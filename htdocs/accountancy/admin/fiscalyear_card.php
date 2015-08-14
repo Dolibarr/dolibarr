@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014	Alexandre Spangaro	<alexandre.spangaro@gmail.com>
+/* Copyright (C) 2014-2015  Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -176,6 +176,8 @@ if ($action == 'create')
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="add">';
 
+	dol_fiche_head();
+
     print '<table class="border" width="100%">';
 
 	// Label
@@ -199,9 +201,14 @@ if ($action == 'create')
     print '</td></tr>';
 
     print '</table>';
+	
+	dol_fiche_end();
 
-    print '<br><center><input class="button" type="submit" value="'.$langs->trans("Save").'"> &nbsp; &nbsp; ';
-    print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></center';
+    print '<div class="center">';
+	print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+    print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '</div>';
 
     print '</form>';
 }
@@ -251,9 +258,11 @@ else if ($id)
 
             print '</table>';
 
-            print '<br><center><input type="submit" class="button" value="'.$langs->trans("Save").'"> &nbsp; ';
+            print '<br><div class="center">';
+			print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
             print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
-            print '</center>';
+            print '</div>';
 
             print '</form>';
 

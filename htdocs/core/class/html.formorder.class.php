@@ -57,11 +57,11 @@ class FormOrder
     {
         print '<select class="flat" name="'.$hmlname.'">';
         print '<option value="-1">&nbsp;</option>';
-        $statustohow=array(0,1,2,3,4,5,6,9);	// 7 is same label than 6. 8 does not exist.
+        $statustohow=array('0'=>'0','1'=>'1','2'=>'2','3'=>'3','4'=>'4','5'=>'5','6'=>'6,7','9'=>'9');	// 7 is same label than 6. 8 does not exist.
 
-        foreach($statustohow as $key)
+        foreach($statustohow as $key => $value)
         {
-			print '<option value="'.$key.'"'.($selected == $key?' selected="selected"':'').'>';
+			print '<option value="'.$value.'"'.(($selected == $key || $selected == $value)?' selected':'').'>';
 			print CommandeFournisseur::LibStatut($key,$short);
 	        print '</option>';
         }
@@ -80,16 +80,16 @@ class FormOrder
 	{
 		global $conf,$langs;
 		print '<select class="flat" name="'.$htmlname.'">';
-		if ($addempty) print '<option value="-1" selected="selected">&nbsp;</option>';
+		if ($addempty) print '<option value="-1" selected>&nbsp;</option>';
 
-		// TODO Use a table called llx_c_input_reason
-		print '<option value="0"'.($selected=='0'?' selected="selected"':'').'>'.$langs->trans('OrderSource0').'</option>';
-		print '<option value="1"'.($selected=='1'?' selected="selected"':'').'>'.$langs->trans('OrderSource1').'</option>';
-		print '<option value="2"'.($selected=='2'?' selected="selected"':'').'>'.$langs->trans('OrderSource2').'</option>';
-		print '<option value="3"'.($selected=='3'?' selected="selected"':'').'>'.$langs->trans('OrderSource3').'</option>';
-		print '<option value="4"'.($selected=='4'?' selected="selected"':'').'>'.$langs->trans('OrderSource4').'</option>';
-		print '<option value="5"'.($selected=='5'?' selected="selected"':'').'>'.$langs->trans('OrderSource5').'</option>';
-		print '<option value="6"'.($selected=='6'?' selected="selected"':'').'>'.$langs->trans('OrderSource6').'</option>';
+		// TODO Use the table called llx_c_input_reason
+		print '<option value="0"'.($selected=='0'?' selected':'').'>'.$langs->trans('OrderSource0').'</option>';
+		print '<option value="1"'.($selected=='1'?' selected':'').'>'.$langs->trans('OrderSource1').'</option>';
+		print '<option value="2"'.($selected=='2'?' selected':'').'>'.$langs->trans('OrderSource2').'</option>';
+		print '<option value="3"'.($selected=='3'?' selected':'').'>'.$langs->trans('OrderSource3').'</option>';
+		print '<option value="4"'.($selected=='4'?' selected':'').'>'.$langs->trans('OrderSource4').'</option>';
+		print '<option value="5"'.($selected=='5'?' selected':'').'>'.$langs->trans('OrderSource5').'</option>';
+		print '<option value="6"'.($selected=='6'?' selected':'').'>'.$langs->trans('OrderSource6').'</option>';
 
 		print '</select>';
 	}
@@ -109,9 +109,9 @@ class FormOrder
 		global $conf,$langs,$form;
 
         if (! is_object($form)) $form=new Form($this->db);
-		
+
         $listofmethods=array();
-		
+
 		$sql = "SELECT rowid, code, libelle as label";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_input_method";
 		$sql.= " WHERE active = 1";

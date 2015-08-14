@@ -132,3 +132,4 @@ SelectFilterFields=Nếu bạn muốn lọc vào một số giá trị, giá tr�
 FilterableFields=Champs Filtrables
 FilteredFields=Lĩnh vực lọc
 FilteredFieldsValues=Giá trị bộ lọc
+FormatControlRule=Format control rule

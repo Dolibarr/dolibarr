@@ -56,7 +56,7 @@ class modAskPriceSupplier extends DolibarrModules
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 0;
-		$this->picto='propal';
+		$this->picto='askpricesupplier';
 
 		$this->dirs = array();
 
@@ -148,7 +148,8 @@ class modAskPriceSupplier extends DolibarrModules
 			'langs'=>'askpricesupplier',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'enabled'=>'$conf->askpricesupplier->enabled',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 			'perms'=>'$user->rights->askpricesupplier->lire',	// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
-			'user'=>2 // 0=Menu for internal users, 1=external users, 2=both
+			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
+            'position'=>30
 		);
 		$r++;
 
@@ -160,7 +161,8 @@ class modAskPriceSupplier extends DolibarrModules
 			'langs'=>'askpricesupplier',
 			'enabled'=>'$conf->askpricesupplier->enabled',
 			'perms'=>'$user->rights->askpricesupplier->creer',
-			'user'=>2
+			'user'=>2,
+            'position'=>31
 		);
 		$r++;
 
@@ -172,7 +174,8 @@ class modAskPriceSupplier extends DolibarrModules
 			'langs'=>'askpricesupplier',
 			'enabled'=>'$conf->askpricesupplier->enabled',
 			'perms'=>'$user->rights->askpricesupplier->lire',
-			'user'=>2
+			'user'=>2,
+            'position'=>32
 		);
 		$r++;
 	}
@@ -218,20 +221,5 @@ class modAskPriceSupplier extends DolibarrModules
 
 		return $this->_init($sql, $options);
 	}
-
-    /**
-	 *		Function called when module is disabled.
-	 *      Remove from database constants, boxes and permissions from Dolibarr database.
-	 *		Data directories are not deleted
-	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *      @return     int             	1 if OK, 0 if KO
-     */
-    function remove($options='')
-    {
-		$sql = array();
-
-		return $this->_remove($sql,$options);
-    }
 
 }

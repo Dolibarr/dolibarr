@@ -12,6 +12,7 @@ Notify_FICHINTER_VALIDATE=Müdahale doğrulandı
 Notify_FICHINTER_SENTBYMAIL=Müdahale posta ile gönderildi
 Notify_BILL_VALIDATE=Müşteri faturası onaylandı
 Notify_BILL_UNVALIDATE=Müşteri faturasından doğrulama kaldırıldı
+Notify_ORDER_SUPPLIER_VALIDATE=Tedarikçi siparişi kaydedildi.
 Notify_ORDER_SUPPLIER_APPROVE=Tedarikçi siparişi onaylandı
 Notify_ORDER_SUPPLIER_REFUSE=Tedarikçi siparişi reddedildi
 Notify_ORDER_VALIDATE=Müşteri siparişi onaylandı
@@ -203,6 +204,7 @@ ClickHereToGoTo=%s e gitmek için buraya tıkla
 YouMustClickToChange=Ancak önce bu şifre değiştirmeyi doğrulamak için aşağıdaki linke tıklamanız gerekir
 ForgetIfNothing=Bu değiştirmeyi istemediyseniz, bu epostayı unutun. Kimlik bilgilerinizi güvenli tutulur.
 IfAmountHigherThan=Eğer tutar <strong>%s</strong> den büyükse
+SourcesRepository=Kaynaklar için havuz
 
 ##### Calendar common #####
 AddCalendarEntry=% Takvimine giriş ekleyin

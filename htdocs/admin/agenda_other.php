@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2008-2010	Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2011		Regis Houssin		<regis.houssin@capnetworks.com>
- * Copyright (C) 2011-2013  Juanjo Menent		<jmenent@2byte.es>
+/* Copyright (C) 2008-2015	Laurent Destailleur             <eldy@users.sourceforge.net>
+ * Copyright (C) 2011		Regis Houssin                   <regis.houssin@capnetworks.com>
+ * Copyright (C) 2011-2013  Juanjo Menent                   <jmenent@2byte.es>
+ * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -88,20 +89,19 @@ $formactions=new FormActions($db);
 llxHeader();
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("AgendaSetup"),$linkback,'setup');
+print_fiche_titre($langs->trans("AgendaSetup"),$linkback,'title_setup');
 print "<br>\n";
 
+
+
+print '<form action="'.$_SERVER["PHP_SELF"].'" name="agenda">';
+print '<input type="hidden" name="action" value="set">';
 
 $head=agenda_prepare_head();
 
 dol_fiche_head($head, 'other', $langs->trans("Agenda"), 0, 'action');
 
-//print_titre($langs->trans("OtherOptions"));
-
 $var=true;
-
-print '<form action="'.$_SERVER["PHP_SELF"].'" name="agenda">';
-print '<input type="hidden" name="action" value="set">';
 
 print '<table class="noborder allwidth">'."\n";
 print '<tr class="liste_titre">'."\n";
@@ -157,11 +157,12 @@ print '</td></tr>'."\n";
 
 print '</table>';
 
-print '<center><input class="button" type="submit" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'"></center>';
+dol_fiche_end();
+
+print '<div class="center"><input class="button" type="submit" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'"></div>';
 
 print '</form>';
 
-dol_fiche_end();
 
 print "<br>";
 

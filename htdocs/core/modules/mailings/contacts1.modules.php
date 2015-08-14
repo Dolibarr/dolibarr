@@ -60,7 +60,7 @@ class mailing_contacts1 extends MailingTargets
 	 *	array of SQL request that returns two field:
 	 *	One called "label", One called "nb".
 	 *
-	 *	@return		array		Array with SQL requests
+	 *	@return		string[]		Array with SQL requests
 	 */
 	function getSqlArrayForStats()
 	{
@@ -85,7 +85,7 @@ class mailing_contacts1 extends MailingTargets
 	 *	For example if this selector is used to extract 500 different
 	 *	emails from a text file, this function must return 500.
 	 *
-	 *  @param	string	$sql		Requete sql de comptage
+	 *  @param		string	$sql		Requete sql de comptage
 	 *	@return		int
 	 */
 	function getNbOfRecipients($sql='')

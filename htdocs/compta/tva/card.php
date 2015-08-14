@@ -2,6 +2,7 @@
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2015	   Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -187,6 +188,8 @@ if ($action == 'create')
 
     print_fiche_titre($langs->trans("NewVATPayment"));
 
+    dol_fiche_head();
+
     print '<table class="border" width="100%">';
 
     print "<tr>";
@@ -228,10 +231,13 @@ if ($action == 'create')
 
     print '</table>';
 
-	print "<br>";
+    dol_fiche_end();
 
-	print '<center><input type="submit" class="button" value="'.$langs->trans("Save").'"> &nbsp; ';
-    print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></center>';
+	print '<div class="center">';
+	print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+    print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '</div>';
 
     print '</form>';
 }

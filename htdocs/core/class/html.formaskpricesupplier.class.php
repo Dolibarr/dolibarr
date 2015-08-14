@@ -71,7 +71,7 @@ class FormAskPriceSupplier
                     $obj = $this->db->fetch_object($resql);
                     if ($selected == $obj->id)
                     {
-                        print '<option value="'.$obj->id.'" selected="selected">';
+                        print '<option value="'.$obj->id.'" selected>';
                     }
                     else
                     {

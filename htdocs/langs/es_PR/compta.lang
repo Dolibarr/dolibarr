@@ -19,4 +19,3 @@ VATReportByQuartersInInputOutputMode=Informe por tasa del IVU repercutido y paga
 VATReportByQuartersInDueDebtMode=Informe por tasa del IVU repercutido y pagado (IVU debido)
 SeeVATReportInInputOutputMode=Ver el informe <b>%sIVU pagado%s</b> para un modo de cálculo estandard
 SeeVATReportInDueDebtMode=Ver el informe <b>%sIVU debido%s</b> para un modo de cálculo con la opción sobre lo debido
-ACCOUNTING_VAT_ACCOUNT=Código contable por defecto para el IVU (si no está definido en el diccionario "Tasas de IVU")

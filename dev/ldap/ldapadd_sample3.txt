@@ -1,4 +1,5 @@
 # ldapadd_sample3.txt
+# ldapadd is into package ldap-utils on debian.
 #
 # Use this sample to add cn records
 # This is the step to create records inside tree ou=contacts,dc=my-domain,dc=com

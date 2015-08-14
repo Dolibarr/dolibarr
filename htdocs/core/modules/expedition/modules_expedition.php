@@ -43,7 +43,7 @@ abstract class ModelePdfExpedition extends CommonDocGenerator
 	 *  Return list of active generation modules
 	 *
      *  @param	DoliDB	$db     			Database handler
-     *  @param  string	$maxfilenamelength  Max length of value to show
+     *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
 	 */
 	static function liste_modeles($db,$maxfilenamelength=0)
@@ -154,8 +154,11 @@ abstract class ModelNumRefExpedition
  *  @param      int			$hideref        Hide ref
  * 	@return 	int 						1 if OK -1 if KO
  * 	@deprecated Use the new function generateDocument of Expedition class
+ * @see Expedition::generateDocument()
  */
 function expedition_pdf_create(DoliDB $db, Expedition $object, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
 {
+	dol_syslog(__METHOD__ . " is deprecated", LOG_WARNING);
+
 	return $object->generateDocument($modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 }

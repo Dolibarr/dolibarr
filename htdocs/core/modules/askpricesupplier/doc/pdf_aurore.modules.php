@@ -165,7 +165,7 @@ class pdf_aurore extends ModelePDFAskPriceSupplier
 				$objphoto = new Product($this->db);
 				$objphoto->fetch($object->lines[$i]->fk_product);
 
-				$pdir = get_exdir($object->lines[$i]->fk_product,2) . $object->lines[$i]->fk_product ."/photos/";
+				$pdir = get_exdir($object->lines[$i]->fk_product,2,0,0,$objphoto,'product') . $object->lines[$i]->fk_product ."/photos/";
 				$dir = $conf->product->dir_output.'/'.$pdir;
 
 				$realpath='';
@@ -708,7 +708,7 @@ class pdf_aurore extends ModelePDFAskPriceSupplier
 
 			$pdf->SetFont('','', $default_font_size - 2);
 			$pdf->SetXY($posxval, $posy);
-			
+
 			$lib_condition_paiement=str_replace('\n',"\n",$lib_condition_paiement);
 			$pdf->MultiCell(80, 4, $lib_condition_paiement,0,'L');
 
@@ -1266,7 +1266,7 @@ class pdf_aurore extends ModelePDFAskPriceSupplier
 		$pdf->SetTextColor(0,0,60);
 		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("AskPriceSupplierDate")." : " . dol_print_date($object->date_livraison,"day",false,$outputlangs,true), '', 'R');
 */
-		
+
 		if ($object->client->code_client)
 		{
 			$posy+=4;

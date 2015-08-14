@@ -1,9 +1,10 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2013-2014 Alexandre Spangaro	<alexandre.spangaro@gmail.com>
+ * Copyright (C) 2013-2015 Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2014 	   Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2015      Jean-François Ferry  <jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,8 +48,8 @@ $list = array (
 		'ACCOUNTING_SELL_JOURNAL',
 		'ACCOUNTING_PURCHASE_JOURNAL',
 		'ACCOUNTING_SOCIAL_JOURNAL',
-		'ACCOUNTING_CASH_JOURNAL',
-		'ACCOUNTING_MISCELLANEOUS_JOURNAL' 
+		'ACCOUNTING_MISCELLANEOUS_JOURNAL',
+		'ACCOUNTING_EXPENSEREPORT_JOURNAL'
 );
 
 /*
@@ -82,7 +83,7 @@ llxHeader();
 $form = new Form($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans('ConfigAccountingExpert'),$linkback,'setup');
+print_fiche_titre($langs->trans('ConfigAccountingExpert'),$linkback,'title_setup');
 
 $head = admin_accounting_prepare_head(null);
 
@@ -112,10 +113,10 @@ foreach ( $list as $key ) {
 	print '</td></tr>';
 }
 
-print '</form>';
 print "</table>\n";
 
 print '<br /><div style="text-align:center"><input type="submit" class="button" value="' . $langs->trans('Modify') . '" name="button"></div>';
+print '</form>';
 
 print '<br />';
 
@@ -163,7 +164,6 @@ $db->free($resql);
 
 print "</table>\n";
 
-print '</table>';
 print '</div>';
 
 print '<br>';

@@ -1,6 +1,5 @@
 <?php
-/* Module to manage resources into Dolibarr ERP/CRM
- * Copyright (C) 2013-2014	Jean-François Ferry	<jfefe@aternatik.fr>
+/* Copyright (C) 2013-2014 Jean-François Ferry <jfefe@aternatik.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,10 +13,12 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Module to manage resources into Dolibarr ERP/CRM
  */
 
 /**
- * 	\defgroup	resource	Resource module
+ * 	\defgroup	resource	Module resource
  * 	\brief		Resource module descriptor.
  * 	\file		core/modules/modResource.class.php
  * 	\ingroup	resource
@@ -45,13 +46,13 @@ class modResource extends DolibarrModules
 		// Id for module (must be unique).
 		// Use a free id here
 		// (See in Home -> System information -> Dolibarr for list of used modules id).
-		$this->numero = 110111;
+		$this->numero = 63000;
 		// Key text used to identify module (for permissions, menus, etc...)
 		$this->rights_class = 'resource';
 
 		// Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
 		// It is used to group modules in module setup page
-		$this->family = "hr";
+		$this->family = "projects";
 		// Module label (no space allowed)
 		// used if translation string 'ModuleXXXName' not found
 		// (where XXX is value of numeric property 'numero' of module)
@@ -59,15 +60,15 @@ class modResource extends DolibarrModules
 		// Module description
 		// used if translation string 'ModuleXXXDesc' not found
 		// (where XXX is value of numeric property 'numero' of module)
-		$this->description = "Description of module Resource";
+		$this->description = "Manage resources (printers, cars, room, ...) you can then share into events";
 		// Possible values for version are: 'development', 'experimental' or version
-		$this->version = 'development';
+		$this->version = 'dolibarr';
 		// Key used in llx_const table to save module status enabled/disabled
 		// (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_' . strtoupper($this->name);
 		// Where to store the module in setup page
 		// (0=common,1=interface,2=others,3=very specific)
-		$this->special = 0;
+		$this->special = 2;
 		// Name of image file used for this module.
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png
 		// use this->picto='pictovalue'
@@ -114,8 +115,7 @@ class modResource extends DolibarrModules
 		$this->requiredby = array('modPlace');
 		// Minimum version of PHP required by module
 		$this->phpmin = array(5, 3);
-		// Minimum version of Dolibarr required by module
-		$this->need_dolibarr_version = array(3, 5);
+
 		$this->langfiles = array("resource@resource"); // langfiles@resource
 		// Constants
 		// List of particular constants to add when module is enabled
@@ -152,8 +152,7 @@ class modResource extends DolibarrModules
 		// (reresource 'x' by type of category (0=product, 1=supplier, 2=customer, 3=member)
 
 		$this->tabs = array(
-			'action:+resources:Resources:resource:$user->rights->resource->read:/resource/element_resource.php?element=action&element_id=__ID__',
-			'thirdparty:+resources:Resources:resource:$user->rights->resource->read:/resource/element_resource.php?element=societe&element_id=__ID__'
+//			'thirdparty:+resources:Resources:resource:$user->rights->resource->read:/resource/element_resource.php?element=societe&element_id=__ID__'
 		);
 
 		// Boxes
@@ -173,25 +172,25 @@ class modResource extends DolibarrModules
 		$this->rights = array(); // Permission array used by this module
 		$r = 0;
 
-		$this->rights[$r][0] = 1101201;
-		$this->rights[$r][1] = 'See resources';
+		$this->rights[$r][0] = 63001;
+		$this->rights[$r][1] = 'Read resources';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'read';
 		$r++;
 
-		$this->rights[$r][0] = 1101202;
-		$this->rights[$r][1] = 'Modify resources';
+		$this->rights[$r][0] = 63002;
+		$this->rights[$r][1] = 'Create/Modify resources';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'write';
 		$r++;
 
-		$this->rights[$r][0] = 1101203;
+		$this->rights[$r][0] = 63003;
 		$this->rights[$r][1] = 'Delete resources';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'delete';
 		$r++;
 
-		$this->rights[$r][0] = 1101204;
+		$this->rights[$r][0] = 63004;
 		$this->rights[$r][1] = 'Link resources';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'link';
@@ -359,21 +358,6 @@ class modResource extends DolibarrModules
 		$result = $this->loadTables();
 
 		return $this->_init($sql, $options);
-	}
-
-	/**
-	 * Function called when module is disabled.
-	 * Remove from database constants, boxes and permissions from Dolibarr database.
-	 * Data directories are not deleted
-	 *
-	 * 	@param		string	$options	Options when enabling module ('', 'noboxes')
-	 * 	@return		int					1 if OK, 0 if KO
-	 */
-	public function remove($options = '')
-	{
-		$sql = array();
-
-		return $this->_remove($sql, $options);
 	}
 
 	/**

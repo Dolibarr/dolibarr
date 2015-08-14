@@ -42,5 +42,5 @@ SentToSuppliers=Trimite la furnizori
 ListOfSupplierOrders=Lista comenzi furnizori
 MenuOrdersSupplierToBill=Comenzi Furnizor de facturat
 NbDaysToDelivery= Intârziere Livrare in zile
-DescNbDaysToDelivery=Cea mai mare intarziere este afisata in lista produsului comandat
-UseDoubleApproval=Use double approval (the second approval can be done by any user with the dedicated permission)
+DescNbDaysToDelivery=The biggest deliver delay of the products from this order
+UseDoubleApproval=Use double approval when amount (without tax) is higher than (The second approval can be done by any user with the dedicated permission. Set to 0 for no double approval)

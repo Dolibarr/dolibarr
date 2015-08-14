@@ -12,6 +12,7 @@ Notify_FICHINTER_VALIDATE=Can thiệp xác nhận
 Notify_FICHINTER_SENTBYMAIL=Can thiệp gửi qua đường bưu điện
 Notify_BILL_VALIDATE=Hóa đơn khách hàng xác nhận
 Notify_BILL_UNVALIDATE=Hóa đơn của khách hàng unvalidated
+Notify_ORDER_SUPPLIER_VALIDATE=Supplier order recorded
 Notify_ORDER_SUPPLIER_APPROVE=Để nhà cung cấp đã được phê duyệt
 Notify_ORDER_SUPPLIER_REFUSE=Để nhà cung cấp từ chối
 Notify_ORDER_VALIDATE=Đơn đặt hàng được xác nhận
@@ -203,6 +204,7 @@ ClickHereToGoTo=Click vào đây để đi đến% s
 YouMustClickToChange=Tuy nhiên, trước tiên bạn phải nhấp vào liên kết sau đây để xác nhận thay đổi mật khẩu này
 ForgetIfNothing=Nếu bạn không yêu cầu thay đổi này, chỉ cần quên email này. Thông tin của bạn được lưu giữ an toàn.
 IfAmountHigherThan=If amount higher than <strong>%s</strong>
+SourcesRepository=Repository for sources
 
 ##### Calendar common #####
 AddCalendarEntry=Thêm phần trong lịch% s

@@ -1,0 +1,53 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=Lån
+Loans=Lån
+NewLoan=Nytt lån
+ShowLoan=Vis lån
+PaymentLoan=Nedbetaling på lån
+ShowLoanPayment=Vis nedbetaling på lån
+Capital=Kapital
+Insurance=Forsikring
+Interest=Rente
+Nbterms=Antall terminer
+LoanAccountancyCapitalCode=Regnskapskode for kapital
+LoanAccountancyInsuranceCode=Regnskapskode for forsikring
+LoanAccountancyInterestCode=Regnskapskode for rente
+LoanPayment=Nedbetaling på lån
+ConfirmDeleteLoan=Bekreft sletting av dette lånet
+LoanDeleted=Lånet ble slettet
+ConfirmPayLoan=Bekreft at dette lånet er klassifisert som betalt
+LoanPaid=Lån nedbetalt
+ErrorLoanCapital=Lånebeløp må være numerisk og større en null
+ErrorLoanLength=Låneperioden må være numerisk og større enn null
+ErrorLoanInterest=Årlig rente må være numerisk og større enn null
+# Calc
+LoanCalc=Lånekalkulator
+PurchaseFinanceInfo=Kjøps- og finansieringsinformasjon
+SalePriceOfAsset=Aktiva salgspris
+PercentageDown=Prosentvis ned
+LengthOfMortgage=Låneperiode
+AnnualInterestRate=Årlig rente
+ExplainCalculations=Forklar utregninger
+ShowMeCalculationsAndAmortization=Vis utregninger og amortisering
+MortgagePaymentInformation=Nedbetalingsinformasjon
+DownPayment=Avdrag
+DownPaymentDesc= <b>Nedbetaling</b> = Lånebeløp * prosent ned / 100 (For 5% ned får man 5/100 eller 0.05)
+InterestRateDesc=<b>Rentefot</b> = Årsrente/100
+MonthlyFactorDesc=<b>Månedsfaktor</b> = Resultatet av følgende formel:
+MonthlyInterestRateDesc=<b>Månedlig rentefot</b> = Årlig rentefot / 12 (mnd)
+MonthTermDesc=<b>Månedsterminer</b> = Låneperiode i år * 12
+MonthlyPaymentDesc=Månedlige nedbetalinger er regnet ut med følgende formel:
+AmortizationPaymentDesc=<a href="#amortization">amortisering</a> bryter ned hvor mye av den månedlige betalingen går til rentebetaling, og hvor mye som går til nedbetaling på lånet ditt.
+AmountFinanced=Finansieringsbeløp
+AmortizationMonthlyPaymentOverYears=Amortisering for månedlige avdrag: <b>%s</b> over %s år
+Totalsforyear=Totalt for året
+MonthlyPayment=Månedlig avdrag
+LoanCalcDesc=Denne <b>lånekalkulatoren</b> kan brukes til å finne ut månedlige utbetalinger på et lån, basert på kjøpspris, ønskede terminer, kjøperens forskuddsbetaling i prosent, og lånets rente. <br> Denne kalkulatoren tar med PMI (Private Mortgage Insurance) for lån hvor mindre enn 20% er satt som egenandel. Eiendomsskatt blir også tatt i betraktning, og dennes effekt på den totale månedlige etalingen. <br>
+GoToInterest=%s vil gå mot INTEREST
+GoToPrincipal=%s vil gå mot PRINCIPAL
+YouWillSpend=Du vil bruke %s på lånet i år %s
+# Admin
+ConfigLoan=Oppset av lån-modulen
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Standard regnskapskode for kapital
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Standard regnskapskode for renter
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Standard regnskapskode for forsikring

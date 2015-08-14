@@ -687,7 +687,7 @@ function createOrder($authentication,$order)
 		$newobject->date_lim_reglement=dol_stringtotime($order['date_due'],'dayrfc');
 		$newobject->note_private=$order['note_private'];
 		$newobject->note_public=$order['note_public'];
-		$newobject->statut=0;	// We start with status draft
+		$newobject->statut=Commande::STATUS_DRAFT;	// We start with status draft
 		$newobject->billed=$order['billed'];
 		$newobject->fk_project=$order['project_id'];
 		$newobject->fk_delivery_address=$order['fk_delivery_address'];
@@ -917,7 +917,17 @@ function updateOrder($authentication,$order)
 			if (isset($order['status']))
 			{
 				if ($order['status'] == -1) $result=$object->cancel($fuser);
-				if ($order['status'] == 1)  $result=$object->valid($fuser);
+				if ($order['status'] == 1)
+				{
+					$result=$object->valid($fuser);
+					if ($result	>= 0)
+					{
+						// Define output language
+						$outputlangs = $langs;
+						$order->generateDocument($order->modelpdf, $outputlangs);
+					
+					}
+				}
 				if ($order['status'] == 0)  $result=$object->set_reopen($fuser);
 				if ($order['status'] == 3)  $result=$object->cloture($fuser);
 			}
@@ -951,7 +961,9 @@ function updateOrder($authentication,$order)
 			$db->commit();
 			$objectresp=array(
 					'result'=>array('result_code'=>'OK', 'result_label'=>''),
-					'id'=>$object->id
+					'id'=>$object->id,
+					'ref'=>$object->ref,
+					'ref_ext'=>$object->ref_ext
 			);
 		}
 		elseif ($objectfound)

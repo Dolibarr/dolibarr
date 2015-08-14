@@ -110,7 +110,7 @@ llxHeader('',$langs->trans("MailmanSpipSetup"),$help_url);
 
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("MailmanSpipSetup"),$linkback,'setup');
+print_fiche_titre($langs->trans("MailmanSpipSetup"),$linkback,'title_setup');
 
 
 $head = mailmanspip_admin_prepare_head();
@@ -124,11 +124,11 @@ $var=true;
  */
 if (! empty($conf->global->ADHERENT_USE_SPIP))
 {
-    //$lien=img_picto($langs->trans("Active"),'tick').' ';
-    $lien='<a href="'.$_SERVER["PHP_SELF"].'?action=unset&value=0&name=ADHERENT_USE_SPIP">';
-    //$lien.=$langs->trans("Disable");
-    $lien.=img_picto($langs->trans("Activated"),'switch_on');
-    $lien.='</a>';
+    //$link=img_picto($langs->trans("Active"),'tick').' ';
+    $link='<a href="'.$_SERVER["PHP_SELF"].'?action=unset&value=0&name=ADHERENT_USE_SPIP">';
+    //$link.=$langs->trans("Disable");
+    $link.=img_picto($langs->trans("Activated"),'switch_on');
+    $link.='</a>';
     // Edition des varibales globales
     $constantes=array(
     	'ADHERENT_SPIP_SERVEUR',
@@ -137,18 +137,18 @@ if (! empty($conf->global->ADHERENT_USE_SPIP))
     	'ADHERENT_SPIP_PASS'
 	);
 
-    print_fiche_titre($langs->trans('SPIPTitle'), $lien, '');
+    print_fiche_titre($langs->trans('SPIPTitle'), $link, '');
 	print '<br>';
     form_constantes($constantes);
     print '<br>';
 }
 else
 {
-    $lien='<a href="'.$_SERVER["PHP_SELF"].'?action=set&value=1&name=ADHERENT_USE_SPIP">';
-    //$lien.=$langs->trans("Activate");
-    $lien.=img_picto($langs->trans("Disabled"),'switch_off');
-    $lien.='</a>';
-    print_fiche_titre($langs->trans('SPIPTitle'), $lien, '');
+    $link='<a href="'.$_SERVER["PHP_SELF"].'?action=set&value=1&name=ADHERENT_USE_SPIP">';
+    //$link.=$langs->trans("Activate");
+    $link.=img_picto($langs->trans("Disabled"),'switch_off');
+    $link.='</a>';
+    print_fiche_titre($langs->trans('SPIPTitle'), $link, '');
 }
 
 

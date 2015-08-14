@@ -20,8 +20,8 @@
  */
 
 /**
- *      \file       htdocs/dev/generate-societe.php
- *		\brief      Script de generation de donnees aleatoires pour les societes
+ *      \file       dev/initdata/generate-societe.php
+ *      \brief      Script de generation de donnees aleatoires pour les societes
  */
 
 // Test si mode batch
@@ -89,7 +89,7 @@ for ($s = 0 ; $s < GEN_NUMBER_SOCIETE ; $s++)
 {
     print "Company $s\n";
     $soc = new Societe($db);
-    $soc->nom = "Company num ".time()."$s";
+    $soc->name = "Company num ".time()."$s";
     $soc->town = $listoftown[rand(0, count($listoftown)-1)];
     $soc->client = rand(1,2);		// Une societe sur 2 est prospect, l'autre client
     $soc->fournisseur = rand(0,1);	// Une societe sur 2 est fournisseur
@@ -101,7 +101,7 @@ for ($s = 0 ; $s < GEN_NUMBER_SOCIETE ; $s++)
 	// Un client sur 3 a une remise de 5%
     $user_remise=rand(1,3); if ($user_remise==3) $soc->remise_percent=5;
 	print "> client=".$soc->client.", fournisseur=".$soc->fournisseur.", remise=".$soc->remise_percent."\n";
-	$soc->note='Company created by the script generate-societe.php';
+    $soc->note_private = 'Company created by the script generate-societe.php';
     $socid = $soc->create();
 
     if ($socid >= 0)
@@ -120,7 +120,7 @@ for ($s = 0 ; $s < GEN_NUMBER_SOCIETE ; $s++)
             }
         }
 
-        print "Company ".$s." created nom=".$soc->nom."\n";
+        print "Company ".$s." created nom=".$soc->name."\n";
     }
     else
     {

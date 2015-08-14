@@ -2,6 +2,7 @@
 -- Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+-- Copyright (C) 2012      Cédric Salvador      <csalvador@gpcsolutions.fr>
 -- Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -30,7 +31,7 @@ ALTER TABLE llx_product ADD INDEX idx_product_fk_country (fk_country);
 ALTER TABLE llx_product ADD INDEX idx_product_fk_user_author (fk_user_author);
 ALTER TABLE llx_product ADD INDEX idx_product_fk_barcode_type (fk_barcode_type);
 ALTER TABLE llx_product ADD UNIQUE INDEX uk_product_barcode (barcode, fk_barcode_type, entity);
-
+ALTER TABLE llx_product ADD CONSTRAINT fk_product_fk_unit FOREIGN KEY (fk_unit) REFERENCES llx_c_units (rowid);
 
 ALTER TABLE  llx_product ADD CONSTRAINT fk_product_fk_country FOREIGN KEY (fk_country) REFERENCES  llx_c_country (rowid);
 ALTER TABLE  llx_product ADD CONSTRAINT fk_product_barcode_type FOREIGN KEY (fk_barcode_type) REFERENCES  llx_c_barcode_type (rowid);

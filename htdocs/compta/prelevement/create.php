@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2010      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2010-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2012 Juanjo Menent        <jmenent@2byte.es>
  *
@@ -96,13 +96,19 @@ if (prelevement_check_config() < 0)
 	print '</div>';
 }
 
-$h=0;
+/*$h=0;
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/create.php';
 $head[$h][1] = $langs->trans("NewStandingOrder");
+$head[$h][2] = 'payment';
+$hselected = 'payment';
 $h++;
 
 dol_fiche_head($head, $hselected, $langs->trans("StandingOrders"), 0, 'payment');
+*/
 
+print_fiche_titre($langs->trans("NewStandingOrder"));
+
+dol_fiche_head();
 
 $nb=$bprev->NbFactureAPrelever();
 $nb1=$bprev->NbFactureAPrelever(1);
@@ -161,7 +167,7 @@ print '<br>';
  */
 
 $sql = "SELECT f.facnumber, f.rowid, f.total_ttc, s.nom as name, s.rowid as socid,";
-$sql.= " pfd.date_demande";
+$sql.= " pfd.date_demande, pfd.amount";
 $sql.= " FROM ".MAIN_DB_PREFIX."facture as f,";
 $sql.= " ".MAIN_DB_PREFIX."societe as s,";
 $sql.= " ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
@@ -184,6 +190,7 @@ if ($resql)
     print '<td>'.$langs->trans("Invoice").'</td>';
     print '<td>'.$langs->trans("ThirdParty").'</td>';
     print '<td>'.$langs->trans("RIB").'</td>';
+    print '<td>'.$langs->trans("RUM").'</td>';
     print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
     print '<td align="right">'.$langs->trans("DateRequest").'</td>';
     print '</tr>';
@@ -210,9 +217,13 @@ if ($resql)
             print '<td>';
             print $thirdpartystatic->display_rib();
             print '</td>';
+            // RUM
+            print '<td>';
+            print $thirdpartystatic->display_rib('rum');
+            print '</td>';
             // Amount
             print '<td align="right">';
-            print price($obj->total_ttc,0,$langs,0,0,-1,$conf->currency);
+            print price($obj->amount,0,$langs,0,0,-1,$conf->currency);
             print '</td>';
             // Date
             print '<td align="right">';
@@ -265,11 +276,14 @@ if ($result)
         $obj = $db->fetch_object($result);
         $var=!$var;
 
-        print "<tr ".$bc[$var]."><td>";
+        print "<tr ".$bc[$var].">";
+
+        print "<td>";
         $bprev->id=$obj->rowid;
         $bprev->ref=$obj->ref;
         print $bprev->getNomUrl(1);
         print "</td>\n";
+
         print '<td align="center">'.dol_print_date($db->jdate($obj->datec),'day')."</td>\n";
 
         print '<td align="right">'.price($obj->amount,0,$langs,0,0,-1,$conf->currency)."</td>\n";

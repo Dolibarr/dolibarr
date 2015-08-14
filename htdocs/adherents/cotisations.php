@@ -32,6 +32,12 @@ $langs->load("members");
 
 $filter=$_GET["filter"];
 $statut=isset($_GET["statut"])?$_GET["statut"]:1;
+$search_ref=GETPOST('search_ref');
+$search_lastname=GETPOST('search_lastname');
+$search_login=GETPOST('search_login');
+$search_note=GETPOST('search_note');
+$search_account=GETPOST('search_account','int');
+$search_amount=GETPOST('search_amount','int');
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -43,7 +49,6 @@ $pagenext = $page + 1;
 if (! $sortorder) {  $sortorder="DESC"; }
 if (! $sortfield) {  $sortfield="c.dateadh"; }
 
-$msg='';
 $date_select=isset($_GET["date_select"])?$_GET["date_select"]:$_POST["date_select"];
 
 // Security check
@@ -54,14 +59,27 @@ $result=restrictedArea($user,'adherent','','','cotisation');
  *	Actions
  */
 
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+{
+    $search="";
+	$search_ref="";
+    $search_lastname="";
+	$search_firstname="";
+	$search_login="";
+    $search_note="";
+	$search_amount="";
+	$search_account="";
+}
+
 
 /*
  * View
  */
 
+$form=new Form($db);
+
 llxHeader('',$langs->trans("ListOfSubscriptions"),'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
 
-if ($msg)	print $msg.'<br>';
 
 // List of subscriptions
 $sql = "SELECT d.rowid, d.login, d.firstname, d.lastname, d.societe,";
@@ -77,6 +95,31 @@ if (isset($date_select) && $date_select != '')
 {
     $sql.= " AND c.dateadh LIKE '".$date_select."%'";
 }
+if ($search_ref)
+{
+	if (is_numeric($search_ref)) $sql.= " AND (c.rowid = ".$db->escape($search_ref).")";
+	else $sql.=" AND 1 = 2";    // Always wrong
+}
+if ($search_lastname)
+{
+	$sql.= " AND (d.firstname LIKE '%".$db->escape($search_lastname)."%' OR d.lastname LIKE '%".$db->escape($search_lastname)."%' OR d.societe LIKE '%".$db->escape($search_lastname)."%')";
+}
+if ($search_login)
+{
+	$sql.= " AND d.login LIKE '%".$db->escape($search_login)."%'";
+}
+if ($search_note)
+{
+	$sql.= " AND c.note LIKE '%".$db->escape($search_note)."%'";
+}
+if ($search_account > 0)
+{
+	$sql.= " AND b.fk_account = ".$search_account;
+}
+if ($search_amount)
+{
+	$sql.=" AND c.cotisation = ".$db->escape($search_amount);
+}
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($conf->liste_limit+1, $offset);
 
@@ -90,10 +133,23 @@ if ($result)
     if (! empty($date_select)) $title.=' ('.$langs->trans("Year").' '.$date_select.')';
 
     $param="";
-    $param.="&amp;statut=$statut&amp;date_select=$date_select";
+    $param.="&statut=$statut&date_select=$date_select";
+
+    if ($search_lastname) $param.="&search_lastname=".$search_lastname;
+	if ($search_login)    $param.="&search_login=".$search_login;
+	if ($search_acount)   $param.="&search_account=".$search_account;
+	if ($search_amount)   $param.="&search_amount=".$search_amount;
     print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num);
 
+	if ($sall)
+	{
+		print $langs->trans("Filter")." (".$langs->trans("Ref").", ".$langs->trans("Lastname").", ".$langs->trans("Firstname").", ".$langs->trans("EMail").", ".$langs->trans("Address")." ".$langs->trans("or")." ".$langs->trans("Town")."): ".$sall;
+	}
 
+    $param="";
+    $param.="&statut=$statut&date_select=$date_select";
+
+    print '<form method="POST" action="'.$_SERVER["PHP_SELF"].($param?'?'.$param:'').'">';
     print '<table class="noborder" width="100%">';
 
     print '<tr class="liste_titre">';
@@ -107,8 +163,46 @@ if ($result)
     }
     print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"c.dateadh",$param,"",'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("DateEnd"),$_SERVER["PHP_SELF"],"c.datef",$param,"",'align="center"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"c.cotisation",$param,"",'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"c.cotisation",$param,"",'colspan="2" align="right"',$sortfield,$sortorder);
     print "</tr>\n";
+
+
+	// Line for filters fields
+	print '<tr class="liste_titre">';
+
+	print '<td class="liste_titre" align="left">';
+	print '<input class="flat" type="text" name="search_ref" value="'.$search_ref.'" size="4"></td>';
+
+	print '<td class="liste_titre" align="left">';
+	print '<input class="flat" type="text" name="search_lastname" value="'.$search_lastname.'" size="12"></td>';
+
+	print '<td class="liste_titre" align="left">';
+	print '<input class="flat" type="text" name="search_login" value="'.$search_login.'" size="7"></td>';
+
+	print '<td class="liste_titre" align="left">';
+	print '<input class="flat" type="text" name="search_note" value="'.$search_note.'" size="7"></td>';
+
+    if (! empty($conf->banque->enabled))
+    {
+		print '<td class="liste_titre">';
+		print $form->select_comptes($search_account, 'search_account', 0, '', 1);
+		print '</td>';
+    }
+
+	print '<td class="liste_titre">&nbsp;</td>';
+
+	print '<td class="liste_titre">&nbsp;</td>';
+
+	print '<td align="right" class="liste_titre">';
+	print '<input class="flat" type="text" name="search_amount" value="'.$search_amount.'" size="4">';
+	print '</td><td align="right" class="liste_titre" width="60px">';
+	print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	print ' ';
+	print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" name="button_removefilter" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+	print '</td>';
+
+	print "</tr>\n";
+
 
     // Static objects
     $cotisation=new Cotisation($db);
@@ -133,11 +227,6 @@ if ($result)
 
         $var=!$var;
 
-        if ($allowinsertbankafter && ! $objp->fk_account && ! empty($conf->banque->enabled) && $objp->cotisation)
-        {
-            print "<form method=\"post\" action=\"cotisations.php\">";
-            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-        }
         print "<tr ".$bc[$var].">";
 
         // Ref
@@ -167,19 +256,6 @@ if ($result)
             else
             {
                 print "<td>";
-                if ($allowinsertbankafter && $objp->cotisation)
-                {
-                    print '<input type="hidden" name="action" value="2bank">';
-                    print '<input type="hidden" name="rowid" value="'.$objp->crowid.'">';
-                    $form->select_comptes('','accountid',0,'',1);
-                    print '<br>';
-                    $form->select_types_paiements('','paymenttypeid');
-                    print '<input name="num_chq" type="text" class="flat" size="5">';
-                }
-                else
-                {
-                    print '&nbsp;';
-                }
                 print "</td>\n";
             }
         }
@@ -191,13 +267,10 @@ if ($result)
         print '<td align="center">'.dol_print_date($db->jdate($objp->datef),'day')."</td>\n";
 
         // Price
-        print '<td align="right">'.price($objp->cotisation).'</td>';
+        print '<td align="right" colspan="2">'.price($objp->cotisation).'</td>';
 
         print "</tr>";
-        if ($allowinsertbankafter && ! $objp->fk_account && ! empty($conf->banque->enabled) && $objp->cotisation)
-        {
-            print "</form>\n";
-        }
+
         $i++;
     }
 
@@ -214,13 +287,11 @@ if ($result)
     }
    	print '<td>&nbsp;</td>';
    	print '<td>&nbsp;</td>';
-   	print "<td align=\"right\">".price($total)."</td>\n";
+   	print '<td align="right" colspan="2">'.price($total)."</td>\n";
     print "</tr>\n";
 
     print "</table>";
-    print "<br>\n";
-
-
+	print '</form>';
 }
 else
 {
@@ -228,6 +299,5 @@ else
 }
 
 
-$db->close();
-
 llxFooter();
+$db->close();

@@ -81,7 +81,7 @@ $form = new Form($db);
 
 llxHeader('',$langs->trans("Proxy"));
 
-print_fiche_titre($langs->trans("SecuritySetup"),'','setup');
+print_fiche_titre($langs->trans("SecuritySetup"),'','title_setup');
 
 print $langs->trans("ProxyDesc")."<br>\n";
 print "<br>\n";

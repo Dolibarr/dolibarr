@@ -1,5 +1,12 @@
 # Dolibarr language file - en_US - Accounting Expert
 CHARSET=UTF-8
+ACCOUNTING_EXPORT_SEPARATORCSV=Column separator for export file
+ACCOUNTING_EXPORT_DATE=Date format for export file
+ACCOUNTING_EXPORT_PIECE=Export the number of piece ?
+ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account ?
+ACCOUNTING_EXPORT_LABEL=Export the label ?
+ACCOUNTING_EXPORT_AMOUNT=Export the amount ?
+ACCOUNTING_EXPORT_DEVISE=Export the devise ?
 
 Accounting=Contabilitate
 Globalparameters=Parametri globali
@@ -41,6 +48,7 @@ NewAccount=Cont contabil nou
 Update=Modifică
 List=List
 Create=Crează
+CreateMvts=Create movement
 UpdateAccount=Modificare cont contabil
 UpdateMvts=Modificare mişcare
 WriteBookKeeping=Înregistrare contabilă in Cartea Mare
@@ -76,14 +84,15 @@ ACCOUNTING_LIST_SORT_VENTILATION_DONE=Începe sortarea paginilor ventilate "Vent
 
 AccountLength=Lungimea conturilor contabile  afişate în Dolibarr
 AccountLengthDesc=Funcția pentru a simula lungirea unui cont contabil prin înlocuirea spatiile  libere cu cifra zero. Această funcție afectează numai  afişarea , aceasta nu va schimba conturile contabile înregistrate în Dolibarr. Pentru export, această funcţie este necesară să fie compatibil cu unele software-ul
+ACCOUNTING_LENGTH_DESCRIPTION=Length for displaying product & services description in listings (Best = 50)
+ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Length for displaying product & services account description form in listings (Best = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Lungimea conturilor generale
 ACCOUNTING_LENGTH_AACCOUNT=Lungimea conturilor de terţi
 
 ACCOUNTING_SELL_JOURNAL=Jurnal vânzări
 ACCOUNTING_PURCHASE_JOURNAL=Jurnal cumpărări
-ACCOUNTING_BANK_JOURNAL=Jurnal bancă
-ACCOUNTING_CASH_JOURNAL=Jurnal casă
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Journal Diverse
+ACCOUNTING_EXPENSEREPORT_JOURNAL=Expense report journal
 ACCOUNTING_SOCIAL_JOURNAL=Jurnal Asigurări Sociale
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Cont transfer

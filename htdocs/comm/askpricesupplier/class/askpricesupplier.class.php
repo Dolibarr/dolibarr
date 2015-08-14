@@ -6,7 +6,7 @@
  * Copyright (C) 2005-2013 Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani			<acianfa@free.fr>
  * Copyright (C) 2008      Raphael Bertrand			<raphael.bertrand@resultic.fr>
- * Copyright (C) 2010-2014 Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2010-2015 Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2010-2011 Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2012-2014 Christophe Battarel  	<christophe.battarel@altairis.fr>
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
@@ -59,13 +59,42 @@ class AskPriceSupplier extends CommonObject
     var $client;		// Objet societe client (a charger par fetch_client)
 
     var $fk_project;
+
+	/**
+	 * @deprecated
+	 * @see user_author_id
+	 */
     var $author;
     var $ref;
 	var $ref_fourn;  //Reference saisie lors de l'ajout d'une ligne à la demande
     var $statut;					// 0 (draft), 1 (validated), 2 (signed), 3 (not signed), 4 (billed)
-    var $datec;						// Date of creation
+
     var $date;						// Date of proposal
     var $date_livraison;
+
+	/**
+	 * @deprecated
+	 * @see date_creation
+	 */
+	var $datec;
+
+	/**
+	 * Creation date
+	 * @var int
+	 */
+	public $date_creation;
+
+	/**
+	 * @deprecated
+	 * @see date_validation
+	 */
+	var $datev;
+
+	/**
+	 * Validation date
+	 * @var int
+	 */
+	public $date_validation;
 
     var $user_author_id;
     var $user_valid_id;
@@ -76,9 +105,22 @@ class AskPriceSupplier extends CommonObject
     var $total_localtax1;			// Total Local Taxes 1
     var $total_localtax2;			// Total Local Taxes 2
     var $total_ttc;					// Total with tax
-    var $price;						// deprecated (for compatibility)
-    var $tva;						// deprecated (for compatibility)
-    var $total;						// deprecated (for compatibility)
+
+	/**
+	 * @deprecated
+	 * @see price_ht
+	 */
+    var $price;
+	/**
+	 * @deprecated
+	 * @see total_tva
+	 */
+    var $tva;
+	/**
+	 * @deprecated
+	 * @see total_ttc
+	 */
+    var $total;
 
     var $cond_reglement_id;
     var $cond_reglement_code;
@@ -88,7 +130,13 @@ class AskPriceSupplier extends CommonObject
     var $remise;
     var $remise_percent;
     var $remise_absolue;
-    var $note;						// deprecated (for compatibility)
+
+	/**
+	 * @deprecated
+	 * @see note_public, note_private
+	 */
+    var $note;
+	
     var $note_private;
     var $note_public;
     var $shipping_method_id;
@@ -1031,7 +1079,7 @@ class AskPriceSupplier extends CommonObject
                 $this->remise               = $obj->remise;
                 $this->remise_percent       = $obj->remise_percent;
                 $this->remise_absolue       = $obj->remise_absolue;
-                $this->total                = $obj->total; // TODO obsolete
+                $this->total                = $obj->total; // TODO deprecated
                 $this->total_ht             = $obj->total_ht;
                 $this->total_tva            = $obj->tva;
                 $this->total_localtax1		= $obj->localtax1;
@@ -1040,14 +1088,14 @@ class AskPriceSupplier extends CommonObject
                 $this->socid                = $obj->fk_soc;
                 $this->fk_project           = $obj->fk_projet;
                 $this->modelpdf             = $obj->model_pdf;
-                $this->note                 = $obj->note_private; // TODO obsolete
+                $this->note                 = $obj->note_private; // TODO deprecated
                 $this->note_private         = $obj->note_private;
                 $this->note_public          = $obj->note_public;
                 $this->statut               = $obj->fk_statut;
                 $this->statut_libelle       = $obj->statut_label;
 
-                $this->datec                = $this->db->jdate($obj->datec); // TODO obsolete
-                $this->datev                = $this->db->jdate($obj->datev); // TODO obsolete
+                $this->datec                = $this->db->jdate($obj->datec); // TODO deprecated
+                $this->datev                = $this->db->jdate($obj->datev); // TODO deprecated
                 $this->date_creation		= $this->db->jdate($obj->datec); //Creation date
                 $this->date_validation		= $this->db->jdate($obj->datev); //Validation date
                 $this->date_livraison       = $this->db->jdate($obj->date_livraison);
@@ -1600,10 +1648,10 @@ class AskPriceSupplier extends CommonObject
 			if ($product->subprice <= 0)
 				continue;
 
-			$idProductFourn = $this->find_min_price_product_fournisseur($product->fk_product, $product->qty, $this->socid);
-			$res = $productsupplier->fetch_product_fournisseur_price($idProductFourn);
+			$idProductFourn = $productsupplier->find_min_price_product_fournisseur($product->fk_product, $product->qty);
+			$res = $productsupplier->fetch($idProductFourn);
 
-			if ($res > 0) {
+			if ($productsupplier->id) {
 				if ($productsupplier->fourn_qty == $product->qty) {
 					$this->updatePriceFournisseur($productsupplier->product_fourn_price_id, $product, $user);
 				} else {
@@ -1614,48 +1662,6 @@ class AskPriceSupplier extends CommonObject
 			}
 		}
 	}
-
-	/**
-     * 	Fonction de base dans la class ProductFournisseur
-     *
-     *  @param	int		$prodid	    Product id
-     *  @param	int		$qty		Minimum quantity
-     *  @param	int		$fk_soc		Id supplier
-     *  @return int					<0 if KO, 0=Not found of no product id provided, >0 if OK
-     */
-    function find_min_price_product_fournisseur($prodid, $qty=0, $fk_soc)
-    {
-        if (empty($prodid) || empty($fk_soc))
-        {
-        	dol_syslog("Warning function find_min_price_product_fournisseur were called with prodid empty. May be a bug.", LOG_WARNING);
-        	return 0;
-        }
-
-        $sql = "SELECT rowid";
-        $sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price";
-        $sql.= " WHERE entity IN (".getEntity('societe', 1).")";
-        $sql.= " AND fk_product = ".(int) $prodid;
-        $sql.= " AND fk_soc = ".(int) $fk_soc;
-        if ($qty > 0) $sql.= " AND quantity <= ".$qty;
-        $sql.= " ORDER BY unitprice";
-        $sql.= $this->db->plimit(1);
-
-        dol_syslog(get_class($this)."::find_min_price_product_fournisseur", LOG_DEBUG);
-
-        $resql = $this->db->query($sql);
-        if ($resql)
-        {
-            $record = $this->db->fetch_array($resql);
-            $this->db->free($resql);
-            return $record['rowid'];
-        }
-        else
-		{
-            $this->error=$this->db->error();
-            return -1;
-        }
-    }
-
 
 	/**
      *	Upate ProductFournisseur
@@ -1672,7 +1678,8 @@ class AskPriceSupplier extends CommonObject
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'product_fournisseur_price SET '.(!empty($product->ref_fourn) ? 'ref_fourn = "'.$product->ref_fourn.'", ' : '').' price ='.$price.', unitprice ='.$unitPrice.' WHERE rowid = '.$idProductFournPrice;
 
 		$resql = $this->db->query($sql);
-		if (!resql) {
+
+		if (!$resql) {
 			$this->error=$this->db->error();
             $this->db->rollback();
             return -1;
@@ -1708,7 +1715,8 @@ class AskPriceSupplier extends CommonObject
 		$sql .= '(datec, fk_product, fk_soc, ref_fourn, price, quantity, unitprice, tva_tx, fk_user) VALUES ('.implode(',', $values).')';
 
 		$resql = $this->db->query($sql);
-		if (!resql) {
+
+		if (!$resql) {
 			$this->error=$this->db->error();
             $this->db->rollback();
             return -1;
@@ -2458,7 +2466,7 @@ class AskPriceSupplier extends CommonObject
     }
 
 	/**
-	 * Permet de vérifier que chaque référence fournisseur est saisie dans la demande de prix
+	 * Permet de vérifier que chaque référence fournisseur est saisie dans la demande de prix au moement de clôturer
 	 * 
 	 * @return	int		0 if KO, 1 if OK
 	 */
@@ -2496,7 +2504,18 @@ class AskPriceSupplierLine  extends CommonObject
     var $fk_parent_line;
     var $desc;          	// Description ligne
     var $fk_product;		// Id produit predefini
-    var $product_type = 0;	// Type 0 = product, 1 = Service
+
+	/**
+	 * @deprecated
+	 * @see product_type
+	 */
+	var $fk_product_type;
+	/**
+	 * Product type
+	 * @var int
+	 * @see Product::TYPE_PRODUCT, Product::TYPE_SERVICE
+	 */
+    public $product_type = Product::TYPE_PRODUCT;
 
     var $qty;
     var $tva_tx;
@@ -2524,14 +2543,43 @@ class AskPriceSupplierLine  extends CommonObject
     var $total_tva;			// Total TVA  de la ligne toute quantite et incluant la remise ligne
     var $total_ttc;			// Total TTC de la ligne toute quantite et incluant la remise ligne
 
-    // Ne plus utiliser
+	/**
+	 * @deprecated
+	 * @see remise_percent, fk_remise_except
+	 */
     var $remise;
+	/**
+	 * @deprecated
+	 * @see subprice
+	 */
     var $price;
 
     // From llx_product
-    var $ref;						// Reference produit
-    var $libelle;       // Label produit
-    var $product_desc;  // Description produit
+	/**
+	 * @deprecated
+	 * @see product_ref
+	 */
+	var $ref;
+	/**
+	 * Product reference
+	 * @var string
+	 */
+	public $product_ref;
+	/**
+	 * @deprecated
+	 * @see product_label
+	 */
+	var $libelle;
+	/**
+	 *  Product label
+	 * @var string
+	 */
+	public $product_label;
+	/**
+	 * Product description
+	 * @var string
+	 */
+	public $product_desc;
 
     var $localtax1_tx;		// Local tax 1
     var $localtax2_tx;		// Local tax 2

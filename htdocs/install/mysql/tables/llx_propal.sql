@@ -65,6 +65,8 @@ create table llx_propal
   fk_shipping_method    integer,                        -- shipping method id
   fk_availability		integer NULL,
   fk_input_reason		integer,
+  fk_incoterms          integer,										-- for incoterms
+  location_incoterms    varchar(255),								-- for incoterms
   import_key			varchar(14),
   extraparams			varchar(255),					-- for stock other parameters with json format
   fk_delivery_address	integer							-- delivery address (deprecated)

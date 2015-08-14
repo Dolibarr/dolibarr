@@ -12,6 +12,7 @@ Notify_FICHINTER_VALIDATE=Potrjena intervencija
 Notify_FICHINTER_SENTBYMAIL=Intervencija poslana po EMailu
 Notify_BILL_VALIDATE=Potrjen račun
 Notify_BILL_UNVALIDATE=Račun za kupca ni potrjen
+Notify_ORDER_SUPPLIER_VALIDATE=Naročilo pri dobavitelju je shranjeno
 Notify_ORDER_SUPPLIER_APPROVE=Odobreno naročilo pri dobavitelju
 Notify_ORDER_SUPPLIER_REFUSE=Zavrnjeno naročilo pri dobavitelju
 Notify_ORDER_VALIDATE=Potrjeno naročilo kupca
@@ -203,6 +204,7 @@ ClickHereToGoTo=K.iknite tukaj za vstop v %s
 YouMustClickToChange=Vendar morate najprej klikniti na naslednji link za potrditev spremembe gesla
 ForgetIfNothing=Če niste zahtevali te spremembe, enostavno pozabite na ta email. Vaši prijavni podatki so varno shranjeni.
 IfAmountHigherThan=Če je znesek večji od <strong>%s</strong>
+SourcesRepository=Shramba virov
 
 ##### Calendar common #####
 AddCalendarEntry=Dodaj vnos v koledar %s

@@ -6,7 +6,8 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@@2byte.es>
  * Copyright (C) 2012-2014 Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2011-2014 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
+ * Copyright (C) 2011-2015 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015      Florian Henry	    <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +38,9 @@ require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php'
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
+require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
+require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
+require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
@@ -44,6 +48,10 @@ $langs->load("banks");
 $langs->load("categories");
 $langs->load("bills");
 $langs->load("companies");
+$langs->load("salaries");
+$langs->load("loan");
+$langs->load("donations");
+$langs->load("trips");
 
 $id = (GETPOST('id','int') ? GETPOST('id','int') : GETPOST('account','int'));
 $ref = GETPOST('ref','alpha');
@@ -63,6 +71,15 @@ $req_desc=GETPOST("req_desc",'',3);
 $req_debit=GETPOST("req_debit",'',3);
 $req_credit=GETPOST("req_credit",'',3);
 
+$req_stdtmonth=GETPOST('req_stdtmonth', 'int');
+$req_stdtday=GETPOST('req_stdtday', 'int');
+$req_stdtyear=GETPOST('req_stdtyear', 'int');
+$req_stdt = dol_mktime(0, 0, 0, $req_stdtmonth, $req_stdtday, $req_stdtyear);
+$req_enddtmonth=GETPOST('req_enddtmonth', 'int');
+$req_enddtday=GETPOST('req_enddtday', 'int');
+$req_enddtyear=GETPOST('req_enddtyear', 'int');
+$req_enddt = dol_mktime(23, 59, 59, $req_enddtmonth, $req_enddtday, $req_enddtyear);
+
 $vline=GETPOST("vline");
 $page=GETPOST('page','int');
 $negpage=GETPOST('negpage','int');
@@ -73,6 +90,24 @@ if ($negpage)
 }
 
 $object = new Account($db);
+
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+{
+	$paiementtype="";
+	$req_nb="";
+	$thirdparty="";
+	$req_desc="";
+    $req_debit="";
+	$req_credit="";
+	$req_stdtmonth="";
+	$req_stdtday="";
+	$req_stdtyear="";
+	$req_stdt = "";
+	$req_enddtmonth="";
+	$req_enddtday="";
+	$req_enddtyear="";
+	$req_enddt = "";
+}
 
 /*
  * Action
@@ -143,16 +178,19 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->banque->m
  * View
  */
 
-llxHeader();
+llxHeader('',$langs->trans("FinancialAccount").'-'.$langs->trans("Transactions"));
 
 $societestatic=new Societe($db);
 $userstatic=new User($db);
 $chargestatic=new ChargeSociales($db);
+$loanstatic=new Loan($db);
 $memberstatic=new Adherent($db);
 $paymentstatic=new Paiement($db);
 $paymentsupplierstatic=new PaiementFourn($db);
 $paymentvatstatic=new TVA($db);
 $paymentsalstatic=new PaymentSalary($db);
+$donstatic=new Don($db);
+$expensereportstatic=new ExpenseReport($db);
 $bankstatic=new Account($db);
 $banklinestatic=new AccountLine($db);
 
@@ -185,7 +223,7 @@ if ($id > 0 || ! empty($ref))
 		$var=True;
 		$num = $db->num_rows($result);
 		$i = 0;
-		$options = '<option value="0" selected="true">&nbsp;</option>';
+		$options = '<option value="0" selected>&nbsp;</option>';
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($result);
@@ -236,6 +274,27 @@ if ($id > 0 || ! empty($ref))
 		$param.='&amp;paiementtype='.urlencode($paiementtype);
 		$mode_search = 1;
 	}
+	
+	if ($req_stdt && $req_enddt)
+	{
+		$sql_rech.=" AND (b.datev BETWEEN '".$db->escape($db->idate($req_stdt))."' AND '".$db->escape($db->idate($req_enddt))."')";
+		$param.='&amp;req_stdtmonth='.$req_stdtmonth.'&amp;req_stdtyear='.$req_stdtyear.'&amp;req_stdtday='.$req_stdtday;
+		$param.='&amp;req_enddtmonth='.$req_enddtmonth.'&amp;req_enddtday='.$req_enddtday.'&amp;req_enddtyear='.$req_enddtyear;
+		$mode_search = 1;
+	} 
+	elseif ($req_stdt) 
+	{
+			$sql_rech.=" AND b.datev >= '".$db->escape($db->idate($req_stdt))."'";
+			$param.='&amp;req_stdtmonth='.$req_stdtmonth.'&amp;req_stdtyear='.$req_stdtyear.'&amp;req_stdtday='.$req_stdtday;
+			$mode_search = 1;
+	}
+	elseif ($req_enddt) 
+	{
+			$sql_rech.=" AND b.datev <= '".$db->escape($db->idate($req_enddt))."'";
+			$param.='&amp;req_enddtmonth='.$req_enddtmonth.'&amp;req_enddtday='.$req_enddtday.'&amp;req_enddtyear='.$req_enddtyear;
+			$mode_search = 1;
+	}
+	
 
 	$sql = "SELECT count(*) as total";
 	$sql.= " FROM ".MAIN_DB_PREFIX."bank_account as ba";
@@ -247,7 +306,7 @@ if ($id > 0 || ! empty($ref))
 	}
 	$sql.= " WHERE b.fk_account = ".$object->id;
 	$sql.= " AND b.fk_account = ba.rowid";
-	$sql.= " AND ba.entity = ".$conf->entity;
+	$sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
 	$sql.= $sql_rech;
 
 	dol_syslog("account.php count transactions -", LOG_DEBUG);
@@ -296,19 +355,56 @@ if ($id > 0 || ! empty($ref))
 	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/index.php">'.$langs->trans("BackToList").'</a>';
 
 	// Ref
-	print '<tr><td valign="top" width="25%">'.$langs->trans("Ref").'</td>';
+	print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
 	print '<td colspan="3">';
 	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref');
 	print '</td></tr>';
 
 	// Label
-	print '<tr><td valign="top">'.$langs->trans("Label").'</td>';
+	print '<tr><td>'.$langs->trans("Label").'</td>';
 	print '<td colspan="3">'.$object->label.'</td></tr>';
 
 	print '</table>';
 
-	print '<br>';
+	dol_fiche_end();
+	
 
+
+	/*
+	 * Boutons actions
+	 */
+
+	if ($action != 'delete') {
+		print '<div class="tabsAction">';
+
+		if ($object->type != 2 && $object->rappro) { // If not cash account and can be reconciliate
+			if ($user->rights->banque->consolidate) {
+				print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/bank/rappro.php?account='.$object->id.($vline?'&amp;vline='.$vline:'').'">'.$langs->trans("Conciliate").'</a>';
+			} else {
+				print '<a class="butActionRefused" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("Conciliate").'</a>';
+			}
+		}
+
+		if ($action != 'addline') {
+			if (empty($conf->global->BANK_DISABLE_DIRECT_INPUT)) {
+                if (empty($conf->accounting->enabled)) {
+                    if ($user->rights->banque->modifier) {
+                        print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=addline&amp;id='.$object->id.'&amp;page='.$page.($vline?'&amp;vline='.$vline:'').'">'.$langs->trans("AddBankRecord").'</a>';
+                    } else {
+                        print '<a class="butActionRefused" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("AddBankRecord").'</a>';
+                    }
+                } else {
+                    print '<a class="butActionRefused" title="'.$langs->trans("FeatureDisabled").'" href="#">'.$langs->trans("AddBankRecord").'</a>';
+                }
+			} else {
+                print '<a class="butActionRefused" title="'.$langs->trans("FeatureDisabled").'" href="#">'.$langs->trans("AddBankRecord").'</a>';
+            }
+        }
+        print '</div>';
+    }
+	
+	print '<br>';
+		
 	/**
 	 * Search form
 	 */
@@ -335,7 +431,13 @@ if ($id > 0 || ! empty($ref))
 	print '<input type="hidden" name="thirdparty"   value="'.$thirdparty.'">';
 	print '<input type="hidden" name="nbpage"       value="'.$totalPages.'">';
 	print '<input type="hidden" name="id"           value="'.$object->id.'">';
-
+	print '<input type="hidden" name="req_stdtmonth"     value="'.$req_stdtmonth.'">';
+	print '<input type="hidden" name="req_stdtyear"     value="'.$req_stdtyear.'">';
+	print '<input type="hidden" name="req_stdtday"     value="'.$req_stdtday.'">';
+	print '<input type="hidden" name="req_enddtmonth"     value="'.$req_enddtmonth.'">';
+	print '<input type="hidden" name="req_enddtday"     value="'.$req_enddtday.'">';
+	print '<input type="hidden" name="req_enddtyear"     value="'.$req_enddtyear.'">';
+	
 	$navig ='<div data-role="fieldcontain">';
 	if ($limitsql > $viewline) $navig.='<a href="account.php?'.$param.'&amp;page='.($page+1).'">'.img_previous().'</a>';
 	$navig.= '<label for="negpage">'.$langs->trans("Page")."</label> "; // ' Page ';
@@ -347,23 +449,20 @@ if ($id > 0 || ! empty($ref))
 	}
 	$navig.='</div>';
 
+	
 	//var_dump($navig);
 
-	print '<table class="notopnoleftnoright" width="100%">';
-
-	// Show title
 	if ($action != 'addline' && $action != 'delete')
 	{
-		print '<tr><td colspan="10" align="right">'.$navig.'</td></tr>';
+		print '<div class="floatright">'.$navig.'</div>';
 	}
-
+	
 	// Form to add a transaction with no invoice
 	if ($user->rights->banque->modifier && $action == 'addline')
 	{
-		print '<tr>';
-		print '<td align="left" colspan="10"><b>'.$langs->trans("AddBankRecordLong").'</b></td>';
-		print '</tr>';
+        print_fiche_titre($langs->trans("AddBankRecordLong"),'','');
 
+		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Date").'</td>';
 		print '<td>&nbsp;</td>';
@@ -387,7 +486,7 @@ if ($id > 0 || ! empty($ref))
 		print '<input name="label" class="flat" type="text" size="24"  value="'.GETPOST("label").'">';
 		if ($nbcategories)
 		{
-			print '<br>'.$langs->trans("Category").': <select class="flat" name="cat1">'.$options.'</select>';
+			print '<br>'.$langs->trans("Rubrique").': <select class="flat" name="cat1">'.$options.'</select>';
 		}
 		print '</td>';
 		print '<td align=right><input name="debit" class="flat" type="text" size="4" value="'.GETPOST("debit").'"></td>';
@@ -396,10 +495,12 @@ if ($id > 0 || ! empty($ref))
 		print '<input type="submit" name="save" class="button" value="'.$langs->trans("Add").'"><br>';
 		print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
 		print '</td></tr>';
-		print "</form>";
-
-		print '<tr class="noborder"><td colspan="10">&nbsp;</td></tr>'."\n";
+		print '</table>';
+		print '</form>';
+		print '<br>';
 	}
+
+	print '<table class="noborder" width="100%">';
 
 	/*
 	 * Affiche tableau des transactions bancaires
@@ -426,9 +527,12 @@ if ($id > 0 || ! empty($ref))
 	print '<input type="hidden" name="action" value="search">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
 
+	$period_filter .= $langs->trans('From').'&nbsp;'.$form->select_date($req_stdt,'req_stdt',0,0,1,null,1,1,1);
+	$period_filter .= '<BR>'. $langs->trans('to').'&nbsp;'.$form->select_date($req_enddt,'req_enddt',0,0,1,null,1,1,1);
+	
 	print '<tr class="liste_titre">';
 	print '<td>&nbsp;</td>';
-	print '<td>&nbsp;</td>';
+	print '<td>'.$period_filter.'</td>';
 	print '<td>';
 	//$filtertype=array('TIP'=>'TIP','PRE'=>'PRE',...)
 	$filtertype='';
@@ -440,7 +544,10 @@ if ($id > 0 || ! empty($ref))
 	print '<td align="right"><input type="text" class="flat" name="req_debit" value="'.$req_debit.'" size="4"></td>';
 	print '<td align="right"><input type="text" class="flat" name="req_credit" value="'.$req_credit.'" size="4"></td>';
 	print '<td align="center">&nbsp;</td>';
-	print '<td align="center" width="40"><input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';
+	print '<td class="liste_titre" align="right">';
+	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+	print '</td>';
 	print "</tr>\n";
 
 
@@ -492,9 +599,10 @@ if ($id > 0 || ! empty($ref))
 	}
 	$sql.= " WHERE b.fk_account=".$object->id;
 	$sql.= " AND b.fk_account = ba.rowid";
+
 	// Si le partage des compte bancaire est activé dans multicompany, on ne limite pas la recherche des comptes à l'entité dans laquelle on se trouve (Ticket 1573)
-	if(!$conf->global->MULTICOMPANY_BANK_ACCOUNT_SHARING_ENABLED)
-	$sql.= " AND ba.entity = ".$conf->entity;
+	if(!$conf->global->MULTICOMPANY_BANK_ACCOUNT_SHARING_ENABLED) $sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
+	
 	$sql.= $sql_rech;
 	$sql.= $db->order("b.datev, b.datec", "ASC");  // We add date of creation to have correct order when everything is done the same day
 	$sql.= $db->plimit($limitsql, 0);
@@ -512,7 +620,7 @@ if ($id > 0 || ! empty($ref))
 		$var=true;
 
 		$num = $db->num_rows($result);
-		$i = 0; $total = 0; $sep = -1;
+		$i = 0; $total = 0; $sep = -1; $total_deb=0; $total_cred=0;
 
 		while ($i < $num)
 		{
@@ -607,6 +715,24 @@ if ($id > 0 || ! empty($ref))
 						$paymentsalstatic->id=$links[$key]['url_id'];
 						$paymentsalstatic->ref=$links[$key]['url_id'];
 						print ' '.$paymentsalstatic->getNomUrl(2);
+					}
+					elseif ($links[$key]['type']=='payment_loan')
+					{
+						print '<a href="'.DOL_URL_ROOT.'/loan/payment/card.php?id='.$links[$key]['url_id'].'">';
+						print ' '.img_object($langs->trans('ShowPayment'),'payment').' ';
+						print '</a>';
+					}
+					elseif ($links[$key]['type']=='payment_donation')
+					{
+						print '<a href="'.DOL_URL_ROOT.'/don/payment/card.php?id='.$links[$key]['url_id'].'">';
+						print ' '.img_object($langs->trans('ShowPayment'),'payment').' ';
+						print '</a>';
+					}
+					elseif ($links[$key]['type']=='payment_expensereport')
+					{
+						print '<a href="'.DOL_URL_ROOT.'/expensereport/payment/card.php?id='.$links[$key]['url_id'].'">';
+						print ' '.img_object($langs->trans('ShowPayment'),'payment').' ';
+						print '</a>';
 					}
 					elseif ($links[$key]['type']=='banktransfert')
 					{
@@ -707,6 +833,21 @@ if ($id > 0 || ! empty($ref))
 						$chargestatic->ref=$chargestatic->lib;
 						print $chargestatic->getNomUrl(1,16);
 					}
+					else if ($links[$key]['type']=='loan')
+					{
+						$loanstatic->id=$links[$key]['url_id'];
+						if (preg_match('/^\((.*)\)$/i',$links[$key]['label'],$reg))
+						{
+							if ($reg[1]=='loan') $reg[1]='Loan';
+							$loanstatic->label=$langs->trans($reg[1]);
+						}
+						else
+						{
+							$loanstatic->label=$links[$key]['label'];
+						}
+						$loanstatic->ref=$loanstatic->label;
+						print $loanstatic->getLinkUrl(1,16);
+					}
 					else if ($links[$key]['type']=='member')
 					{
 						$memberstatic->id=$links[$key]['url_id'];
@@ -720,10 +861,12 @@ if ($id > 0 || ! empty($ref))
 				if ($objp->amount < 0)
 				{
 					print '<td align="right" class="nowrap">'.price($objp->amount * -1).'</td><td>&nbsp;</td>'."\n";
+					$total_deb +=$objp->amount;
 				}
 				else
 				{
 					print '<td>&nbsp;</td><td align="right" class="nowrap">&nbsp;'.price($objp->amount).'</td>'."\n";
+					$total_cred +=$objp->amount;
 				}
 
 				// Balance
@@ -731,11 +874,11 @@ if ($id > 0 || ! empty($ref))
 				{
 					if ($total >= 0)
 					{
-						print '<td align="right" nowrap>&nbsp;'.price($total).'</td>';
+						print '<td align="right" class="nowrap">&nbsp;'.price($total).'</td>';
 					}
 					else
 					{
-						print '<td align="right" class="error" nowrap>&nbsp;'.price($total).'</td>';
+						print '<td align="right" class="error nowrap">&nbsp;'.price($total).'</td>';
 					}
 				}
 				else
@@ -746,7 +889,7 @@ if ($id > 0 || ! empty($ref))
 				// Transaction reconciliated or edit link
 				if ($objp->rappro && $object->canBeConciliated() > 0)  // If line not conciliated and account can be conciliated
 				{
-					print '<td align="center" nowrap>';
+					print '<td align="center" class="nowrap">';
 					print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$object->id.'&amp;page='.$page.'">';
 					print img_edit();
 					print '</a>';
@@ -795,11 +938,23 @@ if ($id > 0 || ! empty($ref))
 		// Show total
 		if ($page == 0 && ! $mode_search)
 		{
+			//Real account situation
 			print '<tr class="liste_total"><td align="left" colspan="8">';
 			if ($sep > 0) print '&nbsp;';	// If we had at least one line in future
 			else print $langs->trans("CurrentBalance");
 			print ' '.$object->currency_code.'</td>';
-			print '<td align="right" nowrap><b>'.price($total, 0, $langs, 0, 0, -1, $object->currency_code).'</b></td>';
+			print '<td align="right" class="nowrap"><b>'.price($solde, 0, $langs, 0, 0, -1, $object->currency_code).'</b></td>';
+			print '<td>&nbsp;</td>';
+			print '</tr>';
+		} else {
+			// Only total according row displays
+			print '<tr class="liste_total"><td align="left" colspan="6">';
+			if ($sep > 0) print '&nbsp;';	// If we had at least one line in future
+			else print $langs->trans("Total");
+			print ' '.$object->currency_code.'</td>';
+			print '<td align="right" class="nowrap"><b>'.price($total_deb*-1, 0, $langs, 0, 0, -1, $object->currency_code).'</b></td>';
+			print '<td align="right" class="nowrap"><b>'.price($total_cred, 0, $langs, 0, 0, -1, $object->currency_code).'</b></td>';
+			print '<td align="right" class="nowrap"><b>'.price($total_cred-($total_deb*-1), 0, $langs, 0, 0, -1, $object->currency_code).'</b></td>';
 			print '<td>&nbsp;</td>';
 			print '</tr>';
 		}
@@ -813,51 +968,6 @@ if ($id > 0 || ! empty($ref))
 	print "</table>";
 
 	print "</form>\n";
-
-	dol_fiche_end();
-
-
-	/*
-	 * Boutons actions
-	 */
-
-	if ($action != 'delete')
-	{
-		print '<div class="tabsAction">';
-
-		if ($object->type != 2 && $object->rappro)  // If not cash account and can be reconciliate
-		{
-			if ($user->rights->banque->consolidate)
-			{
-				print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/bank/rappro.php?account='.$object->id.($vline?'&amp;vline='.$vline:'').'">'.$langs->trans("Conciliate").'</a>';
-			}
-			else
-			{
-				print '<a class="butActionRefused" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("Conciliate").'</a>';
-			}
-		}
-
-		if ($action != 'addline')
-		{
-			if (empty($conf->global->BANK_DISABLE_DIRECT_INPUT))
-			{
-				if ($user->rights->banque->modifier)
-				{
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=addline&amp;id='.$object->id.'&amp;page='.$page.($vline?'&amp;vline='.$vline:'').'">'.$langs->trans("AddBankRecord").'</a>';
-				}
-				else
-				{
-					print '<a class="butActionRefused" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("AddBankRecord").'</a>';
-				}
-			}
-			else
-			{
-				print '<a class="butActionRefused" title="'.$langs->trans("FeatureDisabled").'" href="#">'.$langs->trans("AddBankRecord").'</a>';
-			}
-		}
-
-		print '</div>';
-	}
 
 	print '<br>';
 }

@@ -1,9 +1,10 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2015 Alexandre Spangaro	<alexandre.spangaro@gmail.com>
+ * Copyright (C) 2013-2015 Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2014	   Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -94,7 +95,7 @@ llxHeader();
 $form = new Form($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans('ConfigAccountingExpert'),$linkback,'setup');
+print_fiche_titre($langs->trans('ConfigAccountingExpert'),$linkback,'title_setup');
 
 $head = admin_accounting_prepare_head();
 
@@ -142,33 +143,35 @@ print "<br>\n";
  */
 
 $num = count($list);
-if ($num) {
+if ($num)
+{
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td colspan="3">' . $langs->trans('OtherOptions') . '</td>';
 	print "</tr>\n";
 	if ($conf->global->ACCOUNTING_EXPORT_MODELCSV > 1) print '<tr><td colspan="2" bgcolor="red"><b>' . $langs->trans('OptionsDeactivatedForThisExportModel') . '</b></td></tr>';
+
+	foreach ( $list as $key ) {
+		$var = ! $var;
+
+		print '<tr ' . $bc[$var] . ' class="value">';
+
+		// Param
+		$label = $langs->trans($key);
+		print '<td width="50%">' . $label . '</td>';
+
+		// Value
+		print '<td>';
+		print '<input type="text" size="20" name="' . $key . '" value="' . $conf->global->$key . '">';
+		print '</td></tr>';
+	}
+
+	print "</table>\n";
 }
 
-foreach ( $list as $key ) {
-	$var = ! $var;
-
-	print '<tr ' . $bc[$var] . ' class="value">';
-
-	// Param
-	$label = $langs->trans($key);
-	print '<td width="50%">' . $label . '</td>';
-
-	// Value
-	print '<td>';
-	print '<input type="text" size="20" name="' . $key . '" value="' . $conf->global->$key . '">';
-	print '</td></tr>';
-}
+print '<br><div style="text-align:center"><input type="submit" class="button" value="' . dol_escape_htmltag($langs->trans('Modify')) . '" name="button"></div>';
 
 print '</form>';
-print "</table>\n";
-
-print '<br /><div align="center"><input type="submit" class="button" value="' . $langs->trans('Modify') . '" name="button"></div>';
 
 llxFooter();
 $db->close();

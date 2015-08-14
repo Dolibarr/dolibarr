@@ -117,6 +117,14 @@ if ($resql)
 		{
 			$property[$i]['ischar']=false;
 		}
+		if (preg_match('/int/i',$property[$i]['type']))
+		{
+			$property[$i]['isint']=true;
+		}
+		else
+		{
+			$property[$i]['isint']=false;
+		}
 	}
 }
 else
@@ -135,7 +143,7 @@ foreach($property as $key => $prop)
     $i++;
     if ($prop['field'] != 'rowid')
     {
-        $varpropselect.="\t\t\$sql.= \" ";
+        $varpropselect.="\t\t\$sql .= \" ";
         $varpropselect.="t.".$prop['field'];
         if ($i < count($property)) $varpropselect.=",";
         $varpropselect.="\";";
@@ -173,8 +181,8 @@ $targetcontent=$sourcecontent;
 
 // Substitute class name
 $targetcontent=preg_replace('/skeleton_class\.class\.php/', $classmin.'.class.php', $targetcontent);
-$targetcontent=preg_replace('/\$element=\'skeleton\'/', '\$element=\''.$classmin.'\'', $targetcontent);
-$targetcontent=preg_replace('/\$table_element=\'skeleton\'/', '\$table_element=\''.$classmin.'\'', $targetcontent);
+$targetcontent=preg_replace('/\$element = \'skeleton\'/', '\$element = \''.$classmin.'\'', $targetcontent);
+$targetcontent=preg_replace('/\$table_element = \'skeleton\'/', '\$table_element = \''.$tablenoprefix.'\'', $targetcontent);
 $targetcontent=preg_replace('/Skeleton_Class/', $classname, $targetcontent);
 
 // Substitute comments
@@ -192,15 +200,18 @@ foreach($property as $key => $prop)
 {
 	if ($prop['field'] != 'rowid' && $prop['field'] != 'id')
 	{
-		$varprop.="\tvar \$".$prop['field'];
-		if ($prop['istime']) $varprop.="=''";
+		$varprop.="\tpublic \$".$prop['field'];
+		if ($prop['istime']) $varprop.=" = ''";
 		$varprop.=";";
 		if ($prop['comment']) $varprop.="\t// ".$prop['extra'];
 		$varprop.="\n";
 	}
 }
-$targetcontent=preg_replace('/var \$prop1;/', $varprop, $targetcontent);
-$targetcontent=preg_replace('/var \$prop2;/', '', $targetcontent);
+$targetcontent=preg_replace('/public \$prop1;/', $varprop, $targetcontent);
+$targetcontent=preg_replace('/public \$prop2;/', '', $targetcontent);
+
+$targetcontent=preg_replace('/\*((\s|\n|\r|\t)*)\@var mixed Sample property 1((\s|\n|\r|\t)*)/', '', $targetcontent);
+$targetcontent=preg_replace('/\*((\s|\n|\r|\t)*)\@var mixed Sample property 2((\s|\n|\r|\t)*)/', '', $targetcontent);
 
 // Substitute clean parameters
 $varprop="\n";
@@ -209,13 +220,20 @@ foreach($property as $key => $prop)
 {
 	if ($prop['field'] != 'rowid' && $prop['field'] != 'id' && ! $prop['istime'])
 	{
-		$varprop.="\t\tif (isset(\$this->".$prop['field'].")) \$this->".$prop['field']."=trim(\$this->".$prop['field'].");";
+		$varprop.="\t\tif (isset(\$this->".$prop['field'].")) {\n\t\t\t \$this->".$prop['field']." = trim(\$this->".$prop['field'].");\n\t\t}";
 		$varprop.="\n";
 	}
 }
-$targetcontent=preg_replace('/if \(isset\(\$this->prop1\)\) \$this->prop1=trim\(\$this->prop1\);/', $varprop, $targetcontent);
-$targetcontent=preg_replace('/if \(isset\(\$this->prop2\)\) \$this->prop2=trim\(\$this->prop2\);/', '', $targetcontent);
+$targetcontent=preg_replace('/if \(isset\(\$this->prop1\)\) {((\n|\r|\t)*)\$this->prop1 = trim\(\$this->prop1\);((\n|\r|\t)*)}/', $varprop, $targetcontent);
+$targetcontent=preg_replace('/if \(isset\(\$this->prop2\)\) {((\n|\r|\t)*)\$this->prop2 = trim\(\$this->prop2\);((\n|\r|\t)*)}/', '', $targetcontent);
 
+
+$no_output_field=0;
+foreach($property as $key => $prop)
+{
+	if ($prop['field'] == 'tms') $no_output_field++;	// This is a field of type timestamp edited automatically
+	if ($prop['extra'] == 'auto_increment') $no_output_field++;
+}
 // Substitute insert into parameters
 $varprop="\n";
 $cleanparam='';
@@ -229,102 +247,142 @@ foreach($property as $key => $prop)
 
 	if ($addfield)
 	{
-		$varprop.="\t\t\$sql.= \"".$prop['field'];
-		if ($i < count($property)) $varprop.=",";
-		$varprop.="\";";
+		$varprop.="\t\t\$sql.= '".$prop['field'];
+		if ($i <= count($property)-$no_output_field) $varprop.=",";
+		$varprop.="';";
 		$varprop.="\n";
 	}
 }
-$targetcontent=preg_replace('/\$sql\.= " field1,";/', $varprop, $targetcontent);
-$targetcontent=preg_replace('/\$sql\.= " field2";/', '', $targetcontent);
+$targetcontent=preg_replace('/\$sql \.= \' field1,\';/', $varprop, $targetcontent);
+$targetcontent=preg_replace('/\$sql \.= \' field2\';/', '', $targetcontent);
 
 // Substitute insert values parameters
 $varprop="\n";
 $cleanparam='';
 $i=0;
+
+//Count nb field to output to manage commat at end SQL instruction
+
+
 foreach($property as $key => $prop)
 {
-	$i++;
+	
 	$addfield=1;
 	if ($prop['field'] == 'tms') $addfield=0;	// This is a field of type timestamp edited automatically
 	if ($prop['extra'] == 'auto_increment') $addfield=0;
-
+	
 	if ($addfield)
 	{
-		$varprop.="\t\t\$sql.= \" ";
-		if ($prop['istime'])
+		$i++;
+		
+		$varprop.="\t\t\$sql .= ' ";
+		if ($prop['field']=='datec')
 		{
-			$varprop.='".(! isset($this->'.$prop['field'].') || dol_strlen($this->'.$prop['field'].')==0?\'NULL\':"\'".$this->db->idate(';
+			$varprop.='\'."\'".$this->db->idate(dol_now())."\'"';
+		}
+		elseif ($prop['istime'])
+		{
+			$varprop.='\'.(! isset($this->'.$prop['field'].') || dol_strlen($this->'.$prop['field'].')==0?\'NULL\':"\'".$this->db->idate(';
 			$varprop.="\$this->".$prop['field']."";
-			$varprop.=')."\'")."';
-			if ($i < count($property)) $varprop.=",";
-			$varprop.='";';
+			$varprop.=").\"'\")";
 		}
 		elseif ($prop['ischar'])
 		{
-			$varprop.='".(! isset($this->'.$prop['field'].')?\'NULL\':"\'".';
-			$varprop.='$this->db->escape($this->'.$prop['field'].')';
-			$varprop.='."\'")."';
-			if ($i < count($property)) $varprop.=",";
-			$varprop.='";';
+			$varprop.="'.(! isset(\$this->".$prop['field'].")?'NULL':\"'\".";
+			$varprop.="\$this->db->escape(\$this->".$prop['field'].")";
+			$varprop.=".\"'\")";
+		}
+		elseif ($prop['field']=='fk_user_mod' || $prop['field']=='fk_user_author')
+		{
+			$varprop.="'.\$user->id";
+		}
+		elseif ($prop['isint'])
+		{
+			$varprop.='\'.(! isset($this->'.$prop['field'].')?\'NULL\':';
+			$varprop.="\$this->".$prop['field']."";
+			$varprop.=')';
 		}
 		else
 		{
-			$varprop.='".(! isset($this->'.$prop['field'].')?\'NULL\':"\'".';
+			$varprop.=' \'.(! isset($this->'.$prop['field'].')?\'NULL\':"\'".';
 			$varprop.="\$this->".$prop['field']."";
-			$varprop.='."\'")."';
-			if ($i < count($property)) $varprop.=",";
-			$varprop.='";';
+			$varprop.='.\').';
+			
 		}
+		
+		if ($i < (count($property)-$no_output_field)) $varprop.=".','";
+		$varprop.=';';
 		$varprop.="\n";
 	}
 }
-$targetcontent=preg_replace('/\$sql\.= " \'".\$this->prop1\."\',";/', $varprop, $targetcontent);
-$targetcontent=preg_replace('/\$sql\.= " \'".\$this->prop2\."\'";/', '', $targetcontent);
+
+$patern1='/\$sql \.= \' (.*)\' \. \$this->prop1 \. \'(.*),\';/';
+$patern2='/\$sql \.= \' (.*)\' \. \$this->prop2 \. \'(.*)\';/';
+$targetcontent=preg_replace($patern1, $varprop, $targetcontent);
+$targetcontent=preg_replace($patern2, '', $targetcontent);
 
 // Substitute update values parameters
+
+//Count nb field to output to manage commat at end SQL instruction
+$no_output_field=0;
+foreach($property as $key => $prop)
+{
+	if ($prop['extra'] == 'auto_increment') $no_output_field++;
+}
+
 $varprop="\n";
 $cleanparam='';
 $i=0;
 foreach($property as $key => $prop)
 {
-	$i++;
-	if ($prop['field'] != 'rowid' && $prop['field'] != 'id')
+	
+	$addfield=1;
+	if ($prop['extra'] == 'auto_increment') $addfield=0;
+	
+	if ($addfield)
 	{
-		$varprop.="\t\t\$sql.= \" ";
-		$varprop.=$prop['field'].'=';
-		if ($prop['istime'])
-		{
-			// (dol_strlen($this->datep)!=0 ? "'".$this->db->idate($this->datep)."'" : 'null')
-			$varprop.='".(dol_strlen($this->'.$prop['field'].')!=0 ? "\'".$this->db->idate(';
+		$i++;
+		
+		$varprop.="\t\t\$sql .= ' ";
+		$varprop.=$prop['field'].' = ';
+		if ($prop['field']=='tms') {
+			$varprop.='\'.(dol_strlen($this->'.$prop['field'].') != 0 ? "\'".$this->db->idate(';
 			$varprop.='$this->'.$prop['field'];
-			$varprop.=')."\'" : \'null\').';
-			$varprop.='"';
+			$varprop.=')."\'" : "\'".$this->db->idate(dol_now())."\'")';
+		}
+		elseif ($prop['istime'])
+		{
+			$varprop.='\'.(! isset($this->'.$prop['field'].') || dol_strlen($this->'.$prop['field'].') != 0 ? "\'".$this->db->idate(';
+			$varprop.='$this->'.$prop['field'];
+			$varprop.=')."\'" : \'null\')';
+		}
+		
+		elseif ($prop['field']=='fk_user_mod') {
+			$varprop.="'.\$user->id";
 		}
 		else
 		{
-			$varprop.="\".";
-			// $sql.= " field1=".(isset($this->field1)?"'".$this->db->escape($this->field1)."'":"null").",";
+			$varprop.="'.";
 			if ($prop['ischar']) $varprop.='(isset($this->'.$prop['field'].')?"\'".$this->db->escape($this->'.$prop['field'].')."\'":"null")';
-			// $sql.= " field1=".(isset($this->field1)?$this->field1:"null").",";
+			elseif ($prop['isint']) $varprop.='(isset($this->'.$prop['field'].')?$this->'.$prop['field'].':"null")';
 			else $varprop.='(isset($this->'.$prop['field'].')?$this->'.$prop['field'].':"null")';
-			$varprop.=".\"";
 		}
 
-		if ($i < count($property)) $varprop.=',';
-		$varprop.='";';
+		if ($i < (count($property)-$no_output_field)) $varprop.=".','";
+		$varprop.=';';
 		$varprop.="\n";
 	}
 }
-$targetcontent=preg_replace('/\$sql.= " field1=".\(isset\(\$this->field1\)\?"\'".\$this->db->escape\(\$this->field1\)."\'":"null"\).",";/', $varprop, $targetcontent);
-$targetcontent=preg_replace('/\$sql.= " field2=".\(isset\(\$this->field2\)\?"\'".\$this->db->escape\(\$this->field2\)."\'":"null"\)."";/', '', $targetcontent);
+$targetcontent=preg_replace('/\$sql \.= " field1=".\(isset\(\$this->field1\)\?"\'".\$this->db->escape\(\$this->field1\)."\'":"null"\).",";/', $varprop, $targetcontent);
+$targetcontent=preg_replace('/\$sql \.= " field2=".\(isset\(\$this->field2\)\?"\'".\$this->db->escape\(\$this->field2\)."\'":"null"\)."";/', '', $targetcontent);
 
 // Substitute fetch/select parameters
-$targetcontent=preg_replace('/\$sql\.= " t\.field1,";/', $varpropselect, $targetcontent);
-$targetcontent=preg_replace('/\$sql\.= " t\.field2";/', '', $targetcontent);
+$targetcontent=preg_replace('/\$sql \.= \' t\.field1,\';/', $varpropselect, $targetcontent);
+$targetcontent=preg_replace('/\$sql \.= \' t\.field2\';/', '', $targetcontent);
 
 // Substitute select set parameters
 $varprop="\n";
+$varpropline="\n";
 $cleanparam='';
 $i=0;
 foreach($property as $key => $prop)
@@ -338,10 +396,21 @@ foreach($property as $key => $prop)
 		if ($prop['istime']) $varprop.=')';
 		$varprop.=";";
 		$varprop.="\n";
+		
+		$varpropline.="\t\t\t\t\$line->".$prop['field']." = ";
+		if ($prop['istime']) $varpropline.='$this->db->jdate(';
+		$varpropline.='$obj->'.$prop['field'];
+		if ($prop['istime']) $varpropline.=')';
+		$varpropline.=";";
+		$varpropline.="\n";
 	}
 }
 $targetcontent=preg_replace('/\$this->prop1 = \$obj->field1;/', $varprop, $targetcontent);
 $targetcontent=preg_replace('/\$this->prop2 = \$obj->field2;/', '', $targetcontent);
+
+//Substirute fetchAll
+$targetcontent=preg_replace('/\$line->prop1 = \$obj->field1;/', $varpropline, $targetcontent);
+$targetcontent=preg_replace('/\$line->prop2 = \$obj->field2;/', '', $targetcontent);
 
 
 // Substitute initasspecimen parameters
@@ -351,12 +420,12 @@ foreach($property as $key => $prop)
 {
 	if ($prop['field'] != 'rowid' && $prop['field'] != 'id')
 	{
-		$varprop.="\t\t\$this->".$prop['field']."='';";
+		$varprop.="\t\t\$this->".$prop['field']." = '';";
 		$varprop.="\n";
 	}
 }
-$targetcontent=preg_replace('/\$this->prop1=\'prop1\';/', $varprop, $targetcontent);
-$targetcontent=preg_replace('/\$this->prop2=\'prop2\';/', '', $targetcontent);
+$targetcontent=preg_replace('/\$this->prop1 = \'prop1\';/', $varprop, $targetcontent);
+$targetcontent=preg_replace('/\$this->prop2 = \'prop2\';/', '', $targetcontent);
 
 // Build file
 $fp=fopen($outfile,"w");
@@ -392,8 +461,8 @@ $targetcontent=$sourcecontent;
 // Substitute class name
 $targetcontent=preg_replace('/skeleton_class\.class\.php/', $classmin.'.class.php', $targetcontent);
 $targetcontent=preg_replace('/skeleton_script\.php/', $classmin.'_script.php', $targetcontent);
-$targetcontent=preg_replace('/\$element=\'skeleton\'/', '\$element=\''.$classmin.'\'', $targetcontent);
-$targetcontent=preg_replace('/\$table_element=\'skeleton\'/', '\$table_element=\''.$classmin.'\'', $targetcontent);
+$targetcontent=preg_replace('/\$element = \'skeleton\'/', '\$element=\''.$classmin.'\'', $targetcontent);
+$targetcontent=preg_replace('/\$table_element = \'skeleton\'/', '\$table_element=\''.$classmin.'\'', $targetcontent);
 $targetcontent=preg_replace('/Skeleton_Class/', $classname, $targetcontent);
 
 // Substitute comments
@@ -438,8 +507,8 @@ $targetcontent=$sourcecontent;
 // Substitute class name
 $targetcontent=preg_replace('/skeleton_class\.class\.php/', $classmin.'.class.php', $targetcontent);
 $targetcontent=preg_replace('/skeleton_script\.php/', $classmin.'_script.php', $targetcontent);
-$targetcontent=preg_replace('/\$element=\'skeleton\'/', '\$element=\''.$classmin.'\'', $targetcontent);
-$targetcontent=preg_replace('/\$table_element=\'skeleton\'/', '\$table_element=\''.$classmin.'\'', $targetcontent);
+$targetcontent=preg_replace('/\$element = \'skeleton\'/', '\$element=\''.$classmin.'\'', $targetcontent);
+$targetcontent=preg_replace('/\$table_element = \'skeleton\'/', '\$table_element=\''.$classmin.'\'', $targetcontent);
 $targetcontent=preg_replace('/Skeleton_Class/', $classname, $targetcontent);
 $targetcontent=preg_replace('/skeleton/', $classname, $targetcontent);
 
@@ -452,8 +521,8 @@ $targetcontent=preg_replace('/Put here some comments/','Initialy built by build_
 $targetcontent=preg_replace('/MAIN_DB_PREFIX."mytable/', 'MAIN_DB_PREFIX."'.$tablenoprefix, $targetcontent);
 
 // Substitute fetch/select parameters
-$targetcontent=preg_replace('/\$sql\.= " t\.field1,";/', $varpropselect, $targetcontent);
-$targetcontent=preg_replace('/\$sql\.= " t\.field2";/', '', $targetcontent);
+$targetcontent=preg_replace('/\$sql \.= " t\.field1,";/', $varpropselect, $targetcontent);
+$targetcontent=preg_replace('/\$sql \.= " t\.field2";/', '', $targetcontent);
 
 // Build file
 $fp=fopen($outfile,"w");

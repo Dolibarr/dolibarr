@@ -375,13 +375,13 @@ function pHeader($subtitle,$next,$action='set',$param='',$forcejqueryurl='')
 
     print '<!-- Includes CSS for JQuery -->'."\n";
     if ($jQueryUiCustomPath) print '<link rel="stylesheet" type="text/css" href="'.$jQueryUiCustomPath.'css/'.$jquerytheme.'/jquery-ui.min.css" />'."\n";  // JQuery
-    else print '<link rel="stylesheet" type="text/css" href="../includes/jquery/css/'.$jquerytheme.'/jquery-ui-latest.custom.css" />'."\n";    // JQuery
+    else print '<link rel="stylesheet" type="text/css" href="../includes/jquery/css/'.$jquerytheme.'/jquery-ui.custom.css" />'."\n";    // JQuery
 
     print '<!-- Includes JS for JQuery -->'."\n";
     if ($jQueryCustomPath) print '<script type="text/javascript" src="'.$jQueryCustomPath.'jquery.min.js"></script>'."\n";
-    else print '<script type="text/javascript" src="../includes/jquery/js/jquery-latest.min.js"></script>'."\n";
+    else print '<script type="text/javascript" src="../includes/jquery/js/jquery.min.js"></script>'."\n";
     if ($jQueryUiCustomPath) print '<script type="text/javascript" src="'.$jQueryUiCustomPath.'jquery-ui.min.js"></script>'."\n";
-    else print '<script type="text/javascript" src="../includes/jquery/js/jquery-ui-latest.custom.min.js"></script>'."\n";
+    else print '<script type="text/javascript" src="../includes/jquery/js/jquery-ui.custom.min.js"></script>'."\n";
 
     print '<title>'.$langs->trans("DolibarrSetup").'</title>'."\n";
     print '</head>'."\n";
@@ -411,10 +411,10 @@ function pHeader($subtitle,$next,$action='set',$param='',$forcejqueryurl='')
 /**
  * Print HTML footer of install pages
  *
- * @param 	string	$nonext				No button "Next step"
+ * @param 	integer	$nonext				No button "Next step"
  * @param	string	$setuplang			Language code
  * @param	string	$jscheckfunction	Add a javascript check function
- * @param	string	$withpleasewait		Add also please wait tags
+ * @param	integer	$withpleasewait		Add also please wait tags
  * @return	void
  */
 function pFooter($nonext=0,$setuplang='',$jscheckfunction='', $withpleasewait=0)
@@ -422,6 +422,7 @@ function pFooter($nonext=0,$setuplang='',$jscheckfunction='', $withpleasewait=0)
     global $conf,$langs;
 
     $langs->load("main");
+    $langs->load("other");
     $langs->load("admin");
 
     print '</td></tr></table>'."\n";

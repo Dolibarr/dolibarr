@@ -1,5 +1,12 @@
 # Dolibarr language file - en_US - Accounting Expert
 CHARSET=UTF-8
+ACCOUNTING_EXPORT_SEPARATORCSV=Column separator for export file
+ACCOUNTING_EXPORT_DATE=Date format for export file
+ACCOUNTING_EXPORT_PIECE=Export the number of piece ?
+ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account ?
+ACCOUNTING_EXPORT_LABEL=Export the label ?
+ACCOUNTING_EXPORT_AMOUNT=Export the amount ?
+ACCOUNTING_EXPORT_DEVISE=Export the devise ?
 
 Accounting=Regnskab
 Globalparameters=Globale parametre
@@ -41,6 +48,7 @@ NewAccount=By regnskabskonto
 Update=Opdater
 List=Liste
 Create=Opret
+CreateMvts=Create movement
 UpdateAccount=Ændring af en regnskabsmæssig konto
 UpdateMvts=Ændring af en bevægelse
 WriteBookKeeping=Optage konti i kontoplanen
@@ -76,14 +84,15 @@ ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the breakdown pages "
 
 AccountLength=Længde af regnskabssystemet konti i Dolibarr
 AccountLengthDesc=Funktion gør det muligt at foregive en længde på regnskabsmæssig konto ved at erstatte mellemrum med tallet nul. Da denne funktion kun vises på skærmen ændrer det ikke ved de bogføring registreret i Dolibarr konti. For eksport, er det nødvendigt denne funktion til at være kompatibel med bestemt software.
+ACCOUNTING_LENGTH_DESCRIPTION=Length for displaying product & services description in listings (Best = 50)
+ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Length for displaying product & services account description form in listings (Best = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Længde af det almindelige regnskab
 ACCOUNTING_LENGTH_AACCOUNT=Længde af de tredjeparts-konti
 
 ACCOUNTING_SELL_JOURNAL=Salgskladde
 ACCOUNTING_PURCHASE_JOURNAL=Indkøbskladde
-ACCOUNTING_BANK_JOURNAL=Bankkladde
-ACCOUNTING_CASH_JOURNAL=Kontantkladde
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Diversekladde
+ACCOUNTING_EXPENSEREPORT_JOURNAL=Expense report journal
 ACCOUNTING_SOCIAL_JOURNAL=Socialkladde
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Konto overførsel

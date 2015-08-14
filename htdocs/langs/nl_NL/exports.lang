@@ -132,3 +132,4 @@ SelectFilterFields=Vul hier de waarden in waarop je wil filteren.
 FilterableFields=Filtervelden
 FilteredFields=Gefilterde velden
 FilteredFieldsValues=Waarde voor filter
+FormatControlRule=Format control rule

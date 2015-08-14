@@ -216,7 +216,7 @@ if ($id)
 		print '</table><br>';
 
 		//Confirm Button
-		print '<center><input type="submit" class="button" value='.$langs->trans("Confirm").'><center>';
+		print '<div class="center"><input type="submit" class="button" value='.$langs->trans("Confirm").'></div>';
 		print '</form>';
 	}
 

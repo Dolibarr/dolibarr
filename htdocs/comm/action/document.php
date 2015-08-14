@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@capnetworks.com>
  * Copyright (C) 2005      Simon TOSSER          <simon@kornog-computing.com>
@@ -143,7 +143,7 @@ if ($object->id > 0)
 	print '<tr><td>'.$langs->trans("Title").'</td><td colspan="3">'.$object->label.'</td></tr>';
 
 	// Full day event
-	print '<tr><td>'.$langs->trans("EventOnFullDay").'</td><td colspan="3">'.yn($object->fulldayevent).'</td></tr>';
+	print '<tr><td>'.$langs->trans("EventOnFullDay").'</td><td colspan="3">'.yn($object->fulldayevent, 3).'</td></tr>';
 
 	// Date start
 	print '<tr><td width="30%">'.$langs->trans("DateActionStart").'</td><td colspan="3">';
@@ -186,13 +186,13 @@ if ($object->id > 0)
 				if ($val['id'] && $val['id'] != $object->userownerid) $listofuserid[$val['id']]=$val;
 			}
 		}
-		$_SESSION['assignedtouser']=dol_json_encode($listofuserid);
+		$_SESSION['assignedtouser']=json_encode($listofuserid);
 	}
 	else
 	{
 		if (!empty($_SESSION['assignedtouser']))
 		{
-			$listofuserid=dol_json_decode($_SESSION['assignedtouser'], true);
+			$listofuserid=json_decode($_SESSION['assignedtouser'], true);
 		}
 	}
 	print $form->select_dolusers_forevent('view','assignedtouser',1);
@@ -235,7 +235,7 @@ if ($object->id > 0)
 	// Project
 	if (! empty($conf->projet->enabled))
 	{
-		print '<tr><td valign="top">'.$langs->trans("Project").'</td><td colspan="3">';
+		print '<tr><td class="tdtop">'.$langs->trans("Project").'</td><td colspan="3">';
 		if ($object->fk_project)
 		{
 			$project=new Project($db);
@@ -274,7 +274,7 @@ if ($object->id > 0)
 	}
 
 
-	print '<tr><td width="30%" nowrap>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
+	print '<tr><td width="30%" class="nowrap">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
 	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
 
 	print '</table>';
@@ -294,7 +294,7 @@ if ($object->id > 0)
 		print '<input type="hidden" name="month" value="'.dol_print_date($object->datep,'%m').'">';
 		print '<input type="hidden" name="day" value="'.dol_print_date($object->datep,'%d').'">';
 		//print '<input type="hidden" name="day" value="'.dol_print_date($object->datep,'%d').'">';
-		print img_picto($langs->trans("ViewCal"),'object_calendar','class="hideonsmartphone"').' <input type="submit" style="min-width: 120px" class="button" name="viewcal" value="'.$langs->trans("ViewCal").'">';
+		print img_picto($langs->trans("ViewCal"),'object_calendar','class="hideonsmartphone pictoactionview"').' <input type="submit" style="min-width: 120px" class="button buttonactionview" name="viewcal" value="'.$langs->trans("ViewCal").'">';
 		print '</form>'."\n";
 		print '<form name="listactionsfilterweek" action="'.DOL_URL_ROOT.'/comm/action/index.php" method="POST" style="float: left; padding-right: 10px;">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -303,7 +303,7 @@ if ($object->id > 0)
 		print '<input type="hidden" name="month" value="'.dol_print_date($object->datep,'%m').'">';
 		print '<input type="hidden" name="day" value="'.dol_print_date($object->datep,'%d').'">';
 		//print '<input type="hidden" name="day" value="'.dol_print_date($object->datep,'%d').'">';
-		print img_picto($langs->trans("ViewCal"),'object_calendarweek','class="hideonsmartphone"').' <input type="submit" style="min-width: 120px" class="button" name="viewweek" value="'.$langs->trans("ViewWeek").'">';
+		print img_picto($langs->trans("ViewCal"),'object_calendarweek','class="hideonsmartphone pictoactionview"').' <input type="submit" style="min-width: 120px" class="button buttonactionview" name="viewweek" value="'.$langs->trans("ViewWeek").'">';
 		print '</form>'."\n";
 		print '<form name="listactionsfilterday" action="'.DOL_URL_ROOT.'/comm/action/index.php" method="POST" style="float: left; padding-right: 10px;">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -312,7 +312,7 @@ if ($object->id > 0)
 		print '<input type="hidden" name="month" value="'.dol_print_date($object->datep,'%m').'">';
 		print '<input type="hidden" name="day" value="'.dol_print_date($object->datep,'%d').'">';
 		//print '<input type="hidden" name="day" value="'.dol_print_date($object->datep,'%d').'">';
-		print img_picto($langs->trans("ViewCal"),'object_calendarday','class="hideonsmartphone"').' <input type="submit" style="min-width: 120px" class="button" name="viewday" value="'.$langs->trans("ViewDay").'">';
+		print img_picto($langs->trans("ViewCal"),'object_calendarday','class="hideonsmartphone pictoactionview"').' <input type="submit" style="min-width: 120px" class="button buttonactionview" name="viewday" value="'.$langs->trans("ViewDay").'">';
 		print '</form>'."\n";
 		print '<form name="listactionsfilterperuser" action="'.DOL_URL_ROOT.'/comm/action/peruser.php" method="POST" style="float: left; padding-right: 10px;">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -321,7 +321,7 @@ if ($object->id > 0)
 		print '<input type="hidden" name="month" value="'.dol_print_date($object->datep,'%m').'">';
 		print '<input type="hidden" name="day" value="'.dol_print_date($object->datep,'%d').'">';
 		//print '<input type="hidden" name="day" value="'.dol_print_date($object->datep,'%d').'">';
-		print img_picto($langs->trans("ViewCal"),'object_calendarperuser','class="hideonsmartphone"').' <input type="submit" style="min-width: 120px" class="button" name="viewperuser" value="'.$langs->trans("ViewPerUser").'">';
+		print img_picto($langs->trans("ViewCal"),'object_calendarperuser','class="hideonsmartphone pictoactionview"').' <input type="submit" style="min-width: 120px" class="button buttonactionview" name="viewperuser" value="'.$langs->trans("ViewPerUser").'">';
 		print '</form>'."\n";
 		print '</div>';
 

@@ -36,7 +36,6 @@ class GoogleAPI
 	 *
 	 * @param 	DoliDB		$db			Database handler
 	 * @param	string		$key		Google key
-	 * @return 	GoogleAPI
 	 */
 	function __construct($db,$key)
 	{

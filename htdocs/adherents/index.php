@@ -157,7 +157,7 @@ print "</table></form>";
 if ($conf->use_javascript_ajax)
 {
     print '<br>';
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder nohover" width="100%">';
     print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").'</td></tr>';
     print '<tr '.$bc[0].'><td align="center" colspan="2">';
 

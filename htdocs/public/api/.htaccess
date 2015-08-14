@@ -1,0 +1,15 @@
+#
+# Apache configuration file to use API
+#
+
+DirectoryIndex index.php
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^$ index.php [QSA,L]
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ index.php [QSA,L]
+</IfModule>
+<IfModule mod_php5.c>
+    php_flag display_errors On
+</IfModule>

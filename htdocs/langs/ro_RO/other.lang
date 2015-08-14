@@ -12,6 +12,7 @@ Notify_FICHINTER_VALIDATE=Validate intervenţie
 Notify_FICHINTER_SENTBYMAIL=Intervenţie trimisă prin mail
 Notify_BILL_VALIDATE=Factura client validată
 Notify_BILL_UNVALIDATE=Factura client nevalidată
+Notify_ORDER_SUPPLIER_VALIDATE=Supplier order recorded
 Notify_ORDER_SUPPLIER_APPROVE=Furnizor pentru a aprobat
 Notify_ORDER_SUPPLIER_REFUSE=Furnizor pentru a refuzat
 Notify_ORDER_VALIDATE=Comandă client validată
@@ -203,6 +204,7 @@ ClickHereToGoTo=Click aici pentru a merge la %s
 YouMustClickToChange=Trebuie însă mai întâi să faceți clic pe link-ul următor pentru a valida această schimbare a parolei
 ForgetIfNothing=Dacă nu ați solicitat această schimbare, ignoraţi acest e-mail. Datele dvs.  sunt păstrate în condiții de siguranță.
 IfAmountHigherThan=If amount higher than <strong>%s</strong>
+SourcesRepository=Repository for sources
 
 ##### Calendar common #####
 AddCalendarEntry=Adăugaţi în calendar intrare %s

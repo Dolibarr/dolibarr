@@ -137,7 +137,8 @@ class modFacture extends DolibarrModules
 		$this->rights[$r][1] = 'Valider les factures';
 		$this->rights[$r][2] = 'a';
 		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'valider';
+		$this->rights[$r][4] = 'invoice_advance';
+		$this->rights[$r][5] = 'validate';
 
 		$r++;
 		$this->rights[$r][0] = 15;
@@ -208,8 +209,14 @@ class modFacture extends DolibarrModules
         				$typeFilter="Boolean";
         				break;
         			case 'sellist':
-        				$typeFilter="List:".$obj->param;
-        				break;
+						$tmp='';
+						$tmpparam=unserialize($obj->param);	// $tmp ay be array 'options' => array 'c_currencies:code_iso:code_iso' => null
+						if ($tmpparam['options'] && is_array($tmpparam['options'])) {
+							$tmpkeys=array_keys($tmpparam['options']);
+							$tmp=array_shift($tmpkeys);
+						}
+						if (preg_match('/[a-z0-9_]+:[a-z0-9_]+:[a-z0-9_]+/', $tmp)) $typeFilter="List:".$tmp;
+						break;
         			}
         			$this->export_fields_array[$r][$fieldname]=$fieldlabel;
         			$this->export_TypeFields_array[$r][$fieldname]=$typeFilter;
@@ -227,17 +234,17 @@ class modFacture extends DolibarrModules
 		$this->export_sql_end[$r] .=' , '.MAIN_DB_PREFIX.'facturedet as fd';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product as p on (fd.fk_product = p.rowid)';
 		$this->export_sql_end[$r] .=' WHERE f.fk_soc = s.rowid AND f.rowid = fd.fk_facture';
-		$this->export_sql_end[$r] .=' AND f.entity = '.$conf->entity;
+		$this->export_sql_end[$r] .=' AND f.entity IN ('.getEntity('facture',1).')';
 		$r++;
 
 		$this->export_code[$r]=$this->rights_class.'_'.$r;
 		$this->export_label[$r]='CustomersInvoicesAndPayments';	// Translation key (used only if key ExportDataset_xxx_z not found)
 		$this->export_icon[$r]='bill';
 		$this->export_permission[$r]=array(array("facture","facture","export"));
-		$this->export_fields_array[$r]=array('s.rowid'=>"IdCompany",'s.nom'=>'CompanyName','s.address'=>'Address','s.zip'=>'Zip','s.town'=>'Town','c.code'=>'CountryCode','s.phone'=>'Phone','s.siren'=>'ProfId1','s.siret'=>'ProfId2','s.ape'=>'ProfId3','s.idprof4'=>'ProfId4','s.code_compta'=>'CustomerAccountancyCode','s.code_compta_fournisseur'=>'SupplierAccountancyCode','s.tva_intra'=>'VATIntra','f.rowid'=>"InvoiceId",'f.facnumber'=>"InvoiceRef",'f.datec'=>"InvoiceDateCreation",'f.datef'=>"DateInvoice",'f.date_lim_reglement'=>"DateDue",'f.total'=>"TotalHT",'f.total_ttc'=>"TotalTTC",'f.tva'=>"TotalVAT",'f.paye'=>"InvoicePaid",'f.fk_statut'=>'InvoiceStatus','f.note_private'=>"NotePrivate",'f.note_public'=>"NotePublic",'f.fk_user_author'=>'CreatedById','uc.login'=>'CreatedByLogin','f.fk_user_valid'=>'ValidatedById','uv.login'=>'ValidatedByLogin','p.rowid'=>'PaymentId','pf.amount'=>'AmountPayment','p.datep'=>'DatePayment','p.num_paiement'=>'PaymentNumber');
-		//$this->export_TypeFields_array[$r]=array('s.rowid'=>"List:societe:nom",'s.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','c.code'=>'Text','s.phone'=>'Text','s.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text','s.code_compta'=>'Text','s.code_compta_fournisseur'=>'Text','s.tva_intra'=>'Text','f.rowid'=>"List:facture:facnumber",'f.facnumber'=>"Text",'f.datec'=>"Date",'f.datef'=>"Date",'f.date_lim_reglement'=>"Date",'f.total'=>"Number",'f.total_ttc'=>"Number",'f.tva'=>"Number",'f.paye'=>"Boolean",'f.fk_statut'=>'Status','f.note_private'=>"Text",'f.note_public'=>"Text",'pf.amount'=>'Number','p.datep'=>'Date','p.num_paiement'=>'Number');
-		$this->export_TypeFields_array[$r]=array('s.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','c.code'=>'Text','s.phone'=>'Text','s.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text','s.code_compta'=>'Text','s.code_compta_fournisseur'=>'Text','s.tva_intra'=>'Text','f.rowid'=>"List:facture:facnumber",'f.facnumber'=>"Text",'f.datec'=>"Date",'f.datef'=>"Date",'f.date_lim_reglement'=>"Date",'f.total'=>"Number",'f.total_ttc'=>"Number",'f.tva'=>"Number",'f.paye'=>"Boolean",'f.fk_statut'=>'Status','f.note_private'=>"Text",'f.note_public'=>"Text",'pf.amount'=>'Number','p.datep'=>'Date','p.num_paiement'=>'Number');
-		$this->export_entities_array[$r]=array('s.rowid'=>"company",'s.nom'=>'company','s.address'=>'company','s.zip'=>'company','s.town'=>'company','c.code'=>'company','s.phone'=>'company','s.siren'=>'company','s.siret'=>'company','s.ape'=>'company','s.idprof4'=>'company','s.code_compta'=>'company','s.code_compta_fournisseur'=>'company','s.tva_intra'=>'company','f.rowid'=>"invoice",'f.facnumber'=>"invoice",'f.datec'=>"invoice",'f.datef'=>"invoice",'f.date_lim_reglement'=>"invoice",'f.total'=>"invoice",'f.total_ttc'=>"invoice",'f.tva'=>"invoice",'f.paye'=>"invoice",'f.fk_statut'=>'invoice','f.note_private'=>"invoice",'f.note_public'=>"invoice",'p.rowid'=>'payment','pf.amount'=>'payment','p.datep'=>'payment','p.num_paiement'=>'payment','f.fk_user_author'=>'user','uc.login'=>'user','f.fk_user_valid'=>'user','uv.login'=>'user');
+		$this->export_fields_array[$r]=array('s.rowid'=>"IdCompany",'s.nom'=>'CompanyName','s.address'=>'Address','s.zip'=>'Zip','s.town'=>'Town','c.code'=>'CountryCode','s.phone'=>'Phone','s.siren'=>'ProfId1','s.siret'=>'ProfId2','s.ape'=>'ProfId3','s.idprof4'=>'ProfId4','s.code_compta'=>'CustomerAccountancyCode','s.code_compta_fournisseur'=>'SupplierAccountancyCode','s.tva_intra'=>'VATIntra','f.rowid'=>"InvoiceId",'f.facnumber'=>"InvoiceRef",'f.datec'=>"InvoiceDateCreation",'f.datef'=>"DateInvoice",'f.date_lim_reglement'=>"DateDue",'f.total'=>"TotalHT",'f.total_ttc'=>"TotalTTC",'f.tva'=>"TotalVAT",'f.paye'=>"InvoicePaid",'f.fk_statut'=>'InvoiceStatus','f.note_private'=>"NotePrivate",'f.note_public'=>"NotePublic",'f.fk_user_author'=>'CreatedById','uc.login'=>'CreatedByLogin','f.fk_user_valid'=>'ValidatedById','uv.login'=>'ValidatedByLogin','p.rowid'=>'PaymentId','pf.amount'=>'AmountPayment','p.datep'=>'DatePayment','p.num_paiement'=>'PaymentNumber','pt.code'=>'PaymentMode','p.fk_bank'=>'IdTransaction');
+		//$this->export_TypeFields_array[$r]=array('s.rowid'=>"List:societe:nom",'s.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','c.code'=>'Text','s.phone'=>'Text','s.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text','s.code_compta'=>'Text','s.code_compta_fournisseur'=>'Text','s.tva_intra'=>'Text','f.rowid'=>"List:facture:facnumber",'f.facnumber'=>"Text",'f.datec'=>"Date",'f.datef'=>"Date",'f.date_lim_reglement'=>"Date",'f.total'=>"Number",'f.total_ttc'=>"Number",'f.tva'=>"Number",'f.paye'=>"Boolean",'f.fk_statut'=>'Status','f.note_private'=>"Text",'f.note_public'=>"Text",'pf.amount'=>'Number','p.datep'=>'Date','p.num_paiement'=>'Number','p.fk_bank'=>'Number');
+		$this->export_TypeFields_array[$r]=array('s.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','c.code'=>'Text','s.phone'=>'Text','s.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text','s.code_compta'=>'Text','s.code_compta_fournisseur'=>'Text','s.tva_intra'=>'Text','f.rowid'=>"List:facture:facnumber",'f.facnumber'=>"Text",'f.datec'=>"Date",'f.datef'=>"Date",'f.date_lim_reglement'=>"Date",'f.total'=>"Number",'f.total_ttc'=>"Number",'f.tva'=>"Number",'f.paye'=>"Boolean",'f.fk_statut'=>'Status','f.note_private'=>"Text",'f.note_public'=>"Text",'pf.amount'=>'Number','p.datep'=>'Date','p.num_paiement'=>'Number','p.fk_bank'=>'Number');
+		$this->export_entities_array[$r]=array('s.rowid'=>"company",'s.nom'=>'company','s.address'=>'company','s.zip'=>'company','s.town'=>'company','c.code'=>'company','s.phone'=>'company','s.siren'=>'company','s.siret'=>'company','s.ape'=>'company','s.idprof4'=>'company','s.code_compta'=>'company','s.code_compta_fournisseur'=>'company','s.tva_intra'=>'company','f.rowid'=>"invoice",'f.facnumber'=>"invoice",'f.datec'=>"invoice",'f.datef'=>"invoice",'f.date_lim_reglement'=>"invoice",'f.total'=>"invoice",'f.total_ttc'=>"invoice",'f.tva'=>"invoice",'f.paye'=>"invoice",'f.fk_statut'=>'invoice','f.note_private'=>"invoice",'f.note_public'=>"invoice",'p.rowid'=>'payment','pf.amount'=>'payment','p.datep'=>'payment','p.num_paiement'=>'payment','pt.code'=>'payment','p.fk_bank'=>'payment','f.fk_user_author'=>'user','uc.login'=>'user','f.fk_user_valid'=>'user','uv.login'=>'user');
 		$this->export_dependencies_array[$r]=array('payment'=>'p.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
 		// Add extra fields
 		$sql="SELECT name, label, type, param FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'facture'";
@@ -264,7 +271,13 @@ class modFacture extends DolibarrModules
 						$typeFilter="Boolean";
 						break;
 					case 'sellist':
-						$typeFilter="List:".$obj->param;
+						$tmp='';
+						$tmpparam=unserialize($obj->param);	// $tmp ay be array 'options' => array 'c_currencies:code_iso:code_iso' => null
+						if ($tmpparam['options'] && is_array($tmpparam['options'])) {
+							$tmpkeys=array_keys($tmpparam['options']);
+							$tmp=array_shift($tmpkeys);
+						}
+						if (preg_match('/[a-z0-9_]+:[a-z0-9_]+:[a-z0-9_]+/', $tmp)) $typeFilter="List:".$tmp;
 						break;
 				}
 				$this->export_fields_array[$r][$fieldname]=$fieldlabel;
@@ -282,8 +295,9 @@ class modFacture extends DolibarrModules
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'facture_extrafields as extra ON f.rowid = extra.fk_object';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'paiement_facture as pf ON pf.fk_facture = f.rowid';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'paiement as p ON pf.fk_paiement = p.rowid';
+		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as pt ON pt.id = p.fk_paiement';
 		$this->export_sql_end[$r] .=' WHERE f.fk_soc = s.rowid';
-		$this->export_sql_end[$r] .=' AND f.entity = '.$conf->entity;
+		$this->export_sql_end[$r] .=' AND f.entity IN ('.getEntity('facture',1).')';
 		$r++;
 	}
 
@@ -328,20 +342,4 @@ class modFacture extends DolibarrModules
 
 		return $this->_init($sql,$options);
 	}
-
-    /**
-	 *		Function called when module is disabled.
-	 *      Remove from database constants, boxes and permissions from Dolibarr database.
-	 *		Data directories are not deleted
-	 *
-     *      @param      string	$options    Options when enabling module ('', 'newboxdefonly', 'noboxes')
-	 *      @return     int             	1 if OK, 0 if KO
-     */
-    function remove($options='')
-    {
-		$sql = array();
-
-		return $this->_remove($sql,$options);
-    }
-
 }

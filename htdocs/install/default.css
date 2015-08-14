@@ -296,3 +296,7 @@ background-color: #dfd;
 background-repeat: repeat-x;
 background-position: top left;
 }
+
+.center {
+    text-align: center;
+}

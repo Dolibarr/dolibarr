@@ -7,8 +7,9 @@ TripsAndExpenses=Giderler raporları
 TripsAndExpensesStatistics=Gider raporları istatistkleri
 TripCard=Gider raporu kartı
 AddTrip=Gider raporu oluştur
-ListOfTrips=Gider raporu listesi
+ListOfTrips=Gider raporları listesi
 ListOfFees=Ücretler listesi
+ShowTrip=Gider raporu göster
 NewTrip=Yeni gider raporu
 CompanyVisited=Ziyaret edilen firma/kuruluş
 Kilometers=Kilometre
@@ -40,11 +41,10 @@ TF_BUS=Otobüs
 TF_CAR=Araba
 TF_PEAGE=Geçiş parası
 TF_ESSENCE=Yakıt
-TF_HOTEL=Hostel
+TF_HOTEL=Otel
 TF_TAXI=Taksi
 
 ErrorDoubleDeclaration=Benzer bir tarih aralığı için başka bir gider raporu bildirdiniz.
-ListTripsAndExpenses=Giderler raporları listesi
 AucuneNDF=Bu kriter uyan hiç gider raporu bulunamadı
 AucuneLigne=Bildirilen hiç gider raporu yok
 AddLine=Satır ekle
@@ -56,12 +56,12 @@ ModePaiement=Ödeme biçimi
 Note=Not
 Project=Proje
 
-VALIDATOR=Onama için bilgilendirilecek kullanıcı
+VALIDATOR=Onaylama için sorumlu kişi
 VALIDOR=Onaylayan
 AUTHOR=Kaydeden
 AUTHORPAIEMENT=Ödeyen
 REFUSEUR=Reddeden
-CANCEL_USER=İptal eden
+CANCEL_USER=Silen
 
 MOTIF_REFUS=Neden
 MOTIF_CANCEL=Neden
@@ -74,9 +74,10 @@ DATE_PAIEMENT=Ödeme tarihi
 
 TO_PAID=Öde
 BROUILLONNER=Yeniden aç
-SendToValid=Onay için gönder
+SendToValid=Onay üzerine gönderilmiş
 ModifyInfoGen=Düzenle
 ValidateAndSubmit=Doğrula ve onay için gönder
+ValidatedWaitingApproval=Doğrulanmış (onay bekliyor)
 
 NOT_VALIDATOR=Bu gider raporunu onaylama yetiniz yok
 NOT_AUTHOR=Bu gider raporunu yazan siz değilsiniz. İşlem iptal edildi.
@@ -93,10 +94,11 @@ ConfirmPaidTrip=Bu gider raporunun durumunu "Ödendi" olarak değiştirmek isted
 CancelTrip=Bir gider raporu iptal et
 ConfirmCancelTrip=Bu gider raporunu iptal etmek istediğinizden emin misiniz?
 
-BrouillonnerTrip=Gider raporun geri "Taslak" durumuna döndür
+BrouillonnerTrip=Gider raporu durumunu yeniden "Taslak" durumuna getir
 ConfirmBrouillonnerTrip=Bu gider raporunu "Taslak" durumuna döndürmek istediğinizden emin misiniz?
 
 SaveTrip=Gider raporunu doğrula
 ConfirmSaveTrip=Bu gider raporunu doğrulamak istediğinizden emin misiniz?
 
 NoTripsToExportCSV=Bu dönem için dışaaktarılacak gider raporu yok.
+ExpenseReportPayment=Expense report payment

@@ -199,7 +199,8 @@ Entreprises=Ettevõtted
 DOLIBARRFOUNDATION_PAYMENT_FORM=Liikmemaksu tasumiseks pangaülekande abil vaata lehte <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribe</a>.<br>Krediitkaardi või Paypali makse tegemiseks klõpsa lehe allosas asuval nupul.<br>
 ByProperties=Karakteristikute alusel
 MembersStatisticsByProperties=Liikmete statistika karakteristikute alusel
-MembersByNature=Liikmed loomuse alusel
+MembersByNature=This screen show you statistics on members by nature.
+MembersByRegion=This screen show you statistics on members by region.
 VATToUseForSubscriptions=Liikmemaksude jaoks kasutatav KM määr
 NoVatOnSubscription=Liikmemaksudel ei ole KM
 MEMBER_PAYONLINE_SENDEMAIL=E-posti aadress, kuhu saadetakse hoiatus, kui Dolibarr on saanud liikmemaksu tasumise kinnituse

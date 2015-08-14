@@ -1,6 +1,6 @@
 <?php
 /* Copyright (c) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (c) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (c) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,7 +56,7 @@ class DolGraph
 	var $showlegend=1;
 	var $showpointvalue=1;
 	var $showpercent=0;
-
+	var $combine=0;				// 0.05 if you want to combine records < 5% into "other"
 	var $graph;     			// Objet Graph (Artichow, Phplot...)
 	var $error;
 
@@ -115,7 +115,7 @@ class DolGraph
 	 * Set Y precision
 	 *
 	 * @param 	float	$which_prec		Precision
-	 * @return 	string
+	 * @return 	boolean
 	 */
 	function SetPrecisionY($which_prec)
 	{
@@ -187,7 +187,7 @@ class DolGraph
 	 * Set y label
 	 *
 	 * @param 	string	$label		Y label
-	 * @return	boolean				True
+	 * @return	boolean|null				True
 	 */
 	function SetYLabel($label)
 	{
@@ -198,7 +198,7 @@ class DolGraph
 	 * Set width
 	 *
 	 * @param 	int		$w			Width
-	 * @return	boolean				True
+	 * @return	boolean|null				True
 	 */
 	function SetWidth($w)
 	{
@@ -554,7 +554,7 @@ class DolGraph
 	/**
 	 * Return min value of all data
 	 *
-	 * @return 	int		Max value of all data
+	 * @return 	double		Max value of all data
 	 */
 	function GetFloorMinValue()
 	{
@@ -578,7 +578,7 @@ class DolGraph
 	 *
 	 * @param	string	$file    	Image file name to use to save onto disk (also used as javascript unique id)
 	 * @param	string	$fileurl	Url path to show image if saved onto disk
-	 * @return	void
+	 * @return	integer|null
 	 */
 	function draw($file,$fileurl='')
 	{
@@ -774,7 +774,7 @@ class DolGraph
 		// Generate file
 		$graph->draw($file);
 
-		$this->_stringtoshow='<!-- Build using '.$this->_library.' --><img src="'.$fileurl.'" title="'.dol_escape_htmltag($this->title?$this->title:$this->YLabel).'" alt="'.dol_escape_htmltag($this->title?$this->title:$this->YLabel).'">';
+		$this->stringtoshow='<!-- Build using '.$this->_library.' --><img src="'.$fileurl.'" title="'.dol_escape_htmltag($this->title?$this->title:$this->YLabel).'" alt="'.dol_escape_htmltag($this->title?$this->title:$this->YLabel).'">';
 	}
 
 
@@ -847,18 +847,18 @@ class DolGraph
 		}
 		$tag=dol_escape_htmltag(dol_string_unaccent(dol_string_nospecial(basename($file),'_',array('-','.'))));
 
-		$this->_stringtoshow ='<!-- Build using '.$this->_library.' -->'."\n";
-		if (! empty($this->title)) $this->_stringtoshow.='<div align="center" class="dolgraphtitle'.(empty($this->cssprefix)?'':' dolgraphtitle'.$this->cssprefix).'">'.$this->title.'</div>';
-		$this->_stringtoshow.='<div id="placeholder_'.$tag.'" style="width:'.$this->width.'px;height:'.$this->height.'px;" class="dolgraph'.(empty($this->cssprefix)?'':' dolgraph'.$this->cssprefix).'"></div>'."\n";
-		$this->_stringtoshow.='<script id="'.$tag.'">'."\n";
-		$this->_stringtoshow.='$(function () {'."\n";
+		$this->stringtoshow ='<!-- Build using '.$this->_library.' -->'."\n";
+		if (! empty($this->title)) $this->stringtoshow.='<div align="center" class="dolgraphtitle'.(empty($this->cssprefix)?'':' dolgraphtitle'.$this->cssprefix).'">'.$this->title.'</div>';
+		$this->stringtoshow.='<div id="placeholder_'.$tag.'" style="width:'.$this->width.'px;height:'.$this->height.'px;" class="dolgraph'.(empty($this->cssprefix)?'':' dolgraph'.$this->cssprefix).'"></div>'."\n";
+		$this->stringtoshow.='<script id="'.$tag.'">'."\n";
+		$this->stringtoshow.='$(function () {'."\n";
 		$i=$firstlot;
 		while ($i < $nblot)
 		{
-			$this->_stringtoshow.=$serie[$i];
+			$this->stringtoshow.=$serie[$i];
 			$i++;
 		}
-		$this->_stringtoshow.="\n";
+		$this->stringtoshow.="\n";
 
 		// Special case for Graph of type 'pie'
 		if (isset($this->type[$firstlot]) && $this->type[$firstlot] == 'pie')
@@ -871,49 +871,53 @@ class DolGraph
 			$showpointvalue=$this->showpointvalue;
 			$showpercent=$this->showpercent;
 
-			$this->_stringtoshow.= '
+			$this->stringtoshow.= '
 			function plotWithOptions_'.$tag.'() {
 			$.plot($("#placeholder_'.$tag.'"), d0,
 			{
-			series: {
-			pie: {
-			show: true,
-			radius: 3/4,
-			label: {
-			show: true,
-			radius: 3/4,
-			formatter: function(label, series) {
-			var percent=Math.round(series.percent);
-			var number=series.data[0][1];
-			return \'';
-			$this->_stringtoshow.='<div style="font-size:8pt;text-align:center;padding:2px;color:white;">';
-			if ($urltemp) $this->_stringtoshow.='<a style="color: #FFFFFF;" border="0" href="'.$urltemp.'">';
-			$this->_stringtoshow.='\'+';
-			$this->_stringtoshow.=($showlegend?'':'label+\'<br/>\'+');	// Hide label if already shown in legend
-			$this->_stringtoshow.=($showpointvalue?'number+':'');
-			$this->_stringtoshow.=($showpercent?'\'<br/>\'+percent+\'%\'+':'');
-			$this->_stringtoshow.='\'';
-			if ($urltemp) $this->_stringtoshow.='</a>';
-			$this->_stringtoshow.='</div>\';
-			},
-			background: {
-			opacity: 0.5,
-			color: \'#000000\'
-			}
-			}
-			}
+				series: {
+					pie: {
+						show: true,
+						radius: 0.8,
+						'.($this->combine ? '
+						combine: {
+						 	threshold: '.$this->combine.'
+						},' : '') . '
+						label: {
+							show: true,
+							radius: 0.9,
+							formatter: function(label, series) {
+								var percent=Math.round(series.percent);
+								var number=series.data[0][1];
+								return \'';
+								$this->stringtoshow.='<div style="font-size:8pt;text-align:center;padding:2px;color:black;">';
+								if ($urltemp) $this->stringtoshow.='<a style="color: #FFFFFF;" border="0" href="'.$urltemp.'">';
+								$this->stringtoshow.='\'+';
+								$this->stringtoshow.=($showlegend?'':'label+\' \'+');	// Hide label if already shown in legend
+								$this->stringtoshow.=($showpointvalue?'number+':'');
+								$this->stringtoshow.=($showpercent?'\'<br/>\'+percent+\'%\'+':'');
+								$this->stringtoshow.='\'';
+								if ($urltemp) $this->stringtoshow.='</a>';
+								$this->stringtoshow.='</div>\';
+							},
+							background: {
+							opacity: 0.0,
+							color: \'#000000\'
+						}
+					}
+				}
 			},
 			zoom: {
-			interactive: true
+				interactive: true
 			},
 			pan: {
-			interactive: true
+				interactive: true
 			},';
 			if (count($datacolor))
 			{
-				$this->_stringtoshow.='colors: '.(! empty($data['seriescolor']) ? json_encode($data['seriescolor']) : json_encode($datacolor)).',';
+				$this->stringtoshow.='colors: '.(! empty($data['seriescolor']) ? json_encode($data['seriescolor']) : json_encode($datacolor)).',';
 			}
-			$this->_stringtoshow.='legend: {show: '.($showlegend?'true':'false').', position: \'ne\' }
+			$this->stringtoshow.='legend: {show: '.($showlegend?'true':'false').', position: \'ne\' }
 		});
 		}'."\n";
 		}
@@ -921,7 +925,7 @@ class DolGraph
 		else
 		{
 			// Add code to support tooltips
-			$this->_stringtoshow.='
+			$this->stringtoshow.='
 			function showTooltip_'.$tag.'(x, y, contents) {
 				$(\'<div id="tooltip_'.$tag.'">\' + contents + \'</div>\').css({
 					position: \'absolute\',
@@ -951,10 +955,10 @@ class DolGraph
 						var y = item.datapoint[1].toFixed(2);
 						var z = item.series.xaxis.ticks[item.dataIndex].label;
 						';
-						if ($this->showpointvalue > 0) $this->_stringtoshow.='
+						if ($this->showpointvalue > 0) $this->stringtoshow.='
 							showTooltip_'.$tag.'(item.pageX, item.pageY, item.series.label + "<br>" + z + " => " + y);
 						';
-						$this->_stringtoshow.='
+						$this->stringtoshow.='
 					}
 				}
 				else {
@@ -964,50 +968,50 @@ class DolGraph
 			});
 			';
 
-			$this->_stringtoshow.='var stack = null, steps = false;'."\n";
+			$this->stringtoshow.='var stack = null, steps = false;'."\n";
 
-			$this->_stringtoshow.='function plotWithOptions_'.$tag.'() {'."\n";
-			$this->_stringtoshow.='$.plot($("#placeholder_'.$tag.'"), [ '."\n";
+			$this->stringtoshow.='function plotWithOptions_'.$tag.'() {'."\n";
+			$this->stringtoshow.='$.plot($("#placeholder_'.$tag.'"), [ '."\n";
 			$i=$firstlot;
 			while ($i < $nblot)
 			{
-				if ($i > $firstlot) $this->_stringtoshow.=', '."\n";
+				if ($i > $firstlot) $this->stringtoshow.=', '."\n";
 				$color=sprintf("%02x%02x%02x",$this->datacolor[$i][0],$this->datacolor[$i][1],$this->datacolor[$i][2]);
-				$this->_stringtoshow.='{ ';
-				if (! isset($this->type[$i]) || $this->type[$i] == 'bars') $this->_stringtoshow.='bars: { show: true, align: "'.($i==$firstlot?'center':'left').'", barWidth: 0.5 }, ';
-				if (isset($this->type[$i]) && $this->type[$i] == 'lines')  $this->_stringtoshow.='lines: { show: true, fill: false }, ';
-				$this->_stringtoshow.='color: "#'.$color.'", label: "'.(isset($this->Legend[$i]) ? dol_escape_js($this->Legend[$i]) : '').'", data: d'.$i.' }';
+				$this->stringtoshow.='{ ';
+				if (! isset($this->type[$i]) || $this->type[$i] == 'bars') $this->stringtoshow.='bars: { show: true, align: "'.($i==$firstlot?'center':'left').'", barWidth: 0.5 }, ';
+				if (isset($this->type[$i]) && $this->type[$i] == 'lines')  $this->stringtoshow.='lines: { show: true, fill: false }, ';
+				$this->stringtoshow.='color: "#'.$color.'", label: "'.(isset($this->Legend[$i]) ? dol_escape_js($this->Legend[$i]) : '').'", data: d'.$i.' }';
 				$i++;
 			}
-			$this->_stringtoshow.="\n".' ], { series: { stack: stack, lines: { fill: false, steps: steps }, bars: { barWidth: 0.6 } }'."\n";
+			$this->stringtoshow.="\n".' ], { series: { stack: stack, lines: { fill: false, steps: steps }, bars: { barWidth: 0.6 } }'."\n";
 
 			// Xaxis
-			$this->_stringtoshow.=', xaxis: { ticks: ['."\n";
+			$this->stringtoshow.=', xaxis: { ticks: ['."\n";
 			$x=0;
 			foreach($this->data as $key => $valarray)
 			{
-				if ($x > 0) $this->_stringtoshow.=', '."\n";
-				$this->_stringtoshow.= ' ['.$x.', "'.$valarray[0].'"]';
+				if ($x > 0) $this->stringtoshow.=', '."\n";
+				$this->stringtoshow.= ' ['.$x.', "'.$valarray[0].'"]';
 				$x++;
 			}
-			$this->_stringtoshow.='] }'."\n";
+			$this->stringtoshow.='] }'."\n";
 
 			// Yaxis
-			$this->_stringtoshow.=', yaxis: { min: '.$this->MinValue.', max: '.($this->MaxValue).' }'."\n";
+			$this->stringtoshow.=', yaxis: { min: '.$this->MinValue.', max: '.($this->MaxValue).' }'."\n";
 
 			// Background color
 			$color1=sprintf("%02x%02x%02x",$this->bgcolorgrid[0],$this->bgcolorgrid[0],$this->bgcolorgrid[2]);
 			$color2=sprintf("%02x%02x%02x",$this->bgcolorgrid[0],$this->bgcolorgrid[1],$this->bgcolorgrid[2]);
-			$this->_stringtoshow.=', grid: { hoverable: true, backgroundColor: { colors: ["#'.$color1.'", "#'.$color2.'"] } }'."\n";
-			//$this->_stringtoshow.=', shadowSize: 20'."\n";    TODO Uncommet this
-			$this->_stringtoshow.='});'."\n";
-			$this->_stringtoshow.='}'."\n";
+			$this->stringtoshow.=', grid: { hoverable: true, backgroundColor: { colors: ["#'.$color1.'", "#'.$color2.'"] } }'."\n";
+			//$this->stringtoshow.=', shadowSize: 20'."\n";    TODO Uncommet this
+			$this->stringtoshow.='});'."\n";
+			$this->stringtoshow.='}'."\n";
 
 		}
 
-		$this->_stringtoshow.='plotWithOptions_'.$tag.'();'."\n";
-		$this->_stringtoshow.='});'."\n";
-		$this->_stringtoshow.='</script>'."\n";
+		$this->stringtoshow.='plotWithOptions_'.$tag.'();'."\n";
+		$this->stringtoshow.='});'."\n";
+		$this->stringtoshow.='</script>'."\n";
 	}
 
 
@@ -1019,7 +1023,7 @@ class DolGraph
 	 */
 	function show()
 	{
-		return $this->_stringtoshow;
+		return $this->stringtoshow;
 	}
 
 

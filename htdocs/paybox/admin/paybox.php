@@ -91,7 +91,7 @@ if (empty($conf->global->PAYBOX_IBS_DEVISE)) $conf->global->PAYBOX_IBS_DEVISE=$I
 llxHeader();
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("PayBoxSetup"),$linkback,'setup');
+print_fiche_titre($langs->trans("PayBoxSetup"),$linkback,'title_setup');
 
 print $langs->trans("PayBoxDesc")."<br>\n";
 
@@ -195,7 +195,7 @@ print '<input size="32" type="email" name="PAYBOX_PAYONLINE_SENDEMAIL" value="'.
 print ' &nbsp; '.$langs->trans("Example").': myemail@myserver.com';
 print '</td></tr>';
 
-print '</table><br><center><input type="submit" class="button" value="'.$langs->trans("Modify").'"></center></form>';
+print '</table><br><div class="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div></form>';
 
 print '<br><br>';
 

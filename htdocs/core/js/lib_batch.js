@@ -19,11 +19,17 @@
 // \brief      File that include javascript functions used when dispatching batch-enabled product
 //
 
-function addLineBatch(index) {
+/**
+ * addLineBatch
+ * 
+ * @param	index	int		number of produt. 0 = first product line
+ */
+function addLineBatch(index) 
+{
 	var nme = 'dluo_0_'+index;
 	$row=$("tr[name='"+nme+"']").clone(true);
 	$row.find("input[name^='qty']").val('');
-	var trs = $("tr[name^='dluo_'][name$='_"+index+"']");
+	var trs = $("tr[name^='dluo_'][name$='_"+index+"']");			/* trs.length = position of line for batch */
 	var newrow=$row.html().replace(/_0_/g,"_"+(trs.length)+"_");
 	$row.html(newrow);
 	//clear value
@@ -31,4 +37,13 @@ function addLineBatch(index) {
 	//change name of row
 	$row.attr('name','dluo_'+trs.length+'_'+index);
 	$("tr[name^='dluo_'][name$='_"+index+"']:last").after($row);
+	
+	/*  Suffix of lines are:  _ trs.length _ index  */
+	jQuery("#lot_number_"+trs.length+"_"+index).focus();
+	nb = jQuery("#qty_"+(trs.length - 1)+"_"+index).val();
+	if (nb > 0)
+	{
+		jQuery("#qty_"+(trs.length - 1)+"_"+index).val(1);
+		jQuery("#qty_"+trs.length+"_"+index).val(nb - 1);
+	}
 }

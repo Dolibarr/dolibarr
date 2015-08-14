@@ -3,6 +3,7 @@
  * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,22 +99,27 @@ class box_external_rss extends ModeleBoxes
         }
         else
         {
-        	$this->info_box_head = array('text' => $title,
-        		'sublink' => $link, 'subtext'=>$langs->trans("LastRefreshDate").': '.($rssparser->getLastFetchDate()?dol_print_date($rssparser->getLastFetchDate(),"dayhourtext"):$langs->trans("Unknown")), 'subpicto'=>'object_bookmark');
+            $this->info_box_head = array(
+                'text' => $title,
+                'sublink' => $link,
+                'subtext'=>$langs->trans("LastRefreshDate").': '.($rssparser->getLastFetchDate()?dol_print_date($rssparser->getLastFetchDate(),"dayhourtext"):$langs->trans("Unknown")),
+                'subpicto'=>'object_bookmark',
+            );
 		}
 
 		// INFO on items
 		$items=$rssparser->getItems();
+        //print '<pre>'.print_r($items,true).'</pre>';
 		$nbitems=count($items);
-        for($i = 0; $i < $max && $i < $nbitems; $i++)
+        for($line = 0; $line < $max && $line < $nbitems; $line++)
         {
-            $item = $items[$i];
+            $item = $items[$line];
 
 			// Feed common fields
             $href  = $item['link'];
         	$title = urldecode($item['title']);
-			$date  = $item['date_timestamp'];	// date will be empty if conversion into timestamp failed
-			if ($rssparser->getFormat() == 'rss')		// If RSS
+			$date  = $item['date_timestamp'];       // date will be empty if conversion into timestamp failed
+			if ($rssparser->getFormat() == 'rss')   // If RSS
 			{
 				if (! $date && isset($item['pubdate']))    $date=$item['pubdate'];
 				if (! $date && isset($item['dc']['date'])) $date=$item['dc']['date'];
@@ -134,23 +140,41 @@ class box_external_rss extends ModeleBoxes
 	        if (! $isutf8 && $conf->file->character_set_client == 'UTF-8') $title=utf8_encode($title);
 	        elseif ($isutf8 && $conf->file->character_set_client == 'ISO-8859-1') $title=utf8_decode($title);
 
-	        $title=preg_replace("/([[:alnum:]])\?([[:alnum:]])/","\\1'\\2",$title);   // Gere probleme des apostrophes mal codee/decodee par utf8
+            $title=preg_replace("/([[:alnum:]])\?([[:alnum:]])/","\\1'\\2",$title);   // Gere probleme des apostrophes mal codee/decodee par utf8
             $title=preg_replace("/^\s+/","",$title);                                  // Supprime espaces de debut
             $this->info_box_contents["$href"]="$title";
 
-            $this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
-            'logo' => $this->boximg,
-            'url' => $href,
-            'target' => 'newrss');
+            $tooltip = $title;
+            $description = ! empty($item['description'])?$item['description']:'';
+            $isutf8 = utf8_check($description);
+            if (! $isutf8 && $conf->file->character_set_client == 'UTF-8') $description=utf8_encode($description);
+            elseif ($isutf8 && $conf->file->character_set_client == 'ISO-8859-1') $description=utf8_decode($description);
+            $description=preg_replace("/([[:alnum:]])\?([[:alnum:]])/","\\1'\\2",$description);
+            $description=preg_replace("/^\s+/","",$description);
+            $description=str_replace("\r\n","",$description);
+            $tooltip.= '<br>'.$description;
 
-            $this->info_box_contents[$i][1] = array('td' => 'align="left"',
-            'text' => $title,
-            'url' => $href,
-            'maxlength' => 64,
-            'target' => 'newrss');
+            $this->info_box_contents[$line][0] = array(
+                'td' => 'align="left" width="16"',
+                'logo' => $this->boximg,
+                'url' => $href,
+                'tooltip' => $tooltip,
+                'target' => 'newrss',
+            );
 
-            $this->info_box_contents[$i][2] = array('td' => 'align="right" nowrap="1"',
-            'text' => $date);
+            $this->info_box_contents[$line][1] = array(
+                'td' => 'align="left"',
+                'text' => $title,
+                'url' => $href,
+                'tooltip' => $tooltip,
+                'maxlength' => 64,
+                'target' => 'newrss',
+            );
+
+            $this->info_box_contents[$line][2] = array(
+                'td' => 'align="right" nowrap="1"',
+                'text' => $date,
+            );
         }
     }
 

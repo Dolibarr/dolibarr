@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2012 Laurent Destailleur   <eldy@users.sourceforge.net>
+/* Copyright (C) 2012		Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2015		Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +45,7 @@ class FormBank
     /**
      *  Retourne la liste des types de comptes financiers
      *
-     *  @param	string	$selected        Type pre-selectionne
+     *  @param	integer	$selected        Type pre-selectionne
      *  @param  string	$htmlname        Nom champ formulaire
      *  @return	void
      */
@@ -55,7 +56,7 @@ class FormBank
 
         $type_available=array(0,1,2);
 
-        print '<select class="flat" name="'.$htmlname.'">';
+        print '<select id="select'.$htmlname.'" class="flat" name="'.$htmlname.'">';
         $num = count($type_available);
         $i = 0;
         if ($num)
@@ -64,7 +65,7 @@ class FormBank
             {
                 if ($selected == $type_available[$i])
                 {
-                    print '<option value="'.$type_available[$i].'" selected="selected">'.$langs->trans("BankType".$type_available[$i]).'</option>';
+                    print '<option value="'.$type_available[$i].'" selected>'.$langs->trans("BankType".$type_available[$i]).'</option>';
                 }
                 else
                 {

@@ -25,15 +25,15 @@
     		var size = jQuery("#size");
     		var unique = jQuery("#unique");
     		var required = jQuery("#required");
-    		if (type == 'date') { size.attr('disabled','disabled'); }
-    		else if (type == 'datetime') { size.attr('disabled','disabled'); }
+			if (type == 'date') { size.prop('disabled', true); }
+			else if (type == 'datetime') { size.prop('disabled', true); }
     		else if (type == 'double') { size.removeAttr('disabled'); }
     		else if (type == 'int') { size.removeAttr('disabled'); }
-    		else if (type == 'text') { size.removeAttr('disabled'); unique.attr('disabled','disabled').removeAttr('checked'); }
+			else if (type == 'text') { size.removeAttr('disabled'); unique.prop('disabled', true).removeAttr('checked'); }
     		else if (type == 'varchar') { size.removeAttr('disabled'); }
-    		else if (type == 'boolean') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');}
-    		else if (type == 'price') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');}
-    		else size.val('').attr('disabled','disabled');
+			else if (type == 'boolean') { size.val('').prop('disabled', true); unique.prop('disabled', true);}
+			else if (type == 'price') { size.val('').prop('disabled', true); unique.prop('disabled', true);}
+			else size.val('').prop('disabled', true);
     	}
     	init_typeoffields(jQuery("#type").val());
     });
@@ -46,6 +46,8 @@
 <input type="hidden" name="action" value="update">
 <input type="hidden" name="rowid" value="<?php echo $rowid ?>">
 
+<?php dol_fiche_head(); ?>
+
 <table summary="listofattributes" class="border centpercent">
 
 <?php
@@ -56,8 +58,10 @@ $required=$extrafields->attribute_required[$attrname];
 $pos=$extrafields->attribute_pos[$attrname];
 $alwayseditable=$extrafields->attribute_alwayseditable[$attrname];
 $param=$extrafields->attribute_param[$attrname];
+$perms=$extrafields->attribute_perms[$attrname];
+$list=$extrafields->attribute_list[$attrname];
 
-if((($type == 'select') || ($type == 'checkbox') ||(($type == 'radio'))) && is_array($param))
+if((($type == 'select') || ($type == 'checkbox') || ($type == 'radio')) && is_array($param))
 {
 	$param_chain = '';
 	foreach ($param['options'] as $key => $value)
@@ -68,7 +72,7 @@ if((($type == 'select') || ($type == 'checkbox') ||(($type == 'radio'))) && is_a
 		}
 	}
 }
-elseif ($type== 'sellist')
+elseif (($type== 'sellist') || ($type == 'chkbxlst') || ($type == 'link') )
 {
 	$paramlist=array_keys($param['options']);
 	$param_chain = $paramlist[0];
@@ -89,7 +93,7 @@ elseif ($type== 'sellist')
 <tr><td><?php echo $langs->trans("Position"); ?></td><td class="valeur"><input type="text" name="pos" size="5" value="<?php  echo $extrafields->attribute_pos[$attrname];  ?>"></td></tr>
 <!--  Value (for select list / radio) -->
 <?php
-if(($type == 'select') || ($type == 'sellist') || ($type == 'checkbox') ||(($type == 'radio')))
+if(($type == 'select') || ($type == 'sellist') || ($type == 'checkbox') || ($type == 'chkbxlst') || ($type == 'radio'))
 {
 ?>
 <tr id="value_choice">
@@ -108,17 +112,24 @@ if(($type == 'select') || ($type == 'sellist') || ($type == 'checkbox') ||(($typ
 }
 ?>
 <!-- Unique -->
-<tr><td><?php echo $langs->trans("Unique"); ?></td><td class="valeur"><input id="unique" type="checkbox" name="unique" <?php echo ($unique?' checked="true"':''); ?>></td></tr>
+<tr><td><?php echo $langs->trans("Unique"); ?></td><td class="valeur"><input id="unique" type="checkbox" name="unique" <?php echo ($unique?' checked':''); ?>></td></tr>
 <!-- Required -->
-<tr><td><?php echo $langs->trans("Required"); ?></td><td class="valeur"><input id="required" type="checkbox" name="required" <?php echo ($required?' checked="true"':''); ?>></td></tr>
+<tr><td><?php echo $langs->trans("Required"); ?></td><td class="valeur"><input id="required" type="checkbox" name="required" <?php echo ($required?' checked':''); ?>></td></tr>
 <!-- Always editable -->
-<tr><td><?php echo $langs->trans("AlwaysEditable"); ?></td><td class="valeur"><input id="alwayseditable" type="checkbox" name="alwayseditable" <?php echo ($alwayseditable?' checked="true"':''); ?>></td></tr>
-
+<tr><td><?php echo $langs->trans("AlwaysEditable"); ?></td><td class="valeur"><input id="alwayseditable" type="checkbox" name="alwayseditable" <?php echo ($alwayseditable?' checked':''); ?>></td></tr>
+<!-- By default visible into list -->
+<?php if ($conf->global->MAIN_FEATURES_LEVEL >= 2) { ?>
+<tr><td><?php echo $langs->trans("ByDefaultInList"); ?>
+<?php echo img_info($langs->trans("FeatureNotYetSupported")); ?>
+</td><td class="valeur"><input id="list" type="checkbox" name="list" <?php echo ($list?' checked':''); ?>></td></tr>
+<?php } ?>
 </table>
 
-<div align="center"><br><input type="submit" name="button" class="button" value="<?php echo $langs->trans("Save"); ?>"> &nbsp;
+<?php dol_fiche_end(); ?>
+
+<div align="center"><input type="submit" name="button" class="button" value="<?php echo $langs->trans("Save"); ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 <input type="submit" name="button" class="button" value="<?php echo $langs->trans("Cancel"); ?>"></div>
 
 </form>
 
-<!-- END PHP TEMPLATE admin_extrafields.tpl.php -->
+<!-- END PHP TEMPLATE admin_extrafields_edit.tpl.php -->

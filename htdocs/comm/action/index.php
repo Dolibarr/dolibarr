@@ -184,12 +184,13 @@ if (empty($conf->global->AGENDA_DISABLE_EXT))
         $i++;
         $source='AGENDA_EXT_SRC'.$i;
         $name='AGENDA_EXT_NAME'.$i;
+        $offsettz='AGENDA_EXT_OFFSETTZ'.$i;
         $color='AGENDA_EXT_COLOR'.$i;
         $buggedfile='AGENDA_EXT_BUGGEDFILE'.$i;
         if (! empty($conf->global->$source) && ! empty($conf->global->$name))
         {
         	// Note: $conf->global->buggedfile can be empty or 'uselocalandtznodaylight' or 'uselocalandtzdaylight'
-        	$listofextcals[]=array('src'=>$conf->global->$source,'name'=>$conf->global->$name,'color'=>$conf->global->$color,'buggedfile'=>(isset($conf->global->buggedfile)?$conf->global->buggedfile:0));
+        	$listofextcals[]=array('src'=>$conf->global->$source,'name'=>$conf->global->$name,'offsettz'=>$conf->global->$offsettz,'color'=>$conf->global->$color,'buggedfile'=>(isset($conf->global->buggedfile)?$conf->global->buggedfile:0));
         }
     }
 }
@@ -202,13 +203,14 @@ if (empty($user->conf->AGENDA_DISABLE_EXT))
 		$i++;
 		$source='AGENDA_EXT_SRC_'.$user->id.'_'.$i;
 		$name='AGENDA_EXT_NAME_'.$user->id.'_'.$i;
+        $offsettz='AGENDA_EXT_OFFSETTZ_'.$user->id.'_'.$i;
 		$color='AGENDA_EXT_COLOR_'.$user->id.'_'.$i;
 		$enabled='AGENDA_EXT_ENABLED_'.$user->id.'_'.$i;
 		$buggedfile='AGENDA_EXT_BUGGEDFILE_'.$user->id.'_'.$i;
 		if (! empty($user->conf->$source) && ! empty($user->conf->$name))
 		{
 			// Note: $conf->global->buggedfile can be empty or 'uselocalandtznodaylight' or 'uselocalandtzdaylight'
-			$listofextcals[]=array('src'=>$user->conf->$source,'name'=>$user->conf->$name,'color'=>$user->conf->$color,'buggedfile'=>(isset($user->conf->buggedfile)?$user->conf->buggedfile:0));
+			$listofextcals[]=array('src'=>$user->conf->$source,'name'=>$user->conf->$name,'offsettz'=>$user->conf->$offsettz,'color'=>$user->conf->$color,'buggedfile'=>(isset($user->conf->buggedfile)?$user->conf->buggedfile:0));
 		}
 	}
 }
@@ -346,11 +348,14 @@ dol_fiche_head($head, $tabactive, $langs->trans('Agenda'), 0, 'action');
 print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirthday,0,$filtert,0,$pid,$socid,$action,$listofextcals,$actioncode,$usergroup);
 dol_fiche_end();
 
+
+// Define the legend/list of calendard to show
+$s=''; $link='';
+
 $showextcals=$listofextcals;
-// Legend
-if (! empty($conf->use_javascript_ajax))
+
+if (! empty($conf->use_javascript_ajax))	// If javascript on
 {
-	$s='';
 	$s.='<script type="text/javascript">' . "\n";
 	$s.='jQuery(document).ready(function () {' . "\n";
 	$s.='jQuery("#check_birthday").click(function() { jQuery(".family_birthday").toggle(); });' . "\n";
@@ -363,7 +368,10 @@ if (! empty($conf->use_javascript_ajax))
   	$s.='});' . "\n";
 	$s.='</script>' . "\n";
 
-	$s.='<div class="nowrap clear float"><input type="checkbox" id="check_mytasks" name="check_mytasks" checked="true" disabled="disabled"> ' . $langs->trans("LocalAgenda").' &nbsp; </div>';
+	// Local calendar
+	$s.='<div class="nowrap clear float"><input type="checkbox" id="check_mytasks" name="check_mytasks" checked disabled> ' . $langs->trans("LocalAgenda").' &nbsp; </div>';
+
+	// External calendars
 	if (is_array($showextcals) && count($showextcals) > 0)
 	{
 		$s.='<script type="text/javascript">' . "\n";
@@ -379,16 +387,26 @@ if (! empty($conf->use_javascript_ajax))
 		foreach ($showextcals as $val)
 		{
 			$htmlname = md5($val['name']);
-			$s.='<div class="nowrap float"><input type="checkbox" id="check_ext' . $htmlname . '" name="check_ext' . $htmlname . '" checked="true"> ' . $val['name'] . ' &nbsp; </div>';
+			$s.='<div class="nowrap float"><input type="checkbox" id="check_ext' . $htmlname . '" name="check_ext' . $htmlname . '" checked> ' . $val['name'] . ' &nbsp; </div>';
 		}
 	}
+
+	// Birthdays
 	$s.='<div class="nowrap float"><input type="checkbox" id="check_birthday" name="check_birthday"> '.$langs->trans("AgendaShowBirthdayEvents").' &nbsp; </div>';
+
+	// Calendars from hooks
+    $parameters=array(); $object=null;
+	$reshook=$hookmanager->executeHooks('addCalendarChoice',$parameters,$object,$action);
+    if (empty($reshook))
+    {
+		$s.= $hookmanager->resPrint;
+    }
+    elseif ($reshook > 1)
+	{
+    	$s = $hookmanager->resPrint;
+    }
 }
-
-
-$link='';
-// Add link to show birthdays
-if (empty($conf->use_javascript_ajax))
+else 									// If javascript off
 {
 	$newparam=$param;   // newparam is for birthday links
     $newparam=preg_replace('/showbirthday=[0-1]/i','showbirthday='.(empty($showbirthday)?1:0),$newparam);
@@ -401,10 +419,10 @@ if (empty($conf->use_javascript_ajax))
     $link.='</a>';
 }
 
-print_fiche_titre($s,$link.' &nbsp; &nbsp; '.$nav, '');
+print_fiche_titre($s, $link.' &nbsp; &nbsp; '.$nav, '');
 
 
-// Get event in an array
+// Load events from database into $eventarray
 $eventarray=array();
 
 $sql = 'SELECT ';
@@ -478,6 +496,7 @@ if ($filterg > 0) $sql.= " AND a.fk_user_action IN (SELECT fk_user FROM ".MAIN_D
 $sql.= ' ORDER BY datep';
 //print $sql;
 
+
 dol_syslog("comm/action/index.php", LOG_DEBUG);
 $resql=$db->query($sql);
 if ($resql)
@@ -498,8 +517,12 @@ if ($resql)
         // Create a new object action
         $event=new ActionComm($db);
         $event->id=$obj->id;
-        $event->datep=$db->jdate($obj->datep);      // datep and datef are GMT date
+
+        $event->datep=$db->jdate($obj->datep);      // datep and datef are GMT date. Example: 1970-01-01 01:00:00, jdate will return 0 if TZ of PHP server is Europe/Berlin
         $event->datef=$db->jdate($obj->datep2);
+		//var_dump($obj->datep);
+        //var_dump($event->datep);
+
         $event->type_code=$obj->type_code;
         $event->type_label=$obj->type_label;
         $event->libelle=$obj->label;
@@ -579,6 +602,7 @@ else
     dol_print_error($db);
 }
 
+// Complete $eventarray with birthdates
 if ($showbirthday)
 {
     // Add events in array
@@ -646,6 +670,7 @@ if ($showbirthday)
     }
 }
 
+// Complete $eventarray with external import Ical
 if (count($listofextcals))
 {
     require_once DOL_DOCUMENT_ROOT.'/comm/action/class/ical.class.php';
@@ -653,6 +678,7 @@ if (count($listofextcals))
     {
         $url=$extcal['src'];    // Example: https://www.google.com/calendar/ical/eldy10%40gmail.com/private-cde92aa7d7e0ef6110010a821a2aaeb/basic.ics
         $namecal = $extcal['name'];
+        $offsettz = $extcal['offsettz'];
         $colorcal = $extcal['color'];
         $buggedfile = $extcal['buggedfile'];
         //print "url=".$url." namecal=".$namecal." colorcal=".$colorcal." buggedfile=".$buggedfile;
@@ -794,12 +820,22 @@ if (count($listofextcals))
                 {
                     $datestart=$icalevent['DTSTART'];
                     $dateend=$icalevent['DTEND'];
+
+                    $datestart+=+($offsettz * 3600);
+                    $dateend+=+($offsettz * 3600);
+
                     $addevent=true;
+                    //var_dump($offsettz);
+                    //var_dump(dol_print_date($datestart, 'dayhour', 'gmt'));
                 }
                 elseif (isset($icalevent['DTSTART']['unixtime']))	// File contains a local timezone + a TZ (for example when using bluemind)
                 {
                     $datestart=$icalevent['DTSTART']['unixtime'];
                     $dateend=$icalevent['DTEND']['unixtime'];
+
+                    $datestart+=+($offsettz * 3600);
+                    $dateend+=+($offsettz * 3600);
+
                     // $buggedfile is set to uselocalandtznodaylight if conf->global->AGENDA_EXT_BUGGEDFILEx = 'uselocalandtznodaylight'
                     if ($buggedfile === 'uselocalandtznodaylight')	// unixtime is a local date that does not take daylight into account, TZID is +1 for example for 'Europe/Paris' in summer instead of 2
                     {
@@ -885,6 +921,15 @@ if (count($listofextcals))
         }
     }
 }
+
+
+
+// Complete $eventarray with events coming from external module
+$parameters=array(); $object=null;
+$reshook=$hookmanager->executeHooks('getCalendarEvents',$parameters,$object,$action);
+if (! empty($hookmanager->resArray['eventarray'])) $eventarray=array_merge($eventarray, $hookmanager->resArray['eventarray']);
+
+
 
 $maxnbofchar=18;
 $cachethirdparties=array();
@@ -1005,7 +1050,7 @@ elseif ($action == 'show_week') // View by week
     {
         // Show days of the current week
 		$curtime = dol_time_plus_duree($firstdaytoshow, $iter_day, 'd');
-		$tmparray = dol_getdate($curtime,'fast');
+		$tmparray = dol_getdate($curtime, true);
 		$tmpday = $tmparray['mday'];
 		$tmpmonth = $tmparray['mon'];
 		$tmpyear = $tmparray['year'];
@@ -1288,7 +1333,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                             // Hour start
                             if ($tmpyearstart == $annee && $tmpmonthstart == $mois && $tmpdaystart == $jour)
                             {
-                                $daterange.=dol_print_date($event->date_start_in_calendar,'%H:%M');
+                                $daterange.=dol_print_date($event->date_start_in_calendar,'%H:%M');	// Il faudrait utiliser ici tzuser, mais si on ne peut pas car qd on rentre un date dans fiche action, en input la conversion local->gmt se base sur le TZ server et non user
                                 if ($event->date_end_in_calendar && $event->date_start_in_calendar != $event->date_end_in_calendar)
                                 {
                                     if ($tmpyearstart == $tmpyearend && $tmpmonthstart == $tmpmonthend && $tmpdaystart == $tmpdayend)
@@ -1308,7 +1353,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                             if ($event->date_end_in_calendar && $event->date_start_in_calendar != $event->date_end_in_calendar)
                             {
                                 if ($tmpyearend == $annee && $tmpmonthend == $mois && $tmpdayend == $jour)
-                                $daterange.=dol_print_date($event->date_end_in_calendar,'%H:%M');
+                                $daterange.=dol_print_date($event->date_end_in_calendar,'%H:%M');	// Il faudrait utiliser ici tzuser, mais si on ne peut pas car qd on rentre un date dans fiche action, en input la conversion local->gmt se base sur le TZ server et non user
                             }
                             //print $daterange;
                             if ($event->type_code != 'ICALEVENT')
@@ -1380,7 +1425,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 
                     print '</td>';
                     // Status - Percent
-                    print '<td align="right" class="nowrap">';
+                    print '<td align="right" class="nowrap cal_event_right">';
                     if ($event->type_code != 'BIRTHDAY' && $event->type_code != 'ICALEVENT') print $event->getLibStatut(3,1);
                     else print '&nbsp;';
                     print '</td></tr></table>';

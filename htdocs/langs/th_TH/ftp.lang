@@ -1,12 +1,12 @@
 # Dolibarr language file - Source file is en_US - ftp
-FTPClientSetup=FTP Client module setup
-NewFTPClient=New FTP connection setup
-FTPArea=FTP Area
-FTPAreaDesc=This screen show you content of a FTP server view
-SetupOfFTPClientModuleNotComplete=Setup of FTP client module seems to be not complete
-FTPFeatureNotSupportedByYourPHP=Your PHP does not support FTP functions
-FailedToConnectToFTPServer=Failed to connect to FTP server (server %s, port %s)
-FailedToConnectToFTPServerWithCredentials=Failed to login to FTP server with defined login/password
-FTPFailedToRemoveFile=Failed to remove file <b>%s</b>.
-FTPFailedToRemoveDir=Failed to remove directory <b>%s</b> (Check permissions and that directory is empty).
-FTPPassiveMode=Passive mode
+FTPClientSetup=การติดตั้งโมดูล FTP ไคลเอนต์
+NewFTPClient=การตั้งค่าการเชื่อมต่อใหม่ FTP
+FTPArea=พื้นที่ FTP
+FTPAreaDesc=หน้าจอนี้จะแสดงให้คุณเห็นเนื้อหาในมุมมองของ FTP เซิร์ฟเวอร์
+SetupOfFTPClientModuleNotComplete=การติดตั้งโมดูลลูกค้า FTP ดูเหมือนว่าจะไม่สมบูรณ์
+FTPFeatureNotSupportedByYourPHP=PHP ของคุณไม่สนับสนุนฟังก์ชั่น FTP
+FailedToConnectToFTPServer=ล้มเหลวในการเชื่อมต่อกับเซิร์ฟเวอร์ FTP (เซิร์ฟเวอร์% s พอร์ต% s)
+FailedToConnectToFTPServerWithCredentials=ล้มเหลวในการเข้าสู่เซิร์ฟเวอร์ FTP ที่มีกำหนดเข้าสู่ระบบ / รหัสผ่าน
+FTPFailedToRemoveFile=<b>ไม่สามารถลบไฟล์%</b> s
+FTPFailedToRemoveDir=<b>ไม่สามารถลบไดเรกทอรี% s</b> (สิทธิ์ตรวจสอบไดเรกทอรีที่ว่างเปล่า)
+FTPPassiveMode=โหมด Passive

@@ -5,7 +5,8 @@
  * Copyright (C) 2013		Charles-Fr BENKE	<charles.fr@benke.fr>
  * Copyright (C) 2013		Cédric Salvador		<csalvador@gpcsolutions.fr>
  * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
- *
+ * Copyright (C) 2015		Bahfir Abbes		<bafbes@gmail.com>
+
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -36,6 +37,7 @@ class FormFile
     var $error;
 
     var $numoffiles;
+	var $infofiles;			// Used to return informations by function getDocumentsLink
 
 
     /**
@@ -73,7 +75,7 @@ class FormFile
         global $conf,$langs, $hookmanager;
         $hookmanager->initHooks(array('formfile'));
 
-        if (! empty($conf->browser->layout) && $conf->browser->layout != 'classic') return 0;
+        if (! empty($conf->browser->layout) && $conf->browser->layout != 'classic') $useajax=0;
 
 		if ((! empty($conf->global->MAIN_USE_JQUERY_FILEUPLOAD) && $useajax) || ($useajax==2))
         {
@@ -115,11 +117,11 @@ class FormFile
                 $out .= '<input type="hidden" name="max_file_size" value="'.($max*1024).'">';
             }
             $out .= '<input class="flat" type="file" name="userfile" size="'.$maxlength.'"';
-            $out .= (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm)?' disabled="disabled"':'');
+            $out .= (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm)?' disabled':'');
             $out .= '>';
-            $out .= ' &nbsp; ';
+            $out .= '&nbsp;';
             $out .= '<input type="submit" class="button" name="sendit" value="'.$langs->trans("Upload").'"';
-            $out .= (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm)?' disabled="disabled"':'');
+            $out .= (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm)?' disabled':'');
             $out .= '>';
 
             if ($addcancel)
@@ -150,7 +152,7 @@ class FormFile
             	$out .= '<tr>';
    	            if (! empty($options)) $out .= '<td>'.$options.'</td>';
 	            $out .= '<td valign="middle" class="nowrap">';
-				$out .= '<input type="checkbox" checked="checked" name="savingdocmask" value="'.dol_escape_js($savingdocmask).'"> '.$langs->trans("SaveUploadedFileWithMask", preg_replace('/__file__/',$langs->transnoentitiesnoconv("OriginFileName"),$savingdocmask), $langs->transnoentitiesnoconv("OriginFileName"));
+				$out .= '<input type="checkbox" checked name="savingdocmask" value="'.dol_escape_js($savingdocmask).'"> '.$langs->trans("SaveUploadedFileWithMask", preg_replace('/__file__/',$langs->transnoentitiesnoconv("OriginFileName"),$savingdocmask), $langs->transnoentitiesnoconv("OriginFileName"));
             	$out .= '</td>';
             	$out .= '</tr>';
             }
@@ -182,8 +184,9 @@ class FormFile
 	            $out .= '<input type="text" name="label" id="label">';
 	            $out .= '<input type="hidden" name="objecttype" value="' . $object->element . '">';
 	            $out .= '<input type="hidden" name="objectid" value="' . $object->id . '">';
+	            $out .= '&nbsp;';
 	            $out .= '<input type="submit" class="button" name="linkit" value="'.$langs->trans("ToLink").'"';
-	            $out .= (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm)?' disabled="disabled"':'');
+	            $out .= (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm)?' disabled':'');
 	            $out .= '>';
 	            $out .= '</td></tr>';
 	            $out .= '</table>';
@@ -247,7 +250,7 @@ class FormFile
      *      @param      string				$modelselected      Model to preselect by default
      *      @param      string				$allowgenifempty	Allow generation even if list of template ($genallowed) is empty (show however a warning)
      *      @param      string				$forcenomultilang	Do not show language option (even if MAIN_MULTILANGS defined)
-     *      @param      int					$iconPDF            Obsolete, see getDocumentsLink
+     *      @param      int					$iconPDF            Deprecated, see getDocumentsLink
      * 		@param		int					$maxfilenamelength	Max length for filename shown
      * 		@param		string				$noform				Do not output html form tags
      * 		@param		string				$param				More param on http links
@@ -259,12 +262,16 @@ class FormFile
      */
     function showdocuments($modulepart,$modulesubdir,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$allowgenifempty=1,$forcenomultilang=0,$iconPDF=0,$maxfilenamelength=28,$noform=0,$param='',$title='',$buttonlabel='',$codelang='',$morepicto='')
     {
+		// Deprecation warning
+		if (0 !== $iconPDF) {
+			dol_syslog(__METHOD__ . ": passing iconPDF parameter is deprecated", LOG_WARNING);
+		}
+
         global $langs, $conf, $user, $hookmanager;
         global $form, $bc;
 
         if (! is_object($form)) $form=new Form($this->db);
 
-        // filedir = $conf->...->dir_ouput."/".get_exdir(id)
         include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
         // For backward compatibility
@@ -273,9 +280,10 @@ class FormFile
         }
 
         $printer=0;
-        if (in_array($modulepart,array('facture','askpricesupplier','propal','proposal','order','commande')))	// This feature is implemented only for such elements
+
+        if (in_array($modulepart,array('facture','askpricesupplier','propal','proposal','order','commande','expedition')))	// The direct print feature is implemented only for such elements
         {
-        	$printer = (!empty($user->rights->printipp->read) && !empty($conf->printipp->enabled))?true:false;
+            $printer = (!empty($user->rights->printing->read) && !empty($conf->printing->enabled))?true:false;
         }
 
         $hookmanager->initHooks(array('formfile'));
@@ -449,15 +457,15 @@ class FormFile
             }
             else if ($modulepart != 'agenda')
             {
-                // For normalized standard modules
-                $file=dol_buildpath('/core/modules/'.$modulepart.'/modules_'.$modulepart.'.php',0);
+            	// For normalized standard modules
+            	$file=dol_buildpath('/core/modules/'.$modulepart.'/modules_'.$modulepart.'.php',0);
                 if (file_exists($file))
                 {
-                    $res=include_once $file;
+                	$res=include_once $file;
                 }
                 // For normalized external modules
                 else
-              {
+				{
                 	$file=dol_buildpath('/'.$modulepart.'/core/modules/'.$modulepart.'/modules_'.$modulepart.'.php',0);
                 	$res=include_once $file;
                 }
@@ -467,7 +475,7 @@ class FormFile
                     $modellist=call_user_func($class.'::liste_modeles',$this->db);
                 }
                 else
-                {
+              {
                     dol_print_error($this->db,'Bad value for modulepart');
                     return -1;
                 }
@@ -527,7 +535,7 @@ class FormFile
             $out.= '<th align="center" colspan="'.($addcolumforpicto?'2':'1').'" class="formdocbutton liste_titre maxwidthonsmartphone">';
             $genbutton = '<input class="button" id="'.$forname.'_generatebutton" name="'.$forname.'_generatebutton"';
             $genbutton.= ' type="submit" value="'.$buttonlabel.'"';
-            if (! $allowgenifempty && ! is_array($modellist) && empty($modellist)) $genbutton.= ' disabled="disabled"';
+            if (! $allowgenifempty && ! is_array($modellist) && empty($modellist)) $genbutton.= ' disabled';
             $genbutton.= '>';
             if ($allowgenifempty && ! is_array($modellist) && empty($modellist) && empty($conf->dol_no_mouse_hover) && $modulepart != 'unpaid')
             {
@@ -550,7 +558,11 @@ class FormFile
 
             // Execute hooks
             $parameters=array('socid'=>(isset($GLOBALS['socid'])?$GLOBALS['socid']:''),'id'=>(isset($GLOBALS['id'])?$GLOBALS['id']:''),'modulepart'=>$modulepart);
-            if (is_object($hookmanager)) $out.= $hookmanager->executeHooks('formBuilddocOptions',$parameters,$GLOBALS['object']);
+            if (is_object($hookmanager))
+            {
+            	$reshook = $hookmanager->executeHooks('formBuilddocOptions',$parameters,$GLOBALS['object']);
+            	$out.= $hookmanager->resPrint;
+            }
         }
 
         // Get list of files
@@ -574,11 +586,9 @@ class FormFile
 					$var=!$var;
 
 					// Define relative path for download link (depends on module)
-					$relativepath=$file["name"];								// Cas general
+					$relativepath=$file["name"];										// Cas general
 					if ($modulesubdir) $relativepath=$modulesubdir."/".$file["name"];	// Cas propal, facture...
-					// Autre cas
-					if ($modulepart == 'donation')            { $relativepath = get_exdir($modulesubdir,2).$file["name"]; }
-					if ($modulepart == 'export')              { $relativepath = $file["name"]; }
+					if ($modulepart == 'export') $relativepath = $file["name"];			// Other case
 
 					$out.= "<tr ".$bc[$var].">";
 
@@ -608,8 +618,8 @@ class FormFile
 						$out.= '<td align="right">';
 						if ($delallowed)
 						{
-							$out.= '<a href="'.$urlsource.(strpos($urlsource,'?')?'&':'?').'action=remove_file&file='.urlencode($relativepath);
-							$out.= ($param?'&'.$param:'');
+							$out.= '<a href="'.$urlsource.(strpos($urlsource,'?')?'&amp;':'?').'action=remove_file&amp;file='.urlencode($relativepath);
+							$out.= ($param?'&amp;'.$param:'');
 							//$out.= '&modulepart='.$modulepart; // TODO obsolete ?
 							//$out.= '&urlsource='.urlencode($urlsource); // TODO obsolete ?
 							$out.= '">'.img_picto($langs->trans("Delete"), 'delete.png').'</a>';
@@ -618,9 +628,9 @@ class FormFile
 						if ($printer)
 						{
 							//$out.= '<td align="right">';
-    	                    $out.= '&nbsp;<a href="'.$urlsource.(strpos($urlsource,'?')?'&':'?').'action=print_file&amp;printer='.$modulepart.'&amp;file='.urlencode($relativepath);
-        	                $out.= ($param?'&'.$param:'');
-            	            $out.= '">'.img_picto($langs->trans("Print"),'printer.png').'</a>';
+                            $out.= '&nbsp;<a href="'.$urlsource.(strpos($urlsource,'?')?'&amp;':'?').'action=print_file&amp;printer='.$modulepart.'&amp;file='.urlencode($relativepath);
+                            $out.= ($param?'&amp;'.$param:'');
+                            $out.= '">'.img_picto($langs->trans("PrintFile", $relativepath),'printer.png').'</a>';
 						}
 						if ($morepicto)
 						{
@@ -672,16 +682,18 @@ class FormFile
      *	@param	string	$modulepart		propal, facture, facture_fourn, ...
      *	@param	string	$modulesubdir	Sub-directory to scan (Example: '0/1/10', 'FA/DD/MM/YY/9999'). Use '' if file is not into subdir of module.
      *	@param	string	$filedir		Directory to scan
-     *	@return	string              	Output string with HTML link of documents (might be empty string)
+     *  @param	string	$filter			Filter filenames on this regex string (Example: '\.pdf$')
+     *	@return	string              	Output string with HTML link of documents (might be empty string). This also fill the array ->infofiles
      */
-    function getDocumentsLink($modulepart, $modulesubdir, $filedir)
+    function getDocumentsLink($modulepart, $modulesubdir, $filedir, $filter='')
     {
-    	if (! function_exists('dol_dir_list')) include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+    	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
     	$out='';
-    	$this->numoffiles=0;
-		
-		$file_list=dol_dir_list($filedir, 'files', 0, preg_quote(basename($modulesubdir).'.pdf','/'), '\.meta$|\.png$');
+
+    	$this->infofiles=array('nboffiles'=>0,'extensions'=>array(),'files'=>array());
+
+		$file_list=dol_dir_list($filedir, 'files', 0, preg_quote(basename($modulesubdir),'/').'[^\-]+', '\.meta$|\.png$');	// Get list of files starting with name fo ref (but not followed by "-" to discard uploaded files)
 
     	// For ajax treatment
     	$out.= '<div id="gen_pdf_'.$modulesubdir.'" class="linkobject hideobject">'.img_picto('', 'refresh').'</div>'."\n";
@@ -691,26 +703,35 @@ class FormFile
     		// Loop on each file found
     		foreach($file_list as $file)
     		{
+    			if ($filter && ! preg_match('/'.$filter.'/i', $file["name"])) continue;	// Discard this. It does not match provided filter.
+
     			// Define relative path for download link (depends on module)
     			$relativepath=$file["name"];								// Cas general
     			if ($modulesubdir) $relativepath=$modulesubdir."/".$file["name"];	// Cas propal, facture...
     			// Autre cas
     			if ($modulepart == 'donation')            {
-    				$relativepath = get_exdir($modulesubdir,2).$file["name"];
+    				$relativepath = get_exdir($modulesubdir,2,0,0,null,'donation').$file["name"];
     			}
     			if ($modulepart == 'export')              {
     				$relativepath = $file["name"];
     			}
+	            if ($modulepart == 'facture_fournisseur' || $modulepart == 'invoice_fournisseur') {
+	                $relativepath = get_exdir($modulesubdir, 2,0,0,null,'invoice_supplier'). $modulesubdir. "/" . $file["name"];
+	            }
 
     			// Show file name with link to download
     			$out.= '<a data-ajax="false" href="'.DOL_URL_ROOT . '/document.php?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'"';
     			$mime=dol_mimetype($relativepath,'',0);
     			if (preg_match('/text/',$mime)) $out.= ' target="_blank"';
     			$out.= '>';
-    			$out.= img_pdf($file["name"],2);
+    			$out.= img_mime($relativepath, $file["name"]);
     			$out.= '</a>'."\n";
 
-    			$this->numoffiles++;
+    			$this->infofiles['nboffiles']++;
+    			$this->infofiles['files'][]=$file['fullname'];
+    			$ext=pathinfo($file["name"], PATHINFO_EXTENSION);
+    			if (empty($this->infofiles[$ext])) $this->infofiles['extensions'][$ext]=1;
+    			else $this->infofiles['extensions'][$ext]++;
     		}
     	}
 
@@ -776,8 +797,8 @@ class FormFile
 			print_liste_field_titre($langs->trans("Size"),$url,"size","",$param,'align="right"',$sortfield,$sortorder);
 			print_liste_field_titre($langs->trans("Date"),$url,"date","",$param,'align="center"',$sortfield,$sortorder);
 			if (empty($useinecm)) print_liste_field_titre('',$url,"","",$param,'align="center"');
-			print_liste_field_titre('','','');
-			print '</tr>';
+			print_liste_field_titre('');
+			print "</tr>\n";
 
 			$nboffiles=count($filearray);
 
@@ -794,8 +815,8 @@ class FormFile
 					if (empty($relativepath))
 					{
 						$relativepath=(! empty($object->ref)?dol_sanitizeFileName($object->ref):'').'/';
-						if ($object->element == 'invoice_supplier') $relativepath=get_exdir($object->id,2).$relativepath;	// TODO Call using a defined value for $relativepath
-						if ($object->element == 'member') $relativepath=get_exdir($object->id,2).$relativepath;				// TODO Call using a defined value for $relativepath
+						if ($object->element == 'invoice_supplier') $relativepath=get_exdir($object->id,2,0,0,$object,'invoice_supplier').$relativepath;	// TODO Call using a defined value for $relativepath
+						if ($object->element == 'member') $relativepath=get_exdir($object->id,2,0,0,$object,'member').$relativepath;				// TODO Call using a defined value for $relativepath
 						if ($object->element == 'project_task') $relativepath='Call_not_supported_._Call_function_using_a_defined_relative_path_.';
 					}
 
@@ -829,7 +850,12 @@ class FormFile
 						$fileinfo = pathinfo($file['name']);
 						print '<td align="center">';
 						$minifile=$fileinfo['filename'].'_mini.'.strtolower($fileinfo['extension']);	// Thumbs are created with filename in lower case
-						if (image_format_supported($file['name']) > 0) print '<img border="0" height="'.$maxheightmini.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($relativepath.'thumbs/'.$minifile).'" title="">';
+						if (image_format_supported($file['name']) > 0)
+						{
+							print '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension'])).'" class="aphoto" target="_blank">';
+							print '<img border="0" height="'.$maxheightmini.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($relativepath.'thumbs/'.$minifile).'" title="">';
+							print '</a>';
+						}
 						else print '&nbsp;';
 						print '</td>';
 					}
@@ -837,6 +863,34 @@ class FormFile
 					// ($param must start with &)
 					print '<td align="right">';
 					if ($useinecm)     print '<a href="'.DOL_URL_ROOT.'/ecm/docfile.php?urlfile='.urlencode($file['name']).$param.'" class="editfilelink" rel="'.urlencode($file['name']).'">'.img_view().'</a> &nbsp; ';
+					else
+					{
+						if (image_format_supported($file['name']) > 0)
+						{
+							$permtoedit=0;
+							$newmodulepart=$modulepart;
+							if ($modulepart == 'product' || $modulepart == 'produit' || $modulepart == 'service')
+							{
+								if ($user->rights->produit->creer && $object->type == Product::TYPE_PRODUCT) $permtoedit=1;
+								if ($user->rights->service->creer && $object->type == Product::TYPE_SERVICE) $permtoedit=1;
+								$newmodulepart='produit|service';
+							}
+							/* TODO Not yet working
+							if ($modulepart == 'holiday')
+							{
+								if ($user->rights->holiday->write_all) $permtoedit=1;
+							}
+							*/
+
+							if (empty($conf->global->MAIN_UPLOAD_DOC)) $permtoedit=0;
+
+							if ($permtoedit)
+							{
+   								// Link to resize
+   			               		print '<a href="'.DOL_URL_ROOT.'/core/photos_resize.php?modulepart='.urlencode($newmodulepart).'&id='.$object->id.'&file='.urlencode($relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension'])).'" title="'.dol_escape_htmltag($langs->trans("Resize")).'">'.img_picto($langs->trans("Resize"),DOL_URL_ROOT.'/theme/common/transform-crop-and-resize','',1).'</a> &nbsp; ';
+							}
+						}
+					}
 					if ($permtodelete)
 					{
 						/*

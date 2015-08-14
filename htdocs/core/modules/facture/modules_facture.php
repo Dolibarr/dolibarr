@@ -43,7 +43,7 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 	 *  Return list of active generation modules
 	 *
      *  @param	DoliDB	$db     			Database handler
-     *  @param  string	$maxfilenamelength  Max length of value to show
+     *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
 	 */
 	static function liste_modeles($db,$maxfilenamelength=0)
@@ -148,7 +148,7 @@ abstract class ModeleNumRefFactures
  *  Create a document onto disk according to template module.
  *
  *	@param	DoliDB		$db  			Database handler
- *	@param  Object		$object			Object invoice
+ *	@param  Facture		$object			Object invoice
  *	@param	string		$modele			Force template to use ('' to not force)
  *	@param	Translate	$outputlangs	objet lang a utiliser pour traduction
  *  @param  int			$hidedetails    Hide details of lines
@@ -156,9 +156,12 @@ abstract class ModeleNumRefFactures
  *  @param  int			$hideref        Hide ref
  *	@return int        					<0 if KO, >0 if OK
  * @deprecated Use the new function generateDocument of Facture class
+ * @see Facture::generateDocument()
  */
 function facture_pdf_create(DoliDB $db, Facture $object, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
 {
+	dol_syslog(__METHOD__ . " is deprecated", LOG_WARNING);
+
 	return $object->generateDocument($modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 }
 

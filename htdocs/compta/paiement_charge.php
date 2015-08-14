@@ -176,9 +176,11 @@ if ($_GET["action"] == 'create')
 	print '<input type="hidden" name="chid" value="'.$chid.'">';
 	print '<input type="hidden" name="action" value="add_payment">';
 
+	dol_fiche_head('', '');
+
 	print '<table cellspacing="0" class="border" width="100%" cellpadding="2">';
 
-	print "<tr class=\"liste_titre\"><td colspan=\"3\">".$langs->trans('Charge')."</td>";
+	print "<tr class=\"liste_titre\"><td colspan=\"3\">".$langs->trans("SocialContribution")."</td>";
 
 	print '<tr><td>'.$langs->trans("Ref").'</td><td colspan="2"><a href="'.DOL_URL_ROOT.'/compta/sociales/charges.php?id='.$chid.'">'.$chid.'</a></td></tr>';
 	print '<tr><td>'.$langs->trans("Type")."</td><td colspan=\"2\">".$charge->type_libelle."</td></tr>\n";
@@ -235,7 +237,7 @@ if ($_GET["action"] == 'create')
 
 	print '</table>';
 
-	print '<br>';
+	dol_fiche_end();
 
 	/*
  	 * Autres charges impayees
@@ -312,13 +314,11 @@ if ($_GET["action"] == 'create')
 
 	print "</table>";
 
-	print '<br><center>';
-
+	print '<br><div class="center">';
 	print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
-	print '&nbsp; &nbsp;';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-
-	print '</center>';
+	print '</div>';
 
 	print "</form>\n";
 }

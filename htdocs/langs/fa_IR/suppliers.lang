@@ -42,5 +42,5 @@ SentToSuppliers=ارسال شده به تامین کنندگان
 ListOfSupplierOrders=List of supplier orders
 MenuOrdersSupplierToBill=Supplier orders to invoice
 NbDaysToDelivery=Delivery delay in days
-DescNbDaysToDelivery=The biggest delay is display among order product list
-UseDoubleApproval=Use double approval (the second approval can be done by any user with the dedicated permission)
+DescNbDaysToDelivery=The biggest deliver delay of the products from this order
+UseDoubleApproval=Use double approval when amount (without tax) is higher than (The second approval can be done by any user with the dedicated permission. Set to 0 for no double approval)

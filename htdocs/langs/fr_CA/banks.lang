@@ -1,2 +1,3 @@
 # Dolibarr language file - Source file is en_US - banks
-InputReceiptNumber=Choose the bank statement related with the conciliation. Use a sortable numeric value: YYYYMM or YYYYMMDD
+OnlyOpenedAccount=Uniquement comptes ouverts
+SocialContributionPayment=Règlement charge sociale

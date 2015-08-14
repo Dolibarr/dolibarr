@@ -1,5 +1,12 @@
 # Dolibarr language file - en_US - Accounting Expert
 CHARSET=UTF-8
+ACCOUNTING_EXPORT_SEPARATORCSV=Column separator for export file
+ACCOUNTING_EXPORT_DATE=Date format for export file
+ACCOUNTING_EXPORT_PIECE=Export the number of piece ?
+ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account ?
+ACCOUNTING_EXPORT_LABEL=Export the label ?
+ACCOUNTING_EXPORT_AMOUNT=Export the amount ?
+ACCOUNTING_EXPORT_DEVISE=Export the devise ?
 
 Accounting=Contabilista
 Globalparameters=Parâmetros Globais
@@ -13,9 +20,9 @@ ConfigAccountingExpert=A configuração do módulo especialista em contabilidade
 Journaux=Diarios
 JournalFinancial=Diarios financeiros
 Exports=Exportados
-Export=Export
+Export=Exportar
 Modelcsv=Modelo de exportação
-OptionsDeactivatedForThisExportModel=For this export model, options are deactivated
+OptionsDeactivatedForThisExportModel=Para este modelo de esportação, as opções estão desativadas
 Selectmodelcsv=Selecione um modelo de exportação
 Modelcsv_normal=Exportação classica
 Modelcsv_CEGID=Exportação em direção Especialista CEGID 
@@ -41,6 +48,7 @@ NewAccount=Nova Conta Contabilistica
 Update=Atualizar
 List=Lista
 Create=Criar
+CreateMvts=Create movement
 UpdateAccount=Modificação de conta contabilistica
 UpdateMvts=modificação de movimento
 WriteBookKeeping= Gravar conta em contabilidade geral
@@ -68,7 +76,7 @@ Lineofinvoice=Linha de fatura
 VentilatedinAccount=Limpo com succeso na conta de contabilidade
 NotVentilatedinAccount=Por limpar na conta de contabilidade
 
-ACCOUNTING_SEPARATORCSV=Column separator in export file
+ACCOUNTING_SEPARATORCSV=Separador de coluna no ficheiro a exportar
 
 ACCOUNTING_LIMIT_LIST_VENTILATION=Número de elementos a ser mostrado por página (máxima recomendada: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Comece a classificação das páginas repartição "Tem que repartir" pelos elementos mais recentes
@@ -76,14 +84,15 @@ ACCOUNTING_LIST_SORT_VENTILATION_DONE=Comece a triagem das páginas repartidas "
 
 AccountLength=Comprimento das contas de contabilidade mostradas em Dolibarr
 AccountLengthDesc=Função que permite simular um comprimento de conta contábil, substituindo espaços pela figura zero. Esta função só toca a tela, ele não modifica as contas contábeis registradas no Dolibarr. Para a exportação, esta função é necessária para ser compatível com determinado software.
+ACCOUNTING_LENGTH_DESCRIPTION=Length for displaying product & services description in listings (Best = 50)
+ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Length for displaying product & services account description form in listings (Best = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Comprimento de conta geral
 ACCOUNTING_LENGTH_AACCOUNT=Comprimento de conta de terceiros
 
 ACCOUNTING_SELL_JOURNAL=Diário de vendas
 ACCOUNTING_PURCHASE_JOURNAL=Diário de compras
-ACCOUNTING_BANK_JOURNAL=diário de bancos
-ACCOUNTING_CASH_JOURNAL=diário de caixa
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Diário de diversos
+ACCOUNTING_EXPENSEREPORT_JOURNAL=Expense report journal
 ACCOUNTING_SOCIAL_JOURNAL=Diário social
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Conta de transferencia 

@@ -1,0 +1,7 @@
+Module62000Name=Incoterm
+Module62000Desc=Aggiunge funzioni per la gestione Incoterm
+IncotermLabel=Import-Export
+IncotermSetupTitle1=Caratteristica
+IncotermSetupTitle2=Stato
+IncotermSetup=Impostazioni del modulo Import-Export
+IncotermFunctionDesc=Attiva la modalità Incoterm (Soggetto terzo, proposta, ordine cliente, fattura attiva, spedizione, ordine fornitore)

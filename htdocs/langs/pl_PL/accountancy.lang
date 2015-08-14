@@ -1,5 +1,12 @@
 # Dolibarr language file - en_US - Accounting Expert
 CHARSET=UTF-8
+ACCOUNTING_EXPORT_SEPARATORCSV=Column separator for export file
+ACCOUNTING_EXPORT_DATE=Date format for export file
+ACCOUNTING_EXPORT_PIECE=Export the number of piece ?
+ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account ?
+ACCOUNTING_EXPORT_LABEL=Export the label ?
+ACCOUNTING_EXPORT_AMOUNT=Export the amount ?
+ACCOUNTING_EXPORT_DEVISE=Export the devise ?
 
 Accounting=Księgowość
 Globalparameters=Parametry globalne
@@ -41,6 +48,7 @@ NewAccount=Nowe konto księgowe
 Update=Aktualizacja
 List=Lista
 Create=Utworzyć
+CreateMvts=Create movement
 UpdateAccount=Modyfikacja konta księgowego
 UpdateMvts=Modyfikacja ruch
 WriteBookKeeping=Konta rekord w księdze głównej
@@ -76,14 +84,15 @@ ACCOUNTING_LIST_SORT_VENTILATION_DONE=Rozpocznij sortowanie stron rozpadu "Break
 
 AccountLength=Długość rozliczania rachunków przedstawiono w Dolibarr
 AccountLengthDesc=Funkcja pozwala udawać długość koncie księgowym zastępując obowiązuje przez cyfrę zero. Funkcja ta dotyka tylko wyświetlacz, to nie zmienia kont księgowych zarejestrowanych w Dolibarr. Na wywóz, funkcja ta jest konieczna, aby być zgodne z określonym oprogramowaniem.
+ACCOUNTING_LENGTH_DESCRIPTION=Length for displaying product & services description in listings (Best = 50)
+ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Length for displaying product & services account description form in listings (Best = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Długość ogólnych rachunków
 ACCOUNTING_LENGTH_AACCOUNT=Długość z rachunków osób trzecich
 
 ACCOUNTING_SELL_JOURNAL=Sprzedam czasopisma
 ACCOUNTING_PURCHASE_JOURNAL=Zakup czasopisma
-ACCOUNTING_BANK_JOURNAL=Czasopismo Banku
-ACCOUNTING_CASH_JOURNAL=Czasopismo Gotówka
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Inne czasopisma
+ACCOUNTING_EXPENSEREPORT_JOURNAL=Expense report journal
 ACCOUNTING_SOCIAL_JOURNAL=Czasopismo Społecznego
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Konto transferu

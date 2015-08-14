@@ -4,6 +4,7 @@
  * Copyright (C) 2009-2014	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2012		Christophe Battarel		<christophe.battarel@altairis.fr>
+ * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +28,7 @@
 
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 
 
 /**
@@ -40,7 +42,12 @@ class ProductFournisseur extends Product
     var $product_fourn_price_id;  // id of ligne product-supplier
 
     var $id;                      // product id
-    var $fourn_ref;               // deprecated
+	/**
+	 * @deprecated
+	 * @see ref_supplier
+	 */
+    var $fourn_ref;
+    var $delivery_time_days;
     var $ref_supplier;			  // ref supplier (can be set by get_buyprice)
     var $vatrate_supplier;		  // default vat rate for this supplier/qty/product (can be set by get_buyprice)
 
@@ -54,6 +61,8 @@ class ProductFournisseur extends Product
     var $fk_availability;         // availability delay
     var $fourn_unitprice;
     var $fourn_tva_npr;
+
+    var $fk_supplier_price_expression;
 
 
     /**
@@ -150,9 +159,10 @@ class ProductFournisseur extends Product
 	 *    @param  	float		$remise_percent		Discount  regarding qty (percent)
 	 *    @param  	float		$remise				Discount  regarding qty (amount)
 	 *    @param  	int			$newnpr				Set NPR or not
+	 *    @param	int			$delivery_time_days	Delay in days for delivery (max). May be '' if not defined.
      *    @return	int								<0 if KO, >=0 if OK
      */
-    function update_buyprice($qty, $buyprice, $user, $price_base_type, $fourn, $availability, $ref_fourn, $tva_tx, $charges=0, $remise_percent=0, $remise=0, $newnpr=0)
+    function update_buyprice($qty, $buyprice, $user, $price_base_type, $fourn, $availability, $ref_fourn, $tva_tx, $charges=0, $remise_percent=0, $remise=0, $newnpr=0, $delivery_time_days=0)
     {
         global $conf, $langs;
         //global $mysoc;
@@ -163,6 +173,7 @@ class ProductFournisseur extends Product
         if (empty($charges)) $charges=0;
         if (empty($availability)) $availability=0;
         if (empty($remise_percent)) $remise_percent=0;
+        if ($delivery_time_days != '' && ! is_numeric($delivery_time_days)) $delivery_time_days = '';
         if ($price_base_type == 'TTC')
 		{
 			//$ttx = get_default_tva($fourn,$mysoc,$this->id);	// We must use the VAT rate defined by user and not calculate it
@@ -196,7 +207,8 @@ class ProductFournisseur extends Product
 			$sql.= " fk_availability = ".$availability.",";
 			$sql.= " entity = ".$conf->entity.",";
 			$sql.= " info_bits = ".$newnpr.",";
-			$sql.= " charges = ".$charges;
+			$sql.= " charges = ".$charges.",";
+			$sql.= " delivery_time_days = ".($delivery_time_days != '' ? $delivery_time_days : 'null');
 			$sql.= " WHERE rowid = ".$this->product_fourn_price_id;
 			// TODO Add price_base_type and price_ttc
 
@@ -239,7 +251,7 @@ class ProductFournisseur extends Product
 		  		{
 		            // Add price for this quantity to supplier
 		            $sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur_price(";
-		            $sql.= "datec, fk_product, fk_soc, ref_fourn, fk_user, price, quantity, remise_percent, remise, unitprice, tva_tx, charges, unitcharges, fk_availability, info_bits, entity)";
+		            $sql.= "datec, fk_product, fk_soc, ref_fourn, fk_user, price, quantity, remise_percent, remise, unitprice, tva_tx, charges, unitcharges, fk_availability, info_bits, entity, delivery_time_days)";
 		            $sql.= " values('".$this->db->idate($now)."',";
 		            $sql.= " ".$this->id.",";
 		            $sql.= " ".$fourn->id.",";
@@ -255,7 +267,8 @@ class ProductFournisseur extends Product
 		            $sql.= " ".$unitCharges.",";
 		            $sql.= " ".$availability.",";
 		            $sql.= " ".$newnpr.",";
-		            $sql.= $conf->entity;
+		            $sql.= $conf->entity.",";
+		            $sql.= $delivery_time_days;
 		            $sql.=")";
 
 		            dol_syslog(get_class($this)."::update_buyprice", LOG_DEBUG);
@@ -321,13 +334,14 @@ class ProductFournisseur extends Product
     /**
      *    Loads the price information of a provider
      *
-     *    @param	int		$rowid	        Line id
-     *    @return   int 					< 0 if KO, 0 if OK but not found, > 0 if OK
+     *    @param    int     $rowid              Line id
+     *    @param    int     $ignore_expression  Ignores the math expression for calculating price and uses the db value instead
+     *    @return   int 					    < 0 if KO, 0 if OK but not found, > 0 if OK
      */
-    function fetch_product_fournisseur_price($rowid)
+    function fetch_product_fournisseur_price($rowid, $ignore_expression = 0)
     {
         $sql = "SELECT pfp.rowid, pfp.price, pfp.quantity, pfp.unitprice, pfp.remise_percent, pfp.remise, pfp.tva_tx, pfp.fk_availability,";
-        $sql.= " pfp.fk_soc, pfp.ref_fourn, pfp.fk_product, pfp.charges, pfp.unitcharges"; // , pfp.recuperableonly as fourn_tva_npr";  FIXME this field not exist in llx_product_fournisseur_price
+        $sql.= " pfp.fk_soc, pfp.ref_fourn, pfp.fk_product, pfp.charges, pfp.unitcharges, pfp.fk_supplier_price_expression, pfp.delivery_time_days"; // , pfp.recuperableonly as fourn_tva_npr";  FIXME this field not exist in llx_product_fournisseur_price
         $sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
         $sql.= " WHERE pfp.rowid = ".$rowid;
 
@@ -339,7 +353,8 @@ class ProductFournisseur extends Product
             if ($obj)
             {
             	$this->product_fourn_price_id	= $rowid;
-            	$this->fourn_ref				= $obj->ref_fourn;
+            	$this->fourn_ref				= $obj->ref_fourn; // deprecated
+	            $this->ref_supplier             = $obj->ref_fourn;
             	$this->fourn_price				= $obj->price;
             	$this->fourn_charges            = $obj->charges;
             	$this->fourn_qty                = $obj->quantity;
@@ -347,11 +362,31 @@ class ProductFournisseur extends Product
             	$this->fourn_remise             = $obj->remise;
             	$this->fourn_unitprice          = $obj->unitprice;
             	$this->fourn_unitcharges        = $obj->unitcharges;
-            	$this->tva_tx					= $obj->tva_tx;
+            	$this->fourn_tva_tx					= $obj->tva_tx;
             	$this->product_id				= $obj->fk_product;	// deprecated
             	$this->fk_product				= $obj->fk_product;
             	$this->fk_availability			= $obj->fk_availability;
-            	//$this->fourn_tva_npr			= $obj->fourn_tva_npr; // FIXME this field not exist in llx_product_fournisseur_price
+				$this->delivery_time_days		= $obj->delivery_time_days;
+            	//$this->fourn_tva_npr			= $obj->fourn_tva_npr; // TODO this field not exist in llx_product_fournisseur_price. We should add it ?
+                $this->fk_supplier_price_expression      = $obj->fk_supplier_price_expression;
+
+                if (empty($ignore_expression) && !empty($this->fk_supplier_price_expression)) {
+                    $priceparser = new PriceParser($this->db);
+                    $price_result = $priceparser->parseProductSupplier($this->fk_product, $this->fk_supplier_price_expression, $this->fourn_qty, $this->fourn_tva_tx);
+                    if ($price_result >= 0) {
+                    	$this->fourn_price = $price_result;
+                    	//recalculation of unitprice, as probably the price changed...
+	                    if ($this->fourn_qty!=0)
+	                    {
+	                        $this->fourn_unitprice = price2num($this->fourn_price/$this->fourn_qty,'MU');
+	                    }
+	                    else
+	                    {
+	                        $this->fourn_unitprice="";
+	                    }
+                    }
+                }
+
             	return 1;
             }
             else
@@ -380,8 +415,8 @@ class ProductFournisseur extends Product
         global $conf;
 
         $sql = "SELECT s.nom as supplier_name, s.rowid as fourn_id,";
-        $sql.= " pfp.rowid as product_fourn_pri_id, pfp.ref_fourn, pfp.fk_product as product_fourn_id,";
-        $sql.= " pfp.price, pfp.quantity, pfp.unitprice, pfp.remise_percent, pfp.remise, pfp.tva_tx, pfp.fk_availability, pfp.charges, pfp.unitcharges, pfp.info_bits";
+        $sql.= " pfp.rowid as product_fourn_pri_id, pfp.ref_fourn, pfp.fk_product as product_fourn_id, pfp.fk_supplier_price_expression,";
+        $sql.= " pfp.price, pfp.quantity, pfp.unitprice, pfp.remise_percent, pfp.remise, pfp.tva_tx, pfp.fk_availability, pfp.charges, pfp.unitcharges, pfp.info_bits, pfp.delivery_time_days";
         $sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
         $sql.= ", ".MAIN_DB_PREFIX."societe as s";
         $sql.= " WHERE pfp.entity IN (".getEntity('product', 1).")";
@@ -409,14 +444,25 @@ class ProductFournisseur extends Product
 				$prodfourn->fourn_remise_percent	= $record["remise_percent"];
 				$prodfourn->fourn_remise			= $record["remise"];
                 $prodfourn->fourn_unitprice			= $record["unitprice"];
-								$prodfourn->fourn_charges          = $record["charges"];
-								$prodfourn->fourn_unitcharges      = $record["unitcharges"];
+				$prodfourn->fourn_charges           = $record["charges"];
+				$prodfourn->fourn_unitcharges       = $record["unitcharges"];
                 $prodfourn->fourn_tva_tx			= $record["tva_tx"];
                 $prodfourn->fourn_id				= $record["fourn_id"];
                 $prodfourn->fourn_name				= $record["supplier_name"];
                 $prodfourn->fk_availability			= $record["fk_availability"];
+				$prodfourn->delivery_time_days		= $record["delivery_time_days"];
                 $prodfourn->id						= $prodid;
-                $prodfourn->fourn_tva_npr						= $record["info_bits"];
+                $prodfourn->fourn_tva_npr					= $record["info_bits"];
+                $prodfourn->fk_supplier_price_expression    = $record["fk_supplier_price_expression"];
+
+                if (!empty($prodfourn->fk_supplier_price_expression)) {
+                    $priceparser = new PriceParser($this->db);
+                    $price_result = $priceparser->parseProductSupplier($prodid, $prodfourn->fk_supplier_price_expression, $prodfourn->fourn_qty, $prodfourn->fourn_tva_tx);
+                    if ($price_result >= 0) {
+                    	$prodfourn->fourn_price = $price_result;
+                    	$prodfourn->fourn_unitprice = null; //force recalculation of unitprice, as probably the price changed...
+                    }
+                }
 
                 if (!isset($prodfourn->fourn_unitprice))
                 {
@@ -444,7 +490,7 @@ class ProductFournisseur extends Product
     }
 
     /**
-     * 	Load properties for minimum price
+     *  Load properties for minimum price
      *
      *  @param	int		$prodid	    Product id
      *  @param	int		$qty		Minimum quantity
@@ -465,44 +511,86 @@ class ProductFournisseur extends Product
         $this->fourn_ref              = '';
         $this->fourn_price            = '';
         $this->fourn_qty              = '';
-		$this->fourn_remise_percent   = '';
-		$this->fourn_remise           = '';
+        $this->fourn_remise_percent   = '';
+        $this->fourn_remise           = '';
         $this->fourn_unitprice        = '';
-        $this->fourn_id			      = '';
-        $this->fourn_name			  = '';
-        $this->id					  = '';
+        $this->fourn_id               = '';
+        $this->fourn_name             = '';
+		$this->delivery_time_days  = '';
+        $this->id                     = '';
 
         $sql = "SELECT s.nom as supplier_name, s.rowid as fourn_id,";
         $sql.= " pfp.rowid as product_fourn_price_id, pfp.ref_fourn,";
         $sql.= " pfp.price, pfp.quantity, pfp.unitprice, pfp.tva_tx, pfp.charges, pfp.unitcharges, ";
-        $sql.= " pfp.remise, pfp.remise_percent";
+        $sql.= " pfp.remise, pfp.remise_percent, pfp.fk_supplier_price_expression, pfp.delivery_time_days";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
         $sql.= " WHERE s.entity IN (".getEntity('societe', 1).")";
         $sql.= " AND pfp.fk_product = ".$prodid;
         $sql.= " AND pfp.fk_soc = s.rowid";
         if ($qty > 0) $sql.= " AND pfp.quantity <= ".$qty;
-        $sql.= " ORDER BY pfp.unitprice";
-        $sql.= $this->db->plimit(1);
 
         dol_syslog(get_class($this)."::find_min_price_product_fournisseur", LOG_DEBUG);
 
         $resql = $this->db->query($sql);
         if ($resql)
         {
-            $record = $this->db->fetch_array($resql);
-            $this->product_fourn_price_id	= $record["product_fourn_price_id"];
-            $this->fourn_ref				= $record["ref_fourn"];
-            $this->fourn_price				= $record["price"];
-            $this->fourn_qty				= $record["quantity"];
-            $this->fourn_remise_percent		= $record["remise_percent"];
-            $this->fourn_remise				= $record["remise"];
-            $this->fourn_unitprice			= $record["unitprice"];
-            $this->fourn_charges			= $record["charges"];
-            $this->fourn_unitcharges		= $record["unitcharges"];
-            $this->fourn_tva_tx				= $record["tva_tx"];
-            $this->fourn_id					= $record["fourn_id"];
-            $this->fourn_name				= $record["supplier_name"];
-            $this->id						= $prodid;
+            $record_array = array();
+
+            //Store each record to array for later search of min
+            while ($record = $this->db->fetch_array($resql))
+            {
+                $record_array[]=$record;
+            }
+
+            if (count($record_array) == 0)
+            {
+                $this->db->free($resql);
+                return 0;
+            }
+            else
+            {
+                $min = -1;
+                foreach($record_array as $record)
+                {
+                    $fourn_price = $record["price"];
+                    $fourn_unitprice = $record["unitprice"];
+                    if (!empty($record["fk_supplier_price_expression"])) {
+                        $priceparser = new PriceParser($this->db);
+                        $price_result = $priceparser->parseProductSupplier($prodid, $record["fk_supplier_price_expression"], $record["quantity"], $record["tva_tx"]);
+                        if ($price_result >= 0) {
+                            $fourn_price = price2num($price_result,'MU');
+                            if ($record["quantity"] != 0)
+                            {
+                                $fourn_unitprice = price2num($fourn_price/$record["quantity"],'MU');
+                            }
+                            else
+                            {
+                                $fourn_unitprice = $fourn_price;
+                            }
+                        }
+                    }
+                    if ($fourn_unitprice < $min || $min == -1)
+                    {
+                        $this->product_fourn_price_id   = $record["product_fourn_price_id"];
+                        $this->fourn_ref                = $record["ref_fourn"];
+                        $this->fourn_price              = $fourn_price;
+                        $this->fourn_qty                = $record["quantity"];
+                        $this->fourn_remise_percent     = $record["remise_percent"];
+                        $this->fourn_remise             = $record["remise"];
+                        $this->fourn_unitprice          = $fourn_unitprice;
+                        $this->fourn_charges            = $record["charges"];
+                        $this->fourn_unitcharges        = $record["unitcharges"];
+                        $this->fourn_tva_tx             = $record["tva_tx"];
+                        $this->fourn_id                 = $record["fourn_id"];
+                        $this->fourn_name               = $record["supplier_name"];
+						$this->delivery_time_days		= $record["delivery_time_days"];
+                        $this->fk_supplier_price_expression      = $record["fk_supplier_price_expression"];
+                        $this->id                       = $prodid;
+                        $min = $this->fourn_unitprice;
+                    }
+                }
+            }
+
             $this->db->free($resql);
             return 1;
         }
@@ -514,19 +602,55 @@ class ProductFournisseur extends Product
     }
 
     /**
+     *  Sets the supplier price expression
+     *
+     *  @param  int     $expression_id	Expression
+     *  @return int                 	<0 if KO, >0 if OK
+     */
+    function setSupplierPriceExpression($expression_id)
+    {
+        global $conf;
+
+        // Clean parameters
+        $this->db->begin();
+        $expression_id = $expression_id != 0 ? $expression_id : 'NULL';
+
+        $sql = "UPDATE ".MAIN_DB_PREFIX."product_fournisseur_price";
+        $sql.= " SET fk_supplier_price_expression = ".$expression_id;
+        $sql.= " WHERE rowid = ".$this->product_fourn_price_id;
+
+        dol_syslog(get_class($this)."::setSupplierPriceExpression", LOG_DEBUG);
+
+        $resql = $this->db->query($sql);
+        if ($resql)
+        {
+            $this->db->commit();
+            return 1;
+        }
+        else
+        {
+            $this->error=$this->db->error()." sql=".$sql;
+            $this->db->rollback();
+            return -1;
+        }
+    }
+
+    /**
      *	Display supplier of product
      *
-     *	@param	int		$withpicto	Add picto
-     *	@param	string	$option		Target of link ('', 'customer', 'prospect', 'supplier')
-     *	@return	string				String with supplier price
+     *	@param	int		$withpicto		Add picto
+     *	@param	string	$option			Target of link ('', 'customer', 'prospect', 'supplier')
+     *	@param	int		$maxlen			Max length of name
+     *  @param	integer	$notooltip		1=Disable tooltip
+     *	@return	string					String with supplier price
 	 *  TODO Remove this method. Use getNomUrl directly.
      */
-    function getSocNomUrl($withpicto=0,$option='supplier')
+    function getSocNomUrl($withpicto=0,$option='supplier',$maxlen=0,$notooltip=0)
     {
-        $cust = new Fournisseur($this->db);
-        $cust->fetch($this->fourn_id);
+        $thirdparty = new Fournisseur($this->db);
+        $thirdparty->fetch($this->fourn_id);
 
-        return $cust->getNomUrl($withpicto,$option);
+        return $thirdparty->getNomUrl($withpicto,$option,$maxlen,$notooltip);
     }
 
     /**
@@ -534,15 +658,34 @@ class ProductFournisseur extends Product
      *
      *  @param	int		$showunitprice	Show "Unit price" into output string
      *  @param	int		$showsuptitle	Show "Supplier" into output string
+     *	@param	int		$maxlen			Max length of name
+     *  @param	integer	$notooltip		1=Disable tooltip
      *	@return	string					String with supplier price
      */
-    function display_price_product_fournisseur($showunitprice=1,$showsuptitle=1)
+    function display_price_product_fournisseur($showunitprice=1,$showsuptitle=1,$maxlen=0,$notooltip=0)
     {
         global $langs;
         $langs->load("suppliers");
-        $out=($showunitprice?price($this->fourn_unitprice).' '.$langs->trans("HT").' &nbsp; (':'').($showsuptitle?$langs->trans("Supplier").': ':'').$this->getSocNomUrl(1).' / '.$langs->trans("SupplierRef").': '.$this->fourn_ref.($showunitprice?')':'');
+        $out=($showunitprice?price($this->fourn_unitprice).' '.$langs->trans("HT").' &nbsp; (':'').($showsuptitle?$langs->trans("Supplier").': ':'').$this->getSocNomUrl(1, 'supplier', $maxlen, $notooltip).' / '.$langs->trans("SupplierRef").': '.$this->fourn_ref.($showunitprice?')':'');
         return $out;
     }
+
+	/**
+	 * Function used to replace a thirdparty id with another one.
+	 *
+	 * @param DoliDB $db Database handler
+	 * @param int $origin_id Old thirdparty id
+	 * @param int $dest_id New thirdparty id
+	 * @return bool
+	 */
+	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	{
+		$tables = array(
+			'product_fournisseur_price'
+		);
+
+		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+	}
 
 }
 

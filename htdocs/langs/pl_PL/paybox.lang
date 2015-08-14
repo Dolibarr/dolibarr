@@ -12,7 +12,6 @@ Creditor=Wierzyciel
 PaymentCode=Kod płatności
 PayBoxDoPayment=Przejdź do płatności
 YouWillBeRedirectedOnPayBox=Zostaniesz przekierowany na zabezpieczoną stronę Paybox bys mógł podać informację z karty kredytowej.
-PleaseBePatient=Proszę, bądź cierpliwy
 Continue=Dalej
 ToOfferALinkForOnlinePayment=URL %s płatności
 ToOfferALinkForOnlinePaymentOnOrder=URL zaoferowania %s płatności online interfejsu użytkownika za zamówienie

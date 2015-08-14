@@ -19,7 +19,7 @@
  */
 
 /**
- *	    \file       htdocs/dev/generate-facture.php
+ *      \file       dev/intdata/generate-facture.php
  *		\brief      Script de generation de donnees aleatoires pour les factures
  */
 

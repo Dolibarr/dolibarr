@@ -37,7 +37,7 @@ class DoliDBSqlite extends DoliDB
     const LABEL='PDO Sqlite';
     //! Version min database
     const VERSIONMIN='3.0.0';
-	//! Resultset of last query
+	/** @var PDOStatement Resultset of last query */
 	private $_results;
 
     /**
@@ -54,7 +54,7 @@ class DoliDBSqlite extends DoliDB
      */
     function __construct($type, $host, $user, $pass, $name='', $port=0)
     {
-        global $conf,$langs;
+        global $conf;
 
         // Note that having "static" property for "$forcecharset" and "$forcecollate" will make error here in strict mode, so they are not static
         if (! empty($conf->db->character_set)) $this->forcecharset=$conf->db->character_set;
@@ -70,8 +70,8 @@ class DoliDBSqlite extends DoliDB
 
         /*if (! function_exists("sqlite_query"))
         {
-            $this->connected = 0;
-            $this->ok = 0;
+            $this->connected = false;
+            $this->ok = false;
             $this->error="Sqlite PHP functions for using Sqlite driver are not available in this version of PHP. Try to use another driver.";
             dol_syslog(get_class($this)."::DoliDBSqlite : Sqlite PHP functions for using Sqlite driver are not available in this version of PHP. Try to use another driver.",LOG_ERR);
             return $this->ok;
@@ -79,8 +79,8 @@ class DoliDBSqlite extends DoliDB
 
         /*if (! $host)
         {
-            $this->connected = 0;
-            $this->ok = 0;
+            $this->connected = false;
+            $this->ok = false;
             $this->error=$langs->trans("ErrorWrongHostParameter");
             dol_syslog(get_class($this)."::DoliDBSqlite : Erreur Connect, wrong host parameters",LOG_ERR);
             return $this->ok;
@@ -92,9 +92,9 @@ class DoliDBSqlite extends DoliDB
 
         if ($this->db)
         {
-            $this->connected = 1;
-            $this->ok = 1;
-            $this->database_selected = 1;
+            $this->connected = true;
+            $this->ok = true;
+            $this->database_selected = true;
             $this->database_name = $name;
 
             $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -102,15 +102,15 @@ class DoliDBSqlite extends DoliDB
         else
         {
             // host, login ou password incorrect
-            $this->connected = 0;
-            $this->ok = 0;
-            $this->database_selected = 0;
+            $this->connected = false;
+            $this->ok = false;
+            $this->database_selected = false;
             $this->database_name = '';
             //$this->error=sqlite_connect_error();
             dol_syslog(get_class($this)."::DoliDBSqlite : Erreur Connect ".$this->error,LOG_ERR);
         }
 
-        return $this->ok;
+        return (int) $this->ok;
     }
 
 
@@ -285,6 +285,7 @@ class DoliDBSqlite extends DoliDB
     function select_db($database)
     {
         dol_syslog(get_class($this)."::select_db database=".$database, LOG_DEBUG);
+	    // FIXME: sqlite_select_db() does not exist
         return sqlite_select_db($this->db,$database);
     }
 
@@ -296,13 +297,13 @@ class DoliDBSqlite extends DoliDB
 	 *	@param	    string	$login		login
 	 *	@param	    string	$passwd		password
 	 *	@param		string	$name		name of database (not used for mysql, used for pgsql)
-	 *	@param		string	$port		Port of database server
-	 *	@return		resource			Database access handler
+	 *	@param		integer	$port		Port of database server
+	 *	@return		PDO			Database access handler
 	 *	@see		close
      */
     function connect($host, $login, $passwd, $name, $port=0)
     {
-        global $conf,$main_data_dir;
+        global $main_data_dir;
 
         dol_syslog(get_class($this)."::connect name=".$name,LOG_DEBUG);
 
@@ -345,17 +346,14 @@ class DoliDBSqlite extends DoliDB
      */
     function getDriverInfo()
     {
-	    // FIXME: Dummy method
-	    // TODO: Implement
-
-    	return '';
+	    return 'sqlite php driver';
     }
 
 
     /**
      *  Close database connexion
      *
-     *  @return     boolean     True if disconnect successfull, false otherwise
+     *  @return     bool     True if disconnect successfull, false otherwise
      *  @see        connect
      */
     function close()
@@ -363,7 +361,7 @@ class DoliDBSqlite extends DoliDB
         if ($this->db)
         {
 	        if ($this->transaction_opened > 0) dol_syslog(get_class($this)."::close Closing a connection with an opened transaction depth=".$this->transaction_opened,LOG_ERR);
-            $this->connected=0;
+            $this->connected=false;
             $this->db=null;    // Clean this->db
             return true;
         }
@@ -377,13 +375,11 @@ class DoliDBSqlite extends DoliDB
      * 	@param	int		$usesavepoint	0=Default mode, 1=Run a savepoint before and a rollbock to savepoint if error (this allow to have some request with errors inside global transactions).
      * 									Note that with Mysql, this parameter is not used as Myssql can already commit a transaction even if one request is in error, without using savepoints.
      *  @param  string	$type           Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
-     *	@return	resource    			Resultset of answer
+     *	@return	PDOStatement			Resultset of answer
      */
     function query($query,$usesavepoint=0,$type='auto')
     {
-        $errmsg='';
-
-        $ret='';
+        $ret=null;
         $query = trim($query);
         $this->error = 0;
 
@@ -432,8 +428,8 @@ class DoliDBSqlite extends DoliDB
     /**
      *	Renvoie la ligne courante (comme un objet) pour le curseur resultset
      *
-     *	@param	Resultset	$resultset  Curseur de la requete voulue
-     *	@return	Object					Object result line or false if KO or end of cursor
+     *	@param	PDOStatement    $resultset  Curseur de la requete voulue
+     *	@return	false|object				Object result line or false if KO or end of cursor
      */
     function fetch_object($resultset)
     {
@@ -446,8 +442,8 @@ class DoliDBSqlite extends DoliDB
     /**
      *	Return datas as an array
      *
-     *	@param	Resultset	$resultset  Resultset of request
-     *	@return	array					Array
+     *	@param	PDOStatement	$resultset  Resultset of request
+     *	@return	false|array					Array or false if KO or end of cursor
      */
     function fetch_array($resultset)
     {
@@ -459,8 +455,8 @@ class DoliDBSqlite extends DoliDB
     /**
      *	Return datas as an array
      *
-     *	@param	Resultset	$resultset  Resultset of request
-     *	@return	array					Array
+     *	@param	PDOStatement	$resultset  Resultset of request
+     *	@return	false|array					Array or false if KO or end of cursor
      */
     function fetch_row($resultset)
     {
@@ -480,7 +476,7 @@ class DoliDBSqlite extends DoliDB
     /**
      *	Return number of lines for result of a SELECT
      *
-     *	@param	Resultset	$resultset  Resulset of requests
+     *	@param	PDOStatement	$resultset  Resulset of requests
      *	@return int		    			Nb of lines
      *	@see    affected_rows
      */
@@ -494,7 +490,7 @@ class DoliDBSqlite extends DoliDB
     /**
      *	Return number of lines for result of a SELECT
      *
-     *	@param	Resultset	$resultset  Resulset of requests
+     *	@param	PDOStatement	$resultset  Resulset of requests
      *	@return int		    			Nb of lines
      *	@see    affected_rows
      */
@@ -511,10 +507,10 @@ class DoliDBSqlite extends DoliDB
 	/**
 	 *	Free last resultset used.
 	 *
-	 *	@param  resultset	$resultset   Curseur de la requete voulue
+	 *	@param  PDOStatement	$resultset   Curseur de la requete voulue
 	 *	@return	void
 	 */
-    function free($resultset=0)
+    function free($resultset=null)
     {
         // If resultset not provided, we take the last used by connexion
         if (! is_object($resultset)) { $resultset=$this->_results; }
@@ -629,7 +625,7 @@ class DoliDBSqlite extends DoliDB
      *
      *  @param  string  $fieldorvalue   Field name or value to encrypt
      *  @param	int		$withQuotes     Return string with quotes
-     *  @return return          		XXX(field) or XXX('value') or field or 'value'
+     *  @return string          		XXX(field) or XXX('value') or field or 'value'
      */
     function encrypt($fieldorvalue, $withQuotes=0)
     {
@@ -712,7 +708,7 @@ class DoliDBSqlite extends DoliDB
 	 * 	@param	string	$charset		Charset used to store data
 	 * 	@param	string	$collation		Charset used to sort data
 	 * 	@param	string	$owner			Username of database owner
-	 * 	@return	resource				resource defined if OK, null if KO
+	 * 	@return	PDOStatement			resource defined if OK, null if KO
      */
     function DDLCreateDb($database,$charset='',$collation='',$owner='')
     {
@@ -789,11 +785,13 @@ class DoliDBSqlite extends DoliDB
 	 *	@param	    string	$type 			Type de la table
 	 *	@param	    array	$unique_keys 	Tableau associatifs Nom de champs qui seront clef unique => valeur
 	 *	@param	    array	$fulltext_keys	Tableau des Nom de champs qui seront indexes en fulltext
-	 *	@param	    string	$keys 			Tableau des champs cles noms => valeur
+	 *	@param	    array	$keys 			Tableau des champs cles noms => valeur
 	 *	@return	    int						<0 if KO, >=0 if OK
      */
-    function DDLCreateTable($table,$fields,$primary_key,$type,$unique_keys="",$fulltext_keys="",$keys="")
+    function DDLCreateTable($table,$fields,$primary_key,$type,$unique_keys=null,$fulltext_keys=null,$keys=null)
     {
+	    // FIXME: $fulltext_keys parameter is unused
+
         // cles recherchees dans le tableau des descriptions (fields) : type,value,attribute,null,default,extra
         // ex. : $fields['rowid'] = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
         $sql = "create table ".$table."(";
@@ -823,7 +821,7 @@ class DoliDBSqlite extends DoliDB
         if($primary_key != "")
         $pk = "primary key(".$primary_key.")";
 
-        if($unique_keys != "")
+        if(is_array($unique_keys))
         {
             $i = 0;
             foreach($unique_keys as $key => $value)
@@ -832,7 +830,7 @@ class DoliDBSqlite extends DoliDB
                 $i++;
             }
         }
-        if($keys != "")
+        if(is_array($keys))
         {
             $i = 0;
             foreach($keys as $key => $value)
@@ -844,9 +842,9 @@ class DoliDBSqlite extends DoliDB
         $sql .= implode(',',$sqlfields);
         if($primary_key != "")
         $sql .= ",".$pk;
-        if($unique_keys != "")
+        if(is_array($unique_keys))
         $sql .= ",".implode(',',$sqluq);
-        if($keys != "")
+        if(is_array($keys))
         $sql .= ",".implode(',',$sqlk);
         $sql .=") type=".$type;
 

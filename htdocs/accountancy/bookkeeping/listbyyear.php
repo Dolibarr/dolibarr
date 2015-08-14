@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2014 Alexandre Spangaro	<alexandre.spangaro@gmail.com> 
+ * Copyright (C) 2013-2014 Alexandre Spangaro	<aspangaro.dolibarr@gmail.com> 
  * Copyright (C) 2013-2014 Florian Henry		<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -90,7 +90,7 @@ if ($resql) {
 	print_liste_field_titre($langs->trans("Amount"), $_SERVER['PHP_SELF'], "bk.montant", "", "", "", $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Sens"), $_SERVER['PHP_SELF'], "bk.sens", "", "", "", $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Codejournal"), $_SERVER['PHP_SELF'], "bk.code_journal", "", "", "", $sortfield, $sortorder);
-	print_liste_field_titre("&nbsp;");
+	print_liste_field_titre('');
 	print "</tr>\n";
 	
 	$var = True;

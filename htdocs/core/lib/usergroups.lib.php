@@ -126,7 +126,12 @@ function user_prepare_head($object)
 	return $head;
 }
 
-
+/**
+ * Prepare array with list of tabs
+ *
+ * @param 	Group $object		Object group
+ * @return	array				Array of tabs
+ */
 function group_prepare_head($object)
 {
 	global $langs, $conf, $user;
@@ -249,7 +254,12 @@ function entity_prepare_head($object, $aEntities)
  */
 function show_theme($fuser,$edit=0,$foruserprofile=false)
 {
-    global $conf,$langs,$bc;
+    global $conf,$langs,$db;
+    global $bc;
+
+	require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
+
+    $formother = new FormOther($db);
 
     //$dirthemes=array(empty($conf->global->MAIN_FORCETHEMEDIR)?'/theme':$conf->global->MAIN_FORCETHEMEDIR.'/theme');
     $dirthemes=array('/theme');
@@ -312,7 +322,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
     	print '</tr>';
     }
 
-    $var=!$var;
+    //$var=!$var;
     print '<tr '.$bc[$var].'><td colspan="'.$colspan.'">';
 
     print '<table class="nobordernopadding" width="100%"><tr><td><div align="center">';
@@ -334,8 +344,9 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
     				if (is_dir($dirtheme."/".$subdir) && substr($subdir, 0, 1) <> '.'
     						&& substr($subdir, 0, 3) <> 'CVS' && ! preg_match('/common|phones/i',$subdir))
     				{
-    					// Disable not stable themes
-    					//if ($conf->global->MAIN_FEATURES_LEVEL < 1 && preg_match('/bureau2crea/i',$subdir)) continue;
+    					// Disable not stable themes (dir ends with _exp or _dev)
+    					if ($conf->global->MAIN_FEATURES_LEVEL < 2 && preg_match('/_dev$/i',$subdir)) continue;
+    					if ($conf->global->MAIN_FEATURES_LEVEL < 1 && preg_match('/_exp$/i',$subdir)) continue;
 
     					print '<div class="inline-block" style="margin-top: 10px; margin-bottom: 10px; margin-right: 20px; margin-left: 20px;">';
     					$file=$dirtheme."/".$subdir."/thumb.png";
@@ -366,6 +377,58 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
     print '</div></td></tr></table>';
 
     print '</td></tr>';
+
+	if (! $foruserprofile)
+	{
+	    $var=!$var;
+	    print '<tr '.$bc[$var].'>';
+	    print '<td>'.$langs->trans("HighlightLinesOnMouseHover").'</td>';
+	    $hoverdisabled=(isset($conf->global->THEME_ELDY_USE_HOVER) && $conf->global->THEME_ELDY_USE_HOVER == '0');
+	    print '<td colspan="'.($colspan-1).'"><input '.$bc[$var].' name="check_THEME_ELDY_USE_HOVER"'.($edit?'':' disabled').' type="checkbox" '.($hoverdisabled?"":" checked").'>';
+	    print ' &nbsp; ('.$langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis").')';
+	    print '</td>';
+	    print '</tr>';
+
+	    //if ($conf->theme == 'eldy')
+	    //{
+		    // TopMenuBackgroundColor
+		    $var=!$var;
+		    print '<tr '.$bc[$var].'>';
+		    print '<td>'.$langs->trans("TopMenuBackgroundColor").'</td>';
+		    print '<td colspan="'.($colspan-1).'">';
+		    if ($edit)
+		    {
+				print $formother->selectColor(colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_TOPMENU_BACK1,array()),''),'THEME_ELDY_TOPMENU_BACK1','formcolor',1).' ';
+		    }
+		   	else
+		   	{
+		   		$color = colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_TOPMENU_BACK1,array()),'');
+				if ($color) print '<input type="text" class="colorthumb" disabled style="padding: 1px; margin-top: 0; margin-bottom: 0; width: 36px; background-color: #'.$color.'" value="'.$color.'">';
+				else print $langs->trans("Default");
+		   	}
+	    	print ' &nbsp; ('.$langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis").')';
+		    print '</td>';
+
+		    // BackgroundTableTitleColor
+		    $var=!$var;
+		    print '<tr '.$bc[$var].'>';
+		    print '<td>'.$langs->trans("BackgroundTableTitleColor").'</td>';
+		    print '<td colspan="'.($colspan-1).'">';
+		    if ($edit)
+		    {
+				print $formother->selectColor(colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_BACKTITLE1,array()),''),'THEME_ELDY_BACKTITLE1','formcolor',1).' ';
+		    }
+		   	else
+		   	{
+		   		print $formother->showColor($conf->global->THEME_ELDY_BACKTITLE1, $langs->trans("Default"));
+		   	}
+	    	print ' &nbsp; ('.$langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis").')';
+		    print '</td>';
+	    //}
+
+	    print '</tr>';
+	}
+
     print '</table>';
 }
 

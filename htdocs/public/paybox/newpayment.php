@@ -40,7 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 // Security check
-if (empty($conf->paybox->enabled)) accessforbidden('',1,1,1);
+if (empty($conf->paybox->enabled)) accessforbidden('',0,0,1);
 
 $langs->load("main");
 $langs->load("other");
@@ -166,7 +166,7 @@ if (! empty($conf->global->$paramcreditor)) $creditor=$conf->global->$paramcredi
 else if (! empty($conf->global->PAYBOX_CREDITOR)) $creditor=$conf->global->PAYBOX_CREDITOR;
 
 print '<span id="dolpaymentspan"></span>'."\n";
-print '<center>';
+print '<div class="center">';
 print '<form id="dolpaymentform" name="paymentform" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="dopayment">';
@@ -558,7 +558,7 @@ if (GETPOST("source") == 'contractline' && $valid)
 	$text='<b>'.$langs->trans("PaymentRenewContractId",$contract->ref,$contractline->ref).'</b>';
 	if ($contractline->fk_product)
 	{
-		$text.='<br>'.$product->ref.($product->libelle?' - '.$product->libelle:'');
+		$text.='<br>'.$product->ref.($product->label?' - '.$product->label:'');
 	}
 	if ($contractline->description) $text.='<br>'.dol_htmlentitiesbr($contractline->description);
 	//if ($contractline->date_fin_validite) {
@@ -778,7 +778,7 @@ print '</td></tr>'."\n";
 
 print '</table>'."\n";
 print '</form>'."\n";
-print '</center>'."\n";
+print '</div>'."\n";
 print '<br>';
 
 

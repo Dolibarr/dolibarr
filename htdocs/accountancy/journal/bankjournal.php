@@ -4,7 +4,7 @@
  * Copyright (C) 2011		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2012		Regis Houssin		<regis@dolibarr.fr>
  * Copyright (C) 2013		Christophe Battarel	<christophe.battarel@altairis.fr>
- * Copyright (C) 2013-2015  Alexandre Spangaro	<alexandre.spangaro@gmail.com>
+ * Copyright (C) 2013-2015  Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2013-2014  Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2013-2014  Olivier Geffroy		<jeff@jeffinfo.com>
  *
@@ -36,6 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
@@ -115,6 +116,7 @@ $object = new Account($db);
 $paymentstatic = new Paiement($db);
 $paymentsupplierstatic = new PaiementFourn($db);
 $societestatic = new Societe($db);
+$userstatic = new User($db);
 $chargestatic = new ChargeSociales($db);
 $paymentvatstatic = new TVA($db);
 $paymentsalstatic = new PaymentSalary($db);
@@ -127,8 +129,8 @@ if ($result) {
 	// Variables
 	$cptfour = (! empty($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER) ? $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER : $langs->trans("CodeNotDef"));
 	$cptcli = (! empty($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER) ? $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER : $langs->trans("CodeNotDef"));
-	$cpttva = (! empty($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE) ? $conf->global->ACCOUNTING_ACCOUNT_SUSPENSE : $langs->trans("CodeNotDef"));
 	$accountancy_account_salary = (! empty($conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT) ? $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT : $langs->trans("CodeNotDef"));
+	$accountancy_account_pay_vat = (! empty($conf->global->ACCOUNTING_VAT_PAY_ACCOUNT) ? $conf->global->ACCOUNTING_VAT_PAY_ACCOUNT : $langs->trans("CodeNotDef"));
 
 	$tabpay = array ();
 	$tabbq = array ();
@@ -167,11 +169,13 @@ if ($result) {
 		}
 		$links = $object->get_url($obj->rowid);
 
-
+		// get_url may return -1 which is not traversable
+		if (is_array($links))
+		{
+		
 		foreach ( $links as $key => $val )
 		{
 			$tabtype[$obj->rowid] = $links[$key]['type'];
-
 
 			if ($links[$key]['type'] == 'payment')
 			{
@@ -190,6 +194,13 @@ if ($result) {
 				$societestatic->name = $links[$key]['label'];
 				$tabpay[$obj->rowid]["soclib"] = $societestatic->getNomUrl(1, '', 30);
 				$tabtp[$obj->rowid][$compta_soc] += $obj->amount;
+			}
+			else if ($links[$key]['type'] == 'user')
+			{
+				$userstatic->id = $links[$key]['url_id'];
+				$userstatic->name = $links[$key]['label'];
+				$tabpay[$obj->rowid]["soclib"] = $userstatic->getNomUrl(1, '', 30);
+				// $tabtp[$obj->rowid][$compta_user] += $obj->amount;
 			}
 			else if ($links[$key]['type'] == 'sc')
 			{
@@ -229,8 +240,8 @@ if ($result) {
 			{
 				$paymentvatstatic->id = $links[$key]['url_id'];
 				$paymentvatstatic->ref = $links[$key]['url_id'];
-				$tabpay[$obj->rowid]["lib"] .= ' ' . $paymentvatstatic->getNomUrl(2);
-				$tabtp[$obj->rowid][$cpttva] += $obj->amount;
+				$tabpay[$obj->rowid]["lib"] .= ' ' . $langs->trans("PaymentVat");
+				$tabtp[$obj->rowid][$accountancy_account_pay_vat] += $obj->amount;
 			}
 			else if ($links[$key]['type'] == 'payment_salary')
 			{
@@ -249,11 +260,14 @@ if ($result) {
 				$tabtp [$obj->rowid] [$accountancy_account_salary] += $obj->amount;
 			}*/
 		}
+		
+		}
+		
 		$tabbq[$obj->rowid][$compta_bank] += $obj->amount;
 
 		// if($obj->socid)$tabtp[$obj->rowid][$compta_soc] += $obj->amount;
 
-		$i ++;
+		$i++;
 	}
 } else {
 	dol_print_error($db);
@@ -417,10 +431,9 @@ if ($action == 'export_csv')
 	if ($conf->global->ACCOUNTING_EXPORT_MODELCSV == 2) 	// Model Cegid Expert Export
 	{
 		$sep = ";";
-		
+
 		foreach ( $tabpay as $key => $val ) {
 			$date = dol_print_date($db->jdate($val["date"]), '%d%m%Y');
-
 
 			$companystatic->id = $tabcompany[$key]['id'];
 			$companystatic->name = $tabcompany[$key]['name'];
@@ -502,7 +515,7 @@ if ($action == 'export_csv')
 			// Third party
 			if (is_array ( $tabtp[$key]))
 			{
-				foreach ( $tabtp[$key] as $k => $mt ) 
+				foreach ( $tabtp[$key] as $k => $mt )
 				{
 					if ($mt) {
 						print '"' . $date . '"' . $sep;
@@ -516,7 +529,7 @@ if ($action == 'export_csv')
 				}
 			}
 			else
-			{				
+			{
 				foreach ( $tabbq[$key] as $k => $mt )
 				{
 					if (1)
@@ -549,9 +562,9 @@ else
 	$h=0;
 	$head[$h][0] = $_SERVER["PHP_SELF"].'?id_account='.$id_accountancy_journal;
 	$head[$h][1] = $langs->trans("Report");
-	$head[$h][2] = 'report';
+	$head[$h][2] = 'card';
 
-	dol_fiche_head($head, $hselected);
+	dol_fiche_head($head, 'card', $langs->trans("BankJournal"), 0, 'payment');
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id_account='.$id_accountancy_journal.'">';
 	print '<table width="100%" class="border">';
@@ -589,7 +602,7 @@ else
 
 	print '</div>';
 	// End report
-	
+
 	print '<input type="button" class="button" style="float: right;" value="' . $langs->trans("Export") . '" onclick="launch_export();" />';
 
 	print '<input type="button" class="button" value="' . $langs->trans("WriteBookKeeping") . '" onclick="writeBookKeeping();" />';
@@ -674,6 +687,7 @@ else
 				print "<td>" . $reflabel . "</td>";
 				print "<td>" . $conf->global->ACCOUNTING_ACCOUNT_SUSPENSE . "</td>";
 				print "<td>" . $langs->trans('ThirdParty') . "</td>";
+				print "<td>&nbsp;</td>";
 				print "<td align='right'>" . ($mt < 0 ? price(- $mt) : '') . "</td>";
 				print "<td align='right'>" . ($mt >= 0 ? price($mt) : '') . "</td>";
 				print "</tr>";

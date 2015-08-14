@@ -1,0 +1,53 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=Ссуда
+Loans=Ссуды
+NewLoan=Новая ссуда
+ShowLoan=Показать ссуду
+PaymentLoan=Оплата ссуды
+ShowLoanPayment=Просмотр оплаты ссуды
+Capital=Капитал
+Insurance=Страховка
+Interest=Доля капитала
+Nbterms=Количество условий
+LoanAccountancyCapitalCode=Бухгалтерский код капитала
+LoanAccountancyInsuranceCode=Бухгалтерский код страхования
+LoanAccountancyInterestCode=Бухгалтерский код доли в капитале
+LoanPayment=Оплата ссуды
+ConfirmDeleteLoan=Подтвердите удаление этой ссуды
+LoanDeleted=Ссуда успешно удалена
+ConfirmPayLoan=Подтвердите, что эта ссуда оплачена
+LoanPaid=Ссуда оплачена
+ErrorLoanCapital=Суммы ссуды должна быть числом больше нуля.
+ErrorLoanLength=Длина ссуды должна быть числом больше нуля.
+ErrorLoanInterest=Годовой процент должен быть числом больше нуля.
+# Calc
+LoanCalc=Калькулятор банковской ссуды
+PurchaseFinanceInfo=Информация о покупках и финансах
+SalePriceOfAsset=Цена продажи актива
+PercentageDown=Процент вниз
+LengthOfMortgage=Срок ссуды
+AnnualInterestRate=Годовой процент
+ExplainCalculations=Explain Calculations
+ShowMeCalculationsAndAmortization=Show me the calculations and amortization
+MortgagePaymentInformation=Mortgage Payment Information
+DownPayment=Авансовый платёж
+DownPaymentDesc=<b>Авансовый платеж</b> = цена дома, умноженного на процент,  разделенный на 100 (для 5% аванса будет  5/100 или 0.05),
+InterestRateDesc=The <b>interest rate</b> = The annual interest percentage divided by 100
+MonthlyFactorDesc=The <b>monthly factor</b> = The result of the following formula
+MonthlyInterestRateDesc=The <b>monthly interest rate</b> = The annual interest rate divided by 12 (for the 12 months in a year)
+MonthTermDesc=The <b>month term</b> of the loan in months = The number of years you've taken the loan out for times 12
+MonthlyPaymentDesc=Ежемесячная оплата вычислена, используя следующую формулу
+AmortizationPaymentDesc=The <a href="#amortization">amortization</a> breaks down how much of your monthly payment goes towards the bank's interest, and how much goes into paying off the principal of your loan.
+AmountFinanced=Amount Financed
+AmortizationMonthlyPaymentOverYears=Amortization For Monthly Payment: <b>%s</b> over %s years
+Totalsforyear=Годовой итог
+MonthlyPayment=Месячный платёж
+LoanCalcDesc=This <b>mortgage calculator</b> can be used to figure out monthly payments of a home mortgage loan, based on the home's sale price, the term of the loan desired, buyer's down payment percentage, and the loan's interest rate.<br> This calculator factors in PMI (Private Mortgage Insurance) for loans where less than 20% is put as a down payment. Also taken into consideration are the town property taxes, and their effect on the total monthly mortgage payment.<br>
+GoToInterest=%s will go towards INTEREST
+GoToPrincipal=%s will go towards PRINCIPAL
+YouWillSpend=Вы потратите %s на свой дом в  %s году
+# Admin
+ConfigLoan=Настройка модуля Ссуды
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Бухгалтерский код капитала по умолчанию
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Accountancy code interest by default
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Бухгалтерский код страхования по-умолчанию

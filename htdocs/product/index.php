@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2001-2006	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C)      2014	Charles-Fr BENKE		<charles.fr@benke.fr>
+/* Copyright (C) 2001-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2014  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2014       Charles-Fr BENKE        <charles.fr@benke.fr>
+ * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +28,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 
 $type=GETPOST("type",'int');
 if ($type =='' && !$user->rights->produit->lire) $type='1';	// Force global page on service page only
@@ -66,7 +68,8 @@ if ((isset($_GET["type"]) && $_GET["type"] == 1) || empty($conf->product->enable
 
 llxHeader("",$langs->trans("ProductsAndServices"),$helpurl);
 
-print_fiche_titre($transAreaType);
+$linkback="";
+print_fiche_titre($transAreaType,$linkback,'title_products.png');
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -232,7 +235,8 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
  * Last modified products
  */
 $max=15;
-$sql = "SELECT p.rowid, p.label, p.price, p.ref, p.fk_product_type, p.tosell, p.tobuy,";
+$sql = "SELECT p.rowid, p.label, p.price, p.ref, p.fk_product_type, p.tosell, p.tobuy, p.fk_price_expression,";
+$sql.= " p.entity,";
 $sql.= " p.tms as datem";
 $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 $sql.= " WHERE p.entity IN (".getEntity($product_static->element, 1).")";
@@ -288,7 +292,9 @@ if ($result)
 			print '<td class="nowrap">';
 			$product_static->id=$objp->rowid;
 			$product_static->ref=$objp->ref;
+			$product_static->label = $objp->label;
 			$product_static->type=$objp->fk_product_type;
+            $product_static->entity = $objp->entity;
 			print $product_static->getNomUrl(1,'',16);
 			print "</td>\n";
 			print '<td>'.dol_trunc($objp->label,32).'</td>';
@@ -298,9 +304,17 @@ if ($result)
 			// Sell price
 			if (empty($conf->global->PRODUIT_MULTIPRICES))
 			{
+                if (!empty($objp->fk_price_expression)) {
+                	$product = new Product($db);
+                	$product->fetch($objp->rowid);
+                    $priceparser = new PriceParser($db);
+                    $price_result = $priceparser->parseProduct($product);
+                    if ($price_result >= 0) {
+                        $objp->price = $price_result;
+                    }
+                }
 				print '<td align="right">';
-    			if ($objp->price_base_type == 'TTC') print price($objp->price_ttc).' '.$langs->trans("TTC");
-    			else print price($objp->price).' '.$langs->trans("HT");
+    			print price($objp->price).' '.$langs->trans("HT");
     			print '</td>';
 			}
 			print '<td align="right" class="nowrap">';
@@ -313,9 +327,10 @@ if ($result)
 			$i++;
 		}
 
-		$db->free();
+		$db->free($result);
 
 		print "</table>";
+		print '<br>';
 	}
 }
 else
@@ -341,8 +356,12 @@ llxFooter();
 $db->close();
 
 
-
-
+/*
+ *  Print html activity for product type
+ *
+ *  @param      int $product_type   Type of product
+ *  @return     void
+ */
 function activitytrim($product_type)
 {
 	global $conf,$langs,$db;
@@ -359,7 +378,7 @@ function activitytrim($product_type)
 	$sql.= " AND pf.fk_facture = f.rowid";
 	$sql.= " AND pf.fk_paiement= p.rowid";
 	$sql.= " AND fd.product_type=".$product_type;
-	$sql.= " AND s.entity = ".$conf->entity;
+	$sql.= " AND s.entity IN (".getEntity('societe', 1).")";
 	$sql.= " AND p.datep >= '".$db->idate(dol_get_first_day($yearofbegindate),1)."'";
 	$sql.= " GROUP BY annee, mois ";
 	$sql.= " ORDER BY annee, mois ";
@@ -367,7 +386,6 @@ function activitytrim($product_type)
 	$result = $db->query($sql);
 	if ($result)
 	{
-		//$tmpyear=$beginyear; // FIXME $beginyear is not defined
 		$tmpyear=0;
 		$trim1=0;
 		$trim2=0;
@@ -378,7 +396,6 @@ function activitytrim($product_type)
 
 		if ($num > 0 )
 		{
-			print '<br>';
 			print '<table class="noborder" width="75%">';
 
 			if ($product_type==0)

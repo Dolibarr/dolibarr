@@ -266,7 +266,8 @@ class ChargeSociales extends CommonObject
         $sql = "UPDATE ".MAIN_DB_PREFIX."chargesociales";
         $sql.= " SET libelle='".$this->db->escape($this->lib)."',";
         $sql.= " date_ech='".$this->db->idate($this->date_ech)."',";
-        $sql.= " periode='".$this->db->idate($this->periode)."'";
+        $sql.= " periode='".$this->db->idate($this->periode)."',";
+        $sql.= " amount='".price2num($this->amount,'MT')."'";
         $sql.= " WHERE rowid=".$this->id;
 
         dol_syslog(get_class($this)."::update", LOG_DEBUG);
@@ -407,9 +408,9 @@ class ChargeSociales extends CommonObject
 
 
     /**
-     *  Renvoie nom clicable (avec eventuellement le picto)
+     *  Return clicable name (with picto eventually)
      *
-     *	@param	int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+     *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
      * 	@param	int		$maxlen			Longueur max libelle
      *	@return	string					Chaine avec URL
      */
@@ -420,13 +421,14 @@ class ChargeSociales extends CommonObject
         $result='';
 
         if (empty($this->ref)) $this->ref=$this->lib;
+        $label = $langs->trans("ShowSocialContribution").': '.$this->ref;
 
-        $lien = '<a href="'.DOL_URL_ROOT.'/compta/sociales/charges.php?id='.$this->id.'">';
-        $lienfin='</a>';
+        $link = '<a href="'.DOL_URL_ROOT.'/compta/sociales/charges.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+        $linkend='</a>';
 
-        if ($withpicto) $result.=($lien.img_object($langs->trans("ShowSocialContribution").': '.$this->lib,'bill').$lienfin.' ');
+        if ($withpicto) $result.=($link.img_object($label, 'bill', 'class="classfortooltip"').$linkend.' ');
         if ($withpicto && $withpicto != 2) $result.=' ';
-        if ($withpicto != 2) $result.=$lien.($maxlen?dol_trunc($this->ref,$maxlen):$this->ref).$lienfin;
+        if ($withpicto != 2) $result.=$link.($maxlen?dol_trunc($this->ref,$maxlen):$this->ref).$linkend;
         return $result;
     }
 

@@ -34,19 +34,21 @@ print_titre($langs->trans('RelatedContracts'));
 	<td align="center"><?php echo $langs->trans("Date"); ?></td>
 	<td align="right">&nbsp;</td>
 	<td align="right"><?php echo $langs->trans("Status"); ?></td>
+	<td></td>
 </tr>
 <?php
 $var=true;
-foreach($linkedObjectBlock as $object)
+foreach($linkedObjectBlock as $key => $objectlink)
 {
-    $object->fetch_lines();
+    $objectlink->fetch_lines();
 	$var=!$var;
 ?>
-<tr <?php echo $bc[$var]; ?> ><td>
-	<a href="<?php echo DOL_URL_ROOT.'/contrat/card.php?id='.$object->id ?>"><?php echo img_object($langs->trans("ShowContract"),"contract").' '.$object->ref; ?></a></td>
-	<td align="center"><?php echo dol_print_date($object->date_contrat,'day'); ?></td>
+<tr <?php echo $bc[$var]; ?> >
+    <td><?php echo $objectlink->getNomUrl(1); ?></td>
+	<td align="center"><?php echo dol_print_date($objectlink->date_contrat,'day'); ?></td>
 	<td align="right">&nbsp;</td>
-	<td align="right"><?php echo $object->getLibStatut(6); ?></td>
+	<td align="right"><?php echo $objectlink->getLibStatut(6); ?></td>
+	<td align="right"><a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_delete($langs->transnoentitiesnoconv("RemoveLink")); ?></a></td>
 </tr>
 <?php } ?>
 

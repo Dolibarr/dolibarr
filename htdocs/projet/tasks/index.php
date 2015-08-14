@@ -36,7 +36,10 @@ $id=GETPOST('id','int');
 $search_project=GETPOST('search_project');
 if (! isset($_GET['search_status']) && ! isset($_POST['search_status'])) $search_status=1;
 else $search_status=GETPOST('search_status');
-
+$search_task_ref=GETPOST('search_task_ref');
+$search_task_label=GETPOST('search_task_label');
+$search_project_user=GETPOST('search_project_user');
+$search_task_user=GETPOST('search_task_user');
 
 // Security check
 $socid=0;
@@ -51,6 +54,22 @@ $page = $page == -1 ? 0 : $page;
 
 $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 
+// Purge criteria
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+{
+	$search_project="";
+	$search_status="";
+	$search_task_ref="";
+	$search_task_label="";
+}
+if (empty($search_status) && $search_status == '') $search_status=1;
+
+
+/*
+ * Actions
+ */
+
+// None
 
 
 /*
@@ -72,7 +91,7 @@ if ($id)
 	$projectstatic->societe->fetch($projectstatic->societe->id);
 }
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num);
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num, '', 'title_project');
 
 // Show description of content
 if ($mine) print $langs->trans("MyTasksDesc").'<br><br>';
@@ -87,13 +106,41 @@ $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1,$so
 
 // Get list of tasks in tasksarray and taskarrayfiltered
 // We need all tasks (even not limited to a user because a task assigned to a user can have a parent that is not assigned to him and we need such parents).
-$tasksarray=$taskstatic->getTasksArray(0, 0, $projectstatic->id, $socid, 0, $search_project, $search_status);
+$morewherefilter='';
+if ($search_task_ref)   $morewherefilter.=natural_search('t.ref', $search_task_ref);
+if ($search_task_label) $morewherefilter.=natural_search('t.label', $search_task_label);
+$tasksarray=$taskstatic->getTasksArray(0, 0, $projectstatic->id, $socid, 0, $search_project, $search_status, $morewherefilter, $search_project_user, $search_task_user);
 // We load also tasks limited to a particular user
 $tasksrole=($mine ? $taskstatic->getUserRolesForProjectsOrTasks(0,$user,$projectstatic->id,0) : '');
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="mode" value="'.GETPOST('mode').'">';
 print '<table class="noborder" width="100%">';
+
+// If the user can view users
+if ($user->rights->user->user->lire)
+{
+	$moreforfilter.='<div class="divsearchfield">';
+    $moreforfilter.=$langs->trans('ProjectsWithThisUserAsContact'). ' ';
+    $moreforfilter.=$form->select_dolusers($search_project_user, 'search_project_user', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+	$moreforfilter.='</div>';
+}
+if ($user->rights->user->user->lire)
+{
+	$moreforfilter.='<div class="divsearchfield">';
+    $moreforfilter.=$langs->trans('TasksWithThisUserAsContact'). ' ';
+    $moreforfilter.=$form->select_dolusers($search_task_user, 'search_task_user', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+	$moreforfilter.='</div>';
+}
+if (! empty($moreforfilter))
+{
+	print '<div class="liste_titre">';
+	print $moreforfilter;
+	$parameters=array();
+	$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
+	print '</div>';
+}
 
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Project").'</td>';
@@ -102,7 +149,7 @@ print '<td>'.$langs->trans("RefTask").'</td>';
 print '<td>'.$langs->trans("LabelTask").'</td>';
 print '<td align="center">'.$langs->trans("DateStart").'</td>';
 print '<td align="center">'.$langs->trans("DateEnd").'</td>';
-print '<td align="center">'.$langs->trans("PlannedWorkload");
+print '<td align="right">'.$langs->trans("PlannedWorkload");
 // TODO Replace 86400 and 7 to take account working hours per day and working day per weeks
 //print '<br>('.$langs->trans("DelayWorkHour").')';
 print '</td>';
@@ -120,11 +167,18 @@ $listofstatus=array(-1=>'&nbsp;');
 foreach($projectstatic->statuts_short as $key => $val) $listofstatus[$key]=$langs->trans($val);
 print $form->selectarray('search_status', $listofstatus, $search_status);
 print '</td>';
-print '<td class="liste_titre" colspan="7">';
-print '&nbsp;';
+print '<td class="liste_titre">';
+print '<input type="text" class="flat" name="search_task_ref" value="'.dol_escape_htmltag($search_task_ref).'" size="4">';
 print '</td>';
-print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';
-print "</tr>\n";
+print '<td class="liste_titre">';
+print '<input type="text" class="flat" name="search_task_label" value="'.dol_escape_htmltag($search_task_label).'" size="8">';
+print '</td>';
+print '<td class="liste_titre" colspan="5">';
+print '&nbsp;';
+print '<td class="liste_titre nowrap" align="right">';
+print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("RemoveFilter"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+print '</td>';
 
 $max=1000;
 

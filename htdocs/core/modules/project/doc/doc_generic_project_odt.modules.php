@@ -105,7 +105,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 	/**
 	 * Define array with couple substitution key => substitution value
 	 *
-	 * @param   Object			$object             Main object to use as data source
+	 * @param   Project			$object             Main object to use as data source
 	 * @param   Translate		$outputlangs        Lang object to use for output
 	 * @return	array								Array of substitution
 	 */

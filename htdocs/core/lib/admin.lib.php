@@ -40,7 +40,8 @@ function versiontostring($versionarray)
 }
 
 /**
- *	Compare 2 versions (stored into 2 arrays)
+ *	Compare 2 versions (stored into 2 arrays).
+ *  For example, to check if Dolibarr version is lower than (x,y,z), do "if versioncompare(versiondolibarrarray(), array(x.y.z)) <= 0"
  *
  *	@param      array		$versionarray1      Array of version (vermajor,verminor,patch)
  *	@param      array		$versionarray2		Array of version (vermajor,verminor,patch)
@@ -386,6 +387,12 @@ function dolibarr_del_const($db, $name, $entity=1)
 {
     global $conf;
 
+    if (empty($name))
+    {
+    	dol_print_error('','Error call dolibar_del_const with parameter name empty');
+    	return -1;
+    }
+
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
     $sql.= " WHERE (".$db->decrypt('name')." = '".$db->escape($name)."'";
     if (is_numeric($name)) $sql.= " OR rowid = '".$db->escape($name)."'";
@@ -438,7 +445,7 @@ function dolibarr_get_const($db, $name, $entity=1)
 
 
 /**
- *	Insert a parameter (key,value) into database.
+ *	Insert a parameter (key,value) into database (delete old key then insert it again).
  *
  *	@param	    DoliDB		$db         Database handler
  *	@param	    string		$name		Name of constant
@@ -516,11 +523,6 @@ function security_prepare_head()
     $h = 0;
     $head = array();
 
-    $head[$h][0] = DOL_URL_ROOT."/admin/proxy.php";
-    $head[$h][1] = $langs->trans("ExternalAccess");
-    $head[$h][2] = 'proxy';
-    $h++;
-
     $head[$h][0] = DOL_URL_ROOT."/admin/security_other.php";
     $head[$h][1] = $langs->trans("Miscellaneous");
     $head[$h][2] = 'misc';
@@ -529,6 +531,16 @@ function security_prepare_head()
     $head[$h][0] = DOL_URL_ROOT."/admin/security.php";
     $head[$h][1] = $langs->trans("Passwords");
     $head[$h][2] = 'passwords';
+    $h++;
+
+    $head[$h][0] = DOL_URL_ROOT."/admin/security_file.php";
+    $head[$h][1] = $langs->trans("Files");
+    $head[$h][2] = 'file';
+    $h++;
+
+    $head[$h][0] = DOL_URL_ROOT."/admin/proxy.php";
+    $head[$h][1] = $langs->trans("ExternalAccess");
+    $head[$h][2] = 'proxy';
     $h++;
 
     $head[$h][0] = DOL_URL_ROOT."/admin/events.php";
@@ -822,20 +834,21 @@ function unActivateModule($value, $requiredby=1)
     {
         $objMod = new $modName($db);
         $result=$objMod->remove();
+        if ($result <= 0) $ret=$objMod->error;
     }
     else
     {
-        // TODO Cannot instantiate abstract class
-    	//$genericMod = new DolibarrModul($db);
-        //$genericMod->name=preg_replace('/^mod/i','',$modName);
-        //$genericMod->rights_class=strtolower(preg_replace('/^mod/i','',$modName));
-        //$genericMod->const_name='MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i','',$modName));
+        // TODO Replace this afte DolibarrModules is moved as abstract class with a try catch to show module is bugged
+        $genericMod = new DolibarrModules($db);
+        $genericMod->name=preg_replace('/^mod/i','',$modName);
+        $genericMod->rights_class=strtolower(preg_replace('/^mod/i','',$modName));
+        $genericMod->const_name='MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i','',$modName));
         dol_syslog("modules::unActivateModule Failed to find module file, we use generic function with name " . $modName);
-        //$genericMod->_remove();
+        $genericMod->_remove();
     }
 
     // Desactivation des modules qui dependent de lui
-    if ($requiredby)
+    if (! $ret && $requiredby)
     {
         $countrb=count($objMod->requiredby);
         for ($i = 0; $i < $countrb; $i++)
@@ -1072,18 +1085,18 @@ function form_constantes($tableau,$strictw3c=0)
             if ($const == 'ADHERENT_MAILMAN_URL')
             {
                 print '. '.$langs->trans("Example").': <a href="#" id="exampleclick1">'.img_down().'</a><br>';
-                //print 'http://lists.domain.com/cgi-bin/mailman/admin/%LISTE%/members?adminpw=%MAILMAN_ADMINPW%&subscribees=%EMAIL%&send_welcome_msg_to_this_batch=1';
+                //print 'http://lists.exampe.com/cgi-bin/mailman/admin/%LISTE%/members?adminpw=%MAILMAN_ADMINPW%&subscribees=%EMAIL%&send_welcome_msg_to_this_batch=1';
                 print '<div id="example1" class="hidden">';
-                print 'http://lists.domain.com/cgi-bin/mailman/admin/%LISTE%/members/add?subscribees_upload=%EMAIL%&amp;adminpw=%MAILMAN_ADMINPW%&amp;subscribe_or_invite=0&amp;send_welcome_msg_to_this_batch=0&amp;notification_to_list_owner=0';
+                print 'http://lists.example.com/cgi-bin/mailman/admin/%LISTE%/members/add?subscribees_upload=%EMAIL%&amp;adminpw=%MAILMAN_ADMINPW%&amp;subscribe_or_invite=0&amp;send_welcome_msg_to_this_batch=0&amp;notification_to_list_owner=0';
                 print '</div>';
             }
             if ($const == 'ADHERENT_MAILMAN_UNSUB_URL')
             {
                 print '. '.$langs->trans("Example").': <a href="#" id="exampleclick2">'.img_down().'</a><br>';
                 print '<div id="example2" class="hidden">';
-                print 'http://lists.domain.com/cgi-bin/mailman/admin/%LISTE%/members/remove?unsubscribees_upload=%EMAIL%&amp;adminpw=%MAILMAN_ADMINPW%&amp;send_unsub_ack_to_this_batch=0&amp;send_unsub_notifications_to_list_owner=0';
+                print 'http://lists.example.com/cgi-bin/mailman/admin/%LISTE%/members/remove?unsubscribees_upload=%EMAIL%&amp;adminpw=%MAILMAN_ADMINPW%&amp;send_unsub_ack_to_this_batch=0&amp;send_unsub_notifications_to_list_owner=0';
                 print '</div>';
-                //print 'http://lists.domain.com/cgi-bin/mailman/admin/%LISTE%/members/remove?adminpw=%MAILMAN_ADMINPW%&unsubscribees=%EMAIL%';
+                //print 'http://lists.example.com/cgi-bin/mailman/admin/%LISTE%/members/remove?adminpw=%MAILMAN_ADMINPW%&unsubscribees=%EMAIL%';
             }
             if ($const == 'ADHERENT_MAILMAN_LISTS')
             {
@@ -1094,7 +1107,7 @@ function form_constantes($tableau,$strictw3c=0)
             	print 'TYPE:Type1:mymailmanlist1,TYPE:Type2:mymailmanlist2<br>';
             	if ($conf->categorie->enabled) print 'CATEG:Categ1:mymailmanlist1,CATEG:Categ2:mymailmanlist2<br>';
             	print '</div>';
-            	//print 'http://lists.domain.com/cgi-bin/mailman/admin/%LISTE%/members/remove?adminpw=%MAILMAN_ADMINPW%&unsubscribees=%EMAIL%';
+            	//print 'http://lists.example.com/cgi-bin/mailman/admin/%LISTE%/members/remove?adminpw=%MAILMAN_ADMINPW%&unsubscribees=%EMAIL%';
             }
 
             print "</td>\n";

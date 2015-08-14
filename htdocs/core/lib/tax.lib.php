@@ -1,9 +1,11 @@
 <?php
-/* Copyright (C) 2004-2009	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2006-2007	Yannick Warnier		<ywarnier@beeznest.org>
- * Copyright (C) 2011		Regis Houssin		<regis.houssin@capnetworks.com>
- * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
+/* Copyright (C) 2004-2009 Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2007 Yannick Warnier		<ywarnier@beeznest.org>
+ * Copyright (C) 2011	   Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2012	   Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2012      Cédric Salvador      <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2012-2014 Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +36,7 @@
  */
 function tax_prepare_head(ChargeSociales $object)
 {
-    global $langs, $conf;
+    global $langs, $conf, $user;
 
     $h = 0;
     $head = array();
@@ -55,7 +57,7 @@ function tax_prepare_head(ChargeSociales $object)
 	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
 	$head[$h][0] = DOL_URL_ROOT.'/compta/sociales/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Documents");
-	if($nbFiles > 0) $head[$h][1].= ' ('.$nbFiles.')';
+	if($nbFiles > 0) $head[$h][1].= ' <span class="badge">'.$nbFiles.'</span>';
 	$head[$h][2] = 'documents';
 	$h++;
 
@@ -106,102 +108,73 @@ function vat_by_thirdparty($db, $y, $date_start, $date_end, $modetax, $direction
     if ($modetax == 1)
     {
         // If vat paid on due invoices (non draft)
-        if (! empty($conf->global->MAIN_MODULE_ACCOUNTING))
+        $sql = "SELECT s.rowid as socid, s.nom as name, s.siren as tva_intra, s.tva_assuj as assuj,";
+        $sql.= " sum(f.$total_ht) as amount, sum(f.".$total_tva.") as tva,";
+        $sql.= " sum(f.localtax1) as localtax1,";
+        $sql.= " sum(f.localtax2) as localtax2";
+        $sql.= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f,";
+        $sql.= " ".MAIN_DB_PREFIX."societe as s";
+        $sql.= " WHERE f.entity = " . $conf->entity;
+        $sql.= " AND f.fk_statut in (1,2)"; // Validated or paid (partially or completely)
+        if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2,5)";
+        else $sql.= " AND f.type IN (0,1,2,3,5)";
+        if ($y && $m)
         {
-            // TODO a ce jour on se sait pas la compter car le montant tva d'un payment
-            // n'est pas stocke dans la table des payments.
-            // Seul le module compta expert peut resoudre ce probleme.
-            // (Il faut quand un payment a lieu, stocker en plus du montant du paiement le
-            // detail part tva et part ht).
-            $sql = 'TODO';
+            $sql.= " AND f.datef >= '".$db->idate(dol_get_first_day($y,$m,false))."'";
+            $sql.= " AND f.datef <= '".$db->idate(dol_get_last_day($y,$m,false))."'";
         }
-        if (! empty($conf->global->MAIN_MODULE_COMPTABILITE))
+        else if ($y)
         {
-            $sql = "SELECT s.rowid as socid, s.nom as name, s.siren as tva_intra, s.tva_assuj as assuj,";
-            $sql.= " sum(f.$total_ht) as amount, sum(f.".$total_tva.") as tva,";
-            $sql.= " sum(f.localtax1) as localtax1,";
-            $sql.= " sum(f.localtax2) as localtax2";
-            $sql.= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f,";
-            $sql.= " ".MAIN_DB_PREFIX."societe as s";
-            $sql.= " WHERE f.entity = " . $conf->entity;
-            $sql.= " AND f.fk_statut in (1,2)"; // Validated or paid (partially or completely)
-        	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2)";
-        	else $sql.= " AND f.type IN (0,1,2,3)";
-            if ($y && $m)
-            {
-                $sql.= " AND f.datef >= '".$db->idate(dol_get_first_day($y,$m,false))."'";
-                $sql.= " AND f.datef <= '".$db->idate(dol_get_last_day($y,$m,false))."'";
-            }
-            else if ($y)
-            {
-                $sql.= " AND f.datef >= '".$db->idate(dol_get_first_day($y,1,false))."'";
-                $sql.= " AND f.datef <= '".$db->idate(dol_get_last_day($y,12,false))."'";
-            }
-            if ($date_start && $date_end) $sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
-            $sql.= " AND s.rowid = f.fk_soc";
-            $sql.= " GROUP BY s.rowid, s.nom, s.tva_intra, s.tva_assuj";
+            $sql.= " AND f.datef >= '".$db->idate(dol_get_first_day($y,1,false))."'";
+            $sql.= " AND f.datef <= '".$db->idate(dol_get_last_day($y,12,false))."'";
         }
+        if ($date_start && $date_end) $sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
+        $sql.= " AND s.rowid = f.fk_soc";
+        $sql.= " GROUP BY s.rowid, s.nom, s.tva_intra, s.tva_assuj";
     }
     else
     {
-        if (! empty($conf->global->MAIN_MODULE_ACCOUNTING))
+        // Tva sur factures payes (should be on payment)
+/*      $sql = "SELECT s.rowid as socid, s.nom as nom, s.tva_intra as tva_intra, s.tva_assuj as assuj,";
+        $sql.= " sum(fd.total_ht) as amount, sum(".$total_tva.") as tva";
+        $sql.= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f, ".MAIN_DB_PREFIX.$invoicetable." as fd, ".MAIN_DB_PREFIX."societe as s";
+        $sql.= " WHERE ";
+        $sql.= " f.fk_statut in (2)";   // Paid (partially or completely)
+        if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2,5)";
+		else $sql.= " AND f.type IN (0,1,2,3,5)";
+        if ($y && $m)
         {
-            // If vat paid on payments
-            // TODO a ce jour on se sait pas la compter car le montant tva d'un payment
-            // n'est pas stocke dans la table des payments.
-            // Seul le module compta expert peut resoudre ce probleme.
-            // (Il faut quand un payment a lieu, stocker en plus du montant du paiement le
-            // detail part tva et part ht).
-            $sql = 'TODO';
+            $sql.= " AND f.datef >= '".$db->idate(dol_get_first_day($y,$m,false))."'";
+            $sql.= " AND f.datef <= '".$db->idate(dol_get_last_day($y,$m,false))."'";
         }
-        if (! empty($conf->global->MAIN_MODULE_COMPTABILITE))
+        else if ($y)
         {
-            // Tva sur factures payes (should be on payment)
-/*          $sql = "SELECT s.rowid as socid, s.nom as nom, s.tva_intra as tva_intra, s.tva_assuj as assuj,";
-            $sql.= " sum(fd.total_ht) as amount, sum(".$total_tva.") as tva";
-            $sql.= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f, ".MAIN_DB_PREFIX.$invoicetable." as fd, ".MAIN_DB_PREFIX."societe as s";
-            $sql.= " WHERE ";
-            $sql.= " f.fk_statut in (2)";   // Paid (partially or completely)
-        	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2)";
-        	else $sql.= " AND f.type IN (0,1,2,3)";
-            if ($y && $m)
-            {
-                $sql.= " AND f.datef >= '".$db->idate(dol_get_first_day($y,$m,false))."'";
-                $sql.= " AND f.datef <= '".$db->idate(dol_get_last_day($y,$m,false))."'";
-            }
-            else if ($y)
-            {
-                $sql.= " AND f.datef >= '".$db->idate(dol_get_first_day($y,1,false))."'";
-                $sql.= " AND f.datef <= '".$db->idate(dol_get_last_day($y,12,false))."'";
-            }
-            if ($date_start && $date_end) $sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
-            $sql.= " AND s.rowid = f.fk_soc AND f.rowid = fd.".$fk_facture;
-            $sql.= " GROUP BY s.rowid as socid, s.nom as nom, s.tva_intra as tva_intra, s.tva_assuj as assuj";
+            $sql.= " AND f.datef >= '".$db->idate(dol_get_first_day($y,1,false))."'";
+            $sql.= " AND f.datef <= '".$db->idate(dol_get_last_day($y,12,false))."'";
+        }
+        if ($date_start && $date_end) $sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
+        $sql.= " AND s.rowid = f.fk_soc AND f.rowid = fd.".$fk_facture;
+        $sql.= " GROUP BY s.rowid as socid, s.nom as nom, s.tva_intra as tva_intra, s.tva_assuj as assuj";
 */
-            $sql = 'TODO';
-        }
     }
 
     if (! $sql) return -1;
-    if ($sql == 'TODO') return -2;
-    if ($sql != 'TODO')
+
+    dol_syslog("Tax.lib:thirdparty", LOG_DEBUG);
+    $resql = $db->query($sql);
+    if ($resql)
     {
-        dol_syslog("Tax.lib:thirdparty", LOG_DEBUG);
-        $resql = $db->query($sql);
-        if ($resql)
+        while($assoc = $db->fetch_object($resql))
         {
-            while($assoc = $db->fetch_object($resql))
-            {
-                $list[] = $assoc;
-            }
-            $db->free($resql);
-            return $list;
+            $list[] = $assoc;
         }
-        else
-        {
-            dol_print_error($db);
-            return -3;
-        }
+        $db->free($resql);
+        return $list;
+    }
+    else
+    {
+        dol_print_error($db);
+        return -3;
     }
 }
 
@@ -263,94 +236,74 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
     $sql='';
     if ($modetax == 1)  // Option vat on delivery for goods (payment) and debit invoice for services
     {
-        if (! empty($conf->global->MAIN_MODULE_ACCOUNTING))
+        // Count on delivery date (use invoice date as delivery is unknown)
+        $sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.tva_tx as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
+        $sql .=" d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
+        $sql.= " d.date_start as date_start, d.date_end as date_end,";
+        $sql.= " f.".$invoicefieldref." as facnum, f.type, f.total_ttc as ftotal_ttc, f.datef, s.nom as company_name, s.rowid as company_id,";
+        $sql.= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype,";
+        $sql.= " 0 as payment_id, 0 as payment_amount";
+        $sql.= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f,";
+        $sql.= " ".MAIN_DB_PREFIX."societe as s,";
+        $sql.= " ".MAIN_DB_PREFIX.$invoicedettable." as d" ;
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on d.fk_product = p.rowid";
+        $sql.= " WHERE f.entity = " . $conf->entity;
+        $sql.= " AND f.fk_statut in (1,2)"; // Validated or paid (partially or completely)
+        if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2,5)";
+        else $sql.= " AND f.type IN (0,1,2,3,5)";
+        $sql.= " AND f.rowid = d.".$fk_facture;
+        $sql.= " AND s.rowid = f.fk_soc";
+        if ($y && $m)
         {
-            // TODO a ce jour on se sait pas la compter car le montant tva d'un payment
-            // n'est pas stocke dans la table des payments.
-            // Seul le module compta expert peut resoudre ce probleme.
-            // (Il faut quand un payment a lieu, stocker en plus du montant du paiement le
-            // detail part tva et part ht).
-            $sql='TODO';
+            $sql.= " AND f.datef >= '".$db->idate(dol_get_first_day($y,$m,false))."'";
+            $sql.= " AND f.datef <= '".$db->idate(dol_get_last_day($y,$m,false))."'";
         }
-        if (! empty($conf->global->MAIN_MODULE_COMPTABILITE))
+        else if ($y)
         {
-            // Count on delivery date (use invoice date as delivery is unknown)
-            $sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.tva_tx as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
-            $sql .=" d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
-            $sql.= " d.date_start as date_start, d.date_end as date_end,";
-            $sql.= " f.".$invoicefieldref." as facnum, f.type, f.total_ttc as ftotal_ttc,";
-            $sql.= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype,";
-            $sql.= " 0 as payment_id, 0 as payment_amount";
-            $sql.= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f,";
-            $sql.= " ".MAIN_DB_PREFIX.$invoicedettable." as d" ;
-            $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on d.fk_product = p.rowid";
-            $sql.= " WHERE f.entity = " . $conf->entity;
-            $sql.= " AND f.fk_statut in (1,2)"; // Validated or paid (partially or completely)
-            if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2)";
-            else $sql.= " AND f.type IN (0,1,2,3)";
-            $sql.= " AND f.rowid = d.".$fk_facture;
-            if ($y && $m)
-            {
-                $sql.= " AND f.datef >= '".$db->idate(dol_get_first_day($y,$m,false))."'";
-                $sql.= " AND f.datef <= '".$db->idate(dol_get_last_day($y,$m,false))."'";
-            }
-            else if ($y)
-            {
-                $sql.= " AND f.datef >= '".$db->idate(dol_get_first_day($y,1,false))."'";
-                $sql.= " AND f.datef <= '".$db->idate(dol_get_last_day($y,12,false))."'";
-            }
-            if ($q) $sql.= " AND (date_format(f.datef,'%m') > ".(($q-1)*3)." AND date_format(f.datef,'%m') <= ".($q*3).")";
-            if ($date_start && $date_end) $sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
-            $sql.= " AND (d.product_type = 0";                              // Limit to products
-            $sql.= " AND d.date_start is null AND d.date_end IS NULL)";     // enhance detection of service
-            $sql.= " ORDER BY d.rowid, d.".$fk_facture;
+            $sql.= " AND f.datef >= '".$db->idate(dol_get_first_day($y,1,false))."'";
+            $sql.= " AND f.datef <= '".$db->idate(dol_get_last_day($y,12,false))."'";
         }
+        if ($q) $sql.= " AND (date_format(f.datef,'%m') > ".(($q-1)*3)." AND date_format(f.datef,'%m') <= ".($q*3).")";
+        if ($date_start && $date_end) $sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
+        $sql.= " AND (d.product_type = 0";                              // Limit to products
+        $sql.= " AND d.date_start is null AND d.date_end IS NULL)";     // enhance detection of service
+        $sql.= " ORDER BY d.rowid, d.".$fk_facture;
     }
     else    // Option vat on delivery for goods (payments) and payments for services
     {
-        if (! empty($conf->global->MAIN_MODULE_ACCOUNTING))
+        // Count on delivery date (use invoice date as delivery is unknown)
+        $sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.tva_tx as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
+        $sql .=" d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
+        $sql.= " d.date_start as date_start, d.date_end as date_end,";
+        $sql.= " f.".$invoicefieldref." as facnum, f.type, f.total_ttc as ftotal_ttc, f.datef as date_f, s.nom as company_name, s.rowid as company_id,";
+        $sql.= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype,";
+        $sql.= " 0 as payment_id, 0 as payment_amount";
+        $sql.= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f,";
+        $sql.= " ".MAIN_DB_PREFIX."societe as s,";
+        $sql.= " ".MAIN_DB_PREFIX.$invoicedettable." as d" ;
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on d.fk_product = p.rowid";
+        $sql.= " WHERE f.entity = " . $conf->entity;
+        $sql.= " AND f.fk_statut in (1,2)"; // Validated or paid (partially or completely)
+        if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2,5)";
+        else $sql.= " AND f.type IN (0,1,2,3,5)";
+        $sql.= " AND f.rowid = d.".$fk_facture;
+        $sql.= " AND s.rowid = f.fk_soc";
+        if ($y && $m)
         {
-            // TODO a ce jour on se sait pas la compter car le montant tva d'un payment
-            // n'est pas stocke dans la table des payments.
-            // Seul le module compta expert peut resoudre ce probleme.
-            // (Il faut quand un payment a lieu, stocker en plus du montant du paiement le
-            // detail part tva et part ht).
-            $sql='TODO';
+            $sql.= " AND f.datef >= '".$db->idate(dol_get_first_day($y,$m,false))."'";
+            $sql.= " AND f.datef <= '".$db->idate(dol_get_last_day($y,$m,false))."'";
         }
-        if (! empty($conf->global->MAIN_MODULE_COMPTABILITE))
+        else if ($y)
         {
-            // Count on delivery date (use invoice date as delivery is unknown)
-            $sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.tva_tx as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
-            $sql .=" d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
-            $sql.= " d.date_start as date_start, d.date_end as date_end,";
-            $sql.= " f.".$invoicefieldref." as facnum, f.type, f.total_ttc as ftotal_ttc,";
-            $sql.= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype,";
-            $sql.= " 0 as payment_id, 0 as payment_amount";
-            $sql.= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f,";
-            $sql.= " ".MAIN_DB_PREFIX.$invoicedettable." as d" ;
-            $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on d.fk_product = p.rowid";
-            $sql.= " WHERE f.entity = " . $conf->entity;
-            $sql.= " AND f.fk_statut in (1,2)"; // Validated or paid (partially or completely)
-        	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2)";
-        	else $sql.= " AND f.type IN (0,1,2,3)";
-            $sql.= " AND f.rowid = d.".$fk_facture;
-            if ($y && $m)
-            {
-                $sql.= " AND f.datef >= '".$db->idate(dol_get_first_day($y,$m,false))."'";
-                $sql.= " AND f.datef <= '".$db->idate(dol_get_last_day($y,$m,false))."'";
-            }
-            else if ($y)
-            {
-                $sql.= " AND f.datef >= '".$db->idate(dol_get_first_day($y,1,false))."'";
-                $sql.= " AND f.datef <= '".$db->idate(dol_get_last_day($y,12,false))."'";
-            }
-            if ($q) $sql.= " AND (date_format(f.datef,'%m') > ".(($q-1)*3)." AND date_format(f.datef,'%m') <= ".($q*3).")";
-            if ($date_start && $date_end) $sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
-            $sql.= " AND (d.product_type = 0";                              // Limit to products
-            $sql.= " AND d.date_start is null AND d.date_end IS NULL)";     // enhance detection of service
-            $sql.= " ORDER BY d.rowid, d.".$fk_facture;
-            //print $sql;
+            $sql.= " AND f.datef >= '".$db->idate(dol_get_first_day($y,1,false))."'";
+            $sql.= " AND f.datef <= '".$db->idate(dol_get_last_day($y,12,false))."'";
         }
+        if ($q) $sql.= " AND (date_format(f.datef,'%m') > ".(($q-1)*3)." AND date_format(f.datef,'%m') <= ".($q*3).")";
+        if ($date_start && $date_end) $sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
+        $sql.= " AND (d.product_type = 0";                              // Limit to products
+        $sql.= " AND d.date_start is null AND d.date_end IS NULL)";     // enhance detection of service
+        $sql.= " ORDER BY d.rowid, d.".$fk_facture;
+        //print $sql;
     }
 
     //print $sql.'<br>';
@@ -382,6 +335,9 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
                 }
                 $list[$assoc['rate']]['dtotal_ttc'][] = $assoc['total_ttc'];
                 $list[$assoc['rate']]['dtype'][] = $assoc['dtype'];
+                $list[$assoc['rate']]['datef'][] = $assoc['datef'];
+                $list[$assoc['rate']]['company_name'][] = $assoc['company_name'];
+                $list[$assoc['rate']]['company_id'][] = $assoc['company_id'];
                 $list[$assoc['rate']]['ddate_start'][] = $db->jdate($assoc['date_start']);
                 $list[$assoc['rate']]['ddate_end'][] = $db->jdate($assoc['date_end']);
 
@@ -420,99 +376,77 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
     $sql='';
     if ($modetax == 1)  // Option vat on delivery for goods (payment) and debit invoice for services
     {
-        if (! empty($conf->global->MAIN_MODULE_ACCOUNTING))
+        // Count on invoice date
+        $sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.tva_tx as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
+        $sql .=" d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
+        $sql.= " d.date_start as date_start, d.date_end as date_end,";
+        $sql.= " f.".$invoicefieldref." as facnum, f.type, f.total_ttc as ftotal_ttc, f.datef, s.nom as company_name, s.rowid as company_id,";
+        $sql.= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype,";
+        $sql.= " 0 as payment_id, 0 as payment_amount";
+        $sql.= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f,";
+        $sql.= " ".MAIN_DB_PREFIX."societe as s,";
+        $sql.= " ".MAIN_DB_PREFIX.$invoicedettable." as d" ;
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on d.fk_product = p.rowid";
+        $sql.= " WHERE f.entity = " . $conf->entity;
+        $sql.= " AND f.fk_statut in (1,2)"; // Validated or paid (partially or completely)
+        if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2,5)";
+		else $sql.= " AND f.type IN (0,1,2,3,5)";
+        $sql.= " AND f.rowid = d.".$fk_facture;
+        $sql.= " AND s.rowid = f.fk_soc";
+        if ($y && $m)
         {
-            // Count on invoice date
-            // TODO a ce jour on se sait pas la compter car le montant tva d'un payment
-            // n'est pas stocke dans la table des payments.
-            // Seul le module compta expert peut resoudre ce probleme.
-            // (Il faut quand un payment a lieu, stocker en plus du montant du paiement le
-            // detail part tva et part ht).
-            $sql='TODO';
+            $sql.= " AND f.datef >= '".$db->idate(dol_get_first_day($y,$m,false))."'";
+            $sql.= " AND f.datef <= '".$db->idate(dol_get_last_day($y,$m,false))."'";
         }
-        if (! empty($conf->global->MAIN_MODULE_COMPTABILITE))
+        else if ($y)
         {
-            // Count on invoice date
-            $sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.tva_tx as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
-            $sql .=" d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
-            $sql.= " d.date_start as date_start, d.date_end as date_end,";
-            $sql.= " f.".$invoicefieldref." as facnum, f.type, f.total_ttc as ftotal_ttc,";
-            $sql.= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype,";
-            $sql.= " 0 as payment_id, 0 as payment_amount";
-            $sql.= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f,";
-            $sql.= " ".MAIN_DB_PREFIX.$invoicedettable." as d" ;
-            $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on d.fk_product = p.rowid";
-            $sql.= " WHERE f.entity = " . $conf->entity;
-            $sql.= " AND f.fk_statut in (1,2)"; // Validated or paid (partially or completely)
-        	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2)";
-        	else $sql.= " AND f.type IN (0,1,2,3)";
-            $sql.= " AND f.rowid = d.".$fk_facture;
-            if ($y && $m)
-            {
-                $sql.= " AND f.datef >= '".$db->idate(dol_get_first_day($y,$m,false))."'";
-                $sql.= " AND f.datef <= '".$db->idate(dol_get_last_day($y,$m,false))."'";
-            }
-            else if ($y)
-            {
-                $sql.= " AND f.datef >= '".$db->idate(dol_get_first_day($y,1,false))."'";
-                $sql.= " AND f.datef <= '".$db->idate(dol_get_last_day($y,12,false))."'";
-            }
-            if ($q) $sql.= " AND (date_format(f.datef,'%m') > ".(($q-1)*3)." AND date_format(f.datef,'%m') <= ".($q*3).")";
-            if ($date_start && $date_end) $sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
-            $sql.= " AND (d.product_type = 1";                              // Limit to services
-            $sql.= " OR d.date_start is NOT null OR d.date_end IS NOT NULL)";       // enhance detection of service
-            $sql.= " ORDER BY d.rowid, d.".$fk_facture;
+            $sql.= " AND f.datef >= '".$db->idate(dol_get_first_day($y,1,false))."'";
+            $sql.= " AND f.datef <= '".$db->idate(dol_get_last_day($y,12,false))."'";
         }
+        if ($q) $sql.= " AND (date_format(f.datef,'%m') > ".(($q-1)*3)." AND date_format(f.datef,'%m') <= ".($q*3).")";
+        if ($date_start && $date_end) $sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
+        $sql.= " AND (d.product_type = 1";                              // Limit to services
+        $sql.= " OR d.date_start is NOT null OR d.date_end IS NOT NULL)";       // enhance detection of service
+        $sql.= " ORDER BY d.rowid, d.".$fk_facture; 
     }
     else    // Option vat on delivery for goods (payments) and payments for services
     {
-        if (! empty($conf->global->MAIN_MODULE_ACCOUNTING))
+        // Count on payments date
+        $sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.tva_tx as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
+        $sql .=" d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
+        $sql.= " d.date_start as date_start, d.date_end as date_end,";
+        $sql.= " f.".$invoicefieldref." as facnum, f.type, f.total_ttc as ftotal_ttc, f.datef, s.nom as company_name, s.rowid as company_id,";
+        $sql.= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype,";
+        $sql.= " pf.".$fk_payment." as payment_id, pf.amount as payment_amount";
+        $sql.= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f,";
+        $sql.= " ".MAIN_DB_PREFIX.$paymentfacturetable." as pf,";
+        $sql.= " ".MAIN_DB_PREFIX.$paymenttable." as pa,";
+        $sql.= " ".MAIN_DB_PREFIX."societe as s,";
+        $sql.= " ".MAIN_DB_PREFIX.$invoicedettable." as d";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on d.fk_product = p.rowid";
+        $sql.= " WHERE f.entity = " . $conf->entity;
+        $sql.= " AND f.fk_statut in (1,2)"; // Paid (partially or completely)
+        if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2,5)";
+		else $sql.= " AND f.type IN (0,1,2,3,5)";
+        $sql.= " AND f.rowid = d.".$fk_facture;
+        $sql.= " AND s.rowid = f.fk_soc";
+        $sql.= " AND pf.".$fk_facture2." = f.rowid";
+        $sql.= " AND pa.rowid = pf.".$fk_payment;
+        if ($y && $m)
         {
-            // Count on payments date
-            // TODO a ce jour on se sait pas la compter car le montant tva d'un payment
-            // n'est pas stocke dans la table des payments.
-            // Seul le module compta expert peut resoudre ce probleme.
-            // (Il faut quand un paiement a lieu, stocker en plus du montant du paiement le
-            // detail part tva et part ht).
-            $sql='TODO';
+            $sql.= " AND pa.datep >= '".$db->idate(dol_get_first_day($y,$m,false))."'";
+            $sql.= " AND pa.datep <= '".$db->idate(dol_get_last_day($y,$m,false))."'";
         }
-        if (! empty($conf->global->MAIN_MODULE_COMPTABILITE))
+        else if ($y)
         {
-            // Count on payments date
-            $sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.tva_tx as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
-            $sql .=" d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
-            $sql.= " d.date_start as date_start, d.date_end as date_end,";
-            $sql.= " f.".$invoicefieldref." as facnum, f.type, f.total_ttc as ftotal_ttc,";
-            $sql.= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype,";
-            $sql.= " pf.".$fk_payment." as payment_id, pf.amount as payment_amount";
-            $sql.= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f,";
-            $sql.= " ".MAIN_DB_PREFIX.$paymentfacturetable." as pf,";
-            $sql.= " ".MAIN_DB_PREFIX.$paymenttable." as pa,";
-            $sql.= " ".MAIN_DB_PREFIX.$invoicedettable." as d";
-            $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on d.fk_product = p.rowid";
-            $sql.= " WHERE f.entity = " . $conf->entity;
-            $sql.= " AND f.fk_statut in (1,2)"; // Paid (partially or completely)
-        	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2)";
-        	else $sql.= " AND f.type IN (0,1,2,3)";
-            $sql.= " AND f.rowid = d.".$fk_facture;;
-            $sql.= " AND pf.".$fk_facture2." = f.rowid";
-            $sql.= " AND pa.rowid = pf.".$fk_payment;
-            if ($y && $m)
-            {
-                $sql.= " AND pa.datep >= '".$db->idate(dol_get_first_day($y,$m,false))."'";
-                $sql.= " AND pa.datep <= '".$db->idate(dol_get_last_day($y,$m,false))."'";
-            }
-            else if ($y)
-            {
-                $sql.= " AND pa.datep >= '".$db->idate(dol_get_first_day($y,1,false))."'";
-                $sql.= " AND pa.datep <= '".$db->idate(dol_get_last_day($y,12,false))."'";
-            }
-            if ($q) $sql.= " AND (date_format(pa.datep,'%m') > ".(($q-1)*3)." AND date_format(pa.datep,'%m') <= ".($q*3).")";
-            if ($date_start && $date_end) $sql.= " AND pa.datep >= '".$db->idate($date_start)."' AND pa.datep <= '".$db->idate($date_end)."'";
-            $sql.= " AND (d.product_type = 1";                              // Limit to services
-            $sql.= " OR d.date_start is NOT null OR d.date_end IS NOT NULL)";       // enhance detection of service
-            $sql.= " ORDER BY d.rowid, d.".$fk_facture.", pf.rowid";
+            $sql.= " AND pa.datep >= '".$db->idate(dol_get_first_day($y,1,false))."'";
+            $sql.= " AND pa.datep <= '".$db->idate(dol_get_last_day($y,12,false))."'";
         }
+        if ($q) $sql.= " AND (date_format(pa.datep,'%m') > ".(($q-1)*3)." AND date_format(pa.datep,'%m') <= ".($q*3).")";
+        if ($date_start && $date_end) $sql.= " AND pa.datep >= '".$db->idate($date_start)."' AND pa.datep <= '".$db->idate($date_end)."'";
+        $sql.= " AND (d.product_type = 1";                              // Limit to services
+        $sql.= " OR d.date_start is NOT null OR d.date_end IS NOT NULL)";       // enhance detection of service
+        $sql.= " ORDER BY d.rowid, d.".$fk_facture.", pf.rowid";
     }
 
     if (! $sql)
@@ -546,6 +480,9 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
                 }
                 $list[$assoc['rate']]['dtotal_ttc'][] = $assoc['total_ttc'];
                 $list[$assoc['rate']]['dtype'][] = $assoc['dtype'];
+                $list[$assoc['rate']]['datef'][] = $assoc['datef'];
+                $list[$assoc['rate']]['company_name'][] = $assoc['company_name'];
+                $list[$assoc['rate']]['company_id'][] = $assoc['company_id'];
                 $list[$assoc['rate']]['ddate_start'][] = $db->jdate($assoc['date_start']);
                 $list[$assoc['rate']]['ddate_end'][] = $db->jdate($assoc['date_end']);
 

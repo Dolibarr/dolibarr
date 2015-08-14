@@ -458,7 +458,7 @@ print '</td></tr>';
 
 // Expire date
 print '<tr><td>'.$langs->trans('ExpireDate').'</td><td colspan="2">';
-if ($action == 'edit') print $form->select_date($expiredate?$expiredate:$object->date_fin,'expire');
+if ($action == 'edit') print $form->select_date($expiredate?$expiredate:$object->date_fin,'expire',0,0,0,'',1,0,1);
 else print dol_print_date($object->date_fin,'day');
 print '</td></tr>';
 
@@ -480,7 +480,7 @@ $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($
 $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
 //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
-$url=$urlwithouturlroot.dol_buildpath('/opensurvey/public/studs.php',1).'?sondage='.$numsondage;
+$url=$urlwithouturlroot.dol_buildpath('/public/opensurvey/studs.php',1).'?sondage='.$numsondage;
 $urlvcal='<a href="'.$url.'" target="_blank">'.$url.'</a>';
 print $urlvcal;
 
@@ -834,7 +834,7 @@ while ($compteur < $num)
 				if (empty($listofanswers[$i]['format']) || ! in_array($listofanswers[$i]['format'],array('yesno','foragainst')))
 				{
 					print '<input type="checkbox" name="choix'.$i.'" value="1" ';
-					if ($car == '1') print 'checked="checked"';
+					if ($car == '1') print 'checked';
 					print '>';
 				}
 				if (! empty($listofanswers[$i]['format']) && $listofanswers[$i]['format'] == 'yesno')
@@ -931,7 +931,7 @@ if (empty($testligneamodifier))
 			print '<input type="checkbox" name="choix'.$i.'" value="1"';
 			if ( isset($_POST['choix'.$i]) && $_POST['choix'.$i] == '1' )
 			{
-				print ' checked="checked"';
+				print ' checked';
 			}
 			print '>';
 		}

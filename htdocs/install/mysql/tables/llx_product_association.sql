@@ -22,6 +22,7 @@ create table llx_product_association
   rowid                 integer AUTO_INCREMENT PRIMARY KEY,
   fk_product_pere       integer NOT NULL DEFAULT 0, -- id du produit maitre
   fk_product_fils       integer NOT NULL DEFAULT 0, -- id du sous-produit
-  qty                   double NULL
+  qty                   double NULL,
+  incdec                integer DEFAULT 1			-- when set to 1 changing stock of product will change stock of linked product too
 )ENGINE=innodb;
 

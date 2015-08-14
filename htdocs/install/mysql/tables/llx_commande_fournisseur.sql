@@ -36,12 +36,14 @@ create table llx_commande_fournisseur
   date_creation			datetime,                      -- date de creation 
   date_valid			datetime,                      -- date de validation
   date_approve			datetime,                      -- date de approve
+  date_approve2			datetime,                      -- date de approve 2 (when double approving is accivated)
   date_commande			date,                          -- date de la commande
   fk_user_author		integer,                       -- user making creation
   fk_user_modif         integer,                       -- user making last change
   fk_user_valid			integer,                       -- user validating
   fk_user_approve		integer,                       -- user approving
-  source				smallint NOT NULL,
+  fk_user_approve2		integer,                       -- user approving 2 (when double approving is accivated)
+  source				smallint NOT NULL,			-- not used, except by setting this to 42 for orders coming for replenishment and 0 in other case ?
   fk_statut				smallint  default 0,
   amount_ht				real      default 0,
   remise_percent		real      default 0,
@@ -59,8 +61,10 @@ create table llx_commande_fournisseur
   fk_account            integer,                       -- bank account
   fk_cond_reglement		integer,                       -- condition de reglement
   fk_mode_reglement		integer,                       -- mode de reglement
-  fk_input_method	    integer default 0,
+  fk_input_method	    integer default 0,            -- id coming from c_input_reason, '0' if no defined
+  fk_incoterms          integer,						-- for incoterms
+  location_incoterms    varchar(255),					-- for incoterms
   import_key			varchar(14),
   extraparams			varchar(255)					-- for stock other parameters with json format
-  
+
 )ENGINE=innodb;

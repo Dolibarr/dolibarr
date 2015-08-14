@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2013	Jean-François Ferry	<jfefe@aternatik.fr>
+/* Copyright (C) 2013	Jean-François Ferry	 <jfefe@aternatik.fr>
+ * Copyright (C) 2015	Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,21 +23,16 @@
  *					Initialy built by build_class_from_table on 2013-07-24 16:03
  */
 
+require '../main.inc.php';
 
-// Change this following line to use the correct relative path (../, ../../, etc)
-$res=0;
-$res=@include("../main.inc.php");				// For root directory
-if (! $res) $res=@include("../../main.inc.php");	// For "custom" directory
-if (! $res) die("Include of main fails");
-
-require_once 'class/resource.class.php';
-require_once 'class/html.formresource.class.php';
+require_once DOL_DOCUMENT_ROOT.'/resource/class/resource.class.php';
+require_once DOL_DOCUMENT_ROOT.'/resource/class/html.formresource.class.php';
 
 // Load traductions files required by page
 $langs->load("resource");
 $langs->load("companies");
 $langs->load("other");
-$langs->load("resource@resource");
+$langs->load("resource");
 
 // Get parameters
 $id			= GETPOST('id','int');
@@ -69,25 +65,25 @@ if ($action == 'confirm_add_resource')
 	if (! $cancel)
 	{
 		$error='';
-			
+
 		$ref=GETPOST('ref','alpha');
 		$description=GETPOST('description','alpha');
 		$fk_code_type_resource=GETPOST('fk_code_type_resource','alpha');
-			
+
 		if (empty($ref))
 		{
 			$mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Ref"));
 			setEventMessage($mesg, 'errors');
 			$error++;
 		}
-			
+
 		if (! $error)
 		{
 			$object=new Resource($db);
 			$object->ref=$ref;
 			$object->description=$description;
 			$object->fk_code_type_resource=$fk_code_type_resource;
-				
+
 			$result=$object->create($user);
 			if ($result > 0)
 			{
@@ -123,29 +119,30 @@ if ($action == 'confirm_add_resource')
 $form=new Form($db);
 $formresource = new FormResource($db);
 
-if (! $action) 
+if (! $action)
 {
 	$pagetitle=$langs->trans('AddResource');
 	llxHeader('',$pagetitle,'');
-	print_fiche_titre($pagetitle,'','resource.png@resource');
+	print_fiche_titre($pagetitle,'','title_generic');
 
 	print '<form method="post" action="'.$_SERVER['PHP_SELF'].'" name="add_resource">';
 	print '<input type="hidden" name="action" value="confirm_add_resource" />';
+
+	dol_fiche_head('');
 
 	print '<table class="border" width="100%">';
 
 	// Ref / label
 	$field = 'ref';
 	print '<tr>';
-	print '<td>';
-	print '<label for="'.$field.'" class="fieldrequired">';
+	print '<td class="fieldrequired">';
 	print $langs->trans('ResourceFormLabel_'.$field);
 	print '</td>';
 	print '<td>';
 	print '<input type="text" name="'.$field.'" value="'.$$field.'" />';
 	print '</td>';
 	print '</tr>';
-	
+
 	// Type
 	print '<tr><td width="20%">'.$langs->trans("ResourceType").'</td>';
 	print '<td>';
@@ -155,13 +152,11 @@ if (! $action)
 	// Description
 	$field = 'description';
 	print '<tr>';
-	print '<td>';
-	print '<label for="'.$field.'">';
+	print '<td class="tdtop">';
 	print $langs->trans('ResourceFormLabel_'.$field);
-	print '</label>';
 	print '</td>';
 	print '<td>';
-	require_once (DOL_DOCUMENT_ROOT . "/core/class/doleditor.class.php");
+	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 	$doleditor = new DolEditor($field, $$field, 160, '', '', false);
 	$doleditor->Create();
 	print '</td>';
@@ -169,9 +164,11 @@ if (! $action)
 
 	print '</table>';
 
-	echo '<br><div align="center">',
+	dol_fiche_end('');
+
+	echo '<div align="center">',
 	'<input type="submit" class="button" name="add" value="'.$langs->trans('Save').'" />',
-	'&nbsp;',
+	'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
 	'<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'" />',
 	'</div>';
 

@@ -1260,6 +1260,10 @@ CREATE TABLE llx_askpricesupplierdet_extrafields (
 ) ENGINE=innodb;
 -- End Module AskPriceSupplier --
 
+-- Not into official 3.7 but must be into migration for 3.7 when migration is done by 3.8 code 
+ALTER TABLE llx_extrafields ADD COLUMN perms varchar(255) after fieldrequired;
+ALTER TABLE llx_extrafields ADD COLUMN list integer DEFAULT 0 after perms;
+
 -- IVORY COST (id country=21)
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,localtax1,localtax1_type,localtax2,localtax2_type,note,active) values (211, 21,  '0','0',0,0,0,0,'IVA Rate 0',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,localtax1,localtax1_type,localtax2,localtax2_type,note,active) values (212, 21,  '18','0',7.5,2,0,0,'IVA standard rate',1);

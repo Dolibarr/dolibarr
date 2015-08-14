@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2008-2014	Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2015	Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2011		Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2012  Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2015		Jean-François Ferry <jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -132,8 +133,13 @@ if (preg_match('/del_(.*)/',$action,$reg))
 llxHeader();
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("AgendaSetup"),$linkback,'setup');
+print_fiche_titre($langs->trans("AgendaSetup"),$linkback,'title_setup');
 print "<br>\n";
+
+
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="save">';
 
 
 $head=agenda_prepare_head();
@@ -143,10 +149,6 @@ dol_fiche_head($head, 'autoactions', $langs->trans("Agenda"), 0, 'action');
 print $langs->trans("AgendaAutoActionDesc")."<br>\n";
 print $langs->trans("OnlyActiveElementsAreShown").'<br>';
 print "<br>\n";
-
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="save">';
 
 $var=true;
 print '<table class="noborder" width="100%">';
@@ -167,8 +169,9 @@ if (! empty($triggers))
 		//print 'module='.$module.'<br>';
 		if (! empty($conf->$module->enabled))
 		{
-			// Discard special case.
+			// Discard special case: If option FICHINTER_CLASSIFY_BILLED is not set, we discard both trigger FICHINTER_CLASSIFY_BILLED and FICHINTER_CLASSIFY_UNBILLED
 			if ($trigger['code'] == 'FICHINTER_CLASSIFY_BILLED' && empty($conf->global->FICHINTER_CLASSIFY_BILLED)) continue;
+			if ($trigger['code'] == 'FICHINTER_CLASSIFY_UNBILLED' && empty($conf->global->FICHINTER_CLASSIFY_BILLED)) continue;
 
 			$var=!$var;
 			print '<tr '.$bc[$var].'>';
@@ -177,20 +180,21 @@ if (! empty($triggers))
 			print '<td align="right" width="40">';
 			$key='MAIN_AGENDA_ACTIONAUTO_'.$trigger['code'];
 			$value=$conf->global->$key;
-			print '<input '.$bc[$var].' type="checkbox" name="'.$key.'" value="1"'.((($action=='selectall'||$value) && $action!="selectnone")?' checked="checked"':'').'>';
+			print '<input '.$bc[$var].' type="checkbox" name="'.$key.'" value="1"'.((($action=='selectall'||$value) && $action!="selectnone")?' checked':'').'>';
 			print '</td></tr>'."\n";
 		}
 	}
 }
 print '</table>';
 
-print '<br><center>';
+dol_fiche_end();
+
+print '<div class="center">';
 print '<input type="submit" name="save" class="button" value="'.$langs->trans("Save").'">';
-print "</center>";
+print "</div>";
 
 print "</form>\n";
 
-dol_fiche_end();
 
 print "<br>";
 

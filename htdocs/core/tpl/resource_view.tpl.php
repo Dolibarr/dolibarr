@@ -6,36 +6,32 @@ $form= new Form($db);
 
 if( (array) $linked_resources && count($linked_resources) > 0)
 {
-	$var=false;
+	$var=true;
 
 	// TODO: DEBUT DU TPL
 	if($mode == 'edit' )
 	{
-
 		print '<div class="tagtable centpercent noborder allwidth">';
 		print '<form class="tagtr liste_titre">';
 		print '<div class="tagtd">'.$langs->trans('Type').'</div>';
 		print '<div class="tagtd">'.$langs->trans('Resource').'</div>';
-		print '<div class="tagtd">'.$langs->trans('Busy').'</div>';
-		print '<div class="tagtd">'.$langs->trans('Mandatory').'</div>';
-		print '<div class="tagtd">'.$langs->trans('Edit').'</div>';
+		print '<div class="tagtd" align="center">'.$langs->trans('Busy').'</div>';
+		print '<div class="tagtd" align="center">'.$langs->trans('Mandatory').'</div>';
+		print '<div class="tagtd"></div>';
 		print '</form>';
 		//print '</div>';
-
 	}
 	else
 	{
-
 		print '<div class="tagtable centpercent noborder allwidth">';
 		print '<form class="tagtr liste_titre">';
 		print '<div class="tagtd">'.$langs->trans('Type').'</div>';
 		print '<div class="tagtd">'.$langs->trans('Resource').'</div>';
-		print '<div class="tagtd">'.$langs->trans('Busy').'</div>';
-		print '<div class="tagtd">'.$langs->trans('Mandatory').'</div>';
-		print '<div class="tagtd">'.$langs->trans('Action').'</div>';
+		print '<div class="tagtd" align="center">'.$langs->trans('Busy').'</div>';
+		print '<div class="tagtd" align="center">'.$langs->trans('Mandatory').'</div>';
+		print '<div class="tagtd"></div>';
 		print '</form>';
 		//print '</div>';
-
 	}
 
 
@@ -55,7 +51,7 @@ if( (array) $linked_resources && count($linked_resources) > 0)
 
 			print '<div class="tagtd">'.$object_resource->type_label.'</div>';
 			print '<div class="tagtd">'.$object_resource->getNomUrl(1).'</div>';
-			print '<div class="tagtd">'.$form->selectyesno('busy',$linked_resource['busy']?1:0,1).'</div>';
+			print '<div class="tagtd" align="center">'.$form->selectyesno('busy',$linked_resource['busy']?1:0,1).'</div>';
 			print '<div class="tagtd">'.$form->selectyesno('mandatory',$linked_resource['mandatory']?1:0,1).'</div>';
 			print '<div class="tagtd"><input type="submit" class="button" value="'.$langs->trans("Update").'"></div>';
 			print '</form>';
@@ -77,20 +73,20 @@ if( (array) $linked_resources && count($linked_resources) > 0)
 			print $object_resource->getNomUrl(1);
 			print '</div class="tagtd">';
 
-			print '<div class="tagtd">';
-			print $linked_resource['busy']?1:0;
+			print '<div class="tagtd" align="center">';
+			print yn($linked_resource['busy']);
 			print '</div>';
 
-			print '<div class="tagtd">';
-			print $linked_resource['mandatory']?1:0;
+			print '<div class="tagtd" align="center">';
+			print yn($linked_resource['mandatory']);
 			print '</div>';
 
-			print '<div class="tagtd">';
+			print '<div class="tagtd" align="right">';
 			print '<a href="'.$_SERVER['PHP_SELF'].'?mode=edit&resource_type='.$linked_resource['resource_type'].'&element='.$element.'&element_id='.$element_id.'&lineid='.$linked_resource['rowid'].'">';
 			print img_edit();
 			print '</a>';
 			print '&nbsp;';
-			print '<a href="'.$_SERVER['PHP_SELF'].'?action=delete_resource&element='.$element.'&element_id='.$element_id.'&lineid='.$linked_resource['rowid'].'">';			
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=delete_resource&id='.$linked_resource['resource_id'].'&element='.$element.'&element_id='.$element_id.'&lineid='.$linked_resource['rowid'].'">';
 			print img_delete();
 			print '</a>';
 			print '</div>';

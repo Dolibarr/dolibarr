@@ -2,8 +2,8 @@
 -- Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2008-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
--- Copyright (C) 2010      juanjo Menent        <jmenent@2byte.es>
--- Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
+-- Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
+-- Copyright (C) 2012-2013 Cédric Salvador      <csalvador@gpcsolutions.fr>
 -- Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -71,10 +71,14 @@ create table llx_product
   volume					float        DEFAULT NULL,
   volume_units				tinyint      DEFAULT NULL,
   stock						integer,						-- Current physical stock (dernormalized field)
-  pmp						double(24,8) DEFAULT 0 NOT NULL,
+  pmp						double(24,8) DEFAULT 0 NOT NULL,		-- To store valuation of stock calculated using average price method, for this product
+  fifo						double(24,8),							-- To store valuation of stock calculated using fifo method, for this product
+  lifo						double(24,8),							-- To store valuation of stock calculated using lifo method, for this product
   canvas					varchar(32)  DEFAULT NULL,
   finished					tinyint      DEFAULT NULL,
   hidden					tinyint      DEFAULT 0,			-- Not used. Deprecated.
   import_key				varchar(14),					-- Import key
-  desiredstock              integer      DEFAULT 0
+  fk_price_expression integer,                     -- Link to the rule for dynamic price calculation
+  desiredstock              integer      DEFAULT 0,
+  fk_unit					integer      DEFAULT NULL
 )ENGINE=innodb;

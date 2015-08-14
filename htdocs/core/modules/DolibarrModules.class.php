@@ -39,166 +39,182 @@ abstract class DolibarrModules
      */
     public $db;
 
-	/**
-	 * @var string Relative path to module style sheet
-	 * @deprecated
-	 */
-	public $style_sheet = '';
+    /**
+     * @var string Relative path to module style sheet
+     * @deprecated
+     * @see module_parts
+     */
+    public $style_sheet = '';
 
-	/**
-	 * @var array Paths to create when module is activated
-	 */
-	public $dirs = array();
+    /**
+     * @var array Paths to create when module is activated
+     */
+    public $dirs = array();
 
-	/**
-	 * @var array Module boxes
-	 */
-	public $boxes = array();
+    /**
+     * @var array Module boxes
+     */
+    public $boxes = array();
 
-	/**
-	 * @var array Module constants
-	 */
-	public $const = array();
+    /**
+     * @var array Module constants
+     */
+    public $const = array();
 
-	/**
-	 * @var array Module access rights
-	 */
-	public $rights;
+    /**
+     * @var array Module cron jobs entries
+     */
+    public $cronjobs = array();
 
-	/**
-	 * @var string Module access rights family
-	 */
-	public $rights_class;
+    /**
+     * @var array Module access rights
+     */
+    public $rights;
 
-	/**
-	 * @var array Module menu entries
-	 */
-	public $menu = array();
+    /**
+     * @var string Module access rights family
+     */
+    public $rights_class;
 
-	/**
-	 * @var array Module parts
-	 *  array(
-	 *      // Set this to 1 if module has its own trigger directory (/mymodule/core/triggers)
-	 *      'triggers' => 0,
-	 *      // Set this to 1 if module has its own login method directory (/mymodule/core/login)
+    /**
+     * @var array Module menu entries
+     */
+    public $menu = array();
+
+    /**
+     * @var array Module parts
+     *  array(
+     *      // Set this to 1 if module has its own trigger directory (/mymodule/core/triggers)
+     *      'triggers' => 0,
+     *      // Set this to 1 if module has its own login method directory (/mymodule/core/login)
 	 *  	'login' => 0,
-	 *      // Set this to 1 if module has its own substitution function file (/mymodule/core/substitutions)
+     *      // Set this to 1 if module has its own substitution function file (/mymodule/core/substitutions)
 	 *	    'substitutions' => 0,
-	 *      // Set this to 1 if module has its own menus handler directory (/mymodule/core/menus)
+     *      // Set this to 1 if module has its own menus handler directory (/mymodule/core/menus)
 	 *	    'menus' => 0,
-	 *      // Set this to 1 if module has its own theme directory (/mymodule/theme)
+     *      // Set this to 1 if module has its own theme directory (/mymodule/theme)
 	 *	    'theme' => 0,
-	 *      // Set this to 1 if module overwrite template dir (/mymodule/core/tpl)
-	 *      'tpl' => 0,
-	 *      // Set this to 1 if module has its own barcode directory (/mymodule/core/modules/barcode)
+     *      // Set this to 1 if module overwrite template dir (/mymodule/core/tpl)
+     *      'tpl' => 0,
+     *      // Set this to 1 if module has its own barcode directory (/mymodule/core/modules/barcode)
 	 *	    'barcode' => 0,
-	 *      // Set this to 1 if module has its own models directory (/mymodule/core/modules/xxx)
+     *      // Set this to 1 if module has its own models directory (/mymodule/core/modules/xxx)
 	 *	    'models' => 0,
-	 *      // Set this to relative path of css file if module has its own css file
+     *      // Set this to relative path of css file if module has its own css file
 	 *	    'css' => '/mymodule/css/mymodule.css.php',
-	 *      // Set this to relative path of js file if module must load a js on all pages
+     *      // Set this to relative path of js file if module must load a js on all pages
 	 *	    'js' => '/mymodule/js/mymodule.js',
-	 *      // Set here all hooks context managed by module
+     *      // Set here all hooks context managed by module
 	 *	    'hooks' => array('hookcontext1','hookcontext2'),
-	 *      // Set here all workflow context managed by module
+     *      // Set here all workflow context managed by module
 	 *	    'workflow' => array(
-	 *          'WORKFLOW_MODULE1_YOURACTIONTYPE_MODULE2' = >array(
-	 *              'enabled' => '! empty($conf->module1->enabled) && ! empty($conf->module2->enabled)',
-	 *              'picto'=>'yourpicto@mymodule'
-	 *          )
-	 *      )
-	 *  )
-	 */
-	public $module_parts = array();
+     *          'WORKFLOW_MODULE1_YOURACTIONTYPE_MODULE2' = >array(
+     *              'enabled' => '! empty($conf->module1->enabled) && ! empty($conf->module2->enabled)',
+     *              'picto'=>'yourpicto@mymodule'
+     *          )
+     *      )
+     *  )
+     */
+    public $module_parts = array();
+
+    /**
+     * @var string Module documents ?
+     * @deprecated Seems unused anywhere
+     */
+    public $docs;
+
+    /**
+     * @var string ?
+     * @deprecated Seems unused anywhere
+     */
+    public $dbversion = "-";
+
+    /**
+     * @var string Error message
+     */
+    public $error;
+
+    /**
+     * @var int Module unique ID
+     */
+    public $numero;
+
+    /**
+     * @var string Module name
+     */
+    public $name;
+
+    /**
+     * @var string Module version
+     */
+    public $version;
+
+    /**
+     * @var string Module description
+     */
+    public $description;
+
+    /**
+     * @var string[] Module language files
+     */
+    public $langfiles;
+
+    /**
+     * @var string Module export code
+     */
+    public $export_code;
+
+    /**
+     * @var string Module export label
+     */
+    public $export_label;
+
+    /**
+     * @var string Module import code
+     */
+    public $import_code;
+
+    /**
+     * @var string Module import label
+     */
+    public $import_label;
+
+    /**
+     * @var string Module constant name
+     */
+    public $const_name;
+
+    /**
+     * @var bool Module can't be disabled
+     */
+    public $always_enabled;
+
+    /**
+     * @var bool Module is enabled globally (Multicompany support)
+     */
+    public $core_enabled;
 
 	/**
-	 * @var string Module documents ?
-	 * @deprecated Seems unused anywhere
-	 */
-	public $docs;
-
-	/**
-	 * @var string ?
-	 * @deprecated Seems unused anywhere
-	 */
-	public $dbversion = "-";
-
-	/**
-	 * @var string Error message
-	 */
-	public $error;
-
-	/**
-	 * @var int Module unique ID
-	 */
-	public $numero;
-
-	/**
-	 * @var string Module name
-	 */
-	public $name;
-
-	/**
-	 * @var string Module version
-	 */
-	public $version;
-
-	/**
-	 * @var string Module description
-	 */
-	public $description;
-
-	/**
-	 * @var string[] Module language files
-	 */
-	public $langfiles;
-
-	/**
-	 * @var string Module export code
-	 */
-	public $export_code;
-
-	/**
-	 * @var string Module export label
-	 */
-	public $export_label;
-
-	/**
-	 * @var string Module import code
-	 */
-	public $import_code;
-
-	/**
-	 * @var string Module import label
-	 */
-	public $import_label;
-
-	/**
-	 * @var string Module constant name
-	 */
-	public $const_name;
-
-	/**
-	 * @var bool Module can't be disabled
-	 */
-	public $always_enabled;
-
-	/**
-	 * @var bool Module is enabled globally (Multicompany support)
-	 */
-	public $core_enabled;
-
-	/**
-	 * Enables a module.
-	 * Inserts all informations into database
+	 * Constructor. Define names, constants, directories, boxes, permissions
 	 *
-	 * @param   string[]    $array_sql  SQL requests to be executed when enabling module
-	 * @param   string      $options    String with options when disabling module:
-	 *                                    'noboxes' = Do not insert boxes
-	 *                                    'newboxdefonly' = For boxes, insert def of boxes only and not boxes activation
-	 *
-	 * @return  int                     1 if OK, 0 if KO
+	 * @param DoliDB		$db      Database handler
 	 */
+	//public function __construct($db);
+	// We should but can't set this as abstract because this will make dolibarr hang
+	// after migration due to old module not implementing. We must wait PHP is able to make
+	// a try catch on Fatal error to manage this correctly.
+
+    /**
+     * Enables a module.
+     * Inserts all informations into database
+     *
+	 * @param   array  		$array_sql  SQL requests to be executed when enabling module
+     * @param   string      $options    String with options when disabling module:
+     *                                    'noboxes' = Do not insert boxes
+     *                                    'newboxdefonly' = For boxes, insert def of boxes only and not boxes activation
+     *
+     * @return  int                         1 if OK, 0 if KO
+     */
     function _init($array_sql, $options='')
     {
         global $conf;
@@ -209,17 +225,20 @@ abstract class DolibarrModules
         // Insert activation module constant
         if (! $err) $err+=$this->_active();
 
-        // Insert new pages for tabs into llx_const
+        // Insert new pages for tabs (into llx_const)
         if (! $err) $err+=$this->insert_tabs();
 
         // Insert activation of module's parts
         if (! $err) $err+=$this->insert_module_parts();
 
-        // Insert constant defined by modules, into llx_const
+        // Insert constant defined by modules (into llx_const)
         if (! $err) $err+=$this->insert_const();
 
-        // Insert boxes def into llx_boxes_def and boxes setup into llx_boxes
+        // Insert boxes def into llx_boxes_def and boxes setup (into llx_boxes)
         if (! $err && ! preg_match('/noboxes/',$options)) $err+=$this->insert_boxes($options);
+
+        // Insert cron job entries (entry in llx_cronjobs)
+        if (! $err) $err+=$this->insert_cronjobs();
 
         // Insert permission definitions of module into llx_rights_def. If user is admin, grant this permission to user.
         if (! $err) $err+=$this->insert_permissions(1);
@@ -232,12 +251,12 @@ abstract class DolibarrModules
 
         // Execute addons requests
         $num=count($array_sql);
-    	for ($i = 0; $i < $num; $i++)
+        for ($i = 0; $i < $num; $i++)
         {
             if (! $err)
             {
                 $val=$array_sql[$i];
-	            $sql=$val;
+                $sql=$val;
                 $ignoreerror=0;
                 if (is_array($val))
                 {
@@ -307,6 +326,9 @@ abstract class DolibarrModules
         // Remove list of module's available boxes (entry in llx_boxes)
         if (! $err && ! preg_match('/(newboxdefonly|noboxes)/',$options)) $err+=$this->delete_boxes();	// We don't have to delete if option ask to keep boxes safe or ask to add new box def only
 
+        // Remove list of module's cron job entries (entry in llx_cronjobs)
+        if (! $err) $err+=$this->delete_cronjobs();
+
         // Remove module's permissions from list of available permissions (entries in llx_rights_def)
         if (! $err) $err+=$this->delete_permissions();
 
@@ -367,12 +389,12 @@ abstract class DolibarrModules
             // If module name translation using it's unique id does not exists, we take use its name to find translation
             if (is_array($this->langfiles))
             {
-            	foreach($this->langfiles as $val)
-            	{
-            		if ($val) $langs->load($val);
-            	}
+                foreach($this->langfiles as $val)
+                {
+                    if ($val) $langs->load($val);
+                }
             }
-       		return $langs->trans($this->name);
+            return $langs->trans($this->name);
         }
     }
 
@@ -389,20 +411,20 @@ abstract class DolibarrModules
 
         if ($langs->trans("Module".$this->numero."Desc") != ("Module".$this->numero."Desc"))
         {
-	        // If module description translation exists
+            // If module description translation exists
             return $langs->trans("Module".$this->numero."Desc");
         }
         else
-		{
+        {
             // If module description translation using it's unique id does not exists, we take use its name to find translation
             if (is_array($this->langfiles))
             {
-            	foreach($this->langfiles as $val)
-            	{
-            		if ($val) $langs->load($val);
-            	}
+                foreach($this->langfiles as $val)
+                {
+                    if ($val) $langs->load($val);
+                }
             }
-       		return $langs->trans($this->description);
+            return $langs->trans($this->description);
         }
     }
 
@@ -419,11 +441,17 @@ abstract class DolibarrModules
         global $langs;
         $langs->load("admin");
 
-        if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
-        elseif ($this->version == 'development') return $langs->trans("VersionDevelopment");
-        elseif ($this->version == 'dolibarr') return DOL_VERSION;
-        elseif ($this->version) return $this->version;
-        else return $langs->trans("VersionUnknown");
+        $ret='';
+
+        $newversion=preg_replace('/_deprecated/','',$this->version);
+        if ($newversion == 'experimental') $ret=$langs->trans("VersionExperimental");
+        elseif ($newversion == 'development') $ret=$langs->trans("VersionDevelopment");
+        elseif ($newversion == 'dolibarr') $ret=DOL_VERSION;
+        elseif ($newversion) $ret=$newversion;
+        else $ret=$langs->trans("VersionUnknown");
+
+        if (preg_match('/_deprecated/',$this->version)) $ret.=' ('.$langs->trans("Deprecated").')';
+        return $ret;
     }
 
 
@@ -434,7 +462,7 @@ abstract class DolibarrModules
      */
     function isCoreOrExternalModule()
     {
-        if ($this->version == 'dolibarr') return 'core';
+        if ($this->version == 'dolibarr' || $this->version == 'dolibarr_deprecated') return 'core';
         if (! empty($this->version) && ! in_array($this->version,array('experimental','development'))) return 'external';
         if (! empty($this->editor_name) || ! empty($this->editor_web)) return 'external';
         return 'unknown';
@@ -576,9 +604,9 @@ abstract class DolibarrModules
         global $conf;
 
         $error=0;
-		$dirfound=0;
+        $dirfound=0;
 
-		if (empty($reldir)) return 1;
+        if (empty($reldir)) return 1;
 
         include_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
 
@@ -593,10 +621,10 @@ abstract class DolibarrModules
                 $handle=@opendir($dir);         // Dir may not exists
                 if (is_resource($handle))
                 {
-                	$dirfound++;
+                    $dirfound++;
 
-	                // Run llx_mytable.sql files
-                	while (($file = readdir($handle))!==false)
+                    // Run llx_mytable.sql files
+                    while (($file = readdir($handle))!==false)
                     {
                         if (preg_match('/\.sql$/i',$file) && ! preg_match('/\.key\.sql$/i',$file) && substr($file,0,4) == 'llx_' && substr($file,0,4) != 'data')
                         {
@@ -607,8 +635,8 @@ abstract class DolibarrModules
 
                     rewinddir($handle);
 
-	                // Run llx_mytable.key.sql files (Must be done after llx_mytable.sql)
-                	while (($file = readdir($handle))!==false)
+                    // Run llx_mytable.key.sql files (Must be done after llx_mytable.sql)
+                    while (($file = readdir($handle))!==false)
                     {
                         if (preg_match('/\.key\.sql$/i',$file) && substr($file,0,4) == 'llx_' && substr($file,0,4) != 'data')
                         {
@@ -620,7 +648,7 @@ abstract class DolibarrModules
                     rewinddir($handle);
 
                     // Run data_xxx.sql files (Must be done after llx_mytable.key.sql)
-                	while (($file = readdir($handle))!==false)
+                    while (($file = readdir($handle))!==false)
                     {
                         if (preg_match('/\.sql$/i',$file) && ! preg_match('/\.key\.sql$/i',$file) && substr($file,0,4) == 'data')
                         {
@@ -632,7 +660,7 @@ abstract class DolibarrModules
                     rewinddir($handle);
 
                     // Run update_xxx.sql files
-                	while (($file = readdir($handle))!==false)
+                    while (($file = readdir($handle))!==false)
                     {
                         if (preg_match('/\.sql$/i',$file) && ! preg_match('/\.key\.sql$/i',$file) && substr($file,0,6) == 'update')
                         {
@@ -665,9 +693,9 @@ abstract class DolibarrModules
      */
     function insert_boxes($option='')
     {
-		require_once DOL_DOCUMENT_ROOT . '/core/class/infobox.class.php';
+        require_once DOL_DOCUMENT_ROOT . '/core/class/infobox.class.php';
 
-    	global $conf;
+        global $conf;
 
         $err=0;
 
@@ -675,8 +703,8 @@ abstract class DolibarrModules
         {
             $pos_name = InfoBox::getListOfPagesForBoxes();
 
-			foreach ($this->boxes as $key => $value)
-			{
+            foreach ($this->boxes as $key => $value)
+            {
                 $file  = isset($this->boxes[$key]['file'])?$this->boxes[$key]['file']:'';
                 $note  = isset($this->boxes[$key]['note'])?$this->boxes[$key]['note']:'';
                 $enabledbydefaulton = isset($this->boxes[$key]['enabledbydefaulton'])?$this->boxes[$key]['enabledbydefaulton']:'Home';
@@ -718,15 +746,15 @@ abstract class DolibarrModules
 
                             foreach ($pos_name as $key2 => $val2)
                             {
-                            	//print 'key2='.$key2.'-val2='.$val2."<br>\n";
+                                //print 'key2='.$key2.'-val2='.$val2."<br>\n";
                             	if ($enabledbydefaulton && $val2 != $enabledbydefaulton) continue;		// Not enabled by default onto this page.
 
-	                            $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes (box_id,position,box_order,fk_user,entity)";
-    	                        $sql.= " VALUES (".$lastid.", ".$key2.", '0', 0, ".$conf->entity.")";
+                                $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes (box_id,position,box_order,fk_user,entity)";
+                                $sql.= " VALUES (".$lastid.", ".$key2.", '0', 0, ".$conf->entity.")";
 
-    	                        dol_syslog(get_class($this)."::insert_boxes onto page ".$key2."=".$val2."", LOG_DEBUG);
-                            	$resql=$this->db->query($sql);
-                            	if (! $resql) $err++;
+                                dol_syslog(get_class($this)."::insert_boxes onto page ".$key2."=".$val2."", LOG_DEBUG);
+                                $resql=$this->db->query($sql);
+                                if (! $resql) $err++;
                             }
                         }
 
@@ -735,7 +763,7 @@ abstract class DolibarrModules
                             $this->db->commit();
                         }
                         else
-						{
+                        {
                             $this->error=$this->db->lasterror();
                             $this->db->rollback();
                         }
@@ -775,11 +803,22 @@ abstract class DolibarrModules
 
                 if (empty($file)) $file  = isset($this->boxes[$key][1])?$this->boxes[$key][1]:'';	// For backward compatibility
 
-                $sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes";
-                $sql.= " USING ".MAIN_DB_PREFIX."boxes, ".MAIN_DB_PREFIX."boxes_def";
-                $sql.= " WHERE ".MAIN_DB_PREFIX."boxes.box_id = ".MAIN_DB_PREFIX."boxes_def.rowid";
-                $sql.= " AND ".MAIN_DB_PREFIX."boxes_def.file = '".$this->db->escape($file)."'";
-                $sql.= " AND ".MAIN_DB_PREFIX."boxes.entity = ".$conf->entity;
+                if ($this->db->type == 'sqlite3') {
+                    // sqlite doesn't support "USING" syntax.
+                    // TODO: remove this dependency.
+                    $sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes ";
+                    $sql .= "WHERE ".MAIN_DB_PREFIX."boxes.box_id IN (";
+                    $sql .= "SELECT ".MAIN_DB_PREFIX."boxes_def.rowid ";
+                    $sql .= "FROM ".MAIN_DB_PREFIX."boxes_def ";
+                    $sql .= "WHERE ".MAIN_DB_PREFIX."boxes_def.file = '".$this->db->escape($file)."') ";
+                    $sql .= "AND ".MAIN_DB_PREFIX."boxes.entity = ".$conf->entity;
+                } else {
+                    $sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes";
+                    $sql.= " USING ".MAIN_DB_PREFIX."boxes, ".MAIN_DB_PREFIX."boxes_def";
+                    $sql.= " WHERE ".MAIN_DB_PREFIX."boxes.box_id = ".MAIN_DB_PREFIX."boxes_def.rowid";
+                    $sql.= " AND ".MAIN_DB_PREFIX."boxes_def.file = '".$this->db->escape($file)."'";
+                    $sql.= " AND ".MAIN_DB_PREFIX."boxes.entity = ".$conf->entity;
+                }
 
                 dol_syslog(get_class($this)."::delete_boxes", LOG_DEBUG);
                 $resql=$this->db->query($sql);
@@ -800,6 +839,130 @@ abstract class DolibarrModules
                     $this->error=$this->db->lasterror();
                     $err++;
                 }
+            }
+        }
+
+        return $err;
+    }
+
+    /**
+     * Adds cronjobs
+     *
+     * @return  int             Error count (0 if OK)
+     */
+    function insert_cronjobs()
+    {
+        require_once DOL_DOCUMENT_ROOT . '/core/class/infobox.class.php';
+
+        global $conf;
+
+        $err=0;
+
+        if (is_array($this->cronjobs))
+        {
+            foreach ($this->cronjobs as $key => $value)
+            {
+                $label  = isset($this->cronjobs[$key]['label'])?$this->cronjobs[$key]['label']:'';
+                $jobtype  = isset($this->cronjobs[$key]['jobtype'])?$this->cronjobs[$key]['jobtype']:'';
+                $class  = isset($this->cronjobs[$key]['class'])?$this->cronjobs[$key]['class']:'';
+                $method = isset($this->cronjobs[$key]['method'])?$this->cronjobs[$key]['method']:'';
+                $command  = isset($this->cronjobs[$key]['command'])?$this->cronjobs[$key]['command']:'';
+                $parameters  = isset($this->cronjobs[$key]['parameters'])?$this->cronjobs[$key]['parameters']:'';
+                $comment = isset($this->cronjobs[$key]['comment'])?$this->cronjobs[$key]['comment']:'';
+                $frequency = isset($this->cronjobs[$key]['frequency'])?$this->cronjobs[$key]['frequency']:'';
+                $unitfrequency = isset($this->cronjobs[$key]['unitfrequency'])?$this->cronjobs[$key]['unitfrequency']:'';
+
+                // Search if boxes def already present
+                $sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."cronjob";
+                $sql.= " WHERE module_name = '".$this->db->escape($this->rights_class)."'";
+                if ($class) $sql.= " AND classesname = '".$this->db->escape($class)."'";
+                if ($method) $sql.= " AND methodename = '".$this->db->escape($method)."'";
+                if ($command) $sql.= " AND command = '".$this->db->escape($command)."'";
+                $sql.= " AND entity = ".$conf->entity;
+
+                $now=dol_now();
+
+                dol_syslog(get_class($this)."::insert_cronjobs", LOG_DEBUG);
+                $result=$this->db->query($sql);
+                if ($result)
+                {
+                    $obj = $this->db->fetch_object($result);
+                    if ($obj->nb == 0)
+                    {
+                        $this->db->begin();
+
+                        if (! $err)
+                        {
+                            $sql = "INSERT INTO ".MAIN_DB_PREFIX."cronjob (module_name, datec, label, jobtype, classesname, methodename, command, params, note, frequency, unitfrequency, entity)";
+                            $sql.= " VALUES (";
+                            $sql.= "'".$this->db->escape($this->rights_class)."', ";
+                            $sql.= "'".$this->db->idate($now)."', ";
+                            $sql.= "'".$this->db->escape($label)."', ";
+                            $sql.= "'".$this->db->escape($jobtype)."', ";
+                            $sql.= ($class?"'".$this->db->escape($class)."'":"null").",";
+                            $sql.= ($method?"'".$this->db->escape($method)."'":"null").",";
+                            $sql.= ($command?"'".$this->db->escape($command)."'":"null").",";
+                            $sql.= ($parameters?"'".$this->db->escape($parameters)."'":"null").",";
+                            $sql.= ($comment?"'".$this->db->escape($comment)."'":"null").",";
+                            $sql.= "'".$this->db->escape($frequency)."', ";
+                            $sql.= "'".$this->db->escape($unitfrequency)."', ";
+                            $sql.= $conf->entity;
+                            $sql.= ")";
+print $sql;
+
+                            dol_syslog(get_class($this)."::insert_cronjobs", LOG_DEBUG);
+                            $resql=$this->db->query($sql);
+                            if (! $resql) $err++;
+
+                        }
+
+                        if (! $err)
+                        {
+                            $this->db->commit();
+                        }
+                        else
+                        {
+                            $this->error=$this->db->lasterror();
+                            $this->db->rollback();
+                        }
+                    }
+                    // else box already registered into database
+                }
+                else
+              {
+                    $this->error=$this->db->lasterror();
+                    $err++;
+                }
+            }
+        }
+
+        return $err;
+    }
+
+
+    /**
+     * Removes boxes
+     *
+     * @return  int Error count (0 if OK)
+     */
+    function delete_cronjobs()
+    {
+        global $conf;
+
+        $err=0;
+
+        if (is_array($this->cronjobs))
+        {
+            $sql = "DELETE FROM ".MAIN_DB_PREFIX."cronjob";
+            $sql.= " WHERE module_name = '".$this->db->escape($this->rights_class)."'";
+            $sql.= " AND entity = ".$conf->entity;
+
+            dol_syslog(get_class($this)."::delete_cronjobs", LOG_DEBUG);
+            $resql=$this->db->query($sql);
+            if (! $resql)
+            {
+                $this->error=$this->db->lasterror();
+                $err++;
             }
         }
 
@@ -847,7 +1010,18 @@ abstract class DolibarrModules
             $i=0;
             foreach ($this->tabs as $key => $value)
             {
-                if ($value)
+            	if (is_array($value) && count($value) == 0) continue;	// Discard empty arrays
+
+            	$entity=$conf->entity;
+            	$newvalue = $value;
+
+            	if (is_array($value))
+            	{
+            		$newvalue = $value['data'];
+            		if (isset($value['entity'])) $entity = $value['entity'];
+            	}
+
+                if ($newvalue)
                 {
                     $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (";
                     $sql.= "name";
@@ -1006,7 +1180,7 @@ abstract class DolibarrModules
         if ($resql)
         {
             $obj=$this->db->fetch_object($resql);
-            if (! empty($obj->value) && ! empty($this->rights))
+            if ($obj !== null && ! empty($obj->value) && ! empty($this->rights))
             {
                 // Si module actif
                 foreach ($this->rights as $key => $value)
@@ -1021,54 +1195,54 @@ abstract class DolibarrModules
 
                     if (empty($r_type)) $r_type='w';
 
-	                // Search if perm already present
-    	            $sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."rights_def";
-        	        $sql.= " WHERE id = ".$r_id." AND entity = ".$entity;
-					$resqlselect=$this->db->query($sql);
+                    // Search if perm already present
+                    $sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."rights_def";
+                    $sql.= " WHERE id = ".$r_id." AND entity = ".$entity;
+                    $resqlselect=$this->db->query($sql);
 
-					$obj = $this->db->fetch_object($resqlselect);
+                    $obj = $this->db->fetch_object($resqlselect);
                     if ($obj->nb == 0)
                     {
-	                    if (dol_strlen($r_perms) )
-	                    {
-	                        if (dol_strlen($r_subperms) )
-	                        {
-	                            $sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def";
-	                            $sql.= " (id, entity, libelle, module, type, bydefault, perms, subperms)";
-	                            $sql.= " VALUES ";
-	                            $sql.= "(".$r_id.",".$entity.",'".$this->db->escape($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."','".$r_subperms."')";
-	                        }
-	                        else
-	                        {
-	                            $sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def";
-	                            $sql.= " (id, entity, libelle, module, type, bydefault, perms)";
-	                            $sql.= " VALUES ";
-	                            $sql.= "(".$r_id.",".$entity.",'".$this->db->escape($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."')";
-	                        }
-	                    }
-	                    else
-						{
-	                        $sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def ";
-	                        $sql .= " (id, entity, libelle, module, type, bydefault)";
-	                        $sql .= " VALUES ";
-	                        $sql .= "(".$r_id.",".$entity.",'".$this->db->escape($r_desc)."','".$r_modul."','".$r_type."',".$r_def.")";
-	                    }
+                        if (dol_strlen($r_perms) )
+                        {
+                            if (dol_strlen($r_subperms) )
+                            {
+                                $sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def";
+                                $sql.= " (id, entity, libelle, module, type, bydefault, perms, subperms)";
+                                $sql.= " VALUES ";
+                                $sql.= "(".$r_id.",".$entity.",'".$this->db->escape($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."','".$r_subperms."')";
+                            }
+                            else
+                            {
+                                $sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def";
+                                $sql.= " (id, entity, libelle, module, type, bydefault, perms)";
+                                $sql.= " VALUES ";
+                                $sql.= "(".$r_id.",".$entity.",'".$this->db->escape($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."')";
+                            }
+                        }
+                        else
+                        {
+                            $sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def ";
+                            $sql .= " (id, entity, libelle, module, type, bydefault)";
+                            $sql .= " VALUES ";
+                            $sql .= "(".$r_id.",".$entity.",'".$this->db->escape($r_desc)."','".$r_modul."','".$r_type."',".$r_def.")";
+                        }
 
-                    	$resqlinsert=$this->db->query($sql,1);
+                        $resqlinsert=$this->db->query($sql,1);
 
-	                    if (! $resqlinsert)
-	                    {
-	                        if ($this->db->errno() != "DB_ERROR_RECORD_ALREADY_EXISTS")
-	                        {
-	                            $this->error=$this->db->lasterror();
-	                            $err++;
-	                            break;
-	                        }
-	                        else dol_syslog(get_class($this)."::insert_permissions record already exists", LOG_INFO);
+                        if (! $resqlinsert)
+                        {
+                            if ($this->db->errno() != "DB_ERROR_RECORD_ALREADY_EXISTS")
+                            {
+                                $this->error=$this->db->lasterror();
+                                $err++;
+                                break;
+                            }
+                            else dol_syslog(get_class($this)."::insert_permissions record already exists", LOG_INFO);
 
-	                    }
+                        }
 
-	                    $this->db->free($resqlinsert);
+                        $this->db->free($resqlinsert);
                     }
 
                     $this->db->free($resqlselect);
@@ -1076,9 +1250,9 @@ abstract class DolibarrModules
                     // If we want to init permissions on admin users
                     if ($reinitadminperms)
                     {
-                    	if (! class_exists('User')) {
-							require DOL_DOCUMENT_ROOT . '/user/class/user.class.php';
-                    	}
+                        if (! class_exists('User')) {
+                            require DOL_DOCUMENT_ROOT . '/user/class/user.class.php';
+                        }
                         $sql="SELECT rowid FROM ".MAIN_DB_PREFIX."user WHERE admin = 1";
                         dol_syslog(get_class($this)."::insert_permissions Search all admin users", LOG_DEBUG);
                         $resqlseladmin=$this->db->query($sql,1);
@@ -1093,7 +1267,7 @@ abstract class DolibarrModules
                                 $tmpuser=new User($this->db);
                                 $tmpuser->fetch($obj2->rowid);
                                 if (!empty($tmpuser->id)) {
-                                	$tmpuser->addrights($r_id);
+                                    $tmpuser->addrights($r_id);
                                 }
                                 $i++;
                             }
@@ -1152,7 +1326,7 @@ abstract class DolibarrModules
      */
     function insert_menus()
     {
-    	global $user;
+        global $user;
 
         require_once DOL_DOCUMENT_ROOT . '/core/class/menubase.class.php';
 
@@ -1160,7 +1334,6 @@ abstract class DolibarrModules
 
         $this->db->begin();
 
-        //var_dump($this->menu); exit;
         foreach ($this->menu as $key => $value)
         {
             $menu = new Menubase($this->db);
@@ -1169,11 +1342,9 @@ abstract class DolibarrModules
             if (! $this->menu[$key]['fk_menu'])
             {
                 $menu->fk_menu=0;
-                //print 'aaa'.$this->menu[$key]['fk_menu'];
             }
             else
             {
-                //print 'xxx'.$this->menu[$key]['fk_menu'];exit;
                 $foundparent=0;
                 $fk_parent=$this->menu[$key]['fk_menu'];
                 if (preg_match('/^r=/',$fk_parent))	// old deprecated method
@@ -1217,10 +1388,11 @@ abstract class DolibarrModules
             $menu->target=$this->menu[$key]['target'];
             $menu->user=$this->menu[$key]['user'];
             $menu->enabled=isset($this->menu[$key]['enabled'])?$this->menu[$key]['enabled']:0;
+            $menu->position=$this->menu[$key]['position'];
 
             if (! $err)
             {
-                $result=$menu->create($user);
+                $result=$menu->create($user);	// Save menu entry into table llx_menu
                 if ($result > 0)
                 {
                     $this->menu[$key]['rowid']=$result;
@@ -1409,14 +1581,14 @@ abstract class DolibarrModules
      */
     function insert_module_parts()
     {
-    	global $conf;
+        global $conf;
 
-    	$error=0;
+        $error=0;
 
-    	if (is_array($this->module_parts) && ! empty($this->module_parts))
-    	{
-    		foreach($this->module_parts as $key => $value)
-    		{
+        if (is_array($this->module_parts) && ! empty($this->module_parts))
+        {
+            foreach($this->module_parts as $key => $value)
+            {
     			if (is_array($value) && count($value) == 0) continue;	// Discard empty arrays
 
     			$entity=$conf->entity; // Reset the current entity
@@ -1442,40 +1614,40 @@ abstract class DolibarrModules
     				}
     			}
 
-    			$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (";
-    			$sql.= "name";
-    			$sql.= ", type";
-    			$sql.= ", value";
-    			$sql.= ", note";
-    			$sql.= ", visible";
-    			$sql.= ", entity";
-    			$sql.= ")";
-    			$sql.= " VALUES (";
-    			$sql.= $this->db->encrypt($this->const_name."_".strtoupper($key), 1);
-    			$sql.= ", 'chaine'";
-    			$sql.= ", ".$this->db->encrypt($newvalue, 1);
-    			$sql.= ", null";
-    			$sql.= ", '0'";
-    			$sql.= ", ".$entity;
-    			$sql.= ")";
+                $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (";
+                $sql.= "name";
+                $sql.= ", type";
+                $sql.= ", value";
+                $sql.= ", note";
+                $sql.= ", visible";
+                $sql.= ", entity";
+                $sql.= ")";
+                $sql.= " VALUES (";
+                $sql.= $this->db->encrypt($this->const_name."_".strtoupper($key), 1);
+                $sql.= ", 'chaine'";
+                $sql.= ", ".$this->db->encrypt($newvalue, 1);
+                $sql.= ", null";
+                $sql.= ", '0'";
+                $sql.= ", ".$entity;
+                $sql.= ")";
 
-    			dol_syslog(get_class($this)."::insert_const_".$key."", LOG_DEBUG);
-    			$resql=$this->db->query($sql,1);
-    			if (! $resql)
-    			{
-    			    if ($this->db->lasterrno() != 'DB_ERROR_RECORD_ALREADY_EXISTS')
-    			    {
-        			    $error++;
-        				$this->error=$this->db->lasterror();
-    			    }
-    			    else
-    			    {
-    			        dol_syslog(get_class($this)."::insert_const_".$key." Record already exists.", LOG_WARNING);
-    			    }
-    			}
-    		}
-    	}
-    	return $error;
+                dol_syslog(get_class($this)."::insert_const_".$key."", LOG_DEBUG);
+                $resql=$this->db->query($sql,1);
+                if (! $resql)
+                {
+                    if ($this->db->lasterrno() != 'DB_ERROR_RECORD_ALREADY_EXISTS')
+                    {
+                        $error++;
+                        $this->error=$this->db->lasterror();
+                    }
+                    else
+                    {
+                        dol_syslog(get_class($this)."::insert_const_".$key." Record already exists.", LOG_WARNING);
+                    }
+                }
+            }
+        }
+        return $error;
     }
 
     /**
@@ -1485,31 +1657,57 @@ abstract class DolibarrModules
      */
     function delete_module_parts()
     {
-    	global $conf;
+        global $conf;
 
-    	$err=0;
-    	$entity=$conf->entity;
+        $err=0;
+        $entity=$conf->entity;
 
-    	if (is_array($this->module_parts) && ! empty($this->module_parts))
-    	{
-    		foreach($this->module_parts as $key => $value)
-    		{
-    			// If entity is defined
-    			if (is_array($value) && isset($value['entity'])) $entity = $value['entity'];
+        if (is_array($this->module_parts) && ! empty($this->module_parts))
+        {
+            foreach($this->module_parts as $key => $value)
+            {
+                // If entity is defined
+                if (is_array($value) && isset($value['entity'])) $entity = $value['entity'];
 
-    			$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
-    			$sql.= " WHERE ".$this->db->decrypt('name')." LIKE '".$this->const_name."_".strtoupper($key)."'";
-    			$sql.= " AND entity = ".$entity;
+                $sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
+                $sql.= " WHERE ".$this->db->decrypt('name')." LIKE '".$this->const_name."_".strtoupper($key)."'";
+                $sql.= " AND entity = ".$entity;
 
-    			dol_syslog(get_class($this)."::delete_const_".$key."", LOG_DEBUG);
-    			if (! $this->db->query($sql))
-    			{
-    				$this->error=$this->db->lasterror();
-    				$err++;
-    			}
-    		}
-    	}
-    	return $err;
+                dol_syslog(get_class($this)."::delete_const_".$key."", LOG_DEBUG);
+                if (! $this->db->query($sql))
+                {
+                    $this->error=$this->db->lasterror();
+                    $err++;
+                }
+            }
+        }
+        return $err;
     }
+
+	/**
+	 * Function called when module is enabled.
+	 * The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 * It also creates data directories
+	 *
+	 * @param string $options    Options when enabling module ('', 'noboxes')
+	 * @return int             	1 if OK, 0 if KO
+	 */
+	public function init($options = '')
+	{
+		return $this->_init(array(), $options);
+	}
+
+	/**
+	 * Function called when module is disabled.
+	 * Remove from database constants, boxes and permissions from Dolibarr database.
+	 * Data directories are not deleted
+	 *
+	 * @param      string	$options    Options when enabling module ('', 'noboxes')
+	 * @return     int             	1 if OK, 0 if KO
+	 */
+	public function remove($options = '')
+	{
+		return $this->_remove(array(), $options);
+	}
 
 }

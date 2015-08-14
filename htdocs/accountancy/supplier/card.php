@@ -1,10 +1,11 @@
 <?php
 /* Copyright (C) 2004       Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2005       Simon TOSSER          <simon@kornog-computing.com>
- * Copyright (C) 2013-2014  Alexandre Spangaro    <alexandre.spangaro@gmail.com>
+ * Copyright (C) 2013-2015  Alexandre Spangaro    <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2013-2014  Olivier Geffroy       <jeff@jeffinfo.com>
  * Copyright (C) 2013-2014	Florian Henry	      <florian.henry@open-concept.pro>
  * Copyright (C) 2014	    Juanjo Menent		  <jmenent@2byte.es>
+ * Copyright (C) 2015       Jean-François Ferry	  <jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,31 +34,32 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/html.formventilation.class.php';
 
 // Langs
-$langs->load("compta");
 $langs->load("bills");
-$langs->load("other");
-$langs->load("main");
 $langs->load("accountancy");
 
-$action = GETPOST('action');
-$id = GETPOST('id', 'int');
+$action = GETPOST('action', 'alpha');
 $codeventil = GETPOST('codeventil');
+$id = GETPOST('id');
 
 // Security check
 if ($user->societe_id > 0)
 	accessforbidden();
 
-if ($action == 'ventil' && $user->rights->accounting->ventilation->dispatch)
-{
-	$sql = " UPDATE " . MAIN_DB_PREFIX . "facture_fourn_det";
-	$sql .= " SET fk_code_ventilation = " . $codeventil;
-	$sql .= " WHERE rowid = " . $id;
-	
-	dol_syslog('accountancy/journal/sellsjournal.php:: $sql=' . $sql);
-	
-	$resql = $db->query($sql);
-	if (! $resql) {
-		setEventMessage($db->lasterror(), 'errors');
+if ($action == 'ventil' && $user->rights->accounting->ventilation->dispatch) {
+	if (! GETPOST('cancel', 'alpha'))
+	{
+		$sql = " UPDATE " . MAIN_DB_PREFIX . "facture_fourn_det";
+		$sql .= " SET fk_code_ventilation = " . $codeventil;
+		$sql .= " WHERE rowid = " . $id;
+		
+		dol_syslog('accountancy/supplier/card.php:: $sql=' . $sql);
+		$resql = $db->query($sql);
+		if (! $resql) {
+			setEventMessage($db->lasterror(), 'errors');
+		}
+	} else {
+		header("Location: ./lines.php");
+		exit();
 	}
 }
 
@@ -77,7 +79,7 @@ $form = new Form($db);
 $facturefournisseur_static = new FactureFournisseur($db);
 $formventilation = new FormVentilation($db);
 
-if ($_GET["id"]) {
+if (! empty($id)) {
 	$sql = "SELECT f.ref as facnumber, f.rowid as facid, l.fk_product, l.description, l.rowid, l.fk_code_ventilation, ";
 	$sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label";
 	$sql .= ", aa.account_number, aa.label";
@@ -86,11 +88,14 @@ if ($_GET["id"]) {
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accountingaccount as aa ON l.fk_code_ventilation = aa.rowid";
 	$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "facture_fourn as f ON f.rowid = l.fk_facture_fourn ";
 	$sql .= " WHERE f.fk_statut > 0 AND l.rowid = " . $id;
+	
 	if (! empty($conf->multicompany->enabled)) {
-		$sql .= " AND f.entity = '" . $conf->entity . "'";
+		$sql .= " AND f.entity IN (" . getEntity("facture_fourn", 1) . ")";
 	}
 	
+	dol_syslog("/accounting/supplier/card.php sql=" . $sql, LOG_DEBUG);
 	$result = $db->query($sql);
+
 	if ($result) {
 		$num_lines = $db->num_rows($result);
 		$i = 0;
@@ -102,9 +107,11 @@ if ($_GET["id"]) {
 			print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
 			print '<input type="hidden" name="action" value="ventil">';
 			
-			print_fiche_titre($langs->trans("SuppliersVentilation"));
+			print_fiche_titre($langs->trans('SuppliersVentilation'),'','title_setup');
+
+            dol_fiche_head();
 			
-			print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
+			print '<table class="border" width="100%">';
 			
 			// ref invoice
 			print '<tr><td>' . $langs->trans("BillsSuppliers") . '</td>';
@@ -113,24 +120,29 @@ if ($_GET["id"]) {
 			print '<td>' . $facturefournisseur_static->getNomUrl(1) . '</td>';
 			print '</tr>';
 			
-			print '<tr><td width="20%">Ligne</td>';
+			print '<tr><td width="20%">' . $langs->trans("Line") . '</td>';
 			print '<td>' . stripslashes(nl2br($objp->description)) . '</td></tr>';
 			print '<tr><td width="20%">' . $langs->trans("ProductLabel") . '</td>';
 			print '<td>' . dol_trunc($objp->product_label, 24) . '</td>';
 			print '<tr><td width="20%">' . $langs->trans("Account") . '</td><td>';
-			print $objp->account_number . '-' . $objp->label;
-			print '<tr><td width="20%">' . $langs->trans("NewAccount") . '</td><td>';
 			print $formventilation->select_account($objp->fk_code_ventilation, 'codeventil', 1);
 			print '</td></tr>';
-			print '<tr><td>&nbsp;</td><td><input type="submit" class="button" value="' . $langs->trans("Update") . '"></td></tr>';
-			
 			print '</table>';
+
+            dol_fiche_end();
+
+			print '<div class="center">';
+			print '<input class="button" type="submit" value="' . $langs->trans("Save") . '">';
+			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+			print '<input class="button" type="submit" name="cancel" value="' . $langs->trans("Cancel") . '">';
+			print '</div>';
+
 			print '</form>';
 		} else {
-			print "Error 1";
+			print "Error";
 		}
 	} else {
-		print "Error 2";
+		print "Error";
 	}
 } else {
 	print "Error ID incorrect";

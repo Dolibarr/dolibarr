@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014		Alexandre Spangaro	<alexandre.spangaro@gmail.com>
+/* Copyright (C) 2014		Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
 /**
  * Class to manage fiscal year
  */
-class Fiscalyear
+class Fiscalyear extends CommonObject
 {
 	public $element='fiscalyear';
 	public $table_element='accounting_fiscalyear';

@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/paybox/lib/paybox.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 // Security check
-if (empty($conf->paybox->enabled)) accessforbidden('',1,1,1);
+if (empty($conf->paybox->enabled)) accessforbidden('',0,0,1);
 
 $langs->load("main");
 $langs->load("other");
@@ -99,6 +99,19 @@ $ipaddress          = $_SESSION['ipaddress'];
 dol_syslog("Call newpaymentok with token=".$token." paymentType=".$paymentType." currencyCodeType=".$currencyCodeType." payerID=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt." fulltag=".$fulltag);
 */
 
+
+print $langs->trans("YourPaymentHasBeenRecorded")."<br><br>\n";
+
+if (! empty($conf->global->PAYBOX_MESSAGE_OK)) print $conf->global->PAYBOX_MESSAGE_OK;
+
+// Appel des triggers
+include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+$interface=new Interfaces($db);
+$result=$interface->run_triggers('PAYBOX_PAYMENT_OK',$object,$user,$langs,$conf);
+if ($result < 0) { $error++; $errors=$interface->errors; }
+// Fin appel triggers
+
+
 // Send an email
 if (! empty($conf->global->PAYBOX_PAYONLINE_SENDEMAIL))
 {
@@ -135,6 +148,7 @@ if (! empty($conf->global->PAYBOX_PAYONLINE_SENDEMAIL))
 	require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 	$mailfile = new CMailFile($topic, $sendto, $from, $content, array(), array(), array(), '', '', 0, $ishtml);
 
+	// Send an email
 	$result=$mailfile->sendfile();
 	if ($result)
 	{
@@ -147,12 +161,8 @@ if (! empty($conf->global->PAYBOX_PAYONLINE_SENDEMAIL))
 }
 
 
-print $langs->trans("YourPaymentHasBeenRecorded")."<br><br>\n";
-
-if (! empty($conf->global->PAYBOX_MESSAGE_OK)) print $conf->global->PAYBOX_MESSAGE_OK;
 
 print "\n</div>\n";
-
 
 html_print_paybox_footer($mysoc,$langs);
 

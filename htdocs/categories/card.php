@@ -1,9 +1,10 @@
 <?php
 /* Copyright (C) 2005		Matthieu Valleton	<mv@seeschloss.org>
- * Copyright (C) 2006-2011	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2015	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2014	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2007		Patrick Raguin		<patrick.raguin@gmail.com>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,14 +51,14 @@ $parent=GETPOST('parent');
 
 if ($origin)
 {
-	if ($type == 0) $idProdOrigin 		= $origin;
-	if ($type == 1) $idSupplierOrigin 	= $origin;
-	if ($type == 2) $idCompanyOrigin 	= $origin;
-	if ($type == 3) $idMemberOrigin 	= $origin;
-	if ($type == 4) $idContactOrigin 	= $origin;
+	if ($type == Categorie::TYPE_PRODUCT)     $idProdOrigin     = $origin;
+	if ($type == Categorie::TYPE_SUPPLIER)    $idSupplierOrigin = $origin;
+	if ($type == Categorie::TYPE_CUSTOMER)    $idCompanyOrigin  = $origin;
+	if ($type == Categorie::TYPE_MEMBER)      $idMemberOrigin   = $origin;
+	if ($type == Categorie::TYPE_CONTACT)     $idContactOrigin  = $origin;
 }
 
-if ($catorigin && $type == 0) $idCatOrigin = $catorigin;
+if ($catorigin && $type == Categorie::TYPE_PRODUCT) $idCatOrigin = $catorigin;
 
 $object = new Categorie($db);
 
@@ -233,11 +234,13 @@ if ($user->rights->categorie->creer)
 
 		print_fiche_titre($langs->trans("CreateCat"));
 
+		dol_fiche_head('');
+
 		print '<table width="100%" class="border">';
 
 		// Ref
 		print '<tr>';
-		print '<td width="25%" class="fieldrequired">'.$langs->trans("Ref").'</td><td><input id="label" class="flat" name="label" size="25" value="'.$label.'">';
+		print '<td width="20%" class="fieldrequired">'.$langs->trans("Ref").'</td><td><input id="label" class="flat" name="label" size="25" value="'.$label.'">';
 		print'</td></tr>';
 
 		// Description
@@ -261,11 +264,13 @@ if ($user->rights->categorie->creer)
 
 		print '</table>';
 
-		print '<center><br>';
+		dol_fiche_end('');
+
+		print '<div class="center">';
 		print '<input type="submit" class="button" value="'.$langs->trans("CreateThisCat").'" name="creation" />';
-		print ' &nbsp; &nbsp; ';
+		print '&nbsp; &nbsp; &nbsp;';
 		print '<input type="submit" class="button" value="'.$langs->trans("Cancel").'" name="cancel" />';
-		print '</center>';
+		print '</div>';
 
 		print '</form>';
 	}

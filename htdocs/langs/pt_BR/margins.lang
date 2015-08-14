@@ -11,6 +11,7 @@ MarginDetails=Detalhes de margem
 ProductMargins=Margem de produtos
 CustomerMargins=Margems de clientes
 SalesRepresentativeMargins=Tolerância aos representante de vendas
+UserMargins=Margens do Usuário
 ProductService=Produto ou serviço
 Launch=Inicio
 ForceBuyingPriceIfNull=Forcar preço de compra se nulo

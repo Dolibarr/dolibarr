@@ -43,7 +43,12 @@ class Opensurveysondage extends CommonObject
     var $id;
 
 	var $id_sondage;
+	/**
+	 * @deprecated
+	 * @see description
+	 */
 	var $commentaires;
+	public $description;
 
 	var $mail_admin;
 	var $nom_admin;

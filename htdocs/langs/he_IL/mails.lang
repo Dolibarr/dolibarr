@@ -77,7 +77,7 @@ CheckRead=Read Receipt
 YourMailUnsubcribeOK=The email <b>%s</b>  is correctly unsubcribe from mailing list
 MailtoEMail=Hyper link to email
 ActivateCheckRead=Allow to use the "Unsubcribe" link
-ActivateCheckReadKey=Key use to encrypt URL use for "Read Receipt" and "Unsubcribe" feature
+ActivateCheckReadKey=Key used to encrypt URL used for "Read Receipt" and "Unsubcribe" feature
 EMailSentToNRecipients=EMail sent to %s recipients.
 XTargetsAdded=<b>%s</b> recipients added into target list
 EachInvoiceWillBeAttachedToEmail=A document using default invoice document template will be created and attached to each email.
@@ -128,6 +128,7 @@ TagCheckMail=Track mail opening
 TagUnsubscribe=Unsubscribe link
 TagSignature=Signature sending user
 TagMailtoEmail=Recipient EMail
+NoEmailSentBadSenderOrRecipientEmail=No email sent. Bad sender or recipient email. Verify user profile.
 # Module Notifications
 Notifications=הודעות
 NoNotificationsWillBeSent=No email notifications are planned for this event and company

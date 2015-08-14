@@ -35,7 +35,6 @@ IfDatabaseExistsGoBackAndCheckCreate=Jeśli baza danych istnieje, w poprzednim k
 WarningBrowserTooOld=Zbyt stara wersja przeglądarki. Zdecydowanie zalecamy wykonanie uaktualnienia do najnowszej wersji przeglądarki Firefox, Chrome lub Opera.
 PHPVersion=Wersja PHP
 YouCanContinue=Możesz kontynuować...
-PleaseBePatient=Proszę o cierpliwość...
 License=Użyta licencja
 ConfigurationFile=Plik konfiguracyjny
 WebPagesDirectory=Katalog, gdzie przechowywana jest strona WWW
@@ -64,6 +63,7 @@ DatabaseSuperUserAccess=Baza danych z dostępem na prawach superużytkownika
 CheckToCreateDatabase=Zaznacz jeśli baza danych nie istnieje i musi zostać utworzona.<br>W przypadku takim na dole tej strony musisz podać użytkownika/hasło do konta superużytkownika.
 CheckToCreateUser=Zaznacz jeśli użytkownik nie istnieje i musi zostać utworzony.<br>W przypadku takim na dole tej strony musisz podać użytkownika/hasło do konta superużytkownika.
 Experimental=(eksperymentalnie, na własną odpowiedzialność)
+Deprecated=(deprecated)
 DatabaseRootLoginDescription=Login użytkownika mogącego tworzyć nowe bazy lub nowych użytkowników, wymagane jeśli baza danych oraz jej właściciel nie istnieją.
 KeepEmptyIfNoPassword=Zostaw puste jeśli użytkownik nie posiada hasła (unikaj takiej sytuacji)
 SaveConfigurationFile=Zapis wartości
@@ -156,7 +156,7 @@ LastStepDesc=<strong>Ostatni krok:</strong> Zdefiniuj tutaj nazwę i hasło, kt�
 ActivateModule=Aktywuj moduł %s
 ShowEditTechnicalParameters=Kliknij tutaj, aby pokazać / edytować zaawansowane parametry (tryb ekspert)
 WarningUpgrade=Uwaga:\nPamiętaj o zrobieniu kopi zapasowej bazy!\nWysoko rekomendowane: dla przykładu,  podczas wystąpienia błędu w bazie danych systemu (dla przykładu w wersji 5.5.40 mySQL), niektóre dane lub tabele mogą zostać stracone podczas tego procesu. Rekomendowane jest by zrobic kopię swojej bazy przed migracją.\n\nNaciśnij OK by zacząć migrację...
-ErrorDatabaseVersionForbiddenForMigration=Twoja wersja bazy danych% s. Ma krytycznej utraty danych podejmowania błąd jeśli się zmianę struktury na bazie danych, tak jak jest to wymagane przez proces migracji. Na jego powodu migracji nie zostaną dopuszczone do aktualizacji bazy danych do wyższej wersji stałej (lista znanych wersji podsłuch:% s)
+ErrorDatabaseVersionForbiddenForMigration=Twoja wersja bazy danych to %s. Ma krytyczną lukę utraty danych jeśli się zmieni struktury na bazie danych, tak jak jest to wymagane podczas procesu migracji. Z tego powodu migracje nie zostaną dopuszczone dopóki nie ulepszysz bazy danych do wyższej wersji  (lista znanych wersji z lukami: %s)
 
 #########
 # upgrade

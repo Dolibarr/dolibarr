@@ -5,7 +5,7 @@
  * Copyright (C) 2004		Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012	Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2014		Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2014		Alexandre Spangaro	 <alexandre.spangaro@gmail.com>
+ * Copyright (C) 2014		Alexandre Spangaro	 <aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -132,21 +132,20 @@ class modSalaries extends DolibarrModules
 		// Exports
 		//--------
 		$r=0;
-/*
+
 		$r++;
 		$this->export_code[$r]=$this->rights_class.'_'.$r;
-		$this->export_label[$r]='Payment of salaries';
-		$this->export_permission[$r]=array(array("tax","charges","export"));
-		$this->export_fields_array[$r]=array('cc.libelle'=>"Type",'c.rowid'=>"IdSocialContribution",'c.libelle'=>"Label",'c.date_ech'=>'DateDue','c.periode'=>'Period','c.amount'=>"AmountExpected","c.paye"=>"Status",'p.rowid'=>'PaymentId','p.datep'=>'DatePayment','p.amount'=>'AmountPayment','p.num_paiement'=>'Numero');
-		$this->export_TypeFields_array[$r]=array('cc.libelle'=>"List:c_chargesociales:libelle:id",'c.libelle'=>"Text",'c.date_ech'=>'Date','c.periode'=>'Period','c.amount'=>"Number","c.paye"=>"Boolean",'p.datep'=>'Date','p.amount'=>'Number','p.num_paiement'=>'Number');
-		$this->export_entities_array[$r]=array('cc.libelle'=>"tax_type",'c.rowid'=>"tax",'c.libelle'=>'tax','c.date_ech'=>'tax','c.periode'=>'tax','c.amount'=>"tax","c.paye"=>"tax",'p.rowid'=>'payment','p.datep'=>'payment','p.amount'=>'payment','p.num_paiement'=>'payment');
+		$this->export_label[$r]='Salaries and payments';
+		$this->export_permission[$r]=array(array("salaries","export"));
+		$this->export_fields_array[$r]=array('u.firstname'=>"Firstname",'u.lastname'=>"Lastname",'u.login'=>"Login",'u.salary'=>'CurrentSalary','p.datep'=>'DatePayment','p.datesp'=>'DateStartPeriod','p.dateep'=>'DateEndPeriod','p.amount'=>'AmountPayment','p.num_payment'=>'Numero','p.label'=>'Label','p.note'=>'Note');
+		$this->export_TypeFields_array[$r]=array('u.firstname'=>"Text",'u.lastname'=>"Text",'u.login'=>'Text','u.salary'=>"Number",'p.datep'=>'Date','p.datesp'=>'Date','p.dateep'=>'Date','p.amount'=>'Number','p.num_payment'=>'Number','p.label'=>'Text');
+		$this->export_entities_array[$r]=array('u.firstname'=>'user','u.lastname'=>'user','u.login'=>'user','u.salary'=>'user','p.datep'=>'payment','p.datesp'=>'payment','p.dateep'=>'payment','p.amount'=>'payment','p.label'=>'payment','p.note'=>'payment','p.num_payment'=>'payment');
 
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
-		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'c_chargesociales as cc, '.MAIN_DB_PREFIX.'chargesociales as c';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'paiementcharge as p ON p.fk_charge = c.rowid';
-		$this->export_sql_end[$r] .=' WHERE c.fk_type = cc.id';
-		$this->export_sql_end[$r] .=' AND c.entity = '.$conf->entity;
-		*/
+		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'user as u';
+		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'payment_salary as p ON p.fk_user = u.rowid';
+		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as cp ON p.fk_typepayment = cp.id';
+		$this->export_sql_end[$r] .=' AND u.entity IN ('.getEntity('user',1).')';
 	}
 
 
@@ -169,20 +168,4 @@ class modSalaries extends DolibarrModules
 
 		return $this->_init($sql,$options);
 	}
-
-    /**
-	 *		Function called when module is disabled.
-	 *      Remove from database constants, boxes and permissions from Dolibarr database.
-	 *		Data directories are not deleted
-	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *      @return     int             	1 if OK, 0 if KO
-     */
-    function remove($options='')
-    {
-		$sql = array();
-
-		return $this->_remove($sql,$options);
-    }
-
 }

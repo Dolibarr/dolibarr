@@ -1,6 +1,6 @@
 <?PHP
 /* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2014 Alexandre Spangaro	<alexandre.spangaro@fidurex.fr>
+ * Copyright (C) 2013-2014 Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2014	   Florian Henry		<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -164,7 +164,6 @@ if ($resql) {
 		header('Content-Disposition: attachment;filename=export_csv.csv');
 
 		$obj = $db->fetch_object($resql);
-		$var = ! $var;
 
 		print '"' . $obj->compta . '",';
 		print '"' . $obj->address . '",';

@@ -2,7 +2,7 @@
 /**
  * PHPExcel
  *
- * Copyright (c) 2006 - 2012 PHPExcel
+ * Copyright (c) 2006 - 2014 PHPExcel
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,9 +20,9 @@
  *
  * @category	PHPExcel
  * @package		PHPExcel_Chart
- * @copyright	Copyright (c) 2006 - 2012 PHPExcel (http://www.codeplex.com/PHPExcel)
+ * @copyright	Copyright (c) 2006 - 2014 PHPExcel (http://www.codeplex.com/PHPExcel)
  * @license		http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt	LGPL
- * @version		1.7.8, 2012-10-12
+ * @version		1.8.0, 2014-03-02
  */
 
 
@@ -31,7 +31,7 @@
  *
  * @category	PHPExcel
  * @package		PHPExcel_Chart
- * @copyright	Copyright (c) 2006 - 2012 PHPExcel (http://www.codeplex.com/PHPExcel)
+ * @copyright	Copyright (c) 2006 - 2014 PHPExcel (http://www.codeplex.com/PHPExcel)
  */
 class PHPExcel_Chart_PlotArea
 {
@@ -110,10 +110,13 @@ class PHPExcel_Chart_PlotArea
 	/**
 	 * Set Plot Series
 	 *
-	 * @param array of PHPExcel_Chart_DataSeries
+	 * @param [PHPExcel_Chart_DataSeries]
+     * @return PHPExcel_Chart_PlotArea
 	 */
 	public function setPlotSeries($plotSeries = array()) {
 		$this->_plotSeries = $plotSeries;
+        
+        return $this;
 	}
 
 	public function refresh(PHPExcel_Worksheet $worksheet) {

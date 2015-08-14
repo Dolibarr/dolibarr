@@ -7,8 +7,9 @@ TripsAndExpenses=Note spese
 TripsAndExpensesStatistics=Statistiche note spese
 TripCard=Scheda nota spese
 AddTrip=Crea nota spese
-ListOfTrips=Lista delle note spese
+ListOfTrips=List of expense reports
 ListOfFees=Elenco delle tariffe
+ShowTrip=Show expense report
 NewTrip=Nuova nota spese
 CompanyVisited=Società/Fondazione visitata
 Kilometers=Kilometri
@@ -27,7 +28,7 @@ AnyOtherInThisListCanValidate=Persona da informare per la convalida
 TripSociete=Informazioni azienda
 TripSalarie=Informazioni utente
 TripNDF=Informazioni nota spese
-DeleteLine=Cancella una riga della nota spese
+DeleteLine=Delete a line of the expense report
 ConfirmDeleteLine=Vuoi davvero eliminare questa riga?
 PDFStandardExpenseReports=Template standard per la generazione dei PDF delle not spese
 ExpenseReportLine=Riga di nota spese
@@ -44,7 +45,6 @@ TF_HOTEL=Hotel
 TF_TAXI=Taxi
 
 ErrorDoubleDeclaration=Hai già inviata una nota spese per il periodo selezionato
-ListTripsAndExpenses=Lista delle note spese
 AucuneNDF=Nessuna nota spese trovata
 AucuneLigne=Non ci sono ancora note spese
 AddLine=Aggiungi una riga
@@ -56,12 +56,12 @@ ModePaiement=Modalità di pagamento
 Note=Nota
 Project=Progetto
 
-VALIDATOR=Utente responsabile dell'approvazione
+VALIDATOR=User responsible for approval
 VALIDOR=Approvata da
 AUTHOR=Registrata da
-AUTHORPAIEMENT=Liquidata da
+AUTHORPAIEMENT=Paid by
 REFUSEUR=Rifiutata da
-CANCEL_USER=Eliminata da
+CANCEL_USER=Deleted by
 
 MOTIF_REFUS=Motivo
 MOTIF_CANCEL=Motivo
@@ -74,9 +74,10 @@ DATE_PAIEMENT=Liquidata in data
 
 TO_PAID=Liquida
 BROUILLONNER=Riapri
-SendToValid=Invia per l'approvazione
+SendToValid=Sent on approval
 ModifyInfoGen=Modifica
 ValidateAndSubmit=Convalida e proponi per l'approvazione
+ValidatedWaitingApproval=Validated (waiting for approval)
 
 NOT_VALIDATOR=Non sei autorizzato ad approvare questa nota spese
 NOT_AUTHOR=Non sei l'autore di questa nota spese. Operazione annullata.
@@ -93,10 +94,11 @@ ConfirmPaidTrip=Vuoi davvero modificare lo stato di questa nota spese in "liquid
 CancelTrip=Elimina una nota spese
 ConfirmCancelTrip=Vuoi davvero eliminare questa nota spese?
 
-BrouillonnerTrip=Riporta la nota spese allo stato "bozza"
+BrouillonnerTrip=Move back expense report to status "Draft"
 ConfirmBrouillonnerTrip=Vuoi davvero riportare questa nota spese allo stato "bozza"?
 
 SaveTrip=Convalida la nota spese
 ConfirmSaveTrip=Vuoi davvero convalidare questa nota spese?
 
 NoTripsToExportCSV=Nessuna nota spese da esportare per il periodo
+ExpenseReportPayment=Expense report payment

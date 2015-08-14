@@ -634,7 +634,7 @@ llxFooter();
  * @param 	string	$ftp_user		FTP user
  * @param 	string	$ftp_password	FTP password
  * @param 	string	$section		Directory
- * @param	string	$ftp_passive	Use a passive mode
+ * @param	integer	$ftp_passive	Use a passive mode
  * @return	int 	<0 if OK, >0 if KO
  */
 function dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $section, $ftp_passive=0)

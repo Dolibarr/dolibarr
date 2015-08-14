@@ -2,7 +2,7 @@
 /**
  * PHPExcel
  *
- * Copyright (C) 2006 - 2012 PHPExcel
+ * Copyright (C) 2006 - 2014 PHPExcel
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,7 +22,7 @@
  * @package    PHPExcel_Shared_OLE
  * @copyright  Copyright (c) 2006 - 2007 Christian Schmidt
  * @license    http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt	LGPL
- * @version 1.7.8, 2012-10-12
+ * @version 1.8.0, 2014-03-02
  */
 
 /**
@@ -161,14 +161,15 @@ class PHPExcel_Shared_OLE_ChainedBlockStream
 	 */
 	public function stream_eof()
 	{
-		$eof = $this->pos >= strlen($this->data);
-		// Workaround for bug in PHP 5.0.x: http://bugs.php.net/27508
-		if (version_compare(PHP_VERSION, '5.0', '>=') &&
-			version_compare(PHP_VERSION, '5.1', '<')) {
-
-		   $eof = !$eof;
-		}
-		return $eof;
+//		As we don't support below 5.2 anymore, this is simply redundancy and overhead
+//		$eof = $this->pos >= strlen($this->data);
+//		// Workaround for bug in PHP 5.0.x: http://bugs.php.net/27508
+//		if (version_compare(PHP_VERSION, '5.0', '>=') &&
+//			version_compare(PHP_VERSION, '5.1', '<')) {
+//		   $eof = !$eof;
+//		}
+//		return $eof;
+		return $this->pos >= strlen($this->data);
 	}
 
 	/**

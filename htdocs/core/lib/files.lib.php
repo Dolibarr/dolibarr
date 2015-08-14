@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2012-2013	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2012-2015	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -78,7 +78,8 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 				'sortcriteria' => $sortcriteria,
 				'sortorder' => $sortorder,
 				'loaddate' => $loaddate,
-				'loadsize' => $loadsize
+				'loadsize' => $loadsize,
+				'mode' => $mode
 		);
 		$reshook=$hookmanager->executeHooks('getNodesList', $parameters, $object);
 	}
@@ -152,7 +153,7 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 						// if we're in a directory and we want recursive behavior, call this function again
 						if ($recursive)
 						{
-							$file_list = array_merge($file_list,dol_dir_list($path."/".$file, $types, $recursive, $filter, $excludefilter, $sortcriteria, $sortorder, $mode));
+							$file_list = array_merge($file_list,dol_dir_list($path."/".$file, $types, $recursive, $filter, $excludefilter, $sortcriteria, $sortorder, $mode, $nohook));
 						}
 					}
 					else if (! $isdir && (($types == "files") || ($types == "all")))
@@ -451,7 +452,7 @@ function dol_count_nb_of_line($file)
  * Return size of a file
  *
  * @param 	string		$pathoffile		Path of file
- * @return 	string						File size
+ * @return 	integer						File size
  */
 function dol_filesize($pathoffile)
 {
@@ -476,15 +477,19 @@ function dol_filemtime($pathoffile)
  *
  * @param	string	$srcfile			Source file (can't be a directory)
  * @param	string	$destfile			Destination file (can't be a directory)
- * @param	int		$newmask			Mask for new file (0 by default means $conf->global->MAIN_UMASK)
+ * @param	int		$newmask			Mask for new file (0 by default means $conf->global->MAIN_UMASK). Example: '0666'
  * @param 	int		$overwriteifexists	Overwrite file if exists (1 by default)
  * @return	int							<0 if error, 0 if nothing done (dest file already exists and overwriteifexists=0), >0 if OK
+ * @see		dolCopyr
  */
 function dol_copy($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
 {
 	global $conf;
 
 	dol_syslog("files.lib.php::dol_copy srcfile=".$srcfile." destfile=".$destfile." newmask=".$newmask." overwriteifexists=".$overwriteifexists);
+
+	if (empty($srcfile) || empty($destfile)) return -1;
+
 	$destexists=dol_is_file($destfile);
 	if (! $overwriteifexists && $destexists) return 0;
 
@@ -523,12 +528,77 @@ function dol_copy($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
 }
 
 /**
+ * Copy a dir to another dir.
+ *
+ * @param	string	$srcfile			Source file (a directory)
+ * @param	string	$destfile			Destination file (a directory)
+ * @param	int		$newmask			Mask for new file (0 by default means $conf->global->MAIN_UMASK). Example: '0666'
+ * @param 	int		$overwriteifexists	Overwrite file if exists (1 by default)
+ * @return	int							<0 if error, 0 if nothing done (dest dir already exists and overwriteifexists=0), >0 if OK
+ * @see		dol_copy
+ */
+function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists)
+{
+	global $conf;
+
+	$result=0;
+
+	dol_syslog("files.lib.php::dolCopyr srcfile=".$srcfile." destfile=".$destfile." newmask=".$newmask." overwriteifexists=".$overwriteifexists);
+
+	if (empty($srcfile) || empty($destfile)) return -1;
+
+	$destexists=dol_is_dir($destfile);
+	if (! $overwriteifexists && $destexists) return 0;
+
+	$srcfile=dol_osencode($srcfile);
+	$destfile=dol_osencode($destfile);
+
+    // recursive function to copy
+    // all subdirectories and contents:
+	if (is_dir($srcfile))
+	{
+        $dir_handle=opendir($srcfile);
+        while ($file=readdir($dir_handle))
+        {
+            if ($file!="." && $file!="..")
+            {
+                if (is_dir($srcfile."/".$file))
+                {
+                    if (!is_dir($destfile."/".$file))
+                    {
+                    	umask(0);
+						$dirmaskdec=octdec($newmask);
+						if (empty($newmask) && ! empty($conf->global->MAIN_UMASK)) $dirmaskdec=octdec($conf->global->MAIN_UMASK);
+						$dirmaskdec |= octdec('0200');  // Set w bit required to be able to create content for recursive subdirs files
+                    	dol_mkdir($destfile."/".$file, '', decoct($dirmaskdec));
+                    }
+                    $result=dolCopyDir($srcfile."/".$file, $destfile."/".$file, $newmask, $overwriteifexists);
+                }
+                else
+				{
+                    $result=dol_copy($srcfile."/".$file, $destfile."/".$file, $newmask, $overwriteifexists);
+                }
+                if ($result < 0) break;
+            }
+        }
+        closedir($dir_handle);
+    }
+    else
+	{
+        $result=dol_copy($srcfile, $destfile, $newmask, $overwriteifexists);
+    }
+
+    return $result;
+}
+
+
+/**
  * Move a file into another name.
  * This function differs from dol_move_uploaded_file, because it can be called in any context.
  *
- * @param	string  $srcfile            Source file (can't be a directory)
- * @param   string	$destfile           Destination file (can't be a directory)
- * @param   string	$newmask            Mask for new file (0 by default means $conf->global->MAIN_UMASK)
+ * @param	string  $srcfile            Source file (can't be a directory. use native php @rename() to move a directory)
+ * @param   string	$destfile           Destination file (can't be a directory. use native php @rename() to move a directory)
+ * @param   integer	$newmask            Mask for new file (0 by default means $conf->global->MAIN_UMASK)
  * @param   int		$overwriteifexists  Overwrite file if exists (1 by default)
  * @return  boolean 		            True if OK, false if KO
  */
@@ -587,7 +657,7 @@ function dol_unescapefile($filename)
  *	@param	string	$dest_file			Target full path filename  ($_FILES['field']['name'])
  * 	@param	int		$allowoverwrite		1=Overwrite target file if it already exists
  * 	@param	int		$disablevirusscan	1=Disable virus scan
- * 	@param	string	$uploaderrorcode	Value of PHP upload error code ($_FILES['field']['error'])
+ * 	@param	integer	$uploaderrorcode	Value of PHP upload error code ($_FILES['field']['error'])
  * 	@param	int		$nohook				Disable all hooks
  * 	@param	string	$varfiles			_FILES var name
  *	@return int       			  		>0 if OK, <0 or string if KO
@@ -723,12 +793,12 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 /**
  *  Remove a file or several files with a mask
  *
- *  @param	string	$file           File to delete or mask of file to delete
- *  @param  int		$disableglob    Disable usage of glob like *
+ *  @param	string	$file           File to delete or mask of files to delete
+ *  @param  int		$disableglob    Disable usage of glob like * so function is an exact delete function that will return error if no file found
  *  @param  int		$nophperrors    Disable all PHP output errors
  *  @param	int		$nohook			Disable all hooks
  *  @param	object	$object			Current object in use
- *  @return boolean         		True if file is deleted (or if glob is used and there's nothing to delete), False if error
+ *  @return boolean         		True if no error (file is deleted or if glob is used and there's nothing to delete), False if error
  */
 function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=null)
 {
@@ -753,19 +823,20 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=n
 		$reshook=$hookmanager->executeHooks('deleteFile', $parameters, $object);
 	}
 
-	if (empty($nohook) && isset($reshook) && $reshook != '') // 0:not deleted, 1:deleted, null or '' for bypass
+	if (empty($nohook) && $reshook != 0) // reshook = 0 to do standard actions, 1 = ok, -1 = ko
 	{
-		return $reshook;
+		if ($reshook < 0) return false;
+		return true;
 	}
 	else
 	{
 		$error=0;
 
 		//print "x".$file." ".$disableglob;exit;
-		$ok=true;
 		$file_osencoded=dol_osencode($file);    // New filename encoded in OS filesystem encoding charset
 		if (empty($disableglob) && ! empty($file_osencoded))
 		{
+			$ok=true;
 			$globencoded=str_replace('[','\[',$file_osencoded);
 			$globencoded=str_replace(']','\]',$globencoded);
 			$listofdir=glob($globencoded);
@@ -783,6 +854,7 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=n
 		}
 		else
 		{
+			$ok=false;
 			if ($nophperrors) $ok=@unlink($file_osencoded);
 			else $ok=unlink($file_osencoded);
 			if ($ok) dol_syslog("Removed file ".$file_osencoded, LOG_DEBUG);
@@ -888,9 +960,9 @@ function dol_delete_preview($object)
 
 	if (file_exists($file) && is_writable($file))
 	{
-		if ( ! dol_delete_file($file,1) )
+		if (! dol_delete_file($file,1))
 		{
-			$object->error=$langs->trans("ErrorFailedToOpenFile",$file);
+			$object->error=$langs->trans("ErrorFailedToDeleteFile",$file);
 			return 0;
 		}
 	}
@@ -919,7 +991,7 @@ function dol_delete_preview($object)
  *	This should allow "grep" search.
  *  This feature is enabled only if option MAIN_DOC_CREATE_METAFILE is set.
  *
- *	@param	Object	$object		Object
+ *	@param	CommonObject	$object		Object
  *	@return	int					0 if we did nothing, >0 success, <0 error
  */
 function dol_meta_create($object)
@@ -1260,19 +1332,40 @@ function dol_compress_file($inputfile, $outputfile, $mode="gz")
  */
 function dol_uncompress($inputfile,$outputdir)
 {
-    global $conf;
+    global $conf, $langs;
 
     if (defined('ODTPHP_PATHTOPCLZIP'))
     {
+    	dol_syslog("Constant ODTPHP_PATHTOPCLZIP for pclzip library is set to ".constant('ODTPHP_PATHTOPCLZIP').", so we use Pclzip to unzip into ".$outputdir);
         include_once ODTPHP_PATHTOPCLZIP.'/pclzip.lib.php';
         $archive = new PclZip($inputfile);
-        if ($archive->extract(PCLZIP_OPT_PATH, $outputdir) == 0) return array('error'=>$archive->errorInfo(true));
-        else return array();
+        $result=$archive->extract(PCLZIP_OPT_PATH, $outputdir);
+        //var_dump($result);
+        if (! is_array($result) && $result <= 0) return array('error'=>$archive->errorInfo(true));
+        else
+		{
+			$ok=1; $errmsg='';
+			// Loop on each file to check result for unzipping file
+			foreach($result as $key => $val)
+			{
+				if ($val['status'] == 'path_creation_fail')
+				{
+					$langs->load("errors");
+					$ok=0;
+					$errmsg=$langs->trans("ErrorFailToCreateDir", $val['filename']);
+					break;
+				}
+			}
+
+			if ($ok) return array();
+			else return array('error'=>$errmsg);
+		}
     }
 
     if (class_exists('ZipArchive'))
     {
-        $zip = new ZipArchive;
+    	dol_syslog("Class ZipArchive is set so we unzip using ZipArchive to unzip into ".$outputdir);
+    	$zip = new ZipArchive;
         $res = $zip->open($inputfile);
         if ($res === TRUE)
         {
@@ -1308,7 +1401,7 @@ function dol_most_recent_file($dir,$regexfilter='',$excludefilter=array('(\.meta
 /**
  * Security check when accessing to a document (used by document.php, viewimage.php and webservices)
  *
- * @param	string	$modulepart			Module of document (module, module_user_temp, module_user or module_temp)
+ * @param	string	$modulepart			Module of document ('module', 'module_user_temp', 'module_user' or 'module_temp')
  * @param	string	$original_file		Relative path with filename
  * @param	string	$entity				Restrict onto entity
  * @param  	User	$fuser				User object (forced)
@@ -1726,7 +1819,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 			$accessallowed=1;
 		}
 
-		$original_file=$conf->banque->dir_output.'/bordereau/'.get_exdir(basename($original_file,".pdf"),2,1).$original_file;
+		$original_file=$conf->banque->dir_output.'/bordereau/'.$original_file;		// original_file should contains relative path so include the get_exdir result
 	}
 
 	// Wrapping for export module
@@ -1874,4 +1967,50 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 	);
 
 	return $ret;
+}
+
+/**
+ * Store object in file
+ *
+ * @param string $directory Directory of cache
+ * @param string $filename Name of filecache
+ * @param mixed $object Object to store in cachefile
+ * @return void
+ */
+function dol_filecache($directory, $filename, $object)
+{
+    if (! dol_is_dir($directory)) dol_mkdir($directory);
+    $cachefile = $directory . $filename;
+    file_put_contents($cachefile, serialize($object), LOCK_EX);
+    @chmod($cachefile, 0644);
+}
+
+/**
+ * Test if Refresh needed
+ *
+ * @param string $directory Directory of cache
+ * @param string $filename Name of filecache
+ * @param int $cachetime Cachetime delay
+ * @return boolean 0 no refresh 1 if refresh needed
+ */
+function dol_cache_refresh($directory, $filename, $cachetime)
+{
+    $now = dol_now();
+    $cachefile = $directory . $filename;
+    $refresh = !file_exists($cachefile) || ($now-$cachetime) > dol_filemtime($cachefile);
+    return $refresh;
+}
+
+/**
+ * Read object from cachefile
+ *
+ * @param string $directory Directory of cache
+ * @param string $filename Name of filecache
+ * @return mixed Unserialise from file
+ */
+function dol_readcachefile($directory, $filename)
+{
+    $cachefile = $directory . $filename;
+    $object = unserialize(file_get_contents($cachefile));
+    return $object;
 }

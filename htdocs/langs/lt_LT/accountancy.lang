@@ -1,5 +1,12 @@
 # Dolibarr language file - en_US - Accounting Expert
 CHARSET=UTF-8
+ACCOUNTING_EXPORT_SEPARATORCSV=Column separator for export file
+ACCOUNTING_EXPORT_DATE=Date format for export file
+ACCOUNTING_EXPORT_PIECE=Export the number of piece ?
+ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account ?
+ACCOUNTING_EXPORT_LABEL=Export the label ?
+ACCOUNTING_EXPORT_AMOUNT=Export the amount ?
+ACCOUNTING_EXPORT_DEVISE=Export the devise ?
 
 Accounting=Apskaita
 Globalparameters=Bendrieji parametrai
@@ -41,6 +48,7 @@ NewAccount=Nauja apskaitos sąskaita
 Update=Atnaujinimas
 List=Sąrašas
 Create=Sukurti
+CreateMvts=Create movement
 UpdateAccount=Apskaitos sąskaitos modifikavimas
 UpdateMvts=Judėjimo modifikavimas
 WriteBookKeeping=Įrašyti sąskaitas Didžiąją knygą
@@ -76,14 +84,15 @@ ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the breakdown pages "
 
 AccountLength=Apskaitos sąskaitų, parodytų Dolibarr, ilgis
 AccountLengthDesc=Function allowing to feign a length of accounting account by replacing spaces by the zero figure. This function touches only the display, it does not modify the accounting accounts registered in Dolibarr. For the export, this function is necessary to be compatible with certain software.
+ACCOUNTING_LENGTH_DESCRIPTION=Length for displaying product & services description in listings (Best = 50)
+ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Length for displaying product & services account description form in listings (Best = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Bendrųjų sąskaitų ilgis
 ACCOUNTING_LENGTH_AACCOUNT=Trečiųjų šalių sąskaitų ilgis
 
 ACCOUNTING_SELL_JOURNAL=Pardavimų žurnalas
 ACCOUNTING_PURCHASE_JOURNAL=Pirkimų žurnalas
-ACCOUNTING_BANK_JOURNAL=Banko žurnalas
-ACCOUNTING_CASH_JOURNAL=Pinigų žurnalas
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Įvairiarūšis žurnalas
+ACCOUNTING_EXPENSEREPORT_JOURNAL=Expense report journal
 ACCOUNTING_SOCIAL_JOURNAL=Socialinis žurnalas
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Operacijų sąskaita

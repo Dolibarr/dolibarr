@@ -132,3 +132,4 @@ SelectFilterFields=Wenn Sie nach bestimmten Werten filtern wollen, geben Sie die
 FilterableFields=Filterbare Felder
 FilteredFields=Gefilterte Felder
 FilteredFieldsValues=Filter Wert
+FormatControlRule=Regel für die Formatkontrolle

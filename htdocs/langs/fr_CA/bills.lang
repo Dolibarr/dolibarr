@@ -1,2 +1,4 @@
 # Dolibarr language file - Source file is en_US - bills
-ClosePaidInvoicesAutomatically=Classify "Paid" all standard, situation or replacement invoices entirely paid.
+ShowSocialContribution=Afficher charge sociale
+IdSocialContribution=Id charge sociale
+NoSituations=Pas de point de situation ouvert

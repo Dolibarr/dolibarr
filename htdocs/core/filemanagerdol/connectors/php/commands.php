@@ -22,7 +22,14 @@
  * This is the File Manager Connector for PHP.
  */
 
-function GetFolders( $resourceType, $currentFolder )
+/**
+ * GetFolders
+ * 
+ * @param	string	$resourceType		Resource type
+ * @param 	string 	$currentFolder		Current folder
+ * @return 	void
+ */
+function GetFolders($resourceType, $currentFolder)
 {
 	// Map the virtual path to the local server path.
 	$sServerDir = ServerMapFolder($resourceType, $currentFolder, 'GetFolders');
@@ -53,6 +60,13 @@ function GetFolders( $resourceType, $currentFolder )
 	echo "</Folders>" ;
 }
 
+/**
+ * GetFoldersAndFiles
+ *
+ * @param	string	$resourceType	Resource type
+ * @param	string	$currentFolder	Current folder
+ * @return void
+ */
 function GetFoldersAndFiles( $resourceType, $currentFolder )
 {
 	// Map the virtual path to the local server path.
@@ -111,6 +125,13 @@ function GetFoldersAndFiles( $resourceType, $currentFolder )
 	echo '</Files>' ;
 }
 
+/**
+ * Create folder
+ *
+ * @param   string $resourceType    Resource type
+ * @param   string $currentFolder   Current folder
+ * @return void
+ */
 function CreateFolder( $resourceType, $currentFolder )
 {
 	if (!isset($_GET)) {
@@ -164,6 +185,15 @@ function CreateFolder( $resourceType, $currentFolder )
 
 // DOL_CHANGE
 //function FileUpload( $resourceType, $currentFolder, $sCommand )
+/**
+ * FileUpload
+ * 
+ * @param	string	$resourceType	Resource type
+ * @param 	string 	$currentFolder	Current folder
+ * @param	string	$sCommand		Command
+ * @param	string	$CKEcallback	Callback
+ * @return	null
+ */
 function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 {
 	if (!isset($_FILES)) {

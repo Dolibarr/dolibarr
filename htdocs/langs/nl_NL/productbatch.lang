@@ -19,4 +19,4 @@ printQty=Aantal: %d
 AddDispatchBatchLine=Voeg een regel toe voor houdbaarheids ontvangst
 BatchDefaultNumber=Onbepaald
 WhenProductBatchModuleOnOptionAreForced=Als module Lot / Serienummer actief is, verhogen/verlagen voorraad modus wordt geforceerd en kan niet worden bewerkt. Andere opties kunnen worden gedefinieerd als u wilt.
-ProductDoesNotUseBatchSerial=Dit product is niet lot/serienummer ingesteld
+ProductDoesNotUseBatchSerial=This product does not use lot/serial number

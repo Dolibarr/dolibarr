@@ -1,34 +1,34 @@
 
-MenuResourceIndex=Resources
-MenuResourceAdd=New resource
-MenuResourcePlanning=Resource planning
-DeleteResource=Delete resource
-ConfirmDeleteResourceElement=Confirm delete the resource for this element
-NoResourceInDatabase=No resource in database.
-NoResourceLinked=No resource linked
+MenuResourceIndex=ทรัพยากร
+MenuResourceAdd=ทรัพยากรใหม่
+MenuResourcePlanning=การวางแผนทรัพยากร
+DeleteResource=ลบทรัพยากร
+ConfirmDeleteResourceElement=ยืนยันการลบทรัพยากรสำหรับองค์ประกอบนี้
+NoResourceInDatabase=ไม่มีทรัพยากรในฐานข้อมูล
+NoResourceLinked=ทรัพยากรที่ไม่มีการเชื่อมโยง
 
-ResourcePageIndex=Resources list
-ResourceSingular=Resource
-ResourceCard=Resource card
-AddResource=Create a resource
-ResourceFormLabel_ref=Resource name
-ResourceType=Resource type
-ResourceFormLabel_description=Resource description
+ResourcePageIndex=รายการทรัพยากร
+ResourceSingular=ทรัพยากร
+ResourceCard=บัตรทรัพยากร
+AddResource=สร้างทรัพยากร
+ResourceFormLabel_ref=ชื่อทรัพยากร
+ResourceType=ประเภททรัพยากร
+ResourceFormLabel_description=คำอธิบายทรัพยากร
 
-ResourcesLinkedToElement=Resources linked to element
+ResourcesLinkedToElement=ทรัพยากรที่เชื่อมโยงกับองค์ประกอบ
 
-ShowResourcePlanning=Show resource planning
-GotoDate=Go to date
+ShowResourcePlanning=แสดงการวางแผนทรัพยากร
+GotoDate=ไปยังวันที่
 
-ResourceElementPage=Element resources
-ResourceCreatedWithSuccess=Resource successfully created
-RessourceLineSuccessfullyDeleted=Resource line successfully deleted
-RessourceLineSuccessfullyUpdated=Resource line successfully updated
-ResourceLinkedWithSuccess=Resource linked with success
+ResourceElementPage=ทรัพยากรธาตุ
+ResourceCreatedWithSuccess=ทรัพยากรสร้างเสร็จเรียบร้อยแล้ว
+RessourceLineSuccessfullyDeleted=สายทรัพยากรลบเรียบร้อยแล้ว
+RessourceLineSuccessfullyUpdated=สายทรัพยากรปรับปรุงเรียบร้อยแล้ว
+ResourceLinkedWithSuccess=ทรัพยากรที่เชื่อมโยงกับความสำเร็จ
 
-TitleResourceCard=Resource card
-ConfirmDeleteResource=Confirm to delete this resource
-RessourceSuccessfullyDeleted=Resource successfully deleted
-DictionaryResourceType=Type of resources
+TitleResourceCard=บัตรทรัพยากร
+ConfirmDeleteResource=ยืนยันการลบทรัพยากรนี้
+RessourceSuccessfullyDeleted=ทรัพยากรลบเรียบร้อยแล้ว
+DictionaryResourceType=ประเภทของทรัพยากร
 
-SelectResource=Select resource
+SelectResource=ทรัพยากรที่เลือก

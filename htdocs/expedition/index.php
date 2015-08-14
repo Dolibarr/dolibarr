@@ -75,7 +75,7 @@ if (!$user->rights->societe->client->voir && !$socid)
 	$clause = " AND ";
 }
 $sql.= $clause." e.fk_statut = 0";
-$sql.= " AND e.entity = ".$conf->entity;
+$sql.= " AND e.entity IN (".getEntity('expedition', 1).")";
 if ($socid) $sql.= " AND c.fk_soc = ".$socid;
 
 $resql=$db->query($sql);
@@ -93,7 +93,7 @@ if ($resql)
 		{
 			$var=!$var;
 			$obj = $db->fetch_object($resql);
-			print "<tr ".$bc[$var]."><td nowrap=\"nowrap\">";
+			print "<tr ".$bc[$var].'><td class="nowrap">';
 			$shipment->id=$obj->rowid;
 			$shipment->ref=$obj->ref;
 			print $shipment->getNomUrl(1);
@@ -235,7 +235,7 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON e.rowid = el.fk_ta
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."commande as c ON el.fk_source = c.rowid AND el.sourcetype IN ('commande') AND el.targettype = 'shipping'";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = e.fk_soc";
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON e.fk_soc = sc.fk_soc";
-$sql.= " WHERE e.entity = ".$conf->entity;
+$sql.= " WHERE e.entity IN (".getEntity('expedition', 1).")";
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND sc.fk_user = " .$user->id;
 $sql.= " AND e.fk_statut = 1";
 if ($socid) $sql.= " AND c.fk_soc = ".$socid;

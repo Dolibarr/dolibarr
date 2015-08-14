@@ -199,7 +199,8 @@ Entreprises=Uzņēmumi
 DOLIBARRFOUNDATION_PAYMENT_FORM=Lai padarītu jūsu abonementa maksājumu, izmantojot bankas pārskaitījumu, skatiet lapu <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribe</a> . <br> Maksāt, izmantojot kredītkarti vai Paypal, noklikšķiniet uz pogas šīs lapas apakšā. <br>
 ByProperties=Līdz raksturlielumu
 MembersStatisticsByProperties=Dalībnieku statistika pēc parametriem
-MembersByNature=Dalībnieki pēc būtības
+MembersByNature=This screen show you statistics on members by nature.
+MembersByRegion=This screen show you statistics on members by region.
 VATToUseForSubscriptions=PVN likme izmantot abonementu
 NoVatOnSubscription=Nav TVA par abonēšanu
 MEMBER_PAYONLINE_SENDEMAIL=E-pastu, lai brīdinātu, kad Dolibarr saņem apstiprinājumu par apstiprinātu maksājuma parakstīšanas

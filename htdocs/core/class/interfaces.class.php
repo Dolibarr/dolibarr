@@ -50,7 +50,7 @@ class Interfaces
      *   This function call all qualified triggers.
      *
      *   @param		string		$action     Trigger event code
-     *   @param     object		$object     Objet concern
+     *   @param     object		$object     Objet concerned. Some context information may also be provided into array property object->context.
      *   @param     User		$user       Objet user
      *   @param     Lang		$langs      Objet lang
      *   @param     Conf		$conf       Objet conf

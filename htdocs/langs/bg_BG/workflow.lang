@@ -1,11 +1,11 @@
 # Dolibarr language file - Source file is en_US - admin
 WorkflowSetup=Настройки на модул Workflow
-WorkflowDesc=This module is designed to modify the behaviour of automatic actions into application. By default, workflow is opened (you make thing in order you want). You can activate the automatic actions that you are interesting in.
-ThereIsNoWorkflowToModify=Не е работния процес, можете да модифицирате за модул сте активирали.
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Създаване на заявка на клиента автоматично, след като е подписано търговско предложение
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Създаване на фактура на клиента автоматично, след като е подписано търговско предложение
-descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Създаване на фактура на клиента автоматично след договор е потвърден
-descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Създаване на фактура на клиента се затваря автоматично след поръчка на клиента
+WorkflowDesc=This module is designed to modify the behaviour of automatic actions into application. By default, workflow is open (you can do things in the order you want). You can activate the automatic actions you are interested in.
+ThereIsNoWorkflowToModify=There is no workflow modifications available with the activated modules.
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automatically create a customer order after a commercial proposal is signed
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICEAutomatically create a customer invoice after a commercial proposal is signed
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICEAutomatically create a customer invoice after a contract is validated
+descWORKFLOW_ORDER_AUTOCREATE_INVOICEAutomatically create a customer invoice after a customer order is closed
 descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Класифицира свързан източник на предложение за Плоскоклюн при поръчка на клиента на платен
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is set to paid
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is validated

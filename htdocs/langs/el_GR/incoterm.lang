@@ -1,0 +1,7 @@
+Module62000Name=Incoterm
+Module62000Desc=Add features to manage Incoterm
+IncotermLabel=Διεθνείς Εμπορικοί Όροι
+IncotermSetupTitle1=Χαρακτηριστικό
+IncotermSetupTitle2=Κατάσταση
+IncotermSetup=Ρύθμιση του module  Διεθνείς Εμπορικός Όρος
+IncotermFunctionDesc=Ενεργοποίηση Διεθνείς Εμπορικός Όρος χαρακτηριστικό (Πελ./Προμ., προσφορά, παραγγελία πελάτη, Τιμολογίου Πελάτη, την αποστολή, παραγγελία Προμηθευτή)

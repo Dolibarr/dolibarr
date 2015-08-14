@@ -199,7 +199,8 @@ Entreprises=Εταιρείες
 DOLIBARRFOUNDATION_PAYMENT_FORM=Για να κάνετε την πληρωμή της συνδρομής σας χρησιμοποιώντας μια τραπεζική μεταφορά, δείτε τη σελίδα <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribe</a> . <br> Για να πληρώσετε με πιστωτική κάρτα ή Paypal, κάντε κλικ στο κουμπί στο κάτω μέρος της σελίδας. <br>
 ByProperties=Με χαρακτηριστικά
 MembersStatisticsByProperties=Στατιστικά στοιχεία μελων από τα χαρακτηριστικά
-MembersByNature=Μέλη εκ φύσεως
+MembersByNature=Αυτή η οθόνη εμφανίζει στατιστικά για τα μέλη του από τη φύση τους.
+MembersByRegion=Αυτή η οθόνη εμφανίζει στατιστικά για τα μέλη κατά περιοχή.
 VATToUseForSubscriptions=Συντελεστή ΦΠΑ που θα χρησιμοποιηθεί για τις συνδρομές
 NoVatOnSubscription=No TVA for subscriptions
 MEMBER_PAYONLINE_SENDEMAIL=Στείλτε e-mail για να προειδοποιήσει όταν Dolibarr λάβετε μια επιβεβαίωση της μια επικυρωμένη πληρωμής για την εγγραφή

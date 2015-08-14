@@ -1,5 +1,5 @@
 -- ===================================================================
--- Copyright (C) 2011-2014 Alexandre Spangaro <alexandre.spangaro@gmail.com>
+-- Copyright (C) 2011-2014 Alexandre Spangaro <aspangaro.dolibarr@gmail.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -22,13 +22,14 @@ create table llx_payment_salary
   tms             timestamp,
   fk_user         integer NOT NULL,
   datep           date,                       -- date de paiement
-  datev           date,                       -- date de valeur
+  datev           date,                       -- date de valeur (this field should not be here, only into bank tables)
+  salary          real,						  -- salary of user when payment was done
   amount          real NOT NULL DEFAULT 0,
   fk_typepayment  integer NOT NULL,
-  num_payment     varchar(50),
+  num_payment     varchar(50),				  -- ref
   label           varchar(255),
-  datesp          date,                       -- date de début de la période
-  dateep          date,                       -- date de fin de la période    
+  datesp          date,                       -- date start period
+  dateep          date,                       -- date end period    
   entity          integer DEFAULT 1 NOT NULL,	-- multi company id
   note            text,
   fk_bank         integer,  

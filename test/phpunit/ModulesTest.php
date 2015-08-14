@@ -79,6 +79,8 @@ class ModulesTest extends PHPUnit_Framework_TestCase
 
     	print __METHOD__."\n";
     }
+
+    // tear down after class
     public static function tearDownAfterClass()
     {
     	global $conf,$user,$langs,$db;
@@ -126,11 +128,12 @@ class ModulesTest extends PHPUnit_Framework_TestCase
 		$db=$this->savdb;
 
 		$modulelist=array('Accounting','Adherent','Agenda','Banque','Barcode','Bookmark',
-		'CashDesk','Categorie','ClickToDial','Commande','Comptabilite','Contrat','Cron','Deplacement','Document','Don',
-		'ECM','Expedition','Export','ExternalRss','ExternalSite','Facture',
-		'Fckeditor','Ficheinter','Fournisseur','FTP','GeoIPMaxmind','Gravatar','Holiday','Import','Label','Ldap','Mailing',
-		'Notification','OpenSurvey','Paybox','Paypal','Prelevement','Product','Projet','Propale',
-		'Service','Societe','Stock','Syslog','Tax','User','WebServices','Workflow');
+		'CashDesk','Categorie','ClickToDial','Commande','Comptabilite','Contrat','Cron','Deplacement','DocumentGeneration','Don','DynamicPrices',
+		'ECM','Expedition','Export','ExternalRss','ExternalSite',
+		'Facture','Fckeditor','Ficheinter','Fournisseur','FTP','GeoIPMaxmind','Gravatar','Holiday','Import','Label','Ldap',
+		'Mailing','MailmanSpip','Margin',
+		'Notification','OpenSurvey','Paybox','Paypal','Prelevement','Product','ProductBatch','Projet','Propale',
+		'Salaries','Service','Skype','Societe','Stock','SyncSupplierWebServices','Syslog','Tax','User','WebServices','Workflow');
 		foreach($modulelist as $modlabel)
 		{
     		require_once(DOL_DOCUMENT_ROOT.'/core/modules/mod'.$modlabel.'.class.php');

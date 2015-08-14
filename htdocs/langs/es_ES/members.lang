@@ -199,7 +199,8 @@ Entreprises=Empresas
 DOLIBARRFOUNDATION_PAYMENT_FORM=Para realizar el pago de su cotización por transferencia bancaria, visite la página <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribirse#Para_una_adhesi.C3.B3n_por_transferencia">http://wiki.dolibarr.org/index.php/Subscribirse</a>.<br>Para pagar con tarjeta de crédito o PayPal, haga clic en el botón en la parte inferior de esta página.<br><br>
 ByProperties=Por características
 MembersStatisticsByProperties=Estadísticas de los miembros por características
-MembersByNature=Miembros por naturaleza
+MembersByNature=Esta pantalla presenta una estadística del número de miembros por naturaleza.
+MembersByRegion=Esta pantalla presenta una estadística del número de miembros por región
 VATToUseForSubscriptions=Tasa de IVA para las afiliaciones
 NoVatOnSubscription=Sin IVA para en las afiliaciones
 MEMBER_PAYONLINE_SENDEMAIL=E-Mail para advertir en caso de recepción de confirmación de un pago validado de una afiliación

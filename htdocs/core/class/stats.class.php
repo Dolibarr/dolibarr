@@ -56,7 +56,7 @@ abstract class Stats
 	    	include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
 	    }
 
-		$newpathofdestfile=$conf->user->dir_temp.'/'.get_class($this).'_'.__FUNCTION__.'_'.(empty($this->cachefilesuffix)?'':$this->cachefilesuffix.'_').$langs->defaultlang.'_user'.$user->id.'.cache';
+		$newpathofdestfile=$conf->user->dir_temp.'/'.get_class($this).'_'.__FUNCTION__.'_'.(empty($this->cachefilesuffix)?'':$this->cachefilesuffix.'_').$langs->defaultlang.'_entity.'.$conf->entity.'_user'.$user->id.'.cache';
 		$newmask='0644';
 
 		$nowgmt = dol_now();
@@ -125,7 +125,10 @@ abstract class Stats
 	}
 
 	/**
-	 * Return amount of elements by month for several years
+	 * Return amount of elements by month for several years.
+	 * Criterias used to build request are defined into the constructor of parent class into xxx/class/xxxstats.class.php
+	 * The caller of class can add more filters into sql request by adding criteris into the $stats->where property just after
+	 * calling constructor.
 	 *
 	 * @param	int		$endyear		Start year
 	 * @param	int		$startyear		End year
@@ -147,7 +150,7 @@ abstract class Stats
         	include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
         }
 
-        $newpathofdestfile=$conf->user->dir_temp.'/'.get_class($this).'_'.__FUNCTION__.'_'.(empty($this->cachefilesuffix)?'':$this->cachefilesuffix.'_').$langs->defaultlang.'_user'.$user->id.'.cache';
+        $newpathofdestfile=$conf->user->dir_temp.'/'.get_class($this).'_'.__FUNCTION__.'_'.(empty($this->cachefilesuffix)?'':$this->cachefilesuffix.'_').$langs->defaultlang.'_entity.'.$conf->entity.'_user'.$user->id.'.cache';
         $newmask='0644';
 
         $nowgmt = dol_now();
@@ -273,7 +276,7 @@ abstract class Stats
         	include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
         }
 
-        $newpathofdestfile=$conf->user->dir_temp.'/'.get_class($this).'_'.__FUNCTION__.'_'.(empty($this->cachefilesuffix)?'':$this->cachefilesuffix.'_').$langs->defaultlang.'_user'.$user->id.'.cache';
+        $newpathofdestfile=$conf->user->dir_temp.'/'.get_class($this).'_'.__FUNCTION__.'_'.(empty($this->cachefilesuffix)?'':$this->cachefilesuffix.'_').$langs->defaultlang.'_entity.'.$conf->entity.'_user'.$user->id.'.cache';
         $newmask='0644';
 
         $nowgmt = dol_now();
@@ -380,8 +383,11 @@ abstract class Stats
 				$row = $this->db->fetch_object($resql);
 				$result[$i]['year'] = $row->year;
 				$result[$i]['nb'] = $row->nb;
+				if($i>0) $result[$i-1]['nb_diff'] = ($result[$i-1]['nb'] - $row->nb) / $row->nb * 100;
 				$result[$i]['total'] = $row->total;
+				if($i>0) $result[$i-1]['total_diff'] = ($result[$i-1]['total'] - $row->total) / $row->total * 100;
 				$result[$i]['avg'] = $row->avg;
+				if($i>0) $result[$i-1]['avg_diff'] = ($result[$i-1]['avg'] - $row->avg) / $row->avg * 100;
 				$i++;
 			}
 			$this->db->free($resql);

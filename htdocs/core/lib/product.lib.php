@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2007      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2009-2010 Regis Houssin        <regis.houssin@capnetworks.com>
+/* Copyright (C) 2006-2008  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2007       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2009-2010  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,13 +28,12 @@
 /**
  * Prepare array with list of tabs
  *
- * @param   Object	$object		Object related to tabs
- * @param	User	$user		Object user
+ * @param   Product	$object		Object related to tabs
  * @return  array				Array of tabs to show
  */
-function product_prepare_head($object, $user)
+function product_prepare_head($object)
 {
-	global $langs, $conf;
+	global $langs, $conf, $user;
 	$langs->load("products");
 
 	$h = 0;
@@ -58,13 +58,16 @@ function product_prepare_head($object, $user)
 	}
 
 	// Show category tab
+	/* No more required. Replaced with new multiselect component
 	if (! empty($conf->categorie->enabled) && $user->rights->categorie->lire)
 	{
-		$head[$h][0] = DOL_URL_ROOT."/categories/categorie.php?id=".$object->id.'&type=0';
+		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+		$type = Categorie::TYPE_PRODUCT;
+		$head[$h][0] = DOL_URL_ROOT."/categories/categorie.php?id=".$object->id.'&type='.$type;
 		$head[$h][1] = $langs->trans('Categories');
 		$head[$h][2] = 'category';
 		$h++;
-	}
+	}*/
 
 	// Multilangs
 	if (! empty($conf->global->MAIN_MULTILANGS))
@@ -94,7 +97,7 @@ function product_prepare_head($object, $user)
 	$head[$h][2] = 'referers';
 	$h++;
 
-    if($object->isproduct())    // Si produit stockable
+    if ($object->isproduct() || ($object->isservice() && ! empty($conf->global->STOCK_SUPPORTS_SERVICES)))    // If physical product we can stock (or service with option)
     {
         if (! empty($conf->stock->enabled) && $user->rights->stock->lire)
         {
@@ -111,10 +114,12 @@ function product_prepare_head($object, $user)
     // $this->tabs = array('entity:-tabname);   												to remove a tab
     complete_head_from_modules($conf,$langs,$object,$head,$h,'product');
 
+    /* Merged into the Join files tab
 	$head[$h][0] = DOL_URL_ROOT."/product/photos.php?id=".$object->id;
 	$head[$h][1] = $langs->trans("Photos");
 	$head[$h][2] = 'photos';
 	$h++;
+	*/
 
     // Attachments
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -183,7 +188,7 @@ function product_admin_prepare_head()
  *
  * @param	Product		$product	Product object
  * @param 	int			$socid		Thirdparty id
- * @return	void
+ * @return	integer
  */
 function show_stats_for_company($product,$socid)
 {

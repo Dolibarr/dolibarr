@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2011	Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2010-2015	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2009		Meos
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@capnetworks.com>
  *
@@ -37,7 +37,6 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 $langs->load("products");
 $langs->load("other");
@@ -46,16 +45,25 @@ $id=GETPOST('id','int');
 $action=GETPOST('action','alpha');
 $modulepart=GETPOST('modulepart','alpha')?GETPOST('modulepart','alpha'):'produit|service';
 $original_file = isset($_REQUEST["file"])?urldecode($_REQUEST["file"]):'';
+$backtourl=GETPOST('backtourl');
+$cancel=GETPOST("cancel");
 
 // Security check
 if (empty($modulepart)) accessforbidden('Bad value for modulepart');
 $accessallowed=0;
-if ($modulepart=='produit|service')
+if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'service' || $modulepart == 'produit|service')
 {
 	$result=restrictedArea($user,'produit|service',$id,'product&product');
 	if ($modulepart=='produit|service' && (! $user->rights->produit->lire && ! $user->rights->service->lire)) accessforbidden();
 	$accessallowed=1;
 }
+elseif ($modulepart == 'holiday')
+{
+	$result=restrictedArea($user,'holiday',$id,'holiday');
+	if ($modulepart=='holiday' && (! $user->rights->holiday->read)) accessforbidden();
+	$accessallowed=1;
+}
+
 
 // Security:
 // Limit access if permissions are wrong
@@ -64,19 +72,50 @@ if (! $accessallowed)
 	accessforbidden();
 }
 
-$object = new Product($db);
-if ($id > 0)
+// Define dir according to modulepart
+if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'service' || $modulepart == 'produit|service')
 {
-	$result = $object->fetch($id);
-	if ($result <= 0) dol_print_error($db,'Failed to load object');
-	$dir=$conf->product->multidir_output[$object->entity];	// By default
-	if ($object->type == 0) $dir=$conf->product->multidir_output[$object->entity];
-	if ($object->type == 1) $dir=$conf->service->multidir_output[$object->entity];
+	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+	$object = new Product($db);
+	if ($id > 0)
+	{
+		$result = $object->fetch($id);
+		if ($result <= 0) dol_print_error($db,'Failed to load object');
+		$dir=$conf->product->multidir_output[$object->entity];	// By default
+		if ($object->type == Product::TYPE_PRODUCT) $dir=$conf->product->multidir_output[$object->entity];
+		if ($object->type == Product::TYPE_SERVICE) $dir=$conf->service->multidir_output[$object->entity];
+	}
 }
+elseif ($modulepart == 'holiday')
+{
+	require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
+	$object = new Holiday($db);
+	if ($id > 0)
+	{
+		$result = $object->fetch($id);
+		if ($result <= 0) dol_print_error($db,'Failed to load object');
+		$dir=$conf->holiday->dir_output;	// By default
+	}
+}
+
 
 /*
  * Actions
  */
+
+if ($cancel)
+{
+	if ($backtourl)
+	{
+		header("Location: ".$backtourl);
+		exit;
+	}
+	else
+	{
+		header("Location: ".DOL_URL_ROOT."/product/document.php?id=".$id.'&file='.urldecode($_POST["file"]));
+		exit;
+	}
+}
 
 if ($action == 'confirm_resize' && (isset($_POST["file"]) != "") && (isset($_POST["sizex"]) != "") && (isset($_POST["sizey"]) != ""))
 {
@@ -85,13 +124,24 @@ if ($action == 'confirm_resize' && (isset($_POST["file"]) != "") && (isset($_POS
 
 	if ($result == $fullpath)
 	{
-		header("Location: ".DOL_URL_ROOT."/product/photos.php?id=".$id.'&action=addthumb&file='.urldecode($_POST["file"]));
-		exit;
+		$object->add_thumb($fullpath);
+
+		if ($backtourl)
+		{
+			header("Location: ".$backtourl);
+			exit;
+		}
+		else
+		{
+			header("Location: ".DOL_URL_ROOT."/product/document.php?id=".$id.'&file='.urldecode($_POST["file"]));
+			exit;
+		}
 	}
 	else
 	{
-		$mesg=$result;
+		setEventMessage($result, 'errors');
 		$_GET['file']=$_POST["file"];
+		$action='';
 	}
 }
 
@@ -103,13 +153,24 @@ if ($action == 'confirm_crop')
 
 	if ($result == $fullpath)
 	{
-		header("Location: ".DOL_URL_ROOT."/product/photos.php?id=".$id.'&action=addthumb&file='.urldecode($_POST["file"]));
-		exit;
+		$object->add_thumb($fullpath);
+
+		if ($backtourl)
+		{
+			header("Location: ".$backtourl);
+			exit;
+		}
+		else
+		{
+			header("Location: ".DOL_URL_ROOT."/product/document.php?id=".$id.'&file='.urldecode($_POST["file"]));
+			exit;
+		}
 	}
 	else
 	{
-		$mesg=$result;
+		setEventMessage($result, 'errors');
 		$_GET['file']=$_POST["file"];
+		$action='';
 	}
 }
 
@@ -123,8 +184,6 @@ llxHeader($head, $langs->trans("Image"), '', '', 0, 0, array('/includes/jquery/p
 
 print_fiche_titre($langs->trans("ImageEditor"));
 
-if ($mesg) print '<div class="error">'.$mesg.'</div>';
-
 $infoarray=dol_getImageSize($dir."/".urldecode($_GET["file"]));
 $height=$infoarray['height'];
 $width=$infoarray['width'];
@@ -132,6 +191,11 @@ print $langs->trans("CurrentInformationOnImage").': ';
 print $langs->trans("Width").': <strong>'.$width.'</strong> x '.$langs->trans("Height").': <strong>'.$height.'</strong><br>';
 
 print '<br>'."\n";
+
+
+/*
+ * Resize image
+ */
 
 print '<!-- Form to resize -->'."\n";
 print '<form name="redim_file" action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="POST">';
@@ -145,10 +209,14 @@ print '<input type="hidden" name="file" value="'.$_GET['file'].'" />';
 print '<input type="hidden" name="action" value="confirm_resize" />';
 print '<input type="hidden" name="product" value="'.$id.'" />';
 print '<input type="hidden" name="id" value="'.$id.'" />';
-print '<br><input class="button" name="sendit" value="'.dol_escape_htmltag($langs->trans("Resize")).'" type="submit" />';
+print '<br>';
+print '<input class="button" id="submitresize" name="sendit" value="'.dol_escape_htmltag($langs->trans("Resize")).'" type="submit" />';
+print '&nbsp;';
+print '<input type="submit" id="cancelresize" name="cancel" class="button" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" />';
 print '</fieldset>'."\n";
 print '</form>';
 print '<br>'."\n";
+
 
 /*
  * Crop image
@@ -168,17 +236,17 @@ if (! empty($conf->use_javascript_ajax))
 		$refsizeforcrop='screenwidth';
 		$ratioforcrop=2;
 	}
-	
+
 	print '<!-- Form to crop -->'."\n";
 	print '<fieldset id="redim_file">';
 	print '<legend>'.$langs->trans("Recenter").'</legend>';
 	print $langs->trans("DefineNewAreaToPick").'...<br>';
-	print '<br><center>';
+	print '<br><div class="center">';
 	print '<div style="border: 1px solid #888888; width: '.$widthforcrop.'px;">';
 	print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&entity='.$object->entity.'&file='.$original_file.'" alt="" id="cropbox" width="'.$widthforcrop.'px"/>';
 	print '</div>';
-	print '</center><br>';
-	print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="post" onsubmit="return checkCoords();">
+	print '</div><br>';
+	print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="post">
 	      <div class="jc_coords">
 	         '.$langs->trans("NewSizeAfterCropping").':
 	         <label>X1 <input type="text" size="4" id="x" name="x" /></label>
@@ -188,19 +256,33 @@ if (! empty($conf->use_javascript_ajax))
 	         <label>W <input type="text" size="4" id="w" name="w" /></label>
 	         <label>H <input type="text" size="4" id="h" name="h" /></label>
 	      </div>
-	
+
 	      <input type="hidden" id="file" name="file" value="'.urlencode($original_file).'" />
 	      <input type="hidden" id="action" name="action" value="confirm_crop" />
 	      <input type="hidden" id="product" name="product" value="'.$id.'" />
 	      <input type="hidden" id="refsizeforcrop" name="refsizeforcrop" value="'.$refsizeforcrop.'" />
 	      <input type="hidden" id="ratioforcrop" name="ratioforcrop" value="'.$ratioforcrop.'" />
 	      <input type="hidden" name="id" value="'.$id.'" />
-	      <br><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Recenter")).'" />
+	      <br>
+	      <input type="submit" id="submitcrop" name="submitcrop" class="button" value="'.dol_escape_htmltag($langs->trans("Recenter")).'" />
+	      &nbsp;
+	      <input type="submit" id="cancelcrop" name="cancel" class="button" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" />
 	   </form>'."\n";
 	print '</fieldset>'."\n";
 	print '<br>';
 }
 
+/* Check that mandatory fields are filled */
+print '<script type="text/javascript" language="javascript">
+jQuery(document).ready(function() {
+	$("#submitcrop").click(function(e) {
+	    var idClicked = e.target.id;
+	    if (parseInt(jQuery(\'#w\').val())) return true;
+	    alert(\''.dol_escape_js($langs->trans("ErrorFieldRequired", $langs->trans("Dimension"))).'\');
+	    return false;
+	});
+});
+</script>';
 
 llxFooter();
 $db->close();

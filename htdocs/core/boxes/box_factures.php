@@ -2,6 +2,7 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,8 +54,11 @@ class box_factures extends ModeleBoxes
 
 		$this->max=$max;
 
-		include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-		$facturestatic=new Facture($db);
+        include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+        include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+
+        $facturestatic=new Facture($db);
+        $societestatic = new Societe($db);
 
 		$text = $langs->trans("BoxTitleLast".($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE?"":"Modified")."CustomerBills",$max);
 		$this->info_box_head = array(
@@ -62,11 +66,16 @@ class box_factures extends ModeleBoxes
 				'limit'=> dol_strlen($text)
 		);
 
-		if ($user->rights->facture->lire)
-		{
-			$sql = "SELECT f.rowid as facid, f.facnumber, f.type, f.total as total_ht, f.datef as df";
+        if ($user->rights->facture->lire) {
+            $sql = "SELECT f.rowid as facid";
+            $sql.= ", f.facnumber, f.type, f.total as total_ht";
+            $sql.= ", f.tva as total_tva";
+            $sql.= ", f.total_ttc";
+            $sql.= ", f.datef as df";
 			$sql.= ", f.paye, f.fk_statut, f.datec, f.tms";
-			$sql.= ", s.nom as name, s.rowid as socid";
+            $sql.= ", s.nom as name";
+            $sql.= ", s.rowid as socid";
+            $sql.= ", s.code_client";
 			$sql.= ", f.date_lim_reglement as datelimite";
 			$sql.= " FROM (".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -85,78 +94,87 @@ class box_factures extends ModeleBoxes
 				$num = $db->num_rows($result);
 				$now=dol_now();
 
-				$i = 0;
+				$line = 0;
 				$l_due_date = $langs->trans('Late').' ('.strtolower($langs->trans('DateEcheance')).': %s)';
 
-				while ($i < $num)
-				{
-					$objp = $db->fetch_object($result);
-					$datelimite=$db->jdate($objp->datelimite);
-					$date=$db->jdate($objp->df);
-					$datem=$db->jdate($objp->tms);
+                while ($line < $num) {
+                    $objp = $db->fetch_object($result);
+                    $datelimite = $db->jdate($objp->datelimite);
+                    $date = $db->jdate($objp->df);
+                    $datem = $db->jdate($objp->tms);
+                    $facturestatic->id = $objp->facid;
+                    $facturestatic->ref = $objp->facnumber;
+                    $facturestatic->type = $objp->type;
+                    $facturestatic->total_ht = $objp->total_ht;
+                    $facturestatic->total_tva = $objp->total_tva;
+                    $facturestatic->total_ttc = $objp->total_ttc;
+                    $societestatic->id = $objp->socid;
+                    $societestatic->name = $objp->name;
+                    $societestatic->code_client = $objp->code_client;
 
-					$picto='bill';
-					if ($objp->type == 1) $picto.='r';
-					if ($objp->type == 2) $picto.='a';
 					$late = '';
 					if ($objp->paye == 0 && ($objp->fk_statut != 2 && $objp->fk_statut != 3) && $datelimite < ($now - $conf->facture->client->warning_delay)) { $late = img_warning(sprintf($l_due_date,dol_print_date($datelimite,'day')));}
 
-					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
-                    'logo' => $picto,
-                    'url' => DOL_URL_ROOT."/compta/facture.php?facid=".$objp->facid);
+                    $this->info_box_contents[$line][] = array(
+                        'td' => 'align="left"',
+                        'text' => $facturestatic->getNomUrl(1),
+                        'text2'=> $late,
+                        'asis' => 1,
+                    );
 
-					$this->info_box_contents[$i][1] = array('td' => 'align="left"',
-                    'text' => $objp->facnumber,
-                    'text2'=> $late,
-                    'url' => DOL_URL_ROOT."/compta/facture.php?facid=".$objp->facid);
+                    $this->info_box_contents[$line][] = array(
+                        'td' => 'align="left"',
+                        'text' => $societestatic->getNomUrl(1, '', 40),
+                        'asis' => 1,
+                    );
 
-					$this->info_box_contents[$i][2] = array('td' => 'align="left" width="16"',
-                    'logo' => 'company',
-                    'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid);
+                    $this->info_box_contents[$line][] = array(
+                        'td' => 'align="right"',
+                        'text' => price($objp->total_ht, 0, $langs, 0, -1, -1, $conf->currency),
+                    );
 
-					$this->info_box_contents[$i][3] = array('td' => 'align="left"',
-                    'text' => $objp->name,
-                    'maxlength'=>40,
-                    'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid);
+                    $this->info_box_contents[$line][] = array(
+                        'td' => 'align="right"',
+                        'text' => dol_print_date($date,'day'),
+                    );
 
-					$this->info_box_contents[$i][4] = array('td' => 'align="right"',
-                    'text' => price($objp->total_ht),
-					);
+                    $this->info_box_contents[$line][] = array(
+                        'td' => 'align="right" width="18"',
+                        'text' => $facturestatic->LibStatut($objp->paye,$objp->fk_statut,3),
+                    );
 
-					$this->info_box_contents[$i][5] = array('td' => 'align="right"',
-                    'text' => dol_print_date($date,'day'),
-					);
+                    $line++;
+                }
 
-					$this->info_box_contents[$i][6] = array('td' => 'align="right" width="18"',
-                    'text' => $facturestatic->LibStatut($objp->paye,$objp->fk_statut,3));
+                if ($num==0)
+                    $this->info_box_contents[$line][0] = array(
+                        'td' => 'align="center"',
+                        'text'=>$langs->trans("NoRecordedInvoices"),
+                    );
 
-					$i++;
-				}
+                $db->free($result);
+            } else {
+                $this->info_box_contents[0][0] = array(
+                    'td' => 'align="left"',
+                    'maxlength'=>500,
+                    'text' => ($db->error().' sql='.$sql),
+                );
+            }
 
-				if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedInvoices"));
-
-				$db->free($result);
-			}
-			else
-			{
-				$this->info_box_contents[0][0] = array(	'td' => 'align="left"',
-    	        										'maxlength'=>500,
-	            										'text' => ($db->error().' sql='.$sql));
-			}
-
-		}
-		else {
-			$this->info_box_contents[0][0] = array('td' => 'align="left"',
-            'text' => $langs->trans("ReadPermissionNotAllowed"));
-		}
-	}
+        } else {
+            $this->info_box_contents[0][0] = array(
+                'td' => 'align="left"',
+                'text' => $langs->trans("ReadPermissionNotAllowed"),
+            );
+        }
+    }
 
 	/**
-	 *	Method to show box
+	 *  Method to show box
 	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *	@return	void
+	 *  @param  array   $head       Array with properties of box title
+	 *  @param  array   $contents   Array with properties of box lines
+	 *  @return void
 	 */
 	function showBox($head = null, $contents = null)
 	{

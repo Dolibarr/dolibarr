@@ -1,8 +1,9 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2013-2014 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
+ * Copyright (C) 2013-2015 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2013-2014 Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014 	   Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2015      Ari Elbaz (elarifr)  <github@accedinfo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +28,7 @@
 /**
  * Class to manage accounting accounts
  */
-class AccountingAccount
+class AccountingAccount extends CommonObject
 {
 	var $db;
 	var $error;
@@ -60,14 +61,16 @@ class AccountingAccount
 	/**
 	 * Load record in memory
 	 *
-	 * @param	int		$rowid				Id
-	 * @param	string	$account_number		Account number
-	 * @return 	int							<0 if KO, >0 if OK
+	 * @param	int		$rowid					Id
+	 * @param	string	$account_number			Account number
+	 * @param	int		$limittocurentchart		1=Do not load record if it is into another accounting system
+	 * @return 	int								<0 if KO, >0 if OK
 	 */
-	function fetch($rowid = null, $account_number = null)
+	function fetch($rowid = null, $account_number = null, $limittocurentchart=0)
 	{
-		if ($rowid || $account_number)
-		{
+		global $conf;
+
+		if ($rowid || $account_number) {
 			$sql = "SELECT rowid, datec, tms, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, fk_user_author, fk_user_modif, active";
 			$sql.= " FROM " . MAIN_DB_PREFIX . "accountingaccount WHERE";
 			if ($rowid) {
@@ -75,15 +78,15 @@ class AccountingAccount
 			} elseif ($account_number) {
 				$sql .= " account_number = '" . $account_number . "'";
 			}
-
+			if (!empty($limittocurentchart)) {
+				$sql .=' AND fk_pcg_version IN (SELECT pcg_version FROM '.MAIN_DB_PREFIX.'accounting_system WHERE rowid='.$conf->global->CHARTOFACCOUNTS.')';
+			}
 			dol_syslog(get_class($this) . "::fetch sql=" . $sql, LOG_DEBUG);
 			$result = $this->db->query($sql);
-			if ($result)
-			{
+			if ($result) {
 				$obj = $this->db->fetch_object($result);
 
-				if ($obj)
-				{
+				if ($obj) {
 					$this->id = $obj->rowid;
 					$this->rowid = $obj->rowid;
 					$this->datec = $obj->datec;
@@ -99,18 +102,14 @@ class AccountingAccount
 					$this->active = $obj->active;
 
 					return $this->id;
-				}
-				else
-				{
+				} else {
 					return 0;
 				}
-			}
-			else
-			{
-				dol_print_error($this->db);
+			} else {
+				$this->error="Error " . $this->db->lasterror();
+				$this->errors[] = "Error " . $this->db->lasterror();
 			}
 		}
-
 		return -1;
 	}
 
@@ -125,8 +124,7 @@ class AccountingAccount
 	{
 		global $conf;
 		$error = 0;
-
-		$now=dol_now();
+		$now = dol_now();
 
 		// Clean parameters
 		if (isset($this->fk_pcg_version))
@@ -341,6 +339,31 @@ class AccountingAccount
 		} else {
 			return - 1;
 		}
+	}
+
+	/**
+	 *	Return clicable name (with picto eventually)
+	 *
+	 *	@param		int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
+	 *	@return		string					Chaine avec URL
+	 */
+	function getNomUrl($withpicto=0)
+	{
+		global $langs;
+
+		$result='';
+
+		$link = '<a href="'.DOL_URL_ROOT.'/accountancy/admin/card.php?id='.$this->id.'">';
+		$linkend='</a>';
+
+		$picto='billr';
+
+		$label=$langs->trans("Show").': '.$this->account_number.' - '.$this->label;
+
+		if ($withpicto) $result.=($link.img_object($label,$picto).$linkend);
+		if ($withpicto && $withpicto != 2) $result.=' ';
+		if ($withpicto != 2) $result.=$link.$this->account_number.$linkend;
+		return $result;
 	}
 
 	/**

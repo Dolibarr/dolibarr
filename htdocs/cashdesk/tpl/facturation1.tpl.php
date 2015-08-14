@@ -74,7 +74,7 @@ $langs->load("cashdesk");
 						for ($i = 0; $i < $nbtoshow; $i++)
 						{
 							if ( $id == $tab_designations[$i]['rowid'] )
-								$selected = 'selected="selected"';
+								$selected = 'selected';
 							else
 								$selected = '';
 
@@ -111,18 +111,18 @@ $langs->load("cashdesk");
 				</td>
 				<!-- Affichage du stock pour l'article courant -->
 				<td>
-				<input class="texte1_off" type="text" name="txtStock" value="<?php echo $obj_facturation->stock() ?>" disabled="disabled" />
+				<input class="texte1_off" type="text" name="txtStock" value="<?php echo $obj_facturation->stock() ?>" disabled />
 				</td>
 				<!-- Show unit price -->
 				<?php // TODO Remove the disabled and use this value when adding product into cart ?>
-				<td><input class="texte1_off" type="text" name="txtPrixUnit" value="<?php echo price2num($obj_facturation->prix(), 'MU'); ?>" onchange="javascript: modif();" disabled="disabled" /></td>
+				<td><input class="texte1_off" type="text" name="txtPrixUnit" value="<?php echo price2num($obj_facturation->prix(), 'MU'); ?>" onchange="javascript: modif();" disabled /></td>
 				<td><?php echo $conf->currency; ?></td>
     			<!-- Choix de la remise -->
     			<td><input class="texte1" type="text" id="txtRemise" name="txtRemise" value="0" onkeyup="javascript: modif();" onfocus="javascript: this.select();"/>
 <?php print genkeypad("txtRemise", "frmQte");?>
     			</td>
     			<!-- Affichage du total HT -->
-    			<td><input class="texte1_off" type="text" name="txtTotal" value="" disabled="disabled" /></td><td><?php echo $conf->currency; ?></td>
+    			<td><input class="texte1_off" type="text" name="txtTotal" value="" disabled /></td><td><?php echo $conf->currency; ?></td>
                 <!-- Choix du taux de TVA -->
                 <td class="select_tva">
                 <?php //var_dump($tab_tva); ?>
@@ -133,7 +133,7 @@ $langs->load("cashdesk");
                         for($i=0;$i < $tab_tva_size;$i++) {
 
                             if ( $tva_tx == $tab_tva[$i]['taux'] )
-                                $selected = 'selected="selected"';
+                                $selected = 'selected';
                             else
                             $selected = '';
 
@@ -158,13 +158,13 @@ $langs->load("cashdesk");
 			<tr><th class="label1"><?php echo $langs->trans("TotalTicket"); ?></th><th class="label1"><?php echo $langs->trans("Received"); ?></th><th class="label1"><?php echo $langs->trans("Change"); ?></th></tr>
 			<tr>
 			<!-- Affichage du montant du -->
-			<td><input class="texte2_off" type="text" name="txtDu" value="<?php echo price2num($obj_facturation->prixTotalTtc(), 'MT'); ?>" disabled="disabled" /></td>
+			<td><input class="texte2_off" type="text" name="txtDu" value="<?php echo price2num($obj_facturation->prixTotalTtc(), 'MT'); ?>" disabled /></td>
 			<!-- Choix du montant encaisse -->
 			<td><input class="texte2" type="text" id="txtEncaisse" name="txtEncaisse" value="" onkeyup="javascript: verifDifference();" onfocus="javascript: this.select();" />
 <?php print genkeypad("txtEncaisse", "frmDifference");?>
 			</td>
 			<!-- Affichage du montant rendu -->
-			<td><input class="texte2_off" type="text" name="txtRendu" value="0" disabled="disabled" /></td>
+			<td><input class="texte2_off" type="text" name="txtRendu" value="0" disabled /></td>
 			</tr>
 			<tr>
 		</table>
@@ -206,8 +206,8 @@ $langs->load("cashdesk");
 				<td>
 				<input class="button bouton_mode_reglement" type="submit" name="btnModeReglement" value="<?php echo $langs->trans("Reported"); ?>" onclick="javascript: verifClic('DIF');" />
 				<?php
-				echo $langs->trans("DateEcheance").' :';
-				print $form->select_date(-1,'txtDatePaiement');
+				print $langs->trans("DateEcheance").' :';
+				print $form->select_date(-1,'txtDatePaiement',0,0,0,'paymentmode',1,0,1);
 				?>
  				</td>
 			</tr>

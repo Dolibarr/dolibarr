@@ -57,6 +57,7 @@ RemoveFromGroup=إزالة من المجموعة
 PasswordChangedAndSentTo=تم تغيير كلمة المرور وترسل إلى <b>٪ ق.</b>
 PasswordChangeRequestSent=طلب تغيير كلمة السر لإرسالها إلى <b>٪ ق ٪ ق.</b>
 MenuUsersAndGroups=مجموعات المستخدمين
+MenuMyUserCard=My user card
 LastGroupsCreated=ق الماضي خلق مجموعات ٪
 LastUsersCreated=آخر مستخدمين خلق ق ٪
 ShowGroup=وتبين لفريق

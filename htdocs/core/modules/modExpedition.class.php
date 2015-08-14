@@ -151,7 +151,8 @@ class modExpedition extends DolibarrModules
 		$this->rights[$r][1] = 'Valider les expeditions';
 		$this->rights[$r][2] = 'd';
 		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'valider';
+		$this->rights[$r][4] = 'shipping_advance';
+		$this->rights[$r][5] = 'validate';
 
 		$r++;
 		$this->rights[$r][0] = 105; // id de la permission
@@ -197,8 +198,8 @@ class modExpedition extends DolibarrModules
 		$this->rights[$r][1] = 'Valider les bons de livraison';
 		$this->rights[$r][2] = 'd';
 		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'livraison';
-		$this->rights[$r][5] = 'valider';
+		$this->rights[$r][4] = 'livraison_advance';
+		$this->rights[$r][5] = 'validate';
 
 		$r++;
 		$this->rights[$r][0] = 1109;
@@ -228,7 +229,7 @@ class modExpedition extends DolibarrModules
 		$this->export_sql_end[$r] .=' '.MAIN_DB_PREFIX.'expeditiondet as ed, '.MAIN_DB_PREFIX.'commandedet as cd';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product as p on cd.fk_product = p.rowid';
 		$this->export_sql_end[$r] .=' WHERE c.fk_soc = s.rowid AND c.rowid = ed.fk_expedition AND ed.fk_origin_line = cd.rowid';
-		$this->export_sql_end[$r] .=' AND c.entity = '.$conf->entity;
+		$this->export_sql_end[$r] .=' AND c.entity IN ('.getEntity('shipment',1).')';
 	}
 
 
@@ -276,20 +277,4 @@ class modExpedition extends DolibarrModules
 
 		return $this->_init($sql,$options);
 	}
-
-    /**
-	 *		Function called when module is disabled.
-	 *      Remove from database constants, boxes and permissions from Dolibarr database.
-	 *		Data directories are not deleted
-	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *      @return     int             	1 if OK, 0 if KO
-     */
-    function remove($options='')
-    {
-		$sql = array();
-
-		return $this->_remove($sql,$options);
-    }
-
 }

@@ -1,0 +1,7 @@
+Module62000Name=Incoterm
+Module62000Desc=เพิ่มคุณสมบัติในการจัดการ Incoterm
+IncotermLabel=Incoterms
+IncotermSetupTitle1=ลักษณะ
+IncotermSetupTitle2=สถานะ
+IncotermSetup=การติดตั้งโมดูล Incoterm
+IncotermFunctionDesc=เปิดใช้งานคุณสมบัติ Incoterm (Thirdparty, ข้อเสนอ, สั่งซื้อของลูกค้า, ใบแจ้งหนี้ของลูกค้า, การจัดส่งคำสั่งผลิต)

@@ -199,7 +199,8 @@ Entreprises=Podjetja
 DOLIBARRFOUNDATION_PAYMENT_FORM=Če želite plačati članarino z bančnim nakazilom, glejte stran <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribe</a>.<br>Za plačilo s kreditno kartico ali Paypal, kliknite na gumb na dnu te strani.<br>
 ByProperties=Po lastnostih
 MembersStatisticsByProperties=Statistika članov po lastnostih
-MembersByNature=Naravni člani
+MembersByNature=Na tem zaslonu je prikazana statistika članov po lastnostih.
+MembersByRegion=Na tem zaslonu je prikazana statistika članov po regijah.
 VATToUseForSubscriptions=Stopnja DDV za naročnine
 NoVatOnSubscription=Ni davka za naročnine
 MEMBER_PAYONLINE_SENDEMAIL=Opozorilno e-sporočilo, ko Dilibarr prejme potrdilo potrjenega plačila za naročnino

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2013-2014 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Marcos García       <marcosgdf@gmail.com>
+ * Copyright (C) 2015	   Alexandre Spangaro  <aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,7 +80,7 @@ if (GETPOST("creation_sondage_date") || GETPOST("creation_sondage_autre"))
 	$testdate = false;
 	$champdatefin = dol_mktime(0,0,0,GETPOST('champdatefinmonth'),GETPOST('champdatefinday'),GETPOST('champdatefinyear'));
 
-	if (GETPOST('champdatefin') && ($champdatefin > 0))	// A date was provided
+	if ($champdatefin && ($champdatefin > 0))	// A date was provided
 	{
 		// Expire date is not before today
 		if ($champdatefin >= dol_now())
@@ -90,9 +91,10 @@ if (GETPOST("creation_sondage_date") || GETPOST("creation_sondage_autre"))
 		else
 		{
 			$testdate = true;
+			$_SESSION['champdatefin'] = dol_print_date($champdatefin,'dayrfc');
 			//$testdate = false;
 			//$_SESSION['champdatefin'] = dol_print_date($champdatefin,'dayrfc');
-			//setEventMessage($langs->trans('ExpiredDate'),'errors');
+			setEventMessage($langs->trans('ExpiredDate'),'warnings');
 		}
 	}
 
@@ -134,6 +136,8 @@ print_fiche_titre($langs->trans("CreatePoll").' (1 / 2)');
 //debut du formulaire
 print '<form name="formulaire" action="" method="POST">'."\n";
 
+dol_fiche_head();
+
 //Affichage des différents champs textes a remplir
 print '<table class="border" width="100%">'."\n";
 
@@ -152,10 +156,12 @@ print '</tr>'."\n";
 
 print '<tr><td class="fieldrequired">'.  $langs->trans("ExpireDate")  .'</td><td>';
 
-print $form->select_date($champdatefin?$champdatefin:-1,'champdatefin','','','',"add",1,0);
+print $form->select_date($champdatefin?$champdatefin:-1,'champdatefin','','','',"add",1,0,1);
 
 print '</tr>'."\n";
 print '</table>'."\n";
+
+dol_fiche_end();
 
 //focus javascript sur le premier champ
 print '<script type="text/javascript">'."\n";
@@ -170,12 +176,12 @@ if ($_SESSION["mailsonde"]) $cochemail="checked";
 
 print '<input type="checkbox" name="mailsonde" '.$cochemail.'> '. $langs->trans("ToReceiveEMailForEachVote") .'<br>'."\n";
 
-if ($_SESSION['allow_comments']) $allow_comments = 'checked="checked"';
-if (isset($_POST['allow_comments'])) $allow_comments=GETPOST('allow_comments')?'checked="checked"':'';
+if ($_SESSION['allow_comments']) $allow_comments = 'checked';
+if (isset($_POST['allow_comments'])) $allow_comments=GETPOST('allow_comments')?'checked':'';
 print '<input type="checkbox" name="allow_comments" '.$allow_comments.'"> '.$langs->trans('CanComment').'<br />'."\n";
 
-if ($_SESSION['allow_spy']) $allow_spy = 'checed="checked"';
-if (isset($_POST['allow_spy'])) $allow_spy=GETPOST('allow_spy')?'checked="checked"':'';
+if ($_SESSION['allow_spy']) $allow_spy = 'checed';
+if (isset($_POST['allow_spy'])) $allow_spy=GETPOST('allow_spy')?'checked':'';
 print '<input type="checkbox" name="allow_spy" '.$allow_spy.'> '.$langs->trans('CanSeeOthersVote').'<br />'."\n";
 
 if (GETPOST('choix_sondage'))

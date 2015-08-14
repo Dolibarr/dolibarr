@@ -49,7 +49,7 @@ class modUser extends DolibarrModules
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "Gestion des utilisateurs (requis)";
-		$this->always_enabled = 1;	// Can't be disabled
+		$this->always_enabled = true;	// Can't be disabled
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';
@@ -209,10 +209,9 @@ class modUser extends DolibarrModules
 		$this->export_code[$r]=$this->rights_class.'_'.$r;
 		$this->export_label[$r]='Liste des utilisateurs Dolibarr et attributs';
 		$this->export_permission[$r]=array(array("user","user","export"));
-		$this->export_fields_array[$r]=array('u.rowid'=>"Id",'u.login'=>"Login",'u.lastname'=>"Lastname",'u.firstname'=>"Firstname",'u.office_phone'=>'Phone','u.office_fax'=>'Fax','u.email'=>'EMail','u.datec'=>"DateCreation",'u.tms'=>"DateLastModification",'u.admin'=>"Administrator",'u.statut'=>'Status','u.note'=>"Note",'u.datelastlogin'=>'LastConnexion','u.datepreviouslogin'=>'PreviousConnexion','u.fk_socpeople'=>"IdContact",'u.fk_societe'=>"IdCompany",'u.fk_member'=>"MemberId");
-		$this->export_TypeFields_array[$r]=array('u.login'=>"Text",'u.lastname'=>"Text",'u.firstname'=>"Text",'u.office_phone'=>'Text','u.office_fax'=>'Text','u.email'=>'Text','u.datec'=>"Date",'u.tms'=>"Date",'u.admin'=>"Boolean",'u.statut'=>'Status','u.note'=>"Text",'u.datelastlogin'=>'Date','u.datepreviouslogin'=>'Date','u.fk_societe'=>"Text",'u.fk_member'=>"Text");
-
-		$this->export_entities_array[$r]=array('u.rowid'=>"user",'u.login'=>"user",'u.lastname'=>"user",'u.firstname'=>"user",'u.office_phone'=>'user','u.office_fax'=>'user','u.email'=>'user','u.datec'=>"user",'u.tms'=>"user",'u.admin'=>"user",'u.statut'=>'user','u.note'=>"user",'u.datelastlogin'=>'user','u.datepreviouslogin'=>'user','u.fk_socpeople'=>"contact",'u.fk_societe'=>"company",'u.fk_member'=>"member");
+		$this->export_fields_array[$r]=array('u.rowid'=>"Id",'u.login'=>"Login",'u.lastname'=>"Lastname",'u.firstname'=>"Firstname",'u.office_phone'=>'Phone','u.office_fax'=>'Fax','u.email'=>'EMail','u.datec'=>"DateCreation",'u.tms'=>"DateLastModification",'u.admin'=>"Administrator",'u.statut'=>'Status','u.note'=>"Note",'u.datelastlogin'=>'LastConnexion','u.datepreviouslogin'=>'PreviousConnexion','u.fk_socpeople'=>"IdContact",'u.fk_soc'=>"IdCompany",'u.fk_member'=>"MemberId");
+		$this->export_TypeFields_array[$r]=array('u.login'=>"Text",'u.lastname'=>"Text",'u.firstname'=>"Text",'u.office_phone'=>'Text','u.office_fax'=>'Text','u.email'=>'Text','u.datec'=>"Date",'u.tms'=>"Date",'u.admin'=>"Boolean",'u.statut'=>'Status','u.note'=>"Text",'u.datelastlogin'=>'Date','u.datepreviouslogin'=>'Date','u.fk_soc'=>"List:societe:nom:rowid",'u.fk_member'=>"List:adherent:firstname");
+		$this->export_entities_array[$r]=array('u.rowid'=>"user",'u.login'=>"user",'u.lastname'=>"user",'u.firstname'=>"user",'u.office_phone'=>'user','u.office_fax'=>'user','u.email'=>'user','u.datec'=>"user",'u.tms'=>"user",'u.admin'=>"user",'u.statut'=>'user','u.note'=>"user",'u.datelastlogin'=>'user','u.datepreviouslogin'=>'user','u.fk_socpeople'=>"contact",'u.fk_soc'=>"company",'u.fk_member'=>"member");
         if (empty($conf->adherent->enabled))
         {
             unset($this->export_fields_array[$r]['u.fk_member']);
@@ -220,7 +219,7 @@ class modUser extends DolibarrModules
         }
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'user as u';
-		$this->export_sql_end[$r] .=' WHERE u.entity IN (0,'.$conf->entity.')';
+		$this->export_sql_end[$r] .=' WHERE u.entity IN ('.getEntity('user',1).')';
 	}
 
 
@@ -243,20 +242,4 @@ class modUser extends DolibarrModules
 
 		return $this->_init($sql,$options);
 	}
-
-    /**
-	 *		Function called when module is disabled.
-	 *      Remove from database constants, boxes and permissions from Dolibarr database.
-	 *		Data directories are not deleted
-	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *      @return     int             	1 if OK, 0 if KO
-     */
-    function remove($options='')
-    {
-		$sql = array();
-
-		return $this->_remove($sql,$options);
-    }
-
 }

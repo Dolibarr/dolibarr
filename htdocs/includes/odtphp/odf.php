@@ -486,11 +486,14 @@ IMG;
 
 		$execmethod=(empty($conf->global->MAIN_EXEC_USE_POPEN)?1:2);	// 1 or 2
 
-		$name=str_replace('.odt', '', $name);
-		if (!empty($conf->global->MAIN_DOL_SCRIPTS_ROOT)) {
-			$command = $conf->global->MAIN_DOL_SCRIPTS_ROOT.'/scripts/odt2pdf/odt2pdf.sh '.$name;
-		}else {
-			$command = '../../scripts/odt2pdf/odt2pdf.sh '.$name;
+		$name=preg_replace('/\.odt/i', '', $name);
+		if (!empty($conf->global->MAIN_DOL_SCRIPTS_ROOT))
+		{
+			$command = $conf->global->MAIN_DOL_SCRIPTS_ROOT.'/scripts/odt2pdf/odt2pdf.sh '.escapeshellcmd($name).' '.(is_numeric($conf->global->MAIN_ODT_AS_PDF)?'jodconverter':$conf->global->MAIN_ODT_AS_PDF);
+		}
+		else
+		{
+			$command = '../../scripts/odt2pdf/odt2pdf.sh '.escapeshellcmd($name).' '.(is_numeric($conf->global->MAIN_ODT_AS_PDF)?'jodconverter':$conf->global->MAIN_ODT_AS_PDF);
 		}
 
 
@@ -620,7 +623,7 @@ IMG;
 	public function getvalue($valuename)
 	{
 		$searchreg="/\\[".$valuename."\\](.*)\\[\\/".$valuename."\\]/";
-		preg_match($searchreg, $this->contentXml, $matches); 
+		preg_match($searchreg, $this->contentXml, $matches);
 		$this->contentXml = preg_replace($searchreg, "", $this->contentXml);
 		return  $matches[1];
 	}

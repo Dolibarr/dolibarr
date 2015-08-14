@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne           <eric.seigne@ryxeo.com>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2013 Regis Houssin         <regis.houssin@capnetworks.com>
@@ -9,7 +9,8 @@
  * Copyright (C) 2010-2011 Philippe Grand        <philippe.grand@atoo-net.com>
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
-*
+ * Copyright (C) 2015      Jean-François Ferry     <jfefe@aternatik.fr>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -55,9 +56,10 @@ $search_refcustomer=GETPOST('search_refcustomer','alpha');
 $search_societe=GETPOST('search_societe','alpha');
 $search_montant_ht=GETPOST('search_montant_ht','alpha');
 $search_author=GETPOST('search_author','alpha');
+$search_product_category=GETPOST('search_product_category','int');
 $search_town=GETPOST('search_town','alpha');
-$viewstatut=$db->escape(GETPOST('viewstatut'));
-$object_statut=$db->escape(GETPOST('propal_statut'));
+$viewstatut=GETPOST('viewstatut');
+$object_statut=GETPOST('propal_statut');
 
 $sall=GETPOST("sall");
 $mesg=(GETPOST("msg") ? GETPOST("msg") : GETPOST("mesg"));
@@ -90,6 +92,7 @@ if (GETPOST("button_removefilter") || GETPOST("button_removefilter_x"))	// Both 
     $search_societe='';
     $search_montant_ht='';
     $search_author='';
+    $search_product_category='';
     $search_town='';
     $year='';
     $month='';
@@ -144,24 +147,25 @@ if (! $sortorder) $sortorder='DESC';
 $limit = $conf->liste_limit;
 
 
-if (! $sall) $sql = 'SELECT';
-else $sql = 'SELECT DISTINCT';
+$sql = 'SELECT';
+if ($sall || $search_product_category > 0) $sql = 'SELECT DISTINCT';
 $sql.= ' s.rowid, s.nom as name, s.town, s.client, s.code_client,';
 $sql.= ' p.rowid as propalid, p.note_private, p.total_ht, p.ref, p.ref_client, p.fk_statut, p.fk_user_author, p.datep as dp, p.fin_validite as dfv,';
 if (! $user->rights->societe->client->voir && ! $socid) $sql .= " sc.fk_soc, sc.fk_user,";
 $sql.= ' u.login';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'propal as p';
-if ($sall) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'propaldet as pd ON p.rowid=pd.fk_propal';
+if ($sall || $search_product_category > 0) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'propaldet as pd ON p.rowid=pd.fk_propal';
+if ($search_product_category > 0) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON cp.fk_product=pd.fk_product';
 $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON p.fk_user_author = u.rowid';
 // We'll need this table joined to the select in order to filter by sale
-if ($search_sale || (! $user->rights->societe->client->voir && ! $socid)) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if ($search_sale > 0 || (! $user->rights->societe->client->voir && ! $socid)) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 if ($search_user > 0)
 {
     $sql.=", ".MAIN_DB_PREFIX."element_contact as c";
     $sql.=", ".MAIN_DB_PREFIX."c_type_contact as tc";
 }
 $sql.= ' WHERE p.fk_soc = s.rowid';
-$sql.= ' AND p.entity = '.$conf->entity;
+$sql.= ' AND p.entity IN ('.getEntity('propal', 1).')';
 if (! $user->rights->societe->client->voir && ! $socid) //restriction
 {
 	$sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
@@ -182,14 +186,15 @@ if ($search_author)
 {
 	$sql.= " AND u.login LIKE '%".$db->escape(trim($search_author))."%'";
 }
-if ($search_montant_ht)
+if ($search_montant_ht != '')
 {
-	$sql.= " AND p.total_ht='".$db->escape(price2num(trim($search_montant_ht)))."'";
+	$sql.= natural_search("p.total_ht", $search_montant_ht, 1);
 }
 if ($sall) {
     $sql .= natural_search(array('s.nom', 'p.note_private', 'p.note_public', 'pd.description'), $sall);
 }
-if ($socid) $sql.= ' AND s.rowid = '.$socid;
+if ($search_product_category > 0) $sql.=" AND cp.fk_categorie = ".$search_product_category;
+if ($socid > 0) $sql.= ' AND s.rowid = '.$socid;
 if ($viewstatut <> '')
 {
 	$sql.= ' AND p.fk_statut IN ('.$viewstatut.')';
@@ -222,7 +227,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
 }
-
+//print $sql;
 
 $sql.= $db->plimit($limit + 1,$offset);
 $result=$db->query($sql);
@@ -250,7 +255,8 @@ if ($result)
 	if ($search_montant_ht)  $param.='&search_montant_ht='.$search_montant_ht;
 	if ($search_author)  	 $param.='&search_author='.$search_author;
 	if ($search_town)		 $param.='&search_town='.$search_town;
-	print_barre_liste($langs->trans('ListOfProposals').' '.($socid?'- '.$soc->name:''), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
+
+	print_barre_liste($langs->trans('ListOfProposals').' '.($socid?'- '.$soc->name:''), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords,'title_commercial.png');
 
 	// Lignes des champs de filtre
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
@@ -264,15 +270,28 @@ if ($result)
  	if ($user->rights->societe->client->voir || $socid)
  	{
  		$langs->load("commercial");
-	 	$moreforfilter.=$langs->trans('ThirdPartiesOfSaleRepresentative'). ': ';
-		$moreforfilter.=$formother->select_salesrepresentatives($search_sale,'search_sale',$user);
-	 	$moreforfilter.=' &nbsp; &nbsp; &nbsp; ';
+	 	$moreforfilter.='<div class="divsearchfield">';
+ 		$moreforfilter.=$langs->trans('ThirdPartiesOfSaleRepresentative'). ': ';
+		$moreforfilter.=$formother->select_salesrepresentatives($search_sale, 'search_sale', $user, 0, 1, 'maxwidth300');
+	 	$moreforfilter.='</div>';
  	}
 	// If the user can view prospects other than his'
 	if ($user->rights->societe->client->voir || $socid)
 	{
-	    $moreforfilter.=$langs->trans('LinkedToSpecificUsers'). ': ';
-	    $moreforfilter.=$form->select_dolusers($search_user,'search_user',1);
+	 	$moreforfilter.='<div class="divsearchfield">';
+		$moreforfilter.=$langs->trans('LinkedToSpecificUsers'). ': ';
+	    $moreforfilter.=$form->select_dolusers($search_user, 'search_user', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+	    $moreforfilter.='</div>';
+	}
+	// If the user can view prospects other than his'
+	if ($conf->categorie->enabled && $user->rights->produit->lire)
+	{
+		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+		$moreforfilter.='<div class="divsearchfield">';
+		$moreforfilter.=$langs->trans('IncludingProductWithTag'). ': ';
+		$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, null, 'parent', null, null, 1);
+		$moreforfilter.=$form->selectarray('search_product_category', $cate_arbo, $search_product_category, 1, 0, 0, '', 0, 0, 0, 0, '', 1);
+		$moreforfilter.='</div>';
 	}
 	if (! empty($moreforfilter))
 	{
@@ -292,7 +311,7 @@ if ($result)
 	print_liste_field_titre($langs->trans('AmountHT'),$_SERVER["PHP_SELF"],'p.total_ht','',$param, 'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('Author'),$_SERVER["PHP_SELF"],'u.login','',$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('Status'),$_SERVER["PHP_SELF"],'p.fk_statut','',$param,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre('');
+	print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
@@ -316,12 +335,12 @@ if ($result)
 	print '</td>';
 	print '<td class="liste_titre" colspan="1">&nbsp;</td>';
 	// Amount
-	print '<td class="liste_titre" align="center">';
-	print '<input class="flat" type="text" size="10" name="search_montant_ht" value="'.$search_montant_ht.'">';
+	print '<td class="liste_titre" align="right">';
+	print '<input class="flat" type="text" size="6" name="search_montant_ht" value="'.$search_montant_ht.'">';
 	print '</td>';
 	// Author
 	print '<td class="liste_titre" align="center">';
-	print '<input class="flat" size="10" type="text" name="search_author" value="'.$search_author.'">';
+	print '<input class="flat" size="6" type="text" name="search_author" value="'.$search_author.'">';
 	print '</td>';
 	print '<td class="liste_titre" align="right">';
 	$formpropal->selectProposalStatus($viewstatut,1);
@@ -437,14 +456,14 @@ if ($result)
 				if($num<$limit){
 					$var=!$var;
 					print '<tr class="liste_total"><td align="left">'.$langs->trans("TotalHT").'</td>';
-					print '<td colspan="6" align="right"">'.price($total).'<td colspan="3"</td>';
+					print '<td colspan="6" align="right">'.price($total).'</td><td colspan="3"></td>';
 					print '</tr>';
 				}
 				else
 				{
 					$var=!$var;
 					print '<tr class="liste_total"><td align="left">'.$langs->trans("TotalHTforthispage").'</td>';
-					print '<td colspan="6" align="right"">'.price($total).'<td colspan="3"</td>';
+					print '<td colspan="6" align="right">'.price($total).'</td><td colspan="3"></td>';
 					print '</tr>';
 				}
 

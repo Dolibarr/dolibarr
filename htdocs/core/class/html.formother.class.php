@@ -85,7 +85,7 @@ class FormOther
                 $obj = $this->db->fetch_object($result);
                 if ($selected == $obj->rowid)
                 {
-                    print '<option value="'.$obj->rowid.'" selected="selected">';
+                    print '<option value="'.$obj->rowid.'" selected>';
                 }
                 else
                 {
@@ -134,7 +134,7 @@ class FormOther
                 $obj = $this->db->fetch_object($result);
                 if ($selected == $obj->rowid)
                 {
-                    print '<option value="'.$obj->rowid.'" selected="selected">';
+                    print '<option value="'.$obj->rowid.'" selected>';
                 }
                 else
                 {
@@ -157,7 +157,7 @@ class FormOther
      *
      *    @param	string	$selected   Preselected ecotaxes
      *    @param    string	$htmlname	Name of combo list
-     *    @return	void
+     *    @return	integer
      */
     function select_ecotaxes($selected='',$htmlname='ecotaxe_id')
     {
@@ -184,7 +184,7 @@ class FormOther
                     $obj = $this->db->fetch_object($resql);
                     if ($selected && $selected == $obj->rowid)
                     {
-                        print '<option value="'.$obj->rowid.'" selected="selected">';
+                        print '<option value="'.$obj->rowid.'" selected>';
                     }
                     else
                     {
@@ -242,7 +242,7 @@ class FormOther
     				$obj = $this->db->fetch_object($resql);
     				if (($selected && $selected == $obj->taux) || $num == 1)
     				{
-    					$out.='<option value="'.$obj->taux.'" selected="selected">';
+    					$out.='<option value="'.$obj->taux.'" selected>';
     				}
     				else
     				{
@@ -268,7 +268,7 @@ class FormOther
     /**
      *    Return a HTML select list to select a percent
      *
-     *    @param	string	$selected      	pourcentage pre-selectionne
+     *    @param	integer	$selected      	pourcentage pre-selectionne
      *    @param    string	$htmlname      	nom de la liste deroulante
      *    @param	int		$disabled		Disabled or not
      *    @param    int		$increment     	increment value
@@ -278,13 +278,13 @@ class FormOther
      */
     function select_percent($selected=0,$htmlname='percent',$disabled=0,$increment=5,$start=0,$end=100)
     {
-        $return = '<select class="flat" name="'.$htmlname.'" '.($disabled?'disabled="disabled"':'').'>';
+        $return = '<select class="flat" name="'.$htmlname.'" '.($disabled?'disabled':'').'>';
 
         for ($i = $start ; $i <= $end ; $i += $increment)
         {
             if ($selected == $i)
             {
-                $return.= '<option value="'.$i.'" selected="selected">';
+                $return.= '<option value="'.$i.'" selected>';
             }
             else
             {
@@ -303,7 +303,7 @@ class FormOther
      * Return select list for categories (to use in form search selectors)
      *
      * @param	int		$type			Type of categories (0=product, 1=suppliers, 2=customers, 3=members)
-     * @param  string	$selected     	Preselected value
+     * @param  integer	$selected     	Preselected value
      * @param  string	$htmlname      	Name of combo list
      * @param	int		$nocateg		Show also an entry "Not categorized"
      * @return string		        	Html combo list code
@@ -311,15 +311,26 @@ class FormOther
      */
     function select_categories($type,$selected=0,$htmlname='search_categ',$nocateg=0)
     {
-        global $langs;
+        global $conf, $langs;
         require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
         // Load list of "categories"
         $static_categs = new Categorie($this->db);
         $tab_categs = $static_categs->get_full_arbo($type);
 
+        $moreforfilter = '';
+        $nodatarole = '';
+        // Enhance with select2
+        if ($conf->use_javascript_ajax)
+        {
+            include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+            $comboenhancement = ajax_combobox('select_categ_'.$htmlname);
+            $moreforfilter.=$comboenhancement;
+            $nodatarole=($comboenhancement?' data-role="none"':'');
+        }
+
         // Print a select with each of them
-        $moreforfilter ='<select class="flat" id="select_categ_'.$htmlname.'" name="'.$htmlname.'">';
+        $moreforfilter.='<select class="flat minwidth100" id="select_categ_'.$htmlname.'" name="'.$htmlname.'"'.$nodatarole.'>';
         $moreforfilter.='<option value="">&nbsp;</option>';	// Should use -1 to say nothing
 
         if (is_array($tab_categs))
@@ -327,14 +338,14 @@ class FormOther
             foreach ($tab_categs as $categ)
             {
                 $moreforfilter.='<option value="'.$categ['id'].'"';
-                if ($categ['id'] == $selected) $moreforfilter.=' selected="selected"';
+                if ($categ['id'] == $selected) $moreforfilter.=' selected';
                 $moreforfilter.='>'.dol_trunc($categ['fulllabel'],50,'middle').'</option>';
             }
         }
         if ($nocateg)
         {
         	$langs->load("categories");
-        	$moreforfilter.='<option value="-2"'.($selected == -2 ? ' selected="selected"':'').'>- '.$langs->trans("NotCategorized").' -</option>';
+        	$moreforfilter.='<option value="-2"'.($selected == -2 ? ' selected':'').'>- '.$langs->trans("NotCategorized").' -</option>';
         }
         $moreforfilter.='</select>';
 
@@ -349,9 +360,11 @@ class FormOther
      *  @param  string	$htmlname      	Name of combo list (example: 'search_sale')
      *  @param  User	$user           Object user
      *  @param	int		$showstatus		0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
+     *  @param	int		$showempty		1=show also an empty value
+     *  @param	string	$morecss		More CSS
      *  @return string					Html combo list code
      */
-    function select_salesrepresentatives($selected,$htmlname,$user,$showstatus=0)
+    function select_salesrepresentatives($selected,$htmlname,$user,$showstatus=0,$showempty=1,$morecss='')
     {
         global $conf,$langs;
         $langs->load('users');
@@ -362,23 +375,24 @@ class FormOther
         if ($conf->use_javascript_ajax)
         {
             include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-            $htmlforcombo = ajax_combobox($htmlname);
-            if ($htmlforcombo)
+
+            $comboenhancement = ajax_combobox($htmlname);
+            if ($comboenhancement)
             {
-            	$out.= $htmlforcombo;
-            	$nodatarole=' data-role="none"';
+            	$out.=$comboenhancement;
+            	$nodatarole=($comboenhancement?' data-role="none"':'');
             }
         }
         // Select each sales and print them in a select input
-        $out.='<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"'.$nodatarole.'>';
-        $out.='<option value="">&nbsp;</option>';
+        $out.='<select class="flat'.($morecss?' '.$morecss:'').'" id="'.$htmlname.'" name="'.$htmlname.'"'.$nodatarole.'>';
+        if ($showempty) $out.='<option value="0">&nbsp;</option>';
 
         // Get list of users allowed to be viewed
         $sql_usr = "SELECT u.rowid, u.lastname, u.firstname, u.statut, u.login";
         $sql_usr.= " FROM ".MAIN_DB_PREFIX."user as u";
         $sql_usr.= " WHERE u.entity IN (0,".$conf->entity.")";
         if (empty($user->rights->user->user->lire)) $sql_usr.=" AND u.rowid = ".$user->id;
-        if (! empty($user->societe_id)) $sql_usr.=" AND u.fk_societe = ".$user->societe_id;
+        if (! empty($user->societe_id)) $sql_usr.=" AND u.fk_soc = ".$user->societe_id;
         // Add existing sales representatives of thirdparty of external user
         if (empty($user->rights->user->user->lire) && $user->societe_id)
         {
@@ -399,7 +413,7 @@ class FormOther
 
                 $out.='<option value="'.$obj_usr->rowid.'"';
 
-                if ($obj_usr->rowid == $selected) $out.=' selected="selected"';
+                if ($obj_usr->rowid == $selected) $out.=' selected';
 
                 $out.='>';
                 $out.=dolGetFirstLastname($obj_usr->firstname,$obj_usr->lastname);
@@ -506,9 +520,9 @@ class FormOther
                 {
                     if ($lines[$i]->fk_project != $lastprojectid)	// Break found on project
                     {
-                        if ($i > 0) print '<option value="0" disabled="disabled">----------</option>';
+                        if ($i > 0) print '<option value="0" disabled>----------</option>';
                         print '<option value="'.$lines[$i]->fk_project.'_0"';
-                        if ($selectedproject == $lines[$i]->fk_project) print ' selected="selected"';
+                        if ($selectedproject == $lines[$i]->fk_project) print ' selected';
                         print '>';	// Project -> Task
                         print $langs->trans("Project").' '.$lines[$i]->projectref;
                         if (empty($lines[$i]->public))
@@ -541,8 +555,8 @@ class FormOther
                 	}
 
                     print '<option value="'.$lines[$i]->fk_project.'_'.$lines[$i]->id.'"';
-                    if (($lines[$i]->id == $selectedtask) || ($lines[$i]->fk_project.'_'.$lines[$i]->id == $selectedtask)) print ' selected="selected"';
-                    if ($disabled) print ' disabled="disabled"';
+                    if (($lines[$i]->id == $selectedtask) || ($lines[$i]->fk_project.'_'.$lines[$i]->id == $selectedtask)) print ' selected';
+                    if ($disabled) print ' disabled';
                     print '>';
                     print $langs->trans("Project").' '.$lines[$i]->projectref;
                     if (empty($lines[$i]->public))
@@ -569,6 +583,24 @@ class FormOther
         }
     }
 
+
+    /**
+     *		Output a HTML thumb of color or a text if not defined.
+     *
+     *		@param	string		$color				String with hex (FFFFFF) or comma RGB ('255,255,255')
+     *		@param	string		$textifnotdefined	Text to show if color not defined
+     * 		@return	string							HTML code for color thumb
+     *		@see selectColor
+     */
+    static function showColor($color, $textifnotdefined='')
+    {
+    	include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+
+    	$color = colorArrayToHex(colorStringToArray($color,array()),'');
+		if ($color) print '<input type="text" class="colorthumb" disabled style="padding: 1px; margin-top: 0; margin-bottom: 0; width: 36px; background-color: #'.$color.'" value="'.$color.'">';
+		else print $textifnotdefined;
+    }
+
     /**
      *		Output a HTML code to select a color
      *
@@ -578,7 +610,8 @@ class FormOther
      * 		@param	int			$showcolorbox	1=Show color code and color box, 0=Show only color code
      * 		@param 	array		$arrayofcolors	Array of colors. Example: array('29527A','5229A3','A32929','7A367A','B1365F','0D7813')
      * 		@return	void
-     * 		@deprecated
+     * 		@deprecated Use instead selectColor
+     *      @see selectColor()
      */
     function select_color($set_color='', $prefix='f_color', $form_name='', $showcolorbox=1, $arrayofcolors='')
     {
@@ -595,9 +628,15 @@ class FormOther
      * 		@param 	array		$arrayofcolors	Array of colors. Example: array('29527A','5229A3','A32929','7A367A','B1365F','0D7813')
      * 		@param	string		$morecss		Add css style into input field
      * 		@return	string
+     *		@see showColor
      */
-    function selectColor($set_color='', $prefix='f_color', $form_name='', $showcolorbox=1, $arrayofcolors='', $morecss='')
+    static function selectColor($set_color='', $prefix='f_color', $form_name='', $showcolorbox=1, $arrayofcolors='', $morecss='')
     {
+	    // Deprecation warning
+	    if ($form_name) {
+		    dol_syslog(__METHOD__ . ": form_name parameter is deprecated", LOG_WARNING);
+	    }
+
         global $langs,$conf;
 
         $out='';
@@ -670,7 +709,7 @@ class FormOther
             foreach ($arrayofcolors as $val)
             {
                 $out.= '<option value="'.$val.'"';
-                if ($set_color == $val) $out.= ' selected="selected"';
+                if ($set_color == $val) $out.= ' selected';
                 $out.= '>'.$val.'</option>';
             }
             $out.= '</select>';
@@ -747,7 +786,7 @@ class FormOther
         {
             if ($selected == $key)
             {
-                $select_week .= '<option value="'.$key.'" selected="selected">';
+                $select_week .= '<option value="'.$key.'" selected>';
             }
             else
             {
@@ -760,20 +799,22 @@ class FormOther
     }
 
     /**
-     *    	Return HTML combo list of month
+     *      Return HTML combo list of month
      *
-     *    	@param	string		$selected          Preselected value
-     *    	@param  string		$htmlname          Nom de la zone select
-     *    	@param  int			$useempty          Affiche valeur vide dans liste
-     *    	@return	string
+     *      @param  string      $selected          Preselected value
+     *      @param  string      $htmlname          Name of HTML select object
+     *      @param  int         $useempty          Show empty in list
+     *      @param  int         $longlabel         Show long label
+     *      @return string
      */
-    function select_month($selected='',$htmlname='monthid',$useempty=0)
+    function select_month($selected='',$htmlname='monthid',$useempty=0,$longlabel=0)
     {
         global $langs;
 
         require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-        $montharray = monthArray($langs);	// Get array
+        if ($longlabel) $montharray = monthArray($langs, 0);	// Get array
+        else $montharray = monthArray($langs, 1);
 
         $select_month = '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
         if ($useempty)
@@ -784,7 +825,7 @@ class FormOther
         {
             if ($selected == $key)
             {
-                $select_month .= '<option value="'.$key.'" selected="selected">';
+                $select_month .= '<option value="'.$key.'" selected>';
             }
             else
             {
@@ -825,7 +866,7 @@ class FormOther
      *  @param	int		$offset			Offset
      *  @param	int		$invert			Invert
      *  @param	string	$option			Option
-     *  @return	void
+     *  @return	string
      */
     function selectyear($selected='',$htmlname='yearid',$useempty=0, $min_year=10, $max_year=5, $offset=0, $invert=0, $option='')
     {
@@ -836,11 +877,11 @@ class FormOther
         $min_year = $currentyear-$min_year;
         if(empty($selected) && empty($useempty)) $selected = $currentyear;
 
-        $out.= '<select class="flat" id="' . $htmlname . '" name="' . $htmlname . '"'.$option.' >';
+        $out.= '<select class="flat" placeholder="aa" id="' . $htmlname . '" name="' . $htmlname . '"'.$option.' >';
         if($useempty)
         {
         	$selected_html='';
-            if ($selected == '') $selected_html = ' selected="selected"';
+            if ($selected == '') $selected_html = ' selected';
             $out.= '<option value=""' . $selected_html . '>&nbsp;</option>';
         }
         if (! $invert)
@@ -848,7 +889,7 @@ class FormOther
             for ($y = $max_year; $y >= $min_year; $y--)
             {
                 $selected_html='';
-                if ($selected > 0 && $y == $selected) $selected_html = ' selected="selected"';
+                if ($selected > 0 && $y == $selected) $selected_html = ' selected';
                 $out.= '<option value="'.$y.'"'.$selected_html.' >'.$y.'</option>';
             }
         }
@@ -857,7 +898,7 @@ class FormOther
             for ($y = $min_year; $y <= $max_year; $y++)
             {
                 $selected_html='';
-                if ($selected > 0 && $y == $selected) $selected_html = ' selected="selected"';
+                if ($selected > 0 && $y == $selected) $selected_html = ' selected';
                 $out.= '<option value="'.$y.'"'.$selected_html.' >'.$y.'</option>';
             }
         }
@@ -1173,7 +1214,7 @@ class FormOther
                     $obj = $this->db->fetch_object($result);
                     if ($selected == $obj->rowid || $selected == $obj->$keyfield)
                     {
-                        print '<option value="'.$obj->$keyfield.'" selected="selected">';
+                        print '<option value="'.$obj->$keyfield.'" selected>';
                     }
                     else
                     {

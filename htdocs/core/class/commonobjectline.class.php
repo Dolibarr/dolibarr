@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,8 +29,71 @@
  */
 abstract class CommonObjectLine extends CommonObject
 {
-	// TODO
+	/**
+	 * Id of the line
+	 * @var int
+	 */
+	public $id;
 
+	/**
+	 * Id of the line
+	 * @var int
+	 * @deprecated Try to use id property as possible (even if field into database is still rowid)
+	 * @see id
+	 */
+	public $rowid;
+
+    //! Database handler
+    public $db;
+
+	/**
+	 * Product/service unit code ('km', 'm', 'p', ...)
+	 * @var string
+	 */
+	public $fk_unit;
+
+
+    /**
+     *	Returns the text label from units dictionnary
+     *
+     * 	@param	string $type Label type (long or short)
+     *	@return	string|int <0 if ko, label if ok
+     */
+	public function getLabelOfUnit($type='long')
+	{
+		global $langs;
+
+		if (!$this->fk_unit) {
+			return '';
+		}
+
+		$langs->load('products');
+
+		$this->db->begin();
+
+		$label_type = 'label';
+
+		if ($type == 'short')
+		{
+			$label_type = 'short_label';
+		}
+
+		$sql = 'select '.$label_type.' from '.MAIN_DB_PREFIX.'c_units where rowid='.$this->fk_unit;
+		$resql = $this->db->query($sql);
+		if($resql && $this->db->num_rows($resql) > 0)
+		{
+			$res = $this->db->fetch_array($resql);
+			$label = $res[$label_type];
+			$this->db->free($resql);
+			return $label;
+		}
+		else
+		{
+			$this->error=$this->db->error().' sql='.$sql;
+			dol_syslog(get_class($this)."::getLabelOfUnit Error ".$this->error, LOG_ERR);
+			return -1;
+		}
+	}
 	// Currently we need function at end of file CommonObject for all object lines. Should find a way to avoid duplicate code.
 
 	// For the moment we use the extends on CommonObject until PHP min is 5.4 so use Traits.

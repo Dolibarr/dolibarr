@@ -294,8 +294,11 @@ class modSociete extends DolibarrModules
         				$typeFilter="Boolean";
         				break;
         			case 'sellist':
-        				$typeFilter="List:".$obj->param;
-        				break;
+						$tmp='';
+						$tmpparam=unserialize($obj->param);	// $tmp ay be array 'options' => array 'c_currencies:code_iso:code_iso' => null
+						if ($tmpparam['options'] && is_array($tmpparam['options'])) $tmp=array_shift(array_keys($tmpparam['options']));
+						if (preg_match('/[a-z0-9_]+:[a-z0-9_]+:[a-z0-9_]+/', $tmp)) $typeFilter="List:".$tmp;
+						break;
         		}
         		$this->export_fields_array[$r][$fieldname]=$fieldlabel;
         		$this->export_TypeFields_array[$r][$fieldname]=$typeFilter;
@@ -353,8 +356,10 @@ class modSociete extends DolibarrModules
         				$typeFilter="Boolean";
         				break;
         			case 'sellist':
-        				$typeFilter="List:".$obj->param;
-        				break;
+						$tmp='';
+						$tmpparam=unserialize($obj->param);	// $tmp ay be array 'options' => array 'c_currencies:code_iso:code_iso' => null
+						if ($tmpparam['options'] && is_array($tmpparam['options'])) $tmp=array_shift(array_keys($tmpparam['options']));
+						if (preg_match('/[a-z0-9_]+:[a-z0-9_]+:[a-z0-9_]+/', $tmp)) $typeFilter="List:".$tmp;
 					case 'select':
 						$typeFilter="Select:".$obj->param;
 						break;
@@ -502,20 +507,4 @@ class modSociete extends DolibarrModules
 
 		return $this->_init($sql,$options);
 	}
-
-    /**
-	 *		Function called when module is disabled.
-	 *      Remove from database constants, boxes and permissions from Dolibarr database.
-	 *		Data directories are not deleted
-	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *      @return     int             	1 if OK, 0 if KO
-     */
-    function remove($options='')
-    {
-		$sql = array();
-
-		return $this->_remove($sql,$options);
-    }
-
 }

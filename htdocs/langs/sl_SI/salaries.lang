@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - users
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Accountancy code for salaries payments
-SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Accountancy code for financial charge
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Računovodska koda za izplačilo plač
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Računovodska koda za finančno bremenitev
 Salary=Plača
 Salaries=Plače
 Employee=Zaposleni
@@ -8,6 +8,8 @@ NewSalaryPayment=Novo izplačilo plače
 SalaryPayment=Izplačilo plače
 SalariesPayments=Izplačila plač
 ShowSalaryPayment=Prikaži izplačilo plač
-THM=Average hourly price
-TJM=Average daily price
-CurrentSalary=Current salary
+THM=Povprečna urna postavka
+TJM=Povprečna dnevna postavka
+CurrentSalary=Trenutna plača
+THMDescription=This value may be used to calculate cost of time consumed on a project entered by users if module project is used
+TJMDescription=This value is currently as information only and is not used for any calculation

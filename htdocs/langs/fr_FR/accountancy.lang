@@ -1,5 +1,12 @@
 # Dolibarr language file - en_US - Accounting Expert
 CHARSET=UTF-8
+ACCOUNTING_EXPORT_SEPARATORCSV=Séparateur de colonnes pour le fichier exporté
+ACCOUNTING_EXPORT_DATE=Format de date pour le fichier d'exportation
+ACCOUNTING_EXPORT_PIECE=Exporter la référence des pièces ?
+ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export avec le compte global ?
+ACCOUNTING_EXPORT_LABEL=Export des tags/catégories ?
+ACCOUNTING_EXPORT_AMOUNT=Export du montant ?
+ACCOUNTING_EXPORT_DEVISE=Export de la devise ?
 
 Accounting=Comptabilité
 Globalparameters=Paramètres globaux
@@ -41,6 +48,7 @@ NewAccount=Nouveau compte comptable
 Update=Modifier
 List=Liste
 Create=Créer
+CreateMvts=Créer mouvement
 UpdateAccount=Modification de compte comptable
 UpdateMvts=Modification de mouvements
 WriteBookKeeping=Enregistrer les écritures dans le grand livre
@@ -76,14 +84,15 @@ ACCOUNTING_LIST_SORT_VENTILATION_DONE=Commencer le tri des pages de ventilation 
 
 AccountLength=Longueur des comptes comptables affichés dans Dolibarr 
 AccountLengthDesc=Fonction permettant de simuler une longueur de compte comptable en remplaçant les espaces par le chiffre zéro. Cette fonction touche uniquement à l'affichage, elle ne modifie pas les comptes comptables enregistrés dans Dolibarr. Pour l'export, cette fonction est nécessaire pour être compatible avec certains logiciels.
+ACCOUNTING_LENGTH_DESCRIPTION=Longueur pour afficher la description des produits & services dans les listes (Idéalement = 50)
+ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Longueur pour afficher la description du compte des produits & services dans les listes (Idéaliement = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Longueur des comptes généraux
 ACCOUNTING_LENGTH_AACCOUNT=Longueur des comptes tiers
 
 ACCOUNTING_SELL_JOURNAL=Journal des ventes
 ACCOUNTING_PURCHASE_JOURNAL=Journal des achats
-ACCOUNTING_BANK_JOURNAL=Journal de banque
-ACCOUNTING_CASH_JOURNAL=Journal de caisse
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Journal des opérations diverses
+ACCOUNTING_EXPENSEREPORT_JOURNAL=Journal des notes de frais
 ACCOUNTING_SOCIAL_JOURNAL=Journal de paie
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Compte comptable de tranfert

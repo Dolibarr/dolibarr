@@ -42,6 +42,7 @@ if (! function_exists('json_encode'))
  *
  * @param	mixed	$elements		PHP Object to json encode
  * @return 	string					Json encoded string
+ * @deprecated PHP >= 5.3 supports native json_encode
  */
 function dol_json_encode($elements)
 {
@@ -218,7 +219,8 @@ if (! function_exists('json_decode'))
  *
  * @param	string	$json		Json encoded to PHP Object or Array
  * @param	bool	$assoc		False return an object, true return an array. Try to always use it with true !
- * @return 	mixed				Object or Array
+ * @return 	mixed				Object or Array or false on error
+ * @deprecated PHP >= 5.3 supports native json_decode
  */
 function dol_json_decode($json, $assoc=false)
 {
@@ -271,7 +273,7 @@ function dol_json_decode($json, $assoc=false)
 /**
  * Return text according to type
  *
- * @param 	mixed	$val	Value to decode
+ * @param 	string	$val	Value to decode
  * @return	string			Formated value
  */
 function _unval($val)

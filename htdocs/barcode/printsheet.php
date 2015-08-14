@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2006-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2003	   Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2003	   Jean-Louis Bergamo	<jlb@j1b.org>
+ * Copyright (C) 2006-2013 Laurent Destailleur	<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -10,7 +10,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -18,9 +18,9 @@
  */
 
 /**
- *	\file 		htdocs/barcode/printsheet.php
- *	\ingroup    member
- *	\brief      Page to print sheets with barcodes using the document templates into core/modules/printsheets
+ *	\file		htdocs/barcode/printsheet.php
+ *	\ingroup	member
+ *	\brief		Page to print sheets with barcodes using the document templates into core/modules/printsheets
  */
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/format_cards.lib.php';
@@ -96,13 +96,13 @@ if ($action == 'builddoc')
 
 	if (empty($forbarcode))			// barcode value
 	{
-	    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("BarcodeValue")),'errors');
-	    $error++;
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("BarcodeValue")),'errors');
+		$error++;
 	}
 	if (empty($fk_barcode_type))		// barcode type = barcode encoding
 	{
-	    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("BarcodeType")),'errors');
-	    $error++;
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("BarcodeType")),'errors');
+		$error++;
 	}
 
 	if (! $error)
@@ -123,46 +123,54 @@ if ($action == 'builddoc')
 		$code=$forbarcode;
 		$generator=$stdobject->barcode_type_coder;				// coder (loaded by fetch_barcode). Engine.
 		$encoding=strtoupper($stdobject->barcode_type_code);	// code (loaded by fetch_barcode). Example 'ean', 'isbn', ...
-		$barcodeimage=$conf->barcode->dir_temp.'/barcode_'.$code.'_'.$encoding.'.png';
 
 		$diroutput=$conf->barcode->dir_temp;
 		dol_mkdir($diroutput);
 
 		// Generate barcode
-	    $dirbarcode=array_merge(array("/core/modules/barcode/doc/"),$conf->modules_parts['barcode']);
+		$dirbarcode=array_merge(array("/core/modules/barcode/doc/"),$conf->modules_parts['barcode']);
 
-	    foreach($dirbarcode as $reldir)
-	    {
-	        $dir=dol_buildpath($reldir,0);
-	        $newdir=dol_osencode($dir);
-
-	        // Check if directory exists (we do not use dol_is_dir to avoid loading files.lib.php)
-	        if (! is_dir($newdir)) continue;
-
-	        $result=@include_once $newdir.$generator.'.modules.php';
-	        if ($result) break;
-	    }
-
-	    // Load barcode class
-	    $classname = "mod".ucfirst($generator);
-	    $module = new $classname($db);
-	    if ($module->encodingIsSupported($encoding))
-	    {
-	    	dol_delete_file($barcodeimage);
-	    	// File is created with full name $barcodeimage = $conf->barcode->dir_temp.'/barcode_'.$code.'_'.$encoding.'.png';
-	        $result=$module->writeBarCode($code,$encoding,'Y',4);
-
-	        if ($result <= 0 || ! dol_is_file($barcodeimage))
-	        {
-	        	$error++;
-	        	setEventMessage('Failed to generate image file of barcode for code='.$code.' encoding='.$encoding.' file='.basename($barcodeimage), 'errors');
-	        }
-	    }
-	    else
+		foreach($dirbarcode as $reldir)
 		{
-	    	$error++;
-	    	setEventMessage("Error, encoding ".$encoding." is not supported by encoder ".$generator.'. You must choose another barcode type or install a barcode generation engine that support '.$encoding, 'errors');
-	    }
+			$dir=dol_buildpath($reldir,0);
+			$newdir=dol_osencode($dir);
+
+			// Check if directory exists (we do not use dol_is_dir to avoid loading files.lib.php)
+			if (! is_dir($newdir)) continue;
+
+			$result=@include_once $newdir.$generator.'.modules.php';
+			if ($result) break;
+		}
+
+		// Load barcode class for generating barcode image
+		$classname = "mod".ucfirst($generator);
+		$module = new $classname($db);
+		if ($generator != 'tcpdfbarcode') {
+			$template = 'standardlabel';
+			$is2d = false;
+			if ($module->encodingIsSupported($encoding))
+			{
+				$barcodeimage=$conf->barcode->dir_temp.'/barcode_'.$code.'_'.$encoding.'.png';
+				dol_delete_file($barcodeimage);
+				// File is created with full name $barcodeimage = $conf->barcode->dir_temp.'/barcode_'.$code.'_'.$encoding.'.png';
+				$result=$module->writeBarCode($code,$encoding,'Y',4);
+
+				if ($result <= 0 || ! dol_is_file($barcodeimage))
+				{
+					$error++;
+					setEventMessage('Failed to generate image file of barcode for code='.$code.' encoding='.$encoding.' file='.basename($barcodeimage), 'errors');
+				}
+			}
+			else
+			{
+				$error++;
+				setEventMessage("Error, encoding ".$encoding." is not supported by encoder ".$generator.'. You must choose another barcode type or install a barcode generation engine that support '.$encoding, 'errors');
+			}
+		} else {
+			$template = 'tcpdflabel';
+			$encoding = $module->getTcpdfEncodingType($encoding); //convert to TCPDF compatible encoding types
+			$is2d = $module->is2d;
+		}
 	}
 
 	if (! $error)
@@ -188,11 +196,12 @@ if ($action == 'builddoc')
 		// For labels
 		if ($mode == 'label')
 		{
-			$txtforsticker="%PHOTO%";
-			$textleft=make_substitutions($txtforsticker, $substitutionarray);
-			$textheader='';
-			$textfooter='';
-			$textright='';
+
+			$txtforsticker="%PHOTO%"; // Photo will be barcode image, %BARCODE% posible when using TCPDF generator
+			$textleft=make_substitutions((empty($conf->global->BARCODE_LABEL_LEFT_TEXT)?$txtforsticker:$conf->global->BARCODE_LABEL_LEFT_TEXT), $substitutionarray);
+			$textheader=make_substitutions((empty($conf->global->BARCODE_LABEL_HEADER_TEXT)?'':$conf->global->BARCODE_LABEL_HEADER_TEXT), $substitutionarray);
+			$textfooter=make_substitutions((empty($conf->global->BARCODE_LABEL_FOOTER_TEXT)?'':$conf->global->BARCODE_LABEL_FOOTER_TEXT), $substitutionarray);
+			$textright=make_substitutions((empty($conf->global->BARCODE_LABEL_RIGHT_TEXT)?'':$conf->global->BARCODE_LABEL_RIGHT_TEXT), $substitutionarray);
 			$forceimgscalewidth=(empty($conf->global->BARCODE_FORCEIMGSCALEWIDTH)?1:$conf->global->BARCODE_FORCEIMGSCALEWIDTH);
 			$forceimgscaleheight=(empty($conf->global->BARCODE_FORCEIMGSCALEHEIGHT)?1:$conf->global->BARCODE_FORCEIMGSCALEHEIGHT);
 
@@ -203,6 +212,9 @@ if ($action == 'builddoc')
 					'textheader'=>$textheader,
 					'textfooter'=>$textfooter,
 					'textright'=>$textright,
+					'code'=>$code,
+					'encoding'=>$encoding,
+					'is2d'=>$is2d,
 					'photo'=>$barcodeimage	// Photo must be a file that exists with format supported by TCPDF
 				);
 			}
@@ -222,7 +234,7 @@ if ($action == 'builddoc')
 			{
 				$mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("DescADHERENT_ETIQUETTE_TYPE"));
 			}
-			if (! $mesg) $result=members_label_pdf_create($db, $arrayofmembers, $modellabel, $outputlangs, $diroutput);
+			if (! $mesg) $result=members_label_pdf_create($db, $arrayofmembers, $modellabel, $outputlangs, $diroutput, $template);
 		}
 
 		if ($result <= 0)
@@ -230,11 +242,11 @@ if ($action == 'builddoc')
 			dol_print_error('',$result);
 		}
 
-	    if (! $mesg)
-	    {
-	    	$db->close();
-	    	exit;
-	    }
+		if (! $mesg)
+		{
+			$db->close();
+			exit;
+		}
 	}
 }
 
@@ -301,28 +313,28 @@ jQuery(document).ready(function() {
 	{
 		if (jQuery("#fillmanually:checked").val() == "fillmanually")
 		{
-			jQuery("#submitproduct").attr(\'disabled\',\'disabled\');
-			jQuery("#submitthirdparty").attr(\'disabled\',\'disabled\');
-			jQuery("#search_productid").attr(\'disabled\',\'disabled\');
-			jQuery("#socid").attr(\'disabled\',\'disabled\');
+			jQuery("#submitproduct").prop("disabled", true);
+			jQuery("#submitthirdparty").prop("disabled", true);
+			jQuery("#search_productid").prop("disabled", true);
+			jQuery("#socid").prop("disabled", true);
 			jQuery(".showforproductselector").hide();
 			jQuery(".showforthirdpartyselector").hide();
 		}
 		if (jQuery("#fillfromproduct:checked").val() == "fillfromproduct")
 		{
-			jQuery("#submitproduct").removeAttr(\'disabled\');
-			jQuery("#submitthirdparty").attr(\'disabled\',\'disabled\');
-			jQuery("#search_productid").removeAttr(\'disabled\');
-			jQuery("#socid").attr(\'disabled\',\'disabled\');
+			jQuery("#submitproduct").removeAttr("disabled");
+			jQuery("#submitthirdparty").prop("disabled", true);
+			jQuery("#search_productid").removeAttr("disabled");
+			jQuery("#socid").prop("disabled", true);
 			jQuery(".showforproductselector").show();
 			jQuery(".showforthirdpartyselector").hide();
 		}
 		if (jQuery("#fillfromthirdparty:checked").val() == "fillfromthirdparty")
 		{
-			jQuery("#submitproduct").attr(\'disabled\',\'disabled\');
-			jQuery("#submitthirdparty").removeAttr(\'disabled\');
-			jQuery("#search_productid").attr(\'disabled\',\'disabled\');
-			jQuery("#socid").removeAttr(\'disabled\');
+			jQuery("#submitproduct").prop("disabled", true);
+			jQuery("#submitthirdparty").removeAttr("disabled");
+			jQuery("#search_productid").prop("disabled", true);
+			jQuery("#socid").removeAttr("disabled");
 			jQuery(".showforproductselector").hide();
 			jQuery(".showforthirdpartyselector").show();
 		}
@@ -336,11 +348,11 @@ jQuery(document).ready(function() {
 	{
 		if (jQuery("#select_fk_barcode_type").val() > 0 && jQuery("#forbarcode").val())
 		{
-			jQuery("#submitformbarcodegen").removeAttr(\'disabled\');
+			jQuery("#submitformbarcodegen").removeAttr("disabled");
 		}
 		else
 		{
-			jQuery("#submitformbarcodegen").attr(\'disabled\',\'disabled\');
+			jQuery("#submitformbarcodegen").prop("disabled", true);
 		}
 	}
 	init_gendoc_button();
@@ -354,20 +366,20 @@ jQuery(document).ready(function() {
 </script>';
 
 // Checkbox to select from free text
-print '<input id="fillmanually" type="radio" '.((! GETPOST("selectorforbarcode") || GETPOST("selectorforbarcode")=='fillmanually')?'checked="checked" ':'').'name="selectorforbarcode" value="fillmanually" class="radiobarcodeselect"> '.$langs->trans("FillBarCodeTypeAndValueManually").' &nbsp; ';
+print '<input id="fillmanually" type="radio" '.((! GETPOST("selectorforbarcode") || GETPOST("selectorforbarcode")=='fillmanually')?'checked ':'').'name="selectorforbarcode" value="fillmanually" class="radiobarcodeselect"> '.$langs->trans("FillBarCodeTypeAndValueManually").' &nbsp; ';
 print '<br>';
 
-print '<input id="fillfromproduct" type="radio" '.((GETPOST("selectorforbarcode")=='fillfromproduct')?'checked="checked" ':'').'name="selectorforbarcode" value="fillfromproduct" class="radiobarcodeselect"> '.$langs->trans("FillBarCodeTypeAndValueFromProduct").' &nbsp; ';
+print '<input id="fillfromproduct" type="radio" '.((GETPOST("selectorforbarcode")=='fillfromproduct')?'checked ':'').'name="selectorforbarcode" value="fillfromproduct" class="radiobarcodeselect"> '.$langs->trans("FillBarCodeTypeAndValueFromProduct").' &nbsp; ';
 print '<br>';
 print '<div class="showforproductselector">';
 $form->select_produits(GETPOST('productid'), 'productid', '');
 print ' &nbsp; <input type="submit" id="submitproduct" name="submitproduct" class="button" value="'.(dol_escape_htmltag($langs->trans("GetBarCode"))).'">';
 print '</div>';
 
-print '<input id="fillfromthirdparty" type="radio" '.((GETPOST("selectorforbarcode")=='fillfromthirdparty')?'checked="checked" ':'').'name="selectorforbarcode" value="fillfromthirdparty" class="radiobarcodeselect"> '.$langs->trans("FillBarCodeTypeAndValueFromThirdParty").' &nbsp; ';
+print '<input id="fillfromthirdparty" type="radio" '.((GETPOST("selectorforbarcode")=='fillfromthirdparty')?'checked ':'').'name="selectorforbarcode" value="fillfromthirdparty" class="radiobarcodeselect"> '.$langs->trans("FillBarCodeTypeAndValueFromThirdParty").' &nbsp; ';
 print '<br>';
 print '<div class="showforthirdpartyselector">';
-print $form->select_company(GETPOST('socid'), 'socid', '', 1);
+print $form->select_company(GETPOST('socid'), 'socid', '', 1, 0, 0, array(), 0, 'minwidth300');
 print ' &nbsp; <input type="submit" id="submitthirdparty" name="submitthirdparty" class="button showforthirdpartyselector" value="'.(dol_escape_htmltag($langs->trans("GetBarCode"))).'">';
 print '</div>';
 
@@ -411,7 +423,7 @@ print '<br>';
 
 print '</div>';
 
-print '<br><input class="button" type="submit" id="submitformbarcodegen" '.((GETPOST("selectorforbarcode") && GETPOST("selectorforbarcode"))?'':'disabled="checked" ').'value="'.$langs->trans("BuildPageToPrint").'">';
+print '<br><input class="button" type="submit" id="submitformbarcodegen" '.((GETPOST("selectorforbarcode") && GETPOST("selectorforbarcode"))?'':'disabled ').'value="'.$langs->trans("BuildPageToPrint").'">';
 
 print '</form>';
 print '<br>';

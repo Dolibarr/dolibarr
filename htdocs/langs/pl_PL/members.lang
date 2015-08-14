@@ -199,7 +199,8 @@ Entreprises=Firmy
 DOLIBARRFOUNDATION_PAYMENT_FORM=Aby dokonać płatności abonamentu za pomocą przelewu bankowego, patrz strona <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribe~~dobj</a> . <br> Aby zapłacić za pomocą karty kredytowej lub PayPal, kliknij przycisk na dole tej strony. <br>
 ByProperties=Według cech
 MembersStatisticsByProperties=Użytkownicy statystyki cech
-MembersByNature=Użytkownicy z natury
+MembersByNature=This screen show you statistics on members by nature.
+MembersByRegion=This screen show you statistics on members by region.
 VATToUseForSubscriptions=Stawka VAT użyć do subskrypcji
 NoVatOnSubscription=Nie TVA subskrypcji
 MEMBER_PAYONLINE_SENDEMAIL=E-mail, aby ostrzec, gdy Dolibarr otrzymać potwierdzenie zatwierdzonej płatności subskrypcji

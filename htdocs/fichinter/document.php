@@ -81,14 +81,13 @@ include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php
 
 $form = new Form($db);
 
-llxHeader("","",$langs->trans("InterventionCard"));
-
+llxHeader('',$langs->trans("Intervention"));
 
 if ($object->id)
 {
 	$object->fetch_thirdparty();
 
-	$head=fichinter_prepare_head($object, $user);
+	$head=fichinter_prepare_head($object);
 
 	dol_fiche_head($head, 'documents',  $langs->trans("InterventionCard"), 0, 'intervention');
 

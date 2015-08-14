@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - mails
 ResetMailing=E-Mail-Kampagne erneut senden
-ConfirmResetMailing=Achtung: Die neuerliche Ausführung der E-Mail-Kampagne <b>%s</b> erlaubt Ihnen den Massenversand von E-Mails zu einem anderen Zeitpunkt. Möchten Sie wirklich fortfahren?
 CloneEMailing=E-Mail-Kampagne duplizieren
 ConfirmCloneEMailing=Möchten Sie diese Mailkampagne wirklich duplizieren?
 CloneContent=Nachricht duplizieren

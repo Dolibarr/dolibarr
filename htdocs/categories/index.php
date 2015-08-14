@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2005      Matthieu Valleton    <mv@seeschloss.org>
- * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2006-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+/* Copyright (C) 2005       Matthieu Valleton   <mv@seeschloss.org>
+ * Copyright (C) 2005       Eric Seigne         <eric.seigne@ryxeo.com>
+ * Copyright (C) 2006-2015  Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2007       Patrick Raguin      <patrick.raguin@gmail.com>
+ * Copyright (C) 2005-2012  Regis Houssin       <regis.houssin@capnetworks.com>
+ * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,13 +29,14 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 $langs->load("categories");
 
 if (! $user->rights->categorie->lire) accessforbidden();
 
 $id=GETPOST('id','int');
-$type=(GETPOST('type') ? GETPOST('type') : 0);
+$type=(GETPOST('type') ? GETPOST('type') : Categorie::TYPE_PRODUCT);
 $catname=GETPOST('catname','alpha');
 $section=(GETPOST('section')?GETPOST('section'):0);
 
@@ -46,12 +48,12 @@ $section=(GETPOST('section')?GETPOST('section'):0);
 $categstatic = new Categorie($db);
 $form = new Form($db);
 
-if ($type == 0) $title=$langs->trans("ProductsCategoriesArea");
-elseif ($type == 1) $title=$langs->trans("SuppliersCategoriesArea");
-elseif ($type == 2) $title=$langs->trans("CustomersCategoriesArea");
-elseif ($type == 3) $title=$langs->trans("MembersCategoriesArea");
-elseif ($type == 4) $title=$langs->trans("ContactsCategoriesArea");
-else $title=$langs->trans("CategoriesArea");
+if ($type == Categorie::TYPE_PRODUCT)       $title=$langs->trans("ProductsCategoriesArea");
+elseif ($type == Categorie::TYPE_SUPPLIER)  $title=$langs->trans("SuppliersCategoriesArea");
+elseif ($type == Categorie::TYPE_CUSTOMER)  $title=$langs->trans("CustomersCategoriesArea");
+elseif ($type == Categorie::TYPE_MEMBER)    $title=$langs->trans("MembersCategoriesArea");
+elseif ($type == Categorie::TYPE_CONTACT)   $title=$langs->trans("ContactsCategoriesArea");
+else                                        $title=$langs->trans("CategoriesArea");
 
 $arrayofjs=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.js', '/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js');
 $arrayofcss=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
@@ -146,21 +148,21 @@ foreach($fulltree as $key => $val)
 	$categstatic->ref=$val['label'];
 	$categstatic->type=$type;
 	$li=$categstatic->getNomUrl(1,'',60);
+	$desc=dol_htmlcleanlastbr($val['description']);
 
 	$data[] = array(
 	'rowid'=>$val['rowid'],
 	'fk_menu'=>$val['fk_parent'],
 	'entry'=>'<table class="nobordernopadding centpercent"><tr><td>'.$li.
-	'</td><td width="50%">'.
-	' '.$val['description'].'</td>'.
+	'</td><td width="50%">'.dolGetFirstLineOfText($desc).'</td>'.
 	'<td align="right" width="20px;"><a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$val['id'].'&type='.$type.'">'.img_view().'</a></td>'.
 	'</tr></table>'
 	);
 }
 
 
-print '<table class="liste" width="100%">';
-print '<tr class="liste_titre"><td>'.$langs->trans("Categories").'</td><td>'.$langs->trans("Description").'</td><td align="right">';
+print '<table class="liste nohover" width="100%">';
+print '<tr class="liste_titre"><td>'.$langs->trans("Categories").'</td><td></td><td align="right">';
 if (! empty($conf->use_javascript_ajax))
 {
 	print '<div id="iddivjstreecontrol"><a href="#">'.img_picto('','object_category').' '.$langs->trans("UndoExpandAll").'</a> | <a href="#">'.img_picto('','object_category-expanded').' '.$langs->trans("ExpandAll").'</a></div>';

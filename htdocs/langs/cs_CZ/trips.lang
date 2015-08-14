@@ -7,8 +7,9 @@ TripsAndExpenses=Zprávy výdajů
 TripsAndExpensesStatistics=Statistiky výdaje
 TripCard=Karta zpráv výdajů
 AddTrip=Vytvoření zprávy o výdajích
-ListOfTrips=Seznam zpráv výdajů
+ListOfTrips=Seznam vyúčtování výdajů
 ListOfFees=Sazebník poplatků
+ShowTrip=Show expense report
 NewTrip=Nová zpráva výdaje
 CompanyVisited=Firma/nadace navštívena
 Kilometers=Kilometry
@@ -27,7 +28,7 @@ AnyOtherInThisListCanValidate=Informovat osobu o schválení.
 TripSociete=Informace o firmě
 TripSalarie=Informace o uživateli
 TripNDF=Informace o správě nákladů
-DeleteLine=Vymazat Ligne výdajovou zprávu
+DeleteLine=Odstranění řádku zprávy výdajů
 ConfirmDeleteLine=Jste si jisti, že chcete smazat tento řádek?
 PDFStandardExpenseReports=Standardní šablona pro vytvoření PDF dokumentu pro zprávy o výdajích
 ExpenseReportLine=Výdajová zpráva řádek
@@ -40,11 +41,10 @@ TF_BUS=Autobus
 TF_CAR=Auto
 TF_PEAGE=Mýto
 TF_ESSENCE=Palivo
-TF_HOTEL=Hostel
+TF_HOTEL=Hotel
 TF_TAXI=Taxi
 
 ErrorDoubleDeclaration=Deklaroval jste další hlášení výdajů do podobného časového období.
-ListTripsAndExpenses=Seznam vyúčtování výdajů
 AucuneNDF=Žádné zprávy o výdajích nalezených podle tohoto kritéria
 AucuneLigne=Neexistuje žádná zpráva o právě deklarovaném výdaji
 AddLine=Přidat řádek
@@ -56,12 +56,12 @@ ModePaiement=Režim platby
 Note=poznámka
 Project=Projekt
 
-VALIDATOR=Uživatel informoval o kolaudaci
+VALIDATOR=Uživatel odpovídá za schválení
 VALIDOR=Schváleno
 AUTHOR=Zaznamenáno
 AUTHORPAIEMENT=Placeno
 REFUSEUR=Zamítnuto
-CANCEL_USER=Zrušeno
+CANCEL_USER=Smazáno
 
 MOTIF_REFUS=Důvod
 MOTIF_CANCEL=Důvod
@@ -74,9 +74,10 @@ DATE_PAIEMENT=Datum platby
 
 TO_PAID=Platba
 BROUILLONNER=Znovu otevřeno
-SendToValid=Odesláno ke schválení
+SendToValid=Odesláno na schválení
 ModifyInfoGen=Úprava
 ValidateAndSubmit=Kontrola a odeslání schválení
+ValidatedWaitingApproval=Validated (waiting for approval)
 
 NOT_VALIDATOR=Nemáte dovoleno schvalovat tuto zprávu o výdajích
 NOT_AUTHOR=Nejste autorem této zprávy výdajů. Operace zrušena.
@@ -93,10 +94,11 @@ ConfirmPaidTrip=Jste si jisti, že chcete změnit stav této zprávy výdajů na
 CancelTrip=Zrušit zprávu o výdajích
 ConfirmCancelTrip=Jste si jisti, že chcete zrušit tuto zprávu o výdajích?
 
-BrouillonnerTrip=Přesun zpět zprávu o výdajích do stavu "Koncept" n
+BrouillonnerTrip=Návrat výdajových zpráv do stavu "Koncept"
 ConfirmBrouillonnerTrip=Jste si jisti, že chcete přesunout tuto zprávu o výdajích na status "Koncept"?
 
 SaveTrip=Ověřit zprávu o výdajích
 ConfirmSaveTrip=Jste si jisti, že chcete ověřit tuto zprávu o výdajích?
 
 NoTripsToExportCSV=Žádná zpráva o výdajích na export pro toto období.
+ExpenseReportPayment=Expense report payment

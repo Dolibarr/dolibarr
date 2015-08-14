@@ -9,6 +9,7 @@ TripCard=Skjema for reiseregninger
 AddTrip=Opprett reiseregning
 ListOfTrips=Liste over reiseregninger
 ListOfFees=Oversikt over avgifter
+ShowTrip=Vis utgiftsrapport
 NewTrip=Ny reiseregning
 CompanyVisited=Firma/organiasjon besøkt
 Kilometers=Kilometer
@@ -40,11 +41,10 @@ TF_BUS=Buss
 TF_CAR=Bil
 TF_PEAGE=Toll
 TF_ESSENCE=Drivstoff
-TF_HOTEL=Overnatting
+TF_HOTEL=Hotell
 TF_TAXI=Taxi
 
 ErrorDoubleDeclaration=Du har opprettet en annen reiseregning i overlappende tidsperiode
-ListTripsAndExpenses=Liste over reiseregninger
 AucuneNDF=Ingen reiseregning funnet etter disse kriteriene
 AucuneLigne=Ingen reiseregning er opprettet enda
 AddLine=Legg til linje
@@ -56,12 +56,12 @@ ModePaiement=Betalingsmåte
 Note=Notat
 Project=Prosjekt
 
-VALIDATOR=Bruker som skal informeres for godkjenning
+VALIDATOR=Bruker som er ansvarlig for godkjenning
 VALIDOR=Godkjent av
 AUTHOR=Registrert av
 AUTHORPAIEMENT=Betalt av
 REFUSEUR=Avvist av
-CANCEL_USER=Kansellert av
+CANCEL_USER=Slettet av
 
 MOTIF_REFUS=Grunn
 MOTIF_CANCEL=Grunn
@@ -74,9 +74,10 @@ DATE_PAIEMENT=Betalt dato
 
 TO_PAID=Betal
 BROUILLONNER=Gjenåpne
-SendToValid=Sendt for godkjenning
+SendToValid=Sendt til godkjenning
 ModifyInfoGen=Endre
 ValidateAndSubmit=Valider og send til godkjenning
+ValidatedWaitingApproval=Validert (venter på godkjenning)
 
 NOT_VALIDATOR=Du har ikke tillatelse til å godkjenne denne reiseregningen
 NOT_AUTHOR=Reiseregningener ikke opprettet av deg. Operasjonen avbrutt.
@@ -93,10 +94,11 @@ ConfirmPaidTrip=Er du sikker på at du vil endre status til "betalt" for denne r
 CancelTrip=Kanseller en reiseregning
 ConfirmCancelTrip=Er du sikker på at du vil kansellere denne reiseregningen?
 
-BrouillonnerTrip=Endre status på reiseregning til "Kladd"
+BrouillonnerTrip=Endre reiseregning til "kladd"
 ConfirmBrouillonnerTrip=Er du sikker på at du vil endre status til "Kladd" for denne reiseregningen?
 
 SaveTrip=Godkjenn reiseregning
 ConfirmSaveTrip=Er du sikker på at du vil validere denne reiseregningen?
 
 NoTripsToExportCSV=Ingen reiseregning å eksportere for denne perioden
+ExpenseReportPayment=Expense report payment

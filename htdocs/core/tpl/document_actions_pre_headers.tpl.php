@@ -80,11 +80,8 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes')
 		        }
 	        }
 
-            if ($ret) {
-                setEventMessage($langs->trans("FileWasRemoved", $urlfile));
-            } else {
-                setEventMessage($langs->trans("ErrorFailToDeleteFile", $urlfile), 'errors');
-            }
+            if ($ret) setEventMessage($langs->trans("FileWasRemoved", $urlfile));
+            else setEventMessage($langs->trans("ErrorFailToDeleteFile", $urlfile), 'errors');
         }
         elseif ($linkid)
         {

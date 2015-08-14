@@ -19,4 +19,4 @@ printQty=Cant: %d
 AddDispatchBatchLine=Adauga o linie pentru Perioada de valabilitate expediere
 BatchDefaultNumber=Nedefinit
 WhenProductBatchModuleOnOptionAreForced=When module Lot/Serial is on, increase/decrease stock mode is forced to last choice and can't be edited. Other options can be defined as you want.
-ProductDoesNotUseBatchSerial=Acest produs nu foloseste numarul de lot / serie
+ProductDoesNotUseBatchSerial=This product does not use lot/serial number

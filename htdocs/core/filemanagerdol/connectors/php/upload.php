@@ -27,7 +27,14 @@ require 'util.php';
 require 'io.php';
 require 'commands.php';
 
-function SendError( $number, $text )
+/**
+ * SendError
+ *
+ * @param	integer	$number		Number
+ * @param	string	$text		Text
+ * @return 	void
+ */
+function SendError($number, $text)
 {
 	SendUploadResults($number, '', '', $text);
 }

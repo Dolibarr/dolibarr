@@ -48,10 +48,13 @@ if ($action == 'setvalue')
 	$mailerror = GETPOST('MAILING_EMAIL_ERRORSTO','alpha');
 	$checkread = GETPOST('value','alpha');
 	$checkread_key = GETPOST('MAILING_EMAIL_UNSUBSCRIBE_KEY','alpha');
+    $mailingdelay = GETPOST('MAILING_DELAY', 'int');
 
 	$res=dolibarr_set_const($db, "MAILING_EMAIL_FROM",$mailfrom,'chaine',0,'',$conf->entity);
 	if (! $res > 0) $error++;
 	$res=dolibarr_set_const($db, "MAILING_EMAIL_ERRORSTO",$mailerror,'chaine',0,'',$conf->entity);
+	if (! $res > 0) $error++;
+	$res=dolibarr_set_const($db, "MAILING_DELAY",$mailingdelay,'chaine',0,'',$conf->entity);
 	if (! $res > 0) $error++;
 
 	// Create temporary encryption key if nedded
@@ -78,7 +81,7 @@ if ($action == 'setvalue')
 llxHeader('',$langs->trans("MailingSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("MailingSetup"),$linkback,'setup');
+print_fiche_titre($langs->trans("MailingSetup"),$linkback,'title_setup');
 
 if (! empty($conf->use_javascript_ajax))
 {
@@ -122,6 +125,12 @@ print '<tr '.$bc[$var].'><td>';
 print $langs->trans("MailingEMailError").'</td><td>';
 print '<input size="32" type="text" name="MAILING_EMAIL_ERRORSTO" value="'.$conf->global->MAILING_EMAIL_ERRORSTO.'">';
 if (!empty($conf->global->MAILING_EMAIL_ERRORSTO) && ! isValidEmail($conf->global->MAILING_EMAIL_ERRORSTO)) print ' '.img_warning($langs->trans("BadEMail"));
+print '</td></tr>';
+
+$var=!$var;
+print '<tr '.$bc[$var].'><td>';
+print $langs->trans("MailingDelay").'</td><td>';
+print '<input size="32" type="text" name="MAILING_DELAY" value="'.$conf->global->MAILING_DELAY.'">';
 print '</td></tr>';
 
 // Constant to add salt into the unsubscribe and check read tag.

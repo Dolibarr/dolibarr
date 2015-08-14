@@ -165,14 +165,14 @@ jQuery(document).ready(function() {
 		var row_num = field_id.split("_");
 		jQuery("#updateconst").show();
 		jQuery("#action").val('update');
-		jQuery("#check_" + row_num[1]).attr("checked",true);
+		jQuery("#check_" + row_num[1]).prop("checked",true);
 	});
 });
 </script>
 <?php
 }
 
-print_fiche_titre($langs->trans("OtherSetup"),'','setup');
+print_fiche_titre($langs->trans("OtherSetup"),'','title_setup');
 
 print $langs->trans("ConstDesc")."<br>\n";
 print "<br>\n";
@@ -229,8 +229,9 @@ $sql.= ", note";
 $sql.= ", entity";
 $sql.= " FROM ".MAIN_DB_PREFIX."const";
 $sql.= " WHERE entity IN (".$user->entity.",".$conf->entity.")";
-if ((empty($user->entity) || $user->admin) && $debug) {} // to force for superadmin
-else $sql.= " AND visible = 1";			// We must always have this. Otherwise, array is too large and submitting data fails due to apache POST or GET limits
+if ((empty($user->entity) || $user->admin) && $debug) {} 										// to force for superadmin to debug
+else if (! GETPOST('visible') || GETPOST('visible') != 'all') $sql.= " AND visible = 1";		// We must always have this. Otherwise, array is too large and submitting data fails due to apache POST or GET limits
+if (GETPOST('name')) $sql.=natural_search("name", GETPOST('name'));
 $sql.= " ORDER BY entity, name ASC";
 
 dol_syslog("Const::listConstant", LOG_DEBUG);

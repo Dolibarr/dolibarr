@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2012 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin         <regis.houssin@capnetworks.com>
  * Copyright (C) 2010      Juanjo Menent         <jmenent@2byte.es>
+ * Copyright (C) 2015      Raphaël Doursenaud    <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +48,7 @@ require_once $dolibarr_main_document_root . '/core/class/menubase.class.php';
 require_once $dolibarr_main_document_root . '/core/lib/files.lib.php';
 
 $grant_query='';
-$etape = 2;
+$step = 2;
 $error = 0;
 
 
@@ -74,8 +75,8 @@ if ($dolibarr_main_db_type == 'pgsql')  $choix=2;
 if ($dolibarr_main_db_type == 'mssql')  $choix=3;
 
 
-dolibarr_install_syslog("upgrade2: Entering upgrade2.php page");
-if (! is_object($conf)) dolibarr_install_syslog("upgrade2: conf file not initialized",LOG_ERR);
+dolibarr_install_syslog("--- upgrade2: entering upgrade2.php page");
+if (! is_object($conf)) dolibarr_install_syslog("upgrade2: conf file not initialized", LOG_ERR);
 
 
 
@@ -98,7 +99,7 @@ if (! $versionfrom && ! $versionto)
 	exit;
 }
 
-pHeader('','etape5',GETPOST("action")?GETPOST("action"):'upgrade','versionfrom='.$versionfrom.'&versionto='.$versionto);
+pHeader('','step5',GETPOST("action")?GETPOST("action"):'upgrade','versionfrom='.$versionfrom.'&versionto='.$versionto);
 
 
 if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
@@ -134,18 +135,18 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
     include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
     $hookmanager=new HookManager($db);
 
-    if ($db->connected != 1)
+    if (!$db->connected)
     {
         print '<tr><td colspan="4">'.$langs->trans("ErrorFailedToConnectToDatabase",$conf->db->name).'</td><td align="right">'.$langs->trans('Error').'</td></tr>';
-        dolibarr_install_syslog('upgrade2: Failed to connect to database : '.$conf->db->name.' on '.$conf->db->host.' for user '.$conf->db->user, LOG_ERR);
+        dolibarr_install_syslog('upgrade2: failed to connect to database :' . $conf->db->name . ' on ' . $conf->db->host . ' for user ' . $conf->db->user, LOG_ERR);
         $error++;
     }
 
     if (! $error)
     {
-        if($db->database_selected == 1)
+        if($db->database_selected)
         {
-            dolibarr_install_syslog('upgrade2: Database connection successfull : '.$dolibarr_main_db_name);
+            dolibarr_install_syslog('upgrade2: database connection successful :' . $dolibarr_main_db_name);
         }
         else
         {
@@ -363,7 +364,13 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
         {
        	    migrate_event_assignement($db,$langs,$conf);
+        }
 
+        // Scripts for lat version
+        $afterversionarray=explode('.','3.7.9');
+        $beforeversionarray=explode('.','3.8.9');
+        if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
+        {
         	// Reload modules (this must be always and only into last targeted version)
 			$listofmodule=array(
 				    	'MAIN_MODULE_AGENDA',
@@ -375,6 +382,7 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
 				    	'MAIN_MODULE_ECM',
 				    	'MAIN_MODULE_FACTURE',
 				    	'MAIN_MODULE_FOURNISSEUR',
+						'MAIN_MODULE_HOLIDAY',
 						'MAIN_MODULE_OPENSURVEY',
 						'MAIN_MODULE_PAYBOX',
 						'MAIN_MODULE_PRODUIT',
@@ -414,6 +422,7 @@ $ret=0;
 if ($error && isset($argv[1])) $ret=1;
 dol_syslog("Exit ".$ret);
 
+dolibarr_install_syslog("--- upgrade2: end");
 pFooter($error,$setuplang);
 
 if ($db->connected) $db->close();
@@ -448,7 +457,7 @@ function migrate_paiements($db,$langs,$conf)
 
         $resql = $db->query($sql);
 
-        dolibarr_install_syslog("upgrade2::migrate_paiements", LOG_DEBUG);
+        dolibarr_install_syslog("upgrade2::migrate_paiements");
         if ($resql)
         {
             $i = 0;
@@ -548,7 +557,7 @@ function migrate_paiements_orphelins_1($db,$langs,$conf)
 
         $resql = $db->query($sql);
 
-        dolibarr_install_syslog("upgrade2::migrate_paiements_orphelins_1", LOG_DEBUG);
+        dolibarr_install_syslog("upgrade2::migrate_paiements_orphelins_1");
         $row = array();
         if ($resql)
         {
@@ -674,7 +683,7 @@ function migrate_paiements_orphelins_2($db,$langs,$conf)
 
         $resql = $db->query($sql);
 
-        dolibarr_install_syslog("upgrade2::migrate_paiements_orphelins_2", LOG_DEBUG);
+        dolibarr_install_syslog("upgrade2::migrate_paiements_orphelins_2");
         $row = array();
         if ($resql)
         {
@@ -814,7 +823,7 @@ function migrate_contracts_det($db,$langs,$conf)
     $sql.= " WHERE cd.rowid IS NULL AND p.rowid IS NOT NULL";
     $resql = $db->query($sql);
 
-    dolibarr_install_syslog("upgrade2::migrate_contracts_det", LOG_DEBUG);
+    dolibarr_install_syslog("upgrade2::migrate_contracts_det");
     if ($resql)
     {
         $i = 0;
@@ -910,7 +919,7 @@ function migrate_links_transfert($db,$langs,$conf)
     $sql.= " AND bu.fk_bank IS NULL";
     $resql = $db->query($sql);
 
-    dolibarr_install_syslog("upgrade2::migrate_links_transfert", LOG_DEBUG);
+    dolibarr_install_syslog("upgrade2::migrate_links_transfert");
     if ($resql)
     {
         $i = 0;
@@ -934,7 +943,7 @@ function migrate_links_transfert($db,$langs,$conf)
                 $sql.= ")";
 
                 print $sql.'<br>';
-                dolibarr_install_syslog("migrate_links_transfert", LOG_DEBUG);
+                dolibarr_install_syslog("migrate_links_transfert");
 
                 if (! $db->query($sql))
                 {
@@ -985,7 +994,7 @@ function migrate_contracts_date1($db,$langs,$conf)
     print '<b>'.$langs->trans('MigrationContractsEmptyDatesUpdate')."</b><br>\n";
 
     $sql="update llx_contrat set date_contrat=tms where date_contrat is null";
-    dolibarr_install_syslog("upgrade2::migrate_contracts_date1", LOG_DEBUG);
+    dolibarr_install_syslog("upgrade2::migrate_contracts_date1");
     $resql = $db->query($sql);
     if (! $resql) dol_print_error($db);
     if ($db->affected_rows($resql) > 0)
@@ -994,7 +1003,7 @@ function migrate_contracts_date1($db,$langs,$conf)
     print $langs->trans('MigrationContractsEmptyDatesNothingToUpdate')."<br>\n";
 
     $sql="update llx_contrat set datec=tms where datec is null";
-    dolibarr_install_syslog("upgrade2::migrate_contracts_date1", LOG_DEBUG);
+    dolibarr_install_syslog("upgrade2::migrate_contracts_date1");
     $resql = $db->query($sql);
     if (! $resql) dol_print_error($db);
     if ($db->affected_rows($resql) > 0)
@@ -1024,7 +1033,7 @@ function migrate_contracts_date2($db,$langs,$conf)
     $sql.= " GROUP BY c.rowid, c.date_contrat";
     $resql = $db->query($sql);
 
-    dolibarr_install_syslog("upgrade2::migrate_contracts_date2", LOG_DEBUG);
+    dolibarr_install_syslog("upgrade2::migrate_contracts_date2");
     if ($resql)
     {
         $i = 0;
@@ -1085,7 +1094,7 @@ function migrate_contracts_date3($db,$langs,$conf)
     print '<b>'.$langs->trans('MigrationContractsIncoherentCreationDateUpdate')."</b><br>\n";
 
     $sql="update llx_contrat set datec=date_contrat where datec is null or datec > date_contrat";
-    dolibarr_install_syslog("upgrade2::migrate_contracts_date3", LOG_DEBUG);
+    dolibarr_install_syslog("upgrade2::migrate_contracts_date3");
     $resql = $db->query($sql);
     if (! $resql) dol_print_error($db);
     if ($db->affected_rows($resql) > 0)
@@ -1113,7 +1122,7 @@ function migrate_contracts_open($db,$langs,$conf)
 
     $sql = "SELECT c.rowid as cref FROM llx_contrat as c, llx_contratdet as cd";
     $sql.= " WHERE cd.statut = 4 AND c.statut=2 AND c.rowid=cd.fk_contrat";
-    dolibarr_install_syslog("upgrade2::migrate_contracts_open", LOG_DEBUG);
+    dolibarr_install_syslog("upgrade2::migrate_contracts_open");
     $resql = $db->query($sql);
     if (! $resql) dol_print_error($db);
     if ($db->affected_rows($resql) > 0) {
@@ -1183,7 +1192,7 @@ function migrate_paiementfourn_facturefourn($db,$langs,$conf)
         $select_sql.= ' FROM '.MAIN_DB_PREFIX.'paiementfourn';
         $select_sql.= ' WHERE fk_facture_fourn IS NOT NULL';
 
-        dolibarr_install_syslog("upgrade2::migrate_paiementfourn_facturefourn", LOG_DEBUG);
+        dolibarr_install_syslog("upgrade2::migrate_paiementfourn_facturefourn");
         $select_resql = $db->query($select_sql);
         if ($select_resql)
         {
@@ -1292,14 +1301,14 @@ function migrate_price_facture($db,$langs,$conf)
     print '<b>'.$langs->trans('MigrationInvoice')."</b><br>\n";
 
     // Liste des lignes facture non a jour
-    $sql = "SELECT fd.rowid, fd.qty, fd.subprice, fd.remise_percent, fd.tva_tx as tva_taux, fd.total_ttc, fd.info_bits,";
+    $sql = "SELECT fd.rowid, fd.qty, fd.subprice, fd.remise_percent, fd.tva_tx as vatrate, fd.total_ttc, fd.info_bits,";
     $sql.= " f.rowid as facid, f.remise_percent as remise_percent_global, f.total_ttc as total_ttc_f";
     $sql.= " FROM ".MAIN_DB_PREFIX."facturedet as fd, ".MAIN_DB_PREFIX."facture as f";
     $sql.= " WHERE fd.fk_facture = f.rowid";
     $sql.= " AND (((fd.total_ttc = 0 AND fd.remise_percent != 100) or fd.total_ttc IS NULL) or f.total_ttc IS NULL)";
     //print $sql;
 
-    dolibarr_install_syslog("upgrade2::migrate_price_facture", LOG_DEBUG);
+    dolibarr_install_syslog("upgrade2::migrate_price_facture");
     $resql=$db->query($sql);
     if ($resql)
     {
@@ -1314,7 +1323,7 @@ function migrate_price_facture($db,$langs,$conf)
                 $rowid = $obj->rowid;
                 $qty = $obj->qty;
                 $pu = $obj->subprice;
-                $txtva = $obj->tva_taux;
+                $vatrate = $obj->vatrate;
                 $remise_percent = $obj->remise_percent;
                 $remise_percent_global = $obj->remise_percent_global;
                 $total_ttc_f = $obj->total_ttc_f;
@@ -1324,7 +1333,7 @@ function migrate_price_facture($db,$langs,$conf)
                 $facligne= new FactureLigne($db);
                 $facligne->fetch($rowid);
 
-                $result=calcul_price_total($qty,$pu,$remise_percent,$txtva, 0, 0,$remise_percent_global,'HT',$info_bits,0);
+                $result=calcul_price_total($qty,$pu,$remise_percent,$vatrate, 0, 0,$remise_percent_global,'HT',$info_bits,0);
                 $total_ht  = $result[0];
                 $total_tva = $result[1];
                 $total_ttc = $result[2];
@@ -1333,7 +1342,7 @@ function migrate_price_facture($db,$langs,$conf)
                 $facligne->total_tva = $total_tva;
                 $facligne->total_ttc = $total_ttc;
 
-                dolibarr_install_syslog("upgrade2: Line $rowid: facid=$obj->facid pu=$pu qty=$qty tva_taux=$txtva remise_percent=$remise_percent remise_global=$remise_percent_global -> $total_ht, $total_tva, $total_ttc");
+                dolibarr_install_syslog("upgrade2: line " . $rowid . ": facid=" . $obj->facid . " pu=" . $pu ." qty=" . $qty . " vatrate=" . $vatrate . " remise_percent=" . $remise_percent . " remise_global=" . $remise_percent_global . " -> " . $total_ht . ", " . $total_tva . ", " . $total_ttc);
                 print ". ";
                 $facligne->update_total();
 
@@ -1406,13 +1415,13 @@ function migrate_price_propal($db,$langs,$conf)
     print '<b>'.$langs->trans('MigrationProposal')."</b><br>\n";
 
     // Liste des lignes propal non a jour
-    $sql = "SELECT pd.rowid, pd.qty, pd.subprice, pd.remise_percent, pd.tva_tx as tva_taux, pd.info_bits,";
+    $sql = "SELECT pd.rowid, pd.qty, pd.subprice, pd.remise_percent, pd.tva_tx as vatrate, pd.info_bits,";
     $sql.= " p.rowid as propalid, p.remise_percent as remise_percent_global";
     $sql.= " FROM ".MAIN_DB_PREFIX."propaldet as pd, ".MAIN_DB_PREFIX."propal as p";
     $sql.= " WHERE pd.fk_propal = p.rowid";
     $sql.= " AND ((pd.total_ttc = 0 AND pd.remise_percent != 100) or pd.total_ttc IS NULL)";
 
-    dolibarr_install_syslog("upgrade2::migrate_price_propal", LOG_DEBUG);
+    dolibarr_install_syslog("upgrade2::migrate_price_propal");
     $resql=$db->query($sql);
     if ($resql)
     {
@@ -1427,7 +1436,7 @@ function migrate_price_propal($db,$langs,$conf)
                 $rowid = $obj->rowid;
                 $qty = $obj->qty;
                 $pu = $obj->subprice;
-                $txtva = $obj->tva_taux;
+                $vatrate = $obj->vatrate;
                 $remise_percent = $obj->remise_percent;
                 $remise_percent_global = $obj->remise_percent_global;
                 $info_bits = $obj->info_bits;
@@ -1436,7 +1445,7 @@ function migrate_price_propal($db,$langs,$conf)
                 $propalligne= new PropaleLigne($db);
                 $propalligne->fetch($rowid);
 
-                $result=calcul_price_total($qty,$pu,$remise_percent,$txtva,0,0,$remise_percent_global,'HT',$info_bits,0);
+                $result=calcul_price_total($qty,$pu,$remise_percent,$vatrate,0,0,$remise_percent_global,'HT',$info_bits,0);
                 $total_ht  = $result[0];
                 $total_tva = $result[1];
                 $total_ttc = $result[2];
@@ -1445,7 +1454,7 @@ function migrate_price_propal($db,$langs,$conf)
                 $propalligne->total_tva = $total_tva;
                 $propalligne->total_ttc = $total_ttc;
 
-                dolibarr_install_syslog("upgrade2: Line $rowid: propalid=$obj->rowid pu=$pu qty=$qty tva_taux=$txtva remise_percent=$remise_percent remise_global=$remise_percent_global -> $total_ht, $total_tva, $total_ttc");
+                dolibarr_install_syslog("upgrade2: Line " . $rowid . ": propalid=" . $obj->rowid . " pu=" . $pu . " qty=" . $qty . " vatrate=" . $vatrate . " remise_percent=" . $remise_percent . " remise_global=" . $remise_percent_global . " -> " . $total_ht . ", " . $total_tva. ", " . $total_ttc);
                 print ". ";
                 $propalligne->update_total();
 
@@ -1515,13 +1524,13 @@ function migrate_price_contrat($db,$langs,$conf)
     print '<b>'.$langs->trans('MigrationContract')."</b><br>\n";
 
     // Liste des lignes contrat non a jour
-    $sql = "SELECT cd.rowid, cd.qty, cd.subprice, cd.remise_percent, cd.tva_tx as tva_taux, cd.info_bits,";
+    $sql = "SELECT cd.rowid, cd.qty, cd.subprice, cd.remise_percent, cd.tva_tx as vatrate, cd.info_bits,";
     $sql.= " c.rowid as contratid";
     $sql.= " FROM ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."contrat as c";
     $sql.= " WHERE cd.fk_contrat = c.rowid";
     $sql.= " AND ((cd.total_ttc = 0 AND cd.remise_percent != 100 AND cd.subprice > 0) or cd.total_ttc IS NULL)";
 
-    dolibarr_install_syslog("upgrade2::migrate_price_contrat", LOG_DEBUG);
+    dolibarr_install_syslog("upgrade2::migrate_price_contrat");
     $resql=$db->query($sql);
     if ($resql)
     {
@@ -1536,7 +1545,7 @@ function migrate_price_contrat($db,$langs,$conf)
                 $rowid = $obj->rowid;
                 $qty = $obj->qty;
                 $pu = $obj->subprice;
-                $txtva = $obj->tva_taux;
+                $vatrate = $obj->vatrate;
                 $remise_percent = $obj->remise_percent;
                 $info_bits = $obj->info_bits;
 
@@ -1545,7 +1554,7 @@ function migrate_price_contrat($db,$langs,$conf)
                 //$contratligne->fetch($rowid); Non requis car le update_total ne met a jour que chp redefinis
                 $contratligne->id=$rowid;
 
-                $result=calcul_price_total($qty,$pu,$remise_percent,$txtva,0,0,0,'HT',$info_bits,0,$tmpmysoc);
+                $result=calcul_price_total($qty,$pu,$remise_percent,$vatrate,0,0,0,'HT',$info_bits,0,$tmpmysoc);
                 $total_ht  = $result[0];
                 $total_tva = $result[1];
                 $total_ttc = $result[2];
@@ -1554,7 +1563,7 @@ function migrate_price_contrat($db,$langs,$conf)
                 $contratligne->total_tva = $total_tva;
                 $contratligne->total_ttc = $total_ttc;
 
-                dolibarr_install_syslog("upgrade2: Line $rowid: contratdetid=$obj->rowid pu=$pu qty=$qty tva_taux=$txtva remise_percent=$remise_percent -> $total_ht, $total_tva, $total_ttc");
+                dolibarr_install_syslog("upgrade2: Line " . $rowid . ": contratdetid=" . $obj->rowid . " pu=" . $pu . " qty=" . $qty . " vatrate=" . $vatrate . " remise_percent=" . $remise_percent. "  -> " . $total_ht . ", " . $total_tva. " , " . $total_ttc);
                 print ". ";
                 $contratligne->update_total();
 
@@ -1600,13 +1609,13 @@ function migrate_price_commande($db,$langs,$conf)
     print '<b>'.$langs->trans('MigrationOrder')."</b><br>\n";
 
     // Liste des lignes commande non a jour
-    $sql = "SELECT cd.rowid, cd.qty, cd.subprice, cd.remise_percent, cd.tva_tx as tva_taux, cd.info_bits,";
+    $sql = "SELECT cd.rowid, cd.qty, cd.subprice, cd.remise_percent, cd.tva_tx as vatrate, cd.info_bits,";
     $sql.= " c.rowid as commandeid, c.remise_percent as remise_percent_global";
     $sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd, ".MAIN_DB_PREFIX."commande as c";
     $sql.= " WHERE cd.fk_commande = c.rowid";
     $sql.= " AND ((cd.total_ttc = 0 AND cd.remise_percent != 100) or cd.total_ttc IS NULL)";
 
-    dolibarr_install_syslog("upgrade2::migrate_price_commande", LOG_DEBUG);
+    dolibarr_install_syslog("upgrade2::migrate_price_commande");
     $resql=$db->query($sql);
     if ($resql)
     {
@@ -1621,7 +1630,7 @@ function migrate_price_commande($db,$langs,$conf)
                 $rowid = $obj->rowid;
                 $qty = $obj->qty;
                 $pu = $obj->subprice;
-                $txtva = $obj->tva_taux;
+                $vatrate = $obj->vatrate;
                 $remise_percent = $obj->remise_percent;
                 $remise_percent_global = $obj->remise_percent_global;
                 $info_bits = $obj->info_bits;
@@ -1630,7 +1639,7 @@ function migrate_price_commande($db,$langs,$conf)
                 $commandeligne= new OrderLine($db);
                 $commandeligne->fetch($rowid);
 
-                $result=calcul_price_total($qty,$pu,$remise_percent,$txtva,0,0,$remise_percent_global,'HT',$info_bits,0);
+                $result=calcul_price_total($qty,$pu,$remise_percent,$vatrate,0,0,$remise_percent_global,'HT',$info_bits,0);
                 $total_ht  = $result[0];
                 $total_tva = $result[1];
                 $total_ttc = $result[2];
@@ -1639,7 +1648,7 @@ function migrate_price_commande($db,$langs,$conf)
                 $commandeligne->total_tva = $total_tva;
                 $commandeligne->total_ttc = $total_ttc;
 
-                dolibarr_install_syslog("upgrade2: Line $rowid: commandeid=$obj->rowid pu=$pu qty=$qty tva_taux=$txtva remise_percent=$remise_percent remise_global=$remise_percent_global -> $total_ht, $total_tva, $total_ttc");
+                dolibarr_install_syslog("upgrade2: Line " . $rowid . " : commandeid=" . $obj->rowid . " pu=" . $pu . " qty=" . $qty . " vatrate=" . $vatrate . " remise_percent=" . $remise_percent . " remise_global=" . $remise_percent_global. "  -> " . $total_ht . ", " . $total_tva . ", " . $total_ttc);
                 print ". ";
                 $commandeligne->update_total();
 
@@ -1714,13 +1723,13 @@ function migrate_price_commande_fournisseur($db,$langs,$conf)
     print '<b>'.$langs->trans('MigrationSupplierOrder')."</b><br>\n";
 
     // Liste des lignes commande non a jour
-    $sql = "SELECT cd.rowid, cd.qty, cd.subprice, cd.remise_percent, cd.tva_tx as tva_taux, cd.info_bits,";
+    $sql = "SELECT cd.rowid, cd.qty, cd.subprice, cd.remise_percent, cd.tva_tx as vatrate, cd.info_bits,";
     $sql.= " c.rowid as commandeid, c.remise_percent as remise_percent_global";
     $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd, ".MAIN_DB_PREFIX."commande_fournisseur as c";
     $sql.= " WHERE cd.fk_commande = c.rowid";
     $sql.= " AND ((cd.total_ttc = 0 AND cd.remise_percent != 100) or cd.total_ttc IS NULL)";
 
-    dolibarr_install_syslog("upgrade2::migrate_price_commande_fournisseur", LOG_DEBUG);
+    dolibarr_install_syslog("upgrade2::migrate_price_commande_fournisseur");
     $resql=$db->query($sql);
     if ($resql)
     {
@@ -1735,7 +1744,7 @@ function migrate_price_commande_fournisseur($db,$langs,$conf)
                 $rowid = $obj->rowid;
                 $qty = $obj->qty;
                 $pu = $obj->subprice;
-                $txtva = $obj->tva_taux;
+                $vatrate = $obj->vatrate;
                 $remise_percent = $obj->remise_percent;
                 $remise_percent_global = $obj->remise_percent_global;
                 $info_bits = $obj->info_bits;
@@ -1744,7 +1753,7 @@ function migrate_price_commande_fournisseur($db,$langs,$conf)
                 $commandeligne= new CommandeFournisseurLigne($db);
                 $commandeligne->fetch($rowid);
 
-                $result=calcul_price_total($qty,$pu,$remise_percent,$txtva,0,0,$remise_percent_global,'HT',$info_bits,0);
+                $result=calcul_price_total($qty,$pu,$remise_percent,$vatrate,0,0,$remise_percent_global,'HT',$info_bits,0);
                 $total_ht  = $result[0];
                 $total_tva = $result[1];
                 $total_ttc = $result[2];
@@ -1753,7 +1762,7 @@ function migrate_price_commande_fournisseur($db,$langs,$conf)
                 $commandeligne->total_tva = $total_tva;
                 $commandeligne->total_ttc = $total_ttc;
 
-                dolibarr_install_syslog("upgrade2: Line $rowid: commandeid=$obj->rowid pu=$pu qty=$qty tva_taux=$txtva remise_percent=$remise_percent remise_global=$remise_percent_global -> $total_ht, $total_tva, $total_ttc");
+                dolibarr_install_syslog("upgrade2: Line " . $rowid . ": commandeid=" . $obj->rowid . " pu=" . $pu . "  qty=" . $qty . " vatrate=" . $vatrate . " remise_percent=" . $remise_percent . " remise_global=" . $remise_percent_global . " -> " . $total_ht . ", " . $total_tva . ", " . $total_ttc);
                 print ". ";
                 $commandeligne->update_total();
 
@@ -2407,7 +2416,7 @@ function migrate_commande_deliveryaddress($db,$langs,$conf)
  * @param	DoliDB		$db		Database handler
  * @param	Translate	$langs	Object langs
  * @param	Conf		$conf	Object conf
- * @return	void
+ * @return	integer|null
  */
 function migrate_restore_missing_links($db,$langs,$conf)
 {
@@ -2441,7 +2450,7 @@ function migrate_restore_missing_links($db,$langs,$conf)
     $sql.= " (SELECT t2.rowid FROM ".MAIN_DB_PREFIX.$table2." as t2";
     $sql.= " WHERE t1.rowid = t2.".$field2.")";
 
-    dolibarr_install_syslog("upgrade2:migrate_restore_missing_links DIRECTION 1", LOG_DEBUG);
+    dolibarr_install_syslog("upgrade2::migrate_restore_missing_links DIRECTION 1");
     $resql = $db->query($sql);
     if ($resql)
     {
@@ -2507,7 +2516,7 @@ function migrate_restore_missing_links($db,$langs,$conf)
     $sql.= " (SELECT t2.rowid FROM ".MAIN_DB_PREFIX.$table2." as t2";
     $sql.= " WHERE t1.rowid = t2.".$field2.")";
 
-    dolibarr_install_syslog("upgrade2:migrate_restore_missing_links DIRECTION 2", LOG_DEBUG);
+    dolibarr_install_syslog("upgrade2::migrate_restore_missing_links DIRECTION 2");
     $resql = $db->query($sql);
     if ($resql)
     {
@@ -2772,7 +2781,7 @@ function migrate_relationship_tables($db,$langs,$conf,$table,$fk_source,$sourcet
 
     if ($db->DDLInfoTable(MAIN_DB_PREFIX.$table))
     {
-        dolibarr_install_syslog("upgrade2::migrate_relationship_tables table = ".MAIN_DB_PREFIX.$table);
+        dolibarr_install_syslog("upgrade2::migrate_relationship_tables table = " . MAIN_DB_PREFIX . $table);
 
         $db->begin();
 
@@ -3297,7 +3306,7 @@ function migrate_actioncomm_element($db,$langs,$conf)
 		$obj = $db->fetch_object($result);
 		if ($obj)
 		{
-			dolibarr_install_syslog("upgrade2::migrate_actioncomm_element field=".$field);
+			dolibarr_install_syslog("upgrade2::migrate_actioncomm_element field=" . $field);
 
 			$db->begin();
 
@@ -3360,7 +3369,7 @@ function migrate_mode_reglement($db,$langs,$conf)
 	{
 		$error=0;
 
-		dolibarr_install_syslog("upgrade2::migrate_mode_reglement code=".$elements['code'][$key]);
+		dolibarr_install_syslog("upgrade2::migrate_mode_reglement code=" . $elements['code'][$key]);
 
 		$sqlSelect = "SELECT id";
 		$sqlSelect.= " FROM ".MAIN_DB_PREFIX."c_paiement";
@@ -3391,7 +3400,7 @@ function migrate_mode_reglement($db,$langs,$conf)
 
 				if ($resqla && $resql)
 				{
-					foreach($elements['tables'] as $table)		// FIXME We must not update tables if oldid is not renamed
+					foreach($elements['tables'] as $table)
 					{
 						$sql = "UPDATE ".MAIN_DB_PREFIX.$table." SET ";
 						$sql.= "fk_mode_reglement = ".$elements['new_id'][$key];
@@ -3617,7 +3626,7 @@ function migrate_directories($db,$langs,$conf,$oldname,$newname)
 
     if (is_dir(DOL_DATA_ROOT.$oldname) && ! file_exists(DOL_DATA_ROOT.$newname))
     {
-        dolibarr_install_syslog("upgrade2::migrate_directories move ".DOL_DATA_ROOT.$oldname.' into '.DOL_DATA_ROOT.$newname);
+        dolibarr_install_syslog("upgrade2::migrate_directories move " . DOL_DATA_ROOT . $oldname . ' into ' . DOL_DATA_ROOT . $newname);
         @rename(DOL_DATA_ROOT.$oldname,DOL_DATA_ROOT.$newname);
     }
 }
@@ -3680,7 +3689,7 @@ function migrate_delete_old_files($db,$langs,$conf)
                 print ' '.$langs->trans("RemoveItManuallyAndPressF5ToContinue").'</div>';
             }
             else
-            {
+			{
                 //print $langs->trans("FileWasRemoved",$filetodelete);
             }
         }
@@ -3767,7 +3776,7 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array())
 
 	    if ($moduletoreload == 'MAIN_MODULE_AGENDA')
 	    {
-	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Agenda");
+	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Agenda module");
 	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modAgenda.class.php';
 	        if ($res) {
 	            $mod=new modAgenda($db);
@@ -3777,7 +3786,7 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array())
 	    }
         if ($moduletoreload == 'MAIN_MODULE_BARCODE')
     	{
-	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Barcode");
+	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Barcode module");
 	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modBarcode.class.php';
 	        if ($res) {
 	            $mod=new modBarcode($db);
@@ -3787,7 +3796,7 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array())
 	    }
 	    if ($moduletoreload == 'MAIN_MODULE_CRON')
     	{
-	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Cron");
+	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Cron module");
 	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modCron.class.php';
 	        if ($res) {
 	            $mod=new modCron($db);
@@ -3797,7 +3806,7 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array())
 	    }
 	    if ($moduletoreload == 'MAIN_MODULE_SOCIETE')
 	    {
-	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Societe");
+	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Societe module");
 	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modSociete.class.php';
 	        if ($res) {
 	            $mod=new modSociete($db);
@@ -3807,7 +3816,7 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array())
 	    }
 	    if ($moduletoreload == 'MAIN_MODULE_PRODUIT')    // Permission has changed into 2.7
 	    {
-	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Produit");
+	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Produit module");
 	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modProduct.class.php';
 	        if ($res) {
 	            $mod=new modProduct($db);
@@ -3817,9 +3826,10 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array())
 	    }
 	    if ($moduletoreload == 'MAIN_MODULE_SERVICE')    // Permission has changed into 2.7
 	    {
-	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Service");
+	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Service module");
+
+	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modService.class.php';
 	        if ($res) {
-	            $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modService.class.php';
 	            $mod=new modService($db);
 	            //$mod->remove('noboxes');
 	            $mod->init('newboxdefonly');
@@ -3827,9 +3837,10 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array())
 	    }
 	    if ($moduletoreload == 'MAIN_MODULE_COMMANDE')   // Permission has changed into 2.9
 	    {
-	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Commande");
+	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Commande module");
+
+	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modCommande.class.php';
 	        if ($res) {
-	            $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modCommande.class.php';
 	            $mod=new modCommande($db);
 	            //$mod->remove('noboxes');
 	            $mod->init('newboxdefonly');
@@ -3837,9 +3848,9 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array())
 	    }
 	    if ($moduletoreload == 'MAIN_MODULE_FACTURE')    // Permission has changed into 2.9
 	    {
-	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Facture");
+	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Facture module");
+	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modFacture.class.php';
 	        if ($res) {
-	            $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modFacture.class.php';
 	            $mod=new modFacture($db);
 	            //$mod->remove('noboxes');
 	            $mod->init('newboxdefonly');
@@ -3847,7 +3858,7 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array())
 	    }
 	    if ($moduletoreload == 'MAIN_MODULE_FOURNISSEUR')    // Permission has changed into 2.9
 	    {
-	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Fournisseur");
+	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Fournisseur module");
 	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modFournisseur.class.php';
 	        if ($res) {
 	            $mod=new modFournisseur($db);
@@ -3857,7 +3868,7 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array())
 	    }
 	    if ($moduletoreload == 'MAIN_MODULE_DEPLACEMENT')    // Permission has changed into 3.0
 	    {
-	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Deplacement");
+	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Deplacement module");
 	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modDeplacement.class.php';
 	        if ($res) {
 	            $mod=new modDeplacement($db);
@@ -3867,7 +3878,7 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array())
 	    }
 	    if ($moduletoreload == 'MAIN_MODULE_DON')    // Permission has changed into 3.0
 	    {
-	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Don");
+	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Don module");
 	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modDon.class.php';
 	        if ($res) {
 	            $mod=new modDon($db);
@@ -3877,9 +3888,9 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array())
 	    }
 	    if ($moduletoreload == 'MAIN_MODULE_ECM')    // Permission has changed into 3.0 and 3.1
 	    {
-	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module ECM");
+	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate ECM module");
+	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modECM.class.php';
 	        if ($res) {
-	            $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modECM.class.php';
 	            $mod=new modECM($db);
 	            $mod->remove('noboxes');	// We need to remove because a permission id has been removed
 	            $mod->init('newboxdefonly');
@@ -3887,7 +3898,7 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array())
 	    }
 	    if ($moduletoreload == 'MAIN_MODULE_PAYBOX')    // Permission has changed into 3.0
 	    {
-	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Paybox");
+	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Paybox module");
 	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modPaybox.class.php';
 	        if ($res) {
 	            $mod=new modPaybox($db);
@@ -3897,7 +3908,7 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array())
 	    }
     	if ($moduletoreload == 'MAIN_MODULE_OPENSURVEY')    // Permission has changed into 3.0
 	    {
-	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Opensurvey");
+	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Opensurvey module");
 	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modOpenSurvey.class.php';
 	        if ($res) {
 	            $mod=new modOpenSurvey($db);
@@ -3907,7 +3918,7 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array())
 	    }
     	if ($moduletoreload == 'MAIN_MODULE_USER')    // Permission has changed into 3.0
 	    {
-	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module User");
+	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate User module");
 	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modUser.class.php';
 	        if ($res) {
 	            $mod=new modUser($db);

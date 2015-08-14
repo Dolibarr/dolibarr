@@ -133,7 +133,7 @@ class modTax extends DolibarrModules
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'c_chargesociales as cc, '.MAIN_DB_PREFIX.'chargesociales as c';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'paiementcharge as p ON p.fk_charge = c.rowid';
 		$this->export_sql_end[$r] .=' WHERE c.fk_type = cc.id';
-		$this->export_sql_end[$r] .=' AND c.entity = '.$conf->entity;
+		$this->export_sql_end[$r] .=' AND c.entity IN ('.getEntity('tax',1).')';
 	}
 
 
@@ -156,20 +156,4 @@ class modTax extends DolibarrModules
 
 		return $this->_init($sql,$options);
 	}
-
-    /**
-	 *		Function called when module is disabled.
-	 *      Remove from database constants, boxes and permissions from Dolibarr database.
-	 *		Data directories are not deleted
-	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *      @return     int             	1 if OK, 0 if KO
-     */
-    function remove($options='')
-    {
-		$sql = array();
-
-		return $this->_remove($sql,$options);
-    }
-
 }

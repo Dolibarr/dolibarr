@@ -42,5 +42,5 @@ SentToSuppliers=Đã gửi đến nhà cung cấp
 ListOfSupplierOrders=Danh sách các đơn hàng nhà cung cấp
 MenuOrdersSupplierToBill=Chuyển các đơn hàng nhà cung cấp sang hóa đơn
 NbDaysToDelivery=Số ngày giao hàng
-DescNbDaysToDelivery=Thời gian chậm nhất được hiển thị trong danh sách sản phẩm đặt hàng
-UseDoubleApproval=Use double approval (the second approval can be done by any user with the dedicated permission)
+DescNbDaysToDelivery=The biggest deliver delay of the products from this order
+UseDoubleApproval=Use double approval when amount (without tax) is higher than (The second approval can be done by any user with the dedicated permission. Set to 0 for no double approval)

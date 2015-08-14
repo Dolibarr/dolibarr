@@ -1,5 +1,7 @@
 <?php
-/* Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2015  Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2015       Alexandre Spangaro  <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,15 +68,6 @@ function member_prepare_head(Adherent $object)
 	    $h++;
 	}
 
-	// Show category tab
-	if (! empty($conf->categorie->enabled) && ! empty($user->rights->categorie->lire))
-	{
-		$head[$h][0] = DOL_URL_ROOT."/categories/categorie.php?id=".$object->id.'&type=3';
-		$head[$h][1] = $langs->trans('Categories');
-		$head[$h][2] = 'category';
-		$h++;
-	}
-
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
@@ -107,6 +100,34 @@ function member_prepare_head(Adherent $object)
 	return $head;
 }
 
+/**
+ *  Return array head with list of tabs to view object informations
+ *
+ *  @param	Adherent	$object         Member
+ *  @return array           		head
+ */
+function member_type_prepare_head(AdherentType $object)
+{
+	global $langs, $conf, $user;
+
+	$h=0;
+	$head = array();
+
+	$head[$h][0] = DOL_URL_ROOT.'/adherents/type.php?rowid='.$object->id;
+	$head[$h][1] = $langs->trans("Card");
+	$head[$h][2] = 'card';
+	$h++;
+
+    // Show more tabs from modules
+    // Entries must be declared in modules descriptor with line
+    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+    // $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
+    complete_head_from_modules($conf,$langs,$object,$head,$h,'membertype');
+
+	complete_head_from_modules($conf,$langs,$object,$head,$h,'membertype','remove');
+
+	return $head;
+}
 
 /**
  *  Return array head with list of tabs to view object informations

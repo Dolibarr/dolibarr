@@ -153,7 +153,7 @@ class Translate
  	 *										If $domain is "file@module" instead of "file" then we look for module lang file
 	 *										in htdocs/custom/modules/mymodule/langs/code_CODE/file.lang
 	 *										then in htdocs/module/langs/code_CODE/file.lang instead of htdocs/langs/code_CODE/file.lang
-	 *  @param	string	$alt         		0 (try xx_ZZ then 1), 1 (try xx_XX then 2), 2 (try en_US)
+	 *  @param	integer	$alt         		0 (try xx_ZZ then 1), 1 (try xx_XX then 2), 2 (try en_US)
 	 * 	@param	int		$stopafterdirection	Stop when the DIRECTION tag is found (optimize speed)
 	 * 	@param	int		$forcelangdir		To force a different lang directory
 	 *	@return	int							<0 if KO, 0 if already loaded or loading not required, >0 if OK
@@ -337,8 +337,8 @@ class Translate
 	}
 
 	/**
-	 * Return translated value of key. Search in lang file, then into database.
-	 * Key must be any complete entry into lang file: CurrencyEUR, ...
+	 * Return translated value of key for special keys ("Currency...", "Civility...", ...).
+	 * Search in lang file, then into database. Key must be any complete entry into lang file: CurrencyEUR, ...
 	 * If not found, return key.
 	 * The string return is not formated (translated with transnoentitiesnoconv)
 	 * NOTE: To avoid infinite loop (getLabelFromKey->transnoentities->getTradFromKey), if you modify this function,
@@ -354,25 +354,33 @@ class Translate
 		if (! is_string($key)) return 'ErrorBadValueForParamNotAString';	// Avoid multiple errors with code not using function correctly.
 
 		$newstr=$key;
-		if (preg_match('/^Currency([A-Z][A-Z][A-Z])$/i',$key,$reg))
-		{
-			$newstr=$this->getLabelFromKey($db,$reg[1],'c_currencies','code_iso','label');
-		}
-		else if (preg_match('/^SendingMethod([0-9A-Z]+)$/i',$key,$reg))
-		{
-			$newstr=$this->getLabelFromKey($db,$reg[1],'c_shipment_mode','code','libelle');
-		}
-        else if (preg_match('/^PaymentTypeShort([0-9A-Z]+)$/i',$key,$reg))
-        {
-            $newstr=$this->getLabelFromKey($db,$reg[1],'c_paiement','code','libelle');
-        }
-        else if (preg_match('/^Civility([0-9A-Z]+)$/i',$key,$reg))
+	    if (preg_match('/^Civility([0-9A-Z]+)$/i',$key,$reg))
         {
             $newstr=$this->getLabelFromKey($db,$reg[1],'c_civility','code','label');
         }
-        else if (preg_match('/^OrderSource([0-9A-Z]+)$/i',$key,$reg))
+		elseif (preg_match('/^Currency([A-Z][A-Z][A-Z])$/i',$key,$reg))
+		{
+			$newstr=$this->getLabelFromKey($db,$reg[1],'c_currencies','code_iso','label');
+		}
+		elseif (preg_match('/^SendingMethod([0-9A-Z]+)$/i',$key,$reg))
+		{
+			$newstr=$this->getLabelFromKey($db,$reg[1],'c_shipment_mode','code','libelle');
+		}
+        elseif (preg_match('/^PaymentTypeShort([0-9A-Z]+)$/i',$key,$reg))
         {
-        	// TODO Add a table for OrderSourceX
+            $newstr=$this->getLabelFromKey($db,$reg[1],'c_paiement','code','libelle');
+        }
+		elseif (preg_match('/^OppStatusShort([0-9A-Z]+)$/i',$key,$reg))
+        {
+            $newstr=$this->getLabelFromKey($db,$reg[1],'c_lead_status','code','label');
+        }
+        elseif (preg_match('/^OppStatus([0-9A-Z]+)$/i',$key,$reg))
+        {
+            $newstr=$this->getLabelFromKey($db,$reg[1],'c_lead_status','code','label');
+        }
+        elseif (preg_match('/^OrderSource([0-9A-Z]+)$/i',$key,$reg))
+        {
+        	// TODO OrderSourceX must be replaced with content of table llx_c_input_reason or llx_c_input_method
             //$newstr=$this->getLabelFromKey($db,$reg[1],'c_ordersource','code','label');
         }
         return $newstr;
@@ -548,7 +556,7 @@ class Translate
 	 *  Return list of all available languages
 	 *
 	 * 	@param	string	$langdir		Directory to scan
-	 *  @param  string	$maxlength   	Max length for each value in combo box (will be truncated)
+	 *  @param  integer	$maxlength   	Max length for each value in combo box (will be truncated)
 	 *  @param	int		$usecode		Show code instead of country name for language variant
 	 *  @return array     				List of languages
 	 */
@@ -583,7 +591,7 @@ class Translate
 	 *  Return if a filename $filename exists for current language (or alternate language)
 	 *
 	 *  @param	string	$filename       Language filename to search
-	 *  @param  string	$searchalt      Search also alernate language file
+	 *  @param  integer	$searchalt      Search also alernate language file
 	 *  @return boolean         		true if exists and readable
 	 */
 	function file_exists($filename,$searchalt=0)
@@ -707,6 +715,7 @@ class Translate
 	 *  @param	string	$amount				If not '', show currency + amount according to langs ($10, 10€).
 	 *  @return	string						Amount + Currency symbol encoded into UTF8
 	 *  @deprecated							Use method price to output a price
+	 *  @see price()
 	 */
 	function getCurrencyAmount($currency_code, $amount)
 	{
@@ -720,7 +729,7 @@ class Translate
 	 *	Return a currency code into its symbol
 	 *
 	 *  @param	string	$currency_code		Currency code
-	 *  @param	string	$forceloadall		1=Force to load all currencies into cache. We know we need to use all of them. By default read and cache only required currency.
+	 *  @param	integer	$forceloadall		1=Force to load all currencies into cache. We know we need to use all of them. By default read and cache only required currency.
 	 *  @return	string						Currency symbol encoded into UTF8
 	 */
 	function getCurrencySymbol($currency_code, $forceloadall=0)

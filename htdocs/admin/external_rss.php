@@ -189,7 +189,7 @@ if ($_POST["delete"])
 llxHeader('',$langs->trans("ExternalRSSSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("ExternalRSSSetup"), $linkback, 'setup');
+print_fiche_titre($langs->trans("ExternalRSSSetup"), $linkback, 'title_setup');
 print '<br>';
 
 // Formulaire ajout
@@ -214,11 +214,11 @@ print '<td>http://news.google.com/news?ned=us&topic=h&output=rss<br>http://www.d
 print '</tr>';
 print '</table>';
 
-print '<center><br>';
+print '<br><div class="center">';
 print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
 print '<input type="hidden" name="action" value="add">';
 print '<input type="hidden" name="norss" value="'.($lastexternalrss+1).'">';
-print '<br><br>';
+print '</div><br><br>';
 
 print '</form>';
 

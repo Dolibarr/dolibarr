@@ -1,6 +1,6 @@
 [main]
 host = https://www.transifex.com
-lang_map = uz: uz_UZ, sw: sw_SW
+lang_map = uz: uz_UZ, sw: sw_SW, sr@latin: sr_RS
 
 [dolibarr.accountancy]
 file_filter = htdocs/langs/<lang>/accountancy.lang
@@ -146,6 +146,12 @@ source_file = htdocs/langs/en_US/holiday.lang
 source_lang = en_US
 type = MOZILLAPROPERTIES
 
+[dolibarr.incoterm]
+file_filter = htdocs/langs/<lang>/incoterm.lang
+source_file = htdocs/langs/en_US/incoterm.lang
+source_lang = en_US
+type = MOZILLAPROPERTIES
+
 [dolibarr.install]
 file_filter = htdocs/langs/<lang>/install.lang
 source_file = htdocs/langs/en_US/install.lang
@@ -173,6 +179,12 @@ type = MOZILLAPROPERTIES
 [dolibarr.link]
 file_filter = htdocs/langs/<lang>/link.lang
 source_file = htdocs/langs/en_US/link.lang
+source_lang = en_US
+type = MOZILLAPROPERTIES
+
+[dolibarr.loan]
+file_filter = htdocs/langs/<lang>/loan.lang
+source_file = htdocs/langs/en_US/loan.lang
 source_lang = en_US
 type = MOZILLAPROPERTIES
 
@@ -236,9 +248,9 @@ source_file = htdocs/langs/en_US/paypal.lang
 source_lang = en_US
 type = MOZILLAPROPERTIES
 
-[dolibarr.printipp]
-file_filter = htdocs/langs/<lang>/printipp.lang
-source_file = htdocs/langs/en_US/printipp.lang
+[dolibarr.printing]
+file_filter = htdocs/langs/<lang>/printing.lang
+source_file = htdocs/langs/en_US/printing.lang
 source_lang = en_US
 type = MOZILLAPROPERTIES
 

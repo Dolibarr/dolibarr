@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (c) 2004-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (c) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2005		Eric Seigne				<eric.seigne@ryxeo.com>
  * Copyright (C) 2013		Juanjo Menent			<jmenent@2byte.es>
@@ -67,9 +67,9 @@ if (! empty($id) || ! empty($ref))
 
 	if ($result)
 	{
-		$head=product_prepare_head($object, $user);
+		$head=product_prepare_head($object);
 		$titre=$langs->trans("CardProduct".$object->type);
-		$picto=($object->type==1?'service':'product');
+		$picto=($object->type==Product::TYPE_SERVICE?'service':'product');
 
 		dol_fiche_head($head, 'stats', $titre, 0, $picto);
 
@@ -83,7 +83,7 @@ if (! empty($id) || ! empty($ref))
 		print '</tr>';
 
 		// Label
-		print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$object->libelle.'</td></tr>';
+		print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$object->label.'</td></tr>';
 
 		// Status (to sell)
 		print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td>';
@@ -229,7 +229,7 @@ if (! empty($id) || ! empty($ref))
 			print $graphfiles[$key]['label'];
 			print '</td></tr>';
 			// Image
-			print '<tr><td colspan="2" align="center">';
+			print '<tr class="impair"><td colspan="2" class="nohover" align="center">';
 			print $graphfiles[$key]['output'];
 			print '</td></tr>';
 			// Date generation

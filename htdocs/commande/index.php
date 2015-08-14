@@ -82,7 +82,7 @@ $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql.= ", ".MAIN_DB_PREFIX."commande as c";
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE c.fk_soc = s.rowid";
-$sql.= " AND c.entity = ".$conf->entity;
+$sql.= " AND c.entity IN (".getEntity('societe', 1).")";
 if ($user->societe_id) $sql.=' AND c.fk_soc = '.$user->societe_id;
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 $sql.= " GROUP BY c.fk_statut, c.facture";
@@ -115,7 +115,7 @@ if ($resql)
         $i++;
     }
     $db->free($resql);
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder nohover" width="100%">';
     print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("CustomersOrders").'</td></tr>'."\n";
     $listofstatus=array(0,1,2,3,3,-1);
     $bool=false;
@@ -171,7 +171,7 @@ if (! empty($conf->commande->enabled))
 	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE c.fk_soc = s.rowid";
-	$sql.= " AND c.entity = ".$conf->entity;
+	$sql.= " AND c.entity IN (".getEntity('commande', 1).")";
 	$sql.= " AND c.fk_statut = 0";
 	if ($socid) $sql.= " AND c.fk_soc = ".$socid;
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
@@ -220,7 +220,7 @@ $sql.= " FROM ".MAIN_DB_PREFIX."commande as c,";
 $sql.= " ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE c.fk_soc = s.rowid";
-$sql.= " AND c.entity = ".$conf->entity;
+$sql.= " AND c.entity IN (".getEntity('commande', 1).")";
 //$sql.= " AND c.fk_statut > 2";
 if ($socid) $sql .= " AND c.fk_soc = ".$socid;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
@@ -290,7 +290,7 @@ if (! empty($conf->commande->enabled))
 	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE c.fk_soc = s.rowid";
-	$sql.= " AND c.entity = ".$conf->entity;
+	$sql.= " AND c.entity IN (".getEntity('commande', 1).")";
 	$sql.= " AND c.fk_statut = 1";
 	if ($socid) $sql.= " AND c.fk_soc = ".$socid;
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
@@ -303,7 +303,7 @@ if (! empty($conf->commande->enabled))
 
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td colspan="3">'.$langs->trans("OrdersToProcess").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut=1">('.$num.')</a></td></tr>';
+		print '<td colspan="3">'.$langs->trans("OrdersToProcess").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut=1"><span class="badge">'.$num.'</span></a></td></tr>';
 
 		if ($num)
 		{
@@ -361,7 +361,7 @@ if (! empty($conf->commande->enabled))
 	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE c.fk_soc = s.rowid";
-	$sql.= " AND c.entity = ".$conf->entity;
+	$sql.= " AND c.entity IN (".getEntity('commande', 1).")";
 	$sql.= " AND c.fk_statut = 2 ";
 	if ($socid) $sql.= " AND c.fk_soc = ".$socid;
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
@@ -374,7 +374,7 @@ if (! empty($conf->commande->enabled))
 
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td colspan="3">'.$langs->trans("OnProcessOrders").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut=2">('.$num.')</a></td></tr>';
+		print '<td colspan="3">'.$langs->trans("OnProcessOrders").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut=2"><span class="badge">'.$num.'</span></a></td></tr>';
 
 		if ($num)
 		{

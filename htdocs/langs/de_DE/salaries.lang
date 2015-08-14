@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - users
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Buchhaltungscode für Bezahlung der Gehälter
-SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Accountancy code for financial charge
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Standard Buchhaltungs-Konto für die Zahlung der Löhne/Gehälter
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Standard Buchhaltungs-Konto für Finanzaufwendungen
 Salary=Lohn
 Salaries=Löhne
 Employee=Angestellter
@@ -8,6 +8,8 @@ NewSalaryPayment=Neue Lohnzahlung
 SalaryPayment=Lohnzahlung
 SalariesPayments=Lohnzahlungen
 ShowSalaryPayment=Zeige Lohnzahlung
-THM=Durchschnittlicher Stundenpreis
-TJM=Durchschnittlicher Tagespreis
-CurrentSalary=Current salary
+THM=Durchschnittlicher Stundensatz
+TJM=Durchschnittlicher Tagessatz
+CurrentSalary=aktueller  Lohn
+THMDescription=Dieser Wert kann verwendet werden, um die Kosten für die verbrauchte Zeit eines Anwender zu berechnen, wenn das Modul Projektverwaltung verwendet wird,
+TJMDescription=Dieser Wert ist aktuell nur zu Informationszwecken und wird nicht für eine Berechnung verwendet

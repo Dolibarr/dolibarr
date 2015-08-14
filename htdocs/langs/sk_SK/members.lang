@@ -199,7 +199,8 @@ Entreprises=Firmy
 DOLIBARRFOUNDATION_PAYMENT_FORM=Ak chcete, aby vaše predplatné platbu bankovým prevodom, viď strana <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribe</a> . <br> Ak chcete platiť pomocou kreditnej karty alebo PayPal, kliknite na tlačidlo v dolnej časti tejto stránky. <br>
 ByProperties=Charakteristikami
 MembersStatisticsByProperties=Členovia štatistiky podľa charakteristík
-MembersByNature=Členovia od prírody
+MembersByNature=This screen show you statistics on members by nature.
+MembersByRegion=This screen show you statistics on members by region.
 VATToUseForSubscriptions=Sadzba DPH sa má použiť pre predplatné
 NoVatOnSubscription=Nie TVA za upísané vlastné imanie
 MEMBER_PAYONLINE_SENDEMAIL=E-mail upozorniť pri Dolibarr obdržíte potvrdenie o overenú platby za predplatné

@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2013-2015 Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
+/* Copyright (C) 2001-2003  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2002-2003  Jean-Louis Bergamo      <jlb@j1b.org>
+ * Copyright (C) 2004-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2013-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,6 +73,10 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 	$sall="";
 }
 
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('memberlist'));
+$extrafields = new ExtraFields($db);
+
 
 /*
  * View
@@ -91,6 +95,12 @@ $sql = "SELECT d.rowid, d.login, d.lastname, d.firstname, d.societe as company, 
 $sql.= " d.datefin,";
 $sql.= " d.email, d.fk_adherent_type as type_id, d.morphy, d.statut,";
 $sql.= " t.libelle as type, t.cotisation";
+// Add fields for extrafields
+foreach ($extrafields->attribute_list as $key => $val) $sql.=",ef.".$key.' as options_'.$key;
+// Add fields from hooks
+$parameters=array();
+$reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
+$sql.=$hookmanager->resPrint;
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent as d";
 if (! empty($search_categ) || ! empty($catid)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_member as cm ON d.rowid = cm.fk_member"; // We need this table joined to the select in order to filter by categ
 $sql.= ", ".MAIN_DB_PREFIX."adherent_type as t";
@@ -99,53 +109,24 @@ if ($catid > 0)    $sql.= " AND cm.fk_categorie = ".$db->escape($catid);
 if ($catid == -2)  $sql.= " AND cm.fk_categorie IS NULL";
 if ($search_categ > 0)   $sql.= " AND cm.fk_categorie = ".$db->escape($search_categ);
 if ($search_categ == -2) $sql.= " AND cm.fk_categorie IS NULL";
-$sql.= " AND d.entity = ".$conf->entity;
-if ($sall)
-{
-        // For natural search
-        $scrit = explode(' ', $sall);
-        foreach ($scrit as $crit)
-        {
-            $sql.=" AND (";
-            if (is_numeric($sall)) $sql.= "d.rowid = ".$db->escape($sall)." OR ";
-            $sql.=" d.firstname LIKE '%".$db->escape($sall)."%' OR d.lastname LIKE '%".$db->escape($sall)."%' OR d.societe LIKE '%".$db->escape($sall)."%'";
-            $sql.=" OR d.email LIKE '%".$db->escape($sall)."%' OR d.login LIKE '%".$db->escape($sall)."%' OR d.address LIKE '%".$db->escape($sall)."%'";
-            $sql.=" OR d.town LIKE '%".$db->escape($sall)."%' OR d.note LIKE '%".$db->escape($sall)."%')";
-        }
-}
-if ($type > 0)
-{
-	$sql.=" AND t.rowid=".$db->escape($type);
-}
-if (isset($_GET["statut"]) || isset($_POST["statut"]))
-{
-	$sql.=" AND d.statut in (".$db->escape($statut).")";     // Peut valoir un nombre ou liste de nombre separes par virgules
-}
+$sql.= " AND d.entity IN (".getEntity('adherent', 1).")";
+if ($sall) $sql.=natural_search(array("d.rowid", "d.firstname", "d.lastname", "d.societe", "d.email", "d.login", "d.address", "d.town", "d.note_public", "d.note_private"), $sall);
+if ($type > 0) $sql.=" AND t.rowid=".$db->escape($type);
+if (isset($_GET["statut"]) || isset($_POST["statut"])) $sql.=" AND d.statut in (".$db->escape($statut).")";     // Peut valoir un nombre ou liste de nombre separes par virgules
 if ($search_ref)
 {
 	if (is_numeric($search_ref)) $sql.= " AND (d.rowid = ".$db->escape($search_ref).")";
 	else $sql.=" AND 1 = 2";    // Always wrong
 }
-if ($search_lastname)
-{
-	$sql.= " AND (d.firstname LIKE '%".$db->escape($search_lastname)."%' OR d.lastname LIKE '%".$db->escape($search_lastname)."%' OR d.societe LIKE '%".$db->escape($search_lastname)."%')";
-}
-if ($search_login)
-{
-	$sql.= " AND d.login LIKE '%".$db->escape($search_login)."%'";
-}
-if ($search_email)
-{
-	$sql.= " AND (d.email LIKE '%".$db->escape($search_email)."%')";
-}
-if ($filter == 'uptodate')
-{
-	$sql.=" AND datefin >= '".$db->idate($now)."'";
-}
-if ($filter == 'outofdate')
-{
-	$sql.=" AND (datefin IS NULL OR datefin < '".$db->idate($now)."')";
-}
+if ($search_lastname) $sql.= natural_search(array("d.firstname", "d.lastname", "d.societe"), $search_lastname);
+if ($search_login) $sql.= natural_search("d.login", $search_login);
+if ($search_email) $sql.= natural_search("d.email", $search_email);
+if ($filter == 'uptodate') $sql.=" AND datefin >= '".$db->idate($now)."'";
+if ($filter == 'outofdate') $sql.=" AND (datefin IS NULL OR datefin < '".$db->idate($now)."')";
+// Add where from hooks
+$parameters=array();
+$reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
+$sql.=$hookmanager->resPrint;
 
 // Count total nb of records with no order and no limits
 $nbtotalofrecords = 0;
@@ -199,28 +180,33 @@ if ($resql)
 
 	if ($sall)
 	{
-		print $langs->trans("Filter")." (".$langs->trans("Ref").", ".$langs->trans("Lastname").", ".$langs->trans("Firstname").", ".$langs->trans("EMail").", ".$langs->trans("Address")." ".$langs->trans("or")." ".$langs->trans("Town")."): ".$sall;
+		print $langs->trans("Filter")." (".$langs->trans("Ref").", ".$langs->trans("Lastname").", ".$langs->trans("Firstname").", ".$langs->trans("EMail").", ".$langs->trans("Address")." ".$langs->trans("or")." ".$langs->trans("Town")."): ";
+		print '<strong>'.$sall.'</strong>';
 	}
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].($param?'?'.$param:'').'">';
-	print "<table class=\"noborder\" width=\"100%\">";
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 	// Filter on categories
 	$moreforfilter='';
 	if (! empty($conf->categorie->enabled))
 	{
+		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 		$moreforfilter.=$langs->trans('Categories'). ': ';
-		$moreforfilter.=$formother->select_categories(3,$search_categ,'search_categ',1);
+		$moreforfilter.=$formother->select_categories(Categorie::TYPE_MEMBER,$search_categ,'search_categ',1);
 		$moreforfilter.=' &nbsp; &nbsp; &nbsp; ';
 	}
-	if ($moreforfilter)
+	if (! empty($moreforfilter))
 	{
-		print '<tr class="liste_titre">';
-		print '<td class="liste_titre" colspan="9">';
+		print '<div class="liste_titre">';
 		print $moreforfilter;
-		print '</td></tr>';
+    	$parameters=array();
+    	$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+	    print $hookmanager->resPrint;
+	    print '</div>';
 	}
 
+	print "<table class=\"noborder\" width=\"100%\">";
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"d.rowid",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Name")." / ".$langs->trans("Company"),$_SERVER["PHP_SELF"],"d.lastname",$param,"","",$sortfield,$sortorder);
@@ -228,12 +214,17 @@ if ($resql)
 	print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"t.libelle",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Person"),$_SERVER["PHP_SELF"],"d.morphy",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("EMail"),$_SERVER["PHP_SELF"],"d.email",$param,"","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"d.statut,d.datefin",$param,"","",$sortfield,$sortorder);
+
+	$parameters=array();
+    $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
+
+    print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"d.statut,d.datefin",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("EndSubscription"),$_SERVER["PHP_SELF"],"d.datefin",$param,"",'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Action"),$_SERVER["PHP_SELF"],"",$param,"",'width="60" align="center"',$sortfield,$sortorder);
 	print "</tr>\n";
 
-	// Lignes des champs de filtre
+	// Line for filters fields
 	print '<tr class="liste_titre">';
 
 	print '<td class="liste_titre" align="left">';
@@ -255,7 +246,12 @@ if ($resql)
 	print '<td class="liste_titre" align="left">';
 	print '<input class="flat" type="text" name="search_email" value="'.$search_email.'" size="12"></td>';
 
-	print '<td class="liste_titre">&nbsp;</td>';
+	$parameters=array();
+    $reshook=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
+
+    // Status
+    print '<td class="liste_titre">&nbsp;</td>';
 
 	print '<td align="right" colspan="2" class="liste_titre">';
 	print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
@@ -264,7 +260,6 @@ if ($resql)
 	print '</td>';
 
 	print "</tr>\n";
-	print '</form>';
 
 	$var=True;
 	while ($i < $num && $i < $conf->liste_limit)
@@ -316,7 +311,11 @@ if ($resql)
 		// EMail
 		print "<td>".dol_print_email($objp->email,0,0,1)."</td>\n";
 
-		// Statut
+		$parameters=array('obj' => $obj);
+        $reshook=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook
+        print $hookmanager->resPrint;
+
+        // Statut
 		print '<td class="nowrap">';
 		print $memberstatic->LibStatut($objp->statut,$objp->cotisation,$datefin,2);
 		print "</td>";
@@ -365,7 +364,14 @@ if ($resql)
 		$i++;
 	}
 
+	$db->free($resql);
+
+	$parameters=array('sql' => $sql);
+	$reshook=$hookmanager->executeHooks('printFieldListFooter',$parameters);    // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
+
 	print "</table>\n";
+	print '</form>';
 
 	if ($num > $conf->liste_limit)
 	{

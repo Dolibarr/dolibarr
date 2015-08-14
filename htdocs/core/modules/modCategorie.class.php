@@ -121,8 +121,8 @@ class modCategorie extends DolibarrModules
 		$this->export_entities_array[$r]=array('s.rowid'=>'company','s.nom'=>'company','s.prefix_comm'=>"company",'s.client'=>"company",'s.datec'=>"company",'s.tms'=>"company",'s.code_client'=>"company",'s.address'=>"company",'s.zip'=>"company",'s.town'=>"company",'c.label'=>"company",'c.code'=>"company",'s.phone'=>"company",'s.fax'=>"company",'s.url'=>"company",'s.email'=>"company",'s.siret'=>"company",'s.siren'=>"company",'s.ape'=>"company",'s.idprof4'=>"company",'s.tva_intra'=>"company",'s.capital'=>"company",'s.note_public'=>"company");	// We define here only fields that use another picto
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'categorie as u, '.MAIN_DB_PREFIX.'categorie_fournisseur as cf, '.MAIN_DB_PREFIX.'societe as s LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as t ON s.fk_typent = t.id LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON s.fk_pays = c.rowid LEFT JOIN '.MAIN_DB_PREFIX.'c_effectif as ce ON s.fk_effectif = ce.id LEFT JOIN '.MAIN_DB_PREFIX.'c_forme_juridique as cfj ON s.fk_forme_juridique = cfj.code';
-		$this->export_sql_end[$r] .=' WHERE u.rowid = cf.fk_categorie AND cf.fk_societe = s.rowid';
-		$this->export_sql_end[$r] .=' AND u.entity = '.$conf->entity;
+		$this->export_sql_end[$r] .=' WHERE u.rowid = cf.fk_categorie AND cf.fk_soc = s.rowid';
+		$this->export_sql_end[$r] .=' AND u.entity IN ('.getEntity('category',1).')';
 		$this->export_sql_end[$r] .=' AND u.type = 1';	// Supplier categories
 
 		$r++;
@@ -136,8 +136,8 @@ class modCategorie extends DolibarrModules
 		$this->export_entities_array[$r]=array('s.rowid'=>'company','s.nom'=>'company','s.prefix_comm'=>"company",'s.client'=>"company",'s.datec'=>"company",'s.tms'=>"company",'s.code_client'=>"company",'s.address'=>"company",'s.zip'=>"company",'s.town'=>"company",'c.label'=>"company",'c.code'=>"company",'s.phone'=>"company",'s.fax'=>"company",'s.url'=>"company",'s.email'=>"company",'s.siret'=>"company",'s.siren'=>"company",'s.ape'=>"company",'s.idprof4'=>"company",'s.tva_intra'=>"company",'s.capital'=>"company",'s.note_public'=>"company",'s.fk_prospectlevel'=>'company','s.fk_stcomm'=>'company');	// We define here only fields that use another picto
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'categorie as u, '.MAIN_DB_PREFIX.'categorie_societe as cf, '.MAIN_DB_PREFIX.'societe as s LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as t ON s.fk_typent = t.id LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON s.fk_pays = c.rowid LEFT JOIN '.MAIN_DB_PREFIX.'c_effectif as ce ON s.fk_effectif = ce.id LEFT JOIN '.MAIN_DB_PREFIX.'c_forme_juridique as cfj ON s.fk_forme_juridique = cfj.code';
-		$this->export_sql_end[$r] .=' WHERE u.rowid = cf.fk_categorie AND cf.fk_societe = s.rowid';
-		$this->export_sql_end[$r] .=' AND u.entity = '.$conf->entity;
+		$this->export_sql_end[$r] .=' WHERE u.rowid = cf.fk_categorie AND cf.fk_soc = s.rowid';
+		$this->export_sql_end[$r] .=' AND u.entity IN ('.getEntity('category',1).')';
 		$this->export_sql_end[$r] .=' AND u.type = 2';	// Customer/Prospect categories
 
 		$r++;
@@ -152,7 +152,7 @@ class modCategorie extends DolibarrModules
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'categorie as u, '.MAIN_DB_PREFIX.'categorie_product as cp, '.MAIN_DB_PREFIX.'product as p';
 		$this->export_sql_end[$r] .=' WHERE u.rowid = cp.fk_categorie AND cp.fk_product = p.rowid';
-		$this->export_sql_end[$r] .=' AND u.entity = '.$conf->entity;
+		$this->export_sql_end[$r] .=' AND u.entity IN ('.getEntity('category',1).')';
 		$this->export_sql_end[$r] .=' AND u.type = 0';	// Supplier categories
 
 		$r++;
@@ -167,8 +167,8 @@ class modCategorie extends DolibarrModules
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'categorie as u, '.MAIN_DB_PREFIX.'categorie_member as cp, '.MAIN_DB_PREFIX.'adherent as p';
 		$this->export_sql_end[$r] .=' WHERE u.rowid = cp.fk_categorie AND cp.fk_member = p.rowid';
-		$this->export_sql_end[$r] .=' AND u.entity = '.$conf->entity;
-		$this->export_sql_end[$r] .=' AND u.type = 3';	// Supplier categories
+		$this->export_sql_end[$r] .=' AND u.entity IN ('.getEntity('category',1).')';
+		$this->export_sql_end[$r] .=' AND u.type = 3';	// Member categories
 
 		$r++;
 		$this->export_code[$r]='category_'.$r;
@@ -197,13 +197,33 @@ class modCategorie extends DolibarrModules
 			'p.fax' => 'Fax',
 			'p.email' => 'Email',
 			'p.note_private' => 'NotePrivate',
-			'p.note_public' => 'NotePublic'
+			'p.note_public' => 'NotePublic',
+			's.nom'=>"Name",
+			's.client'=>"Customer",
+			's.fournisseur'=>"Supplier",
+			's.status'=>"Status",
+			's.address'=>"Address",
+			's.zip'=>"Zip",
+			's.town'=>"Town",
+			's.phone'=>"Phone",
+			's.fax'=>"Fax",
+			's.url'=>"Url",
+			's.email'=>"Email"
 		);
 		$this->export_TypeFields_array[$r] = array (
 			'u.label' => "Text",
 			'u.description' => "Text",
 			'p.lastname' => 'Text',
-			'p.firstname' => 'Text'
+			'p.firstname' => 'Text',
+			's.nom'=>"Text",
+			's.status'=>"Text",
+			's.address'=>"Text",
+			's.zip'=>"Text",
+			's.town'=>"Text",
+			's.phone'=>"Text",
+			's.fax'=>"Text",
+			's.url'=>"Text",
+			's.email'=>"Text"
 		);
 		$this->export_entities_array[$r] = array (
 			'u.rowid' => "category",
@@ -226,12 +246,24 @@ class modCategorie extends DolibarrModules
 			'p.fax' => 'contact',
 			'p.email' => 'contact',
 			'p.note_private' => 'contact',
-			'p.note_public' => 'contact'
+			'p.note_public' => 'contact',
+			's.nom'=>"company",
+			's.client'=>"company",
+			's.fournisseur'=>"company",
+			's.status'=>"company",
+			's.address'=>"company",
+			's.zip'=>"company",
+			's.town'=>"company",
+			's.phone'=>"company",
+			's.fax'=>"company",
+			's.url'=>"company",
+			's.email'=>"company"
 		); // We define here only fields that use another picto
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM ' . MAIN_DB_PREFIX . 'categorie as u, '.MAIN_DB_PREFIX . 'categorie_contact as cp, '.MAIN_DB_PREFIX . 'socpeople as p';
 		$this->export_sql_end[$r] .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'c_country as country ON p.fk_pays = country.rowid';
-		$this->export_sql_end[$r] .= ' WHERE u.rowid = cp.fk_categorie AND cp.fk_socpeople = p.rowid AND u.entity = ' . $conf->entity;
+		$this->export_sql_end[$r] .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'societe as s ON s.rowid = p.fk_soc';
+		$this->export_sql_end[$r] .= ' WHERE u.rowid = cp.fk_categorie AND cp.fk_socpeople = p.rowid AND u.entity IN ('.getEntity('category',1).')';
 		$this->export_sql_end[$r] .= ' AND u.type = 4'; // contact categories
 
 		// Imports
@@ -283,14 +315,14 @@ class modCategorie extends DolibarrModules
 			$this->import_icon[$r]=$this->picto;
 			$this->import_entities_array[$r]=array();		// We define here only fields that use another icon that the one defined into import_icon
 			$this->import_tables_array[$r]=array('cs'=>MAIN_DB_PREFIX.'categorie_societe');
-			$this->import_fields_array[$r]=array('cs.fk_categorie'=>"Category*",'cs.fk_societe'=>"ThirdParty*"
+			$this->import_fields_array[$r]=array('cs.fk_categorie'=>"Category*",'cs.fk_soc'=>"ThirdParty*"
 			);
 
 			$this->import_convertvalue_array[$r]=array(
 					'cs.fk_categorie'=>array('rule'=>'fetchidfromref','classfile'=>'/categories/class/categorie.class.php','class'=>'Categorie','method'=>'fetch','element'=>'category'),
-					'cs.fk_societe'=>array('rule'=>'fetchidfromref','classfile'=>'/societe/class/societe.class.php','class'=>'Societe','method'=>'fetch','element'=>'ThirdParty')
+					'cs.fk_soc'=>array('rule'=>'fetchidfromref','classfile'=>'/societe/class/societe.class.php','class'=>'Societe','method'=>'fetch','element'=>'ThirdParty')
 			);
-			$this->import_examplevalues_array[$r]=array('cs.fk_categorie'=>"Imported category",'cs.fk_societe'=>"MyBigCompany");
+			$this->import_examplevalues_array[$r]=array('cs.fk_categorie'=>"Imported category",'cs.fk_soc'=>"MyBigCompany");
 		}
 
 		if (! empty($conf->fournisseur->enabled))
@@ -302,14 +334,14 @@ class modCategorie extends DolibarrModules
 			$this->import_icon[$r]=$this->picto;
 			$this->import_entities_array[$r]=array();		// We define here only fields that use another icon that the one defined into import_icon
 			$this->import_tables_array[$r]=array('cs'=>MAIN_DB_PREFIX.'categorie_fournisseur');
-			$this->import_fields_array[$r]=array('cs.fk_categorie'=>"Category*",'cs.fk_societe'=>"Supplier*"
+			$this->import_fields_array[$r]=array('cs.fk_categorie'=>"Category*",'cs.fk_soc'=>"Supplier*"
 			);
 
 			$this->import_convertvalue_array[$r]=array(
 					'cs.fk_categorie'=>array('rule'=>'fetchidfromref','classfile'=>'/categories/class/categorie.class.php','class'=>'Categorie','method'=>'fetch','element'=>'category'),
-					'cs.fk_societe'=>array('rule'=>'fetchidfromref','classfile'=>'/societe/class/societe.class.php','class'=>'Societe','method'=>'fetch','element'=>'ThirdParty')
+					'cs.fk_soc'=>array('rule'=>'fetchidfromref','classfile'=>'/societe/class/societe.class.php','class'=>'Societe','method'=>'fetch','element'=>'ThirdParty')
 			);
-			$this->import_examplevalues_array[$r]=array('cs.fk_categorie'=>"Imported category",'cs.fk_societe'=>"MyBigCompany");
+			$this->import_examplevalues_array[$r]=array('cs.fk_categorie'=>"Imported category",'cs.fk_soc'=>"MyBigCompany");
 		}
 	}
 
@@ -331,20 +363,4 @@ class modCategorie extends DolibarrModules
 
 		return $this->_init($sql,$options);
 	}
-
-    /**
-	 *		Function called when module is disabled.
-	 *      Remove from database constants, boxes and permissions from Dolibarr database.
-	 *		Data directories are not deleted
-	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *      @return     int             	1 if OK, 0 if KO
-     */
-    function remove($options='')
-    {
-		$sql = array();
-
-		return $this->_remove($sql,$options);
-    }
-
 }

@@ -1,0 +1,7 @@
+Module62000Name=Incoterm
+Module62000Desc=Add features to manage Incoterm
+IncotermLabel=Incoterms
+IncotermSetupTitle1=Tulajdonság
+IncotermSetupTitle2=Státusz
+IncotermSetup=Setup of module Incoterm
+IncotermFunctionDesc=Activate Incoterm feature (Thirdparty, Proposal, Customer Order, Customer Invoice, Shipment, Supplier order)

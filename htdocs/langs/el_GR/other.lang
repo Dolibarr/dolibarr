@@ -12,6 +12,7 @@ Notify_FICHINTER_VALIDATE=Intervention validated
 Notify_FICHINTER_SENTBYMAIL=Παρέμβαση αποστέλλεται μέσω ταχυδρομείου
 Notify_BILL_VALIDATE=Το τιμολόγιο πελάτη επικυρώθηκε
 Notify_BILL_UNVALIDATE=Τιμολόγιο του Πελάτη μη επικυρωμένο
+Notify_ORDER_SUPPLIER_VALIDATE=Παραγγελία του προμηθευτή καταγράφηκε
 Notify_ORDER_SUPPLIER_APPROVE=Η παραγγελία προμηθευτή εγγρίθηκε
 Notify_ORDER_SUPPLIER_REFUSE=Η παραγγελία προμηθευτή απορρίφθηκε
 Notify_ORDER_VALIDATE=Η παραγγελία πελάτη επικυρώθηκε
@@ -203,6 +204,7 @@ ClickHereToGoTo=Κάντε κλικ εδώ για να μεταβείτε στο
 YouMustClickToChange=Θα πρέπει πρώτα να κάνετε κλικ στον παρακάτω σύνδεσμο για να επικυρώσει την αλλαγή του κωδικού πρόσβασης
 ForgetIfNothing=Αν δεν ζητήσατε αυτή την αλλαγή, απλά ξεχάστε αυτό το email. Τα διαπιστευτήριά σας παραμένουν ασφαλή.
 IfAmountHigherThan=Εάν το ποσό υπερβαίνει <strong>%s</strong>
+SourcesRepository=Αποθετήριο για τις πηγές
 
 ##### Calendar common #####
 AddCalendarEntry=Προσθήκη εγγραφής στο ημερολόγιο %s

@@ -37,6 +37,7 @@ $langs->load('propal');
 $langs->load('compta');
 $langs->load('other');
 $langs->load("bills");
+$langs->load('companies');
 
 
 $id=(GETPOST('id','int')?GETPOST('id','int'):GETPOST('facid','int'));  // For backward compatibility

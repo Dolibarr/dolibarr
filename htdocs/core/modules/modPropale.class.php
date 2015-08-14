@@ -130,7 +130,8 @@ class modPropale extends DolibarrModules
 		$this->rights[$r][1] = 'Valider les propositions commerciales'; // libelle de la permission
 		$this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
-		$this->rights[$r][4] = 'valider';
+		$this->rights[$r][4] = 'propal_advance';
+		$this->rights[$r][5] = 'validate';
 
 		$r++;
 		$this->rights[$r][0] = 25; // id de la permission
@@ -185,7 +186,7 @@ class modPropale extends DolibarrModules
 		$this->export_sql_end[$r] .=', '.MAIN_DB_PREFIX.'propaldet as cd';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product as p on (cd.fk_product = p.rowid)';
 		$this->export_sql_end[$r] .=' WHERE c.fk_soc = s.rowid AND c.rowid = cd.fk_propal';
-		$this->export_sql_end[$r] .=' AND c.entity = '.$conf->entity;
+		$this->export_sql_end[$r] .=' AND c.entity IN ('.getEntity('propal',1).')';
 	}
 
 
@@ -230,20 +231,4 @@ class modPropale extends DolibarrModules
 		return $this->_init($sql,$options);
 
 	}
-
-    /**
-	 *		Function called when module is disabled.
-	 *      Remove from database constants, boxes and permissions from Dolibarr database.
-	 *		Data directories are not deleted
-	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *      @return     int             	1 if OK, 0 if KO
-     */
-    function remove($options='')
-    {
-		$sql = array();
-
-		return $this->_remove($sql,$options);
-    }
-
 }

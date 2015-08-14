@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2006-2010	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -61,8 +61,27 @@ if ($action == 'addcontact' && $user->rights->projet->creer)
 
     if ($result > 0 && $id > 0)
     {
-    	$idfortaskuser=GETPOST("contactid")>0?GETPOST("contactid"):GETPOST("userid");
-  		$result = $object->add_contact($idfortaskuser, GETPOST("type"), GETPOST("source"));
+    	$idfortaskuser=(GETPOST("contactid")!=0)?GETPOST("contactid"):GETPOST("userid");	// GETPOST('contactid') may val -1 to mean empty or -2 to means "everybody"
+    	if ($idfortaskuser == -2)
+    	{
+    		$result=$projectstatic->fetch($object->fk_project);
+    		if ($result <= 0)
+    		{
+    			dol_print_error($db,$projectstatic->error,$projectstatic->errors);
+    		}
+    		else
+    		{
+    			$contactsofproject=$projectstatic->getListContactId('internal');
+    			foreach($contactsofproject as $key => $val)
+    			{
+    				$result = $object->add_contact($val, GETPOST("type"), GETPOST("source"));
+    			}
+    		}
+    	}
+    	else
+    	{
+  			$result = $object->add_contact($idfortaskuser, GETPOST("type"), GETPOST("source"));
+    	}
     }
 
 	if ($result >= 0)
@@ -279,12 +298,13 @@ if ($id > 0 || ! empty($ref))
 		    if ($res) break;
 		}
 */
-		print '<table class="noborder" width="100%">';
 
 		/*
-		 * Ajouter une ligne de contact
+		 * Add a new contact line
 		 * Non affiche en mode modification de ligne
 		 */
+		print '<table class="noborder" width="100%">';
+
 		if ($action != 'editline' && $user->rights->projet->creer)
 		{
 			print '<tr class="liste_titre">';
@@ -317,8 +337,9 @@ if ($id > 0 || ! empty($ref))
 
 			print '<td colspan="1">';
 			// On recupere les id des users deja selectionnes
-			$contactsofproject=$projectstatic->getListContactId('internal');
-			$form->select_users($user->id,'contactid',0,'',0,'',$contactsofproject);
+			if ($object->project->public) $contactsofproject='';	// Everybody
+			else $contactsofproject=$projectstatic->getListContactId('internal');
+			print $form->select_dolusers((GETPOST('contactid')?GETPOST('contactid'):$user->id), 'contactid', 0, '', 0, '', $contactsofproject, 0, 0, 0, '', 1, $langs->trans("ResourceNotAssignedToProject"));
 			print '</td>';
 			print '<td>';
 			$formcompany->selectTypeContact($object, '', 'type','internal','rowid');
@@ -346,12 +367,9 @@ if ($id > 0 || ! empty($ref))
 				print '</td>';
 
 				print '<td colspan="1">';
-				$events=array();
-				$events[]=array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php',1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
-
 				$thirdpartyofproject=$projectstatic->getListContactId('thirdparty');
 				$selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$projectstatic->societe->id;
-				$selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany', $thirdpartyofproject, 0, $events, '&withproject='.$withproject);
+				$selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany', $thirdpartyofproject, 0, '&withproject='.$withproject);
 				print '</td>';
 
 				print '<td colspan="1">';
@@ -362,7 +380,7 @@ if ($id > 0 || ! empty($ref))
 				$formcompany->selectTypeContact($object, '', 'type','external','rowid');
 				print '</td>';
 				print '<td align="right" colspan="3" ><input type="submit" class="button" id="add-customer-contact" value="'.$langs->trans("Add").'"';
-				if (! $nbofcontacts) print ' disabled="disabled"';
+				if (! $nbofcontacts) print ' disabled';
 				print '></td>';
 				print '</tr>';
 
@@ -448,7 +466,7 @@ if ($id > 0 || ! empty($ref))
 				print '</td>';
 
 				// Icon update et delete
-				print '<td align="center" nowrap>';
+				print '<td align="center" class="nowrap">';
 				if ($user->rights->projet->creer)
 				{
 					print '&nbsp;';

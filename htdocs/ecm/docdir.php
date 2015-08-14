@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2008-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2008-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2015	    Alexandre Spangaro  <aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +21,6 @@
  *	\file      	htdocs/ecm/docdir.php
  *	\ingroup   	ecm
  *	\brief     	Main page for ECM section area
- *	\author		Laurent Destailleur
  */
 
 require '../main.inc.php';
@@ -154,6 +154,8 @@ if ($action == 'create')
 
 	$title=$langs->trans("ECMNewSection");
 	print_fiche_titre($title);
+	
+	dol_fiche_head();
 
 	print '<table class="border" width="100%">';
 
@@ -174,12 +176,14 @@ if ($action == 'create')
 	print '</td></tr>'."\n";
 
 	print '</table><br>';
+	
+	dol_fiche_end();
 
-	print '<center>';
+	print '<div class="center">';
 	print '<input type="submit" class="button" name="create" value="'.$langs->trans("Create").'">';
-	print ' &nbsp; &nbsp; ';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</center>';
+	print '</div>';
 	print '</form>';
 }
 

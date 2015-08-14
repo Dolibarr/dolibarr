@@ -12,6 +12,7 @@ Notify_FICHINTER_VALIDATE=Intervencija patvirtinta
 Notify_FICHINTER_SENTBYMAIL=Intervencija nusiųsta paštu
 Notify_BILL_VALIDATE=Kliento sąskaita-faktūra patvirtinta
 Notify_BILL_UNVALIDATE=Kliento sąskaita-faktūra nepatvirtinta
+Notify_ORDER_SUPPLIER_VALIDATE=Supplier order recorded
 Notify_ORDER_SUPPLIER_APPROVE=Tiekėjo užsakymas patvirtintas
 Notify_ORDER_SUPPLIER_REFUSE=Tiekėjo užsakymas atmestas
 Notify_ORDER_VALIDATE=Kliento užsakymas patvirtintas
@@ -203,6 +204,7 @@ ClickHereToGoTo=Spauskite čia norėdami pereiti į %s
 YouMustClickToChange=Pirmiausia turite paspausti ant šios nuorodos ir patvirtinti šį slaptažodžio pakeitimą
 ForgetIfNothing=Jei neprašėte šio pakeitimo, tiesiog pamirškite šį pranešimą. Jūsų mandatai yra saugūs.
 IfAmountHigherThan=If amount higher than <strong>%s</strong>
+SourcesRepository=Repository for sources
 
 ##### Calendar common #####
 AddCalendarEntry=Pridėti įrašą kalendoriuje %s

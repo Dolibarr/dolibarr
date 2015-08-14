@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +43,7 @@ llxHeader('',$langs->trans("Setup"),$wikihelp);
 $form = new Form($db);
 
 
-print_fiche_titre($langs->trans("SetupArea"),'','setup');
+print_fiche_titre($langs->trans("SetupArea"),'','title_setup.png');
 
 
 if (! empty($conf->global->MAIN_MOTD_SETUPPAGE))
@@ -110,7 +111,7 @@ if (empty($reshook))
 	print "<br>";
 
 	// Show logo
-	print '<center><div class="logo_setup"></div></center>';
+	print '<div class="center"><div class="logo_setup"></div></div>';
 }
 
 

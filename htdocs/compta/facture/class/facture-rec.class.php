@@ -1,9 +1,11 @@
 <?php
 /* Copyright (C) 2003-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2011	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2012       Cedric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
+ * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -96,7 +98,7 @@ class FactureRec extends Facture
 		// Clean parameters
 		$this->titre=trim($this->titre);
 		$this->usenewprice=empty($this->usenewprice)?0:$this->usenewprice;
-		
+
 		$this->db->begin();
 
 		// Charge facture modele
@@ -161,7 +163,8 @@ class FactureRec extends Facture
                         $facsrc->lines[$i]->product_type,
                         $facsrc->lines[$i]->rang,
                         $facsrc->lines[$i]->special_code,
-                    	$facsrc->lines[$i]->label
+                    	$facsrc->lines[$i]->label,
+	                    $facsrc->lines[$i]->fk_unit
                     );
 
 					if ($result_insert < 0)
@@ -260,7 +263,7 @@ class FactureRec extends Facture
 				$this->rang					  = $obj->rang;
 				$this->special_code			  = $obj->special_code;
 
-				if ($this->statut == 0)	$this->brouillon = 1;
+				if ($this->statut == self::STATUS_DRAFT)	$this->brouillon = 1;
 
 				/*
 				 * Lines
@@ -299,6 +302,7 @@ class FactureRec extends Facture
 		$sql.= ' l.remise, l.remise_percent, l.subprice,';
 		$sql.= ' l.total_ht, l.total_tva, l.total_ttc,';
 		$sql.= ' l.rang, l.special_code,';
+		$sql.= ' l.fk_unit,';
 		$sql.= ' p.ref as product_ref, p.fk_product_type as fk_product_type, p.label as product_label, p.description as product_desc';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facturedet_rec as l';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
@@ -341,6 +345,7 @@ class FactureRec extends Facture
 				$line->code_ventilation = $objp->fk_code_ventilation;
 				$line->rang 			= $objp->rang;
 				$line->special_code 	= $objp->special_code;
+				$line->fk_unit          = $objp->fk_unit;
 
 				// Ne plus utiliser
 				$line->price            = $objp->price;
@@ -410,13 +415,14 @@ class FactureRec extends Facture
      *	@param      int			$rang               Position of line
      *	@param		int			$special_code		Special code
      *	@param		string		$label				Label of the line
+     *	@param		string		$fk_unit			Unit
      *	@return    	int             				<0 if KO, Id of line if OK
 	 */
-	function addline($desc, $pu_ht, $qty, $txtva, $fk_product=0, $remise_percent=0, $price_base_type='HT', $info_bits=0, $fk_remise_except='', $pu_ttc=0, $type=0, $rang=-1, $special_code=0, $label='')
+	function addline($desc, $pu_ht, $qty, $txtva, $fk_product=0, $remise_percent=0, $price_base_type='HT', $info_bits=0, $fk_remise_except='', $pu_ttc=0, $type=0, $rang=-1, $special_code=0, $label='', $fk_unit=null)
 	{
 		$facid=$this->id;
 
-		dol_syslog("FactureRec::addline facid=$facid,desc=$desc,pu_ht=$pu_ht,qty=$qty,txtva=$txtva,fk_product=$fk_product,remise_percent=$remise_percent,date_start=$date_start,date_end=$date_end,ventil=$ventil,info_bits=$info_bits,fk_remise_except=$fk_remise_except,price_base_type=$price_base_type,pu_ttc=$pu_ttc,type=$type", LOG_DEBUG);
+		dol_syslog("FactureRec::addline facid=$facid,desc=$desc,pu_ht=$pu_ht,qty=$qty,txtva=$txtva,fk_product=$fk_product,remise_percent=$remise_percent,date_start=$date_start,date_end=$date_end,ventil=$ventil,info_bits=$info_bits,fk_remise_except=$fk_remise_except,price_base_type=$price_base_type,pu_ttc=$pu_ttc,type=$type,fk_unit=$fk_unit", LOG_DEBUG);
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
 		// Check parameters
@@ -476,6 +482,7 @@ class FactureRec extends Facture
 			$sql.= ", total_ttc";
 			$sql.= ", rang";
 			$sql.= ", special_code";
+			$sql.= ", fk_unit";
 			$sql.= ") VALUES (";
 			$sql.= "'".$facid."'";
 			$sql.= ", ".(! empty($label)?"'".$this->db->escape($label)."'":"null");
@@ -492,7 +499,8 @@ class FactureRec extends Facture
 			$sql.= ", '".price2num($total_tva)."'";
 			$sql.= ", '".price2num($total_ttc)."'";
 			$sql.= ", ".$rang;
-			$sql.= ", ".$special_code.")";
+			$sql.= ", ".$special_code;
+			$sql.= ", ".($fk_unit?"'".$this->db->escape($fk_unit)."'":"null").")";
 
 			dol_syslog(get_class($this)."::addline", LOG_DEBUG);
 			if ($this->db->query($sql))
@@ -547,9 +555,9 @@ class FactureRec extends Facture
 	}
 
 	/**
-	 *	Renvoie nom clicable (avec eventuellement le picto)
+	 *	Return clicable name (with picto eventually)
 	 *
-	 *	@param		int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+	 *	@param		int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 *	@param		string	$option			Sur quoi pointe le lien ('', 'withdraw')
 	 *	@return		string					Chaine avec URL
 	 */
@@ -558,21 +566,21 @@ class FactureRec extends Facture
 		global $langs;
 
 		$result='';
+        $label=$langs->trans("ShowInvoice").': '.$this->ref;
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/compta/facture/fiche-rec.php?facid='.$this->id.'">';
-		$lienfin='</a>';
+        $link = '<a href="'.DOL_URL_ROOT.'/compta/facture/fiche-rec.php?facid='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$linkend='</a>';
 
 		$picto='bill';
 
-		$label=$langs->trans("ShowInvoice").': '.$this->ref;
 
-		if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
+        if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
 		if ($withpicto && $withpicto != 2) $result.=' ';
-		if ($withpicto != 2) $result.=$lien.$this->ref.$lienfin;
+		if ($withpicto != 2) $result.=$link.$this->ref.$linkend;
 		return $result;
 	}
 
-	
+
 	/**
 	 *  Initialise an instance with random values.
 	 *  Used to build previews or test instances.
@@ -593,5 +601,21 @@ class FactureRec extends Facture
 
 		$this->usenewprice = 1;
 	}
-		
+
+	/**
+	 * Function used to replace a thirdparty id with another one.
+	 *
+	 * @param DoliDB $db Database handler
+	 * @param int $origin_id Old thirdparty id
+	 * @param int $dest_id New thirdparty id
+	 * @return bool
+	 */
+	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	{
+		$tables = array(
+			'facture_rec'
+		);
+
+		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+	}
 }

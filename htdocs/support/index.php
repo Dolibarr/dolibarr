@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008-2013	Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2015	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2008-2012	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
  *
@@ -194,7 +194,8 @@ print '</td></tr></table>';
 
 print '</td>';
 print '</tr><tr>';
-$urlwiki='http://wiki.dolibarr.org/index.php/List of Dolibarr partners and providers';
+//$urlwiki='http://wiki.dolibarr.org/index.php/List of Dolibarr partners and providers';
+$urlwiki='http://partners.dolibarr.org';
 print '<td align="center" valign="top">';
 print '<table class="nocellnopadd">';
 print '<tr><td align="center">';
@@ -228,7 +229,8 @@ print '</td></tr></table>';
 
 print '</td>';
 print '</tr><tr>';
-$urlwiki='http://wiki.dolibarr.org/index.php/List of Dolibarr partners and providers';
+//$urlwiki='http://wiki.dolibarr.org/index.php/List of Dolibarr partners and providers';
+$urlwiki='http://partners.dolibarr.org';
 print '<td align="center" valign="top">';
 print '<table class="nocellnopadd">';
 print '<tr><td align="center">';

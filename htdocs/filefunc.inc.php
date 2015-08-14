@@ -8,6 +8,7 @@
  * Copyright (C) 2005 	   Simon Tosser         <simon@kornog-computing.com>
  * Copyright (C) 2006 	   Andre Cianfarani     <andre.cianfarani@acdeveloppement.net>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2015      Bahfir Abbes         <bafbes@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,28 +30,24 @@
  *  \brief      File that include conf.php file and commons lib like functions.lib.php
  */
 
-if (! defined('DOL_VERSION')) define('DOL_VERSION','3.7.2');
+if (! defined('DOL_VERSION')) define('DOL_VERSION','3.8.0-beta');
+
 if (! defined('EURO')) define('EURO',chr(128));
 
 // Define syslog constants
 if (! defined('LOG_DEBUG'))
 {
-    if (function_exists("define_syslog_variables"))
-    {
-    	define_syslog_variables(); // Deprecated since php 5.3.0, syslog variables no longer need to be initialized
-    }
-    else
-    {
-    	// Pour PHP sans syslog (comme sous Windows)
-    	define('LOG_EMERG',0);
-    	define('LOG_ALERT',1);
-    	define('LOG_CRIT',2);
-    	define('LOG_ERR',3);
-    	define('LOG_WARNING',4);
-    	define('LOG_NOTICE',5);
-    	define('LOG_INFO',6);
-    	define('LOG_DEBUG',7);
-    }
+	if (! function_exists("syslog")) {
+		// For PHP versions without syslog (like running on Windows OS)
+		define('LOG_EMERG',0);
+		define('LOG_ALERT',1);
+		define('LOG_CRIT',2);
+		define('LOG_ERR',3);
+		define('LOG_WARNING',4);
+		define('LOG_NOTICE',5);
+		define('LOG_INFO',6);
+		define('LOG_DEBUG',7);
+	}
 }
 
 // End of common declaration part
@@ -60,6 +57,7 @@ if (defined('DOL_INC_FOR_VERSION_ERROR')) return;
 // Define vars
 $conffiletoshowshort = "conf.php";
 // Define localization of conf file
+// --- Start of part replaced by Dolibarr packager makepack-dolibarr
 $conffile = "conf/conf.php";
 $conffiletoshow = "htdocs/conf/conf.php";
 // For debian/redhat like systems
@@ -68,10 +66,26 @@ $conffiletoshow = "htdocs/conf/conf.php";
 
 
 // Include configuration
+// --- End of part replaced by Dolibarr packager makepack-dolibarr
+// Replace conf filename with "conf" parameter on url by GET
+if (! empty($_GET['conf']))
+{
+	$confname=basename($_GET['conf']);
+    setcookie('dolconf', $confname, 0, '/');
+    $conffile = 'conf/'.$confname.'.php';
+} else {
+	$confname=basename(empty($_COOKIE['dolconf']) ? 'conf' : $_COOKIE['dolconf']);
+	$conffile = 'conf/'.$confname.'.php';
+}
+
+
+// Include configuration
 $result=@include_once $conffile;	// Keep @ because with some error reporting this break the redirect
 
 if (! $result && ! empty($_SERVER["GATEWAY_INTERFACE"]))    // If install not done and we are in a web session
 {
+	// Note: If calling page was not into htdocs (index.php, ...), then this redirect will fails.
+	// There is no real solution, because the only way to know the apache url relative path is to have into conf file.
 	header("Location: install/index.php");
 	exit;
 }
@@ -83,7 +97,6 @@ if (! empty($dolibarr_strict_mode))
 }
 else
 {
-	if (! defined('E_DEPRECATED')) define('E_DEPRECATED',0);	// For PHP < 5.3.0 compatibility
 	error_reporting(E_ALL & ~(E_STRICT|E_NOTICE|E_DEPRECATED));
 }
 
@@ -100,8 +113,8 @@ $dolibarr_main_document_root_alt=(empty($dolibarr_main_document_root_alt)?'':tri
 if (empty($dolibarr_main_db_port)) $dolibarr_main_db_port=0;		// Pour compatibilite avec anciennes configs, si non defini, on prend 'mysql'
 if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysql';	// Pour compatibilite avec anciennes configs, si non defini, on prend 'mysql'
 if (empty($dolibarr_main_db_prefix)) $dolibarr_main_db_prefix='llx_';
-if (empty($dolibarr_main_db_character_set)) $dolibarr_main_db_character_set=($dolibarr_main_db_type=='mysql'?'latin1':'');		// Old installation
-if (empty($dolibarr_main_db_collation)) $dolibarr_main_db_collation=($dolibarr_main_db_type=='mysql'?'latin1_swedish_ci':'');	// Old installation
+if (empty($dolibarr_main_db_character_set)) $dolibarr_main_db_character_set=($dolibarr_main_db_type=='mysql'?'utf8':'');		// Old installation
+if (empty($dolibarr_main_db_collation)) $dolibarr_main_db_collation=($dolibarr_main_db_type=='mysql'?'utf8_general_ci':'');	// Old installation
 if (empty($dolibarr_main_db_encryption)) $dolibarr_main_db_encryption=0;
 if (empty($dolibarr_main_db_cryptkey)) $dolibarr_main_db_cryptkey='';
 if (empty($dolibarr_main_limit_users)) $dolibarr_main_limit_users=0;
@@ -191,9 +204,10 @@ define('MAIN_DB_PREFIX',$dolibarr_main_db_prefix);
  */
 // Path to root libraries
 if (! defined('ADODB_PATH'))           { define('ADODB_PATH',           (!isset($dolibarr_lib_ADODB_PATH))?DOL_DOCUMENT_ROOT.'/includes/adodbtime/':(empty($dolibarr_lib_ADODB_PATH)?'':$dolibarr_lib_ADODB_PATH.'/')); }
-if (! defined('TCPDF_PATH'))           { define('TCPDF_PATH',           (empty($dolibarr_lib_TCPDF_PATH))?DOL_DOCUMENT_ROOT.'/includes/tcpdf/':$dolibarr_lib_TCPDF_PATH.'/'); }
 if (! defined('FPDF_PATH'))            { define('FPDF_PATH',            (empty($dolibarr_lib_FPDF_PATH))?DOL_DOCUMENT_ROOT.'/includes/fpdf/':$dolibarr_lib_FPDF_PATH.'/'); }	// Used only for package that can't include tcpdf
+if (! defined('TCPDF_PATH'))           { define('TCPDF_PATH',           (empty($dolibarr_lib_TCPDF_PATH))?DOL_DOCUMENT_ROOT.'/includes/tcpdf/':$dolibarr_lib_TCPDF_PATH.'/'); }
 if (! defined('FPDI_PATH'))            { define('FPDI_PATH',            (empty($dolibarr_lib_FPDI_PATH))?DOL_DOCUMENT_ROOT.'/includes/fpdfi/':$dolibarr_lib_FPDI_PATH.'/'); }
+if (! defined('TCPDI_PATH'))           { define('TCPDI_PATH',           (empty($dolibarr_lib_TCPDI_PATH))?DOL_DOCUMENT_ROOT.'/includes/tcpdi/':$dolibarr_lib_TCPDI_PATH.'/'); }
 if (! defined('NUSOAP_PATH'))          { define('NUSOAP_PATH',          (!isset($dolibarr_lib_NUSOAP_PATH))?DOL_DOCUMENT_ROOT.'/includes/nusoap/lib/':(empty($dolibarr_lib_NUSOAP_PATH)?'':$dolibarr_lib_NUSOAP_PATH.'/')); }
 if (! defined('PHPEXCEL_PATH'))        { define('PHPEXCEL_PATH',        (!isset($dolibarr_lib_PHPEXCEL_PATH))?DOL_DOCUMENT_ROOT.'/includes/phpexcel/':(empty($dolibarr_lib_PHPEXCEL_PATH)?'':$dolibarr_lib_PHPEXCEL_PATH.'/')); }
 if (! defined('GEOIP_PATH'))           { define('GEOIP_PATH',           (!isset($dolibarr_lib_GEOIP_PATH))?DOL_DOCUMENT_ROOT.'/includes/geoip/':(empty($dolibarr_lib_GEOIP_PATH)?'':$dolibarr_lib_GEOIP_PATH.'/')); }

@@ -132,3 +132,4 @@ SelectFilterFields=Kui soovid mõnede väärtuste põhjal filtreerida, siis sise
 FilterableFields=Filtreeritav ala
 FilteredFields=Filtreeritav väl
 FilteredFieldsValues=Filtri väärtus
+FormatControlRule=Format control rule

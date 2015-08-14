@@ -2,7 +2,7 @@
 /**
  * PHPExcel
  *
- * Copyright (c) 2006 - 2012 PHPExcel
+ * Copyright (c) 2006 - 2014 PHPExcel
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,9 +20,9 @@
  *
  * @category   PHPExcel
  * @package    PHPExcel_Reader
- * @copyright  Copyright (c) 2006 - 2012 PHPExcel (http://www.codeplex.com/PHPExcel)
+ * @copyright  Copyright (c) 2006 - 2014 PHPExcel (http://www.codeplex.com/PHPExcel)
  * @license    http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt	LGPL
- * @version    1.7.8, 2012-10-12
+ * @version    1.8.0, 2014-03-02
  */
 
 
@@ -40,37 +40,16 @@ if (!defined('PHPEXCEL_ROOT')) {
  *
  * @category   PHPExcel
  * @package    PHPExcel_Reader
- * @copyright  Copyright (c) 2006 - 2012 PHPExcel (http://www.codeplex.com/PHPExcel)
+ * @copyright  Copyright (c) 2006 - 2014 PHPExcel (http://www.codeplex.com/PHPExcel)
  */
-class PHPExcel_Reader_Excel2003XML implements PHPExcel_Reader_IReader
+class PHPExcel_Reader_Excel2003XML extends PHPExcel_Reader_Abstract implements PHPExcel_Reader_IReader
 {
-	/**
-	 * Read data only?
-	 *
-	 * @var boolean
-	 */
-	private $_readDataOnly = false;
-
-	/**
-	 * Restict which sheets should be loaded?
-	 *
-	 * @var array
-	 */
-	private $_loadSheetsOnly = null;
-
 	/**
 	 * Formats
 	 *
 	 * @var array
 	 */
 	private $_styles = array();
-
-	/**
-	 * PHPExcel_Reader_IReadFilter instance
-	 *
-	 * @var PHPExcel_Reader_IReadFilter
-	 */
-	private $_readFilter = null;
 
 	/**
 	 * Character set used in the file
@@ -89,92 +68,11 @@ class PHPExcel_Reader_Excel2003XML implements PHPExcel_Reader_IReader
 
 
 	/**
-	 * Read data only?
-	 *
-	 * @return boolean
-	 */
-	public function getReadDataOnly() {
-		return $this->_readDataOnly;
-	}
-
-
-	/**
-	 * Set read data only
-	 *
-	 * @param boolean $pValue
-	 * @return PHPExcel_Reader_Excel2003XML
-	 */
-	public function setReadDataOnly($pValue = false) {
-		$this->_readDataOnly = $pValue;
-		return $this;
-	}
-
-
-	/**
-	 * Get which sheets to load
-	 *
-	 * @return mixed
-	 */
-	public function getLoadSheetsOnly()
-	{
-		return $this->_loadSheetsOnly;
-	}
-
-
-	/**
-	 * Set which sheets to load
-	 *
-	 * @param mixed $value
-	 * @return PHPExcel_Reader_Excel2003XML
-	 */
-	public function setLoadSheetsOnly($value = null)
-	{
-		$this->_loadSheetsOnly = is_array($value) ?
-			$value : array($value);
-		return $this;
-	}
-
-
-	/**
-	 * Set all sheets to load
-	 *
-	 * @return PHPExcel_Reader_Excel2003XML
-	 */
-	public function setLoadAllSheets()
-	{
-		$this->_loadSheetsOnly = null;
-		return $this;
-	}
-
-
-	/**
-	 * Read filter
-	 *
-	 * @return PHPExcel_Reader_IReadFilter
-	 */
-	public function getReadFilter() {
-		return $this->_readFilter;
-	}
-
-
-	/**
-	 * Set read filter
-	 *
-	 * @param PHPExcel_Reader_IReadFilter $pValue
-	 * @return PHPExcel_Reader_Excel2003XML
-	 */
-	public function setReadFilter(PHPExcel_Reader_IReadFilter $pValue) {
-		$this->_readFilter = $pValue;
-		return $this;
-	}
-
-
-	/**
 	 * Can the current PHPExcel_Reader_IReader read the file?
 	 *
-	 * @param 	string 		$pFileName
+	 * @param 	string 		$pFilename
 	 * @return 	boolean
-	 * @throws Exception
+	 * @throws PHPExcel_Reader_Exception
 	 */
 	public function canRead($pFilename)
 	{
@@ -194,15 +92,13 @@ class PHPExcel_Reader_Excel2003XML implements PHPExcel_Reader_IReader
 				'<?mso-application progid="Excel.Sheet"?>'
 			);
 
-		// Check if file exists
-		if (!file_exists($pFilename)) {
-			throw new Exception("Could not open " . $pFilename . " for reading! File does not exist.");
-		}
-
+		// Open file
+		$this->_openFile($pFilename);
+		$fileHandle = $this->_fileHandle;
+		
 		// Read sample data (first 2 KB will do)
-		$fh = fopen($pFilename, 'r');
-		$data = fread($fh, 2048);
-		fclose($fh);
+		$data = fread($fileHandle, 2048);
+		fclose($fileHandle);
 
 		$valid = true;
 		foreach($signature as $match) {
@@ -227,21 +123,21 @@ class PHPExcel_Reader_Excel2003XML implements PHPExcel_Reader_IReader
 	 * Reads names of the worksheets from a file, without parsing the whole file to a PHPExcel object
 	 *
 	 * @param 	string 		$pFilename
-	 * @throws 	Exception
+	 * @throws 	PHPExcel_Reader_Exception
 	 */
 	public function listWorksheetNames($pFilename)
 	{
 		// Check if file exists
 		if (!file_exists($pFilename)) {
-			throw new Exception("Could not open " . $pFilename . " for reading! File does not exist.");
+			throw new PHPExcel_Reader_Exception("Could not open " . $pFilename . " for reading! File does not exist.");
 		}
 		if (!$this->canRead($pFilename)) {
-			throw new Exception($pFilename . " is an Invalid Spreadsheet file.");
+			throw new PHPExcel_Reader_Exception($pFilename . " is an Invalid Spreadsheet file.");
 		}
 
 		$worksheetNames = array();
 
-		$xml = simplexml_load_file($pFilename);
+		$xml = simplexml_load_file($pFilename, 'SimpleXMLElement', PHPExcel_Settings::getLibXmlLoaderOptions());
 		$namespaces = $xml->getNamespaces(true);
 
 		$xml_ss = $xml->children($namespaces['ss']);
@@ -258,18 +154,18 @@ class PHPExcel_Reader_Excel2003XML implements PHPExcel_Reader_IReader
 	 * Return worksheet info (Name, Last Column Letter, Last Column Index, Total Rows, Total Columns)
 	 *
 	 * @param   string     $pFilename
-	 * @throws   Exception
+	 * @throws   PHPExcel_Reader_Exception
 	 */
 	public function listWorksheetInfo($pFilename)
 	{
 		// Check if file exists
 		if (!file_exists($pFilename)) {
-			throw new Exception("Could not open " . $pFilename . " for reading! File does not exist.");
+			throw new PHPExcel_Reader_Exception("Could not open " . $pFilename . " for reading! File does not exist.");
 		}
 
 		$worksheetInfo = array();
 
-		$xml = simplexml_load_file($pFilename);
+		$xml = simplexml_load_file($pFilename, 'SimpleXMLElement', PHPExcel_Settings::getLibXmlLoaderOptions());
 		$namespaces = $xml->getNamespaces(true);
 
 		$worksheetID = 1;
@@ -330,7 +226,7 @@ class PHPExcel_Reader_Excel2003XML implements PHPExcel_Reader_IReader
 	 *
 	 * @param 	string 		$pFilename
 	 * @return 	PHPExcel
-	 * @throws 	Exception
+	 * @throws 	PHPExcel_Reader_Exception
 	 */
 	public function load($pFilename)
 	{
@@ -392,7 +288,7 @@ class PHPExcel_Reader_Excel2003XML implements PHPExcel_Reader_IReader
 	 * @param 	string 		$pFilename
 	 * @param	PHPExcel	$objPHPExcel
 	 * @return 	PHPExcel
-	 * @throws 	Exception
+	 * @throws 	PHPExcel_Reader_Exception
 	 */
 	public function loadIntoExisting($pFilename, PHPExcel $objPHPExcel)
 	{
@@ -427,14 +323,14 @@ class PHPExcel_Reader_Excel2003XML implements PHPExcel_Reader_IReader
 
 		// Check if file exists
 		if (!file_exists($pFilename)) {
-			throw new Exception("Could not open " . $pFilename . " for reading! File does not exist.");
+			throw new PHPExcel_Reader_Exception("Could not open " . $pFilename . " for reading! File does not exist.");
 		}
 
 		if (!$this->canRead($pFilename)) {
-			throw new Exception($pFilename . " is an Invalid Spreadsheet file.");
+			throw new PHPExcel_Reader_Exception($pFilename . " is an Invalid Spreadsheet file.");
 		}
 
-		$xml = simplexml_load_file($pFilename);
+		$xml = simplexml_load_file($pFilename, 'SimpleXMLElement', PHPExcel_Settings::getLibXmlLoaderOptions());
 		$namespaces = $xml->getNamespaces(true);
 
 		$docProps = $objPHPExcel->getProperties();

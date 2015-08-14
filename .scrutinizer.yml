@@ -5,12 +5,13 @@ imports:
 
 filter:
     excluded_paths:
-        - 'build/*'
-        - 'dev/*'
-        - 'doc/*'
-        - 'test/*'
-        - 'htdocs/includes/*'
-    paths: {  }
+        - build/*
+        - dev/*
+        - doc/*
+        - test/*
+    paths: 
+        - htdocs/*
+        - scripts/*
     
 tools:
     # php_analyzer. Doc on https://scrutinizer-ci.com/docs/tools/php/php-analyzer/
@@ -18,15 +19,18 @@ tools:
         enabled: true
         extensions:
             - php
-        dependency_paths: {  }
+        dependency_paths: 
+            - htdocs/includes/
         filter:
             excluded_paths:
-                - 'build/*'
-                - 'dev/*'
-                - 'doc/*'
-                - 'test/*'
-                - 'htdocs/includes/*'
-            paths: {  }
+                - build/*
+                - dev/*
+                - doc/*
+                - test/*
+                - htdocs/includes/*
+            paths:
+                - htdocs/
+                - scripts/
         config:
             parameter_reference_check:
                 enabled:              true

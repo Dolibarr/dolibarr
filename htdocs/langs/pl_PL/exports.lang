@@ -132,3 +132,4 @@ SelectFilterFields=Jeśli chcesz filtrować niektóre wartości, wartości po pr
 FilterableFields=Champs Filtrables
 FilteredFields=Pola filtrowane
 FilteredFieldsValues=Wart filtru
+FormatControlRule=Format control rule

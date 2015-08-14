@@ -77,15 +77,15 @@ CheckRead=Открыть получателя
 YourMailUnsubcribeOK=The email <b>%s</b>  is correctly unsubcribe from mailing list
 MailtoEMail=Ссылка на email
 ActivateCheckRead=Разрешить использовать ссылку "Отказаться от подписки"
-ActivateCheckReadKey=Key use to encrypt URL use for "Read Receipt" and "Unsubcribe" feature
+ActivateCheckReadKey=Key used to encrypt URL used for "Read Receipt" and "Unsubcribe" feature
 EMailSentToNRecipients=Email отправлено %s получателям.
-XTargetsAdded=<b>%s</b> recipients added into target list
+XTargetsAdded=<b>%s</b> добавлено в список получателей
 EachInvoiceWillBeAttachedToEmail=A document using default invoice document template will be created and attached to each email.
 MailTopicSendRemindUnpaidInvoices=Уведомление по счёту %s (%s)
 SendRemind=Отправить напоминание по Email
 RemindSent=%s напоминания(й) отправлено
 AllRecipientSelectedForRemind=All thirdparties selected and if an email is set (note that one mail per invoice will be sent)
-NoRemindSent=No EMail reminder sent
+NoRemindSent=Нет отправленного уведомления по электронной почте
 ResultOfMassSending=Result of mass EMail reminders sending
 
 # Libelle des modules de liste de destinataires mailing
@@ -127,14 +127,15 @@ YouCanUseCommaSeparatorForSeveralRecipients=Вы можете использов
 TagCheckMail=Отслеживать открытие писем
 TagUnsubscribe=Ссылка для отказа от подписки
 TagSignature=Подпись отправителя
-TagMailtoEmail=Recipient EMail
+TagMailtoEmail=EMail получателя
+NoEmailSentBadSenderOrRecipientEmail=No email sent. Bad sender or recipient email. Verify user profile.
 # Module Notifications
 Notifications=Уведомления
 NoNotificationsWillBeSent=Нет электронной почте уведомления, планируется к этому мероприятию и компании
 ANotificationsWillBeSent=1 уведомление будет отправлено по электронной почте
 SomeNotificationsWillBeSent=%s уведомления будут отправлены по электронной почте
-AddNewNotification=Activate a new email notification target
-ListOfActiveNotifications=List all active email notification targets
+AddNewNotification=Включить новое задание на уведомление по электронной почте
+ListOfActiveNotifications=Список всех заданий на уведомление по электронной почте
 ListOfNotificationsDone=Список всех уведомлений по электронной почте отправлено
 MailSendSetupIs=Configuration of email sending has been setup to '%s'. This mode can't be used to send mass emailing.
 MailSendSetupIs2=You must first go, with an admin account, into menu %sHome - Setup - EMails%s to change parameter <strong>'%s'</strong> to use mode '%s'. With this mode, you can enter setup of the SMTP server provided by your Internet Service Provider and use Mass emailing feature.

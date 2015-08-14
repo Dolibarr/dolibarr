@@ -22,9 +22,9 @@
 create table llx_c_action_trigger
 (
   rowid			integer AUTO_INCREMENT PRIMARY KEY,
+  elementtype	varchar(16) 			NOT NULL,
   code			varchar(32)				NOT NULL,
   label			varchar(128)			NOT NULL,
   description	varchar(255),
-  elementtype	varchar(16) 			NOT NULL,
   rang			integer		DEFAULT 0
 )ENGINE=innodb;

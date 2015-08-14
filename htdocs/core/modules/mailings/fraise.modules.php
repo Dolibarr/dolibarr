@@ -63,7 +63,7 @@ class mailing_fraise extends MailingTargets
 	 *	array of SQL request that returns two field:
 	 *	One called "label", One called "nb".
 	 *
-	 *	@return		array		Array with SQL requests
+	 *	@return		string[]		Array with SQL requests
 	 */
     function getSqlArrayForStats()
 	{
@@ -86,8 +86,8 @@ class mailing_fraise extends MailingTargets
 	 *	For example if this selector is used to extract 500 different
 	 *	emails from a text file, this function must return 500.
 	 *
-	 *  @param	string	$sql		Requete sql de comptage
-	 *	@return		int			Nb of recipients
+	 *  @param		string		$sql		Requete sql de comptage
+	 *	@return		int						Nb of recipients
 	 */
     function getNbOfRecipients($sql='')
     {
@@ -153,6 +153,11 @@ class mailing_fraise extends MailingTargets
      */
     function add_to_target($mailing_id,$filtersarray=array())
     {
+	    // Deprecation warning
+	    if ($filtersarray) {
+		    dol_syslog(__METHOD__ . ": filtersarray parameter is deprecated", LOG_WARNING);
+	    }
+
     	global $langs,$_POST;
 		$langs->load("members");
         $langs->load("companies");

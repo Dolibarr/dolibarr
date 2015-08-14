@@ -84,6 +84,11 @@ WithdrawalFile=arquivo retirado
 SetToStatusSent=Definir o estado como "arquivo enviado"
 ThisWillAlsoAddPaymentOnInvoice=Isso também irá criar pagamentos em facturas e classificá-los para pagar
 StatisticsByLineStatus=Statistics by status of lines
+RUM=RUM
+RUMWillBeGenerated=RUM number will be generated once bank account information are saved
+WithdrawMode=Withdraw mode (FRST or RECUR)
+WithdrawRequestAmount=Withdraw request amount:
+WithdrawRequestErrorNilAmount=Unable to create withdraw request for nil amount.
 
 ### Notifications
 InfoCreditSubject=Pagamento de %s ordem permanente pelo banco

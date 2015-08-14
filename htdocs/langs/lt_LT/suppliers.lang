@@ -42,5 +42,5 @@ SentToSuppliers=Nusiųsta tiekėjams
 ListOfSupplierOrders=Tiekėjo užsakymų sąrašas
 MenuOrdersSupplierToBill=Tiekėjo užsakymai sąskaitoms
 NbDaysToDelivery=Pristatymo vėlavimas dienomis
-DescNbDaysToDelivery=Didžiausias vėlavimas rodomas
-UseDoubleApproval=Naudoti dvigubą patvirtinimą (antras patvirtinimas gali būti atliktas bet kurio vartotojo su priskirtais tam leidimais)
+DescNbDaysToDelivery=The biggest deliver delay of the products from this order
+UseDoubleApproval=Use double approval when amount (without tax) is higher than (The second approval can be done by any user with the dedicated permission. Set to 0 for no double approval)

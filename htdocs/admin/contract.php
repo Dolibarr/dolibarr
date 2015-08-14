@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2011-2013      Juanjo Menent	    <jmenent@2byte.es>
- * Copyright (C) 2011-2013      Philippe Grand	    <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2014      Philippe Grand	    <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -214,7 +214,7 @@ llxHeader();
 $form=new Form($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("ContractsSetup"),$linkback,'setup');
+print_fiche_titre($langs->trans("ContractsSetup"),$linkback,'title_setup');
 
 print "<br>";
 
@@ -299,18 +299,16 @@ foreach ($dirmodels as $reldir)
 						$htmltooltip='';
 						$htmltooltip.=''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
 						$nextval=$module->getNextValue($mysoc,$contract);
-						if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
-						{
-							$htmltooltip.=''.$langs->trans("NextValue").': ';
-							if ($nextval)
-							{
-								$htmltooltip.=$nextval.'<br>';
-							}
-							else
-							{
-								$htmltooltip.=$langs->trans($module->error).'<br>';
-							}
-						}
+                        if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
+                            $htmltooltip.=''.$langs->trans("NextValue").': ';
+                            if ($nextval) {
+                                if (preg_match('/^Error/',$nextval) || $nextval=='NotConfigured')
+                                    $nextval = $langs->trans($nextval);
+                                $htmltooltip.=$nextval.'<br>';
+                            } else {
+                                $htmltooltip.=$langs->trans($module->error).'<br>';
+                            }
+                        }
 
 						print '<td align="center">';
 						print $form->textwithpicto('',$htmltooltip,1,0);
@@ -509,7 +507,6 @@ print '<tr '.$bc[$var].'><td colspan="2">';
 print $langs->trans("FreeLegalTextOnContracts").' ('.$langs->trans("AddCRIfTooLong").')<br>';
 print '<textarea name="CONTRACT_FREE_TEXT" class="flat" cols="120">'.$conf->global->CONTRACT_FREE_TEXT.'</textarea>';
 print '</td></tr>'."\n";
-print '</form>';
 
 //Use draft Watermark
 $var=!$var;

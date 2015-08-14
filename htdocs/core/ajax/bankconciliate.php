@@ -25,7 +25,7 @@ if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
 if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
 if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
 if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
-//if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');    // Required to knwo date format for dol_print_date
+//if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');    // Required to know date format for dol_print_date
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
@@ -50,7 +50,7 @@ top_httphead();
 if (($user->rights->banque->modifier || $user->rights->banque->consolidate) && $action == 'dvnext')
 {
 	// Increase date
-	$al =new AccountLine($db);
+	$al = new AccountLine($db);
     $al->datev_next($_GET["rowid"]);
     $al->fetch($_GET["rowid"]);
 

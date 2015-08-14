@@ -1,11 +1,6 @@
 # Dolibarr language file - Source file is en_US - commercial
 CommercialArea=Área Comercial
-DeleteAction=Eliminar um evento/tarefa
-NewAction=Novo evento/tarefa
-AddAction=Criar evento/tarefa
-AddAnAction=Criar um evento/tarefa
 AddActionRendezVous=Criar evento tipo Rendez-vous
-ConfirmDeleteAction=Você tem certeza que deseja excluir este evento/tarefa?
 CardAction=Ficha de evento
 PercentDone=Percentual completo
 ActionOnCompany=Tarefa relativa à empresa
@@ -48,7 +43,7 @@ LastProspectContactInProcess=Contato em Curso
 LastProspectContactDone=Clientes Potenciais Contactados
 DateActionPlanned=Data Planificação
 ActionAskedBy=Ação Questionada por
-ActionAffectedTo=Responsável pelo evento
+ActionAffectedTo=Evento atribuído a
 ActionDoneBy=Ação Realizada por
 ActionUserAsk=Registrada por
 ErrorStatusCantBeZeroIfStarted=Se o campo '<b>Ficha de Realização</b>' tiver dados a ação está em curso, por isso o campo 'Estado' não pode ser 0%%.

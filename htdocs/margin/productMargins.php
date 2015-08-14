@@ -263,7 +263,7 @@ if ($result)
 				$product_static->type=$objp->fk_product_type;
 				$product_static->id=$objp->rowid;
 				$product_static->ref=$objp->ref;
-				$product_static->libelle=$objp->label;
+				$product_static->label=$objp->label;
 				$text=$product_static->getNomUrl(1);
 				print $text.= ' - '.$objp->label;
 				print "</td>\n";

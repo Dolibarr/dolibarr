@@ -7,8 +7,9 @@ TripsAndExpenses=Rapoarte Cheltuieli
 TripsAndExpensesStatistics=Statistici Rapoarte Cheltuieli
 TripCard=Fisa Raport Cheltuieli
 AddTrip=Creare Raport Cheltuieli
-ListOfTrips=Listă  rapoarte de cheltuieli
+ListOfTrips=List of expense reports
 ListOfFees=Lista note cheltuieli
+ShowTrip=Show expense report
 NewTrip= Raport de cheltuieli nou
 CompanyVisited=Societatea / Instituţia vizitată
 Kilometers=Kilometri
@@ -27,7 +28,7 @@ AnyOtherInThisListCanValidate=Persoana de informare pentru validare.
 TripSociete=Informații   companie
 TripSalarie=Informații Utilizator 
 TripNDF=Informations expense report
-DeleteLine=Ștergeo linie a raportului de cheltuieli
+DeleteLine=Delete a line of the expense report
 ConfirmDeleteLine=Sunteţi sigur că doriţi să ştergeţi această linie?
 PDFStandardExpenseReports=Standard template to generate a PDF document for expense report
 ExpenseReportLine=Line raport de cheltuieli
@@ -40,11 +41,10 @@ TF_BUS=Autobuz
 TF_CAR=Mașină
 TF_PEAGE=Taxă
 TF_ESSENCE=Combustibil
-TF_HOTEL=Hostel
+TF_HOTEL=Hotel
 TF_TAXI=Taxi
 
 ErrorDoubleDeclaration=Ați declarat un alt raport de cheltuieli într-un interval de timp similar.
-ListTripsAndExpenses=Listă rapoarte de cheltuieli
 AucuneNDF=Nu există rapoarte de cheltuieli pentru acest criteriu
 AucuneLigne=Nu există încă nici un raport de cheltuieli declarate 
 AddLine=Adaugao linie
@@ -56,12 +56,12 @@ ModePaiement=Mod plata
 Note=Notă
 Project=Proiect
 
-VALIDATOR=Utilizatorul de informat pentru aprobare
+VALIDATOR=User responsible for approval
 VALIDOR=Aprobat de
 AUTHOR=Înregistrat de
-AUTHORPAIEMENT=Platit de
+AUTHORPAIEMENT=Paid by
 REFUSEUR=Respins de
-CANCEL_USER=Anulat de
+CANCEL_USER=Deleted by
 
 MOTIF_REFUS=Motiv
 MOTIF_CANCEL=Motiv
@@ -74,9 +74,10 @@ DATE_PAIEMENT=Data Plata
 
 TO_PAID=Plăteşte
 BROUILLONNER=Redeschide
-SendToValid=Trimis la aprobare
+SendToValid=Sent on approval
 ModifyInfoGen=Editare
 ValidateAndSubmit=Validareaza și trimite pentru aprobare
+ValidatedWaitingApproval=Validated (waiting for approval)
 
 NOT_VALIDATOR=Nu aveti permisiunea să aprobati acest raport de cheltuieli
 NOT_AUTHOR=Tu nu esti autorul acestui raport de cheltuieli. Operatiune anulata.
@@ -93,10 +94,11 @@ ConfirmPaidTrip=Sunteţi sigur că doriţi sa clasati acest raport de cheltuieli
 CancelTrip=Anulează un raport de cheltuieli
 ConfirmCancelTrip=Sunteți sigur că doriți să anulați acest raport cheltuieli?
 
-BrouillonnerTrip=Muta Inapoi raportul de cheltuieli la statutul de "Draft" 
+BrouillonnerTrip=Move back expense report to status "Draft"
 ConfirmBrouillonnerTrip=Are you sure you want to move this expense report to status "Draft" ?
 
 SaveTrip=Valideaza raport de cheltuieli
 ConfirmSaveTrip=Are you sure you want to validate this expense report ?
 
 NoTripsToExportCSV=No expense report to export for this period.
+ExpenseReportPayment=Expense report payment

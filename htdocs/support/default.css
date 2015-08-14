@@ -147,7 +147,7 @@ background: #DDDFDD;
 }
 
 table { font-size: 12px; }
-table.login {  border: 1px solid #C0C0C0; background: #F0F0F0; font-size: 12px; }
+table.login {  border: 1px solid #C0C0C0; background: #FFF; font-size: 12px; }
 
 .inline-block
 {

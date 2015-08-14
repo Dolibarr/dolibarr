@@ -232,9 +232,10 @@ class Productcustomerprice extends CommonObject
 	 * @param int $id object
 	 * @return int <0 if KO, >0 if OK
 	 */
-	function fetch($id) {
-
+	function fetch($id)
+	{
 		global $langs;
+
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
 
@@ -293,18 +294,22 @@ class Productcustomerprice extends CommonObject
 	}
 
 	/**
-	 * Load all objects in memory from database
+	 * Load all customer prices in memory from database
 	 *
-	 * @param string $sortorder order
-	 * @param string $sortfield field
-	 * @param int $limit page
-	 * @param int $offset offset
-	 * @param array $filter output
-	 * @return int <0 if KO, >0 if OK
+	 * @param 	string 	$sortorder 	order
+	 * @param 	string 	$sortfield 	field
+	 * @param 	int 	$limit 		page
+	 * @param 	int 	$offset 	offset
+	 * @param 	array 	$filter 	Filter for select
+	 * @return 	int 				<0 if KO, >0 if OK
 	 */
-	function fetch_all($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = array()) {
-
+	function fetch_all($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = array())
+	{
 		global $langs;
+
+		if (! empty($sortfield)) $sortfield = "t.rowid";
+		if (! empty($sortorder)) $sortorder = "DESC";
+
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
 
@@ -347,12 +352,8 @@ class Productcustomerprice extends CommonObject
 			}
 		}
 
-		if (! empty($sortfield)) {
-			$sql .= " ORDER BY " . $sortfield . ' ' . $sortorder;
-		}
-		if (! empty($limit)) {
-			$sql .= ' ' . $this->db->plimit($limit + 1, $offset);
-		}
+		$sql.= $this->db->order($sortfield, $sortorder);
+		if (! empty($limit)) $sql .= ' ' . $this->db->plimit($limit + 1, $offset);
 
 		dol_syslog(get_class($this) . "::fetch_all", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -400,16 +401,20 @@ class Productcustomerprice extends CommonObject
 	/**
 	 * Load all objects in memory from database
 	 *
-	 * @param string $sortorder order
-	 * @param string $sortfield field
-	 * @param int $limit page
-	 * @param int $offset offset
-	 * @param array $filter output
-	 * @return int <0 if KO, >0 if OK
+	 * @param 	string 	$sortorder 	order
+	 * @param 	string 	$sortfield 	field
+	 * @param 	int 	$limit 		page
+	 * @param 	int 	$offset 	offset
+	 * @param 	array 	$filter 	Filter for sql request
+	 * @return 	int 			<0 if KO, >0 if OK
 	 */
-	function fetch_all_log($sortorder, $sortfield, $limit, $offset, $filter = array()) {
-
+	function fetch_all_log($sortorder, $sortfield, $limit, $offset, $filter = array())
+	{
 		global $langs;
+
+		if (! empty($sortfield)) $sortfield = "t.rowid";
+		if (! empty($sortorder)) $sortorder = "DESC";
+
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
 
@@ -451,12 +456,8 @@ class Productcustomerprice extends CommonObject
 			}
 		}
 
-		if (! empty($sortfield)) {
-			$sql .= " ORDER BY " . $sortfield . ' ' . $sortorder;
-		}
-		if (! empty($limit)) {
-			$sql .= ' ' . $this->db->plimit($limit + 1, $offset);
-		}
+		$sql.= $this->db->order($sortfield, $sortorder);
+		if (! empty($limit)) $sql .= ' ' . $this->db->plimit($limit + 1, $offset);
 
 		dol_syslog(get_class($this) . "::fetch_all_log", LOG_DEBUG);
 		$resql = $this->db->query($sql);

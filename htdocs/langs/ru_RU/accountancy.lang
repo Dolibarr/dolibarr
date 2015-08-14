@@ -1,5 +1,12 @@
 # Dolibarr language file - en_US - Accounting Expert
 CHARSET=Кодировка UTF-8
+ACCOUNTING_EXPORT_SEPARATORCSV=Column separator for export file
+ACCOUNTING_EXPORT_DATE=Date format for export file
+ACCOUNTING_EXPORT_PIECE=Export the number of piece ?
+ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account ?
+ACCOUNTING_EXPORT_LABEL=Export the label ?
+ACCOUNTING_EXPORT_AMOUNT=Export the amount ?
+ACCOUNTING_EXPORT_DEVISE=Export the devise ?
 
 Accounting=Бухгалтерия
 Globalparameters=Глобальные параметры
@@ -25,8 +32,8 @@ Back=Назад
 Definechartofaccounts=Define a chart of accounts
 Selectchartofaccounts=Select a chart of accounts
 Validate=Подтвердить
-Addanaccount=Add an accounting account
-AccountAccounting=Accounting account
+Addanaccount=Добавить бухгалтерский счёт
+AccountAccounting=Бухгалтерский счёт
 Ventilation=Breakdown
 ToDispatch=На отправку
 Dispatched=Отправленный
@@ -37,15 +44,16 @@ TradeMargin=Торговая наценка
 Reports=Отчёты
 ByCustomerInvoice=По счетам клиентов
 ByMonth=По месяцам
-NewAccount=New accounting account
+NewAccount=Новый бухгалтерский счёт
 Update=Обновить
 List=Список
 Create=Создать
+CreateMvts=Create movement
 UpdateAccount=Modification of an accounting account
 UpdateMvts=Modification of a movement
-WriteBookKeeping=Record accounts in general ledger
+WriteBookKeeping=Записать счета в главную книгу
 Bookkeeping=Главная книга
-AccountBalanceByMonth=Account balance by month
+AccountBalanceByMonth=Баланс счёта по месяцам
 
 AccountingVentilation=Breakdown accounting
 AccountingVentilationSupplier=Breakdown accounting supplier
@@ -53,11 +61,11 @@ AccountingVentilationCustomer=Breakdown accounting customer
 Line=Строка
 
 CAHTF=Total purchase supplier HT
-InvoiceLines=Lines of invoice to be ventilated
+InvoiceLines=Строки счёта для обсуждения
 InvoiceLinesDone=Ventilated lines of invoice
 IntoAccount=In the accounting account
 
-Ventilate=Ventilate
+Ventilate=Обсудить
 VentilationAuto=Automatic breakdown
 
 Processing=Обрабатывается
@@ -76,14 +84,15 @@ ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the breakdown pages "
 
 AccountLength=Length of the accounting accounts shown in Dolibarr
 AccountLengthDesc=Function allowing to feign a length of accounting account by replacing spaces by the zero figure. This function touches only the display, it does not modify the accounting accounts registered in Dolibarr. For the export, this function is necessary to be compatible with certain software.
+ACCOUNTING_LENGTH_DESCRIPTION=Length for displaying product & services description in listings (Best = 50)
+ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Length for displaying product & services account description form in listings (Best = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Length of the general accounts
 ACCOUNTING_LENGTH_AACCOUNT=Length of the third party accounts
 
 ACCOUNTING_SELL_JOURNAL=Журнал продаж
 ACCOUNTING_PURCHASE_JOURNAL=Журнал платежей
-ACCOUNTING_BANK_JOURNAL=Банковский журнал
-ACCOUNTING_CASH_JOURNAL=Журнал наличных средств
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Журнал "Разное"
+ACCOUNTING_EXPENSEREPORT_JOURNAL=Expense report journal
 ACCOUNTING_SOCIAL_JOURNAL=Социальный журнал
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Account of transfer

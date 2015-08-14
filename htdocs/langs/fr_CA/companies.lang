@@ -1,0 +1,7 @@
+# Dolibarr language file - Source file is en_US - companies
+VATIsUsed=Assujetti à la TVA (TPS)
+VATIsNotUsed=Non assujetti à la TVA (TPS)
+VATIntra=Numéro de TVA (TPS)
+VATIntraShort=Num. TVA (TPS)
+VATIntraVeryShort=N° TVA (TPS)
+SearchThirdparty=Rechercher tiers

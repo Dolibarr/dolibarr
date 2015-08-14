@@ -39,7 +39,7 @@ print '<body style="margin: 10px">';
 print '<div>';
 print '<div>';
 
-print_fiche_titre($langs->trans("VATIntraCheckableOnEUSite"),'','setup');
+print_fiche_titre($langs->trans("VATIntraCheckableOnEUSite"),'','title_setup');
 
 
 if (! $_REQUEST["vatNumber"])
@@ -49,8 +49,10 @@ if (! $_REQUEST["vatNumber"])
 }
 else
 {
+	$_REQUEST["vatNumber"] = preg_replace('/\^\w/', '', $_REQUEST["vatNumber"]);
 	$countryCode=substr($_REQUEST["vatNumber"],0,2);
 	$vatNumber=substr($_REQUEST["vatNumber"],2);
+	
 	print '<b>'.$langs->trans("Country").'</b>: '.$countryCode.'<br>';
 	print '<b>'.$langs->trans("VATIntraShort").'</b>: '.$vatNumber.'<br>';
 	print '<br>';
@@ -158,7 +160,7 @@ else
 print '<br>';
 print $langs->trans("VATIntraManualCheck",$langs->trans("VATIntraCheckURL"),$langs->trans("VATIntraCheckURL")).'<br>';
 print '<br>';
-print '<center><input type="button" class="button" value="'.$langs->trans("CloseWindow").'" onclick="javascript: window.close()"></center>';
+print '<div class="center"><input type="button" class="button" value="'.$langs->trans("CloseWindow").'" onclick="javascript: window.close()"></div>';
 
 if ($messagetoshow)
 {

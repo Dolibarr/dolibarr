@@ -57,6 +57,7 @@ RemoveFromGroup=Премахване от групата
 PasswordChangedAndSentTo=Паролата е сменена и изпратена на <b>%s</b>.
 PasswordChangeRequestSent=Заявка за промяна на паролата на <b>%s,</b> е изпратена на <b>%s.</b>
 MenuUsersAndGroups=Потребители и Групи
+MenuMyUserCard=My user card
 LastGroupsCreated=Последните %s създадени групи
 LastUsersCreated=Последните %s създадени потребители
 ShowGroup=Показване на групата

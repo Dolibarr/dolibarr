@@ -199,7 +199,8 @@ Entreprises=Imprese
 DOLIBARRFOUNDATION_PAYMENT_FORM=Per effettuare il pagamento dell'adesione tramite bonifico bancario, vedi <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribe</a>.<br/>Per pagare con carta di credito o Paypal, clicca sul pulsante in fondo a questa pagina.<br/>
 ByProperties=Per natura
 MembersStatisticsByProperties=Statistiche dei membri per natura
-MembersByNature=Membri per natura
+MembersByNature=This screen show you statistics on members by nature.
+MembersByRegion=This screen show you statistics on members by region.
 VATToUseForSubscriptions=Aliquota IVA in uso per le sottoscrizioni
 NoVatOnSubscription=Nessuna IVA per gli abbonamenti
 MEMBER_PAYONLINE_SENDEMAIL=Email di avviso quando Dolibarr riceve la conferma della validazione di un pagamento per adesione

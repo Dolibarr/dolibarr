@@ -130,7 +130,7 @@ $help_url='EN:Module_Barcode|FR:Module_Codes_Barre|ES:Módulo Código de barra';
 llxHeader('',$langs->trans("BarcodeSetup"),$help_url);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("BarcodeSetup"),$linkback,'setup');
+print_fiche_titre($langs->trans("BarcodeSetup"),$linkback,'title_setup');
 
 // Detect bar codes modules
 $barcodelist=array();
@@ -318,7 +318,6 @@ if (! isset($_SERVER['WINDIR']))
 	print '</td>';
 	print '<td width="60" align="center"><input type="submit" class="button" name="submit_GENBARCODE_LOCATION" value="'.$langs->trans("Modify").'"></td>';
 	print '</tr>';
-	print '</form>';
 }
 
 // Module products
@@ -350,6 +349,7 @@ if (! empty($conf->societe->enabled))
 }
 
 print "</table>\n";
+print '</form>';
 
 print '<br>';
 

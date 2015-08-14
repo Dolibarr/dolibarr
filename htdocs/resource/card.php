@@ -68,7 +68,7 @@ if (empty($reshook))
 	* ACTIONS
 	********************************************************************/
 
-	if ($action == 'update' && ! $_POST["cancel"]  && $user->rights->resource->write )
+	if ($action == 'update' && ! $_POST["cancel"] && $user->rights->resource->write)
 	{
 		$error=0;
 
@@ -113,6 +113,7 @@ if (empty($reshook))
 	}
 }
 
+
 /***************************************************
 * VIEW
 *
@@ -127,12 +128,10 @@ $formresource = new FormResource($db);
 if ( $object->fetch($id) > 0 )
 {
 	$head=resourcePrepareHead($object);
-	dol_fiche_head($head, 'resource', $langs->trans("ResourceSingular"),0,'resource@resource');
 
 
 	if ($action == 'edit' )
 	{
-
 		if ( ! $user->rights->resource->write )
 			accessforbidden('',0);
 
@@ -144,10 +143,12 @@ if ( $object->fetch($id) > 0 )
 		print '<input type="hidden" name="action" value="update">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
 
+		dol_fiche_head($head, 'resource', $langs->trans("ResourceSingular"),0,'resource@resource');
+
 		print '<table class="border" width="100%">';
 
 		// Ref
-		print '<tr><td width="20%">'.$langs->trans("ResourceFormLabel_ref").'</td>';
+		print '<tr><td width="20%" class="fieldrequired">'.$langs->trans("ResourceFormLabel_ref").'</td>';
 		print '<td><input size="12" name="ref" value="'.(GETPOST('ref') ? GETPOST('ref') : $object->ref).'"></td></tr>';
 
 		// Type
@@ -162,19 +163,27 @@ if ( $object->fetch($id) > 0 )
 		print '<textarea name="description" cols="80" rows="'.ROWS_3.'">'.($_POST['description'] ? GETPOST('description','alpha') : $object->description).'</textarea>';
 		print '</td></tr>';
 
-		print '<tr><td align="center" colspan="2">';
+		print '</table>';
+
+		dol_fiche_end();
+
+		print '<div class="center">';
 		print '<input name="update" class="button" type="submit" value="'.$langs->trans("Modify").'"> &nbsp; ';
 		print '<input type="submit" class="button" name="cancel" Value="'.$langs->trans("Cancel").'"></td></tr>';
-		print '</table>';
+		print '</div>';
+
 		print '</form>';
 	}
 	else
 	{
-	    // Confirm deleting resource line
+		dol_fiche_head($head, 'resource', $langs->trans("ResourceSingular"),0,'resource@resource');
+
+		// Confirm deleting resource line
 	    if ($action == 'delete')
 	    {
 	        print $form->formconfirm("card.php?&id=".$id,$langs->trans("DeleteResource"),$langs->trans("ConfirmDeleteResource"),"confirm_delete_resource",'','',1);
 	    }
+
 
 		/*---------------------------------------
 		 * View object
@@ -210,7 +219,7 @@ if ( $object->fetch($id) > 0 )
 
 	/*
 	 * Boutons actions
-	*/
+	 */
 	print '<div class="tabsAction">';
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
@@ -223,7 +232,7 @@ if ( $object->fetch($id) > 0 )
 			if($user->rights->resource->write)
 			{
 				print '<div class="inline-block divButAction">';
-				print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&amp;action=edit" class="butAction">'.$langs->trans('Edit').'</a>';
+				print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&amp;action=edit" class="butAction">'.$langs->trans('Modify').'</a>';
 				print '</div>';
 			}
 		}

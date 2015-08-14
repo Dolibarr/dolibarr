@@ -33,6 +33,8 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+if (!empty($conf->global->PRODUIT_PDF_MERGE_PROPAL))
+	require_once DOL_DOCUMENT_ROOT.'/product/class/propalmergepdfproduct.class.php';
 
 $langs->load("other");
 $langs->load("products");
@@ -84,8 +86,71 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
+	//Delete line if product propal merge is linked to a file
+	if (!empty($conf->global->PRODUIT_PDF_MERGE_PROPAL))
+	{
+		if ($action == 'confirm_deletefile' && $confirm == 'yes')
+		{
+			//extract file name
+			$urlfile = GETPOST('urlfile', 'alpha');
+			$filename = basename($urlfile);
+			$filetomerge = new Propalmergepdfproduct($db);
+			$filetomerge->fk_product=$object->id;
+			$filetomerge->file_name=$filename;
+			$result=$filetomerge->delete_by_file($user);
+			if ($result<0) {
+				setEventMessage($filetomerge->error,'errors');
+			}
+		}
+	}
+
 	// Action sending file
 	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_pre_headers.tpl.php';
+
+}
+
+if ($action=='filemerge')
+{
+	$is_refresh = GETPOST('refresh');
+	if (empty($is_refresh)) {
+
+		$filetomerge_file_array = GETPOST('filetoadd');
+
+		$filetomerge_file_array = GETPOST('filetoadd');
+
+		if ($conf->global->MAIN_MULTILANGS) {
+			$lang_id = GETPOST('lang_id');
+		}
+
+		// Delete all file already associated
+		$filetomerge = new Propalmergepdfproduct($db);
+
+		if ($conf->global->MAIN_MULTILANGS) {
+			$result=$filetomerge->delete_by_product($user, $object->id, $lang_id);
+		} else {
+			$result=$filetomerge->delete_by_product($user, $object->id);
+		}
+		if ($result<0) {
+			setEventMessage($filetomerge->error,'errors');
+		}
+
+		// for each file checked add it to the product
+		if (is_array($filetomerge_file_array)) {
+			foreach ( $filetomerge_file_array as $filetomerge_file ) {
+				$filetomerge->fk_product = $object->id;
+				$filetomerge->file_name = $filetomerge_file;
+
+				if ($conf->global->MAIN_MULTILANGS) {
+					$filetomerge->lang = $lang_id;
+				}
+
+				$result=$filetomerge->create($user);
+				if ($result<0) {
+					setEventMessage($filetomerge->error,'errors');
+				}
+			}
+		}
+	}
 }
 
 
@@ -100,9 +165,9 @@ llxHeader("","",$langs->trans("CardProduct".$object->type));
 
 if ($object->id)
 {
-	$head=product_prepare_head($object, $user);
+	$head=product_prepare_head($object);
 	$titre=$langs->trans("CardProduct".$object->type);
-	$picto=($object->type==1?'service':'product');
+	$picto=($object->type== Product::TYPE_SERVICE?'service':'product');
 	dol_fiche_head($head, 'documents', $titre, 0, $picto);
 
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -127,7 +192,7 @@ if ($object->id)
     print '</tr>';
 
     // Label
-    print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$object->libelle.'</td></tr>';
+    print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$object->label.'</td></tr>';
 
 	// Status (to sell)
 	print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td>';
@@ -146,9 +211,138 @@ if ($object->id)
     print '</div>';
 
     $modulepart = 'produit';
-    $permission = (($object->type == 0 && $user->rights->produit->creer) || ($object->type == 1 && $user->rights->service->creer));
+    $permission = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer));
     $param = '&id=' . $object->id;
     include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
+
+
+    // Merge propal PDF docuemnt PDF files
+    if (!empty($conf->global->PRODUIT_PDF_MERGE_PROPAL))
+    {
+    	$filetomerge = new Propalmergepdfproduct($db);
+
+    	if ($conf->global->MAIN_MULTILANGS) {
+    		$lang_id = GETPOST('lang_id');
+    		$result = $filetomerge->fetch_by_product($object->id, $lang_id);
+    	} else {
+    		$result = $filetomerge->fetch_by_product($object->id);
+    	}
+
+    	$form = new Form($db);
+
+    	$filearray = dol_dir_list($upload_dir, "files", 0, '', '\.meta$', 'name', SORT_ASC, 1);
+
+    	// For each file build select list with PDF extention
+    	if (count($filearray) > 0) {
+    		print '<br>';
+    		// Actual file to merge is :
+    		if (count($filetomerge->lines) > 0) {
+    			print $langs->trans('PropalMergePdfProductActualFile');
+    		}
+
+    		print '<form name="filemerge" action="' . DOL_URL_ROOT . '/product/document.php?id=' . $object->id . '" method="post">';
+    		print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
+    		print '<input type="hidden" name="action" value="filemerge">';
+    		if (count($filetomerge->lines) == 0) {
+    			print $langs->trans('PropalMergePdfProductChooseFile');
+    		}
+
+    		print  '<table class="noborder">';
+
+    		// Get language
+    		if ($conf->global->MAIN_MULTILANGS) {
+
+    			$langs->load("languages");
+
+    			print  '<tr class="liste_titre"><td>';
+
+    			$delauft_lang = (empty($lang_id)) ? $langs->getDefaultLang() : $lang_id;
+
+    			$langs_available = $langs->get_available_languages(DOL_DOCUMENT_ROOT, 12);
+
+    			print  '<select class="flat" id="lang_id" name="lang_id">';
+
+    			asort($langs_available);
+
+    			$uncompletelanguages = array (
+    					'da_DA',
+    					'fi_FI',
+    					'hu_HU',
+    					'is_IS',
+    					'pl_PL',
+    					'ro_RO',
+    					'ru_RU',
+    					'sv_SV',
+    					'tr_TR',
+    					'zh_CN'
+    			);
+    			foreach ( $langs_available as $key => $value )
+    			{
+    				if ($showwarning && in_array($key, $uncompletelanguages))
+    				{
+    					// $value.=' - '.$langs->trans("TranslationUncomplete",$key);
+    				}
+    				if ($filter && is_array($filter)) {
+    					if (! array_key_exists($key, $filter)) {
+    						print  '<option value="' . $key . '">' . $value . '</option>';
+    					}
+    				} else if ($delauft_lang == $key) {
+    					print  '<option value="' . $key . '" selected>' . $value . '</option>';
+    				} else {
+    					print  '<option value="' . $key . '">' . $value . '</option>';
+    				}
+    			}
+    			print  '</select>';
+
+    			if ($conf->global->MAIN_MULTILANGS) {
+    				print  '<input type="submit" class="button" name="refresh" value="' . $langs->trans('Refresh') . '">';
+    			}
+
+    			print  '</td></tr>';
+    		}
+
+    		$style = 'impair';
+    		foreach ($filearray as $filetoadd)
+    		{
+    			if ($ext = pathinfo($filetoadd['name'], PATHINFO_EXTENSION) == 'pdf')
+    			{
+    				if ($style == 'pair') {
+    					$style = 'impair';
+    				} else {
+    					$style = 'pair';
+    				}
+
+    				$checked = '';
+    				$filename = $filetoadd['name'];
+
+    				if ($conf->global->MAIN_MULTILANGS) {
+    					if (array_key_exists($filetoadd['name'] . '_' . $delauft_lang, $filetomerge->lines)) {
+    						$filename = $filetoadd['name'] . ' - ' . $langs->trans('Language_' . $delauft_lang);
+    						$checked = ' checked ';
+    					}
+    				} else {
+    					if (array_key_exists($filetoadd['name'], $filetomerge->lines)) {
+    						$checked = ' checked ';
+    					}
+    				}
+
+    				print  '<tr class="' . $style . '"><td>';
+
+    				print  '<input type="checkbox" ' . $checked . ' name="filetoadd[]" id="filetoadd" value="' . $filetoadd['name'] . '">' . $filename . '</input>';
+    				print  '</td></tr>';
+    			}
+    		}
+
+    		print  '<tr><td>';
+    		print  '<input type="submit" class="button" name="save" value="' . $langs->trans('Save') . '">';
+    		print  '</td></tr>';
+
+    		print  '</table>';
+
+    		print  '</form>';
+    	}
+    }
+
 }
 else
 {

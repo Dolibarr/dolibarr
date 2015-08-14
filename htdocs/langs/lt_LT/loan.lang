@@ -1,0 +1,53 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=Paskola
+Loans=Paskolos
+NewLoan=Nauja paskola
+ShowLoan=Rodyti paskolą
+PaymentLoan=Paskolos apmokėjimas
+ShowLoanPayment=Rodyti paskolos apmokėjimą
+Capital=Kapitalas
+Insurance=Draudimas
+Interest=Palūkanos
+Nbterms=Sąlygos numeris
+LoanAccountancyCapitalCode=Kapitalo sąskaitos Nr.
+LoanAccountancyInsuranceCode=Draudimo sąskaitos Nr.
+LoanAccountancyInterestCode=Palūkanų sąskaitos Nr.
+LoanPayment=Paskolos apmokėjimas
+ConfirmDeleteLoan=Patvirtinti šios paskolos panaikinimą
+LoanDeleted=Skola sėkmingai panaikinta 
+ConfirmPayLoan=Patvirtinti paskolos priskyrimą prie apmokėtų
+LoanPaid=Paskola grąžinta
+ErrorLoanCapital=Paskolos suma turi būti skaičius didesnis už 0.
+ErrorLoanLength=Paskolos terminas turi būti skaičius didesnis už 0.
+ErrorLoanInterest=Metinės palūkanos turi būti skaičius didesnis už 0.
+# Calc
+LoanCalc=Banko paskolų skaičiuoklė
+PurchaseFinanceInfo=Pirkimo ir finansavimo informacija
+SalePriceOfAsset=Turto pardavimo kaina
+PercentageDown=Procentų sumažėjimas
+LengthOfMortgage=Įkeitimo (hipotekos) trukmė
+AnnualInterestRate=Metinė palūkanų norma
+ExplainCalculations=Paaiškinti skaičiavimus
+ShowMeCalculationsAndAmortization=Parodyti skaičiavimus ir amortizaciją
+MortgagePaymentInformation=Įkeisto turto apmokėjimo informacija
+DownPayment=Pradinis mokėjimas
+DownPaymentDesc=<b>Pradinė įmoka</b> = Būsto kaina x procentų sumažėjimo / 100 ( 5% sumažėjimui yra 5/100 or 0.05)
+InterestRateDesc=<b>Palūkanų rodiklis</b> = Metinė palūkanų norma % / 100
+MonthlyFactorDesc=<b>Mėnesio faktorius</b> = Sekančios formulės rezultatas
+MonthlyInterestRateDesc=<b>Mėnesio palūkanų norma</b> = Metinė palūkanų norma / 12
+MonthTermDesc=<b>Mėnesių skaičius</b> = Paskolos metų skaičius x 12
+MonthlyPaymentDesc=Mėnesinė įmoka nustatoma pagal sekančią formulę
+AmortizationPaymentDesc=<a href="#amortizacija">amortizacija</a> parodo kokia mėnesinės įmokos dalis skiriama banko plaūkanoms ir kokia dalis - paskolos dengimui.
+AmountFinanced=Finansuota suma
+AmortizationMonthlyPaymentOverYears=Mėnesinės įmokos amortizacija: <b>%s</b> per %s metų
+Totalsforyear=Iš viso per metus
+MonthlyPayment=Mėnesinė įmoka
+LoanCalcDesc=Ši <b>įkeisto turto skaičiuoklė</b> gali būti naudojama būsto paskolos mėnesinių įmokų skaičiavimui, atsižvelgiant į namo pardavimo kainą, paskolos trukmę, pirkėjo pradinės įmokos procentą ir paskolos palūkanų normą. <br> Ši skaičiuoklė atsižvelgia į PĮBD (Privataus įkeisto Būsto Draudimas) paskoloms, kur pradinė įmoka yra mažiau kaip 20%. Taip pat atsižvelgiama į nekilnojamo turto mokesčius ir jų įtaką mėnesinėms paskolos grą-inimo įmokoms.<br>
+GoToInterest=%s skiriama PALŪKANOMS
+GoToPrincipal=%s skiriama PASKOLOS GRĄŽINIMUI
+YouWillSpend=Jūs išleisite %s Jūsų namui per metus %s
+# Admin
+ConfigLoan=Paskolos modulio konfigūracija
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Kapitalo sąskaitos Nr. pagal nutylėjimą
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Palūkanų sąskaitos Nr. pagal nutylėjimą
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Draudimo sąskaitos Nr. pagal nutylėjimą

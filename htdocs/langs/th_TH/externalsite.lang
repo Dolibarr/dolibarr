@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - externalsite
-ExternalSiteSetup=Setup link to external website
-ExternalSiteURL=External Site URL
-ExternalSiteModuleNotComplete=Module ExternalSite was not configured properly.
-ExampleMyMenuEntry=My menu entry
+ExternalSiteSetup=การติดตั้งการเชื่อมโยงไปยังเว็บไซต์ภายนอก
+ExternalSiteURL=URL ของเว็บไซต์ภายนอก
+ExternalSiteModuleNotComplete=โมดูล ExternalSite ไม่ได้กำหนดค่าอย่างถูกต้อง
+ExampleMyMenuEntry=รายการเมนู

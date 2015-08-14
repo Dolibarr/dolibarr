@@ -101,9 +101,10 @@ if ($result)
     print_liste_field_titre($langs->trans("Lastname"),$_SERVER["PHP_SELF"],"p.name", $begin, "", "", $sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Firstname"),$_SERVER["PHP_SELF"],"p.firstname", $begin, "", "", $sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom", $begin, "", "", $sortfield,$sortorder);
-    print '<td class="liste_titre">'.$langs->trans("Email").'</td>';
-    print '<td class="liste_titre">'.$langs->trans("Phone").'</td>';
+    print_liste_field_titre($langs->trans("Email"));
+    print_liste_field_titre($langs->trans("Phone"));
     print "</tr>\n";
+
     $var=True;
     $i = 0;
     while ($i < min($num,$limit))

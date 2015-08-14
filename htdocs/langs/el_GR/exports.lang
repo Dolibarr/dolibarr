@@ -125,10 +125,11 @@ BankAccountNumber=Αριθμός Λογαριασμού
 BankAccountNumberKey=Κωδ.
 SpecialCode=Ειδικός κωδικός
 ExportStringFilter=%% επιτρέπει την αντικατάσταση ενός ή περισσότερων χαρακτήρων στο κείμενο του
-ExportDateFilter=YYYY, YYYYMM, YYYYMMDD : filters by one year/month/day<br>YYYY+YYYY, YYYYMM+YYYYMM, YYYYMMDD+YYYYMMDD : filters over a range of years/months/days<br> > YYYY, > YYYYMM, > YYYYMMDD : filters on all following years/months/days<br> < YYYY, < YYYYMM, < YYYYMMDD : filters on all previous years/months/days
+ExportDateFilter=YYYY, YYYYMM, YYYYMMDD : φίλτρα ανά ένα έτος/μήνα/ημέρα<br>YYYY+YYYY, YYYYMM+YYYYMM, YYYYMMDD+YYYYMMDD : φίλτρα για μια σειρά ετών/μηνών/ημερών<br> > YYYY, > YYYYMM, > YYYYMMDD : φίλτρα για όλα τα επόμενα έτη/μήνες/ ημέρες<br> < YYYY, < YYYYMM, < YYYYMMDD : φίλτρα για όλα τα προηγούμενα έτη/μήνες/ημέρες
 ExportNumericFilter='NNNNN' φίλτρα από μία τιμή<br>'NNNNN+NNNNN' φίλτρα σε ένα εύρος τιμών<br>'&gt;NNNNN' φίλτρα από τις χαμηλότερες τιμές<br>'&gt;NNNNN' φίλτρα από τις υψηλότερες τιμές
 ## filters
 SelectFilterFields=Αν θέλετε να φιλτράρετε ορισμένες τιμές, απλά εισάγετε τις τιμές εδώ.
 FilterableFields=Πεδία φιλτραρίσματος
 FilteredFields=Φιλτραρισμένα πεδία
 FilteredFieldsValues=Αξία φίλτρου
+FormatControlRule=Μορφοποίηση του κανόνα ελέγχου

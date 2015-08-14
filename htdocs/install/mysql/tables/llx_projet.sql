@@ -31,8 +31,14 @@ create table llx_projet
   description      text,
   fk_user_creat    integer NOT NULL,			-- createur du projet
   public           integer,						-- project is public or not
-  fk_statut        smallint DEFAULT 0 NOT NULL,
+  fk_statut        integer DEFAULT 0 NOT NULL,	-- open or close
+  fk_opp_status    integer DEFAULT NULL,	        -- if project is used to manage opportunities
+  date_close       datetime DEFAULT NULL,    
+  fk_user_close    integer DEFAULT NULL,
   note_private     text,
   note_public      text,
+  --budget_days      real,                      -- budget in days is sum of field planned_workload of tasks
+  opp_amount       double(24,8),
+  budget_amount    double(24,8),				
   model_pdf        varchar(255)
 )ENGINE=innodb;

@@ -1,0 +1,55 @@
+This file lists specific errors observed in the official IBAN specification.
+
+In addition to the specific errors, there persist basic outstanding
+matters that cause issue for implementers:
+ - Non 1:1 mapping of records to countries (eg: French territories, etc.)
+ - Mixing of free text and hard data in specification fields
+ - Lack of validation of information in fields prior to publishing
+ - Lack of synchronisation between TXT and PDF versions of the registry
+
+2011-07-16
+----------
+ - No information for Kuwait past sixth column
+ - Total absence of information regarding Kazakhstan
+ - '1.00001E+15' instead of a valid BBAN example for Lithuania
+ - Repeated IBAN example in human format instead of IBAN format-
+   specification for UAE
+ - Incorrect domestic example for Bulgaria, Kazakhstan, Latvia,
+   Lithuania, Luxembourg, Macedonia, Mauritius, Romania, San Marino
+   (complete, human-format IBAN instead of domestic example)
+
+Early 2012
+----------
+ - Inconsistent record ordering (KW, KZ)
+ - Inconsistent capitalization (DK)
+ - Continued presence of incorrect domestic examples
+
+February 2013
+-------------
+ - Deployment of unparseable special values such as "Not in use" (FI).
+ - Still(!) missing a registry entry for 2010's 'new' entry of Khazakstan
+
+September 2013
+--------------
+ - Azerbaijan, Brazil, Costa Rica, Palestine, Virgin Islands 'SEPA 
+   Country' field in PDF (yes/no) is completely blank
+
+March 2014
+----------
+ - In multiple cases, territories of a major country have a SEPA status
+   that differs from the parent jurisdiction. The IBAN specification as
+   previously released does not include individual records for these
+   territories, and thus cannot convey this important information.
+ - The IBAN registry's old URL is no longer publicly available! Its now
+   ends in a 404, and the apparent new home, located over at
+   http://www.swift.com/products_services/by_type/reference_data/iban_registry_iso13616
+   does not have any content. The parent portion of this part of the
+   SWIFT website suggests the information may have been moved to a new
+   'SWIFTRef' site, however that site appears to only peddle paid for
+   directories of BICs and similar. The new location after much
+   searching was found to be http://www.swift.com/products_services/bic_and_iban_format_registration_iban_format_r
+
+June 2014
+---------
+ - The TXT registry records of QA and JO do not match those within the 
+   PDF and are essentially spurious while looking roughly correct. Dang.

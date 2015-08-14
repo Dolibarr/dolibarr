@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2012-2013 Philippe Berthet     <berthet@systune.be>
- * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2013	   Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2013-2015 Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015	   Ferran Marcet		<fmarcet@2byte.es>
  *
  * Version V1.1 Initial version of Philippe Berthet
@@ -68,7 +69,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 }
 // Customer or supplier selected in drop box
 $thirdTypeSelect = GETPOST("third_select_id");
-$type_element = GETPOST('type_element')?GETPOST('type_element'):$type_element;
+$type_element = GETPOST('type_element')?GETPOST('type_element'):'';
 
 
 $langs->load("companies");
@@ -76,6 +77,7 @@ $langs->load("bills");
 $langs->load("orders");
 $langs->load("suppliers");
 $langs->load("propal");
+$langs->load("interventions");
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('consumptionthirdparty'));
@@ -99,8 +101,10 @@ $form = new Form($db);
 $formother = new FormOther($db);
 $productstatic=new Product($db);
 
-$titre = $langs->trans("Referer",$object->name);
-llxHeader('',$titre,'');
+$title = $langs->trans("Referers",$object->name);
+if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name." - ".$title;
+$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
+llxHeader('',$title,$help_url);
 
 if (empty($socid))
 {
@@ -116,6 +120,10 @@ print '<tr><td width="25%">'.$langs->trans('ThirdPartyName').'</td>';
 print '<td colspan="3">';
 print $form->showrefnav($object,'socid','',($user->societe_id?0:1),'rowid','nom');
 print '</td></tr>';
+
+// Alias names (commercial, trademark or alias names)
+print '<tr id="name_alias"><td><label for="name_alias_input">'.$langs->trans('AliasNames').'</label></td>';
+print '<td colspan="3">'.$object->name_alias.'</td></tr>';
 
 if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
 {
@@ -211,7 +219,7 @@ if ($type_element == 'propal')
 {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 	$documentstatic=new Propal($db);
-	$sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, \'1\' as doc_type, c.datep as datePrint, c.fk_statut as status, ';
+	$sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, \'1\' as doc_type, c.datep as dateprint, c.fk_statut as status, ';
 	$tables_from = MAIN_DB_PREFIX."propal as c,".MAIN_DB_PREFIX."propaldet as d";
 	$where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".$socid;
 	$where.= " AND d.fk_propal = c.rowid";
@@ -307,12 +315,13 @@ print_liste_field_titre($langs->trans('Date'),$_SERVER['PHP_SELF'],'dateprint','
 print_liste_field_titre($langs->trans('Status'),$_SERVER['PHP_SELF'],'fk_status','',$param,'align="center"',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans('Product'),$_SERVER['PHP_SELF'],'','',$param,'align="left"',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans('Quantity'),$_SERVER['PHP_SELF'],'prod_qty','',$param,'align="right"',$sortfield,$sortorder);
+print "</tr>\n";
 // Filters
 print '<tr class="liste_titre">';
 print '<td class="liste_titre" align="left">';
 print '<input class="flat" type="text" name="sref" size="8" value="'.$sref.'">';
 print '</td>';
-print '<td class="liste_titre">'; // date
+print '<td class="liste_titre nowrap">'; // date
 print $formother->select_month($month?$month:-1,'month',1);
 $formother->select_year($year?$year:-1,'year',1, 20, 1);
 print '</td>';

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -46,7 +46,7 @@ $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
 $feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
 if ($user->id == $id) $feature2=''; // A user can always read its own card
-$result = restrictedArea($user, 'user', $id, '&user', $feature2);
+$result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
 
 
@@ -112,8 +112,8 @@ if ($id)
     print '<tr><td>'.$langs->trans("Login").'</td><td class="valeur" colspan="3">'.$object->login.'&nbsp;</td></tr>';
 
 	// Note
-    print '<tr><td valign="top">'.$langs->trans("Note").'</td>';
-	print '<td valign="top" colspan="3">';
+    print '<tr><td class="tdtop">'.$langs->trans("Note").'</td>';
+	print '<td colspan="3">';
 	if ($action == 'edit' && $user->rights->user->user->creer)
 	{
 		print "<input type=\"hidden\" name=\"action\" value=\"update\">";
@@ -131,22 +131,22 @@ if ($id)
 
     print "</table>";
 
+	dol_fiche_end();
+
 	if ($action == 'edit')
 	{
-		print '<center><br>';
+		print '<div class="center">';
 		print '<input type="submit" class="button" name="update" value="'.$langs->trans("Save").'">';
-		print '&nbsp; &nbsp;';
+		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-		print '</center>';
+		print '</div>';
 	}
 
-	print "</form>\n";
 
+	/*
+     * Actions
+     */
 
-    /*
-    * Actions
-    */
-    print '</div>';
     print '<div class="tabsAction">';
 
     if ($user->rights->user->user->creer && $action != 'edit')
@@ -156,9 +156,9 @@ if ($id)
 
     print "</div>";
 
-
+	print "</form>\n";
 }
 
-$db->close();
-
 llxFooter();
+
+$db->close();

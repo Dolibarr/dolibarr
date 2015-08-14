@@ -63,7 +63,7 @@ if ($actionsave)
 llxHeader();
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("WebServicesSetup"),$linkback,'setup');
+print_fiche_titre($langs->trans("WebServicesSetup"),$linkback,'title_setup');
 
 print $langs->trans("WebServicesDesc")."<br>\n";
 print "<br>\n";
@@ -90,9 +90,9 @@ print '</tr>';
 
 print '</table>';
 
-print '<br><center>';
+print '<br><div class="center">';
 print '<input type="submit" name="save" class="button" value="'.$langs->trans("Save").'">';
-print '</center>';
+print '</div>';
 
 print '</form>';
 

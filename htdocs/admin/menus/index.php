@@ -214,7 +214,7 @@ $arrayofcss=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css')
 llxHeader('',$langs->trans("Menus"),'','',0,0,$arrayofjs,$arrayofcss);
 
 
-print_fiche_titre($langs->trans("Menus"),'','setup');
+print_fiche_titre($langs->trans("Menus"),'','title_setup');
 
 
 $h = 0;

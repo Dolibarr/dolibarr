@@ -55,7 +55,7 @@ $pagenext = $page + 1;
 
 
 /*
- * Mode Liste
+ * Mode List
  *
  */
 $sql = "SELECT p.rowid, p.ref, p.amount, p.statut";
@@ -75,17 +75,16 @@ if ($result)
 
   print_barre_liste($langs->trans("WithdrawalsReceipts"), $page, $_SERVER["PHP_SELF"], $urladd, $sortfield, $sortorder, '', $num);
 
-  print"\n<!-- debut table -->\n";
   print '<table class="liste" width="100%">';
 
   print '<tr class="liste_titre">';
   print_liste_field_titre($langs->trans("WithdrawalsReceipts"),$_SERVER["PHP_SELF"],"p.ref",'','','class="liste_titre"');
   print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"p.datec","","",'class="liste_titre" align="center"');
-  print '<td class="liste_titre" align="right">'.$langs->trans("Amount").'</td>';
-  print '</tr>';
+  print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"","","",'align="center"');
+  print "</tr>\n";
 
   print '<tr class="liste_titre">';
-  print '<form action="bons.php" method="GET">';
+  print '<form action="'.$_SERVER["PHP_SELF"].'" method="GET">';
   print '<td class="liste_titre"><input type="text" class="flat" name="search_ligne" value="'. $search_line.'" size="10"></td>';
   print '<td class="liste_titre">&nbsp;</td>';
   print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';
@@ -121,7 +120,7 @@ else
   dol_print_error($db);
 }
 
-$db->close();
 
 llxFooter();
 
+$db->close();

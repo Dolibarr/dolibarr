@@ -1,5 +1,12 @@
 # Dolibarr language file - en_US - Accounting Expert
 CHARSET=UTF-8
+ACCOUNTING_EXPORT_SEPARATORCSV=Column separator for export file
+ACCOUNTING_EXPORT_DATE=Date format for export file
+ACCOUNTING_EXPORT_PIECE=Export the number of piece ?
+ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account ?
+ACCOUNTING_EXPORT_LABEL=Export the label ?
+ACCOUNTING_EXPORT_AMOUNT=Export the amount ?
+ACCOUNTING_EXPORT_DEVISE=Export the devise ?
 
 Accounting=Kế toán
 Globalparameters=Các thông số toàn cầu
@@ -41,6 +48,7 @@ NewAccount=Tài khoản kế toán mới
 Update=Cập nhật
 List=Danh sách
 Create=Tạo
+CreateMvts=Create movement
 UpdateAccount=Sự biến đổi của một tài khoản kế toán
 UpdateMvts=Sửa đổi của một thay đổi
 WriteBookKeeping=Tài khoản ghi trong sổ kế toán tổng
@@ -76,14 +84,15 @@ ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the breakdown pages "
 
 AccountLength=Chiều dài của kế toán tài khoản thể hiện trong Dolibarr
 AccountLengthDesc=Chức năng cho phép để giả vờ chiều dài của tài khoản kế toán bằng cách thay thế không gian bởi các con số không. Chức năng này chỉ chạm vào màn hình, nó không sửa đổi các tài khoản kế toán đăng ký tại Dolibarr. Đối với xuất khẩu, chức năng này là cần thiết để tương thích với phần mềm nhất định.
+ACCOUNTING_LENGTH_DESCRIPTION=Length for displaying product & services description in listings (Best = 50)
+ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Length for displaying product & services account description form in listings (Best = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Chiều dài của các tài khoản tổng hợp
 ACCOUNTING_LENGTH_AACCOUNT=Chiều dài của các tài khoản của bên thứ ba
 
 ACCOUNTING_SELL_JOURNAL=Bán tạp chí
 ACCOUNTING_PURCHASE_JOURNAL=Mua tạp chí
-ACCOUNTING_BANK_JOURNAL=Tạp chí Ngân hàng
-ACCOUNTING_CASH_JOURNAL=Tạp chí tiền mặt
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Linh tinh tạp chí
+ACCOUNTING_EXPENSEREPORT_JOURNAL=Expense report journal
 ACCOUNTING_SOCIAL_JOURNAL=Tạp chí Xã hội
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Tài khoản chuyển nhượng

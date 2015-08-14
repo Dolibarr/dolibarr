@@ -35,7 +35,6 @@ IfDatabaseExistsGoBackAndCheckCreate=Si la base de dades ja existeix, torneu enr
 WarningBrowserTooOld=El seu navegador és molt antic. Es recomana que actualitzeu a una versió recent de Firefox, Chrome o Opera.
 PHPVersion=Versió PHP
 YouCanContinue=Pot continuar ...
-PleaseBePatient=Esperi, si us plau...
 License=Llicència d'ús
 ConfigurationFile=Arxiu de configuració
 WebPagesDirectory=Carpeta que conté les pàgines web
@@ -64,6 +63,7 @@ DatabaseSuperUserAccess=Base de dades - Accés super usuari
 CheckToCreateDatabase=Seleccioneu aquesta opció si la base de dades no existeix i s'ha de crear. En aquest cas, cal indicar usuari/contrasenya de superusuari, més endavant en aquesta pàgina.
 CheckToCreateUser=Seleccioneu aquesta opció si l'usuari no existeix i s'ha de crear.<br>En aquest cas, cal indicar usuari/contrasenya de superusuari, més endavant en aquesta pàgina.
 Experimental=(experimental)
+Deprecated=(deprecated)
 DatabaseRootLoginDescription=Usuari de la base que té els drets de creació de bases de dades o compte per a la base de dades, inútil si la base de dades i el seu usuari ja existeixen (com quan estan en un amfitrió).
 KeepEmptyIfNoPassword=Deixi buit si l'usuari no té contrasenya
 SaveConfigurationFile=Gravació del fitxer de configuració
@@ -155,8 +155,8 @@ MigrationFinished=Acabada l'actualització
 LastStepDesc=<strong>Últim pas</strong>: Indiqueu aquí el compte i la contrasenya del primer usuari que fareu servir per connectar-se a l'aplicació. No perdi aquests identificadors, és el compte que permet administrar la resta.
 ActivateModule=Activació del mòdul %s
 ShowEditTechnicalParameters=Premi aquí per veure/editar els paràmetres tècnics (mode expert)
-WarningUpgrade=Warning:\nDid your run a database backup first ?\nThis is highly recommanded: for example, due to some bugs into databases systems (for example mysql version 5.5.40), some data or tables may be lost during this process, so it is highly recommanded to have a complete dump of your database before starting migration.\n\nClick OK to start migration process...
-ErrorDatabaseVersionForbiddenForMigration=Your database version is %s. It has a critical bug making data loss if you make structure change on your database, like it is required by the migration process. For his reason, migration will not be allowed until you upgrade your database to a higher fixed version (list of known bugged version: %s)
+WarningUpgrade=Advertència:\nHas fet primer una copia de seguretat de la base de dades?\nAixò es recomana: per exemple, a causa d'alguns errors en els sistemes de bases de dades (per exemple MySQL versió 5.5.40), algunes dades o taules es poden perdre durant aquest procés, es recomana tenir una copia completa de la base de dades abans d'iniciar la migració.\n\nFeu clic a D'acord per iniciar el procés de migració...
+ErrorDatabaseVersionForbiddenForMigration=La versió de la seva base de dades és %s. Aquesta te un error crític i es poden perdre dades si es fa un canvi a l'estructura de la base de dades i per fer l'actualització necessita fer aquests canvis. Per aquesta raó, la migració no es permetrà fins que s'actualitzi la seva base de dades a una versió estable i/o superior (llista de versions afectades: %s)
 
 #########
 # upgrade
@@ -208,7 +208,7 @@ MigrationProjectTaskTime=Actualització de temps dedicat en segons
 MigrationActioncommElement=Actualització de les dades de accions sobre elements
 MigrationPaymentMode=Actualització de les formes de pagament
 MigrationCategorieAssociation=Actualització de les categories
-MigrationEvents=Migration of events to add event owner into assignement table
+MigrationEvents=Migració d'esdeveniments per afegir propietari a la taula d'asignació
 
-ShowNotAvailableOptions=Show not available options
-HideNotAvailableOptions=Hide not available options
+ShowNotAvailableOptions=Mostra opcions no disponibles
+HideNotAvailableOptions=Amaga opcions no disponibles

@@ -2,7 +2,8 @@
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2011-2013 Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2011-2013 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2015      Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +34,11 @@ if (!$user->admin) accessforbidden();
 
 $action = GETPOST('action','alpha');
 
+// Other parameters ACCOUNTING_*
+$list = array (
+		'ACCOUNTING_VAT_PAY_ACCOUNT'
+);
+
 /*
  * Actions
  */
@@ -51,9 +57,11 @@ $action = GETPOST('action','alpha');
 
 $tax_mode = empty($conf->global->TAX_MODE)?0:$conf->global->TAX_MODE;
 
-if ($action == 'settaxmode')
-{
-    $tax_mode = GETPOST('tax_mode','alpha');
+if ($action == 'update') {
+    $error = 0;
+
+	// Tax mode
+	$tax_mode = GETPOST('tax_mode','alpha');
 
     $db->begin();
 
@@ -79,37 +87,23 @@ if ($action == 'settaxmode')
     $res = dolibarr_set_const($db, 'TAX_MODE_BUY_SERVICE', $value,'chaine',0,'',$conf->entity);
     if (! $res > 0) $error++;
 
-    if (! $error)
-    {
+	// Others options
+    foreach ($list as $constname) {
+        $constvalue = GETPOST($constname, 'alpha');
+
+        if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
+            $error++;
+        }
+    }
+
+    if (! $error) {
         $db->commit();
         setEventMessage($langs->trans("SetupSaved"));
-    }
-    else
-    {
+    } else {
         $db->rollback();
         setEventMessage($langs->trans("Error"),'errors');
     }
-
-
 }
-
-/*
- if ($_POST['action'] == 'update' || $_POST['action'] == 'add')
- {
- if (! dolibarr_set_const($db, $_POST['constname'], $_POST['constvalue'], $typeconst[$_POST['consttype']], 0, isset($_POST['constnote']) ? $_POST['constnote'] : '',$conf->entity));
- {
- print $db->error();
- }
- }
-
- if ($_GET['action'] == 'delete')
- {
- if (! dolibarr_del_const($db, $_GET['constname'],$conf->entity));
- {
- print $db->error();
- }
- }
- */
 
 
 /*
@@ -120,9 +114,10 @@ llxHeader();
 $form=new Form($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans('TaxSetup'),$linkback,'setup');
+print_fiche_titre($langs->trans('TaxSetup'),$linkback,'title_setup');
 
-print '<br>';
+dol_fiche_head();
+
 if (empty($mysoc->tva_assuj))
 {
     print $langs->trans("YourCompanyDoesNotUseVAT").'<br>';
@@ -134,29 +129,28 @@ else
     // Cas des parametres TAX_MODE_SELL/BUY_SERVICE/PRODUCT
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    print '<input type="hidden" name="action" value="settaxmode">';
+    print '<input type="hidden" name="action" value="update">';
+
     print '<tr class="liste_titre">';
-    print '<td>'.$langs->trans('OptionVatMode').'</td><td>'.$langs->trans('Description').'</td>';
-    print '<td align="right"><input class="button" type="submit" value="'.$langs->trans('Modify').'"></td>';
+    print '<td colspan="2">'.$langs->trans('OptionVatMode').'</td><td>'.$langs->trans('Description').'</td>';
     print "</tr>\n";
     print '<tr '.$bc[false].'><td width="200"><input type="radio" name="tax_mode" value="0"'.($tax_mode != 1 ? ' checked' : '').'> '.$langs->trans('OptionVATDefault').'</td>';
     print '<td colspan="2">'.nl2br($langs->trans('OptionVatDefaultDesc'));
     print "</td></tr>\n";
     print '<tr '.$bc[true].'><td width="200"><input type="radio" name="tax_mode" value="1"'.($tax_mode == 1 ? ' checked' : '').'> '.$langs->trans('OptionVATDebitOption').'</td>';
     print '<td colspan="2">'.nl2br($langs->trans('OptionVatDebitOptionDesc'))."</td></tr>\n";
-    print '</form>';
 
     print "</table>\n";
 
-    print '<br><br>';
+    print '<br>';
     print_fiche_titre($langs->trans("SummaryOfVatExigibilityUsedByDefault"),'','');
     //print ' ('.$langs->trans("CanBeChangedWhenMakingInvoice").')';
 
-    print '<table class="border" width="100%">';
-    print '<tr><td>&nbsp;</td><td>'.$langs->trans("Buy").'</td><td>'.$langs->trans("Sell").'</td></tr>';
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre"><td>&nbsp;</td><td>'.$langs->trans("Buy").'</td><td>'.$langs->trans("Sell").'</td></tr>';
 
     // Products
-    print '<tr><td>'.$langs->trans("Product").'</td>';
+    print '<tr '.$bc[false].'><td>'.$langs->trans("Product").'</td>';
     print '<td>';
     print $langs->trans("OnDelivery");
     print ' ('.$langs->trans("SupposedToBeInvoiceDate").')';
@@ -167,7 +161,7 @@ else
     print '</td></tr>';
 
     // Services
-    print '<tr><td>'.$langs->trans("Services").'</td>';
+    print '<tr '.$bc[true].'><td>'.$langs->trans("Services").'</td>';
     print '<td>';
     if ($tax_mode == 0)
     {
@@ -195,6 +189,42 @@ else
 
     print '</table>';
 }
+
+print "<br>\n";
+
+/*
+ *  Others params
+ */
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<td colspan="3">' . $langs->trans('OtherOptions') . '</td>';
+print "</tr>\n";
+
+foreach ($list as $key)
+{
+	$var=!$var;
+
+	print '<tr '.$bc[$var].' class="value">';
+
+	// Param
+	$label = $langs->trans($key); 
+	print '<td><label for="'.$key.'">'.$label.'</label></td>';
+
+	// Value
+	print '<td>';
+	print '<input type="text" size="20" id="'.$key.'" name="'.$key.'" value="'.$conf->global->$key.'">';
+	print '</td></tr>';
+}
+
+print '</table>';
+
+dol_fiche_end();
+
+print '<div class="center">';
+print '<input type="submit" class="button" value="' . $langs->trans("Modify") . '" name="button">';
+print '</div>';
+
+print '</form>';
 
 $db->close();
 

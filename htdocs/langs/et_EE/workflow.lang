@@ -1,11 +1,11 @@
 # Dolibarr language file - Source file is en_US - admin
 WorkflowSetup=Töövoo mooduli seaded
-WorkflowDesc=This module is designed to modify the behaviour of automatic actions into application. By default, workflow is opened (you make thing in order you want). You can activate the automatic actions that you are interesting in.
-ThereIsNoWorkflowToModify=Hetkel aktiveeritud moodulite jaoks ei ole ühtki muudetavat töövoogu.
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Pärast pakkumise allkirjastamast loo automaatselt uus tellimus
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Pärast pakkumise allkirjastamist loo automaatselt uus arve
-descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Pärast lepingu kinnitamast loo automaatselt uus arve
-descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Pärast tellimuse sulgemist loo automaatselt uus arve
+WorkflowDesc=This module is designed to modify the behaviour of automatic actions into application. By default, workflow is open (you can do things in the order you want). You can activate the automatic actions you are interested in.
+ThereIsNoWorkflowToModify=There is no workflow modifications available with the activated modules.
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automatically create a customer order after a commercial proposal is signed
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICEAutomatically create a customer invoice after a commercial proposal is signed
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICEAutomatically create a customer invoice after a contract is validated
+descWORKFLOW_ORDER_AUTOCREATE_INVOICEAutomatically create a customer invoice after a customer order is closed
 descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Pärast tellimusega seotud makse laekumist määra tellimusega seotud pakkumise staatuseks 'Arve esitatud'
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Kui müügiarve staatuseks on määratud 'Makstud', siis määra seotud tellimus(t)e staatuseks 'Arve esitatud'
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Kui müügiarve on kinnitatud, siis määra seotud tellimus(t)e staatuseks 'Arve esitatud'

@@ -270,18 +270,18 @@ if ($result)
 
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans('Ref'),$_SERVER["PHP_SELF"],'p.ref','',$param,'',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans('Company'),$_SERVER["PHP_SELF"],'s.nom','',$param,'',$sortfield,$sortorder);	
+	print_liste_field_titre($langs->trans('Company'),$_SERVER["PHP_SELF"],'s.nom','',$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('AskPriceSupplierDate'),$_SERVER["PHP_SELF"],'p.date_livraison','',$param, 'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('AmountHT'),$_SERVER["PHP_SELF"],'p.total_ht','',$param, 'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('Author'),$_SERVER["PHP_SELF"],'u.login','',$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('Status'),$_SERVER["PHP_SELF"],'p.fk_statut','',$param,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre('');
+	print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre">';
 	print '<input class="flat" size="6" type="text" name="search_ref" value="'.$search_ref.'">';
-	print '</td>';	
+	print '</td>';
 	print '<td class="liste_titre" align="left">';
 	print '<input class="flat" type="text" size="12" name="search_societe" value="'.$search_societe.'">';
 	print '</td>';
@@ -294,7 +294,7 @@ if ($result)
 	$syear = $year;
 	$formother->select_year($syear,'year',1, 20, 5);
 	print '</td>';
-		
+
 	// Amount
 	print '<td class="liste_titre" align="right">';
 	print '<input class="flat" type="text" size="10" name="search_montant_ht" value="'.$search_montant_ht.'">';
@@ -353,7 +353,7 @@ if ($result)
 		print '</td></tr></table>';
 
 		print "</td>\n";
-		
+
 		$url = DOL_URL_ROOT.'/comm/card.php?socid='.$objp->rowid;
 
 		// Company
@@ -364,12 +364,12 @@ if ($result)
 		print '<td>';
 		print $companystatic->getNomUrl(1,'customer');
 		print '</td>';
-		
+
 		// Date askprice
 		print '<td align="center">';
 		print dol_print_date($db->jdate($objp->dp), 'day');
 		print "</td>\n";
-		
+
 		print '<td align="right">'.price($objp->total_ht)."</td>\n";
 
 		$userstatic->id=$objp->fk_user_author;

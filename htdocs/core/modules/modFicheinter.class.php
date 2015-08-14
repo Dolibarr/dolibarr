@@ -21,7 +21,7 @@
  */
 
 /**
- *	\defgroup   ficheinter     Module intervention cards
+ *	\defgroup   ficheinter     Module Interventions
  *	\brief      Module to manage intervention cards
  *	\file       htdocs/core/modules/modFicheinter.class.php
  *	\ingroup    ficheinter
@@ -147,7 +147,7 @@ class modFicheinter extends DolibarrModules
         $this->export_sql_start[$r]='SELECT DISTINCT ';
         $this->export_sql_end[$r]  =' FROM ('.MAIN_DB_PREFIX.'fichinter as f, '.MAIN_DB_PREFIX.'fichinterdet as fd, '.MAIN_DB_PREFIX.'societe as s)';
         $this->export_sql_end[$r] .=' WHERE f.fk_soc = s.rowid AND f.rowid = fd.fk_fichinter';
-        $this->export_sql_end[$r] .=' AND f.entity = '.$conf->entity;
+        $this->export_sql_end[$r] .=' AND f.entity IN ('.getEntity('intervention',1).')';
         $r++;
 
     }
@@ -175,20 +175,4 @@ class modFicheinter extends DolibarrModules
 
         return $this->_init($sql,$options);
     }
-
-    /**
-	 *		Function called when module is disabled.
-	 *      Remove from database constants, boxes and permissions from Dolibarr database.
-	 *		Data directories are not deleted
-	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *      @return     int             	1 if OK, 0 if KO
-     */
-    function remove($options='')
-    {
-		$sql = array();
-
-		return $this->_remove($sql,$options);
-    }
-
 }

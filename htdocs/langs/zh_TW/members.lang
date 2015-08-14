@@ -199,7 +199,8 @@ Entreprises=公司
 DOLIBARRFOUNDATION_PAYMENT_FORM=為了使您的訂閱使用銀行轉帳支付，請參閱頁<a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribe</a> 。 <br>使用信用卡或PayPal支付，點擊此頁底部的按鈕。 <br>
 ByProperties=By characteristics
 MembersStatisticsByProperties=Members statistics by characteristics
-MembersByNature=Members by nature
+MembersByNature=This screen show you statistics on members by nature.
+MembersByRegion=This screen show you statistics on members by region.
 VATToUseForSubscriptions=VAT rate to use for subscriptions
 NoVatOnSubscription=No TVA for subscriptions
 MEMBER_PAYONLINE_SENDEMAIL=Email to warn when Dolibarr receive a confirmation of a validated payment for subscription

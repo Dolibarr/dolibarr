@@ -1,11 +1,11 @@
 # Dolibarr language file - Source file is en_US - admin
 WorkflowSetup=Arbetsflöde modul konfiguration
-WorkflowDesc=Denna modul ändrar beteendet av automatiska händelser i tillämpningar. Standardbeteende är att arbetsflöde öppnas (du gör saker i den ordning du vill). Automatiska händelser kan aktiveras för de händelser som önskas.
-ThereIsNoWorkflowToModify=Det finns ingen arbetsflöde du kan ändra för modul du har aktiverat.
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Skapa en kundorder automatiskt efter en kommersiell förslag undertecknas
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Skapa en kundfaktura automatiskt efter en kommersiell förslag undertecknas
-descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Skapa en kundfaktura automatiskt efter ett avtal validerad
-descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Skapa en kundfaktura automatiskt efter en kundorder är stängd
+WorkflowDesc=This module is designed to modify the behaviour of automatic actions into application. By default, workflow is open (you can do things in the order you want). You can activate the automatic actions you are interested in.
+ThereIsNoWorkflowToModify=There is no workflow modifications available with the activated modules.
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automatically create a customer order after a commercial proposal is signed
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICEAutomatically create a customer invoice after a commercial proposal is signed
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICEAutomatically create a customer invoice after a contract is validated
+descWORKFLOW_ORDER_AUTOCREATE_INVOICEAutomatically create a customer invoice after a customer order is closed
 descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Klassificera länkad förslag källa att faktureras när kundorder är inställd på betald
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Klassificera länkade källa kundorder (s) för att faktureras när kundfaktura är inställd på betald
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Klassificera länkade källa kundorder (s) för att faktureras när kundfaktura valideras

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2013-2014 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
+ * Copyright (C) 2013-2015 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -145,6 +145,7 @@ if ($result) {
 	
 	print '<a class="butAction" href="./card.php?action=create">' . $langs->trans("Addanaccount") . '</a>';
 	print '<a class="butAction" href="./importaccounts.php">' . $langs->trans("ImportAccount") . '</a>';
+	print '<a class="butAction" href="./productaccount.php">' . $langs->trans("CheckProductAccountancyCode") . '</a>';
 	print '<br/><br/>';
 	
 	print '<table class="noborder" width="100%">';
@@ -154,7 +155,7 @@ if ($result) {
 	print_liste_field_titre($langs->trans("Accountparent"), $_SERVER["PHP_SELF"], "aa.account_parent", "", $param, "", $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Pcgtype"), $_SERVER["PHP_SELF"], "aa.pcg_type", "", $param, "", $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Pcgsubtype"), $_SERVER["PHP_SELF"], "aa.pcg_subtype", "", $param, "", $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Active"), $_SERVER["PHP_SELF"], "aa.active", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans("Activated"), $_SERVER["PHP_SELF"], "aa.active", "", $param, "", $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Action"),$_SERVER["PHP_SELF"],"",$param,"",'width="60" align="center"',$sortfield,$sortorder);
 	print '</tr>';
 	
@@ -174,12 +175,17 @@ if ($result) {
 	
 	$var = true;
 	
+	$accountstatic=new AccountingAccount($db);
+	
 	while ( $i < min($num, $limit) ) {
 		$obj = $db->fetch_object($resql);
 		
-		$var = ! $var;
+		$accountstatic->id=$obj->rowid;
+		$accountstatic->label=$obj->label;
+		$accountstatic->account_number=$obj->account_number;
+
 		print '<tr ' . $bc[$var] . '>';
-		print '<td><a href="./card.php?id=' . $obj->rowid . '">' . $obj->account_number . '</td>';
+		print '<td>' . $accountstatic->getNomUrl(1) . '</td>';
 		print '<td>' . $obj->label . '</td>';
 		print '<td>' . $obj->account_parent . '</td>';
 		print '<td>' . $obj->pcg_type . '</td>';
@@ -210,6 +216,7 @@ if ($result) {
 		print '</td>' . "\n";
 		
 		print "</tr>\n";
+		$var=!$var;
 		$i ++;
 	}
 	

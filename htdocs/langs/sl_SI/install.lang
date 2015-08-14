@@ -35,7 +35,6 @@ IfDatabaseExistsGoBackAndCheckCreate=Če baza podatkov že obstaja, se vrnite na
 WarningBrowserTooOld=Verzija brskalnika je prestara. Priporočamo nadgraditev vašega brskalnika na zadnjo verzijo Firefox, Chrome ali Opera.
 PHPVersion=PHP Verzija
 YouCanContinue=Lahko nadaljujete...
-PleaseBePatient=Prosim, bodite potrpežljivi...
 License=Uporablja licenco
 ConfigurationFile=Konfiguracijska datoteka
 WebPagesDirectory=Mapa, v kateri so shranjene web strani
@@ -64,6 +63,7 @@ DatabaseSuperUserAccess=Strežnik za bazo podatkov – »Super uporabnik« dosto
 CheckToCreateDatabase=Označite kvadratek, če baza podatkov ne obstaja in jo je potrebno ustvariti.<br>V tem primeru morate vnesti uporabniško ime/geslo za račun »Super uporabnik« na dnu te strani.
 CheckToCreateUser=Označite kvadratek, če lastnik ne obstaja in ga je potrebno ustvariti.<br>V tem primeru morate izbrati njegovo uporabniško ime in geslo in vnesti tudi uporabniško ime/geslo za račun »Super uporabnik« na dnu te strani. Če ta kvadratek ni označen, morata obstajati lastnikova baza podatkov in njegovo geslo.
 Experimental=(eksperimentalno)
+Deprecated=(nasprotovanje)
 DatabaseRootLoginDescription=Uporabniško ime uporabnika omogoča kreiranje nove baze podatkov ali novega uporabnika, razen če vaša baza podatkov in vaše uporabniško ime že obstajata (na primer če gostujete pri spletnem ponudniku).
 KeepEmptyIfNoPassword=Pustite prazno, če uporabnik nima gesla (temu se izogibajte)
 SaveConfigurationFile=Shrani vrednosti
@@ -156,7 +156,7 @@ LastStepDesc=<strong>Zadnji korak</strong>: Tukaj določite uporabniško ime in 
 ActivateModule=Vključite modul %s
 ShowEditTechnicalParameters=Kliknite tukaj za prikaz/popravek naprednih parametrov (expertni način)
 WarningUpgrade=Pozor:\nAli ste najprej naredili varnostno kopijo baze podatkov ?\nTo je zelo priporočeno: na primer zaradi nekaterih hroščev v sistemu baze podatkov (na primer mysql verzija 5.5.40), lahko med tem postopkom izgubite nekatere podatke ali tabele, zato je priporočeno imeti celotno kopijo vaše baze podatkov pred začetkom migracije.\n\nKliknite OK za začetek procesa migracije...
-ErrorDatabaseVersionForbiddenForMigration=Your database version is %s. It has a critical bug making data loss if you make structure change on your database, like it is required by the migration process. For his reason, migration will not be allowed until you upgrade your database to a higher fixed version (list of known bugged version: %s)
+ErrorDatabaseVersionForbiddenForMigration=Verzija vaše baze podatkov je %s. Vsebuje kritičnega hrošča, ki povzroči izgubo podatkov, če naredite strukturno spremembo baze, kot jo zahteva postopek migracije. Zato migracija ne bo dovoljena, dokler ne posodobite baze na višjo stabilno verzijo (seznam znanih hroščastih verzij: %s)
 
 #########
 # upgrade

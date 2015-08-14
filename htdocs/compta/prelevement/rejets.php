@@ -92,7 +92,7 @@ if ($result)
 	print_liste_field_titre($langs->trans("Line"),$_SERVER["PHP_SELF"],"p.ref",'',$urladd);
 	print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER["PHP_SELF"],"s.nom",'',$urladd);
 	print_liste_field_titre($langs->trans("Reason"),$_SERVER["PHP_SELF"],"pr.motif","",$urladd);
-	print '</tr>';
+	print "</tr>\n";
 
 	$var=True;
 

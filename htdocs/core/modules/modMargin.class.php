@@ -130,37 +130,14 @@ class modMargin extends DolibarrModules
 		$this->rights[$r][2] = 'w'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'creer';
+
+		$r++;
+		$this->rights[$r][0] = 59003; // id de la permission
+		$this->rights[$r][1] = 'Read every user margin'; // libelle de la permission
+		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][4] = 'read';
+		$this->rights[$r][5] = 'all';
 	}
-
-	/**
-     *	Function called when module is enabled.
-     *	The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
-     *	It also creates data directories.
-     *
-     *	@return     int             1 if OK, 0 if KO
-     */
-	function init()
-  	{
-    	$sql = array();
-
-		//$result=$this->_load_tables();
-
-    	return $this->_init($sql);
-  	}
-
-	/**
-	 *	Function called when module is disabled.
-	 *	Remove from database constants, boxes and permissions from Dolibarr database.
-	 *	Data directories are not deleted.
-	 *
-	 *	@return     int             1 if OK, 0 if KO
- 	 */
-	function remove()
-	{
-    	$sql = array();
-
-    	return $this->_remove($sql);
-  	}
-
 }
 

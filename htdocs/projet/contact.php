@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2010      Regis Houssin       <regis.houssin@capnetworks.com>
- * Copyright (C) 2012-2014 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2012-2015 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,12 +41,8 @@ $mine   = GETPOST('mode')=='mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 
 $object = new Project($db);
-if ($id > 0 || ! empty($ref))
-{
-    $object->fetch($id,$ref);
-    $object->fetch_thirdparty();
-    $id=$object->id;
-}
+
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not includ_once
 
 // Security check
 $socid=0;
@@ -124,8 +120,10 @@ if (($action == 'deleteline' || $action == 'deletecontact') && $user->rights->pr
  * View
  */
 
+$title=$langs->trans("ProjectContact").' - '.$object->ref.' '.$object->name;
+if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->ref.' '.$object->name.' - '.$langs->trans("ProjectContact");
 $help_url="EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
-llxHeader('', $langs->trans("Project"), $help_url);
+llxHeader('', $title, $help_url);
 
 $form = new Form($db);
 $formcompany= new FormCompany($db);
@@ -185,7 +183,7 @@ if ($id > 0 || ! empty($ref))
 	else print $langs->trans('PrivateProject');
 	print '</td></tr>';
 
-	// Statut
+	// Status
 	print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
 
 	// Date start
@@ -196,6 +194,22 @@ if ($id > 0 || ! empty($ref))
 	// Date end
 	print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
 	print dol_print_date($object->date_end,'day');
+	print '</td></tr>';
+
+	// Opportunity status
+	print '<tr><td>'.$langs->trans("OpportunityStatus").'</td><td>';
+	$code = dol_getIdFromCode($db, $object->opp_status, 'c_lead_status', 'rowid', 'code');
+	if ($code) print $langs->trans("OppStatus".$code);
+	print '</td></tr>';
+
+	// Opportunity Amount
+	print '<tr><td>'.$langs->trans("OpportunityAmount").'</td><td>';
+	if (strcmp($object->opp_amount,'')) print price($object->opp_amount,'',$langs,0,0,0,$conf->currency);
+	print '</td></tr>';
+
+	// Budget
+	print '<tr><td>'.$langs->trans("Budget").'</td><td>';
+	if (strcmp($object->budget_amount, '')) print price($object->budget_amount,'',$langs,0,0,0,$conf->currency);
 	print '</td></tr>';
 
 	print "</table>";

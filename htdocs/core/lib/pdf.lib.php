@@ -5,8 +5,11 @@
  * Copyright (C) 2010-2012	Regis Houssin       	<regis.houssin@capnetworks.com>
  * Copyright (C) 2010		Juanjo Menent       	<jmenent@2byte.es>
  * Copyright (C) 2012		Christophe Battarel		<christophe.battarel@altairis.fr>
+ * Copyright (C) 2012       Cédric Salvador         <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2012-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2014		Cedric GROSS			<c.gross@kreiz-it.fr>
  * Copyright (C) 2014		Teddy Andreotti			<125155@supinfo.com>
+ * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -123,8 +126,9 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 	if (empty($conf->global->MAIN_USE_FPDF)) require_once TCPDF_PATH.'tcpdf.php';
 	else require_once FPDF_PATH.'fpdf.php';
 
-	// We need to instantiate fpdi object (instead of tcpdf) to use merging features. But we can disable it.
-	if (empty($conf->global->MAIN_DISABLE_FPDI)) require_once FPDI_PATH.'fpdi.php';
+	// We need to instantiate tcpdi or fpdi object (instead of tcpdf) to use merging features. But we can disable it (this will break all merge features).
+    if (empty($conf->global->MAIN_DISABLE_TCPDI)) require_once TCPDI_PATH.'tcpdi.php';
+	else if (empty($conf->global->MAIN_DISABLE_FPDI)) require_once FPDI_PATH.'fpdi.php';
 
 	//$arrayformat=pdf_getFormat();
 	//$format=array($arrayformat['width'],$arrayformat['height']);
@@ -144,7 +148,8 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 		- print-high : Print the document to a representation from which a faithful digital copy of the PDF content could be generated. When this is not set, printing is limited to a low-level representation of the appearance, possibly of degraded quality.
 		- owner : (inverted logic - only for public-key) when set permits change of encryption and enables all other permissions.
 		*/
-		if (class_exists('FPDI')) $pdf = new FPDI($pagetype,$metric,$format);
+		if (class_exists('TCPDI')) $pdf = new TCPDI($pagetype,$metric,$format);
+		else if (class_exists('FPDI')) $pdf = new FPDI($pagetype,$metric,$format);
 		else $pdf = new TCPDF($pagetype,$metric,$format);
 		// For TCPDF, we specify permission we want to block
 		$pdfrights = array('modify','copy');
@@ -155,7 +160,8 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 	}
 	else
 	{
-		if (class_exists('FPDI')) $pdf = new FPDI($pagetype,$metric,$format);
+		if (class_exists('TCPDI')) $pdf = new TCPDI($pagetype,$metric,$format);
+		else if (class_exists('FPDI')) $pdf = new FPDI($pagetype,$metric,$format);
 		else $pdf = new TCPDF($pagetype,$metric,$format);
 	}
 
@@ -284,6 +290,33 @@ function pdf_getHeightForLogo($logo, $url = false)
 	return $height;
 }
 
+/**
+ * Returns the name of the thirdparty
+ *
+ * @param Societe|Contact $thirdparty Contact or thirdparty
+ * @param Translate $outputlangs Output language
+ * @return string
+ */
+function pdfBuildThirdpartyName($thirdparty, Translate $outputlangs)
+{
+	//Recipient name
+	$socname = '';
+
+	// On peut utiliser le nom de la societe du contact
+	if ($thirdparty instanceof Societe) {
+		if (!empty($thirdparty->name_alias)) {
+			$socname = $thirdparty->name_alias."\n";
+		}
+
+		$socname .= $thirdparty->name;
+	} elseif ($thirdparty instanceof Contact) {
+		$socname = $thirdparty->socname;
+	} else {
+		throw new InvalidArgumentException();
+	}
+
+	return $outputlangs->convToOutputCharset($socname);
+}
 
 /**
  *   	Return a string with full address formated
@@ -320,9 +353,9 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
 		if (empty($conf->global->MAIN_PDF_DISABLESOURCEDETAILS))
 		{
 			// Phone
-			if ($sourcecompany->phone) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".$outputlangs->convToOutputCharset($sourcecompany->phone);
+			if ($sourcecompany->phone) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("PhoneShort").": ".$outputlangs->convToOutputCharset($sourcecompany->phone);
 			// Fax
-			if ($sourcecompany->fax) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Fax").": ".$outputlangs->convToOutputCharset($sourcecompany->fax);
+			if ($sourcecompany->fax) $stringaddress .= ($stringaddress ? ($sourcecompany->phone ? " - " : "\n") : '' ).$outputlangs->transnoentities("Fax").": ".$outputlangs->convToOutputCharset($sourcecompany->fax);
 			// EMail
 			if ($sourcecompany->email) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Email").": ".$outputlangs->convToOutputCharset($sourcecompany->email);
 			// Web
@@ -533,6 +566,7 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 			$cury+=3;
 		}
 
+		/*
 		if (empty($onlynumber)) $pdf->line($curx+1, $cury+1, $curx+1, $cury+8);
 
 		if ($usedetailedbban == 1)
@@ -596,6 +630,7 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 
 		$curx=$savcurx;
 		$cury+=9;
+		*/
 	}
 	else
 	{
@@ -624,6 +659,16 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 		$tmpy=$pdf->getStringHeight(100, $val);
 		$cury+=$tmpy;
 	}
+
+	if (! empty($account->proprio))
+	{
+		$pdf->SetXY($curx, $cury);
+		$val=$outputlangs->transnoentities("BankAccountOwner").': ' . $outputlangs->convToOutputCharset($account->proprio);
+		$pdf->MultiCell(100, 3, $val, 0, 'L', 0);
+		$tmpy=$pdf->getStringHeight(100, $val);
+		$cury+=$tmpy;
+	}
+
 	else if (! $usedetailedbban) $cury+=1;
 
 	// Use correct name of bank id according to country
@@ -924,7 +969,7 @@ function pdf_writeLinkedObjects(&$pdf,$object,$outputlangs,$posx,$posy,$w,$h,$al
  *  @param  int				$hideref       		Hide reference
  *  @param  int				$hidedesc           Hide description
  * 	@param	int				$issupplierline		Is it a line for a supplier object ?
- * 	@return	void
+ * 	@return	string|null
  */
 function pdf_writelinedesc(&$pdf,$object,$i,$outputlangs,$w,$h,$posx,$posy,$hideref=0,$hidedesc=0,$issupplierline=0)
 {
@@ -1082,7 +1127,7 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$categstatic=new Categorie($db);
 		// recovering the list of all the categories linked to product
-		$tblcateg=$categstatic->containing($idprod,0);
+		$tblcateg=$categstatic->containing($idprod, Categorie::TYPE_PRODUCT);
 		foreach ($tblcateg as $cate)
 		{
 			// Adding the descriptions if they are filled
@@ -1142,7 +1187,7 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
  *	@param	int			$i					Current line number
  *  @param  Translate	$outputlangs		Object langs for output
  *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
- * 	@return	void
+ * 	@return	null|string
  */
 function pdf_getlinenum($object,$i,$outputlangs,$hidedetails=0)
 {
@@ -1168,7 +1213,7 @@ function pdf_getlinenum($object,$i,$outputlangs,$hidedetails=0)
  *	@param	int			$i					Current line number
  *  @param  Translate	$outputlangs		Object langs for output
  *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
- * 	@return	void
+ * 	@return	null|string
  */
 function pdf_getlineref($object,$i,$outputlangs,$hidedetails=0)
 {
@@ -1193,7 +1238,7 @@ function pdf_getlineref($object,$i,$outputlangs,$hidedetails=0)
  *	@param	int			$i					Current line number
  *  @param  Translate	$outputlangs		Object langs for output
  *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
- * 	@return	void
+ * 	@return	null|string
  */
 function pdf_getlineref_supplier($object,$i,$outputlangs,$hidedetails=0)
 {
@@ -1417,6 +1462,43 @@ function pdf_getlineqty_keeptoship($object,$i,$outputlangs,$hidedetails=0)
 }
 
 /**
+ *	Return line unit
+ *
+ *	@param	Object		$object				Object
+ *	@param	int			$i					Current line number
+ *  @param  Translate	$outputlangs		Object langs for output
+ *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
+ *  @param	HookManager	$hookmanager		Hook manager instance
+ *  @return	void
+ */
+function pdf_getlineunit($object, $i, $outputlangs, $hidedetails = 0, $hookmanager = false)
+{
+	global $langs;
+	if ($object->lines[$i]->special_code != 3) {
+		if (is_object($hookmanager) && (($object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code)) || !empty($object->lines[$i]->fk_parent_line))) {
+			$special_code = $object->lines[$i]->special_code;
+			if (!empty($object->lines[$i]->fk_parent_line)) {
+				$special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
+			}
+			$parameters = array(
+				'i' => $i,
+				'outputlangs' => $outputlangs,
+				'hidedetails' => $hidedetails,
+				'special_code' => $special_code
+			);
+			$action = '';
+			return $hookmanager->executeHooks('pdf_getlineunit', $parameters, $object,
+				$action);    // Note that $action and $object may have been modified by some hooks
+		} else {
+			if (empty($hidedetails) || $hidedetails > 1) {
+				return $langs->transnoentitiesnoconv($object->lines[$i]->getLabelOfUnit('short'));
+			}
+		}
+	}
+}
+
+
+/**
  *	Return line remise percent
  *
  *	@param	Object		$object				Object
@@ -1444,6 +1526,31 @@ function pdf_getlineremisepercent($object,$i,$outputlangs,$hidedetails=0)
 		else
 		{
 			if (empty($hidedetails) || $hidedetails > 1) return dol_print_reduction($object->lines[$i]->remise_percent,$outputlangs);
+		}
+	}
+}
+
+/**
+ * Return line percent
+ *
+ * @param Object $object Object
+ * @param int $i Current line number
+ * @param Translate $outputlangs Object langs for output
+ * @param int $hidedetails Hide details (0=no, 1=yes, 2=just special lines)
+ * @param HookManager $hookmanager Hook manager instance
+ * @return void
+ */
+function pdf_getlineprogress($object, $i, $outputlangs, $hidedetails = 0, $hookmanager = null)
+{
+	if ($object->lines[$i]->special_code != 3) {
+		if (is_object($hookmanager) && (($object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code)) || !empty($object->lines[$i]->fk_parent_line))) {
+			$special_code = $object->lines[$i]->special_code;
+			if (!empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
+			$parameters = array('i' => $i, 'outputlangs' => $outputlangs, 'hidedetails' => $hidedetails, 'special_code' => $special_code);
+			$action = '';
+			return $hookmanager->executeHooks('pdf_getlineprogress', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+		} else {
+			if (empty($hidedetails) || $hidedetails > 1) return $object->lines[$i]->situation_percent . '%';
 		}
 	}
 }
@@ -1527,7 +1634,7 @@ function pdf_getlinetotalwithtax($object,$i,$outputlangs,$hidedetails=0)
  *	@param	Object		$object				Object
  *	@param	string		$type				Type
  *  @param  Translate	$outputlangs		Object langs for output
- * 	@return	void
+ * 	@return	integer
  */
 function pdf_getTotalQty($object,$type,$outputlangs)
 {
@@ -1628,12 +1735,22 @@ function pdf_getLinkedObjects($object,$outputlangs)
 				$objects[$i]->fetchObjectLinked();
 				$order = $objects[$i]->linkedObjects['commande'][0];
 
-				$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefOrder") . ' / ' . $outputlangs->transnoentities("RefSending");
-				$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($order->ref) . ($order->ref_client ? ' ('.$order->ref_client.')' : '');
-				$linkedobjects[$objecttype]['ref_value'].= ' / ' . $outputlangs->transnoentities($objects[$i]->ref);
-				$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("OrderDate") . ' / ' . $outputlangs->transnoentities("DateSending");
-				$linkedobjects[$objecttype]['date_value'] = dol_print_date($order->date,'day','',$outputlangs);
-				$linkedobjects[$objecttype]['date_value'].= ' / ' . dol_print_date($objects[$i]->date_delivery,'day','',$outputlangs);
+				if (! empty($object->linkedObjects['commande']))	// There is already a link to order so we show only info of shipment
+				{
+					$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefSending");
+					$linkedobjects[$objecttype]['ref_value'].= $outputlangs->transnoentities($objects[$i]->ref);
+					$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("DateSending");
+					$linkedobjects[$objecttype]['date_value'].= dol_print_date($objects[$i]->date_delivery,'day','',$outputlangs);
+				}
+				else	// We show both info of order and shipment
+				{
+					$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefOrder") . ' / ' . $outputlangs->transnoentities("RefSending");
+					$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($order->ref) . ($order->ref_client ? ' ('.$order->ref_client.')' : '');
+					$linkedobjects[$objecttype]['ref_value'].= ' / ' . $outputlangs->transnoentities($objects[$i]->ref);
+					$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("OrderDate") . ' / ' . $outputlangs->transnoentities("DateSending");
+					$linkedobjects[$objecttype]['date_value'] = dol_print_date($order->date,'day','',$outputlangs);
+					$linkedobjects[$objecttype]['date_value'].= ' / ' . dol_print_date($objects[$i]->date_delivery,'day','',$outputlangs);
+				}
 			}
 		}
 	}

@@ -128,7 +128,7 @@ else if ($action == 'add' && $user->rights->deplacement->creer)
 	        setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date")), 'errors');
             $error++;
         }
-        if ($object->type == '-1') 	// Otherwise it is TF_LUNCH,...
+        if ($object->type == '-1')
         {
 	        setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")), 'errors');
             $error++;
@@ -262,7 +262,7 @@ if ($action == 'create')
 
     print "<tr>";
     print '<td class="fieldrequired">'.$langs->trans("Date").'</td><td>';
-    print $form->select_date($datec?$datec:-1,'','','','','add',1,1);
+    print $form->select_date($datec?$datec:-1,'','','','','add',1,1,1);
     print '</td></tr>';
 
     // Km
@@ -303,8 +303,11 @@ if ($action == 'create')
 
     print '</table>';
 
-    print '<br><center><input class="button" type="submit" value="'.$langs->trans("Save").'"> &nbsp; &nbsp; ';
-    print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></center';
+    print '<br><div class="center">';
+	print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+    print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '</div>';
 
     print '</form>';
 }
@@ -355,7 +358,7 @@ else if ($id)
 
             // Date
             print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td>';
-            print $form->select_date($object->date,'','','','','update');
+            print $form->select_date($object->date,'',0,0,0,'update',1,0,1);
             print '</td></tr>';
 
             // Km
@@ -396,9 +399,11 @@ else if ($id)
 
             print '</table>';
 
-            print '<br><center><input type="submit" class="button" value="'.$langs->trans("Save").'"> &nbsp; ';
+            print '<br><div class="center">';
+			print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
             print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
-            print '</center>';
+            print '</div>';
 
             print '</form>';
 
@@ -428,7 +433,7 @@ else if ($id)
             print '</td></tr>';
 
 	        $form->load_cache_types_fees();
-            
+
 	        // Type
             print '<tr><td>';
             print $form->editfieldkey("Type",'type',$langs->trans($object->type),$object,$conf->global->MAIN_EDIT_ALSO_INLINE && $user->rights->deplacement->creer,'select:types_fees');
@@ -483,11 +488,11 @@ else if ($id)
                 print '</td><td colspan="3">';
                 if ($action == 'classify')
                 {
-                    $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project,'projectid');
+                    $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project,'projectid', 0, 0, 1);
                 }
                 else
                 {
-                    $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project,'none');
+                    $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project,'none', 0, 0);
                 }
                 print '</td>';
                 print '</tr>';

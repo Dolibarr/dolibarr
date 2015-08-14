@@ -132,11 +132,10 @@ class modContrat extends DolibarrModules
 		
 		// Exports
 		//--------
-
 		$r=1;
 
 		$this->export_code[$r]=$this->rights_class.'_'.$r;
-		$this->export_label[$r]='ContractAndServices';	// Translation key (used only if key ExportDataset_xxx_z not found)
+		$this->export_label[$r]='ContractsAndLine';	// Translation key (used only if key ExportDataset_xxx_z not found)
 		$this->export_icon[$r]='contract';
 		$this->export_permission[$r]=array(array("contrat","export"));
 		$this->export_fields_array[$r]=array('s.rowid'=>"IdCompany",'s.nom'=>'CompanyName','s.address'=>'Address','s.zip'=>'Zip','s.town'=>'Town','c.code'=>'CountryCode',
@@ -177,7 +176,7 @@ class modContrat extends DolibarrModules
 		$this->export_sql_end[$r] .=' '.MAIN_DB_PREFIX.'contratdet as cod';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product as p on (cod.fk_product = p.rowid)';
 		$this->export_sql_end[$r] .=' WHERE co.fk_soc = s.rowid and co.rowid = cod.fk_contrat';
-		$this->export_sql_end[$r] .=' AND co.entity = '.$conf->entity;
+		$this->export_sql_end[$r] .=' AND co.entity IN ('.getEntity('contract',1).')';
 	}
 
 
@@ -200,20 +199,4 @@ class modContrat extends DolibarrModules
 
 		return $this->_init($sql,$options);
 	}
-
-    /**
-	 *		Function called when module is disabled.
-	 *      Remove from database constants, boxes and permissions from Dolibarr database.
-	 *		Data directories are not deleted
-	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *      @return     int             	1 if OK, 0 if KO
-     */
-    function remove($options='')
-    {
-		$sql = array();
-
-		return $this->_remove($sql,$options);
-    }
-
 }

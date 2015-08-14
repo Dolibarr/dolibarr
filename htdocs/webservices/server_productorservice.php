@@ -73,7 +73,7 @@ $server->wsdl->addComplexType(
     	'sourceapplication' => array('name'=>'sourceapplication','type'=>'xsd:string'),
     	'login' => array('name'=>'login','type'=>'xsd:string'),
         'password' => array('name'=>'password','type'=>'xsd:string'),
-        'entity' => array('name'=>'entity','type'=>'xsd:string'),
+        'entity' => array('name'=>'entity','type'=>'xsd:string')
     )
 );
 // Define WSDL Return object
@@ -85,7 +85,7 @@ $server->wsdl->addComplexType(
     '',
     array(
         'result_code' => array('name'=>'result_code','type'=>'xsd:string'),
-        'result_label' => array('name'=>'result_label','type'=>'xsd:string'),
+        'result_label' => array('name'=>'result_label','type'=>'xsd:string')
     )
 );
 
@@ -122,6 +122,8 @@ $productorservice_fields = array(
     'stock_alert' => array('name'=>'stock_alert','type'=>'xsd:string'),
     'stock_real' => array('name'=>'stock_real','type'=>'xsd:string'),
     'stock_pmp' => array('name'=>'stock_pmp','type'=>'xsd:string'),
+    'warehouse_ref' => array('name'=>'warehouse_ref','type'=>'xsd:string'),		// Used only for create or update to set which warehouse to use for stock correction if stock_real differs from database
+
     'canvas' => array('name'=>'canvas','type'=>'xsd:string'),
     'import_key' => array('name'=>'import_key','type'=>'xsd:string'),
 
@@ -372,50 +374,50 @@ function getProductOrService($authentication,$id='',$ref='',$ref_ext='',$lang=''
             	$product->load_stock();
 
             	$dir = (!empty($conf->product->dir_output)?$conf->product->dir_output:$conf->service->dir_output);
-            	$pdir = get_exdir($product->id,2) . $product->id ."/photos/";
+            	$pdir = get_exdir($product->id,2,0,0,$product,'product') . $product->id ."/photos/";
             	$dir = $dir . '/'. $pdir;
 
             	if (! empty($product->multilangs[$langs->defaultlang]["label"]))     		$product->label =  $product->multilangs[$langs->defaultlang]["label"];
             	if (! empty($product->multilangs[$langs->defaultlang]["description"]))     	$product->description =  $product->multilangs[$langs->defaultlang]["description"];
             	if (! empty($product->multilangs[$langs->defaultlang]["note"]))     		$product->note =  $product->multilangs[$langs->defaultlang]["note"];
 
-		$productorservice_result_fields = array(
-		    'id' => $product->id,
-	   	    'ref' => $product->ref,
-	   	    'ref_ext' => $product->ref_ext,
-	    	    'label' => $product->label,
-	    	    'description' => $product->description,
-	    	    'date_creation' => dol_print_date($product->date_creation,'dayhourrfc'),
-	    	    'date_modification' => dol_print_date($product->date_modification,'dayhourrfc'),
-	            'note' => $product->note,
-	            'status_tosell' => $product->status,
-	            'status_tobuy' => $product->status_buy,
-		    'type' => $product->type,
-		    'barcode' => $product->barcode,
-		    'barcode_type' => $product->barcode_type,
-		    'country_id' => $product->country_id>0?$product->country_id:'',
-		    'country_code' => $product->country_code,
-		    'custom_code' => $product->customcode,
+            	$productorservice_result_fields = array(
+	            	'id' => $product->id,
+	            	'ref' => $product->ref,
+	            	'ref_ext' => $product->ref_ext,
+	            	'label' => $product->label,
+	            	'description' => $product->description,
+	            	'date_creation' => dol_print_date($product->date_creation,'dayhourrfc'),
+	            	'date_modification' => dol_print_date($product->date_modification,'dayhourrfc'),
+	            	'note' => $product->note,
+	            	'status_tosell' => $product->status,
+	            	'status_tobuy' => $product->status_buy,
+	            	'type' => $product->type,
+	            	'barcode' => $product->barcode,
+	            	'barcode_type' => $product->barcode_type,
+	            	'country_id' => $product->country_id>0?$product->country_id:'',
+	            	'country_code' => $product->country_code,
+	            	'custom_code' => $product->customcode,
 
-	            'price_net' => $product->price,
-	            'price' => $product->price_ttc,
-	            'price_min_net' => $product->price_min,
-	            'price_min' => $product->price_min_ttc,
-	            'price_base_type' => $product->price_base_type,
-		    'vat_rate' => $product->tva_tx,
-		    //! French VAT NPR
-		    'vat_npr' => $product->tva_npr,
-		    //! Spanish local taxes
-		    'localtax1_tx' => $product->localtax1_tx,
-		    'localtax2_tx' => $product->localtax2_tx,
+	            	'price_net' => $product->price,
+	            	'price' => $product->price_ttc,
+	            	'price_min_net' => $product->price_min,
+	            	'price_min' => $product->price_min_ttc,
+	            	'price_base_type' => $product->price_base_type,
+	            	'vat_rate' => $product->tva_tx,
+	            	//! French VAT NPR
+	            	'vat_npr' => $product->tva_npr,
+	            	//! Spanish local taxes
+	            	'localtax1_tx' => $product->localtax1_tx,
+	            	'localtax2_tx' => $product->localtax2_tx,
 
-		    'stock_real' => $product->stock_reel,
-		    'stock_alert' => $product->seuil_stock_alerte,
-		    'pmp' => $product->pmp,
-		    'import_key' => $product->import_key,
-		    'dir' => $pdir,
-		    'images' => $product->liste_photos($dir,$nbmax=10)
-                );
+	            	'stock_real' => $product->stock_reel,
+	            	'stock_alert' => $product->seuil_stock_alerte,
+	            	'pmp' => $product->pmp,
+	            	'import_key' => $product->import_key,
+	            	'dir' => $pdir,
+	            	'images' => $product->liste_photos($dir,$nbmax=10)
+            	);
 
                 //Retreive all extrafield for thirdsparty
             	// fetch optionals attributes and labels
@@ -503,7 +505,7 @@ function createProductOrService($authentication,$product)
         $newobject->ref=$product['ref'];
         $newobject->ref_ext=$product['ref_ext'];
         $newobject->type=$product['type'];
-        $newobject->libelle=$product['label'];    // TODO deprecated
+        $newobject->libelle=$product['label'];    // @deprecated
         $newobject->label=$product['label'];
         $newobject->description=$product['description'];
         $newobject->note=$product['note'];
@@ -515,11 +517,11 @@ function createProductOrService($authentication,$product)
         $newobject->price_base_type=$product['price_base_type'];
         $newobject->date_creation=$now;
 
-	if ($product['barcode']) 
-	{
-		$newobject->barcode = $product['barcode'];
-		$newobject->barcode_type = $product['barcode_type'];
-	}
+		if ($product['barcode'])
+		{
+			$newobject->barcode = $product['barcode'];
+			$newobject->barcode_type = $product['barcode_type'];
+		}
 
         $newobject->stock_reel=$product['stock_real'];
         $newobject->pmp=$product['pmp'];
@@ -547,12 +549,12 @@ function createProductOrService($authentication,$product)
         //var_dump($product['lines'][0]['type']);
 
         $extrafields=new ExtraFields($db);
-	$extralabels=$extrafields->fetch_name_optionals_label('product',true);
-	foreach($extrafields->attribute_label as $key=>$label)
-	{
-		$key='options_'.$key;
-		$newobject->array_options[$key]=$product[$key];
-	}
+		$extralabels=$extrafields->fetch_name_optionals_label('product',true);
+		foreach($extrafields->attribute_label as $key=>$label)
+		{
+			$key='options_'.$key;
+			$newobject->array_options[$key]=$product[$key];
+		}
 
         $db->begin();
 
@@ -561,6 +563,46 @@ function createProductOrService($authentication,$product)
         {
             $error++;
         }
+
+        if (! $error)
+        {
+        	// Update stock if stock count is provided and differs from database after creation or update
+			if (isset($product['stock_real']) && $product['stock_real'] != '' && ! empty($conf->global->stock->enabled))
+			{
+				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+
+				$savstockreal=$newobject->stock_reel;
+				$newobject->load_stock();		// This overwrite ->stock_reel
+				$getstockreal = $newobject->stock_reel;
+
+				if ($savstockreal != $getstockreal)
+				{
+					$warehouse = new Entrepot($this->db);
+					$warehouse->fetch(0, $product['warehouse_ref']);
+					if ($warehouse->id > 0)
+					{
+						if (($savstockreal - $getstockreal) > 0)
+						{
+							$result=$newobject->correct_stock($fuser, $warehouse->id, ($savstockreal - $getstockreal), 0, 'Correction from external call (Web Service)', 0, 'WS'.dol_print_date($now,'dayhourlog'));
+						}
+						if (($savstockreal - $getstockreal) > 0)
+						{
+							$result=$newobject->correct_stock($fuser, $warehouse->id, ($savstockreal - $getstockreal), 1, 'Correction from external call (Web Service)', 0, 'WS'.dol_print_date($now,'dayhourlog'));
+						}
+						if ($result <= 0)
+						{
+							$error++;
+							$newobject->error='You set a different value for stock, but correction of stock count (before='.$getstockreal.', after='.$savstockreal.') fails with error '.$newobject->error;
+						}
+					}
+					else
+					{
+						$error++;
+						$newobject->error='You set a different value for stock but we failed to find warehouse '.$product['warehouse_ref'].' to make correction.';
+					}
+				}
+			}
+		}
 
         if (! $error)
         {
@@ -622,7 +664,7 @@ function updateProductOrService($authentication,$product)
     {
         $errror++; $errorcode='KO' ; $errorlabel="You must set a barcode type when setting a barcode.";
     }
-  
+
     if (! $error)
     {
         include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -633,7 +675,7 @@ function updateProductOrService($authentication,$product)
         if (isset($product['ref']))     $newobject->ref=$product['ref'];
         if (isset($product['ref_ext'])) $newobject->ref_ext=$product['ref_ext'];
         $newobject->type=$product['type'];
-        $newobject->libelle=$product['label'];    // TODO deprecated
+        $newobject->libelle=$product['label'];    // @deprecated
         $newobject->label=$product['label'];
         $newobject->description=$product['description'];
         $newobject->note=$product['note'];
@@ -645,7 +687,7 @@ function updateProductOrService($authentication,$product)
         $newobject->price_base_type=$product['price_base_type'];
         $newobject->date_creation=$now;
 
-        if ($product['barcode']) 
+        if ($product['barcode'])
         {
                 $newobject->barcode = $product['barcode'];
                 $newobject->barcode_type = $product['barcode_type'];
@@ -676,13 +718,13 @@ function updateProductOrService($authentication,$product)
         //var_dump($product['ref_ext']);
         //var_dump($product['lines'][0]['type']);
 
-	$extrafields=new ExtraFields($db);
-	$extralabels=$extrafields->fetch_name_optionals_label('product',true);
-	foreach($extrafields->attribute_label as $key=>$label)
-	{
-		$key='options_'.$key;
-		$newobject->array_options[$key]=$product[$key];
-	}
+		$extrafields=new ExtraFields($db);
+		$extralabels=$extrafields->fetch_name_optionals_label('product',true);
+		foreach($extrafields->attribute_label as $key=>$label)
+		{
+			$key='options_'.$key;
+			$newobject->array_options[$key]=$product[$key];
+		}
 
         $db->begin();
 
@@ -691,6 +733,65 @@ function updateProductOrService($authentication,$product)
         {
             $error++;
         }
+        else
+		{
+        	// Update stock if stock count is provided and differs from database after creation or update
+			if (isset($product['stock_real']) && $product['stock_real'] != '' && ! empty($conf->global->stock->enabled))
+			{
+				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+
+				$savstockreal=$newobject->stock_reel;
+				$newobject->load_stock();		// This overwrite ->stock_reel
+				$getstockreal = $newobject->stock_reel;
+
+				if ($savstockreal != $getstockreal)
+				{
+					$warehouse = new Entrepot($this->db);
+					$warehouse->fetch(0, $product['warehouse_ref']);
+					if ($warehouse->id > 0)
+					{
+						if (($savstockreal - $getstockreal) > 0)
+						{
+							$result=$newobject->correct_stock($fuser, $warehouse->id, ($savstockreal - $getstockreal), 0, 'Correction from external call (Web Service)', 0, 'WS'.dol_print_date($now,'dayhourlog'));
+						}
+						if (($savstockreal - $getstockreal) > 0)
+						{
+							$result=$newobject->correct_stock($fuser, $warehouse->id, ($savstockreal - $getstockreal), 1, 'Correction from external call (Web Service)', 0, 'WS'.dol_print_date($now,'dayhourlog'));
+						}
+						if ($result <= 0)
+						{
+							$error++;
+							$newobject->error='You set a different value for stock, but correction of stock count (before='.$getstockreal.', after='.$savstockreal.') fails with error '.$newobject->error;
+						}
+					}
+					else
+					{
+						$error++;
+						$newobject->error='You set a different value for stock but we failed to find warehouse '.$product['warehouse_ref'].' to make correction.';
+					}
+				}
+			}
+        }
+
+        if (! $error)
+        {
+            if ($newobject->price_base_type == 'HT')
+            {
+                $result=$newobject->updatePrice($newobject->price, $newobject->price_base_type,$fuser);
+                if ($result <= 0)
+                {
+                    $error++;
+                }
+            }
+            elseif ($newobject->price_base_type == 'TTC')
+            {
+                $result=$newobject->updatePrice($newobject->price_ttc, $newobject->price_base_type);
+                if ($result <= 0)
+                {
+                    $error++;
+                }
+            }
+        }
 
         if (! $error)
         {
@@ -698,7 +799,7 @@ function updateProductOrService($authentication,$product)
             $objectresp=array('result'=>array('result_code'=>'OK', 'result_label'=>''),'id'=>$newobject->id,'ref'=>$newobject->ref);
         }
         else
-        {
+		{
             $db->rollback();
             $error++;
             $errorcode='KO';
@@ -954,7 +1055,7 @@ function getProductsForCategory($authentication,$id,$lang='')
 						if($obj->status > 0 )
 						{
 							$dir = (!empty($conf->product->dir_output)?$conf->product->dir_output:$conf->service->dir_output);
-							$pdir = get_exdir($obj->id,2) . $obj->id ."/photos/";
+							$pdir = get_exdir($obj->id,2,0,0,$product,'product') . $obj->id ."/photos/";
 							$dir = $dir . '/'. $pdir;
 
 							$products[] = array(

@@ -132,3 +132,4 @@ SelectFilterFields=If you want to filter on some values, just input values here.
 FilterableFields=Champs Filtrables
 FilteredFields=Filtered fields
 FilteredFieldsValues=Value for filter
+FormatControlRule=Format control rule

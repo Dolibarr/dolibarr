@@ -84,6 +84,11 @@ WithdrawalFile=Plik Wycofanie
 SetToStatusSent=Ustaw status "Plik Wysłane"
 ThisWillAlsoAddPaymentOnInvoice=Odnosi się to także płatności faktur i będzie je sklasyfikować jako "Paid"
 StatisticsByLineStatus=Statystyki według stanu linii
+RUM=RUM
+RUMWillBeGenerated=RUM number will be generated once bank account information are saved
+WithdrawMode=Withdraw mode (FRST or RECUR)
+WithdrawRequestAmount=Withdraw request amount:
+WithdrawRequestErrorNilAmount=Unable to create withdraw request for nil amount.
 
 ### Notifications
 InfoCreditSubject=Płatność z %s zamówienia stojących przez bank

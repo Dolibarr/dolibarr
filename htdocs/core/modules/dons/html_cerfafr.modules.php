@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2006	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2014       Alexandre Spangaro		<alexandre.spangaro@gmail.com> 
+ * Copyright (C) 2014-2015  Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
  *	\brief      Form of donation
  */
 require_once DOL_DOCUMENT_ROOT.'/core/modules/dons/modules_don.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/dons/class/don.class.php';
+require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 
@@ -105,7 +105,7 @@ class html_cerfafr extends ModeleDon
 			else
 			{
 				$donref = dol_sanitizeFileName($don->ref);
-				$dir = $conf->don->dir_output . "/" . get_exdir($donref,2);
+				$dir = $conf->don->dir_output . "/" . get_exdir($donref,2,0,1,$don,'donation') . "/" . dol_sanitizeFileName($don->ref);
 				$file = $dir . "/" . $donref . ".html";
 			}
 
@@ -168,54 +168,54 @@ class html_cerfafr extends ModeleDon
 		        $form = str_replace('__Message__',$outputlangs->trans("Message"),$form);
 		        $form = str_replace('__IConfirmDonationReception__',$outputlangs->trans("IConfirmDonationReception"),$form);
 		        $form = str_replace('__DonationMessage__',$conf->global->DONATION_MESSAGE,$form);
-				
+
 				$frencharticle='';
 		        if (preg_match('/fr/i',$outputlangs->defaultlang)) $frencharticle='<font size="+1">Article 200, 238 bis et 885-0 V bis A du code général des impôts (CGI)</font>';
 				$form = str_replace('__FrenchArticle__',$frencharticle,$form);
-				
+
 				$frencheligibility='';
 				if (preg_match('/fr/i',$outputlangs->defaultlang)) $frencheligibility='Le bénéficiaire certifie sur l\'honneur que les dons et versements qu\'il reçoit ouvrent droit à la réduction d\'impôt prévue à l\'article :';
 				$form = str_replace('__FrenchEligibility__',$frencheligibility,$form);
-				
+
 				$art200='';
 				if (preg_match('/fr/i',$outputlangs->defaultlang)) {
-					if ($conf->global->DONATION_ART200 >= 1) 
+					if ($conf->global->DONATION_ART200 >= 1)
 					{
-						$art200='<input type="checkbox" checked="checked">200 du CGI';
+						$art200='<input type="checkbox" disabled="true" checked>200 du CGI';
 					}
 					else
 					{
-						$art200='<input type="checkbox">200 du CGI';
+						$art200='<input type="checkbox" disabled="true">200 du CGI';
 					}
 				}
 				$form = str_replace('__ARTICLE200__',$art200,$form);
 
 				$art238='';
 				if (preg_match('/fr/i',$outputlangs->defaultlang)) {
-					if ($conf->global->DONATION_ART238 >= 1) 
+					if ($conf->global->DONATION_ART238 >= 1)
 					{
-						$art238='<input type="checkbox" checked="checked">238 bis du CGI';
+						$art238='<input type="checkbox" disabled="true" checked>238 bis du CGI';
 					}
 					else
 					{
-						$art238='<input type="checkbox">238 bis du CGI';
+						$art238='<input type="checkbox" disabled="true">238 bis du CGI';
 					}
 				}
 				$form = str_replace('__ARTICLE238__',$art238,$form);
-				
+
 				$art885='';
 				if (preg_match('/fr/i',$outputlangs->defaultlang)) {
-					if ($conf->global->DONATION_ART885 >= 1) 
+					if ($conf->global->DONATION_ART885 >= 1)
 					{
-						$art885='<input type="checkbox" checked="checked">885-0 V bis du CGI';
+						$art885='<input type="checkbox" disabled="true" checked>885-0 V bis du CGI';
 					}
 					else
 					{
-						$art885='<input type="checkbox">885-0 V bis du CGI';
+						$art885='<input type="checkbox" disabled="true">885-0 V bis du CGI';
 					}
 				}
 				$form = str_replace('__ARTICLE885__',$art885,$form);
-				
+
 				// Save file on disk
 		        dol_syslog("html_cerfafr::write_file $file");
 		        $handle=fopen($file,"w");

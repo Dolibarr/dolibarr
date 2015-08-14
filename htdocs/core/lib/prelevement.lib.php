@@ -44,11 +44,6 @@ function prelevement_prepare_head(BonPrelevement $object)
 	$head[$h][2] = 'prelevement';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/lignes.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("Lines");
-	$head[$h][2] = 'lines';
-	$h++;
-
 	$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/factures.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Bills");
 	$head[$h][2] = 'invoices';

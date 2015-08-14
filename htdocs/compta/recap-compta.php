@@ -115,7 +115,7 @@ if ($socid > 0)
 
 			if (! $num > 0)
 			{
-				print '<tr><td colspan="7">'.$langs->trans("NoInvoice").'</td></tr>';
+				print '<tr '.$bc[false].'><td colspan="7">'.$langs->trans("NoInvoice").'</td></tr>';
 			}
 
 			$solde = 0;
@@ -142,7 +142,7 @@ if ($socid > 0)
 
 				print '<td aling="left">'.$fac->getLibStatut(2,$totalpaye).'</td>';
 				print '<td align="right">'.price($fac->total_ttc)."</td>\n";
-				if (($fac->statut == 3 ) || ($fac->statut == 2 && ! $fact->close_code) )  $solde = $solde = $solde + $totalpaye;
+				if (($fac->statut == Facture::STATUS_ABANDONED ) || ($fac->statut == Facture::STATUS_CLOSED && ! $fact->close_code) )  $solde = $solde = $solde + $totalpaye;
 				else $solde = $solde + $fac->total_ttc;
 
 				print '<td align="right">&nbsp;</td>';

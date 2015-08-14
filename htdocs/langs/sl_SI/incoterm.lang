@@ -1,0 +1,7 @@
+Module62000Name=Incoterm
+Module62000Desc=Add features to manage Incoterm
+IncotermLabel=Incotermi
+IncotermSetupTitle1=Funkcija
+IncotermSetupTitle2=Status
+IncotermSetup=Nastavitev Incoterm modula
+IncotermFunctionDesc=Aktivacija Incoterm funkcij (partner, ponudba, naročilo kupca, račun za kupca, odprema, naročilo pri dobavitelju)

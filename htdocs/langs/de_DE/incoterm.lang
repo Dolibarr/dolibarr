@@ -1,0 +1,7 @@
+Module62000Name=Incoterm
+Module62000Desc=Funktion hinzufügen um Incoterms zu verwalten
+IncotermLabel=Incoterms
+IncotermSetupTitle1=Funktion
+IncotermSetupTitle2=Status
+IncotermSetup=Verwaltung von Modul Incoterms / Lieferbedingungen
+IncotermFunctionDesc=Incoterms-Funktion aktivieren (Partner, Angebot, Auftrag, Rechnung, Lieferung , Bestellung)

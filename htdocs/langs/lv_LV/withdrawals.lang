@@ -84,6 +84,11 @@ WithdrawalFile=Izstāšanās fails
 SetToStatusSent=Nomainīt uz statusu "Fails nosūtīts"
 ThisWillAlsoAddPaymentOnInvoice=This tab allows you to request a standing order. Once it is complete, you can type the payment to close the invoice.
 StatisticsByLineStatus=Statistics by status of lines
+RUM=RUM
+RUMWillBeGenerated=RUM number will be generated once bank account information are saved
+WithdrawMode=Withdraw mode (FRST or RECUR)
+WithdrawRequestAmount=Withdraw request amount:
+WithdrawRequestErrorNilAmount=Unable to create withdraw request for nil amount.
 
 ### Notifications
 InfoCreditSubject=Maksājumu pastāvīgā rīkojuma %s banka

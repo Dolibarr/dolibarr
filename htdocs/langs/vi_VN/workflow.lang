@@ -1,11 +1,11 @@
 # Dolibarr language file - Source file is en_US - admin
 WorkflowSetup=Thiết lập mô-đun công việc
-WorkflowDesc=This module is designed to modify the behaviour of automatic actions into application. By default, workflow is opened (you make thing in order you want). You can activate the automatic actions that you are interesting in.
-ThereIsNoWorkflowToModify=Không có công việc, bạn có thể thay đổi cho mô-đun bạn đã kích hoạt.
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Tạo ra một đơn đặt hàng tự động sau một đề nghị thương mại được ký kết
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Tạo ra một hóa đơn khách hàng tự động sau một đề nghị thương mại được ký kết
-descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Tạo ra một hóa đơn khách hàng tự động sau khi hợp đồng được xác nhận
-descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Tạo ra một hóa đơn khách hàng tự động sau khi một đơn đặt hàng bị đóng
+WorkflowDesc=This module is designed to modify the behaviour of automatic actions into application. By default, workflow is open (you can do things in the order you want). You can activate the automatic actions you are interested in.
+ThereIsNoWorkflowToModify=There is no workflow modifications available with the activated modules.
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automatically create a customer order after a commercial proposal is signed
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICEAutomatically create a customer invoice after a commercial proposal is signed
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICEAutomatically create a customer invoice after a contract is validated
+descWORKFLOW_ORDER_AUTOCREATE_INVOICEAutomatically create a customer invoice after a customer order is closed
 descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Phân loại đề xuất nguồn liên quan đến hóa đơn khi đơn đặt hàng được thiết lập để trả
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Phân loại đơn đặt hàng nguồn liên kết (s) để tính tiền khi hóa đơn khách hàng được thiết lập để trả
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Phân loại theo thứ tự liên kết nguồn khách hàng (s) để tính tiền khi hóa đơn của khách hàng được xác nhận

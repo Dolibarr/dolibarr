@@ -84,6 +84,11 @@ WithdrawalFile=Fichier de prélèvement
 SetToStatusSent=Mettre au statut "Fichier envoyé"
 ThisWillAlsoAddPaymentOnInvoice=Ceci créera également les paiements sur les factures et les classera payées
 StatisticsByLineStatus=Statistiques par statut des lignes
+RUM=RUM
+RUMWillBeGenerated=Le numéro de RUM sera généré une fois les informations de compte bancaire sont enregistrées
+WithdrawMode=Mode de prélévement (FRST ou RECUR)
+WithdrawRequestAmount=Montant de la demande de prélèvement
+WithdrawRequestErrorNilAmount=Impossible de créer une demande de prélèvement pour un montant nul
 
 ### Notifications
 InfoCreditSubject=Crédit prélèvement %s à la banque

@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2010	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Eric Seigne				<eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -130,6 +131,7 @@ abstract class CommonDocGenerator
             'mycompany_idprof5'=>$mysoc->idprof5,
             'mycompany_idprof6'=>$mysoc->idprof6,
         	'mycompany_vatnumber'=>$mysoc->tva_intra,
+			'mycompany_object'=>$mysoc->object,
         	// Only private not exists for "mysoc"
             'mycompany_note_private'=>$mysoc->note_private,
 
@@ -159,6 +161,7 @@ abstract class CommonDocGenerator
 
         $array_thirdparty = array(
             'company_name'=>$object->name,
+	        'company_name_alias' => $object->name_alias,
             'company_email'=>$object->email,
             'company_phone'=>$object->phone,
             'company_fax'=>$object->fax,
@@ -218,7 +221,7 @@ abstract class CommonDocGenerator
 	/**
 	 * Define array with couple subtitution key => subtitution value
 	 *
-	 * @param	Object 		$object        	contact
+	 * @param	Contact 		$object        	contact
 	 * @param	Translate 	$outputlangs   	object for output
 	 * @param   array_key	$array_key	    Name of the key for return array
 	 * @return	array of substitution key->code
@@ -416,10 +419,11 @@ abstract class CommonDocGenerator
 	{
 		global $conf;
 
-		return array(
+		$resarray= array(
 			'line_fulldesc'=>doc_getlinedesc($line,$outputlangs),
 			'line_product_ref'=>$line->product_ref,
 			'line_product_label'=>$line->product_label,
+                        'line_product_type'=>$line->product_type,
 			'line_desc'=>$line->desc,
 			'line_vatrate'=>vatrate($line->tva_tx,true,$line->info_bits),
 			'line_up'=>price2num($line->subprice),
@@ -437,12 +441,24 @@ abstract class CommonDocGenerator
 			'line_date_end'=>$line->date_end,
 			'line_date_end_rfc'=>dol_print_date($line->date_end,'rfc')
 		);
+
+		// Retrieve extrafields
+		$extrafieldkey=$line->element;
+		$array_key="line";
+		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+		$extrafields = new ExtraFields($this->db);
+		$extralabels = $extrafields->fetch_name_optionals_label($extrafieldkey,true);
+		$line->fetch_optionals($line->rowid,$extralabels);
+
+		$resarray = $this->fill_substitutionarray_with_extrafields($line,$resarray,$extrafields,$array_key=$array_key,$outputlangs);
+
+		return $resarray;
 	}
 
     /**
      * Define array with couple substitution key => substitution value
      *
-     * @param   Object			$object             Main object to use as data source
+     * @param   Expedition			$object             Main object to use as data source
      * @param   Translate		$outputlangs        Lang object to use for output
      * @param   array_key		$array_key	        Name of the key for return array
      * @return	array								Array of substitution

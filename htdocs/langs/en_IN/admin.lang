@@ -1,17 +1,4 @@
 # Dolibarr language file - Source file is en_US - admin
-Module20Name=Quotations
-Module20Desc=Quotation's management
-Permission21=Read quotations
-Permission22=Create/modify quotations
-Permission24=Validate quotations
-Permission25=Send quotations
-Permission26=Close quotations
-Permission27=Delete quotations
-Permission28=Export quotations
-WebCalAddEventOnStatusPropal=Add calendar event on quotations status change
-PropalSetup=Quotations module setup
-ProposalsNumberingModules=Quotations numbering modules
-ProposalsPDFModules=Quotations documents models
-HideTreadedPropal=Hide the treated quotations in the list
-FreeLegalTextOnProposal=Free text on quotations
-WatermarkOnDraftProposal=Watermark on draft quotations (none if empty)
+AntiVirusCommandExample=Example for ClamWin: c:\\Progra~1\\ClamWin\\bin\\clamscan.exe<br>Example for ClamAv: /usr/bin/clamscan
+AntiVirusParamExample=Example for ClamWin: --database="C:\\Program Files (x86)\\ClamWin\\lib"
+ExampleOfDirectoriesForModelGen=Examples of syntax:<br>c:\\mydir<br>/home/mydir<br>DOL_DATA_ROOT/ecm/ecmdir

@@ -1,28 +1,28 @@
 # Dolibarr language file - Source file is en_US - help
-CommunitySupport=Forum/Wiki support
-EMailSupport=Emails support
-RemoteControlSupport=Online real time / remote support
-OtherSupport=Other support
-ToSeeListOfAvailableRessources=To contact/see available resources:
-ClickHere=Click here
-HelpCenter=Help center
-DolibarrHelpCenter=Dolibarr help and support center
-ToGoBackToDolibarr=Otherwise, click <a href="%s">here to use Dolibarr</a>
-TypeOfSupport=Source of support
-TypeSupportCommunauty=Community (free)
-TypeSupportCommercial=Commercial
-TypeOfHelp=Type
-NeedHelpCenter=Need help or support ?
-Efficiency=Efficiency
-TypeHelpOnly=Help only
-TypeHelpDev=Help+Development
-TypeHelpDevForm=Help+Development+Formation
-ToGetHelpGoOnSparkAngels1=Some companies can provide a fast (sometime immediate) and more efficient online support by taking control of your computer. Such helpers can be found on <b>%s</b> web site:
-ToGetHelpGoOnSparkAngels3=You can also go to the list of all available coaches for Dolibarr, for this click on button
-ToGetHelpGoOnSparkAngels2=Sometimes, there is no company available at the moment you make your search, so think to change the filter to look for "all availability". You will be able to send more requests.
-BackToHelpCenter=Otherwise, click here to go <a href="%s">back to help center home page</a>.
-LinkToGoldMember=You can call one of the coach preselected by Dolibarr for your language (%s) by clicking his Widget (status and maximum price are automatically updated):
-PossibleLanguages=Supported languages
-MakeADonation=Help Dolibarr project, make a donation
-SubscribeToFoundation=Help Dolibarr project, subscribe to the foundation
-SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>
+CommunitySupport=ฟอรั่มการสนับสนุน / วิกิพีเดีย
+EMailSupport=สนับสนุนอีเมล์
+RemoteControlSupport=ออนไลน์เรียลไทม์ / สนับสนุนระยะไกล
+OtherSupport=การสนับสนุนอื่น ๆ
+ToSeeListOfAvailableRessources=หากต้องการติดต่อ / ดูทรัพยากรที่มีอยู่:
+ClickHere=คลิกที่นี่
+HelpCenter=ศูนย์ช่วยเหลือ
+DolibarrHelpCenter=ช่วยเหลือ Dolibarr และศูนย์การสนับสนุน
+ToGoBackToDolibarr=หรือคลิก <a href="%s">ที่นี่เพื่อใช้ Dolibarr</a>
+TypeOfSupport=แหล่งที่มาของการสนับสนุน
+TypeSupportCommunauty=ชุมชน (ฟรี)
+TypeSupportCommercial=เชิงพาณิชย์
+TypeOfHelp=ชนิด
+NeedHelpCenter=ต้องการความช่วยเหลือหรือการสนับสนุน?
+Efficiency=ประสิทธิภาพ
+TypeHelpOnly=ช่วยเหลือเท่านั้น
+TypeHelpDev=ความช่วยเหลือ + พัฒนา
+TypeHelpDevForm=ความช่วยเหลือ + + การพัฒนาสร้าง
+ToGetHelpGoOnSparkAngels1=บาง บริษัท สามารถให้บริการได้อย่างรวดเร็ว (บางครั้งทันที) และมีประสิทธิภาพมากขึ้นการสนับสนุนทางออนไลน์โดยการควบคุมของเครื่องคอมพิวเตอร์ของคุณ <b>ช่วยเหลือดังกล่าวสามารถพบได้บน% s</b> เว็บไซต์:
+ToGetHelpGoOnSparkAngels3=นอกจากนี้คุณยังสามารถไปที่รายชื่อของโค้ชที่มีอยู่ทั้งหมดสำหรับ Dolibarr สำหรับนี้คลิกที่ปุ่ม
+ToGetHelpGoOnSparkAngels2=บางครั้งไม่มี บริษัท ที่มีอยู่ในช่วงเวลาที่คุณให้การค้นหาของคุณจึงคิดที่จะเปลี่ยนแปลงตัวกรองที่จะมองหา "ทั้งหมดพร้อมใช้งาน" คุณจะสามารถที่จะส่งคำขอเพิ่มเติม
+BackToHelpCenter=หรือคลิกที่นี่เพื่อไป <a href="%s">กลับไปช่วยหน้าบ้านศูนย์</a>
+LinkToGoldMember=คุณสามารถเรียกหนึ่งในโค้ชไว้ล่วงหน้าโดย Dolibarr สำหรับภาษาของคุณ (% s) โดยคลิกที่เครื่องมือของเขา (สถานะและราคาสูงสุดที่มีการปรับปรุงโดยอัตโนมัติ):
+PossibleLanguages=ภาษาที่รองรับ
+MakeADonation=ช่วยเหลือโครงการ Dolibarr ให้บริจาค
+SubscribeToFoundation=ช่วยเหลือโครงการ Dolibarr สมัครให้กับมูลนิธิ
+SeeOfficalSupport=สำหรับการสนับสนุนอย่างเป็นทางการ Dolibarr ในภาษาของคุณ: <br> <a href="%s" target="_blank"><b>% s</b></a>

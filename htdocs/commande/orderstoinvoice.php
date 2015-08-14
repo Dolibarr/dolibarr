@@ -412,7 +412,7 @@ if ($action == 'create' && !$error)
 
 	// Standard invoice
 	print '<tr height="18"><td width="16px" valign="middle">';
-	print '<input type="radio" name="type" value="0"'.(GETPOST('type')==0?' checked="true"':'').'>';
+	print '<input type="radio" name="type" value="0"'.(GETPOST('type')==0?' checked':'').'>';
 	print '</td><td valign="middle">';
 	$desc=$html->textwithpicto($langs->trans("InvoiceStandardAsk"),$langs->transnoentities("InvoiceStandardDesc"),1);
 	print $desc;
@@ -496,26 +496,25 @@ if ($action == 'create' && !$error)
 	}
 
 	// Button "Create Draft"
-	print '<br><center><input type="submit" class="button" name="bouton" value="'.$langs->trans('CreateDraft').'" /></center>';
+	print '<br><div class="center"><input type="submit" class="button" name="bouton" value="'.$langs->trans('CreateDraft').'" /></div>';
 	print "</form>\n";
 
 	print '</td></tr>';
 	print "</table>\n";
 }
 
-
 //Mode liste
-if (($action != 'create' && $action != 'add') || !$error)
+if (($action != 'create' && $action != 'add') && !$error)
 {
 	llxHeader();
 	?>
 	<script type="text/javascript">
 		jQuery(document).ready(function() {
 		jQuery("#checkall").click(function() {
-			jQuery(".checkformerge").attr('checked', true);
+			jQuery(".checkformerge").prop('checked', true);
 		});
 		jQuery("#checknone").click(function() {
-			jQuery(".checkformerge").attr('checked', false);
+			jQuery(".checkformerge").prop('checked', false);
 		});
 	});
 	</script>
@@ -526,7 +525,7 @@ if (($action != 'create' && $action != 'add') || !$error)
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 	$sql.= ', '.MAIN_DB_PREFIX.'commande as c';
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql.= ' WHERE c.entity = '.$conf->entity;
+	$sql.= ' WHERE c.entity IN ('.getEntity('commande', 1).')';
 	$sql.= ' AND c.fk_soc = s.rowid';
 
 	// Show orders with status validated, shipping started and delivered (well any order we can bill)
@@ -655,12 +654,12 @@ if (($action != 'create' && $action != 'add') || !$error)
 			print '<td>'.$objp->ref_client.'</td>';
 
 			// Order date
-			print '<td align="center" nowrap>';
+			print '<td align="center" class="nowrap">';
 			print dol_print_date($db->jdate($objp->date_commande),'day');
 			print '</td>';
 
 			//Delivery date
-			print '<td align="center" nowrap>';
+			print '<td align="center" class="nowrap">';
 			print dol_print_date($db->jdate($objp->date_livraison),'day');
 			print '</td>';
 
@@ -683,13 +682,14 @@ if (($action != 'create' && $action != 'add') || !$error)
 		/*
 		 * Boutons actions
 		*/
-		print '<center><br><input type="checkbox" checked="checked" name="autocloseorders"> '.$langs->trans("CloseProcessedOrdersAutomatically");
+		print '<br><div class="center"><input type="checkbox" checked name="autocloseorders"> '.$langs->trans("CloseProcessedOrdersAutomatically");
 		print '<div align="right">';
 		print '<input type="hidden" name="socid" value="'.$socid.'">';
 		print '<input type="hidden" name="action" value="create">';
 		print '<input type="hidden" name="origin" value="commande"><br>';
 		//print '<a class="butAction" href="index.php">'.$langs->trans("GoBack").'</a>';
 		print '<input type="submit" class="butAction" value="'.$langs->trans("GenerateBill").'">';
+		print '</div>';
 		print '</div>';
 		print '</form>';
 		$db->free($resql);

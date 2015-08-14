@@ -1,7 +1,0 @@
-# Dolibarr language file - Source file is en_US - compta
-CheckReceipt=Cheque deposit
-CheckReceiptShort=Cheque deposit
-NewCheckDeposit=New cheque deposit
-NoWaitingChecks=No cheques waiting for deposit.
-DateChequeReceived=Cheque receiving input date
-NbOfCheques=Nb of cheques

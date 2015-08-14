@@ -199,7 +199,8 @@ Entreprises=Stofnanir
 DOLIBARRFOUNDATION_PAYMENT_FORM=Til að gera áskrift greiðslu með millifærslu, sjá síðu <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribe~~dobj</a> . <br> Til að greiða með kreditkorti eða PayPal, smelltu á hnappinn neðst á síðunni. <br>
 ByProperties=By characteristics
 MembersStatisticsByProperties=Members statistics by characteristics
-MembersByNature=Members by nature
+MembersByNature=This screen show you statistics on members by nature.
+MembersByRegion=This screen show you statistics on members by region.
 VATToUseForSubscriptions=VAT rate to use for subscriptions
 NoVatOnSubscription=No TVA for subscriptions
 MEMBER_PAYONLINE_SENDEMAIL=Email to warn when Dolibarr receive a confirmation of a validated payment for subscription

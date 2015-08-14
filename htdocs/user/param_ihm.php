@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010-2015 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013	   Florian Henry        <florian.henry@open-concept.pro.com>
  *
@@ -55,7 +55,7 @@ if ($user->id == $id)	// A user can always read its own card
     $feature2='';
     $canreaduser=1;
 }
-$result = restrictedArea($user, 'user', $id, '&user', $feature2);
+$result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 if ($user->id <> $id && ! $canreaduser) accessforbidden();
 
 $dirtop = "../core/menus/standard";
@@ -131,19 +131,19 @@ dol_fiche_head($head, 'guisetup', $title, 0, 'user');
 print '<table class="border" width="100%">';
 
 // Ref
-print '<tr><td width="25%" valign="top">'.$langs->trans("Ref").'</td>';
+print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
 print '<td colspan="2">';
 print $form->showrefnav($object,'id','',$user->rights->user->user->lire || $user->admin);
 print '</td>';
 print '</tr>';
 
 // LastName
-print '<tr><td width="25%" valign="top">'.$langs->trans("LastName").'</td>';
+print '<tr><td width="25%">'.$langs->trans("LastName").'</td>';
 print '<td colspan="2">'.$object->lastname.'</td>';
 print "</tr>\n";
 
 // FirstName
-print '<tr><td width="25%" valign="top">'.$langs->trans("FirstName").'</td>';
+print '<tr><td width="25%">'.$langs->trans("FirstName").'</td>';
 print '<td colspan="2">'.$object->firstname.'</td>';
 print "</tr>\n";
 
@@ -155,11 +155,11 @@ if ($action == 'edit')
 	print '<script type="text/javascript" language="javascript">
 	jQuery(document).ready(function() {
 		$("#main_lang_default").change(function() {
-			$("#check_MAIN_LANG_DEFAULT").attr(\'checked\', true);
+			$("#check_MAIN_LANG_DEFAULT").prop("checked", true);
 		});
 		$("#main_size_liste_limit").keyup(function() {
-			if ($(this).val().length) $("#check_SIZE_LISTE_LIMIT").attr(\'checked\', true);
-			else $("#check_SIZE_LISTE_LIMIT").attr(\'checked\', false);
+			if ($(this).val().length) $("#check_SIZE_LISTE_LIMIT").prop("checked", true);
+			else $("#check_SIZE_LISTE_LIMIT").prop("checked", false);
 		});
 	});
 	</script>';
@@ -202,11 +202,11 @@ if ($action == 'edit')
     dol_fiche_end();
 
 
-    print '<center>';
+    print '<div class="center">';
     print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
-    print ' &nbsp; &nbsp; ';
+    print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
     print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-    print '</center>';
+    print '</div>';
 
     print '</form>';
 

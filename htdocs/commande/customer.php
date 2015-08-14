@@ -73,7 +73,7 @@ if (!$user->rights->societe->client->voir && !$socid) $sql.= ", sc.fk_soc, sc.fk
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st, ".MAIN_DB_PREFIX."commande as c";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE s.fk_stcomm = st.id AND c.fk_soc = s.rowid";
-$sql.= " AND s.entity = ".$conf->entity;
+$sql.= " AND s.entity IN (".getEntity('societe', 1).")";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if (dol_strlen($stcomm))
 {
@@ -158,12 +158,12 @@ if ($resql)
 		print '<td>';
 
         $result='';
-        $lien=$lienfin='';
-        $lien = '<a href="'.dol_buildpath('/commande/orderstoinvoice.php',1).'?socid='.$obj->rowid.'">';
-        $lienfin='</a>';
+        $link=$linkend='';
+        $link = '<a href="'.dol_buildpath('/commande/orderstoinvoice.php',1).'?socid='.$obj->rowid.'">';
+        $linkend='</a>';
         $name=$obj->name;
-        $result.=($lien.img_object($langs->trans("ShowCompany").': '.$name,'company').$lienfin);
-        $result.=$lien.(dol_trunc($name,$maxlen)).$lienfin;
+        $result.=($link.img_object($langs->trans("ShowCompany").': '.$name,'company').$linkend);
+        $result.=$link.(dol_trunc($name,$maxlen)).$linkend;
 
 		print $result;
 		print '</td>';

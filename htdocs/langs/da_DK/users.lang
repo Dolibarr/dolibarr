@@ -57,6 +57,7 @@ RemoveFromGroup=Fjern fra gruppe
 PasswordChangedAndSentTo=Password ændret og sendt <b>til %s.</b>
 PasswordChangeRequestSent=Anmodning om at ændre password <b>for %s</b> sendt <b>til %s.</b>
 MenuUsersAndGroups=Brugere & Grupper
+MenuMyUserCard=My user card
 LastGroupsCreated=Seneste %s oprettet grupper
 LastUsersCreated=Seneste %s brugere oprettet
 ShowGroup=Vis gruppe

@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012	Regis Houssin       <regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2012	Philippe Grand      <philippe.grand@atoo-net.com>
  * Copyright (C) 2014		Charles-Fr Benke	<charles.fr@benke.fr>
+ * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -152,6 +153,11 @@ if ($id > 0 || ! empty($ref))
 		print '<td colspan="3">';
 		print $form->showrefnav($object,'id','',($user->societe_id?0:1),'rowid','nom');
 		print '</td></tr>';
+
+		// Alias names (commercial, trademark or alias names)
+		print '<tr><td valign="top">'.$langs->trans('AliasNames').'</td><td colspan="3">';
+		print $object->name_alias;
+		print "</td></tr>";
 
 		if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
 		{

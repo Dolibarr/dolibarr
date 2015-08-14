@@ -12,6 +12,7 @@ Notify_FICHINTER_VALIDATE=幹預驗證
 Notify_FICHINTER_SENTBYMAIL=Intervention sent by mail
 Notify_BILL_VALIDATE=客戶發票驗證
 Notify_BILL_UNVALIDATE=Customer invoice unvalidated
+Notify_ORDER_SUPPLIER_VALIDATE=Supplier order recorded
 Notify_ORDER_SUPPLIER_APPROVE=供應商為了批準
 Notify_ORDER_SUPPLIER_REFUSE=供應商的訂單被拒絕
 Notify_ORDER_VALIDATE=驗證客戶訂單
@@ -203,6 +204,7 @@ ClickHereToGoTo=Click here to go to %s
 YouMustClickToChange=You must however first click on the following link to validate this password change
 ForgetIfNothing=If you didn't request this change, just forget this email. Your credentials are kept safe.
 IfAmountHigherThan=If amount higher than <strong>%s</strong>
+SourcesRepository=Repository for sources
 
 ##### Calendar common #####
 AddCalendarEntry=日歷項中添加%s的

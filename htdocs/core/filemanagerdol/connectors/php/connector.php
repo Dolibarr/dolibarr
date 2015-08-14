@@ -35,13 +35,18 @@ if ( !$Config['Enabled'] )
 
 DoResponse();
 
+/**
+ * DoResponse
+ *
+ * @return void
+ */
 function DoResponse()
 {
     if (!isset($_GET)) {
         global $_GET;
     }
 	if ( !isset( $_GET['Command'] ) || !isset( $_GET['Type'] ) || !isset( $_GET['CurrentFolder'] ) )
-		return ;
+		return;
 
 	// Get the main request informaiton.
 	$sCommand		= $_GET['Command'] ;
@@ -60,7 +65,7 @@ function DoResponse()
 	if ( $sCommand == 'FileUpload' )
 	{
 		FileUpload($sResourceType, $sCurrentFolder, $sCommand);
-		return ;
+		return;
 	}
 
 	CreateXmlHeader($sCommand, $sResourceType, $sCurrentFolder);
@@ -70,16 +75,16 @@ function DoResponse()
 	{
 		case 'GetFolders' :
 			GetFolders($sResourceType, $sCurrentFolder);
-			break ;
+			break;
 		case 'GetFoldersAndFiles' :
 			GetFoldersAndFiles($sResourceType, $sCurrentFolder);
-			break ;
+			break;
 		case 'CreateFolder' :
 			CreateFolder($sResourceType, $sCurrentFolder);
-			break ;
+			break;
 	}
 
 	CreateXmlFooter();
 
-	exit ;
+	exit;
 }

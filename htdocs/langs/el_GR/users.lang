@@ -57,6 +57,7 @@ RemoveFromGroup=Αφαίρεση από την ομάδα
 PasswordChangedAndSentTo=Password changed and sent to <b>%s</b>.
 PasswordChangeRequestSent=Request to change password for <b>%s</b> sent to <b>%s</b>.
 MenuUsersAndGroups=Χρήστες και Ομάδες
+MenuMyUserCard=Κάρτα χρήστη
 LastGroupsCreated=Last %s created groups
 LastUsersCreated=Last %s users created
 ShowGroup=Εμφάνιση ομάδας

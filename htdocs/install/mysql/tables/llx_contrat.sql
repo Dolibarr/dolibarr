@@ -23,12 +23,12 @@ create table llx_contrat
   rowid						integer AUTO_INCREMENT PRIMARY KEY,
   ref						varchar(30),		            -- contrat reference
   ref_supplier				varchar(30),		            -- suplier contract ref
-  ref_ext				varchar(30),		            -- external contract ref
-  entity					integer DEFAULT 1 NOT NULL,	-- multi company id
+  ref_ext					varchar(30),		            -- external contract ref
+  entity					integer DEFAULT 1 NOT NULL,		-- multi company id
   tms						timestamp,
-  datec						datetime,                   -- creation date
+  datec						datetime,                   	-- creation date
   date_contrat				datetime,
-  statut					smallint DEFAULT 0,
+  statut					smallint DEFAULT 0,				-- not used. deprecated
   mise_en_service			datetime,
   fin_validite				datetime,
   date_cloture				datetime,

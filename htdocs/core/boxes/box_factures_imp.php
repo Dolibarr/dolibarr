@@ -2,6 +2,7 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,15 +58,24 @@ class box_factures_imp extends ModeleBoxes
 		$this->max=$max;
 
 		include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-		$facturestatic=new Facture($db);
+        include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+
+        $facturestatic = new Facture($db);
+        $societestatic = new Societe($db);
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleOldestUnpaidCustomerBills",$max));
 
 		if ($user->rights->facture->lire)
 		{
 			$sql = "SELECT s.nom as name, s.rowid as socid,";
+            $sql.= " s.code_client,";
+            $sql.= " s.logo,";
 			$sql.= " f.facnumber, f.date_lim_reglement as datelimite,";
+            $sql.= " f.type,";
 			$sql.= " f.amount, f.datef as df,";
+            $sql.= " f.total as total_ht,";
+            $sql.= " f.tva as total_tva,";
+            $sql.= " f.total_ttc,";
 			$sql.= " f.paye, f.fk_statut, f.rowid as facid";
 			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -85,59 +95,77 @@ class box_factures_imp extends ModeleBoxes
 				$num = $db->num_rows($result);
 				$now=dol_now();
 
-				$i = 0;
+				$line = 0;
 				$l_due_date = $langs->trans('Late').' ('.strtolower($langs->trans('DateEcheance')).': %s)';
 
-				while ($i < $num)
+				while ($line < $num)
 				{
 					$objp = $db->fetch_object($result);
 					$datelimite=$db->jdate($objp->datelimite);
+                    $facturestatic->id = $objp->facid;
+                    $facturestatic->ref = $objp->facnumber;
+                    $facturestatic->type = $objp->type;
+                    $facturestatic->total_ht = $objp->total_ht;
+                    $facturestatic->total_tva = $objp->total_tva;
+                    $facturestatic->total_ttc = $objp->total_ttc;
+                    $societestatic->id = $objp->socid;
+                    $societestatic->name = $objp->name;
+                    $societestatic->client = 1;
+                    $societestatic->code_client = $objp->code_client;
+                    $societestatic->logo = $objp->logo;
 
 					$late='';
 					if ($datelimite < ($now - $conf->facture->client->warning_delay)) $late = img_warning(sprintf($l_due_date,dol_print_date($datelimite,'day')));
 
-					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
-                    'logo' => $this->boximg,
-                    'url' => DOL_URL_ROOT."/compta/facture.php?facid=".$objp->facid);
+                    $this->info_box_contents[$line][] = array(
+                        'td' => 'align="left"',
+                        'text' => $facturestatic->getNomUrl(1),
+                        'text2'=> $late,
+                        'asis' => 1,
+                    );
 
-					$this->info_box_contents[$i][1] = array('td' => 'align="left"',
-                    'text' => $objp->facnumber,
-                    'text2'=> $late,
-                    'url' => DOL_URL_ROOT."/compta/facture.php?facid=".$objp->facid);
+                    $this->info_box_contents[$line][] = array(
+                        'td' => 'align="left"',
+                        'text' => $societestatic->getNomUrl(1, '', 44),
+                        'asis' => 1,
+                    );
 
-					$this->info_box_contents[$i][2] = array('td' => 'align="left" width="16"',
-                    'logo' => 'company',
-                    'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid);
+                    $this->info_box_contents[$line][] = array(
+                        'td' => 'align="right"',
+                        'text' => price($objp->total_ht, 0, $langs, 0, -1, -1, $conf->currency),
+                    );
 
-					$this->info_box_contents[$i][3] = array('td' => 'align="left"',
-                    'text' => $objp->name,
-                    'maxlength'=>44,
-                    'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid);
+                    $this->info_box_contents[$line][] = array(
+                        'td' => 'align="right"',
+                        'text' => dol_print_date($datelimite,'day'),
+                    );
 
-					$this->info_box_contents[$i][4] = array('td' => 'align="right"',
-                    'text' => dol_print_date($datelimite,'day'),
-					);
+                    $this->info_box_contents[$line][] = array(
+                        'td' => 'align="right" width="18"',
+                        'text' => $facturestatic->LibStatut($objp->paye,$objp->fk_statut,3),
+                    );
 
-					$this->info_box_contents[$i][5] = array('td' => 'align="right" width="18"',
-                    'text' => $facturestatic->LibStatut($objp->paye,$objp->fk_statut,3));
-
-					$i++;
+					$line++;
 				}
 
-				if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoUnpaidCustomerBills"));
+				if ($num==0) $this->info_box_contents[$line][0] = array('td' => 'align="center"','text'=>$langs->trans("NoUnpaidCustomerBills"));
 
 				$db->free($result);
 			}
 			else
 			{
-				$this->info_box_contents[0][0] = array(	'td' => 'align="left"',
-    	        										'maxlength'=>500,
-	            										'text' => ($db->error().' sql='.$sql));
+                $this->info_box_contents[0][0] = array(
+                    'td' => 'align="left"',
+                    'maxlength'=>500,
+                    'text' => ($db->error().' sql='.$sql),
+                );
 			}
 		}
 		else {
-			$this->info_box_contents[0][0] = array('td' => 'align="left"',
-            'text' => $langs->trans("ReadPermissionNotAllowed"));
+            $this->info_box_contents[0][0] = array(
+                'td' => 'align="left"',
+                'text' => $langs->trans("ReadPermissionNotAllowed"),
+            );
 		}
 	}
 

@@ -24,8 +24,7 @@
 ?>
 
 <div id="principal_content" style="margin-left: 0;">
-	<div style="margin-left: 0; position: relative;" class="gantt"
-		id="GanttChartDIV"></div>
+	<div style="margin-left: 0; position: relative;" class="gantt" id="GanttChartDIV"></div>
 
 	<script type="text/javascript">
 
@@ -79,34 +78,43 @@ function reloadGraph() {
 }
 
 
-var g = new JSGantt.GanttChart('g',document.getElementById('GanttChartDIV'), 'day');
-var booShowRessources = 1;
-var booShowDurations = 1;
-var booShowComplete = 1;
-var barText = "Resource";
-var graphFormat = "day";
+var g = new JSGantt.GanttChart('g', document.getElementById('GanttChartDIV'), 'day');
+/* For JSGanttImproved var g = new JSGantt.GanttChart(document.getElementById('GanttChartDIV'), 'day'); */
 
-g.setDateInputFormat('mm/dd/yyyy');  // Set format of input dates ('mm/dd/yyyy', 'dd/mm/yyyy', 'yyyy-mm-dd')
-g.setDateDisplayFormat('<?php echo $dateformat; ?>');	// Set format to display dates ('mm/dd/yyyy', 'dd/mm/yyyy', 'yyyy-mm-dd')
-g.setShowRes(1); 		// Show/Hide Responsible (0/1)
-g.setShowDur(1); 		// Show/Hide Duration (0/1)
-g.setShowComp(1); 		// Show/Hide % Complete(0/1)
-g.setShowStartDate(1); 	// Show/Hide % Complete(0/1)
-g.setShowEndDate(1); 	// Show/Hide % Complete(0/1)
-g.setFormatArr("day","week","month","quarter") // Set format options (up to 4 : "minute","hour","day","week","month","quarter")
-g.setCaptionType('Caption');  // Set to Show Caption (None,Caption,Resource,Duration,Complete)
-if(g) {
-<?php
-$level=0;
-$tnums = count($tasks);
-for ($tcursor=0; $tcursor < $tnums; $tcursor++) {
-	$t = $tasks[$tcursor];
-	if ($t["task_parent"] == 0) {
-		constructGanttLine($tasks,$t,$project_dependencies,$level,$project_id);
-		findChildGanttLine($tasks,$t["task_id"],$project_dependencies,$level+1);
+/* For JSGanttImproved if (g.getDivId() != null) */
+if (g)
+{
+	var booShowRessources = 1;
+	var booShowDurations = 1;
+	var booShowComplete = 1;
+	var barText = "Resource";
+	var graphFormat = "day";
+
+	g.setDateInputFormat('mm/dd/yyyy');  // Set format of input dates ('mm/dd/yyyy', 'dd/mm/yyyy', does not work with 'yyyy-mm-dd')
+	g.setDateDisplayFormat('<?php echo $dateformat; ?>');
+	/* For JSGanttImproved g.setDateTaskDisplayFormat('<?php echo $datehourformat; ?>'); */
+	/* For JSGanttImproved g.setDayMajorDateDisplayFormat('dd mon'); */
+	g.setShowRes(1); 		// Show/Hide Responsible (0/1)
+	g.setShowDur(1); 		// Show/Hide Duration (0/1)
+	g.setShowComp(1); 		// Show/Hide % Complete(0/1)
+	g.setShowStartDate(1); 	// Show/Hide % Complete(0/1)
+	g.setShowEndDate(1); 	// Show/Hide % Complete(0/1)
+	g.setFormatArr("day","week","month","quarter") // Set format options (up to 4 : "minute","hour","day","week","month","quarter")
+	g.setCaptionType('Caption');  // Set to Show Caption (None,Caption,Resource,Duration,Complete)
+	/* g.setShowTaskInfoLink(1) */
+
+	<?php
+	$level=0;
+	$tnums = count($tasks);
+	for ($tcursor=0; $tcursor < $tnums; $tcursor++) {
+		$t = $tasks[$tcursor];
+		if ($t["task_parent"] == 0) {
+			constructGanttLine($tasks,$t,$project_dependencies,$level,$project_id);
+			findChildGanttLine($tasks,$t["task_id"],$project_dependencies,$level+1);
+		}
 	}
-}
-?>
+	?>
+
 	g.Draw(jQuery("#tabs").width()-40);
 	setTimeout('g.DrawDependencies()',100);
 }
@@ -159,15 +167,47 @@ function constructGanttLine($tarr,$task,$project_dependencies,$level=0,$project_
     $percent = $task['task_percent_complete']?$task['task_percent_complete']:0;
     // Link
     $link=DOL_URL_ROOT.'/projet/tasks/task.php?withproject=1&id='.$task["task_id"];
+
     // Name
     $name=$task['task_name'];
     for($i=0; $i < $level; $i++) {
         $name=' &nbsp; &nbsp; '.$name;
     }
     // Add line to gantt
-    $s = "// Add taks id=".$task["task_id"]." level = ".$level."\n";
-    $s = "g.AddTaskItem(new JSGantt.TaskItem(".$task['task_id'].",'".dol_escape_js($name)."','".$start_date."', '".$end_date."', '".$task['task_color']."', '".$link."', ".$task['task_milestone'].", '".$resources."', ".$percent.", ".($task["task_is_group"]>0?1:0).", '".$parent."', 1, '".($depend?$depend:"")."'));";
-    echo $s."\n";
+    /*
+	g.AddTaskItem(new JSGantt.TaskItem(1, 'Define Chart API','',          '',          'ggroupblack','', 0, 'Brian', 0,  1,0,1,'','','Some Notes text',g));
+	g.AddTaskItem(new JSGantt.TaskItem(11,'Chart Object',    '2014-02-20','2014-02-20','gmilestone', '', 1, 'Shlomy',100,0,1,1,'','','',g));
+	</pre>
+	<p>Method definition:
+	<strong>TaskItem(<em>pID, pName, pStart, pEnd, pColor, pLink, pMile, pRes, pComp, pGroup, pParent, pOpen, pDepend, pCaption, pNotes, pGantt</em>)</strong></p>
+	<dl>
+	<dt>pID</dt><dd>(required) a unique numeric ID used to identify each row</dd>
+	<dt>pName</dt><dd>(required) the task Label</dd>
+	<dt>pStart</dt><dd>(required) the task start date, can enter empty date ('') for groups. You can also enter specific time (2014-02-20 12:00) for additional precision.</dd>
+	<dt>pEnd</dt><dd>(required) the task end date, can enter empty date ('') for groups</dd>
+	<dt>pClass</dt><dd>(required) the css class for this task</dd>
+	<dt>pLink</dt><dd>(optional) any http link to be displayed in tool tip as the "More information" link.</dd>
+	<dt>pMile</dt><dd>(optional) indicates whether this is a milestone task - Numeric; 1 = milestone, 0 = not milestone</dd>
+	<dt>pRes</dt><dd>(optional) resource name</dd>
+	<dt>pComp</dt><dd>(required) completion percent, numeric</dd>
+	<dt>pGroup</dt><dd>(optional) indicates whether this is a group task (parent) - Numeric; 0 = normal task, 1 = standard group task, 2 = combined group task<a href='#combinedtasks' class="footnote">*</a></dd>
+	<dt>pParent</dt><dd>(required) identifies a parent pID, this causes this task to be a child of identified task. Numeric, top level tasks should have pParent set to 0</dd>
+	<dt>pOpen</dt><dd>(required) indicates whether a standard group task is open when chart is first drawn. Value must be set for all items but is only used by standard group tasks.  Numeric, 1 = open, 0 = closed</dd>
+	<dt>pDepend</dt><dd>(optional) comma separated list of id&#39;s this task is dependent on. A line will be drawn from each listed task to this item<br />Each id can optionally be followed by a dependency type suffix. Valid values are:<blockquote>'FS' - Finish to Start (default if suffix is omitted)<br />'SF' - Start to Finish<br />'SS' - Start to Start<br />'FF' - Finish to Finish</blockquote>If present the suffix must be added directly to the id e.g. '123SS'</dd>
+	<dt>pCaption</dt><dd>(optional) caption that will be added after task bar if CaptionType set to "Caption"</dd>
+	<dt>pNotes</dt><dd>(optional) Detailed task information that will be displayed in tool tip for this task</dd>
+	<dt>pGantt</dt><dd>(required) javascript JSGantt.GanttChart object from which to take settings.  Defaults to &quot;g&quot; for backwards compatibility</dd>
+    */
+
+    $note="";
+
+    $s = "\n// Add taks id=".$task["task_id"]." level = ".$level."\n";
+    $s.= "g.AddTaskItem(new JSGantt.TaskItem(".$task['task_id'].",'".dol_escape_js($name)."','".$start_date."', '".$end_date."', '".$task['task_color']."', '".$link."', ".$task['task_milestone'].", '".$resources."', ".($percent >= 0 ? $percent : 0).", ".($task["task_is_group"]>0?1:0).", '".$parent."', 1, '".($depend?$depend:"")."', '".$note."'));";
+    // For JSGanttImproved
+    //$s.= "g.AddTaskItem(new JSGantt.TaskItem(".$task['task_id'].",'".dol_escape_js($name)."','".$start_date."', '".$end_date."', 'gtaskblue', '".$link."', ".$task['task_milestone'].", '".$resources."', ".($percent >= 0 ? $percent : 0).", ".($task["task_is_group"]>0?1:0).", '".$parent."', 1, '".($depend?$depend:"")."', '".$note."'));";
+    echo $s;
+
+
 }
 
 /**

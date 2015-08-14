@@ -42,5 +42,5 @@ SentToSuppliers=Odoslané dodávateľom
 ListOfSupplierOrders=Zoznam dodávateľských objednávok
 MenuOrdersSupplierToBill=Vytvoriť faktúru z dodávateľskej objednávky
 NbDaysToDelivery=Zdržanie dodávky v dňoch
-DescNbDaysToDelivery=Zobrazené je najväčšie zdržanie spomedzi položiek objednávky 
-UseDoubleApproval=Use double approval (the second approval can be done by any user with the dedicated permission)
+DescNbDaysToDelivery=The biggest deliver delay of the products from this order
+UseDoubleApproval=Use double approval when amount (without tax) is higher than (The second approval can be done by any user with the dedicated permission. Set to 0 for no double approval)

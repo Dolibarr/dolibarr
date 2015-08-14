@@ -199,7 +199,8 @@ Entreprises=Bedrijven
 DOLIBARRFOUNDATION_PAYMENT_FORM=Om uw abonnement betalen via een bankoverschrijving, zie pagina <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribe</a> . <br> Betalen met een creditcard of Paypal, klik op de knop onderaan deze pagina. <br>
 ByProperties=Volgens eigenschappen
 MembersStatisticsByProperties=Leden statistiek volgens eigenschappen
-MembersByNature=Leden volgens aard
+MembersByNature=This screen show you statistics on members by nature.
+MembersByRegion=This screen show you statistics on members by region.
 VATToUseForSubscriptions=BTW tarief voor inschrijvingen
 NoVatOnSubscription=Geen BTW bij inschrijving
 MEMBER_PAYONLINE_SENDEMAIL=E-mail om te verwittigen dat Dolibarr een bericht ontvangen heeft voor een bevestigde betaling van een inschrijving

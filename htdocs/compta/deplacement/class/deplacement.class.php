@@ -44,7 +44,11 @@ class Deplacement extends CommonObject
 	var $fk_user_author;
 	var $fk_user;
 	var $km;
-	var $note;			// TODO obsolete
+	/**
+	 * @deprecated
+	 * @see note_private, note_public
+	 */
+	var $note;			// TODO deprecated
 	var $note_private;
 	var $note_public;
 	var $socid;
@@ -349,7 +353,7 @@ class Deplacement extends CommonObject
 	/**
 	 *	Return clicable name (with picto eventually)
 	 *
-	 *	@param		int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+	 *	@param		int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 *	@return		string					Chaine avec URL
 	 */
 	function getNomUrl($withpicto=0)
@@ -357,17 +361,17 @@ class Deplacement extends CommonObject
 		global $langs;
 
 		$result='';
+        $label=$langs->trans("Show").': '.$this->ref;
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/compta/deplacement/card.php?id='.$this->id.'">';
-		$lienfin='</a>';
+        $link = '<a href="'.DOL_URL_ROOT.'/compta/deplacement/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$linkend='</a>';
 
 		$picto='trip';
 
-		$label=$langs->trans("Show").': '.$this->ref;
 
-		if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
+        if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
 		if ($withpicto && $withpicto != 2) $result.=' ';
-		if ($withpicto != 2) $result.=$lien.$this->ref.$lienfin;
+		if ($withpicto != 2) $result.=$link.$this->ref.$linkend;
 		return $result;
 	}
 

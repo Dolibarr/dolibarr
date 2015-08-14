@@ -2,7 +2,8 @@
 /* Copyright (C) 2005      Christophe
  * Copyright (C) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2013	   Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2013      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,8 +77,7 @@ class box_comptes extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleCurrentAccounts"));
 
-		if ($user->rights->banque->lire)
-		{
+        if ($user->rights->banque->lire) {
 			$sql = "SELECT rowid, ref, label, bank, number, courant, clos, rappro, url,";
 			$sql.= " code_banque, code_guichet, cle_rib, bic, iban_prefix as iban,";
 			$sql.= " domiciliation, proprio, owner_address,";
@@ -90,76 +90,77 @@ class box_comptes extends ModeleBoxes
 			$sql.= " ORDER BY label";
 			$sql.= $db->plimit($max, 0);
 
-			dol_syslog(get_class($this)."::loadBox", LOG_DEBUG);
-			$result = $db->query($sql);
-			if ($result)
-			{
-				$num = $db->num_rows($result);
+            dol_syslog(get_class($this)."::loadBox", LOG_DEBUG);
+            $result = $db->query($sql);
+            if ($result) {
+                $num = $db->num_rows($result);
 
-				$i = 0;
-				$solde_total = 0;
+                $line = 0;
+                $solde_total = array();
 
-				$listofcurrencies=array();
-				$account_static = new Account($db);
-				while ($i < $num)
-				{
-					$objp = $db->fetch_object($result);
+                $account_static = new Account($db);
+                while ($line < $num) {
+                    $objp = $db->fetch_object($result);
 
-					$account_static->id = $objp->rowid;
-					$solde=$account_static->solde(0);
+                    $account_static->id = $objp->rowid;
+                    $account_static->label = $objp->label;
+                    $account_static->number = $objp->number;
+                    $solde=$account_static->solde(0);
 
-					$solde_total += $solde;
+                    $solde_total[$objp->currency_code] += $solde;
 
-					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
-					'logo' => $this->boximg,
-					'url' => DOL_URL_ROOT."/compta/bank/account.php?account=".$objp->rowid);
+                    $this->info_box_contents[$line][] = array(
+                        'td' => 'align="left"',
+                        'text' => $account_static->getNomUrl(1),
+                        'asis' => 1,
+                    );
 
-					$this->info_box_contents[$i][1] = array('td' => 'align="left"',
-					'text' => $objp->label,
-					'url' => DOL_URL_ROOT."/compta/bank/account.php?account=".$objp->rowid);
+                    $this->info_box_contents[$line][] = array(
+                        'td' => 'align="left"',
+                        'text' => $objp->number,
+                    );
 
-					$this->info_box_contents[$i][2] = array('td' => 'align="left"',
-					'text' => $objp->number
-					);
+                    $this->info_box_contents[$line][] = array(
+                        'td' => 'align="right"',
+                        'text' => price($solde, 0, $langs, 0, -1, -1, $objp->currency_code)
+                    );
 
-					$this->info_box_contents[$i][3] = array('td' => 'align="right"',
-					'text' => price($solde, 0, $langs, 0, 0, -1, $objp->currency_code)
-					);
+                    $line++;
+                }
 
-					$listofcurrencies[$objp->currency_code]=1;
-					$i++;
-				}
+                // Total
+                foreach ($solde_total as $key=>$solde) {
+                    $this->info_box_contents[$line][] = array(
+                        'tr' => 'class="liste_total"',
+                        'td' => 'align="left" class="liste_total"',
+                        'text' => $langs->trans('Total').' '.$key,
+                    );
+                    $this->info_box_contents[$line][] = array(
+                        'td' => 'align="right" class="liste_total"',
+                        'text' => '&nbsp;'
+                    );
 
-				// Total
-				if (count($listofcurrencies) <= 1)
-				{
-					$this->info_box_contents[$i][0] = array('tr' => 'class="liste_total"', 'td' => 'align="right" class="liste_total"',
-					'text' => $langs->trans('Total')
-					);
-					$this->info_box_contents[$i][1] = array('td' => 'align="right" class="liste_total"',
-					'text' => '&nbsp;'
-					);
-					$this->info_box_contents[$i][2] = array('td' => 'align="right" class="liste_total"',
-					'text' => '&nbsp;'
-					);
-					$totalamount=price($solde_total,0,$langs,0,0,-1,$conf->currency);
-					$this->info_box_contents[$i][3] = array('td' => 'align="right" class="liste_total"',
-					'text' => $totalamount
-					);
-				}
+                    $this->info_box_contents[$line][] = array(
+                        'td' => 'align="right" class="liste_total"',
+                        'text' => price($solde, 0, $langs, 0, -1, -1, $key)
+                    );
+                    $line++;
+                }
 
-				$db->free($result);
-			}
-			else {
-				$this->info_box_contents[0][0] = array(	'td' => 'align="left"',
-    	        										'maxlength'=>500,
-	            										'text' => ($db->error().' sql='.$sql));
-			}
-		}
-		else {
-			$this->info_box_contents[0][0] = array('td' => 'align="left"',
-			'text' => $langs->trans("ReadPermissionNotAllowed"));
-		}
+                $db->free($result);
+            } else {
+                $this->info_box_contents[0][0] = array(
+                    'td' => 'align="left"',
+                    'maxlength'=>500,
+                    'text' => ($db->error().' sql='.$sql),
+                );
+            }
+        } else {
+            $this->info_box_contents[0][0] = array(
+                'td' => 'align="left"',
+                'text' => $langs->trans("ReadPermissionNotAllowed"),
+            );
+        }
 
 	}
 

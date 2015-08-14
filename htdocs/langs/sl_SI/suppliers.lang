@@ -42,5 +42,5 @@ SentToSuppliers=Pošlji dobaviteljem
 ListOfSupplierOrders=Seznam naročil dobaviitelja
 MenuOrdersSupplierToBill=Zaračunavanje naročil dobavitelja
 NbDaysToDelivery=Zakasnitev dobave v dnevih
-DescNbDaysToDelivery=Največja zakasnitev je prikazana med seznami naročenih proizvodov
-UseDoubleApproval=Uporabi dvojno potrjevanje (drugo potrditev lahko izvrši katerikoli uporabnik z dodeljenim dovoljenjem)
+DescNbDaysToDelivery=Največja zamuda pri dobavi proizvodov iz tega naročila
+UseDoubleApproval=Use double approval when amount (without tax) is higher than (The second approval can be done by any user with the dedicated permission. Set to 0 for no double approval)

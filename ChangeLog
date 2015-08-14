@@ -5,8 +5,226 @@ English Dolibarr ChangeLog
 WARNING: Do not try to make any Dolibarr upgrade if you are running Mysql version 5.5.40.
 Mysql version 5.5.40 has a very critical bug making your data beeing definitely lost.
 You may also experience troubles with Mysql 5.5.41 with error "Lost connection" during migration.
-Upgrading to any other version or database system is abolutely required BEFORE trying to
+Upgrading to any other version or any other database system is abolutely required BEFORE trying
 make a Dolibarr upgrade.
+
+
+***** ChangeLog for 3.8 compared to 3.7.* *****
+For users:
+FIX: #2519
+FIX: #2758 Product::update sets product note to "null" when $prod->note is null
+FIX: #2832: Fixed a problem with special characters in expense report PDF model
+FIX: #2856 : Wrong table design
+FIX: #2901
+FIX: #2957 : missing $langs object for trigger
+FIX: #2983 Load gravatar avatar images securely over HTTPS
+FIX: #2987: removed dead function moneyMeter()
+FIX: #3009: Better filtering to prevent SQL injection
+FIX: #3009: Better filtering to prevent SQL injection
+FIX: #3091 TotalHT amount in supplier order is bold unlike the rest of Dolibarr
+FIX: #3138 - Too much visible thing when access is denied on public pages
+FIX: #3173 Overlapping of shipment ref
+FIX: Adding 5 more choice link into survey module was not working with chrome
+FIX: bad calculation for stock value
+FIX: Bad link to login page into email for password renewal.
+FIX: Bad logo for status "Do not contact" of thirdparty.
+FIX: Bad variable usage
+FIX: Better management error into the color conversion functions
+FIX: [bug #1883] missing field in SQL installation
+FIX: Bug on order and supplier invoice numeration mask when use supplier code
+FIX: Bug on order and supplier invoice numeration mask when use supplier code
+FIX: button create payment hide if tax amount is less than 1
+FIX: can receive new batch product on supplier order
+FIX: can show print page after product save
+FIX: Close #2835 Customer prices of a product shows incorrect history order
+FIX: Close #2837 Product list table column header does not match column body
+FIX: Close bug #2855 Wrong translation key in localtax report page
+FIX: Close bug #2861 Undefined variable $res when migrating from 3.6.2 to 3.7.0
+FIX: Close bug #2891 Category hooks do not work
+FIX: Close bug #2900 Courtesy title is not stored in create thirdparty form
+FIX: Close bug #2976: "Report" tab is the current tab but it is not marked as selected by the UI
+FIX: Correct migration script
+FIX: create contact with extrafiel is null when it is require
+FIX: Description of contract line was not visible.
+FIX: Correct path of loan class
+FIX: Correct problem field with note - Add note_private & use wysiwyg editor
+FIX: Edit in place of "Outstanding Limit"
+FIX: Module Expense Report - Correct init
+FIX: Update licence to GPLv3
+FIX: End log must use same level then start log.
+FIX: event for restricted user was restricted if company null
+FIX: event not linked to contact on creation
+FIX: Export of tags for contact and member
+FIX: extrafields required on thirdparty
+FIX: Force ref
+FIX: Function expects an int, not a boolean
+FIX: Function was expecting a boolean not a string
+FIX: hide category if it's not enable
+FIX: If supplier invoice block linked element is display after other block total HT amount is not reset to 0 and sum other block (like customer orders values)
+FIX: jdate returning -62169955200 on x64 machine
+FIX: Let ability to use IDPROF verifications even if new entry is "private"
+FIX: migration error
+FIX: moved built-in bug report system to GitHub Issues
+FIX: Moved code to where the variable is defined
+FIX: No check warehouse is provided if module stock is not enabled.
+FIX: Payed invoices are showed as canceled FIX: Bad date filter on customer order
+FIX: Ref/label of product on contract line was not visible, nor into page, nor into PDF.
+FIX: Removed concatenation on undeclared variable
+FIX: Remove deprecated property 'libelle' on product object
+FIX: Replaced some deprecated call
+FIX: Replaced some deprecated property
+FIX: Save of filters into export profiles failed.
+FIX: "script" balise with wrong syntax
+FIX: send mail, copy sendto don't read the list of contact
+FIX: top links menu have target attribute with wrong value
+FIX: total amount in tpl linked object are not reset
+FIX; Unknown field 'sc.fk_soc' in field list
+FIX: update usergroup name
+FIX: Variable declared boolean
+FIX: Variable might not be traversable
+FIX: We did a test on a permission to export contract when permission did not exists.
+FIX: when mailing is deleted, the targets list was kept in database
+FIX: when multicompany was enabled, this function didn't check just on the good entity (problem when both company use same mask)
+FIX: When we automatically creta an order from a proposal with workflow module, if some extrafields of propal don't exist in order object, insertExtraFields() function tries to insert extrafields in unexistant column of commande_extrafields table.
+FIX: When we clone a propal, if it has a project which is not assigned to a third, it was not on new propal because fk_project was always set to empty string if new propal is for another third.
+FIX: when we create an agenda event with "Not applicable" status, it is automatically saved with "To do" status
+FIX: width multiselect
+FIX: Wrong type hinting
+FIX: XSS security using the onerror and missing escapement on type of member page.
+FIX: Missing visibility of static property
+NEW: Add a button to purge criteria in user list
+NEW: add all assigned users and all extrafields data in new event when we createFromClone
+NEW: Add a new component to select categories/tags from the main edit page of product. The dedicated tab is also removed.
+NEW: Add a search field and report on hrm area
+NEW: Add a tab document in donation card
+NEW: Add bank account owner in invoice/proposal/orders footer
+NEW: Add button to purge search criteria into list
+NEW: Add close date and user for projects.
+NEW: Add company information into  category contact export
+NEW: Add current salary on list of payment
+NEW: add date value filter on account records list
+NEW: Add exemple of setup for multitail to render dolibarr log files
+NEW: Add filter on status on invoice list
+NEW: Add filter on task ref and task label into list of tasks
+NEW: Add filter on user contact or user task into task list
+NEW: Add gender property managed on user card FIX: Better error messages when uploading photo of user when permission to write are not granted
+NEW: Add help tooltips on fields of dictionary edit pages. Fix: visible list of tasks are for opened project only.
+NEW: Add hidden option MAIN_MAILFORM_DISABLE_ENTERKEY to disable the key enter into the form to send email.
+NEW: add hook in send mail
+NEW: Add hooks on list of members to allow an external module to add more fields into list view.
+NEW: Add hooks to allow an external module to complete list of events into calendar views.
+NEW: Add opportunity amount on project card.
+NEW: Add option THEME_ELDY_DISABLE_IMAGE to disable images into menu eldy.
+NEW: add PDF icon on linked element into project
+NEW: add "productpricecard" hook and uniformize code
+NEW: Add ref and label of project into export
+NEW: Add search box for supplier order search.
+NEW: Add status into filters of graph
+NEW: Add tab document on salaries payment
+NEW: A link to the bugtracker can be enabled in the GUI
+NEW: A module can add its entries into cron module.
+NEW: autofocus on product selection dropdown list or search field
+NEW: Backup and restore tool is easier to use
+NEW: Can add all user of a project as user of a task, in one step.
+NEW: Can add project search on left menu search area
+NEW: Can assign a task to yourself to have it appear on timesheet
+NEW: Can close a project that has draft status with no need to switch it to validate status before.
+NEW: Can edit Background color for Top menu and Background color for table title line (works only with theme menu eldy).
+NEW: Can edit email template using WYSIWYG editor
+NEW: Can edit internal label of invoice even when closed (this is a private information)
+NEW: Can edit list of prospect status for customers/prospects. Add a new entry into dictionary table to manage list fo status. Removed deprecated files.
+NEW: Can filter on contact status in prospect list. Removed deprecated menu entry.
+NEW: Can filter proposal on a tag of a product Enhance also the prototype test_arrays to include select form before table.
+NEW: Can filter proposal, orders or invoices with criteria "contain at least one product with following tag"
+NEW: Can install an external module from admin pages, if web server has permission for and if setup is ok for.
+NEW: Can search on customer order amount into customer order list.
+NEW: Can upload files on leave requests. Use more standard permissions.
+NEW: Can use a "|" to make a OR search on several different criterias into text filters of tables.
+NEW: Clean code into salary module, debug and add indexes NEW: Can filter on user list and salary payments on user with naural search.
+NEW: clone action on agenda events
+NEW: dev feature : replace conf filename with "conf" parameter on url by GET
+NEW: display linked object in edit mode when we create an event from an order, propal...
+NEW: Enhancement of module 'Notification by Email'. Show nb of notifications set. Can set several emails. Can set a threshold on amount for notifications. Add notification on supplier order validation.
+NEW: Enhance prototype, project list and proposal list with new hook to have an external module able to add more fields.
+NEW: Enhance the natural_search function so we can use it to search numeric fields with criteria with operator <>= inside (< 100, >= 1000)
+NEW: Enter amount for withdraws requests
+NEW: Feature request: A page to merge two thirdparties into one #2613
+NEW: Feature to build a merged pdf with all unpaid invoice can work for paid invoices.
+NEW: Filter "active" by default on user list. Fix label of permission of project module
+NEW: For a contract line, price is no more mandatory.
+NEW: Forms are using the tab look, even in creation mode.
+NEW: Hidden option THEME_ELDY_USE_HOVER is stable enough to become officialy visible into setup.
+NEW: If module salaries is on, you can set a hourly value for tome consumed by users. Each time a user enter its time consumed on a project, a calculation is done to provide the cost for human services. This value appears into the "Transversal view" of project.
+NEW: Implement option SUPPLIER_ORDER_USE_DISPATCH_STATUS to add a status into each dispathing line of supplier order to "verify" a reception is ok. Status of order can be set to "total/done" only if line is verified.
+NEW: Into the overview of projects, the name of thirdparty appears into combo lists of elements to link to project.
+NEW: Introduce option SUPPLIER_ORDER_DOUBLE_APPROVAL to allow 2 approvals to make a supplier order approved. Activating this option introduce a new permission to the second level approval.
+NEW: Introduce TCPDI as replacement of FPDI.
+NEW: List of recent modified supplier product prices in Supplier card
+NEW: Module notification should details of emails into confirm box, not only number.
+NEW: On page to see/edit contact of an ojbect, the status of contact is visible (for both external and internal users).
+NEW: Product stock and subproduct stock are independant
+NEW: Propal merge product card PDF into azur
+NEW: Rename install etape to step
+NEW: Replace category edition page on members with new select2 component.
+NEW: Show difference between timespent by everybody and time spent by user making timesheet into timesheet pages. NEW: Can enter start hours of task when creating timesheet
+NEW: Show last official stable version into system - update page.
+NEW: Show photo of logged user into login top right block. NEW: If no photo is available for user, we show a generic photo depending on gender
+NEW: [T1758] Merge bank card & account card
+NEW: [ task 1191 ] AJAX selector for projects
+NEW: [ task #851 ] Add a new field: Commercial name
+NEW: [ task #977 ] New option to manage product unit Migrated code from GPCSolutions/dolibarr:3.2-units branch and adapted for 3.8 with some improvements
+NEW: The line where mouse is over can be highlight with option THEME_ELDY_USE_HOVER (on by default)
+NEW: The notification module accept keyword __SUPERVISOR__ to send notification to supervisor of user.
+NEW: Thumbs for statistics on main page are fully clicable (not only link inside the thumb)
+NEW: Title of page project contains project ref and label
+NEW: update skeleton and class builder
+NEW: Use new select2 component for juridical status, country and state selection.
+NEW: Web service to create or update product can correct stock during creation/update.
+NEW: When creating order, proposal or invoice from thirdparty card, the project is asked during creation. A link to create project if it does not exists is also available. NEW: Uniformize form creation of proposal to add public and private notes during creation like done for order and invoice.
+NEW: When using transfer or correct stock from warehouse, after recording we go back to the warehouse page.
+NEW: Add Option to not change date on cloning project
+NEW: Add check list from table for extrafield type
+NEW: Use new combobox.
+NEW: Add hidden option MAXTABS_IN_CARD.
+NEW: A default label is suggested for stock correction and transfer instead of empty string.
+NEW: Add Weighted average price as default price for buying price for margin calculation. Add option MARGIN_PMP_AS_DEFAULT_BUY_PRICE to replace with first supplier price.
+NEW: Introduce option MAIN_HTML_TITLE to start to control format of html title content.
+NEW: Add extrafields on bank account cards.
+NEW: Added delay between mails in Newsletter module.
+NEW: [ task #1793 ] Create new permission to restrict commercial agent margin to logged user.
+NEW: Add experimental module ask supplier price to request supplier quotation.
+NEW: Add module batch management.
+
+For translators:
+NEW: Update language files.
+NEW: When a translation is not available we always jump to en_US and only en_US.
+NEW: All language tranlsations (except source en_US) is now managed on https://www.transifex.com/projects/p/dolibarr/.
+FIX: Typo errors in translation.
+
+For developers:
+NEW: Function yn can show a visual checkbox.
+NEW: Introduced select2 jquery plugin.
+NEW: Possibility to add javascript in main login page with "getLoginPageOptions" hook.
+NEW: possibility to defined a tab for all entities in module descriptor.
+NEW: add restler framework First step to build REST API into Dolibarr.
+NEW: add an explorer for REST API consultation & documentation.
+NEW: script to build API class from existing class.
+NEW: Add function dolCopyDir to copy directory with recursive content.
+NEW: Introduce function dolGetFirstLineOfText.
+
+WARNING: Following changes may create regression for some external modules, but were necessary to make
+Dolibarr better:
+- Removed hook supplierorderdao into supplier order creation. This is a business event, so we must use the 
+  trigger ORDER_SUPPLIER_CREATE instead.
+- Hooks 'printLeftBlock' and 'formConfirm' are now compliant with hook development rules. They are
+  "addreplace" hooks, so you must return content with "->resprints='mycontent'" and not with "return 'mycontent'"  
+- All fields "fk_societe" and "fk_soc" are now named "fk_soc" (same name for all fields).
+- Method select_PriceBaseType and load_PriceBaseType were merged into selectPriceBaseType.
+- The triggers USER_LOGIN* are deprecated. They are still working but you should prefer use the 
+  hook afterLogin or afterLoginFailed instead.
+- The trigger USER_CREATE_FROM_CONTACT has been replace with USER_CREATE and property context is now filled
+  to make difference between creation from contact or not.
+
 
 ***** ChangeLog for 3.7.2 compared to 3.7.1 *****
 FIX [ bug #2855 ] Wrong translation key in localtax report page
@@ -19,6 +237,7 @@ FIX [ bug #3198 ] Trigger LINECONTRACT_INSERT passes Contrat as $object instead 
 FIX: Not showing delivery date on rouget pdf
 FIX: Not showing task extrafields when creating from left menu
 FIX [ bug #3288 ] Tasks box is not properly drawn
+FIX [ bug #3211 ] Outstading bill amount of a client showed wrong amounts
 
 NEW: Created new ContratLigne::insert function
 
@@ -162,6 +381,7 @@ For users:
 - Fix: [ bug #1535 ] Supplier invoice Extrafields are not shown
 - Fix: datepicker first day of week can be monday by setting into display setup
 - Fix: [ bug #575 ] GED doesn't works if there is "/" in a mask
+- Fix: [ task #1728 ] Deactivate RIB suggest in proposals / invoices / orders
 
 For users, new experimental module (need to set feature level of instance to experimental to see them):
 - New: Module Accounting Expert to manage accountancy
@@ -280,6 +500,7 @@ Dolibarr better:
 - Fix: [ bug #3074 ] Accruals accounting use payment date instead of commitment date in turnover reports for salaries
 - Fix: Not showing product supplier reference when page break
 - Fix: [ bug #3341 ] Missing translation in /compta/paiement_charge.php
+- Fix: [ bug #3342 ] Taxes dictionary page does not accept localized decimals for localtax2 rate
 
 ***** ChangeLog for 3.6.2 compared to 3.6.1 *****
 - Fix: fix ErrorBadValueForParamNotAString error message in price customer multiprice.
@@ -464,6 +685,9 @@ Fix: [ bug #2570 ] [Contacts] Page should not process if ID is invalid
 Fix: [ bug #3268 ] SQL error when accessing thirdparty log page without a socid parameter
 Fix: [ bug #3180 ] formObjectOptions hook when editing thirdparty card does not print result
 Fix: [ bug #1791 ] Margin menu not available if any Finance module is not enabled
+Fix: [ bug #3310 ] OrderLine::fetch, FactureLigne::fetch and PropaleLigne::fetch do not return anything
+Fix: [ bug #3206 ] PropaleLigne, OrderLine and FactureLigne given to triggers through update function does not contain all the information
+Fix: [ bug #3313 ] Error enabling module with PostgreSQL database
 
 ***** ChangeLog for 3.5.6 compared to 3.5.5 *****
 Fix: Avoid missing class error for fetch_thirdparty method #1973

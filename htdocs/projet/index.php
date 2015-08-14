@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -51,7 +51,7 @@ $sortorder = GETPOST("sortorder",'alpha');
 $socstatic=new Societe($db);
 $projectstatic=new Project($db);
 $userstatic=new User($db);
-$tasktmp=new Task($db);
+$form=new Form($db);
 
 $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,($mine?$mine:(empty($user->rights->projet->all->lire)?0:2)),1);
 //var_dump($projectsListId);
@@ -62,7 +62,7 @@ llxHeader("",$langs->trans("Projects"),"EN:Module_Projects|FR:Module_Projets|ES:
 $text=$langs->trans("Projects");
 if ($mine) $text=$langs->trans("MyProjects");
 
-print_fiche_titre($text);
+print_fiche_titre($text,'','title_project.png');
 
 // Show description of content
 if ($mine) print $langs->trans("MyProjectsDesc").'<br><br>';
@@ -71,6 +71,28 @@ else
 	if (! empty($user->rights->projet->all->lire) && ! $socid) print $langs->trans("ProjectsDesc").'<br><br>';
 	else print $langs->trans("ProjectsPublicDesc").'<br><br>';
 }
+
+
+// Get list of ponderated percent for each status
+$listofoppstatus=array(); $listofopplabel=array(); $listofoppcode=array();
+$sql = "SELECT cls.rowid, cls.code, cls.percent, cls.label";
+$sql.= " FROM ".MAIN_DB_PREFIX."c_lead_status as cls";
+$resql = $db->query($sql);
+if ( $resql )
+{
+	$num = $db->num_rows($resql);
+	$i = 0;
+
+	while ($i < $num)
+	{
+		$objp = $db->fetch_object($resql);
+		$listofoppstatus[$objp->rowid]=$objp->percent;
+		$listofopplabel[$objp->rowid]=$objp->label;
+		$listofoppcode[$objp->rowid]=$objp->code;
+		$i++;
+	}
+}
+else dol_print_error($db);
 
 
 
@@ -86,14 +108,107 @@ if (! empty($conf->projet->enabled) && $user->rights->projet->lire)
 	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAProject").'</td></tr>';
 	print '<tr '.$bc[$var].'>';
 	print '<td class="nowrap"><label for="sf_ref">'.$langs->trans("Ref").'</label>:</td><td><input type="text" class="flat" name="search_ref" id="sf_ref" size="18"></td>';
-	print '<td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+	print '<td rowspan="3"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+	print '<tr '.$bc[$var].'><td class="nowrap"><label for="syear">'.$langs->trans("Year").'</label>:</td><td><input type="text" class="flat" name="search_year" id="search_year" size="18"></td>';
 	print '<tr '.$bc[$var].'><td class="nowrap"><label for="sall">'.$langs->trans("Other").'</label>:</td><td><input type="text" class="flat" name="search_all" id="search_all" size="18"></td>';
 	print '</tr>';
 	print "</table></form>\n";
 	print "<br>\n";
 }
 
-print_projecttasks_array($db,$socid,$projectsListId,0,0);
+
+/*
+ * Statistics
+ */
+
+if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
+{
+	$sql = "SELECT COUNT(p.rowid) as nb, SUM(p.opp_amount) as opp_amount, p.fk_opp_status as opp_status";
+	$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
+	$sql.= " WHERE p.entity = ".$conf->entity;
+	$sql.= " AND p.fk_statut = 1";
+	if ($mine || empty($user->rights->projet->all->lire)) $sql.= " AND p.rowid IN (".$projectsListId.")";
+	if ($socid)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
+	$sql.= " GROUP BY p.fk_opp_status";
+	$resql = $db->query($sql);
+	if ($resql)
+	{
+	    $num = $db->num_rows($resql);
+	    $i = 0;
+
+	    $totalnb=0;
+	    $totalamount=0;
+	    $ponderated_opp_amount=0;
+	    $valsnb=array();
+	    $valsamount=array();
+	    $dataseries=array();
+	    // -1=Canceled, 0=Draft, 1=Validated, (2=Accepted/On process not managed for customer orders), 3=Closed (Sent/Received, billed or not)
+	    while ($i < $num)
+	    {
+	        $obj = $db->fetch_object($resql);
+	        if ($obj)
+	        {
+	            //if ($row[1]!=-1 && ($row[1]!=3 || $row[2]!=1))
+	            {
+	                $valsnb[$obj->opp_status]=$obj->nb;
+	                $valsamount[$obj->opp_status]=$obj->opp_amount;
+	                $totalnb+=$obj->nb;
+	                $totalamount+=$obj->opp_amount;
+	                $ponderated_opp_amount = $ponderated_opp_amount + price2num($listofoppstatus[$obj->opp_status] * $obj->opp_amount / 100);
+	            }
+	            $total+=$row[0];
+	        }
+	        $i++;
+	    }
+	    $db->free($resql);
+
+	    print '<table class="noborder nohover" width="100%">';
+	    print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("OpportunitiesStatusForOpenedProjects").'</td></tr>'."\n";
+	    $var=true;
+	    $listofstatus=array_keys($listofoppstatus);
+	    foreach ($listofstatus as $status)
+	    {
+	    	$labelstatus = '';
+
+			$code = dol_getIdFromCode($db, $status, 'c_lead_status', 'rowid', 'code');
+	        if ($code) $labelstatus = $langs->trans("OppStatus".$code);
+	        if (empty($labelstatus)) $labelstatus=$listofopplabel[$status];
+
+	        //$labelstatus .= ' ('.$langs->trans("Coeff").': '.price2num($listofoppstatus[$status]).')';
+	        $labelstatus .= ' - '.price2num($listofoppstatus[$status]).'%';
+
+	        $dataseries[]=array('label'=>$labelstatus,'data'=>(isset($valsamount[$status])?(float) $valsamount[$status]:0));
+	        if (! $conf->use_javascript_ajax)
+	        {
+	            $var=!$var;
+	            print "<tr ".$bc[$var].">";
+	            print '<td>'.$labelstatus.'</td>';
+	            print '<td align="right"><a href="list.php?statut='.$status.'">'.price((isset($valsamount[$status])?(float) $valsamount[$status]:0), 0, '', 1, -1, -1, $conf->currency).'</a></td>';
+	            print "</tr>\n";
+	        }
+	    }
+	    if ($conf->use_javascript_ajax)
+	    {
+	        print '<tr class="impair"><td align="center" colspan="2">';
+	        $data=array('series'=>$dataseries);
+	        dol_print_graph('stats',400,180,$data,1,'pie',0,'');
+	        print '</td></tr>';
+	    }
+	    //if ($totalinprocess != $total)
+	    //print '<tr class="liste_total"><td>'.$langs->trans("Total").' ('.$langs->trans("CustomersOrdersRunning").')</td><td align="right">'.$totalinprocess.'</td></tr>';
+	    print '<tr class="liste_total"><td>'.$langs->trans("OpportunityTotalAmount").'</td><td align="right">'.price($totalamount, 0, '', 1, -1, -1, $conf->currency).'</td></tr>';
+	    print '<tr class="liste_total"><td>'.$langs->trans("OpportunityPonderatedAmount").'</td><td align="right">'.price($ponderated_opp_amount, 0, '', 1, -1, -1, $conf->currency).'</td></tr>';
+	    print "</table><br>";
+	}
+	else
+	{
+	    dol_print_error($db);
+	}
+}
+
+
+// List of draft projects
+print_projecttasks_array($db,$form,$socid,$projectsListId,0,0,$listofoppstatus);
 
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
@@ -101,15 +216,16 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print_liste_field_titre($langs->trans("ThirdParties"),$_SERVER["PHP_SELF"],"s.nom","","","",$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("OpenedProjectsByThirdparties"),$_SERVER["PHP_SELF"],"s.nom","","","",$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("NbOfProjects"),"","","","",'align="right"',$sortfield,$sortorder);
 print "</tr>\n";
 
-$sql = "SELECT count(p.rowid) as nb";
+$sql = "SELECT COUNT(p.rowid) as nb, SUM(p.opp_amount)";
 $sql.= ", s.nom as name, s.rowid as socid";
 $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 $sql.= " WHERE p.entity = ".$conf->entity;
+$sql.= " AND p.fk_statut = 1";
 if ($mine || empty($user->rights->projet->all->lire)) $sql.= " AND p.rowid IN (".$projectsListId.")";
 if ($socid)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
 $sql.= " GROUP BY s.nom, s.rowid";
@@ -138,7 +254,7 @@ if ( $resql )
 			print $langs->trans("OthersNotLinkedToThirdParty");
 		}
 		print '</td>';
-		print '<td align="right"><a href="'.DOL_URL_ROOT.'/projet/list.php?socid='.$obj->socid.'">'.$obj->nb.'</a></td>';
+		print '<td align="right"><a href="'.DOL_URL_ROOT.'/projet/list.php?socid='.$obj->socid.'&search_status=1">'.$obj->nb.'</a></td>';
 		print "</tr>\n";
 
 		$i++;
@@ -153,129 +269,14 @@ else
 print "</table>";
 
 
+print '<br>';
+
+
+print_projecttasks_array($db,$form,$socid,$projectsListId,0,1,$listofoppstatus);
+
+
+
 print '</div></div></div>';
-
-
-// Tasks for all resources of all opened projects and time spent for each task/resource
-print '<div class="fichecenter">';
-
-$max = (empty($conf->global->PROJECT_LIMIT_TASK_PROJECT_AREA)?1000:$conf->global->PROJECT_LIMIT_TASK_PROJECT_AREA);
-
-$sql = "SELECT p.ref, p.title, p.rowid as projectid, t.label, t.rowid as taskid, t.planned_workload, t.duration_effective, t.progress, t.dateo, t.datee, SUM(tasktime.task_duration) as timespent";
-$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t on t.fk_projet = p.rowid";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task_time as tasktime on tasktime.fk_task = t.rowid";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on tasktime.fk_user = u.rowid";
-$sql.= " WHERE p.entity = ".$conf->entity;
-if ($mine || empty($user->rights->projet->all->lire)) $sql.= " AND p.rowid IN (".$projectsListId.")";
-if ($socid)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
-$sql.= " AND p.fk_statut=1";
-$sql.= " GROUP BY p.ref, p.title, p.rowid, t.label, t.rowid, t.planned_workload, t.duration_effective, t.progress, t.dateo, t.datee";
-$sql.= " ORDER BY t.rowid, t.dateo, t.datee";
-$sql.= $db->plimit($max+1);	// We want more to know if we have more than limit
-
-$var=true;
-
-dol_syslog('projet:index.php: affectationpercent', LOG_DEBUG);
-$resql = $db->query($sql);
-if ( $resql )
-{
-	$num = $db->num_rows($resql);
-	$i = 0;
-
-	print '<br>';
-
-	print_fiche_titre($langs->trans("TasksOnOpenedProject"),'','').'<br>';
-
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre">';
-	//print '<th>'.$langs->trans('TaskRessourceLinks').'</th>';
-	print '<th>'.$langs->trans('Projects').'</th>';
-	print '<th>'.$langs->trans('Task').'</th>';
-	print '<th>'.$langs->trans('DateStart').'</th>';
-	print '<th>'.$langs->trans('DateEnd').'</th>';
-	print '<th align="right">'.$langs->trans('PlannedWorkload').'</th>';
-	print '<th align="right">'.$langs->trans("ProgressDeclared").'</td>';
-	print '<th align="right">'.$langs->trans('TimeSpent').'</th>';
-	print '<th align="right">'.$langs->trans("ProgressCalculated").'</td>';
-	print '</tr>';
-
-	while ($i < $num && $i < $max)
-	{
-		$obj = $db->fetch_object($resql);
-		$var=!$var;
-
-		$username='';
-		if ($obj->userid && $userstatic->id != $obj->userid)	// We have a user and it is not last loaded user
-		{
-			$result=$userstatic->fetch($obj->userid);
-			if (! $result) $userstatic->id=0;
-		}
-		if ($userstatic->id) $username = $userstatic->getNomUrl(0,0);
-
-		print "<tr ".$bc[$var].">";
-		//print '<td>'.$username.'</td>';
-		print '<td>';
-		$projectstatic->id=$obj->projectid;
-		$projectstatic->ref=$obj->ref;
-		$projectstatic->title=$obj->title;
-		print $projectstatic->getNomUrl(1,'',16);
-		//print '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$obj->projectid.'">'.$obj->title.'</a>';
-		print '</td>';
-		print '<td>';
-		if (! empty($obj->taskid))
-		{
-			$tasktmp->id = $obj->taskid;
-			$tasktmp->ref = $obj->label;
-			print $tasktmp->getNomUrl(1, 'withproject');
-		}
-		else print $langs->trans("NoTasks");
-		print '</td>';
-		print '<td>'.dol_print_date($db->jdate($obj->dateo),'day').'</td>';
-		print '<td>'.dol_print_date($db->jdate($obj->datee),'day').'</td>';
-		print '<td align="right"><a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$obj->taskid.'&withproject=1">';
-		print convertSecondToTime($obj->planned_workload, 'all');
-		print '</a></td>';
-		print '<td align="right">';
-		print ($obj->taskid>0)?$obj->progress.'%':'';
-		print '</td>';
-		print '<td align="right"><a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$obj->taskid.'&withproject=1">';
-		print convertSecondToTime($obj->timespent, 'all');
-		print '</a></td>';
-		print '<td align="right">';
-		if (! empty($obj->taskid))
-		{
-			if (empty($obj->planned_workload) > 0) {
-				$percentcompletion = $langs->trans("WorkloadNotDefined");
-			} else {
-				$percentcompletion = intval($obj->duration_effective*100/$obj->planned_workload).'%';
-			}
-		}
-		print $percentcompletion;
-		print '</td>';
-		print "</tr>\n";
-
-		$i++;
-	}
-
-	if ($num > $max)
-	{
-		print '<tr><td colspan="6">'.$langs->trans("WarningTooManyDataPleaseUseMoreFilters").'</td></tr>';
-	}
-
-	print "</table>";
-
-
-	$db->free($resql);
-}
-else
-{
-	dol_print_error($db);
-}
-
-print '</div>';
-
 
 
 llxFooter();

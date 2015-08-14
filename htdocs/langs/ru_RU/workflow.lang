@@ -1,11 +1,11 @@
 # Dolibarr language file - Source file is en_US - admin
 WorkflowSetup=Установка модуля Рабочих процессов
-WorkflowDesc=Этот модуль спроектирован для изменения поведения автоматических действий в приложении. По умолчанию, рабочий процесс открыт (вы можете делать вещи в том порядке, в каком желаете). Вы можете включить режим автоматических действий, в которых вы заинтересованы. 
-ThereIsNoWorkflowToModify=Существует не рабочий процесс можно изменить для модуля активации.
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Создать заказ клиента автоматически после коммерческое предложение подписано
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Создать счет клиента автоматически после коммерческое предложение подписано
-descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Создать счет клиента автоматически после контракт проверяется
-descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Создать счет клиента автоматически после заказа клиента закрыт
+WorkflowDesc=This module is designed to modify the behaviour of automatic actions into application. By default, workflow is open (you can do things in the order you want). You can activate the automatic actions you are interested in.
+ThereIsNoWorkflowToModify=There is no workflow modifications available with the activated modules.
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automatically create a customer order after a commercial proposal is signed
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICEAutomatically create a customer invoice after a commercial proposal is signed
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICEAutomatically create a customer invoice after a contract is validated
+descWORKFLOW_ORDER_AUTOCREATE_INVOICEAutomatically create a customer invoice after a customer order is closed
 descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Классифицировать связанные коммерческие предложения оплаченными, когда заказ клиента обозначен, как оплаченный
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Классифицировать связанные заказы клиента оплаченными, когда счёт клиента оплачен. 
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Классифицировать связанные заказы клиента оплаченными, когда счёт клиента подтверждён.

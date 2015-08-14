@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2013 Laurent Destailleur  <eldy@uers.sourceforge.net>
+ * Copyright (C) 2005-2015 Laurent Destailleur  <eldy@uers.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2014	   Florian Henry        <florian.henry@open-concept.pro>
  *
@@ -408,25 +408,17 @@ if ($object->fetch($id) >= 0)
 		print_liste_field_titre($langs->trans("Firstname"),$_SERVER["PHP_SELF"],"mc.firstname",$param,"","",$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("OtherInformations"),$_SERVER["PHP_SELF"],"",$param,"","",$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("Source"),$_SERVER["PHP_SELF"],"",$param,"",'align="center"',$sortfield,$sortorder);
-
 		// Date sending
 		if ($object->statut < 2)
 		{
-			print '<td class="liste_titre">&nbsp;</td>';
+			print_liste_field_titre('');
 		}
 		else
 		{
 			print_liste_field_titre($langs->trans("DateSending"),$_SERVER["PHP_SELF"],"mc.date_envoi",$param,'','align="center"',$sortfield,$sortorder);
 		}
-
-		// Statut
 		print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"mc.statut",$param,'','align="right"',$sortfield,$sortorder);
-
-		//Search Icon
-		print '<td class="liste_titre">';
-		print '&nbsp';
-		print '</td>';
-
+		print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
 		print '</tr>';
 
 		// Ligne des champs de filtres
@@ -463,8 +455,7 @@ if ($object->fetch($id) >= 0)
 		//Search Icon
 		print '<td class="liste_titre" align="right">';
 		print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-		print '&nbsp; ';
-		print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" name="button_removefilter" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+		print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Reset"),'searchclear.png','','',1).'" name="button_removefilter" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
 		print '</td>';
 		print '</tr>';
 
@@ -523,9 +514,6 @@ if ($object->fetch($id) >= 0)
 				{
 					print '<td align="center">&nbsp;</td>';
 					print '<td align="right" class="nowrap">'.$langs->trans("MailingStatusNotSent");
-					if ($user->rights->mailing->creer && $allowaddtarget) {
-						print '<a href="'.$_SERVER['PHP_SELF'].'?action=delete&rowid='.$obj->rowid.$param.'">'.img_delete($langs->trans("RemoveRecipient"));
-					}
 					print '</td>';
 				}
 				else
@@ -537,7 +525,14 @@ if ($object->fetch($id) >= 0)
 				}
 
 				//Sreach Icon
-				print '<td></td>';
+				print '<td align="right">';
+				if ($obj->statut == 0)
+				{
+					if ($user->rights->mailing->creer && $allowaddtarget) {
+						print '<a href="'.$_SERVER['PHP_SELF'].'?action=delete&rowid='.$obj->rowid.$param.'">'.img_delete($langs->trans("RemoveRecipient"));
+					}
+				}
+				print '</td>';
 				print '</tr>';
 
 				$i++;
@@ -545,7 +540,7 @@ if ($object->fetch($id) >= 0)
 		}
 		else
 		{
-			print '<tr '.$bc[false].'><td colspan="7">'.$langs->trans("NoTargetYet").'</td></tr>';
+			print '<tr '.$bc[false].'><td colspan="8">'.$langs->trans("NoTargetYet").'</td></tr>';
 		}
 		print "</table><br>";
 

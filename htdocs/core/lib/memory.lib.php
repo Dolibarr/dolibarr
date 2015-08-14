@@ -231,7 +231,7 @@ function dol_getshmop($memoryid)
 	global $shmkeys,$shmoffset;
 
 	if (empty($shmkeys[$memoryid]) || ! function_exists("shmop_open")) return 0;
-	$shmkey=dol_getshmopaddress($memoryid);;
+	$shmkey=dol_getshmopaddress($memoryid);
 	//print 'dol_getshmop memoryid='.$memoryid." shmkey=".$shmkey."<br>\n";
 	$handle=@shmop_open($shmkey,'a',0,0);
 	if ($handle)

@@ -132,3 +132,4 @@ SelectFilterFields=如果你想过滤一些值，这里只是输入值。
 FilterableFields=筛选字段
 FilteredFields=过滤字段
 FilteredFieldsValues=过滤值
+FormatControlRule=Format control rule

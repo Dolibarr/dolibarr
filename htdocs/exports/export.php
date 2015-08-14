@@ -58,9 +58,12 @@ $entitytoicon = array(
 	'account'      => 'account',
 	'product'      => 'product',
     'warehouse'    => 'stock',
+    'batch'        => 'stock',
 	'category'     => 'category',
 	'shipment'     => 'sending',
-    'shipment_line'=> 'sending'
+    'shipment_line'=> 'sending',
+    'expensereport'=> 'trip',
+    'expensereport_line'=> 'trip'
 );
 
 // Translation code
@@ -86,7 +89,8 @@ $entitytolang = array(
 	'product'      => 'Product',
     'service'      => 'Service',
     'stock'        => 'Stock',
-    'warehouse'    => 'Warehouse',
+    'batch'        => 'Batch',
+	'warehouse'    => 'Warehouse',
 	'category'     => 'Category',
 	'other'        => 'Other',
     'trip'         => 'TripsAndExpenses',
@@ -95,7 +99,9 @@ $entitytolang = array(
     'project'      => 'Projects',
     'projecttask'  => 'Tasks',
     'task_time'    => 'TaskTimeSpent',
-	'action'       => 'Event'
+	'action'       => 'Event',
+	'expensereport'=> 'ExpenseReport',
+	'expensereport_line'=> 'ExpenseReportLine'
 );
 
 $array_selected=isset($_SESSION["export_selected_fields"])?$_SESSION["export_selected_fields"]:array();
@@ -112,7 +118,7 @@ $field=GETPOST("field");
 $objexport=new Export($db);
 $objexport->load_arrays($user,$datatoexport);
 
-$objmodelexport=new ModeleExports();
+$objmodelexport=new ModeleExports($db);
 $form = new Form($db);
 $htmlother = new FormOther($db);
 $formfile = new FormFile($db);
@@ -287,7 +293,7 @@ if ($action == 'add_export_model')
 				$hexafiltervalue.=$key.'='.$val;
 			}
 		}
-		
+
 	    $objexport->model_name = $export_name;
 	    $objexport->datatoexport = $datatoexport;
 	    $objexport->hexa = $hexa;
@@ -988,7 +994,7 @@ if ($step == 4 && $datatoexport)
 
 if ($step == 5 && $datatoexport)
 {
-    asort($array_selected);
+	asort($array_selected);
 
     llxHeader('',$langs->trans("NewExport"),'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones');
 
@@ -1138,6 +1144,7 @@ if ($step == 5 && $datatoexport)
 
     print '</td><td width="50%">&nbsp;</td></tr>';
     print '</table>';
+
 }
 
 print '<br>';
@@ -1145,6 +1152,8 @@ print '<br>';
 llxFooter();
 
 $db->close();
+
+exit;	// don't know why but apache hangs with php 5.3.10-1ubuntu3.12 and apache 2.2.2 if i remove this exit or replace with return
 
 
 /**
@@ -1168,4 +1177,3 @@ function getablenamefromfield($code,$sqlmaxforexport)
 	}
 	else return '';
 }
-

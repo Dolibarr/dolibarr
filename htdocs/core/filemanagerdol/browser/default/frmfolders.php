@@ -220,7 +220,7 @@ window.onload = function()
 		<table id="tableFiles" cellSpacing="0" cellPadding="0" width="100%" border="0">
 			<tr id="trUp" style="DISPLAY: none">
 				<td width="16"><a id="linkUpIcon" href="#"><img alt="" src="images/FolderUp.gif" width="16" height="16" border="0"></a></td>
-				<td nowrap width="100%">&nbsp;<a id="linkUp" href="#">..</a></td>
+				<td class="nowrap" width="100%">&nbsp;<a id="linkUp" href="#">..</a></td>
 			</tr>
 		</table>
 	</body>

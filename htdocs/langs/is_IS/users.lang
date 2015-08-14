@@ -57,6 +57,7 @@ RemoveFromGroup=Fjarlægja úr hópi
 PasswordChangedAndSentTo=Lykilorð breyst og sendur <b>til %s .</b>
 PasswordChangeRequestSent=Beiðni um að breyta lykilorðinu <b>fyrir %s </b> sent <b>til %s .</b>
 MenuUsersAndGroups=Notendur & Groups
+MenuMyUserCard=My user card
 LastGroupsCreated=Last %s  búinn til hópa
 LastUsersCreated=Last %s  notendur skapa
 ShowGroup=Sýna hópur

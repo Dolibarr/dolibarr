@@ -18,9 +18,9 @@
 
 /**
  *      \file       test/phpunit/FactureTest.php
- *		\ingroup    test
+ *      \ingroup    test
  *      \brief      PHPUnit test
- *		\remarks	To run this script as CLI:  phpunit filename.php
+ *      \remarks    To run this script as CLI:  phpunit filename.php
  */
 
 global $conf,$user,$langs,$db;
@@ -29,11 +29,10 @@ global $conf,$user,$langs,$db;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/compta/facture/class/facture.class.php';
 
-if (empty($user->id))
-{
-	print "Load permissions for admin user nb 1\n";
-	$user->fetch(1);
-	$user->getrights();
+if (empty($user->id)) {
+    print "Load permissions for admin user nb 1\n";
+    $user->fetch(1);
+    $user->getrights();
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
@@ -47,74 +46,77 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  */
 class FactureTest extends PHPUnit_Framework_TestCase
 {
-	protected $savconf;
-	protected $savuser;
-	protected $savlangs;
-	protected $savdb;
+    protected $savconf;
+    protected $savuser;
+    protected $savlangs;
+    protected $savdb;
 
-	/**
-	 * Constructor
-	 * We save global variables into local variables
-	 *
-	 * @return FactureTest
-	 */
-	function __construct()
-	{
-		//$this->sharedFixture
-		global $conf,$user,$langs,$db;
-		$this->savconf=$conf;
-		$this->savuser=$user;
-		$this->savlangs=$langs;
-		$this->savdb=$db;
-
-		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-		//print " - db ".$db->db;
-		print "\n";
-	}
-
-	// Static methods
-  	public static function setUpBeforeClass()
+    /**
+     * Constructor
+     * We save global variables into local variables
+     *
+     * @return FactureTest
+     */
+    function __construct()
     {
-    	global $conf,$user,$langs,$db;
+        //$this->sharedFixture
+        global $conf,$user,$langs,$db;
+        $this->savconf=$conf;
+        $this->savuser=$user;
+        $this->savlangs=$langs;
+        $this->savdb=$db;
 
+        print __METHOD__." db->type=".$db->type." user->id=".$user->id;
+        //print " - db ".$db->db;
+        print "\n";
+    }
+
+    // Static methods
+    public static function setUpBeforeClass()
+    {
+        global $conf,$user,$langs,$db;
+
+        if (empty($conf->facture->enabled)) { print __METHOD__." module customer invoice must be enabled.\n"; die(); }
         if (! empty($conf->ecotaxdeee->enabled)) { print __METHOD__." ecotaxdeee module must not be enabled.\n"; die(); }
 
-        $db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
+        $db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
 
-    	print __METHOD__."\n";
+        print __METHOD__."\n";
     }
+
+    // tear down after class
     public static function tearDownAfterClass()
     {
-    	global $conf,$user,$langs,$db;
-		$db->rollback();
+        global $conf,$user,$langs,$db;
+        $db->rollback();
 
-		print __METHOD__."\n";
+        print __METHOD__."\n";
     }
 
-	/**
-	 * Init phpunit tests
-	 *
-	 * @return	void
-	 */
+    /**
+     * Init phpunit tests
+     *
+     * @return  void
+     */
     protected function setUp()
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		print __METHOD__."\n";
+        print __METHOD__."\n";
     }
 
-	/**
-	 * End phpunit tests
-	 *
-	 * @return	void
-	 */
-	protected function tearDown()
+    /**
+     * End phpunit tests
+     *
+     * @return  void
+     */
+    protected function tearDown()
     {
-    	print __METHOD__."\n";
+        print __METHOD__."\n";
     }
 
     /**
@@ -124,107 +126,107 @@ class FactureTest extends PHPUnit_Framework_TestCase
      */
     public function testFactureCreate()
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		$localobject=new Facture($this->savdb);
-    	$localobject->initAsSpecimen();
-    	$result=$localobject->create($user);
+        $localobject=new Facture($this->savdb);
+        $localobject->initAsSpecimen();
+        $result=$localobject->create($user);
 
-    	$this->assertLessThan($result, 0);
-    	print __METHOD__." result=".$result."\n";
-    	return $result;
+        $this->assertLessThan($result, 0);
+        print __METHOD__." result=".$result."\n";
+        return $result;
     }
 
     /**
      * testFactureFetch
      *
-     * @param	int		$id		Id invoice
-     * @return	int
+     * @param   int $id     Id invoice
+     * @return  int
      *
-     * @depends	testFactureCreate
+     * @depends testFactureCreate
      * The depends says test is run only if previous is ok
      */
     public function testFactureFetch($id)
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		$localobject=new Facture($this->savdb);
-    	$result=$localobject->fetch($id);
+        $localobject=new Facture($this->savdb);
+        $result=$localobject->fetch($id);
 
-    	$this->assertLessThan($result, 0);
-    	print __METHOD__." id=".$id." result=".$result."\n";
-    	return $localobject;
+        $this->assertLessThan($result, 0);
+        print __METHOD__." id=".$id." result=".$result."\n";
+        return $localobject;
     }
 
     /**
      * testFactureFetch
      *
-     * @param	Object	$localobject	Invoice
-     * @return	int
+     * @param   Object $localobject Invoice
+     * @return  int
      *
-     * @depends	testFactureFetch
+     * @depends testFactureFetch
      * The depends says test is run only if previous is ok
      */
     public function testFactureUpdate($localobject)
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
         $this->changeProperties($localobject);
-    	$result=$localobject->update($user);
+        $result=$localobject->update($user);
 
-    	print __METHOD__." id=".$localobject->id." result=".$result."\n";
-    	$this->assertLessThan($result, 0);
-    	return $localobject;
+        print __METHOD__." id=".$localobject->id." result=".$result."\n";
+        $this->assertLessThan($result, 0);
+        return $localobject;
     }
 
     /**
      * testFactureValid
      *
-     * @param	Object	$localobject	Invoice
-     * @return	void
+     * @param   Object $localobject Invoice
+     * @return  void
      *
-     * @depends	testFactureUpdate
+     * @depends testFactureUpdate
      * The depends says test is run only if previous is ok
      */
     public function testFactureValid($localobject)
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-    	$result=$localobject->validate($user);
-    	print __METHOD__." id=".$localobject->id." result=".$result."\n";
+        $result=$localobject->validate($user);
+        print __METHOD__." id=".$localobject->id." result=".$result."\n";
 
-    	$this->assertLessThan($result, 0);
+        $this->assertLessThan($result, 0);
 
-    	// Test everything are still same than specimen
-    	$newlocalobject=new Facture($this->savdb);
-    	$newlocalobject->initAsSpecimen();
-    	$this->changeProperties($newlocalobject);
-        $this->assertEquals($this->objCompare($localobject,$newlocalobject,true,array('newref','oldref','id','lines','client','thirdparty','brouillon','user_author','date_creation','date_validation','datem','ref','statut','paye','specimen','facnumber','actiontypecode','actionmsg2','actionmsg','mode_reglement','cond_reglement','cond_reglement_doc')), array());    // Actual, Expected
+        // Test everything are still same than specimen
+        $newlocalobject=new Facture($this->savdb);
+        $newlocalobject->initAsSpecimen();
+        $this->changeProperties($newlocalobject);
+        $this->assertEquals($this->objCompare($localobject,$newlocalobject,true,array('newref','oldref','id','lines','client','thirdparty','brouillon','user_author','date_creation','date_validation','datem','ref','statut','paye','specimen','facnumber','actiontypecode','actionmsg2','actionmsg','mode_reglement','cond_reglement','cond_reglement_doc','situation_cycle_ref','situation_counter','situation_final')), array());    // Actual, Expected
 
-    	return $localobject;
+        return $localobject;
     }
 
    /**
      * testFactureOther
      *
-     * @param	Object	$localobject	Invoice
-     * @return	int
+     * @param   Object $localobject Invoice
+     * @return  int
      *
      * @depends testFactureValid
      * The depends says test is run only if previous is ok
@@ -256,34 +258,34 @@ class FactureTest extends PHPUnit_Framework_TestCase
     /**
      * testFactureDelete
      *
-     * @param	int		$id		Id of invoice
-     * @return	int
+     * @param   int $id     Id of invoice
+     * @return  int
      *
-     * @depends	testFactureOther
+     * @depends testFactureOther
      * The depends says test is run only if previous is ok
      */
     public function testFactureDelete($id)
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		$localobject=new Facture($this->savdb);
-    	$result=$localobject->fetch($id);
-		$result=$localobject->delete($id);
+        $localobject=new Facture($this->savdb);
+        $result=$localobject->fetch($id);
+        $result=$localobject->delete($id);
 
-		print __METHOD__." id=".$id." result=".$result."\n";
-    	$this->assertGreaterThanOrEqual(0, $result);
-    	return $result;
+        print __METHOD__." id=".$id." result=".$result."\n";
+        $this->assertGreaterThanOrEqual(0, $result);
+        return $result;
     }
 
     /**
      * Edit an object to test updates
      *
-     * @param 	mixed	$localobject		Object Facture
-     * @return	void
+     * @param   mixed $localobject        Object Facture
+     * @return  void
      */
     public function changeProperties(&$localobject)
     {
@@ -294,11 +296,11 @@ class FactureTest extends PHPUnit_Framework_TestCase
     /**
      * Compare all public properties values of 2 objects
      *
-     * @param 	Object		$oA						Object operand 1
-     * @param 	Object		$oB						Object operand 2
-     * @param	boolean		$ignoretype				False will not report diff if type of value differs
-     * @param	array		$fieldstoignorearray	Array of fields to ignore in diff
-	 * @return	array								Array with differences
+     * @param   Object $oA                      Object operand 1
+     * @param   Object $oB                      Object operand 2
+     * @param   boolean $ignoretype             False will not report diff if type of value differs
+     * @param   array $fieldstoignorearray      Array of fields to ignore in diff
+     * @return  array                           Array with differences
      */
     public function objCompare($oA,$oB,$ignoretype=true,$fieldstoignorearray=array('id'))
     {

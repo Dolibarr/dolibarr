@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2007-2014 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2007-2015 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -132,7 +132,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
     						// Disable an element
     						if (options.option_disabled) {
     							if (ui.item.disabled) {
-    								$("#" + options.option_disabled).attr("disabled", "disabled");
+									$("#" + options.option_disabled).prop("disabled", true);
     								if (options.error) {
     									$.jnotify(options.error, "error", true);		// Output with jnotify the error message
     								}
@@ -145,7 +145,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
     						}
     						if (options.disabled) {
     							$.each(options.disabled, function(key, value) {
-    								$("#" + value).attr("disabled", "disabled");
+									$("#" + value).prop("disabled", true);
     							});
     						}
     						if (options.show) {
@@ -174,8 +174,8 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
     						$("#search_'.$htmlname.'").trigger("change");	// To tell that input text field was modified
     					}
     					,delay: 500
-					}).data( "autocomplete" )._renderItem = function( ul, item ) {
-						return $( "<li></li>" )
+					}).data("ui-autocomplete")._renderItem = function( ul, item ) {
+						return $("<li></li>")
 						.data( "item.autocomplete", item )
 						.append( \'<a><span class="tag">\' + item.label + "</span></a>" )
 						.appendTo(ul);
@@ -225,8 +225,8 @@ function ajax_multiautocompleter($htmlname, $fields, $url, $option='', $minLengt
 										}
 										for (i=0;i<nboffields;i++) {
 											if (item[fields[i]]) {   // If defined
-                                                //alert(item[fields[i]]);
-											    jQuery("#" + fields[i]).val(item[fields[i]]);
+                                            	//alert(item[fields[i]]);
+												jQuery("#" + fields[i]).val(item[fields[i]]);
 											}
 										}
 									}
@@ -235,13 +235,22 @@ function ajax_multiautocompleter($htmlname, $fields, $url, $option='', $minLengt
 							});
     					},
     					select: function( event, ui ) {
+    					    needtotrigger = "";
     						for (i=0;i<nboffields;i++) {
     							//alert(fields[i] + " = " + ui.item[fields[i]]);
 								if (fields[i]=="selectcountry_id")
 								{
 								    if (ui.item[fields[i]] > 0)     // Do not erase country if unknown
 								    {
+								    	oldvalue=jQuery("#" + fields[i]).val();
+								        newvalue=ui.item[fields[i]];
+								    	//alert(oldvalue+" "+newvalue);
 								        jQuery("#" + fields[i]).val(ui.item[fields[i]]);
+								        if (oldvalue != newvalue)	// To force select2 to refresh visible content
+								        {
+									    	needtotrigger="#" + fields[i];
+										}
+
 								        // If we set new country and new state, we need to set a new list of state to allow change
                                         if (ui.item.states && ui.item["state_id"] != jQuery("#state_id").value) {
                                             jQuery("#state_id").html(ui.item.states);
@@ -252,14 +261,34 @@ function ajax_multiautocompleter($htmlname, $fields, $url, $option='', $minLengt
                                 {
                                     if (ui.item[fields[i]] > 0)     // Do not erase state if unknown
                                     {
+								    	oldvalue=jQuery("#" + fields[i]).val();
+								        newvalue=ui.item[fields[i]];
+								    	//alert(oldvalue+" "+newvalue);
                                         jQuery("#" + fields[i]).val(ui.item[fields[i]]);    // This may fails if not correct country
+								        if (oldvalue != newvalue)	// To force select2 to refresh visible content
+								        {
+									    	needtotrigger="#" + fields[i];
+										}
                                     }
                                 }
 								else if (ui.item[fields[i]]) {   // If defined
-								    //alert(fields[i]);
-								    //alert(ui.item[fields[i]]);
+							    	oldvalue=jQuery("#" + fields[i]).val();
+							        newvalue=ui.item[fields[i]];
+							    	//alert(oldvalue+" "+newvalue);
 							        jQuery("#" + fields[i]).val(ui.item[fields[i]]);
+							        if (oldvalue != newvalue)	// To force select2 to refresh visible content
+							        {
+								    	needtotrigger="#" + fields[i];
+									}
 								}
+							}
+							if (needtotrigger != "")	// To force select2 to refresh visible content
+							{
+								// We introduce a delay so hand is back to js and all other js change can be done before the trigger that may execute a submit is done
+								// This is required for example when changing zip with autocomplete that change the country
+								jQuery(needtotrigger).delay(500).queue(function() {
+    								jQuery(needtotrigger).trigger("change");
+								});
 							}
     					}
 					});
@@ -311,85 +340,86 @@ function ajax_dialog($title,$message,$w=350,$h=150)
  * Use ajax_combobox() only for small combo list! If not, use instead ajax_autocompleter().
  * TODO: It is used when COMPANY_USE_SEARCH_TO_SELECT and CONTACT_USE_SEARCH_TO_SELECT are set by html.formcompany.class.php. Should use ajax_autocompleter instead like done by html.form.class.php for select_produits.
  *
- * @param	string	$htmlname					Name of html select field
+ * @param	string	$htmlname					Name of html select field ('myid' or '.myclass')
  * @param	array	$events						More events option. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
  * @param  	int		$minLengthToAutocomplete	Minimum length of input string to start autocomplete
+ * @param	int		$forcefocus					Force focus on field
  * @return	string								Return html string to convert a select field into a combo, or '' if feature has been disabled for some reason.
  */
-function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0)
+function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $forcefocus=0)
 {
 	global $conf;
 
-	if (! empty($conf->browser->phone)) return '';	// combobox disabled for smartphones (does not works)
-	if (! empty($conf->dol_use_jmobile)) return '';	// combobox with jmobile (does not works)
+	//if (! empty($conf->browser->phone)) return '';	// combobox disabled for smartphones (does not works)
+	if (! empty($conf->dol_use_jmobile)) return '';	// select2 works with jmobile but it breaks the autosize feature of jmobile.
 	if (! empty($conf->global->MAIN_DISABLE_AJAX_COMBOX)) return '';
 	if (empty($conf->use_javascript_ajax)) return '';
 
-	/* Some properties for combobox:
-	minLengthToAutocomplete: 2,
-	comboboxContainerClass: "comboboxContainer",
-	comboboxValueContainerClass: "comboboxValueContainer",
-	comboboxValueContentClass: "comboboxValueContent",
-	comboboxDropDownClass: "comboboxDropDownContainer",
-	comboboxDropDownButtonClass: "comboboxDropDownButton",
-	comboboxDropDownItemClass: "comboboxItem",
-	comboboxDropDownItemHoverClass: "comboboxItemHover",
-	comboboxDropDownGroupItemHeaderClass: "comboboxGroupItemHeader",
-	comboboxDropDownGroupItemContainerClass: "comboboxGroupItemContainer",
-	animationType: "slide",
-	width: "500px" */
+	if (empty($minLengthToAutocomplete)) $minLengthToAutocomplete=0;
 
-	$msg = '<script type="text/javascript">
-	$(document).ready(function() {
-    	$("#'.$htmlname.'").combobox({
-    		minLengthToAutocomplete : '.$minLengthToAutocomplete.',
-    		selected : function(event,ui) {
-    			var obj = '.json_encode($events).';
-    			$.each(obj, function(key,values) {
-    				if (values.method.length) {
-    					runJsCodeForEvent'.$htmlname.'(values);
-    				}
+    $tmpplugin='select2';
+    $msg='<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
+          <script type="text/javascript">
+        	$(document).ready(function () {
+        		$(\''.(preg_match('/^\./',$htmlname)?$htmlname:'#'.$htmlname).'\').'.$tmpplugin.'({
+        		    dir: \'ltr\',
+        			width: \'resolve\',		/* off or resolve */
+					minimumInputLength: '.$minLengthToAutocomplete.'
+				})';
+	if ($forcefocus) $msg.= '.select2(\'focus\')';
+	$msg.= ';'."\n";
+
+	if (count($events))
+	{
+		$msg.= '
+			jQuery("#'.$htmlname.'").change(function () {
+				var obj = '.json_encode($events).';
+		   		$.each(obj, function(key,values) {
+	    			if (values.method.length) {
+	    				runJsCodeForEvent'.$htmlname.'(values);
+	    			}
 				});
-			}
-		});
+			});
 
-		function runJsCodeForEvent'.$htmlname.'(obj) {
-			var id = $("#'.$htmlname.'").val();
-			var method = obj.method;
-			var url = obj.url;
-			var htmlname = obj.htmlname;
-			var showempty = obj.showempty;
-    		$.getJSON(url,
-					{
-						action: method,
-						id: id,
-						htmlname: htmlname,
-						showempty: showempty
-					},
-					function(response) {
-						$.each(obj.params, function(key,action) {
-							if (key.length) {
-								var num = response.num;
-								if (num > 0) {
-									$("#" + key).removeAttr(action);
-								} else {
-									$("#" + key).attr(action, action);
+			function runJsCodeForEvent'.$htmlname.'(obj) {
+				var id = $("#'.$htmlname.'").val();
+				var method = obj.method;
+				var url = obj.url;
+				var htmlname = obj.htmlname;
+				var showempty = obj.showempty;
+	    		$.getJSON(url,
+						{
+							action: method,
+							id: id,
+							htmlname: htmlname,
+							showempty: showempty
+						},
+						function(response) {
+							$.each(obj.params, function(key,action) {
+								if (key.length) {
+									var num = response.num;
+									if (num > 0) {
+										$("#" + key).removeAttr(action);
+									} else {
+										$("#" + key).attr(action, action);
+									}
 								}
+							});
+							$("select#" + htmlname).html(response.value);
+							if (response.num) {
+								var selecthtml_str = response.value;
+								var selecthtml_dom=$.parseHTML(selecthtml_str);
+								$("#inputautocomplete"+htmlname).val(selecthtml_dom[0][0].innerHTML);
+							} else {
+								$("#inputautocomplete"+htmlname).val("");
 							}
-						});
-						$("select#" + htmlname).html(response.value);
-						if (response.num) {
-							var selecthtml_str = response.value;
-							var selecthtml_dom=$.parseHTML(selecthtml_str);
-							$("#inputautocomplete"+htmlname).val(selecthtml_dom[0][0].innerHTML);
-						} else {
-							$("#inputautocomplete"+htmlname).val("");
+							$("select#" + htmlname).change();	/* Trigger event change */
 						}
-						$("select#" + htmlname).change();	/* Trigger event change */
-					});
-		}
+				);
+			}';
+	}
 
-	});'."\n";
+	$msg.= '});'."\n";
     $msg.= "</script>\n";
 
     return $msg;
@@ -526,7 +556,7 @@ function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input=a
                     // Disable another element
                     if (input.disabled && input.disabled.length > 0) {
                         $.each(input.disabled, function(key,value) {
-                            $("#" + value).attr("disabled", true);
+                            $("#" + value).prop("disabled", true);
                             if ($("#" + value).hasClass("butAction") == true) {
                                 $("#" + value).removeClass("butAction");
                                 $("#" + value).addClass("butActionRefused");

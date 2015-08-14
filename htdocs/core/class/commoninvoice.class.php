@@ -1,5 +1,7 @@
 <?php
-/* Copyright (C) 2012 Regis Houssin  <regis.houssin@capnetworks.com>
+/* Copyright (C) 2012       Regis Houssin       <regis.houssin@capnetworks.com>
+ * Copyright (C) 2012       Cédric Salvador     <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +30,64 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
  */
 abstract class CommonInvoice extends CommonObject
 {
+    /**
+     * Standard invoice
+     */
+    const TYPE_STANDARD = 0;
+
+    /**
+     * Replacement invoice
+     */
+    const TYPE_REPLACEMENT = 1;
+
+    /**
+     * Credit note invoice
+     */
+    const TYPE_CREDIT_NOTE = 2;
+
+    /**
+     * Deposit invoice
+     */
+    const TYPE_DEPOSIT = 3;
+
+    /**
+     * Proforma invoice
+     */
+    const TYPE_PROFORMA = 4;
+
+    /**
+     * Situation invoice
+     */
+    const TYPE_SITUATION = 5;
+
+	/**
+	 * Draft
+	 */
+	const STATUS_DRAFT = 0;
+
+	/**
+	 * Validated (need to be paid)
+	 */
+	const STATUS_VALIDATED = 1;
+
+	/**
+	 * Classified paid.
+	 * If paid partially, $this->close_code can be:
+	 * - CLOSECODE_DISCOUNTVAT
+	 * - CLOSECODE_BADDEBT
+	 * If paid completelly, this->close_code will be null
+	 */
+	const STATUS_CLOSED = 2;
+
+	/**
+	 * Classified abandoned and no payment done.
+	 * $this->close_code can be:
+	 * - CLOSECODE_BADDEBT
+	 * - CLOSECODE_ABANDONED
+	 * - CLOSECODE_REPLACED
+	 */
+	const STATUS_ABANDONED = 3;
+
 	/**
 	 * 	Return amount of payments already done
 	 *
@@ -143,11 +203,12 @@ abstract class CommonInvoice extends CommonObject
 	function getLibType()
 	{
 		global $langs;
-		if ($this->type == 0) return $langs->trans("InvoiceStandard");
-		if ($this->type == 1) return $langs->trans("InvoiceReplacement");
-		if ($this->type == 2) return $langs->trans("InvoiceAvoir");
-		if ($this->type == 3) return $langs->trans("InvoiceDeposit");
-		if ($this->type == 4) return $langs->trans("InvoiceProForma");
+        if ($this->type == CommonInvoice::TYPE_STANDARD) return $langs->trans("InvoiceStandard");
+        if ($this->type == CommonInvoice::TYPE_REPLACEMENT) return $langs->trans("InvoiceReplacement");
+        if ($this->type == CommonInvoice::TYPE_CREDIT_NOTE) return $langs->trans("InvoiceAvoir");
+        if ($this->type == CommonInvoice::TYPE_DEPOSIT) return $langs->trans("InvoiceDeposit");
+        if ($this->type == CommonInvoice::TYPE_PROFORMA) return $langs->trans("InvoiceProForma");
+        if ($this->type == CommonInvoice::TYPE_SITUATION) return $langs->trans("InvoiceSituation");
 		return $langs->trans("Unknown");
 	}
 
@@ -155,7 +216,7 @@ abstract class CommonInvoice extends CommonObject
 	 *  Return label of object status
 	 *
 	 *  @param      int		$mode			0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto
-	 *  @param      double	$alreadypaid    0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
+	 *  @param      integer	$alreadypaid    0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
 	 *  @return     string			        Label
 	 */
 	function getLibStatut($mode=0,$alreadypaid=-1)
@@ -169,7 +230,7 @@ abstract class CommonInvoice extends CommonObject
 	 *	@param    	int  	$paye          	Status field paye
 	 *	@param      int		$status        	Id status
 	 *	@param      int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto
-	 *	@param		double	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
+	 *	@param		integer	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
 	 *	@param		int		$type			Type facture
 	 *	@return     string        			Libelle du statut
 	 */
@@ -293,7 +354,7 @@ abstract class CommonInvoice extends CommonObject
 	 *	Renvoi une date limite de reglement de facture en fonction des
 	 *	conditions de reglements de la facture et date de facturation
 	 *
-	 *	@param      string	$cond_reglement   	Condition of payment (code or id) to use. If 0, we use current condition.
+	 *	@param      integer	$cond_reglement   	Condition of payment (code or id) to use. If 0, we use current condition.
 	 *	@return     date     			       	Date limite de reglement si ok, <0 si ko
 	 */
 	function calculate_date_lim_reglement($cond_reglement=0)
@@ -367,5 +428,100 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobjectline.class.php';
  */
 abstract class CommonInvoiceLine extends CommonObjectLine
 {
+	/**
+	 * Quantity
+	 * @var int
+	 */
+	public $qty;
+
+	/**
+	 * Unit price before taxes
+	 * @var float
+	 */
+	public $subprice;
+
+	/**
+	 * Type of the product. 0 for product 1 for service
+	 * @var int
+	 */
+	public $product_type = 0;
+
+	/**
+	 * Id of corresponding product
+	 * @var int
+	 */
+	public $fk_product;
+
+	/**
+	 * VAT %
+	 * @var float
+	 */
+	public $tva_tx;
+
+	/**
+	 * Local tax 1 %
+	 * @var float
+	 */
+	public $localtax1_tx;
+
+	/**
+	 * Local tax 2 %
+	 * @var float
+	 */
+	public $localtax2_tx;
+
+	/**
+	 * Percent of discount
+	 * @var float
+	 */
+	public $remise_percent;
+
+	/**
+	 * Total amount before taxes
+	 * @var float
+	 */
+	public $total_ht;
+
+	/**
+	 * Total VAT amount
+	 * @var float
+	 */
+	public $total_tva;
+
+	/**
+	 * Total local tax 1 amount
+	 * @var float
+	 */
+	public $total_localtax1;
+
+	/**
+	 * Total local tax 2 amount
+	 * @var float
+	 */
+	public $total_localtax2;
+
+	/**
+	 * Total amount with taxes
+	 * @var float
+	 */
+	public $total_ttc;
+
+	/**
+	 * Liste d'options cumulables:
+	 * Bit 0:	0 si TVA normal - 1 si TVA NPR
+	 * Bit 1:	0 si ligne normal - 1 si bit discount (link to line into llx_remise_except)
+	 * @var int
+	 */
+	public $info_bits = 0;
+
+	/**
+	 *  Constructor
+	 *
+	 *  @param	DoliDB		$db		Database handler
+	 */
+	public function __construct(DoliDB $db)
+	{
+		$this->db = $db;
+	}
 }
 

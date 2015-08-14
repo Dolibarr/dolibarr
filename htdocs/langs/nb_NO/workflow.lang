@@ -1,11 +1,11 @@
 # Dolibarr language file - Source file is en_US - admin
-WorkflowSetup=Arbeidsflyt modulen oppsett
-WorkflowDesc=This module is designed to modify the behaviour of automatic actions into application. By default, workflow is opened (you make thing in order you want). You can activate the automatic actions that you are interesting in.
-ThereIsNoWorkflowToModify=Det er ingen arbeidsflyt kan du endre for modul du har aktivert.
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Lag en kundeordre automatisk etter en kommersiell forslag er signert
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Lag en kunde faktura automatisk etter en kommersiell forslag er signert
-descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Lag en kunde faktura automatisk etter en kontrakt er validert
-descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Lag en kunde faktura automatisk etter en kundeordre er stengt
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classify linked source proposal to billed when customer order is set to paid
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is set to paid
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is validated
+WorkflowSetup=Oppsett av Arbeidsflyt-modulen 
+WorkflowDesc=Denne modulen er laget for å sette opp automatiske hendelser i programmet. Som standard er arbeidsflyt-modulen åpen (du kan gjøre ting i de rekkefølgen du ønsker). Du kan aktivere de automatiske hendelsene du vil.
+ThereIsNoWorkflowToModify=Det er ingen arbeidsflyt-modifikasjoner tilgjengelig med aktiverte moduler.
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automatisk opprettelse av kundeordre etter at et tilbud er signert
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICEAutomatically Opprett faktura etter at et tilbud er signert
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICEAutomatically Opprett faktura etter at en kontrakt er validert
+descWORKFLOW_ORDER_AUTOCREATE_INVOICEAutomatically Opprett faktura etter at en ordre er lukket
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Klassifiser tilbud som fakturert når kundeordre er satt til betalt
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Klassifiser kundeordre(r) som fakturert når faktura er satt til betalt
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Klassifiser kundeordre(r) som fakturert når faktura er satt til validert

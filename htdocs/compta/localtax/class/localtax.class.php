@@ -109,13 +109,21 @@ class Localtax extends CommonObject
             if ($result < 0) $error++;
             // End call triggers
 
-			//FIXME: Add rollback if trigger fail
-
-            return $this->id;
+            if (! $error)
+            {
+            	$this->db->commit();
+            	return $this->id;
+            }
+            else
+			{
+				$this->db->rollback();
+				return -1;
+            }
         }
         else
-        {
+		{
             $this->error="Error ".$this->db->lasterror();
+            $this->db->rollback();
             return -1;
         }
     }
@@ -141,7 +149,9 @@ class Localtax extends CommonObject
 		$this->fk_user_creat=trim($this->fk_user_creat);
 		$this->fk_user_modif=trim($this->fk_user_modif);
 
-        // Update request
+		$this->db->begin();
+
+		// Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX."localtax SET";
         $sql.= " localtaxtype=".$this->ltt.",";
 		$sql.= " tms=".$this->db->idate($this->tms).",";
@@ -160,20 +170,27 @@ class Localtax extends CommonObject
         if (! $resql)
         {
             $this->error="Error ".$this->db->lasterror();
-            return -1;
+            $error++;
         }
 
-		if (! $notrigger)
+		if (! $error && ! $notrigger)
 		{
             // Call trigger
             $result=$this->call_trigger('LOCALTAX_MODIFY',$user);
             if ($result < 0) $error++;
             // End call triggers
-
-            //FIXME: Add rollback if trigger fail
     	}
 
-        return 1;
+    	if (! $error)
+    	{
+    		$this->db->commit();
+    		return 1;
+    	}
+    	else
+    	{
+    		$this->db->rollback();
+    		return -1;
+    	}
     }
 
 
@@ -580,16 +597,16 @@ class Localtax extends CommonObject
 		global $langs;
 
 		$result='';
-
-		$lien = '<a href="'.DOL_URL_ROOT.'/compta/localtax/card.php?id='.$this->id.'">';
-		$lienfin='</a>';
-
-		$picto='payment';
 		$label=$langs->trans("ShowVatPayment").': '.$this->ref;
 
-		if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
+        $link = '<a href="'.DOL_URL_ROOT.'/compta/localtax/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$linkend='</a>';
+
+		$picto='payment';
+
+        if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
 		if ($withpicto && $withpicto != 2) $result.=' ';
-		if ($withpicto != 2) $result.=$lien.$this->ref.$lienfin;
+		if ($withpicto != 2) $result.=$link.$this->ref.$linkend;
 		return $result;
 	}
 

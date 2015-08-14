@@ -606,9 +606,9 @@ class Resource extends CommonObject
      * Fetch all resources available, declared by modules
      * Load available resource in array $this->available_resources
      *
-     * note : deprecated, remplaced by hook getElementResources
-     *
      * @return int 	number of available resources declared by modules
+     * @deprecated, remplaced by hook getElementResources
+     * @see getElementResources()
      */
     function fetch_all_available() {
     	global $conf;
@@ -798,16 +798,20 @@ class Resource extends CommonObject
 	    return $resources;
     }
 
+    /*
+     *  Return an int number of resources linked to the element
+     *
+     *  @return     int
+     */
     function fetchElementResources($element,$element_id)
     {
-    	$resources = $this->getElementResources($element,$element_id);
-    	$i=0;
-    	foreach($resources as $nb => $resource)
-    	{
-    		$this->lines[$i] = fetchObjectByElement($resource['resource_id'],$resource['resource_type']);
-    		$i++;
-    	}
-    	return $i;
+        $resources = $this->getElementResources($element,$element_id);
+        $i=0;
+        foreach($resources as $nb => $resource) {
+            $this->lines[$i] = fetchObjectByElement($resource['resource_id'],$resource['resource_type']);
+            $i++;
+        }
+        return $i;
 
     }
 
@@ -865,22 +869,22 @@ class Resource extends CommonObject
         global $langs;
 
         $result='';
+        $label=$langs->trans("ShowResource").': '.$this->ref;
 
         if ($option == '')
         {
-            $lien = '<a href="'.dol_buildpath('/resource/card.php',1).'?id='.$this->id. $get_params .'">';
+            $link = '<a href="'.dol_buildpath('/resource/card.php',1).'?id='.$this->id. $get_params .'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
             $picto='resource@resource';
             $label=$langs->trans("ShowResource").': '.$this->ref;
 
         }
 
-        $lienfin='</a>';
+        $linkend='</a>';
 
-        $label=$langs->trans("ShowResource").': '.$this->ref;
 
-        if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
+        if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
         if ($withpicto && $withpicto != 2) $result.=' ';
-        $result.=$lien.$this->ref.$lienfin;
+        $result.=$link.$this->ref.$linkend;
         return $result;
     }
 }

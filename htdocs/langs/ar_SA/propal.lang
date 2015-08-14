@@ -4,7 +4,7 @@ Proposal=اقتراح التجارية
 ProposalShort=اقتراح
 ProposalsDraft=مقترحات مشاريع تجارية
 ProposalDraft=اقتراح لمشروع تجاري
-ProposalsOpened=افتتح مقترحات تجارية
+ProposalsOpened=Open commercial proposals
 Prop=مقترحات تجارية
 CommercialProposal=اقتراح التجارية
 CommercialProposals=مقترحات تجارية
@@ -16,7 +16,7 @@ Prospect=احتمال
 ProspectList=احتمال قائمة
 DeleteProp=اقتراح حذف التجارية
 ValidateProp=مصادقة على اقتراح التجارية
-AddProp=إضافة اقتراح
+AddProp=Create proposal
 ConfirmDeleteProp=هل أنت متأكد من أنك تريد حذف هذا التجارية الاقتراح؟
 ConfirmValidateProp=هل أنت متأكد من هذا التجارية للمصادقة على الاقتراح؟
 LastPropals=آخر مقترحات ٪
@@ -31,7 +31,7 @@ AmountOfProposalsByMonthHT=المبلغ في الشهر (بعد خصم الضر�
 NbOfProposals=عدد من المقترحات والتجاري
 ShowPropal=وتظهر اقتراح
 PropalsDraft=المسودات
-PropalsOpened=فتح
+PropalsOpened=Open
 PropalsNotBilled=مغلقة لا توصف
 PropalStatusDraft=مشروع (لا بد من التحقق من صحة)
 PropalStatusValidated=صادق (اقتراح فتح)
@@ -42,7 +42,7 @@ PropalStatusNotSigned=لم يتم التوقيع (مغلقة)
 PropalStatusBilled=فواتير
 PropalStatusDraftShort=مسودة
 PropalStatusValidatedShort=صادق
-PropalStatusOpenedShort=فتح
+PropalStatusOpenedShort=Open
 PropalStatusClosedShort=مغلقة
 PropalStatusSignedShort=وقعت
 PropalStatusNotSignedShort=لم يتم التوقيع
@@ -51,12 +51,10 @@ PropalsToClose=مقترحات ليقفل التجارية
 PropalsToBill=ووقع على مشروع القانون التجاري مقترحات
 ListOfProposals=قائمة مقترحات تجارية
 ActionsOnPropal=الإجراءات على الاقتراح
-NoOpenedPropals=فتحت أي مقترحات تجارية
-NoOtherOpenedPropals=أي اقتراحات أخرى افتتح التجارية
+NoOpenedPropals=No open commercial proposals
+NoOtherOpenedPropals=No other open commercial proposals
 RefProposal=اقتراح المرجع التجارية
 SendPropalByMail=اقتراح ارسال التجارية عن طريق البريد
-FileNotUploaded=الملف ليس تحميل
-FileUploaded=الملف بنجاح تحميلها
 AssociatedDocuments=الوثائق المرتبطة الاقتراح :
 ErrorCantOpenDir=لا نستطيع فتح الدليل
 DatePropal=تاريخ الاقتراح
@@ -70,8 +68,8 @@ ErrorPropalNotFound=Propal ق لم يتم العثور على ٪
 Estimate=التقدير :
 EstimateShort=التقدير
 OtherPropals=مقترحات أخرى
-# AddToDraftProposals=Add to draft proposal
-# NoDraftProposals=No draft proposals
+AddToDraftProposals=Add to draft proposal
+NoDraftProposals=No draft proposals
 CopyPropalFrom=اقتراح إنشاء التجارية عن طريق نسخ وجود اقتراح
 CreateEmptyPropal=خلق خاليا التجارية vierge مقترحات أو من قائمة المنتجات / الخدمات
 DefaultProposalDurationValidity=تقصير مدة صلاحية اقتراح التجارية (أيام)
@@ -97,6 +95,7 @@ TypeContact_propal_external_CUSTOMER=اتصل العملاء اقتراح متا
 # Document models
 DocModelAzurDescription=اقتراح نموذج كامل (logo...)
 DocModelJauneDescription=اقتراح نموذج اليد الصفراء
-# DefaultModelPropalCreate=Default model creation
-# DefaultModelPropalToBill=Default template when closing a business proposal (to be invoiced)
-# DefaultModelPropalClosed=Default template when closing a business proposal (unbilled)
+DefaultModelPropalCreate=Default model creation
+DefaultModelPropalToBill=Default template when closing a business proposal (to be invoiced)
+DefaultModelPropalClosed=Default template when closing a business proposal (unbilled)
+ProposalCustomerSignature=Written acceptance, company stamp, date and signature

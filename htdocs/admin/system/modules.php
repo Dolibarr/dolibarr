@@ -39,7 +39,7 @@ if (! $user->admin)
 
 llxHeader();
 
-print_fiche_titre($langs->trans("AvailableModules"),'','setup');
+print_fiche_titre($langs->trans("AvailableModules"),'','title_setup');
 
 print $langs->trans("ToActivateModule").'<br>';
 print "<br>\n";
@@ -118,7 +118,7 @@ foreach($sortorder as $numero=>$name)
 	$idperms="";
 	$var=!$var;
 	// Module
-	print "<tr ".$bc[$var]."><td width=\"300\" nowrap=\"nowrap\">";
+	print "<tr ".$bc[$var].'><td width="300" class="nowrap">';
 	$alt=$name.' - '.$modules_files[$numero];
     if (! empty($picto[$numero]))
     {

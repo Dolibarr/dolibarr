@@ -4,6 +4,7 @@
  * Copyright (C) 2011-2014 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013	   Cedric GROSS         <c.gross@kreiz-it.fr>
  * Copyright (C) 2014       Marcos García       <marcosgdf@gmail.com>
+ * Copyright (C) 2015       Bahfir Abbes        <bafbes@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,6 +80,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		if ($action == 'COMPANY_CREATE')
         {
             $langs->load("other");
+            $langs->load("companies");
 
 			$object->actiontypecode='AC_OTH_AUTO';
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("NewCompanyToDolibarr",$object->name);
@@ -91,7 +93,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
         }
         elseif ($action == 'COMPANY_SENTBYMAIL')
         {
-            $langs->load("orders");
+            $langs->load("other");
+        	$langs->load("orders");
 
             if (empty($object->actiontypecode)) $object->actiontypecode='AC_OTH_AUTO';
             if (empty($object->actionmsg2)) dol_syslog('Trigger called with property actionmsg2 on object not defined', LOG_ERR);
@@ -114,7 +117,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'PROPAL_VALIDATE')
         {
-            $langs->load("propal");
+            $langs->load("other");
+        	$langs->load("propal");
 
 			$object->actiontypecode='AC_OTH_AUTO';
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("PropalValidatedInDolibarr",($object->newref?$object->newref:$object->ref));
@@ -125,7 +129,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
         elseif ($action == 'PROPAL_SENTBYMAIL')
         {
-            $langs->load("propal");
+            $langs->load("other");
+        	$langs->load("propal");
 
             $object->actiontypecode='AC_OTH_AUTO';
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("ProposalSentByEMail",$object->ref);
@@ -140,7 +145,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'PROPAL_CLOSE_SIGNED')
         {
-            $langs->load("propal");
+            $langs->load("other");
+        	$langs->load("propal");
 
 			$object->actiontypecode='AC_OTH_AUTO';
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("PropalClosedSignedInDolibarr",$object->ref);
@@ -151,7 +157,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'PROPAL_CLASSIFY_BILLED')
         {
-            $langs->load("propal");
+            $langs->load("other");
+        	$langs->load("propal");
 
 			$object->actiontypecode='AC_OTH_AUTO';
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("PropalClassifiedBilledInDolibarr",$object->ref);
@@ -162,7 +169,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'PROPAL_CLOSE_REFUSED')
         {
-            $langs->load("propal");
+            $langs->load("other");
+        	$langs->load("propal");
 
 			$object->actiontypecode='AC_OTH_AUTO';
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("PropalClosedRefusedInDolibarr",$object->ref);
@@ -184,7 +192,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'ORDER_CLOSE')
         {
-            $langs->load("orders");
+            $langs->load("other");
+        	$langs->load("orders");
 
 			$object->actiontypecode='AC_OTH_AUTO';
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("OrderDeliveredInDolibarr",$object->ref);
@@ -195,7 +204,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'ORDER_CLASSIFY_BILLED')
         {
-            $langs->load("orders");
+            $langs->load("other");
+        	$langs->load("orders");
 
 			$object->actiontypecode='AC_OTH_AUTO';
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("OrderBilledInDolibarr",$object->ref);
@@ -206,7 +216,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'ORDER_CANCEL')
         {
-            $langs->load("orders");
+            $langs->load("other");
+        	$langs->load("orders");
 
 			$object->actiontypecode='AC_OTH_AUTO';
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("OrderCanceledInDolibarr",$object->ref);
@@ -217,7 +228,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'ORDER_SENTBYMAIL')
         {
-            $langs->load("orders");
+            $langs->load("other");
+        	$langs->load("orders");
 
             $object->actiontypecode='AC_OTH_AUTO';
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("OrderSentByEMail",$object->ref);
@@ -421,7 +433,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'ORDER_SUPPLIER_VALIDATE')
         {
-            $langs->load("orders");
+            $langs->load("other");
+        	$langs->load("orders");
 
 			$object->actiontypecode='AC_OTH_AUTO';
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("OrderValidatedInDolibarr",($object->newref?$object->newref:$object->ref));
@@ -432,6 +445,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'ORDER_SUPPLIER_APPROVE')
 		{
+            $langs->load("other");
 			$langs->load("orders");
 
 			$object->actiontypecode='AC_OTH_AUTO';
@@ -443,6 +457,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'ORDER_SUPPLIER_REFUSE')
 		{
+            $langs->load("other");
 			$langs->load("orders");
 
 			$object->actiontypecode='AC_OTH_AUTO';
@@ -477,6 +492,18 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			$object->actiontypecode='AC_OTH_AUTO';
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("InvoiceValidatedInDolibarr",($object->newref?$object->newref:$object->ref));
             $object->actionmsg=$langs->transnoentities("InvoiceValidatedInDolibarr",($object->newref?$object->newref:$object->ref));
+            $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+
+            $object->sendtoid=0;
+		}
+		elseif ($action == 'BILL_SUPPLIER_UNVALIDATE')
+        {
+            $langs->load("other");
+            $langs->load("bills");
+
+			$object->actiontypecode='AC_OTH_AUTO';
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("InvoiceBackToDraftInDolibarr",$object->ref);
+            $object->actionmsg=$langs->transnoentities("InvoiceBackToDraftInDolibarr",$object->ref);
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
 
             $object->sendtoid=0;

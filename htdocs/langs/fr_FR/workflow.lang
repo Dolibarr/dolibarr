@@ -1,11 +1,11 @@
 # Dolibarr language file - Source file is en_US - admin
 WorkflowSetup=Configuration du module workflow
-WorkflowDesc=Ce module vous permet de modifier le comportement d'enchaînement automatisé. Par défaut, le workflow est ouvert (vous faites mes choses dans l'ordre que vous voulez). Vous pouvez activer les enchainements automatisées qui vous intéressent.
-ThereIsNoWorkflowToModify=Il n'y a pas de flux workflow modifiable pour les modules que vous avez activé.
+WorkflowDesc=Ce module est conçu pour modifier le comportement des actions automatiques dans l'application. Par défaut, le workflow est ouvert (vous pouvez faire les choses dans l'ordre que vous voulez). Vous pouvez toutefois activer des actions automatiques qui vous intéressent.
+ThereIsNoWorkflowToModify=Il n'y a pas de modifications de workflow disponibles avec les modules activés.
 descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Créer une commande client automatiquement à la signature d'une proposition commerciale
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Créer une facture client automatiquement à la signature d'une proposition commerciale
-descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Créer une facture client automatiquement à la validation d'un contrat
-descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Créer une facture client automatiquement à la clôture d'une commande client
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICEAutomatically Créer une facture client automatiquement à la signature d'une proposition commerciale
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICEAutomatically Créer une facture client automatiquement à la validation d'un contrat
+descWORKFLOW_ORDER_AUTOCREATE_INVOICEAutomatically Créer une facture client automatiquement à la clôture d'une commande client
 descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classer facturée la proposition commerciale source quand la commande client dérivée est classée payée
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classer facturée la ou les commandes clients source quand la facture client dérivée est classée payée
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classer facturée la ou les commandes clients source lorsque la facture client dérivée est validée

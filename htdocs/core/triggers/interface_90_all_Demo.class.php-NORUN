@@ -2,6 +2,7 @@
 /* Copyright (C) 2005-2014 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2014 Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2014      Marcos García		<marcosgdf@gmail.com>
+ * Copyright (C) 2015      Bahfir Abbes        <bafbes@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +48,7 @@ class InterfaceDemo extends DolibarrTriggers
 	 * All functions "runTrigger" are triggered if file is inside directory htdocs/core/triggers or htdocs/module/code/triggers (and declared)
      *
      * @param string		$action		Event action code
-     * @param Object		$object     Object
+     * @param Object		$object     Object concerned. Some context information may also be provided into array property object->context.
      * @param User		    $user       Object user
      * @param Translate 	$langs      Object langs
      * @param conf		    $conf       Object conf
@@ -61,24 +62,18 @@ class InterfaceDemo extends DolibarrTriggers
 	    switch ($action) {
 		    
 		    // Users
-		    case 'USER_LOGIN':
-		    case 'USER_UPDATE_SESSION':
 		    case 'USER_CREATE':
-		    case 'USER_CREATE_FROM_CONTACT':
-		    case 'USER_LOGIN':
-			// Warning: To increase performances, this action is triggered only if
-			// constant MAIN_ACTIVATE_UPDATESESSIONTRIGGER is set to 1.
-		    case 'USER_UPDATE_SESSION':
-		    case 'USER_CREATE':
-		    case 'USER_CREATE_FROM_CONTACT':
 		    case 'USER_MODIFY':
 		    case 'USER_NEW_PASSWORD':
 		    case 'USER_ENABLEDISABLE':
 		    case 'USER_DELETE':
-		    case 'USER_LOGOUT':
 		    case 'USER_SETINGROUP':
 		    case 'USER_REMOVEFROMGROUP':
 				
+		    case 'USER_LOGIN':
+		    case 'USER_LOGIN_FAILED':
+		    case 'USER_LOGOUT':
+
 		    // Actions
 		    case 'ACTION_MODIFY':
 		    case 'ACTION_CREATE':
@@ -119,6 +114,7 @@ class InterfaceDemo extends DolibarrTriggers
 		    case 'ORDER_CLONE':
 		    case 'ORDER_VALIDATE':
 		    case 'ORDER_DELETE':
+		    case 'ORDER_CANCEL':
 		    case 'ORDER_SENTBYMAIL':
 		    case 'ORDER_CLASSIFY_BILLED':
 		    case 'LINEORDER_INSERT':
@@ -196,6 +192,7 @@ class InterfaceDemo extends DolibarrTriggers
 		    case 'BILL_SUPPLIER_PAYED':
 		    case 'BILL_SUPPLIER_UNPAYED':
 		    case 'BILL_SUPPLIER_VALIDATE':
+		    case 'BILL_SUPPLIER_UNVALIDATE':
 		    case 'LINEBILL_SUPPLIER_CREATE':
 		    case 'LINEBILL_SUPPLIER_UPDATE':
 		    case 'LINEBILL_SUPPLIER_DELETE':
@@ -205,8 +202,12 @@ class InterfaceDemo extends DolibarrTriggers
 		    case 'PAYMENT_SUPPLIER_CREATE':
 		    case 'PAYMENT_ADD_TO_BANK':
 		    case 'PAYMENT_DELETE':
-
-			//Donation
+		    
+		    // Online  
+		    case 'PAYMENT_PAYBOX_OK':
+		    case 'PAYMENT_PAYPAL_OK':
+		    
+			// Donation
 		    case 'DON_CREATE':
 		    case 'DON_UPDATE':
 		    case 'DON_DELETE':

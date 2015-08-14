@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
  * Copyright (C) 2013-2014 Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2014 Alexandre Spangaro	<alexandre.spangaro@gmail.com> 
+ * Copyright (C) 2013-2015 Alexandre Spangaro	<aspangaro.dolibarr@gmail.com> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/html.formventilation.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
 
+// Langs
+$langs->load("accountancy");
 
 $page = GETPOST("page");
 $sortorder = GETPOST("sortorder");
@@ -155,8 +157,6 @@ else {
 		
 		print '</form>';
 		
-		print '<a href="./card.php?action=create" class="butAction">' . $langs->trans("NewAccountingMvt") . '</a></div>';
-		
 		print '<form name="add" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
 		print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
 		print '<input type="hidden" name="action" value="export_csv">';
@@ -209,7 +209,7 @@ else {
 			print "<tr $bc[$var]>";
 			
 			print '<td>' . $obj->doc_type . '</td>';
-			print '<td>' . dol_print_date($db->jdate($obj->doc_date), 'day') . '</td>';
+			print '<td align="center">' . dol_print_date($db->jdate($obj->doc_date), 'day') . '</td>';
 			print '<td>' . $obj->doc_ref . '</td>';
 			print '<td>' . length_accountg($obj->numero_compte) . '</td>';
 			print '<td>' . length_accounta($obj->code_tiers) . '</td>';
@@ -224,6 +224,11 @@ else {
 			$i ++;
 		}
 		print "</table>";
+
+		print '<div class="tabsAction">';
+		print '<a class="butAction" href="./card.php?action=create">'.$langs->trans("NewAccountingMvt").'</a>';
+		print '</div>';
+
 		$db->free($resql);
 	} else {
 		dol_print_error($db);

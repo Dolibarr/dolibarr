@@ -24,7 +24,7 @@ create table llx_c_regions
   fk_pays     integer NOT NULL,
   cheflieu    varchar(50),
   tncc        integer,
-  nom         varchar(50),
+  nom         varchar(100),
   active      tinyint DEFAULT 1 NOT NULL
 )ENGINE=innodb;
 

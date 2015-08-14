@@ -1,11 +1,11 @@
 # Dolibarr language file - Source file is en_US - admin
-WorkflowSetup=Workflow module setup
-WorkflowDesc=This module is designed to modify the behaviour of automatic actions into application. By default, workflow is opened (you make thing in order you want). You can activate the automatic actions that you are interesting in.
-ThereIsNoWorkflowToModify=There is no workflow you can modify for module you have activated.
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Create a customer order automatically after a commercial proposal is signed
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Create a customer invoice automatically after a commercial proposal is signed
-descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Create a customer invoice automatically after a contract is validated
-descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Create a customer invoice automatically after a customer order is closed
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classify linked source proposal to billed when customer order is set to paid
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is set to paid
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is validated
+WorkflowSetup=เวิร์กโฟลว์การติดตั้งโมดูล
+WorkflowDesc=โมดูลนี้ถูกออกแบบมาเพื่อปรับเปลี่ยนพฤติกรรมของการกระทำโดยอัตโนมัติลงในใบสมัคร โดยค่าเริ่มต้นขั้นตอนการทำงานจะเปิด (คุณสามารถทำสิ่งที่อยู่ในลำดับที่คุณต้องการ) คุณสามารถเปิดใช้การกระทำโดยอัตโนมัติคุณมีความสนใจใน
+ThereIsNoWorkflowToModify=ไม่มีการปรับเปลี่ยนขั้นตอนการทำงานที่มีอยู่กับโมดูลเปิดใช้งานคือ
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=โดยอัตโนมัติสร้างคำสั่งของลูกค้าหลังจากที่ข้อเสนอในเชิงพาณิชย์มีการลงนาม
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICEAutomatically สร้างใบแจ้งหนี้ลูกค้าหลังจากที่ข้อเสนอในเชิงพาณิชย์มีการลงนาม
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICEAutomatically สร้างใบแจ้งหนี้ลูกค้าหลังจากที่สัญญาจะถูกตรวจสอบ
+descWORKFLOW_ORDER_AUTOCREATE_INVOICEAutomatically สร้างใบแจ้งหนี้ลูกค้าหลังจากที่สั่งซื้อของลูกค้าจะถูกปิด
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=จำแนกข้อเสนอแหล่งที่มาเชื่อมโยงกับการเรียกเก็บเงินเมื่อสั่งซื้อของลูกค้ามีการตั้งค่าที่จะจ่ายเงิน
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=จำแนกแหล่งที่มาสั่งซื้อของลูกค้าที่เชื่อมโยง (s) เพื่อเรียกเก็บเงินเมื่อใบแจ้งหนี้ลูกค้าถูกตั้งค่าให้จ่าย
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=จำแนกแหล่งที่มาสั่งซื้อของลูกค้าที่เชื่อมโยง (s) เพื่อเรียกเก็บเงินเมื่อใบแจ้งหนี้ของลูกค้าจะถูกตรวจสอบ

@@ -1,8 +1,8 @@
-LinkANewFile=Link a new file/document
-LinkedFiles=Linked files and documents
-NoLinkFound=No registered links
-LinkComplete=The file has been linked successfully
-ErrorFileNotLinked=The file could not be linked
-LinkRemoved=The link %s has been removed
-ErrorFailedToDeleteLink= Failed to remove link '<b>%s</b>'
-ErrorFailedToUpdateLink= Failed to update link '<b>%s</b>'
+LinkANewFile=Koble en ny fil/dokument
+LinkedFiles=Koblede filer og dokumenter
+NoLinkFound=Ingen registrerte koblinger
+LinkComplete=Filkoblingen ble opprettet
+ErrorFileNotLinked=Filen kunne ikke kobles
+LinkRemoved=Koblingen til %s ble fjernet
+ErrorFailedToDeleteLink= Klarte ikke å fjerne kobling'<b>%s</b>'
+ErrorFailedToUpdateLink= Klarte ikke å oppdatere koblingen til '<b>%s</b>'

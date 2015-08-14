@@ -40,11 +40,3 @@ function updateCoords(c)
 	jQuery('#w').val(Math.ceil(c.w * ratio));
 	jQuery('#h').val(Math.ceil(c.h * ratio));
 };
-
-/* checkCoords */
-function checkCoords()
-{
-   if (parseInt(jQuery('#w').val())) return true;
-   alert('Please select a crop region then press submit.');
-   return false;
-};

@@ -199,7 +199,8 @@ Entreprises=Các công ty
 DOLIBARRFOUNDATION_PAYMENT_FORM=Để thực hiện thanh toán đăng ký của bạn bằng cách sử dụng chuyển khoản ngân hàng, xem trang <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribe</a> . <br> Để thanh toán bằng cách sử dụng thẻ tín dụng hoặc Paypal, bấm vào nút ở dưới cùng của trang này. <br>
 ByProperties=Bởi đặc điểm
 MembersStatisticsByProperties=Thành viên thống kê theo các đặc điểm
-MembersByNature=Thành viên của tự nhiên
+MembersByNature=This screen show you statistics on members by nature.
+MembersByRegion=This screen show you statistics on members by region.
 VATToUseForSubscriptions=Thuế suất thuế GTGT để sử dụng cho mô tả
 NoVatOnSubscription=Không TVA cho mô tả
 MEMBER_PAYONLINE_SENDEMAIL=Gửi email cảnh báo khi Dolibarr nhận được xác nhận của một xác nhận thanh toán cho mô tả

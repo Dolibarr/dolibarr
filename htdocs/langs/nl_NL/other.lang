@@ -12,6 +12,7 @@ Notify_FICHINTER_VALIDATE=Interventie gevalideerd
 Notify_FICHINTER_SENTBYMAIL=Interventie via mail verzonden
 Notify_BILL_VALIDATE=Klant factuur gevalideerd
 Notify_BILL_UNVALIDATE=Klantenfactuur niet gevalideerd
+Notify_ORDER_SUPPLIER_VALIDATE=Supplier order recorded
 Notify_ORDER_SUPPLIER_APPROVE=Leverancier te zijn goedgekeurd
 Notify_ORDER_SUPPLIER_REFUSE=Leverancier bestellen geweigerd
 Notify_ORDER_VALIDATE=Bestelling van de klant gevalideerd
@@ -57,7 +58,7 @@ Miscellaneous=Diversen
 NbOfActiveNotifications=Number of notifications (nb of recipient emails)
 PredefinedMailTest=Dit is een test e-mail.\nDe twee lijnen worden gescheiden door een harde return.
 PredefinedMailTestHtml=Dit is een <b>test</b> e-mail (het woord test moet vetgedrukt worden weergegeven).<br> De twee lijnen worden gescheiden door een harde return.
-PredefinedMailContentSendInvoice=__CONTACTCIVNAME__\n\nYou will find here the invoice __FACREF__\n\n__PERSONALIZED__Sincerely\n\n__SIGNATURE__
+PredefinedMailContentSendInvoice=__CONTACTCIVNAME__ \n\n Hierbij sturen wij u de factuur __FACREF__\n\n__PERSONALIZED__Met vriendelijke groeten,\n\n__SIGNATURE__
 PredefinedMailContentSendInvoiceReminder=__CONTACTCIVNAME__\n\nWe would like to warn you that the invoice  __FACREF__ seems to not being payed. So this is the invoice in attachment again, as a reminder.\n\n__PERSONALIZED__Sincerely\n\n__SIGNATURE__
 PredefinedMailContentSendProposal=__CONTACTCIVNAME__\n\nYou will find here the commercial proposal __PROPREF__\n\n__PERSONALIZED__Sincerely\n\n__SIGNATURE__
 PredefinedMailContentSendAskPriceSupplier=__CONTACTCIVNAME__\n\nYou will find here the price request __ASKREF__\n\n__PERSONALIZED__Sincerely\n\n__SIGNATURE__
@@ -203,6 +204,7 @@ ClickHereToGoTo=Klik hier om naar %s
 YouMustClickToChange=Je moet echter wel eerst klikken op de volgende link om de wachtwoord wijziging te valideren
 ForgetIfNothing=Als u deze wijziging niet heeft aangevraagd, negeer deze e-mail. Uw referenties blijven veilig bewaard.
 IfAmountHigherThan=If amount higher than <strong>%s</strong>
+SourcesRepository=Repository for sources
 
 ##### Calendar common #####
 AddCalendarEntry=Nieuwe vermelding in de agenda %s

@@ -41,7 +41,7 @@ require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypalfunctions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 // Security check
-if (empty($conf->paypal->enabled)) accessforbidden('',1,1,1);
+if (empty($conf->paypal->enabled)) accessforbidden('',0,0,1);
 
 $langs->load("main");
 $langs->load("other");
@@ -110,6 +110,7 @@ dol_syslog("POST=".$tracepost, LOG_DEBUG, 0, '_paypal');
 llxHeaderPaypal($langs->trans("PaymentForm"));
 
 
+// Show message
 print '<span id="dolpaymentspan"></span>'."\n";
 print '<div id="dolpaymentdiv" align="center">'."\n";
 
@@ -216,7 +217,7 @@ if ($PAYPALTOKEN)
 			}
         }
         else
-        {
+		{
             //Display a user friendly Error on the page using any of the following error information returned by PayPal
             $ErrorCode = urldecode($resArray["L_ERRORCODE0"]);
             $ErrorShortMsg = urldecode($resArray["L_SHORTMESSAGE0"]);

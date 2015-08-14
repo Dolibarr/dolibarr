@@ -30,43 +30,47 @@ $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 
 $langs->load("bills");
 echo '<br>';
-if ($num > 1) print_titre($langs->trans("RelatedBills"));
-else print_titre($langs->trans("RelatedBill"));
+print_titre($langs->trans("RelatedCustomerInvoices"));
 ?>
 <table class="noborder allwidth">
 <tr class="liste_titre">
 	<td><?php echo $langs->trans("Ref"); ?></td>
+	<td align="center"><?php echo $langs->trans("RefCustomer"); ?></td>
 	<td align="center"><?php echo $langs->trans("Date"); ?></td>
 	<td align="right"><?php echo $langs->trans("AmountHTShort"); ?></td>
 	<td align="right"><?php echo $langs->trans("Status"); ?></td>
+	<td></td>
 </tr>
 <?php
 $var=true;
 $total=0;
-foreach($linkedObjectBlock as $object)
+foreach($linkedObjectBlock as $key => $objectlink)
 {
 	$var=!$var;
 ?>
-<tr <?php echo $GLOBALS['bc'][$var]; ?> ><td>
-	<a href="<?php echo DOL_URL_ROOT.'/compta/facture.php?facid='.$object->id ?>"><?php echo img_object($langs->trans("ShowBill"),"bill").' '.$object->ref; ?></a></td>
-	<td align="center"><?php echo dol_print_date($object->date,'day'); ?></td>
+<tr <?php echo $GLOBALS['bc'][$var]; ?> >
+    <td><?php echo $objectlink->getNomUrl(1); ?></td>
+	<td align="center"><?php echo $objectlink->ref_client; ?></td>
+	<td align="center"><?php echo dol_print_date($objectlink->date,'day'); ?></td>
 	<td align="right"><?php
 		if ($user->rights->facture->lire) {
-			$total = $total + $object->total_ht;
-			echo price($object->total_ht);
+			$total = $total + $objectlink->total_ht;
+			echo price($objectlink->total_ht);
 		} ?></td>
-	<td align="right"><?php echo $object->getLibStatut(3); ?></td>
+	<td align="right"><?php echo $objectlink->getLibStatut(3); ?></td>
+	<td align="right"><a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_delete($langs->transnoentitiesnoconv("RemoveLink")); ?></a></td>
 </tr>
 <?php
 }
 ?>
 <tr class="liste_total">
-	<td align="left" colspan="2"><?php echo $langs->trans("TotalHT"); ?></td>
+	<td align="left" colspan="3"><?php echo $langs->trans("TotalHT"); ?></td>
 	<td align="right"><?php
 		if ($user->rights->facture->lire) {
 			echo price($total);
 		} ?></td>
-	<td>&nbsp;</td>
+	<td></td>
+	<td></td>
 </tr>
 </table>
 

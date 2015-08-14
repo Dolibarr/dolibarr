@@ -57,6 +57,7 @@ RemoveFromGroup=Odstrani iz skupine
 PasswordChangedAndSentTo=Geslo spremenjeno in poslano <b>%s</b>.
 PasswordChangeRequestSent=Zahtevek za spremembo gesla <b>%s</b> poslan <b>%s</b>.
 MenuUsersAndGroups=Uporabniki & Skupine
+MenuMyUserCard=Moja uporabniška kartica
 LastGroupsCreated=Zadnjih %s kreiranih skupin
 LastUsersCreated=Zadnjih %s kreiranih uporabnikov
 ShowGroup=Prikaži skupino

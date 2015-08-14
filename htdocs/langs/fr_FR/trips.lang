@@ -9,6 +9,7 @@ TripCard=Fiche note de frais
 AddTrip=Créer note de frais
 ListOfTrips=Liste des notes de frais
 ListOfFees=Liste des notes de frais
+ShowTrip=Afficher la note de frais
 NewTrip=Nouvelle note de frais
 CompanyVisited=Société/institution visitée
 Kilometers=Kilomètres
@@ -27,7 +28,7 @@ AnyOtherInThisListCanValidate=Personne à informer pour la validation.
 TripSociete=Information société
 TripSalarie=Informations utilisateur
 TripNDF=Informations note de frais
-DeleteLine=Effacer une ligne de note de frais
+DeleteLine=Supprimer une ligne d'une note de frais
 ConfirmDeleteLine=Êtes-vous sûr de vouloir supprimer cette ligne ?
 PDFStandardExpenseReports=Modèle de note de frais PDF standard
 ExpenseReportLine=Ligne de la note de frais
@@ -44,7 +45,6 @@ TF_HOTEL=Hôtel
 TF_TAXI=Taxi
 
 ErrorDoubleDeclaration=Vous avez déclaré une autre note de frais dans une période similaire.
-ListTripsAndExpenses=Liste des notes de frais
 AucuneNDF=Pas de note de frais trouvées avec ces critères
 AucuneLigne=Aucune note de frais déclarée
 AddLine=Ajout nouvelle ligne
@@ -56,12 +56,12 @@ ModePaiement=Mode de paiement
 Note=Note
 Project=Projet
 
-VALIDATOR=Utilisateur à informer pour approbation
+VALIDATOR=Utilisateur responsable de l'approbation
 VALIDOR=Approuvé par
 AUTHOR=Enregistré par
 AUTHORPAIEMENT=Payé par
 REFUSEUR=Refusé par
-CANCEL_USER=Annulé par
+CANCEL_USER=Supprimé par
 
 MOTIF_REFUS=Motif
 MOTIF_CANCEL=Motif
@@ -74,9 +74,10 @@ DATE_PAIEMENT=Date de paiement
 
 TO_PAID=Payer
 BROUILLONNER=Réouvrir
-SendToValid=Envoyer a l'approbation
+SendToValid=Envoyer approbation
 ModifyInfoGen=Editer
 ValidateAndSubmit=Valider et envoyer pour approbation
+ValidatedWaitingApproval=Validé (en attente d'approbation)
 
 NOT_VALIDATOR=Vous n'êtes pas autorisé a approuver cette note de frais
 NOT_AUTHOR=Vous n'êtes pas l'auteur de cette note de frais. Opération annulé.
@@ -93,10 +94,11 @@ ConfirmPaidTrip=Êtes-vous sûr de vouloir changer le statut de cette note de fr
 CancelTrip=Annuler note de frais
 ConfirmCancelTrip=Êtes-vous sûr de vouloir annuler cette note de frais ?
 
-BrouillonnerTrip=Move back expense report to status "Draft"n
+BrouillonnerTrip=Passer le rapport de dépenses au statut "Brouillon"
 ConfirmBrouillonnerTrip=Êtes-vous sûr de vouloir changer le statut de cette note de frais en "Brouillon" ?
 
 SaveTrip=Valider note de frais
 ConfirmSaveTrip=Êtes-vous sûr de vouloir valider cette note de frais ?
 
 NoTripsToExportCSV=Pas de note de frais à exporter dans cette période
+ExpenseReportPayment=Paiement des notes de frais

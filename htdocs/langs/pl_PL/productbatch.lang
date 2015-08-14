@@ -19,4 +19,4 @@ printQty=Ilość: %d
 AddDispatchBatchLine=Dodaj linię dla przedłużenia wysyłki
 BatchDefaultNumber=Niezdefiniowano
 WhenProductBatchModuleOnOptionAreForced=Gdy moduł lot / numer seryjny jest aktywny, zwiększenie / zmniejszenie Tryb magazynowy jest wymuszony do ostatniego wyboru i nie może być edytowany. Inne opcje można określić, jak chcesz.
-ProductDoesNotUseBatchSerial=Ten produkt nie używa pliku/wsadu/numeru seryjnego
+ProductDoesNotUseBatchSerial=This product does not use lot/serial number

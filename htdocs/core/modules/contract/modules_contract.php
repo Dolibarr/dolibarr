@@ -44,7 +44,7 @@ abstract class ModelePDFContract extends CommonDocGenerator
 	 *	Return list of active generation modules
 	 *
      *  @param	DoliDB	$db     			Database handler
-     *  @param  string	$maxfilenamelength  Max length of value to show
+     *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
 	 */
 	static function liste_modeles($db,$maxfilenamelength=0)
@@ -148,7 +148,7 @@ class ModelNumRefContracts
  *  Create a contract document on disk using template defined into CONTRACT_ADDON_PDF
  *
  *  @param	DoliDB		$db  			objet base de donnee
- *  @param	Object		$object			Object contract
+ *  @param	Contrat		$object			Object contract
  *  @param	string		$modele			force le modele a utiliser ('' par defaut)
  *  @param	Translate	$outputlangs	objet lang a utiliser pour traduction
  *  @param  int			$hidedetails    Hide details of lines
@@ -156,8 +156,11 @@ class ModelNumRefContracts
  *  @param  int			$hideref        Hide ref
  *  @return int         				0 if KO, 1 if OK
  * @deprecated Use the new function generateDocument of Contrat class
+ * @see Contrat::generateDocument()
  */
 function contract_pdf_create(DoliDB $db, Contrat $object, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
 {
+	dol_syslog(__METHOD__ . " is deprecated", LOG_WARNING);
+
 	return $object->generateDocument($modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 }

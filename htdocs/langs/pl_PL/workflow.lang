@@ -1,11 +1,11 @@
 # Dolibarr language file - Source file is en_US - admin
-WorkflowSetup=Workflow konfiguracji modułu
-WorkflowDesc=This module is designed to modify the behaviour of automatic actions into application. By default, workflow is opened (you make thing in order you want). You can activate the automatic actions that you are interesting in.
-ThereIsNoWorkflowToModify=Nie ma przepływu pracy można modyfikować modułu został uaktywniony.
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Tworzenie zlecenia klienta automatycznie po handlowego wniosek jest podpisany
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Tworzenie faktury klienta automatycznie po handlowego wniosek jest podpisany
-descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Tworzenie faktury klienta automatycznie po zatwierdzeniu umowy
-descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Tworzenie faktury klienta automatycznie po zamówienie klienta jest zamknięty
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classify linked source proposal to billed when customer order is set to paid
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is set to paid
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is validated
+WorkflowSetup=Konfiguracja modułu przepływu pracy
+WorkflowDesc=This module is designed to modify the behaviour of automatic actions into application. By default, workflow is open (you can do things in the order you want). You can activate the automatic actions you are interested in.
+ThereIsNoWorkflowToModify=There is no workflow modifications available with the activated modules.
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automatically create a customer order after a commercial proposal is signed
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICEAutomatically create a customer invoice after a commercial proposal is signed
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICEAutomatically create a customer invoice after a contract is validated
+descWORKFLOW_ORDER_AUTOCREATE_INVOICEAutomatically create a customer invoice after a customer order is closed
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Klasyfikowania związany propozycję źródłowego zapowiadane gdy zamówienie klienta jest ustawiony na płatne
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Klasyfikowania związane Źródło (-a), gdy klienta do faktury klienta naliczana jest ustawiony wypłacane
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Klasyfikowania związany zamówienie klienta źródłowego (s) do grubodzioby, gdy faktura klient jest weryfikowany

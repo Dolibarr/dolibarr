@@ -1,0 +1,53 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=Emprunt
+Loans=Emprunts
+NewLoan=Nouvel emprunt
+ShowLoan=Montrer emprunt
+PaymentLoan=Paiement emprunt
+ShowLoanPayment=Montrer paiement de l'emprunt
+Capital=Capital
+Insurance=Assurance
+Interest=Intérêt
+Nbterms=Nombre de termes
+LoanAccountancyCapitalCode=Compte comptable capital
+LoanAccountancyInsuranceCode=Compte comptable assurance
+LoanAccountancyInterestCode=Compte comptable intérêt
+LoanPayment=Paiement du prêt
+ConfirmDeleteLoan=Confirmer la suppression de cet emprunt ?
+LoanDeleted=Emprunt supprimé avec succès
+ConfirmPayLoan=Classer cet emprunt comme payé
+LoanPaid=Emprunt payé
+ErrorLoanCapital=Le montant du prêt doit être numérique et positif.
+ErrorLoanLength=La durée du prêt doit être numérique et positive.
+ErrorLoanInterest=Le taux d'intérêt annuel doit être numérique et positif.
+# Calc
+LoanCalc=Calculateur d'Emprunt Bancaire
+PurchaseFinanceInfo=Information de Financement et d'Achat
+SalePriceOfAsset=Prix de vente du Bien
+PercentageDown=Réduction Pourcentage
+LengthOfMortgage=Durée de l'Hypothèque
+AnnualInterestRate=Taux d'Intérêts Annuel
+ExplainCalculations=Expliquer les Calculs
+ShowMeCalculationsAndAmortization=Montrer les calculs et l'ammortissement
+MortgagePaymentInformation=Information de Paiement de l'Hypothèque
+DownPayment=Acompte
+DownPaymentDesc=L'<b>acompte</b> = Le prix de la maison multiplié par le pourcentage divisé par 100 (5% devient 5/100 ou 0,05)
+InterestRateDesc=The <b>interest rate</b> = The annual interest percentage divided by 100
+MonthlyFactorDesc=The <b>monthly factor</b> = The result of the following formula
+MonthlyInterestRateDesc=The <b>monthly interest rate</b> = The annual interest rate divided by 12 (for the 12 months in a year)
+MonthTermDesc=The <b>month term</b> of the loan in months = The number of years you've taken the loan out for times 12
+MonthlyPaymentDesc=The montly payment is figured out using the following formula
+AmortizationPaymentDesc=The <a href="#amortization">amortization</a> breaks down how much of your monthly payment goes towards the bank's interest, and how much goes into paying off the principal of your loan.
+AmountFinanced=Amount Financed
+AmortizationMonthlyPaymentOverYears=Amortization For Monthly Payment: <b>%s</b> over %s years
+Totalsforyear=Total pour l'année
+MonthlyPayment=Paiement mensuel
+LoanCalcDesc=This <b>mortgage calculator</b> can be used to figure out monthly payments of a home mortgage loan, based on the home's sale price, the term of the loan desired, buyer's down payment percentage, and the loan's interest rate.<br> This calculator factors in PMI (Private Mortgage Insurance) for loans where less than 20% is put as a down payment. Also taken into consideration are the town property taxes, and their effect on the total monthly mortgage payment.<br>
+GoToInterest=%s will go towards INTEREST
+GoToPrincipal=%s will go towards PRINCIPAL
+YouWillSpend=You will spend %s on your house in year %s
+# Admin
+ConfigLoan=Configuration du module Emprunt
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Accountancy code capital by default
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Accountancy code interest by default
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Accountancy code insurance by default

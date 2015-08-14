@@ -29,7 +29,7 @@ CREATE TABLE llx_cronjob
   	classesname 		varchar(255),
   	objectname		varchar(255),
   	methodename		varchar(255),
-  	params 			text NOT NULL,
+  	params 			text,
 	md5params 		varchar(32),
   	module_name 		varchar(255),
   	priority 		integer DEFAULT 0,
@@ -47,5 +47,6 @@ CREATE TABLE llx_cronjob
   	fk_user_author 		integer DEFAULT NULL,
   	fk_user_mod 		integer DEFAULT NULL,
 	note text,
-	libname			varchar(255)
+	libname			varchar(255),
+	entity			integer DEFAULT 0
 )ENGINE=innodb;

@@ -199,7 +199,8 @@ Entreprises=Firmalar
 DOLIBARRFOUNDATION_PAYMENT_FORM=Banka havalesi ile abonelik ödemenizi yapmak için bu sayfaya bakın <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribe</a>.<br>Krdei Kart ya da Paypal ile ödemek için bu sayfanın altındaki düğmeye tıklayın.<br>
 ByProperties=Özelliklere göre
 MembersStatisticsByProperties=Özelliklere göre üye istatistikleri
-MembersByNature=Doğal üyeler
+MembersByNature=Bu ekran doğaya göre üye istatistiklerini gösterir.
+MembersByRegion=Bu ekran bölgeye göre üye istatistiklerini gösterir.
 VATToUseForSubscriptions=Abonelikler için kullanılacak KDV oranı
 NoVatOnSubscription=Abonelikler için KDV yok
 MEMBER_PAYONLINE_SENDEMAIL=Dolibarr'ın bir doğrulanmış abonelik ödeme onayını almasıyla gönderilecek uyarı epostası

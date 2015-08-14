@@ -42,5 +42,5 @@ SentToSuppliers=Enviat a proveïdors
 ListOfSupplierOrders=Llista de comandes a proveïdors
 MenuOrdersSupplierToBill=Comandes a proveïdors a facturar
 NbDaysToDelivery=Temps d'entrega en dies
-DescNbDaysToDelivery=El major plaç es visualitza en el llistat de comandes de productes
-UseDoubleApproval=Usar aprovació doble (la segona aprovació pot ser realitzada per un usuari amb el permís dedicat)
+DescNbDaysToDelivery=The biggest deliver delay of the products from this order
+UseDoubleApproval=Use double approval when amount (without tax) is higher than (The second approval can be done by any user with the dedicated permission. Set to 0 for no double approval)

@@ -39,7 +39,7 @@ if (!$user->admin)
 
 llxHeader();
 
-print_fiche_titre($langs->trans("SummaryConst"),'','setup');
+print_fiche_titre($langs->trans("SummaryConst"),'','title_setup');
 
 
 print_titre($langs->trans("ConfigurationFile").' ('.$conffiletoshowshort.')');
@@ -73,8 +73,10 @@ $configfileparameters=array(
 							'?dolibarr_main_auth_ldap_debug',
                             'separator',
                             '?dolibarr_lib_ADODB_PATH',
-                            '?dolibarr_lib_TCPDF_PATH',
-                            '?dolibarr_lib_FPDI_PATH',
+							'?dolibarr_lib_FPDF_PATH',
+	                        '?dolibarr_lib_TCPDF_PATH',
+							'?dolibarr_lib_FPDI_PATH',
+                            '?dolibarr_lib_TCPDI_PATH',
 							'?dolibarr_lib_NUSOAP_PATH',
                             '?dolibarr_lib_PHPEXCEL_PATH',
                             '?dolibarr_lib_GEOIP_PATH',

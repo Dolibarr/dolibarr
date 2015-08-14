@@ -31,20 +31,23 @@ If not using Eclipse, to install PHPUnit manually:
 > phpunit MyFileTest.php
 If using Eclipse, select the test and click on menu "Run external tools and choose PHPUnit".
 
-* Generate a report of Unit tests code coverage among tested classes only:
+* Generate a report of Unit tests code coverage done by one tested class:
 > cd test
-> phpunit -d memory_limit=-1 -d max_input_time=600 -d max_execution_time=600 --configuration ./phpunit/phpunittest.xml --coverage-html ./report --coverage-clover ./report/logs/phpunit.coverage.xml --log-junit ./report/logs/phpunit.xml phpunit/MyClassTest.php
+> phpunit -d memory_limit=-1 -d max_input_time=1800 -d max_execution_time=1800 --configuration ./phpunit/phpunittest.xml --coverage-html ./report ./report/logs/phpunit.xml phpunit/MyClassTest.php
 Note that xdebug must be installed for this feature to work.
 
-* Generate a report of Unit tests code coverage among all Dolibarr classes:
-Increase your PHP memory (memory_limit and suhosin.memory_limit in php.ini) to 4G. Note: Version 3.5 need 1.5G
+* Generate a report of Unit tests code coverage done by all Dolibarr unit test classes:
+Increase your PHP memory (memory_limit and suhosin.memory_limit in php.ini) to 4G. You can check setup with "php -i | grep memory". Note: Version 3.5 need 1.5G
 > cd test
-> phpunit -d suhosin.memory_limit=4G -d memory_limit=-1 -d max_input_time=0 -d max_execution_time=0 --configuration ./phpunit/phpunittest.xml --coverage-html ./report --coverage-clover ./report/logs/phpunit.coverage.xml --log-junit ./report/logs/phpunit.xml phpunit/AllTests.php
+> phpunit -d suhosin.memory_limit=4G -d memory_limit=-1 -d max_input_time=0 -d max_execution_time=0 --configuration ./phpunit/phpunittest.xml --coverage-html ./report phpunit/AllTests.php
 
 If there is a timeout before end, try this: 
 > cd test
 > php -d suhosin.memory_limit=4G -d memory_limit=-1 -d max_input_time=0 -d max_execution_time=0 /usr/bin/phpunit -d suhosin.memory_limit=4G -d memory_limit=-1 -d max_input_time=0 -d max_execution_time=0 --configuration ./phpunit/phpunittest.xml --coverage-html ./report phpunit/AllTests.php
-puis renice -10 du process php
+ou
+> php -d suhosin.memory_limit=4G -d memory_limit=-1 -d max_input_time=0 -d max_execution_time=0 /usr/bin/phpunit -d suhosin.memory_limit=4G -d memory_limit=-1 -d max_input_time=0 -d max_execution_time=0 --configuration ./phpunit/phpunittest.xml --coverage-php ./report/codecoverage.php phpunit/AllTests.php
+puis 
+> sudo renice -10 idprocessphp
 
 
 

@@ -9,6 +9,7 @@ default.properties
 .buildpath
 .gitmodules
 dolibarr_install.log
+upgrade.log
 doxygen_warnings.log
 /.project
 .DS_Store

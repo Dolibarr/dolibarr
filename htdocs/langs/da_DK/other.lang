@@ -12,6 +12,7 @@ Notify_FICHINTER_VALIDATE=Valider intervention
 Notify_FICHINTER_SENTBYMAIL=Intervention sent by mail
 Notify_BILL_VALIDATE=Valider regningen
 Notify_BILL_UNVALIDATE=Customer invoice unvalidated
+Notify_ORDER_SUPPLIER_VALIDATE=Supplier order recorded
 Notify_ORDER_SUPPLIER_APPROVE=Leverandør for godkendt
 Notify_ORDER_SUPPLIER_REFUSE=Leverandør For nægtes
 Notify_ORDER_VALIDATE=Kundeordre valideret
@@ -203,6 +204,7 @@ ClickHereToGoTo=Click here to go to %s
 YouMustClickToChange=You must however first click on the following link to validate this password change
 ForgetIfNothing=If you didn't request this change, just forget this email. Your credentials are kept safe.
 IfAmountHigherThan=If amount higher than <strong>%s</strong>
+SourcesRepository=Repository for sources
 
 ##### Calendar common #####
 AddCalendarEntry=Tilføj post i kalenderen %s

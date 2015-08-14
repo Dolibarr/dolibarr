@@ -3,8 +3,10 @@
  * Copyright (C) 2007-2010	Jean Heimburger		<jean@tiaris.info>
  * Copyright (C) 2011-2014	Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@capnetworks.com>
- * Copyright (C) 2011-2012  Alexandre Spangaro	<alexandre.spangaro@gmail.com>
+ * Copyright (C) 2011-2012  Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2012       Cédric Salvador     <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013		Marcos García		<marcosgdf@gmail.com>
+ * Copyright (C) 2014       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -101,7 +103,7 @@ $p = explode(":", $conf->global->MAIN_INFO_SOCIETE_COUNTRY);
 $idpays = $p[0];
 
 $sql = "SELECT f.rowid, f.facnumber, f.type, f.datef, f.ref_client,";
-$sql.= " fd.product_type, fd.total_ht, fd.total_tva, fd.tva_tx, fd.total_ttc, fd.localtax1_tx, fd.localtax2_tx, fd.total_localtax1, fd.total_localtax2,";
+$sql.= " fd.product_type, fd.total_ht, fd.total_tva, fd.tva_tx, fd.total_ttc, fd.localtax1_tx, fd.localtax2_tx, fd.total_localtax1, fd.total_localtax2, fd.rowid as id, fd.situation_percent,";
 $sql.= " s.rowid as socid, s.nom as name, s.code_compta, s.client,";
 $sql.= " p.rowid as pid, p.ref as pref, p.accountancy_code_sell,";
 $sql.= " ct.accountancy_code_sell as account_tva, ct.recuperableonly";
@@ -112,8 +114,8 @@ $sql.= " JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = f.fk_soc";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_tva ct ON fd.tva_tx = ct.taux AND fd.info_bits = ct.recuperableonly AND ct.fk_pays = '".$idpays."'";
 $sql.= " WHERE f.entity = ".$conf->entity;
 $sql.= " AND f.fk_statut > 0";
-if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2)";
-else $sql.= " AND f.type IN (0,1,2,3)";
+if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2,5)";
+else $sql.= " AND f.type IN (0,1,2,3,5)";
 $sql.= " AND fd.product_type IN (0,1)";
 if ($date_start && $date_end) $sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 $sql.= " ORDER BY f.rowid";
@@ -149,13 +151,23 @@ if ($result)
 			if($obj->product_type == 0) $compta_prod = (! empty($conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT)?$conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT:$langs->trans("CodeNotDef"));
 			else $compta_prod = (! empty($conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT)?$conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT:$langs->trans("CodeNotDef"));
 		}
-		$cpttva = (! empty($conf->global->ACCOUNTING_VAT_ACCOUNT)?$conf->global->ACCOUNTING_VAT_ACCOUNT:$langs->trans("CodeNotDef"));
+		$cpttva = (! empty($conf->global->ACCOUNTING_VAT_SOLD_ACCOUNT)?$conf->global->ACCOUNTING_VAT_SOLD_ACCOUNT:$langs->trans("CodeNotDef"));
 		$compta_tva = (! empty($obj->account_tva)?$obj->account_tva:$cpttva);
 
 		$account_localtax1=getLocalTaxesFromRate($obj->tva_tx, 1, $obj->thirdparty, $mysoc);
 		$compta_localtax1= (! empty($account_localtax1[3])?$account_localtax1[3]:$langs->trans("CodeNotDef"));
 		$account_localtax2=getLocalTaxesFromRate($obj->tva_tx, 2, $obj->thirdparty, $mysoc);
 		$compta_localtax2= (! empty($account_localtax2[3])?$account_localtax2[3]:$langs->trans("CodeNotDef"));
+
+		// Situation invoices handling
+		$line = new FactureLigne($db);
+		$line->fetch($obj->id);
+		$prev_progress = $line->get_prev_progress();
+		if ($obj->situation_percent == 0) { // Avoid divide by 0
+			$situation_ratio = 0;
+		} else {
+			$situation_ratio = ($obj->situation_percent - $prev_progress) / $obj->situation_percent;
+		}
 
     	//la ligne facture
    		$tabfac[$obj->rowid]["date"] = $obj->datef;
@@ -166,9 +178,9 @@ if ($result)
    		if (! isset($tabtva[$obj->rowid][$compta_tva])) $tabtva[$obj->rowid][$compta_tva]=0;
    		if (! isset($tablocaltax1[$obj->rowid][$compta_localtax1])) $tablocaltax1[$obj->rowid][$compta_localtax1]=0;
    		if (! isset($tablocaltax2[$obj->rowid][$compta_localtax2])) $tablocaltax2[$obj->rowid][$compta_localtax2]=0;
-   		$tabttc[$obj->rowid][$compta_soc] += $obj->total_ttc;
-   		$tabht[$obj->rowid][$compta_prod] += $obj->total_ht;
-   		if($obj->recuperableonly != 1) $tabtva[$obj->rowid][$compta_tva] += $obj->total_tva;
+		$tabttc[$obj->rowid][$compta_soc] += $obj->total_ttc * $situation_ratio;
+		$tabht[$obj->rowid][$compta_prod] += $obj->total_ht * $situation_ratio;
+		if($obj->recuperableonly != 1) $tabtva[$obj->rowid][$compta_tva] += $obj->total_tva * $situation_ratio;
    		$tablocaltax1[$obj->rowid][$compta_localtax1] += $obj->total_localtax1;
    		$tablocaltax2[$obj->rowid][$compta_localtax2] += $obj->total_localtax2;
    		$tabcompany[$obj->rowid]=array('id'=>$obj->socid, 'name'=>$obj->name, 'client'=>$obj->client);

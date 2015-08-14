@@ -37,7 +37,9 @@ create table llx_societe_rib
   proprio        varchar(60),
   owner_address  varchar(255),
   default_rib    smallint NOT NULL DEFAULT 0,
+  
+  rum            varchar(32),	 				-- RUM value to use for SEPA generation
+  frstrecur      varchar(16) default 'FRST',  -- 'FRST' or 'RECUR'
+
   import_key     varchar(14)    -- import key
-
-
 )ENGINE=innodb;

@@ -1,0 +1,53 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=Pożyczka
+Loans=Kredyty
+NewLoan=Nowa pożyczka
+ShowLoan=Pokaż Pożyczka
+PaymentLoan=Spłata kredytu
+ShowLoanPayment=Pokaż Pożyczka Płatność
+Capital=Kapitał
+Insurance=Ubezpieczenie
+Interest=Odsetki
+Nbterms=Liczba składników
+LoanAccountancyCapitalCode=Kapitał Kod Księgowość
+LoanAccountancyInsuranceCode=Ubezpieczenie Kod Księgowość
+LoanAccountancyInterestCode=Zainteresowanie Kod Księgowość
+LoanPayment=Spłata kredytu
+ConfirmDeleteLoan=Potwierdź usunięcie tego kredytu
+LoanDeleted=Pożyczka została usunięta
+ConfirmPayLoan=Potwierdź sklasyfikować wypłacane pożyczka
+LoanPaid=Pożyczka Płatny
+ErrorLoanCapital=Kwota kredytu musi być numeryczny i większa od zera.
+ErrorLoanLength=Długość pożyczka musi być numeryczne, a większy od zera.
+ErrorLoanInterest=Roczne odsetki musi być numeryczne, a większy od zera.
+# Calc
+LoanCalc=Kredyty bankowe Kalkulator
+PurchaseFinanceInfo=Zakup i Finansowanie informacji
+SalePriceOfAsset=Cena sprzedaży aktywów
+PercentageDown=Procent w dół
+LengthOfMortgage=Długość hipoteczny
+AnnualInterestRate=Roczna stopa procentowa
+ExplainCalculations=Wyjaśnij Obliczenia
+ShowMeCalculationsAndAmortization=Pokaż mi obliczenia i amortyzację
+MortgagePaymentInformation=Informacje hipoteczny Płatność
+DownPayment=Zaliczka
+DownPaymentDesc=<b>Zaliczka</b> = cena domu pomnożona przez procent w dół, podzielona przez 100 (dla 5% w dół staje 5/100 lub 0,05)
+InterestRateDesc=<b>Oprocentowanie</b> = Roczna wartość procentowa odsetek podzielony przez 100
+MonthlyFactorDesc=<b>Miesięczna czynnikiem</b> = wynik wzoru
+MonthlyInterestRateDesc=<b>Miesięczna stopa procentowa</b> = roczna stopa procentowa podzielona przez 12 (za 12 miesięcy w roku)
+MonthTermDesc=<b>Miesięcy okres</b> kredytowania w miesiącach = ilość lat wziąłeś kredyt się do czasów 12
+MonthlyPaymentDesc=Miesięczny płatności zorientowali się, stosując następujący wzór
+AmortizationPaymentDesc=<a href="#amortization">Amortyzacja</a> zepsuje, ile miesięczne płatności idzie w kierunku zainteresowania banku, a ile idzie do spłaty kwoty głównej pożyczki.
+AmountFinanced=Kwota Finansowane
+AmortizationMonthlyPaymentOverYears=Amortyzacja miesięczną <b>spłatę:% s</b> na% s lat
+Totalsforyear=Sumy dla roku
+MonthlyPayment=Miesięczny Płatność
+LoanCalcDesc=<b>Kalkulator kredytu hipotecznego</b> może być używany, aby dowiedzieć miesięcznych wypłat kredytu hipotecznego w domu, w oparciu o cenę domu na sprzedaż w, okres kredytowania pożądanym, dół procent płatności kupującego, i stopy procentowej kredytu. <br> Ten kalkulator czynniki PMI (Private Mortgage Insurance) dla kredytów w których mniej niż 20% jest umieszczone jako zaliczki. Brane pod uwagę również to podatki od nieruchomości miasto, a ich wpływ na łączne miesięczne płatności hipotecznych. <br>
+GoToInterest=% s zostanie przeznaczona INTERESÓW
+GoToPrincipal=% s zostanie przeznaczona PODSTAWOWA
+YouWillSpend=Spędzisz% s na dom w rok% s
+# Admin
+ConfigLoan=Konfiguracja modułu pożyczki
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Kapitał Kod domyślnie Rachunkowości
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Zainteresowanie Kod domyślnie Rachunkowości
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Ubezpieczenie Kod domyślnie Rachunkowości

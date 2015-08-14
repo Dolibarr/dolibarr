@@ -95,17 +95,17 @@ class FormActions
                     percentage.val(value);
 
                     if (defaultvalue == -1) {
-                        percentage.attr('disabled', 'disabled');
+						percentage.prop('disabled', true);
                         $('.hideifna').hide();
                     }
                     else if (defaultvalue == 0) {
 						percentage.val(0);
-                    	percentage.attr('disabled', 'disabled');
+						percentage.prop('disabled', true);
                         $('.hideifna').show();
                     }
                     else if (defaultvalue == 100) {
 						percentage.val(100);
-                        percentage.attr('disabled', 'disabled');
+						percentage.prop('disabled', true);
                         $('.hideifna').show();
                     }
                     else {
@@ -120,14 +120,14 @@ class FormActions
         {
         	//var_dump($selected);
         	if ($selected == 'done') $selected='100';
-            print '<select '.($canedit?'':'disabled="disabled" ').'name="'.$htmlname.'" id="select'.$htmlname.'" class="flat">';
-            if ($showempty) print '<option value=""'.($selected == ''?' selected="selected"':'').'></option>';
+            print '<select '.($canedit?'':'disabled ').'name="'.$htmlname.'" id="select'.$htmlname.'" class="flat">';
+            if ($showempty) print '<option value=""'.($selected == ''?' selected':'').'></option>';
             foreach($listofstatus as $key => $val)
             {
-                print '<option value="'.$key.'"'.(($selected == $key && strlen($selected) == strlen($key)) || (($selected > 0 && $selected < 100) && $key == '50') ? ' selected="selected"' : '').'>'.$val.'</option>';
+                print '<option value="'.$key.'"'.(($selected == $key && strlen($selected) == strlen($key)) || (($selected > 0 && $selected < 100) && $key == '50') ? ' selected' : '').'>'.$val.'</option>';
                 if ($key == '50' && $onlyselect == 2)
                 {
-                	print '<option value="todo"'.($selected == 'todo' ? ' selected="selected"' : '').'>'.$langs->trans("ActionUncomplete").' ('.$langs->trans("ActionRunningNotStarted")."+".$langs->trans("ActionRunningShort").')</option>';
+                	print '<option value="todo"'.($selected == 'todo' ? ' selected' : '').'>'.$langs->trans("ActionUncomplete").' ('.$langs->trans("ActionRunningNotStarted")."+".$langs->trans("ActionRunningShort").')</option>';
                 }
             }
             print '</select>';
@@ -135,13 +135,13 @@ class FormActions
 
             if (empty($onlyselect))
             {
-	            print ' <input type="text" id="val'.$htmlname.'" name="percentage" class="flat hideifna" value="'.($selected>=0?$selected:'').'" size="2"'.($canedit&&($selected>=0)?'':' disabled="disabled"').'>';
+	            print ' <input type="text" id="val'.$htmlname.'" name="percentage" class="flat hideifna" value="'.($selected>=0?$selected:'').'" size="2"'.($canedit&&($selected>=0)?'':' disabled').'>';
     	        print '<span class="hideifna">%</span>';
             }
         }
         else
 		{
-            print ' <input type="text" id="val'.$htmlname.'" name="percentage" class="flat" value="'.($selected>=0?$selected:'').'" size="2"'.($canedit?'':' disabled="disabled"').'>%';
+            print ' <input type="text" id="val'.$htmlname.'" name="percentage" class="flat" value="'.($selected>=0?$selected:'').'" size="2"'.($canedit?'':' disabled').'>%';
         }
     }
 

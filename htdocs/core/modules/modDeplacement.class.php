@@ -50,7 +50,7 @@ class modDeplacement extends DolibarrModules
 		$this->description = "Gestion des notes de frais et deplacements";		// Si traduction Module75Desc non trouvee
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = 'dolibarr';
+		$this->version = 'dolibarr_deprecated';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 0;
@@ -124,7 +124,7 @@ class modDeplacement extends DolibarrModules
 		$this->export_sql_end[$r] .=', '.MAIN_DB_PREFIX.'deplacement as d';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON d.fk_soc = s.rowid';
 		$this->export_sql_end[$r] .=' WHERE d.fk_user = u.rowid';
-		$this->export_sql_end[$r] .=' AND d.entity = '.$conf->entity;
+		$this->export_sql_end[$r] .=' AND d.entity IN ('.getEntity('deplacement',1).')';
 	}
 
 
@@ -145,20 +145,4 @@ class modDeplacement extends DolibarrModules
 
 		return $this->_init($sql,$options);
 	}
-
-    /**
-	 *		Function called when module is disabled.
-	 *      Remove from database constants, boxes and permissions from Dolibarr database.
-	 *		Data directories are not deleted
-	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *      @return     int             	1 if OK, 0 if KO
-     */
-    function remove($options='')
-    {
-		$sql = array();
-
-		return $this->_remove($sql,$options);
-    }
-
 }

@@ -207,7 +207,7 @@ if (($action == 'create' || $action == 'add') && empty($mesgs)) {
 									$fk_parent_line = 0;
 								}
 								// FIXME Missing $lines[$i]->ref_supplier and $lines[$i]->label into addline and updateline methods. They are filled when coming from order for example.
-								$result = $object->addline($desc, $lines[$i]->subprice, $lines[$i]->tva_tx, $lines[$i]->localtax1_tx, $lines[$i]->localtax2_tx, $lines[$i]->qty, $lines[$i]->fk_product, $lines[$i]->remise_percent, $date_start, $date_end, 0, $lines[$i]->info_bits, 'HT', $product_type);
+								$result = $object->addline($desc, $lines[$i]->subprice, $lines[$i]->tva_tx, $lines[$i]->localtax1_tx, $lines[$i]->localtax2_tx, $lines[$i]->qty, $lines[$i]->fk_product, $lines[$i]->remise_percent, $date_start, $date_end, 0, $lines[$i]->info_bits, 'HT', $product_type, -1, false, 0, $lines[$i]->fk_unit);
 
 								if ($result > 0) {
 									$lineid = $result;
@@ -259,7 +259,7 @@ $formfile = new FormFile($db);
 $companystatic = new Societe($db);
 
 // Mode creation
-if ($action == 'create' && empty($mesgs)) {
+if ($action == 'create' && !$error) {
 
 	llxHeader();
 	print_fiche_titre($langs->trans('NewBill'));
@@ -372,7 +372,7 @@ if ($action == 'create' && empty($mesgs)) {
 	}
 
 	// Button "Create Draft"
-	print '<br><center><input type="submit" class="button" name="bouton" value="' . $langs->trans('CreateDraft') . '" /></center>';
+	print '<br><div class="center"><input type="submit" class="button" name="bouton" value="' . $langs->trans('CreateDraft') . '" /></div>';
 	print "</form>\n";
 
 	print '</td></tr>';
@@ -380,16 +380,16 @@ if ($action == 'create' && empty($mesgs)) {
 }
 
 // Mode liste
-if (($action != 'create' && $action != 'add') || ! empty($mesgs)) {
+if (($action != 'create' && $action != 'add') && !$error) {
 	llxHeader();
 	?>
 <script type="text/javascript">
 		jQuery(document).ready(function() {
 		jQuery("#checkall").click(function() {
-			jQuery(".checkformerge").attr('checked', true);
+			jQuery(".checkformerge").prop('checked', true);
 		});
 		jQuery("#checknone").click(function() {
-			jQuery(".checkformerge").attr('checked', false);
+			jQuery(".checkformerge").prop('checked', false);
 		});
 	});
 	</script>
@@ -462,7 +462,7 @@ if (($action != 'create' && $action != 'add') || ! empty($mesgs)) {
 		print_liste_field_titre($langs->trans('DeliveryDate'), 'orderstoinvoice.php', 'c.date_livraison', '', '&amp;socid=' . $socid, 'align="center"', $sortfield, $sortorder);
 		print_liste_field_titre($langs->trans('Status'), '', '', '', '', 'align="right"');
 		print_liste_field_titre($langs->trans('GenerateBill'), '', '', '', '', 'align="center"');
-		print '</tr>';
+		print "</tr>\n";
 
 		// Lignes des champs de filtre
 		print '<form method="get" action="orderstoinvoice.php">';
@@ -541,7 +541,7 @@ if (($action != 'create' && $action != 'add') || ! empty($mesgs)) {
 			print '<td align="right" class="nowrap">' . $generic_commande->LibStatut($objp->fk_statut, 5) . '</td>';
 
 			// Checkbox
-			print '<td align="center">';
+			print '<td class="center">';
 			print '<input class="flat checkformerge" type="checkbox" name="orders_to_invoice[]" value="' . $objp->rowid . '">';
 			print '</td>';
 
@@ -556,13 +556,14 @@ if (($action != 'create' && $action != 'add') || ! empty($mesgs)) {
 		/*
 		 * Boutons actions
 		*/
-		print '<center>';
-		print '<div align="right">';
+		print '<div class="center">';
+		print '<div class="right">';
 		print '<input type="hidden" name="socid" value="' . $socid . '">';
 		print '<input type="hidden" name="action" value="create">';
 		print '<input type="hidden" name="origin" value="order_supplier"><br>';
 		// print '<a class="butAction" href="index.php">'.$langs->trans("GoBack").'</a>';
 		print '<input type="submit" class="butAction" value="' . $langs->trans("GenerateBill") . '">';
+		print '</div>';
 		print '</div>';
 		print '</form>';
 		$db->free($resql);

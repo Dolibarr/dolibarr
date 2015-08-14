@@ -147,7 +147,9 @@ if ($result)
   	print_liste_field_titre($langs->trans("Bill"),$_SERVER["PHP_SELF"],"p.ref",'',$urladd,'class="liste_titre"',$sortfield,$sortorder);
   	print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER["PHP_SELF"],"s.nom",'',$urladd,'class="liste_titre"',$sortfield,$sortorder);
   	print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"f.total_ttc","",$urladd,'class="liste_titre" align="center"',$sortfield,$sortorder);
-  	print '<td class="liste_titre" colspan="2">&nbsp;</td></tr>';
+  	print_liste_field_titre('');
+	print_liste_field_titre('');
+	print "</tr>\n";
 
   	$var=false;
 

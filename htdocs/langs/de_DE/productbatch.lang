@@ -19,4 +19,4 @@ printQty=Menge: %d
 AddDispatchBatchLine=Fügen Sie eine Zeile für Haltbarkeit Dispatching
 BatchDefaultNumber=Nicht definiert
 WhenProductBatchModuleOnOptionAreForced=Wenn das Modul Lot/Seriennr eingeschaltet ist, wird der Modus für Lagerbestands-Erhöhungen / -Senkungen auf die letzte Auswahl festgelegt und kann nicht geändert werden. Andere Optionen können nach Wunsch eingestellt werden.
-ProductDoesNotUseBatchSerial=Dieses Produkt hat keine Chargen- / Seriennummer.
+ProductDoesNotUseBatchSerial=Dieses Produkt verwendet keine Lose oder Seriennummern

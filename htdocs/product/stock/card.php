@@ -218,7 +218,7 @@ if ($action == 'create')
 	print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">';
 	print '<select name="statut" class="flat">';
 	print '<option value="0">'.$langs->trans("WarehouseClosed").'</option>';
-	print '<option value="1" selected="selected">'.$langs->trans("WarehouseOpened").'</option>';
+	print '<option value="1" selected>'.$langs->trans("WarehouseOpened").'</option>';
 	print '</select>';
 	print '</td></tr>';
 
@@ -226,7 +226,7 @@ if ($action == 'create')
 
 	dol_fiche_end();
 
-	print '<center><input type="submit" class="button" value="'.$langs->trans("Create").'"></center>';
+	print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></div>';
 
 	print '</form>';
 }
@@ -308,7 +308,7 @@ else
 
 			// Value
 			print '<tr><td valign="top">'.$langs->trans("EstimatedStockValueShort").'</td><td colspan="3">';
-			print empty($calcproducts['value'])?'0':$calcproducts['value'];
+			print price((empty($calcproducts['value'])?'0':price2num($calcproducts['value'],'MT')), 0, $langs, 0, -1, -1, $conf->currency);
 			print "</td></tr>";
 
 			// Last movement
@@ -387,9 +387,9 @@ else
 			print_liste_field_titre($langs->trans("EstimatedStockValueShort"),"", "","&amp;id=".$id,"",'align="right"',$sortfield,$sortorder);
             if (empty($conf->global->PRODUIT_MULTIPRICES)) print_liste_field_titre($langs->trans("SellPriceMin"),"", "p.price","&amp;id=".$id,"",'align="right"',$sortfield,$sortorder);
             if (empty($conf->global->PRODUIT_MULTIPRICES)) print_liste_field_titre($langs->trans("EstimatedStockValueSellShort"),"", "","&amp;id=".$id,"",'align="right"',$sortfield,$sortorder);
-			if ($user->rights->stock->mouvement->creer) print '<td>&nbsp;</td>';
-			if ($user->rights->stock->creer)            print '<td>&nbsp;</td>';
-			print "</tr>";
+			if ($user->rights->stock->mouvement->creer) print_liste_field_titre('');
+			if ($user->rights->stock->creer)            print_liste_field_titre('');
+			print "</tr>\n";
 
 			$totalunit=0;
 			$totalvalue=$totalvaluesell=0;
@@ -435,7 +435,8 @@ else
 					print "<tr ".$bc[$var].">";
 					print "<td>";
 					$productstatic->id=$objp->rowid;
-					$productstatic->ref=$objp->ref;
+                    $productstatic->ref = $objp->ref;
+                    $productstatic->label = $objp->produit;
 					$productstatic->type=$objp->type;
 					print $productstatic->getNomUrl(1,'stock',16);
 					print '</td>';
@@ -466,14 +467,14 @@ else
 
                     if ($user->rights->stock->mouvement->creer)
 					{
-						print '<td align="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&amp;id='.$objp->rowid.'&amp;action=transfert">';
-						print img_picto($langs->trans("StockMovement"),'uparrow.png').' '.$langs->trans("StockMovement");
+						print '<td align="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&id='.$objp->rowid.'&action=transfert&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'">';
+						print img_picto($langs->trans("StockMovement"),'uparrow.png','class="hideonsmartphone"').' '.$langs->trans("StockMovement");
 						print "</a></td>";
 					}
 
 					if ($user->rights->stock->creer)
 					{
-						print '<td align="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&amp;id='.$objp->rowid.'&amp;action=correction">';
+						print '<td align="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&id='.$objp->rowid.'&action=correction&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'">';
 						print $langs->trans("StockCorrection");
 						print "</a></td>";
 					}
@@ -517,6 +518,10 @@ else
 			print '<input type="hidden" name="action" value="update">';
 			print '<input type="hidden" name="id" value="'.$object->id.'">';
 
+			$head = stock_prepare_head($object);
+
+			dol_fiche_head($head, 'card', $langs->trans("Warehouse"), 0, 'stock');
+
 			print '<table class="border" width="100%">';
 
 			// Ref
@@ -551,15 +556,20 @@ else
 
 			print '<tr><td width="20%">'.$langs->trans("Status").'</td><td colspan="3">';
 			print '<select name="statut" class="flat">';
-			print '<option value="0" '.($object->statut == 0?'selected="selected"':'').'>'.$langs->trans("WarehouseClosed").'</option>';
-			print '<option value="1" '.($object->statut == 0?'':'selected="selected"').'>'.$langs->trans("WarehouseOpened").'</option>';
+			print '<option value="0" '.($object->statut == 0?'selected':'').'>'.$langs->trans("WarehouseClosed").'</option>';
+			print '<option value="1" '.($object->statut == 0?'':'selected').'>'.$langs->trans("WarehouseOpened").'</option>';
 			print '</select>';
 			print '</td></tr>';
 
 			print '</table>';
 
-			print '<center><br><input type="submit" class="button" value="'.$langs->trans("Save").'">&nbsp;';
-			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></center>';
+			dol_fiche_end();
+
+			print '<div class="center">';
+			print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+			print '</div>';
 
 			print '</form>';
 

@@ -1,11 +1,11 @@
 # Dolibarr language file - Source file is en_US - admin
 WorkflowSetup=Configurare Modul Flux de Lucru
-WorkflowDesc=Acest modul vă permite modificarea comportamentului acțiunilor automate în aplicaţie. În mod implicit, fluxul de lucru este deschis (puteţi face ce doriţi în ordinea dorită). Puteți activa acțiunile automate de care sunteti interesat
-ThereIsNoWorkflowToModify=Nu există nici un flux de lucru  modificabil pentru modulele  activate.
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Crează o comandă client automat, după ce o ofertă comercială este semnată
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Crează o factură client automat, după ce o ofertă comercială este semnată
-descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Crează o factură client automat, după ce un contract este validat
-descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Crează o factură client automat, după ce o comandă client este închisă
+WorkflowDesc=This module is designed to modify the behaviour of automatic actions into application. By default, workflow is open (you can do things in the order you want). You can activate the automatic actions you are interested in.
+ThereIsNoWorkflowToModify=There is no workflow modifications available with the activated modules.
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automatically create a customer order after a commercial proposal is signed
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICEAutomatically create a customer invoice after a commercial proposal is signed
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICEAutomatically create a customer invoice after a contract is validated
+descWORKFLOW_ORDER_AUTOCREATE_INVOICEAutomatically create a customer invoice after a customer order is closed
 descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Clasează propunere comercială legată ca facturată când comanda client este setată ca plătită
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Clasează comenzi(le) client sursă legate ca facturate, atunci când factura clientului este setată ca plătită
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Clasează comenzi(le) client sursă legate ca facturate, atunci când factura clientului este validată

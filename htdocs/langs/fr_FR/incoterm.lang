@@ -1,0 +1,7 @@
+Module62000Name=Incoterm
+Module62000Desc=Ajouts de fonctionnalités pour gérer les incoterms
+IncotermLabel=Incoterms
+IncotermSetupTitle1=Fonction
+IncotermSetupTitle2=État
+IncotermSetup=Configuration du module Incoterm
+IncotermFunctionDesc=Activer la fonction Incoterm (Société, Proposition comercial, Commande, Facture, Expédition, Livraison, Commande fournisseur)

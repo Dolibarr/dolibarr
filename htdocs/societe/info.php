@@ -57,17 +57,27 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
  *	View
  */
 
+$title=$langs->trans("ThirdParty");
+if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name.' - '.$langs->trans("Info");
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
-llxHeader('',$langs->trans("ThirdParty"),$help_url);
+llxHeader('',$title,$help_url);
 
 if ($socid > 0)
 {
 	$result = $object->fetch($socid);
+	if (! $result)
+	{
+		$langs->load("errors");
+		print $langs->trans("ErrorRecordNotFound");
+
+		llxFooter();
+		$db->close();
+
+		exit;
+	}
+
 	$object->info($socid);
 
-	/*
-	 * Affichage onglets
-	 */
 	$head = societe_prepare_head($object);
 
 	dol_fiche_head($head, 'info', $langs->trans("ThirdParty"), 0, 'company');
@@ -79,6 +89,7 @@ if ($socid > 0)
 
 	dol_fiche_end();
 }
+
 
 llxFooter();
 

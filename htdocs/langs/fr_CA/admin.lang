@@ -1,18 +1,40 @@
 # Dolibarr language file - Source file is en_US - admin
-AntiVirusCommandExample=Example for ClamWin: c:\\Progra~1\\ClamWin\\bin\\clamscan.exe<br>Example for ClamAv: /usr/bin/clamscan
-AntiVirusParamExample=Example for ClamWin: --database="C:\\Program Files (x86)\\ClamWin\\lib"
-UnpackPackageInDolibarrRoot=Unpack package file into directory dedicated to external modules: <b>%s</b>
-ExampleOfDirectoriesForModelGen=Examples of syntax:<br>c:\\mydir<br>/home/mydir<br>DOL_DATA_ROOT/ecm/ecmdir
-LocalTaxDesc=Some countries apply 2 or 3 taxes on each invoice line. If this is the case, choose type for second and third tax and its rate. Possible type are:<br>1 : local tax apply on products and services without vat (localtax is calculated on amount without tax)<br>2 : local tax apply on products and services including vat (localtax is calculated on amount + main tax)<br>3 : local tax apply on products without vat (localtax is calculated on amount without tax)<br>4 : local tax apply on products including vat (vat is calculated on amount + main vat)<br>5 : local tax apply on services without vat (localtax is calculated on amount without tax)<br>6 : local tax apply on services including vat (localtax is calculated on amount + tax)
-Module1780Desc=Create tags/category (products, customers, suppliers, contacts or members)
-Module39000Name=Product lot
-Module39000Desc=Lot or serial number, eat-by and sell-by date management on products
-MAIN_ROUNDING_RULE_TOT=Size of rounding range (for rare countries where rounding is done on something else than base 10)
-BackupDesc2=Save content of documents directory (<b>%s</b>) that contains all uploaded and generated files (you can make a zip for example).
-BackupDesc3=Save content of your database (<b>%s</b>) into a dump file. For this, you can use following assistant.
-RestoreDesc2=Restore archive file (zip file for example) of documents directory to extract tree of files in documents directory of a new Dolibarr installation or into this current documents directoy (<b>%s</b>).
-RestoreDesc3=Restore the data, from a backup dump file, into the database of the new Dolibarr installation or into the database of this current installation (<b>%s</b>). Warning, once restore is finished, you must use a login/password, that existed when backup was made, to connect again. To restore a backup database into this current installation, you can follow this assistant.
-NotificationsDesc=EMails notifications feature allows you to silently send automatic mail, for some Dolibarr events. Targets of notifications can be defined:<br>* per third parties contacts (customers or suppliers), one contact at time.<br>* or by setting global target email addresses in module setup page.
-CashDeskDoNotDecreaseStock=Disable stock decrease when a sell is done from Point of Sale (if "no", stock decrease is done for each sell done from POS, whatever is option set into module Stock).
-StockDecreaseForPointOfSaleDisabledbyBatch=Stock decrease in POS is not compatible with lot management
-MAIN_APPLICATION_TITLE=Force visible name of application (warning: setting your own name here may break autofill login feature when using DoliDroid mobile application)
+FilesUpdated=Mettre à jour les fichiers
+InstrucToEncodePass=Pour chiffrer le mot de passe de la base dans le fichier de configuration <b>conf.php</b>, remplacer la ligne<br><b>$dolibarr_main_db_pass="...";</b><br>par<br><b>$dolibarr_main_db_pass="crypted:%s";</b>
+InstrucToClearPass=Pour avoir le mot de passe de la base décodé (en clair) dans le fichier de configuration <b>conf.php</b>, remplacer dans ce fichier la ligne<br><b>$dolibarr_main_db_pass="crypted:..."</b><br>par<br><b>$dolibarr_main_db_pass="%s"</b>
+DownloadPackageFromWebSite=Télécharger le package %s.
+UnpackPackageInDolibarrRoot=Décompresser le paquet dans le répertoire dédié aux modules externes : <b>%s</b>
+YouCanSubmitFile=Sélectionner le module :
+HideAnyVATInformationOnPDF=Cacher toutes les informations en rapport avec la TVA (TPS) sur les PDF générés
+OldVATRates=Ancien taux de TVA (TPS)
+NewVATRates=Nouveau taux de TVA (TPS)
+LocalTaxDesc=Certains pays appliquent 2 voire 3 taux sur chaque ligne de facture. Si c'est le cas, choisissez le type du deuxième et troisième taux et sa valeur. Les types possibles sont:<br>1 : taxe locale sur les produits et services hors tva (la taxe locale est calculée sur le montant hors taxe)<br>2 : taxe locale sur les produits et services avant tva (TPS) (la taxe locale est appliquée sur le montant + tva (TPS))<br>3 : taxe locale uniquement sur les produits hors tva (TPS) (la taxe locale est calculée sur le montant hors taxe)<br>4 : taxe locale uniquement sur les produits avant tva(TPS) (la taxe locale est calculée sur le montant + tva)<br>5 : taxe locale uniquement sur les services hors tva (la taxe locale est calculée sur le montant hors taxe)<br>6 : taxe locale uniquement sur les service avant tva (la taxe locale est calculée sur le montant + tva)
+Module75Name=Notes de frais et déplacements
+Module500Name=Dépenses spéciales (taxes, charges, dividendes)
+Module500Desc=Gestion des dépenses spéciales comme les taxes, charges sociales et dividendes
+Module770Name=Note de frais
+Module2600Name=WebServices
+Module2600Desc=Active le serveur de Web Services de Dolibarr
+Permission41=Consulter les projets et tâches (partagés ou dont je suis contact)
+Permission91=Consulter les charges et la TVA (TPS)
+Permission92=Créer/modifier les charges et la TVA (TPS)
+Permission93=Supprimer les charges et la TVA (TPS)
+Permission94=Exporter les charges
+Permission141=Consulter tous les projets et tâches (y compris privés dont je ne suis pas contact)
+Permission144=Supprimer tous les projets et tâches (y compris privés dont je ne suis pas contact)
+Permission771=Voir les notes de frais (Les vôtres et les utilisateurs autorisés)
+DictionarySocialContributions=Types de charges sociales
+DictionaryVAT=Taux de TVA (TPS) ou de Taxes de Ventes
+VATManagement=Gestion TVA (TPS)
+VATIsUsedDesc=Le taux de TVA (TPS) proposé par défaut lors de la création de proposition commerciale, facture, commande, etc... répond à la règle standard suivante :<br>Si vendeur non assujetti à TVA, TVA par défaut=0. Fin de règle.<br>Si le (pays vendeur= pays acheteur) alors TVA par défaut=TVA du produit vendu. Fin de règle.<br>Si vendeur et acheteur dans Communauté européenne et bien vendu= moyen de transport neuf (auto, bateau, avion), TVA par défaut=0 (La TVA doit être payée par acheteur au centre d'impôts de son pays et non au vendeur). Fin de règle.<br>Si vendeur et acheteur dans Communauté européenne et acheteur= particulier alors TVA par défaut=TVA du produit vendu (TVA pays vendeur si < seuil du pays et si  avant 01/01/2015, TVA pays acheteur après le 01/01/2015). Fin de règle.<br>Si vendeur et acheteur dans Communauté européenne et acheteur= entreprise alors TVA par défaut=0. Fin de règle.<br>Sinon TVA proposée par défaut=0. Fin de règle.<br>
+VATIsNotUsedDesc=Le taux de TVA (TPS) proposé par défaut est 0. C'est le cas d'associations, particuliers ou certaines petites sociétés.
+LocalTax1IsUsedDesc=Utilisation d'un 2ème type taxe (autre que TVA (TPS))
+LocalTax1IsNotUsedDesc=Pas d'utilisation de 2ème type taxe (autre que TVA (TPS))
+LocalTax2IsUsedDesc=Utilisation d'un 3ème type taxe (autre que TVA(TPS))
+LocalTax2IsNotUsedDesc=Pas d'utilisation de 3ème type taxe (autre que TVA(TPS))
+ShowBugTrackLink=Afficher le lien "Signaler un défaut"
+MAIN_ROUNDING_RULE_TOT=Taille du pas des arrondis (pour les très rares pays qui arrondissent sur une autre base que la base 10)
+OnlyFollowingModulesAreOpenedToExternalUsers=Remarque, seuls les modules suivants sont ouverts aux utilisateurs externes (quelles que soient les permissions de ces utilisateurs) :
+TaxSetup=Configuration du module Taxes, charges sociales et dividendes
+YourCompanyDoesNotUseVAT=Votre institution est configurée comme non assujettie à la TVA (TPS) (Accueil - Configuration - Société/Institution), aussi il n'y a aucune option sur la gestion TVA à paramétrer.
+Opened=Ouverte

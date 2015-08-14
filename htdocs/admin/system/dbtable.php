@@ -41,7 +41,7 @@ $table=GETPOST('table','alpha');
 llxHeader();
 
 
-print_fiche_titre($langs->trans("Table") . " ".$table,'','setup');
+print_fiche_titre($langs->trans("Table") . " ".$table,'','title_setup');
 
 // Define request to get table description
 $base=0;

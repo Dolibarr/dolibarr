@@ -24,6 +24,9 @@
 	<td align="right"><?php echo $this->tpl['vat_rate']; ?></td>
 	<td align="right"><?php echo $this->tpl['price']; ?></td>
 	<td align="right"><?php echo $this->tpl['qty']; ?></td>
+    <?php
+    if($conf->global->PRODUCT_USE_UNITS) echo '<td align="left">'.$langs->trans($this->tpl['unit']).'</td>';
+    ?>
 	<td align="right"><?php echo $this->tpl['remise_percent']; ?></td>
 </tr>
 <!-- END PHP TEMPLATE originproductline.tpl.php -->

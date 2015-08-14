@@ -48,7 +48,7 @@ $nowstring=dol_print_date(dol_now(),'dayhourlog');
 
 llxHeader();
 
-print_fiche_titre($langs->trans("PerfDolibarr"),'','setup');
+print_fiche_titre($langs->trans("PerfDolibarr"),'','title_setup');
 
 print $langs->trans("YouMayFindPerfAdviceHere",'http://wiki.dolibarr.org/index.php/FAQ_Increase_Performance').' (<a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("Reload").'</a>)<br>';
 
@@ -172,7 +172,7 @@ jQuery(document).ready(function() {
   var compcssstring;
   getcssurl = $.ajax({
     type: "GET",
-    url: \''.DOL_URL_ROOT.'/includes/jquery/css/smoothness/jquery-ui-latest.custom.css\',
+    url: \''.DOL_URL_ROOT.'/includes/jquery/css/smoothness/jquery-ui.css\',
     cache: false,
     /* async: false, */
     /*crossDomain: true, */

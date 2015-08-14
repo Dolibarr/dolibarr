@@ -84,6 +84,11 @@ WithdrawalFile=Väljamaksete fail
 SetToStatusSent=Märgi staatuseks 'Fail saadetud'
 ThisWillAlsoAddPaymentOnInvoice=See rakendub ka arvetega seotud maksetele ja liigitab nad "Makstud"
 StatisticsByLineStatus=Statistics by status of lines
+RUM=RUM
+RUMWillBeGenerated=RUM number will be generated once bank account information are saved
+WithdrawMode=Withdraw mode (FRST or RECUR)
+WithdrawRequestAmount=Withdraw request amount:
+WithdrawRequestErrorNilAmount=Unable to create withdraw request for nil amount.
 
 ### Notifications
 InfoCreditSubject=Otsekorralduse makse %s panga poolt

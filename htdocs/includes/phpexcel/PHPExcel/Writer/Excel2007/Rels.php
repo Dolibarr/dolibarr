@@ -2,7 +2,7 @@
 /**
  * PHPExcel
  *
- * Copyright (c) 2006 - 2012 PHPExcel
+ * Copyright (c) 2006 - 2014 PHPExcel
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,9 +20,9 @@
  *
  * @category   PHPExcel
  * @package    PHPExcel_Writer_Excel2007
- * @copyright  Copyright (c) 2006 - 2012 PHPExcel (http://www.codeplex.com/PHPExcel)
+ * @copyright  Copyright (c) 2006 - 2014 PHPExcel (http://www.codeplex.com/PHPExcel)
  * @license    http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt	LGPL
- * @version    1.7.8, 2012-10-12
+ * @version    1.8.0, 2014-03-02
  */
 
 
@@ -31,7 +31,7 @@
  *
  * @category   PHPExcel
  * @package    PHPExcel_Writer_Excel2007
- * @copyright  Copyright (c) 2006 - 2012 PHPExcel (http://www.codeplex.com/PHPExcel)
+ * @copyright  Copyright (c) 2006 - 2014 PHPExcel (http://www.codeplex.com/PHPExcel)
  */
 class PHPExcel_Writer_Excel2007_Rels extends PHPExcel_Writer_Excel2007_WriterPart
 {
@@ -40,7 +40,7 @@ class PHPExcel_Writer_Excel2007_Rels extends PHPExcel_Writer_Excel2007_WriterPar
 	 *
 	 * @param 	PHPExcel	$pPHPExcel
 	 * @return 	string 		XML Output
-	 * @throws 	Exception
+	 * @throws 	PHPExcel_Writer_Exception
 	 */
 	public function writeRelationships(PHPExcel $pPHPExcel = null)
 	{
@@ -94,6 +94,15 @@ class PHPExcel_Writer_Excel2007_Rels extends PHPExcel_Writer_Excel2007_WriterPar
 				'http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument',
 				'xl/workbook.xml'
 			);
+			// a custom UI in workbook ?
+			if($pPHPExcel->hasRibbon()){
+				$this->_writeRelationShip(
+					$objWriter,
+					5,
+					'http://schemas.microsoft.com/office/2006/relationships/ui/extensibility',
+					$pPHPExcel->getRibbonXMLData('target')
+				);
+			}
 
 		$objWriter->endElement();
 
@@ -106,7 +115,7 @@ class PHPExcel_Writer_Excel2007_Rels extends PHPExcel_Writer_Excel2007_WriterPar
 	 *
 	 * @param 	PHPExcel	$pPHPExcel
 	 * @return 	string 		XML Output
-	 * @throws 	Exception
+	 * @throws 	PHPExcel_Writer_Exception
 	 */
 	public function writeWorkbookRelationships(PHPExcel $pPHPExcel = null)
 	{
@@ -159,6 +168,17 @@ class PHPExcel_Writer_Excel2007_Rels extends PHPExcel_Writer_Excel2007_WriterPar
 					'worksheets/sheet' . ($i + 1) . '.xml'
 				);
 			}
+			// Relationships for vbaProject if needed
+			// id : just after the last sheet
+			if($pPHPExcel->hasMacros()){
+				$this->_writeRelationShip(
+					$objWriter,
+					($i + 1 + 3),
+					'http://schemas.microsoft.com/office/2006/relationships/vbaProject',
+					'vbaProject.bin'
+				);
+				++$i;//increment i if needed for an another relation
+			}
 
 		$objWriter->endElement();
 
@@ -177,7 +197,7 @@ class PHPExcel_Writer_Excel2007_Rels extends PHPExcel_Writer_Excel2007_WriterPar
 	 * @param 	int					$pWorksheetId
 	 * @param	boolean				$includeCharts	Flag indicating if we should write charts
 	 * @return 	string 				XML Output
-	 * @throws 	Exception
+	 * @throws 	PHPExcel_Writer_Exception
 	 */
 	public function writeWorksheetRelationships(PHPExcel_Worksheet $pWorksheet = null, $pWorksheetId = 1, $includeCharts = FALSE)
 	{
@@ -286,7 +306,7 @@ class PHPExcel_Writer_Excel2007_Rels extends PHPExcel_Writer_Excel2007_WriterPar
 	 * @param	int					&$chartRef		Chart ID
 	 * @param	boolean				$includeCharts	Flag indicating if we should write charts
 	 * @return 	string 				XML Output
-	 * @throws 	Exception
+	 * @throws 	PHPExcel_Writer_Exception
 	 */
 	public function writeDrawingRelationships(PHPExcel_Worksheet $pWorksheet = null, &$chartRef, $includeCharts = FALSE)
 	{
@@ -350,7 +370,7 @@ class PHPExcel_Writer_Excel2007_Rels extends PHPExcel_Writer_Excel2007_WriterPar
 	 *
 	 * @param 	PHPExcel_Worksheet			$pWorksheet
 	 * @return 	string 						XML Output
-	 * @throws 	Exception
+	 * @throws 	PHPExcel_Writer_Exception
 	 */
 	public function writeHeaderFooterDrawingRelationships(PHPExcel_Worksheet $pWorksheet = null)
 	{
@@ -394,7 +414,7 @@ class PHPExcel_Writer_Excel2007_Rels extends PHPExcel_Writer_Excel2007_WriterPar
 	 * @param 	string						$pType			Relationship type
 	 * @param 	string 						$pTarget		Relationship target
 	 * @param 	string 						$pTargetMode	Relationship target mode
-	 * @throws 	Exception
+	 * @throws 	PHPExcel_Writer_Exception
 	 */
 	private function _writeRelationship(PHPExcel_Shared_XMLWriter $objWriter = null, $pId = 1, $pType = '', $pTarget = '', $pTargetMode = '')
 	{
@@ -411,7 +431,7 @@ class PHPExcel_Writer_Excel2007_Rels extends PHPExcel_Writer_Excel2007_WriterPar
 
 			$objWriter->endElement();
 		} else {
-			throw new Exception("Invalid parameters passed.");
+			throw new PHPExcel_Writer_Exception("Invalid parameters passed.");
 		}
 	}
 }

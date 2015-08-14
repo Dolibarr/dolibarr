@@ -2,6 +2,7 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -95,8 +96,8 @@ class box_members extends ModeleBoxes
 			{
 				$num = $db->num_rows($result);
 
-				$i = 0;
-				while ($i < $num)
+				$line = 0;
+				while ($line < $num)
 				{
 					$objp = $db->fetch_object($result);
 					$datec=$db->jdate($objp->datec);
@@ -104,6 +105,8 @@ class box_members extends ModeleBoxes
 
 					$memberstatic->lastname=$objp->lastname;
 					$memberstatic->firstname=$objp->firstname;
+					$memberstatic->id = $objp->rowid;
+                    $memberstatic->ref = $objp->rowid;
 
 					if (! empty($objp->fk_soc)) {
 						$memberstatic->socid = $objp->fk_soc;
@@ -113,39 +116,53 @@ class box_members extends ModeleBoxes
 						$memberstatic->name=$objp->company;
 					}
 
-					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
-                    'logo' => $this->boximg,
-                    'url' => DOL_URL_ROOT."/adherents/card.php?rowid=".$objp->rowid);
+                    $this->info_box_contents[$line][] = array(
+                        'td' => 'align="left"',
+                        'text' => $memberstatic->getNomUrl(1),
+                        'asis' => 1,
+                    );
 
-					$this->info_box_contents[$i][1] = array('td' => 'align="left"',
-                    'text' => $memberstatic->getFullName($langs),
-                    'url' => DOL_URL_ROOT."/adherents/card.php?rowid=".$objp->rowid);
+                    $this->info_box_contents[$line][] = array(
+                        'td' => 'align="left"',
+                        'text' => $memberstatic->getFullName($langs),
+                        'url' => DOL_URL_ROOT."/adherents/card.php?rowid=".$objp->rowid,
+                    );
 
-					$this->info_box_contents[$i][2] = array('td' => 'align="right"',
-					'text' => dol_print_date($datem, "day"));
+                    $this->info_box_contents[$line][] = array(
+                        'td' => 'align="right"',
+                        'text' => dol_print_date($datem, "day"),
+                    );
 
-					$this->info_box_contents[$i][3] = array('td' => 'align="right" width="18"',
-                    'text' => $memberstatic->LibStatut($objp->status,$objp->cotisation,$db->jdate($objp->date_end_subscription),3));
+                    $this->info_box_contents[$line][] = array(
+                        'td' => 'align="right" width="18"',
+                        'text' => $memberstatic->LibStatut($objp->status,$objp->cotisation,$db->jdate($objp->date_end_subscription),3),
+                    );
 
-					$i++;
-				}
+                    $line++;
+                }
 
-				if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedCustomers"));
+                if ($num==0)
+                    $this->info_box_contents[$line][0] = array(
+                        'td' => 'align="center"',
+                        'text'=>$langs->trans("NoRecordedCustomers"),
+                    );
 
-				$db->free($result);
-			}
-			else {
-				$this->info_box_contents[0][0] = array(	'td' => 'align="left"',
-    	        										'maxlength'=>500,
-	            										'text' => ($db->error().' sql='.$sql));
-			}
-		}
-		else {
-			$this->info_box_contents[0][0] = array('align' => 'left',
-            'text' => $langs->trans("ReadPermissionNotAllowed"));
-		}
+                $db->free($result);
+            } else {
+                $this->info_box_contents[0][0] = array(
+                    'td' => 'align="left"',
+                    'maxlength'=>500,
+                    'text' => ($db->error().' sql='.$sql),
+                );
+            }
+        } else {
+            $this->info_box_contents[0][0] = array(
+                'align' => 'left',
+                'text' => $langs->trans("ReadPermissionNotAllowed"),
+            );
+        }
 
-	}
+    }
 
 	/**
 	 *	Method to show box

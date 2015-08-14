@@ -80,7 +80,7 @@ class modHoliday extends DolibarrModules
 		//$this->style_sheet = '/mymodule/mymodule.css.php';
 
 		// Config pages. Put here list of php page names stored in admmin directory used to setup module.
-		$this->config_page_url = array("holiday.php?leftmenu=setup@holiday");
+		// $this->config_page_url = array("holiday.php?leftmenu=setup@holiday");
 
 		// Dependencies
 		$this->depends = array();		// List of modules id that must be enabled if this module is enabled
@@ -115,7 +115,7 @@ class modHoliday extends DolibarrModules
 		// 'group'            to add a tab in group view
 		// 'contact'          to add a tab in contact view
 		// 'categories_x'	  to add a tab in category view (replace 'x' by type of category (0=product, 1=supplier, 2=customer, 3=member)
-		$this->tabs = array('user:+paidholidays:CPTitreMenu:holiday:$user->rights->holiday->write:/holiday/index.php?mainmenu=holiday&id=__ID__');
+		$this->tabs = array('user:+paidholidays:CPTitreMenu:holiday:$user->rights->holiday->read:/holiday/list.php?mainmenu=holiday&id=__ID__');
 
 		// Boxes
 		$this->boxes = array();			// List of boxes
@@ -134,16 +134,16 @@ class modHoliday extends DolibarrModules
 		$r=0;
 
 		$this->rights[$r][0] = 20001; 				// Permission id (must not be already used)
-		$this->rights[$r][1] = 'Create/modify your own holidays';	// Permission label
+		$this->rights[$r][1] = 'Read your own holidays';	// Permission label
 		$this->rights[$r][3] = 1; 					// Permission by default for new user (0/1)
-		$this->rights[$r][4] = 'write';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$this->rights[$r][4] = 'read';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$this->rights[$r][5] = '';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$r++;
 
 		$this->rights[$r][0] = 20002; 				// Permission id (must not be already used)
-		$this->rights[$r][1] = 'Create/modify hollidays for everybody';	// Permission label
-		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
-		$this->rights[$r][4] = 'write_all';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$this->rights[$r][1] = 'Create/modify your own holidays';	// Permission label
+		$this->rights[$r][3] = 1; 					// Permission by default for new user (0/1)
+		$this->rights[$r][4] = 'write';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$this->rights[$r][5] = '';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$r++;
 
@@ -155,23 +155,23 @@ class modHoliday extends DolibarrModules
 		$r++;
 
 		$this->rights[$r][0] = 20004; 				// Permission id (must not be already used)
-		$this->rights[$r][1] = 'Setup holidays of users';	// Permission label
+		$this->rights[$r][1] = 'Read holidays for everybody';	// Permission label
 		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
-		$this->rights[$r][4] = 'define_holiday';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$this->rights[$r][4] = 'read_all';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$this->rights[$r][5] = '';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$r++;
 
 		$this->rights[$r][0] = 20005; 				// Permission id (must not be already used)
-		$this->rights[$r][1] = 'See logs for holidays requests';	// Permission label
+		$this->rights[$r][1] = 'Create/modify holidays for everybody';	// Permission label
 		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
-		$this->rights[$r][4] = 'view_log';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$this->rights[$r][4] = 'write_all';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$this->rights[$r][5] = '';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$r++;
 
 		$this->rights[$r][0] = 20006; 				// Permission id (must not be already used)
-		$this->rights[$r][1] = 'Read holidays monthly report';	// Permission label
+		$this->rights[$r][1] = 'Setup holidays of users (setup and update balance)';	// Permission label
 		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
-		$this->rights[$r][4] = 'month_report';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$this->rights[$r][4] = 'define_holiday';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$this->rights[$r][5] = '';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$r++;
 
@@ -278,36 +278,5 @@ class modHoliday extends DolibarrModules
 		// $this->export_sql_end[$r] .=' WHERE f.fk_soc = s.rowid AND f.rowid = fd.fk_facture';
 		// $r++;
 	}
-
-	/**
-	 *	Function called when module is enabled.
-	 *	The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
-	 *	It also creates data directories.
-	 *
-	 *	@return     int             1 if OK, 0 if KO
-	 */
-	function init()
-	{
-		$sql = array();
-
-		//$result=$this->_load_tables('');
-
-		return $this->_init($sql);
-	}
-
-	/**
-	 *	Function called when module is disabled.
-	 *  Remove from database constants, boxes and permissions from Dolibarr database.
-	 *	Data directories are not deleted.
-	 *
-	 *  @return     int             1 if OK, 0 if KO
-	 */
-	function remove()
-	{
-		$sql = array();
-
-		return $this->_remove($sql);
-	}
-
 }
 

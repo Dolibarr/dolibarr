@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,6 +61,7 @@ class ActionComm extends CommonObject
     /**
      * @var string
      * @deprecated Use $label
+     * @see label
      */
     public $libelle;
 
@@ -70,6 +72,7 @@ class ActionComm extends CommonObject
      * Object user that create action
      * @var User
      * @deprecated
+     * @see authorid
      */
     var $author;
 
@@ -77,6 +80,7 @@ class ActionComm extends CommonObject
      * Object user that modified action
      * @var User
      * @deprecated
+     * @see usermodid
      */
     var $usermod;
     var $authorid;		// Id user that create action
@@ -113,6 +117,7 @@ class ActionComm extends CommonObject
      * Object user of owner
      * @var User
      * @deprecated
+     * @see userownerid
      */
     var $usertodo;
 
@@ -120,6 +125,7 @@ class ActionComm extends CommonObject
      * Object user that did action
      * @var User
      * @deprecated
+     * @see userdoneid
      */
     var $userdone;
 
@@ -129,12 +135,16 @@ class ActionComm extends CommonObject
     /**
      * Company linked to action (optional)
      * @var Societe|null
+     * @deprecated
+     * @see socid
      */
     var $societe;
 
     /**
      * Contact linked to action (optional)
      * @var Contact|null
+     * @deprecated
+     * @see contactid
      */
     var $contact;
 
@@ -210,7 +220,15 @@ class ActionComm extends CommonObject
         if ($this->elementtype=='commande') $this->elementtype='order';
         if ($this->elementtype=='contrat')  $this->elementtype='contract';
 
+        if (! is_array($this->userassigned) && ! empty($this->userassigned))	// For backward compatibility
+        {
+        	$tmpid=$this->userassigned;
+        	$this->userassigned=array();
+        	$this->userassigned[$tmpid]=array('id'=>$tmpid);
+        }
+
         if (is_object($this->contact) && $this->contact->id > 0 && ! ($this->contactid > 0)) $this->contactid = $this->contact->id;		// For backward compatibility. Using this->contact->xx is deprecated
+
 
         $userownerid=$this->userownerid;
         $userdoneid=$this->userdoneid;
@@ -327,7 +345,7 @@ class ActionComm extends CommonObject
             	$action='create';
 
 	            // Actions on extra fields (by external module or standard code)
-				// FIXME le hook fait double emploi avec le trigger !!
+				// TODO le hook fait double emploi avec le trigger !!
             	$hookmanager->initHooks(array('actioncommdao'));
 	            $parameters=array('actcomm'=>$this->id);
 	            $reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
@@ -371,6 +389,68 @@ class ActionComm extends CommonObject
             return -1;
         }
 
+    }
+
+    /**
+     *		Load an object from its id and create a new one in database
+     *
+     *      @param	    user	        $fuser      	Object user making action
+	 *		@param		int				$socid			Id of thirdparty
+     * 	 	@return		int								New id of clone
+     */
+    function createFromClone($fuser, $socid)
+    {
+        global $db, $user, $langs, $conf, $hookmanager;
+
+        $this->context['createfromclone']='createfromclone';
+
+        $error=0;
+        $now=dol_now();
+
+        $this->db->begin();
+
+        // Load source object
+        $objFrom = dol_clone($this);
+
+		$this->fetch_optionals();
+		$this->fetch_userassigned();
+
+        $this->id=0;
+
+        // Create clone
+        $result=$this->add($fuser);
+        if ($result < 0) $error++;
+
+        if (! $error)
+        {
+            // Hook of thirdparty module
+            if (is_object($hookmanager))
+            {
+                $parameters=array('objFrom'=>$objFrom);
+                $action='';
+                $reshook=$hookmanager->executeHooks('createFrom',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+                if ($reshook < 0) $error++;
+            }
+
+            // Call trigger
+            $result=$this->call_trigger('ACTION_CLONE', $fuser);
+            if ($result < 0) { $error++; }
+            // End call triggers
+        }
+
+        unset($this->context['createfromclone']);
+
+        // End
+        if (! $error)
+        {
+            $this->db->commit();
+            return $this->id;
+        }
+        else
+        {
+            $this->db->rollback();
+            return -1;
+        }
     }
 
     /**
@@ -461,7 +541,7 @@ class ActionComm extends CommonObject
                 $this->fulldayevent			= $obj->fulldayevent;
                 $this->location				= $obj->location;
                 $this->transparency			= $obj->transparency;
-                $this->punctual				= $obj->punctual;
+                $this->punctual				= $obj->punctual;       // deprecated
 
                 $this->socid				= $obj->fk_soc;			// To have fetch_thirdparty method working
                 $this->contactid			= $obj->fk_contact;		// To have fetch_contact method working
@@ -653,7 +733,7 @@ class ActionComm extends CommonObject
 			$action='update';
 
         	// Actions on extra fields (by external module or standard code)
-			// FIXME le hook fait double emploi avec le trigger !!
+			// TODO le hook fait double emploi avec le trigger !!
         	$hookmanager->initHooks(array('actioncommdao'));
         	$parameters=array('actcomm'=>$this->id);
         	$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
@@ -678,6 +758,10 @@ class ActionComm extends CommonObject
 
 				foreach($this->userassigned as $key => $val)
 				{
+			        if (! is_array($val))	// For backward compatibility when val=id
+			        {
+			        	$val=array('id'=>$val);
+			        }
 					$sql ="INSERT INTO ".MAIN_DB_PREFIX."actioncomm_resources(fk_actioncomm, element_type, fk_element, mandatory, transparency, answer_status)";
 					$sql.=" VALUES(".$this->id.", 'user', ".$val['id'].", ".(empty($val['manadatory'])?'0':$val['manadatory']).", ".(empty($val['transparency'])?'0':$val['transparency']).", ".(empty($val['answer_status'])?'0':$val['answer_status']).")";
 
@@ -739,7 +823,7 @@ class ActionComm extends CommonObject
 
         $sql = "SELECT a.id";
         $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
-        $sql.= " WHERE a.entity = ".$conf->entity;
+        $sql.= " WHERE a.entity IN (".getEntity('actioncomm', 1).")";
         if (! empty($socid)) $sql.= " AND a.fk_soc = ".$socid;
         if (! empty($elementtype))
         {
@@ -775,18 +859,14 @@ class ActionComm extends CommonObject
     }
 
     /**
-     *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
+     * Load indicators for dashboard (this->nbtodo and this->nbtodolate)
      *
-     *      @param	User	$user   Objet user
-     *      @return int     		<0 if KO, >0 if OK
+     * @param	User	$user   Objet user
+     * @return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
      */
     function load_board($user)
     {
-        global $conf, $user;
-
-        $now=dol_now();
-
-        $this->nbtodo=$this->nbtodolate=0;
+        global $conf, $user, $langs;
 
         $sql = "SELECT a.id, a.datep as dp";
         $sql.= " FROM (".MAIN_DB_PREFIX."actioncomm as a";
@@ -794,7 +874,7 @@ class ActionComm extends CommonObject
         if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
         $sql.= " WHERE a.percent >= 0 AND a.percent < 100";
-        $sql.= " AND a.entity = ".$conf->entity;
+        $sql.= " AND a.entity IN (".getEntity('actioncomm', 1).")";
         if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= " AND (a.fk_soc IS NULL OR sc.fk_user = " .$user->id . ")";
         if ($user->societe_id) $sql.=" AND a.fk_soc = ".$user->societe_id;
         if (! $user->rights->agenda->allactions->read) $sql.= " AND (a.fk_user_author = ".$user->id . " OR a.fk_user_action = ".$user->id . " OR a.fk_user_done = ".$user->id . ")";
@@ -802,13 +882,25 @@ class ActionComm extends CommonObject
         $resql=$this->db->query($sql);
         if ($resql)
         {
+	        $now = dol_now();
+
+	        $response = new WorkboardResponse();
+	        $response->warning_delay = $conf->actions->warning_delay/60/60/24;
+	        $response->label = $langs->trans("ActionsToDo");
+	        $response->url = DOL_URL_ROOT.'/comm/action/listactions.php?status=todo&amp;mainmenu=agenda';
+	        $response->img = img_object($langs->trans("Actions"),"action");
+
             // This assignment in condition is not a bug. It allows walking the results.
             while ($obj=$this->db->fetch_object($resql))
             {
-                $this->nbtodo++;
-                if (isset($obj->dp) && $this->db->jdate($obj->dp) < ($now - $conf->actions->warning_delay)) $this->nbtodolate++;
+	            $response->nbtodo++;
+
+                if (isset($obj->dp) && $this->db->jdate($obj->dp) < ($now - $conf->actions->warning_delay)) {
+	                $response->nbtodolate++;
+                }
             }
-            return 1;
+
+            return $response;
         }
         else
         {
@@ -948,7 +1040,7 @@ class ActionComm extends CommonObject
      *    	Return URL of event
      *      Use $this->id, $this->type_code, $this->label and $this->type_label
      *
-     * 		@param	int		$withpicto			0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+     * 		@param	int		$withpicto			0=No picto, 1=Include picto into link, 2=Only picto
      *		@param	int		$maxlength			Nombre de caracteres max dans libelle
      *		@param	string	$classname			Force style class on a link
      * 		@param	string	$option				''=Link to action,'birthday'=Link to contact
@@ -960,36 +1052,42 @@ class ActionComm extends CommonObject
         global $conf,$langs;
 
         $result='';
-        if ($option=='birthday') $lien = '<a '.($classname?'class="'.$classname.'" ':'').'href="'.DOL_URL_ROOT.'/contact/perso.php?id='.$this->id.'">';
-        else $lien = '<a '.($classname?'class="'.$classname.'" ':'').'href="'.DOL_URL_ROOT.'/comm/action/card.php?id='.$this->id.'">';
-        $lienfin='</a>';
-        $label=$this->label;
-        if (empty($label)) $label=$this->libelle;	// For backward compatibility
+        $tooltip = '<u>' . $langs->trans('ShowAction'.$objp->code) . '</u>';
+        if (! empty($this->ref))
+            $tooltip .= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
+        if (! empty($this->label))
+            $tooltip .= '<br><b>' . $langs->trans('Title') . ':</b> ' . $this->label;
+        $label = $this->label;
+        if (empty($label)) $label=$this->libelle;   // For backward compatibility
+        $linkclose = '" title="'.dol_escape_htmltag($tooltip, 1).'">';
+        if ($option=='birthday') $link = '<a class="'.$classname.' classfortooltip" href="'.DOL_URL_ROOT.'/contact/perso.php?id='.$this->id.$linkclose;
+        else $link = '<a class="'.$classname.' classfortooltip" href="'.DOL_URL_ROOT.'/comm/action/card.php?id='.$this->id.$linkclose;
+        $linkend='</a>';
         //print 'rrr'.$this->libelle.'-'.$withpicto;
 
         if ($withpicto == 2)
         {
             $libelle=$label;
-        	if (! empty($conf->global->AGENDA_USE_EVENT_TYPE)) $libelle=$langs->transnoentities("Action".$this->type_code);
+            if (! empty($conf->global->AGENDA_USE_EVENT_TYPE)) $libelle=$langs->transnoentities("Action".$this->type_code);
             $libelleshort='';
         }
         else
-       {
-       		$libelle=(empty($this->libelle)?$label:$this->libelle.(($label && $label != $this->libelle)?' '.$label:''));
-       		if (! empty($conf->global->AGENDA_USE_EVENT_TYPE) && empty($libelle)) $libelle=($langs->transnoentities("Action".$this->type_code) != "Action".$this->type_code)?$langs->transnoentities("Action".$this->type_code):$this->type_label;
-       		$libelleshort=dol_trunc($libelle,$maxlength);
+        {
+            $libelle=(empty($this->libelle)?$label:$this->libelle.(($label && $label != $this->libelle)?' '.$label:''));
+            if (! empty($conf->global->AGENDA_USE_EVENT_TYPE) && empty($libelle)) $libelle=($langs->transnoentities("Action".$this->type_code) != "Action".$this->type_code)?$langs->transnoentities("Action".$this->type_code):$this->type_label;
+            $libelleshort=dol_trunc($libelle,$maxlength);
         }
 
         if ($withpicto)
         {
-        	if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))	// Add code into ()
-        	{
-        		 $libelle.=(($this->type_code && $libelle!=$langs->transnoentities("Action".$this->type_code) && $langs->transnoentities("Action".$this->type_code)!="Action".$this->type_code)?' ('.$langs->transnoentities("Action".$this->type_code).')':'');
-        	}
-            $result.=$lien.img_object($langs->trans("ShowAction").': '.$libelle,($overwritepicto?$overwritepicto:'action')).$lienfin;
+            if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))	// Add code into ()
+            {
+                $libelle.=(($this->type_code && $libelle!=$langs->transnoentities("Action".$this->type_code) && $langs->transnoentities("Action".$this->type_code)!="Action".$this->type_code)?' ('.$langs->transnoentities("Action".$this->type_code).')':'');
+            }
+            $result.=$link.img_object($langs->trans("ShowAction").': '.$libelle, ($overwritepicto?$overwritepicto:'action'), 'class="classfortooltip"').$linkend;
         }
         if ($withpicto==1) $result.=' ';
-        $result.=$lien.$libelleshort.$lienfin;
+        $result.=$link.$libelleshort.$linkend;
         return $result;
     }
 
@@ -1073,7 +1171,7 @@ class ActionComm extends CommonObject
 			// We must filter on assignement table
 			if ($filters['logint'] || $filters['login']) $sql.=", ".MAIN_DB_PREFIX."actioncomm_resources as ar";
 			$sql.= " WHERE a.fk_action=c.id";
-            $sql.= " AND a.entity = ".$conf->entity;
+            $sql.= " AND a.entity IN (".getEntity('actioncomm', 1).")";
             foreach ($filters as $key => $value)
             {
                 if ($key == 'notolderthan' && $value != '') $sql.=" AND a.datep >= '".$this->db->idate($now-($value*24*60*60))."'";
@@ -1244,6 +1342,23 @@ class ActionComm extends CommonObject
         $this->userownerid=$user->id;
         $this->userassigned[$user->id]=array('id'=>$user->id, 'transparency'=> 1);
     }
+
+	/**
+	 * Function used to replace a thirdparty id with another one.
+	 *
+	 * @param DoliDB $db Database handler
+	 * @param int $origin_id Old thirdparty id
+	 * @param int $dest_id New thirdparty id
+	 * @return bool
+	 */
+	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	{
+		$tables = array(
+			'actioncomm'
+		);
+
+		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+	}
 
 }
 

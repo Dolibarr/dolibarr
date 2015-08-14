@@ -1,0 +1,7 @@
+Module62000Name=Incoterm
+Module62000Desc=Add features to manage Incoterm
+IncotermLabel=Incoterms
+IncotermSetupTitle1=Função
+IncotermSetupTitle2=Estado
+IncotermSetup=Configuração do módulo Incoterm
+IncotermFunctionDesc=Ativar função Incoterm (Terceiros, Proposta, Encomenda de Cliente, Fatura de Cliente, Expedição, Encomenda do Fornecedor)

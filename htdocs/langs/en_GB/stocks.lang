@@ -1,2 +1,0 @@
-# Dolibarr language file - Source file is en_US - stocks
-WarehouseMustBeSelectedAtFirstStepWhenProductBatchModuleOn=Source warehouse must be defined here when "product lot" module is on. It will be used to list wich lot/serial is available for product that required lot/serial data for movement. If you want to send products from different warehouses, just make the shipment into several steps.

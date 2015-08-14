@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ print $langs->trans("FormatedImportDesc2").'<br>';
 print '<br>';
 
 
-print '<div class="fichecenter"><div class="fichethirdleft">';
+print '<div class="fichecenter"><div class="fichehalfleft">';
 
 
 // List of import set
@@ -85,7 +85,7 @@ else
 print '</table>';
 print '<br>';
 
-print '<center>';
+print '<div class="center">';
 if (count($import->array_import_code))
 {
 	//if ($user->rights->import->run)
@@ -97,11 +97,11 @@ if (count($import->array_import_code))
 	//	print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("NewImport").'</a>';
 	//}
 }
-print '</center>';
+print '</div>';
 print '<br>';
 
 
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
 
 // List of available import format

@@ -65,7 +65,7 @@ ErrorNoValueForCheckBoxType=لطفا ارزش برای استخراج را پر 
 ErrorNoValueForRadioType=لطفا ارزش برای فهرست های رادیویی را پر کنید
 ErrorBadFormatValueList=ارزش لیست نیست می توانید بیش از یک آمده <u>است:٪ s را،</u> اما باید حداقل یک: هیدرولیکی Llave، VALORES
 ErrorFieldCanNotContainSpecialCharacters=<b>٪</b> درست <b>ها</b> باید شامل کاراکترهای خاص نیست.
-ErrorFieldCanNotContainSpecialNorUpperCharacters=<b>٪</b> درست <b>ها</b> باید شامل کاراکترهای خاص، و نه حروف بزرگ نیست.
+ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contain special characters, nor upper case characters and cannot contain only numbers.
 ErrorNoAccountancyModuleLoaded=بدون ماژول حسابداری فعال
 ErrorExportDuplicateProfil=این نام مشخصات در حال حاضر برای این مجموعه صادرات وجود دارد.
 ErrorLDAPSetupNotComplete=تطبیق Dolibarr-LDAP کامل نیست.
@@ -100,7 +100,7 @@ ErrorProdIdAlreadyExist=٪ s را به یک سوم دیگر اختصاص داد�
 ErrorFailedToSendPassword=برای ارسال رمز عبور ناموفق
 ErrorFailedToLoadRSSFile=نتواند به دریافت خوراک RSS. سعی کنید برای اضافه کردن MAIN_SIMPLEXMLLOAD_DEBUG ثابت اگر پیغام خطا می کند اطلاعات کافی را فراهم نمی کند.
 ErrorPasswordDiffers=کلمات عبور متفاوت است، لطفا دوباره آنها را تایپ کنید.
-ErrorForbidden=دسترسی ممنوع است. <br> شما سعی می کنید برای دسترسی به یک صفحه، منطقه و یا ویژگی بدون اینکه در جلسه تصدیق و یا است که به کاربر خود پذیر نیست.
+ErrorForbidden=Access denied.<br>You try to access to a page, area or feature of a disabled module or without being in an authenticated session or that is not allowed to your user.
 ErrorForbidden2=اجازه این ورود می تواند توسط مدیر Dolibarr خود را از منوی٪ s->٪ s را تعریف شده است.
 ErrorForbidden3=به نظر می رسد که Dolibarr از طریق یک جلسه تصدیق استفاده نمی شود. نگاهی به اسناد و مدارک راه اندازی Dolibarr بدانید که چگونه برای مدیریت احراز اصالت (htaccess تغییر نام دهید، mod_auth و یا دیگر ...).
 ErrorNoImagickReadimage=کلاس Imagick در این PHP یافت نشد. بدون پیش نمایش را می توان در دسترس است. مدیران می توانند این برگه را از منوی راه اندازی غیر فعال کردن - نمایش.
@@ -170,6 +170,8 @@ ErrorGlobalVariableUpdater4=SOAP client failed with error '%s'
 ErrorGlobalVariableUpdater5=No global variable selected
 ErrorFieldMustBeANumeric=Field <b>%s</b> must be a numeric value
 ErrorFieldMustBeAnInteger=Field <b>%s</b> must be an integer
+ErrorMandatoryParametersNotProvided=Mandatory parameter(s) not provided
+ErrorOppStatusRequiredIfAmount=You set an estimated amount for this opportunity/lead. So you must also enter its status
 
 # Warnings
 WarningMandatorySetupNotComplete=پارامترهای راه اندازی اجباری هنوز تعریف نشده
@@ -190,3 +192,4 @@ WarningNotRelevant=عملیات بی ربط برای این مجموعه داد�
 WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=قابلیت غیر فعال زمانی که راه اندازی صفحه نمایش برای فرد نابینا یا از مرورگرهای متن بهینه شده است.
 WarningPaymentDateLowerThanInvoiceDate=Payment date (%s) is earlier than invoice date (%s) for invoice %s.
 WarningTooManyDataPleaseUseMoreFilters=Too many data. Please use more filters
+WarningSomeLinesWithNullHourlyRate=Some times were recorded by users when their hourly rate was not defined. A value of 0 was used but this may result in wrong valuation of time spent.

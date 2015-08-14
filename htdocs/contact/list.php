@@ -1,11 +1,12 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2013-2015 Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
- * Copyright (C) 2013      Alexandre Spangaro   <alexandre.spangaro@gmail.com>
+/* Copyright (C) 2001-2004  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2003       Eric Seigne             <erics@rycks.com>
+ * Copyright (C) 2004-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2013-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2013       Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -130,7 +131,7 @@ $formother=new FormOther($db);
 
 $sql = "SELECT s.rowid as socid, s.nom as name,";
 $sql.= " p.rowid as cidp, p.lastname as lastname, p.statut, p.firstname, p.poste, p.email, p.skype,";
-$sql.= " p.phone, p.phone_mobile, p.fax, p.fk_pays, p.priv, p.tms,";
+$sql.= " p.phone as phone_pro, p.phone_mobile, p.phone_perso, p.fax, p.fk_pays, p.priv, p.tms,";
 $sql.= " co.code as country_code";
 $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON co.rowid = p.fk_pays";
@@ -264,7 +265,7 @@ if ($result)
 	$num = $db->num_rows($result);
     $i = 0;
 
-    print_barre_liste($titre, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords);
+    print_barre_liste($titre, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords,'title_companies.png');
 
     print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -274,8 +275,9 @@ if ($result)
 
     if (! empty($conf->categorie->enabled))
     {
+		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
     	$moreforfilter.=$langs->trans('Categories'). ': ';
-    	$moreforfilter.=$formother->select_categories(4,$search_categ,'search_categ',1);
+    	$moreforfilter.=$formother->select_categories(Categorie::TYPE_CONTACT,$search_categ,'search_categ',1);
     	$moreforfilter.=' &nbsp; &nbsp; &nbsp; ';
     }
     if ($moreforfilter)
@@ -309,10 +311,10 @@ if ($result)
     print_liste_field_titre($langs->trans("DateModificationShort"),$_SERVER["PHP_SELF"],"p.tms", $begin, $param, 'align="center"', $sortfield,$sortorder);
     print_liste_field_titre($langs->trans("ContactVisibility"),$_SERVER["PHP_SELF"],"p.priv", $begin, $param, 'align="center"', $sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"p.statut", $begin, $param, 'align="center"', $sortfield,$sortorder);
-    print '<td class="liste_titre">&nbsp;</td>';
+    print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
     print "</tr>\n";
 
-    // Ligne des champs de filtres
+    // Lines for filter fields
     print '<tr class="liste_titre">';
     print '<td class="liste_titre">';
     print '<input class="flat" type="text" name="search_lastname" size="9" value="'.dol_escape_htmltag($search_lastname).'">';
@@ -375,6 +377,10 @@ if ($result)
 		$contactstatic->firstname='';
 		$contactstatic->id=$obj->cidp;
 		$contactstatic->statut=$obj->statut;
+		$contactstatic->poste=$obj->poste;
+		$contactstatic->phone_pro=$obj->phone_pro;
+		$contactstatic->phone_perso=$obj->phone_perso;
+		$contactstatic->phone_mobile=$obj->phone_mobile;
 		print $contactstatic->getNomUrl(1,'',20);
 		print '</td>';
 
@@ -401,7 +407,7 @@ if ($result)
         }
 
         // Phone
-        print '<td>'.dol_print_phone($obj->phone,$obj->country_code,$obj->cidp,$obj->socid,'AC_TEL').'</td>';
+        print '<td>'.dol_print_phone($obj->phone_pro,$obj->country_code,$obj->cidp,$obj->socid,'AC_TEL').'</td>';
         // Phone mobile
         print '<td>'.dol_print_phone($obj->phone_mobile,$obj->country_code,$obj->cidp,$obj->socid,'AC_TEL').'</td>';
         // Fax
@@ -436,7 +442,7 @@ if ($result)
 
     print '</form>';
 
-    if ($num > $limit) print_barre_liste('', $page, $_SERVER["PHP_SELF"], '&amp;begin='.$begin.'&amp;view='.$view.'&amp;userid='.$userid, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '');
+    if ($num > $limit) print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '');
 
     $db->free($result);
 }

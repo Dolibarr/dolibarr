@@ -1,0 +1,70 @@
+{
+    "name":"restler/framework",
+    "description":"Just the Restler Framework without the tests and examples",
+    "type":"library",
+    "keywords":["server","api","framework","REST"],
+    "homepage":"http://luracast.com/products/restler/",
+    "license":"LGPL-2.1",
+    "authors":[
+        {
+            "name":"Luracast",
+            "email":"arul@luracast.com"
+        },
+        {
+            "name":"Nick nickl- Lombard",
+            "email":"github@jigsoft.co.za"
+        }
+    ],
+    "extra":{
+        "branch-alias":{
+            "master":"v3.0.x-dev"
+        }
+    },
+    "suggest":{
+        "luracast/explorer":"Restler's very own api explorer (see require-dev for details)",
+        "rodneyrehm/plist":"Restler supports tho Apple plist xml format (see require-dev for details)",
+        "zendframework/zendamf":"Support for the amf document format  (see require-dev for details)",
+        "symfony/yaml":"Restler can produce content in yaml format as well (see require-dev for details)",
+        "twig/twig":"Restler can render HtmlView using twig templates (see require-dev for details)",
+        "mustache/mustache":"Restler can render HtmlView using mustache/handlebar templates (see require-dev for details)",
+        "bshaffer/oauth2-server-php":"Restler can provide OAuth2 authentication using this library (see require-dev for details)"
+    },
+    "require":{
+        "php":">=5.3.0"
+    },
+    "require-dev":{
+        "luracast/explorer":"*",
+        "rodneyrehm/plist":"dev-master",
+        "zendframework/zendamf":"dev-master",
+        "symfony/yaml":"*",
+        "mustache/mustache": "dev-master",
+        "twig/twig": "v1.13.0",
+        "bshaffer/oauth2-server-php":"v1.0"
+    },
+    "repositories":[
+        {
+            "type":"vcs",
+            "url":"https://github.com/zendframework/ZendAmf.git"
+        },
+        {
+            "type":"package",
+            "package":{
+                "name":"luracast/explorer",
+                "version":"v3.0.0",
+                "dist":{
+                    "type":"zip",
+                    "url":"https://github.com/Luracast/Restler-API-Explorer/zipball/v3.0.0"
+                }
+            }
+        }
+    ],
+    "autoload":{
+        "psr-0":{
+            "Luracast\\Restler":""
+        }
+    },
+    "target-dir": "Luracast/Restler",
+    "replace": {
+        "luracast/restler":"3.*"
+    }
+}

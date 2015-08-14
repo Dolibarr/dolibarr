@@ -1,0 +1,47 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=Emprestimo
+Loans=Emprestimos
+NewLoan=Novo emprestimo
+ShowLoan=Mostrar emprestimo
+PaymentLoan=Pagamento do emprestimo
+ShowLoanPayment=Mostrar pagamento do emprestimo
+Interest=Juro
+Nbterms=Numero de termos
+LoanAccountancyCapitalCode=Código Contábil Capital
+LoanAccountancyInsuranceCode=Código Contábil Seguro
+LoanAccountancyInterestCode=Código Contábil Juros
+LoanPayment=Pagamento de empréstimo
+ConfirmDeleteLoan=Confirme a exclusão deste empréstimo
+LoanDeleted=Empréstimo Apagado com Sucesso
+ConfirmPayLoan=Confirmar este empréstimo como pago
+LoanPaid=Empréstimo pago
+ErrorLoanCapital=Montante do empréstimo tem de ser numérico e maior que zero.
+ErrorLoanLength=Prazo do empréstimo tem de ser numérico e maior que zero.
+ErrorLoanInterest=Juros anual tem de ser numérico e maior que zero.
+LoanCalc=Calculadora de Empréstimos Bancários
+PurchaseFinanceInfo=Compra e Financiamento Informação
+SalePriceOfAsset=Preço de venda de ativos
+PercentageDown=Percentagem de Down
+LengthOfMortgage=Duração do Mortgage
+AnnualInterestRate=Taxa de juros anual
+ExplainCalculations=Explique Cálculos
+ShowMeCalculationsAndAmortization=Mostre-me os cálculos e amortização
+MortgagePaymentInformation=Informação do pagamento de hipoteca
+DownPayment=Pagamento Inicial
+DownPaymentDesc=<b>Pagamento inicial</b> = O preço da casa multiplicado pelo percentual dividido por 100 (para 5% tem-se como resultado 5/100 ou 0.05)
+InterestRateDesc=A <b>taxa de juros</b> = O percentual de juros anual dividido por 100
+MonthlyFactorDesc=<b>Fator mensal</b> = Resultado da seguinte fórmula
+MonthlyInterestRateDesc=A <b>taxa de juros mensal</b> = A taxa de juro anual dividido por 12 (para os 12 meses em um ano)
+MonthTermDesc=O <b>termo mensal</b> do empréstimo em meses = Número de anos do empréstimo tomado multiplicado por 12
+MonthlyPaymentDesc=O pagamento mensal é descoberto com a seguinte fórmula
+AmortizationPaymentDesc=A <a href="#amortization">amortização</a> demonstra o quanto do seu pagamento mensal  destina-se a juros do banco e quanto refere-se ao pagamento do pirncipal do seu empréstimo.
+AmountFinanced=Valor Financiado
+AmortizationMonthlyPaymentOverYears=Amortização de pagamento mensal: <b>%s%</b>de  %s ao longo dos anos
+Totalsforyear=Os totais de ano
+LoanCalcDesc=Esta <b>calculadora de hipoteca</b> pode ser usado para descobrir pagamentos mensais de um empréstimo hipotecário casa, com base no preço da casa venda, o prazo do empréstimo desejado, percentual pagamento do comprador, e taxa de juros do empréstimo. <br> Este fatores calculadora em PMI (Private Mortgage Insurance) para empréstimos em que menos de 20% é colocado como um pré-pagamento. Também são levados em consideração os impostos sobre a propriedade cidade, e seu efeito sobre o total dos pagamentos de hipoteca mensal. <br>
+GoToInterest=%s será destinado a JUROS
+GoToPrincipal=%s será destinado ao PRINCIPAL
+YouWillSpend=Você irá gastar %s em sua casa no ano %s
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Código Contábil Capital por padrão
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Código Contábil Juros por padrão
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Código Contábil Seguros por padrão

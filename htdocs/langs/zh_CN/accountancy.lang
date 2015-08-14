@@ -1,5 +1,12 @@
 # Dolibarr language file - en_US - Accounting Expert
 CHARSET=UTF-8
+ACCOUNTING_EXPORT_SEPARATORCSV=Column separator for export file
+ACCOUNTING_EXPORT_DATE=Date format for export file
+ACCOUNTING_EXPORT_PIECE=Export the number of piece ?
+ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account ?
+ACCOUNTING_EXPORT_LABEL=Export the label ?
+ACCOUNTING_EXPORT_AMOUNT=Export the amount ?
+ACCOUNTING_EXPORT_DEVISE=Export the devise ?
 
 Accounting=会计
 Globalparameters=全局参数
@@ -41,6 +48,7 @@ NewAccount=”新建“会计账户
 Update=更新
 List=名单
 Create=创建
+CreateMvts=Create movement
 UpdateAccount=修改”会计帐户“
 UpdateMvts=对一个”活动“进行修改
 WriteBookKeeping=在”总账“中的”账户记录“
@@ -76,14 +84,15 @@ ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the breakdown pages "
 
 AccountLength=会计长度账户显示在的Dolibarr
 AccountLengthDesc=功能允许由零的数字代替空格假装会计账户的长度。这个函数只接触了显示屏，它不修改的Dolibarr登记的会计科目。为出口，这个功能是必要的，以与特定的软件兼容。
+ACCOUNTING_LENGTH_DESCRIPTION=Length for displaying product & services description in listings (Best = 50)
+ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Length for displaying product & services account description form in listings (Best = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Length of the general accounts
 ACCOUNTING_LENGTH_AACCOUNT=Length of the third party accounts
 
 ACCOUNTING_SELL_JOURNAL=Sell journal
 ACCOUNTING_PURCHASE_JOURNAL=Purchase journal
-ACCOUNTING_BANK_JOURNAL=Bank journal
-ACCOUNTING_CASH_JOURNAL=Cash journal
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Miscellaneous journal
+ACCOUNTING_EXPENSEREPORT_JOURNAL=Expense report journal
 ACCOUNTING_SOCIAL_JOURNAL=Social journal
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=转账账户

@@ -2,6 +2,7 @@
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,8 +51,7 @@ if ($action == 'addconst')
     dolibarr_set_const($db, "MAIN_BOXES_MAXLINES",$_POST["MAIN_BOXES_MAXLINES"],'',0,'',$conf->entity);
 }
 
-if ($action == 'add')
-{
+if ($action == 'add') {
     $error=0;
     $db->begin();
     if (isset($_POST['boxid']) && is_array($_POST['boxid']))
@@ -219,7 +219,7 @@ $form=new Form($db);
 
 llxHeader('',$langs->trans("Boxes"));
 
-print_fiche_titre($langs->trans("Boxes"),'','setup');
+print_fiche_titre($langs->trans("Boxes"),'','title_setup');
 
 print $langs->trans("BoxesDesc")." ".$langs->trans("OnlyActiveElementsAreShown")."<br>\n";
 
@@ -368,7 +368,6 @@ foreach($boxtoadd as $box)
     print '<td class="center">';
     print $form->selectarray("boxid[".$box->box_id."][pos]", $pos_name, 0, 1, 0, 0, '', 1)."\n";
     print '<input type="hidden" name="boxid['.$box->box_id.'][value]" value="'.$box->box_id.'">'."\n";
-    //print '<input type="checkbox" class="flat" name="boxid['.$box->box_id.'][active]">'."\n";
     print '</td>';
 
     print '</tr>'."\n";
@@ -376,7 +375,7 @@ foreach($boxtoadd as $box)
 
 print '</table>'."\n";
 print '<div class="right">';
-print '<input type="submit" class="button"'.(count($boxtoadd)?'':' disabled="disabled"').' value="'.$langs->trans("Activate").'">';
+print '<input type="submit" class="button"'.(count($boxtoadd)?'':' disabled').' value="'.$langs->trans("Activate").'">';
 print '</div>'."\n";
 print '</form>';
 print "\n".'<!-- End Boxes Available -->'."\n";

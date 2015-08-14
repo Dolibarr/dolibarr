@@ -1,12 +1,14 @@
 <?php
-/* Copyright (C) 2006-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2006		    Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2007		    Patrick Raguin			  <patrick.raguin@gmail.com>
- * Copyright (C) 2010-2012	Regis Houssin			    <regis.houssin@capnetworks.com>
- * Copyright (C) 2013-2014  Florian Henry		  	  <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2014  Juanjo Menent		  	  <jmenent@2byte.es>
- * Copyright (C) 2013       Christophe Battarel		<contact@altairis.fr>
- * Copyright (C) 2013       Alexandre Spangaro    <alexandre.spangaro@gmail.com>
+/* Copyright (C) 2006-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2006       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2007       Patrick Raguin          <patrick.raguin@gmail.com>
+ * Copyright (C) 2010-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2013-2014  Florian Henry           <florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2014  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2013       Christophe Battarel     <contact@altairis.fr>
+ * Copyright (C) 2013       Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015       Frederic France         <frederic.france@free.fr>
+ * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,15 +82,25 @@ function societe_prepare_head(Societe $object)
     	$h++;
     }
     //show categorie tab
-    if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire))
+    /*if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire))
     {
-        $type = 2;
-        if ($object->fournisseur) $type = 1;
+		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+        $type = Categorie::TYPE_CUSTOMER;
+        if ($object->fournisseur) $type = Categorie::TYPE_SUPPLIER;
         $head[$h][0] = DOL_URL_ROOT.'/categories/categorie.php?socid='.$object->id."&type=".$type;
         $head[$h][1] = $langs->trans('Categories');
         $head[$h][2] = 'category';
         $h++;
-    }
+    }*/
+
+    // Tab to link resources
+	if ($conf->resource->enabled && ! empty($conf->global->RESOURCE_ON_THIRDPARTIES))
+	{
+		$head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=societe&element_id='.$object->id;
+		$head[$h][1] = $langs->trans("Resources");
+		$head[$h][2] = 'resources';
+		$h++;
+	}
 
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
@@ -470,7 +482,7 @@ function show_projects($conf,$langs,$db,$object,$backtopage='')
         print_fiche_titre($langs->trans("ProjectsDedicatedToThisThirdParty"),$buttoncreate,'');
         print "\n".'<table class="noborder" width=100%>';
 
-        $sql  = "SELECT p.rowid,p.title,p.ref,p.public, p.dateo as do, p.datee as de";
+        $sql  = "SELECT p.rowid as id, p.title, p.ref, p.public, p.dateo as do, p.datee as de, p.fk_statut as status";
         $sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
         $sql .= " WHERE p.fk_soc = ".$object->id;
         $sql .= " ORDER BY p.dateo DESC";
@@ -482,23 +494,24 @@ function show_projects($conf,$langs,$db,$object,$backtopage='')
 
             print '<tr class="liste_titre">';
             print '<td>'.$langs->trans("Ref").'</td><td>'.$langs->trans("Name").'</td><td align="center">'.$langs->trans("DateStart").'</td><td align="center">'.$langs->trans("DateEnd").'</td>';
+            print '<td align="right">'.$langs->trans("Status").'</td>';
             print '</tr>';
 
             if ($num > 0)
             {
                 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
-                $projectstatic = new Project($db);
+                $projecttmp = new Project($db);
 
                 $i=0;
-                $var=false;
+                $var=true;
                 while ($i < $num)
                 {
                     $obj = $db->fetch_object($result);
-                    $projectstatic->fetch($obj->rowid);
+                    $projecttmp->fetch($obj->id);
 
                     // To verify role of users
-                    $userAccess = $projectstatic->restrictedProjectArea($user);
+                    $userAccess = $projecttmp->restrictedProjectArea($user);
 
                     if ($user->rights->projet->lire && $userAccess > 0)
                     {
@@ -506,13 +519,15 @@ function show_projects($conf,$langs,$db,$object,$backtopage='')
                         print "<tr ".$bc[$var].">";
 
                         // Ref
-                        print '<td><a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowProject"),($obj->public?'projectpub':'project'))." ".$obj->ref.'</a></td>';
+                        print '<td><a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$projecttmp->id.'">'.img_object($langs->trans("ShowProject"),($obj->public?'projectpub':'project'))." ".$obj->ref.'</a></td>';
                         // Label
                         print '<td>'.$obj->title.'</td>';
                         // Date start
                         print '<td align="center">'.dol_print_date($db->jdate($obj->do),"day").'</td>';
                         // Date end
                         print '<td align="center">'.dol_print_date($db->jdate($obj->de),"day").'</td>';
+                        // Status
+                        print '<td align="right">'.$projecttmp->getLibStatut(5).'</td>';
 
                         print '</tr>';
                     }
@@ -561,6 +576,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     $search_status		= GETPOST("search_status",'int');
     if ($search_status=='') $search_status=1; // always display activ customer first
     $search_name = GETPOST("search_name",'alpha');
+    $search_addressphone = GETPOST("search_addressphone",'alpha');
 
     if (! $sortorder) $sortorder="ASC";
     if (! $sortfield) $sortfield="p.lastname";
@@ -603,55 +619,37 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans("Name"),$_SERVER["PHP_SELF"],"p.lastname","",$param,'',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Poste"),$_SERVER["PHP_SELF"],"p.poste","",$param,'',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("PhonePro"),$_SERVER["PHP_SELF"],"p.phone","",$param,'',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("PhoneMobile"),$_SERVER["PHP_SELF"],"p.phone_mobile","",$param,'',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Fax"),$_SERVER["PHP_SELF"],"p.fax","",$param,'',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("EMail"),$_SERVER["PHP_SELF"],"p.email","",$param,'',$sortfield,$sortorder);
-    if (! empty($conf->skype->enabled))
-    {
-		$colspan++;
-		print '<td>'.$langs->trans("Skype").'</td>';
-    }
+    print_liste_field_titre($langs->trans("Address").' / '.$langs->trans("Phone").' / '.$langs->trans("Email"),$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"p.statut","",$param,'',$sortfield,$sortorder);
-    // Copy to clipboard
-    print "<td>&nbsp;</td>";
     // Add to agenda
     if (! empty($conf->agenda->enabled) && ! empty($user->rights->agenda->myactions->create))
     {
     	$colspan++;
-        print '<td>&nbsp;</td>';
+        print_liste_field_titre('');
     }
     // Edit
-    print '<td>&nbsp;</td>';
-    print "</tr>";
+    print_liste_field_titre('');
+	print "</tr>\n";
 
 
     print '<tr class="liste_titre">';
+    // Name - Position
     print '<td class="liste_titre">';
     print '<input type="text" class="flat" name="search_name" size="20" value="'.$search_name.'">';
     print '</td>';
 
-    print '<td>&nbsp;</td>';
-    print '<td>&nbsp;</td>';
+    // Address / Phone
+    print '<td>';
+    //print '<input type="text" class="flat" name="search_addressphone" size="20" value="'.$search_addressphone.'">';
+    print '</td>';
 
+    // Email
     print '<td>&nbsp;</td>';
-
-    print '<td>&nbsp;</td>';
-
-    print '<td>&nbsp;</td>';
-    if (! empty($conf->skype->enabled))
-    {
-		$colspan++;
-		print '<td>&nbsp;</td>';
-    }
 
     // Status
     print '<td class="liste_titre maxwidthonsmartphone">';
-    print $form->selectarray('search_status', array('-1'=>'','0'=>$langs->trans('ActivityCeased'),'1'=>$langs->trans('InActivity')),$search_status);
+    print $form->selectarray('search_status', array('-1'=>'','0'=>$contactstatic->LibStatut(0,1),'1'=>$contactstatic->LibStatut(1,1)),$search_status);
     print '</td>';
-
-    // Copy to clipboard
-    print "<td>&nbsp;</td>";
 
     // Add to agenda
     if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
@@ -668,7 +666,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     print "</tr>";
 
 
-    $sql = "SELECT p.rowid, p.lastname, p.firstname, p.fk_pays as country_id, p.poste, p.phone, p.phone_mobile, p.fax, p.email, p.skype, p.statut ";
+    $sql = "SELECT p.rowid, p.lastname, p.firstname, p.fk_pays as country_id, p.civility, p.poste, p.phone as phone_pro, p.phone_mobile, p.phone_perso, p.fax, p.email, p.skype, p.statut ";
     $sql .= ", p.civility as civility_id, p.address, p.zip, p.town";
     $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
     $sql .= " WHERE p.fk_soc = ".$object->id;
@@ -678,9 +676,11 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
 
     dol_syslog('core/lib/company.lib.php :: show_contacts', LOG_DEBUG);
     $result = $db->query($sql);
+    if (! $result) dol_print_error($db);
+
     $num = $db->num_rows($result);
 
-	$var=false;
+	$var=true;
 	if ($num)
     {
         $i=0;
@@ -697,75 +697,61 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
             $contactstatic->lastname = $obj->lastname;
             $contactstatic->firstname = $obj->firstname;
             $contactstatic->civility_id = $obj->civility_id;
+            $contactstatic->poste = $obj->poste;
+            $contactstatic->address = $obj->address;
+            $contactstatic->zip = $obj->zip;
+            $contactstatic->town = $obj->town;
+            $contactstatic->phone_pro = $obj->phone_pro;
+            $contactstatic->phone_mobile = $obj->phone_mobile;
+            $contactstatic->phone_perso = $obj->phone_perso;
+            $contactstatic->email = $obj->email;
             print $contactstatic->getNomUrl(1,'',0,'&backtopage='.urlencode($backtopage));
+			print '</td><td>';
+            if ($obj->poste) print $obj->poste;
             print '</td>';
-
-            print '<td>'.$obj->poste.'</td>';
 
             $country_code = getCountry($obj->country_id, 'all');
 
-            // Lien click to dial
+            // Address and phone
             print '<td>';
-            print dol_print_phone($obj->phone,$country_code['code'],$obj->rowid,$object->id,'AC_TEL');
-            print '</td>';
-            print '<td>';
-            print dol_print_phone($obj->phone_mobile,$country_code['code'],$obj->rowid,$object->id,'AC_TEL');
-            print '</td>';
-            print '<td>';
-            print dol_print_phone($obj->fax,$country_code['code'],$obj->rowid,$object->id,'AC_FAX');
-            print '</td>';
-            print '<td>';
-            print dol_print_email($obj->email,$obj->rowid,$object->id,'AC_EMAIL');
-            print '</td>';
+            $outdone=0;
+            $contactstatic->address = $obj->address;
+            $contactstatic->zip = $obj->zip;
+            $contactstatic->town = $obj->town;
+            $contactstatic->country_id = $obj->country_id;
+            $coords = $contactstatic->getFullAddress(1,', ');
+            if (! empty($conf->use_javascript_ajax))
+            {
+				$namecoords = $contactstatic->getFullName($langs,1).'<br>'.$coords;
+				// hideonsmatphone because copyToClipboard call jquery dialog that does not work with jmobile
+				print '<a href="#" class="hideonsmartphone" onclick="return copyToClipboard(\''.dol_escape_js($namecoords).'\',\''.dol_escape_js($langs->trans("HelpCopyToClipboard")).'\');">';
+            	print img_picto($langs->trans("Address"), 'object_address.png');
+            	print '</a> ';
+            }
+            if ($coords) { print dol_print_address($coords,'address_contact_'.$obj->rowid, 'contact', $obj->rowid); $outdone++; }
+
+            if ($obj->phone_pro || $obj->phone_mobile || $obj->phone_perso || $obj->fax) print ($outdone?'<br>':'');
+            if ($obj->phone_pro) { print dol_print_phone($obj->phone_pro,$country_code['code'],$obj->rowid,$object->id,'AC_TEL','&nbsp;','phone'); $outdone++; }
+            if ($obj->phone_mobile) { print dol_print_phone($obj->phone_mobile,$country_code['code'],$obj->rowid,$object->id,'AC_TEL','&nbsp;','phone'); $outdone++; }
+            if ($obj->phone_perso) { print dol_print_phone($obj->phone_perso,$country_code['code'],$obj->rowid,$object->id,'AC_TEL','&nbsp;','phone'); $outdone++; }
+            if ($obj->fax) { print dol_print_phone($obj->fax,$country_code['code'],$obj->rowid,$object->id,'AC_FAX','&nbsp;','fax'); $outdone++; }
+
+            print '<div style="clear: both;"></div>';
+            $outdone=0;
+            if ($obj->email) print dol_print_email($obj->email,$obj->rowid,$object->id,'AC_EMAIL',0,0,1);
             if (! empty($conf->skype->enabled))
             {
-                print '<td>';
-                print dol_print_skype($obj->skype,$obj->rowid,$object->id,'AC_SKYPE');
-                print '</td>';
+				if ($obj->skype) print ($outdone?'<br>':'').dol_print_skype($obj->skype,$obj->rowid,$object->id,'AC_SKYPE');
             }
+            print '</td>';
 
             // Status
 			print '<td>'.$contactstatic->getLibStatut(5).'</td>';
-
-            print '<td align="center">';
-            if (! empty($conf->use_javascript_ajax))
-            {
-       			// Copy to clipboard
-				$coords = '';
-				if (!empty($object->name))   $coords .= $object->name."<br>";
-				$coords .= $contactstatic->getFullName($langs,1).' ';
-				$coords .= "<br>";
-				if (!empty($obj->address))
-				{
-					$coords .= dol_nl2br($obj->address,1,true)."<br>";
-					if (!empty($obj->zip))  $coords .= $obj->zip.' ';
-					if (!empty($obj->town)) $coords .= $obj->town;
-					if (!empty($obj->country_id)) $coords .= "<br>".$country_code['label'];
-				}
-				else if (!empty($object->address))
-				{
-					$coords .= dol_nl2br($object->address,1,true)."<br>";
-					if (!empty($object->zip))  $coords .= $object->zip.' ';
-					if (!empty($object->town)) $coords .= $object->town;
-					if (!empty($object->country_id)) $coords .= "<br>".$country_code['label'];
-				}
-				// hideonsmatphone because copyToClipboard call jquery dialog that does not work with jmobile
-				print '<a href="#" class="hideonsmartphone" onclick="return copyToClipboard(\''.dol_escape_js($coords).'\',\''.dol_escape_js($langs->trans("HelpCopyToClipboard")).'\');">';
-            	print img_picto($langs->trans("Address"), 'object_address.png');
-            	print '</a>';
-            }
-            print '</td>';
 
             // Add to agenda
             if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
             {
                 print '<td align="center">';
-                //if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
-                //{
-                //	print '<a class="hideonsmartphone" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&actioncode=AC_RDV&contactid='.$obj->rowid.'&socid='.$object->id.'&backtopage='.urlencode($backtopage).'">';
-                //	print img_object($langs->trans("Rendez-Vous"),"action_rdv");
-                //	print '</a> ';
-                //}
                 print '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&actioncode=&contactid='.$obj->rowid.'&socid='.$object->id.'&backtopage='.urlencode($backtopage).'">';
                 print img_object($langs->trans("Event"),"action");
                 print '</a></td>';
@@ -787,7 +773,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     }
     else
 	{
-        print "<tr ".$bc[$var].">";
+        print "<tr ".$bc[! $var].">";
         print '<td colspan="'.$colspan.'">'.$langs->trans("None").'</td>';
         print "</tr>\n";
     }
@@ -911,7 +897,7 @@ function show_addresses($conf,$langs,$db,$object,$backtopage='')
  */
 function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
 {
-    global $bc,$user;
+    global $bc,$user,$conf;
 
     // Check parameters
     if (! is_object($object)) dol_print_error('','BadParameter');
@@ -929,12 +915,22 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
         $out.="\n";
         $out.='<table width="100%" class="noborder">';
         $out.='<tr class="liste_titre">';
-        $out.='<td colspan="2">';
+		if($conf->global->AGENDA_USE_EVENT_TYPE) $out.='<td colspan="3">';
+		else $out.='<td colspan="2">';
         if (get_class($object) == 'Societe') $out.='<a href="'.DOL_URL_ROOT.'/comm/action/listactions.php?socid='.$object->id.'&amp;status=todo">';
         $out.=$langs->trans("ActionsToDoShort");
         if (get_class($object) == 'Societe') $out.='</a>';
         $out.='</td>';
-        $out.='<td colspan="5" align="right">';
+		
+		if($conf->global->AGENDA_USE_EVENT_TYPE) {
+			$out.='<td>';
+			$out.=$langs->trans("Type");
+			$out.='</td>';
+			$out.='<td colspan="4" align="right">';
+		} else {
+			$out.='<td colspan="5" align="right">';
+		}
+        
         $out.='</td>';
         $out.='</tr>';
 
@@ -979,12 +975,13 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
                     $var = !$var;
 
                     $obj = $db->fetch_object($result);
-
+					$actionstatic->fetch($obj->id);
                     $datep=$db->jdate($obj->dp);
                     $datep2=$db->jdate($obj->dp2);
 
                     $out.="<tr ".$bc[$var].">";
 
+                    // Date
                     $out.='<td width="120" align="left" class="nowrap">';
                     $out.=dol_print_date($datep,'dayhour');
                     if ($datep2 && $datep2 != $datep)
@@ -1012,8 +1009,13 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
 
                     // Title of event
                     //$out.='<td colspan="2">'.dol_trunc($obj->label,40).'</td>';
-                    $out.='<td colspan="2">'.$actionstatic->getNomUrl(1,40).'</td>';
-
+                    $out.='<td>'.$actionstatic->getNomUrl(1,120).'</td>';
+					
+					if($conf->global->AGENDA_USE_EVENT_TYPE) {
+						$out.= '<td>';
+						$out.=$actionstatic->type;
+						$out.='</td>';
+					}
                     // Contact pour cette action
                     if (empty($objcon->id) && $obj->fk_contact > 0)
                     {
@@ -1028,9 +1030,11 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
                     }
 
                     $out.='<td width="80" class="nowrap">';
-                    $userstatic->id=$obj->fk_user_author;
-                    $userstatic->login=$obj->login;
-                    $out.=$userstatic->getLoginUrl(1);
+                    //$userstatic->id=$obj->fk_user_author;
+                    //$userstatic->login=$obj->login;
+                    //$out.=$userstatic->getLoginUrl(1);
+                    $userstatic->fetch($obj->fk_user_author);
+                    $out.=$userstatic->getNomUrl(1);
                     $out.='</td>';
 
                     // Statut
@@ -1074,7 +1078,7 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
  */
 function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
 {
-    global $bc,$user;
+    global $bc,$user,$conf;
 
     // Check parameters
     if (! is_object($object)) dol_print_error('','BadParameter');
@@ -1213,12 +1217,22 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
         $out.="\n";
         $out.='<table class="noborder" width="100%">';
         $out.='<tr class="liste_titre">';
-        $out.='<td colspan="2">';
+		if($conf->global->AGENDA_USE_EVENT_TYPE) $out.='<td colspan="3">';
+		else $out.='<td colspan="2">';
         if (get_class($object) == 'Societe') $out.='<a href="'.DOL_URL_ROOT.'/comm/action/listactions.php?socid='.$object->id.'&amp;status=done">';
         $out.=$langs->trans("ActionsDoneShort");
         if (get_class($object) == 'Societe') $out.='</a>';
         $out.='</td>';
-        $out.='<td colspan="5" align="right">';
+		
+		if($conf->global->AGENDA_USE_EVENT_TYPE) {
+			$out.='<td>';
+			$out.=$langs->trans("Type");
+			$out.='</td>';
+			$out.='<td colspan="4" align="right">';
+		} else {
+			$out.='<td colspan="5" align="right">';
+		}
+        
         $out.='</td>';
         $out.='</tr>';
 
@@ -1226,7 +1240,7 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
         {
             $var=!$var;
             $out.="<tr ".$bc[$var].">";
-
+			$actionstatic->fetch($histo[$key]['id']);
             // Champ date
             $out.='<td width="120" class="nowrap">';
             $out.=dol_print_date($histo[$key]['datestart'],'dayhour');
@@ -1252,17 +1266,22 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
                 //$actionstatic->libelle=$libelle;
                 $actionstatic->libelle=$histo[$key]['note'];
                 $actionstatic->id=$histo[$key]['id'];
-                $out.=$actionstatic->getNomUrl(1,40);
+                $out.=$actionstatic->getNomUrl(1,120);
             }
             if (isset($histo[$key]['type']) && $histo[$key]['type']=='mailing')
             {
                 $out.='<a href="'.DOL_URL_ROOT.'/comm/mailing/card.php?id='.$histo[$key]['id'].'">'.img_object($langs->trans("ShowEMailing"),"email").' ';
                 $transcode=$langs->trans("Action".$histo[$key]['acode']);
                 $libelle=($transcode!="Action".$histo[$key]['acode']?$transcode:'Send mass mailing');
-                $out.=dol_trunc($libelle,40);
+                $out.=dol_trunc($libelle,120);
             }
             $out.='</td>';
-
+			
+			if($conf->global->AGENDA_USE_EVENT_TYPE) {
+				$out.='<td>';
+				$out.=$actionstatic->type;
+				$out.='</td>';
+			}
             // Title of event
             //$out.='<td>'.dol_trunc($histo[$key]['note'], 40).'</td>';
 
@@ -1274,22 +1293,36 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
             {
             	if ($histo[$key]['elementtype'] == 'propal' && ! empty($conf->propal->enabled))
             	{
-            		$propalstatic->ref=$langs->trans("ProposalShort");
-            		$propalstatic->id=$histo[$key]['fk_element'];
-            		$out.=$propalstatic->getNomUrl(1);
-            	}
+            		//$propalstatic->ref=$langs->trans("ProposalShort");
+            		//$propalstatic->id=$histo[$key]['fk_element'];
+                    if ($propalstatic->fetch($histo[$key]['fk_element'])>0) {
+                        $propalstatic->type=$histo[$key]['ftype'];
+                        $out.=$propalstatic->getNomUrl(1);
+                    } else {
+                        $out.= $langs->trans("ProposalDeleted");
+                    }
+             	}
             	elseif (($histo[$key]['elementtype'] == 'order' || $histo[$key]['elementtype'] == 'commande') && ! empty($conf->commande->enabled))
             	{
-            		$orderstatic->ref=$langs->trans("Order");
-            		$orderstatic->id=$histo[$key]['fk_element'];
-            		$out.=$orderstatic->getNomUrl(1);
-            	}
+            		//$orderstatic->ref=$langs->trans("Order");
+            		//$orderstatic->id=$histo[$key]['fk_element'];
+                    if ($orderstatic->fetch($histo[$key]['fk_element'])>0) {
+                        $orderstatic->type=$histo[$key]['ftype'];
+                        $out.=$orderstatic->getNomUrl(1);
+                    } else {
+                        $out.= $langs->trans("OrderDeleted");
+                    }
+             	}
             	elseif (($histo[$key]['elementtype'] == 'invoice' || $histo[$key]['elementtype'] == 'facture') && ! empty($conf->facture->enabled))
             	{
-            		$facturestatic->ref=$langs->trans("Invoice");
-            		$facturestatic->id=$histo[$key]['fk_element'];
-            		$facturestatic->type=$histo[$key]['ftype'];
-            		$out.=$facturestatic->getNomUrl(1,'compta');
+            		//$facturestatic->ref=$langs->trans("Invoice");
+            		//$facturestatic->id=$histo[$key]['fk_element'];
+                    if ($facturestatic->fetch($histo[$key]['fk_element'])>0) {
+                        $facturestatic->type=$histo[$key]['ftype'];
+                        $out.=$facturestatic->getNomUrl(1,'compta');
+                    } else {
+                        $out.= $langs->trans("InvoiceDeleted");
+                    }
             	}
             	else $out.='&nbsp;';
             }
@@ -1311,9 +1344,11 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
 
             // Auteur
             $out.='<td class="nowrap" width="80">';
-            $userstatic->id=$histo[$key]['userid'];
-            $userstatic->login=$histo[$key]['login'];
-            $out.=$userstatic->getLoginUrl(1);
+            //$userstatic->id=$histo[$key]['userid'];
+            //$userstatic->login=$histo[$key]['login'];
+            //$out.=$userstatic->getLoginUrl(1);
+            $userstatic->fetch($histo[$key]['userid']);
+            $out.=$userstatic->getNomUrl(1);
             $out.='</td>';
 
             // Statut

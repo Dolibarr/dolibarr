@@ -57,6 +57,7 @@ RemoveFromGroup=從組中刪除
 PasswordChangedAndSentTo=密碼更改，發送到<b>%s。</b>
 PasswordChangeRequestSent=要求更改密碼<b>的S%</b>發送到<b>%s。</b>
 MenuUsersAndGroups=用戶和群組
+MenuMyUserCard=My user card
 LastGroupsCreated=共建立 %s 群組
 LastUsersCreated=共建立 %s 位用戶
 ShowGroup=顯示群組

@@ -59,7 +59,7 @@ $hookmanager->initHooks(array('element_resource'));
 $object->available_resources = array('resource');
 
 // Get parameters
-$id				= GETPOST('id','int');
+$id			= GETPOST('id','int');
 $action			= GETPOST('action','alpha');
 $mode			= GETPOST('mode','alpha');
 $lineid			= GETPOST('lineid','int');
@@ -70,6 +70,12 @@ $resource_type	= GETPOST('resource_type','alpha');
 $busy 			= GETPOST('busy','int');
 $mandatory 		= GETPOST('mandatory','int');
 $cancel			= GETPOST('cancel','alpha');
+$confirm                = GETPOST('confirm','alpha');
+
+
+/*
+ * Actions
+ */
 
 if($action == 'add_element_resource' && ! $cancel)
 {
@@ -113,22 +119,22 @@ if ($action == 'update_linked_resource' && $user->rights->resource->write && !GE
 }
 
 // Delete a resource linked to an element
-if ($action == 'confirm_delete_linked_resource' && $user->rights->resource->delete && GETPOST('confirm') == 'yes')
+if ($action == 'confirm_delete_linked_resource' && $user->rights->resource->delete && $confirm === 'yes')
 {
-	$res = $object->fetch(GETPOST('id'));
-	if($res)
+	$res = $object->fetch($id);
+	if($res > 0)
 	{
-		$result = $object->delete_resource($lineid,$element);
+            $result = $object->delete_resource($lineid,$element);
 
-		if ($result >= 0)
-		{
-			setEventMessage($langs->trans('RessourceLineSuccessfullyDeleted'));
-			Header("Location: ".$_SERVER['PHP_SELF']."?element=".$element."&element_id=".$element_id);
-			exit;
-		}
-		else {
-			setEventMessage($object->error,'errors');
-		}
+            if ($result >= 0)
+            {
+                    setEventMessage($langs->trans('RessourceLineSuccessfullyDeleted'));
+                    Header("Location: ".$_SERVER['PHP_SELF']."?element=".$element."&element_id=".$element_id);
+                    exit;
+            }
+            else {
+                    setEventMessage($object->error,'errors');
+            }
 	}
 	else
 	{
@@ -146,17 +152,15 @@ $reshook=$hookmanager->executeHooks('getElementResources',$parameters,$object,$a
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 
-/***************************************************
- * VIEW
-*
-* Put here all code to build page
-****************************************************/
+
+/*
+ * View
+ */
+
+$form=new Form($db);
 
 $pagetitle=$langs->trans('ResourceElementPage');
 llxHeader('',$pagetitle,'');
-
-
-$form=new Form($db);
 
 
 // Load available resource, declared by modules
@@ -173,7 +177,7 @@ else
 	// Confirmation suppression resource line
 	if ($action == 'delete_resource')
 	{
-		print $form->formconfirm("element_resource.php?element=".$element."&element_id=".$element_id."&lineid=".$lineid,$langs->trans("DeleteResource"),$langs->trans("ConfirmDeleteResourceElement"),"confirm_delete_linked_resource",'','',1);
+		print $form->formconfirm("element_resource.php?element=".$element."&element_id=".$element_id."&id=".$id."&lineid=".$lineid,$langs->trans("DeleteResource"),$langs->trans("ConfirmDeleteResourceElement"),"confirm_delete_linked_resource",'','',1);
 	}
 
 
@@ -211,16 +215,17 @@ else
 			print '<tr><td>'.$langs->trans("Title").'</td><td colspan="3">'.$act->label.'</td></tr>';
 			print '</table>';
 
-			print '</div>';
+			dol_fiche_end();
 		}
 	}
+
 	/*
 	 * Specific to thirdparty module
 	 */
-	if($element_id && $element == 'societe')
+	if ($element_id && $element == 'societe')
 	{
 		$socstatic = fetchObjectByElement($element_id,$element);
-		if(is_object($socstatic)) {
+		if (is_object($socstatic)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 			$head = societe_prepare_head($socstatic);
 
@@ -239,13 +244,13 @@ else
 	        print '</tr>';
 			print '</table>';
 
-			print '</div>';
+			dol_fiche_end();
 		}
 	}
 
 
 
-	print_fiche_titre($langs->trans('ResourcesLinkedToElement'),'','resource.png@resource');
+	//print_fiche_titre($langs->trans('ResourcesLinkedToElement'),'','');
 
 
 
@@ -256,7 +261,8 @@ else
 		{
 			$element_prop = getElementProperties($resource_obj);
 
-			print_titre($langs->trans(ucfirst($element_prop['element']).'Singular'));
+
+
 
 			//print '/'.$modresources.'/class/'.$resource_obj.'.class.php<br />';
 
@@ -266,21 +272,21 @@ else
 
 			$linked_resources = $object->getElementResources($element,$element_id,$resource_obj);
 
-			if ( $mode == 'add' && $resource_obj == $resource_type)
+
+			// If we have a specific template we use it
+			if(file_exists(dol_buildpath($path.'/core/tpl/resource_'.$element_prop['element'].'_add.tpl.php')))
 			{
-				// If we have a specific template we use it
-				if(file_exists(dol_buildpath($path.'/core/tpl/resource_'.$element_prop['element'].'_'.$mode.'.tpl.php')))
-				{
-					$res=include dol_buildpath($path.'/core/tpl/resource_'.$element_prop['element'].'_'.$mode.'.tpl.php');
-				}
-				else
-				{
-					$res=include DOL_DOCUMENT_ROOT . '/core/tpl/resource_add.tpl.php';
-				}
+				$res=include dol_buildpath($path.'/core/tpl/resource_'.$element_prop['element'].'_add.tpl.php');
 			}
 			else
 			{
-				//print '/'.$element_prop['module'].'/core/tpl/resource_'.$element_prop['element'].'_view.tpl.php';
+				$res=include DOL_DOCUMENT_ROOT . '/core/tpl/resource_add.tpl.php';
+			}
+
+
+			if ($mode != 'add' || $resource_obj != $resource_type)
+			{
+				//print_titre($langs->trans(ucfirst($element_prop['element']).'Singular'));
 
 				// If we have a specific template we use it
 				if(file_exists(dol_buildpath($path.'/core/tpl/resource_'.$element_prop['element'].'_view.tpl.php')))
@@ -292,15 +298,6 @@ else
 				{
 					$res=include DOL_DOCUMENT_ROOT . '/core/tpl/resource_view.tpl.php';
 				}
-			}
-
-			if($resource_obj!=$resource_type )
-			{
-				print '<div class="tabsAction">';
-				print '<div class="inline-block divButAction">';
-				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?mode=add&resource_type='.$resource_obj.'&element='.$element.'&element_id='.$element_id.'">'.$langs->trans('AddResource').'</a>';
-				print '</div>';
-				print '</div>';
 			}
 		}
 	}

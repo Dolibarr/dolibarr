@@ -30,16 +30,16 @@ if (empty($usedolheader))
 	<link rel="shortcut icon" type="image/x-icon" href="<?php echo DOL_URL_ROOT ?>/theme/eldy/img/favicon.ico"/>
 	<title>Test page</title>
 	<!-- Includes for JQuery (Ajax library) -->
-	<link rel="stylesheet" type="text/css" href="<?php echo DOL_URL_ROOT ?>/includes/jquery/css/smoothness/jquery-ui-latest.custom.css" />
-	<link rel="stylesheet" type="text/css" href="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/datatables/css/jquery.dataTables.css" />
+	<link rel="stylesheet" type="text/css" href="<?php echo DOL_URL_ROOT ?>/includes/jquery/css/smoothness/jquery-ui.custom.css" />
+	<link rel="stylesheet" type="text/css" href="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/datatables/media/css/jquery.dataTables.css" />
 	<?php if ($_GET["dol_use_jmobile"] == 1) { ?>
 	<link rel="stylesheet" type="text/css" href="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/mobile/jquery.mobile-latest.min.css" />
 	<?php } ?>
 	<link rel="stylesheet" type="text/css" title="default" href="<?php echo DOL_URL_ROOT ?>/theme/eldy/style.css.php<?php echo ($_GET["dol_use_jmobile"] == 1)?'?dol_use_jmobile=1&dol_optimize_smallscreen=1':''; ?>" />
 	<!-- Includes JS for JQuery -->
-	<script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/js/jquery-latest.min.js"></script>
+	<script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/js/jquery.min.js"></script>
 	<script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/tablednd/jquery.tablednd.0.6.min.js"></script>
-	<script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/datatables/js/jquery.dataTables.js"></script>
+	<script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/datatables/media/js/jquery.dataTables.js"></script>
 	<?php if ($_GET["dol_use_jmobile"] == 1) { ?>
 	<script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/mobile/jquery.mobile-latest.min.js"></script>
 	<?php } ?>
@@ -53,8 +53,8 @@ if (empty($usedolheader))
 }
 else
 {
-	$arraycss=array('/includes/jquery/plugins/datatables/css/jquery.dataTables.css');
-	$arrayjs=array('/includes/jquery/plugins/datatables/js/jquery.dataTables.js');
+	$arraycss=array('/includes/jquery/plugins/datatables/media/css/jquery.dataTables.css');
+	$arrayjs=array('/includes/jquery/plugins/datatables/media/js/jquery.dataTables.js');
 	llxHeader('','','','',0,0,$arrayjs,$arraycss);
 }
 
@@ -66,8 +66,8 @@ else
 <h1>
 This page is a sample of page using tables. It is designed to make test with<br>
 - css (add parameter &theme=newtheme to test another theme or edit css of current theme)<br>
-- jmobile (add parameter dol_use_jmobile=1&dol_optimize_smallscreen=1 to enable view with jmobile)<br>
-- no javascript / usage for bind people (add parameter nojs=1 to force disable javascript)<br>
+- jmobile (add parameter <a href="<?php echo $_SERVER["PHP_SELF"].'?dol_use_jmobile=1&dol_optimize_smallscreen=1'; ?>">dol_use_jmobile=1&dol_optimize_smallscreen=1</a> to enable view with jmobile)<br>
+- no javascript / usage for bind people (add parameter <a href="<?php echo $_SERVER["PHP_SELF"].'?nojs=1'; ?>">nojs=1</a> to force disable javascript)<br>
 - dataTables<br>
 - tablednd<br>
 </h1>
@@ -148,6 +148,39 @@ print_barre_liste('Title of my list', 3, $_SERVER["PHP_SELF"], '', '', '', 'Text
 
 ?>
 <table class="liste noborder tagtable centpercent" id="tablelines3">
+<?php
+$moreforfilter.='<div class="divsearchfield">';
+$moreforfilter.=$langs->trans('This is a select list for a filter A'). ': ';
+$cate_arbo = array('field1'=>'value1a into the select list A','field2'=>'value2a');
+$moreforfilter.=$form->selectarray('search_aaa', $cate_arbo, '', 1);		// List without js combo
+$moreforfilter.='</div>';
+
+$moreforfilter.='<div class="divsearchfield">';
+$moreforfilter.=$langs->trans('This is a select list for a filter B'). ': ';
+$cate_arbo = array('field1'=>'value1b into the select list B','field2'=>'value2b');
+$moreforfilter.=$form->selectarray('search_bbb', $cate_arbo, '', 1, 0, 0, '', 0, 0, 0, 0, '', 1);		// List with js combo
+$moreforfilter.='</div>';
+
+$moreforfilter.='<div class="divsearchfield">';
+$moreforfilter.=$langs->trans('This is a select list for a filter C'). ': ';
+$cate_arbo = array('field1'=>'value1c into the select list C','field2'=>'value2c');
+$moreforfilter.=$form->selectarray('search_ccc', $cate_arbo, '', 1, 0, 0, '', 0, 0, 0, 0, '', 1);		// List with js combo
+$moreforfilter.='</div>';
+
+$moreforfilter.='<div class="divsearchfield">';
+$moreforfilter.=$langs->trans('This is a select list for a filter D'). ': ';
+$cate_arbo = array('field1'=>'value1d into the select list D','field2'=>'value2d');
+$moreforfilter.=$form->selectarray('search_ddd', $cate_arbo, '', 1, 0, 0, '', 0, 0, 0, 0, '', 1);		// List with js combo
+$moreforfilter.='</div>';
+
+if (! empty($moreforfilter))
+{
+    print '<tr class="liste_titre">';
+    print '<td class="liste_titre" colspan="10">';
+    print $moreforfilter;
+    print '</td></tr>';
+}
+?>
 <tr class="liste_titre">
 <?php print getTitleFieldOfList($langs->trans('title1'),0,$_SERVER["PHP_SELF"],'aaa','','','align="left"',$sortfield,$sortorder); ?>
 <?php print getTitleFieldOfList($langs->trans('title2'),0,$_SERVER["PHP_SELF"],'bbb','','','align="right"',$sortfield,$sortorder); ?>
@@ -184,12 +217,12 @@ $(document).ready(function(){
 			}
 		},
 		"aaSorting": [[0,'desc']],
-		"sDom": 'T<"clear">lfrtip',
-/* To get flash tools
+		"sDom": 'CT<"clear">lfrtip',
+//To get flash tools
  		"oTableTools": {
-			"sSwfPath": "<?php echo DOL_URL_ROOT.'/includes/jquery/plugins/datatables/extras/TableTools/swf/copy_csv_xls_pdf.swf'; ?>"
-		}
-*/
+			"sSwfPath": "<?php echo dol_buildpath('/includes/jquery/plugins/datatables/extensions/TableTools/swf/copy_csv_xls_pdf.swf',1); ?>"
+		},
+
 /* To use in ajax mode
 		"bProcessing": true,	// Show	"processing message"
 		"bServerSide": true,

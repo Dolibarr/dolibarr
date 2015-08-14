@@ -23,6 +23,21 @@ Replace call to serialize_val with no bugged value
 
 
 
+FPDI:
+-----
+Replace:
+	$this->_readXref($this->_xref, $this->_findXref());
+with:
+    try {
+	        $this->_readXref($this->_xref, $this->_findXref());
+    }
+    catch(Exception $e)
+    {
+        	print $e->getMessage();
+        	exit;
+    }
+
+
 TCPDF:
 ------
 * Removed all fonts except 
@@ -45,6 +60,19 @@ In htdocs/includes/tcpdf/tcpdf.php
 +       protected $default_monospaced_font = 'freemono';
 
 * Renamed getmypid into dol_getmypid().
+
+
+TCPDI:
+------
+Add fpdf_tpl.php 1.2
+Add tcpdi.php
+Add tcpdi_parser.php and replace:
+require_once(dirname(__FILE__).'/include/tcpdf_filters.php');
+with:
+require_once(dirname(__FILE__).'/../tcpdf/include/tcpdf_filters.php');
+
+
+
 
 
 JSGANTT:

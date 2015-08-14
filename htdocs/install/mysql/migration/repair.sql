@@ -54,6 +54,7 @@ delete from llx_adherent_extrafields where fk_object not in (select rowid from l
 delete from llx_product_extrafields where fk_object not in (select rowid from llx_product);
 --delete from llx_societe_commerciaux where fk_soc not in (select rowid from llx_societe);
 
+update llx_product_batch set batch = '' where batch = 'Non d&eacute;fini';
 
 -- Fix: delete category child with no category parent.
 drop table tmp_categorie;
@@ -71,6 +72,18 @@ delete from llx_categorie_contact where fk_categorie not in (select rowid from l
 -- Fix: delete orphelin deliveries. Note: deliveries are linked to shipment by llx_element_element only. No other links.
 delete from llx_livraisondet where fk_livraison not in (select fk_target from llx_element_element where targettype = 'delivery') AND fk_livraison not in (select fk_source from llx_element_element where sourcetype = 'delivery');
 delete from llx_livraison    where rowid not in (select fk_target from llx_element_element where targettype = 'delivery') AND rowid not in (select fk_source from llx_element_element where sourcetype = 'delivery');
+
+
+-- Fix delete element_element orphelins (right side)
+delete from llx_element_element where targettype='shipping' and fk_target not in (select rowid from llx_expedition);
+delete from llx_element_element where targettype='propal' and fk_target not in (select rowid from llx_propal);
+delete from llx_element_element where targettype='facture' and fk_target not in (select rowid from llx_facture);
+delete from llx_element_element where targettype='commande' and fk_target not in (select rowid from llx_commande);
+-- Fix delete element_element orphelins (left side)
+delete from llx_element_element where sourcetype='shipping' and fk_source not in (select rowid from llx_expedition);
+delete from llx_element_element where sourcetype='propal' and fk_source not in (select rowid from llx_propal);
+delete from llx_element_element where sourcetype='facture' and fk_source not in (select rowid from llx_facture);
+delete from llx_element_element where sourcetype='commande' and fk_source not in (select rowid from llx_commande);
 
 
 UPDATE llx_product SET canvas = NULL where canvas = 'default@product';
@@ -213,5 +226,8 @@ update llx_facturedet set product_type = 1 where product_type = 2;
 --update llx_facturedet as d set d.product_type = 1 where d.fk_product = 22 and d.product_type = 0;
 
 delete from llx_commande_fournisseur_dispatch where fk_commandefourndet = 0 or fk_commandefourndet IS NULL;
+
+
+delete from llx_menu where menu_handler = 'smartphone';
 
 

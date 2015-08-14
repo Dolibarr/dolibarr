@@ -11,3 +11,5 @@ ShowSalaryPayment=Hiện thanh toán tiền lương
 THM=Giá trung bình theo giờ
 TJM=Giá trung bình hàng ngày
 CurrentSalary=Current salary
+THMDescription=This value may be used to calculate cost of time consumed on a project entered by users if module project is used
+TJMDescription=This value is currently as information only and is not used for any calculation

@@ -35,7 +35,6 @@ IfDatabaseExistsGoBackAndCheckCreate=Jei duomenų bazė jau yra, eikite atgal ir
 WarningBrowserTooOld=Per sena naršyklės versiją. Rekomenduojama atnaujinti savo naršyklę į naujausią versiją Firefox, Chrome ar Opera.
 PHPVersion=PHP versija
 YouCanContinue=Galite tęsti toliau ...
-PleaseBePatient=Prašau, būkite kantrūs ...
 License=Naudojant licenciją
 ConfigurationFile=Konfigūracijos failas
 WebPagesDirectory=Katalogas, kur saugomi web tinklalapiai
@@ -64,6 +63,7 @@ DatabaseSuperUserAccess=Duomenų bazės serveris - Superuser prieiga
 CheckToCreateDatabase=Žymėti langelį, jei duomenų bazės nėra ir ji turi būti sukurta. <br>Tokiu atveju, turite užpildyti prisijungimo/slaptažodį superuser sąskaitai šio puslapio apačioje.
 CheckToCreateUser=Žymėti langelį, jei duomenų bazės savininko nėra ir jis turi būti sukurtas. <br>Šiuo atveju, jūs turite pasirinkti jo prisijungimo vardą ir slaptažodį ir užpildyti prisijungimo/slaptažodžio superuser sąskaitai šio puslapio apačioje. Jei šis langelis nepažymėtas, savininko duomenų bazė ir jos slaptažodis jau egzistuoja.
 Experimental=(eksperimentinis)
+Deprecated=(užprotestuotas)
 DatabaseRootLoginDescription=Prisijungimas vartotojui leidžia kurti naujas duomenų bazes arba naujus vartotojus. Tai privaloma, jei Jūsų duomenų bazė ar jos savininkas dar neegzistuoja.
 KeepEmptyIfNoPassword=Palikite tuščią, jei vartotojas neturi slaptažodžio (praleisti)
 SaveConfigurationFile=Išsaugoti reikšmes
@@ -155,7 +155,7 @@ MigrationFinished=Perkėlimas baigtas
 LastStepDesc=<strong>Paskutinis žingsnis</strong>: Nustatykite čia prisijungimo vardą ir slaptažodį, kuriuos planuojate naudoti prisijungimui prie programos. Nepameskite jų, nes tai yra administratoriaus, kuris administruoja visus kitus vartotojus, sąskaitos rekvizitai.
 ActivateModule=Įjungti modulį %s
 ShowEditTechnicalParameters=Spauskite čia, kad galėtumete matyti/redaguoti išplėstinius parametrus (eksperto režime)
-WarningUpgrade=Warning:\nDid your run a database backup first ?\nThis is highly recommanded: for example, due to some bugs into databases systems (for example mysql version 5.5.40), some data or tables may be lost during this process, so it is highly recommanded to have a complete dump of your database before starting migration.\n\nClick OK to start migration process...
+WarningUpgrade=Įspėjimas: Ar Jūs pasidarėte duomenų bazės atsarginę kopiją ? Tai labai rekomenduotina: pavyzdžiui, dėl kai kurių klaidų duomenų bazės sistemoje (pvz. mysql versija 5.5.40), kai kurie duomenys ar lentelės gali būti prarasti šio proceso metu, todėl, prieš pradedant perkėlimą primygtinai rekomenduojama pasidaryti pilną savo duomenų bazės kopiją. Spausti Gerai, kad pradėti perkėlimo procesą ...
 ErrorDatabaseVersionForbiddenForMigration=Jūsų duomenų bazės versija yra %s. Gali būti kritinė situacija su duomenų praradimu, jeigu pakeisite duomenų bazės struktūrą, kaip reikalaujama perkėlimo proceso metu. Šiuo tikslu perkėlimas nebus leidžiamas, kol nebus atliktas duomenų bazės programos atnaujinimas į aukštesnę versiją (žinomų klaidingų versijų sąrašas: %s)
 
 #########

@@ -132,3 +132,4 @@ SelectFilterFields=Si quiere aplicar un filtro sobre algunos valores, introdúzc
 FilterableFields=Campos filtrables
 FilteredFields=Campos filtrados
 FilteredFieldsValues=Valores de filtros
+FormatControlRule=Regla formato de control

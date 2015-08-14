@@ -1,5 +1,12 @@
 # Dolibarr language file - en_US - Accounting Expert
 CHARSET=UTF-8
+ACCOUNTING_EXPORT_SEPARATORCSV=Oddělovač sloupců pro export souboru
+ACCOUNTING_EXPORT_DATE=Formát data pro export souboru
+ACCOUNTING_EXPORT_PIECE=Export počtu kusu?
+ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export s globálním účtem?
+ACCOUNTING_EXPORT_LABEL=Export štítku?
+ACCOUNTING_EXPORT_AMOUNT=Export částky?
+ACCOUNTING_EXPORT_DEVISE=Export návrhu?
 
 Accounting=Účetnictví
 Globalparameters=Globální parametry
@@ -41,6 +48,7 @@ NewAccount=Nový účetní účet
 Update=Aktualizovat
 List=Seznam
 Create=Vytvořit
+CreateMvts=Create movement
 UpdateAccount=Změna účetního účtu
 UpdateMvts=Změna pohybu
 WriteBookKeeping=Účetní záznamy v hlavní účetní knize
@@ -60,7 +68,7 @@ IntoAccount=V účetním účtu
 Ventilate=Prověřit
 VentilationAuto=Automatické členění
 
-Processing=Pracuji .....
+Processing=Dřu jako kůň  .....
 EndProcessing=Konec zpracování
 AnyLineVentilate=Prověřit všechny řádky
 SelectedLines=Vybrané řádky
@@ -76,14 +84,15 @@ ACCOUNTING_LIST_SORT_VENTILATION_DONE=Začněte třídění rozpisu stránek "Br
 
 AccountLength=Délka účetnické osnovy uvedené v Dolibarr
 AccountLengthDesc=Funkce povolující simulovat délku účetního účtu nahrazením místa prostřednictvím nulového obrázku. Tato funkce se týká pouze zobrazení, to nemění účetní účty zaregistrované v Dolibarr. Pro export této funkce je nutné, aby byla kompatibilní s daným softwarem.
+ACCOUNTING_LENGTH_DESCRIPTION=Length for displaying product & services description in listings (Best = 50)
+ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Length for displaying product & services account description form in listings (Best = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Délka hlavních účtů
 ACCOUNTING_LENGTH_AACCOUNT=Délka účtů třetích stran
 
 ACCOUNTING_SELL_JOURNAL=Prodejní deník
 ACCOUNTING_PURCHASE_JOURNAL=Nákupní deník
-ACCOUNTING_BANK_JOURNAL=Bankovní deník
-ACCOUNTING_CASH_JOURNAL=Peněžní deník
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Ostatní deník
+ACCOUNTING_EXPENSEREPORT_JOURNAL=Rozšířený výpis deníku
 ACCOUNTING_SOCIAL_JOURNAL=Sociální deník
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Převodní účet

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,7 +65,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 $var=false;
 print '<form method="post" action="'.DOL_URL_ROOT.'/user/index.php">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<table class="noborder" width="100%">';
+print '<table class="noborder nohover" width="100%">';
 print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAUser").'</td></tr>';
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("Ref").':</td><td><input class="flat" type="text" name="search_user" size="18"></td><td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
@@ -79,7 +79,7 @@ if ($canreadperms)
 	$var=false;
 	print '<form method="post" action="'.DOL_URL_ROOT.'/user/group/index.php">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder nohover" width="100%">';
 	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAGroup").'</td></tr>';
 	print '<tr '.$bc[$var].'><td>';
 	print $langs->trans("Ref").':</td><td><input class="flat" type="text" name="search_group" size="18"></td><td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
@@ -98,10 +98,18 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
  */
 $max=10;
 
-$sql = "SELECT u.rowid, u.lastname, u.firstname, u.admin, u.login, u.fk_societe, u.datec, u.statut, u.entity, u.ldap_sid,";
-$sql.= " s.nom as name, s.canvas";
+$sql = "SELECT u.rowid, u.lastname, u.firstname, u.admin, u.login, u.fk_soc, u.datec, u.statut";
+$sql.= ", u.entity";
+$sql.= ", u.ldap_sid";
+$sql.= ", u.photo";
+$sql.= ", u.admin";
+$sql.= ", u.email";
+$sql.= ", u.skype";
+$sql.= ", s.nom as name";
+$sql.= ", s.code_client";
+$sql.= ", s.canvas";
 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_societe = s.rowid";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_soc = s.rowid";
 if (! empty($conf->multicompany->enabled) && $conf->entity == 1 && ($conf->multicompany->transverse_mode || ($user->admin && ! $user->entity)))
 {
 	$sql.= " WHERE u.entity IS NOT NULL";
@@ -110,7 +118,7 @@ else
 {
 	$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
 }
-if (!empty($socid)) $sql.= " AND u.fk_societe = ".$socid;
+if (!empty($socid)) $sql.= " AND u.fk_soc = ".$socid;
 $sql.= $db->order("u.datec","DESC");
 $sql.= $db->plimit($max);
 
@@ -129,7 +137,18 @@ if ($resql)
 		$var=!$var;
 
 		print "<tr ".$bc[$var].">";
-		print '<td><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowUser"),"user").' '.dolGetFirstLastname($obj->firstname,$obj->lastname).'</a>';
+		print '<td>';
+        $fuserstatic->id = $obj->rowid;
+        $fuserstatic->statut = $obj->statut;
+        $fuserstatic->lastname = $obj->lastname;
+        $fuserstatic->firstname = $obj->firstname;
+        $fuserstatic->login = $obj->login;
+        $fuserstatic->photo = $obj->photo;
+        $fuserstatic->admin = $obj->admin;
+        $fuserstatic->email = $obj->email;
+        $fuserstatic->skype = $obj->skype;
+        $fuserstatic->societe_id = $obj->fk_soc;
+        print $fuserstatic->getNomUrl(1);
 		if (! empty($conf->multicompany->enabled) && $obj->admin && ! $obj->entity)
 		{
 			print img_picto($langs->trans("SuperAdministrator"),'redstar');
@@ -141,10 +160,11 @@ if ($resql)
 		print "</td>";
 		print '<td align="left">'.$obj->login.'</td>';
 		print "<td>";
-		if ($obj->fk_societe)
+		if ($obj->fk_soc)
 		{
-			$companystatic->id=$obj->fk_societe;
+			$companystatic->id=$obj->fk_soc;
             $companystatic->name=$obj->name;
+            $companystatic->code_client = $obj->code_client;
             $companystatic->canvas=$obj->canvas;
             print $companystatic->getNomUrl(1);
 		}
@@ -156,27 +176,27 @@ if ($resql)
 		{
 			print ' ('.$langs->trans("DomainUser").')';
 		}
-        // TODO This should be done with a hook
-        if (is_object($mc))
-        {
-			if (! empty($conf->multicompany->enabled))
-	        {
-	        	if (empty($obj->entity))
-	        	{
-	        		print ' ('.$langs->trans("AllEntities").')';
-	        	}
-	        	else
-	        	{
-	        		$mc->getInfo($obj->entity);
-	        		print ' ('.$mc->label.')';
-	        	}
-	        }
-        }
+
+		$entity=$obj->entity;
+		$entitystring='';
+        // TODO Set of entitystring should be done with a hook
+		if (! empty($conf->multicompany->enabled) && is_object($mc))
+		{
+			if (empty($entity))
+			{
+				$entitystring=$langs->trans("AllEntities");
+			}
+			else
+			{
+				$mc->getInfo($entity);
+				$entitystring=$mc->label;
+			}
+		}
+        print ($entitystring?' ('.$entitystring.')':'');
+
 		print '</td>';
 		print '<td align="right">'.dol_print_date($db->jdate($obj->datec),'dayhour').'</td>';
         print '<td align="right">';
-        $fuserstatic->id=$obj->rowid;
-        $fuserstatic->statut=$obj->statut;
         print $fuserstatic->getLibStatut(3);
         print '</td>';
 
@@ -236,7 +256,7 @@ if ($canreadperms)
 				print img_picto($langs->trans("GlobalGroup"),'redstar');
 			}
 			print "</td>";
-			if (! empty($conf->multicompany->enabled))
+			if (! empty($conf->multicompany->enabled) && is_object($mc))
 			{
 	        	$mc->getInfo($obj->entity);
 	        	print '<td>';

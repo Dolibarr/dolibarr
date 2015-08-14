@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2012	Christophe Battarel	<christophe.battarel@altairis.fr>
- * Copyright (C) 2014   Marcos García       <marcosgdf@gmail.com>
+/* Copyright (C) 2012      Christophe Battarel <christophe.battarel@altairis.fr>
+ * Copyright (C) 2014-2015 Marcos García       <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,10 +77,15 @@ function marges_prepare_head()
 		$h++;
 	}
 
+	if ($user->rights->margin->read->all) {
+		$title = 'UserMargins';
+	} else {
+		$title = 'SalesRepresentativeMargins';
+	}
+
 	$head[$h][0] = DOL_URL_ROOT."/margin/agentMargins.php";
-	$head[$h][1] = $langs->trans("SalesRepresentativeMargins");
+	$head[$h][1] = $langs->trans($title);
 	$head[$h][2] = 'agentMargins';
-	$h++;
 
 	return $head;
 }

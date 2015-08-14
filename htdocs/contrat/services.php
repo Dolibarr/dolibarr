@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -151,7 +152,7 @@ if ($resql)
 	if ($mode == "4" && $filter != "expired") $title=$langs->trans("ListOfRunningServices");
 	if ($mode == "4" && $filter == "expired") $title=$langs->trans("ListOfExpiredServices");
 	if ($mode == "5") $title=$langs->trans("ListOfClosedServices");
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num,$totalnboflines,'title_commercial.png');
 
 	print '<table class="liste" width="100%">';
 
@@ -190,14 +191,14 @@ if ($resql)
 	print $form->selectarray('filter_op1',$arrayofoperators,$filter_op1,1);
 	print ' ';
 	$filter_date1=dol_mktime(0,0,0,$op1month,$op1day,$op1year);
-	print $form->select_date($filter_date1,'op1',0,0,1);
+	print $form->select_date($filter_date1,'op1',0,0,1,'',1,0,1);
 	print '</td>';
 	print '<td class="liste_titre" align="center">';
 	$arrayofoperators=array('<'=>'<','>'=>'>');
 	print $form->selectarray('filter_op2',$arrayofoperators,$filter_op2,1);
 	print ' ';
 	$filter_date2=dol_mktime(0,0,0,$op2month,$op2day,$op2year);
-	print $form->select_date($filter_date2,'op2',0,0,1);
+	print $form->select_date($filter_date2,'op2',0,0,1,'',1,0,1);
 	print '</td>';
     print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
