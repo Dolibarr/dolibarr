@@ -812,7 +812,8 @@ function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $p
 
 	if (! $notab) $out.="\n".'<div class="tabBar">'."\n";
 
-	$parameters=array('context'=>$hookparameter);
+	array_push($hookmanager->contextarray,$hookparameter);
+	$parameters=array();
 	$reshook=$hookmanager->executeHooks('printTabsHead',$parameters);    // Note that $action and $object may have been modified by some hooks
 
 	return $out;
