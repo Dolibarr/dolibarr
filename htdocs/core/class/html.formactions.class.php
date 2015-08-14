@@ -196,10 +196,7 @@ class FormActions
 
         	foreach($listofactions as $action)
         	{
-        		$savlabel=$action->label;
-        		$action->label=$action->ref;
-        		$ref=$action->getNomUrl(1);
-        		$action->label=$savlabel;
+        		$ref=$action->getNomUrl(1,-1);
         		$label=$action->getNomUrl(0,38);
 
         		$var=!$var;
