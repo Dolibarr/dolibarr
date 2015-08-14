@@ -801,7 +801,7 @@ $db->close();
 
 
 /**
- * Show event of a particular day for a user
+ * Show event line of a particular day for a user
  *
  * @param	string	$username		Login
  * @param   int		$day            Day
@@ -1021,30 +1021,37 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 			}
 		}
 
-
-		if ($h == $begin_h) echo '<td class="'.$style.'_peruserleft cal_peruser'.($var?' cal_impair '.$style.'_impair':'').'">';
-		else echo '<td class="'.$style.' cal_peruser'.($var?' cal_impair '.$style.'_impair':'').'">';
-		if (count($cases1[$h]) == 1)	// 1 seul evenement
-		{
-			$ids=array_keys($cases1[$h]);
-			$output = array_slice($cases1[$h], 0, 1);
-			if ($output[0]['string']) $title1.=($title1?' - ':'').$output[0]['string'];
-			if ($output[0]['color']) $color1 = $output[0]['color'];
-		}
-		else if (count($cases1[$h]) > 1) $color1='222222';
-
-		if (count($cases2[$h]) == 1)	// 1 seul evenement
-		{
-			$ids=array_keys($cases2[$h]);
-			$output = array_slice($cases2[$h], 0, 1);
-			if ($output[0]['string']) $title2.=($title2?' - ':'').$output[0]['string'];
-			if ($output[0]['color']) $color2 = $output[0]['color'];
-		}
-		else if (count($cases2[$h]) > 1) $color2='222222';
 		$ids1='';$ids2='';
 		if (count($cases1[$h]) && array_keys($cases1[$h])) $ids1=join(',',array_keys($cases1[$h]));
 		if (count($cases2[$h]) && array_keys($cases2[$h])) $ids2=join(',',array_keys($cases2[$h]));
-		//var_dump($cases1[$h]);
+
+		if ($h == $begin_h) echo '<td class="'.$style.'_peruserleft cal_peruser'.($var?' cal_impair '.$style.'_impair':'').'">';
+		else echo '<td class="'.$style.' cal_peruser'.($var?' cal_impair '.$style.'_impair':'').'">';
+		if (count($cases1[$h]) == 1)	// only 1 event
+		{
+			$output = array_slice($cases1[$h], 0, 1);
+			$title1=$langs->trans("Ref").' '.$ids1.($title1?' - '.$title1:'');
+			if ($output[0]['string']) $title1.=($title1?' - ':'').$output[0]['string'];
+			if ($output[0]['color']) $color1 = $output[0]['color'];
+		}
+		else if (count($cases1[$h]) > 1)
+		{
+			$title1=$langs->trans("Ref").' '.$ids1.($title1?' - '.$title1:'');
+			$color1='222222';
+		}
+
+		if (count($cases2[$h]) == 1)	// only 1 event
+		{
+			$output = array_slice($cases2[$h], 0, 1);
+			$title2=$langs->trans("Ref").' '.$ids2.($title2?' - '.$title2:'');
+			if ($output[0]['string']) $title2.=($title2?' - ':'').$output[0]['string'];
+			if ($output[0]['color']) $color2 = $output[0]['color'];
+		}
+		else if (count($cases2[$h]) > 1)
+		{
+			$title2=$langs->trans("Ref").' '.$ids2.($title2?' - '.$title2:'');
+			$color2='222222';
+		}
 		print '<table class="nobordernopadding" width="100%">';
 		print '<tr><td '.($color1?'style="background: #'.$color1.';"':'').'class="'.($style1?$style1.' ':'').'onclickopenref'.($title1?' cursorpointer':'').'" ref="ref_'.$username->id.'_'.sprintf("%04d",$year).'_'.sprintf("%02d",$month).'_'.sprintf("%02d",$day).'_'.sprintf("%02d",$h).'_00_'.($ids1?$ids1:'none').'"'.($title1?' title="'.$title1.'"':'').'>';
 		print $string1;
