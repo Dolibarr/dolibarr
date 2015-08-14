@@ -669,9 +669,10 @@ if ($action == 'create')
                 print '<td align="center">'.$langs->trans("QtyOrdered").'</td>';
                 print '<td align="center">'.$langs->trans("QtyShipped").'</td>';
                 print '<td align="center">'.$langs->trans("QtyToShip");
-				if (empty($conf->productbatch->enabled)) {
-                print ' <br>(<a href="#" id="autofill">'.$langs->trans("Fill").'</a>';
-                print ' / <a href="#" id="autoreset">'.$langs->trans("Reset").'</a>)';
+				if (empty($conf->productbatch->enabled)) 
+				{
+	                print ' <br>(<a href="#" id="autofill">'.$langs->trans("Fill").'</a>';
+	                print ' / <a href="#" id="autoreset">'.$langs->trans("Reset").'</a>)';
 				}
                 print '</td>';
                 if (! empty($conf->stock->enabled))
@@ -848,31 +849,45 @@ if ($action == 'create')
 				else
 				{
 					print '<td></td><td></td></tr>';	// end line and start a new one for lot/serial
+
+					$staticwarehouse=new Entrepot($db);
+					$staticwarehouse->fetch($warehouse_id);
+					
 					$subj=0;
 					print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
-					foreach ($product->stock_warehouse[$warehouse_id]->detail_batch as $dbatch)
+					if (count($product->stock_warehouse[$warehouse_id]->detail_batch))
 					{
-						//var_dump($dbatch);
-						$substock=$dbatch->qty +0 ;
-						print '<tr><td colspan="3" ></td><td align="center">';
-						print '<input name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="'.min($defaultqty,$substock).'">';
-						print '</td>';
-
-						print '<td align="left">';
-
-						$staticwarehouse=new Entrepot($db);
-						$staticwarehouse->fetch($warehouse_id);
-						print $staticwarehouse->getNomUrl(0).' / ';
-
-						print '<!-- Show details of lot -->';
-						print '<input name="batchl'.$indiceAsked.'_'.$subj.'" type="hidden" value="'.$dbatch->id.'">';
-						print $langs->trans("DetailBatchFormat", $dbatch->batch, dol_print_date($dbatch->eatby,"day"), dol_print_date($dbatch->sellby,"day"), $dbatch->qty);
-						if ($defaultqty<=0) {
-							$defaultqty=0;
-						} else {
-							$defaultqty -=min($defaultqty,$substock);
+						foreach ($product->stock_warehouse[$warehouse_id]->detail_batch as $dbatch)
+						{
+							//var_dump($dbatch);
+							$substock=$dbatch->qty +0 ;		// To get a numeric
+							print '<tr><td colspan="3" ></td><td align="center">';
+							print '<input name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="'.($substock > 0 ? min($defaultqty,$substock) : '0').'">';
+							print '</td>';
+	
+							print '<td align="left">';
+	
+							print $staticwarehouse->getNomUrl(0).' / ';
+	
+							print '<!-- Show details of lot -->';
+							print '<input name="batchl'.$indiceAsked.'_'.$subj.'" type="hidden" value="'.$dbatch->id.'">';
+							print $langs->trans("DetailBatchFormat", $dbatch->batch, dol_print_date($dbatch->eatby,"day"), dol_print_date($dbatch->sellby,"day"), $dbatch->qty);
+							if ($defaultqty<=0) {
+								$defaultqty=0;
+							} else {
+								$defaultqty -= min($defaultqty,$substock);
+							}
+							$subj++;
 						}
-						$subj++;
+					}
+					else
+					{
+						print '<tr><td colspan="3" ></td><td align="center">';
+						print '<input name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="0" disabled="disabled"> ';
+						print '</td>';
+						
+						print '<td align="left">';
+						print img_warning().' '.$langs->trans("NoProductToShipFoundIntoStock", $staticwarehouse->libelle);
 					}
 				}
 
