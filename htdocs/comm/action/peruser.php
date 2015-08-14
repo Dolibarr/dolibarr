@@ -853,6 +853,8 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 			// Scan all event for this date
 			foreach ($eventarray[$daykey] as $index => $event)
 			{
+				//var_dump($event);
+
 				$keysofuserassigned=array_keys($event->userassigned);
 				if (! in_array($username->id,$keysofuserassigned)) continue;	// We discard record if event is from another user than user we want to show
 				//if ($username->id != $event->userownerid) continue;	// We discard record if event is from another user than user we want to show
