@@ -179,7 +179,7 @@ class FormActions
             elseif ($typeelement == 'fichinter') $title=$langs->trans('ActionsOnFicheInter');
         	else $title=$langs->trans("Actions");
 
-        	print_titre($title);
+        	print load_fiche_titre($title,'','');
 
         	$total = 0;	$var=true;
         	print '<table class="noborder" width="100%">';
