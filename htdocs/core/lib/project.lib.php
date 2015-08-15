@@ -1023,14 +1023,13 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks=
 	if (!empty($conf->global->PROJECT_LIMIT_YEAR_RANGE))
 	{
 		//Add the year filter input
+		print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">';
 		print '<table width="100%">';
 		print '<tr>';
 		print '<td>'.$langs->trans("Year").'</td>';
-		print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">';
 		print '<td style="text-align:right"><input type="text" size="4" class="flat" name="project_year_filter" value="'.$project_year_filter.'"/>';
-		print '</form>';
 		print "</tr>\n";
-		print '</table>';
+		print '</table></form>';
 	}
 }
 
