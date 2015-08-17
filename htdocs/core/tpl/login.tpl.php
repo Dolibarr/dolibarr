@@ -222,7 +222,7 @@ if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file
 <?php if (! empty($_SESSION['dol_loginmesg']))
 {
 ?>
-	<div class="center login_main_message" style="max-width: 500px; margin-left: 10px; margin-right: 10px;"><div class="error">
+	<div class="center login_main_message" style="max-width: 520px"><div class="error">
 	<?php echo $_SESSION['dol_loginmesg']; ?>
 	</div></div>
 <?php

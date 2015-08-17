@@ -3277,12 +3277,12 @@ abstract class CommonObject
 	 *	Need $this->element & $this->id
 	 *
 	 *	@param		int		$resource_id		Resource id
-	 *	@param		string	$resource_element	Resource element
+	 *	@param		string	$resource_type		'resource'
 	 *	@param		int		$busy				Busy or not
 	 *	@param		int		$mandatory			Mandatory or not
 	 *	@return		int							<=0 if KO, >0 if OK
 	 */
-	function add_element_resource($resource_id,$resource_element,$busy=0,$mandatory=0)
+	function add_element_resource($resource_id, $resource_type, $busy=0, $mandatory=0)
 	{
 		$this->db->begin();
 
@@ -3295,7 +3295,7 @@ abstract class CommonObject
 		$sql.= ", mandatory";
 		$sql.= ") VALUES (";
 		$sql.= $resource_id;
-		$sql.= ", '".$resource_element."'";
+		$sql.= ", '".$resource_type."'";
 		$sql.= ", '".$this->id."'";
 		$sql.= ", '".$this->element."'";
 		$sql.= ", '".$busy."'";
