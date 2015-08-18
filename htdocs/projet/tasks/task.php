@@ -63,128 +63,132 @@ $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 /*
  * Actions
  */
+$parameters=array('id'=>$id);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
-{
-	$error=0;
-
-	if (empty($_POST["label"]))
+if (empty($reshook)){
+	if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
 	{
-		$error++;
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")), 'errors');
-	}
-	if (! $error)
-	{
-		$object->fetch($id,$ref);
-
-		$tmparray=explode('_',$_POST['task_parent']);
-		$task_parent=$tmparray[1];
-		if (empty($task_parent)) $task_parent = 0;	// If task_parent is ''
-
-		$object->ref = GETPOST("ref",'alpha',2);
-		$object->label = $_POST["label"];
-		$object->description = $_POST['description'];
-		$object->fk_task_parent = $task_parent;
-		$object->planned_workload = $planned_workload;
-		$object->date_start = dol_mktime($_POST['dateohour'],$_POST['dateomin'],0,$_POST['dateomonth'],$_POST['dateoday'],$_POST['dateoyear'],'user');
-		$object->date_end = dol_mktime($_POST['dateehour'],$_POST['dateemin'],0,$_POST['dateemonth'],$_POST['dateeday'],$_POST['dateeyear'],'user');
-		$object->progress = $_POST['progress'];
-
-		// Fill array 'array_options' with data from add form
-		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
-		if ($ret < 0) $error++;
-
+		$error=0;
+	
+		if (empty($_POST["label"]))
+		{
+			$error++;
+			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")), 'errors');
+		}
 		if (! $error)
 		{
-			$result=$object->update($user);
-			if ($result < 0)
+			$object->fetch($id,$ref);
+	
+			$tmparray=explode('_',$_POST['task_parent']);
+			$task_parent=$tmparray[1];
+			if (empty($task_parent)) $task_parent = 0;	// If task_parent is ''
+	
+			$object->ref = GETPOST("ref",'alpha',2);
+			$object->label = $_POST["label"];
+			$object->description = $_POST['description'];
+			$object->fk_task_parent = $task_parent;
+			$object->planned_workload = $planned_workload;
+			$object->date_start = dol_mktime($_POST['dateohour'],$_POST['dateomin'],0,$_POST['dateomonth'],$_POST['dateoday'],$_POST['dateoyear'],'user');
+			$object->date_end = dol_mktime($_POST['dateehour'],$_POST['dateemin'],0,$_POST['dateemonth'],$_POST['dateeday'],$_POST['dateeyear'],'user');
+			$object->progress = $_POST['progress'];
+	
+			// Fill array 'array_options' with data from add form
+			$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+			if ($ret < 0) $error++;
+	
+			if (! $error)
+			{
+				$result=$object->update($user);
+				if ($result < 0)
+				{
+				    setEventMessages($object->error,$object->errors,'errors');
+				}
+			}
+		}
+		else
+		{
+			$action='edit';
+		}
+	}
+	
+	if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->projet->supprimer)
+	{
+		if ($object->fetch($id,$ref) >= 0)
+		{
+			$result=$projectstatic->fetch($object->fk_project);
+			$projectstatic->fetch_thirdparty();
+	
+			if ($object->delete($user) > 0)
+			{
+				header('Location: '.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.($withproject?'&withproject=1':''));
+				exit;
+			}
+			else
 			{
 			    setEventMessages($object->error,$object->errors,'errors');
+				$action='';
 			}
 		}
 	}
-	else
+	
+	// Retreive First Task ID of Project if withprojet is on to allow project prev next to work
+	if (! empty($project_ref) && ! empty($withproject))
 	{
-		$action='edit';
-	}
-}
-
-if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->projet->supprimer)
-{
-	if ($object->fetch($id,$ref) >= 0)
-	{
-		$result=$projectstatic->fetch($object->fk_project);
-		$projectstatic->fetch_thirdparty();
-
-		if ($object->delete($user) > 0)
+		if ($projectstatic->fetch('',$project_ref) > 0)
 		{
-			header('Location: '.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.($withproject?'&withproject=1':''));
-			exit;
-		}
-		else
-		{
-		    setEventMessages($object->error,$object->errors,'errors');
-			$action='';
+			$tasksarray=$object->getTasksArray(0, 0, $projectstatic->id, $socid, 0);
+			if (count($tasksarray) > 0)
+			{
+				$id=$tasksarray[0]->id;
+			}
+			else
+			{
+				header("Location: ".DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.(empty($mode)?'':'&mode='.$mode));
+			}
 		}
 	}
-}
-
-// Retreive First Task ID of Project if withprojet is on to allow project prev next to work
-if (! empty($project_ref) && ! empty($withproject))
-{
-	if ($projectstatic->fetch('',$project_ref) > 0)
+	
+	// Build doc
+	if ($action == 'builddoc' && $user->rights->projet->creer)
 	{
-		$tasksarray=$object->getTasksArray(0, 0, $projectstatic->id, $socid, 0);
-		if (count($tasksarray) > 0)
+		$object->fetch($id,$ref);
+	
+		// Save last template used to generate document
+		if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
+	
+		$outputlangs = $langs;
+		if (GETPOST('lang_id'))
 		{
-			$id=$tasksarray[0]->id;
+			$outputlangs = new Translate("",$conf);
+			$outputlangs->setDefaultLang(GETPOST('lang_id'));
 		}
-		else
+		$result= $object->generateDocument($object->modelpdf, $outputlangs);
+		if ($result <= 0)
 		{
-			header("Location: ".DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.(empty($mode)?'':'&mode='.$mode));
+			setEventMessages($object->error, $object->errors, 'errors');
+	        $action='';
+		}
+	}
+	
+	// Delete file in doc form
+	if ($action == 'remove_file' && $user->rights->projet->creer)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+	
+		if ($object->fetch($id,$ref) >= 0 )
+		{
+			$langs->load("other");
+			$upload_dir =	$conf->projet->dir_output;
+			$file =	$upload_dir	. '/' .	GETPOST('file');
+	
+			$ret=dol_delete_file($file);
+			if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
+			else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
 		}
 	}
 }
-
-// Build doc
-if ($action == 'builddoc' && $user->rights->projet->creer)
-{
-	$object->fetch($id,$ref);
-
-	// Save last template used to generate document
-	if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
-
-	$outputlangs = $langs;
-	if (GETPOST('lang_id'))
-	{
-		$outputlangs = new Translate("",$conf);
-		$outputlangs->setDefaultLang(GETPOST('lang_id'));
-	}
-	$result= $object->generateDocument($object->modelpdf, $outputlangs);
-	if ($result <= 0)
-	{
-		setEventMessages($object->error, $object->errors, 'errors');
-        $action='';
-	}
-}
-
-// Delete file in doc form
-if ($action == 'remove_file' && $user->rights->projet->creer)
-{
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
-	if ($object->fetch($id,$ref) >= 0 )
-	{
-		$langs->load("other");
-		$upload_dir =	$conf->projet->dir_output;
-		$file =	$upload_dir	. '/' .	GETPOST('file');
-
-		$ret=dol_delete_file($file);
-		if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-		else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
-	}
-}
-
 /*
  * View
 */
