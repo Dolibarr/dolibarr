@@ -117,7 +117,7 @@ http://bugs.debian.org/package
 severity 123 xxx
 
 
-##### Update but tracker system
+##### Update bug tracker system
 
 To set status of a bug to "pending"
 > bts --smtp-host=yoursmtpserver tag 999999 +pending
@@ -249,7 +249,7 @@ from git clone dir and make link to git.
 * If local branch upstream and pristine-tar does not exists, create it
 from origin/upstream and origin/pristine.
 
-* If new upstream is available onto sourceforge, launch:
+* When new upstream is available onto sourceforge, launch:
 > debian/get-orig-source.sh
 If script fails with error Bad certificate, you can set "export PERL_LWP_SSL_VERIFY_HOSTNAME=0" to solve this.
 
@@ -273,8 +273,8 @@ Note: If there was errors solved manually after get-orig-sources.sh, you may nee
 * Fix debian/* files used to build package.
 Add an entry into debian/changelog
 > dch -v x.y.z+dfsgw-v "My comment" will add entry.
-For example: dch -v x.y.z+dfsgw-1 "New upstream release." for a new version (x.y.z = version, w start from 1 and increaed for each new import)
-Then modify changelog to replace "version" or "unstable" with "UNRELEASED".
+For example: dch -v x.y.z+dfsgw-1 "New upstream release." for a new version (x.y.z = version, w start from 1 and increased for each new import)
+Then check/modify changelog to replace "version" or "unstable" with "UNRELEASED".
 Then check/modify also the user/date signature:
 - Date must have format reported by "date -R"
 - Name and email must match value into debian/control file (Entry added here is used by next step).
@@ -299,7 +299,7 @@ Note: Package is built into directory ../build-area
 
 * If package .deb is ok:
 Note: If there was errors managed manually, you may need to make a git commit but do not use option "amend" previous commit
-> git push --all ou git push origin --all
+> git push --all
 
 * If ok, you can tag.
 > Edit debian/changelog to replace "UNRELEASED" into "unstable", then push
