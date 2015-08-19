@@ -467,6 +467,21 @@ class modSociete extends DolibarrModules
 				'sr.code_banque'=>"0000", 'sr.code_guichet'=>"1111",'sr.number'=>"3333333333",
 				'sr.cle_rib'=>"22",'sr.bic'=>"USHINGMMXXX",'sr.iban_prefix'=>"US00 0000 1111 22 3333 3333"
 		);
+		
+		// Import Company Salesman
+		$r++;
+		$this->import_code[$r]=$this->rights_class.'_'.$r;
+		$this->import_label[$r]="ImportDataset_company_4";	// Translation key
+		$this->import_icon[$r]='company';
+		$this->import_entities_array[$r]=array('sr.fk_user'=>'user');		// We define here only fields that use another icon that the one defined into import_icon
+		$this->import_tables_array[$r]=array('sr'=>MAIN_DB_PREFIX.'societe_commerciaux');
+		$this->import_fields_array[$r]=array('sr.fk_soc'=>"ThirdPartyName*",'sr.fk_user'=>"User*");
+		
+		$this->import_convertvalue_array[$r]=array(
+				'sr.fk_soc'=>array('rule'=>'fetchidfromref','classfile'=>'/societe/class/societe.class.php','class'=>'Societe','method'=>'fetch','element'=>'ThirdParty'),
+				'sr.fk_user'=>array('rule'=>'fetchidfromref','classfile'=>'/user/class/user.class.php','class'=>'User','method'=>'fetch','element'=>'User')
+		);
+		$this->import_examplevalues_array[$r]=array('sr.fk_soc'=>"MyBigCompany",'sr.fk_user'=>"login");
 	}
 
 
