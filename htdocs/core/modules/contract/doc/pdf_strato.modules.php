@@ -268,18 +268,32 @@ class pdf_strato extends ModelePDFContract
 
 						// Description of product line
 
-						if ($objectligne->datei) {
-							$datei = dol_print_date($objectligne->datei,'dayhour',false,$outputlangs,true);
+						if ($objectligne->date_ouverture_prevue) {
+							$datei = dol_print_date($objectligne->date_ouverture_prevue,'day',false,$outputlangs,true);
 						} else {
 							$datei = $langs->trans("Unknown");
 						}
 
-						if ($objectligne->duration) {
-							$durationi = convertSecondToTime($objectligne->duration);
+						if ($objectligne->date_fin_validite) {
+							$durationi = convertSecondToTime($objectligne->date_fin_validite - $objectligne->date_ouverture_prevue, 'allwithouthour');
+							$datee = dol_print_date($objectligne->date_fin_validite,'day',false,$outputlangs,true);
 						} else {
 							$durationi = $langs->trans("Unknown");
+							$datee = $langs->trans("Unknown");
 						}
 
+						if ($objectligne->date_ouverture) {
+							$daters = dol_print_date($objectligne->date_ouverture,'day',false,$outputlangs,true);
+						} else {
+							$daters = $langs->trans("Unknown");
+						}
+
+						if ($objectligne->date_cloture) {
+							$datere = dol_print_date($objectligne->date_cloture,'day',false,$outputlangs,true);
+						} else {
+							$datere = $langs->trans("Unknown");
+						}
+						
 						$txtpredefinedservice='';
                         $txtpredefinedservice = $objectligne->product_ref;
                         if ($objectligne->product_label)
@@ -288,7 +302,10 @@ class pdf_strato extends ModelePDFContract
                         	$txtpredefinedservice .= $objectligne->product_label;
                         }
 
-						$txt='<strong>'.dol_htmlentitiesbr($outputlangs->transnoentities("Date")." : ".$datei." - ".$outputlangs->transnoentities("Duration")." : ".$durationi,1,$outputlangs->charset_output).'</strong>';
+						$txt='<strong>'.dol_htmlentitiesbr($outputlangs->transnoentities("DateStartPlannedShort")." : ".$datei." - ".$outputlangs->transnoentities("DateEndPlanned")." : ".$datee,1,$outputlangs->charset_output).'</strong>';
+						$txt.='<br>';
+						$txt.='<strong>'.dol_htmlentitiesbr($outputlangs->transnoentities("DateStartRealShort")." : ".$daters,1,$outputlangs->charset_output);
+						if ($objectligne->date_cloture) $txt.=dol_htmlentitiesbr(" - ".$outputlangs->transnoentities("DateEndRealShort")." : ".$datere,1,$outputlangs->charset_output).'</strong>';
 						$desc=dol_htmlentitiesbr($objectligne->desc,1);
 
 						$pdf->writeHTMLCell(0, 0, $curX, $curY, dol_concatdesc($txt,dol_concatdesc($txtpredefinedservice,$desc)), 0, 1, 0);
