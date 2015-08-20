@@ -628,7 +628,7 @@ class Expedition extends CommonObject
 			// TODO possibilite d'expedier a partir d'une propale ou autre origine
 			$sql = "SELECT cd.fk_product, cd.subprice,";
 			$sql.= " ed.rowid, ed.qty, ed.fk_entrepot,";
-			$sql.= " edb.rowid as edbrowid, edb.eatby, edb.sellby, edb.batch, edb.qty, edb.fk_origin_stock";
+			$sql.= " edb.rowid as edbrowid, edb.eatby, edb.sellby, edb.batch, edb.qty as edbqty, edb.fk_origin_stock";
 			$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd,";
 			$sql.= " ".MAIN_DB_PREFIX."expeditiondet as ed";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."expeditiondet_batch as edb on edb.fk_expeditiondet = ed.rowid";
@@ -639,8 +639,8 @@ class Expedition extends CommonObject
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
-			    $cpt = $this->db->num_rows($resql);
-                for ($i = 0; $i < $cpt; $i++)
+				$cpt = $this->db->num_rows($resql);
+				for ($i = 0; $i < $cpt; $i++)
 				{
 					$obj = $this->db->fetch_object($resql);
 					if ($obj->qty <= 0) continue;
@@ -658,14 +658,14 @@ class Expedition extends CommonObject
 						$result=$mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty, $obj->subprice, $langs->trans("ShipmentValidatedInDolibarr",$numref));
 						if ($result < 0) {
 							$error++; break;
-						}
+							}
 					}
 					else
 					{
 						// line with batch detail
 						
 						// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
-						$result=$mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty, $obj->subprice, $langs->trans("ShipmentValidatedInDolibarr",$numref), '', $obj->eatby, $obj->sellby, $obj->batch);
+						$result=$mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $obj->edbqty, $obj->subprice, $langs->trans("ShipmentValidatedInDolibarr",$numref), '', $obj->eatby, $obj->sellby, $obj->batch);
 						if ($result < 0) {
 							$error++; break;
 						}
@@ -860,7 +860,7 @@ class Expedition extends CommonObject
 					// $value['q']=qty to move
 					// $value['id_batch']=id into llx_product_batch of record to move
 					//var_dump($value);
-								
+					
 					$linebatch = new ExpeditionLineBatch($this->db);
 					$ret=$linebatch->fetchFromStock($value['id_batch']);	// load serial, sellby, eatby
 					if ($ret<0)
