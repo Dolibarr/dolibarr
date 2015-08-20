@@ -224,7 +224,7 @@ Dolibarr better:
   hook afterLogin or afterLoginFailed instead.
 - The trigger USER_CREATE_FROM_CONTACT has been replace with USER_CREATE and property context is now filled
   to make difference between creation from contact or not.
-
+- Function get_exdir require now 6 parameters. This is to prepare a future feature.
 
 ***** ChangeLog for 3.7.2 compared to 3.7.1 *****
 FIX [ bug #2855 ] Wrong translation key in localtax report page

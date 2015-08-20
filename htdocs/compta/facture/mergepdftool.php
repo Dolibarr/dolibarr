@@ -56,7 +56,7 @@ if (GETPOST('button_search'))
 }
 if ($option == 'late') $filter = 'paye:0';
 if ($option == 'unpaidall') $filter = 'paye:0';
-if ($mode == 'sendremind' && $filter == '') $filter = 'paye:0';
+if ($mode == 'sendmassremind' && $filter == '') $filter = 'paye:0';
 if ($filter == '') $filter = 'paye:0';
 
 $search_user = GETPOST('search_user','int');

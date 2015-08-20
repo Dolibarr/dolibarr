@@ -111,7 +111,7 @@ class pdf_beluga extends ModelePDFProjects
 	{
 		global $user,$langs,$conf;
 
-$formproject=new FormProjets($this->db);
+        $formproject=new FormProjets($this->db);
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
@@ -223,233 +223,216 @@ $formproject=new FormProjets($this->db);
 				$iniY = $tab_top + 7;
 				$curY = $tab_top + 7;
 				$nexY = $tab_top + 7;
-
-$listofreferent=array(
-'propal'=>array(
-	'name'=>"Proposals",
-	'title'=>"ListProposalsAssociatedProject",
-	'class'=>'Propal',
-	'table'=>'propal',
-    'datefieldname'=>'datep',
-	'test'=>$conf->propal->enabled && $user->rights->propale->lire),
-'order'=>array(
-	'name'=>"CustomersOrders",
-	'title'=>"ListOrdersAssociatedProject",
-	'class'=>'Commande',
-	'table'=>'commande',
-	'datefieldname'=>'date_commande',
-	'test'=>$conf->commande->enabled && $user->rights->commande->lire),
-'invoice'=>array(
-	'name'=>"CustomersInvoices",
-	'title'=>"ListInvoicesAssociatedProject",
-	'class'=>'Facture',
-	'margin'=>'add',
-	'table'=>'facture',
-	'datefieldname'=>'datef',
-	'test'=>$conf->facture->enabled && $user->rights->facture->lire),
-'invoice_predefined'=>array(
-	'name'=>"PredefinedInvoices",
-	'title'=>"ListPredefinedInvoicesAssociatedProject",
-	'class'=>'FactureRec',
-	'table'=>'facture_rec',
-	'datefieldname'=>'datec',
-	'test'=>$conf->facture->enabled && $user->rights->facture->lire),
-'order_supplier'=>array(
-	'name'=>"SuppliersOrders",
-	'title'=>"ListSupplierOrdersAssociatedProject",
-	'class'=>'CommandeFournisseur',
-	'table'=>'commande_fournisseur',
-	'datefieldname'=>'date_commande',
-	'test'=>$conf->fournisseur->enabled && $user->rights->fournisseur->commande->lire),
-'invoice_supplier'=>array(
-	'name'=>"BillsSuppliers",
-	'title'=>"ListSupplierInvoicesAssociatedProject",
-	'class'=>'FactureFournisseur',
-	'margin'=>'minus',
-	'table'=>'facture_fourn',
-	'datefieldname'=>'datef',
-	'test'=>$conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire),
-'contract'=>array(
-	'name'=>"Contracts",
-	'title'=>"ListContractAssociatedProject",
-	'class'=>'Contrat',
-	'table'=>'contrat',
-	'datefieldname'=>'date_contrat',
-	'test'=>$conf->contrat->enabled && $user->rights->contrat->lire),
-'intervention'=>array(
-	'name'=>"Interventions",
-	'title'=>"ListFichinterAssociatedProject",
-	'class'=>'Fichinter',
-	'table'=>'fichinter',
-	'datefieldname'=>'date_valid',
-	'disableamount'=>1,
-	'test'=>$conf->ficheinter->enabled && $user->rights->ficheinter->lire),
-'trip'=>array(
-	'name'=>"TripsAndExpenses",
-	'title'=>"ListTripAssociatedProject",
-	'class'=>'Deplacement',
-	'table'=>'deplacement',
-	'datefieldname'=>'dated',
-	'margin'=>'minus',
-	'disableamount'=>1,
-	'test'=>$conf->deplacement->enabled && $user->rights->deplacement->lire),
-'agenda'=>array(
-	'name'=>"Agenda",
-	'title'=>"ListActionsAssociatedProject",
-	'class'=>'ActionComm',
-	'table'=>'actioncomm',
-	'datefieldname'=>'datep',
-	'disableamount'=>1,
-	'test'=>$conf->agenda->enabled && $user->rights->agenda->allactions->lire)
-);
-
-
-foreach ($listofreferent as $key => $value)
-{
-	$title=$value['title'];
-	$classname=$value['class'];
-	$tablename=$value['table'];
-	$datefieldname=$value['datefieldname'];
-	$qualified=$value['test'];
-
-	if ($qualified)
-	{
-		$elementarray = $object->get_element_list($key, $tablename, $datefieldname, $dates, $datee);
-		$num=count($elementarray);
-if ($num> 0)
-{
-		$nexY = $pdf->GetY()+5;
-		$curY = $nexY;
-		$pdf->SetXY($this->posxref, $curY);
-		$pdf->MultiCell($this->posxstatut-$this->posxref, 3, $outputlangs->transnoentities($title), 0, 'L');
-
-		
-		$selectList=$formproject->select_element($tablename,$project->thirdparty->id);
-		$nexY = $pdf->GetY()+1;
-		$curY = $nexY;
-		$pdf->SetXY($this->posxref, $curY);
-		$pdf->MultiCell($this->posxdate-$this->posxref, 3, $outputlangs->transnoentities("Ref"), 1, 'L');
-		$pdf->SetXY($this->posxdate, $curY);
-		$pdf->MultiCell($this->posxsociety-$this->posxdate, 3, $outputlangs->transnoentities("Date"), 1, 'C');
-		$pdf->SetXY($this->posxsociety, $curY);
-		$pdf->MultiCell($this->posxamountht-$this->posxsociety, 3, $outputlangs->transnoentities("ThirdParty"), 1, 'L');
-		if (empty($value['disableamount'])) 
-		{
-			$pdf->SetXY($this->posxamountht, $curY);
-			$pdf->MultiCell($this->posxamountttc-$this->posxamountht, 3, $outputlangs->transnoentities("AmountHT"), 1, 'R');
-			$pdf->SetXY($this->posxamountttc, $curY);
-			$pdf->MultiCell($this->posxstatut-$this->posxamountttc, 3, $outputlangs->transnoentities("AmountTTC"), 1, 'R');
-		}
-		else
-		{
-			$pdf->SetXY($this->posxamountht, $curY);
-			$pdf->MultiCell($this->posxstatut-$this->posxamountht, 3, "", 1, 'R');
-		}
-		$pdf->SetXY($this->posxstatut, $curY);
-		$pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->posxstatut, 3, $outputlangs->transnoentities("Statut"), 1, 'R');
-
-		
-		if (is_array($elementarray) && count($elementarray)>0)
-		{
-			$nexY = $pdf->GetY();
-			$curY = $nexY;
-			
-			$total_ht = 0;
-			$total_ttc = 0;
-			$num=count($elementarray);
-			for ($i = 0; $i < $num; $i++)
-			{
-				$element = new $classname($this->db);
-				$element->fetch($elementarray[$i]);
-				$element->fetch_thirdparty();
-				//print $classname;
-
-				$qualifiedfortotal=true;
-				if ($key == 'invoice')
-				{
-					if ($element->close_code == 'replaced') $qualifiedfortotal=false;	// Replacement invoice
-				}
-
-				$pdf->SetXY($this->posxref, $curY);
-				$pdf->MultiCell($this->posxdate-$this->posxref, 3, $element->ref, 1, 'L');
-
-
-				// Date
-				if ($tablename == 'commande_fournisseur' || $tablename == 'supplier_order') $date=$element->date_commande;
-				else
-				{
-					$date=$element->date;
-					if (empty($date)) $date=$element->datep;
-					if (empty($date)) $date=$element->date_contrat;
-					if (empty($date)) $date=$element->datev; //Fiche inter
-				}
-				
-				$pdf->SetXY($this->posxdate, $curY);
-				$pdf->MultiCell($this->posxsociety-$this->posxdate, 3, dol_print_date($date,'day'), 1, 'C');
-		
-				$pdf->SetXY($this->posxsociety, $curY);
-				if (is_object($element->thirdparty))
-					$pdf->MultiCell($this->posxamountht-$this->posxsociety, 3, $element->thirdparty->name, 1, 'L');
-
-
-                // Amount without tax
-				if (empty($value['disableamount']))
-				{
-					$pdf->SetXY($this->posxamountht, $curY);
-					$pdf->MultiCell($this->posxamountttc-$this->posxamountht, 3, 
-						(isset($element->total_ht)?price($element->total_ht):'&nbsp;'), 1, 'R');
-					$pdf->SetXY($this->posxamountttc, $curY);
-					$pdf->MultiCell($this->posxstatut-$this->posxamountttc, 3, 
-						(isset($element->total_ttc)?price($element->total_ttc):'&nbsp;'), 1, 'R');
-				}
-				else
-				{
-					$pdf->SetXY($this->posxamountht, $curY);
-					$pdf->MultiCell($this->posxstatut-$this->posxamountht, 3, "", 1, 'R');
-				}
-
-				// Status
-				if ($element instanceof CommonInvoice) {
-					//This applies for Facture and FactureFournisseur
-					$outputstatut= $element->getLibStatut(1, $element->getSommePaiement());
-				} else {
-					$outputstatut = $element->getLibStatut(1);
-				}
-				$pdf->SetXY($this->posxstatut, $curY);
-				$pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->posxstatut, 3, 
-					$outputstatut, 1, 'R',false, 1, '', '', true, 0, true);
-
-				if ($qualifiedfortotal)
-				{
-					$total_ht = $total_ht + $element->total_ht;
-					$total_ttc = $total_ttc + $element->total_ttc;
-				}
-$nexY = $pdf->GetY();
-				$curY = $nexY;
-			}
-
-
-			if (empty($value['disableamount']))
-			{
-				$curY = $nexY;
-				$pdf->SetXY($this->posxref, $curY);
-				$pdf->MultiCell($this->posxamountttc-$this->posxref, 3, "TOTAL", 1, 'L');
-				$pdf->SetXY($this->posxamountht, $curY);
-				$pdf->MultiCell($this->posxamountttc-$this->posxamountht, 3, 
-					(isset($element->total_ht)?price($total_ht):'&nbsp;'), 1, 'R');
-				$pdf->SetXY($this->posxamountttc, $curY);
-				$pdf->MultiCell($this->posxstatut-$this->posxamountttc, 3, 
-					(isset($element->total_ttc)?price($total_ttc):'&nbsp;'), 1, 'R');
-				$pdf->SetXY($this->posxstatut, $curY);
-				$pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->posxstatut, 3, 
-					$outputlangs->transnoentities("Nb")." ".$num, 1, 'L');
-			}
-			$nexY = $pdf->GetY()+5;
-			$curY = $nexY;
-		}
-	}
-}
-}
+                                    
+                $listofreferent=array(
+                    'propal'=>array(
+                    	'name'=>"Proposals",
+                    	'title'=>"ListProposalsAssociatedProject",
+                    	'class'=>'Propal',
+                    	'table'=>'propal',
+                        'datefieldname'=>'datep',
+                    	'test'=>$conf->propal->enabled && $user->rights->propale->lire),
+                    'order'=>array(
+                    	'name'=>"CustomersOrders",
+                    	'title'=>"ListOrdersAssociatedProject",
+                    	'class'=>'Commande',
+                    	'table'=>'commande',
+                    	'datefieldname'=>'date_commande',
+                    	'test'=>$conf->commande->enabled && $user->rights->commande->lire),
+                    'invoice'=>array(
+                    	'name'=>"CustomersInvoices",
+                    	'title'=>"ListInvoicesAssociatedProject",
+                    	'class'=>'Facture',
+                    	'margin'=>'add',
+                    	'table'=>'facture',
+                    	'datefieldname'=>'datef',
+                    	'test'=>$conf->facture->enabled && $user->rights->facture->lire),
+                    'invoice_predefined'=>array(
+                    	'name'=>"PredefinedInvoices",
+                    	'title'=>"ListPredefinedInvoicesAssociatedProject",
+                    	'class'=>'FactureRec',
+                    	'table'=>'facture_rec',
+                    	'datefieldname'=>'datec',
+                    	'test'=>$conf->facture->enabled && $user->rights->facture->lire),
+                    'order_supplier'=>array(
+                    	'name'=>"SuppliersOrders",
+                    	'title'=>"ListSupplierOrdersAssociatedProject",
+                    	'class'=>'CommandeFournisseur',
+                    	'table'=>'commande_fournisseur',
+                    	'datefieldname'=>'date_commande',
+                    	'test'=>$conf->fournisseur->enabled && $user->rights->fournisseur->commande->lire),
+                    'invoice_supplier'=>array(
+                    	'name'=>"BillsSuppliers",
+                    	'title'=>"ListSupplierInvoicesAssociatedProject",
+                    	'class'=>'FactureFournisseur',
+                    	'margin'=>'minus',
+                    	'table'=>'facture_fourn',
+                    	'datefieldname'=>'datef',
+                    	'test'=>$conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire),
+                    'contract'=>array(
+                    	'name'=>"Contracts",
+                    	'title'=>"ListContractAssociatedProject",
+                    	'class'=>'Contrat',
+                    	'table'=>'contrat',
+                    	'datefieldname'=>'date_contrat',
+                    	'test'=>$conf->contrat->enabled && $user->rights->contrat->lire),
+                    'intervention'=>array(
+                    	'name'=>"Interventions",
+                    	'title'=>"ListFichinterAssociatedProject",
+                    	'class'=>'Fichinter',
+                    	'table'=>'fichinter',
+                    	'datefieldname'=>'date_valid',
+                    	'disableamount'=>1,
+                    	'test'=>$conf->ficheinter->enabled && $user->rights->ficheinter->lire),
+                    'trip'=>array(
+                    	'name'=>"TripsAndExpenses",
+                    	'title'=>"ListTripAssociatedProject",
+                    	'class'=>'Deplacement',
+                    	'table'=>'deplacement',
+                    	'datefieldname'=>'dated',
+                    	'margin'=>'minus',
+                    	'disableamount'=>1,
+                    	'test'=>$conf->deplacement->enabled && $user->rights->deplacement->lire),
+                    'agenda'=>array(
+                    	'name'=>"Agenda",
+                    	'title'=>"ListActionsAssociatedProject",
+                    	'class'=>'ActionComm',
+                    	'table'=>'actioncomm',
+                    	'datefieldname'=>'datep',
+                    	'disableamount'=>1,
+                    	'test'=>$conf->agenda->enabled && $user->rights->agenda->allactions->lire)
+                );
+                
+                
+                foreach ($listofreferent as $key => $value)
+                {
+                	$title=$value['title'];
+                	$classname=$value['class'];
+                	$tablename=$value['table'];
+                	$datefieldname=$value['datefieldname'];
+                	$qualified=$value['test'];
+                	
+                    if ($qualified)
+                    {
+                        $elementarray = $object->get_element_list($key, $tablename, $datefieldname, $dates, $datee);
+                        $num = count($elementarray);
+                        if ($num > 0)
+                        {
+                            $nexY = $pdf->GetY() + 5;
+                            $curY = $nexY;
+                            $pdf->SetXY($this->posxref, $curY);
+                            $pdf->MultiCell($this->posxstatut - $this->posxref, 3, $outputlangs->transnoentities($title), 0, 'L');
+                            
+                            $selectList = $formproject->select_element($tablename, $project->thirdparty->id);
+                            $nexY = $pdf->GetY() + 1;
+                            $curY = $nexY;
+                            $pdf->SetXY($this->posxref, $curY);
+                            $pdf->MultiCell($this->posxdate - $this->posxref, 3, $outputlangs->transnoentities("Ref"), 1, 'L');
+                            $pdf->SetXY($this->posxdate, $curY);
+                            $pdf->MultiCell($this->posxsociety - $this->posxdate, 3, $outputlangs->transnoentities("Date"), 1, 'C');
+                            $pdf->SetXY($this->posxsociety, $curY);
+                            $pdf->MultiCell($this->posxamountht - $this->posxsociety, 3, $outputlangs->transnoentities("ThirdParty"), 1, 'L');
+                            if (empty($value['disableamount'])) {
+                                $pdf->SetXY($this->posxamountht, $curY);
+                                $pdf->MultiCell($this->posxamountttc - $this->posxamountht, 3, $outputlangs->transnoentities("AmountHT"), 1, 'R');
+                                $pdf->SetXY($this->posxamountttc, $curY);
+                                $pdf->MultiCell($this->posxstatut - $this->posxamountttc, 3, $outputlangs->transnoentities("AmountTTC"), 1, 'R');
+                            } else {
+                                $pdf->SetXY($this->posxamountht, $curY);
+                                $pdf->MultiCell($this->posxstatut - $this->posxamountht, 3, "", 1, 'R');
+                            }
+                            $pdf->SetXY($this->posxstatut, $curY);
+                            $pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxstatut, 3, $outputlangs->transnoentities("Statut"), 1, 'R');
+                            
+                            if (is_array($elementarray) && count($elementarray) > 0)
+                            {
+                                $nexY = $pdf->GetY();
+                                $curY = $nexY;
+                                
+                                $total_ht = 0;
+                                $total_ttc = 0;
+                                $num = count($elementarray);
+                                for ($i = 0; $i < $num; $i ++) {
+                                    $element = new $classname($this->db);
+                                    $element->fetch($elementarray[$i]);
+                                    $element->fetch_thirdparty();
+                                    // print $classname;
+                                    
+                                    $qualifiedfortotal = true;
+                                    if ($key == 'invoice') {
+                                        if ($element->close_code == 'replaced')
+                                            $qualifiedfortotal = false; // Replacement invoice
+                                    }
+                                    
+                                    $pdf->SetXY($this->posxref, $curY);
+                                    $pdf->MultiCell($this->posxdate - $this->posxref, 3, $element->ref, 1, 'L');
+                                    
+                                    // Date
+                                    if ($tablename == 'commande_fournisseur' || $tablename == 'supplier_order')
+                                        $date = $element->date_commande;
+                                    else {
+                                        $date = $element->date;
+                                        if (empty($date))
+                                            $date = $element->datep;
+                                        if (empty($date))
+                                            $date = $element->date_contrat;
+                                        if (empty($date))
+                                            $date = $element->datev; // Fiche inter
+                                    }
+                                    
+                                    $pdf->SetXY($this->posxdate, $curY);
+                                    $pdf->MultiCell($this->posxsociety - $this->posxdate, 3, dol_print_date($date, 'day'), 1, 'C');
+                                    
+                                    $pdf->SetXY($this->posxsociety, $curY);
+                                    if (is_object($element->thirdparty))
+                                        $pdf->MultiCell($this->posxamountht - $this->posxsociety, 3, $element->thirdparty->name, 1, 'L');
+                                        
+                                        // Amount without tax
+                                    if (empty($value['disableamount'])) {
+                                        $pdf->SetXY($this->posxamountht, $curY);
+                                        $pdf->MultiCell($this->posxamountttc - $this->posxamountht, 3, (isset($element->total_ht) ? price($element->total_ht) : '&nbsp;'), 1, 'R');
+                                        $pdf->SetXY($this->posxamountttc, $curY);
+                                        $pdf->MultiCell($this->posxstatut - $this->posxamountttc, 3, (isset($element->total_ttc) ? price($element->total_ttc) : '&nbsp;'), 1, 'R');
+                                    } else {
+                                        $pdf->SetXY($this->posxamountht, $curY);
+                                        $pdf->MultiCell($this->posxstatut - $this->posxamountht, 3, "", 1, 'R');
+                                    }
+                                    
+                                    // Status
+                                    if ($element instanceof CommonInvoice) {
+                                        // This applies for Facture and FactureFournisseur
+                                        $outputstatut = $element->getLibStatut(1, $element->getSommePaiement());
+                                    } else {
+                                        $outputstatut = $element->getLibStatut(1);
+                                    }
+                                    $pdf->SetXY($this->posxstatut, $curY);
+                                    $pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxstatut, 3, $outputstatut, 1, 'R', false, 1, '', '', true, 0, true);
+                                    
+                                    if ($qualifiedfortotal) {
+                                        $total_ht = $total_ht + $element->total_ht;
+                                        $total_ttc = $total_ttc + $element->total_ttc;
+                                    }
+                                    $nexY = $pdf->GetY();
+                                    $curY = $nexY;
+                                }
+                                
+                                if (empty($value['disableamount'])) {
+                                    $curY = $nexY;
+                                    $pdf->SetXY($this->posxref, $curY);
+                                    $pdf->MultiCell($this->posxamountttc - $this->posxref, 3, "TOTAL", 1, 'L');
+                                    $pdf->SetXY($this->posxamountht, $curY);
+                                    $pdf->MultiCell($this->posxamountttc - $this->posxamountht, 3, (isset($element->total_ht) ? price($total_ht) : '&nbsp;'), 1, 'R');
+                                    $pdf->SetXY($this->posxamountttc, $curY);
+                                    $pdf->MultiCell($this->posxstatut - $this->posxamountttc, 3, (isset($element->total_ttc) ? price($total_ttc) : '&nbsp;'), 1, 'R');
+                                    $pdf->SetXY($this->posxstatut, $curY);
+                                    $pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxstatut, 3, $outputlangs->transnoentities("Nb") . " " . $num, 1, 'L');
+                                }
+                                $nexY = $pdf->GetY() + 5;
+                                $curY = $nexY;
+                            }
+                        }
+                    }
+                }
 
 
 

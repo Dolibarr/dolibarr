@@ -658,7 +658,7 @@ class Expedition extends CommonObject
 						$result=$mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty, $obj->subprice, $langs->trans("ShipmentValidatedInDolibarr",$numref));
 						if ($result < 0) {
 							$error++; break;
-							}
+						}
 					}
 					else
 					{
@@ -860,8 +860,8 @@ class Expedition extends CommonObject
 					// $value['q']=qty to move
 					// $value['id_batch']=id into llx_product_batch of record to move
 					//var_dump($value);
-					
-					$linebatch = new ExpeditionLineBatch($this->db);
+
+				    $linebatch = new ExpeditionLineBatch($this->db);
 					$ret=$linebatch->fetchFromStock($value['id_batch']);	// load serial, sellby, eatby
 					if ($ret<0)
 					{
