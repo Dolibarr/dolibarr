@@ -672,7 +672,7 @@ class Societe extends CommonObject
         $this->localtax2_value=trim($this->localtax2_value);
 
         $this->capital=price2num(trim($this->capital),'MT');
-        if (empty($this->capital)) $this->capital = 0;
+        if (empty($this->capital) || ! is_numeric($this->capital)) $this->capital = 0;
 
         $this->effectif_id=trim($this->effectif_id);
         $this->forme_juridique_code=trim($this->forme_juridique_code);
