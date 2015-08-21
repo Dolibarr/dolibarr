@@ -673,8 +673,13 @@ if (empty($reshook))
     $trigger_name='COMPANY_SENTBYMAIL';
     $paramname='socid';
     $mode='emailfromthirdparty';
-    include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
-
+    $reshook = $hookmanager->executeHooks('ChangeActionSendmailsPath', $parameters, $object, $action); 	// Note that $action and $object may have been
+		if (empty($reshook)) {
+				include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
+		}else{
+				include DOL_DOCUMENT_ROOT.$reshook;
+		}
+	
 
     /*
      * Generate document
