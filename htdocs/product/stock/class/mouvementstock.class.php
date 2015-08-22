@@ -664,7 +664,7 @@ class MouvementStock extends CommonObject
 			default:
 				if ($origintype)
 				{
-					require_once DOL_DOCUMENT_ROOT.'/'.$origintype.'/class/'.$origintype.'.class.php';
+					dol_include_once ('/'.$origintype.'/class/'.$origintype.'.class.php');
 					$classname = ucfirst($origintype);
 					$origin = new $classname($this->db);
 				}
