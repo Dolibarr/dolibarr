@@ -169,7 +169,7 @@ class DolEditor
             	if (! defined('REQUIRE_CKEDITOR')) define('REQUIRE_CKEDITOR','1');
 
             	//$skin='kama';
-            	$skin='moono'; 	// default with cdeditor 4
+            	$skin = $conf->global->FCKEDITOR_SKIN; 	// default with ckeditor 4 : moono
 
             	$htmlencode_force=preg_match('/_encoded$/',$this->toolbarname)?'true':'false';
 
