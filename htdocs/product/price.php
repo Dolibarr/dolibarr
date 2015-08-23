@@ -8,6 +8,7 @@
  * Copyright (C) 2014		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2014 	    Philippe Grand 		    <philippe.grand@atoo-net.com>
  * Copyright (C) 2014		Ion agorria				<ion@agorria.com>
+ * Copyright (C) 2015		Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -690,7 +691,11 @@ if ($action == 'edit_price' && ($user->rights->produit->creer || $user->rights->
 		print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 		print '<input type="hidden" name="action" value="update_price">';
 		print '<input type="hidden" name="id" value="' . $object->id . '">';
+
+		dol_fiche_head('');
+		
 		print '<table class="border" width="100%">';
+		print '<tbody>';
 
 		// VAT
 		print '<tr><td>' . $langs->trans("VATRate") . '</td><td>';
@@ -706,7 +711,7 @@ if ($action == 'edit_price' && ($user->rights->produit->creer || $user->rights->
 		print '</td>';
 		print '</tr>';
 
- 		//Only show price mode and expression selector if module is enabled
+ 		// Only show price mode and expression selector if module is enabled
 		if (! empty($conf->dynamicprices->enabled)) {
 			// Price mode selector
 			print '<tr><td>'.$langs->trans("PriceMode").'</td><td>';
@@ -769,9 +774,12 @@ if ($action == 'edit_price' && ($user->rights->produit->creer || $user->rights->
 		}
 		print '</td></tr>';
 
+		print '</tbody>';
 		print '</table>';
 
-		print '<br><div class="center">';
+		dol_fiche_end();
+
+		print '<div class="center">';
 		print '<input type="submit" class="button" value="' . $langs->trans("Save") . '">';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 		print '<input type="submit" class="button" name="cancel" value="' . $langs->trans("Cancel") . '">';
@@ -787,7 +795,11 @@ if ($action == 'edit_price' && ($user->rights->produit->creer || $user->rights->
 			print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 			print '<input type="hidden" name="action" value="update_price">';
 			print '<input type="hidden" name="id" value="' . $object->id . '">';
+			
+			dol_fiche_head('');
+		
 			print '<table class="border" width="100%">';
+			print '<tbody>';
 
 			// VAT
 			if ($i == 1) {
@@ -826,9 +838,14 @@ if ($action == 'edit_price' && ($user->rights->produit->creer || $user->rights->
 			}
 			print '</td></tr>';
 
-			print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="' . $langs->trans("Save") . '">&nbsp;';
+			print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="' . $langs->trans("Save") . '">&nbsp;&nbsp;&nbsp;';
 			print '<input type="submit" class="button" name="cancel" value="' . $langs->trans("Cancel") . '"></td></tr>';
+			
+			print '</tbody>';
 			print '</table>';
+
+			dol_fiche_end();
+
 			print '</form>';
 		}
 	}
