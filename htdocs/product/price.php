@@ -799,7 +799,6 @@ if ($action == 'edit_price' && ($user->rights->produit->creer || $user->rights->
 			dol_fiche_head('');
 		
 			print '<table class="border" width="100%">';
-			print '<tbody>';
 
 			// VAT
 			if ($i == 1) {
@@ -838,10 +837,10 @@ if ($action == 'edit_price' && ($user->rights->produit->creer || $user->rights->
 			}
 			print '</td></tr>';
 
-			print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="' . $langs->trans("Save") . '">&nbsp;&nbsp;&nbsp;';
+			print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="' . $langs->trans("Save") . '">';
+			print '&nbsp;&nbsp;&nbsp;';
 			print '<input type="submit" class="button" name="cancel" value="' . $langs->trans("Cancel") . '"></td></tr>';
 			
-			print '</tbody>';
 			print '</table>';
 
 			dol_fiche_end();
