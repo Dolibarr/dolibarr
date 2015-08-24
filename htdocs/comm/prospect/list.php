@@ -420,7 +420,7 @@ if ($resql)
 	{
 		$arraystcomm[$val['id']]=$val['label'];
 	}
-    print $form->selectarray('search_stcomm', $arraystcomm, $search_stcomm, 1);
+    print $form->selectarray('search_stcomm', $arraystcomm, $search_stcomm, -2);
     print '</td>';
 
     print '<td class="liste_titre" align="center">';
