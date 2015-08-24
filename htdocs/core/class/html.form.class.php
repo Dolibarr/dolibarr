@@ -4455,7 +4455,7 @@ class Form
         {
         	$textforempty=' ';
         	if (! empty($conf->use_javascript_ajax)) $textforempty='&nbsp;';	// If we use ajaxcombo, we need &nbsp; here to avoid to have an empty element that is too small.
-            $out.='<option value="-1"'.($id==-1?' selected':'').'>'.$textforempty.'</option>'."\n";
+            $out.='<option value="-2"'.($id==-2?' selected':'').'>'.$textforempty.'</option>'."\n";     // id is -2 because -1 is already "do not contact"
         }
 
         if (is_array($array))

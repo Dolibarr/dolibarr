@@ -150,7 +150,7 @@ $search_categ = GETPOST('search_categ','int');
 // If the internal user must only see his prospect, force searching by him
 if (!$user->rights->societe->client->voir && !$socid) $search_sale = $user->id;
 
-// List of avaible states; we'll need that for each lines (quick changing prospect states) and for search bar (filter by prospect state)
+// List of available states; we'll need that for each lines (quick changing prospect states) and for search bar (filter by prospect state)
 $sts = array(-1,0,1,2,3);
 
 
@@ -235,7 +235,7 @@ $sql.= " AND s.client IN (2, 3)";
 $sql.= ' AND s.entity IN ('.getEntity('societe', 1).')';
 if ((!$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc";
 if ($socid) $sql.= " AND s.rowid = " .$socid;
-if ($search_stcomm != '') $sql.= natural_search("s.fk_stcomm",$search_stcomm,2);
+if ($search_stcomm != '' && $search_stcomm != -2) $sql.= natural_search("s.fk_stcomm",$search_stcomm,2);
 if ($catid > 0)           $sql.= " AND cs.fk_categorie = ".$catid;
 if ($catid == -2)         $sql.= " AND cs.fk_categorie IS NULL";
 if ($search_categ > 0)    $sql.= " AND cs.fk_categorie = ".$search_categ;
@@ -376,13 +376,13 @@ if ($resql)
 	print '<input type="text" class="flat" name="search_nom" size="10" value="'.$search_nom.'">';
 	print '</td>';
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_zipcode" size="10" value="'.$search_zipcode.'">';
+	print '<input type="text" class="flat" name="search_zipcode" size="6" value="'.$search_zipcode.'">';
 	print '</td>';
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_town" size="10" value="'.$search_town.'">';
+	print '<input type="text" class="flat" name="search_town" size="8" value="'.$search_town.'">';
 	print '</td>';
  	print '<td class="liste_titre" align="center">';
-    print '<input type="text" class="flat" name="search_state" size="10" value="'.$search_state.'">';
+    print '<input type="text" class="flat" name="search_state" size="8" value="'.$search_state.'">';
     print '</td>';
     print '<td align="center" class="liste_titre">';
 	print '<input class="flat" type="text" size="10" name="search_datec" value="'.$search_datec.'">';
@@ -490,7 +490,7 @@ if ($resql)
 		print $prospectstatic->LibProspCommStatut($obj->stcomm_id,2,$prospectstatic->cacheprospectstatus[$obj->stcomm_id]['label']);
 		print "</td>";
 
-		print '<td align="right" class="nowrap">';
+		print '<td align="center" class="nowrap">';
 		foreach($prospectstatic->cacheprospectstatus as $key => $val)
 		{
 			$titlealt='default';
