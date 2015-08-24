@@ -22,7 +22,7 @@
  */
 
 
-// TODO Include this include file into all class objects
+// TODO Include this include file into all element pages allowing email sending
 
 // $id must be defined
 // $actiontypecode must be defined
@@ -92,7 +92,7 @@ if(! empty($_POST['removAll']))
 /*
  * Send mail
  */
-if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_POST['removAll'] && ! $_POST['removedfile'] && ! $_POST['cancel'])
+if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_POST['removAll'] && ! $_POST['removedfile'] && ! $_POST['cancel'] && !$_POST['modelselected'])
 {
 	if($conf->dolimail->enabled) $langs->load("dolimail@dolimail");
 	$langs->load('mails');
