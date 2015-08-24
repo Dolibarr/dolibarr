@@ -259,16 +259,17 @@ if ($socname)
 	$sortorder = "ASC";
 }
 // Extra fields
-if (is_array($extrafields->attribute_list) && count($extrafields->attribute_list)) 
+foreach ($search_array_options as $key => $val)
 {
-	foreach($extrafields->attribute_list as $key => $val) 
-	{
-	    $crit=GETPOST('search_options_'.$key);
-	    if ($val && $crit != '')
-	    {
-            $sql .= natural_search('ef.'.$key, $crit);
-	    }
-	}
+    $crit=$val;
+    $tmpkey=preg_replace('/search_options_/','',$key);
+    $typ=$extrafields->attribute_type[$tmpkey];
+    $mode=0;
+    if (in_array($typ, array('int'))) $mode=1;    // Search on a numeric
+    if ($val && ( ($crit != '' && ! in_array($typ, array('select'))) || ! empty($crit))) 
+    {
+        $sql .= natural_search('ef.'.$tmpkey, $crit, $mode);
+    }
 }
 // Add where from hooks
 $parameters=array();
@@ -317,9 +318,15 @@ if ($resql)
  	}
  	if ($search_level_from != '') $param.='&search_level_from='.$search_level_from;
  	if ($search_level_to != '') $param.='&search_level_to='.$search_level_to;
- 	if ($search_categ != '') $param.='&search_categ='.$search_categ;
+ 	if ($search_categ != '') $param.='&search_categ='.urlencode($search_categ);
  	if ($search_sale > 0) $param.='&search_sale='.$search_sale;
  	if ($search_status != '') $param.='&search_status='.$search_status;
+    foreach ($search_array_options as $key => $val)
+    {
+        $crit=$val;
+        $tmpkey=preg_replace('/search_options_/','',$key);
+        $param.='&search_options_'.$tmpkey.'='.urlencode($val);
+    } 	
  	// $param and $urladd should have the same value
  	$urladd = $param;
 
