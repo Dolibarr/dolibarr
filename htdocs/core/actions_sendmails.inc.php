@@ -163,7 +163,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 			}
 			else	// Id du contact
 			{
-				$sendto = $thirdparty->contact_get_property($_POST['receiver'],'email');
+				$sendto = $thirdparty->contact_get_property((int) $_POST['receiver'],'email');
 				$sendtoid = $_POST['receiver'];
 			}
 		}
@@ -180,7 +180,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 			}
 			else	// Id du contact
 			{
-				$sendtocc = $thirdparty->contact_get_property($_POST['receivercc'],'email');
+				$sendtocc = $thirdparty->contact_get_property((int) $_POST['receivercc'],'email');
 			}
 		}
 
@@ -220,7 +220,9 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 			$filepath = $attachedfiles['paths'];
 			$filename = $attachedfiles['names'];
 			$mimetype = $attachedfiles['mimes'];
-			
+
+			$trackid = GETPOST('trackid','aZ');
+
 			if($conf->dolimail->enabled)
 			{
 				$mailfromid = explode ("#", $_POST['frommail'],3);
@@ -263,7 +265,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 			}
 			// Send mail
 			require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-			$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,$sendtobcc,$deliveryreceipt,-1);
+			$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,$sendtobcc,$deliveryreceipt,-1,'','',$trackid);
 			if ($mailfile->error)
 			{
 				$mesgs[]='<div class="error">'.$mailfile->error.'</div>';
