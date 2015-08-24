@@ -1422,6 +1422,7 @@ class ExtraFields
 			return 0;
 		}
 	}
+	
 	/**
 	 * return array_options array for object by extrafields value (using for data send by forms)
 	 *
