@@ -95,6 +95,7 @@ class HookManager
 						$pathroot	= '';
 
 						// Include actions class overwriting hooks
+						dol_syslog('Loading hook:' . $actionfile, LOG_INFO);
 						$resaction=dol_include_once($path.$actionfile);
 						if ($resaction)
 						{

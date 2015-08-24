@@ -158,7 +158,6 @@ if ($result)
 	$db->free($result);
 }
 
-print "</form>";
 
 /*
  * Line to add category
@@ -172,9 +171,7 @@ if ($action != 'edit')
 	print '</tr>';
 }
 
-print "</table>";
-
-print "</form>";
+print '</table></form>';
 
 llxFooter();
 

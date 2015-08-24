@@ -229,7 +229,12 @@ if ($mode == 'test' && $user->admin)
         $langs->load($driver);
         $printer = new $classname($db);
         //print '<pre>'.print_r($printer, true).'</pre>';
-        print $printer->listAvailablePrinters();
+        if (count($printer->getlist_available_printers)) {
+            print $printer->listAvailablePrinters();
+        }
+        else {
+            print $langs->trans('PleaseConfigureDriverfromList');
+        }
 
     } else {
         print $langs->trans('PleaseSelectaDriverfromList');

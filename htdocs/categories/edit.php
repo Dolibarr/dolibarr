@@ -117,17 +117,14 @@ if ($action == 'update' && $user->rights->categorie->creer)
  * View
  */
 
+$form = new Form($db);
+
 llxHeader("","",$langs->trans("Categories"));
 
 print_fiche_titre($langs->trans("ModifCat"));
 
 $object->fetch($id);
 
-$form = new Form($db);
-
-print '<table class="notopnoleft" border="0" width="100%">';
-
-print '<tr><td class="notopnoleft" valign="top" width="30%">';
 
 print "\n";
 print '<form method="post" action="'.$_SERVER['PHP_SELF'].'">';
@@ -135,6 +132,8 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="id" value="'.$object->id.'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
+
+dol_fiche_head('');
 
 print '<table class="border" width="100%">';
 
@@ -165,13 +164,15 @@ if (empty($reshook) && ! empty($extrafields->attribute_label))
 }
 
 print '</table>';
-print '<br>';
+
+
+dol_fiche_end();
+
 
 print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div>';
 
 print '</form>';
 
-print '</td></tr></table>';
 
 
 llxFooter();

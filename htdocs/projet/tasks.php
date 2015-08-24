@@ -55,8 +55,8 @@ if ($id > 0 || ! empty($ref))
 {
 	// fetch optionals attributes and labels
 	$extralabels_projet=$extrafields_project->fetch_name_optionals_label($object->table_element);
-	$extralabels_task=$extrafields_task->fetch_name_optionals_label($taskstatic->table_element);
 }
+$extralabels_task=$extrafields_task->fetch_name_optionals_label($taskstatic->table_element);
 
 // Security check
 $socid=0;

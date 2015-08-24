@@ -264,7 +264,7 @@ if ($action == 'add' && $canadduser)
             $langs->load("errors");
             $db->rollback();
             if (is_array($object->errors) && count($object->errors)) setEventMessage($object->errors,'errors');
-            else setEventMessage($object->error);
+            else setEventMessage($object->error, 'errors');
             $action="create";       // Go back to create page
         }
 
@@ -329,7 +329,7 @@ if ($action == 'update' && ! $_POST["cancel"])
 				$result=$tmpuser->fetch(0, GETPOST("login"));
 				if ($result > 0)
 				{
-					setEventMessage($langs->trans("ErrorLoginAlreadyExists"), 'errors');
+					setEventMessage($langs->trans("ErrorLoginAlreadyExists", GETPOST('login')), 'errors');
 					$action="edit";       // Go back to create page
 					$error++;
 				}
@@ -725,7 +725,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST" name="createuser">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="add">';
-    if (! empty($ldap_sid)) print '<input type="hidden" name="ldap_sid" value="'.$ldap_sid.'">';
+    if (! empty($ldap_sid)) print '<input type="hidden" name="ldap_sid" value="'.dol_escape_htmltag($ldap_sid).'">';
     print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
 
     dol_fiche_head('', '', '', 0, '');

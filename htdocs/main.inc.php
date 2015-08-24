@@ -1059,14 +1059,14 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 	        	}
 	        }
         }
-        $themeparam='?lang='.$langs->defaultlang.'&theme='.$conf->theme.(GETPOST('optioncss')?'&optioncss='.GETPOST('optioncss','alpha',1):'').'&userid='.$user->id.'&entity='.$conf->entity;
-        $themeparam.=($ext?'&'.$ext:'');
-        if (! empty($_SESSION['dol_resetcache'])) $themeparam.='&dol_resetcache='.$_SESSION['dol_resetcache'];
-        if (GETPOST('dol_hide_topmenu'))           { $themeparam.='&dol_hide_topmenu='.GETPOST('dol_hide_topmenu','int'); }
-        if (GETPOST('dol_hide_leftmenu'))          { $themeparam.='&dol_hide_leftmenu='.GETPOST('dol_hide_leftmenu','int'); }
-        if (GETPOST('dol_optimize_smallscreen'))   { $themeparam.='&dol_optimize_smallscreen='.GETPOST('dol_optimize_smallscreen','int'); }
-        if (GETPOST('dol_no_mouse_hover'))         { $themeparam.='&dol_no_mouse_hover='.GETPOST('dol_no_mouse_hover','int'); }
-        if (GETPOST('dol_use_jmobile'))            { $themeparam.='&dol_use_jmobile='.GETPOST('dol_use_jmobile','int'); $conf->dol_use_jmobile=GETPOST('dol_use_jmobile','int'); }
+        $themeparam='?lang='.$langs->defaultlang.'&amp;theme='.$conf->theme.(GETPOST('optioncss')?'&amp;optioncss='.GETPOST('optioncss','alpha',1):'').'&amp;userid='.$user->id.'&amp;entity='.$conf->entity;
+        $themeparam.=($ext?'&amp;'.$ext:'');
+        if (! empty($_SESSION['dol_resetcache'])) $themeparam.='&amp;dol_resetcache='.$_SESSION['dol_resetcache'];
+        if (GETPOST('dol_hide_topmenu'))           { $themeparam.='&amp;dol_hide_topmenu='.GETPOST('dol_hide_topmenu','int'); }
+        if (GETPOST('dol_hide_leftmenu'))          { $themeparam.='&amp;dol_hide_leftmenu='.GETPOST('dol_hide_leftmenu','int'); }
+        if (GETPOST('dol_optimize_smallscreen'))   { $themeparam.='&amp;dol_optimize_smallscreen='.GETPOST('dol_optimize_smallscreen','int'); }
+        if (GETPOST('dol_no_mouse_hover'))         { $themeparam.='&amp;dol_no_mouse_hover='.GETPOST('dol_no_mouse_hover','int'); }
+        if (GETPOST('dol_use_jmobile'))            { $themeparam.='&amp;dol_use_jmobile='.GETPOST('dol_use_jmobile','int'); $conf->dol_use_jmobile=GETPOST('dol_use_jmobile','int'); }
         //print 'themepath='.$themepath.' themeparam='.$themeparam;exit;
         print '<link rel="stylesheet" type="text/css" href="'.$themepath.$themeparam.'">'."\n";
 	    if (! empty($conf->global->MAIN_FIX_FLASH_ON_CHROME)) print '<!-- Includes CSS that does not exists as workaround of flash bug of chrome -->'."\n".'<link rel="stylesheet" type="text/css" href="filethatdoesnotexiststosolvechromeflashbug">'."\n";

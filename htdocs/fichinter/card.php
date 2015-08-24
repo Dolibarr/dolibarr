@@ -949,7 +949,7 @@ $formfile = new FormFile($db);
 if ($conf->contrat->enabled)
 	$formcontract = new FormContract($db);
 
-llxHeader('',$langs->trans("Fichinter"));
+llxHeader('',$langs->trans("Intervention"));
 
 if ($action == 'create')
 {

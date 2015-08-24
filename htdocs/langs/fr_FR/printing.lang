@@ -10,6 +10,7 @@ PrintTestDesc=Liste des imprimantes
 FileWasSentToPrinter=Le fichier %s a été envoyé à l'imprimante
 NoActivePrintingModuleFound=Pas de module actif pour imprimer le document
 PleaseSelectaDriverfromList=Sélection un driver dans la liste
+PleaseConfigureDriverfromList=Configurer le driver sélectionné dans la liste.
 SetupDriver=Configuration du driver
 TestDriver=Test
 TargetedPrinter=Imprimante cible

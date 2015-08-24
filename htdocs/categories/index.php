@@ -148,12 +148,13 @@ foreach($fulltree as $key => $val)
 	$categstatic->ref=$val['label'];
 	$categstatic->type=$type;
 	$li=$categstatic->getNomUrl(1,'',60);
+	$desc=dol_htmlcleanlastbr($val['description']);
 
 	$data[] = array(
 	'rowid'=>$val['rowid'],
 	'fk_menu'=>$val['fk_parent'],
 	'entry'=>'<table class="nobordernopadding centpercent"><tr><td>'.$li.
-	'</td><td width="50%">'.dolGetFirstLineOfText($val['description']).'</td>'.
+	'</td><td width="50%">'.dolGetFirstLineOfText($desc).'</td>'.
 	'<td align="right" width="20px;"><a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$val['id'].'&type='.$type.'">'.img_view().'</a></td>'.
 	'</tr></table>'
 	);
