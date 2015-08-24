@@ -160,6 +160,7 @@ $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('thirdparty');
+$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
 
 // Do we click on purge search criteria ?
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
@@ -174,6 +175,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 	$search_datec="";
 	$search_categ="";
 	$search_status="";
+	$search_array_options=array();
 }
 
 if ($search_status=='') $search_status=1; // always display active customer first
@@ -256,6 +258,18 @@ if ($socname)
 	$sortfield = "s.nom";
 	$sortorder = "ASC";
 }
+// Extra fields
+if (is_array($extrafields->attribute_list) && count($extrafields->attribute_list)) 
+{
+	foreach($extrafields->attribute_list as $key => $val) 
+	{
+	    $crit=GETPOST('search_options_'.$key);
+	    if ($val && $crit != '')
+	    {
+            $sql .= natural_search('ef.'.$key, $crit);
+	    }
+	}
+}
 // Add where from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
@@ -269,6 +283,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 }
 $sql.= " ORDER BY $sortfield $sortorder, s.nom ASC";
 $sql.= $db->plimit($conf->liste_limit+1, $offset);
+//print $sql;
 
 dol_syslog('comm/prospect/list.php', LOG_DEBUG);
 $resql = $db->query($sql);
@@ -434,9 +449,10 @@ if ($resql)
 	   {
 	       if ($val)
 	       {
-                print '<td class="liste_titre">';
-                //print $extrafields->showInputField($key, $array_options[$key], '', '', 'search_', 4);
-                print '</td>';
+	           $crit=$search_array_options['search_options_'.$key];
+	           print '<td class="liste_titre">';
+               print $extrafields->showInputField($key, $crit, '', '', 'search_', 4);
+               print '</td>';
 	       }
 	   }
 	}
