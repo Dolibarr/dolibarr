@@ -129,6 +129,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
     $search_montant_ht='';
     $search_montant_ttc='';
     $search_status='';
+    $day='';
     $year='';
     $month='';
 }
