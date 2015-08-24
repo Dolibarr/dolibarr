@@ -146,7 +146,8 @@ class HookManager
 		        'pdf_writelinedesc',
 		        'paymentsupplierinvoices',
 		        'printSearchForm',
-        		'formatEvent'
+        		'formatEvent',
+				'addCalendarChoice'
         		)
         	)) $hooktype='addreplace';
 
