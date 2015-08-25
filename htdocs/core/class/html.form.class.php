@@ -4406,7 +4406,7 @@ class Form
      *	@param	string			$htmlname       Name of html select area. Must start with "multi" if this is a multiselect
      *	@param	array			$array          Array with key+value
      *	@param	string|string[]	$id             Preselected key or preselected keys for multiselect
-     *	@param	int				$show_empty     0 no empty value allowed, 1 to add an empty value into list (value is '' or '&nbsp;').
+     *	@param	int				$show_empty     0 no empty value allowed, 1 to add an empty value into list (value is '' or '&nbsp;'), <0 to add an empty value with key that is this value.
      *	@param	int				$key_in_label   1 pour afficher la key dans la valeur "[key] value"
      *	@param	int				$value_as_key   1 to use value as key
      *	@param  string			$moreparam      Add more parameters onto the select tag
@@ -4455,7 +4455,7 @@ class Form
         {
         	$textforempty=' ';
         	if (! empty($conf->use_javascript_ajax)) $textforempty='&nbsp;';	// If we use ajaxcombo, we need &nbsp; here to avoid to have an empty element that is too small.
-            $out.='<option value="-2"'.($id==-2?' selected':'').'>'.$textforempty.'</option>'."\n";     // id is -2 because -1 is already "do not contact"
+            $out.='<option value="'.($show_empty < 0 ? $show_empty : -1).'"'.($id==-2?' selected':'').'>'.$textforempty.'</option>'."\n";     // id is -2 because -1 is already "do not contact"
         }
 
         if (is_array($array))
