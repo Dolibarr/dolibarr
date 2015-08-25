@@ -695,7 +695,6 @@ if ($action == 'edit_price' && ($user->rights->produit->creer || $user->rights->
 		dol_fiche_head('');
 		
 		print '<table class="border" width="100%">';
-		print '<tbody>';
 
 		// VAT
 		print '<tr><td>' . $langs->trans("VATRate") . '</td><td>';
@@ -774,7 +773,6 @@ if ($action == 'edit_price' && ($user->rights->produit->creer || $user->rights->
 		}
 		print '</td></tr>';
 
-		print '</tbody>';
 		print '</table>';
 
 		dol_fiche_end();
