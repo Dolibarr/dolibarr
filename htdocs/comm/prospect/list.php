@@ -160,6 +160,7 @@ $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('thirdparty');
+$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
 
 // Do we click on purge search criteria ?
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
@@ -174,6 +175,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 	$search_datec="";
 	$search_categ="";
 	$search_status="";
+	$search_array_options=array();
 }
 
 if ($search_status=='') $search_status=1; // always display active customer first
@@ -256,6 +258,19 @@ if ($socname)
 	$sortfield = "s.nom";
 	$sortorder = "ASC";
 }
+// Extra fields
+foreach ($search_array_options as $key => $val)
+{
+    $crit=$val;
+    $tmpkey=preg_replace('/search_options_/','',$key);
+    $typ=$extrafields->attribute_type[$tmpkey];
+    $mode=0;
+    if (in_array($typ, array('int'))) $mode=1;    // Search on a numeric
+    if ($val && ( ($crit != '' && ! in_array($typ, array('select'))) || ! empty($crit))) 
+    {
+        $sql .= natural_search('ef.'.$tmpkey, $crit, $mode);
+    }
+}
 // Add where from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
@@ -269,6 +284,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 }
 $sql.= " ORDER BY $sortfield $sortorder, s.nom ASC";
 $sql.= $db->plimit($conf->liste_limit+1, $offset);
+//print $sql;
 
 dol_syslog('comm/prospect/list.php', LOG_DEBUG);
 $resql = $db->query($sql);
@@ -302,9 +318,15 @@ if ($resql)
  	}
  	if ($search_level_from != '') $param.='&search_level_from='.$search_level_from;
  	if ($search_level_to != '') $param.='&search_level_to='.$search_level_to;
- 	if ($search_categ != '') $param.='&search_categ='.$search_categ;
+ 	if ($search_categ != '') $param.='&search_categ='.urlencode($search_categ);
  	if ($search_sale > 0) $param.='&search_sale='.$search_sale;
  	if ($search_status != '') $param.='&search_status='.$search_status;
+    foreach ($search_array_options as $key => $val)
+    {
+        $crit=$val;
+        $tmpkey=preg_replace('/search_options_/','',$key);
+        $param.='&search_options_'.$tmpkey.'='.urlencode($val);
+    } 	
  	// $param and $urladd should have the same value
  	$urladd = $param;
 
@@ -420,7 +442,7 @@ if ($resql)
 	{
 		$arraystcomm[$val['id']]=$val['label'];
 	}
-    print $form->selectarray('search_stcomm', $arraystcomm, $search_stcomm, 1);
+    print $form->selectarray('search_stcomm', $arraystcomm, $search_stcomm, -2);
     print '</td>';
 
     print '<td class="liste_titre" align="center">';
@@ -434,9 +456,10 @@ if ($resql)
 	   {
 	       if ($val)
 	       {
-                print '<td class="liste_titre">';
-                //print $extrafields->showInputField($key, $array_options[$key], '', '', 'search_', 4);
-                print '</td>';
+	           $crit=$search_array_options['search_options_'.$key];
+	           print '<td class="liste_titre">';
+               print $extrafields->showInputField($key, $crit, '', '', 'search_', 4);
+               print '</td>';
 	       }
 	   }
 	}
