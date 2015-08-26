@@ -202,19 +202,17 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 	}
 }
 
-
 /**
  *  Scan a directory and return a array of files/directories from a selection.
  *  Content for string is UTF8 and dir separator is "/".
  *
+ *  @param	int	$fk_soc        	select socid - for your selection in array
  *  @param	string	$module_get     Starting path from which to search
- *  @param	int			$fk_soc        	select socid - for your selection in array
- *  @param	string	$sortorder			SORT_ASC or SORT_DESC
+ *  @param	string	$sortorder	SORT_ASC or SORT_DESC
  *  @param	array		$excludefiles   Array of Regex for exclude filter (example: array('(\.meta|_preview\.png)$','^\.'))
- *	@return	array		Array of array( filefolder=> array( filelabel=> array( file=> array('name'=>'xxx','date'=>'yyy','size'=>99,'type'=>'dir|file'))))
+ *  @return	array		Array of array( filefolder=> array( filelabel=> array( file=> array('name'=>'xxx','date'=>'yyy','size'=>99,'type'=>'dir|file'))))
  */
-
-function get_soc_file_array($module_get = false, $fk_soc, $sortorder = false, $excludefiles = false) 
+function get_soc_file_array($fk_soc, $module_get = false, $sortorder = false, $excludefiles = false) 
 {
 	global $user, $conf, $db;
 
@@ -245,7 +243,7 @@ function get_soc_file_array($module_get = false, $fk_soc, $sortorder = false, $e
 
 	
 	// rights
-	if (sizeof($ar_modules_get) > 0)
+	if (count($ar_modules_get) > 0)
 	foreach($ar_modules_get as $curmodule)
 	{
 		switch($curmodule)
@@ -300,7 +298,7 @@ function get_soc_file_array($module_get = false, $fk_soc, $sortorder = false, $e
 	$ar_modules_get = $ar_modules_secure;
 	
 	$xy=0;
-	if (sizeof($ar_modules_get)>0)
+	if (count($ar_modules_get)>0)
 	foreach($ar_modules_get as $curmodule => $myarray)
 	{
 		if($fk_soc > 0 && $curmodule != "company")
@@ -444,7 +442,7 @@ function get_soc_file_array($module_get = false, $fk_soc, $sortorder = false, $e
 				}
 			}
 			// Error if ther isn't any File
-			if(sizeof($output[$curmodule]) == 0)
+			if(count($output[$curmodule]) == 0)
 			{
 				$error++;
 				$errors[]="Error [404]: No File found for User: ".$fk_soc." in module: ".$curmodule;
@@ -453,7 +451,7 @@ function get_soc_file_array($module_get = false, $fk_soc, $sortorder = false, $e
 		}
 
 		// Extra for Mail attachments
-		if($curmodule == "dolimail" && sizeof($output["dolimail"])>0)
+		if($curmodule == "dolimail" && count($output["dolimail"])>0)
 		{
 			foreach($output["dolimail"] as $label => $filedata)
 			{
@@ -462,7 +460,7 @@ function get_soc_file_array($module_get = false, $fk_soc, $sortorder = false, $e
 		}
 
 		// Extra for Mail attachments
-		if($curmodule == "invoice" && sizeof($output["invoice"])>0)
+		if($curmodule == "invoice" && count($output["invoice"])>0)
 		{
 			foreach($output["invoice"] as $label => $filedata)
 			{
@@ -471,7 +469,7 @@ function get_soc_file_array($module_get = false, $fk_soc, $sortorder = false, $e
 		}
 
 		// Extra for Mail attachments
-		if($curmodule == "invoice_supplier" && sizeof($output["invoice_supplier"])>0)
+		if($curmodule == "invoice_supplier" && count($output["invoice_supplier"])>0)
 		{
 			foreach($output["invoice_supplier"] as $label => $filedata)
 			{
@@ -480,7 +478,7 @@ function get_soc_file_array($module_get = false, $fk_soc, $sortorder = false, $e
 		}
 
 		// Extra for Mail attachments
-		if($curmodule == "contract" && sizeof($output["contract"])>0)
+		if($curmodule == "contract" && count($output["contract"])>0)
 		{
 			foreach($output["contract"] as $label => $filedata)
 			{
@@ -491,7 +489,7 @@ function get_soc_file_array($module_get = false, $fk_soc, $sortorder = false, $e
 		$xy++;
 	}
 
-	if(sizeof($output) > 0)
+	if(count($output) > 0)
 	{
 		return $output;
 	}
@@ -501,15 +499,12 @@ function get_soc_file_array($module_get = false, $fk_soc, $sortorder = false, $e
 	}
 }
 
-
 /**
  *  Calculate Bytes to kb, mb and translate it to current language
  *
- *  @param	int			$byt        	Bytes
- *	@return	string	calculated string
+ *  @param	int	$byt        	Bytes
+ *  @return	string	calculated string
  */
-
-
 function calculate_byte($byt)
 {
 	global $langs;
