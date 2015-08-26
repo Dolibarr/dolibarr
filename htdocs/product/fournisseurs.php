@@ -6,6 +6,7 @@
  * Copyright (C) 2010-2012 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2014      Ion Agorria          <ion@agorria.com>
+ * Copyright (C) 2015      Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -320,6 +321,8 @@ if ($id || $ref)
 				print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$product->id.'" method="POST">';
 				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				print '<input type="hidden" name="action" value="updateprice">';
+				
+				dol_fiche_head();
 
 				print '<table class="border" width="100%">';
 
@@ -487,9 +490,11 @@ if ($id || $ref)
 
 				print '</table>';
 
-				print '<br><div class="center">';
+				dol_fiche_end();
+
+				print '<div class="center">';
 				print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
-				print '&nbsp; &nbsp;';
+				print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 				print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
 				print '</div>';
 
@@ -536,6 +541,7 @@ if ($id || $ref)
 				print_liste_field_titre($langs->trans("UnitPriceHT"),$_SERVER["PHP_SELF"],"pfp.unitprice","",$param,'align="right"',$sortfield,$sortorder);
 				print_liste_field_titre($langs->trans("DiscountQtyMin"));
 				print_liste_field_titre($langs->trans("NbDaysToDelivery"),$_SERVER["PHP_SELF"],"pfp.delivery_time_days","",$param,'align="right"',$sortfield,$sortorder);
+
 				// Charges ????
 				if ($conf->global->PRODUCT_CHARGES)
 				{
