@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2012		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2012		Charles-Fr BENKE	<charles.fr@benke.fr>
+ * Copyright (C) 2015       Juanjo Menent       <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,7 +64,8 @@ $entitytoicon = array(
 	'shipment'     => 'sending',
     'shipment_line'=> 'sending',
     'expensereport'=> 'trip',
-    'expensereport_line'=> 'trip'
+    'expensereport_line'=> 'trip',
+    'contract_line' => 'contract'
 );
 
 // Translation code

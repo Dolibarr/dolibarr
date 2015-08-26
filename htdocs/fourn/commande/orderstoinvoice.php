@@ -453,7 +453,9 @@ if (($action != 'create' && $action != 'add') && !$error) {
 			$companystatic->nom = $soc->nom;
 			print '<h3>' . $companystatic->getNomUrl(1, 'customer') . '</h3>';
 		}
-
+		
+		print '<form method="get" action="orderstoinvoice.php">';
+		print '<input type="hidden" name="socid" value="' . $socid . '">';
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print_liste_field_titre($langs->trans('Ref'), 'orderstoinvoice.php', 'c.ref', '', '&amp;socid=' . $socid, '', $sortfield, $sortorder);
@@ -465,8 +467,6 @@ if (($action != 'create' && $action != 'add') && !$error) {
 		print "</tr>\n";
 
 		// Lignes des champs de filtre
-		print '<form method="get" action="orderstoinvoice.php">';
-		print '<input type="hidden" name="socid" value="' . $socid . '">';
 		print '<tr class="liste_titre">';
 		print '<td class="liste_titre">';
 		// REF
@@ -497,7 +497,6 @@ if (($action != 'create' && $action != 'add') && !$error) {
 		print '</td>';
 
 		print '</td></tr>';
-		print '</form>';
 
 		print '<form name="orders2invoice" action="orderstoinvoice.php" method="GET">';
 		$var = True;
