@@ -121,7 +121,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 			{
 					setEventMessage($langs->trans('ErrorFailedToFindSocieteRecord',$_POST['sendto']),'errors');
 			}
-			elseif (sizeof($possibleaccounts)>1) 
+			elseif (count($possibleaccounts)>1) 
 			{
 					$sendtosocid=$possibleaccounts[1]['id'];
 					$result=$object->fetch($sendtosocid);
@@ -226,7 +226,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 			if($conf->dolimail->enabled)
 			{
 				$mailfromid = explode ("#", $_POST['frommail'],3);
-				if (sizeof($mailfromid)==0) $from = $_POST['fromname'] . ' <' . $_POST['frommail'] .'>';
+				if (count($mailfromid)==0) $from = $_POST['fromname'] . ' <' . $_POST['frommail'] .'>';
 				else
 				{
 					$mbid = $mailfromid[1];
