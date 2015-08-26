@@ -41,7 +41,7 @@ class modContrat extends DolibarrModules
 	 */
 	function __construct($db)
 	{
-		global $conf;
+		global $conf, $langs;
 
 		$this->db = $db;
 		$this->numero = 54;
@@ -132,6 +132,8 @@ class modContrat extends DolibarrModules
 		
 		// Exports
 		//--------
+		$langs->load("contracts");
+
 		$r=1;
 
 		$this->export_code[$r]=$this->rights_class.'_'.$r;
