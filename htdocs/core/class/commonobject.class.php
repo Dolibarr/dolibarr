@@ -1837,7 +1837,7 @@ abstract class CommonObject
      *	@return	void
      *  @see	add_object_linked, updateObjectLinked, deleteObjectLinked
      */
-	function fetchObjectLinked($sourceid='',$sourcetype='',$targetid='',$targettype='',$clause='OR')
+	function fetchObjectLinked($sourceid=null,$sourcetype='',$targetid=null,$targettype='',$clause='OR')
     {
         global $conf;
 
