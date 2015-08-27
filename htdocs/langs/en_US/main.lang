@@ -746,3 +746,4 @@ ShortFriday=F
 ShortSaturday=S
 ShortSunday=S
 SelectMailModel=Select email template
+SetRef=Set ref

@@ -577,6 +577,7 @@ else
 	print '</tr>';
 
 	// External ref
+	/* Ext ref are not visible field on standard usage
 	print '<tr><td>';
 
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
@@ -601,7 +602,8 @@ else
 
 	print '</td>';
 	print '</tr>';
-
+	*/
+	
 	print '<tr><td>'.$langs->trans('Account').'</td><td colspan="2">';
 	print $accountstatic->getNomUrl(1);
 	print '</td></tr>';
@@ -622,7 +624,7 @@ else
 	print '</table><br>';
 
 
-	// Liste des cheques
+	// List of cheques
 	$sql = "SELECT b.rowid, b.amount, b.num_chq, b.emetteur,";
 	$sql.= " b.dateo as date, b.datec as datec, b.banque,";
 	$sql.= " p.rowid as pid, ba.rowid as bid, p.statut";
@@ -632,7 +634,7 @@ else
 	$sql.= " WHERE ba.entity IN (".getEntity('bank_account', 1).")";
 	$sql.= " AND b.fk_type= 'CHQ'";
 	$sql.= " AND b.fk_bordereau = ".$object->id;
-	$sql.= " ORDER BY $sortfield $sortorder";
+	$sql.= $db->order($sortfield, $sortorder);
 
 	$resql = $db->query($sql);
 	if ($resql)
