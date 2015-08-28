@@ -602,6 +602,7 @@ foreach ($listofreferent as $key => $value)
 					$expensereport->fetch($element->fk_expensereport);
 				}
 
+				//print 'xxx'.$tablename;
 				//print $classname;
 
 				if ($breakline && $saved_third_id != $element->thirdparty->id)
@@ -620,7 +621,7 @@ foreach ($listofreferent as $key => $value)
 				$qualifiedfortotal=true;
 				if ($key == 'invoice')
 				{
-					if ($element->close_code == 'replaced') $qualifiedfortotal=false;	// Replacement invoice
+					if (! empty($element->close_code) && $element->close_code == 'replaced') $qualifiedfortotal=false;	// Replacement invoice, do not include into total
 				}
 
 				$var=!$var;
