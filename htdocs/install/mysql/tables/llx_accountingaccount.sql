@@ -24,7 +24,7 @@ create table llx_accountingaccount
   entity          integer DEFAULT 1 NOT NULL,
   datec           datetime,
   tms             timestamp,
-  fk_pcg_version  varchar(12)  NOT NULL,
+  fk_pcg_version  varchar(32)  NOT NULL,
   pcg_type        varchar(20)  NOT NULL,
   pcg_subtype     varchar(20)  NOT NULL,
   account_number  varchar(32)  NOT NULL,
