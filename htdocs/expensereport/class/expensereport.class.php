@@ -61,14 +61,16 @@ class ExpenseReport extends CommonObject
     var $code_paiement;
     var $code_statut;
 
-    /*
-        ACTIONS
-    */
+    // ACTIONS
 
-    // Enregistrement
+    // Create
     var $date_create;
     var $fk_user_author;
 
+    // Update
+	var $date_modif;
+    var $fk_user_modif;
+    
     // Refus
     var $date_refuse;
     var $detail_refuse;
@@ -141,6 +143,7 @@ class ExpenseReport extends CommonObject
         $sql.= ",date_create";
         $sql.= ",fk_user_author";
         $sql.= ",fk_user_validator";
+        $sql.= ",fk_user_modif";
         $sql.= ",fk_statut";
         $sql.= ",fk_c_paiement";
         $sql.= ",paid";
@@ -156,6 +159,7 @@ class ExpenseReport extends CommonObject
         $sql.= ", '".$this->db->idate($now)."'";
         $sql.= ", ".($user->id > 0 ? $user->id:"null");
         $sql.= ", ".($this->fk_user_validator > 0 ? $this->fk_user_validator:"null");
+        $sql.= ", ".($this->fk_user_modif > 0 ? $this->fk_user_modif:"null");
         $sql.= ", ".($this->fk_statut > 1 ? $this->fk_statut:0);
         $sql.= ", ".($this->modepaymentid?$this->modepaymentid:"null");
         $sql.= ", 0";
@@ -240,6 +244,7 @@ class ExpenseReport extends CommonObject
         $sql.= " , fk_user_author = ".($user->id > 0 ? "'".$user->id."'":"null");
         $sql.= " , fk_user_validator = ".($this->fk_user_validator > 0 ? $this->fk_user_validator:"null");
         $sql.= " , fk_user_valid = ".($this->fk_user_valid > 0 ? $this->fk_user_valid:"null");
+        $sql.= " , fk_user_modif = ".($this->fk_user_modif > 0 ? $this->fk_user_modif:"null");
         $sql.= " , fk_statut = ".($this->fk_statut >= 0 ? $this->fk_statut:'0');
         $sql.= " , fk_c_paiement = ".($this->fk_c_paiement > 0 ? $this->fk_c_paiement:"null");
         $sql.= " , note_public = ".(!empty($this->note_public)?"'".$this->db->escape($this->note_public)."'":"''");
@@ -275,9 +280,10 @@ class ExpenseReport extends CommonObject
         $sql.= " d.detail_refuse, d.detail_cancel, d.fk_user_refuse, d.fk_user_cancel,";                // ACTIONS
         $sql.= " d.date_refuse, d.date_cancel,";                                                        // ACTIONS
         $sql.= " d.total_ht, d.total_ttc, d.total_tva,";                                                // TOTAUX (int)
-        $sql.= " d.date_debut, d.date_fin, d.date_create, d.date_valid, d.date_approve,";           // DATES (datetime)
-        $sql.= " d.fk_user_author, d.fk_user_validator, d.fk_statut as status, d.fk_c_paiement,";
+        $sql.= " d.date_debut, d.date_fin, d.date_create, d.tms as date_modif, d.date_valid, d.date_approve,";	// DATES (datetime)
+        $sql.= " d.fk_user_author, d.fk_user_modif, d.fk_user_validator,";
         $sql.= " d.fk_user_valid, d.fk_user_approve,";
+        $sql.= " d.fk_statut as status, d.fk_c_paiement,";
         $sql.= " dp.libelle as libelle_paiement, dp.code as code_paiement";                             // INNER JOIN paiement
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as d LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as dp ON d.fk_c_paiement = dp.id";
         if ($ref) $sql.= " WHERE d.ref = '".$this->db->escape($ref)."'";
@@ -306,16 +312,18 @@ class ExpenseReport extends CommonObject
                 $this->date_valid       = $this->db->jdate($obj->date_valid);
                 $this->date_approve     = $this->db->jdate($obj->date_approve);
                 $this->date_create      = $this->db->jdate($obj->date_create);
+                $this->date_modif       = $this->db->jdate($obj->date_modif);
                 $this->date_refuse      = $this->db->jdate($obj->date_refuse);
                 $this->date_cancel      = $this->db->jdate($obj->date_cancel);
 
                 $this->fk_user_author           = $obj->fk_user_author;
+                $this->fk_user_modif            = $obj->fk_user_modif;
                 $this->fk_user_validator        = $obj->fk_user_validator;
                 $this->fk_user_valid            = $obj->fk_user_valid;
                 $this->fk_user_refuse           = $obj->fk_user_refuse;
                 $this->fk_user_cancel           = $obj->fk_user_cancel;
                 $this->fk_user_approve          = $obj->fk_user_approve;
-
+                
                 $user_author = new User($this->db);
                 if ($this->fk_user_author > 0) $user_author->fetch($this->fk_user_author);
 
@@ -496,7 +504,13 @@ class ExpenseReport extends CommonObject
                     $muser->fetch($obj->fk_user_modification);
                     $this->user_modification   = $muser;
                 }
-
+                if ($obj->fk_user_approve)
+                {
+                    $auser = new User($this->db);
+                    $auser->fetch($obj->fk_user_approve);
+                    $this->user_approve   = $auser;
+                }
+                
             }
             $this->db->free($resql);
         }
@@ -869,20 +883,21 @@ class ExpenseReport extends CommonObject
 
         if ($this->fk_statut != 2)
         {
+        	$now = dol_now();
+        	
             $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-            $sql.= " SET ref = '".$this->ref."', fk_statut = 2, fk_user_valid = ".$fuser->id.",";
+            $sql.= " SET ref = '".$this->ref."', fk_statut = 2, fk_user_valid = ".$fuser->id.", date_valid='".$this->db->idate($now)."',";
             $sql.= " ref_number_int = ".$ref_number_int;
             $sql.= ' WHERE rowid = '.$this->id;
 
-            dol_syslog(get_class($this)."::set_save sql=".$sql, LOG_DEBUG);
-
-            if ($this->db->query($sql))
+            $resql=$this->db->query($sql);
+            if ($resql)
             {
                 return 1;
             }
             else
             {
-                $this->error=$this->db->error();
+                $this->error=$this->db->lasterror();
                 return -1;
             }
         }
