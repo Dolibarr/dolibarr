@@ -746,7 +746,7 @@ else
 
 				if ($object->statut == 0 && $num_prod > 0) 
 				{
-					if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->livraison->creer))
+					if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expedition->livraison->creer))
 						|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expedition->livraison_advance->validate)))
 					{
 						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=valid">'.$langs->trans("Validate").'</a>';
