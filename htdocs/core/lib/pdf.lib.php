@@ -744,7 +744,7 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 	// First line of company infos
 	$line1=""; $line2=""; $line3=""; $line4="";
 
-	if ($showdetails && 1)
+	if ($showdetails)
 	{
 		// Company name
 		if ($fromcompany->name)
