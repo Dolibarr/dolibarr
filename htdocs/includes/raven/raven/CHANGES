@@ -1,3 +1,9 @@
+0.12.1
+------
+
+- Dont send empty values for various context.
+
+
 0.12.0
 ------
 

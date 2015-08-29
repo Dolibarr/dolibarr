@@ -16,7 +16,7 @@
 
 class Raven_Client
 {
-    const VERSION = '0.12.0';
+    const VERSION = '0.12.1';
     const PROTOCOL = '6';
 
     const DEBUG = 'debug';
@@ -448,6 +448,12 @@ class Raven_Client
             $this->get_extra_data(),
             $this->context->extra,
             $data['extra']);
+
+        // avoid empty arrays (which dont convert to dicts)
+        if (empty($data['extra']))
+            unset($data['extra']);
+        if (empty($data['tags']))
+            unset($data['tags']);
 
         if ((!$stack && $this->auto_log_stacks) || $stack === true) {
             $stack = debug_backtrace();
