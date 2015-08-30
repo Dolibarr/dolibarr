@@ -53,6 +53,7 @@ $search_desc = GETPOST('search_desc', 'alpha');
 $search_amount = GETPOST('search_amount', 'alpha');
 $search_account = GETPOST('search_account', 'alpha');
 $search_vat = GETPOST('search_vat', 'alpha');
+$btn_ventil = GETPOST('ventil', 'alpha');
 
 // Getpost Order and column and limit page
 $sortfield = GETPOST('sortfield', 'alpha');
@@ -129,7 +130,7 @@ print '<script type="text/javascript">
  * Action
  */
 
-if ($action == 'ventil') {
+if ($action == 'ventil' && !empty($btn_ventil)) {
 	print '<div><font color="red">' . $langs->trans("Processing") . '...</font></div>';
 	if (! empty($codeventil) && ! empty($mesCasesCochees)) {
 		print '<div><font color="red">' . count($mesCasesCochees) . ' ' . $langs->trans("SelectedLines") . '</font></div>';
@@ -337,7 +338,7 @@ if ($result) {
 	}
 	
 	print '</table>';
-	print '<br><div align="center"><input type="submit" class="butAction" value="' . $langs->trans("Ventilate") . '"></div>';
+	print '<br><div align="center"><input type="submit" class="butAction" value="' . $langs->trans("Ventilate") . '" name="ventil"></div>';
 	print '</form>';
 } else {
 	print $db->error();

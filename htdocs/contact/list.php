@@ -269,7 +269,7 @@ if ($result)
 
     print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    print '<input type="hidden" name="view" value="'.htmlspecialchars($view).'">';
+    print '<input type="hidden" name="view" value="'.dol_escape_htmltag($view).'">';
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 

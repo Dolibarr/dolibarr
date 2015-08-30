@@ -725,7 +725,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST" name="createuser">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="add">';
-    if (! empty($ldap_sid)) print '<input type="hidden" name="ldap_sid" value="'.$ldap_sid.'">';
+    if (! empty($ldap_sid)) print '<input type="hidden" name="ldap_sid" value="'.dol_escape_htmltag($ldap_sid).'">';
     print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
 
     dol_fiche_head('', '', '', 0, '');
