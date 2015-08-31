@@ -110,6 +110,7 @@ class Conf
 		$this->bank				= new stdClass();
 		$this->notification		= new stdClass();
 		$this->mailing			= new stdClass();
+		$this->expensereport	= new stdClass();
 	}
 
 
