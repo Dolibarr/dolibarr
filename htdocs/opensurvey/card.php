@@ -311,12 +311,15 @@ if ($action != 'edit')
 {
 	print '<script type="text/javascript">
                jQuery(document).ready(function () {
-				    jQuery("#opensurveyurl").focus(function() { jQuery(this).select(); } );
+				    jQuery("#opensurveyurl").click(function() { jQuery(this).select(); } );
 				});
 		    </script>';
 	print ' <a href="'.$url.'" target="_blank">'.$langs->trans("Link").'</a>';
 
 }
+
+print '</td></tr>';
+
 print '</table>';
 
 dol_fiche_end();
