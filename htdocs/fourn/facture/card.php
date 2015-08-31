@@ -526,7 +526,7 @@ if (empty($reshook))
 		            $result = $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	            	if ($result	<= 0)
 	            	{
-	            		dol_print_error($db,$result);
+	            		dol_print_error($db,$object->error,$object->errors);
 	            		exit;
 	            	}
 	            }
@@ -2296,7 +2296,7 @@ else
 	            $result = $object->generateDocument(GETPOST('model')?GETPOST('model'):$object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
                 if ($result <= 0)
                 {
-                    dol_print_error($db,$result);
+                    dol_print_error($db,$object->error,$object->errors);
                     exit;
                 }
                 $fileparams = dol_most_recent_file($conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id,2,0,0,$object,'invoice_supplier').$ref, preg_quote($ref,'/').'([^\-])+');

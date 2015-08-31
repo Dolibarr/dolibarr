@@ -1597,7 +1597,7 @@ else if ($id || $ref)
 			$result = $object->generateDocument(GETPOST('model')?GETPOST('model'):$object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			if ($result <= 0)
 			{
-				dol_print_error($db,$result);
+				dol_print_error($db,$object->error,$object->errors);
 				exit;
 			}
 			$fileparams = dol_most_recent_file($conf->expedition->dir_output . '/sending/' . $ref, preg_quote($ref, '/').'[^\-]+');

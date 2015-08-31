@@ -442,7 +442,7 @@ if (empty($reshook))
 					$ret = $object->fetch($id); // Reload to get new records
 
 					$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
-	    			if ($result < 0) dol_print_error($db,$result);
+	    			if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 				}
 			}
 			else
@@ -1421,10 +1421,7 @@ if (empty($reshook))
 						$ret = $object->fetch($id); // Reload to get new records
 
 						$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
-						if ($result < 0)
-						{
-							setEventMessages($object->error, $object->errors, 'errors');
-						}
+						if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 					}
 
 					unset($_POST['prod_entry_mode']);
@@ -3809,7 +3806,7 @@ else if ($id > 0 || ! empty($ref))
 		if (! $file || ! is_readable($file)) {
 			$result = $object->generateDocument(GETPOST('model') ? GETPOST('model') : $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			if ($result <= 0) {
-				dol_print_error($db, $result);
+				dol_print_error($db, $object->error, $object->errors);
 				exit();
 			}
 			$fileparams = dol_most_recent_file($conf->facture->dir_output . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
