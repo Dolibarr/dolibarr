@@ -3588,6 +3588,11 @@ abstract class CommonObject
     {
     	if (empty($rowid)) $rowid=$this->id;
 
+        //To avoid SQL errors. Probably not the better solution though
+        if (!$this->table_element) {
+            return 0;
+        }
+
         if (! is_array($optionsArray))
         {
             // optionsArray not already loaded, so we load it
