@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2008-2011	Laurent Destailleur			<eldy@users.sourceforge.net>
- * Copyright (C) 2008-2012	Regis Houssin				<regis.houssin@capnetworks.com>
- * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
+/* Copyright (C) 2008-2011  Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2008-2012  Regis Houssin               <regis.houssin@capnetworks.com>
+ * Copyright (C) 2008       Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
+ * Copyright (C) 2015       Raphaël Doursenaud          <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,7 +84,9 @@ function dolGetModulesDirs($subdir='')
     foreach ($conf->file->dol_document_root as $type => $dirroot)
     {
         // Default core/modules dir
-        $modulesdir[$dirroot . '/core/modules'.$subdir.'/'] = $dirroot . '/core/modules'.$subdir.'/';
+        if ($type === 'main') {
+            $modulesdir[$dirroot . '/core/modules' . $subdir . '/'] = $dirroot . '/core/modules' . $subdir . '/';
+        }
 
         // Scan dir from external modules
         $handle=@opendir($dirroot);
