@@ -102,3 +102,5 @@ ConfirmSaveTrip=Вы точно хотите проверить данный о�
 
 NoTripsToExportCSV=Нет отчёта о затратах за этот период.
 ExpenseReportPayment=Expense report payment
+
+ExpenseReportsToPay=Expense reports to pay

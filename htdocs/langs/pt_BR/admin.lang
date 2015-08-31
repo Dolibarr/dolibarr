@@ -1075,6 +1075,7 @@ CashDeskBankAccountForCheque=Padrão conta para usar a receber pagamentos por ch
 CashDeskBankAccountForCB=Padrão conta para usar a receber pagamentos por cartões de crédito
 CashDeskDoNotDecreaseStock=Desativar diminuição de ações quando uma venda é feita a partir de ponto de venda (se "não", diminuição de ações é feito para cada vendem feito a partir de POS, o que for opção definida no módulo de estoque).
 CashDeskIdWareHouse=Forçar e restringir armazém a usar para redução de ações
+StockDecreaseForPointOfSaleDisabled=Diminuição do estoque pelo PDV desativado
 BookmarkSetup=Configuração do Módulo de Favoritos
 BookmarkDesc=Este módulo lhe permite Gerenciar os links e acessos diretos. também permite Adicionar qualquer página de Dolibarr o link web ao menu de acesso rápido da esquerda.
 NbOfBoomarkToShow=Número máximo de marcadores que se mostrará ao menu

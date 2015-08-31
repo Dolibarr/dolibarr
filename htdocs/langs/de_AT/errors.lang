@@ -6,3 +6,4 @@ ErrorCashAccountAcceptsOnlyCashMoney=Dies ist ein Bargeldkonto (Kassa) und akzep
 ErrorCustomerCodeAlreadyUsed=Diese Kunden Nr. ist bereits vergeben.
 ErrorSupplierCodeRequired=Lieferanten Nr. erforderlich
 WarningUntilDirRemoved=Diese Warnung bleibt so lange aktiv, wie dieses Verzeichnis existiert (nur für Administratoren).
+WarningTooManyDataPleaseUseMoreFilters=Too many data. Please use more filters

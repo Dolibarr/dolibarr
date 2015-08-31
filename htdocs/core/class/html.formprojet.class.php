@@ -423,7 +423,7 @@ class FormProjets
 	 *    @param	string		$morecss			More CSS
 	 *    @return	int|string						The HTML select list of element or '' if nothing or -1 if KO
 	 */
-	function select_element($table_element,$socid=0,$morecss='')
+	function select_element($table_element, $socid=0, $morecss='')
 	{
 		global $conf, $langs;
 
@@ -515,13 +515,14 @@ class FormProjets
 	/**
 	 *    Build a HTML select list of element of same thirdparty to suggest to link them to project
 	 *
-	 *    @param	string		$htmlname			HTML name
-	 *    @param	int			$preselected		Preselected
-	 *    @param	int			$showempty			Add an empty line
-	 *    @param	int			$useshortlabel		Use short label
-	 *    @return	int|string						The HTML select list of element or '' if nothing or -1 if KO
+	 *    @param   string      $htmlname           HTML name
+	 *    @param   int         $preselected        Preselected
+	 *    @param   int         $showempty          Add an empty line
+	 *    @param   int         $useshortlabel      Use short label
+	 *    @param   int         $showallnone        Add choice "All" and "None"
+	 *    @return  int|string                      The HTML select list of element or '' if nothing or -1 if KO
 	 */
-	function selectOpportunityStatus($htmlname,$preselected=0,$showempty=1,$useshortlabel=0,$showallnone=0)
+	function selectOpportunityStatus($htmlname, $preselected=0, $showempty=1, $useshortlabel=0, $showallnone=0)
 	{
 		global $conf, $langs;
 

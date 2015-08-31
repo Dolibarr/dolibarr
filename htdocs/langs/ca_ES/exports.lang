@@ -48,6 +48,7 @@ NoImportableData=Sense taules de dades importables (cap mòdul amb les definicio
 FileSuccessfullyBuilt=Arxiu d'exportació generat
 SQLUsedForExport=Consulta SQL utilitzada per construir el fitxer d'exportació
 LineId=ID de línia
+LineLabel=Label of line
 LineDescription=Descripció de línia
 LineUnitPrice=Preu unitari de la línia
 LineVATRate=Tipus d'IVA de la línia

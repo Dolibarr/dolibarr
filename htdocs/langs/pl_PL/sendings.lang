@@ -69,6 +69,7 @@ ProductQtyInCustomersOrdersRunning=Ilość produktów w otwartych zleceń klient
 ProductQtyInSuppliersOrdersRunning=Ilość produktów w otwartych dostawców zamówień
 ProductQtyInShipmentAlreadySent=Product quantity from opened customer order already sent
 ProductQtyInSuppliersShipmentAlreadyRecevied=Ilość produktów z otwartego zlecenia dostawca otrzymał już
+NoProductToShipFoundIntoStock=No product to ship found into warehouse <b>%s</b>. Correct sotck or go back to choose another warehouse.
 
 # Sending methods
 SendingMethodCATCH=Catch przez klientów

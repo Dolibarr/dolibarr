@@ -368,10 +368,10 @@ if ($resql)
     		print "<tr ".$bc[$var].">";
 
     		// Project url
-    		print "<td>";
+    		print '<td class="nowrap">';
     		$projectstatic->ref = $objp->ref;
     		print $projectstatic->getNomUrl(1);
-    		print "</td>";
+    		print '</td>';
 
     		// Title
     		print '<td>';

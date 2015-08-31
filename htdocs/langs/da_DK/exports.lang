@@ -48,6 +48,7 @@ NoImportableData=Nr. indføres data (ingen modul med definitioner at tillade dat
 FileSuccessfullyBuilt=Eksporter fil genereret
 SQLUsedForExport=SQL Anmodning bruges til at bygge eksport-fil
 LineId=Id for linje
+LineLabel=Label of line
 LineDescription=Beskrivelse af linje
 LineUnitPrice=Enhedspris på linje
 LineVATRate=Momssats på linje

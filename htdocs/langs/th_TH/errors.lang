@@ -79,7 +79,7 @@ ErrorModuleRequireJavascript=จาวาสคริปต์จะต้อง
 ErrorPasswordsMustMatch=ทั้งสองพิมพ์รหัสผ่านจะต้องตรงกับแต่ละอื่น ๆ
 ErrorContactEMail=ข้อผิดพลาดทางเทคนิคที่เกิดขึ้น กรุณาติดต่อผู้ดูแลระบบเพื่อต่อไปนี้อีเมล <b>en% s ให้รหัสข้อผิดพลาด% s</b> ในข้อความของคุณหรือดียิ่งขึ้นโดยการเพิ่มสำเนาหน้าจอของหน้านี้
 ErrorWrongValueForField=<b>ค่าที่ไม่ถูกต้องสำหรับจำนวนสนาม% s</b> (ค่า <b>'% s' ไม่ตรงกับกฎ% s</b> regex)
-ErrorFieldValueNotIn=<b>ค่าที่ไม่ถูกต้องสำหรับจำนวนสนาม% s</b> (ค่า <b>'% s' ไม่ใช่ค่าที่มีอยู่เข้าไปในสนาม% s ของตาราง% s =% s)</b>
+ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b>)
 ErrorFieldRefNotIn=<b>ค่าที่ไม่ถูกต้องสำหรับจำนวนสนาม% s</b> (ค่า <b>'% s' ไม่ได้อ้างอิง% s</b> ที่มีอยู่)
 ErrorsOnXLines=<b>ข้อผิดพลาดในการบันทึกแหล่ง% s</b> (s)
 ErrorFileIsInfectedWithAVirus=โปรแกรมป้องกันไวรัสที่ไม่สามารถที่จะตรวจสอบไฟล์ (ไฟล์อาจจะมีการติดเชื้อไวรัส)

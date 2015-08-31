@@ -48,6 +48,7 @@ NoImportableData=İçeaktarılacak veri yok (veri içeaktarmaya izin veren tanı
 FileSuccessfullyBuilt=Dışaaktarma dosyası oluşturuldu
 SQLUsedForExport=Dışaaktarılacakı dosyayı oluşturmak için kullanılan SQL sorgusu
 LineId=Satır no
+LineLabel=Label of line
 LineDescription=Satır açıklaması
 LineUnitPrice=Satırın birim fiyat
 LineVATRate=Satırın KDV oranı
