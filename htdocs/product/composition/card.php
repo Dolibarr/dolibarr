@@ -204,7 +204,7 @@ if ($id > 0 || ! empty($ref))
 		print '</tr>';
 
 		// Label
-		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->libelle.'</td>';
+		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->label.'</td>';
 		print '</tr>';
 
 		// Nature

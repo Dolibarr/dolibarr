@@ -1480,6 +1480,89 @@ class ExpenseReport extends CommonObject
         return $ret;
     }
 
+	/**
+     *      Charge indicateurs this->nb pour le tableau de bord
+     *
+     *      @return     int         <0 if KO, >0 if OK
+     */
+    function load_state_board()
+    {
+        global $conf;
+
+        $this->nb=array();
+
+        $sql = "SELECT count(ex.rowid) as nb";
+        $sql.= " FROM ".MAIN_DB_PREFIX."expensereport as ex";
+        $sql.= " WHERE ex.fk_statut > 0";
+        $sql.= " AND ex.entity IN (".getEntity('expensereport', 1).")";
+
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            while ($obj=$this->db->fetch_object($resql))
+            {
+                $this->nb["expensereports"]=$obj->nb;
+            }
+            $this->db->free($resql);
+            return 1;
+        }
+        else
+        {
+            dol_print_error($this->db);
+            $this->error=$this->db->error();
+            return -1;
+        }
+
+    }
+
+    /**
+     *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
+     *
+     *      @param	User	$user   		Objet user
+     *      @return WorkboardResponse|int 	<0 if KO, WorkboardResponse if OK
+     */
+    function load_board($user)
+    {
+        global $conf, $langs;
+
+        if ($user->societe_id) return -1;   // protection pour eviter appel par utilisateur externe
+
+	    $now=dol_now();
+
+        $sql = "SELECT ex.rowid, ex.date_valid";
+        $sql.= " FROM ".MAIN_DB_PREFIX."expensereport as ex";
+        $sql.= " WHERE ex.fk_statut = 5";
+        $sql.= " AND ex.entity IN (".getEntity('expensereport', 1).")";
+
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+	        $langs->load("members");
+
+	        $response = new WorkboardResponse();
+	        $response->warning_delay=$conf->expensereport->payment->warning_delay/60/60/24;
+	        $response->label=$langs->trans("ExpenseReportsToPay");
+	        $response->url=DOL_URL_ROOT.'/expensereport/list.php?mainmenu=hrm&amp;statut=5';
+	        $response->img=img_object($langs->trans("ExpenseReports"),"user");
+
+            while ($obj=$this->db->fetch_object($resql))
+            {
+	            $response->nbtodo++;
+
+                if ($this->db->jdate($obj->datevalid) < ($now - $conf->expensereport->payment->warning_delay)) {
+	                $response->nbtodolate++;
+                }
+            }
+
+            return $response;
+        }
+        else
+        {
+            dol_print_error($this->db);
+            $this->error=$this->db->error();
+            return -1;
+        }
+    }
 }
 
 
