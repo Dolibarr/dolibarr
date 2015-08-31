@@ -522,7 +522,7 @@ class SMTPs
 	 * @param mixed $_strConfigPath path to config file or VOID
 	 * @return void
 	 */
-	function setConfig ( $_strConfigPath = null )
+	function setConfig($_strConfigPath = null)
 	{
 		/**
 		 * Returns constructed SELECT Object string or boolean upon failure
@@ -736,7 +736,7 @@ class SMTPs
 	 * @param string $_strTransEncode Content-Transfer-Encoding
 	 * @return void
 	 */
-	function setTransEncode ( $_strTransEncode )
+	function setTransEncode($_strTransEncode)
 	{
 		if (array_search($_strTransEncode, $this->_smtpsTransEncodeTypes))
 		$this->_smtpsTransEncode = $_strTransEncode;
@@ -830,7 +830,7 @@ class SMTPs
 	 * @return void
 	 *
 	 */
-	function _buildAddrList( $_type, $_addrList )
+	function _buildAddrList($_type, $_addrList)
 	{
 		// Pull existing list
 		$aryHost = $this->_msgRecipients;

@@ -1757,9 +1757,10 @@ if ($action=='create')
 	print "</form>\n";
 
 	// Show origin lines
-	if (! empty($origin) && ! empty($originid) && is_object($objectsrc)) {
+	if (! empty($origin) && ! empty($originid) && is_object($objectsrc)) 
+	{
 		$title = $langs->trans('ProductsAndServices');
-		print_titre($title);
+		print load_fiche_titre($title,'','');
 
 		print '<table class="noborder" width="100%">';
 
@@ -2540,7 +2541,7 @@ elseif (! empty($object->id))
             'entity'=>''
         );
 
-        print_titre($langs->trans('CreateRemoteOrder'));
+        print load_fiche_titre($langs->trans('CreateRemoteOrder'),'');
 
         //Is everything filled?
         if (empty($ws_url) || empty($ws_key)) {

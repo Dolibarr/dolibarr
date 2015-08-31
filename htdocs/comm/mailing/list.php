@@ -96,7 +96,8 @@ if ($result)
 
 	$param = "&amp;sall=".$sall;
 	if ($filteremail) $param.='&amp;filteremail='.urlencode($filteremail);
-
+	
+	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<table class="liste">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"m.rowid",$param,"","",$sortfield,$sortorder);
@@ -108,7 +109,6 @@ if ($result)
 	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],($filteremail?"mc.statut":"m.statut"),$param,"",'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
-	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre">';
 	print '<input type="text" class="flat" name="sref" value="'.$sref.'" size="6">';
@@ -123,7 +123,6 @@ if ($result)
 	print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print "</td>";
 	print "</tr>\n";
-	print '</form>';
 
 	$var=True;
 
@@ -177,7 +176,7 @@ if ($result)
 		print "</tr>\n";
 		$i++;
 	}
-	print "</table>";
+	print '</table></form>';
 	$db->free($result);
 }
 else

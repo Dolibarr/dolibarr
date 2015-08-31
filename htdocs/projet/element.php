@@ -347,7 +347,7 @@ $langs->load("margins");
 //print load_fiche_titre($langs->trans("Profit"),'','title_accountancy');
 print '<div class="center">'.img_picto("", "title_accountancy").' '.$langs->trans("Profit").'</div><br>';
 
-print '<table class="noborder">';
+print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td align="left" width="200">'.$langs->trans("Element").'</td>';
 print '<td align="right" width="100">'.$langs->trans("Number").'</td>';

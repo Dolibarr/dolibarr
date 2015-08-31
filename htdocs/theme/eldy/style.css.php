@@ -948,18 +948,13 @@ form#login {
     -webkit-box-shadow: 3px 2px 20px #CCC;
     box-shadow: 3px 2px 20px #CCC;*/
 
-	border-radius: 8px;
+	border-radius: 5px;
 	border:solid 1px rgba(80,80,80,.4);
 
 	border-top:solid 1px f8f8f8;
-	/*
-	background-color: #f8f8f8;
-	background-image: -o-linear-gradient(top, rgba(250,250,250,.6) 0%, rgba(192,192,192,.3) 100%);
-	background-image: -moz-linear-gradient(top, rgba(250,250,250,.6) 0%, rgba(192,192,192,.3) 100%);
-	background-image: -webkit-linear-gradient(top, rgba(250,250,250,.6) 0%, rgba(192,192,192,.3) 100%);
-	background-image: -ms-linear-gradient(top, rgba(250,250,250,.6) 0%, rgba(192,192,192,.3) 100%);
-	background-image: linear-gradient(top, rgba(250,250,250,.6) 0%, rgba(192,192,192,.3) 100%);
-	*/
+}
+.login_main_message {
+	text-align: center;
 }
 div#login_left, div#login_right {
 	display: inline-block;

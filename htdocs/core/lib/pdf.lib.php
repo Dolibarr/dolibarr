@@ -744,7 +744,7 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 	// First line of company infos
 	$line1=""; $line2=""; $line3=""; $line4="";
 
-	if ($showdetails && 1)
+	if ($showdetails)
 	{
 		// Company name
 		if ($fromcompany->name)
@@ -788,7 +788,7 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 			$line2.=($line2?" - ":"").$fromcompany->email;
 		}
 	}
-	if (($showdetails && 2) || ($fromcompany->country_code == 'DE'))
+	if ($showdetails || ($fromcompany->country_code == 'DE'))
 	{
 		// Managers
 		if ($fromcompany->managers)
@@ -1692,64 +1692,61 @@ function pdf_getLinkedObjects($object,$outputlangs)
 		if ($objecttype == 'propal')
 		{
 			$outputlangs->load('propal');
-			$num=count($objects);
-			for ($i=0;$i<$num;$i++)
+			
+			foreach($objects as $elementobject)
 			{
 				$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefProposal");
-				$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($objects[$i]->ref);
+				$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($elementobject->ref);
 				$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("DatePropal");
-				$linkedobjects[$objecttype]['date_value'] = dol_print_date($objects[$i]->date,'day','',$outputlangs);
+				$linkedobjects[$objecttype]['date_value'] = dol_print_date($elementobject->date,'day','',$outputlangs);
 			}
 		}
 		else if ($objecttype == 'commande')
 		{
 			$outputlangs->load('orders');
-			$num=count($objects);
-			for ($i=0;$i<$num;$i++)
+			foreach($objects as $elementobject)
 			{
 				$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefOrder");
-				$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($objects[$i]->ref) . ($objects[$i]->ref_client ? ' ('.$objects[$i]->ref_client.')' : '');
+				$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($elementobject->ref) . ($elementobject->ref_client ? ' ('.$elementobject->ref_client.')' : '');
 				$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("OrderDate");
-				$linkedobjects[$objecttype]['date_value'] = dol_print_date($objects[$i]->date,'day','',$outputlangs);
+				$linkedobjects[$objecttype]['date_value'] = dol_print_date($elementobject->date,'day','',$outputlangs);
 			}
 		}
 		else if ($objecttype == 'contrat')
 		{
 			$outputlangs->load('contracts');
-			$num=count($objects);
-			for ($i=0;$i<$num;$i++)
+			foreach($objects as $elementobject)
 			{
 				$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefContract");
-				$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($objects[$i]->ref);
+				$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($elementobject->ref);
 				$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("DateContract");
-				$linkedobjects[$objecttype]['date_value'] = dol_print_date($objects[$i]->date_contrat,'day','',$outputlangs);
+				$linkedobjects[$objecttype]['date_value'] = dol_print_date($elementobject->date_contrat,'day','',$outputlangs);
 			}
 		}
 		else if ($objecttype == 'shipping')
 		{
 			$outputlangs->load('orders');
 			$outputlangs->load('sendings');
-			$num=count($objects);
-			for ($i=0;$i<$num;$i++)
+			foreach($objects as $elementobject)
 			{
-				$objects[$i]->fetchObjectLinked();
-				$order = $objects[$i]->linkedObjects['commande'][0];
+				$elementobject->fetchObjectLinked();
+				$order = $elementobject->linkedObjects['commande'][0];
 
 				if (! empty($object->linkedObjects['commande']))	// There is already a link to order so we show only info of shipment
 				{
 					$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefSending");
-					$linkedobjects[$objecttype]['ref_value'].= $outputlangs->transnoentities($objects[$i]->ref);
+					$linkedobjects[$objecttype]['ref_value'].= $outputlangs->transnoentities($elementobject->ref);
 					$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("DateSending");
-					$linkedobjects[$objecttype]['date_value'].= dol_print_date($objects[$i]->date_delivery,'day','',$outputlangs);
+					$linkedobjects[$objecttype]['date_value'].= dol_print_date($elementobject->date_delivery,'day','',$outputlangs);
 				}
 				else	// We show both info of order and shipment
 				{
 					$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefOrder") . ' / ' . $outputlangs->transnoentities("RefSending");
 					$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($order->ref) . ($order->ref_client ? ' ('.$order->ref_client.')' : '');
-					$linkedobjects[$objecttype]['ref_value'].= ' / ' . $outputlangs->transnoentities($objects[$i]->ref);
+					$linkedobjects[$objecttype]['ref_value'].= ' / ' . $outputlangs->transnoentities($elementobject->ref);
 					$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("OrderDate") . ' / ' . $outputlangs->transnoentities("DateSending");
 					$linkedobjects[$objecttype]['date_value'] = dol_print_date($order->date,'day','',$outputlangs);
-					$linkedobjects[$objecttype]['date_value'].= ' / ' . dol_print_date($objects[$i]->date_delivery,'day','',$outputlangs);
+					$linkedobjects[$objecttype]['date_value'].= ' / ' . dol_print_date($elementobject->date_delivery,'day','',$outputlangs);
 				}
 			}
 		}

@@ -105,7 +105,7 @@ class box_contacts extends ModeleBoxes
 
                     $this->info_box_contents[$line][] = array(
                         'td' => 'align="left"',
-                        'text' => $societestatic->getNomUrl(1),
+                        'text' => ($objp->fk_soc > 0 ? $societestatic->getNomUrl(1) : ''),
                         'asis' => 1,
                     );
 
