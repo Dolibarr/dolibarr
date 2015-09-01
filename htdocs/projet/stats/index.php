@@ -122,7 +122,7 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 			$px->SetType(array (
 					'pie'
 			));
-			$px->SetTitle($langs->trans('ProjectOpenedProjectByOppStatus'));
+			$px->SetTitle($langs->trans('OpportunitiesStatusForOpenedProjects'));
 			$result=$px->draw($filenamenb, $fileurlnb);
 			if ($result<0) {
 				setEventMessages($px->error, null, 'errors');
