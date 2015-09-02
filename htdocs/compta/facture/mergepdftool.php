@@ -165,10 +165,12 @@ if ($action == 'presend' && GETPOST('sendmail'))
 							'__CHECK_READ__' => '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$obj2->tag.'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>',
 							//'__LASTNAME__' => $obj2->lastname,
 							//'__FIRSTNAME__' => $obj2->firstname,
-							'__REF__' => $object->ref,
+							'__FACREF__' => $object->ref,            // For backward compatibility
+						    '__REF__' => $object->ref,
 							'__REFCLIENT__' => $object->thirdparty->name
 						);
 
+						$subject=make_substitutions($subject, $substitutionarray);
 						$message=make_substitutions($message, $substitutionarray);
 
 						$actiontypecode='AC_FAC';
@@ -196,7 +198,7 @@ if ($action == 'presend' && GETPOST('sendmail'))
 						}
 						else
 						{
-							//$result=$mailfile->sendfile();
+							$result=$mailfile->sendfile();
 							if ($result)
 							{
 								$resultmasssend.=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));		// Must not contain "
@@ -250,7 +252,7 @@ if ($action == 'presend' && GETPOST('sendmail'))
 					$nbignored++;
 					$langs->load("other");
 					$resultmasssend.='<div class="error">'.$langs->trans('ErrorCantReadFile',$file).'</div>';
-					dol_syslog('Failed to read file: '.$file);
+					dol_syslog('Failed to read file: '.$file, LOG_WARNING);
 					break ;
 				}
 			}
@@ -263,7 +265,7 @@ if ($action == 'presend' && GETPOST('sendmail'))
 		}
 		else
 		{
-			setEventMessage($langs->trans("NoRemindSent"), 'warnings');
+			setEventMessage($langs->trans("NoRemindSent"), 'warnings');  // May be object has no generated PDF file
 		}
 	}
 }
