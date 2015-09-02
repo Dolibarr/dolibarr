@@ -248,12 +248,11 @@ if ($action == 'presend' && GETPOST('sendmail'))
 					}
 				}
 				else
-				{
+				{  
 					$nbignored++;
 					$langs->load("other");
 					$resultmasssend.='<div class="error">'.$langs->trans('ErrorCantReadFile',$file).'</div>';
 					dol_syslog('Failed to read file: '.$file, LOG_WARNING);
-					break ;
 				}
 			}
 		}
@@ -558,9 +557,7 @@ if ($resql)
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 		$formmail = new FormMail($db);
 
-		print '<br>';
-		print_fiche_titre($langs->trans("SendRemind"),'','');
-		print '<br>';
+		dol_fiche_head(null, '', $langs->trans("SendRemind"));
 
 		$topicmail="MailTopicSendRemindUnpaidInvoices";
 		$modelmail="facture_relance";
@@ -600,7 +597,8 @@ if ($resql)
 		$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
 
 		print $formmail->get_form();
-		print '<br>'."\n";
+        
+        dol_fiche_end();
 	}
 
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
