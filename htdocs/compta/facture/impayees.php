@@ -217,7 +217,6 @@ if ($action == 'presend' && GETPOST('sendmail'))
 					$langs->load("other");
 					$resultmasssend.='<div class="error">'.$langs->trans('ErrorCantReadFile',$file).'</div>';
 					dol_syslog('Failed to read file: '.$file);
-					break ;
 				}
 			}
 		}
@@ -471,8 +470,8 @@ if ($resql)
 	else $titre.=' ('.$langs->trans("All").')';
 
 	$link='';
-	if (empty($option)) $link='<a href="'.$_SERVER["PHP_SELF"].'?option=late">'.$langs->trans("ShowUnpaidLateOnly").'</a>';
-	elseif ($option == 'late') $link='<a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("ShowUnpaidAll").'</a>';
+	if (empty($option)) $link='<a href="'.$_SERVER["PHP_SELF"].'?option=late'.$param.'">'.$langs->trans("ShowUnpaidLateOnly").'</a>';
+	elseif ($option == 'late') $link='<a href="'.$_SERVER["PHP_SELF"].($param?'?'.preg_replace('/&?(amps;)?option=late/','',$param):'').'">'.$langs->trans("ShowUnpaidAll").'</a>';
 	print_fiche_titre($titre,$link);
 	//print_barre_liste($titre,$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',0);	// We don't want pagination on this page
 
