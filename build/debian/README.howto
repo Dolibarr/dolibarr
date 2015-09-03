@@ -356,4 +356,3 @@ Note that package 3.5.7 contains not only fixed for bugs reported to debian. It 
 so it is a better solution to validate this maintenance release than applying a patch of the only CVE-2015-3935. 
 After discussion with ..., it appears that security holes are enough to request this unblock request."
 
-
