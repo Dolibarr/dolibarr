@@ -2,6 +2,9 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** ChangeLog for 3.6.4 compared to 3.6.3 *****
+- Fix: [ bug #2893 ] Dolibarr error when viewing an invoice after changing invoice mask
+
 ***** ChangeLog for 3.6.3 compared to 3.6.2 *****
 - Fix: ref_ext was not saved when recording a customer order from web service
 - Fix: amarok is a bugged theme making dolidroid failed. We switch to eldy automatically with dolidroid.
@@ -43,6 +46,7 @@ English Dolibarr ChangeLog
 - Fix: Not showing product supplier reference when page break
 - Fix: [ bug #3341 ] Missing translation in /compta/paiement_charge.php
 - Fix: [ bug #3342 ] Taxes dictionary page does not accept localized decimals for localtax2 rate
+- Fix: [ bug
 
 ***** ChangeLog for 3.6.2 compared to 3.6.1 *****
 - Fix: fix ErrorBadValueForParamNotAString error message in price customer multiprice.
