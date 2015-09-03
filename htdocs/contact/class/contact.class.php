@@ -499,8 +499,9 @@ class Contact extends CommonObject
 	 */
 	function fetch($id, $user=0, $ref_ext='')
 	{
-		dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
 		global $langs;
+
+		dol_syslog(get_class($this)."::fetch id=".$id, LOG_DEBUG);
 
 		$langs->load("companies");
 
@@ -524,7 +525,6 @@ class Contact extends CommonObject
 		if ($id) $sql.= " WHERE c.rowid = ". $id;
 		elseif ($ref_ext) $sql .= " WHERE c.ref_ext = '".$this->db->escape($ref_ext)."'";
 
-		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -565,7 +565,7 @@ class Contact extends CommonObject
 
 				$this->email			= $obj->email;
 				$this->jabberid			= $obj->jabberid;
-        $this->skype			= $obj->skype;
+                $this->skype			= $obj->skype;
 				$this->priv				= $obj->priv;
 				$this->mail				= $obj->email;
 
