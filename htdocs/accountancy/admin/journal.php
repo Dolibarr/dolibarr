@@ -22,7 +22,7 @@
  */
 
 /**
- * \file		htdocs/accountancy/admin/journaux.php
+ * \file		htdocs/accountancy/admin/journal.php
  * \ingroup		Accounting Expert
  * \brief		Setup page to configure accounting expert module
  */
@@ -87,11 +87,11 @@ print_fiche_titre($langs->trans('ConfigAccountingExpert'),$linkback,'title_setup
 
 $head = admin_accounting_prepare_head(null);
 
-dol_fiche_head($head, 'journal', $langs->trans("Configuration"), 0, 'cron');
-
 print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">';
 print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
 print '<input type="hidden" name="action" value="update">';
+
+dol_fiche_head($head, 'journal', $langs->trans("Configuration"), 0, 'cron');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -115,10 +115,9 @@ foreach ( $list as $key ) {
 
 print "</table>\n";
 
-print '<br /><div style="text-align:center"><input type="submit" class="button" value="' . $langs->trans('Modify') . '" name="button"></div>';
-print '</form>';
 
-print '<br />';
+print '<br>';
+
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -164,9 +163,12 @@ $db->free($resql);
 
 print "</table>\n";
 
-print '</div>';
+dol_fiche_end();
 
-print '<br>';
+print '<div class="center"><input type="submit" class="button" value="' . $langs->trans('Modify') . '" name="button"></div>';
+
+print '</form>';
+
 
 llxFooter();
 $db->close();
