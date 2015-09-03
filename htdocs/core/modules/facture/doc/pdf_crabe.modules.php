@@ -1506,11 +1506,13 @@ class pdf_crabe extends ModelePDFFactures
 			// Show recipient name
 			$pdf->SetXY($posx+2,$posy+3);
 			$pdf->SetFont('','B', $default_font_size);
-			$pdf->MultiCell($widthrecbox, 4, $carac_client_name, 0, 'L');
+			$pdf->MultiCell($widthrecbox, 2, $carac_client_name, 0, 'L');
+
+			$posy = $pdf->getY();
 
 			// Show recipient information
 			$pdf->SetFont('','', $default_font_size - 1);
-			$pdf->SetXY($posx+2,$posy+4+(dol_nboflines_bis($carac_client_name,50)*4));
+			$pdf->SetXY($posx+2,$posy);
 			$pdf->MultiCell($widthrecbox, 4, $carac_client, 0, 'L');
 		}
 
