@@ -46,7 +46,6 @@ English Dolibarr ChangeLog
 - Fix: Not showing product supplier reference when page break
 - Fix: [ bug #3341 ] Missing translation in /compta/paiement_charge.php
 - Fix: [ bug #3342 ] Taxes dictionary page does not accept localized decimals for localtax2 rate
-- Fix: [ bug
 
 ***** ChangeLog for 3.6.2 compared to 3.6.1 *****
 - Fix: fix ErrorBadValueForParamNotAString error message in price customer multiprice.
