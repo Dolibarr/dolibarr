@@ -168,7 +168,7 @@ if ($result)
         // Type
         print '<td>'.$langs->trans("PaymentTypeShort".$obj->payment_code).' '.$obj->num_payment.'</td>';
 		// Amount
-        print "<td align=\"right\">".price($obj->amount,0,$outputlangs,1,-1,-1,$conf->currency)."</td>";
+        print "<td align=\"right\">".price($obj->amount)."</td>";
         print "<td>&nbsp;</td>";
         print "</tr>\n";
 
@@ -177,7 +177,7 @@ if ($result)
         $i++;
     }
     print '<tr class="liste_total"><td colspan="5" class="liste_total">'.$langs->trans("Total").'</td>';
-    print '<td  class="liste_total" align="right">'.price($total,0,$outputlangs,1,-1,-1,$conf->currency)."</td>";
+    print '<td  class="liste_total" align="right">'.price($total)."</td>";
 	print "<td>&nbsp;</td></tr>";
 
     print "</table>";

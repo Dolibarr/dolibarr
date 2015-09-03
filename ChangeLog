@@ -21,6 +21,7 @@ FIX: Not showing task extrafields when creating from left menu
 FIX [ bug #3288 ] Tasks box is not properly drawn
 FIX [ bug #3211 ] Outstading bill amount of a client showed wrong amounts
 FIX [ bug #3321 ] Users with certain permissions were shown a "forbidden access" page even if they had the rights
+FIX [ bug #3426 ] Unable to create an invoice from a contract with extrafields
 FIX [ bug #3383 ] Company name is overlapped with company direction in PDF models
 
 NEW: Created new ContratLigne::insert function
