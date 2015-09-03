@@ -129,10 +129,12 @@ if ($action == 'presend' && GETPOST('sendmail'))
 							'__CHECK_READ__' => '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$obj2->tag.'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>',
 							//'__LASTNAME__' => $obj2->lastname,
 							//'__FIRSTNAME__' => $obj2->firstname,
-							'__REF__' => $object->ref,
+							'__FACREF__' => $object->ref,            // For backward compatibility
+						    '__REF__' => $object->ref,
 							'__REFCLIENT__' => $object->thirdparty->name
 						);
 
+						$subject=make_substitutions($subject, $substitutionarray);
 						$message=make_substitutions($message, $substitutionarray);
 
 						$actiontypecode='AC_FAC';
@@ -160,7 +162,7 @@ if ($action == 'presend' && GETPOST('sendmail'))
 						}
 						else
 						{
-							//$result=$mailfile->sendfile();
+							$result=$mailfile->sendfile();
 							if ($result)
 							{
 								$resultmasssend.=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));		// Must not contain "
@@ -215,7 +217,6 @@ if ($action == 'presend' && GETPOST('sendmail'))
 					$langs->load("other");
 					$resultmasssend.='<div class="error">'.$langs->trans('ErrorCantReadFile',$file).'</div>';
 					dol_syslog('Failed to read file: '.$file);
-					break ;
 				}
 			}
 		}
@@ -469,8 +470,8 @@ if ($resql)
 	else $titre.=' ('.$langs->trans("All").')';
 
 	$link='';
-	if (empty($option)) $link='<a href="'.$_SERVER["PHP_SELF"].'?option=late">'.$langs->trans("ShowUnpaidLateOnly").'</a>';
-	elseif ($option == 'late') $link='<a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("ShowUnpaidAll").'</a>';
+	if (empty($option)) $link='<a href="'.$_SERVER["PHP_SELF"].'?option=late'.$param.'">'.$langs->trans("ShowUnpaidLateOnly").'</a>';
+	elseif ($option == 'late') $link='<a href="'.$_SERVER["PHP_SELF"].($param?'?'.preg_replace('/&?(amps;)?option=late/','',$param):'').'">'.$langs->trans("ShowUnpaidAll").'</a>';
 	print_fiche_titre($titre,$link);
 	//print_barre_liste($titre,$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',0);	// We don't want pagination on this page
 

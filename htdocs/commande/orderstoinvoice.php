@@ -505,7 +505,7 @@ if ($action == 'create' && !$error)
 
 
 //Mode liste
-if (($action != 'create' && $action != 'add') || !$error)
+if (($action != 'create' && $action != 'add') && !$error)
 {
 	llxHeader();
 	?>
