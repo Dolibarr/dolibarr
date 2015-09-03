@@ -860,6 +860,23 @@ function unActivateModule($value, $requiredby=1)
     return $ret;
 }
 
+/**
+ * Find value from dictionnary
+ * 
+ *  @param	 	string 				$dictionnary	Dictionnary
+ *  @param	 	array 				$filter	  		Filter
+ *  @return  	array           	$line
+ */ 
+function dolibarr_find_dictionnary(&$db, $dictionnary, $filter) {
+	$sql= "SELECT * FROM ".MAIN_DB_PREFIX.$dictionnary." WHERE active=1";
+	foreach($filter as $field=>$value) {
+		$sql.=" AND $field='$value'";
+	}
+	$resultset = $db->query($sql);
+	$row = $db->fetch_object($resultset);
+	return $row;
+}
+ 
 
 /**
  *  Add external modules to list of dictionaries

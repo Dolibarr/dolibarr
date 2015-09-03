@@ -38,6 +38,59 @@
 include_once DOL_DOCUMENT_ROOT .'/core/lib/json.lib.php';
 
 /**
+ * Function to transform field from a dictionnary
+ * 
+ * @param 	$db	Database 	Object
+ * @param	$string			String to transform
+ * @param	$tableName		Table of record
+ * @param	$fieldName		Field name
+ */
+function dol_transform_field(&$db, &$string, $tableName, $fieldName) {
+	if(dolibarr_get_const($db, 'DICT_FIELD_CASES')) {
+			$param = dolibarr_find_dictionnary($db, 'c_field_cases', array('table_name'=>$tableName, 'field_name'=>$fieldName));
+			if($param) {
+				switch(strtoupper($param->transformation)) {
+					case 'UPPERCASE':
+						$string = strtoupper($string);
+						break;
+					case 'UCWORDS':
+						dol_ucwords($string);
+						break;
+					default:
+						if(preg_match($param->transformation, null) !== false) {
+							$string = preg_replace(str_replace('/[', '/[^', $param->transformation),'',$string);
+						}
+						break;
+				}
+			}
+		}
+}
+
+/**
+ * UCWords with defined separators
+ * (e.g.: Chateau De L'atour-maubourg --> Château De L'Atour-Maubourg)
+ */
+function dol_ucwords(&$string, $separators = array("'","-")) {
+	
+	$string=ucwords(strtolower($string));
+	foreach($separators as $separator) {
+		if(strpos($string, $separator)!==false) {
+			$temp = explode($separator, $string);
+			$tRedo = array();
+			foreach($temp as $word) {
+				if(substr($word,1, 1)!==' ') {// case of "dolly['s bar]", not to uppercase the 's
+					$tRedo[] = ucwords($word);
+				} else {
+					$tRedo[] = $word;
+				}
+			}
+			$string = implode($separator, $tRedo);
+		}
+	}
+}
+ 
+ 
+/**
  * Function to return value of a static property when class
  * name is dynamically defined (not hard coded).
  * This is because $myclass::$myvar works from PHP 5.3.0+ only
