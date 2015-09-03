@@ -643,7 +643,15 @@ class Expedition extends CommonObject
 				for ($i = 0; $i < $cpt; $i++)
 				{
 					$obj = $this->db->fetch_object($resql);
-					if ($obj->qty <= 0) continue;
+					if (empty($obj->edbrowid))
+					{
+						$qty = $obj->qty;
+					}
+					else
+					{
+						$qty = $obj->edbqty;
+					}
+					if ($qty <= 0) continue;
 					dol_syslog(get_class($this)."::valid movement index ".$i." ed.rowid=".$obj->rowid." edb.rowid=".$obj->edbrowid);
 
 					//var_dump($this->lines[$i]);
@@ -655,7 +663,7 @@ class Expedition extends CommonObject
 						// line without batch detail
 						
 						// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
-						$result=$mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty, $obj->subprice, $langs->trans("ShipmentValidatedInDolibarr",$numref));
+						$result=$mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ShipmentValidatedInDolibarr",$numref));
 						if ($result < 0) {
 							$error++; break;
 						}
@@ -665,15 +673,16 @@ class Expedition extends CommonObject
 						// line with batch detail
 						
 						// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
-						$result=$mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $obj->edbqty, $obj->subprice, $langs->trans("ShipmentValidatedInDolibarr",$numref), '', $obj->eatby, $obj->sellby, $obj->batch);
+						$result=$mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ShipmentValidatedInDolibarr",$numref), '', $obj->eatby, $obj->sellby, $obj->batch);
 						if ($result < 0) {
 							$error++; break;
 						}
 						
 						// We update content of table llx_product_batch (will be rename into llx_product_stock_batch inantoher version)
+						// We can set livraison_batch to deprecated and adapt livraison to handle batch too (mouvS->_create also calls mouvS->_create_batch)
 						if (! empty($conf->productbatch->enabled))
 						{
-							$result=$mouvS->livraison_batch($obj->fk_origin_stock, $obj->qty);		// ->fk_origin_stock = id into table llx_product_batch (will be rename into llx_product_stock_batch in another version)
+							$result=$mouvS->livraison_batch($obj->fk_origin_stock, $qty);		// ->fk_origin_stock = id into table llx_product_batch (will be rename into llx_product_stock_batch in another version)
 							if ($result < 0) { $error++; $this->errors[]=$mouvS->error; break; }
 						}
 					}
