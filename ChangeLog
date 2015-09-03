@@ -23,6 +23,7 @@ FIX [ bug #3211 ] Outstading bill amount of a client showed wrong amounts
 FIX [ bug #3321 ] Users with certain permissions were shown a "forbidden access" page even if they had the rights
 FIX [ bug #3426 ] Unable to create an invoice from a contract with extrafields
 FIX [ bug #3431 ] Invoice bank account is not respected
+FIX [ bug #3432 ] Spaces should be removed from IBAN when formatting it
 
 NEW: Created new ContratLigne::insert function
 
