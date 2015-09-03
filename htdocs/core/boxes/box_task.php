@@ -82,7 +82,7 @@ class box_task extends ModeleBoxes
 
 			$sql = "SELECT pt.fk_statut, count(pt.rowid) as nb, sum(ptt.task_duration) as durationtot, sum(pt.planned_workload) as plannedtot";
 			$sql.= " FROM ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."projet_task_time as ptt";
-			$sql.= " WHERE DATE_FORMAT(pt.datec,'%Y') = ".date("Y")." ";
+			$sql.= " WHERE DATE_FORMAT(pt.datec,'%Y') = '".date("Y")."' ";
 			$sql.= " AND pt.rowid = ptt.fk_task";
 			$sql.= " GROUP BY pt.fk_statut ";
 			$sql.= " ORDER BY pt.fk_statut DESC";
