@@ -79,7 +79,7 @@ ErrorModuleRequireJavascript=Javascript þarf ekki að vera óvirkur til að haf
 ErrorPasswordsMustMatch=Bæði tegund lykilorð verður að samsvara hvor öðrum
 ErrorContactEMail=Tæknilegt villa kom upp. Vinsamlegast hafðu samband við kerfisstjóra til að fylgja email <b>%s</b> en veita merkjamál villa <b>%s</b> í skilaboðin, eða jafnvel enn betri með því að bæta skjár afrit af þessari síðu.
 ErrorWrongValueForField=Wrong gildi fyrir reitinn <b>númer %s </b> (gildi <b>' %s '</b> er ekki það sama ríkisstjóratíð <b>reglu %s )</b>
-ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b> = <b>%s</b>)
+ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b>)
 ErrorFieldRefNotIn=Rangt gildi fyrir sviði númer <b>%s</b> ('á <b>%s</b> &quot;gildi er ekki <b>%s</b> núverandi dómari)
 ErrorsOnXLines=Villur <b>á %s </b> uppspretta línur
 ErrorFileIsInfectedWithAVirus=The antivirus program was not 'fær til setja í gildi the skrá (skrá gæti verið sýkt af veiru)

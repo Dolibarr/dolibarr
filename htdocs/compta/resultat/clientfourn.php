@@ -309,7 +309,7 @@ if ($modecompta == 'CREANCES-DETTES')
 }
 else
 {
-    $sql = "SELECT s.nom, s.rowid as socid, sum(pf.amount) as amount_ttc";
+    $sql = "SELECT s.nom as name, s.rowid as socid, sum(pf.amount) as amount_ttc";
     $sql.= " FROM ".MAIN_DB_PREFIX."paiementfourn as p";
     $sql.= ", ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture_fourn as f";

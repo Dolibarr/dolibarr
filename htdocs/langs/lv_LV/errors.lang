@@ -79,7 +79,7 @@ ErrorModuleRequireJavascript=Javascript nedrīkst tikt izslēgti, ka šī funkci
 ErrorPasswordsMustMatch=Abām ievadītām parolēm jāsakrīt
 ErrorContactEMail=Tehniska kļūda. Lūdzu, sazinieties ar administratoru pa sekojošu e-pastu <b>%s</b>, lai iesniegtu kļūdas kodu <b>%s</b> jūsu ziņojumā, vai labāk, pievienojot šīs lapas ekrāna.
 ErrorWrongValueForField=Nepareiza vērtība lauka numuru <b>%s</b> (vērtība '<b>%s</b>' nesakrīt regex noteikums <b>%s</b>)
-ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b> = <b>%s</b>)
+ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b>)
 ErrorFieldRefNotIn=Nepareiza vērtība lauka numuru <b>%s</b> (vērtība <b>&quot;%s&quot;</b> nav <b>%s</b> esošo ref)
 ErrorsOnXLines=Kļūdas <b>%s</b> avota ierakstu (-s)
 ErrorFileIsInfectedWithAVirus=Antivīrusu programma nevarēja apstiprināt failu (fails varētu būt inficēti ar vīrusu)

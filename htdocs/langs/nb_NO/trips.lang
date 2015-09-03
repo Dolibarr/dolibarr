@@ -101,4 +101,6 @@ SaveTrip=Godkjenn reiseregning
 ConfirmSaveTrip=Er du sikker på at du vil validere denne reiseregningen?
 
 NoTripsToExportCSV=Ingen reiseregning å eksportere for denne perioden
-ExpenseReportPayment=Expense report payment
+ExpenseReportPayment=Betaling av utgiftsrapport
+
+ExpenseReportsToPay=Expense reports to pay

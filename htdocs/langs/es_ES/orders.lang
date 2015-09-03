@@ -125,7 +125,7 @@ CloneOrder=Clonar pedido
 ConfirmCloneOrder=¿Está seguro de querer clonar este pedido <b>%s</b>?
 DispatchSupplierOrder=Recepción del pedido a proveedor %s
 FirstApprovalAlreadyDone=Primera aprobación realizada
-SecondApprovalAlreadyDone=Second approval already done
+SecondApprovalAlreadyDone=Segunda aprobación realizada
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Responsable seguimiento pedido cliente
 TypeContact_commande_internal_SHIPPING=Responsable envío pedido cliente

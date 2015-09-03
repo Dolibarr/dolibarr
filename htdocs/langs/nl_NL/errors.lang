@@ -79,7 +79,7 @@ ErrorModuleRequireJavascript=Javascript dient niet uitgeschakeld te zijn voor de
 ErrorPasswordsMustMatch=De twee ingevoerde wachtwoorden komen niet overeen.
 ErrorContactEMail=Er is een technische fout opgetreden. Neemt u alstublieft contact op met de beheerder via het e-mailadres <b>%s</b> en vermeld de volgende foutcode <b>%s</b> in uw bericht, of nog beter voeg een schermafbeelding van de pagina toe.
 ErrorWrongValueForField=Foutiefe waarde voor het veld nummer <b>%s</b> (waarde <b>%s</b> voldoet niet aan de reguliere expressieregel <b>%s</b>)
-ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b> = <b>%s</b>)
+ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b>)
 ErrorFieldRefNotIn=Verkeerde waarde voor veldnummer <b>%s</b> (waarde <b>'%s'</b> is geen <b>%s</b> bestaande ref)
 ErrorsOnXLines=Fouten op bronregels <b>%s</b>
 ErrorFileIsInfectedWithAVirus=Het antivirusprogramma kon dit bestand niet valideren (het zou met een virus geïnfecteerd kunnen zijn)

@@ -1470,8 +1470,8 @@ class Project extends CommonObject
 	/**
 	 *  Create an intervention document on disk using template defined into PROJECT_ADDON_PDF
 	 *
-	 *  @param	string		$modele			force le modele a utiliser ('' par defaut)
-	 *  @param	Translate	$outputlangs	objet lang a utiliser pour traduction
+	 *  @param	string		$modele			Force template to use ('' by default)
+	 *  @param	Translate	$outputlangs	Objet lang to use for translation
 	 *  @param  int			$hidedetails    Hide details of lines
 	 *  @param  int			$hidedesc       Hide description
 	 *  @param  int			$hideref        Hide ref

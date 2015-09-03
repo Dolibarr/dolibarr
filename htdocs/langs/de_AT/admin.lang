@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - admin
-VersionRecommanded=Empfohlen
 UseSearchToSelectCompany=Suchfeld statt Listenansicht für Partnerauswahl verwenden
 NextValue=Nächste Wert
 ImportMySqlDesc=Zum Wiederherstellen einer Sicherungsdatei müssen Sie folgenden Befehl über die Kommandozeile ausführen:

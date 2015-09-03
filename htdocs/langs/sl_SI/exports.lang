@@ -48,6 +48,7 @@ NoImportableData=Ni podatkov, ki jih lahko uvozite (ni tako definiranega modula,
 FileSuccessfullyBuilt=Ustvarjena izvozna datoteka
 SQLUsedForExport=SQL zahtevek uporabljen za izgradnjo izvozne datoteke
 LineId=Id vrstice
+LineLabel=Label of line
 LineDescription=Opis vrstice
 LineUnitPrice=Cena enote v vrstici
 LineVATRate=Stopnja DDV v vrstici

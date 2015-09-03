@@ -215,7 +215,7 @@ print '<td>'.$langs->trans('Account').'</td>';
 print '<td>'.$langs->trans('Type').'</td><td align="right">'.$langs->trans('Debit').'</td><td align="right">'.$langs->trans('Credit').'</td>';
 print "</tr>\n";
 
-$var=true;
+$var=false;
 
 $invoicestatic=new Facture($db);
 $companystatic=new Client($db);

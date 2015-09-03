@@ -79,7 +79,7 @@ ErrorModuleRequireJavascript=Javascript nem szabad tiltani, hogy ez a funkció m
 ErrorPasswordsMustMatch=Mindkét típusú jelszavakat kell egyeznie egymással
 ErrorContactEMail=Egy technikai hiba történt. Kérjük, lépjen kapcsolatba a következő e-mail rendszergazda <b>%s</b> en biztosítja a hibakódot <b>%s</b> be az üzenetet, vagy még jobb hozzáadásával képernyő ezen oldal másolatát.
 ErrorWrongValueForField=Rossz érték mezőszám <b>%s</b> (érték <b>&quot;%s&quot;</b> nem egyezik regex szabály <b>%s)</b>
-ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b> = <b>%s</b>)
+ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b>)
 ErrorFieldRefNotIn=Rossz érték mezőszám <b>%s</b> (érték <b>&quot;%s&quot;</b> nem létező <b>%s</b> ref)
 ErrorsOnXLines=<b>%s</b> hibák forrása vonalak
 ErrorFileIsInfectedWithAVirus=A víruskereső program nem tudta érvényesíteni a fájl (file lehet megfertőzte egy vírus)
