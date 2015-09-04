@@ -469,11 +469,11 @@ if ($mode != 'marketplace')
         		}
         		else if (preg_match('/^([^@]+)@([^@]+)$/i',$objMod->config_page_url,$regs))
         		{
-        			print '<td align="right" valign="top"><a href="'.dol_buildpath('/'.$regs[2].'/admin/'.$regs[1],1).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup").'</a></td>';
+        			print '<td align="right" valign="middle"><a href="'.dol_buildpath('/'.$regs[2].'/admin/'.$regs[1],1).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup").'</a></td>';
         		}
         		else
         		{
-        			print '<td align="right" valign="top"><a href="'.$objMod->config_page_url.'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup").'</a></td>';
+        			print '<td align="right" valign="middle"><a href="'.$objMod->config_page_url.'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup").'</a></td>';
         		}
         	}
         	else
@@ -500,7 +500,8 @@ if ($mode != 'marketplace')
 	        	print img_picto($langs->trans("Disabled"),'switch_off');
 	        	print "</a>\n";
         	}
-        	print "</td>\n  <td>&nbsp;</td>";
+        	print "</td>\n";
+        	print "<td>&nbsp;</td>";
         }
 
         print "</tr>\n";

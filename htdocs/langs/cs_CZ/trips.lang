@@ -102,3 +102,5 @@ ConfirmSaveTrip=Jste si jisti, že chcete ověřit tuto zprávu o výdajích?
 
 NoTripsToExportCSV=Žádná zpráva o výdajích na export pro toto období.
 ExpenseReportPayment=Expense report payment
+
+ExpenseReportsToPay=Expense reports to pay

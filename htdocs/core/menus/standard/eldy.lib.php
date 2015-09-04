@@ -488,7 +488,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 					$newmenu->add("/admin/modules.php?mainmenu=home", $langs->trans("Modules").$warnpicto,1);
 					$newmenu->add("/admin/menus.php?mainmenu=home", $langs->trans("Menus"),1);
 					$newmenu->add("/admin/ihm.php?mainmenu=home", $langs->trans("GUISetup"),1);
-					if (! in_array($langs->defaultlang,array('en_US','en_GB','en_NZ','en_AU','fr_FR','fr_BE','es_ES','ca_ES')))
+					if (! in_array($langs->defaultlang,array('en_US')))
 					{
 						$newmenu->add("/admin/translation.php", $langs->trans("Translation"),1);
 					}
@@ -1190,12 +1190,12 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				// Project affected to user
 				$newmenu->add("/projet/index.php?leftmenu=projects&mode=mine", $langs->trans("MyProjects"), 0, $user->rights->projet->lire, '', $mainmenu, 'myprojects');
 				$newmenu->add("/projet/card.php?leftmenu=projects&action=create&mode=mine", $langs->trans("NewProject"), 1, $user->rights->projet->creer);
-				$newmenu->add("/projet/list.php?leftmenu=projects&mode=mine", $langs->trans("List"), 1, $user->rights->projet->lire);
+				$newmenu->add("/projet/list.php?leftmenu=projects&mode=mine&search_status=1", $langs->trans("List"), 1, $user->rights->projet->lire);
 
 				// All project i have permission on
 				$newmenu->add("/projet/index.php?leftmenu=projects", $langs->trans("Projects"), 0, $user->rights->projet->lire && $user->rights->projet->lire, '', $mainmenu, 'projects');
 				$newmenu->add("/projet/card.php?leftmenu=projects&action=create", $langs->trans("NewProject"), 1, $user->rights->projet->creer && $user->rights->projet->creer);
-				$newmenu->add("/projet/list.php?leftmenu=projects", $langs->trans("List"), 1, $user->rights->projet->lire && $user->rights->projet->lire);
+				$newmenu->add("/projet/list.php?leftmenu=projects&search_status=1", $langs->trans("List"), 1, $user->rights->projet->lire && $user->rights->projet->lire);
 				$newmenu->add("/projet/stats/index.php?leftmenu=projects", $langs->trans("Statistics"), 1, $user->rights->projet->lire && $user->rights->projet->lire);
 
 				if (empty($conf->global->PROJECT_HIDE_TASKS))

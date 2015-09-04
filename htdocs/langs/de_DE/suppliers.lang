@@ -43,4 +43,4 @@ ListOfSupplierOrders=Liste der Lieferantenbestellungen
 MenuOrdersSupplierToBill=Zu berechnende Lieferantenbestellungen
 NbDaysToDelivery=Lieferverzug in Tagen
 DescNbDaysToDelivery=Max. Verspätungstoleranz bei Lieferverzögerungen bei Produkten aus dieser Bestellung
-UseDoubleApproval=Use double approval when amount (without tax) is higher than (The second approval can be done by any user with the dedicated permission. Set to 0 for no double approval)
+UseDoubleApproval=Verwende doppelte Genehmigung, wenn der Betrag (ohne Steuer) höher ist als (die zweite Genehmigung kann von jedem Benutzer mit einem speziellen Benutzerrecht durchgeführt werden. Setzen Sie es auf 0 für keine doppelte Genehmigung)

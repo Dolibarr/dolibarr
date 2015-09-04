@@ -3470,11 +3470,20 @@ abstract class CommonObject
 
 				if (empty($srctemplatepath))
 				{
-					$this->error='ErrorGenerationAskedForOdtTemplateWithNoSrcFileFound';
+					$this->error='ErrorGenerationAskedForOdtTemplateWithSrcFileNotDefined';
 					return -1;
 				}
 			}
 
+            if ($obj->type == 'odt' && ! empty($srctemplatepath))
+            {
+                if (! dol_is_file($srctemplatepath))
+                {
+                    $this->error='ErrorGenerationAskedForOdtTemplateWithSrcFileNotFound';
+                    return -1;
+                }
+            }
+    
 			// We save charset_output to restore it because write_file can change it if needed for
 			// output format that does not support UTF8.
 			$sav_charset_output=$outputlangs->charset_output;
@@ -3587,6 +3596,11 @@ abstract class CommonObject
     function fetch_optionals($rowid=null,$optionsArray=null)
     {
     	if (empty($rowid)) $rowid=$this->id;
+
+        //To avoid SQL errors. Probably not the better solution though
+        if (!$this->table_element) {
+            return 0;
+        }
 
         if (! is_array($optionsArray))
         {

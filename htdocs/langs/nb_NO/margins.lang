@@ -30,13 +30,13 @@ UseDiscountAsProduct=Som vare
 UseDiscountAsService=Som tjeneste
 UseDiscountOnTotal=Subtota
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Defineres om en global rabatt skal gjelde for et vare, en tjeneste, eller bare som en subtotal for margin-kalkulasjon
-MARGIN_TYPE=Buying/Cost price suggested by default for margin calculation
+MARGIN_TYPE=Foreslått innkjøps-/kostpris for utregning av margin
 MargeBrute=Bruttomargin
 MargeNette=Nettomargin
-MargeType1=Margin on Best supplier price
-MargeType2=Margin on Weighted Average Price (WAP)
+MargeType1=Margin på beste leverandørpris
+MargeType2=Margin på gjennomsnittspris (Weighted Average Price - WAP)
 MARGIN_TYPE_DETAILS=Brutto margin = Utsalgspris - Innkjøpspris<br/>Nettomargin = Utsalgspris - Kostpris
-MarginTypeDesc=Margin on best buying price : Selling price - Best supplier price defined on product card<br/>Margin on Weighted Average Price (WAP) : Selling price - Product Weighted Average Price
+MarginTypeDesc=Nargin på beste innkjøpspris: Utsalgspris - Beste leverandørpris definert på varekortet<br/>Margin på gjennomsnittspris (WAP): Utsalgspris - Gjennomsnittspris
 CostPrice=Kostpris
 BuyingCost=Kostpris
 UnitCharges=Enhets-avgifter

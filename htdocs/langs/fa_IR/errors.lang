@@ -79,7 +79,7 @@ ErrorModuleRequireJavascript=جاوا اسکریپت نمی باید غیر فع
 ErrorPasswordsMustMatch=هر دو کلمه عبور تایپ شده باید با یکدیگر مطابقت
 ErrorContactEMail=یک خطای فنی رخ داد. لطفا، با مدیر سایت تماس به زیر ایمیل <b>از٪ s</b> EN ارائه کد <b>خطا٪ s</b> در پیام خود، و یا حتی بهتر با اضافه کردن یک کپی روی صفحه نمایش از این صفحه.
 ErrorWrongValueForField=ارزش اشتباه برای تعداد <b>فیلد٪ s</b> (مقدار <b>«٪ s» به</b> عبارت منظم حکومت <b>از٪ s</b> مطابقت ندارد)
-ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b> = <b>%s</b>)
+ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b>)
 ErrorFieldRefNotIn=ارزش اشتباه برای تعداد <b>فیلد٪ s</b> (مقدار <b>«٪ s»</b> است <b>از٪ s</b> کد عکس موجود نیست)
 ErrorsOnXLines=خطا <b>در٪ s را</b> ثبت منبع (ها)
 ErrorFileIsInfectedWithAVirus=برنامه آنتی ویروس قادر به اعتبار فایل (فایل ممکن است توسط یک ویروس آلوده)

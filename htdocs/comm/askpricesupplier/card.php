@@ -1671,7 +1671,7 @@ if ($action == 'create')
 
 				// Create an order
 				if (! empty($conf->commande->enabled) && $object->statut == 2) {
-					if ($user->rights->commande->creer) {
+					if ($user->rights->fournisseur->commande->creer) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="' . DOL_URL_ROOT . '/fourn/commande/card.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '">' . $langs->trans("AddOrder") . '</a></div>';
 					}
 				}
@@ -1770,7 +1770,7 @@ if ($action == 'create')
 
 			if ($result <= 0)
 			{
-				dol_print_error($db, $result);
+				dol_print_error($db, $object->error, $object->errors);
 				exit();
 			}
 			$fileparams = dol_most_recent_file($conf->askpricesupplier->dir_output . '/' . $ref, preg_quote($ref, '/').'[^\-]+');

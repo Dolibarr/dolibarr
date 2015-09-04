@@ -48,6 +48,7 @@ NoImportableData=Ei tuoda maahan tiedot (ei-moduulin määritelmiä mahdollistaa
 FileSuccessfullyBuilt=Vie tiedosto luotu
 SQLUsedForExport=SQL Pyydä tarkoitus rakentaa viedä tiedosto
 LineId=Id-linjan
+LineLabel=Label of line
 LineDescription=Kuvaus linja
 LineUnitPrice=Yksikköhinta radan
 LineVATRate=Alv-linjan

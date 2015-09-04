@@ -239,7 +239,15 @@ if (! empty($conf->margin->enabled))
 ?>
 	jQuery(document).ready(function()
 	{
-		/* Add rule to clear margin when we change price_ht or buying_price, so when we change sell or buy price, margin will be recalculated after submitting form */
+		/* Add rule to clear margin when we change some data, so when we change sell or buy price, margin will be recalculated after submitting form */
+		jQuery("#tva_tx").click(function() {						/* somtimes field is a text, sometimes a combo */
+			jQuery("input[name='np_marginRate']:first").val('');
+			jQuery("input[name='np_markRate']:first").val('');
+		});
+		jQuery("#tva_tx").keyup(function() {						/* somtimes field is a text, sometimes a combo */
+			jQuery("input[name='np_marginRate']:first").val('');
+			jQuery("input[name='np_markRate']:first").val('');
+		});
 		jQuery("#price_ht").keyup(function() {
 			jQuery("input[name='np_marginRate']:first").val('');
 			jQuery("input[name='np_markRate']:first").val('');

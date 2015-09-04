@@ -48,6 +48,7 @@ NoImportableData=いいえインポート可能なデータがありません（
 FileSuccessfullyBuilt=生成されたファイルをエクスポートします。
 SQLUsedForExport=エクスポート·ファイルをビルドするために使用されるSQLリクエスト
 LineId=行のid
+LineLabel=Label of line
 LineDescription=ラインの説明
 LineUnitPrice=ラインの単価
 LineVATRate=ラインの付加価値税率

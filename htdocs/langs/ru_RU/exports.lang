@@ -48,6 +48,7 @@ NoImportableData=Нет данных ввозимый (без модуля с о
 FileSuccessfullyBuilt=Экспортный файл
 SQLUsedForExport=SQL запрос, используемых для создания экспортного файла
 LineId=Идентификатор строки
+LineLabel=Label of line
 LineDescription=Описание строки
 LineUnitPrice=Цена за единицу линии
 LineVATRate=Ставка НДС в строке

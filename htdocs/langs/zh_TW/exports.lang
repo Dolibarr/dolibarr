@@ -48,6 +48,7 @@ NoImportableData=沒有可匯入的資料（模組沒有此定義允許您匯入
 FileSuccessfullyBuilt=Export file generated
 SQLUsedForExport=SQL Request used to build export file
 LineId=Id of line
+LineLabel=Label of line
 LineDescription=說明線
 LineUnitPrice=優惠價線
 LineVATRate=增值稅率線

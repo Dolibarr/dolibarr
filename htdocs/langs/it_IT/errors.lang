@@ -79,7 +79,7 @@ ErrorModuleRequireJavascript=Per questa funzionalità Javascript deve essere att
 ErrorPasswordsMustMatch=Le due password digitate devono essere identiche
 ErrorContactEMail=Si è verificato un errore tecnico. Si prega di contattare l'amministratore all'indirizzo <b>%s</b> <b>%s</b> indicando il codice di errore nel messaggio, o, meglio ancora, allegando uno screenshot della schermata attuale.
 ErrorWrongValueForField=Valore errato nel campo numero <b>%s</b> (il valore <b>'%s'</b>non corrisponde alla regex <b>%s</b>)
-ErrorFieldValueNotIn=Valore errato per il campo numerico <b>%s</b> (valore '<b>%s'</b>' non è un valore consentito nel campo <b>%s</b> della tabella<b>%s =%s)</b>
+ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b>)
 ErrorFieldRefNotIn=Valore errato nel campo numero <b>%s</b> (il valore <b>%s</b>non è un riferimento <b>%s</b> esistente)
 ErrorsOnXLines=Errori in <b>%s</b> righe del sorgente
 ErrorFileIsInfectedWithAVirus=Il programma antivirus non è stato in grado di convalidare il file (il file potrebbe essere infetto)

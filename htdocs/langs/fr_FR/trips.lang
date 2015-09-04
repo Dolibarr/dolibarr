@@ -102,3 +102,5 @@ ConfirmSaveTrip=Êtes-vous sûr de vouloir valider cette note de frais ?
 
 NoTripsToExportCSV=Pas de note de frais à exporter dans cette période
 ExpenseReportPayment=Paiement des notes de frais
+
+ExpenseReportsToPay=Notes de frais à payer

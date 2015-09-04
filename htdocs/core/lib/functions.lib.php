@@ -302,7 +302,7 @@ function dol_getprefix()
  *
  * 	@param	string	$relpath	Relative path to file (Ie: mydir/myfile, ../myfile, ...)
  * 	@param	string	$classname	Class name
- *  @return bool
+ *  @return bool                True if load is a success, False if it fails
  */
 function dol_include_once($relpath, $classname='')
 {

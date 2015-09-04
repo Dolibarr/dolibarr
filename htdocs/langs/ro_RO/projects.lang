@@ -143,7 +143,8 @@ SelectElement=Selectați elementul
 AddElement=Link către element
 UnlinkElement=Element nelegat
 # Documents models
-DocumentModelBaleine=Modelul de rapor al unui proiect complet t (logo. ..)
+DocumentModelBeluga=Project template for linked objects overview
+DocumentModelBaleine=Project report template for tasks
 PlannedWorkload=Volum de lucru Planificat
 PlannedWorkloadShort=Workload
 WorkloadOccupation=Workload assignation

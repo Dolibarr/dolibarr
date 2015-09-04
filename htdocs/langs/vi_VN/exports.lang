@@ -48,6 +48,7 @@ NoImportableData=Không có dữ liệu nhập (không có mô-đun với các �
 FileSuccessfullyBuilt=Xuất dữ liệu tập tin được tạo ra
 SQLUsedForExport=SQL Yêu cầu sử dụng để xây dựng các tập tin xuất dữ liệu
 LineId=Id của dòng
+LineLabel=Label of line
 LineDescription=Mô tả dòng
 LineUnitPrice=Đơn giá đường
 LineVATRate=Thuế GTGT Tỷ giá đường

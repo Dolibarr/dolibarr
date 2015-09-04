@@ -143,7 +143,8 @@ SelectElement=Izberi element
 AddElement=Povezava do elementa
 UnlinkElement=Nepovezan element
 # Documents models
-DocumentModelBaleine=Model poročila za celoten projekt (logo...)
+DocumentModelBeluga=Project template for linked objects overview
+DocumentModelBaleine=Project report template for tasks
 PlannedWorkload=Planirana delovna obremenitev
 PlannedWorkloadShort=Workload
 WorkloadOccupation=Workload assignation
