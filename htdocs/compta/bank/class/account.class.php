@@ -122,8 +122,10 @@ class Account extends CommonObject
      */
     function canBeConciliated()
     {
+        global $conf;
+
         if (empty($this->rappro)) return -1;
-        if ($this->courant == 2) return -2;
+        if ($this->courant == 2 && empty($conf->global->BANK_CAN_RECONCILIATE_CASHACCOUNT)) return -2;
         if ($this->clos) return -3;
         return 1;
     }
