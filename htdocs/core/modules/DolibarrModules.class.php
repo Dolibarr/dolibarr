@@ -32,7 +32,7 @@
  *
  * Parent class for module descriptor class files
  */
-abstract class DolibarrModules
+class DolibarrModules           // Can not be abstract, because we need to instantiant it into unActivateModule to be able to disable a module whose files were removed.
 {
     /**
      * @var DoliDb Database handler
@@ -194,16 +194,21 @@ abstract class DolibarrModules
      */
     public $core_enabled;
 
+	
 	/**
 	 * Constructor. Define names, constants, directories, boxes, permissions
 	 *
 	 * @param DoliDB		$db      Database handler
 	 */
-	//public function __construct($db);
 	// We should but can't set this as abstract because this will make dolibarr hang
 	// after migration due to old module not implementing. We must wait PHP is able to make
 	// a try catch on Fatal error to manage this correctly.
-
+    function __construct($db)
+    {
+        $this->db=$db;
+    }
+	
+    
     /**
      * Enables a module.
      * Inserts all informations into database
