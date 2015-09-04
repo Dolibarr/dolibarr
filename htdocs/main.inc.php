@@ -1229,7 +1229,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             if (! empty($conf->fckeditor->enabled) && (empty($conf->global->FCKEDITOR_EDITORNAME) || $conf->global->FCKEDITOR_EDITORNAME == 'ckeditor'))
             {
                 print '<!-- Includes JS for CKEditor -->'."\n";
-                $pathckeditor=DOL_URL_ROOT.'/includes/ckeditor/';
+                $pathckeditor = DOL_URL_ROOT . '/includes/ckeditor/ckeditor/';
                 $jsckeditor='ckeditor.js';
                 if (constant('JS_CKEDITOR'))	// To use external ckeditor 4 js lib
                 {
@@ -1243,6 +1243,16 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
                 print '</script>'."\n";
                 print '<script type="text/javascript" src="'.$pathckeditor.$jsckeditor.($ext?'?'.$ext:'').'"></script>'."\n";
             }
+
+			// Raven.js for client-side Sentry logging support
+			if (array_key_exists('mod_syslog_sentry', $conf->loghandlers)) {
+				print '<!-- Includes Raven.js for Sentry -->' . "\n";
+				print '<script src="' . DOL_URL_ROOT . '/includes/raven-js/dist/raven.min.js"></script>' . "\n";
+				print '<script src="' . DOL_URL_ROOT . '/includes/raven-js/plugins/native.js"></script>' . "\n";
+				if (! defined('DISABLE_JQUERY')) {
+					print '<script src="' . DOL_URL_ROOT . '/includes/raven-js/plugins/jquery.js"></script>' . "\n";
+				}
+			}
 
             // Global js function
             print '<!-- Includes JS of Dolibarr -->'."\n";
@@ -1321,7 +1331,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
     // For backward compatibility with old modules
     if (empty($conf->headerdone)) top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 
-    print '<body id="mainbody">';
+    print '<body id="mainbody">' . "\n";
 
     if ($conf->use_javascript_ajax)
     {
@@ -1376,15 +1386,29 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 						paneSelector: "#mainContent"
 					}
 				}
-    		</script>';
-        }
+			</script>' . "\n";
+		}
 
-        // Wrapper to show tooltips
-        print "\n".'<script type="text/javascript">
-                    jQuery(document).ready(function () {
-                       	jQuery(".classfortooltip").tipTip({maxWidth: "'.dol_size(600,'width').'px", edgeOffset: 10, delay: 50, fadeIn: 50, fadeOut: 50});
-                    });
-                </script>';
+		// Wrapper to show tooltips
+		print '<script type="text/javascript">
+	jQuery(document).ready(function () {
+		jQuery(".classfortooltip").tipTip({maxWidth: "'.dol_size(600,'width').'px", edgeOffset: 10, delay: 50, fadeIn: 50, fadeOut: 50});
+	});
+</script>' . "\n";
+
+		// Raven.js for client-side Sentry logging support
+		if (array_key_exists('mod_syslog_sentry', $conf->loghandlers) && ! empty($conf->global->SYSLOG_SENTRY_DSN)) {
+
+			// Filter out secret key
+			$dsn = parse_url($conf->global->SYSLOG_SENTRY_DSN);
+			$public_dsn = $dsn['scheme'] . '://' . $dsn['user'] .'@' . $dsn['host'] . $dsn['path'];
+
+			print '<script type="text/javascript">' . "\n";
+			print "Raven.config('" . $public_dsn . "').install()\n";
+			print "Raven.setUserContext({username: '" . $user->login . "'})\n";
+			print "Raven.setTagsContext({version: '" . DOL_VERSION . "'})\n";
+			print "</script>\n";
+		}
     }
 
     /*
