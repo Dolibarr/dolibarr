@@ -213,6 +213,7 @@ RelatedCommercialProposals=Related commercial proposals
 MenuToValid=To valid
 DateMaxPayment=Payment due before
 DateEcheance=Due date limit
+DueDays=Due days
 DateInvoice=Invoice date
 NoInvoice=No invoice
 ClassifyBill=Classify invoice

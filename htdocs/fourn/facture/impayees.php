@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2012		Vinicius Nogueira       <viniciusvgn@gmail.com>
  * Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2015		Andre Schild			<a.schild@aarboard.ch>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,6 +56,17 @@ $search_ref_supplier = GETPOST('search_ref_supplier','alpha');
 $search_company = GETPOST('search_company','alpha');
 $search_amount_no_tax = GETPOST('search_amount_no_tax','alpha');
 $search_amount_all_tax = GETPOST('search_amount_all_tax','alpha');
+$search_duedays = GETPOST('search_duedays','alpha');
+
+$op1month=GETPOST('op1month');
+$op1day=GETPOST('op1day');
+$op1year=GETPOST('op1year');
+$filter_op1=GETPOST('filter_op1');
+
+$op2month=GETPOST('op2month');
+$op2day=GETPOST('op2day');
+$op2year=GETPOST('op2year');
+$filter_op2=GETPOST('filter_op2');
 
 $page = GETPOST("page",'int');
 if ($page == -1) { $page = 0; }
@@ -71,6 +83,15 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 	$search_company="";
 	$search_amount_no_tax="";
 	$search_amount_all_tax="";
+	$op1month="";
+	$op1day="";
+	$op1year="";
+	$filter_op1="";
+	$op2month="";
+	$op2day="";
+	$op2year="";
+	$filter_op2="";
+        $duedays="";
 }
 
 /*
@@ -78,6 +99,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
  */
 
 $now=dol_now();
+$form=new Form($db);
 
 llxHeader('',$langs->trans("BillsSuppliersUnpaid"));
 
@@ -91,6 +113,7 @@ if ($user->rights->fournisseur->facture->lire)
 	$sql = "SELECT s.rowid as socid, s.nom as name,";
 	$sql.= " f.rowid, f.ref, f.ref_supplier, f.total_ht, f.total_ttc,";
 	$sql.= " f.datef as df, f.date_lim_reglement as datelimite, ";
+        $sql.= " DATEDIFF(f.date_lim_reglement, NOW()) as duedays, ";
 	$sql.= " f.paye as paye, f.rowid as facid, f.fk_statut";
 	$sql.= " ,sum(pf.amount) as am";
 	if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", sc.fk_soc, sc.fk_user ";
@@ -101,6 +124,10 @@ if ($user->rights->fournisseur->facture->lire)
 	$sql.= " WHERE f.entity = ".$conf->entity;
 	$sql.= " AND f.fk_soc = s.rowid";
 	$sql.= " AND f.paye = 0 AND f.fk_statut = 1";
+        $filter_date1=dol_mktime(0,0,0,$op1month,$op1day,$op1year);
+        if (! empty($filter_op1) && $filter_op1 != -1 && $filter_date1 != '') $sql.= " AND f.datef ".$filter_op1." '".$db->idate($filter_date1)."'";
+        $filter_date2=dol_mktime(0,0,0,$op2month,$op2day,$op2year);
+        if (! empty($filter_op2) && $filter_op2 != -1 && $filter_date2 != '') $sql.= " AND f.date_lim_reglement ".$filter_op2." '".$db->idate($filter_date2)."'";
 	if ($option == 'late') $sql.=" AND f.date_lim_reglement < '".$db->idate(dol_now() - $conf->facture->fournisseur->warning_delay)."'";
 	if (! $user->rights->societe->client->voir && ! $socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if ($socid) $sql .= " AND s.rowid = ".$socid;
@@ -129,11 +156,16 @@ if ($user->rights->fournisseur->facture->lire)
 		$sql .= " AND s.nom LIKE '%".$search_company."%'";
 	}
 
+	if ($search_duedays)
+	{
+		$sql .= " AND DATEDIFF(f.date_lim_reglement, NOW()) = '".$search_duedays."'";
+	}
+
 	if ($search_amount_no_tax)
 	{
 		$sql .= " AND f.total_ht = '".$search_amount_no_tax."'";
 	}
-
+        
 	if ($search_amount_all_tax)
 	{
 		$sql .= " AND f.total_ttc = '".$search_amount_all_tax."'";
@@ -168,6 +200,11 @@ if ($user->rights->fournisseur->facture->lire)
 		if ($search_company)     	$param.='&amp;search_company='.urlencode($search_company);
 		if ($search_amount_no_tax)	$param.='&amp;search_amount_no_tax='.urlencode($search_amount_no_tax);
 		if ($search_amount_all_tax) $param.='&amp;search_amount_all_tax='.urlencode($search_amount_all_tax);
+                if (! empty($filter_op1) && $filter_op1 != -1) $param.='&amp;filter_op1='.urlencode($filter_op1);
+                if ($filter_date1 != '') $param.='&amp;op1day='.$op1day.'&amp;op1month='.$op1month.'&amp;op1year='.$op1year;
+                if (! empty($filter_op2) && $filter_op2 != -1) $param.='&amp;filter_op2='.urlencode($filter_op2);
+                if ($filter_date2 != '') $param.='&amp;op2day='.$op2day.'&amp;op2month='.$op2month.'&amp;op2year='.$op2year;
+		if ($search_duedays)	$param.='&amp;search_duedays='.urlencode($search_duedays);
 
 		$param.=($option?"&option=".$option:"");
 		if (! empty($late)) $param.='&late='.urlencode($late);
@@ -193,6 +230,7 @@ if ($user->rights->fournisseur->facture->lire)
 		print_liste_field_titre($langs->trans("RefSupplier"),$_SERVER["PHP_SELF"],"f.ref_supplier","",$param,"",$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"f.datef","",$param,'align="center"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("DateDue"),$_SERVER["PHP_SELF"],"f.date_lim_reglement","",$param,'align="center"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("DueDays"),$_SERVER["PHP_SELF"],"duedays","",$param,'align="center"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"f.total_ht","",$param,'align="right"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("AmountTTC"),$_SERVER["PHP_SELF"],"f.total_ttc","",$param,'align="right"',$sortfield,$sortorder);
@@ -206,8 +244,23 @@ if ($user->rights->fournisseur->facture->lire)
 		print '<input class="flat" size="8" type="text" name="search_ref" value="'.$search_ref.'"></td>';
 		print '<td class="liste_titre">';
 		print '<input class="flat" size="8" type="text" name="search_ref_supplier" value="'.$search_ref_supplier.'"></td>';
-		print '<td class="liste_titre">&nbsp;</td>';
-		print '<td class="liste_titre">&nbsp;</td>';
+		print '<td class="liste_titre">';
+                $arrayofoperators=array('<'=>'<','>'=>'>');
+                print $form->selectarray('filter_op1',$arrayofoperators,$filter_op1,1);
+                print ' ';
+                $filter_date1=dol_mktime(0,0,0,$op1month,$op1day,$op1year);
+                print $form->select_date($filter_date1,'op1',0,0,1);
+                print '</td>';
+		print '<td class="liste_titre">';
+                $arrayofoperators=array('<'=>'<','>'=>'>');
+                print $form->selectarray('filter_op2',$arrayofoperators,$filter_op2,1);
+                print ' ';
+                $filter_date2=dol_mktime(0,0,0,$op2month,$op2day,$op2year);
+                print $form->select_date($filter_date2,'op2',0,0,1);
+                print '</td>';
+                print '<td class="liste_titre" align="right">';
+		print '<input class="flat" type="text" size="6" name="search_duedays" value="'.$search_duedays.'">';
+                print '</td>';
 		print '<td class="liste_titre" align="left">';
 		print '<input class="flat" type="text" size="6" name="search_company" value="'.$search_company.'">';
 		print '</td><td class="liste_titre" align="right">';
@@ -234,6 +287,16 @@ if ($user->rights->fournisseur->facture->lire)
 
 				print "<tr ".$bc[$var].">";
 				$classname = "impayee";
+                                if ($objp->duedays <0)
+                                {
+                                    $overdueclassstart="<strong>";
+                                    $overdueclassend="</strong>";
+                                }
+                                else
+                                {
+                                    $overdueclassstart="";
+                                    $overdueclassend="";
+                                }
 
 				print '<td class="nowrap">';
 				$facturestatic->id=$objp->facid;
@@ -244,9 +307,10 @@ if ($user->rights->fournisseur->facture->lire)
 				print '<td class="nowrap">'.dol_trunc($objp->ref_supplier,12).'</td>';
 
 				print '<td class="nowrap" align="center">'.dol_print_date($db->jdate($objp->df),'day')."</td>\n";
-				print '<td class="nowrap" align="center">'.dol_print_date($db->jdate($objp->datelimite),'day');
+				print '<td class="nowrap" align="center">'.$overdueclassstart.dol_print_date($db->jdate($objp->datelimite),'day');
 				if ($objp->datelimite && $db->jdate($objp->datelimite) < ($now - $conf->facture->fournisseur->warning_delay) && ! $objp->paye && $objp->fk_statut == 1) print img_warning($langs->trans("Late"));
-				print "</td>\n";
+				print $overdueclassend."</td>\n";
+                                print "<td align=\"right\">".$overdueclassstart.$objp->duedays.$overdueclassend."</td>";
 
 				print '<td>';
 				$companystatic->id=$objp->socid;
@@ -272,7 +336,7 @@ if ($user->rights->fournisseur->facture->lire)
 			}
 
 			print '<tr class="liste_total">';
-			print "<td colspan=\"5\" align=\"left\">".$langs->trans("Total").": </td>";
+			print "<td colspan=\"6\" align=\"left\">".$langs->trans("Total").": </td>";
 			print "<td align=\"right\"><b>".price($total_ht)."</b></td>";
 			print "<td align=\"right\"><b>".price($total_ttc)."</b></td>";
 			print "<td align=\"right\"><b>".price($total_paid)."</b></td>";

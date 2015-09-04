@@ -5,11 +5,9 @@
  * Copyright (C) 2004		Christophe Combelles	<ccomb@free.fr>
  * Copyright (C) 2005		Marc Barilley / Ocebo	<marc@ocebo.com>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
-<<<<<<< HEAD
  * Copyright (C) 2014		Teddy Andreotti			<125155@supinfo.com>
-=======
- * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
->>>>>>> refs/remotes/origin/3.6
+ * Copyright (C) 2015           Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2015           Andre Schild           <a.schild@aarboard.ch>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -322,7 +320,8 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 				/*
 	             * Autres factures impayees
 	             */
-	            $sql = 'SELECT f.rowid as facid, f.ref, f.ref_supplier, f.total_ht, f.total_ttc, f.datef as df';
+	            $sql = 'SELECT f.rowid as facid, f.ref, f.ref_supplier, f.total_ht, f.total_ttc, f.datef as df, date_lim_reglement as duedate';
+                    $sql.= ', DATEDIFF(f.date_lim_reglement, NOW()) as duedays';
 	            $sql.= ', SUM(pf.amount) as am';
 	            $sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as f';
 	            $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf ON pf.fk_facturefourn = f.rowid';
@@ -330,7 +329,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	            $sql.= ' AND f.fk_soc = '.$object->socid;
 	            $sql.= ' AND f.paye = 0';
 	            $sql.= ' AND f.fk_statut = 1';  // Statut=0 => non validee, Statut=2 => annulee
-	            $sql.= ' GROUP BY f.rowid, f.ref, f.ref_supplier, f.total_ht, f.total_ttc, f.datef';
+	            $sql.= ' GROUP BY f.rowid, f.ref, f.ref_supplier, f.total_ht, f.total_ttc, f.datef, f.date_lim_reglement';
 	            $resql = $db->query($sql);
 	            if ($resql)
 	            {
@@ -356,6 +355,8 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                    print '<td>'.$langs->trans('Ref').'</td>';
 	                    print '<td>'.$langs->trans('RefSupplier').'</td>';
 	                    print '<td align="center">'.$langs->trans('Date').'</td>';
+	                    print '<td align="center">'.$langs->trans('DateMaxPayment').'</td>';
+	                    print '<td align="right">'.$langs->trans('DueDays').'</td>';
 	                    print '<td align="right">'.$langs->trans('AmountTTC').'</td>';
 	                    print '<td align="right">'.$langs->trans('AlreadyPaid').'</td>';
 	                    print '<td align="right">'.$langs->trans('RemainderToPay').'</td>';
@@ -386,6 +387,16 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                        {
 	                            print '<td align="center"><b>!!!</b></td>';
 	                        }
+	                        if ($objp->duedate > 0 )
+	                        {
+	                            print '<td align="center">';
+	                            print dol_print_date($db->jdate($objp->duedate), 'day').'</td>';
+	                        }
+	                        else
+	                        {
+	                            print '<td align="center"><b>!!!</b></td>';
+	                        }
+	                        print '<td align="right">'.$objp->duedays.'</td>';
 	                        print '<td align="right">'.price($objp->total_ttc).'</td>';
 	                        print '<td align="right">'.price($objp->am).'</td>';
 	                        print '<td align="right">'.price($objp->total_ttc - $objp->am).'</td>';
@@ -404,7 +415,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                    {
 	                        // Print total
 	                        print '<tr class="liste_total">';
-	                        print '<td colspan="3" align="left">'.$langs->trans('TotalTTC').':</td>';
+	                        print '<td colspan="5" align="left">'.$langs->trans('TotalTTC').':</td>';
 	                        print '<td align="right"><b>'.price($total_ttc).'</b></td>';
 	                        print '<td align="right"><b>'.price($totalrecu).'</b></td>';
 	                        print '<td align="right"><b>'.price($total_ttc - $totalrecu).'</b></td>';
@@ -545,7 +556,7 @@ if (empty($action))
         print_liste_field_titre($langs->trans('Account'),$_SERVER["PHP_SELF"],'ba.label','',$paramlist,'',$sortfield,$sortorder);
         print_liste_field_titre($langs->trans('Amount'),$_SERVER["PHP_SELF"],'p.amount','',$paramlist,'align="right"',$sortfield,$sortorder);
         //print_liste_field_titre($langs->trans('Invoice'),$_SERVER["PHP_SELF"],'ref_supplier','',$paramlist,'',$sortfield,$sortorder);
-		print_liste_field_titre('');
+        print_liste_field_titre('');
 		print "</tr>\n";
 
         // Lines for filters fields

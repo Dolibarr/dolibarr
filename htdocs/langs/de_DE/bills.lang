@@ -213,6 +213,7 @@ RelatedCommercialProposals=Verknüpfte Angebote
 MenuToValid=Zur Freigabe
 DateMaxPayment=Zahlungsziel
 DateEcheance=Zahlungsfrist (Limit)
+DueDays=Tage bis fällig
 DateInvoice=Rechnungsdatum
 NoInvoice=Keine Rechnung
 ClassifyBill=Rechnung einordnen
