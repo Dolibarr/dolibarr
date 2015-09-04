@@ -230,4 +230,3 @@ else {
 llxFooter();
 
 $db->close();
-?>
