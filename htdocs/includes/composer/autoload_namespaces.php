@@ -6,6 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname(dirname($vendorDir));
 
 return array(
+    'Raven_' => array($vendorDir . '/raven/raven/lib'),
     'PHPExcel' => array($vendorDir . '/phpoffice/phpexcel/Classes'),
     'Luracast\\Restler' => array($vendorDir . '/restler/framework'),
     'Detection' => array($vendorDir . '/mobiledetect/mobiledetectlib/namespaced'),
