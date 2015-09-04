@@ -856,7 +856,7 @@ class User extends CommonObject
 			else
 			{
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."user (datec,login,ldap_sid,entity)";
-				$sql.= " VALUES('".$this->db->idate($this->datec)."','".$this->db->escape($this->login)."','".$this->db->escape($this->ldap_sid)."',". (int) $this->entity.")";
+				$sql.= " VALUES('".$this->db->idate($this->datec)."','".$this->db->escape($this->login)."','".$this->db->escape($this->ldap_sid)."',".$this->db->escape($this->entity).")";
 				$result=$this->db->query($sql);
 
 				dol_syslog(get_class($this)."::create", LOG_DEBUG);
