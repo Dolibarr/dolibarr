@@ -676,7 +676,8 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 	if ($account->getCountryCode() == 'IN') $ibankey="IFSC";
 	if (! empty($account->iban))
 	{
-		$ibanDisplay_temp = $outputlangs->convToOutputCharset($account->iban);
+		//Remove whitespaces to ensure we are dealing with the format we expect
+		$ibanDisplay_temp = str_replace(' ', '', $outputlangs->convToOutputCharset($account->iban));
 		$ibanDisplay = "";
 
 		for($i = 0; $i < dol_strlen($ibanDisplay_temp); $i++)

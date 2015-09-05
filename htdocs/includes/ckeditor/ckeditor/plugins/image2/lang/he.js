@@ -1,0 +1,1 @@
+﻿CKEDITOR.plugins.setLang("image2","he",{alt:"טקסט חלופי",btnUpload:"שליחה לשרת",captioned:"Captioned image",infoTab:"מידע על התמונה",lockRatio:"נעילת היחס",menu:"תכונות התמונה",pathName:"image",pathNameCaption:"caption",resetSize:"איפוס הגודל",resizer:"Click and drag to resize",title:"מאפייני התמונה",uploadTab:"העלאה",urlMissing:"כתובת התמונה חסרה."});

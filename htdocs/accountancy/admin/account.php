@@ -173,11 +173,12 @@ if ($result) {
 	print '</td>';
 	print '</tr>';
 	
-	$var = true;
+	$var = false;
 	
 	$accountstatic=new AccountingAccount($db);
 	
-	while ( $i < min($num, $limit) ) {
+	while ( $i < min($num, $limit) ) 
+	{
 		$obj = $db->fetch_object($resql);
 		
 		$accountstatic->id=$obj->rowid;
