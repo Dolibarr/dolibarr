@@ -1392,6 +1392,7 @@ ModifyProductDescAbility=Personalization of product descriptions in forms
 ViewProductDescInFormAbility=Visualization of product descriptions in the forms (otherwise as popup tooltip)
 MergePropalProductCard=Activate in product/service Attached Files tab an option to merge product PDF document to proposal PDF azur if product/service is in the proposal
 ViewProductDescInThirdpartyLanguageAbility=Visualization of products descriptions in the thirdparty language
+UseMaskOnClone=Use product next ref when we clone a product%s (available if mask configured)
 UseSearchToSelectProductTooltip=Also if you have a large number of product (> 100 000), you can increase speed by setting constant PRODUCT_DONOTSEARCH_ANYWHERE to 1 in Setup->Other. Search will then be limited to start of string.
 UseSearchToSelectProduct=Use a search form to choose a product (rather than a drop-down list).
 UseEcoTaxeAbility=Support Eco-Taxe (WEEE)
