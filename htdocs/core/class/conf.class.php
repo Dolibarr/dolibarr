@@ -346,6 +346,9 @@ class Conf
 		// Module contrat
 		$this->contrat->dir_output=$rootfordata."/contracts";
 		$this->contrat->dir_temp  =$rootfordata."/contracts/temp";
+		// Module bank
+		$this->bank->dir_output=$rootfordata."/bank";
+		$this->bank->dir_temp  =$rootfordata."/bank/temp";
 
 
 		// Set some default values
