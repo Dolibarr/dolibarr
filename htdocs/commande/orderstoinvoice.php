@@ -633,6 +633,9 @@ if (($action != 'create' && $action != 'add') && !$error)
 
 			$generic_commande->id=$objp->rowid;
 			$generic_commande->ref=$objp->ref;
+			$generic_commande->statut = $objp->fk_statut;
+			$generic_commande->date_commande = $db->jdate($objp->date_commande);
+			$generic_commande->date_livraison = $db->jdate($objp->date_livraison);
 
 			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 			print '<td class="nobordernopadding nowrap">';
@@ -640,7 +643,9 @@ if (($action != 'create' && $action != 'add') && !$error)
 			print '</td>';
 
 			print '<td width="20" class="nobordernopadding nowrap">';
-			if (($objp->fk_statut > 0) && ($objp->fk_statut < 3) && $db->jdate($objp->date_valid) < ($now - $conf->commande->client->warning_delay)) print img_picto($langs->trans("Late"),"warning");
+			if ($generic_commande->hasDelay()) {
+				print img_picto($langs->trans("Late"),"warning");
+			}
 			print '</td>';
 
 			print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
