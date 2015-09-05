@@ -29,7 +29,7 @@
  *  \brief      File that include conf.php file and commons lib like functions.lib.php
  */
 
-if (! defined('DOL_VERSION')) define('DOL_VERSION','3.6.4');
+if (! defined('DOL_VERSION')) define('DOL_VERSION','3.6.5');
 if (! defined('EURO')) define('EURO',chr(128));
 
 // Define syslog constants
