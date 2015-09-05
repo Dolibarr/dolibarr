@@ -3236,11 +3236,15 @@ class Facture extends CommonInvoice
 			$response->url=DOL_URL_ROOT.'/compta/facture/list.php?search_status=1';
 			$response->img=img_object($langs->trans("Bills"),"bill");
 
+			$generic_facture = new Facture($this->db);
+
 			while ($obj=$this->db->fetch_object($resql))
 			{
+				$generic_facture->date_lim_reglement = $this->db->jdate($obj->datefin);
+
 				$response->nbtodo++;
 
-				if ($this->db->jdate($obj->datefin) < ($now - $conf->facture->client->warning_delay)) {
+				if ($generic_facture->hasDelay()) {
 					$response->nbtodolate++;
 				}
 			}
@@ -3696,6 +3700,25 @@ class Facture extends CommonInvoice
 		);
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+	}
+
+	/**
+	 * Is the customer invoice delayed?
+	 *
+	 * @return bool
+	 */
+	public function hasDelay()
+	{
+		global $conf;
+
+		$now = dol_now();
+
+		//Paid invoices have status STATUS_CLOSED
+		if (!$this->statut != Facture::STATUS_VALIDATED) {
+			return false;
+		}
+
+		return $this->date_lim_reglement < ($now - $conf->facture->client->warning_delay);
 	}
 }
 
