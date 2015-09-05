@@ -6,9 +6,11 @@
     "homepage": "http://www.dolibarr.org",
     "license": "GPL-3.0+",
     "support": {
-        "issues": "https://doliforge.org/projects/dolibarr",
+        "issues": "https://github.com/Dolibarr/dolibarr/issues",
         "forum": "http://www.dolibarr.org/forum",
-        "wiki": "http://wiki.dolibarr.org"
+        "wiki": "http://wiki.dolibarr.org",
+        "irc": "irc://chat.freenode.net/dolibarr",
+        "source": "https://github.com/Dolibarr/dolibarr"
     },
     "require": {
         "php": ">=5.3.0",
