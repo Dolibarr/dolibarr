@@ -655,7 +655,7 @@ if (empty($action) && $product->id)
     }
 
     //if (($user->rights->stock->mouvement->creer) && ! $product->hasbatch())
-    if (($user->rights->stock->mouvement->creer))
+    if ($user->rights->stock->mouvement->creer)
 	{
 		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'&amp;action=transfert">'.$langs->trans("StockMovement").'</a>';
 	}
