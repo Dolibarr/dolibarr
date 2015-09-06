@@ -72,7 +72,11 @@ class CommandeFournisseur extends CommonOrder
     var $date_approve;
     var $date_approve2;		// Used when SUPPLIER_ORDER_DOUBLE_APPROVAL is set
     var $date_commande;
-	var $date_livraison;	// Date livraison souhaitee
+
+    /**
+     * Delivery date
+     */
+	var $date_livraison;
     var $total_ht;
     var $total_tva;
     var $total_localtax1;   // Total Local tax 1
@@ -2292,7 +2296,7 @@ class CommandeFournisseur extends CommonOrder
         $resql=$this->db->query($sql);
         if ($resql)
         {
-	        $now=dol_now();
+            $commandestatic = new CommandeFournisseur($this->db);
 
 	        $response = new WorkboardResponse();
 	        $response->warning_delay=$conf->commande->fournisseur->warning_delay/60/60/24;
@@ -2304,8 +2308,11 @@ class CommandeFournisseur extends CommonOrder
             {
                 $response->nbtodo++;
 
-				$date_to_test = empty($obj->delivery_date) ? $obj->datec : $obj->delivery_date;
-                if ($obj->fk_statut != 3 && $this->db->jdate($date_to_test) < ($now - $conf->commande->fournisseur->warning_delay)) {
+                $commandestatic->date_livraison = $this->db->jdate($obj->delivery_date);
+                $commandestatic->date_commande = $this->db->jdate($obj->datec);
+                $commandestatic->statut = $obj->fk_statut;
+
+                if ($commandestatic->hasDelay()) {
 	                $response->nbtodolate++;
                 }
             }
@@ -2447,6 +2454,21 @@ class CommandeFournisseur extends CommonOrder
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
 	}
+
+    /**
+     * Is the supplier order delayed?
+     *
+     * @return bool
+     */
+    public function hasDelay()
+    {
+        global $conf;
+
+        $now = dol_now();
+        $date_to_test = empty($this->date_livraison) ? $this->date_commande : $this->date_livraison;
+
+        return ($this->statut != 3) && $date_to_test < ($now - $conf->commande->fournisseur->warning_delay);
+    }
 }
 
 
