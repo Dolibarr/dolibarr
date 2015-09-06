@@ -882,7 +882,6 @@ class ActionComm extends CommonObject
         $resql=$this->db->query($sql);
         if ($resql)
         {
-	        $now = dol_now();
             $agenda_static = new ActionComm($this->db);
 
 	        $response = new WorkboardResponse();
