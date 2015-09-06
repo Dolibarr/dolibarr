@@ -402,7 +402,7 @@ if ($action == 'writeBookKeeping')
 	}
 
 	if (empty($error)) {
-		setEventMessage($langs->trans('Success'), 'mesgs');
+		setEventMessage($langs->trans("GeneralLedgerIsWritten"),'mesgs');
 	}
 }
 // Export
