@@ -310,10 +310,11 @@ if (empty($reshook))
 	    {
 	        $langs->load("other");
 	        $upload_dir =	$conf->projet->dir_output . "/";
-	        $file =	$upload_dir	. '/' .	GETPOST('file');
+	        $urlfile=GETPOST('urlfile','alpha');
+	        $file =	$upload_dir	. '/' .	$filetodelete;
 	        $ret=dol_delete_file($file);
-	        if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-	        else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+	        if ($ret) setEventMessage($langs->trans("FileWasRemoved", $urlfile));
+	        else setEventMessage($langs->trans("ErrorFailToDeleteFile", $urlfile), 'errors');
 	    }
 	}
 
