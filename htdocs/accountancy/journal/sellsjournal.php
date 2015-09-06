@@ -188,6 +188,7 @@ if ($action == 'writebookkeeping') {
 			$bookkeeping->debit = ($mt >= 0) ? $mt : 0;
 			$bookkeeping->credit = ($mt < 0) ? $mt : 0;
 			$bookkeeping->code_journal = $conf->global->ACCOUNTING_SELL_JOURNAL;
+			$bookkeeping->fk_user_author = $user->id;
 
 			$bookkeeping->create();
 		}
@@ -213,6 +214,7 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->debit = ($mt < 0) ? $mt : 0;
 					$bookkeeping->credit = ($mt >= 0) ? $mt : 0;
 					$bookkeeping->code_journal = $conf->global->ACCOUNTING_SELL_JOURNAL;
+					$bookkeeping->fk_user_author = $user->id;
 
 					$bookkeeping->create();
 				}
@@ -238,6 +240,7 @@ if ($action == 'writebookkeeping') {
 				$bookkeeping->debit = ($mt < 0) ? $mt : 0;
 				$bookkeeping->credit = ($mt >= 0) ? $mt : 0;
 				$bookkeeping->code_journal = $conf->global->ACCOUNTING_SELL_JOURNAL;
+				$bookkeeping->fk_user_author = $user->id;
 
 				$bookkeeping->create();
 			}
