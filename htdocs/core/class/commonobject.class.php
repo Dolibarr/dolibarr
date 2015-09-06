@@ -3432,7 +3432,6 @@ abstract class CommonObject
 			require_once $file;
 
 			$obj = new $classname($this->db);
-			//$obj->message = $message;
 
 			// If generator is ODT, we must have srctemplatepath defined, if not we set it.
 			if ($obj->type == 'odt' && empty($srctemplatepath))

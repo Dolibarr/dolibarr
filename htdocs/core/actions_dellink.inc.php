@@ -36,41 +36,4 @@ if ($action == 'dellink' && ! empty($permissiondellink) && ! GETPOST('cancel') &
 	if ($result < 0) setEventMessages($object->error,$object->errors,'errors');
 }
 
-// Build doc
-/* TODO To mutualise code for builddoc and remove_file
-if ($action == 'builddoc' && $permissiondellink)
-{
-	// Save last template used to generate document
-	if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
-
-    $outputlangs = $langs;
-    if (GETPOST('lang_id'))
-    {
-        $outputlangs = new Translate("",$conf);
-        $outputlangs->setDefaultLang(GETPOST('lang_id'));
-    }
-    $result= $object->generateDocument($object->modelpdf, $outputlangs);
-    if ($result <= 0)
-    {
-        setEventMessages($object->error, $object->errors, 'errors');
-        $action='';
-    }
-}
-
-// Delete file in doc form
-if ($action == 'remove_file' && $permissiondellink)
-{
-    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
-    if ($object->id > 0)
-    {
-        $langs->load("other");
-        $urlfile=GETPOST('urlfile','alpha');
-        $file =	$upload_dir	. '/' .	$filetodelete;
-        $ret=dol_delete_file($file);
-        if ($ret) setEventMessage($langs->trans("FileWasRemoved", $urlfile));
-        else setEventMessage($langs->trans("ErrorFailToDeleteFile", $urlfile), 'errors');
-    }
-}
-*/
 
