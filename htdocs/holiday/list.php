@@ -282,7 +282,7 @@ print "</tr>\n";
 // FILTRES
 print '<tr class="liste_titre">';
 print '<td class="liste_titre" align="left" width="50">';
-print '<input class="flat" size="4" type="text" name="search_ref" value="'.$search_ref.'">';
+print '<input class="flat" size="4" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
 print '</td>';
 
 // DATE CREATE
