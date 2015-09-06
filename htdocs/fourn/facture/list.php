@@ -323,6 +323,10 @@ if ($resql)
 	while ($i < min($num,$limit))
 	{
 		$obj = $db->fetch_object($resql);
+
+		$facturestatic->date_echeance = $db->jdate($obj->date_echeance);
+		$facturestatic->statut = $obj->fk_statut;
+
 		$var=!$var;
 
 		print "<tr ".$bc[$var].">";
@@ -342,7 +346,9 @@ if ($resql)
 
 		print '<td align="center" class="nowrap">'.dol_print_date($db->jdate($obj->datef),'day').'</td>';
 		print '<td align="center" class="nowrap">'.dol_print_date($db->jdate($obj->date_echeance),'day');
-		if (($obj->paye == 0) && ($obj->fk_statut > 0) && $obj->date_echeance && $db->jdate($obj->date_echeance) < ($now - $conf->facture->fournisseur->warning_delay)) print img_picto($langs->trans("Late"),"warning");
+		if ($facturestatic->hasDelay()) {
+			print img_picto($langs->trans("Late"),"warning");
+		}
 		print '</td>';
 		print '<td>'.dol_trunc($obj->libelle,36).'</td>';
 		print '<td>';
