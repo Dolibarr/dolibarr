@@ -48,6 +48,7 @@ NoImportableData=Inga importeras data (ingen modul med definitioner för att mö
 FileSuccessfullyBuilt=Export-filen som genereras
 SQLUsedForExport=SQL Request används för att bygga exportfil
 LineId=Id av rad
+LineLabel=Label of line
 LineDescription=Beskrivning av linjen
 LineUnitPrice=Priset per enhet på linjen
 LineVATRate=Momssats på linjen

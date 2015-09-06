@@ -1,14 +1,15 @@
 <?php
-/* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003      Brian Fraval         <brian@fraval.org>
- * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2008      Patrick Raguin       <patrick.raguin@auguria.net>
- * Copyright (C) 2010-2014 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2011-2013 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
- * Copyright (C) 2015      Jean-François Ferry  <jfefe@aternatik.fr>
- * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
+/* Copyright (C) 2001-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2003       Brian Fraval            <brian@fraval.org>
+ * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005       Eric Seigne             <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2008       Patrick Raguin          <patrick.raguin@auguria.net>
+ * Copyright (C) 2010-2014  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2011-2013  Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -411,13 +412,23 @@ if (empty($reshook))
                         }
                     }
 
-					// Categories association
+					// Customer categories association
 					$custcats = GETPOST( 'custcats', 'array' );
 					if (!empty( $custcats )) {
 						$cat = new Categorie( $db );
 						foreach ($custcats as $id_category) {
 							$cat->fetch( $id_category );
 							$cat->add_type( $object, 'customer' );
+						}
+					}
+
+					// Supplier categories association
+					$suppcats = GETPOST('suppcats', 'array');
+					if (!empty($suppcats)) {
+						$cat = new Categorie($db);
+						foreach ($suppcats as $id_category) {
+							$cat->fetch($id_category);
+							$cat->add_type($object, 'supplier');
 						}
 					}
 
@@ -525,7 +536,7 @@ if (empty($reshook))
                     $error = $object->error; $errors = $object->errors;
                 }
 
-				// Categories association
+				// Customer categories association
 				// First we delete all categories association
 				$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . 'categorie_societe';
 				$sql .= ' WHERE fk_soc = ' . $object->id;
@@ -538,6 +549,22 @@ if (empty($reshook))
 					foreach ($categories as $id_category) {
 						$cat->fetch( $id_category );
 						$cat->add_type( $object, 'customer' );
+					}
+				}
+
+				// Supplier categories association
+				// First we delete all categories association
+				$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . 'categorie_fournisseur';
+				$sql .= ' WHERE fk_soc = ' . $object->id;
+				$db->query($sql);
+
+				// Then we add the associated categories
+				$categories = GETPOST('suppcats', 'array');
+				if (!empty($categories)) {
+					$cat = new Categorie($db);
+					foreach ($categories as $id_category) {
+						$cat->fetch($id_category);
+						$cat->add_type($object, 'supplier');
 					}
 				}
 
@@ -1245,13 +1272,26 @@ else
 		}
 
 		// Categories
-	    if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire))
-	    {
-			print '<tr><td class="toptd">'.fieldLabel('Categories','custcats').'</td><td colspan="3">';
-			$cate_arbo = $form->select_all_categories(Categorie::TYPE_CUSTOMER, null, 'parent', null, null, 1);
-			print $form->multiselectarray('custcats', $cate_arbo, GETPOST('custcats', 'array'), null, null, null, null, "90%");
-			print "</td></tr>";
-	    }
+		if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire))
+		{
+			// Customer
+			if ($object->prospect || $object->client) {
+				print '<tr><td class="toptd">' . fieldLabel('CustomersCategoriesShort', 'custcats') . '</td><td colspan="3">';
+				$cate_arbo = $form->select_all_categories(Categorie::TYPE_CUSTOMER, null, 'parent', null, null, 1);
+				print $form->multiselectarray('custcats', $cate_arbo, GETPOST('custcats', 'array'), null, null, null,
+					null, "90%");
+				print "</td></tr>";
+			}
+
+			// Supplier
+			if ($object->fournisseur) {
+				print '<tr><td class="toptd">' . fieldLabel('SuppliersCategoriesShort', 'suppcats') . '</td><td colspan="3">';
+				$cate_arbo = $form->select_all_categories(Categorie::TYPE_SUPPLIER, null, 'parent', null, null, 1);
+				print $form->multiselectarray('suppcats', $cate_arbo, GETPOST('suppcats', 'array'), null, null, null,
+					null, "90%");
+				print "</td></tr>";
+			}
+		}
 
         // Other attributes
         $parameters=array('colspan' => ' colspan="3"', 'colspanvalue' => '3');
@@ -1761,19 +1801,36 @@ else
             }
 
 			// Categories
-		    if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire))
-		    {
-	            print '<tr><td>'.fieldLabel('Categories', 'custcats').'</td>';
-		        print '<td colspan="3">';
-				$cate_arbo = $form->select_all_categories( Categorie::TYPE_CUSTOMER, null, null, null, null, 1);
-				$c = new Categorie( $db );
-				$cats = $c->containing( $object->id, Categorie::TYPE_CUSTOMER );
-				foreach ($cats as $cat) {
-					$arrayselected[] = $cat->id;
+			if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire))
+			{
+				// Customer
+				if ($object->prospect || $object->client) {
+					print '<tr><td>' . fieldLabel('CustomersCategoriesShort', 'custcats') . '</td>';
+					print '<td colspan="3">';
+					$cate_arbo = $form->select_all_categories(Categorie::TYPE_CUSTOMER, null, null, null, null, 1);
+					$c = new Categorie($db);
+					$cats = $c->containing($object->id, Categorie::TYPE_CUSTOMER);
+					foreach ($cats as $cat) {
+						$arrayselected[] = $cat->id;
+					}
+					print $form->multiselectarray('custcats', $cate_arbo, $arrayselected, '', 0, '', 0, '90%');
+					print "</td></tr>";
 				}
-				print $form->multiselectarray( 'custcats', $cate_arbo, $arrayselected, '', 0, '', 0, '90%');
-				print "</td></tr>";
-		    }
+
+				// Supplier
+				if ($object->fournisseur) {
+					print '<tr><td>' . fieldLabel('SuppliersCategoriesShort', 'suppcats') . '</td>';
+					print '<td colspan="3">';
+					$cate_arbo = $form->select_all_categories(Categorie::TYPE_SUPPLIER, null, null, null, null, 1);
+					$c = new Categorie($db);
+					$cats = $c->containing($object->id, Categorie::TYPE_SUPPLIER);
+					foreach ($cats as $cat) {
+						$arrayselected[] = $cat->id;
+					}
+					print $form->multiselectarray('suppcats', $cate_arbo, $arrayselected, '', 0, '', 0, '90%');
+					print "</td></tr>";
+				}
+			}
 
             // Other attributes
             $parameters=array('colspan' => ' colspan="3"', 'colspanvalue' => '3');
@@ -1859,11 +1916,11 @@ else
 				    'name' => 'soc_origin',
 			    	'label' => $langs->trans('MergeOriginThirdparty'),
 				    'type' => 'other',
-				    'value' => $form->select_company('', 'soc_origin', 's.rowid != '.$object->id)
+				    'value' => $form->select_company('', 'soc_origin', 's.rowid != '.$object->id, 1, 0, 0, array(), 0, 'minwidth200')
 			    )
 		    );
 
-		    print $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$object->id, $langs->trans("MergeThirdparties"), $langs->trans("ConfirmMergeThirdparties"), "confirm_merge", $formquestion, 'no', 1);
+		    print $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$object->id, $langs->trans("MergeThirdparties"), $langs->trans("ConfirmMergeThirdparties"), "confirm_merge", $formquestion, 'no', 1, 190);
 	    }
 
         dol_htmloutput_errors($error,$errors);
@@ -2207,13 +2264,24 @@ else
         }
 
 		// Tags / categories
-	    if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire))
-	    {
-	        print '<tr><td>' . $langs->trans( "Categories" ) . '</td>';
-			print '<td colspan="3">';
-			print $form->showCategories( $object->id, 'customer', 1 );
-			print "</td></tr>";
-	    }
+		if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire))
+		{
+			// Customer
+			if ($object->prospect || $object->client) {
+				print '<tr><td>' . $langs->trans("CustomersCategoriesShort") . '</td>';
+				print '<td colspan="3">';
+				print $form->showCategories($object->id, 'customer', 1);
+				print "</td></tr>";
+			}
+
+			// Supplier
+			if ($object->fournisseur) {
+				print '<tr><td>' . $langs->trans("SuppliersCategoriesShort") . '</td>';
+				print '<td colspan="3">';
+				print $form->showCategories($object->id, 'supplier', 1);
+				print "</td></tr>";
+			}
+		}
 
 		// Incoterms
 		if (!empty($conf->incoterm->enabled))

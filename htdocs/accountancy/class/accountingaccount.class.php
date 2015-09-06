@@ -61,12 +61,15 @@ class AccountingAccount extends CommonObject
 	/**
 	 * Load record in memory
 	 *
-	 * @param	int		$rowid				Id
-	 * @param	string	$account_number		Account number
-	 * @return 	int							<0 if KO, >0 if OK
+	 * @param	int		$rowid					Id
+	 * @param	string	$account_number			Account number
+	 * @param	int		$limittocurentchart		1=Do not load record if it is into another accounting system
+	 * @return 	int								<0 if KO, >0 if OK
 	 */
-	function fetch($rowid = null, $account_number = null)
+	function fetch($rowid = null, $account_number = null, $limittocurentchart=0)
 	{
+		global $conf;
+
 		if ($rowid || $account_number) {
 			$sql = "SELECT rowid, datec, tms, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, fk_user_author, fk_user_modif, active";
 			$sql.= " FROM " . MAIN_DB_PREFIX . "accountingaccount WHERE";
@@ -75,7 +78,9 @@ class AccountingAccount extends CommonObject
 			} elseif ($account_number) {
 				$sql .= " account_number = '" . $account_number . "'";
 			}
-
+			if (!empty($limittocurentchart)) {
+				$sql .=' AND fk_pcg_version IN (SELECT pcg_version FROM '.MAIN_DB_PREFIX.'accounting_system WHERE rowid='.$conf->global->CHARTOFACCOUNTS.')';
+			}
 			dol_syslog(get_class($this) . "::fetch sql=" . $sql, LOG_DEBUG);
 			$result = $this->db->query($sql);
 			if ($result) {
@@ -101,7 +106,8 @@ class AccountingAccount extends CommonObject
 					return 0;
 				}
 			} else {
-				dol_print_error($this->db);
+				$this->error="Error " . $this->db->lasterror();
+				$this->errors[] = "Error " . $this->db->lasterror();
 			}
 		}
 		return -1;

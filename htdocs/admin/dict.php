@@ -899,7 +899,11 @@ if ($id)
 				else $valuetoshow=$langs->trans("Type");
             }
             if ($fieldlist[$field]=='code')            { $valuetoshow=$langs->trans("Code"); }
-            if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label') { $valuetoshow=$langs->trans("Label")."*"; }
+            if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label')
+            {
+            	$valuetoshow=$langs->trans("Label");
+            	if ($id != 25) $valuetoshow.="*";
+            }
             if ($fieldlist[$field]=='libelle_facture') { $valuetoshow=$langs->trans("LabelOnDocuments")."*"; }
             if ($fieldlist[$field]=='country')         {
                 if (in_array('region_id',$fieldlist)) { print '<td>&nbsp;</td>'; continue; }		// For region page, we do not show the country input
@@ -1055,7 +1059,11 @@ if ($id)
                 if ($fieldlist[$field]=='lang')            { $valuetoshow=$langs->trans("Language"); }
                 if ($fieldlist[$field]=='type')            { $valuetoshow=$langs->trans("Type"); }
                 if ($fieldlist[$field]=='code')            { $valuetoshow=$langs->trans("Code"); }
-                if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label') { $valuetoshow=$langs->trans("Label")."*"; }
+                if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label')
+                {
+                	$valuetoshow=$langs->trans("Label");
+                   	if ($id != 25) $valuetoshow.="*";
+                }
                 if ($fieldlist[$field]=='libelle_facture') { $valuetoshow=$langs->trans("LabelOnDocuments")."*"; }
                 if ($fieldlist[$field]=='country')         { $valuetoshow=$langs->trans("Country"); }
                 if ($fieldlist[$field]=='recuperableonly') { $valuetoshow=$langs->trans("NPR"); $align="center"; }

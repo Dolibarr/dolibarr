@@ -90,7 +90,7 @@ function dol_hash($chain,$type=0)
 	else if (! empty($conf->global->MAIN_SECURITY_HASH_ALGO) && $conf->global->MAIN_SECURITY_HASH_ALGO == 'sha1') return sha1($chain);
 	else if (! empty($conf->global->MAIN_SECURITY_HASH_ALGO) && $conf->global->MAIN_SECURITY_HASH_ALGO == 'sha1md5') return sha1(md5($chain));
 
-	// No enconding defined
+	// No particular enconding defined, use default
 	return md5($chain);
 }
 

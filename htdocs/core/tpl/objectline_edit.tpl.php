@@ -239,7 +239,15 @@ if (! empty($conf->margin->enabled))
 ?>
 	jQuery(document).ready(function()
 	{
-		/* Add rule to clear margin when we change price_ht or buying_price, so when we change sell or buy price, margin will be recalculated after submitting form */
+		/* Add rule to clear margin when we change some data, so when we change sell or buy price, margin will be recalculated after submitting form */
+		jQuery("#tva_tx").click(function() {						/* somtimes field is a text, sometimes a combo */
+			jQuery("input[name='np_marginRate']:first").val('');
+			jQuery("input[name='np_markRate']:first").val('');
+		});
+		jQuery("#tva_tx").keyup(function() {						/* somtimes field is a text, sometimes a combo */
+			jQuery("input[name='np_marginRate']:first").val('');
+			jQuery("input[name='np_markRate']:first").val('');
+		});
 		jQuery("#price_ht").keyup(function() {
 			jQuery("input[name='np_marginRate']:first").val('');
 			jQuery("input[name='np_markRate']:first").val('');
@@ -322,7 +330,7 @@ if (! empty($conf->margin->enabled))
 		var remise = $("input[name='remise_percent']:first");
 
 		var rate = $("input[name='"+npRate+"']:first");
-		if (rate.val() == '') return true;
+		if (rate.val() == '' || (typeof rate.val()) == 'undefined' ) return true;
 
 		if (! $.isNumeric(rate.val().replace(',','.')))
 		{
@@ -331,7 +339,7 @@ if (! empty($conf->margin->enabled))
 			setTimeout(function () { rate.focus() }, 50);
 			return false;
 		}
-		if (npRate == "markRate" && rate.val() >= 100)
+		if (npRate == "np_markRate" && rate.val() >= 100)
 		{
 			alert('<?php echo $langs->trans("markRateShouldBeLesserThan100"); ?>');
 			e.stopPropagation();
@@ -347,9 +355,11 @@ if (! empty($conf->margin->enabled))
 			bpjs=price2numjs(buying_price.val());
 			ratejs=price2numjs(rate.val());
 
-			if (npRate == "marginRate")
+			/* console.log(npRate+" - "+bpjs+" - "+ratejs); */
+
+			if (npRate == "np_marginRate")
 				price = ((bpjs * (1 + ratejs / 100)) / (1 - remisejs / 100));
-			else if (npRate == "markRate")
+			else if (npRate == "np_markRate")
 				price = ((bpjs / (1 - ratejs / 100)) / (1 - remisejs / 100));
 		}
 		$("input[name='price_ht']:first").val(price);	// TODO Must use a function like php price to have here a formated value

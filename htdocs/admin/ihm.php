@@ -36,6 +36,7 @@ $langs->load("other");
 $langs->load("companies");
 $langs->load("products");
 $langs->load("members");
+$langs->load("projects");
 
 if (! $user->admin) accessforbidden();
 

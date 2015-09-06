@@ -2159,11 +2159,11 @@ abstract class CommonObject
         $sourcetype = (! empty($sourcetype) ? $sourcetype : $this->element);
         $targettype = (! empty($targettype) ? $targettype : $this->element);
 
-        if (empty($sourceid) && empty($targetid))
+        /*if (empty($sourceid) && empty($targetid))
         {
         	dol_syslog('Bad usage of function. No source nor target id defined (nor as parameter nor as object id)', LOG_ERR);
         	return -1;
-        }
+        }*/
 
         // Links between objects are stored in table element_element
         $sql = 'SELECT rowid, fk_source, sourcetype, fk_target, targettype';
@@ -3277,12 +3277,12 @@ abstract class CommonObject
 	 *	Need $this->element & $this->id
 	 *
 	 *	@param		int		$resource_id		Resource id
-	 *	@param		string	$resource_element	Resource element
+	 *	@param		string	$resource_type		'resource'
 	 *	@param		int		$busy				Busy or not
 	 *	@param		int		$mandatory			Mandatory or not
 	 *	@return		int							<=0 if KO, >0 if OK
 	 */
-	function add_element_resource($resource_id,$resource_element,$busy=0,$mandatory=0)
+	function add_element_resource($resource_id, $resource_type, $busy=0, $mandatory=0)
 	{
 		$this->db->begin();
 
@@ -3295,7 +3295,7 @@ abstract class CommonObject
 		$sql.= ", mandatory";
 		$sql.= ") VALUES (";
 		$sql.= $resource_id;
-		$sql.= ", '".$resource_element."'";
+		$sql.= ", '".$resource_type."'";
 		$sql.= ", '".$this->id."'";
 		$sql.= ", '".$this->element."'";
 		$sql.= ", '".$busy."'";
@@ -3470,11 +3470,20 @@ abstract class CommonObject
 
 				if (empty($srctemplatepath))
 				{
-					$this->error='ErrorGenerationAskedForOdtTemplateWithNoSrcFileFound';
+					$this->error='ErrorGenerationAskedForOdtTemplateWithSrcFileNotDefined';
 					return -1;
 				}
 			}
 
+            if ($obj->type == 'odt' && ! empty($srctemplatepath))
+            {
+                if (! dol_is_file($srctemplatepath))
+                {
+                    $this->error='ErrorGenerationAskedForOdtTemplateWithSrcFileNotFound';
+                    return -1;
+                }
+            }
+    
 			// We save charset_output to restore it because write_file can change it if needed for
 			// output format that does not support UTF8.
 			$sav_charset_output=$outputlangs->charset_output;
@@ -3587,6 +3596,11 @@ abstract class CommonObject
     function fetch_optionals($rowid=null,$optionsArray=null)
     {
     	if (empty($rowid)) $rowid=$this->id;
+
+        //To avoid SQL errors. Probably not the better solution though
+        if (!$this->table_element) {
+            return 0;
+        }
 
         if (! is_array($optionsArray))
         {
@@ -3794,7 +3808,7 @@ abstract class CommonObject
      */
     function showOptionals($extrafields, $mode='view', $params=null, $keyprefix='')
     {
-		global $_POST, $conf;
+		global $_POST, $conf, $langs;
 
 		$out = '';
 
@@ -3852,7 +3866,7 @@ abstract class CommonObject
 					if($extrafields->attribute_required[$key])
 						$label = '<span class="fieldrequired">'.$label.'</span>';
 
-					$out .= '<td>'.$label.'</td>';
+					$out .= '<td>'.$langs->trans($label).'</td>';
 					$out .='<td'.($colspan?' colspan="'.$colspan.'"':'').'>';
 
 					switch($mode) {

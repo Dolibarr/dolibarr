@@ -193,7 +193,7 @@ class User extends CommonObject
 
 		if ($sid)    // permet une recherche du user par son SID ActiveDirectory ou Samba
 		{
-			$sql.= " AND (u.ldap_sid = '".$sid."' OR u.login = '".$this->db->escape($login)."') LIMIT 1";
+			$sql.= " AND (u.ldap_sid = '".$this->db->escape($sid)."' OR u.login = '".$this->db->escape($login)."') LIMIT 1";
 		}
 		else if ($login)
 		{
@@ -807,9 +807,9 @@ class User extends CommonObject
 	/**
 	 *  Create a user into database
 	 *
-	 *  @param	User	$user        	Objet user qui demande la creation
-	 *  @param  int		$notrigger		1 ne declenche pas les triggers, 0 sinon
-	 *  @return int			         	<0 si KO, id compte cree si OK
+	 *  @param	User	$user        	Objet user doing creation
+	 *  @param  int		$notrigger		1=do not execute triggers, 0 otherwise
+	 *  @return int			         	<0 if KO, id of created user if OK
 	 */
 	function create($user,$notrigger=0)
 	{
@@ -827,6 +827,12 @@ class User extends CommonObject
 		{
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorBadEMail",$this->email);
+			return -1;
+		}
+		if (empty($this->login))
+		{
+			$langs->load("errors");
+			$this->error = $langs->trans("ErrorFieldRequired",$this->login);
 			return -1;
 		}
 
@@ -856,7 +862,7 @@ class User extends CommonObject
 			else
 			{
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."user (datec,login,ldap_sid,entity)";
-				$sql.= " VALUES('".$this->db->idate($this->datec)."','".$this->db->escape($this->login)."','".$this->ldap_sid."',".$this->db->escape($this->entity).")";
+				$sql.= " VALUES('".$this->db->idate($this->datec)."','".$this->db->escape($this->login)."','".$this->db->escape($this->ldap_sid)."',".$this->db->escape($this->entity).")";
 				$result=$this->db->query($sql);
 
 				dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -1171,7 +1177,13 @@ class User extends CommonObject
 			$this->error = $langs->trans("ErrorBadEMail",$this->email);
 			return -1;
 		}
-
+		if (empty($this->login))
+		{
+			$langs->load("errors");
+			$this->error = $langs->trans("ErrorFieldRequired",$this->login);
+			return -1;
+		}
+		
 		$this->db->begin();
 
 		// Update datas

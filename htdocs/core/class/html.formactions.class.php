@@ -179,7 +179,7 @@ class FormActions
             elseif ($typeelement == 'fichinter') $title=$langs->trans('ActionsOnFicheInter');
         	else $title=$langs->trans("Actions");
 
-        	print_titre($title);
+        	print load_fiche_titre($title,'','');
 
         	$total = 0;	$var=true;
         	print '<table class="noborder" width="100%">';
@@ -196,10 +196,7 @@ class FormActions
 
         	foreach($listofactions as $action)
         	{
-        		$savlabel=$action->label;
-        		$action->label=$action->ref;
-        		$ref=$action->getNomUrl(1);
-        		$action->label=$savlabel;
+        		$ref=$action->getNomUrl(1,-1);
         		$label=$action->getNomUrl(0,38);
 
         		$var=!$var;

@@ -79,7 +79,7 @@ ErrorModuleRequireJavascript=يجب عدم تعطيل جافا سكريبت لج
 ErrorPasswordsMustMatch=ويجب على كلا كلمات المرور المكتوبة تطابق بعضها البعض
 ErrorContactEMail=وقع خطأ فني. من فضلك، اتصل بمسؤول إلى البريد الإلكتروني بعد <b>%s</b> EN توفير <b>%s</b> رمز الخطأ في رسالتك، أو حتى أفضل من خلال إضافة نسخة شاشة من هذه الصفحة.
 ErrorWrongValueForField=قيمة خاطئة لعدد <b>%s</b> الحقل (قيمة <b>'%s'</b> لا يتطابق <b>%s</b> حكم [رجإكس])
-ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b> = <b>%s</b>)
+ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b>)
 ErrorFieldRefNotIn=قيمة خاطئة <b>ل%s</b> عدد حقل <b>('%s</b> &quot;قيمة ليست المرجع <b>%s</b> موجود)
 ErrorsOnXLines=الأخطاء على خطوط مصدر <b>%s</b>
 ErrorFileIsInfectedWithAVirus=وكان برنامج مكافحة الفيروسات غير قادرة على التحقق من صحة الملف (ملف قد يكون مصابا بواسطة فيروس)

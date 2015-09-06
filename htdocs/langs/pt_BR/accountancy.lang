@@ -25,6 +25,7 @@ CustomersVentilation=Cancelar cliente
 SuppliersVentilation=Cancelar fornecedor
 TradeMargin=Margem de comercialização
 ByCustomerInvoice=Por faturas de cliente
+CreateMvts=Criar movimento
 UpdateAccount=Modificação de uma conta contábil
 UpdateMvts=Modificação de um movimento
 WriteBookKeeping=Registo das contas em contabilidade geral
@@ -48,6 +49,8 @@ ACCOUNTING_LIST_SORT_VENTILATION_TODO=Comece a classificação das quebras de p�
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Comece a classificação das quebras de páginas  "separar" por elementos mais recentes
 AccountLength=Duração das contas contábeis mostradas no Dolibarr
 AccountLengthDesc=Função que permite simular uma duração de uma conta contábil, substituindo espaços figurados por zero. Esta função só toca a tela, ele não modifica as contas contábeis registrados no Dolibarr. Para a exportação, esta função é necessária para ser compatível com determinado software.
+ACCOUNTING_LENGTH_DESCRIPTION=Comprimento para a exibição de produtos e serviços descritos em listas (Melhor = 50)
+ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Comprimento para a exibição de produtos e serviços conta de formulário descritos em listas (Melhor = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Tamanho das contas gerais
 ACCOUNTING_LENGTH_AACCOUNT=Tamanho das contas de terceiros
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Diário diversos

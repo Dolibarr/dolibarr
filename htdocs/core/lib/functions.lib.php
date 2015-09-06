@@ -302,7 +302,7 @@ function dol_getprefix()
  *
  * 	@param	string	$relpath	Relative path to file (Ie: mydir/myfile, ../myfile, ...)
  * 	@param	string	$classname	Class name
- *  @return bool
+ *  @return bool                True if load is a success, False if it fails
  */
 function dol_include_once($relpath, $classname='')
 {
@@ -1227,19 +1227,6 @@ function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1)
 	else
 	{
 		dol_print_error('','PHP version must be 5.3+');
-		/*
-		$usealternatemethod=false;
-		if ($year <= 1970) $usealternatemethod=true;		// <= 1970
-		if ($year >= 2038) $usealternatemethod=true;		// >= 2038
-
-		if ($usealternatemethod || $gm)	// Si time gm, seule adodb peut convertir
-		{
-			$date=adodb_mktime($hour,$minute,$second,$month,$day,$year,0,$gm);
-		}
-		else
-		{
-			$date=mktime($hour,$minute,$second,$month,$day,$year);
-		}*/
 		return '';
 	}
 }
@@ -2015,7 +2002,7 @@ function img_picto($titlealt, $picto, $options = '', $pictoisfullpath = false, $
 		$tmparray=array(0=>$titlealt);
 		if (preg_match('/:[^\s]/',$titlealt)) $tmparray=explode(':',$titlealt);		// We explode if we have TextA:TextB. Not if we have TextA: TextB
 		$title=$tmparray[0];
-		$alt=empty($tmparray[1])?$tmparray[0]:$tmparray[1]; // Use title for alt if no alt is provided
+		$alt=empty($tmparray[1])?'':$tmparray[1];
 		return '<img src="'.$fullpathpicto.'" border="0" alt="'.dol_escape_htmltag($alt).'"'.($notitle?'':' title="'.dol_escape_htmltag($title).'"').($options?' '.$options:'').'>';	// Alt is used for accessibility, title for popup
 	}
 }
@@ -2743,8 +2730,8 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
  *
  *	@param	string	$title			Title to show
  *	@return	string					Title to show
- *  @deprecated						Use print_fiche_titre instead
- *  @see print_fiche_titre
+ *  @deprecated						Use load_fiche_titre instead
+ *  @see print_fiche_titre, load_fiche_titre
  */
 function print_titre($title)
 {
@@ -3756,7 +3743,7 @@ function yn($yesno, $case=1, $color=0)
  *
  *	@param	string	$num            Id of object
  *	@param  int		$level		    Level of subdirs to return (1, 2 or 3 levels)
- * 	@param	int		$alpha		    Use alpha ref
+ * 	@param	int		$alpha		    0=Keep number only to forge path, 1=Use alpha part afer the - (By default, use 0).
  *  @param  int		$withoutslash   0=With slash at end, 1=without slash at end (except if '/', we return '')
  *  @param	Object	$object			Object
  *  @param	string	$modulepart		Type of object ('invoice_supplier, 'donation', 'invoice', ...')

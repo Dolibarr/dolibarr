@@ -305,7 +305,7 @@ if ($resql)
 	print '</td><td class="liste_titre" align="right">';
 	print '<input class="flat" type="text" size="6" name="search_amount_all_tax" value="'.$search_amount_all_tax.'">';
 	print '</td><td class="liste_titre" align="right">';
-	$liststatus=array('paye:0'=>$langs->trans("Unpaid"), 'paye:1'=>$langs->trans("Paid"));
+	$liststatus=array('fac.fk_statut:0'=>$langs->trans("Draft"),'fac.fk_statut:1,paye:0'=>$langs->trans("Unpaid"), 'paye:1'=>$langs->trans("Paid"));
 	print $form->selectarray('filtre', $liststatus, $filter, 1);
 	print '</td><td class="liste_titre" align="right">';
 	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';

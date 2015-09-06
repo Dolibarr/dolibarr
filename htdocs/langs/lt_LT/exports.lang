@@ -48,6 +48,7 @@ NoImportableData=Nėra importuojamų duomenų (nėra modulio su apibrėžimais l
 FileSuccessfullyBuilt=Eksporto failas sukurtas
 SQLUsedForExport=SQL užklausa naudojamos sukurti eksporto failą
 LineId=Eilutės ID
+LineLabel=Label of line
 LineDescription=Eilutės aprašymas
 LineUnitPrice=Eilutės vieneto kaina
 LineVATRate=Eilutės PVM tarifas

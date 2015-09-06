@@ -208,7 +208,7 @@ print '</tr>';
 if (count($object->lines) > 0)
 {
 	// Loop on each active job
-	$style='impair';
+	$style='pair';
 	foreach($object->lines as $line)
 	{
 		// title profil

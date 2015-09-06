@@ -22,6 +22,7 @@
 UPDATE llx_facture_fourn set ref=rowid where ref IS NULL;
 ALTER TABLE llx_facture_fourn MODIFY COLUMN ref varchar(255) NOT NULL;
 
+ALTER TABLE llx_bank_url MODIFY COLUMN type varchar(24) NOT NULL;
 
 -- IVORY COST (id country=21)
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,localtax1,localtax1_type,localtax2,localtax2_type,note,active) values (211, 21,  '0','0',0,0,0,0,'IVA Rate 0',1);
@@ -788,3 +789,7 @@ UPDATE llx_c_departements SET code_departement='CE' WHERE ncc='CEUTA' AND fk_reg
 UPDATE llx_c_departements SET code_departement='ML' WHERE ncc='MELILLA' AND fk_region=409;
 DELETE FROM llx_c_departements WHERE ncc='OTROS' AND fk_region=420;
 DELETE FROM llx_c_regions WHERE code_region=420 and fk_pays=4;
+
+ALTER TABLE llx_c_paiement MODIFY COLUMN libelle varchar(62);
+
+ALTER TABLE llx_societe_remise_except MODIFY COLUMN description text NOT NULL;

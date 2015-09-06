@@ -79,7 +79,7 @@ ErrorModuleRequireJavascript=JavaScript turi būti neišjungtas, kad ši funkcij
 ErrorPasswordsMustMatch=Abu įvesti slaptažodžiai turi sutapti tarpusavyje
 ErrorContactEMail=Įvyko techninė klaida. Kreipkitės į administratorių e-paštu <b>%s</b> ir pateikite klaidos kodą <b>%s</b> savo laiške, arba dar geriau, pridėkite šio puslapio ekrano kopiją.
 ErrorWrongValueForField=Neteisinga laukelio numerio reikšmė <b>%s</b> (reikšmė '<b>%s</b>' neatitinka reguliarios išraiškos (regex) taisyklės <b>%s</b>)
-ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b> = <b>%s</b>)
+ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b>)
 ErrorFieldRefNotIn=Neteisinga reikšmė laukelio numeriui <b>%s</b> (reikšmė '<b>%s</b>' yra ne <b>%s</b> egzistuojanti nuoroda)
 ErrorsOnXLines=Klaidos <b>%s</b> šaltinio įraše (-uose)
 ErrorFileIsInfectedWithAVirus=Antivirusinė programa negali patvirtinti failo (failas gali būti užkrėstas virusu)

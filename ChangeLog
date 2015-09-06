@@ -224,7 +224,7 @@ Dolibarr better:
   hook afterLogin or afterLoginFailed instead.
 - The trigger USER_CREATE_FROM_CONTACT has been replace with USER_CREATE and property context is now filled
   to make difference between creation from contact or not.
-
+- Function get_exdir require now 6 parameters. This is to prepare a future feature.
 
 ***** ChangeLog for 3.7.2 compared to 3.7.1 *****
 FIX [ bug #2855 ] Wrong translation key in localtax report page
@@ -237,6 +237,9 @@ FIX [ bug #3198 ] Trigger LINECONTRACT_INSERT passes Contrat as $object instead 
 FIX: Not showing delivery date on rouget pdf
 FIX: Not showing task extrafields when creating from left menu
 FIX [ bug #3288 ] Tasks box is not properly drawn
+FIX [ bug #3211 ] Outstading bill amount of a client showed wrong amounts
+FIX [ bug #3321 ] Users with certain permissions were shown a "forbidden access" page even if they had the rights
+FIX [ bug #3426 ] Unable to create an invoice from a contract with extrafields
 
 NEW: Created new ContratLigne::insert function
 
@@ -684,6 +687,9 @@ Fix: [ bug #2570 ] [Contacts] Page should not process if ID is invalid
 Fix: [ bug #3268 ] SQL error when accessing thirdparty log page without a socid parameter
 Fix: [ bug #3180 ] formObjectOptions hook when editing thirdparty card does not print result
 Fix: [ bug #1791 ] Margin menu not available if any Finance module is not enabled
+Fix: [ bug #3310 ] OrderLine::fetch, FactureLigne::fetch and PropaleLigne::fetch do not return anything
+Fix: [ bug #3206 ] PropaleLigne, OrderLine and FactureLigne given to triggers through update function does not contain all the information
+Fix: [ bug #3313 ] Error enabling module with PostgreSQL database
 
 ***** ChangeLog for 3.5.6 compared to 3.5.5 *****
 Fix: Avoid missing class error for fetch_thirdparty method #1973

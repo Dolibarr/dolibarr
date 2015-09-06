@@ -49,8 +49,10 @@ if (! $_REQUEST["vatNumber"])
 }
 else
 {
+	$_REQUEST["vatNumber"] = preg_replace('/\^\w/', '', $_REQUEST["vatNumber"]);
 	$countryCode=substr($_REQUEST["vatNumber"],0,2);
 	$vatNumber=substr($_REQUEST["vatNumber"],2);
+	
 	print '<b>'.$langs->trans("Country").'</b>: '.$countryCode.'<br>';
 	print '<b>'.$langs->trans("VATIntraShort").'</b>: '.$vatNumber.'<br>';
 	print '<br>';

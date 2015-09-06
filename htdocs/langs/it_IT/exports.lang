@@ -48,6 +48,7 @@ NoImportableData=Nessuna importazione dati (nessun modulo con le definizioni dei
 FileSuccessfullyBuilt=Esporta file generati
 SQLUsedForExport=Comando SQL utilizzato per costruire file di esportazione
 LineId=Linea Id
+LineLabel=Label of line
 LineDescription=Linea Descrizione
 LineUnitPrice=Linea prezzo unitario
 LineVATRate=Linea percentuale IVA

@@ -410,6 +410,7 @@ class DoliDBPgsql extends DoliDB
 			$this->database_name = $name;
 			pg_set_error_verbosity($this->db, PGSQL_ERRORS_VERBOSE);	// Set verbosity to max
 		}
+		pg_query($this->db, "set datestyle = 'ISO, YMD';");
 
 		return $this->db;
 	}

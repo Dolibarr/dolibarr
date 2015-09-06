@@ -1044,9 +1044,9 @@ class ActionComm extends CommonObject
      *      Use $this->id, $this->type_code, $this->label and $this->type_label
      *
      * 		@param	int		$withpicto			0=No picto, 1=Include picto into link, 2=Only picto
-     *		@param	int		$maxlength			Nombre de caracteres max dans libelle
+     *		@param	int		$maxlength			Max number of charaters into label. If negative, use the ref as label.
      *		@param	string	$classname			Force style class on a link
-     * 		@param	string	$option				''=Link to action,'birthday'=Link to contact
+     * 		@param	string	$option				''=Link to action, 'birthday'=Link to contact
      * 		@param	int		$overwritepicto		1=Overwrite picto
      *		@return	string						Chaine avec URL
      */
@@ -1078,7 +1078,8 @@ class ActionComm extends CommonObject
         {
             $libelle=(empty($this->libelle)?$label:$this->libelle.(($label && $label != $this->libelle)?' '.$label:''));
             if (! empty($conf->global->AGENDA_USE_EVENT_TYPE) && empty($libelle)) $libelle=($langs->transnoentities("Action".$this->type_code) != "Action".$this->type_code)?$langs->transnoentities("Action".$this->type_code):$this->type_label;
-            $libelleshort=dol_trunc($libelle,$maxlength);
+            if ($maxlength < 0) $libelleshort=$this->ref;
+            else $libelleshort=dol_trunc($libelle,$maxlength);
         }
 
         if ($withpicto)

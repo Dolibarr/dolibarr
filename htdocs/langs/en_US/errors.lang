@@ -79,7 +79,7 @@ ErrorModuleRequireJavascript=Javascript must not be disabled to have this featur
 ErrorPasswordsMustMatch=Both typed passwords must match each other
 ErrorContactEMail=A technical error occured. Please, contact administrator to following email <b>%s</b> en provide the error code <b>%s</b> in your message, or even better by adding a screen copy of this page.
 ErrorWrongValueForField=Wrong value for field number <b>%s</b> (value '<b>%s</b>' does not match regex rule <b>%s</b>)
-ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b> = <b>%s</b>)
+ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b>)
 ErrorFieldRefNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a <b>%s</b> existing ref)
 ErrorsOnXLines=Errors on <b>%s</b> source record(s)
 ErrorFileIsInfectedWithAVirus=The antivirus program was not able to validate the file (file might be infected by a virus)
@@ -191,5 +191,5 @@ WarningClickToDialUserSetupNotComplete=Setup of ClickToDial information for your
 WarningNotRelevant=Irrelevant operation for this dataset
 WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=Feature disabled when display setup is optimized for blind person or text browsers.
 WarningPaymentDateLowerThanInvoiceDate=Payment date (%s) is earlier than invoice date (%s) for invoice %s. 
-WarningTooManyDataPleaseUseMoreFilters=Too many data. Please use more filters
+WarningTooManyDataPleaseUseMoreFilters=Too many data (more than %s lines). Please use more filters or set the constant %s to a higher limit. 
 WarningSomeLinesWithNullHourlyRate=Some times were recorded by users when their hourly rate was not defined. A value of 0 was used but this may result in wrong valuation of time spent.
