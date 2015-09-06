@@ -2558,15 +2558,16 @@ class Facture extends CommonInvoice
 			$numref = "";
 			$numref = $obj->getNextValue($soc,$this,$mode);
 
-			if ($numref != "")
-			{
-				return $numref;
-			}
-			else
-			{
+			/**
+			 * $numref can be empty in case we ask for the last value because if there is no invoice created with the
+			 * set up mask.
+			 */
+			if ($mode != 'last' && !$numref) {
 				dol_print_error($db,"Facture::getNextNumRef ".$obj->error);
 				return "";
 			}
+
+			return $numref;
 		}
 		else
 		{
