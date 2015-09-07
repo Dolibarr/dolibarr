@@ -78,7 +78,7 @@ class modComptabilite extends DolibarrModules
 		                    "/comptabilite/bordereau"
 		                    );
 
-		// Boites
+		// Boxes
 		$this->boxes = array();
 
 		// Permissions

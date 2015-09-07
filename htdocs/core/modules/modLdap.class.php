@@ -83,7 +83,7 @@ class modLdap extends DolibarrModules
 		13=>array('LDAP_FIELD_MOBILE','chaine','mobile','',0),
 		);
 
-		// Boites
+		// Boxes
 		$this->boxes = array();
 
 		// Permissions

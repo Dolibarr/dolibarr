@@ -75,7 +75,7 @@ class modFckeditor extends DolibarrModules
         $this->const[4]  = array("FCKEDITOR_ENABLE_USERSIGN","yesno","1","WYSIWIG for user signature");
         $this->const[5]  = array("FCKEDITOR_ENABLE_MAIL","yesno","1","WYSIWIG for products details lines for all entities");
 
-		// Boites
+		// Boxes
 		$this->boxes = array();
 
 		// Permissions

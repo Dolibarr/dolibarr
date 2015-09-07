@@ -73,7 +73,7 @@ class modSyslog extends DolibarrModules
 		// Constants
 		$this->const = array();
 
-		// Boites
+		// Boxes
 		$this->boxes = array();
 
 		// Permissions
