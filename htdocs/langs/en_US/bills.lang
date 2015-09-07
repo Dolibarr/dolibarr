@@ -218,7 +218,6 @@ NoInvoice=No invoice
 ClassifyBill=Classify invoice
 SupplierBillsToPay=Suppliers invoices to pay
 CustomerBillsUnpaid=Unpaid customers invoices
-DispenseMontantLettres=The written invoices through mecanographic procedures are dispensed by the order in letters
 NonPercuRecuperable=Non-recoverable
 SetConditions=Set payment terms
 SetMode=Set payment mode
