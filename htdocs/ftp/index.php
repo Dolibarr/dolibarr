@@ -145,7 +145,7 @@ if ($action == 'add' && $user->rights->ftp->setup)
 	{
 		//TODO: Translate
 		setEventMessage('Error '.$langs->trans($ecmdir->error));
-		$_GET["action"] = "create";
+		$action = "create";
 	}
 }
 
@@ -376,9 +376,11 @@ jQuery(document).ready(function() {
 
 	$("#checkall").click(function() {
 		$(".checkboxfordelete").prop('checked', true);
+		jQuery("#delconst").show();
 	});
 	$("#checknone").click(function() {
 		$(".checkboxfordelete").prop('checked', false);
+		jQuery("#delconst").hide();
 	});
 	
 });
