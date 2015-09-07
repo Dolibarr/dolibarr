@@ -53,6 +53,11 @@ abstract class CommonObject
      */
     public $error;
 
+	/**
+     * @var string[]	Array of error strings
+     */
+    public $errors=array();
+
     /**
      * @var string		Key value used to track if data is coming from import wizard
      */
@@ -81,11 +86,6 @@ abstract class CommonObject
 
 
     // Following vars are used by some objects only. We keep this property here in CommonObject to be able to provide common method using them.
-
-	/**
-     * @var string[]	Array of error strings
-     */
-    public $errors=array();
 
     /**
      * @var string[]	Can be used to pass information when only object is provided to method
