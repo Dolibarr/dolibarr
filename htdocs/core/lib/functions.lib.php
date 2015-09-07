@@ -47,23 +47,23 @@ include_once DOL_DOCUMENT_ROOT .'/core/lib/json.lib.php';
  */
 function dol_transform_field(&$db, &$string, $tableName, $fieldName) {
 	if(dolibarr_get_const($db, 'DICT_FIELD_CASES')) {
-			$param = dolibarr_find_dictionnary($db, 'c_field_cases', array('table_name'=>$tableName, 'field_name'=>$fieldName));
-			if($param) {
-				switch(strtoupper($param->transformation)) {
-					case 'UPPERCASE':
-						$string = strtoupper($string);
-						break;
-					case 'UCWORDS':
-						dol_ucwords($string);
-						break;
-					default:
-						if(preg_match($param->transformation, null) !== false) {
-							$string = preg_replace(str_replace('/[', '/[^', $param->transformation),'',$string);
-						}
-						break;
-				}
+		$param = dolibarr_find_dictionnary($db, 'c_field_cases', array('table_name'=>$tableName, 'field_name'=>$fieldName));
+		if($param) {
+			switch(strtoupper($param->transformation)) {
+				case 'UPPERCASE':
+					$string = strtoupper($string);
+					break;
+				case 'UCWORDS':
+					dol_ucwords($string);
+					break;
+				default:
+					if(preg_match($param->transformation, null) !== false) {
+						$string = preg_replace(str_replace('/[', '/[^', $param->transformation),'',$string);
+					}
+					break;
 			}
 		}
+	}
 }
 
 /**
@@ -72,7 +72,7 @@ function dol_transform_field(&$db, &$string, $tableName, $fieldName) {
  */
 function dol_ucwords(&$string, $separators = array("'","-")) {
 	
-	$string=ucwords(strtolower($string));
+	$string = ucwords(strtolower($string));
 	foreach($separators as $separator) {
 		if(strpos($string, $separator)!==false) {
 			$temp = explode($separator, $string);

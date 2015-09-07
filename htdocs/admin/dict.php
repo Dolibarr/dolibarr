@@ -610,6 +610,10 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
                 dol_print_error($db);
             }
         }
+		
+		$object=new stdClass();
+		$object->table = $tabname[$id];
+		$object->fields = array();
 
         // Add new entry
         $sql = "INSERT INTO ".$tabname[$id]." (";
@@ -635,6 +639,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
             if ($i) $sql.=",";
             if ($_POST[$listfieldvalue[$i]] == '') $sql.="null";
             else $sql.="'".$db->escape($_POST[$listfieldvalue[$i]])."'";
+			$object->fields[$field]=$_POST[$listfieldvalue[$i]];
             $i++;
         }
         $sql.=",1)";
@@ -645,6 +650,11 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         {
             setEventMessage($langs->transnoentities("RecordSaved"));
         	$_POST=array('id'=>$id);	// Clean $_POST array, we keep only
+        	
+        	//Exécution d'un trigger
+        	include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+			$interface=new Interfaces($db);
+			$result=$interface->run_triggers('DICT_CREATE',$_POST,$user,$langs,$conf);
         }
         else
         {
@@ -664,6 +674,12 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         else { $rowidcol="rowid"; }
 
         // Modify entry
+        $object=new stdClass();
+		$object->table = $tabname[$id];
+		$object->fields = array();
+		$object->rowidcol = $rowidcol;
+		$object->rowid = $rowid;
+		
         $sql = "UPDATE ".$tabname[$id]." SET ";
         // Modifie valeur des champs
         if ($tabrowid[$id] && ! in_array($tabrowid[$id],$listfieldmodify))
@@ -684,7 +700,9 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
             $sql.= $field."=";
             if ($_POST[$listfieldvalue[$i]] == '') $sql.="null";
             else $sql.="'".$db->escape($_POST[$listfieldvalue[$i]])."'";
-            $i++;
+            
+			$object->fields[$field]=$_POST[$listfieldvalue[$i]];
+			$i++;
         }
         $sql.= " WHERE ".$rowidcol." = '".$rowid."'";
 
@@ -695,6 +713,13 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         {
             setEventMessage($db->error(),'errors');
         }
+		else 
+		{
+			//Exécution d'un trigger
+        	include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+			$interface=new Interfaces($db);
+			$result=$interface->run_triggers('DICT_MODIFY',$object,$user,$langs,$conf);
+		}
     }
     //$_GET["id"]=GETPOST('id', 'int');       // Force affichage dictionnaire en cours d'edition
 }

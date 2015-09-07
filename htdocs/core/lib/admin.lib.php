@@ -870,7 +870,7 @@ function unActivateModule($value, $requiredby=1)
 function dolibarr_find_dictionnary(&$db, $dictionnary, $filter) {
 	$sql= "SELECT * FROM ".MAIN_DB_PREFIX.$dictionnary." WHERE active=1";
 	foreach($filter as $field=>$value) {
-		$sql.=" AND $field='$value'";
+		$sql.=" AND `$field`='$value'";
 	}
 	$resultset = $db->query($sql);
 	$row = $db->fetch_object($resultset);
