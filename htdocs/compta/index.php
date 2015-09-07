@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+/* Copyright (C) 2001-2005  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -574,7 +575,7 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 					$chargestatic->lib=$obj->libelle;
 					$chargestatic->paye=$obj->paye;
 					print '<td>'.$chargestatic->getNomUrl(1).'</td>';
-					print '<td align="center">'.dol_print_date($obj->date_ech,'day').'</td>';
+					print '<td align="center">'.dol_print_date($db->jdate($obj->date_ech),'day').'</td>';
 					print '<td align="right">'.price($obj->amount).'</td>';
 					print '<td align="right">'.price($obj->sumpaid).'</td>';
 					print '<td align="center">'.$chargestatic->getLibStatut(3).'</td>';
@@ -915,7 +916,7 @@ if ($resql)
 		$obj = $db->fetch_object($resql);
 		$var=!$var;
 
-		print "<tr ".$bc[$var]."><td>".dol_print_date($obj->da,"day")."</td>";
+		print "<tr ".$bc[$var]."><td>".dol_print_date($db->jdate($obj->da),"day")."</td>";
 		print "<td><a href=\"action/fiche.php\">$obj->libelle $obj->label</a></td></tr>";
 		$i++;
 	}

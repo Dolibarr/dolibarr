@@ -217,6 +217,13 @@ complete_head_from_modules($conf,$langs,null,$head,$h,$type);
 
 dol_fiche_head($head,'byyear',$langs->trans("Statistics"));
 
+$tmp_companies = $form->select_thirdparty_list($socid,'socid',$filter,1, 0, 0, array(), '', 1);
+//Array passed as an argument to Form::selectarray to build a proper select input
+$companies = array();
+
+foreach ($tmp_companies as $value) {
+	$companies[$value['value']] = $value['label'];
+}
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
@@ -232,7 +239,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
 	if ($mode == 'customer') $filter='s.client in (1,2,3)';
 	if ($mode == 'supplier') $filter='s.fournisseur = 1';
-	print $form->select_company($socid,'socid',$filter,1);
+	print $form->selectarray('socid', $companies, $socid, 1, 0, 0, 'style="width: 100%"');
 	print '</td></tr>';
 	// User
 	print '<tr><td>'.$langs->trans("CreatedBy").'</td><td>';

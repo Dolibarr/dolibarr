@@ -2,6 +2,9 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** ChangeLog for 3.6.4 compared to 3.6.3 *****
+- Fix: [ bug #2893 ] Dolibarr error when viewing an invoice after changing invoice mask
+
 ***** ChangeLog for 3.6.3 compared to 3.6.2 *****
 - Fix: ref_ext was not saved when recording a customer order from web service
 - Fix: amarok is a bugged theme making dolidroid failed. We switch to eldy automatically with dolidroid.
@@ -38,6 +41,11 @@ English Dolibarr ChangeLog
 - Fix: [ bug #2542 ] Contracts store localtax preferences
 - Fix: Bad permission assignments for stock movements actions
 - Fix: [ bug #2891 ] Category hooks do not work
+- Fix: [ bug #2696 ] Adding complementary attribute fails if code is numerics
+- Fix: [ bug #3074 ] Accruals accounting use payment date instead of commitment date in turnover reports for salaries
+- Fix: Not showing product supplier reference when page break
+- Fix: [ bug #3341 ] Missing translation in /compta/paiement_charge.php
+- Fix: [ bug #3342 ] Taxes dictionary page does not accept localized decimals for localtax2 rate
 
 ***** ChangeLog for 3.6.2 compared to 3.6.1 *****
 - Fix: fix ErrorBadValueForParamNotAString error message in price customer multiprice.
@@ -211,6 +219,14 @@ Fix: [ bug #2861 ] Undefined variable $res when migrating
 Fix: [ bug #2837 ] Product list table column header does not match column body
 Fix: [ bug #2835 ] Customer prices of a product shows incorrect history order
 Fix: [ bug #2814 ] JPEG photos are not displayed in Product photos page
+Fix: [ bug #2715 ] Statistics page has broken layout with long thirdparty names
+Fix: [ bug #2570 ] [Contacts] Page should not process if ID is invalid
+Fix: [ bug #3268 ] SQL error when accessing thirdparty log page without a socid parameter
+Fix: [ bug #3180 ] formObjectOptions hook when editing thirdparty card does not print result
+Fix: [ bug #1791 ] Margin menu not available if any Finance module is not enabled
+Fix: [ bug #3310 ] OrderLine::fetch, FactureLigne::fetch and PropaleLigne::fetch do not return anything
+Fix: [ bug #3206 ] PropaleLigne, OrderLine and FactureLigne given to triggers through update function does not contain all the information
+Fix: [ bug #3313 ] Error enabling module with PostgreSQL database
 
 ***** ChangeLog for 3.5.6 compared to 3.5.5 *****
 Fix: Avoid missing class error for fetch_thirdparty method #1973

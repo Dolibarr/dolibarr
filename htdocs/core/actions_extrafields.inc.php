@@ -118,7 +118,7 @@ if ($action == 'add')
 	    if (! $error)
 	    {
     		// attrname must be alphabetical and lower case only
-    		if (isset($_POST["attrname"]) && preg_match("/^[a-z0-9-_]+$/",$_POST['attrname']))
+    		if (isset($_POST["attrname"]) && preg_match("/^[a-z0-9-_]+$/",$_POST['attrname']) && !is_numeric($_POST["attrname"]))
     		{
     			// Construct array for parameter (value of select list)
         		$default_value = GETPOST('default_value');

@@ -516,7 +516,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         $i=0;
         foreach ($listfieldinsert as $f => $value)
         {
-            if ($value == 'price' || preg_match('/^amount/i',$value)) {
+            if ($value == 'price' || preg_match('/^amount/i',$value) || preg_match('/^localtax/i',$value) || $value == 'taux') {
             	$_POST[$listfieldvalue[$i]] = price2num($_POST[$listfieldvalue[$i]],'MU');
             }
             else if ($value == 'entity') {
@@ -564,7 +564,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         $i = 0;
         foreach ($listfieldmodify as $field)
         {
-            if ($field == 'price' || preg_match('/^amount/i',$field)) {
+            if ($field == 'price' || preg_match('/^amount/i',$field) || preg_match('/^localtax/i',$field) || $field == 'taux') {
             	$_POST[$listfieldvalue[$i]] = price2num($_POST[$listfieldvalue[$i]],'MU');
             }
             else if ($field == 'entity') {
@@ -1080,17 +1080,20 @@ if ($id)
 							  $align="center";
 							}
 							else if ($fieldlist[$field]=='localtax1') {
+                                $valuetoshow = price($valuetoshow, 0, $langs, 0, 0);
 							  if ($obj->localtax1 == 0)
 							    $valuetoshow = '';
 							  $align="right";
 							}
 							else if ($fieldlist[$field]=='localtax2') {
+                                $valuetoshow = price($valuetoshow, 0, $langs, 0, 0);
 							  if ($obj->localtax2 == 0)
 							    $valuetoshow = '';
 							  $align="right";
 							}
 							else if (in_array($fieldlist[$field],array('taux','localtax1','localtax2')))
 							{
+                                $valuetoshow = price($valuetoshow, 0, $langs, 0, 0);
 								$align="right";
 							}
 							else if (in_array($fieldlist[$field],array('recuperableonly')))
