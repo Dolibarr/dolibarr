@@ -369,11 +369,22 @@ if ($conf->use_javascript_ajax)
 <script type="text/javascript">
 jQuery(document).ready(function() {
 	jQuery("#delconst").hide();
+
 	jQuery(".checkboxfordelete").click(function() {
 		jQuery("#delconst").show();
 	});
+
+	$("#checkall").click(function() {
+		$(".checkboxfordelete").prop('checked', true);
+	});
+	$("#checknone").click(function() {
+		$(".checkboxfordelete").prop('checked', false);
+	});
+	
 });
+
 </script>
+
 <?php
 }
 
@@ -455,7 +466,8 @@ else
 		print '<td class="liste_titre" align="center">'.$langs->trans("Owner").'</td>'."\n";
 		print '<td class="liste_titre" align="center">'.$langs->trans("Group").'</td>'."\n";
 		print '<td class="liste_titre" align="center">'.$langs->trans("Permissions").'</td>'."\n";
-		print '<td class="liste_titre" align="right">';
+		print '<td class="liste_titre nowrap" align="right">';
+		if ($conf->use_javascript_ajax) print '<a href="#" id="checkall">'.$langs->trans("All").'</a> / <a href="#" id="checknone">'.$langs->trans("None").'</a> ';
 		print '<a href="'.$_SERVER["PHP_SELF"].'?action=refreshmanual&numero_ftp='.$numero_ftp.($section?'&section='.urlencode($section):'').'">'.img_picto($langs->trans("Refresh"),'refresh').'</a>&nbsp;';
 		print '</td>'."\n";
 		print '</tr>'."\n";
