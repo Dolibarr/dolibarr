@@ -64,7 +64,7 @@ class modAdherent extends DolibarrModules
         //-------------
         $this->config_page_url = array("adherent.php@adherents");
 
-        // Dependances
+        // Dependencies
         //------------
         $this->depends = array();
         $this->requiredby = array('modMailmanSpip');

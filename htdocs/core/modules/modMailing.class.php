@@ -56,7 +56,7 @@ class modMailing extends DolibarrModules
 		// Data directories to create when module is enabled
 		$this->dirs = array("/mailing/temp");
 
-		// Dependances
+		// Dependencies
 		$this->depends = array();
 		$this->requiredby = array();
 		$this->langfiles = array("mails");

@@ -67,7 +67,7 @@ class modTax extends DolibarrModules
 		// Config pages
 		$this->config_page_url = array("taxes.php");
 
-		// Dependances
+		// Dependencies
 		$this->depends = array();
 		$this->requiredby = array();
 		$this->conflictwith = array();

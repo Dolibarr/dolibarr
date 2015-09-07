@@ -58,7 +58,7 @@ class modExport extends DolibarrModules
 		// Config pages
 		$this->config_page_url = array();
 
-		// Dependances
+		// Dependencies
 		$this->depends = array();
 		$this->requiredby = array();
 		$this->phpmin = array(4,2,0);

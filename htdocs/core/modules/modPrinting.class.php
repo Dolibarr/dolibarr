@@ -66,7 +66,7 @@ class modPrinting extends DolibarrModules
         // Config pages
         $this->config_page_url = array("printing.php@printing");
 
-        // Dependances
+        // Dependencies
         $this->depends = array();
         $this->requiredby = array();
         $this->phpmin = array(5,1);                     // Minimum version of PHP required by module

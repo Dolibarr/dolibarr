@@ -53,7 +53,7 @@ class modNotification extends DolibarrModules
 		// Data directories to create when module is enabled.
 		$this->dirs = array();
 
-		// Dependances
+		// Dependencies
 		$this->depends = array();
 		$this->requiredby = array();
 		$this->langfiles = array("mails");

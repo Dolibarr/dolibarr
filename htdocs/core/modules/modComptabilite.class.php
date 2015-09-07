@@ -62,7 +62,7 @@ class modComptabilite extends DolibarrModules
 		// Config pages
 		$this->config_page_url = array("compta.php");
 
-		// Dependances
+		// Dependencies
 		$this->depends = array("modFacture","modBanque");
 		$this->requiredby = array();
 		$this->conflictwith = array("modAccounting");
