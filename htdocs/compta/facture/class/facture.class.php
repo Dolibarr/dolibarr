@@ -1211,7 +1211,10 @@ class Facture extends CommonInvoice
 	 */
 	 function fetchPreviousNextSituationInvoice()
 	 {
-	 	$sql = 'SELECT rowid, situation_counter FROM '.MAIN_DB_PREFIX.'facture WHERE rowid <> '.$this->id.' AND situation_cycle_ref = '.(int) $this->situation_cycle_ref;
+	 	$this->tab_previous_situation_invoice = array();
+		$this->tab_next_situation_invoice = array();
+		
+		$sql = 'SELECT rowid, situation_counter FROM '.MAIN_DB_PREFIX.'facture WHERE rowid <> '.$this->id.' AND situation_cycle_ref = '.(int) $this->situation_cycle_ref;
 		
 		dol_syslog(get_class($this).'::fetchPreviousNextSituationInvoice', LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -1229,7 +1232,7 @@ class Facture extends CommonInvoice
 			}
 			
 		}
-		
+
 	 }
 
 	/**

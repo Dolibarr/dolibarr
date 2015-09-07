@@ -437,3 +437,7 @@ DisabledBecauseFinal=This situation is final.
 CantBeLessThanMinPercent=The progress can't be smaller than its value in the previous situation.
 NoSituations=No open situations
 InvoiceSituationLast=Final and general invoice
+PDFAgrumeSituationInvoiceTitle=Situation invoice
+PDFAgrumeDescription=Invoice PDF template Agrume. A complete invoice template if you use situation invoice
+PDFAgrumeSituationInvoiceLine=Situation N°%s : Inv. N°%s on %s
+TotalSituationInvoice=Total situation invoice
