@@ -28,7 +28,7 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *	Classe de description et activation du module export
+ *	Class to describe and enable module export
  */
 class modExport extends DolibarrModules
 {

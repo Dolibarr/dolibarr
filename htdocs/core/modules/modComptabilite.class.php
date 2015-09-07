@@ -30,7 +30,7 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *	Classe de description et activation du module Comptabilite
+ *	Class to describe and enable module Comptabilite
  */
 class modComptabilite extends DolibarrModules
 {

@@ -32,7 +32,7 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *	Classe de description et activation du module Projet
+ *	Class to describe and enable module Projet
  */
 class modProjet extends DolibarrModules
 {

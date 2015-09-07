@@ -29,7 +29,7 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *	Classe de description et activation du module Document
+ *	Class to describe and enable module Document
  */
 class modDocumentGeneration extends DolibarrModules
 {

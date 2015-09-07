@@ -31,7 +31,7 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *	Classe de description et activation du module Societe
+ *	Class to describe and enable module Societe
  */
 class modSociete extends DolibarrModules
 {

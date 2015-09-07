@@ -29,7 +29,7 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *	Classe de description et activation du module Mailing
+ *	Class to describe and enable module Mailing
  */
 class modMailing extends DolibarrModules
 {

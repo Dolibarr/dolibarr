@@ -28,7 +28,7 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *	Classe de description et activation du module Categorie
+ *	Class to describe and enable module Categorie
  */
 class modCategorie extends DolibarrModules
 {
