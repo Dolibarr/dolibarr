@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2012      Regis Houssin       <regis.houssin@capnetworks.com>
  * Copyright (C) 2013-2015 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2015	   Charlie BENKE 	<charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -94,6 +95,14 @@ $userstatic=new User($db);
 		<div class="tagtd nowrap"><?php echo img_object('','contact').' '.$langs->trans("ThirdPartyContacts"); ?></div>
 		<div class="tagtd nowrap maxwidthonsmartphone">
 			<?php $selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$object->socid; ?>
+			<?php 
+			// add company icon for direct link 
+			if ($selectedCompany) 
+			{
+				$companystatic->fetch($selectedCompany);
+				echo $companystatic->getNomUrl(2); 
+			}
+			?>
 			<?php $selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany', '', 0); ?>
 		</div>
 		<div class="tagtd maxwidthonsmartphone">

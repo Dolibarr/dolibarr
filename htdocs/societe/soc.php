@@ -702,56 +702,11 @@ if (empty($reshook))
     $mode='emailfromthirdparty';
     include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
-
-    /*
-     * Generate document
-     */
-    if ($action == 'builddoc')  // En get ou en post
-    {
-        if (is_numeric(GETPOST('model')))
-        {
-            $error=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Model"));
-        }
-        else
-        {
-            require_once DOL_DOCUMENT_ROOT.'/core/modules/societe/modules_societe.class.php';
-
-            $object->fetch($socid);
-
-            // Define output language
-            $outputlangs = $langs;
-            $newlang='';
-            if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id');
-            if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$fac->client->default_lang;
-            if (! empty($newlang))
-            {
-                $outputlangs = new Translate("",$conf);
-                $outputlangs->setDefaultLang($newlang);
-            }
-            $result=thirdparty_doc_create($db, $object, '', GETPOST('model','alpha'), $outputlangs);
-            if ($result <= 0)
-            {
-                dol_print_error($db,$result);
-                exit;
-            }
-        }
-    }
-
-    // Remove file in doc form
-    else if ($action == 'remove_file')
-    {
-    	if ($object->fetch($socid))
-    	{
-    		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
-    		$langs->load("other");
-    		$upload_dir = $conf->societe->dir_output;
-    		$file = $upload_dir . '/' . GETPOST('file');
-    		$ret=dol_delete_file($file,0,0,0,$object);
-    		if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-    		else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
-    	}
-    }
+    // Actions to build doc
+    $id = $socid;
+    $upload_dir = $conf->societe->dir_output;
+    $permissioncreate=$user->rights->societe->creer;
+    include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
 
 
@@ -2556,7 +2511,7 @@ else
 
 	            $var=true;
 
-	            $somethingshown=$formfile->show_documents('company',$object->id,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$object->default_lang);
+	            print $formfile->showdocuments('company', $object->id, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 0, 0, 0, 28, 0, '', 0, '', $object->default_lang);
 
 				print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 

@@ -364,7 +364,8 @@ class Form
     }
 
     /**
-     *	Show a text and picto with tooltip on text or picto
+     *	Show a text and picto with tooltip on text or picto.
+     *  Can be called by an instancied $form->textwithtooltip or by a static call Form::textwithtooltip
      *
      *	@param	string		$text				Text to show
      *	@param	string		$htmltext			HTML content of tooltip. Must be HTML/UTF8 encoded.
