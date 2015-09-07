@@ -1428,7 +1428,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	    $menumanager->showmenu('top');      // This contains a \n
 	    print "</div>\n";
 
-	    $form=new Form($db);
+	    //$form=new Form($db);
 
 	    // Define link to login card
 	    $appli='Dolibarr';
@@ -1496,11 +1496,11 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	        $text ='<a href="'.$_SERVER["PHP_SELF"].'?'.$qs.($qs?'&':'').'optioncss=print" target="_blank">';
 	        $text.= img_picto(":".$langs->trans("PrintContentArea"), 'printer.png', 'class="printer"');
 	        $text.='</a>';
-	        $toprightmenu.=$form->textwithtooltip('',$langs->trans("PrintContentArea"),2,1,$text,'login_block_elem',2);
+	        $toprightmenu.=Form::textwithtooltip('',$langs->trans("PrintContentArea"),2,1,$text,'login_block_elem',2);
 	    }
 
 		// Logout link
-	    $toprightmenu.=$form->textwithtooltip('',$logouthtmltext,2,1,$logouttext,'login_block_elem',2);
+	    $toprightmenu.=Form::textwithtooltip('',$logouthtmltext,2,1,$logouttext,'login_block_elem',2);
 
 	    $toprightmenu.='</div>';
 
@@ -1509,7 +1509,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	    print "</div>\n";
 		print '</div></div>';
 
-	    unset($form);
+	    //unset($form);
     }
 
     if (empty($conf->dol_use_jmobile) && ! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print "</div><!-- End top layout -->\n";
