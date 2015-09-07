@@ -144,6 +144,10 @@ class Facture extends CommonInvoice
 	var $location_incoterms;
 	var $libelle_incoterms;  //Used into tooltip
 
+	//List of situations invoices
+	var $tab_previous_situation_invoice=array();
+	var $tab_next_situation_invoice=array();
+	
 	/**
 	 * @var int Situation cycle reference number
 	 */
@@ -975,7 +979,7 @@ class Facture extends CommonInvoice
 	 * 	@param		int		$ref_int		Internal reference of other object
 	 *	@return     int         			>0 if OK, <0 if KO, 0 if not found
 	 */
-	function fetch($rowid, $ref='', $ref_ext='', $ref_int='')
+	function fetch($rowid, $ref='', $ref_ext='', $ref_int='', $fetch_situation=false)
 	{
 		global $conf;
 
@@ -1064,6 +1068,12 @@ class Facture extends CommonInvoice
 				$this->fk_incoterms = $obj->fk_incoterms;
 				$this->location_incoterms = $obj->location_incoterms;
 				$this->libelle_incoterms = $obj->libelle_incoterms;
+
+				if ($this->type == self::TYPE_SITUATION && $fetch_situation)
+				{
+					//Load all facture objet avec un where situation_cycle_ref = $this->situation_cycle_ref and rowid <> $this->id
+					$this->fetchPreviousNextSituationInvoice();
+				}
 
 				if ($this->statut == self::STATUS_DRAFT)	$this->brouillon = 1;
 
@@ -1193,6 +1203,34 @@ class Facture extends CommonInvoice
 		}
 	}
 
+
+	/**
+	 * Load all situations invoices in $this->tab_previous_situation_invoice and $this->tab_next_situation_invoice
+	 *
+	 *	@return		void 
+	 */
+	 function fetchPreviousNextSituationInvoice()
+	 {
+	 	$sql = 'SELECT rowid, situation_counter FROM '.MAIN_DB_PREFIX.'facture WHERE rowid <> '.$this->id.' AND situation_cycle_ref = '.(int) $this->situation_cycle_ref;
+		
+		dol_syslog(get_class($this).'::fetchPreviousNextSituationInvoice', LOG_DEBUG);
+		$result = $this->db->query($sql);
+		if ($result && $this->db->num_rows($result) > 0)
+		{
+			
+			while ($objp = $this->db->fetch_object($result))
+			{
+				$invoice = new Facture($this->db);
+				if ($invoice->fetch($objp->rowid) > 0)
+				{					
+					if ($objp->situation_counter < $this->situation_counter) $this->tab_previous_situation_invoice[] = $invoice;
+					else $this->tab_next_situation_invoice[] = $invoice;
+				}
+			}
+			
+		}
+		
+	 }
 
 	/**
 	 *      Update database
