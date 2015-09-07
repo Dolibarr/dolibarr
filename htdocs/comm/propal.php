@@ -39,6 +39,7 @@ require_once DOL_DOCUMENT_ROOT . '/comm/propal/class/propal.class.php';
 require_once DOL_DOCUMENT_ROOT . '/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/modules/propale/modules_propale.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/propal.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
@@ -1217,7 +1218,12 @@ if (empty($reshook))
 /*
  * View
  */
-
+ 
+ // If const defined, creation = society search
+if ($action == 'create' &&	dolibarr_get_const($db, 'PROPAL_NEW_SEARCH_SOC')) {
+	header("Location: ../societe/list.php?leftmenu=thirdparties");
+	exit();
+}
 llxHeader('', $langs->trans('Proposal'), 'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos');
 
 $form = new Form($db);
@@ -1232,6 +1238,11 @@ $now = dol_now();
 // Add new proposal
 if ($action == 'create')
 {
+	// If const defined, creation = society search
+	if(dolibarr_get_const($db, 'PROPAL_NEW_SEARCH_SOC')) {
+		header("Location: ../societe/list.php?leftmenu=thirdparties");
+	}
+	
 	print_fiche_titre($langs->trans("NewProp"));
 
 	$soc = new Societe($db);
