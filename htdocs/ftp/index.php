@@ -495,7 +495,7 @@ else
 			// List content of directory ($newsection = '/', '/home', ...)
 			if (! empty($conf->global->FTP_CONNECT_WITH_SFTP))
 			{
-			    if ($newsection == '/') $newsection='/./';  # workaround for bug https://bugs.php.net/bug.php?id=64169
+			    if ($newsection == '/') $newsection='/./';  // workaround for bug https://bugs.php.net/bug.php?id=64169
 			    //$dirHandle = opendir("ssh2.sftp://$conn_id".$newsection);
 			    //var_dump($dirHandle);
                 $contents = scandir('ssh2.sftp://' . $conn_id . $newsection);
