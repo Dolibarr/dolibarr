@@ -113,7 +113,11 @@ $userstatic=new User($db);
 
 <?php }
 	} ?>
-
+	
+	
+</div>
+<br/>
+<div class="tagtable centpercent noborder allwidth">
 	<form class="tagtr liste_titre">
 		<div class="tagtd"><?php echo $langs->trans("Source"); ?></div>
 		<div class="tagtd"><?php echo $langs->trans("Company"); ?></div>
