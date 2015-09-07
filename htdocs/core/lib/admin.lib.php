@@ -853,7 +853,7 @@ function unActivateModule($value, $requiredby=1)
         $countrb=count($objMod->requiredby);
         for ($i = 0; $i < $countrb; $i++)
         {
-            var_dump($objMod->requiredby[$i]);
+            //var_dump($objMod->requiredby[$i]);
             unActivateModule($objMod->requiredby[$i]);
         }
     }
