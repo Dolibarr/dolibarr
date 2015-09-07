@@ -66,7 +66,7 @@ class modGeoIPMaxmind extends DolibarrModules
 		// Config pages
 		$this->config_page_url = array("geoipmaxmind.php");
 
-		// D�pendances
+		// Dependencies
 		$this->depends = array();
 		$this->requiredby = array();
 		$this->phpmin = array(4,2,0);
@@ -74,7 +74,7 @@ class modGeoIPMaxmind extends DolibarrModules
 		$this->need_dolibarr_version = array(2,7,-1);	// Minimum version of Dolibarr required by module
 		$this->need_javascript_ajax = 1;
 
-		// Constantes
+		// Constants
 		$this->const = array();
 
 		// Boxes

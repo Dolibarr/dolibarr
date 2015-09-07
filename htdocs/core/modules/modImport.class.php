@@ -59,7 +59,7 @@ class modImport extends DolibarrModules
 		// Config pages
 		$this->config_page_url = array();
 
-		// D�pendances
+		// Dependencies
 		$this->depends = array();
 		$this->requiredby = array();
 		$this->phpmin = array(4,3,0);	// Need auto_detect_line_endings php option to solve MAC pbs.
@@ -67,7 +67,7 @@ class modImport extends DolibarrModules
 		$this->need_dolibarr_version = array(2,7,-1);	// Minimum version of Dolibarr required by module
 		$this->need_javascript_ajax = 1;
 
-		// Constantes
+		// Constants
 		$this->const = array();
 
 		// Boxes

@@ -70,7 +70,7 @@ class modSyslog extends DolibarrModules
 		$this->depends = array();
 		$this->requiredby = array();
 
-		// Constantes
+		// Constants
 		$this->const = array();
 
 		// Boites

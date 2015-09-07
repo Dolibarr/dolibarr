@@ -66,7 +66,7 @@ class modExternalRss extends DolibarrModules
 		$this->phpmin = array(4,2,0);
 		$this->phpmax = array();
 
-		// Constantes
+		// Constants
 		$this->const = array();
 
 		// Boxes

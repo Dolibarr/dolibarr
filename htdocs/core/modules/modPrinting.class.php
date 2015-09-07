@@ -74,7 +74,7 @@ class modPrinting extends DolibarrModules
         $this->conflictwith = array();
         $this->langfiles = array("printing");
 
-        // Constantes
+        // Constants
         $this->const = array();
 
         // Boxes

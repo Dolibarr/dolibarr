@@ -70,7 +70,7 @@ class modAdherent extends DolibarrModules
         $this->requiredby = array('modMailmanSpip');
         $this->langfiles = array("members","companies");
 
-        // Constantes
+        // Constants
         //-----------
         $this->const = array();
         $this->const[2]  = array("MAIN_SEARCHFORM_ADHERENT","yesno","1","Show form for quick member search");

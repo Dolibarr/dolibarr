@@ -66,7 +66,7 @@ class modCategorie extends DolibarrModules
 		$this->config_page_url = array('categorie.php@categories');
 		$this->langfiles = array("products","companies","categories");
 
-		// Constantes
+		// Constants
 		$this->const = array();
 		$r=0;
 		$this->const[$r][0] = "CATEGORIE_RECURSIV_ADD";

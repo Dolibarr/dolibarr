@@ -73,7 +73,7 @@ class modFicheinter extends DolibarrModules
         // Config pages
         $this->config_page_url = array("fichinter.php");
 
-        // Constantes
+        // Constants
         $this->const = array();
         $r=0;
 

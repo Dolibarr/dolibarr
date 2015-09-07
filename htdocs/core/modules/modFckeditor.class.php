@@ -66,7 +66,7 @@ class modFckeditor extends DolibarrModules
 		$this->depends = array();
 		$this->requiredby = array();
 
-		// Constantes
+		// Constants
 		$this->const = array();
         $this->const[0]  = array("FCKEDITOR_ENABLE_SOCIETE","yesno","1","WYSIWIG for description and note (except products/services)");
         $this->const[1]  = array("FCKEDITOR_ENABLE_PRODUCTDESC","yesno","1","WYSIWIG for products/services description and note");

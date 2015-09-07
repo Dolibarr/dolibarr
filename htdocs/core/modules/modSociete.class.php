@@ -70,7 +70,7 @@ class modSociete extends DolibarrModules
 		$this->requiredby = array("modExpedition","modFacture","modFournisseur","modFicheinter","modPropale","modContrat","modCommande");
 		$this->langfiles = array("companies");
 
-		// Constantes
+		// Constants
 		$this->const = array();
 		$r=0;
 

@@ -68,7 +68,7 @@ class modContrat extends DolibarrModules
 		// Config pages
 		$this->config_page_url = array("contract.php");
 
-		// Constantes
+		// Constants
 		$this->const = array();
 		$this->const[0][0] = "CONTRACT_ADDON";
 		$this->const[0][1] = "chaine";

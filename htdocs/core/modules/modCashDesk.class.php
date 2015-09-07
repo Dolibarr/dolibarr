@@ -70,7 +70,7 @@ class modCashDesk extends DolibarrModules
 		$this->need_dolibarr_version = array(2,4);	// Minimum version of Dolibarr required by module
 		$this->langfiles = array("cashdesk");
 
-		// Constantes
+		// Constants
 		$this->const = array();
 
 		// Boxes

@@ -73,7 +73,7 @@ class modTax extends DolibarrModules
 		$this->conflictwith = array();
 		$this->langfiles = array("compta","bills");
 
-		// Constantes
+		// Constants
 		$this->const = array();
 
 		// Boites

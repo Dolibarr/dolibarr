@@ -79,7 +79,7 @@ class modExpedition extends DolibarrModules
 		$this->conflictwith = array();
 		$this->langfiles = array('deliveries','sendings');
 
-		// Constantes
+		// Constants
 		$this->const = array();
 		$r=0;
 

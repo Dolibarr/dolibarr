@@ -70,7 +70,7 @@ class modPrelevement extends DolibarrModules
 		// Config pages
 		$this->config_page_url = array("prelevement.php");
 
-		// Constantes
+		// Constants
 		$this->const = array();
 
 		// Boites

@@ -68,7 +68,7 @@ class modComptabilite extends DolibarrModules
 		$this->conflictwith = array("modAccounting");
 		$this->langfiles = array("compta");
 
-		// Constantes
+		// Constants
 		$this->const = array();
 
 		// Data directories to create when module is enabled

@@ -66,7 +66,7 @@ class modBookmark extends DolibarrModules
 		// Config pages
 		$this->config_page_url = array('bookmark.php@bookmarks');
 
-		// Constantes
+		// Constants
 		$this->const = array();
 
 		// Boites

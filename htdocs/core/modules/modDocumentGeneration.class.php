@@ -67,7 +67,7 @@ class modDocumentGeneration extends DolibarrModules
 		$this->conflictwith = array();
 		$this->langfiles = array("orders","bills","companies","mails");
 
-		// Constantes
+		// Constants
 
 		$this->const = array();
 

@@ -64,7 +64,7 @@ class modMailing extends DolibarrModules
 		// Config pages
 		$this->config_page_url = array("mailing.php");
 
-		// Constantes
+		// Constants
 		$this->const = array();
 
 		// Boites
