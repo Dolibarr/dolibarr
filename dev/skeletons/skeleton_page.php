@@ -44,7 +44,7 @@ if (! $res && file_exists("../../../../dolibarr/htdocs/main.inc.php")) $res=@inc
 if (! $res) die("Include of main fails");
 // Change this following line to use the correct relative path from htdocs
 include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
-dol_include_once('/module/class/skeleton_class.class.php');
+dol_include_once('/mymodule/class/skeleton_class.class.php');
 
 // Load traductions files requiredby by page
 $langs->load("companies");
@@ -55,6 +55,9 @@ $id			= GETPOST('id','int');
 $action		= GETPOST('action','alpha');
 $backtopage = GETPOST('backtopage');
 $myparam	= GETPOST('myparam','alpha');
+
+$search_field1=GETPOST("search_field1");
+$search_field2=GETPOST("search_field2");
 
 // Protection if external user
 if ($user->societe_id > 0)
@@ -95,7 +98,7 @@ if (empty($reshook))
 	{
 		if (GETPOST('cancel'))
 		{
-			$urltogo=$backtopage?$backtopage:dol_buildpath('/buildingmanagement/list.php',1);
+			$urltogo=$backtopage?$backtopage:dol_buildpath('/mymodule/list.php',1);
 			header("Location: ".$urltogo);
 			exit;
 		}
@@ -227,7 +230,10 @@ jQuery(document).ready(function() {
 // Part to show a list
 if ($action == 'list' || (empty($id) && $action != 'create'))
 {
-    $sql = "SELECT";
+	// Put here content of your page
+	print load_fiche_titre('PageTitle');
+    
+	$sql = "SELECT";
     $sql.= " t.rowid,";
     $sql.= " t.field1,";
     $sql.= " t.field2";
@@ -238,7 +244,10 @@ if ($action == 'list' || (empty($id) && $action != 'create'))
 	$reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
 	$sql.=$hookmanager->resPrint;
     $sql.= " FROM ".MAIN_DB_PREFIX."mytable as t";
-    $sql.= " WHERE field3 = 'xxx'";
+    $sql.= " WHERE 1 = 1";
+    if ($search_field1) $sql.= natural_search("field1",$search_field1);
+    if ($search_field2) $sql.= natural_search("field2",$search_field2);
+    
 	// Add where from hooks
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
@@ -270,12 +279,8 @@ if ($action == 'list' || (empty($id) && $action != 'create'))
 
     // Fields title search
 	print '<tr class="liste_titre">';
-	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_field1" value="'.$search_field1.'" size="10">';
-	print '</td>';
-	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_field2" value="'.$search_field2.'" size="10">';
-	print '</td>';
+	print '<td class="liste_titre"><input type="text" class="flat" name="search_field1" value="'.$search_field1.'" size="10"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" name="search_field2" value="'.$search_field2.'" size="10"></td>';
     $parameters=array();
     $reshook=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
@@ -295,11 +300,8 @@ if ($action == 'list' || (empty($id) && $action != 'create'))
             {
                 // You can use here results
                 print '<tr>';
-                print '<td>';
-                print $obj->field1;
-                print '</td><td>';
-                print $obj->field2;
-                print '</td>';
+                print '<td>'.$obj->field1.'</td>';
+                print '<td>'.$obj->field2.'</td>';
 		        $parameters=array('obj' => $obj);
         		$reshook=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook
                 print $hookmanager->resPrint;
