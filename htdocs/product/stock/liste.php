@@ -47,7 +47,7 @@ $offset = $limit * $page;
 
 $sql  = "SELECT e.rowid, e.label as ref, e.statut, e.lieu, e.address, e.zip, e.town, e.fk_pays";
 $sql.= " FROM ".MAIN_DB_PREFIX."entrepot as e";
-$sql.= " WHERE e.entity = ".$conf->entity;
+$sql.= " WHERE e.entity IN (".getEntity('stock',1).")";
 if ($sref)
 {
     $sql.= " AND e.label like '%".$db->escape($sref)."%'";
