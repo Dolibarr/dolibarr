@@ -106,7 +106,7 @@ llxHeader('', $langs->trans("ListAccounts"));
 $pcgver = $conf->global->CHARTOFACCOUNTS;
 
 $sql = "SELECT aa.rowid, aa.fk_pcg_version, aa.pcg_type, aa.pcg_subtype, aa.account_number, aa.account_parent , aa.label, aa.active ";
-$sql .= " FROM " . MAIN_DB_PREFIX . "accountingaccount as aa, " . MAIN_DB_PREFIX . "accounting_system as asy";
+$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as aa, " . MAIN_DB_PREFIX . "accounting_system as asy";
 $sql .= " WHERE aa.fk_pcg_version = asy.pcg_version";
 $sql .= " AND asy.rowid = " . $pcgver;
 

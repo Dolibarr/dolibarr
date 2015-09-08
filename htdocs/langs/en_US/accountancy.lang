@@ -34,6 +34,7 @@ Selectchartofaccounts=Select a chart of accounts
 Validate=Validate
 Addanaccount=Add an accounting account
 AccountAccounting=Accounting account
+AccountAccountingSuggest=Accounting account suggest
 Ventilation=Breakdown
 ToDispatch=To dispatch
 Dispatched=Dispatched
@@ -63,7 +64,7 @@ Line=Line
 CAHTF=Total purchase supplier before tax
 InvoiceLines=Lines of invoice to be ventilated
 InvoiceLinesDone=Ventilated lines of invoice
-IntoAccount=In the accounting account
+IntoAccount=Ventilate in the accounting account
 
 Ventilate=Ventilate
 VentilationAuto=Automatic breakdown
