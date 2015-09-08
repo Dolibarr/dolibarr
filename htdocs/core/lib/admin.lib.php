@@ -1019,6 +1019,127 @@ function complete_dictionary_with_modules(&$taborder,&$tabname,&$tablib,&$tabsql
     return 1;
 }
 
+/**
+ *  Add external modules to list of contact element
+ *
+ * 	@param		array		$elementList			elementList
+ * 	@return		int			1
+ */
+function complete_elementList_with_modules(&$elementList)
+{
+    global $db, $modules, $conf, $langs;
+
+    // Search modules
+    $filename = array();
+    $modules = array();
+    $orders = array();
+    $categ = array();
+    $dirmod = array();
+    $modulesdir = array();
+    $i = 0; // is a sequencer of modules found
+    $j = 0; // j is module number. Automatically affected if module number not defined.
+
+    foreach ($conf->file->dol_document_root as $type => $dirroot)
+    {
+        $modulesdir[$dirroot . '/core/modules/'] = $dirroot . '/core/modules/';
+
+        $handle=@opendir($dirroot);
+        if (is_resource($handle))
+        {
+            while (($file = readdir($handle))!==false)
+            {
+            	if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
+                {
+                    if (is_dir($dirroot . '/' . $file . '/core/modules/'))
+                    {
+                        $modulesdir[$dirroot . '/' . $file . '/core/modules/'] = $dirroot . '/' . $file . '/core/modules/';
+                    }
+                }
+            }
+            closedir($handle);
+        }
+    }
+
+    foreach ($modulesdir as $dir)
+    {
+    	// Load modules attributes in arrays (name, numero, orders) from dir directory
+    	//print $dir."\n<br>";
+    	dol_syslog("Scan directory ".$dir." for modules");
+        $handle=@opendir(dol_osencode($dir));
+        if (is_resource($handle))
+        {
+            while (($file = readdir($handle))!==false)
+            {
+                //print "$i ".$file."\n<br>";
+                if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod'  && substr($file, dol_strlen($file) - 10) == '.class.php')
+                {
+                    $modName = substr($file, 0, dol_strlen($file) - 10);
+
+                    if ($modName)
+                    {
+                        include_once $dir.$file;
+                        $objMod = new $modName($db);
+
+                        if ($objMod->numero > 0)
+                        {
+                            $j = $objMod->numero;
+                        }
+                        else
+                        {
+                            $j = 1000 + $i;
+                        }
+
+                        $modulequalified=1;
+
+                        // We discard modules according to features level (PS: if module is activated we always show it)
+                        $const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i','',get_class($objMod)));
+                        if ($objMod->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2 && ! $conf->global->$const_name) $modulequalified=0;
+                        if ($objMod->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1 && ! $conf->global->$const_name) $modulequalified=0;
+                        //If module is not activated disqualified
+                        if (empty($conf->global->$const_name)) $modulequalified=0;
+
+                        if ($modulequalified)
+                        {
+							// Load languages files of module
+                            if (isset($objMod->langfiles) && is_array($objMod->langfiles))
+                            {
+                             	foreach($objMod->langfiles as $langfile)
+                              	{
+                               		$langs->load($langfile);
+                               	}
+                           	}
+
+                            $modules[$i] = $objMod;
+                            $filename[$i]= $modName;
+                            $orders[$i]  = $objMod->family."_".$j;   // Tri par famille puis numero module
+                            //print "x".$modName." ".$orders[$i]."\n<br>";
+                            if (isset($categ[$objMod->special])) $categ[$objMod->special]++;                    // Array of all different modules categories
+                            else $categ[$objMod->special]=1;
+                            $dirmod[$i] = $dirroot;
+
+                            if (! empty($objMod->contactelement))
+                            {
+                            	$elementList[$objMod->name] = $langs->trans($objMod->name);
+                                //exit;
+                            }
+
+                            $j++;
+                            $i++;
+                        }
+                        else dol_syslog("Module ".get_class($objMod)." not qualified");
+                    }
+                }
+            }
+            closedir($handle);
+        }
+        else
+        {
+            dol_syslog("htdocs/admin/modules.php: Failed to open directory ".$dir.". See permission and open_basedir option.", LOG_WARNING);
+        }
+    }
+
+    return 1;
+}
 
 /**
  *	Show array with constants to edit
