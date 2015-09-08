@@ -405,7 +405,7 @@ RevenueStamp=Revenue stamp
 YouMustCreateInvoiceFromThird=This option is only available when creating invoice from tab "customer" of thirdparty
 PDFCrabeDescription=Invoice PDF template Crabe. A complete invoice template (recommended Template)
 TerreNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
-MarsNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+MarsNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for deposit invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
 TerreNumRefModelError=A bill starting with $syymm already exists and is not compatible with this model of sequence. Remove it or rename it to activate this module.
 ##### Types de contacts #####
 TypeContact_facture_internal_SALESREPFOLL=Representative following-up customer invoice
