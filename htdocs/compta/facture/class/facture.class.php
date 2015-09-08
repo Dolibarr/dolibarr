@@ -2060,7 +2060,7 @@ class Facture extends CommonInvoice
 			if ($next_invoice->brouillon && $is_last == 1) break;
 			elseif ($next_invoice->brouillon && $is_last != 1) 
 			{
-				$this->error = $langs->trans('updatePriceNextInvoiceErrorIsNotLastAndDraft', $next_invoice->ref);
+				$this->error = $langs->trans('updatePriceNextInvoiceErrorUpdateline', $next_invoice->ref);
 				return false;
 			}
 			
