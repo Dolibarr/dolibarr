@@ -47,20 +47,19 @@ function dol_setcache($memoryid,$data)
 	// Using a memcached server
 	if (! empty($conf->memcached->enabled) && class_exists('Memcached'))
 	{
-	    global $m;
-		if (empty($m) || ! is_object($m))
+	    global $dolmemcache;
+		if (empty($dolmemcache) || ! is_object($dolmemcache))
     	{
-       	    $m=new Memcached();
+       	    $dolmemcache=new Memcached();
        		$tmparray=explode(':',$conf->global->MEMCACHED_SERVER);
-       		$result=$m->addServer($tmparray[0], $tmparray[1]?$tmparray[1]:11211);
+       		$result=$dolmemcache->addServer($tmparray[0], $tmparray[1]?$tmparray[1]:11211);
        		if (! $result) return -1;
        	}
        	
 	    $memoryid=session_name().'_'.$memoryid;
-		//$m->setOption(Memcached::OPT_COMPRESSION, false);
-		//print "Add memoryid=".$memoryid;
-		$m->add($memoryid,$data);    // This fails if key already exists
-		$rescode=$m->getResultCode();
+		//$dolmemcache->setOption(Memcached::OPT_COMPRESSION, false);
+		$dolmemcache->add($memoryid,$data);    // This fails if key already exists
+		$rescode=$dolmemcache->getResultCode();
 		if ($rescode == 0)
 		{
 			return count($data);
@@ -72,18 +71,18 @@ function dol_setcache($memoryid,$data)
 	}
 	else if (! empty($conf->memcached->enabled) && class_exists('Memcache'))
 	{
-		global $m;
-		if (empty($m) || ! is_object($m))
+		global $dolmemcache;
+		if (empty($dolmemcache) || ! is_object($dolmemcache))
     	{
-       	    $m=new Memcache();
+       	    $dolmemcache=new Memcache();
        		$tmparray=explode(':',$conf->global->MEMCACHED_SERVER);
-       		$result=$m->addServer($tmparray[0], $tmparray[1]?$tmparray[1]:11211);
+       		$result=$dolmemcache->addServer($tmparray[0], $tmparray[1]?$tmparray[1]:11211);
        		if (! $result) return -1;
        	}
 	    
        	$memoryid=session_name().'_'.$memoryid;
-		//$m->setOption(Memcached::OPT_COMPRESSION, false);
-		$result=$m->add($memoryid,$data);    // This fails if key already exists
+		//$dolmemcache->setOption(Memcached::OPT_COMPRESSION, false);
+		$result=$dolmemcache->add($memoryid,$data);    // This fails if key already exists
 		if ($result)
 		{
 			return count($data);
