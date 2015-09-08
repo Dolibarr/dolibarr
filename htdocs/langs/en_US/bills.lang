@@ -441,3 +441,6 @@ PDFAgrumeSituationInvoiceTitle=Situation invoice
 PDFAgrumeDescription=Invoice PDF template Agrume. A complete invoice template if you use situation invoice
 PDFAgrumeSituationInvoiceLine=Situation N°%s : Inv. N°%s on %s
 TotalSituationInvoice=Total situation invoice
+invoiceLineProgressError=Invoice line progress can't be egal or upper the next invoice line
+updatePriceNextInvoiceErrorIsNotLastAndDraft=Error : update price of next invoices, %s have draft statut and is not the last of cycle
+updatePriceNextInvoiceErrorUpdateline=Error : update price on invoice line : %s

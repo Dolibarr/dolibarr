@@ -439,3 +439,6 @@ PDFCrabeDescription=Modèle de facture PDF complet (modèle recommandé par déf
 PDFAgrumeSituationInvoiceTitle=Facture de situation
 PDFAgrumeSituationInvoiceLine=Situation N°%s : Fact. N°%s au %s
 TotalSituationInvoice=Total Factures de Situtations
+invoiceLineProgressError=La progression de la ligne de situation ne peut être égale ou supérieure à la ligne de situation suivante
+updatePriceNextInvoiceErrorIsNotLastAndDraft=Erreur lors de la mise à jour des prix des factures suivantes, la facture %s est au statut brouillon et n'est pas la dernière situation
+updatePriceNextInvoiceErrorUpdateline=Erreur de mise à jour d'un prix sur la facture : %s

@@ -1214,7 +1214,7 @@ class Facture extends CommonInvoice
 	 	$this->tab_previous_situation_invoice = array();
 		$this->tab_next_situation_invoice = array();
 		
-		$sql = 'SELECT rowid, situation_counter FROM '.MAIN_DB_PREFIX.'facture WHERE rowid <> '.$this->id.' AND situation_cycle_ref = '.(int) $this->situation_cycle_ref;
+		$sql = 'SELECT rowid, situation_counter FROM '.MAIN_DB_PREFIX.'facture WHERE rowid <> '.$this->id.' AND situation_cycle_ref = '.(int) $this->situation_cycle_ref.' ORDER BY situation_counter ASC';
 		
 		dol_syslog(get_class($this).'::fetchPreviousNextSituationInvoice', LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -2002,6 +2002,14 @@ class Facture extends CommonInvoice
 				}
 			}
 
+			if (! $error && $this->is_last_in_cycle() != 1)
+			{
+				if (! $this->updatePriceNextInvoice($langs))
+				{
+					$error++;
+				}
+			}
+
 			// Set new ref and define current statut
 			if (! $error)
 			{
@@ -2038,6 +2046,45 @@ class Facture extends CommonInvoice
 		}
 	}
 
+	/**
+	 * Update price of next invoice
+	 * 
+	 * @return bool		false if KO, true if OK
+	 */
+	function updatePriceNextInvoice(&$langs)
+	{
+		foreach ($this->tab_next_situation_invoice as $next_invoice)
+		{
+			$is_last = $next_invoice->is_last_in_cycle();
+			
+			if ($next_invoice->brouillon && $is_last == 1) break;
+			elseif ($next_invoice->brouillon && $is_last != 1) 
+			{
+				$this->error = $langs->trans('updatePriceNextInvoiceErrorIsNotLastAndDraft', $next_invoice->ref);
+				return false;
+			}
+			
+			$next_invoice->brouillon = 1;
+			foreach ($next_invoice->lines as $line)
+			{
+				$result = $next_invoice->updateline($line->id, $line->desc, $line->subprice, $line->qty, $line->remise_percent,
+														$line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type,
+														$line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent,
+														$line->fk_unit);
+				
+				if ($result < 0) 
+				{
+					$this->error = $langs->trans('updatePriceNextInvoiceErrorUpdateline', $next_invoice->ref);
+					return false;
+				}
+			}
+			
+			break; // Only the next invoice and not each next invoice
+		}
+		
+		return true;
+	}
+	 
 	/**
 	 *	Set draft status
 	 *
@@ -2361,12 +2408,21 @@ class Facture extends CommonInvoice
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
-		global $mysoc;
+		global $mysoc,$langs;
 
 		dol_syslog(get_class($this)."::updateline rowid=$rowid, desc=$desc, pu=$pu, qty=$qty, remise_percent=$remise_percent, date_start=$date_start, date_end=$date_end, txtva=$txtva, txlocaltax1=$txlocaltax1, txlocaltax2=$txlocaltax2, price_base_type=$price_base_type, info_bits=$info_bits, type=$type, fk_parent_line=$fk_parent_line pa_ht=$pa_ht, special_code=$special_code fk_unit=$fk_unit", LOG_DEBUG);
 
 		if ($this->brouillon)
 		{
+			if ($this->is_last_in_cycle() != 1)
+			{
+				if (!$this->checkProgressLine($rowid, $situation_percent))
+				{
+					if (!$this->error) $this->error=$langs->trans('invoiceLineProgressError');
+					return -3;
+				}
+			}
+		
 			$this->db->begin();
 
 			// Clean parameters
@@ -2497,6 +2553,31 @@ class Facture extends CommonInvoice
 		}
 	}
 
+	/**
+	 * Check if the percent edited is lower of next invoice line 
+	 * 
+	 * @return false if KO, true if OK
+	 */
+	function checkProgressLine($idline, $situation_percent)
+	{
+		$sql = 'SELECT fd.situation_percent FROM '.MAIN_DB_PREFIX.'facturedet fd 
+				INNER JOIN '.MAIN_DB_PREFIX.'facture f ON (fd.fk_facture = f.rowid) 
+				WHERE fd.fk_prev_id = '.$idline.' 
+				AND f.fk_statut <> 0';
+		
+		$result = $this->db->query($sql);
+		if (! $result)
+		{
+			$this->error=$this->db->error();
+			return false;
+		}
+		
+		$obj = $this->db->fetch_object($result);
+		
+		if ($obj === null) return true;
+		else return $situation_percent < $obj->situation_percent;
+	}
+	 
 	/**
 	 * Update invoice line with percentage
 	 *
