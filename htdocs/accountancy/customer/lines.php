@@ -154,7 +154,7 @@ print  '<script type="text/javascript">
 $sql = "SELECT l.rowid , f.facnumber, f.rowid as facid, l.fk_product, l.description, l.total_ht, l.qty, l.tva_tx, l.fk_code_ventilation, aa.label, aa.account_number,";
 $sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type";
 $sql .= " FROM " . MAIN_DB_PREFIX . "facture as f";
-$sql .= " , " . MAIN_DB_PREFIX . "accountingaccount as aa";
+$sql .= " , " . MAIN_DB_PREFIX . "accounting_account as aa";
 $sql .= " , " . MAIN_DB_PREFIX . "facturedet as l";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON p.rowid = l.fk_product";
 $sql .= " WHERE f.rowid = l.fk_facture AND f.fk_statut >= 1 AND l.fk_code_ventilation <> 0 ";

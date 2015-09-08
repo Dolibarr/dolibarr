@@ -72,7 +72,7 @@ if (! empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)) {
 $offset = $limit * $page;
 
 if (! $sortfield)
-	$sortfield = "f.datef, f.facnumber, l.rowid";
+	$sortfield = "f.facnumber";
 
 if (! $sortorder) {
 	if ($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_TODO > 0) {
@@ -136,12 +136,13 @@ if ($action == 'ventil' && !empty($btn_ventil)) {
 		print '<div><font color="red">' . count($mesCasesCochees) . ' ' . $langs->trans("SelectedLines") . '</font></div>';
 		$mesCodesVentilChoisis = $codeventil;
 		$cpt = 0;
+
 		foreach ( $mesCasesCochees as $maLigneCochee ) {
 			$maLigneCourante = explode("_", $maLigneCochee);
 			$monId = $maLigneCourante[0];
 			$monNumLigne = $maLigneCourante[1];
 			$monCompte = $mesCodesVentilChoisis[$monNumLigne];
-			
+
 			$sql = " UPDATE " . MAIN_DB_PREFIX . "facturedet";
 			$sql .= " SET fk_code_ventilation = " . $monCompte;
 			$sql .= " WHERE rowid = " . $monId;
@@ -172,7 +173,7 @@ $sql .= " , l.product_type as type_l, l.tva_tx as tva_tx_line";
 $sql .= " FROM " . MAIN_DB_PREFIX . "facture as f";
 $sql .= " INNER JOIN " . MAIN_DB_PREFIX . "facturedet as l ON f.rowid = l.fk_facture";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON p.rowid = l.fk_product";
-$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accountingaccount as aa ON p.accountancy_code_sell = aa.account_number";
+$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON p.accountancy_code_sell = aa.account_number";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_system as accsys ON accsys.pcg_version = aa.fk_pcg_version";
 $sql .= " WHERE f.fk_statut > 0 AND fk_code_ventilation <= 0";
 $sql .= " AND (accsys.rowid='" . $conf->global->CHARTOFACCOUNTS . "' OR p.accountancy_code_sell IS NULL OR p.accountancy_code_sell ='')";
@@ -216,10 +217,7 @@ if ($result) {
 	
 	print_barre_liste($langs->trans("InvoiceLines"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num_lines);
 	print '<br><b>' . $langs->trans("DescVentilTodoCustomer") . '</b></br>';
-	print_liste_field_titre($langs->trans("Date"), $_SERVER["PHP_SELF"], "f.datef", "", $param, '', $sortfield, $sortorder);
-	print '&nbsp;&nbsp;';
-	print_liste_field_titre($langs->trans("RowId"), $_SERVER["PHP_SELF"], "l.rowid", "", $param, '', $sortfield, $sortorder);
-	
+
 	print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">' . "\n";
 	print '<input type="hidden" name="action" value="ventil">';
 	
@@ -231,7 +229,7 @@ if ($result) {
 	print_liste_field_titre($langs->trans("Description"), $_SERVER["PHP_SELF"], "l.description", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Amount"), $_SERVER["PHP_SELF"],"l.total_ht","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("VATRate"), $_SERVER["PHP_SELF"], "l.tva_tx", "", $param, 'align="center"', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("AccountAccounting"), '', '', '', '', 'align="center"');
+	print_liste_field_titre($langs->trans("AccountAccountingSuggest"), '', '', '', '', 'align="center"');
 	print_liste_field_titre($langs->trans("IntoAccount"), '', '', '', '', 'align="center"');
 	print_liste_field_titre('');
 	print_liste_field_titre($langs->trans("Ventilate") . '<br><label id="select-all">' . $langs->trans('All') . '</label>/<label id="unselect-all">' . $langs->trans('None') . '</label>', '', '', '', '', 'align="center"');
@@ -322,7 +320,7 @@ if ($result) {
 		if ($objp->code_sell_l == $objp->code_sell_p) {
 			print $objp->code_sell_l;
 		} else {
-			print 'lines=' . $objp->code_sell_l . '<br />product=' . $objp->code_sell_p;
+			print $langs->trans("Purchase") . ' = ' . $objp->code_sell_l . '<br />' . $langs->trans("Sell") . ' = ' . $objp->code_sell_p;
 		}
 		print '</td>';
 		
