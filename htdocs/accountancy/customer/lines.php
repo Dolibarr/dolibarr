@@ -202,7 +202,6 @@ if ($result) {
 	$i = 0;
 
 	$param="";
-	if ($search_login) $param.="&search_login=".$search_login;
 	if ($search_facture)   $param.="&search_facture=".$search_facture;
 	if ($search_ref) $param.="&search_ref=".$search_ref;
 	if ($search_label)   $param.="&search_label=".$search_label;
