@@ -1148,6 +1148,10 @@ class AccountLine extends CommonObject
     var $ref;
     var $datec;
     var $dateo;
+
+    /**
+     * Value date
+     */
     var $datev;
     var $amount;
     var $label;

@@ -379,6 +379,8 @@ if ($resql)
             $facturestatic->id=$objp->facid;
             $facturestatic->ref=$objp->facnumber;
             $facturestatic->type=$objp->type;
+            $facturestatic->statut = $objp->fk_statut;
+            $facturestatic->date_lim_reglement = $db->jdate($objp->datelimite);
             $notetoshow=dol_string_nohtmltag(($user->societe_id>0?$objp->note_public:$objp->note),1);
             $paiement = $facturestatic->getSommePaiement();
 
@@ -418,7 +420,7 @@ if ($resql)
 
             // Date limit
             print '<td align="center" class="nowrap">'.dol_print_date($datelimit,'day');
-            if ($datelimit < ($now - $conf->facture->client->warning_delay) && ! $objp->paye && $objp->fk_statut == 1 && ! $paiement)
+            if ($facturestatic->hasDelay())
             {
                 print img_warning($langs->trans('Late'));
             }

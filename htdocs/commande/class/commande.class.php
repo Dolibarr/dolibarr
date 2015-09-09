@@ -2846,7 +2846,7 @@ class Commande extends CommonOrder
 
         $clause = " WHERE";
 
-        $sql = "SELECT c.rowid, c.date_creation as datec, c.date_livraison as delivery_date, c.fk_statut";
+        $sql = "SELECT c.rowid, c.date_creation as datec, c.date_commande, c.date_livraison as delivery_date, c.fk_statut";
         $sql.= " FROM ".MAIN_DB_PREFIX."commande as c";
         if (!$user->rights->societe->client->voir && !$user->societe_id)
         {
@@ -2862,21 +2862,22 @@ class Commande extends CommonOrder
         $resql=$this->db->query($sql);
         if ($resql)
         {
-	        $now=dol_now();
-
 	        $response = new WorkboardResponse();
 	        $response->warning_delay=$conf->commande->client->warning_delay/60/60/24;
 	        $response->label=$langs->trans("OrdersToProcess");
 	        $response->url=DOL_URL_ROOT.'/commande/list.php?viewstatut=-3';
 	        $response->img=img_object($langs->trans("Orders"),"order");
 
+            $generic_commande = new Commande($this->db);
+
             while ($obj=$this->db->fetch_object($resql))
             {
-	            $response->nbtodo++;
+                $response->nbtodo++;
 
-				$date_to_test = empty($obj->delivery_date) ? $obj->datec : $obj->delivery_date;
+                $generic_commande->statut = $obj->fk_statut;
+                $generic_commande->date_livraison = $obj->delivery_date;
 
-	            if ($obj->fk_statut != 3 && $this->db->jdate($date_to_test) < ($now - $conf->commande->client->warning_delay)) {
+                if ($generic_commande->hasDelay()) {
 		            $response->nbtodolate++;
 	            }
             }
@@ -3341,6 +3342,24 @@ class Commande extends CommonOrder
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
 	}
+
+    /**
+     * Is the customer order delayed?
+     *
+     * @return bool
+     */
+    public function hasDelay()
+    {
+        global $conf;
+
+        if (!($this->statut > Commande::STATUS_DRAFT) && ($this->statut < Commande::STATUS_CLOSED)) {
+            return false;
+        }
+
+        $now = dol_now();
+
+        return max($this->date_commande, $this->date_livraison) < ($now - $conf->commande->client->warning_delay);
+    }
 }
 
 

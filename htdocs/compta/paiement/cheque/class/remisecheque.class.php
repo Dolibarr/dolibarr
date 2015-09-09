@@ -44,6 +44,13 @@ class RemiseCheque extends CommonObject
 	var $errno;
 
 	public $statut;
+	public $amount;
+	public $date_bordereau;
+	public $account_id;
+	public $account_label;
+	public $author_id;
+	public $nbcheque;
+	public $number;
 
 	/**
 	 *	Constructor
