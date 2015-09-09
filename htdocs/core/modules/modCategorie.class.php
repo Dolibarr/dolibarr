@@ -28,7 +28,7 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *	Classe de description et activation du module Categorie
+ *	Class to describe and enable module Categorie
  */
 class modCategorie extends DolibarrModules
 {
@@ -66,7 +66,7 @@ class modCategorie extends DolibarrModules
 		$this->config_page_url = array('categorie.php@categories');
 		$this->langfiles = array("products","companies","categories");
 
-		// Constantes
+		// Constants
 		$this->const = array();
 		$r=0;
 		$this->const[$r][0] = "CATEGORIE_RECURSIV_ADD";

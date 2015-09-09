@@ -63,12 +63,12 @@ if ($action == 'validatehistory') {
 	if ($db->type == 'pgsql') {
 		$sql1 = "UPDATE " . MAIN_DB_PREFIX . "facture_fourn_det as fd";
 		$sql1 .= " SET fd.fk_code_ventilation = accnt.rowid";
-		$sql1 .= " FROM " . MAIN_DB_PREFIX . "product as p, " . MAIN_DB_PREFIX . "accountingaccount as accnt , " . MAIN_DB_PREFIX . "accounting_system as syst";
+		$sql1 .= " FROM " . MAIN_DB_PREFIX . "product as p, " . MAIN_DB_PREFIX . "accounting_account as accnt , " . MAIN_DB_PREFIX . "accounting_system as syst";
 		$sql1 .= " WHERE fd.fk_product = p.rowid  AND accnt.fk_pcg_version = syst.pcg_version AND syst.rowid=" . $conf->global->CHARTOFACCOUNTS;
 		$sql1 .= " AND accnt.active = 1 AND p.accountancy_code_buy=accnt.account_number";
 		$sql1 .= " AND fd.fk_code_ventilation = 0";
 	} else {
-		$sql1 = "UPDATE " . MAIN_DB_PREFIX . "facture_fourn_det as fd, " . MAIN_DB_PREFIX . "product as p, " . MAIN_DB_PREFIX . "accountingaccount as accnt , " . MAIN_DB_PREFIX . "accounting_system as syst";
+		$sql1 = "UPDATE " . MAIN_DB_PREFIX . "facture_fourn_det as fd, " . MAIN_DB_PREFIX . "product as p, " . MAIN_DB_PREFIX . "accounting_account as accnt , " . MAIN_DB_PREFIX . "accounting_system as syst";
 		$sql1 .= " SET fd.fk_code_ventilation = accnt.rowid";
 		$sql1 .= " WHERE fd.fk_product = p.rowid AND accnt.fk_pcg_version = syst.pcg_version AND syst.rowid=" . $conf->global->CHARTOFACCOUNTS;
 		$sql1 .= " AND accnt.active = 1 AND p.accountancy_code_buy=accnt.account_number";
@@ -138,7 +138,7 @@ $sql .= "  ROUND(SUM(IF(MONTH(ff.datef)=12,ffd.total_ht,0)),2) AS 'Decembre',";
 $sql .= "  ROUND(SUM(ffd.total_ht),2) as 'Total'";
 $sql .= " FROM " . MAIN_DB_PREFIX . "facture_fourn_det as ffd";
 $sql .= "  LEFT JOIN " . MAIN_DB_PREFIX . "facture_fourn as ff ON ff.rowid = ffd.fk_facture_fourn";
-$sql .= "  LEFT JOIN " . MAIN_DB_PREFIX . "accountingaccount as aa ON aa.rowid = ffd.fk_code_ventilation";
+$sql .= "  LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON aa.rowid = ffd.fk_code_ventilation";
 $sql .= " WHERE ff.datef >= '" . $db->idate(dol_get_first_day($y, 1, false)) . "'";
 $sql .= "  AND ff.datef <= '" . $db->idate(dol_get_last_day($y, 12, false)) . "'";
 $sql .= "  AND ff.fk_statut > 0 ";

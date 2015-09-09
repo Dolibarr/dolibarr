@@ -23,3 +23,9 @@ INSERT INTO llx_const (name, value, type, note, visible) values ('MAIN_DELAY_EXP
 
 ALTER TABLE llx_accounting_system MODIFY COLUMN pcg_version varchar(32);
 ALTER TABLE llx_accountingaccount MODIFY COLUMN fk_pcg_version varchar(32);
+
+UPDATE llx_const SET name = __ENCRYPT('ACCOUNTING_EXPORT_PREFIX_SPEC')__ WHERE __DECRYPT('name')__ = 'EXPORT_PREFIX_SPEC';
+
+ALTER TABLE llx_accountingaccount RENAME TO llx_accounting_account;
+
+ALTER TABLE llx_societe ADD COLUMN model_pdf varchar(255);
