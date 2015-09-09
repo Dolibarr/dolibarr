@@ -167,3 +167,4 @@ ValidateHistory=Validate Automatically
 ErrorAccountancyCodeIsAlreadyUse=Error, you cannot delete this accounting account because it is used
 
 FicheVentilation=Breakdown card
+GeneralLedgerIsWritten=Operations are written in the general ledger
