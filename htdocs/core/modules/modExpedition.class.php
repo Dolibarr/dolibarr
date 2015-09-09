@@ -31,7 +31,7 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *	Classe de description et activation du module Expedition
+ *	Class to describe and enable module Expedition
  */
 class modExpedition extends DolibarrModules
 {
@@ -73,13 +73,13 @@ class modExpedition extends DolibarrModules
 		// Config pages
 		$this->config_page_url = array("confexped.php");
 
-		// Dependances
+		// Dependencies
 		$this->depends = array("modCommande");
 		$this->requiredby = array();
 		$this->conflictwith = array();
 		$this->langfiles = array('deliveries','sendings');
 
-		// Constantes
+		// Constants
 		$this->const = array();
 		$r=0;
 

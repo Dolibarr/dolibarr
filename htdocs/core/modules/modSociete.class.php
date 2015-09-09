@@ -31,7 +31,7 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *	Classe de description et activation du module Societe
+ *	Class to describe and enable module Societe
  */
 class modSociete extends DolibarrModules
 {
@@ -65,12 +65,12 @@ class modSociete extends DolibarrModules
 		// Data directories to create when module is enabled
 		$this->dirs = array("/societe/temp");
 
-		// Dependances
+		// Dependencies
 		$this->depends = array();
 		$this->requiredby = array("modExpedition","modFacture","modFournisseur","modFicheinter","modPropale","modContrat","modCommande");
 		$this->langfiles = array("companies");
 
-		// Constantes
+		// Constants
 		$this->const = array();
 		$r=0;
 
