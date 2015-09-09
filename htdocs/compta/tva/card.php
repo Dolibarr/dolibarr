@@ -167,8 +167,8 @@ if ($action == 'delete')
 
 
 /*
-*	View
-*/
+ *	View
+ */
 
 llxHeader();
 
@@ -194,16 +194,16 @@ if ($action == 'create')
     {
         print "\n".'<script type="text/javascript" language="javascript">';
         print '$(document).ready(function () {
-				$("#radiopayment").click(function() {
-                    $("#Label").html(document.formvat.Label.value);
-                    document.formvat.refund.value=0;
-				});
-				$("#radiorefund").click(function() {
-					$("#Label").html(document.formvat.Label.value);
-                    document.formsoc.refund.value=1;
-				});
-		});';
-        print '</script>'."\n";
+                $("#radiopayment").click(function() {
+                    $("#label").val($(this).data("label"));
+                    
+                });
+                $("#radiorefund").click(function() {
+                    $("#label").val($(this).data("label"));
+                    
+                });
+        });';
+		print '</script>'."\n";
 	}
 
     print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" name="formvat" method="post">';
@@ -215,13 +215,13 @@ if ($action == 'create')
     print $langs->trans("Type").':&nbsp;&nbsp;&nbsp;';
     print '</div>';
     print '<label for="radiopayment">';
-    print '<input type="radio" id="radiopayment" class="flat" name="refund" value="0"'.($refund?'':' checked').'>';
+    print '<input type="radio" id="radiopayment" data-label="'.$langs->trans('VATPayment').'" class="flat" name="refund" value="0"'.($refund?'':' checked="checked"').'>';
     print '&nbsp;';
     print $langs->trans("Payment");
     print '</label>';
     print '&nbsp;&nbsp;&nbsp;';
     print '<label for="radiorefund">';
-    print '<input type="radio" id="radiorefund" class="flat" name="refund" value="1"'.($refund?' checked':'').'>';
+    print '<input type="radio" id="radiorefund" data-label="'.$langs->trans('VATRefund').'" class="flat" name="refund" value="1"'.($refund?' checked="checked"':'').'>';
     print '&nbsp;';
     print $langs->trans("Refund");
     print '</label>';
