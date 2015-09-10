@@ -252,46 +252,65 @@ if ($action == 'list' || (empty($id) && $action != 'create'))
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
 	$sql.=$hookmanager->resPrint;
-    $sql.=$db->order($sortfield, $sortorder);
 
-	print '<form method="GET" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
-
-	if (! empty($moreforfilter))
-	{
-		print '<div class="liste_titre">';
-		print $moreforfilter;
-    	$parameters=array();
-    	$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
-	    print $hookmanager->resPrint;
-	    print '</div>';
-	}
-
-	print '<table class="noborder">'."\n";
-
-    // Fields title
-    print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans('field1'),$_SERVER['PHP_SELF'],'t.field1','',$param,'',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans('field2'),$_SERVER['PHP_SELF'],'t.field2','',$param,'',$sortfield,$sortorder);
-    $parameters=array();
-    $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
-    print $hookmanager->resPrint;
-    print '</tr>'."\n";
-
-    // Fields title search
-	print '<tr class="liste_titre">';
-	print '<td class="liste_titre"><input type="text" class="flat" name="search_field1" value="'.$search_field1.'" size="10"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" name="search_field2" value="'.$search_field2.'" size="10"></td>';
-    $parameters=array();
-    $reshook=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
-    print $hookmanager->resPrint;
-    print '</tr>'."\n";
-
+    // Count total nb of records
+    $nbtotalofrecords = 0;
+    if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+    {
+    	$result = $db->query($sql);
+    	$nbtotalofrecords = $db->num_rows($result);
+    }	
+	
+    $sql.= $db->order($sortfield, $sortorder);
+	$sql.= $db->plimit($conf->liste_limit+1, $offset);
+    
 
     dol_syslog($script_file, LOG_DEBUG);
     $resql=$db->query($sql);
     if ($resql)
     {
         $num = $db->num_rows($resql);
+        
+        $params='';
+    	$params.= '&amp;search_field1='.urlencode($search_field1);
+    	$params.= '&amp;search_field2='.urlencode($search_field2);
+        
+        print_barre_liste($title, $page, $_SERVER["PHP_SELF"],$params,$sortfield,$sortorder,'',$num,$nbtotalofrecords,'title_companies');
+        
+    
+    	print '<form method="GET" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+    
+    	if (! empty($moreforfilter))
+    	{
+    		print '<div class="liste_titre">';
+    		print $moreforfilter;
+        	$parameters=array();
+        	$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+    	    print $hookmanager->resPrint;
+    	    print '</div>';
+    	}
+    
+    	print '<table class="noborder">'."\n";
+    
+        // Fields title
+        print '<tr class="liste_titre">';
+        print_liste_field_titre($langs->trans('field1'),$_SERVER['PHP_SELF'],'t.field1','',$param,'',$sortfield,$sortorder);
+        print_liste_field_titre($langs->trans('field2'),$_SERVER['PHP_SELF'],'t.field2','',$param,'',$sortfield,$sortorder);
+        $parameters=array();
+        $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+        print $hookmanager->resPrint;
+        print '</tr>'."\n";
+    
+        // Fields title search
+    	print '<tr class="liste_titre">';
+    	print '<td class="liste_titre"><input type="text" class="flat" name="search_field1" value="'.$search_field1.'" size="10"></td>';
+    	print '<td class="liste_titre"><input type="text" class="flat" name="search_field2" value="'.$search_field2.'" size="10"></td>';
+        $parameters=array();
+        $reshook=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
+        print $hookmanager->resPrint;
+        print '</tr>'."\n";
+            
+        
         $i = 0;
         while ($i < $num)
         {
@@ -309,21 +328,22 @@ if ($action == 'list' || (empty($id) && $action != 'create'))
             }
             $i++;
         }
+        
+        $db->free($resql);
+    
+    	$parameters=array('sql' => $sql);
+    	$reshook=$hookmanager->executeHooks('printFieldListFooter',$parameters);    // Note that $action and $object may have been modified by hook
+    	print $hookmanager->resPrint;
+    
+    	print "</table>\n";
+    	print "</form>\n";
+        
     }
     else
 	{
         $error++;
         dol_print_error($db);
     }
-
-    $db->free($resql);
-
-	$parameters=array('sql' => $sql);
-	$reshook=$hookmanager->executeHooks('printFieldListFooter',$parameters);    // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
-
-	print "</table>\n";
-	print "</form>\n";
 }
 
 
