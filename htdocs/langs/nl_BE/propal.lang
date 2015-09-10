@@ -1,5 +1,0 @@
-# Dolibarr language file - Source file is en_US - propal
-DateEndPropalShort=Vervaldatum
-CreateEmptyPropal=Maak een lege offerte of uit de lijst van producten / diensten
-UseCustomerContactAsPropalRecipientIfExist=Gebruik,  indien ingesteld, het afnemercontactadres als offerteontvangstadres in plaats van het adres van de derde partij.
-ProposalLine=Offerteregels

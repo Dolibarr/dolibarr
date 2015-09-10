@@ -61,7 +61,7 @@ function report_header($nom,$variante,$period,$periodlink,$description,$builddat
 
 	// Ligne de titre
 	print '<tr>';
-	print '<td valign="top" width="110">'.$langs->trans("ReportName").'</td>';
+	print '<td width="110">'.$langs->trans("ReportName").'</td>';
 	if (! $variantexxx) print '<td colspan="3">';
 	else print '<td>';
 	print $nom;
@@ -73,7 +73,7 @@ function report_header($nom,$variante,$period,$periodlink,$description,$builddat
 	if ($calcmode)
 	{
 		print '<tr>';
-		print '<td valign="top" width="110">'.$langs->trans("CalculationMode").'</td>';
+		print '<td width="110">'.$langs->trans("CalculationMode").'</td>';
 		if (! $variante) print '<td colspan="3">';
 		else print '<td>';
 		print $calcmode;
@@ -94,7 +94,7 @@ function report_header($nom,$variante,$period,$periodlink,$description,$builddat
 
 	// Ligne de description
 	print '<tr>';
-	print '<td valign="top">'.$langs->trans("ReportDescription").'</td>';
+	print '<td>'.$langs->trans("ReportDescription").'</td>';
 	print '<td colspan="3">'.$description.'</td>';
 	print '</tr>';
 

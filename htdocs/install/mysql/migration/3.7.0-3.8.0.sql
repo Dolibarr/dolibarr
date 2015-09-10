@@ -22,6 +22,7 @@
 UPDATE llx_facture_fourn set ref=rowid where ref IS NULL;
 ALTER TABLE llx_facture_fourn MODIFY COLUMN ref varchar(255) NOT NULL;
 
+ALTER TABLE llx_bank_url MODIFY COLUMN type varchar(24) NOT NULL;
 
 -- IVORY COST (id country=21)
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,localtax1,localtax1_type,localtax2,localtax2_type,note,active) values (211, 21,  '0','0',0,0,0,0,'IVA Rate 0',1);

@@ -230,6 +230,9 @@ if ($user->rights->fournisseur->facture->lire)
 			{
 				$objp = $db->fetch_object($resql);
 
+				$facturestatic->statut = $objp->fk_statut;
+				$facturestatic->date_echeance = $db->jdate($objp->datelimite);
+
 				$var=!$var;
 
 				print "<tr ".$bc[$var].">";
@@ -245,7 +248,9 @@ if ($user->rights->fournisseur->facture->lire)
 
 				print '<td class="nowrap" align="center">'.dol_print_date($db->jdate($objp->df),'day')."</td>\n";
 				print '<td class="nowrap" align="center">'.dol_print_date($db->jdate($objp->datelimite),'day');
-				if ($objp->datelimite && $db->jdate($objp->datelimite) < ($now - $conf->facture->fournisseur->warning_delay) && ! $objp->paye && $objp->fk_statut == 1) print img_warning($langs->trans("Late"));
+				if ($facturestatic->hasDelay()) {
+					print img_warning($langs->trans("Late"));
+				}
 				print "</td>\n";
 
 				print '<td>';

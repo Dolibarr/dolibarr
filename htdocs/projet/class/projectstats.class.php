@@ -44,8 +44,8 @@ class ProjectStats extends Stats
 	/**
 	 * Return all leads grouped by status
 	 *
-	 * @param int $limit Limit results
-	 * @return array|int
+	 * @param  int             $limit Limit results
+	 * @return array|int       Array with value or -1 if error
 	 * @throws Exception
 	 */
 	function getAllProjectByStatus($limit = 5)
@@ -55,11 +55,11 @@ class ProjectStats extends Stats
 		$datay = array ();
 
 		$sql = "SELECT";
-		$sql .= " count(DISTINCT t.rowid), t.fk_opp_status";
-		$sql .= " FROM " . MAIN_DB_PREFIX . "projet as t";
+		$sql .= " SUM(t.opp_amount), t.fk_opp_status, cls.code, cls.label";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "projet as t, ".MAIN_DB_PREFIX."c_lead_status as cls";
 		$sql .= $this->buildWhere();
-		$sql .= " AND t.fk_statut = 1";
-		$sql .= " GROUP BY t.fk_opp_status";
+		$sql .= " AND t.fk_opp_status = cls.rowid AND t.fk_statut = 1";
+		$sql .= " GROUP BY t.fk_opp_status, cls.code, cls.label";
 
 		$result = array ();
 		$res = array ();
@@ -73,13 +73,16 @@ class ProjectStats extends Stats
 			while ( $i < $num ) {
 				$row = $this->db->fetch_row($resql);
 				if ($i < $limit || $num == $limit)
-					$result[$i] = array (
-							$this->projet->status[$row[1]] . '(' . $row[0] . ')',
-							$row[0]
+				{
+				    $label = (($langs->trans("OppStatus".$row[2]) != "OppStatus".$row[2]) ? $langs->trans("OppStatus".$row[2]) : $row[2]);
+					$result[$i] = array(
+						$label. ' (' . price(price2num($row[0], 'MT'), 1, $langs, 1, -1, -1, $conf->currency) . ')',
+						$row[0]
 					);
+				}
 				else
 					$other += $row[1];
-				$i ++;
+				$i++;
 			}
 			if ($num > $limit)
 				$result[$i] = array (
@@ -90,7 +93,7 @@ class ProjectStats extends Stats
 		} else {
 			$this->error = "Error " . $this->db->lasterror();
 			dol_syslog(get_class($this) . '::' . __METHOD__ . ' ' . $this->error, LOG_ERR);
-			return - 1;
+			return -1;
 		}
 
 		return $result;

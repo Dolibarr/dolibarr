@@ -43,7 +43,7 @@ if (! $res && file_exists("../../../dolibarr/htdocs/main.inc.php")) $res=@includ
 if (! $res && file_exists("../../../../dolibarr/htdocs/main.inc.php")) $res=@include '../../../../dolibarr/htdocs/main.inc.php';   // Used on dev env only
 if (! $res) die("Include of main fails");
 // Change this following line to use the correct relative path from htdocs
-include_once(DOL_DOCUMENT_ROOT.'/core/class/formcompany.class.php');
+include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
 dol_include_once('/module/class/skeleton_class.class.php');
 
 // Load traductions files requiredby by page
@@ -62,7 +62,7 @@ if ($user->societe_id > 0)
 	//accessforbidden();
 }
 
-if (empty($action) && empty($id) && empty($ref)) $action='create';
+if (empty($action) && empty($id) && empty($ref)) $action='list';
 
 // Load object if id or ref is provided as parameter
 $object=new Skeleton_Class($db);
@@ -225,7 +225,7 @@ jQuery(document).ready(function() {
 
 
 // Part to show a list
-if ($action == 'list' || empty($id))
+if ($action == 'list' || (empty($id) && $action != 'create'))
 {
     $sql = "SELECT";
     $sql.= " t.rowid,";
@@ -243,7 +243,7 @@ if ($action == 'list' || empty($id))
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
 	$sql.=$hookmanager->resPrint;
-    $sql.= " ORDER BY field1 ASC";
+    $sql.=$db->order($sortfield, $sortorder);
 
 	print '<form method="GET" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 
@@ -329,7 +329,7 @@ if ($action == 'list' || empty($id))
 // Part to create
 if ($action == 'create')
 {
-	print_fiche_titre($langs->trans("NewResidence"));
+	print_fiche_titre($langs->trans("NewSkeleton"));
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="action" value="add">';

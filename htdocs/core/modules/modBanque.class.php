@@ -31,7 +31,7 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *	Classe de description et activation du module Banque
+ *	Class to describe and enable module Banque
  */
 class modBanque extends DolibarrModules
 {
@@ -76,7 +76,7 @@ class modBanque extends DolibarrModules
 		// Constants
 		$this->const = array();
 
-		// Boites
+		// Boxes
 		$this->boxes = array(0=>array('file'=>'box_comptes.php','enabledbydefaulton'=>'Home'));
 
 		// Permissions

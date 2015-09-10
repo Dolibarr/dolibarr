@@ -48,6 +48,7 @@ NoImportableData=Nei importable gögn (ekki mát með skilgreiningar til að ley
 FileSuccessfullyBuilt=Útflutningur skrá mynda
 SQLUsedForExport=SQL Beiðni notað til að byggja útflutningur skrá
 LineId=Auðkenni línu
+LineLabel=Label of line
 LineDescription=Lýsing lína
 LineUnitPrice=Unit verð á línu
 LineVATRate=VSK af línu

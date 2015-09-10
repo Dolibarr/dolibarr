@@ -636,7 +636,7 @@ else
 					$i++;
 				}
 			}
-			else print '<tr><td>'.$langs->trans("NoneF").'</td></tr>';
+			else print '<tr '.$bc[false].'><td colspan="6">'.$langs->trans("NoneF").'</td></tr>';
 
 			print "</table>";
 			$db->free($resql);

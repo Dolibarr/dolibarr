@@ -73,7 +73,7 @@ class modCommande extends DolibarrModules
 		$this->conflictwith = array();
 		$this->langfiles = array('orders', 'bills', 'companies','products', 'deliveries');
 
-		// Constantes
+		// Constants
 		$this->const = array();
 		$r=0;
 

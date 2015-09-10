@@ -35,8 +35,7 @@ if (! empty($conf->commande->enabled)) require_once DOL_DOCUMENT_ROOT.'/commande
 
 
 /**
- *  \class      Livraison
- *  \brief      Classe de gestion des bons de livraison
+ *  Class to manage receptions
  */
 class Livraison extends CommonObject
 {
@@ -967,11 +966,14 @@ class Livraison extends CommonObject
 	/**
 	 *	Create object on disk
 	 *
-	 *	@param	string		$modele			force le modele a utiliser ('' to not force)
-	 *	@param	Translate	$outputlangs	objet lang a utiliser pour traduction
-	 *  @return int         				0 if KO, 1 if OK
+	 *	@param     string		$modele			force le modele a utiliser ('' to not force)
+	 * 	@param     Translate	$outputlangs	Object langs to use for output
+	 *  @param     int			$hidedetails    Hide details of lines
+	 *  @param     int			$hidedesc       Hide description
+	 *  @param     int			$hideref        Hide ref
+	 *  @return    int             				0 if KO, 1 if OK
 	 */
-	public function generateDocument($modele, $outputlangs='')
+	public function generateDocument($modele, $outputlangs='',$hidedetails=0,$hidedesc=0,$hideref=0)
 	{
 		global $conf,$user,$langs;
 
@@ -992,7 +994,7 @@ class Livraison extends CommonObject
 
 		$modelpath = "core/modules/livraison/doc/";
 
-		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, 0, 0, 0);
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	}
 
 	/**

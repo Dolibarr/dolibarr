@@ -48,6 +48,7 @@ NoImportableData=Žádné importovatelné údaje (žádný modul s definicemi po
 FileSuccessfullyBuilt=Generován export souboru
 SQLUsedForExport=Dotaz SQL použitý k vytvoření exportovaného souboru
 LineId=Id řádku
+LineLabel=Label of line
 LineDescription=Popis řádku
 LineUnitPrice=Jednotková cena z řádku
 LineVATRate=Sazba DPH z řádku

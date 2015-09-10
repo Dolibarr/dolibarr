@@ -72,7 +72,7 @@ class modAgenda extends DolibarrModules
 		$this->requiredby = array();
 		$this->langfiles = array("companies");
 
-		// Constantes
+		// Constants
 		//-----------
 		$this->const = array();
 		$this->const[15] = array("MAIN_AGENDA_ACTIONAUTO_COMPANY_SENTBYMAIL","chaine","1");

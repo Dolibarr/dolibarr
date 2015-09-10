@@ -143,7 +143,8 @@ SelectElement=Välj elementet
 AddElement=Länk till inslag
 UnlinkElement=Ta bort länk elementet
 # Documents models
-DocumentModelBaleine=En fullständig projektets rapport modellen (logo. ..)
+DocumentModelBeluga=Project template for linked objects overview
+DocumentModelBaleine=Project report template for tasks
 PlannedWorkload=Planerad arbetsbelastning
 PlannedWorkloadShort=Workload
 WorkloadOccupation=Workload assignation

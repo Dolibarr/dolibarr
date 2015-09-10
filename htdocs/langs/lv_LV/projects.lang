@@ -143,7 +143,8 @@ SelectElement=Izvēlieties elementu
 AddElement=Saite uz elementu
 UnlinkElement=Unlink element
 # Documents models
-DocumentModelBaleine=Pilnīgu projekta ziņojums modelis (logo. ..)
+DocumentModelBeluga=Project template for linked objects overview
+DocumentModelBaleine=Project report template for tasks
 PlannedWorkload=Plānotais darba apjoms
 PlannedWorkloadShort=Workload
 WorkloadOccupation=Workload assignation

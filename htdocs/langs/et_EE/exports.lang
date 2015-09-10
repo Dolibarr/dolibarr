@@ -48,6 +48,7 @@ NoImportableData=Imporditavaid andmeid ei ole (ükski moodul ei luba andmete imp
 FileSuccessfullyBuilt=Eksport fail loodud
 SQLUsedForExport=Ekspordi faili loomiseks kasutatav SQL päring
 LineId=Rea ID
+LineLabel=Label of line
 LineDescription=Rea kirjeldus
 LineUnitPrice=Rea ühikuhind
 LineVATRate=Rea KM määr

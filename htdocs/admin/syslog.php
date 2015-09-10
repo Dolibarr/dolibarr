@@ -106,8 +106,17 @@ if ($action == 'set')
 	$activeModules = $newActiveModules;
 	dolibarr_set_const($db, 'SYSLOG_HANDLERS', json_encode($activeModules), 'chaine',0,'',0);
 
+	// Check configuration
+	foreach ($activeModules as $modulename) {
+		/**
+		 * @var LogHandler
+		 */
+		$module = new $modulename;
+		$error = $module->checkConfiguration();
+	}
 
-    if (! $error)
+
+	if (! $error)
 	{
 		$db->commit();
 		setEventMessage($langs->trans("SetupSaved"));
@@ -115,7 +124,8 @@ if ($action == 'set')
 	else
 	{
 		$db->rollback();
-		setEventMessage($langs->trans("Error"),'errors');
+		setEventMessage($error, 'errors');
+
 	}
 
 }
@@ -215,7 +225,11 @@ foreach ($syslogModules as $moduleName)
 	print '<td align="left">';
 	if ($module->getInfo())
 	{
-		print $form->textwithpicto('', $module->getInfo());
+		print $form->textwithpicto('', $module->getInfo(), 1, 'help');
+	}
+	if ($module->getWarning())
+	{
+		print $form->textwithpicto('', $module->getWarning(), 1, 'warning');
 	}
 	print '</td>';
 	print "</tr>\n";
