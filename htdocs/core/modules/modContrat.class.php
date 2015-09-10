@@ -29,7 +29,7 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *	Classe de description et activation du module Contrat
+ *	Class to describe and enable module Contrat
  */
 class modContrat extends DolibarrModules
 {
@@ -61,14 +61,14 @@ class modContrat extends DolibarrModules
 		// Data directories to create when module is enabled
 		$this->dirs = array("/contract/temp");
 
-		// Dependances
+		// Dependencies
 		$this->depends = array("modSociete");
 		$this->requiredby = array();
 
 		// Config pages
 		$this->config_page_url = array("contract.php");
 
-		// Constantes
+		// Constants
 		$this->const = array();
 		$this->const[0][0] = "CONTRACT_ADDON";
 		$this->const[0][1] = "chaine";

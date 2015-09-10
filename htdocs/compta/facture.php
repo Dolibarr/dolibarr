@@ -3223,8 +3223,9 @@ else if ($id > 0 || ! empty($ref))
 			$form->form_date($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $object->date_lim_reglement, 'paymentterm');
 		} else {
 			print dol_print_date($object->date_lim_reglement, 'daytext');
-			if ($object->date_lim_reglement < ($now - $conf->facture->client->warning_delay) && ! $object->paye && $object->statut == 1 && ! isset($object->am))
+			if ($object->hasDelay()) {
 				print img_warning($langs->trans('Late'));
+			}
 		}
 	} else {
 		print '&nbsp;';

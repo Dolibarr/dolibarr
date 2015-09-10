@@ -71,7 +71,7 @@ class modSkype extends DolibarrModules
 	    $this->conflictwith = array();	// List of modules id this module is in conflict with
         $this->langfiles = array();
 
-        // Constantes
+        // Constants
         //-----------
 
 
