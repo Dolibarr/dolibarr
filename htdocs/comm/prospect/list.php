@@ -33,6 +33,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 $langs->load("propal");
 $langs->load("companies");
@@ -216,6 +217,7 @@ if (empty($reshook))
 
 $formother=new FormOther($db);
 $form=new Form($db);
+$formcompany=new FormCompany($db);
 $prospectstatic=new Client($db);
 $prospectstatic->client=2;
 $prospectstatic->loadCacheOfProspStatus();
@@ -259,6 +261,8 @@ if ($search_datec)   $sql .= " AND s.datec LIKE '%".$db->escape($search_datec)."
 if ($search_status!='') $sql .= " AND s.status = ".$db->escape($search_status);
 // Insert levels filters
 if ($search_levels)  $sql .= " AND s.fk_prospectlevel IN (".$search_levels.')';
+if ($search_country) $sql .= " AND s.fk_pays IN (".$search_country.')';
+if ($search_type_thirdparty) $sql .= " AND s.fk_typent IN (".$search_type_thirdparty.')';
 // Insert sale filter
 if ($search_sale > 0) $sql .= " AND sc.fk_user = ".$db->escape($search_sale);
 if ($socname)
@@ -313,7 +317,10 @@ if ($resql)
         llxHeader('',$langs->trans("ThirdParty"),$help_url);
 	}
 
-	$param='&search_stcomm='.$search_stcomm.'&search_nom='.urlencode($search_nom).'&search_zipcode='.urlencode($search_zipcode).'&search_town='.urlencode($search_town);
+	$param='&search_stcomm='.$search_stcomm;
+	$param.='&search_nom='.urlencode($search_nom);
+	$param.='&search_zipcode='.urlencode($search_zipcode);
+	$param.='&search_town='.urlencode($search_town);
  	// Store the status filter in the URL
  	if (isSet($search_setstcomm))
  	{
@@ -419,6 +426,12 @@ if ($resql)
  	print '<td class="liste_titre" align="center">';
     print '<input type="text" class="flat" name="search_state" size="8" value="'.$search_state.'">';
     print '</td>';
+    print '<td class="liste_titre" align="center">';
+    print $form->select_country($search_country,'search_country');
+    print '</td>';
+    print '<td class="liste_titre" align="center">';
+    print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?'ASC':$conf->global->SOCIETE_SORT_ON_TYPEENT));
+    print '</td>';
     print '<td align="center" class="liste_titre">';
 	print '<input class="flat" type="text" size="10" name="search_datec" value="'.$search_datec.'">';
     print '</td>';
@@ -522,9 +535,7 @@ if ($resql)
 		print '</td>';
 		//Type ent
 		print '<td align="center">';
-		if (count($typenArray)==0) {
-			$typenArray = $formcompany->typent_array(1);
-		}
+		if (count($typenArray)==0) $typenArray = $formcompany->typent_array(1);
 		print $typenArray[$obj->typent_code];
 		print '</td>';
 		// Creation date
