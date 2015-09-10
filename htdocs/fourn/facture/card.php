@@ -526,7 +526,7 @@ if (empty($reshook))
 		            $result = $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	            	if ($result	<= 0)
 	            	{
-	            		dol_print_error($db,$result);
+	            		dol_print_error($db,$object->error,$object->errors);
 	            		exit;
 	            	}
 	            }
@@ -1905,7 +1905,9 @@ else
         // Due date
         print '<tr><td>'.$form->editfieldkey("DateMaxPayment",'date_lim_reglement',$object->date_echeance,$object,$form_permission,'datepicker').'</td><td colspan="3">';
         print $form->editfieldval("DateMaxPayment",'date_lim_reglement',$object->date_echeance,$object,$form_permission,'datepicker');
-        if ($action != 'editdate_lim_reglement' && $object->statut < FactureFournisseur::STATUS_CLOSED && $object->date_echeance && $object->date_echeance < ($now - $conf->facture->fournisseur->warning_delay)) print img_warning($langs->trans('Late'));
+        if ($action != 'editdate_lim_reglement' && $object->hasDelay()) {
+	        print img_warning($langs->trans('Late'));
+        }
         print '</td>';
 
 		// Conditions de reglement par defaut
@@ -2296,7 +2298,7 @@ else
 	            $result = $object->generateDocument(GETPOST('model')?GETPOST('model'):$object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
                 if ($result <= 0)
                 {
-                    dol_print_error($db,$result);
+                    dol_print_error($db,$object->error,$object->errors);
                     exit;
                 }
                 $fileparams = dol_most_recent_file($conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id,2,0,0,$object,'invoice_supplier').$ref, preg_quote($ref,'/').'([^\-])+');

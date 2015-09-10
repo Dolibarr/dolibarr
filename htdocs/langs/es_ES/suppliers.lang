@@ -43,4 +43,4 @@ ListOfSupplierOrders=Listado de pedidos a proveedor
 MenuOrdersSupplierToBill=Pedidos a proveedor a facturar
 NbDaysToDelivery=Tiempo de entrega en días
 DescNbDaysToDelivery=El mayor retraso en las entregas de productos de este pedido
-UseDoubleApproval=Use double approval when amount (without tax) is higher than (The second approval can be done by any user with the dedicated permission. Set to 0 for no double approval)
+UseDoubleApproval=Usar doble aprobación si la base imponible (sin IVA) es mayor que (La segunda aprobación puede ser realizada por cualquier usuario con permisos. Dejar a 0 para que no haya doble aprobación)

@@ -646,7 +646,7 @@ else
             print '<td colspan="2"><label for="birthday_alert">'.$langs->trans("Alert").'</label>: ';
             if ($object->birthday_alert)
             {
-                print '<input type="checkbox" name="birthday_alert" id="birthday_aler" checked></td>';
+                print '<input type="checkbox" name="birthday_alert" id="birthday_alert" checked></td>';
             }
             else
             {

@@ -2255,6 +2255,9 @@ div.liste_titre .tagtd {
 	vertical-align: middle;
 }
 div.liste_titre {
+	box-shadow: 2px 2px 4px #CCC;
+}
+div.liste_titre {
 	min-height: 26px !important;	/* We cant use height because it's a div and it should be higher if content is more. but min-height doe not work either for div */
 
 	padding-left: 3px;

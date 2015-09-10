@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2011       Philippe Grand          <philippe.grand@atoo-net.com>
- * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2015  Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
@@ -32,6 +32,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
 $langs->load("propal");
 $langs->load("companies");
@@ -53,6 +54,8 @@ $search_datec       = GETPOST("search_datec");
 $search_categ       = GETPOST("search_categ",'int');
 $search_status		= GETPOST("search_status",'int');
 $catid              = GETPOST("catid",'int');
+$search_country		= GETPOST("search_country",'int');
+$search_type_thirdparty		= GETPOST("search_type_thirdparty",'int');
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -150,13 +153,17 @@ $search_categ = GETPOST('search_categ','int');
 // If the internal user must only see his prospect, force searching by him
 if (!$user->rights->societe->client->voir && !$socid) $search_sale = $user->id;
 
-// List of avaible states; we'll need that for each lines (quick changing prospect states) and for search bar (filter by prospect state)
+// List of available states; we'll need that for each lines (quick changing prospect states) and for search bar (filter by prospect state)
 $sts = array(-1,0,1,2,3);
 
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('prospectlist'));
 $extrafields = new ExtraFields($db);
+
+// fetch optionals attributes and labels
+$extralabels = $extrafields->fetch_name_optionals_label('thirdparty');
+$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
 
 // Do we click on purge search criteria ?
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
@@ -171,6 +178,9 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 	$search_datec="";
 	$search_categ="";
 	$search_status="";
+	$search_country="";
+	$search_type_thirdparty="";
+	$search_array_options=array();
 }
 
 if ($search_status=='') $search_status=1; // always display active customer first
@@ -214,16 +224,21 @@ $sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias, s.zip, s.town, s.d
 $sql.= " s.prefix_comm, s.fk_prospectlevel, s.fk_stcomm as stcomm_id,";
 $sql.= " st.libelle as stcomm_label,";
 $sql.= " d.nom as departement";
+$sql.= " ,s.fk_pays";
+$sql.= " ,typent.code as typent_code";
 if ((!$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
 // Add fields for extrafields
-foreach ($extrafields->attribute_list as $key => $val) $sql.=",ef.".$key.' as options_'.$key;
+if (is_array($extrafields->attribute_list) && count($extrafields->attribute_list)) foreach ($extrafields->attribute_list as $key => $val) $sql.=",ef.".$key.' as options_'.$key;
 // Add fields from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
 $sql .= " FROM ".MAIN_DB_PREFIX."c_stcomm as st";
 $sql.= ", ".MAIN_DB_PREFIX."societe as s";
+if (is_array($extrafields->attribute_list) && count($extrafields->attribute_list)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_extrafields as ef on (s.rowid = ef.fk_object)";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as d on (d.rowid = s.fk_departement)";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays) ";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent) ";
 if (! empty($search_categ) || ! empty($catid)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_societe as cs ON s.rowid = cs.fk_soc"; // We need this table joined to the select in order to filter by categ
 if ((!$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
 $sql.= " WHERE s.fk_stcomm = st.id";
@@ -231,7 +246,7 @@ $sql.= " AND s.client IN (2, 3)";
 $sql.= ' AND s.entity IN ('.getEntity('societe', 1).')';
 if ((!$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc";
 if ($socid) $sql.= " AND s.rowid = " .$socid;
-if ($search_stcomm != '') $sql.= natural_search("s.fk_stcomm",$search_stcomm,2);
+if ($search_stcomm != '' && $search_stcomm != -2) $sql.= natural_search("s.fk_stcomm",$search_stcomm,2);
 if ($catid > 0)           $sql.= " AND cs.fk_categorie = ".$catid;
 if ($catid == -2)         $sql.= " AND cs.fk_categorie IS NULL";
 if ($search_categ > 0)    $sql.= " AND cs.fk_categorie = ".$search_categ;
@@ -252,6 +267,19 @@ if ($socname)
 	$sortfield = "s.nom";
 	$sortorder = "ASC";
 }
+// Extra fields
+foreach ($search_array_options as $key => $val)
+{
+    $crit=$val;
+    $tmpkey=preg_replace('/search_options_/','',$key);
+    $typ=$extrafields->attribute_type[$tmpkey];
+    $mode=0;
+    if (in_array($typ, array('int'))) $mode=1;    // Search on a numeric
+    if ($val && ( ($crit != '' && ! in_array($typ, array('select'))) || ! empty($crit))) 
+    {
+        $sql .= natural_search('ef.'.$tmpkey, $crit, $mode);
+    }
+}
 // Add where from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
@@ -265,6 +293,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 }
 $sql.= " ORDER BY $sortfield $sortorder, s.nom ASC";
 $sql.= $db->plimit($conf->liste_limit+1, $offset);
+//print $sql;
 
 dol_syslog('comm/prospect/list.php', LOG_DEBUG);
 $resql = $db->query($sql);
@@ -298,9 +327,17 @@ if ($resql)
  	}
  	if ($search_level_from != '') $param.='&search_level_from='.$search_level_from;
  	if ($search_level_to != '') $param.='&search_level_to='.$search_level_to;
- 	if ($search_categ != '') $param.='&search_categ='.$search_categ;
+ 	if ($search_categ != '') $param.='&search_categ='.urlencode($search_categ);
  	if ($search_sale > 0) $param.='&search_sale='.$search_sale;
  	if ($search_status != '') $param.='&search_status='.$search_status;
+ 	if ($search_country != '') $param.='&amp;search_country='.$search_country;
+ 	if ($search_type_thirdparty != '') $param.='&amp;search_type_thirdparty='.$search_type_thirdparty;
+    foreach ($search_array_options as $key => $val)
+    {
+        $crit=$val;
+        $tmpkey=preg_replace('/search_options_/','',$key);
+        $param.='&search_options_'.$tmpkey.'='.urlencode($val);
+    } 	
  	// $param and $urladd should have the same value
  	$urladd = $param;
 
@@ -342,11 +379,25 @@ if ($resql)
 	print_liste_field_titre($langs->trans("Zip"),$_SERVER["PHP_SELF"],"s.zip","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Town"),$_SERVER["PHP_SELF"],"s.town","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("State"),$_SERVER["PHP_SELF"],"s.fk_departement","",$param,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Country"),$_SERVER["PHP_SELF"],"country.code_iso","",$param,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("ThirdPartyType"),$_SERVER["PHP_SELF"],"typent.code","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"s.datec","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("ProspectLevelShort"),$_SERVER["PHP_SELF"],"s.fk_prospectlevel","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("StatusProsp"),$_SERVER["PHP_SELF"],"s.fk_stcomm","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre('');
-
+    
+    // Extrafields
+	if (is_array($extrafields->attribute_list) && count($extrafields->attribute_list))
+	{
+	   foreach($extrafields->attribute_list as $key => $val) 
+	   {
+	       if ($val)
+	       {
+	           print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],"ef.".$key,"",$param,"",$sortfield,$sortorder);
+	       }
+	   }
+	}
+	// Hook fields
 	$parameters=array();
     $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
@@ -360,13 +411,13 @@ if ($resql)
 	print '<input type="text" class="flat" name="search_nom" size="10" value="'.$search_nom.'">';
 	print '</td>';
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_zipcode" size="10" value="'.$search_zipcode.'">';
+	print '<input type="text" class="flat" name="search_zipcode" size="6" value="'.$search_zipcode.'">';
 	print '</td>';
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_town" size="10" value="'.$search_town.'">';
+	print '<input type="text" class="flat" name="search_town" size="8" value="'.$search_town.'">';
 	print '</td>';
  	print '<td class="liste_titre" align="center">';
-    print '<input type="text" class="flat" name="search_state" size="10" value="'.$search_state.'">';
+    print '<input type="text" class="flat" name="search_state" size="8" value="'.$search_state.'">';
     print '</td>';
     print '<td align="center" class="liste_titre">';
 	print '<input class="flat" type="text" size="10" name="search_datec" value="'.$search_datec.'">';
@@ -404,14 +455,29 @@ if ($resql)
 	{
 		$arraystcomm[$val['id']]=$val['label'];
 	}
-    print $form->selectarray('search_stcomm', $arraystcomm, $search_stcomm, 1);
+    print $form->selectarray('search_stcomm', $arraystcomm, $search_stcomm, -2);
     print '</td>';
 
     print '<td class="liste_titre" align="center">';
     print '&nbsp;';
     print '</td>';
 
-	$parameters=array();
+    // Extrafields
+	if (is_array($extrafields->attribute_list) && count($extrafields->attribute_list))
+	{
+	   foreach($extrafields->attribute_list as $key => $val) 
+	   {
+	       if ($val)
+	       {
+	           $crit=$search_array_options['search_options_'.$key];
+	           print '<td class="liste_titre">';
+               print $extrafields->showInputField($key, $crit, '', '', 'search_', 4);
+               print '</td>';
+	       }
+	   }
+	}
+    // Hook fields
+    $parameters=array();
 	$reshook=$hookmanager->executeHooks('printFieldListSearch',$parameters);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 
@@ -449,6 +515,18 @@ if ($resql)
         print "<td>".$obj->zip."</td>";
 		print "<td>".$obj->town."</td>";
 		print '<td align="center">'.$obj->departement.'</td>';
+		//Country
+		print '<td align="center">';
+		$tmparray=getCountry($obj->fk_pays,'all');
+		print $tmparray['label'];
+		print '</td>';
+		//Type ent
+		print '<td align="center">';
+		if (count($typenArray)==0) {
+			$typenArray = $formcompany->typent_array(1);
+		}
+		print $typenArray[$obj->typent_code];
+		print '</td>';
 		// Creation date
 		print '<td align="center">'.dol_print_date($db->jdate($obj->datec)).'</td>';
 		// Level
@@ -460,7 +538,7 @@ if ($resql)
 		print $prospectstatic->LibProspCommStatut($obj->stcomm_id,2,$prospectstatic->cacheprospectstatus[$obj->stcomm_id]['label']);
 		print "</td>";
 
-		print '<td align="right" class="nowrap">';
+		print '<td align="center" class="nowrap">';
 		foreach($prospectstatic->cacheprospectstatus as $key => $val)
 		{
 			$titlealt='default';
@@ -469,6 +547,21 @@ if ($resql)
 		}
 		print '</td>';
 
+	    // Extrafields
+    	if (is_array($extrafields->attribute_list) && count($extrafields->attribute_list))
+    	{
+    	   foreach($extrafields->attribute_list as $key => $val) 
+    	   {
+    	       if ($val)
+    	       {
+                    print '<td>';
+                    $paramkey='options_'.$key;
+                    print $extrafields->showOutputField($key, $obj->$paramkey);
+                    print '</td>';
+    	       }
+    	   }
+    	}		
+		// Hook fields
         $parameters=array('obj' => $obj);
         $reshook=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook
 	    print $hookmanager->resPrint;

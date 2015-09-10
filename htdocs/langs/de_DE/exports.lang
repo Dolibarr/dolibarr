@@ -48,6 +48,7 @@ NoImportableData=Keine importfähigen Daten (kein Modul mit Erlaubnis für Daten
 FileSuccessfullyBuilt=Exportdatei erfolgreich erzeugt
 SQLUsedForExport=SQL-Abfrage für Erstellung der Exportdatei genutzt
 LineId=ID der Zeile
+LineLabel=Label of line
 LineDescription=Beschreibung der Zeile
 LineUnitPrice=Stückpreis der Zeile
 LineVATRate=Steuersatz der Zeile

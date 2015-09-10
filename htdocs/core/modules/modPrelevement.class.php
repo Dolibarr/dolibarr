@@ -30,7 +30,7 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *	Classe de description et activation du module Prelevement
+ *	Class to describe and enable module Prelevement
  */
 class modPrelevement extends DolibarrModules
 {
@@ -70,10 +70,10 @@ class modPrelevement extends DolibarrModules
 		// Config pages
 		$this->config_page_url = array("prelevement.php");
 
-		// Constantes
+		// Constants
 		$this->const = array();
 
-		// Boites
+		// Boxes
 		$this->boxes = array();
 
 		// Permissions

@@ -142,14 +142,14 @@ function getEntity($element=false, $shared=0)
  */
 function getBrowserInfo($user_agent)
 {
-	include_once DOL_DOCUMENT_ROOT.'/includes/mobiledetect/mobiledetect.class.php';
+	include_once DOL_DOCUMENT_ROOT.'/includes/mobiledetect/mobiledetectlib/Mobile_Detect.php';
 
 	$name='unknown';
 	$version='';
 	$os='unknown';
 	$phone = '';
 
-	$detectmobile = new MobileDetect(null, $user_agent);
+	$detectmobile = new Mobile_Detect(null, $user_agent);
 	$tablet = $detectmobile->isTablet();
 
 	if ($detectmobile->isMobile()) {
@@ -302,7 +302,7 @@ function dol_getprefix()
  *
  * 	@param	string	$relpath	Relative path to file (Ie: mydir/myfile, ../myfile, ...)
  * 	@param	string	$classname	Class name
- *  @return bool
+ *  @return bool                True if load is a success, False if it fails
  */
 function dol_include_once($relpath, $classname='')
 {
@@ -2766,7 +2766,7 @@ function print_fiche_titre($title, $mesg='', $picto='title_generic.png', $pictoi
  * 	@param	int		$id					To force an id on html objects
  * 	@return	string
  */
-function load_fiche_titre($titre, $mesg='', $picto='title.png', $pictoisfullpath=0, $id=0)
+function load_fiche_titre($titre, $mesg='', $picto='title_generic.png', $pictoisfullpath=0, $id=0)
 {
 	global $conf;
 
@@ -3743,7 +3743,7 @@ function yn($yesno, $case=1, $color=0)
  *
  *	@param	string	$num            Id of object
  *	@param  int		$level		    Level of subdirs to return (1, 2 or 3 levels)
- * 	@param	int		$alpha		    Use alpha ref
+ * 	@param	int		$alpha		    0=Keep number only to forge path, 1=Use alpha part afer the - (By default, use 0).
  *  @param  int		$withoutslash   0=With slash at end, 1=without slash at end (except if '/', we return '')
  *  @param	Object	$object			Object
  *  @param	string	$modulepart		Type of object ('invoice_supplier, 'donation', 'invoice', ...')

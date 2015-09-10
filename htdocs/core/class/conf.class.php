@@ -110,6 +110,7 @@ class Conf
 		$this->bank				= new stdClass();
 		$this->notification		= new stdClass();
 		$this->mailing			= new stdClass();
+		$this->expensereport    = new stdClass();
 	}
 
 
@@ -345,6 +346,9 @@ class Conf
 		// Module contrat
 		$this->contrat->dir_output=$rootfordata."/contracts";
 		$this->contrat->dir_temp  =$rootfordata."/contracts/temp";
+		// Module bank
+		$this->bank->dir_output=$rootfordata."/bank";
+		$this->bank->dir_temp  =$rootfordata."/bank/temp";
 
 
 		// Set some default values
@@ -474,6 +478,7 @@ class Conf
 		$this->adherent->cotisation			= new stdClass();
 		$this->bank->rappro					= new stdClass();
 		$this->bank->cheque					= new stdClass();
+		$this->expensereport->payment		= new stdClass();
 		$this->actions->warning_delay=(isset($this->global->MAIN_DELAY_ACTIONS_TODO)?$this->global->MAIN_DELAY_ACTIONS_TODO:7)*24*60*60;
 		$this->commande->client->warning_delay=(isset($this->global->MAIN_DELAY_ORDERS_TO_PROCESS)?$this->global->MAIN_DELAY_ORDERS_TO_PROCESS:2)*24*60*60;
 		$this->commande->fournisseur->warning_delay=(isset($this->global->MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS)?$this->global->MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS:7)*24*60*60;
@@ -486,6 +491,7 @@ class Conf
 		$this->adherent->cotisation->warning_delay=(isset($this->global->MAIN_DELAY_MEMBERS)?$this->global->MAIN_DELAY_MEMBERS:0)*24*60*60;
 		$this->bank->rappro->warning_delay=(isset($this->global->MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE)?$this->global->MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE:0)*24*60*60;
 		$this->bank->cheque->warning_delay=(isset($this->global->MAIN_DELAY_CHEQUES_TO_DEPOSIT)?$this->global->MAIN_DELAY_CHEQUES_TO_DEPOSIT:0)*24*60*60;
+		$this->expensereport->payment->warning_delay=(isset($this->global->MAIN_DELAY_EXPENSEREPORTS_TO_PAY)?$this->global->MAIN_DELAY_EXPENSEREPORTS_TO_PAY:0)*24*60*60;
 
 		// For modules that want to disable top or left menu
 		if (! empty($this->global->MAIN_HIDE_TOP_MENU)) $this->dol_hide_topmenu=$this->global->MAIN_HIDE_TOP_MENU;

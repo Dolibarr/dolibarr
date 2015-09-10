@@ -807,9 +807,9 @@ class User extends CommonObject
 	/**
 	 *  Create a user into database
 	 *
-	 *  @param	User	$user        	Objet user qui demande la creation
-	 *  @param  int		$notrigger		1 ne declenche pas les triggers, 0 sinon
-	 *  @return int			         	<0 si KO, id compte cree si OK
+	 *  @param	User	$user        	Objet user doing creation
+	 *  @param  int		$notrigger		1=do not execute triggers, 0 otherwise
+	 *  @return int			         	<0 if KO, id of created user if OK
 	 */
 	function create($user,$notrigger=0)
 	{
@@ -827,6 +827,12 @@ class User extends CommonObject
 		{
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorBadEMail",$this->email);
+			return -1;
+		}
+		if (empty($this->login))
+		{
+			$langs->load("errors");
+			$this->error = $langs->trans("ErrorFieldRequired",$this->login);
 			return -1;
 		}
 
@@ -1171,7 +1177,13 @@ class User extends CommonObject
 			$this->error = $langs->trans("ErrorBadEMail",$this->email);
 			return -1;
 		}
-
+		if (empty($this->login))
+		{
+			$langs->load("errors");
+			$this->error = $langs->trans("ErrorFieldRequired",$this->login);
+			return -1;
+		}
+		
 		$this->db->begin();
 
 		// Update datas
@@ -1876,6 +1888,8 @@ class User extends CommonObject
             $s=picto_from_langcode($langs->getDefaultLang());
             $label.= '<br><b>'.$langs->trans("CurrentUserLanguage").':</b> '.($s?$s.' ':'').$langs->getDefaultLang();
             $label.= '<br><b>'.$langs->trans("Browser").':</b> '.$conf->browser->name.($conf->browser->version?' '.$conf->browser->version:'').' ('.$_SERVER['HTTP_USER_AGENT'].')';
+            $label.= '<br><b>'.$langs->trans("Layout").':</b> '.$conf->browser->layout;
+            $label.= '<br><b>'.$langs->trans("Screen").':</b> '.$_SESSION['dol_screenwidth'].' x '.$_SESSION['dol_screenheight'];
             if (! empty($conf->browser->phone)) $label.= '<br><b>'.$langs->trans("Phone").':</b> '.$conf->browser->phone;
             if (! empty($_SESSION["disablemodules"])) $label.= '<br><b>'.$langs->trans("DisabledModules").':</b> <br>'.join(', ',explode(',',$_SESSION["disablemodules"]));
         }

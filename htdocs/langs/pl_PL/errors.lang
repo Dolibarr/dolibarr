@@ -79,7 +79,7 @@ ErrorModuleRequireJavascript=JavaScript nie musi być wyłączona do tej pracy f
 ErrorPasswordsMustMatch=Zarówno wpisane hasło musi się zgadzać się
 ErrorContactEMail=Techniczny błąd. Proszę skontaktować się z administratorem, aby po <b>%s</b> email pl zapewnić <b>%s</b> kod błędu w wiadomości, a nawet lepsze, dodając kopię ekranu strony.
 ErrorWrongValueForField=Nieprawidłowa wartość dla <b>%s</b> numer pola (wartość <b>&quot;%s&quot;</b> nie pasuje regex <b>%s</b> zasady)
-ErrorFieldValueNotIn=Błędna wartość w polu <b>Numer% s</b> (wartości <b>'% s'</b> nie jest dostępna w polu <b>wartości% s Tabela% s =% s)</b>
+ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b>)
 ErrorFieldRefNotIn=Nieprawidłowa wartość dla <b>%s</b> liczba pól (wartość <b>'%s</b> &quot;nie jest <b>%s</b> istniejących ref)
 ErrorsOnXLines=Błędów na linii źródło <b>%s</b>
 ErrorFileIsInfectedWithAVirus=Program antywirusowy nie był w stanie potwierdzić (plik może być zainfekowany przez wirusa)

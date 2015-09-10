@@ -69,8 +69,9 @@ if ($db->type != 'mysql' && $db->type != 'mysqli')
 }
 
 // Show parameters
-print 'Tablename='.$argv[1]."\n";
-print "Current dir is ".getcwd()."\n";
+print 'Tablename: '.$argv[1]."\n";
+print "Current dir: ".getcwd()."\n";
+print "Database name: ".$db->database_name."\n";
 
 
 // Define array with list of properties
@@ -304,10 +305,9 @@ foreach($property as $key => $prop)
 		}
 		else
 		{
-			$varprop.=' \'.(! isset($this->'.$prop['field'].')?\'NULL\':"\'".';
+			$varprop.='\'.(! isset($this->'.$prop['field'].')?\'NULL\':"\'".';
 			$varprop.="\$this->".$prop['field']."";
-			$varprop.='.\').';
-			
+			$varprop.='"\'")';
 		}
 		
 		if ($i < (count($property)-$no_output_field)) $varprop.=".','";

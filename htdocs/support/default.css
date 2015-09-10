@@ -63,6 +63,10 @@ text-align: left;
 border: 1px solid #8CACBB;
 }
 
+table.tablesupport {
+	min-height: 250px;
+}
+
 div.ok {
 color: #114466;
 }

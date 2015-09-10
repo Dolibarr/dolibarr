@@ -16,14 +16,14 @@ Menuaccount=会计账目
 Menuthirdpartyaccount=第三方帐户
 MenuTools=工具
 
-ConfigAccountingExpert=配置"会计专家模块"
+ConfigAccountingExpert=配置会计专家模块
 Journaux=日记帐
-JournalFinancial=财经杂志
+JournalFinancial=财政日帐
 Exports=出口
 Export=Export
 Modelcsv=出口型号
 OptionsDeactivatedForThisExportModel=For this export model, options are deactivated
-Selectmodelcsv=选择一个“导出模型”
+Selectmodelcsv=选择一个导出模型
 Modelcsv_normal=典型的导出
 Modelcsv_CEGID=出口对Cegid的专家
 BackToChartofaccounts=返回科目表

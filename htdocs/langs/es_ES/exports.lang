@@ -48,6 +48,7 @@ NoImportableData=Sin tablas de datos importables (ningún módulo con las defini
 FileSuccessfullyBuilt=Archivo de exportación generado
 SQLUsedForExport=Consulta SQL utilizada para construir el archivo de exportación
 LineId=ID de línea
+LineLabel=Label of line
 LineDescription=Descripción de línea
 LineUnitPrice=Precio unitario de la línea
 LineVATRate=Tipo de IVA de la línea

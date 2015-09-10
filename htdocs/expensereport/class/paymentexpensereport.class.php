@@ -469,7 +469,7 @@ class PaymentExpenseReport extends CommonObject
      */
     function addPaymentToBank($user,$mode,$label,$accountid,$emetteur_nom,$emetteur_banque)
     {
-        global $conf;
+        global $langs,$conf;
 
         $error=0;
 
@@ -482,7 +482,7 @@ class PaymentExpenseReport extends CommonObject
 
             $total=$this->total;
             if ($mode == 'payment_expensereport') $amount=$total;
-
+            
             // Insert payment into llx_bank
             $bank_line_id = $acc->addline(
                 $this->datepaid,
@@ -517,6 +517,32 @@ class PaymentExpenseReport extends CommonObject
                     {
                         $error++;
                         dol_print_error($this->db);
+                    }
+                }
+                
+                // Add link 'user' in bank_url between user and bank transaction
+                if (! $error)
+                {
+                    foreach ($this->amounts as $key => $value)  // We should have always same third party but we loop in case of.
+                    {
+                    	if ($mode == 'payment_expensereport')
+                        {
+                            $euser = new User($this->db);
+                            $euser->fetch($key);
+                            $result=$acc->add_url_line(
+                                $bank_line_id,
+                                $euser->id,
+                                DOL_URL_ROOT.'/user/card.php?id=',
+                                $euser->getFullName($langs),
+                                'user'
+                            );
+                            if ($result <= 0) 
+                            {
+                            	$this->error=$this->db->lasterror();
+                            	dol_syslog(get_class($this).'::addPaymentToBank '.$this->error);
+                            	$error++;
+                            }
+                        }
                     }
                 }
             }

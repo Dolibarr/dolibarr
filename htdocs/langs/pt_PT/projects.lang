@@ -143,7 +143,8 @@ SelectElement=Selecionar elemento
 AddElement=Ligar ao elemento
 UnlinkElement=Desligar o elemento
 # Documents models
-DocumentModelBaleine=modelo de um projeto completo do relatório (logo. ..)
+DocumentModelBeluga=Project template for linked objects overview
+DocumentModelBaleine=Project report template for tasks
 PlannedWorkload=Carga de trabalho planeada
 PlannedWorkloadShort=Workload
 WorkloadOccupation=Workload assignation

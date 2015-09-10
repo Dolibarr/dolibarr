@@ -53,6 +53,11 @@ abstract class CommonObject
      */
     public $error;
 
+	/**
+     * @var string[]	Array of error strings
+     */
+    public $errors=array();
+
     /**
      * @var string		Key value used to track if data is coming from import wizard
      */
@@ -81,11 +86,6 @@ abstract class CommonObject
 
 
     // Following vars are used by some objects only. We keep this property here in CommonObject to be able to provide common method using them.
-
-	/**
-     * @var string[]	Array of error strings
-     */
-    public $errors=array();
 
     /**
      * @var string[]	Can be used to pass information when only object is provided to method
@@ -2159,11 +2159,11 @@ abstract class CommonObject
         $sourcetype = (! empty($sourcetype) ? $sourcetype : $this->element);
         $targettype = (! empty($targettype) ? $targettype : $this->element);
 
-        if (empty($sourceid) && empty($targetid))
+        /*if (empty($sourceid) && empty($targetid))
         {
         	dol_syslog('Bad usage of function. No source nor target id defined (nor as parameter nor as object id)', LOG_ERR);
         	return -1;
-        }
+        }*/
 
         // Links between objects are stored in table element_element
         $sql = 'SELECT rowid, fk_source, sourcetype, fk_target, targettype';
@@ -3432,7 +3432,6 @@ abstract class CommonObject
 			require_once $file;
 
 			$obj = new $classname($this->db);
-			//$obj->message = $message;
 
 			// If generator is ODT, we must have srctemplatepath defined, if not we set it.
 			if ($obj->type == 'odt' && empty($srctemplatepath))
@@ -3470,11 +3469,20 @@ abstract class CommonObject
 
 				if (empty($srctemplatepath))
 				{
-					$this->error='ErrorGenerationAskedForOdtTemplateWithNoSrcFileFound';
+					$this->error='ErrorGenerationAskedForOdtTemplateWithSrcFileNotDefined';
 					return -1;
 				}
 			}
 
+            if ($obj->type == 'odt' && ! empty($srctemplatepath))
+            {
+                if (! dol_is_file($srctemplatepath))
+                {
+                    $this->error='ErrorGenerationAskedForOdtTemplateWithSrcFileNotFound';
+                    return -1;
+                }
+            }
+    
 			// We save charset_output to restore it because write_file can change it if needed for
 			// output format that does not support UTF8.
 			$sav_charset_output=$outputlangs->charset_output;
@@ -3587,6 +3595,11 @@ abstract class CommonObject
     function fetch_optionals($rowid=null,$optionsArray=null)
     {
     	if (empty($rowid)) $rowid=$this->id;
+
+        //To avoid SQL errors. Probably not the better solution though
+        if (!$this->table_element) {
+            return 0;
+        }
 
         if (! is_array($optionsArray))
         {
@@ -3794,7 +3807,7 @@ abstract class CommonObject
      */
     function showOptionals($extrafields, $mode='view', $params=null, $keyprefix='')
     {
-		global $_POST, $conf;
+		global $_POST, $conf, $langs;
 
 		$out = '';
 
@@ -3852,7 +3865,7 @@ abstract class CommonObject
 					if($extrafields->attribute_required[$key])
 						$label = '<span class="fieldrequired">'.$label.'</span>';
 
-					$out .= '<td>'.$label.'</td>';
+					$out .= '<td>'.$langs->trans($label).'</td>';
 					$out .='<td'.($colspan?' colspan="'.$colspan.'"':'').'>';
 
 					switch($mode) {

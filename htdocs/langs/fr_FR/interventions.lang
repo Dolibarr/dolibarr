@@ -39,6 +39,9 @@ InterventionClassifiedUnbilledInDolibarr=Intervention %s positionné à non fact
 InterventionSentByEMail=Intervention %s envoyé par EMail
 InterventionDeletedInDolibarr=Intervention %s effacée
 SearchAnIntervention=Chercher une intervention
+InterventionsArea=Espace interventions
+DraftFichinter=Interventions brouillon
+LastModifiedInterventions=Les %s dernières interventions modifiées
 ##### Types de contacts #####
 TypeContact_fichinter_internal_INTERREPFOLL=Responsable suivi de l'intervention
 TypeContact_fichinter_internal_INTERVENING=Intervenant

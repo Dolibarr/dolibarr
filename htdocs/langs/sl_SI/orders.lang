@@ -125,7 +125,7 @@ CloneOrder=Kloniraj naročilo
 ConfirmCloneOrder=Ali zares želite klonirati to naročilo <b>%s</b> ?
 DispatchSupplierOrder=Prejem naročila od dobavitelja %s
 FirstApprovalAlreadyDone=Prva odobritev je že narejena
-SecondApprovalAlreadyDone=Second approval already done
+SecondApprovalAlreadyDone=Druga odobritev je že narejena
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Referent za sledenje naročila kupca
 TypeContact_commande_internal_SHIPPING=Referent za sledenje odpreme
