@@ -168,10 +168,10 @@ class DolEditor
             {
             	if (! defined('REQUIRE_CKEDITOR')) define('REQUIRE_CKEDITOR','1');
 
-            	if (empty($conf->global->FCKEDITOR_SKIN)) {
-					$skin = monoo; // default with ckeditor 4 : moono
+            	if (! empty($conf->global->FCKEDITOR_SKIN)) {
+					$skin = $conf->global->FCKEDITOR_SKIN;
 				} else {
-					$skin = $conf->global->FCKEDITOR_SKIN; 	
+					$skin = 'monoo'; // default with ckeditor 4 : moono
 				}
 
             	$htmlencode_force=preg_match('/_encoded$/',$this->toolbarname)?'true':'false';
