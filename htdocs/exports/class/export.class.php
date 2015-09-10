@@ -43,7 +43,8 @@ class Export
 	var $array_export_entities=array();         // Tableau des listes de champ+alias a exporter
 	var $array_export_dependencies=array();     // array of list of entities that must take care of the DISTINCT if a field is added into export
 	var $array_export_special=array();          // Tableau des operations speciales sur champ
-
+    var $array_export_examplevalues=array();    // array with examples
+    
 	// To store export modules
 	var $hexa;
 	var $hexafiltervalue;
@@ -174,7 +175,9 @@ class Export
 									$this->array_export_dependencies[$i]=(! empty($module->export_dependencies_array[$r])?$module->export_dependencies_array[$r]:'');
 									// Tableau des operations speciales sur champ
 									$this->array_export_special[$i]=(! empty($module->export_special_array[$r])?$module->export_special_array[$r]:'');
-
+            						// Array of examples
+            						$this->array_export_examplevalues[$i]=$module->export_examplevalues_array[$r];
+									
 									// Requete sql du dataset
 									$this->array_export_sql_start[$i]=$module->export_sql_start[$r];
 									$this->array_export_sql_end[$i]=$module->export_sql_end[$r];

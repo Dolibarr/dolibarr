@@ -569,6 +569,10 @@ if ($step == 2 && $datatoexport)
         $tablename=getablenamefromfield($code,$sqlmaxforexport);
         $htmltext ='<b>'.$langs->trans("Name").":</b> ".$text.'<br>';
         $htmltext.='<b>'.$langs->trans("Table")." -> ".$langs->trans("Field").":</b> ".$tablename." -> ".preg_replace('/^.*\./','',$code)."<br>";
+		if (! empty($objexport->array_export_examplevalues[0][$code]))
+		{
+		    $htmltext.=$langs->trans("SourceExample").': <b>'.$objexport->array_export_examplevalues[0][$code].'</b><br>';
+		}
         if (isset($array_selected[$code]) && $array_selected[$code])
         {
             // Selected fields
