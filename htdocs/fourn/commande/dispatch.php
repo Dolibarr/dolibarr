@@ -264,9 +264,17 @@ if ($id > 0 || ! empty($ref))
 			$resql = $db->query($sql);
 			if ($resql)
 			{
-				while ( $row = $db->fetch_row($resql) )
+				$num = $db->num_rows($resql);
+				$i = 0;
+				
+				if ($num)
 				{
-					$products_dispatched[$row[0]] = price2num($row[2], 5);
+					while ($i < $num)
+					{
+						$objd = $db->fetch_object($resql);
+						$products_dispatched[$objd->rowid] = price2num($objd->qty, 5);
+						$i++;
+					}
 				}
 				$db->free($resql);
 			}
