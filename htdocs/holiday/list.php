@@ -18,7 +18,7 @@
  */
 
 /**
- *   	\file       htdocs/holiday/index.php
+ *   	\file       htdocs/holiday/list.php
  *		\ingroup    holiday
  *		\brief      List of holiday.
  */
