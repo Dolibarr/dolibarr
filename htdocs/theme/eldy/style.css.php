@@ -603,7 +603,10 @@ div.ficheaddleft {
 	padding-top: 1px;
 	padding-bottom: 1px;
 }
-
+div.attacharea {
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
 
 /* ============================================================================== */
 /* Menu top et 1ere ligne tableau                                                 */
