@@ -482,7 +482,7 @@ if ($action == 'update' && ! $_POST["cancel"])
                     {
                     	$error++;
                     	$langs->load("errors");
-                    	setEventMessages($langs->trans("ErrorFailedToCreateDir", $dir), $mesgs, 'errors');
+                    	setEventMessages($langs->transnoentitiesnoconv("ErrorFailedToCreateDir", $dir), $mesgs, 'errors');
                     }
                 }
             }

@@ -152,7 +152,7 @@ if (empty($reshook))
 		if (empty($object->ref))
 		{
 			$error++;
-			setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Ref")),null,'errors');
+			setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired",$langs->transnoentitiesnoconv("Ref")),null,'errors');
 		}
 
 		if (! $error)
@@ -183,7 +183,7 @@ if (empty($reshook))
 		if ($result > 0)
 		{
 			// Delete OK
-			setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
+			setEventMessages("RecordDeleted", null, 'mesgs');
 			header("Location: ".dol_buildpath('/buildingmanagement/list.php',1));
 			exit;
 		}
