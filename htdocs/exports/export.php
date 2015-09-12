@@ -244,6 +244,7 @@ if ($action == 'builddoc')
 	if ($result < 0)
 	{
 		setEventMessage($objexport->error, 'errors');
+		$sqlusedforexport=$objexport->sqlusedforexport;
 	}
 	else
 	{
@@ -363,7 +364,6 @@ if ($step == 4 && $action == 'submitFormField')
 	if (is_array($objexport->array_export_TypeFields[0]))
 	{
 		$_SESSION["export_filtered_fields"]=array();
-		//var_dump($_POST);
 		foreach($objexport->array_export_TypeFields[0] as $code => $type)	// $code: s.fieldname $value: Text|Boolean|List:ccc
 		{
 			$newcode=(string) preg_replace('/\./','_',$code);
@@ -742,6 +742,10 @@ if ($step == 3 && $datatoexport)
 		$tablename=getablenamefromfield($code,$sqlmaxforexport);
 		$htmltext ='<b>'.$langs->trans("Name").':</b> '.$text.'<br>';
 		$htmltext.='<b>'.$langs->trans("Table")." -> ".$langs->trans("Field").":</b> ".$tablename." -> ".preg_replace('/^.*\./','',$code)."<br>";
+		if (! empty($objexport->array_export_examplevalues[0][$code]))
+		{
+		    $htmltext.=$langs->trans("SourceExample").': <b>'.$objexport->array_export_examplevalues[0][$code].'</b><br>';
+		}
 		print '<td>';
 		print $form->textwithpicto($text,$htmltext);
 		print '</td>';
@@ -907,6 +911,10 @@ if ($step == 4 && $datatoexport)
         $tablename=getablenamefromfield($code,$sqlmaxforexport);
         $htmltext ='<b>'.$langs->trans("Name").":</b> ".$text.'<br>';
         $htmltext.='<b>'.$langs->trans("Table")." -> ".$langs->trans("Field").":</b> ".$tablename." -> ".preg_replace('/^.*\./','',$code)."<br>";
+    	if (! empty($objexport->array_export_examplevalues[0][$code]))
+		{
+		    $htmltext.=$langs->trans("SourceExample").': <b>'.$objexport->array_export_examplevalues[0][$code].'</b><br>';
+		}
         print $form->textwithpicto($text,$htmltext);
 		//print ' ('.$code.')';
         print '</td>';

@@ -233,11 +233,11 @@ class Export
 		}
 		$sql.=$this->array_export_sql_end[$indice];
 
-		//construction du filtrage si le parametrage existe
+		// Add the filtering into sql if a filtering array is provided
 		if (is_array($array_filterValue) && !empty($array_filterValue))
 		{
 			$sqlWhere='';
-			// pour ne pas a gerer le nombre de condition
+			// Loop on each condition to add
 			foreach ($array_filterValue as $key => $value)
 			{
 				if ($value != '') $sqlWhere.=" and ".$this->build_filterQuery($this->array_export_TypeFields[$indice][$key], $key, $array_filterValue[$key]);
@@ -314,6 +314,8 @@ class Export
 				else
 					$szFilterQuery=" ".$NameField."='".$ValueField."'";
 				break;
+			default:
+			    dol_syslog("Error we try to forge an sql export request with a condition on a field with type '".$InfoFieldList[0]."' (defined into module descriptor) but this type is unknown/not supported. It looks like a bug into module descriptor.", LOG_ERROR);
 		}
 
 		return $szFilterQuery;
