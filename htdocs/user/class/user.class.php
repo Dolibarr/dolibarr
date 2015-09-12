@@ -184,7 +184,7 @@ class User extends CommonObject
 
 		if ((empty($conf->multicompany->enabled) || empty($conf->multicompany->transverse_mode)) && (! empty($user->entity)))
 		{
-			$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
+			$sql.= " WHERE u.entity IN (0,". (int) $conf->entity.")";
 		}
 		else
 		{
@@ -201,7 +201,7 @@ class User extends CommonObject
 		}
 		else
 		{
-			$sql.= " AND u.rowid = ".$id;
+			$sql.= " AND u.rowid = ". (int) $id;
 		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -290,8 +290,8 @@ class User extends CommonObject
 		if ($loadpersonalconf)
 		{
 			$sql = "SELECT param, value FROM ".MAIN_DB_PREFIX."user_param";
-			$sql.= " WHERE fk_user = ".$this->id;
-			$sql.= " AND entity = ".$conf->entity;
+			$sql.= " WHERE fk_user = ". (int) $this->id;
+			$sql.= " AND entity = ". (int) $conf->entity;
 			//dol_syslog(get_class($this).'::fetch load personalized conf', LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if ($resql)
@@ -345,7 +345,7 @@ class User extends CommonObject
 			$sql = "SELECT module, perms, subperms";
 			$sql.= " FROM ".MAIN_DB_PREFIX."rights_def";
 			$sql.= " WHERE id = '".$this->db->escape($rid)."'";
-			$sql.= " AND entity = ".$entity;
+			$sql.= " AND entity = ". (int) $entity;
 
 			$result=$this->db->query($sql);
 			if ($result) {
@@ -360,10 +360,10 @@ class User extends CommonObject
 			}
 
 			// Where pour la liste des droits a ajouter
-			$whereforadd="id=".$this->db->escape($rid);
+			$whereforadd="id=". (int) $rid;
 			// Ajout des droits induits
-			if (! empty($subperms))   $whereforadd.=" OR (module='$module' AND perms='$perms' AND (subperms='lire' OR subperms='read'))";
-			else if (! empty($perms)) $whereforadd.=" OR (module='$module' AND (perms='lire' OR perms='read') AND subperms IS NULL)";
+			if (! empty($subperms))   $whereforadd.=' OR (module=\''.$this->db->escape($module).'\' AND perms=\''.$this->db->escape($perms).'\' AND (subperms=\'lire\' OR subperms=\'read\'))';
+			else if (! empty($perms)) $whereforadd.=' OR (module=\''.$this->db->escape($module).'\' AND (perms=\'lire\' OR perms=\'read\') AND subperms IS NULL)';
 		}
 		else {
 			// On a pas demande un droit en particulier mais une liste de droits
@@ -380,7 +380,7 @@ class User extends CommonObject
 			$sql = "SELECT id";
 			$sql.= " FROM ".MAIN_DB_PREFIX."rights_def";
 			$sql.= " WHERE ".$whereforadd;
-			$sql.= " AND entity = ".$entity;
+			$sql.= " AND entity = ". (int) $entity;
 
 			$result=$this->db->query($sql);
 			if ($result)
@@ -392,9 +392,9 @@ class User extends CommonObject
 					$obj = $this->db->fetch_object($result);
 					$nid = $obj->id;
 
-					$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = ".$this->id." AND fk_id=".$nid;
+					$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = ". (int) $this->id." AND fk_id=". (int) $nid;
 					if (! $this->db->query($sql)) $err++;
-					$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_rights (fk_user, fk_id) VALUES (".$this->id.", ".$nid.")";
+					$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_rights (fk_user, fk_id) VALUES (". (int) $this->id.", ". (int) $nid.")";
 					if (! $this->db->query($sql)) $err++;
 
 					$i++;
@@ -445,7 +445,7 @@ class User extends CommonObject
 			$sql = "SELECT module, perms, subperms";
 			$sql.= " FROM ".MAIN_DB_PREFIX."rights_def";
 			$sql.= " WHERE id = '".$this->db->escape($rid)."'";
-			$sql.= " AND entity = ".$entity;
+			$sql.= " AND entity = ". (int) $entity;
 
 			$result=$this->db->query($sql);
 			if ($result) {
@@ -462,8 +462,8 @@ class User extends CommonObject
 			// Where pour la liste des droits a supprimer
 			$wherefordel="id=".$this->db->escape($rid);
 			// Suppression des droits induits
-			if ($subperms=='lire' || $subperms=='read') $wherefordel.=" OR (module='$module' AND perms='$perms' AND subperms IS NOT NULL)";
-			if ($perms=='lire' || $perms=='read')       $wherefordel.=" OR (module='$module')";
+			if ($subperms=='lire' || $subperms=='read') $wherefordel.=" OR (module='$this->db->escape($module)' AND perms='$this->db->escape($perms)' AND subperms IS NOT NULL)";
+			if ($perms=='lire' || $perms=='read')       $wherefordel.=" OR (module='$this->db->escape($module)')";
 		}
 		else {
 			// On a demande suppression d'un droit sur la base d'un nom de module ou perms
@@ -479,7 +479,7 @@ class User extends CommonObject
 			$sql = "SELECT id";
 			$sql.= " FROM ".MAIN_DB_PREFIX."rights_def";
 			$sql.= " WHERE $wherefordel";
-			$sql.= " AND entity = ".$entity;
+			$sql.= " AND entity = ". (int) $entity;
 
 			$result=$this->db->query($sql);
 			if ($result)
@@ -492,7 +492,7 @@ class User extends CommonObject
 					$nid = $obj->id;
 
 					$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights";
-					$sql.= " WHERE fk_user = ".$this->id." AND fk_id=".$nid;
+					$sql.= " WHERE fk_user = ". (int) $this->id." AND fk_id=". (int) $nid;
 					if (! $this->db->query($sql)) $err++;
 
 					$i++;
@@ -562,8 +562,8 @@ class User extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."user_rights as ur";
 		$sql.= ", ".MAIN_DB_PREFIX."rights_def as r";
 		$sql.= " WHERE r.id = ur.fk_id";
-		$sql.= " AND r.entity IN (0,".(! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)?"1,":"").$conf->entity.")";
-		$sql.= " AND ur.fk_user= ".$this->id;
+		$sql.= " AND r.entity IN (0,".(! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)?"1,":""). (int) $conf->entity.")";
+		$sql.= " AND ur.fk_user= ". (int) $this->id;
 		$sql.= " AND r.perms IS NOT NULL";
 		if ($moduletag) $sql.= " AND r.module = '".$this->db->escape($moduletag)."'";
 
@@ -608,12 +608,12 @@ class User extends CommonObject
 		$sql.= " ".MAIN_DB_PREFIX."rights_def as r";
 		$sql.= " WHERE r.id = gr.fk_id";
 		if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)) {
-			$sql.= " AND gu.entity IN (0,".$conf->entity.")";
+			$sql.= " AND gu.entity IN (0,". (int) $conf->entity.")";
 		} else {
-			$sql.= " AND r.entity = ".$conf->entity;
+			$sql.= " AND r.entity = ". (int) $conf->entity;
 		}
 		$sql.= " AND gr.fk_usergroup = gu.fk_usergroup";
-		$sql.= " AND gu.fk_user = ".$this->id;
+		$sql.= " AND gu.fk_user = ". (int) $this->id;
 		$sql.= " AND r.perms IS NOT NULL";
 		if ($moduletag) $sql.= " AND r.module = '".$this->db->escape($moduletag)."'";
 
@@ -688,8 +688,8 @@ class User extends CommonObject
 
 		// Deactivate user
 		$sql = "UPDATE ".MAIN_DB_PREFIX."user";
-		$sql.= " SET statut = ".$this->statut;
-		$sql.= " WHERE rowid = ".$this->id;
+		$sql.= " SET statut = ". (int) $this->statut;
+		$sql.= " WHERE rowid = ". (int) $this->id;
 		$result = $this->db->query($sql);
 
 		dol_syslog(get_class($this)."::setstatus", LOG_DEBUG);
@@ -732,7 +732,7 @@ class User extends CommonObject
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 
 		// Remove rights
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = ".$this->id;
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = ". (int) $this->id;
 
 		if (! $error && ! $this->db->query($sql))
 		{
@@ -741,7 +741,7 @@ class User extends CommonObject
 		}
 
 		// Remove group
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_user WHERE fk_user  = ".$this->id;
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_user WHERE fk_user  = ". (int) $this->id;
 		if (! $error && ! $this->db->query($sql))
 		{
 			$error++;
@@ -751,7 +751,7 @@ class User extends CommonObject
 		// If contact, remove link
 		if ($this->contact_id)
 		{
-			$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET fk_user_creat = null WHERE rowid = ".$this->contact_id;
+			$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET fk_user_creat = null WHERE rowid = ". (int) $this->contact_id;
 			if (! $error && ! $this->db->query($sql))
 			{
 				$error++;
@@ -773,7 +773,7 @@ class User extends CommonObject
 		// Remove user
         if (! $error)
         {
-	        $sql = "DELETE FROM ".MAIN_DB_PREFIX."user WHERE rowid = ".$this->id;
+	        $sql = "DELETE FROM ".MAIN_DB_PREFIX."user WHERE rowid = ". (int) $this->id;
 	       	dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 	       	if (! $this->db->query($sql))
 	       	{
@@ -843,7 +843,7 @@ class User extends CommonObject
 
 		$sql = "SELECT login FROM ".MAIN_DB_PREFIX."user";
 		$sql.= " WHERE login ='".$this->db->escape($this->login)."'";
-		$sql.= " AND entity IN (0,".$this->db->escape($conf->entity).")";
+		$sql.= " AND entity IN (0,". (int) $conf->entity.")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$resql=$this->db->query($sql);
@@ -976,9 +976,9 @@ class User extends CommonObject
 		if ($result > 0)
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."user";
-			$sql.= " SET fk_socpeople=".$contact->id;
-			if ($contact->socid) $sql.=", fk_soc=".$contact->socid;
-			$sql.= " WHERE rowid=".$this->id;
+			$sql.= " SET fk_socpeople=". (int) $contact->id;
+			if ($contact->socid) $sql.=", fk_soc=". (int) $contact->socid;
+			$sql.= " WHERE rowid=". (int) $this->id;
 			$resql=$this->db->query($sql);
 
 			dol_syslog(get_class($this)."::create_from_contact", LOG_DEBUG);
@@ -1053,8 +1053,8 @@ class User extends CommonObject
 			if ($result > 0 && $member->fk_soc)	// If member is linked to a thirdparty
 			{
 				$sql = "UPDATE ".MAIN_DB_PREFIX."user";
-				$sql.= " SET fk_soc=".$member->fk_soc;
-				$sql.= " WHERE rowid=".$this->id;
+				$sql.= " SET fk_soc=". (int) $member->fk_soc;
+				$sql.= " WHERE rowid=". (int) $this->id;
 
 				dol_syslog(get_class($this)."::create_from_member", LOG_DEBUG);
 				$resql=$this->db->query($sql);
@@ -1097,7 +1097,7 @@ class User extends CommonObject
 
 		$sql = "SELECT id FROM ".MAIN_DB_PREFIX."rights_def";
 		$sql.= " WHERE bydefault = 1";
-		$sql.= " AND entity = ".$conf->entity;
+		$sql.= " AND entity = ". (int) $conf->entity;
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -1117,10 +1117,10 @@ class User extends CommonObject
 		while ($i < $num)
 		{
 
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = $this->id AND fk_id=$rd[$i]";
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = ". (int) $this->id." AND fk_id=". (int) $rd[$i]."";
 			$result=$this->db->query($sql);
 
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_rights (fk_user, fk_id) VALUES ($this->id, $rd[$i])";
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_rights (fk_user, fk_id) VALUES (". (int) $this->id.", ". (int) $rd[$i].")";
 			$result=$this->db->query($sql);
 			if (! $result) return -1;
 			$i++;
@@ -1193,7 +1193,7 @@ class User extends CommonObject
 		$sql.= ", login = '".$this->db->escape($this->login)."'";
         $sql.= ", api_key = '".$this->db->escape($this->api_key)."'";
 		$sql.= ", gender = ".($this->gender != -1 ? "'".$this->db->escape($this->gender)."'" : "null");	// 'man' or 'woman'
-		$sql.= ", admin = ".$this->admin;
+		$sql.= ", admin = ". (int) $this->admin;
 		$sql.= ", address = '".$this->db->escape($this->address)."'";
 		$sql.= ", zip = '".$this->db->escape($this->zip)."'";
 		$sql.= ", town = '".$this->db->escape($this->town)."'";
@@ -1217,8 +1217,8 @@ class User extends CommonObject
 		if (isset($this->salary) || $this->salary != '')           $sql.= ", salary= ".($this->salary != ''?"'".$this->db->escape($this->salary)."'":"null");
 		if (isset($this->salaryextra) || $this->salaryextra != '') $sql.= ", salaryextra= ".($this->salaryextra != ''?"'".$this->db->escape($this->salaryextra)."'":"null");
 		$sql.= ", weeklyhours= ".($this->weeklyhours != ''?"'".$this->db->escape($this->weeklyhours)."'":"null");
-		$sql.= ", entity = '".$this->entity."'";
-		$sql.= " WHERE rowid = ".$this->id;
+		$sql.= ", entity = '".$this->db->escape($this->entity)."'";
+		$sql.= " WHERE rowid = ". (int) $this->id;
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -1240,13 +1240,13 @@ class User extends CommonObject
 			// If user is linked to a member, remove old link to this member
 			if ($this->fk_member > 0)
 			{
-				$sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member = NULL where fk_member = ".$this->fk_member;
+				$sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member = NULL where fk_member = ". (int) $this->fk_member;
 				dol_syslog(get_class($this)."::update", LOG_DEBUG);
 				$resql = $this->db->query($sql);
 				if (! $resql) { $this->error=$this->db->error(); $this->db->rollback(); return -5; }
 			}
 			// Set link to user
-			$sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member =".($this->fk_member>0?$this->fk_member:'null')." where rowid = ".$this->id;
+			$sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member =".($this->fk_member>0? (int) $this->fk_member:'null')." where rowid = ". (int) $this->id;
 			dol_syslog(get_class($this)."::update", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (! $resql) { $this->error=$this->db->error(); $this->db->rollback(); return -5; }
@@ -1360,7 +1360,7 @@ class User extends CommonObject
 		$sql.= " datepreviouslogin = datelastlogin,";
 		$sql.= " datelastlogin = '".$this->db->idate($now)."',";
 		$sql.= " tms = tms";    // La date de derniere modif doit changer sauf pour la mise a jour de date de derniere connexion
-		$sql.= " WHERE rowid = ".$this->id;
+		$sql.= " WHERE rowid = ". (int) $this->id;
 
 		dol_syslog(get_class($this)."::update_last_login_date user->id=".$this->id." ".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -1424,7 +1424,7 @@ class User extends CommonObject
 			{
 				$sql.= ", pass = '".$this->db->escape($password)."'";
 			}
-			$sql.= " WHERE rowid = ".$this->id;
+			$sql.= " WHERE rowid = ". (int) $this->id;
 
 			dol_syslog(get_class($this)."::setPassword", LOG_DEBUG);
 			$result = $this->db->query($sql);
@@ -1494,7 +1494,7 @@ class User extends CommonObject
 			// After receiving confirmation link, we will crypt it and store it in pass_crypted
 			$sql = "UPDATE ".MAIN_DB_PREFIX."user";
 			$sql.= " SET pass_temp = '".$this->db->escape($password)."'";
-			$sql.= " WHERE rowid = ".$this->id;
+			$sql.= " WHERE rowid = ". (int) $this->id;
 
 			dol_syslog(get_class($this)."::setPassword", LOG_DEBUG);	// No log
 			$result = $this->db->query($sql);
@@ -1625,7 +1625,7 @@ class User extends CommonObject
 	{
 		$sql = "SELECT url, login, pass, poste ";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user_clicktodial as u";
-		$sql.= " WHERE u.fk_user = ".$this->id;
+		$sql.= " WHERE u.fk_user = ". (int) $this->id;
 
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -1662,14 +1662,14 @@ class User extends CommonObject
 		$this->db->begin();
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_clicktodial";
-		$sql .= " WHERE fk_user = ".$this->id;
+		$sql .= " WHERE fk_user = ". (int) $this->id;
 
 		dol_syslog(get_class($this).'::update_clicktodial', LOG_DEBUG);
 		$result = $this->db->query($sql);
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_clicktodial";
 		$sql .= " (fk_user,url,login,pass,poste)";
-		$sql .= " VALUES (".$this->id;
+		$sql .= " VALUES (". (int) $this->id;
 		$sql .= ", '". $this->db->escape($this->clicktodial_url) ."'";
 		$sql .= ", '". $this->db->escape($this->clicktodial_login) ."'";
 		$sql .= ", '". $this->db->escape($this->clicktodial_password) ."'";
@@ -1708,14 +1708,14 @@ class User extends CommonObject
 		$this->db->begin();
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_user";
-		$sql.= " WHERE fk_user  = ".$this->id;
-		$sql.= " AND fk_usergroup = ".$group;
-		$sql.= " AND entity = ".$entity;
+		$sql.= " WHERE fk_user  = ". (int) $this->id;
+		$sql.= " AND fk_usergroup = ". (int) $group;
+		$sql.= " AND entity = ". (int) $entity;
 
 		$result = $this->db->query($sql);
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."usergroup_user (entity, fk_user, fk_usergroup)";
-		$sql.= " VALUES (".$entity.",".$this->id.",".$group.")";
+		$sql.= " VALUES (". (int) $entity.",". (int) $this->id.",". (int) $group.")";
 
 		$result = $this->db->query($sql);
 		if ($result)
@@ -1767,9 +1767,9 @@ class User extends CommonObject
 		$this->db->begin();
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_user";
-		$sql.= " WHERE fk_user  = ".$this->id;
-		$sql.= " AND fk_usergroup = ".$group;
-		$sql.= " AND entity = ".$entity;
+		$sql.= " WHERE fk_user  = ". (int) $this->id;
+		$sql.= " AND fk_usergroup = ". (int) $group;
+		$sql.= " AND entity = ". (int) $entity;
 
 		$result = $this->db->query($sql);
 		if ($result)
@@ -2140,7 +2140,7 @@ class User extends CommonObject
 		$sql = "SELECT u.rowid, u.login as ref, u.datec,";
 		$sql.= " u.tms as date_modification, u.entity";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-		$sql.= " WHERE u.rowid = ".$id;
+		$sql.= " WHERE u.rowid = ". (int) $id;
 
 		$result=$this->db->query($sql);
 		if ($result)
@@ -2214,7 +2214,7 @@ class User extends CommonObject
 		else
 		{
 			if ($all) $sql.= " WHERE entity > 0"; // all users except superadmins
-			else $sql.= " WHERE entity = ".$conf->entity;
+			else $sql.= " WHERE entity = ". (int) $conf->entity;
 			if ($limitTo == 'active') $sql.= " AND statut = 1";
 		}
 
@@ -2278,7 +2278,7 @@ class User extends CommonObject
 	function get_children()
 	{
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."user";
-		$sql.= " WHERE fk_user = ".$this->id;
+		$sql.= " WHERE fk_user = ". (int) $this->id;
 
 		dol_syslog(get_class($this)."::get_children result=".$result, LOG_DEBUG);
 		$res  = $this->db->query($sql);
@@ -2316,7 +2316,7 @@ class User extends CommonObject
 		$sql = "SELECT fk_user as id_parent, rowid as id_son";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user";
 		$sql.= " WHERE fk_user <> 0";
-		$sql.= " AND entity IN (".getEntity('user',1).")";
+		$sql.= " AND entity IN (". (int) getEntity('user',1).")";
 
 		dol_syslog(get_class($this)."::load_parentof", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -2366,7 +2366,7 @@ class User extends CommonObject
 		}
 		else
 		{
-			$sql.= " WHERE u.entity IN (".getEntity('user',1).")";
+			$sql.= " WHERE u.entity IN (". (int) getEntity('user',1).")";
 		}
 		if ($filter) $sql.=" AND ".$filter;
 

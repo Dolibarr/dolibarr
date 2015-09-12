@@ -1002,20 +1002,20 @@ class CommandeFournisseur extends CommonOrder
         $sql.= ") ";
         $sql.= " VALUES (";
         $sql.= "''";
-        $sql.= ", '".$this->ref_supplier."'";
+        $sql.= ", '".$this->db->escape($this->ref_supplier)."'";
         $sql.= ", '".$this->db->escape($this->note_private)."'";
         $sql.= ", '".$this->db->escape($this->note_public)."'";
-        $sql.= ", ".$conf->entity;
-        $sql.= ", ".$this->socid;
+        $sql.= ", ". (int) $conf->entity;
+        $sql.= ", ".(int) $this->socid;
         $sql.= ", '".$this->db->idate($now)."'";
 		$sql.= ", ".($this->date_livraison?"'".$this->db->idate($this->date_livraison)."'":"null");
-        $sql.= ", ".$user->id;
+        $sql.= ", ". (int) $user->id;
         $sql.= ", 0";
-        $sql.= ", " . $this->source;
+        $sql.= ", " . (int) $this->source;
         $sql.= ", '".$conf->global->COMMANDE_SUPPLIER_ADDON_PDF."'";
-        $sql.= ", ".($this->mode_reglement_id > 0 ? $this->mode_reglement_id : 'null');
-        $sql.= ", ".($this->cond_reglement_id > 0 ? $this->cond_reglement_id : 'null');
-        $sql.= ", ".($this->fk_account>0?$this->fk_account:'NULL');
+        $sql.= ", ".($this->mode_reglement_id > 0 ? (int) $this->mode_reglement_id : 'null');
+        $sql.= ", ".($this->cond_reglement_id > 0 ? (int) $this->cond_reglement_id : 'null');
+        $sql.= ", ".($this->fk_account>0? (int) $this->fk_account:'NULL');
         $sql.= ", ".(int) $this->fk_incoterms;
         $sql.= ", '".$this->db->escape($this->location_incoterms)."'";
         $sql.= ")";
@@ -1436,7 +1436,7 @@ class CommandeFournisseur extends CommonOrder
 
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseur_dispatch";
             $sql.= " (fk_commande, fk_product, qty, fk_entrepot, fk_user, datec, fk_commandefourndet, status, comment, eatby, sellby, batch) VALUES";
-            $sql.= " ('".$this->id."','".$product."','".$qty."',".($entrepot>0?"'".$entrepot."'":"null").",'".$user->id."','".$this->db->idate($now)."','".$fk_commandefourndet."', ".$dispatchstatus.", '".$this->db->escape($comment)."', ";
+            $sql.= " ('". (int) $this->id."','". (int) $product."','". (float) $qty."',".((int) $entrepot>0?"'". (int) $entrepot."'":"null").",'". (int) $user->id."','".$this->db->idate($now)."','". (int) $fk_commandefourndet."', ". (int) $dispatchstatus.", '".$this->db->escape($comment)."', ";
             $sql.= ($eatby?"'".$this->db->idate($eatby)."'":"null").", ".($sellby?"'".$this->db->idate($sellby)."'":"null").", ".($batch?"'".$batch."'":"null");
             $sql.= ")";
 
@@ -1529,7 +1529,7 @@ class CommandeFournisseur extends CommonOrder
 
 		if (! $error)
 		{
-	        $sql = "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseurdet WHERE rowid = ".$idline;
+	        $sql = "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseurdet WHERE rowid = ". (int) $idline;
 	        $resql=$this->db->query($sql);
 
 	        dol_syslog(get_class($this)."::deleteline sql=".$sql);
@@ -1582,14 +1582,14 @@ class CommandeFournisseur extends CommonOrder
 
         $this->db->begin();
 
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseurdet WHERE fk_commande =". $this->id ;
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseurdet WHERE fk_commande =". (int) $this->id ;
         dol_syslog(get_class($this)."::delete", LOG_DEBUG);
         if (! $this->db->query($sql) )
         {
             $error++;
         }
 
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseur WHERE rowid =".$this->id;
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseur WHERE rowid =" . (int) $this->id;
         dol_syslog(get_class($this)."::delete", LOG_DEBUG);
         if ($resql = $this->db->query($sql) )
         {
@@ -1806,8 +1806,8 @@ class CommandeFournisseur extends CommonOrder
                 $this->db->begin();
 
                 $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
-                $sql.= " SET fk_statut = ".$statut;
-                $sql.= " WHERE rowid = ".$this->id;
+                $sql.= " SET fk_statut = ". (int) $statut;
+                $sql.= " WHERE rowid = ". (int) $this->id;
                 $sql.= " AND fk_statut IN (3,4)";	// Process running or Partially received
 
                 dol_syslog(get_class($this)."::Livraison", LOG_DEBUG);
@@ -1960,8 +1960,8 @@ class CommandeFournisseur extends CommonOrder
         $this->db->begin();
 
         $sql = 'UPDATE '.MAIN_DB_PREFIX.'commande_fournisseur';
-        $sql.= ' SET fk_statut='.$status;
-        $sql.= ' WHERE rowid = '.$this->id;
+        $sql.= ' SET fk_statut='. (int) $status;
+        $sql.= ' WHERE rowid = '. (int) $this->id;
 
         dol_syslog(get_class($this)."::setStatus", LOG_DEBUG);
         $resql = $this->db->query($sql);
@@ -2592,7 +2592,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
         $sql.= ",total_localtax1='".price2num($this->total_localtax1)."'";
         $sql.= ",total_localtax2='".price2num($this->total_localtax2)."'";
         $sql.= ",total_ttc='".price2num($this->total_ttc)."'";
-        $sql.= " WHERE rowid = ".$this->rowid;
+        $sql.= " WHERE rowid = ". (int) $this->rowid;
 
         dol_syslog("CommandeFournisseurLigne.class.php::update_total", LOG_DEBUG);
 

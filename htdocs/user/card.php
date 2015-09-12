@@ -204,7 +204,7 @@ if ($action == 'add' && $canadduser)
         $object->signature	    = GETPOST("signature");
         $object->accountancy_code = GETPOST("accountancy_code");
         $object->note			= GETPOST("note");
-        $object->ldap_sid		= GETPOST("ldap_sid");
+        $object->ldap_sid		= GETPOST("ldap_sid", 'alpha');
         $object->fk_user        = GETPOST("fk_user")>0?GETPOST("fk_user"):0;
 
         $object->thm            = GETPOST("thm")!=''?GETPOST("thm"):'';

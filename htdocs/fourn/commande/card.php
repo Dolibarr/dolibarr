@@ -894,8 +894,8 @@ if (empty($reshook))
 	        // Creation commande
 	        $object->ref_supplier  	= GETPOST('refsupplier');
 	        $object->socid         	= $socid;
-			$object->cond_reglement_id = GETPOST('cond_reglement_id');
-	        $object->mode_reglement_id = GETPOST('mode_reglement_id');
+			$object->cond_reglement_id = GETPOST('cond_reglement_id', 'int');
+	        $object->mode_reglement_id = GETPOST('mode_reglement_id', 'int');
 	        $object->fk_account        = GETPOST('fk_account', 'int');
 	        $object->note_private	= GETPOST('note_private');
 	        $object->note_public   	= GETPOST('note_public');

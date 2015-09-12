@@ -418,25 +418,25 @@ class Product extends CommonObject
 					$sql.= ", fk_unit";
 					$sql.= ") VALUES (";
 					$sql.= "'".$this->db->idate($now)."'";
-					$sql.= ", ".$conf->entity;
+					$sql.= ", ". (int) $conf->entity;
 					$sql.= ", '".$this->db->escape($this->ref)."'";
 					$sql.= ", ".(! empty($this->ref_ext)?"'".$this->db->escape($this->ref_ext)."'":"null");
 					$sql.= ", ".price2num($price_min_ht);
 					$sql.= ", ".price2num($price_min_ttc);
 					$sql.= ", ".(! empty($this->label)?"'".$this->db->escape($this->label)."'":"null");
-					$sql.= ", ".$user->id;
-					$sql.= ", ".$this->type;
+					$sql.= ", ". (int) $user->id;
+					$sql.= ", ". (int) $this->type;
 					$sql.= ", ".price2num($price_ht);
 					$sql.= ", ".price2num($price_ttc);
-					$sql.= ", '".$this->price_base_type."'";
-					$sql.= ", ".$this->status;
-					$sql.= ", ".$this->status_buy;
-					$sql.= ", '".$this->accountancy_code_buy."'";
-					$sql.= ", '".$this->accountancy_code_sell."'";
-					$sql.= ", '".$this->canvas."'";
+					$sql.= ", '".$this->db->escape($this->price_base_type)."'";
+					$sql.= ", ". (int) $this->status;
+					$sql.= ", ". (int) $this->status_buy;
+					$sql.= ", '".$this->db->escape($this->accountancy_code_buy)."'";
+					$sql.= ", '".$this->db->escape($this->accountancy_code_sell)."'";
+					$sql.= ", '".$this->db->escape($this->canvas)."'";
 					$sql.= ", ".((! isset($this->finished) || $this->finished < 0 || $this->finished == '') ? 'null' : (int) $this->finished);
-					$sql.= ", ".((empty($this->status_batch) || $this->status_batch < 0)? '0':$this->status_batch);
-					$sql.= ", ".(!$this->fk_unit ? 'NULL' : $this->fk_unit);
+					$sql.= ", ".((empty($this->status_batch) || $this->status_batch < 0)? '0': (int) $this->status_batch);
+					$sql.= ", ".(!$this->fk_unit ? 'NULL' : (int) $this->fk_unit);
 					$sql.= ")";
 
 					dol_syslog(get_class($this)."::Create", LOG_DEBUG);
@@ -694,40 +694,40 @@ class Product extends CommonObject
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."product";
 			$sql.= " SET label = '" . $this->db->escape($this->label) ."'";
-			$sql.= ", ref = '" . $this->ref ."'";
+			$sql.= ", ref = '" . $this->db->escape($this->ref) ."'";
 			$sql.= ", ref_ext = ".(! empty($this->ref_ext)?"'".$this->db->escape($this->ref_ext)."'":"null");
-			$sql.= ", tva_tx = " . $this->tva_tx;
-			$sql.= ", recuperableonly = " . $this->tva_npr;
-			$sql.= ", localtax1_tx = " . $this->localtax1_tx;
-			$sql.= ", localtax2_tx = " . $this->localtax2_tx;
+			$sql.= ", tva_tx = " . $this->db->escape($this->tva_tx);
+			$sql.= ", recuperableonly = " . (int) $this->tva_npr;
+			$sql.= ", localtax1_tx = " . $this->db->escape($this->localtax1_tx);
+			$sql.= ", localtax2_tx = " . $this->db->escape($this->localtax2_tx);
 
 			$sql.= ", barcode = ". (empty($this->barcode)?"null":"'".$this->db->escape($this->barcode)."'");
 			$sql.= ", fk_barcode_type = ". (empty($this->barcode_type)?"null":$this->db->escape($this->barcode_type));
 
-			$sql.= ", tosell = " . $this->status;
-			$sql.= ", tobuy = " . $this->status_buy;
-			$sql.= ", tobatch = " . ((empty($this->status_batch) || $this->status_batch < 0) ? '0' : $this->status_batch);
+			$sql.= ", tosell = " . (int) $this->status;
+			$sql.= ", tobuy = " . (int) $this->status_buy;
+			$sql.= ", tobatch = " . ((empty($this->status_batch) || $this->status_batch < 0) ? '0' : (int) $this->status_batch);
 			$sql.= ", finished = " . ((! isset($this->finished) || $this->finished < 0) ? "null" : (int) $this->finished);
-			$sql.= ", weight = " . ($this->weight!='' ? "'".$this->weight."'" : 'null');
-			$sql.= ", weight_units = " . ($this->weight_units!='' ? "'".$this->weight_units."'": 'null');
-			$sql.= ", length = " . ($this->length!='' ? "'".$this->length."'" : 'null');
-			$sql.= ", length_units = " . ($this->length_units!='' ? "'".$this->length_units."'" : 'null');
-			$sql.= ", surface = " . ($this->surface!='' ? "'".$this->surface."'" : 'null');
-			$sql.= ", surface_units = " . ($this->surface_units!='' ? "'".$this->surface_units."'" : 'null');
-			$sql.= ", volume = " . ($this->volume!='' ? "'".$this->volume."'" : 'null');
-			$sql.= ", volume_units = " . ($this->volume_units!='' ? "'".$this->volume_units."'" : 'null');
-			$sql.= ", seuil_stock_alerte = " . ((isset($this->seuil_stock_alerte) && $this->seuil_stock_alerte != '') ? "'".$this->seuil_stock_alerte."'" : "null");
+			$sql.= ", weight = " . ($this->weight!='' ? "'". (float) $this->weight."'" : 'null');
+			$sql.= ", weight_units = " . ($this->weight_units!='' ? "'". (int) $this->weight_units."'": 'null');
+			$sql.= ", length = " . ($this->length!='' ? "'". (float) $this->length."'" : 'null');
+			$sql.= ", length_units = " . ($this->length_units!='' ? "'". (int) $this->length_units."'" : 'null');
+			$sql.= ", surface = " . ($this->surface!='' ? "'". (float) $this->surface."'" : 'null');
+			$sql.= ", surface_units = " . ($this->surface_units!='' ? "'". (int) $this->surface_units."'" : 'null');
+			$sql.= ", volume = " . ($this->volume!='' ? "'". (float) $this->volume."'" : 'null');
+			$sql.= ", volume_units = " . ($this->volume_units!='' ? "'". (int) $this->volume_units."'" : 'null');
+			$sql.= ", seuil_stock_alerte = " . ((isset($this->seuil_stock_alerte) && $this->seuil_stock_alerte != '') ? "'". (int) $this->seuil_stock_alerte."'" : "null");
 			$sql.= ", description = '" . $this->db->escape($this->description) ."'";
 			$sql.= ", url = " . ($this->url?"'".$this->db->escape($this->url)."'":'null');
 			$sql.= ", customcode = '" .        $this->db->escape($this->customcode) ."'";
-	        $sql.= ", fk_country = " . ($this->country_id > 0 ? $this->country_id : 'null');
+	        $sql.= ", fk_country = " . ($this->country_id > 0 ? (int) $this->country_id : 'null');
 	        $sql.= ", note = ".(isset($this->note) ? "'" .$this->db->escape($this->note)."'" : 'null');
-			$sql.= ", duration = '" . $this->duration_value . $this->duration_unit ."'";
-			$sql.= ", accountancy_code_buy = '" . $this->accountancy_code_buy."'";
-			$sql.= ", accountancy_code_sell= '" . $this->accountancy_code_sell."'";
-			$sql.= ", desiredstock = " . ((isset($this->desiredstock) && $this->desiredstock != '') ? $this->desiredstock : "null");
-	        $sql.= ", fk_unit= " . (!$this->fk_unit ? 'NULL' : $this->fk_unit);
-			$sql.= " WHERE rowid = " . $id;
+			$sql.= ", duration = '" . $this->db->escape($this->duration_value . $this->duration_unit) ."'";
+			$sql.= ", accountancy_code_buy = '" . $this->db->escape($this->accountancy_code_buy)."'";
+			$sql.= ", accountancy_code_sell= '" . $this->db->escape($this->accountancy_code_sell)."'";
+			$sql.= ", desiredstock = " . ((isset($this->desiredstock) && $this->desiredstock != '') ? (int) $this->desiredstock : "null");
+	        $sql.= ", fk_unit= " . (!$this->fk_unit ? 'NULL' : (int) $this->fk_unit);
+			$sql.= " WHERE rowid = " . (int) $id;
 
 			dol_syslog(get_class($this)."::update", LOG_DEBUG);
 
@@ -885,7 +885,7 @@ class Product extends CommonObject
     				if (! $error)
     				{
     					$sql = "DELETE FROM ".MAIN_DB_PREFIX.$table;
-    					$sql.= " WHERE fk_product = ".$id;
+    					$sql.= " WHERE fk_product = ". (int) $id;
     					dol_syslog(get_class($this).'::delete', LOG_DEBUG);
     					$result = $this->db->query($sql);
     					if (! $result)
@@ -901,7 +901,7 @@ class Product extends CommonObject
 			if (! $error)
 			{
 				$sqlz = "DELETE FROM ".MAIN_DB_PREFIX."product";
-				$sqlz.= " WHERE rowid = ".$id;
+				$sqlz.= " WHERE rowid = ". (int) $id;
 				dol_syslog(get_class($this).'::delete', LOG_DEBUG);
 				$resultz = $this->db->query($sqlz);
 				if ( ! $resultz )
@@ -1427,16 +1427,16 @@ class Product extends CommonObject
 			// Ne pas mettre de quote sur les numeriques decimaux.
 			// Ceci provoque des stockages avec arrondis en base au lieu des valeurs exactes.
 			$sql = "UPDATE ".MAIN_DB_PREFIX."product SET";
-			$sql.= " price_base_type='".$newpricebase."',";
-			$sql.= " price=".$price.",";
-			$sql.= " price_ttc=".$price_ttc.",";
-			$sql.= " price_min=".$price_min.",";
-			$sql.= " price_min_ttc=".$price_min_ttc.",";
-			$sql.= " localtax1_tx=".($localtax1>=0?$localtax1:'NULL').",";
-			$sql.= " localtax2_tx=".($localtax2>=0?$localtax2:'NULL').",";
+			$sql.= " price_base_type='".$this->db->escape($newpricebase)."',";
+			$sql.= " price=".$this->db->escape($price).",";
+			$sql.= " price_ttc=".$this->db->escape($price_ttc).",";
+			$sql.= " price_min=".$this->db->escape($price_min).",";
+			$sql.= " price_min_ttc=".$this->db->escape($price_min_ttc).",";
+			$sql.= " localtax1_tx=".($localtax1>=0?$this->db->escape($localtax1):'NULL').",";
+			$sql.= " localtax2_tx=".($localtax2>=0?$this->db->escape($localtax2):'NULL').",";
 			$sql.= " tva_tx='".price2num($newvat)."',";
-            $sql.= " recuperableonly='".$newnpr."'";
-			$sql.= " WHERE rowid = ".$id;
+            $sql.= " recuperableonly='". (int) $newnpr."'";
+			$sql.= " WHERE rowid = ". (int) $id;
 
 			dol_syslog(get_class($this)."::update_price", LOG_DEBUG);
 			$resql=$this->db->query($sql);
@@ -1548,7 +1548,7 @@ class Product extends CommonObject
 		$sql.= " datec, tms, import_key, entity, desiredstock, tobatch, fk_unit";
 		$sql.= " , fk_price_expression";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
-		if ($id) $sql.= " WHERE rowid = ".$this->db->escape($id);
+		if ($id) $sql.= " WHERE rowid = ". (int) $id;
 		else
 		{
 			$sql.= " WHERE entity IN (".getEntity($this->element, 1).")";
@@ -2370,7 +2370,7 @@ class Product extends CommonObject
 				else
 				{
 					$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'product_association(fk_product_pere,fk_product_fils,qty,incdec)';
-					$sql .= ' VALUES ('.$id_pere.', '.$id_fils.', '.$qty.', '.$incdec.')';
+					$sql .= ' VALUES ('. (int) $id_pere.', '. (int) $id_fils.', '.$this->db->escape($qty).', '. (int) $incdec.')';
 					if (! $this->db->query($sql))
 					{
 						dol_print_error($this->db);
@@ -2403,9 +2403,9 @@ class Product extends CommonObject
 		if (! is_numeric($qty)) $qty=1;
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'product_association SET ';
-		$sql.= 'qty='.$qty;
-		$sql.= ',incdec='.$incdec;
-		$sql .= ' WHERE fk_product_pere='.$id_pere.' AND fk_product_fils='.$id_fils;
+		$sql.= 'qty='.$this->db->escape($qty);
+		$sql.= ',incdec='. (int) $incdec;
+		$sql .= ' WHERE fk_product_pere='. (int) $id_pere.' AND fk_product_fils='. (int) $id_fils;
 
 		if (!$this->db->query($sql))
 		{
@@ -2432,8 +2432,8 @@ class Product extends CommonObject
 		if (! is_numeric($fk_child)) $fk_child=0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_association";
-		$sql.= " WHERE fk_product_pere  = ".$fk_parent;
-		$sql.= " AND fk_product_fils = ".$fk_child;
+		$sql.= " WHERE fk_product_pere  = ". (int) $fk_parent;
+		$sql.= " AND fk_product_fils = ". (int) $fk_child;
 
 		dol_syslog(get_class($this).'::del_sousproduit', LOG_DEBUG);
 		if (! $this->db->query($sql))
@@ -2456,8 +2456,8 @@ class Product extends CommonObject
 	{
 		$sql = "SELECT fk_product_pere, qty, incdec";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_association";
-		$sql.= " WHERE fk_product_pere  = '".$fk_parent."'";
-		$sql.= " AND fk_product_fils = '".$fk_child."'";
+		$sql.= " WHERE fk_product_pere  = '". (int) $fk_parent."'";
+		$sql.= " AND fk_product_fils = '". (int) $fk_child."'";
 
 		$result = $this->db->query($sql);
 		if ($result)
@@ -2505,10 +2505,10 @@ class Product extends CommonObject
 		{
     		$sql = "SELECT rowid, fk_product";
     		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price";
-    		$sql.= " WHERE fk_soc = ".$id_fourn;
-    		$sql.= " AND ref_fourn = '".$ref_fourn."'";
-    		$sql.= " AND fk_product != ".$this->id;
-    		$sql.= " AND entity = ".$conf->entity;
+    		$sql.= " WHERE fk_soc = ". (int) $id_fourn;
+    		$sql.= " AND ref_fourn = '".$this->db->escape($ref_fourn)."'";
+    		$sql.= " AND fk_product != ". (int) $this->id;
+    		$sql.= " AND entity = ". (int) $conf->entity;
 
     		dol_syslog(get_class($this)."::add_fournisseur", LOG_DEBUG);
     		$resql=$this->db->query($sql);
@@ -2603,8 +2603,8 @@ class Product extends CommonObject
 
 		$sql = "SELECT p.fk_soc";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as p";
-		$sql.= " WHERE p.fk_product = ".$this->id;
-		$sql.= " AND p.entity = ".$conf->entity;
+		$sql.= " WHERE p.fk_product = ". (int) $this->id;
+		$sql.= " AND p.entity = ". (int) $conf->entity;
 
 		$result = $this->db->query($sql);
 		if ($result)
@@ -2638,7 +2638,7 @@ class Product extends CommonObject
 		$sql.= " fk_product, date_price, price, tva_tx, localtax1_tx, localtax2_tx, fk_user_author, tosell)";
 		$sql.= " SELECT ".$toId . ", date_price, price, tva_tx, localtax1_tx, localtax2_tx, fk_user_author, tosell";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_price ";
-		$sql.= " WHERE fk_product = ". $fromId;
+		$sql.= " WHERE fk_product = ". (int) $fromId;
 
 		dol_syslog(get_class($this).'::clone_price', LOG_DEBUG);
 		if (! $this->db->query($sql))
@@ -2663,7 +2663,7 @@ class Product extends CommonObject
 
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'product_association (rowid, fk_product_pere, fk_product_fils, qty)';
 		$sql.= " SELECT null, $toId, fk_product_fils, qty FROM ".MAIN_DB_PREFIX."product_association";
-		$sql.= " WHERE fk_product_pere = '".$fromId."'";
+		$sql.= " WHERE fk_product_pere = '". (int) $fromId."'";
 
 		dol_syslog(get_class($this).'::clone_association', LOG_DEBUG);
 		if (! $this->db->query($sql))
@@ -2707,7 +2707,7 @@ class Product extends CommonObject
 		$sql.= " datec, fk_product, fk_soc, price, quantity, fk_user)";
 		$sql.= " SELECT '".$this->db->idate($now)."', ".$toId. ", fk_soc, price, quantity, fk_user";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price";
-		$sql.= " WHERE fk_product = ".$fromId;
+		$sql.= " WHERE fk_product = ". (int) $fromId;
 
 		dol_syslog(get_class($this).'::clone_fournisseurs', LOG_DEBUG);
 		$resql=$this->db->query($sql);
@@ -2854,7 +2854,7 @@ class Product extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_association as pa,";
 		$sql.= " ".MAIN_DB_PREFIX."product as p";
 		$sql.= " WHERE p.rowid = pa.fk_product_pere";
-		$sql.= " AND pa.fk_product_fils = ".$this->id;
+		$sql.= " AND pa.fk_product_fils = ". (int) $this->id;
 
 		$res = $this->db->query($sql);
 		if ($res)
@@ -2891,7 +2891,7 @@ class Product extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_association as pa,";
 		$sql.= " ".MAIN_DB_PREFIX."product as p";
 		$sql.= " WHERE p.rowid = pa.fk_product_pere";
-		$sql.= " AND p.rowid = ".$this->id;
+		$sql.= " AND p.rowid = ". (int) $this->id;
 
 		$res = $this->db->query($sql);
 		if ($res)
@@ -2923,8 +2923,8 @@ class Product extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 		$sql.= ", ".MAIN_DB_PREFIX."product_association as pa";
 		$sql.= " WHERE p.rowid = pa.fk_product_fils";
-		$sql.= " AND pa.fk_product_pere = ".$id;
-		$sql.= " AND pa.fk_product_fils != ".$id;	// This should not happens, it is to avoid infinite loop if it happens
+		$sql.= " AND pa.fk_product_pere = ". (int) $id;
+		$sql.= " AND pa.fk_product_fils != ". (int) $id;	// This should not happens, it is to avoid infinite loop if it happens
 
 		dol_syslog(get_class($this).'::getChildsArbo', LOG_DEBUG);
 		$res  = $this->db->query($sql);
@@ -3259,7 +3259,7 @@ class Product extends CommonObject
 		$sql.= ", ".MAIN_DB_PREFIX."entrepot as w";
 		$sql.= " WHERE w.entity IN (".getEntity('warehouse', 1).")";
 		$sql.= " AND w.rowid = ps.fk_entrepot";
-		$sql.= " AND ps.fk_product = ".$this->id;
+		$sql.= " AND ps.fk_product = ". (int) $this->id;
 
 		dol_syslog(get_class($this)."::load_stock", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -3367,7 +3367,7 @@ class Product extends CommonObject
     	$result=array();
 
     	$sql = "SELECT pb.batch, pb.eatby, pb.sellby, SUM(pb.qty) FROM ".MAIN_DB_PREFIX."product_batch as pb, ".MAIN_DB_PREFIX."product_stock as ps";
-    	$sql.= " WHERE pb.fk_product_stock = ps.rowid AND ps.fk_product = ".$this->id." AND pb.batch = '".$this->db->escape($batch)."'";
+    	$sql.= " WHERE pb.fk_product_stock = ps.rowid AND ps.fk_product = ". (int) $this->id." AND pb.batch = '".$this->db->escape($batch)."'";
     	$sql.= " GROUP BY pb.batch, pb.eatby, pb.sellby";
     	dol_syslog(get_class($this)."::loadBatchInfo load first entry found for lot/serial = ".$batch, LOG_DEBUG);
     	$resql = $this->db->query($sql);

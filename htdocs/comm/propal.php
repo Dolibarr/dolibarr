@@ -297,20 +297,20 @@ if (empty($reshook))
 					$object->ref = GETPOST('ref');
 					$object->datep = $datep;
 					$object->date_livraison = $date_delivery;
-					$object->availability_id = GETPOST('availability_id');
-					$object->demand_reason_id = GETPOST('demand_reason_id');
-					$object->fk_delivery_address = GETPOST('fk_address');
+					$object->availability_id = GETPOST('availability_id', 'int');
+					$object->demand_reason_id = GETPOST('demand_reason_id', 'int');
+					$object->fk_delivery_address = GETPOST('fk_address', 'int');
 	                $object->shipping_method_id = GETPOST('shipping_method_id', 'int');
 					$object->duree_validite = $duration;
-					$object->cond_reglement_id = GETPOST('cond_reglement_id');
-					$object->mode_reglement_id = GETPOST('mode_reglement_id');
+					$object->cond_reglement_id = GETPOST('cond_reglement_id', 'int');
+					$object->mode_reglement_id = GETPOST('mode_reglement_id', 'int');
 	                $object->fk_account = GETPOST('fk_account', 'int');
 					$object->remise_percent = GETPOST('remise_percent');
 					$object->remise_absolue = GETPOST('remise_absolue');
-					$object->socid = GETPOST('socid');
-					$object->contactid = GETPOST('contactid');
-					$object->fk_project = GETPOST('projectid');
-					$object->modelpdf = GETPOST('model');
+					$object->socid = GETPOST('socid', 'int');
+					$object->contactid = GETPOST('contactid', 'int');
+					$object->fk_project = GETPOST('projectid', 'int');
+					$object->modelpdf = GETPOST('model', 'alpha');
 					$object->author = $user->id; // deprecated
 					$object->note_private = GETPOST('note_private');
 					$object->note_public = GETPOST('note_public');
@@ -327,17 +327,17 @@ if (empty($reshook))
 				$object->ref_client = GETPOST('ref_client');
 				$object->datep = $datep;
 				$object->date_livraison = $date_delivery;
-				$object->availability_id = GETPOST('availability_id');
-				$object->demand_reason_id = GETPOST('demand_reason_id');
-				$object->fk_delivery_address = GETPOST('fk_address');
+				$object->availability_id = GETPOST('availability_id', 'int');
+				$object->demand_reason_id = GETPOST('demand_reason_id', 'int');
+				$object->fk_delivery_address = GETPOST('fk_address', 'int');
 	            $object->shipping_method_id = GETPOST('shipping_method_id', 'int');
-				$object->duree_validite = GETPOST('duree_validite');
-				$object->cond_reglement_id = GETPOST('cond_reglement_id');
-				$object->mode_reglement_id = GETPOST('mode_reglement_id');
+				$object->duree_validite = GETPOST('duree_validite', 'int');
+				$object->cond_reglement_id = GETPOST('cond_reglement_id', 'int');
+				$object->mode_reglement_id = GETPOST('mode_reglement_id', 'int');
 	            $object->fk_account = GETPOST('fk_account', 'int');
-				$object->contactid = GETPOST('contactid');
-				$object->fk_project = GETPOST('projectid');
-				$object->modelpdf = GETPOST('model');
+				$object->contactid = GETPOST('contactid', 'int');
+				$object->fk_project = GETPOST('projectid', 'int');
+				$object->modelpdf = GETPOST('model', 'alpha');
 				$object->author = $user->id; // deprecated
 				$object->note_private = GETPOST('note_private');
 				$object->note_public = GETPOST('note_public');
@@ -345,7 +345,7 @@ if (empty($reshook))
 				$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 
 				$object->origin = GETPOST('origin');
-				$object->origin_id = GETPOST('originid');
+				$object->origin_id = GETPOST('originid', 'int');
 
 				for($i = 1; $i <= $conf->global->PRODUCT_SHOW_WHEN_CREATE; $i ++)
 				{

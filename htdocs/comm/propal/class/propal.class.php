@@ -855,33 +855,33 @@ class Propal extends CommonObject
         $sql.= ", entity";
         $sql.= ") ";
         $sql.= " VALUES (";
-        $sql.= $this->socid;
+        $sql.= (int) $this->socid;
         $sql.= ", 0";
         $sql.= ", ".$this->remise;
-        $sql.= ", ".($this->remise_percent?$this->remise_percent:'null');
-        $sql.= ", ".($this->remise_absolue?$this->remise_absolue:'null');
+        $sql.= ", ".($this->remise_percent?$this->db->escape($this->remise_percent):'null');
+        $sql.= ", ".($this->remise_absolue?$this->db->escape($this->remise_absolue):'null');
         $sql.= ", 0";
         $sql.= ", 0";
         $sql.= ", '".$this->db->idate($this->date)."'";
         $sql.= ", '".$this->db->idate($now)."'";
         $sql.= ", '(PROV)'";
-        $sql.= ", ".($user->id > 0 ? "'".$user->id."'":"null");
+        $sql.= ", ".($user->id > 0 ? "'". (int) $user->id."'":"null");
         $sql.= ", '".$this->db->escape($this->note_private)."'";
         $sql.= ", '".$this->db->escape($this->note_public)."'";
-        $sql.= ", '".$this->modelpdf."'";
+        $sql.= ", '".$this->db->escape($this->modelpdf)."'";
         $sql.= ", ".($this->fin_validite!=''?"'".$this->db->idate($this->fin_validite)."'":"null");
-        $sql.= ", ".$this->cond_reglement_id;
-        $sql.= ", ".$this->mode_reglement_id;
-        $sql.= ", ".($this->fk_account>0?$this->fk_account:'NULL');
+        $sql.= ", ". (int) $this->cond_reglement_id;
+        $sql.= ", ". (int) $this->mode_reglement_id;
+        $sql.= ", ".($this->fk_account>0? (int) $this->fk_account:'NULL');
         $sql.= ", '".$this->db->escape($this->ref_client)."'";
         $sql.= ", ".($this->date_livraison!=''?"'".$this->db->idate($this->date_livraison)."'":"null");
-        $sql.= ", ".($this->shipping_method_id>0?$this->shipping_method_id:'NULL');
-        $sql.= ", ".$this->availability_id;
-        $sql.= ", ".$this->demand_reason_id;
-        $sql.= ", ".($this->fk_project?$this->fk_project:"null");
+        $sql.= ", ".($this->shipping_method_id>0? (int) $this->shipping_method_id:'NULL');
+        $sql.= ", ". (int) $this->availability_id;
+        $sql.= ", ". (int) $this->demand_reason_id;
+        $sql.= ", ".($this->fk_project? (int) $this->fk_project:"null");
         $sql.= ", ".(int) $this->fk_incoterms;
         $sql.= ", '".$this->db->escape($this->location_incoterms)."'";
-        $sql.= ", ".$conf->entity;
+        $sql.= ", ". (int) $conf->entity;
         $sql.= ")";
 
         dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -1493,8 +1493,8 @@ class Propal extends CommonObject
 
             $sql = "UPDATE ".MAIN_DB_PREFIX."propal";
             $sql.= " SET ref = '".$num."',";
-            $sql.= " fk_statut = ".self::STATUS_VALIDATED.", date_valid='".$this->db->idate($now)."', fk_user_valid=".$user->id;
-            $sql.= " WHERE rowid = ".$this->id." AND fk_statut = ".self::STATUS_DRAFT;
+            $sql.= " fk_statut = ".self::STATUS_VALIDATED.", date_valid='".$this->db->idate($now)."', fk_user_valid=". (int) $user->id;
+            $sql.= " WHERE rowid = ". (int) $this->id." AND fk_statut = ". (int) self::STATUS_DRAFT;
 
             dol_syslog(get_class($this)."::valid", LOG_DEBUG);
 			$resql=$this->db->query($sql);
