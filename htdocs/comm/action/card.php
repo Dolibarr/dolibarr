@@ -407,7 +407,7 @@ if ($action == 'update')
 		if (! $datef && $percentage == 100)
 		{
 			$error++; $donotclearsession=1;
-			setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("DateEnd")),$object->errors,'errors');
+			setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired",$langs->transnoentitiesnoconv("DateEnd")),$object->errors,'errors');
 			$action = 'edit';
 		}
 

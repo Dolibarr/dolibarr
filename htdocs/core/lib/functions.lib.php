@@ -4385,15 +4385,17 @@ function dol_htmloutput_events()
 
 /**
  *	Get formated messages to output (Used to show messages on html output).
+ *  This include also the translation of the message key.
  *
- *	@param	string		$mesgstring		Message string
- *	@param	array		$mesgarray      Messages array
+ *	@param	string		$mesgstring		Message string or message key
+ *	@param	string[]	$mesgarray      Array of message strings or message keys
  *  @param  string		$style          Style of message output ('ok' or 'error')
  *  @param  int			$keepembedded   Set to 1 in error message must be kept embedded into its html place (this disable jnotify)
  *	@return	string						Return html output
  *
  *  @see    dol_print_error
  *  @see    dol_htmloutput_errors
+ *  @see    setEventMessages
  */
 function get_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepembedded=0)
 {
@@ -4478,14 +4480,15 @@ function get_htmloutput_errors($mesgstring='', $mesgarray='', $keepembedded=0)
 /**
  *	Print formated messages to output (Used to show messages on html output).
  *
- *	@param	string	$mesgstring		 Message
- *	@param	array	$mesgarray       Messages array
- *  @param  string	$style           Which style to use ('ok', 'warning', 'error')
- *  @param  int		$keepembedded    Set to 1 if message must be kept embedded into its html place (this disable jnotify)
+ *	@param	string		$mesgstring		Message string or message key
+ *	@param	string[]	$mesgarray      Array of message strings or message keys
+ *  @param  string      $style          Which style to use ('ok', 'warning', 'error')
+ *  @param  int         $keepembedded   Set to 1 if message must be kept embedded into its html place (this disable jnotify)
  *  @return	void
  *
  *  @see    dol_print_error
  *  @see    dol_htmloutput_errors
+ *  @see    setEventMessages
  */
 function dol_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepembedded=0)
 {

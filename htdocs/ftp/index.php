@@ -341,7 +341,7 @@ if ($action == 'download')
 		}
 		else
 		{
-			setEventMessages($langs->trans('FailedToGetFile',$remotefile), null, 'errors');
+			setEventMessages($langs->transnoentitiesnoconv('FailedToGetFile',$remotefile), null, 'errors');
 		}
 
 	}
