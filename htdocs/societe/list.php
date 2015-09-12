@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2013-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2015       Florian Henry      		<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +29,8 @@
 require_once '../main.inc.php';
 include_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
 $langs->load("companies");
 $langs->load("customers");
@@ -55,6 +58,8 @@ $search_categ=trim(GETPOST("search_categ"));
 $mode=GETPOST("mode");
 $modesearch=GETPOST("mode_search");
 $search_type=trim(GETPOST('search_type'));
+$search_country				= GETPOST("search_country",'int');
+$search_type_thirdparty		= GETPOST("search_type_thirdparty",'int');
 
 $sortfield=GETPOST("sortfield",'alpha');
 $sortorder=GETPOST("sortorder",'alpha');
@@ -153,6 +158,7 @@ if ($mode == 'search')
 $form=new Form($db);
 $htmlother=new FormOther($db);
 $companystatic=new Societe($db);
+$formcompany=new FormCompany($db);
 
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('',$langs->trans("ThirdParty"),$help_url);
@@ -172,6 +178,8 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 	$search_idprof3='';
 	$search_idprof4='';
 	$search_type='';
+	$search_country='';
+	$search_type_thirdparty='';
 }
 
 if ($socname)
@@ -195,6 +203,8 @@ $title=$langs->trans("ListOfThirdParties");
 $sql = "SELECT s.rowid, s.nom as name, s.barcode, s.town, s.datec, s.code_client, s.code_fournisseur, ";
 $sql.= " st.libelle as stcomm, s.prefix_comm, s.client, s.fournisseur, s.canvas, s.status as status,";
 $sql.= " s.siren as idprof1, s.siret as idprof2, ape as idprof3, idprof4 as idprof4";
+$sql.= ",s.fk_pays";
+$sql.= ",typent.code as typent_code";
 // We'll need these fields in order to filter by sale (including the case where the user can only see his prospects)
 if ($search_sale) $sql .= ", sc.fk_soc, sc.fk_user";
 // We'll need these fields in order to filter by categ
@@ -205,8 +215,10 @@ foreach ($extrafields->attribute_list as $key => $val) $sql.=",ef.".$key.' as op
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
-$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,";
-$sql.= " ".MAIN_DB_PREFIX."c_stcomm as st";
+$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays) ";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent) ";
+$sql.= " ,".MAIN_DB_PREFIX."c_stcomm as st";
 // We'll need this table joined to the select in order to filter by sale
 if ($search_sale || (!$user->rights->societe->client->voir && !$socid)) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 // We'll need this table joined to the select in order to filter by categ
@@ -235,6 +247,8 @@ if ($search_type > 0 && in_array($search_type,array('1,3','2,3'))) $sql .= " AND
 if ($search_type > 0 && in_array($search_type,array('4')))         $sql .= " AND s.fournisseur = 1";
 if ($search_type == '0') $sql .= " AND s.client = 0 AND s.fournisseur = 0";
 if (!empty($conf->barcode->enabled) && $sbarcode) $sql.= " AND s.barcode LIKE '%".$db->escape($sbarcode)."%'";
+if ($search_country) $sql .= " AND s.fk_pays IN (".$search_country.')';
+if ($search_type_thirdparty) $sql .= " AND s.fk_typent IN (".$search_type_thirdparty.')';
 // Add where from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
@@ -257,14 +271,18 @@ if ($resql)
 	$num = $db->num_rows($resql);
 	$i = 0;
 
-	$params = "&amp;socname=".htmlspecialchars($socname)."&amp;search_nom=".htmlspecialchars($search_nom)."&amp;search_town=".htmlspecialchars($search_town);
-	$params.= ($sbarcode?"&amp;sbarcode=".htmlspecialchars($sbarcode):"");
-	$params.= '&amp;search_idprof1='.htmlspecialchars($search_idprof1);
-	$params.= '&amp;search_idprof2='.htmlspecialchars($search_idprof2);
-	$params.= '&amp;search_idprof3='.htmlspecialchars($search_idprof3);
-	$params.= '&amp;search_idprof4='.htmlspecialchars($search_idprof4);
+	$param = "&amp;socname=".htmlspecialchars($socname);
+	$param.= "&amp;search_nom=".htmlspecialchars($search_nom);
+	$param.= "&amp;search_town=".htmlspecialchars($search_town);
+	$param.= ($sbarcode?"&amp;sbarcode=".htmlspecialchars($sbarcode):"");
+	$param.= '&amp;search_idprof1='.htmlspecialchars($search_idprof1);
+	$param.= '&amp;search_idprof2='.htmlspecialchars($search_idprof2);
+	$param.= '&amp;search_idprof3='.htmlspecialchars($search_idprof3);
+	$param.= '&amp;search_idprof4='.htmlspecialchars($search_idprof4);
+	if ($search_country != '') $param.='&amp;search_country='.htmlspecialchars($search_country);
+	if ($search_type_thirdparty != '') $param.='&amp;search_type_thirdparty='.htmlspecialchars($search_type_thirdparty);
 
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"],$params,$sortfield,$sortorder,'',$num,$nbtotalofrecords,'title_companies');
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords,'title_companies');
 
     // Show delete result message
     if (GETPOST('delsoc'))
@@ -325,18 +343,20 @@ if ($resql)
 
     // Lines of titles
     print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$params,"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
     if (! empty($conf->barcode->enabled)) print_liste_field_titre($langs->trans("BarCode"), $_SERVER["PHP_SELF"], "s.barcode",$param,'','',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Town"),$_SERVER["PHP_SELF"],"s.town","",$params,'',$sortfield,$sortorder);
-	print_liste_field_titre($form->textwithpicto($langs->trans("ProfId1Short"),$textprofid[1],1,0),$_SERVER["PHP_SELF"],"s.siren","",$params,'class="nowrap"',$sortfield,$sortorder);
-	print_liste_field_titre($form->textwithpicto($langs->trans("ProfId2Short"),$textprofid[2],1,0),$_SERVER["PHP_SELF"],"s.siret","",$params,'class="nowrap"',$sortfield,$sortorder);
-	print_liste_field_titre($form->textwithpicto($langs->trans("ProfId3Short"),$textprofid[3],1,0),$_SERVER["PHP_SELF"],"s.ape","",$params,'class="nowrap"',$sortfield,$sortorder);
-	print_liste_field_titre($form->textwithpicto($langs->trans("ProfId4Short"),$textprofid[4],1,0),$_SERVER["PHP_SELF"],"s.idprof4","",$params,'class="nowrap"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Town"),$_SERVER["PHP_SELF"],"s.town","",$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Country"),$_SERVER["PHP_SELF"],"country.code_iso","",$param,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("ThirdPartyType"),$_SERVER["PHP_SELF"],"typent.code","",$param,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($form->textwithpicto($langs->trans("ProfId1Short"),$textprofid[1],1,0),$_SERVER["PHP_SELF"],"s.siren","",$param,'class="nowrap"',$sortfield,$sortorder);
+	print_liste_field_titre($form->textwithpicto($langs->trans("ProfId2Short"),$textprofid[2],1,0),$_SERVER["PHP_SELF"],"s.siret","",$param,'class="nowrap"',$sortfield,$sortorder);
+	print_liste_field_titre($form->textwithpicto($langs->trans("ProfId3Short"),$textprofid[3],1,0),$_SERVER["PHP_SELF"],"s.ape","",$param,'class="nowrap"',$sortfield,$sortorder);
+	print_liste_field_titre($form->textwithpicto($langs->trans("ProfId4Short"),$textprofid[4],1,0),$_SERVER["PHP_SELF"],"s.idprof4","",$param,'class="nowrap"',$sortfield,$sortorder);
 	print_liste_field_titre('');
     $parameters=array();
     $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
-	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"s.status","",$params,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"s.status","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
 	print "</tr>\n";
 
@@ -358,6 +378,14 @@ if ($resql)
 	// Town
 	print '<td class="liste_titre">';
 	print '<input class="flat" size="10" type="text" name="search_town" value="'.htmlspecialchars($search_town).'">';
+	print '</td>';
+	//Country
+	print '<td class="liste_titre" align="center">';
+	print $form->select_country($search_country,'search_country');
+	print '</td>';
+	//Company type
+	print '<td class="liste_titre" align="center">';
+	print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?'ASC':$conf->global->SOCIETE_SORT_ON_TYPEENT));
 	print '</td>';
 	// IdProf1
 	print '<td class="liste_titre">';
@@ -424,6 +452,16 @@ if ($resql)
 			print '<td>'.$objp->barcode.'</td>';
 		}
 		print "<td>".$obj->town."</td>\n";
+		//Country
+		print '<td align="center">';
+		$tmparray=getCountry($obj->fk_pays,'all');
+		print $tmparray['label'];
+		print '</td>';
+		//Type ent
+		print '<td align="center">';
+		if (count($typenArray)==0) $typenArray = $formcompany->typent_array(1);
+		print $typenArray[$obj->typent_code];
+		print '</td>';
 		print "<td>".$obj->idprof1."</td>\n";
 		print "<td>".$obj->idprof2."</td>\n";
 		print "<td>".$obj->idprof3."</td>\n";

@@ -5,6 +5,7 @@
  * Copyright (C) 2011       Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2015       Florian Henry      		<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +30,8 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
 $langs->load("suppliers");
 $langs->load("orders");
@@ -44,6 +47,8 @@ $search_datec				= GETPOST("search_datec");
 $search_categ				= GETPOST('search_categ','int');
 $search_status              = GETPOST("search_status",'int');
 $catid						= GETPOST("catid",'int');
+$search_country				= GETPOST("search_country",'int');
+$search_type_thirdparty		= GETPOST("search_type_thirdparty",'int');
 
 // Security check
 $socid = GETPOST('socid','int');
@@ -76,6 +81,8 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 	$search_categ="";
     $search_status='';
 	$catid="";
+	$search_country="";
+	$search_type_thirdparty="";
 }
 
 if ($search_status=='') $search_status=1; // always display activ customer first
@@ -99,12 +106,15 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 $form=new Form($db);
 $htmlother=new FormOther($db);
 $thirdpartystatic=new Societe($db);
+$formcompany=new FormCompany($db);
 
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('',$langs->trans("ThirdParty"),$help_url);
 
 $sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias, s.zip, s.town, s.datec, st.libelle as stcomm, s.prefix_comm, s.status as status, ";
 $sql.= "code_fournisseur, code_compta_fournisseur";
+$sql.= ",s.fk_pays";
+$sql.= ",typent.code as typent_code";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 // Add fields for extrafields
 foreach ($extrafields->attribute_list as $key => $val) $sql.=",ef.".$key.' as options_'.$key;
@@ -114,6 +124,8 @@ $reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // N
 $sql.=$hookmanager->resPrint;
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_extrafields as ef ON ef.fk_object = s.rowid";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays) ";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent) ";
 if (! empty($search_categ) || ! empty($catid)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_fournisseur as cf ON s.rowid = cf.fk_soc"; // We need this table joined to the select in order to filter by categ
 $sql.= ", ".MAIN_DB_PREFIX."c_stcomm as st";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -137,6 +149,8 @@ if ($catid > 0)          $sql.= " AND cf.fk_categorie = ".$catid;
 if ($catid == -2)        $sql.= " AND cf.fk_categorie IS NULL";
 if ($search_categ > 0)   $sql.= " AND cf.fk_categorie = ".$search_categ;
 if ($search_categ == -2) $sql.= " AND cf.fk_categorie IS NULL";
+if ($search_country) $sql .= " AND s.fk_pays IN (".$search_country.')';
+if ($search_type_thirdparty) $sql .= " AND s.fk_typent IN (".$search_type_thirdparty.')';
 // Add where from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
@@ -160,9 +174,14 @@ if ($resql)
 	$num = $db->num_rows($resql);
 	$i = 0;
 
-	$param = "&amp;search_name=".$search_name."&amp;search_supplier_code=".$search_supplier_code."&amp;search_zipcode=".$search_zipcode."&amp;search_town=".$search_town;
- 	if ($search_categ != '') $param.='&amp;search_categ='.$search_categ;
- 	if ($search_status != '') $param.='&amp;search_status='.$search_status;
+	$param = "&amp;search_name=".htmlspecialchars($search_name);
+	$param.="&amp;search_supplier_code=".htmlspecialchars($search_supplier_code);
+	$param.="&amp;search_zipcode=".htmlspecialchars($search_zipcode);
+	$param.="&amp;search_town=".htmlspecialchars($search_town);
+ 	if ($search_categ != '') $param.='&amp;search_categ='.htmlspecialchars($search_categ);
+ 	if ($search_status != '') $param.='&amp;search_status='.htmlspecialchars($search_status);
+ 	if ($search_country != '') $param.='&amp;search_country='.htmlspecialchars($search_country);
+ 	if ($search_type_thirdparty != '') $param.='&amp;search_type_thirdparty='.htmlspecialchars($search_type_thirdparty);
 
 	print_barre_liste($langs->trans("ListOfSuppliers"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_companies');
 
@@ -193,6 +212,8 @@ if ($resql)
 	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$param,'valign="middle"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Zip"),$_SERVER["PHP_SELF"],"s.zip","",$param,'valign="middle"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Town"),$_SERVER["PHP_SELF"],"s.town","",$param,'valign="middle"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Country"),$_SERVER["PHP_SELF"],"country.code_iso","",$param,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("ThirdPartyType"),$_SERVER["PHP_SELF"],"typent.code","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("SupplierCode"),$_SERVER["PHP_SELF"],"s.code_fournisseur","",$param,'align="left"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("AccountancyCode"),$_SERVER["PHP_SELF"],"s.code_compta_fournisseur","",$param,'align="left"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"s.datec","",$param,'align="right"',$sortfield,$sortorder);
@@ -213,6 +234,14 @@ if ($resql)
 
 	print '<td class="liste_titre"><input type="text" size="10" class="flat" name="search_town" value="'.$search_town.'"></td>';
 
+	print '<td class="liste_titre" align="center">';
+	print $form->select_country($search_country,'search_country');
+	print '</td>';
+	
+	print '<td class="liste_titre" align="center">';
+	print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?'ASC':$conf->global->SOCIETE_SORT_ON_TYPEENT));
+	print '</td>';
+	
 	print '<td align="left" class="liste_titre">';
 	print '<input class="flat" type="text" size="10" name="search_supplier_code" value="'.$search_supplier_code.'">';
 	print '</td>';
@@ -257,6 +286,16 @@ if ($resql)
 		print "</td>\n";
 		print '<td>'.$obj->zip.'</td>'."\n";
 		print '<td>'.$obj->town.'</td>'."\n";
+		//Country
+		print '<td align="center">';
+		$tmparray=getCountry($obj->fk_pays,'all');
+		print $tmparray['label'];
+		print '</td>';
+		//Type ent
+		print '<td align="center">';
+		if (count($typenArray)==0) $typenArray = $formcompany->typent_array(1);
+		print $typenArray[$obj->typent_code];
+		print '</td>';
 		print '<td align="left">'.$obj->code_fournisseur.'&nbsp;</td>';
 		print '<td align="left">'.$obj->code_compta_fournisseur.'&nbsp;</td>';
 		print '<td align="right">'.dol_print_date($db->jdate($obj->datec),'day').'</td>';
