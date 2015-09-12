@@ -529,6 +529,7 @@ if (empty($reshook))
     // Add product into object
     if ($object->id > 0 && $action == 'addin')
     {
+        $thirpdartyid =0 ;
         if (GETPOST('propalid') > 0)
         {
         	$propal = new Propal($db);
@@ -563,7 +564,7 @@ if (empty($reshook))
 	        $thirpdartyid = $facture->socid;
         }
 
-        if (isset($thirpdartyid)) {
+        if ( $thirpdartyid > 0)  {
             $soc = new Societe($db);
             $result = $soc->fetch($thirpdartyid);
             if ($result <= 0) {
