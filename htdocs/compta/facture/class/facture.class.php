@@ -2240,13 +2240,14 @@ class Facture extends CommonInvoice
 			}
 			$price    = price2num($price);
 
-			// Update line into database
-			$this->line=new FactureLigne($this->db);
+			//Fetch current line from the database and then clone the object and set it in $oldline property
+			$line = new FactureLigne($this->db);
+			$line->fetch($rowid);
 
-			// Stock previous line records
-			$staticline=new FactureLigne($this->db);
-			$staticline->fetch($rowid);
-			$this->line->oldline = $staticline;
+			$staticline = clone $line;
+
+			$line->oldline = $staticline;
+			$this->line = $line;
 
 			// Reorder if fk_parent_line change
 			if (! empty($fk_parent_line) && ! empty($staticline->fk_parent_line) && $fk_parent_line != $staticline->fk_parent_line)
@@ -3487,10 +3488,12 @@ class FactureLigne  extends CommonInvoiceLine
 			$this->product_desc			= $objp->product_desc;
 
 			$this->db->free($result);
+
+			return 1;
 		}
 		else
 		{
-			dol_print_error($this->db);
+			return -1;
 		}
 	}
 
