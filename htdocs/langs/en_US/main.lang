@@ -748,3 +748,4 @@ ShortSaturday=S
 ShortSunday=S
 SelectMailModel=Select email template
 SetRef=Set ref
+SearchIntoProject=Search %s into projects

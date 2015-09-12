@@ -4500,70 +4500,71 @@ class Form
      *	Return a HTML select string, built from an array of key+value but content returned into select come from an Ajax call of an URL.
      *  Note: Do not apply langs->trans function on returned content, content may be entity encoded twice.
      *
-     *	@param	string	$htmlname       Name of html select area
-     *	@param	string	$url			Url
-     *	@param	string	$id             Preselected key
-     *	@param	int		$show_empty     0 no empty value allowed, 1 to add an empty value into list (value is '' or '&nbsp;').
-     *	@param	int		$key_in_label   1 pour afficher la key dans la valeur "[key] value"
-     *	@param	int		$value_as_key   1 to use value as key
-     *	@param  string	$moreparam      Add more parameters onto the select tag
-     *	@param  int		$translate		Translate and encode value
-     * 	@param	int		$maxlen			Length maximum for labels
-     * 	@param	int		$disabled		Html select box is disabled
-     *  @param	int		$sort			'ASC' or 'DESC' = Sort on label, '' or 'NONE' = Do not sort
-     *  @param	string	$morecss		Add more class to css styles
-     *  @param	int		$addjscombo		Add js combo
-     * 	@return	string					HTML select string.
+     *	@param	string	$htmlname       		Name of html select area
+     *	@param	string	$url					Url
+     *	@param	string	$id             		Preselected key
+     *	@param  string	$moreparam      		Add more parameters onto the select tag
+     *	@param  string	$moreparamtourl 		Add more parameters onto the Ajax called URL
+     * 	@param	int		$disabled				Html select box is disabled
+     *  @param	int		$minimumInputLength		Minimum Input Length
+     *  @param	string	$morecss				Add more class to css styles
+     * 	@return	string							HTML select string.
      */
-    static function selectArrayAjax($htmlname, $url, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $moreparam='', $translate=0, $maxlen=0, $disabled=0, $sort='', $morecss='', $addjscombo=0)
+    static function selectArrayAjax($htmlname, $url, $id='', $moreparam='', $moreparamtourl='', $disabled=0, $minimumInputLength=1, $morecss='')
     {
     	$out = '';
 
-        // Add code for jquery to use select2
-        if ($addjscombo && empty($conf->dol_use_jmobile))
-        {
-        	$tmpplugin='select2';
-        	$out.='<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
-    		   <script type="text/javascript">
-				$(document).ready(function () {
-			    	$(".'.$htmlname.'").select2({
-					  ajax: {
-					    dir: "ltr",
-					    url: "'.$url.'",
-					    dataType: \'json\',
-					    delay: 250,
-					    data: function (params) {
-					      return {
-					        q: params.term, // search term
-					        page: params.page
-					      };
-					    },
-					    processResults: function (data, page) {
-					      // parse the results into the format expected by Select2.
-					      // since we are using custom formatting functions we do not need to
-					      // alter the remote JSON data
-					      return {
-					        results: data.items
-					      };
-					    },
-					    cache: true
-					  },
-					  escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
-					  minimumInputLength: 0,
-					  //templateResult: formatRepo, // omitted for brevity, see the source of this page
-					  //templateSelection: formatRepoSelection // omitted for brevity, see the source of this page
-					});
-				});
-			</script>';
-        }
-		else
-		{
-        	// TODO get all values from $url into $array
+    	$tmpplugin='select2';
+    	$out.='<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
+	    	<script type="text/javascript">
+	    	$(document).ready(function () {
+		    	$(".'.$htmlname.'").select2({
+			    	ajax: {
+				    	dir: "ltr",
+				    	url: "'.$url.'",
+				    	dataType: \'json\',
+				    	delay: 250,
+				    	data: function (searchTerm, pageNumber, context) {
+				    		return {
+						    	q: searchTerm, // search term
+				    			page: pageNumber
+				    		};
+			    		},
+			    		results: function (remoteData, pageNumber, query) {
+			    			console.log(remoteData);
+			    			return {results:[{id:\'none\', text:\'aa\'}, {id:\'rrr\', text:\'Red\'},{id:\'bbb\', text:\'Search a into projects\'}], more:false}
+			    			//return {results:[remoteData], more:false}
+    					},
+			    		/*processResults: function (data, page) {
+			    			// parse the results into the format expected by Select2.
+			    			// since we are using custom formatting functions we do not need to
+			    			// alter the remote JSON data
+			    			console.log(data);
+			    			return {
+			    				results: data.items
+			    			};
+			    		},*/
+			    		cache: true
+			    	},
+			    	escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+			    	minimumInputLength: '.$minimumInputLength.',
+			    	//templateResult: formatRepo, // omitted for brevity, see the source of this page
+			    	//templateSelection: formatRepoSelection // omitted for brevity, see the source of this page
+			    });
+			    
+			    $(".'.$htmlname.'").change(function() { 
+			    	alert(\'eee\');
+			    	$(".'.$htmlname.'").select2.clearSearch(); 
+    			} );
 
-		}
+    			
+    			
+    	});
+	    </script>';
 
-   		$out.=self::selectarray('.'.$htmlname, $array, $id, $show_empty, $key_in_label, $value_as_key, '', $translate, $maxlen, $disabled, $sort, '', 0);
 
+		$out.='<input type="text" class="'.$htmlname.($morecss?' '.$morecss:'').'" '.($moreparam?$moreparam.' ':'').'name="'.$htmlname.'">';
+		
 		return $out;
     }
 
