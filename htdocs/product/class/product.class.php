@@ -694,7 +694,7 @@ class Product extends CommonObject
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."product";
 			$sql.= " SET label = '" . $this->db->escape($this->label) ."'";
-			$sql.= ", ref = '" . $this->ref ."'";
+			$sql.= ", ref = '" . $this->db->escape($this->ref) ."'";
 			$sql.= ", ref_ext = ".(! empty($this->ref_ext)?"'".$this->db->escape($this->ref_ext)."'":"null");
 			$sql.= ", tva_tx = " . $this->tva_tx;
 			$sql.= ", recuperableonly = " . $this->tva_npr;
@@ -722,9 +722,9 @@ class Product extends CommonObject
 			$sql.= ", customcode = '" .        $this->db->escape($this->customcode) ."'";
 	        $sql.= ", fk_country = " . ($this->country_id > 0 ? $this->country_id : 'null');
 	        $sql.= ", note = ".(isset($this->note) ? "'" .$this->db->escape($this->note)."'" : 'null');
-			$sql.= ", duration = '" . $this->duration_value . $this->duration_unit ."'";
-			$sql.= ", accountancy_code_buy = '" . $this->accountancy_code_buy."'";
-			$sql.= ", accountancy_code_sell= '" . $this->accountancy_code_sell."'";
+			$sql.= ", duration = '" . $this->db->escape($this->duration_value . $this->duration_unit) ."'";
+			$sql.= ", accountancy_code_buy = '" . $this->db->escape($this->accountancy_code_buy)."'";
+			$sql.= ", accountancy_code_sell= '" . $this->db->escape($this->accountancy_code_sell)."'";
 			$sql.= ", desiredstock = " . ((isset($this->desiredstock) && $this->desiredstock != '') ? $this->desiredstock : "null");
 	        $sql.= ", fk_unit= " . (!$this->fk_unit ? 'NULL' : $this->fk_unit);
 			$sql.= " WHERE rowid = " . $id;
