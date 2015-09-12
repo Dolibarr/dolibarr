@@ -364,7 +364,7 @@ if (empty($reshook))
 			if(empty($object->date_echeance)) $object->date_echeance = $object->calculate_date_lim_reglement();
 
 	        // If creation from another object of another module
-	        if ($_POST['origin'] && $_POST['originid'])
+	        if (! $error && $_POST['origin'] && $_POST['originid'])
 	        {
 	            // Parse element/subelement (ex: project_task)
 	            $element = $subelement = $_POST['origin'];
@@ -468,17 +468,17 @@ if (empty($reshook))
 	                $error++;
 	            }
 	        }
-	        // If some invoice's lines already known
-	        else
+	        else if (! $error)
 	        {
 	            $id = $object->create($user);
 	            if ($id < 0)
 	            {
 	                $error++;
 	            }
-
+	            
 	            if (! $error)
 	            {
+        	        // If some invoice's lines already known
 	                for ($i = 1 ; $i < 9 ; $i++)
 	                {
 	                    $label = $_POST['label'.$i];
@@ -513,7 +513,8 @@ if (empty($reshook))
 	        {
 	            $langs->load("errors");
 	            $db->rollback();
-		        setEventMessage($langs->trans($object->error), 'errors');
+	            
+		        setEventMessages($object->error, $object->errors, 'errors');
 	            $action='create';
 	            $_GET['socid']=$_POST['socid'];
 	        }

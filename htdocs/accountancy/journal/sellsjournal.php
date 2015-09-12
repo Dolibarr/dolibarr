@@ -193,6 +193,8 @@ if ($result) {
 // Bookkeeping Write
 if ($action == 'writebookkeeping')
 {
+	$now = dol_now();
+	$error = 0;
 
 	foreach ($tabfac as $key => $val)
 	{
@@ -213,8 +215,13 @@ if ($action == 'writebookkeeping')
 			$bookkeeping->debit = ($mt >= 0) ? $mt : 0;
 			$bookkeeping->credit = ($mt < 0) ? $mt : 0;
 			$bookkeeping->code_journal = $conf->global->ACCOUNTING_SELL_JOURNAL;
+			$bookkeeping->fk_user_author = $user->id;
 
-			$bookkeeping->create();
+			$result = $bookkeeping->create();
+			if ($result < 0) {
+				$error ++;
+				setEventMessage($object->errors, 'errors');
+			}
 		}
 
 		// Product / Service
@@ -238,8 +245,13 @@ if ($action == 'writebookkeeping')
 					$bookkeeping->debit = ($mt < 0) ? $mt : 0;
 					$bookkeeping->credit = ($mt >= 0) ? $mt : 0;
 					$bookkeeping->code_journal = $conf->global->ACCOUNTING_SELL_JOURNAL;
+					$bookkeeping->fk_user_author = $user->id;
 
-					$bookkeeping->create();
+					$result = $bookkeeping->create();
+					if ($result < 0) {
+						$error ++;
+						setEventMessage($object->errors, 'errors');
+					}
 				}
 			}
 		}
@@ -265,10 +277,19 @@ if ($action == 'writebookkeeping')
 				$bookkeeping->debit = ($mt < 0) ? $mt : 0;
 				$bookkeeping->credit = ($mt >= 0) ? $mt : 0;
 				$bookkeeping->code_journal = $conf->global->ACCOUNTING_SELL_JOURNAL;
+				$bookkeeping->fk_user_author = $user->id;
 
-				$bookkeeping->create();
+				$result = $bookkeeping->create();
+				if ($result < 0) {
+					$error ++;
+					setEventMessage($object->errors, 'errors');
+				}
 			}
 		}
+	}
+
+	if (empty($error)) {
+		setEventMessage($langs->trans("GeneralLedgerIsWritten"),'mesgs');
 	}
 }
 

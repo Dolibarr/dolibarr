@@ -302,6 +302,7 @@ if ($action == 'writeBookKeeping')
 			$bookkeeping->debit = ($mt >= 0 ? $mt : 0);
 			$bookkeeping->credit = ($mt < 0 ? - $mt : 0);
 			$bookkeeping->code_journal = $conf->global->ACCOUNTING_BANK_JOURNAL;
+			$bookkeeping->fk_user_author = $user->id;
 
 			if ($tabtype[$key] == 'payment') {
 
@@ -352,6 +353,7 @@ if ($action == 'writeBookKeeping')
 			$bookkeeping->debit = ($mt < 0 ? - $mt : 0);
 			$bookkeeping->credit = ($mt >= 0) ? $mt : 0;
 			$bookkeeping->code_journal = $conf->global->ACCOUNTING_BANK_JOURNAL;
+			$bookkeeping->fk_user_author = $user->id;
 
 			if ($tabtype[$key] == 'sc') {
 				$bookkeeping->code_tiers = '';
@@ -416,7 +418,7 @@ if ($action == 'writeBookKeeping')
 	}
 
 	if (empty($error)) {
-		setEventMessage($langs->trans('Success'), 'mesgs');
+		setEventMessage($langs->trans("GeneralLedgerIsWritten"),'mesgs');
 	}
 }
 // Export
