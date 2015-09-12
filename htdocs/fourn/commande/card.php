@@ -121,8 +121,10 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, 
 
 if ($action == 'setref_supplier' && $user->rights->fournisseur->commande->creer)
 {
+	
     $result=$object->setValueFrom('ref_supplier',GETPOST('ref_supplier','alpha'));
     if ($result < 0) dol_print_error($db, $object->error);
+	else $object->ref_supplier=GETPOST('ref_supplier','alpha'); // ADD : ref_supplier to object property, otherwise not visibly updated on change
 }
 
 // conditions de reglement
