@@ -65,6 +65,7 @@ ErrorRecordIsUsedCantDelete=Não é possível excluir registro. Ele já é usado
 ErrorModuleRequireJavascript=Javascript não deve ser desativado para ter esse recurso funcionando. Para ativar / desativar o Javascript, vá ao menu Home-> Configuração-> Display.
 ErrorContactEMail=Ocorreu um erro técnico. Por favor, contate o administrador no seguinte e-mail <b>%s</b> e forneça o seguinte código de erro <b>%s</b> em sua mensagem. Ou, se possível, adicione uma foto da tela - print screen.
 ErrorWrongValueForField=Valor errado para o número do <b>campo% s</b> (valor <b>'% s'</b> não corresponde <b>regra% s)</b>
+ErrorFieldValueNotIn=Valor errado para o número de campo <b>%s</b> (valor '<b>%s</b>' não é um valor disponível no campo <b>%s</b> da tabela <b>%s</b>)
 ErrorFieldRefNotIn=Valor errado para o número do <b>campo% s</b> (valor <b>'% s'</b> não é <b>um% s</b> ref existente)
 ErrorsOnXLines=Erros no registro de <b>origem% s</b> (s)
 ErrorSpecialCharNotAllowedForField=Os caracteres especiais não são permitidos para o campo "% s"

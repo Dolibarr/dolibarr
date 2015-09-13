@@ -8068,18 +8068,18 @@
 <md5file name="externalsite.lang">ed3b811dbf2f5f0da999aac45470a2eb</md5file>
 </dir>
 <dir name="/langs/ca_ES" >
-<md5file name="projects.lang">cff7d687e53e56d5de6d6358ec3982ea</md5file>
+<md5file name="projects.lang">4b3a795b74f619b597f1d2ebd5f0ed4d</md5file>
 <md5file name="cashdesk.lang">36d8c10a2ce5713bc959bebc6b9bb3af</md5file>
 <md5file name="workflow.lang">55323f24685f41d39d6a5d297e3654db</md5file>
-<md5file name="bills.lang">6daa54147b7db543898545900eedfd49</md5file>
+<md5file name="bills.lang">b9c19de6ebfce5bf046caa3bbd6738bb</md5file>
 <md5file name="orders.lang">762641475619347539e2028a53f2ddf9</md5file>
-<md5file name="admin.lang">62509f268db4b26b0475183f0357cd8f</md5file>
+<md5file name="admin.lang">9feb7142f076e8cb6562176417105676</md5file>
 <md5file name="withdrawals.lang">a338de2b2e184a6a79b27c41ef758527</md5file>
 <md5file name="incoterm.lang">c7e95ae701ec540f03a566203de781b3</md5file>
 <md5file name="loan.lang">d9a551b3b77910142a904b5bff66b447</md5file>
-<md5file name="boxes.lang">0c303345656e37fc1519da1964cddbde</md5file>
-<md5file name="members.lang">e75b11d818d994ef2df874ada88fedc5</md5file>
-<md5file name="ecm.lang">dd1173124be792e55578eeb469959fb5</md5file>
+<md5file name="boxes.lang">c19d107b0434906fbc0b459f61f85117</md5file>
+<md5file name="members.lang">b273aa429a16fe1379be33876a4d49f7</md5file>
+<md5file name="ecm.lang">8869a3a7b2a620a7621d4870c57aef75</md5file>
 <md5file name="link.lang">e1161971bb06488cabe9066c8e827741</md5file>
 <md5file name="stocks.lang">5477536cee0c749079f446676f85ba11</md5file>
 <md5file name="products.lang">886b27ac5b94fa8a293aeae7226314c5</md5file>
@@ -8093,45 +8093,48 @@
 <md5file name="categories.lang">8d6ef3890b3855e9c9901f905906f84a</md5file>
 <md5file name="paybox.lang">e8df1b36eeaf2d3020a71b0e273a4d99</md5file>
 <md5file name="ldap.lang">97af8c6ef82a0f244fc815e6e16ccf90</md5file>
-<md5file name="users.lang">975a2947aca7feb0804787f73f8cfc86</md5file>
-<md5file name="companies.lang">7361cedcebec9c497149e3b40e60483f</md5file>
+<md5file name="users.lang">90ec5a83c874481c4db7a861ea540e62</md5file>
+<md5file name="companies.lang">012cf35d940aed1700ac751a07331a41</md5file>
 <md5file name="margins.lang">fbbf6dd97870502f3b527a7855cc22fd</md5file>
 <md5file name="ftp.lang">171adcd57eecc43d8ebea5bd3cff21dc</md5file>
-<md5file name="exports.lang">630c4c5bc0e842062b63ab3bae3d6ba5</md5file>
+<md5file name="exports.lang">a9b978311e891d61a5a0a001933d7a6d</md5file>
 <md5file name="paypal.lang">8ff03a197fb775293900b1652cbc2cae</md5file>
 <md5file name="cron.lang">bbcc88993e093b880a682371243cc500</md5file>
 <md5file name="interventions.lang">28eb991ac8777246895a581c360a9daa</md5file>
-<md5file name="errors.lang">7cb0a65fde8c5f2e2d7a0cb9519d137e</md5file>
+<md5file name="errors.lang">7b7811b0028140c1b0369fe9aa94304c</md5file>
 <md5file name="compta.lang">0c898de20d09cf4914877ebf2695dd53</md5file>
-<md5file name="suppliers.lang">157fa0a114ad141c7ad556bc19f5bae5</md5file>
+<md5file name="suppliers.lang">10d1641217a535f93ec6a25fb693b58f</md5file>
 <md5file name="opensurvey.lang">72edeb3570c0c46201f53a9ecafea7cf</md5file>
 <md5file name="donations.lang">47f5032648762db635d3ac9e03848d6d</md5file>
 <md5file name="contracts.lang">f3b0f3b7f9597a5081dd6901be2eef39</md5file>
 <md5file name="deliveries.lang">c1da4b8a0934373f032daa2da245a23b</md5file>
 <md5file name="mailmanspip.lang">9bc9627697f6507eaac340ce462ea48f</md5file>
-<md5file name="install.lang">07b3bbe8aa044d6d64bf25ecca5cd7f4</md5file>
-<md5file name="propal.lang">47b62e8cc7056a679fc3aace6fb6a863</md5file>
-<md5file name="main.lang">9bf0635f1b8ed60e7c54e7e68ae0443d</md5file>
+<md5file name="install.lang">d31e5e9b017c68c52f39451f6a4888ee</md5file>
+<md5file name="propal.lang">fb0d8c3726d85a9e032c4aba68fe5ca7</md5file>
+<md5file name="main.lang">eb245be274ad480eb8d849529678aea9</md5file>
 <md5file name="languages.lang">1f5d636a4df5141cf03332bf7192e96a</md5file>
 <md5file name="bookmarks.lang">4c3b11586abcc5df7e395609ee7131be</md5file>
 <md5file name="sms.lang">45bc4e783f1c8f3b4cc8887ff320ac8a</md5file>
 <md5file name="dict.lang">02140c8aab60d378c25d218f29d4fd51</md5file>
 <md5file name="mails.lang">6a019476090e0d2e7e18ff0cb90d8244</md5file>
 <md5file name="printipp.lang">a9e2cc6d99ccff9c1f8944d41f09a4ec</md5file>
-<md5file name="other.lang">d70a8a5f266915543907b6d590b761f1</md5file>
+<md5file name="other.lang">344d119920534915d078b0bcf8139e6c</md5file>
 <md5file name="commercial.lang">537f4288b80ea71ac01cd85436796b2b</md5file>
 <md5file name="salaries.lang">5a39128e50a6a619cab4a84ed21fb5b0</md5file>
-<md5file name="trips.lang">e9b6c71ac37c6e7980cc53e276b15a5e</md5file>
+<md5file name="trips.lang">6d59726d14209ced062616f6eabb9963</md5file>
 <md5file name="sendings.lang">65b5c3e29f240fad7628e628e4f4b988</md5file>
-<md5file name="accountancy.lang">01f40ece71aa9db066160bf309b94ee4</md5file>
+<md5file name="accountancy.lang">ef7b6fa3ddd58753aa2f9e99c606c61e</md5file>
 <md5file name="externalsite.lang">1fb6c4f678f781062defcb85377e1223</md5file>
 </dir>
 <dir name="/langs/en_IN" >
-<md5file name="admin.lang">a287d462bc71f579eea372c586ca1e65</md5file>
+<md5file name="projects.lang">c294d42b0c532a0d0ed0ecd75b2da20f</md5file>
+<md5file name="bills.lang">02b4f98405e26fe54399ae5cf3d8e884</md5file>
+<md5file name="admin.lang">dc9564fc481ddd3101734b4e01c40027</md5file>
 <md5file name="boxes.lang">329a3456692fb25e9ddd96dba6698739</md5file>
+<md5file name="banks.lang">5b5402436d2e5525c68fe96889c8628b</md5file>
 <md5file name="errors.lang">14b937be198fc9c37d706a131f110c68</md5file>
 <md5file name="propal.lang">da1eb7c39da28b862a798f37efa7ee43</md5file>
-<md5file name="main.lang">9f5ba8d00d619d312d40c07f38b35c6e</md5file>
+<md5file name="main.lang">538ab10324a9a151d1944f94b590e3e2</md5file>
 <md5file name="other.lang">dd8e45a37c5ef0fc6089df59605c284e</md5file>
 </dir>
 <dir name="/langs/sw_SW" >
@@ -8253,24 +8256,24 @@
 <md5file name="externalsite.lang">cdfa3838283c176556fd986e1d077a37</md5file>
 </dir>
 <dir name="/langs/lv_LV" >
-<md5file name="projects.lang">bd424fc217be0ffdbf0b3fd91b655237</md5file>
+<md5file name="projects.lang">eba82bd2e88b7d544b96c6d99e3a0fb0</md5file>
 <md5file name="cashdesk.lang">c9310d0a5a4f7e1f6b85201c0dc2fc5e</md5file>
 <md5file name="workflow.lang">6e04edde5694fc8e6bbb47aa579d974f</md5file>
 <md5file name="bills.lang">9d3c42abc625b3259d4e5371f06263dd</md5file>
-<md5file name="orders.lang">10b0931c4d5572b126974fa14b0fd515</md5file>
-<md5file name="admin.lang">8fac83bae24586fbae9330401017253d</md5file>
+<md5file name="orders.lang">97157f5de97d427dad060de635f0cbb2</md5file>
+<md5file name="admin.lang">4d40e9d36ff84f7214a61043608504ce</md5file>
 <md5file name="withdrawals.lang">74a51ee9815a4e81828f00e102f2b977</md5file>
-<md5file name="incoterm.lang">24c63cbdef9fee26ca73e39677998398</md5file>
+<md5file name="incoterm.lang">0c1d539dd0e536ab43cab029104330a2</md5file>
 <md5file name="loan.lang">f4edcec9ef405af2798f27a4d7902e12</md5file>
 <md5file name="boxes.lang">f70756497c931aadd89edbe485e88fb7</md5file>
 <md5file name="members.lang">f5e8ae5dcbf8191e1830afe13c85f33d</md5file>
 <md5file name="ecm.lang">dc628590b54606da6a6d3510ea4c94d1</md5file>
 <md5file name="link.lang">86b10d96c3a969dbf3a625859ee245fe</md5file>
 <md5file name="stocks.lang">fb4f2e0c1a0a003c40b83cec58eb358d</md5file>
-<md5file name="products.lang">ab63ebe42a0eab6813d2d36da0c9016a</md5file>
+<md5file name="products.lang">2e93d30362c8d78a190c48a84ee14fcc</md5file>
 <md5file name="printing.lang">236eb01d61d0a87dc150f17fdd070f65</md5file>
 <md5file name="banks.lang">52bdee3176be9266973887c2b2862dba</md5file>
-<md5file name="agenda.lang">c75cc3416f15f643240de33667382a0f</md5file>
+<md5file name="agenda.lang">1402d10037a08d56070eee0ebf921e4d</md5file>
 <md5file name="help.lang">f8e9d0e2f7ca86f855a1fe6a39eab4d1</md5file>
 <md5file name="holiday.lang">09f6758e377ebd553ff2a713b1e14f90</md5file>
 <md5file name="productbatch.lang">1461952a71c3b0dab73956e09db90725</md5file>
@@ -8279,14 +8282,14 @@
 <md5file name="paybox.lang">1a7bfdc52688934752339f4d77e7e84e</md5file>
 <md5file name="ldap.lang">4bfee5904f91bea7f89e69b65d84edef</md5file>
 <md5file name="users.lang">41880d289bea521ebd8f24215e6d5f07</md5file>
-<md5file name="companies.lang">ebf811d997026c5833fa58e181a533ba</md5file>
+<md5file name="companies.lang">10fe8c6fba8b8a39a3fe4015c16a2fc1</md5file>
 <md5file name="margins.lang">aaaf43f06ec3b56fa2ce44165d8b2227</md5file>
 <md5file name="ftp.lang">ece08cb7ed6810cdb3f0c1c917ec986c</md5file>
 <md5file name="exports.lang">7942ec5d8cbd1ded094458fae7db8f64</md5file>
 <md5file name="paypal.lang">7f1cf10b121b601826c8160b97d9201a</md5file>
-<md5file name="cron.lang">519e04aa0c92c6e37e9008ed841bf930</md5file>
+<md5file name="cron.lang">18c683d449cb983a0199f72f41bfa394</md5file>
 <md5file name="interventions.lang">eb93565549b324f373ccb8ae14a9e82c</md5file>
-<md5file name="errors.lang">ab0531ca41b4d5a104290f4089e35c5d</md5file>
+<md5file name="errors.lang">f567192aeedd26a512a273c46a1b2e01</md5file>
 <md5file name="compta.lang">4620d5383d98264739be856cdfad21fe</md5file>
 <md5file name="suppliers.lang">526eded1162a09941869ab46ef83ef71</md5file>
 <md5file name="opensurvey.lang">bf1409395306f2b2924a67beac05dd56</md5file>
@@ -8294,19 +8297,19 @@
 <md5file name="contracts.lang">ecb08089d6cffff8cce5bc9928dbfda5</md5file>
 <md5file name="deliveries.lang">e0a2135bf8ba78d71c0162491021d9bb</md5file>
 <md5file name="mailmanspip.lang">ae2a39ed84e9a8b31e97d34efd50bf79</md5file>
-<md5file name="install.lang">e59711d75e0002d1a4c428c12f78ec86</md5file>
+<md5file name="install.lang">6e5d7e32d2d4c4c9bb5b54e9b974c2fa</md5file>
 <md5file name="propal.lang">95562f393025b7c7156e666cb8b45bc6</md5file>
-<md5file name="main.lang">9be739c1831b7c878e30e31cb6c581bf</md5file>
-<md5file name="languages.lang">d08d7e1099b10c74bcb32199fb938a3d</md5file>
+<md5file name="main.lang">7da38e511cb16a90594a443f9575c810</md5file>
+<md5file name="languages.lang">67a5de359f633e9e24a8ef12bd1fc575</md5file>
 <md5file name="bookmarks.lang">2ba914ba1f287a51e96117c8734d0370</md5file>
 <md5file name="sms.lang">98035fec612b1dea0f11fa299377d2bd</md5file>
 <md5file name="dict.lang">cc44d8f6611ef62af800332274ddf91d</md5file>
 <md5file name="mails.lang">f84dfcb30b9046145c153fe1e44201da</md5file>
 <md5file name="printipp.lang">599dc37a15c362ea63096dfbf7f57bf1</md5file>
-<md5file name="other.lang">6e89b691b2b736950d61f73d949326ff</md5file>
+<md5file name="other.lang">52b36012424c817a4e9fc5736417709c</md5file>
 <md5file name="commercial.lang">ae4b679a3888906e9e0544dd5a54d83e</md5file>
 <md5file name="salaries.lang">1bb02f5007b998c89755a783129afce8</md5file>
-<md5file name="trips.lang">0e44777c6c6ceaa9aa7a58d6d00ca07b</md5file>
+<md5file name="trips.lang">d7db058dfc7cd6d999d30e337b78fb5c</md5file>
 <md5file name="sendings.lang">df5f2db52f342e27dde87f01bcbd8e7e</md5file>
 <md5file name="accountancy.lang">cb066077c3f9a76a2d5bca265971d2dd</md5file>
 <md5file name="externalsite.lang">98e1082970a865bf1264472c0367b2ea</md5file>
@@ -8318,24 +8321,24 @@
 <md5file name="projects.lang">11daeb226361692832cbfc06ea1f4c52</md5file>
 <md5file name="cashdesk.lang">c4000c3a5f961950001bdbf0eada3ea1</md5file>
 <md5file name="workflow.lang">7d36ebf391461a17289c2b5be7cf3e85</md5file>
-<md5file name="bills.lang">015b28a27d7c57e400d5d5b391e1fe81</md5file>
+<md5file name="bills.lang">3334f3288a65d910ed596c68a2043d00</md5file>
 <md5file name="orders.lang">dc5d5cdb1ddb2cabc4a153dc8153de91</md5file>
-<md5file name="admin.lang">fda1964002458760af39fa368db41a5b</md5file>
+<md5file name="admin.lang">f3146c00e2d0b6667d17c5eebc31360f</md5file>
 <md5file name="withdrawals.lang">f42193f1b045aa8b255d4c544bbfbffb</md5file>
 <md5file name="incoterm.lang">577770bc1b047e531d1c8915b91c1b3a</md5file>
 <md5file name="loan.lang">f2a97948d26385dbf048ef0cf2c525d7</md5file>
-<md5file name="boxes.lang">5bf30afb669fabbcaffa18890ff52efd</md5file>
+<md5file name="boxes.lang">b46d5511e9d6998ff9c889cb8c0da1e8</md5file>
 <md5file name="members.lang">0206639eae0df85877c2e2bcf3a6f449</md5file>
 <md5file name="ecm.lang">5e31f5e7cbecac3ea5023184356defd2</md5file>
 <md5file name="link.lang">a4f7de71fffb7fe66bbe1ead04e43890</md5file>
 <md5file name="commissions.lang">f8a9ee9349754eca7dd8fa4a3b30923c</md5file>
 <md5file name="stocks.lang">208960ca78917b6337d736cd20344a7f</md5file>
-<md5file name="products.lang">e982533d31e1dca35dde12b9a2eaff16</md5file>
+<md5file name="products.lang">590a8bd1778eddcb5c069279b124e929</md5file>
 <md5file name="printing.lang">e7c013349082da3d9d5648c430c5fa17</md5file>
-<md5file name="banks.lang">0c4829c41c9d83c00d52e4c9c3488dc7</md5file>
-<md5file name="agenda.lang">2b22c61e3f2ddd574c1cfee86af7d957</md5file>
+<md5file name="banks.lang">703ed24e2722902f0bce8d3a3f7a59dd</md5file>
+<md5file name="agenda.lang">403bc95d966adfd004f72ad0b8d859ad</md5file>
 <md5file name="help.lang">426904859bbfa17b03832bb45bb04199</md5file>
-<md5file name="holiday.lang">a405559486829c7050b0479b2773f2c7</md5file>
+<md5file name="holiday.lang">1625f57e5654ad47f05fd7eccd6fb90b</md5file>
 <md5file name="productbatch.lang">c5c8e08bddcd4b099e4421c7b876d3ca</md5file>
 <md5file name="resource.lang">2bad6855dcaaf4b18c3c92f32d94893f</md5file>
 <md5file name="categories.lang">81bfbfd57357a74c3f3af6987afe6f12</md5file>
@@ -8359,7 +8362,7 @@
 <md5file name="mailmanspip.lang">491fa67114d3c382ca11c8beda1d2481</md5file>
 <md5file name="install.lang">5ed950ce4cceab6d20489e7ac57531bf</md5file>
 <md5file name="propal.lang">fda71a80dc11279fb51ad436388c1256</md5file>
-<md5file name="main.lang">e04f36be0e265fe419101c6ed96ee774</md5file>
+<md5file name="main.lang">94faf36ca44e55f0562c06b20b801c9f</md5file>
 <md5file name="languages.lang">425ba45315eed3b973749855951b51d3</md5file>
 <md5file name="bookmarks.lang">f0b4dcb4ff338aae365219b7c90568c9</md5file>
 <md5file name="sms.lang">0495a2ce04fae425dc6a1d880ceb1dbe</md5file>
@@ -8371,7 +8374,7 @@
 <md5file name="salaries.lang">b3b43d5b59898b53c3438acc767d5fb3</md5file>
 <md5file name="trips.lang">8fe26f5460eea59779e88aca24436dbc</md5file>
 <md5file name="sendings.lang">6f17157fa2d3d23e0552c7ef33efd818</md5file>
-<md5file name="accountancy.lang">5ca8cbe45832b4da7724a6fb647437a5</md5file>
+<md5file name="accountancy.lang">214b4bf175d9a576e99aa32a33ab3ae8</md5file>
 <md5file name="externalsite.lang">381fda47b3c28be5e86909a54ecf6f72</md5file>
 </dir>
 <dir name="/langs/eu_ES" >
@@ -8681,7 +8684,7 @@
 <md5file name="bills.lang">5d79a6c5b00b1b46d1f52b4b43a829f6</md5file>
 <md5file name="orders.lang">198b3a29bd95db8f58b32d7db4bff003</md5file>
 <md5file name="admin.lang">0e42cb9139c1cecb18bf40882da184e2</md5file>
-<md5file name="withdrawals.lang">d72639b10d0ea524ad308f364518272e</md5file>
+<md5file name="withdrawals.lang">58c19042214fce0286d38a8553680674</md5file>
 <md5file name="incoterm.lang">5f9bc55c61786609f6d57cc987d8f688</md5file>
 <md5file name="loan.lang">f2a97948d26385dbf048ef0cf2c525d7</md5file>
 <md5file name="boxes.lang">ab89fbf62d7046c7327249be47ccefeb</md5file>
@@ -8691,7 +8694,7 @@
 <md5file name="stocks.lang">20b3e0e6e75fd590b98bb3cb3773ea01</md5file>
 <md5file name="products.lang">e37b2888a049752461749305cba2261f</md5file>
 <md5file name="printing.lang">34ef2a5c01a6de0d058eb647a73cda4f</md5file>
-<md5file name="banks.lang">eee37a0b37da7fa689ffe2c8c3af7f41</md5file>
+<md5file name="banks.lang">66d599a5d64fdd125525f0ba69459838</md5file>
 <md5file name="agenda.lang">7df456c127e3cb8ae8ae1a74f56c9c16</md5file>
 <md5file name="help.lang">593a0056ee80a54a01c01c0c266034d4</md5file>
 <md5file name="holiday.lang">c0aa0c1b0a8218a9bec70fd09f811600</md5file>
@@ -8717,7 +8720,7 @@
 <md5file name="deliveries.lang">6312dc067c98595bb72d77dfcc9344b4</md5file>
 <md5file name="mailmanspip.lang">95c15ca3dd5f1f6760ef60df52b6dac5</md5file>
 <md5file name="install.lang">1538105a599084c46759fc0103f3fc3c</md5file>
-<md5file name="propal.lang">76660e9880edbbb9ab9234291381f6cf</md5file>
+<md5file name="propal.lang">d360b1161b553a45255a5806f55382eb</md5file>
 <md5file name="main.lang">8b75cf8f0252a48aa1c4d2af802b17f3</md5file>
 <md5file name="languages.lang">575d2dc8514dac008055d79898b96b7f</md5file>
 <md5file name="bookmarks.lang">2c7e63fd6233af8fabc598cea968cd6b</md5file>
@@ -8793,58 +8796,58 @@
 <md5file name="externalsite.lang">f249c5416780b6370b92514232af8da7</md5file>
 </dir>
 <dir name="/langs/de_DE" >
-<md5file name="projects.lang">fb8b3aedf89e165288efce917d9a77fc</md5file>
+<md5file name="projects.lang">0a86e4d4cf2f78188088bbcd94636dc5</md5file>
 <md5file name="cashdesk.lang">96d264ca8820d06e79142a24331876a2</md5file>
 <md5file name="workflow.lang">236388ae2d5c562bd3b7123817527f73</md5file>
-<md5file name="bills.lang">9481dda9d86de7ce90b2088e039eee35</md5file>
+<md5file name="bills.lang">7e60ab0c29e2988abb2c38706a25d810</md5file>
 <md5file name="orders.lang">0d26a4183a05beee36f73348e05ac1a9</md5file>
-<md5file name="admin.lang">77a1476e5e41674569d8548428330d9b</md5file>
+<md5file name="admin.lang">b72976e76e3b5b1e06e3bdfe32f21bbf</md5file>
 <md5file name="withdrawals.lang">7372240ddcfd567371833e17c55cf3bb</md5file>
 <md5file name="incoterm.lang">5fd0cdbdc0238bc2f9c0fde2e1cec05c</md5file>
 <md5file name="loan.lang">45ffe99a918a7bbc4a6042bd1f7ded89</md5file>
-<md5file name="boxes.lang">49b290a1c41d5e4863c504ed6735dcd3</md5file>
+<md5file name="boxes.lang">edcd6f0e266ebd3f8889d44444b1f874</md5file>
 <md5file name="members.lang">6ffdee3464337d9022910038309669df</md5file>
-<md5file name="ecm.lang">cb94c875e29680176d4d3dacda770b77</md5file>
-<md5file name="link.lang">bcf50b7b8461f7737f70e507955a7832</md5file>
-<md5file name="stocks.lang">de0c5aba2f753a8f85e6b788eb249940</md5file>
-<md5file name="products.lang">bee295ded961028412b6ffbc88216961</md5file>
-<md5file name="printing.lang">3b895bdcd4cfc1dd6a583868daee6ae5</md5file>
+<md5file name="ecm.lang">2213ae80db2f9c6a475e1209d31ed2f7</md5file>
+<md5file name="link.lang">699b645ecaba7ee82e5a2b9c8e04d599</md5file>
+<md5file name="stocks.lang">817ce0b47f0dba9656d1ad1583596161</md5file>
+<md5file name="products.lang">360250f28958a294923f493023127c1f</md5file>
+<md5file name="printing.lang">5ed5c5747e7602e1b128fc541e0a2ffb</md5file>
 <md5file name="banks.lang">13885e7bd616e8210d416328c572935c</md5file>
-<md5file name="agenda.lang">70924f10fb1a31a7126d3f68d520da3f</md5file>
+<md5file name="agenda.lang">507560124bb9af9903a36e155fba3c96</md5file>
 <md5file name="help.lang">94bb9cad9889690d55670af89e832ee8</md5file>
 <md5file name="holiday.lang">1bbbd210a5b9232c6e58fee38086c5f8</md5file>
 <md5file name="productbatch.lang">4c7673b351fab33e0a33fa2910faf0d6</md5file>
 <md5file name="resource.lang">c36fa900ef2e082506bccd1fa51eed31</md5file>
-<md5file name="categories.lang">648a63b131c0b8bda0cea5f5a5db0aa0</md5file>
+<md5file name="categories.lang">e93c689a6bd1cf8e7670e4aec826d763</md5file>
 <md5file name="paybox.lang">d19ff90add77cc081a9daf23f5b604fe</md5file>
 <md5file name="ldap.lang">3080ff9fdb247eaf98b234710abdc34b</md5file>
-<md5file name="users.lang">6d4756da26d3fe5b74a189472acb594a</md5file>
-<md5file name="companies.lang">16290ea856cf8aca0426f508cd3f69d0</md5file>
-<md5file name="margins.lang">a5930a01fca7a5501914bd256de7dfad</md5file>
+<md5file name="users.lang">87a5230bbfe882e0fbafacdd6fdcc67e</md5file>
+<md5file name="companies.lang">e55061d5b57b555a836c9943bf8a0ce7</md5file>
+<md5file name="margins.lang">41f6a7ee8a9f798c0af92c1ca1dcf5bd</md5file>
 <md5file name="ftp.lang">8b1f59559c969a8b8733993c72569c3f</md5file>
-<md5file name="exports.lang">91bf3149aa21917f18b1493c6f2927a9</md5file>
+<md5file name="exports.lang">df8be38ee0615e261ce232877c0a80a1</md5file>
 <md5file name="paypal.lang">64d4f3497d67b4e8da246b865501955a</md5file>
 <md5file name="cron.lang">b66283810f815e888bc6f5ae1b52a6ac</md5file>
-<md5file name="interventions.lang">07831ce10e9008053282872d7c82875d</md5file>
-<md5file name="errors.lang">e0b38c5103c67e9644cbc54dc2d940eb</md5file>
-<md5file name="compta.lang">448607c8896fd564a903155c740fb154</md5file>
+<md5file name="interventions.lang">9ec513148be43126359a4b2929a63e43</md5file>
+<md5file name="errors.lang">ca0d391cb42af1a44e3583eda0d35444</md5file>
+<md5file name="compta.lang">b3236f8c827a0eb88cee1c906b5bedea</md5file>
 <md5file name="suppliers.lang">77d571e5b03acdb7a2029a4f9218a323</md5file>
 <md5file name="opensurvey.lang">a40157ef24e9a8c6ddfd3885dc186a96</md5file>
-<md5file name="donations.lang">ac5c655d8e83649b5b5531688024a9c4</md5file>
-<md5file name="contracts.lang">0c9d162545da4751dc3126316404b496</md5file>
+<md5file name="donations.lang">056998dce70220b02ec8ed7855ac8b8f</md5file>
+<md5file name="contracts.lang">50d7642780c847932b5928f5ddc419bd</md5file>
 <md5file name="deliveries.lang">3533fdfc61408e851bdb68653ea870f0</md5file>
 <md5file name="mailmanspip.lang">cf24f0f04a6026a4d06cdaa7617586ac</md5file>
 <md5file name="install.lang">fa070151663aee0383a3c518d6a628d4</md5file>
-<md5file name="propal.lang">0de50b823bbeeed38f82dfcd5106ccfd</md5file>
-<md5file name="main.lang">b7aca869541be08df3c5732eee3b3c5e</md5file>
+<md5file name="propal.lang">2f46b0cf8ce598febf0c2f66eff0b230</md5file>
+<md5file name="main.lang">be743d008c1c7503dc8fe449ef70d31a</md5file>
 <md5file name="languages.lang">63bd42d2a260631f2b4eb7e32bff21bf</md5file>
-<md5file name="bookmarks.lang">bbab00fb08ae238a1428f6b9332ff0d0</md5file>
+<md5file name="bookmarks.lang">53794030a3a02da1d3ebd2b15b95af35</md5file>
 <md5file name="sms.lang">8f8b08ea0127e8dd80c06c9e79896a61</md5file>
 <md5file name="dict.lang">6f3ad06950f1c62f4bd86e51a7ddae95</md5file>
 <md5file name="mails.lang">96efcb427a067568896a54d9cba6a836</md5file>
 <md5file name="printipp.lang">2d1ed344ed1f795dc8ca3acc51cfeaa8</md5file>
 <md5file name="other.lang">0f487a02eb56c25838b3ca7a44e3d340</md5file>
-<md5file name="commercial.lang">bab262d6460d9e578d15f084cd57c4c7</md5file>
+<md5file name="commercial.lang">23cd5ee0ff6441087199ef3f6f48f4cd</md5file>
 <md5file name="salaries.lang">4c1471fc81697146f2072c4c55b16a9c</md5file>
 <md5file name="trips.lang">24ec07bccd0232ebebd94716dd6abaf9</md5file>
 <md5file name="sendings.lang">7f96e18c0ac56314a33e35de090c5045</md5file>
@@ -8852,9 +8855,13 @@
 <md5file name="externalsite.lang">cbfc8102d5d4b206ce17095f41a08013</md5file>
 </dir>
 <dir name="/langs/es_MX" >
-<md5file name="admin.lang">a287d462bc71f579eea372c586ca1e65</md5file>
+<md5file name="projects.lang">c294d42b0c532a0d0ed0ecd75b2da20f</md5file>
+<md5file name="bills.lang">322d2f0d1f63bdac9a7179e8f597321b</md5file>
+<md5file name="admin.lang">dc9564fc481ddd3101734b4e01c40027</md5file>
+<md5file name="banks.lang">5b5402436d2e5525c68fe96889c8628b</md5file>
+<md5file name="holiday.lang">2ec28d7d8a03797203f724f8e5cdd8d3</md5file>
 <md5file name="errors.lang">14b937be198fc9c37d706a131f110c68</md5file>
-<md5file name="main.lang">9f5ba8d00d619d312d40c07f38b35c6e</md5file>
+<md5file name="main.lang">538ab10324a9a151d1944f94b590e3e2</md5file>
 </dir>
 <dir name="/langs/he_IL" >
 <md5file name="projects.lang">0b184c77fe31ae048a9527291610ab4c</md5file>
@@ -8981,9 +8988,13 @@
 <md5file name="main.lang">b72997707e75dd3fb9bb3344408f0fd8</md5file>
 </dir>
 <dir name="/langs/es_BO" >
-<md5file name="admin.lang">a287d462bc71f579eea372c586ca1e65</md5file>
+<md5file name="projects.lang">c294d42b0c532a0d0ed0ecd75b2da20f</md5file>
+<md5file name="bills.lang">322d2f0d1f63bdac9a7179e8f597321b</md5file>
+<md5file name="admin.lang">dc9564fc481ddd3101734b4e01c40027</md5file>
+<md5file name="banks.lang">5b5402436d2e5525c68fe96889c8628b</md5file>
+<md5file name="holiday.lang">2ec28d7d8a03797203f724f8e5cdd8d3</md5file>
 <md5file name="errors.lang">14b937be198fc9c37d706a131f110c68</md5file>
-<md5file name="main.lang">9f5ba8d00d619d312d40c07f38b35c6e</md5file>
+<md5file name="main.lang">538ab10324a9a151d1944f94b590e3e2</md5file>
 </dir>
 <dir name="/langs/en_NZ" >
 <md5file name="companies.lang">fb46bbe6fd59edc488ae4cf9c9e59be7</md5file>
@@ -9109,15 +9120,22 @@
 <md5file name="externalsite.lang">f1f34d8c0f864daa5e8ab56801027430</md5file>
 </dir>
 <dir name="/langs/en_GB" >
-<md5file name="admin.lang">a287d462bc71f579eea372c586ca1e65</md5file>
+<md5file name="projects.lang">c294d42b0c532a0d0ed0ecd75b2da20f</md5file>
+<md5file name="bills.lang">02b4f98405e26fe54399ae5cf3d8e884</md5file>
+<md5file name="admin.lang">dc9564fc481ddd3101734b4e01c40027</md5file>
+<md5file name="banks.lang">5b5402436d2e5525c68fe96889c8628b</md5file>
 <md5file name="errors.lang">14b937be198fc9c37d706a131f110c68</md5file>
-<md5file name="main.lang">defd77128a4daa7471cd207350120cee</md5file>
+<md5file name="main.lang">4dc7f339b479b935f54185ca937b5200</md5file>
 </dir>
 <dir name="/langs/es_PY" >
-<md5file name="admin.lang">a287d462bc71f579eea372c586ca1e65</md5file>
+<md5file name="projects.lang">c294d42b0c532a0d0ed0ecd75b2da20f</md5file>
+<md5file name="bills.lang">322d2f0d1f63bdac9a7179e8f597321b</md5file>
+<md5file name="admin.lang">dc9564fc481ddd3101734b4e01c40027</md5file>
+<md5file name="banks.lang">5b5402436d2e5525c68fe96889c8628b</md5file>
+<md5file name="holiday.lang">2ec28d7d8a03797203f724f8e5cdd8d3</md5file>
 <md5file name="companies.lang">86edd8b14802f697dde804a0b134a9f9</md5file>
 <md5file name="errors.lang">14b937be198fc9c37d706a131f110c68</md5file>
-<md5file name="main.lang">47e41f42a075152d70958fe89cbf8d37</md5file>
+<md5file name="main.lang">392ef1b0569abd200f863d93d88ad77e</md5file>
 </dir>
 <dir name="/langs/zh_CN" >
 <md5file name="projects.lang">37ed2423117fa214345519409b790293</md5file>
@@ -9151,7 +9169,7 @@
 <md5file name="ftp.lang">edebaaf030b310580975751b4b7007e4</md5file>
 <md5file name="exports.lang">1700083ef9212badec296d94e212cd0c</md5file>
 <md5file name="paypal.lang">2c27edeee3a6e7883ed719fe44d6d145</md5file>
-<md5file name="cron.lang">8617166efb147696761492d83e9a1324</md5file>
+<md5file name="cron.lang">a47439737e5532545747c6f73d6b90cd</md5file>
 <md5file name="interventions.lang">43db758beb5f856b7e9b6baea10c3a50</md5file>
 <md5file name="errors.lang">39ae77d3255b573476dbf4bac144c91f</md5file>
 <md5file name="compta.lang">32cdae7ed3b21f35edbddf5810f28711</md5file>
@@ -9238,7 +9256,11 @@
 <md5file name="externalsite.lang">86d18225c3ec4d2ab47d5b96594e1d74</md5file>
 </dir>
 <dir name="/langs/es_CO" >
-<md5file name="admin.lang">a287d462bc71f579eea372c586ca1e65</md5file>
+<md5file name="projects.lang">c294d42b0c532a0d0ed0ecd75b2da20f</md5file>
+<md5file name="bills.lang">322d2f0d1f63bdac9a7179e8f597321b</md5file>
+<md5file name="admin.lang">dc9564fc481ddd3101734b4e01c40027</md5file>
+<md5file name="banks.lang">5b5402436d2e5525c68fe96889c8628b</md5file>
+<md5file name="holiday.lang">2ec28d7d8a03797203f724f8e5cdd8d3</md5file>
 <md5file name="companies.lang">4a73b1420652c433015ba38d07a82126</md5file>
 <md5file name="errors.lang">14b937be198fc9c37d706a131f110c68</md5file>
 <md5file name="main.lang">09cd93b89ceaf280cdf4e3ed95113d5e</md5file>
@@ -9306,7 +9328,7 @@
 </dir>
 <dir name="/langs/de_AT" >
 <md5file name="projects.lang">3c1901d15b11b7c8d9411305c2c10e47</md5file>
-<md5file name="bills.lang">43f67ab455d8d7d37792adf1b07c5d9a</md5file>
+<md5file name="bills.lang">f0b73e105427c026e55c1eb06adccac1</md5file>
 <md5file name="orders.lang">0f4cabd5c702824c0432a5b16dedf3ef</md5file>
 <md5file name="admin.lang">f22819b1a3eb265c2e589bcc71fc7562</md5file>
 <md5file name="withdrawals.lang">e5be41a111cad12948b3c30fcd5a41c3</md5file>
@@ -9318,6 +9340,7 @@
 <md5file name="banks.lang">616c29b85368aae480120bb30455f2e8</md5file>
 <md5file name="agenda.lang">d87b686508e12bb408c58888689211a2</md5file>
 <md5file name="help.lang">5e5684f776f1a7354578715682f38651</md5file>
+<md5file name="holiday.lang">2ec28d7d8a03797203f724f8e5cdd8d3</md5file>
 <md5file name="categories.lang">fedf292cca2809a18d78f474c1334447</md5file>
 <md5file name="paybox.lang">b1d9c0b57b93cd0b5584fab53a6c227d</md5file>
 <md5file name="ldap.lang">dcd4b0caa14caf886102e9aca04e8b7b</md5file>
@@ -9333,7 +9356,7 @@
 <md5file name="deliveries.lang">82a6941cc4dc14b88f1053af0b499e4e</md5file>
 <md5file name="install.lang">59addea31dca998c1b712c1ed87d3f9d</md5file>
 <md5file name="propal.lang">ba8ea3ba48fae1c8c7bf1e4a44d31dd1</md5file>
-<md5file name="main.lang">380507f4784c904ee80136f10dc4c93a</md5file>
+<md5file name="main.lang">9747da73ccbc43226cc6b5a74ffc4fa6</md5file>
 <md5file name="languages.lang">85086256e7de8ee29545bcd5c1063a55</md5file>
 <md5file name="bookmarks.lang">5695f95ab75430e71ca7e91b1d4a7993</md5file>
 <md5file name="dict.lang">5df22313fdd1f6434b42a5a11f635460</md5file>
@@ -9448,7 +9471,7 @@
 <md5file name="propal.lang">b62965af8cd454ed73aa42db77882ce8</md5file>
 <md5file name="main.lang">e34f203f621a58e6a025f8d5776c747c</md5file>
 <md5file name="languages.lang">b79ef3622f679533a44325aebaf50f74</md5file>
-<md5file name="bookmarks.lang">14de703774957e32462615ce075e168a</md5file>
+<md5file name="bookmarks.lang">f11caf85f97048d91c71324fa554e8cf</md5file>
 <md5file name="sms.lang">d7076d1ba0b16124aa157994fdb7ec3e</md5file>
 <md5file name="dict.lang">c16ead4fa40f9b157f7c4f0ec8afefd5</md5file>
 <md5file name="mails.lang">4174a4faff345145b6fe6ff3f2aa337c</md5file>
@@ -9462,9 +9485,13 @@
 <md5file name="externalsite.lang">ef990f1dec41193b1367ff9ff985ca67</md5file>
 </dir>
 <dir name="/langs/de_CH" >
-<md5file name="admin.lang">a287d462bc71f579eea372c586ca1e65</md5file>
+<md5file name="projects.lang">c294d42b0c532a0d0ed0ecd75b2da20f</md5file>
+<md5file name="bills.lang">1db1d7ff0f6ef232f1aaac2c2cb56b43</md5file>
+<md5file name="admin.lang">dc9564fc481ddd3101734b4e01c40027</md5file>
+<md5file name="banks.lang">5b5402436d2e5525c68fe96889c8628b</md5file>
+<md5file name="holiday.lang">2ec28d7d8a03797203f724f8e5cdd8d3</md5file>
 <md5file name="errors.lang">14b937be198fc9c37d706a131f110c68</md5file>
-<md5file name="main.lang">93fc25faef2e4a631602c033427fd12b</md5file>
+<md5file name="main.lang">65d76d4a51649d67a90d5c49c8ca7430</md5file>
 </dir>
 <dir name="/langs/id_ID" >
 <md5file name="projects.lang">001f89497d83b75fd374517b88d782ee</md5file>
@@ -9526,12 +9553,14 @@
 <md5file name="externalsite.lang">f1f34d8c0f864daa5e8ab56801027430</md5file>
 </dir>
 <dir name="/langs/fr_BE" >
-<md5file name="bills.lang">3f6327969cc147dd5bbaebce67dcabed</md5file>
-<md5file name="admin.lang">176fcc18540d7f71d144108fd02b61e4</md5file>
+<md5file name="projects.lang">c294d42b0c532a0d0ed0ecd75b2da20f</md5file>
+<md5file name="bills.lang">523ab8741e3df41c6147df2003e726a8</md5file>
+<md5file name="admin.lang">21f130550e39e481ce9cb357516e6ab1</md5file>
 <md5file name="boxes.lang">3332e7e07f91da6313b26cb61dbca6ee</md5file>
+<md5file name="banks.lang">5b5402436d2e5525c68fe96889c8628b</md5file>
 <md5file name="agenda.lang">2cd37a211a31a13ce61875112cd9b50b</md5file>
 <md5file name="errors.lang">14b937be198fc9c37d706a131f110c68</md5file>
-<md5file name="main.lang">c86d9cd72187d66eca91c2d2671c3c7e</md5file>
+<md5file name="main.lang">34e9924a5543f5c9f8d42f68852aa1ce</md5file>
 <md5file name="sms.lang">68459fc84ea935a6d7c3c01688685585</md5file>
 <md5file name="accountancy.lang">73e9edb0163694ae2e0a80744ec41138</md5file>
 </dir>
@@ -9797,8 +9826,8 @@
 <md5file name="categories.lang">5568084ceebffcae386fc1ec48e7ffa8</md5file>
 <md5file name="paybox.lang">17da2830504929531702d918d538bece</md5file>
 <md5file name="ldap.lang">681bb6760c742ae699ed900dca34241d</md5file>
-<md5file name="users.lang">d91a412e4582686aee55e22120f10420</md5file>
-<md5file name="companies.lang">081ddaf3beab038b809eb6db2957285e</md5file>
+<md5file name="users.lang">59862f5cdca62471f71fcab151781df3</md5file>
+<md5file name="companies.lang">ee05f7fb91d29da2977b7374f9cff85f</md5file>
 <md5file name="margins.lang">05a11b19b5162789760c9838a936df75</md5file>
 <md5file name="ftp.lang">eead927af63207df007d30bbefa0bb40</md5file>
 <md5file name="exports.lang">24076c897f856af4bf47d86d96078688</md5file>
@@ -9815,7 +9844,7 @@
 <md5file name="mailmanspip.lang">fb5913e34a812d5fdf9e25b8ca8c9fb2</md5file>
 <md5file name="install.lang">3868fe6746505c0449f7ab2550a54795</md5file>
 <md5file name="propal.lang">c57c2471c7a6eddd29d27909cc422e41</md5file>
-<md5file name="main.lang">78faa2226aeb9f90e52c0f6239002838</md5file>
+<md5file name="main.lang">976677f9986a37f46dd8cb078afdce50</md5file>
 <md5file name="languages.lang">4dc8101030bd3c2080accb4bcb04f9cd</md5file>
 <md5file name="bookmarks.lang">8cc192424d2a8a3a8439cf6c9e9c866d</md5file>
 <md5file name="sms.lang">228b0316d26bdd36e56a9158eea64ef6</md5file>
@@ -9948,26 +9977,29 @@
 <md5file name="externalsite.lang">e77cfae1b2c9124ddd567cc6f0bcd7a9</md5file>
 </dir>
 <dir name="/langs/es_CL" >
-<md5file name="projects.lang">d04237165096c4ab4aae777ac08a63c1</md5file>
+<md5file name="projects.lang">9eb7de069f59815934e071aa4bc8a400</md5file>
 <md5file name="workflow.lang">d644237a73e898a62393491905b4ed87</md5file>
-<md5file name="bills.lang">857cfdee8d1a70d9357f829ff7465ec3</md5file>
+<md5file name="bills.lang">4160f02f654932bedd29edd671b51d46</md5file>
 <md5file name="orders.lang">b39c038e6e8b0628c90d5114271dc50e</md5file>
-<md5file name="admin.lang">8b1af0ee9bd757f406a9085e52cb3e1a</md5file>
+<md5file name="admin.lang">72b5eccc9277874ce99e16752aba159c</md5file>
 <md5file name="boxes.lang">18381fbfd3da6eb62195dd3d7c2025b5</md5file>
 <md5file name="members.lang">fab0071a1a02bdff2c962825b43c2dfd</md5file>
 <md5file name="ecm.lang">f254234f7743f533f091e707ae5c6e5a</md5file>
 <md5file name="products.lang">93d2324320ddf2609d33828f0070e552</md5file>
+<md5file name="banks.lang">5b5402436d2e5525c68fe96889c8628b</md5file>
 <md5file name="agenda.lang">07dba3c5fa878727518a110582690996</md5file>
+<md5file name="holiday.lang">2ec28d7d8a03797203f724f8e5cdd8d3</md5file>
 <md5file name="companies.lang">169e53e9bb18aead3d080bed0fb9a311</md5file>
 <md5file name="errors.lang">14b937be198fc9c37d706a131f110c68</md5file>
 <md5file name="compta.lang">721f864f34ed9957a1da79a505146c16</md5file>
 <md5file name="install.lang">f03b0dcf6c6febaec231650b079d2f69</md5file>
 <md5file name="propal.lang">0dcf4ac06cd149d2c5828b8563cbe01b</md5file>
-<md5file name="main.lang">436545df3d1465a5a48adb9868ac07a4</md5file>
+<md5file name="main.lang">1a6ce5cdb1c6c8e0101031ed7aa4cffb</md5file>
 <md5file name="other.lang">d0e4982b7bc6a1cd62b339dd4edef863</md5file>
 <md5file name="commercial.lang">a946d614786a829d9964c0e27d143e0c</md5file>
 </dir>
 <dir name="/langs/fr_CA" >
+<md5file name="projects.lang">c294d42b0c532a0d0ed0ecd75b2da20f</md5file>
 <md5file name="cashdesk.lang">08acb8a8ca3a1dd92759d583424913af</md5file>
 <md5file name="bills.lang">5db0fae663b6387d4176b8cd656f89b9</md5file>
 <md5file name="admin.lang">1f9c4608541c8e95cd6189b122aaec7b</md5file>
@@ -10028,7 +10060,7 @@
 <md5file name="ftp.lang">68bdddeadf40d3061dd009fe77eec5d2</md5file>
 <md5file name="exports.lang">487ac2c661ac6747c4931ffd4e094d6d</md5file>
 <md5file name="paypal.lang">bfdffc1cf6e42979f52384d3125b72ad</md5file>
-<md5file name="cron.lang">e2e0d56d7a9126019e91b05281dc523b</md5file>
+<md5file name="cron.lang">5136e39159be1875f8f6ba4489500d09</md5file>
 <md5file name="interventions.lang">8028b9965a200c62fd4a16eee39c0e19</md5file>
 <md5file name="errors.lang">6dea95444fa084d9f9f33be87ab60a07</md5file>
 <md5file name="compta.lang">2edcb98d384fa73b9452c76b88602e06</md5file>
@@ -10074,16 +10106,16 @@
 <md5file name="products.lang">0f859bffb657420f91289f3404c3ac5f</md5file>
 <md5file name="printing.lang">fb330418c81c08843a8ecc7b41911c3e</md5file>
 <md5file name="banks.lang">70bab55d7cb9bda9286475b0e83d5667</md5file>
-<md5file name="agenda.lang">1d96699f1c6dd1a9cd56e70eb905207c</md5file>
+<md5file name="agenda.lang">c89a0952620429ffc07402cf29cb6343</md5file>
 <md5file name="help.lang">db6c98d5d67b4033e5b2c0669a0defcb</md5file>
 <md5file name="holiday.lang">440254be3afebcb1e39048e3d150f20d</md5file>
 <md5file name="productbatch.lang">1898ba53941f49ece5a58b90fdac3ebd</md5file>
 <md5file name="resource.lang">7353c73dcba6a3beb03620ccb68802b3</md5file>
-<md5file name="categories.lang">ae5891d4d6ff46e24a0d271dbfbc3cea</md5file>
+<md5file name="categories.lang">98e462f88ab14c1a545de484f1b66166</md5file>
 <md5file name="paybox.lang">72ccc97c1267b7432a5a34838c729dbd</md5file>
 <md5file name="ldap.lang">8568e4d03cdcc1874f6f39e21f994007</md5file>
 <md5file name="users.lang">70b002fd1a16e5e9f19e1ca9c51797ba</md5file>
-<md5file name="companies.lang">abaf5e5dc04b686a761c0f8f40953845</md5file>
+<md5file name="companies.lang">0ad29ff756130d52f6263650570736a3</md5file>
 <md5file name="margins.lang">cc12ebdf72077be80525d64e6a7ed5ec</md5file>
 <md5file name="ftp.lang">418be20b4d4d50ff450dfb18734e4722</md5file>
 <md5file name="exports.lang">11972a00c6080c23c92f9dfb07d15d6c</md5file>
@@ -10095,7 +10127,7 @@
 <md5file name="suppliers.lang">5940b1e0d9e4ef0693e6f862f1fca63c</md5file>
 <md5file name="opensurvey.lang">976e6f39654ffd979a1633da2107011e</md5file>
 <md5file name="donations.lang">7e73be5f5ef1f54d09eae743625e6e72</md5file>
-<md5file name="contracts.lang">2959472be49271fad183a7687007452a</md5file>
+<md5file name="contracts.lang">23688a6549a080e528796537be16b9fc</md5file>
 <md5file name="deliveries.lang">2b39e01ef2d55c7b3a24671fcd570e59</md5file>
 <md5file name="mailmanspip.lang">0b5290b5856769452f96d8557ae4af4f</md5file>
 <md5file name="install.lang">b5468bbd78484c8d55f8cb41dba6bc7a</md5file>
@@ -10108,11 +10140,11 @@
 <md5file name="mails.lang">493c788205c2f5743e9ba7d6e084f9c8</md5file>
 <md5file name="printipp.lang">37c8cf292316d659b712e3e792776e3f</md5file>
 <md5file name="other.lang">1c6a361487dcc57e627543fb69cf58b1</md5file>
-<md5file name="commercial.lang">9caf24505bb667bb3dd7e228f8ddaf0a</md5file>
+<md5file name="commercial.lang">37a149141ae55f1f1ec1f84529379e6a</md5file>
 <md5file name="salaries.lang">d0739d358ed00196d99144e88cdd7f7a</md5file>
 <md5file name="trips.lang">3e1b068f6c8c349c1deff0e88c8ca80a</md5file>
 <md5file name="sendings.lang">0e72f1e88211f93ee64eebbfe1564d1d</md5file>
-<md5file name="accountancy.lang">ebc36cfe6862d9742703ea60b6bcb873</md5file>
+<md5file name="accountancy.lang">b13be9ebaee90884f0445788681ac8fe</md5file>
 <md5file name="externalsite.lang">1e261eaa004ceeffa908ff6569fc2119</md5file>
 </dir>
 <dir name="/langs/en_CA" >
@@ -10180,15 +10212,22 @@
 <md5file name="externalsite.lang">69e863de65c7c11b4d4359dd33933737</md5file>
 </dir>
 <dir name="/langs/es_AR" >
-<md5file name="admin.lang">a287d462bc71f579eea372c586ca1e65</md5file>
+<md5file name="projects.lang">c294d42b0c532a0d0ed0ecd75b2da20f</md5file>
+<md5file name="bills.lang">322d2f0d1f63bdac9a7179e8f597321b</md5file>
+<md5file name="admin.lang">dc9564fc481ddd3101734b4e01c40027</md5file>
+<md5file name="banks.lang">5b5402436d2e5525c68fe96889c8628b</md5file>
+<md5file name="holiday.lang">2ec28d7d8a03797203f724f8e5cdd8d3</md5file>
 <md5file name="errors.lang">14b937be198fc9c37d706a131f110c68</md5file>
-<md5file name="main.lang">9f5ba8d00d619d312d40c07f38b35c6e</md5file>
+<md5file name="main.lang">538ab10324a9a151d1944f94b590e3e2</md5file>
 </dir>
 <dir name="/langs/en_AU" >
-<md5file name="admin.lang">a287d462bc71f579eea372c586ca1e65</md5file>
+<md5file name="projects.lang">c294d42b0c532a0d0ed0ecd75b2da20f</md5file>
+<md5file name="bills.lang">02b4f98405e26fe54399ae5cf3d8e884</md5file>
+<md5file name="admin.lang">dc9564fc481ddd3101734b4e01c40027</md5file>
 <md5file name="withdrawals.lang">ab59d61bbffe26c3fdf53d3c6b5b05d9</md5file>
+<md5file name="banks.lang">5b5402436d2e5525c68fe96889c8628b</md5file>
 <md5file name="errors.lang">14b937be198fc9c37d706a131f110c68</md5file>
-<md5file name="main.lang">9f5ba8d00d619d312d40c07f38b35c6e</md5file>
+<md5file name="main.lang">538ab10324a9a151d1944f94b590e3e2</md5file>
 </dir>
 <dir name="/langs/sv_SE" >
 <md5file name="projects.lang">fb147cbb17dbe7162bdfe77907095f58</md5file>
@@ -10253,9 +10292,9 @@
 <md5file name="projects.lang">17826ac0abf776f5bc6d8c68e09c17d5</md5file>
 <md5file name="cashdesk.lang">dc2cd95b6531d5b5cc7d52251523506a</md5file>
 <md5file name="workflow.lang">57282ab3ba26185cd568d1838e0ab8f3</md5file>
-<md5file name="bills.lang">a86f2736db442ecdfbddabdc0c2e5357</md5file>
+<md5file name="bills.lang">b12fb144c4254826c2d04579be5b5f45</md5file>
 <md5file name="orders.lang">826aba4abd3429ff665409aebda73e5e</md5file>
-<md5file name="admin.lang">15fb15ce131f8143dab8ffcca18c39cc</md5file>
+<md5file name="admin.lang">f2ba671f9d17aef7228fc204ed1b7398</md5file>
 <md5file name="withdrawals.lang">a094115816a8df0c006766c4000861c6</md5file>
 <md5file name="incoterm.lang">3e5ce3b248f7dda5c1eb88b75a642f5f</md5file>
 <md5file name="loan.lang">25088723418dcc167b4665c455714951</md5file>
@@ -10264,10 +10303,10 @@
 <md5file name="ecm.lang">b05c8370bfbe8bc89c37c083624b5dff</md5file>
 <md5file name="link.lang">910620b9e594d851f1f8a1f286890aec</md5file>
 <md5file name="stocks.lang">601f004f8adb4995ee968e7a3c01b5df</md5file>
-<md5file name="products.lang">8c30f8f9c7899cc04652fa00345e8ccc</md5file>
+<md5file name="products.lang">d9c71112e2d9ed882f346e18ef246004</md5file>
 <md5file name="printing.lang">6b93db41124ee6e53e738d483b6f87ad</md5file>
-<md5file name="banks.lang">b730a74048ae2d8663b272d1d41894c7</md5file>
-<md5file name="agenda.lang">8958650d44eb12275fd720c326469f8d</md5file>
+<md5file name="banks.lang">24c57b650c2e20498aa850503992564d</md5file>
+<md5file name="agenda.lang">fe4355e5361957737c127212b9ab7777</md5file>
 <md5file name="help.lang">3509f62c9752bbac4f9bde2df2c7c8f0</md5file>
 <md5file name="holiday.lang">99414bbf1bf1e685f4f730c760b96fd4</md5file>
 <md5file name="productbatch.lang">20422b3e39bd1f7a977afcc1b14f3103</md5file>
@@ -10276,25 +10315,25 @@
 <md5file name="paybox.lang">d7054e46baeb846c67f554fbaded072a</md5file>
 <md5file name="ldap.lang">3aeb0bb955d966af8406506605547e1c</md5file>
 <md5file name="users.lang">e7ac3efa7156fac7b187b4e2d3aa6b32</md5file>
-<md5file name="companies.lang">15767402780bab0cb2b45a7cff19c948</md5file>
+<md5file name="companies.lang">07fa6f601297cb41a1a6668d8a4137c1</md5file>
 <md5file name="margins.lang">90c202b94dcd09173f067e8bf5164b77</md5file>
 <md5file name="ftp.lang">4b3416e5ad27f1623f5c9222cf93f491</md5file>
-<md5file name="exports.lang">7e75fd524735ea2bf2261b3d8ec3ecb6</md5file>
+<md5file name="exports.lang">4f30c615b5054649acfe658b41c64664</md5file>
 <md5file name="paypal.lang">6f11fdfa4b04669635edc07ca6efeca4</md5file>
 <md5file name="cron.lang">48a83412d06860f170a73a68d6d1d607</md5file>
 <md5file name="interventions.lang">5c3ad5663f3d6527148247ff7312b385</md5file>
-<md5file name="errors.lang">1b425e64c64c92a307c6e16aba8e0f6b</md5file>
+<md5file name="errors.lang">2e611ed7fc633ec32354afd2809d8312</md5file>
 <md5file name="compta.lang">3b991a186f3742555e60e6f61785e885</md5file>
 <md5file name="suppliers.lang">ea89357f6a833ce27bdaa3c633b73559</md5file>
 <md5file name="opensurvey.lang">838ea08d95f65f9a06957a7d066f0891</md5file>
 <md5file name="donations.lang">925e7c28144a75b7e0fbc57715f523f8</md5file>
-<md5file name="contracts.lang">1025f4364ac908d77f2f3ae4c592c601</md5file>
+<md5file name="contracts.lang">b9e738744ff3a33a47ae67f529eead70</md5file>
 <md5file name="deliveries.lang">1db9e49d446f770d60dd8d133b654b4c</md5file>
 <md5file name="mailmanspip.lang">4941939fc3ea3906cfe30989e3c07431</md5file>
 <md5file name="install.lang">f804018f508887af815f81d054905620</md5file>
 <md5file name="propal.lang">6e9ac5f9954ea167f40c686de9be6b7b</md5file>
-<md5file name="main.lang">b840d63814462bb7fb797c729a302d52</md5file>
-<md5file name="languages.lang">140f52814650cf6fda4427eabd69f2b3</md5file>
+<md5file name="main.lang">562889c108c03eb1b52e7c4819b3b125</md5file>
+<md5file name="languages.lang">d1a2602d42b8e7df617ca9c2ad3fb71f</md5file>
 <md5file name="bookmarks.lang">285145b8adf6d1d7e53a1c102b25c177</md5file>
 <md5file name="sms.lang">673f3e0c4062e13cdef27b581fb66461</md5file>
 <md5file name="dict.lang">d74248250355b90443c5340490731dcf</md5file>
@@ -10304,14 +10343,18 @@
 <md5file name="commercial.lang">5ca61a0d6b95a636b2949ae460e1d05c</md5file>
 <md5file name="salaries.lang">e0f4c93906c140661ee859581b1a168f</md5file>
 <md5file name="trips.lang">feb14dfc2c998cee54ba6247bb784862</md5file>
-<md5file name="sendings.lang">3c4f6b1eacd24b5ec036788219f0fb1a</md5file>
+<md5file name="sendings.lang">48ec52231c3493ab0344cba74e220a61</md5file>
 <md5file name="accountancy.lang">813838a5f1d8832941b8ea61ed2c7271</md5file>
 <md5file name="externalsite.lang">e17ab7d7f81ddef4dc5e5ff071a5152c</md5file>
 </dir>
 <dir name="/langs/es_DO" >
-<md5file name="admin.lang">8e7647cbe7536c0a885439de89bf2d16</md5file>
+<md5file name="projects.lang">c294d42b0c532a0d0ed0ecd75b2da20f</md5file>
+<md5file name="bills.lang">322d2f0d1f63bdac9a7179e8f597321b</md5file>
+<md5file name="admin.lang">01ecdb579e7aaa2f7a35a9d9f9e706a0</md5file>
+<md5file name="banks.lang">5b5402436d2e5525c68fe96889c8628b</md5file>
+<md5file name="holiday.lang">2ec28d7d8a03797203f724f8e5cdd8d3</md5file>
 <md5file name="errors.lang">14b937be198fc9c37d706a131f110c68</md5file>
-<md5file name="main.lang">9f5ba8d00d619d312d40c07f38b35c6e</md5file>
+<md5file name="main.lang">538ab10324a9a151d1944f94b590e3e2</md5file>
 </dir>
 <dir name="/langs/da_DK" >
 <md5file name="projects.lang">6656b3e6dc07ae24df1501e0932f5ce5</md5file>
@@ -10461,11 +10504,11 @@
 <md5file name="companies.lang">7f005dc1c4048f02914f491339a5669b</md5file>
 <md5file name="margins.lang">0c4ca601c83dcfc8d0f4f45dc773e2f7</md5file>
 <md5file name="ftp.lang">2da0a1995db50d0752d2e509a3bca37f</md5file>
-<md5file name="exports.lang">f0c5c0185e5e1b2923910044a19706bc</md5file>
+<md5file name="exports.lang">215c2affe164ae37a7089481fb874de3</md5file>
 <md5file name="paypal.lang">10c2dcc555137e38039193ccedfc0cd3</md5file>
 <md5file name="cron.lang">bb194e9b127b46bb2271d19ed84603d3</md5file>
 <md5file name="interventions.lang">15be1fe8f10c081149a3003de6ec6921</md5file>
-<md5file name="errors.lang">0b3e76ac18a371234ecefd89ff06adb0</md5file>
+<md5file name="errors.lang">a1c2c9bfc0b6f28497c1869f91b54afa</md5file>
 <md5file name="compta.lang">d816d6622fcaf3c5f4e8f0a516128d20</md5file>
 <md5file name="suppliers.lang">548bc532286b35f7a6ffee2a2801502a</md5file>
 <md5file name="opensurvey.lang">199dcc4ae427c0d0e5fbde6c0d2d2f99</md5file>
@@ -10550,13 +10593,16 @@
 <md5file name="externalsite.lang">8670dccfd7a31fa4c44bc8fffd978739</md5file>
 </dir>
 <dir name="/langs/es_PE" >
-<md5file name="bills.lang">36d54cc80744708ba9ec226b550c8daf</md5file>
-<md5file name="admin.lang">b445026a015b310e55204739eab1d577</md5file>
+<md5file name="projects.lang">c294d42b0c532a0d0ed0ecd75b2da20f</md5file>
+<md5file name="bills.lang">725c0db804f21f04b78982da61ff2d7e</md5file>
+<md5file name="admin.lang">e9ab65cca74d0d1069c0bb6b50074d1a</md5file>
+<md5file name="banks.lang">5b5402436d2e5525c68fe96889c8628b</md5file>
+<md5file name="holiday.lang">2ec28d7d8a03797203f724f8e5cdd8d3</md5file>
 <md5file name="companies.lang">921ab7227ed3abcda2db9bf141411751</md5file>
 <md5file name="errors.lang">14b937be198fc9c37d706a131f110c68</md5file>
 <md5file name="compta.lang">2172e11a30b062324fc2a90d1f6de9b2</md5file>
 <md5file name="propal.lang">34ea25003f05ded5624df898f2c1ac4b</md5file>
-<md5file name="main.lang">7210212c531b08cb22055f395769fec4</md5file>
+<md5file name="main.lang">3007373ed2951f690530327240c5f115</md5file>
 </dir>
 <dir name="/langs/ar_SA" >
 <md5file name="projects.lang">1f16414a30aa0a40379d1cf47ac9a6f4</md5file>
@@ -10849,7 +10895,7 @@
 <md5file name="salaries.lang">b6786821a9641b2e90eb60d1cf955593</md5file>
 <md5file name="trips.lang">29567ae731d5a20740dadb635820c0d7</md5file>
 <md5file name="sendings.lang">83da48fa37c40e4f8c5ca323d585e7d9</md5file>
-<md5file name="accountancy.lang">98df0b16465e8526f1a34f0e24e1d25b</md5file>
+<md5file name="accountancy.lang">233e3c0da4808e32e5bff1b70a00caf7</md5file>
 <md5file name="externalsite.lang">1be24d68eebff59f8a3d55d1d248cdfb</md5file>
 </dir>
 <dir name="/langs/ko_KR" >
@@ -10915,7 +10961,7 @@
 <md5file name="projects.lang">6cc0c652a67b7a726760dcdc608db98b</md5file>
 <md5file name="cashdesk.lang">a7a17bad11811e39b0164573964f3c18</md5file>
 <md5file name="workflow.lang">3814711841ff79bfb1bffb653cfde0fb</md5file>
-<md5file name="bills.lang">c6794aafb3744bde6e6f10406dfdcbea</md5file>
+<md5file name="bills.lang">ce04cd21ab1a71817562e3bfa4207f49</md5file>
 <md5file name="orders.lang">40da93d7868af1bcee8c47d560dad545</md5file>
 <md5file name="admin.lang">f7b95693315b045c22b7868e83fa419a</md5file>
 <md5file name="withdrawals.lang">d7a12190e2704590b4523ba5b60dd6b6</md5file>
@@ -10946,7 +10992,7 @@
 <md5file name="cron.lang">4508eefc4cbf06183f780a47550b51fd</md5file>
 <md5file name="interventions.lang">624f8ffd5c36af2b87a06aee63b17bb0</md5file>
 <md5file name="errors.lang">88f572d21982792d5393ee999d2c443b</md5file>
-<md5file name="compta.lang">301863f24dfdf588d170f0dd76389132</md5file>
+<md5file name="compta.lang">c283b0ba64ed9301e67a9d18923aed60</md5file>
 <md5file name="suppliers.lang">307d48fb06eea97b2818146fbb8929cf</md5file>
 <md5file name="opensurvey.lang">bee0636e455ad5d9a8dcc288ac2abb4c</md5file>
 <md5file name="donations.lang">9875bc160f395b95a197ffbb4ac22190</md5file>
@@ -11031,9 +11077,12 @@
 <md5file name="externalsite.lang">56d8a0b2df579f5cead684b83fdef191</md5file>
 </dir>
 <dir name="/langs/fr_CH" >
-<md5file name="admin.lang">a287d462bc71f579eea372c586ca1e65</md5file>
+<md5file name="projects.lang">c294d42b0c532a0d0ed0ecd75b2da20f</md5file>
+<md5file name="bills.lang">02b4f98405e26fe54399ae5cf3d8e884</md5file>
+<md5file name="admin.lang">dc9564fc481ddd3101734b4e01c40027</md5file>
+<md5file name="banks.lang">5b5402436d2e5525c68fe96889c8628b</md5file>
 <md5file name="errors.lang">14b937be198fc9c37d706a131f110c68</md5file>
-<md5file name="main.lang">9f5ba8d00d619d312d40c07f38b35c6e</md5file>
+<md5file name="main.lang">538ab10324a9a151d1944f94b590e3e2</md5file>
 </dir>
 <dir name="/langs/es_HN" >
 <md5file name="bills.lang">eb0d31b8fe30bfb4b4a2cac24e104c61</md5file>
@@ -11044,7 +11093,6 @@
 <md5file name="main.lang">e70e0c0be5993759f867484624b7270f</md5file>
 </dir>
 <dir name="/langs/nl_BE" >
-<md5file name="admin.lang">a287d462bc71f579eea372c586ca1e65</md5file>
 <md5file name="main.lang">9f5ba8d00d619d312d40c07f38b35c6e</md5file>
 </dir>
 <dir name="/langs/uk_UA" >
@@ -11181,7 +11229,7 @@
 <md5file name="cidlookup.php">adf4d0f538de7decd6b3e4c5140c159a</md5file>
 </dir>
 <dir name="" >
-<md5file name="filefunc.inc.php">6cd1200c5de4e664f873c1131c4b4605</md5file>
+<md5file name="filefunc.inc.php">5b06c4c900114c4ce894c39022aad38f</md5file>
 </dir>
 <dir name="/fichinter" >
 <md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
