@@ -40,7 +40,7 @@ function show_skin($fuser,$edit=0)
 
     $formother = new FormOther($db);
 
-    $dirskins=array('/includes/ckeditor/skins');
+    $dirskins=array('/includes/ckeditor/ckeditor/skins');
     if (! empty($conf->modules_parts['theme']))		// Using this feature slow down application
     {
     	foreach($conf->modules_parts['theme'] as $reldir)
@@ -52,7 +52,8 @@ function show_skin($fuser,$edit=0)
 	// Now dir_themes=array('/themes') or dir_themes=array('/theme','/mymodule/theme')
 
     $selected_theme='';
-    $selected_theme=$conf->global->FCKEDITOR_SKIN;
+    if (empty($conf->global->FCKEDITOR_SKIN)) $selected_theme='moono';
+    else $selected_theme=$conf->global->FCKEDITOR_SKIN;
 
     $colspan=2;
 
@@ -65,9 +66,9 @@ function show_skin($fuser,$edit=0)
    	print '<tr class="liste_titre"><th width="35%">'.$langs->trans("DefaultSkin").'</th>';
    	print '<th align="right">';
    	$url='http://ckeditor.com/addons/skins/all';
-   	print '<a href="'.$url.'" target="_blank">';
+   	/*print '<a href="'.$url.'" target="_blank">';
    	print $langs->trans('DownloadMoreSkins');
-   	print '</a>';
+   	print '</a>';*/
    	print '</th></tr>';
 
 	print '<tr '.$bc[$var].'>';
