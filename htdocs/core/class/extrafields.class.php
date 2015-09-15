@@ -753,7 +753,7 @@ class ExtraFields
 				$out.='<option value="'.$key.'"';
 				$out.= ($value==$key?' selected':'');
 				$out.= (!empty($parent)?' parent="'.$parent.'"':'');
-				$out.='>'.$val.'</option>';
+				$out.='>'.$langs->trans($val).'</option>';
 			}
 			$out.='</select>';
 		}
@@ -838,7 +838,7 @@ class ExtraFields
 
 						// Several field into label (eq table:code|libelle:rowid)
 						$fields_label = explode('|',$InfoFieldList[1]);
-						if(is_array($fields_label))
+						if(is_array($fields_label) && count($fields_label) > 1)
 						{
 							$notrans = true;
 							foreach ($fields_label as $field_toshow)
@@ -921,7 +921,7 @@ class ExtraFields
 					$out.='';
 				}
 
-				$out.='/>'.$val.'<br>';
+				$out.='/>'.$langs->trans($val).'<br>';
 			}
 		}
 		elseif ($type == 'radio')
@@ -932,7 +932,7 @@ class ExtraFields
 				$out.='<input class="flat" type="radio" name="'.$keysuffix.'options_'.$key.$keyprefix.'" '.($moreparam?$moreparam:'');
 				$out.=' value="'.$keyopt.'"';
 				$out.= ($value==$keyopt?'checked':'');
-				$out.='/>'.$val.'<br>';
+				$out.='/>'.$langs->trans($val).'<br>';
 			}
 		}
 		elseif ($type == 'chkbxlst')
@@ -1159,7 +1159,7 @@ class ExtraFields
 		}
 		elseif ($type == 'select')
 		{
-			$value=$params['options'][$value];
+			$value=$langs->trans($params['options'][$value]);
 		}
 		elseif ($type == 'sellist')
 		{
@@ -1233,7 +1233,7 @@ class ExtraFields
 		}
 		elseif ($type == 'radio')
 		{
-			$value=$params['options'][$value];
+			$value=$langs->trans($params['options'][$value]);
 		}
 		elseif ($type == 'checkbox')
 		{
@@ -1242,7 +1242,7 @@ class ExtraFields
 			if (is_array($value_arr))
 			{
 				foreach ($value_arr as $keyval=>$valueval) {
-					$value.=$params['options'][$valueval].'<br>';
+					$value.=$langs->trans($params['options'][$valueval]).'<br>';
 				}
 			}
 		}
