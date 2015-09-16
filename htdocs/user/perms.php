@@ -67,43 +67,50 @@ if ($user->id == $id && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user-
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 if ($user->id <> $id && ! $canreaduser) accessforbidden();
 
+$object = new User($db);
+$object->fetch($id);
+$object->getrights();
+
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('usercard','globalcard'));
 
 /**
  * Actions
  */
 
-if ($action == 'addrights' && $caneditperms)
-{
-	$edituser = new User($db);
-	$edituser->fetch($id);
-	//$edituser->addrights($rights, $module, '', $entity); // TODO unused for the moment
-	$edituser->addrights($rights, $module);
+$parameters=array('id'=>$socid);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-	// Si on a touche a ses propres droits, on recharge
-	if ($id == $user->id)
-	{
-		$user->clearrights();
-		$user->getrights();
-		$menumanager->loadMenu();
+if (empty($reshook)) {
+	if ($action == 'addrights' && $caneditperms) {
+		$edituser = new User($db);
+		$edituser->fetch($id);
+		//$edituser->addrights($rights, $module, '', $entity); // TODO unused for the moment
+		$edituser->addrights($rights, $module);
+
+		// Si on a touche a ses propres droits, on recharge
+		if ($id == $user->id) {
+			$user->clearrights();
+			$user->getrights();
+			$menumanager->loadMenu();
+		}
+	}
+
+	if ($action == 'delrights' && $caneditperms) {
+		$edituser = new User($db);
+		$edituser->fetch($id);
+		//$edituser->delrights($rights, $module, '', $entity); // TODO unused for the moment
+		$edituser->delrights($rights, $module);
+
+		// Si on a touche a ses propres droits, on recharge
+		if ($id == $user->id) {
+			$user->clearrights();
+			$user->getrights();
+			$menumanager->loadMenu();
+		}
 	}
 }
-
-if ($action == 'delrights' && $caneditperms)
-{
-	$edituser = new User($db);
-	$edituser->fetch($id);
-	//$edituser->delrights($rights, $module, '', $entity); // TODO unused for the moment
-	$edituser->delrights($rights, $module);
-
-	// Si on a touche a ses propres droits, on recharge
-	if ($id == $user->id)
-	{
-		$user->clearrights();
-		$user->getrights();
-		$menumanager->loadMenu();
-	}
-}
-
 
 
 /**
@@ -113,10 +120,6 @@ if ($action == 'delrights' && $caneditperms)
 llxHeader('',$langs->trans("Permissions"));
 
 $form=new Form($db);
-
-$object = new User($db);
-$object->fetch($id);
-$object->getrights();
 
 $head = user_prepare_head($object);
 

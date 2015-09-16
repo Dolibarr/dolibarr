@@ -41,25 +41,33 @@ if ($user->id == $id)	// A user can always read its own card
 }
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('usercard','globalcard'));
 
 /*
  * Actions
  */
 
-if ($action == 'update' && ! GETPOST('cancel'))
-{
-	$edituser = new User($db);
-	$edituser->fetch($id);
+$parameters=array('id'=>$socid);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-	$edituser->clicktodial_url      = GETPOST("url");
-	$edituser->clicktodial_login    = GETPOST("login");
-	$edituser->clicktodial_password = GETPOST("password");
-	$edituser->clicktodial_poste    = GETPOST("poste");
+if (empty($reshook)) {
+    if ($action == 'update' && !GETPOST('cancel')) {
+        $edituser = new User($db);
+        $edituser->fetch($id);
 
-	$result=$edituser->update_clicktodial();
-	if ($result < 0) setEventMessage($edituser->error,'errors');
+        $edituser->clicktodial_url = GETPOST("url");
+        $edituser->clicktodial_login = GETPOST("login");
+        $edituser->clicktodial_password = GETPOST("password");
+        $edituser->clicktodial_poste = GETPOST("poste");
+
+        $result = $edituser->update_clicktodial();
+        if ($result < 0) {
+            setEventMessage($edituser->error, 'errors');
+        }
+    }
 }
-
 
 
 /*

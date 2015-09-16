@@ -66,62 +66,70 @@ $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 if (($fuser->id != $user->id) && (! $user->rights->user->user->lire))
   accessforbidden();
 
-
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('usercard','globalcard'));
 
 /*
  * Actions
  */
-if ($actionsave)
-{
-    $db->begin();
 
-	$i=1; $errorsaved=0;
-	$error=0;
-	$tabparam=array();
+$parameters=array('id'=>$socid);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-	// Save agendas
-	while ($i <= $MAXAGENDA)
-	{
-		$name=trim(GETPOST('AGENDA_EXT_NAME_'.$id.'_'.$i,'alpha'));
-		$src=trim(GETPOST('AGENDA_EXT_SRC_'.$id.'_'.$i,'alpha'));
-		$offsettz=trim(GETPOST('AGENDA_EXT_OFFSETTZ_'.$id.'_'.$i,'alpha'));
-		$color=trim(GETPOST('AGENDA_EXT_COLOR_'.$id.'_'.$i,'alpha'));
-		if ($color=='-1') $color='';
-		$enabled=trim(GETPOST('AGENDA_EXT_ENABLED_'.$id.'_'.$i,'alpha'));
+if (empty($reshook)) {
+	if ($actionsave) {
+		$db->begin();
 
-		if (! empty($src) && ! dol_is_url($src))
-		{
-			setEventMessage($langs->trans("ErrorParamMustBeAnUrl"),'errors');
-			$error++;
-			$errorsaved++;
-			break;
+		$i = 1;
+		$errorsaved = 0;
+		$error = 0;
+		$tabparam = array();
+
+		// Save agendas
+		while ($i <= $MAXAGENDA) {
+			$name = trim(GETPOST('AGENDA_EXT_NAME_'.$id.'_'.$i, 'alpha'));
+			$src = trim(GETPOST('AGENDA_EXT_SRC_'.$id.'_'.$i, 'alpha'));
+			$offsettz = trim(GETPOST('AGENDA_EXT_OFFSETTZ_'.$id.'_'.$i, 'alpha'));
+			$color = trim(GETPOST('AGENDA_EXT_COLOR_'.$id.'_'.$i, 'alpha'));
+			if ($color == '-1') {
+				$color = '';
+			}
+			$enabled = trim(GETPOST('AGENDA_EXT_ENABLED_'.$id.'_'.$i, 'alpha'));
+
+			if (!empty($src) && !dol_is_url($src)) {
+				setEventMessage($langs->trans("ErrorParamMustBeAnUrl"), 'errors');
+				$error ++;
+				$errorsaved ++;
+				break;
+			}
+
+			$tabparam['AGENDA_EXT_NAME_'.$id.'_'.$i] = $name;
+			$tabparam['AGENDA_EXT_SRC_'.$id.'_'.$i] = $src;
+			$tabparam['AGENDA_EXT_OFFSETTZ_'.$id.'_'.$i] = $offsettz;
+			$tabparam['AGENDA_EXT_COLOR_'.$id.'_'.$i] = $color;
+			$tabparam['AGENDA_EXT_ENABLED_'.$id.'_'.$i] = $enabled;
+
+			$i ++;
 		}
 
-		$tabparam['AGENDA_EXT_NAME_'.$id.'_'.$i]=$name;
-		$tabparam['AGENDA_EXT_SRC_'.$id.'_'.$i]=$src;
-		$tabparam['AGENDA_EXT_OFFSETTZ_'.$id.'_'.$i]=$offsettz;
-		$tabparam['AGENDA_EXT_COLOR_'.$id.'_'.$i]=$color;
-		$tabparam['AGENDA_EXT_ENABLED_'.$id.'_'.$i]=$enabled;
+		if (!$error) {
+			$result = dol_set_user_param($db, $conf, $fuser, $tabparam);
+			if (!$result > 0) {
+				$error ++;
+			}
+		}
 
-		$i++;
+		if (!$error) {
+			$db->commit();
+			setEventMessage($langs->trans("SetupSaved"));
+		} else {
+			$db->rollback();
+			if (empty($errorsaved)) {
+				setEventMessage($langs->trans("Error"), 'errors');
+			}
+		}
 	}
-
-	if (! $error)
-	{
-		$result=dol_set_user_param($db, $conf, $fuser, $tabparam);
-		if (! $result > 0) $error++;
-	}
-
-    if (! $error)
-    {
-        $db->commit();
-        setEventMessage($langs->trans("SetupSaved"));
-    }
-    else
-    {
-        $db->rollback();
-        if (empty($errorsaved))	setEventMessage($langs->trans("Error"),'errors');
-    }
 }
 
 /*
