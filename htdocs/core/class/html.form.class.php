@@ -4676,7 +4676,7 @@ class Form
 		global $db;
 
 		include_once DOL_DOCUMENT_ROOT.'/categories/class.categorie.class.php';
-		
+
 		$cat = new Categorie($db);
 		$categories = $cat->containing($id, $type);
 
