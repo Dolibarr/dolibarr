@@ -112,20 +112,20 @@ if (empty($reshook)) {
 
 	// Action clone object
 	if ($action == 'confirm_clone' && $confirm == 'yes') {
-		if (1 == 0 && ! GETPOST('clone_content') && ! GETPOST('clone_receivers')) {
-			setEventMessage($langs->trans("NoCloneOptionsSpecified"), 'errors');
-		} else {
+//		if (1 == 0 && ! GETPOST('clone_content') && ! GETPOST('clone_receivers')) {
+//			setEventMessage($langs->trans("NoCloneOptionsSpecified"), 'errors');
+//		} else {
 			if ($object->id > 0) {
 				$result = $object->createFromClone($socid);
 				if ($result > 0) {
 					header("Location: " . $_SERVER['PHP_SELF'] . '?id=' . $result);
 					exit();
 				} else {
-					setEventMessage($object->error, 'errors');
+					if (count($object->errors) > 0) setEventMessage($object->errors, 'errors');
 					$action = '';
 				}
 			}
-		}
+//		}
 	}
 
 	// Delete proposal
