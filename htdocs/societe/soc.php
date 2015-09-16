@@ -1274,6 +1274,8 @@ else
 		// Categories
 		if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire))
 		{
+			$langs->load('categories');
+
 			// Customer
 			if ($object->prospect || $object->client) {
 				print '<tr><td class="toptd">' . fieldLabel('CustomersCategoriesShort', 'custcats') . '</td><td colspan="3">';
