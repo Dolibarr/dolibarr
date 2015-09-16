@@ -431,10 +431,10 @@ if ($step == 1 || ! $datatoexport)
 	        //print img_object($objexport->array_export_module[$key]->getName(),$export->array_export_module[$key]->picto).' ';
             print $objexport->array_export_module[$key]->getName();
             print '</td><td>';
-			$icon=$objexport->array_export_icon[$key];
+			$icon=preg_replace('/:.*$/','',$objexport->array_export_icon[$key]);
 			$label=$objexport->array_export_label[$key];
             //print $value.'-'.$icon.'-'.$label."<br>";
-			print img_object($objexport->array_export_module[$key]->getName(),$icon).' ';
+			print img_object($objexport->array_export_module[$key]->getName(), $icon).' ';
             print $label;
             print '</td><td align="right">';
             if ($objexport->array_export_perms[$key])
@@ -492,10 +492,10 @@ if ($step == 2 && $datatoexport)
     // Lot de donnees a exporter
     print '<tr><td width="25%">'.$langs->trans("DatasetToExport").'</td>';
     print '<td>';
-    $icon=$objexport->array_export_icon[0];
+	$icon=preg_replace('/:.*$/','',$objexport->array_export_icon[0]);
     $label=$objexport->array_export_label[0];
     //print $value.'-'.$icon.'-'.$label."<br>";
-    print img_object($objexport->array_export_module[0]->getName(),$icon).' ';
+    print img_object($objexport->array_export_module[0]->getName(), $icon).' ';
     print $label;
     print '</td></tr>';
 
@@ -666,10 +666,10 @@ if ($step == 3 && $datatoexport)
 	// Lot de donnees a exporter
 	print '<tr><td width="25%">'.$langs->trans("DatasetToExport").'</td>';
 	print '<td>';
-	$icon=$objexport->array_export_icon[0];
+	$icon=preg_replace('/:.*$/','',$objexport->array_export_icon[0]);
 	$label=$objexport->array_export_label[0];
 	//print $value.'-'.$icon.'-'.$label."<br>";
-	print img_object($objexport->array_export_module[0]->getName(),$icon).' ';
+	print img_object($objexport->array_export_module[0]->getName(), $icon).' ';
 	print $label;
 	print '</td></tr>';
 
@@ -832,7 +832,8 @@ if ($step == 4 && $datatoexport)
     // Lot de donnees a exporter
     print '<tr><td width="25%">'.$langs->trans("DatasetToExport").'</td>';
     print '<td>';
-    print img_object($objexport->array_export_module[0]->getName(),$objexport->array_export_icon[0]).' ';
+	$icon=preg_replace('/:.*$/','',$objexport->array_export_icon[0]);
+    print img_object($objexport->array_export_module[0]->getName(), $icon).' ';
     print $objexport->array_export_label[0];
     print '</td></tr>';
 
@@ -1069,7 +1070,8 @@ if ($step == 5 && $datatoexport)
     // Lot de donnees a exporter
     print '<tr><td width="25%">'.$langs->trans("DatasetToExport").'</td>';
     print '<td>';
-    print img_object($objexport->array_export_module[0]->getName(),$objexport->array_export_icon[0]).' ';
+	$icon=preg_replace('/:.*$/','',$objexport->array_export_icon[0]);
+    print img_object($objexport->array_export_module[0]->getName(), $icon).' ';
     print $objexport->array_export_label[0];
     print '</td></tr>';
 

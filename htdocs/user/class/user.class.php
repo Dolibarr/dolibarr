@@ -1191,7 +1191,7 @@ class User extends CommonObject
 		$sql.= " lastname = '".$this->db->escape($this->lastname)."'";
 		$sql.= ", firstname = '".$this->db->escape($this->firstname)."'";
 		$sql.= ", login = '".$this->db->escape($this->login)."'";
-        $sql.= ", api_key = '".$this->db->escape($this->api_key)."'";
+        $sql.= ", api_key = ".($this->api_key ? "'".$this->db->escape($this->api_key)."'" : "null");
 		$sql.= ", gender = ".($this->gender != -1 ? "'".$this->db->escape($this->gender)."'" : "null");	// 'man' or 'woman'
 		$sql.= ", admin = ".$this->admin;
 		$sql.= ", address = '".$this->db->escape($this->address)."'";

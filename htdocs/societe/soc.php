@@ -49,7 +49,8 @@ $langs->load("commercial");
 $langs->load("bills");
 $langs->load("banks");
 $langs->load("users");
-if (!empty($conf->incoterm->enabled)) $langs->load("incoterm");
+if (! empty($conf->categories->enabled)) $langs->load("categories");
+if (! empty($conf->incoterm->enabled)) $langs->load("incoterm");
 if (! empty($conf->notification->enabled)) $langs->load("mails");
 
 $mesg=''; $error=0; $errors=array();

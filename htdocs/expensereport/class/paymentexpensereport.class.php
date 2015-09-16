@@ -488,7 +488,7 @@ class PaymentExpenseReport extends CommonObject
                 $this->datepaid,
                 $this->fk_typepayment,  // Payment mode id or code ("CHQ or VIR for example")
                 $label,
-                $amount,
+                -$amount,
                 $this->num_payment,
                 '',
                 $user,

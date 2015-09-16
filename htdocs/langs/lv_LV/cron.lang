@@ -76,7 +76,7 @@ CronMethodHelp=Objekts metode, lai palaistu. <BR> Par exemple atnest metodi Doli
 CronArgsHelp=Šī metode argumentus. <BR> Par exemple atnest metodi Dolibarr Produkta objekts / htdocs / produktu / klase / product.class.php, no paramters vērtība var būt <i>0, ProductRef</i>
 CronCommandHelp=Sistēma komandrindas izpildīt.
 CronCreateJob=Create new Scheduled Job
-CronFrom=From
+CronFrom=No
 # Info
 CronInfoPage=Informācija
 # Common

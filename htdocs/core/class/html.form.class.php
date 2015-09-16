@@ -3016,6 +3016,8 @@ class Form
         global $langs;
         $langs->load("categories");
 
+		include_once DOL_DOCUMENT_ROOT.'/categories/class.categorie.class.php';
+        
         $cat = new Categorie($this->db);
         $cate_arbo = $cat->get_full_arbo($type,$excludeafterid);
 
@@ -4674,6 +4676,8 @@ class Form
 	function showCategories($id, $type, $rendermode=0)
 	{
 		global $db;
+
+		include_once DOL_DOCUMENT_ROOT.'/categories/class.categorie.class.php';
 
 		$cat = new Categorie($db);
 		$categories = $cat->containing($id, $type);

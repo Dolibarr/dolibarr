@@ -264,10 +264,13 @@ if ($object->id > 0)
 	print '</tr>';
 
 	// Categories
-	print '<tr><td>' . $langs->trans("Categories") . '</td>';
-	print '<td colspan="3">';
-	print $form->showCategories($object->id, 'supplier', 1);
-	print "</td></tr>";
+	if (! empty($conf->categorie->enabled))
+	{
+    	print '<tr><td>' . $langs->trans("Categories") . '</td>';
+    	print '<td colspan="3">';
+    	print $form->showCategories($object->id, 'supplier', 1);
+    	print "</td></tr>";
+	}
 
 	// Other attributes
 	$parameters=array('socid'=>$object->id, 'colspan' => ' colspan="3"', 'colspanvalue' => '3');
