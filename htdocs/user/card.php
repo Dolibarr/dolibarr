@@ -278,7 +278,7 @@ if (($action == 'addgroup' || $action == 'removegroup') && $caneditfield)
     {
         $editgroup = new UserGroup($db);
         $editgroup->fetch($group);
-        $editgroup->oldcopy=dol_clone($editgroup);
+        $editgroup->oldcopy=clone($editgroup);
 
         $object->fetch($id);
         if ($action == 'addgroup')    $object->SetInGroup($group,($conf->multicompany->transverse_mode?GETPOST("entity"):$editgroup->entity));
@@ -340,7 +340,7 @@ if ($action == 'update' && ! $_POST["cancel"])
        {
             $db->begin();
 
-            $object->oldcopy=dol_clone($object);
+            $object->oldcopy=clone($object);
 
             $object->lastname	= GETPOST("lastname",'alpha');
             $object->firstname	= GETPOST("firstname",'alpha');
@@ -508,7 +508,7 @@ if ($action == 'update' && ! $_POST["cancel"])
     {
         $object->fetch($id);
 
-        $object->oldcopy=dol_clone($object);
+        $object->oldcopy=clone($object);
 
         $ret=$object->setPassword($user,$_POST["password"]);
         if ($ret < 0)
@@ -1046,7 +1046,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 	{
 		print '<tr><td>'.$langs->trans("ColorUser").'</td>';
 		print '<td>';
-		print $formother->selectColor(GETPOST('color')?GETPOST('color'):$object->color, 'color', 'usercolorconfig', 1, '', 'hideifnotset');
+		print $formother->selectColor(GETPOST('color')?GETPOST('color'):$object->color, 'color', null, 1, '', 'hideifnotset');
 		print '</td></tr>';
 	}
 
@@ -2151,7 +2151,7 @@ else
             {
 				print '<tr><td>'.$langs->trans("ColorUser").'</td>';
 				print '<td>';
-				print $formother->selectColor(GETPOST('color')?GETPOST('color'):$object->color, 'color', 'usercolorconfig', 1, '', 'hideifnotset');
+				print $formother->selectColor(GETPOST('color')?GETPOST('color'):$object->color, 'color', null, 1, '', 'hideifnotset');
 				print '</td></tr>';
 			}
 
