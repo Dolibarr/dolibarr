@@ -77,7 +77,7 @@ if ($action == 'addcontact' && $user->rights->expedition->creer)
 {
     if ($result > 0 && $id > 0)
     {
-  		$result = $objectsrc->add_contact($_POST["contactid"], $_POST["type"], $_POST["source"]);
+  		$result = $objectsrc->add_contact(GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'), $_POST["type"], $_POST["source"]);
     }
 
 	if ($result >= 0)
@@ -87,14 +87,15 @@ if ($action == 'addcontact' && $user->rights->expedition->creer)
 	}
 	else
 	{
-		if ($objectsrc->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+		if ($objectsrc->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') 
+		{
 			$langs->load("errors");
 			$mesg = $langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType");
 		} else {
 			$mesg = $objectsrc->error;
+			$mesgs = $objectsrc->errors;
 		}
-
-		setEventMessage($mesg, 'errors');
+		setEventMessages($mesg, $mesgs, 'errors');
 	}
 }
 
@@ -235,7 +236,6 @@ if ($id > 0 || ! empty($ref))
 
 	// Lignes de contacts
 	echo '<br>';
-
 
 	// Contacts lines (modules that overwrite templates must declare this into descriptor)
 	$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));

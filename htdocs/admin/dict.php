@@ -445,6 +445,7 @@ if ($id == 11)
 	$langs->load("interventions");
 	$elementList = array(
 			''				    => '',
+            'societe'           => $langs->trans('ThirdParty'),
 //			'proposal'          => $langs->trans('Proposal'),
 //			'order'             => $langs->trans('Order'),
 //			'invoice'           => $langs->trans('Bill'),
