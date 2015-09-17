@@ -39,6 +39,7 @@ $confirm=GETPOST('confirm');
 $socid=GETPOST('socid','int');
 $label=GETPOST('label');
 $description=GETPOST('description');
+$color=GETPOST('color','alpha');
 $visible=GETPOST('visible');
 $parent=GETPOST('parent');
 
@@ -71,6 +72,7 @@ if ($action == 'update' && $user->rights->categorie->creer)
 
 	$categorie->label          = $label;
 	$categorie->description    = dol_htmlcleanlastbr($description);
+	$categorie->color          = $color;
 	$categorie->socid          = ($socid ? $socid : 'null');
 	$categorie->visible        = $visible;
 
@@ -150,6 +152,13 @@ print '<td >';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 $doleditor=new DolEditor('description',$object->description,'',200,'dolibarr_notes','',false,true,$conf->fckeditor->enabled,ROWS_6,50);
 $doleditor->Create();
+print '</td></tr>';
+
+// Color
+print '<tr>';
+print '<td class="fieldrequired" width="25%">'.$langs->trans("Color").'</td>';
+print '<td >';
+print $formother->select_color($color, 'color');
 print '</td></tr>';
 
 // Parent category

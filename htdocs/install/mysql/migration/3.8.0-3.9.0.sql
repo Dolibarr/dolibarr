@@ -32,6 +32,7 @@ ALTER TABLE llx_societe ADD COLUMN model_pdf varchar(255);
 
 ALTER TABLE llx_societe_commerciaux ADD COLUMN import_key varchar(14) AFTER fk_user;
 
+ALTER TABLE llx_categorie ADD COLUMN color varchar(8);
 
 create table llx_overwrite_trans
 (
