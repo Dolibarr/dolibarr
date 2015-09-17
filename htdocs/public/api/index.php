@@ -31,7 +31,7 @@ $res=0;
 if (! $res && file_exists("../../main.inc.php")) $res=include '../../main.inc.php';
 if (! $res) die("Include of main fails");
 
-require_once DOL_DOCUMENT_ROOT.'/includes/autoload.php';
+require_once DOL_DOCUMENT_ROOT.'/api/restler.php';
 require_once DOL_DOCUMENT_ROOT.'/api/class/api.class.php';
 require_once DOL_DOCUMENT_ROOT.'/api/class/api_access.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
