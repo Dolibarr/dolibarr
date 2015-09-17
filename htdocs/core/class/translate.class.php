@@ -144,7 +144,6 @@ class Translate
 	 *  If data for file already loaded, do nothing.
 	 * 	All data in translation array are stored in UTF-8 format.
      *  tab_loaded is completed with $domain key.
-     *  Warning: MAIN_USE_CUSTOM_TRANSLATION is an old deprecated feature. Do not use it. It will revert
      *  rule "we keep first entry found with we keep last entry found" so it is probably not what you want to do.
      *
      *  Value for hash are: 1:Loaded from disk, 2:Not found, 3:Loaded from cache
@@ -261,7 +260,7 @@ class Translate
 								$tab=explode('=',$line,2);
 								$key=trim($tab[0]);
 								//print "Domain=$domain, found a string for $tab[0] with value $tab[1]<br>";
-								if ((! empty($conf->global->MAIN_USE_CUSTOM_TRANSLATION) || empty($this->tab_translate[$key])) && isset($tab[1]))    // If translation was already found, we must not continue, even if MAIN_FORCELANGDIR is set (MAIN_FORCELANGDIR is to replace lang dir, not to overwrite entries)
+								if (empty($this->tab_translate[$key]) && isset($tab[1]))    // If translation was already found, we must not continue, even if MAIN_FORCELANGDIR is set (MAIN_FORCELANGDIR is to replace lang dir, not to overwrite entries)
 								{
 									$value=trim(preg_replace('/\\n/',"\n",$tab[1]));
 
@@ -297,7 +296,7 @@ class Translate
 							}
 						}
 
-						if (empty($conf->global->MAIN_FORCELANGDIR) && empty($conf->global->MAIN_USE_CUSTOM_TRANSLATION)) break;		// Break loop on each root dir. If a module has forced dir, we do not stop loop.
+						if (empty($conf->global->MAIN_FORCELANGDIR)) break;		// Break loop on each root dir. If a module has forced dir, we do not stop loop.
 					}
 				}
 			}
@@ -330,6 +329,19 @@ class Translate
 			if (empty($this->_tab_loaded[$newdomain])) $this->_tab_loaded[$newdomain]=2;           // Marque ce fichier comme non trouve
 		}
 
+		
+		// Overwrite translation
+		$overwritekey='MAIN_OVERWRITE_TRANS_'.$this->defaultlang;
+        if (! empty($conf->global->$overwritekey))    // Overwrite translation with key1:newstring1,key2:newstring2
+        {
+            $tmparray=explode(',', $conf->global->$overwritekey);
+            foreach($tmparray as $tmp)
+            {
+                $tmparray2=explode(':',$tmp);
+                if (! empty($tmparray2[1])) $this->tab_translate[$tmparray2[0]]=$tmparray2[1];
+            }
+        }
+		
 		// Check to be sure that SeparatorDecimal differs from SeparatorThousand
 		if (! empty($this->tab_translate["SeparatorDecimal"]) && ! empty($this->tab_translate["SeparatorThousand"])
 		&& $this->tab_translate["SeparatorDecimal"] == $this->tab_translate["SeparatorThousand"]) $this->tab_translate["SeparatorThousand"]='';
@@ -409,18 +421,6 @@ class Translate
 	    if (! empty($this->tab_translate[$key]))	// Translation is available
 		{
             $str=$this->tab_translate[$key];
-
-		    // Overwrite translation (TODO Move this at a higher level when we load tab_translate to avoid doing it for each trans call)
-		    $overwritekey='MAIN_OVERWRITE_TRANS_'.$this->defaultlang;
-            if (! empty($conf->global->$overwritekey))    // Overwrite translation with key1:newstring1,key2:newstring2
-            {
-                $tmparray=explode(',', $conf->global->$overwritekey);
-                foreach($tmparray as $tmp)
-                {
-                    $tmparray2=explode(':',$tmp);
-                	if ($tmparray2[0]==$key) { $str=$tmparray2[1]; break; }
-                }
-            }
 
             if (! preg_match('/^Format/',$key)) 
             {

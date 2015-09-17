@@ -9,6 +9,13 @@ Upgrading to any other version or any other database system is abolutely require
 make a Dolibarr upgrade.
 
 
+***** ChangeLog for 3.9 compared to 3.8.* *****
+
+WARNING: Following changes may create regression for some external modules, but were necessary to make
+Dolibarr better:
+- Deprecated hidden option MAIN_USE_CUSTOM_TRANSLATION has been removed. Use MAIN_OVERWRITE_TRANS_xx_YY instead.
+
+
 ***** ChangeLog for 3.8 compared to 3.7.* *****
 For users:
 FIX: #2519
