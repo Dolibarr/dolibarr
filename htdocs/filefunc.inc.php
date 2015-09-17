@@ -30,7 +30,7 @@
  *  \brief      File that include conf.php file and commons lib like functions.lib.php
  */
 
-if (! defined('DOL_VERSION')) define('DOL_VERSION','3.8.0-beta');
+if (! defined('DOL_VERSION')) define('DOL_VERSION','3.8.0');
 
 if (! defined('EURO')) define('EURO',chr(128));
 
@@ -67,7 +67,9 @@ $conffiletoshow = "htdocs/conf/conf.php";
 
 // Include configuration
 // --- End of part replaced by Dolibarr packager makepack-dolibarr
+
 // Replace conf filename with "conf" parameter on url by GET
+/* Disabled. This is a serious security hole
 if (! empty($_GET['conf']))
 {
 	$confname=basename($_GET['conf']);
@@ -77,7 +79,7 @@ if (! empty($_GET['conf']))
 	$confname=basename(empty($_COOKIE['dolconf']) ? 'conf' : $_COOKIE['dolconf']);
 	$conffile = 'conf/'.$confname.'.php';
 }
-
+*/
 
 // Include configuration
 $result=@include_once $conffile;	// Keep @ because with some error reporting this break the redirect

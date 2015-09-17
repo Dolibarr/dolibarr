@@ -168,9 +168,9 @@ class Contact extends CommonObject
 		$sql.= " ".($user->id > 0 ? "'".$user->id."'":"null").",";
 		$sql.= " ".$this->priv.",";
 		$sql.= " ".$this->statut.",";
-        $sql.= " ".(! empty($this->canvas)?"'".$this->canvas."'":"null").",";
+        $sql.= " ".(! empty($this->canvas)?"'".$this->db->escape($this->canvas)."'":"null").",";
         $sql.= " ".$conf->entity.",";
-	$sql.= "'".$this->db->escape($this->ref_ext)."',";
+        $sql.= "'".$this->db->escape($this->ref_ext)."',";
         $sql.= " ".(! empty($this->import_key)?"'".$this->import_key."'":"null");
 		$sql.= ")";
 
