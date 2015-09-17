@@ -31,3 +31,13 @@ ALTER TABLE llx_accountingaccount RENAME TO llx_accounting_account;
 ALTER TABLE llx_societe ADD COLUMN model_pdf varchar(255);
 
 ALTER TABLE llx_societe_commerciaux ADD COLUMN import_key varchar(14) AFTER fk_user;
+
+
+create table llx_overwrite_trans
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  lang            varchar(5),	-- en_US, fr_FR ...
+  transkey	      varchar(128),
+  transvalue      text
+)ENGINE=innodb;
+
