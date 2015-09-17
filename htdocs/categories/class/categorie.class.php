@@ -368,7 +368,7 @@ class Categorie extends CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."categorie";
 		$sql.= " SET label = '".$this->db->escape($this->label)."',";
-		$sql.= " description = '".$this->db->escape($this->description)."'";
+		$sql.= " description = '".$this->db->escape($this->description)."',";
 		$sql.= " color = '".$this->db->escape($this->color)."'";
 		if (! empty($conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER))
 		{
