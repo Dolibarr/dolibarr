@@ -535,12 +535,15 @@ td.showDragHandle {
 /* ============================================================================== */
 
 #id-container {
-	margin-top: 12px;
-	margin-bottom: 8px;
+	/* margin-top: 12px;
+	margin-bottom: 8px; */
 	display: table;
 	table-layout: fixed;
 }
 #id-right, #id-left {
+	padding-top: 12px;
+	padding-bottom: 8px;
+
 	display: table-cell;
 	float: none;
 	vertical-align: top;
@@ -1113,7 +1116,7 @@ div.blockvmenupair, div.blockvmenuimpair, div.blockvmenubookmarks
 
 	background: rgb(<?php echo $colorbackvmenu1; ?>);
 
-    border-left: 1px solid #AAA;
+    /*border-left: 1px solid #AAA;
     border-right: 1px solid #BBB;
     border-bottom: 1px solid #BBB;
     border-top: 1px solid #BBB;
@@ -1122,6 +1125,7 @@ div.blockvmenupair, div.blockvmenuimpair, div.blockvmenubookmarks
     -moz-box-shadow: 3px 3px 4px #DDD;
     -webkit-box-shadow: 3px 3px 4px #DDD;
     box-shadow: 3px 3px 4px #DDD;
+    */
 }
 
 div.blockvmenusearch
@@ -1136,7 +1140,7 @@ div.blockvmenusearch
     padding-bottom: 3px;
     margin: 1px 0px 8px 2px;
 	background: rgb(<?php echo $colorbackvmenu2; ?>);
-
+/*
     border-left: 1px solid #AAA;
     border-right: 1px solid #CCC;
     border-bottom: 1px solid #CCC;
@@ -1146,6 +1150,7 @@ div.blockvmenusearch
     -moz-box-shadow: 3px 3px 4px #DDD;
     -webkit-box-shadow: 3px 3px 4px #DDD;
     box-shadow: 3px 3px 4px #DDD;
+    */
 }
 
 div.blockvmenusearch > form > div {
