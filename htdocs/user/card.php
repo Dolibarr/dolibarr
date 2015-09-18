@@ -841,6 +841,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     }
     else
     {
+    	require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
         // PARTIAL WORKAROUND
         $generated_fake_api_key=getRandomPassword(false);
         print '<input type="hidden" name="api_key" value="'.$generated_fake_api_key.'">';
