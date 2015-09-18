@@ -291,6 +291,55 @@ function pdf_getHeightForLogo($logo, $url = false)
 }
 
 /**
+ * Function to try to calculate height of a HTML Content
+ * 
+ * @param TCPDF     $pdf            PDF initialized object
+ * @param string    $htmlcontent    HTML Contect
+ * @see getStringHeight
+ */
+function pdfGetHeightForHtmlContent(&$pdf, $htmlcontent)
+{
+    // store current object
+    $pdf->startTransaction();
+    // store starting values
+    $start_y = $pdf->GetY();
+    var_dump($start_y);
+    $start_page = $pdf->getPage();
+    // call your printing functions with your parameters
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    $pdf->writeHTMLCell(0, 0, 0, $start_y, $htmlcontent, 0, 1, false, true, 'J',true);
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // get the new Y
+    $end_y = $pdf->GetY();
+    $end_page = $pdf->getPage();
+    // calculate height
+    $height = 0;
+    if ($end_page == $start_page) {
+        $height = $end_y - $start_y;
+    }
+    else 
+    {
+        for ($page=$start_page; $page <= $end_page; ++$page) {
+        	$this->setPage($page);
+        	if ($page == $start_page) {
+        		// first page
+        		$height = $this->h - $start_y - $this->bMargin;
+        	} elseif ($page == $end_page) {
+        		// last page
+        		$height = $end_y - $this->tMargin;
+        	} else {
+        		$height = $this->h - $this->tMargin - $this->bMargin;
+        	}
+        }
+	}
+	// restore previous object
+	$pdf = $pdf->rollbackTransaction();    
+
+    return $height;
+}
+
+
+/**
  * Returns the name of the thirdparty
  *
  * @param Societe|Contact $thirdparty Contact or thirdparty
@@ -854,11 +903,20 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 	$freetextheight=0;
 	if ($line)	// Free text
 	{
-		$width=20000; $align='L';	// By default, ask a manual break: We use a large value 20000, to not have automatic wrap. This make user understand, he need to add CR on its text.
-		if (! empty($conf->global->MAIN_USE_AUTOWRAP_ON_FREETEXT)) {
-			$width=200; $align='C';
+		//$line="eee<br>\nfd<strong>sf</strong>sdf<br>\nghfghg<br>";
+	    if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))   // by default
+		{
+			$width=20000; $align='L';	// By default, ask a manual break: We use a large value 20000, to not have automatic wrap. This make user understand, he need to add CR on its text.
+    		if (! empty($conf->global->MAIN_USE_AUTOWRAP_ON_FREETEXT)) {
+    			$width=200; $align='C';
+    		}
+		    $freetextheight=$pdf->getStringHeight($width,$line);
 		}
-		$freetextheight=$pdf->getStringHeight($width,$line);
+		else
+		{
+            $freetextheight=pdfGetHeightForHtmlContent($pdf,dol_htmlentitiesbr($line, 1));      // New method (works for HTML content)
+            //print '<br>'.$freetextheight;exit;
+		}
 	}
 
 	$marginwithfooter=$marge_basse + $freetextheight + (! empty($line1)?3:0) + (! empty($line2)?3:0) + (! empty($line3)?3:0) + (! empty($line4)?3:0);
@@ -867,7 +925,14 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 	if ($line)	// Free text
 	{
 		$pdf->SetXY($dims['lm'],-$posy);
-		$pdf->MultiCell(0, 3, $line, 0, $align, 0);
+		if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))   // by default
+		{
+            $pdf->MultiCell(0, 3, $line, 0, $align, 0);
+		}
+		else
+		{
+            $pdf->writeHTMLCell($pdf->page_largeur - $pdf->margin_left - $pdf->margin_right, $freetextheight, $dims['lm'], $dims['hk']-$marginwithfooter, $line);
+		}
 		$posy-=$freetextheight;
 	}
 

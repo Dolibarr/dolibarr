@@ -555,7 +555,16 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set_COMMANDE_FREE_TEXT">';
 print '<tr '.$bc[$var].'><td colspan="2">';
 print $langs->trans("FreeLegalTextOnOrders").' ('.$langs->trans("AddCRIfTooLong").')<br>';
-print '<textarea name="COMMANDE_FREE_TEXT" class="flat" cols="120">'.$conf->global->COMMANDE_FREE_TEXT.'</textarea>';
+if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
+{
+    print '<textarea name="COMMANDE_FREE_TEXT" class="flat" cols="120">'.$conf->global->COMMANDE_FREE_TEXT.'</textarea>';
+}
+else
+{
+    include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+    $doleditor=new DolEditor('COMMANDE_FREE_TEXT', $conf->global->COMMANDE_FREE_TEXT,'',80,'dolibarr_details');
+    print $doleditor->Create();
+}
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";

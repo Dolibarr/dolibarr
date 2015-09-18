@@ -1,1 +1,0 @@
-﻿CKEDITOR.plugins.setLang("font","pt",{fontSize:{label:"Tamanho",voiceLabel:"Tamanho da Letra",panelTitle:"Tamanho da Letra"},label:"Tipo de Letra",panelTitle:"Nome do Tipo de Letra",voiceLabel:"Tipo de Letra"});
