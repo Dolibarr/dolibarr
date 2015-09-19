@@ -10,6 +10,7 @@
  * Copyright (C) 2013-2014 Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2013      Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2015	   Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -121,6 +122,7 @@ class User extends CommonObject
 
 	var $color;						// Define background color for user in agenda
 
+	private $childrens=array();
 	/**
 	 *    Constructor de la classe
 	 *
@@ -2299,6 +2301,66 @@ class User extends CommonObject
 			return -1;
 		}
 	}
+
+	/**
+	 * @param $userid User to get childrens
+	 *
+	 * @throws Exception
+	 */
+	private function get_childrens($userid)
+	{
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."user";
+		$sql.= " WHERE fk_user = ".$userid;
+
+		dol_syslog(__METHOD__."  sql=".$sql, LOG_DEBUG);
+		$res  = $this->db->query($sql);
+		if ($res)
+		{
+			while ($rec = $this->db->fetch_array($res))
+			{
+				$this->childrens[] = $rec['rowid'];
+				$this->get_childrens($rec['rowid']);
+			}
+		}
+		else
+		{
+			dol_print_error($this->db);
+
+		}
+	}
+
+	/**
+	 * @param $userid User to get hierarchy
+	 *
+	 * @return string of user for SQL
+	 */
+	function get_hierarchy($userid)
+	{
+		$users="";
+		$hierarchy=array();
+
+		$this->get_childrens($userid);
+
+		$hierarchy=$this->childrens;
+
+		$max=count($hierarchy);
+		if($max)
+		{
+			$users.="( $this->id,";
+			foreach ($hierarchy as $i => $value)
+			{
+				if (($i+1)<$max)
+					$users.=$value.",";
+				else
+					$users.=$value.")";
+			}
+		}
+
+		if (! $users)
+			$users="(".$this->id.")";
+		return $users;
+	}
+
 
 
 	/**
