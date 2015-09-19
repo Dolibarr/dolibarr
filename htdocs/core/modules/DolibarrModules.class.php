@@ -6,6 +6,7 @@
  * Copyright (C) 2005-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2014       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2015       Peter Fontaine          <contact@peterfontaine.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -193,9 +194,32 @@ class DolibarrModules           // Can not be abstract, because we need to insta
      * @var bool Module is enabled globally (Multicompany support)
      */
     public $core_enabled;
+    
+    /**
+     * @var array Module dashboard entries
+     *
+     * @code $dashboardlines = array(
+     *            array(
+     *            'class_file' => '/mymodule/class/myclass1.class.php',
+     *            'class_name' => 'myClass',
+     *            'class_func' => 'myfunction_load_board',
+     *            'extra_param' => '',
+     *            'allow_external' => false,
+     *            'right' => '$user->rights->mymodule->right'
+     *            ),
+     *            array(
+     *            'class_file' => '/mymodule/class/myclass2.class.php',
+     *            'class_name' => 'myClass2',
+     *            'class_func' => 'myfunction_load_board',
+     *            'extra_param' => '',
+     *            'allow_external' => true,
+     *            'right' => '$user->rights->mymodule->right'
+     *            )
+     *            );
+     */
+    public $dashboardlines;
 
-	
-	/**
+    /**
 	 * Constructor. Define names, constants, directories, boxes, permissions
 	 *
 	 * @param DoliDB		$db      Database handler
@@ -253,6 +277,9 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 
         // Create module's directories
         if (! $err) $err+=$this->create_dirs();
+
+        // Insert dashboard lines
+        if (! $err) $err+=$this->insert_dashboardlines();
 
         // Execute addons requests
         $num=count($array_sql);
@@ -342,6 +369,9 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 
         // Remove module's directories
         if (! $err) $err+=$this->delete_dirs();
+
+        // Remove dashboard lines
+        if (! $err) $err+=$this->delete_dashboardlines();
 
         // Run complementary sql requests
         $num=count($array_sql);
@@ -1688,6 +1718,78 @@ print $sql;
         }
         return $err;
     }
+
+    /**
+     * Insert dashboard lines into DB
+     *
+     * @return int
+     */
+    function insert_dashboardlines()
+    {
+        global $conf;
+
+        $err=0;
+        $entity=$conf->entity;
+
+        if (is_array($this->dashboardlines) && ! empty($this->dashboardlines))
+        {
+            foreach($this->dashboardlines as $dbline)
+            {
+                if (is_array($dbline) && ! empty($dbline)) {
+                    $sql = "INSERT INTO " . MAIN_DB_PREFIX . "dashboardlines ";
+                    $sql .= "(module, class_file, class_name, class_func, extra_param, allow_external, perm, entity) ";
+                    $sql .= "VALUES ( ";
+                    $sql .= "'" . $this->db->encrypt($this->name) . "', ";
+                    $sql .= "'" . $this->db->encrypt($dbline['class_file']) . "', ";
+                    $sql .= "'" . $this->db->encrypt($dbline['class_name']) . "', ";
+                    $sql .= "'" . $this->db->encrypt($dbline['class_func']) . "', ";
+                    $sql .= ($dbline['extra_param'] ? "'" . $this->db->encrypt($dbline['extra_param']) . "'" : "NULL") . ", ";
+                    $sql .= ($dbline['allow_external'] ? '1' : '0') . ", ";
+                    $sql .= ($dbline['right'] ? "'" . $this->db->encrypt($dbline['right']) . "'" : "NULL") . ", ";
+                    $sql .= $entity;
+                    $sql .= ")";
+
+                    dol_syslog(get_class($this).'::insert_dashboardlines', LOG_DEBUG);
+                    $resql = $this->db->query($sql);
+                    if (! $resql)
+                    {
+                        $this->error=$this->db->lasterror();
+                        $err++;
+                    }
+                }
+            }
+        }
+
+        return $err;
+    }
+
+    /**
+     * Remove dashboard lines from DB
+     *
+     * @return int
+     */
+    function delete_dashboardlines()
+    {
+        global $conf;
+
+        $err=0;
+        $entity=$conf->entity;
+
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."dashboardlines ";
+        $sql.= "WHERE module = '".$this->db->encrypt($this->name)."' ";
+        $sql.= "AND entity = ".$entity;
+
+        dol_syslog(get_class($this).'::delete_dashboardlines', LOG_DEBUG);
+        $resql = $this->db->query($sql);
+        if (! $resql)
+        {
+            $this->error = $this->db->lasterror();
+            $err++;
+        }
+
+        return $err;
+    }
+
 
 	/**
 	 * Function called when module is enabled.

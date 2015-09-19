@@ -42,3 +42,14 @@ create table llx_overwrite_trans
   transvalue      text
 )ENGINE=innodb;
 
+CREATE TABLE llx_dashboardlines (
+  rowid          integer      AUTO_INCREMENT PRIMARY KEY,
+  module         varchar(255) NOT NULL,
+  class_file     varchar(255) NOT NULL,
+  class_name     varchar(255) NOT NULL,
+  class_func     varchar(255) NOT NULL,
+  extra_param    varchar(255) DEFAULT NULL,
+  allow_external smallint     DEFAULT 0 NOT NULL,
+  perm           varchar(255) DEFAULT NULL,
+  entity         integer      DEFAULT 1 NOT NULL
+)ENGINE=innodb;

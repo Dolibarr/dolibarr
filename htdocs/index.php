@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2015 Regis Houssin	<regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2012 Juanjo Menent	<jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2015      Peter Fontaine		<contact@peterfontaine.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +29,7 @@ define('NOCSRFCHECK',1);	// This is login page. We must be able to go on it from
 
 require 'main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/dashboardlines.lib.php';
 
 // If not defined, we select menu "home"
 $_GET['mainmenu']=GETPOST('mainmenu', 'alpha')?GETPOST('mainmenu', 'alpha'):'home';
@@ -418,6 +420,9 @@ if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire
 
 	$dashboardlines[] = $board->load_board($user);
 }
+
+// Adding lines from modules
+dbl_get_dashboardlines($dashboardlines);
 
 // Calculate total nb of late
 $totallate=0;
