@@ -37,7 +37,7 @@ function dbl_get_dashboardlines ( &$dashboardlines )
                 include_once DOL_DOCUMENT_ROOT . $line['class_file'];
                 $board = new $line['class_name']($db);
                 if ( !$line['extra_param'] ) $dashboardlines[] = $board->$line['class_func']($user);
-                else $dashboardlines[] = $board->$line['class_func']($user , $line['extra_param']);
+                else $dashboardlines[] = $board->$line['class_func']($user, $line['extra_param']);
             }
         }
     }
@@ -52,7 +52,7 @@ function dbl_get_lines_from_db ()
     $sql = "SELECT * FROM " . MAIN_DB_PREFIX . "dashboardlines ";
     $sql .= "WHERE entity = " . $entity;
 
-    dol_syslog("Get modules dashboard lines" , LOG_DEBUG);
+    dol_syslog("Get modules dashboard lines", LOG_DEBUG);
     $resql = $db->query($sql);
 
     $dbl = array();
