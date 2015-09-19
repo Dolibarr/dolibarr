@@ -194,7 +194,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
      * @var bool Module is enabled globally (Multicompany support)
      */
     public $core_enabled;
-    
+
     /**
      * @var array Module dashboard entries
      *
