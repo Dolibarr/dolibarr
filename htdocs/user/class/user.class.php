@@ -2336,28 +2336,36 @@ class User extends CommonObject
 	 */
 	function get_hierarchy($userid)
 	{
-		$users="";
+		global $conf;
+		$users = "";
 		$hierarchy=array();
 
-		$this->get_childrens($userid);
+		if(! empty($conf->global->USERS_USE_HIERARCHY)) {
+			$this->get_childrens($userid);
+			$hierarchy = $this->childrens;
 
-		$hierarchy=$this->childrens;
-
-		$max=count($hierarchy);
-		if($max)
-		{
-			$users.="( $this->id,";
-			foreach ($hierarchy as $i => $value)
-			{
-				if (($i+1)<$max)
-					$users.=$value.",";
-				else
-					$users.=$value.")";
+			$max = count($hierarchy);
+			if ($max) {
+				$users .= "( $this->id,";
+				foreach ($hierarchy as $i => $value) {
+					if (($i + 1) < $max) {
+						$users .= $value . ",";
+					}
+					else {
+						$users .= $value . ")";
+					}
+				}
 			}
+
+			if (!$users) {
+				$users = "(" . $this->id . ")";
+			}
+
+		}
+		else {
+			$users = "(".$this->id.")";
 		}
 
-		if (! $users)
-			$users="(".$this->id.")";
 		return $users;
 	}
 

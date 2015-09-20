@@ -136,6 +136,26 @@ else
 }
 print '</td></tr>';
 
+if ( $conf->global->MAIN_FEATURES_LEVEL > 0) {
+    // Use users hierarchy
+    $var = !$var;
+    print '<tr ' . $bc[$var] . '>';
+    print '<td>' . $langs->trans("UserUsesHierarchy") . '</td>';
+    print '<td align="center" width="20">&nbsp;</td>';
+
+    print '<td align="center" width="100">';
+    if ($conf->use_javascript_ajax) {
+        print ajax_constantonoff('USERS_USE_HIERARCHY');
+    }
+    else {
+        if (empty($conf->global->USERS_USE_HIERARCHY)) {
+            print '<a href="' . $_SERVER['PHP_SELF'] . '?action=set_USERS_USE_HIERARCHY">' . img_picto($langs->trans("Disabled"), 'off') . '</a>';
+        } else {
+            print '<a href="' . $_SERVER['PHP_SELF'] . '?action=del_USERS_USE_HIERARCHY">' . img_picto($langs->trans("Enabled"), 'on') . '</a>';
+        }
+    }
+    print '</td></tr>';
+}
 print '</table>';
 
 dol_fiche_end();

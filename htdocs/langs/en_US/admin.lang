@@ -1119,6 +1119,8 @@ EncryptedPasswordInDatabase=To allow the encryption of the passwords in the data
 DisableForgetPasswordLinkOnLogonPage=Do not show the link "Forget password" on login page
 UsersSetup=Users module setup
 UserMailRequired=EMail required to create a new user
+UserUsesHierarchy=Activate hierarchy mode
+
 ##### Company setup #####
 CompanySetup=Companies module setup
 CompanyCodeChecker=Module for third parties code generation and checking (customer or supplier)
