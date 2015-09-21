@@ -551,6 +551,12 @@ td.showDragHandle {
 #id-right {	/* This must stay id-right ant not be replaced with echo $right */
 	width: 100%;
 }
+#id-left {
+	background-color: #fff;
+	border-right: 1px #888 solid;
+/*	height: calc(100% - 50px);*/
+}
+
 
 div.fiche {
 	margin-<?php print $left; ?>: <?php print (GETPOST("optioncss") == 'print'?6:((empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT))?($dol_hide_leftmenu?'4':'20'):'24')); ?>px;
@@ -3674,7 +3680,6 @@ border-top-right-radius: 6px;
 .public_border {
 	border: 1px solid #888;
 }
-.public_liste_titre {
 
 
 
@@ -3686,6 +3691,17 @@ border-top-right-radius: 6px;
 }
 @media only screen and (max-width: 767px)
 {
+	.mainmenuaspan {
+    	display: none;
+    }
+    li.tmenu, li.tmenusel {
+    	min-width: 34px;
+    }
+    div.mainmenu {
+    	min-width: auto;
+    	background-position-y: 8px;
+    	height: 34px;
+    }
 	.imgopensurveywizard { width:95%; height: auto; }
 }
 
