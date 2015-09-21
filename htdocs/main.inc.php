@@ -1390,8 +1390,8 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 </script>' . "\n";
 
 		// Raven.js for client-side Sentry logging support
-		if (array_key_exists('mod_syslog_sentry', $conf->loghandlers) && ! empty($conf->global->SYSLOG_SENTRY_DSN)) {
-
+		if (array_key_exists('mod_syslog_sentry', $conf->loghandlers) && ! empty($conf->global->SYSLOG_SENTRY_DSN)) 
+		{
 			// Filter out secret key
 			$dsn = parse_url($conf->global->SYSLOG_SENTRY_DSN);
 			$public_dsn = $dsn['scheme'] . '://' . $dsn['user'] .'@' . $dsn['host'] . $dsn['path'];
@@ -1465,7 +1465,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 
 	    // Login name with tooltip
 		$toprightmenu.='<div class="inline-block nowrap"><div class="inline-block login_block_elem" style="padding: 0px;">';
-        $toprightmenu.=$user->getNomurl(0, '', true, 0, 11);
+        $toprightmenu.=$user->getNomurl(0, '', true, 0, 11, 0, 'firstname');
         $toprightmenu.='</div></div>';
 
 		$toprightmenu.='</div>';
