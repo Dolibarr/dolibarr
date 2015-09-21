@@ -234,7 +234,8 @@ class Translate
 				if ($usecachekey)
 				{
 			        //dol_syslog('Translate::Load we will cache result into usecachekey '.$usecachekey);
-
+                    //global $aaa; $aaa+=1;
+                    //print $aaa." ".$usecachekey."\n";
 				    require_once DOL_DOCUMENT_ROOT .'/core/lib/memory.lib.php';
 					$tmparray=dol_getcache($usecachekey);
 					if (is_array($tmparray) && count($tmparray))

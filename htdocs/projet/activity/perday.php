@@ -96,12 +96,12 @@ if ($action == 'assign')
     }
     else
     {
-    	setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Task")), '', 'errors');
+    	setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("Task")), '', 'errors');
     	$error++;
     }
     if (! GETPOST('type'))
     {
-    	setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), '', 'errors');
+    	setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), '', 'errors');
     	$error++;
     }
     if (! $error)
@@ -126,7 +126,7 @@ if ($action == 'assign')
 
 	if (! $error)
 	{
-		setEventMessages($langs->trans("TaskAssignedToEnterTime"), null);
+		setEventMessages("TaskAssignedToEnterTime", null);
 	}
 
 	$action='';
@@ -180,7 +180,7 @@ if ($action == 'addtime' && $user->rights->projet->creer)
 			}
 			else
 			{
-				setEventMessages($langs->trans("ErrorBadDate"), null, 'errors');
+				setEventMessages("ErrorBadDate", null, 'errors');
 				$error++;
 				break;
 			}
