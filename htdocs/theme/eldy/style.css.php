@@ -107,7 +107,7 @@ $colorbacklinepair2=(250+round($isred/3)).','.(250+round($isgreen/3)).','.(250+r
 $colorbacklinepairhover=(230+round(($isred+$isgreen+$isblue)/9)).','.(230+round(($isred+$isgreen+$isblue)/9)).','.(230+round(($isred+$isgreen+$isblue)/9));    // line pair
 $colorbackbody='243,243,243';
 $colortext='40,40,40';
-$fontsize='12';
+$fontsize='13';
 $fontsizesmaller='11';
 $usegradient=1;
 
@@ -487,6 +487,11 @@ div.confirmmessage {
 	z-index: 999999;
 }
 */
+.googlerefreshcal {
+	padding-top: 4px;
+	padding-bottom: 4px;
+}
+
 
 /* ============================================================================== */
 /* Styles to hide objects                                                         */
@@ -1042,9 +1047,10 @@ div.login_block_other { padding-top: 3px; text-align: right; }
 	height: 16px;
 }
 .alogin, .alogin:hover {
-	color: #888 !important;
+	color: #<?php echo $colortextbackvmenu; ?> !important;
 	font-weight: normal !important;
 	font-size: <?php echo $fontsizesmaller; ?>px !important;
+	padding-top: 2px;
 }
 .alogin:hover {
 	text-decoration:underline !important;
@@ -3695,12 +3701,10 @@ border-top-right-radius: 6px;
     	display: none;
     }
     li.tmenu, li.tmenusel {
-    	min-width: 34px;
+    	min-width: 32px;
     }
     div.mainmenu {
     	min-width: auto;
-    	background-position-y: 8px;
-    	height: 34px;
     }
 	.imgopensurveywizard { width:95%; height: auto; }
 }
