@@ -1292,8 +1292,8 @@ if ($action == 'create' && $user->rights->commande->creer)
 
 			$datedelivery = (! empty($objectsrc->date_livraison) ? $objectsrc->date_livraison : '');
 
-			$note_private = (! empty($objectsrc->note_private) ? $objectsrc->note_private : (! empty($objectsrc->note_private) ? $objectsrc->note_private : ''));
-			$note_public = (! empty($objectsrc->note_public) ? $objectsrc->note_public : '');
+			$note_private = $object->getDefaultCreateValueFor('note_private', (! empty($objectsrc->note_private) ? $objectsrc->note_private : null));
+			$note_public = $object->getDefaultCreateValueFor('note_public', (! empty($objectsrc->note_public) ? $objectsrc->note_public : null));
 
 			// Object source contacts list
 			$srccontactslist = $objectsrc->liste_contact(- 1, 'external', 1);
@@ -1311,6 +1311,9 @@ if ($action == 'create' && $user->rights->commande->creer)
 		$remise_absolue     = 0;
 		$dateorder          = empty($conf->global->MAIN_AUTOFILL_DATE_ORDER)?-1:'';
 		$projectid          = 0;
+
+		$note_private = $object->getDefaultCreateValueFor('note_private');
+		$note_public = $object->getDefaultCreateValueFor('note_public');
 	}
 	$absolute_discount=$soc->getAvailableDiscounts();
 
