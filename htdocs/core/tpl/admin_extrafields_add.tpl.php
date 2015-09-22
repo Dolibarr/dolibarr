@@ -74,6 +74,7 @@
 <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post">
 <input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">
 <input type="hidden" name="action" value="add">
+<input type="hidden" name="rowid" value="<?php echo $rowid ?>">
 
 <?php dol_fiche_head(); ?>
 
