@@ -557,9 +557,9 @@ td.showDragHandle {
 	width: 100%;
 }
 #id-left {
-	background-color: #fff;
+/*	background-color: #fff;
 	border-right: 1px #888 solid;
-/*	height: calc(100% - 50px);*/
+	height: calc(100% - 50px);*/
 }
 
 
@@ -777,6 +777,9 @@ div.tmenucenter
     height: <?php print $heightmenu; ?>px;
 	<?php } ?>
     width: 100%;
+}
+div.menu_titre {
+	padding-top: 5px;
 }
 .mainmenuaspan
 {
@@ -1064,6 +1067,8 @@ img.login, img.printer, img.entity {
 }
 img.loginphoto {
 	border-radius: 2px;
+	width: 16px;
+    height: 16px;
 }
 .span-icon-user {
 	background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/object_user.png',1); ?>) no-repeat scroll 7px 7px;
@@ -1113,8 +1118,31 @@ font.vsmenudisabledmargin { margin: 1px 1px 1px 8px; }
 
 a.help:link, a.help:visited, a.help:hover, a.help:active { font-size:<?php print $fontsizesmaller ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #666666; text-decoration: none; }
 
-
-div.blockvmenupair, div.blockvmenuimpair, div.blockvmenubookmarks
+.vmenu div.blockvmenufirst, .vmenu div.blockvmenulogo, .vmenu div.blockvmenubookmarks
+{
+    border-top: 1px solid #BBB;
+}
+.vmenu div.blockvmenubookmarks, .vmenu div.blockvmenuend, .vmenu div.blockvmenulogo
+{
+	border-bottom: 1px solid #BBB;
+}
+.vmenu div.blockvmenuend, .vmenu div.blockvmenulogo
+{
+	margin: 0 0 8px 2px;
+}
+.vmenu div.blockvmenuend, div.blockvmenusearch
+{
+	padding-bottom: 5px;
+}
+.vmenu div.blockvmenulogo
+{
+	padding-bottom: 10px;
+}
+div.blockvmenubookmarks
+{
+	padding-bottom: 6px !important;
+}
+div.blockvmenupair, div.blockvmenuimpair, div.blockvmenubookmarks, div.blockvmenuend
 {
 	font-family: <?php print $fontlist ?>;
 	color: #000000;
@@ -1124,20 +1152,21 @@ div.blockvmenupair, div.blockvmenuimpair, div.blockvmenubookmarks
     padding-right: 1px;
     padding-top: 3px;
     padding-bottom: 3px;
-    margin: 1px 0px 8px 2px;
+    /* margin: 1px 0 8px 2px; */
+    margin: 0 0 0 2px;
 
 	background: rgb(<?php echo $colorbackvmenu1; ?>);
 
-    /*border-left: 1px solid #AAA;
+    border-left: 1px solid #AAA;
     border-right: 1px solid #BBB;
-    border-bottom: 1px solid #BBB;
+/*    border-bottom: 1px solid #BBB;
     border-top: 1px solid #BBB;
     border-radius: 4px;
 	-moz-border-radius: 4px;
     -moz-box-shadow: 3px 3px 4px #DDD;
     -webkit-box-shadow: 3px 3px 4px #DDD;
     box-shadow: 3px 3px 4px #DDD;
-    */
+  */  
 }
 
 div.blockvmenusearch
@@ -1152,17 +1181,16 @@ div.blockvmenusearch
     padding-bottom: 3px;
     margin: 1px 0px 8px 2px;
 	background: rgb(<?php echo $colorbackvmenu2; ?>);
-/*
+
     border-left: 1px solid #AAA;
-    border-right: 1px solid #CCC;
-    border-bottom: 1px solid #CCC;
-    border-top: 1px solid #CCC;
-    border-radius: 4px;
+    border-right: 1px solid #BBB;
+    border-bottom: 1px solid #BBB;
+    border-top: 1px solid #BBB;
+    /*border-radius: 4px;
 	-moz-border-radius: 4px;
     -moz-box-shadow: 3px 3px 4px #DDD;
     -webkit-box-shadow: 3px 3px 4px #DDD;
-    box-shadow: 3px 3px 4px #DDD;
-    */
+    box-shadow: 3px 3px 4px #DDD;*/
 }
 
 div.blockvmenusearch > form > div {

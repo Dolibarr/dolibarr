@@ -1050,8 +1050,8 @@ table.login_table_securitycode tr td {
 
 div.login_block {
 	border-right: 1px solid rgba(0,0,0,0.3);
-    padding-top: 8px;
-	position: absolute;
+    padding-top: 5px;
+    padding-bottom: 3px;
 	<?php print $left; ?>: 0;
 	top: 0px;
 	position: fixed;
@@ -1089,6 +1089,9 @@ div.login_block_other { padding-top: 3px; }
 	padding: 0px 0px 0px 4px !important;
 	height: 16px;
 }
+.login_block_elem_name {
+	margin-top: 5px;
+}
 .alogin, .alogin:hover {
 	color: #888 !important;
 	font-weight: normal !important;
@@ -1105,7 +1108,10 @@ img.login, img.printer, img.entity {
 	font-weight: bold;
 }
 img.loginphoto {
-	border-radius: 2px;
+	border-radius: 5px;
+	margin-top: -4px;
+	width: 20px;
+	height: 20px;
 }
 
 .span-icon-user {
@@ -2167,7 +2173,6 @@ tr.liste_titre_sel th, th.liste_titre_sel, tr.liste_titre_sel td, td.liste_titre
     font-weight: normal;
     border-bottom: 1px solid #FDFFFF;
     text-decoration: underline;
-	text-shadow: 1px 0px 1px #<?php echo $colorshadowtitle; ?>;
 }
 input.liste_titre {
     background: transparent;
