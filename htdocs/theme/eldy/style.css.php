@@ -2722,8 +2722,12 @@ table.valid {
 	border-radius: 4px;
 }
 #tiptip_content {
-	background-color: rgb(255,255,255);
-	background-color: rgba(255,255,255,0.95);
+-moz-border-radius:0px;
+-webkit-border-radius: 0px;
+border-radius: 0px;
+background-color: rgb(255,255,255);
+/*	background-color: rgb(255,255,255);
+	background-color: rgba(255,255,255,0.95);*/
 	line-height: 1.4em;
 	min-width: 200px;
 }

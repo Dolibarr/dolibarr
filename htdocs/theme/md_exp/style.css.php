@@ -691,12 +691,14 @@ div#tmenu_tooltip {
 	display:none;
 <?php } else { ?>
 	background: rgb(<?php echo $colorbackhmenu1 ?>);
+	/*
 	background-image: linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(128,128,128,.3) 100%);
 	background-image: -o-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(128,128,128,.3) 100%);
 	background-image: -moz-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(128,128,128,.3) 100%);
 	background-image: -webkit-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(128,128,128,.3) 100%);
 	background-image: -ms-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(128,128,128,.3) 100%);
 	background-image: -webkit-gradient( linear, left top, left bottom, color-stop(0, rgba(255,255,255,.3)), color-stop(1, rgba(128,128,128,.3)) );
+	*/
 <?php } ?>
 }
 
@@ -2526,14 +2528,20 @@ padding: 2px;
 z-index: 3000;
 background-color: #EFCFAA;
 opacity: 1;
--moz-border-radius:3px;
--webkit-border-radius: 3px;
-border-radius: 3px;
+-moz-border-radius:0px;
+-webkit-border-radius: 0px;
+border-radius: 0px;
 }
+
 #tiptip_content {
-    background-color: rgb(252,248,246);
-	background-color: rgba(252,248,246,0.95);
+-moz-border-radius:0px;
+-webkit-border-radius: 0px;
+border-radius: 0px;
+background-color: rgb(255,255,255);
+/*    background-color: rgb(252,248,246);
+	background-color: rgba(252,248,246,0.95);*/
 	line-height: 1.4em;
+	min-width: 200px;
 }
 
 /* ============================================================================== */
