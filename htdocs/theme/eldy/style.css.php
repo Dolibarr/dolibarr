@@ -3669,7 +3669,6 @@ border-top-right-radius: 6px;
 .public_border {
 	border: 1px solid #888;
 }
-.public_liste_titre {
 
 
 

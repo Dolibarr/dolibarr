@@ -82,20 +82,16 @@ if ($action == 'update' && $user->rights->categorie->creer)
 
 	if (empty($categorie->label))
 	{
-		$action = 'create';
+	    $error++;
+		$action = 'edit';
 		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")), 'errors');
-	}
-	if (empty($categorie->description))
-	{
-		$action = 'create';
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Description")), 'errors');
 	}
 	if (empty($categorie->error))
 	{
 		$ret = $extrafields->setOptionalsFromPost($extralabels,$categorie);
 		if ($ret < 0) $error++;
 
-		if ($categorie->update($user) > 0)
+		if (! $error && $categorie->update($user) > 0)
 		{
 			header('Location: '.DOL_URL_ROOT.'/categories/viewcat.php?id='.$categorie->id.'&type='.$type);
 			exit;
@@ -138,14 +134,14 @@ dol_fiche_head('');
 print '<table class="border" width="100%">';
 
 // Ref
-print '<tr><td class="fieldrequired">';
+print '<tr><td class="fieldrequired" width="25%">';
 print $langs->trans("Ref").'</td>';
 print '<td><input type="text" size="25" id="label" name ="label" value="'.$object->label.'" />';
 print '</tr>';
 
 // Description
 print '<tr>';
-print '<td class="fieldrequired" width="25%">'.$langs->trans("Description").'</td>';
+print '<td>'.$langs->trans("Description").'</td>';
 print '<td >';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 $doleditor=new DolEditor('description',$object->description,'',200,'dolibarr_notes','',false,true,$conf->fckeditor->enabled,ROWS_6,50);
