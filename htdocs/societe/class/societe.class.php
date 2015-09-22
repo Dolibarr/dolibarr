@@ -419,7 +419,7 @@ class Societe extends CommonObject
      *    @param	User	$user       Object of user that ask creation
      *    @return   int         		>= 0 if OK, < 0 if KO
      */
-    function create($user='')
+    function create($user)
     {
         global $langs,$conf;
 
@@ -484,7 +484,7 @@ class Societe extends CommonObject
                     $this->add_commercial($user, $this->commercial_id);
                 }
                 // si un commercial cree un client il lui est affecte automatiquement
-                else if (!$user->rights->societe->client->voir)
+                else if (empty($user->rights->societe->client->voir))
                 {
                     $this->add_commercial($user, $user->id);
                 }
