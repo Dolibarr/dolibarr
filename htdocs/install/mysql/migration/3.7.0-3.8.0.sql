@@ -794,3 +794,6 @@ DELETE FROM llx_c_regions WHERE code_region=420 and fk_pays=4;
 ALTER TABLE llx_c_paiement MODIFY COLUMN libelle varchar(62);
 
 ALTER TABLE llx_societe_remise_except MODIFY COLUMN description text NOT NULL;
+
+-- Fix Autoincrement rowid on resources
+ALTER TABLE llx_c_type_resource CHANGE COLUMN rowid rowid INTEGER NOT NULL AUTO_INCREMENT;
