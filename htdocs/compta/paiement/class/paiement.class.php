@@ -697,9 +697,11 @@ class Paiement extends CommonObject
 		}
 	}
 
-	/*
-	 *    \brief      Information sur l'objet
-	 *    \param      id      id du paiement dont il faut afficher les infos
+	/**
+	 *    Information sur l'objet
+	 *    
+	 *    @param   int     $id      id du paiement dont il faut afficher les infos
+	 *    @return  void
 	 */
 	function info($id)
 	{

@@ -39,12 +39,14 @@ parse_str($argv[1]);
 $outputfile=dirname(__FILE__).'/../htdocs/install/filelist.xml';
 $fp = fopen($outputfile,'w');
 fputs($fp, '<?xml version="1.0" encoding="UTF-8" ?>'."\n");
-fputs($fp, '<checksum_list>'."\n");
-fputs($fp, '<dolibarr_root_dir version="'.$release.'">'."\n");
-$dir_iterator = new RecursiveDirectoryIterator(dirname(__FILE__).'/../htdocs/');
-$iterator = new RecursiveIteratorIterator($dir_iterator);
+fputs($fp, '<checksum_list version="'.$release.'">'."\n");
+
+fputs($fp, '<dolibarr_htdocs_dir>'."\n");
+
+$dir_iterator1 = new RecursiveDirectoryIterator(dirname(__FILE__).'/../htdocs/');
+$iterator1 = new RecursiveIteratorIterator($dir_iterator1);
 // need to ignore document custom etc
-$files = new RegexIterator($iterator, '#^(?:[A-Z]:)?(?:/(?!(?:custom|documents|conf|install|nltechno))[^/]+)+/[^/]+\.(?:php|css|html|js|json|tpl|jpg|png|gif|sql|lang)$#i');
+$files = new RegexIterator($iterator1, '#^(?:[A-Z]:)?(?:/(?!(?:custom|documents|conf|install|nltechno))[^/]+)+/[^/]+\.(?:php|css|html|js|json|tpl|jpg|png|gif|sql|lang)$#i');
 $dir='';
 $needtoclose=0;
 foreach ($files as $file) {
@@ -61,7 +63,34 @@ foreach ($files as $file) {
     }
 }
 fputs($fp, '</dir>'."\n");
-fputs($fp, '</dolibarr_root_dir>'."\n");
+fputs($fp, '</dolibarr_htdocs_dir>'."\n");
+
+
+fputs($fp, '<dolibarr_script_dir version="'.$release.'">'."\n");
+
+$dir_iterator2 = new RecursiveDirectoryIterator(dirname(__FILE__).'/../scripts/');
+$iterator2 = new RecursiveIteratorIterator($dir_iterator2);
+// need to ignore document custom etc
+$files = new RegexIterator($iterator2, '#^(?:[A-Z]:)?(?:/(?!(?:custom|documents|conf|install|nltechno))[^/]+)+/[^/]+\.(?:php|css|html|js|json|tpl|jpg|png|gif|sql|lang)$#i');
+$dir='';
+$needtoclose=0;
+foreach ($files as $file) {
+    $newdir = str_replace(dirname(__FILE__).'/../scripts', '', dirname($file));
+    if ($newdir!=$dir) {
+        if ($needtoclose)
+            fputs($fp, '</dir>'."\n");
+        fputs($fp, '<dir name="'.$newdir.'" >'."\n");
+        $dir = $newdir;
+        $needtoclose=1;
+    }
+    if (filetype($file)=="file") {
+        fputs($fp, '<md5file name="'.basename($file).'">'.md5_file($file).'</md5file>'."\n");
+    }
+}
+fputs($fp, '</dir>'."\n");
+fputs($fp, '</dolibarr_script_dir>'."\n");
+
+
 fputs($fp, '</checksum_list>'."\n");
 fclose($fp);
 

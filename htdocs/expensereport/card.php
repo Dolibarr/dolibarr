@@ -709,7 +709,7 @@ if ($action == "confirm_brouillonner" && GETPOST('confirm')=="yes" && $id > 0 &&
 	}
 	else
 	{
-		setEventMessages($langs->transnoentitiesnoconv("NOT_AUTHOR"), '', 'errors');
+		setEventMessages("NOT_AUTHOR", '', 'errors');
 	}
 }
 

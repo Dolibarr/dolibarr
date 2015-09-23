@@ -231,8 +231,8 @@ Security=Seguretat
 Passwords=Contrasenyes
 DoNotStoreClearPassword=No emmagatzemar la contrasenya sense xifrar a la base
 MainDbPasswordFileConfEncrypted=Encriptar la contrasenya de la base en l'arxiu conf.php
-InstrucToEncodePass=To have password encoded into the <b>conf.php</b> file, replace the line <br><b>$dolibarr_main_db_pass="...";</b><br>by<br><b>$dolibarr_main_db_pass="crypted:%s";</b>
-InstrucToClearPass=To have password decoded (clear) into the <b>conf.php</b> file, replace the line <br><b>$dolibarr_main_db_pass="crypted:...";</b><br>by<br><b>$dolibarr_main_db_pass="%s";</b>
+InstrucToEncodePass=Per tenir la contrasenya encriptada al fitxer <b>conf.php</b> reemplaça la línia<br><b>$dolibarr_main_db_pass="...";</b><br>per<br><b>$dolibarr_main_db_pass="crypted:%s";</b>
+InstrucToClearPass=Per tenir la contrasenya descodificada en el fitxer de configuració <b> conf.php </b>, reemplaça en aquest fitxer la línia <br><b>$dolibarr_main_db_pass="crypted:..."</b><br> per <br><b>$dolibarr_main_db_pass="%s"</b>
 ProtectAndEncryptPdfFiles=Protecció i encriptació dels pdf generats
 ProtectAndEncryptPdfFilesDesc=La protecció d'un document pdf deixa el document lliure a la lectura ia la impressió a qualsevol lector de PDF. Per contra, la modificació i la còpia resulten impossibles.
 Feature=Funció

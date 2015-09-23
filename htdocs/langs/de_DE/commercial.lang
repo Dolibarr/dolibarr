@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - commercial
 Commercial=Vertrieb
-CommercialArea=Vertriebsübersicht
+CommercialArea=Vertriebs - Übersicht
 CommercialCard=Vertriebskarte
 CustomerArea=Kundenübersicht
 Customer=Kunde
@@ -22,7 +22,7 @@ TaskRDV=Treffen
 TaskRDVWith=Treffen mit %s
 ShowTask=Zeige Aufgabe
 ShowAction=Ereignisse anzeigen
-ActionsReport=Ereignis Report
+ActionsReport=Ereignis Journal
 ThirdPartiesOfSaleRepresentative=Partner mit Vertriebsmitarbeiter
 SalesRepresentative=Vertriebsmitarbeiter
 SalesRepresentatives=Vertreter
