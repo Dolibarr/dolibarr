@@ -988,14 +988,16 @@ class Commande extends CommonOrder
         $this->ref_client         = '';
 
         // Set ref
-        require_once DOL_DOCUMENT_ROOT ."/core/modules/commande/".$conf->global->COMMANDE_ADDON.'.php';
-        $obj = $conf->global->COMMANDE_ADDON;
-        $modCommande = new $obj;
-        $this->ref = $modCommande->getNextValue($objsoc,$this);
-
+		$this->ref = '(PROV)';
 
         // Create clone
         $result=$this->create($user);
+        if ($result < 0) $error++;
+
+		// Set new ref
+		$newref='(PROV'.$this->id.')';
+        $sql = 'UPDATE '.MAIN_DB_PREFIX."commande SET ref='".$this->db->escape($newref)."' WHERE rowid=".$this->id;
+        $result=$this->db->query($sql);
         if ($result < 0) $error++;
 
         if (! $error)
