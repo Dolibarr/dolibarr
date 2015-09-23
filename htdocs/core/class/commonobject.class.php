@@ -389,7 +389,7 @@ abstract class CommonObject
      *
      *	@param	Translate	$langs			Language object for translation of civility
      *	@param	int			$option			0=No option, 1=Add civility
-     * 	@param	int			$nameorder		-1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname
+     * 	@param	int			$nameorder		-1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname, 2=Firstname
      * 	@param	int			$maxlen			Maximum length
      * 	@return	string						String with full name
      */
@@ -3549,7 +3549,47 @@ abstract class CommonObject
 
 	/* Functions common to commonobject and commonobjectline */
 
+    /* For default values */
 
+    /**
+     * Return the default value to use for a field when showing the create form of object. 
+     * Return values in this order:
+     * 1) If parameter is available into POST, we return it first.
+     * 2) If not but an alternate value was provided as parameter of function, we return it.
+     * 3) If not but a constant $conf->global->OBJECTELEMENT_FIELDNAME is set, we return it (It is better to use the dedicated table). 
+     * 4) Return value found into database (TODO No yet implemented)
+     * 
+     * @param   string      $fieldname          Name of field
+     * @param   string      $alternatevalue     Alternate value to use
+     * @return  string                          Default value
+     **/
+	function getDefaultCreateValueFor($fieldname, $alternatevalue=null)
+    {
+        global $conf, $_POST;
+
+        // If param is has been posted with use this value first.
+        if (isset($_POST[$fieldname])) return GETPOST($fieldname, 2);
+        
+        if (isset($alternatevalue)) return $alternatevalue;
+        
+        $newelement=$this->element;
+        if ($newelement == 'facture') $newelement='invoice';
+        if ($newelement == 'commande') $newelement='order';
+        if (empty($newelement)) 
+        {
+            dol_syslog("Ask a default value using common method getDefaultCreateValueForField on an object with no property ->element defined. Return empty string.", LOG_WARNING);
+            return '';
+        }
+        
+        $keyforfieldname=strtoupper($newelement.'_DEFAULT_'.$fieldname);
+        //var_dump($keyforfieldname);
+        if (isset($conf->global->$keyforfieldname)) return $conf->global->$keyforfieldname;
+        
+        // TODO Ad here a scan into table llx_overwrite_default with a filter on $this->element and $fieldname 
+        
+    }
+	
+    
 	/* For triggers */
 
 

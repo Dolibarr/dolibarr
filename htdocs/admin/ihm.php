@@ -343,7 +343,7 @@ else	// Show
     print ($conf->global->MAIN_LANG_DEFAULT=='auto'?$langs->trans("AutoDetectLang"):$langs->trans("Language_".$conf->global->MAIN_LANG_DEFAULT));
     print '</td>';
 	print '<td width="20">';
-    if ($user->admin && $conf->global->MAIN_LANG_DEFAULT!='auto') print info_admin($langs->trans("SubmitTranslation",$conf->global->MAIN_LANG_DEFAULT),1);
+    if ($user->admin && $conf->global->MAIN_LANG_DEFAULT!='auto') print info_admin($langs->trans("SubmitTranslation".($conf->global->MAIN_LANG_DEFAULT=='en_US'?'ENUS':''),$conf->global->MAIN_LANG_DEFAULT),1);
 	print '</td>';
 	print "</tr>";
 

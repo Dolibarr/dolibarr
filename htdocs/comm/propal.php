@@ -195,22 +195,18 @@ if (empty($reshook))
 		{
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
 			{
-						// Define output language
-				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
-				{
-					$outputlangs = $langs;
-					$newlang = '';
-					if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
-					if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
-					if (! empty($newlang)) {
-						$outputlangs = new Translate("", $conf);
-						$outputlangs->setDefaultLang($newlang);
-					}
-					$model=$object->modelpdf;
-					$ret = $object->fetch($id); // Reload to get new records
-
-					$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+				$outputlangs = $langs;
+				$newlang = '';
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+				if (! empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
 				}
+				$model=$object->modelpdf;
+				$ret = $object->fetch($id); // Reload to get new records
+
+				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
 		} else {
 			$langs->load("errors");
@@ -1290,7 +1286,7 @@ if ($action == 'create')
 		print '</td>';
 	} else {
 		print '<td colspan="2">';
-		print $form->select_company('', 'socid', 's.client = 1 OR s.client = 2 OR s.client = 3', 1);
+		print $form->select_company('', 'socid', '(s.client = 1 OR s.client = 2 OR s.client = 3) AND status=1', 1);
 		print '</td>';
 	}
 	print '</tr>' . "\n";
@@ -1414,11 +1410,7 @@ if ($action == 'create')
 	print '<tr>';
 	print '<td class="border" valign="top">' . $langs->trans('NotePublic') . '</td>';
 	print '<td valign="top" colspan="2">';
-	$note_public = '';
-	if (is_object($objectsrc)) 	// Take value from source object
-	{
-		$note_public = $objectsrc->note_public;
-	}
+	$note_public = $object->getDefaultCreateValueFor('note_public', (is_object($objectsrc)?$objectsrc->note_public:null));
 	$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
 	print $doleditor->Create(1);
 
@@ -1428,11 +1420,7 @@ if ($action == 'create')
 		print '<tr>';
 		print '<td class="border" valign="top">' . $langs->trans('NotePrivate') . '</td>';
 		print '<td valign="top" colspan="2">';
-		$note_private = '';
-		if (! empty($origin) && ! empty($originid) && is_object($objectsrc)) 		// Take value from source object
-		{
-			$note_private = $objectsrc->note_private;
-		}
+        $note_private = $object->getDefaultCreateValueFor('note_private', ((! empty($origin) && ! empty($originid) && is_object($objectsrc))?$objectsrc->note_private:null));
 		$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
 		print $doleditor->Create(1);
 		// print '<textarea name="note_private" wrap="soft" cols="70" rows="'.ROWS_3.'">'.$note_private.'.</textarea>
