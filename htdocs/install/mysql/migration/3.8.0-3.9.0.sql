@@ -42,3 +42,4 @@ create table llx_overwrite_trans
   transvalue      text
 )ENGINE=innodb;
 
+ALTER TABLE llx_paiement ADD COLUMN ref varchar(30) NOT NULL AFTER rowid;
