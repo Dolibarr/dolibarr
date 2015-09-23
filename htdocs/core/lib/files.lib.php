@@ -627,7 +627,7 @@ function dol_move($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
         	else dol_syslog("files.lib.php::dol_move failed", LOG_WARNING);
         }
         if (empty($newmask) && ! empty($conf->global->MAIN_UMASK)) $newmask=$conf->global->MAIN_UMASK;
-        @chmod($newpathofsrcfile, octdec($newmask));
+        @chmod($newpathofdestfile, octdec($newmask));
     }
 
     return $result;

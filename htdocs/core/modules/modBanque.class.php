@@ -164,7 +164,7 @@ class modBanque extends DolibarrModules
 		$this->export_code[$r]=$this->rights_class.'_'.$r;
 		$this->export_label[$r]='Bordereaux remise Chq/Fact';
 		$this->export_permission[$r]=array(array("banque","export"));
-		$this->export_fields_array[$r]=array("bch.rowid"=>"bordereauid","bch.number"=>"Numero","bch.ref_ext"=>"RefExt",'ba.ref'=>'AccountRef','ba.label'=>'AccountLabel','b.datev'=>'DateValue','b.num_chq'=>'ChequeOrTransferNumber','b.amount'=>'Credit','b.num_releve'=>'AccountStatement','b.datec'=>"DateCreation",
+		$this->export_fields_array[$r]=array("bch.rowid"=>"DepositId","bch.number"=>"Numero","bch.ref_ext"=>"RefExt",'ba.ref'=>'AccountRef','ba.label'=>'AccountLabel','b.datev'=>'DateValue','b.num_chq'=>'ChequeOrTransferNumber','b.amount'=>'Credit','b.num_releve'=>'AccountStatement','b.datec'=>"DateCreation",
 			"bch.date_bordereau"=>"Date","bch.amount"=>"Total","bch.nbcheque"=>"NbCheque","bu.url_id"=>"IdThirdParty","s.nom"=>"ThirdParty","f.facnumber"=>"InvoiceRef"
 			);
 		$this->export_TypeFields_array[$r]=array('ba.ref'=>'Text','ba.label'=>'Text','b.datev'=>'Date','b.num_chq'=>'Text','b.amount'=>'Numeric','b.num_releve'=>'Text','b.datec'=>"Date",
