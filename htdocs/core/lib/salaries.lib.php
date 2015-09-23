@@ -51,12 +51,10 @@ function salaries_prepare_head($object) {
 	$head[$h][2] = 'documents';
 	$h++;
 
-    /*
 	$head[$h][0] = DOL_URL_ROOT.'/compta/salaries/info.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Info");
 	$head[$h][2] = 'info';
 	$h++;
-	*/
     
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'salaries', 'remove');
 

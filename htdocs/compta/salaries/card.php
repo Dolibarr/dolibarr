@@ -83,7 +83,7 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 	$object->note=GETPOST("note");
 	$object->type_payment=GETPOST("paymenttype");
 	$object->num_payment=GETPOST("num_payment");
-	$object->fk_user_creat=$user->id;
+	$object->fk_user_author=$user->id;
 
 	// Set user current salary as ref salaray for the payment
 	$fuser=new User($db);
@@ -314,7 +314,6 @@ if ($id)
 	$head=salaries_prepare_head($object);
 
 	dol_fiche_head($head, 'card', $langs->trans("SalaryPayment"), 0, 'payment');
-
 
 	print '<table class="border" width="100%">';
 
