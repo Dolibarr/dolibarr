@@ -693,17 +693,17 @@ function dol_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto
  *  Show tab header of a card
  *
  *	@param	array	$links				Array of tabs
- *	@param	int		$active     		Active tab name
+ *	@param	string	$active     		Active tab name
  *	@param  string	$title      		Title
  *	@param  int		$notab				0=Add tab header, 1=no tab header. If you set this to 1, using dol_fiche_end() to close tab is not required.
  * 	@param	string	$picto				Add a picto on tab title
  *	@param	int		$pictoisfullpath	If 1, image path is a full path. If you set this to 1, you can use url returned by dol_buildpath('/mymodyle/img/myimg.png',1) for $picto.
  * 	@return	string
  */
-function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto='', $pictoisfullpath=0)
+function dol_get_fiche_head($links=array(), $active='', $title='', $notab=0, $picto='', $pictoisfullpath=0)
 {
-	global $conf,$langs;
-
+	global $conf,$langs, $hookmanager;
+	
 	$out="\n".'<div class="tabs" data-role="controlgroup" data-type="horizontal">'."\n";
 
 	// Show title
@@ -810,6 +810,9 @@ function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $p
 	$out.="</div>\n";
 	
 	if (! $notab) $out.="\n".'<div class="tabBar">'."\n";
+
+	$parameters=array('tabname' => $active);
+	$reshook=$hookmanager->executeHooks('printTabsHead',$parameters);    // Note that $action and $object may have been modified by some hooks
 
 	return $out;
 }
@@ -4898,7 +4901,7 @@ function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode=
  */
 function printCommonFooter($zone='private')
 {
-	global $conf;
+	global $conf, $hookmanager;
 	global $micro_start_time;
 
 	if ($zone == 'private') print "\n".'<!-- Common footer for private page -->'."\n";
@@ -4976,6 +4979,8 @@ function printCommonFooter($zone='private')
 		print "End of log output -->\n";
 	}
 
+	$parameters=array();
+	$reshook=$hookmanager->executeHooks('printCommonFooter',$parameters);    // Note that $action and $object may have been modified by some hooks
 }
 
 /**
