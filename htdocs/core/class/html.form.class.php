@@ -3015,7 +3015,7 @@ class Form
         global $langs;
         $langs->load("categories");
 
-		include_once DOL_DOCUMENT_ROOT.'/categories/class.categorie.class.php';
+		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
         
         $cat = new Categorie($this->db);
         $cate_arbo = $cat->get_full_arbo($type,$excludeafterid);
@@ -4675,7 +4675,7 @@ class Form
 	{
 		global $db;
 
-		include_once DOL_DOCUMENT_ROOT.'/categories/class.categorie.class.php';
+		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 		$cat = new Categorie($db);
 		$categories = $cat->containing($id, $type);
@@ -5061,10 +5061,7 @@ class Form
         $next_ref     = $object->ref_next?'<a data-role="button" data-icon="arrow-r" data-iconpos="right" href="'.$_SERVER["PHP_SELF"].'?'.$paramid.'='.urlencode($object->ref_next).$moreparam.'">'.(empty($conf->dol_use_jmobile)?'>':'&nbsp;').'</a>':'';
 
         //print "xx".$previous_ref."x".$next_ref;
-        //if ($previous_ref || $next_ref || $morehtml) {
-            //$ret.='<table class="nobordernopadding" width="100%"><tr class="nobordernopadding"><td class="nobordernopadding">';
-            $ret.='<div style="vertical-align: middle"><div class="inline-block floatleft refid'.(($shownav && ($previous_ref || $next_ref))?' refidpadding':'').'">';
-        //}
+        $ret.='<div style="vertical-align: middle"><div class="inline-block floatleft refid'.(($shownav && ($previous_ref || $next_ref))?' refidpadding':'').'">';
 
         $ret.=dol_htmlentities($object->$fieldref);
         if ($morehtmlref)

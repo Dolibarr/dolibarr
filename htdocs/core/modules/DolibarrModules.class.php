@@ -623,8 +623,14 @@ abstract class DolibarrModules
                 {
                     $dirfound++;
 
-                    // Run llx_mytable.sql files
+                    // Run llx_mytable.sql files, then llx_mytable_*.sql
+                    $files = array();
                     while (($file = readdir($handle))!==false)
+                    {
+                        $files[] = $file;
+                    }
+                    sort($files);
+                    foreach ($files as $file) 
                     {
                         if (preg_match('/\.sql$/i',$file) && ! preg_match('/\.key\.sql$/i',$file) && substr($file,0,4) == 'llx_' && substr($file,0,4) != 'data')
                         {
@@ -635,8 +641,14 @@ abstract class DolibarrModules
 
                     rewinddir($handle);
 
-                    // Run llx_mytable.key.sql files (Must be done after llx_mytable.sql)
+                    // Run llx_mytable.key.sql files (Must be done after llx_mytable.sql) then then llx_mytable_*.key.sql
+                    $files = array();
                     while (($file = readdir($handle))!==false)
+                    {
+                        $files[] = $file;
+                    }
+                    sort($files);
+                    foreach ($files as $file) 
                     {
                         if (preg_match('/\.key\.sql$/i',$file) && substr($file,0,4) == 'llx_' && substr($file,0,4) != 'data')
                         {
@@ -648,7 +660,13 @@ abstract class DolibarrModules
                     rewinddir($handle);
 
                     // Run data_xxx.sql files (Must be done after llx_mytable.key.sql)
+                    $files = array();
                     while (($file = readdir($handle))!==false)
+                    {
+                        $files[] = $file;
+                    }
+                    sort($files);
+                    foreach ($files as $file) 
                     {
                         if (preg_match('/\.sql$/i',$file) && ! preg_match('/\.key\.sql$/i',$file) && substr($file,0,4) == 'data')
                         {
@@ -660,7 +678,13 @@ abstract class DolibarrModules
                     rewinddir($handle);
 
                     // Run update_xxx.sql files
+                    $files = array();
                     while (($file = readdir($handle))!==false)
+                    {
+                        $files[] = $file;
+                    }
+                    sort($files);
+                    foreach ($files as $file) 
                     {
                         if (preg_match('/\.sql$/i',$file) && ! preg_match('/\.key\.sql$/i',$file) && substr($file,0,6) == 'update')
                         {
