@@ -112,7 +112,6 @@ class Categorie extends CommonObject
 	public $element='category';
 	public $table_element='categories';
 
-	var $id;
 	var $fk_parent;
 	var $label;
 	var $description;
@@ -134,7 +133,6 @@ class Categorie extends CommonObject
 	 * @see Categorie::TYPE_CONTACT
 	 */
 	var $type;
-	var $import_key;
 
 	var $cats=array();			// Tableau en memoire des categories
 	var $motherof=array();

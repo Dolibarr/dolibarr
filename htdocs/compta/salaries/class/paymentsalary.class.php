@@ -34,9 +34,6 @@ class PaymentSalary extends CommonObject
 	//public $element='payment_salary';			//!< Id that identify managed objects
 	//public $table_element='payment_salary';	//!< Name of table without prefix where object is stored
 
-	var $id;
-	var $ref;
-
 	var $tms;
 	var $fk_user;
 	var $datep;
@@ -47,7 +44,6 @@ class PaymentSalary extends CommonObject
 	var $label;
 	var $datesp;
 	var $dateep;
-	var $note;
 	var $fk_bank;
 	var $fk_user_creat;
 	var $fk_user_modif;

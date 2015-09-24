@@ -24,7 +24,6 @@ include_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
  */
 class ProjectStats extends Stats
 {
-	protected $db;
 	private $project;
 	public $userid;
 	public $socid;

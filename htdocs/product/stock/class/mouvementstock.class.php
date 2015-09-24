@@ -30,9 +30,6 @@
  */
 class MouvementStock extends CommonObject
 {
-    var $error;
-    var $db;
-
 	var $product_id;
 	var $entrepot_id;
 	var $qty;
