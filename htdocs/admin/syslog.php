@@ -178,7 +178,7 @@ if ($conf->global->MAIN_MODULE_MULTICOMPANY && $user->entity)
 //print "conf->global->MAIN_FEATURES_LEVEL = ".$conf->global->MAIN_FEATURES_LEVEL."<br><br>\n";
 
 // Output mode
-print_titre($langs->trans("SyslogOutput"));
+print load_fiche_titre($langs->trans("SyslogOutput"));
 
 // Mode
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
@@ -240,7 +240,7 @@ print "</form>\n";
 
 print '<br>'."\n\n";
 
-print_titre($langs->trans("SyslogLevel"));
+print load_fiche_titre($langs->trans("SyslogLevel"));
 
 // Level
 print '<form action="syslog.php" method="post">';

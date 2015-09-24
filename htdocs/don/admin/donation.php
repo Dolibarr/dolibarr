@@ -208,7 +208,7 @@ dol_fiche_head($head, 'general', $langs->trans("Donations"), 0, 'payment');
 /*
  *  Params
  */
-print_titre($langs->trans("Options"));
+print load_fiche_titre($langs->trans("Options"));
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -255,7 +255,7 @@ print '</form>';
 if (preg_match('/fr/i',$conf->global->MAIN_INFO_SOCIETE_COUNTRY))
 {
 	print '<br>';
-	print_titre($langs->trans("FrenchOptions"));
+	print load_fiche_titre($langs->trans("FrenchOptions"));
 
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
@@ -308,7 +308,7 @@ if (preg_match('/fr/i',$conf->global->MAIN_INFO_SOCIETE_COUNTRY))
 
 // Document templates
 print '<br>';
-print_titre($langs->trans("DonationsModels"));
+print load_fiche_titre($langs->trans("DonationsModels"));
 
 // Defini tableau def de modele
 $type='donation';

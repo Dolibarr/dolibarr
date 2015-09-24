@@ -178,7 +178,7 @@ print '<br>';
 if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
 {
     $langs->load("mails");
-    print_titre($langs->trans("Notifications"));
+    print load_fiche_titre($langs->trans("Notifications"));
 
     $sql = "SELECT u.rowid, u.lastname, u.firstname, u.fk_soc, u.email";
     $sql.= " FROM ".MAIN_DB_PREFIX."user as u";

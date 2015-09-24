@@ -237,7 +237,7 @@ $form=new Form($db);
  */
 $dirproduct=array('/core/modules/product/');
 
-print_titre($langs->trans("ProductCodeChecker"));
+print load_fiche_titre($langs->trans("ProductCodeChecker"));
 
 print '<table class="noborder" width="100%">'."\n";
 print '<tr class="liste_titre">'."\n";
@@ -319,7 +319,7 @@ print '</table>';
 
 print "<br>";
 
-print_titre($langs->trans("ProductOtherConf"));
+print load_fiche_titre($langs->trans("ProductOtherConf"));
 
 
 

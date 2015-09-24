@@ -453,7 +453,7 @@ else	// Show
 	 *  Library
 	 */
 	print '<br>';
-	print_titre($langs->trans("Library"));
+	print load_fiche_titre($langs->trans("Library"));
 
 	print '<table class="noborder" width="100%">'."\n";
 

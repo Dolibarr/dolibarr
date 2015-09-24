@@ -130,10 +130,10 @@ print '<br>';
 
 print '<table width="100%" class="nobordernopadding">';
 print '<tr><td>';
-print_titre($langs->transcountry($LTSummary,$mysoc->country_code));
+print load_fiche_titre($langs->transcountry($LTSummary,$mysoc->country_code));
 
 print '</td><td width="5">&nbsp;</td><td>';
-print_titre($langs->transcountry($LTPaid,$mysoc->country_code));
+print load_fiche_titre($langs->transcountry($LTPaid,$mysoc->country_code));
 print '</td></tr>';
 
 print '<tr><td width="50%" valign="top">';

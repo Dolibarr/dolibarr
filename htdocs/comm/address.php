@@ -306,7 +306,7 @@ elseif ($action == 'edit')
 
     dol_fiche_head($head, 'card', $societe->name);
 
-    print_titre($langs->trans("EditAddress"));
+    print load_fiche_titre($langs->trans("EditAddress"));
     print "<br>\n";
 
     if ($socid)

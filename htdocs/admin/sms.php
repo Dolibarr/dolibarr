@@ -289,7 +289,7 @@ else
 	if ($_GET["action"] == 'testconnect')
 	{
 		print '<br>';
-		print_titre($langs->trans("DoTestServerAvailability"));
+		print load_fiche_titre($langs->trans("DoTestServerAvailability"));
 
 		// If we use SSL/TLS
 		if (! empty($conf->global->MAIN_MAIL_EMAIL_TLS) && function_exists('openssl_open')) $server='ssl://'.$server;
@@ -311,7 +311,7 @@ else
 	if ($action == 'test')
 	{
 		print '<br>';
-		print_titre($langs->trans("DoTestSend"));
+		print load_fiche_titre($langs->trans("DoTestSend"));
 
 		// Cree l'objet formulaire mail
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formsms.class.php';

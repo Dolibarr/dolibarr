@@ -191,7 +191,7 @@ if ($action == 'create')
 		else if (empty($conf->product->enabled))
 			$title = $langs->trans("Services");
 
-		print_titre($title);
+		print load_fiche_titre($title);
 
 		/*
 		 * Invoice lines
@@ -456,7 +456,7 @@ else
 			else if (empty($conf->product->enabled))
 				$title = $langs->trans("Services");
 
-			print_titre($title);
+			print load_fiche_titre($title);
 
 			print '<table class="noborder" width="100%">';
 			print '<tr class="liste_titre">';

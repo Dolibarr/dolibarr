@@ -613,7 +613,7 @@ if ($id > 0 || ! empty($ref))
 			{
 				print "<br/>\n";
 
-				print_titre($langs->trans("ReceivingForSameOrder"));
+				print load_fiche_titre($langs->trans("ReceivingForSameOrder"));
 
 				print '<table class="noborder" width="100%">';
 

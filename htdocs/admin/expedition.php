@@ -248,7 +248,7 @@ dol_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
  * Expedition numbering model
  */
 
-print_titre($langs->trans("SendingsNumberingModules"));
+print load_fiche_titre($langs->trans("SendingsNumberingModules"));
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -354,7 +354,7 @@ print '</table><br>';
 /*
  *  Documents models for Sendings Receipt
  */
-print_titre($langs->trans("SendingsReceiptModel"));
+print load_fiche_titre($langs->trans("SendingsReceiptModel"));
 
 // Defini tableau def de modele invoice
 $type="shipping";
@@ -516,7 +516,7 @@ print '<br>';
  * Other options
  *
  */
-print_titre($langs->trans("OtherOptions"));
+print load_fiche_titre($langs->trans("OtherOptions"));
 
 $var=true;
 print "<table class=\"noborder\" width=\"100%\">";

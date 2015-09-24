@@ -317,7 +317,7 @@ if ($socid > 0)
 	$resql=$db->query($sql);
 	if ($resql)
 	{
-		print_titre($langs->trans("DiscountStillRemaining"));
+		print load_fiche_titre($langs->trans("DiscountStillRemaining"));
 		print '<table width="100%" class="noborder">';
 		print '<tr class="liste_titre">';
 		print '<td width="120" align="left">'.$langs->trans("Date").'</td>';	// Need 120+ for format with AM/PM
@@ -457,7 +457,7 @@ if ($socid > 0)
 	if ($resql) $resql2=$db->query($sql2);
 	if ($resql2)
 	{
-		print_titre($langs->trans("DiscountAlreadyCounted"));
+		print load_fiche_titre($langs->trans("DiscountAlreadyCounted"));
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td width="120" align="left">'.$langs->trans("Date").'</td>';	// Need 120+ for format with AM/PM

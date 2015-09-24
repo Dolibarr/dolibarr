@@ -617,7 +617,7 @@ if ($id > 0 || $ref)
 	/*
 	if ($_GET["action"] == "definir")
 	{
-		print_titre($langs->trans("SetStock"));
+		print load_fiche_titre($langs->trans("SetStock"));
 		print "<form action=\"product.php?id=$product->id\" method=\"post\">\n";
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="create_stock">';

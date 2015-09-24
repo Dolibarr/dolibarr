@@ -2409,7 +2409,7 @@ else
 			$modelmail='thirdparty';
 
 			print '<br>';
-			print_titre($langs->trans($titreform));
+			print load_fiche_titre($langs->trans($titreform));
 
 			// Define output language
 			$outputlangs = $langs;
