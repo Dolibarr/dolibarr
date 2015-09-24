@@ -3237,7 +3237,7 @@ class Form
             $formconfirm.= ($question ? '<div class="confirmmessage"'.img_help('','').' '.$question . '</div>': '');
             $formconfirm.= '</div>'."\n";
 
-            $formconfirm.= "\n<!-- begin ajax form_confirm page=".$page." -->\n";
+            $formconfirm.= "\n<!-- begin ajax formconfirm page=".$page." -->\n";
             $formconfirm.= '<script type="text/javascript">'."\n";
             $formconfirm.= 'jQuery(document).ready(function() {
             $(function() {
@@ -3308,11 +3308,11 @@ class Form
             });
             });
             </script>';
-            $formconfirm.= "<!-- end ajax form_confirm -->\n";
+            $formconfirm.= "<!-- end ajax formconfirm -->\n";
         }
         else
         {
-        	$formconfirm.= "\n<!-- begin form_confirm page=".$page." -->\n";
+        	$formconfirm.= "\n<!-- begin formconfirm page=".$page." -->\n";
 
             $formconfirm.= '<form method="POST" action="'.$page.'" class="notoptoleftroright">'."\n";
             $formconfirm.= '<input type="hidden" name="action" value="'.$action.'">'."\n";
@@ -3345,7 +3345,7 @@ class Form
             $formconfirm.= "</form>\n";
             $formconfirm.= '<br>';
 
-            $formconfirm.= "<!-- end form_confirm -->\n";
+            $formconfirm.= "<!-- end formconfirm -->\n";
         }
 
         return $formconfirm;
