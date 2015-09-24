@@ -214,7 +214,7 @@ llxHeader();
 $form=new Form($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("ContractsSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("ContractsSetup"),$linkback,'title_setup');
 
 print "<br>";
 

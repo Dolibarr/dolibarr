@@ -641,7 +641,7 @@ function formCategory($db,$object,$typeid,$socid=0,$showclassifyform=1)
 	}
 
 	print '<br>';
-	print_fiche_titre($title,$linktocreate,'');
+	print load_fiche_titre($title,$linktocreate,'');
 
 	// Form to add record into a category
 	if ($showclassifyform)

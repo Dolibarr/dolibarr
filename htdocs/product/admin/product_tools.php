@@ -246,7 +246,7 @@ $title = $langs->trans('ModulesSystemTools');
 
 llxHeader('',$title);
 
-print_fiche_titre($title,'','title_setup');
+print load_fiche_titre($title,'','title_setup');
 
 print $langs->trans("ProductVatMassChangeDesc").'<br><br>';
 

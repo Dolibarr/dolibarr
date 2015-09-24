@@ -288,7 +288,7 @@ $help_url='EN:Module Third Parties setup|FR:Paramétrage_du_module_Tiers|ES:Conf
 llxHeader('',$langs->trans("CompanySetup"),$help_url);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("CompanySetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("CompanySetup"),$linkback,'title_setup');
 
 
 $head = societe_admin_prepare_head();

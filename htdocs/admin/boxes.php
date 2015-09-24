@@ -219,7 +219,7 @@ $form=new Form($db);
 
 llxHeader('',$langs->trans("Boxes"));
 
-print_fiche_titre($langs->trans("Boxes"),'','title_setup');
+print load_fiche_titre($langs->trans("Boxes"),'','title_setup');
 
 print $langs->trans("BoxesDesc")." ".$langs->trans("OnlyActiveElementsAreShown")."<br>\n";
 

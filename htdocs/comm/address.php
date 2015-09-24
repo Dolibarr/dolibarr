@@ -211,7 +211,7 @@ if ($action == 'create')
             $object->country		= $tmparray['label'];
         }
 
-        print_fiche_titre($langs->trans("AddAddress"));
+        print load_fiche_titre($langs->trans("AddAddress"));
 
         print "<br>\n";
 

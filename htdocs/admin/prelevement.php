@@ -119,7 +119,7 @@ llxHeader('',$langs->trans("WithdrawalsSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 
-print_fiche_titre($langs->trans("WithdrawalsSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("WithdrawalsSetup"),$linkback,'title_setup');
 print '<br>';
 
 print '<form method="post" action="prelevement.php?action=set">';

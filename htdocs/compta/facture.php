@@ -1822,7 +1822,7 @@ if ($action == 'create')
 	$facturestatic = new Facture($db);
 	$extralabels = $extrafields->fetch_name_optionals_label($facturestatic->table_element);
 
-	print_fiche_titre($langs->trans('NewBill'));
+	print load_fiche_titre($langs->trans('NewBill'));
 
 	$soc = new Societe($db);
 	if ($socid > 0)
@@ -3804,7 +3804,7 @@ else if ($id > 0 || ! empty($ref))
 
 		print '<div class="clearboth"></div>';
 		print '<br>';
-		print_fiche_titre($langs->trans($titreform));
+		print load_fiche_titre($langs->trans($titreform));
 
 		// Cree l'objet formulaire mail
 		dol_fiche_head();

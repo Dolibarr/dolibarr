@@ -414,7 +414,7 @@ else 									// If javascript off
     $link.='</a>';
 }
 
-print_fiche_titre($s, $link.' &nbsp; &nbsp; '.$nav, '');
+print load_fiche_titre($s, $link.' &nbsp; &nbsp; '.$nav, '');
 
 
 // Load events from database into $eventarray

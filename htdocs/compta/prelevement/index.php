@@ -64,7 +64,7 @@ if (prelevement_check_config() < 0)
 	print '</div>';
 }
 
-print_fiche_titre($langs->trans("CustomersStandingOrdersArea"));
+print load_fiche_titre($langs->trans("CustomersStandingOrdersArea"));
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';

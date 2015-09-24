@@ -59,7 +59,7 @@ $form=new Form($db);
 
 llxHeader();
 
-print_fiche_titre($langs->trans("StatisticsOfSendings"), $mesg);
+print load_fiche_titre($langs->trans("StatisticsOfSendings"), $mesg);
 
 
 dol_mkdir($dir);

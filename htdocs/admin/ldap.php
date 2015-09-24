@@ -82,7 +82,7 @@ llxHeader('',$langs->trans("LDAPSetup"),'EN:Module_LDAP_En|FR:Module_LDAP|ES:M&o
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 
-print_fiche_titre($langs->trans("LDAPSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("LDAPSetup"),$linkback,'title_setup');
 
 $head = ldap_prepare_head();
 

@@ -107,7 +107,7 @@ if (! empty($id)) {
 			print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
 			print '<input type="hidden" name="action" value="ventil">';
 			
-			print_fiche_titre($langs->trans('SuppliersVentilation'),'','title_setup');
+			print load_fiche_titre($langs->trans('SuppliersVentilation'),'','title_setup');
 
             dol_fiche_head();
 			

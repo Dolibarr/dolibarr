@@ -1238,7 +1238,7 @@ if ($action == 'create')
 	$facturestatic = new FactureFournisseur($db);
 	$extralabels = $extrafields->fetch_name_optionals_label($facturestatic->table_element);
 
-    print_fiche_titre($langs->trans('NewBill'));
+    print load_fiche_titre($langs->trans('NewBill'));
 
     dol_htmloutput_events();
 
@@ -2310,7 +2310,7 @@ else
 
 			print '<div class="clearboth"></div>';
             print '<br>';
-            print_fiche_titre($langs->trans('SendBillByMail'));
+            print load_fiche_titre($langs->trans('SendBillByMail'));
 
             dol_fiche_head('');
 

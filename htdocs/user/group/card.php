@@ -222,7 +222,7 @@ $fuserstatic = new User($db);
 
 if ($action == 'create')
 {
-    print_fiche_titre($langs->trans("NewGroup"));
+    print load_fiche_titre($langs->trans("NewGroup"));
 
     print dol_set_focus('#nom');
 
@@ -374,7 +374,7 @@ else
              * Liste des utilisateurs dans le groupe
              */
 
-            print_fiche_titre($langs->trans("ListOfUsersInGroup"),'','');
+            print load_fiche_titre($langs->trans("ListOfUsersInGroup"),'','');
 
             // On selectionne les users qui ne sont pas deja dans le groupe
             $exclude = array();

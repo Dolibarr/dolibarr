@@ -469,7 +469,7 @@ if ($id > 0 || ! empty($ref))
 	// Form to add a transaction with no invoice
 	if ($user->rights->banque->modifier && $action == 'addline')
 	{
-        print_fiche_titre($langs->trans("AddBankRecordLong"),'','');
+        print load_fiche_titre($langs->trans("AddBankRecordLong"),'','');
 
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';

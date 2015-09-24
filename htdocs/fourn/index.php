@@ -48,7 +48,7 @@ $companystatic=new Societe($db);
 
 llxHeader("",$langs->trans("SuppliersArea"));
 
-print_fiche_titre($langs->trans("SuppliersArea"));
+print load_fiche_titre($langs->trans("SuppliersArea"));
 
 
 //print '<table border="0" width="100%" class="notopnoleftnoright">';

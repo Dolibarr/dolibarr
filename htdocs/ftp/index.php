@@ -396,7 +396,7 @@ $userstatic = new User($db);
 
 
 // List
-print_fiche_titre($langs->trans("FTPArea"));
+print load_fiche_titre($langs->trans("FTPArea"));
 
 print $langs->trans("FTPAreaDesc")."<br>";
 

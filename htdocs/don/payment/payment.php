@@ -162,7 +162,7 @@ if (GETPOST("action") == 'create')
 
 	$total = $don->amount;
 
-	print_fiche_titre($langs->trans("DoPayment"));
+	print load_fiche_titre($langs->trans("DoPayment"));
 
 	if ($mesg)
 	{

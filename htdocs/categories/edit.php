@@ -121,7 +121,7 @@ $formother = new FormOther($db);
 
 llxHeader("","",$langs->trans("Categories"));
 
-print_fiche_titre($langs->trans("ModifCat"));
+print load_fiche_titre($langs->trans("ModifCat"));
 
 $object->fetch($id);
 

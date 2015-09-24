@@ -45,7 +45,7 @@ $result = restrictedArea($user, 'prelevement','','','bons');
 
 llxHeader('',$langs->trans("WithdrawStatistics"));
 
-print_fiche_titre($langs->trans("Statistics"));
+print load_fiche_titre($langs->trans("Statistics"));
 
 // Define total and nbtotal
 $sql = "SELECT sum(pl.amount), count(pl.amount)";

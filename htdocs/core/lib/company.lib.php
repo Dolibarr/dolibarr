@@ -479,7 +479,7 @@ function show_projects($conf,$langs,$db,$object,$backtopage='')
         }
 
         print "\n";
-        print_fiche_titre($langs->trans("ProjectsDedicatedToThisThirdParty"),$buttoncreate,'');
+        print load_fiche_titre($langs->trans("ProjectsDedicatedToThisThirdParty"),$buttoncreate,'');
         print "\n".'<table class="noborder" width=100%>';
 
         $sql  = "SELECT p.rowid as id, p.title, p.ref, p.public, p.dateo as do, p.datee as de, p.fk_statut as status";
@@ -602,7 +602,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     print "\n";
 
     $title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("ContactsForCompany") : $langs->trans("ContactsAddressesForCompany"));
-    print_fiche_titre($title,$buttoncreate,'');
+    print load_fiche_titre($title,$buttoncreate,'');
 
     print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'" name="formfilter">';
     print '<input type="hidden" name="socid" value="'.$object->id.'">';
@@ -816,7 +816,7 @@ function show_addresses($conf,$langs,$db,$object,$backtopage='')
 	}
 
 	print "\n";
-	print_fiche_titre($langs->trans("AddressesForCompany"),$buttoncreate,'');
+	print load_fiche_titre($langs->trans("AddressesForCompany"),$buttoncreate,'');
 
 	print "\n".'<table class="noborder" width="100%">'."\n";
 

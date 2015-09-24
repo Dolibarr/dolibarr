@@ -55,7 +55,7 @@ $help_url="EN:ModuleFichinters|FR:Module_Fiche_Interventions|ES:Módulo_FichaInt
 
 llxHeader("",$langs->trans("Interventions"),$help_url);
 
-print_fiche_titre($langs->trans("InterventionsArea"));
+print load_fiche_titre($langs->trans("InterventionsArea"));
 
 //print '<table width="100%" class="notopnoleftnoright">';
 //print '<tr><td valign="top" width="30%" class="notopnoleft">';

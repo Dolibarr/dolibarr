@@ -879,7 +879,7 @@ else
         /* Show create form */
 
         $linkback="";
-        print_fiche_titre($langs->trans("NewThirdParty"),$linkback,'title_companies.png');
+        print load_fiche_titre($langs->trans("NewThirdParty"),$linkback,'title_companies.png');
 
         if (! empty($conf->use_javascript_ajax))
         {
@@ -1284,7 +1284,7 @@ else
          * Edition
          */
 
-        //print_fiche_titre($langs->trans("EditCompany"));
+        //print load_fiche_titre($langs->trans("EditCompany"));
 
         if ($socid)
         {

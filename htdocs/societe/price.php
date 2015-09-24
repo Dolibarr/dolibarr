@@ -236,7 +236,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 		// Create mode
 
-		print_fiche_titre($langs->trans('PriceByCustomer'));
+		print load_fiche_titre($langs->trans('PriceByCustomer'));
 
 		print '<form action="' . $_SERVER["PHP_SELF"] . '?socid=' . $soc->id . '" method="POST">';
 		print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
@@ -309,7 +309,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 		// Edit mode
 
-		print_fiche_titre($langs->trans('PriceByCustomer'));
+		print load_fiche_titre($langs->trans('PriceByCustomer'));
 
 		$result = $prodcustprice->fetch(GETPOST('lineid', 'int'));
 		if ($result < 0) {

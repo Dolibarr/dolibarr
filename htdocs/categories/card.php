@@ -236,7 +236,7 @@ if ($user->rights->categorie->creer)
 		if ($origin) print '<input type="hidden" name="origin" value="'.$origin.'">';
 		if ($catorigin)	print '<input type="hidden" name="catorigin" value="'.$catorigin.'">';
 
-		print_fiche_titre($langs->trans("CreateCat"));
+		print load_fiche_titre($langs->trans("CreateCat"));
 
 		dol_fiche_head('');
 

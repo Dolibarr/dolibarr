@@ -147,7 +147,7 @@ if (preg_match('/^mac/i',PHP_OS)) $linuxlike=0;
 $wikihelp='EN:Setup Sms|FR:Paramétrage Sms|ES:Configuración Sms';
 llxHeader('',$langs->trans("Setup"),$wikihelp);
 
-print_fiche_titre($langs->trans("SmsSetup"),'','title_setup');
+print load_fiche_titre($langs->trans("SmsSetup"),'','title_setup');
 
 print $langs->trans("SmsDesc")."<br>\n";
 print "<br>\n";

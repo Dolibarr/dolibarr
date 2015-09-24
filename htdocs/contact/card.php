@@ -443,7 +443,7 @@ else
 
             $title = $addcontact = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("AddContact") : $langs->trans("AddContactAddress"));
             $linkback='';
-            print_fiche_titre($title,$linkback,'title_companies.png');
+            print load_fiche_titre($title,$linkback,'title_companies.png');
 
             // Affiche les erreurs
             dol_htmloutput_errors(is_numeric($error)?'':$error,$errors);
@@ -626,7 +626,7 @@ else
 
 
             // Add personnal information
-            print_fiche_titre('<div class="comboperso">'.$langs->trans("PersonalInformations").'</div>','','');
+            print load_fiche_titre('<div class="comboperso">'.$langs->trans("PersonalInformations").'</div>','','');
 
             print '<table class="border" width="100%">';
 

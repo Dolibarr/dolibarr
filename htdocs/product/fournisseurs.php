@@ -311,11 +311,11 @@ if ($id || $ref)
 				if ($rowid)
 				{
 					$product->fetch_product_fournisseur_price($rowid, 1); //Ignore the math expression when getting the price
-					print_fiche_titre($langs->trans("ChangeSupplierPrice"));
+					print load_fiche_titre($langs->trans("ChangeSupplierPrice"));
 				}
 				else
 				{
-					print_fiche_titre($langs->trans("AddSupplierPrice"));
+					print load_fiche_titre($langs->trans("AddSupplierPrice"));
 				}
 
 				print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$product->id.'" method="POST">';

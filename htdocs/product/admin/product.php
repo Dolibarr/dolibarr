@@ -225,7 +225,7 @@ else if (empty($conf->service->enabled))
 llxHeader('',$title);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($title,$linkback,'title_setup');
+print load_fiche_titre($title,$linkback,'title_setup');
 
 $head = product_admin_prepare_head();
 dol_fiche_head($head, 'general', $tab, 0, 'product');

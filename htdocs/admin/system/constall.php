@@ -39,7 +39,7 @@ if (!$user->admin)
 
 llxHeader();
 
-print_fiche_titre($langs->trans("SummaryConst"),'','title_setup');
+print load_fiche_titre($langs->trans("SummaryConst"),'','title_setup');
 
 
 print load_fiche_titre($langs->trans("ConfigurationFile").' ('.$conffiletoshowshort.')');

@@ -116,7 +116,7 @@ $product_static=new Product($db);
 $payment_static=new Paiement($db);
 $paymentfourn_static=new PaiementFourn($db);
 
-//print_fiche_titre($langs->trans("VAT"),"");
+//print load_fiche_titre($langs->trans("VAT"),"");
 
 //$fsearch.='<br>';
 $fsearch.='  <input type="hidden" name="year" value="'.$year.'">';

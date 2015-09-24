@@ -66,7 +66,7 @@ $textobject=$langs->transnoentitiesnoconv("CommRequests");
 llxHeader('',$langs->trans("AskPriceSupplierSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("AskPriceSupplierSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("AskPriceSupplierSetup"),$linkback,'title_setup');
 
 $head = askpricesupplier_admin_prepare_head();
 

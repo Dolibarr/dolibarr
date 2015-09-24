@@ -166,7 +166,7 @@ $form=new Form($db);
 if (! $rowid && $action != 'create' && $action != 'edit')
 {
 
-	print_fiche_titre($langs->trans("MembersTypes"));
+	print load_fiche_titre($langs->trans("MembersTypes"));
 
 	dol_fiche_head('');
 
@@ -238,7 +238,7 @@ if ($action == 'create')
 {
 	$object = new AdherentType($db);
 
-	print_fiche_titre($langs->trans("NewMemberType"));
+	print load_fiche_titre($langs->trans("NewMemberType"));
 
 	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';

@@ -2736,7 +2736,7 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
  *	@param	string	$title			Title to show
  *	@return	string					Title to show
  *  @deprecated						Use load_fiche_titre instead
- *  @see print_fiche_titre, load_fiche_titre
+ *  @see load_fiche_titre
  */
 function print_titre($title)
 {

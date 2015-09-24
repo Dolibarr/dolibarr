@@ -1233,7 +1233,7 @@ if (! empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
  */
 if ($action == 'create' && $user->rights->commande->creer)
 {
-	print_fiche_titre($langs->trans('CreateOrder'),'','title_commercial.png');
+	print load_fiche_titre($langs->trans('CreateOrder'),'','title_commercial.png');
 
 	$soc = new Societe($db);
 	if ($socid > 0)
@@ -2376,7 +2376,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 
 			print '<div class="clearboth"></div>';
 			print '<br>';
-			print_fiche_titre($langs->trans('SendOrderByMail'));
+			print load_fiche_titre($langs->trans('SendOrderByMail'));
 
 			dol_fiche_head('');
 

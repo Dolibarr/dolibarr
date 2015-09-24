@@ -188,7 +188,7 @@ if ($id)
 // Formulaire saisie tva
 if ($action == 'create')
 {
-	print_fiche_titre($langs->trans("VAT") . ' - ' . $langs->trans("New"));
+	print load_fiche_titre($langs->trans("VAT") . ' - ' . $langs->trans("New"));
 
 	if (! empty($conf->use_javascript_ajax))
     {

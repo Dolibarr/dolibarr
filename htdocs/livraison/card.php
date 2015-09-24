@@ -238,7 +238,7 @@ $formfile = new FormFile($db);
 if ($action == 'create')
 {
 
-	print_fiche_titre($langs->trans("CreateADeliveryOrder"));
+	print load_fiche_titre($langs->trans("CreateADeliveryOrder"));
 
 	if ($mesg)
 	{

@@ -264,7 +264,7 @@ if ($socid > 0)
 	print '</table>';
 	print '<br>';
 
-	print_fiche_titre($langs->trans("NewGlobalDiscount"),'','');
+	print load_fiche_titre($langs->trans("NewGlobalDiscount"),'','');
 	print '<table class="border" width="100%">';
 	print '<tr><td width="38%">'.$langs->trans("AmountHT").'</td>';
 	print '<td><input type="text" size="5" name="amount_ht" value="'.$_POST["amount_ht"].'">';

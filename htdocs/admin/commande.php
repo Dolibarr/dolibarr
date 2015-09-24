@@ -263,7 +263,7 @@ llxHeader("",$langs->trans("OrdersSetup"));
 $form=new Form($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("OrdersSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("OrdersSetup"),$linkback,'title_setup');
 
 $head = order_admin_prepare_head();
 

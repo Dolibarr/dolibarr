@@ -678,7 +678,7 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
     else
     {
         // Formulaire de demande de congés payés
-        print_fiche_titre($langs->trans('MenuAddCP'), '', 'title_hrm.png');
+        print load_fiche_titre($langs->trans('MenuAddCP'), '', 'title_hrm.png');
 
         // Si il y a une erreur
         if (GETPOST('error')) {
@@ -896,7 +896,7 @@ else
             $userRequest = new User($db);
             $userRequest->fetch($cp->fk_user);
 
-            //print_fiche_titre($langs->trans('TitreRequestCP'));
+            //print load_fiche_titre($langs->trans('TitreRequestCP'));
 
             // Si il y a une erreur
             if (GETPOST('error'))

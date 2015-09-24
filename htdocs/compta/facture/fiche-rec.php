@@ -118,7 +118,7 @@ $companystatic = new Societe($db);
  */
 if ($action == 'create')
 {
-	print_fiche_titre($langs->trans("CreateRepeatableInvoice"),'','title_accountancy.png');
+	print load_fiche_titre($langs->trans("CreateRepeatableInvoice"),'','title_accountancy.png');
 
 	$object = new Facture($db);   // Source invoice
 	$product_static = new Product($db);

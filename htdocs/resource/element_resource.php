@@ -244,7 +244,7 @@ else
 
 
 
-	//print_fiche_titre($langs->trans('ResourcesLinkedToElement'),'','');
+	//print load_fiche_titre($langs->trans('ResourcesLinkedToElement'),'','');
 
 
 

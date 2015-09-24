@@ -627,7 +627,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     /*                                                                            */
     /* ************************************************************************** */
 
-    print_fiche_titre($langs->trans("NewUser"));
+    print load_fiche_titre($langs->trans("NewUser"));
 
     print $langs->trans("CreateInternalUserDesc")."<br>\n";
     print "<br>";
@@ -1614,7 +1614,7 @@ else
 
             if ($canreadgroup)
             {
-                print_fiche_titre($langs->trans("ListOfGroupsForUser"),'','');
+                print load_fiche_titre($langs->trans("ListOfGroupsForUser"),'','');
 
                 // On selectionne les groupes auquel fait parti le user
                 $exclude = array();

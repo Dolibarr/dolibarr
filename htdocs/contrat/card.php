@@ -930,7 +930,7 @@ if ($result > 0)
  *********************************************************************/
 if ($action == 'create')
 {
-	print_fiche_titre($langs->trans('AddContract'),'','title_commercial.png');
+	print load_fiche_titre($langs->trans('AddContract'),'','title_commercial.png');
 
     $soc = new Societe($db);
     if ($socid>0) $soc->fetch($socid);

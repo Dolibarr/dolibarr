@@ -1089,7 +1089,7 @@ if (! empty($conf->global->DEPLACEMENT_TO_CLEAN))
 // Create
 if ($action == 'create')
 {
-	print print_fiche_titre($langs->trans("NewTrip"));
+	print print load_fiche_titre($langs->trans("NewTrip"));
 
 	print '<form action="'.$_SERVER['PHP_SELF'].'" method="post" name="create">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -1178,7 +1178,7 @@ else
 			{
 				if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous))
 				{
-					print_fiche_titre($langs->trans('TripCard'));
+					print load_fiche_titre($langs->trans('TripCard'));
 
 					print '<div class="tabBar">';
 					print $langs->trans('NotUserRightToView');
@@ -1772,7 +1772,7 @@ else
 					// Add a line
 					if (($object->fk_statut==0 || $object->fk_statut==99) && $action != 'editline')
 					{
-						print_fiche_titre($langs->trans("AddLine"),'','');
+						print load_fiche_titre($langs->trans("AddLine"),'','');
 
 						print '<form method="post" action="'.$_SERVER['PHP_SELF'].'" name="addline">';
 						print '<input type="hidden" name="id" value="'.$object->id.'">';

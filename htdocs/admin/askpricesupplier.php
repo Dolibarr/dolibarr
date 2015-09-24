@@ -240,7 +240,7 @@ $form=new Form($db);
 //if ($mesg) print $mesg;
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("AskPriceSupplierSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("AskPriceSupplierSetup"),$linkback,'title_setup');
 
 $head = askpricesupplier_admin_prepare_head();
 

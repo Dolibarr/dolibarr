@@ -70,7 +70,7 @@ $textobject=$langs->transnoentitiesnoconv("Agenda");
 llxHeader('',$langs->trans("AgendaSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("AgendaSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("AgendaSetup"),$linkback,'title_setup');
 print "<br>\n";
 
 $head=agenda_prepare_head();
