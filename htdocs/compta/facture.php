@@ -1159,7 +1159,19 @@ if (empty($reshook))
 				$result = $object->fetch($_POST['situations']);
 				$object->fk_facture_source = $_POST['situations'];
 				$object->type = Facture::TYPE_SITUATION;
-
+				
+				if (!empty($origin) && !empty($originid))
+				{
+					$object->origin = $origin;
+					$object->origin_id = $originid;
+					
+					foreach ($object->lines as &$line) 
+					{
+						$line->origin = $object->origin;
+						$line->origin_id = $line->id;
+					}
+				}
+				
 				$object->fetch_thirdparty();
 				$object->date = $datefacture;
 				$object->note_public = trim($_POST['note_public']);
@@ -1177,6 +1189,7 @@ if (empty($reshook))
 
 				$object->situation_counter = $object->situation_counter + 1;
 				$id = $object->createFromCurrent($user);
+				
 				if ($id <= 0) $mesg = $object->error;
 			}
 		}
@@ -2096,7 +2109,7 @@ if ($action == 'create')
 			$opt = $form->selectSituationInvoices(GETPOST('originid'), $socid);
 			print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
 			$tmp='<input type="radio" name="type" value="5"' . (GETPOST('type') == 5 && GETPOST('originid') ? ' checked' : '');
-			if ($opt == ('<option value ="0" selected>' . $langs->trans('NoSituations') . '</option>') || (GETPOST('origin') && GETPOST('origin') != 'facture')) $tmp.=' disabled';
+			if ($opt == ('<option value ="0" selected>' . $langs->trans('NoSituations') . '</option>') || (GETPOST('origin') && GETPOST('origin') != 'facture' && GETPOST('origin') != 'commande')) $tmp.=' disabled';
 			$tmp.= '> ';
 			$text = $tmp.$langs->trans("InvoiceSituationAsk") . ' ';
 			$text .= '<select class="flat" id="situations" name="situations">';

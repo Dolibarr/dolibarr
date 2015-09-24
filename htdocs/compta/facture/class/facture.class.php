@@ -652,6 +652,9 @@ class Facture extends CommonInvoice
 		$facture->remise_absolue    = $this->remise_absolue;
 		$facture->remise_percent    = $this->remise_percent;
 
+		$facture->origin 			= $this->origin;
+		$facture->origin_id			= $this->origin_id;
+
 		$facture->lines		    	= $this->lines;	// Tableau des lignes de factures
 		$facture->products		    = $this->lines;	// Tant que products encore utilise
 		$facture->situation_counter = $this->situation_counter;
