@@ -3581,7 +3581,7 @@ class Form
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
             print '<tr><td>';
-            print $this->select_users($selected,$htmlname,1,$exclude,0,$include);
+            print $this->select_dolusers($selected,$htmlname,1,$exclude,0,$include);
             print '</td>';
             print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
             print '</tr></table></form>';
