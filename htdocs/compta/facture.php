@@ -42,6 +42,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/modules/facture/modules_facture.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/discount.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formmargin.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
@@ -1800,6 +1801,7 @@ if (empty($reshook))
 $form = new Form($db);
 $formother = new FormOther($db);
 $formfile = new FormFile($db);
+$formmargin = new FormMargin($this->db);
 $bankaccountstatic = new Account($db);
 if (! empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
 
@@ -3166,7 +3168,7 @@ else if ($id > 0 || ! empty($ref))
 	if (! empty($conf->margin->enabled))
 	{
 		print '<br>';
-		$object->displayMarginInfos($object->statut > 0);
+		$formmargin->displayMarginInfos($object, $object->statut > 0);
 	}
 
 	print '</td></tr>';
