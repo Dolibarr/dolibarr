@@ -4938,7 +4938,7 @@ function printCommonFooter($zone='private')
 		print 'MAIN_OPTIMIZE_SPEED='.(isset($conf->global->MAIN_OPTIMIZE_SPEED)?$conf->global->MAIN_OPTIMIZE_SPEED:'off');
 		if ($micro_start_time)
 		{
-			$micro_end_time=dol_microtime_float();
+			$micro_end_time = microtime(true);
 			print ' - Build time: '.ceil(1000*($micro_end_time-$micro_start_time)).' ms';
 		}
 		if (function_exists("memory_get_usage"))
