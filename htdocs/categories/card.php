@@ -256,7 +256,7 @@ if ($user->rights->categorie->creer)
 
 		// Color
 		print '<tr><td>'.$langs->trans("Color").'</td><td>';
-		print $formother->select_color($color,'color');
+		print $formother->selectColor($color,'color');
 		print '</td></tr>';
 		
 		// Parent category
