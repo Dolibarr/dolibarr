@@ -2806,10 +2806,11 @@ abstract class CommonObject
     // --------------------
 
     /**
-     *  Show linked object block.
+     * Show linked object block.
      *
-     *  @return		int		<0 if KO, >0 if OK
-     *  @deprecated 3.8 Use instead $form->shoLinkedObjectBlock($object)
+     * @return int <0 if KO, >0 if OK
+     * @deprecated 3.8 Use instead $form->showLinkedObjectBlock($object)
+     * @see Form::showLinkedObjectBlock
      */
     function showLinkedObjectBlock()
     {
