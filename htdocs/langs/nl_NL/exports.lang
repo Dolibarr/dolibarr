@@ -48,6 +48,7 @@ NoImportableData=Geen importeerbare gegevens (geen module met definities om gege
 FileSuccessfullyBuilt=Export bestand succesvol gegenereerd
 SQLUsedForExport=SQL verzoek dat gebruikt wordt om een exportbestand te maken
 LineId=regel ID
+LineLabel=Label of line
 LineDescription=Regelomschrijving
 LineUnitPrice=Prijs per eenheid van de regel
 LineVATRate=BTW-tarief van de regel

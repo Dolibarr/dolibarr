@@ -1,8 +1,10 @@
 # Dolibarr language file - Source file is en_US - printing
-Module64000Name=Direct Printing
-Module64000Desc=Enable Direct Printing System
+Module64000Name=Άμεση εκτύπωση
+Module64000Desc=Ενεργοποίηση άμεσης εκτύπωσης
 PrintingSetup=Ρύθμιση του συστήματος για την άμεση εκτύπωση
 PrintingDesc=Το module αυτό προσθέτει ένα κουμπί Εκτύπωσης για να στείλετε έγγραφα απευθείας σε έναν εκτυπωτή (χωρίς να ανοίξετε το έγγραφο με μια εφαρμογή).
+MenuDirectPrinting=Direct Printing
+DirectPrint=Direct print
 ModuleDriverSetup=Ρύθμιση Module οδήγησης
 PrintingDriverDesc=Διαμόρφωση μεταβλητών για τον οδηγό εκτύπωσης.
 ListDrivers=Λίστα οδηγών
@@ -10,6 +12,7 @@ PrintTestDesc=Λίστα εκτυπωτών.
 FileWasSentToPrinter=Το αρχείο %s στάλθηκε στον εκτυπωτή
 NoActivePrintingModuleFound=Κανένα ενεργό module εκτύπωσης για έγγραφο 
 PleaseSelectaDriverfromList=Παρακαλώ επιλέξτε ένα πρόγραμμα οδήγησης από τη λίστα.
+PleaseConfigureDriverfromList=Please configure the selected driver from list.
 SetupDriver=Ρυθμίσεις του προγράμματος οδήγησης
 TestDriver=Test
 TargetedPrinter=Στοχευμένη εκτύπωση

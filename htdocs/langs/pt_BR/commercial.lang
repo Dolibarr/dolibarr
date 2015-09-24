@@ -1,6 +1,11 @@
 # Dolibarr language file - Source file is en_US - commercial
 CommercialArea=Área Comercial
+DeleteAction=Apagar um evento
+NewAction=Novo evento
+AddAction=Criar evento
+AddAnAction=Criar um evento
 AddActionRendezVous=Criar evento tipo Rendez-vous
+ConfirmDeleteAction=Tem certeza de que deseja excluir este evento?
 CardAction=Ficha de evento
 PercentDone=Percentual completo
 ActionOnCompany=Tarefa relativa à empresa
@@ -67,3 +72,4 @@ StatusProsp=Estado do prospeto
 DraftPropals=Rascunhos das propostas comerciais
 SearchPropal=Busque a proposta comercial
 CommercialDashboard=Somario comercial
+NoLimit=Sem limite

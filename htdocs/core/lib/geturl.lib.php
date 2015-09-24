@@ -24,12 +24,12 @@
 /**
  * Function get content from an URL (use proxy if proxy defined)
  *
- * @param	string	$url 				URL to call.
- * @param	string	$postorget			'POST', 'GET', 'HEAD'
- * @param	string	$param				Parameters of URL (x=value1&y=value2)
- * @param	string	$followlocation		1=Follow location, 0=Do not follow
- * @param	array	$addheaders			Array of string to add into header. Example: array('Accept: application/xrds+xml', ....)
- * @return	array						Returns an associative array containing the response from the server array('content'=>response,'curl_error_no'=>errno,'curl_error_msg'=>errmsg...)
+ * @param	string	  $url 				    URL to call.
+ * @param	string    $postorget		    'POST', 'GET', 'HEAD', 'PUT', 'PUTALREADYFORMATED', 'DELETE'
+ * @param	string    $param			    Parameters of URL (x=value1&y=value2) or may be a formated content with PUTALREADYFORMATED
+ * @param	string    $followlocation		1=Follow location, 0=Do not follow
+ * @param	array     $addheaders			Array of string to add into header. Example: ('Accept: application/xrds+xml', ....)
+ * @return	array						    Returns an associative array containing the response from the server array('content'=>response,'curl_error_no'=>errno,'curl_error_msg'=>errmsg...)
  */
 function getURLContent($url,$postorget='GET',$param='',$followlocation=1,$addheaders=array())
 {
@@ -74,7 +74,18 @@ function getURLContent($url,$postorget='GET',$param='',$followlocation=1,$addhea
     else if ($postorget == 'PUT')
     {
     	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT'); // HTTP request is 'PUT'
-    	curl_setopt($ch, CURLOPT_POSTFIELDS, $param);	// Setting param x=a&y=z as PUT fields
+    	if (! is_array($param)) parse_str($param, $array_param);
+    	else 
+    	{
+    	    dol_syslog("parameter param must be a string", LOG_WARNING);
+    	    $array_param=$param;
+    	}
+    	curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($array_param));	// Setting param x=a&y=z as PUT fields	
+    }
+    else if ($postorget == 'PUTALREADYFORMATED')
+    {
+    	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT'); // HTTP request is 'PUT'
+    	curl_setopt($ch, CURLOPT_POSTFIELDS, $param);	// param = content of post, like a xml string
     }
     else if ($postorget == 'HEAD')
     {

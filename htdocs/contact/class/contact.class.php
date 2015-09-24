@@ -168,9 +168,9 @@ class Contact extends CommonObject
 		$sql.= " ".($user->id > 0 ? "'".$user->id."'":"null").",";
 		$sql.= " ".$this->priv.",";
 		$sql.= " ".$this->statut.",";
-        $sql.= " ".(! empty($this->canvas)?"'".$this->canvas."'":"null").",";
+        $sql.= " ".(! empty($this->canvas)?"'".$this->db->escape($this->canvas)."'":"null").",";
         $sql.= " ".$conf->entity.",";
-	$sql.= "'".$this->db->escape($this->ref_ext)."',";
+        $sql.= "'".$this->db->escape($this->ref_ext)."',";
         $sql.= " ".(! empty($this->import_key)?"'".$this->import_key."'":"null");
 		$sql.= ")";
 
@@ -516,8 +516,9 @@ class Contact extends CommonObject
 	 */
 	function fetch($id, $user=0, $ref_ext='')
 	{
-		dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
 		global $langs;
+
+		dol_syslog(get_class($this)."::fetch id=".$id, LOG_DEBUG);
 
 		if (empty($id) && empty($ref_ext))
 		{
@@ -547,7 +548,6 @@ class Contact extends CommonObject
 		if ($id) $sql.= " WHERE c.rowid = ". $id;
 		elseif ($ref_ext) $sql .= " WHERE c.ref_ext = '".$this->db->escape($ref_ext)."'";
 
-		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{

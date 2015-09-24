@@ -67,6 +67,7 @@ create table llx_societe
   fk_stcomm                integer        DEFAULT 0 NOT NULL,      	-- commercial statut
   note_private             text,                                		--
   note_public              text,                                        --
+  model_pdf				   varchar(255),
   prefix_comm              varchar(5),                          		-- prefix commercial
   client                   tinyint        DEFAULT 0,            		-- client 0/1/2
   fournisseur              tinyint        DEFAULT 0,            		-- fournisseur 0/1

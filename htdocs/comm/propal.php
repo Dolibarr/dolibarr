@@ -195,22 +195,18 @@ if (empty($reshook))
 		{
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
 			{
-						// Define output language
-				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
-				{
-					$outputlangs = $langs;
-					$newlang = '';
-					if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
-					if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
-					if (! empty($newlang)) {
-						$outputlangs = new Translate("", $conf);
-						$outputlangs->setDefaultLang($newlang);
-					}
-					$model=$object->modelpdf;
-					$ret = $object->fetch($id); // Reload to get new records
-
-					$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+				$outputlangs = $langs;
+				$newlang = '';
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+				if (! empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
 				}
+				$model=$object->modelpdf;
+				$ret = $object->fetch($id); // Reload to get new records
+
+				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
 		} else {
 			$langs->load("errors");
@@ -1053,49 +1049,6 @@ if (empty($reshook))
 		exit();
 	}
 
-	// Generation doc (depuis lien ou depuis cartouche doc)
-	else if ($action == 'builddoc' && $user->rights->propal->creer) {
-		if (GETPOST('model')) {
-			$object->setDocModel($user, GETPOST('model'));
-		}
-	    if (GETPOST('fk_bank')) { // this field may come from an external module
-            $object->fk_bank = GETPOST('fk_bank');
-        } else {
-            $object->fk_bank = $object->fk_account;
-        }
-
-		// Define output language
-		$outputlangs = $langs;
-		if (! empty($conf->global->MAIN_MULTILANGS)) {
-			$outputlangs = new Translate("", $conf);
-			$newlang = (GETPOST('lang_id') ? GETPOST('lang_id') : $object->thirdparty->default_lang);
-			$outputlangs->setDefaultLang($newlang);
-		}
-		$ret = $object->fetch($id); // Reload to get new records
-		$result = $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-		if ($result <= 0)
-		{
-			setEventMessages($object->error, $object->errors, 'errors');
-	        $action='';
-		}
-	}
-
-	// Remove file in doc form
-	else if ($action == 'remove_file' && $user->rights->propal->creer) {
-		if ($object->id > 0) {
-			require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
-
-			$langs->load("other");
-			$upload_dir = $conf->propal->dir_output;
-			$file = $upload_dir . '/' . GETPOST('file');
-			$ret = dol_delete_file($file, 0, 0, 0, $object);
-			if ($ret)
-				setEventMessage($langs->trans("FileWasRemoved", GETPOST('file')));
-			else
-				setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('file')), 'errors');
-		}
-	}
-
 	// Set project
 	else if ($action == 'classin' && $user->rights->propal->creer) {
 		$object->setProject($_POST['projectid']);
@@ -1211,6 +1164,12 @@ if (empty($reshook))
 			}
 		}
 	}
+	
+    // Actions to build doc
+    $upload_dir = $conf->propal->dir_output;
+    $permissioncreate=$user->rights->propal->creer;
+    include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
+	
 }
 
 
@@ -1327,7 +1286,7 @@ if ($action == 'create')
 		print '</td>';
 	} else {
 		print '<td colspan="2">';
-		print $form->select_company('', 'socid', 's.client = 1 OR s.client = 2 OR s.client = 3', 1);
+		print $form->select_company('', 'socid', '(s.client = 1 OR s.client = 2 OR s.client = 3) AND status=1', 1);
 		print '</td>';
 	}
 	print '</tr>' . "\n";
@@ -1451,11 +1410,7 @@ if ($action == 'create')
 	print '<tr>';
 	print '<td class="border" valign="top">' . $langs->trans('NotePublic') . '</td>';
 	print '<td valign="top" colspan="2">';
-	$note_public = '';
-	if (is_object($objectsrc)) 	// Take value from source object
-	{
-		$note_public = $objectsrc->note_public;
-	}
+	$note_public = $object->getDefaultCreateValueFor('note_public', (is_object($objectsrc)?$objectsrc->note_public:null));
 	$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
 	print $doleditor->Create(1);
 
@@ -1465,11 +1420,7 @@ if ($action == 'create')
 		print '<tr>';
 		print '<td class="border" valign="top">' . $langs->trans('NotePrivate') . '</td>';
 		print '<td valign="top" colspan="2">';
-		$note_private = '';
-		if (! empty($origin) && ! empty($originid) && is_object($objectsrc)) 		// Take value from source object
-		{
-			$note_private = $objectsrc->note_private;
-		}
+        $note_private = $object->getDefaultCreateValueFor('note_private', ((! empty($origin) && ! empty($originid) && is_object($objectsrc))?$objectsrc->note_private:null));
 		$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
 		print $doleditor->Create(1);
 		// print '<textarea name="note_private" wrap="soft" cols="70" rows="'.ROWS_3.'">'.$note_private.'.</textarea>
@@ -2327,7 +2278,7 @@ if ($action == 'create')
 		if (! $file || ! is_readable($file)) {
 			$result = $object->generateDocument(GETPOST('model') ? GETPOST('model') : $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			if ($result <= 0) {
-				dol_print_error($db, $result);
+				dol_print_error($db, $object->error, $object->errors);
 				exit();
 			}
 			$fileparams = dol_most_recent_file($conf->propal->dir_output . '/' . $ref, preg_quote($ref, '/').'[^\-]+');

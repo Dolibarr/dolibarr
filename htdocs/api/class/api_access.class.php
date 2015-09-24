@@ -60,7 +60,8 @@ class DolibarrApiAccess implements iAuthenticate
 
 		$userClass = Defaults::$userIdentifierClass;
 
-		if (isset($_GET['api_key'])) {
+		if (isset($_GET['api_key'])) 
+		{
 			$sql = "SELECT u.login, u.datec, u.api_key, ";
 			$sql.= " u.tms as date_modification, u.entity";
 			$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
@@ -100,7 +101,9 @@ class DolibarrApiAccess implements iAuthenticate
         }
 		else
 		{
-			return false;
+		    throw new RestException(401, "Failed to login to API. No parameter 'api_key' provided");
+		    //dol_syslog("Failed to login to API. No parameter key provided", LOG_DEBUG);
+			//return false;
 		}
 
         $userClass::setCacheIdentifier(static::$role);

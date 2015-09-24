@@ -1165,8 +1165,10 @@ if (empty($reshook))
 
 
 
-	if (! $error && ! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->commande->creer) {
-		if ($action == 'addcontact') {
+	if (! $error && ! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->commande->creer) 
+	{
+		if ($action == 'addcontact') 
+		{
 			if ($object->id > 0) {
 				$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
 				$result = $object->add_contact($contactid, GETPOST('type'), GETPOST('source'));
@@ -1186,7 +1188,8 @@ if (empty($reshook))
 		}
 
 		// bascule du statut d'un contact
-		else if ($action == 'swapstatut') {
+		else if ($action == 'swapstatut') 
+		{
 			if ($object->id > 0) {
 				$result = $object->swapContactStatus(GETPOST('ligne'));
 			} else {
@@ -1195,7 +1198,8 @@ if (empty($reshook))
 		}
 
 		// Efface un contact
-		else if ($action == 'deletecontact') {
+		else if ($action == 'deletecontact') 
+		{
 			$result = $object->delete_contact($lineid);
 
 			if ($result >= 0) {
@@ -1288,8 +1292,8 @@ if ($action == 'create' && $user->rights->commande->creer)
 
 			$datedelivery = (! empty($objectsrc->date_livraison) ? $objectsrc->date_livraison : '');
 
-			$note_private = (! empty($objectsrc->note_private) ? $objectsrc->note_private : (! empty($objectsrc->note_private) ? $objectsrc->note_private : ''));
-			$note_public = (! empty($objectsrc->note_public) ? $objectsrc->note_public : '');
+			$note_private = $object->getDefaultCreateValueFor('note_private', (! empty($objectsrc->note_private) ? $objectsrc->note_private : null));
+			$note_public = $object->getDefaultCreateValueFor('note_public', (! empty($objectsrc->note_public) ? $objectsrc->note_public : null));
 
 			// Object source contacts list
 			$srccontactslist = $objectsrc->liste_contact(- 1, 'external', 1);
@@ -1307,6 +1311,9 @@ if ($action == 'create' && $user->rights->commande->creer)
 		$remise_absolue     = 0;
 		$dateorder          = empty($conf->global->MAIN_AUTOFILL_DATE_ORDER)?-1:'';
 		$projectid          = 0;
+
+		$note_private = $object->getDefaultCreateValueFor('note_private');
+		$note_public = $object->getDefaultCreateValueFor('note_public');
 	}
 	$absolute_discount=$soc->getAvailableDiscounts();
 
@@ -2360,7 +2367,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 			if (! $file || ! is_readable($file)) {
 				$result = $object->generateDocument(GETPOST('model') ? GETPOST('model') : $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 				if ($result <= 0) {
-					dol_print_error($db, $result);
+					dol_print_error($db, $object->error, $object->errors);
 					exit();
 				}
 				$fileparams = dol_most_recent_file($conf->commande->dir_output . '/' . $ref, preg_quote($ref, '/').'[^\-]+');

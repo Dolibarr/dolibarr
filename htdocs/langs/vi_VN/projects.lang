@@ -143,7 +143,8 @@ SelectElement=Chọn yếu tố
 AddElement=Liên kết đến yếu tố
 UnlinkElement=Yếu tố không liên kết
 # Documents models
-DocumentModelBaleine=Mô hình báo cáo hoàn chỉnh của dự án (lôgô...)
+DocumentModelBeluga=Project template for linked objects overview
+DocumentModelBaleine=Project report template for tasks
 PlannedWorkload=Khối lượng công việc dự tính
 PlannedWorkloadShort=Khối lượng công việc
 WorkloadOccupation=Phân phối khối lượng công việc

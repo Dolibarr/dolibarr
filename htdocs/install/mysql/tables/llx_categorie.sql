@@ -26,10 +26,10 @@ create table llx_categorie
 	label 		    varchar(255) NOT NULL,				-- category name
 	type	        tinyint DEFAULT 1 NOT NULL,			-- category type (product, supplier, customer, member)
 	description 	text,								-- description of the category
-	fk_soc          integer DEFAULT NULL,				-- attribution of the category has a company (for product only)
+    color           varchar(8),                         -- color
+	fk_soc          integer DEFAULT NULL,				-- not used by default. Used when option CATEGORY_ASSIGNED_TO_A_CUSTOMER is set.
 	visible         tinyint DEFAULT 1 NOT NULL,			-- determine if the products are visible or not
     import_key      varchar(14)							-- Import key
-    
 )ENGINE=innodb;
 
 -- 

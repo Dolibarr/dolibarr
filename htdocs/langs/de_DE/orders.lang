@@ -152,7 +152,7 @@ OrderSource4=Fax-Kampagne
 OrderSource5=Vertrieb
 OrderSource6=Andere
 QtyOrdered=Bestellmenge
-AddDeliveryCostLine=Fügen Sie eine Versandkostenzeile zur Erfassung des Bestellgewichts ein
+AddDeliveryCostLine=Fügen Sie eine Zeile für die Versandkostenanteil an, nach Gewicht der Bestellung
 # Documents models
 PDFEinsteinDescription=Eine vollständige Bestellvorlage (Logo, uwm.)
 PDFEdisonDescription=Eine einfache Bestellungsvorlage

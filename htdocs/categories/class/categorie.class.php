@@ -116,6 +116,13 @@ class Categorie extends CommonObject
 	var $fk_parent;
 	var $label;
 	var $description;
+	/**
+	 * @var string     Color
+	 */
+	var $color;
+	/**
+	 * @var ???
+	 */
 	var $socid;
 	/**
 	 * @var int Category type
@@ -156,7 +163,7 @@ class Categorie extends CommonObject
 		// Check parameters
 		if (empty($id) && empty($label)) return -1;
 
-		$sql = "SELECT rowid, fk_parent, entity, label, description, fk_soc, visible, type";
+		$sql = "SELECT rowid, fk_parent, entity, label, description, color, fk_soc, visible, type";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie";
 		if ($id)
 		{
@@ -180,6 +187,7 @@ class Categorie extends CommonObject
 				$this->fk_parent	= $res['fk_parent'];
 				$this->label		= $res['label'];
 				$this->description	= $res['description'];
+				$this->color    	= $res['color'];
 				$this->socid		= $res['fk_soc'];
 				$this->visible		= $res['visible'];
 				$this->type			= $res['type'];
@@ -225,6 +233,7 @@ class Categorie extends CommonObject
 		// Clean parameters
 		$this->label = trim($this->label);
 		$this->description = trim($this->description);
+		$this->color = trim($this->color);
 		$this->import_key = trim($this->import_key);
 		if (empty($this->visible)) $this->visible=0;
 		$this->fk_parent = ($this->fk_parent != "" ? intval($this->fk_parent) : 0);
@@ -244,6 +253,7 @@ class Categorie extends CommonObject
 		$sql.= "fk_parent,";
 		$sql.= " label,";
 		$sql.= " description,";
+		$sql.= " color,";
 		if (! empty($conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER))
 		{
 			$sql.= "fk_soc,";
@@ -256,6 +266,7 @@ class Categorie extends CommonObject
 		$sql.= $this->fk_parent.",";
 		$sql.= "'".$this->db->escape($this->label)."',";
 		$sql.= "'".$this->db->escape($this->description)."',";
+		$sql.= "'".$this->db->escape($this->color)."',";
 		if (! empty($conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER))
 		{
 			$sql.= ($this->socid != -1 ? $this->socid : 'null').",";
@@ -357,7 +368,8 @@ class Categorie extends CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."categorie";
 		$sql.= " SET label = '".$this->db->escape($this->label)."',";
-		$sql.= " description = '".$this->db->escape($this->description)."'";
+		$sql.= " description = '".$this->db->escape($this->description)."',";
+		$sql.= " color = '".$this->db->escape($this->color)."'";
 		if (! empty($conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER))
 		{
 			$sql .= ", fk_soc = ".($this->socid != -1 ? $this->socid : 'null');
@@ -562,14 +574,15 @@ class Categorie extends CommonObject
 		if ($this->id == -1) return -2;
 
 		// For backward compatibility
-		if ($type == 'societe') {
+		if ($type == 'societe') 
+		{
 			$type = 'customer';
-			dol_syslog( get_class( $this ) . "::add_type(): type 'societe' is deprecated, please use 'customer' instead",
-				LOG_WARNING );
-		} elseif ($type == 'fournisseur') {
+			dol_syslog(get_class($this) . "::add_type(): type 'societe' is deprecated, please use 'customer' instead",	LOG_WARNING);
+		}
+		elseif ($type == 'fournisseur') 
+		{
 			$type = 'supplier';
-			dol_syslog( get_class( $this ) . "::add_type(): type 'fournisseur' is deprecated, please use 'supplier' instead",
-				LOG_WARNING );
+			dol_syslog(get_class($this) . "::add_type(): type 'fournisseur' is deprecated, please use 'supplier' instead", LOG_WARNING);
 		}
 
         $this->db->begin();
@@ -876,7 +889,7 @@ class Categorie extends CommonObject
 		$current_lang = $langs->getDefaultLang();
 
 		// Init $this->cats array
-		$sql = "SELECT DISTINCT c.rowid, c.label, c.description, c.fk_parent";	// Distinct reduce pb with old tables with duplicates
+		$sql = "SELECT DISTINCT c.rowid, c.label, c.description, c.color, c.fk_parent";	// Distinct reduce pb with old tables with duplicates
 		if (! empty($conf->global->MAIN_MULTILANGS)) $sql.= ", t.label as label_trans, t.description as description_trans";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie as c";
 		if (! empty($conf->global->MAIN_MULTILANGS)) $sql.= " LEFT  JOIN ".MAIN_DB_PREFIX."categorie_lang as t ON t.fk_category=c.rowid AND t.lang='".$current_lang."'";
@@ -895,6 +908,7 @@ class Categorie extends CommonObject
 				$this->cats[$obj->rowid]['fk_parent'] = $obj->fk_parent;
 				$this->cats[$obj->rowid]['label'] = ! empty($obj->label_trans) ? $obj->label_trans : $obj->label;
 				$this->cats[$obj->rowid]['description'] = ! empty($obj->description_trans) ? $obj->description_trans : $obj->description;
+				$this->cats[$obj->rowid]['color'] = $obj->color;
 				$i++;
 			}
 		}

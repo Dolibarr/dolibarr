@@ -225,7 +225,8 @@ if (isset($_SERVER["HTTP_USER_AGENT"]))
 
 
 // Force HTTPS if required ($conf->file->main_force_https is 0/1 or https dolibarr root url)
-if (! empty($conf->file->main_force_https))
+// $_SERVER["HTTPS"] is 'on' when link is https, otherwise $_SERVER["HTTPS"] is empty or 'off'
+if (! empty($conf->file->main_force_https) && (empty($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] != 'on'))
 {
     $newurl='';
     if (is_numeric($conf->file->main_force_https))
@@ -239,21 +240,13 @@ if (! empty($conf->file->main_force_https))
         }
         else	// Check HTTPS environment variable (Apache/mod_ssl only)
         {
-            // $_SERVER["HTTPS"] is 'on' when link is https, otherwise $_SERVER["HTTPS"] is empty or 'off'
-            if (empty($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] != 'on')		// If link is http
-            {
-                $newurl=preg_replace('/^http:/i','https:',DOL_MAIN_URL_ROOT).$_SERVER["REQUEST_URI"];
-            }
+            $newurl=preg_replace('/^http:/i','https:',DOL_MAIN_URL_ROOT).$_SERVER["REQUEST_URI"];
         }
     }
     else
     {
         // Check HTTPS environment variable (Apache/mod_ssl only)
-        // $_SERVER["HTTPS"] is 'on' when link is https, otherwise $_SERVER["HTTPS"] is empty or 'off'
-        if (empty($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] != 'on')		// If link is http
-        {
-            $newurl=$conf->file->main_force_https.$_SERVER["REQUEST_URI"];
-        }
+        $newurl=$conf->file->main_force_https.$_SERVER["REQUEST_URI"];
     }
     // Start redirect
     if ($newurl)
@@ -1229,7 +1222,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             if (! empty($conf->fckeditor->enabled) && (empty($conf->global->FCKEDITOR_EDITORNAME) || $conf->global->FCKEDITOR_EDITORNAME == 'ckeditor'))
             {
                 print '<!-- Includes JS for CKEditor -->'."\n";
-                $pathckeditor=DOL_URL_ROOT.'/includes/ckeditor/';
+                $pathckeditor = DOL_URL_ROOT . '/includes/ckeditor/ckeditor/';
                 $jsckeditor='ckeditor.js';
                 if (constant('JS_CKEDITOR'))	// To use external ckeditor 4 js lib
                 {
@@ -1243,6 +1236,16 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
                 print '</script>'."\n";
                 print '<script type="text/javascript" src="'.$pathckeditor.$jsckeditor.($ext?'?'.$ext:'').'"></script>'."\n";
             }
+
+			// Raven.js for client-side Sentry logging support
+			if (array_key_exists('mod_syslog_sentry', $conf->loghandlers)) {
+				print '<!-- Includes Raven.js for Sentry -->' . "\n";
+				print '<script src="' . DOL_URL_ROOT . '/includes/raven-js/dist/raven.min.js"></script>' . "\n";
+				print '<script src="' . DOL_URL_ROOT . '/includes/raven-js/plugins/native.js"></script>' . "\n";
+				if (! defined('DISABLE_JQUERY')) {
+					print '<script src="' . DOL_URL_ROOT . '/includes/raven-js/plugins/jquery.js"></script>' . "\n";
+				}
+			}
 
             // Global js function
             print '<!-- Includes JS of Dolibarr -->'."\n";
@@ -1321,7 +1324,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
     // For backward compatibility with old modules
     if (empty($conf->headerdone)) top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 
-    print '<body id="mainbody">';
+    print '<body id="mainbody">' . "\n";
 
     if ($conf->use_javascript_ajax)
     {
@@ -1376,15 +1379,29 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 						paneSelector: "#mainContent"
 					}
 				}
-    		</script>';
-        }
+			</script>' . "\n";
+		}
 
-        // Wrapper to show tooltips
-        print "\n".'<script type="text/javascript">
-                    jQuery(document).ready(function () {
-                       	jQuery(".classfortooltip").tipTip({maxWidth: "'.dol_size(600,'width').'px", edgeOffset: 10, delay: 50, fadeIn: 50, fadeOut: 50});
-                    });
-                </script>';
+		// Wrapper to show tooltips
+		print '<script type="text/javascript">
+	jQuery(document).ready(function () {
+		jQuery(".classfortooltip").tipTip({maxWidth: "'.dol_size(600,'width').'px", edgeOffset: 10, delay: 50, fadeIn: 50, fadeOut: 50});
+	});
+</script>' . "\n";
+
+		// Raven.js for client-side Sentry logging support
+		if (array_key_exists('mod_syslog_sentry', $conf->loghandlers) && ! empty($conf->global->SYSLOG_SENTRY_DSN)) 
+		{
+			// Filter out secret key
+			$dsn = parse_url($conf->global->SYSLOG_SENTRY_DSN);
+			$public_dsn = $dsn['scheme'] . '://' . $dsn['user'] .'@' . $dsn['host'] . $dsn['path'];
+
+			print '<script type="text/javascript">' . "\n";
+			print "Raven.config('" . $public_dsn . "').install()\n";
+			print "Raven.setUserContext({username: '" . $user->login . "'})\n";
+			print "Raven.setTagsContext({version: '" . DOL_VERSION . "'})\n";
+			print "</script>\n";
+		}
     }
 
     /*
@@ -1404,7 +1421,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	    $menumanager->showmenu('top');      // This contains a \n
 	    print "</div>\n";
 
-	    $form=new Form($db);
+	    //$form=new Form($db);
 
 	    // Define link to login card
 	    $appli='Dolibarr';
@@ -1443,12 +1460,12 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 
 	    // User photo
 	    $toprightmenu.='<div class="inline-block nowrap"><div class="inline-block login_block_elem" style="padding: 0px;">';
-	    $toprightmenu.=$user->getPhotoUrl(16,16,'loginphoto');
+	    $toprightmenu.=$user->getPhotoUrl(0,0,'loginphoto');
 	    $toprightmenu.='</div></div>';
 
 	    // Login name with tooltip
-		$toprightmenu.='<div class="inline-block nowrap"><div class="inline-block login_block_elem" style="padding: 0px;">';
-        $toprightmenu.=$user->getNomurl(0, '', true, 0, 11);
+		$toprightmenu.='<div class="inline-block nowrap"><div class="inline-block login_block_elem login_block_elem_name" style="padding: 0px;">';
+        $toprightmenu.=$user->getNomurl(0, '', true, 0, 11, 0, 'firstname','alogin');
         $toprightmenu.='</div></div>';
 
 		$toprightmenu.='</div>';
@@ -1472,11 +1489,11 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	        $text ='<a href="'.$_SERVER["PHP_SELF"].'?'.$qs.($qs?'&':'').'optioncss=print" target="_blank">';
 	        $text.= img_picto(":".$langs->trans("PrintContentArea"), 'printer.png', 'class="printer"');
 	        $text.='</a>';
-	        $toprightmenu.=$form->textwithtooltip('',$langs->trans("PrintContentArea"),2,1,$text,'login_block_elem',2);
+	        $toprightmenu.=Form::textwithtooltip('',$langs->trans("PrintContentArea"),2,1,$text,'login_block_elem',2);
 	    }
 
 		// Logout link
-	    $toprightmenu.=$form->textwithtooltip('',$logouthtmltext,2,1,$logouttext,'login_block_elem',2);
+	    $toprightmenu.=Form::textwithtooltip('',$logouthtmltext,2,1,$logouttext,'login_block_elem',2);
 
 	    $toprightmenu.='</div>';
 
@@ -1485,7 +1502,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	    print "</div>\n";
 		print '</div></div>';
 
-	    unset($form);
+	    //unset($form);
     }
 
     if (empty($conf->dol_use_jmobile) && ! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print "</div><!-- End top layout -->\n";

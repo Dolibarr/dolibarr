@@ -51,7 +51,7 @@ $(document).ready(function() {
 
 	$('#refreshbutton').click( function() {
 		$.pleaseBePatient("<?php echo $langs->trans('PleaseBePatient'); ?>");
-		$.getJSON( "<?php echo DOL_URL_ROOT . '/ecm/ajax/ecmdatabase.php'; ?>", {
+		$.get( "<?php echo DOL_URL_ROOT . '/ecm/ajax/ecmdatabase.php'; ?>", {
 			action: "build",
 			element: "ecm"
 		},

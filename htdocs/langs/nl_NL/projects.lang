@@ -143,7 +143,8 @@ SelectElement=Kies een element
 AddElement=Koppeling naar element
 UnlinkElement=Ontkoppel element
 # Documents models
-DocumentModelBaleine=Een compleet projectrapportagemodel (logo, etc)
+DocumentModelBeluga=Project template for linked objects overview
+DocumentModelBaleine=Project report template for tasks
 PlannedWorkload=Geplande workload
 PlannedWorkloadShort=Workload
 WorkloadOccupation=Workload toekenning

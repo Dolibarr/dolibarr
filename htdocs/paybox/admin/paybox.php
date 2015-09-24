@@ -100,6 +100,8 @@ print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="setvalue">';
 
+dol_fiche_head(null, 'payboxaccount', '');
+
 $var=true;
 
 print '<table class="noborder" width="100%">';
@@ -195,7 +197,13 @@ print '<input size="32" type="email" name="PAYBOX_PAYONLINE_SENDEMAIL" value="'.
 print ' &nbsp; '.$langs->trans("Example").': myemail@myserver.com';
 print '</td></tr>';
 
-print '</table><br><div class="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div></form>';
+print '</table>';
+
+dol_fiche_end();
+
+print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div>';
+
+print '</form>';
 
 print '<br><br>';
 
@@ -227,6 +235,6 @@ if (! empty($conf->adherent->enabled))
 print "<br>";
 print info_admin($langs->trans("YouCanAddTagOnUrl"));
 
-$db->close();
-dol_fiche_end();
 llxFooter();
+
+$db->close();

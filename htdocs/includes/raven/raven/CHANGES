@@ -1,0 +1,45 @@
+0.12.1
+------
+
+- Dont send empty values for various context.
+
+
+0.12.0
+------
+
+- Bumped protocol version to 6.
+- Fixed an issue with the async curl handler (GH-216).
+- Removed UDP transport.
+
+0.11.0
+------
+
+- New configuration parameter: 'release'
+- New configuration parameter: 'message_limit'
+- New configuration parameter: 'curl_ssl_version'
+- New configuration parameter: 'curl_ipv4'
+- New configuration parameter: 'verify_ssl'
+- Updated remote endpoint to use modern project-based path.
+- Expanded default sanitizer support to include 'auth_pw' attribute.
+
+0.10.0
+------
+
+- Added a default certificate bundle which includes common root CA's
+  as well as getsentry.com's CA.
+
+0.9.1
+-----
+
+- Change default curl connection to 'sync'
+- Improve CLI reporting
+
+
+0.9.0
+-----
+
+- Protocol version 5
+- Default to asynchronous HTTP handler using curl_multi.
+
+
+(For previous versions see the commit history)

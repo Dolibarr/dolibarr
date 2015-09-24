@@ -142,14 +142,14 @@ function getEntity($element=false, $shared=0)
  */
 function getBrowserInfo($user_agent)
 {
-	include_once DOL_DOCUMENT_ROOT.'/includes/mobiledetect/mobiledetect.class.php';
+	include_once DOL_DOCUMENT_ROOT.'/includes/mobiledetect/mobiledetectlib/Mobile_Detect.php';
 
 	$name='unknown';
 	$version='';
 	$os='unknown';
 	$phone = '';
 
-	$detectmobile = new MobileDetect(null, $user_agent);
+	$detectmobile = new Mobile_Detect(null, $user_agent);
 	$tablet = $detectmobile->isTablet();
 
 	if ($detectmobile->isMobile()) {
@@ -302,7 +302,7 @@ function dol_getprefix()
  *
  * 	@param	string	$relpath	Relative path to file (Ie: mydir/myfile, ../myfile, ...)
  * 	@param	string	$classname	Class name
- *  @return bool
+ *  @return bool                True if load is a success, False if it fails
  */
 function dol_include_once($relpath, $classname='')
 {
@@ -693,17 +693,17 @@ function dol_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto
  *  Show tab header of a card
  *
  *	@param	array	$links				Array of tabs
- *	@param	int		$active     		Active tab name
+ *	@param	string	$active     		Active tab name
  *	@param  string	$title      		Title
  *	@param  int		$notab				0=Add tab header, 1=no tab header. If you set this to 1, using dol_fiche_end() to close tab is not required.
  * 	@param	string	$picto				Add a picto on tab title
  *	@param	int		$pictoisfullpath	If 1, image path is a full path. If you set this to 1, you can use url returned by dol_buildpath('/mymodyle/img/myimg.png',1) for $picto.
  * 	@return	string
  */
-function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto='', $pictoisfullpath=0)
+function dol_get_fiche_head($links=array(), $active='', $title='', $notab=0, $picto='', $pictoisfullpath=0)
 {
-	global $conf,$langs;
-
+	global $conf,$langs, $hookmanager;
+	
 	$out="\n".'<div class="tabs" data-role="controlgroup" data-type="horizontal">'."\n";
 
 	// Show title
@@ -731,6 +731,7 @@ function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $p
 	// if =0 we don't use the feature
 	$limittoshow=(empty($conf->global->MAIN_MAXTABS_IN_CARD)?99:$conf->global->MAIN_MAXTABS_IN_CARD);
 	$displaytab=0;
+	$nbintab=0;
 
 	for ($i = 0 ; $i <= $maxkey ; $i++)
 	{
@@ -767,7 +768,7 @@ function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $p
 				}
 				else
 				{
-					$out.='<a data-role="button"'.(! empty($links[$i][2])?' id="'.$links[$i][2].'"':'').' class="tab inline-block" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
+					$out.='<a data-role="button"'.(! empty($links[$i][2])?' id="'.$links[$i][2].'"':'').' class="tabunactive tab inline-block" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
 				}
 			}
 			$out.='</div>';
@@ -787,6 +788,7 @@ function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $p
 				$outmore.='<a'.(! empty($links[$i][2])?' id="'.$links[$i][2].'"':'').' class="inline-block" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
 
 			$outmore.='</div>';
+			$nbintab++;
 		}
 		$displaytab=$i;
 	}
@@ -795,19 +797,22 @@ function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $p
 	{
 		$tabsname=str_replace("@", "", $picto);
 		$out.='<div id="moretabs'.$tabsname.'" class="inline-block tabsElem">';
-		$out.='<a href="" data-role="button" style="background-color: #f0f0f0;" class="tab inline-block">'.$langs->trans("More").'...</a>';
+		$out.='<a href="" data-role="button" style="background-color: #f0f0f0;" class="tab inline-block">'.$langs->trans("More").' <span class="badge">'.$nbintab.'</span></a>';
 		$out.='<div id="moretabsList'.$tabsname.'" style="position: absolute; left: -999em;text-align: left;margin:0px;padding:2px">'.$outmore.'</div>';
 		$out.="</div>\n";
 
 		$out.="<script>";
-		$out.="$('#moretabs".$tabsname.").mouseenter( function() { $('#moretabsList".$tabsname.").css('left','auto');});";
-		$out.="$('#moretabs".$tabsname.").mouseleave( function() { $('#moretabsList".$tabsname.").css('left','-999em');});";
+		$out.="$('#moretabs".$tabsname."').mouseenter( function() { $('#moretabsList".$tabsname."').css('left','auto');});";
+		$out.="$('#moretabs".$tabsname."').mouseleave( function() { $('#moretabsList".$tabsname."').css('left','-999em');});";
 		$out.="</script>";
 	}
 
 	$out.="</div>\n";
-
+	
 	if (! $notab) $out.="\n".'<div class="tabBar">'."\n";
+
+	$parameters=array('tabname' => $active);
+	$reshook=$hookmanager->executeHooks('printTabsHead',$parameters);    // Note that $action and $object may have been modified by some hooks
 
 	return $out;
 }
@@ -2766,7 +2771,7 @@ function print_fiche_titre($title, $mesg='', $picto='title_generic.png', $pictoi
  * 	@param	int		$id					To force an id on html objects
  * 	@return	string
  */
-function load_fiche_titre($titre, $mesg='', $picto='title.png', $pictoisfullpath=0, $id=0)
+function load_fiche_titre($titre, $mesg='', $picto='title_generic.png', $pictoisfullpath=0, $id=0)
 {
 	global $conf;
 
@@ -2847,7 +2852,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 	{
 		if ($totalnboflines)	// If we know total nb of lines
 		{
-			$maxnbofpage=(empty($conf->dol_optimize_smallscreen)?10:3);		// nb before and after selected page
+			$maxnbofpage=(empty($conf->dol_optimize_smallscreen) ? 6 : 3);		// nb before and after selected page + ... + first or last
 
 			$nbpages=ceil($totalnboflines/$conf->liste_limit);
 			$cpt=($page-$maxnbofpage);
@@ -2856,8 +2861,10 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 			if ($cpt>=1)
 			{
 				$pagelist.= '<li'.(empty($conf->dol_use_jmobile)?' class="pagination"':'').'><a '.(empty($conf->dol_use_jmobile)?'':'data-role="button" ').'href="'.$file.'?page=0'.$options.'&amp;sortfield='.$sortfield.'&amp;sortorder='.$sortorder.'">1</a></li>';
-				if ($cpt >= 2) $pagelist.='<li><span class="inactive">...</span></li>';
+				if ($cpt > 2) $pagelist.='<li'.(empty($conf->dol_use_jmobile)?' class="pagination"':'').'><span '.(empty($conf->dol_use_jmobile)?'class="inactive"':'data-role="button"').'>...</span></li>';
+				else if ($cpt == 2) $pagelist.='<li'.(empty($conf->dol_use_jmobile)?' class="pagination"':'').'><a '.(empty($conf->dol_use_jmobile)?'':'data-role="button" ').'href="'.$file.'?page=1'.$options.'&amp;sortfield='.$sortfield.'&amp;sortorder='.$sortorder.'">2</a></li>';
 			}
+			
 			do
 			{
 				if ($cpt==$page)
@@ -2871,9 +2878,11 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 				$cpt++;
 			}
 			while ($cpt < $nbpages && $cpt<=$page+$maxnbofpage);
+			
 			if ($cpt<$nbpages)
 			{
-				if ($cpt<$nbpages-1) $pagelist.= '<li'.(empty($conf->dol_use_jmobile)?' class="pagination"':'').'><span '.(empty($conf->dol_use_jmobile)?'class="inactive"':'data-role="button"').'>...</span></li>';
+				if ($cpt<$nbpages-2) $pagelist.= '<li'.(empty($conf->dol_use_jmobile)?' class="pagination"':'').'><span '.(empty($conf->dol_use_jmobile)?'class="inactive"':'data-role="button"').'>...</span></li>';
+				else if ($cpt == $nbpages-2) $pagelist.= '<li'.(empty($conf->dol_use_jmobile)?' class="pagination"':'').'><a '.(empty($conf->dol_use_jmobile)?'':'data-role="button" ').'href="'.$file.'?page='.($nbpages-2).$options.'&amp;sortfield='.$sortfield.'&amp;sortorder='.$sortorder.'">'.($nbpages - 1).'</a></li>';
 				$pagelist.= '<li'.(empty($conf->dol_use_jmobile)?' class="pagination"':'').'><a '.(empty($conf->dol_use_jmobile)?'':'data-role="button" ').'href="'.$file.'?page='.($nbpages-1).$options.'&amp;sortfield='.$sortfield.'&amp;sortorder='.$sortorder.'">'.$nbpages.'</a></li>';
 			}
 		}
@@ -4291,11 +4300,15 @@ function dolGetFirstLastname($firstname,$lastname,$nameorder=-1)
 	$ret='';
 	// If order not defined, we use the setup
 	if ($nameorder < 0) $nameorder=(empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION));
-	if ($nameorder)
+	if ($nameorder && ((string) $nameorder != '2'))
 	{
-		$ret.=$firstname;
+        $ret.=$firstname;
 		if ($firstname && $lastname) $ret.=' ';
 		$ret.=$lastname;
+	}
+	else if ($nameorder == 2)
+	{
+	   $ret.=$firstname;   
 	}
 	else
 	{
@@ -4385,15 +4398,17 @@ function dol_htmloutput_events()
 
 /**
  *	Get formated messages to output (Used to show messages on html output).
+ *  This include also the translation of the message key.
  *
- *	@param	string		$mesgstring		Message string
- *	@param	array		$mesgarray      Messages array
+ *	@param	string		$mesgstring		Message string or message key
+ *	@param	string[]	$mesgarray      Array of message strings or message keys
  *  @param  string		$style          Style of message output ('ok' or 'error')
  *  @param  int			$keepembedded   Set to 1 in error message must be kept embedded into its html place (this disable jnotify)
  *	@return	string						Return html output
  *
  *  @see    dol_print_error
  *  @see    dol_htmloutput_errors
+ *  @see    setEventMessages
  */
 function get_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepembedded=0)
 {
@@ -4478,14 +4493,15 @@ function get_htmloutput_errors($mesgstring='', $mesgarray='', $keepembedded=0)
 /**
  *	Print formated messages to output (Used to show messages on html output).
  *
- *	@param	string	$mesgstring		 Message
- *	@param	array	$mesgarray       Messages array
- *  @param  string	$style           Which style to use ('ok', 'warning', 'error')
- *  @param  int		$keepembedded    Set to 1 if message must be kept embedded into its html place (this disable jnotify)
+ *	@param	string		$mesgstring		Message string or message key
+ *	@param	string[]	$mesgarray      Array of message strings or message keys
+ *  @param  string      $style          Which style to use ('ok', 'warning', 'error')
+ *  @param  int         $keepembedded   Set to 1 if message must be kept embedded into its html place (this disable jnotify)
  *  @return	void
  *
  *  @see    dol_print_error
  *  @see    dol_htmloutput_errors
+ *  @see    setEventMessages
  */
 function dol_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepembedded=0)
 {
@@ -4885,7 +4901,7 @@ function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode=
  */
 function printCommonFooter($zone='private')
 {
-	global $conf;
+	global $conf, $hookmanager;
 	global $micro_start_time;
 
 	if ($zone == 'private') print "\n".'<!-- Common footer for private page -->'."\n";
@@ -4963,6 +4979,8 @@ function printCommonFooter($zone='private')
 		print "End of log output -->\n";
 	}
 
+	$parameters=array();
+	$reshook=$hookmanager->executeHooks('printCommonFooter',$parameters);    // Note that $action and $object may have been modified by some hooks
 }
 
 /**

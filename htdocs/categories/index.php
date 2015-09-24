@@ -179,7 +179,7 @@ if ($nbofentries > 0)
 }
 else
 {
-	print '<tr>';
+	print '<tr '.$bc[0].'>';
 	print '<td colspan="3"><table class="nobordernopadding"><tr class="nobordernopadding"><td>'.img_picto_common('','treemenu/branchbottom.gif').'</td>';
 	print '<td valign="middle">';
 	print $langs->trans("NoCategoryYet");

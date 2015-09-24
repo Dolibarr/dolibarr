@@ -1,17 +1,5 @@
 # Dolibarr language file - Source file is en_US - bills
-RelatedCommercialProposals=Related quotations
-PaymentTypeShortCHQ=Cheque
-ChequeNumber=Cheque N°
-ChequeOrTransferNumber=Cheque/Transfer N°
-ChequeMaker=Cheque transmitter
-ChequeBank=Bank of Cheque
-PrettyLittleSentence=Accept the amount of payments due by cheques issued in my name as a Member of an accounting association approved by the Fiscal Administration.
-PaymentByChequeOrderedTo=Cheque payment (including tax) are payable to %s send to
-PaymentByChequeOrderedToShort=Cheque payment (including tax) are payable to
-MenuChequeDeposits=Cheques deposits
-MenuCheques=Cheques
-MenuChequesReceipts=Cheques receipts
-ChequesReceipts=Cheques receipts
-ChequesArea=Cheques deposits area
-ChequeDeposits=Cheques deposits
-Cheques=Cheques
+PaymentTypeTIP=Deposit
+PaymentTypeShortTIP=Deposit
+PaymentTypeTRA=Bill payment
+PaymentTypeShortTRA=Bill

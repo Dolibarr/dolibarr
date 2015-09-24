@@ -48,6 +48,7 @@ NoImportableData=Nr przywozowe danych (bez modułu z definicji pozwalają na imp
 FileSuccessfullyBuilt=Eksport plików generowanych
 SQLUsedForExport=Zapytanie SQL wykorzystywane do budowania pliku eksportu
 LineId=Identyfikator linii
+LineLabel=Label of line
 LineDescription=Opis linii
 LineUnitPrice=Cena jednostkowa linii
 LineVATRate=Stawka VAT linii

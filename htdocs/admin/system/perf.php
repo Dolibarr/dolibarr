@@ -108,6 +108,14 @@ if (! $foundcache && $test)
 	$foundcache++;
 	print img_picto('','tick.png').' '.$langs->trans("EAcceleratorInstalled");
 }
+$test=function_exists('opcache_get_status');
+if (! $foundcache && $test)
+{
+	$foundcache++;
+	print img_picto('','tick.png').' '.$langs->trans("ZendOPCacheInstalled");  // Should be by defautl starting with PHP 5.5
+	//$tmp=opcache_get_status();
+	//var_dump($tmp);
+}
 $test=function_exists('apc_cache_info');
 if (! $foundcache && $test)
 {

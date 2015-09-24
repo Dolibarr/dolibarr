@@ -29,7 +29,7 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *	Classe de description et activation du module Document
+ *	Class to describe and enable module Document
  */
 class modDocumentGeneration extends DolibarrModules
 {
@@ -67,11 +67,11 @@ class modDocumentGeneration extends DolibarrModules
 		$this->conflictwith = array();
 		$this->langfiles = array("orders","bills","companies","mails");
 
-		// Constantes
+		// Constants
 
 		$this->const = array();
 
-		// Boites
+		// Boxes
 		$this->boxes = array();
 
 		// Permissions

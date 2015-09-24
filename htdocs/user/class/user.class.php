@@ -1191,7 +1191,7 @@ class User extends CommonObject
 		$sql.= " lastname = '".$this->db->escape($this->lastname)."'";
 		$sql.= ", firstname = '".$this->db->escape($this->firstname)."'";
 		$sql.= ", login = '".$this->db->escape($this->login)."'";
-        $sql.= ", api_key = '".$this->db->escape($this->api_key)."'";
+        $sql.= ", api_key = ".($this->api_key ? "'".$this->db->escape($this->api_key)."'" : "null");
 		$sql.= ", gender = ".($this->gender != -1 ? "'".$this->db->escape($this->gender)."'" : "null");	// 'man' or 'woman'
 		$sql.= ", admin = ".$this->admin;
 		$sql.= ", address = '".$this->db->escape($this->address)."'";
@@ -1836,9 +1836,11 @@ class User extends CommonObject
      *  @param	integer	$notooltip			1=Disable tooltip
      *  @param	int		$maxlen				Max length of visible user name
      *  @param	int		$hidethirdpartylogo	Hide logo of thirdparty if user is external user
+     *  @param  string  $mode               'firstname'=Show only firstname
+     *  @param  string  $morecss            Add more css on link
 	 *	@return	string						String with URL
 	 */
-	function getNomUrl($withpicto=0, $option='', $infologin=0, $notooltip=0, $maxlen=24, $hidethirdpartylogo=0)
+	function getNomUrl($withpicto=0, $option='', $infologin=0, $notooltip=0, $maxlen=24, $hidethirdpartylogo=0, $mode='',$morecss='')
 	{
 		global $langs, $conf, $db;
         global $dolibarr_main_authentication, $dolibarr_main_demo;
@@ -1888,13 +1890,15 @@ class User extends CommonObject
             $s=picto_from_langcode($langs->getDefaultLang());
             $label.= '<br><b>'.$langs->trans("CurrentUserLanguage").':</b> '.($s?$s.' ':'').$langs->getDefaultLang();
             $label.= '<br><b>'.$langs->trans("Browser").':</b> '.$conf->browser->name.($conf->browser->version?' '.$conf->browser->version:'').' ('.$_SERVER['HTTP_USER_AGENT'].')';
+            $label.= '<br><b>'.$langs->trans("Layout").':</b> '.$conf->browser->layout;
+            $label.= '<br><b>'.$langs->trans("Screen").':</b> '.$_SESSION['dol_screenwidth'].' x '.$_SESSION['dol_screenheight'];
             if (! empty($conf->browser->phone)) $label.= '<br><b>'.$langs->trans("Phone").':</b> '.$conf->browser->phone;
             if (! empty($_SESSION["disablemodules"])) $label.= '<br><b>'.$langs->trans("DisabledModules").':</b> <br>'.join(', ',explode(',',$_SESSION["disablemodules"]));
         }
 
 
         $link = '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'"';
-        $link.= ($notooltip?'':' title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip"');
+        $link.= ($notooltip?'':' title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip'.($morecss?' '.$morecss:'').'"');
         $link.= '>';
 		$linkend='</a>';
 
@@ -1903,7 +1907,7 @@ class User extends CommonObject
             $result.=($link.img_object(($notooltip?'':$label), 'user', ($notooltip?'':'class="classfortooltip"')).$linkend);
             if ($withpicto != 2) $result.=' ';
 		}
-		$result.= $link . $this->getFullName($langs,'',-1,$maxlen) . $linkend . $companylink;
+		$result.= $link . $this->getFullName($langs,'',($mode == 'firstname' ? 2 : -1),$maxlen) . $linkend . $companylink;
 		return $result;
 	}
 

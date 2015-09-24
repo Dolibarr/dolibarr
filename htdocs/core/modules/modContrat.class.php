@@ -29,7 +29,7 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *	Classe de description et activation du module Contrat
+ *	Class to describe and enable module Contrat
  */
 class modContrat extends DolibarrModules
 {
@@ -41,7 +41,7 @@ class modContrat extends DolibarrModules
 	 */
 	function __construct($db)
 	{
-		global $conf;
+		global $conf, $langs;
 
 		$this->db = $db;
 		$this->numero = 54;
@@ -61,14 +61,14 @@ class modContrat extends DolibarrModules
 		// Data directories to create when module is enabled
 		$this->dirs = array("/contract/temp");
 
-		// Dependances
+		// Dependencies
 		$this->depends = array("modSociete");
 		$this->requiredby = array();
 
 		// Config pages
 		$this->config_page_url = array("contract.php");
 
-		// Constantes
+		// Constants
 		$this->const = array();
 		$this->const[0][0] = "CONTRACT_ADDON";
 		$this->const[0][1] = "chaine";
@@ -132,6 +132,8 @@ class modContrat extends DolibarrModules
 		
 		// Exports
 		//--------
+		$langs->load("contracts");
+
 		$r=1;
 
 		$this->export_code[$r]=$this->rights_class.'_'.$r;
@@ -141,18 +143,18 @@ class modContrat extends DolibarrModules
 		$this->export_fields_array[$r]=array('s.rowid'=>"IdCompany",'s.nom'=>'CompanyName','s.address'=>'Address','s.zip'=>'Zip','s.town'=>'Town','c.code'=>'CountryCode',
 		's.phone'=>'Phone','s.siren'=>'ProfId1','s.siret'=>'ProfId2','s.ape'=>'ProfId3','s.idprof4'=>'ProfId4','s.code_compta'=>'CustomerAccountancyCode',
 		's.code_compta_fournisseur'=>'SupplierAccountancyCode','s.tva_intra'=>'VATIntra',
-		'co.rowid'=>"contractId",'co.ref'=>"contactRef",'co.datec'=>"contractDateCreation",'co.date_contrat'=>"DateContract",'co.mise_en_service'=>"DateMiseService",
-		'co.fin_validite'=>"EndValidity",'co.date_cloture'=>"Cloture",'co.note_private'=>"NotePrivate",'co.note_public'=>"NotePublic",
+		'co.rowid'=>"Id",'co.ref'=>"Ref",'co.datec'=>"DateCreation",'co.date_contrat'=>"DateContract",'co.mise_en_service'=>"ContractStartDate",
+		'co.fin_validite'=>"ContractEndDate",'co.date_cloture'=>"Closing",'co.note_private'=>"NotePrivate",'co.note_public'=>"NotePublic",
 		'cod.rowid'=>'LineId','cod.label'=>"LineLabel",'cod.description'=>"LineDescription",'cod.price_ht'=>"LineUnitPrice",'cod.tva_tx'=>"LineVATRate",
 		'cod.qty'=>"LineQty",'cod.total_ht'=>"LineTotalHT",'cod.total_tva'=>"LineTotalVAT",'cod.total_ttc'=>"LineTotalTTC",
-		'cod.date_ouverture'=>"DateStart",'cod.date_ouverture_prevue'=>"DateStartPrevis",'cod.date_fin_validite'=>"EndValidity",'cod.date_cloture'=>"DateEnd",
+		'cod.date_ouverture'=>"DateStart",'cod.date_ouverture_prevue'=>"DateStartPlanned",'cod.date_fin_validite'=>"DateEndPlanned",'cod.date_cloture'=>"DateEnd",
 		'p.rowid'=>'ProductId','p.ref'=>'ProductRef','p.label'=>'ProductLabel');
 
 		$this->export_entities_array[$r]=array('s.rowid'=>"company",'s.nom'=>'company','s.address'=>'company','s.zip'=>'company',
 		's.town'=>'company','c.code'=>'company','s.phone'=>'company','s.siren'=>'company','s.siret'=>'company','s.ape'=>'company',
 		's.idprof4'=>'company','s.code_compta'=>'company','s.code_compta_fournisseur'=>'company','s.tva_intra'=>'company',
-		'co.rowid'=>"Contract",'co.ref'=>"Contract",'co.datec'=>"Contract",'co.date_contrat'=>"Contract",'co.mise_en_service'=>"Contract",
-		'co.fin_validite'=>"Contract",'co.date_cloture'=>"Contract",'co.note_private'=>"Contract",'co.note_public'=>"Contract",
+		'co.rowid'=>"contract",'co.ref'=>"contract",'co.datec'=>"contract",'co.date_contrat'=>"contract",'co.mise_en_service'=>"contract",
+		'co.fin_validite'=>"contract",'co.date_cloture'=>"contract",'co.note_private'=>"contract",'co.note_public'=>"contract",
 		'cod.rowid'=>'contract_line','cod.label'=>"contract_line",'cod.description'=>"contract_line",'cod.price_ht'=>"contract_line",'cod.tva_tx'=>"contract_line",
 		'cod.qty'=>"contract_line",'cod.total_ht'=>"contract_line",'cod.total_tva'=>"contract_line",'cod.total_ttc'=>"contract_line",
 		'cod.date_ouverture'=>"contract_line",'cod.date_ouverture_prevue'=>"contract_line",'cod.date_fin_validite'=>"contract_line",'cod.date_cloture'=>"contract_line",
