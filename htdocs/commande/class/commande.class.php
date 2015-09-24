@@ -958,7 +958,7 @@ class Commande extends CommonOrder
 			$line->fetch_optionals($line->rowid);
 
         // Load source object
-        $objFrom = dol_clone($this);
+        $objFrom = clone $this;
 
         // Change socid if needed
         if (! empty($socid) && $socid != $this->socid)

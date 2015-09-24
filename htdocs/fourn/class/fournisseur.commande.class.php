@@ -1137,8 +1137,8 @@ class CommandeFournisseur extends CommonOrder
 
 		$this->db->begin();
 
-        // Load source object
-        $objFrom = dol_clone($this);
+		// Load source object
+		$objFrom = clone $this;
 
         $this->id=0;
         $this->statut=0;

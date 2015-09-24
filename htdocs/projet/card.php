@@ -218,7 +218,7 @@ if (empty($reshook))
 
 	    if (! $error)
 	    {
-	        $object->oldcopy = dol_clone($object);
+			$object->oldcopy = clone $object;
 
 			$old_start_date = $object->date_start;
 

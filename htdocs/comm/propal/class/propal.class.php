@@ -647,7 +647,7 @@ class Propal extends CommonObject
             $line = new PropaleLigne($this->db);
             $line->fetch($rowid);
 
-            $staticline = clone $line;
+			$staticline = clone $line;
 
             $line->oldline = $staticline;
             $this->line = $line;
@@ -1077,7 +1077,7 @@ class Propal extends CommonObject
 			$line->fetch_optionals($line->rowid);
 
         // Load source object
-        $objFrom = dol_clone($this);
+        $objFrom = clone $this;
 
         $objsoc=new Societe($this->db);
 

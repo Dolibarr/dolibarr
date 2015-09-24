@@ -409,8 +409,8 @@ class ActionComm extends CommonObject
 
         $this->db->begin();
 
-        // Load source object
-        $objFrom = dol_clone($this);
+		// Load source object
+		$objFrom = clone $this;
 
 		$this->fetch_optionals();
 		$this->fetch_userassigned();

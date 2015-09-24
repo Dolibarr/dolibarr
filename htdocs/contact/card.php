@@ -289,7 +289,7 @@ if (empty($reshook))
 
             $object->fetch($contactid);
 
-            $object->oldcopy=dol_clone($object);
+			$object->oldcopy = clone$object;
 
             $object->old_lastname	= GETPOST("old_lastname");
             $object->old_firstname	= GETPOST("old_firstname");

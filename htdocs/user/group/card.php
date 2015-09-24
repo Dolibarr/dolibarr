@@ -142,7 +142,7 @@ if ($action == 'adduser' || $action =='removeuser')
         if ($userid)
         {
             $object->fetch($id);
-            $object->oldcopy=dol_clone($object);
+			$object->oldcopy = clone $object;
 
 			$edituser = new User($db);
 			$edituser->fetch($userid);
@@ -176,7 +176,7 @@ if ($action == 'update')
 
         $object->fetch($id);
 
-        $object->oldcopy=dol_clone($object);
+		$object->oldcopy = clone $object;
 
 		$object->name	= trim($_POST["group"]);
 		$object->nom	= $object->name;			// For backward compatibility
