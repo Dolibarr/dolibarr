@@ -2306,6 +2306,7 @@ class Facture extends CommonInvoice
 
 			$this->line->context = $this->context;
 
+			$this->line->situpation_percent = $situation_percent;
 			$this->line->fk_facture=$this->id;
 			$this->line->label=$label;	// deprecated
 			$this->line->desc=$desc;
@@ -2351,7 +2352,6 @@ class Facture extends CommonInvoice
 			{
 				// Reorder if child line
 				if (! empty($fk_parent_line)) $this->line_order(true,'DESC');
-
 				// Mise a jour informations denormalisees au niveau de la facture meme
 				$result=$this->update_price(1,'auto',0,$mysoc);	// This method is designed to add line from user input so total calculation must be done using 'auto' mode.
 				if ($result > 0)
