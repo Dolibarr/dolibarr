@@ -44,18 +44,8 @@ class Adherent extends CommonObject
     public $table_element='adherent';
     protected $ismultientitymanaged = 1;  // 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
-    var $error;
-    var $errors;
     var $mesgs;
 
-    var $id;
-
-    var $ref;
-    public $ref_ext;
-
-    var $civility_id;
-    var $firstname;
-    var $lastname;
     var $login;
     var $pass;
     var $societe;
@@ -68,10 +58,6 @@ class Adherent extends CommonObject
     var $state_code;            // Code of department
     var $state;                 // Label of department
 
-    var $country_id;
-    var $country_code;
-    var $country;
-
     var $email;
     var $skype;
     var $phone;
@@ -80,8 +66,6 @@ class Adherent extends CommonObject
 
     var $morphy;
     var $public;
-    var $note_private;		// Private note
-    var $note_public;       // Public note
     var $statut;			// -1:brouillon, 0:resilie, >=1:valide,paye
     var $photo;
 
@@ -99,7 +83,6 @@ class Adherent extends CommonObject
     var $user_login;
 
     var $fk_soc;
-	var $thirdparty;		// Loaded by ->fetch_thirdparty()
 
     // Fields loaded by fetch_subscriptions()
     var $first_subscription_date;
@@ -109,9 +92,6 @@ class Adherent extends CommonObject
     var $last_subscription_date_end;
     var $last_subscription_amount;
     var $subscriptions=array();
-
-    //  var $public;
-    var $array_options;
 
     var $oldcopy;		// To contains a clone of this when we need to save old properties of object
 

@@ -55,10 +55,6 @@ class Product extends CommonObject
 
 	var $regeximgext='\.jpg|\.jpeg|\.bmp|\.gif|\.png|\.tiff';
 
-	//! Identifiant unique
-	var $id ;
-	//! Ref
-	var $ref;
 	/*
 	 * @deprecated
 	 * @see label
@@ -128,8 +124,6 @@ class Product extends CommonObject
 	var $status_batch;
 
 	var $customcode;       // Customs code
-    var $country_id;       // Country origin id
-	var $country_code;     // Country origin code (US, FR, ...)
 
 	//! Unites de mesure
 	var $weight;
@@ -146,10 +140,6 @@ class Product extends CommonObject
 
 	//! barcode
 	var $barcode;               // value
-	var $barcode_type;          // id
-	var $barcode_type_code;     // code  (loaded by fetch_barcode). Example 'ean', 'isbn', ...
-	var $barcode_type_label;    // label (loaded by fetch_barcode)
-	var $barcode_type_coder;    // coder (loaded by fetch_barcode). Engine.
 
 	var $stats_propale=array();
 	var $stats_commande=array();
@@ -163,10 +153,6 @@ class Product extends CommonObject
 	var $imgWidth;
 	var $imgHeight;
 
-	//! Canevas a utiliser si le produit n'est pas un produit generique
-	var $canvas;
-
-	var $import_key;
 	var $date_creation;
 	var $date_modification;
 
@@ -182,9 +168,6 @@ class Product extends CommonObject
 	var $stock_warehouse=array();
 
 	var $oldcopy;
-
-	//note not visible on orders and invoices
-	var $note;
 
     var $fk_price_expression;
 

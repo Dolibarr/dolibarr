@@ -247,7 +247,7 @@ llxHeader();
 $form=new Form($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("InterventionsSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("InterventionsSetup"),$linkback,'title_setup');
 
 
 $head=fichinter_admin_prepare_head();
@@ -256,7 +256,7 @@ dol_fiche_head($head, 'ficheinter', $langs->trans("Interventions"), 0, 'interven
 
 // Interventions numbering model
 
-print_titre($langs->trans("FicheinterNumberingModules"));
+print load_fiche_titre($langs->trans("FicheinterNumberingModules"));
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -358,7 +358,7 @@ print '</table><br>';
  *  Documents models for Interventions
  */
 
-print_titre($langs->trans("TemplatePDFInterventions"));
+print load_fiche_titre($langs->trans("TemplatePDFInterventions"));
 
 // Defini tableau def des modeles
 $type='ficheinter';
@@ -512,7 +512,7 @@ print "<br>";
  *
  */
 
-print_titre($langs->trans("OtherOptions"));
+print load_fiche_titre($langs->trans("OtherOptions"));
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';

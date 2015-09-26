@@ -263,7 +263,7 @@ llxHeader("",$langs->trans("OrdersSetup"));
 $form=new Form($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("OrdersSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("OrdersSetup"),$linkback,'title_setup');
 
 $head = order_admin_prepare_head();
 
@@ -273,7 +273,7 @@ dol_fiche_head($head, 'general', $langs->trans("Orders"), 0, 'order');
  * Orders Numbering model
  */
 
-print_titre($langs->trans("OrdersNumberingModules"));
+print load_fiche_titre($langs->trans("OrdersNumberingModules"));
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -377,7 +377,7 @@ print "</table><br>\n";
  * Document templates generators
  */
 
-print_titre($langs->trans("OrdersModelModule"));
+print load_fiche_titre($langs->trans("OrdersModelModule"));
 
 // Load array def with activated templates
 $def = array();
@@ -540,7 +540,7 @@ print "<br>";
  *
  */
 
-print_titre($langs->trans("OtherOptions"));
+print load_fiche_titre($langs->trans("OtherOptions"));
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
@@ -638,7 +638,7 @@ print '<br>';
  * Notifications
  */
 
-print_titre($langs->trans("Notifications"));
+print load_fiche_titre($langs->trans("Notifications"));
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';

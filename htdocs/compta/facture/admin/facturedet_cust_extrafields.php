@@ -66,7 +66,7 @@ $textobject=strtolower($langs->transnoentitiesnoconv("BillsCustomers"));
 llxHeader('',$langs->trans("BillsSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("BillsSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("BillsSetup"),$linkback,'title_setup');
 print '<br>';
 
 $head = invoice_admin_prepare_head();
@@ -96,7 +96,7 @@ if ($action != 'create' && $action != 'edit')
 if ($action == 'create')
 {
     print "<br>";
-    print_titre($langs->trans('NewAttribute'));
+    print load_fiche_titre($langs->trans('NewAttribute'));
 
     require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_add.tpl.php';
 }
@@ -109,7 +109,7 @@ if ($action == 'create')
 if ($action == 'edit' && ! empty($attrname))
 {
     print "<br>";
-    print_titre($langs->trans("FieldEdition", $attrname));
+    print load_fiche_titre($langs->trans("FieldEdition", $attrname));
 
     require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_edit.tpl.php';
 }

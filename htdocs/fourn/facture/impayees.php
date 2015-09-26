@@ -181,7 +181,7 @@ if ($user->rights->fournisseur->facture->lire)
 		$link='';
 		if (empty($option)) $link='<a href="'.$_SERVER["PHP_SELF"].'?option=late'.($socid?'&socid='.$socid:'').'">'.$langs->trans("ShowUnpaidLateOnly").'</a>';
 		elseif ($option == 'late') $link='<a href="'.$_SERVER["PHP_SELF"].'?'.($socid?'&socid='.$socid:'').'">'.$langs->trans("ShowUnpaidAll").'</a>';
-		print_fiche_titre($titre,$link);
+		print load_fiche_titre($titre,$link);
 
 		print_barre_liste('','',$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',0);	// We don't want pagination on this page
 		$i = 0;

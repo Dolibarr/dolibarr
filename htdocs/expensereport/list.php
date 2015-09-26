@@ -214,7 +214,7 @@ if ($resql)
 	// User
 	if ($user->rights->expensereport->readall || $user->rights->expensereport->lire_tous){
 		print '<td class="liste_titre" align="left">';
-		$html->select_users($search_user,"search_user",1,"",0,'');
+		$html->select_dolusers($search_user,"search_user",1,"",0,'');
 		print '</td>';
 	} else {
 		print '<td class="liste_titre">&nbsp;</td>';

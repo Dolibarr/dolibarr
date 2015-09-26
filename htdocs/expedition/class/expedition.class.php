@@ -45,24 +45,15 @@ class Expedition extends CommonObject
 	public $table_element="expedition";
 	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
-	var $id;
 	var $socid;
 	var $ref_customer;
-	var $ref_ext;
 	var $ref_int;
 	var $brouillon;
 	var $entrepot_id;
-	var $modelpdf;
-	var $origin;
-	var $origin_id;
 	var $lines=array();
-	var $shipping_method_id;
 	var $tracking_number;
 	var $tracking_url;
-	var $statut;
 	var $billed;
-	var $note_public;
-	var $note_private;
 	var $model_pdf;
 
 	var $trueWeight;
@@ -95,19 +86,7 @@ class Expedition extends CommonObject
 	var $date_creation;
 	var $date_valid;
 
-	// For Invoicing
-	var $total_ht;			// Total net of tax
-	var $total_ttc;			// Total with tax
-	var $total_tva;			// Total VAT
-	var $total_localtax1;   // Total Local tax 1
-	var $total_localtax2;   // Total Local tax 2
-
 	var $listmeths;			// List of carriers
-
-	//Incorterms
-	var $fk_incoterms;
-	var $location_incoterms;
-	var $libelle_incoterms;  //Used into tooltip
 
 	/**
 	 *	Constructor

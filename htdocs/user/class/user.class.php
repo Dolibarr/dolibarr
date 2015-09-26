@@ -44,14 +44,9 @@ class User extends CommonObject
 	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
 	var $id=0;
-	var $ref;
-	var $ref_ext;
 	var $ldap_sid;
 	var $search_sid;
-	var $lastname;
-	var $firstname;
 	var $gender;
-	var $note;
 	var $email;
 	var $skype;
 	var $job;
@@ -1409,7 +1404,7 @@ class User extends CommonObject
 		// Mise a jour
 		if (! $changelater)
 		{
-		    if (! is_object($this->oldcopy)) $this->oldcopy=dol_clone($this);
+		    if (! is_object($this->oldcopy)) $this->oldcopy = clone $this;
 
 		    $this->db->begin();
 

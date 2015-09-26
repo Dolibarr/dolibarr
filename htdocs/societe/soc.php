@@ -232,7 +232,7 @@ if (empty($reshook))
         if ($action == 'update')
         {
         	$ret=$object->fetch($socid);
-        	$object->oldcopy=dol_clone($object);
+			$object->oldcopy = clone $object;
         }
 		else $object->canvas=$canvas;
 
@@ -879,7 +879,7 @@ else
         /* Show create form */
 
         $linkback="";
-        print_fiche_titre($langs->trans("NewThirdParty"),$linkback,'title_companies.png');
+        print load_fiche_titre($langs->trans("NewThirdParty"),$linkback,'title_companies.png');
 
         if (! empty($conf->use_javascript_ajax))
         {
@@ -1213,7 +1213,7 @@ else
             print '<tr>';
             print '<td>'.fieldLabel('AllocateCommercial','commercial_id').'</td>';
             print '<td colspan="3" class="maxwidthonsmartphone">';
-            $form->select_users((! empty($object->commercial_id)?$object->commercial_id:$user->id),'commercial_id',1); // Add current user by default
+            $form->select_dolusers((! empty($object->commercial_id)?$object->commercial_id:$user->id),'commercial_id',1); // Add current user by default
             print '</td></tr>';
         }
 
@@ -1284,7 +1284,7 @@ else
          * Edition
          */
 
-        //print_fiche_titre($langs->trans("EditCompany"));
+        //print load_fiche_titre($langs->trans("EditCompany"));
 
         if ($socid)
         {
@@ -1329,7 +1329,7 @@ else
                 $prefixSupplierIsUsed = $modCodeFournisseur->verif_prefixIsUsed();
             }
 
-            $object->oldcopy=dol_clone($object);
+			$object->oldcopy = clone $object;
 
             if (GETPOST('name'))
             {
@@ -2409,7 +2409,7 @@ else
 			$modelmail='thirdparty';
 
 			print '<br>';
-			print_titre($langs->trans($titreform));
+			print load_fiche_titre($langs->trans($titreform));
 
 			// Define output language
 			$outputlangs = $langs;

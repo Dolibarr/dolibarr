@@ -43,6 +43,6 @@ if ($conf->projet->enabled)
 {
 	$arrayresult['searchintoproject']=$langs->trans("SearchIntoProject", $search_boxvalue);
 }
-print dol_json_encode($arrayresult);
+print json_encode($arrayresult);
 
 if (is_object($db)) $db->close();

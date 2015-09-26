@@ -960,7 +960,7 @@ if ($action == 'create')
 
 	$soc=new Societe($db);
 
-	print_fiche_titre($langs->trans("AddIntervention"));
+	print load_fiche_titre($langs->trans("AddIntervention"));
 
 	dol_htmloutput_mesg($mesg);
 
@@ -1804,7 +1804,7 @@ else if ($id > 0 || ! empty($ref))
 
 		print '<div class="clearboth"></div>';
 		print '<br>';
-		print_fiche_titre($langs->trans('SendInterventionByMail'));
+		print load_fiche_titre($langs->trans('SendInterventionByMail'));
 
 		dol_fiche_head('');
 

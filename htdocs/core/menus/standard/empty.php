@@ -99,7 +99,7 @@ class MenuManager
 
 			if ($mode == 'jmobile')
 			{
-				$this->topmenu=dol_clone($this->menu);
+				$this->topmenu = clone $this->menu;
 				unset($this->menu->liste);
 			}
 		}
@@ -205,7 +205,7 @@ class MenuManager
 
 			if ($mode == 'jmobile')
 			{
-				$this->leftmenu=dol_clone($this->menu);
+				$this->leftmenu = clone $this->menu;
 				unset($this->menu->liste);
 			}
 		}

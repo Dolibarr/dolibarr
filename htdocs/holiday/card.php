@@ -678,7 +678,7 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
     else
     {
         // Formulaire de demande de congés payés
-        print_fiche_titre($langs->trans('MenuAddCP'), '', 'title_hrm.png');
+        print load_fiche_titre($langs->trans('MenuAddCP'), '', 'title_hrm.png');
 
         // Si il y a une erreur
         if (GETPOST('error')) {
@@ -782,10 +782,10 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         print '<td>';
         if (empty($user->rights->holiday->write_all))
         {
-        	print $form->select_users($userid,'useridbis',0,'',1);
+        	print $form->select_dolusers($userid,'useridbis',0,'',1);
         	print '<input type="hidden" name="userid" value="'.$userid.'">';
         }
-        else print $form->select_users(GETPOST('userid')?GETPOST('userid'):$user->id,'userid',0,'',0);
+        else print $form->select_dolusers(GETPOST('userid')?GETPOST('userid'):$user->id,'userid',0,'',0);
         print '</td>';
         print '</tr>';
 
@@ -896,7 +896,7 @@ else
             $userRequest = new User($db);
             $userRequest->fetch($cp->fk_user);
 
-            //print_fiche_titre($langs->trans('TitreRequestCP'));
+            //print load_fiche_titre($langs->trans('TitreRequestCP'));
 
             // Si il y a une erreur
             if (GETPOST('error'))

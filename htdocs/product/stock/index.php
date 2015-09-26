@@ -40,7 +40,7 @@ $result=restrictedArea($user,'stock');
 $help_url='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
 llxHeader("",$langs->trans("Stocks"),$help_url);
 
-print_fiche_titre($langs->trans("StocksArea"));
+print load_fiche_titre($langs->trans("StocksArea"));
 
 
 //print '<table border="0" width="100%" class="notopnoleftnoright">';

@@ -27,7 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/dolprintipp.class.php';
 
 llxHeader("",$langs->trans("Printing"));
 
-print_fiche_titre($langs->trans("Printing"));
+print load_fiche_titre($langs->trans("Printing"));
 
 // List Jobs from printing modules
 $printer = new dolPrintIPP($db,$conf->global->PRINTIPP_HOST,$conf->global->PRINTIPP_PORT,$user->login,$conf->global->PRINTIPP_USER,$conf->global->PRINTIPP_PASSWORD);

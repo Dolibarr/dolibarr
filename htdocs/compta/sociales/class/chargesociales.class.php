@@ -39,8 +39,6 @@ class ChargeSociales extends CommonObject
      */
     protected $table_ref_field = 'ref';
 
-    var $id;
-    var $ref;
     var $date_ech;
     var $lib;
     var $type;

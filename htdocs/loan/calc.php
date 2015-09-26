@@ -121,7 +121,7 @@ if (! empty($errors)) {
 
 llxHeader();
 
-print_fiche_titre($langs->trans("LoanCalc"));
+print load_fiche_titre($langs->trans("LoanCalc"));
 print $langs->trans('LoanCalcDesc');
 
 print '<form method="GET" name="information" action="'.$_SERVER['PHP_SELF'].'">';

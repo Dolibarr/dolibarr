@@ -24,7 +24,7 @@ $contact = $GLOBALS['objcanvas']->control->object;
 <!-- BEGIN PHP TEMPLATE ADHERENTCARD_EDIT.TPL.PHP DEFAULT -->
 
 <?php
-print_fiche_titre($this->control->tpl['title']);
+print load_fiche_titre($this->control->tpl['title']);
 
 dol_htmloutput_errors($this->control->tpl['error'],$this->control->tpl['errors']);
 

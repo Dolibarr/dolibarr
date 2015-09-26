@@ -51,26 +51,15 @@ class Commande extends CommonOrder
      */
     protected $table_ref_field = 'ref';
 
-    var $id;
-
 	/**
 	 * Client ID
 	 * @var int
 	 */
     var $socid;
 
-	/**
-	 * Client (loaded by fetch_client)
-	 * @var Societe
-	 */
-    var $client;
-
-    var $ref;
     var $ref_client;
-    var $ref_ext;
     var $ref_int;
     var $contactid;
-    var $fk_project;
 
 	/**
 	 * Status of the order. Check the following constants:
@@ -86,16 +75,12 @@ class Commande extends CommonOrder
     var $billed;		// billed or not
 
     var $brouillon;
-    var $cond_reglement_id;
     var $cond_reglement_code;
-    var $fk_account;
-    var $mode_reglement_id;
     var $mode_reglement_code;
     var $availability_id;
     var $availability_code;
     var $demand_reason_id;
     var $demand_reason_code;
-    var $fk_delivery_address;
     var $address;
     var $date;				// Date commande
 	/**
@@ -104,31 +89,15 @@ class Commande extends CommonOrder
 	 */
     var $date_commande;
     var $date_livraison;	// Date livraison souhaitee
-    var $shipping_method_id;
     var $fk_remise_except;
     var $remise_percent;
-    var $total_ht;			// Total net of tax
-    var $total_ttc;			// Total with tax
-    var $total_tva;			// Total VAT
-    var $total_localtax1;   // Total Local tax 1
-    var $total_localtax2;   // Total Local tax 2
     var $remise_absolue;
-    var $modelpdf;
     var $info_bits;
     var $rang;
     var $special_code;
     var $source;			// Origin of order
-	/**
-	 * @deprecated
-	 * @see note_private, note_public
-	 */
-    var $note;
-    var $note_private;
-    var $note_public;
     var $extraparams=array();
 
-    var $origin;
-    var $origin_id;
     var $linked_objects=array();
 
     var $user_author_id;
@@ -137,11 +106,6 @@ class Commande extends CommonOrder
 	 * @var OrderLine[]
 	 */
 	var $lines = array();
-
-	//Incorterms
-	var $fk_incoterms;
-	var $location_incoterms;
-	var $libelle_incoterms;  //Used into tooltip
 
     // Pour board
     var $nbtodo;
@@ -958,7 +922,7 @@ class Commande extends CommonOrder
 			$line->fetch_optionals($line->rowid);
 
         // Load source object
-        $objFrom = dol_clone($this);
+        $objFrom = clone $this;
 
         // Change socid if needed
         if (! empty($socid) && $socid != $this->socid)

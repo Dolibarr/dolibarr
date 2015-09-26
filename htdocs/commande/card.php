@@ -36,6 +36,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formorder.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formmargin.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/modules/commande/modules_commande.php';
 require_once DOL_DOCUMENT_ROOT . '/commande/class/commande.class.php';
 require_once DOL_DOCUMENT_ROOT . '/comm/action/class/actioncomm.class.php';
@@ -129,7 +130,7 @@ if (empty($reshook))
 			if ($object->id > 0)
 			{
 				// Because createFromClone modifies the object, we must clone it so that we can restore it later
-				$orig = dol_clone($object);
+				$orig = clone $object;
 
 				$result=$object->createFromClone($socid);
 				if ($result > 0)
@@ -1222,6 +1223,7 @@ llxHeader('', $langs->trans('Order'), 'EN:Customers_Orders|FR:Commandes_Clients|
 $form = new Form($db);
 $formfile = new FormFile($db);
 $formorder = new FormOrder($db);
+$formmargin = new FormMargin($db);
 if (! empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
 
 /**
@@ -1233,7 +1235,7 @@ if (! empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
  */
 if ($action == 'create' && $user->rights->commande->creer)
 {
-	print_fiche_titre($langs->trans('CreateOrder'),'','title_commercial.png');
+	print load_fiche_titre($langs->trans('CreateOrder'),'','title_commercial.png');
 
 	$soc = new Societe($db);
 	if ($socid > 0)
@@ -1574,7 +1576,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 	// Show origin lines
 	if (! empty($origin) && ! empty($originid) && is_object($objectsrc)) {
 		$title = $langs->trans('ProductsAndServices');
-		print_titre($title);
+		print load_fiche_titre($title);
 
 		print '<table class="noborder" width="100%">';
 
@@ -2084,7 +2086,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		// Margin Infos
 		if (! empty($conf->margin->enabled)) {
 			print '<td valign="top" width="50%" colspan="2" rowspan="' . $rowspan . '">';
-			$object->displayMarginInfos();
+			$formmargin->displayMarginInfos($object);
 			print '</td>';
 		} else
 			print '<td width="50%" colspan="2" rowspan="' . $rowspan . '"></td>';
@@ -2376,7 +2378,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 
 			print '<div class="clearboth"></div>';
 			print '<br>';
-			print_fiche_titre($langs->trans('SendOrderByMail'));
+			print load_fiche_titre($langs->trans('SendOrderByMail'));
 
 			dol_fiche_head('');
 

@@ -397,7 +397,7 @@ function dol_clone($object)
 {
 	dol_syslog(__FUNCTION__ . " is deprecated", LOG_WARNING);
 
-	$myclone=clone($object);
+	$myclone = clone $object;
 	return $myclone;
 }
 
@@ -2736,7 +2736,7 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
  *	@param	string	$title			Title to show
  *	@return	string					Title to show
  *  @deprecated						Use load_fiche_titre instead
- *  @see print_fiche_titre, load_fiche_titre
+ *  @see load_fiche_titre
  */
 function print_titre($title)
 {
@@ -4855,6 +4855,8 @@ function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode=
 				}
 				else if (count($values) == 5)       // deprecated
 				{
+					dol_syslog('Passing 5 values in tabs module_parts is deprecated. Please update to 6 with permissions.', LOG_WARNING);
+
 					if ($values[0] != $type) continue;
 					if ($values[3]) $langs->load($values[3]);
 					if (preg_match('/SUBSTITUTION_([^_]+)/i',$values[2],$reg))
@@ -4938,7 +4940,7 @@ function printCommonFooter($zone='private')
 		print 'MAIN_OPTIMIZE_SPEED='.(isset($conf->global->MAIN_OPTIMIZE_SPEED)?$conf->global->MAIN_OPTIMIZE_SPEED:'off');
 		if ($micro_start_time)
 		{
-			$micro_end_time=dol_microtime_float();
+			$micro_end_time = microtime(true);
 			print ' - Build time: '.ceil(1000*($micro_end_time-$micro_start_time)).' ms';
 		}
 		if (function_exists("memory_get_usage"))

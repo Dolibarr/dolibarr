@@ -46,7 +46,7 @@ $staticmember=new Adherent($db);
 $statictype=new AdherentType($db);
 $subscriptionstatic=new Cotisation($db);
 
-print_fiche_titre($langs->trans("MembersArea"));
+print load_fiche_titre($langs->trans("MembersArea"));
 
 
 $var=True;

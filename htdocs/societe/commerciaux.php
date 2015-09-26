@@ -234,7 +234,7 @@ if ($_GET["socid"])
 			$num = $db->num_rows($resql);
 			$i = 0;
 
-			print_titre($title);
+			print load_fiche_titre($title);
 
 			// Lignes des titres
 			print '<table class="noborder" width="100%">';

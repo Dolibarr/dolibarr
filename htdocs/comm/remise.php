@@ -124,7 +124,7 @@ if ($socid > 0)
 	print '</table>';
 	print '<br>';
 
-	print_fiche_titre($langs->trans("NewRelativeDiscount"),'','');
+	print load_fiche_titre($langs->trans("NewRelativeDiscount"),'','');
 
 	print '<table class="border" width="100%">';
 

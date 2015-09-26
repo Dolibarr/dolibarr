@@ -172,7 +172,7 @@ jQuery(document).ready(function() {
 <?php
 }
 
-print_fiche_titre($langs->trans("OtherSetup"),'','title_setup');
+print load_fiche_titre($langs->trans("OtherSetup"),'','title_setup');
 
 print $langs->trans("ConstDesc")."<br>\n";
 print "<br>\n";

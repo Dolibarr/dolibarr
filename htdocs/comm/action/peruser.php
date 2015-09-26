@@ -337,7 +337,7 @@ if ($conf->use_javascript_ajax)
 
 
 $link='';
-print_fiche_titre($s, $link.' &nbsp; &nbsp; '.$nav, '');
+print load_fiche_titre($s, $link.' &nbsp; &nbsp; '.$nav, '');
 
 
 // Get event in an array

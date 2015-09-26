@@ -121,7 +121,7 @@ $formother = new FormOther($db);
 
 llxHeader("","",$langs->trans("Categories"));
 
-print_fiche_titre($langs->trans("ModifCat"));
+print load_fiche_titre($langs->trans("ModifCat"));
 
 $object->fetch($id);
 
@@ -156,7 +156,7 @@ print '</td></tr>';
 print '<tr>';
 print '<td>'.$langs->trans("Color").'</td>';
 print '<td >';
-print $formother->select_color($object->color, 'color');
+print $formother->selectColor($object->color, 'color');
 print '</td></tr>';
 
 // Parent category
