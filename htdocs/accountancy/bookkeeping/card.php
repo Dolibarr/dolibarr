@@ -189,7 +189,7 @@ if ($action == 'delete') {
 }
 
 if ($action == 'create') {
-    print_fiche_titre($langs->trans("CreateMvts"));
+    print load_fiche_titre($langs->trans("CreateMvts"));
 
     $code_journal_array = array (
             $conf->global->ACCOUNTING_SELL_JOURNAL => $conf->global->ACCOUNTING_SELL_JOURNAL,
@@ -250,7 +250,7 @@ if ($action == 'create') {
     }
     if (! empty($book->piece_num)) {
 
-        print_fiche_titre($langs->trans("UpdateMvts"));
+        print load_fiche_titre($langs->trans("UpdateMvts"));
 
         print '<table class="border" width="100%">';
         print '<tr class="pair">';
@@ -280,7 +280,7 @@ if ($action == 'create') {
             setEventMessage($book->errors, 'errors');
         } else {
 
-            print_fiche_titre($langs->trans("ListeMvts"));
+            print load_fiche_titre($langs->trans("ListeMvts"));
             print "<table class=\"noborder\" width=\"100%\">";
             if (count($book->linesmvt) > 0) {
 
@@ -367,7 +367,7 @@ if ($action == 'create') {
         }
     }
     else {
-        print_fiche_titre($langs->trans("NoRecords"));
+        print load_fiche_titre($langs->trans("NoRecords"));
     }
 }
 

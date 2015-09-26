@@ -813,7 +813,7 @@ if ($id)
     $titre.=' - '.$langs->trans($tablib[$id]);
     $linkback='<a href="'.$_SERVER['PHP_SELF'].'">'.$langs->trans("BackToDictionaryList").'</a>';
 }
-print_fiche_titre($titre,$linkback,'title_setup');
+print load_fiche_titre($titre,$linkback,'title_setup');
 
 if (empty($id))
 {

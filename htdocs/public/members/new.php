@@ -367,7 +367,7 @@ $extrafields->fetch_name_optionals_label('adherent');    // fetch optionals attr
 llxHeaderVierge($langs->trans("NewSubscription"));
 
 
-print_titre($langs->trans("NewSubscription"));
+print load_fiche_titre($langs->trans("NewSubscription"));
 
 if (! empty($conf->global->MEMBER_NEWFORM_TEXT)) print $langs->trans($conf->global->MEMBER_NEWFORM_TEXT)."<br>\n";
 else print $langs->trans("NewSubscriptionDesc",$conf->global->MAIN_INFO_SOCIETE_MAIL)."<br>\n";

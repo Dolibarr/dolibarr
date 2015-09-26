@@ -277,7 +277,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 		$title='';
 		if ($facture->type != 2) $title.=$langs->trans("EnterPaymentReceivedFromCustomer");
 		if ($facture->type == 2) $title.=$langs->trans("EnterPaymentDueToCustomer");
-		print_fiche_titre($title);
+		print load_fiche_titre($title);
 
 		// Initialize data for confirmation (this is used because data can be change during confirmation)
 		if ($action == 'add_paiement')

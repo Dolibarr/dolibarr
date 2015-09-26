@@ -114,7 +114,7 @@ $form=new Form($db);
 $formother=new FormOther($db);
 $formadmin=new FormAdmin($db);
 
-print_fiche_titre($langs->trans("GUISetup"),'','title_setup');
+print load_fiche_titre($langs->trans("GUISetup"),'','title_setup');
 
 print $langs->trans("DisplayDesc")."<br>\n";
 print "<br>\n";
@@ -132,7 +132,7 @@ if ($action == 'edit')	// Edit
     clearstatcache();
     $var=true;
 
-    print_fiche_titre($langs->trans("Language"),'','');
+    print load_fiche_titre($langs->trans("Language"),'','');
     print '<br>';
     print '<table summary="edit" class="noborder" width="100%">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td>';

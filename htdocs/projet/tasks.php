@@ -266,7 +266,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 {
 	if ($id > 0 || ! empty($ref)) print '<br>';
 
-	print_fiche_titre($langs->trans("NewTask"), '', 'title_project');
+	print load_fiche_titre($langs->trans("NewTask"), '', 'title_project');
 
 	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';

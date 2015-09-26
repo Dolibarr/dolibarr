@@ -330,7 +330,7 @@ else
 //Debut du formulaire et bandeaux de tete
 print '<form name="formulaire" action="" method="POST">'."\n";
 
-print_fiche_titre($langs->trans("CreatePoll").' (2 / 2)');
+print load_fiche_titre($langs->trans("CreatePoll").' (2 / 2)');
 
 //affichage de l'aide pour les jours
 print '<div class="bodydate">'."\n";

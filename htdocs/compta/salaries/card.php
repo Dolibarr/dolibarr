@@ -225,7 +225,7 @@ if ($action == 'create')
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
 
-	print_fiche_titre($langs->trans("NewSalaryPayment"),'', 'title_accountancy.png');
+	print load_fiche_titre($langs->trans("NewSalaryPayment"),'', 'title_accountancy.png');
 
 	dol_fiche_head('', '');
 	

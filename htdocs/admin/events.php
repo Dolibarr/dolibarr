@@ -73,7 +73,7 @@ if ($action == "save")
 llxHeader('',$langs->trans("Audit"));
 
 //$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("SecuritySetup"),'','title_setup');
+print load_fiche_titre($langs->trans("SecuritySetup"),'','title_setup');
 
 print $langs->trans("LogEventDesc")."<br>\n";
 print "<br>\n";

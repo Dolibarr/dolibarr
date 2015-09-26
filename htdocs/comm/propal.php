@@ -1191,7 +1191,7 @@ $now = dol_now();
 // Add new proposal
 if ($action == 'create')
 {
-	print_fiche_titre($langs->trans("NewProp"));
+	print load_fiche_titre($langs->trans("NewProp"));
 
 	$soc = new Societe($db);
 	if ($socid > 0)
@@ -1579,7 +1579,7 @@ if ($action == 'create')
 		print '<br>';
 
 		$title = $langs->trans('ProductsAndServices');
-		print_titre($title);
+		print load_fiche_titre($title);
 
 		print '<table class="noborder" width="100%">';
 
@@ -2287,7 +2287,7 @@ if ($action == 'create')
 
 		print '<div class="clearboth"></div>';
 		print '<br>';
-		print_fiche_titre($langs->trans('SendPropalByMail'));
+		print load_fiche_titre($langs->trans('SendPropalByMail'));
 
 		dol_fiche_head('');
 

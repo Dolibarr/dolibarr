@@ -984,7 +984,7 @@ $now = dol_now();
 // Add new askprice
 if ($action == 'create')
 {
-	print_fiche_titre($langs->trans("NewAskPrice"));
+	print load_fiche_titre($langs->trans("NewAskPrice"));
 
 	$soc = new Societe($db);
 	if ($socid > 0)
@@ -1263,7 +1263,7 @@ if ($action == 'create')
 		print '<br>';
 
 		$title = $langs->trans('ProductsAndServices');
-		print_titre($title);
+		print load_fiche_titre($title);
 
 		print '<table class="noborder" width="100%">';
 
@@ -1770,7 +1770,7 @@ if ($action == 'create')
 
 		print '<div class="clearboth"></div>';
 		print '<br>';
-		print_fiche_titre($langs->trans('SendAskByMail'));
+		print load_fiche_titre($langs->trans('SendAskByMail'));
 
 		dol_fiche_head('');
 

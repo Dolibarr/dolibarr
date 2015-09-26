@@ -271,7 +271,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             $obj = $db->fetch_object($resql);
             $total = $obj->total;
 
-            print_fiche_titre($langs->trans('DoPayment'));
+            print load_fiche_titre($langs->trans('DoPayment'));
 
             print '<form id="payment_form" name="addpaiement" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';

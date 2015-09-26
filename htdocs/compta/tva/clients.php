@@ -227,7 +227,7 @@ $vatsup=$langs->trans("VATPaid");
 // VAT Received
 
 //print "<br>";
-//print_titre($vatcust);
+//print load_fiche_titre($vatcust);
 
 print "<table class=\"noborder\" width=\"100%\">";
 print "<tr class=\"liste_titre\">";
@@ -306,7 +306,7 @@ if (is_array($coll_list)) {
 // VAT Paid
 
 //print "<br>";
-//print_titre($vatsup);
+//print load_fiche_titre($vatsup);
 
 //print "<table class=\"noborder\" width=\"100%\">";
 print "<tr class=\"liste_titre\">";

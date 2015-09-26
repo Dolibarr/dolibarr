@@ -219,7 +219,7 @@ $form=new Form($db);
 
 llxHeader('',$langs->trans("Boxes"));
 
-print_fiche_titre($langs->trans("Boxes"),'','title_setup');
+print load_fiche_titre($langs->trans("Boxes"),'','title_setup');
 
 print $langs->trans("BoxesDesc")." ".$langs->trans("OnlyActiveElementsAreShown")."<br>\n";
 
@@ -323,7 +323,7 @@ $boxtoadd=InfoBox::listBoxes($db,'available',-1,null,$actives);
 
 print "<br>\n";
 print "\n\n".'<!-- Boxes Available -->'."\n";
-print_titre($langs->trans("BoxesAvailable"));
+print load_fiche_titre($langs->trans("BoxesAvailable"));
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
@@ -385,7 +385,7 @@ print "\n".'<!-- End Boxes Available -->'."\n";
 $boxactivated=InfoBox::listBoxes($db,'activated',-1,null);
 //var_dump($boxactivated);
 print "<br>\n\n";
-print_titre($langs->trans("BoxesActivated"));
+print load_fiche_titre($langs->trans("BoxesActivated"));
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -446,7 +446,7 @@ print '</table><br>';
 // Other parameters
 
 print "\n\n".'<!-- Other Const -->'."\n";
-print_titre($langs->trans("Other"));
+print load_fiche_titre($langs->trans("Other"));
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="addconst">';

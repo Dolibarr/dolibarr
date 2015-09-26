@@ -133,7 +133,7 @@ $form = new Form($db);
 
 llxHeader();
 
-print_fiche_titre($langs->trans("DelaysOfToleranceBeforeWarning"),'','title_setup');
+print load_fiche_titre($langs->trans("DelaysOfToleranceBeforeWarning"),'','title_setup');
 
 print $langs->transnoentities("DelaysOfToleranceDesc",img_warning());
 print " ".$langs->trans("OnlyActiveElementsAreShown",DOL_URL_ROOT.'/admin/modules.php')."<br>\n";

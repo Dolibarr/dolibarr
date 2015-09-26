@@ -52,7 +52,7 @@ $help_url="EN:Module_Ask_Price_Supplier|FR:Module_Demande_de_prix_fournisseur";
 
 llxHeader("",$langs->trans("AskPriceSupplierArea"),$help_url);
 
-print_fiche_titre($langs->trans("AskPriceSupplierArea"));
+print load_fiche_titre($langs->trans("AskPriceSupplierArea"));
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 

@@ -65,7 +65,7 @@ $langs->load('other');
 
 llxHeader('', $langs->trans("ProposalsStatistics"));
 
-print_fiche_titre($langs->trans("ProposalsStatistics"),'','title_commercial.png');
+print load_fiche_titre($langs->trans("ProposalsStatistics"),'','title_commercial.png');
 
 $dir=$conf->propal->dir_temp;
 

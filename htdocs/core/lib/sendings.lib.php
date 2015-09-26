@@ -184,8 +184,8 @@ function show_list_sending_receive($origin,$origin_id,$filter='')
 
 		if ($num)
 		{
-			if ($filter) print_titre($langs->trans("OtherSendingsForSameOrder"));
-			else print_titre($langs->trans("SendingsAndReceivingForSameOrder"));
+			if ($filter) print load_fiche_titre($langs->trans("OtherSendingsForSameOrder"));
+			else print load_fiche_titre($langs->trans("SendingsAndReceivingForSameOrder"));
 
 			print '<table class="liste" width="100%">';
 			print '<tr class="liste_titre">';

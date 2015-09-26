@@ -790,7 +790,7 @@ class FormFile
 			$param = (isset($object->id)?'&id='.$object->id:'').$param;
 
 			// Show list of existing files
-			if (empty($useinecm)) print_titre($title?$title:$langs->trans("AttachedFiles"));
+			if (empty($useinecm)) print load_fiche_titre($title?$title:$langs->trans("AttachedFiles"));
 			if (empty($url)) $url=$_SERVER["PHP_SELF"];
 			print '<table width="100%" class="'.($useinecm?'nobordernopadding':'liste').'">';
 			print '<tr class="liste_titre">';
@@ -951,7 +951,7 @@ class FormFile
         dol_syslog(get_class($this).'::list_of_autoecmfiles upload_dir='.$upload_dir.' modulepart='.$modulepart);
 
         // Show list of documents
-        if (empty($useinecm)) print_titre($langs->trans("AttachedFiles"));
+        if (empty($useinecm)) print load_fiche_titre($langs->trans("AttachedFiles"));
         if (empty($url)) $url=$_SERVER["PHP_SELF"];
         print '<table width="100%" class="nobordernopadding">';
         print '<tr class="liste_titre">';
@@ -1194,7 +1194,7 @@ class FormFile
         $param .= (isset($object->id)?'&id=' . $object->id : '');
 
         // Show list of associated links
-        print_titre($langs->trans("LinkedFiles"));
+        print load_fiche_titre($langs->trans("LinkedFiles"));
 
         print '<form action="' . $_SERVER['PHP_SELF'] . ($param?'?'.$param:'') . '" method="POST">';
 

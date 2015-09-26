@@ -469,7 +469,7 @@ $product_static = new Product($db);
 
 if ($action == 'create2')
 {
-    print_fiche_titre($langs->trans("CreateASending")).'<br>';
+    print load_fiche_titre($langs->trans("CreateASending")).'<br>';
     print $langs->trans("ShipmentCreationIsDoneFromOrder");
     $action=''; $id=''; $ref='';
 }
@@ -479,7 +479,7 @@ if ($action == 'create')
 {
     $expe = new Expedition($db);
 
-    print_fiche_titre($langs->trans("CreateASending"));
+    print load_fiche_titre($langs->trans("CreateASending"));
     if (! $origin)
     {
         setEventMessage($langs->trans("ErrorBadParameters"),'errors');
@@ -1606,7 +1606,7 @@ else if ($id || $ref)
 
 		print '<div class="clearboth"></div>';
 		print '<br>';
-		print_fiche_titre($langs->trans('SendShippingByEMail'));
+		print load_fiche_titre($langs->trans('SendShippingByEMail'));
 
 		dol_fiche_head('');
 

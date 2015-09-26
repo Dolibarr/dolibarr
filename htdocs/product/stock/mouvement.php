@@ -358,7 +358,7 @@ if ($resql)
 	/*
     if ($action == "correction")
     {
-        print_titre($langs->trans("StockCorrection"));
+        print load_fiche_titre($langs->trans("StockCorrection"));
         print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="post">'."\n";
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="action" value="correct_stock">';
@@ -399,7 +399,7 @@ if ($resql)
 
     if ($action == "transfert")
     {
-        print_titre($langs->trans("Transfer"));
+        print load_fiche_titre($langs->trans("Transfer"));
         print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="post">'."\n";
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="action" value="transfert_stock">';

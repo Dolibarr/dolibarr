@@ -48,7 +48,7 @@ $commandestatic = new CommandeFournisseur($db);
 $userstatic=new User($db);
 $formfile = new FormFile($db);
 
-print_fiche_titre($langs->trans("SuppliersOrdersArea"));
+print load_fiche_titre($langs->trans("SuppliersOrdersArea"));
 
 print '<table class="notopnoleftnoright" width="100%">';
 print '<tr valign="top"><td class="notopnoleft" width="30%">';

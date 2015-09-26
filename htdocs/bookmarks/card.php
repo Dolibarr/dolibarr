@@ -149,7 +149,7 @@ if ($action == 'create')
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
 
-	print_fiche_titre($langs->trans("NewBookmark"));
+	print load_fiche_titre($langs->trans("NewBookmark"));
 
 	dol_fiche_head($head, $hselected, $langs->trans("Bookmark"),0,'bookmark');
 

@@ -136,7 +136,7 @@ if (GETPOST('save','alpha'))
 llxHeader();
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("AdvancedEditor"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("AdvancedEditor"),$linkback,'title_setup');
 print '<br>';
 
 $var=true;
@@ -189,7 +189,7 @@ else
     show_skin(null,1);
     print '<br>'."\n";
     
-	print_fiche_titre($langs->trans("TestSubmitForm"),'(mode='.$mode.')','');
+	print load_fiche_titre($langs->trans("TestSubmitForm"),'(mode='.$mode.')','');
     print '<input type="hidden" name="mode" value="'.dol_escape_htmltag($mode).'">';
     $uselocalbrowser=true;
     $readonly=($mode=='dolibarr_readonly'?1:0);
