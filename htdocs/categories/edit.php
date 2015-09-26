@@ -156,7 +156,7 @@ print '</td></tr>';
 print '<tr>';
 print '<td>'.$langs->trans("Color").'</td>';
 print '<td >';
-print $formother->select_color($object->color, 'color');
+print $formother->selectColor($object->color, 'color');
 print '</td></tr>';
 
 // Parent category
