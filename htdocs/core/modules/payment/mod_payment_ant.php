@@ -26,7 +26,7 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/payment/modules_payment.php';
 
 
 /**
- *	Class to manage customer order numbering rules Saphir
+ *	Class to manage customer payment numbering rules Ant
  */
 class mod_payment_ant extends ModeleNumRefPayments
 {
@@ -52,7 +52,7 @@ class mod_payment_ant extends ModeleNumRefPayments
 		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		$texte.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		$texte.= '<input type="hidden" name="action" value="updateMask">';
-		$texte.= '<input type="hidden" name="maskconstorder" value="PAYMENT_ANT_MASK">';
+		$texte.= '<input type="hidden" name="maskconstpayment" value="PAYMENT_ANT_MASK">';
 		$texte.= '<table class="nobordernopadding" width="100%">';
 
 		$tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("Order"),$langs->transnoentities("Order"));
@@ -63,7 +63,7 @@ class mod_payment_ant extends ModeleNumRefPayments
 
 		// Parametrage du prefix
 		$texte.= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskorder" value="'.$conf->global->PAYMENT_ANT_MASK.'">',$tooltip,1,1).'</td>';
+		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskpayment" value="'.$conf->global->PAYMENT_ANT_MASK.'">',$tooltip,1,1).'</td>';
 
 		$texte.= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 
@@ -118,7 +118,7 @@ class mod_payment_ant extends ModeleNumRefPayments
 			return 0;
 		}
 
-		$numFinal=get_next_value($db,$mask,'payment','ref','',$objsoc,$object->date);
+		$numFinal=get_next_value($db,$mask,'paiement','ref','',$objsoc,$object->date);
 
 		return  $numFinal;
 	}

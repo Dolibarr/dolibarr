@@ -25,9 +25,9 @@
 require_once DOL_DOCUMENT_ROOT .'/core/modules/payment/modules_payment.php';
 
 /**
- *	Class to manage customer order numbering rules Marbre
+ *	Class to manage customer payment numbering rules Cicada
  */
-class mod_commande_cicada extends ModeleNumRefPayments
+class mod_payment_cicada extends ModeleNumRefPayments
 {
 	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
 	var $prefix='PAY';
@@ -72,7 +72,7 @@ class mod_commande_cicada extends ModeleNumRefPayments
 
 		$posindice=8;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
-		$sql.= " FROM ".MAIN_DB_PREFIX."payment";
+		$sql.= " FROM ".MAIN_DB_PREFIX."paiement";
 		$sql.= " WHERE ref LIKE '".$this->prefix."____-%'";
 		$sql.= " AND entity = ".$conf->entity;
 
@@ -106,7 +106,7 @@ class mod_commande_cicada extends ModeleNumRefPayments
 		// D'abord on recupere la valeur max
 		$posindice=8;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
-		$sql.= " FROM ".MAIN_DB_PREFIX."payment";
+		$sql.= " FROM ".MAIN_DB_PREFIX."paiement";
 		$sql.= " WHERE ref like '".$this->prefix."____-%'";
 		$sql.= " AND entity = ".$conf->entity;
 
