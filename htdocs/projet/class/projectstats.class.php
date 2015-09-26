@@ -371,7 +371,7 @@ class ProjectStats extends Stats
 		if ($foundintocache) // Cache file found and is not too old
 		{
 			dol_syslog(get_class($this) . '::' . __FUNCTION__ . " read data from cache file " . $newpathofdestfile . " " . $filedate . ".");
-			$data = dol_json_decode(file_get_contents($newpathofdestfile), true);
+			$data = json_decode(file_get_contents($newpathofdestfile), true);
 		} else {
 			$year = $startyear;
 			while ( $year <= $endyear ) {
@@ -397,7 +397,7 @@ class ProjectStats extends Stats
 			if (! dol_is_dir($conf->user->dir_temp))
 				dol_mkdir($conf->user->dir_temp);
 			$fp = fopen($newpathofdestfile, 'w');
-			fwrite($fp, dol_json_encode($data));
+			fwrite($fp, json_encode($data));
 			fclose($fp);
 			if (! empty($conf->global->MAIN_UMASK))
 				$newmask = $conf->global->MAIN_UMASK;
