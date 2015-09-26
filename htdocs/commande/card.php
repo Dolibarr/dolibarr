@@ -36,6 +36,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formorder.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formmargin.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/modules/commande/modules_commande.php';
 require_once DOL_DOCUMENT_ROOT . '/commande/class/commande.class.php';
 require_once DOL_DOCUMENT_ROOT . '/comm/action/class/actioncomm.class.php';
@@ -1222,6 +1223,7 @@ llxHeader('', $langs->trans('Order'), 'EN:Customers_Orders|FR:Commandes_Clients|
 $form = new Form($db);
 $formfile = new FormFile($db);
 $formorder = new FormOrder($db);
+$formmargin = new FormMargin($db);
 if (! empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
 
 /**
@@ -2084,7 +2086,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		// Margin Infos
 		if (! empty($conf->margin->enabled)) {
 			print '<td valign="top" width="50%" colspan="2" rowspan="' . $rowspan . '">';
-			$object->displayMarginInfos();
+			$formmargin->displayMarginInfos($object);
 			print '</td>';
 		} else
 			print '<td width="50%" colspan="2" rowspan="' . $rowspan . '"></td>';
