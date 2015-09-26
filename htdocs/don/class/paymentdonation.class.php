@@ -32,9 +32,7 @@ class PaymentDonation extends CommonObject
 	public $element='payment_donation';			//!< Id that identify managed objects
 	public $table_element='payment_donation';	//!< Name of table without prefix where object is stored
 
-	var $id;
 	var $rowid;
-	var $ref;
 
 	var $fk_donation;
 	var $datec='';
@@ -44,7 +42,6 @@ class PaymentDonation extends CommonObject
     var $amounts=array();   // Array of amounts
 	var $typepayment;
 	var $num_payment;
-	var $note;
 	var $fk_bank;
 	var $fk_user_creat;
 	var $fk_user_modif;

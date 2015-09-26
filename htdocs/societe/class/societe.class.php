@@ -51,8 +51,6 @@ class Societe extends CommonObject
      */
     protected $ismultientitymanaged = 1;
 
-    public $id;
-    public $name;
     public $entity;
 
     /**
@@ -63,9 +61,6 @@ class Societe extends CommonObject
      */
     public $nom;
 
-    var $firstname;
-    var $lastname;
-
 	/**
 	 * Alias names (commercial, trademark or alias names)
 	 * @var string
@@ -73,7 +68,6 @@ class Societe extends CommonObject
 	public $name_alias;
 
     public $particulier;
-    public $civility_id;
     public $address;
     public $zip;
     public $town;
@@ -113,9 +107,6 @@ class Societe extends CommonObject
      * @see country
      */
     var $pays;
-    var $country_id;
-    var $country_code;
-    var $country;
 
 	/**
 	 * Phone number
@@ -149,26 +140,6 @@ class Societe extends CommonObject
      * @var string
      */
     var $barcode;
-    /**
-     * ID of bardode type
-     * @var int
-     */
-    var $barcode_type;
-    /**
-     * code (loaded by fetch_barcode)
-     * @var string
-     */
-    var $barcode_type_code;
-    /**
-     * label (loaded by fetch_barcode)
-     * @var string
-     */
-    var $barcode_type_label;
-    /**
-     * coder (loaded by fetch_barcode)
-     * @var string
-     */
-    var $barcode_type_coder;
 
     // 6 professional id (usage depends on country)
 
@@ -233,8 +204,6 @@ class Societe extends CommonObject
     var $forme_juridique;
 
     var $remise_percent;
-    var $mode_reglement_id;
-    var $cond_reglement_id;
     var $mode_reglement_supplier_id;
     var $cond_reglement_supplier_id;
 	var $fk_prospectlevel;

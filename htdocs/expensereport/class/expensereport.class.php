@@ -29,21 +29,12 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
  */
 class ExpenseReport extends CommonObject
 {
-    var $db;
-    var $error;
     var $element='expensereport';
     var $table_element='expensereport';
     var $table_element_line = 'expensereport_det';
     var $fk_element = 'fk_expensereport';
 
-    var $id;
-    var $ref;
     var $lignes=array();
-    var $total_ht;
-    var $total_tva;
-    var $total_ttc;
-    var $note_public;
-    var $note_private;
     var $date_debut;
     var $date_fin;
 

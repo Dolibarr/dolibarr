@@ -29,9 +29,6 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
  */
 class Service extends CommonObject
 {
-	var $db;
-
-	var $id;
 	var $libelle;
 	var $price;
 	var $tms;
