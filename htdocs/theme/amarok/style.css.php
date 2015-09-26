@@ -320,6 +320,7 @@ th .button {
 }
 .center {
     text-align: center;
+	margin: 0px auto;
 }
 .left {
 	text-align: <?php print $left; ?>;
@@ -458,6 +459,10 @@ div.tmenu ul li a.tmenusel {/* texte du menu principal sélectionné */
 
 body.body center { color:white; margin-top: 100px; }
 
+.login_vertical_align {
+	padding: 10px;
+}
+
 form#login {
 	border:solid 1px rgba(0,0,0,.4);
 	border-top:solid 1px #ffffff;
@@ -515,6 +520,10 @@ form#login table.login_table {
 	background:none !important;
 }
 
+.login_main_message {
+	text-align: center;
+}
+
 div#login_left, div#login_right {
 	display: inline-block;
 	min-width: 220px;
@@ -522,7 +531,7 @@ div#login_left, div#login_right {
 	vertical-align: middle;
 }
 
-table.login_table { background-color: red  !important;}
+table.login_table { margin: 0px auto; background-color: red  !important;}
 table.login_table tr td {vertical-align:middle;}
 table.login_table tr.vmenu td {font-size:18px;}
 table.login_table tr td a {color:#333333 !important;}
