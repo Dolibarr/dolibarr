@@ -42,3 +42,6 @@ create table llx_overwrite_trans
   transvalue      text
 )ENGINE=innodb;
 
+ALTER TABLE llx_payment_salary ADD COLUMN datec datetime after tms;
+ALTER TABLE llx_payment_salary CHANGE COLUMN fk_user_creat fk_user_author integer;
+
