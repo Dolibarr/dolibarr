@@ -950,8 +950,8 @@ class AskPriceSupplier extends CommonObject
 		foreach($this->lines as $line)
 			$line->fetch_optionals($line->rowid);
 
-        // Load source object
-        $objFrom = dol_clone($this);
+		// Load source object
+		$objFrom = clone $this;
 
         $objsoc=new Societe($this->db);
 

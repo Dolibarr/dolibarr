@@ -397,7 +397,7 @@ function dol_clone($object)
 {
 	dol_syslog(__FUNCTION__ . " is deprecated", LOG_WARNING);
 
-	$myclone=clone($object);
+	$myclone = clone $object;
 	return $myclone;
 }
 

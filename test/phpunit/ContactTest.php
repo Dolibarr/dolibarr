@@ -189,7 +189,7 @@ class ContactTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject->oldcopy=dol_clone($localobject);
+		$localobject->oldcopy = clone $localobject;
 
 		$localobject->note_private='New private note after update';
 		$localobject->note_public='New public note after update';

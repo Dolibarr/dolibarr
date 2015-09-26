@@ -399,7 +399,7 @@ if ($id || $ref)
 
 				// We don't have supplier, so we try to guess.
 				// For this we build a fictive supplier with same properties than user but using vat)
-				$mysoc2=dol_clone($mysoc);
+				$mysoc2 = clone $mysoc;
 				$mysoc2->name='Fictive seller with same country';
 				$mysoc2->tva_assuj=1;
 				$default_vat=get_default_tva($mysoc2, $mysoc, $product->id, 0);

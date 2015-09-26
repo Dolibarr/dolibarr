@@ -315,7 +315,7 @@ if (empty($reshook))
         {
             if ($object->id > 0)
             {
-            	$object->oldcopy=dol_clone($object);
+				$object->oldcopy= clone $object;
 
                 $object->ref                    = $ref;
                 $object->label                  = GETPOST('label');
