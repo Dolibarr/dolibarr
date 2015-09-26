@@ -466,6 +466,7 @@ if ($action == 'create' && $user->rights->projet->creer)
     	print $form->textwithtooltip($text.' '.img_help(),$texthelp,1);
     }
     else print $text;
+    print ' <a href="'.DOL_URL_ROOT.'/societe/soc.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").'</a>';
     print '</td></tr>';
 
     // Status
