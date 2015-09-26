@@ -106,7 +106,7 @@ $colorbacklineimpairhover=(230+round(($isred+$isgreen+$isblue)/9)).','.(230+roun
 $colorbacklinepair1=(244+round($isred/3)).','.(244+round($isgreen/3)).','.(244+round($isblue/3));    // line pair
 $colorbacklinepair2=(250+round($isred/3)).','.(250+round($isgreen/3)).','.(250+round($isblue/3));    // line pair
 $colorbacklinepairhover=(230+round(($isred+$isgreen+$isblue)/9)).','.(230+round(($isred+$isgreen+$isblue)/9)).','.(230+round(($isred+$isgreen+$isblue)/9));    // line pair
-$colorbackbody='243,243,243';
+$colorbackbody='255,255,255';
 $colortext='40,40,40';
 $fontsize='13';
 $fontsizesmaller='11';
@@ -129,7 +129,7 @@ if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
     $conf->global->THEME_ELDY_BACKTABCARD1='255,255,255';     // card
     $conf->global->THEME_ELDY_BACKTABCARD2='234,234,234';
     $conf->global->THEME_ELDY_BACKTABACTIVE='234,234,234';
-    $conf->global->THEME_ELDY_BACKBODY='243,243,243';
+    $conf->global->THEME_ELDY_BACKBODY='255,255,255';
     $conf->global->THEME_ELDY_LINEPAIR1='242,242,242';
     $conf->global->THEME_ELDY_LINEPAIR2='248,248,248';
     $conf->global->THEME_ELDY_LINEPAIRHOVER='238,246,252';
@@ -3527,8 +3527,36 @@ border-top-right-radius: 6px;
     div.mainmenu {
     	min-width: auto;
     }
+    .topmenuimage {
+    	background-size: 26px auto;
+    	margin-top: 8px;
+	}
+	div.tmenuleft {
+		display: none;
+	}
+	
 	.imgopensurveywizard { width:95%; height: auto; }
+	
+	#tooltip {
+		position: absolute;
+		width: <?php print dol_size(350,'width'); ?>px;
+	}	
 }
+@media only screen and (max-width: 570px)
+{
+    div.mainmenu {
+    	min-width: 20px;
+    }
+	.topmenuimage {
+    	background-size: 20px auto;
+    }
+    
+	#tooltip {
+		position: absolute;
+		width: <?php print dol_size(300,'width'); ?>px;
+	}	
+}
+
 
 
 <?php
