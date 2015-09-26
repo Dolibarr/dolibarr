@@ -827,7 +827,7 @@ if ($rowid > 0)
     {
         print '<br>';
 
-        print_fiche_titre($langs->trans("NewCotisation"));
+        print load_fiche_titre($langs->trans("NewCotisation"));
 
         // Define default choice to select
         $bankdirect=0;        // 1 means option by default is write to bank direct with no invoice

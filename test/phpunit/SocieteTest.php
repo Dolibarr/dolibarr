@@ -211,13 +211,13 @@ class SocieteTest extends PHPUnit_Framework_TestCase
         print __METHOD__." id=".$localobject->id." result=".$result."\n";
         $this->assertLessThan($result, 0);
 
-        $result=$localobject->update_note($localobject->note_private,'_private');
-        print __METHOD__." id=".$localobject->id." result=".$result."\n";
-        $this->assertLessThan($result, 0, 'Holiday::update_note_private error');
+		$result=$localobject->update_note($localobject->note_private,'_private');
+		print __METHOD__." id=".$localobject->id." result=".$result."\n";
+		$this->assertLessThan($result, 0, 'Holiday::update_note (private) error');
 
-        $result=$localobject->update_note_public($localobject->note_public);
-        print __METHOD__." id=".$localobject->id." result=".$result."\n";
-        $this->assertLessThan($result, 0, 'Holiday::update_note_public error');
+		$result=$localobject->update_note($localobject->note_public, '_public');
+		print __METHOD__." id=".$localobject->id." result=".$result."\n";
+		$this->assertLessThan($result, 0, 'Holiday::update_note (public) error');
 
         $newobject=new Societe($this->savdb);
         $result=$newobject->fetch($localobject->id);

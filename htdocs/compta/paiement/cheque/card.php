@@ -312,7 +312,7 @@ if ($action == 'new')
 	$hselected = $h;
 	$h++;
 
-	print_fiche_titre($langs->trans("Cheques"));
+	print load_fiche_titre($langs->trans("Cheques"));
 }
 else
 {

@@ -351,7 +351,7 @@ if ($action == 'list' || (empty($id) && $action != 'create'))
 // Part to create
 if ($action == 'create')
 {
-	print_fiche_titre($langs->trans("NewSkeleton"));
+	print load_fiche_titre($langs->trans("NewSkeleton"));
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="action" value="add">';

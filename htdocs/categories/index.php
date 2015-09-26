@@ -61,7 +61,7 @@ $arrayofcss=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css')
 llxHeader('',$title,'','',0,0,$arrayofjs,$arrayofcss);
 
 
-print_fiche_titre($title);
+print load_fiche_titre($title);
 
 //print '<table border="0" width="100%" class="notopnoleftnoright">';
 //print '<tr><td valign="top" width="30%" class="notopnoleft">';

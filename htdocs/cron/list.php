@@ -131,7 +131,7 @@ $pagetitle=$langs->trans("CronList");
 
 llxHeader('',$pagetitle);
 
-print_fiche_titre($pagetitle,'','title_setup');
+print load_fiche_titre($pagetitle,'','title_setup');
 
 print $langs->trans('CronInfo');
 

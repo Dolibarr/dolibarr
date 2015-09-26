@@ -38,7 +38,7 @@ $langs->load("members");
 llxHeader();
 
 
-print_fiche_titre("Dolibarr",'','title_setup');
+print load_fiche_titre("Dolibarr",'','title_setup');
 
 print '<div style="padding-left: 30px;">'.img_picto_common('', 'dolibarr_box.png','height="120"').'</div>';
 

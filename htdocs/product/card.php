@@ -315,7 +315,7 @@ if (empty($reshook))
         {
             if ($object->id > 0)
             {
-            	$object->oldcopy=dol_clone($object);
+				$object->oldcopy= clone $object;
 
                 $object->ref                    = $ref;
                 $object->label                  = GETPOST('label');
@@ -806,7 +806,7 @@ else
         if ($type==1) $title=$langs->trans("NewService");
         else $title=$langs->trans("NewProduct");
         $linkback="";
-        print_fiche_titre($title,$linkback,'title_products.png');
+        print load_fiche_titre($title,$linkback,'title_products.png');
 
         dol_fiche_head('');
 
@@ -1060,7 +1060,7 @@ else
 
             $type = $langs->trans('Product');
             if ($object->isservice()) $type = $langs->trans('Service');
-            //print_fiche_titre($langs->trans('Modify').' '.$type.' : '.(is_object($object->oldcopy)?$object->oldcopy->ref:$object->ref), "");
+            //print load_fiche_titre($langs->trans('Modify').' '.$type.' : '.(is_object($object->oldcopy)?$object->oldcopy->ref:$object->ref), "");
 
             // Main official, simple, and not duplicated code
             print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST">'."\n";

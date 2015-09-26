@@ -55,7 +55,7 @@ if (! $sortorder) $sortorder="ASC";
 
 llxHeader();
 
-print_fiche_titre($langs->trans("ListOfGroups"));
+print load_fiche_titre($langs->trans("ListOfGroups"));
 
 $sql = "SELECT g.rowid, g.nom as name, g.entity, g.datec, COUNT(DISTINCT ugu.fk_user) as nb";
 $sql.= " FROM ".MAIN_DB_PREFIX."usergroup as g";

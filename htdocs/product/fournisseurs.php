@@ -311,11 +311,11 @@ if ($id || $ref)
 				if ($rowid)
 				{
 					$product->fetch_product_fournisseur_price($rowid, 1); //Ignore the math expression when getting the price
-					print_fiche_titre($langs->trans("ChangeSupplierPrice"));
+					print load_fiche_titre($langs->trans("ChangeSupplierPrice"));
 				}
 				else
 				{
-					print_fiche_titre($langs->trans("AddSupplierPrice"));
+					print load_fiche_titre($langs->trans("AddSupplierPrice"));
 				}
 
 				print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$product->id.'" method="POST">';
@@ -399,7 +399,7 @@ if ($id || $ref)
 
 				// We don't have supplier, so we try to guess.
 				// For this we build a fictive supplier with same properties than user but using vat)
-				$mysoc2=dol_clone($mysoc);
+				$mysoc2 = clone $mysoc;
 				$mysoc2->name='Fictive seller with same country';
 				$mysoc2->tva_assuj=1;
 				$default_vat=get_default_tva($mysoc2, $mysoc, $product->id, 0);

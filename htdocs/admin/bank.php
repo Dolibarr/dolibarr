@@ -87,7 +87,7 @@ llxHeader("",$langs->trans("BankSetupModule"));
 $form=new Form($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("BankSetupModule"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("BankSetupModule"),$linkback,'title_setup');
 
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
@@ -142,7 +142,7 @@ print '</form>';
 
 
 //Show bank account order
-print_titre($langs->trans("BankOrderShow"));
+print load_fiche_titre($langs->trans("BankOrderShow"));
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';

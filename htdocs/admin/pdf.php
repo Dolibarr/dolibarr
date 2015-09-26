@@ -93,7 +93,7 @@ $form=new Form($db);
 $formother=new FormOther($db);
 $formadmin=new FormAdmin($db);
 
-print_fiche_titre($langs->trans("PDF"),'','title_setup');
+print load_fiche_titre($langs->trans("PDF"),'','title_setup');
 
 print $langs->trans("PDFDesc")."<br>\n";
 print "<br>\n";
@@ -110,7 +110,7 @@ if ($action == 'edit')	// Edit
 
 
     // Misc options
-    print_fiche_titre($langs->trans("DictionaryPaperFormat"),'','').'<br>';
+    print load_fiche_titre($langs->trans("DictionaryPaperFormat"),'','').'<br>';
 	$var=true;
     print '<table summary="more" class="noborder" width="100%">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
@@ -130,7 +130,7 @@ if ($action == 'edit')	// Edit
 
 
     // Addresses
-    print_fiche_titre($langs->trans("PDFAddressForging"),'','').'<br>';
+    print load_fiche_titre($langs->trans("PDFAddressForging"),'','').'<br>';
 	$var=true;
     print '<table summary="more" class="noborder" width="100%">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
@@ -212,7 +212,7 @@ if ($action == 'edit')	// Edit
     print '<br>';
 
     // Other
-    print_fiche_titre($langs->trans("Other"),'','').'<br>';
+    print load_fiche_titre($langs->trans("Other"),'','').'<br>';
 	$var=true;
     print '<table summary="more" class="noborder" width="100%">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
@@ -262,7 +262,7 @@ else	// Show
     $var=true;
 
     // Misc options
-    print_fiche_titre($langs->trans("DictionaryPaperFormat"),'','').'<br>';
+    print load_fiche_titre($langs->trans("DictionaryPaperFormat"),'','').'<br>';
 	$var=true;
     print '<table summary="more" class="noborder" width="100%">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
@@ -299,7 +299,7 @@ else	// Show
 
 	print '<br>';
 
-	print_fiche_titre($langs->trans("PDFAddressForging"),'','').'<br>';
+	print load_fiche_titre($langs->trans("PDFAddressForging"),'','').'<br>';
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
 
@@ -380,7 +380,7 @@ else	// Show
     print '<br>';
 
     // Other
-    print_fiche_titre($langs->trans("Other"),'','').'<br>';
+    print load_fiche_titre($langs->trans("Other"),'','').'<br>';
 	$var=true;
     print '<table summary="more" class="noborder" width="100%">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px" colspan="2">'.$langs->trans("Value").'</td></tr>';
@@ -453,7 +453,7 @@ else	// Show
 	 *  Library
 	 */
 	print '<br>';
-	print_titre($langs->trans("Library"));
+	print load_fiche_titre($langs->trans("Library"));
 
 	print '<table class="noborder" width="100%">'."\n";
 

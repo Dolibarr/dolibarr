@@ -53,7 +53,7 @@ $help_url="EN:Module_Customers_Orders|FR:Module_Commandes_Clients|ES:Módulo_Ped
 
 llxHeader("",$langs->trans("Orders"),$help_url);
 
-print_fiche_titre($langs->trans("OrdersArea"));
+print load_fiche_titre($langs->trans("OrdersArea"));
 
 //print '<table width="100%" class="notopnoleftnoright">';
 //print '<tr><td valign="top" width="30%" class="notopnoleft">';

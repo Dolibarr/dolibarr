@@ -168,7 +168,7 @@ if ($conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap') print "<br>\n";
 
 
 // Affichage attributs LDAP
-print_titre($langs->trans("LDAPInformationsForThisUser"));
+print load_fiche_titre($langs->trans("LDAPInformationsForThisUser"));
 
 print '<table width="100%" class="noborder">';
 

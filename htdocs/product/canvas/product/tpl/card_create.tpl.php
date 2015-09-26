@@ -22,7 +22,7 @@ $statutarray=array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSe
 
 <!-- BEGIN PHP TEMPLATE -->
 
-<?php print_fiche_titre($langs->trans("Product")); ?>
+<?php print load_fiche_titre($langs->trans("Product")); ?>
 
 <?php dol_htmloutput_errors((is_numeric($object->error)?'':$object->error),$object->errors); ?>
 

@@ -683,7 +683,7 @@ if (! $action || $action == 'delete' || $action == 'showlog_customer_price' || $
  */
 if ($action == 'edit_price' && ($user->rights->produit->creer || $user->rights->service->creer))
 {
-	print_fiche_titre($langs->trans("NewPrice"), '');
+	print load_fiche_titre($langs->trans("NewPrice"), '');
 
 	if (empty($conf->global->PRODUIT_MULTIPRICES))
 	{
@@ -880,7 +880,7 @@ if ($result)
 
 	if ($num > 0)
 	{
-		if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) print_fiche_titre($langs->trans("DefaultPrice"),'','');
+		if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) print load_fiche_titre($langs->trans("DefaultPrice"),'','');
 
 		print '<table class="noborder" width="100%">';
 
@@ -1013,7 +1013,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		// Create mode
 		$maxpricesupplier = $object->min_recommended_price();
 
-		print_fiche_titre($langs->trans('PriceByCustomer'));
+		print load_fiche_titre($langs->trans('PriceByCustomer'));
 
 		print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
 		print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
@@ -1092,7 +1092,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		// Edit mode
 		$maxpricesupplier = $object->min_recommended_price();
 
-		print_fiche_titre($langs->trans('PriceByCustomer'));
+		print load_fiche_titre($langs->trans('PriceByCustomer'));
 
 		$result = $prodcustprice->fetch(GETPOST('lineid', 'int'));
 		if ($result < 0) {

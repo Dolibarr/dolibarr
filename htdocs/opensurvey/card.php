@@ -361,7 +361,7 @@ print '<br>';
 
 print '<form name="formulaire5" action="#" method="POST">'."\n";
 
-print_fiche_titre($langs->trans("CommentsOfVoters"),'','');
+print load_fiche_titre($langs->trans("CommentsOfVoters"),'','');
 
 // Comment list
 $comments = $object->getComments();

@@ -153,7 +153,7 @@ if ($action == 'create')
 	print '<input type="hidden" name="action" value="add">';
 
 	$title=$langs->trans("ECMNewSection");
-	print_fiche_titre($title);
+	print load_fiche_titre($title);
 	
 	dol_fiche_head();
 
@@ -193,7 +193,7 @@ if (empty($action) || $action == 'delete_section')
 	//***********************
 	// List
 	//***********************
-	print_fiche_titre($langs->trans("ECMSectionOfDocuments"));
+	print load_fiche_titre($langs->trans("ECMSectionOfDocuments"));
 	print '<br>';
 
 /*

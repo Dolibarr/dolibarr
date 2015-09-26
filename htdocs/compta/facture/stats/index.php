@@ -75,7 +75,7 @@ if ($mode == 'supplier')
 	$dir=$conf->fournisseur->dir_output.'/facture/temp';
 }
 
-print_fiche_titre($title, $mesg, 'title_accountancy.png');
+print load_fiche_titre($title, $mesg, 'title_accountancy.png');
 
 dol_mkdir($dir);
 
