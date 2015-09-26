@@ -384,12 +384,12 @@ if ($action == 'update' && ! $_POST["cancel"])
             	}
             	else
             	{
-            		$object->entity = (GETPOST('entity', 'int') ? 0 : GETPOST('entity', 'int'));
+            		$object->entity = (! GETPOST('entity', 'int') ? 0 : GETPOST('entity', 'int'));
             	}
             }
             else
             {
-            	$object->entity = (GETPOST('entity', 'int') ? 0 : GETPOST('entity', 'int'));
+            	$object->entity = (! GETPOST('entity', 'int') ? 0 : GETPOST('entity', 'int'));
             }
 
             if (GETPOST('deletephoto')) $object->photo='';
