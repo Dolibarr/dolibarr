@@ -302,8 +302,8 @@ class Productcustomerprice extends CommonObject
 	{
 		global $langs;
 
-		if (! empty($sortfield)) $sortfield = "t.rowid";
-		if (! empty($sortorder)) $sortorder = "DESC";
+		if ( empty($sortfield)) $sortfield = "t.rowid";
+		if ( empty($sortorder)) $sortorder = "DESC";
 
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
@@ -346,8 +346,9 @@ class Productcustomerprice extends CommonObject
 				}
 			}
 		}
-
-		$sql.= $this->db->order($sortfield, $sortorder);
+		if (!empty($sortfield)) {
+			$sql.= $this->db->order($sortfield, $sortorder);
+		}
 		if (! empty($limit)) $sql .= ' ' . $this->db->plimit($limit + 1, $offset);
 
 		dol_syslog(get_class($this) . "::fetch_all", LOG_DEBUG);
