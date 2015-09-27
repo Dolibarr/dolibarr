@@ -449,6 +449,19 @@ textarea.centpercent {
 #formuserfile_link {
 	margin-left: 1px;
 }
+.listofinvoicetype {
+	height: 28px;
+	vertical-align: middle;
+}
+div.divsearchfield {
+	float: <?php print $left; ?>;
+	margin-<?php print $right; ?>: 12px;
+	margin-top: 1px;
+    margin-bottom: 2px;
+}
+div.confirmmessage {
+	padding-top: 6px;
+}
 
 
 /* ============================================================================== */
@@ -2049,6 +2062,12 @@ div.liste_titre, tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.list
     font-family: <?php print $fontlist ?>;
     border-bottom: 1px solid #FDFFFF;
     text-align: <?php echo $left; ?>;
+}
+div.liste_titre_bydiv {
+	box-shadow: none;
+	border-collapse: collapse;
+	display: table;
+	padding: 2px 2px 2px 0;
 }
 tr.liste_titre th, th.liste_titre, form.liste_titre div, div.liste_titre
 {

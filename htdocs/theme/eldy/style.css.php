@@ -472,6 +472,8 @@ textarea.centpercent {
 div.divsearchfield {
 	float: <?php print $left; ?>;
 	margin-<?php print $right; ?>: 12px;
+	margin-top: 1px;
+    margin-bottom: 2px;
 }
 div.confirmmessage {
 	padding-top: 6px;
@@ -2249,7 +2251,7 @@ div.liste_titre {
 	box-shadow: 2px 2px 4px #CCC;
 }
 div.liste_titre {
-	min-height: 26px !important;	/* We cant use height because it's a div and it should be higher if content is more. but min-height doe not work either for div */
+	min-height: 26px !important;	/* We cant use height because it's a div and it should be higher if content is more. but min-height does not work either for div */
 
 	padding-left: 3px;
 	padding-top: 2px;
@@ -2266,6 +2268,12 @@ div.liste_titre {
 	border-top-width: 1px;
 	border-top-color: #CCC;
 	border-top-style: solid;
+}
+div.liste_titre_bydiv {
+	box-shadow: none;
+	border-collapse: collapse;
+	display: table;
+	padding: 2px 2px 2px 0;
 }
 tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable.tr
 {
