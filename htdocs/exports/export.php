@@ -112,7 +112,7 @@ $field=GETPOST("field");
 $objexport=new Export($db);
 $objexport->load_arrays($user,$datatoexport);
 
-$objmodelexport=new ModeleExports();
+$objmodelexport=new ModeleExports($db);
 $form = new Form($db);
 $htmlother = new FormOther($db);
 $formfile = new FormFile($db);
