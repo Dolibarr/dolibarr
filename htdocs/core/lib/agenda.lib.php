@@ -126,19 +126,25 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print '<tr>';
 		print '<td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">'.$langs->trans("VisibleTimeRange").'</td>';
 		print "<td class='nowrap maxwidthonsmartphone'>";
+		print '<div class="ui-grid-a"><div class="ui-block-a">';
 		print '<input type="number" class="short" name="begin_h" value="'.$begin_h.'" min="0" max="23">';
 		if (empty($conf->dol_use_jmobile)) print ' - ';
+		else print '</div><div class="ui-block-b">';
 		print '<input type="number" class="short" name="end_h" value="'.$end_h.'" min="1" max="24">';
 		if (empty($conf->dol_use_jmobile)) print ' '.$langs->trans("H");
+		print '</div></div>';
 		print '</td></tr>';
 
 		// Filter on days
 		print '<tr>';
 		print '<td class="nowrap">'.$langs->trans("VisibleDaysRange").'</td>';
 		print "<td class='nowrap maxwidthonsmartphone'>";
+		print '<div class="ui-grid-a"><div class="ui-block-a">';
 		print '<input type="number" class="short" name="begin_d" value="'.$begin_d.'" min="1" max="7">';
 		if (empty($conf->dol_use_jmobile)) print ' - ';
+		else print '</div><div class="ui-block-b">';
 		print '<input type="number" class="short" name="end_d" value="'.$end_d.'" min="1" max="7">';
+		print '</div></div>';
 		print '</td></tr>';
 	}
 
