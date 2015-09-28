@@ -2954,20 +2954,20 @@ abstract class CommonObject
 
 			$var=!$var;
 
-			if (is_object($hookmanager) && (($line->product_type == 9 && ! empty($line->special_code)) || ! empty($line->fk_parent_line)))
+			if (is_object($hookmanager))
 			{
 				if (empty($line->fk_parent_line))
 				{
 					$parameters = array('line'=>$line,'var'=>$var,'num'=>$num,'i'=>$i,'dateSelector'=>$dateSelector,'seller'=>$seller,'buyer'=>$buyer,'selected'=>$selected, 'extrafieldsline'=>$extrafieldsline);
-					$hookmanager->executeHooks('printObjectLine', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
+					$reshook = $hookmanager->executeHooks('printObjectLine', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
 				}
 				else
 				{
 					$parameters = array('line'=>$line,'var'=>$var,'num'=>$num,'i'=>$i,'dateSelector'=>$dateSelector,'seller'=>$seller,'buyer'=>$buyer,'selected'=>$selected, 'extrafieldsline'=>$extrafieldsline);
-					$hookmanager->executeHooks('printObjectSubLine', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
+					$reshook = $hookmanager->executeHooks('printObjectSubLine', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
 				}
 			}
-			else
+			if(empty($reshook))
 			{
 				$this->printObjectLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected,$extrafieldsline);
 			}
@@ -3017,6 +3017,10 @@ abstract class CommonObject
 			{
 				$product_static = new Product($this->db);
 				$product_static->fetch($line->fk_product);
+				//if change in hook show correct in tooltip
+				$product_static->ref = $line->ref;
+				$product_static->label = $line->label;
+
 				$text=$product_static->getNomUrl(1);
 
 				// Define output language and label
