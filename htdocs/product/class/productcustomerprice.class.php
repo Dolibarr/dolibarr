@@ -307,8 +307,8 @@ class Productcustomerprice extends CommonObject
 	{
 		global $langs;
 
-		if (! empty($sortfield)) $sortfield = "t.rowid";
-		if (! empty($sortorder)) $sortorder = "DESC";
+		if ( empty($sortfield)) $sortfield = "t.rowid";
+		if ( empty($sortorder)) $sortorder = "DESC";
 
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
