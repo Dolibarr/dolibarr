@@ -90,7 +90,7 @@ SelectAtLeastOneField=Kapcsolja be legalább egy forrás mező oszlopban a mező
 SelectFormat=Válassza ezt az import fájl formátum
 RunImportFile=Indítsa import file
 NowClickToRunTheImport=Ellenőrizze eredménye import szimuláció. Ha minden rendben van, indítsa el a végleges import.
-DataLoadedWithId=Minden adatot fog elindulni a következő behozatali ID: <b>%s</b>
+DataLoadedWithId=All data will be loaded with the following import id: <b>%s</b>
 ErrorMissingMandatoryValue=Kötelező adatok üres a forrás fájl mezőben <b>%s.</b>
 TooMuchErrors=Van még más forrásból <b>%s</b> vonalak kimeneti hibákat, de korlátozott volt.
 TooMuchWarnings=Van még más forrásból <b>%s</b> vonalak figyelmeztetések, de kimeneti korlátozott volt.
@@ -130,7 +130,7 @@ ExportDateFilter=YYYY, YYYYMM, YYYYMMDD : filters by one year/month/day<br>YYYY+
 ExportNumericFilter='NNNNN' filters by one value<br>'NNNNN+NNNNN' filters over a range of values<br>'&gt;NNNNN' filters by lower values<br>'&gt;NNNNN' filters by higher values
 ## filters
 SelectFilterFields=If you want to filter on some values, just input values here.
-FilterableFields=Champs Filtrables
+FilterableFields=Filterable Fields
 FilteredFields=Filtered fields
 FilteredFieldsValues=Value for filter
 FormatControlRule=Format control rule

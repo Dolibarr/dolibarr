@@ -1,4 +1,7 @@
 # Dolibarr language file - Source file is en_US - accountancy
+ACCOUNTING_EXPORT_LABEL=Export the label
+ACCOUNTING_EXPORT_AMOUNT=Export the amount
+ACCOUNTING_EXPORT_DEVISE=Export the devise
 Menuthirdpartyaccount=Comptes tiers
 ConfigAccountingExpert=Configuration du module de compta expert
 Selectmodelcsv=Sélectionnez un modèle d'export
@@ -33,5 +36,5 @@ DescThirdPartyReport=Consulter la liste des clients et fournisseurs tiers et de 
 Pcgtype=Classe du compte
 Pcgsubtype=Sous-classe du compte
 DescVentilCustomer=Consulter la subdivision comptable annuelle de vos factures clients
-TotalVente=Chiffre d'affaire total HT
+TotalVente=Total turnover before tax
 TotalMarge=Marge de ventes totale

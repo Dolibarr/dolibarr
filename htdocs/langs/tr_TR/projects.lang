@@ -1,6 +1,8 @@
 # Dolibarr language file - Source file is en_US - projects
 RefProject=Referans Proje
+ProjectRef=Project ref.
 ProjectId=Proje Kimliği
+ProjectLabel=Project label
 Project=Proje
 Projects=Projeler
 ProjectStatus=Proje durumu
@@ -27,7 +29,7 @@ OfficerProject=Proje sorumlusu
 LastProjects=Son %s proje
 AllProjects=Tüm projeler
 OpenedProjects=Açık projeler
-OpportunitiesStatusForOpenedProjects=Açık projeler için fırsat durumları
+OpportunitiesStatusForOpenedProjects=Opportunities amount of opened projects by status
 ProjectsList=Proje listesi
 ShowProject=Proje göster
 SetProject=Proje ayarla
@@ -143,8 +145,8 @@ SelectElement=Öğe seç
 AddElement=Öğeye bağlan
 UnlinkElement=Öğenin bağlantısını kaldır
 # Documents models
-DocumentModelBeluga=Project template for linked objects overview
-DocumentModelBaleine=Project report template for tasks
+DocumentModelBeluga=Bağlantılı nesnelere gözatmak için proje şablonu
+DocumentModelBaleine=Görevler proje raporu şablonu
 PlannedWorkload=Planlı işyükü
 PlannedWorkloadShort=İşyükü
 WorkloadOccupation=İşyükü ataması

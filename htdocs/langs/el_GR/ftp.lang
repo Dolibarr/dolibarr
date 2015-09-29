@@ -10,3 +10,5 @@ FailedToConnectToFTPServerWithCredentials=Αποτυχία σύνδεσης με
 FTPFailedToRemoveFile=Αποτυχία διαγραφής <b>%s</b> αρχείο.
 FTPFailedToRemoveDir=Αποτυχία διαγραφής <b>%s</b> κατάλογου (ελέγξτε τα δικαιώματα και ότι ο κατάλογος είναι κενός).
 FTPPassiveMode=Passive λειτουργία
+ChooseAFTPEntryIntoMenu=Choose a FTP entry into menu...
+FailedToGetFile=Failed to get files %s

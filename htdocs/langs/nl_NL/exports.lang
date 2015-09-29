@@ -90,7 +90,7 @@ SelectAtLeastOneField=Kies tenminste een bronveld om te exporteren in de kolom v
 SelectFormat=Kies het importeerbestandsformaat
 RunImportFile=Start importeren bestand
 NowClickToRunTheImport=Controleer het resultaat van de import simulatie. Als alle correct is, start dan het definitieve importeren.
-DataLoadedWithId=Alle gegevens zullen worden geladen met de volgende import id: <b>%s<b>
+DataLoadedWithId=All data will be loaded with the following import id: <b>%s</b>
 ErrorMissingMandatoryValue=Verplichte gegevens niet aanwezig in bron bestand voor veld <b>%s</b>.
 TooMuchErrors=Er zijn nog steeds <b>%s</b> andere bronregels met fouten, maar de uitvoer is ingekord.
 TooMuchWarnings=Er zijn nog steeds <b>%s</b> andere bronregels met waarschuwingen, maar de uitvoer is ingekord.
@@ -130,7 +130,7 @@ ExportDateFilter=YYYY, YYYYMM, YYYYMMDD : filtert met één jaar/maand/dag<br>YY
 ExportNumericFilter='NNNNN' filtert door één waarde<br>'NNNNN+NNNNN' filtert over een bereik van waarden<br> '&gt;NNNNN' filtert door lagere waarden <br>'&gt;NNNNN' filtert door hogere waarden
 ## filters
 SelectFilterFields=Vul hier de waarden in waarop je wil filteren.
-FilterableFields=Filtervelden
+FilterableFields=Filterable Fields
 FilteredFields=Gefilterde velden
 FilteredFieldsValues=Waarde voor filter
 FormatControlRule=Format control rule

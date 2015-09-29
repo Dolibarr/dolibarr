@@ -90,7 +90,7 @@ SelectAtLeastOneField=التبديل حقل واحد على الأقل مصدر 
 SelectFormat=اختيار تنسيق الملف هذا الاستيراد
 RunImportFile=بدء استيراد الملف
 NowClickToRunTheImport=تحقق نتيجة لمحاكاة الاستيراد. إذا كان كل شيء على ما يرام ، بدء استيراد نهائي.
-DataLoadedWithId=يمكن تحميل جميع البيانات ومع معرف استيراد التالية : <b>%s</b>
+DataLoadedWithId=All data will be loaded with the following import id: <b>%s</b>
 ErrorMissingMandatoryValue=البيانات الإلزامية فارغ في الملف المصدر <b>ل%s</b> الميدان.
 TooMuchErrors=لا يزال هناك <b>%s</b> خطوط مصدر آخر مع وجود أخطاء ولكن محدودة الانتاج و.
 TooMuchWarnings=لا يزال هناك <b>%s</b> خطوط مصدر آخر مع تحذيرات ولكن محدودة الانتاج و.
@@ -130,7 +130,7 @@ ExportDateFilter=YYYY, YYYYMM, YYYYMMDD : filters by one year/month/day<br>YYYY+
 ExportNumericFilter='NNNNN' filters by one value<br>'NNNNN+NNNNN' filters over a range of values<br>'&gt;NNNNN' filters by lower values<br>'&gt;NNNNN' filters by higher values
 ## filters
 SelectFilterFields=If you want to filter on some values, just input values here.
-FilterableFields=Champs Filtrables
+FilterableFields=Filterable Fields
 FilteredFields=Filtered fields
 FilteredFieldsValues=Value for filter
 FormatControlRule=Format control rule

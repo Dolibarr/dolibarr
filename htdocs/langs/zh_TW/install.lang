@@ -209,6 +209,6 @@ MigrationActioncommElement=在行動上的更新數據
 MigrationPaymentMode=付款方式的數據遷移
 MigrationCategorieAssociation=目錄遷移
 MigrationEvents=事件遷移正進行新增事件負責人到指定的表格
-
+MigrationReloadModule=Reload module %s
 ShowNotAvailableOptions=顯示不可用的選項
 HideNotAvailableOptions= 隱藏不可用的選項

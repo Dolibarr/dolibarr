@@ -1,5 +1,2 @@
 # Dolibarr language file - Source file is en_US - bills
-PaymentTypeTIP=Deposit
-PaymentTypeShortTIP=Deposit
-PaymentTypeTRA=Bill payment
-PaymentTypeShortTRA=Bill
+MarsNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for deposit invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0

@@ -90,7 +90,7 @@ SelectAtLeastOneField=エクスポートするフィールドの列に少なく�
 SelectFormat=このインポートファイル形式を選択します。
 RunImportFile=インポートファイルを起動する
 NowClickToRunTheImport=インポートシミュレーションの結果を確認してください。すべてがうまくいっていれば、決定的なインポートを起動します。
-DataLoadedWithId=<b>%s：</b>すべてのデータは、次のimport IDでロードされます
+DataLoadedWithId=All data will be loaded with the following import id: <b>%s</b>
 ErrorMissingMandatoryValue=必須データは、フィールド<b>%s</b>のソースファイル内の空です。
 TooMuchErrors=そこにエラーが発生した<b>%s</b>他のソース行はまだですが、出力が制限されていました。
 TooMuchWarnings=そこに警告と<b>%s</b>他のソース行はまだですが、出力が制限されていました。
@@ -130,7 +130,7 @@ ExportDateFilter=YYYY, YYYYMM, YYYYMMDD : filters by one year/month/day<br>YYYY+
 ExportNumericFilter='NNNNN' filters by one value<br>'NNNNN+NNNNN' filters over a range of values<br>'&gt;NNNNN' filters by lower values<br>'&gt;NNNNN' filters by higher values
 ## filters
 SelectFilterFields=If you want to filter on some values, just input values here.
-FilterableFields=Champs Filtrables
+FilterableFields=Filterable Fields
 FilteredFields=Filtered fields
 FilteredFieldsValues=Value for filter
 FormatControlRule=Format control rule

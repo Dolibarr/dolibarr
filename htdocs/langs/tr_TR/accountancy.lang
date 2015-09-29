@@ -2,11 +2,13 @@
 CHARSET=UTF-8
 ACCOUNTING_EXPORT_SEPARATORCSV=Dışaaktarma dosyası için sütun ayırıcısı
 ACCOUNTING_EXPORT_DATE=Dışaaktarma dosyası için tarih biçimi
-ACCOUNTING_EXPORT_PIECE=Dışaaktarılacak parça sayısı ?
-ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Genel hesapla mı dışaaktarılsın?
-ACCOUNTING_EXPORT_LABEL=Etiket dışaaktarılsın mı?
-ACCOUNTING_EXPORT_AMOUNT=Tutar dışaaktarılsın mı?
-ACCOUNTING_EXPORT_DEVISE=Aygıt dışaaktarılsın mı?
+ACCOUNTING_EXPORT_PIECE=Export the number of piece
+ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account
+ACCOUNTING_EXPORT_LABEL=Export the label
+ACCOUNTING_EXPORT_AMOUNT=Export the amount
+ACCOUNTING_EXPORT_DEVISE=Export the devise
+Selectformat=Select the format for the file
+ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
 
 Accounting=Muhasebe
 Globalparameters=Genel parametreler
@@ -34,6 +36,7 @@ Selectchartofaccounts=Hesap planı seç
 Validate=Doğrula
 Addanaccount=Muhasebe hesabı ekle
 AccountAccounting=Muhasebe hesabı
+AccountAccountingSuggest=Accounting account suggest
 Ventilation=Analiz
 ToDispatch=Gönderilecek
 Dispatched=Gönderilmiş
@@ -60,10 +63,10 @@ AccountingVentilationSupplier=Tedarikçi hesabı analizi
 AccountingVentilationCustomer=Müşteri hesabı analizi
 Line=Satır
 
-CAHTF=Tedarikçi HT toplam alışı
+CAHTF=Total purchase supplier before tax
 InvoiceLines=Analiz edilecek fatura kalemleri
 InvoiceLinesDone=Analiz edilen fatura kalemleri
-IntoAccount=Muhasebe hesabında
+IntoAccount=Ventilate in the accounting account
 
 Ventilate=Analiz
 VentilationAuto=Otomatik analiz
@@ -152,7 +155,7 @@ Active=Hesap özeti
 NewFiscalYear=Yeni mali yıl
 
 DescVentilCustomer=Müşteri faturalarınızın yıllık hesap analizi için buraya danışın
-TotalVente=Toplam ciro HT
+TotalVente=Total turnover before tax
 TotalMarge=Toplam satışlar kar oranı
 DescVentilDoneCustomer=Burada müşteri faturaları satırlarına ve onların muhasebe hesaplarının listesine bakın.
 DescVentilTodoCustomer=Bir muhasebe hesabıyla müşteri faturanızın kalemlerini analiz edin
@@ -167,3 +170,4 @@ ValidateHistory=Otomatikman doğrula
 ErrorAccountancyCodeIsAlreadyUse=Hata, kullanıldığı için bu muhasebe hesabını silemezsiniz
 
 FicheVentilation=Analiz kartı
+GeneralLedgerIsWritten=Operations are written in the general ledger

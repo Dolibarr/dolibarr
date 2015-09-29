@@ -90,7 +90,7 @@ SelectAtLeastOneField=تغییر حداقل یکی از فیلد منبع در �
 SelectFormat=را انتخاب کنید این فرمت فایل واردات
 RunImportFile=راه اندازی فایل واردات
 NowClickToRunTheImport=نتیجه شبیه سازی واردات را بررسی کنید. اگر همه چیز خوب است، راه اندازی واردات قطعی.
-DataLoadedWithId=همه داده خواهد شد با شناسه (شماره) واردات زیر آپلود <b>شده:٪ s را</b>
+DataLoadedWithId=All data will be loaded with the following import id: <b>%s</b>
 ErrorMissingMandatoryValue=اطلاعات اجباری خالی در فایل منبع را برای <b>فیلد٪ s</b> است.
 TooMuchErrors=هنوز هم وجود دارد <b>از٪ s</b> خط منبع دیگر با اشتباهات اما خروجی محدود بوده است.
 TooMuchWarnings=هنوز هم وجود دارد <b>از٪ s</b> خط منبع دیگر با هشدارهای اما خروجی محدود بوده است.
@@ -130,7 +130,7 @@ ExportDateFilter=YYYY, YYYYMM, YYYYMMDD : filters by one year/month/day<br>YYYY+
 ExportNumericFilter=فیلتر 'NNNNN توسط یک ارزش <br> فیلتر 'NNNNN + NNNNN' بیش از یک طیف وسیعی از مقادیر <br> '> NNNNN' فیلتر شده توسط مقادیر پایین تر <br> '> NNNNN' فیلتر شده توسط ارزش بالاتر
 ## filters
 SelectFilterFields=اگر می خواهید برای فیلتر کردن در برخی از ارزش ها، فقط مقادیر ورودی در اینجا.
-FilterableFields=شانزه Filtrables
+FilterableFields=Filterable Fields
 FilteredFields=رشته های فیلتر شده
 FilteredFieldsValues=ارزش فیلتر
 FormatControlRule=Format control rule
