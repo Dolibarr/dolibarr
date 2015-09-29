@@ -400,9 +400,24 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
     else
     {
         print '<tr '.$bc[$var].'>';
-        print '<td>'.$langs->trans("HighlightLinesOnMouseHover").'</td>';
-        print '<td colspan="'.($colspan-1).'"><input '.$bc[$var].' name="check_THEME_ELDY_USE_HOVER"'.($edit?'':' disabled').' type="checkbox" '.($hoverdisabled?"":" checked").'>';
-        print ' &nbsp; ('.$langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis").')';
+        print '<td>'.$langs->trans("HighlightLinesColor").'</td>';
+        print '<td colspan="'.($colspan-1).'">';
+        //print '<input '.$bc[$var].' name="check_THEME_ELDY_USE_HOVER"'.($edit?'':' disabled').' type="checkbox" '.($hoverdisabled?"":" checked").'>';
+        //print ' &nbsp; ('.$langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis").')';
+	    if ($edit)
+	    {
+	   	    if ($conf->global->THEME_ELDY_USE_HOVER == '1') $color='edf4fb';
+	   		else $color = colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_USE_HOVER,array()),'');
+	        print $formother->selectColor($color,'THEME_ELDY_USE_HOVER','formcolor',1).' ';
+	    }
+	   	else
+	   	{
+	   	    if ($conf->global->THEME_ELDY_USE_HOVER == '1') $color='edf4fb';
+	   		else $color = colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_USE_HOVER,array()),'');
+			if ($color) print '<input type="text" class="colorthumb" disabled="disabled" style="padding: 1px; margin-top: 0; margin-bottom: 0; width: 36px; background-color: #'.$color.'" value="'.$color.'">';
+			else print $langs->trans("None");
+	   	}
+    	print ' &nbsp; ('.$langs->trans("Default").': <strong>edf4fb</strong>, '.$langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis").')';
         print '</td>';
         print '</tr>';
     }
