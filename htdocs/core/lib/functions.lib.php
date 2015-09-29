@@ -1698,7 +1698,9 @@ function dol_substr($string,$start,$length,$stringencoding='')
 	}
 	else
 	{
+		$string = utf8_decode($string);//Pour coupe sur caractére spéciale
 		$ret=substr($string,$start,$length);
+                $ret = utf8_encode($ret);
 	}
 	return $ret;
 }
