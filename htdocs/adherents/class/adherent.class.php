@@ -540,10 +540,12 @@ class Adherent extends CommonObject
 
                     if ($result >= 0)
                     {
+                        //var_dump($this->user_login);exit;
+                        //var_dump($this->login);exit;
+                        $luser->login=$this->login;
                         $luser->civility_id=$this->civility_id;
                         $luser->firstname=$this->firstname;
                         $luser->lastname=$this->lastname;
-                        $luser->login=$this->user_login;
                         $luser->pass=$this->pass;
                         $luser->societe_id=$this->societe;
 
