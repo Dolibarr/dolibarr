@@ -296,3 +296,4 @@ PropalMergePdfProductActualFile=Fichiers utilisés pour l'ajout au PDF Azur sont
 PropalMergePdfProductChooseFile=Sélectionnez les fichiers PDF
 IncludingProductWithTag=Incluant un produit ayant le tag/catégorie
 DefaultPriceRealPriceMayDependOnCustomer=Prix ​​par défaut, le prix réel peut dépendre du client
+DefaultUnitToShow=Unité
