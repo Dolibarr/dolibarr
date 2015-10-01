@@ -26,10 +26,10 @@ ALTER TABLE llx_accountingaccount MODIFY COLUMN fk_pcg_version varchar(32);
 
 UPDATE llx_const SET name = __ENCRYPT('ACCOUNTING_EXPORT_PREFIX_SPEC')__ WHERE __DECRYPT('name')__ = 'EXPORT_PREFIX_SPEC';
 
-UPDATE llx_const set MAIN_THEME = __ENCRYPT('eldy')__ WHERE __DECRYPT('MAIN_THEME')__ = 'auguria';
-UPDATE llx_const set MAIN_THEME = __ENCRYPT('eldy')__ WHERE __DECRYPT('MAIN_THEME')__ = 'bureau2crea';
-UPDATE llx_const set MAIN_THEME = __ENCRYPT('eldy')__ WHERE __DECRYPT('MAIN_THEME')__ = 'amarok';
-UPDATE llx_const set MAIN_THEME = __ENCRYPT('eldy')__ WHERE __DECRYPT('MAIN_THEME')__ = 'cameleo';
+UPDATE llx_const set value = __ENCRYPT('eldy')__ WHERE __DECRYPT('value')__ = 'auguria';
+UPDATE llx_const set value = __ENCRYPT('eldy')__ WHERE __DECRYPT('value')__ = 'bureau2crea';
+UPDATE llx_const set value = __ENCRYPT('eldy')__ WHERE __DECRYPT('value')__ = 'amarok';
+UPDATE llx_const set value = __ENCRYPT('eldy')__ WHERE __DECRYPT('value')__ = 'cameleo';
 
 ALTER TABLE llx_accountingaccount RENAME TO llx_accounting_account;
 
