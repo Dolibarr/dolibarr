@@ -83,7 +83,7 @@ if (! defined('DONOTLOADCONF') && file_exists($conffile))
     if ($result)
     {
 		if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysqli';	// For backward compatibility
-		if (empty($dolibarr_main_db_port) && ($dolibarr_main_db_type='mysqli' || $dolibarr_main_db_type='mysql')) $dolibarr_main_db_port='3306'; // For backward compatibility
+		if (empty($dolibarr_main_db_port) && ($dolibarr_main_db_type=='mysqli' || $dolibarr_main_db_type=='mysql')) $dolibarr_main_db_port='3306'; // For backward compatibility
 
 		// Clean parameters
     	$dolibarr_main_data_root        =isset($dolibarr_main_data_root)?trim($dolibarr_main_data_root):'';
