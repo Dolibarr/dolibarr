@@ -26,6 +26,11 @@ ALTER TABLE llx_accountingaccount MODIFY COLUMN fk_pcg_version varchar(32);
 
 UPDATE llx_const SET name = __ENCRYPT('ACCOUNTING_EXPORT_PREFIX_SPEC')__ WHERE __DECRYPT('name')__ = 'EXPORT_PREFIX_SPEC';
 
+UPDATE llx_const set MAIN_THEME = __ENCRYPT('eldy')__ WHERE __DECRYPT('MAIN_THEME')__ = 'auguria';
+UPDATE llx_const set MAIN_THEME = __ENCRYPT('eldy')__ WHERE __DECRYPT('MAIN_THEME')__ = 'bureau2crea';
+UPDATE llx_const set MAIN_THEME = __ENCRYPT('eldy')__ WHERE __DECRYPT('MAIN_THEME')__ = 'amarok';
+UPDATE llx_const set MAIN_THEME = __ENCRYPT('eldy')__ WHERE __DECRYPT('MAIN_THEME')__ = 'cameleo';
+
 ALTER TABLE llx_accountingaccount RENAME TO llx_accounting_account;
 
 ALTER TABLE llx_societe ADD COLUMN model_pdf varchar(255);
@@ -46,3 +51,5 @@ ALTER TABLE llx_payment_salary ADD COLUMN datec datetime after tms;
 ALTER TABLE llx_payment_salary CHANGE COLUMN fk_user_creat fk_user_author integer;
 
 ALTER TABLE llx_adherent ADD COLUMN pass_crypted varchar(128) after pass;
+
+

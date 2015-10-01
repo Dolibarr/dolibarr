@@ -291,7 +291,7 @@ div.floatright
 /* Styles to hide objects                                                         */
 /* ============================================================================== */
 
-.hideobject { display: none; }
+.hideobject, .loginphoto { display: none; }
 <?php if (! empty($dol_optimize_smallscreen)) { ?>
 .hideonsmartphone { display: none; }
 .noenlargeonsmartphone { width : 50px !important; display: inline !important; }
