@@ -209,6 +209,6 @@ MigrationActioncommElement=Aktualizovat údaje na činnostech
 MigrationPaymentMode=Migrace dat platebního režimu
 MigrationCategorieAssociation=Migrace kategorií
 MigrationEvents=Migrace událostí přidá vlastníka události do přiřazené tabulky
-
+MigrationReloadModule=Reload module %s
 ShowNotAvailableOptions=Ukázat nedostupné možnosti
 HideNotAvailableOptions=Skrýt nedostupné možnosti

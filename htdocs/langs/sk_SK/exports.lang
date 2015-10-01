@@ -90,7 +90,7 @@ SelectAtLeastOneField=Prepnutie aspoň jeden zdrojový poľa v stĺpci polí pre
 SelectFormat=Zvoľte túto importu súboru vo formáte
 RunImportFile=Spustenie importu súboru
 NowClickToRunTheImport=Skontrolujte výsledok importu simulácie. Ak je všetko v poriadku, spustite trvalému dovozu.
-DataLoadedWithId=Všetky dáta budú zaťažená nasledujúceho dovozného id: <b>%s</b>
+DataLoadedWithId=All data will be loaded with the following import id: <b>%s</b>
 ErrorMissingMandatoryValue=Povinné údaje je prázdny v zdrojovom súbore pre poľné <b>%s.</b>
 TooMuchErrors=Tam je ešte <b>%s</b> ďalšie zdrojové riadky s chybami, ale výkon bol obmedzený.
 TooMuchWarnings=Tam je ešte <b>%s</b> ďalšie zdrojové riadky s varovaním, ale výkon bol obmedzený.
@@ -130,7 +130,7 @@ ExportDateFilter=YYYY, YYYYMM, YYYYMMDD : filters by one year/month/day<br>YYYY+
 ExportNumericFilter='NNNNN' filters by one value<br>'NNNNN+NNNNN' filters over a range of values<br>'&gt;NNNNN' filters by lower values<br>'&gt;NNNNN' filters by higher values
 ## filters
 SelectFilterFields=Ak chcete filtrovať niektoré hodnoty, stačí zadať hodnoty tu.
-FilterableFields=Champs Filtrables
+FilterableFields=Filterable Fields
 FilteredFields=Filtrované polia
 FilteredFieldsValues=Hodnota za filtrom
 FormatControlRule=Format control rule

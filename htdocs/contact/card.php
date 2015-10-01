@@ -224,13 +224,7 @@ if (empty($reshook))
 			} else {
 				// Categories association
 				$contcats = GETPOST( 'contcats', 'array' );
-				if (!empty( $contcats )) {
-					$cat = new Categorie( $db );
-					foreach ($contcats as $id_category) {
-						$cat->fetch( $id_category );
-						$cat->add_type( $object, 'contact' );
-					}
-				}
+				$object->setCategories($contcats);
 			}
         }
 
@@ -333,13 +327,8 @@ if (empty($reshook))
 
 				// Then we add the associated categories
 				$categories = GETPOST( 'contcats', 'array' );
-				if (!empty( $categories )) {
-					$cat = new Categorie( $db );
-					foreach ($categories as $id_category) {
-						$cat->fetch( $id_category );
-						$cat->add_type( $object, 'contact' );
-					}
-				}
+				$object->setCategories($categories);
+
                 $object->old_lastname='';
                 $object->old_firstname='';
                 $action = 'view';

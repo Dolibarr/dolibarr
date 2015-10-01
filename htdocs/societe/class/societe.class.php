@@ -461,14 +461,14 @@ class Societe extends CommonObject
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, name_alias, entity, datec, fk_user_creat, canvas, status, ref_int, ref_ext, fk_stcomm, fk_incoterms, location_incoterms ,import_key)";
             $sql.= " VALUES ('".$this->db->escape($this->name)."', '".$this->db->escape($this->name_alias)."', ".$conf->entity.", '".$this->db->idate($now)."'";
             $sql.= ", ".(! empty($user->id) ? "'".$user->id."'":"null");
-            $sql.= ", ".(! empty($this->canvas) ? "'".$this->canvas."'":"null");
+            $sql.= ", ".(! empty($this->canvas) ? "'".$this->db->escape($this->canvas)."'":"null");
             $sql.= ", ".$this->status;
-            $sql.= ", ".(! empty($this->ref_int) ? "'".$this->ref_int."'":"null");
-            $sql.= ", ".(! empty($this->ref_ext) ? "'".$this->ref_ext."'":"null");
+            $sql.= ", ".(! empty($this->ref_int) ? "'".$this->db->escape($this->ref_int)."'":"null");
+            $sql.= ", ".(! empty($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'":"null");
             $sql.= ", 0";
 			$sql.= ", ".(int) $this->fk_incoterms;
 			$sql.= ", '".$this->db->escape($this->location_incoterms)."'";
-            $sql.= ", ".(! empty($this->import_key) ? "'".$this->import_key."'":"null").")";
+            $sql.= ", ".(! empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'":"null").")";
 
             dol_syslog(get_class($this)."::create", LOG_DEBUG);
             $result=$this->db->query($sql);
@@ -789,7 +789,7 @@ class Societe extends CommonObject
             $sql .= ",ref_ext = " .(! empty($this->ref_ext)?"'".$this->db->escape($this->ref_ext) ."'":"null");
             $sql .= ",address = '" . $this->db->escape($this->address) ."'";
 
-            $sql .= ",zip = ".(! empty($this->zip)?"'".$this->zip."'":"null");
+            $sql .= ",zip = ".(! empty($this->zip)?"'".$this->db->escape($this->zip)."'":"null");
             $sql .= ",town = ".(! empty($this->town)?"'".$this->db->escape($this->town)."'":"null");
 
             $sql .= ",fk_departement = '" . (! empty($this->state_id)?$this->state_id:'0') ."'";
@@ -841,17 +841,17 @@ class Societe extends CommonObject
 
             $sql .= ",prefix_comm = ".(! empty($this->prefix_comm)?"'".$this->db->escape($this->prefix_comm)."'":"null");
 
-            $sql .= ",fk_effectif = ".(! empty($this->effectif_id)?"'".$this->effectif_id."'":"null");
+            $sql .= ",fk_effectif = ".(! empty($this->effectif_id)?"'".$this->db->escape($this->effectif_id)."'":"null");
 
-            $sql .= ",fk_typent = ".(! empty($this->typent_id)?"'".$this->typent_id."'":"0");
+            $sql .= ",fk_typent = ".(! empty($this->typent_id)?"'".$this->db->escape($this->typent_id)."'":"0");
 
-            $sql .= ",fk_forme_juridique = ".(! empty($this->forme_juridique_code)?"'".$this->forme_juridique_code."'":"null");
+            $sql .= ",fk_forme_juridique = ".(! empty($this->forme_juridique_code)?"'".$this->db->escape($this->forme_juridique_code)."'":"null");
 
             $sql .= ",client = " . (! empty($this->client)?$this->client:0);
             $sql .= ",fournisseur = " . (! empty($this->fournisseur)?$this->fournisseur:0);
-            $sql .= ",barcode = ".(! empty($this->barcode)?"'".$this->barcode."'":"null");
-            $sql .= ",default_lang = ".(! empty($this->default_lang)?"'".$this->default_lang."'":"null");
-            $sql .= ",logo = ".(! empty($this->logo)?"'".$this->logo."'":"null");
+            $sql .= ",barcode = ".(! empty($this->barcode)?"'".$this->db->escape($this->barcode)."'":"null");
+            $sql .= ",default_lang = ".(! empty($this->default_lang)?"'".$this->db->escape($this->default_lang)."'":"null");
+            $sql .= ",logo = ".(! empty($this->logo)?"'".$this->db->escape($this->logo)."'":"null");
 
             $sql .= ",webservices_url = ".(! empty($this->webservices_url)?"'".$this->db->escape($this->webservices_url)."'":"null");
             $sql .= ",webservices_key = ".(! empty($this->webservices_key)?"'".$this->db->escape($this->webservices_key)."'":"null");
@@ -1530,7 +1530,7 @@ class Societe extends CommonObject
 
             // Positionne remise courante
             $sql = "UPDATE ".MAIN_DB_PREFIX."societe ";
-            $sql.= " SET remise_client = '".$remise."'";
+            $sql.= " SET remise_client = '".$this->db->escape($remise)."'";
             $sql.= " WHERE rowid = " . $this->id .";";
             $resql=$this->db->query($sql);
             if (! $resql)
@@ -1543,7 +1543,7 @@ class Societe extends CommonObject
             // Ecrit trace dans historique des remises
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_remise";
             $sql.= " (datec, fk_soc, remise_client, note, fk_user_author)";
-            $sql.= " VALUES ('".$this->db->idate($now)."', ".$this->id.", '".$remise."',";
+            $sql.= " VALUES ('".$this->db->idate($now)."', ".$this->id.", '".$this->db->escape($remise)."',";
             $sql.= " '".$this->db->escape($note)."',";
             $sql.= " ".$user->id;
             $sql.= ")";
@@ -1693,7 +1693,7 @@ class Societe extends CommonObject
         	$now=dol_now();
 
             $sql  = "UPDATE ".MAIN_DB_PREFIX."societe";
-            $sql .= " SET price_level = '".$price_level."'";
+            $sql .= " SET price_level = '".$this->db->escape($price_level)."'";
             $sql .= " WHERE rowid = " . $this->id;
 
             if (! $this->db->query($sql))
@@ -1704,7 +1704,7 @@ class Societe extends CommonObject
 
             $sql  = "INSERT INTO ".MAIN_DB_PREFIX."societe_prices";
             $sql .= " (datec, fk_soc, price_level, fk_user_author)";
-            $sql .= " VALUES ('".$this->db->idate($now)."',".$this->id.",'".$price_level."',".$user->id.")";
+            $sql .= " VALUES ('".$this->db->idate($now)."',".$this->id.",'".$this->db->escape($price_level)."',".$user->id.")";
 
             if (! $this->db->query($sql))
             {
@@ -3241,7 +3241,7 @@ class Societe extends CommonObject
 	 *  @param  User	$user		User making change
 	 *	@return	int					<0 if KO, >0 if OK
 	 */
-	function set_OutstandingBill (User $user)
+	function set_OutstandingBill(User $user)
 	{
 		if ($this->id)
 		{
@@ -3341,6 +3341,65 @@ class Societe extends CommonObject
 		if ($statut==3) return $langs->trans("ProspectCustomer");
 
 	}
+
+	/**
+	 * Sets object to supplied categories.
+	 *
+	 * Deletes object from existing categories not supplied.
+	 * Adds it to non existing supplied categories.
+	 * Existing categories are left untouch.
+	 *
+	 * @param int[]|int $categories Category or categories IDs
+	 * @param string $type Category type (customer or supplier)
+	 */
+	public function setCategories($categories, $type)
+	{
+		// Decode type
+		if ($type == 'customer') {
+			$type_id = Categorie::TYPE_CUSTOMER;
+			$type_text = 'customer';
+		} elseif ($type == 'supplier') {
+			$type_id = Categorie::TYPE_SUPPLIER;
+			$type_text = 'supplier';
+		} else {
+			dol_syslog(__METHOD__ . ': Type ' . $type .  'is an unknown company category type. Done nothing.', LOG_ERR);
+			return;
+		}
+
+		// Handle single category
+		if (!is_array($categories)) {
+			$categories = array($categories);
+		}
+
+		// Get current categories
+		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+		$c = new Categorie($this->db);
+		$existing = $c->containing($this->id, $type_id, 'id');
+
+		// Diff
+		if (is_array($existing)) {
+			var_dump($existing);
+			var_dump($categories);
+			$to_del = array_diff($existing, $categories);
+			$to_add = array_diff($categories, $existing);
+		} else {
+			$to_del = array(); // Nothing to delete
+			$to_add = $categories;
+		}
+
+		// Process
+		foreach ($to_del as $del) {
+			$c->fetch($del);
+			$c->del_type($this, $type_text);
+		}
+		foreach ($to_add as $add) {
+			$c->fetch($add);
+			$c->add_type($this, $type_text);
+		}
+
+		return;
+	}
+
 
 	/**
 	 * Function used to replace a thirdparty id with another one.

@@ -1165,8 +1165,10 @@ if (empty($reshook))
 
 
 
-	if (! $error && ! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->commande->creer) {
-		if ($action == 'addcontact') {
+	if (! $error && ! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->commande->creer) 
+	{
+		if ($action == 'addcontact') 
+		{
 			if ($object->id > 0) {
 				$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
 				$result = $object->add_contact($contactid, GETPOST('type'), GETPOST('source'));
@@ -1186,7 +1188,8 @@ if (empty($reshook))
 		}
 
 		// bascule du statut d'un contact
-		else if ($action == 'swapstatut') {
+		else if ($action == 'swapstatut') 
+		{
 			if ($object->id > 0) {
 				$result = $object->swapContactStatus(GETPOST('ligne'));
 			} else {
@@ -1195,7 +1198,8 @@ if (empty($reshook))
 		}
 
 		// Efface un contact
-		else if ($action == 'deletecontact') {
+		else if ($action == 'deletecontact') 
+		{
 			$result = $object->delete_contact($lineid);
 
 			if ($result >= 0) {

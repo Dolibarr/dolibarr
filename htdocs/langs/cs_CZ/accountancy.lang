@@ -2,11 +2,13 @@
 CHARSET=UTF-8
 ACCOUNTING_EXPORT_SEPARATORCSV=Oddělovač sloupců pro export souboru
 ACCOUNTING_EXPORT_DATE=Formát data pro export souboru
-ACCOUNTING_EXPORT_PIECE=Export počtu kusu?
-ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export s globálním účtem?
-ACCOUNTING_EXPORT_LABEL=Export štítku?
-ACCOUNTING_EXPORT_AMOUNT=Export částky?
-ACCOUNTING_EXPORT_DEVISE=Export návrhu?
+ACCOUNTING_EXPORT_PIECE=Export the number of piece
+ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account
+ACCOUNTING_EXPORT_LABEL=Export the label
+ACCOUNTING_EXPORT_AMOUNT=Export the amount
+ACCOUNTING_EXPORT_DEVISE=Export the devise
+Selectformat=Select the format for the file
+ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
 
 Accounting=Účetnictví
 Globalparameters=Globální parametry
@@ -34,6 +36,7 @@ Selectchartofaccounts=Vyberte účtové osnovy
 Validate=Potvrdit
 Addanaccount=Přidat účetní účet
 AccountAccounting=Účetní účet
+AccountAccountingSuggest=Accounting account suggest
 Ventilation=Přerušení
 ToDispatch=Nahlásit
 Dispatched=Odesláno
@@ -60,10 +63,10 @@ AccountingVentilationSupplier=Členění účetnictví dodavatel
 AccountingVentilationCustomer=Členění účetnictví zákazník
 Line=Linka
 
-CAHTF=Celkové platby dodavatele HT
+CAHTF=Total purchase supplier before tax
 InvoiceLines=Řádky faktury, které mají být prověřeny
 InvoiceLinesDone=Prověření řádků faktury
-IntoAccount=V účetním účtu 
+IntoAccount=Ventilate in the accounting account
 
 Ventilate=Prověřit
 VentilationAuto=Automatické členění
@@ -152,7 +155,7 @@ Active=Prohlášení
 NewFiscalYear=Nový fiskální rok
 
 DescVentilCustomer=Seznamte se zde s ročním rozdělením účetnictví faktur zákazníků
-TotalVente=Celkový obrat HT
+TotalVente=Total turnover before tax
 TotalMarge=Celkové tržby marže
 DescVentilDoneCustomer=Seznamte se zde se seznamem linek faktur zákazníků a jejich účetních účtů
 DescVentilTodoCustomer=Prověřte své řádky zákaznické faktury s účetním účtem.
@@ -167,3 +170,4 @@ ValidateHistory=Ověřit automaticky
 ErrorAccountancyCodeIsAlreadyUse=Chyba, nelze odstranit tento účetní účet, protože ho zrovna používáte
 
 FicheVentilation=Karta členění
+GeneralLedgerIsWritten=Operations are written in the general ledger

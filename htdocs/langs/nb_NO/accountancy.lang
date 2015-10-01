@@ -2,11 +2,13 @@
 CHARSET=UTF-8
 ACCOUNTING_EXPORT_SEPARATORCSV=Kolonneseparator for eksportfil
 ACCOUNTING_EXPORT_DATE=Datoformat for eksportfil
-ACCOUNTING_EXPORT_PIECE=Eksporter nummeret?
-ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Eksporter med global konto?
-ACCOUNTING_EXPORT_LABEL=Eksportere etiketten?
-ACCOUNTING_EXPORT_AMOUNT=Eksportere beløp?
-ACCOUNTING_EXPORT_DEVISE=Eksporter enheten?
+ACCOUNTING_EXPORT_PIECE=Export the number of piece
+ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account
+ACCOUNTING_EXPORT_LABEL=Export the label
+ACCOUNTING_EXPORT_AMOUNT=Export the amount
+ACCOUNTING_EXPORT_DEVISE=Export the devise
+Selectformat=Select the format for the file
+ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
 
 Accounting=Regnskap
 Globalparameters=Globale parametre
@@ -34,6 +36,7 @@ Selectchartofaccounts=Velg et kontodiagram
 Validate=Valider
 Addanaccount=Legg til regnskapskonto
 AccountAccounting=Regnskapskonto
+AccountAccountingSuggest=Accounting account suggest
 Ventilation=Fordeling
 ToDispatch=Skal sendes
 Dispatched=Sendt
@@ -60,10 +63,10 @@ AccountingVentilationSupplier=Regnskapsfordeling leverandører
 AccountingVentilationCustomer=Regnskapsfordeling kunder
 Line=Linje
 
-CAHTF=Totalt innkjøp HT
+CAHTF=Total purchase supplier before tax
 InvoiceLines=Fakturalinjer som skal ventileres
 InvoiceLinesDone=Ventilerte fakturalinjer
-IntoAccount=I regnskapskontoen
+IntoAccount=Ventilate in the accounting account
 
 Ventilate=Ventiler
 VentilationAuto=Automatisk fordeling
@@ -152,7 +155,7 @@ Active=Uttalelse
 NewFiscalYear=Nytt regnskapsår
 
 DescVentilCustomer=Årlig regnskapsfordelingfordeling over kundefakturaer
-TotalVente=Totalomsetning HT
+TotalVente=Total turnover before tax
 TotalMarge=Total salgsmargin
 DescVentilDoneCustomer=Liste over linjer på kundefakturaer og deres regnskapskontoer
 DescVentilTodoCustomer=Ventiler kundefaktura-linjer med en regnskapskonto
@@ -167,3 +170,4 @@ ValidateHistory=Valider automatisk
 ErrorAccountancyCodeIsAlreadyUse=Feil! Du kan ikke slette denne regnskapskontoen fordi den er i bruk
 
 FicheVentilation=Fordelingskort
+GeneralLedgerIsWritten=Operations are written in the general ledger

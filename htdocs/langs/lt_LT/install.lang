@@ -209,6 +209,6 @@ MigrationActioncommElement=Atnaujinti veiksmų duomenis
 MigrationPaymentMode=Duomenų perkėlimas mokėjimo būdui
 MigrationCategorieAssociation=Kategorijų perkėlimas
 MigrationEvents=Įvykių migracija pridedant įvykio savininką į užduočių lentelę
-
+MigrationReloadModule=Reload module %s
 ShowNotAvailableOptions=Parodyti negalimas opcijas
 HideNotAvailableOptions=Paslėpti negalimas opcijas

@@ -90,7 +90,7 @@ SelectAtLeastOneField=Chuyển ít nhất một lĩnh vực nguồn trong cột 
 SelectFormat=Chọn định dạng tập tin nhập dữ liệu này
 RunImportFile=Nhập dữ liệu tập tin khởi động
 NowClickToRunTheImport=Kiểm tra kết quả của mô phỏng nhập dữ liệu. Nếu mọi thứ đều ổn, khởi động nhập dữ liệu dứt khoát.
-DataLoadedWithId=Tất cả dữ liệu sẽ được nạp với id nhập dữ liệu sau đây: <b>%s</b>
+DataLoadedWithId=All data will be loaded with the following import id: <b>%s</b>
 ErrorMissingMandatoryValue=Dữ liệu bắt buộc có sản phẩm nào trong tập tin nguồn cho trường <b>%s</b>.
 TooMuchErrors=Hiện vẫn còn <b>%s</b> dòng nguồn khác với các lỗi nhưng sản lượng còn hạn chế.
 TooMuchWarnings=Hiện vẫn còn <b>%s</b> dòng nguồn khác với các cảnh báo nhưng sản lượng còn hạn chế.
@@ -130,7 +130,7 @@ ExportDateFilter=YYYY, YYYYMM, YYYYMMDD: bộ lọc một năm / tháng / ngày 
 ExportNumericFilter=Bộ lọc 'nnnnn' bởi một giá trị <br> Bộ lọc 'nnnnn + nnnnn "trên một loạt các giá trị <br> '> Nnnnn "bộ lọc các giá trị thấp <br> '> Nnnnn "bộ lọc các giá trị cao hơn
 ## filters
 SelectFilterFields=Nếu bạn muốn lọc vào một số giá trị, giá trị chỉ vào đây.
-FilterableFields=Champs Filtrables
+FilterableFields=Filterable Fields
 FilteredFields=Lĩnh vực lọc
 FilteredFieldsValues=Giá trị bộ lọc
 FormatControlRule=Format control rule

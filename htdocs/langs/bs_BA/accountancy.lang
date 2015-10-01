@@ -2,11 +2,13 @@
 CHARSET=UTF-8
 ACCOUNTING_EXPORT_SEPARATORCSV=Column separator for export file
 ACCOUNTING_EXPORT_DATE=Date format for export file
-ACCOUNTING_EXPORT_PIECE=Export the number of piece ?
-ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account ?
-ACCOUNTING_EXPORT_LABEL=Export the label ?
-ACCOUNTING_EXPORT_AMOUNT=Export the amount ?
-ACCOUNTING_EXPORT_DEVISE=Export the devise ?
+ACCOUNTING_EXPORT_PIECE=Export the number of piece
+ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account
+ACCOUNTING_EXPORT_LABEL=Export the label
+ACCOUNTING_EXPORT_AMOUNT=Export the amount
+ACCOUNTING_EXPORT_DEVISE=Export the devise
+Selectformat=Select the format for the file
+ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
 
 Accounting=Računovodstvo
 Globalparameters=Global parameters
@@ -34,6 +36,7 @@ Selectchartofaccounts=Select a chart of accounts
 Validate=Validate
 Addanaccount=Add an accounting account
 AccountAccounting=Accounting account
+AccountAccountingSuggest=Accounting account suggest
 Ventilation=Breakdown
 ToDispatch=To dispatch
 Dispatched=Dispatched
@@ -60,10 +63,10 @@ AccountingVentilationSupplier=Breakdown accounting supplier
 AccountingVentilationCustomer=Breakdown accounting customer
 Line=Line
 
-CAHTF=Total purchase supplier HT
+CAHTF=Total purchase supplier before tax
 InvoiceLines=Lines of invoice to be ventilated
 InvoiceLinesDone=Ventilated lines of invoice
-IntoAccount=In the accounting account
+IntoAccount=Ventilate in the accounting account
 
 Ventilate=Ventilate
 VentilationAuto=Automatic breakdown
@@ -152,7 +155,7 @@ Active=Statement
 NewFiscalYear=New fiscal year
 
 DescVentilCustomer=Consult here the annual breakdown accounting of your invoices customers
-TotalVente=Total turnover HT
+TotalVente=Total turnover before tax
 TotalMarge=Total sales margin
 DescVentilDoneCustomer=Consult here the list of the lines of invoices customers and their accounting account
 DescVentilTodoCustomer=Ventilate your lines of customer invoice with an accounting account
@@ -167,3 +170,4 @@ ValidateHistory=Validate Automatically
 ErrorAccountancyCodeIsAlreadyUse=Error, you cannot delete this accounting account because it is used
 
 FicheVentilation=Breakdown card
+GeneralLedgerIsWritten=Operations are written in the general ledger

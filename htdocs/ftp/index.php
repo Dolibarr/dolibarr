@@ -339,8 +339,7 @@ if ($_REQUEST['action'] == 'download')
 		}
 		else
 		{
-			//TODO: Translate
-			setEventMessage('Failed to get file '.$remotefile, 'errors');
+			setEventMessages($langs->transnoentitiesnoconv('FailedToGetFile',$remotefile), null, 'errors');
 		}
 
 	}

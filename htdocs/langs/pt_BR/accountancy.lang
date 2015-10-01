@@ -1,11 +1,6 @@
 # Dolibarr language file - Source file is en_US - accountancy
 ACCOUNTING_EXPORT_SEPARATORCSV=Separador de coluna para o arquivo de exportação
 ACCOUNTING_EXPORT_DATE=Formato de data para arquivo de exportação
-ACCOUNTING_EXPORT_PIECE=Exportar o número de peça?
-ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Exportação com conta global?
-ACCOUNTING_EXPORT_LABEL=Exportar o rótulo?
-ACCOUNTING_EXPORT_AMOUNT=Exportar o montante?
-ACCOUNTING_EXPORT_DEVISE=Exportar o legado?
 Accounting=Contabilidade
 Globalparameters=Parametros globais
 Menuaccount=Contas contábeis
@@ -33,7 +28,6 @@ AccountBalanceByMonth=Saldo da conta por mês
 AccountingVentilation=Cancelar contabilidade
 AccountingVentilationSupplier=Cancelar fornecedor de contabilidade
 AccountingVentilationCustomer=Cancelar contabilidade de cliente
-CAHTF=Total de HT compra fornecedor
 InvoiceLines=Linhas de fatura para discutir
 InvoiceLinesDone=Linhas de fatura discutidas
 Ventilate=Descutir/debater
@@ -81,7 +75,6 @@ ListAccounts=Lista das contas contábeis
 Pcgtype=Classes de conta
 Pcgsubtype=Sob classe de conta
 DescVentilCustomer=Consulte aqui a contabilização repartição anual dos seus clientes faturas
-TotalVente=HT volume de negócios total
 TotalMarge=Margem de vendas totais
 DescVentilDoneCustomer=Consultar aqui a lista das linhas das faturas de clientes e sua conta na contabilidade
 DescVentilTodoCustomer=Linhas de faturas de clientes com contas contábeis discutidas

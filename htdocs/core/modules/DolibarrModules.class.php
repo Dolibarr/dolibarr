@@ -623,8 +623,14 @@ abstract class DolibarrModules
                 {
                     $dirfound++;
 
-                    // Run llx_mytable.sql files
+                    // Run llx_mytable.sql files, then llx_mytable_*.sql
+                    $files = array();
                     while (($file = readdir($handle))!==false)
+                    {
+                        $files[] = $file;
+                    }
+                    sort($files);
+                    foreach ($files as $file) 
                     {
                         if (preg_match('/\.sql$/i',$file) && ! preg_match('/\.key\.sql$/i',$file) && substr($file,0,4) == 'llx_' && substr($file,0,4) != 'data')
                         {
@@ -635,8 +641,14 @@ abstract class DolibarrModules
 
                     rewinddir($handle);
 
-                    // Run llx_mytable.key.sql files (Must be done after llx_mytable.sql)
+                    // Run llx_mytable.key.sql files (Must be done after llx_mytable.sql) then then llx_mytable_*.key.sql
+                    $files = array();
                     while (($file = readdir($handle))!==false)
+                    {
+                        $files[] = $file;
+                    }
+                    sort($files);
+                    foreach ($files as $file) 
                     {
                         if (preg_match('/\.key\.sql$/i',$file) && substr($file,0,4) == 'llx_' && substr($file,0,4) != 'data')
                         {
@@ -648,7 +660,13 @@ abstract class DolibarrModules
                     rewinddir($handle);
 
                     // Run data_xxx.sql files (Must be done after llx_mytable.key.sql)
+                    $files = array();
                     while (($file = readdir($handle))!==false)
+                    {
+                        $files[] = $file;
+                    }
+                    sort($files);
+                    foreach ($files as $file) 
                     {
                         if (preg_match('/\.sql$/i',$file) && ! preg_match('/\.key\.sql$/i',$file) && substr($file,0,4) == 'data')
                         {
@@ -660,7 +678,13 @@ abstract class DolibarrModules
                     rewinddir($handle);
 
                     // Run update_xxx.sql files
+                    $files = array();
                     while (($file = readdir($handle))!==false)
+                    {
+                        $files[] = $file;
+                    }
+                    sort($files);
+                    foreach ($files as $file) 
                     {
                         if (preg_match('/\.sql$/i',$file) && ! preg_match('/\.key\.sql$/i',$file) && substr($file,0,6) == 'update')
                         {
@@ -1686,11 +1710,13 @@ print $sql;
 
 	/**
 	 * Function called when module is enabled.
-	 * The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 * The init function adds tabs, constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 * It also creates data directories
 	 *
-	 * @param string $options    Options when enabling module ('', 'noboxes')
-	 * @return int             	1 if OK, 0 if KO
+	 * @param string $options   Options when enabling module ('', 'newboxdefonly', 'noboxes')
+     *                          'noboxes' = Do not insert boxes
+     *                          'newboxdefonly' = For boxes, insert def of boxes only and not boxes activation
+	 * @return int				1 if OK, 0 if KO
 	 */
 	public function init($options = '')
 	{
@@ -1699,11 +1725,11 @@ print $sql;
 
 	/**
 	 * Function called when module is disabled.
-	 * Remove from database constants, boxes and permissions from Dolibarr database.
+	 * The remove function removes tabs, constants, boxes, permissions and menus from Dolibarr database.
 	 * Data directories are not deleted
 	 *
 	 * @param      string	$options    Options when enabling module ('', 'noboxes')
-	 * @return     int             	1 if OK, 0 if KO
+	 * @return     int             		1 if OK, 0 if KO
 	 */
 	public function remove($options = '')
 	{

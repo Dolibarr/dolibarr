@@ -1,11 +1,11 @@
 # Dolibarr language file - Source file is en_US - admin
-WorkflowSetup=Workflow module setup
-WorkflowDesc=This module is designed to modify the behaviour of automatic actions into application. By default, workflow is open (you can do things in the order you want). You can activate the automatic actions you are interested in.
-ThereIsNoWorkflowToModify=There is no workflow modifications available with the activated modules.
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automatically create a customer order after a commercial proposal is signed
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICEAutomatically create a customer invoice after a commercial proposal is signed
-descWORKFLOW_CONTRACT_AUTOCREATE_INVOICEAutomatically create a customer invoice after a contract is validated
-descWORKFLOW_ORDER_AUTOCREATE_INVOICEAutomatically create a customer invoice after a customer order is closed
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classify linked source proposal to billed when customer order is set to paid
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is set to paid
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is validated
+WorkflowSetup=Podešavanja modula Workflow
+WorkflowDesc=Ovaj modul je namenjen za izmene automatskih akcija u aplikaciji. Po defaultu, workflow je otvoren (možete vršiti akcije redosledom kojim poželite). Možete aktivirati automatske akcije koje Vas interesuju.
+ThereIsNoWorkflowToModify=Nema mogućih izmena workflow-a u aktiviranim modulima.
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automatski kreiraj narudžbinu klijenta nakon potpisivanja komercijalne ponude.
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICEAutomatically Kreiraj račun za klijenta kada je komercijalna ponuda potpisana.
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICEAutomatically Kreiraj račun za klijenta kada je ugovor potvrđen
+descWORKFLOW_ORDER_AUTOCREATE_INVOICEAutomatically Kreiraj račun za klijenta kada je narudžbina zatvorena
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Označi komercijalnu ponudu kao naplaćenu kada se narudžbina klijenta označi kao plaćena.
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Označi komerijalnu(e) ponudu(e) kao naplaćenu(e) kada je račun klijenta označen kao plaćen.
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Označi komerijalnu(e) ponudu(e) kao naplaćenu(e) kada je račun klijenta označen kao potvrđen.

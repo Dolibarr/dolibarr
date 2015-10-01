@@ -102,7 +102,7 @@ if ($action == 'update' && isset($_POST['update_cp']))
 		}
     }
 
-    if (! $error) setEventMessages($langs->trans('UpdateConfCPOK'), '', 'mesgs');
+    if (! $error) setEventMessages('UpdateConfCPOK', '', 'mesgs');
 }
 elseif($action == 'add_event')
 {
@@ -122,7 +122,7 @@ elseif($action == 'add_event')
 
     if ($error)
     {
-	    setEventMessages($langs->trans('ErrorAddEventToUserCP'), '', 'errors');
+	    setEventMessages('ErrorAddEventToUserCP', '', 'errors');
     }
     else
 	{
@@ -135,7 +135,7 @@ elseif($action == 'add_event')
 
         $holiday->updateSoldeCP($userCP,$new_holiday);
 
-		setEventMessages($langs->trans('AddEventToUserOkCP'), '', 'mesgs');
+		setEventMessages('AddEventToUserOkCP', '', 'mesgs');
     }
 }
 

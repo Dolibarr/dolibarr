@@ -1,6 +1,8 @@
 # Dolibarr language file - Source file is en_US - projects
 RefProject=Tham chiếu dự án
+ProjectRef=Project ref.
 ProjectId=ID dự án
+ProjectLabel=Project label
 Project=Dự án
 Projects=Các dự án
 ProjectStatus=Trạng thái dự án
@@ -27,7 +29,7 @@ OfficerProject=Nhân viên dự án
 LastProjects=% dự án cuối
 AllProjects=Tất cả dự án
 OpenedProjects=Opened projects
-OpportunitiesStatusForOpenedProjects=Opportunities status for opened projects
+OpportunitiesStatusForOpenedProjects=Opportunities amount of opened projects by status
 ProjectsList=Danh sách dự án
 ShowProject=Hiển thị dự án
 SetProject=Lập dự án

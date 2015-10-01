@@ -366,29 +366,29 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
        	    migrate_event_assignement($db,$langs,$conf);
         }
 
-        // Scripts for lat version
+        // Scripts for last version
         $afterversionarray=explode('.','3.7.9');
         $beforeversionarray=explode('.','3.8.9');
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
         {
         	// Reload modules (this must be always and only into last targeted version)
 			$listofmodule=array(
-				    	'MAIN_MODULE_AGENDA',
-						'MAIN_MODULE_BARCODE',
-						'MAIN_MODULE_CRON',
-				    	'MAIN_MODULE_COMMANDE',
-				    	'MAIN_MODULE_DEPLACEMENT',
-				    	'MAIN_MODULE_DON',
-				    	'MAIN_MODULE_ECM',
-				    	'MAIN_MODULE_FACTURE',
-				    	'MAIN_MODULE_FOURNISSEUR',
-						'MAIN_MODULE_HOLIDAY',
-						'MAIN_MODULE_OPENSURVEY',
-						'MAIN_MODULE_PAYBOX',
-						'MAIN_MODULE_PRODUIT',
-						'MAIN_MODULE_SOCIETE',
-				    	'MAIN_MODULE_SERVICE',
-						'MAIN_MODULE_USER'
+				    	'MAIN_MODULE_AGENDA'=>'newboxdefonly',
+						'MAIN_MODULE_BARCODE'=>'newboxdefonly',
+						'MAIN_MODULE_CRON'=>'newboxdefonly',
+				    	'MAIN_MODULE_COMMANDE'=>'newboxdefonly',
+				    	'MAIN_MODULE_DEPLACEMENT'=>'newboxdefonly',
+				    	'MAIN_MODULE_DON'=>'newboxdefonly',
+				    	'MAIN_MODULE_ECM'=>'newboxdefonly',
+				    	'MAIN_MODULE_FACTURE'=>'newboxdefonly',
+				    	'MAIN_MODULE_FOURNISSEUR'=>'newboxdefonly',
+						'MAIN_MODULE_HOLIDAY'=>'newboxdefonly',
+						'MAIN_MODULE_OPENSURVEY'=>'newboxdefonly',
+						'MAIN_MODULE_PAYBOX'=>'newboxdefonly',
+						'MAIN_MODULE_PRODUIT'=>'newboxdefonly',
+						'MAIN_MODULE_SOCIETE'=>'newboxdefonly',
+				    	'MAIN_MODULE_SERVICE'=>'newboxdefonly',
+						'MAIN_MODULE_USER'=>'newboxdefonly'
 			);
         	migrate_reload_modules($db,$langs,$conf,$listofmodule);
 
@@ -3750,30 +3750,33 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array())
 {
     dolibarr_install_syslog("upgrade2::migrate_reload_modules");
 
-    // Module to reload if no info is provided
+    // If no info is provided, we reload all modules with mode newboxdefonly.
     if (count($listofmodule) == 0)
     {
     	$listofmodule=array(
-	    	'MAIN_MODULE_AGENDA',
-	    	'MAIN_MODULE_SOCIETE',
-	    	'MAIN_MODULE_PRODUIT',
-	    	'MAIN_MODULE_SERVICE',
-	    	'MAIN_MODULE_COMMANDE',
-	    	'MAIN_MODULE_FACTURE',
-	    	'MAIN_MODULE_FOURNISSEUR',
-	    	'MAIN_MODULE_USER',
-	    	'MAIN_MODULE_DEPLACEMENT',
-	    	'MAIN_MODULE_DON',
-	    	'MAIN_MODULE_ECM',
-	    	'MAIN_MODULE_PAYBOX',
-    		'MAIN_MODULE_OPENSURVEY'
+	    	'MAIN_MODULE_AGENDA'=>'newboxdefonly',
+	    	'MAIN_MODULE_SOCIETE'=>'newboxdefonly',
+	    	'MAIN_MODULE_PRODUIT'=>'newboxdefonly',
+	    	'MAIN_MODULE_SERVICE'=>'newboxdefonly',
+	    	'MAIN_MODULE_COMMANDE'=>'newboxdefonly',
+	    	'MAIN_MODULE_FACTURE'=>'newboxdefonly',
+	    	'MAIN_MODULE_FOURNISSEUR'=>'newboxdefonly',
+    		'MAIN_MODULE_HOLIDAY'=>'newboxdefonly',
+    		'MAIN_MODULE_USER'=>'newboxdefonly',
+	    	'MAIN_MODULE_DEPLACEMENT'=>'newboxdefonly',
+	    	'MAIN_MODULE_DON'=>'newboxdefonly',
+	    	'MAIN_MODULE_ECM'=>'newboxdefonly',
+	    	'MAIN_MODULE_PAYBOX'=>'newboxdefonly',
+    		'MAIN_MODULE_OPENSURVEY'=>'newboxdefonly'
     	);
     }
 
-    foreach($listofmodule as $moduletoreload)
+    foreach($listofmodule as $moduletoreload => $reloadmode)
     {
     	if (empty($moduletoreload) || empty($conf->global->$moduletoreload)) continue;
 
+    	$mod=null;
+    	
 	    if ($moduletoreload == 'MAIN_MODULE_AGENDA')
 	    {
 	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Agenda module");
@@ -3781,7 +3784,7 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array())
 	        if ($res) {
 	            $mod=new modAgenda($db);
 	            $mod->remove('noboxes');
-	            $mod->init('newboxdefonly');
+	            $mod->init($reloadmode);
 	        }
 	    }
         if ($moduletoreload == 'MAIN_MODULE_BARCODE')
@@ -3791,7 +3794,7 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array())
 	        if ($res) {
 	            $mod=new modBarcode($db);
 	            $mod->remove('noboxes');
-	            $mod->init('newboxdefonly');
+	            $mod->init($reloadmode);
 	        }
 	    }
 	    if ($moduletoreload == 'MAIN_MODULE_CRON')
@@ -3801,7 +3804,7 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array())
 	        if ($res) {
 	            $mod=new modCron($db);
 	            $mod->remove('noboxes');
-	            $mod->init('newboxdefonly');
+	            $mod->init($reloadmode);
 	        }
 	    }
 	    if ($moduletoreload == 'MAIN_MODULE_SOCIETE')
@@ -3811,7 +3814,7 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array())
 	        if ($res) {
 	            $mod=new modSociete($db);
 	            $mod->remove('noboxes');
-	            $mod->init('newboxdefonly');
+	            $mod->init($reloadmode);
 	        }
 	    }
 	    if ($moduletoreload == 'MAIN_MODULE_PRODUIT')    // Permission has changed into 2.7
@@ -3821,29 +3824,27 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array())
 	        if ($res) {
 	            $mod=new modProduct($db);
 	            //$mod->remove('noboxes');
-	            $mod->init('newboxdefonly');
+	            $mod->init($reloadmode);
 	        }
 	    }
 	    if ($moduletoreload == 'MAIN_MODULE_SERVICE')    // Permission has changed into 2.7
 	    {
 	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Service module");
-
 	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modService.class.php';
 	        if ($res) {
 	            $mod=new modService($db);
 	            //$mod->remove('noboxes');
-	            $mod->init('newboxdefonly');
+	            $mod->init($reloadmode);
 	        }
 	    }
 	    if ($moduletoreload == 'MAIN_MODULE_COMMANDE')   // Permission has changed into 2.9
 	    {
 	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Commande module");
-
 	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modCommande.class.php';
 	        if ($res) {
 	            $mod=new modCommande($db);
 	            //$mod->remove('noboxes');
-	            $mod->init('newboxdefonly');
+	            $mod->init($reloadmode);
 	        }
 	    }
 	    if ($moduletoreload == 'MAIN_MODULE_FACTURE')    // Permission has changed into 2.9
@@ -3853,7 +3854,7 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array())
 	        if ($res) {
 	            $mod=new modFacture($db);
 	            //$mod->remove('noboxes');
-	            $mod->init('newboxdefonly');
+	            $mod->init($reloadmode);
 	        }
 	    }
 	    if ($moduletoreload == 'MAIN_MODULE_FOURNISSEUR')    // Permission has changed into 2.9
@@ -3863,7 +3864,17 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array())
 	        if ($res) {
 	            $mod=new modFournisseur($db);
 	            //$mod->remove('noboxes');
-	            $mod->init('newboxdefonly');
+	            $mod->init($reloadmode);
+	        }
+	    }
+    	if ($moduletoreload == 'MAIN_MODULE_HOLIDAY')    // Permission and tabs has changed into 3.8
+	    {
+	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Leave Request module");
+	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modHoliday.class.php';
+	        if ($res) {
+	            $mod=new modHoliday($db);
+	            $mod->remove('noboxes');
+	            $mod->init($reloadmode);
 	        }
 	    }
 	    if ($moduletoreload == 'MAIN_MODULE_DEPLACEMENT')    // Permission has changed into 3.0
@@ -3872,8 +3883,8 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array())
 	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modDeplacement.class.php';
 	        if ($res) {
 	            $mod=new modDeplacement($db);
-	            //$mod->remove('noboxes');	// We need to remove because a permission id has been removed
-	            $mod->init('newboxdefonly');
+	            //$mod->remove('noboxes');
+	            $mod->init($reloadmode);
 	        }
 	    }
 	    if ($moduletoreload == 'MAIN_MODULE_DON')    // Permission has changed into 3.0
@@ -3882,8 +3893,8 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array())
 	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modDon.class.php';
 	        if ($res) {
 	            $mod=new modDon($db);
-	            //$mod->remove('noboxes');	// We need to remove because a permission id has been removed
-	            $mod->init('newboxdefonly');
+	            //$mod->remove('noboxes');
+	            $mod->init($reloadmode);
 	        }
 	    }
 	    if ($moduletoreload == 'MAIN_MODULE_ECM')    // Permission has changed into 3.0 and 3.1
@@ -3893,7 +3904,7 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array())
 	        if ($res) {
 	            $mod=new modECM($db);
 	            $mod->remove('noboxes');	// We need to remove because a permission id has been removed
-	            $mod->init('newboxdefonly');
+	            $mod->init($reloadmode);
 	        }
 	    }
 	    if ($moduletoreload == 'MAIN_MODULE_PAYBOX')    // Permission has changed into 3.0
@@ -3903,7 +3914,7 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array())
 	        if ($res) {
 	            $mod=new modPaybox($db);
 	            $mod->remove('noboxes');  // We need to remove because id of module has changed
-	            $mod->init('newboxdefonly');
+	            $mod->init($reloadmode);
 	        }
 	    }
     	if ($moduletoreload == 'MAIN_MODULE_OPENSURVEY')    // Permission has changed into 3.0
@@ -3913,7 +3924,7 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array())
 	        if ($res) {
 	            $mod=new modOpenSurvey($db);
 	            $mod->remove('noboxes');  // We need to remove because menu entries has changed
-	            $mod->init('newboxdefonly');
+	            $mod->init($reloadmode);
 	        }
 	    }
     	if ($moduletoreload == 'MAIN_MODULE_USER')    // Permission has changed into 3.0
@@ -3922,11 +3933,20 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array())
 	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modUser.class.php';
 	        if ($res) {
 	            $mod=new modUser($db);
-	            //$mod->remove('noboxes');  // We need to remove because id of module has changed
-	            $mod->init('newboxdefonly');
+	            //$mod->remove('noboxes');
+	            $mod->init($reloadmode);
 	        }
 	    }
 
+		if (! empty($mod) && is_object($mod))
+		{	    
+    		print '<tr><td colspan="4">';
+        	print '<b>'.$langs->trans('Upgrade').'</b>: ';
+        	print $langs->trans('MigrationReloadModule')." ".$mod->getName();
+        	print "<!-- (".$reloadmode.") -->";
+        	print "<br>\n";
+        	print '</td></tr>';
+		}
     }
 }
 
@@ -3951,7 +3971,7 @@ function migrate_reload_menu($db,$langs,$conf,$versionto)
 
     $versiontoarray=explode('.',$versionto);
 
-    // Script for VX (X<2.9) -> V2.9
+    // Migration required when target version is between 
     $afterversionarray=explode('.','2.8.9');
     $beforeversionarray=explode('.','2.9.9');
     if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
@@ -3959,9 +3979,17 @@ function migrate_reload_menu($db,$langs,$conf,$versionto)
         $listofmenuhandler['auguria']=1;   // We set here only dynamic menu handlers
     }
 
-    // Script for VX (X<3.2) -> V3.2
+    // Migration required when target version is between 
     $afterversionarray=explode('.','3.1.9');
     $beforeversionarray=explode('.','3.2.9');
+    if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
+    {
+        $listofmenuhandler['auguria']=1;   // We set here only dynamic menu handlers
+    }
+
+    // Migration required when target version is between 
+    $afterversionarray=explode('.','3.7.9');
+    $beforeversionarray=explode('.','3.8.9');
     if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
     {
         $listofmenuhandler['auguria']=1;   // We set here only dynamic menu handlers

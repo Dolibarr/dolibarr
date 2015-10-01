@@ -49,7 +49,8 @@ $langs->load("commercial");
 $langs->load("bills");
 $langs->load("banks");
 $langs->load("users");
-if (!empty($conf->incoterm->enabled)) $langs->load("incoterm");
+if (! empty($conf->categories->enabled)) $langs->load("categories");
+if (! empty($conf->incoterm->enabled)) $langs->load("incoterm");
 if (! empty($conf->notification->enabled)) $langs->load("mails");
 
 $mesg=''; $error=0; $errors=array();
@@ -414,23 +415,11 @@ if (empty($reshook))
 
 					// Customer categories association
 					$custcats = GETPOST( 'custcats', 'array' );
-					if (!empty( $custcats )) {
-						$cat = new Categorie( $db );
-						foreach ($custcats as $id_category) {
-							$cat->fetch( $id_category );
-							$cat->add_type( $object, 'customer' );
-						}
-					}
+					$object->setCategories($custcats, 'customer');
 
 					// Supplier categories association
 					$suppcats = GETPOST('suppcats', 'array');
-					if (!empty($suppcats)) {
-						$cat = new Categorie($db);
-						foreach ($suppcats as $id_category) {
-							$cat->fetch($id_category);
-							$cat->add_type($object, 'supplier');
-						}
-					}
+					$object->setCategories($suppcats, 'supplier');
 
                     // Logo/Photo save
                     $dir     = $conf->societe->multidir_output[$conf->entity]."/".$object->id."/logos/";
@@ -537,36 +526,12 @@ if (empty($reshook))
                 }
 
 				// Customer categories association
-				// First we delete all categories association
-				$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . 'categorie_societe';
-				$sql .= ' WHERE fk_soc = ' . $object->id;
-				$db->query( $sql );
-
-				// Then we add the associated categories
 				$categories = GETPOST( 'custcats', 'array' );
-				if (!empty( $categories )) {
-					$cat = new Categorie( $db );
-					foreach ($categories as $id_category) {
-						$cat->fetch( $id_category );
-						$cat->add_type( $object, 'customer' );
-					}
-				}
+				$object->setCategories($categories, 'customer');
 
 				// Supplier categories association
-				// First we delete all categories association
-				$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . 'categorie_fournisseur';
-				$sql .= ' WHERE fk_soc = ' . $object->id;
-				$db->query($sql);
-
-				// Then we add the associated categories
 				$categories = GETPOST('suppcats', 'array');
-				if (!empty($categories)) {
-					$cat = new Categorie($db);
-					foreach ($categories as $id_category) {
-						$cat->fetch($id_category);
-						$cat->add_type($object, 'supplier');
-					}
-				}
+				$object->setCategories($categories, 'supplier');
 
                 // Logo/Photo save
                 $dir     = $conf->societe->multidir_output[$object->entity]."/".$object->id."/logos";
@@ -1202,11 +1167,11 @@ else
         print '</td></tr>';
 
         // Legal Form
-        print '<tr><td>'.fieldLabel('JuridicalStatus','legal_form').'</td>';
+        print '<tr><td>'.fieldLabel('JuridicalStatus','forme_juridique_code').'</td>';
         print '<td colspan="3" class="maxwidthonsmartphone">';
         if ($object->country_id)
         {
-            print $formcompany->select_juridicalstatus($object->forme_juridique_code, $object->country_code, '', 'legal_form');
+            print $formcompany->select_juridicalstatus($object->forme_juridique_code, $object->country_code, '', 'forme_juridique_code');
         }
         else
         {
@@ -1274,6 +1239,8 @@ else
 		// Categories
 		if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire))
 		{
+			$langs->load('categories');
+
 			// Customer
 			if ($object->prospect || $object->client) {
 				print '<tr><td class="toptd">' . fieldLabel('CustomersCategoriesShort', 'custcats') . '</td><td colspan="3">';
@@ -1783,8 +1750,8 @@ else
             print '</td></tr>';
 
             // Juridical type
-            print '<tr><td>'.fieldLabel('JuridicalStatus','legal_form').'</td><td colspan="3">';
-            print $formcompany->select_juridicalstatus($object->forme_juridique_code, $object->country_code, '', 'legal_form');
+            print '<tr><td>'.fieldLabel('JuridicalStatus','forme_juridique_code').'</td><td colspan="3">';
+            print $formcompany->select_juridicalstatus($object->forme_juridique_code, $object->country_code, '', 'forme_juridique_code');
             print '</td></tr>';
 
             // Capital

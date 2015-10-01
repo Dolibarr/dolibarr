@@ -39,6 +39,9 @@ InterventionClassifiedUnbilledInDolibarr=Intervention %s set as unbilled
 InterventionSentByEMail=Intervention %s sent by EMail
 InterventionDeletedInDolibarr=Intervention %s deleted
 SearchAnIntervention=Search an intervention
+InterventionsArea=Interventions area
+DraftFichinter=Draft interventions
+LastModifiedInterventions=Last %s modified interventions
 ##### Types de contacts #####
 TypeContact_fichinter_internal_INTERREPFOLL=Representative following-up intervention
 TypeContact_fichinter_internal_INTERVENING=Intervening
@@ -50,4 +53,15 @@ ArcticNumRefModelError=Failed to activate
 PacificNumRefModelDesc1=Return numero with format %syymm-nnnn where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
 PacificNumRefModelError=An intervention card starting with $syymm already exists and is not compatible with this model of sequence. Remove it or rename it to activate this module.
 PrintProductsOnFichinter=Print products on intervention card
-PrintProductsOnFichinterDetails=forinterventions generated from orders
+PrintProductsOnFichinterDetails=interventions generated from orders
+##### Exports #####
+InterId=Intervention id
+InterRef=Intervention ref.
+InterDateCreation=Date creation intervention
+InterDuration=Duration intervention
+InterStatus=Status intervention
+InterNote=Note intervention
+InterLineId=Line id intervention
+InterLineDate=Line date intervention
+InterLineDuration=Line duration intervention
+InterLineDesc=Line description intervention

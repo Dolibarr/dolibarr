@@ -227,6 +227,7 @@ div.floatright
 }
 .center {
     text-align: center;
+	margin: 0px auto;
 }
 .left {
 	text-align: <?php print $left; ?>;
@@ -637,7 +638,12 @@ foreach($mainmenuusedarray as $val)
 
 
 /* Login */
-
+.login_vertical_align {
+	padding: 10px;
+}
+.login_main_message {
+	text-align: center;
+}
 form#login {
 	margin-top: <?php echo $dol_optimize_smallscreen?'30':'60' ?>px;
 	margin-bottom: 30px;
@@ -652,8 +658,7 @@ form#login {
 	text-shadow: 1px 1px 1px #FFF;
 }
 .login_table {
-	margin-left: 10px;
-	margin-right: 10px;
+	margin: 0px auto;  /* Center */
 	padding:12px;
 	max-width: 540px;
 	border: 1px solid #C0C0C0;

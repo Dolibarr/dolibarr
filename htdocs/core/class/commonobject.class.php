@@ -452,13 +452,15 @@ abstract class CommonObject
         // Check parameters
         if ($fk_socpeople <= 0)
         {
-            $this->error=$langs->trans("ErrorWrongValueForParameter","1");
+            $langs->load("errors");
+            $this->error=$langs->trans("ErrorWrongValueForParameterX","1");
             dol_syslog(get_class($this)."::add_contact ".$this->error,LOG_ERR);
             return -1;
         }
         if (! $type_contact)
         {
-            $this->error=$langs->trans("ErrorWrongValueForParameter","2");
+            $langs->load("errors");
+            $this->error=$langs->trans("ErrorWrongValueForParameterX","2");
             dol_syslog(get_class($this)."::add_contact ".$this->error,LOG_ERR);
             return -2;
         }
@@ -486,7 +488,7 @@ abstract class CommonObject
         }
 
         $datecreate = dol_now();
-
+        
         $this->db->begin();
 
         // Insertion dans la base
@@ -504,7 +506,11 @@ abstract class CommonObject
             if (! $notrigger)
             {
             	$result=$this->call_trigger(strtoupper($this->element).'_ADD_CONTACT', $user);
-	            if ($result < 0) { $this->db->rollback(); return -1; }
+	            if ($result < 0) 
+	            { 
+	                $this->db->rollback(); 
+	                return -1;
+	            }
             }
 
             $this->db->commit();
@@ -1077,18 +1083,18 @@ abstract class CommonObject
     function getValueFrom($table, $id, $field)
     {
         $result=false;
-
-        $sql = "SELECT ".$field." FROM ".MAIN_DB_PREFIX.$table;
-        $sql.= " WHERE rowid = ".$id;
-
-        dol_syslog(get_class($this).'::getValueFrom', LOG_DEBUG);
-        $resql = $this->db->query($sql);
-        if ($resql)
-        {
-            $row = $this->db->fetch_row($resql);
-            $result = $row[0];
-        }
-
+		if (!empty($id) && !empty($field) && !empty($table)) {
+	        $sql = "SELECT ".$field." FROM ".MAIN_DB_PREFIX.$table;
+	        $sql.= " WHERE rowid = ".$id;
+	
+	        dol_syslog(get_class($this).'::getValueFrom', LOG_DEBUG);
+	        $resql = $this->db->query($sql);
+	        if ($resql)
+	        {
+	            $row = $this->db->fetch_row($resql);
+	            $result = $row[0];
+	        }
+		}
         return $result;
     }
 
