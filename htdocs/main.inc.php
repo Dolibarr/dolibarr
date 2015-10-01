@@ -973,10 +973,9 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		if (GETPOST('dol_basehref')) print '<base href="'.dol_escape_htmltag(GETPOST('dol_basehref')).'">'."\n";
         // Displays meta
         print '<meta name="robots" content="noindex,nofollow">'."\n";      				// Do not index
-        print '<meta name="viewport" content="width=device-width, initial-scale=1">';	// Scale for mobile device
+        print '<meta name="viewport" content="width=device-width, initial-scale=1.0">';	// Scale for mobile device
         print '<meta name="author" content="Dolibarr Development Team">'."\n";
-		if (! empty($conf->global->MAIN_ACTIVATE_HTML5)) print '<meta name="viewport" content="width=device-width, initial-scale=1.0">'."\n";	// Needed for Responsive Web Design
-        $favicon=dol_buildpath('/theme/'.$conf->theme.'/img/favicon.ico',1);
+		$favicon=dol_buildpath('/theme/'.$conf->theme.'/img/favicon.ico',1);
         if (! empty($conf->global->MAIN_FAVICON_URL)) $favicon=$conf->global->MAIN_FAVICON_URL;
         print '<link rel="shortcut icon" type="image/x-icon" href="'.$favicon.'"/>'."\n";
         if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="top" title="'.$langs->trans("Home").'" href="'.(DOL_URL_ROOT?DOL_URL_ROOT:'/').'">'."\n";
