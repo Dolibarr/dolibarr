@@ -63,8 +63,7 @@ if ($action == 'update')
 	dolibarr_set_const($db, "MAIN_DEFAULT_WORKING_DAYS",		$_POST["MAIN_DEFAULT_WORKING_DAYS"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_DEFAULT_WORKING_HOURS",		$_POST["MAIN_DEFAULT_WORKING_HOURS"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_SHOW_LOGO",					$_POST["MAIN_SHOW_LOGO"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_ACTIVATE_HTML5",				$_POST["MAIN_ACTIVATE_HTML5"],'chaine',0,'',$conf->entity);
-    dolibarr_set_const($db, "MAIN_ACTIVATE_FILECACHE",          $_POST["MAIN_ACTIVATE_FILECACHE"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_ACTIVATE_FILECACHE",          $_POST["MAIN_ACTIVATE_FILECACHE"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_FIRSTNAME_NAME_POSITION",		$_POST["MAIN_FIRSTNAME_NAME_POSITION"],'chaine',0,'',$conf->entity);
 
 	dolibarr_set_const($db, "MAIN_THEME",						$_POST["main_theme"],'chaine',0,'',$conf->entity);
@@ -188,17 +187,6 @@ if ($action == 'edit')	// Edit
     print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
-
-	// Activate Html5 - Developement - Only available on Eldy template
-	if ($conf->global->MAIN_FEATURES_LEVEL == 2 || ! empty($conf->global->MAIN_ACTIVATE_HTML5))
-	{
-		$var=!$var;
-		print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("EnableHtml5").'</td><td>';
-		print $form->selectyesno('MAIN_ACTIVATE_HTML5',$conf->global->MAIN_ACTIVATE_HTML5,1);
-		print '</td>';
-		print '<td width="20">&nbsp;</td>';
-		print '</tr>';
-	}
 
     // Activate FileCache - Developement
     if ($conf->global->MAIN_FEATURES_LEVEL == 2 || ! empty($conf->global->MAIN_ACTIVATE_FILECACHE)) {
@@ -384,15 +372,6 @@ else	// Show
     print '<tr '.$bc[$var].'><td>'.$langs->trans("EnableShowLogo").'</td><td>' . yn($conf->global->MAIN_SHOW_LOGO) . '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print "</tr>";
-
-	// Activate Html5 - Developement - Only available on Eldy template
-	if ($conf->global->MAIN_FEATURES_LEVEL == 2 || ! empty($conf->global->MAIN_ACTIVATE_HTML5))
-    {
-		$var=!$var;
-		print '<tr '.$bc[$var].'><td>'.$langs->trans("EnableHtml5").'</td><td>' . yn($conf->global->MAIN_ACTIVATE_HTML5) . '</td>';
-		print '<td width="20">&nbsp;</td>';
-		print "</tr>";
-	}
 
     // Activate FileCache - Developement
     if ($conf->global->MAIN_FEATURES_LEVEL == 2 || ! empty($conf->global->MAIN_ACTIVATE_FILECACHE)) {
