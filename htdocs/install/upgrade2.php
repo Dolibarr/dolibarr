@@ -3818,8 +3818,8 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array())
 	    if ($moduletoreload == 'MAIN_MODULE_SERVICE')    // Permission has changed into 2.7
 	    {
 	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Service");
+	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modService.class.php';
 	        if ($res) {
-	            $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modService.class.php';
 	            $mod=new modService($db);
 	            //$mod->remove('noboxes');
 	            $mod->init('newboxdefonly');
@@ -3828,8 +3828,8 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array())
 	    if ($moduletoreload == 'MAIN_MODULE_COMMANDE')   // Permission has changed into 2.9
 	    {
 	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Commande");
+	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modCommande.class.php';
 	        if ($res) {
-	            $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modCommande.class.php';
 	            $mod=new modCommande($db);
 	            //$mod->remove('noboxes');
 	            $mod->init('newboxdefonly');
@@ -3838,8 +3838,8 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array())
 	    if ($moduletoreload == 'MAIN_MODULE_FACTURE')    // Permission has changed into 2.9
 	    {
 	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Facture");
+	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modFacture.class.php';
 	        if ($res) {
-	            $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modFacture.class.php';
 	            $mod=new modFacture($db);
 	            //$mod->remove('noboxes');
 	            $mod->init('newboxdefonly');
@@ -3878,8 +3878,8 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array())
 	    if ($moduletoreload == 'MAIN_MODULE_ECM')    // Permission has changed into 3.0 and 3.1
 	    {
 	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module ECM");
+	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modECM.class.php';
 	        if ($res) {
-	            $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modECM.class.php';
 	            $mod=new modECM($db);
 	            $mod->remove('noboxes');	// We need to remove because a permission id has been removed
 	            $mod->init('newboxdefonly');
