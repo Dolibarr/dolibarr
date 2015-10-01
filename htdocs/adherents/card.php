@@ -1478,7 +1478,14 @@ else
 		// Password
 		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
 		{
-			print '<tr><td>'.$langs->trans("Password").'</td><td>'.preg_replace('/./i','*',$object->pass).'</td></tr>';
+			print '<tr><td>'.$langs->trans("Password").'</td><td>'.preg_replace('/./i','*',$object->pass);
+			if ((! empty($object->pass) || ! empty($object->pass_crypted)) && empty($object->user_id))
+			{
+			    $langs->load("errors");
+			    $htmltext=$langs->trans("WarningPasswordSetWithNoAccount");
+			    print ' '.$form->textwithpicto('', $htmltext,1,'warning');
+			}
+			print '</td></tr>';
 		}
 
 		// Address
