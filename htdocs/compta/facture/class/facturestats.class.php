@@ -168,7 +168,7 @@ class FactureStats extends Stats
 
 		$sql = "SELECT date_format(datef,'%m') as dm, AVG(f.".$this->field.")";
 		$sql.= " FROM ".$this->from;
-		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		if (!$user->rights->societe->client->voir && !$this->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
         $sql.= " WHERE f.datef BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
 		$sql.= " AND ".$this->where;
         $sql.= " GROUP BY dm";
@@ -188,7 +188,7 @@ class FactureStats extends Stats
 
 		$sql = "SELECT date_format(datef,'%Y') as year, COUNT(*) as nb, SUM(f.".$this->field.") as total, AVG(f.".$this->field.") as avg";
 		$sql.= " FROM ".$this->from;
-		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		if (!$user->rights->societe->client->voir && !$this->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE ".$this->where;
 		$sql.= " GROUP BY year";
         $sql.= $this->db->order('year','DESC');
