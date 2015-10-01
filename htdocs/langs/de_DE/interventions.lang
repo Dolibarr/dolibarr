@@ -39,6 +39,9 @@ InterventionClassifiedUnbilledInDolibarr=Eingriff %s als nicht verrechnet einges
 InterventionSentByEMail=Eingriff %s per E-Mail versandt
 InterventionDeletedInDolibarr=Eingriff %s gelöscht
 SearchAnIntervention=Arbeitseinsatz suchen
+InterventionsArea=Interventions area
+DraftFichinter=Draft interventions
+LastModifiedInterventions=Last %s modified interventions
 ##### Types de contacts #####
 TypeContact_fichinter_internal_INTERREPFOLL=Eingriffsnachverfolgung durch Vertreter
 TypeContact_fichinter_internal_INTERVENING=Eingriff läuft
@@ -51,3 +54,14 @@ PacificNumRefModelDesc1=Liefere Nummer im Format %syymm-nnnn zurück, wobei yy d
 PacificNumRefModelError=Eine Interventionskarte beginnend mit $syymm existiert bereits und ist nicht mir dieser Numerierungssequenz kompatibel. Bitte löschen oder umbenennen.
 PrintProductsOnFichinter=Drucke Produkte auf Eingriffskarte
 PrintProductsOnFichinterDetails=Interventionen von Bestellungen generiert
+##### Exports #####
+InterId=Intervention id
+InterRef=Intervention ref.
+InterDateCreation=Date creation intervention
+InterDuration=Duration intervention
+InterStatus=Status intervention
+InterNote=Note intervention
+InterLineId=Line id intervention
+InterLineDate=Line date intervention
+InterLineDuration=Line duration intervention
+InterLineDesc=Line description intervention

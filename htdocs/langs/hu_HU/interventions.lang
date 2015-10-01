@@ -39,6 +39,9 @@ InterventionClassifiedUnbilledInDolibarr=Intervention %s set as unbilled
 InterventionSentByEMail=Intervention %s sent by EMail
 InterventionDeletedInDolibarr=Intervention %s deleted
 SearchAnIntervention=Search an intervention
+InterventionsArea=Interventions area
+DraftFichinter=Draft interventions
+LastModifiedInterventions=Last %s modified interventions
 ##### Types de contacts #####
 TypeContact_fichinter_internal_INTERREPFOLL=Reprezentatív követési intervenció
 TypeContact_fichinter_internal_INTERVENING=Beavatkozás
@@ -51,3 +54,14 @@ PacificNumRefModelDesc1=Számot ad a következő formában: %syymm-nnnn ahol yy 
 PacificNumRefModelError=Egy intervenciós kártya $syymm kezdéssel már létezik és nem kompatibilies ezzel a szekvencia modellel. Távolítsa el vagy nevezze át hogy aktiválhassa a modult.
 PrintProductsOnFichinter=Print products on intervention card
 PrintProductsOnFichinterDetails=interventions generated from orders
+##### Exports #####
+InterId=Intervention id
+InterRef=Intervention ref.
+InterDateCreation=Date creation intervention
+InterDuration=Duration intervention
+InterStatus=Status intervention
+InterNote=Note intervention
+InterLineId=Line id intervention
+InterLineDate=Line date intervention
+InterLineDuration=Line duration intervention
+InterLineDesc=Line description intervention

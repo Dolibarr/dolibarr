@@ -90,7 +90,7 @@ SelectAtLeastOneField=Bitte wählen Sie zumindest ein Feld für den Datenbankexp
 SelectFormat=Wählen Sie das Format der Importdatei
 RunImportFile=Dateiimport starten
 NowClickToRunTheImport=Überprüfen Sie das Ergebnis der Importsimulation. Ist das Ergebnis zufriedenstellend, können Sie den Importvorgang jetzt starten.
-DataLoadedWithId=Alle Daten werden mit der folgenden Import-ID verarbeitet: <b>%s</b>
+DataLoadedWithId=All data will be loaded with the following import id: <b>%s</b>
 ErrorMissingMandatoryValue=Für das erforderliche Feld <b>%s</b> konnte in der Quelldatei kein Wert gefunden werden
 TooMuchErrors=Es gibt noch <b>%s</b> weitere, fehlerhafte Zeilen. Die Ausgabe wurde beschränkt.
 TooMuchWarnings=Es gibt noch <b>%s</b> weitere Zeilen mit Warnungen. Die Ausgabe wurde beschränkt.
@@ -130,7 +130,7 @@ ExportDateFilter='YYYY' 'YYYYMM' 'YYYYMMDD': filtert nach einem Jahr/Monat/Tag<b
 ExportNumericFilter='NNNNN' filtert genau einen Wert<br>'NNNNN+NNNNN' filtert einen Wertebereich<br>'&gt;NNNNN' filtert nach kleineren Werten<br>'&gt;NNNNN' filtert nach größeren Werten
 ## filters
 SelectFilterFields=Wenn Sie nach bestimmten Werten filtern wollen, geben Sie diese Werte hier ein.
-FilterableFields=Filterbare Felder
+FilterableFields=Filterable Fields
 FilteredFields=Gefilterte Felder
 FilteredFieldsValues=Filter Wert
 FormatControlRule=Regel für die Formatkontrolle

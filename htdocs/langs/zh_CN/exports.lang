@@ -90,7 +90,7 @@ SelectAtLeastOneField=开关至少一源的字段列字段出口
 SelectFormat=选择此导入文件格式
 RunImportFile=启动导入文件
 NowClickToRunTheImport=检查进口仿真结果。如果一切正常，启动最终进口。
-DataLoadedWithId=所有数据都将被载入与下面的导入编号<b>：%s的</b>
+DataLoadedWithId=All data will be loaded with the following import id: <b>%s</b>
 ErrorMissingMandatoryValue=强制性数据是<b>%</b>空场源文件中<b>的</b> S。
 TooMuchErrors=还有<b>%的台词</b> ，但有错误的其他来源，但产量一直有限。
 TooMuchWarnings=还有<b>%s的</b>线，警告其他来源，但产量一直有限。
@@ -130,7 +130,7 @@ ExportDateFilter=YYYY, YYYYMM, YYYYMMDD : filters by one year/month/day<br>YYYY+
 ExportNumericFilter='NNNNN' filters by one value<br>'NNNNN+NNNNN' filters over a range of values<br>'&gt;NNNNN' filters by lower values<br>'&gt;NNNNN' filters by higher values
 ## filters
 SelectFilterFields=如果你想过滤一些值，这里只是输入值。
-FilterableFields=筛选字段
+FilterableFields=Filterable Fields
 FilteredFields=过滤字段
 FilteredFieldsValues=过滤值
 FormatControlRule=Format control rule

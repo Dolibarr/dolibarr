@@ -419,7 +419,7 @@ else if ($id || $ref)
 		// Ref
 		print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
 		print '<td class="valeur">';
-		print $form->showrefnav($member,'id');
+		print $form->showrefnav($member,'id','','1','rowid','ref','','&type='.$type);
 		print '</td></tr>';
 
         // Login

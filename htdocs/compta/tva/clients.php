@@ -100,6 +100,10 @@ if ($user->societe_id) {
 }
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
+// Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES')
+$modecompta = $conf->global->ACCOUNTING_MODE;
+if (GETPOST("modecompta")) $modecompta=GETPOST("modecompta");
+
 
 
 /*
@@ -292,7 +296,14 @@ if (is_array($coll_list)) {
 } else {
 	$langs->load("errors");
 	if ($coll_list == -1) {
-		print '<tr><td colspan="5">' . $langs->trans("ErrorNoAccountancyModuleLoaded") . '</td></tr>';
+		if ($modecompta == 'CREANCES-DETTES')
+		{
+			print '<tr><td colspan="5">' . $langs->trans("ErrorNoAccountancyModuleLoaded") . '</td></tr>';
+		}
+		else
+		{
+			print '<tr><td colspan="5">' . $langs->trans("FeatureNotYetAvailable") . '</td></tr>';
+		}
 	} else if ($coll_list == -2) {
 		print '<tr><td colspan="5">' . $langs->trans("FeatureNotYetAvailable") . '</td></tr>';
 	} else {
@@ -377,7 +388,14 @@ if (is_array($coll_list)) {
 } else {
 	$langs->load("errors");
 	if ($coll_list == -1) {
-		print '<tr><td colspan="5">' . $langs->trans("ErrorNoAccountancyModuleLoaded") . '</td></tr>';
+		if ($modecompta == 'CREANCES-DETTES')
+		{
+			print '<tr><td colspan="5">' . $langs->trans("ErrorNoAccountancyModuleLoaded") . '</td></tr>';
+		}
+		else
+		{
+			print '<tr><td colspan="5">' . $langs->trans("FeatureNotYetAvailable") . '</td></tr>';
+		}
 	} else if ($coll_list == -2) {
 		print '<tr><td colspan="5">' . $langs->trans("FeatureNotYetAvailable") . '</td></tr>';
 	} else {
@@ -457,7 +475,14 @@ if ($special_report) {
 	} else {
 		$langs->load("errors");
 		if ($coll_list == -1) {
-			print '<tr><td colspan="5">' . $langs->trans("ErrorNoAccountancyModuleLoaded") . '</td></tr>';
+			if ($modecompta == 'CREANCES-DETTES')
+			{
+				print '<tr><td colspan="5">' . $langs->trans("ErrorNoAccountancyModuleLoaded") . '</td></tr>';
+			}
+			else
+			{
+				print '<tr><td colspan="5">' . $langs->trans("FeatureNotYetAvailable") . '</td></tr>';
+			}
 		} else {
 			if ($coll_list == -2) {
 				print '<tr><td colspan="5">' . $langs->trans("FeatureNotYetAvailable") . '</td></tr>';
@@ -530,7 +555,14 @@ if ($special_report) {
 	} else {
 		$langs->load("errors");
 		if ($coll_list == -1) {
-			print '<tr><td colspan="5">' . $langs->trans("ErrorNoAccountancyModuleLoaded") . '</td></tr>';
+			if ($modecompta == 'CREANCES-DETTES')
+			{
+				print '<tr><td colspan="5">' . $langs->trans("ErrorNoAccountancyModuleLoaded") . '</td></tr>';
+			}
+			else
+			{
+				print '<tr><td colspan="5">' . $langs->trans("FeatureNotYetAvailable") . '</td></tr>';
+			}
 		} else {
 			if ($coll_list == -2) {
 				print '<tr><td colspan="5">' . $langs->trans("FeatureNotYetAvailable") . '</td></tr>';

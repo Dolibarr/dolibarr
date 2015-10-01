@@ -10,3 +10,5 @@ FailedToConnectToFTPServerWithCredentials=Inloggen op FTP met ingestelde gebruik
 FTPFailedToRemoveFile=Bestand <b>%s</b> kon niet verwijderd worden.
 FTPFailedToRemoveDir=Map <b>%s</b> kon niet verwijderd worden (Controleer de rechten en of de map leeg is).
 FTPPassiveMode=Passive mode
+ChooseAFTPEntryIntoMenu=Choose a FTP entry into menu...
+FailedToGetFile=Failed to get files %s

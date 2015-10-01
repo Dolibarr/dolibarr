@@ -1,36 +1,36 @@
 # Dolibarr language file - Source file is en_US - loan
-Loan=Loan
-Loans=Loans
-NewLoan=New Loan
-ShowLoan=Show Loan
-PaymentLoan=Loan payment
-ShowLoanPayment=Show Loan Payment
-Capital=Capital
-Insurance=Insurance
-Interest=Interest
-Nbterms=Number of terms
-LoanAccountancyCapitalCode=Accountancy code capital
-LoanAccountancyInsuranceCode=Accountancy code insurance
-LoanAccountancyInterestCode=Accountancy code interest
-LoanPayment=Loan payment
-ConfirmDeleteLoan=Confirm deleting this loan
-LoanDeleted=Loan Deleted Successfully
-ConfirmPayLoan=Confirm classify paid this loan
-LoanPaid=Loan Paid
-ErrorLoanCapital=Loan amount has to be numeric and greater than zero.
-ErrorLoanLength=Loan length has to be numeric and greater than zero.
-ErrorLoanInterest=Annual interest has to be numeric and greater than zero.
+Loan=Zajam
+Loans=Zajmovi
+NewLoan=Novi Zajam
+ShowLoan=Prikaži Zajam
+PaymentLoan=Isplata Zajma
+ShowLoanPayment=Prikaži isplatu Zajma
+Capital=Kapital
+Insurance=Osiguranje
+Interest=Kamata
+Nbterms=Broj uslova
+LoanAccountancyCapitalCode=Računovodstveni kod kapitala
+LoanAccountancyInsuranceCode=Računovodstveni kod osiguranja
+LoanAccountancyInterestCode=Računovodstveni kod kamate
+LoanPayment=Isplata Zajma
+ConfirmDeleteLoan=Potvrdi brisanje ovog zajma
+LoanDeleted=Zajam uspešno obrisan
+ConfirmPayLoan=Potvrdi klasiranje ovog zajma kao isplaćen
+LoanPaid=Zajam isplaćen
+ErrorLoanCapital=Svota zajma mora biti numerička i veća od nule.
+ErrorLoanLength=Trajanje zajma mora biti numeričko i veće od nule
+ErrorLoanInterest=Godišnja kamata mora biti numerička i veća od nule.
 # Calc
-LoanCalc=Bank Loans Calculator
-PurchaseFinanceInfo=Purchase & Financing Information
-SalePriceOfAsset=Sale Price of Asset
+LoanCalc=Kalkulator zajmova
+PurchaseFinanceInfo=Informacije o kupovini i finansiranju
+SalePriceOfAsset=Prodajna cena proizvoda
 PercentageDown=Percentage Down
-LengthOfMortgage=Length of Mortgage
-AnnualInterestRate=Annual Interest Rate
-ExplainCalculations=Explain Calculations
-ShowMeCalculationsAndAmortization=Show me the calculations and amortization
-MortgagePaymentInformation=Mortgage Payment Information
-DownPayment=Down Payment
+LengthOfMortgage=Dužina kredita
+AnnualInterestRate=Godišnja kamatna rata
+ExplainCalculations=Objasni kalkulacije
+ShowMeCalculationsAndAmortization=Prikaži kalkulacije i amortizaciju
+MortgagePaymentInformation=Informacije isplate kredita
+DownPayment=Isplata
 DownPaymentDesc=The <b>down payment</b> = The price of the home multiplied by the percentage down divided by 100 (for 5% down becomes 5/100 or 0.05)
 InterestRateDesc=The <b>interest rate</b> = The annual interest percentage divided by 100
 MonthlyFactorDesc=The <b>monthly factor</b> = The result of the following formula

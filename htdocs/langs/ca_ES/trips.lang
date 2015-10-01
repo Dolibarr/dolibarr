@@ -1,11 +1,11 @@
 # Dolibarr language file - Source file is en_US - trips
-ExpenseReport=Expense report
-ExpenseReports=Expense reports
+ExpenseReport=Informe de despeses
+ExpenseReports=Informes de despeses
 Trip=Informe de despeses
 Trips=Informes de despeses
 TripsAndExpenses=Informes de despeses
 TripsAndExpensesStatistics=Estadístiques de l'informe de despeses
-TripCard=Expense report card
+TripCard=Informe de despesa de targeta
 AddTrip=Crear informe de despeses
 ListOfTrips=Llistat de informes de despeses
 ListOfFees=Llistat notes de honoraris
@@ -16,22 +16,22 @@ Kilometers=Quilòmetres
 FeesKilometersOrAmout=Import o quilòmetres
 DeleteTrip=Eliminar informe de despeses
 ConfirmDeleteTrip=Esteu segur de voler eliminar aquest informe de despeses?
-ListTripsAndExpenses=List of expense reports
-ListToApprove=Waiting for approval
-ExpensesArea=Expense reports area
-SearchATripAndExpense=Search an expense report
-ClassifyRefunded=Classify 'Refunded'
-ExpenseReportWaitingForApproval=A new expense report has been submitted for approval
-ExpenseReportWaitingForApprovalMessage=A new expense report has been submitted and is waiting for approval.\n- User: %s\n- Period: %s\nClick here to validate: %s
-TripId=Id expense report
-AnyOtherInThisListCanValidate=Person to inform for validation.
-TripSociete=Information company
-TripSalarie=Informations user
-TripNDF=Informations expense report
-DeleteLine=Delete a line of the expense report
-ConfirmDeleteLine=Are you sure you want to delete this line ?
-PDFStandardExpenseReports=Standard template to generate a PDF document for expense report
-ExpenseReportLine=Expense report line
+ListTripsAndExpenses=Llistat d'informes de despeses
+ListToApprove=Pendent d'aprovació
+ExpensesArea=Àrea d'informes de despeses
+SearchATripAndExpense=Cerca un informe de despeses
+ClassifyRefunded=Classificar 'Retornat'
+ExpenseReportWaitingForApproval=S'ha generat un nou informe de vendes per aprovació
+ExpenseReportWaitingForApprovalMessage=S'ha presentat un nou informe de despeses i està esperant l'aprovació.\n- Usuari: %s\n- Període: %s\nClica aquí per validar: %s
+TripId=Id d'informe de despeses
+AnyOtherInThisListCanValidate=Persona a informar per a validar
+TripSociete=Informació de l'empresa
+TripSalarie=Informacions d'usuari
+TripNDF=Informacions de l'informe de despeses
+DeleteLine=Eliminar una línia de l'informe de despeses
+ConfirmDeleteLine=Esteu segur de voler eliminar aquesta línia ?
+PDFStandardExpenseReports=Plantilla estàndard per generar un document PDF per l'informe de despeses
+ExpenseReportLine=Línia de l'informe de despeses
 TF_OTHER=Altre
 TF_TRANSPORTATION=Transport
 TF_LUNCH=Dieta
@@ -44,19 +44,19 @@ TF_ESSENCE=Combustible
 TF_HOTEL=Hotel
 TF_TAXI=Taxi
 
-ErrorDoubleDeclaration=You have declared another expense report into a similar date range.
-AucuneNDF=No expense reports found for this criteria
-AucuneLigne=There is no expense report declared yet
-AddLine=Add a line
+ErrorDoubleDeclaration=Has declarat un altre informe de despeses en un altre rang de dates semblant
+AucuneNDF=No s'han trobat informes de despeses per aquests criteris
+AucuneLigne=Encara no hi ha informe de despeses declarat
+AddLine=Afegeix una línia
 AddLineMini=Afegir
 
-Date_DEBUT=Period date start
-Date_FIN=Period date end
-ModePaiement=Payment mode
-Note=Note
+Date_DEBUT=Període d'inici
+Date_FIN=Període final
+ModePaiement=Tipus de pagament
+Note=Nota
 Project=Projecte
 
-VALIDATOR=User responsible for approval
+VALIDATOR=Usuari responsable de l'aprovació
 VALIDOR=Aprovat per
 AUTHOR=Desat per
 AUTHORPAIEMENT=Pagat per
@@ -66,41 +66,41 @@ CANCEL_USER=Eliminat per
 MOTIF_REFUS=Raó
 MOTIF_CANCEL=Raó
 
-DATE_REFUS=Deny date
-DATE_SAVE=Validation date
-DATE_VALIDE=Validation date
-DATE_CANCEL=Cancelation date
-DATE_PAIEMENT=Payment date
+DATE_REFUS=Data de denegació
+DATE_SAVE=Data de validació
+DATE_VALIDE=Data de validació
+DATE_CANCEL=Data de cancelació
+DATE_PAIEMENT=Data de pagament
 
 TO_PAID=Pagar
 BROUILLONNER=Reobrir
-SendToValid=Sent on approval
+SendToValid=Enviar per aprovació
 ModifyInfoGen=Edita
-ValidateAndSubmit=Validate and submit for approval
-ValidatedWaitingApproval=Validated (waiting for approval)
+ValidateAndSubmit=Validar i sotmetre a aprovació
+ValidatedWaitingApproval=Validat (pendent d'aprovació)
 
-NOT_VALIDATOR=You are not allowed to approve this expense report
-NOT_AUTHOR=You are not the author of this expense report. Operation cancelled.
+NOT_VALIDATOR=No estàs autoritzat per aprovar aquest informe de despeses
+NOT_AUTHOR=No ets l'autor d'aquest informe de despeses. L'operació s'ha cancelat.
 
-RefuseTrip=Deny an expense report
-ConfirmRefuseTrip=Are you sure you want to deny this expense report ?
+RefuseTrip=Denegar un informe de despeses
+ConfirmRefuseTrip=Esteu segur de voler denegar aquest informe de despeses ?
 
-ValideTrip=Approve expense report
-ConfirmValideTrip=Are you sure you want to approve this expense report ?
+ValideTrip=Aprova l'informe de despeses
+ConfirmValideTrip=Esteu segur de voler aprovar aquest informe de despeses ?
 
-PaidTrip=Pay an expense report
-ConfirmPaidTrip=Are you sure you want to change status of this expense report to "Paid" ?
+PaidTrip=Pagar un informe de despeses
+ConfirmPaidTrip=Esteu segur de voler canviar l'estat d'aquest informe de despeses a "Pagat" ?
 
-CancelTrip=Cancel an expense report
-ConfirmCancelTrip=Are you sure you want to cancel this expense report ?
+CancelTrip=Cancela un informe de despeses
+ConfirmCancelTrip=Esteu segur de voler cancelar aquest informe de despeses ?
 
-BrouillonnerTrip=Move back expense report to status "Draft"
-ConfirmBrouillonnerTrip=Are you sure you want to move this expense report to status "Draft" ?
+BrouillonnerTrip=Tornar l'informe de despeses a l'estat "Esborrany"
+ConfirmBrouillonnerTrip=Esteu segur de voler moure aquest informe de despeses a l'estat "Esborrany" ?
 
-SaveTrip=Validate expense report
-ConfirmSaveTrip=Are you sure you want to validate this expense report ?
+SaveTrip=Valida l'informe de despeses
+ConfirmSaveTrip=Esteu segur de voler validar aquest informe de despeses?
 
-NoTripsToExportCSV=No expense report to export for this period.
-ExpenseReportPayment=Expense report payment
+NoTripsToExportCSV=No hi ha informe de despeses per exportar en aquest període
+ExpenseReportPayment=Informe de despeses pagades
 
-ExpenseReportsToPay=Expense reports to pay
+ExpenseReportsToPay=Informes de despeses a pagar

@@ -90,7 +90,7 @@ SelectAtLeastOneField=Pārslēgt vismaz vienu avota lauku slejā jomās eksport�
 SelectFormat=Izvēlieties šo importa failu formātu
 RunImportFile=Uzsākt faila importu
 NowClickToRunTheImport=Pārbaudiet rezultātu importa simulāciju. Ja viss ir ok, sākt galīgo importu.
-DataLoadedWithId=Visi dati tiek ielādēti ar šādu importa ID: <b>%s</b>
+DataLoadedWithId=All data will be loaded with the following import id: <b>%s</b>
 ErrorMissingMandatoryValue=Obligātie dati ir tukšs avota failu lauka <b>%s.</b>
 TooMuchErrors=Joprojām <b>%s</b> citu avotu līnijas ar kļūdām, taču izlaide ir bijusi ierobežota.
 TooMuchWarnings=Joprojām <b>%s</b> citu avotu līnijas ar brīdinājumiem, taču izlaide ir bijusi ierobežota.
@@ -130,7 +130,7 @@ ExportDateFilter=YYYY, YYYYMM, YYYYMMDD : filters by one year/month/day<br>YYYY+
 ExportNumericFilter='NNNNN' filters by one value<br>'NNNNN+NNNNN' filters over a range of values<br>'&gt;NNNNN' filters by lower values<br>'&gt;NNNNN' filters by higher values
 ## filters
 SelectFilterFields=Ja jūs vēlaties filtrēt dažas vērtības, vienkārši ievadi vērtības šeit.
-FilterableFields=Champs Filtrables
+FilterableFields=Filterable Fields
 FilteredFields=Filtrētie lauki
 FilteredFieldsValues=Cenas filtru
 FormatControlRule=Format control rule

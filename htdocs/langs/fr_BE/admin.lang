@@ -26,7 +26,5 @@ IfModuleEnabled=Note: oui ne fonctionne que si le module <b>%s</b> est activé
 RemoveLock=Supprimez le fichier <b>%s</b> s'il existe pour autoriser l'utilisation de l'outil de mise à jour.
 AntiVirusCommandExample=Example for ClamWin: c:\\Progra~1\\ClamWin\\bin\\clamscan.exe<br>Example for ClamAv: /usr/bin/clamscan
 AntiVirusParamExample=Example for ClamWin: --database="C:\\Program Files (x86)\\ClamWin\\lib"
-ListOfDirectoriesForModelGenODT=List of directories containing templates files with OpenDocument format.<br><br>Put here full path of directories.<br>Add a carriage return between eah directory.<br>To add a directory of the GED module, add here <b>DOL_DATA_ROOT/ecm/yourdirectoryname</b>.<br><br>Files in those directories must end with <b>.odt</b>.
+SubmitTranslation=If translation for this language is not complete or you find errors, you can correct this by editing files into directory <b>langs/%s</b> and submit your change to www.transifex.com/dolibarr-association/dolibarr/
 ExampleOfDirectoriesForModelGen=Examples of syntax:<br>c:\\mydir<br>/home/mydir<br>DOL_DATA_ROOT/ecm/ecmdir
-Permission171=Read trips and expenses (own and his subordinates)
-Permission771=Read expense reports (own and his subordinates)

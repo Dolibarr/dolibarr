@@ -85,10 +85,10 @@ SetToStatusSent=Classificar com "Arxiu enviat"
 ThisWillAlsoAddPaymentOnInvoice=Es crearan els pagaments de les factures i les classificarà com pagades
 StatisticsByLineStatus=Estadístiques per estats de línies
 RUM=RUM
-RUMWillBeGenerated=RUM number will be generated once bank account information are saved
-WithdrawMode=Withdraw mode (FRST or RECUR)
-WithdrawRequestAmount=Withdraw request amount:
-WithdrawRequestErrorNilAmount=Unable to create withdraw request for nil amount.
+RUMWillBeGenerated=El número RUM es generarà un cop la informació del compte bancari estigui desat
+WithdrawMode=Mode domiciliació (FRST o RECUR)
+WithdrawRequestAmount=Total de la petició de domiciliació:
+WithdrawRequestErrorNilAmount=No es pot crear la sol·licitud de domiciliació per un import nul.
 
 ### Notifications
 InfoCreditSubject=Abonament de domiciliació %s pel banc

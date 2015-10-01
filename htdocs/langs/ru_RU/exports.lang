@@ -90,7 +90,7 @@ SelectAtLeastOneField=Switch по крайней мере один источн�
 SelectFormat=Выберите этот формат файла для импорта
 RunImportFile=Запуск файла для импорта
 NowClickToRunTheImport=Проверьте результат импорта моделирования. Если все в порядке, начало окончательного импорта.
-DataLoadedWithId=Все данные будут загружены следующие идентификатор импорт: <b>%s</b>
+DataLoadedWithId=All data will be loaded with the following import id: <b>%s</b>
 ErrorMissingMandatoryValue=Обязательные данные пуст в исходном файле на местах <b>%s.</b>
 TooMuchErrors=Существует еще <b>%s</b> других линий источника ошибок, но выход был ограниченным.
 TooMuchWarnings=Существует еще <b>%s</b> другие линии источника с предупреждениями, но выход был ограниченным.
@@ -130,7 +130,7 @@ ExportDateFilter=YYYY, YYYYMM, YYYYMMDD : filters by one year/month/day<br>YYYY+
 ExportNumericFilter='NNNNN' filters by one value<br>'NNNNN+NNNNN' filters over a range of values<br>'&gt;NNNNN' filters by lower values<br>'&gt;NNNNN' filters by higher values
 ## filters
 SelectFilterFields=If you want to filter on some values, just input values here.
-FilterableFields=Champs Filtrables
+FilterableFields=Filterable Fields
 FilteredFields=Filtered fields
 FilteredFieldsValues=Значение для фильтрации
 FormatControlRule=Format control rule

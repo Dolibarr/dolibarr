@@ -1203,11 +1203,11 @@ else
         print '</td></tr>';
 
         // Legal Form
-        print '<tr><td>'.fieldLabel('JuridicalStatus','legal_form').'</td>';
+        print '<tr><td>'.fieldLabel('JuridicalStatus','forme_juridique_code').'</td>';
         print '<td colspan="3" class="maxwidthonsmartphone">';
         if ($object->country_id)
         {
-            print $formcompany->select_juridicalstatus($object->forme_juridique_code, $object->country_code, '', 'legal_form');
+            print $formcompany->select_juridicalstatus($object->forme_juridique_code, $object->country_code, '', 'forme_juridique_code');
         }
         else
         {
@@ -1786,8 +1786,8 @@ else
             print '</td></tr>';
 
             // Juridical type
-            print '<tr><td>'.fieldLabel('JuridicalStatus','legal_form').'</td><td colspan="3">';
-            print $formcompany->select_juridicalstatus($object->forme_juridique_code, $object->country_code, '', 'legal_form');
+            print '<tr><td>'.fieldLabel('JuridicalStatus','forme_juridique_code').'</td><td colspan="3">';
+            print $formcompany->select_juridicalstatus($object->forme_juridique_code, $object->country_code, '', 'forme_juridique_code');
             print '</td></tr>';
 
             // Capital

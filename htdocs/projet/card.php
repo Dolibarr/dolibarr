@@ -466,6 +466,7 @@ if ($action == 'create' && $user->rights->projet->creer)
     	print $form->textwithtooltip($text.' '.img_help(),$texthelp,1);
     }
     else print $text;
+    print ' <a href="'.DOL_URL_ROOT.'/societe/soc.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").'</a>';
     print '</td></tr>';
 
     // Status
@@ -873,9 +874,8 @@ else
 
     if ($action != 'presend')
     {
-        print '<table width="100%"><tr><td width="50%" valign="top">';
+        print '<div class="fichecenter"><div class="fichehalfleft">';
         print '<a name="builddoc"></a>'; // ancre
-
 
         /*
          * Documents generes
@@ -890,7 +890,7 @@ else
 
         $somethingshown=$formfile->show_documents('project',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf);
 
-        print '</td><td valign="top" width="50%">';
+        print '</div></div class="fichehalfright">';
 
         if (!empty($object->id))
         {
@@ -900,7 +900,7 @@ else
 	        $somethingshown=$formactions->showactions($object,'project',$socid);
         }
 
-        print '</td></tr></table>';
+        print '</div>';
     }
 
     // Hook to add more things on page

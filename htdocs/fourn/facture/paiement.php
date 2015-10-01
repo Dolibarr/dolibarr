@@ -43,6 +43,7 @@ $confirm	= GETPOST('confirm');
 
 $facid=GETPOST('facid','int');
 $socid=GETPOST('socid','int');
+$accountid	= GETPOST('accountid');
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -197,7 +198,7 @@ if (empty($reshook))
 
 	        if (! $error)
 	        {
-	            $result=$paiement->addPaymentToBank($user,'payment_supplier','(SupplierInvoicePayment)',$_POST['accountid'],'','');
+	            $result=$paiement->addPaymentToBank($user,'payment_supplier','(SupplierInvoicePayment)',$accountid,'','');
 	            if ($result < 0)
 	            {
 	            	setEventMessage($paiement->error, 'errors');
@@ -301,7 +302,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             if (! empty($conf->banque->enabled))
             {
                 print '<tr><td class="fieldrequired">'.$langs->trans('Account').'</td><td>';
-                $form->select_comptes(empty($_POST['accountid'])?'':$_POST['accountid'],'accountid',0,'',2);
+                $form->select_comptes(empty($accountid)?'':$accountid,'accountid',0,'',2);
                 print '</td></tr>';
             }
             else

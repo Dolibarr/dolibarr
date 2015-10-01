@@ -245,6 +245,11 @@ if ($resql)
 		print '<strong>'.$search_all.'</strong>';
 	}
 
+	$colspan=8;
+	if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES)) $colspan+=2;
+	if (empty($conf->global->PROJECT_LIST_HIDE_STARTDATE)) $colspan++;
+
+	
 	// If the user can view prospects other than his'
 	if ($user->rights->societe->client->voir || $socid)
 	{
@@ -265,7 +270,7 @@ if ($resql)
 	}
 	if (! empty($moreforfilter))
 	{
-		print '<div class="liste_titre">';
+		print '<div class="liste_titre liste_titre_bydiv centpercent">';
 		print $moreforfilter;
     	$parameters=array();
     	$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
@@ -273,8 +278,8 @@ if ($resql)
     	print '</div>';
 	}
 
-	print '<table class="noborder" width="100%">';
-
+	print '<table class="liste" width="100%">';
+	
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"p.ref","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"p.title","",$param,"",$sortfield,$sortorder);

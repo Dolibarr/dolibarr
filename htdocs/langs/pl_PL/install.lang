@@ -209,6 +209,6 @@ MigrationActioncommElement=Aktualizacja danych na temat działań
 MigrationPaymentMode=Migracji danych w trybie płatności
 MigrationCategorieAssociation=Migracja kategorii
 MigrationEvents=Przenieś wydarzenie by dodać nowego właściciela do przypisanej tabeli.
-
+MigrationReloadModule=Reload module %s
 ShowNotAvailableOptions=Pokaż niedostępne opcje.
 HideNotAvailableOptions=Ukryj niedostępne opcje.

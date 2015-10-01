@@ -39,6 +39,9 @@ InterventionClassifiedUnbilledInDolibarr=Intervention %s set as unbilled
 InterventionSentByEMail=Intervention %s sent by EMail
 InterventionDeletedInDolibarr=Intervention %s deleted
 SearchAnIntervention=Search an intervention
+InterventionsArea=Interventions area
+DraftFichinter=Draft interventions
+LastModifiedInterventions=Last %s modified interventions
 ##### Types de contacts #####
 TypeContact_fichinter_internal_INTERREPFOLL=Sekančios intervencijos atstovas
 TypeContact_fichinter_internal_INTERVENING=Intervencija
@@ -51,3 +54,14 @@ PacificNumRefModelDesc1=Grąžinti numerį su formatu %syymm-nnnn, kur yy yra me
 PacificNumRefModelError=Intervencijos kortelė pradedant $syymm jau egzistuoja ir yra nesuderinama su šios sekos modeliu. Pašalinti ją arba pakeisti vardą šio modulio aktyvavimui.
 PrintProductsOnFichinter=Spausdinti produktus intervencinėje kortelėje
 PrintProductsOnFichinterDetails=interventions generated from orders
+##### Exports #####
+InterId=Intervention id
+InterRef=Intervention ref.
+InterDateCreation=Date creation intervention
+InterDuration=Duration intervention
+InterStatus=Status intervention
+InterNote=Note intervention
+InterLineId=Line id intervention
+InterLineDate=Line date intervention
+InterLineDuration=Line duration intervention
+InterLineDesc=Line description intervention
