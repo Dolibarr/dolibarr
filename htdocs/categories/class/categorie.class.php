@@ -1222,7 +1222,7 @@ class Categorie extends CommonObject
 	 * @param   string $type Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode
 	 *                       (0, 1, 2, ...) is deprecated.
 	 * @param   string $mode 'object'=Get array of fetched category instances, 'label'=Get array of category
-	 *                       labels
+	 *                       labels, 'id'= Get array of category IDs
 	 *
 	 * @return  mixed        Array of category objects or < 0 if KO
 	 */
@@ -1239,7 +1239,7 @@ class Categorie extends CommonObject
 			$type = $map_type[$type];
 		}
 
-		$sql = "SELECT ct.fk_categorie, c.label";
+		$sql = "SELECT ct.fk_categorie, c.label, c.rowid";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "categorie_" . $this->MAP_CAT_TABLE[$type] . " as ct, " . MAIN_DB_PREFIX . "categorie as c";
 		$sql .= " WHERE ct.fk_categorie = c.rowid AND ct.fk_" . $this->MAP_CAT_FK[$type] . " = " . $id . " AND c.type = " . $this->MAP_ID[$type];
 		$sql .= " AND c.entity IN (" . getEntity( 'category', 1 ) . ")";
@@ -1249,11 +1249,11 @@ class Categorie extends CommonObject
 		{
 			while ($obj = $this->db->fetch_object($res))
 			{
-				if ($mode == 'label')
-				{
+				if ($mode == 'id') {
+					$cats[] = $obj->rowid;
+				} else if ($mode == 'label') {
 					$cats[] = $obj->label;
-				}
-				else {
+				} else {
 					$cat = new Categorie($this->db);
 					$cat->fetch($obj->fk_categorie);
 					$cats[] = $cat;
