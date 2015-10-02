@@ -90,7 +90,7 @@ SelectAtLeastOneField=Switch co najmniej jednego źródła pola w kolumnie pól 
 SelectFormat=Wybierz ten format pliku importu
 RunImportFile=Uruchom plik importu
 NowClickToRunTheImport=Sprawdź wynik symulacji import. Jeśli wszystko jest ok, rozpocząć ostateczne na przywóz.
-DataLoadedWithId=Wszystkie dane zostaną wczytane z następującymi id import: <b>%s</b>
+DataLoadedWithId=All data will be loaded with the following import id: <b>%s</b>
 ErrorMissingMandatoryValue=Obowiązkowe jest pusty danych w pliku źródłowym dla <b>%s</b> dziedzinie.
 TooMuchErrors=Nadal <b>%s</b> inne linie z błędami, ale wyjście jest niewielki.
 TooMuchWarnings=Nadal <b>%s</b> inne linie z ostrzeżeniami, ale wyjście jest niewielki.
@@ -130,7 +130,7 @@ ExportDateFilter=YYYY, RRRRMM, RRRRMMDD: filtry o rok / miesiąc / dzień <br> R
 ExportNumericFilter=Filtry "NNNNN 'o jeden wartości <br> Filtry "NNNNN + NNNNN" ponad zakres wartości <br> "> NNNNN" filtry według niższej wartości <br> "> NNNNN" filtry według wyższych wartości
 ## filters
 SelectFilterFields=Jeśli chcesz filtrować niektóre wartości, wartości po prostu wejść tutaj.
-FilterableFields=Champs Filtrables
+FilterableFields=Filterable Fields
 FilteredFields=Pola filtrowane
 FilteredFieldsValues=Wart filtru
 FormatControlRule=Format control rule

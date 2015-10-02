@@ -90,7 +90,7 @@ SelectAtLeastOneField=Switch mindst én kilde felt i kolonnen for felter for at 
 SelectFormat=Vælg denne import filformat
 RunImportFile=Launch import-fil
 NowClickToRunTheImport=Check følge af import simulering. Hvis alt er ok, lancering af den endelige import.
-DataLoadedWithId=Alle data vil være belastet med det følgende import id: <b>%s</b>
+DataLoadedWithId=All data will be loaded with the following import id: <b>%s</b>
 ErrorMissingMandatoryValue=Obligatorisk data er tom i kildefilen for felt <b>%s.</b>
 TooMuchErrors=Der er stadig <b>%s</b> anden kilde linjer med fejl, men produktionen har været begrænset.
 TooMuchWarnings=Der er stadig <b>%s</b> andre kildelinjer med advarsler, men produktionen har været begrænset.
@@ -130,7 +130,7 @@ ExportDateFilter=YYYY, YYYYMM, YYYYMMDD : filters by one year/month/day<br>YYYY+
 ExportNumericFilter='NNNNN' filters by one value<br>'NNNNN+NNNNN' filters over a range of values<br>'&gt;NNNNN' filters by lower values<br>'&gt;NNNNN' filters by higher values
 ## filters
 SelectFilterFields=If you want to filter on some values, just input values here.
-FilterableFields=Champs Filtrables
+FilterableFields=Filterable Fields
 FilteredFields=Filtered fields
 FilteredFieldsValues=Value for filter
 FormatControlRule=Format control rule

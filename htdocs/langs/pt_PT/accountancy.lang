@@ -2,11 +2,13 @@
 CHARSET=UTF-8
 ACCOUNTING_EXPORT_SEPARATORCSV=Column separator for export file
 ACCOUNTING_EXPORT_DATE=Date format for export file
-ACCOUNTING_EXPORT_PIECE=Export the number of piece ?
-ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account ?
-ACCOUNTING_EXPORT_LABEL=Export the label ?
-ACCOUNTING_EXPORT_AMOUNT=Export the amount ?
-ACCOUNTING_EXPORT_DEVISE=Export the devise ?
+ACCOUNTING_EXPORT_PIECE=Export the number of piece
+ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account
+ACCOUNTING_EXPORT_LABEL=Export the label
+ACCOUNTING_EXPORT_AMOUNT=Export the amount
+ACCOUNTING_EXPORT_DEVISE=Export the devise
+Selectformat=Select the format for the file
+ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
 
 Accounting=Contabilista
 Globalparameters=Parâmetros Globais
@@ -34,6 +36,7 @@ Selectchartofaccounts=Selecione plano de contas
 Validate=Valide
 Addanaccount=Adicione uma conta contabilistica
 AccountAccounting=Conta contabilistica
+AccountAccountingSuggest=Accounting account suggest
 Ventilation=Separação
 ToDispatch=A despachar
 Dispatched=Despachado
@@ -60,10 +63,10 @@ AccountingVentilationSupplier=Contabilidade desagregada de Fornecedor
 AccountingVentilationCustomer=Contabilidade desagregada de Cliente
 Line=Linha
 
-CAHTF=Total de compras fornecedor HT
+CAHTF=Total purchase supplier before tax
 InvoiceLines=Linhas de fatura a ser limpa
 InvoiceLinesDone=Linhas limpas de fatura
-IntoAccount=Na conta de contabilidade
+IntoAccount=Ventilate in the accounting account
 
 Ventilate=Limpar
 VentilationAuto=Desagregação automática 
@@ -152,7 +155,7 @@ Active=Declaração
 NewFiscalYear=Novo ano fiscal
 
 DescVentilCustomer=Consulte aqui a repartição anual das contas de faturas a clientes
-TotalVente=Volume de negócios de HT
+TotalVente=Total turnover before tax
 TotalMarge=Margem total de vendas
 DescVentilDoneCustomer=Consulte aqui a lista das linhas de facturas a clientes  e as suas conta de contabilidade
 DescVentilTodoCustomer=Alinhar suas linhas de fatura do cliente com uma conta de contabilidade
@@ -167,3 +170,4 @@ ValidateHistory=Validação automatica
 ErrorAccountancyCodeIsAlreadyUse=Erro, Não pode apagar uma conta em uso
 
 FicheVentilation=Carta de desagregação
+GeneralLedgerIsWritten=Operations are written in the general ledger

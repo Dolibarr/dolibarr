@@ -209,6 +209,6 @@ MigrationActioncommElement=Opdatere data om tiltag
 MigrationPaymentMode=Data migration for betaling mode
 MigrationCategorieAssociation=Migration of categories
 MigrationEvents=Migration of events to add event owner into assignement table
-
+MigrationReloadModule=Reload module %s
 ShowNotAvailableOptions=Show not available options
 HideNotAvailableOptions=Hide not available options

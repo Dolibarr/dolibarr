@@ -90,7 +90,7 @@ SelectAtLeastOneField=Bascular com a mínim un camp origen a la columna de camps
 SelectFormat=Seleccioneu aquest format de fitxer d'importació
 RunImportFile=Llançar la importació
 NowClickToRunTheImport=Comproveu els resultats de la simulació. Si tot està bé, inicieu la importació definitiva.
-DataLoadedWithId=Totes les dades seran importades amb la id d'importació: <b>%s</b>
+DataLoadedWithId=All data will be loaded with the following import id: <b>%s</b>
 ErrorMissingMandatoryValue=Dada obligatoria no indicada en el fitxer font, camp número <b>%s</b>.
 TooMuchErrors=Encara hi ha <b>%s</b> línies amb error, però la seva visualització ha estat limitada.
 TooMuchWarnings=Encara hi ha <b>%s</b> línies amb warnings, però la seva visualització ha estat limitada.
@@ -130,7 +130,7 @@ ExportDateFilter=AAAA, AAAAMM, AAAAMMDD: filtres per any/mes/dia<br>AAAA+AAAA, A
 ExportNumericFilter=Filtres 'NNNNN' per un valor<br>Filtres 'NNNNN+NNNN' més d'un rang de valors<br> '&gt; NNNNN' filtres per valors més baixos <br> '&gt; NNNNN' filtres pels valors més alts
 ## filters
 SelectFilterFields=Si vol aplicar un filtre sobre alguns valors, introduïu-los aquí.
-FilterableFields=Camps filtrables
+FilterableFields=Filterable Fields
 FilteredFields=Campos filtrats
 FilteredFieldsValues=Valors de filtres
 FormatControlRule=Regla de control de format

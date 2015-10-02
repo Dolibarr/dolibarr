@@ -62,14 +62,14 @@ llxHeader('',$langs->trans("ThirdParty").' - '.$langs->trans("Margins"),$help_ur
 
 if ($socid > 0)
 {
-    $societe = new Societe($db);
-    $societe->fetch($socid);
+    $object = new Societe($db);
+    $object->fetch($socid);
 
     /*
      * Affichage onglets
      */
 
-    $head = societe_prepare_head($societe);
+    $head = societe_prepare_head($object);
 
     dol_fiche_head($head, 'margin', $langs->trans("ThirdParty"),0,'company');
 
@@ -77,29 +77,29 @@ if ($socid > 0)
 
     print '<tr><td width="20%">'.$langs->trans('ThirdPartyName').'</td>';
     print '<td colspan="3">';
-    print $form->showrefnav($societe,'socid','',($user->societe_id?0:1),'rowid','nom');
+    print $form->showrefnav($object,'socid','',($user->societe_id?0:1),'rowid','nom');
     print '</td></tr>';
 
     if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
     {
-        print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$societe->prefix_comm.'</td></tr>';
+        print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
     }
 
-    if ($societe->client)
+    if ($object->client)
     {
         print '<tr><td>';
         print $langs->trans('CustomerCode').'</td><td colspan="3">';
-        print $societe->code_client;
-        if ($societe->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
+        print $object->code_client;
+        if ($object->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
         print '</td></tr>';
     }
 
-    if ($societe->fournisseur)
+    if ($object->fournisseur)
     {
         print '<tr><td>';
         print $langs->trans('SupplierCode').'</td><td colspan="3">';
-        print $societe->code_fournisseur;
-        if ($societe->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
+        print $object->code_fournisseur;
+        if ($object->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
         print '</td></tr>';
     }
 
@@ -153,7 +153,7 @@ if ($socid > 0)
     {
     	$num = $db->num_rows($result);
 
-    	print_barre_liste($langs->trans("MarginDetails"),$page,$_SERVER["PHP_SELF"],"&amp;socid=".$societe->id,$sortfield,$sortorder,'',0,0,'');
+    	print_barre_liste($langs->trans("MarginDetails"),$page,$_SERVER["PHP_SELF"],"&amp;socid=".$object->id,$sortfield,$sortorder,'',0,0,'');
 
     	$i = 0;
     	print "<table class=\"noborder\" width=\"100%\">";
@@ -246,7 +246,7 @@ if ($socid > 0)
 }
 else
 {
-	dol_print_error();
+	dol_print_error('', 'Parameter socid not defined');
 }
 
 

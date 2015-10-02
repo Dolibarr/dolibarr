@@ -39,6 +39,9 @@ InterventionClassifiedUnbilledInDolibarr=Intervention %s set as unbilled
 InterventionSentByEMail=Intervention %s sent by EMail
 InterventionDeletedInDolibarr=Intervention %s deleted
 SearchAnIntervention=Search an intervention
+InterventionsArea=Interventions area
+DraftFichinter=Draft interventions
+LastModifiedInterventions=Last %s modified interventions
 ##### Types de contacts #####
 TypeContact_fichinter_internal_INTERREPFOLL=نماینده زیر تا مداخله
 TypeContact_fichinter_internal_INTERVENING=مداخله
@@ -51,3 +54,14 @@ PacificNumRefModelDesc1=بازگشت numero با فرمت٪ syymm-NNNN که در
 PacificNumRefModelError=کارت مداخله با $ شروع میشوند syymm حال حاضر وجود دارد و سازگار با این مدل توالی نیست. آن را حذف و یا تغییر نام آن را به این ماژول را فعال کنید.
 PrintProductsOnFichinter=محصول چاپ بر روی کارت مداخله
 PrintProductsOnFichinterDetails=interventions generated from orders
+##### Exports #####
+InterId=Intervention id
+InterRef=Intervention ref.
+InterDateCreation=Date creation intervention
+InterDuration=Duration intervention
+InterStatus=Status intervention
+InterNote=Note intervention
+InterLineId=Line id intervention
+InterLineDate=Line date intervention
+InterLineDuration=Line duration intervention
+InterLineDesc=Line description intervention

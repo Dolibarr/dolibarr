@@ -90,7 +90,7 @@ SelectAtLeastOneField=Byt minst en källa fält i kolumnen i fält att exportera
 SelectFormat=Välj denna import filformat
 RunImportFile=Lansering importera filen
 NowClickToRunTheImport=Kontrollera resultat av import simulering. Om allt är ok, starta den slutgiltiga importen.
-DataLoadedWithId=Alla uppgifter kommer att belastas med följande import id: <b>%s</b>
+DataLoadedWithId=All data will be loaded with the following import id: <b>%s</b>
 ErrorMissingMandatoryValue=Obligatoriska uppgifter är tomt i källfilen för fält <b>%s.</b>
 TooMuchErrors=Det finns fortfarande <b>%s</b> andra källrader med fel men BNP har varit begränsade.
 TooMuchWarnings=Det finns fortfarande <b>%s</b> andra källrader med varningar men BNP har varit begränsade.
@@ -130,7 +130,7 @@ ExportDateFilter=ÅÅÅÅ, ÅÅÅÅMM, ÅÅÅÅMMDD: filter efter ett år / mån
 ExportNumericFilter='NNNNN "filter med en värde <br> 'NNNNN + NNNNN' filter över ett intervall av värden <br> "> NNNNN" filter med lägre värden <br> "> NNNNN" filter med högre värden
 ## filters
 SelectFilterFields=Om du vill filtrera på vissa värderingar, fyll i ingångsvärden här.
-FilterableFields=Champs Filtrables
+FilterableFields=Filterable Fields
 FilteredFields=Filtrerad fält
 FilteredFieldsValues=Värde för filter
 FormatControlRule=Format control rule

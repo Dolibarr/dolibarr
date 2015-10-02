@@ -2,11 +2,13 @@
 CHARSET=UTF-8
 ACCOUNTING_EXPORT_SEPARATORCSV=Διαχωριστής στηλών για το αρχείο που θα εξαχθεί
 ACCOUNTING_EXPORT_DATE=Μορφή ημερομηνίας για το αρχείο που θα εξαγθεί
-ACCOUNTING_EXPORT_PIECE=Export the number of piece ?
-ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account ?
-ACCOUNTING_EXPORT_LABEL=Export the label ?
-ACCOUNTING_EXPORT_AMOUNT=Export the amount ?
-ACCOUNTING_EXPORT_DEVISE=Export the devise ?
+ACCOUNTING_EXPORT_PIECE=Export the number of piece
+ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account
+ACCOUNTING_EXPORT_LABEL=Export the label
+ACCOUNTING_EXPORT_AMOUNT=Export the amount
+ACCOUNTING_EXPORT_DEVISE=Export the devise
+Selectformat=Select the format for the file
+ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
 
 Accounting=Λογιστική
 Globalparameters=Βασικοί Παράμετροι
@@ -34,6 +36,7 @@ Selectchartofaccounts=Επιλέξτε ένα διάγραμμα των λογα
 Validate=Επικύρωση
 Addanaccount=Προσθέστε ένα λογιστικό λογαριασμό
 AccountAccounting=Λογιστική λογαριασμού
+AccountAccountingSuggest=Accounting account suggest
 Ventilation=Ανάλυση
 ToDispatch=Για την αποστολή
 Dispatched=Αποστέλλονται
@@ -60,10 +63,10 @@ AccountingVentilationSupplier=Ανάλυση λογιστικών προμηθε
 AccountingVentilationCustomer=Ανάλυση λογιστικών των πελατών
 Line=Γραμμή
 
-CAHTF=Σύνολο προμηθευτή αγορά ΗΤ
+CAHTF=Total purchase supplier before tax
 InvoiceLines=Εγγραφές τιμολογίου για ανανέωση
 InvoiceLinesDone=Ανανεωμένες εγγραφές τιμολογίου
-IntoAccount=Στο λογιστικό λογαριασμό
+IntoAccount=Ventilate in the accounting account
 
 Ventilate=Ανανέωση
 VentilationAuto=Αυτόματη ανάλυση
@@ -152,7 +155,7 @@ Active=Δήλωση
 NewFiscalYear=Νέα οικονομική χρονιά
 
 DescVentilCustomer=Συμβουλευτείτε εδώ την ετήσια κατανομή των λογαριασμών των τιμολογίων των πελατών σας
-TotalVente=Σύνολο κύκλου εργασιών ΗΤ
+TotalVente=Total turnover before tax
 TotalMarge=Συνολικό περιθώριο πωλήσεων
 DescVentilDoneCustomer=Συμβουλευτείτε εδώ τη λίστα των γραμμών των τιμολογίων των πελατών και τη λογιστική των λογαριασμών τους
 DescVentilTodoCustomer=Ανανεώστε τις εγγραφές ενός τιμολογίου πελάτη με έναν λογιστικό λογαριασμό
@@ -167,3 +170,4 @@ ValidateHistory=Αυτόματη επικύρωση
 ErrorAccountancyCodeIsAlreadyUse=Σφάλμα, δεν μπορείτε να διαγράψετε αυτόν τον λογιστικό λογαριασμό γιατί χρησιμοποιείται
 
 FicheVentilation=Φόρμα ανάλυσης
+GeneralLedgerIsWritten=Operations are written in the general ledger

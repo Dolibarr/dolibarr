@@ -209,6 +209,6 @@ MigrationActioncommElement=Uuenda tegevuste andmec
 MigrationPaymentMode=Maksete režiimi andmete migreerimine
 MigrationCategorieAssociation=Kategooriate migreerimine
 MigrationEvents=Sündmuste migreerimine sündmuse omaniku lisamiseks seoste tabelisse
-
+MigrationReloadModule=Reload module %s
 ShowNotAvailableOptions=Näita mitte saadaval olevaid lisavalikuid
 HideNotAvailableOptions=Peida mitte saadaval olevad lisavalikud

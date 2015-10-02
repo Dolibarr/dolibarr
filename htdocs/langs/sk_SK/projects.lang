@@ -1,6 +1,8 @@
 # Dolibarr language file - Source file is en_US - projects
 RefProject=Ref. project
+ProjectRef=Project ref.
 ProjectId=Project Id
+ProjectLabel=Project label
 Project=Projekt
 Projects=Projekty
 ProjectStatus=Project status
@@ -27,7 +29,7 @@ OfficerProject=Riaditeľ projektu
 LastProjects=Posledný %s projekty
 AllProjects=Všetky projekty
 OpenedProjects=Opened projects
-OpportunitiesStatusForOpenedProjects=Opportunities status for opened projects
+OpportunitiesStatusForOpenedProjects=Opportunities amount of opened projects by status
 ProjectsList=Zoznam projektov
 ShowProject=Zobraziť projektu
 SetProject=Nastavenie projektu

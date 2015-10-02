@@ -90,7 +90,7 @@ SelectAtLeastOneField=Switch campo almeno una fonte, nella colonna dei campi da 
 SelectFormat=Scegliere questo formato di file di importazione
 RunImportFile=Lancio l'importazione di file
 NowClickToRunTheImport=Controllare risultato della simulazione di importazione. Se tutto è ok, avviare l'importazione definitiva.
-DataLoadedWithId=Tutti i dati saranno caricati con l'id di importazione di seguito: <b>%s</b>
+DataLoadedWithId=All data will be loaded with the following import id: <b>%s</b>
 ErrorMissingMandatoryValue=I dati obbligatori è vuoto <b>%s</b> file sorgente in campo per.
 TooMuchErrors=C'è ancora <b>%s</b> linee di altra fonte di errori ma la produzione è stata limitata.
 TooMuchWarnings=C'è ancora <b>%s</b> linee altra fonte con avvisi di uscita, ma è stato limitato.
@@ -130,7 +130,7 @@ ExportDateFilter=YYYY, YYYYMM, YYYYMMDD : filtra per un anno/mese/giorno<br>YYYY
 ExportNumericFilter='NNNNN' filtra per un solo valore<br>'NNNNN+NNNNN' filtra su un range di valori<br>'&gt;NNNNN' filtra per valori inferiori<br>'&gt;NNNNN' filtra per valori superiori
 ## filters
 SelectFilterFields=Se vuoi filtrare su qualche valore, inserisci qui il valore.
-FilterableFields=Campi filtrabili
+FilterableFields=Filterable Fields
 FilteredFields=Campi filtrati
 FilteredFieldsValues=Valore per il filtro
 FormatControlRule=Format control rule

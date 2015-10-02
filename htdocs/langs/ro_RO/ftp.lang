@@ -10,3 +10,5 @@ FailedToConnectToFTPServerWithCredentials=Autentificarea la serverul FTP a eșua
 FTPFailedToRemoveFile=Fișierul <b>%s</b> nu poate fi șters.
 FTPFailedToRemoveDir=Directorul <b>%s</b> nu poate fi șters (Verificaţi permisiunile şi faptul că directorul este gol).
 FTPPassiveMode=Mod pasiv
+ChooseAFTPEntryIntoMenu=Choose a FTP entry into menu...
+FailedToGetFile=Failed to get files %s

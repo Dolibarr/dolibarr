@@ -209,6 +209,6 @@ MigrationActioncommElement=Ενημέρωση στοιχεία για τις δ�
 MigrationPaymentMode=Η μεταφορά δεδομένων για την κατάσταση πληρωμής
 MigrationCategorieAssociation=Μετακίνηση των κατηγοριών
 MigrationEvents=Migration of events to add event owner into assignement table
-
+MigrationReloadModule=Reload module %s
 ShowNotAvailableOptions=Εμφάνιση μη διαθέσιμων επιλογών
 HideNotAvailableOptions=Απόκρυψη μη μη διαθέσιμων επιλογών
