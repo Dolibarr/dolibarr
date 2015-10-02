@@ -126,7 +126,7 @@ For users:
        Use accesskey on form search.
 - New: Intervention documents are now available in ECM module.
 - New: Add attachments on user card + in ECM module.
-- New: Can add __PROJECT_REF__ and __TIHRPARTY_NAME__ into email topic or content template.
+- New: Can add __PROJECT_REF__ and __THIRDPARTY_NAME__ into email topic or content template.
 - New: [ task #1204 ] add Numering contrat module free (like leopard in product module).
 - New: [ task #712 ] Add warning when creating invoice from proposal or order, when there is already one invoice.
 - New: Enable supplier price log table.
