@@ -111,15 +111,15 @@ $fontsize='13';
 $fontsizesmaller='11';
 $usegradient=1;
 
-// Eldy colors
+// Case of option always editable
+if (! isset($conf->global->THEME_ELDY_TOPMENU_BACK1)) $conf->global->THEME_ELDY_TOPMENU_BACK1=join(',',colorStringToArray('#37474F'));   // topmenu (140,160,185)
+if (! isset($conf->global->THEME_ELDY_BACKTITLE1)) $conf->global->THEME_ELDY_BACKTITLE1='140,150,180';       	// title of arrays TO MATCH ELDY (140,160,185)
+//if (! isset($conf->global->THEME_ELDY_BACKTITLE1)) $conf->global->THEME_ELDY_BACKTITLE1='230,230,230';     // title of arrays TO MATCH BOOTSTRAP
+//if (! isset($conf->global->THEME_ELDY_USE_HOVER)) $conf->global->THEME_ELDY_USE_HOVER='';			            // color for links
+    
+// Fields not yet editable by default
 if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
 {
-	// Case of option always editable
-	if (! isset($conf->global->THEME_ELDY_TOPMENU_BACK1)) $conf->global->THEME_ELDY_TOPMENU_BACK1=join(',',colorStringToArray('#37474F'));   // topmenu (140,160,185)
-    if (! isset($conf->global->THEME_ELDY_BACKTITLE1)) $conf->global->THEME_ELDY_BACKTITLE1='140,150,180';       	// title of arrays TO MATCH ELDY (140,160,185)
-    //if (! isset($conf->global->THEME_ELDY_BACKTITLE1)) $conf->global->THEME_ELDY_BACKTITLE1='230,230,230';     // title of arrays TO MATCH BOOTSTRAP
-    if (! isset($conf->global->THEME_ELDY_USE_HOVER)) $conf->global->THEME_ELDY_USE_HOVER='';			            // color for links
-    
 	// Cas of option editable if option THEME_ELDY_ENABLE_PERSONALIZED is on
     // 90A4AE, 607D8B, 455A64, 37474F
     $conf->global->THEME_ELDY_TOPMENU_BACK2='236,236,236';
@@ -1848,7 +1848,7 @@ table.noborder, table.formdoc, div.noborder {
 	border-spacing: 0px;
 
 	border-width: 1px;
-	border-color: #CCC;
+	border-color: #BBB;
 	border-style: solid;
 
 	margin: 0px 0px 2px 0px;

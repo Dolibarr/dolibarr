@@ -106,19 +106,20 @@ $colorbacklinepair2=(250+round($isred/3)).','.(250+round($isgreen/3)).','.(250+r
 $colorbacklinepairhover=(230+round(($isred+$isgreen+$isblue)/9)).','.(230+round(($isred+$isgreen+$isblue)/9)).','.(230+round(($isred+$isgreen+$isblue)/9));    // line pair
 $colorbackbody='255,255,255';
 $colortext='40,40,40';
-$fontsize='13';
+$fontsize='12';
 $fontsizesmaller='11';
 $usegradient=1;
 
-// Eldy colors
+
+// Case of option always editable
+if (! isset($conf->global->THEME_ELDY_TOPMENU_BACK1)) $conf->global->THEME_ELDY_TOPMENU_BACK1='140,150,180';    // topmenu (140,160,185)
+//if (! isset($conf->global->THEME_ELDY_BACKTITLE1)) $conf->global->THEME_ELDY_BACKTITLE1='140,150,180';       	// title of arrays TO MATCH ELDY (140,160,185)
+if (! isset($conf->global->THEME_ELDY_BACKTITLE1)) $conf->global->THEME_ELDY_BACKTITLE1='230,230,230';        // title of arrays TO MATCH BOOTSTRAP
+//if (! isset($conf->global->THEME_ELDY_USE_HOVER)) $conf->global->THEME_ELDY_USE_HOVER='';			            // color for links
+
+// Fields not yet editable by default
 if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
 {
-	// Case of option always editable
-	if (! isset($conf->global->THEME_ELDY_TOPMENU_BACK1)) $conf->global->THEME_ELDY_TOPMENU_BACK1='140,150,180';    // topmenu (140,160,185)
-    //if (! isset($conf->global->THEME_ELDY_BACKTITLE1)) $conf->global->THEME_ELDY_BACKTITLE1='140,150,180';       	// title of arrays TO MATCH ELDY (140,160,185)
-    if (! isset($conf->global->THEME_ELDY_BACKTITLE1)) $conf->global->THEME_ELDY_BACKTITLE1='230,230,230';        // title of arrays TO MATCH BOOTSTRAP
-    if (! isset($conf->global->THEME_ELDY_USE_HOVER)) $conf->global->THEME_ELDY_USE_HOVER='';			            // color for links
-
 	// Cas of option editable if option THEME_ELDY_ENABLE_PERSONALIZED is on
 	$conf->global->THEME_ELDY_TOPMENU_BACK2='236,236,236';
 	$conf->global->THEME_ELDY_VERMENU_BACK1='255,255,255';    // vmenu
@@ -138,6 +139,7 @@ if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
     $conf->global->THEME_ELDY_FONT_SIZE1='12';
     $conf->global->THEME_ELDY_FONT_SIZE2='11';
 }
+//var_dump($conf->global->THEME_ELDY_BACKBODY);
 
 // Cas of option availables only if THEME_ELDY_ENABLE_PERSONALIZED is on
 $colorbackhmenu1=empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TOPMENU_BACK1)?$colorbackhmenu1:$conf->global->THEME_ELDY_TOPMENU_BACK1)   :(empty($user->conf->THEME_ELDY_TOPMENU_BACK1)?$colorbackhmenu1:$user->conf->THEME_ELDY_TOPMENU_BACK1);
@@ -1957,17 +1959,21 @@ table.noborder, table.formdoc, div.noborder {
 	border-spacing: 0px;
 
 	border-top-width: 1px;
-	border-top-color: #CCC;
+	border-top-color: #BBB;
 	border-top-style: solid;
 
 	border-right-width: 1px;
-	border-right-color: #CCC;
+	border-right-color: #BBB;
 	border-right-style: solid;
 
 	border-left-width: 1px;
-	border-left-color: #CCC;
+	border-left-color: #BBB;
 	border-left-style: solid;
 
+	border-bottom-width: 1px;
+	border-bottom-color: #BBB;
+	border-bottom-style: solid;
+	
 	margin: 0px 0px 2px 0px;
 
 	-moz-box-shadow: 2px 2px 4px #CCC;
