@@ -978,7 +978,7 @@ $form = new Form($db);
 $formother = new FormOther($db);
 $formfile = new FormFile($db);
 $formaskpricesupplier = new FormAskPriceSupplier($db);
-$formmargin = new FormMargin($this->db);
+$formmargin = new FormMargin($db);
 $companystatic = new Societe($db);
 
 $now = dol_now();
