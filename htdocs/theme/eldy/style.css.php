@@ -2187,6 +2187,9 @@ div.pagination li.pagination .active {
 div.pagination li.paginationafterarrows {
 	margin-left: 10px;
 }
+.paginationatbottom {
+	margin-top: 9px;
+}
 
 /* Prepare to remove class pair - impair
 .noborder > tbody > tr:nth-child(even) td {
