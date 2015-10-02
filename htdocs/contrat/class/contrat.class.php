@@ -51,25 +51,6 @@ class Contrat extends CommonObject
 	protected $table_ref_field = 'ref';
 
 	/**
-	 * Id of the contract
-	 * @var int
-	 */
-	var $id;
-
-	/**
-	 * Reference of the contract
-	 * @var string
-	 */
-	var $ref;
-
-	/**
-	 * External reference of the contract.
-	 * Used by 3rd party services
-	 * @var string
-	 */
-	var $ref_ext;
-
-	/**
 	 * Supplier reference of the contract
 	 * @var string
 	 */
@@ -141,24 +122,10 @@ class Contrat extends CommonObject
 	var $commercial_suivi_id;
 
 	/**
-	 * @var string	Private note
-	 */
-	var $note_private;
-
-	/**
-	 * @var string	Public note
-	 */
-	var $note_public;
-
-	var $modelpdf;
-
-	/**
 	 * @deprecated Use fk_project instead
 	 * @see fk_project
 	 */
 	var $fk_projet;
-
-	public $fk_project;
 
 	var $extraparams=array();
 

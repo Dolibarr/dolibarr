@@ -246,6 +246,8 @@ if ($id > 0 || ! empty($ref))
 						$memberstatic->ref=$objp->rowid;
 						$memberstatic->lastname=$objp->lastname;
 						$memberstatic->firstname=$objp->firstname;
+						$memberstatic->statut=$objp->statut;
+						$memberstatic->datefin=$db->jdate($objp->datefin);
 
 						$companyname=$objp->company;
 
@@ -290,7 +292,9 @@ if ($id > 0 || ! empty($ref))
 						{
 							print '<td align="center" class="nowrap">';
 							print dol_print_date($datefin,'day');
-							if ($datefin < ($now -  $conf->adherent->cotisation->warning_delay) && $objp->statut > 0) print " ".img_warning($langs->trans("SubscriptionLate"));
+							if ($memberstatic->hasDelay()) {
+								print " ".img_warning($langs->trans("SubscriptionLate"));
+							}
 							print '</td>';
 						}
 						else

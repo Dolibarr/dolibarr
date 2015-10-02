@@ -35,7 +35,6 @@
 //@ini_set('memory_limit', '64M');	// This may be useless if memory is hard limited by your PHP
 
 // For optional tuning. Enabled if environment variable MAIN_SHOW_TUNING_INFO is defined.
-// A call first. Is the equivalent function dol_microtime_float not yet loaded.
 $micro_start_time=0;
 if (! empty($_SERVER['MAIN_SHOW_TUNING_INFO']))
 {
@@ -225,7 +224,8 @@ if (isset($_SERVER["HTTP_USER_AGENT"]))
 
 
 // Force HTTPS if required ($conf->file->main_force_https is 0/1 or https dolibarr root url)
-if (! empty($conf->file->main_force_https))
+// $_SERVER["HTTPS"] is 'on' when link is https, otherwise $_SERVER["HTTPS"] is empty or 'off'
+if (! empty($conf->file->main_force_https) && (empty($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] != 'on'))
 {
     $newurl='';
     if (is_numeric($conf->file->main_force_https))
@@ -239,21 +239,13 @@ if (! empty($conf->file->main_force_https))
         }
         else	// Check HTTPS environment variable (Apache/mod_ssl only)
         {
-            // $_SERVER["HTTPS"] is 'on' when link is https, otherwise $_SERVER["HTTPS"] is empty or 'off'
-            if (empty($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] != 'on')		// If link is http
-            {
-                $newurl=preg_replace('/^http:/i','https:',DOL_MAIN_URL_ROOT).$_SERVER["REQUEST_URI"];
-            }
+            $newurl=preg_replace('/^http:/i','https:',DOL_MAIN_URL_ROOT).$_SERVER["REQUEST_URI"];
         }
     }
     else
     {
         // Check HTTPS environment variable (Apache/mod_ssl only)
-        // $_SERVER["HTTPS"] is 'on' when link is https, otherwise $_SERVER["HTTPS"] is empty or 'off'
-        if (empty($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] != 'on')		// If link is http
-        {
-            $newurl=$conf->file->main_force_https.$_SERVER["REQUEST_URI"];
-        }
+        $newurl=$conf->file->main_force_https.$_SERVER["REQUEST_URI"];
     }
     // Start redirect
     if ($newurl)
@@ -981,10 +973,9 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		if (GETPOST('dol_basehref')) print '<base href="'.dol_escape_htmltag(GETPOST('dol_basehref')).'">'."\n";
         // Displays meta
         print '<meta name="robots" content="noindex,nofollow">'."\n";      				// Do not index
-        print '<meta name="viewport" content="width=device-width, initial-scale=1">';	// Scale for mobile device
+        print '<meta name="viewport" content="width=device-width, initial-scale=1.0">';	// Scale for mobile device
         print '<meta name="author" content="Dolibarr Development Team">'."\n";
-		if (! empty($conf->global->MAIN_ACTIVATE_HTML5)) print '<meta name="viewport" content="width=device-width, initial-scale=1.0">'."\n";	// Needed for Responsive Web Design
-        $favicon=dol_buildpath('/theme/'.$conf->theme.'/img/favicon.ico',1);
+		$favicon=dol_buildpath('/theme/'.$conf->theme.'/img/favicon.ico',1);
         if (! empty($conf->global->MAIN_FAVICON_URL)) $favicon=$conf->global->MAIN_FAVICON_URL;
         print '<link rel="shortcut icon" type="image/x-icon" href="'.$favicon.'"/>'."\n";
         if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="top" title="'.$langs->trans("Home").'" href="'.(DOL_URL_ROOT?DOL_URL_ROOT:'/').'">'."\n";
@@ -1397,8 +1388,8 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 </script>' . "\n";
 
 		// Raven.js for client-side Sentry logging support
-		if (array_key_exists('mod_syslog_sentry', $conf->loghandlers) && ! empty($conf->global->SYSLOG_SENTRY_DSN)) {
-
+		if (array_key_exists('mod_syslog_sentry', $conf->loghandlers) && ! empty($conf->global->SYSLOG_SENTRY_DSN)) 
+		{
 			// Filter out secret key
 			$dsn = parse_url($conf->global->SYSLOG_SENTRY_DSN);
 			$public_dsn = $dsn['scheme'] . '://' . $dsn['user'] .'@' . $dsn['host'] . $dsn['path'];
@@ -1467,12 +1458,12 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 
 	    // User photo
 	    $toprightmenu.='<div class="inline-block nowrap"><div class="inline-block login_block_elem" style="padding: 0px;">';
-	    $toprightmenu.=$user->getPhotoUrl(16,16,'loginphoto');
+	    $toprightmenu.=$user->getPhotoUrl(0,0,'loginphoto');
 	    $toprightmenu.='</div></div>';
 
 	    // Login name with tooltip
-		$toprightmenu.='<div class="inline-block nowrap"><div class="inline-block login_block_elem" style="padding: 0px;">';
-        $toprightmenu.=$user->getNomurl(0, '', true, 0, 11);
+		$toprightmenu.='<div class="inline-block nowrap"><div class="inline-block login_block_elem login_block_elem_name" style="padding: 0px;">';
+        $toprightmenu.=$user->getNomurl(0, '', true, 0, 11, 0, 'firstname','alogin');
         $toprightmenu.='</div></div>';
 
 		$toprightmenu.='</div>';

@@ -3,7 +3,7 @@
  * Copyright (C) 2004      Eric Seigne           <eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2012 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2013 Regis Houssin         <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2015 Regis Houssin         <regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
  * Copyright (C) 2010-2012 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
@@ -69,7 +69,7 @@ $search_refcustomer=GETPOST('search_refcustomer','alpha');
 $search_societe=GETPOST('search_societe','alpha');
 $search_montant_ht=GETPOST('search_montant_ht','alpha');
 $search_montant_ttc=GETPOST('search_montant_ttc','alpha');
-$search_status=GETPOST('search_status','alpha');
+$search_status=GETPOST('search_status','int');
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -191,7 +191,7 @@ if ($search_refcustomer) $sql .= natural_search('f.ref_client', $search_refcusto
 if ($search_societe) $sql .= natural_search('s.nom', $search_societe);
 if ($search_montant_ht != '') $sql.= natural_search('f.total', $search_montant_ht, 1);
 if ($search_montant_ttc != '') $sql.= natural_search('f.total_ttc', $search_montant_ttc, 1);
-if ($search_status != '') $sql.= " AND f.fk_statut = '".$db->escape($search_status)."'";
+if ($search_status != '') $sql.= " AND f.fk_statut = ".$db->escape($search_status);
 if ($month > 0)
 {
     if ($year > 0 && empty($day))
@@ -379,6 +379,8 @@ if ($resql)
             $facturestatic->id=$objp->facid;
             $facturestatic->ref=$objp->facnumber;
             $facturestatic->type=$objp->type;
+            $facturestatic->statut = $objp->fk_statut;
+            $facturestatic->date_lim_reglement = $db->jdate($objp->datelimite);
             $notetoshow=dol_string_nohtmltag(($user->societe_id>0?$objp->note_public:$objp->note),1);
             $paiement = $facturestatic->getSommePaiement();
 
@@ -418,7 +420,7 @@ if ($resql)
 
             // Date limit
             print '<td align="center" class="nowrap">'.dol_print_date($datelimit,'day');
-            if ($datelimit < ($now - $conf->facture->client->warning_delay) && ! $objp->paye && $objp->fk_statut == 1 && ! $paiement)
+            if ($facturestatic->hasDelay())
             {
                 print img_warning($langs->trans('Late'));
             }

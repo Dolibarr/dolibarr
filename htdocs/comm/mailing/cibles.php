@@ -223,7 +223,7 @@ if ($object->fetch($id) >= 0)
 	// Show email selectors
 	if ($allowaddtarget && $user->rights->mailing->creer)
 	{
-		print_fiche_titre($langs->trans("ToAddRecipientsChooseHere"),($user->admin?info_admin($langs->trans("YouCanAddYourOwnPredefindedListHere"),1):''),'');
+		print load_fiche_titre($langs->trans("ToAddRecipientsChooseHere"),($user->admin?info_admin($langs->trans("YouCanAddYourOwnPredefindedListHere"),1):''),'');
 
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';

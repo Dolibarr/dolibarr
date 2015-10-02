@@ -278,7 +278,7 @@ if (($action == 'addgroup' || $action == 'removegroup') && $caneditfield)
     {
         $editgroup = new UserGroup($db);
         $editgroup->fetch($group);
-        $editgroup->oldcopy=dol_clone($editgroup);
+		$editgroup->oldcopy=clone $editgroup;
 
         $object->fetch($id);
         if ($action == 'addgroup')    $object->SetInGroup($group,($conf->multicompany->transverse_mode?GETPOST("entity"):$editgroup->entity));
@@ -340,7 +340,7 @@ if ($action == 'update' && ! $_POST["cancel"])
        {
             $db->begin();
 
-            $object->oldcopy=dol_clone($object);
+			$object->oldcopy = clone $object;
 
             $object->lastname	= GETPOST("lastname",'alpha');
             $object->firstname	= GETPOST("firstname",'alpha');
@@ -482,7 +482,7 @@ if ($action == 'update' && ! $_POST["cancel"])
                     {
                     	$error++;
                     	$langs->load("errors");
-                    	setEventMessages($langs->trans("ErrorFailedToCreateDir", $dir), $mesgs, 'errors');
+                    	setEventMessages($langs->transnoentitiesnoconv("ErrorFailedToCreateDir", $dir), $mesgs, 'errors');
                     }
                 }
             }
@@ -508,7 +508,7 @@ if ($action == 'update' && ! $_POST["cancel"])
     {
         $object->fetch($id);
 
-        $object->oldcopy=dol_clone($object);
+		$object->oldcopy = clone $object;
 
         $ret=$object->setPassword($user,$_POST["password"]);
         if ($ret < 0)
@@ -627,7 +627,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     /*                                                                            */
     /* ************************************************************************** */
 
-    print_fiche_titre($langs->trans("NewUser"));
+    print load_fiche_titre($langs->trans("NewUser"));
 
     print $langs->trans("CreateInternalUserDesc")."<br>\n";
     print "<br>";
@@ -841,6 +841,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     }
     else
     {
+    	require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
         // PARTIAL WORKAROUND
         $generated_fake_api_key=getRandomPassword(false);
         print '<input type="hidden" name="api_key" value="'.$generated_fake_api_key.'">';
@@ -1046,7 +1047,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 	{
 		print '<tr><td>'.$langs->trans("ColorUser").'</td>';
 		print '<td>';
-		print $formother->selectColor(GETPOST('color')?GETPOST('color'):$object->color, 'color', 'usercolorconfig', 1, '', 'hideifnotset');
+		print $formother->selectColor(GETPOST('color')?GETPOST('color'):$object->color, 'color', null, 1, '', 'hideifnotset');
 		print '</td></tr>';
 	}
 
@@ -1613,7 +1614,7 @@ else
 
             if ($canreadgroup)
             {
-                print_fiche_titre($langs->trans("ListOfGroupsForUser"),'','');
+                print load_fiche_titre($langs->trans("ListOfGroupsForUser"),'','');
 
                 // On selectionne les groupes auquel fait parti le user
                 $exclude = array();
@@ -2151,7 +2152,7 @@ else
             {
 				print '<tr><td>'.$langs->trans("ColorUser").'</td>';
 				print '<td>';
-				print $formother->selectColor(GETPOST('color')?GETPOST('color'):$object->color, 'color', 'usercolorconfig', 1, '', 'hideifnotset');
+				print $formother->selectColor(GETPOST('color')?GETPOST('color'):$object->color, 'color', null, 1, '', 'hideifnotset');
 				print '</td></tr>';
 			}
 

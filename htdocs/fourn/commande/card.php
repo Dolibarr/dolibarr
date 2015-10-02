@@ -1408,7 +1408,7 @@ $productstatic = new Product($db);
 $now=dol_now();
 if ($action=='create')
 {
-	print_fiche_titre($langs->trans('NewOrder'));
+	print load_fiche_titre($langs->trans('NewOrder'));
 
 	dol_htmloutput_events();
 
@@ -1460,8 +1460,8 @@ if ($action=='create')
 
 		$datedelivery = (! empty($objectsrc->date_livraison) ? $objectsrc->date_livraison : '');
 
-		$note_private = (! empty($objectsrc->note_private) ? $objectsrc->note_private : (! empty($objectsrc->note_private) ? $objectsrc->note_private : ''));
-		$note_public = (! empty($objectsrc->note_public) ? $objectsrc->note_public : '');
+		$note_private = $object->getDefaultCreateValueFor('note_private', (! empty($objectsrc->note_private) ? $objectsrc->note_private : null));
+		$note_public = $object->getDefaultCreateValueFor('note_public', (! empty($objectsrc->note_public) ? $objectsrc->note_public : null));
 
 		// Object source contacts list
 		$srccontactslist = $objectsrc->liste_contact(- 1, 'external', 1);
@@ -1471,6 +1471,9 @@ if ($action=='create')
 	{
 		$cond_reglement_id 	= $societe->cond_reglement_supplier_id;
 		$mode_reglement_id 	= $societe->mode_reglement_supplier_id;
+
+		$note_private = $object->getDefaultCreateValueFor('note_private');
+		$note_public = $object->getDefaultCreateValueFor('note_public');
 	}
 
 	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="post">';
@@ -2302,7 +2305,7 @@ elseif (! empty($object->id))
 
 		print '<div class="clearboth"></div>';
 		print '<br>';
-		print_fiche_titre($langs->trans('SendOrderByMail'));
+		print load_fiche_titre($langs->trans('SendOrderByMail'));
 
 		dol_fiche_head('');
 
@@ -2792,7 +2795,7 @@ elseif (! empty($object->id))
 			print '<form name="commande" action="card.php?id='.$object->id.'&amp;action=commande" method="post">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden"	name="action" value="commande">';
-			print_fiche_titre($langs->trans("ToOrder"),'','');
+			print load_fiche_titre($langs->trans("ToOrder"),'','');
 			print '<table class="border" width="100%">';
 			//print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("ToOrder").'</td></tr>';
 			print '<tr><td>'.$langs->trans("OrderDate").'</td><td>';
@@ -2820,7 +2823,7 @@ elseif (! empty($object->id))
 			print '<form action="card.php?id='.$object->id.'" method="post">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden"	name="action" value="livraison">';
-			print_fiche_titre($langs->trans("Receive"),'','');
+			print load_fiche_titre($langs->trans("Receive"),'','');
 			print '<table class="border" width="100%">';
 			//print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Receive").'</td></tr>';
 			print '<tr><td>'.$langs->trans("DeliveryDate").'</td><td>';

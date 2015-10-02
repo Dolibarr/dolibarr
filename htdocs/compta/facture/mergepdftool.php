@@ -544,7 +544,7 @@ if ($resql)
 
 	$param.=(! empty($option)?"&amp;option=".$option:"");
 
-	print_fiche_titre($titre,$link);
+	print load_fiche_titre($titre,$link);
 	//print_barre_liste($titre,$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',0);	// We don't want pagination on this page
 
 	print '<form id="form_unpaid" method="POST" action="'.$_SERVER["PHP_SELF"].'?sortfield='. $sortfield .'&sortorder='. $sortorder .'">';
@@ -734,6 +734,8 @@ if ($resql)
 			$facturestatic->id=$objp->facid;
 			$facturestatic->ref=$objp->facnumber;
 			$facturestatic->type=$objp->type;
+			$facturestatic->statut=$objp->fk_statut;
+			$facturestatic->date_lim_reglement= $db->jdate($objp->datelimite);
 
 			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 
@@ -744,7 +746,9 @@ if ($resql)
 
 			// Warning picto
 			print '<td width="20" class="nobordernopadding nowrap">';
-			if ($date_limit < ($now - $conf->facture->client->warning_delay) && ! $objp->paye && $objp->fk_statut == 1) print img_warning($langs->trans("Late"));
+			if ($facturestatic->hasDelay()) {
+				print img_warning($langs->trans("Late"));
+			}
 			print '</td>';
 
 			// PDF Picto

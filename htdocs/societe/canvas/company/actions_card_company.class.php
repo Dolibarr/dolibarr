@@ -29,11 +29,6 @@ include_once DOL_DOCUMENT_ROOT.'/societe/canvas/actions_card_common.class.php';
  */
 class ActionsCardCompany extends ActionsCardCommon
 {
-    var $dirmodule;
-	var $targetmodule;
-    var $canvas;
-    var $card;
-
 	/**
 	 *    Constructor
 	 *

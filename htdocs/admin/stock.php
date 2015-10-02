@@ -113,7 +113,7 @@ if($action)
 llxHeader('',$langs->trans("StockSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("StockSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("StockSetup"),$linkback,'title_setup');
 
 $form=new Form($db);
 

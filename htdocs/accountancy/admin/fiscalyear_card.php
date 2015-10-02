@@ -170,7 +170,7 @@ $form = new Form($db);
 */
 if ($action == 'create')
 {
-    print_fiche_titre($langs->trans("NewFiscalYear"));
+    print load_fiche_titre($langs->trans("NewFiscalYear"));
 
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';

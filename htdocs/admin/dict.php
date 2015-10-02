@@ -151,7 +151,7 @@ $tabsql[8] = "SELECT t.id    as rowid, t.code as code, t.libelle, t.fk_country a
 $tabsql[9] = "SELECT c.code_iso as code, c.label, c.unicode, c.active FROM ".MAIN_DB_PREFIX."c_currencies AS c";
 $tabsql[10]= "SELECT t.rowid, t.taux, t.localtax1_type, t.localtax1, t.localtax2_type, t.localtax2, c.label as country, c.code as country_code, t.fk_pays as country_id, t.recuperableonly, t.note, t.active, t.accountancy_code_sell, t.accountancy_code_buy FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c WHERE t.fk_pays=c.rowid";
 $tabsql[11]= "SELECT t.rowid as rowid, element, source, code, libelle, active FROM ".MAIN_DB_PREFIX."c_type_contact AS t";
-$tabsql[12]= "SELECT c.rowid as rowid, c.code, c.sortorder, c.libelle, c.libelle_facture, nbjour, fdm, decalage, active FROM ".MAIN_DB_PREFIX.'c_payment_term AS c';
+$tabsql[12]= "SELECT c.rowid as rowid, c.code, c.libelle, c.libelle_facture, c.nbjour, c.fdm, c.decalage, c.active, c.sortorder FROM ".MAIN_DB_PREFIX.'c_payment_term AS c';
 $tabsql[13]= "SELECT c.id    as rowid, c.code, c.libelle, c.type, c.active, c.accountancy_code FROM ".MAIN_DB_PREFIX."c_paiement AS c";
 $tabsql[14]= "SELECT e.rowid as rowid, e.code as code, e.libelle, e.price, e.organization, e.fk_pays as country_id, c.code as country_code, c.label as country, e.active FROM ".MAIN_DB_PREFIX."c_ecotaxe AS e, ".MAIN_DB_PREFIX."c_country as c WHERE e.fk_pays=c.rowid and c.active=1";
 $tabsql[15]= "SELECT rowid   as rowid, code, label as libelle, width, height, unit, active FROM ".MAIN_DB_PREFIX."c_paper_format";
@@ -215,7 +215,7 @@ $tabfield[8] = "code,libelle,country_id,country";
 $tabfield[9] = "code,label,unicode";
 $tabfield[10]= "country_id,country,taux,recuperableonly,localtax1_type,localtax1,localtax2_type,localtax2,accountancy_code_sell,accountancy_code_buy,note";
 $tabfield[11]= "element,source,code,libelle";
-$tabfield[12]= "code,libelle,libelle_facture,nbjour,fdm,decalage";
+$tabfield[12]= "code,libelle,libelle_facture,nbjour,fdm,decalage,sortorder";
 $tabfield[13]= "code,libelle,type,accountancy_code";
 $tabfield[14]= "code,libelle,price,organization,country_id,country";
 $tabfield[15]= "code,libelle,width,height,unit";
@@ -247,7 +247,7 @@ $tabfieldvalue[8] = "code,libelle,country";
 $tabfieldvalue[9] = "code,label,unicode";
 $tabfieldvalue[10]= "country,taux,recuperableonly,localtax1_type,localtax1,localtax2_type,localtax2,accountancy_code_sell,accountancy_code_buy,note";
 $tabfieldvalue[11]= "element,source,code,libelle";
-$tabfieldvalue[12]= "code,libelle,libelle_facture,nbjour,fdm,decalage";
+$tabfieldvalue[12]= "code,libelle,libelle_facture,nbjour,fdm,decalage,sortorder";
 $tabfieldvalue[13]= "code,libelle,type,accountancy_code";
 $tabfieldvalue[14]= "code,libelle,price,organization,country";
 $tabfieldvalue[15]= "code,libelle,width,height,unit";
@@ -279,7 +279,7 @@ $tabfieldinsert[8] = "code,libelle,fk_country";
 $tabfieldinsert[9] = "code_iso,label,unicode";
 $tabfieldinsert[10]= "fk_pays,taux,recuperableonly,localtax1_type,localtax1,localtax2_type,localtax2,accountancy_code_sell,accountancy_code_buy,note";
 $tabfieldinsert[11]= "element,source,code,libelle";
-$tabfieldinsert[12]= "code,libelle,libelle_facture,nbjour,fdm,decalage";
+$tabfieldinsert[12]= "code,libelle,libelle_facture,nbjour,fdm,decalage,sortorder";
 $tabfieldinsert[13]= "code,libelle,type,accountancy_code";
 $tabfieldinsert[14]= "code,libelle,price,organization,fk_pays";
 $tabfieldinsert[15]= "code,label,width,height,unit";
@@ -445,6 +445,7 @@ if ($id == 11)
 	$langs->load("interventions");
 	$elementList = array(
 			''				    => '',
+            'societe'           => $langs->trans('ThirdParty'),
 //			'proposal'          => $langs->trans('Proposal'),
 //			'order'             => $langs->trans('Order'),
 //			'invoice'           => $langs->trans('Bill'),
@@ -812,7 +813,7 @@ if ($id)
     $titre.=' - '.$langs->trans($tablib[$id]);
     $linkback='<a href="'.$_SERVER['PHP_SELF'].'">'.$langs->trans("BackToDictionaryList").'</a>';
 }
-print_fiche_titre($titre,$linkback,'title_setup');
+print load_fiche_titre($titre,$linkback,'title_setup');
 
 if (empty($id))
 {
@@ -1594,6 +1595,7 @@ function fieldList($fieldlist, $obj='', $tabname='', $context='')
 			if ($fieldlist[$field]=='accountancy_code') $size='size="10" ';
 			if ($fieldlist[$field]=='accountancy_code_sell') $size='size="10" ';
 			if ($fieldlist[$field]=='accountancy_code_buy') $size='size="10" ';
+			if ($fieldlist[$field]=='sortorder') $size='size="2" ';
 			print '<input type="text" '.$size.' class="flat" value="'.(isset($obj->$fieldlist[$field])?$obj->$fieldlist[$field]:'').'" name="'.$fieldlist[$field].'">';
 			print '</td>';
 		}

@@ -35,18 +35,9 @@ class AdherentType extends CommonObject
     public $table_element = 'adherent_type';
     public $element = 'adherent_type';
 
-    var $id;
-
-    /**
-     * @var int
-     */
-    public $ref;
-
     var $libelle;
-    var $statut;
     var $cotisation;  // Soumis a la cotisation
     var $vote;		  // droit de vote
-    var $note; 		  // commentaire
     var $mail_valid;  //mail envoye lors de la validation
 
 

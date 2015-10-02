@@ -370,7 +370,7 @@ if ($action == 'create' && !$error)
 	$facturestatic=new Facture($db);
 
 	llxHeader();
-	print_fiche_titre($langs->trans('NewBill'));
+	print load_fiche_titre($langs->trans('NewBill'));
 
 	$soc = new Societe($db);
 	if ($socid) $res=$soc->fetch($socid);
@@ -570,7 +570,7 @@ if (($action != 'create' && $action != 'add') || ($action == 'create' && $error)
 		$title = $langs->trans('ListOfOrders');
 		$title.=' - '.$langs->trans('StatusOrderValidated').', '.$langs->trans("StatusOrderSent").', '.$langs->trans('StatusOrderToBill');
 		$num = $db->num_rows($resql);
-		print_fiche_titre($title);
+		print load_fiche_titre($title);
 		$i = 0;
 		$period=$html->select_date($date_start,'date_start',0,0,1,'',1,0,1).' - '.$html->select_date($date_end,'date_end',0,0,1,'',1,0,1);
 		$periodely=$html->select_date($date_starty,'date_start_dely',0,0,1,'',1,0,1).' - '.$html->select_date($date_endy,'date_end_dely',0,0,1,'',1,0,1);
@@ -640,6 +640,9 @@ if (($action != 'create' && $action != 'add') || ($action == 'create' && $error)
 
 			$generic_commande->id=$objp->rowid;
 			$generic_commande->ref=$objp->ref;
+			$generic_commande->statut = $objp->fk_statut;
+			$generic_commande->date_commande = $db->jdate($objp->date_commande);
+			$generic_commande->date_livraison = $db->jdate($objp->date_livraison);
 
 			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 			print '<td class="nobordernopadding nowrap">';
@@ -647,7 +650,9 @@ if (($action != 'create' && $action != 'add') || ($action == 'create' && $error)
 			print '</td>';
 
 			print '<td width="20" class="nobordernopadding nowrap">';
-			if (($objp->fk_statut > 0) && ($objp->fk_statut < 3) && $db->jdate($objp->date_valid) < ($now - $conf->commande->client->warning_delay)) print img_picto($langs->trans("Late"),"warning");
+			if ($generic_commande->hasDelay()) {
+				print img_picto($langs->trans("Late"),"warning");
+			}
 			print '</td>';
 
 			print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';

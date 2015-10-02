@@ -84,7 +84,7 @@ if ($socid > 0)
 	if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 	{
 		// Factures
-		print_fiche_titre($langs->trans("CustomerPreview"));
+		print load_fiche_titre($langs->trans("CustomerPreview"));
 
 		print '<table class="noborder" width="100%">';
 

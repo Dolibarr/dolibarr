@@ -1,0 +1,5 @@
+# Dolibarr language file - Source file is en_US - bills
+PaymentTypeTIP=Deposit
+PaymentTypeShortTIP=Deposit
+PaymentTypeTRA=Bill payment
+PaymentTypeShortTRA=Bill

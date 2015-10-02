@@ -54,9 +54,10 @@ class Address
 	public $lines;
 
 	/**
-	 *  Constructor
+	 * Constructor
 	 *
-	 *  @param	DoliDB		$db     Database handler
+	 * @param DoliDB $db Database handler
+	 * @deprecated
 	 */
 	function __construct($db)
 	{

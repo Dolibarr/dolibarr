@@ -268,7 +268,7 @@ if (empty($reshook))
 		// Create new object
 		if ($result > 0 && ! $error)
 		{
-			$object->oldcopy=dol_clone($object);
+			$object->oldcopy = clone $object;
 
 			// Change values
 			$object->civility_id = trim($_POST["civility_id"]);
@@ -779,7 +779,7 @@ else
 
 		$adht = new AdherentType($db);
 
-		print_fiche_titre($langs->trans("NewMember"));
+		print load_fiche_titre($langs->trans("NewMember"));
 
 		if ($conf->use_javascript_ajax)
 		{

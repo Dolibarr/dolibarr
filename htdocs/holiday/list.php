@@ -18,7 +18,7 @@
  */
 
 /**
- *   	\file       htdocs/holiday/index.php
+ *   	\file       htdocs/holiday/list.php
  *		\ingroup    holiday
  *		\brief      List of holiday.
  */
@@ -198,7 +198,7 @@ else
 // Si erreur SQL
 if ($holiday_payes == '-1')
 {
-    print_fiche_titre($langs->trans('CPTitreMenu'), '', 'title_hrm.png');
+    print load_fiche_titre($langs->trans('CPTitreMenu'), '', 'title_hrm.png');
 
     dol_print_error($db, $langs->trans('Error').' '.$holiday->error);
     exit();

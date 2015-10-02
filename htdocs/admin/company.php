@@ -277,7 +277,7 @@ $formcompany=new FormCompany($db);
 
 $countrynotdefined='<font class="error">'.$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')</font>';
 
-print_fiche_titre($langs->trans("CompanyFoundation"),'','title_setup');
+print load_fiche_titre($langs->trans("CompanyFoundation"),'','title_setup');
 
 print $langs->trans("CompanyFundationDesc")."<br>\n";
 print "<br>\n";
@@ -414,9 +414,9 @@ if ($action == 'edit' || $action == 'updateedit')
 
 	// Forme juridique
 	$var=!$var;
-	print '<tr '.$bc[$var].'><td><label for="legal_form">'.$langs->trans("JuridicalStatus").'</label></td><td>';
+	print '<tr '.$bc[$var].'><td><label for="forme_juridique_code">'.$langs->trans("JuridicalStatus").'</label></td><td>';
 	if ($mysoc->country_code) {
-		print $formcompany->select_juridicalstatus($conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE, $mysoc->country_code, '', 'legal_form');
+		print $formcompany->select_juridicalstatus($conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE, $mysoc->country_code, '', 'forme_juridique_code');
 	} else {
 		print $countrynotdefined;
 	}

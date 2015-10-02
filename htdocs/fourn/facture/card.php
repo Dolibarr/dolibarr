@@ -364,7 +364,7 @@ if (empty($reshook))
 			if(empty($object->date_echeance)) $object->date_echeance = $object->calculate_date_lim_reglement();
 
 	        // If creation from another object of another module
-	        if ($_POST['origin'] && $_POST['originid'])
+	        if (! $error && $_POST['origin'] && $_POST['originid'])
 	        {
 	            // Parse element/subelement (ex: project_task)
 	            $element = $subelement = $_POST['origin'];
@@ -468,17 +468,17 @@ if (empty($reshook))
 	                $error++;
 	            }
 	        }
-	        // If some invoice's lines already known
-	        else
+	        else if (! $error)
 	        {
 	            $id = $object->create($user);
 	            if ($id < 0)
 	            {
 	                $error++;
 	            }
-
+	            
 	            if (! $error)
 	            {
+        	        // If some invoice's lines already known
 	                for ($i = 1 ; $i < 9 ; $i++)
 	                {
 	                    $label = $_POST['label'.$i];
@@ -513,7 +513,8 @@ if (empty($reshook))
 	        {
 	            $langs->load("errors");
 	            $db->rollback();
-		        setEventMessage($langs->trans($object->error), 'errors');
+	            
+		        setEventMessages($object->error, $object->errors, 'errors');
 	            $action='create';
 	            $_GET['socid']=$_POST['socid'];
 	        }
@@ -1237,7 +1238,7 @@ if ($action == 'create')
 	$facturestatic = new FactureFournisseur($db);
 	$extralabels = $extrafields->fetch_name_optionals_label($facturestatic->table_element);
 
-    print_fiche_titre($langs->trans('NewBill'));
+    print load_fiche_titre($langs->trans('NewBill'));
 
     dol_htmloutput_events();
 
@@ -1476,7 +1477,8 @@ if ($action == 'create')
 	// Public note
 	print '<tr><td>'.$langs->trans('NotePublic').'</td>';
     print '<td>';
-    $doleditor = new DolEditor('note_public', GETPOST('note_public'), '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
+    $note_public = $object->getDefaultCreateValueFor('note_public');
+    $doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
     print $doleditor->Create(1);
     print '</td>';
    // print '<td><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_5.'"></textarea></td>';
@@ -1485,7 +1487,8 @@ if ($action == 'create')
     // Private note
     print '<tr><td>'.$langs->trans('NotePrivate').'</td>';
     print '<td>';
-    $doleditor = new DolEditor('note_private', GETPOST('note_private'), '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
+    $note_private = $object->getDefaultCreateValueFor('note_private');
+    $doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
     print $doleditor->Create(1);
     print '</td>';
     // print '<td><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_5.'"></textarea></td>';
@@ -1587,7 +1590,7 @@ if ($action == 'create')
         print '<br>';
 
         $title=$langs->trans('ProductsAndServices');
-        print_titre($title);
+        print load_fiche_titre($title);
 
         print '<table class="noborder" width="100%">';
 
@@ -1905,7 +1908,9 @@ else
         // Due date
         print '<tr><td>'.$form->editfieldkey("DateMaxPayment",'date_lim_reglement',$object->date_echeance,$object,$form_permission,'datepicker').'</td><td colspan="3">';
         print $form->editfieldval("DateMaxPayment",'date_lim_reglement',$object->date_echeance,$object,$form_permission,'datepicker');
-        if ($action != 'editdate_lim_reglement' && $object->statut < FactureFournisseur::STATUS_CLOSED && $object->date_echeance && $object->date_echeance < ($now - $conf->facture->fournisseur->warning_delay)) print img_warning($langs->trans('Late'));
+        if ($action != 'editdate_lim_reglement' && $object->hasDelay()) {
+	        print img_warning($langs->trans('Late'));
+        }
         print '</td>';
 
 		// Conditions de reglement par defaut
@@ -2305,7 +2310,7 @@ else
 
 			print '<div class="clearboth"></div>';
             print '<br>';
-            print_fiche_titre($langs->trans('SendBillByMail'));
+            print load_fiche_titre($langs->trans('SendBillByMail'));
 
             dol_fiche_head('');
 

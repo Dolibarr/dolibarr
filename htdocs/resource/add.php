@@ -123,7 +123,7 @@ if (! $action)
 {
 	$pagetitle=$langs->trans('AddResource');
 	llxHeader('',$pagetitle,'');
-	print_fiche_titre($pagetitle,'','title_generic');
+	print load_fiche_titre($pagetitle,'','title_generic');
 
 	print '<form method="post" action="'.$_SERVER['PHP_SELF'].'" name="add_resource">';
 	print '<input type="hidden" name="action" value="confirm_add_resource" />';

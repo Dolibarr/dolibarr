@@ -1,7 +1,7 @@
 # Dolibarr language file - en_US - Accounting Expert
 CHARSET=UTF-8
-ACCOUNTING_EXPORT_SEPARATORCSV=Column separator for export file
-ACCOUNTING_EXPORT_DATE=Date format for export file
+ACCOUNTING_EXPORT_SEPARATORCSV=Διαχωριστής στηλών για το αρχείο που θα εξαχθεί
+ACCOUNTING_EXPORT_DATE=Μορφή ημερομηνίας για το αρχείο που θα εξαγθεί
 ACCOUNTING_EXPORT_PIECE=Export the number of piece ?
 ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account ?
 ACCOUNTING_EXPORT_LABEL=Export the label ?

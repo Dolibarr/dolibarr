@@ -89,7 +89,7 @@ $form = new Form($db);
 llxHeader('',$langs->trans("Margins").' - '.$langs->trans("Products"));
 
 $text=$langs->trans("Margins");
-//print_fiche_titre($text);
+//print load_fiche_titre($text);
 
 // Show tabs
 $head=marges_prepare_head($user);

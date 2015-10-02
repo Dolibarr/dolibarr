@@ -232,7 +232,7 @@ llxHeader("",$langs->trans("SocialContribution"),$help_url);
 // Mode creation
 if ($action == 'create')
 {
-	print_fiche_titre($langs->trans("NewSocialContribution"));
+	print load_fiche_titre($langs->trans("NewSocialContribution"));
 
     $var=false;
 

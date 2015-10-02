@@ -42,6 +42,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/modules/facture/modules_facture.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/discount.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formmargin.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
@@ -923,7 +924,11 @@ if (empty($reshook))
 						$exp = new Expedition($db);
 						$exp->fetch($object->origin_id);
 						$exp->fetchObjectLinked();
-						if (count($exp->linkedObjectsIds['commande']) > 0) $object->linked_objects['commande'] = $exp->linkedObjectsIds['commande'][0];
+						if (count($exp->linkedObjectsIds['commande']) > 0) {
+							foreach ($exp->linkedObjectsIds['commande'] as $key => $value){
+								$object->linked_objects['commande'] = $value;
+							}
+						}
 					}
 
 					if (is_array($_POST['other_linked_objects']) && ! empty($_POST['other_linked_objects']))
@@ -1718,61 +1723,7 @@ if (empty($reshook))
 			else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
 			$action = '';
 		}
-	}
-
-	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
-
-	if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->facture->creer)
-	{
-		if ($action == 'addcontact')
-		{
-			$result = $object->fetch($id);
-
-			if ($result > 0 && $id > 0) {
-				$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
-				$result = $object->add_contact($contactid, $_POST["type"], $_POST["source"]);
-			}
-
-		if ($result >= 0) {
-			header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $object->id);
-			exit();
-		} else {
-			if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-				$langs->load("errors");
-				setEventMessage($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), 'errors');
-			} else {
-				setEventMessage($object->error, 'errors');
-			}
-		}
-	}
-
-	// bascule du statut d'un contact
-	else if ($action == 'swapstatut')
-	{
-		if ($object->fetch($id)) {
-			$result = $object->swapContactStatus(GETPOST('ligne'));
-		} else {
-			dol_print_error($db);
-			}
-	}
-
-	// Efface un contact
-	else if ($action == 'deletecontact')
-	{
-		$object->fetch($id);
-		$result = $object->delete_contact($lineid);
-
-		if ($result >= 0) {
-			header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $object->id);
-			exit();
-		} else {
-			dol_print_error($db);
-		}
-	}
-
-
-	if ($action == 'update_extras')
-	{
+	} elseif ($action == 'update_extras') {
 		// Fill array 'array_options' with data from add form
 		$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 		$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
@@ -1784,18 +1735,60 @@ if (empty($reshook))
 			$hookmanager->initHooks(array('invoicedao'));
 			$parameters = array('id' => $object->id);
 			$reshook = $hookmanager->executeHooks('insertExtraFields', $parameters, $object, $action); // Note that $action and $object may have been modified by
-			                                                                                      // some hooks
+			// some hooks
 			if (empty($reshook)) {
-						$result = $object->insertExtraFields();
-					if ($result < 0) {
-						$error ++;
-					}
-				} else if ($reshook < 0)
+				$result = $object->insertExtraFields();
+				if ($result < 0) {
 					$error ++;
+				}
+			} else if ($reshook < 0)
+				$error ++;
+		}
+
+		if ($error)
+			$action = 'edit_extras';
+	}
+
+	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
+
+	if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->facture->creer) {
+		if ($action == 'addcontact') {
+			$result = $object->fetch($id);
+
+			if ($result > 0 && $id > 0) {
+				$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
+				$result = $object->add_contact($contactid, $_POST["type"], $_POST["source"]);
 			}
 
-			if ($error)
-				$action = 'edit_extras';
+			if ($result >= 0) {
+				header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+				exit();
+			} else {
+				if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+					$langs->load("errors");
+					setEventMessage($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), 'errors');
+				} else {
+					setEventMessage($object->error, 'errors');
+				}
+			}
+		} // bascule du statut d'un contact
+		elseif ($action == 'swapstatut') {
+			if ($object->fetch($id)) {
+				$result = $object->swapContactStatus(GETPOST('ligne'));
+			} else {
+				dol_print_error($db);
+			}
+		} // Efface un contact
+		elseif ($action == 'deletecontact') {
+			$object->fetch($id);
+			$result = $object->delete_contact($lineid);
+
+			if ($result >= 0) {
+				header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+				exit();
+			} else {
+				dol_print_error($db);
+			}
 		}
 	}
 }
@@ -1808,6 +1801,7 @@ if (empty($reshook))
 $form = new Form($db);
 $formother = new FormOther($db);
 $formfile = new FormFile($db);
+$formmargin = new FormMargin($this->db);
 $bankaccountstatic = new Account($db);
 if (! empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
 
@@ -1830,7 +1824,7 @@ if ($action == 'create')
 	$facturestatic = new Facture($db);
 	$extralabels = $extrafields->fetch_name_optionals_label($facturestatic->table_element);
 
-	print_fiche_titre($langs->trans('NewBill'));
+	print load_fiche_titre($langs->trans('NewBill'));
 
 	$soc = new Societe($db);
 	if ($socid > 0)
@@ -2182,9 +2176,9 @@ if ($action == 'create')
 			$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceAvoirDesc"), 1, 'help', '', 0, 3);
 			print $desc;
 
-			print '<div id="credit_note_options">';
-	        print '&nbsp;&nbsp;&nbsp; <input type="checkbox" name="invoiceAvoirWithLines" id="invoiceAvoirWithLines" value="1" onclick="if($(this).is(\':checked\') ) { $(\'#radio_creditnote\').prop("checked", true); $(\'#invoiceAvoirWithPaymentRestAmount\').removeAttr(\'checked\');   }" '.(GETPOST('invoiceAvoirWithLines','int')>0 ? 'checked':'').' /> <label for="invoiceAvoirWithLines">'.$langs->trans('invoiceAvoirWithLines')."</label>";
-	        print '<br>&nbsp;&nbsp;&nbsp; <input type="checkbox" name="invoiceAvoirWithPaymentRestAmount" id="invoiceAvoirWithPaymentRestAmount" value="1" onclick="if($(this).is(\':checked\') ) { $(\'#radio_creditnote\').prop("checked", true);  $(\'#invoiceAvoirWithLines\').removeAttr(\'checked\');   }" '.(GETPOST('invoiceAvoirWithPaymentRestAmount','int')>0 ? 'checked':'').' /> <label for="invoiceAvoirWithPaymentRestAmount">'.$langs->trans('invoiceAvoirWithPaymentRestAmount')."</label>";
+			print '<div id="credit_note_options" class="clearboth">';
+	        print '&nbsp;&nbsp;&nbsp; <input data-role="none" type="checkbox" name="invoiceAvoirWithLines" id="invoiceAvoirWithLines" value="1" onclick="if($(this).is(\':checked\') ) { $(\'#radio_creditnote\').prop(\'checked\', true); $(\'#invoiceAvoirWithPaymentRestAmount\').removeAttr(\'checked\');   }" '.(GETPOST('invoiceAvoirWithLines','int')>0 ? 'checked':'').' /> <label for="invoiceAvoirWithLines">'.$langs->trans('invoiceAvoirWithLines')."</label>";
+	        print '<br>&nbsp;&nbsp;&nbsp; <input data-role="none" type="checkbox" name="invoiceAvoirWithPaymentRestAmount" id="invoiceAvoirWithPaymentRestAmount" value="1" onclick="if($(this).is(\':checked\') ) { $(\'#radio_creditnote\').prop(\'checked\', true);  $(\'#invoiceAvoirWithLines\').removeAttr(\'checked\');   }" '.(GETPOST('invoiceAvoirWithPaymentRestAmount','int')>0 ? 'checked':'').' /> <label for="invoiceAvoirWithPaymentRestAmount">'.$langs->trans('invoiceAvoirWithPaymentRestAmount')."</label>";
 			print '</div>';
 
 			print '</div></div>';
@@ -2293,11 +2287,7 @@ if ($action == 'create')
 	print '<tr>';
 	print '<td class="border" valign="top">' . $langs->trans('NotePublic') . '</td>';
 	print '<td valign="top" colspan="2">';
-	$note_public = '';
-	if (is_object($objectsrc)) 	// Take value from source object
-	{
-		$note_public = $objectsrc->note_public;
-	}
+	$note_public = $object->getDefaultCreateValueFor('note_public', (is_object($objectsrc)?$objectsrc->note_public:null));
 	$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
 	print $doleditor->Create(1);
 
@@ -2307,11 +2297,7 @@ if ($action == 'create')
 		print '<tr>';
 		print '<td class="border" valign="top">' . $langs->trans('NotePrivate') . '</td>';
 		print '<td valign="top" colspan="2">';
-		$note_private = '';
-		if (! empty($origin) && ! empty($originid) && is_object($objectsrc)) 		// Take value from source object
-		{
-			$note_private = $objectsrc->note_private;
-		}
+        $note_private = $object->getDefaultCreateValueFor('note_private', ((! empty($origin) && ! empty($originid) && is_object($objectsrc))?$objectsrc->note_private:null));
 		$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
 		print $doleditor->Create(1);
 		// print '<textarea name="note_private" wrap="soft" cols="70" rows="'.ROWS_3.'">'.$note_private.'.</textarea>
@@ -2451,7 +2437,7 @@ if ($action == 'create')
 		print '<br>';
 
 		$title = $langs->trans('ProductsAndServices');
-		print_titre($title);
+		print load_fiche_titre($title);
 
 		print '<table class="noborder" width="100%">';
 
@@ -3182,7 +3168,7 @@ else if ($id > 0 || ! empty($ref))
 	if (! empty($conf->margin->enabled))
 	{
 		print '<br>';
-		$object->displayMarginInfos($object->statut > 0);
+		$formmargin->displayMarginInfos($object, $object->statut > 0);
 	}
 
 	print '</td></tr>';
@@ -3223,8 +3209,9 @@ else if ($id > 0 || ! empty($ref))
 			$form->form_date($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $object->date_lim_reglement, 'paymentterm');
 		} else {
 			print dol_print_date($object->date_lim_reglement, 'daytext');
-			if ($object->date_lim_reglement < ($now - $conf->facture->client->warning_delay) && ! $object->paye && $object->statut == 1 && ! isset($object->am))
+			if ($object->hasDelay()) {
 				print img_warning($langs->trans('Late'));
+			}
 		}
 	} else {
 		print '&nbsp;';
@@ -3819,7 +3806,7 @@ else if ($id > 0 || ! empty($ref))
 
 		print '<div class="clearboth"></div>';
 		print '<br>';
-		print_fiche_titre($langs->trans($titreform));
+		print load_fiche_titre($langs->trans($titreform));
 
 		// Cree l'objet formulaire mail
 		dol_fiche_head();

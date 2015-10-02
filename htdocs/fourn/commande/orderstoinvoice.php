@@ -262,7 +262,7 @@ $companystatic = new Societe($db);
 if ($action == 'create' && !$error) {
 
 	llxHeader();
-	print_fiche_titre($langs->trans('NewBill'));
+	print load_fiche_titre($langs->trans('NewBill'));
 
 	$soc = new Societe($db);
 	if ($socid)
@@ -442,7 +442,7 @@ if (($action != 'create' && $action != 'add') && !$error) {
 		$title = $langs->trans('ListOfSupplierOrders');
 		$title .= ' - ' . $langs->trans('StatusOrderReceivedAllShort');
 		$num = $db->num_rows($resql);
-		print_fiche_titre($title);
+		print load_fiche_titre($title);
 		$i = 0;
 		$period = $html->select_date($date_start, 'date_start', 0, 0, 1, '', 1, 0, 1) . ' - ' . $html->select_date($date_end, 'date_end', 0, 0, 1, '', 1, 0, 1);
 		$periodely = $html->select_date($date_starty, 'date_start_dely', 0, 0, 1, '', 1, 0, 1) . ' - ' . $html->select_date($date_endy, 'date_end_dely', 0, 0, 1, '', 1, 0, 1);

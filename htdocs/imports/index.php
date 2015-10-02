@@ -41,7 +41,7 @@ $form=new Form($db);
 
 llxHeader('',$langs->trans("ImportArea"),'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
 
-print_fiche_titre($langs->trans("ImportArea"));
+print load_fiche_titre($langs->trans("ImportArea"));
 
 print $langs->trans("FormatedImportDesc1").'<br>';
 print $langs->trans("FormatedImportDesc2").'<br>';

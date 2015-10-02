@@ -131,6 +131,7 @@ abstract class CommonObject
 	public $thirdparty;
 	/**
 	 * @deprecated
+	 * @var Societe A related customer
 	 * @see thirdparty
 	 */
 	public $client;
@@ -283,27 +284,27 @@ abstract class CommonObject
 	public $note;
 
 	/**
-	 * @var float
+	 * @var float Total amount before taxes
 	 * @see update_price()
 	 */
 	public $total_ht;
 	/**
-	 * @var float
+	 * @var float Total VAT amount
 	 * @see update_price()
 	 */
 	public $total_tva;
 	/**
-	 * @var float
+	 * @var float Total local tax 1 amount
 	 * @see update_price()
 	 */
 	public $total_localtax1;
 	/**
-	 * @var float
+	 * @var float Total local tax 2 amount
 	 * @see update_price()
 	 */
 	public $total_localtax2;
 	/**
-	 * @var float
+	 * @var float Total amount with taxes
 	 * @see update_price()
 	 */
 	public $total_ttc;
@@ -389,7 +390,7 @@ abstract class CommonObject
      *
      *	@param	Translate	$langs			Language object for translation of civility
      *	@param	int			$option			0=No option, 1=Add civility
-     * 	@param	int			$nameorder		-1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname
+     * 	@param	int			$nameorder		-1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname, 2=Firstname
      * 	@param	int			$maxlen			Maximum length
      * 	@return	string						String with full name
      */
@@ -452,13 +453,15 @@ abstract class CommonObject
         // Check parameters
         if ($fk_socpeople <= 0)
         {
-            $this->error=$langs->trans("ErrorWrongValueForParameter","1");
+            $langs->load("errors");
+            $this->error=$langs->trans("ErrorWrongValueForParameterX","1");
             dol_syslog(get_class($this)."::add_contact ".$this->error,LOG_ERR);
             return -1;
         }
         if (! $type_contact)
         {
-            $this->error=$langs->trans("ErrorWrongValueForParameter","2");
+            $langs->load("errors");
+            $this->error=$langs->trans("ErrorWrongValueForParameterX","2");
             dol_syslog(get_class($this)."::add_contact ".$this->error,LOG_ERR);
             return -2;
         }
@@ -486,7 +489,7 @@ abstract class CommonObject
         }
 
         $datecreate = dol_now();
-
+        
         $this->db->begin();
 
         // Insertion dans la base
@@ -504,7 +507,11 @@ abstract class CommonObject
             if (! $notrigger)
             {
             	$result=$this->call_trigger(strtoupper($this->element).'_ADD_CONTACT', $user);
-	            if ($result < 0) { $this->db->rollback(); return -1; }
+	            if ($result < 0) 
+	            { 
+	                $this->db->rollback(); 
+	                return -1;
+	            }
             }
 
             $this->db->commit();
@@ -1077,18 +1084,18 @@ abstract class CommonObject
     function getValueFrom($table, $id, $field)
     {
         $result=false;
-
-        $sql = "SELECT ".$field." FROM ".MAIN_DB_PREFIX.$table;
-        $sql.= " WHERE rowid = ".$id;
-
-        dol_syslog(get_class($this).'::getValueFrom', LOG_DEBUG);
-        $resql = $this->db->query($sql);
-        if ($resql)
-        {
-            $row = $this->db->fetch_row($resql);
-            $result = $row[0];
-        }
-
+		if (!empty($id) && !empty($field) && !empty($table)) {
+	        $sql = "SELECT ".$field." FROM ".MAIN_DB_PREFIX.$table;
+	        $sql.= " WHERE rowid = ".$id;
+	
+	        dol_syslog(get_class($this).'::getValueFrom', LOG_DEBUG);
+	        $resql = $this->db->query($sql);
+	        if ($resql)
+	        {
+	            $row = $this->db->fetch_row($resql);
+	            $result = $row[0];
+	        }
+		}
         return $result;
     }
 
@@ -2800,10 +2807,11 @@ abstract class CommonObject
     // --------------------
 
     /**
-     *  Show linked object block.
+     * Show linked object block.
      *
-     *  @return		int		<0 if KO, >0 if OK
-     *  @deprecated 3.8 Use instead $form->shoLinkedObjectBlock($object)
+     * @return int <0 if KO, >0 if OK
+     * @deprecated 3.8 Use instead $form->showLinkedObjectBlock($object)
+     * @see Form::showLinkedObjectBlock
      */
     function showLinkedObjectBlock()
     {
@@ -3543,7 +3551,47 @@ abstract class CommonObject
 
 	/* Functions common to commonobject and commonobjectline */
 
+    /* For default values */
 
+    /**
+     * Return the default value to use for a field when showing the create form of object. 
+     * Return values in this order:
+     * 1) If parameter is available into POST, we return it first.
+     * 2) If not but an alternate value was provided as parameter of function, we return it.
+     * 3) If not but a constant $conf->global->OBJECTELEMENT_FIELDNAME is set, we return it (It is better to use the dedicated table). 
+     * 4) Return value found into database (TODO No yet implemented)
+     * 
+     * @param   string      $fieldname          Name of field
+     * @param   string      $alternatevalue     Alternate value to use
+     * @return  string                          Default value
+     **/
+	function getDefaultCreateValueFor($fieldname, $alternatevalue=null)
+    {
+        global $conf, $_POST;
+
+        // If param is has been posted with use this value first.
+        if (isset($_POST[$fieldname])) return GETPOST($fieldname, 2);
+        
+        if (isset($alternatevalue)) return $alternatevalue;
+        
+        $newelement=$this->element;
+        if ($newelement == 'facture') $newelement='invoice';
+        if ($newelement == 'commande') $newelement='order';
+        if (empty($newelement)) 
+        {
+            dol_syslog("Ask a default value using common method getDefaultCreateValueForField on an object with no property ->element defined. Return empty string.", LOG_WARNING);
+            return '';
+        }
+        
+        $keyforfieldname=strtoupper($newelement.'_DEFAULT_'.$fieldname);
+        //var_dump($keyforfieldname);
+        if (isset($conf->global->$keyforfieldname)) return $conf->global->$keyforfieldname;
+        
+        // TODO Ad here a scan into table llx_overwrite_default with a filter on $this->element and $fieldname 
+        
+    }
+	
+    
 	/* For triggers */
 
 

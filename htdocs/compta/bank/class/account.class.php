@@ -44,9 +44,7 @@ class Account extends CommonObject
      * @see id
      */
     var $rowid;
-    var $id;
 
-    var $ref;
     var $label;
     //! 1=Compte courant/check/carte, 2=Compte liquide, 0=Compte épargne
     var $courant;
@@ -74,10 +72,6 @@ class Account extends CommonObject
     var $state_id;
     var $state_code;
     var $state;
-
-    var $country_id;
-    var $country_code;
-    var $country;
 
     var $type_lib=array();
 
@@ -1148,6 +1142,10 @@ class AccountLine extends CommonObject
     var $ref;
     var $datec;
     var $dateo;
+
+    /**
+     * Value date
+     */
     var $datev;
     var $amount;
     var $label;

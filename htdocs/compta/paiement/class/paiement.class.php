@@ -36,8 +36,6 @@ class Paiement extends CommonObject
     public $element='payment';
     public $table_element='paiement';
 
-    var $id;
-	var $ref;
 	var $facid;
 	var $datepaye;
 	/**
@@ -59,8 +57,6 @@ class Paiement extends CommonObject
 	var $num_paiement;	// Numero du CHQ, VIR, etc...
 	var $bank_account;	// Id compte bancaire du paiement
 	var $bank_line;     // Id de la ligne d'ecriture bancaire
-	var $fk_account;	// Id of bank account
-	var $note;
 	// fk_paiement dans llx_paiement est l'id du type de paiement (7 pour CHQ, ...)
 	// fk_paiement dans llx_paiement_facture est le rowid du paiement
 
@@ -697,9 +693,11 @@ class Paiement extends CommonObject
 		}
 	}
 
-	/*
-	 *    \brief      Information sur l'objet
-	 *    \param      id      id du paiement dont il faut afficher les infos
+	/**
+	 *    Information sur l'objet
+	 *    
+	 *    @param   int     $id      id du paiement dont il faut afficher les infos
+	 *    @return  void
 	 */
 	function info($id)
 	{

@@ -19,12 +19,37 @@
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
 
-INSERT INTO llx_const (name, value, type, note, visible) values ('MAIN_DELAY_EXPENSEREPORTS_TO_PAY','31','chaine','Tolérance de retard avant alerte (en jours) sur les notes de frais impayées',0);
+INSERT INTO llx_const (name, value, type, note, visible) values (__ENCRYPT('MAIN_DELAY_EXPENSEREPORTS_TO_PAY')__,__ENCRYPT('31')__,'chaine','Tolérance de retard avant alerte (en jours) sur les notes de frais impayées',0);
 
 ALTER TABLE llx_accounting_system MODIFY COLUMN pcg_version varchar(32);
 ALTER TABLE llx_accountingaccount MODIFY COLUMN fk_pcg_version varchar(32);
 
+UPDATE llx_const SET name = __ENCRYPT('ACCOUNTING_EXPORT_PREFIX_SPEC')__ WHERE __DECRYPT('name')__ = 'EXPORT_PREFIX_SPEC';
+
+UPDATE llx_const set value = __ENCRYPT('eldy')__ WHERE __DECRYPT('value')__ = 'auguria';
+UPDATE llx_const set value = __ENCRYPT('eldy')__ WHERE __DECRYPT('value')__ = 'bureau2crea';
+UPDATE llx_const set value = __ENCRYPT('eldy')__ WHERE __DECRYPT('value')__ = 'amarok';
+UPDATE llx_const set value = __ENCRYPT('eldy')__ WHERE __DECRYPT('value')__ = 'cameleo';
+
 ALTER TABLE llx_accountingaccount RENAME TO llx_accounting_account;
 
 ALTER TABLE llx_societe ADD COLUMN model_pdf varchar(255);
+
+ALTER TABLE llx_societe_commerciaux ADD COLUMN import_key varchar(14) AFTER fk_user;
+
+ALTER TABLE llx_categorie ADD COLUMN color varchar(8);
+
+create table llx_overwrite_trans
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  lang            varchar(5),	-- en_US, fr_FR ...
+  transkey	      varchar(128),
+  transvalue      text
+)ENGINE=innodb;
+
+ALTER TABLE llx_payment_salary ADD COLUMN datec datetime after tms;
+ALTER TABLE llx_payment_salary CHANGE COLUMN fk_user_creat fk_user_author integer;
+
+ALTER TABLE llx_adherent ADD COLUMN pass_crypted varchar(128) after pass;
+
 

@@ -244,7 +244,7 @@ else
 
 
 
-	//print_fiche_titre($langs->trans('ResourcesLinkedToElement'),'','');
+	//print load_fiche_titre($langs->trans('ResourcesLinkedToElement'),'','');
 
 
 
@@ -277,7 +277,7 @@ else
 
 			if ($mode != 'add' || $resource_obj != $resource_type)
 			{
-				//print_titre($langs->trans(ucfirst($element_prop['element']).'Singular'));
+				//print load_fiche_titre($langs->trans(ucfirst($element_prop['element']).'Singular'));
 
 				// If we have a specific template we use it
 				if(file_exists(dol_buildpath($path.'/core/tpl/resource_'.$element_prop['element'].'_view.tpl.php')))

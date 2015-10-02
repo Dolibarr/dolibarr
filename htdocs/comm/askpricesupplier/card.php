@@ -29,6 +29,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaskpricesupplier.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formmargin.class.php';
 require_once DOL_DOCUMENT_ROOT . '/comm/askpricesupplier/class/askpricesupplier.class.php';
 require_once DOL_DOCUMENT_ROOT . '/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/modules/askpricesupplier/modules_askpricesupplier.php';
@@ -977,6 +978,7 @@ $form = new Form($db);
 $formother = new FormOther($db);
 $formfile = new FormFile($db);
 $formaskpricesupplier = new FormAskPriceSupplier($db);
+$formmargin = new FormMargin($this->db);
 $companystatic = new Societe($db);
 
 $now = dol_now();
@@ -984,7 +986,7 @@ $now = dol_now();
 // Add new askprice
 if ($action == 'create')
 {
-	print_fiche_titre($langs->trans("NewAskPrice"));
+	print load_fiche_titre($langs->trans("NewAskPrice"));
 
 	$soc = new Societe($db);
 	if ($socid > 0)
@@ -1263,7 +1265,7 @@ if ($action == 'create')
 		print '<br>';
 
 		$title = $langs->trans('ProductsAndServices');
-		print_titre($title);
+		print load_fiche_titre($title);
 
 		print '<table class="noborder" width="100%">';
 
@@ -1500,7 +1502,7 @@ if ($action == 'create')
 	// Margin Infos
 	if (! empty($conf->margin->enabled)) {
 		print '<td valign="top" width="50%" rowspan="4">';
-		$object->displayMarginInfos();
+		$formmargin->displayMarginInfos($object);
 		print '</td>';
 	}
 	print '</tr>';
@@ -1770,7 +1772,7 @@ if ($action == 'create')
 
 		print '<div class="clearboth"></div>';
 		print '<br>';
-		print_fiche_titre($langs->trans('SendAskByMail'));
+		print load_fiche_titre($langs->trans('SendAskByMail'));
 
 		dol_fiche_head('');
 

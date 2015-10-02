@@ -1,7 +1,11 @@
+/allscreens*
 /ancot*
 /bootstrap*
+/dolimed*
+/ecommerce*
 /extensions*
 /google*
+/lead
 /multicompany*
 /ndf*
 /numberingpack*
@@ -11,5 +15,3 @@
 /teclib*
 /test.php
 /ultimatepdf*
-/lead
-/dolimed*

@@ -100,7 +100,7 @@ $html = new Form($db);
 $submit = isset($_POST['submit'])?true:false;
 $idAccount=isset($_GET["account"])?$_GET["account"]:$_POST["account"];
 
-print_fiche_titre($langs->trans("TripSynch"));
+print load_fiche_titre($langs->trans("TripSynch"));
 
 
 dol_fiche_head('');
@@ -108,13 +108,13 @@ dol_fiche_head('');
 
 if ($_GET["action"] == 'ndfTOaccount'):
 	$idTrip = $_GET['idTrip'];
-	$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?idTrip=".$idTrip."&account=".$idAccount,$langs->trans("ndfToAccount"),$langs->trans("ConfirmNdfToAccount"),"confirm_ndf_to_account","","",1);
+	$ret=$html->formconfirm($_SERVER["PHP_SELF"]."?idTrip=".$idTrip."&account=".$idAccount,$langs->trans("ndfToAccount"),$langs->trans("ConfirmNdfToAccount"),"confirm_ndf_to_account","","",1);
 	if ($ret == 'html') print '<br />';
 endif;
 
 if ($_GET["action"] == 'accountTOndf'):
 	$idTrip = $_GET['idTrip'];
-	$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?idTrip=".$idTrip."&account=".$idAccount,$langs->trans("AccountToNdf"),$langs->trans("ConfirmAccountToNdf"),"confirm_account_to_ndf","","",1);
+	$ret=$html->formconfirm($_SERVER["PHP_SELF"]."?idTrip=".$idTrip."&account=".$idAccount,$langs->trans("AccountToNdf"),$langs->trans("ConfirmAccountToNdf"),"confirm_account_to_ndf","","",1);
 	if ($ret == 'html') print '<br />';
 endif;
 

@@ -114,7 +114,23 @@ class modProjet extends DolibarrModules
 		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/tasks";
 		$this->const[$r][3] = "";
 		$this->const[$r][4] = 0;
-
+		$r++;
+		
+		$this->const[$r][0] = "PROJECT_USE_OPPORTUNIES";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "1";
+		$this->const[$r][3] = "";
+		$this->const[$r][4] = 0;
+		$r++;
+		
+		/* not required (0 = not present)
+		$this->const[$r][0] = "PROJECT_HIDE_TASKS";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "0";
+		$this->const[$r][3] = "";
+		$this->const[$r][4] = 0;
+		*/
+		
 		// Boxes
 		$this->boxes = array();
 		$r=0;
@@ -193,7 +209,7 @@ class modProjet extends DolibarrModules
 		$this->export_TypeFields_array[$r]=array('s.rowid'=>"List:societe:nom",'s.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','s.fk_pays'=>'List:c_country:label',
 		's.phone'=>'Text','s.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text','s.code_compta'=>'Text','s.code_compta_fournisseur'=>'Text',
 		'p.rowid'=>"List:projet:ref",'p.ref'=>"Text",'p.datec'=>"Date",'p.dateo'=>"Date",'p.datee'=>"Date",'p.fk_statut'=>'Status','p.description'=>"Text",
-		'pt.dateo'=>"Date",'pt.datee'=>"Date",'pt.duration_effective'=>"Duree",'pt.planned_workload'=>"Number",'pt.progress'=>"Number",'pt.description'=>"Text",
+		'pt.dateo'=>"Date",'pt.datee'=>"Date",'pt.duration_effective'=>"Duree",'pt.planned_workload'=>"Numeric",'pt.progress'=>"Numeric",'pt.description'=>"Text",
 		'ptt.task_date'=>'Date','ptt.task_duration'=>"Duree",'ptt.fk_user'=>"List:user:CONCAT(lastname,' ',firstname)",'ptt.note'=>"Text");
 
 		$this->export_entities_array[$r]=array('s.rowid'=>"company",'s.nom'=>'company','s.address'=>'company','s.zip'=>'company','s.town'=>'company','s.fk_pays'=>'company',

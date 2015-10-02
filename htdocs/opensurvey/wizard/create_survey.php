@@ -94,7 +94,7 @@ if (GETPOST("creation_sondage_date") || GETPOST("creation_sondage_autre"))
 			$_SESSION['champdatefin'] = dol_print_date($champdatefin,'dayrfc');
 			//$testdate = false;
 			//$_SESSION['champdatefin'] = dol_print_date($champdatefin,'dayrfc');
-			setEventMessage($langs->trans('ExpiredDate'),'warnings');
+			setEventMessage('ExpireDate','warnings');
 		}
 	}
 
@@ -131,7 +131,7 @@ $arrayofjs=array();
 $arrayofcss=array('/opensurvey/css/style.css');
 llxHeader('', $langs->trans("OpenSurvey"), '', "", 0, 0, $arrayofjs, $arrayofcss);
 
-print_fiche_titre($langs->trans("CreatePoll").' (1 / 2)');
+print load_fiche_titre($langs->trans("CreatePoll").' (1 / 2)');
 
 //debut du formulaire
 print '<form name="formulaire" action="" method="POST">'."\n";

@@ -407,7 +407,7 @@ if ($action == 'update')
 		if (! $datef && $percentage == 100)
 		{
 			$error++; $donotclearsession=1;
-			setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("DateEnd")),$object->errors,'errors');
+			setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired",$langs->transnoentitiesnoconv("DateEnd")),$object->errors,'errors');
 			$action = 'edit';
 		}
 
@@ -636,8 +636,8 @@ if ($action == 'create')
 	if ($backtopage) print '<input type="hidden" name="backtopage" value="'.($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"]).'">';
 	if (empty($conf->global->AGENDA_USE_EVENT_TYPE)) print '<input type="hidden" name="actioncode" value="'.dol_getIdFromCode($db, 'AC_OTH', 'c_actioncomm').'">';
 
-	if (GETPOST("actioncode") == 'AC_RDV') print_fiche_titre($langs->trans("AddActionRendezVous"));
-	else print_fiche_titre($langs->trans("AddAnAction"));
+	if (GETPOST("actioncode") == 'AC_RDV') print load_fiche_titre($langs->trans("AddActionRendezVous"));
+	else print load_fiche_titre($langs->trans("AddAnAction"));
 
 	dol_fiche_head();
 
@@ -647,7 +647,8 @@ if ($action == 'create')
 	if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
 	{
 		print '<tr><td width="30%"><span class="fieldrequired">'.$langs->trans("Type").'</span></b></td><td>';
-		$formactions->select_type_actions(GETPOST("actioncode")?GETPOST("actioncode"):$object->type_code, "actioncode","systemauto");
+		$default=(empty($conf->global->AGENDA_USE_EVENT_TYPE_DEFAULT)?'':$conf->global->AGENDA_USE_EVENT_TYPE_DEFAULT);
+		$formactions->select_type_actions(GETPOST("actioncode")?GETPOST("actioncode"):($object->type_code?$object->type_code:$default), "actioncode","systemauto");
 		print '</td></tr>';
 	}
 

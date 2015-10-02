@@ -77,7 +77,7 @@ if ($mode == 'supplier')
     $dir=$conf->fournisseur->dir_output.'/commande/temp';
 }
 
-print_fiche_titre($title,'','title_commercial.png');
+print load_fiche_titre($title,'','title_commercial.png');
 
 dol_mkdir($dir);
 

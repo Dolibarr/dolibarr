@@ -43,31 +43,14 @@ class Livraison extends CommonObject
 	public $fk_element="fk_livraison";
 	public $table_element="livraison";
 
-	var $id;
 	var $brouillon;
-	var $origin;
-	var $origin_id;
 	var $socid;
 	var $ref_customer;
-	var $statut;
-
-	/**
-	 * @deprecated
-	 * @see note_public, note_private
-	 */
-	var $note;
-	var $note_public;
-	var $note_private;
 
 	var $date_delivery;    // Date really received
 	var $date_creation;
 	var $date_valid;
 	var $model_pdf;
-
-	//Incorterms
-	var $fk_incoterms;
-	var $location_incoterms;
-	var $libelle_incoterms;  //Used into tooltip
 
 	/**
 	 * Constructor

@@ -275,7 +275,7 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0)
 				$url = $shorturl = $tmp[0];
 				$param = (isset($tmp[1])?$tmp[1]:'');
 
-				if (! preg_match('/mainmenu/i',$url) || ! preg_match('/leftmenu/i',$url)) $param.=($param?'&':'').'mainmenu='.$newTabMenu[$i]['mainmenu'].'&amp;leftmenu=';
+				if (! preg_match('/mainmenu/i',$param) || ! preg_match('/leftmenu/i',$param)) $param.=($param?'&':'').'mainmenu='.$newTabMenu[$i]['mainmenu'].'&amp;leftmenu=';
 				//$url.="idmenu=".$newTabMenu[$i]['rowid'];    // Already done by menuLoad
 				$url = dol_buildpath($url,1).($param?'?'.$param:'');
 				$shorturl = $shorturl.($param?'?'.$param:'');
@@ -439,7 +439,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 		}
 		$title=$langs->trans("GoIntoSetupToChangeLogo");
 		print "\n".'<!-- Show logo on menu -->'."\n";
-		print '<div class="blockvmenuimpair">'."\n";
+		print '<div class="blockvmenuimpair blockvmenulogo">'."\n";
 		print '<div class="menu_titre" id="menu_titre_logo"></div>';
 		print '<div class="menu_top" id="menu_top_logo"></div>';
 		print '<div class="menu_contenu" id="menu_contenu_logo">';
@@ -629,7 +629,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 			if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) $newmenu->add("/contact/list.php?leftmenu=contacts&type=p", $langs->trans("Prospects"), 2, $user->rights->societe->contact->lire);
 			if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) $newmenu->add("/contact/list.php?leftmenu=contacts&type=c", $langs->trans("Customers"), 2, $user->rights->societe->contact->lire);
 			if (! empty($conf->fournisseur->enabled)) $newmenu->add("/contact/list.php?leftmenu=contacts&type=f", $langs->trans("Suppliers"), 2, $user->rights->societe->contact->lire);
-			$newmenu->add("/contact/list.php?leftmenu=contacts&type=o", $langs->trans("Others"), 2, $user->rights->societe->contact->lire);
+			$newmenu->add("/contact/list.php?leftmenu=contacts&type=o", $langs->trans("ContactOthers"), 2, $user->rights->societe->contact->lire);
 			//$newmenu->add("/contact/list.php?userid=$user->id", $langs->trans("MyContacts"), 1, $user->rights->societe->contact->lire);
 
 			// Categories
@@ -866,8 +866,8 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 					if (empty($conf->global->TAX_DISABLE_VAT_MENUS))
 					{
 						$newmenu->add("/compta/tva/index.php?leftmenu=tax_vat&amp;mainmenu=accountancy",$langs->trans("VAT"),1,$user->rights->tax->charges->lire, '', $mainmenu, 'tax_vat');
-						if (empty($leftmenu) || preg_match('/^tax_vat/i',$leftmenu)) $newmenu->add("/compta/tva/card.php?leftmenu=tax_vat&action=create",$langs->trans("NewPayment"),2,$user->rights->tax->charges->creer);
-						if (empty($leftmenu) || preg_match('/^tax_vat/i',$leftmenu)) $newmenu->add("/compta/tva/reglement.php?leftmenu=tax_vat",$langs->trans("Payments"),2,$user->rights->tax->charges->lire);
+						if (empty($leftmenu) || preg_match('/^tax_vat/i',$leftmenu)) $newmenu->add("/compta/tva/card.php?leftmenu=tax_vat&action=create",$langs->trans("New"),2,$user->rights->tax->charges->creer);
+						if (empty($leftmenu) || preg_match('/^tax_vat/i',$leftmenu)) $newmenu->add("/compta/tva/reglement.php?leftmenu=tax_vat",$langs->trans("List"),2,$user->rights->tax->charges->lire);
 						if (empty($leftmenu) || preg_match('/^tax_vat/i',$leftmenu)) $newmenu->add("/compta/tva/clients.php?leftmenu=tax_vat", $langs->trans("ReportByCustomers"), 2, $user->rights->tax->charges->lire);
 						if (empty($leftmenu) || preg_match('/^tax_vat/i',$leftmenu)) $newmenu->add("/compta/tva/quadri_detail.php?leftmenu=tax_vat", $langs->trans("ReportByQuarter"), 2, $user->rights->tax->charges->lire);
 						global $mysoc;
@@ -1395,7 +1395,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 	$invert=empty($conf->global->MAIN_MENU_INVERT)?"":"invert";
 	if (empty($noout))
 	{
-		$alt=0; $blockvmenuopened=false;
+		$alt=0; $altok=0; $blockvmenuopened=false;
 		$num=count($menu_array);
 		for ($i = 0; $i < $num; $i++)
 		{
@@ -1405,14 +1405,15 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 			$alt++;
 			if (empty($menu_array[$i]['level']) && $showmenu)
 			{
+			    $altok++;
 				$blockvmenuopened=true;
-				if (($alt%2==0))
+				if ($altok % 2 == 0)
 				{
-					print '<div class="blockvmenuimpair'.$invert.'">'."\n";
+					print '<div class="blockvmenuimpair'.$invert.($alt == 1 ? ' blockvmenufirst':'').'">'."\n";
 				}
 				else
 				{
-					print '<div class="blockvmenupair'.$invert.'">'."\n";
+					print '<div class="blockvmenupair'.$invert.($alt == 1 ? ' blockvmenufirst':'').'">'."\n";
 				}
 			}
 
@@ -1478,9 +1479,11 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 			{
 				if ($showmenu)
 					print '<div class="menu_end"></div>'."\n";
-				if ($blockvmenuopened) { print "</div>\n"; $blockvmenuopened=false; }
+				if ($blockvmenuopened) { print '</div>'."\n"; $blockvmenuopened=false; }
 			}
 		}
+		
+		if ($altok) print '<div class="blockvmenuend"></div>';
 	}
 
 	return count($menu_array);
