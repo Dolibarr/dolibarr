@@ -781,6 +781,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("BillsCustomersUnpaid",$num).' <a href="'.DOL_URL_ROOT.'/compta/facture/list.php?search_status=1"><span class="badge">'.$num.'</span></a></td>';
+		print '<td align="right">'.$langs->trans("DateDue").'</td>';
 		if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td align="right">'.$langs->trans("AmountHT").'</td>';
 		print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
 		print '<td align="right">'.$langs->trans("Received").'</td>';
@@ -830,6 +831,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
                 $societestatic->code_fournisseur = $obj->code_fournisseur;
 				print $societestatic->getNomUrl(1,'customer',44);
 				print '</td>';
+				print '<td align="right">'.$obj->datelimite.'</td>';
 				if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td align="right">'.price($obj->total_ht).'</td>';
 				print '<td align="right">'.price($obj->total_ttc).'</td>';
 				print '<td align="right">'.price($obj->am).'</td>';
@@ -844,6 +846,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 			}
 
 			print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").' &nbsp; <font style="font-weight: normal">('.$langs->trans("RemainderToTake").': '.price($total_ttc-$totalam).')</font> </td>';
+			print '<td>&nbsp;</td>';
 			if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td align="right">'.price($total).'</td>';
 			print '<td align="right">'.price($total_ttc).'</td>';
 			print '<td align="right">'.price($totalam).'</td>';
@@ -852,7 +855,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 		}
 		else
 		{
-			$colspan=5;
+			$colspan=6;
 			if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) $colspan++;
 			print '<tr '.$bc[$var].'><td colspan="'.$colspan.'">'.$langs->trans("NoInvoice").'</td></tr>';
 		}
@@ -873,6 +876,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 	$facstatic=new FactureFournisseur($db);
 
 	$sql = "SELECT ff.rowid, ff.ref, ff.fk_statut, ff.libelle, ff.total_ht, ff.total_tva, ff.total_ttc, ff.paye";
+	$sql.= ", ff.date_lim_reglement";
 	$sql.= ", s.nom as name";
     $sql.= ", s.rowid as socid";
     $sql.= ", s.code_client";
@@ -889,6 +893,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 	if ($socid) $sql.= " AND ff.fk_soc = ".$socid;
 	$sql.= " GROUP BY ff.rowid, ff.ref, ff.fk_statut, ff.libelle, ff.total_ht, ff.tva, ff.total_tva, ff.total_ttc, ff.paye,";
 	$sql.= " s.nom, s.rowid, s.code_client, s.code_fournisseur";
+	$sql.= " ORDER BY ff.date_lim_reglement ASC";
 
 	$resql=$db->query($sql);
 	if ($resql)
@@ -898,6 +903,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("BillsSuppliersUnpaid",$num).' <a href="'.DOL_URL_ROOT.'/fourn/facture/impayees.php"><span class="badge">'.$num.'</span></a></td>';
+		print '<td align="right">'.$langs->trans("DateDue").'</td>';
 		if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td align="right">'.$langs->trans("AmountHT").'</td>';
 		print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
 		print '<td align="right">'.$langs->trans("Paid").'</td>';
@@ -926,6 +932,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
                 $societestatic->code_client = $obj->code_client;
                 $societestatic->code_fournisseur = $obj->code_fournisseur;
 				print '<td>'.$societestatic->getNomUrl(1, 'supplier', 44).'</td>';
+				print '<td align="right">'.$obj->date_lim_reglement.'</td>';
 				if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td align="right">'.price($obj->total_ht).'</td>';
 				print '<td align="right">'.price($obj->total_ttc).'</td>';
 				print '<td align="right">'.price($obj->am).'</td>';
@@ -939,6 +946,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 			}
 
 			print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").' &nbsp; <font style="font-weight: normal">('.$langs->trans("RemainderToPay").': '.price($total_ttc-$totalam).')</font> </td>';
+			print '<td>&nbsp;</td>';
 			if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td align="right">'.price($total).'</td>';
 			print '<td align="right">'.price($total_ttc).'</td>';
 			print '<td align="right">'.price($totalam).'</td>';
@@ -947,7 +955,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 		}
 		else
 		{
-			$colspan=5;
+			$colspan=6;
 			if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) $colspan++;
 			print '<tr '.$bc[$var].'><td colspan="'.$colspan.'">'.$langs->trans("NoInvoice").'</td></tr>';
 		}
