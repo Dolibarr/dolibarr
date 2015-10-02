@@ -2145,6 +2145,16 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 		$original_file=$conf->banque->dir_output.'/bordereau/'.$original_file;		// original_file should contains relative path so include the get_exdir result
 	}
 
+	// Wrapping for bank
+	else if ($modulepart == 'bank')
+	{
+		if ($fuser->rights->banque->lire)
+		{
+			$accessallowed=1;
+		}
+		$original_file=$conf->bank->dir_output.'/'.$original_file;
+	}
+
 	// Wrapping for export module
 	else if ($modulepart == 'export')
 	{
