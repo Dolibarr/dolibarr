@@ -10,3 +10,5 @@ FailedToConnectToFTPServerWithCredentials=Tanımlı kullanıcı/parola ile FTP s
 FTPFailedToRemoveFile=<b>%s</b> Dosyası kaldırılamadı.
 FTPFailedToRemoveDir=<b>%s</b> Dizini kaldırılamadı (İzinleri o dizinin boş olduğunu denetleyin).
 FTPPassiveMode=Pasif mod
+ChooseAFTPEntryIntoMenu=Choose a FTP entry into menu...
+FailedToGetFile=Failed to get files %s

@@ -6,3 +6,4 @@ ErrorFileNotLinked=Soubor nemohl být propojen
 LinkRemoved=Odkaz %s byl odstraněn
 ErrorFailedToDeleteLink= Nepodařilo se odstranit odkaz '<b>%s</b>'
 ErrorFailedToUpdateLink= Nepodařilo se aktualizovat odkaz '<b>%s</b>'
+URLToLink=URL to link

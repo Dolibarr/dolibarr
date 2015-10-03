@@ -39,6 +39,9 @@ InterventionClassifiedUnbilledInDolibarr=Intervention %s set as unbilled
 InterventionSentByEMail=Intervention %s sent by EMail
 InterventionDeletedInDolibarr=Intervention %s deleted
 SearchAnIntervention=Search an intervention
+InterventionsArea=Interventions area
+DraftFichinter=Draft interventions
+LastModifiedInterventions=Last %s modified interventions
 ##### Types de contacts #####
 TypeContact_fichinter_internal_INTERREPFOLL=代表随访干预
 TypeContact_fichinter_internal_INTERVENING=干预
@@ -51,3 +54,14 @@ PacificNumRefModelDesc1=返回格式%syymm，其中yy是二○○一年numero，
 PacificNumRefModelError=干预卡$ syymm起已经存在，而不是与此序列模型兼容。删除或重新命名它激活该模块。
 PrintProductsOnFichinter=干预卡上的打印产品
 PrintProductsOnFichinterDetails=interventions generated from orders
+##### Exports #####
+InterId=Intervention id
+InterRef=Intervention ref.
+InterDateCreation=Date creation intervention
+InterDuration=Duration intervention
+InterStatus=Status intervention
+InterNote=Note intervention
+InterLineId=Line id intervention
+InterLineDate=Line date intervention
+InterLineDuration=Line duration intervention
+InterLineDesc=Line description intervention

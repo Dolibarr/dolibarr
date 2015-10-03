@@ -209,6 +209,6 @@ MigrationActioncommElement=Posodobitev podatkov o aktivnostih
 MigrationPaymentMode=Podatki, migracije za način plačila
 MigrationCategorieAssociation=Migracija kategorij
 MigrationEvents=Migracija dogodkov za dodajanje lastnika dogodka v dodelitveno tabelo
-
+MigrationReloadModule=Reload module %s
 ShowNotAvailableOptions=Prikaži opcije, ki niso na voljo
 HideNotAvailableOptions=Skrij opcije, ki niso na voljo

@@ -49,7 +49,7 @@ $langs->load("commercial");
 $langs->load("bills");
 $langs->load("banks");
 $langs->load("users");
-if (! empty($conf->categories->enabled)) $langs->load("categories");
+if (! empty($conf->categorie->enabled)) $langs->load("categories");
 if (! empty($conf->incoterm->enabled)) $langs->load("incoterm");
 if (! empty($conf->notification->enabled)) $langs->load("mails");
 
@@ -426,23 +426,11 @@ if (empty($reshook))
 
 					// Customer categories association
 					$custcats = GETPOST( 'custcats', 'array' );
-					if (!empty( $custcats )) {
-						$cat = new Categorie( $db );
-						foreach ($custcats as $id_category) {
-							$cat->fetch( $id_category );
-							$cat->add_type( $object, 'customer' );
-						}
-					}
+					$object->setCategories($custcats, 'customer');
 
 					// Supplier categories association
 					$suppcats = GETPOST('suppcats', 'array');
-					if (!empty($suppcats)) {
-						$cat = new Categorie($db);
-						foreach ($suppcats as $id_category) {
-							$cat->fetch($id_category);
-							$cat->add_type($object, 'supplier');
-						}
-					}
+					$object->setCategories($suppcats, 'supplier');
 
                     // Logo/Photo save
                     $dir     = $conf->societe->multidir_output[$conf->entity]."/".$object->id."/logos/";
@@ -549,36 +537,12 @@ if (empty($reshook))
                 }
 
 				// Customer categories association
-				// First we delete all categories association
-				$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . 'categorie_societe';
-				$sql .= ' WHERE fk_soc = ' . $object->id;
-				$db->query( $sql );
-
-				// Then we add the associated categories
 				$categories = GETPOST( 'custcats', 'array' );
-				if (!empty( $categories )) {
-					$cat = new Categorie( $db );
-					foreach ($categories as $id_category) {
-						$cat->fetch( $id_category );
-						$cat->add_type( $object, 'customer' );
-					}
-				}
+				$object->setCategories($categories, 'customer');
 
 				// Supplier categories association
-				// First we delete all categories association
-				$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . 'categorie_fournisseur';
-				$sql .= ' WHERE fk_soc = ' . $object->id;
-				$db->query($sql);
-
-				// Then we add the associated categories
 				$categories = GETPOST('suppcats', 'array');
-				if (!empty($categories)) {
-					$cat = new Categorie($db);
-					foreach ($categories as $id_category) {
-						$cat->fetch($id_category);
-						$cat->add_type($object, 'supplier');
-					}
-				}
+				$object->setCategories($categories, 'supplier');
 
                 // Logo/Photo save
                 $dir     = $conf->societe->multidir_output[$object->entity]."/".$object->id."/logos";

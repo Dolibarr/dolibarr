@@ -2,11 +2,13 @@
 CHARSET=UTF-8
 ACCOUNTING_EXPORT_SEPARATORCSV=Ločilo za stolpce za izvozno datoteko
 ACCOUNTING_EXPORT_DATE=Format datuma za izvozno datoteko
-ACCOUNTING_EXPORT_PIECE=Izvozi število kosov ?
-ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Izvozi z globalnim računom ?
-ACCOUNTING_EXPORT_LABEL=Izvozi naziv ?
-ACCOUNTING_EXPORT_AMOUNT=Izvozi znesek ?
-ACCOUNTING_EXPORT_DEVISE=Izvozi valuto ?
+ACCOUNTING_EXPORT_PIECE=Export the number of piece
+ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account
+ACCOUNTING_EXPORT_LABEL=Export the label
+ACCOUNTING_EXPORT_AMOUNT=Export the amount
+ACCOUNTING_EXPORT_DEVISE=Export the devise
+Selectformat=Select the format for the file
+ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
 
 Accounting=Računovodstvo
 Globalparameters=Globalni parametri
@@ -34,6 +36,7 @@ Selectchartofaccounts=Izberite kontni plan
 Validate=Potrjevanje
 Addanaccount=Dodaj računovodskega račun
 AccountAccounting=Računovodstvo račun
+AccountAccountingSuggest=Accounting account suggest
 Ventilation=Pregled
 ToDispatch=Odpremo
 Dispatched=Odpošlje
@@ -60,10 +63,10 @@ AccountingVentilationSupplier=Pregled računov dobaviteljev
 AccountingVentilationCustomer=Pregled računov kupcev
 Line=Line
 
-CAHTF=Skupaj nakup dobavitelj HT
+CAHTF=Total purchase supplier before tax
 InvoiceLines=Linije računa, ki se prezračuje
 InvoiceLinesDone=Prezračevane linije računa
-IntoAccount=Obračunskega računa
+IntoAccount=Ventilate in the accounting account
 
 Ventilate=Prezračiti
 VentilationAuto=Avtomatski pregled
@@ -152,7 +155,7 @@ Active=Izjava
 NewFiscalYear=Novo poslovno leto
 
 DescVentilCustomer=Tukaj poglejte letni pregled vaših računov kupcem
-TotalVente=Skupni prihodek HT
+TotalVente=Total turnover before tax
 TotalMarge=Skupaj prodajna marža
 DescVentilDoneCustomer=Tukaj poglejte seznam vrstic na računih za kupce in njihovih računovodskih računov
 DescVentilTodoCustomer=Prezračite svoje linije računa stranke z računovodsko račun
@@ -167,3 +170,4 @@ ValidateHistory=Potrditi Samodejno
 ErrorAccountancyCodeIsAlreadyUse=Napaka, ne morete izbrisati to računovodsko račun, ker se uporablja
 
 FicheVentilation=Kartica pregleda
+GeneralLedgerIsWritten=Operations are written in the general ledger

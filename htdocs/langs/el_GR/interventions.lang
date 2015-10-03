@@ -39,6 +39,9 @@ InterventionClassifiedUnbilledInDolibarr=Σετ Παρέμβαση %s ως μη 
 InterventionSentByEMail=Παρέμβαση %s αποστέλλετε με ηλεκτρονικό ταχυδρομείο 
 InterventionDeletedInDolibarr=Παρέμβαση %s διαγράφετε
 SearchAnIntervention=Αναζήτηση παρέμβασης
+InterventionsArea=Interventions area
+DraftFichinter=Draft interventions
+LastModifiedInterventions=Last %s modified interventions
 ##### Types de contacts #####
 TypeContact_fichinter_internal_INTERREPFOLL=Αντιπρόσωπος που παρακολουθεί την παρέμβαση
 TypeContact_fichinter_internal_INTERVENING=Παρεμβαίνων
@@ -51,3 +54,14 @@ PacificNumRefModelDesc1=Αριθμός επιστροφής με μορφή %syy
 PacificNumRefModelError=Μια καρτέλα παρέμβασης με $syymm ήδη υπάρχει και δεν είναι συμβατή με αυτή την ακολουθία. Απομακρύνετε την ή μετονομάστε την για να ενεργοποιήσετε το module.
 PrintProductsOnFichinter=Εκτυπώστε προϊόντα στην κάρτα παρέμβασης
 PrintProductsOnFichinterDetails=παρεμβάσεις που προέρχονται από παραγγελίες
+##### Exports #####
+InterId=Intervention id
+InterRef=Intervention ref.
+InterDateCreation=Date creation intervention
+InterDuration=Duration intervention
+InterStatus=Status intervention
+InterNote=Note intervention
+InterLineId=Line id intervention
+InterLineDate=Line date intervention
+InterLineDuration=Line duration intervention
+InterLineDesc=Line description intervention

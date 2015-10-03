@@ -77,7 +77,7 @@ $hideref 	 = (GETPOST('hideref','int') ? GETPOST('hideref','int') : (! empty($co
 $object = new Expedition($db);
 
 // Load object. Make an object->fetch
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not includ_once
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('expeditioncard','globalcard'));

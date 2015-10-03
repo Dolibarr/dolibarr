@@ -2,11 +2,13 @@
 CHARSET=UTF-8
 ACCOUNTING_EXPORT_SEPARATORCSV=Separador de columna pel fitxer d'exportació
 ACCOUNTING_EXPORT_DATE=Format de data pel fitxer d'exportació
-ACCOUNTING_EXPORT_PIECE=Export the number of piece ?
-ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account ?
-ACCOUNTING_EXPORT_LABEL=Exportar l'etiqueta?
-ACCOUNTING_EXPORT_AMOUNT=Export the amount ?
-ACCOUNTING_EXPORT_DEVISE=Export the devise ?
+ACCOUNTING_EXPORT_PIECE=Export the number of piece
+ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account
+ACCOUNTING_EXPORT_LABEL=Export the label
+ACCOUNTING_EXPORT_AMOUNT=Export the amount
+ACCOUNTING_EXPORT_DEVISE=Export the devise
+Selectformat=Select the format for the file
+ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
 
 Accounting=Comptabilitat experta
 Globalparameters=Paràmetres globals
@@ -34,136 +36,138 @@ Selectchartofaccounts=Seleccionar el Pla comptable
 Validate=Validar
 Addanaccount=Afegir un compte comptable
 AccountAccounting=Compte comptable
-Ventilation=Breakdown
+AccountAccountingSuggest=Accounting account suggest
+Ventilation=Desglossament
 ToDispatch=A desglossar
 Dispatched=Desglossats
 
-CustomersVentilation=Breakdown customers
-SuppliersVentilation=Breakdown suppliers
-TradeMargin=Trade margin
+CustomersVentilation=Desglossament de clients
+SuppliersVentilation=Desglossament de proveïdors
+TradeMargin=Marge comercial
 Reports=Informes
-ByCustomerInvoice=By invoices customers
+ByCustomerInvoice=Per factures de clients
 ByMonth=Per mes
 NewAccount=Nou compte comptable
 Update=Actualitzar
 List=Llistat
 Create=Crear
 CreateMvts=Crear moviment
-UpdateAccount=Modification of an accounting account
-UpdateMvts=Modification of a movement
-WriteBookKeeping=Record accounts in general ledger
-Bookkeeping=General ledger
-AccountBalanceByMonth=Account balance by month
+UpdateAccount=Modificació d'un compte comptable
+UpdateMvts=Modificació d'un moviment
+WriteBookKeeping=Registre de comptabilitat en el llibre major
+Bookkeeping=Llibre major
+AccountBalanceByMonth=Balanç comptable per mes
 
-AccountingVentilation=Breakdown accounting
-AccountingVentilationSupplier=Breakdown accounting supplier
-AccountingVentilationCustomer=Breakdown accounting customer
+AccountingVentilation=Desglossament de comptabilitat
+AccountingVentilationSupplier=Desglossament de comptabilitat de proveïdor
+AccountingVentilationCustomer=Desglossament de comptabilitat de clients
 Line=Línia
 
-CAHTF=Total purchase supplier HT
-InvoiceLines=Lines of invoice to be ventilated
-InvoiceLinesDone=Ventilated lines of invoice
-IntoAccount=In the accounting account
+CAHTF=Total purchase supplier before tax
+InvoiceLines=Línies de factura per ser ventilades
+InvoiceLinesDone=Línies de factura ventilades
+IntoAccount=Ventilate in the accounting account
 
-Ventilate=Ventilate
-VentilationAuto=Automatic breakdown
+Ventilate=Ventilar
+VentilationAuto=Desglossament automàtic
 
 Processing=Processant
-EndProcessing=The end of processing
-AnyLineVentilate=Any lines to ventilate
-SelectedLines=Selected lines
-Lineofinvoice=Line of invoice
-VentilatedinAccount=Ventilated successfully in the accounting account
-NotVentilatedinAccount=Not ventilated in the accounting account
+EndProcessing=Final del procés
+AnyLineVentilate=Qualsevol línia per ventilar
+SelectedLines=Línies seleccionades
+Lineofinvoice=Línia de factura
+VentilatedinAccount=Ventilat satisfactòriament en els comptes comptables
+NotVentilatedinAccount=No ventilat en el compte comptable
 
-ACCOUNTING_SEPARATORCSV=Column separator in export file
+ACCOUNTING_SEPARATORCSV=Separador de columna en fitxer d'exportació
 
-ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to be breakdown shown by page (maximum recommended : 50)
-ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the breakdown pages "Has to breakdown" by the most recent elements
-ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the breakdown pages "Breakdown" by the most recent elements
+ACCOUNTING_LIMIT_LIST_VENTILATION=Número d'elements per visualitzar el desglossament per pàgina (màxim recomanat : 50)
+ACCOUNTING_LIST_SORT_VENTILATION_TODO=Comença la classificació de les pàgines de desglossament "S'ha de desglossar" pels elements més recents
+ACCOUNTING_LIST_SORT_VENTILATION_DONE=Comença la classificació de les pàgines de desglossament "Desglossar" pels elements més recents
 
-AccountLength=Length of the accounting accounts shown in Dolibarr
-AccountLengthDesc=Function allowing to feign a length of accounting account by replacing spaces by the zero figure. This function touches only the display, it does not modify the accounting accounts registered in Dolibarr. For the export, this function is necessary to be compatible with certain software.
-ACCOUNTING_LENGTH_DESCRIPTION=Length for displaying product & services description in listings (Best = 50)
-ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Length for displaying product & services account description form in listings (Best = 50)
-ACCOUNTING_LENGTH_GACCOUNT=Length of the general accounts
-ACCOUNTING_LENGTH_AACCOUNT=Length of the third party accounts
+AccountLength=Longitud dels comptes comptables mostrats a Dolibarr
+AccountLengthDesc=Funció que permet fingir una longitud de compte comptable mitjançant la substitució d'espais per la xifra zero. Aquesta funció només toca la pantalla, no modifica els comptes comptables registrats a Dolibarr. Per a l'exportació, aquesta funció és necessària per ser compatible amb un determinat programari.
+ACCOUNTING_LENGTH_DESCRIPTION=Longitud per mostrar la descripció de productes i serveis en llistats (Recomanat = 50)
+ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Longitud per mostrar la el formulari de descripció comptes de productes i serveis en llistats (Recomanat = 50)
+ACCOUNTING_LENGTH_GACCOUNT=Mida dels comptes generals
+ACCOUNTING_LENGTH_AACCOUNT=Mida dels comptes de tercers
 
-ACCOUNTING_SELL_JOURNAL=Sell journal
-ACCOUNTING_PURCHASE_JOURNAL=Purchase journal
-ACCOUNTING_MISCELLANEOUS_JOURNAL=Miscellaneous journal
-ACCOUNTING_EXPENSEREPORT_JOURNAL=Expense report journal
-ACCOUNTING_SOCIAL_JOURNAL=Social journal
+ACCOUNTING_SELL_JOURNAL=Diari de venda
+ACCOUNTING_PURCHASE_JOURNAL=Diari de compra
+ACCOUNTING_MISCELLANEOUS_JOURNAL=Diari varis
+ACCOUNTING_EXPENSEREPORT_JOURNAL=Diari de l'informe de despeses
+ACCOUNTING_SOCIAL_JOURNAL=Diari social
 
-ACCOUNTING_ACCOUNT_TRANSFER_CASH=Account of transfer
-ACCOUNTING_ACCOUNT_SUSPENSE=Account of wait
+ACCOUNTING_ACCOUNT_TRANSFER_CASH=Transferència de compte
+ACCOUNTING_ACCOUNT_SUSPENSE=Compte d'espera
 
-ACCOUNTING_PRODUCT_BUY_ACCOUNT=Accounting account by default for bought products (if not defined in the product sheet)
-ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Accounting account by default for the sold products (if not defined in the product sheet)
-ACCOUNTING_SERVICE_BUY_ACCOUNT=Accounting account by default for the bought services (if not defined in the service sheet)
-ACCOUNTING_SERVICE_SOLD_ACCOUNT=Accounting account by default for the sold services (if not defined in the service sheet)
+ACCOUNTING_PRODUCT_BUY_ACCOUNT=Compte comptable per defecte per productes comprats (si no s'ha definit en la fitxa de producte)
+ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Compte comptable per defecte per productes venuts (si no s'ha definit en la fitxa de producte)
+ACCOUNTING_SERVICE_BUY_ACCOUNT=Compte comptable per defecte per serveis comprats (si no s'ha definit en la fitxa de servei)
+ACCOUNTING_SERVICE_SOLD_ACCOUNT=Compte comptable per defecte per serveis venuts (si no s'ha definit en la fitxa de servei)
 
-Doctype=Type of document
-Docdate=Date
-Docref=Reference
-Numerocompte=Account
-Code_tiers=Thirdparty
-Labelcompte=Label account
-Debit=Debit
-Credit=Credit
-Amount=Amount
-Sens=Sens
-Codejournal=Journal
+Doctype=Tipus de document
+Docdate=Data
+Docref=Referència
+Numerocompte=Compte
+Code_tiers=Tercer
+Labelcompte=Etiqueta de compte
+Debit=Dèbit
+Credit=Crèdit
+Amount=Import
+Sens=Significat
+Codejournal=Diari
 
-DelBookKeeping=Delete the records of the general ledger
+DelBookKeeping=Eliminar els registres del llibre major
 
-SellsJournal=Sells journal
-PurchasesJournal=Purchases journal
-DescSellsJournal=Sells journal
-DescPurchasesJournal=Purchases journal
-BankJournal=Bank journal
-DescBankJournal=Bank journal including all the types of payments other than cash
-CashJournal=Cash journal
-DescCashJournal=Cash journal including the type of payment cash
+SellsJournal=Diari de vendes
+PurchasesJournal=Diari de compres
+DescSellsJournal=Diari de vendes
+DescPurchasesJournal=Diari de compres
+BankJournal=Diari del banc
+DescBankJournal=Diari del banc incloent tots els tipus de pagaments diferents de caixa
+CashJournal=Efectiu diari
+DescCashJournal=Efectiu diari inclòs el tipus de pagament al comptat
 
-CashPayment=Cash Payment
+CashPayment=Pagament al comptat
 
-SupplierInvoicePayment=Payment of invoice supplier
-CustomerInvoicePayment=Payment of invoice customer
+SupplierInvoicePayment=Pagament de factura de proveïdor
+CustomerInvoicePayment=Pagament de factura de client
 
 ThirdPartyAccount=Compte de tercer
 
 NewAccountingMvt=Nou moviment
 NumMvts=Nombre de moviment
 ListeMvts=Llistat del moviment
-ErrorDebitCredit=Debit and Credit cannot have a value at the same time
+ErrorDebitCredit=El dèbit i el crèdit no poden tenir valors alhora
 
 ReportThirdParty=Llitat de comptes de tercers
-DescThirdPartyReport=Consult here the list of the thirdparty customers and the suppliers and their accounting accounts
+DescThirdPartyReport=Consulta aquí el llistat dels tercers clients i proveïdors i els seus comptes comptables
 
-ListAccounts=List of the accounting accounts
+ListAccounts=Llistat dels comptes comptables
 
 Pcgversion=Versió del pla
-Pcgtype=Class of account
-Pcgsubtype=Under class of account
-Accountparent=Root of the account
+Pcgtype=Classe de compte
+Pcgsubtype=Sota la classe de compte
+Accountparent=Arrel del compte
 Active=Extracte
 
 NewFiscalYear=Nou any fiscal
 
-DescVentilCustomer=Consult here the annual breakdown accounting of your invoices customers
-TotalVente=Total turnover HT
+DescVentilCustomer=Consulta aquí el desglossament anual comptable de les teves factures de clients
+TotalVente=Total turnover before tax
 TotalMarge=Marge total de vendes
-DescVentilDoneCustomer=Consult here the list of the lines of invoices customers and their accounting account
-DescVentilTodoCustomer=Ventilate your lines of customer invoice with an accounting account
-ChangeAccount=Change the accounting account for lines selected by the account:
+DescVentilDoneCustomer=Consulta aquí el llistat de línies de factures de clients i els seus comptes comptables
+DescVentilTodoCustomer=Ventila les teves línies de factures de client amb un compte comptable
+ChangeAccount=Canvia el compte comptable per les línies seleccionades pel compte:
 Vide=-
-DescVentilSupplier=Consult here the annual breakdown accounting of your invoices suppliers
-DescVentilTodoSupplier=Ventilate your lines of invoice supplier with an accounting account
-DescVentilDoneSupplier=Consult here the list of the lines of invoices supplier and their accounting account
+DescVentilSupplier=Consulta aquí el desglossament anual comptable de les teves factures de proveïdors
+DescVentilTodoSupplier=Ventila les teves línies de factures de proveïdor amb un compte comptable
+DescVentilDoneSupplier=Consulta aquí el llistat de línies de factures de proveïdors i els seus comptes comptables
 
-ValidateHistory=Validate Automatically
+ValidateHistory=Valida automàticament
 
-ErrorAccountancyCodeIsAlreadyUse=Error, you cannot delete this accounting account because it is used
+ErrorAccountancyCodeIsAlreadyUse=Error, no pots eliminar aquest compte comptable perquè està en ús
 
-FicheVentilation=Breakdown card
+FicheVentilation=Desglossament de targetes
+GeneralLedgerIsWritten=Operations are written in the general ledger

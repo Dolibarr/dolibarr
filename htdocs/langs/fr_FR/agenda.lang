@@ -77,7 +77,7 @@ AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> pour restreindre aux écéveme
 AgendaShowBirthdayEvents=Afficher l'anniversaire des contacts
 AgendaHideBirthdayEvents=Cacher l'anniversaire des contacts
 Busy=Occupé
-ExportDataset_event1=Liste évênements de l'agenda
+ExportDataset_event1=Liste des événements de l'agenda
 DefaultWorkingDays=Jours ouvrables par défaut de la semaine (Exemple: 1-5, 1-6)
 DefaultWorkingHours=Heures de travail par défaut d'une journée (Exemple: 9-18)
 # External Sites ical

@@ -90,7 +90,7 @@ SelectAtLeastOneField=Eksportui įjungti bent vieną šaltinio lauką laukų stu
 SelectFormat=Pasirinkite šį importo failo formatą
 RunImportFile=Pradėti importuoti failą
 NowClickToRunTheImport=Patikrinkite importo simuliacijos rezultatą. Jei viskas gerai, pradėti tikrą galutinį importą.
-DataLoadedWithId=Visi duomenys bus įkrauti su šiuo importo ID: <b>%s</b>
+DataLoadedWithId=All data will be loaded with the following import id: <b>%s</b>
 ErrorMissingMandatoryValue=Privalomi duomenys yra tušti šaltinio failo lauke <b>%s</b>.
 TooMuchErrors=Čia yra <b>%s</b> kito šaltinio eilutės su klaidomis, bet išvestis buvo apribota.
 TooMuchWarnings=Čia yra dar <b>%s</b> kito šaltinio eilutės su įspėjimais, bet išvestis buvo apribota.
@@ -130,7 +130,7 @@ ExportDateFilter=YYYY, YYYYMM, YYYYMMDD : filtruoja paeiliui metai/mėnuo/diena<
 ExportNumericFilter='NNNNN' filtruos pagal vieną reikšmę<br>'NNNNN+NNNNN' filtruos diapazono reikšmes<br>'&gt;NNNNN' filtruos mažesnes reikšmes<br>'&gt;NNNNN' filtruos didesnes reikšmes.
 ## filters
 SelectFilterFields=Jei norite filtruoti pagal kai kokias reikšmes, įveskite reikšmes čia.
-FilterableFields=Filtruojami laukeliai
+FilterableFields=Filterable Fields
 FilteredFields=Atfiltruoti laukeliai
 FilteredFieldsValues=Reikšmės filtravimui
 FormatControlRule=Format control rule

@@ -1,8 +1,9 @@
-LinkANewFile=Link a new file/document
-LinkedFiles=Linked files and documents
-NoLinkFound=No registered links
-LinkComplete=The file has been linked successfully
-ErrorFileNotLinked=The file could not be linked
-LinkRemoved=The link %s has been removed
-ErrorFailedToDeleteLink= Failed to remove link '<b>%s</b>'
-ErrorFailedToUpdateLink= Failed to update link '<b>%s</b>'
+LinkANewFile=Vincular un nou arxiu / document
+LinkedFiles=Arxius i documents vinculats
+NoLinkFound=No hi ha enllaços registrats
+LinkComplete=L'arxiu s'ha vinculat correctament
+ErrorFileNotLinked=L'arxiu no s'ha vinculat
+LinkRemoved=L'enllaç %s ha estat eliminat
+ErrorFailedToDeleteLink= Error en eliminar l'enllaç '<b>%s</b>'
+ErrorFailedToUpdateLink= Error en actualitzar l'enllaç '<b>%s</b>'
+URLToLink=URL to link

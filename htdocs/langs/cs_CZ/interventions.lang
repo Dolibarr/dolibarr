@@ -39,6 +39,9 @@ InterventionClassifiedUnbilledInDolibarr=Intervence %s nastavená jako nezaúčt
 InterventionSentByEMail=Intervence %s odeslána e-mailem
 InterventionDeletedInDolibarr=Intervence %s odstraněna
 SearchAnIntervention=Hledat intervenci
+InterventionsArea=Interventions area
+DraftFichinter=Draft interventions
+LastModifiedInterventions=Last %s modified interventions
 ##### Types de contacts #####
 TypeContact_fichinter_internal_INTERREPFOLL=Representativní následující intervence
 TypeContact_fichinter_internal_INTERVENING=Zásah
@@ -51,3 +54,14 @@ PacificNumRefModelDesc1=Návrat čísla ve formátu %syymm-nnnn, kde yy je rok, 
 PacificNumRefModelError=Zásahová karta začíná s $ syymm již existuje a není kompatibilní s tímto modelem sekvence. Odstraňte ji nebo přejmenujte pro aktivaci tohoto modulu.
 PrintProductsOnFichinter=Výpis produktů na intervenční kartě
 PrintProductsOnFichinterDetails=intervence generované z objednávek
+##### Exports #####
+InterId=Intervention id
+InterRef=Intervention ref.
+InterDateCreation=Date creation intervention
+InterDuration=Duration intervention
+InterStatus=Status intervention
+InterNote=Note intervention
+InterLineId=Line id intervention
+InterLineDate=Line date intervention
+InterLineDuration=Line duration intervention
+InterLineDesc=Line description intervention
