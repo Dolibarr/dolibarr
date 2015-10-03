@@ -1401,7 +1401,7 @@ print $sql;
                 }
                 if (! $foundparent)
                 {
-                    $this->error="ErrorBadDefinitionOfMenuArrayInModuleDescriptor (bad value for key fk_menu)";
+                    $this->error="ErrorBadDefinitionOfMenuArrayInModuleDescriptor";
                     dol_syslog(get_class($this)."::insert_menus ".$this->error." ".$this->menu[$key]['fk_menu'], LOG_ERR);
                     $err++;
                 }
