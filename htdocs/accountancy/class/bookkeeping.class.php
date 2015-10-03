@@ -29,11 +29,6 @@
  */
 class BookKeeping extends CommonObject
 {
-	var $db;
-	var $error;
-	var $errors;
-
-	var $id;
 	var $doc_date;
 	var $doc_type;
 	var $doc_ref;

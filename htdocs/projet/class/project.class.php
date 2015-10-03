@@ -43,8 +43,6 @@ class Project extends CommonObject
      */
     protected $table_ref_field = 'ref';
 
-    var $id;
-    var $ref;
     var $description;
 	/**
 	 * @var string
@@ -60,8 +58,6 @@ class Project extends CommonObject
     var $user_author_id;    //!< Id of project creator. Not defined if shared project.
 	var $user_close_id;
     var $public;      //!< Tell if this is a public or private project
-    var $note_private;
-    var $note_public;
     var $budget_amount;
 
     var $statuts_short;

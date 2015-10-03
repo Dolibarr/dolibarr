@@ -33,9 +33,6 @@ class PaymentSocialContribution extends CommonObject
 	public $element='paiementcharge';			//!< Id that identify managed objects
 	public $table_element='paiementcharge';	//!< Name of table without prefix where object is stored
 
-	var $id;
-	var $ref;
-
 	var $fk_charge;
 	var $datec='';
 	var $tms='';
@@ -49,7 +46,6 @@ class PaymentSocialContribution extends CommonObject
     var $amounts=array();   // Array of amounts
 	var $fk_typepaiement;
 	var $num_paiement;
-	var $note;
 	var $fk_bank;
 	var $fk_user_creat;
 	var $fk_user_modif;

@@ -107,7 +107,6 @@ class ActionComm extends CommonObject
 
 	var $transparency;	// Transparency (ical standard). Used to say if people assigned to event are busy or not by event. 0=available, 1=busy, 2=busy (refused events)
     var $priority;      // Small int (0 By default)
-    var $note;          // Description
 
 	var $userassigned = array();	// Array of user ids
     var $userownerid;	// Id of user owner = fk_user_action into table
@@ -147,12 +146,6 @@ class ActionComm extends CommonObject
      * @see contactid
      */
     var $contact;
-
-    /**
-     * Id of project (optional)
-     * @var int
-     */
-    var $fk_project;
 
     // Properties for links to other objects
     var $fk_element;    // Id of record

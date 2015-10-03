@@ -34,16 +34,11 @@ class Holiday extends CommonObject
 	public $element='holiday';
 	public $table_element='holiday';
 
-	var $db;
-    var $error;
-    var $errors=array();
-
 	/**
 	 * @deprecated
 	 * @see id
 	 */
     var $rowid;
-    var $ref;
 
     var $fk_user;
     var $date_create='';
