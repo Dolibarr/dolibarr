@@ -226,11 +226,11 @@ if ($action == 'set_FACTURE_DRAFT_WATERMARK')
     }
 }
 
-if ($action == 'set_FACTURE_FREE_TEXT')
+if ($action == 'set_INVOICE_FREE_TEXT')
 {
-	$freetext = GETPOST('FACTURE_FREE_TEXT');	// No alpha here, we want exact string
+	$freetext = GETPOST('INVOICE_FREE_TEXT');	// No alpha here, we want exact string
 
-    $res = dolibarr_set_const($db, "FACTURE_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
+    $res = dolibarr_set_const($db, "INVOICE_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
 
 	if (! $res > 0) $error++;
 
@@ -753,10 +753,10 @@ print '</form>';
 $var=! $var;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
-print '<input type="hidden" name="action" value="set_FACTURE_FREE_TEXT" />';
+print '<input type="hidden" name="action" value="set_INVOICE_FREE_TEXT" />';
 print '<tr '.$bc[$var].'><td colspan="2">';
 print $langs->trans("FreeLegalTextOnInvoices").' ('.$langs->trans("AddCRIfTooLong").')<br>';
-$variablename='FACTURE_FREE_TEXT';
+$variablename='INVOICE_FREE_TEXT';
 if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 {
     print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';

@@ -298,7 +298,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 
 				// Line of free text
 				$newfreetext='';
-				$paramfreetext='FACTURE_FREE_TEXT';
+				$paramfreetext='INVOICE_FREE_TEXT';
 				if (! empty($conf->global->$paramfreetext))
 				{
 					$newfreetext=make_substitutions($conf->global->$paramfreetext,$substitutionarray);
