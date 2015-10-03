@@ -156,7 +156,7 @@ if (! empty($conf->global->LDAP_CONTACT_ACTIVE) && $conf->global->LDAP_CONTACT_A
 
 
 // Affichage attributs LDAP
-print_titre($langs->trans("LDAPInformationsForThisContact"));
+print load_fiche_titre($langs->trans("LDAPInformationsForThisContact"));
 
 print '<table width="100%" class="noborder">';
 

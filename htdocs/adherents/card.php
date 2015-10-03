@@ -268,7 +268,7 @@ if (empty($reshook))
 		// Create new object
 		if ($result > 0 && ! $error)
 		{
-			$object->oldcopy=dol_clone($object);
+			$object->oldcopy = clone $object;
 
 			// Change values
 			$object->civility_id = trim($_POST["civility_id"]);
@@ -326,25 +326,8 @@ if (empty($reshook))
 
 			if ($result >= 0 && ! count($object->errors))
 			{
-				// Categories association
-				// First we delete all categories association
-				$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . 'categorie_member';
-				$sql .= ' WHERE fk_member = ' . $object->id;
-				$resql = $db->query($sql);
-				if (! $resql) dol_print_error($db);
-
-				// Then we add the associated categories
 				$categories = GETPOST('memcats', 'array');
-
-				if (! empty($categories))
-				{
-					$cat = new Categorie($db);
-					foreach ($categories as $id_category)
-					{
-						$cat->fetch($id_category);
-						$cat->add_type($object, 'member');
-					}
-				}
+				$object->setCategories($categories);
 
 				// Logo/Photo save
 				$dir= $conf->adherent->dir_output . '/' . get_exdir($object->id,2,0,1,$object,'member').'/photos';
@@ -560,15 +543,7 @@ if (empty($reshook))
 			{
 				// Categories association
 				$memcats = GETPOST('memcats', 'array');
-				if (! empty($memcats))
-				{
-					$cat = new Categorie($db);
-					foreach ($memcats as $id_category)
-					{
-						$cat->fetch($id_category);
-						$cat->add_type($object, 'member');
-					}
-				}
+				$object->setCategories($memcats);
 
 				$db->commit();
 				$rowid=$object->id;
@@ -779,7 +754,7 @@ else
 
 		$adht = new AdherentType($db);
 
-		print_fiche_titre($langs->trans("NewMember"));
+		print load_fiche_titre($langs->trans("NewMember"));
 
 		if ($conf->use_javascript_ajax)
 		{
@@ -1478,7 +1453,14 @@ else
 		// Password
 		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
 		{
-			print '<tr><td>'.$langs->trans("Password").'</td><td>'.preg_replace('/./i','*',$object->pass).'</td></tr>';
+			print '<tr><td>'.$langs->trans("Password").'</td><td>'.preg_replace('/./i','*',$object->pass);
+			if ((! empty($object->pass) || ! empty($object->pass_crypted)) && empty($object->user_id))
+			{
+			    $langs->load("errors");
+			    $htmltext=$langs->trans("WarningPasswordSetWithNoAccount");
+			    print ' '.$form->textwithpicto('', $htmltext,1,'warning');
+			}
+			print '</td></tr>';
 		}
 
 		// Address

@@ -223,7 +223,7 @@ if (! empty($id) || ! empty($ref))
 
 			// Show graph
 
-			print '<table class="border" width="100%">';
+			print '<table class="noborder" width="100%">';
 			// Label
 			print '<tr class="liste_titre"><td colspan="2">';
 			print $graphfiles[$key]['label'];

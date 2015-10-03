@@ -544,7 +544,7 @@ if ($resql)
 
 	$param.=(! empty($option)?"&amp;option=".$option:"");
 
-	print_fiche_titre($titre,$link);
+	print load_fiche_titre($titre,$link);
 	//print_barre_liste($titre,$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',0);	// We don't want pagination on this page
 
 	print '<form id="form_unpaid" method="POST" action="'.$_SERVER["PHP_SELF"].'?sortfield='. $sortfield .'&sortorder='. $sortorder .'">';

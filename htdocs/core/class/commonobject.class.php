@@ -131,6 +131,7 @@ abstract class CommonObject
 	public $thirdparty;
 	/**
 	 * @deprecated
+	 * @var Societe A related customer
 	 * @see thirdparty
 	 */
 	public $client;
@@ -283,27 +284,27 @@ abstract class CommonObject
 	public $note;
 
 	/**
-	 * @var float
+	 * @var float Total amount before taxes
 	 * @see update_price()
 	 */
 	public $total_ht;
 	/**
-	 * @var float
+	 * @var float Total VAT amount
 	 * @see update_price()
 	 */
 	public $total_tva;
 	/**
-	 * @var float
+	 * @var float Total local tax 1 amount
 	 * @see update_price()
 	 */
 	public $total_localtax1;
 	/**
-	 * @var float
+	 * @var float Total local tax 2 amount
 	 * @see update_price()
 	 */
 	public $total_localtax2;
 	/**
-	 * @var float
+	 * @var float Total amount with taxes
 	 * @see update_price()
 	 */
 	public $total_ttc;
@@ -1083,18 +1084,18 @@ abstract class CommonObject
     function getValueFrom($table, $id, $field)
     {
         $result=false;
-
-        $sql = "SELECT ".$field." FROM ".MAIN_DB_PREFIX.$table;
-        $sql.= " WHERE rowid = ".$id;
-
-        dol_syslog(get_class($this).'::getValueFrom', LOG_DEBUG);
-        $resql = $this->db->query($sql);
-        if ($resql)
-        {
-            $row = $this->db->fetch_row($resql);
-            $result = $row[0];
-        }
-
+		if (!empty($id) && !empty($field) && !empty($table)) {
+	        $sql = "SELECT ".$field." FROM ".MAIN_DB_PREFIX.$table;
+	        $sql.= " WHERE rowid = ".$id;
+	
+	        dol_syslog(get_class($this).'::getValueFrom', LOG_DEBUG);
+	        $resql = $this->db->query($sql);
+	        if ($resql)
+	        {
+	            $row = $this->db->fetch_row($resql);
+	            $result = $row[0];
+	        }
+		}
         return $result;
     }
 
@@ -2271,7 +2272,7 @@ abstract class CommonObject
                     {
                         dol_include_once('/'.$classpath.'/'.$classfile.'.class.php');
 
-                        foreach($objectids as $i => $objectid);	// $i is rowid into llx_element_element
+                        foreach($objectids as $i => $objectid)	// $i is rowid into llx_element_element
                         {
                             $object = new $classname($this->db);
                             $ret = $object->fetch($objectid);
@@ -2806,10 +2807,11 @@ abstract class CommonObject
     // --------------------
 
     /**
-     *  Show linked object block.
+     * Show linked object block.
      *
-     *  @return		int		<0 if KO, >0 if OK
-     *  @deprecated 3.8 Use instead $form->shoLinkedObjectBlock($object)
+     * @return int <0 if KO, >0 if OK
+     * @deprecated 3.8 Use instead $form->showLinkedObjectBlock($object)
+     * @see Form::showLinkedObjectBlock
      */
     function showLinkedObjectBlock()
     {

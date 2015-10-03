@@ -107,7 +107,6 @@ class ActionComm extends CommonObject
 
 	var $transparency;	// Transparency (ical standard). Used to say if people assigned to event are busy or not by event. 0=available, 1=busy, 2=busy (refused events)
     var $priority;      // Small int (0 By default)
-    var $note;          // Description
 
 	var $userassigned = array();	// Array of user ids
     var $userownerid;	// Id of user owner = fk_user_action into table
@@ -147,12 +146,6 @@ class ActionComm extends CommonObject
      * @see contactid
      */
     var $contact;
-
-    /**
-     * Id of project (optional)
-     * @var int
-     */
-    var $fk_project;
 
     // Properties for links to other objects
     var $fk_element;    // Id of record
@@ -409,8 +402,8 @@ class ActionComm extends CommonObject
 
         $this->db->begin();
 
-        // Load source object
-        $objFrom = dol_clone($this);
+		// Load source object
+		$objFrom = clone $this;
 
 		$this->fetch_optionals();
 		$this->fetch_userassigned();
@@ -622,7 +615,19 @@ class ActionComm extends CommonObject
         	$this->error=$this->db->lasterror();
         	$error++;
         }
-
+        
+        if (! $error) {
+	        $sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm_resources";
+	        $sql.= " WHERE fk_actioncomm=".$this->id;
+	        
+	        dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+	        $res=$this->db->query($sql);
+	        if ($res < 0) {
+	        	$this->error=$this->db->lasterror();
+	        	$error++;
+	        }
+        }
+        
         // Removed extrafields
         if (! $error) {
         	$result=$this->deleteExtraFields();

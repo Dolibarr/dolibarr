@@ -656,7 +656,7 @@ if ($id > 0 || ! empty($ref))
 		{
 			if ($user->rights->expedition->creer)
 			{
-				print_titre($langs->trans("NewSending"));
+				print load_fiche_titre($langs->trans("NewSending"));
 
 				print '<form method="GET" action="'.DOL_URL_ROOT.'/expedition/card.php">';
 				print '<input type="hidden" name="action" value="create">';

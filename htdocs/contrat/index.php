@@ -64,7 +64,7 @@ $now = dol_now();
 
 llxHeader();
 
-print_fiche_titre($langs->trans("ContractsArea"),'','title_commercial.png');
+print load_fiche_titre($langs->trans("ContractsArea"),'','title_commercial.png');
 
 
 //print '<table border="0" width="100%" class="notopnoleftnoright">';

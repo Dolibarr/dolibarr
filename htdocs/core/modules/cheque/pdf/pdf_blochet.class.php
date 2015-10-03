@@ -33,8 +33,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/cheque/pdf/modules_chequereceipts.
  */
 class BordereauChequeBlochet extends ModeleChequeReceipts
 {
-    var $error='';
-
 	var $emetteur;	// Objet societe qui emet
 
 	/**

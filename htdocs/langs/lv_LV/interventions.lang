@@ -39,6 +39,9 @@ InterventionClassifiedUnbilledInDolibarr=Intervention %s set as unbilled
 InterventionSentByEMail=Intervention %s sent by EMail
 InterventionDeletedInDolibarr=Intervention %s deleted
 SearchAnIntervention=Search an intervention
+InterventionsArea=Interventions area
+DraftFichinter=Draft interventions
+LastModifiedInterventions=Last %s modified interventions
 ##### Types de contacts #####
 TypeContact_fichinter_internal_INTERREPFOLL=Pārstāvis turpinot darboties iejaukšanās
 TypeContact_fichinter_internal_INTERVENING=Iejaukšanās
@@ -51,3 +54,14 @@ PacificNumRefModelDesc1=Atgriešanās Numero ar formātu %syymm-NNNN kur yy ir g
 PacificNumRefModelError=Iejaukšanās karte sākot ar syymm $ jau pastāv un nav saderīgs ar šo modeli secību. Noņemt to vai pārdēvēt to aktivizētu šo moduli.
 PrintProductsOnFichinter=Drukāt produktus intervences kartes
 PrintProductsOnFichinterDetails=interventions generated from orders
+##### Exports #####
+InterId=Intervention id
+InterRef=Intervention ref.
+InterDateCreation=Date creation intervention
+InterDuration=Duration intervention
+InterStatus=Status intervention
+InterNote=Note intervention
+InterLineId=Line id intervention
+InterLineDate=Line date intervention
+InterLineDuration=Line duration intervention
+InterLineDesc=Line description intervention

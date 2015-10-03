@@ -49,13 +49,14 @@ $langs->load("commercial");
 $langs->load("bills");
 $langs->load("banks");
 $langs->load("users");
-if (! empty($conf->categories->enabled)) $langs->load("categories");
+if (! empty($conf->categorie->enabled)) $langs->load("categories");
 if (! empty($conf->incoterm->enabled)) $langs->load("incoterm");
 if (! empty($conf->notification->enabled)) $langs->load("mails");
 
 $mesg=''; $error=0; $errors=array();
 
 $action		= (GETPOST('action') ? GETPOST('action') : 'view');
+$cancel     = GETPOST('cancel');
 $backtopage = GETPOST('backtopage','alpha');
 $confirm	= GETPOST('confirm');
 $socid		= GETPOST('socid','int');
@@ -98,6 +99,16 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
+    if ($cancel)
+    {
+        $action='';
+        if (! empty($backtopage))
+        {
+            header("Location: ".$backtopage);
+            exit;
+        }    
+    }
+    
 	if ($action == 'confirm_merge' && $confirm == 'yes')
 	{
 		$object->fetch($socid);
@@ -232,7 +243,7 @@ if (empty($reshook))
         if ($action == 'update')
         {
         	$ret=$object->fetch($socid);
-        	$object->oldcopy=dol_clone($object);
+			$object->oldcopy = clone $object;
         }
 		else $object->canvas=$canvas;
 
@@ -415,23 +426,11 @@ if (empty($reshook))
 
 					// Customer categories association
 					$custcats = GETPOST( 'custcats', 'array' );
-					if (!empty( $custcats )) {
-						$cat = new Categorie( $db );
-						foreach ($custcats as $id_category) {
-							$cat->fetch( $id_category );
-							$cat->add_type( $object, 'customer' );
-						}
-					}
+					$object->setCategories($custcats, 'customer');
 
 					// Supplier categories association
 					$suppcats = GETPOST('suppcats', 'array');
-					if (!empty($suppcats)) {
-						$cat = new Categorie($db);
-						foreach ($suppcats as $id_category) {
-							$cat->fetch($id_category);
-							$cat->add_type($object, 'supplier');
-						}
-					}
+					$object->setCategories($suppcats, 'supplier');
 
                     // Logo/Photo save
                     $dir     = $conf->societe->multidir_output[$conf->entity]."/".$object->id."/logos/";
@@ -538,36 +537,12 @@ if (empty($reshook))
                 }
 
 				// Customer categories association
-				// First we delete all categories association
-				$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . 'categorie_societe';
-				$sql .= ' WHERE fk_soc = ' . $object->id;
-				$db->query( $sql );
-
-				// Then we add the associated categories
 				$categories = GETPOST( 'custcats', 'array' );
-				if (!empty( $categories )) {
-					$cat = new Categorie( $db );
-					foreach ($categories as $id_category) {
-						$cat->fetch( $id_category );
-						$cat->add_type( $object, 'customer' );
-					}
-				}
+				$object->setCategories($categories, 'customer');
 
 				// Supplier categories association
-				// First we delete all categories association
-				$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . 'categorie_fournisseur';
-				$sql .= ' WHERE fk_soc = ' . $object->id;
-				$db->query($sql);
-
-				// Then we add the associated categories
 				$categories = GETPOST('suppcats', 'array');
-				if (!empty($categories)) {
-					$cat = new Categorie($db);
-					foreach ($categories as $id_category) {
-						$cat->fetch($id_category);
-						$cat->add_type($object, 'supplier');
-					}
-				}
+				$object->setCategories($categories, 'supplier');
 
                 // Logo/Photo save
                 $dir     = $conf->societe->multidir_output[$object->entity]."/".$object->id."/logos";
@@ -879,7 +854,7 @@ else
         /* Show create form */
 
         $linkback="";
-        print_fiche_titre($langs->trans("NewThirdParty"),$linkback,'title_companies.png');
+        print load_fiche_titre($langs->trans("NewThirdParty"),$linkback,'title_companies.png');
 
         if (! empty($conf->use_javascript_ajax))
         {
@@ -1158,11 +1133,11 @@ else
         print '</td></tr>';
 
         // Legal Form
-        print '<tr><td>'.fieldLabel('JuridicalStatus','legal_form').'</td>';
+        print '<tr><td>'.fieldLabel('JuridicalStatus','forme_juridique_code').'</td>';
         print '<td colspan="3" class="maxwidthonsmartphone">';
         if ($object->country_id)
         {
-            print $formcompany->select_juridicalstatus($object->forme_juridique_code, $object->country_code, '', 'legal_form');
+            print $formcompany->select_juridicalstatus($object->forme_juridique_code, $object->country_code, '', 'forme_juridique_code');
         }
         else
         {
@@ -1213,7 +1188,7 @@ else
             print '<tr>';
             print '<td>'.fieldLabel('AllocateCommercial','commercial_id').'</td>';
             print '<td colspan="3" class="maxwidthonsmartphone">';
-            $form->select_users((! empty($object->commercial_id)?$object->commercial_id:$user->id),'commercial_id',1); // Add current user by default
+            $form->select_dolusers((! empty($object->commercial_id)?$object->commercial_id:$user->id),'commercial_id',1); // Add current user by default
             print '</td></tr>';
         }
 
@@ -1273,7 +1248,12 @@ else
         dol_fiche_end();
 
         print '<div class="center">';
-        print '<input type="submit" class="button" value="'.$langs->trans('AddThirdParty').'">';
+        print '<input type="submit" class="button" name="submit" value="'.$langs->trans('AddThirdParty').'">';
+        if ($backtopage)
+        {
+            print ' &nbsp; ';
+            print '<input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
+        }
         print '</div>'."\n";
 
         print '</form>'."\n";
@@ -1284,7 +1264,7 @@ else
          * Edition
          */
 
-        //print_fiche_titre($langs->trans("EditCompany"));
+        //print load_fiche_titre($langs->trans("EditCompany"));
 
         if ($socid)
         {
@@ -1329,7 +1309,7 @@ else
                 $prefixSupplierIsUsed = $modCodeFournisseur->verif_prefixIsUsed();
             }
 
-            $object->oldcopy=dol_clone($object);
+			$object->oldcopy = clone $object;
 
             if (GETPOST('name'))
             {
@@ -1741,8 +1721,8 @@ else
             print '</td></tr>';
 
             // Juridical type
-            print '<tr><td>'.fieldLabel('JuridicalStatus','legal_form').'</td><td colspan="3">';
-            print $formcompany->select_juridicalstatus($object->forme_juridique_code, $object->country_code, '', 'legal_form');
+            print '<tr><td>'.fieldLabel('JuridicalStatus','forme_juridique_code').'</td><td colspan="3">';
+            print $formcompany->select_juridicalstatus($object->forme_juridique_code, $object->country_code, '', 'forme_juridique_code');
             print '</td></tr>';
 
             // Capital
@@ -2409,7 +2389,7 @@ else
 			$modelmail='thirdparty';
 
 			print '<br>';
-			print_titre($langs->trans($titreform));
+			print load_fiche_titre($langs->trans($titreform));
 
 			// Define output language
 			$outputlangs = $langs;

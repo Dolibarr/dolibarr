@@ -264,7 +264,7 @@ if ($socid > 0)
 	print '</table>';
 	print '<br>';
 
-	print_fiche_titre($langs->trans("NewGlobalDiscount"),'','');
+	print load_fiche_titre($langs->trans("NewGlobalDiscount"),'','');
 	print '<table class="border" width="100%">';
 	print '<tr><td width="38%">'.$langs->trans("AmountHT").'</td>';
 	print '<td><input type="text" size="5" name="amount_ht" value="'.$_POST["amount_ht"].'">';
@@ -317,7 +317,7 @@ if ($socid > 0)
 	$resql=$db->query($sql);
 	if ($resql)
 	{
-		print_titre($langs->trans("DiscountStillRemaining"));
+		print load_fiche_titre($langs->trans("DiscountStillRemaining"));
 		print '<table width="100%" class="noborder">';
 		print '<tr class="liste_titre">';
 		print '<td width="120" align="left">'.$langs->trans("Date").'</td>';	// Need 120+ for format with AM/PM
@@ -457,7 +457,7 @@ if ($socid > 0)
 	if ($resql) $resql2=$db->query($sql2);
 	if ($resql2)
 	{
-		print_titre($langs->trans("DiscountAlreadyCounted"));
+		print load_fiche_titre($langs->trans("DiscountAlreadyCounted"));
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td width="120" align="left">'.$langs->trans("Date").'</td>';	// Need 120+ for format with AM/PM

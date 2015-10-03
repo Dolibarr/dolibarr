@@ -53,18 +53,13 @@ class AskPriceSupplier extends CommonObject
      */
     protected $table_ref_field = 'ref';
 
-    var $id;
-
     var $socid;		// Id client
-    var $client;		// Objet societe client (a charger par fetch_client)
 
-    var $fk_project;
 	/**
 	 * @deprecated
 	 * @see user_author_id
 	 */
     var $author;
-    var $ref;
 	var $ref_fourn;  //Reference saisie lors de l'ajout d'une ligne à la demande
     var $statut;					// 0 (draft), 1 (validated), 2 (signed), 3 (not signed), 4 (billed)
     var $date;						// Date of proposal
@@ -99,12 +94,6 @@ class AskPriceSupplier extends CommonObject
     var $user_valid_id;
     var $user_close_id;
 
-    var $total_ht;					// Total net of tax
-    var $total_tva;					// Total VAT
-    var $total_localtax1;			// Total Local Taxes 1
-    var $total_localtax2;			// Total Local Taxes 2
-    var $total_ttc;					// Total with tax
-
 	/**
 	 * @deprecated
 	 * @see price_ht
@@ -121,31 +110,17 @@ class AskPriceSupplier extends CommonObject
 	 */
     var $total;
 
-    var $cond_reglement_id;
     var $cond_reglement_code;
-    var $fk_account;				// Id of bank account
-    var $mode_reglement_id;
     var $mode_reglement_code;
     var $remise;
     var $remise_percent;
     var $remise_absolue;
-	/**
-	 * @deprecated
-	 * @see note_public, note_private
-	 */
-    var $note;
-    var $note_private;
-    var $note_public;
-    var $shipping_method_id;
 
     var $products=array();
     var $extraparams=array();
 
     var $lines = array();
     var $line;
-
-    var $origin;
-    var $origin_id;
 
     var $labelstatut=array();
     var $labelstatut_short=array();
@@ -950,8 +925,8 @@ class AskPriceSupplier extends CommonObject
 		foreach($this->lines as $line)
 			$line->fetch_optionals($line->rowid);
 
-        // Load source object
-        $objFrom = dol_clone($this);
+		// Load source object
+		$objFrom = clone $this;
 
         $objsoc=new Societe($this->db);
 

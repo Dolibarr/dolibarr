@@ -77,7 +77,7 @@ $hideref 	 = (GETPOST('hideref','int') ? GETPOST('hideref','int') : (! empty($co
 $object = new Expedition($db);
 
 // Load object. Make an object->fetch
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not includ_once
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('expeditioncard','globalcard'));
@@ -469,7 +469,7 @@ $product_static = new Product($db);
 
 if ($action == 'create2')
 {
-    print_fiche_titre($langs->trans("CreateASending")).'<br>';
+    print load_fiche_titre($langs->trans("CreateASending")).'<br>';
     print $langs->trans("ShipmentCreationIsDoneFromOrder");
     $action=''; $id=''; $ref='';
 }
@@ -479,7 +479,7 @@ if ($action == 'create')
 {
     $expe = new Expedition($db);
 
-    print_fiche_titre($langs->trans("CreateASending"));
+    print load_fiche_titre($langs->trans("CreateASending"));
     if (! $origin)
     {
         setEventMessage($langs->trans("ErrorBadParameters"),'errors');
@@ -1606,7 +1606,7 @@ else if ($id || $ref)
 
 		print '<div class="clearboth"></div>';
 		print '<br>';
-		print_fiche_titre($langs->trans('SendShippingByEMail'));
+		print load_fiche_titre($langs->trans('SendShippingByEMail'));
 
 		dol_fiche_head('');
 

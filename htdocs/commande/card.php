@@ -36,6 +36,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formorder.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formmargin.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/modules/commande/modules_commande.php';
 require_once DOL_DOCUMENT_ROOT . '/commande/class/commande.class.php';
 require_once DOL_DOCUMENT_ROOT . '/comm/action/class/actioncomm.class.php';
@@ -88,7 +89,7 @@ $extrafields = new ExtraFields($db);
 $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not includ_once
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('ordercard','globalcard'));
@@ -129,7 +130,7 @@ if (empty($reshook))
 			if ($object->id > 0)
 			{
 				// Because createFromClone modifies the object, we must clone it so that we can restore it later
-				$orig = dol_clone($object);
+				$orig = clone $object;
 
 				$result=$object->createFromClone($socid);
 				if ($result > 0)
@@ -1222,6 +1223,7 @@ llxHeader('', $langs->trans('Order'), 'EN:Customers_Orders|FR:Commandes_Clients|
 $form = new Form($db);
 $formfile = new FormFile($db);
 $formorder = new FormOrder($db);
+$formmargin = new FormMargin($db);
 if (! empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
 
 /**
@@ -1233,7 +1235,7 @@ if (! empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
  */
 if ($action == 'create' && $user->rights->commande->creer)
 {
-	print_fiche_titre($langs->trans('CreateOrder'),'','title_commercial.png');
+	print load_fiche_titre($langs->trans('CreateOrder'),'','title_commercial.png');
 
 	$soc = new Societe($db);
 	if ($socid > 0)
@@ -1430,6 +1432,8 @@ if ($action == 'create' && $user->rights->commande->creer)
 	$form->selectInputReason($demand_reason_id, 'demand_reason_id', '', 1);
 	print '</td></tr>';
 
+	// TODO How record was recorded OrderMode (llx_c_input_method)
+	
 	// Project
 	if (! empty($conf->projet->enabled) && $socid > 0)
 	{
@@ -1574,7 +1578,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 	// Show origin lines
 	if (! empty($origin) && ! empty($originid) && is_object($objectsrc)) {
 		$title = $langs->trans('ProductsAndServices');
-		print_titre($title);
+		print load_fiche_titre($title);
 
 		print '<table class="noborder" width="100%">';
 
@@ -1971,7 +1975,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		}
 		print '</td></tr>';
 
-		// Source
+		// Origin
 		print '<tr><td height="10">';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('Source');
@@ -1991,6 +1995,8 @@ if ($action == 'create' && $user->rights->commande->creer)
 		// print '<a href="'.DOL_URL_ROOT.'/admin/dict.php?id=22&origin=order&originid='.$object->id.'">'.$langs->trans("DictionarySource").'</a>';
 		print '</td></tr>';
 
+    	// TODO How record was recorded OrderMode (llx_c_input_method)
+		
 		// Project
 		if (! empty($conf->projet->enabled))
 		{
@@ -2084,7 +2090,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		// Margin Infos
 		if (! empty($conf->margin->enabled)) {
 			print '<td valign="top" width="50%" colspan="2" rowspan="' . $rowspan . '">';
-			$object->displayMarginInfos();
+			$formmargin->displayMarginInfos($object);
 			print '</td>';
 		} else
 			print '<td width="50%" colspan="2" rowspan="' . $rowspan . '"></td>';
@@ -2376,7 +2382,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 
 			print '<div class="clearboth"></div>';
 			print '<br>';
-			print_fiche_titre($langs->trans('SendOrderByMail'));
+			print load_fiche_titre($langs->trans('SendOrderByMail'));
 
 			dol_fiche_head('');
 
@@ -2408,7 +2414,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 			$formmail->substit ['__ORDERREF__'] = $object->ref;
 			$formmail->substit ['__SIGNATURE__'] = $user->signature;
 			$formmail->substit ['__REFCLIENT__'] = $object->ref_client;
-			$formmail->substit ['__THIRPARTY_NAME__'] = $object->thirdparty->name;
+			$formmail->substit ['__THIRDPARTY_NAME__'] = $object->thirdparty->name;
 			$formmail->substit ['__PROJECT_REF__'] = (is_object($object->projet)?$object->projet->ref:'');
 			$formmail->substit ['__PERSONALIZED__'] = '';
 			$formmail->substit ['__CONTACTCIVNAME__'] = '';

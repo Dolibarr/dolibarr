@@ -3830,7 +3830,6 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array())
 	    if ($moduletoreload == 'MAIN_MODULE_SERVICE')    // Permission has changed into 2.7
 	    {
 	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Service module");
-
 	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modService.class.php';
 	        if ($res) {
 	            $mod=new modService($db);
@@ -3841,7 +3840,6 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array())
 	    if ($moduletoreload == 'MAIN_MODULE_COMMANDE')   // Permission has changed into 2.9
 	    {
 	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Commande module");
-
 	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modCommande.class.php';
 	        if ($res) {
 	            $mod=new modCommande($db);

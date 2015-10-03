@@ -41,11 +41,7 @@ class Contact extends CommonObject
 	public $table_element='socpeople';
 	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
-	var $id;
-    var $ref_ext;
 	var $civility_id;  // In fact we store civility_code
-    var $lastname;
-	var $firstname;
 	var $address;
 	var $zip;
 	var $town;
@@ -69,10 +65,6 @@ class Contact extends CommonObject
 	var $state_code;		    // Code of department
 	var $state;			        // Label of department
 
-	var $country_id;			// Id of country
-	var $country_code;			// Code of country
-	var $country;				// Label of country
-
     var $poste;                 // Position
 
 	var $socid;					// fk_soc
@@ -91,13 +83,6 @@ class Contact extends CommonObject
 
 	var $birthday;
 	var $default_lang;
-    var $note_public;           // Public note
-	/**
-	 * @deprecated
-	 * @see note_public, note_private
-	 */
-	var $note;
-	var $note_private;			// Private note
     var $no_email;				// 1=Don't send e-mail to this contact, 0=do
 
 	var $ref_facturation;       // Nb de reference facture pour lequel il est contact
@@ -107,7 +92,6 @@ class Contact extends CommonObject
 
 	var $user_id;
 	var $user_login;
-	var $import_key;
 
 	var $oldcopy;				// To contains a clone of this when we need to save old properties of object
 
@@ -1121,6 +1105,49 @@ class Contact extends CommonObject
 			$this->db->commit();
 			return 1;
 		}
+	}
+
+	/**
+	 * Sets object to supplied categories.
+	 *
+	 * Deletes object from existing categories not supplied.
+	 * Adds it to non existing supplied categories.
+	 * Existing categories are left untouch.
+	 *
+	 * @param int[]|int $categories Category or categories IDs
+	 */
+	public function setCategories($categories)
+	{
+		// Handle single category
+		if (!is_array($categories)) {
+			$categories = array($categories);
+		}
+
+		// Get current categories
+		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+		$c = new Categorie($this->db);
+		$existing = $c->containing($this->id, Categorie::TYPE_CONTACT, 'id');
+
+		// Diff
+		if (is_array($existing)) {
+			$to_del = array_diff($existing, $categories);
+			$to_add = array_diff($categories, $existing);
+		} else {
+			$to_del = array(); // Nothing to delete
+			$to_add = $categories;
+		}
+
+		// Process
+		foreach ($to_del as $del) {
+			$c->fetch($del);
+			$c->del_type($this, 'contact');
+		}
+		foreach ($to_add as $add) {
+			$c->fetch($add);
+			$c->add_type($this, 'contact');
+		}
+
+		return;
 	}
 
 	/**

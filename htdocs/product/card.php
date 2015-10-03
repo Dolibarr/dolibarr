@@ -284,13 +284,7 @@ if (empty($reshook))
             {
 				// Category association
 				$categories = GETPOST('categories');
-				if(!empty($categories)) {
-					$cat = new Categorie($db);
-					foreach($categories as $id_category) {
-						$cat->fetch($id_category);
-						$cat->add_type($object, 'product');
-					}
-				}
+				$object->setCategories($categories);
 
                 header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
                 exit;
@@ -315,7 +309,7 @@ if (empty($reshook))
         {
             if ($object->id > 0)
             {
-            	$object->oldcopy=dol_clone($object);
+				$object->oldcopy= clone $object;
 
                 $object->ref                    = $ref;
                 $object->label                  = GETPOST('label');
@@ -379,21 +373,8 @@ if (empty($reshook))
                     if ($object->update($object->id, $user) > 0)
                     {
 						// Category association
-						// First we delete all categories association
-						$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_product";
-						$sql .= " WHERE fk_product = ".$object->id;
-						$db->query($sql);
-
-						// Then we add the associated categories
 						$categories = GETPOST('categories');
-						if(!empty($categories)) {
-							$cat = new Categorie($db);
-
-							foreach($categories as $id_category) {
-								$cat->fetch($id_category);
-								$cat->add_type($object, 'product');
-							}
-						}
+						$object->setCategories($categories);
 
                         $action = 'view';
                     }
@@ -806,7 +787,7 @@ else
         if ($type==1) $title=$langs->trans("NewService");
         else $title=$langs->trans("NewProduct");
         $linkback="";
-        print_fiche_titre($title,$linkback,'title_products.png');
+        print load_fiche_titre($title,$linkback,'title_products.png');
 
         dol_fiche_head('');
 
@@ -1060,7 +1041,7 @@ else
 
             $type = $langs->trans('Product');
             if ($object->isservice()) $type = $langs->trans('Service');
-            //print_fiche_titre($langs->trans('Modify').' '.$type.' : '.(is_object($object->oldcopy)?$object->oldcopy->ref:$object->ref), "");
+            //print load_fiche_titre($langs->trans('Modify').' '.$type.' : '.(is_object($object->oldcopy)?$object->oldcopy->ref:$object->ref), "");
 
             // Main official, simple, and not duplicated code
             print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST">'."\n";

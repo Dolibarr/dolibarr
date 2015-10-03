@@ -58,27 +58,15 @@ class Facture extends CommonInvoice
 	 */
 	protected $table_ref_field = 'facnumber';
 
-	var $id;
-	//! Id client
 	var $socid;
-	//! Objet societe client (to load with fetch_client method)
 
-	/**
-	 * Customer
-	 * @var Societe
-	 */
-	var $client;
 	var $author;
 	var $fk_user_author;
 	var $fk_user_valid;
-	//! Invoice date
-	var $date;				// Invoice date
 	var $date_creation;		// Creation date
 	var $date_validation;	// Validation date
 	var $datem;
-	var $ref;
 	var $ref_client;
-	var $ref_ext;
 	var $ref_int;
 	//Check constants for types
 	var $type = self::TYPE_STANDARD;
@@ -90,20 +78,7 @@ class Facture extends CommonInvoice
 	var $total_tva=0;
 	var $total_ttc=0;
 	var $revenuestamp;
-	/**
-	 * @deprecated
-	 * @see note_private, note_public
-	 */
-	var $note;
-	var $note_private;
-	var $note_public;
 
-	/**
-	 * Invoice status
-	 * @var int
-	 * @see Facture::STATUS_DRAFT, Facture::STATUS_VALIDATED, Facture::STATUS_PAID, Facture::STATUS_ABANDONED
-	 */
-	var $statut;
 	//! Fermeture apres paiement partiel: discount_vat, badcustomer, abandon
 	//! Fermeture alors que aucun paiement: replaced (si remplace), abandon
 	var $close_code;
@@ -113,18 +88,11 @@ class Facture extends CommonInvoice
 	var $paye;
 	//! id of source invoice if replacement invoice or credit note
 	var $fk_facture_source;
-	var $origin;
-	var $origin_id;
 	var $linked_objects=array();
-	var $fk_project;
 	var $date_lim_reglement;
-	var $cond_reglement_id;			// Id in llx_c_paiement
 	var $cond_reglement_code;		// Code in llx_c_paiement
-	var $mode_reglement_id;			// Id in llx_c_paiement
 	var $mode_reglement_code;		// Code in llx_c_paiement
-    var $fk_account;                // Id of bank account
 	var $fk_bank;					// Field to store bank id to use when payment mode is withdraw
-	var $modelpdf;
 	/**
 	 * @deprecated
 	 */
@@ -138,11 +106,6 @@ class Facture extends CommonInvoice
 	var $specimen;
 
 	var $fac_rec;
-
-	//Incoterms
-	var $fk_incoterms;
-	var $location_incoterms;
-	var $libelle_incoterms;  //Used into tooltip
 
 	/**
 	 * @var int Situation cycle reference number
@@ -158,64 +121,6 @@ class Facture extends CommonInvoice
 	 * @var bool Final situation flag
 	 */
 	public $situation_final;
-
-    /**
-     * Standard invoice
-     */
-    const TYPE_STANDARD = 0;
-
-    /**
-     * Replacement invoice
-     */
-    const TYPE_REPLACEMENT = 1;
-
-    /**
-     * Credit note invoice
-     */
-    const TYPE_CREDIT_NOTE = 2;
-
-    /**
-     * Deposit invoice
-     */
-    const TYPE_DEPOSIT = 3;
-
-    /**
-     * Proforma invoice
-     */
-    const TYPE_PROFORMA = 4;
-
-	/**
-	 * Situation invoice
-	 */
-	const TYPE_SITUATION = 5;
-
-	/**
-	 * Draft
-	 */
-	const STATUS_DRAFT = 0;
-
-	/**
-	 * Validated (need to be paid)
-	 */
-	const STATUS_VALIDATED = 1;
-
-	/**
-	 * Classified paid.
-	 * If paid partially, $this->close_code can be:
-	 * - CLOSECODE_DISCOUNTVAT
-	 * - CLOSECODE_BADDEBT
-	 * If paid completelly, this->close_code will be null
-	 */
-	const STATUS_CLOSED = 2;
-
-	/**
-	 * Classified abandoned and no payment done.
-	 * $this->close_code can be:
-	 * - CLOSECODE_BADDEBT
-	 * - CLOSECODE_ABANDONED
-	 * - CLOSECODE_REPLACED
-	 */
-	const STATUS_ABANDONED = 3;
 
 	const CLOSECODE_DISCOUNTVAT = 'discount_vat';
 	const CLOSECODE_BADDEBT = 'badcustomer';
@@ -701,7 +606,7 @@ class Facture extends CommonInvoice
 			$line->fetch_optionals($line->rowid);
 
 		// Load source object
-		$objFrom = dol_clone($this);
+		$objFrom = clone $this;
 
 
 
@@ -2090,7 +1995,7 @@ class Facture extends CommonInvoice
 	 *		@param    	int			$fk_remise_except	Id discount used
 	 *		@param		string		$price_base_type	'HT' or 'TTC'
 	 * 		@param    	double		$pu_ttc             Unit price with tax (> 0 even for credit note)
-	 * 		@param		int			$type				Type of line (0=product, 1=service)
+	 * 		@param		int			$type				Type of line (0=product, 1=service). Not used if fk_product is defined, the type of product is used.
 	 *      @param      int			$rang               Position of line
 	 *      @param		int			$special_code		Special code (also used by externals modules!)
 	 *      @param		string		$origin				'order', ...
@@ -2155,6 +2060,20 @@ class Facture extends CommonInvoice
 		{
 			$this->db->begin();
 
+			$product_type=$type;
+			if (!empty($fk_product))
+			{
+				$product=new Product($this->db);
+				$result=$product->fetch($fk_product);
+				$product_type=$product->type;
+
+				if (! empty($conf->global->STOCK_MUST_BE_ENOUGH_FOR_INVOICE) && $product_type == 0 && $product->stock_reel < $qty) {
+					$this->error=$langs->trans('ErrorStockIsNotEnough');
+					$this->db->rollback();
+					return -3;
+				}
+			}
+
 			// Calcul du total TTC et de la TVA pour la ligne a partir de
 			// qty, pu, remise_percent et txtva
 			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
@@ -2162,7 +2081,7 @@ class Facture extends CommonInvoice
 
 			$localtaxes_type=getLocalTaxesFromRate($txtva,0,$this->thirdparty, $mysoc);
 
-			$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type, $situation_percent);
+			$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $product_type, $mysoc, $localtaxes_type, $situation_percent);
 
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
@@ -2177,20 +2096,6 @@ class Facture extends CommonInvoice
 			{
 				$rangmax = $this->line_max($fk_parent_line);
 				$rangtouse = $rangmax + 1;
-			}
-
-			$product_type=$type;
-			if (!empty($fk_product))
-			{
-				$product=new Product($this->db);
-				$result=$product->fetch($fk_product);
-				$product_type=$product->type;
-
-				if (! empty($conf->global->STOCK_MUST_BE_ENOUGH_FOR_INVOICE) && $product_type == 0 && $product->stock_reel < $qty) {
-					$this->error=$langs->trans('ErrorStockIsNotEnough');
-					$this->db->rollback();
-					return -3;
-				}
 			}
 
 			// Insert line

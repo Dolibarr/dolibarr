@@ -203,7 +203,6 @@ else if ($action == 'set_FICHINTER_FREE_TEXT')
 else if ($action == 'set_FICHINTER_DRAFT_WATERMARK')
 {
 	$draft= GETPOST('FICHINTER_DRAFT_WATERMARK','alpha');
-
 	$res = dolibarr_set_const($db, "FICHINTER_DRAFT_WATERMARK",trim($draft),'chaine',0,'',$conf->entity);
 
 	if (! $res > 0) $error++;
@@ -247,7 +246,7 @@ llxHeader();
 $form=new Form($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("InterventionsSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("InterventionsSetup"),$linkback,'title_setup');
 
 
 $head=fichinter_admin_prepare_head();
@@ -256,7 +255,7 @@ dol_fiche_head($head, 'ficheinter', $langs->trans("Interventions"), 0, 'interven
 
 // Interventions numbering model
 
-print_titre($langs->trans("FicheinterNumberingModules"));
+print load_fiche_titre($langs->trans("FicheinterNumberingModules"));
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -358,7 +357,7 @@ print '</table><br>';
  *  Documents models for Interventions
  */
 
-print_titre($langs->trans("TemplatePDFInterventions"));
+print load_fiche_titre($langs->trans("TemplatePDFInterventions"));
 
 // Defini tableau def des modeles
 $type='ficheinter';
@@ -512,7 +511,7 @@ print "<br>";
  *
  */
 
-print_titre($langs->trans("OtherOptions"));
+print load_fiche_titre($langs->trans("OtherOptions"));
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
@@ -554,7 +553,7 @@ print '<input size="50" class="flat" type="text" name="FICHINTER_DRAFT_WATERMARK
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
-
+print '</form>';
 // print products on fichinter
 $var=! $var;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';

@@ -6,3 +6,4 @@ ErrorFileNotLinked=فایل نمی تواند مرتبط شود
 LinkRemoved=لینک٪ s را حذف شده
 ErrorFailedToDeleteLink= برای حذف لینک <b>«٪ s»</b> شکست خورد
 ErrorFailedToUpdateLink= برای به روز رسانی لینک <b>«٪ s»</b> شکست خورد
+URLToLink=URL to link

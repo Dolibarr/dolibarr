@@ -117,7 +117,7 @@ llxHeader();
 
 $form=new Form($db);
 
-print_fiche_titre($langs->trans("Purge"),'','title_setup');
+print load_fiche_titre($langs->trans("Purge"),'','title_setup');
 
 print $langs->trans("PurgeAreaDesc",$dolibarr_main_data_root).'<br>';
 print '<br>';

@@ -39,6 +39,9 @@ InterventionClassifiedUnbilledInDolibarr=Intervensjon %s satt til ufakturert
 InterventionSentByEMail=Intervensjon %s sendt med e-post
 InterventionDeletedInDolibarr=Intervensjon %s ble slettet
 SearchAnIntervention=Søk etter intervensjon
+InterventionsArea=Interventions area
+DraftFichinter=Draft interventions
+LastModifiedInterventions=Last %s modified interventions
 ##### Types de contacts #####
 TypeContact_fichinter_internal_INTERREPFOLL=Ansvarlig for å følge opp intervensjonen
 TypeContact_fichinter_internal_INTERVENING=Behandler
@@ -51,3 +54,14 @@ PacificNumRefModelDesc1=Gir et nummer med formatet %sååmm-nnnn hvor åå er å
 PacificNumRefModelError=Det finnes allerede et intervensjonskort som starter med  $sååmm, og dette er ikke kompatibelt med denne nummereringsmodellen. Du må fjerne denne for å aktivere denne modellen.
 PrintProductsOnFichinter=Skriv ut varer på intervensjonskortet
 PrintProductsOnFichinterDetails=intervensjoner generert fra ordre
+##### Exports #####
+InterId=Intervention id
+InterRef=Intervention ref.
+InterDateCreation=Date creation intervention
+InterDuration=Duration intervention
+InterStatus=Status intervention
+InterNote=Note intervention
+InterLineId=Line id intervention
+InterLineDate=Line date intervention
+InterLineDuration=Line duration intervention
+InterLineDesc=Line description intervention

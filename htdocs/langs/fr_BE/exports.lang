@@ -1,0 +1,3 @@
+# Dolibarr language file - Source file is en_US - exports
+DataLoadedWithId=All data will be loaded with the following import id: <b>%s</b>
+FilterableFields=Filterable Fields

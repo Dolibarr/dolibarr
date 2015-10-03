@@ -64,7 +64,7 @@ if ($mode == 'memberbytown') $title=$langs->trans("MembersStatisticsByTown");
 if ($mode == 'memberbyregion') $title=$langs->trans("MembersStatisticsByRegion");
 
 
-print_fiche_titre($title, $mesg);
+print load_fiche_titre($title, $mesg);
 
 dol_mkdir($dir);
 

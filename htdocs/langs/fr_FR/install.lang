@@ -209,6 +209,6 @@ MigrationActioncommElement=Mise à jour des données des actions des éléments
 MigrationPaymentMode=Migration des modes de paiement
 MigrationCategorieAssociation=Migration des categories
 MigrationEvents=Migration des évènements pour ajouter les propriétaires dans la table des utilisateurs assignés
-
+MigrationReloadModule=Rechargement du module %s
 ShowNotAvailableOptions=Afficher les choix non disponibles
 HideNotAvailableOptions=Cacher les choix non disponibles

@@ -95,7 +95,7 @@ $help_url='EN:Module_Users|FR:Module_Utilisateurs|ES:M&oacute;dulo_Usuarios';
 llxHeader('',$langs->trans("UsersSetup"),$help_url);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("UsersSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("UsersSetup"),$linkback,'title_setup');
 
 
 $head=user_admin_prepare_head();

@@ -110,7 +110,7 @@ jQuery(document).ready(function() {
 </script>
 <?php
 
-print_fiche_titre($langs->trans("Backup"),'','title_setup');
+print load_fiche_titre($langs->trans("Backup"),'','title_setup');
 
 print $langs->trans("BackupDesc",DOL_DATA_ROOT).'<br><br>';
 
@@ -133,7 +133,7 @@ print '<br>';
 
 <?php
 
-print_titre($title?$title:$langs->trans("BackupDumpWizard"));
+print load_fiche_titre($title?$title:$langs->trans("BackupDumpWizard"));
 
 print '<table width="100%" class="'.($useinecm?'nobordernopadding':'liste').' nohover">';
 print '<tr class="liste_titre">';

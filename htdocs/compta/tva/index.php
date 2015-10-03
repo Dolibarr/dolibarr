@@ -116,7 +116,7 @@ $tva = new Tva($db);
 $textprevyear="<a href=\"index.php?year=" . ($year_current-1) . "\">".img_previous()."</a>";
 $textnextyear=" <a href=\"index.php?year=" . ($year_current+1) . "\">".img_next()."</a>";
 
-print_fiche_titre($langs->trans("VAT"),"$textprevyear ".$langs->trans("Year")." $year_start $textnextyear");
+print load_fiche_titre($langs->trans("VAT"),"$textprevyear ".$langs->trans("Year")." $year_start $textnextyear");
 
 print $langs->trans("VATReportBuildWithOptionDefinedInModule").'<br>';
 print '('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')<br>';
@@ -124,12 +124,12 @@ print '<br>';
 
 print '<table width="100%" class="notopnoleftnoright">';
 print '<tr><td class="notopnoleft" width="50%">';
-print_titre($langs->trans("VATSummary"));
+print load_fiche_titre($langs->trans("VATSummary"));
 // The report mode is the one defined by defaut in tax module setup
 //print $modetax;
 //print '('.$langs->trans("SeeVATReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modetax=0">','</a>').')';
 print '</td><td>';
-print_titre($langs->trans("VATPaid"));
+print load_fiche_titre($langs->trans("VATPaid"));
 print '</td></tr>';
 
 print '<tr><td class="notopnoleft" width="50%" valign="top">';

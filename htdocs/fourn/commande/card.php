@@ -1408,7 +1408,7 @@ $productstatic = new Product($db);
 $now=dol_now();
 if ($action=='create')
 {
-	print_fiche_titre($langs->trans('NewOrder'));
+	print load_fiche_titre($langs->trans('NewOrder'));
 
 	dol_htmloutput_events();
 
@@ -2305,7 +2305,7 @@ elseif (! empty($object->id))
 
 		print '<div class="clearboth"></div>';
 		print '<br>';
-		print_fiche_titre($langs->trans('SendOrderByMail'));
+		print load_fiche_titre($langs->trans('SendOrderByMail'));
 
 		dol_fiche_head('');
 
@@ -2333,7 +2333,7 @@ elseif (! empty($object->id))
 		// Tableau des substitutions
 		$formmail->substit['__ORDERREF__']=$object->ref;
 		$formmail->substit['__ORDERSUPPLIERREF__']=$object->ref_supplier;
-		$formmail->substit['__THIRPARTY_NAME__'] = $object->thirdparty->name;
+		$formmail->substit['__THIRDPARTY_NAME__'] = $object->thirdparty->name;
 		$formmail->substit['__PROJECT_REF__'] = (is_object($object->projet)?$object->projet->ref:'');
 		$formmail->substit['__SIGNATURE__']=$user->signature;
 		$formmail->substit['__PERSONALIZED__']='';
@@ -2795,7 +2795,7 @@ elseif (! empty($object->id))
 			print '<form name="commande" action="card.php?id='.$object->id.'&amp;action=commande" method="post">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden"	name="action" value="commande">';
-			print_fiche_titre($langs->trans("ToOrder"),'','');
+			print load_fiche_titre($langs->trans("ToOrder"),'','');
 			print '<table class="border" width="100%">';
 			//print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("ToOrder").'</td></tr>';
 			print '<tr><td>'.$langs->trans("OrderDate").'</td><td>';
@@ -2823,7 +2823,7 @@ elseif (! empty($object->id))
 			print '<form action="card.php?id='.$object->id.'" method="post">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden"	name="action" value="livraison">';
-			print_fiche_titre($langs->trans("Receive"),'','');
+			print load_fiche_titre($langs->trans("Receive"),'','');
 			print '<table class="border" width="100%">';
 			//print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Receive").'</td></tr>';
 			print '<tr><td>'.$langs->trans("DeliveryDate").'</td><td>';

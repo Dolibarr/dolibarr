@@ -39,6 +39,9 @@ InterventionClassifiedUnbilledInDolibarr=Interventie %s als nog niet gefactureer
 InterventionSentByEMail=Interventie %s per e-mail verstuurd
 InterventionDeletedInDolibarr=Interventie %s verwijderd
 SearchAnIntervention=Zoek een interventie
+InterventionsArea=Interventions area
+DraftFichinter=Draft interventions
+LastModifiedInterventions=Last %s modified interventions
 ##### Types de contacts #####
 TypeContact_fichinter_internal_INTERREPFOLL=Vertegenwoordiger die de nabehandeling van de interventie doet
 TypeContact_fichinter_internal_INTERVENING=Tussenliggende
@@ -51,3 +54,14 @@ PacificNumRefModelDesc1=Geef nummer met het formaat %sjjmm-nnnn terug waarbij jj
 PacificNumRefModelError=Een interventiedetailkaart beginnend met %s sjjmm bestaat al en is niet verenigbaar met deze reeksinstelling. Verwijder of hernoem het om deze module te activeren.
 PrintProductsOnFichinter=Printproducten op interventie fiche
 PrintProductsOnFichinterDetails=Interventies gegenereerd op basis van bestellingen
+##### Exports #####
+InterId=Intervention id
+InterRef=Intervention ref.
+InterDateCreation=Date creation intervention
+InterDuration=Duration intervention
+InterStatus=Status intervention
+InterNote=Note intervention
+InterLineId=Line id intervention
+InterLineDate=Line date intervention
+InterLineDuration=Line duration intervention
+InterLineDesc=Line description intervention

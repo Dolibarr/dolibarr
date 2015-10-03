@@ -70,7 +70,7 @@ $help_url='';
 llxHeader('',$langs->trans("ECMSetup"),$help_url);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("ECMSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("ECMSetup"),$linkback,'title_setup');
 print '<br>';
 
 print '<table class="noborder" width="100%">';
