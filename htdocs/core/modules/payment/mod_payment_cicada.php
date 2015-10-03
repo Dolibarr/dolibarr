@@ -104,7 +104,7 @@ class mod_payment_cicada extends ModeleNumRefPayments
 		global $db,$conf;
 
 		// D'abord on recupere la valeur max
-		$posindice=8;
+		$posindice=9;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql.= " FROM ".MAIN_DB_PREFIX."paiement";
 		$sql.= " WHERE ref like '".$this->prefix."____-%'";
@@ -124,7 +124,7 @@ class mod_payment_cicada extends ModeleNumRefPayments
 		}
 
 		//$date=time();
-		$date=$object->date;
+		$date=$object->datepaye;
 		$yymm = strftime("%y%m",$date);
 
     	if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is
@@ -142,7 +142,7 @@ class mod_payment_cicada extends ModeleNumRefPayments
 	 * 	@param	string		$objforref	Object for number to search
 	 *  @return string      			Next free value
 	 */
-	function commande_get_num($objsoc,$objforref)
+	function payment_get_num($objsoc,$objforref)
 	{
 		return $this->getNextValue($objsoc,$objforref);
 	}

@@ -82,7 +82,7 @@ class Paiement extends CommonObject
 	 */
 	function fetch($id, $ref='', $fk_bank='')
 	{
-		$sql = 'SELECT p.rowid, p.datep as dp, p.amount, p.statut, p.fk_bank,';
+		$sql = 'SELECT p.rowid, p.ref, p.datep as dp, p.amount, p.statut, p.fk_bank,';
 		$sql.= ' c.code as type_code, c.libelle as type_libelle,';
 		$sql.= ' p.num_paiement, p.note,';
 		$sql.= ' b.fk_account';
@@ -105,7 +105,7 @@ class Paiement extends CommonObject
 			{
 				$obj = $this->db->fetch_object($result);
 				$this->id             = $obj->rowid;
-				$this->ref            = $obj->rowid;
+				$this->ref            = $obj->ref;
 				$this->date           = $this->db->jdate($obj->dp);
 				$this->datepaye       = $this->db->jdate($obj->dp);
 				$this->numero         = $obj->num_paiement;
@@ -177,7 +177,7 @@ class Paiement extends CommonObject
 		$ref = $this->getNextNumRef('');
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement (entity, ref, datec, datep, amount, fk_paiement, num_paiement, note, fk_user_creat)";
-		$sql.= " VALUES (".$conf->entity.", '".$ref."', ". $this->db->idate($now)."', '".$this->db->idate($this->datepaye)."', '".$totalamount."', ".$this->paiementid.", '".$this->num_paiement."', '".$this->db->escape($this->note)."', ".$user->id.")";
+		$sql.= " VALUES (".$conf->entity.", '".$ref."', '". $this->db->idate($now)."', '".$this->db->idate($this->datepaye)."', '".$totalamount."', ".$this->paiementid.", '".$this->num_paiement."', '".$this->db->escape($this->note)."', ".$user->id.")";
 
 		dol_syslog(get_class($this)."::Create insert paiement", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -806,7 +806,7 @@ class Paiement extends CommonObject
 
 			foreach ($dirmodels as $reldir) {
 
-				$dir = dol_buildpath($reldir."core/modules/facture/");
+				$dir = dol_buildpath($reldir."core/modules/payment/");
 
 				// Load file with numbering class (if found)
 				if (is_file($dir.$file) && is_readable($dir.$file))
@@ -818,8 +818,8 @@ class Paiement extends CommonObject
 			// For compatibility
 			if (! $mybool)
 			{
-				$file = $conf->global->FACTURE_ADDON."/".$conf->global->PAYMENT_ADDON.".modules.php";
-				$classname = "mod_facture_".$conf->global->PAYMENT_ADDON;
+				$file = $conf->global->PAYMENT_ADDON.".php";
+				$classname = "mod_payment_".$conf->global->PAYMENT_ADDON;
 				$classname = preg_replace('/\-.*$/','',$classname);
 				// Include file with class
 				foreach ($conf->file->dol_document_root as $dirroot)
@@ -841,7 +841,7 @@ class Paiement extends CommonObject
 
 			$obj = new $classname();
 			$numref = "";
-			$numref = $obj->getNextValue($soc,$this,$mode);
+			$numref = $obj->getNextValue($soc,$this);
 
 			/**
 			 * $numref can be empty in case we ask for the last value because if there is no invoice created with the

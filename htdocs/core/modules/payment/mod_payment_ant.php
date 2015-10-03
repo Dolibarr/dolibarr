@@ -118,7 +118,7 @@ class mod_payment_ant extends ModeleNumRefPayments
 			return 0;
 		}
 
-		$numFinal=get_next_value($db,$mask,'paiement','ref','',$objsoc,$object->date);
+		$numFinal=get_next_value($db,$mask,'paiement','ref','',$objsoc,$object->datepaye);
 
 		return  $numFinal;
 	}
