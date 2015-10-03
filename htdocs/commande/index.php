@@ -26,6 +26,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT .'/core/class/notify.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 require_once DOL_DOCUMENT_ROOT .'/commande/class/commande.class.php';
 
 if (!$user->rights->commande->lire) accessforbidden();
@@ -47,6 +48,7 @@ if ($user->societe_id > 0)
  */
 
 $commandestatic=new Commande($db);
+$companystatic=new Societe($db);
 $form = new Form($db);
 $formfile = new FormFile($db);
 $help_url="EN:Module_Customers_Orders|FR:Module_Commandes_Clients|ES:Módulo_Pedidos_de_clientes";
@@ -167,6 +169,9 @@ else
 if (! empty($conf->commande->enabled))
 {
 	$sql = "SELECT c.rowid, c.ref, s.nom as name, s.rowid as socid";
+    $sql.= ", s.client";
+    $sql.= ", s.code_client";
+    $sql.= ", s.canvas";
 	$sql.= " FROM ".MAIN_DB_PREFIX."commande as c";
 	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -192,10 +197,23 @@ if (! empty($conf->commande->enabled))
 			{
 				$var=!$var;
 				$obj = $db->fetch_object($resql);
+
+                $commandestatic->id=$obj->rowid;
+                $commandestatic->ref=$obj->ref;
+
+				$companystatic->id=$obj->socid;
+				$companystatic->name=$obj->name;
+				$companystatic->client=$obj->client;
+				$companystatic->code_client=$obj->code_client;
+				$companystatic->canvas=$obj->canvas;
+
 				print "<tr ".$bc[$var].">";
 				print '<td class="nowrap">';
-				print "<a href=\"card.php?id=".$obj->rowid."\">".img_object($langs->trans("ShowOrder"),"order").' '.$obj->ref."</a></td>";
-				print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($obj->name,24).'</a></td></tr>';
+				print $commandestatic->getNomUrl(1);
+                print "</td>";
+                print '<td class="nowrap">';
+				print $companystatic->getNomUrl(1,'company',16);
+                print '</td></tr>';
 				$i++;
 			}
 		}
@@ -216,6 +234,9 @@ $max=5;
 
 $sql = "SELECT c.rowid, c.ref, c.fk_statut, c.facture, c.date_cloture as datec, c.tms as datem,";
 $sql.= " s.nom as name, s.rowid as socid";
+$sql.= ", s.client";
+$sql.= ", s.code_client";
+$sql.= ", s.canvas";
 $sql.= " FROM ".MAIN_DB_PREFIX."commande as c,";
 $sql.= " ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -250,6 +271,12 @@ if ($resql)
 			$commandestatic->id=$obj->rowid;
 			$commandestatic->ref=$obj->ref;
 
+			$companystatic->id=$obj->socid;
+			$companystatic->name=$obj->name;
+			$companystatic->client=$obj->client;
+			$companystatic->code_client=$obj->code_client;
+			$companystatic->canvas=$obj->canvas;
+
 			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 			print '<td width="96" class="nobordernopadding nowrap">';
 			print $commandestatic->getNomUrl(1);
@@ -268,7 +295,9 @@ if ($resql)
 
 			print '</td>';
 
-			print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->name.'</a></td>';
+			print '<td class="nowrap">';
+            print $companystatic->getNomUrl(1,'company',16);
+            print '</td>';
 			print '<td>'.dol_print_date($db->jdate($obj->datem),'day').'</td>';
 			print '<td align="right">'.$commandestatic->LibStatut($obj->fk_statut,$obj->facture,5).'</td>';
 			print '</tr>';
@@ -286,6 +315,9 @@ else dol_print_error($db);
 if (! empty($conf->commande->enabled))
 {
 	$sql = "SELECT c.rowid, c.ref, c.fk_statut, c.facture, s.nom as name, s.rowid as socid";
+    $sql.= ", s.client";
+    $sql.= ", s.code_client";
+    $sql.= ", s.canvas";
 	$sql.=" FROM ".MAIN_DB_PREFIX."commande as c";
 	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -319,6 +351,12 @@ if (! empty($conf->commande->enabled))
 				$commandestatic->id=$obj->rowid;
 				$commandestatic->ref=$obj->ref;
 
+				$companystatic->id=$obj->socid;
+				$companystatic->name=$obj->name;
+				$companystatic->client=$obj->client;
+				$companystatic->code_client=$obj->code_client;
+				$companystatic->canvas=$obj->canvas;
+
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 				print '<td width="96" class="nobordernopadding nowrap">';
 				print $commandestatic->getNomUrl(1);
@@ -337,7 +375,9 @@ if (! empty($conf->commande->enabled))
 
 				print '</td>';
 
-				print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($obj->name,24).'</a></td>';
+				print '<td class="nowrap">';
+                print $companystatic->getNomUrl(1,'company',24);
+                print '</td>';
 
 				print '<td align="right">'.$commandestatic->LibStatut($obj->fk_statut,$obj->facture,5).'</td>';
 
@@ -357,6 +397,9 @@ if (! empty($conf->commande->enabled))
 if (! empty($conf->commande->enabled))
 {
 	$sql = "SELECT c.rowid, c.ref, c.fk_statut, c.facture, s.nom as name, s.rowid as socid";
+    $sql.= ", s.client";
+    $sql.= ", s.code_client";
+    $sql.= ", s.canvas";
 	$sql.= " FROM ".MAIN_DB_PREFIX."commande as c";
 	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -390,6 +433,12 @@ if (! empty($conf->commande->enabled))
 				$commandestatic->id=$obj->rowid;
 				$commandestatic->ref=$obj->ref;
 
+				$companystatic->id=$obj->socid;
+				$companystatic->name=$obj->name;
+				$companystatic->client=$obj->client;
+				$companystatic->code_client=$obj->code_client;
+				$companystatic->canvas=$obj->canvas;
+
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 				print '<td width="96" class="nobordernopadding nowrap">';
 				print $commandestatic->getNomUrl(1);
@@ -408,7 +457,9 @@ if (! empty($conf->commande->enabled))
 
 				print '</td>';
 
-				print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->name.'</a></td>';
+				print '<td>';
+				print $companystatic->getNomUrl(1,'company');
+				print '</td>';
 
 				print '<td align="right">'.$commandestatic->LibStatut($obj->fk_statut,$obj->facture,5).'</td>';
 
