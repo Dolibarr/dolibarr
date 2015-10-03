@@ -99,7 +99,7 @@ If you want to build/test package locally:
 	bzr branch lp:~yourlogin/+junk/debian-[dev|stable]
     cd debian-[dev|stable]
     bzr status
-	-- Update files here --
+	-- Update files here: Remove all (except .bzr dir) and overwrite. Restore version into the file changelog --
     bzr commit -m "Description of change"
     bzr push lp:~yourlogin/+junk/debian-[dev|stable]
 
