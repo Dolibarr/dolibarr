@@ -158,7 +158,7 @@ $colorbacklinepair1=join(',',colorStringToArray($colorbacklinepair1));
 $colorbacklinepair2=join(',',colorStringToArray($colorbacklinepair2));
 if ($colorbacklinepairhover != '') $colorbacklinepairhover=join(',',colorStringToArray($colorbacklinepairhover));
 $colorbackbody=join(',',colorStringToArray($colorbackbody));
-$colortext=join(',',colorStringToArray($colorbackvmenu1));
+$colortext=join(',',colorStringToArray($colortext));
 
 // Set text color to black or white
 $tmppart=explode(',',$colorbackhmenu1);
