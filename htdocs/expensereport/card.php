@@ -1089,7 +1089,7 @@ if (! empty($conf->global->DEPLACEMENT_TO_CLEAN))
 // Create
 if ($action == 'create')
 {
-	print print load_fiche_titre($langs->trans("NewTrip"));
+	print load_fiche_titre($langs->trans("NewTrip"));
 
 	print '<form action="'.$_SERVER['PHP_SELF'].'" method="post" name="create">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';

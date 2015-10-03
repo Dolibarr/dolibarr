@@ -56,6 +56,7 @@ if (! empty($conf->notification->enabled)) $langs->load("mails");
 $mesg=''; $error=0; $errors=array();
 
 $action		= (GETPOST('action') ? GETPOST('action') : 'view');
+$cancel     = GETPOST('cancel');
 $backtopage = GETPOST('backtopage','alpha');
 $confirm	= GETPOST('confirm');
 $socid		= GETPOST('socid','int');
@@ -98,6 +99,16 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
+    if ($cancel)
+    {
+        $action='';
+        if (! empty($backtopage))
+        {
+            header("Location: ".$backtopage);
+            exit;
+        }    
+    }
+    
 	if ($action == 'confirm_merge' && $confirm == 'yes')
 	{
 		$object->fetch($socid);
@@ -1158,11 +1169,11 @@ else
         print '</td></tr>';
 
         // Legal Form
-        print '<tr><td>'.fieldLabel('JuridicalStatus','legal_form').'</td>';
+        print '<tr><td>'.fieldLabel('JuridicalStatus','forme_juridique_code').'</td>';
         print '<td colspan="3" class="maxwidthonsmartphone">';
         if ($object->country_id)
         {
-            print $formcompany->select_juridicalstatus($object->forme_juridique_code, $object->country_code, '', 'legal_form');
+            print $formcompany->select_juridicalstatus($object->forme_juridique_code, $object->country_code, '', 'forme_juridique_code');
         }
         else
         {
@@ -1273,7 +1284,12 @@ else
         dol_fiche_end();
 
         print '<div class="center">';
-        print '<input type="submit" class="button" value="'.$langs->trans('AddThirdParty').'">';
+        print '<input type="submit" class="button" name="submit" value="'.$langs->trans('AddThirdParty').'">';
+        if ($backtopage)
+        {
+            print ' &nbsp; ';
+            print '<input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
+        }
         print '</div>'."\n";
 
         print '</form>'."\n";
@@ -1741,8 +1757,8 @@ else
             print '</td></tr>';
 
             // Juridical type
-            print '<tr><td>'.fieldLabel('JuridicalStatus','legal_form').'</td><td colspan="3">';
-            print $formcompany->select_juridicalstatus($object->forme_juridique_code, $object->country_code, '', 'legal_form');
+            print '<tr><td>'.fieldLabel('JuridicalStatus','forme_juridique_code').'</td><td colspan="3">';
+            print $formcompany->select_juridicalstatus($object->forme_juridique_code, $object->country_code, '', 'forme_juridique_code');
             print '</td></tr>';
 
             // Capital

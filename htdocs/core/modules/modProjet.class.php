@@ -114,7 +114,23 @@ class modProjet extends DolibarrModules
 		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/tasks";
 		$this->const[$r][3] = "";
 		$this->const[$r][4] = 0;
-
+		$r++;
+		
+		$this->const[$r][0] = "PROJECT_USE_OPPORTUNIES";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "1";
+		$this->const[$r][3] = "";
+		$this->const[$r][4] = 0;
+		$r++;
+		
+		/* not required (0 = not present)
+		$this->const[$r][0] = "PROJECT_HIDE_TASKS";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "0";
+		$this->const[$r][3] = "";
+		$this->const[$r][4] = 0;
+		*/
+		
 		// Boxes
 		$this->boxes = array();
 		$r=0;

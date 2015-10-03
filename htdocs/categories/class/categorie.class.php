@@ -228,6 +228,8 @@ class Categorie extends CommonObject
 
 		$error=0;
 
+		dol_syslog(get_class($this).'::create', LOG_DEBUG);
+		
 		// Clean parameters
 		$this->label = trim($this->label);
 		$this->description = trim($this->description);
@@ -246,7 +248,6 @@ class Categorie extends CommonObject
 
 		$this->db->begin();
 
-		dol_syslog(get_class($this).'::create', LOG_DEBUG);
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie (";
 		$sql.= "fk_parent,";
 		$sql.= " label,";
@@ -275,7 +276,6 @@ class Categorie extends CommonObject
 		$sql.= $conf->entity;
 		$sql.= ")";
 
-		dol_syslog(get_class($this).'::create', LOG_DEBUG);
 		$res = $this->db->query($sql);
 		if ($res)
 		{

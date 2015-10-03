@@ -35,6 +35,7 @@ create table llx_adherent
   firstname        varchar(50),
   login            varchar(50),          -- login
   pass             varchar(50),          -- password
+  pass_crypted     varchar(128),
   fk_adherent_type integer NOT NULL,
   morphy           varchar(3) NOT NULL, -- personne morale / personne physique
   societe          varchar(128),			-- company name (should be same lenght than societe.name)
