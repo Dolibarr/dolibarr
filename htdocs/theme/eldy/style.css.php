@@ -74,86 +74,66 @@ $dol_no_mouse_hover=$conf->dol_no_mouse_hover;
 $dol_use_jmobile=$conf->dol_use_jmobile;
 
 
-// Define reference colors
-// Example: Light grey: $colred=235;$colgreen=235;$colblue=235;
-// Example: Pink:       $colred=230;$colgreen=210;$colblue=230;
-// Example: Green:      $colred=210;$colgreen=230;$colblue=210;
-// Example: Ocean:      $colred=220;$colgreen=220;$colblue=240;
 //$conf->global->THEME_ELDY_ENABLE_PERSONALIZED=0;
 //$user->conf->THEME_ELDY_ENABLE_PERSONALIZED=0;
 //var_dump($user->conf->THEME_ELDY_RGB);
-$colred  =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_RGB)?235:hexdec(substr($conf->global->THEME_ELDY_RGB,0,2))):(empty($user->conf->THEME_ELDY_RGB)?235:hexdec(substr($user->conf->THEME_ELDY_RGB,0,2)));
-$colgreen=empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_RGB)?235:hexdec(substr($conf->global->THEME_ELDY_RGB,2,2))):(empty($user->conf->THEME_ELDY_RGB)?235:hexdec(substr($user->conf->THEME_ELDY_RGB,2,2)));
-$colblue =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_RGB)?235:hexdec(substr($conf->global->THEME_ELDY_RGB,4,2))):(empty($user->conf->THEME_ELDY_RGB)?235:hexdec(substr($user->conf->THEME_ELDY_RGB,4,2)));
 
 // Colors
-$isred=max(0,(2*$colred-$colgreen-$colblue)/2);        // 0 - 255
-$isgreen=max(0,(2*$colgreen-$colred-$colblue)/2);      // 0 - 255
-$isblue=max(0,(2*$colblue-$colred-$colgreen)/2);       // 0 - 255
-$colorbackhmenu1=($colred-3).','.($colgreen-3).','.($colblue-3);         // topmenu
-$colorbackhmenu2=($colred+5).','.($colgreen+5).','.($colblue+5);
-$colorbackvmenu1=($colred+15).','.($colgreen+16).','.($colblue+17);      // vmenu
-$colorbackvmenu2=($colred-15).','.($colgreen-15).','.($colblue-15);
-$colorbacktitle1=($colred-5).','.($colgreen-5).','.($colblue-5);    // title of array
-$colorbacktitle2=($colred-15).','.($colgreen-15).','.($colblue-15);
+$colorbackhmenu1='140,150,180';      // topmenu
+$colorbackvmenu1='255,255,255';      // vmenu
+$colorbacktitle1='230,230,230';      // title of array
 $colorbacktabcard1='255,255,255';  // card
-$colorbacktabcard2=($colred-15).','.($colgreen-15).','.($colblue-15);
-$colorbacktabactive=($colred-15).','.($colgreen-15).','.($colblue-15);
+$colorbacktabactive='234,234,234';
 $colorbacklineimpair1='255,255,255';    // line impair
 $colorbacklineimpair2='255,255,255';    // line impair
-$colorbacklinepair1=(244+round($isred/3)).','.(244+round($isgreen/3)).','.(244+round($isblue/3));    // line pair
-$colorbacklinepair2=(250+round($isred/3)).','.(250+round($isgreen/3)).','.(250+round($isblue/3));    // line pair
-$colorbacklinepairhover=(230+round(($isred+$isgreen+$isblue)/9)).','.(230+round(($isred+$isgreen+$isblue)/9)).','.(230+round(($isred+$isgreen+$isblue)/9));    // line pair
+$colorbacklinepair1='250,250,250';    // line pair
+$colorbacklinepair2='248,248,248';    // line pair
+$colorbacklinepairhover='238,246,252';    // line pair
 $colorbackbody='255,255,255';
 $colortext='40,40,40';
-$fontsize='13';
+$fontsize='12';
 $fontsizesmaller='11';
 $usegradient=1;
 
-// Eldy colors
+
+// Case of option always editable
+if (! isset($conf->global->THEME_ELDY_TOPMENU_BACK1)) $conf->global->THEME_ELDY_TOPMENU_BACK1='140,150,180';    // topmenu (140,160,185)
+//if (! isset($conf->global->THEME_ELDY_BACKTITLE1)) $conf->global->THEME_ELDY_BACKTITLE1='140,150,180';       	// title of arrays TO MATCH ELDY (140,160,185)
+if (! isset($conf->global->THEME_ELDY_BACKTITLE1)) $conf->global->THEME_ELDY_BACKTITLE1='230,230,230';        // title of arrays TO MATCH BOOTSTRAP
+//if (! isset($conf->global->THEME_ELDY_USE_HOVER)) $conf->global->THEME_ELDY_USE_HOVER='';			            // color for links
+
+// Fields not yet editable by default
 if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
 {
-	// Case of option always editable
-	if (! isset($conf->global->THEME_ELDY_TOPMENU_BACK1)) $conf->global->THEME_ELDY_TOPMENU_BACK1='140,150,180';    // topmenu (140,160,185)
-    //if (! isset($conf->global->THEME_ELDY_BACKTITLE1)) $conf->global->THEME_ELDY_BACKTITLE1='140,150,180';       	// title of arrays TO MATCH ELDY (140,160,185)
-    if (! isset($conf->global->THEME_ELDY_BACKTITLE1)) $conf->global->THEME_ELDY_BACKTITLE1='230,230,230';        // title of arrays TO MATCH BOOTSTRAP
-    if (! isset($conf->global->THEME_ELDY_USE_HOVER)) $conf->global->THEME_ELDY_USE_HOVER='';			            // color for links
-
 	// Cas of option editable if option THEME_ELDY_ENABLE_PERSONALIZED is on
-	$conf->global->THEME_ELDY_TOPMENU_BACK2='236,236,236';
 	$conf->global->THEME_ELDY_VERMENU_BACK1='255,255,255';    // vmenu
-    $conf->global->THEME_ELDY_VERMENU_BACK2='255,255,255';
-    $conf->global->THEME_ELDY_BACKTITLE2='230,230,230';
-    $conf->global->THEME_ELDY_BACKTABCARD1='255,255,255';
-    $conf->global->THEME_ELDY_BACKTABCARD2='210,210,210';     // card
+    $conf->global->THEME_ELDY_BACKTABCARD1='255,255,255';     // card
     $conf->global->THEME_ELDY_BACKTABACTIVE='234,234,234';
-    $conf->global->THEME_ELDY_BACKBODY='255,255,255';
     $conf->global->THEME_ELDY_LINEIMPAIR1='255,255,255';
     $conf->global->THEME_ELDY_LINEIMPAIR2='255,255,255';
     $conf->global->THEME_ELDY_LINEPAIR1='250,250,250';
     $conf->global->THEME_ELDY_LINEPAIR2='248,248,248';
     $conf->global->THEME_ELDY_LINEPAIRHOVER='238,246,252';
     $conf->global->THEME_ELDY_USE_HOVER=='238,246,252';
+    $conf->global->THEME_ELDY_BACKBODY='255,255,255';
     
     $conf->global->THEME_ELDY_FONT_SIZE1='12';
     $conf->global->THEME_ELDY_FONT_SIZE2='11';
 }
+//var_dump($conf->global->THEME_ELDY_BACKBODY);
+//var_dump($user->conf->THEME_ELDY_BACKTITLE1);
 
-// Cas of option availables only if THEME_ELDY_ENABLE_PERSONALIZED is on
-$colorbackhmenu1=empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TOPMENU_BACK1)?$colorbackhmenu1:$conf->global->THEME_ELDY_TOPMENU_BACK1)   :(empty($user->conf->THEME_ELDY_TOPMENU_BACK1)?$colorbackhmenu1:$user->conf->THEME_ELDY_TOPMENU_BACK1);
-$colorbackhmenu2     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TOPMENU_BACK2)?$colorbackhmenu2:$conf->global->THEME_ELDY_TOPMENU_BACK2)   :(empty($user->conf->THEME_ELDY_TOPMENU_BACK2)?$colorbackhmenu2:$user->conf->THEME_ELDY_TOPMENU_BACK2);
+// Case of option availables only if THEME_ELDY_ENABLE_PERSONALIZED is on
+$colorbackhmenu1     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TOPMENU_BACK1)?$colorbackhmenu1:$conf->global->THEME_ELDY_TOPMENU_BACK1)   :(empty($user->conf->THEME_ELDY_TOPMENU_BACK1)?$colorbackhmenu1:$user->conf->THEME_ELDY_TOPMENU_BACK1);
 $colorbackvmenu1     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_VERMENU_BACK1)?$colorbackvmenu1:$conf->global->THEME_ELDY_VERMENU_BACK1)   :(empty($user->conf->THEME_ELDY_VERMENU_BACK1)?$colorbackvmenu1:$user->conf->THEME_ELDY_VERMENU_BACK1);
-$colorbackvmenu2     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_VERMENU_BACK2)?$colorbackvmenu2:$conf->global->THEME_ELDY_VERMENU_BACK2)   :(empty($user->conf->THEME_ELDY_VERMENU_BACK2)?$colorbackvmenu2:$user->conf->THEME_ELDY_VERMENU_BACK2);
 $colorbacktitle1     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_BACKTITLE1)   ?$colorbacktitle1:$conf->global->THEME_ELDY_BACKTITLE1)      :(empty($user->conf->THEME_ELDY_BACKTITLE1)?$colorbacktitle1:$user->conf->THEME_ELDY_BACKTITLE1);
-$colorbacktitle2     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_BACKTITLE2)   ?$colorbacktitle2:$conf->global->THEME_ELDY_BACKTITLE2)      :(empty($user->conf->THEME_ELDY_BACKTITLE2)?$colorbacktitle2:$user->conf->THEME_ELDY_BACKTITLE2);
 $colorbacktabcard1   =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_BACKTABCARD1) ?$colorbacktabcard1:$conf->global->THEME_ELDY_BACKTABCARD1)  :(empty($user->conf->THEME_ELDY_BACKTABCARD1)?$colorbacktabcard1:$user->conf->THEME_ELDY_BACKTABCARD1);
-$colorbacktabcard2   =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_BACKTABCARD2) ?$colorbacktabcard2:$conf->global->THEME_ELDY_BACKTABCARD2)  :(empty($user->conf->THEME_ELDY_BACKTABCARD2)?$colorbacktabcard2:$user->conf->THEME_ELDY_BACKTABCARD2);
 $colorbacktabactive  =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_BACKTABACTIVE)?$colorbacktabactive:$conf->global->THEME_ELDY_BACKTABACTIVE):(empty($user->conf->THEME_ELDY_BACKTABACTIVE)?$colorbacktabactive:$user->conf->THEME_ELDY_BACKTABACTIVE);
 $colorbacklineimpair1=empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_LINEIMPAIR1)  ?$colorbacklineimpair1:$conf->global->THEME_ELDY_LINEIMPAIR1):(empty($user->conf->THEME_ELDY_LINEIMPAIR1)?$colorbacklineimpair1:$user->conf->THEME_ELDY_LINEIMPAIR1);
 $colorbacklineimpair2=empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_LINEIMPAIR2)  ?$colorbacklineimpair2:$conf->global->THEME_ELDY_LINEIMPAIR2):(empty($user->conf->THEME_ELDY_LINEIMPAIR2)?$colorbacklineimpair2:$user->conf->THEME_ELDY_LINEIMPAIR2);
 $colorbacklinepair1  =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_LINEPAIR1)    ?$colorbacklinepair1:$conf->global->THEME_ELDY_LINEPAIR1)    :(empty($user->conf->THEME_ELDY_LINEPAIR1)?$colorbacklinepair1:$user->conf->THEME_ELDY_LINEPAIR1);
 $colorbacklinepair2  =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_LINEPAIR2)    ?$colorbacklinepair2:$conf->global->THEME_ELDY_LINEPAIR2)    :(empty($user->conf->THEME_ELDY_LINEPAIR2)?$colorbacklinepair2:$user->conf->THEME_ELDY_LINEPAIR2);
-$colorbacklinepairhover  =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_LINEPAIRHOVER)    ?$colorbacklinepairhover:$conf->global->THEME_ELDY_LINEPAIRHOVER)    :(empty($user->conf->THEME_ELDY_LINEPAIRHOVER)?$colorbacklinepairhover:$user->conf->THEME_ELDY_LINEPAIRHOVER);
+$colorbacklinepairhover=empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_LINEPAIRHOVER)    ?$colorbacklinepairhover:$conf->global->THEME_ELDY_LINEPAIRHOVER)    :(empty($user->conf->THEME_ELDY_LINEPAIRHOVER)?$colorbacklinepairhover:$user->conf->THEME_ELDY_LINEPAIRHOVER);
 $colorbackbody       =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_BACKBODY)     ?$colorbackbody:$conf->global->THEME_ELDY_BACKBODY)          :(empty($user->conf->THEME_ELDY_BACKBODY)?$colorbackbody:$user->conf->THEME_ELDY_BACKBODY);
 $colortext           =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TEXT)         ?$colortext:$conf->global->THEME_ELDY_TEXT)                  :(empty($user->conf->THEME_ELDY_TEXT)?$colortext:$user->conf->THEME_ELDY_TEXT);
 $fontsize            =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_FONT_SIZE1)   ?$fontsize:$conf->global->THEME_ELDY_FONT_SIZE1)             :(empty($user->conf->THEME_ELDY_FONT_SIZE1)?$fontsize:$user->conf->THEME_ELDY_FONT_SIZE1);
@@ -167,14 +147,18 @@ if (! empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED))
 }
 
 // Format color value to match expected format (may be 'FFFFFF' or '255,255,255')
-$colorbackbody=join(',',colorStringToArray($colorbackbody));
 $colorbackhmenu1=join(',',colorStringToArray($colorbackhmenu1));
-$colorbackhmenu2=join(',',colorStringToArray($colorbackhmenu2));
 $colorbackvmenu1=join(',',colorStringToArray($colorbackvmenu1));
-$colorbackvmenu2=join(',',colorStringToArray($colorbackvmenu2));
+$colorbacktitle1=join(',',colorStringToArray($colorbacktitle1));
 $colorbacktabcard1=join(',',colorStringToArray($colorbacktabcard1));
-$colorbacktabcard2=join(',',colorStringToArray($colorbacktabcard2));
+$colorbacktabactive=join(',',colorStringToArray($colorbacktabactive));
+$colorbacklineimpair1=join(',',colorStringToArray($colorbacklineimpair1));
+$colorbacklineimpair2=join(',',colorStringToArray($colorbacklineimpair2));
+$colorbacklinepair1=join(',',colorStringToArray($colorbacklinepair1));
+$colorbacklinepair2=join(',',colorStringToArray($colorbacklinepair2));
 if ($colorbacklinepairhover != '') $colorbacklinepairhover=join(',',colorStringToArray($colorbacklinepairhover));
+$colorbackbody=join(',',colorStringToArray($colorbackbody));
+$colortext=join(',',colorStringToArray($colorbackvmenu1));
 
 // Set text color to black or white
 $tmppart=explode(',',$colorbackhmenu1);
@@ -195,8 +179,6 @@ if ($tmpval <= 340) { $colortextbacktab='FFF'; }
 else { $colortextbacktab='111'; }
 
 print '/*'."\n";
-print 'colred='.$colred.' colgreen='.$colgreen.' colblue='.$colblue."\n";
-print 'isred='.$isred.' isgreen='.$isgreen.' isblue='.$isblue."\n";
 print 'colorbackbody='.$colorbackbody."\n";
 print 'colorbackvmenu1='.$colorbackvmenu1."\n";
 print 'colorbackhmenu1='.$colorbackhmenu1."\n";
@@ -1957,17 +1939,21 @@ table.noborder, table.formdoc, div.noborder {
 	border-spacing: 0px;
 
 	border-top-width: 1px;
-	border-top-color: #CCC;
+	border-top-color: #BBB;
 	border-top-style: solid;
 
 	border-right-width: 1px;
-	border-right-color: #CCC;
+	border-right-color: #BBB;
 	border-right-style: solid;
 
 	border-left-width: 1px;
-	border-left-color: #CCC;
+	border-left-color: #BBB;
 	border-left-style: solid;
 
+	border-bottom-width: 1px;
+	border-bottom-color: #BBB;
+	border-bottom-style: solid;
+	
 	margin: 0px 0px 2px 0px;
 
 	-moz-box-shadow: 2px 2px 4px #CCC;
@@ -2200,6 +2186,9 @@ div.pagination li.pagination .active {
 }
 div.pagination li.paginationafterarrows {
 	margin-left: 10px;
+}
+.paginationatbottom {
+	margin-top: 9px;
 }
 
 /* Prepare to remove class pair - impair

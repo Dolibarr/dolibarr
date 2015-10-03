@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2015 	   Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2015      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
@@ -831,7 +831,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
                 $societestatic->code_fournisseur = $obj->code_fournisseur;
 				print $societestatic->getNomUrl(1,'customer',44);
 				print '</td>';
-				print '<td align="right">'.$obj->datelimite.'</td>';
+				print '<td align="right">'.dol_print_date($db->jdate($obj->datelimite),'day').'</td>';
 				if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td align="right">'.price($obj->total_ht).'</td>';
 				print '<td align="right">'.price($obj->total_ttc).'</td>';
 				print '<td align="right">'.price($obj->am).'</td>';
@@ -932,7 +932,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
                 $societestatic->code_client = $obj->code_client;
                 $societestatic->code_fournisseur = $obj->code_fournisseur;
 				print '<td>'.$societestatic->getNomUrl(1, 'supplier', 44).'</td>';
-				print '<td align="right">'.$obj->date_lim_reglement.'</td>';
+				print '<td align="right">'.dol_print_date($db->jdate($obj->date_lim_reglement),'day').'</td>';
 				if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td align="right">'.price($obj->total_ht).'</td>';
 				print '<td align="right">'.price($obj->total_ttc).'</td>';
 				print '<td align="right">'.price($obj->am).'</td>';
