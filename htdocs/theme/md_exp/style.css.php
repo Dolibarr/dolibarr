@@ -3540,7 +3540,23 @@ border-top-right-radius: 6px;
 	#tooltip {
 		position: absolute;
 		width: <?php print dol_size(350,'width'); ?>px;
-	}	
+	}
+
+	div.fichethirdleft {
+		width: 100%;
+	}
+	
+	div.fichetwothirdright {
+        width: 100%;
+	}
+
+	div.fichehalfleft {
+        width: 100%;
+	}
+
+	div.fichehalfright {
+		width: 100%;
+	}
 }
 @media only screen and (max-width: 570px)
 {
@@ -3554,7 +3570,23 @@ border-top-right-radius: 6px;
 	#tooltip {
 		position: absolute;
 		width: <?php print dol_size(300,'width'); ?>px;
-	}	
+	}
+
+	div.fichethirdleft {
+		width: 100%;
+	}
+	
+	div.fichetwothirdright {
+        width: 100%;
+	}
+
+	div.fichehalfleft {
+        width: 100%;
+	}
+
+	div.fichehalfright {
+		width: 100%;
+	}
 }
 
 
