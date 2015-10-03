@@ -6,3 +6,4 @@ ErrorFileNotLinked=Il file non può essere collegato
 LinkRemoved=Il collegamento %s è stato rimosso
 ErrorFailedToDeleteLink= Impossibile rimuovere il collegamento '<b>%s</b>'
 ErrorFailedToUpdateLink= Impossibile caricare il collegamento '<b>%s</b>'
+URLToLink=URL to link

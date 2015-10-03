@@ -1,12 +1,14 @@
 # Dolibarr language file - en_US - Accounting Expert
 CHARSET=UTF-8
-ACCOUNTING_EXPORT_SEPARATORCSV=Column separator for export file
-ACCOUNTING_EXPORT_DATE=Date format for export file
-ACCOUNTING_EXPORT_PIECE=Export the number of piece ?
-ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account ?
-ACCOUNTING_EXPORT_LABEL=Export the label ?
-ACCOUNTING_EXPORT_AMOUNT=Export the amount ?
-ACCOUNTING_EXPORT_DEVISE=Export the devise ?
+ACCOUNTING_EXPORT_SEPARATORCSV=列分隔符的导出文件
+ACCOUNTING_EXPORT_DATE=日期格式导出文件
+ACCOUNTING_EXPORT_PIECE=Export the number of piece
+ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account
+ACCOUNTING_EXPORT_LABEL=Export the label
+ACCOUNTING_EXPORT_AMOUNT=Export the amount
+ACCOUNTING_EXPORT_DEVISE=Export the devise
+Selectformat=Select the format for the file
+ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
 
 Accounting=会计
 Globalparameters=全局参数
@@ -20,9 +22,9 @@ ConfigAccountingExpert=配置会计专家模块
 Journaux=日记帐
 JournalFinancial=财政日帐
 Exports=出口
-Export=Export
+Export=出口
 Modelcsv=出口型号
-OptionsDeactivatedForThisExportModel=For this export model, options are deactivated
+OptionsDeactivatedForThisExportModel=对于这种出口模式，选项被禁用
 Selectmodelcsv=选择一个导出模型
 Modelcsv_normal=典型的导出
 Modelcsv_CEGID=出口对Cegid的专家
@@ -34,12 +36,13 @@ Selectchartofaccounts=选择会计科目表
 Validate=验证
 Addanaccount=添加一个会计帐户
 AccountAccounting=会计账户
-Ventilation=Breakdown
+AccountAccountingSuggest=Accounting account suggest
+Ventilation=明细核算
 ToDispatch=派遣
 Dispatched=调度
 
-CustomersVentilation=Breakdown customers
-SuppliersVentilation=Breakdown suppliers
+CustomersVentilation=客户明细
+SuppliersVentilation=供应商明细
 TradeMargin=贸易保证金
 Reports=报告
 ByCustomerInvoice=依据”发票“的客户
@@ -48,25 +51,25 @@ NewAccount=”新建“会计账户
 Update=更新
 List=名单
 Create=创建
-CreateMvts=Create movement
+CreateMvts=创建运动
 UpdateAccount=修改”会计帐户“
 UpdateMvts=对一个”活动“进行修改
 WriteBookKeeping=在”总账“中的”账户记录“
 Bookkeeping=总帐
 AccountBalanceByMonth=”账户余额“按月份
 
-AccountingVentilation=Breakdown accounting
-AccountingVentilationSupplier=Breakdown accounting supplier
-AccountingVentilationCustomer=Breakdown accounting customer
+AccountingVentilation=明细核算
+AccountingVentilationSupplier=供应商明细核算
+AccountingVentilationCustomer=客户财务明细
 Line=线
 
-CAHTF=总采购供应商HT
+CAHTF=Total purchase supplier before tax
 InvoiceLines=发票行进行通风
 InvoiceLinesDone=发票通风线
-IntoAccount=在会计帐户
+IntoAccount=Ventilate in the accounting account
 
 Ventilate=通风
-VentilationAuto=Automatic breakdown
+VentilationAuto=自动核算
 
 Processing=处理
 EndProcessing=处理的结束
@@ -76,32 +79,32 @@ Lineofinvoice=发票行
 VentilatedinAccount=在会计账户成功通风
 NotVentilatedinAccount=不通风的会计账户
 
-ACCOUNTING_SEPARATORCSV=Column separator in export file
+ACCOUNTING_SEPARATORCSV=在导出文件列分隔符
 
-ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to be breakdown shown by page (maximum recommended : 50)
-ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the breakdown pages "Has to breakdown" by the most recent elements
-ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the breakdown pages "Breakdown" by the most recent elements
+ACCOUNTING_LIMIT_LIST_VENTILATION=元素个数是逐页显示击穿（最大推荐：50）
+ACCOUNTING_LIST_SORT_VENTILATION_TODO=开始故障页的排序“有击穿”由最近的元素
+ACCOUNTING_LIST_SORT_VENTILATION_DONE=由最近的元素开始破裂页“故障”的分类
 
 AccountLength=会计长度账户显示在的Dolibarr
 AccountLengthDesc=功能允许由零的数字代替空格假装会计账户的长度。这个函数只接触了显示屏，它不修改的Dolibarr登记的会计科目。为出口，这个功能是必要的，以与特定的软件兼容。
-ACCOUNTING_LENGTH_DESCRIPTION=Length for displaying product & services description in listings (Best = 50)
-ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Length for displaying product & services account description form in listings (Best = 50)
-ACCOUNTING_LENGTH_GACCOUNT=Length of the general accounts
-ACCOUNTING_LENGTH_AACCOUNT=Length of the third party accounts
+ACCOUNTING_LENGTH_DESCRIPTION=长度在房源展示产品及服务介绍（最佳= 50）
+ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=长度在列表显示的产品与服务帐户说明的形式（最佳= 50）
+ACCOUNTING_LENGTH_GACCOUNT=一般账户长度
+ACCOUNTING_LENGTH_AACCOUNT=第三方账户的长度
 
-ACCOUNTING_SELL_JOURNAL=Sell journal
-ACCOUNTING_PURCHASE_JOURNAL=Purchase journal
-ACCOUNTING_MISCELLANEOUS_JOURNAL=Miscellaneous journal
-ACCOUNTING_EXPENSEREPORT_JOURNAL=Expense report journal
-ACCOUNTING_SOCIAL_JOURNAL=Social journal
+ACCOUNTING_SELL_JOURNAL=卖杂志
+ACCOUNTING_PURCHASE_JOURNAL=购买杂志
+ACCOUNTING_MISCELLANEOUS_JOURNAL=其他杂志
+ACCOUNTING_EXPENSEREPORT_JOURNAL=费用报告日记
+ACCOUNTING_SOCIAL_JOURNAL=社交杂志
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=转账账户
-ACCOUNTING_ACCOUNT_SUSPENSE=Account of wait
+ACCOUNTING_ACCOUNT_SUSPENSE=等待帐户
 
-ACCOUNTING_PRODUCT_BUY_ACCOUNT=Accounting account by default for bought products (if not defined in the product sheet)
-ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Accounting account by default for the sold products (if not defined in the product sheet)
-ACCOUNTING_SERVICE_BUY_ACCOUNT=Accounting account by default for the bought services (if not defined in the service sheet)
-ACCOUNTING_SERVICE_SOLD_ACCOUNT=Accounting account by default for the sold services (if not defined in the service sheet)
+ACCOUNTING_PRODUCT_BUY_ACCOUNT=会计帐户默认情况下，购买产品（如在产品表没有定义）
+ACCOUNTING_PRODUCT_SOLD_ACCOUNT=会计帐户默认情况下为销售的产品（如在产品表没有定义）
+ACCOUNTING_SERVICE_BUY_ACCOUNT=会计帐户默认情况下为买服务（如果服务表没有定义）
+ACCOUNTING_SERVICE_SOLD_ACCOUNT=会计帐户默认情况下为卖服务（如果服务表没有定义）
 
 Doctype=文件类型
 Docdate=日期
@@ -151,14 +154,14 @@ Active=声明
 
 NewFiscalYear=新财年
 
-DescVentilCustomer=Consult here the annual breakdown accounting of your invoices customers
-TotalVente=总成交量HT
+DescVentilCustomer=在这里，请咨询您的发票客户每年的分项核算
+TotalVente=Total turnover before tax
 TotalMarge=总销售利润率
 DescVentilDoneCustomer=这里查阅发票的客户的行和其会计帐户的列表
 DescVentilTodoCustomer=与会计帐户通风客户发票行
 ChangeAccount=变化的账户选择行会计帐户：
 Vide=-
-DescVentilSupplier=Consult here the annual breakdown accounting of your invoices suppliers
+DescVentilSupplier=在这里，请咨询您的发票的供应商每年的分项核算
 DescVentilTodoSupplier=与会计帐户通风发票的供应商的线路
 DescVentilDoneSupplier=在这里请教发票的供应商的线条和其会计帐户列表
 
@@ -166,4 +169,5 @@ ValidateHistory=自动验证
 
 ErrorAccountancyCodeIsAlreadyUse=错误，你不能删除这个会计帐户，因为它是用来
 
-FicheVentilation=Breakdown card
+FicheVentilation=击穿卡
+GeneralLedgerIsWritten=Operations are written in the general ledger

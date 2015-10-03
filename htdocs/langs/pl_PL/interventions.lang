@@ -39,6 +39,9 @@ InterventionClassifiedUnbilledInDolibarr=% Interwencyjnej s zestaw jako weryfiko
 InterventionSentByEMail=% Interwencja y wysyłane e-mailem
 InterventionDeletedInDolibarr=% Interwencja s usunięte
 SearchAnIntervention=Szukaj interwencji
+InterventionsArea=Interventions area
+DraftFichinter=Draft interventions
+LastModifiedInterventions=Last %s modified interventions
 ##### Types de contacts #####
 TypeContact_fichinter_internal_INTERREPFOLL=Przedstawiciela w ślad za interwencję
 TypeContact_fichinter_internal_INTERVENING=Interwencja
@@ -51,3 +54,14 @@ PacificNumRefModelDesc1=Wróć NUMERO z formatu %syymm rr-nnnn gdzie jest rok, m
 PacificNumRefModelError=Interwencja karty zaczynające się od $ syymm już istnieje i nie jest kompatybilne z tym modelem sekwencji. Usuń go lub zmienić jego nazwę, aby włączyć ten moduł.
 PrintProductsOnFichinter=Drukarnie na karcie interwencyjną
 PrintProductsOnFichinterDetails=Interwencje generowane z zamówień
+##### Exports #####
+InterId=Intervention id
+InterRef=Intervention ref.
+InterDateCreation=Date creation intervention
+InterDuration=Duration intervention
+InterStatus=Status intervention
+InterNote=Note intervention
+InterLineId=Line id intervention
+InterLineDate=Line date intervention
+InterLineDuration=Line duration intervention
+InterLineDesc=Line description intervention

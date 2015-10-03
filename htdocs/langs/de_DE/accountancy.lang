@@ -2,11 +2,13 @@
 CHARSET=UTF-8
 ACCOUNTING_EXPORT_SEPARATORCSV=Spaltentrennzeichen für die Export-Datei
 ACCOUNTING_EXPORT_DATE=Das Datumsformat für die Exportdatei.
-ACCOUNTING_EXPORT_PIECE=Exportiere eine Anzahl an Teile?
-ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Exportiere mit Globalen Konto.
-ACCOUNTING_EXPORT_LABEL=Exportiere die Beschriftung?
-ACCOUNTING_EXPORT_AMOUNT=Exportiere den Betrag?
-ACCOUNTING_EXPORT_DEVISE=Exporiere die Konstruktion?
+ACCOUNTING_EXPORT_PIECE=Export the number of piece
+ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account
+ACCOUNTING_EXPORT_LABEL=Export the label
+ACCOUNTING_EXPORT_AMOUNT=Export the amount
+ACCOUNTING_EXPORT_DEVISE=Export the devise
+Selectformat=Select the format for the file
+ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
 
 Accounting=Buchhaltung
 Globalparameters=Globale Parameter
@@ -34,6 +36,7 @@ Selectchartofaccounts=Kontenplan wählen
 Validate=Freigeben
 Addanaccount=Fügen Sie ein Buchhaltungskonto hinzu
 AccountAccounting=Buchhaltungs Konto
+AccountAccountingSuggest=Accounting account suggest
 Ventilation=Abbauen
 ToDispatch=Zu versenden
 Dispatched=Versandt
@@ -60,10 +63,10 @@ AccountingVentilationSupplier=Abbau von Buchhaltungs-Lieferanten
 AccountingVentilationCustomer=Abbau von Buchhaltungs-Kunden
 Line=Zeile
 
-CAHTF=Summe Lieferantenbestellungen netto
+CAHTF=Total purchase supplier before tax
 InvoiceLines=Rechnungszeile bereinigen
 InvoiceLinesDone=Bereinigte Rechnungszeilen
-IntoAccount=Im Buchhaltungs-Konto
+IntoAccount=Ventilate in the accounting account
 
 Ventilate=erörtern
 VentilationAuto=Automatischer Abbau
@@ -89,8 +92,8 @@ ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Länge für die Anzeige der Beschreibung v
 ACCOUNTING_LENGTH_GACCOUNT=Länge der Finanzbuchführung
 ACCOUNTING_LENGTH_AACCOUNT=Länge der Partner
 
-ACCOUNTING_SELL_JOURNAL=Verkaufsjournal
-ACCOUNTING_PURCHASE_JOURNAL=Einkaufsjournal
+ACCOUNTING_SELL_JOURNAL=Ausgangsrechnungen
+ACCOUNTING_PURCHASE_JOURNAL=Eingangsrechnungen
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Verschiedenes Journal
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Spesenabrechnung Journal
 ACCOUNTING_SOCIAL_JOURNAL=Sozial-Journal
@@ -152,7 +155,7 @@ Active=Auszug
 NewFiscalYear=Neues fiskalisches Jahr
 
 DescVentilCustomer=Konsultieren Sie hier die jährliche Aufteilung der Buchhaltung Ihrer Rechnungs-Kunden
-TotalVente=Totaler Umsatz
+TotalVente=Total turnover before tax
 TotalMarge=Gesamt-Spanne
 DescVentilDoneCustomer=Konsultieren Sie hier die Liste der Zeilen der Rechnungs-Kunden und deren Abbrechnungskonto
 DescVentilTodoCustomer=Bereinigen Sie die Zeilen der Kundenrechnung mit einem Rechnungskonto
@@ -167,3 +170,4 @@ ValidateHistory=Automatisch geltend machen
 ErrorAccountancyCodeIsAlreadyUse=Fehler, Sie können dieses Buchaltungskonto nicht löschen, da es benutzt wird.
 
 FicheVentilation=Abbau-Karte
+GeneralLedgerIsWritten=Operations are written in the general ledger

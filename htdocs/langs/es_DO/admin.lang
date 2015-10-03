@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - admin
 AntiVirusCommandExample=Example for ClamWin: c:\\Progra~1\\ClamWin\\bin\\clamscan.exe<br>Example for ClamAv: /usr/bin/clamscan
 AntiVirusParamExample=Example for ClamWin: --database="C:\\Program Files (x86)\\ClamWin\\lib"
-ListOfDirectoriesForModelGenODT=List of directories containing templates files with OpenDocument format.<br><br>Put here full path of directories.<br>Add a carriage return between eah directory.<br>To add a directory of the GED module, add here <b>DOL_DATA_ROOT/ecm/yourdirectoryname</b>.<br><br>Files in those directories must end with <b>.odt</b>.
 ExampleOfDirectoriesForModelGen=Examples of syntax:<br>c:\\mydir<br>/home/mydir<br>DOL_DATA_ROOT/ecm/ecmdir
 HideAnyVATInformationOnPDF=Ocultar toda la información relacionada con el ITBIS en la generación de los PDF
 OldVATRates=Tasa de ITBIS antigua
@@ -9,8 +8,6 @@ NewVATRates=Tasa de ITBIS nueva
 Permission91=Consultar impuestos e ITBIS
 Permission92=Crear/modificar impuestos e ITBIS
 Permission93=Eliminar impuestos e ITBIS
-Permission171=Read trips and expenses (own and his subordinates)
-Permission771=Read expense reports (own and his subordinates)
 DictionaryVAT=Tasa de ITBIS (Impuesto sobre ventas en EEUU)
 VATManagement=Gestión ITBIS
 VATIsUsedDesc=El tipo de ITBIS propuesto por defecto en las creaciones de presupuestos, facturas, pedidos, etc. Responde a la siguiente regla:<br>Si el vendedor no está sujeto a ITBIS, ITBIS por defecto=0. Final de regla.<br>Si el país del vendedor= país del comprador entonces IVA por defecto=IVA del producto vendido. Final de regla.<br>Si vendedor y comprador residen en la Comunidad Europea y el bien vendido= nuevo medio de transportes (auto, barco, avión), IVA por defecto=0 (el IVA debe ser pagado por comprador a la hacienda pública de su país y no al vendedor). Final de regla<br>Si vendedor y comprador residen en la Comunidad Europea y comprador= particular o empresa sin NIF intracomunitario entonces IVA por defecto=IVA del producto vendido. Final de regla.<br>Si vendedor y comprador residen en la Comunidad Europea y comprador= empresa con NIF intracomunitario entonces IVA por defecto=0. Final de regla.<br>Si no, IVA propuesto por defecto=0. Final de regla.<br>

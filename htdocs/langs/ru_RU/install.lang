@@ -209,6 +209,6 @@ MigrationActioncommElement=Обновление данных о действия
 MigrationPaymentMode=Миграция данных для оплаты режим
 MigrationCategorieAssociation=Миграция категорий
 MigrationEvents=Перенос событий для добавления владельца в таблицу присваиванья
-
+MigrationReloadModule=Reload module %s
 ShowNotAvailableOptions=Показать недоступные опции
 HideNotAvailableOptions=Скрыть недоступные опции

@@ -39,6 +39,9 @@ InterventionClassifiedUnbilledInDolibarr=Faturalanmadı olarak ayarlanan müdaha
 InterventionSentByEMail=Eposta ile gönderilen müdahale %s
 InterventionDeletedInDolibarr=Silinen müdahale %s
 SearchAnIntervention=Müdahale ara
+InterventionsArea=Interventions area
+DraftFichinter=Draft interventions
+LastModifiedInterventions=Last %s modified interventions
 ##### Types de contacts #####
 TypeContact_fichinter_internal_INTERREPFOLL=Müdahale izleme temsilcisi
 TypeContact_fichinter_internal_INTERVENING=Müdahalede
@@ -51,3 +54,14 @@ PacificNumRefModelDesc1=Sayıyı %syymm-nnnn olarak gösterir, yy: yıl, mm: ay 
 PacificNumRefModelError=$syymm Başlayan bir müdahale kartı zaten var ve sıra bu dizi modeli ile uyumlu değildir. Modülü etkinleştirmek için kaldırın ya da yeniden adlandırın.
 PrintProductsOnFichinter=Müdahale kartında ürünleri yazdır
 PrintProductsOnFichinterDetails=Siparişlerden oluşturulan müdahaleler
+##### Exports #####
+InterId=Intervention id
+InterRef=Intervention ref.
+InterDateCreation=Date creation intervention
+InterDuration=Duration intervention
+InterStatus=Status intervention
+InterNote=Note intervention
+InterLineId=Line id intervention
+InterLineDate=Line date intervention
+InterLineDuration=Line duration intervention
+InterLineDesc=Line description intervention

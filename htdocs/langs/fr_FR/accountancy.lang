@@ -2,11 +2,13 @@
 CHARSET=UTF-8
 ACCOUNTING_EXPORT_SEPARATORCSV=Séparateur de colonnes pour le fichier exporté
 ACCOUNTING_EXPORT_DATE=Format de date pour le fichier d'exportation
-ACCOUNTING_EXPORT_PIECE=Exporter la référence des pièces ?
-ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export avec le compte global ?
-ACCOUNTING_EXPORT_LABEL=Export des tags/catégories ?
-ACCOUNTING_EXPORT_AMOUNT=Export du montant ?
-ACCOUNTING_EXPORT_DEVISE=Export de la devise ?
+ACCOUNTING_EXPORT_PIECE=Export the number of piece
+ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account
+ACCOUNTING_EXPORT_LABEL=Exporter le libellé
+ACCOUNTING_EXPORT_AMOUNT=Exporter le montant
+ACCOUNTING_EXPORT_DEVISE=Exporter la devise
+Selectformat=Sélectionnez le format du fichier
+ACCOUNTING_EXPORT_PREFIX_SPEC=Spécifiez le préfixe pour le nom du fichier
 
 Accounting=Comptabilité
 Globalparameters=Paramètres globaux
@@ -34,6 +36,7 @@ Selectchartofaccounts=Sélectionner un plan comptable
 Validate=Valider
 Addanaccount=Ajouter un compte comptable
 AccountAccounting=Compte comptable
+AccountAccountingSuggest=Suggestion du compte
 Ventilation=Ventilation
 ToDispatch=A ventiler
 Dispatched=Ventilés
@@ -60,10 +63,10 @@ AccountingVentilationSupplier=Ventilation comptable client
 AccountingVentilationCustomer=Ventilation comptable fournisseur
 Line=Ligne
 
-CAHTF=Total achats fournisseur HT
+CAHTF=Total purchase supplier before tax
 InvoiceLines=Lignes de factures à ventiler
 InvoiceLinesDone=Lignes de factures ventilées
-IntoAccount=Dans le compte comptable
+IntoAccount=Ventilate in the accounting account
 
 Ventilate=Ventiler
 VentilationAuto=Ventilation automatique
@@ -152,7 +155,7 @@ Active=Relevé
 NewFiscalYear=Nouvelle année fiscale
 
 DescVentilCustomer=Consultez ici la ventilation comptable annuelle de vos factures clients
-TotalVente=Chiffre d'affaires HT
+TotalVente=Total chiffre affaire hors taxe
 TotalMarge=Total marge
 DescVentilDoneCustomer=Consultez ici la liste des lignes de factures clients et leur compte comptable
 DescVentilTodoCustomer=Consultez ici la liste des lignes de factures clients et leur compte comptable
@@ -167,3 +170,4 @@ ValidateHistory=Valider Automatiquement
 ErrorAccountancyCodeIsAlreadyUse=Erreur, vous ne pouvez pas détruire de compte comptable car il est utilisé
 
 FicheVentilation=Fiche ventilation
+GeneralLedgerIsWritten=Operations are written in the general ledger

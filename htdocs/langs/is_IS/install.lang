@@ -209,6 +209,6 @@ MigrationActioncommElement=Uppfæra upplýsingar um aðgerðir
 MigrationPaymentMode=Gögn fólksflutninga í ham greiðslu
 MigrationCategorieAssociation=Migration of categories
 MigrationEvents=Migration of events to add event owner into assignement table
-
+MigrationReloadModule=Reload module %s
 ShowNotAvailableOptions=Show not available options
 HideNotAvailableOptions=Hide not available options

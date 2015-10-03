@@ -46,7 +46,3 @@ SearchACustomerInvoice=Kundenrechnung finden
 SearchASupplierInvoice=Lieferantenrechnung finden
 CancelBill=Rechnung stornieren
 SendRemindByMail=Mahnung per E-Mail senden
-PaymentTypeTIP=Deposit
-PaymentTypeShortTIP=Deposit
-PaymentTypeTRA=Bill payment
-PaymentTypeShortTRA=Bill

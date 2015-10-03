@@ -90,7 +90,7 @@ SelectAtLeastOneField=Comută cel puțin un câmp sursă în coloana de câmpuri
 SelectFormat=Alegeţi acest fişier format de import
 RunImportFile=Lansarea de import dosar
 NowClickToRunTheImport=Verificaţi rezultat al simulării de import. Daca totul este ok, lansarea de import definitiv.
-DataLoadedWithId=Toate datele vor fi încărcate cu id-ul de import următoarele: <b>%s</b>
+DataLoadedWithId=All data will be loaded with the following import id: <b>%s</b>
 ErrorMissingMandatoryValue=datelor obligatorii este gol în <b>%s</b> fişierul sursă pentru domeniul.
 TooMuchErrors=Nu există încă <b>%s</b> sursă de alte linii cu erori, dar producţia a fost limitată.
 TooMuchWarnings=Nu există încă <b>%s</b> sursă de alte linii cu avertismente, dar producţia a fost limitată.
@@ -130,7 +130,7 @@ ExportDateFilter=YYYY, YYYYMM, YYYYMMDD : filtrează după un an/lună/zi<br>YYY
 ExportNumericFilter='NNNNN' filtrează după o valoare<br>'NNNNN+NNNNN' filtrează peste un rang de valori<br>'&gt;NNNNN' filtrează după valori mai mici<br>'&gt;NNNNN' filtrează după valori mai mari
 ## filters
 SelectFilterFields=Dacă doriți să filtrați pe anumite valori, doar introduceţi valorile aici.
-FilterableFields=Câmpuri filtrabile
+FilterableFields=Filterable Fields
 FilteredFields=Câmpuri filtrate
 FilteredFieldsValues=Valoare pentru filtru
 FormatControlRule=Format control rule

@@ -10,3 +10,5 @@ FailedToConnectToFTPServerWithCredentials=Не можете да се логне
 FTPFailedToRemoveFile=Неуспешно премахване на файла <b>%s.</b>
 FTPFailedToRemoveDir=Неуспешно премахване на директорията <b>%s</b> (Проверете правата и дали директорията е празна).
 FTPPassiveMode=Пасивен режим
+ChooseAFTPEntryIntoMenu=Choose a FTP entry into menu...
+FailedToGetFile=Failed to get files %s
