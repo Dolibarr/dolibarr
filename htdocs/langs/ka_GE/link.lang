@@ -6,3 +6,4 @@ ErrorFileNotLinked=The file could not be linked
 LinkRemoved=The link %s has been removed
 ErrorFailedToDeleteLink= Failed to remove link '<b>%s</b>'
 ErrorFailedToUpdateLink= Failed to update link '<b>%s</b>'
+URLToLink=URL to link

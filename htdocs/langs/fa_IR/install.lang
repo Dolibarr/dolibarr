@@ -209,6 +209,6 @@ MigrationActioncommElement=به روز کردن اطلاعات در مورد ا�
 MigrationPaymentMode=اطلاعات مهاجرت برای حالت پرداخت
 MigrationCategorieAssociation=مهاجرت از دسته
 MigrationEvents=Migration of events to add event owner into assignement table
-
+MigrationReloadModule=Reload module %s
 ShowNotAvailableOptions=نمایش گزینه های در دسترس نیست
 HideNotAvailableOptions=پنهان کردن گزینه های در دسترس نیست

@@ -39,6 +39,9 @@ InterventionClassifiedUnbilledInDolibarr=Intervenţia %s setată ca nefacturată
 InterventionSentByEMail=Intervenţia %s trimisă pe Email
 InterventionDeletedInDolibarr=Intervenţia %s ştearsă
 SearchAnIntervention=Caută o intervenţie
+InterventionsArea=Interventions area
+DraftFichinter=Draft interventions
+LastModifiedInterventions=Last %s modified interventions
 ##### Types de contacts #####
 TypeContact_fichinter_internal_INTERREPFOLL=Reprezentant urmărire  intervenţie
 TypeContact_fichinter_internal_INTERVENING=Realizator intervenţie
@@ -51,3 +54,14 @@ PacificNumRefModelDesc1=Numărul retrimis sub forma%syymm-nnnn unde yy este anul
 PacificNumRefModelError=O fişă de intervenţie începând cu $syymm există deja şi nu este compatibilă cu acest model al succesiunii. Eliminaţi-o sau redenumiţi-o pentru a activa acest modul.
 PrintProductsOnFichinter=Printează produsele pe fişa intervenţiei
 PrintProductsOnFichinterDetails=interventions generated from orders
+##### Exports #####
+InterId=Intervention id
+InterRef=Intervention ref.
+InterDateCreation=Date creation intervention
+InterDuration=Duration intervention
+InterStatus=Status intervention
+InterNote=Note intervention
+InterLineId=Line id intervention
+InterLineDate=Line date intervention
+InterLineDuration=Line duration intervention
+InterLineDesc=Line description intervention

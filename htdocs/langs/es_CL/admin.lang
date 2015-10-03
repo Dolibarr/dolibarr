@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - admin
 AntiVirusCommandExample=Example for ClamWin: c:\\Progra~1\\ClamWin\\bin\\clamscan.exe<br>Example for ClamAv: /usr/bin/clamscan
 AntiVirusParamExample=Example for ClamWin: --database="C:\\Program Files (x86)\\ClamWin\\lib"
-ListOfDirectoriesForModelGenODT=List of directories containing templates files with OpenDocument format.<br><br>Put here full path of directories.<br>Add a carriage return between eah directory.<br>To add a directory of the GED module, add here <b>DOL_DATA_ROOT/ecm/yourdirectoryname</b>.<br><br>Files in those directories must end with <b>.odt</b>.
 ExampleOfDirectoriesForModelGen=Examples of syntax:<br>c:\\mydir<br>/home/mydir<br>DOL_DATA_ROOT/ecm/ecmdir
 Module20Name=Cotizaciones
 Module20Desc=Gestión de cotizaciones/propuestas comerciales
@@ -12,8 +11,6 @@ Permission25=Enviar las cotizaciones
 Permission26=Cerrar cotizaciones
 Permission27=Eliminar cotizaciones
 Permission28=Exportar las cotizaciones
-Permission171=Read trips and expenses (own and his subordinates)
-Permission771=Read expense reports (own and his subordinates)
 VATIsUsedDesc=El tipo de IVA propuesto por defecto en las creaciones de cotizaciones, facturas, pedidos, etc. Responde a la siguiente regla:<br>Si el vendedor no está sujeto a IVA, IVA por defecto=0. Final de regla.<br>Si el país del vendedor= país del comprador entonces IVA por defecto=IVA del producto vendido. Final de regla.<br>Si vendedor y comprador residen en la Comunidad Europea y el bien vendido= nuevo medio de transportes (auto, barco, avión), IVA por defecto=0 (el IVA debe ser pagado por comprador a la hacienda pública de su país y no al vendedor). Final de regla<br>Si vendedor y comprador residen en la Comunidad Europea y comprador= particular o empresa sin NIF intracomunitario entonces IVA por defecto=IVA del producto vendido. Final de regla.<br>Si vendedor y comprador residen en la Comunidad Europea y comprador= empresa con NIF intracomunitario entonces IVA por defecto=0. Final de regla.<br>Si no, IVA propuesto por defecto=0. Final de regla.<br>
 Delays_MAIN_DELAY_PROPALS_TO_CLOSE=Tolerancia de retraso antes de la alerta (en días) sobre cotizaciones a cerrar
 Delays_MAIN_DELAY_PROPALS_TO_BILL=Tolerancia de retraso antes de la alerta (en días) sobre cotizaciones no facturadas

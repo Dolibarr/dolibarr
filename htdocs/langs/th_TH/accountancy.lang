@@ -2,11 +2,13 @@
 CHARSET=UTF-8
 ACCOUNTING_EXPORT_SEPARATORCSV=คั่นคอลัมน์สำหรับแฟ้มส่งออก
 ACCOUNTING_EXPORT_DATE=รูปแบบวันที่สำหรับไฟล์การส่งออก
-ACCOUNTING_EXPORT_PIECE=การส่งออกจำนวนของชิ้น?
-ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=ส่งออกกับบัญชีทั่วโลกหรือไม่
-ACCOUNTING_EXPORT_LABEL=ส่งออกฉลาก?
-ACCOUNTING_EXPORT_AMOUNT=การส่งออกจำนวน?
-ACCOUNTING_EXPORT_DEVISE=ส่งออกประดิษฐ์?
+ACCOUNTING_EXPORT_PIECE=Export the number of piece
+ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account
+ACCOUNTING_EXPORT_LABEL=Export the label
+ACCOUNTING_EXPORT_AMOUNT=Export the amount
+ACCOUNTING_EXPORT_DEVISE=Export the devise
+Selectformat=Select the format for the file
+ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
 
 Accounting=การบัญชี
 Globalparameters=พารามิเตอร์ทั่วโลก
@@ -34,6 +36,7 @@ Selectchartofaccounts=เลือกผังบัญชี
 Validate=ตรวจสอบ
 Addanaccount=เพิ่มบัญชีบัญชี
 AccountAccounting=บัญชีการบัญชี
+AccountAccountingSuggest=Accounting account suggest
 Ventilation=การเสีย
 ToDispatch=ที่จะส่ง
 Dispatched=ส่ง
@@ -60,10 +63,10 @@ AccountingVentilationSupplier=รายละเอียดผู้จัด�
 AccountingVentilationCustomer=รายละเอียดบัญชีของลูกค้า
 Line=สาย
 
-CAHTF=HT ซัพพลายเออร์ที่ซื้อทั้งหมด
+CAHTF=Total purchase supplier before tax
 InvoiceLines=เส้นของใบแจ้งหนี้ที่จะต้องมีการระบายอากาศ
 InvoiceLinesDone=สายช่องระบายความร้อนของใบแจ้งหนี้
-IntoAccount=ในบัญชีของบัญชี
+IntoAccount=Ventilate in the accounting account
 
 Ventilate=ระบายอากาศ
 VentilationAuto=สลายอัตโนมัติ
@@ -152,7 +155,7 @@ Active=คำแถลง
 NewFiscalYear=ปีงบประมาณใหม่
 
 DescVentilCustomer=ที่นี่ให้คำปรึกษารายละเอียดบัญชีของลูกค้าประจำปีของใบแจ้งหนี้ของคุณ
-TotalVente=HT มูลค่าการซื้อขายรวม
+TotalVente=Total turnover before tax
 TotalMarge=อัตรากำไรขั้นต้นรวมยอดขาย
 DescVentilDoneCustomer=ให้คำปรึกษาที่นี่รายชื่อของสายของลูกค้าใบแจ้งหนี้และบัญชีบัญชีของพวกเขา
 DescVentilTodoCustomer=ระบายอากาศในสายของคุณใบแจ้งหนี้ลูกค้าที่มีบัญชีการบัญชี
@@ -167,3 +170,4 @@ ValidateHistory=ตรวจสอบโดยอัตโนมัติ
 ErrorAccountancyCodeIsAlreadyUse=ข้อผิดพลาดที่คุณไม่สามารถลบบัญชีบัญชีนี้เพราะมันถูกนำมาใช้
 
 FicheVentilation=บัตรพังทลาย
+GeneralLedgerIsWritten=Operations are written in the general ledger

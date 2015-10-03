@@ -209,6 +209,6 @@ MigrationActioncommElement=Actualizare date pe acţiuni
 MigrationPaymentMode=Migrare de date pentru modul de plată
 MigrationCategorieAssociation=Migrarea categoriilor
 MigrationEvents=Migrația evenimentelor pentru a adăuga proprietarului evenimentul în tabelul de atribuire
-
+MigrationReloadModule=Reload module %s
 ShowNotAvailableOptions=Afişează opţiunile nedisponibile
 HideNotAvailableOptions=Acunde opţiunile nedisponibile

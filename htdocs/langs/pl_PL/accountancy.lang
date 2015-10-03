@@ -2,11 +2,13 @@
 CHARSET=UTF-8
 ACCOUNTING_EXPORT_SEPARATORCSV=Column separator for export file
 ACCOUNTING_EXPORT_DATE=Date format for export file
-ACCOUNTING_EXPORT_PIECE=Export the number of piece ?
-ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account ?
-ACCOUNTING_EXPORT_LABEL=Export the label ?
-ACCOUNTING_EXPORT_AMOUNT=Export the amount ?
-ACCOUNTING_EXPORT_DEVISE=Export the devise ?
+ACCOUNTING_EXPORT_PIECE=Export the number of piece
+ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account
+ACCOUNTING_EXPORT_LABEL=Export the label
+ACCOUNTING_EXPORT_AMOUNT=Export the amount
+ACCOUNTING_EXPORT_DEVISE=Export the devise
+Selectformat=Select the format for the file
+ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
 
 Accounting=Księgowość
 Globalparameters=Parametry globalne
@@ -34,6 +36,7 @@ Selectchartofaccounts=Wybierz plan kont
 Validate=Uprawomocnić
 Addanaccount=Dodaj konto księgowe
 AccountAccounting=Konto księgowe
+AccountAccountingSuggest=Accounting account suggest
 Ventilation=Awaria
 ToDispatch=Wysyłką
 Dispatched=Wywoływane
@@ -60,10 +63,10 @@ AccountingVentilationSupplier=Dostawca rachunkowości podział
 AccountingVentilationCustomer=Podział klientów rachunkowości
 Line=Linia
 
-CAHTF=Razem HT dostawca kupna
+CAHTF=Total purchase supplier before tax
 InvoiceLines=Linie faktury być wentylowane
 InvoiceLinesDone=Wentylowanych linie faktury
-IntoAccount=W rachunku rachunkowości
+IntoAccount=Ventilate in the accounting account
 
 Ventilate=Wietrzyć
 VentilationAuto=Automatyczny podział
@@ -152,7 +155,7 @@ Active=Oświadczenie
 NewFiscalYear=Nowy rok podatkowy
 
 DescVentilCustomer=Skonsultuj się tutaj rocznego rozliczenia przebicia faktur klientów
-TotalVente=Razem HT obroty
+TotalVente=Total turnover before tax
 TotalMarge=Marża całkowita sprzedaż
 DescVentilDoneCustomer=Skonsultuj się tutaj listę linii faktur klientów i ich rachunek rachunkowości
 DescVentilTodoCustomer=Wyraź swoje wiersze faktury klienta z kontem rachunkowości
@@ -167,3 +170,4 @@ ValidateHistory=Weryfikacja Automatycznie
 ErrorAccountancyCodeIsAlreadyUse=Błąd, nie można usunąć to konto księgowe, ponieważ jest używany
 
 FicheVentilation=Karta Podział
+GeneralLedgerIsWritten=Operations are written in the general ledger

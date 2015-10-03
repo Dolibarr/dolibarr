@@ -1227,6 +1227,7 @@ ContractsNumberingModules=Contracts numbering modules
 TemplatePDFContracts=Contracts documents models
 FreeLegalTextOnContracts=Free text on contracts
 WatermarkOnDraftContractCards=Watermark on draft contracts (none if empty)
+ContractsAndServices=List of contracts and services
 ##### Members #####
 MembersSetup=Members module setup
 MemberMainOptions=Main options

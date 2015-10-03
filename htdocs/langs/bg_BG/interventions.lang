@@ -39,6 +39,9 @@ InterventionClassifiedUnbilledInDolibarr=Intervention %s set as unbilled
 InterventionSentByEMail=Intervention %s sent by EMail
 InterventionDeletedInDolibarr=Intervention %s deleted
 SearchAnIntervention=Search an intervention
+InterventionsArea=Interventions area
+DraftFichinter=Draft interventions
+LastModifiedInterventions=Last %s modified interventions
 ##### Types de contacts #####
 TypeContact_fichinter_internal_INTERREPFOLL=Представител проследяване намеса
 TypeContact_fichinter_internal_INTERVENING=Намеса
@@ -51,3 +54,14 @@ PacificNumRefModelDesc1=Връщане Numero с формат %syymm-NNNN, къ�
 PacificNumRefModelError=Интервенционната карта започва с $ syymm вече съществува и не е съвместим с този модел на последователност. Извадете го или го преименувайте да се активира този модул.
 PrintProductsOnFichinter=Print products on intervention card
 PrintProductsOnFichinterDetails=interventions generated from orders
+##### Exports #####
+InterId=Intervention id
+InterRef=Intervention ref.
+InterDateCreation=Date creation intervention
+InterDuration=Duration intervention
+InterStatus=Status intervention
+InterNote=Note intervention
+InterLineId=Line id intervention
+InterLineDate=Line date intervention
+InterLineDuration=Line duration intervention
+InterLineDesc=Line description intervention

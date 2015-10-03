@@ -2272,7 +2272,7 @@ abstract class CommonObject
                     {
                         dol_include_once('/'.$classpath.'/'.$classfile.'.class.php');
 
-                        foreach($objectids as $i => $objectid);	// $i is rowid into llx_element_element
+                        foreach($objectids as $i => $objectid)	// $i is rowid into llx_element_element
                         {
                             $object = new $classname($this->db);
                             $ret = $object->fetch($objectid);

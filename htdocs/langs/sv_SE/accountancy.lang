@@ -2,11 +2,13 @@
 CHARSET=UTF-8
 ACCOUNTING_EXPORT_SEPARATORCSV=Kolumnseparator för exportfil
 ACCOUNTING_EXPORT_DATE=Datumformat för exportfil
-ACCOUNTING_EXPORT_PIECE=Exportera med antal detaljer?
-ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Exportera med globalt konto?
-ACCOUNTING_EXPORT_LABEL=Exportera titel?
-ACCOUNTING_EXPORT_AMOUNT=Exportera antal?
-ACCOUNTING_EXPORT_DEVISE=Exportera formatet ?
+ACCOUNTING_EXPORT_PIECE=Export the number of piece
+ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account
+ACCOUNTING_EXPORT_LABEL=Export the label
+ACCOUNTING_EXPORT_AMOUNT=Export the amount
+ACCOUNTING_EXPORT_DEVISE=Export the devise
+Selectformat=Select the format for the file
+ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
 
 Accounting=Redovisning
 Globalparameters=Globala parametrar
@@ -34,6 +36,7 @@ Selectchartofaccounts=Välj en kontoplan
 Validate=Validera
 Addanaccount=Lägg till ett redovisningskonto
 AccountAccounting=Redovisningskonto
+AccountAccountingSuggest=Accounting account suggest
 Ventilation=Fördelning
 ToDispatch=Avsändandet
 Dispatched=Levereras
@@ -60,10 +63,10 @@ AccountingVentilationSupplier=Uppdelning redovisnings leverantör
 AccountingVentilationCustomer=Uppdelning redovisnings kund
 Line=Linje
 
-CAHTF=Totala köpesleverantörs HT
+CAHTF=Total purchase supplier before tax
 InvoiceLines=Linjer av faktura som ska ventileras
 InvoiceLinesDone=Ventilerade linjer faktura
-IntoAccount=I bokföringskonto
+IntoAccount=Ventilate in the accounting account
 
 Ventilate=Ventilera
 VentilationAuto=Automatisk uppdelning
@@ -152,7 +155,7 @@ Active=Uttalande
 NewFiscalYear=Nytt räkenskapsår
 
 DescVentilCustomer=Rådgör här den årliga fördelningen redovisning av era fakturor kunder
-TotalVente=Total omsättning HT
+TotalVente=Total turnover before tax
 TotalMarge=Total försäljning marginal
 DescVentilDoneCustomer=Konsul här listan med linjerna av fakturor kunder och deras bokföringskonto
 DescVentilTodoCustomer=Ventilera dina rader av kundfaktura med en redovisningskonto
@@ -167,3 +170,4 @@ ValidateHistory=Validera Automatiskt
 ErrorAccountancyCodeIsAlreadyUse=Fel, du kan inte ta bort denna redovisningskonto eftersom den används
 
 FicheVentilation=Uppdelning kort
+GeneralLedgerIsWritten=Operations are written in the general ledger

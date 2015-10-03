@@ -1345,7 +1345,6 @@ class Societe extends CommonObject
             {
                 $sql = "DELETE FROM ".MAIN_DB_PREFIX."socpeople";
                 $sql.= " WHERE fk_soc = " . $id;
-                dol_syslog(get_class($this)."::delete", LOG_DEBUG);
                 if (! $this->db->query($sql))
                 {
                     $error++;
@@ -1358,7 +1357,6 @@ class Societe extends CommonObject
             {
                 $sql = "UPDATE ".MAIN_DB_PREFIX."adherent";
                 $sql.= " SET fk_soc = NULL WHERE fk_soc = " . $id;
-                dol_syslog(get_class($this)."::delete", LOG_DEBUG);
                 if (! $this->db->query($sql))
                 {
                     $error++;
@@ -1372,7 +1370,18 @@ class Societe extends CommonObject
             {
                 $sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_rib";
                 $sql.= " WHERE fk_soc = " . $id;
-                dol_syslog(get_class($this)."::Delete", LOG_DEBUG);
+                if (! $this->db->query($sql))
+                {
+                    $error++;
+                    $this->error = $this->db->lasterror();
+                }
+            }
+
+		    // Remove societe_remise_except
+            if (! $error)
+            {
+                $sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_remise_except";
+                $sql.= " WHERE fk_soc = " . $id;
                 if (! $this->db->query($sql))
                 {
                     $error++;
@@ -1385,7 +1394,6 @@ class Societe extends CommonObject
             {
                 $sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_commerciaux";
                 $sql.= " WHERE fk_soc = " . $id;
-                dol_syslog(get_class($this)."::Delete", LOG_DEBUG);
                 if (! $this->db->query($sql))
                 {
                     $error++;
@@ -3349,6 +3357,65 @@ class Societe extends CommonObject
 	}
 	
 	
+	/**
+	 * Sets object to supplied categories.
+	 *
+	 * Deletes object from existing categories not supplied.
+	 * Adds it to non existing supplied categories.
+	 * Existing categories are left untouch.
+	 *
+	 * @param int[]|int $categories Category or categories IDs
+	 * @param string $type Category type (customer or supplier)
+	 */
+	public function setCategories($categories, $type)
+	{
+		// Decode type
+		if ($type == 'customer') {
+			$type_id = Categorie::TYPE_CUSTOMER;
+			$type_text = 'customer';
+		} elseif ($type == 'supplier') {
+			$type_id = Categorie::TYPE_SUPPLIER;
+			$type_text = 'supplier';
+		} else {
+			dol_syslog(__METHOD__ . ': Type ' . $type .  'is an unknown company category type. Done nothing.', LOG_ERR);
+			return;
+		}
+
+		// Handle single category
+		if (!is_array($categories)) {
+			$categories = array($categories);
+		}
+
+		// Get current categories
+		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+		$c = new Categorie($this->db);
+		$existing = $c->containing($this->id, $type_id, 'id');
+
+		// Diff
+		if (is_array($existing)) {
+			var_dump($existing);
+			var_dump($categories);
+			$to_del = array_diff($existing, $categories);
+			$to_add = array_diff($categories, $existing);
+		} else {
+			$to_del = array(); // Nothing to delete
+			$to_add = $categories;
+		}
+
+		// Process
+		foreach ($to_del as $del) {
+			$c->fetch($del);
+			$c->del_type($this, $type_text);
+		}
+		foreach ($to_add as $add) {
+			$c->fetch($add);
+			$c->add_type($this, $type_text);
+		}
+
+		return;
+	}
+
+
 	/**
 	 * Function used to replace a thirdparty id with another one.
 	 * It must be used within a transaction to avoid trouble

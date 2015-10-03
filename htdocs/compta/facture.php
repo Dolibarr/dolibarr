@@ -1801,7 +1801,7 @@ if (empty($reshook))
 $form = new Form($db);
 $formother = new FormOther($db);
 $formfile = new FormFile($db);
-$formmargin = new FormMargin($this->db);
+$formmargin = new FormMargin($db);
 $bankaccountstatic = new Account($db);
 if (! empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
 

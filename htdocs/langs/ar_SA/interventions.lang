@@ -39,6 +39,9 @@ InterventionClassifiedUnbilledInDolibarr=Intervention %s set as unbilled
 InterventionSentByEMail=Intervention %s sent by EMail
 InterventionDeletedInDolibarr=Intervention %s deleted
 SearchAnIntervention=Search an intervention
+InterventionsArea=Interventions area
+DraftFichinter=Draft interventions
+LastModifiedInterventions=Last %s modified interventions
 ##### Types de contacts #####
 TypeContact_fichinter_internal_INTERREPFOLL=ممثل متابعة التدخل
 TypeContact_fichinter_internal_INTERVENING=التدخل
@@ -51,3 +54,14 @@ PacificNumRefModelDesc1=عودة número مع الشكل nnnn - ٪ syymm فيه�
 PacificNumRefModelError=تدخل البطاقة ابتداء من دولار ويوجد بالفعل syymm لا تتفق مع هذا النموذج من التسلسل. إزالة أو تغيير تسميتها لتصبح لتفعيل هذه الوحدة.
 PrintProductsOnFichinter=Print products on intervention card
 PrintProductsOnFichinterDetails=interventions generated from orders
+##### Exports #####
+InterId=Intervention id
+InterRef=Intervention ref.
+InterDateCreation=Date creation intervention
+InterDuration=Duration intervention
+InterStatus=Status intervention
+InterNote=Note intervention
+InterLineId=Line id intervention
+InterLineDate=Line date intervention
+InterLineDuration=Line duration intervention
+InterLineDesc=Line description intervention
