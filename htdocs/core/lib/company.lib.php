@@ -537,7 +537,7 @@ function show_projects($conf,$langs,$db,$object,$backtopage='')
             else
 			{
                 $var = false;
-            	print '<tr '.$bc[$var].'><td colspan="4">'.$langs->trans("None").'</td></tr>';
+            	print '<tr '.$bc[$var].'><td colspan="5">'.$langs->trans("None").'</td></tr>';
             }
             $db->free($result);
         }

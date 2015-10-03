@@ -298,6 +298,7 @@ if (empty($reshook))
             $object->zip			= GETPOST("zipcode");
             $object->town			= GETPOST("town");
             $object->state_id   	= GETPOST("state_id",'int');
+            $object->fk_departement	= GETPOST("state_id",'int');	// For backward compatibility
             $object->country_id		= GETPOST("country_id",'int');
 
             $object->email			= GETPOST("email",'alpha');

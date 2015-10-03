@@ -1427,6 +1427,8 @@ if ($action == 'create' && $user->rights->commande->creer)
 	$form->selectInputReason($demand_reason_id, 'demand_reason_id', '', 1);
 	print '</td></tr>';
 
+	// TODO How record was recorded OrderMode (llx_c_input_method)
+	
 	// Project
 	if (! empty($conf->projet->enabled) && $socid > 0)
 	{
@@ -1968,7 +1970,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		}
 		print '</td></tr>';
 
-		// Source
+		// Origin
 		print '<tr><td height="10">';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('Source');
@@ -1988,6 +1990,8 @@ if ($action == 'create' && $user->rights->commande->creer)
 		// print '<a href="'.DOL_URL_ROOT.'/admin/dict.php?id=22&origin=order&originid='.$object->id.'">'.$langs->trans("DictionarySource").'</a>';
 		print '</td></tr>';
 
+    	// TODO How record was recorded OrderMode (llx_c_input_method)
+		
 		// Project
 		if (! empty($conf->projet->enabled))
 		{
@@ -2405,7 +2409,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 			$formmail->substit ['__ORDERREF__'] = $object->ref;
 			$formmail->substit ['__SIGNATURE__'] = $user->signature;
 			$formmail->substit ['__REFCLIENT__'] = $object->ref_client;
-			$formmail->substit ['__THIRPARTY_NAME__'] = $object->thirdparty->name;
+			$formmail->substit ['__THIRDPARTY_NAME__'] = $object->thirdparty->name;
 			$formmail->substit ['__PROJECT_REF__'] = (is_object($object->projet)?$object->projet->ref:'');
 			$formmail->substit ['__PERSONALIZED__'] = '';
 			$formmail->substit ['__CONTACTCIVNAME__'] = '';
