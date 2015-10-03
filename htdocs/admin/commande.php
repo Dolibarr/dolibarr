@@ -204,11 +204,11 @@ else if ($action == 'set_COMMANDE_DRAFT_WATERMARK')
     }
 }
 
-else if ($action == 'set_COMMANDE_FREE_TEXT')
+else if ($action == 'set_ORDER_FREE_TEXT')
 {
-	$freetext = GETPOST("COMMANDE_FREE_TEXT");	// No alpha here, we want exact string
+	$freetext = GETPOST("ORDER_FREE_TEXT");	// No alpha here, we want exact string
 
-	$res = dolibarr_set_const($db, "COMMANDE_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
+	$res = dolibarr_set_const($db, "ORDER_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
 
 	if (! $res > 0) $error++;
 
@@ -552,10 +552,10 @@ $var=true;
 $var=! $var;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="set_COMMANDE_FREE_TEXT">';
+print '<input type="hidden" name="action" value="set_ORDER_FREE_TEXT">';
 print '<tr '.$bc[$var].'><td colspan="2">';
 print $langs->trans("FreeLegalTextOnOrders").' ('.$langs->trans("AddCRIfTooLong").')<br>';
-$variablename='COMMANDE_FREE_TEXT';
+$variablename='ORDER_FREE_TEXT';
 if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 {
     print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
