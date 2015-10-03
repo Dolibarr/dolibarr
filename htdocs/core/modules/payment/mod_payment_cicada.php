@@ -70,7 +70,7 @@ class mod_payment_cicada extends ModeleNumRefPayments
 
 		$payyymm=''; $max='';
 
-		$posindice=8;
+		$posindice=9;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql.= " FROM ".MAIN_DB_PREFIX."paiement";
 		$sql.= " WHERE ref LIKE '".$this->prefix."____-%'";
