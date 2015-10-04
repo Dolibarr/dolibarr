@@ -56,6 +56,7 @@ $pagenext = $page + 1;
 $limit = $conf->liste_limit;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="p.rowid";
+$optioncss = GETPOST('optioncss','alpha');
 
 $amounts = array();
 
@@ -531,6 +532,7 @@ if (empty($action))
         $paramlist.=(! empty($search_ref)?"&search_ref=".$search_ref:"");
         $paramlist.=(! empty($search_company)?"&search_company=".$search_company:"");
         $paramlist.=(! empty($search_amount)?"&search_amount='".$search_amount:"");
+        if ($optioncss != '') $paramlist.='&optioncss='.$optioncss;
 
         print_barre_liste($langs->trans('SupplierPayments'), $page, $_SERVER["PHP_SELF"],$paramlist,$sortfield,$sortorder,'',$num);
 

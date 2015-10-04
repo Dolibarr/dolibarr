@@ -49,6 +49,7 @@ $pagenext = $page + 1;
 $limit = $conf->liste_limit;
 if (! $sortfield) $sortfield="s.datep";
 if (! $sortorder) $sortorder="DESC";
+$optioncss = GETPOST('optioncss','alpha');
 
 $filtre=$_GET["filtre"];
 
@@ -120,6 +121,7 @@ if ($result)
 
 	$param='';
 	if ($typeid) $param.='&amp;typeid='.$typeid;
+	if ($optioncss != '') $param.='&amp;optioncss='.$optioncss;
 
 	print_barre_liste($langs->trans("SalariesPayments"),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$totalnboflines, 'title_accountancy.png');
 

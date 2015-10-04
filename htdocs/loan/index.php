@@ -51,6 +51,7 @@ $search_ref=GETPOST('search_ref','int');
 $search_label=GETPOST('search_label','alpha');
 $search_amount=GETPOST('search_amount','alpha');
 $filtre=GETPOST("filtre");
+$optioncss = GETPOST('optioncss','alpha');
 
 // Purge search criteria
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
@@ -93,6 +94,9 @@ if ($resql)
 	$var=true;
 
 	print load_fiche_titre($langs->trans("Loans"));
+
+    $param="";
+    if ($optioncss != '') $param.='&optioncss='.$optioncss;
 
     print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">'."\n";
     print '<table class="noborder" width="100%">';
