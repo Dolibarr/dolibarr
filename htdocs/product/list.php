@@ -54,6 +54,7 @@ $tosell = GETPOST("tosell", 'int');
 $tobuy = GETPOST("tobuy", 'int');
 $fourn_id = GETPOST("fourn_id",'int');
 $catid = GETPOST('catid','int');
+$optioncss = GETPOST('optioncss','alpha');
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -239,6 +240,7 @@ else
     	$param.=($fourn_id?"&amp;fourn_id=".$fourn_id:"");
     	$param.=($search_categ?"&amp;search_categ=".$search_categ:"");
     	$param.=isset($type)?"&amp;type=".$type:"";
+		if ($optioncss != '') $param.='&optioncss='.$optioncss;
 
     	print_barre_liste($texte, $page, "list.php", $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords,'title_products.png');
 
@@ -272,6 +274,7 @@ else
     	else
     	{
     		print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
+            if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
     		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     		print '<input type="hidden" name="action" value="list">';
     		print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';

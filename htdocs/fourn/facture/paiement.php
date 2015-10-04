@@ -7,6 +7,7 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2014		Teddy Andreotti			<125155@supinfo.com>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2015       Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,6 +56,7 @@ $pagenext = $page + 1;
 $limit = $conf->liste_limit;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="p.rowid";
+$optioncss = GETPOST('optioncss','alpha');
 
 $amounts = array();
 
@@ -438,7 +440,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                $text.='<br>'.$langs->trans("AllCompletelyPayedInvoiceWillBeClosed");
 	                print '<input type="hidden" name="closepaidinvoices" value="'.GETPOST('closepaidinvoices').'">';
 	            }
-	            $form->formconfirm($_SERVER['PHP_SELF'].'?facid='.$facture->id.'&socid='.$facture->socid.'&type='.$facture->type,$langs->trans('PayedSuppliersPayments'),$text,'confirm_paiement',$formquestion,$preselectedchoice);
+	            print $form->formconfirm($_SERVER['PHP_SELF'].'?facid='.$facture->id.'&socid='.$facture->socid.'&type='.$facture->type,$langs->trans('PayedSuppliersPayments'),$text,'confirm_paiement',$formquestion,$preselectedchoice);
 	        }
 
             print '</form>';
@@ -530,10 +532,12 @@ if (empty($action))
         $paramlist.=(! empty($search_ref)?"&search_ref=".$search_ref:"");
         $paramlist.=(! empty($search_company)?"&search_company=".$search_company:"");
         $paramlist.=(! empty($search_amount)?"&search_amount='".$search_amount:"");
+        if ($optioncss != '') $paramlist.='&optioncss='.$optioncss;
 
         print_barre_liste($langs->trans('SupplierPayments'), $page, $_SERVER["PHP_SELF"],$paramlist,$sortfield,$sortorder,'',$num);
 
         print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
+        if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
         print '<table class="noborder" width="100%">';
         print '<tr class="liste_titre">';
         print_liste_field_titre($langs->trans('RefPayment'),$_SERVER["PHP_SELF"],'p.rowid','',$paramlist,'',$sortfield,$sortorder);

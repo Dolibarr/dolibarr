@@ -1212,7 +1212,7 @@ class User extends CommonObject
 		if (isset($this->salary) || $this->salary != '')           $sql.= ", salary= ".($this->salary != ''?"'".$this->db->escape($this->salary)."'":"null");
 		if (isset($this->salaryextra) || $this->salaryextra != '') $sql.= ", salaryextra= ".($this->salaryextra != ''?"'".$this->db->escape($this->salaryextra)."'":"null");
 		$sql.= ", weeklyhours= ".($this->weeklyhours != ''?"'".$this->db->escape($this->weeklyhours)."'":"null");
-		$sql.= ", entity = '".$this->entity."'";
+		$sql.= ", entity = '".$this->db->escape($this->entity)."'";
 		$sql.= " WHERE rowid = ".$this->id;
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);

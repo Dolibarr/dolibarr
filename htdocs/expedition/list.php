@@ -38,6 +38,7 @@ $result = restrictedArea($user, 'expedition',$expeditionid,'');
 $search_ref_exp = GETPOST("search_ref_exp");
 $search_ref_liv = GETPOST('search_ref_liv');
 $search_company = GETPOST("search_company");
+$optioncss = GETPOST('optioncss','alpha');
 
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
@@ -114,12 +115,14 @@ if ($resql)
 	if ($search_ref_exp) $param.= "&amp;search_ref_exp=".$search_ref_exp;
 	if ($search_ref_liv) $param.= "&amp;search_ref_liv=".$search_ref_liv;
 	if ($search_company) $param.= "&amp;search_company=".$search_company;
+	if ($optioncss != '') $param.='&amp;optioncss='.$optioncss;
 
 	print_barre_liste($langs->trans('ListOfSendings'), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num);
 
 
 	$i = 0;
     print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	print '<table class="noborder" width="100%">';
 
 	print '<tr class="liste_titre">';

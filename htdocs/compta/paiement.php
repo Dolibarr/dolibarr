@@ -7,6 +7,7 @@
  * Copyright (C) 2012      Cédric Salvador       <csalvador@gpcsolutions.fr>
  * Copyright (C) 2014      Raphaël Doursenaud    <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2014      Teddy Andreotti       <125155@supinfo.com>
+ * Copyright (C) 2015      Juanjo Menent		 <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -658,7 +659,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                 $text.='<br>'.$langs->trans("AllCompletelyPayedInvoiceWillBeClosed");
                 print '<input type="hidden" name="closepaidinvoices" value="'.GETPOST('closepaidinvoices').'">';
             }
-            $form->formconfirm($_SERVER['PHP_SELF'].'?facid='.$facture->id.'&socid='.$facture->socid.'&type='.$facture->type,$langs->trans('ReceivedCustomersPayments'),$text,'confirm_paiement',$formquestion,$preselectedchoice);
+            print $form->formconfirm($_SERVER['PHP_SELF'].'?facid='.$facture->id.'&socid='.$facture->socid.'&type='.$facture->type,$langs->trans('ReceivedCustomersPayments'),$text,'confirm_paiement',$formquestion,$preselectedchoice);
         }
 
         print "</form>\n";

@@ -5155,6 +5155,11 @@ class Form
             $smallfile=preg_replace('/(\.png|\.gif|\.jpg|\.jpeg|\.bmp)/i','_small\\1',$smallfile);
             if ($object->logo) $file=$id.'/logos/thumbs/'.$smallfile;
         }
+        if ($modulepart=='contact')
+        {
+            $dir=$conf->societe->multidir_output[$entity].'/contact';
+            $file=$id.'/photos/'.$object->photo;
+        }
         else if ($modulepart=='userphoto')
         {
             $dir=$conf->user->dir_output;

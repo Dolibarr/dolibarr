@@ -46,6 +46,7 @@ $search_ht=GETPOST('search_ht');
 $search_ttc=GETPOST('search_ttc');
 $sall=GETPOST('search_all');
 $search_status=(GETPOST('search_status','alpha')!=''?GETPOST('search_status','alpha'):GETPOST('statut','alpha'));	// alpha and not intbecause it can be '6,7'
+$optioncss = GETPOST('optioncss','alpha');
 
 $page  = GETPOST('page','int');
 $socid = GETPOST('socid','int');
@@ -185,6 +186,7 @@ if ($resql)
 	if ($search_refsupp) 		$param.="&search_refsupp=".$search_refsupp;
 	if ($socid)					$param.="&socid=".$socid;
 	if ($search_status >= 0)  	$param.="&search_status=".$search_status;
+	if ($optioncss != '') $param.='&optioncss='.$optioncss;
 
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords);
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';

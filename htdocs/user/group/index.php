@@ -36,6 +36,7 @@ $langs->load("users");
 
 $sall=GETPOST('sall');
 $search_group=GETPOST('search_group');
+$optioncss = GETPOST('optioncss','alpha');
 
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
@@ -83,6 +84,7 @@ if ($resql)
     $i = 0;
 
     $param="&search_group=".urlencode($search_group)."&amp;sall=".urlencode($sall);
+    if ($optioncss != '') $param.='&amp;optioncss='.$optioncss;
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans("Group"),$_SERVER["PHP_SELF"],"g.nom",$param,"","",$sortfield,$sortorder);
