@@ -867,6 +867,7 @@ else if ($action == 'update_extras')
 			if ($result < 0)
 			{
 				$error++;
+				setEventMessage($object->error,'errors');
 			}
 		}
 		else if ($reshook < 0) $error++;
