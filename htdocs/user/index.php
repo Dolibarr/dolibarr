@@ -122,6 +122,7 @@ if ($result)
     $i = 0;
 
     print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 
     $param="search_user=".$search_user."&sall=".$sall;
     $param.="&search_statut=".$search_statut;

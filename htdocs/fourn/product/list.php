@@ -165,6 +165,7 @@ if ($resql)
 	}
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	if ($fourn_id > 0) print '<input type="hidden" name="fourn_id" value="'.$fourn_id.'">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';

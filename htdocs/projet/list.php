@@ -232,6 +232,7 @@ if ($resql)
 	print_barre_liste($text, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, "", $num,'','title_project');
 
 	print '<form method="GET" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 
 	// Show description of content
 	if ($mine) print $langs->trans("MyProjectsDesc").'<br><br>';

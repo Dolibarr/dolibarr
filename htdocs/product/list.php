@@ -274,6 +274,7 @@ else
     	else
     	{
     		print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
+            if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
     		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     		print '<input type="hidden" name="action" value="list">';
     		print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';

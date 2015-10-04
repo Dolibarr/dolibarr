@@ -188,6 +188,7 @@ if ($resql)
 	print_barre_liste($langs->trans("ListOfSuppliers"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_companies');
 
 	print '<form method="GET" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 
 	// Filter on categories
 	$moreforfilter='';
