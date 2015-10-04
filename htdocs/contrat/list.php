@@ -135,6 +135,7 @@ if ($resql)
     print_barre_liste($langs->trans("ListOfContracts"), $page, $_SERVER["PHP_SELF"], '&search_contract='.$search_contract.'&search_name='.$search_name, $sortfield, $sortorder,'',$num,$totalnboflines,'title_commercial.png');
 
     print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
     print '<table class="liste" width="100%">';
 
     // If the user can view prospects other than his'

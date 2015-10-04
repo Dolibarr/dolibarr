@@ -262,6 +262,7 @@ if ($result)
 
 	// Lignes des champs de filtre
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
+	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 
 	$i = 0;
 	print '<table class="liste" width="100%">';
