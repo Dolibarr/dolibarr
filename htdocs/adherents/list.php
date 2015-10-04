@@ -48,6 +48,7 @@ $search_email=GETPOST("search_email");
 $search_categ = GETPOST("search_categ",'int');
 $catid        = GETPOST("catid",'int');
 $sall=GETPOST("sall");
+$optioncss = GETPOST('optioncss','alpha');
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -176,6 +177,7 @@ if ($resql)
 	if ($search_email) $param.="&search_email=".$search_email;
 	if ($filter)       $param.="&filter=".$filter;
 	if ($type > 0)     $param.="&type=".$type;
+	if ($optioncss != '') $param.='&optioncss='.$optioncss;
 	print_barre_liste($titre,$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
 
 	if ($sall)
@@ -185,6 +187,7 @@ if ($resql)
 	}
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].($param?'?'.$param:'').'">';
+    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 	// Filter on categories

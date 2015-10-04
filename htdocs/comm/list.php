@@ -60,6 +60,7 @@ $search_compta = GETPOST("search_compta");
 $search_status = GETPOST("search_status",'int');
 $search_country	= GETPOST("search_country",'int');
 $search_type_thirdparty	= GETPOST("search_type_thirdparty",'int');
+$optioncss = GETPOST('optioncss','alpha');
 
 // Load sale and categ filters
 $search_sale  = GETPOST("search_sale",'int');
@@ -179,12 +180,14 @@ if ($result)
  	if ($search_status != '') $param.='&amp;search_status='.htmlspecialchars($search_status);
  	if ($search_country != '') $param.='&amp;search_country='.htmlspecialchars($search_country);
  	if ($search_type_thirdparty != '') $param.='&amp;search_type_thirdparty='.htmlspecialchars($search_type_thirdparty);
+	if ($optioncss != '') $param.='&amp;optioncss='.$optioncss;
 
 	print_barre_liste($langs->trans("ListOfCustomers"), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords,'title_companies.png');
 
 	$i = 0;
 
 	print '<form method="GET" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 
 	// Filter on categories
  	$moreforfilter='';
