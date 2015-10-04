@@ -52,5 +52,6 @@ ALTER TABLE llx_payment_salary CHANGE COLUMN fk_user_creat fk_user_author intege
 
 ALTER TABLE llx_adherent ADD COLUMN pass_crypted varchar(128) after pass;
 
-
 ALTER TABLE llx_paiement ADD COLUMN ref varchar(30) NOT NULL AFTER rowid;
+
+ALTER TABLE llx_socpeople ADD COLUMN photo varchar(255) AFTER skype;
