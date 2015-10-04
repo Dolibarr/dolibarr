@@ -324,7 +324,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 
 				// Line of free text
 				$newfreetext='';
-				$paramfreetext='PROPALE_FREE_TEXT';
+				$paramfreetext='PROPOSAL_FREE_TEXT';
 				if (! empty($conf->global->$paramfreetext))
 				{
 					$newfreetext=make_substitutions($conf->global->$paramfreetext,$substitutionarray);
