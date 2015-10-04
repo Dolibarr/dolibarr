@@ -150,6 +150,7 @@ if ($result)
 
 
     print '<form method="POST" action="'.$_SERVER["PHP_SELF"].($param?'?'.$param:'').'">';
+    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
     print '<table class="noborder" width="100%">';
 
     print '<tr class="liste_titre">';

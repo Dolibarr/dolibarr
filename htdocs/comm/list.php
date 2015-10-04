@@ -187,6 +187,7 @@ if ($result)
 	$i = 0;
 
 	print '<form method="GET" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 
 	// Filter on categories
  	$moreforfilter='';

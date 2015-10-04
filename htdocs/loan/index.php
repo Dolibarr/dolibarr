@@ -99,6 +99,7 @@ if ($resql)
     if ($optioncss != '') $param.='&optioncss='.$optioncss;
 
     print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
     print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"l.rowid","",$param,"",$sortfield,$sortorder);

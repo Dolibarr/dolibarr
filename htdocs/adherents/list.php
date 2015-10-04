@@ -187,6 +187,7 @@ if ($resql)
 	}
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].($param?'?'.$param:'').'">';
+    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 	// Filter on categories

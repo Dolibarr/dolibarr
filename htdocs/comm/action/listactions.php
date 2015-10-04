@@ -135,6 +135,7 @@ $userstatic=new User($db);
 
 $nav='';
 $nav.='<form name="dateselect" action="'.$_SERVER["PHP_SELF"].'?action=show_peruser'.$param.'">';
+if ($optioncss != '') $nav.= '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 if ($actioncode || isset($_GET['actioncode']) || isset($_POST['actioncode'])) $nav.='<input type="hidden" name="actioncode" value="'.$actioncode.'">';
 if ($status || isset($_GET['status']) || isset($_POST['status']))  $nav.='<input type="hidden" name="status" value="'.$status.'">';
 if ($filter)  $nav.='<input type="hidden" name="filter" value="'.$filter.'">';
@@ -274,6 +275,7 @@ if ($resql)
 
 
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'?'.$param.'">'."\n";
+    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 
 	$i = 0;
 	print '<table class="liste" width="100%">';
