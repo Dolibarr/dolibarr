@@ -40,6 +40,7 @@ $sref = GETPOST('sref');
 $sRefSupplier = GETPOST('srefsupplier');
 $snom = GETPOST('snom');
 $type = GETPOST('type');
+$optioncss = GETPOST('optioncss','alpha');
 
 $sortfield = GETPOST('sortfield');
 $sortorder = GETPOST('sortorder');
@@ -150,6 +151,7 @@ if ($resql)
 
 
 	$param="&tobuy=".$tobuy."&sref=".$sref."&snom=".$snom."&fourn_id=".$fourn_id.(isset($type)?"&amp;type=".$type:"").(empty($sRefSupplier)?"":"&amp;srefsupplier=".$sRefSupplier);
+	if ($optioncss != '') $param.='&optioncss='.$optioncss;
 	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords);
 
 

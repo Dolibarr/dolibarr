@@ -56,6 +56,7 @@ $search_priv=GETPOST("search_priv");
 $search_categ=GETPOST("search_categ",'int');
 $search_status=GETPOST("search_status",'int');
 if ($search_status=='') $search_status=1; // always display activ customer first
+$optioncss = GETPOST('optioncss','alpha');
 
 
 $type=GETPOST("type");
@@ -261,6 +262,7 @@ if ($result)
     if (!empty($search_categ)) $param.='&search_categ='.htmlspecialchars($search_categ);
     if ($search_status != '') $param.='&amp;search_status='.htmlspecialchars($search_status);
     if ($search_priv == '0' || $search_priv == '1') $param.="&search_priv=".htmlspecialchars($search_priv);
+    if ($optioncss != '') $param.='&optioncss='.$optioncss;
 
 	$num = $db->num_rows($result);
     $i = 0;

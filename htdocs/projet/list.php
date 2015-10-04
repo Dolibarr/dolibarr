@@ -73,6 +73,7 @@ $search_opp_status=GETPOST("search_opp_status",'alpha');
 $search_public=GETPOST("search_public",'int');
 $search_user=GETPOST('search_user','int');
 $search_sale=GETPOST('search_sale','int');
+$optioncss = GETPOST('optioncss','alpha');
 
 $day	= GETPOST('day','int');
 $month	= GETPOST('month','int');
@@ -223,6 +224,7 @@ if ($resql)
 	if ($search_public != '') 		$param.='&search_public='.$search_public;
 	if ($search_user > 0)    		$param.='&search_user='.$search_user;
 	if ($search_sale > 0)    		$param.='&search_sale='.$search_sale;
+	if ($optioncss != '') $param.='&optioncss='.$optioncss;
 
 
 	$text=$langs->trans("Projects");

@@ -49,6 +49,7 @@ $search_status              = GETPOST("search_status",'int');
 $catid						= GETPOST("catid",'int');
 $search_country				= GETPOST("search_country",'int');
 $search_type_thirdparty		= GETPOST("search_type_thirdparty",'int');
+$optioncss = GETPOST('optioncss','alpha');
 
 // Security check
 $socid = GETPOST('socid','int');
@@ -182,6 +183,7 @@ if ($resql)
  	if ($search_status != '') $param.='&amp;search_status='.htmlspecialchars($search_status);
  	if ($search_country != '') $param.='&amp;search_country='.htmlspecialchars($search_country);
  	if ($search_type_thirdparty != '') $param.='&amp;search_type_thirdparty='.htmlspecialchars($search_type_thirdparty);
+	if ($optioncss != '') $param.='&optioncss='.$optioncss;
 
 	print_barre_liste($langs->trans("ListOfSuppliers"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_companies');
 

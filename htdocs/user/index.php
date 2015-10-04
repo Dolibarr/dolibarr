@@ -47,6 +47,7 @@ $search_lastname=GETPOST('search_lastname','alpha');
 $search_firstname=GETPOST('search_firstname','alpha');
 $search_statut=GETPOST('search_statut','alpha');
 $search_thirdparty=GETPOST('search_thirdparty','alpha');
+$optioncss = GETPOST('optioncss','alpha');
 
 if ($search_statut == '') $search_statut='1';
 
@@ -124,6 +125,7 @@ if ($result)
 
     $param="search_user=".$search_user."&sall=".$sall;
     $param.="&search_statut=".$search_statut;
+    if ($optioncss != '') $param.='&optioncss='.$optioncss;
 
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';

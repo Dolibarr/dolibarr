@@ -60,6 +60,7 @@ $modesearch=GETPOST("mode_search");
 $search_type=trim(GETPOST('search_type'));
 $search_country				= GETPOST("search_country",'int');
 $search_type_thirdparty		= GETPOST("search_type_thirdparty",'int');
+$optioncss = GETPOST('optioncss','alpha');
 
 $sortfield=GETPOST("sortfield",'alpha');
 $sortorder=GETPOST("sortorder",'alpha');
@@ -281,6 +282,7 @@ if ($resql)
 	$param.= '&amp;search_idprof4='.htmlspecialchars($search_idprof4);
 	if ($search_country != '') $param.='&amp;search_country='.htmlspecialchars($search_country);
 	if ($search_type_thirdparty != '') $param.='&amp;search_type_thirdparty='.htmlspecialchars($search_type_thirdparty);
+	if ($optioncss != '') $param.='&amp;optioncss='.$optioncss;
 
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords,'title_companies');
 

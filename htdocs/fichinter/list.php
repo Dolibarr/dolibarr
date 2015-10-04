@@ -62,6 +62,7 @@ $search_company=GETPOST('search_company','alpha');
 $search_desc=GETPOST('search_desc','alpha');
 $search_status=GETPOST('search_status');
 $sall=GETPOST('sall');
+$optioncss = GETPOST('optioncss','alpha');
 
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
@@ -128,6 +129,7 @@ if ($result)
 	if ($search_company) $urlparam.="&search_company=".urlencode($search_company);
 	if ($search_desc) $urlparam.="&search_desc=".urlencode($search_desc);
 	if ($search_status != '' && $search_status > -1) $urlparam.="&search_status=".urlencode($search_status);
+	if ($optioncss != '') $urlparam.='&optioncss='.$optioncss;
 
 	print_barre_liste($langs->trans("ListOfInterventions"), $page, $_SERVER['PHP_SELF'], $urlparam, $sortfield, $sortorder, '', $num, $totalnboflines, 'title_commercial.png');
 
