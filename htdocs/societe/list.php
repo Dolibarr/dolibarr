@@ -55,12 +55,14 @@ $search_idprof5=trim(GETPOST('search_idprof5'));
 $search_idprof6=trim(GETPOST('search_idprof6'));
 $search_sale=trim(GETPOST("search_sale"));
 $search_categ=trim(GETPOST("search_categ"));
+$search_type=trim(GETPOST('search_type'));
+$search_country=GETPOST("search_country",'int');
+$search_type_thirdparty=GETPOST("search_type_thirdparty",'int');
+$search_status=GETPOST("search_status",'int');
+
+$optioncss=GETPOST('optioncss','alpha');
 $mode=GETPOST("mode");
 $modesearch=GETPOST("mode_search");
-$search_type=trim(GETPOST('search_type'));
-$search_country				= GETPOST("search_country",'int');
-$search_type_thirdparty		= GETPOST("search_type_thirdparty",'int');
-$optioncss = GETPOST('optioncss','alpha');
 
 $sortfield=GETPOST("sortfield",'alpha');
 $sortorder=GETPOST("sortorder",'alpha');
@@ -181,7 +183,10 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 	$search_type='';
 	$search_country='';
 	$search_type_thirdparty='';
+	$search_status='';
 }
+
+if ($search_status=='') $search_status=1; // always display active thirdparty first
 
 if ($socname)
 {
@@ -247,6 +252,7 @@ if ($search_idprof6)  $sql .= " AND s.idprof6 LIKE '%".$db->escape($search_idpro
 if ($search_type > 0 && in_array($search_type,array('1,3','2,3'))) $sql .= " AND s.client IN (".$db->escape($search_type).")";
 if ($search_type > 0 && in_array($search_type,array('4')))         $sql .= " AND s.fournisseur = 1";
 if ($search_type == '0') $sql .= " AND s.client = 0 AND s.fournisseur = 0";
+if ($search_status!='') $sql .= " AND s.status = ".$db->escape($search_status);
 if (!empty($conf->barcode->enabled) && $sbarcode) $sql.= " AND s.barcode LIKE '%".$db->escape($sbarcode)."%'";
 if ($search_country) $sql .= " AND s.fk_pays IN (".$search_country.')';
 if ($search_type_thirdparty) $sql .= " AND s.fk_typent IN (".$search_type_thirdparty.')';
@@ -272,18 +278,19 @@ if ($resql)
 	$num = $db->num_rows($resql);
 	$i = 0;
 
-	$param = "&amp;socname=".htmlspecialchars($socname);
-	$param.= "&amp;search_nom=".htmlspecialchars($search_nom);
-	$param.= "&amp;search_town=".htmlspecialchars($search_town);
-	$param.= ($sbarcode?"&amp;sbarcode=".htmlspecialchars($sbarcode):"");
-	$param.= '&amp;search_idprof1='.htmlspecialchars($search_idprof1);
-	$param.= '&amp;search_idprof2='.htmlspecialchars($search_idprof2);
-	$param.= '&amp;search_idprof3='.htmlspecialchars($search_idprof3);
-	$param.= '&amp;search_idprof4='.htmlspecialchars($search_idprof4);
-	if ($search_country != '') $param.='&amp;search_country='.htmlspecialchars($search_country);
-	if ($search_type_thirdparty != '') $param.='&amp;search_type_thirdparty='.htmlspecialchars($search_type_thirdparty);
-	if ($optioncss != '') $param.='&amp;optioncss='.$optioncss;
-
+	$param = "&amp;socname=".urlencode($socname);
+	$param.= "&amp;search_nom=".urlencode($search_nom);
+	$param.= "&amp;search_town=".urlencode($search_town);
+	$param.= ($sbarcode?"&amp;sbarcode=".urlencode($sbarcode):"");
+	$param.= '&amp;search_idprof1='.urlencode($search_idprof1);
+	$param.= '&amp;search_idprof2='.urlencode($search_idprof2);
+	$param.= '&amp;search_idprof3='.urlencode($search_idprof3);
+	$param.= '&amp;search_idprof4='.urlencode($search_idprof4);
+	if ($search_country != '') $param.='&amp;search_country='.urlencode($search_country);
+	if ($search_type_thirdparty != '') $param.='&amp;search_type_thirdparty='.urlencode($search_type_thirdparty);
+	if ($optioncss != '') $param.='&amp;optioncss='.urlencode($optioncss);
+    if ($search_status != '') $params.='&amp;search_status='.urlencode($search_status);
+	
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords,'title_companies');
 
     // Show delete result message
@@ -422,7 +429,9 @@ if ($resql)
     print $hookmanager->resPrint;
 
     // Status
-    print '<td></td>';
+    print '<td class="liste_titre" align="right">';
+    print $form->selectarray('search_status', array('0'=>$langs->trans('ActivityCeased'),'1'=>$langs->trans('InActivity')),$search_status);
+    print '</td>';
 
 	print '<td class="liste_titre" align="right">';
 	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
