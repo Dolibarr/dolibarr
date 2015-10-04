@@ -198,10 +198,14 @@ if ($resql)
     {
         $numr=$db->num_rows($resqlr);
         $i=0;
+        $last_ok=0;
         while (($i < $numr) && ($i < $nbmax))
         {
             $objr = $db->fetch_object($resqlr);
+            if (! $last_ok) {
             $last_releve = $objr->num_releve;
+                $last_ok=1;
+            }
             $i++;
             $liste='<a href="'.DOL_URL_ROOT.'/compta/bank/releve.php?account='.$acct->id.'&amp;num='.$objr->num_releve.'">'.$objr->num_releve.'</a> &nbsp; '.$liste;
         }
@@ -218,11 +222,11 @@ if ($resql)
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?account='.$acct->id.'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print "<input type=\"hidden\" name=\"action\" value=\"rappro\">";
-	print "<input type=\"hidden\" name=\"account\" value=\"".$acct->id."\">";
+	print '<input type="hidden" name="action" value="rappro">';
+	print '<input type="hidden" name="account" value="'.$acct->id.'">';
 
     print '<strong>'.$langs->trans("InputReceiptNumber").'</strong>: ';
-    print '<input class="flat" name="num_releve" type="text" value="'.(GETPOST('num_releve')?GETPOST('num_releve'):$objp->num_releve).'" size="10">';
+    print '<input class="flat" name="num_releve" type="text" value="'.(GETPOST('num_releve')?GETPOST('num_releve'):$last_releve).'" size="10">';
     print '<br>';
     if ($options)
     {
