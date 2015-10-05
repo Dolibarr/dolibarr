@@ -882,15 +882,17 @@ class Project extends CommonObject
         $result = '';
         $link = '';
         $linkend = '';
-        $label = '<u>' . $langs->trans("ShowProject") . '</u>';
+        $label='';
+        if ($option != 'nolink') $label = '<u>' . $langs->trans("ShowProject") . '</u>';
         if (! empty($this->ref))
-            $label .= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
+            $label .= ($label?'<br>':'').'<b>' . $langs->trans('Ref') . ': </b>' . $this->ref;	// The space must be after the : to not being explode when showing the title in img_picto
         if (! empty($this->title))
-            $label .= '<br><b>' . $langs->trans('Label') . ':</b> ' . $this->title;
+            $label .= ($label?'<br>':'').'<b>' . $langs->trans('Label') . ': </b>' . $this->title;	// The space must be after the : to not being explode when showing the title in img_picto
         if ($moreinpopup) $label.='<br>'.$moreinpopup;
         $linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 
-        if ($option != 'nolink') {
+        if ($option != 'nolink') 
+        {
             if (preg_match('/\.php$/',$option)) {
                 $link = '<a href="' . dol_buildpath($option,1) . '?id=' . $this->id . $linkclose;
                 $linkend = '</a>';
