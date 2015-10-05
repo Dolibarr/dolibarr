@@ -12,7 +12,8 @@ Issues are now managed on [GitHub](https://github.com/Dolibarr/dolibarr/Issues).
 
 1. Please [use the search engine](https://help.github.com/articles/searching-issues) to check if nobody's already reported your problem.
 2. [Create an issue](https://help.github.com/articles/creating-an-issue). Choose an appropriate title. Prepend appropriately with Bug or Feature Request.
-3. Report with as much detail as possible ([Use screenshots or even screencasts whenever possible](https://help.github.com/articles/issue-attachments)).
+4. Tell us the version you are using!
+3. Write a report with as much detail as possible (Use [screenshots](https://help.github.com/articles/issue-attachments) or even screencasts and provide logging and debugging informations whenever possible).
 
 We're still figuring out how to migrate old issues to GitHub. In the meantime, they are still available at [Doliforge](https://doliforge.org/projects/dolibarr).
 
