@@ -68,7 +68,7 @@ Translations
 ------------
 The source language (en_US) is maintained in the repository. See the [Code](#code) section above.
 
-All other translations are managed online at [Transifex](https://www.transifex.com/projects/p/dolibarr).
+All other translations are managed online at [Transifex](https://www.transifex.com/dolibarr-association/dolibarr/).
 
 Join an existing translation team or create your own and translate into the interface.
 
