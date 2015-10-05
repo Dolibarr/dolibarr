@@ -2014,11 +2014,11 @@ table.liste {
 	width: 100%;
 
 	border-collapse: collapse;
-	border-top-color: #FEFEFE;
-
+/*	border-top-color: #FEFEFE;
 	border-top-width: 1px;
 	border-top-color: #CCC;
 	border-top-style: solid;
+*/
 
 	border-right-width: 1px;
 	border-right-color: #CCC;

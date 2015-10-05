@@ -341,7 +341,7 @@ if ($resql)
 	*/
 	if (! empty($moreforfilter))
 	{
-		print '<div class="liste_titre">';
+		print '<div class="liste_titre liste_titre_bydiv centpercent">';
 		print $moreforfilter;
     	$parameters=array();
     	$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
@@ -349,7 +349,7 @@ if ($resql)
 	    print '</div>';
 	}
 
-	print '<table class="liste" width="100%">';
+	print '<table class="liste">';
 
     // Lines of titles
     print '<tr class="liste_titre">';

@@ -281,7 +281,7 @@ if ($resql)
     	print '</div>';
 	}
 
-	print '<table class="liste" width="100%">';
+	print '<table class="liste">';
 	
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"p.ref","",$param,"",$sortfield,$sortorder);
