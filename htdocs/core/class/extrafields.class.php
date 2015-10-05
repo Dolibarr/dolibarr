@@ -753,7 +753,7 @@ class ExtraFields
 					$sqlwhere.= ' WHERE 1';
 				}
 				if (in_array($InfoFieldList[0],array('tablewithentity'))) $sqlwhere.= ' AND entity = '.$conf->entity;	// Some tables may have field, some other not. For the moment we disable it.
-				//$sql.=preg_replace('/^ AND /','',$sqlwhere);
+				$sql.=preg_replace('/^ AND /','',$sqlwhere);
 				//print $sql;
 
 				dol_syslog(get_class($this).'::showInputField type=sellist sql='.$sql);
