@@ -75,7 +75,7 @@ Join an existing translation team or create your own and translate into the inte
 Your translations will be available in the next major release.
 
 ### Resources
-[Translator documentation](http://wiki.dolibarr.org/index.php/Developer_documentation)
+[Translator documentation](http://wiki.dolibarr.org/index.php/Translator_documentation)
 
 Documentation
 -------------
