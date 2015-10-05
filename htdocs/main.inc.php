@@ -165,7 +165,6 @@ if (! defined('NOSCANPOSTFORINJECTION'))
 // This is to make Dolibarr working with Plesk
 if (! empty($_SERVER['DOCUMENT_ROOT']) && substr($_SERVER['DOCUMENT_ROOT'], -6) !== 'htdocs') {
 		set_include_path($_SERVER['DOCUMENT_ROOT'] . '/htdocs');
-	}
 }
 
 // Include the conf.php and functions.lib.php
