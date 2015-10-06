@@ -1289,12 +1289,12 @@ class AskPriceSupplier extends CommonObject
             $soc->fetch($this->socid);
 
             // Define new ref
-            if (! $error && (preg_match('/^[\(]?PROV/i', $this->ref)))
+            if (! $error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) // empty should not happened, but when it occurs, the test save life
             {
             	$num = $this->getNextNumRef($soc);
             }
             else
-          {
+            {
             	$num = $this->ref;
             }
             $this->newref = $num;

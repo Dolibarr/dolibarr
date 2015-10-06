@@ -1827,7 +1827,7 @@ class Facture extends CommonInvoice
 		{
 			$num = $force_number;
 		}
-		else if (preg_match('/^[\(]?PROV/i', $this->ref))
+		else if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) // empty should not happened, but when it occurs, the test save life
 		{
 			if (! empty($conf->global->FAC_FORCE_DATE_VALIDATION))	// If option enabled, we force invoice date
 			{

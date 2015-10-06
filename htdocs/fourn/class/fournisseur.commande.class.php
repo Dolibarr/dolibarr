@@ -388,7 +388,7 @@ class CommandeFournisseur extends CommonOrder
             $soc->fetch($this->fourn_id);
 
             // Check if object has a temporary ref
-            if (preg_match('/^[\(]?PROV/i', $this->ref))
+            if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) // empty should not happened, but when it occurs, the test save life
             {
                 $num = $this->getNextNumRef($soc);
             }
@@ -684,7 +684,7 @@ class CommandeFournisseur extends CommonOrder
             $soc->fetch($this->fourn_id);
 
             // Check if object has a temporary ref
-            if (preg_match('/^[\(]?PROV/i', $this->ref))
+            if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) // empty should not happened, but when it occurs, the test save life
             {
                 $num = $this->getNextNumRef($soc);
             }
