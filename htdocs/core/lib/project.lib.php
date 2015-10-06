@@ -53,7 +53,7 @@ function project_prepare_head($object)
 	|| ! empty($conf->ficheinter->enabled) || ! empty($conf->agenda->enabled) || ! empty($conf->deplacement->enabled))
 	{
 		$head[$h][0] = DOL_URL_ROOT.'/projet/element.php?id='.$object->id;
-		$head[$h][1] = $langs->trans("Overview");
+		$head[$h][1] = $langs->trans("ProjectOverview");
 		$head[$h][2] = 'element';
 		$h++;
 	}
