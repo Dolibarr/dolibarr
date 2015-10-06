@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2011       Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
@@ -238,7 +238,7 @@ if ($resql)
 	print '<td class="liste_titre"><input type="text" size="10" class="flat" name="search_town" value="'.$search_town.'"></td>';
 
 	print '<td class="liste_titre" align="center">';
-	print $form->select_country($search_country,'search_country');
+	print $form->select_country($search_country,'search_country','',0,'maxwidth100');
 	print '</td>';
 	
 	print '<td class="liste_titre" align="center">';

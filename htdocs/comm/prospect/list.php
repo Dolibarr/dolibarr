@@ -385,7 +385,7 @@ if ($resql)
 	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Zip"),$_SERVER["PHP_SELF"],"s.zip","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Town"),$_SERVER["PHP_SELF"],"s.town","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("State"),$_SERVER["PHP_SELF"],"s.fk_departement","",$param,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("StateShort"),$_SERVER["PHP_SELF"],"s.fk_departement","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Country"),$_SERVER["PHP_SELF"],"country.code_iso","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("ThirdPartyType"),$_SERVER["PHP_SELF"],"typent.code","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"s.datec","",$param,'align="center"',$sortfield,$sortorder);
@@ -427,13 +427,13 @@ if ($resql)
     print '<input type="text" class="flat" name="search_state" size="8" value="'.$search_state.'">';
     print '</td>';
     print '<td class="liste_titre" align="center">';
-    print $form->select_country($search_country,'search_country');
+    print $form->select_country($search_country,'search_country','',0,'maxwidth100');
     print '</td>';
     print '<td class="liste_titre" align="center">';
     print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?'ASC':$conf->global->SOCIETE_SORT_ON_TYPEENT));
     print '</td>';
     print '<td align="center" class="liste_titre">';
-	print '<input class="flat" type="text" size="10" name="search_datec" value="'.$search_datec.'">';
+	print '<input class="flat" type="text" size="6" name="search_datec" value="'.$search_datec.'">';
     print '</td>';
 
  	// Prospect level

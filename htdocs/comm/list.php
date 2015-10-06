@@ -246,7 +246,7 @@ if ($result)
     print '</td>';
 
     print '<td class="liste_titre" align="center">';
-    print $form->select_country($search_country,'search_country');
+    print $form->select_country($search_country,'search_country','',0,'maxwidth100');
     print '</td>';
     
     print '<td class="liste_titre" align="center">';
