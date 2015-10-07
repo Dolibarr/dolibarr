@@ -90,7 +90,7 @@ SelectAtLeastOneField=Vaheta ringi vähemalt üks lähteväli eksporditavate vä
 SelectFormat=Vali selle impordi faili formaat
 RunImportFile=Käivita impordi fail
 NowClickToRunTheImport=Kontrolli impordi simulatsiooni tulemust. Kui kõik on korras, käivita lõplik import.
-DataLoadedWithId=Kõik andmed laetakse järgmise impordi IDga: <b>%s</b>
+DataLoadedWithId=All data will be loaded with the following import id: <b>%s</b>
 ErrorMissingMandatoryValue=Kohustuslikud andmed on tühjad lähtefailis välja <b>%s</b> jaoks.
 TooMuchErrors=On veel <b>%s</b> muud rida vigadega, kuid väljundit on piiratud.
 TooMuchWarnings=On veel <b>%s</b> muud rida hoiatustega, kuid väljundit on piiratud.
@@ -130,7 +130,7 @@ ExportDateFilter=YYYY, YYYYMM, YYYYMMDD : filters by one year/month/day<br>YYYY+
 ExportNumericFilter='NNNNN' filters by one value<br>'NNNNN+NNNNN' filters over a range of values<br>'&gt;NNNNN' filters by lower values<br>'&gt;NNNNN' filters by higher values
 ## filters
 SelectFilterFields=Kui soovid mõnede väärtuste põhjal filtreerida, siis sisesta nad siia.
-FilterableFields=Filtreeritav ala
+FilterableFields=Filterable Fields
 FilteredFields=Filtreeritav väl
 FilteredFieldsValues=Filtri väärtus
 FormatControlRule=Format control rule

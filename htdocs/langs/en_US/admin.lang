@@ -1178,6 +1178,7 @@ SuggestPaymentByRIBOnAccount=Suggest payment by withdraw on account
 SuggestPaymentByChequeToAddress=Suggest payment by cheque to
 FreeLegalTextOnInvoices=Free text on invoices
 WatermarkOnDraftInvoices=Watermark on draft invoices (none if empty)
+PaymentsNumberingModule=Payments numbering model
 ##### Proposals #####
 PropalSetup=Commercial proposals module setup
 CreateForm=Create forms
@@ -1226,6 +1227,7 @@ ContractsNumberingModules=Contracts numbering modules
 TemplatePDFContracts=Contracts documents models
 FreeLegalTextOnContracts=Free text on contracts
 WatermarkOnDraftContractCards=Watermark on draft contracts (none if empty)
+ContractsAndServices=List of contracts and services
 ##### Members #####
 MembersSetup=Members module setup
 MemberMainOptions=Main options

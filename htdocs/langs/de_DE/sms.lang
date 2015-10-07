@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - sms
 Sms=SMS
 SmsSetup=SMS Einstellungen
-SmsDesc=Auf diese Seite haben Sie die Möglichkeit globale Einstellungen der SMS-Funktionen vorzunehmen
+SmsDesc=Auf dieser Seite haben Sie die Möglichkeit globale Einstellungen der SMS-Funktionen vorzunehmen
 SmsCard=SMS Karte
 AllSms=Alle SMS Aktionen
 SmsTargets=Ziele

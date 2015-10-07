@@ -1,6 +1,8 @@
 # Dolibarr language file - Source file is en_US - projects
 RefProject=Ref. project
+ProjectRef=Project ref.
 ProjectId=Project Id
+ProjectLabel=Project label
 Project=Project
 Projects=פרוייקטים
 ProjectStatus=Project status
@@ -27,7 +29,7 @@ OfficerProject=Officer project
 LastProjects=Last %s projects
 AllProjects=All projects
 OpenedProjects=Opened projects
-OpportunitiesStatusForOpenedProjects=Opportunities status for opened projects
+OpportunitiesStatusForOpenedProjects=Opportunities amount of opened projects by status
 ProjectsList=List of projects
 ShowProject=Show project
 SetProject=Set project

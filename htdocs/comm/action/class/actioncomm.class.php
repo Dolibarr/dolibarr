@@ -615,7 +615,19 @@ class ActionComm extends CommonObject
         	$this->error=$this->db->lasterror();
         	$error++;
         }
-
+        
+        if (! $error) {
+	        $sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm_resources";
+	        $sql.= " WHERE fk_actioncomm=".$this->id;
+	        
+	        dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+	        $res=$this->db->query($sql);
+	        if ($res < 0) {
+	        	$this->error=$this->db->lasterror();
+	        	$error++;
+	        }
+        }
+        
         // Removed extrafields
         if (! $error) {
         	$result=$this->deleteExtraFields();

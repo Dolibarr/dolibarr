@@ -90,7 +90,7 @@ SelectAtLeastOneField=Switch at least one source field in the column of fields t
 SelectFormat=Choose this import file format
 RunImportFile=Launch import file
 NowClickToRunTheImport=Check result of import simulation. If everything is ok, launch the definitive import.
-DataLoadedWithId=All data will be loaded with the following import id: <b>%s<b>
+DataLoadedWithId=All data will be loaded with the following import id: <b>%s</b>
 ErrorMissingMandatoryValue=Mandatory data is empty in source file for field <b>%s</b>.
 TooMuchErrors=There is still <b>%s</b> other source lines with errors but output has been limited.
 TooMuchWarnings=There is still <b>%s</b> other source lines with warnings but output has been limited.
@@ -130,7 +130,7 @@ ExportDateFilter=YYYY, YYYYMM, YYYYMMDD : φίλτρα ανά ένα έτος/μ
 ExportNumericFilter='NNNNN' φίλτρα από μία τιμή<br>'NNNNN+NNNNN' φίλτρα σε ένα εύρος τιμών<br>'&gt;NNNNN' φίλτρα από τις χαμηλότερες τιμές<br>'&gt;NNNNN' φίλτρα από τις υψηλότερες τιμές
 ## filters
 SelectFilterFields=Αν θέλετε να φιλτράρετε ορισμένες τιμές, απλά εισάγετε τις τιμές εδώ.
-FilterableFields=Πεδία φιλτραρίσματος
+FilterableFields=Filterable Fields
 FilteredFields=Φιλτραρισμένα πεδία
 FilteredFieldsValues=Αξία φίλτρου
 FormatControlRule=Μορφοποίηση του κανόνα ελέγχου

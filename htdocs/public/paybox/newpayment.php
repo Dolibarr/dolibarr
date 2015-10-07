@@ -167,7 +167,7 @@ else if (! empty($conf->global->PAYBOX_CREDITOR)) $creditor=$conf->global->PAYBO
 
 print '<span id="dolpaymentspan"></span>'."\n";
 print '<div class="center">';
-print '<form id="dolpaymentform" name="paymentform" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<form id="dolpaymentform" class="center" name="paymentform" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="dopayment">';
 print '<input type="hidden" name="tag" value="'.GETPOST("tag",'alpha').'">';
@@ -180,7 +180,7 @@ print '<!-- urlok = '.$urlok.' -->'."\n";
 print '<!-- urlko = '.$urlko.' -->'."\n";
 print "\n";
 
-print '<table id="dolpaymenttable" summary="Payment form">'."\n";
+print '<table id="dolpaymenttable" summary="Payment form" class="center">'."\n";
 
 // Show logo (search order: logo defined by PAYBOX_LOGO_suffix, then PAYBOX_LOGO, then small company logo, large company logo, theme logo, common logo)
 $width=0;

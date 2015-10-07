@@ -191,7 +191,7 @@ if ($search_refcustomer) $sql .= natural_search('f.ref_client', $search_refcusto
 if ($search_societe) $sql .= natural_search('s.nom', $search_societe);
 if ($search_montant_ht != '') $sql.= natural_search('f.total', $search_montant_ht, 1);
 if ($search_montant_ttc != '') $sql.= natural_search('f.total_ttc', $search_montant_ttc, 1);
-if ($search_status != '') $sql.= " AND f.fk_statut = ".$db->escape($search_status);
+if ($search_status != '' && $search_status >= 0) $sql.= " AND f.fk_statut = ".$db->escape($search_status);
 if ($month > 0)
 {
     if ($year > 0 && empty($day))
@@ -270,6 +270,7 @@ if ($resql)
     if ($search_user > 0)    $param.='&search_user=' .$search_user;
     if ($search_montant_ht != '')  $param.='&search_montant_ht='.$search_montant_ht;
     if ($search_montant_ttc != '') $param.='&search_montant_ttc='.$search_montant_ttc;
+    if ($search_status > 0) $param.='&search_status='.$search_status;
     print_barre_liste($langs->trans('BillsCustomers').' '.($socid?' '.$soc->name:''),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords,'title_accountancy.png');
 
     $i = 0;

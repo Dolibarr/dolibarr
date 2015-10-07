@@ -31,6 +31,7 @@ $langs->load("admin");
 if (! $user->rights->bookmark->lire) {
     restrictedArea($user, 'bookmarks');
 }
+$optioncss = GETPOST('optioncss','alpha');
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -88,21 +89,23 @@ if ($resql)
 {
     $num = $db->num_rows($resql);
     $i = 0;
+    $param = "";
+    if ($optioncss != '') $param ='&optioncss='.$optioncss;
 
     print "<table class=\"noborder\" width=\"100%\">";
 
     print "<tr class=\"liste_titre\">";
     //print "<td>&nbsp;</td>";
-    print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"bid","","",'align="left"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"bid","", $param,'align="left"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Title"),'','');
     print "</td>";
     print_liste_field_titre($langs->trans("Link"),'','');
     print "</td>";
     print_liste_field_titre($langs->trans("Target"),'','','','','align="center"');
     print "</td>";
-    print_liste_field_titre($langs->trans("Owner"),$_SERVER["PHP_SELF"],"u.lastname","","",'align="center"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"b.dateb","","",'align="center"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Position"),$_SERVER["PHP_SELF"],"b.position","","",'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Owner"),$_SERVER["PHP_SELF"],"u.lastname","", $param,'align="center"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"b.dateb","", $param,'align="center"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Position"),$_SERVER["PHP_SELF"],"b.position","", $param,'align="right"',$sortfield,$sortorder);
     print_liste_field_titre('');
     print "</tr>\n";
 

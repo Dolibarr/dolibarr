@@ -2,6 +2,7 @@
 /* Copyright (C) 2005-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2015      Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -118,6 +119,11 @@ function invoice_admin_prepare_head()
 	$head[$h][0] = DOL_URL_ROOT.'/admin/facture.php';
 	$head[$h][1] = $langs->trans("Miscellaneous");
 	$head[$h][2] = 'general';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/admin/payment.php';
+	$head[$h][1] = $langs->trans("Payments");
+	$head[$h][2] = 'payment';
 	$h++;
 
 	// Show more tabs from modules

@@ -38,6 +38,7 @@ $search_login=GETPOST('search_login');
 $search_note=GETPOST('search_note');
 $search_account=GETPOST('search_account','int');
 $search_amount=GETPOST('search_amount','int');
+$optioncss = GETPOST('optioncss','alpha');
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -139,6 +140,7 @@ if ($result)
 	if ($search_login)    $param.="&search_login=".$search_login;
 	if ($search_acount)   $param.="&search_account=".$search_account;
 	if ($search_amount)   $param.="&search_amount=".$search_amount;
+	if ($optioncss != '') $param.='&optioncss='.$optioncss;
     print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num);
 
 	if ($sall)
@@ -146,10 +148,9 @@ if ($result)
 		print $langs->trans("Filter")." (".$langs->trans("Ref").", ".$langs->trans("Lastname").", ".$langs->trans("Firstname").", ".$langs->trans("EMail").", ".$langs->trans("Address")." ".$langs->trans("or")." ".$langs->trans("Town")."): ".$sall;
 	}
 
-    $param="";
-    $param.="&statut=$statut&date_select=$date_select";
 
     print '<form method="POST" action="'.$_SERVER["PHP_SELF"].($param?'?'.$param:'').'">';
+    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
     print '<table class="noborder" width="100%">';
 
     print '<tr class="liste_titre">';

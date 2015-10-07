@@ -39,6 +39,9 @@ InterventionClassifiedUnbilledInDolibarr=Intervention %s set as unbilled
 InterventionSentByEMail=Intervention %s sent by EMail
 InterventionDeletedInDolibarr=Intervention %s deleted
 SearchAnIntervention=Search an intervention
+InterventionsArea=Interventions area
+DraftFichinter=Draft interventions
+LastModifiedInterventions=Last %s modified interventions
 ##### Types de contacts #####
 TypeContact_fichinter_internal_INTERREPFOLL=Đại diện theo dõi can thiệp
 TypeContact_fichinter_internal_INTERVENING=Can thiệp
@@ -51,3 +54,14 @@ PacificNumRefModelDesc1=Quay trở lại với các định dạng numero% syymm
 PacificNumRefModelError=Thẻ can thiệp bắt đầu với $ syymm đã tồn tại và không tương thích với mô hình này của chuỗi. Loại bỏ nó hoặc đổi tên nó để kích hoạt module này.
 PrintProductsOnFichinter=Sản phẩm in trên thẻ can thiệp
 PrintProductsOnFichinterDetails=interventions generated from orders
+##### Exports #####
+InterId=Intervention id
+InterRef=Intervention ref.
+InterDateCreation=Date creation intervention
+InterDuration=Duration intervention
+InterStatus=Status intervention
+InterNote=Note intervention
+InterLineId=Line id intervention
+InterLineDate=Line date intervention
+InterLineDuration=Line duration intervention
+InterLineDesc=Line description intervention

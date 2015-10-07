@@ -51,6 +51,7 @@ $search_status=GETPOST('search_status');
 $socid=GETPOST('socid');
 
 $search_sale = GETPOST('search_sale','int');
+$optioncss = GETPOST('optioncss','alpha');
 
 if (! $sortfield) $sortfield="c.rowid";
 if (! $sortorder) $sortorder="DESC";
@@ -134,6 +135,7 @@ if ($resql)
     print_barre_liste($langs->trans("ListOfContracts"), $page, $_SERVER["PHP_SELF"], '&search_contract='.$search_contract.'&search_name='.$search_name, $sortfield, $sortorder,'',$num,$totalnboflines,'title_commercial.png');
 
     print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
     print '<table class="liste" width="100%">';
 
     // If the user can view prospects other than his'
@@ -160,6 +162,7 @@ if ($resql)
     $param.='&search_name='.$search_name;
     $param.='&search_ref_supplier='.$search_ref_supplier;
     $param.='&search_sale=' .$search_sale;
+    if ($optioncss != '') $param.='&optioncss='.$optioncss;
 
     print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"], "c.rowid","","$param",'',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("RefCustomer"), $_SERVER["PHP_SELF"], "c.ref_supplier","","$param",'',$sortfield,$sortorder);

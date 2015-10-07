@@ -30,8 +30,9 @@ then
 else
 	for file in `find htdocs/langs/$1/*.lang -type f`
 	do
+	echo $file
 		export basefile=`basename $file | sed -s s/\.lang//g`
-		echo "tx push --skip -r dolibarr.$basfile -t -l $1 $2 $3 $4"
+		echo "tx push --skip -r dolibarr.$basefile -t -l $1 $2 $3 $4"
 		tx push --skip -r dolibarr.$basefile -t -l $1 $2 $3 $4
 	done
 fi

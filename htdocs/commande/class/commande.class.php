@@ -1131,7 +1131,7 @@ class Commande extends CommonOrder
      *	@param      float			$txtva           	Taux de tva force, sinon -1
      *	@param      float			$txlocaltax1		Local tax 1 rate
      *	@param      float			$txlocaltax2		Local tax 2 rate
-     *	@param      int				$fk_product      	Id du produit/service predefini
+     *	@param      int				$fk_product      	Id of product
      *	@param      float			$remise_percent  	Pourcentage de remise de la ligne
      *	@param      int				$info_bits			Bits de type de lignes
      *	@param      int				$fk_remise_except	Id remise
@@ -1139,7 +1139,7 @@ class Commande extends CommonOrder
      *	@param      float			$pu_ttc    		    Prix unitaire TTC
      *	@param      int				$date_start       	Start date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
      *	@param      int				$date_end         	End date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
-     *	@param      int				$type				Type of line (0=product, 1=service)
+     *	@param      int				$type				Type of line (0=product, 1=service). Not used if fk_product is defined, the type of product is used.
      *	@param      int				$rang             	Position of line
      *	@param		int				$special_code		Special code (also used by externals modules!)
      *	@param		int				$fk_parent_line		Parent line
@@ -1201,29 +1201,7 @@ class Commande extends CommonOrder
         {
             $this->db->begin();
 
-            // Calcul du total TTC et de la TVA pour la ligne a partir de
-            // qty, pu, remise_percent et txtva
-            // TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
-            // la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-
-            $localtaxes_type=getLocalTaxesFromRate($txtva,0,$this->thirdparty,$mysoc);
-
-            $tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type,'', $localtaxes_type);
-            $total_ht  = $tabprice[0];
-            $total_tva = $tabprice[1];
-            $total_ttc = $tabprice[2];
-            $total_localtax1 = $tabprice[9];
-            $total_localtax2 = $tabprice[10];
-
-            // Rang to use
-            $rangtouse = $rang;
-            if ($rangtouse == -1)
-            {
-                $rangmax = $this->line_max($fk_parent_line);
-                $rangtouse = $rangmax + 1;
-            }
-
-			$product_type=$type;
+        	$product_type=$type;
 			if (!empty($fk_product))
 			{
 				$product=new Product($this->db);
@@ -1238,6 +1216,27 @@ class Commande extends CommonOrder
 					return self::STOCK_NOT_ENOUGH_FOR_ORDER;
 				}
 			}
+			// Calcul du total TTC et de la TVA pour la ligne a partir de
+            // qty, pu, remise_percent et txtva
+            // TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
+            // la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
+
+            $localtaxes_type=getLocalTaxesFromRate($txtva,0,$this->thirdparty,$mysoc);
+
+            $tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $product_type,'', $localtaxes_type);
+            $total_ht  = $tabprice[0];
+            $total_tva = $tabprice[1];
+            $total_ttc = $tabprice[2];
+            $total_localtax1 = $tabprice[9];
+            $total_localtax2 = $tabprice[10];
+
+            // Rang to use
+            $rangtouse = $rang;
+            if ($rangtouse == -1)
+            {
+                $rangmax = $this->line_max($fk_parent_line);
+                $rangtouse = $rangmax + 1;
+            }
 
             // TODO A virer
             // Anciens indicateurs: $price, $remise (a ne plus utiliser)

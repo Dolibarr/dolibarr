@@ -73,6 +73,7 @@ $search_opp_status=GETPOST("search_opp_status",'alpha');
 $search_public=GETPOST("search_public",'int');
 $search_user=GETPOST('search_user','int');
 $search_sale=GETPOST('search_sale','int');
+$optioncss = GETPOST('optioncss','alpha');
 
 $day	= GETPOST('day','int');
 $month	= GETPOST('month','int');
@@ -223,6 +224,7 @@ if ($resql)
 	if ($search_public != '') 		$param.='&search_public='.$search_public;
 	if ($search_user > 0)    		$param.='&search_user='.$search_user;
 	if ($search_sale > 0)    		$param.='&search_sale='.$search_sale;
+	if ($optioncss != '') $param.='&optioncss='.$optioncss;
 
 
 	$text=$langs->trans("Projects");
@@ -230,6 +232,7 @@ if ($resql)
 	print_barre_liste($text, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, "", $num,'','title_project');
 
 	print '<form method="GET" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 
 	// Show description of content
 	if ($mine) print $langs->trans("MyProjectsDesc").'<br><br>';
@@ -245,6 +248,11 @@ if ($resql)
 		print '<strong>'.$search_all.'</strong>';
 	}
 
+	$colspan=8;
+	if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES)) $colspan+=2;
+	if (empty($conf->global->PROJECT_LIST_HIDE_STARTDATE)) $colspan++;
+
+	
 	// If the user can view prospects other than his'
 	if ($user->rights->societe->client->voir || $socid)
 	{
@@ -265,7 +273,7 @@ if ($resql)
 	}
 	if (! empty($moreforfilter))
 	{
-		print '<div class="liste_titre">';
+		print '<div class="liste_titre liste_titre_bydiv centpercent">';
 		print $moreforfilter;
     	$parameters=array();
     	$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
@@ -273,8 +281,8 @@ if ($resql)
     	print '</div>';
 	}
 
-	print '<table class="noborder" width="100%">';
-
+	print '<table class="liste" width="100%">';
+	
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"p.ref","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"p.title","",$param,"",$sortfield,$sortorder);

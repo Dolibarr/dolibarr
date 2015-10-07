@@ -978,7 +978,7 @@ $form = new Form($db);
 $formother = new FormOther($db);
 $formfile = new FormFile($db);
 $formaskpricesupplier = new FormAskPriceSupplier($db);
-$formmargin = new FormMargin($this->db);
+$formmargin = new FormMargin($db);
 $companystatic = new Societe($db);
 
 $now = dol_now();
@@ -1802,7 +1802,7 @@ if ($action == 'create')
 		// Tableau des substitutions
 		$formmail->substit['__ASKREF__'] = $object->ref;
 		$formmail->substit['__SIGNATURE__'] = $user->signature;
-		$formmail->substit['__THIRPARTY_NAME__'] = $object->thirdparty->name;
+		$formmail->substit['__THIRDPARTY_NAME__'] = $object->thirdparty->name;
 		$formmail->substit['__PROJECT_REF__'] = (is_object($object->projet)?$object->projet->ref:'');
 		$formmail->substit['__CONTACTCIVNAME__'] = '';
 		$formmail->substit['__PERSONALIZED__'] = '';

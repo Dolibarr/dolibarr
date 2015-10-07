@@ -129,11 +129,11 @@ if ($action == 'set_PROPALE_DRAFT_WATERMARK')
 	}
 }
 
-if ($action == 'set_PROPALE_FREE_TEXT')
+if ($action == 'set_PROPOSAL_FREE_TEXT')
 {
-	$freetext = GETPOST('PROPALE_FREE_TEXT');	// No alpha here, we want exact string
+	$freetext = GETPOST('PROPOSAL_FREE_TEXT');	// No alpha here, we want exact string
 
-	$res = dolibarr_set_const($db, "PROPALE_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
+	$res = dolibarr_set_const($db, "PROPOSAL_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
 
 	if (! $res > 0) $error++;
 
@@ -575,10 +575,10 @@ print '</form>';
 $var=! $var;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="set_PROPALE_FREE_TEXT">';
+print '<input type="hidden" name="action" value="set_PROPOSAL_FREE_TEXT">';
 print '<tr '.$bc[$var].'><td colspan="2">';
 print $langs->trans("FreeLegalTextOnProposal").' ('.$langs->trans("AddCRIfTooLong").')<br>';
-$variablename='PROPALE_FREE_TEXT';
+$variablename='PROPOSAL_FREE_TEXT';
 if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 {
     print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';

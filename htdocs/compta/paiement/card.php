@@ -4,6 +4,7 @@
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@capnetworks.com>
  * Copyright (C) 2013		Marcos García		<marcosgdf@gmail.com>
+ * Copyright (C) 2015		Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -201,7 +202,7 @@ if ($action == 'valide')
 print '<table class="border" width="100%">';
 
 // Ref
-print '<tr><td width="20%">'.$langs->trans('Ref').'</td><td colspan="3">'.$object->id.'</td></tr>';
+print '<tr><td width="20%">'.$langs->trans('Ref').'</td><td colspan="3">'.$object->ref.'</td></tr>';
 
 // Date payment
 print '<tr><td>'.$form->editfieldkey("Date",'datep',$object->date,$object,$user->rights->facture->paiement).'</td><td colspan="3">';

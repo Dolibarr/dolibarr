@@ -39,6 +39,9 @@ InterventionClassifiedUnbilledInDolibarr=Intervention %s set as unbilled
 InterventionSentByEMail=Intervention %s sent by EMail
 InterventionDeletedInDolibarr=Intervention %s deleted
 SearchAnIntervention=Search an intervention
+InterventionsArea=Interventions area
+DraftFichinter=Draft interventions
+LastModifiedInterventions=Last %s modified interventions
 ##### Types de contacts #####
 TypeContact_fichinter_internal_INTERREPFOLL=Predstavnik koji kontroliše intervenciju
 TypeContact_fichinter_internal_INTERVENING=Serviser
@@ -51,3 +54,14 @@ PacificNumRefModelDesc1=Vratiti broj sa formatom %syymm-nnnn, gdje je yy godina,
 PacificNumRefModelError=Kartica intervencije koja počinje sa $syymm već postoji i nije kompatibilna sa ovim modelom nizda. Odstrani ili promijeni da bi se modul mogao aktivirati.
 PrintProductsOnFichinter=Isprintaj proizvode sa kartice intervencije
 PrintProductsOnFichinterDetails=interventions generated from orders
+##### Exports #####
+InterId=Intervention id
+InterRef=Intervention ref.
+InterDateCreation=Date creation intervention
+InterDuration=Duration intervention
+InterStatus=Status intervention
+InterNote=Note intervention
+InterLineId=Line id intervention
+InterLineDate=Line date intervention
+InterLineDuration=Line duration intervention
+InterLineDesc=Line description intervention

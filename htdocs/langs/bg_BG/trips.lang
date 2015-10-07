@@ -57,7 +57,7 @@ Note=Note
 Project=Project
 
 VALIDATOR=User responsible for approval
-VALIDOR=Approved by
+VALIDOR=Одобрено от
 AUTHOR=Recorded by
 AUTHORPAIEMENT=Paid by
 REFUSEUR=Denied by
@@ -67,8 +67,8 @@ MOTIF_REFUS=Reason
 MOTIF_CANCEL=Reason
 
 DATE_REFUS=Deny date
-DATE_SAVE=Validation date
-DATE_VALIDE=Validation date
+DATE_SAVE=Дата на валидиране
+DATE_VALIDE=Дата на валидиране
 DATE_CANCEL=Cancelation date
 DATE_PAIEMENT=Payment date
 
