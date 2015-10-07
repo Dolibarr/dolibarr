@@ -861,7 +861,7 @@ foreach($conf->modules as $val)
 $mainmenuusedarray=array_unique(explode(',',$mainmenuused));
 
 $generic=1;
-$divalreadydefined=array('home','companies','products','commercial','accountancy','project','tools','members','agenda','holiday','bookmark','cashdesk','ecm','geoipmaxmind','gravatar','clicktodial','paypal','webservices');
+$divalreadydefined=array('home','companies','products','commercial','externalsite','accountancy','project','tools','members','agenda','holiday','bookmark','cashdesk','ecm','geoipmaxmind','gravatar','clicktodial','paypal','webservices');
 foreach($mainmenuusedarray as $val)
 {
 	if (empty($val) || in_array($val,$divalreadydefined)) continue;
@@ -2014,11 +2014,11 @@ table.liste {
 	width: 100%;
 
 	border-collapse: collapse;
-	border-top-color: #FEFEFE;
-
+/*	border-top-color: #FEFEFE;
 	border-top-width: 1px;
 	border-top-color: #CCC;
 	border-top-style: solid;
+*/
 
 	border-right-width: 1px;
 	border-right-color: #CCC;

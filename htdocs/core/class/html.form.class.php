@@ -484,9 +484,10 @@ class Form
      *  @param  string	$htmlname       Name of html select object
      *  @param  string	$htmloption     Options html on select object
      *  @param	integer	$maxlength		Max length for labels (0=no limit)
+     *  @param	string	$morecss		More css class
      *  @return string           		HTML string with select
      */
-    function select_country($selected='',$htmlname='country_id',$htmloption='',$maxlength=0)
+    function select_country($selected='',$htmlname='country_id',$htmloption='',$maxlength=0,$morecss='minwidth300')
     {
         global $conf,$langs;
 
@@ -507,7 +508,7 @@ class Form
         $resql=$this->db->query($sql);
         if ($resql)
         {
-            $out.= '<select id="select'.$htmlname.'" class="flat selectcountry minwidth300" name="'.$htmlname.'" '.$htmloption.'>';
+            $out.= '<select id="select'.$htmlname.'" class="flat selectcountry'.($morecss?' '.$morecss:'').'" name="'.$htmlname.'" '.$htmloption.'>';
             $num = $this->db->num_rows($resql);
             $i = 0;
             if ($num)

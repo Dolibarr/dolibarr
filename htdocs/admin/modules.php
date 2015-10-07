@@ -43,6 +43,21 @@ if (! $user->admin)
 
 $specialtostring=array(0=>'common', 1=>'interfaces', 2=>'other', 3=>'functional', 4=>'marketplace');
 
+$familyinfo=array(
+	'hr'=>array('position'=>'001', 'label'=>$langs->trans("ModuleFamilyHr")),
+	'crm'=>array('position'=>'006', 'label'=>$langs->trans("ModuleFamilyCrm")),
+	'financial'=>array('position'=>'009', 'label'=>$langs->trans("ModuleFamilyFinancial")),
+	'products'=>array('position'=>'012', 'label'=>$langs->trans("ModuleFamilyProducts")),
+	'projects'=>array('position'=>'015', 'label'=>$langs->trans("ModuleFamilyProjects")),
+	'ecm'=>array('position'=>'018', 'label'=>$langs->trans("ModuleFamilyECM")),
+	'technic'=>array('position'=>'021', 'label'=>$langs->trans("ModuleFamilyTechnic")),
+	'portal'=>array('position'=>'040', 'label'=>$langs->trans("ModuleFamilyPortal")),
+	'interface'=>array('position'=>'050', 'label'=>$langs->trans("ModuleFamilyInterface")),
+	'base'=>array('position'=>'060', 'label'=>$langs->trans("ModuleFamilyBase")),
+	'other'=>array('position'=>'100', 'label'=>$langs->trans("ModuleFamilyOther")),
+);
+
+
 
 /*
  * Actions
@@ -124,22 +139,20 @@ foreach ($modulesdir as $dir)
 				                $objMod = new $modName($db);
 								$modNameLoaded[$modName]=$dir;
 
-    		    		        if ($objMod->numero > 0)
+    		    		        if (! $objMod->numero > 0)
     		            		{
-    		         		       $j = $objMod->numero;
+    		         		    	dol_syslog('a module descriptor must have a numero property', LOG_ERR);   
     		            		}
-    		            		else
-    		            		{
-    		                		$j = 1000 + $i;
-    		            		}
-
+								$j = $objMod->numero;
+								
     							$modulequalified=1;
 
 		    					// We discard modules according to features level (PS: if module is activated we always show it)
 		    					$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i','',get_class($objMod)));
 		    					if ($objMod->version == 'development'  && (empty($conf->global->$const_name) && ($conf->global->MAIN_FEATURES_LEVEL < 2))) $modulequalified=0;
 		    					if ($objMod->version == 'experimental' && (empty($conf->global->$const_name) && ($conf->global->MAIN_FEATURES_LEVEL < 1))) $modulequalified=0;
-								// We discard modules according to property disabled
+								if (preg_match('/deprecated/', $objMod->version) && (empty($conf->global->$const_name) && ($conf->global->MAIN_FEATURES_LEVEL >= 0))) $modulequalified=0;
+		    					// We discard modules according to property disabled
 		    					if (! empty($objMod->hidden)) $modulequalified=false;
 
 		    					// Define array $categ with categ with at least one qualified module
@@ -147,13 +160,19 @@ foreach ($modulesdir as $dir)
 		    					{
 		    						$modules[$i] = $objMod;
 		    			            $filename[$i]= $modName;
-		    			            $orders[$i]  = $objMod->family."_".$j;   // Sort by family, then by module number
+		    					
+		    			            $special = $objMod->special;
+		    			            $familykey = $objMod->family;
+		    			            
+		    			            if ($special == 1) $familykey='interface';
+		    			            
+		    			            $orders[$i]  = $familyinfo[$familykey]['position']."_".$familykey."_".$j;   // Sort by family, then by module number
 		    						$dirmod[$i]  = $dir;
 		    			            // Set categ[$i]
-		    						$special     = isset($specialtostring[$objMod->special])?$specialtostring[$objMod->special]:'unknown';
-		    			            if ($objMod->version == 'development' || $objMod->version == 'experimental') $special='expdev';
-		    						if (isset($categ[$special])) $categ[$special]++;					// Array of all different modules categories
-		    			            else $categ[$special]=1;
+		    						$specialstring = isset($specialtostring[$special])?$specialtostring[$special]:'unknown';
+		    			            if ($objMod->version == 'development' || $objMod->version == 'experimental') $specialstring='expdev';
+		    						if (isset($categ[$specialstring])) $categ[$specialstring]++;					// Array of all different modules categories
+		    			            else $categ[$specialstring]=1;
 		    						$j++;
 		    			            $i++;
 		    					}
@@ -197,9 +216,9 @@ print load_fiche_titre($langs->trans("ModulesSetup"),$moreinfo,'title_setup');
 // Start to show page
 if (empty($mode)) $mode='common';
 if ($mode==='common')      print $langs->trans("ModulesDesc")."<br>\n";
-if ($mode==='other')       print $langs->trans("ModulesSpecialDesc")."<br>\n";
-if ($mode==='interfaces')  print $langs->trans("ModulesInterfaceDesc")."<br>\n";
-if ($mode==='functional')  print $langs->trans("ModulesJobDesc")."<br>\n";
+//if ($mode==='other')       print $langs->trans("ModulesSpecialDesc")."<br>\n";
+//if ($mode==='interfaces')  print $langs->trans("ModulesInterfaceDesc")."<br>\n";
+//if ($mode==='functional')  print $langs->trans("ModulesJobDesc")."<br>\n";
 if ($mode==='marketplace') print $langs->trans("ModulesMarketPlaceDesc")."<br>\n";
 if ($mode==='expdev')      print $langs->trans("ModuleFamilyExperimental")."<br>\n";
 
@@ -213,11 +232,12 @@ $categidx='common';    // Main
 if (! empty($categ[$categidx]))
 {
 	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=".$categidx;
-	$head[$h][1] = $langs->trans("ModulesCommon");
+	$head[$h][1] = $langs->trans("AvailableModules");
 	$head[$h][2] = 'common';
 	$h++;
 }
 
+/*
 $categidx='other';    // Other
 if (! empty($categ[$categidx]))
 {
@@ -244,6 +264,7 @@ if (! empty($categ[$categidx]))
 	$head[$h][2] = 'functional';
 	$h++;
 }
+*/
 
 $categidx='expdev';
 if (! empty($categ[$categidx]))
@@ -287,28 +308,19 @@ if ($mode != 'marketplace')
 
     $oldfamily='';
 
-    $familylib=array(
-    'base'=>$langs->trans("ModuleFamilyBase"),
-    'crm'=>$langs->trans("ModuleFamilyCrm"),
-    'products'=>$langs->trans("ModuleFamilyProducts"),
-    'hr'=>$langs->trans("ModuleFamilyHr"),
-    'projects'=>$langs->trans("ModuleFamilyProjects"),
-    'financial'=>$langs->trans("ModuleFamilyFinancial"),
-    'ecm'=>$langs->trans("ModuleFamilyECM"),
-    'technic'=>$langs->trans("ModuleFamilyTechnic"),
-    'other'=>$langs->trans("ModuleFamilyOther")
-    );
-
     foreach ($orders as $key => $value)
     {
         $tab=explode('_',$value);
-        $family=$tab[0]; $numero=$tab[1];
+        $familypos=$tab[0]; $familykey=$tab[1]; $numero=$tab[2];
 
         $modName = $filename[$key];
     	$objMod  = $modules[$key];
 
+    	$special = $objMod->special;
+    	
     	//print $objMod->name." - ".$key." - ".$objMod->special.' - '.$objMod->version."<br>";
-    	if (($mode != (isset($specialtostring[$objMod->special])?$specialtostring[$objMod->special]:'unknown')	&& $mode != 'expdev')
+    	//if (($mode != (isset($specialtostring[$special])?$specialtostring[$special]:'unknown') && $mode != 'expdev')
+    	if (($special >= 4 && $mode != 'expdev')
     		|| ($mode == 'expdev' && $objMod->version != 'development' && $objMod->version != 'experimental')) continue;    // Discard if not for current tab
 
         if (! $objMod->getName())
@@ -329,28 +341,27 @@ if ($mode != 'marketplace')
         }
 
         // Print a separator if we change family
-        //print "<tr><td>xx".$oldfamily."-".$family."-".$atleastoneforfamily."<br></td><tr>";
-        //if ($oldfamily && $family!=$oldfamily && $atleastoneforfamily) {
-        if ($family!=$oldfamily)
+        //print "<tr><td>xx".$oldfamily."-".$familykey."-".$atleastoneforfamily."<br></td><tr>";
+        //if ($oldfamily && $familykey!=$oldfamily && $atleastoneforfamily) {
+        if ($familykey!=$oldfamily)
         {
             print '<tr class="liste_titre">'."\n";
             print '<td colspan="5">';
-            $familytext=empty($familylib[$family])?$family:$familylib[$family];
+            $familytext=empty($familyinfo[$familykey]['label'])?$familykey:$familyinfo[$familykey]['label'];
             print $familytext;
             print "</td>\n";
     		print '<td align="right">'.$langs->trans("SetupShort").'</td>'."\n";
             print "</tr>\n";
             $atleastoneforfamily=0;
-            //print "<tr><td>yy".$oldfamily."-".$family."-".$atleastoneforfamily."<br></td><tr>";
+            //print "<tr><td>yy".$oldfamily."-".$familykey."-".$atleastoneforfamily."<br></td><tr>";
         }
 
         $atleastoneforfamily++;
 
-        if ($family!=$oldfamily)
+        if ($familykey!=$oldfamily)
         {
-        	$familytext=empty($familylib[$family])?$family:$familylib[$family];
-        	//print $familytext;
-        	$oldfamily=$family;
+        	$familytext=empty($familyinfo[$familykey]['label'])?$familykey:$familyinfo[$familykey]['label'];
+        	$oldfamily=$familykey;
         }
 
         $var=!$var;

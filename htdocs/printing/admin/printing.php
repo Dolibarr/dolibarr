@@ -229,7 +229,7 @@ if ($mode == 'test' && $user->admin)
         $langs->load($driver);
         $printer = new $classname($db);
         //print '<pre>'.print_r($printer, true).'</pre>';
-        if (count($printer->getlist_available_printers)) {
+        if (count($printer->getlist_available_printers())) {
             print $printer->listAvailablePrinters();
         }
         else {
