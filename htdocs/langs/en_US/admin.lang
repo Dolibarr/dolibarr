@@ -1692,3 +1692,4 @@ MailToSendSupplierRequestForQuotation=To send quotation request to supplier
 MailToSendSupplierOrder=To send supplier order
 MailToSendSupplierInvoice=To send supplier invoice
 MailToThirdparty=To send email from thirdparty page
+ByDefaultInList=Show by default on list view
