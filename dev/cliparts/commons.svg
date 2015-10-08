@@ -1773,7 +1773,10 @@
     <g
        id="g8014"
        style="opacity:0.27956992"
-       transform="matrix(0.99771798,0,0,1.0176646,-1.1510876,-0.81544515)">
+       transform="matrix(0.99771798,0,0,1.0176646,-1.1510876,-0.81544515)"
+       inkscape:export-filename="/home/ldestailleur/git/dolibarr/htdocs/public/theme/common/nophoto.png"
+       inkscape:export-xdpi="76.774879"
+       inkscape:export-ydpi="76.774879">
       <path
          id="path2629"
          sodipodi:rx="1.75"
@@ -2027,7 +2030,10 @@
        sodipodi:cx="112.85714"
        id="path2996"
        style="fill:none;stroke:#dbdbdb;stroke-width:8.42921066;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       sodipodi:type="arc" />
+       sodipodi:type="arc"
+       inkscape:export-filename="/home/ldestailleur/git/dolibarr/htdocs/public/theme/common/nophoto.png"
+       inkscape:export-xdpi="76.774879"
+       inkscape:export-ydpi="76.774879" />
     <path
        d="m 150,192.36218 a 3.5714285,10 0 1 1 -7.14285,0 3.5714285,10 0 1 1 7.14285,0 z"
        sodipodi:ry="10"
@@ -2044,6 +2050,9 @@
        height="0.7751227"
        width="143.95984"
        id="rect3777"
-       style="fill:none;stroke:#dbdbdb;stroke-width:5.06745768;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+       style="fill:none;stroke:#dbdbdb;stroke-width:5.06745768;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       inkscape:export-filename="/home/ldestailleur/git/dolibarr/htdocs/public/theme/common/nophoto.png"
+       inkscape:export-xdpi="76.774879"
+       inkscape:export-ydpi="76.774879" />
   </g>
 </svg>
