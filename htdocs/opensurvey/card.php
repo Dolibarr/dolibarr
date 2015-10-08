@@ -367,7 +367,7 @@ if ($comments) {
 }
 else
 {
-	print $langs->trans("NoCommentYet").'<br>';;
+	print $langs->trans("NoCommentYet").'<br>';
 }
 
 print '<br>';

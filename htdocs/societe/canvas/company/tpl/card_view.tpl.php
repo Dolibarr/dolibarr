@@ -107,7 +107,7 @@ dol_fiche_head($head, 'card', $langs->trans("ThirdParty"),0,'company');
 
 <tr>
 	<td><?php echo $langs->trans('EMail'); ?></td>
-	<td><?php echo $this->control->tpl['email'];; ?></td>
+	<td><?php echo $this->control->tpl['email']; ?></td>
 	<td><?php echo $langs->trans('Web'); ?></td>
 	<td><?php echo $this->control->tpl['url']; ?></td>
 </tr>

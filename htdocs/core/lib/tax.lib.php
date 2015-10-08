@@ -494,7 +494,7 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
             $sql.= " AND f.fk_statut in (1,2)"; // Paid (partially or completely)
         	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2)";
         	else $sql.= " AND f.type IN (0,1,2,3)";
-            $sql.= " AND f.rowid = d.".$fk_facture;;
+            $sql.= " AND f.rowid = d.".$fk_facture;
             $sql.= " AND pf.".$fk_facture2." = f.rowid";
             $sql.= " AND pa.rowid = pf.".$fk_payment;
             if ($y && $m)

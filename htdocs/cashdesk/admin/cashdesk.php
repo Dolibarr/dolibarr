@@ -164,7 +164,7 @@ if (! empty($conf->service->enabled))
     $var=! $var;
     print '<tr '.$bc[$var].'><td>';
     print $langs->trans("CashdeskShowServices");
-    print '<td colspan="2">';;
+    print '<td colspan="2">';
     print $form->selectyesno("CASHDESK_SERVICES",$conf->global->CASHDESK_SERVICES,1);
     print "</td></tr>\n";
 }
