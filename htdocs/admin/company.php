@@ -380,7 +380,7 @@ if ($action == 'edit' || $action == 'updateedit')
 			print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode('/thumbs/'.$mysoc->logo_mini).'">';
 		}
 	} else {
-		print '<img height="30" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.jpg">';
+		print '<img height="30" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png">';
 	}
 	print '</td></tr></table>';
 	print '</td></tr>';
@@ -769,7 +769,7 @@ else
 	}
 	else
 	{
-		print '<img height="30" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.jpg">';
+		print '<img height="30" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png">';
 	}
 	print '</td></tr></table>';
 

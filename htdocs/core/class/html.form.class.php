@@ -5197,7 +5197,7 @@ class Form
             }
             else
 			{
-				$nophoto='/public/theme/common/nophoto.jpg';
+				$nophoto='/public/theme/common/nophoto.png';
 				if (in_array($modulepart,array('userphoto','contact')))	// For module thar are "physical" users
 				{
 					$nophoto='/public/theme/common/user_anonymous.png';
