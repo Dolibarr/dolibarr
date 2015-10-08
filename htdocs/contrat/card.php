@@ -799,7 +799,7 @@ if (empty($reshook))
 	            setEventMessage($object->errors, 'errors');
 	        }
 	
-	        $result = $object->setValueFrom('ref',GETPOST('ref','alpha'));;
+	        $result = $object->setValueFrom('ref',GETPOST('ref','alpha'));
 	        if ($result < 0) {
 	            setEventMessage($object->errors, 'errors');
 	            $action = 'editref';
