@@ -35,16 +35,19 @@
 class DolibarrModules           // Can not be abstract, because we need to instantiant it into unActivateModule to be able to disable a module whose files were removed.
 {
     /**
+     * @var int Module unique ID
+     */
+    public $numero;
+
+    /**
+     * @var string Module name
+     */
+    public $name;
+
+	/**
      * @var DoliDb Database handler
      */
     public $db;
-
-    /**
-     * @var string Relative path to module style sheet
-     * @deprecated
-     * @see module_parts
-     */
-    public $style_sheet = '';
 
     /**
      * @var array Paths to create when module is activated
@@ -135,16 +138,6 @@ class DolibarrModules           // Can not be abstract, because we need to insta
     public $error;
 
     /**
-     * @var int Module unique ID
-     */
-    public $numero;
-
-    /**
-     * @var string Module name
-     */
-    public $name;
-
-    /**
      * @var string Module version
      */
     public $version;
@@ -193,7 +186,15 @@ class DolibarrModules           // Can not be abstract, because we need to insta
      * @var bool Module is enabled globally (Multicompany support)
      */
     public $core_enabled;
+    
+    /**
+     * @var string Relative path to module style sheet
+     * @deprecated
+     * @see module_parts
+     */
+    public $style_sheet = '';
 
+    
 	
 	/**
 	 * Constructor. Define names, constants, directories, boxes, permissions
@@ -470,6 +471,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
         if ($this->version == 'dolibarr' || $this->version == 'dolibarr_deprecated') return 'core';
         if (! empty($this->version) && ! in_array($this->version,array('experimental','development'))) return 'external';
         if (! empty($this->editor_name) || ! empty($this->editor_web)) return 'external';
+        if ($this->numero >= 100000) return 'external';
         return 'unknown';
     }
 

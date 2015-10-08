@@ -205,7 +205,7 @@ if ($result)
  	}
  	if ($moreforfilter)
 	{
-		print '<div class="liste_titre">';
+		print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	    print $moreforfilter;
     	$parameters=array();
     	$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
@@ -213,7 +213,7 @@ if ($result)
 	    print '</div>';
 	}
 
-	print '<table class="liste" width="100%">'."\n";
+	print '<table class="liste">'."\n";
 
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
@@ -246,7 +246,7 @@ if ($result)
     print '</td>';
 
     print '<td class="liste_titre" align="center">';
-    print $form->select_country($search_country,'search_country');
+    print $form->select_country($search_country,'search_country','',0,'maxwidth100');
     print '</td>';
     
     print '<td class="liste_titre" align="center">';

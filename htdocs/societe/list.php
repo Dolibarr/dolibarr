@@ -195,7 +195,7 @@ if ($socname)
 
 
 /*
- * Mode Liste
+ * Mode List
  */
 /*
  REM: Regle sur droits "Voir tous les clients"
@@ -341,7 +341,7 @@ if ($resql)
 	*/
 	if (! empty($moreforfilter))
 	{
-		print '<div class="liste_titre">';
+		print '<div class="liste_titre liste_titre_bydiv centpercent">';
 		print $moreforfilter;
     	$parameters=array();
     	$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
@@ -349,7 +349,7 @@ if ($resql)
 	    print '</div>';
 	}
 
-	print '<table class="liste" width="100%">';
+	print '<table class="liste">';
 
     // Lines of titles
     print '<tr class="liste_titre">';
@@ -376,7 +376,7 @@ if ($resql)
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	if (! empty($search_nom_only) && empty($search_nom)) $search_nom=$search_nom_only;
-	print '<input class="flat" type="text" name="search_nom" value="'.htmlspecialchars($search_nom).'">';
+	print '<input class="flat" type="text" name="search_nom" size="8" value="'.htmlspecialchars($search_nom).'">';
 	print '</td>';
 	// Barcode
 	if (! empty($conf->barcode->enabled))
@@ -387,11 +387,11 @@ if ($resql)
     }
 	// Town
 	print '<td class="liste_titre">';
-	print '<input class="flat" size="10" type="text" name="search_town" value="'.htmlspecialchars($search_town).'">';
+	print '<input class="flat" size="8" type="text" name="search_town" value="'.htmlspecialchars($search_town).'">';
 	print '</td>';
 	//Country
 	print '<td class="liste_titre" align="center">';
-	print $form->select_country($search_country,'search_country');
+	print $form->select_country($search_country,'search_country','',0,'maxwidth100');
 	print '</td>';
 	//Company type
 	print '<td class="liste_titre" align="center">';

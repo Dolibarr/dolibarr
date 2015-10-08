@@ -276,6 +276,15 @@ if ($result)
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
+    if ($sall)
+    {
+        print $langs->trans("Filter")." (".$langs->trans("Lastname").", ".$langs->trans("Firstname").", ".$langs->trans("ThirdParty")." ".$langs->trans("or")." ".$langs->trans("EMail")."): ".$sall;
+    }
+	if ($search_firstlast_only)
+	{
+        print $langs->trans("Filter")." (".$langs->trans("Lastname").", ".$langs->trans("Firstname")."): ".$search_firstlast_only;
+	}
+    
     if (! empty($conf->categorie->enabled))
     {
 		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
@@ -285,20 +294,12 @@ if ($result)
     }
     if ($moreforfilter)
     {
-    	print '<div class="liste_titre">';
+    	print '<div class="liste_titre liste_titre_bydiv centpercent">';
     	print $moreforfilter;
     	print '</div>';
     }
 
-    if ($sall)
-    {
-        print $langs->trans("Filter")." (".$langs->trans("Lastname").", ".$langs->trans("Firstname").", ".$langs->trans("ThirdParty")." ".$langs->trans("or")." ".$langs->trans("EMail")."): ".$sall;
-    }
-	if ($search_firstlast_only)
-	{
-        print $langs->trans("Filter")." (".$langs->trans("Lastname").", ".$langs->trans("Firstname")."): ".$search_firstlast_only;
-	}
-    print '<table class="liste" width="100%">';
+    print '<table class="liste">';
 
     // Ligne des titres
     print '<tr class="liste_titre">';
