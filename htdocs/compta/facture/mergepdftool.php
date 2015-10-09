@@ -616,32 +616,38 @@ if ($resql)
 	}
 
 	$i = 0;
-	print '<table class="liste" width="100%">';
 
  	// If the user can view prospects other than his'
     $moreforfilter='';
  	if ($user->rights->societe->client->voir || $socid)
  	{
  		$langs->load("commercial");
+ 		$moreforfilter.='<div class="divsearchfield">';
  		$moreforfilter.=$langs->trans('ThirdPartiesOfSaleRepresentative'). ': ';
 		$moreforfilter.=$formother->select_salesrepresentatives($search_sale,'search_sale',$user);
-	 	$moreforfilter.=' &nbsp; &nbsp; &nbsp; ';
+	 	$moreforfilter.='</div>';
  	}
     // If the user can view prospects other than his'
     if ($user->rights->societe->client->voir || $socid)
     {
+        $moreforfilter.='<div class="divsearchfield">';
         $moreforfilter.=$langs->trans('LinkedToSpecificUsers'). ': ';
         $moreforfilter.=$form->select_dolusers($search_user,'search_user',1);
+        $moreforfilter.='</div>';
     }
-    if ($moreforfilter)
+    if (! empty($moreforfilter))
     {
-        print '<tr class="liste_titre">';
-        print '<td class="liste_titre" colspan="13">';
+        print '<div class="liste_titre liste_titre_bydiv centpercent">';
         print $moreforfilter;
-        print '</td></tr>';
+        $parameters=array();
+        $reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+        print $hookmanager->resPrint;
+        print '</div>';
     }
 
-	print '<tr class="liste_titre">';
+    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">';
+    
+    print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"f.facnumber","",$param,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans('RefCustomer'),$_SERVER["PHP_SELF"],'f.ref_client','',$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"f.datef","",$param,'align="center"',$sortfield,$sortorder);

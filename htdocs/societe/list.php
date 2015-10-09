@@ -321,15 +321,18 @@ if ($resql)
 	$moreforfilter='';
     if (! empty($conf->categorie->enabled))
     {
+        $moreforfilter.='<div class="divsearchfield">';
         $moreforfilter.=$langs->trans('Categories'). ': ';
         $moreforfilter.=$htmlother->select_categories(Categories::TYPE_CUSTOMER,$search_categ,'search_categ');
-        $moreforfilter.=' &nbsp; &nbsp; &nbsp; ';
+        $moreforfilter.='</div>';
     }
     // If the user can view prospects other than his'
     if ($user->rights->societe->client->voir || $socid)
     {
+        $moreforfilter.='<div class="divsearchfield">';
         $moreforfilter.=$langs->trans('SalesRepresentatives'). ': ';
         $moreforfilter.=$htmlother->select_salesrepresentatives($search_sale,'search_sale',$user);
+        $moreforfilter.='</div>'; 
     }
     if ($moreforfilter)
     {
@@ -349,8 +352,8 @@ if ($resql)
 	    print '</div>';
 	}
 
-	print '<table class="liste">';
-
+	print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
+    		
     // Lines of titles
     print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);

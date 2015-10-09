@@ -281,8 +281,6 @@ else
     		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
     		print '<input type="hidden" name="type" value="'.$type.'">';
 
-    		print '<table class="liste" width="100%">';
-
     		// Filter on categories
     	 	$moreforfilter='';
     	 	$colspan=6;
@@ -294,19 +292,23 @@ else
 
     		if (! empty($conf->categorie->enabled))
     		{
-    		 	$moreforfilter.=$langs->trans('Categories'). ': ';
+                $moreforfilter.='<div class="divsearchfield">';
+    		    $moreforfilter.=$langs->trans('Categories'). ': ';
     			$moreforfilter.=$htmlother->select_categories(Categorie::TYPE_PRODUCT,$search_categ,'search_categ',1);
-    		 	$moreforfilter.=' &nbsp; &nbsp; &nbsp; ';
+    		 	$moreforfilter.='</div>';
     		}
     	 	if ($moreforfilter)
     		{
-    			print '<tr class="liste_titre">';
-    			print '<td class="liste_titre" colspan="'.$colspan.'">';
+        		print '<div class="liste_titre liste_titre_bydiv centpercent">';
     		    print $moreforfilter;
-    		    print '</td></tr>';
+            	$parameters=array();
+            	$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+        	    print $hookmanager->resPrint;
+    		    print '</div>';
     		}
 
     		// Lignes des titres
+    		print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
     		print '<tr class="liste_titre">';
     		print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"], "p.ref",$param,"","",$sortfield,$sortorder);
     		print_liste_field_titre($langs->trans("Label"), $_SERVER["PHP_SELF"], "p.label",$param,"","",$sortfield,$sortorder);

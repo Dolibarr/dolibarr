@@ -141,7 +141,7 @@ if (! empty($moreforfilter))
 	print '</div>';
 }
 
-print '<table class="liste">';
+print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'" id="tablelines3">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Project").'</td>';
 print '<td>'.$langs->trans("ProjectStatus").'</td>';

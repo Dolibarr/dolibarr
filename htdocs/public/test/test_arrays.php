@@ -146,9 +146,7 @@ $nav.='</form>';
 
 print_barre_liste('Title of my list', 3, $_SERVER["PHP_SELF"], '', '', '', 'Text in middle', 20, 5000, '', 0, $nav);
 
-?>
-<table class="liste noborder tagtable centpercent" id="tablelines3">
-<?php
+
 $moreforfilter.='<div class="divsearchfield">';
 $moreforfilter.=$langs->trans('This is a select list for a filter A'). ': ';
 $cate_arbo = array('field1'=>'value1a into the select list A','field2'=>'value2a');
@@ -175,11 +173,15 @@ $moreforfilter.='</div>';
 
 if (! empty($moreforfilter))
 {
-    print '<tr class="liste_titre">';
-    print '<td class="liste_titre" colspan="10">';
+    print '<div class="liste_titre liste_titre_bydiv centpercent">';
     print $moreforfilter;
-    print '</td></tr>';
+    $parameters=array();
+    $reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
+    print '</div>';
 }
+
+print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'" id="tablelines3">';
 ?>
 <tr class="liste_titre">
 <?php print getTitleFieldOfList($langs->trans('title1'),0,$_SERVER["PHP_SELF"],'aaa','','','align="left"',$sortfield,$sortorder); ?>
@@ -188,7 +190,9 @@ if (! empty($moreforfilter))
 </tr>
 <tr class="pair"><td><?php echo $productspecimen->getNomUrl(1); ?></td><td align="right">b1</td><td class="tdlineupdown" align="left">c1</td></tr>
 <tr class="impair"><td>a2</td><td align="right">b2</td><td class="tdlineupdown" align="left">c2</td></tr>
-</table>
+<?php 
+print '</table>';
+?>
 <br>
 
 

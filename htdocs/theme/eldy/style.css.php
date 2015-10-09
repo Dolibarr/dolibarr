@@ -452,8 +452,10 @@ textarea.centpercent {
 div.divsearchfield {
 	float: <?php print $left; ?>;
 	margin-<?php print $right; ?>: 12px;
-	margin-top: 1px;
-    margin-bottom: 2px;
+    margin-<?php print $left; ?>: 2px;
+	margin-top: 3px;
+    margin-bottom: 3px;
+  	padding-left: 2px;
 }
 div.confirmmessage {
 	padding-top: 6px;
@@ -1934,7 +1936,7 @@ td.border, div.tagtable div div.border {
 
 /* Main boxes */
 
-table.noborder, table.formdoc, div.noborder {
+table.liste, table.noborder, table.formdoc, div.noborder {
 	width: 100%;
 
 	border-collapse: separate !important;
@@ -1962,25 +1964,28 @@ table.noborder, table.formdoc, div.noborder {
 	-webkit-box-shadow: 2px 2px 4px #CCC;
 	box-shadow: 2px 2px 4px #CCC;
 
-	-moz-border-radius: 0.2em;
+/*	-moz-border-radius: 0.2em;
 	-webkit-border-radius: 0.2em;
-	border-radius: 0.2em;
+	border-radius: 0.2em;*/
 }
 
-table.noborder tr, div.noborder form {
+table.liste tr, table.noborder tr, div.noborder form {
 	border-top-color: #FEFEFE;
 
 	border-right-width: 1px;
-	border-right-color: #BBBBBB;
+	border-right-color: #BBB;
 	border-right-style: solid;
 
 	border-left-width: 1px;
-	border-left-color: #BBBBBB;
+	border-left-color: #BBB;
 	border-left-style: solid;
 	min-height: 20px;
 }
 
-table.noborder th, table.noborder td, div.noborder form, div.noborder form div {
+table.liste th, table.noborder th {
+	padding: 10px 2px 10px 3px;			/* t r b l */
+}
+table.liste td, table.noborder td, div.noborder form, div.noborder form div {
 	padding: 5px 2px 5px 3px;			/* t r b l */
 }
 
@@ -2008,41 +2013,11 @@ td.borderright {
 }
 
 
-/* For lists */
-
-table.liste {
-	width: 100%;
-
-	border-collapse: collapse;
-/*	border-top-color: #FEFEFE;
-	border-top-width: 1px;
-	border-top-color: #CCC;
-	border-top-style: solid;
-*/
-
-	border-right-width: 1px;
-	border-right-color: #CCC;
-	border-right-style: solid;
-
-/*
-	border-bottom-width: 1px;
-	border-bottom-color: #BBBBBB;
-	border-bottom-style: solid;
-*/
-	border-left-width: 1px;
-	border-left-color: #CCC;
-	border-left-style: solid;
-
-	margin-bottom: 2px;
-	margin-top: 0px;
-
-    -moz-box-shadow: 0px 3px 4px #CCC;
-    -webkit-box-shadow: 0px 3px 4px #CC;
-    box-shadow: 0px 3px 4px #CCC;
+/* For table with no filter before */
+table.listwithfilterbefore {
+	border-top: none !important;
 }
-table.liste td {
-	padding-right: 2px;
-}
+
 
 .tagtable, .table-border { display: table; }
 .tagtr, .table-border-row  { display: table-row; }
@@ -2285,27 +2260,28 @@ div.liste_titre {
 div.liste_titre {
 	min-height: 26px !important;	/* We cant use height because it's a div and it should be higher if content is more. but min-height does not work either for div */
 
-	padding-left: 3px;
 	padding-top: 2px;
 	padding-bottom: 2px;
 
 	border-right-width: 1px;
-	border-right-color: #CCC;
+	border-right-color: #BBB;
 	border-right-style: solid;
 
 	border-left-width: 1px;
-	border-left-color: #CCC;
+	border-left-color: #BBB;
 	border-left-style: solid;
 
 	border-top-width: 1px;
-	border-top-color: #CCC;
+	border-top-color: #BBB;
 	border-top-style: solid;
 }
 div.liste_titre_bydiv {
 	box-shadow: none;
 	border-collapse: collapse;
 	display: table;
-	padding: 2px 2px 2px 0;
+	padding: 2px 0px 2px 0;
+	box-shadow: 2px 2px 4px #CCC;
+	width: calc(100% - 1px);	/* 1px more, i don't know why */
 }
 tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable.tr
 {

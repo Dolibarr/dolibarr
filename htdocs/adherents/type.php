@@ -168,7 +168,7 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 
 	print load_fiche_titre($langs->trans("MembersTypes"));
 
-	dol_fiche_head('');
+	//dol_fiche_head('');
 
 	$sql = "SELECT d.rowid, d.libelle, d.cotisation, d.vote";
 	$sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
@@ -211,7 +211,7 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 		dol_print_error($db);
 	}
 
-	dol_fiche_end();
+	//dol_fiche_end();
 
 	/*
 	 * Hotbar

@@ -136,26 +136,29 @@ if ($resql)
 
     print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-    print '<table class="liste" width="100%">';
 
     // If the user can view prospects other than his'
     $moreforfilter='';
     if ($user->rights->societe->client->voir || $socid)
     {
     	$langs->load("commercial");
+    	$moreforfilter.='<div class="divsearchfield">';
     	$moreforfilter.=$langs->trans('ThirdPartiesOfSaleRepresentative'). ': ';
     	$moreforfilter.=$formother->select_salesrepresentatives($search_sale,'search_sale',$user);
-    	$moreforfilter.=' &nbsp; &nbsp; &nbsp; ';
+    	$moreforfilter.='</div>';
     }
 
-    if ($moreforfilter)
+    if (! empty($moreforfilter))
     {
-    	print '<tr class="liste_titre">';
-    	print '<td class="liste_titre" colspan="9">';
-    	print $moreforfilter;
-    	print '</td></tr>';
+        print '<div class="liste_titre liste_titre_bydiv centpercent">';
+        print $moreforfilter;
+        $parameters=array();
+        $reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+        print $hookmanager->resPrint;
+        print '</div>';
     }
 
+    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">';
     print '<tr class="liste_titre">';
 
     $param='&search_contract='.$search_contract;
