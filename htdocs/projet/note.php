@@ -131,7 +131,7 @@ if ($id > 0 || ! empty($ref))
 	$colwidth=30;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
-	dol_fiche_end();;
+	dol_fiche_end();
 }
 
 llxFooter();

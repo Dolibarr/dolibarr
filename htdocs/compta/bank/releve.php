@@ -343,7 +343,7 @@ else
 				elseif ($links[$key]['type']=='payment_supplier')
 				{
 					$paymentsupplierstatic->id=$links[$key]['url_id'];
-					$paymentsupplierstatic->ref=$langs->trans("Payment");;
+					$paymentsupplierstatic->ref=$langs->trans("Payment");
 					print ' '.$paymentsupplierstatic->getNomUrl(1);
 					$newline=0;
 				}
