@@ -3487,6 +3487,61 @@ a span.select2-chosen
 }
 
 
+/* ============================================================================== */
+/*  Multiselect with checkbox                                                     */
+/* ============================================================================== */
+
+dl.dropdown {
+    margin:0px;
+    padding:0px;
+}
+.dropdown dd, .dropdown dt {
+    margin:0px;
+    padding:0px;
+}
+.dropdown ul {
+    margin: -1px 0 0 0;
+    text-align: left;
+}
+.dropdown dd {
+    position:relative;
+}
+.dropdown dt a {
+    display:block;
+    overflow: hidden;
+    border:0;
+}
+.dropdown dt a span, .multiSel span {
+    cursor:pointer;
+    display:inline-block;
+    padding: 0 3px 2px 0;
+}
+.dropdown dd ul {
+    background-color: #FFF;
+    border: 1px solid #888;
+    display:none;
+    right:0px;						/* pop is align on right */
+    padding: 2px 15px 2px 5px;
+    position:absolute;
+    top:2px;
+    list-style:none;
+    max-height: 200px;
+    overflow: auto;
+}
+.dropdown span.value {
+    display:none;
+}
+.dropdown dd ul li {
+	white-space: nowrap;
+}
+.dropdown dd ul li a {
+    padding:5px;
+    display:block;
+}
+.dropdown dd ul li a:hover {
+    background-color:#fff;
+}
+
 
 /* ============================================================================== */
 /*  JMobile                                                                       */

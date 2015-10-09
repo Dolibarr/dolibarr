@@ -4591,34 +4591,36 @@ class Form
     {
     	global $conf, $langs;
 
+    	$out = '';
+    	
     	// Add code for jquery to use multiselect
     	if (! empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) || defined('REQUIRE_JQUERY_MULTISELECT'))
     	{
     		$tmpplugin=empty($conf->global->MAIN_USE_JQUERY_MULTISELECT)?constant('REQUIRE_JQUERY_MULTISELECT'):$conf->global->MAIN_USE_JQUERY_MULTISELECT;
-   			print '<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
+   			$out.='<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
     			<script type="text/javascript">
 	    			function formatResult(record) {'."\n";
 						if ($elemtype == 'category')
 						{
-							print '	//return \'<span><img src="'.DOL_URL_ROOT.'/theme/eldy/img/object_category.png'.'"> <a href="'.DOL_URL_ROOT.'/categories/viewcat.php?type=0&id=\'+record.id+\'">\'+record.text+\'</a></span>\';
+							$out.='	//return \'<span><img src="'.DOL_URL_ROOT.'/theme/eldy/img/object_category.png'.'"> <a href="'.DOL_URL_ROOT.'/categories/viewcat.php?type=0&id=\'+record.id+\'">\'+record.text+\'</a></span>\';
 								  	return \'<span><img src="'.DOL_URL_ROOT.'/theme/eldy/img/object_category.png'.'"> \'+record.text+\'</span>\';';
 						}
 						else
 						{
-							print 'return record.text;';
+							$out.='return record.text;';
 						}
-			print '	};
+			$out.= '	};
     				function formatSelection(record) {'."\n";
 						if ($elemtype == 'category')
 						{
-							print '	//return \'<span><img src="'.DOL_URL_ROOT.'/theme/eldy/img/object_category.png'.'"> <a href="'.DOL_URL_ROOT.'/categories/viewcat.php?type=0&id=\'+record.id+\'">\'+record.text+\'</a></span>\';
+							$out.='	//return \'<span><img src="'.DOL_URL_ROOT.'/theme/eldy/img/object_category.png'.'"> <a href="'.DOL_URL_ROOT.'/categories/viewcat.php?type=0&id=\'+record.id+\'">\'+record.text+\'</a></span>\';
 								  	return \'<span><img src="'.DOL_URL_ROOT.'/theme/eldy/img/object_category.png'.'"> \'+record.text+\'</span>\';';
 						}
 						else
 						{
-							print 'return record.text;';
+							$out.='return record.text;';
 						}
-			print '	};
+			$out.= '	};
 	    			$(document).ready(function () {
     					$(\'#'.$htmlname.'\').'.$tmpplugin.'({
     						dir: \'ltr\',
@@ -4636,7 +4638,7 @@ class Form
     	// Try also magic suggest
 
     	// Add data-role="none" to disable jmobile decoration
-		$out = '<select data-role="none" id="'.$htmlname.'" class="multiselect'.($morecss?' '.$morecss:'').'" multiple name="'.$htmlname.'[]"'.($moreattrib?' '.$moreattrib:'').($width?' style="width: '.(preg_match('/%/',$width)?$width:$width.'px').'"':'').'>'."\n";
+		$out .= '<select data-role="none" id="'.$htmlname.'" class="multiselect'.($morecss?' '.$morecss:'').'" multiple name="'.$htmlname.'[]"'.($moreattrib?' '.$moreattrib:'').($width?' style="width: '.(preg_match('/%/',$width)?$width:$width.'px').'"':'').'>'."\n";
     	if (is_array($array) && ! empty($array))
     	{
     		if ($value_as_key) $array=array_combine($array, $array);
@@ -4665,6 +4667,84 @@ class Form
     }
 
 
+    /**
+     *	Show a multiselect form from an array.
+     *
+     *	@param	string	$htmlname		Name of select
+     *	@param	array	$array			Array with array to show
+     *	@return	string					HTML multiselect string
+     *  @see selectarray
+     */
+    static function multiSelectArrayWithCheckbox($htmlname, $array)
+    {
+        $lis='';
+        $liststring='';
+        
+        foreach($array as $key => $val)
+        {
+           if (isset($val['cond']) && ! $val['cond']) continue; 
+	       if ($val['label']) 
+	       {
+	           $lis.='<li><input type="checkbox" value="'.$key.'"'.($val['checked']?' checked="checked"':'').'/>'.dol_escape_htmltag($val['label']).'</li>';
+	           $liststring.=$key.',';
+	       }
+        }
+        
+        
+        $out ='<!-- Component multiSelectArrayWithCheckbox '.$htmlname.' --> 
+            
+            <dl class="dropdown"> 
+          
+            <dt>
+            <a href="#">
+              '.img_picto('','list').'    
+              <input type="hidden" class="'.$htmlname.'" name="'.$htmlname.'" value="'.$liststring.'">
+            </a>
+            </dt>
+          
+            <dd>
+                <div class="multiselectcheckbox'.$htmlname.'">
+                    <ul>
+                    '.$lis.'
+                    </ul>
+                </div>
+            </dd>
+        </dl>
+            
+        <script type="text/javascript">
+          $(".dropdown dt a").on(\'click\', function () {
+              $(".dropdown dd ul").slideToggle(\'fast\');
+          });
+    
+          $(".dropdown dd ul li a").on(\'click\', function () {
+              $(".dropdown dd ul").hide();
+          });
+    
+          function getSelectedValue(id) {
+               return $("#" + id).find("dt a span.value").html();
+          }
+    
+          $(document).bind(\'click\', function (e) {
+              var $clicked = $(e.target);
+              if (!$clicked.parents().hasClass("dropdown")) $(".dropdown dd ul").hide();
+          });
+    
+          $(\'.multiselectcheckbox'.$htmlname.' input[type="checkbox"]\').on(\'click\', function () {
+            
+              var title = $(this).val() + ",";
+            
+              if ($(this).is(\':checked\')) {
+                  $(\'.'.$htmlname.'\').val(title + $(\'.'.$htmlname.'\').val());
+              } 
+              else {
+                  $(\'.'.$htmlname.'\').val( $(\'.'.$htmlname.'\').val().replace(title, \'\') )
+              }
+          });        
+        </script>            
+            
+        ';
+        return $out;
+    }
 
 	/**
 	 * 	Render list of categories linked to object with id $id and type $type
