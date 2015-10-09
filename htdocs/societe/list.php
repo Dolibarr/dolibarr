@@ -334,13 +334,6 @@ if ($resql)
         $moreforfilter.=$htmlother->select_salesrepresentatives($search_sale,'search_sale',$user);
         $moreforfilter.='</div>'; 
     }
-    if ($moreforfilter)
-    {
-        print '<tr class="liste_titre">';
-        print '<td class="liste_titre" colspan="8">';
-        print $moreforfilter;
-        print '</td></tr>';
-    }
 	*/
 	if (! empty($moreforfilter))
 	{
