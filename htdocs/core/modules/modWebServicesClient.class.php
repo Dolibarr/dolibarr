@@ -18,7 +18,7 @@
 /**
  *      \defgroup   webservices     Module webservices
  *      \brief      Module to enable client for supplier WebServices
- *       \file       htdocs/core/modules/modSyncSupplierWebServices.class.php
+ *       \file       htdocs/core/modules/modWebServicesClient.class.php
  *       \ingroup    webservices
  *       \brief      File to describe client for supplier webservices module
  */
