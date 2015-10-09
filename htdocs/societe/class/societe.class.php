@@ -3386,8 +3386,6 @@ class Societe extends CommonObject
 
 		// Diff
 		if (is_array($existing)) {
-			var_dump($existing);
-			var_dump($categories);
 			$to_del = array_diff($existing, $categories);
 			$to_add = array_diff($categories, $existing);
 		} else {
