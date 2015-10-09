@@ -3649,7 +3649,7 @@ border-top-right-radius: 6px;
 	#tooltip {
 		position: absolute;
 		width: <?php print dol_size(350,'width'); ?>px;
-	}	
+	}
 }
 @media only screen and (max-width: 570px)
 {
@@ -3663,7 +3663,7 @@ border-top-right-radius: 6px;
 	#tooltip {
 		position: absolute;
 		width: <?php print dol_size(300,'width'); ?>px;
-	}	
+	}
 }
 
 
