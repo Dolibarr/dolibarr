@@ -156,7 +156,7 @@ Handlebars.SafeString.prototype.toString = function() {
       }
     }
   };
-})();;
+})();
 // lib/handlebars/runtime.js
 Handlebars.VM = {
   template: function(templateSpec) {
