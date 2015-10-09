@@ -456,6 +456,10 @@ textarea.centpercent {
 div.divsearchfield {
 	float: <?php print $left; ?>;
 	margin-<?php print $right; ?>: 12px;
+	margin-<?php print $left; ?>: 2px;
+	margin-top: 3px;
+    margin-bottom: 3px;
+  	padding-left: 2px;	
 }
 div.confirmmessage {
 	padding-top: 6px;
@@ -1788,7 +1792,7 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 
 table.border, table.dataTable, .table-border, .table-border-col, .table-key-border-col, .table-val-border-col, div.border {
 	border: 1px solid #f4f4f4;
-	border-collapse: collapse;
+	border-collapse: collapse !important;
 	padding: 1px 2px 1px 3px;			/* t r b l */
 }
 
@@ -1822,7 +1826,7 @@ td.border, div.tagtable div div.border {
 
 /* Main boxes */
 
-table.noborder, table.formdoc, div.noborder {
+table.liste, table.noborder, table.formdoc, div.noborder {
 	width: 100%;
 
 	border-collapse: separate !important;
@@ -1856,6 +1860,9 @@ table.noborder tr, div.noborder form {
 	height: 26px;
 }
 
+table.liste th, table.noborder th {
+	padding: 5px 2px 5px 3px;			/* t r b l */
+}
 table.noborder th, table.noborder td, div.noborder form, div.noborder form div {
 	padding: 1px 2px 1px 3px;			/* t r b l */
 }
@@ -1883,35 +1890,9 @@ td.borderright {
 	border-right-style: solid !important;
 }
 
-/* For lists */
-
-table.liste {
-	width: 100%;
-	border-collapse: collapse;
-	border-top-color: #FEFEFE;
-
-	border-right-width: 1px;
-	border-right-color: #CCC;
-	border-right-style: solid;
-
-/*
-	border-bottom-width: 1px;
-	border-bottom-color: #BBBBBB;
-	border-bottom-style: solid;
-*/
-	border-left-width: 1px;
-	border-left-color: #CCC;
-	border-left-style: solid;
-
-	margin-bottom: 2px;
-	margin-top: 0px;
-
-    -moz-box-shadow: 0px 3px 4px #CCC;
-    -webkit-box-shadow: 0px 3px 4px #CC;
-    box-shadow: 0px 3px 4px #CCC;
-}
-table.liste td {
-	padding-right: 2px;
+/* For table with no filter before */
+table.listwithfilterbefore {
+	border-top: none !important;
 }
 
 .tagtable, .table-border { display: table; }
@@ -2050,6 +2031,9 @@ div.pagination li.pagination .active {
 div.pagination li.paginationafterarrows {
 	margin-left: 10px;
 }
+.paginationatbottom {
+	margin-top: 9px;
+}
 
 /* Prepare to remove class pair - impair
 .noborder > tbody > tr:nth-child(even) td {
@@ -2139,6 +2123,29 @@ div.liste_titre .tagtd {
 }
 div.liste_titre {
 	min-height: 26px !important;	/* We cant use height because it's a div and it should be higher if content is more. but min-height doe not work either for div */
+
+	padding-top: 2px;
+	padding-bottom: 2px;
+
+	border-right-width: 1px;
+	border-right-color: #BBB;
+	border-right-style: solid;
+
+	border-left-width: 1px;
+	border-left-color: #BBB;
+	border-left-style: solid;
+
+	border-top-width: 1px;
+	border-top-color: #BBB;
+	border-top-style: solid;
+}
+div.liste_titre_bydiv {
+	box-shadow: none;
+	border-collapse: collapse;
+	display: table;
+	padding: 2px 0px 2px 0;
+	box-shadow: 2px 2px 4px #CCC;
+	width: calc(100% - 1px);	/* 1px more, i don't know why */
 }
 tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable.tr
 {
@@ -2425,7 +2432,12 @@ td.legendLabel { padding: 2px 2px 2px 0 !important; }
 	margin-bottom: 2px;
 	margin-top: 2px;
 }
-.photointooltip {
+.photowithmargin {
+/*	-webkit-box-shadow: 0px 0px 3px #777;
+	-moz-box-shadow: 0px 0px 3px #777;
+	box-shadow: 0px 0px 3px #777;*/
+}
+.photointoolitp {
 	margin-top: 8px;
 	float: left;
 	/*text-align: center; */
@@ -3221,7 +3233,7 @@ table.dataTable tr.odd td.sorting_1, table.dataTable tr.even td.sorting_1 {
 	background-color: #FFF !important;
 	border-radius: inherit !important;
 }
-.paging_full_numbers a.paginate_button_disabled:hover {
+.paging_full_numbers a.paginate_button_disabled:hover, .paging_full_numbers a.disabled:hover {
     background-color: #FFF !important;
 }
 .paginate_button, .paginate_active {
@@ -3242,9 +3254,25 @@ table.dataTable tr.odd td.sorting_1, table.dataTable tr.even td.sorting_1 {
 	background-image: none;
 }
 
+div.dataTables_length {
+	float: right !important;
+	padding-left: 8px;
+}
+div.dataTables_length select {
+	background: #fff;
+}
+.dataTables_wrapper .dataTables_paginate {
+	padding-top: 0px !important;
+}
+
+
 /* ============================================================================== */
 /*  Select2                                                                       */
 /* ============================================================================== */
+
+.selectoptiondisabledwhite {
+	background: #FFFFFF !important;
+}
 
 .select2-choice,
 .select2-drop.select2-drop-above.select2-drop-active,
@@ -3330,6 +3358,62 @@ a span.select2-chosen
   position: relative;
   cursor: text;
   overflow: hidden;
+}
+
+
+/* ============================================================================== */
+/*  Multiselect with checkbox                                                     */
+/* ============================================================================== */
+
+dl.dropdown {
+    margin:0px;
+    padding:0px;
+}
+.dropdown dd, .dropdown dt {
+    margin:0px;
+    padding:0px;
+}
+.dropdown ul {
+    margin: -1px 0 0 0;
+    text-align: left;
+}
+.dropdown dd {
+    position:relative;
+}
+.dropdown dt a {
+    display:block;
+    overflow: hidden;
+    border:0;
+}
+.dropdown dt a span, .multiSel span {
+    cursor:pointer;
+    display:inline-block;
+    padding: 0 3px 2px 0;
+}
+.dropdown dd ul {
+    background-color: #FFF;
+    border: 1px solid #888;
+    display:none;
+    right:0px;						/* pop is align on right */
+    padding: 2px 15px 2px 5px;
+    position:absolute;
+    top:2px;
+    list-style:none;
+    max-height: 200px;
+    overflow: auto;
+}
+.dropdown span.value {
+    display:none;
+}
+.dropdown dd ul li {
+	white-space: nowrap;
+}
+.dropdown dd ul li a {
+    padding:5px;
+    display:block;
+}
+.dropdown dd ul li a:hover {
+    background-color:#fff;
 }
 
 

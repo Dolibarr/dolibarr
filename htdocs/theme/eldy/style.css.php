@@ -537,7 +537,7 @@ td.showDragHandle {
 	float: none;
 	vertical-align: top;
 }
-#id-right {	/* This must stay id-right ant not be replaced with echo $right */
+#id-right {	/* This must stay id-right and not be replaced with echo $right */
 	width: 100%;
 }
 #id-left {
@@ -1894,7 +1894,7 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 
 table.border, table.dataTable, .table-border, .table-border-col, .table-key-border-col, .table-val-border-col, div.border {
 	border: 1px solid #E0E0E0;
-	border-collapse: collapse;
+	border-collapse: collapse !important;
 	padding: 1px 2px 1px 3px;			/* t r b l */
 }
 
@@ -3362,7 +3362,7 @@ table.dataTable tr.odd td.sorting_1, table.dataTable tr.even td.sorting_1 {
 	background-color: #FFF !important;
 	border-radius: inherit !important;
 }
-.paging_full_numbers a.paginate_button_disabled:hover {
+.paging_full_numbers a.paginate_button_disabled:hover, .paging_full_numbers a.disabled:hover {
     background-color: #FFF !important;
 }
 .paginate_button, .paginate_active {
@@ -3390,7 +3390,9 @@ div.dataTables_length {
 div.dataTables_length select {
 	background: #fff;
 }
-
+.dataTables_wrapper .dataTables_paginate {
+	padding-top: 0px !important;
+}
 
 /* ============================================================================== */
 /*  Select2                                                                       */
