@@ -632,40 +632,6 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
 	print "</tr>\n";
 
 
-    print '<tr class="liste_titre">';
-    // Name - Position
-    print '<td class="liste_titre">';
-    print '<input type="text" class="flat" name="search_name" size="20" value="'.$search_name.'">';
-    print '</td>';
-
-    // Address / Phone
-    print '<td>';
-    //print '<input type="text" class="flat" name="search_addressphone" size="20" value="'.$search_addressphone.'">';
-    print '</td>';
-
-    // Email
-    print '<td>&nbsp;</td>';
-
-    // Status
-    print '<td class="liste_titre maxwidthonsmartphone">';
-    print $form->selectarray('search_status', array('-1'=>'','0'=>$contactstatic->LibStatut(0,1),'1'=>$contactstatic->LibStatut(1,1)),$search_status);
-    print '</td>';
-
-    // Add to agenda
-    if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
-    {
-    	$colspan++;
-        print '<td>&nbsp;</td>';
-    }
-
-	// Edit
-    print '<td class="liste_titre" align="right">';
-    print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-    print '</td>';
-
-    print "</tr>";
-
-
     $sql = "SELECT p.rowid, p.lastname, p.firstname, p.fk_pays as country_id, p.civility, p.poste, p.phone as phone_pro, p.phone_mobile, p.phone_perso, p.fax, p.email, p.skype, p.statut ";
     $sql .= ", p.civility as civility_id, p.address, p.zip, p.town";
     $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
@@ -683,6 +649,39 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
 	$var=true;
 	if ($num)
     {
+        print '<tr class="liste_titre">';
+        // Name - Position
+        print '<td class="liste_titre">';
+        print '<input type="text" class="flat" name="search_name" size="20" value="'.$search_name.'">';
+        print '</td>';
+    
+        // Address / Phone
+        print '<td>';
+        //print '<input type="text" class="flat" name="search_addressphone" size="20" value="'.$search_addressphone.'">';
+        print '</td>';
+    
+        // Email
+        print '<td>&nbsp;</td>';
+    
+        // Status
+        print '<td class="liste_titre maxwidthonsmartphone">';
+        print $form->selectarray('search_status', array('-1'=>'','0'=>$contactstatic->LibStatut(0,1),'1'=>$contactstatic->LibStatut(1,1)),$search_status);
+        print '</td>';
+    
+        // Add to agenda
+        if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
+        {
+        	$colspan++;
+            print '<td>&nbsp;</td>';
+        }
+    
+    	// Edit
+        print '<td class="liste_titre" align="right">';
+        print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+        print '</td>';
+    
+        print "</tr>";
+    
         $i=0;
 
         while ($i < $num)
