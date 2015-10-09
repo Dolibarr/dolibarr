@@ -604,6 +604,38 @@ div.attacharea {
 	padding-bottom: 10px;
 }
 
+div.arearef {
+	/*border-bottom: 1px solid #bbb;*/
+	padding-top: 2px;
+	padding-bottom: 5px;
+	/*padding-right: 3px;
+	padding-left: 2px;*/
+	margin-bottom: 10px;
+}
+div.heightref {
+	min-height: 74px; 
+}
+div.divphotoref {
+	padding-right: 10px;
+}
+div.statusref {
+	float: right;
+	padding-right: 12px;
+	margin-top: 9px;
+	margin-bottom: 10px;
+}
+img.photoref {
+	height: 68px;
+	width: 68px;
+	border: 1px solid #CCC;
+	-moz-box-shadow: 3px 3px 4px #DDD;
+    -webkit-box-shadow: 3px 3px 4px #DDD;
+    box-shadow: 3px 3px 4px #DDD;
+}
+.underrefbanner {
+	border-bottom: 2px solid #888;
+}
+
 /* ============================================================================== */
 /* Menu top et 1ere ligne tableau                                                 */
 /* ============================================================================== */
@@ -2051,13 +2083,19 @@ table.liste td {
 
 /* Pagination */
 div.refidpadding  {
-	padding-top: <?php print empty($conf->dol_use_jmobile)?'8':'12'; ?>px;
+	/* padding-top: <?php print empty($conf->dol_use_jmobile)?'8':'12'; ?>px; */
 }
 div.refid  {
-	padding-top: <?php print empty($conf->dol_use_jmobile)?'5':'12'; ?>px;
+	/* padding-top: <?php print empty($conf->dol_use_jmobile)?'5':'12'; ?>px; */
 	font-weight: bold;
   	color: #766;
-  	font-size: 120%;
+  	font-size: 160%;
+}
+div.refidno  {
+	padding-top: 2px;
+	font-weight: normal;
+  	color: #444;
+  	font-size: <?php print $fontsize ?>px;
 }
 
 div.pagination {

@@ -5042,16 +5042,18 @@ class Form
      *    @param	int		$shownav	  	Show Condition (navigation is shown if value is 1)
      *    @param	string	$fieldid   		Nom du champ en base a utiliser pour select next et previous (we make the select max and min on this field)
      *    @param	string	$fieldref   	Nom du champ objet ref (object->ref) a utiliser pour select next et previous
-     *    @param	string	$morehtmlref  	Code html supplementaire a afficher apres ref
+     *    @param	string	$morehtmlref  	More html to show after ref
      *    @param	string	$moreparam  	More param to add in nav link url.
      *	  @param	int		$nodbprefix		Do not include DB prefix to forge table name
+     *	  @param	string	$morehtmlleft	More html code to show before ref
+     *	  @param	string	$morehtmlright	More html code to show before navigation arrows
      * 	  @return	string    				Portion HTML avec ref + boutons nav
      */
-    function showrefnav($object,$paramid,$morehtml='',$shownav=1,$fieldid='rowid',$fieldref='ref',$morehtmlref='',$moreparam='',$nodbprefix=0)
+    function showrefnav($object,$paramid,$morehtml='',$shownav=1,$fieldid='rowid',$fieldref='ref',$morehtmlref='',$moreparam='',$nodbprefix=0,$morehtmlleft='',$morehtmlright='')
     {
     	global $langs,$conf;
 
-        $ret='';
+    	$ret='';
         if (empty($fieldid))  $fieldid='rowid';
         if (empty($fieldref)) $fieldref='ref';
 
@@ -5064,14 +5066,18 @@ class Form
         $next_ref     = $object->ref_next?'<a data-role="button" data-icon="arrow-r" data-iconpos="right" href="'.$_SERVER["PHP_SELF"].'?'.$paramid.'='.urlencode($object->ref_next).$moreparam.'">'.(empty($conf->dol_use_jmobile)?'>':'&nbsp;').'</a>':'';
 
         //print "xx".$previous_ref."x".$next_ref;
-        $ret.='<div style="vertical-align: middle"><div class="inline-block floatleft refid'.(($shownav && ($previous_ref || $next_ref))?' refidpadding':'').'">';
+        $ret.='<div style="vertical-align: middle">';
+        
+		$ret.='<div class="inline-block floatleft">'.$morehtmlleft.'</div>';
+        
+        $ret.='<div class="inline-block floatleft valignmiddle refid'.(($shownav && ($previous_ref || $next_ref))?' refidpadding':'').'">';
 
         $ret.=dol_htmlentities($object->$fieldref);
         if ($morehtmlref)
         {
             $ret.=' '.$morehtmlref;
         }
-			$ret.='</div>';
+		$ret.='</div>';
 
         if ($previous_ref || $next_ref || $morehtml)
         {
@@ -5079,23 +5085,20 @@ class Form
         }
         if ($morehtml)
         {
-            //$ret.='</td><td class="paddingrightonly" align="right">'.$morehtml;
             $ret.='<li class="noborder litext">'.$morehtml.'</li>';
         }
         if ($shownav && ($previous_ref || $next_ref))
         {
-            //$ret.='</td><td class="nobordernopadding" align="center" width="20">'.$previous_ref.'</td>';
-            //$ret.='<td class="nobordernopadding" align="center" width="20">'.$next_ref;
             $ret.='<li class="pagination">'.$previous_ref.'</li>';
             $ret.='<li class="pagination">'.$next_ref.'</li>';
         }
         if ($previous_ref || $next_ref || $morehtml)
         {
-            //$ret.='</td></tr></table>';
             $ret.='</ul></div>';
         }
-		$ret.='</div>';
-
+		$ret.='<div class="statusref">'.$morehtmlright.'</div>';
+        $ret.='</div>';
+		
         return $ret;
     }
 
@@ -5132,15 +5135,16 @@ class Form
     /**
      *    	Return HTML code to output a photo
      *
-     *    	@param	string		$modulepart		Key to define module concerned ('societe', 'userphoto', 'memberphoto')
-     *     	@param  object		$object			Object containing data to retrieve file name
-     * 		@param	int			$width			Width of photo
-     * 		@param	int			$height			Height of photo (auto if 0)
-     * 		@param	int			$caneditfield	Add edit fields
-     * 		@param	string		$cssclass		CSS name to use on img for photo
-     * 	  	@return string    					HTML code to output photo
+     *    	@param	string		$modulepart			Key to define module concerned ('societe', 'userphoto', 'memberphoto')
+     *     	@param  object		$object				Object containing data to retrieve file name
+     * 		@param	int			$width				Width of photo
+     * 		@param	int			$height				Height of photo (auto if 0)
+     * 		@param	int			$caneditfield		Add edit fields
+     * 		@param	string		$cssclass			CSS name to use on img for photo
+     * 		@param	int			$genericifundef		Use a generic image if no image avaiable
+     * 	  	@return string    						HTML code to output photo
      */
-    static function showphoto($modulepart, $object, $width=100, $height=0, $caneditfield=0, $cssclass='photowithmargin')
+    static function showphoto($modulepart, $object, $width=100, $height=0, $caneditfield=0, $cssclass='photowithmargin', $genericifundef=0)
     {
         global $conf,$langs;
 
@@ -5199,7 +5203,7 @@ class Form
             else
 			{
 				$nophoto='/public/theme/common/nophoto.jpg';
-				if (in_array($modulepart,array('userphoto','contact')))	// For module thar are "physical" users
+				if (in_array($modulepart,array('userphoto','contact')))	// For module that are "physical" users
 				{
 					$nophoto='/public/theme/common/user_anonymous.png';
 					if ($object->gender == 'man') $nophoto='/public/theme/common/user_man.png';

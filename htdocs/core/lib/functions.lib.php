@@ -1315,20 +1315,25 @@ function dol_print_size($size,$shortvalue=0,$shortunit=0)
  * @param	string		$url		Url to show
  * @param	string		$target		Target for link
  * @param	int			$max		Max number of characters to show
+ * @param	int			$withpicto	With picto
  * @return	string					HTML Link
  */
-function dol_print_url($url,$target='_blank',$max=32)
+function dol_print_url($url,$target='_blank',$max=32,$withpicto=0)
 {
+	global $langs;
+	
 	if (empty($url)) return '';
 
 	$link='<a href="';
 	if (! preg_match('/^http/i',$url)) $link.='http://';
 	$link.=$url;
-	if ($target) $link.='" target="'.$target.'">';
+	$link.='"';
+	if ($target) $link.=' target="'.$target.'"';
+	$link.='>';
 	if (! preg_match('/^http/i',$url)) $link.='http://';
 	$link.=dol_trunc($url,$max);
 	$link.='</a>';
-	return $link;
+	return '<div class="nospan float" style="margin-right: 10px">'.($withpicto?img_picto($langs->trans("Url"), 'object_globe.png').' ':'').$link.'</div>';
 }
 
 /**
@@ -1591,26 +1596,30 @@ function dol_user_country()
 /**
  *  Format address string
  *
- *  @param	string	$address     Address
- *  @param  int		$htmlid      Html ID (for example 'gmap')
- *  @param  int		$mode        thirdparty|contact|member|other
- *  @param  int		$id          Id of object
- *  @return void
+ *  @param	string	$address    Address
+ *  @param  int		$htmlid     Html ID (for example 'gmap')
+ *  @param  int		$mode       thirdparty|contact|member|other
+ *  @param  int		$id         Id of object
+ *  @param	int		$noprint	No output. Result is the function return
+ *  @return string|void			Nothing if noprint is 0, formatted address if noprint is 1
  *  @see dol_format_address
  */
-function dol_print_address($address, $htmlid, $mode, $id)
+function dol_print_address($address, $htmlid, $mode, $id, $noprint=0)
 {
 	global $conf, $user, $langs, $hookmanager;
 
+	$out = '';
+	
 	if ($address)
 	{
         if ($hookmanager) {
             $parameters = array('element' => $mode, 'id' => $id);
             $reshook = $hookmanager->executeHooks('printAddress', $parameters, $address);
-            print $hookmanager->resPrint;
+            $out.=$hookmanager->resPrint;
         }
-        if (empty($reshook)) {
-            print nl2br($address);
+        if (empty($reshook)) 
+        {
+            $out.=nl2br($address);
             $showgmap=$showomap=0;
             if ($mode=='thirdparty' && ! empty($conf->google->enabled) && ! empty($conf->global->GOOGLE_ENABLE_GMAPS)) $showgmap=1;
             if ($mode=='contact' && ! empty($conf->google->enabled) && ! empty($conf->global->GOOGLE_ENABLE_GMAPS_CONTACTS)) $showgmap=1;
@@ -1623,15 +1632,17 @@ function dol_print_address($address, $htmlid, $mode, $id)
             if ($showgmap)
             {
                 $url=dol_buildpath('/google/gmaps.php?mode='.$mode.'&id='.$id,1);
-                print ' <a href="'.$url.'" target="_gmaps"><img id="'.$htmlid.'" border="0" src="'.DOL_URL_ROOT.'/theme/common/gmap.png"></a>';
+                $out.=' <a href="'.$url.'" target="_gmaps"><img id="'.$htmlid.'" border="0" src="'.DOL_URL_ROOT.'/theme/common/gmap.png"></a>';
             }
             if ($showomap)
             {
                 $url=dol_buildpath('/openstreetmap/maps.php?mode='.$mode.'&id='.$id,1);
-                print ' <a href="'.$url.'" target="_gmaps"><img id="'.$htmlid.'_openstreetmap" border="0" src="'.DOL_URL_ROOT.'/theme/common/gmap.png"></a>';
+                $out.=' <a href="'.$url.'" target="_gmaps"><img id="'.$htmlid.'_openstreetmap" border="0" src="'.DOL_URL_ROOT.'/theme/common/gmap.png"></a>';
             }
         }
 	}
+	if ($noprint) return $out;
+	else print $out;
 }
 
 
