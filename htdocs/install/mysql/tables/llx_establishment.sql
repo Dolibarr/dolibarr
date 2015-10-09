@@ -36,6 +36,6 @@ CREATE TABLE IF NOT EXISTS llx_establishment (
   fk_user_mod		integer NOT NULL,
   datec				datetime NOT NULL,
   tms				timestamp NOT NULL,
-  statut            tinyint DEFAULT 1,
+  status            tinyint DEFAULT 1,
 ) ENGINE=InnoDB;
 
