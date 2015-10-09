@@ -251,6 +251,7 @@ input, textarea, select {
 	border:solid 1px rgba(0,0,0,.3);
 	border-top:solid 1px rgba(0,0,0,.3);
 	border-bottom:solid 1px rgba(0,0,0,.2);
+	background-color: #FFF;
 	/* box-shadow: 1px 1px 1px rgba(0,0,0,.2) inset;*/
 	padding:4px;
 	margin-left:1px;
@@ -1555,9 +1556,9 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	-webkit-box-shadow: 0 -1px 4px rgba(0,0,0,.1);
 	box-shadow: 0 -1px 4px rgba(0,0,0,.1);
 
-    border-right: 1px solid #CCCCCC;
-	border-left: 1px solid #f4f4f4;
-	border-top: 1px solid #D8D8D8;
+	border-right: 1px solid #AAA !important;
+	border-left: 1px solid #AAA !important;
+	border-top: 1px solid #BBB !important;
 
 	-moz-border-radius:3px 3px 0px 0px;
 	-webkit-border-radius:3px 3px 0px 0px;
@@ -2241,6 +2242,10 @@ div.tabBar .noborder {
 	-moz-box-shadow: 0px 0px 0px #f4f4f4 !important;
 	-webkit-box-shadow: 0px 0px 0px #f4f4f4 !important;
 	box-shadow: 0px 0px 0px #f4f4f4 !important;
+}
+
+#tablelines tr.liste_titre td, .paymenttable tr.liste_titre td, .margintable tr.liste_titre td, .tableforservicepart1 tr.liste_titre td {
+	border-bottom: 1px solid #AAA !important;
 }
 
 
@@ -3407,6 +3412,7 @@ dl.dropdown {
 }
 .dropdown dd ul li {
 	white-space: nowrap;
+	font-weight: normal;
 }
 .dropdown dd ul li a {
     padding:5px;

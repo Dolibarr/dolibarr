@@ -1562,9 +1562,11 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	-webkit-box-shadow: 0 -1px 4px rgba(0,0,0,.1);
 	box-shadow: 0 -1px 4px rgba(0,0,0,.1);
 	margin-bottom: 0 0.2em 0 0.2em !important;
+
 	border-right: 1px solid #AAA !important;
 	border-left: 1px solid #AAA !important;
 	border-top: 1px solid #BBB !important;
+
 	-moz-border-radius:4px 4px 0 0;
     -webkit-border-radius: 4px 4px 0 0;
 	border-radius: 4px 4px 0 0;
@@ -1897,7 +1899,9 @@ table.border, table.dataTable, .table-border, .table-border-col, .table-key-bord
 	border-collapse: collapse !important;
 	padding: 1px 2px 1px 3px;			/* t r b l */
 }
-
+table.borderplus {
+	border: 1px solid #BBB;
+}
 .border tbody tr, .border tbody tr td {
 	height: 20px;
 }
@@ -2372,6 +2376,10 @@ div.tabBar .noborder {
 	-moz-box-shadow: 0px 0px 0px #DDD !important;
 	-webkit-box-shadow: 0px 0px 0px #DDD !important;
 	box-shadow: 0px 0px 0px #DDD !important;
+}
+
+#tablelines tr.liste_titre td, .paymenttable tr.liste_titre td, .margintable tr.liste_titre td, .tableforservicepart1 tr.liste_titre td {
+	border-bottom: 1px solid #AAA !important;
 }
 
 
@@ -3535,6 +3543,7 @@ dl.dropdown {
 }
 .dropdown dd ul li {
 	white-space: nowrap;
+	font-weight: normal;
 }
 .dropdown dd ul li a {
     padding:5px;
