@@ -86,3 +86,5 @@ CREATE TABLE IF NOT EXISTS llx_establishment (
   statut            tinyint DEFAULT 1,
 ) ENGINE=InnoDB;
 
+ALTER TABLE llx_user ADD COLUMN employee tinyint DEFAULT 0 AFTER ref_int;
+

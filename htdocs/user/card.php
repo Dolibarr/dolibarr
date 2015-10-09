@@ -191,6 +191,7 @@ if ($action == 'add' && $canadduser)
     {
         $object->lastname		= GETPOST("lastname",'alpha');
         $object->firstname	    = GETPOST("firstname",'alpha');
+		$object->employee		= GETPOST("employee",'int');
         $object->login		    = GETPOST("login",'alpha');
         $object->api_key		= GETPOST("api_key",'alpha');
         $object->gender		    = GETPOST("gender",'alpha');
@@ -344,6 +345,7 @@ if ($action == 'update' && ! $_POST["cancel"])
 
             $object->lastname	= GETPOST("lastname",'alpha');
             $object->firstname	= GETPOST("firstname",'alpha');
+			$object->employee   = GETPOST("employee",'int');
             $object->login		= GETPOST("login",'alpha');
             $object->gender		= GETPOST("gender",'alpha');
             $object->pass		= GETPOST("password");
@@ -762,6 +764,12 @@ if (($action == 'create') || ($action == 'adduserldap'))
     {
         print '<input size="30" type="text" name="firstname" value="'.GETPOST('firstname').'">';
     }
+    print '</td></tr>';
+
+	// Employee
+    print '<tr>';
+    print '<td>'.fieldLabel('Employee','employee',0).'</td><td>';
+    print $form->selectyesno("employee",(isset($_POST['employee'])?GETPOST('employee'):0),1);
     print '</td></tr>';
 
     // Position/Job
@@ -1223,6 +1231,11 @@ else
             print '<tr><td>'.$langs->trans("Firstname").'</td>';
             print '<td colspan="2">'.$object->firstname.'</td>';
             print '</tr>'."\n";
+
+			// Employee
+            print '<tr><td>'.$langs->trans("Employee").'</td><td colspan="2">';
+            print yn($object->employee);
+            print '</td></tr>'."\n";
 
             // Position/Job
             print '<tr><td>'.$langs->trans("PostOrFunction").'</td>';
@@ -1801,6 +1814,12 @@ else
                 print '<input type="hidden" name="firstname" value="'.$object->firstname.'">';
                 print $object->firstname;
             }
+            print '</td></tr>';
+
+            // Employee
+            print '<tr>';
+            print '<td>'.fieldLabel('Employee','employee',0).'</td><td>';
+            print $form->selectyesno("employee",$object->employee,1);
             print '</td></tr>';
 
             // Position/Job
