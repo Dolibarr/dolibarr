@@ -112,6 +112,34 @@ $strMaxRetry = "2";
 
 llxHeader();
 
+$sql = "SELECT s.nom as name FROM ".MAIN_DB_PREFIX."societe as s";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON sp.fk_soc = s.rowid";
+$sql.= " WHERE s.entity IN (".getEntity('societe', 1).")";
+$sql.= " AND (s.phone='".$db->escape($called)."'";
+$sql.= " OR sp.phone='".$db->escape($called)."'";
+$sql.= " OR sp.phone_perso='".$db->escape($called)."'";
+$sql.= " OR sp.phone_mobile='".$db->escape($called)."')";
+$sql.= $db->plimit(1);
+
+dol_syslog('click to dial search information with phone '.$called, LOG_DEBUG);
+$resql = $db->query($sql);
+if ($resql)
+{
+	$obj = $db->fetch_object($resql);
+	if ($obj)
+	{
+		$found = $obj->name;
+	} else {
+		$found = $notfound;
+	}
+	$db->free($resql);
+}
+else
+{
+	dol_print_error($db,'Error');
+	$found = 'Error';
+}
+
 $number=strtolower($called);
 $pos=strpos($number,"local");
 if (! empty($number))
@@ -120,7 +148,7 @@ if (! empty($number))
     {
         $errno=0;
         $errstr=0;
-        $strCallerId = "Dolibarr <".strtolower($caller).">";
+        $strCallerId = "Dolibarr call $found <".strtolower($number).">";
         $oSocket = @fsockopen($strHost, $port, $errno, $errstr, 10);
         if (!$oSocket)
         {
