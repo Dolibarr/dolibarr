@@ -56,21 +56,21 @@ class modHRM extends DolibarrModules
 		// $this->picto = '';
 		
 		// define triggers
-		$this->module_parts = array (
+		$this->module_parts = array();
 		
 		// Data directories to create when module is enabled
-		$this->dirs = array ();
+		$this->dirs = array();
 		
 		// Config pages
 		$this->config_page_url = array('admin_hrm.php@hrm');
 		
 		// Dependencies
 		$this->depends = array();
-		$this->requiredby = array("
+		$this->requiredby = array(/*"
 			modSalaries,
 			modExpenseReport,
 			modHoliday
-		");
+		"*/);
 		$this->conflictwith = array();
 		$this->phpmin = array (
 			5,
@@ -78,7 +78,7 @@ class modHRM extends DolibarrModules
 		); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array (
 			3,
-			8 
+			7 
 		); // Minimum version of Dolibarr required by module
 		$this->langfiles = array (
 			"hrm" 
@@ -239,12 +239,13 @@ class modHRM extends DolibarrModules
 	 * @param string $options Enabling module ('', 'noboxes')
 	 * @return int if OK, 0 if KO
 	 */
-	public function init($options = '')
+	function init($options='')
 	{
+		// Permissions
+		$this->remove($options);
+
 		$sql = array();
-		
-		$result = $this->loadTables();
-		
-		return $this->_init($sql, $options);
+
+		return $this->_init($sql,$options);
 	}
 }
