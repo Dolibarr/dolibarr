@@ -1528,10 +1528,10 @@ div.tabsElem {
 
 div.tabBar {
     color: #<?php echo $colortextbacktab; ?>;
-    padding-top: <?php echo ($dol_optimize_smallscreen?'4':'14'); ?>px;
-    padding-left: <?php echo ($dol_optimize_smallscreen?'4':'14'); ?>px;
-    padding-right: <?php echo ($dol_optimize_smallscreen?'4':'14'); ?>px;
-    padding-bottom: <?php echo ($dol_optimize_smallscreen?'4':'12'); ?>px;
+    padding-top: <?php echo ($dol_optimize_smallscreen?'4':'16'); ?>px;
+    padding-left: <?php echo ($dol_optimize_smallscreen?'4':'18'); ?>px;
+    padding-right: <?php echo ($dol_optimize_smallscreen?'4':'18'); ?>px;
+    padding-bottom: <?php echo ($dol_optimize_smallscreen?'4':'14'); ?>px;
     margin: 0px 0px 14px 0px;
     -moz-border-radius:4px;
     -webkit-border-radius: 4px;
@@ -2064,10 +2064,9 @@ table.listwithfilterbefore {
 
 /* Pagination */
 div.refidpadding  {
-	/* padding-top: <?php print empty($conf->dol_use_jmobile)?'8':'12'; ?>px; */
+	padding-top: <?php print empty($conf->dol_use_jmobile)?'3':'14'; ?>px;
 }
 div.refid  {
-	/* padding-top: <?php print empty($conf->dol_use_jmobile)?'5':'12'; ?>px; */
 	font-weight: bold;
   	color: #766;
   	font-size: 160%;

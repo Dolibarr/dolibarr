@@ -677,8 +677,8 @@ div.statusref {
 	margin-bottom: 10px;
 }
 img.photoref {
-	height: 68px;
-	width: 68px;
+	height: 80px;
+	width: 80px;
 	border: 1px solid #CCC;
 	-moz-box-shadow: 3px 3px 4px #DDD;
     -webkit-box-shadow: 3px 3px 4px #DDD;
@@ -1513,10 +1513,10 @@ div.tabsElem { margin-top: 8px; }		/* To avoid overlap of tabs when not browser 
 
 div.tabBar {
     color: #<?php echo $colortextbacktab; ?>;
-    padding-top: 9px;
-    padding-left: <?php echo ($dol_optimize_smallscreen?'4':'8'); ?>px;
-    padding-right: <?php echo ($dol_optimize_smallscreen?'4':'8'); ?>px;
-    padding-bottom: 8px;
+    padding-top: <?php echo ($dol_optimize_smallscreen?'4':'16'); ?>px;
+    padding-left: <?php echo ($dol_optimize_smallscreen?'4':'16'); ?>px;
+    padding-right: <?php echo ($dol_optimize_smallscreen?'4':'16'); ?>px;
+    padding-bottom: <?php echo ($dol_optimize_smallscreen?'4':'14'); ?>px;
     margin: 0px 0px 14px 0px;
     -moz-border-radius:3px;
     -webkit-border-radius: 3px;
@@ -1934,10 +1934,9 @@ table.listwithfilterbefore {
 
 /* Pagination */
 div.refidpadding  {
-	/* padding-top: <?php print empty($conf->dol_use_jmobile)?'8':'12'; ?>px; */
+	padding-top: <?php print empty($conf->dol_use_jmobile)?'3':'14'; ?>px;
 }
 div.refid  {
-	/* padding-top: <?php print empty($conf->dol_use_jmobile)?'5':'12'; ?>px; */
 	font-weight: bold;
   	color: #766;
   	font-size: 160%;

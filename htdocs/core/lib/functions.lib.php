@@ -841,6 +841,50 @@ function dol_get_fiche_end($notab=0)
 }
 
 /**
+ *  Show tab footer of a card
+ *
+ *  @param	object	$object			Object to show
+ *  @param	string	$paramid   		Name of parameter to use to name the id into the URL link
+ *  @param	string	$morehtml  		More html content to output just before the nav bar
+ *  @param	int		$shownav	  	Show Condition (navigation is shown if value is 1)
+ *  @param	string	$fieldid   		Nom du champ en base a utiliser pour select next et previous (we make the select max and min on this field)
+ *  @param	string	$fieldref   	Nom du champ objet ref (object->ref) a utiliser pour select next et previous
+ *  @param	string	$morehtmlref  	More html to show after ref
+ *  @param	string	$moreparam  	More param to add in nav link url.
+ *	@param	int		$nodbprefix		Do not include DB prefix to forge table name
+ *	@param	string	$morehtmlleft	More html code to show before ref
+ *	@param	string	$morehtmlright	More html code to show before navigation arrows
+ *  @return	void
+ */
+function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='rowid', $fieldref='ref', $morehtmlref='', $moreparam='', $nodbprefix=0, $morehtmlleft='', $morehtmlright='')
+{
+	global $conf, $form, $user;
+
+	//$showlogo=$object->logo;
+	$showlogo=1;
+	$showbarcode=empty($conf->barcode->enabled)?0:1;
+	if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) $showbarcode=0;
+
+	print '<div class="arearef heightref valignmiddle" width="100%">';
+	//$morehtmlleft='<div class="floatleft inline-block valignmiddle divphotoref">'.img_picto('', 'title_companies', '', '').'</div>';
+	if ($showlogo)    $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$form->showphoto('societe',$object,0,0,0,'photoref').'</div>';
+	//if ($showlogo)    $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$form->showphoto('societe',$object,0,0,0,'photoref').'</div>';
+	if ($showbarcode) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$form->showbarcode($object).'</div>';
+	if (! empty($conf->use_javascript_ajax) && $user->rights->societe->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
+		$morehtmlright.=ajax_object_onoff($object, 'status', 'status', 'InActivity', 'ActivityCeased');
+	} else {
+		$morehtmlright.=$object->getLibStatut(2);
+	}
+	if (! empty($object->name_nalias)) $morehtmlref.='<div class="refidno">'.$object->name_alias.'</div>';
+	$morehtmlref.='<div class="refidno">';
+	$morehtmlref.=$object->getBannerAddress('refaddress',$object);
+	$morehtmlref.='</div>';
+	print $form->showrefnav($object, $paramid, $morehtml, $shownav, $fieldid, $fieldref, $morehtmlref, $moreparam, $nodbprefix, $morehtmlleft, $morehtmlright);
+	print '</div>';
+	print '<div class="underrefbanner clearboth"></div>';
+}
+   
+/**
  * Show a string with the label tag dedicated to the HTML edit field.
  *
  * @param	string	$langkey		Translation key
