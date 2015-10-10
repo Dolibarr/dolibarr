@@ -679,7 +679,16 @@ if ($rowid > 0)
 			print '<br><br><table class="border" width="100%">';
 			foreach($extrafields->attribute_label as $key=>$label)
 			{
-				$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:(isset($object->array_options['options_'.$key])?$object->array_options['options_'.$key]:''));
+				if (isset($_POST["options_" . $key])) {
+					if (is_array($_POST["options_" . $key])) {
+						// $_POST["options"] is an array but following code expects a comma separated string
+						$value = implode(",", $_POST["options_" . $key]);
+					} else {
+						$value = $_POST["options_" . $key];
+					}
+				} else {
+					$value = $adht->array_options["options_" . $key];
+				}
 				print '<tr><td width="30%">'.$label.'</td><td>';
 				print $extrafields->showInputField($key,$value);
 				print "</td></tr>\n";

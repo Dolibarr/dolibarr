@@ -180,7 +180,7 @@ class Facture extends CommonInvoice
     const TYPE_DEPOSIT = 3;
 
     /**
-     * Proforma invoice
+     * Proforma invoice (should not be used. a proforma is an order)
      */
     const TYPE_PROFORMA = 4;
 
