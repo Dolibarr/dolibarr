@@ -1867,7 +1867,11 @@ else
         dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
         
         
-        print '<table class="border" width="100%">';
+        print '<div class="fichecenter">';
+        print '<div class="fichehalfleft">';
+        
+        print '<div class="underbanner clearboth"></div>';
+        print '<table class="border tableforfield" width="100%">';
 
         // Ref
         /*
@@ -2202,6 +2206,14 @@ else
         else print '&nbsp;';
         print '</td></tr>';
 
+        print '</table>';
+        
+        print '</div>';
+        print '<div class="fichehalfright"><div class="ficheaddleft">';
+       
+        print '<div class="underbanner clearboth"></div>';
+        print '<table class="border tableforfield" width="100%">';
+        
         // Default language
         if (! empty($conf->global->MAIN_MULTILANGS))
         {
@@ -2338,6 +2350,9 @@ else
 
         print '</table>';
 
+        print '</div></div></div>';
+        print '<div style="clear:both"></div>';
+        
         dol_fiche_end();
 
 

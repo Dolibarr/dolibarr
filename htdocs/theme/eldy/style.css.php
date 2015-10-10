@@ -637,8 +637,11 @@ img.photoref {
     object-fit: contain
 }
 .underrefbanner {
+}
+.underbanner {
 	border-bottom: 2px solid #888;
 }
+
 
 /* ============================================================================== */
 /* Menu top et 1ere ligne tableau                                                 */
