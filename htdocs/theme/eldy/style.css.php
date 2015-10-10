@@ -452,8 +452,10 @@ textarea.centpercent {
 div.divsearchfield {
 	float: <?php print $left; ?>;
 	margin-<?php print $right; ?>: 12px;
-	margin-top: 1px;
-    margin-bottom: 2px;
+    margin-<?php print $left; ?>: 2px;
+	margin-top: 3px;
+    margin-bottom: 3px;
+  	padding-left: 2px;
 }
 div.confirmmessage {
 	padding-top: 6px;
@@ -535,7 +537,7 @@ td.showDragHandle {
 	float: none;
 	vertical-align: top;
 }
-#id-right {	/* This must stay id-right ant not be replaced with echo $right */
+#id-right {	/* This must stay id-right and not be replaced with echo $right */
 	width: 100%;
 }
 #id-left {
@@ -613,7 +615,7 @@ div.arearef {
 	margin-bottom: 10px;
 }
 div.heightref {
-	min-height: 74px; 
+	min-height: 80px; 
 }
 div.divphotoref {
 	padding-right: 10px;
@@ -625,12 +627,14 @@ div.statusref {
 	margin-bottom: 10px;
 }
 img.photoref {
-	height: 68px;
-	width: 68px;
 	border: 1px solid #CCC;
 	-moz-box-shadow: 3px 3px 4px #DDD;
     -webkit-box-shadow: 3px 3px 4px #DDD;
     box-shadow: 3px 3px 4px #DDD;
+    padding: 4px;
+	height: 80px;
+	width: 80px;
+    object-fit: contain
 }
 .underrefbanner {
 	border-bottom: 2px solid #888;
@@ -1592,9 +1596,11 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	-webkit-box-shadow: 0 -1px 4px rgba(0,0,0,.1);
 	box-shadow: 0 -1px 4px rgba(0,0,0,.1);
 	margin-bottom: 0 0.2em 0 0.2em !important;
+
 	border-right: 1px solid #AAA !important;
 	border-left: 1px solid #AAA !important;
 	border-top: 1px solid #BBB !important;
+
 	-moz-border-radius:4px 4px 0 0;
     -webkit-border-radius: 4px 4px 0 0;
 	border-radius: 4px 4px 0 0;
@@ -1924,10 +1930,12 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 
 table.border, table.dataTable, .table-border, .table-border-col, .table-key-border-col, .table-val-border-col, div.border {
 	border: 1px solid #E0E0E0;
-	border-collapse: collapse;
+	border-collapse: collapse !important;
 	padding: 1px 2px 1px 3px;			/* t r b l */
 }
-
+table.borderplus {
+	border: 1px solid #BBB;
+}
 .border tbody tr, .border tbody tr td {
 	height: 20px;
 }
@@ -1966,7 +1974,7 @@ td.border, div.tagtable div div.border {
 
 /* Main boxes */
 
-table.noborder, table.formdoc, div.noborder {
+table.liste, table.noborder, table.formdoc, div.noborder {
 	width: 100%;
 
 	border-collapse: separate !important;
@@ -1994,25 +2002,28 @@ table.noborder, table.formdoc, div.noborder {
 	-webkit-box-shadow: 2px 2px 4px #CCC;
 	box-shadow: 2px 2px 4px #CCC;
 
-	-moz-border-radius: 0.2em;
+/*	-moz-border-radius: 0.2em;
 	-webkit-border-radius: 0.2em;
-	border-radius: 0.2em;
+	border-radius: 0.2em;*/
 }
 
-table.noborder tr, div.noborder form {
+table.liste tr, table.noborder tr, div.noborder form {
 	border-top-color: #FEFEFE;
 
 	border-right-width: 1px;
-	border-right-color: #BBBBBB;
+	border-right-color: #BBB;
 	border-right-style: solid;
 
 	border-left-width: 1px;
-	border-left-color: #BBBBBB;
+	border-left-color: #BBB;
 	border-left-style: solid;
 	min-height: 20px;
 }
 
-table.noborder th, table.noborder td, div.noborder form, div.noborder form div {
+table.liste th, table.noborder th {
+	padding: 10px 2px 10px 3px;			/* t r b l */
+}
+table.liste td, table.noborder td, div.noborder form, div.noborder form div {
 	padding: 5px 2px 5px 3px;			/* t r b l */
 }
 
@@ -2040,41 +2051,11 @@ td.borderright {
 }
 
 
-/* For lists */
-
-table.liste {
-	width: 100%;
-
-	border-collapse: collapse;
-/*	border-top-color: #FEFEFE;
-	border-top-width: 1px;
-	border-top-color: #CCC;
-	border-top-style: solid;
-*/
-
-	border-right-width: 1px;
-	border-right-color: #CCC;
-	border-right-style: solid;
-
-/*
-	border-bottom-width: 1px;
-	border-bottom-color: #BBBBBB;
-	border-bottom-style: solid;
-*/
-	border-left-width: 1px;
-	border-left-color: #CCC;
-	border-left-style: solid;
-
-	margin-bottom: 2px;
-	margin-top: 0px;
-
-    -moz-box-shadow: 0px 3px 4px #CCC;
-    -webkit-box-shadow: 0px 3px 4px #CC;
-    box-shadow: 0px 3px 4px #CCC;
+/* For table with no filter before */
+table.listwithfilterbefore {
+	border-top: none !important;
 }
-table.liste td {
-	padding-right: 2px;
-}
+
 
 .tagtable, .table-border { display: table; }
 .tagtr, .table-border-row  { display: table-row; }
@@ -2323,27 +2304,28 @@ div.liste_titre {
 div.liste_titre {
 	min-height: 26px !important;	/* We cant use height because it's a div and it should be higher if content is more. but min-height does not work either for div */
 
-	padding-left: 3px;
 	padding-top: 2px;
 	padding-bottom: 2px;
 
 	border-right-width: 1px;
-	border-right-color: #CCC;
+	border-right-color: #BBB;
 	border-right-style: solid;
 
 	border-left-width: 1px;
-	border-left-color: #CCC;
+	border-left-color: #BBB;
 	border-left-style: solid;
 
 	border-top-width: 1px;
-	border-top-color: #CCC;
+	border-top-color: #BBB;
 	border-top-style: solid;
 }
 div.liste_titre_bydiv {
 	box-shadow: none;
 	border-collapse: collapse;
 	display: table;
-	padding: 2px 2px 2px 0;
+	padding: 2px 0px 2px 0;
+	box-shadow: 2px 2px 4px #CCC;
+	width: calc(100% - 1px);	/* 1px more, i don't know why */
 }
 tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable.tr
 {
@@ -2434,6 +2416,10 @@ div.tabBar .noborder {
 	-moz-box-shadow: 0px 0px 0px #DDD !important;
 	-webkit-box-shadow: 0px 0px 0px #DDD !important;
 	box-shadow: 0px 0px 0px #DDD !important;
+}
+
+#tablelines tr.liste_titre td, .paymenttable tr.liste_titre td, .margintable tr.liste_titre td, .tableforservicepart1 tr.liste_titre td {
+	border-bottom: 1px solid #AAA !important;
 }
 
 
@@ -3424,7 +3410,7 @@ table.dataTable tr.odd td.sorting_1, table.dataTable tr.even td.sorting_1 {
 	background-color: #FFF !important;
 	border-radius: inherit !important;
 }
-.paging_full_numbers a.paginate_button_disabled:hover {
+.paging_full_numbers a.paginate_button_disabled:hover, .paging_full_numbers a.disabled:hover {
     background-color: #FFF !important;
 }
 .paginate_button, .paginate_active {
@@ -3452,7 +3438,9 @@ div.dataTables_length {
 div.dataTables_length select {
 	background: #fff;
 }
-
+.dataTables_wrapper .dataTables_paginate {
+	padding-top: 0px !important;
+}
 
 /* ============================================================================== */
 /*  Select2                                                                       */
@@ -3548,6 +3536,62 @@ a span.select2-chosen
   overflow: hidden;
 }
 
+
+/* ============================================================================== */
+/*  Multiselect with checkbox                                                     */
+/* ============================================================================== */
+
+dl.dropdown {
+    margin:0px;
+    padding:0px;
+}
+.dropdown dd, .dropdown dt {
+    margin:0px;
+    padding:0px;
+}
+.dropdown ul {
+    margin: -1px 0 0 0;
+    text-align: left;
+}
+.dropdown dd {
+    position:relative;
+}
+.dropdown dt a {
+    display:block;
+    overflow: hidden;
+    border:0;
+}
+.dropdown dt a span, .multiSel span {
+    cursor:pointer;
+    display:inline-block;
+    padding: 0 3px 2px 0;
+}
+.dropdown dd ul {
+    background-color: #FFF;
+    border: 1px solid #888;
+    display:none;
+    right:0px;						/* pop is align on right */
+    padding: 2px 15px 2px 5px;
+    position:absolute;
+    top:2px;
+    list-style:none;
+    max-height: 200px;
+    overflow: auto;
+}
+.dropdown span.value {
+    display:none;
+}
+.dropdown dd ul li {
+	white-space: nowrap;
+	font-weight: normal;
+}
+.dropdown dd ul li a {
+    padding:5px;
+    display:block;
+}
+.dropdown dd ul li a:hover {
+    background-color:#fff;
+}
 
 
 /* ============================================================================== */

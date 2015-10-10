@@ -288,9 +288,10 @@ if ($result)
     if (! empty($conf->categorie->enabled))
     {
 		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
-    	$moreforfilter.=$langs->trans('Categories'). ': ';
+        $moreforfilter.='<div class="divsearchfield">';
+		$moreforfilter.=$langs->trans('Categories'). ': ';
     	$moreforfilter.=$formother->select_categories(Categorie::TYPE_CONTACT,$search_categ,'search_categ',1);
-    	$moreforfilter.=' &nbsp; &nbsp; &nbsp; ';
+    	$moreforfilter.='</div>';
     }
     if ($moreforfilter)
     {
@@ -299,7 +300,7 @@ if ($result)
     	print '</div>';
     }
 
-    print '<table class="liste">';
+	print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
 
     // Ligne des titres
     print '<tr class="liste_titre">';

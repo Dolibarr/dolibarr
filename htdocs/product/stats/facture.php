@@ -22,7 +22,7 @@
 /**
  *	\file       htdocs/product/stats/facture.php
  *	\ingroup    product service facture
- *	\brief      Page des stats des factures clients pour un produit
+ *	\brief      Page of invoice statistics for a product
  */
 
 require '../../main.inc.php';
@@ -128,7 +128,8 @@ if ($id > 0 || ! empty($ref))
 		print '</div>';
 
 
-        if ($user->rights->facture->lire) {
+        if ($user->rights->facture->lire) 
+        {
             $sql = "SELECT distinct s.nom as name, s.rowid as socid, s.code_client,";
             $sql.= " f.facnumber, d.total_ht as total_ht,";
             $sql.= " f.datef, f.paye, f.fk_statut as statut, f.rowid as facid, d.qty";
@@ -189,7 +190,8 @@ if ($id > 0 || ! empty($ref))
                 }
 
                 print_barre_liste($langs->trans("CustomersInvoices"),$page,$_SERVER["PHP_SELF"],"&amp;id=".$product->id,$sortfield,$sortorder,'',$num,$totalrecords,'');
-                print '<div class="liste_titre">';
+                print '<div class="liste_titre liste_titre_bydiv centpercent">';
+                print '<div class="divsearchfield">';
                 print $langs->trans('Period').' ('.$langs->trans("DateInvoice") .') - ';
 				print $langs->trans('Month') . ':<input class="flat" type="text" size="4" name="search_month" value="' . $search_month . '"> ';
 				print $langs->trans('Year') . ':' . $formother->selectyear($search_year ? $search_year : - 1, 'search_year', 1, 20, 5);
@@ -198,9 +200,10 @@ if ($id > 0 || ! empty($ref))
 				print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
                 print '</div>';
 				print '</div>';
+				print '</div>';
 
                 $i = 0;
-                print '<table class="noborder" width="100%">';
+                print '<table class="tagtable liste listwithfilterbefore" width="100%">';
                 print '<tr class="liste_titre">';
                 print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"s.rowid","",$option,'',$sortfield,$sortorder);
                 print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$option,'',$sortfield,$sortorder);

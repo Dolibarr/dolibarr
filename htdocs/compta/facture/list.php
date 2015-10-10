@@ -275,7 +275,6 @@ if ($resql)
 
     $i = 0;
     print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">'."\n";
-    print '<table class="liste" width="100%">';
 
  	// If the user can view prospects other than his'
     $moreforfilter='';
@@ -308,12 +307,16 @@ if ($resql)
 
     if ($moreforfilter)
     {
-        print '<tr class="liste_titre">';
-        print '<td class="liste_titre" colspan="11">';
+   		print '<div class="liste_titre liste_titre_bydiv centpercent">';
         print $moreforfilter;
-        print '</td></tr>';
+    	$parameters=array();
+    	$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+	    print $hookmanager->resPrint;
+        print '</div>';
     }
 
+    print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
+    		
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans('Ref'),$_SERVER['PHP_SELF'],'f.facnumber','',$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('RefCustomer'),$_SERVER["PHP_SELF"],'f.ref_client','',$param,'',$sortfield,$sortorder);
