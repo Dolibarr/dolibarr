@@ -62,7 +62,7 @@ class modHRM extends DolibarrModules
 		$this->dirs = array ();
 		
 		// Config pages
-		$this->config_page_url = array('admin_hrm.php');
+		$this->config_page_url = array('admin_hrm.php@hrm');
 		
 		// Dependencies
 		$this->depends = array();
