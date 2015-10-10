@@ -26,7 +26,7 @@ include_once (DOL_DOCUMENT_ROOT . "/core/modules/DolibarrModules.class.php");
  * \class 	modHRM
  * \brief 	Class to describe and activate the HRM module
  */
-class modiHRM extends DolibarrModules
+class modHRM extends DolibarrModules
 {
 	/**
 	 * Constructor.
@@ -88,8 +88,8 @@ class modiHRM extends DolibarrModules
 		$this->dictionnaries=array(
 			'langs'=>'hrm',
 			'tabname'=>array(
-				MAIN_DB_PREFIX."c_ihrm_department",
-				MAIN_DB_PREFIX."c_ihrm_function"
+				MAIN_DB_PREFIX."c_hrm_department",
+				MAIN_DB_PREFIX."c_hrm_function"
 			),
 			'tablib'=>array(
 				"DepartmentDict",

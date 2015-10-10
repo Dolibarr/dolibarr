@@ -29,7 +29,7 @@ INSERT INTO llx_c_hrm_department (rowid, pos, code, label, active) VALUES(3, 15,
 INSERT INTO llx_c_hrm_department (rowid, pos, code, label, active) VALUES(4, 20,'IT', 'Inform. Technology (IT)', 1);
 INSERT INTO llx_c_hrm_department (rowid, pos, code, label, active) VALUES(5, 25,'MARKETING', 'Marketing', 1);
 INSERT INTO llx_c_hrm_department (rowid, pos, code, label, active) VALUES(6, 30,'SALES', 'Sales', 1);
-INSERT INTO llx_c_hrm_department (rowid, pos, code, label, active) VALUES(7, 35,'Legal', 'Legal', 1);
+INSERT INTO llx_c_hrm_department (rowid, pos, code, label, active) VALUES(7, 35,'LEGAL', 'Legal', 1);
 INSERT INTO llx_c_hrm_department (rowid, pos, code, label, active) VALUES(8, 40,'FINANCIAL', 'Financial accounting', 1);
 INSERT INTO llx_c_hrm_department (rowid, pos, code, label, active) VALUES(9, 45,'HUMANRES', 'Human resources', 1);
 INSERT INTO llx_c_hrm_department (rowid, pos, code, label, active) VALUES(10, 50,'PURCHASING', 'Purchasing', 1);
