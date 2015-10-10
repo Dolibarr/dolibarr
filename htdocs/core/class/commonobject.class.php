@@ -437,10 +437,11 @@ abstract class CommonObject
     /**
      * 	Return full address of contact
      *
-     * 	@param		Societe		$object				Object Societe or null
+     * 	@param		string		$htmlkey            HTML id to make banner content unique
+     *  @param      Object      $object				Object (thirdparty, thirdparty of contact for contact, null for a member)
      *	@return		string							Full address string
      */
-    function getBannerAddress($htmlkey, $object=null)
+    function getBannerAddress($htmlkey, $object)
     {
     	global $conf, $langs;
 
@@ -465,7 +466,7 @@ abstract class CommonObject
 			$outdone++;
 		}
 		
-		if (! in_array($object->country_code,$countriesusingstate) && empty($conf->global->MAIN_FORCE_STATE_INTO_ADDRESS)
+		if (! in_array($this->country_code,$countriesusingstate) && empty($conf->global->MAIN_FORCE_STATE_INTO_ADDRESS)
 				&& ! empty($conf->global->SOCIETE_DISABLE_STATE) && $this->state) 
 		{
 			$out.=($outdone?'<br>':'').$this->state;
