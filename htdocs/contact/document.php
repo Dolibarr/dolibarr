@@ -104,6 +104,25 @@ if ($object->id)
     print '<tr><td width="20%">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</td><td width="30%">'.$object->lastname.'</td>';
     print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="30%">'.$object->firstname.'</td></tr>';
 
+    // Company
+    if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
+    {
+    	if ($object->socid > 0)
+    	{
+    		$objsoc = new Societe($db);
+    		$objsoc->fetch($object->socid);
+
+    		print '<tr><td>'.$langs->trans("ThirdParty").'</td><td colspan="3">'.$objsoc->getNomUrl(1).'</td></tr>';
+    	}
+
+    	else
+    	{
+    		print '<tr><td>'.$langs->trans("ThirdParty").'</td><td colspan="3">';
+    		print $langs->trans("ContactNotLinkedToCompany");
+    		print '</td></tr>';
+    	}
+    }
+    
     print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
     print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
     print '</table>';

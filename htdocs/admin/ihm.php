@@ -36,6 +36,7 @@ $langs->load("other");
 $langs->load("companies");
 $langs->load("products");
 $langs->load("members");
+$langs->load("projects");
 
 if (! $user->admin) accessforbidden();
 
@@ -62,8 +63,7 @@ if ($action == 'update')
 	dolibarr_set_const($db, "MAIN_DEFAULT_WORKING_DAYS",		$_POST["MAIN_DEFAULT_WORKING_DAYS"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_DEFAULT_WORKING_HOURS",		$_POST["MAIN_DEFAULT_WORKING_HOURS"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_SHOW_LOGO",					$_POST["MAIN_SHOW_LOGO"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_ACTIVATE_HTML5",				$_POST["MAIN_ACTIVATE_HTML5"],'chaine',0,'',$conf->entity);
-    dolibarr_set_const($db, "MAIN_ACTIVATE_FILECACHE",          $_POST["MAIN_ACTIVATE_FILECACHE"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_ACTIVATE_FILECACHE",          $_POST["MAIN_ACTIVATE_FILECACHE"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_FIRSTNAME_NAME_POSITION",		$_POST["MAIN_FIRSTNAME_NAME_POSITION"],'chaine',0,'',$conf->entity);
 
 	dolibarr_set_const($db, "MAIN_THEME",						$_POST["main_theme"],'chaine',0,'',$conf->entity);
@@ -89,8 +89,8 @@ if ($action == 'update')
 	dolibarr_set_const($db, "MAIN_HELP_DISABLELINK",			$_POST["MAIN_HELP_DISABLELINK"],'chaine',0,'',0);	    // Param for all entities
 	dolibarr_set_const($db, "MAIN_BUGTRACK_ENABLELINK",         $_POST["MAIN_BUGTRACK_ENABLELINK"],'chaine',0,'',$conf->entity);
 
-	if (GETPOST('check_THEME_ELDY_USE_HOVER') == 'on') dolibarr_set_const($db,"THEME_ELDY_USE_HOVER", 1,'chaine',0,'',$conf->entity);
-	else dolibarr_set_const($db,"THEME_ELDY_USE_HOVER",0,'chaine',0,'',$conf->entity);
+	if (GETPOST('THEME_ELDY_USE_HOVER') == '') dolibarr_del_const($db, "THEME_ELDY_USE_HOVER", $conf->entity);
+	else dolibarr_set_const($db, "THEME_ELDY_USE_HOVER", $_POST["THEME_ELDY_USE_HOVER"], 'chaine', 0, '', $conf->entity);
 
 	// This one is not always defined
 	if (isset($_POST["MAIN_USE_PREVIEW_TABS"])) dolibarr_set_const($db, "MAIN_USE_PREVIEW_TABS", $_POST["MAIN_USE_PREVIEW_TABS"],'chaine',0,'',$conf->entity);
@@ -113,7 +113,7 @@ $form=new Form($db);
 $formother=new FormOther($db);
 $formadmin=new FormAdmin($db);
 
-print_fiche_titre($langs->trans("GUISetup"),'','title_setup');
+print load_fiche_titre($langs->trans("GUISetup"),'','title_setup');
 
 print $langs->trans("DisplayDesc")."<br>\n";
 print "<br>\n";
@@ -131,7 +131,7 @@ if ($action == 'edit')	// Edit
     clearstatcache();
     $var=true;
 
-    print_fiche_titre($langs->trans("Language"),'','');
+    print load_fiche_titre($langs->trans("Language"),'','');
     print '<br>';
     print '<table summary="edit" class="noborder" width="100%">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td>';
@@ -187,17 +187,6 @@ if ($action == 'edit')	// Edit
     print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
-
-	// Activate Html5 - Developement - Only available on Eldy template
-	if ($conf->global->MAIN_FEATURES_LEVEL == 2 || ! empty($conf->global->MAIN_ACTIVATE_HTML5))
-	{
-		$var=!$var;
-		print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("EnableHtml5").'</td><td>';
-		print $form->selectyesno('MAIN_ACTIVATE_HTML5',$conf->global->MAIN_ACTIVATE_HTML5,1);
-		print '</td>';
-		print '<td width="20">&nbsp;</td>';
-		print '</tr>';
-	}
 
     // Activate FileCache - Developement
     if ($conf->global->MAIN_FEATURES_LEVEL == 2 || ! empty($conf->global->MAIN_ACTIVATE_FILECACHE)) {
@@ -342,7 +331,7 @@ else	// Show
     print ($conf->global->MAIN_LANG_DEFAULT=='auto'?$langs->trans("AutoDetectLang"):$langs->trans("Language_".$conf->global->MAIN_LANG_DEFAULT));
     print '</td>';
 	print '<td width="20">';
-    if ($user->admin && $conf->global->MAIN_LANG_DEFAULT!='auto') print info_admin($langs->trans("SubmitTranslation",$conf->global->MAIN_LANG_DEFAULT),1);
+    if ($user->admin && $conf->global->MAIN_LANG_DEFAULT!='auto') print info_admin($langs->trans("SubmitTranslation".($conf->global->MAIN_LANG_DEFAULT=='en_US'?'ENUS':''),$conf->global->MAIN_LANG_DEFAULT),1);
 	print '</td>';
 	print "</tr>";
 
@@ -383,15 +372,6 @@ else	// Show
     print '<tr '.$bc[$var].'><td>'.$langs->trans("EnableShowLogo").'</td><td>' . yn($conf->global->MAIN_SHOW_LOGO) . '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print "</tr>";
-
-	// Activate Html5 - Developement - Only available on Eldy template
-	if ($conf->global->MAIN_FEATURES_LEVEL == 2 || ! empty($conf->global->MAIN_ACTIVATE_HTML5))
-    {
-		$var=!$var;
-		print '<tr '.$bc[$var].'><td>'.$langs->trans("EnableHtml5").'</td><td>' . yn($conf->global->MAIN_ACTIVATE_HTML5) . '</td>';
-		print '<td width="20">&nbsp;</td>';
-		print "</tr>";
-	}
 
     // Activate FileCache - Developement
     if ($conf->global->MAIN_FEATURES_LEVEL == 2 || ! empty($conf->global->MAIN_ACTIVATE_FILECACHE)) {

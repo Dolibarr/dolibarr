@@ -43,7 +43,7 @@ $title='InfoPHP';
 
 if (isset($title))
 {
-	print_fiche_titre($langs->trans($title), '', 'title_setup');
+	print load_fiche_titre($langs->trans($title), '', 'title_setup');
 }
 
 
@@ -67,7 +67,7 @@ print '<br>';
 $phparray=phpinfo_array();
 foreach($phparray as $key => $value)
 {
-	//print_titre($key);
+	//print load_fiche_titre($key);
 	print '<table class="noborder">';
 	print '<tr class="liste_titre">';
 	//print '<td width="220px">'.$langs->trans("Parameter").'</td>';

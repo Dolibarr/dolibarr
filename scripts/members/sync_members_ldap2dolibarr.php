@@ -48,7 +48,7 @@ $langs->load("errors");
 $version=DOL_VERSION;
 $error=0;
 $forcecommit=0;
-
+$confirmed=0;
 
 
 /*
@@ -94,7 +94,7 @@ $required_fields=array_unique(array_values(array_filter($required_fields, "dolVa
 
 
 if (! isset($argv[2]) || ! is_numeric($argv[2])) {
-    print "Usage:  $script_file (nocommitiferror|commitiferror) id_member_type  [--server=ldapserverhost]\n";
+    print "Usage:  $script_file (nocommitiferror|commitiferror) id_member_type  [--server=ldapserverhost] [-y]\n";
 	exit(-1);
 }
 
@@ -103,6 +103,7 @@ foreach($argv as $key => $val)
 {
 	if ($val == 'commitiferror') $forcecommit=1;
 	if (preg_match('/--server=([^\s]+)$/',$val,$reg)) $conf->global->LDAP_SERVER_HOST=$reg[1];
+	if (preg_match('/-y$/',$val,$reg)) $confirmed=1;
 }
 
 print "Mails sending disabled (useless in batch mode)\n";
@@ -139,9 +140,11 @@ if ($typeid <= 0)
 }
 
 
-print "Hit Enter to continue or CTRL+C to stop...\n";
-$input = trim(fgets(STDIN));
-
+if (! $confirmed)
+{
+	print "Hit Enter to continue or CTRL+C to stop...\n";
+	$input = trim(fgets(STDIN));
+}
 
 // Load table of correspondence of countries
 $hashlib2rowid=array();

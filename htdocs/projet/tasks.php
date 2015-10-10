@@ -266,7 +266,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 {
 	if ($id > 0 || ! empty($ref)) print '<br>';
 
-	print_fiche_titre($langs->trans("NewTask"), '', 'title_project');
+	print load_fiche_titre($langs->trans("NewTask"), '', 'title_project');
 
 	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -305,7 +305,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 
 	print '<tr><td>'.$langs->trans("AffectedTo").'</td><td>';
 	$contactsofproject=(! empty($object->id)?$object->getListContactId('internal'):'');
-	$form->select_users($user->id,'userid',0,'',0,'',$contactsofproject);
+	$form->select_dolusers($user->id,'userid',0,'',0,'',$contactsofproject);
 	print '</td></tr>';
 
 	// Date start

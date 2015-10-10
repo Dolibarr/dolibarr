@@ -10,3 +10,5 @@ FailedToConnectToFTPServerWithCredentials=Échec de connexion avec l'identifiant
 FTPFailedToRemoveFile=Échec suppression fichier <b>%s</b>.
 FTPFailedToRemoveDir=Échec suppression répertoire <b>%s</b> (Vérifiez les permissions et que le répertoire soit vide).
 FTPPassiveMode=Mode passif
+ChooseAFTPEntryIntoMenu=Choisissez une entrée FTP dans le menu...
+FailedToGetFile=Echec à la récupération du fichier %s

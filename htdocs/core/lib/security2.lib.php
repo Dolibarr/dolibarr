@@ -416,7 +416,10 @@ function encodedecode_dbpassconf($level=0)
 		if ($fp = @fopen($file,'w'))
 		{
 			fputs($fp, $config);
+			fflush($fp);
 			fclose($fp);
+			clearstatcache();
+			
 			// It's config file, so we set read permission for creator only.
 			// Should set permission to web user and groups for users used by batch
 			//@chmod($file, octdec('0600'));
@@ -439,7 +442,7 @@ function encodedecode_dbpassconf($level=0)
 /**
  * Return a generated password using default module
  *
- * @param		boolean		$generic		true=Create generic password (use default crypt function), false=Use the configured password generation module
+ * @param		boolean		$generic		true=Create generic password (use md5, sha1 depending on setup), false=Use the configured password generation module
  * @return		string						New value for password
  */
 function getRandomPassword($generic=false)

@@ -209,6 +209,6 @@ MigrationActioncommElement=Eylemlere ilişkin veri güncellemesi
 MigrationPaymentMode=Ödeme biçimi için veri taşıma
 MigrationCategorieAssociation=Kategorilerin taşınması
 MigrationEvents=Atama tablosuna etkinlik sahibi eklemek için gerekli taşıma eylemleri
-
+MigrationReloadModule=Reload module %s
 ShowNotAvailableOptions=Kullanılamayacak seçenekler görüntülensin
 HideNotAvailableOptions=Kullanılamayacak seçenekler gizlensin

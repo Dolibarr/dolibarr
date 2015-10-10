@@ -23,7 +23,7 @@ $statutarray=array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSe
 <!-- BEGIN PHP TEMPLATE EDIT.TPL -->
 
 <?php
-print_fiche_titre($langs->trans("Service"));
+print load_fiche_titre($langs->trans("Service"));
 
 dol_htmloutput_errors($object->error,$object->errors);
 ?>

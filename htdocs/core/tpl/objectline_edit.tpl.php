@@ -23,7 +23,7 @@
  * $object (invoice, order, ...)
  * $conf
  * $langs
- * $seller, $nuyer
+ * $seller, $buyer
  * $dateSelector
  * $forceall (0 by default, 1 for supplier invoices/orders)
  * $senderissupplier (0 by default, 1 for supplier invoices/orders)
@@ -172,7 +172,7 @@ $coldisplay=-1; // We remove first td
 		<td align="right" class="margininfos"><?php $coldisplay++; ?>
 			<!-- For predef product -->
 			<?php if (! empty($conf->product->enabled) || ! empty($conf->service->enabled)) { ?>
-			<select id="fournprice_predef" name="fournprice_predef" class="flat" style="display: none;"></select>
+			<select id="fournprice_predef" name="fournprice_predef" class="flat" data-role="none" style="display: none;"></select>
 			<?php } ?>
 			<!-- For free product -->
 			<input type="text" size="5" id="buying_price" name="buying_price" class="hideobject" value="<?php echo price($line->pa_ht,0,'',0); ?>">
@@ -239,7 +239,15 @@ if (! empty($conf->margin->enabled))
 ?>
 	jQuery(document).ready(function()
 	{
-		/* Add rule to clear margin when we change price_ht or buying_price, so when we change sell or buy price, margin will be recalculated after submitting form */
+		/* Add rule to clear margin when we change some data, so when we change sell or buy price, margin will be recalculated after submitting form */
+		jQuery("#tva_tx").click(function() {						/* somtimes field is a text, sometimes a combo */
+			jQuery("input[name='np_marginRate']:first").val('');
+			jQuery("input[name='np_markRate']:first").val('');
+		});
+		jQuery("#tva_tx").keyup(function() {						/* somtimes field is a text, sometimes a combo */
+			jQuery("input[name='np_marginRate']:first").val('');
+			jQuery("input[name='np_markRate']:first").val('');
+		});
 		jQuery("#price_ht").keyup(function() {
 			jQuery("input[name='np_marginRate']:first").val('');
 			jQuery("input[name='np_markRate']:first").val('');
@@ -251,7 +259,7 @@ if (! empty($conf->margin->enabled))
 
 		/* Init field buying_price and fournprice */
 		$.post('<?php echo DOL_URL_ROOT; ?>/fourn/ajax/getSupplierPrices.php', {'idprod': <?php echo $line->fk_product?$line->fk_product:0; ?>}, function(data) {
-		if (data && data.length > 0) {
+          if (data && data.length > 0) {
 			var options = '';
 			var trouve=false;
 			$(data).each(function() {
@@ -294,9 +302,10 @@ if (! empty($conf->margin->enabled))
 			$('#savelinebutton').click(function (e) {
 				return checkEditLine(e, "np_marginRate");
 			});
+			/* Disabled. We must be able to click on button 'cancel'. Check must be done only on button 'save'.
 			$("input[name='np_marginRate']:first").blur(function(e) {
 				return checkEditLine(e, "np_marginRate");
-			});
+			});*/
 		<?php
 		}
 		if (! empty($conf->global->DISPLAY_MARK_RATES))
@@ -305,9 +314,10 @@ if (! empty($conf->margin->enabled))
 			$('#savelinebutton').click(function (e) {
 				return checkEditLine(e, "np_markRate");
 			});
+			/* Disabled. We must be able to click on button 'cancel'. Check must be done only on button 'save'.
 			$("input[name='np_markRate']:first").blur(function(e) {
 				return checkEditLine(e, "np_markRate");
-			});
+			});*/
 		<?php
 		}
 	?>
@@ -315,25 +325,25 @@ if (! empty($conf->margin->enabled))
 
 
 	/* If margin rate field empty, do nothing. */
-	/* Force content of price_ht to 0 or if a discount is set recalculate it from margin rate */
+	/* Force content of price_ht to 0 or if a discount is set, recalculate it from margin rate */
 	function checkEditLine(e, npRate)
 	{
 		var buying_price = $("input[name='buying_price']:first");
 		var remise = $("input[name='remise_percent']:first");
 
 		var rate = $("input[name='"+npRate+"']:first");
-		if (rate.val() == '') return true;
+		if (rate.val() == '' || (typeof rate.val()) == 'undefined' ) return true;
 
-		if (! $.isNumeric(rate.val().replace(',','.')))
+		if (! $.isNumeric(rate.val().replace(' ','').replace(',','.')))
 		{
-			alert('<?php echo $langs->trans("rateMustBeNumeric"); ?>');
+			alert('<?php echo $langs->transnoentitiesnoconv("rateMustBeNumeric"); ?>');
 			e.stopPropagation();
 			setTimeout(function () { rate.focus() }, 50);
 			return false;
 		}
-		if (npRate == "markRate" && rate.val() >= 100)
+		if (npRate == "np_markRate" && rate.val() >= 100)
 		{
-			alert('<?php echo $langs->trans("markRateShouldBeLesserThan100"); ?>');
+			alert('<?php echo $langs->transnoentitiesnoconv("markRateShouldBeLesserThan100"); ?>');
 			e.stopPropagation();
 			setTimeout(function () { rate.focus() }, 50);
 			return false;
@@ -346,12 +356,20 @@ if (! empty($conf->margin->enabled))
 		{
 			bpjs=price2numjs(buying_price.val());
 			ratejs=price2numjs(rate.val());
+			/* console.log(npRate+" - "+bpjs+" - "+ratejs); */
 
-			if (npRate == "marginRate")
-				price = ((bpjs * (1 + ratejs / 100)) / (1 - remisejs / 100));
-			else if (npRate == "markRate")
-				price = ((bpjs / (1 - ratejs / 100)) / (1 - remisejs / 100));
+			if (npRate == "np_marginRate")
+				price = ((bpjs * (1 + (ratejs / 100))) / (1 - remisejs / 100));
+			else if (npRate == "np_markRate")
+			{
+				if (ratejs != 100)
+				{
+					price = ((bpjs / (1 - (ratejs / 100))) / (1 - remisejs / 100));
+				}
+				else price=$("input[name='price_ht']:first").val();
+			}
 		}
+		/* console.log("new price ht = "+price); */
 		$("input[name='price_ht']:first").val(price);	// TODO Must use a function like php price to have here a formated value
 
 		return true;

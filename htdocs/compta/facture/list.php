@@ -3,7 +3,7 @@
  * Copyright (C) 2004      Eric Seigne           <eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2012 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2013 Regis Houssin         <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2015 Regis Houssin         <regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
  * Copyright (C) 2010-2012 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
@@ -69,7 +69,7 @@ $search_refcustomer=GETPOST('search_refcustomer','alpha');
 $search_societe=GETPOST('search_societe','alpha');
 $search_montant_ht=GETPOST('search_montant_ht','alpha');
 $search_montant_ttc=GETPOST('search_montant_ttc','alpha');
-$search_status=GETPOST('search_status','alpha');
+$search_status=GETPOST('search_status','int');
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -129,6 +129,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
     $search_montant_ht='';
     $search_montant_ttc='';
     $search_status='';
+    $day='';
     $year='';
     $month='';
 }
@@ -190,7 +191,7 @@ if ($search_refcustomer) $sql .= natural_search('f.ref_client', $search_refcusto
 if ($search_societe) $sql .= natural_search('s.nom', $search_societe);
 if ($search_montant_ht != '') $sql.= natural_search('f.total', $search_montant_ht, 1);
 if ($search_montant_ttc != '') $sql.= natural_search('f.total_ttc', $search_montant_ttc, 1);
-if ($search_status != '') $sql.= " AND f.fk_statut = '".$db->escape($search_status)."'";
+if ($search_status != '' && $search_status >= 0) $sql.= " AND f.fk_statut = ".$db->escape($search_status);
 if ($month > 0)
 {
     if ($year > 0 && empty($day))
@@ -269,11 +270,11 @@ if ($resql)
     if ($search_user > 0)    $param.='&search_user=' .$search_user;
     if ($search_montant_ht != '')  $param.='&search_montant_ht='.$search_montant_ht;
     if ($search_montant_ttc != '') $param.='&search_montant_ttc='.$search_montant_ttc;
+    if ($search_status > 0) $param.='&search_status='.$search_status;
     print_barre_liste($langs->trans('BillsCustomers').' '.($socid?' '.$soc->name:''),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords,'title_accountancy.png');
 
     $i = 0;
     print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">'."\n";
-    print '<table class="liste" width="100%">';
 
  	// If the user can view prospects other than his'
     $moreforfilter='';
@@ -306,12 +307,16 @@ if ($resql)
 
     if ($moreforfilter)
     {
-        print '<tr class="liste_titre">';
-        print '<td class="liste_titre" colspan="11">';
+   		print '<div class="liste_titre liste_titre_bydiv centpercent">';
         print $moreforfilter;
-        print '</td></tr>';
+    	$parameters=array();
+    	$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+	    print $hookmanager->resPrint;
+        print '</div>';
     }
 
+    print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
+    		
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans('Ref'),$_SERVER['PHP_SELF'],'f.facnumber','',$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('RefCustomer'),$_SERVER["PHP_SELF"],'f.ref_client','',$param,'',$sortfield,$sortorder);
@@ -350,7 +355,7 @@ if ($resql)
     print '<td class="liste_titre" align="right"><input class="flat" type="text" size="6" name="search_montant_ttc" value="'.$search_montant_ttc.'"></td>';
     print '<td class="liste_titre"></td>';
     print '<td class="liste_titre" align="right">';
-	$liststatus=array('0'=>$langs->trans("Draft"), '1'=>$langs->trans("Unpaid"), '2'=>$langs->trans("Paid"), '3'=>$langs->trans("Cancel"));
+	$liststatus=array('0'=>$langs->trans("BillShortStatusDraft"), '1'=>$langs->trans("BillShortStatusNotPaid"), '2'=>$langs->trans("BillShortStatusPaid"), '3'=>$langs->trans("BillShortStatusCanceled"));
 	print $form->selectarray('search_status', $liststatus, $search_status, 1);
     print '</td>';
     print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
@@ -378,6 +383,8 @@ if ($resql)
             $facturestatic->id=$objp->facid;
             $facturestatic->ref=$objp->facnumber;
             $facturestatic->type=$objp->type;
+            $facturestatic->statut = $objp->fk_statut;
+            $facturestatic->date_lim_reglement = $db->jdate($objp->datelimite);
             $notetoshow=dol_string_nohtmltag(($user->societe_id>0?$objp->note_public:$objp->note),1);
             $paiement = $facturestatic->getSommePaiement();
 
@@ -417,7 +424,7 @@ if ($resql)
 
             // Date limit
             print '<td align="center" class="nowrap">'.dol_print_date($datelimit,'day');
-            if ($datelimit < ($now - $conf->facture->client->warning_delay) && ! $objp->paye && $objp->fk_statut == 1 && ! $paiement)
+            if ($facturestatic->hasDelay())
             {
                 print img_warning($langs->trans('Late'));
             }

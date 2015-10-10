@@ -237,7 +237,7 @@ if ($socid && $action != 'edit' && $action != "create")
         print $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$soc->id."&ribid=".($ribid?$ribid:$id), $langs->trans("DeleteARib"), $langs->trans("ConfirmDeleteRib", $account->getRibLabel()), "confirm_delete", '', 0, 1);
     }
 
-    print_titre($langs->trans("DefaultRIB"));
+    print load_fiche_titre($langs->trans("DefaultRIB"));
 
     print '<table class="border" width="100%">';
 
@@ -357,7 +357,7 @@ if ($socid && $action != 'edit' && $action != "create")
      * List of bank accounts
      */
 
-    print_titre($langs->trans("AllRIB"));
+    print load_fiche_titre($langs->trans("AllRIB"));
 
     $rib_list = $soc->get_all_rib();
     $var = false;

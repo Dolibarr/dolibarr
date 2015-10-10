@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
- * Copyright (C) 2013      Florian Henry       <florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2015 Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  *
@@ -29,6 +29,8 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 $langs->load("companies");
 $langs->load("customers");
@@ -50,12 +52,15 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="s.nom";
 
-$search_company=GETPOST("search_company");
-$search_zipcode=GETPOST("search_zipcode");
-$search_town=GETPOST("search_town");
-$search_code=GETPOST("search_code");
-$search_compta=GETPOST("search_compta");
-$search_status= GETPOST("search_status",'int');
+$search_company = GETPOST("search_company");
+$search_zipcode = GETPOST("search_zipcode");
+$search_town = GETPOST("search_town");
+$search_code = GETPOST("search_code");
+$search_compta = GETPOST("search_compta");
+$search_status = GETPOST("search_status",'int');
+$search_country	= GETPOST("search_country",'int');
+$search_type_thirdparty	= GETPOST("search_type_thirdparty",'int');
+$optioncss = GETPOST('optioncss','alpha');
 
 // Load sale and categ filters
 $search_sale  = GETPOST("search_sale",'int');
@@ -89,6 +94,8 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
     $search_code='';
     $search_compta='';
     $search_status='';
+    $search_country="";
+    $search_type_thirdparty='';
 }
 
 if ($search_status=='') $search_status=1; // always display activ customer first
@@ -101,12 +108,15 @@ if ($search_status=='') $search_status=1; // always display activ customer first
 $formother=new FormOther($db);
 $form = new Form($db);
 $thirdpartystatic=new Societe($db);
+$formcompany=new FormCompany($db);
 
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('',$langs->trans("ThirdParty"),$help_url);
 
 $sql = "SELECT s.rowid, s.nom as name, s.name_alias, s.client, s.zip, s.town, st.libelle as stcomm, s.prefix_comm, s.code_client, s.code_compta, s.status as status,";
 $sql.= " s.datec, s.canvas";
+$sql.= ",s.fk_pays";
+$sql.= ",typent.code as typent_code";
 if ((!$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
 // Add fields for extrafields
 foreach ($extrafields->attribute_list as $key => $val) $sql.=",ef.".$key.' as options_'.$key;
@@ -116,12 +126,14 @@ $reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // N
 $sql.=$hookmanager->resPrint;
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 if (! empty($search_categ) || ! empty($catid)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_societe as cs ON s.rowid = cs.fk_soc"; // We need this table joined to the select in order to filter by categ
-if ((!$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays) ";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent) ";
+if ((!$user->rights->societe->client->voir && !$socid) || $search_sale) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
 $sql.= ", ".MAIN_DB_PREFIX."c_stcomm as st";
 $sql.= " WHERE s.fk_stcomm = st.id";
 $sql.= " AND s.client IN (1, 3)";
 $sql.= ' AND s.entity IN ('.getEntity('societe', 1).')';
-if ((!$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc";
+if ((!$user->rights->societe->client->voir && !$socid) || $search_sale) $sql.= " AND s.rowid = sc.fk_soc";
 if ($socid) $sql.= " AND s.rowid = ".$socid;
 if ($search_sale > 0)    $sql.= " AND s.rowid = sc.fk_soc";		// Join for the needed table to filter by sale
 if ($catid > 0)          $sql.= " AND cs.fk_categorie = ".$catid;
@@ -134,6 +146,8 @@ if ($search_town)        $sql.= natural_search('s.town', $search_town);
 if ($search_code)        $sql.= natural_search("s.code_client", $search_code);
 if ($search_compta)      $sql.= natural_search("s.code_compta", $search_compta);
 if ($search_status!='')  $sql.= " AND s.status = ".$db->escape($search_status);
+if ($search_country) $sql .= " AND s.fk_pays IN (".$search_country.')';
+if ($search_type_thirdparty) $sql .= " AND s.fk_typent IN (".$search_type_thirdparty.')';
 if ($search_sale > 0)    $sql.= " AND sc.fk_user = ".$search_sale;
 // Add where from hooks
 $parameters=array();
@@ -157,34 +171,44 @@ if ($result)
 {
 	$num = $db->num_rows($result);
 
-	$param = "&amp;search_company=".$search_company."&amp;search_code=".$search_code."&amp;search_zipcode=".$search_zipcode."&amp;search_town=".$search_town;
- 	if ($search_categ != '') $param.='&amp;search_categ='.$search_categ;
- 	if ($search_sale > 0)	$param.='&amp;search_sale='.$search_sale;
- 	if ($search_status != '') $param.='&amp;search_status='.$search_status;
+	$param = "&amp;search_company=".htmlspecialchars($search_company);
+	$param.="&amp;search_code=".htmlspecialchars($search_code);
+	$param.="&amp;search_zipcode=".htmlspecialchars($search_zipcode);
+	$param.="&amp;search_town=".htmlspecialchars($search_town);
+ 	if ($search_categ != '') $param.='&amp;search_categ='.htmlspecialchars($search_categ);
+ 	if ($search_sale > 0)	$param.='&amp;search_sale='.htmlspecialchars($search_sale);
+ 	if ($search_status != '') $param.='&amp;search_status='.htmlspecialchars($search_status);
+ 	if ($search_country != '') $param.='&amp;search_country='.htmlspecialchars($search_country);
+ 	if ($search_type_thirdparty != '') $param.='&amp;search_type_thirdparty='.htmlspecialchars($search_type_thirdparty);
+	if ($optioncss != '') $param.='&amp;optioncss='.$optioncss;
 
 	print_barre_liste($langs->trans("ListOfCustomers"), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords,'title_companies.png');
 
 	$i = 0;
 
 	print '<form method="GET" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 
 	// Filter on categories
  	$moreforfilter='';
 	if (! empty($conf->categorie->enabled))
 	{
+	 	$moreforfilter.='<div class="divsearchfield">';
 	 	$moreforfilter.=$langs->trans('Categories'). ': ';
 		$moreforfilter.=$formother->select_categories(2,$search_categ,'search_categ',1);
-	 	$moreforfilter.=' &nbsp; &nbsp; &nbsp; ';
+	 	$moreforfilter.='</div>';
 	}
  	// If the user can view prospects other than his'
  	if ($user->rights->societe->client->voir || $socid)
  	{
+	 	$moreforfilter.='<div class="divsearchfield">';
 	 	$moreforfilter.=$langs->trans('SalesRepresentatives'). ': ';
 		$moreforfilter.=$formother->select_salesrepresentatives($search_sale,'search_sale',$user);
+		$moreforfilter.='</div>';
  	}
  	if ($moreforfilter)
 	{
-		print '<div class="liste_titre">';
+		print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	    print $moreforfilter;
     	$parameters=array();
     	$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
@@ -192,12 +216,14 @@ if ($result)
 	    print '</div>';
 	}
 
-	print '<table class="liste" width="100%">'."\n";
+    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">';
 
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Zip"),$_SERVER["PHP_SELF"],"s.zip","",$param,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Town"),$_SERVER["PHP_SELF"],"s.town","",$param,"",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Country"),$_SERVER["PHP_SELF"],"country.code_iso","",$param,'align="center"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("ThirdPartyType"),$_SERVER["PHP_SELF"],"typent.code","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("CustomerCode"),$_SERVER["PHP_SELF"],"s.code_client","",$param,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("AccountancyCode"),$_SERVER["PHP_SELF"],"s.code_compta","",$param,'align="left"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"datec","",$param,'align="right"',$sortfield,$sortorder);
@@ -220,6 +246,14 @@ if ($result)
 
 	print '<td class="liste_titre">';
     print '<input type="text" class="flat" name="search_town" value="'.$search_town.'" size="10">';
+    print '</td>';
+
+    print '<td class="liste_titre" align="center">';
+    print $form->select_country($search_country,'search_country','',0,'maxwidth100');
+    print '</td>';
+    
+    print '<td class="liste_titre" align="center">';
+    print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?'ASC':$conf->global->SOCIETE_SORT_ON_TYPEENT));
     print '</td>';
 
     print '<td class="liste_titre">';
@@ -270,6 +304,16 @@ if ($result)
 		print '</td>';
 		print '<td>'.$obj->zip.'</td>';
         print '<td>'.$obj->town.'</td>';
+		//Country
+        print '<td align="center">';
+        $tmparray=getCountry($obj->fk_pays,'all');
+        print $tmparray['label'];
+        print '</td>';
+        //Type ent
+        print '<td align="center">';
+        if (count($typenArray)==0) $typenArray = $formcompany->typent_array(1);
+        print $typenArray[$obj->typent_code];
+        print '</td>';
         print '<td>'.$obj->code_client.'</td>';
         print '<td>'.$obj->code_compta.'</td>';
         print '<td align="right">'.dol_print_date($db->jdate($obj->datec),'day').'</td>';

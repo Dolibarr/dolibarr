@@ -39,6 +39,9 @@ InterventionClassifiedUnbilledInDolibarr=Zásah %s nebude účtovaný
 InterventionSentByEMail=Zásah %s odoslaný e-mailom
 InterventionDeletedInDolibarr=Zásah %s odstránený
 SearchAnIntervention=Vyhľadať zásah
+InterventionsArea=Interventions area
+DraftFichinter=Draft interventions
+LastModifiedInterventions=Last %s modified interventions
 ##### Types de contacts #####
 TypeContact_fichinter_internal_INTERREPFOLL=Zástupca dohliadajúci na zásah
 TypeContact_fichinter_internal_INTERVENING=Zasahujúci
@@ -51,3 +54,14 @@ PacificNumRefModelDesc1=Späť numero vo formáte %syymm-nnnn, kde yy je rok, MM
 PacificNumRefModelError=Karta zásahu začínajúci sa s $syymm už existuje a nie je kompatibilný s týmto modelom sekvencie. Odstráňte ju alebo ju premenujte pre aktiváciu tohto modulu.
 PrintProductsOnFichinter=Vytlačiť produkty na kartu zásahu
 PrintProductsOnFichinterDetails=Zásahy vytvorené z objednávok
+##### Exports #####
+InterId=Intervention id
+InterRef=Intervention ref.
+InterDateCreation=Date creation intervention
+InterDuration=Duration intervention
+InterStatus=Status intervention
+InterNote=Note intervention
+InterLineId=Line id intervention
+InterLineDate=Line date intervention
+InterLineDuration=Line duration intervention
+InterLineDesc=Line description intervention

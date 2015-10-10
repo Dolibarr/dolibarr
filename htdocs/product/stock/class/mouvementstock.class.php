@@ -30,9 +30,6 @@
  */
 class MouvementStock extends CommonObject
 {
-    var $error;
-    var $db;
-
 	var $product_id;
 	var $entrepot_id;
 	var $qty;
@@ -229,8 +226,8 @@ class MouvementStock extends CommonObject
 			$num = 0;
 			if (! $error)
 			{
-				$sql = "SELECT rowid, reel, pmp FROM ".MAIN_DB_PREFIX."product_stock";
-				$sql.= " WHERE fk_entrepot = ".$entrepot_id." AND fk_product = ".$fk_product;
+				$sql = "SELECT rowid, reel FROM ".MAIN_DB_PREFIX."product_stock";
+				$sql.= " WHERE fk_entrepot = ".$entrepot_id." AND fk_product = ".$fk_product;		// This is a unique key
 
 				dol_syslog(get_class($this)."::_create", LOG_DEBUG);
 				$resql=$this->db->query($sql);
@@ -327,7 +324,7 @@ class MouvementStock extends CommonObject
 					$this->errors[]=$this->db->lasterror();
 					$error = -3;
 				}
-				else if(empty($fk_product_stock))
+				else if (empty($fk_product_stock))
 				{
 					$fk_product_stock = $this->db->last_insert_id(MAIN_DB_PREFIX."product_stock");
 				}
@@ -433,7 +430,7 @@ class MouvementStock extends CommonObject
 		// Create movement for each subproduct
 		foreach($pids as $key => $value)
 		{
-			$tmpmove = dol_clone($this);
+			$tmpmove = clone $this;
 			$tmpmove->_create($user, $pids[$key], $entrepot_id, ($qty * $pqtys[$key]), $type, 0, $label, $inventorycode);		// This will also call _createSubProduct making this recursive
 			unset($tmpmove);
 		}
@@ -452,19 +449,22 @@ class MouvementStock extends CommonObject
 	 * 	@param		int		$price			Price
 	 * 	@param		string	$label			Label of stock movement
 	 * 	@param		string	$datem			Force date of movement
+	 *	@param		date	$eatby			eat-by date
+	 *	@param		date	$sellby			sell-by date
+	 *	@param		string	$batch			batch number
 	 * 	@return		int						<0 if KO, >0 if OK
 	 */
-	function livraison($user, $fk_product, $entrepot_id, $qty, $price=0, $label='', $datem='')
+	function livraison($user, $fk_product, $entrepot_id, $qty, $price=0, $label='', $datem='', $eatby='', $sellby='', $batch='')
 	{
-		return $this->_create($user, $fk_product, $entrepot_id, (0 - $qty), 2, $price, $label, '', $datem,'','','',true);
+		return $this->_create($user, $fk_product, $entrepot_id, (0 - $qty), 2, $price, $label, '', $datem, $eatby, $sellby, $batch, true);
 	}
 
 	/**
 	 *	Decrease stock for batch record
 	 *
 	 * 	@param		int		$id_stock_dluo		Id product_dluo
-	 * 	@param		int		$qty			Quantity
-	 * 	@return		int						<0 if KO, >0 if OK
+	 * 	@param		int		$qty				Quantity
+	 * 	@return		int							<0 if KO, >0 if OK
 	 */
 	function livraison_batch($id_stock_dluo, $qty)
 	{
@@ -543,10 +543,12 @@ class MouvementStock extends CommonObject
 	}
 
 	/**
-	 * Create or update batch record
+	 * Create or update batch record (update table llx_product_batch)
 	 *
-	 * @param	variant		$dluo	Could be either int if id of product_batch or array with at leat fk_product_stock
-	 * @param	int			$qty	Quantity of product with batch number
+	 * @param	array|int	$dluo	Could be either 
+	 *                              - int if id of product_batch
+	 *                              - or complete array('fk_product_stock'=>, 'eatby'=>, 'sellby'=> , 'batchnumber'=>)
+	 * @param	int			$qty	Quantity of product with batch number. May be a negative amount.
 	 * @return 	int   				<0 if KO, else return productbatch id
 	 */
 	function _create_batch($dluo, $qty)
@@ -555,44 +557,63 @@ class MouvementStock extends CommonObject
 
 		$result=0;
 
-		// Try to find an existing record with batch same batch number or id
-		if (is_numeric($dluo)) {
+		// Try to find an existing record with same batch number or id
+		if (is_numeric($dluo)) 
+		{
 			$result=$pdluo->fetch($dluo);
-		} else if (is_array($dluo)) {
-			if (isset($dluo['fk_product_stock'])) {
+			if (empty($pdluo->id))
+			{
+				// We didn't find the line. May be it was deleted before by a previous move in same transaction.
+				$this->error = 'Error. You ask a move on a record for a serial that does not exists anymore. May be you take the same serial on samewarehouse several times in same shipment or it was used by another shipment. Remove this shipment and prepare another one.';
+				$this->errors[] = $this->error;
+				$result = -2;
+			}
+		}
+		else if (is_array($dluo)) 
+		{
+			if (isset($dluo['fk_product_stock'])) 
+			{
 				$vfk_product_stock=$dluo['fk_product_stock'];
 				$veatby = $dluo['eatby'];
 				$vsellby = $dluo['sellby'];
 				$vbatchnumber = $dluo['batchnumber'];
+				
 				$result = $pdluo->find($vfk_product_stock,$veatby,$vsellby,$vbatchnumber);
-			} else {
+			}
+			else 
+			{
 				dol_syslog(get_class($this)."::_create_batch array param dluo must contain at least key fk_product_stock".$error, LOG_ERR);
 				$result = -1;
 			}
-		} else {
+		} 
+		else
+		{
 			dol_syslog(get_class($this)."::_create_batch error invalid param dluo".$error, LOG_ERR);
 			$result = -1;
 		}
 
-		// Batch record found so we update it
-		if ($result>0)
+		if ($result >= 0)
 		{
-			if ($pdluo->id >0)
+			// No error
+			if ($pdluo->id > 0)		// product_batch record found
 			{
-				$pdluo->qty +=$qty;
-				if ($pdluo->qty == 0) {
+				//print "Avant ".$pdluo->qty." Apres ".($pdluo->qty + $qty)."<br>";
+				$pdluo->qty += $qty;
+				if ($pdluo->qty == 0) 
+				{
 					$result=$pdluo->delete(0,1);
 				} else {
 					$result=$pdluo->update(0,1);
 				}
 			}
-			else
+			else					// product_batch record not found
 			{
 				$pdluo->fk_product_stock=$vfk_product_stock;
 				$pdluo->qty = $qty;
 				$pdluo->eatby = $veatby;
 				$pdluo->sellby = $vsellby;
 				$pdluo->batch = $vbatchnumber;
+				
 				$result=$pdluo->create(0,1);
 				if ($result < 0)
 				{
@@ -600,11 +621,9 @@ class MouvementStock extends CommonObject
 					$this->errors=$pdluo->errors;
 				}
 			}
-			return $result;
-		} else {
-			return -1;
 		}
-
+		
+		return $result;
 	}
 
     /**
@@ -612,7 +631,7 @@ class MouvementStock extends CommonObject
      *
      * @param   variant $fk_origin  id of origin
      * @param   int $origintype     origin type
-     * @return  string              name url
+     * @return  string              Url link to object
      */
 	function get_origin($fk_origin, $origintype)
 	{
@@ -638,12 +657,22 @@ class MouvementStock extends CommonObject
 				require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 				$origin = new FactureFournisseur($this->db);
 				break;
-
+				
 			default:
-				return '';
+				if ($origintype)
+				{
+					$result=dol_include_once('/'.$origintype.'/class/'.$origintype.'.class.php');
+					if ($result)
+					{
+					   $classname = ucfirst($origintype);
+					   $origin = new $classname($this->db);
+					}
+				}
 				break;
 		}
 
+		if (empty($origin) || ! is_object($origin)) return '';
+		
 		$origin->fetch($fk_origin);
 		return $origin->getNomUrl(1);
 	}

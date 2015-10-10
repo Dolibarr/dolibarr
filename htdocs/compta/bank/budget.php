@@ -44,7 +44,7 @@ $companystatic=new Societe($db);
 llxHeader();
 
 // List movements bu category for bank transactions
-print_fiche_titre($langs->trans("BankTransactionByCategories"), '', 'title_bank.png');
+print load_fiche_titre($langs->trans("BankTransactionByCategories"), '', 'title_bank.png');
 
 print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\">";

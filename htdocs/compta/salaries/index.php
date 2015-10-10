@@ -49,6 +49,7 @@ $pagenext = $page + 1;
 $limit = $conf->liste_limit;
 if (! $sortfield) $sortfield="s.datep";
 if (! $sortorder) $sortorder="DESC";
+$optioncss = GETPOST('optioncss','alpha');
 
 $filtre=$_GET["filtre"];
 
@@ -120,10 +121,12 @@ if ($result)
 
 	$param='';
 	if ($typeid) $param.='&amp;typeid='.$typeid;
+	if ($optioncss != '') $param.='&amp;optioncss='.$optioncss;
 
 	print_barre_liste($langs->trans("SalariesPayments"),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$totalnboflines, 'title_accountancy.png');
 
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
+	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
@@ -191,17 +194,18 @@ if ($result)
         // Type
         print '<td>'.$langs->trans("PaymentTypeShort".$obj->payment_code).' '.$obj->num_payment.'</td>';
 		// Amount
-        print "<td align=\"right\">".price($obj->amount,0,$outputlangs,1,-1,-1,$conf->currency)."</td>";
-        print "<td>&nbsp;</td>";
+        print "<td align=\"right\">".price($obj->amount)."</td>";
+        print "<td></td>";
         print "</tr>\n";
 
         $total = $total + $obj->amount;
 
         $i++;
     }
+    
     print '<tr class="liste_total"><td colspan="6" class="liste_total">'.$langs->trans("Total").'</td>';
     print '<td  class="liste_total" align="right">'.price($total,0,$outputlangs,1,-1,-1,$conf->currency)."</td>";
-	print "<td>&nbsp;</td></tr>";
+	print "<td></td></tr>";
 
     print "</table>";
 

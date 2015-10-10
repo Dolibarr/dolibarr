@@ -553,7 +553,7 @@ if ($result)
         if ($acct->canBeConciliated() > 0)  // Si compte rapprochable
         {
             print '<br>'."\n";
-            print_fiche_titre($langs->trans("Reconciliation"), '', 'title_bank.png');
+            print load_fiche_titre($langs->trans("Reconciliation"), '', 'title_bank.png');
             print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?rowid='.$objp->rowid.'">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<input type="hidden" name="action" value="setreconcile">';
@@ -596,8 +596,7 @@ if ($result)
             }
             print '</tr>';
 
-            print "</table>";
-            print '</form>';
+            print '</table></form>';
         }
 
     }
@@ -610,22 +609,21 @@ print '</div>';
 
 
 // List of bank categories
-
 print '<br>';
-print '<table class="noborder" width="100%">';
 
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?rowid='.$rowid.'&amp;id='.$id.'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="class">';
 print '<input type="hidden" name="orig_account" value="'.$orig_account.'">';
+
+print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Rubriques").'</td><td colspan="2">';
 if ($user->rights->banque->modifier)
 {
     print '<select class="flat" name="cat1">'.$options.'</select>&nbsp;';
     print '<input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
 }
-print "</tr>";
-print "</form>";
+print '</tr>';
 
 $sql = "SELECT c.label, c.rowid";
 $sql.= " FROM ".MAIN_DB_PREFIX."bank_class as a, ".MAIN_DB_PREFIX."bank_categ as c";
@@ -650,13 +648,13 @@ if ($result)
         {
             print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=delete_categ&amp;rowid='.$rowid.'&amp;fk_categ='.$objp->rowid.'">'.img_delete($langs->trans("Remove")).'</a></td>';
         }
-        print "</tr>";
+        print '</tr>';
 
         $i++;
     }
     $db->free($result);
 }
-print "</table>";
+print '</table></form>';
 
 llxFooter();
 

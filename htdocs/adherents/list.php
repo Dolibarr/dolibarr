@@ -48,6 +48,7 @@ $search_email=GETPOST("search_email");
 $search_categ = GETPOST("search_categ",'int');
 $catid        = GETPOST("catid",'int');
 $sall=GETPOST("sall");
+$optioncss = GETPOST('optioncss','alpha');
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -176,6 +177,7 @@ if ($resql)
 	if ($search_email) $param.="&search_email=".$search_email;
 	if ($filter)       $param.="&filter=".$filter;
 	if ($type > 0)     $param.="&type=".$type;
+	if ($optioncss != '') $param.='&optioncss='.$optioncss;
 	print_barre_liste($titre,$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
 
 	if ($sall)
@@ -185,6 +187,7 @@ if ($resql)
 	}
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].($param?'?'.$param:'').'">';
+    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 	// Filter on categories
@@ -192,13 +195,14 @@ if ($resql)
 	if (! empty($conf->categorie->enabled))
 	{
 		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+        $moreforfilter.='<div class="divsearchfield">';
 		$moreforfilter.=$langs->trans('Categories'). ': ';
 		$moreforfilter.=$formother->select_categories(Categorie::TYPE_MEMBER,$search_categ,'search_categ',1);
-		$moreforfilter.=' &nbsp; &nbsp; &nbsp; ';
+		$moreforfilter.='</div>';
 	}
 	if (! empty($moreforfilter))
 	{
-		print '<div class="liste_titre">';
+		print '<div class="liste_titre liste_titre_bydiv centpercent">';
 		print $moreforfilter;
     	$parameters=array();
     	$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
@@ -206,7 +210,7 @@ if ($resql)
 	    print '</div>';
 	}
 
-	print "<table class=\"noborder\" width=\"100%\">";
+    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"d.rowid",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Name")." / ".$langs->trans("Company"),$_SERVER["PHP_SELF"],"d.lastname",$param,"","",$sortfield,$sortorder);
@@ -271,6 +275,8 @@ if ($resql)
 		$memberstatic->ref=$objp->rowid;
 		$memberstatic->lastname=$objp->lastname;
 		$memberstatic->firstname=$objp->firstname;
+		$memberstatic->statut=$objp->statut;
+		$memberstatic->datefin= $datefin;
 
 		if (! empty($objp->fk_soc)) {
 			$memberstatic->socid = $objp->fk_soc;
@@ -325,7 +331,9 @@ if ($resql)
 		{
 			print '<td align="center" class="nowrap">';
 			print dol_print_date($datefin,'day');
-			if ($datefin < ($now -  $conf->adherent->cotisation->warning_delay) && $objp->statut > 0) print " ".img_warning($langs->trans("SubscriptionLate"));
+			if ($memberstatic->hasDelay()) {
+				print " ".img_warning($langs->trans("SubscriptionLate"));
+			}
 			print '</td>';
 		}
 		else

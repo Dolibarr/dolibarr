@@ -156,7 +156,7 @@ if ($_GET["action"] == 'create')
 {
 	$total = $loan->capital;
 
-	print_fiche_titre($langs->trans("DoPayment"));
+	print load_fiche_titre($langs->trans("DoPayment"));
 	print "<br>\n";
 
 	print '<form name="add_payment" action="'.$_SERVER['PHP_SELF'].'" method="post">';

@@ -1,11 +1,6 @@
 # Dolibarr language file - Source file is en_US - accountancy
 ACCOUNTING_EXPORT_SEPARATORCSV=Separador de coluna para o arquivo de exportação
 ACCOUNTING_EXPORT_DATE=Formato de data para arquivo de exportação
-ACCOUNTING_EXPORT_PIECE=Exportar o número de peça?
-ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Exportação com conta global?
-ACCOUNTING_EXPORT_LABEL=Exportar o rótulo?
-ACCOUNTING_EXPORT_AMOUNT=Exportar o montante?
-ACCOUNTING_EXPORT_DEVISE=Exportar o legado?
 Accounting=Contabilidade
 Globalparameters=Parametros globais
 Menuaccount=Contas contábeis
@@ -25,6 +20,7 @@ CustomersVentilation=Cancelar cliente
 SuppliersVentilation=Cancelar fornecedor
 TradeMargin=Margem de comercialização
 ByCustomerInvoice=Por faturas de cliente
+CreateMvts=Criar movimento
 UpdateAccount=Modificação de uma conta contábil
 UpdateMvts=Modificação de um movimento
 WriteBookKeeping=Registo das contas em contabilidade geral
@@ -32,7 +28,6 @@ AccountBalanceByMonth=Saldo da conta por mês
 AccountingVentilation=Cancelar contabilidade
 AccountingVentilationSupplier=Cancelar fornecedor de contabilidade
 AccountingVentilationCustomer=Cancelar contabilidade de cliente
-CAHTF=Total de HT compra fornecedor
 InvoiceLines=Linhas de fatura para discutir
 InvoiceLinesDone=Linhas de fatura discutidas
 Ventilate=Descutir/debater
@@ -48,6 +43,8 @@ ACCOUNTING_LIST_SORT_VENTILATION_TODO=Comece a classificação das quebras de p�
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Comece a classificação das quebras de páginas  "separar" por elementos mais recentes
 AccountLength=Duração das contas contábeis mostradas no Dolibarr
 AccountLengthDesc=Função que permite simular uma duração de uma conta contábil, substituindo espaços figurados por zero. Esta função só toca a tela, ele não modifica as contas contábeis registrados no Dolibarr. Para a exportação, esta função é necessária para ser compatível com determinado software.
+ACCOUNTING_LENGTH_DESCRIPTION=Comprimento para a exibição de produtos e serviços descritos em listas (Melhor = 50)
+ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Comprimento para a exibição de produtos e serviços conta de formulário descritos em listas (Melhor = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Tamanho das contas gerais
 ACCOUNTING_LENGTH_AACCOUNT=Tamanho das contas de terceiros
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Diário diversos
@@ -78,7 +75,6 @@ ListAccounts=Lista das contas contábeis
 Pcgtype=Classes de conta
 Pcgsubtype=Sob classe de conta
 DescVentilCustomer=Consulte aqui a contabilização repartição anual dos seus clientes faturas
-TotalVente=HT volume de negócios total
 TotalMarge=Margem de vendas totais
 DescVentilDoneCustomer=Consultar aqui a lista das linhas das faturas de clientes e sua conta na contabilidade
 DescVentilTodoCustomer=Linhas de faturas de clientes com contas contábeis discutidas

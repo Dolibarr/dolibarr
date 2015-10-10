@@ -32,9 +32,7 @@ class PaymentExpenseReport extends CommonObject
 	public $element='payment_expensereport';			//!< Id that identify managed objects
 	public $table_element='payment_expensereport';	//!< Name of table without prefix where object is stored
 
-	var $id;
 	var $rowid;
-	var $ref;
 
 	var $fk_expensereport;
 	var $datec='';
@@ -44,7 +42,6 @@ class PaymentExpenseReport extends CommonObject
     var $amounts=array();   // Array of amounts
 	var $fk_typepayment;
 	var $num_payment;
-	var $note;
 	var $fk_bank;
 	var $fk_user_creat;
 	var $fk_user_modif;
@@ -469,7 +466,7 @@ class PaymentExpenseReport extends CommonObject
      */
     function addPaymentToBank($user,$mode,$label,$accountid,$emetteur_nom,$emetteur_banque)
     {
-        global $conf;
+        global $langs,$conf;
 
         $error=0;
 
@@ -482,13 +479,13 @@ class PaymentExpenseReport extends CommonObject
 
             $total=$this->total;
             if ($mode == 'payment_expensereport') $amount=$total;
-
+            
             // Insert payment into llx_bank
             $bank_line_id = $acc->addline(
                 $this->datepaid,
                 $this->fk_typepayment,  // Payment mode id or code ("CHQ or VIR for example")
                 $label,
-                $amount,
+                -$amount,
                 $this->num_payment,
                 '',
                 $user,
@@ -517,6 +514,32 @@ class PaymentExpenseReport extends CommonObject
                     {
                         $error++;
                         dol_print_error($this->db);
+                    }
+                }
+                
+                // Add link 'user' in bank_url between user and bank transaction
+                if (! $error)
+                {
+                    foreach ($this->amounts as $key => $value)  // We should have always same third party but we loop in case of.
+                    {
+                    	if ($mode == 'payment_expensereport')
+                        {
+                            $euser = new User($this->db);
+                            $euser->fetch($key);
+                            $result=$acc->add_url_line(
+                                $bank_line_id,
+                                $euser->id,
+                                DOL_URL_ROOT.'/user/card.php?id=',
+                                $euser->getFullName($langs),
+                                'user'
+                            );
+                            if ($result <= 0) 
+                            {
+                            	$this->error=$this->db->lasterror();
+                            	dol_syslog(get_class($this).'::addPaymentToBank '.$this->error);
+                            	$error++;
+                            }
+                        }
                     }
                 }
             }

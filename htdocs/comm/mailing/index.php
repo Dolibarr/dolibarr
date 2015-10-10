@@ -42,7 +42,7 @@ $result=restrictedArea($user,'mailing');
 $help_url='EN:Module_EMailing|FR:Module_Mailing|ES:M&oacute;dulo_Mailing';
 llxHeader('','EMailing',$help_url);
 
-print_fiche_titre($langs->trans("MailingArea"));
+print load_fiche_titre($langs->trans("MailingArea"));
 
 //print '<table class="notopnoleftnoright" width="100%">';
 //print '<tr><td valign="top" width="30%" class="notopnoleft">';

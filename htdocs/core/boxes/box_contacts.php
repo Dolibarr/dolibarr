@@ -82,7 +82,8 @@ class box_contacts extends ModeleBoxes
 				$societestatic=new Societe($db);
 
 				$line = 0;
-                while ($line < $num) {
+                while ($line < $num) 
+                {
 					$objp = $db->fetch_object($result);
 					$datec=$db->jdate($objp->datec);
 					$datem=$db->jdate($objp->tms);
@@ -92,7 +93,6 @@ class box_contacts extends ModeleBoxes
                     $contactstatic->firstname=$objp->firstname;
                     $contactstatic->civility_id=$objp->civility_id;
 					$contactstatic->statut=$objp->status;
-					
                     $societestatic->id = $objp->fk_soc;
                     $societestatic->code_client = $objp->code_client;
                     $societestatic->name = $objp->socname;
@@ -105,7 +105,7 @@ class box_contacts extends ModeleBoxes
 
                     $this->info_box_contents[$line][] = array(
                         'td' => 'align="left"',
-                        'text' => $societestatic->getNomUrl(1),
+                        'text' => ($objp->fk_soc > 0 ? $societestatic->getNomUrl(1) : ''),
                         'asis' => 1,
                     );
 

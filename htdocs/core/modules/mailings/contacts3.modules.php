@@ -85,6 +85,7 @@ class mailing_contacts3 extends MailingTargets
     	if ($filtersarray[0] <> 'all') $sql.= ", ".MAIN_DB_PREFIX."categorie_societe as cs";
     	$sql.= " WHERE sp.email <> ''";     // Note that null != '' is false
     	$sql.= " AND sp.no_email = 0";
+    	$sql.= " AND sp.statut = 1";
     	$sql.= " AND sp.entity IN (".getEntity('societe', 1).")";
     	$sql.= " AND sp.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".$mailing_id.")";
     	if ($filtersarray[0] <> 'all') $sql.= " AND cs.fk_categorie = c.rowid";
@@ -173,6 +174,7 @@ class mailing_contacts3 extends MailingTargets
         $sql.= " WHERE c.entity IN (".getEntity('societe', 1).")";
         $sql.= " AND c.email != ''"; // Note that null != '' is false
         $sql.= " AND c.no_email = 0";
+        $sql.= " AND c.statut = 1";
         /*
     	$sql = "SELECT count(distinct(sp.email)) as nb";
         $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp,";
@@ -208,6 +210,7 @@ class mailing_contacts3 extends MailingTargets
         $sql.= " ".MAIN_DB_PREFIX."categorie_societe as cs";
         $sql.= " WHERE sp.email != ''";     // Note that null != '' is false
         $sql.= " AND sp.no_email = 0";
+        $sql.= " AND sp.statut = 1";
         $sql.= " AND sp.entity IN (".getEntity('societe', 1).")";
         $sql.= " AND cs.fk_categorie = c.rowid";
         $sql.= " AND cs.fk_soc = sp.fk_soc";

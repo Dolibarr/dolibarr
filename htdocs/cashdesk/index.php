@@ -60,10 +60,11 @@ top_htmlhead('','',0,0,'',$arrayofcss);
 
 <h1 class="entete"></h1>
 
-<div class="menu_principal">
+<div class="menu_principal hideonsmartphone">
 </div>
 
 <div class="contenu">
+<div class="inline-block" style="vertical-align: top">
 <div class="principal_login">
 <?php if ($err) print dol_escape_htmltag($err)."<br><br>\n"; ?>
 <fieldset class="cadre_facturation"><legend class="titre1"><?php echo $langs->trans("Identification"); ?></legend>
@@ -156,6 +157,7 @@ print "</tr>\n";
 </form>
 </fieldset>
 
+
 <?php
 if ($_GET['err'] < 0)
 {
@@ -171,6 +173,7 @@ else
 }
 ?>
 
+</div>
 </div>
 </div>
 

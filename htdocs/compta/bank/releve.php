@@ -94,10 +94,10 @@ $banklinestatic=new AccountLine($db);
 
 
 // Load account
-$acct = new Account($db);
+$object = new Account($db);
 if ($id > 0 || ! empty($ref))
 {
-	$acct->fetch($id, $ref);
+	$object->fetch($id, $ref);
 }
 
 if (empty($num))
@@ -107,7 +107,7 @@ if (empty($num))
 	 */
 	$sql = "SELECT DISTINCT(b.num_releve) as numr";
 	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
-	$sql.= " WHERE b.fk_account = ".$acct->id;
+	$sql.= " WHERE b.fk_account = ".$object->id;
 	$sql.= " ORDER BY numr DESC";
 
 	$sql.= $db->plimit($conf->liste_limit+1,$offset);
@@ -120,7 +120,7 @@ if (empty($num))
 		$i = 0;
 
 		// Onglets
-		$head=bank_prepare_head($acct);
+		$head=bank_prepare_head($object);
 		dol_fiche_head($head,'statement',$langs->trans("FinancialAccount"),0,'account');
 
 		print '<table class="border" width="100%">';
@@ -130,19 +130,36 @@ if (empty($num))
 		// Ref
 		print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
 		print '<td colspan="3">';
-		print $form->showrefnav($acct, 'ref', $linkback, 1, 'ref');
+		print $form->showrefnav($object, 'ref', $linkback, 1, 'ref');
 		print '</td></tr>';
 
 		// Label
 		print '<tr><td>'.$langs->trans("Label").'</td>';
-		print '<td colspan="3">'.$acct->label.'</td></tr>';
+		print '<td colspan="3">'.$object->label.'</td></tr>';
 
 		print '</table>';
 
 		dol_fiche_end();
 
+		print '<div class="tabsAction">';
+		
+		if ($object->type != 2 && $object->rappro) 
+		{ 
+			// If not cash account and can be reconciliate
+			if ($user->rights->banque->consolidate) 
+			{
+				print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/bank/rappro.php?account='.$object->id.($vline?'&amp;vline='.$vline:'').'">'.$langs->trans("Conciliate").'</a>';
+			}
+			else
+			{
+				print '<a class="butActionRefused" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("Conciliate").'</a>';
+			}
+		}
 
-		print_barre_liste('', $page, $_SERVER["PHP_SELF"], "&account=".$acct->id, $sortfield, $sortorder,'',$numrows);
+		print '</div>';
+		
+
+		print_barre_liste('', $page, $_SERVER["PHP_SELF"], "&account=".$object->id, $sortfield, $sortorder,'',$numrows);
 
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
@@ -164,13 +181,13 @@ if (empty($num))
 			}
 			else
 			{
-				print '<tr '.$bc[$var].'><td><a href="releve.php?num='.$objp->numr.'&amp;account='.$acct->id.'">'.$objp->numr.'</a></td>';
+				print '<tr '.$bc[$var].'><td><a href="releve.php?num='.$objp->numr.'&amp;account='.$object->id.'">'.$objp->numr.'</a></td>';
 
 				// Calculate start amount
 				$sql = "SELECT sum(b.amount) as amount";
 				$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 				$sql.= " WHERE b.num_releve < '".$db->escape($objp->numr)."'";
-				$sql.= " AND b.fk_account = ".$acct->id;
+				$sql.= " AND b.fk_account = ".$object->id;
 				$resql=$db->query($sql);
 				if ($resql)
 				{
@@ -184,7 +201,7 @@ if (empty($num))
 				$sql = "SELECT sum(b.amount) as amount";
 				$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 				$sql.= " WHERE b.num_releve = '".$db->escape($objp->numr)."'";
-				$sql.= " AND b.fk_account = ".$acct->id;
+				$sql.= " AND b.fk_account = ".$object->id;
 				$resql=$db->query($sql);
 				if ($resql)
 				{
@@ -222,7 +239,7 @@ else
 		$sql = "SELECT DISTINCT(b.num_releve) as num";
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 		$sql.= " WHERE b.num_releve < '".$db->escape($num)."'";
-		$sql.= " AND b.fk_account = ".$acct->id;
+		$sql.= " AND b.fk_account = ".$object->id;
 		$sql.= " ORDER BY b.num_releve DESC";
 
 		dol_syslog("htdocs/compta/bank/releve.php", LOG_DEBUG);
@@ -244,7 +261,7 @@ else
 		$sql = "SELECT DISTINCT(b.num_releve) as num";
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 		$sql.= " WHERE b.num_releve > '".$db->escape($num)."'";
-		$sql.= " AND b.fk_account = ".$acct->id;
+		$sql.= " AND b.fk_account = ".$object->id;
 		$sql.= " ORDER BY b.num_releve ASC";
 
 		dol_syslog("htdocs/compta/bank/releve.php", LOG_DEBUG);
@@ -265,10 +282,10 @@ else
 		$found=true;
 	}
 
-	$mesprevnext ="<a href=\"releve.php?rel=prev&amp;num=$num&amp;ve=$ve&amp;account=$acct->id\">".img_previous()."</a> &nbsp;";
+	$mesprevnext ="<a href=\"releve.php?rel=prev&amp;num=$num&amp;ve=$ve&amp;account=$object->id\">".img_previous()."</a> &nbsp;";
 	$mesprevnext.= $langs->trans("AccountStatement")." $num";
-	$mesprevnext.=" &nbsp; <a href=\"releve.php?rel=next&amp;num=$num&amp;ve=$ve&amp;account=$acct->id\">".img_next()."</a>";
-	print_fiche_titre($langs->trans("AccountStatement").' '.$num.', '.$langs->trans("BankAccount").' : '.$acct->getNomUrl(0),$mesprevnext, 'title_bank.png');
+	$mesprevnext.=" &nbsp; <a href=\"releve.php?rel=next&amp;num=$num&amp;ve=$ve&amp;account=$object->id\">".img_next()."</a>";
+	print load_fiche_titre($langs->trans("AccountStatement").' '.$num.', '.$langs->trans("BankAccount").' : '.$object->getNomUrl(0),$mesprevnext, 'title_bank.png');
 	print '<br>';
 
 	print "<form method=\"post\" action=\"releve.php\">";
@@ -291,7 +308,7 @@ else
 	$sql = "SELECT sum(b.amount) as amount";
 	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 	$sql.= " WHERE b.num_releve < '".$db->escape($num)."'";
-	$sql.= " AND b.fk_account = ".$acct->id;
+	$sql.= " AND b.fk_account = ".$object->id;
 
 	$resql=$db->query($sql);
 	if ($resql)
@@ -309,7 +326,7 @@ else
 	$sql.= ", ".MAIN_DB_PREFIX."bank as b";
 	$sql.= " WHERE b.num_releve='".$db->escape($num)."'";
 	if (!isset($num))	$sql.= " OR b.num_releve is null";
-	$sql.= " AND b.fk_account = ".$acct->id;
+	$sql.= " AND b.fk_account = ".$object->id;
 	$sql.= " AND b.fk_account = ba.rowid";
 	$sql.= $db->order("b.datev, b.datec", "ASC");  // We add date of creation to have correct order when everything is done the same day
 
@@ -321,7 +338,7 @@ else
 		$i = 0;
 
 		// Ligne Solde debut releve
-		print "<tr><td colspan=\"4\"><a href=\"releve.php?num=$num&amp;ve=1&amp;rel=$rel&amp;account=".$acct->id."\">&nbsp;</a></td>";
+		print "<tr><td colspan=\"4\"><a href=\"releve.php?num=$num&amp;ve=1&amp;rel=$rel&amp;account=".$object->id."\">&nbsp;</a></td>";
 		print "<td align=\"right\" colspan=\"2\"><b>".$langs->trans("InitialBankBalance")." :</b></td><td align=\"right\"><b>".price($total)."</b></td><td>&nbsp;</td></tr>\n";
 
 		while ($i < $numrows)
@@ -337,10 +354,10 @@ else
 
 			// Date de valeur
 			print '<td align="center" valign="center" class="nowrap">';
-			print '<a href="releve.php?action=dvprev&amp;num='.$num.'&amp;account='.$acct->id.'&amp;dvid='.$objp->rowid.'">';
+			print '<a href="releve.php?action=dvprev&amp;num='.$num.'&amp;account='.$object->id.'&amp;dvid='.$objp->rowid.'">';
 			print img_previous().'</a> ';
 			print dol_print_date($db->jdate($objp->dv),"day") .' ';
-			print '<a href="releve.php?action=dvnext&amp;num='.$num.'&amp;account='.$acct->id.'&amp;dvid='.$objp->rowid.'">';
+			print '<a href="releve.php?action=dvnext&amp;num='.$num.'&amp;account='.$object->id.'&amp;dvid='.$objp->rowid.'">';
 			print img_next().'</a>';
 			print "</td>\n";
 
@@ -353,7 +370,7 @@ else
 			print '<td class="nowrap">'.$type_label.' '.($objp->num_chq?$objp->num_chq:'').'</td>';
 
 			// Description
-			print '<td valign="center"><a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$acct->id.'">';
+			print '<td valign="center"><a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$object->id.'">';
 			$reg=array();
 			preg_match('/\((.+)\)/i',$objp->label,$reg);	// Si texte entoure de parenthese on tente recherche de traduction
 			if ($reg[1] && $langs->trans($reg[1])!=$reg[1]) print $langs->trans($reg[1]);
@@ -364,7 +381,7 @@ else
 			 * Ajout les liens (societe, company...)
 			 */
 			$newline=1;
-			$links = $acct->get_url($objp->rowid);
+			$links = $object->get_url($objp->rowid);
 			foreach($links as $key=>$val)
 			{
 				if (! $newline) print ' - ';
@@ -500,7 +517,7 @@ else
 
 			if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
 			{
-				print "<td align=\"center\"><a href=\"ligne.php?rowid=$objp->rowid&amp;account=".$acct->id."\">";
+				print "<td align=\"center\"><a href=\"ligne.php?rowid=$objp->rowid&amp;account=".$object->id."\">";
 				print img_edit();
 				print "</a></td>";
 			}
@@ -522,6 +539,7 @@ else
 	print "</table></form>\n";
 }
 
-$db->close();
 
 llxFooter();
+
+$db->close();

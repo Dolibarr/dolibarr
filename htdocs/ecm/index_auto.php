@@ -414,7 +414,7 @@ if (! empty($conf->global->ECM_AUTO_TREE_ENABLED))
 	
 }
 
-print_fiche_titre($langs->trans("ECMArea").' - '.$langs->trans("ECMFileManager"));
+print load_fiche_titre($langs->trans("ECMArea").' - '.$langs->trans("ECMFileManager"));
 
 $helptext1=''; $helptext2='';
 $helptext1.=$langs->trans("ECMAreaDesc");

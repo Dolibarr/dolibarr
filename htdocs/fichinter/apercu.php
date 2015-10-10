@@ -101,7 +101,7 @@ if ($id > 0 || ! empty($ref))
 		if (file_exists($file))
 		{
 			$encfile = urlencode($file);
-			print_titre($langs->trans("Documents"));
+			print load_fiche_titre($langs->trans("Documents"));
 			print '<table class="border" width="100%">';
 
 			print "<tr ".$bc[$var]."><td>".$langs->trans("Intervention")." PDF</td>";

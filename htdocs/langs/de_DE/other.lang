@@ -1,8 +1,8 @@
 # Dolibarr language file - Source file is en_US - other
 SecurityCode=Sicherheitsschlüssel
 Calendar=Kalender
-Tools=Werkzeuge
-ToolsDesc=Diese Seite ist eine Zusammenstellung "Verschiedener Werkzeuge" die nicht in andere Menüeinträgen passen.<br><br> Diese Tools können Sie über dieses Menü auf dieser Seite erreichen.\n
+Tools=Hilfsprogramme
+ToolsDesc=Diese Seite ist eine Zusammenstellung "Verschiedener Hilfsprogramme" die nicht in andere Menüpunkte passen.<br><br> Diese Hilfsprogramme können Sie über dieses Menü auf dieser Seite erreichen.
 Birthday=Geburtstag
 BirthdayDate=Geburtstag
 DateToBirth=Geburtsdatum
@@ -204,6 +204,7 @@ ClickHereToGoTo=Hier klicken für %s
 YouMustClickToChange=Sie müssen zuerst auf den folgenden Link klicken um die Passwortänderung zu bestätigen.
 ForgetIfNothing=Wenn Sie diese Änderung nicht beantragt haben, löschen Sie einfach dieses Mail. Ihre Anmeldedaten sind sicher bei uns aufbewahrt.
 IfAmountHigherThan=Wenn der Betrag höher als <strong>%s</strong>
+SourcesRepository=Repository für Quellcodes
 
 ##### Calendar common #####
 AddCalendarEntry=Neuer Eintrag im Kalender %s

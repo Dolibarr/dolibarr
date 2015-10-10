@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -99,6 +99,13 @@ if ($socid > 0)
 
 	$head = societe_prepare_head($objsoc);
 
+	
+	
+	print '<form method="POST" action="remise.php?id='.$objsoc->id.'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="action" value="setremise">';
+    print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+
 	dol_fiche_head($head, 'relativediscount', $langs->trans("ThirdParty"),0,'company');
 
 
@@ -117,12 +124,7 @@ if ($socid > 0)
 	print '</table>';
 	print '<br>';
 
-	print_fiche_titre($langs->trans("NewRelativeDiscount"),'','');
-
-	print '<form method="POST" action="remise.php?id='.$objsoc->id.'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<input type="hidden" name="action" value="setremise">';
-    print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+	print load_fiche_titre($langs->trans("NewRelativeDiscount"),'','');
 
 	print '<table class="border" width="100%">';
 
@@ -136,6 +138,8 @@ if ($socid > 0)
 
 	print "</table>";
 
+	dol_fiche_end();
+	
 	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
     if (! empty($backtopage))
@@ -146,8 +150,6 @@ if ($socid > 0)
 	print '</div>';
 
 	print "</form>";
-
-	dol_fiche_end();
 
 	print '<br>';
 

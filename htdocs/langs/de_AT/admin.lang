@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - admin
-VersionRecommanded=Empfohlen
 UseSearchToSelectCompany=Suchfeld statt Listenansicht für Partnerauswahl verwenden
 NextValue=Nächste Wert
 ImportMySqlDesc=Zum Wiederherstellen einer Sicherungsdatei müssen Sie folgenden Befehl über die Kommandozeile ausführen:
@@ -23,7 +22,6 @@ Permission62=Eingriffe erstellen/bearbeiten
 Permission64=Eingriffe löschen
 Permission67=Eingriffe exportieren
 Permission153=Dauerauftragsbelege einsehen
-Permission171=Reisen erstellen/bearbeiten
 Permission172=Reisen löschen
 Permission192=Leitungen anlegen
 Permission193=Leitungen verwerfen

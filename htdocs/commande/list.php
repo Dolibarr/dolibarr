@@ -55,6 +55,7 @@ $socid=GETPOST('socid','int');
 $search_user=GETPOST('search_user','int');
 $search_sale=GETPOST('search_sale','int');
 $search_total_ht=GETPOST('search_total_ht','alpha');
+$optioncss = GETPOST('optioncss','alpha');
 
 // Security check
 $id = (GETPOST('orderid')?GETPOST('orderid'):GETPOST('id','int'));
@@ -250,6 +251,7 @@ if ($resql)
 	if ($search_user > 0) 		$param.='&search_user='.$search_user;
 	if ($search_sale > 0) 		$param.='&search_sale='.$search_sale;
 	if ($search_total_ht != '') $param.='&search_total_ht='.$search_total_ht;
+	if ($optioncss != '') $param.='&optioncss='.$optioncss;
 
 	$num = $db->num_rows($resql);
 	print_barre_liste($title, $page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords,'title_commercial.png');
@@ -257,9 +259,8 @@ if ($resql)
 
 	// Lignes des champs de filtre
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
+	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
-
-	print '<table class="noborder" width="100%">';
 
 	$moreforfilter='';
 
@@ -272,15 +273,15 @@ if ($resql)
 		$moreforfilter.=$formother->select_salesrepresentatives($search_sale, 'search_sale', $user, 0, 1, 'maxwidth300');
 	 	$moreforfilter.='</div>';
  	}
-	// If the user can view prospects other than his'
-	if ($user->rights->societe->client->voir || $socid)
+	// If the user can view other users
+	if ($user->rights->user->user->lire)
 	{
 		$moreforfilter.='<div class="divsearchfield">';
 		$moreforfilter.=$langs->trans('LinkedToSpecificUsers'). ': ';
 	    $moreforfilter.=$form->select_dolusers($search_user, 'search_user', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 	 	$moreforfilter.='</div>';
 	}
-	// If the user can view prospects other than his'
+	// If the user can view categories or products
 	if ($conf->categorie->enabled && $user->rights->produit->lire)
 	{
 		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
@@ -292,7 +293,7 @@ if ($resql)
 	}
 	if (! empty($moreforfilter))
 	{
-		print '<div class="liste_titre">';
+		print '<div class="liste_titre liste_titre_bydiv centpercent">';
 		print $moreforfilter;
     	$parameters=array();
     	$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
@@ -300,6 +301,7 @@ if ($resql)
     	print '</div>';
 	}
 
+    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans('Ref'),$_SERVER["PHP_SELF"],'c.ref','',$param,'width="25%"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('RefCustomerOrder'),$_SERVER["PHP_SELF"],'c.ref_client','',$param,'',$sortfield,$sortorder);
@@ -338,7 +340,7 @@ if ($resql)
 	print '</td>';
 	print '<td align="right">';
 	$liststatus=array('0'=>$langs->trans("StatusOrderDraftShort"), '1'=>$langs->trans("StatusOrderValidated"), '2'=>$langs->trans("StatusOrderSentShort"), '3'=>$langs->trans("StatusOrderToBill"), '4'=>$langs->trans("StatusOrderProcessed"), '-1'=>$langs->trans("StatusOrderCanceledShort"));
-	print $form->selectarray('viewstatut', $liststatus, $viewstatut, 1);
+	print $form->selectarray('viewstatut', $liststatus, $viewstatut, -4);
 	print '</td>';
 	print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
@@ -357,9 +359,11 @@ if ($resql)
         $var=!$var;
         print '<tr '.$bc[$var].'>';
         print '<td class="nowrap">';
-
         $generic_commande->id=$objp->rowid;
         $generic_commande->ref=$objp->ref;
+	    $generic_commande->statut = $objp->fk_statut;
+	    $generic_commande->date_commande = $db->jdate($objp->date_commande);
+	    $generic_commande->date_livraison = $db->jdate($objp->date_delivery);
         $generic_commande->ref_client = $objp->ref_client;
         $generic_commande->total_ht = $objp->total_ht;
         $generic_commande->total_tva = $objp->total_tva;
@@ -444,8 +448,9 @@ if ($resql)
 
         // warning late icon
 		print '<td style="min-width: 20px" class="nobordernopadding nowrap">';
-		if (($objp->fk_statut > 0) && ($objp->fk_statut < 3) && max($db->jdate($objp->date_commande),$db->jdate($objp->date_delivery)) < ($now - $conf->commande->client->warning_delay))
-			print img_picto($langs->trans("Late"),"warning");
+		if ($generic_commande->hasDelay()) {
+			print img_picto($langs->trans("Late"), "warning");
+		}
 		if(!empty($objp->note_private))
 		{
 			print ' <span class="note">';

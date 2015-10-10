@@ -85,7 +85,7 @@ if (! empty($id)) {
 	$sql .= " l.fk_code_ventilation, aa.account_number, aa.label";
 	$sql .= " FROM " . MAIN_DB_PREFIX . "facturedet as l";
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON p.rowid = l.fk_product";
-	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accountingaccount as aa ON l.fk_code_ventilation = aa.rowid";
+	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON l.fk_code_ventilation = aa.rowid";
 	$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "facture as f ON f.rowid = l.fk_facture";
 	$sql .= " WHERE f.fk_statut > 0 AND l.rowid = " . $id;
 
@@ -108,7 +108,7 @@ if (! empty($id)) {
 			print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
 			print '<input type="hidden" name="action" value="ventil">';
 
-			print_fiche_titre($langs->trans('CustomersVentilation'),'','title_setup');
+			print load_fiche_titre($langs->trans('CustomersVentilation'),'','title_setup');
 
             dol_fiche_head();
 

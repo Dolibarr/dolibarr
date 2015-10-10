@@ -35,6 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/contact.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -224,13 +225,7 @@ if (empty($reshook))
 			} else {
 				// Categories association
 				$contcats = GETPOST( 'contcats', 'array' );
-				if (!empty( $contcats )) {
-					$cat = new Categorie( $db );
-					foreach ($contcats as $id_category) {
-						$cat->fetch( $id_category );
-						$cat->add_type( $object, 'contact' );
-					}
-				}
+				$object->setCategories($contcats);
 			}
         }
 
@@ -283,13 +278,73 @@ if (empty($reshook))
             $action = 'edit';
         }
 
+
         if (! $error)
         {
         	$contactid=GETPOST("contactid",'int');
 
             $object->fetch($contactid);
 
-            $object->oldcopy=dol_clone($object);
+            // Photo save
+            $dir = $conf->societe->dir_output."/contact/".$object->id."/photos";
+            $file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
+            if ($file_OK)
+            {
+                if (GETPOST('deletephoto'))
+                {
+                    $fileimg=$dir.'/'.$object->photo;
+                    $dirthumbs=$dir.'/thumbs';
+                    dol_delete_file($fileimg);
+                    dol_delete_dir_recursive($dirthumbs);
+                    $object->photo = '';
+                }
+
+                if (image_format_supported($_FILES['photo']['name']) > 0)
+                {
+                    dol_mkdir($dir);
+
+                    if (@is_dir($dir))
+                    {
+                        $newfile=$dir.'/'.dol_sanitizeFileName($_FILES['photo']['name']);
+                        $result = dol_move_uploaded_file($_FILES['photo']['tmp_name'], $newfile, 1);
+
+                        if (! $result > 0)
+                        {
+                            $errors[] = "ErrorFailedToSaveFile";
+                        }
+                        else
+                        {
+                            $object->photo = dol_sanitizeFileName($_FILES['photo']['name']);
+                            // Create small thumbs for company (Ratio is near 16/9)
+                            // Used on logon for example
+                            $imgThumbSmall = vignette($newfile, $maxwidthsmall, $maxheightsmall, '_small', $quality);
+
+                            // Create mini thumbs for company (Ratio is near 16/9)
+                            // Used on menu or for setup page for example
+                            $imgThumbMini = vignette($newfile, $maxwidthmini, $maxheightmini, '_mini', $quality);
+                        }
+                    }
+                }
+                else
+                {
+                    $errors[] = "ErrorBadImageFormat";
+                }
+            }
+            else
+            {
+                switch($_FILES['photo']['error'])
+                {
+                    case 1: //uploaded file exceeds the upload_max_filesize directive in php.ini
+                    case 2: //uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the html form
+                        $errors[] = "ErrorFileSizeTooLarge";
+                        break;
+                    case 3: //uploaded file was only partially uploaded
+                        $errors[] = "ErrorFilePartiallyUploaded";
+                        break;
+                }
+            }
+
+			$object->oldcopy = clone$object;
 
             $object->old_lastname	= GETPOST("old_lastname");
             $object->old_firstname	= GETPOST("old_firstname");
@@ -304,6 +359,7 @@ if (empty($reshook))
             $object->zip			= GETPOST("zipcode");
             $object->town			= GETPOST("town");
             $object->state_id   	= GETPOST("state_id",'int');
+            $object->fk_departement	= GETPOST("state_id",'int');	// For backward compatibility
             $object->country_id		= GETPOST("country_id",'int');
 
             $object->email			= GETPOST("email",'alpha');
@@ -333,13 +389,8 @@ if (empty($reshook))
 
 				// Then we add the associated categories
 				$categories = GETPOST( 'contcats', 'array' );
-				if (!empty( $categories )) {
-					$cat = new Categorie( $db );
-					foreach ($categories as $id_category) {
-						$cat->fetch( $id_category );
-						$cat->add_type( $object, 'contact' );
-					}
-				}
+				$object->setCategories($categories);
+
                 $object->old_lastname='';
                 $object->old_firstname='';
                 $action = 'view';
@@ -443,7 +494,7 @@ else
 
             $title = $addcontact = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("AddContact") : $langs->trans("AddContactAddress"));
             $linkback='';
-            print_fiche_titre($title,$linkback,'title_companies.png');
+            print load_fiche_titre($title,$linkback,'title_companies.png');
 
             // Affiche les erreurs
             dol_htmloutput_errors(is_numeric($error)?'':$error,$errors);
@@ -626,7 +677,7 @@ else
 
 
             // Add personnal information
-            print_fiche_titre('<div class="comboperso">'.$langs->trans("PersonalInformations").'</div>','','');
+            print load_fiche_titre('<div class="comboperso">'.$langs->trans("PersonalInformations").'</div>','','');
 
             print '<table class="border" width="100%">';
 
@@ -646,7 +697,7 @@ else
             print '<td colspan="2"><label for="birthday_alert">'.$langs->trans("Alert").'</label>: ';
             if ($object->birthday_alert)
             {
-                print '<input type="checkbox" name="birthday_alert" id="birthday_aler" checked></td>';
+                print '<input type="checkbox" name="birthday_alert" id="birthday_alert" checked></td>';
             }
             else
             {
@@ -709,7 +760,7 @@ else
 				print '</script>'."\n";
             }
 
-            print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" name="formsoc">';
+            print '<form enctype="multipart/form-data" method="post" action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" name="formsoc">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<input type="hidden" name="id" value="'.$id.'">';
             print '<input type="hidden" name="action" value="update">';
@@ -916,6 +967,23 @@ else
             else print $langs->trans("NoDolibarrAccess");
             print '</td></tr>';
 
+            // Photo
+            print '<tr class="hideonsmartphone">';
+            print '<td>'.fieldLabel('Photo','photoinput').'</td>';
+            print '<td colspan="3">';
+            if ($object->photo) {
+                print $form->showphoto('contact',$object);
+                print "<br>\n";
+            }
+            print '<table class="nobordernopadding">';
+            if ($object->photo) print '<tr><td><input type="checkbox" class="flat" name="deletephoto" id="photodelete"> '.$langs->trans("Delete").'<br><br></td></tr>';
+            //print '<tr><td>'.$langs->trans("PhotoFile").'</td></tr>';
+            print '<tr><td><input type="file" class="flat" name="photo" id="photoinput"></td></tr>';
+            print '</table>';
+
+            print '</td>';
+            print '</tr>';
+
             print '</table>';
 
             print dol_fiche_end();
@@ -983,12 +1051,12 @@ else
 
         // Name
         print '<tr><td width="20%">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</td><td width="30%">'.$object->lastname.'</td>';
-        print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="30%">'.$object->firstname.'</td></tr>';
+        print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="30%">'.$object->firstname.'</td>';
 
         // Company
         if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
         {
-            print '<tr><td>'.$langs->trans("ThirdParty").'</td><td colspan="3">';
+            print '<tr><td>'.$langs->trans("ThirdParty").'</td><td colspan="2">';
             if ($object->socid > 0)
             {
                 $objsoc->fetch($object->socid);
@@ -998,30 +1066,44 @@ else
             {
                 print $langs->trans("ContactNotLinkedToCompany");
             }
-            print '</td></tr>';
+            print '</td>';
         }
 
+        // Photo
+        if ($object->photo)
+        {
+            print '<td rowspan="6" style="text-align: center;" width="25%">';
+            print $form->showphoto('contact',$object);
+            print '</td>';
+        } else {
+            print '<td rowspan="6" style="text-align: center;" width="25%">';
+            print '&nbsp;';
+            print '</td>';
+        }
+
+        print '</tr>';
+
         // Civility
-        print '<tr><td width="15%">'.$langs->trans("UserTitle").'</td><td colspan="3">';
+        print '<tr><td width="15%">'.$langs->trans("UserTitle").'</td><td colspan="2">';
         print $object->getCivilityLabel();
         print '</td></tr>';
 
         // Role
-        print '<tr><td>'.$langs->trans("PostOrFunction").'</td><td colspan="3">'.$object->poste.'</td>';
+        print '<tr><td>'.$langs->trans("PostOrFunction").'</td><td colspan="2">'.$object->poste.'</td>';
 
         // Address
-        print '<tr><td>'.$langs->trans("Address").'</td><td colspan="3">';
+        print '<tr><td>'.$langs->trans("Address").'</td><td colspan="2">';
         dol_print_address($object->address,'gmap','contact',$object->id);
         print '</td></tr>';
 
         // Zip/Town
-        print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td colspan="3">';
+        print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td colspan="2">';
         print $object->zip;
         if ($object->zip) print '&nbsp;';
         print $object->town.'</td></tr>';
 
         // Country
-        print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3">';
+        print '<tr><td>'.$langs->trans("Country").'</td><td colspan="2">';
         $img=picto_from_langcode($object->country_code);
         if ($img) print $img.' ';
         print $object->country;
@@ -1030,7 +1112,7 @@ else
         // State
         if (empty($conf->global->SOCIETE_DISABLE_STATE))
         {
-            print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">'.$object->state.'</td>';
+            print '<tr><td>'.$langs->trans('State').'</td><td colspan="2">'.$object->state.'</td>';
         }
 
         // Phone

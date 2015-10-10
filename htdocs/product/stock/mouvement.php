@@ -358,7 +358,7 @@ if ($resql)
 	/*
     if ($action == "correction")
     {
-        print_titre($langs->trans("StockCorrection"));
+        print load_fiche_titre($langs->trans("StockCorrection"));
         print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="post">'."\n";
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="action" value="correct_stock">';
@@ -399,7 +399,7 @@ if ($resql)
 
     if ($action == "transfert")
     {
-        print_titre($langs->trans("Transfer"));
+        print load_fiche_titre($langs->trans("Transfer"));
         print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="post">'."\n";
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="action" value="transfert_stock">';
@@ -498,7 +498,6 @@ if ($resql)
     print "</tr>\n";
 
     // Lignes des champs de filtre
-
     print '<tr class="liste_titre">';
     print '<td class="liste_titre" valign="right">';
     print '<input class="flat" type="text" size="2" maxlength="2" placeholder="'.dol_escape_htmltag($langs->trans("Month")).'" name="month" value="'.$month.'">';
@@ -549,7 +548,6 @@ if ($resql)
     print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" name="button_removefilter" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
     print '</td>';
     print "</tr>\n";
-    print '</form>';
 
     $arrayofuniqueproduct=array();
 
@@ -621,7 +619,7 @@ if ($resql)
     }
     $db->free($resql);
 
-    print "</table><br>";
+    print "</table></form><br>";
 
     // Add number of product when there is a filter on period
     if (count($arrayofuniqueproduct) == 1 && is_numeric($year))

@@ -31,14 +31,8 @@ require_once DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php";
  */
 class Resource extends CommonObject
 {
-	var $db;							//!< To store db handler
-	var $error;							//!< To return error code (or message)
-	var $errors=array();				//!< To return several error codes (or messages)
 	var $element='resource';			//!< Id that identify managed objects
 	var $table_element='resource';	//!< Name of table without prefix where object is stored
-
-    var $id;
-
 
 	var $resource_id;
 	var $resource_type;
@@ -49,7 +43,6 @@ class Resource extends CommonObject
 	var $fk_user_create;
 	var $type_label;
 	var $tms='';
-
 
     /**
      *  Constructor
@@ -84,7 +77,7 @@ class Resource extends CommonObject
 
 
     	// Insert request
-    	$sql = "INSERT INTO ".MAIN_DB_PREFIX."resource(";
+    	$sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."(";
 
     	$sql.= " entity,";
     	$sql.= "ref,";
@@ -114,7 +107,7 @@ class Resource extends CommonObject
 
     	if (! $error)
     	{
-    		$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."place");
+    		$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
 
     		if (! $notrigger)
     		{
@@ -164,7 +157,7 @@ class Resource extends CommonObject
     	$sql.= " t.note_private,";
     	$sql.= " t.tms,";
     	$sql.= " ty.label as type_label";
-    	$sql.= " FROM ".MAIN_DB_PREFIX."resource as t";
+    	$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
     	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_resource as ty ON ty.code=t.fk_code_type_resource";
     	$sql.= " WHERE t.rowid = ".$this->db->escape($id);
 
@@ -216,7 +209,7 @@ class Resource extends CommonObject
     	if (isset($this->description)) $this->description=trim($this->description);
 
     	// Update request
-    	$sql = "UPDATE ".MAIN_DB_PREFIX."resource SET";
+    	$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
     	$sql.= " ref=".(isset($this->ref)?"'".$this->db->escape($this->ref)."'":"null").",";
     	$sql.= " description=".(isset($this->description)?"'".$this->db->escape($this->description)."'":"null").",";
     	$sql.= " fk_code_type_resource=".(isset($this->fk_code_type_resource)?"'".$this->db->escape($this->fk_code_type_resource)."'":"null").",";
@@ -340,7 +333,7 @@ class Resource extends CommonObject
             // End call triggers
         }
 
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."resource";
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
         $sql.= " WHERE rowid =".$rowid;
 
         dol_syslog(get_class($this)."::delete", LOG_DEBUG);
@@ -386,7 +379,7 @@ class Resource extends CommonObject
     	$sql.= " t.fk_code_type_resource,";
     	$sql.= " t.tms,";
     	$sql.= " ty.label as type_label";
-    	$sql.= " FROM ".MAIN_DB_PREFIX."resource as t";
+    	$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
     	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_resource as ty ON ty.code=t.fk_code_type_resource";
     	$sql.= " WHERE t.entity IN (".getEntity('resource',1).")";
 

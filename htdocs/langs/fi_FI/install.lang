@@ -209,6 +209,6 @@ MigrationActioncommElement=Päivitä tiedot toimista
 MigrationPaymentMode=Tiedot muuttoliike maksua tilassa
 MigrationCategorieAssociation=Kategorioiden siirto 
 MigrationEvents=Migration of events to add event owner into assignement table
-
+MigrationReloadModule=Reload module %s
 ShowNotAvailableOptions=Näytä ei saatavilla olevat valinnat
 HideNotAvailableOptions=Piilota ei saatavilla olevat valinnat

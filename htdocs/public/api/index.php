@@ -31,7 +31,7 @@ $res=0;
 if (! $res && file_exists("../../main.inc.php")) $res=include '../../main.inc.php';
 if (! $res) die("Include of main fails");
 
-require_once DOL_DOCUMENT_ROOT.'/includes/restler/vendor/autoload.php';
+require_once DOL_DOCUMENT_ROOT.'/api/restler.php';
 require_once DOL_DOCUMENT_ROOT.'/api/class/api.class.php';
 require_once DOL_DOCUMENT_ROOT.'/api/class/api_access.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -110,8 +110,11 @@ foreach ($modulesdir as $dir)
                             {
                                 $classname=$reg[1];
                                 $classname = str_replace('Api_','',ucwords($reg[1])).'Api';
+                                $classname = ucfirst($classname);
                                 require_once $dir_part.$file_searched;
-                                if(class_exists($classname)) {
+                                if (class_exists($classname)) 
+                                {
+                                    dol_syslog("Found API classname=".$classname);    
                                     $api->r->addAPIClass($classname,'');
                                 }
                             }

@@ -115,7 +115,6 @@ $tasksrole=($mine ? $taskstatic->getUserRolesForProjectsOrTasks(0,$user,$project
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="mode" value="'.GETPOST('mode').'">';
-print '<table class="noborder" width="100%">';
 
 // If the user can view users
 if ($user->rights->user->user->lire)
@@ -134,7 +133,7 @@ if ($user->rights->user->user->lire)
 }
 if (! empty($moreforfilter))
 {
-	print '<div class="liste_titre">';
+	print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	print $moreforfilter;
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
@@ -142,6 +141,7 @@ if (! empty($moreforfilter))
 	print '</div>';
 }
 
+print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'" id="tablelines3">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Project").'</td>';
 print '<td>'.$langs->trans("ProjectStatus").'</td>';
@@ -180,14 +180,14 @@ print '<input type="image" class="liste_titre" name="button_search" src="'.img_p
 print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("RemoveFilter"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
 print '</td>';
 
-$max=1000;
+$max=10000;
 
 if (count($tasksarray) > (empty($conf->global->PROJECT_LIMIT_TASK_PROJECT_AREA)?$max:$conf->global->PROJECT_LIMIT_TASK_PROJECT_AREA))
 {
 	$langs->load("errors");
 	print '<tr '.$bc[0].'>';
 	print '<td colspan="9">';
-	print $langs->trans("WarningTooManyDataPleaseUseMoreFilters");
+	print $langs->trans("WarningTooManyDataPleaseUseMoreFilters", $max, 'PROJECT_LIMIT_TASK_PROJECT_AREA');
 	print '</td></tr>';
 }
 else

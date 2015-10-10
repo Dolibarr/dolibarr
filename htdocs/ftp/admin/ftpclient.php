@@ -138,7 +138,7 @@ $form=new Form($db);
 llxHeader();
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("FTPClientSetup"), $linkback, 'title_setup');
+print load_fiche_titre($langs->trans("FTPClientSetup"), $linkback, 'title_setup');
 print '<br>';
 
 if (! function_exists('ftp_connect'))

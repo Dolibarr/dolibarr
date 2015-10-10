@@ -17,6 +17,11 @@
  * or see http://www.gnu.org/
  */
 
+
+// TODO This is an action include, not a presentation template.
+// Move this file into htdocs/core/actions_document.inc.php
+
+
 // Variable $upload_dir must be defined when entering here
 
 // Send file/link

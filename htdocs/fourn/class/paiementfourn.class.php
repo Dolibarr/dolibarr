@@ -36,21 +36,6 @@ class PaiementFourn extends Paiement
     public $element='payment_supplier';
     public $table_element='paiementfourn';
 
-    var $id;
-	var $ref;
-	var $facid;
-	var $datepaye;
-	var $total;
-    var $amount;            // Total amount of payment
-    var $amounts=array();   // Array of amounts
-	var $author;
-	var $paiementid;	// Type de paiement. Stocke dans fk_paiement
-						// de llx_paiement qui est lie aux types de
-						//paiement de llx_c_paiement
-	var $num_paiement;	// Numero du CHQ, VIR, etc...
-	var $bank_account;	// Id compte bancaire du paiement
-	var $bank_line;		// Id de la ligne d'ecriture bancaire
-	var $note;
     var $statut;        //Status of payment. 0 = unvalidated; 1 = validated
 	// fk_paiement dans llx_paiement est l'id du type de paiement (7 pour CHQ, ...)
 	// fk_paiement dans llx_paiement_facture est le rowid du paiement

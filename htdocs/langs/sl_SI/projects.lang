@@ -1,6 +1,8 @@
 # Dolibarr language file - Source file is en_US - projects
 RefProject=Ref. project
+ProjectRef=Project ref.
 ProjectId=Id projekta
+ProjectLabel=Project label
 Project=Projekt
 Projects=Projekti
 ProjectStatus=Project status
@@ -27,7 +29,7 @@ OfficerProject=Projekt vodje
 LastProjects=Zadnjih %s projektov
 AllProjects=Vsi projekti
 OpenedProjects=Opened projects
-OpportunitiesStatusForOpenedProjects=Opportunities status for opened projects
+OpportunitiesStatusForOpenedProjects=Opportunities amount of opened projects by status
 ProjectsList=Seznam projektov
 ShowProject=Prikaži projekt
 SetProject=Nastavi projekt
@@ -143,7 +145,8 @@ SelectElement=Izberi element
 AddElement=Povezava do elementa
 UnlinkElement=Nepovezan element
 # Documents models
-DocumentModelBaleine=Model poročila za celoten projekt (logo...)
+DocumentModelBeluga=Project template for linked objects overview
+DocumentModelBaleine=Project report template for tasks
 PlannedWorkload=Planirana delovna obremenitev
 PlannedWorkloadShort=Workload
 WorkloadOccupation=Workload assignation

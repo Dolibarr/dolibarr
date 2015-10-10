@@ -108,7 +108,7 @@ if ($action == 'delete')
 llxHeader();
 
 
-print_fiche_titre($langs->trans("Rubriques"), '', 'title_bank.png');
+print load_fiche_titre($langs->trans("Rubriques"), '', 'title_bank.png');
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -158,7 +158,6 @@ if ($result)
 	$db->free($result);
 }
 
-print "</form>";
 
 /*
  * Line to add category
@@ -172,9 +171,7 @@ if ($action != 'edit')
 	print '</tr>';
 }
 
-print "</table>";
-
-print "</form>";
+print '</table></form>';
 
 llxFooter();
 

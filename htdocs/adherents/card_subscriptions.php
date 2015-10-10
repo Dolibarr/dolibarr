@@ -621,7 +621,9 @@ if ($rowid > 0)
     if ($object->datefin)
     {
         print dol_print_date($object->datefin,'day');
-        if ($object->datefin < ($now -  $conf->adherent->cotisation->warning_delay) && $object->statut > 0) print " ".img_warning($langs->trans("Late")); // Affiche picto retard uniquement si non brouillon et non resilie
+        if ($object->hasDelay()) {
+            print " ".img_warning($langs->trans("Late"));
+        }
     }
     else
     {
@@ -825,7 +827,7 @@ if ($rowid > 0)
     {
         print '<br>';
 
-        print_fiche_titre($langs->trans("NewCotisation"));
+        print load_fiche_titre($langs->trans("NewCotisation"));
 
         // Define default choice to select
         $bankdirect=0;        // 1 means option by default is write to bank direct with no invoice

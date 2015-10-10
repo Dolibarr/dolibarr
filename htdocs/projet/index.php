@@ -62,7 +62,7 @@ llxHeader("",$langs->trans("Projects"),"EN:Module_Projects|FR:Module_Projets|ES:
 $text=$langs->trans("Projects");
 if ($mine) $text=$langs->trans("MyProjects");
 
-print_fiche_titre($text,'','title_project.png');
+print load_fiche_titre($text,'','title_project.png');
 
 // Show description of content
 if ($mine) print $langs->trans("MyProjectsDesc").'<br><br>';

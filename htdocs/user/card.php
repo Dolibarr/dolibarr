@@ -256,11 +256,13 @@ if (empty($reshook)) {
     }
 
 // Action add usergroup
-    if (($action == 'addgroup' || $action == 'removegroup') && $caneditfield) {
-        if ($group) {
-            $editgroup = new UserGroup($db);
-            $editgroup->fetch($group);
-            $editgroup->oldcopy = dol_clone($editgroup);
+if (($action == 'addgroup' || $action == 'removegroup') && $caneditfield)
+{
+    if ($group)
+    {
+        $editgroup = new UserGroup($db);
+        $editgroup->fetch($group);
+		$editgroup->oldcopy=clone $editgroup;
 
             $object->fetch($id);
             if ($action == 'addgroup') {
@@ -300,18 +302,7 @@ if (empty($reshook)) {
             if (!$error) {
                 $object->fetch($id);
 
-                // Test if new login
-                if (GETPOST("login") && GETPOST("login") != $object->login) {
-                    dol_syslog("New login ".$object->login." is requested. We test it does not exists.");
-                    $tmpuser = new User($db);
-                    $result = $tmpuser->fetch(0, GETPOST("login"));
-                    if ($result > 0) {
-                        setEventMessage($langs->trans("ErrorLoginAlreadyExists", GETPOST('login')), 'errors');
-                        $action = "edit";       // Go back to create page
-                        $error ++;
-                    }
-                }
-            }
+			$object->oldcopy = clone $object;
 
             if (!$error) {
                 $db->begin();
@@ -342,7 +333,25 @@ if (empty($reshook)) {
                 $object->salaryextra = GETPOST("salaryextra") != '' ? GETPOST("salaryextra") : '';
                 $object->weeklyhours = GETPOST("weeklyhours") != '' ? GETPOST("weeklyhours") : '';
 
-                $object->color = GETPOST("color") != '' ? GETPOST("color") : '';
+            if (! empty($conf->multicompany->enabled))
+            {
+            	if (! empty($_POST["superadmin"]))
+            	{
+            		$object->entity = 0;
+            	}
+            	else if ($conf->multicompany->transverse_mode)
+            	{
+            		$object->entity = 1; // all users in master entity
+            	}
+            	else
+            	{
+            		$object->entity = (! GETPOST('entity', 'int') ? 0 : GETPOST('entity', 'int'));
+            	}
+            }
+            else
+            {
+            	$object->entity = (! GETPOST('entity', 'int') ? 0 : GETPOST('entity', 'int'));
+            }
 
                 // Fill array 'array_options' with data from add form
                 $ret = $extrafields->setOptionalsFromPost($extralabels, $object);
@@ -453,7 +462,9 @@ if (empty($reshook)) {
                     $login = $_SESSION["dol_login"];
                     if ($login && $login == $object->oldcopy->login && $object->oldcopy->login != $object->login)    // Current user has changed its login
                     {
-                        $_SESSION["dol_login"] = $object->login;    // Set new login to avoid disconnect at next page
+                    	$error++;
+                    	$langs->load("errors");
+                    	setEventMessages($langs->transnoentitiesnoconv("ErrorFailedToCreateDir", $dir), $mesgs, 'errors');
                     }
                 } else {
                     $db->rollback();
@@ -473,6 +484,16 @@ if (empty($reshook)) {
             }
         }
     }
+
+		$object->oldcopy = clone $object;
+
+        $ret=$object->setPassword($user,$_POST["password"]);
+        if ($ret < 0)
+        {
+	        setEventMessage($object->error, 'errors');
+        }
+    }
+}
 
 // Change password with a new generated one
     if ((($action == 'confirm_password' && $confirm == 'yes')
@@ -569,7 +590,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     /*                                                                            */
     /* ************************************************************************** */
 
-    print_fiche_titre($langs->trans("NewUser"));
+    print load_fiche_titre($langs->trans("NewUser"));
 
     print $langs->trans("CreateInternalUserDesc")."<br>\n";
     print "<br>";
@@ -667,7 +688,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST" name="createuser">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="add">';
-    if (! empty($ldap_sid)) print '<input type="hidden" name="ldap_sid" value="'.$ldap_sid.'">';
+    if (! empty($ldap_sid)) print '<input type="hidden" name="ldap_sid" value="'.dol_escape_htmltag($ldap_sid).'">';
     print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
 
     dol_fiche_head('', '', '', 0, '');
@@ -783,6 +804,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     }
     else
     {
+    	require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
         // PARTIAL WORKAROUND
         $generated_fake_api_key=getRandomPassword(false);
         print '<input type="hidden" name="api_key" value="'.$generated_fake_api_key.'">';
@@ -988,7 +1010,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 	{
 		print '<tr><td>'.$langs->trans("ColorUser").'</td>';
 		print '<td>';
-		print $formother->selectColor(GETPOST('color')?GETPOST('color'):$object->color, 'color', 'usercolorconfig', 1, '', 'hideifnotset');
+		print $formother->selectColor(GETPOST('color')?GETPOST('color'):$object->color, 'color', null, 1, '', 'hideifnotset');
 		print '</td></tr>';
 	}
 
@@ -1555,7 +1577,7 @@ else
 
             if ($canreadgroup)
             {
-                print_fiche_titre($langs->trans("ListOfGroupsForUser"),'','');
+                print load_fiche_titre($langs->trans("ListOfGroupsForUser"),'','');
 
                 // On selectionne les groupes auquel fait parti le user
                 $exclude = array();
@@ -2093,7 +2115,7 @@ else
             {
 				print '<tr><td>'.$langs->trans("ColorUser").'</td>';
 				print '<td>';
-				print $formother->selectColor(GETPOST('color')?GETPOST('color'):$object->color, 'color', 'usercolorconfig', 1, '', 'hideifnotset');
+				print $formother->selectColor(GETPOST('color')?GETPOST('color'):$object->color, 'color', null, 1, '', 'hideifnotset');
 				print '</td></tr>';
 			}
 

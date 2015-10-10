@@ -27,10 +27,13 @@
  */
 
 require '../../main.inc.php';
+
+// Class
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/html.formventilation.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
+// Langs
 $langs->load("bills");
 $langs->load("compta");
 $langs->load("main");
@@ -38,23 +41,23 @@ $langs->load("accountancy");
 
 $account_parent = GETPOST('account_parent');
 $changeaccount  = GETPOST('changeaccount');
+//Search Getpost
 $search_ref     = GETPOST('search_ref','alpha');
 $search_invoice = GETPOST('search_invoice','alpha');
 $search_label   = GETPOST('search_label','alpha');
 $search_desc    = GETPOST('search_desc','alpha');
 $search_amount  = GETPOST('search_amount','alpha');
 $search_account = GETPOST('search_account','alpha');
+$search_vat     = GETPOST('search_vat','alpha');
 
+//Getpost Order and column and limit page
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
 $page = GETPOST('page','int');
-
-//if ($page == -1) { $page = 0; }
 if ($page < 0) $page = 0;
 
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-//$limit = $conf->liste_limit;
 if (! empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)) {
 	$limit = $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION;
 } else if ($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION <= 0) {
@@ -62,19 +65,11 @@ if (! empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)) {
 } else {
 	$limit = $conf->liste_limit;
 }
-//$offset = $conf->liste_limit * $page;
 $offset = $limit * $page;
 
-// TODO : remove comment
-//elarifr we can not use only
-//$sql .= " ORDER BY l.rowid";
-// f.datef will order like FA08 FA09 FA10 FA05 FA06 FA07 FA04...
-// f.facnumber will not order properly invoice / avoir / accompte you can have All AC then All AV and all FA
-// l.rowid when an invoice is edited rowid are added at end of table & facturedet.rowid are not ordered
-//if (! $sortfield) $sortfield="f.facnumber";
+
 if (! $sortfield) $sortfield="f.datef, f.facnumber, l.rowid";
 
-//if (! $sortorder) $sortorder="DESC";
 if (! $sortorder) {
 	if ($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_DONE > 0) {
 		$sortorder = " DESC ";
@@ -98,6 +93,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
     $search_desc='';
     $search_amount='';
     $search_account='';
+    $search_vat='';
 }
 
 if (is_array($changeaccount) && count($changeaccount) > 0) {
@@ -158,7 +154,7 @@ print  '<script type="text/javascript">
 $sql = "SELECT l.rowid , f.facnumber, f.rowid as facid, l.fk_product, l.description, l.total_ht, l.qty, l.tva_tx, l.fk_code_ventilation, aa.label, aa.account_number,";
 $sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type";
 $sql .= " FROM " . MAIN_DB_PREFIX . "facture as f";
-$sql .= " , " . MAIN_DB_PREFIX . "accountingaccount as aa";
+$sql .= " , " . MAIN_DB_PREFIX . "accounting_account as aa";
 $sql .= " , " . MAIN_DB_PREFIX . "facturedet as l";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON p.rowid = l.fk_product";
 $sql .= " WHERE f.rowid = l.fk_facture AND f.fk_statut >= 1 AND l.fk_code_ventilation <> 0 ";
@@ -181,8 +177,20 @@ if (strlen(trim($search_amount))) {
 if (strlen(trim($search_account))) {
 	$sql .= " AND aa.account_number like '%" . $search_account . "%'";
 }
+if (strlen(trim($search_vat))) 
+{
+	$sql .= " AND (l.tva_tx like '" . $search_vat . "%')";
+}
 if (! empty($conf->multicompany->enabled)) {
 	$sql .= " AND f.entity IN (" . getEntity("facture", 1) . ")";
+}
+// Count total nb of records with no order and no limits
+$nbtotalofrecords = 0;
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+{
+	$resql = $db->query($sql);
+	if ($resql) $nbtotalofrecords = $db->num_rows($resql);
+	else dol_print_error($db);
 }
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit + 1,$offset);
@@ -192,9 +200,16 @@ $result = $db->query($sql);
 if ($result) {
 	$num_lines = $db->num_rows($result);
 	$i = 0;
-	
-	print_barre_liste($langs->trans("InvoiceLinesDone"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num_lines);
-	
+
+	$param="";
+	if ($search_facture)   $param.="&search_facture=".$search_facture;
+	if ($search_ref) $param.="&search_ref=".$search_ref;
+	if ($search_label)   $param.="&search_label=".$search_label;
+	if ($search_desc)   $param.="&search_desc=".$search_desc;
+	if ($search_account)   $param.="&search_account=".$search_account;
+	if ($filter)       $param.="&filter=".$filter;	
+
+	print_barre_liste($langs->trans("InvoiceLinesDone"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num_lines,$nbtotalofrecords);
 	print '<td align="left"><b>' . $langs->trans("DescVentilDoneCustomer") . '</b></td>';
 	
 	print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '">';
@@ -210,6 +225,7 @@ if ($result) {
 	print_liste_field_titre($langs->trans("Label"), $_SERVER["PHP_SELF"],"p.label","",$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Description"), $_SERVER["PHP_SELF"],"l.description","",$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Amount"), $_SERVER["PHP_SELF"],"l.total_ht","",$param,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("VATRate"), $_SERVER["PHP_SELF"],"l.tva_tx","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Account"), $_SERVER["PHP_SELF"],"aa.account_number","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre('');
 	print_liste_field_titre('');
@@ -222,6 +238,7 @@ if ($result) {
 	print '<td class="liste_titre"><input type="text" class="flat" size="15" name="search_label" value="' . $search_label . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" size="15" name="search_desc" value="' . $search_desc . '"></td>';
 	print '<td class="liste_titre" align="center"><input type="text" class="flat" size="8" name="search_amount" value="' . $search_amount. '"></td>';
+	print '<td class="liste_titre" align="center">%<input type="text" class="flat" size="5" name="search_vat" value="' . $search_vat . '"></td>';
 	print '<td class="liste_titre" align="center"><input type="text" class="flat" size="15" name="search_account" value="' . $search_account . '"></td>';
 	print '<td class="liste_titre" colspan="2">&nbsp;</td>';
 	print '<td class="liste_titre" align="center"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
@@ -257,6 +274,7 @@ if ($result) {
 		print '<td>' . dol_trunc($objp->product_label, 24) . '</td>';
 		print '<td>' . nl2br(dol_trunc($objp->description, 32)) . '</td>';
 		print '<td align="right">' . price($objp->total_ht) . '</td>';
+		print '<td align="center">' . price($objp->tva_tx) . '</td>';
 		print '<td align="center">' . $codecompta . '</td>';
 		print '<td align="right">' . $objp->rowid . '</td>';
 		print '<td align="left"><a href="./card.php?id=' . $objp->rowid . '">';
@@ -273,6 +291,11 @@ if ($result) {
 }
 
 print "</table></form>";
+
+	if ($num_lines > $conf->liste_limit)
+	{
+		print_barre_liste('',$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num_lines,$nbtotalofrecords,'');
+	}
 
 llxFooter();
 $db->close();

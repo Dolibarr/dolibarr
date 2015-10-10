@@ -48,7 +48,7 @@ $version=DOL_VERSION;
 $error=0;
 $forcecommit=0;
 $excludeuser=array();
-
+$confirmed=0;
 
 /*
  * Main
@@ -85,7 +85,7 @@ $required_fields = array(
 $required_fields=array_unique(array_values(array_filter($required_fields, "dolValidElement")));
 
 if (! isset($argv[1])) {
-	print "Usage:  $script_file (nocommitiferror|commitiferror) [--server=ldapserverhost] [--excludeuser=user1,user2...]\n";
+	print "Usage:  $script_file (nocommitiferror|commitiferror) [--server=ldapserverhost] [--excludeuser=user1,user2...] [-y]\n";
     exit(-1);
 }
 
@@ -94,6 +94,7 @@ foreach($argv as $key => $val)
 	if ($val == 'commitiferror') $forcecommit=1;
 	if (preg_match('/--server=([^\s]+)$/',$val,$reg)) $conf->global->LDAP_SERVER_HOST=$reg[1];
 	if (preg_match('/--excludeuser=([^\s]+)$/',$val,$reg)) $excludeuser=explode(',',$reg[1]);
+	if (preg_match('/-y$/',$val,$reg)) $confirmed=1;
 }
 
 print "Mails sending disabled (useless in batch mode)\n";
@@ -118,9 +119,11 @@ print "excludeuser=".join(',',$excludeuser)."\n";
 print "Mapped LDAP fields=".join(',',$required_fields)."\n";
 print "\n";
 
-print "Hit Enter to continue or CTRL+C to stop...\n";
-$input = trim(fgets(STDIN));
-
+if (! $confirmed)
+{
+	print "Hit Enter to continue or CTRL+C to stop...\n";
+	$input = trim(fgets(STDIN));
+}
 
 if (empty($conf->global->LDAP_USER_DN))
 {

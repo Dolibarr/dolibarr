@@ -366,9 +366,17 @@ if ($id > 0 || ! empty($ref))
 			$resql = $db->query($sql);
 			if ($resql)
 			{
-				while ($row = $db->fetch_row($resql))
+				$num = $db->num_rows($resql);
+				$i = 0;
+				
+				if ($num)
 				{
-					$products_dispatched[$row[0]] = $row[2];
+					while ($i < $num)
+					{
+						$objd = $db->fetch_object($resql);
+						$products_dispatched[$objd->rowid] = price2num($objd->qty, 5);
+						$i++;
+					}
 				}
 				$db->free($resql);
 			}
@@ -429,7 +437,7 @@ if ($id > 0 || ! empty($ref))
 					}
 					else
 					{
-						$remaintodispatch=($objp->qty - ((int) $products_dispatched[$objp->rowid]));	// Calculation of dispatched
+						$remaintodispatch=price2num($objp->qty - ((float) $products_dispatched[$objp->rowid]), 5);	// Calculation of dispatched
 						if ($remaintodispatch < 0) $remaintodispatch=0;
 
 						if ($remaintodispatch || empty($conf->global->SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED))
@@ -605,7 +613,7 @@ if ($id > 0 || ! empty($ref))
 			{
 				print "<br/>\n";
 
-				print_titre($langs->trans("ReceivingForSameOrder"));
+				print load_fiche_titre($langs->trans("ReceivingForSameOrder"));
 
 				print '<table class="noborder" width="100%">';
 

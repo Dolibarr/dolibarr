@@ -1,12 +1,14 @@
 # Dolibarr language file - en_US - Accounting Expert
 CHARSET=UTF-8
-ACCOUNTING_EXPORT_SEPARATORCSV=Column separator for export file
-ACCOUNTING_EXPORT_DATE=Date format for export file
-ACCOUNTING_EXPORT_PIECE=Export the number of piece ?
-ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account ?
-ACCOUNTING_EXPORT_LABEL=Export the label ?
-ACCOUNTING_EXPORT_AMOUNT=Export the amount ?
-ACCOUNTING_EXPORT_DEVISE=Export the devise ?
+ACCOUNTING_EXPORT_SEPARATORCSV=Kolumnseparator för exportfil
+ACCOUNTING_EXPORT_DATE=Datumformat för exportfil
+ACCOUNTING_EXPORT_PIECE=Export the number of piece
+ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account
+ACCOUNTING_EXPORT_LABEL=Export the label
+ACCOUNTING_EXPORT_AMOUNT=Export the amount
+ACCOUNTING_EXPORT_DEVISE=Export the devise
+Selectformat=Select the format for the file
+ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
 
 Accounting=Redovisning
 Globalparameters=Globala parametrar
@@ -34,6 +36,7 @@ Selectchartofaccounts=Välj en kontoplan
 Validate=Validera
 Addanaccount=Lägg till ett redovisningskonto
 AccountAccounting=Redovisningskonto
+AccountAccountingSuggest=Accounting account suggest
 Ventilation=Fördelning
 ToDispatch=Avsändandet
 Dispatched=Levereras
@@ -48,7 +51,7 @@ NewAccount=Nytt redovisningskonto
 Update=Uppdatera
 List=Lista
 Create=Skapa
-CreateMvts=Create movement
+CreateMvts=Skapa rörelse
 UpdateAccount=Ändring av ett redovisningskonto
 UpdateMvts=Ändring av en rörelse
 WriteBookKeeping=Record konton i huvudboken
@@ -60,10 +63,10 @@ AccountingVentilationSupplier=Uppdelning redovisnings leverantör
 AccountingVentilationCustomer=Uppdelning redovisnings kund
 Line=Linje
 
-CAHTF=Totala köpesleverantörs HT
+CAHTF=Total purchase supplier before tax
 InvoiceLines=Linjer av faktura som ska ventileras
 InvoiceLinesDone=Ventilerade linjer faktura
-IntoAccount=I bokföringskonto
+IntoAccount=Ventilate in the accounting account
 
 Ventilate=Ventilera
 VentilationAuto=Automatisk uppdelning
@@ -84,15 +87,15 @@ ACCOUNTING_LIST_SORT_VENTILATION_DONE=Börja sorteringen av nedbrytnings sidor "
 
 AccountLength=Längd på redovisningen redovisning i Dolibarr
 AccountLengthDesc=Funktion som gör det möjligt att låtsas en längd av bokföringskonto genom att ersätta mellanslag med noll siffra. Den här funktionen berör endast displayen, det ändrar inte redovisningskonton registrerade i Dolibarr. För export, är nödvändigt denna funktion för att vara kompatibel med viss programvara.
-ACCOUNTING_LENGTH_DESCRIPTION=Length for displaying product & services description in listings (Best = 50)
-ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Length for displaying product & services account description form in listings (Best = 50)
+ACCOUNTING_LENGTH_DESCRIPTION=Längd för att visa produkt och tjänstebeskrivning i listor (Bäst = 50)
+ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Längd för att visa produkt och tjänstekonto  i listor (Bäst = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Längd på de allmänna räkenskaperna
 ACCOUNTING_LENGTH_AACCOUNT=Längd av tredjepartskonton
 
 ACCOUNTING_SELL_JOURNAL=Sell ​​tidskrift
 ACCOUNTING_PURCHASE_JOURNAL=Bara tidskrift
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Diverse tidskrift
-ACCOUNTING_EXPENSEREPORT_JOURNAL=Expense report journal
+ACCOUNTING_EXPENSEREPORT_JOURNAL=Utgiftsjournal
 ACCOUNTING_SOCIAL_JOURNAL=Social tidskrift
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Redogörelse för överföring
@@ -152,7 +155,7 @@ Active=Uttalande
 NewFiscalYear=Nytt räkenskapsår
 
 DescVentilCustomer=Rådgör här den årliga fördelningen redovisning av era fakturor kunder
-TotalVente=Total omsättning HT
+TotalVente=Total turnover before tax
 TotalMarge=Total försäljning marginal
 DescVentilDoneCustomer=Konsul här listan med linjerna av fakturor kunder och deras bokföringskonto
 DescVentilTodoCustomer=Ventilera dina rader av kundfaktura med en redovisningskonto
@@ -167,3 +170,4 @@ ValidateHistory=Validera Automatiskt
 ErrorAccountancyCodeIsAlreadyUse=Fel, du kan inte ta bort denna redovisningskonto eftersom den används
 
 FicheVentilation=Uppdelning kort
+GeneralLedgerIsWritten=Operations are written in the general ledger

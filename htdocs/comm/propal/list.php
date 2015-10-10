@@ -59,6 +59,7 @@ $search_author=GETPOST('search_author','alpha');
 $search_product_category=GETPOST('search_product_category','int');
 $search_town=GETPOST('search_town','alpha');
 $viewstatut=GETPOST('viewstatut');
+$optioncss = GETPOST('optioncss','alpha');
 $object_statut=GETPOST('propal_statut');
 
 $sall=GETPOST("sall");
@@ -255,14 +256,15 @@ if ($result)
 	if ($search_montant_ht)  $param.='&search_montant_ht='.$search_montant_ht;
 	if ($search_author)  	 $param.='&search_author='.$search_author;
 	if ($search_town)		 $param.='&search_town='.$search_town;
+	if ($optioncss != '') $param.='&optioncss='.$optioncss;
 
 	print_barre_liste($langs->trans('ListOfProposals').' '.($socid?'- '.$soc->name:''), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords,'title_commercial.png');
 
 	// Lignes des champs de filtre
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
+	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 
 	$i = 0;
-	print '<table class="liste" width="100%">';
 
 	$moreforfilter='';
 
@@ -295,12 +297,13 @@ if ($result)
 	}
 	if (! empty($moreforfilter))
 	{
-	    print '<tr class="liste_titre">';
-	    print '<td class="liste_titre" colspan="10">';
+        print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	    print $moreforfilter;
-	    print '</td></tr>';
+	    print '</div>';
 	}
 
+	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">';
+	
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans('Ref'),$_SERVER["PHP_SELF"],'p.ref','',$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('RefCustomer'),$_SERVER["PHP_SELF"],'p.ref_client','',$param,'',$sortfield,$sortorder);

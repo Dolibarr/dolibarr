@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - install
-InstallEasy=فقط به گام دستورالعمل های گام به گام دنبال کنید.
-MiscellaneousChecks=پیش نیازها بررسی
+InstallEasy=لطفا دستورالعمل‌ها را گام به گام اجرا کنید. 
+MiscellaneousChecks=بررسی پیش‌نیازها 
 DolibarrWelcome=به Dolibarr خوش آمدید
 ConfFileExists=فایل پیکربندی <b>%s</b> موجود است
 ConfFileDoesNotExists=فایل <b>پیکربندی٪ s</b> وجود ندارد!
@@ -155,7 +155,7 @@ MigrationFinished=مهاجرت به پایان رسید
 LastStepDesc=<strong>آخرین مرحله:</strong> تعریف اینجا کاربری و رمز عبور شما قصد استفاده برای اتصال به نرم افزار. آیا این شل نیست آن را به عنوان حساب به اداره همه دیگران است.
 ActivateModule=فعال بخش٪ s
 ShowEditTechnicalParameters=برای نشان دادن پارامترهای پیشرفته / ویرایش اینجا را کلیک کنید (حالت کارشناسی)
-WarningUpgrade=Warning:\nDid your run a database backup first ?\nThis is highly recommanded: for example, due to some bugs into databases systems (for example mysql version 5.5.40), some data or tables may be lost during this process, so it is highly recommanded to have a complete dump of your database before starting migration.\n\nClick OK to start migration process...
+WarningUpgrade=هشدار\nآیا اول از پایگاه داده پشتیبان گرفته‌اید؟\nپیشنهاد می‌شود حتما اینکار را انجام دهید: برای مثال، به دلیل برخی مشکلات در سیستم‌های پایگاه داده(مثلا نسخه 5.5 mysql )، ممکن است برخی از داده‌ها و جداول در طول این فرآیند از دست برود، بنابراین پیشنهاد می‌کنیم که رونوشت کاملی از پایگاه داده خود قبل از شروع فرآیند انتقال تهیه کنید.\nبرای شروع فرآیند انتقال OK را بزنید. 
 ErrorDatabaseVersionForbiddenForMigration=Your database version is %s. It has a critical bug making data loss if you make structure change on your database, like it is required by the migration process. For his reason, migration will not be allowed until you upgrade your database to a higher fixed version (list of known bugged version: %s)
 
 #########
@@ -209,6 +209,6 @@ MigrationActioncommElement=به روز کردن اطلاعات در مورد ا�
 MigrationPaymentMode=اطلاعات مهاجرت برای حالت پرداخت
 MigrationCategorieAssociation=مهاجرت از دسته
 MigrationEvents=Migration of events to add event owner into assignement table
-
+MigrationReloadModule=Reload module %s
 ShowNotAvailableOptions=نمایش گزینه های در دسترس نیست
 HideNotAvailableOptions=پنهان کردن گزینه های در دسترس نیست

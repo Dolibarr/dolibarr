@@ -102,7 +102,7 @@ if ($action == 'update' && isset($_POST['update_cp']))
 		}
     }
 
-    if (! $error) setEventMessages($langs->trans('UpdateConfCPOK'), '', 'mesgs');
+    if (! $error) setEventMessages('UpdateConfCPOK', '', 'mesgs');
 }
 elseif($action == 'add_event')
 {
@@ -122,7 +122,7 @@ elseif($action == 'add_event')
 
     if ($error)
     {
-	    setEventMessages($langs->trans('ErrorAddEventToUserCP'), '', 'errors');
+	    setEventMessages('ErrorAddEventToUserCP', '', 'errors');
     }
     else
 	{
@@ -135,7 +135,7 @@ elseif($action == 'add_event')
 
         $holiday->updateSoldeCP($userCP,$new_holiday);
 
-		setEventMessages($langs->trans('AddEventToUserOkCP'), '', 'mesgs');
+		setEventMessages('AddEventToUserOkCP', '', 'mesgs');
     }
 }
 
@@ -149,7 +149,7 @@ $userstatic=new User($db);
 
 llxHeader(array(),$langs->trans('CPTitreMenu'));
 
-print_fiche_titre($langs->trans('MenuConfCP'), '', 'title_hrm.png');
+print load_fiche_titre($langs->trans('MenuConfCP'), '', 'title_hrm.png');
 
 print '<div class="info">'.$langs->trans('LastUpdateCP').': '."\n";
 if ($holiday->getConfCP('lastUpdate')) print '<strong>'.dol_print_date($db->jdate($holiday->getConfCP('lastUpdate')),'dayhour','tzuser').'</strong>';
@@ -173,7 +173,7 @@ if ($cp_events == 1)
 	print '<br><form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 	print '<input type="hidden" name="action" value="add_event" />';
 
-	print_fiche_titre($langs->trans('DefineEventUserCP'),'','');
+	print load_fiche_titre($langs->trans('DefineEventUserCP'),'','');
 
 	print $langs->trans('MotifCP').' : ';
 	print $holiday->selectEventCP();

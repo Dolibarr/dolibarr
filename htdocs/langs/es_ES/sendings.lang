@@ -5,7 +5,7 @@ Sendings=Envíos
 AllSendings=Todos los envíos
 Shipment=Envío
 Shipments=Envíos
-ShowSending=Show Shipments
+ShowSending=Mostrar envíos
 Receivings=Recepciones
 SendingsArea=Área envíos
 ListOfSendings=Listado de envíos
@@ -26,8 +26,8 @@ QtyToShip=Cant. a enviar
 QtyReceived=Cant. recibida
 KeepToShip=Resto a enviar
 OtherSendingsForSameOrder=Otros envíos de este pedido
-DateSending=Shipping date
-DateSendingShort=Shipping date
+DateSending=Fecha de entrega
+DateSendingShort=Fecha de entrega
 SendingsForSameOrder=Expediciones de este pedido
 SendingsAndReceivingForSameOrder=Envíos y recepciones de este pedido
 SendingsToValidate=Envíos a validar
@@ -69,6 +69,7 @@ ProductQtyInCustomersOrdersRunning=Cantidad en pedidos de clientes abiertos
 ProductQtyInSuppliersOrdersRunning=Cantidad en pedidos a proveedores abiertos
 ProductQtyInShipmentAlreadySent=Ya ha sido enviada la cantidad del producto del pedido de cliente abierto
 ProductQtyInSuppliersShipmentAlreadyRecevied=Cantidad en pedidos a proveedores ya recibidos
+NoProductToShipFoundIntoStock=No product to ship found into warehouse <b>%s</b>. Correct sotck or go back to choose another warehouse.
 
 # Sending methods
 SendingMethodCATCH=Recogido por el cliente

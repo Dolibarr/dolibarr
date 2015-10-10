@@ -27,7 +27,7 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *	Classe de description et activation du module Workflow
+ *	Class to describe and enable module Workflow
  */
 class modWorkflow extends DolibarrModules
 {

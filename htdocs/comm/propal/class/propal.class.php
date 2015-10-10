@@ -54,23 +54,14 @@ class Propal extends CommonObject
      */
     protected $table_ref_field = 'ref';
 
-    var $id;
-
 	/**
 	 * ID of the client
 	 * @var int
 	 */
     var $socid;
-	/**
-	 * Client (loaded by fetch_client)
-	 * @var Societe
-	 */
-    var $client;
 
     var $contactid;
-    var $fk_project;
     var $author;
-    var $ref;
     var $ref_client;
 
 	/**
@@ -122,12 +113,6 @@ class Propal extends CommonObject
     var $user_valid_id;
     var $user_close_id;
 
-    var $total_ht;					// Total net of tax
-    var $total_tva;					// Total VAT
-    var $total_localtax1;			// Total Local Taxes 1
-    var $total_localtax2;			// Total Local Taxes 2
-    var $total_ttc;					// Total with tax
-
 	/**
 	 * @deprecated
 	 * @see total_ht
@@ -144,29 +129,14 @@ class Propal extends CommonObject
 	 */
     var $total;
 
-    var $cond_reglement_id;
     var $cond_reglement_code;
-    var $fk_account;				// Id of bank account
-    var $mode_reglement_id;
     var $mode_reglement_code;
     var $remise;
     var $remise_percent;
     var $remise_absolue;
-	/**
-	 * @deprecated
-	 * @see note_private, note_public
-	 */
-    var $note;
-    var $note_private;
-    var $note_public;
-	/**
-	 * @deprecated
-	 */
-    var $fk_delivery_address;
     var $fk_address;
     var $address_type;
     var $address;
-    var $shipping_method_id;
     var $availability_id;
     var $availability_code;
     var $demand_reason_id;
@@ -181,18 +151,10 @@ class Propal extends CommonObject
     var $lines = array();
     var $line;
 
-    var $origin;
-    var $origin_id;
-
     var $labelstatut=array();
     var $labelstatut_short=array();
 
     var $specimen;
-
-	//Incorterms
-	var $fk_incoterms;
-	var $location_incoterms;
-	var $libelle_incoterms;  //Used into tooltip
 
 	/**
 	 * Draft status
@@ -402,7 +364,7 @@ class Propal extends CommonObject
      * 		@param    	string		$price_base_type	HT or TTC
      * 		@param    	float		$pu_ttc             Prix unitaire TTC
      * 		@param    	int			$info_bits			Bits de type de lignes
-     *      @param      int			$type               Type of line (product, service)
+     *      @param      int			$type               Type of line (0=product, 1=service). Not used if fk_product is defined, the type of product is used.
      *      @param      int			$rang               Position of line
      *      @param		int			$special_code		Special code (also used by externals modules!)
      *      @param		int			$fk_parent_line		Id of parent line
@@ -455,14 +417,28 @@ class Propal extends CommonObject
         {
             $this->db->begin();
 
-            // Calcul du total TTC et de la TVA pour la ligne a partir de
+        	$product_type=$type;
+			if (!empty($fk_product))
+			{
+				$product=new Product($this->db);
+				$result=$product->fetch($fk_product);
+				$product_type=$product->type;
+
+				if (! empty($conf->global->STOCK_MUST_BE_ENOUGH_FOR_PROPOSAL) && $product_type == 0 && $product->stock_reel < $qty) {
+					$this->error=$langs->trans('ErrorStockIsNotEnough');
+					$this->db->rollback();
+					return -3;
+				}
+			}
+			
+			// Calcul du total TTC et de la TVA pour la ligne a partir de
             // qty, pu, remise_percent et txtva
             // TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
             // la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
 
             $localtaxes_type=getLocalTaxesFromRate($txtva,0,$this->thirdparty,$mysoc);
 
-            $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, '', $localtaxes_type);
+            $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $product_type, '', $localtaxes_type);
             $total_ht  = $tabprice[0];
             $total_tva = $tabprice[1];
             $total_ttc = $tabprice[2];
@@ -643,15 +619,15 @@ class Propal extends CommonObject
                 $price = $pu - $remise;
             }
 
-            // Update line
-            $this->line=new PropaleLigne($this->db);
+            //Fetch current line from the database and then clone the object and set it in $oldline property
+            $line = new PropaleLigne($this->db);
+            $line->fetch($rowid);
 
+			$staticline = clone $line;
+
+            $line->oldline = $staticline;
+            $this->line = $line;
             $this->line->context = $this->context;
-
-            // Stock previous line records
-            $staticline=new PropaleLigne($this->db);
-            $staticline->fetch($rowid);
-            $this->line->oldline = $staticline;
 
             // Reorder if fk_parent_line change
             if (! empty($fk_parent_line) && ! empty($staticline->fk_parent_line) && $fk_parent_line != $staticline->fk_parent_line)
@@ -858,8 +834,8 @@ class Propal extends CommonObject
         $sql.= $this->socid;
         $sql.= ", 0";
         $sql.= ", ".$this->remise;
-        $sql.= ", ".($this->remise_percent?$this->remise_percent:'null');
-        $sql.= ", ".($this->remise_absolue?$this->remise_absolue:'null');
+        $sql.= ", ".($this->remise_percent?$this->db->escape($this->remise_percent):'null');
+        $sql.= ", ".($this->remise_absolue?$this->db->escape($this->remise_absolue):'null');
         $sql.= ", 0";
         $sql.= ", 0";
         $sql.= ", '".$this->db->idate($this->date)."'";
@@ -868,7 +844,7 @@ class Propal extends CommonObject
         $sql.= ", ".($user->id > 0 ? "'".$user->id."'":"null");
         $sql.= ", '".$this->db->escape($this->note_private)."'";
         $sql.= ", '".$this->db->escape($this->note_public)."'";
-        $sql.= ", '".$this->modelpdf."'";
+        $sql.= ", '".$this->db->escape($this->modelpdf)."'";
         $sql.= ", ".($this->fin_validite!=''?"'".$this->db->idate($this->fin_validite)."'":"null");
         $sql.= ", ".$this->cond_reglement_id;
         $sql.= ", ".$this->mode_reglement_id;
@@ -1062,9 +1038,9 @@ class Propal extends CommonObject
     function createFromClone($socid=0)
     {
         global $db, $user,$langs,$conf,$hookmanager;
-		
+
 		dol_include_once('/projet/class.project.class.php');
-				
+
         $this->context['createfromclone']='createfromclone';
 
         $error=0;
@@ -1077,7 +1053,7 @@ class Propal extends CommonObject
 			$line->fetch_optionals($line->rowid);
 
         // Load source object
-        $objFrom = dol_clone($this);
+        $objFrom = clone $this;
 
         $objsoc=new Societe($this->db);
 
@@ -1089,16 +1065,16 @@ class Propal extends CommonObject
                 $this->socid 				= $objsoc->id;
                 $this->cond_reglement_id	= (! empty($objsoc->cond_reglement_id) ? $objsoc->cond_reglement_id : 0);
                 $this->mode_reglement_id	= (! empty($objsoc->mode_reglement_id) ? $objsoc->mode_reglement_id : 0);
-				
+
 				$project = new Project($db);
-				
+
 				if($objFrom->fk_project > 0 && $project->fetch($objFrom->fk_project)) {
 					if($project->socid <= 0) $this->fk_project = $objFrom->fk_project;
 					else $this->fk_project = '';
 				} else {
 					$this->fk_project = '';
 				}
-                
+
                 $this->fk_delivery_address	= '';
             }
 
@@ -3107,10 +3083,12 @@ class PropaleLigne  extends CommonObjectLine
             $this->date_end         = $this->db->jdate($objp->date_end);
 
 			$this->db->free($result);
+
+            return 1;
 		}
 		else
 		{
-			dol_print_error($this->db);
+			return -1;
 		}
 	}
 
