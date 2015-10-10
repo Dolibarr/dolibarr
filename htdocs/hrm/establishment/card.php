@@ -16,22 +16,17 @@
  */
 
 /**
- *  \file       	htdocs/custom/ihrm/establishment/card.php
+ *  \file       	htdocs/hrm/establishment/card.php
  *  \brief      	Page to show an establishment
  */
-$res = @include ("../../main.inc.php"); // For root directory
-if (! $res)
-	$res = @include ("../../../main.inc.php"); // For "custom" directory
-if (! $res)
-	die("Include of main fails");
-
-require_once ('../core/lib/ihrm.lib.php');
-require_once ('../class/establishment.class.php');
+require('../../main.inc.php');
+require_once DOL_DOCUMENT_ROOT.'/core/lib/hrm.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/hrm/class/establishment.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
 $langs->load("admin");
-$langs->load("compta");
+$langs->load("hrm");
 
 // Security check
 if (! $user->admin) accessforbidden();
@@ -267,7 +262,7 @@ else if ($id)
 
         if ($action == 'edit')
         {
-        	dol_fiche_head($head, 'card', $langs->trans("Establishment"), 0, 'building@ihrm');
+        	dol_fiche_head($head, 'card', $langs->trans("Establishment"), 0, 'building');
 
         	print '<form name="update" action="' . $_SERVER["PHP_SELF"] . '" method="POST">' . "\n";
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -344,7 +339,7 @@ else if ($id)
 
             }
 
-        	dol_fiche_head($head, 'card', $langs->trans("Establishment"), 0, 'building@ihrm');
+        	dol_fiche_head($head, 'card', $langs->trans("Establishment"), 0, 'building');
 
         	print '<table class="border" width="100%">';
 

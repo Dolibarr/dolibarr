@@ -16,18 +16,16 @@
  */
 
 /**
- *  \file       	htdocs/custom/ihrm/establishment/info.php
+ *  \file       	htdocs/hrm/establishment/info.php
  *  \brief      	Page to show info of an establishment
  */
 
-require '../../main.inc.php';
-
-require_once ('../core/lib/ihrm.lib.php');
-require_once ('../class/establishment.class.php');
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require('../../main.inc.php');
+require_once DOL_DOCUMENT_ROOT.'/core/lib/hrm.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/hrm/class/establishment.class.php';
 
 $langs->load("admin");
-$langs->load("compta");
+$langs->load("hrm");
 
 // Security check
 if (! $user->admin) accessforbidden();
@@ -45,7 +43,7 @@ if ($id)
 
 	$head = establishment_prepare_head($object);
 
-	dol_fiche_head($head, 'info', $langs->trans("Establishment"), 0, 'building@ihrm');
+	dol_fiche_head($head, 'info', $langs->trans("Establishment"), 0, 'building');
 
     print '<table width="100%"><tr><td>';
     dol_print_object_info($object);

@@ -16,8 +16,8 @@
  */
 
 /**
- *    \file       htdocs/custom/ihrm/class/establishment.class.php
- *    \ingroup    iHRM
+ *    \file       htdocs/hrm/class/establishment.class.php
+ *    \ingroup    HRM
  *    \brief      File of class to manage establishments
  */
 
@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
 class Establishment extends CommonObject
 {
 	public $element='establishment';
-	public $table_element='ihrm_establishment';
+	public $table_element='establishment';
 	public $table_element_line = '';
 	public $fk_element = 'fk_establishment';
 	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
@@ -77,7 +77,7 @@ class Establishment extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."ihrm_establishment (";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."establishment (";
 		$sql.= "name";
 		$sql.= ", address";
 		$sql.= ", zip";
@@ -107,7 +107,7 @@ class Establishment extends CommonObject
 		}
 
 		if (! $error) {
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . "ihrm_establishment");
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . "establishment");
 		}
 
 		// Commit or rollback
@@ -143,7 +143,7 @@ class Establishment extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."ihrm_establishment";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."establishment";
 		$sql .= " SET name = '".$this->name."'";
 		$sql .= ", address = '".$this->address."'";
 		$sql .= ", zip = '".$this->zip."'";
@@ -173,7 +173,7 @@ class Establishment extends CommonObject
 	function fetch($id)
 	{
 		$sql = "SELECT rowid, name, address, zip, town, statut";
-		$sql.= " FROM ".MAIN_DB_PREFIX."ihrm_establishment";
+		$sql.= " FROM ".MAIN_DB_PREFIX."establishment";
 		$sql.= " WHERE rowid = ".$id;
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -208,7 +208,7 @@ class Establishment extends CommonObject
 	{
 		$this->db->begin();
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."ihrm_establishment WHERE rowid = ".$id;
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."establishment WHERE rowid = ".$id;
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -286,7 +286,7 @@ class Establishment extends CommonObject
 	function info($id)
 	{
 		$sql = 'SELECT e.rowid, e.datec, e.fk_user_author, e.tms, e.fk_user_mod';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'ihrm_establishment as e';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'establishment as e';
 		$sql.= ' WHERE e.rowid = '.$id;
 
 		dol_syslog(get_class($this)."::fetch info", LOG_DEBUG);

@@ -16,7 +16,7 @@
  */
 
 /**
- * \file 	htdocs/hrm/admin/admin_ihrm.php
+ * \file 	htdocs/hrm/admin/admin_hrm.php
  * \ingroup HRM
  * \brief 	HRM module setup page
  */
