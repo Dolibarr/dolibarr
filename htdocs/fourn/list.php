@@ -195,9 +195,10 @@ if ($resql)
 	if (! empty($conf->categorie->enabled))
 	{
 		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+		$moreforfilter.='<div class="divsearchfield">';
 		$moreforfilter.=$langs->trans('Categories'). ': ';
 		$moreforfilter.=$htmlother->select_categories(Categorie::TYPE_SUPPLIER,$search_categ,'search_categ',1);
-		$moreforfilter.=' &nbsp; &nbsp; &nbsp; ';
+		$moreforfilter.='</div>';
 	}
 	if ($moreforfilter)
 	{
@@ -209,8 +210,8 @@ if ($resql)
 		print '</div>';
 	}
 
-	print '<table class="liste">';
-
+    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">';
+	
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$param,'valign="middle"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Zip"),$_SERVER["PHP_SELF"],"s.zip","",$param,'valign="middle"',$sortfield,$sortorder);

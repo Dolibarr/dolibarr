@@ -1407,26 +1407,19 @@ else
                     print '<td align="right" class="nowrap">';
                     if ($user->rights->contrat->creer && count($arrayothercontracts) && ($object->statut >= 0))
                     {
-                        print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=move&amp;rowid='.$objp->rowid.'">';
+                        print '<a style="padding-left: 5px;" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=move&amp;rowid='.$objp->rowid.'">';
                         print img_picto($langs->trans("MoveToAnotherContract"),'uparrow');
                         print '</a>';
                     }
-                    else {
-                        print '&nbsp;';
-                    }
                     if ($user->rights->contrat->creer && ($object->statut >= 0))
                     {
-                        print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=editline&amp;rowid='.$objp->rowid.'">';
+                        print '<a style="padding-left: 5px;" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=editline&amp;rowid='.$objp->rowid.'">';
                         print img_edit();
                         print '</a>';
                     }
-                    else {
-                        print '&nbsp;';
-                    }
                     if ( $user->rights->contrat->creer && ($object->statut >= 0))
                     {
-                        print '&nbsp;';
-                        print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=deleteline&amp;rowid='.$objp->rowid.'">';
+                        print '<a style="padding-left: 5px;" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=deleteline&amp;rowid='.$objp->rowid.'">';
                         print img_delete();
                         print '</a>';
                     }

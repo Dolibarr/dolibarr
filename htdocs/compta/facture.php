@@ -2973,16 +2973,16 @@ else if ($id > 0 || ! empty($ref))
 
 	print '<td rowspan="' . $nbrows . '" colspan="2" valign="top">';
 
-	print '<table class="nobordernopadding" width="100%">';
+	print '<table class="nobordernopadding paymenttable" width="100%">';
 
 	// List of payments already done
 	print '<tr class="liste_titre">';
-	print '<td>' . ($object->type == Facture::TYPE_CREDIT_NOTE ? $langs->trans("PaymentsBack") : $langs->trans('Payments')) . '</td>';
-	print '<td>' . $langs->trans('Type') . '</td>';
+	print '<td class="liste_titre">' . ($object->type == Facture::TYPE_CREDIT_NOTE ? $langs->trans("PaymentsBack") : $langs->trans('Payments')) . '</td>';
+	print '<td class="liste_titre">' . $langs->trans('Type') . '</td>';
 	if (! empty($conf->banque->enabled))
-		print '<td align="right">' . $langs->trans('BankAccount') . '</td>';
-	print '<td align="right">' . $langs->trans('Amount') . '</td>';
-	print '<td width="18">&nbsp;</td>';
+		print '<td class="liste_titre" align="right">' . $langs->trans('BankAccount') . '</td>';
+	print '<td class="liste_titre" align="right">' . $langs->trans('Amount') . '</td>';
+	print '<td class="liste_titre" width="18">&nbsp;</td>';
 	print '</tr>';
 
 	$var = true;
@@ -3033,7 +3033,7 @@ else if ($id > 0 || ! empty($ref))
 				$i ++;
 			}
 		} else {
-			print '<tr ' . $bc [$var] . '><td colspan="' . $nbcols . '">' . $langs->trans("None") . '</td><td></td><td></td></tr>';
+			print '<tr ' . $bc[false] . '><td colspan="' . $nbcols . '">' . $langs->trans("None") . '</td><td></td><td></td></tr>';
 		}
 		// }
 		$db->free($result);

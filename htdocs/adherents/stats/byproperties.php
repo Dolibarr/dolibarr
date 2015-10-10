@@ -116,7 +116,7 @@ else
 }
 
 // Print array
-print '<table class="border" width="100%">';
+print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td align="center">'.$langs->trans("Nature").'</td>';
 print '<td align="center">'.$langs->trans("NbOfMembers").'</td>';

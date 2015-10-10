@@ -49,8 +49,10 @@ $search_ref_supplier=GETPOST('search_ref_supplier','alpha');
 $sall=GETPOST('sall');
 $search_status=GETPOST('search_status');
 $socid=GETPOST('socid');
+$search_user=GETPOST('search_user','int');
+$search_sale=GETPOST('search_sale','int');
+$search_product_category=GETPOST('search_product_category','int');
 
-$search_sale = GETPOST('search_sale','int');
 $optioncss = GETPOST('optioncss','alpha');
 
 if (! $sortfield) $sortfield="c.rowid";
@@ -69,7 +71,9 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 	$search_name="";
 	$search_contract="";
 	$search_ref_supplier="";
-	$search_sale="";
+    $search_user='';
+    $search_sale='';
+    $search_product_category='';
 	$sall="";
 	$search_status="";
 }
@@ -82,6 +86,7 @@ if ($search_status == '') $search_status=1;
  */
 
 $now=dol_now();
+$form=new Form($db);
 $formother = new FormOther($db);
 $socstatic = new Societe($db);
 
@@ -99,8 +104,15 @@ $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 if ($search_sale > 0 || (! $user->rights->societe->client->voir && ! $socid)) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= ", ".MAIN_DB_PREFIX."contrat as c";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."contratdet as cd ON c.rowid = cd.fk_contrat";
+if ($search_product_category > 0) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON cp.fk_product=cd.fk_product';
+if ($search_user > 0)
+{
+    $sql.=", ".MAIN_DB_PREFIX."element_contact as ec";
+    $sql.=", ".MAIN_DB_PREFIX."c_type_contact as tc";
+}
 $sql.= " WHERE c.fk_soc = s.rowid ";
-$sql.= " AND c.entity = ".$conf->entity;
+$sql.= ' AND c.entity IN ('.getEntity('contract', 1).')';
+if ($search_product_category > 0) $sql.=" AND cp.fk_categorie = ".$search_product_category;
 if ($socid) $sql.= " AND s.rowid = ".$db->escape($socid);
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 
@@ -122,6 +134,7 @@ if ($search_sale > 0)
 if ($sall) {
     $sql .= natural_search(array('s.nom', 'cd.label', 'cd.description'), $sall);
 }
+if ($search_user > 0) $sql.= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='contrat' AND tc.source='internal' AND ec.element_id = c.rowid AND ec.fk_socpeople = ".$search_user;
 $sql.= " GROUP BY c.rowid, c.ref, c.datec, c.date_contrat, c.statut, c.ref_supplier, s.nom, s.rowid";
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($conf->liste_limit + 1, $offset);
@@ -136,26 +149,47 @@ if ($resql)
 
     print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-    print '<table class="liste" width="100%">';
 
     // If the user can view prospects other than his'
     $moreforfilter='';
     if ($user->rights->societe->client->voir || $socid)
     {
     	$langs->load("commercial");
+    	$moreforfilter.='<div class="divsearchfield">';
     	$moreforfilter.=$langs->trans('ThirdPartiesOfSaleRepresentative'). ': ';
     	$moreforfilter.=$formother->select_salesrepresentatives($search_sale,'search_sale',$user);
-    	$moreforfilter.=' &nbsp; &nbsp; &nbsp; ';
+    	$moreforfilter.='</div>';
     }
-
-    if ($moreforfilter)
+	// If the user can view other users
+	if ($user->rights->user->user->lire)
+	{
+		$moreforfilter.='<div class="divsearchfield">';
+		$moreforfilter.=$langs->trans('LinkedToSpecificUsers'). ': ';
+	    $moreforfilter.=$form->select_dolusers($search_user, 'search_user', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+	 	$moreforfilter.='</div>';
+	}
+	// If the user can view categories of products
+	if ($conf->categorie->enabled && $user->rights->produit->lire)
+	{
+		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+		$moreforfilter.='<div class="divsearchfield">';
+		$moreforfilter.=$langs->trans('IncludingProductWithTag'). ': ';
+		$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, null, 'parent', null, null, 1);
+		$moreforfilter.=$form->selectarray('search_product_category', $cate_arbo, $search_product_category, 1, 0, 0, '', 0, 0, 0, 0, '', 1);
+		$moreforfilter.='</div>';
+	}
+    
+    if (! empty($moreforfilter))
     {
-    	print '<tr class="liste_titre">';
-    	print '<td class="liste_titre" colspan="9">';
-    	print $moreforfilter;
-    	print '</td></tr>';
+        print '<div class="liste_titre liste_titre_bydiv centpercent">';
+        print $moreforfilter;
+        $parameters=array();
+        $reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+        print $hookmanager->resPrint;
+        print '</div>';
     }
 
+    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">';
     print '<tr class="liste_titre">';
 
     $param='&search_contract='.$search_contract;
@@ -171,10 +205,11 @@ if ($resql)
     //print_liste_field_titre($langs->trans("DateCreation"), $_SERVER["PHP_SELF"], "c.datec","","$param",'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("DateContract"), $_SERVER["PHP_SELF"], "c.date_contrat","","$param",'align="center"',$sortfield,$sortorder);
     //print_liste_field_titre($langs->trans("Status"), $_SERVER["PHP_SELF"], "c.statut","","$param",'align="center"',$sortfield,$sortorder);
-    print '<td class="liste_titre" width="16">'.$staticcontratligne->LibStatut(0,3).'</td>';
-    print '<td class="liste_titre" width="16">'.$staticcontratligne->LibStatut(4,3,0).'</td>';
-    print '<td class="liste_titre" width="16">'.$staticcontratligne->LibStatut(4,3,1).'</td>';
-    print '<td class="liste_titre" width="16">'.$staticcontratligne->LibStatut(5,3).'</td>';
+    print_liste_field_titre($staticcontratligne->LibStatut(0,3), '', '', '', '', 'width="16"');
+    print_liste_field_titre($staticcontratligne->LibStatut(4,3,0), '', '', '', '', 'width="16"');
+    print_liste_field_titre($staticcontratligne->LibStatut(4,3,1), '', '', '', '', 'width="16"');
+    print_liste_field_titre($staticcontratligne->LibStatut(5,3), '', '', '', '', 'width="16"');
+    print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
     print "</tr>\n";
 
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -190,7 +225,8 @@ if ($resql)
     print '</td>';
     print '<td class="liste_titre">&nbsp;</td>';
     //print '<td class="liste_titre">&nbsp;</td>';
-    print '<td colspan="5" class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+    print '<td class="liste_titre" colspan="5"></td>';
+    print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
     print "</td></tr>\n";
 
@@ -250,6 +286,7 @@ if ($resql)
         print '<td align="center">'.($obj->nb_running>0?$obj->nb_running:'').'</td>';
         print '<td align="center">'.($obj->nb_expired>0?$obj->nb_expired:'').'</td>';
         print '<td align="center">'.($obj->nb_closed>0 ?$obj->nb_closed:'').'</td>';
+        print '<td></td>';
         print "</tr>\n";
         $i++;
     }

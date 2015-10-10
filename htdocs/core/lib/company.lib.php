@@ -688,10 +688,9 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
         {
             $obj = $db->fetch_object($result);
             $var = !$var;
-            print "<tr ".$bc[$var].">";
-
-            print '<td>';
+            
             $contactstatic->id = $obj->rowid;
+            $contactstatic->ref = $obj->ref;
             $contactstatic->statut = $obj->statut;
             $contactstatic->lastname = $obj->lastname;
             $contactstatic->firstname = $obj->firstname;
@@ -704,44 +703,23 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
             $contactstatic->phone_mobile = $obj->phone_mobile;
             $contactstatic->phone_perso = $obj->phone_perso;
             $contactstatic->email = $obj->email;
+            $contactstatic->web = $obj->web;
+            $contactstatic->skype = $obj->skype;
+
+            $country_code = getCountry($obj->country_id, 'all');
+            $contactstatic->country_code = $country_code;
+            
+            print "<tr ".$bc[$var].">";
+
+            print '<td>';
             print $contactstatic->getNomUrl(1,'',0,'&backtopage='.urlencode($backtopage));
 			print '</td><td>';
             if ($obj->poste) print $obj->poste;
             print '</td>';
 
-            $country_code = getCountry($obj->country_id, 'all');
-
             // Address and phone
             print '<td>';
-            $outdone=0;
-            $contactstatic->address = $obj->address;
-            $contactstatic->zip = $obj->zip;
-            $contactstatic->town = $obj->town;
-            $contactstatic->country_id = $obj->country_id;
-            $coords = $contactstatic->getFullAddress(1,', ');
-            if (! empty($conf->use_javascript_ajax))
-            {
-				$namecoords = $contactstatic->getFullName($langs,1).'<br>'.$coords;
-				// hideonsmatphone because copyToClipboard call jquery dialog that does not work with jmobile
-				print '<a href="#" class="hideonsmartphone" onclick="return copyToClipboard(\''.dol_escape_js($namecoords).'\',\''.dol_escape_js($langs->trans("HelpCopyToClipboard")).'\');">';
-            	print img_picto($langs->trans("Address"), 'object_address.png');
-            	print '</a> ';
-            }
-            if ($coords) { print dol_print_address($coords,'address_contact_'.$obj->rowid, 'contact', $obj->rowid); $outdone++; }
-
-            if ($obj->phone_pro || $obj->phone_mobile || $obj->phone_perso || $obj->fax) print ($outdone?'<br>':'');
-            if ($obj->phone_pro) { print dol_print_phone($obj->phone_pro,$country_code['code'],$obj->rowid,$object->id,'AC_TEL','&nbsp;','phone'); $outdone++; }
-            if ($obj->phone_mobile) { print dol_print_phone($obj->phone_mobile,$country_code['code'],$obj->rowid,$object->id,'AC_TEL','&nbsp;','phone'); $outdone++; }
-            if ($obj->phone_perso) { print dol_print_phone($obj->phone_perso,$country_code['code'],$obj->rowid,$object->id,'AC_TEL','&nbsp;','phone'); $outdone++; }
-            if ($obj->fax) { print dol_print_phone($obj->fax,$country_code['code'],$obj->rowid,$object->id,'AC_FAX','&nbsp;','fax'); $outdone++; }
-
-            print '<div style="clear: both;"></div>';
-            $outdone=0;
-            if ($obj->email) print dol_print_email($obj->email,$obj->rowid,$object->id,'AC_EMAIL',0,0,1);
-            if (! empty($conf->skype->enabled))
-            {
-				if ($obj->skype) print ($outdone?'<br>':'').dol_print_skype($obj->skype,$obj->rowid,$object->id,'AC_SKYPE');
-            }
+            print $contactstatic->getBannerAddress('contact', $object);
             print '</td>';
 
             // Status

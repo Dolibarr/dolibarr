@@ -915,7 +915,7 @@ function dol_format_address($object,$withcountry=0,$sep="\n",$outputlangs='')
 	else if (in_array($object->country_code,array('ES','TR'))) // ES: title firstname name \n address lines \n zip town \n state \n country
 	{
 		$ret .= ($ret ? $sep : '' ).$object->zip;
-		$ret .= ($object->town?' '.$object->town:'');
+		$ret .= ($object->town?(($object->zip?' ':'').$object->town):'');
 		if ($object->state && in_array($object->country_code,$countriesusingstate))
 		{
 			$ret.="\n".$object->state;
@@ -925,10 +925,10 @@ function dol_format_address($object,$withcountry=0,$sep="\n",$outputlangs='')
 	else                                        		// Other: title firstname name \n address lines \n zip town \n country
 	{
 		$ret .= ($ret ? $sep : '' ).$object->zip;
-		$ret .= ($object->town?' '.$object->town:'');
+		$ret .= ($object->town?(($object->zip?' ':'').$object->town):'');
 		if ($object->state && in_array($object->country_code,$countriesusingstate))
 		{
-			$ret.=", ".$object->state;
+			$ret.=($ret?", ":'').$object->state;
 		}
 	}
 	if (! is_object($outputlangs)) $outputlangs=$langs;
@@ -1315,20 +1315,25 @@ function dol_print_size($size,$shortvalue=0,$shortunit=0)
  * @param	string		$url		Url to show
  * @param	string		$target		Target for link
  * @param	int			$max		Max number of characters to show
+ * @param	int			$withpicto	With picto
  * @return	string					HTML Link
  */
-function dol_print_url($url,$target='_blank',$max=32)
+function dol_print_url($url,$target='_blank',$max=32,$withpicto=0)
 {
+	global $langs;
+	
 	if (empty($url)) return '';
 
 	$link='<a href="';
 	if (! preg_match('/^http/i',$url)) $link.='http://';
 	$link.=$url;
-	if ($target) $link.='" target="'.$target.'">';
+	$link.='"';
+	if ($target) $link.=' target="'.$target.'"';
+	$link.='>';
 	if (! preg_match('/^http/i',$url)) $link.='http://';
 	$link.=dol_trunc($url,$max);
 	$link.='</a>';
-	return $link;
+	return '<div class="nospan float" style="margin-right: 10px">'.($withpicto?img_picto($langs->trans("Url"), 'object_globe.png').' ':'').$link.'</div>';
 }
 
 /**
@@ -1591,26 +1596,30 @@ function dol_user_country()
 /**
  *  Format address string
  *
- *  @param	string	$address     Address
- *  @param  int		$htmlid      Html ID (for example 'gmap')
- *  @param  int		$mode        thirdparty|contact|member|other
- *  @param  int		$id          Id of object
- *  @return void
+ *  @param	string	$address    Address
+ *  @param  int		$htmlid     Html ID (for example 'gmap')
+ *  @param  int		$mode       thirdparty|contact|member|other
+ *  @param  int		$id         Id of object
+ *  @param	int		$noprint	No output. Result is the function return
+ *  @return string|void			Nothing if noprint is 0, formatted address if noprint is 1
  *  @see dol_format_address
  */
-function dol_print_address($address, $htmlid, $mode, $id)
+function dol_print_address($address, $htmlid, $mode, $id, $noprint=0)
 {
 	global $conf, $user, $langs, $hookmanager;
 
+	$out = '';
+	
 	if ($address)
 	{
         if ($hookmanager) {
             $parameters = array('element' => $mode, 'id' => $id);
             $reshook = $hookmanager->executeHooks('printAddress', $parameters, $address);
-            print $hookmanager->resPrint;
+            $out.=$hookmanager->resPrint;
         }
-        if (empty($reshook)) {
-            print nl2br($address);
+        if (empty($reshook)) 
+        {
+            $out.=nl2br($address);
             $showgmap=$showomap=0;
             if ($mode=='thirdparty' && ! empty($conf->google->enabled) && ! empty($conf->global->GOOGLE_ENABLE_GMAPS)) $showgmap=1;
             if ($mode=='contact' && ! empty($conf->google->enabled) && ! empty($conf->global->GOOGLE_ENABLE_GMAPS_CONTACTS)) $showgmap=1;
@@ -1623,15 +1632,17 @@ function dol_print_address($address, $htmlid, $mode, $id)
             if ($showgmap)
             {
                 $url=dol_buildpath('/google/gmaps.php?mode='.$mode.'&id='.$id,1);
-                print ' <a href="'.$url.'" target="_gmaps"><img id="'.$htmlid.'" border="0" src="'.DOL_URL_ROOT.'/theme/common/gmap.png"></a>';
+                $out.=' <a href="'.$url.'" target="_gmaps"><img id="'.$htmlid.'" border="0" src="'.DOL_URL_ROOT.'/theme/common/gmap.png"></a>';
             }
             if ($showomap)
             {
                 $url=dol_buildpath('/openstreetmap/maps.php?mode='.$mode.'&id='.$id,1);
-                print ' <a href="'.$url.'" target="_gmaps"><img id="'.$htmlid.'_openstreetmap" border="0" src="'.DOL_URL_ROOT.'/theme/common/gmap.png"></a>';
+                $out.=' <a href="'.$url.'" target="_gmaps"><img id="'.$htmlid.'_openstreetmap" border="0" src="'.DOL_URL_ROOT.'/theme/common/gmap.png"></a>';
             }
         }
 	}
+	if ($noprint) return $out;
+	else print $out;
 }
 
 
@@ -2669,7 +2680,8 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
 
 	$sortorder=strtoupper($sortorder);
 	$out='';
-
+    $sortimg='';
+    
 	$tag='th';
 	if ($thead==2) $tag='div';
 
@@ -2678,25 +2690,33 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
 	if ($field && ($sortfield == $field || $sortfield == preg_replace("/^[^\.]+\./","",$field))) $out.= '<'.$tag.' class="'.$prefix.'liste_titre_sel" '. $moreattrib.'>';
 	else $out.= '<'.$tag.' class="'.$prefix.'liste_titre" '. $moreattrib.'>';
 
-	if (! empty($conf->dol_optimize_smallscreen) && empty($thead) && $field)    // If this is a sort field
+	if (empty($thead) && $field)    // If this is a sort field
 	{
 		$options=preg_replace('/sortfield=([a-zA-Z0-9,\s\.]+)/i','',$moreparam);
 		$options=preg_replace('/sortorder=([a-zA-Z0-9,\s\.]+)/i','',$options);
 		$options=preg_replace('/&+/i','&',$options);
 		if (! preg_match('/^&/',$options)) $options='&'.$options;
 
-		if ($sortorder == 'DESC' ) 	$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">';
-		if ($sortorder == 'ASC' ) 	$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">';
+		if ($field != $sortfield)
+		{
+            if ($sortorder == 'DESC') $out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">';
+            if ($sortorder == 'ASC' || ! $sortorder) $out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">';
+		}
+		else
+		{
+            if ($sortorder == 'DESC' || ! $sortorder) $out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">';
+            if ($sortorder == 'ASC') $out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">';
+		}
 	}
 
 	$out.=$name;
 
-	if (! empty($conf->dol_optimize_smallscreen) && empty($thead) && $field)    // If this is a sort field
+	if (empty($thead) && $field)    // If this is a sort field
 	{
 		$out.='</a>';
 	}
 
-	if (empty($conf->dol_optimize_smallscreen) && empty($thead) && $field)    // If this is a sort field
+	if (empty($thead) && $field)    // If this is a sort field
 	{
 		$options=preg_replace('/sortfield=([a-zA-Z0-9,\s\.]+)/i','',$moreparam);
 		$options=preg_replace('/sortorder=([a-zA-Z0-9,\s\.]+)/i','',$options);
@@ -2704,27 +2724,33 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
 		if (! preg_match('/^&/',$options)) $options='&'.$options;
 
 		//print "&nbsp;";
-		$out.= '<img width="2" src="'.DOL_URL_ROOT.'/theme/common/transparent.png" alt=""><span class="nowrap">';
+		$sortimg.= '<img width="2" src="'.DOL_URL_ROOT.'/theme/common/transparent.png" alt="">';
+		$sortimg.= '<span class="nowrap">';
 
 		if (! $sortorder || $field != $sortfield)
 		{
-			$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
-			$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
+			//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
+			//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
 		}
 		else
 		{
 			if ($sortorder == 'DESC' ) {
-				$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
-				$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",1).'</a>';
+				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
+				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",1).'</a>';
+				$sortimg.= img_up("Z-A",0);
 			}
 			if ($sortorder == 'ASC' ) {
-				$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",1).'</a>';
-				$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
+				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",1).'</a>';
+				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
+				$sortimg.= img_down("A-Z",0);
 			}
 		}
 
-		$out.= '</span>';
+		$sortimg.= '</span>';
 	}
+	
+	$out.=$sortimg;
+	
 	$out.='</'.$tag.'>';
 
 	return $out;

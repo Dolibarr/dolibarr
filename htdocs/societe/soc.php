@@ -1727,7 +1727,7 @@ else
 
             // Capital
             print '<tr><td>'.fieldLabel('Capital','capital').'</td>';
-	        print '<td colspan="3"><input type="text" name="capital" id="capital" size="10" value="'.$object->capital.'"><font class="hideonsmartphone">'.$langs->trans("Currency".$conf->currency).'</font></td></tr>';
+	        print '<td colspan="3"><input type="text" name="capital" id="capital" size="10" value="'.$object->capital.'"> <font class="hideonsmartphone">'.$langs->trans("Currency".$conf->currency).'</font></td></tr>';
 
             // Default language
             if (! empty($conf->global->MAIN_MULTILANGS))
@@ -1863,10 +1863,30 @@ else
 
         dol_htmloutput_errors($error,$errors);
 
-        $showlogo=$object->logo;
+        //$showlogo=$object->logo;
+        $showlogo=1;
         $showbarcode=empty($conf->barcode->enabled)?0:1;
         if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) $showbarcode=0;
 
+        print '<div class="arearef heightref valignmiddle" width="100%">';
+        //$morehtmlleft='<div class="floatleft inline-block valignmiddle divphotoref">'.img_picto('', 'title_companies', '', '').'</div>';
+        if ($showlogo)    $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$form->showphoto('societe',$object,0,0,0,'photoref').'</div>';
+        //if ($showlogo)    $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$form->showphoto('societe',$object,0,0,0,'photoref').'</div>';
+        if ($showbarcode) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$form->showbarcode($object).'</div>';
+        if (! empty($conf->use_javascript_ajax) && $user->rights->societe->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
+            $morehtmlright.=ajax_object_onoff($object, 'status', 'status', 'InActivity', 'ActivityCeased');
+        } else {
+            $morehtmlright.=$object->getLibStatut(2);
+        }
+        $morehtml='';
+        if (! empty($object->ame_nalias)) $morehtml.='<div class="refidno">'.$object->name_alias.'</div>';
+        $morehtml.='<div class="refidno">';
+        $morehtml.=$object->getBannerAddress('refaddress',$object);
+        $morehtml.='</div>';
+        print $form->showrefnav($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom', $morehtml, '', 0, $morehtmlleft, $morehtmlright);
+        print '</div>';
+        print '<div class="underrefbanner clearboth"></div>';
+        
         print '<table class="border" width="100%">';
 
         // Ref
@@ -1879,18 +1899,21 @@ else
         */
 
         // Name
+        /*
         print '<tr><td width="25%">'.$langs->trans('ThirdPartyName').'</td>';
         print '<td colspan="3">';
         print $form->showrefnav($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
         print '</td>';
         print '</tr>';
-
+		*/
+        
 	    // Alias names (commercial, trademark or alias names)
-	    print '<tr><td>'.$langs->trans('AliasNames').'</td><td colspan="3">';
+	    print '<tr><td>'.$langs->trans('AliasNames').'</td><td>';
 	    print $object->name_alias;
 	    print "</td></tr>";
 
         // Logo+barcode
+        /*
         $rowspan=6;
         if (! empty($conf->global->SOCIETE_USEPREFIX)) $rowspan++;
         if (! empty($object->client)) $rowspan++;
@@ -1905,12 +1928,12 @@ else
             if ($showlogo && $showbarcode) $htmllogobar.='<br><br>';
             if ($showbarcode) $htmllogobar.=$form->showbarcode($object);
             $htmllogobar.='</td>';
-        }
+        }*/
 
         // Prefix
         if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
         {
-            print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'">'.$object->prefix_comm.'</td>';
+            print '<tr><td>'.$langs->trans('Prefix').'</td><td>'.$object->prefix_comm.'</td>';
             print $htmllogobar; $htmllogobar='';
             print '</tr>';
         }
@@ -1919,7 +1942,7 @@ else
         if ($object->client)
         {
             print '<tr><td>';
-            print $langs->trans('CustomerCode').'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'">';
+            print $langs->trans('CustomerCode').'</td><td>';
             print $object->code_client;
             if ($object->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
             print '</td>';
@@ -1931,7 +1954,7 @@ else
         if (! empty($conf->fournisseur->enabled) && $object->fournisseur && ! empty($user->rights->fournisseur->lire))
         {
             print '<tr><td>';
-            print $langs->trans('SupplierCode').'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'">';
+            print $langs->trans('SupplierCode').'</td><td>';
             print $object->code_fournisseur;
             if ($object->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
             print '</td>';
@@ -1943,13 +1966,16 @@ else
         if (! empty($conf->barcode->enabled))
         {
             print '<tr><td>';
-            print $langs->trans('Gencod').'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'">'.$object->barcode;
+            print $langs->trans('Gencod').'</td><td>'.$object->barcode;
             print '</td>';
-            print $htmllogobar; $htmllogobar='';
+			if ($htmllogobar) $htmllogobar.=$form->showbarcode($object);
+            print $htmllogobar;
+			$htmllogobar='';
             print '</tr>';
         }
 
         // Status
+        /*
         print '<tr><td>'.$langs->trans("Status").'</td>';
         print '<td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'">';
         if (! empty($conf->use_javascript_ajax) && $user->rights->societe->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
@@ -1960,8 +1986,10 @@ else
         print '</td>';
         print $htmllogobar; $htmllogobar='';
         print '</tr>';
-
+		*/
+        
         // Address
+        /*
         print '<tr><td class="tdtop">'.$langs->trans('Address').'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'">';
         dol_print_address($object->address,'gmap','thirdparty',$object->id);
         print '</td></tr>';
@@ -2007,7 +2035,8 @@ else
         // Phone / Fax
         print '<tr><td>'.$langs->trans('Phone').'</td><td style="min-width: 25%;">'.dol_print_phone($object->phone,$object->country_code,0,$object->id,'AC_TEL').'</td>';
         print '<td>'.$langs->trans('Fax').'</td><td style="min-width: 25%;">'.dol_print_phone($object->fax,$object->country_code,0,$object->id,'AC_FAX').'</td></tr>';
-
+		*/
+        
         // Prof ids
         $i=1; $j=0;
         while ($i <= 6)
@@ -2015,8 +2044,9 @@ else
             $idprof=$langs->transcountry('ProfId'.$i,$object->country_code);
             if ($idprof!='-')
             {
-                if (($j % 2) == 0) print '<tr>';
-                print '<td>'.$idprof.'</td><td>';
+                //if (($j % 2) == 0) print '<tr>';
+                print '<tr>';
+            	print '<td>'.$idprof.'</td><td>';
                 $key='idprof'.$i;
                 print $object->$key;
                 if ($object->$key)
@@ -2025,12 +2055,13 @@ else
                     else print ' <font class="error">('.$langs->trans("ErrorWrongValue").')</font>';
                 }
                 print '</td>';
-                if (($j % 2) == 1) print '</tr>';
+                //if (($j % 2) == 1) print '</tr>';
+                print '</tr>';
                 $j++;
             }
             $i++;
         }
-        if ($j % 2 == 1)  print '<td colspan="2"></td></tr>';
+        //if ($j % 2 == 1)  print '<td colspan="2"></td></tr>';
 
         // VAT payers
         print '<tr><td>';
@@ -2038,9 +2069,11 @@ else
         print '</td><td>';
         print yn($object->tva_assuj);
         print '</td>';
-
+		print '</tr>';
+		
         // VAT Code
-        print '<td class="nowrap">'.$langs->trans('VATIntra').'</td><td>';
+        print '<tr>';
+		print '<td class="nowrap">'.$langs->trans('VATIntra').'</td><td>';
         if ($object->tva_intra)
         {
             $s='';
@@ -2083,7 +2116,7 @@ else
         {
             print '<tr><td>'.$langs->transcountry("LocalTax1IsUsed",$mysoc->country_code).'</td><td>';
             print yn($object->localtax1_assuj);
-            print '</td><td>'.$langs->transcountry("LocalTax2IsUsed",$mysoc->country_code).'</td><td>';
+            print '</td></tr><tr><td>'.$langs->transcountry("LocalTax2IsUsed",$mysoc->country_code).'</td><td>';
             print yn($object->localtax2_assuj);
             print '</td></tr>';
 
@@ -2177,13 +2210,14 @@ else
         // Type + Staff
         $arr = $formcompany->typent_array(1);
         $object->typent= $arr[$object->typent_code];
-        print '<tr><td>'.$langs->trans("ThirdPartyType").'</td><td>'.$object->typent.'</td><td>'.$langs->trans("Staff").'</td><td>'.$object->effectif.'</td></tr>';
+        print '<tr><td>'.$langs->trans("ThirdPartyType").'</td><td>'.$object->typent.'</td>';
+        print '<tr><td>'.$langs->trans("Staff").'</td><td>'.$object->effectif.'</td></tr>';
 
         // Legal
-        print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td colspan="3">'.$object->forme_juridique.'</td></tr>';
+        print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td>'.$object->forme_juridique.'</td></tr>';
 
         // Capital
-        print '<tr><td>'.$langs->trans('Capital').'</td><td colspan="3">';
+        print '<tr><td>'.$langs->trans('Capital').'</td><td>';
         if ($object->capital) print price($object->capital,'',$langs,0,-1,-1, $conf->currency);
         else print '&nbsp;';
         print '</td></tr>';
@@ -2192,7 +2226,7 @@ else
         if (! empty($conf->global->MAIN_MULTILANGS))
         {
             require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-            print '<tr><td>'.$langs->trans("DefaultLang").'</td><td colspan="3">';
+            print '<tr><td>'.$langs->trans("DefaultLang").'</td><td>';
             //$s=picto_from_langcode($object->default_lang);
             //print ($s?$s.' ':'');
             $langs->load("languages");
@@ -2207,7 +2241,7 @@ else
 			// Customer
 			if ($object->prospect || $object->client) {
 				print '<tr><td>' . $langs->trans("CustomersCategoriesShort") . '</td>';
-				print '<td colspan="3">';
+				print '<td>';
 				print $form->showCategories($object->id, 'customer', 1);
 				print "</td></tr>";
 			}
@@ -2215,7 +2249,7 @@ else
 			// Supplier
 			if ($object->fournisseur) {
 				print '<tr><td>' . $langs->trans("SuppliersCategoriesShort") . '</td>';
-				print '<td colspan="3">';
+				print '<td>';
 				print $form->showCategories($object->id, 'supplier', 1);
 				print "</td></tr>";
 			}
