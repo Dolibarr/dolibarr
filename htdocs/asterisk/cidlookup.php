@@ -30,7 +30,7 @@
 include '../master.inc.php';
 
 $phone = GETPOST('phone');
-$notfound = $phone;
+$notfound = $langs->trans("Unknown");
  
 // Security check
 if (empty($conf->clicktodial->enabled)) 
