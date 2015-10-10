@@ -59,7 +59,7 @@ print load_fiche_titre($langs->trans($page_name), $linkback);
 $head = hrm_admin_prepare_head();
 dol_fiche_head($head, 'establishments', $langs->trans("HRM"), 0, "user");
 
-$sql = "SELECT e.rowid, e.name, e.address, e.zip, e.town, e.statut";
+$sql = "SELECT e.rowid, e.name, e.address, e.zip, e.town, e.status";
 $sql.= " FROM ".MAIN_DB_PREFIX."establishment as e";
 $sql.= " WHERE e.entity = ".$conf->entity;
 
@@ -79,7 +79,7 @@ if ($result)
 	print '<td>'.$langs->trans("Address").'</td>';
 	print '<td>'.$langs->trans("Zipcode").'</td>';
 	print '<td>'.$langs->trans("Town").'</td>';
-	print '<td align="right">'.$langs->trans("Statut").'</td>';
+	print '<td align="right">'.$langs->trans("Status").'</td>';
 	print '</tr>';
 
 	if ($num)
@@ -96,7 +96,7 @@ if ($result)
             print '<td align="left">'.$obj->address.'</td>';
 			print '<td align="left">'.$obj->zip.'</td>';
 			print '<td align="left">'.$obj->town.'</td>';
-            print '<td align="right">'.$establishmentstatic->LibStatut($obj->statut,5).'</td>';
+            print '<td align="right">'.$establishmentstatic->LibStatut($obj->status,5).'</td>';
             print '</tr>';
             $var=!$var;
             $i++;
