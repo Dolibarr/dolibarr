@@ -38,13 +38,13 @@ $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm','alpha');
 $id = GETPOST('id','int');
 
-// List of statut
-static $tmpstatut2label=array(
+// List of status
+static $tmpstatus2label=array(
 		'0'=>'OpenEtablishment',
 		'1'=>'CloseEtablishment'
 );
-$statut2label=array('');
-foreach ($tmpstatut2label as $key => $val) $statut2label[$key]=$langs->trans($val);
+$status2label=array('');
+foreach ($tmpstatus2label as $key => $val) $status2label[$key]=$langs->trans($val);
 
 $object = new Establishment($db);
 
@@ -93,7 +93,7 @@ else if ($action == 'add')
 			$object->zip 			= GETPOST('zipcode', 'alpha');
 			$object->town			= GETPOST('town', 'alpha');
 			$object->fk_pays		= $object->country_id;
-			$object->statut     	= GETPOST('statut','int');
+			$object->status     	= GETPOST('status','int');
 			$object->fk_user_author	= $user->id;
 			$object->datec			= dol_now();
 
@@ -234,11 +234,11 @@ if ($action == 'create')
 	print '</td>';
 	print '</tr>';
 
-	// Statut
+	// Status
     print '<tr>';
-    print '<td class="fieldrequired"><label for="statut">'.$langs->trans("Statut").'</label></td>';
+    print '<td class="fieldrequired"><label for="status">'.$langs->trans("Status").'</label></td>';
 	print '<td>';
-	print $form->selectarray('statut',$statut2label,GETPOST('statut'));
+	print $form->selectarray('status',$status2label,GETPOST('status'));
     print '</td></tr>';
 
     print '</table>';
@@ -311,9 +311,9 @@ else if ($id)
 			print '</td>';
 			print '</tr>';			
 
-			// Statut
-			print '<tr><td><label for="statut">'.$langs->trans("Statut").'</label></td><td>';
-			print $form->selectarray('statut',$statut2label,$object->statut);
+			// Status
+			print '<tr><td><label for="status">'.$langs->trans("Status").'</label></td><td>';
+			print $form->selectarray('status',$status2label,$object->status);
 			print '</td></tr>';
 
             print '</table>';
@@ -382,8 +382,8 @@ else if ($id)
 			print '<td colspan="2">'.getCountry($object->fk_pays,1).'</td>';
 			print '</tr>';
 
-            // Statut
-            print '<tr><td>'.$langs->trans("Status").'</td><td colspan="2">'.$object->getLibStatut(4).'</td></tr>';
+            // Status
+            print '<tr><td>'.$langs->trans("Status").'</td><td colspan="2">'.$object->getLibStatus(4).'</td></tr>';
 
             print "</table>";
 

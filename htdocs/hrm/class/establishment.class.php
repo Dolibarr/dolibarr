@@ -40,7 +40,7 @@ class Establishment extends CommonObject
 	var $address;
 	var $zip;
 	var $town;
-	var $statut;		// 0=open, 1=closed
+	var $status;		// 0=open, 1=closed
 	var $entity;
 
 	var $statuts=array();
@@ -82,7 +82,7 @@ class Establishment extends CommonObject
 		$sql.= ", address";
 		$sql.= ", zip";
 		$sql.= ", town";
-		$sql.= ", statut";
+		$sql.= ", status";
 		$sql.= ", entity";
 		$sql.= ", datec";
 		$sql.= ", fk_user_author";
@@ -91,7 +91,7 @@ class Establishment extends CommonObject
 		$sql.= ", '".$this->address."'";
 		$sql.= ", '".$this->zip."'";
 		$sql.= ", '".$this->town."'";
-		$sql.= ", ".$this->statut;
+		$sql.= ", ".$this->status;
 		$sql.= ", ".$conf->entity;
 		$sql.= ", '".$this->db->idate($now)."'";
 		$sql.= ", ". $user->id;
@@ -148,7 +148,7 @@ class Establishment extends CommonObject
 		$sql .= ", address = '".$this->address."'";
 		$sql .= ", zip = '".$this->zip."'";
 		$sql .= ", town = '".$this->town."'";
-		$sql .= ", statut = '".$this->statut."'";
+		$sql .= ", status = '".$this->status."'";
 		$sql .= ", fk_user_mod = " . $user->id;
 		$sql .= " WHERE rowid = ".$this->id;
 
@@ -172,7 +172,7 @@ class Establishment extends CommonObject
 	*/
 	function fetch($id)
 	{
-		$sql = "SELECT rowid, name, address, zip, town, statut";
+		$sql = "SELECT rowid, name, address, zip, town, status";
 		$sql.= " FROM ".MAIN_DB_PREFIX."establishment";
 		$sql.= " WHERE rowid = ".$id;
 
@@ -187,7 +187,7 @@ class Establishment extends CommonObject
 			$this->address		= $obj->address;
 			$this->zip			= $obj->zip;
 			$this->town			= $obj->town;
-			$this->statut	    = $obj->statut;
+			$this->status	    = $obj->status;
 
 			return 1;
 		}
@@ -231,49 +231,49 @@ class Establishment extends CommonObject
 	 * @param	int		$mode   	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 * @return  string   		   	Label
 	 */
-	function getLibStatut($mode=0)
+	function getLibStatus($mode=0)
 	{
-		return $this->LibStatut($this->statut,$mode);
+		return $this->LibStatus($this->status,$mode);
 	}
 
 	/**
 	 *  Give a label from a status
 	 *
-	 *  @param	int		$statut     Id status
+	 *  @param	int		$status     Id status
 	 *  @param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 *  @return string      		Label
 	 */
-	function LibStatut($statut,$mode=0)
+	function LibStatus($status,$mode=0)
 	{
 		global $langs;
 
 		if ($mode == 0)
 		{
-			return $langs->trans($this->statuts[$statut]);
+			return $langs->trans($this->statuts[$status]);
 		}
 		if ($mode == 1)
 		{
-			return $langs->trans($this->statuts_short[$statut]);
+			return $langs->trans($this->statuts_short[$status]);
 		}
 		if ($mode == 2)
 		{
-			if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4').' '.$langs->trans($this->statuts_short[$statut]);
-			if ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut8').' '.$langs->trans($this->statuts_short[$statut]);
+			if ($status==0) return img_picto($langs->trans($this->statuts_short[$status]),'status4').' '.$langs->trans($this->statuts_short[$status]);
+			if ($status==1) return img_picto($langs->trans($this->statuts_short[$status]),'status8').' '.$langs->trans($this->statuts_short[$status]);
 		}
 		if ($mode == 3)
 		{
-			if ($statut==0 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4');
-			if ($statut==1 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]),'statut8');
+			if ($status==0 && ! empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]),'status4');
+			if ($status==1 && ! empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]),'status8');
 		}
 		if ($mode == 4)
 		{
-			if ($statut==0 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4').' '.$langs->trans($this->statuts[$statut]);
-			if ($statut==1 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]),'statut8').' '.$langs->trans($this->statuts[$statut]);
+			if ($status==0 && ! empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]),'status4').' '.$langs->trans($this->statuts[$status]);
+			if ($status==1 && ! empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]),'status8').' '.$langs->trans($this->statuts[$status]);
 		}
 		if ($mode == 5)
 		{
-			if ($statut==0 && ! empty($this->statuts_short[$statut])) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut4');
-			if ($statut==1 && ! empty($this->statuts_short[$statut])) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut8');
+			if ($status==0 && ! empty($this->statuts_short[$status])) return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'status4');
+			if ($status==1 && ! empty($this->statuts_short[$status])) return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'status8');
 		}
 	}
 
