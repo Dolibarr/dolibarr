@@ -720,6 +720,16 @@ create table llx_c_lead_status
   active      tinyint DEFAULT 1 NOT NULL
 )ENGINE=innodb;
 
+ALTER TABLE llx_c_lead_status ADD COLUMN position integer AFTER label;
+ALTER TABLE llx_c_lead_status ADD COLUMN percent double(5,2) AFTER position;
+UPDATE llx_c_lead_status SET position='10' , percent='0' WHERE code='PROSP';
+UPDATE llx_c_lead_status SET position='20' , percent='20' WHERE code='QUAL';
+UPDATE llx_c_lead_status SET position='30' , percent='40' WHERE code='PROPO';
+UPDATE llx_c_lead_status SET position='40' , percent='60' WHERE code='NEGO';
+UPDATE llx_c_lead_status SET position='50' , percent='50' WHERE code='PENDING';
+UPDATE llx_c_lead_status SET position='60' , percent='100' WHERE code='WIN';
+UPDATE llx_c_lead_status SET position='70' , percent='0' WHERE code='LOST';
+
 -- Opportunities status
 INSERT INTO llx_c_lead_status(rowid,code,label,position,percent,active) VALUES (1,'PROSP'  ,'Prospection',  10, 0,1);
 INSERT INTO llx_c_lead_status(rowid,code,label,position,percent,active) VALUES (2,'QUAL'   ,'Qualification',20, 20,1);
