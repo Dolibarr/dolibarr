@@ -4,6 +4,7 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 3.6.5 compared to 3.6.4 *****
 - Fix: [ bug #1776 ] Undefined $deliverycompany variable in pdf_build_address
+- Fix: [ bug #1794 ] Error when cloning Proposal gives error in a malformed page
 
 ***** ChangeLog for 3.6.4 compared to 3.6.3 *****
 - Fix: [ bug #2893 ] Dolibarr error when viewing an invoice after changing invoice mask
