@@ -114,12 +114,12 @@ else {
 	}
 
 	// Free line
-	echo '<span>';
+	echo '<span class="prod_entry_mode_free">';
 	// Show radio free line
 	if ($forceall >= 0 && (! empty($conf->product->enabled) || ! empty($conf->service->enabled)))
 	{
 		echo '<label for="prod_entry_mode_free">';
-		echo '<input type="radio" name="prod_entry_mode" id="prod_entry_mode_free" value="free"';
+		echo '<input type="radio" class="prod_entry_mode_free" name="prod_entry_mode" id="prod_entry_mode_free" value="free"';
 		//echo (GETPOST('prod_entry_mode')=='free' ? ' checked' : ((empty($forceall) && (empty($conf->product->enabled) || empty($conf->service->enabled)))?' checked':'') );
 		echo (GETPOST('prod_entry_mode')=='free' ? ' checked' : '');
 		echo '> ';
@@ -147,9 +147,9 @@ else {
 	if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
 	{
 		if ($forceall >= 0) echo '<br>';
-		echo '<span>';
+		echo '<span class="prod_entry_mode_predef">';
 		echo '<label for="prod_entry_mode_predef">';
-		echo '<input type="radio" name="prod_entry_mode" id="prod_entry_mode_predef" value="predef"'.(GETPOST('prod_entry_mode')=='predef'?' checked':'').'> ';
+		echo '<input type="radio" class="prod_entry_mode_predef" name="prod_entry_mode" id="prod_entry_mode_predef" value="predef"'.(GETPOST('prod_entry_mode')=='predef'?' checked':'').'> ';
 		if (empty($senderissupplier))
 		{
 			if (! empty($conf->product->enabled) && empty($conf->service->enabled)) echo $langs->trans('PredefinedProductsToSell');

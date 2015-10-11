@@ -87,33 +87,21 @@ if ($id)
 	$title = $langs->trans("User");
 	dol_fiche_head($head, 'note', $title, 0, 'user');
 
-	if ($msg) print '<div class="error">'.$msg.'</div>';
-
-	print "<form method=\"post\" action=\"".$_SERVER['PHP_SELF']."\">";
+    dol_banner_tab($object,'id','',$user->rights->user->user->lire || $user->admin);
+    
+    print '<div class="underbanner clearboth"></div>';
+    
+    print "<form method=\"post\" action=\"".$_SERVER['PHP_SELF']."\">";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
     print '<table class="border" width="100%">';
 
-    // Reference
-	print '<tr><td width="20%">'.$langs->trans('Ref').'</td>';
-	print '<td colspan="3">';
-	print $form->showrefnav($object,'id','',$user->rights->user->user->lire || $user->admin);
-	print '</td>';
-	print '</tr>';
-
-    // Lastname
-    print '<tr><td>'.$langs->trans("Lastname").'</td><td class="valeur" colspan="3">'.$object->lastname.'&nbsp;</td>';
-	print '</tr>';
-
-    // Firstname
-    print '<tr><td>'.$langs->trans("Firstname").'</td><td class="valeur" colspan="3">'.$object->firstname.'&nbsp;</td></tr>';
-
     // Login
-    print '<tr><td>'.$langs->trans("Login").'</td><td class="valeur" colspan="3">'.$object->login.'&nbsp;</td></tr>';
+    print '<tr><td class="titlefield">'.$langs->trans("Login").'</td><td class="valeur">'.$object->login.'&nbsp;</td></tr>';
 
 	// Note
     print '<tr><td class="tdtop">'.$langs->trans("Note").'</td>';
-	print '<td colspan="3">';
+	print '<td>';
 	if ($action == 'edit' && $user->rights->user->user->creer)
 	{
 		print "<input type=\"hidden\" name=\"action\" value=\"update\">";

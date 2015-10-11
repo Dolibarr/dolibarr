@@ -493,6 +493,7 @@ div.confirmmessage {
 .maxwidth100 { max-width: 100px; }
 .maxwidth200 { max-width: 200px; }
 .maxwidth300 { max-width: 300px; }
+.titlefield { width: 25%; }
 <?php if (! empty($dol_optimize_smallscreen)) { ?>
 .hideonsmartphone { display: none; }
 .noenlargeonsmartphone { width : 50px !important; display: inline !important; }
@@ -500,6 +501,7 @@ div.confirmmessage {
 .maxwidth100onsmartphone { max-width: 100px; }
 .maxwidth200onsmartphone { max-width: 200px; }
 .maxwidth300onsmartphone { max-width: 300px; }
+.titlefield { width: auto; }
 <?php } ?>
 .linkobject { cursor: pointer; }
 <?php if (GETPOST("optioncss") == 'print') { ?>
@@ -668,17 +670,17 @@ div.heightref {
 	min-height: 74px; 
 }
 div.divphotoref {
-	padding-right: 10px;
+	padding-right: 20px;
 }
 div.statusref {
 	float: right;
 	padding-right: 12px;
-	margin-top: 9px;
+	margin-top: 7px;
 	margin-bottom: 10px;
 }
 img.photoref {
-	height: 68px;
-	width: 68px;
+	height: 80px;
+	width: 80px;
 	border: 1px solid #CCC;
 	-moz-box-shadow: 3px 3px 4px #DDD;
     -webkit-box-shadow: 3px 3px 4px #DDD;
@@ -1513,10 +1515,10 @@ div.tabsElem { margin-top: 8px; }		/* To avoid overlap of tabs when not browser 
 
 div.tabBar {
     color: #<?php echo $colortextbacktab; ?>;
-    padding-top: 9px;
-    padding-left: <?php echo ($dol_optimize_smallscreen?'4':'8'); ?>px;
-    padding-right: <?php echo ($dol_optimize_smallscreen?'4':'8'); ?>px;
-    padding-bottom: 8px;
+    padding-top: <?php echo ($dol_optimize_smallscreen?'4':'16'); ?>px;
+    padding-left: <?php echo ($dol_optimize_smallscreen?'4':'16'); ?>px;
+    padding-right: <?php echo ($dol_optimize_smallscreen?'4':'16'); ?>px;
+    padding-bottom: <?php echo ($dol_optimize_smallscreen?'4':'14'); ?>px;
     margin: 0px 0px 14px 0px;
     -moz-border-radius:3px;
     -webkit-border-radius: 3px;
@@ -1934,10 +1936,9 @@ table.listwithfilterbefore {
 
 /* Pagination */
 div.refidpadding  {
-	/* padding-top: <?php print empty($conf->dol_use_jmobile)?'8':'12'; ?>px; */
+	padding-top: <?php print empty($conf->dol_use_jmobile)?'3':'14'; ?>px;
 }
 div.refid  {
-	/* padding-top: <?php print empty($conf->dol_use_jmobile)?'5':'12'; ?>px; */
 	font-weight: bold;
   	color: #766;
   	font-size: 160%;
@@ -2382,6 +2383,10 @@ tr.box_pair td, tr.box_impair td {
 	position: relative;
 }
 
+.prod_entry_mode_free, .prod_entry_mode_predef {
+    height: 26px !important;
+    vertical-align: middle;
+}
 
 
 

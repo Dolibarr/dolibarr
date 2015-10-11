@@ -136,33 +136,18 @@ if ($action == 'edit')
 }
 
 
-dol_fiche_head($head, 'guisetup', $title, 0, 'user');
-
-
-print '<table class="border" width="100%">';
-
-// Ref
-print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
-print '<td colspan="2">';
-print $form->showrefnav($object,'id','',$user->rights->user->user->lire || $user->admin);
-print '</td>';
-print '</tr>';
-
-// LastName
-print '<tr><td width="25%">'.$langs->trans("LastName").'</td>';
-print '<td colspan="2">'.$object->lastname.'</td>';
-print "</tr>\n";
-
-// FirstName
-print '<tr><td width="25%">'.$langs->trans("FirstName").'</td>';
-print '<td colspan="2">'.$object->firstname.'</td>';
-print "</tr>\n";
-
-print '</table><br>';
-
-
 if ($action == 'edit')
 {
+    dol_fiche_head($head, 'guisetup', $title, 0, 'user');
+    
+    dol_banner_tab($object,'id','',$user->rights->user->user->lire || $user->admin);
+    
+    
+    print '<div class="underbanner clearboth"></div>';
+    
+    print '<br>';
+    
+
     if (! empty($conf->use_javascript_ajax))
     {/*
         print '<script type="text/javascript" language="javascript">
@@ -250,11 +235,18 @@ if ($action == 'edit')
     print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
     print '</div>';
 
-    print '</form>';
-
 }
 else
 {
+    dol_fiche_head($head, 'guisetup', $title, 0, 'user');
+    
+    dol_banner_tab($object,'id','',$user->rights->user->user->lire || $user->admin);
+    
+    
+    print '<div class="underbanner clearboth"></div>';
+    
+    print '<br>';
+    
     $var=true;
 
     print '<table class="noborder" width="100%">';
@@ -310,7 +302,10 @@ else
 
 }
 
-dol_fiche_end();
+if ($action == 'edit')
+{
+    print '</form>';
+}
 
 llxFooter();
 $db->close();

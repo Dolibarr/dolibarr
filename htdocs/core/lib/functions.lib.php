@@ -841,6 +841,58 @@ function dol_get_fiche_end($notab=0)
 }
 
 /**
+ *  Show tab footer of a card
+ *
+ *  @param	object	$object			Object to show
+ *  @param	string	$paramid   		Name of parameter to use to name the id into the URL link
+ *  @param	string	$morehtml  		More html content to output just before the nav bar
+ *  @param	int		$shownav	  	Show Condition (navigation is shown if value is 1)
+ *  @param	string	$fieldid   		Nom du champ en base a utiliser pour select next et previous (we make the select max and min on this field)
+ *  @param	string	$fieldref   	Nom du champ objet ref (object->ref) a utiliser pour select next et previous
+ *  @param	string	$morehtmlref  	More html to show after ref
+ *  @param	string	$moreparam  	More param to add in nav link url.
+ *	@param	int		$nodbprefix		Do not include DB prefix to forge table name
+ *	@param	string	$morehtmlleft	More html code to show before ref
+ *	@param	string	$morehtmlright	More html code to show before navigation arrows
+ *  @return	void
+ */
+function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='rowid', $fieldref='ref', $morehtmlref='', $moreparam='', $nodbprefix=0, $morehtmlleft='', $morehtmlright='')
+{
+	global $conf, $form, $user, $langs;
+
+	//$showlogo=$object->logo;
+	$showlogo=1;
+	$showbarcode=empty($conf->barcode->enabled)?0:($object->barcode?1:0);
+	if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) $showbarcode=0;
+	$modulepart='societe';
+	if ($object->element == 'contact') $modulepart='contact';
+	if ($object->element == 'member') $modulepart='memberphoto';
+	if ($object->element == 'user') $modulepart='userphoto';
+
+	print '<div class="arearef heightref valignmiddle" width="100%">';
+	if ($showlogo)    $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$form->showphoto($modulepart,$object,0,0,0,'photoref').'</div>';
+	if ($showbarcode) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$form->showbarcode($object).'</div>';
+	if ($object->element == 'societe' && ! empty($conf->use_javascript_ajax) && $user->rights->societe->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
+		$morehtmlright.=ajax_object_onoff($object, 'status', 'status', 'InActivity', 'ActivityCeased');
+	} else {
+		$morehtmlright.=$object->getLibStatut(2);
+	}
+	if (! empty($object->name_nalias)) $morehtmlref.='<div class="refidno">'.$object->name_alias.'</div>';
+	$morehtmlref.='<div class="refidno">';
+	$morehtmlref.=$object->getBannerAddress('refaddress',$object);
+	$morehtmlref.='</div>';
+	if (! empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && in_array($object->element, array('societe', 'contact', 'member')))
+	{
+		$morehtmlref.='<div style="clear: both;"></div><div class="refidno">';
+		$morehtmlref.=$langs->trans("TechnicalID").': '.$object->id;
+		$morehtmlref.='</div>';
+	}
+	print $form->showrefnav($object, $paramid, $morehtml, $shownav, $fieldid, $fieldref, $morehtmlref, $moreparam, $nodbprefix, $morehtmlleft, $morehtmlright);
+	print '</div>';
+	print '<div class="underrefbanner clearboth"></div>';
+}
+   
+/**
  * Show a string with the label tag dedicated to the HTML edit field.
  *
  * @param	string	$langkey		Translation key
@@ -924,8 +976,8 @@ function dol_format_address($object,$withcountry=0,$sep="\n",$outputlangs='')
 
 	else                                        		// Other: title firstname name \n address lines \n zip town \n country
 	{
-		$ret .= ($ret ? $sep : '' ).$object->zip;
-		$ret .= ($object->town?(($object->zip?' ':'').$object->town):'');
+		$ret .= $object->zip ? (($ret ? $sep : '' ).$object->zip) : '';
+		$ret .= ($object->town?(($object->zip?' ':$sep).$object->town):'');
 		if ($object->state && in_array($object->country_code,$countriesusingstate))
 		{
 			$ret.=($ret?", ":'').$object->state;
@@ -1440,12 +1492,13 @@ function dol_print_skype($skype,$cid=0,$socid=0,$addlink=0,$max=64)
  * 	@param 	string	$country 	Country code to use for formatting
  * 	@param 	int		$cid 		Id of contact if known
  * 	@param 	int		$socid 		Id of third party if known
- * 	@param 	string		$addlink	''=no link to create action, 'AC_TEL'=add link to clicktodial (if module enabled) and add link to create event (if conf->global->AGENDA_ADDACTIONFORPHONE set)
+ * 	@param 	string	$addlink	''=no link to create action, 'AC_TEL'=add link to clicktodial (if module enabled) and add link to create event (if conf->global->AGENDA_ADDACTIONFORPHONE set)
  * 	@param 	string	$separ 		Separation between numbers for a better visibility example : xx.xx.xx.xx.xx
  *  @param	string  $withpicto  Show picto
+ *  @param	string	$titlealt	Text to show on alt
  * 	@return string 				Formated phone number
  */
-function dol_print_phone($phone,$country='',$cid=0,$socid=0,$addlink='',$separ="&nbsp;",$withpicto='')
+function dol_print_phone($phone,$country='',$cid=0,$socid=0,$addlink='',$separ="&nbsp;",$withpicto='',$titlealt='')
 {
 	global $conf,$user,$langs,$mysoc;
 
@@ -1525,7 +1578,11 @@ function dol_print_phone($phone,$country='',$cid=0,$socid=0,$addlink='',$separ="
 		}
 	}
 
-	return '<div class="nospan float" style="margin-right: 10px">'.($withpicto?img_picto(($withpicto=='fax'?$langs->trans("Fax"):$langs->trans("Phone")), 'object_'.($withpicto=='fax'?'phoning_fax':'phoning').'.png').' ':'').$newphone.'</div>';
+	if (empty($titlealt))
+	{
+		$titlealt=($withpicto=='fax'?$langs->trans("Fax"):$langs->trans("Phone"));
+	}
+	return '<div class="nospan float" style="margin-right: 10px">'.($withpicto?img_picto($titlealt, 'object_'.($withpicto=='fax'?'phoning_fax':'phoning').'.png').' ':'').$newphone.'</div>';
 }
 
 /**
@@ -1621,6 +1678,8 @@ function dol_print_address($address, $htmlid, $mode, $id, $noprint=0)
         {
             $out.=nl2br($address);
             $showgmap=$showomap=0;
+
+            // TODO Add a hook here
             if ($mode=='thirdparty' && ! empty($conf->google->enabled) && ! empty($conf->global->GOOGLE_ENABLE_GMAPS)) $showgmap=1;
             if ($mode=='contact' && ! empty($conf->google->enabled) && ! empty($conf->global->GOOGLE_ENABLE_GMAPS_CONTACTS)) $showgmap=1;
             if ($mode=='member' && ! empty($conf->google->enabled) && ! empty($conf->global->GOOGLE_ENABLE_GMAPS_MEMBERS)) $showgmap=1;
@@ -1628,7 +1687,6 @@ function dol_print_address($address, $htmlid, $mode, $id, $noprint=0)
             if ($mode=='contact' && ! empty($conf->openstreetmap->enabled) && ! empty($conf->global->OPENSTREETMAP_ENABLE_MAPS_CONTACTS)) $showomap=1;
             if ($mode=='member' && ! empty($conf->openstreetmap->enabled) && ! empty($conf->global->OPENSTREETMAP_ENABLE_MAPS_MEMBERS)) $showomap=1;
 
-            // TODO Add a hook here
             if ($showgmap)
             {
                 $url=dol_buildpath('/google/gmaps.php?mode='.$mode.'&id='.$id,1);

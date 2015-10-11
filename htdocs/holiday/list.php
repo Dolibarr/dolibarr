@@ -218,26 +218,13 @@ if ($id > 0)
 	$title = $langs->trans("User");
 	dol_fiche_head($head, 'paidholidays', $title, 0, 'user');
 
-	print '<table class="border" width="100%">';
-
-	// Ref
-	print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
-	print '<td colspan="2">';
-	print $form->showrefnav($fuser,'id','',$user->rights->user->user->lire || $user->admin);
-	print '</td>';
-	print '</tr>';
-
-	// LastName
-	print '<tr><td width="25%">'.$langs->trans("LastName").'</td>';
-	print '<td colspan="2">'.$fuser->lastname.'</td>';
-	print "</tr>\n";
-
-	// FirstName
-	print '<tr><td width="25%">'.$langs->trans("FirstName").'</td>';
-	print '<td colspan="2">'.$fuser->firstname.'</td>';
-	print "</tr>\n";
-
-	print '</table><br>';
+    dol_banner_tab($fuser,'id','',$user->rights->user->user->lire || $user->admin);
+    
+    
+    print '<div class="underbanner clearboth"></div>';
+    
+    print '<br>';
+    
 }
 else
 {

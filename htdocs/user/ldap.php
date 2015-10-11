@@ -89,27 +89,14 @@ $head = user_prepare_head($object);
 $title = $langs->trans("User");
 dol_fiche_head($head, 'ldap', $title, 0, 'user');
 
+dol_banner_tab($object,'id','',$user->rights->user->user->lire || $user->admin);
+
+print '<div class="underbanner clearboth"></div>';
+
 print '<table class="border" width="100%">';
 
-// Ref
-print '<tr><td width="25%" valign="top">'.$langs->trans("Ref").'</td>';
-print '<td>';
-print $form->showrefnav($object,'id','',$user->rights->user->user->lire || $user->admin);
-print '</td>';
-print '</tr>';
-
-// Lastname
-print '<tr><td width="25%" valign="top">'.$langs->trans("Lastname").'</td>';
-print '<td>'.$object->lastname.'</td>';
-print "</tr>\n";
-
-// Firstname
-print '<tr><td width="25%" valign="top">'.$langs->trans("Firstname").'</td>';
-print '<td>'.$object->firstname.'</td>';
-print "</tr>\n";
-
 // Login
-print '<tr><td width="25%" valign="top">'.$langs->trans("Login").'</td>';
+print '<tr><td class="titlefield">'.$langs->trans("Login").'</td>';
 if ($object->ldap_sid)
 {
     print '<td class="warning">'.$langs->trans("LoginAccountDisableInDolibarr").'</td>';

@@ -706,7 +706,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
             $contactstatic->web = $obj->web;
             $contactstatic->skype = $obj->skype;
 
-            $country_code = getCountry($obj->country_id, 'all');
+            $country_code = getCountry($obj->country_id, 2);
             $contactstatic->country_code = $country_code;
             
             print "<tr ".$bc[$var].">";

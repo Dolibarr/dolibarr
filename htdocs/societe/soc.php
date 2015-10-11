@@ -1447,6 +1447,14 @@ else
 
             print '<table class="border" width="100%">';
 
+            // Ref/ID
+			if (! empty($conf->global->MAIN_SHOW_TECHNICAL_ID))
+			{
+		        print '<tr><td>'.$langs->trans("ID").'</td><td colspan="3">';
+            	print $object->ref;
+            	print '</td></tr>';
+			}
+			
             // Name
             print '<tr><td>'.fieldLabel('ThirdPartyName','name',1).'</td>';
 	        print '<td colspan="3"><input type="text" size="60" maxlength="128" name="name" id="name" value="'.dol_escape_htmltag($object->name).'" autofocus="autofocus"></td></tr>';
@@ -1863,31 +1871,15 @@ else
 
         dol_htmloutput_errors($error,$errors);
 
-        //$showlogo=$object->logo;
-        $showlogo=1;
-        $showbarcode=empty($conf->barcode->enabled)?0:1;
-        if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) $showbarcode=0;
-
-        print '<div class="arearef heightref valignmiddle" width="100%">';
-        //$morehtmlleft='<div class="floatleft inline-block valignmiddle divphotoref">'.img_picto('', 'title_companies', '', '').'</div>';
-        if ($showlogo)    $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$form->showphoto('societe',$object,0,0,0,'photoref').'</div>';
-        //if ($showlogo)    $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$form->showphoto('societe',$object,0,0,0,'photoref').'</div>';
-        if ($showbarcode) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$form->showbarcode($object).'</div>';
-        if (! empty($conf->use_javascript_ajax) && $user->rights->societe->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
-            $morehtmlright.=ajax_object_onoff($object, 'status', 'status', 'InActivity', 'ActivityCeased');
-        } else {
-            $morehtmlright.=$object->getLibStatut(2);
-        }
-        $morehtml='';
-        if (! empty($object->ame_nalias)) $morehtml.='<div class="refidno">'.$object->name_alias.'</div>';
-        $morehtml.='<div class="refidno">';
-        $morehtml.=$object->getBannerAddress('refaddress',$object);
-        $morehtml.='</div>';
-        print $form->showrefnav($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom', $morehtml, '', 0, $morehtmlleft, $morehtmlright);
-        print '</div>';
-        print '<div class="underrefbanner clearboth"></div>';
         
-        print '<table class="border" width="100%">';
+        dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
+        
+        
+        print '<div class="fichecenter">';
+        print '<div class="fichehalfleft">';
+        
+        print '<div class="underbanner clearboth"></div>';
+        print '<table class="border tableforfield" width="100%">';
 
         // Ref
         /*
@@ -2156,7 +2148,7 @@ else
         }
         elseif($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj!="1")
         {
-            print '<tr><td>'.$langs->transcountry("LocalTax1IsUsed",$mysoc->country_code).'</td><td colspan="3">';
+            print '<tr><td>'.$langs->transcountry("LocalTax1IsUsed",$mysoc->country_code).'</td><td>';
             print yn($object->localtax1_assuj);
             print '</td><tr>';
             if($object->localtax1_assuj=="1" && (! isOnlyOneLocalTax(1)))
@@ -2178,7 +2170,7 @@ else
         }
         elseif($mysoc->localtax2_assuj=="1" && $mysoc->localtax1_assuj!="1")
         {
-            print '<tr><td>'.$langs->transcountry("LocalTax2IsUsed",$mysoc->country_code).'</td><td colspan="3">';
+            print '<tr><td>'.$langs->transcountry("LocalTax2IsUsed",$mysoc->country_code).'</td><td>';
             print yn($object->localtax2_assuj);
             print '</td><tr>';
             if($object->localtax2_assuj=="1" && (! isOnlyOneLocalTax(2)))
@@ -2222,6 +2214,14 @@ else
         else print '&nbsp;';
         print '</td></tr>';
 
+        print '</table>';
+        
+        print '</div>';
+        print '<div class="fichehalfright"><div class="ficheaddleft">';
+       
+        print '<div class="underbanner clearboth"></div>';
+        print '<table class="border tableforfield" width="100%">';
+        
         // Default language
         if (! empty($conf->global->MAIN_MULTILANGS))
         {
@@ -2333,7 +2333,7 @@ else
         if (! empty($conf->adherent->enabled))
         {
             $langs->load("members");
-            print '<tr><td width="25%" class="tdtop">'.$langs->trans("LinkedToDolibarrMember").'</td>';
+            print '<tr><td class="tdtop">'.$langs->trans("LinkedToDolibarrMember").'</td>';
             print '<td colspan="3">';
             $adh=new Adherent($db);
             $result=$adh->fetch('','',$object->id);
@@ -2357,7 +2357,11 @@ else
         }
 
         print '</table>';
-
+		print '</div>';
+		
+        print '</div></div>';
+        print '<div style="clear:both"></div>';
+        
         dol_fiche_end();
 
 

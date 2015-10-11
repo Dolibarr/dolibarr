@@ -32,36 +32,50 @@ $langs->load("companies");
 
 
 // Security check
-$contactid = GETPOST("id",'int');
+$id = GETPOST("id",'int');
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'contact', $contactid, 'socpeople&societe');
+$result = restrictedArea($user, 'contact', $id, 'socpeople&societe');
 
-$contact = new Contact($db);
+$object = new Contact($db);
 
 
 
 /*
  * 	View
  */
+
+$form=new Form($db);
+
 $title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
 
 llxHeader('',$title,'EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Empresas');
 
-if ($contactid > 0)
+if ($id > 0)
 {
-	$result = $contact->fetch($contactid, $user);
+	$result = $object->fetch($id, $user);
 
-	$contact->info($contactid);
+	$object->info($id);
 
 
-	$head = contact_prepare_head($contact);
+	$head = contact_prepare_head($object);
 
 	dol_fiche_head($head, 'info', $title, 0, 'contact');
 
-	// TODO Put here ref of card
+	$linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php">'.$langs->trans("BackToList").'</a>';
 
-	dol_print_object_info($contact);
+	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '');
 
+
+	print '<div class="fichecenter">';
+
+	print '<div class="underbanner clearboth"></div>';
+
+	print '<br>';
+	
+	dol_print_object_info($object);
+
+	print '</div>';
+	
 	dol_fiche_end();
 }
 
