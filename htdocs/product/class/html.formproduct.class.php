@@ -72,7 +72,7 @@ class FormProduct
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps on ps.fk_entrepot = e.rowid";
 			$sql.= " AND ps.fk_product = '".$fk_product."'";
 		}
-		$sql.= " WHERE e.entity = ".$conf->entity;
+		$sql.= " WHERE e.entity IN (".getEntity('stock',1).")";
 		$sql.= " AND e.statut = 1";
 		$sql.= " ORDER BY e.label";
 

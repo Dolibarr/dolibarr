@@ -448,7 +448,7 @@ function restrictedArea($user, $features, $objectid=0, $dbtablename='', $feature
                 	if (empty($dbt_keyfield)) dol_print_error('','Param dbt_keyfield is required but not defined');
                    
 
-				    $sql = "SELECT dbt.id";
+				    $sql = "SELECT dbt.".$dbt_keyfield;
                     $sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
                     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON (dbt.".$dbt_keyfield." = s.rowid)";
                     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON (sc.fk_soc = dbt.".$dbt_keyfield.")";
