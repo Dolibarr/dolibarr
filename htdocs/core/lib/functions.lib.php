@@ -862,7 +862,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 
 	//$showlogo=$object->logo;
 	$showlogo=1;
-	$showbarcode=empty($conf->barcode->enabled)?0:1;
+	$showbarcode=empty($conf->barcode->enabled)?0:($object->barcode?1:0);
 	if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) $showbarcode=0;
 	$modulepart='societe';
 	if ($object->element == 'contact') $modulepart='contact';
@@ -870,9 +870,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 	if ($object->element == 'user') $modulepart='userphoto';
 
 	print '<div class="arearef heightref valignmiddle" width="100%">';
-	//$morehtmlleft='<div class="floatleft inline-block valignmiddle divphotoref">'.img_picto('', 'title_companies', '', '').'</div>';
 	if ($showlogo)    $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$form->showphoto($modulepart,$object,0,0,0,'photoref').'</div>';
-	//if ($showlogo)    $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$form->showphoto('societe',$object,0,0,0,'photoref').'</div>';
 	if ($showbarcode) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$form->showbarcode($object).'</div>';
 	if ($object->element == 'societe' && ! empty($conf->use_javascript_ajax) && $user->rights->societe->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
 		$morehtmlright.=ajax_object_onoff($object, 'status', 'status', 'InActivity', 'ActivityCeased');

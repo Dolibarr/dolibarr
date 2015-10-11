@@ -489,7 +489,7 @@ div.confirmmessage {
 .maxwidth100 { max-width: 100px; }
 .maxwidth200 { max-width: 200px; }
 .maxwidth300 { max-width: 300px; }
-.titlefield { width: 25% }
+.titlefield { width: 25%; }
 <?php if (! empty($dol_optimize_smallscreen)) { ?>
 .hideonsmartphone { display: none; }
 .noenlargeonsmartphone { width : 50px !important; display: inline !important; }
@@ -620,7 +620,7 @@ div.heightref {
 	min-height: 80px; 
 }
 div.divphotoref {
-	padding-right: 10px;
+	padding-right: 20px;
 }
 div.statusref {
 	float: right;
