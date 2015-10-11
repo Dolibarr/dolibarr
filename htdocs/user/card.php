@@ -1190,9 +1190,6 @@ else
         {
 			dol_fiche_head($head, 'user', $title, 0, 'user');
 
-            $rowspan=19;
-
-
 	        dol_banner_tab($object,'id','',$user->rights->user->user->lire || $user->admin);
 	        
 	        
@@ -1202,24 +1199,6 @@ else
 	        print '<div class="underbanner clearboth"></div>';
 	        print '<table class="border tableforfield" width="100%">';
             
-            if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file->main_authentication) && ! empty($conf->global->MAIN_OPENIDURL_PERUSER)) $rowspan++;
-            if (! empty($conf->societe->enabled)) $rowspan++;
-            if (! empty($conf->adherent->enabled)) $rowspan++;
-            if (! empty($conf->skype->enabled)) $rowspan++;
-			if (! empty($conf->salaries->enabled) && ! empty($user->rights->salaries->read)) $rowspan = $rowspan+3;
-			if (! empty($conf->agenda->enabled)) $rowspan++;
-
-            // Position/Job
-            print '<tr><td>'.$langs->trans("PostOrFunction").'</td>';
-            print '<td>'.$object->job.'</td>';
-            print '</tr>'."\n";
-
-            // Gender
-		    print '<tr><td>'.$langs->trans("Gender").'</td>';
-		    print '<td>';
-		    if ($object->gender) print $langs->trans("Gender".$object->gender);
-		    print '</td></tr>';
-
             // Login
             print '<tr><td>'.$langs->trans("Login").'</td>';
             if (! empty($object->ldap_sid) && $object->statut==0)
@@ -1266,13 +1245,24 @@ else
             }
             print '</tr>'."\n";
 
+	        // Position/Job
+            print '<tr><td>'.$langs->trans("PostOrFunction").'</td>';
+            print '<td>'.$object->job.'</td>';
+            print '</tr>'."\n";
+
+            // Gender
+		    print '<tr><td>'.$langs->trans("Gender").'</td>';
+		    print '<td>';
+		    if ($object->gender) print $langs->trans("Gender".$object->gender);
+		    print '</td></tr>';
+
             // API key
             if(! empty($conf->api->enabled) && $user->admin) {
                 print '<tr><td>'.$langs->trans("ApiKey").'</td>';
                 print '<td>';
                 if (! empty($object->api_key))
                     print $langs->trans("Hidden");
-                print '<td>';
+                print '</td></tr>';
             }
 
             // Administrator
@@ -1319,7 +1309,7 @@ else
             }
 
             // Signature
-            print '<tr><td class="tdtop">'.$langs->trans('Signature').'</td><td colspan="2">';
+            print '<tr><td class="tdtop">'.$langs->trans('Signature').'</td><td>';
             print dol_htmlentitiesbr($object->signature);
             print "</td></tr>\n";
 
