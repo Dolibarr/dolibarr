@@ -623,7 +623,7 @@ div.divphotoref {
 div.statusref {
 	float: right;
 	padding-right: 12px;
-	margin-top: 9px;
+	margin-top: 7px;
 	margin-bottom: 10px;
 }
 img.photoref {
@@ -2132,10 +2132,14 @@ div.pagination li.pagination span.inactive {
   cursor: default;
 }
 div.pagination li.litext a {
-border: none;
+  border: none;
   padding-right: 10px;
   padding-left: 4px;
   font-weight: bold;
+}
+div.pagination li.litext a:hover {
+	background-color: transparent;
+	background-image: none;
 }
 <?php if (! empty($conf->dol_use_jmobile)) { ?>
 div.pagination li.litext {

@@ -1447,6 +1447,14 @@ else
 
             print '<table class="border" width="100%">';
 
+            // Ref/ID
+			if (! empty($conf->global->MAIN_SHOW_TECHNICAL_ID))
+			{
+		        print '<tr><td>'.$langs->trans("ID").'</td><td colspan="3">';
+            	print $object->ref;
+            	print '</td></tr>';
+			}
+			
             // Name
             print '<tr><td>'.fieldLabel('ThirdPartyName','name',1).'</td>';
 	        print '<td colspan="3"><input type="text" size="60" maxlength="128" name="name" id="name" value="'.dol_escape_htmltag($object->name).'" autofocus="autofocus"></td></tr>';
@@ -2140,7 +2148,7 @@ else
         }
         elseif($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj!="1")
         {
-            print '<tr><td>'.$langs->transcountry("LocalTax1IsUsed",$mysoc->country_code).'</td><td colspan="3">';
+            print '<tr><td>'.$langs->transcountry("LocalTax1IsUsed",$mysoc->country_code).'</td><td>';
             print yn($object->localtax1_assuj);
             print '</td><tr>';
             if($object->localtax1_assuj=="1" && (! isOnlyOneLocalTax(1)))
@@ -2162,7 +2170,7 @@ else
         }
         elseif($mysoc->localtax2_assuj=="1" && $mysoc->localtax1_assuj!="1")
         {
-            print '<tr><td>'.$langs->transcountry("LocalTax2IsUsed",$mysoc->country_code).'</td><td colspan="3">';
+            print '<tr><td>'.$langs->transcountry("LocalTax2IsUsed",$mysoc->country_code).'</td><td>';
             print yn($object->localtax2_assuj);
             print '</td><tr>';
             if($object->localtax2_assuj=="1" && (! isOnlyOneLocalTax(2)))
@@ -2325,7 +2333,7 @@ else
         if (! empty($conf->adherent->enabled))
         {
             $langs->load("members");
-            print '<tr><td width="25%" class="tdtop">'.$langs->trans("LinkedToDolibarrMember").'</td>';
+            print '<tr><td class="tdtop">'.$langs->trans("LinkedToDolibarrMember").'</td>';
             print '<td colspan="3">';
             $adh=new Adherent($db);
             $result=$adh->fetch('','',$object->id);
@@ -2349,8 +2357,9 @@ else
         }
 
         print '</table>';
-
-        print '</div></div></div>';
+		print '</div>';
+		
+        print '</div></div>';
         print '<div style="clear:both"></div>';
         
         dol_fiche_end();
