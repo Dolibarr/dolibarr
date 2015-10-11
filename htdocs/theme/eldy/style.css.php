@@ -2523,7 +2523,10 @@ tr.box_pair td, tr.box_impair td {
 	position: relative;
 }
 
-
+.prod_entry_mode_free, .prod_entry_mode_predef {
+    height: 26px !important;
+    vertical-align: middle;
+}
 
 
 

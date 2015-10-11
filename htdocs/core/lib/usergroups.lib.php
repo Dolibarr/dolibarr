@@ -462,7 +462,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 			if ($color) print '<input type="text" class="colorthumb" disabled="disabled" style="padding: 1px; margin-top: 0; margin-bottom: 0; width: 36px; background-color: #'.$color.'" value="'.$color.'">';
 			else print $langs->trans("Default");
 	   	}
-    	print ' &nbsp; ('.$langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis").')';
+    	print ' &nbsp; ('.$langs->trans("Default").': <strong>6e7896</strong>, '.$langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis").')';
 	    print '</td>';
 	}
 	
