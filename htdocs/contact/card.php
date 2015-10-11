@@ -1045,8 +1045,6 @@ else
 
         $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php">'.$langs->trans("BackToList").'</a>';
         
-        $morehtmlref=$object->getFullName($langs);
-        
         dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '');
         
         

@@ -5157,7 +5157,7 @@ class Form
         {
         	$ret.=dol_htmlentities($object->name);
         }
-        else if ($object->element == 'contact')
+        else if (in_array($object->element, array('contact', 'user', 'member')))
         {
         	$ret.=dol_htmlentities($object->getFullName($langs));
         }
