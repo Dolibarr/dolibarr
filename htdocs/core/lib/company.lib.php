@@ -647,7 +647,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     $num = $db->num_rows($result);
 
 	$var=true;
-	if ($num)
+	if ($num || (GETPOST('button_search') || GETPOST('button_search.x') || GETPOST('button_search_x')))
     {
         print '<tr class="liste_titre">';
         // Name - Position
