@@ -458,8 +458,8 @@ div.divsearchfield {
 	float: <?php print $left; ?>;
 	margin-<?php print $right; ?>: 12px;
 	margin-<?php print $left; ?>: 2px;
-	margin-top: 3px;
-    margin-bottom: 3px;
+	margin-top: 4px;
+    margin-bottom: 4px;
   	padding-left: 2px;	
 }
 div.confirmmessage {

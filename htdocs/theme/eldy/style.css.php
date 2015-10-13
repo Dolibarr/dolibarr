@@ -453,8 +453,8 @@ div.divsearchfield {
 	float: <?php print $left; ?>;
 	margin-<?php print $right; ?>: 12px;
     margin-<?php print $left; ?>: 2px;
-	margin-top: 3px;
-    margin-bottom: 3px;
+	margin-top: 4px;
+    margin-bottom: 4px;
   	padding-left: 2px;
 }
 div.confirmmessage {
@@ -2357,7 +2357,7 @@ div.liste_titre, tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.list
 	background-image: -ms-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(250,250,250,0.3) 100%);
 	background-image: linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(250,250,250,0.3) 100%);
 	<?php } ?>
-	font-weight: bold;
+	font-weight: normal;
 
     color: #<?php echo $colortexttitle; ?>;
     font-family: <?php print $fontlist ?>;
@@ -2371,7 +2371,7 @@ tr.liste_titre th, th.liste_titre, form.liste_titre div, div.liste_titre
 tr.liste_titre th, th.liste_titre, tr.liste_titre td, td.liste_titre, form.liste_titre div, div.liste_titre
 {
     font-family: <?php print $fontlist ?>;
-    font-weight: bold;
+    font-weight: normal;
     vertical-align: middle;
 }
 tr.liste_titre th a, th.liste_titre a, tr.liste_titre td a, td.liste_titre a, form.liste_titre div a, div.liste_titre a {
@@ -2487,7 +2487,7 @@ tr.box_titre {
 
 	color: #<?php echo $colortexttitle; ?>;
     font-family: <?php print $fontlist ?>, sans-serif;
-    font-weight: bold;
+    /*font-weight: normal;*/
     border-bottom: 1px solid #FDFFFF;
     white-space: nowrap;
 }
