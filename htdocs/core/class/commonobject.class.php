@@ -447,21 +447,37 @@ abstract class CommonObject
 
     	$countriesusingstate=array('AU','US','IN','GB','ES','UK','TR');
     	
-    	$out='';
+    	$contacti=0;
+    	$thirdpartyid=0;
+    	if ($this->elemet == 'societe')
+    	{
+    		$thirdpartyid=$this->id;
+    	}
+    	if ($this->elemet == 'contact')
+    	{
+    		$contactid=$this->id;
+			$thirdpartyid=$object->fk_soc;
+    	}
+        if ($this->elemet == 'user')
+    	{
+    		$contactid=$this->contact_id;
+			$thirdpartyid=$object->fk_soc;
+    	}
     	
-		$out.='<!-- BEGIN PHP TEMPLATE address_view.tpl.php -->';
+		$out='<!-- BEGIN part to show address block -->';
 		
 		$outdone=0;
 		$coords = $this->getFullAddress(1,', ');
-		if (! empty($conf->use_javascript_ajax))
+		if ($coords) 
 		{
-			$namecoords = $this->getFullName($langs,1).'<br>'.$coords;
-			// hideonsmatphone because copyToClipboard call jquery dialog that does not work with jmobile
-			$out.='<a href="#" class="hideonsmartphone" onclick="return copyToClipboard(\''.dol_escape_js($namecoords).'\',\''.dol_escape_js($langs->trans("HelpCopyToClipboard")).'\');">';
-			$out.=img_picto($langs->trans("Address"), 'object_address.png');
-			$out.='</a> ';
-		}
-		if ($coords) {
+			if (! empty($conf->use_javascript_ajax))
+			{
+				$namecoords = $this->getFullName($langs,1).'<br>'.$coords;
+				// hideonsmatphone because copyToClipboard call jquery dialog that does not work with jmobile
+				$out.='<a href="#" class="hideonsmartphone" onclick="return copyToClipboard(\''.dol_escape_js($namecoords).'\',\''.dol_escape_js($langs->trans("HelpCopyToClipboard")).'\');">';
+				$out.=img_picto($langs->trans("Address"), 'object_address.png');
+				$out.='</a> ';
+			}
 			$out.=dol_print_address($coords, 'address_'.$htmlkey.'_'.$this->id, $this->element, $this->id, 1); $outdone++;
 			$outdone++;
 		}
@@ -472,19 +488,31 @@ abstract class CommonObject
 			$out.=($outdone?'<br>':'').$this->state;
 			$outdone++;
 		}
-		
-		if ($this->phone_pro || $this->phone_mobile || $this->phone_perso || $this->fax) $out.=($outdone?'<br>':'');
-		if ($this->phone_pro) {
-			$out.=dol_print_phone($this->phone_pro,$country_code['code'],$this->rowid,$object->id,'AC_TEL','&nbsp;','phone'); $outdone++;
+
+		if ($this->phone_pro || $this->phone_mobile || $this->phone_perso || $this->fax || $this->office_phone || $this->user_mobile || $this->office_fax) $out.=($outdone?'<br>':'');
+    	if ($this->phone && empty($this->phone_pro)) {		// For objects that store pro phone into ->phone
+			$out.=dol_print_phone($this->phone,$country_code['code'],$contactid,$thirdpartyid,'AC_TEL','&nbsp;','phone',$langs->trans("PhonePro")); $outdone++;
 		}
-		if ($this->phone_mobile) {
-			$out.=dol_print_phone($this->phone_mobile,$country_code['code'],$this->rowid,$object->id,'AC_TEL','&nbsp;','phone'); $outdone++;
+		if (! empty($this->phone_pro)) {
+			$out.=dol_print_phone($this->phone_pro,$country_code['code'],$contactid,$thirdpartyid,'AC_TEL','&nbsp;','phone',$langs->trans("PhonePro")); $outdone++;
 		}
-		if ($this->phone_perso) {
-			$out.=dol_print_phone($this->phone_perso,$country_code['code'],$this->rowid,$object->id,'AC_TEL','&nbsp;','phone'); $outdone++;
+		if (! empty($this->phone_mobile)) {
+			$out.=dol_print_phone($this->phone_mobile,$country_code['code'],$contactid,$thirdpartyid,'AC_TEL','&nbsp;','phone',$langs->trans("PhoneMobile")); $outdone++;
 		}
-		if ($this->fax) {
-			$out.=dol_print_phone($this->fax,$country_code['code'],$this->rowid,$object->id,'AC_FAX','&nbsp;','fax'); $outdone++;
+		if (! empty($this->phone_perso)) {
+			$out.=dol_print_phone($this->phone_perso,$country_code['code'],$contactid,$thirdpartyid,'AC_TEL','&nbsp;','phone',$langs->trans("PhonePerso")); $outdone++;
+		}
+		if (! empty($this->fax)) {
+			$out.=dol_print_phone($this->fax,$country_code['code'],$contactid,$thirdpartyid,'AC_FAX','&nbsp;','fax',$langs->trans("Fax")); $outdone++;
+		}
+    	if (! empty($this->office_phone)) {
+			$out.=dol_print_phone($this->office_phone,$country_code['code'],$contactid,$thirdpartyid,'AC_TEL','&nbsp;','phone',$langs->trans("PhonePro")); $outdone++;
+		}
+		if (! empty($this->user_mobile)) {
+			$out.=dol_print_phone($this->user_mobile,$country_code['code'],$contactid,$thirdpartyid,'AC_TEL','&nbsp;','phone',$langs->trans("PhoneMobile")); $outdone++;
+		}
+		if (! empty($this->office_fax)) {
+			$out.=dol_print_phone($this->fax,$country_code['code'],$contactid,$thirdpartyid,'AC_FAX','&nbsp;','fax',$langs->trans("Fax")); $outdone++;
 		}
 		
 		$out.='<div style="clear: both;"></div>';
@@ -504,7 +532,7 @@ abstract class CommonObject
 			if ($this->skype) $out.=($outdone?'<br>':'').dol_print_skype($this->skype,$this->id,$object->id,'AC_SKYPE');
 		}
 		
-		$out.='<!-- END PHP TEMPLATE address_view.tpl.php -->';
+		$out.='<!-- END Part to show address block -->';
 		
 		return $out;
     }

@@ -489,6 +489,7 @@ div.confirmmessage {
 .maxwidth100 { max-width: 100px; }
 .maxwidth200 { max-width: 200px; }
 .maxwidth300 { max-width: 300px; }
+.titlefield { width: 25%; }
 <?php if (! empty($dol_optimize_smallscreen)) { ?>
 .hideonsmartphone { display: none; }
 .noenlargeonsmartphone { width : 50px !important; display: inline !important; }
@@ -496,6 +497,7 @@ div.confirmmessage {
 .maxwidth100onsmartphone { max-width: 100px; }
 .maxwidth200onsmartphone { max-width: 200px; }
 .maxwidth300onsmartphone { max-width: 300px; }
+.titlefield { width: auto; }
 <?php } ?>
 .linkobject { cursor: pointer; }
 <?php if (GETPOST("optioncss") == 'print') { ?>
@@ -618,12 +620,12 @@ div.heightref {
 	min-height: 80px; 
 }
 div.divphotoref {
-	padding-right: 10px;
+	padding-right: 20px;
 }
 div.statusref {
 	float: right;
 	padding-right: 12px;
-	margin-top: 9px;
+	margin-top: 7px;
 	margin-bottom: 10px;
 }
 img.photoref {
@@ -2132,10 +2134,14 @@ div.pagination li.pagination span.inactive {
   cursor: default;
 }
 div.pagination li.litext a {
-border: none;
+  border: none;
   padding-right: 10px;
   padding-left: 4px;
   font-weight: bold;
+}
+div.pagination li.litext a:hover {
+	background-color: transparent;
+	background-image: none;
 }
 <?php if (! empty($conf->dol_use_jmobile)) { ?>
 div.pagination li.litext {
@@ -2519,7 +2525,10 @@ tr.box_pair td, tr.box_impair td {
 	position: relative;
 }
 
-
+.prod_entry_mode_free, .prod_entry_mode_predef {
+    height: 26px !important;
+    vertical-align: middle;
+}
 
 
 

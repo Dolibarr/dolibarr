@@ -5152,7 +5152,16 @@ class Form
         
         $ret.='<div class="inline-block floatleft valignmiddle refid'.(($shownav && ($previous_ref || $next_ref))?' refidpadding':'').'">';
 
-        $ret.=dol_htmlentities($object->$fieldref);
+        // For thirdparty and contact, the ref is he id, so we show something else
+        if ($object->element == 'societe')
+        {
+        	$ret.=dol_htmlentities($object->name);
+        }
+        else if (in_array($object->element, array('contact', 'user', 'member')))
+        {
+        	$ret.=dol_htmlentities($object->getFullName($langs));
+        }
+        else $ret.=dol_htmlentities($object->$fieldref);
         if ($morehtmlref)
         {
             $ret.=' '.$morehtmlref;

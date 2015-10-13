@@ -1083,7 +1083,7 @@ if (empty($reshook))
 	    $upload_dir_tmp = $vardir.'/temp';
 
 		// TODO Delete only files that was uploaded from email form
-	    dol_remove_file_process($_POST['removedfile'],0);
+	    dol_remove_file_process(GETPOST('removedfile','alpha'),0);
 	    $action='presend';
 	}
 

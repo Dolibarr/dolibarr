@@ -13,8 +13,9 @@ make a Dolibarr upgrade.
 
 WARNING: Following changes may create regression for some external modules, but were necessary to make
 Dolibarr better:
-- Deprecated hidden option MAIN_USE_CUSTOM_TRANSLATION has been removed. Use MAIN_OVERWRITE_TRANS_xx_YY instead.
-
+- Deprecated hidden option MAIN_USE_CUSTOM_TRANSLATION has been removed. Use table llx_overwrite_trans instead.
+- Trigger LINECONTRACT_INSERT has been renamed into LINECONTRACT_CREATE to match common denomination.
+ 
 
 ***** ChangeLog for 3.8 compared to 3.7.* *****
 For users:

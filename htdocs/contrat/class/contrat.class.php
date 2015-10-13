@@ -1332,7 +1332,7 @@ class Contrat extends CommonObject
 
 					if (empty($error)) {
 					    // Call trigger
-					    $result=$this->call_trigger('LINECONTRACT_CREATE',$user);
+					    $result=$this->call_trigger('LINECONTRACT_INSERT',$user);
 					    if ($result < 0)
 					    {
 					        $this->db->rollback();
@@ -2644,7 +2644,7 @@ class ContratLigne extends CommonObjectLine
 			if (!$notrigger)
 			{
 				// Call trigger
-				$result = $this->call_trigger('LINECONTRACT_CREATE', $user);
+				$result = $this->call_trigger('LINECONTRACT_INSERT', $user);
 				if ($result < 0) {
 					$this->db->rollback();
 					return -1;
