@@ -229,6 +229,7 @@ $sql.= " AND p.fk_statut = 1";
 if ($mine || empty($user->rights->projet->all->lire)) $sql.= " AND p.rowid IN (".$projectsListId.")";
 if ($socid)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
 $sql.= " GROUP BY s.nom, s.rowid";
+$sql.= $db->order($sortfield, $sortorder);
 
 $var=true;
 $resql = $db->query($sql);
