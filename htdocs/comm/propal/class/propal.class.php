@@ -1063,7 +1063,7 @@ class Propal extends CommonObject
     {
         global $db, $user,$langs,$conf,$hookmanager;
 
-		dol_include_once('/projet/class.project.class.php');
+		dol_include_once('/projet/class/project.class.php');
 
         $this->context['createfromclone']='createfromclone';
 
