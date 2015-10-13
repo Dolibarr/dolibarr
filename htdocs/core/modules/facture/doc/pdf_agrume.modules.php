@@ -312,7 +312,9 @@ class pdf_agrume extends ModelePDFFactures
 					$this->posxup -= $progress_width;
 					$this->posxqty -= $progress_width;
 					$this->posxdiscount -= $progress_width;
+					$this->posxunit -= $progress_width;
 					$this->posxprogress -= $progress_width;
+					$this->posxpicture -= $progress_width;
 				}
 
 				// New page
@@ -389,6 +391,32 @@ class pdf_agrume extends ModelePDFFactures
 				
 				if (!empty($conf->global->INVOICE_USE_SITUATION))
 				{
+					// Get total commande
+					$sql = 'SELECT fk_source FROM '.MAIN_DB_PREFIX.'element_element WHERE sourcetype = "commande" AND fk_target = '.$object->id.' AND targettype = "facture"';
+					$resql = $db->query($sql);
+					
+					if ($resql && $db->num_rows($resql) > 0)
+					{
+						$obj = $db->fetch_object($resql);
+						$commande = new Commande($db);
+						
+						if ($commande->fetch($obj->fk_source) > 0)
+						{
+							$top = $tab_top;
+							$pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top, $langs->trans('PDFAgrumeSituationOrderTitle'), 0, 1);
+							$pdf->writeHTMLCell(20, 3, $this->page_largeur-$this->marge_droite-19, $tab_top, $langs->trans('TotalTTC'), 0, 1, false, true, 'R');
+							$pdf->Line($this->posxdesc-1, $pdf->GetY(), $this->page_largeur-$this->marge_droite, $pdf->GetY());
+							
+							$nexY = $pdf->GetY();
+							$tab_top = $nexY+1;
+							//A couper en 2 pour avoir le numéro de commande à gauche et le total ttc à droite
+							$pdf->writeHTMLCell(90, 3, $this->posxdesc-1, $tab_top, $langs->trans('PDFAgrumeSituationOrderInfo', $commande->ref), 0, 1);
+							$pdf->writeHTMLCell(20, 3, $this->page_largeur-$this->marge_droite-19, $tab_top, price($commande->total_ttc), 0, 1, false, true, 'R');
+							$nexY = $pdf->GetY();
+							$tab_top = $nexY+4;
+						}
+					}
+
 					$object->fetchPreviousNextSituationInvoice();
 					
 					if (count($object->tab_previous_situation_invoice) > 0)
@@ -404,7 +432,10 @@ class pdf_agrume extends ModelePDFFactures
 							$nexY = $pdf->GetY();
 							$tab_top = $nexY+1;
 							$pdf->writeHTMLCell(90, 3, $this->posxdesc-1, $tab_top, $langs->trans('PDFAgrumeSituationInvoiceLine', $prev_invoice->situation_counter, $prev_invoice->ref, dol_print_date($prev_invoice->date)), 0, 1);
-							$pdf->writeHTMLCell(90, 3, $this->posxdesc+100, $tab_top, price($prev_invoice->total_ttc), 0, 1, false, true, 'R');
+							
+							$price_display = -1 * abs($prev_invoice->total_ttc);
+							$price_display = price($price_display);
+							$pdf->writeHTMLCell(90, 3, $this->posxdesc+100, $tab_top, $price_display, 0, 1, false, true, 'R');
 							
 							$object->totalTCCPreviousSitutationInvoice += $prev_invoice->total_ttc;
 						}
@@ -412,11 +443,27 @@ class pdf_agrume extends ModelePDFFactures
 						$nexY = $pdf->GetY();
 						$height_situation=$nexY-$top;
 						
-						$pdf->SetDrawColor(192,192,192);
-						$pdf->Rect($this->marge_gauche, $top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_situation+2);
+						//$pdf->SetDrawColor(192,192,192);
+						//$pdf->Rect($this->marge_gauche, $top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_situation+2);
+						
+						if ($object->totalTCCPreviousSitutationInvoice > 0)
+						{
+							$tab_top = $nexY+1;
+							$pdf->SetFillColor(248,248,248);
+							$pdf->SetXY($this->posxdesc+140, $tab_top);
+							$pdf->MultiCell(30, 3, $outputlangs->transnoentities("TotalSituationInvoice"), 0, 'L', 1);
+							$pdf->SetXY($this->posxdesc+169, $tab_top);
+							
+							$price_display = -1 * abs($object->totalTCCPreviousSitutationInvoice);
+							$price_display = price($price_display, 0, $outputlangs);
+							$pdf->MultiCell(20, 3, $price_display, 0, 'R', 1);
+							
+							$nexY = $pdf->GetY();
+							$height_situation=$nexY-$top;
+						}
 						
 						$tab_height = $tab_height - $height_situation;
-						$tab_top = $nexY+6;
+						$tab_top = $nexY+7;
 					}
 				}
 
@@ -543,9 +590,18 @@ class pdf_agrume extends ModelePDFFactures
 					// Unit
 					if($conf->global->PRODUCT_USE_UNITS)
 					{
-						$unit = pdf_getlineunit($object, $i, $outputlangs, $hidedetails, $hookmanager);
-						$pdf->SetXY($this->posxunit, $curY);
-						$pdf->MultiCell($this->posxdiscount-$this->posxunit-0.8, 4, $unit, 0, 'L');
+						if ($this->situationinvoice) 
+						{
+							$unit = pdf_getlineunit($object, $i, $outputlangs, $hidedetails, $hookmanager);
+							$pdf->SetXY($this->posxunit, $curY);
+							$pdf->MultiCell($this->posxprogress-$this->posxunit-0.8, 4, $unit, 0, 'L');
+						}
+						else
+						{
+							$unit = pdf_getlineunit($object, $i, $outputlangs, $hidedetails, $hookmanager);
+							$pdf->SetXY($this->posxunit, $curY);
+							$pdf->MultiCell($this->posxdiscount-$this->posxunit-0.8, 4, $unit, 0, 'L');	
+						}
 					}
 
 					// Discount on line
@@ -1301,15 +1357,6 @@ class pdf_agrume extends ModelePDFFactures
 			$pdf->SetTextColor(0,0,0);
 		}
 
-		if (!empty($conf->global->INVOICE_USE_SITUATION) && $object->totalTCCPreviousSitutationInvoice > 0)
-		{
-			$index++;
-			$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-			$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalSituationInvoice"), $useborder, 'L', 1);
-			$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-			$pdf->MultiCell($largcol2, $tab2_hl, price($object->totalTCCPreviousSitutationInvoice, 0, $outputlangs), $useborder, 'R', 1);
-		}
-
 		$index++;
 		return ($tab2_top + ($tab2_hl * $index));
 	}
@@ -1414,7 +1461,22 @@ class pdf_agrume extends ModelePDFFactures
 			}
 		}
 
-		$pdf->line($this->posxdiscount-1, $tab_top, $this->posxdiscount-1, $tab_top + $tab_height);
+		if ($this->situationinvoice)
+		{
+			$pdf->line($this->posxprogress - 2, $tab_top, $this->posxprogress - 2, $tab_top + $tab_height);
+			if (empty($hidetop)) {
+				$pdf->SetXY($this->posxunit - 2, $tab_top + 1);
+				$pdf->MultiCell($this->posxunit - $this->posxprogress - 1, 2, $outputlangs->transnoentities("Progress"), '',
+					'C');
+			}
+			
+			$pdf->line($this->posxprogress+16, $tab_top, $this->posxprogress+16, $tab_top + $tab_height);
+		}
+		else 
+		{
+			$pdf->line($this->posxdiscount-1, $tab_top, $this->posxdiscount-1, $tab_top + $tab_height);
+		}
+
 		if (empty($hidetop))
 		{
 			if ($this->atleastonediscount)
@@ -1504,7 +1566,7 @@ class pdf_agrume extends ModelePDFFactures
 		if ($object->type == 3) $title=$outputlangs->transnoentities("InvoiceDeposit");
 		if ($object->type == 4) $title=$outputlangs->transnoentities("InvoiceProFormat");
 		$pdf->MultiCell($w, 3, $title, '', 'R');
-
+		
 		$pdf->SetFont('','B',$default_font_size);
 
 		$posy+=5;
@@ -1553,6 +1615,15 @@ class pdf_agrume extends ModelePDFFactures
 			$pdf->SetXY($posx,$posy);
 			$pdf->SetTextColor(0,0,60);
 			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CorrectionInvoice").' : '.$outputlangs->convToOutputCharset($objectreplaced->ref), '', 'R');
+		}
+
+
+		if ($this->situationinvoice)
+		{
+			$posy+=4;
+			$pdf->SetXY($posx,$posy);
+			$pdf->SetTextColor(0,0,60);
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("PDFAgrumeSituationNumber", $object->situation_counter), '', 'R');
 		}
 
 		$posy+=4;
