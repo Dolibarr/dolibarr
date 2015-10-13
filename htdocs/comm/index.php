@@ -331,7 +331,11 @@ if (! empty($conf->societe->enabled) && $user->rights->societe->lire)
 
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td colspan="2">'.$langs->trans("BoxTitleLastCustomersOrProspects",$max).'</td>';
+		print '<td colspan="2">';
+		if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) print $langs->trans("BoxTitleLastCustomersOrProspects",$max);
+        else if (! empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) print $langs->trans("BoxTitleLastModifiedProspects",$max);
+		else print $langs->trans("BoxTitleLastModifiedCustomers",$max);
+		print '</td>';
 		print '<td align="right">'.$langs->trans("DateModificationShort").'</td>';
 		print '</tr>';
 		if ($num)
