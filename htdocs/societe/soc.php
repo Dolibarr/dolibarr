@@ -1881,46 +1881,10 @@ else
         print '<div class="underbanner clearboth"></div>';
         print '<table class="border tableforfield" width="100%">';
 
-        // Ref
-        /*
-        print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
-        print '<td colspan="2">';
-        print $fuser->id;
-        print '</td>';
-        print '</tr>';
-        */
-
-        // Name
-        /*
-        print '<tr><td width="25%">'.$langs->trans('ThirdPartyName').'</td>';
-        print '<td colspan="3">';
-        print $form->showrefnav($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
-        print '</td>';
-        print '</tr>';
-		*/
-        
 	    // Alias names (commercial, trademark or alias names)
-	    print '<tr><td>'.$langs->trans('AliasNames').'</td><td>';
+	    print '<tr><td class="titlefield">'.$langs->trans('AliasNames').'</td><td>';
 	    print $object->name_alias;
 	    print "</td></tr>";
-
-        // Logo+barcode
-        /*
-        $rowspan=6;
-        if (! empty($conf->global->SOCIETE_USEPREFIX)) $rowspan++;
-        if (! empty($object->client)) $rowspan++;
-        if (! empty($conf->fournisseur->enabled) && $object->fournisseur && ! empty($user->rights->fournisseur->lire)) $rowspan++;
-        if (! empty($conf->barcode->enabled)) $rowspan++;
-        if (empty($conf->global->SOCIETE_DISABLE_STATE)) $rowspan++;
-        $htmllogobar='';
-        if ($showlogo || $showbarcode)
-        {
-            $htmllogobar.='<td rowspan="'.$rowspan.'" style="text-align: center;" width="25%">';
-            if ($showlogo)   $htmllogobar.=$form->showphoto('societe',$object);
-            if ($showlogo && $showbarcode) $htmllogobar.='<br><br>';
-            if ($showbarcode) $htmllogobar.=$form->showbarcode($object);
-            $htmllogobar.='</td>';
-        }*/
 
         // Prefix
         if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
@@ -1966,69 +1930,6 @@ else
             print '</tr>';
         }
 
-        // Status
-        /*
-        print '<tr><td>'.$langs->trans("Status").'</td>';
-        print '<td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'">';
-        if (! empty($conf->use_javascript_ajax) && $user->rights->societe->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
-            print ajax_object_onoff($object, 'status', 'status', 'InActivity', 'ActivityCeased');
-        } else {
-            print $object->getLibStatut(2);
-        }
-        print '</td>';
-        print $htmllogobar; $htmllogobar='';
-        print '</tr>';
-		*/
-        
-        // Address
-        /*
-        print '<tr><td class="tdtop">'.$langs->trans('Address').'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'">';
-        dol_print_address($object->address,'gmap','thirdparty',$object->id);
-        print '</td></tr>';
-
-        // Zip / Town
-        print '<tr><td width="25%">'.$langs->trans('Zip').' / '.$langs->trans("Town").'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'">';
-        print $object->zip.($object->zip && $object->town?" / ":"").$object->town;
-        print '</td>';
-        print '</tr>';
-
-        // Country
-        print '<tr><td>'.$langs->trans("Country").'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'" class="nowrap">';
-    	if (! empty($object->country_code))
-    	{
-           	//$img=picto_from_langcode($object->country_code);
-           	$img='';
-           	if ($object->isInEEC()) print $form->textwithpicto(($img?$img.' ':'').$object->country,$langs->trans("CountryIsInEEC"),1,0);
-           	else print ($img?$img.' ':'').$object->country;
-    	}
-        print '</td></tr>';
-
-        // State
-        if (empty($conf->global->SOCIETE_DISABLE_STATE)) print '<tr><td>'.$langs->trans('State').'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'">'.$object->state.'</td>';
-
-        // EMail
-        print '<tr><td>'.$langs->trans('EMail').'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'">';
-        print dol_print_email($object->email,0,$object->id,'AC_EMAIL');
-        print '</td></tr>';
-
-        // Web
-        print '<tr><td>'.$langs->trans('Web').'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'">';
-        print dol_print_url($object->url);
-        print '</td></tr>';
-
-        // Skype
-        if (! empty($conf->skype->enabled))
-        {
-            print '<tr><td>'.$langs->trans('Skype').'</td><td colspan="3">';
-            print dol_print_skype($object->skype,0,$object->id,'AC_SKYPE');
-            print '</td></tr>';
-        }
-
-        // Phone / Fax
-        print '<tr><td>'.$langs->trans('Phone').'</td><td style="min-width: 25%;">'.dol_print_phone($object->phone,$object->country_code,0,$object->id,'AC_TEL').'</td>';
-        print '<td>'.$langs->trans('Fax').'</td><td style="min-width: 25%;">'.dol_print_phone($object->fax,$object->country_code,0,$object->id,'AC_FAX').'</td></tr>';
-		*/
-        
         // Prof ids
         $i=1; $j=0;
         while ($i <= 6)

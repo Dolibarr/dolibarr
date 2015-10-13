@@ -109,17 +109,15 @@ if ($object->id)
 		$totalsize+=$file['size'];
 	}
 
-
-	print '<table class="border"width="100%">';
-
-	// Ref
-	print '<tr><td width="25%">'.$langs->trans("ThirdPartyName").'</td>';
-	print '<td colspan="3">';
-	print $form->showrefnav($object,'socid','',($user->societe_id?0:1),'rowid','nom');
-	print '</td></tr>';
+    dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
+        
+    print '<div class="fichecenter">';
+    
+    print '<div class="underbanner clearboth"></div>';
+	print '<table class="border centpercent">';
 
 	// Alias names (commercial, trademark or alias names)
-	print '<tr><td>'.$langs->trans('AliasNames').'</td><td colspan="3">';
+	print '<tr><td class="titlefield">'.$langs->trans('AliasNames').'</td><td colspan="3">';
 	print $object->name_alias;
 	print "</td></tr>";
 
@@ -155,6 +153,8 @@ if ($object->id)
 
 	print '</table>';
 
+	print '</div>';
+	
 	dol_fiche_end();
 
 	$modulepart = 'societe';
