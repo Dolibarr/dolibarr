@@ -442,7 +442,7 @@ if (empty($reshook))
 					$ret = $object->fetch($id); // Reload to get new records
 
 					$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
-	    			if ($result < 0) dol_print_error($db,$result);
+	    			if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 				}
 			}
 			else
@@ -923,7 +923,11 @@ if (empty($reshook))
 						$exp = new Expedition($db);
 						$exp->fetch($object->origin_id);
 						$exp->fetchObjectLinked();
-						if (count($exp->linkedObjectsIds['commande']) > 0) $object->linked_objects['commande'] = $exp->linkedObjectsIds['commande'][0];
+						if (count($exp->linkedObjectsIds['commande']) > 0) {
+							foreach ($exp->linkedObjectsIds['commande'] as $key => $value){
+								$object->linked_objects['commande'] = $value;
+							}
+						}
 					}
 
 					if (is_array($_POST['other_linked_objects']) && ! empty($_POST['other_linked_objects']))
@@ -1421,10 +1425,7 @@ if (empty($reshook))
 						$ret = $object->fetch($id); // Reload to get new records
 
 						$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
-						if ($result < 0)
-						{
-							setEventMessages($object->error, $object->errors, 'errors');
-						}
+						if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 					}
 
 					unset($_POST['prod_entry_mode']);
@@ -2185,9 +2186,9 @@ if ($action == 'create')
 			$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceAvoirDesc"), 1, 'help', '', 0, 3);
 			print $desc;
 
-			print '<div id="credit_note_options">';
-	        print '&nbsp;&nbsp;&nbsp; <input type="checkbox" name="invoiceAvoirWithLines" id="invoiceAvoirWithLines" value="1" onclick="if($(this).is(\':checked\') ) { $(\'#radio_creditnote\').prop("checked", true); $(\'#invoiceAvoirWithPaymentRestAmount\').removeAttr(\'checked\');   }" '.(GETPOST('invoiceAvoirWithLines','int')>0 ? 'checked':'').' /> <label for="invoiceAvoirWithLines">'.$langs->trans('invoiceAvoirWithLines')."</label>";
-	        print '<br>&nbsp;&nbsp;&nbsp; <input type="checkbox" name="invoiceAvoirWithPaymentRestAmount" id="invoiceAvoirWithPaymentRestAmount" value="1" onclick="if($(this).is(\':checked\') ) { $(\'#radio_creditnote\').prop("checked", true);  $(\'#invoiceAvoirWithLines\').removeAttr(\'checked\');   }" '.(GETPOST('invoiceAvoirWithPaymentRestAmount','int')>0 ? 'checked':'').' /> <label for="invoiceAvoirWithPaymentRestAmount">'.$langs->trans('invoiceAvoirWithPaymentRestAmount')."</label>";
+			print '<div id="credit_note_options" class="clearboth">';
+	        print '&nbsp;&nbsp;&nbsp; <input data-role="none" type="checkbox" name="invoiceAvoirWithLines" id="invoiceAvoirWithLines" value="1" onclick="if($(this).is(\':checked\') ) { $(\'#radio_creditnote\').prop(\'checked\', true); $(\'#invoiceAvoirWithPaymentRestAmount\').removeAttr(\'checked\');   }" '.(GETPOST('invoiceAvoirWithLines','int')>0 ? 'checked':'').' /> <label for="invoiceAvoirWithLines">'.$langs->trans('invoiceAvoirWithLines')."</label>";
+	        print '<br>&nbsp;&nbsp;&nbsp; <input data-role="none" type="checkbox" name="invoiceAvoirWithPaymentRestAmount" id="invoiceAvoirWithPaymentRestAmount" value="1" onclick="if($(this).is(\':checked\') ) { $(\'#radio_creditnote\').prop(\'checked\', true);  $(\'#invoiceAvoirWithLines\').removeAttr(\'checked\');   }" '.(GETPOST('invoiceAvoirWithPaymentRestAmount','int')>0 ? 'checked':'').' /> <label for="invoiceAvoirWithPaymentRestAmount">'.$langs->trans('invoiceAvoirWithPaymentRestAmount')."</label>";
 			print '</div>';
 
 			print '</div></div>';
@@ -2245,6 +2246,10 @@ if ($action == 'create')
 	print '</td></tr>';
 
     // Bank Account
+	if (isset($_POST['fk_account'])) {
+		$fk_account = $_POST['fk_account'];
+	}
+
     print '<tr><td>' . $langs->trans('BankAccount') . '</td><td colspan="2">';
     $form->select_comptes($fk_account, 'fk_account', 0, '', 1);
     print '</td></tr>';
@@ -3536,14 +3541,17 @@ else if ($id > 0 || ! empty($ref))
 		                                                                                          // modified by hook
 		if (empty($reshook)) {
 			// Editer une facture deja validee, sans paiement effectue et pas exporte en compta
-			if ($object->statut == 1) {
+			if ($object->statut == 1) 
+			{
 				// On verifie si les lignes de factures ont ete exportees en compta et/ou ventilees
 				$ventilExportCompta = $object->getVentilExportCompta();
 
-				if ($resteapayer == $object->total_ttc && $object->paye == 0 && $ventilExportCompta == 0) {
-					if (! $objectidnext && $object->is_last_in_cycle()) {
+				if ($resteapayer == $object->total_ttc && empty($object->paye) && $ventilExportCompta == 0) 
+				{
+					if (! $objectidnext && $object->is_last_in_cycle()) 
+					{
 					    if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->facture->creer))
-       						|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->invoice_advance->unvalidate)))
+       						|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->facture->invoice_advance->unvalidate)))
 						{
 							print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?facid=' . $object->id . '&amp;action=modif">' . $langs->trans('Modify') . '</a></div>';
 						} else {
@@ -3806,7 +3814,7 @@ else if ($id > 0 || ! empty($ref))
 		if (! $file || ! is_readable($file)) {
 			$result = $object->generateDocument(GETPOST('model') ? GETPOST('model') : $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			if ($result <= 0) {
-				dol_print_error($db, $result);
+				dol_print_error($db, $object->error, $object->errors);
 				exit();
 			}
 			$fileparams = dol_most_recent_file($conf->facture->dir_output . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
@@ -3849,8 +3857,9 @@ else if ($id > 0 || ! empty($ref))
 		$formmail->substit['__FACREF__'] = $object->ref;
 		$formmail->substit['__SIGNATURE__'] = $user->signature;
 		$formmail->substit['__REFCLIENT__'] = $object->ref_client;
-		$formmail->substit['__THIRPARTY_NAME__'] = $object->thirdparty->name;
+		$formmail->substit['__THIRDPARTY_NAME__'] = $object->thirdparty->name;
 		$formmail->substit['__PROJECT_REF__'] = (is_object($object->projet)?$object->projet->ref:'');
+		$formmail->substit['__PROJECT_NAME__'] = (is_object($object->projet)?$object->projet->title:'');
 		$formmail->substit['__PERSONALIZED__'] = '';
 		$formmail->substit['__CONTACTCIVNAME__'] = '';
 

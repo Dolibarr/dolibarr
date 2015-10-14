@@ -1,6 +1,8 @@
 # Dolibarr language file - Source file is en_US - projects
 RefProject=Ref. proiect
+ProjectRef=Project ref.
 ProjectId=ID proiect
+ProjectLabel=Project label
 Project=Proiect
 Projects=Proiecte
 ProjectStatus=Statut Proiect
@@ -27,7 +29,7 @@ OfficerProject=Responsabil de proiect
 LastProjects=Ultimele %s proiecte
 AllProjects=Toate proiectele
 OpenedProjects=Opened projects
-OpportunitiesStatusForOpenedProjects=Opportunities status for opened projects
+OpportunitiesStatusForOpenedProjects=Opportunities amount of opened projects by status
 ProjectsList=Lista  proiecte
 ShowProject=Afişează proiect
 SetProject=Setare proiect
@@ -143,7 +145,8 @@ SelectElement=Selectați elementul
 AddElement=Link către element
 UnlinkElement=Element nelegat
 # Documents models
-DocumentModelBaleine=Modelul de rapor al unui proiect complet t (logo. ..)
+DocumentModelBeluga=Project template for linked objects overview
+DocumentModelBaleine=Project report template for tasks
 PlannedWorkload=Volum de lucru Planificat
 PlannedWorkloadShort=Workload
 WorkloadOccupation=Workload assignation

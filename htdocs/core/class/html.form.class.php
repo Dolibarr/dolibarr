@@ -3015,6 +3015,8 @@ class Form
         global $langs;
         $langs->load("categories");
 
+		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+        
         $cat = new Categorie($this->db);
         $cate_arbo = $cat->get_full_arbo($type,$excludeafterid);
 
@@ -4406,7 +4408,7 @@ class Form
      *	@param	string			$htmlname       Name of html select area. Must start with "multi" if this is a multiselect
      *	@param	array			$array          Array with key+value
      *	@param	string|string[]	$id             Preselected key or preselected keys for multiselect
-     *	@param	int				$show_empty     0 no empty value allowed, 1 to add an empty value into list (value is '' or '&nbsp;').
+     *	@param	int				$show_empty     0 no empty value allowed, 1 to add an empty value into list (value is '' or '&nbsp;'), <0 to add an empty value with key that is this value.
      *	@param	int				$key_in_label   1 pour afficher la key dans la valeur "[key] value"
      *	@param	int				$value_as_key   1 to use value as key
      *	@param  string			$moreparam      Add more parameters onto the select tag
@@ -4455,7 +4457,7 @@ class Form
         {
         	$textforempty=' ';
         	if (! empty($conf->use_javascript_ajax)) $textforempty='&nbsp;';	// If we use ajaxcombo, we need &nbsp; here to avoid to have an empty element that is too small.
-            $out.='<option value="-1"'.($id==-1?' selected':'').'>'.$textforempty.'</option>'."\n";
+            $out.='<option value="'.($show_empty < 0 ? $show_empty : -1).'"'.($id==-2?' selected':'').'>'.$textforempty.'</option>'."\n";     // id is -2 because -1 is already "do not contact"
         }
 
         if (is_array($array))
@@ -4673,6 +4675,8 @@ class Form
 	{
 		global $db;
 
+		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+
 		$cat = new Categorie($db);
 		$categories = $cat->containing($id, $type);
 
@@ -4692,7 +4696,7 @@ class Form
 
 		if ($rendermode == 0)
 		{
-			$cate_arbo = $this->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 64, 0, 1);
+			$cate_arbo = $this->select_all_categories($type, '', 'parent', 64, 0, 1);
 			foreach($categories as $c) {
 				$arrayselected[] = $c->id;
 			}
@@ -5057,10 +5061,7 @@ class Form
         $next_ref     = $object->ref_next?'<a data-role="button" data-icon="arrow-r" data-iconpos="right" href="'.$_SERVER["PHP_SELF"].'?'.$paramid.'='.urlencode($object->ref_next).$moreparam.'">'.(empty($conf->dol_use_jmobile)?'>':'&nbsp;').'</a>':'';
 
         //print "xx".$previous_ref."x".$next_ref;
-        //if ($previous_ref || $next_ref || $morehtml) {
-            //$ret.='<table class="nobordernopadding" width="100%"><tr class="nobordernopadding"><td class="nobordernopadding">';
-            $ret.='<div style="vertical-align: middle"><div class="inline-block floatleft refid'.(($shownav && ($previous_ref || $next_ref))?' refidpadding':'').'">';
-        //}
+        $ret.='<div style="vertical-align: middle"><div class="inline-block floatleft refid'.(($shownav && ($previous_ref || $next_ref))?' refidpadding':'').'">';
 
         $ret.=dol_htmlentities($object->$fieldref);
         if ($morehtmlref)

@@ -287,8 +287,9 @@ if ($result) {
 		print '<th align="left">' . $langs->trans("Accountancy_code_sell_suggest") . '</td>';
 	}
 	// print_liste_field_titre('');
-	print '<td align="center">' . $langs->trans("Ventilate") . '<br><label id="select-all">' . $langs->trans('All') . '</label>/<label id="unselect-all">' . $langs->trans('None') . '</label>' . '</td>';
+	print_liste_field_titre($langs->trans("Ventilate") . '<br><label id="select-all">' . $langs->trans('All') . '</label> / <label id="unselect-all">' . $langs->trans('None') . '</label>');
 	print '</tr>';
+	
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre"><input type="text" class="flat" size="20" name="search_ref" value="' . $search_ref . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" size="20" name="search_label" value="' . $search_label . '"></td>';
@@ -359,7 +360,7 @@ if ($result) {
 			// print '<td align="left">' . $compta_prodbuy . '</td>';
 			// TODO: we shoul set a user defined value to adjust user square / wide screen size
 			// $trunclenghform = defined('ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT') ? ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT : 50;
-			print '<td align="center">';
+			print '<td align="left">';
 			print $form->select_account($compta_prodbuy_id, 'codeventil_'.$product_static->id, 1);
 			print '</td>';
 		} else {
@@ -369,7 +370,7 @@ if ($result) {
 			// TODO: replace by select
 			// TODO: we shoul set a user defined value to adjust user square / wide screen size
 			// $trunclenghform = defined('ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT') ? ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT : 50;
-			print '<td align="center">';
+			print '<td align="left">';
 			print $form->select_account($compta_prodsell_id,  'codeventil_'.$product_static->id, 1);
 			print '</td>';
 		}

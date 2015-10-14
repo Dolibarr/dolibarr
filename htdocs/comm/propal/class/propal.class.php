@@ -462,7 +462,7 @@ class Propal extends CommonObject
 
             $localtaxes_type=getLocalTaxesFromRate($txtva,0,$this->thirdparty,$mysoc);
 
-            $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, '', $localtaxes_type);
+            $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type);
             $total_ht  = $tabprice[0];
             $total_tva = $tabprice[1];
             $total_ttc = $tabprice[2];
@@ -858,8 +858,8 @@ class Propal extends CommonObject
         $sql.= $this->socid;
         $sql.= ", 0";
         $sql.= ", ".$this->remise;
-        $sql.= ", ".($this->remise_percent?$this->remise_percent:'null');
-        $sql.= ", ".($this->remise_absolue?$this->remise_absolue:'null');
+        $sql.= ", ".($this->remise_percent?$this->db->escape($this->remise_percent):'null');
+        $sql.= ", ".($this->remise_absolue?$this->db->escape($this->remise_absolue):'null');
         $sql.= ", 0";
         $sql.= ", 0";
         $sql.= ", '".$this->db->idate($this->date)."'";
@@ -868,7 +868,7 @@ class Propal extends CommonObject
         $sql.= ", ".($user->id > 0 ? "'".$user->id."'":"null");
         $sql.= ", '".$this->db->escape($this->note_private)."'";
         $sql.= ", '".$this->db->escape($this->note_public)."'";
-        $sql.= ", '".$this->modelpdf."'";
+        $sql.= ", '".$this->db->escape($this->modelpdf)."'";
         $sql.= ", ".($this->fin_validite!=''?"'".$this->db->idate($this->fin_validite)."'":"null");
         $sql.= ", ".$this->cond_reglement_id;
         $sql.= ", ".$this->mode_reglement_id;
@@ -1481,12 +1481,12 @@ class Propal extends CommonObject
             $soc->fetch($this->socid);
 
             // Define new ref
-            if (! $error && (preg_match('/^[\(]?PROV/i', $this->ref)))
+            if (! $error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) // empty should not happened, but when it occurs, the test save life
             {
             	$num = $this->getNextNumRef($soc);
             }
             else
-          {
+            {
             	$num = $this->ref;
             }
             $this->newref = $num;

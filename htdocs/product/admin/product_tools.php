@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2012	Regis Houssin       <regis.houssin@capnetworks.com>
- * Copyright (C) 2013   Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2012	   Regis Houssin       <regis.houssin@capnetworks.com>
+ * Copyright (C) 2013-2015 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -299,6 +299,8 @@ else
 
 	print '</table>';
 
+	print '<br>';
+	
 	// Boutons actions
 	print '<div class="center">';
 	print '<input type="submit" id="convert_vatrate" name="convert_vatrate" value="'.$langs->trans("MassConvert").'" class="button" />';

@@ -97,6 +97,12 @@ $modules=array(
 						'img' => 'user'
 				)
 		),
+		'expensereport' => array(
+				array(
+						'code' => 'MAIN_DELAY_EXPENSEREPORTS',
+						'img' => 'trip'
+				)
+		),
 );
 
 if ($action == 'update')

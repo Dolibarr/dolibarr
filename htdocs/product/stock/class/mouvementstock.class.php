@@ -634,7 +634,7 @@ class MouvementStock extends CommonObject
      *
      * @param   variant $fk_origin  id of origin
      * @param   int $origintype     origin type
-     * @return  string              name url
+     * @return  string              Url link to object
      */
 	function get_origin($fk_origin, $origintype)
 	{
@@ -660,12 +660,22 @@ class MouvementStock extends CommonObject
 				require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 				$origin = new FactureFournisseur($this->db);
 				break;
-
+				
 			default:
-				return '';
+				if ($origintype)
+				{
+					$result=dol_include_once('/'.$origintype.'/class/'.$origintype.'.class.php');
+					if ($result)
+					{
+					   $classname = ucfirst($origintype);
+					   $origin = new $classname($this->db);
+					}
+				}
 				break;
 		}
 
+		if (empty($origin) || ! is_object($origin)) return '';
+		
 		$origin->fetch($fk_origin);
 		return $origin->getNomUrl(1);
 	}

@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2015	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2006		Auguria SARL			<info@auguria.org>
- * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2010-2015	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013-2014	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2012-2013	Cédric Salvador			<csalvador@gpcsolutions.fr>
  * Copyright (C) 2011-2015	Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
@@ -284,13 +284,7 @@ if (empty($reshook))
             {
 				// Category association
 				$categories = GETPOST('categories');
-				if(!empty($categories)) {
-					$cat = new Categorie($db);
-					foreach($categories as $id_category) {
-						$cat->fetch($id_category);
-						$cat->add_type($object, 'product');
-					}
-				}
+				$object->setCategories($categories);
 
                 header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
                 exit;
@@ -379,21 +373,8 @@ if (empty($reshook))
                     if ($object->update($object->id, $user) > 0)
                     {
 						// Category association
-						// First we delete all categories association
-						$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_product";
-						$sql .= " WHERE fk_product = ".$object->id;
-						$db->query($sql);
-
-						// Then we add the associated categories
 						$categories = GETPOST('categories');
-						if(!empty($categories)) {
-							$cat = new Categorie($db);
-
-							foreach($categories as $id_category) {
-								$cat->fetch($id_category);
-								$cat->add_type($object, 'product');
-							}
-						}
+						$object->setCategories($categories);
 
                         $action = 'view';
                     }
@@ -529,6 +510,7 @@ if (empty($reshook))
     // Add product into object
     if ($object->id > 0 && $action == 'addin')
     {
+        $thirpdartyid =0 ;
         if (GETPOST('propalid') > 0)
         {
         	$propal = new Propal($db);
@@ -563,171 +545,162 @@ if (empty($reshook))
 	        $thirpdartyid = $facture->socid;
         }
 
-        $soc = new Societe($db);
-        $result=$soc->fetch($thirpdartyid);
-        if ($result <= 0)
-        {
-            dol_print_error($db,$soc->error);
-            exit;
-        }
-
-        $desc = $object->description;
-
-        $tva_tx = get_default_tva($mysoc, $soc, $object->id);
-        $localtax1_tx= get_localtax($tva_tx, 1, $soc);
-        $localtax2_tx= get_localtax($tva_tx, 2, $soc);
-
-        $pu_ht = $object->price;
-        $pu_ttc = $object->price_ttc;
-        $price_base_type = $object->price_base_type;
-
-        // If multiprice
-        if ($conf->global->PRODUIT_MULTIPRICES && $soc->price_level)
-        {
-            $pu_ht = $object->multiprices[$soc->price_level];
-            $pu_ttc = $object->multiprices_ttc[$soc->price_level];
-            $price_base_type = $object->multiprices_base_type[$soc->price_level];
-        }
-   		elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
-		{
-			require_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
-
-			$prodcustprice = new Productcustomerprice($db);
-
-			$filter = array('t.fk_product' => $object->id,'t.fk_soc' => $soc->id);
-
-			$result = $prodcustprice->fetch_all('', '', 0, 0, $filter);
-			if ($result) {
-				if (count($prodcustprice->lines) > 0) {
-					$pu_ht = price($prodcustprice->lines [0]->price);
-					$pu_ttc = price($prodcustprice->lines [0]->price_ttc);
-					$price_base_type = $prodcustprice->lines [0]->price_base_type;
-					$prod->tva_tx = $prodcustprice->lines [0]->tva_tx;
-				}
-			}
-		}
-
-        // On reevalue prix selon taux tva car taux tva transaction peut etre different
-        // de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
-        if ($tva_tx != $object->tva_tx)
-        {
-            if ($price_base_type != 'HT')
-            {
-                $pu_ht = price2num($pu_ttc / (1 + ($tva_tx/100)), 'MU');
+        if ( $thirpdartyid > 0)  {
+            $soc = new Societe($db);
+            $result = $soc->fetch($thirpdartyid);
+            if ($result <= 0) {
+                dol_print_error($db, $soc->error);
+                exit;
             }
-            else
-            {
-                $pu_ttc = price2num($pu_ht * (1 + ($tva_tx/100)), 'MU');
+
+            $desc = $object->description;
+
+            $tva_tx = get_default_tva($mysoc, $soc, $object->id);
+            $localtax1_tx = get_localtax($tva_tx, 1, $soc);
+            $localtax2_tx = get_localtax($tva_tx, 2, $soc);
+
+            $pu_ht = $object->price;
+            $pu_ttc = $object->price_ttc;
+            $price_base_type = $object->price_base_type;
+
+            // If multiprice
+            if ($conf->global->PRODUIT_MULTIPRICES && $soc->price_level) {
+                $pu_ht = $object->multiprices[$soc->price_level];
+                $pu_ttc = $object->multiprices_ttc[$soc->price_level];
+                $price_base_type = $object->multiprices_base_type[$soc->price_level];
+            } elseif (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
+                require_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
+
+                $prodcustprice = new Productcustomerprice($db);
+
+                $filter = array('t.fk_product' => $object->id, 't.fk_soc' => $soc->id);
+
+                $result = $prodcustprice->fetch_all('', '', 0, 0, $filter);
+                if ($result) {
+                    if (count($prodcustprice->lines) > 0) {
+                        $pu_ht = price($prodcustprice->lines [0]->price);
+                        $pu_ttc = price($prodcustprice->lines [0]->price_ttc);
+                        $price_base_type = $prodcustprice->lines [0]->price_base_type;
+                        $prod->tva_tx = $prodcustprice->lines [0]->tva_tx;
+                    }
+                }
+            }
+
+            // On reevalue prix selon taux tva car taux tva transaction peut etre different
+            // de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
+            if ($tva_tx != $object->tva_tx) {
+                if ($price_base_type != 'HT') {
+                    $pu_ht = price2num($pu_ttc / (1 + ($tva_tx / 100)), 'MU');
+                } else {
+                    $pu_ttc = price2num($pu_ht * (1 + ($tva_tx / 100)), 'MU');
+                }
+            }
+
+            if (GETPOST('propalid') > 0) {
+                $result = $propal->addline(
+                    $desc,
+                    $pu_ht,
+                    GETPOST('qty'),
+                    $tva_tx,
+                    $localtax1_tx, // localtax1
+                    $localtax2_tx, // localtax2
+                    $object->id,
+                    GETPOST('remise_percent'),
+                    $price_base_type,
+                    $pu_ttc,
+                    0,
+                    0,
+                    -1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    '',
+                    '',
+                    '',
+                    0,
+                    $object->fk_unit
+                );
+                if ($result > 0) {
+                    header("Location: " . DOL_URL_ROOT . "/comm/propal.php?id=" . $propal->id);
+                    return;
+                }
+
+                setEventMessage($langs->trans("ErrorUnknown") . ": $result", 'errors');
+            } elseif (GETPOST('commandeid') > 0) {
+                $result = $commande->addline(
+                    $desc,
+                    $pu_ht,
+                    GETPOST('qty'),
+                    $tva_tx,
+                    $localtax1_tx, // localtax1
+                    $localtax2_tx, // localtax2
+                    $object->id,
+                    GETPOST('remise_percent'),
+                    '',
+                    '',
+                    $price_base_type,
+                    $pu_ttc,
+                    '',
+                    '',
+                    0,
+                    -1,
+                    0,
+                    0,
+                    null,
+                    0,
+                    '',
+                    0,
+                    $object->fk_unit
+                );
+
+                if ($result > 0) {
+                    header("Location: " . DOL_URL_ROOT . "/commande/card.php?id=" . $commande->id);
+                    exit;
+                }
+            } elseif (GETPOST('factureid') > 0) {
+                $result = $facture->addline(
+                    $desc,
+                    $pu_ht,
+                    GETPOST('qty'),
+                    $tva_tx,
+                    $localtax1_tx,
+                    $localtax2_tx,
+                    $object->id,
+                    GETPOST('remise_percent'),
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    $price_base_type,
+                    $pu_ttc,
+                    Facture::TYPE_STANDARD,
+                    -1,
+                    0,
+                    '',
+                    0,
+                    0,
+                    null,
+                    0,
+                    '',
+                    0,
+                    100,
+                    '',
+                    $object->fk_unit
+                );
+
+                if ($result > 0) {
+                    header("Location: " . DOL_URL_ROOT . "/compta/facture.php?facid=" . $facture->id);
+                    exit;
+                }
             }
         }
+        else {
+            $action="";
+            setEventMessage($langs->trans("WarningSelectOneDocument"), 'warnings');
 
-        if (GETPOST('propalid') > 0)
-        {
-	        $result = $propal->addline(
-	            $desc,
-	            $pu_ht,
-	            GETPOST('qty'),
-	            $tva_tx,
-	            $localtax1_tx, // localtax1
-	            $localtax2_tx, // localtax2
-	            $object->id,
-	            GETPOST('remise_percent'),
-	            $price_base_type,
-	            $pu_ttc,
-		        0,
-		        0,
-		        -1,
-		        0,
-		        0,
-		        0,
-		        0,
-		        '',
-		        '',
-		        '',
-		        0,
-		        $object->fk_unit
-	        );
-	        if ($result > 0)
-	        {
-	            header("Location: ".DOL_URL_ROOT."/comm/propal.php?id=".$propal->id);
-	            return;
-	        }
-
-        	setEventMessage($langs->trans("ErrorUnknown").": $result", 'errors');
         }
-        elseif (GETPOST('commandeid') > 0)
-        {
-            $result =  $commande->addline(
-	            $desc,
-	            $pu_ht,
-	            GETPOST('qty'),
-	            $tva_tx,
-	            $localtax1_tx, // localtax1
-	            $localtax2_tx, // localtax2
-	            $object->id,
-	            GETPOST('remise_percent'),
-	            '',
-	            '',
-	            $price_base_type,
-	            $pu_ttc,
-		        '',
-		        '',
-		        0,
-		        -1,
-		        0,
-		        0,
-		        null,
-		        0,
-		        '',
-		        0,
-		        $object->fk_unit
-	        );
-
-	        if ($result > 0)
-	        {
-	            header("Location: ".DOL_URL_ROOT."/commande/card.php?id=".$commande->id);
-	            exit;
-	        }
-        }
-		elseif (GETPOST('factureid') > 0)
-		{
-	        $result = $facture->addline(
-	            $desc,
-	            $pu_ht,
-	            GETPOST('qty'),
-	            $tva_tx,
-	            $localtax1_tx,
-	            $localtax2_tx,
-	            $object->id,
-	            GETPOST('remise_percent'),
-	            '',
-	            '',
-	            '',
-	            '',
-	            '',
-	            $price_base_type,
-	            $pu_ttc,
-		        Facture::TYPE_STANDARD,
-		        -1,
-		        0,
-		        '',
-		        0,
-		        0,
-		        null,
-		        0,
-		        '',
-		        0,
-		        100,
-		        '',
-		        $object->fk_unit
-	        );
-
-	        if ($result > 0)
-	        {
-	            header("Location: ".DOL_URL_ROOT."/compta/facture.php?facid=".$facture->id);
-	            exit;
-	        }
-		}
     }
 }
 

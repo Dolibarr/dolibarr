@@ -1672,7 +1672,10 @@ elseif (! empty($object->id))
 		$object->date_commande=dol_now();
 
 		// We check if number is temporary number
-		if (preg_match('/^[\(]?PROV/i',$object->ref)) $newref = $object->getNextNumRef($object->thirdparty);
+		if (preg_match('/^[\(]?PROV/i',$object->ref) || empty($object->ref)) // empty should not happened, but when it occurs, the test save life 
+		{
+		    $newref = $object->getNextNumRef($object->thirdparty);
+		}
 		else $newref = $object->ref;
 
 		if ($newref < 0)
@@ -2330,7 +2333,7 @@ elseif (! empty($object->id))
 		// Tableau des substitutions
 		$formmail->substit['__ORDERREF__']=$object->ref;
 		$formmail->substit['__ORDERSUPPLIERREF__']=$object->ref_supplier;
-		$formmail->substit['__THIRPARTY_NAME__'] = $object->thirdparty->name;
+		$formmail->substit['__THIRDPARTY_NAME__'] = $object->thirdparty->name;
 		$formmail->substit['__PROJECT_REF__'] = (is_object($object->projet)?$object->projet->ref:'');
 		$formmail->substit['__SIGNATURE__']=$user->signature;
 		$formmail->substit['__PERSONALIZED__']='';

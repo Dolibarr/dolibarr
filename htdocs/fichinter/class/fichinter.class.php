@@ -149,11 +149,11 @@ class Fichinter extends CommonObject
 		$sql.= " VALUES (";
 		$sql.= $this->socid;
 		$sql.= ", '".$this->db->idate($now)."'";
-		$sql.= ", '".$this->ref."'";
+		$sql.= ", '".$this->db->escape($this->ref)."'";
 		$sql.= ", ".$conf->entity;
 		$sql.= ", ".$user->id;
 		$sql.= ", ".($this->description?"'".$this->db->escape($this->description)."'":"null");
-		$sql.= ", '".$this->modelpdf."'";
+		$sql.= ", '".$this->db->escape($this->modelpdf)."'";
 		$sql.= ", ".($this->fk_project ? $this->fk_project : 0);
 		$sql.= ", ".($this->fk_contrat ? $this->fk_contrat : 0);
 		$sql.= ", ".$this->statut;
@@ -400,7 +400,7 @@ class Fichinter extends CommonObject
 			$now=dol_now();
 
 			// Define new ref
-			if (! $error && (preg_match('/^[\(]?PROV/i', $this->ref)))
+			if (! $error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) // empty should not happened, but when it occurs, the test save life
 			{
 				$num = $this->getNextNumRef($this->thirdparty);
 			}

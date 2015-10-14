@@ -234,7 +234,8 @@ class Translate
 				if ($usecachekey)
 				{
 			        //dol_syslog('Translate::Load we will cache result into usecachekey '.$usecachekey);
-
+                    //global $aaa; $aaa+=1;
+                    //print $aaa." ".$usecachekey."\n";
 				    require_once DOL_DOCUMENT_ROOT .'/core/lib/memory.lib.php';
 					$tmparray=dol_getcache($usecachekey);
 					if (is_array($tmparray) && count($tmparray))
@@ -421,7 +422,11 @@ class Translate
                 }
             }
 
-            if (! preg_match('/^Format/',$key)) $str=sprintf($str,$param1,$param2,$param3,$param4);	// Replace %s and %d except for FormatXXX strings.
+            if (! preg_match('/^Format/',$key)) 
+            {
+            	//print $str;
+            	$str=sprintf($str,$param1,$param2,$param3,$param4);	// Replace %s and %d except for FormatXXX strings.
+            }
 
 			if ($maxsize) $str=dol_trunc($str,$maxsize);
 
@@ -497,7 +502,11 @@ class Translate
                 }
             }
 
-            if (! preg_match('/^Format/',$key)) $str=sprintf($str,$param1,$param2,$param3,$param4);	// Replace %s and %d except for FormatXXX strings.
+            if (! preg_match('/^Format/',$key)) 
+            {
+            	//print $str;
+           		$str=sprintf($str,$param1,$param2,$param3,$param4);	// Replace %s and %d except for FormatXXX strings.
+            }
 
             return $str;
 		}
@@ -819,3 +828,8 @@ class Translate
 	}
 }
 
+
+function warning_handler($errno, $errstr, $errfile, $errline, array $errcontext) {
+	global $str;
+	print 'str='.$str;
+}

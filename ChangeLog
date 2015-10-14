@@ -9,6 +9,74 @@ Upgrading to any other version or any other database system is abolutely require
 make a Dolibarr upgrade.
 
 
+***** ChangeLog for 3.8.1 compared to 3.8.0 *****
+FIX: #3521 postgresql migration error
+FIX: #3524
+FIX: #3529
+FIX: #3530
+FIX: #3533
+FIX: #3533 Load categories language
+FIX: #3534
+FIX: #3572 Impossible to attach project in order
+FIX: #3599 Not saving legal form
+FIX: #3606
+FIX: #3607 Better categories setting and unsetting
+FIX: #3628
+FIX: #3630 - Wrong balance report when module salaries and donation disabled
+FIX: Add a test to save life when ref of object (invoice ref, order ref, ...) was empty. The was no way to go back to a clean situation, even after vaidating again the object.
+FIX: Admin fiche inter page do not take good action
+FIX: Always use type send in parameters in showCategories method
+FIX: avoid SQL error in getValueFrom common object when all params are not send
+FIX: avoid SQL error when no sortfield send to method
+FIX: bad link into project box
+FIX: Bad title line in project view when using jmobile
+FIX: Bad translation key for project "Overview"
+FIX: Can create Proposal on close thridparty #3526
+FIX: Can't change state on a contact
+FIX: Can't change the admin with default setup
+FIX: Can't delete thirdparty if there is some discounts
+FIX: Can't reopen a canceled invoice.
+FIX: Creation of tables or keys must not be done with a random order.
+FIX: debian install when module mysqli is not installed.
+FIX: Description of tags was mandatory in edit mode but not in create mode. Should not be mandatory.
+FIX: display error on extrafields on ficheinter
+FIX: Email selector contact must not include inactive contact
+FIX: error in SQL due to a previous fix
+FIX: Error retrieving customer prices
+FIX: Event from ical stream should not be movable into calendar view
+FIX: facturestat bad sql when customer view is limited
+FIX: Filter on status of thirdparty list and bad encoding of url
+FIX: icon into export profile may be not correctly output
+FIX: Init into bad var
+FIX: Link of project must be cickable if user has permission to read all projects FIX: Missing information into the alt of project picto
+FIX: List of project for user that are restrited as sale repreentative to some thirdparties.
+FIX: Mass Mailing activity don't display all status
+FIX: Missing contracts into list in page of Refering objects of a thirdparty.
+FIX: Missing menu entry for list of thirdparties when using auguria menu manager
+FIX: Missing validate button if permission are not valid.
+FIX: New adherent from, always redirect on entity
+FIX: not closing CSS.
+FIX: not responsive part for project page
+FIX: Only are showing one object linked
+FIX: order ref must not be translated
+FIX: Payment form for paypal and paybox was not centered.
+FIX: Pb into pagination scroll widget FIX: Style of previous-next card when using dolidroid
+FIX: Regression on bad use of fk_account showing the bad bank account on PDF.
+FIX: Removed warnings
+FIX: remove twice same test
+FIX: select of project using ajax autocomplete option
+FIX: sortder field was missing so manually added values were moved to begin.
+FIX: Syntax error in Debian Apache configuration
+FIX: The admin flag is mising.
+FIX: The filter on thirdparty prices should be visible if there is at least one thirdparty price.
+FIX: Thirdparty is missing on card
+FIX: update2.php test res befre assign it
+FIX: When delete actioncomm also delete actioncomm_resources
+FIX: when editing time spent, date of line suggested was a rubbish value
+FIX: When filter with empty status, by default get canceled status (-1)
+FIX: When update a member login for a member linked to a user, the login of user was not sync (not updated).
+FIX: Wizard for restore does not show import command
+
 ***** ChangeLog for 3.8 compared to 3.7.* *****
 For users:
 FIX: #2519
@@ -238,6 +306,13 @@ FIX: Not showing delivery date on rouget pdf
 FIX: Not showing task extrafields when creating from left menu
 FIX [ bug #3288 ] Tasks box is not properly drawn
 FIX [ bug #3211 ] Outstading bill amount of a client showed wrong amounts
+FIX [ bug #3321 ] Users with certain permissions were shown a "forbidden access" page even if they had the rights
+FIX [ bug #3426 ] Unable to create an invoice from a contract with extrafields
+FIX [ bug #3431 ] Invoice bank account is not respected
+FIX [ bug #3432 ] Spaces should be removed from IBAN when formatting it
+FIX [ bug #3358 ] Tasks box does not work with PostgreSQL
+FIX [ bug #3383 ] Company name is overlapped with company direction in PDF models
+FIX [ bug #3460 ] Bank account is not saved when creating a customer invoice and facing an error message
 
 NEW: Created new ContratLigne::insert function
 
@@ -264,11 +339,11 @@ FIX send mail, copy sendto don't read the list of contact
 FIX Properly escape untrusted data to prevent HTML injection.
 FIX send mail, copy sendto don't read the list of contact
 
-Path to save photos of products was moved in 3.7.0 to match path of other attached files. If you had loose 
+Path to save photos of products was moved in 3.7.0 to match path of other attached files. If you had loose
 your photo on the photo tab of products, you can set the constant "PRODUCT_USE_OLD_PATH_FOR_PHOTO" to
 restore old path.
 
-WARNING: 
+WARNING:
 
 Do not try to make any Dolibarr upgrade if you are running Mysql version 5.5.40.
 Mysql version 5.5.40 has a very critical bug making your data beeing definitely lost.
@@ -278,7 +353,7 @@ make a Dolibarr upgrade.
 
 ***** ChangeLog for 3.7 compared to 3.6.* *****
 For users:
-- New: Match other auth system: Login can be done entering login or user 
+- New: Match other auth system: Login can be done entering login or user
        email (this open the road for SSO).
 - New: Agenda export by project #1967.
 - New: Increase length of thirdparty to 128 chars.
@@ -299,14 +374,14 @@ For users:
 - New: Can filter on status on interventions.
 - New: Add help info of field type into dictionary of payment types.
 - New: Add proposals into referer page of thirdparty.
-- New: On contact list can set filter on both active and not active (no more exclusive select). 
+- New: On contact list can set filter on both active and not active (no more exclusive select).
 - New: Intervention documents are now available in ECM module.
 - New: Can attach supplier order to a customer order.
-- New: Supervisor is now visible into user list. 
+- New: Supervisor is now visible into user list.
 - New: Add user of creation and validation on invoice export.
 - New: Add info page about browser.
 - New: Enable feature developed for 3.6 we forgot to enabled: Adding prefix
-       on uploaded file names. 
+       on uploaded file names.
 - New: No more dependency between contract and service module.
 - New: [ task #867 ] Remove ESAEB external module code from core.
 - New: Can create proposal from an intervention.
@@ -337,7 +412,7 @@ For users:
        Use accesskey on form search.
 - New: Intervention documents are now available in ECM module.
 - New: Add attachments on user card + in ECM module.
-- New: Can add __PROJECT_REF__ and __TIHRPARTY_NAME__ into email topic or content template.    
+- New: Can add __PROJECT_REF__ and __THIRDPARTY_NAME__ into email topic or content template.
 - New: [ task #1204 ] add Numering contrat module free (like leopard in product module).
 - New: [ task #712 ] Add warning when creating invoice from proposal or order, when there is already one invoice.
 - New: Enable supplier price log table.
@@ -345,8 +420,8 @@ For users:
 - New: [ task #1218 ] Can drag and drop an event from calendar to change its day.
 - New: Optimize size of image static resources.
 - New: Add hourly and daily amount on user card. Add weekly working hours and salary on user card.
-- New: Content of predefined email come firstly from table llx_c_email_template, then translation key. 
-- New: Add option MAIN_GENERATE_INVOICES_WITH_PICTURE to show picture 
+- New: Content of predefined email come firstly from table llx_c_email_template, then translation key.
+- New: Add option MAIN_GENERATE_INVOICES_WITH_PICTURE to show picture
        onto PDF like MAIN_GENERATE_PROPOSALS_WITH_PICTURE dir for proposals.
 - New: Add more search field in list of cheque deposits.
 - New: Add feature to order to invoice on supplier part.
@@ -449,8 +524,8 @@ Dolibarr better:
 - Deprecated module "oscommerce" were removed.
 - Changed the way parameters are provided to scripts sync_xxx_ldap2dolibarr.php
 - Some field into database were renamed from "libelle" to "label".
-- Table llx_c_pays were renamed into llx_c_country.  
-- Triggers *_BUILDDOC are removed. Building a doc is not a business event. For action after 
+- Table llx_c_pays were renamed into llx_c_country.
+- Triggers *_BUILDDOC are removed. Building a doc is not a business event. For action after
   creation of a pdf or odt, hook "afterPDFCreation" or "afterODTCreation" must be used instead.
 - A lot of pages named fiche.php were renamed into card.php
 - A lot of pages named liste.php were renamed into list.php
@@ -611,7 +686,7 @@ For users:
 - Fix: Add actions events not implemented.
 - Fix: Price min of composition is not supplier price min by quantity.
 - Fix: [ bug #1356 ] Bank accountancy number is limited to 8 numbers.
-- Fix: [ bug #1439 ] impossible to remove a a translation (multilanguage-feature) 
+- Fix: [ bug #1439 ] impossible to remove a a translation (multilanguage-feature)
 - New: If multilangue is enabled, mail (from propal, invoice, etc...) message is pre-defaulted in Customer language
 - Fix: [ bug #1459 ] _ADD_CONTACT and _DEL_CONTACT triggers do not intercept insertion when reported an error
 - Fix: [ bug #1478 ] BILL_PAYED trigger action does not intercept failure under some circumstances
@@ -641,8 +716,8 @@ For developers:
 - New: A module can disable a standard ECM view.
 - New: Add multilang support into product webservice.
 - New: Add hooks on project card page.
-- New: Add call_trigger method on CommonObject class. So new trigger call within object is just : 
-$result = $this->call_trigger($trigger_name, $user) 
+- New: Add call_trigger method on CommonObject class. So new trigger call within object is just :
+$result = $this->call_trigger($trigger_name, $user)
 
 WARNING: Following change may create regression for some external modules, but was necessary to make
 Dolibarr better:

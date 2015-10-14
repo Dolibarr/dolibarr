@@ -627,7 +627,7 @@ function dol_move($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
         	else dol_syslog("files.lib.php::dol_move failed", LOG_WARNING);
         }
         if (empty($newmask) && ! empty($conf->global->MAIN_UMASK)) $newmask=$conf->global->MAIN_UMASK;
-        @chmod($newpathofsrcfile, octdec($newmask));
+        @chmod($newpathofdestfile, octdec($newmask));
     }
 
     return $result;
@@ -1601,6 +1601,16 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 		}
 		$original_file=$conf->societe->multidir_output[$entity].'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT rowid as fk_soc FROM ".MAIN_DB_PREFIX."societe WHERE rowid='".$db->escape($refname)."' AND entity IN (".getEntity('societe', 1).")";
+	}
+
+	// Wrapping for contact
+	else if ($modulepart == 'contact')
+	{
+		if ($fuser->rights->societe->lire)
+		{
+			$accessallowed=1;
+		}
+		$original_file=$conf->societe->multidir_output[$entity].'/contact/'.$original_file;
 	}
 
 	// Wrapping for invoices

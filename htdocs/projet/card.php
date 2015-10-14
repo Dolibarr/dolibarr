@@ -55,7 +55,7 @@ $object = new Project($db);
 $extrafields = new ExtraFields($db);
 
 // Load object
-//include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Can use generic include because when creating a project, ref is defined and we dont want error if fetch fails from ref.
+//include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Can't use generic include because when creating a project, ref is defined and we dont want error if fetch fails from ref.
 if ($id > 0 || ! empty($ref))
 {
     $ret = $object->fetch($id,$ref);	// If we create project, ref may be defined into POST but record does not yet exists into database
@@ -310,10 +310,11 @@ if (empty($reshook))
 	    {
 	        $langs->load("other");
 	        $upload_dir =	$conf->projet->dir_output . "/";
-	        $file =	$upload_dir	. '/' .	GETPOST('file');
+	        $urlfile=GETPOST('urlfile','alpha');
+	        $file =	$upload_dir	. '/' .	$filetodelete;
 	        $ret=dol_delete_file($file);
-	        if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-	        else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+	        if ($ret) setEventMessage($langs->trans("FileWasRemoved", $urlfile));
+	        else setEventMessage($langs->trans("ErrorFailToDeleteFile", $urlfile), 'errors');
 	    }
 	}
 
@@ -465,6 +466,7 @@ if ($action == 'create' && $user->rights->projet->creer)
     	print $form->textwithtooltip($text.' '.img_help(),$texthelp,1);
     }
     else print $text;
+    print ' <a href="'.DOL_URL_ROOT.'/societe/soc.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").'</a>';
     print '</td></tr>';
 
     // Status
@@ -872,9 +874,8 @@ else
 
     if ($action != 'presend')
     {
-        print '<table width="100%"><tr><td width="50%" valign="top">';
+        print '<div class="fichecenter"><div class="fichehalfleft">';
         print '<a name="builddoc"></a>'; // ancre
-
 
         /*
          * Documents generes
@@ -889,7 +890,7 @@ else
 
         $somethingshown=$formfile->show_documents('project',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf);
 
-        print '</td><td valign="top" width="50%">';
+        print '</div></div class="fichehalfright">';
 
         if (!empty($object->id))
         {
@@ -899,7 +900,7 @@ else
 	        $somethingshown=$formactions->showactions($object,'project',$socid);
         }
 
-        print '</td></tr></table>';
+        print '</div>';
     }
 
     // Hook to add more things on page

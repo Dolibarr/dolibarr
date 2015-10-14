@@ -388,7 +388,7 @@ class CommandeFournisseur extends CommonOrder
             $soc->fetch($this->fourn_id);
 
             // Check if object has a temporary ref
-            if (preg_match('/^[\(]?PROV/i', $this->ref))
+            if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) // empty should not happened, but when it occurs, the test save life
             {
                 $num = $this->getNextNumRef($soc);
             }
@@ -684,7 +684,7 @@ class CommandeFournisseur extends CommonOrder
             $soc->fetch($this->fourn_id);
 
             // Check if object has a temporary ref
-            if (preg_match('/^[\(]?PROV/i', $this->ref))
+            if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) // empty should not happened, but when it occurs, the test save life
             {
                 $num = $this->getNextNumRef($soc);
             }
@@ -998,7 +998,7 @@ class CommandeFournisseur extends CommonOrder
         $sql.= ") ";
         $sql.= " VALUES (";
         $sql.= "''";
-        $sql.= ", '".$this->ref_supplier."'";
+        $sql.= ", '".$this->db->escape($this->ref_supplier)."'";
         $sql.= ", '".$this->db->escape($this->note_private)."'";
         $sql.= ", '".$this->db->escape($this->note_public)."'";
         $sql.= ", ".$conf->entity;
@@ -1007,7 +1007,7 @@ class CommandeFournisseur extends CommonOrder
 		$sql.= ", ".($this->date_livraison?"'".$this->db->idate($this->date_livraison)."'":"null");
         $sql.= ", ".$user->id;
         $sql.= ", 0";
-        $sql.= ", " . $this->source;
+        $sql.= ", ".$this->db->escape($this->source);
         $sql.= ", '".$conf->global->COMMANDE_SUPPLIER_ADDON_PDF."'";
         $sql.= ", ".($this->mode_reglement_id > 0 ? $this->mode_reglement_id : 'null');
         $sql.= ", ".($this->cond_reglement_id > 0 ? $this->cond_reglement_id : 'null');

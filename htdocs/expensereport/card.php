@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2015      Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  *
@@ -166,7 +166,8 @@ if ($action == 'update' && $user->rights->expensereport->creer)
 	$object->fk_c_paiement = GETPOST('fk_c_paiement','int');
 	$object->note_public = GETPOST('note_public');
 	$object->note_private = GETPOST('note_private');
-
+	$object->fk_user_modif = $user->id;
+	
 	$result = $object->update($user);
 	if ($result > 0)
 	{
@@ -708,7 +709,7 @@ if ($action == "confirm_brouillonner" && GETPOST('confirm')=="yes" && $id > 0 &&
 	}
 	else
 	{
-		setEventMessages($langs->transnoentitiesnoconv("NOT_AUTHOR"), '', 'errors');
+		setEventMessages("NOT_AUTHOR", '', 'errors');
 	}
 }
 
@@ -1318,30 +1319,35 @@ else
 			{
 				dol_fiche_head($head, 'card', $langs->trans("TripCard"), 0, 'trip');
 
-				if ($action == 'save'):
-				$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("SaveTrip"),$langs->trans("ConfirmSaveTrip"),"confirm_validate","","",1);
-				if ($ret == 'html') print '<br>';
-				endif;
+				if ($action == 'save')
+				{
+					$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("SaveTrip"),$langs->trans("ConfirmSaveTrip"),"confirm_validate","","",1);
+					if ($ret == 'html') print '<br>';
+				}
 
-				if ($action == 'save_from_refuse'):
-				$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("SaveTrip"),$langs->trans("ConfirmSaveTrip"),"confirm_save_from_refuse","","",1);
-				if ($ret == 'html') print '<br>';
-				endif;
+				if ($action == 'save_from_refuse')
+				{
+					$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("SaveTrip"),$langs->trans("ConfirmSaveTrip"),"confirm_save_from_refuse","","",1);
+					if ($ret == 'html') print '<br>';
+				}
 
-				if ($action == 'delete'):
-				$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("DeleteTrip"),$langs->trans("ConfirmDeleteTrip"),"confirm_delete","","",1);
-				if ($ret == 'html') print '<br>';
-				endif;
+				if ($action == 'delete')
+				{
+					$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("DeleteTrip"),$langs->trans("ConfirmDeleteTrip"),"confirm_delete","","",1);
+					if ($ret == 'html') print '<br>';
+				}
 
-				if ($action == 'validate'):
-				$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("ValideTrip"),$langs->trans("ConfirmValideTrip"),"confirm_approve","","",1);
-				if ($ret == 'html') print '<br>';
-				endif;
+				if ($action == 'validate')
+				{
+					$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("ValideTrip"),$langs->trans("ConfirmValideTrip"),"confirm_approve","","",1);
+					if ($ret == 'html') print '<br>';
+				}
 
-				if ($action == 'paid'):
-				$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("PaidTrip"),$langs->trans("ConfirmPaidTrip"),"confirm_paid","","",1);
-				if ($ret == 'html') print '<br>';
-				endif;
+				if ($action == 'paid')
+				{
+					$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("PaidTrip"),$langs->trans("ConfirmPaidTrip"),"confirm_paid","","",1);
+					if ($ret == 'html') print '<br>';
+				}
 
 				if ($action == 'cancel')
 				{
@@ -1663,7 +1669,7 @@ else
 									print img_picto($langs->trans("Document"), "object_generic");
 									print ' <span>'.$piece_comptable.'</span></td>';
 								}
-								print '<td style="text-align:center;">'.$objp->date.'</td>';
+								print '<td style="text-align:center;">'.dol_print_date($db->jdate($objp->date), 'day').'</td>';
 								print '<td style="text-align:center;">';
 								if ($objp->projet_id > 0)
 								{
@@ -1968,7 +1974,7 @@ if ($action != 'create' && $action != 'edit')
 	 *	ET user à droit de "to_paid"
 	 *	Afficher : "Annuler" / "Payer" / "Supprimer"
 	 */
-	if ($user->rights->expensereport->to_paid && $object->fk_statut == 5)
+	if ($user->rights->expensereport->to_paid && ! empty($conf->banque->enabled) && $object->fk_statut == 5)
 	{
 		// Pay
 		if ($remaintopay == 0)
@@ -1979,8 +1985,11 @@ if ($action != 'create' && $action != 'edit')
 		{
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/expensereport/payment/payment.php?id=' . $object->id . '&amp;action=create">' . $langs->trans('DoPayment') . '</a></div>';
 		}
-
-		if (round($remaintopay) == 0 && $object->paid == 0)
+	}
+	
+	if (($user->rights->expensereport->to_paid || empty($conf->banque->enabled)) && $object->fk_statut == 5)
+	{
+		if ((round($remaintopay) == 0 || empty($conf->banque->enabled)) && $object->paid == 0)
 		{
 			print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id='.$object->id.'&action=set_paid">'.$langs->trans("ClassifyPaid")."</a></div>";
 		}

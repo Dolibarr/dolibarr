@@ -39,11 +39,6 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
 class Skeleton_Class extends CommonObject
 {
 	/**
-	 * @var DoliDb Database handler
-	 */
-	protected $db;
-
-	/**
 	 * @var string Error code (or message)
 	 * @deprecated
 	 * @see Skeleton_Class::errors

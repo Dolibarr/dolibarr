@@ -10,3 +10,5 @@ FailedToConnectToFTPServerWithCredentials=Neizdevās pieslēgties FTP serverim a
 FTPFailedToRemoveFile=Neizdevās noņemt failu <b>%s.</b>
 FTPFailedToRemoveDir=Neizdevās noņemt direktoriju <b>%s</b> (Pārbaudiet atļaujas un to vai katalogs ir tukšs).
 FTPPassiveMode=Pasīvais režīms
+ChooseAFTPEntryIntoMenu=Choose a FTP entry into menu...
+FailedToGetFile=Failed to get files %s

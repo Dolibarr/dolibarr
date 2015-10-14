@@ -407,7 +407,7 @@ if ($action == 'update')
 		if (! $datef && $percentage == 100)
 		{
 			$error++; $donotclearsession=1;
-			setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("DateEnd")),$object->errors,'errors');
+			setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired",$langs->transnoentitiesnoconv("DateEnd")),$object->errors,'errors');
 			$action = 'edit';
 		}
 
@@ -1303,7 +1303,16 @@ if ($id > 0)
 			print '<br><br><table class="border" width="100%">';
 			foreach($extrafields->attribute_label as $key=>$label)
 			{
-				$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:(isset($object->array_options['options_'.$key])?$object->array_options['options_'.$key]:''));
+				if (isset($_POST["options_" . $key])) {
+					if (is_array($_POST["options_" . $key])) {
+						// $_POST["options"] is an array but following code expects a comma separated string
+						$value = implode(",", $_POST["options_" . $key]);
+					} else {
+						$value = $_POST["options_" . $key];
+					}
+				} else {
+					$value = $object->array_options["options_" . $key];
+				}
 				print '<tr><td width="30%">'.$label.'</td><td>';
 				print $extrafields->showOutputField($key,$value);
 				print "</td></tr>\n";

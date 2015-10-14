@@ -75,6 +75,7 @@ class FormFile
         global $conf,$langs, $hookmanager;
         $hookmanager->initHooks(array('formfile'));
 
+        
         if (! empty($conf->browser->layout) && $conf->browser->layout != 'classic') $useajax=0;
 
 		if ((! empty($conf->global->MAIN_USE_JQUERY_FILEUPLOAD) && $useajax) || ($useajax==2))
@@ -86,13 +87,13 @@ class FormFile
         	return $this->_formAjaxFileUpload($object);
         }
         else
-       {
+       	{
             $maxlength=$size;
 
             $out = "\n\n<!-- Start form attach new file -->\n";
 
             if (empty($title)) $title=$langs->trans("AttachANewFile");
-            if ($title != 'none') print_titre($title);
+            if ($title != 'none') $out.=load_fiche_titre($title, null, null);
 
             $out .= '<form name="'.$htmlname.'" id="'.$htmlname.'" action="'.$url.'" enctype="multipart/form-data" method="POST">';
             $out .= '<input type="hidden" id="'.$htmlname.'_section_dir" name="section_dir" value="">';
@@ -178,7 +179,7 @@ class FormFile
 	            $out .= '<table width="100%" class="nobordernopadding">';
 	            $out .= '<tr>';
 	            $out .= '<td valign="middle" class="nowrap">';
-	            $out .= $langs->trans("Link") . ': ';
+	            $out .= $langs->trans("URLToLink") . ': ';
 	            $out .= '<input type="text" name="link" size="'.$maxlength.'" id="link">';
 	            $out .= ' &nbsp; ' . $langs->trans("Label") . ': ';
 	            $out .= '<input type="text" name="label" id="label">';
@@ -200,7 +201,9 @@ class FormFile
 
             if (empty($res))
             {
+        		print '<div class="attacharea">';
             	print $out;
+            	print '</div>';
             }
 
             print $hookmanager->resPrint;

@@ -2,11 +2,13 @@
 CHARSET=UTF-8
 ACCOUNTING_EXPORT_SEPARATORCSV=Column separator for export file
 ACCOUNTING_EXPORT_DATE=Date format for export file
-ACCOUNTING_EXPORT_PIECE=Export the number of piece ?
-ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account ?
-ACCOUNTING_EXPORT_LABEL=Export the label ?
-ACCOUNTING_EXPORT_AMOUNT=Export the amount ?
-ACCOUNTING_EXPORT_DEVISE=Export the devise ?
+ACCOUNTING_EXPORT_PIECE=Export the number of piece
+ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account
+ACCOUNTING_EXPORT_LABEL=Export the label
+ACCOUNTING_EXPORT_AMOUNT=Export the amount
+ACCOUNTING_EXPORT_DEVISE=Export the devise
+Selectformat=Select the format for the file
+ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
 
 Accounting=Akuntansi
 Globalparameters=Parameter Global
@@ -25,7 +27,7 @@ Modelcsv=Model Ekspor
 OptionsDeactivatedForThisExportModel=For this export model, options are deactivated
 Selectmodelcsv=Pilih satu model Ekspor
 Modelcsv_normal=Ekspor Klasik
-Modelcsv_CEGID=Export towards CEGID Expert
+Modelcsv_CEGID=Ekspor terhadap CEGID Ahli
 BackToChartofaccounts=Akun pembalik
 Back=Kembali
 
@@ -34,6 +36,7 @@ Selectchartofaccounts=Pilih bagan akun
 Validate=Validasi
 Addanaccount=Tambahkan sebuah akun akuntansi
 AccountAccounting=Akun akuntansi
+AccountAccountingSuggest=Accounting account suggest
 Ventilation=Perincian
 ToDispatch=Untuk Pengiriman
 Dispatched=Dikirim
@@ -50,7 +53,7 @@ List=Daftar
 Create=Buat
 CreateMvts=Create movement
 UpdateAccount=Modifikasi akun akuntansi
-UpdateMvts=Modification of a movement
+UpdateMvts=Modifikasi gerakan
 WriteBookKeeping=Mencatat akun di buku besar
 Bookkeeping=Buku besar
 AccountBalanceByMonth=Saldo per bulan
@@ -60,10 +63,10 @@ AccountingVentilationSupplier=Perincian Akunting Pemasok
 AccountingVentilationCustomer=Perincian Akunting Pelanggan
 Line=Baris
 
-CAHTF=Total purchase supplier HT
-InvoiceLines=Lines of invoice to be ventilated
-InvoiceLinesDone=Ventilated lines of invoice
-IntoAccount=In the accounting account
+CAHTF=Total purchase supplier before tax
+InvoiceLines=\nBaris faktur untuk ventilasi
+InvoiceLinesDone=Baris berventilasi faktur
+IntoAccount=Ventilate in the accounting account
 
 Ventilate=Ventilate
 VentilationAuto=Perincian Otomatis
@@ -152,7 +155,7 @@ Active=Statement
 NewFiscalYear=Tahun Pajak Baru
 
 DescVentilCustomer=Consult here the annual breakdown accounting of your invoices customers
-TotalVente=Total turnover HT
+TotalVente=Total turnover before tax
 TotalMarge=Total margin penjualan
 DescVentilDoneCustomer=Consult here the list of the lines of invoices customers and their accounting account
 DescVentilTodoCustomer=Ventilate your lines of customer invoice with an accounting account
@@ -164,6 +167,7 @@ DescVentilDoneSupplier=Consult here the list of the lines of invoices supplier a
 
 ValidateHistory=Validasi Otomatis
 
-ErrorAccountancyCodeIsAlreadyUse=Error, you cannot delete this accounting account because it is used
+ErrorAccountancyCodeIsAlreadyUse=Kesalahan, Anda tidak dapat menghapus akun akuntansi ini karena digunakan
 
 FicheVentilation=Breakdown card
+GeneralLedgerIsWritten=Operations are written in the general ledger

@@ -278,7 +278,7 @@ if (($action == 'addgroup' || $action == 'removegroup') && $caneditfield)
     {
         $editgroup = new UserGroup($db);
         $editgroup->fetch($group);
-        $editgroup->oldcopy=dol_clone($editgroup);
+        $editgroup->oldcopy=clone($editgroup);
 
         $object->fetch($id);
         if ($action == 'addgroup')    $object->SetInGroup($group,($conf->multicompany->transverse_mode?GETPOST("entity"):$editgroup->entity));
@@ -340,7 +340,7 @@ if ($action == 'update' && ! $_POST["cancel"])
        {
             $db->begin();
 
-            $object->oldcopy=dol_clone($object);
+            $object->oldcopy=clone($object);
 
             $object->lastname	= GETPOST("lastname",'alpha');
             $object->firstname	= GETPOST("firstname",'alpha');
@@ -482,7 +482,7 @@ if ($action == 'update' && ! $_POST["cancel"])
                     {
                     	$error++;
                     	$langs->load("errors");
-                    	setEventMessages($langs->trans("ErrorFailedToCreateDir", $dir), $mesgs, 'errors');
+                    	setEventMessages($langs->transnoentitiesnoconv("ErrorFailedToCreateDir", $dir), $mesgs, 'errors');
                     }
                 }
             }
@@ -508,7 +508,7 @@ if ($action == 'update' && ! $_POST["cancel"])
     {
         $object->fetch($id);
 
-        $object->oldcopy=dol_clone($object);
+        $object->oldcopy=clone($object);
 
         $ret=$object->setPassword($user,$_POST["password"]);
         if ($ret < 0)
@@ -725,7 +725,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST" name="createuser">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="add">';
-    if (! empty($ldap_sid)) print '<input type="hidden" name="ldap_sid" value="'.$ldap_sid.'">';
+    if (! empty($ldap_sid)) print '<input type="hidden" name="ldap_sid" value="'.dol_escape_htmltag($ldap_sid).'">';
     print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
 
     dol_fiche_head('', '', '', 0, '');
@@ -1046,7 +1046,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 	{
 		print '<tr><td>'.$langs->trans("ColorUser").'</td>';
 		print '<td>';
-		print $formother->selectColor(GETPOST('color')?GETPOST('color'):$object->color, 'color', 'usercolorconfig', 1, '', 'hideifnotset');
+		print $formother->selectColor(GETPOST('color')?GETPOST('color'):$object->color, 'color', null, 1, '', 'hideifnotset');
 		print '</td></tr>';
 	}
 
@@ -1883,10 +1883,16 @@ else
             else
             {
                 print '<td>';
-                $nbSuperAdmin = $user->getNbOfUsers('superadmin');
-                if ($user->admin
-                && ($user->id != $object->id)                    // Don't downgrade ourself
-                && ($object->entity > 0 || $nbSuperAdmin > 1)    // Don't downgrade a superadmin if alone
+                $nbAdmin = $user->getNbOfUsers('active','',1);
+                $nbSuperAdmin = $user->getNbOfUsers('active','superadmin',1);
+                //var_dump($nbAdmin);
+                //var_dump($nbSuperAdmin);
+                if ($user->admin								// Need to be admin to allow downgrade of an admin
+                && ($user->id != $object->id)                   // Don't downgrade ourself
+                && (
+                	(empty($conf->multicompany->enabled) && $nbAdmin > 1)
+                	|| (! empty($conf->multicompany->enabled) && ($object->entity > 0 || $nbSuperAdmin > 1))    // Don't downgrade a superadmin if alone
+                	)
                 )
                 {
                     print $form->selectyesno('admin',$object->admin,1);
@@ -2151,7 +2157,7 @@ else
             {
 				print '<tr><td>'.$langs->trans("ColorUser").'</td>';
 				print '<td>';
-				print $formother->selectColor(GETPOST('color')?GETPOST('color'):$object->color, 'color', 'usercolorconfig', 1, '', 'hideifnotset');
+				print $formother->selectColor(GETPOST('color')?GETPOST('color'):$object->color, 'color', null, 1, '', 'hideifnotset');
 				print '</td></tr>';
 			}
 

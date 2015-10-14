@@ -414,9 +414,9 @@ if ($action == 'edit' || $action == 'updateedit')
 
 	// Forme juridique
 	$var=!$var;
-	print '<tr '.$bc[$var].'><td><label for="legal_form">'.$langs->trans("JuridicalStatus").'</label></td><td>';
+	print '<tr '.$bc[$var].'><td><label for="forme_juridique_code">'.$langs->trans("JuridicalStatus").'</label></td><td>';
 	if ($mysoc->country_code) {
-		print $formcompany->select_juridicalstatus($conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE, $mysoc->country_code, '', 'legal_form');
+		print $formcompany->select_juridicalstatus($conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE, $mysoc->country_code, '', 'forme_juridique_code');
 	} else {
 		print $countrynotdefined;
 	}
@@ -761,7 +761,7 @@ else
 	// On propose la generation de la vignette si elle n'existe pas
 	if (!is_file($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini) && preg_match('/(\.jpg|\.jpeg|\.png)$/i',$mysoc->logo))
 	{
-		print '<a href="'.$_SERVER["PHP_SELF"].'?action=addthumb&amp;file='.urlencode($mysoc->logo).'">'.img_picto($langs->trans('GenerateThumb'),'refresh').'&nbsp;&nbsp;</a>';
+		print '<a href="'.$_SERVER["PHP_SELF"].'?action=addthumb&amp;file='.urlencode($mysoc->logo).'">'.img_picto($langs->trans('GenerateThumb'),'refresh').'</a>&nbsp;&nbsp;';
 	}
 	else if ($mysoc->logo_mini && is_file($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini))
 	{

@@ -48,9 +48,9 @@ if ($socid > 0)
 if (!$user->rights->projet->lire) accessforbidden();
 
 
-$sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
-$sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
-$page = isset($_GET["page"])? $_GET["page"]:$_POST["page"];
+$sortfield = GETPOST("sortfield","alpha");
+$sortorder = GETPOST("sortorder");
+$page = GETPOST("page");
 $page = is_numeric($page) ? $page : 0;
 $page = $page == -1 ? 0 : $page;
 
@@ -69,7 +69,7 @@ $search_societe=GETPOST("search_societe");
 $search_year=GETPOST("search_year");
 $search_all=GETPOST("search_all");
 $search_status=GETPOST("search_status",'int');
-$search_opp_status=GETPOST("search_opp_status",'int');
+$search_opp_status=GETPOST("search_opp_status",'alpha');
 $search_public=GETPOST("search_public",'int');
 $search_user=GETPOST('search_user','int');
 $search_sale=GETPOST('search_sale','int');
@@ -126,7 +126,7 @@ llxHeader("",$langs->trans("Projects"),"EN:Module_Projects|FR:Module_Projets|ES:
 $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,($mine?$mine:($user->rights->projet->all->lire?2:0)),1,$socid);
 
 $sql = "SELECT p.rowid as projectid, p.ref, p.title, p.fk_statut, p.fk_opp_status, p.public, p.fk_user_creat";
-$sql.= ", p.datec as date_create, p.dateo as date_start, p.datee as date_end";
+$sql.= ", p.datec as date_create, p.dateo as date_start, p.datee as date_end, p.opp_amount";
 $sql.= ", s.nom as name, s.rowid as socid";
 $sql.= ", cls.code as opp_status_code";
 // Add fields for extrafields
@@ -140,7 +140,7 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_lead_status as cls on p.fk_opp_status = cls.rowid";
 
 // We'll need this table joined to the select in order to filter by sale
-if ($search_sale > 0 || (! $user->rights->societe->client->voir && ! $socid)) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if ($search_sale > 0 || (! $user->rights->societe->client->voir && ! $socid)) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
 if ($search_user > 0)
 {
 	$sql.=", ".MAIN_DB_PREFIX."element_contact as c";
@@ -183,9 +183,15 @@ else if ($year > 0)
 }
 if ($search_all) $sql .= natural_search(array('p.ref','p.title','s.nom'), $search_all);
 if ($search_status >= 0) $sql .= " AND p.fk_statut = ".$db->escape($search_status);
-if ($search_opp_status > 0) $sql .= " AND p.fk_opp_status = ".$db->escape($search_opp_status);
+if ($search_opp_status) 
+{
+    if (is_numeric($search_opp_status) && $search_opp_status > 0) $sql .= " AND p.fk_opp_status = ".$db->escape($search_opp_status);
+    if ($search_opp_status == 'all') $sql .= " AND p.fk_opp_status IS NOT NULL";
+    if ($search_opp_status == 'none') $sql .= " AND p.fk_opp_status IS NULL";
+}
 if ($search_public!='') $sql .= " AND p.public = ".$db->escape($search_public);
-if ($search_sale > 0 || (! $user->rights->societe->client->voir && ! $socid)) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$search_sale;
+if ($search_sale > 0) $sql.= " AND sc.fk_user = " .$search_sale;
+if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND ((s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id.") OR (s.rowid IS NULL))";
 if ($search_user > 0) $sql.= " AND c.fk_c_type_contact = tc.rowid AND tc.element='project' AND tc.source='internal' AND c.element_id = p.rowid AND c.fk_socpeople = ".$search_user;
 // Add where from hooks
 $parameters=array();
@@ -214,7 +220,7 @@ if ($resql)
 	if ($search_label != '') 		$param.='&search_label='.$search_label;
 	if ($search_societe != '') 		$param.='&search_societe='.$search_societe;
 	if ($search_status >= 0) 		$param.='&search_status='.$search_status;
-	if ($search_opp_status >= 0) 	$param.='&search_opp_status='.$search_opp_status;
+	if ((is_numeric($search_opp_status) && $search_opp_status >= 0) || in_array($search_opp_status, array('all','none'))) 	$param.='&search_opp_status='.urlencode($search_opp_status);
 	if ($search_public != '') 		$param.='&search_public='.$search_public;
 	if ($search_user > 0)    		$param.='&search_user='.$search_user;
 	if ($search_sale > 0)    		$param.='&search_sale='.$search_sale;
@@ -222,7 +228,7 @@ if ($resql)
 
 	$text=$langs->trans("Projects");
 	if ($mine) $text=$langs->trans('MyProjects');
-	print_barre_liste($text, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num,'','title_project');
+	print_barre_liste($text, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, "", $num,'','title_project');
 
 	print '<form method="GET" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 
@@ -240,6 +246,11 @@ if ($resql)
 		print '<strong>'.$search_all.'</strong>';
 	}
 
+	$colspan=8;
+	if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES)) $colspan+=2;
+	if (empty($conf->global->PROJECT_LIST_HIDE_STARTDATE)) $colspan++;
+
+	
 	// If the user can view prospects other than his'
 	if ($user->rights->societe->client->voir || $socid)
 	{
@@ -260,7 +271,7 @@ if ($resql)
 	}
 	if (! empty($moreforfilter))
 	{
-		print '<div class="liste_titre">';
+		print '<div class="liste_titre liste_titre_bydiv centpercent">';
 		print $moreforfilter;
     	$parameters=array();
     	$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
@@ -268,8 +279,8 @@ if ($resql)
     	print '</div>';
 	}
 
-	print '<table class="noborder" width="100%">';
-
+	print '<table class="liste" width="100%">';
+	
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"p.ref","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"p.title","",$param,"",$sortfield,$sortorder);
@@ -280,8 +291,8 @@ if ($resql)
 	print_liste_field_titre($langs->trans("Visibility"),$_SERVER["PHP_SELF"],"p.public","",$param,"",$sortfield,$sortorder);
     if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
     {
-    	print_liste_field_titre($langs->trans("OpportunityAmountShort"),$_SERVER["PHP_SELF"],'p.opp_amount',"",$param,'',$sortfield,$sortorder);
-    	print_liste_field_titre($langs->trans("OpportunityStatusShort"),$_SERVER["PHP_SELF"],'p.fk_opp_status',"",$param,'',$sortfield,$sortorder);
+    	print_liste_field_titre($langs->trans("OpportunityAmountShort"),$_SERVER["PHP_SELF"],'p.opp_amount',"",$param,'align="right"',$sortfield,$sortorder);
+    	print_liste_field_titre($langs->trans("OpportunityStatusShort"),$_SERVER["PHP_SELF"],'p.fk_opp_status',"",$param,'align="center"',$sortfield,$sortorder);
     }
 	$parameters=array();
     $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
@@ -331,8 +342,8 @@ if ($resql)
     {
 		print '<td class="liste_titre nowrap">';
 	    print '</td>';
-    	print '<td class="liste_titre nowrap">';
-		print $formproject->selectOpportunityStatus('search_opp_status',$search_opp_status,1,1);
+    	print '<td class="liste_titre nowrap center">';
+		print $formproject->selectOpportunityStatus('search_opp_status',$search_opp_status,1,1,1);
 	    print '</td>';
     }
 
@@ -363,10 +374,10 @@ if ($resql)
     		print "<tr ".$bc[$var].">";
 
     		// Project url
-    		print "<td>";
+    		print '<td class="nowrap">';
     		$projectstatic->ref = $objp->ref;
     		print $projectstatic->getNomUrl(1);
-    		print "</td>";
+    		print '</td>';
 
     		// Title
     		print '<td>';
@@ -448,11 +459,11 @@ if ($resql)
 
 		    if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
     		{
-    			print '<td>';
-    			if ($objp->opp_status_code) print $langs->trans("OppAmount".$objp->opp_amount);
+    			print '<td align="right">';
+    			if ($objp->opp_status_code) print price($objp->opp_amount, 1, '', 1, - 1, - 1, $conf->currency);
     			print '</td>';
 
-    			print '<td>';
+    			print '<td align="middle">';
     			if ($objp->opp_status_code) print $langs->trans("OppStatusShort".$objp->opp_status_code);
     			print '</td>';
     		}

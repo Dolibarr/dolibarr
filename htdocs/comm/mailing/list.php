@@ -40,10 +40,9 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="m.date_creat";
 
-$sall=isset($_GET["sall"])?$_GET["sall"]:$_POST["sall"];
-$sref=isset($_GET["sref"])?$_GET["sref"]:$_POST["sref"];
-
-$filteremail=$_REQUEST["filteremail"]?$_REQUEST["filteremail"]:'';
+$sall=GETPOST("sall","alpha");
+$sref=GETPOST("sref","alpha");
+$filteremail=GETPOST('filteremail','alpha');
 
 
 
@@ -62,8 +61,8 @@ if ($filteremail)
 	$sql.= " FROM ".MAIN_DB_PREFIX."mailing as m, ".MAIN_DB_PREFIX."mailing_cibles as mc";
 	$sql.= " WHERE m.rowid = mc.fk_mailing AND m.entity = ".$conf->entity;
 	$sql.= " AND mc.email = '".$db->escape($filteremail)."'";
-	if ($sref) $sql.= " AND m.rowid = '".$sref."'";
-	if ($sall) $sql.= " AND (m.titre like '%".$sall."%' OR m.sujet like '%".$sall."%' OR m.body like '%".$sall."%')";
+	if ($sref) $sql.= " AND m.rowid = '".$db->escape($sref)."'";
+	if ($sall) $sql.= " AND (m.titre like '%".$db->escape($sall)."%' OR m.sujet like '%".$db->escape($sall)."%' OR m.body like '%".$db->escape($sall)."%')";
 	if (! $sortorder) $sortorder="ASC";
 	if (! $sortfield) $sortfield="m.rowid";
 	$sql.= $db->order($sortfield,$sortorder);
@@ -74,8 +73,8 @@ else
 	$sql = "SELECT m.rowid, m.titre, m.nbemail, m.statut, m.date_creat as datec, m.date_envoi as date_envoi";
 	$sql.= " FROM ".MAIN_DB_PREFIX."mailing as m";
 	$sql.= " WHERE m.entity = ".$conf->entity;
-	if ($sref) $sql.= " AND m.rowid = '".$sref."'";
-	if ($sall) $sql.= " AND (m.titre like '%".$sall."%' OR m.sujet like '%".$sall."%' OR m.body like '%".$sall."%')";
+	if ($sref) $sql.= " AND m.rowid = '".$db->escape($sref)."'";
+	if ($sall) $sql.= " AND (m.titre like '%".$db->escape($sall)."%' OR m.sujet like '%".$db->escape($sall)."%' OR m.body like '%".$db->escape($sall)."%')";
 	if (! $sortorder) $sortorder="ASC";
 	if (! $sortfield) $sortfield="m.rowid";
 	$sql.= $db->order($sortfield,$sortorder);
@@ -94,7 +93,7 @@ if ($result)
 
 	$i = 0;
 
-	$param = "&amp;sall=".$sall;
+	$param = "&amp;sall=".urlencode($sall);
 	if ($filteremail) $param.='&amp;filteremail='.urlencode($filteremail);
 	
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
@@ -111,11 +110,11 @@ if ($result)
 
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="sref" value="'.$sref.'" size="6">';
+	print '<input type="text" class="flat" name="sref" value="'.dol_escape_htmltag($sref).'" size="6">';
 	print '</td>';
 	// Title
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="sall" value="'.$sall.'" size="40">';
+	print '<input type="text" class="flat" name="sall" value="'.dol_escape_htmltag($sall).'" size="40">';
 	print '</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	if (! $filteremail) print '<td class="liste_titre">&nbsp;</td>';
@@ -165,8 +164,7 @@ if ($result)
 		print '<td align="right" class="nowrap">';
 		if ($filteremail)
 		{
-			if ($obj->sendstatut==-1) print $langs->trans("MailingStatusError").' '.img_error();
-			if ($obj->sendstatut==1) print $langs->trans("MailingStatusSent").' '.img_picto($langs->trans("MailingStatusSent"),'statut6');
+			print $email::libStatutDest($obj->sendstatut,2);
 		}
 		else
 		{

@@ -4,7 +4,7 @@
  * Copyright (C) 2004		Christophe Combelles	<ccomb@free.fr>
  * Copyright (C) 2005		Marc Barilley			<marc@ocebo.com>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2010-2015	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013		Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
@@ -266,7 +266,7 @@ class FactureFournisseur extends CommonInvoice
 				{
 	            	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 					{
-						$result=$this->insertExtraFields();
+						$result=$this->insertExtraFields();               // This also set $this->error or $this->errors if errors are found
 						if ($result < 0)
 						{
 							$error++;
@@ -274,11 +274,15 @@ class FactureFournisseur extends CommonInvoice
 					}
 				}
 				else if ($reshook < 0) $error++;
-                // Call trigger
-                $result=$this->call_trigger('BILL_SUPPLIER_CREATE',$user);
-                if ($result < 0) $error++;
-                // End call triggers
-
+				
+				if (! $error)
+				{
+                    // Call trigger
+                    $result=$this->call_trigger('BILL_SUPPLIER_CREATE',$user);
+                    if ($result < 0) $error++;
+                    // End call triggers
+				}
+				
                 if (! $error)
                 {
                     $this->db->commit();
@@ -307,7 +311,7 @@ class FactureFournisseur extends CommonInvoice
             }
             else
             {
-                $this->error=$this->db->error();
+                $this->error=$this->db->lasterror();
                 $this->db->rollback();
                 return -2;
             }
@@ -921,7 +925,7 @@ class FactureFournisseur extends CommonInvoice
         {
             $num = $force_number;
         }
-        else if (preg_match('/^[\(]?PROV/i', $this->ref))
+        else if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) // empty should not happened, but when it occurs, the test save life
         {
             $num = $this->getNextNumRef($this->client);
         }
@@ -982,8 +986,8 @@ class FactureFournisseur extends CommonInvoice
             		$oldref = dol_sanitizeFileName($this->ref);
             		$newref = dol_sanitizeFileName($num);
 
-            		$dirsource = $conf->fournisseur->facture->dir_output.'/'.get_exdir($this->id,2,0,0, $this, 'invoive_supplier').$oldref;
-            		$dirdest = $conf->fournisseur->facture->dir_output.'/'.get_exdir($this->id,2,0,0, $this, 'invoive_supplier').$newref;
+            		$dirsource = $conf->fournisseur->facture->dir_output.'/'.get_exdir($this->id,2,0,0, $this, 'invoice_supplier').$oldref;
+            		$dirdest = $conf->fournisseur->facture->dir_output.'/'.get_exdir($this->id,2,0,0, $this, 'invoice_supplier').$newref;
             		if (file_exists($dirsource))
             		{
             			dol_syslog(get_class($this)."::validate rename dir ".$dirsource." into ".$dirdest);
@@ -992,7 +996,7 @@ class FactureFournisseur extends CommonInvoice
             			{
             				dol_syslog("Rename ok");
                             // Rename docs starting with $oldref with $newref
-	                        $listoffiles=dol_dir_list($conf->fournisseur->facture->dir_output.'/'.get_exdir($this->id,2,0,0, $this, 'invoive_supplier').$newref, 'files', 1, '^'.preg_quote($oldref,'/'));
+	                        $listoffiles=dol_dir_list($conf->fournisseur->facture->dir_output.'/'.get_exdir($this->id,2,0,0, $this, 'invoice_supplier').$newref, 'files', 1, '^'.preg_quote($oldref,'/'));
 	                        foreach($listoffiles as $fileentry)
 	                        {
 	                        	$dirsource=$fileentry['name'];
@@ -1427,7 +1431,7 @@ class FactureFournisseur extends CommonInvoice
 	        $response = new WorkboardResponse();
 	        $response->warning_delay=$conf->facture->fournisseur->warning_delay/60/60/24;
 	        $response->label=$langs->trans("SupplierBillsToPay");
-	        $response->url=DOL_URL_ROOT.'/fourn/facture/list.php?filtre=paye:0';
+	        $response->url=DOL_URL_ROOT.'/fourn/facture/list.php?filtre=fac.fk_statut:1,paye:0';
 	        $response->img=img_object($langs->trans("Bills"),"bill");
 
             while ($obj=$this->db->fetch_object($resql))

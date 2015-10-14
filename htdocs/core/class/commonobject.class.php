@@ -53,6 +53,11 @@ abstract class CommonObject
      */
     public $error;
 
+	/**
+     * @var string[]	Array of error strings
+     */
+    public $errors=array();
+
     /**
      * @var string		Key value used to track if data is coming from import wizard
      */
@@ -81,11 +86,6 @@ abstract class CommonObject
 
 
     // Following vars are used by some objects only. We keep this property here in CommonObject to be able to provide common method using them.
-
-	/**
-     * @var string[]	Array of error strings
-     */
-    public $errors=array();
 
     /**
      * @var string[]	Can be used to pass information when only object is provided to method
@@ -452,13 +452,15 @@ abstract class CommonObject
         // Check parameters
         if ($fk_socpeople <= 0)
         {
-            $this->error=$langs->trans("ErrorWrongValueForParameter","1");
+            $langs->load("errors");
+            $this->error=$langs->trans("ErrorWrongValueForParameterX","1");
             dol_syslog(get_class($this)."::add_contact ".$this->error,LOG_ERR);
             return -1;
         }
         if (! $type_contact)
         {
-            $this->error=$langs->trans("ErrorWrongValueForParameter","2");
+            $langs->load("errors");
+            $this->error=$langs->trans("ErrorWrongValueForParameterX","2");
             dol_syslog(get_class($this)."::add_contact ".$this->error,LOG_ERR);
             return -2;
         }
@@ -486,7 +488,7 @@ abstract class CommonObject
         }
 
         $datecreate = dol_now();
-
+        
         $this->db->begin();
 
         // Insertion dans la base
@@ -504,7 +506,11 @@ abstract class CommonObject
             if (! $notrigger)
             {
             	$result=$this->call_trigger(strtoupper($this->element).'_ADD_CONTACT', $user);
-	            if ($result < 0) { $this->db->rollback(); return -1; }
+	            if ($result < 0) 
+	            { 
+	                $this->db->rollback(); 
+	                return -1;
+	            }
             }
 
             $this->db->commit();
@@ -1077,18 +1083,18 @@ abstract class CommonObject
     function getValueFrom($table, $id, $field)
     {
         $result=false;
-
-        $sql = "SELECT ".$field." FROM ".MAIN_DB_PREFIX.$table;
-        $sql.= " WHERE rowid = ".$id;
-
-        dol_syslog(get_class($this).'::getValueFrom', LOG_DEBUG);
-        $resql = $this->db->query($sql);
-        if ($resql)
-        {
-            $row = $this->db->fetch_row($resql);
-            $result = $row[0];
-        }
-
+		if (!empty($id) && !empty($field) && !empty($table)) {
+	        $sql = "SELECT ".$field." FROM ".MAIN_DB_PREFIX.$table;
+	        $sql.= " WHERE rowid = ".$id;
+	
+	        dol_syslog(get_class($this).'::getValueFrom', LOG_DEBUG);
+	        $resql = $this->db->query($sql);
+	        if ($resql)
+	        {
+	            $row = $this->db->fetch_row($resql);
+	            $result = $row[0];
+	        }
+		}
         return $result;
     }
 
@@ -2159,11 +2165,11 @@ abstract class CommonObject
         $sourcetype = (! empty($sourcetype) ? $sourcetype : $this->element);
         $targettype = (! empty($targettype) ? $targettype : $this->element);
 
-        if (empty($sourceid) && empty($targetid))
+        /*if (empty($sourceid) && empty($targetid))
         {
         	dol_syslog('Bad usage of function. No source nor target id defined (nor as parameter nor as object id)', LOG_ERR);
         	return -1;
-        }
+        }*/
 
         // Links between objects are stored in table element_element
         $sql = 'SELECT rowid, fk_source, sourcetype, fk_target, targettype';
@@ -2265,7 +2271,7 @@ abstract class CommonObject
                     {
                         dol_include_once('/'.$classpath.'/'.$classfile.'.class.php');
 
-                        foreach($objectids as $i => $objectid);	// $i is rowid into llx_element_element
+                        foreach($objectids as $i => $objectid)	// $i is rowid into llx_element_element
                         {
                             $object = new $classname($this->db);
                             $ret = $object->fetch($objectid);
@@ -3470,11 +3476,20 @@ abstract class CommonObject
 
 				if (empty($srctemplatepath))
 				{
-					$this->error='ErrorGenerationAskedForOdtTemplateWithNoSrcFileFound';
+					$this->error='ErrorGenerationAskedForOdtTemplateWithSrcFileNotDefined';
 					return -1;
 				}
 			}
 
+            if ($obj->type == 'odt' && ! empty($srctemplatepath))
+            {
+                if (! dol_is_file($srctemplatepath))
+                {
+                    $this->error='ErrorGenerationAskedForOdtTemplateWithSrcFileNotFound';
+                    return -1;
+                }
+            }
+    
 			// We save charset_output to restore it because write_file can change it if needed for
 			// output format that does not support UTF8.
 			$sav_charset_output=$outputlangs->charset_output;
@@ -3587,6 +3602,11 @@ abstract class CommonObject
     function fetch_optionals($rowid=null,$optionsArray=null)
     {
     	if (empty($rowid)) $rowid=$this->id;
+
+        //To avoid SQL errors. Probably not the better solution though
+        if (!$this->table_element) {
+            return 0;
+        }
 
         if (! is_array($optionsArray))
         {
@@ -3785,16 +3805,16 @@ abstract class CommonObject
    /**
      * Function to show lines of extrafields with output datas
      *
-     * @param	object	$extrafields	Extrafield Object
-     * @param	string	$mode			Show output ('view') or input ('edit') for extrafield
-	 * @param	array	$params			Optionnal parameters. Example: array('colspan'=>2)
-	 * @param	string	$keyprefix		Prefix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param Extrafields   $extrafields    Extrafield Object
+	 * @param string        $mode           Show output (view) or input (edit) for extrafield
+	 * @param array         $params         Optional parameters
+	 * @param string        $keyprefix      Prefix string to add into name and id of field (can be used to avoid duplicate names)
      *
      * @return string
      */
     function showOptionals($extrafields, $mode='view', $params=null, $keyprefix='')
     {
-		global $_POST, $conf;
+		global $_POST, $conf, $langs;
 
 		$out = '';
 
@@ -3819,7 +3839,16 @@ abstract class CommonObject
 						$value=$this->array_options["options_".$key];
 						break;
 					case "edit":
-						$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$this->array_options["options_".$key]);
+						if (isset($_POST["options_" . $key])) {
+							if (is_array($_POST["options_" . $key])) {
+								// $_POST["options"] is an array but following code expects a comma separated string
+								$value = implode(",", $_POST["options_" . $key]);
+							} else {
+								$value = $_POST["options_" . $key];
+							}
+						} else {
+							$value = $this->array_options["options_" . $key];
+						}
 						break;
 				}
 				if ($extrafields->attribute_type[$key] == 'separate')
@@ -3852,7 +3881,7 @@ abstract class CommonObject
 					if($extrafields->attribute_required[$key])
 						$label = '<span class="fieldrequired">'.$label.'</span>';
 
-					$out .= '<td>'.$label.'</td>';
+					$out .= '<td>'.$langs->trans($label).'</td>';
 					$out .='<td'.($colspan?' colspan="'.$colspan.'"':'').'>';
 
 					switch($mode) {
