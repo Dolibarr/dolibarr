@@ -61,6 +61,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
                 include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
                 $newobject = new Commande($this->db);
 
+                $object->statut = 2;
                 $ret=$newobject->createFromProposal($object);
                 if ($ret < 0) { $this->error=$newobject->error; $this->errors[]=$newobject->error; }
                 return $ret;
