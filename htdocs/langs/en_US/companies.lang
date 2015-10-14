@@ -64,6 +64,7 @@ UserTitle=Title
 Surname=Surname/Pseudo
 Address=Address
 State=State/Province
+StateShort=State
 Region=Region
 Country=Country
 CountryCode=Country code

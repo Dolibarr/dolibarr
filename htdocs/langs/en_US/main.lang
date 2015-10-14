@@ -97,6 +97,7 @@ DolibarrHasDetectedError=Dolibarr has detected a technical error
 InformationToHelpDiagnose=This is information that can help diagnostic
 MoreInformation=More information
 TechnicalInformation=Technical information
+TechnicalID=Technical ID
 NotePublic=Note (public)
 NotePrivate=Note (private)
 PrecisionUnitIsLimitedToXDecimals=Dolibarr was setup to limit precision of unit prices to <b>%s</b> decimals.

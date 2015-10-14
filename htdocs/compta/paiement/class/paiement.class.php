@@ -906,7 +906,7 @@ class Paiement extends CommonObject
 
         if ($withpicto) $result.=($link.img_object($langs->trans("ShowPayment"), 'payment', 'class="classfortooltip"').$linkend);
 		if ($withpicto && $withpicto != 2) $result.=' ';
-		if ($withpicto != 2) $result.=$link.$this->ref.$linkend;
+		if ($withpicto != 2) $result.=$link.($this->ref?$this->ref:$this->id).$linkend;
 		return $result;
 	}
 

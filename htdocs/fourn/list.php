@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2011       Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
@@ -195,13 +195,14 @@ if ($resql)
 	if (! empty($conf->categorie->enabled))
 	{
 		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+		$moreforfilter.='<div class="divsearchfield">';
 		$moreforfilter.=$langs->trans('Categories'). ': ';
 		$moreforfilter.=$htmlother->select_categories(Categorie::TYPE_SUPPLIER,$search_categ,'search_categ',1);
-		$moreforfilter.=' &nbsp; &nbsp; &nbsp; ';
+		$moreforfilter.='</div>';
 	}
 	if ($moreforfilter)
 	{
-		print '<div class="liste_titre">';
+		print '<div class="liste_titre liste_titre_bydiv centpercent">';
 		print $moreforfilter;
     	$parameters=array();
     	$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
@@ -209,8 +210,8 @@ if ($resql)
 		print '</div>';
 	}
 
-	print '<table class="liste" width="100%">';
-
+    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">';
+	
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$param,'valign="middle"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Zip"),$_SERVER["PHP_SELF"],"s.zip","",$param,'valign="middle"',$sortfield,$sortorder);
@@ -238,7 +239,7 @@ if ($resql)
 	print '<td class="liste_titre"><input type="text" size="10" class="flat" name="search_town" value="'.$search_town.'"></td>';
 
 	print '<td class="liste_titre" align="center">';
-	print $form->select_country($search_country,'search_country');
+	print $form->select_country($search_country,'search_country','',0,'maxwidth100');
 	print '</td>';
 	
 	print '<td class="liste_titre" align="center">';

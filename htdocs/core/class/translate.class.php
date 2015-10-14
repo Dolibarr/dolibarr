@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001      Eric Seigne         <erics@rycks.com>
- * Copyright (C) 2004-2012 Destailleur Laurent <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015 Destailleur Laurent <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin       <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -579,6 +579,19 @@ class Translate
 		{
             $str=$this->tab_translate[$key];
 
+    		// Make some string replacement after translation
+    		$replacekey='MAIN_REPLACE_TRANS_'.$this->defaultlang;
+            if (! empty($conf->global->$replacekey))    // Replacement translation variable with string1:newstring1,string2:newstring2
+            {
+        		// Overwrite translation with param MAIN_OVERWRITE_TRANS_xx_XX
+                $tmparray=explode(';', $conf->global->$replacekey);
+                foreach($tmparray as $tmp)
+                {
+                    $tmparray2=explode(':',$tmp);
+                    $str=preg_replace('/'.preg_quote($tmparray2[0]).'/',$tmparray2[1],$str);
+                }
+            }
+        
             if (! preg_match('/^Format/',$key)) 
             {
             	//print $str;

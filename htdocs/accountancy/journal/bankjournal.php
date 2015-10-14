@@ -40,6 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
+require_once DOL_DOCUMENT_ROOT.'/don/class/paymentdonation.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
@@ -120,6 +121,7 @@ $paymentsupplierstatic = new PaiementFourn($db);
 $societestatic = new Societe($db);
 $userstatic = new User($db);
 $chargestatic = new ChargeSociales($db);
+$paymentdonstatic = new PaymentDonation($db);
 $paymentvatstatic = new TVA($db);
 $paymentsalstatic = new PaymentSalary($db);
 
@@ -133,7 +135,8 @@ if ($result) {
 	$cptcli = (! empty($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER) ? $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER : $langs->trans("CodeNotDef"));
 	$accountancy_account_salary = (! empty($conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT) ? $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT : $langs->trans("CodeNotDef"));
 	$accountancy_account_pay_vat = (! empty($conf->global->ACCOUNTING_VAT_PAY_ACCOUNT) ? $conf->global->ACCOUNTING_VAT_PAY_ACCOUNT : $langs->trans("CodeNotDef"));
-
+	$accountancy_account_pay_donation = (! empty($conf->global->DONATION_ACCOUNTINGACCOUNT) ? $conf->global->DONATION_ACCOUNTINGACCOUNT : $langs->trans("CodeNotDef"));
+	
 	$tabpay = array ();
 	$tabbq = array ();
 	$tabtp = array ();
@@ -174,95 +177,100 @@ if ($result) {
 		// get_url may return -1 which is not traversable
 		if (is_array($links))
 		{
-		
-		foreach ( $links as $key => $val )
-		{
-			$tabtype[$obj->rowid] = $links[$key]['type'];
+			foreach ( $links as $key => $val )
+			{
+				$tabtype[$obj->rowid] = $links[$key]['type'];
 
-			if ($links[$key]['type'] == 'payment')
-			{
-				$paymentstatic->id = $links[$key]['url_id'];
-				$tabpay[$obj->rowid]["lib"] .= ' ' . $paymentstatic->getNomUrl(2);
-			}
-			else if ($links[$key]['type'] == 'payment_supplier')
-			{
-				$paymentsupplierstatic->id = $links[$key]['url_id'];
-				$paymentsupplierstatic->ref = $links[$key]['url_id'];
-				$tabpay[$obj->rowid]["lib"] .= ' ' . $paymentsupplierstatic->getNomUrl(2);
-			}
-			else if ($links[$key]['type'] == 'company')
-			{
-				$societestatic->id = $links[$key]['url_id'];
-				$societestatic->name = $links[$key]['label'];
-				$tabpay[$obj->rowid]["soclib"] = $societestatic->getNomUrl(1, '', 30);
-				$tabtp[$obj->rowid][$compta_soc] += $obj->amount;
-			}
-			else if ($links[$key]['type'] == 'user')
-			{
-				$userstatic->id = $links[$key]['url_id'];
-				$userstatic->name = $links[$key]['label'];
-				$tabpay[$obj->rowid]["soclib"] = $userstatic->getNomUrl(1, '', 30);
-				// $tabtp[$obj->rowid][$compta_user] += $obj->amount;
-			}
-			else if ($links[$key]['type'] == 'sc')
-			{
-				$chargestatic->id = $links[$key]['url_id'];
-				$chargestatic->ref = $links[$key]['url_id'];
-
-				$tabpay[$obj->rowid]["lib"] .= ' ' . $chargestatic->getNomUrl(2);
-				if (preg_match('/^\((.*)\)$/i', $links[$key]['label'], $reg)) {
-					if ($reg[1] == 'socialcontribution')
-						$reg[1] = 'SocialContribution';
-					$chargestatic->lib = $langs->trans($reg[1]);
-				}
-				else
+				if ($links[$key]['type'] == 'payment')
 				{
-					$chargestatic->lib = $links[$key]['label'];
+					$paymentstatic->id = $links[$key]['url_id'];
+					$tabpay[$obj->rowid]["lib"] .= ' ' . $paymentstatic->getNomUrl(2);
 				}
-				$chargestatic->ref = $chargestatic->lib;
-				$tabpay[$obj->rowid]["soclib"] = $chargestatic->getNomUrl(1, 30);
-
-				$sqlmid = 'SELECT cchgsoc.accountancy_code';
-				$sqlmid .= " FROM " . MAIN_DB_PREFIX . "c_chargesociales cchgsoc ";
-				$sqlmid .= " INNER JOIN " . MAIN_DB_PREFIX . "chargesociales as chgsoc ON  chgsoc.fk_type=cchgsoc.id";
-				$sqlmid .= " INNER JOIN " . MAIN_DB_PREFIX . "paiementcharge as paycharg ON  paycharg.fk_charge=chgsoc.rowid";
-				$sqlmid .= " INNER JOIN " . MAIN_DB_PREFIX . "bank_url as bkurl ON  bkurl.url_id=paycharg.rowid";
-				$sqlmid .= " WHERE bkurl.fk_bank=" . $obj->rowid;
-
-
-				dol_syslog("accountancy/journal/bankjournal.php:: sqlmid=" . $sqlmid, LOG_DEBUG);
-				$resultmid = $db->query($sqlmid);
-				if ($resultmid)
+				else if ($links[$key]['type'] == 'payment_supplier')
 				{
-					$objmid = $db->fetch_object($resultmid);
-					$tabtp[$obj->rowid][$objmid->accountancy_code] += $obj->amount;
+					$paymentsupplierstatic->id = $links[$key]['url_id'];
+					$paymentsupplierstatic->ref = $links[$key]['url_id'];
+					$tabpay[$obj->rowid]["lib"] .= ' ' . $paymentsupplierstatic->getNomUrl(2);
 				}
+				else if ($links[$key]['type'] == 'company')
+				{
+					$societestatic->id = $links[$key]['url_id'];
+					$societestatic->name = $links[$key]['label'];
+					$tabpay[$obj->rowid]["soclib"] = $societestatic->getNomUrl(1, '', 30);
+					$tabtp[$obj->rowid][$compta_soc] += $obj->amount;
+				}
+				else if ($links[$key]['type'] == 'user')
+				{
+					$userstatic->id = $links[$key]['url_id'];
+					$userstatic->name = $links[$key]['label'];
+					$tabpay[$obj->rowid]["soclib"] = $userstatic->getNomUrl(1, '', 30);
+					// $tabtp[$obj->rowid][$compta_user] += $obj->amount;
+				}
+				else if ($links[$key]['type'] == 'sc')
+				{
+					$chargestatic->id = $links[$key]['url_id'];
+					$chargestatic->ref = $links[$key]['url_id'];
+
+					$tabpay[$obj->rowid]["lib"] .= ' ' . $chargestatic->getNomUrl(2);
+					if (preg_match('/^\((.*)\)$/i', $links[$key]['label'], $reg)) {
+						if ($reg[1] == 'socialcontribution')
+							$reg[1] = 'SocialContribution';
+						$chargestatic->lib = $langs->trans($reg[1]);
+					}
+					else
+					{
+						$chargestatic->lib = $links[$key]['label'];
+					}
+					$chargestatic->ref = $chargestatic->lib;
+					$tabpay[$obj->rowid]["soclib"] = $chargestatic->getNomUrl(1, 30);
+
+					$sqlmid = 'SELECT cchgsoc.accountancy_code';
+					$sqlmid .= " FROM " . MAIN_DB_PREFIX . "c_chargesociales cchgsoc ";
+					$sqlmid .= " INNER JOIN " . MAIN_DB_PREFIX . "chargesociales as chgsoc ON  chgsoc.fk_type=cchgsoc.id";
+					$sqlmid .= " INNER JOIN " . MAIN_DB_PREFIX . "paiementcharge as paycharg ON  paycharg.fk_charge=chgsoc.rowid";
+					$sqlmid .= " INNER JOIN " . MAIN_DB_PREFIX . "bank_url as bkurl ON  bkurl.url_id=paycharg.rowid";
+					$sqlmid .= " WHERE bkurl.fk_bank=" . $obj->rowid;
+
+
+					dol_syslog("accountancy/journal/bankjournal.php:: sqlmid=" . $sqlmid, LOG_DEBUG);
+					$resultmid = $db->query($sqlmid);
+					if ($resultmid)
+					{
+						$objmid = $db->fetch_object($resultmid);
+						$tabtp[$obj->rowid][$objmid->accountancy_code] += $obj->amount;
+					}
+				}
+				else if ($links[$key]['type'] == 'payment_donation')
+				{
+					$paymentdonstatic->id = $links[$key]['url_id'];
+					$paymentdonstatic->fk_donation = $links[$key]['url_id'];
+					$tabpay[$obj->rowid]["lib"] .= ' ' . $langs->trans("PaymentDonation");
+					$tabtp[$obj->rowid][$accountancy_account_pay_donation] += $obj->amount;
+				}
+				else if ($links[$key]['type'] == 'payment_vat')
+				{
+					$paymentvatstatic->id = $links[$key]['url_id'];
+					$paymentvatstatic->ref = $links[$key]['url_id'];
+					$tabpay[$obj->rowid]["lib"] .= ' ' . $langs->trans("PaymentVat");
+					$tabtp[$obj->rowid][$accountancy_account_pay_vat] += $obj->amount;
+				}
+				else if ($links[$key]['type'] == 'payment_salary')
+				{
+					$paymentsalstatic->id = $links[$key]['url_id'];
+					$paymentsalstatic->ref = $links[$key]['url_id'];
+					$paymentsalstatic->label = $links[$key]['label'];
+					$tabpay[$obj->rowid]["lib"] .= ' ' . $paymentsalstatic->getNomUrl(2);
+					$tabtp[$obj->rowid][$accountancy_account_salary] += $obj->amount;
+				}
+				else if ($links[$key]['type'] == 'banktransfert')
+				{
+					$tabpay[$obj->rowid]["lib"] .= ' ' . $paymentvatstatic->getNomUrl(2);
+					$tabtp[$obj->rowid][$cpttva] += $obj->amount;
+				}
+				/*else {
+					$tabtp [$obj->rowid] [$accountancy_account_salary] += $obj->amount;
+				}*/
 			}
-			else if ($links[$key]['type'] == 'payment_vat')
-			{
-				$paymentvatstatic->id = $links[$key]['url_id'];
-				$paymentvatstatic->ref = $links[$key]['url_id'];
-				$tabpay[$obj->rowid]["lib"] .= ' ' . $langs->trans("PaymentVat");
-				$tabtp[$obj->rowid][$accountancy_account_pay_vat] += $obj->amount;
-			}
-			else if ($links[$key]['type'] == 'payment_salary')
-			{
-				$paymentsalstatic->id = $links[$key]['url_id'];
-				$paymentsalstatic->ref = $links[$key]['url_id'];
-				$paymentsalstatic->label = $links[$key]['label'];
-				$tabpay[$obj->rowid]["lib"] .= ' ' . $paymentsalstatic->getNomUrl(2);
-				$tabtp[$obj->rowid][$accountancy_account_salary] += $obj->amount;
-			}
-			else if ($links[$key]['type'] == 'banktransfert')
-			{
-				$tabpay[$obj->rowid]["lib"] .= ' ' . $paymentvatstatic->getNomUrl(2);
-				$tabtp[$obj->rowid][$cpttva] += $obj->amount;
-			}
-			/*else {
-				$tabtp [$obj->rowid] [$accountancy_account_salary] += $obj->amount;
-			}*/
-		}
-		
 		}
 		
 		$tabbq[$obj->rowid][$compta_bank] += $obj->amount;

@@ -282,7 +282,7 @@ if (count($arrayjs) && $mode == 'memberbycountry')
 if ($mode)
 {
     // Print array / Affiche le tableau
-    print '<table class="border" width="100%">';
+    print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
     print '<td align="center">'.$label.'</td>';
     if ($label2) print '<td align="center">'.$label2.'</td>';

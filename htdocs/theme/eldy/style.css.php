@@ -452,8 +452,10 @@ textarea.centpercent {
 div.divsearchfield {
 	float: <?php print $left; ?>;
 	margin-<?php print $right; ?>: 12px;
-	margin-top: 1px;
-    margin-bottom: 2px;
+    margin-<?php print $left; ?>: 2px;
+	margin-top: 4px;
+    margin-bottom: 4px;
+  	padding-left: 2px;
 }
 div.confirmmessage {
 	padding-top: 6px;
@@ -487,6 +489,7 @@ div.confirmmessage {
 .maxwidth100 { max-width: 100px; }
 .maxwidth200 { max-width: 200px; }
 .maxwidth300 { max-width: 300px; }
+.titlefield { width: 30%; }
 <?php if (! empty($dol_optimize_smallscreen)) { ?>
 .hideonsmartphone { display: none; }
 .noenlargeonsmartphone { width : 50px !important; display: inline !important; }
@@ -494,6 +497,7 @@ div.confirmmessage {
 .maxwidth100onsmartphone { max-width: 100px; }
 .maxwidth200onsmartphone { max-width: 200px; }
 .maxwidth300onsmartphone { max-width: 300px; }
+.titlefield { width: auto; }
 <?php } ?>
 .linkobject { cursor: pointer; }
 <?php if (GETPOST("optioncss") == 'print') { ?>
@@ -535,7 +539,7 @@ td.showDragHandle {
 	float: none;
 	vertical-align: top;
 }
-#id-right {	/* This must stay id-right ant not be replaced with echo $right */
+#id-right {	/* This must stay id-right and not be replaced with echo $right */
 	width: 100%;
 }
 #id-left {
@@ -603,6 +607,43 @@ div.attacharea {
 	padding-top: 10px;
 	padding-bottom: 10px;
 }
+
+div.arearef {
+	/*border-bottom: 1px solid #bbb;*/
+	padding-top: 2px;
+	padding-bottom: 5px;
+	/*padding-right: 3px;
+	padding-left: 2px;*/
+	margin-bottom: 10px;
+}
+div.heightref {
+	min-height: 80px; 
+}
+div.divphotoref {
+	padding-right: 20px;
+}
+div.statusref {
+	float: right;
+	padding-right: 12px;
+	margin-top: 6px;
+	margin-bottom: 10px;
+}
+img.photoref {
+	border: 1px solid #CCC;
+	-moz-box-shadow: 3px 3px 4px #DDD;
+    -webkit-box-shadow: 3px 3px 4px #DDD;
+    box-shadow: 3px 3px 4px #DDD;
+    padding: 4px;
+	height: 80px;
+	width: 80px;
+    object-fit: contain
+}
+.underrefbanner {
+}
+.underbanner {
+	border-bottom: 2px solid #888;
+}
+
 
 /* ============================================================================== */
 /* Menu top et 1ere ligne tableau                                                 */
@@ -861,7 +902,7 @@ foreach($conf->modules as $val)
 $mainmenuusedarray=array_unique(explode(',',$mainmenuused));
 
 $generic=1;
-$divalreadydefined=array('home','companies','products','commercial','accountancy','project','tools','members','agenda','holiday','bookmark','cashdesk','ecm','geoipmaxmind','gravatar','clicktodial','paypal','webservices');
+$divalreadydefined=array('home','companies','products','commercial','externalsite','accountancy','project','tools','members','agenda','holiday','bookmark','cashdesk','ecm','geoipmaxmind','gravatar','clicktodial','paypal','webservices');
 foreach($mainmenuusedarray as $val)
 {
 	if (empty($val) || in_array($val,$divalreadydefined)) continue;
@@ -1492,10 +1533,10 @@ div.tabsElem {
 
 div.tabBar {
     color: #<?php echo $colortextbacktab; ?>;
-    padding-top: <?php echo ($dol_optimize_smallscreen?'4':'14'); ?>px;
-    padding-left: <?php echo ($dol_optimize_smallscreen?'4':'14'); ?>px;
-    padding-right: <?php echo ($dol_optimize_smallscreen?'4':'14'); ?>px;
-    padding-bottom: <?php echo ($dol_optimize_smallscreen?'4':'12'); ?>px;
+    padding-top: <?php echo ($dol_optimize_smallscreen?'4':'16'); ?>px;
+    padding-left: <?php echo ($dol_optimize_smallscreen?'4':'18'); ?>px;
+    padding-right: <?php echo ($dol_optimize_smallscreen?'4':'18'); ?>px;
+    padding-bottom: <?php echo ($dol_optimize_smallscreen?'4':'14'); ?>px;
     margin: 0px 0px 14px 0px;
     -moz-border-radius:4px;
     -webkit-border-radius: 4px;
@@ -1560,9 +1601,11 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	-webkit-box-shadow: 0 -1px 4px rgba(0,0,0,.1);
 	box-shadow: 0 -1px 4px rgba(0,0,0,.1);
 	margin-bottom: 0 0.2em 0 0.2em !important;
+
 	border-right: 1px solid #AAA !important;
 	border-left: 1px solid #AAA !important;
 	border-top: 1px solid #BBB !important;
+
 	-moz-border-radius:4px 4px 0 0;
     -webkit-border-radius: 4px 4px 0 0;
 	border-radius: 4px 4px 0 0;
@@ -1892,10 +1935,12 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 
 table.border, table.dataTable, .table-border, .table-border-col, .table-key-border-col, .table-val-border-col, div.border {
 	border: 1px solid #E0E0E0;
-	border-collapse: collapse;
+	border-collapse: collapse !important;
 	padding: 1px 2px 1px 3px;			/* t r b l */
 }
-
+table.borderplus {
+	border: 1px solid #BBB;
+}
 .border tbody tr, .border tbody tr td {
 	height: 20px;
 }
@@ -1925,7 +1970,7 @@ td.border, div.tagtable div div.border {
 }
 
 .table-key-border-col {
-	width: 25%;
+	/* width: 25%; */
 	vertical-align:top;
 }
 .table-val-border-col {
@@ -1934,7 +1979,7 @@ td.border, div.tagtable div div.border {
 
 /* Main boxes */
 
-table.noborder, table.formdoc, div.noborder {
+table.liste, table.noborder, table.formdoc, div.noborder {
 	width: 100%;
 
 	border-collapse: separate !important;
@@ -1962,25 +2007,28 @@ table.noborder, table.formdoc, div.noborder {
 	-webkit-box-shadow: 2px 2px 4px #CCC;
 	box-shadow: 2px 2px 4px #CCC;
 
-	-moz-border-radius: 0.2em;
+/*	-moz-border-radius: 0.2em;
 	-webkit-border-radius: 0.2em;
-	border-radius: 0.2em;
+	border-radius: 0.2em;*/
 }
 
-table.noborder tr, div.noborder form {
+table.liste tr, table.noborder tr, div.noborder form {
 	border-top-color: #FEFEFE;
 
 	border-right-width: 1px;
-	border-right-color: #BBBBBB;
+	border-right-color: #BBB;
 	border-right-style: solid;
 
 	border-left-width: 1px;
-	border-left-color: #BBBBBB;
+	border-left-color: #BBB;
 	border-left-style: solid;
 	min-height: 20px;
 }
 
-table.noborder th, table.noborder td, div.noborder form, div.noborder form div {
+table.liste th, table.noborder th {
+	padding: 10px 2px 10px 3px;			/* t r b l */
+}
+table.liste td, table.noborder td, div.noborder form, div.noborder form div {
 	padding: 5px 2px 5px 3px;			/* t r b l */
 }
 
@@ -2008,41 +2056,11 @@ td.borderright {
 }
 
 
-/* For lists */
-
-table.liste {
-	width: 100%;
-
-	border-collapse: collapse;
-	border-top-color: #FEFEFE;
-
-	border-top-width: 1px;
-	border-top-color: #CCC;
-	border-top-style: solid;
-
-	border-right-width: 1px;
-	border-right-color: #CCC;
-	border-right-style: solid;
-
-/*
-	border-bottom-width: 1px;
-	border-bottom-color: #BBBBBB;
-	border-bottom-style: solid;
-*/
-	border-left-width: 1px;
-	border-left-color: #CCC;
-	border-left-style: solid;
-
-	margin-bottom: 2px;
-	margin-top: 0px;
-
-    -moz-box-shadow: 0px 3px 4px #CCC;
-    -webkit-box-shadow: 0px 3px 4px #CC;
-    box-shadow: 0px 3px 4px #CCC;
+/* For table with no filter before */
+table.listwithfilterbefore {
+	border-top: none !important;
 }
-table.liste td {
-	padding-right: 2px;
-}
+
 
 .tagtable, .table-border { display: table; }
 .tagtr, .table-border-row  { display: table-row; }
@@ -2051,13 +2069,18 @@ table.liste td {
 
 /* Pagination */
 div.refidpadding  {
-	padding-top: <?php print empty($conf->dol_use_jmobile)?'8':'12'; ?>px;
+	padding-top: <?php print empty($conf->dol_use_jmobile)?'3':'14'; ?>px;
 }
 div.refid  {
-	padding-top: <?php print empty($conf->dol_use_jmobile)?'5':'12'; ?>px;
 	font-weight: bold;
   	color: #766;
-  	font-size: 120%;
+  	font-size: 160%;
+}
+div.refidno  {
+	padding-top: 2px;
+	font-weight: normal;
+  	color: #444;
+  	font-size: <?php print $fontsize ?>px;
 }
 
 div.pagination {
@@ -2110,11 +2133,18 @@ div.pagination li.pagination span {
 div.pagination li.pagination span.inactive {
   cursor: default;
 }
+/*div.pagination li.litext {
+	padding-top: 8px;
+}*/
 div.pagination li.litext a {
-border: none;
+  border: none;
   padding-right: 10px;
   padding-left: 4px;
   font-weight: bold;
+}
+div.pagination li.litext a:hover {
+	background-color: transparent;
+	background-image: none;
 }
 <?php if (! empty($conf->dol_use_jmobile)) { ?>
 div.pagination li.litext {
@@ -2285,27 +2315,28 @@ div.liste_titre {
 div.liste_titre {
 	min-height: 26px !important;	/* We cant use height because it's a div and it should be higher if content is more. but min-height does not work either for div */
 
-	padding-left: 3px;
 	padding-top: 2px;
 	padding-bottom: 2px;
 
 	border-right-width: 1px;
-	border-right-color: #CCC;
+	border-right-color: #BBB;
 	border-right-style: solid;
 
 	border-left-width: 1px;
-	border-left-color: #CCC;
+	border-left-color: #BBB;
 	border-left-style: solid;
 
 	border-top-width: 1px;
-	border-top-color: #CCC;
+	border-top-color: #BBB;
 	border-top-style: solid;
 }
 div.liste_titre_bydiv {
 	box-shadow: none;
 	border-collapse: collapse;
 	display: table;
-	padding: 2px 2px 2px 0;
+	padding: 2px 0px 2px 0;
+	box-shadow: 2px 2px 4px #CCC;
+	width: calc(100% - 1px);	/* 1px more, i don't know why */
 }
 tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable.tr
 {
@@ -2326,7 +2357,7 @@ div.liste_titre, tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.list
 	background-image: -ms-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(250,250,250,0.3) 100%);
 	background-image: linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(250,250,250,0.3) 100%);
 	<?php } ?>
-	font-weight: bold;
+	font-weight: normal;
 
     color: #<?php echo $colortexttitle; ?>;
     font-family: <?php print $fontlist ?>;
@@ -2340,7 +2371,7 @@ tr.liste_titre th, th.liste_titre, form.liste_titre div, div.liste_titre
 tr.liste_titre th, th.liste_titre, tr.liste_titre td, td.liste_titre, form.liste_titre div, div.liste_titre
 {
     font-family: <?php print $fontlist ?>;
-    font-weight: bold;
+    font-weight: normal;
     vertical-align: middle;
 }
 tr.liste_titre th a, th.liste_titre a, tr.liste_titre td a, td.liste_titre a, form.liste_titre div a, div.liste_titre a {
@@ -2398,6 +2429,10 @@ div.tabBar .noborder {
 	box-shadow: 0px 0px 0px #DDD !important;
 }
 
+#tablelines tr.liste_titre td, .paymenttable tr.liste_titre td, .margintable tr.liste_titre td, .tableforservicepart1 tr.liste_titre td {
+	border-bottom: 1px solid #AAA !important;
+}
+
 
 /*
  *  Boxes
@@ -2452,7 +2487,7 @@ tr.box_titre {
 
 	color: #<?php echo $colortexttitle; ?>;
     font-family: <?php print $fontlist ?>, sans-serif;
-    font-weight: bold;
+    /*font-weight: normal;*/
     border-bottom: 1px solid #FDFFFF;
     white-space: nowrap;
 }
@@ -2493,7 +2528,10 @@ tr.box_pair td, tr.box_impair td {
 	position: relative;
 }
 
-
+.prod_entry_mode_free, .prod_entry_mode_predef {
+    height: 26px !important;
+    vertical-align: middle;
+}
 
 
 
@@ -3386,7 +3424,7 @@ table.dataTable tr.odd td.sorting_1, table.dataTable tr.even td.sorting_1 {
 	background-color: #FFF !important;
 	border-radius: inherit !important;
 }
-.paging_full_numbers a.paginate_button_disabled:hover {
+.paging_full_numbers a.paginate_button_disabled:hover, .paging_full_numbers a.disabled:hover {
     background-color: #FFF !important;
 }
 .paginate_button, .paginate_active {
@@ -3414,7 +3452,9 @@ div.dataTables_length {
 div.dataTables_length select {
 	background: #fff;
 }
-
+.dataTables_wrapper .dataTables_paginate {
+	padding-top: 0px !important;
+}
 
 /* ============================================================================== */
 /*  Select2                                                                       */
@@ -3510,6 +3550,62 @@ a span.select2-chosen
   overflow: hidden;
 }
 
+
+/* ============================================================================== */
+/*  Multiselect with checkbox                                                     */
+/* ============================================================================== */
+
+dl.dropdown {
+    margin:0px;
+    padding:0px;
+}
+.dropdown dd, .dropdown dt {
+    margin:0px;
+    padding:0px;
+}
+.dropdown ul {
+    margin: -1px 0 0 0;
+    text-align: left;
+}
+.dropdown dd {
+    position:relative;
+}
+.dropdown dt a {
+    display:block;
+    overflow: hidden;
+    border:0;
+}
+.dropdown dt a span, .multiSel span {
+    cursor:pointer;
+    display:inline-block;
+    padding: 0 3px 2px 0;
+}
+.dropdown dd ul {
+    background-color: #FFF;
+    border: 1px solid #888;
+    display:none;
+    right:0px;						/* pop is align on right */
+    padding: 2px 15px 2px 5px;
+    position:absolute;
+    top:2px;
+    list-style:none;
+    max-height: 200px;
+    overflow: auto;
+}
+.dropdown span.value {
+    display:none;
+}
+.dropdown dd ul li {
+	white-space: nowrap;
+	font-weight: normal;
+}
+.dropdown dd ul li a {
+    padding:5px;
+    display:block;
+}
+.dropdown dd ul li a:hover {
+    background-color:#fff;
+}
 
 
 /* ============================================================================== */

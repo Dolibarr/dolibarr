@@ -57,6 +57,8 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
  *	View
  */
 
+$form=new Form($b);
+
 $title=$langs->trans("ThirdParty");
 if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name.' - '.$langs->trans("Info");
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
@@ -82,11 +84,21 @@ if ($socid > 0)
 
 	dol_fiche_head($head, 'info', $langs->trans("ThirdParty"), 0, 'company');
 
+	$linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php">'.$langs->trans("BackToList").'</a>';
 
-	print '<table width="100%"><tr><td>';
+	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '');
+
+
+	print '<div class="fichecenter">';
+
+	print '<div class="underbanner clearboth"></div>';
+
+	print '<br>';
+	
 	dol_print_object_info($object);
-	print '</td></tr></table>';
 
+	print '</div>';
+	
 	dol_fiche_end();
 }
 

@@ -195,7 +195,7 @@ if ($socname)
 
 
 /*
- * Mode Liste
+ * Mode List
  */
 /*
  REM: Regle sur droits "Voir tous les clients"
@@ -208,9 +208,9 @@ $title=$langs->trans("ListOfThirdParties");
 
 $sql = "SELECT s.rowid, s.nom as name, s.barcode, s.town, s.datec, s.code_client, s.code_fournisseur, ";
 $sql.= " st.libelle as stcomm, s.prefix_comm, s.client, s.fournisseur, s.canvas, s.status as status,";
-$sql.= " s.siren as idprof1, s.siret as idprof2, ape as idprof3, idprof4 as idprof4";
-$sql.= ",s.fk_pays";
-$sql.= ",typent.code as typent_code";
+$sql.= " s.siren as idprof1, s.siret as idprof2, ape as idprof3, idprof4 as idprof4,";
+$sql.= " s.fk_pays, s.tms as date_update, s.datec as date_creation,";
+$sql.= " typent.code as typent_code";
 // We'll need these fields in order to filter by sale (including the case where the user can only see his prospects)
 if ($search_sale) $sql .= ", sc.fk_soc, sc.fk_user";
 // We'll need these fields in order to filter by categ
@@ -321,27 +321,23 @@ if ($resql)
 	$moreforfilter='';
     if (! empty($conf->categorie->enabled))
     {
+        $moreforfilter.='<div class="divsearchfield">';
         $moreforfilter.=$langs->trans('Categories'). ': ';
         $moreforfilter.=$htmlother->select_categories(Categories::TYPE_CUSTOMER,$search_categ,'search_categ');
-        $moreforfilter.=' &nbsp; &nbsp; &nbsp; ';
+        $moreforfilter.='</div>';
     }
     // If the user can view prospects other than his'
     if ($user->rights->societe->client->voir || $socid)
     {
+        $moreforfilter.='<div class="divsearchfield">';
         $moreforfilter.=$langs->trans('SalesRepresentatives'). ': ';
         $moreforfilter.=$htmlother->select_salesrepresentatives($search_sale,'search_sale',$user);
-    }
-    if ($moreforfilter)
-    {
-        print '<tr class="liste_titre">';
-        print '<td class="liste_titre" colspan="8">';
-        print $moreforfilter;
-        print '</td></tr>';
+        $moreforfilter.='</div>'; 
     }
 	*/
 	if (! empty($moreforfilter))
 	{
-		print '<div class="liste_titre">';
+		print '<div class="liste_titre liste_titre_bydiv centpercent">';
 		print $moreforfilter;
     	$parameters=array();
     	$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
@@ -349,10 +345,29 @@ if ($resql)
 	    print '</div>';
 	}
 
-	print '<table class="liste" width="100%">';
+	// Define list of fields to show into list
+    $arrayfields=array(
+        's.nom'=>array('label'=>$langs->trans("Company"), 'checked'=>1),
+        's.barcode'=>array('label'=>$langs->trans("BarCode"), 'checked'=>1, 'cond'=>(! empty($conf->barcode->enabled))),
+        's.town'=>array('label'=>$langs->trans("Town"), 'checked'=>1),
+        'country.code_iso'=>array('label'=>$langs->trans("Country"), 'checked'=>1),
+        'typent.code'=>array('label'=>$langs->trans("ThirdPartyType"), 'checked'=>1),
+        's.siren'=>array('label'=>$langs->trans("ProfId1Short"), 'checked'=>1),
+        's.siret'=>array('label'=>$langs->trans("ProfId2Short"), 'checked'=>1),
+        's.ape'=>array('label'=>$langs->trans("ProfId3Short"), 'checked'=>1),
+        's.idprof4'=>array('label'=>$langs->trans("ProfId4Short"), 'checked'=>1),
+        's.status'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>200),
+        's.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
+        's.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
+    );
+    if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
+    {
+        $selectotherfields=$form->multiSelectArrayWithCheckbox('selectotherfields', $arrayfields);
+    }
+    
+	print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
 
-    // Lines of titles
-    print '<tr class="liste_titre">';
+	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
     if (! empty($conf->barcode->enabled)) print_liste_field_titre($langs->trans("BarCode"), $_SERVER["PHP_SELF"], "s.barcode",$param,'','',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Town"),$_SERVER["PHP_SELF"],"s.town","",$param,'',$sortfield,$sortorder);
@@ -367,7 +382,7 @@ if ($resql)
     $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
 	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"s.status","",$param,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
+	print_liste_field_titre($selectotherfields, $_SERVER["PHP_SELF"],"",'','','align="right"',$sortfield,$sortorder,'maxwidthsearch ');
 	print "</tr>\n";
 
 	// Fields title search
@@ -376,22 +391,23 @@ if ($resql)
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	if (! empty($search_nom_only) && empty($search_nom)) $search_nom=$search_nom_only;
-	print '<input class="flat" type="text" name="search_nom" value="'.htmlspecialchars($search_nom).'">';
+	
+	print '<input class="flat" type="text" name="search_nom" size="8" value="'.dol_escape_htmltag($search_nom).'">';
 	print '</td>';
 	// Barcode
 	if (! empty($conf->barcode->enabled))
 	{
 		print '<td class="liste_titre">';
-		print '<input class="flat" type="text" name="sbarcode" size="6" value="'.htmlspecialchars($sbarcode).'">';
+		print '<input class="flat" type="text" name="sbarcode" size="6" value="'.dol_escape_htmltag($sbarcode).'">';
 		print '</td>';
     }
 	// Town
 	print '<td class="liste_titre">';
-	print '<input class="flat" size="10" type="text" name="search_town" value="'.htmlspecialchars($search_town).'">';
+	print '<input class="flat" size="8" type="text" name="search_town" value="'.dol_escape_htmltag($search_town).'">';
 	print '</td>';
 	//Country
 	print '<td class="liste_titre" align="center">';
-	print $form->select_country($search_country,'search_country');
+	print $form->select_country($search_country,'search_country','',0,'maxwidth100');
 	print '</td>';
 	//Company type
 	print '<td class="liste_titre" align="center">';
@@ -399,19 +415,19 @@ if ($resql)
 	print '</td>';
 	// IdProf1
 	print '<td class="liste_titre">';
-	print '<input class="flat" size="4" type="text" name="search_idprof1" value="'.htmlspecialchars($search_idprof1).'">';
+	print '<input class="flat" size="4" type="text" name="search_idprof1" value="'.dol_escape_htmltag($search_idprof1).'">';
 	print '</td>';
 	// IdProf2
 	print '<td class="liste_titre">';
-	print '<input class="flat" size="4" type="text" name="search_idprof2" value="'.htmlspecialchars($search_idprof2).'">';
+	print '<input class="flat" size="4" type="text" name="search_idprof2" value="'.dol_escape_htmltag($search_idprof2).'">';
 	print '</td>';
 	// IdProf3
 	print '<td class="liste_titre">';
-	print '<input class="flat" size="4" type="text" name="search_idprof3" value="'.htmlspecialchars($search_idprof3).'">';
+	print '<input class="flat" size="4" type="text" name="search_idprof3" value="'.dol_escape_htmltag($search_idprof3).'">';
 	print '</td>';
 	// IdProf4
 	print '<td class="liste_titre">';
-	print '<input class="flat" size="4" type="text" name="search_idprof4" value="'.htmlspecialchars($search_idprof4).'">';
+	print '<input class="flat" size="4" type="text" name="search_idprof4" value="'.dol_escape_htmltag($search_idprof4).'">';
 	print '</td>';
 	// Type (customer/prospect/supplier)
 	print '<td class="liste_titre" align="middle">';

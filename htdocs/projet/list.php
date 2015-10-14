@@ -274,15 +274,18 @@ if ($resql)
 	if (! empty($moreforfilter))
 	{
 		print '<div class="liste_titre liste_titre_bydiv centpercent">';
+        //print '<tr class="liste_titre">';
+        //print '<td class="liste_titre" colspan="'.$colspan.'">';
 		print $moreforfilter;
     	$parameters=array();
     	$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
     	print $hookmanager->resPrint;
     	print '</div>';
-	}
+        //print '</td></tr>';
+    }
 
-	print '<table class="liste" width="100%">';
-	
+	print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
+    		
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"p.ref","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"p.title","",$param,"",$sortfield,$sortorder);

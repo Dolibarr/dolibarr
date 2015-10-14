@@ -101,6 +101,7 @@ CorrectStock=Correct stock
 AddPhoto=Add photo
 ListOfStockMovements=List of stock movements
 BuyingPrice=Buying price
+PriceForEachProduct=Products with specific prices
 SupplierCard=Supplier card
 CommercialCard=Commercial card
 AllWays=Path to find your product in stock

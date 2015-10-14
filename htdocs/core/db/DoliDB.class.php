@@ -226,7 +226,7 @@ abstract class DoliDB implements Database
 	 */
 	function order($sortfield=null,$sortorder=null)
 	{
-		if (isset($sortfield))
+		if (! empty($sortfield))
 		{
 			$return='';
 			$fields=explode(',',$sortfield);
@@ -236,7 +236,7 @@ abstract class DoliDB implements Database
 				else $return.=',';
 
 				$return.=preg_replace('/[^0-9a-z_\.]/i','',$val);
-				if (isset($sortorder))
+				if (! empty($sortorder))
 				{
 					$return.=' '.preg_replace('/[^0-9a-z]/i','',$sortorder);
 				}

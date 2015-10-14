@@ -52,9 +52,9 @@ if (GETPOST('cancel') && ! empty($backtopage))
 
 if (GETPOST("action") == 'setremise')
 {
-	$soc = New Societe($db);
-	$soc->fetch($_GET["id"]);
-	$result=$soc->set_remise_client($_POST["remise"],$_POST["note"],$user);
+	$object = new Societe($db);
+	$object->fetch($_GET["id"]);
+	$result=$object->set_remise_client($_POST["remise"],$_POST["note"],$user);
 
 	if ($result > 0)
 	{
@@ -71,7 +71,7 @@ if (GETPOST("action") == 'setremise')
 	}
 	else
 	{
-		setEventMessage($soc->error, 'errors');
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
 
@@ -93,51 +93,50 @@ llxHeader();
 if ($socid > 0)
 {
 	// On recupere les donnees societes par l'objet
-	$objsoc = new Societe($db);
-	$objsoc->id=$socid;
-	$objsoc->fetch($socid);
+	$object = new Societe($db);
+	$object->fetch($socid);
 
-	$head = societe_prepare_head($objsoc);
+	$head = societe_prepare_head($object);
 
 	
 	
-	print '<form method="POST" action="remise.php?id='.$objsoc->id.'">';
+	print '<form method="POST" action="remise.php?id='.$object->id.'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="setremise">';
     print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 	dol_fiche_head($head, 'relativediscount', $langs->trans("ThirdParty"),0,'company');
 
-
-	print '<table class="border" width="100%">';
-
-    // Name
-	print '<tr><td colspan="2" width="25%">'.$langs->trans('Name').'</td>';
-	print '<td colspan="2">';
-	print $form->showrefnav($objsoc,'id','',1,'rowid','nom');
-	print '</td></tr>';
+    dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
+        
+    print '<div class="fichecenter">';
+    
+    print '<div class="underbanner clearboth"></div>';
+	print '<table class="border centpercent">';
 
 	// Remise
-	print '<tr><td colspan="2" width="25%">';
-	print $langs->trans("CustomerRelativeDiscount").'</td><td colspan="2">'.price2num($objsoc->remise_percent)."%</td></tr>";
+	print '<tr><td class="titlefield">';
+	print $langs->trans("CustomerRelativeDiscount").'</td><td>'.price2num($object->remise_percent)."%</td></tr>";
 
 	print '</table>';
 	print '<br>';
 
 	print load_fiche_titre($langs->trans("NewRelativeDiscount"),'','');
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 
 	// Nouvelle valeur
-	print '<tr><td colspan="2">';
-	print $langs->trans("NewValue").'</td><td colspan="2"><input type="text" size="5" name="remise" value="'.($_POST["remise"]?$_POST["remise"]:'').'">%</td></tr>';
+	print '<tr><td class="titlefield">';
+	print $langs->trans("NewValue").'</td><td><input type="text" size="5" name="remise" value="'.($_POST["remise"]?$_POST["remise"]:'').'">%</td></tr>';
 
 	// Motif/Note
-	print '<tr><td colspan="2" width="25%">';
-	print $langs->trans("NoteReason").'</td><td colspan="2"><input type="text" size="60" name="note" value="'.$_POST["note"].'"></td></tr>';
+	print '<tr><td>';
+	print $langs->trans("NoteReason").'</td><td><input type="text" size="60" name="note" value="'.$_POST["note"].'"></td></tr>';
 
 	print "</table>";
 
+	print '</div>';
+	
 	dol_fiche_end();
 	
 	print '<div class="center">';
@@ -160,7 +159,7 @@ if ($socid > 0)
 	$sql  = "SELECT rc.rowid, rc.remise_client as remise_percent, rc.note, rc.datec as dc,";
 	$sql.= " u.login, u.rowid as user_id";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe_remise as rc, ".MAIN_DB_PREFIX."user as u";
-	$sql.= " WHERE rc.fk_soc =". $objsoc->id;
+	$sql.= " WHERE rc.fk_soc =". $object->id;
 	$sql.= " AND u.rowid = rc.fk_user_author";
 	$sql.= " ORDER BY rc.datec DESC";
 

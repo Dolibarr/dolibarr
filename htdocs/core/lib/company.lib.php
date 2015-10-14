@@ -58,6 +58,16 @@ function societe_prepare_head(Societe $object)
         $head[$h][2] = 'customer';
         $h++;
     }
+    if (($object->client==1 || $object->client==2 || $object->client==3) && (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)))
+    {
+    	$langs->load("products");
+	    // price
+	    $head[$h][0] = DOL_URL_ROOT.'/societe/price.php?socid='.$object->id;
+	    $head[$h][1] = $langs->trans("CustomerPrices");
+	    $head[$h][2] = 'price';
+	    $h++;
+    }
+
     if (! empty($conf->fournisseur->enabled) && $object->fournisseur && ! empty($user->rights->fournisseur->lire))
     {
         $head[$h][0] = DOL_URL_ROOT.'/fourn/card.php?socid='.$object->id;
@@ -167,16 +177,6 @@ function societe_prepare_head(Societe $object)
 		if($nbFiles > 0) $head[$h][1].= ' <span class="badge">'.$nbFiles.'</span>';
         $head[$h][2] = 'document';
         $h++;
-    }
-
-    if (($object->client==1 || $object->client==2 || $object->client==3) && (! empty ( $conf->global->PRODUIT_CUSTOMER_PRICES )))
-    {
-    	$langs->load("products");
-	    // price
-	    $head[$h][0] = DOL_URL_ROOT.'/societe/price.php?socid='.$object->id;
-	    $head[$h][1] = $langs->trans("CustomerPrices");
-	    $head[$h][2] = 'price';
-	    $h++;
     }
 
     // Log
@@ -632,40 +632,6 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
 	print "</tr>\n";
 
 
-    print '<tr class="liste_titre">';
-    // Name - Position
-    print '<td class="liste_titre">';
-    print '<input type="text" class="flat" name="search_name" size="20" value="'.$search_name.'">';
-    print '</td>';
-
-    // Address / Phone
-    print '<td>';
-    //print '<input type="text" class="flat" name="search_addressphone" size="20" value="'.$search_addressphone.'">';
-    print '</td>';
-
-    // Email
-    print '<td>&nbsp;</td>';
-
-    // Status
-    print '<td class="liste_titre maxwidthonsmartphone">';
-    print $form->selectarray('search_status', array('-1'=>'','0'=>$contactstatic->LibStatut(0,1),'1'=>$contactstatic->LibStatut(1,1)),$search_status);
-    print '</td>';
-
-    // Add to agenda
-    if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
-    {
-    	$colspan++;
-        print '<td>&nbsp;</td>';
-    }
-
-	// Edit
-    print '<td class="liste_titre" align="right">';
-    print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-    print '</td>';
-
-    print "</tr>";
-
-
     $sql = "SELECT p.rowid, p.lastname, p.firstname, p.fk_pays as country_id, p.civility, p.poste, p.phone as phone_pro, p.phone_mobile, p.phone_perso, p.fax, p.email, p.skype, p.statut ";
     $sql .= ", p.civility as civility_id, p.address, p.zip, p.town";
     $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
@@ -681,18 +647,50 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     $num = $db->num_rows($result);
 
 	$var=true;
-	if ($num)
+	if ($num || (GETPOST('button_search') || GETPOST('button_search.x') || GETPOST('button_search_x')))
     {
+        print '<tr class="liste_titre">';
+        // Name - Position
+        print '<td class="liste_titre">';
+        print '<input type="text" class="flat" name="search_name" size="20" value="'.$search_name.'">';
+        print '</td>';
+    
+        // Address / Phone
+        print '<td>';
+        //print '<input type="text" class="flat" name="search_addressphone" size="20" value="'.$search_addressphone.'">';
+        print '</td>';
+    
+        // Email
+        print '<td>&nbsp;</td>';
+    
+        // Status
+        print '<td class="liste_titre maxwidthonsmartphone">';
+        print $form->selectarray('search_status', array('-1'=>'','0'=>$contactstatic->LibStatut(0,1),'1'=>$contactstatic->LibStatut(1,1)),$search_status);
+        print '</td>';
+    
+        // Add to agenda
+        if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
+        {
+        	$colspan++;
+            print '<td>&nbsp;</td>';
+        }
+    
+    	// Edit
+        print '<td class="liste_titre" align="right">';
+        print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+        print '</td>';
+    
+        print "</tr>";
+    
         $i=0;
 
         while ($i < $num)
         {
             $obj = $db->fetch_object($result);
             $var = !$var;
-            print "<tr ".$bc[$var].">";
-
-            print '<td>';
+            
             $contactstatic->id = $obj->rowid;
+            $contactstatic->ref = $obj->ref;
             $contactstatic->statut = $obj->statut;
             $contactstatic->lastname = $obj->lastname;
             $contactstatic->firstname = $obj->firstname;
@@ -705,44 +703,23 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
             $contactstatic->phone_mobile = $obj->phone_mobile;
             $contactstatic->phone_perso = $obj->phone_perso;
             $contactstatic->email = $obj->email;
+            $contactstatic->web = $obj->web;
+            $contactstatic->skype = $obj->skype;
+
+            $country_code = getCountry($obj->country_id, 2);
+            $contactstatic->country_code = $country_code;
+            
+            print "<tr ".$bc[$var].">";
+
+            print '<td>';
             print $contactstatic->getNomUrl(1,'',0,'&backtopage='.urlencode($backtopage));
 			print '</td><td>';
             if ($obj->poste) print $obj->poste;
             print '</td>';
 
-            $country_code = getCountry($obj->country_id, 'all');
-
             // Address and phone
             print '<td>';
-            $outdone=0;
-            $contactstatic->address = $obj->address;
-            $contactstatic->zip = $obj->zip;
-            $contactstatic->town = $obj->town;
-            $contactstatic->country_id = $obj->country_id;
-            $coords = $contactstatic->getFullAddress(1,', ');
-            if (! empty($conf->use_javascript_ajax))
-            {
-				$namecoords = $contactstatic->getFullName($langs,1).'<br>'.$coords;
-				// hideonsmatphone because copyToClipboard call jquery dialog that does not work with jmobile
-				print '<a href="#" class="hideonsmartphone" onclick="return copyToClipboard(\''.dol_escape_js($namecoords).'\',\''.dol_escape_js($langs->trans("HelpCopyToClipboard")).'\');">';
-            	print img_picto($langs->trans("Address"), 'object_address.png');
-            	print '</a> ';
-            }
-            if ($coords) { print dol_print_address($coords,'address_contact_'.$obj->rowid, 'contact', $obj->rowid); $outdone++; }
-
-            if ($obj->phone_pro || $obj->phone_mobile || $obj->phone_perso || $obj->fax) print ($outdone?'<br>':'');
-            if ($obj->phone_pro) { print dol_print_phone($obj->phone_pro,$country_code['code'],$obj->rowid,$object->id,'AC_TEL','&nbsp;','phone'); $outdone++; }
-            if ($obj->phone_mobile) { print dol_print_phone($obj->phone_mobile,$country_code['code'],$obj->rowid,$object->id,'AC_TEL','&nbsp;','phone'); $outdone++; }
-            if ($obj->phone_perso) { print dol_print_phone($obj->phone_perso,$country_code['code'],$obj->rowid,$object->id,'AC_TEL','&nbsp;','phone'); $outdone++; }
-            if ($obj->fax) { print dol_print_phone($obj->fax,$country_code['code'],$obj->rowid,$object->id,'AC_FAX','&nbsp;','fax'); $outdone++; }
-
-            print '<div style="clear: both;"></div>';
-            $outdone=0;
-            if ($obj->email) print dol_print_email($obj->email,$obj->rowid,$object->id,'AC_EMAIL',0,0,1);
-            if (! empty($conf->skype->enabled))
-            {
-				if ($obj->skype) print ($outdone?'<br>':'').dol_print_skype($obj->skype,$obj->rowid,$object->id,'AC_SKYPE');
-            }
+            print $contactstatic->getBannerAddress('contact', $object);
             print '</td>';
 
             // Status

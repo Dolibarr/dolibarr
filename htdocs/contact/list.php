@@ -276,20 +276,6 @@ if ($result)
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
-    if (! empty($conf->categorie->enabled))
-    {
-		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
-    	$moreforfilter.=$langs->trans('Categories'). ': ';
-    	$moreforfilter.=$formother->select_categories(Categorie::TYPE_CONTACT,$search_categ,'search_categ',1);
-    	$moreforfilter.=' &nbsp; &nbsp; &nbsp; ';
-    }
-    if ($moreforfilter)
-    {
-    	print '<div class="liste_titre">';
-    	print $moreforfilter;
-    	print '</div>';
-    }
-
     if ($sall)
     {
         print $langs->trans("Filter")." (".$langs->trans("Lastname").", ".$langs->trans("Firstname").", ".$langs->trans("ThirdParty")." ".$langs->trans("or")." ".$langs->trans("EMail")."): ".$sall;
@@ -298,7 +284,23 @@ if ($result)
 	{
         print $langs->trans("Filter")." (".$langs->trans("Lastname").", ".$langs->trans("Firstname")."): ".$search_firstlast_only;
 	}
-    print '<table class="liste" width="100%">';
+    
+    if (! empty($conf->categorie->enabled))
+    {
+		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+        $moreforfilter.='<div class="divsearchfield">';
+		$moreforfilter.=$langs->trans('Categories'). ': ';
+    	$moreforfilter.=$formother->select_categories(Categorie::TYPE_CONTACT,$search_categ,'search_categ',1);
+    	$moreforfilter.='</div>';
+    }
+    if ($moreforfilter)
+    {
+    	print '<div class="liste_titre liste_titre_bydiv centpercent">';
+    	print $moreforfilter;
+    	print '</div>';
+    }
+
+	print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
 
     // Ligne des titres
     print '<tr class="liste_titre">';

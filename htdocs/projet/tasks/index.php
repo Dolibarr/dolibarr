@@ -115,7 +115,6 @@ $tasksrole=($mine ? $taskstatic->getUserRolesForProjectsOrTasks(0,$user,$project
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="mode" value="'.GETPOST('mode').'">';
-print '<table class="noborder" width="100%">';
 
 // If the user can view users
 if ($user->rights->user->user->lire)
@@ -134,7 +133,7 @@ if ($user->rights->user->user->lire)
 }
 if (! empty($moreforfilter))
 {
-	print '<div class="liste_titre">';
+	print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	print $moreforfilter;
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
@@ -142,6 +141,7 @@ if (! empty($moreforfilter))
 	print '</div>';
 }
 
+print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'" id="tablelines3">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Project").'</td>';
 print '<td>'.$langs->trans("ProjectStatus").'</td>';

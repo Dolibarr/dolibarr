@@ -251,28 +251,13 @@ else
 
 /*
  * Ecran ajout/suppression permission
-*/
+ */
 
-print '<table class="border" width="100%">';
 
-// Ref
-print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
-print '<td>';
-print $form->showrefnav($object,'id','',$user->rights->user->user->lire || $user->admin);
-print '</td>';
-print '</tr>'."\n";
+dol_banner_tab($object,'id','',$user->rights->user->user->lire || $user->admin);
 
-// Lastname
-print '<tr><td width="25%">'.$langs->trans("Lastname").'</td>';
-print '<td>'.$object->lastname.'</td>';
-print '</tr>'."\n";
 
-// Firstname
-print '<tr><td width="25%">'.$langs->trans("Firstname").'</td>';
-print '<td>'.$object->firstname.'</td>';
-print '</tr>'."\n";
-
-print '</table><br>';
+print '<div class="underbanner clearboth"></div>';
 
 if ($user->admin) print info_admin($langs->trans("WarningOnlyPermissionOfActivatedModules"));
 // Show warning about external users
@@ -422,6 +407,7 @@ if ($result)
 }
 else dol_print_error($db);
 print '</table>';
+
 
 // For multicompany transversal mode
 // TODO Place a hook here

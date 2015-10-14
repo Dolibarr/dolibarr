@@ -265,7 +265,6 @@ if ($result)
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 
 	$i = 0;
-	print '<table class="liste" width="100%">';
 
 	$moreforfilter='';
 
@@ -298,12 +297,13 @@ if ($result)
 	}
 	if (! empty($moreforfilter))
 	{
-	    print '<tr class="liste_titre">';
-	    print '<td class="liste_titre" colspan="10">';
+        print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	    print $moreforfilter;
-	    print '</td></tr>';
+	    print '</div>';
 	}
 
+	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">';
+	
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans('Ref'),$_SERVER["PHP_SELF"],'p.ref','',$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('RefCustomer'),$_SERVER["PHP_SELF"],'p.ref_client','',$param,'',$sortfield,$sortorder);

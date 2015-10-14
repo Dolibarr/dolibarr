@@ -282,7 +282,7 @@ if ($action == 'list' || (empty($id) && $action != 'create'))
     
     	if (! empty($moreforfilter))
     	{
-    		print '<div class="liste_titre">';
+    		print '<div class="liste_titre liste_titre_bydiv centpercent">';
     		print $moreforfilter;
         	$parameters=array();
         	$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
@@ -290,7 +290,7 @@ if ($action == 'list' || (empty($id) && $action != 'create'))
     	    print '</div>';
     	}
     
-    	print '<table class="noborder">'."\n";
+    	print '<table class="liste">'."\n";
     
         // Fields title
         print '<tr class="liste_titre">';

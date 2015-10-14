@@ -1516,7 +1516,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
  * @param   int		$donotdeletefile        1=Do not delete physically file
  * @return	void
  */
-function dol_remove_file_process($filenb,$donotupdatesession=0,$donotdeletefile=0)
+function dol_remove_file_process($filenb,$donotupdatesession=0,$donotdeletefile=1)
 {
 	global $db,$user,$conf,$langs,$_FILES;
 

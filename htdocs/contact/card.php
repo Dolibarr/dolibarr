@@ -4,10 +4,10 @@
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
- * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
+ * Copyright (C) 2013      Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2013      Alexandre Spangaro 	<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2014      Juanjo Menent	 	<jmenent@2byte.es>
- * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
+ * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -773,11 +773,14 @@ else
 
             print '<table class="border" width="100%">';
 
-            // Ref
-            print '<tr><td>'.$langs->trans("Ref").'</td><td colspan="3">';
-            print $object->ref;
-            print '</td></tr>';
-
+            // Ref/ID
+            if (! empty($conf->global->MAIN_SHOW_TECHNICAL_ID))
+           	{
+	            print '<tr><td>'.$langs->trans("ID").'</td><td colspan="3">';
+	            print $object->ref;
+	            print '</td></tr>';
+           	}
+           	
             // Lastname
             print '<tr><td width="20%" class="fieldrequired"><label for="lastname">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</label></td>';
             print '<td width="30%"><input name="lastname" id="lastname" type="text" size="20" maxlength="80" value="'.(isset($_POST["lastname"])?$_POST["lastname"]:$object->lastname).'" autofocus="autofocus"></td>';
@@ -1040,23 +1043,32 @@ else
 
         }
 
-        print '<table class="border" width="100%">';
-
         $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php">'.$langs->trans("BackToList").'</a>';
+        
+        dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '');
+        
+        
+        print '<div class="fichecenter">';
+        print '<div class="fichehalfleft">';
+        
+        print '<div class="underbanner clearboth"></div>';
+        print '<table class="border tableforfield" width="100%">';
+
 
         // Ref
-        print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td colspan="3">';
+        /*print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td colspan="3">';
         print $form->showrefnav($object, 'id', $linkback);
         print '</td></tr>';
 
         // Name
         print '<tr><td width="20%">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</td><td width="30%">'.$object->lastname.'</td>';
         print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="30%">'.$object->firstname.'</td>';
-
+		*/
+        
         // Company
         if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
         {
-            print '<tr><td>'.$langs->trans("ThirdParty").'</td><td colspan="2">';
+            print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
             if ($object->socid > 0)
             {
                 $objsoc->fetch($object->socid);
@@ -1070,6 +1082,7 @@ else
         }
 
         // Photo
+        /*
         if ($object->photo)
         {
             print '<td rowspan="6" style="text-align: center;" width="25%">';
@@ -1080,18 +1093,20 @@ else
             print '&nbsp;';
             print '</td>';
         }
-
+		*/
+        
         print '</tr>';
 
         // Civility
-        print '<tr><td width="15%">'.$langs->trans("UserTitle").'</td><td colspan="2">';
+        print '<tr><td>'.$langs->trans("UserTitle").'</td><td>';
         print $object->getCivilityLabel();
         print '</td></tr>';
 
         // Role
-        print '<tr><td>'.$langs->trans("PostOrFunction").'</td><td colspan="2">'.$object->poste.'</td>';
+        print '<tr><td>'.$langs->trans("PostOrFunction").'</td><td>'.$object->poste.'</td></tr>';
 
         // Address
+        /*
         print '<tr><td>'.$langs->trans("Address").'</td><td colspan="2">';
         dol_print_address($object->address,'gmap','contact',$object->id);
         print '</td></tr>';
@@ -1112,68 +1127,72 @@ else
         // State
         if (empty($conf->global->SOCIETE_DISABLE_STATE))
         {
-            print '<tr><td>'.$langs->trans('State').'</td><td colspan="2">'.$object->state.'</td>';
-        }
+            print '<tr><td>'.$langs->trans('State').'</td><td>'.$object->state.'</td></tr>';
+        }*/
 
         // Phone
+        /*
         print '<tr><td>'.$langs->trans("PhonePro").'</td><td>'.dol_print_phone($object->phone_pro,$object->country_code,$object->id,$object->socid,'AC_TEL').'</td>';
         print '<td>'.$langs->trans("PhonePerso").'</td><td>'.dol_print_phone($object->phone_perso,$object->country_code,$object->id,$object->socid,'AC_TEL').'</td></tr>';
 
         print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td>'.dol_print_phone($object->phone_mobile,$object->country_code,$object->id,$object->socid,'AC_TEL').'</td>';
         print '<td>'.$langs->trans("Fax").'</td><td>'.dol_print_phone($object->fax,$object->country_code,$object->id,$object->socid,'AC_FAX').'</td></tr>';
-
+		*/
+        
         // Email
-        print '<tr><td>'.$langs->trans("EMail").'</td><td>'.dol_print_email($object->email,$object->id,$object->socid,'AC_EMAIL').'</td>';
+        //print '<tr><td>'.$langs->trans("EMail").'</td><td>'.dol_print_email($object->email,$object->id,$object->socid,'AC_EMAIL').'</td></tr>';
         if (! empty($conf->mailing->enabled))
         {
             $langs->load("mails");
-            print '<td class="nowrap">'.$langs->trans("NbOfEMailingsSend").'</td>';
-            print '<td><a href="'.DOL_URL_ROOT.'/comm/mailing/list.php?filteremail='.urlencode($object->email).'">'.$object->getNbOfEMailings().'</a></td>';
+            print '<tr><td class="nowrap">'.$langs->trans("NbOfEMailingsSend").'</td>';
+            print '<td><a href="'.DOL_URL_ROOT.'/comm/mailing/list.php?filteremail='.urlencode($object->email).'">'.$object->getNbOfEMailings().'</a></td></tr>';
         }
-        else
-        {
-            print '<td colspan="2">&nbsp;</td>';
-        }
-        print '</tr>';
 
         // Instant message and no email
-        print '<tr><td>'.$langs->trans("IM").'</td><td>'.$object->jabberid.'</td>';
+        print '<tr><td>'.$langs->trans("IM").'</td><td>'.$object->jabberid.'</td></tr>';
         if (!empty($conf->mailing->enabled))
         {
-        	print '<td>'.$langs->trans("No_Email").'</td><td>'.yn($object->no_email).'</td>';
+        	print '<tr><td>'.$langs->trans("No_Email").'</td><td>'.yn($object->no_email).'</td></tr>';
         }
-        else
-       {
-	       	print '<td colspan="2">&nbsp;</td>';
-        }
-        print '</tr>';
 
         // Skype
         if (! empty($conf->skype->enabled))
         {
-            print '<tr><td>'.$langs->trans("Skype").'</td><td colspan="3">'.dol_print_skype($object->skype,0,$object->fk_soc,1).'</td></tr>';
+            print '<tr><td>'.$langs->trans("Skype").'</td><td>'.dol_print_skype($object->skype,0,$object->fk_soc,1).'</td></tr>';
         }
 
-        print '<tr><td>'.$langs->trans("ContactVisibility").'</td><td colspan="3">';
+        print '<tr><td>'.$langs->trans("ContactVisibility").'</td><td>';
         print $object->LibPubPriv($object->priv);
         print '</td></tr>';
 
         // Note Public
-        print '<tr><td class="tdtop">'.$langs->trans("NotePublic").'</td><td colspan="3">';
+        /*
+        print '<tr><td class="tdtop">'.$langs->trans("NotePublic").'</td><td>';
         print nl2br($object->note_public);
         print '</td></tr>';
 
         // Note Private
-        print '<tr><td class="tdtop">'.$langs->trans("NotePrivate").'</td><td colspan="3">';
+        print '<tr><td class="tdtop">'.$langs->trans("NotePrivate").'</td><td>';
         print nl2br($object->note_private);
-
-	 	// Statut
-		print '<tr><td>'.$langs->trans("Status").'</td>';
+        print '</td></tr>';
+        */
+        
+        print '</table>';
+        
+        print '</div>';
+        print '<div class="fichehalfright"><div class="ficheaddleft">';
+       
+        print '<div class="underbanner clearboth"></div>';
+        print '<table class="border tableforfield" width="100%">';
+        
+        // Statut
+		/*print '<tr><td>'.$langs->trans("Status").'</td>';
 		print '<td>';
 		print $object->getLibStatut(4);
 		print '</td>';
 		print '</tr>'."\n";
-
+		*/
+        
 		// Categories
 		if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire)) {
 			print '<tr><td>' . $langs->trans( "Categories" ) . '</td>';
@@ -1240,7 +1259,10 @@ else
         print '</td></tr>';
 
         print "</table>";
-
+        
+        print '</div></div></div>';
+        print '<div style="clear:both"></div>';
+                
         print dol_fiche_end();
 
         // Barre d'actions

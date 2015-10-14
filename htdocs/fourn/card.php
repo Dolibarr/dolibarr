@@ -131,16 +131,15 @@ if ($object->id > 0)
 
 	dol_fiche_head($head, 'supplier', $langs->trans("ThirdParty"),0,'company');
 
-
+    dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
+        
 	print '<div class="fichecenter"><div class="fichehalfleft">';
 
+    print '<div class="underbanner clearboth"></div>';
 	print '<table width="100%" class="border">';
-	print '<tr><td width="30%">'.$langs->trans("ThirdPartyName").'</td><td width="70%" colspan="3">';
-	print $form->showrefnav($object,'socid','',($user->societe_id?0:1),'rowid','nom','','');
-	print '</td></tr>';
 
 	// Alias names (commercial, trademark or alias names)
-	print '<tr><td>'.$langs->trans('AliasNameShort').'</td><td colspan="3">';
+	print '<tr><td class="titlefield">'.$langs->trans('AliasNameShort').'</td><td colspan="3">';
 	print $object->name_alias;
 	print "</td></tr>";
 
@@ -167,35 +166,6 @@ if ($object->id > 0)
         print '</td>';
         print '</tr>';
 	}
-
-	// Address
-	print '<tr><td valign="top">'.$langs->trans("Address").'</td><td colspan="3">';
-	dol_print_address($object->address,'gmap','thirdparty',$object->id);
-	print '</td></tr>';
-
-	// Zip / Town
-	print '<tr><td class="nowrap">'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td colspan="3">'.$object->zip.(($object->zip && $object->town)?' / ':'').$object->town.'</td>';
-	print '</tr>';
-
-	// Country
-	print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3">';
-	//$img=picto_from_langcode($object->country_code);
-	$img='';
-	if ($object->isInEEC()) print $form->textwithpicto(($img?$img.' ':'').$object->country,$langs->trans("CountryIsInEEC"),1,0);
-	else print ($img?$img.' ':'').$object->country;
-	print '</td></tr>';
-
-    // EMail
-	print '<td>'.$langs->trans('EMail').'</td><td colspan="3">'.dol_print_email($object->email,0,$object->id,'AC_EMAIL').'</td></tr>';
-
-	// Web
-	print '<tr><td>'.$langs->trans("Web").'</td><td colspan="3">'.dol_print_url($object->url).'</td></tr>';
-
-	// Phone
-	print '<tr><td>'.$langs->trans("Phone").'</td><td style="min-width: 25%;">'.dol_print_phone($object->phone,$object->country_code,0,$object->id,'AC_TEL').'</td>';
-
-	// Fax
-	print '<td>'.$langs->trans("Fax").'</td><td style="min-width: 25%;">'.dol_print_phone($object->fax,$object->country_code,0,$object->id,'AC_FAX').'</td></tr>';
 
 	// Assujetti a TVA ou pas
 	print '<tr>';
