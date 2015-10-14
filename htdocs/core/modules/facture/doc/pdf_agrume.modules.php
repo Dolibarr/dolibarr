@@ -402,10 +402,15 @@ class pdf_agrume extends ModelePDFFactures
 							$total_decompte += $prev_invoice->total_ht;
 						}
 					}
-					
+			
 					$top = $tab_top;
 					$pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top, $langs->trans('PDFAgrumeSituationInvoiceTitle'), 0, 1);
-					$pdf->writeHTMLCell(90, 3, $this->posxdesc+100, $tab_top, $langs->trans('Amount'), 0, 1, false, true, 'R');
+					
+					$pdf->SetFont('','', $default_font_size - 2);
+					$titre = $outputlangs->transnoentities("AmountInCurrency",$outputlangs->transnoentitiesnoconv("Currency".$conf->currency));
+					$pdf->writeHTMLCell(90, 3, $this->posxdesc+100, $tab_top, $titre, 0, 1, false, true, 'R');
+					$pdf->SetFont('','', $default_font_size);
+					
 					$pdf->Line($this->posxdesc-1, $pdf->GetY(), $this->page_largeur-$this->marge_droite, $pdf->GetY());
 					
 					$nexY = $pdf->GetY();
@@ -439,12 +444,11 @@ class pdf_agrume extends ModelePDFFactures
 						
 						$this->page =1;
 						$bottomlasttab=$this->page_hauteur - $heightforinfotot  + 1;
+						
 						// Affiche zone infos
 						$posy=$this->_tableau_info($pdf, $object, $bottomlasttab, $outputlangs);
+						
 						// Affiche zone totaux
-						
-						
-						/**/
 						foreach ($object->lines as $line)
 						{
 							$vatrate=(string) $line->tva_tx;
@@ -459,9 +463,10 @@ class pdf_agrume extends ModelePDFFactures
 							if (! isset($this->tva[$vatrate])) $this->tva[$vatrate]='';
 							$this->tva[$vatrate] += $tvaligne;
 						}
-						/**/
+
 						$posy=$this->_tableau_tot_situation($pdf, $object, $deja_regle, $bottomlasttab, $outputlangs);
 						$this->tva = array();
+						
 						// Pied de page
 						$this->_pagefoot($pdf,$object,$outputlangs,1);
 						if (method_exists($pdf,'AliasNbPages')) $pdf->AliasNbPages();
@@ -478,7 +483,6 @@ class pdf_agrume extends ModelePDFFactures
 						$iniY = $tab_top_newpage+10;
 						$curY = $tab_top_newpage+10;
 						$nexY = $tab_top_newpage+10;
-						
 					}
 				}
 				else 
