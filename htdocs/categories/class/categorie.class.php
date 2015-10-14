@@ -399,14 +399,13 @@ class Categorie extends CommonObject
 			}
 			else if ($reshook < 0) $error++;
 
-			$this->db->commit();
-
-
             // Call trigger
             $result=$this->call_trigger('CATEGORY_MODIFY',$user);
             if ($result < 0) { $error++; $this->db->rollback(); return -1; }
             // End call triggers
 
+			$this->db->commit();
+			
 			return 1;
 		}
 		else
