@@ -406,10 +406,11 @@ if (! defined('NOLOGIN'))
                 $langs->load('main');
                 $langs->load('errors');
 
-                $user->trigger_mesg='ErrorBadValueForCode - login='.GETPOST("username","alpha",2);
                 $_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadValueForCode");
                 $test=false;
 
+                // TODO @deprecated Remove this. Hook must be used, not this trigger.
+                $user->trigger_mesg='ErrorBadValueForCode - login='.GETPOST("username","alpha",2);
                 // Call of triggers
                 include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                 $interface=new Interfaces($db);
@@ -480,11 +481,11 @@ if (! defined('NOLOGIN'))
                 $langs->load('errors');
 
                 // Bad password. No authmode has found a good password.
-                $user->trigger_mesg=$langs->trans("ErrorBadLoginPassword").' - login='.GETPOST("username","alpha",2);
                 // We set a generic message if not defined inside function checkLoginPassEntity or subfunctions
                 if (empty($_SESSION["dol_loginmesg"])) $_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadLoginPassword");
 
-                // TODO We should use a hook afterLoginFailed here, not a trigger.
+                // TODO @deprecated Remove this. Hook must be used, not this trigger.
+                $user->trigger_mesg=$langs->trans("ErrorBadLoginPassword").' - login='.GETPOST("username","alpha",2);
                 // Call of triggers
                 include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
                 $interface=new Interfaces($db);
@@ -527,16 +528,19 @@ if (! defined('NOLOGIN'))
                 $langs->load('main');
                 $langs->load('errors');
 
-                $user->trigger_mesg='ErrorCantLoadUserFromDolibarrDatabase - login='.$login;
                 $_SESSION["dol_loginmesg"]=$langs->trans("ErrorCantLoadUserFromDolibarrDatabase",$login);
+            
+                // TODO @deprecated Remove this. Hook must be used, not this trigger.
+                $user->trigger_mesg='ErrorCantLoadUserFromDolibarrDatabase - login='.$login;
             }
             if ($resultFetchUser < 0)
             {
-                $user->trigger_mesg=$user->error;
                 $_SESSION["dol_loginmesg"]=$user->error;
+            
+                // TODO @deprecated Remove this. Hook must be used, not this trigger.
+                $user->trigger_mesg=$user->error;
             }
 
-            // TODO We should use a hook afterLoginFailed here, not a trigger.
             // Call triggers
             include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
             $interface=new Interfaces($db);
@@ -577,16 +581,20 @@ if (! defined('NOLOGIN'))
                 $langs->load('main');
                 $langs->load('errors');
 
-                $user->trigger_mesg='ErrorCantLoadUserFromDolibarrDatabase - login='.$login;
                 $_SESSION["dol_loginmesg"]=$langs->trans("ErrorCantLoadUserFromDolibarrDatabase",$login);
+                
+                // TODO @deprecated Remove this. Hook must be used, not this trigger.
+                $user->trigger_mesg='ErrorCantLoadUserFromDolibarrDatabase - login='.$login;
             }
             if ($resultFetchUser < 0)
             {
-                $user->trigger_mesg=$user->error;
                 $_SESSION["dol_loginmesg"]=$user->error;
+            
+                // TODO @deprecated Remove this. Hook must be used, not this trigger.
+                $user->trigger_mesg=$user->error;
             }
 
-            // TODO We should use a hook here, not a trigger.
+            // TODO @deprecated Remove this. Hook must be used, not this trigger.
             // Call triggers
             include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
             $interface=new Interfaces($db);
@@ -654,9 +662,8 @@ if (! defined('NOLOGIN'))
 
         $loginfo = 'TZ='.$_SESSION["dol_tz"].';TZString='.$_SESSION["dol_tz_string"].';Screen='.$_SESSION["dol_screenwidth"].'x'.$_SESSION["dol_screenheight"];
 
+        // TODO @deprecated Remove this. Hook must be used, not this trigger.
         $user->trigger_mesg = $loginfo;
-
-        // TODO We should use hook afterLogin here, not a trigger
         // Call triggers
         include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
         $interface=new Interfaces($db);
@@ -683,6 +690,25 @@ if (! defined('NOLOGIN'))
         else
 		{
             $db->commit();
+        }
+        
+        if (! empty($user->conf->MAIN_LANDING_PAGE))    // Example: /index.php
+        {
+            $newpath=dol_buildpath($user->conf->MAIN_LANDING_PAGE, 1);
+            if ($_SERVER["PHP_SELF"] != $newpath)   // not already on landing page (avoid infinite loop)
+            {
+                header('Location: '.$newpath);
+                exit;
+            }
+        }
+        if (! empty($conf->global->MAIN_LANDING_PAGE))    // Example: /index.php
+        {
+            $newpath=dol_buildpath($conf->global->MAIN_LANDING_PAGE, 1);
+            if ($_SERVER["PHP_SELF"] != $newpath)   // not already on landing page (avoid infinite loop)
+            {
+                header('Location: '.$newpath);
+                exit;
+            }
         }
     }
 
