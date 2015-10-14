@@ -781,7 +781,7 @@ else
         $object->fax				= GETPOST('fax', 'alpha');
         $object->email				= GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL);
         $object->url				= GETPOST('url', 'custom', 0, FILTER_SANITIZE_URL);
-        $object->capital			= GETPOST('capital', 'int');
+        $object->capital			= GETPOST('capital', 'alpha');
         $object->barcode			= GETPOST('barcode', 'alpha');
         $object->idprof1			= GETPOST('idprof1', 'alpha');
         $object->idprof2			= GETPOST('idprof2', 'alpha');
@@ -1330,7 +1330,7 @@ else
                 $object->fax					= GETPOST('fax', 'alpha');
                 $object->email					= GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL);
                 $object->url					= GETPOST('url', 'custom', 0, FILTER_SANITIZE_URL);
-                $object->capital				= GETPOST('capital', 'int');
+                $object->capital				= GETPOST('capital', 'alpha');
                 $object->idprof1				= GETPOST('idprof1', 'alpha');
                 $object->idprof2				= GETPOST('idprof2', 'alpha');
                 $object->idprof3				= GETPOST('idprof3', 'alpha');

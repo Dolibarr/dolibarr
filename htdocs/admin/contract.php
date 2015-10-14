@@ -226,7 +226,7 @@ dol_fiche_head($head, 'contract', $langs->trans("Contracts"), 0, 'contract');
  * Contracts Numbering model
  */
 
-print load_fiche_titre($langs->trans("ContractsNumberingModules"));
+print load_fiche_titre($langs->trans("ContractsNumberingModules"),'','');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -329,7 +329,7 @@ print '</table><br>';
  *  Documents models for Contracts
  */
 
-print load_fiche_titre($langs->trans("TemplatePDFContracts"));
+print load_fiche_titre($langs->trans("TemplatePDFContracts"),'','');
 
 // Defini tableau def des modeles
 $def = array();
@@ -494,7 +494,7 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set_other">';
 
-print load_fiche_titre($langs->trans("OtherOptions"));
+print load_fiche_titre($langs->trans("OtherOptions"),'','');
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';

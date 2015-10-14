@@ -299,7 +299,7 @@ $dirsociete=array_merge(array('/core/modules/societe/'),$conf->modules_parts['so
 
 // Module to manage customer/supplier code
 
-print load_fiche_titre($langs->trans("CompanyCodeChecker"));
+print load_fiche_titre($langs->trans("CompanyCodeChecker"),'','');
 
 print '<table class="noborder" width="100%">'."\n";
 print '<tr class="liste_titre">'."\n";
@@ -381,7 +381,7 @@ print "<br>";
 
 // Select accountancy code numbering module
 
-print load_fiche_titre($langs->trans("AccountCodeManager"));
+print load_fiche_titre($langs->trans("AccountCodeManager"),'','');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -452,7 +452,7 @@ print "</table>\n";
  *  Document templates generators
  */
 print '<br>';
-print load_fiche_titre($langs->trans("ModelModules"));
+print load_fiche_titre($langs->trans("ModelModules"),'','');
 
 // Load array def with activated templates
 $def = array();
@@ -598,7 +598,7 @@ print '</table>';
 print '<br>';
 
 //IDProf
-print load_fiche_titre($langs->trans("CompanyIdProfChecker"));
+print load_fiche_titre($langs->trans("CompanyIdProfChecker"),'','');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -691,7 +691,7 @@ while ($i < $nbofloop)
 print "</table><br>\n";
 
 
-print load_fiche_titre($langs->trans("Other"));
+print load_fiche_titre($langs->trans("Other"),'','');
 
 // Autres options
 $form=new Form($db);
@@ -804,6 +804,7 @@ print '</form>';
 
 dol_fiche_end();
 
-$db->close();
 
 llxFooter();
+
+$db->close();

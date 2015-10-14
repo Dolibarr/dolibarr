@@ -221,7 +221,7 @@ dol_fiche_head($head, 'order', $langs->trans("Suppliers"), 0, 'company');
 
 // Supplier order numbering module
 
-print load_fiche_titre($langs->trans("OrdersNumberingModules"));
+print load_fiche_titre($langs->trans("OrdersNumberingModules"),'','');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -325,7 +325,7 @@ print '</table><br>';
  *  Documents models for supplier orders
  */
 
-print load_fiche_titre($langs->trans("OrdersModelModule"));
+print load_fiche_titre($langs->trans("OrdersModelModule"),'','');
 
 // Defini tableau def de modele
 $def = array();
@@ -464,7 +464,7 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set_SUPPLIER_ORDER_OTHER">';
 
-print load_fiche_titre($langs->trans("OtherOptions"));
+print load_fiche_titre($langs->trans("OtherOptions"),'','');
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
@@ -512,7 +512,7 @@ print '</form>';
  * Notifications
  */
 
-print load_fiche_titre($langs->trans("Notifications"));
+print load_fiche_titre($langs->trans("Notifications"),'','');
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';

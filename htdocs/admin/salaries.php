@@ -83,6 +83,8 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="update">';
 
+dol_fiche_head();
+
 /*
  *  Params
  */
@@ -109,10 +111,13 @@ foreach ($list as $key)
 
 print '</tr>';
 
-print '</form>';
 print "</table>\n";
 
-print '<br /><div style="text-align:center"><input type="submit" class="button" value="'.$langs->trans('Modify').'" name="button"></div>';
+print '</form>';
+
+dol_fiche_end();
+
+print '<div style="text-align:center"><input type="submit" class="button" value="'.$langs->trans('Modify').'" name="button"></div>';
 
 llxFooter();
 $db->close();

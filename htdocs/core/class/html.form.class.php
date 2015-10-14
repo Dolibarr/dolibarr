@@ -4671,12 +4671,12 @@ class Form
      *	Show a multiselect form from an array.
      *
      *	@param	string	$htmlname		Name of select
-     *	@param	array	$array			Array with array of fields we could show
+     *	@param	array	$array			Array with array of fields we could show. This array may be modified according to setup of user.
      *  @param  string  $varpage        Id of context for page. Can be set with $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
      *	@return	string					HTML multiselect string
      *  @see selectarray
      */
-    static function multiSelectArrayWithCheckbox($htmlname, $array, $varpage)
+    static function multiSelectArrayWithCheckbox($htmlname, &$array, $varpage)
     {
         global $user;
         
@@ -4699,7 +4699,11 @@ class Form
         
         foreach($array as $key => $val)
         {
-           if (isset($val['cond']) && ! $val['cond']) continue; 
+           if (isset($val['enabled']) && ! $val['enabled']) 
+           {
+               unset($array[$key]);     // We don't want this field
+               continue; 
+           }
            if ($val['label']) 
 	       {
 	           $lis.='<li><input type="checkbox" value="'.$key.'"'.(empty($val['checked'])?'':' checked="checked"').'/>'.dol_escape_htmltag($val['label']).'</li>';

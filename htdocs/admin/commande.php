@@ -273,7 +273,7 @@ dol_fiche_head($head, 'general', $langs->trans("Orders"), 0, 'order');
  * Orders Numbering model
  */
 
-print load_fiche_titre($langs->trans("OrdersNumberingModules"));
+print load_fiche_titre($langs->trans("OrdersNumberingModules"),'','');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -377,7 +377,7 @@ print "</table><br>\n";
  * Document templates generators
  */
 
-print load_fiche_titre($langs->trans("OrdersModelModule"));
+print load_fiche_titre($langs->trans("OrdersModelModule"),'','');
 
 // Load array def with activated templates
 $def = array();
@@ -540,7 +540,7 @@ print "<br>";
  *
  */
 
-print load_fiche_titre($langs->trans("OtherOptions"));
+print load_fiche_titre($langs->trans("OtherOptions"),'','');
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
@@ -638,7 +638,7 @@ print '<br>';
  * Notifications
  */
 
-print load_fiche_titre($langs->trans("Notifications"));
+print load_fiche_titre($langs->trans("Notifications"),'','');
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';

@@ -244,7 +244,7 @@ dol_fiche_head($head, 'expensereport', $langs->trans("ExpenseReports"), 0, 'trip
 
 // Interventions numbering model
 /*
-print load_fiche_titre($langs->trans("FicheinterNumberingModules"));
+print load_fiche_titre($langs->trans("FicheinterNumberingModules"),'','');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';

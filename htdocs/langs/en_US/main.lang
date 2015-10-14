@@ -229,6 +229,7 @@ DateAndHour=Date and hour
 DateStart=Date start
 DateEnd=Date end
 DateCreation=Creation date
+DateCreationShort=Creat. date
 DateModification=Modification date
 DateModificationShort=Modif. date
 DateLastModification=Last modification date

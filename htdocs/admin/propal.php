@@ -270,7 +270,7 @@ dol_fiche_head($head, 'general', $langs->trans("Proposals"), 0, 'propal');
 /*
  *  Module numerotation
  */
-print load_fiche_titre($langs->trans("ProposalsNumberingModules"));
+print load_fiche_titre($langs->trans("ProposalsNumberingModules"),'','');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -374,7 +374,7 @@ print "</table><br>\n";
  * Document templates generators
  */
 
-print load_fiche_titre($langs->trans("ProposalsPDFModules"));
+print load_fiche_titre($langs->trans("ProposalsPDFModules"),'','');
 
 // Load array def with activated templates
 $def = array();
@@ -536,7 +536,7 @@ print '<br>';
  * Other options
  *
  */
-print load_fiche_titre($langs->trans("OtherOptions"));
+print load_fiche_titre($langs->trans("OtherOptions"),'','');
 
 $var=true;
 print "<table class=\"noborder\" width=\"100%\">";
@@ -643,7 +643,7 @@ print '</table>';
  *  Directory
  */
 print '<br>';
-print load_fiche_titre($langs->trans("PathToDocuments"));
+print load_fiche_titre($langs->trans("PathToDocuments"),'','');
 
 print "<table class=\"noborder\" width=\"100%\">\n";
 print "<tr class=\"liste_titre\">\n";
@@ -658,7 +658,7 @@ print "</table>\n<br>";
  * Notifications
  */
 
-print load_fiche_titre($langs->trans("Notifications"));
+print load_fiche_titre($langs->trans("Notifications"),'','');
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';

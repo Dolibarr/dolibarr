@@ -821,7 +821,7 @@ class Product extends CommonObject
 	function delete($id=0)
 	{
 		// Deprecation warning
-		if (0 == $id) {
+		if ($id > 0) {
 			dol_syslog(__METHOD__ . " with parameter is deprecated", LOG_WARNING);
 		}
 
