@@ -95,6 +95,7 @@ $colortext='50,50,130';
 $fontsize='13';
 $fontsizesmaller='11';
 $usegradient=1;
+$useboldtitle=1;
 
 // Case of option always editable
 if (! isset($conf->global->THEME_ELDY_TOPMENU_BACK1)) $conf->global->THEME_ELDY_TOPMENU_BACK1=join(',',colorStringToArray('#37474F'));   // topmenu (140,160,185)
@@ -809,7 +810,7 @@ li.tmenu, li.tmenusel {
 }
 li.tmenusel, li.tmenu:hover {
     background-image: -o-linear-gradient(bottom, rgba(250,250,250,0.3) 0%, rgba(0,0,0,0.3) 100%) !important;
-    background-image: -moz-linear-gradient(bottom, rgba(250,250,250,0.3) 0%, rgba(0,0,0,0.3) 100%) !important;
+    background-image: -moz-linear-gradient(bottom, rgba(0,0,0,0.5) 0%, rgba(250,250,250,0) 100%) !important;
     background-image: -webkit-linear-gradient(bottom, rgba(0,0,0,0.3) 0%, rgba(250,250,250,0) 100%) !important;
     background-image: -ms-linear-gradient(bottom, rgba(250,250,250,0.3) 0%, rgba(0,0,0,0.3) 100%) !important;
     background-image: linear-gradient(bottom, rgba(250,250,250,0.3) 0%, rgba(0,0,0,0.3) 100%) !important;
@@ -2207,7 +2208,7 @@ div.liste_titre, tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.list
 	background-image: -ms-linear-gradient(bottom, rgba(0,0,0,0.3) 0%, rgba(250,250,250,0.3) 100%);
 	background-image: linear-gradient(bottom, rgba(0,0,0,0.3) 0%, rgba(250,250,250,0.3) 100%);
 	<?php } ?>
-	font-weight: bold;
+	font-weight: <?php echo $useboldtitle?'bold':'normal'; ?>;
 	*/
 	
     color: #<?php echo $colortexttitle; ?>;
@@ -2222,7 +2223,7 @@ tr.liste_titre th, th.liste_titre, form.liste_titre div, div.liste_titre
 tr.liste_titre th, th.liste_titre, tr.liste_titre td, td.liste_titre, form.liste_titre div, div.liste_titre
 {
     font-family: <?php print $fontlist ?>;
-    font-weight: bold;
+    font-weight: <?php echo $useboldtitle?'bold':'normal'; ?>;
     vertical-align: middle;
 }
 tr.liste_titre th a, th.liste_titre a, tr.liste_titre td a, td.liste_titre a, form.liste_titre div a, div.liste_titre a {
@@ -2344,7 +2345,7 @@ tr.box_titre {
     background-repeat: repeat-x;
     color: #<?php echo $colortexttitle; ?>;
     font-family: <?php print $fontlist ?>, sans-serif;
-    font-weight: bold;
+    font-weight: <?php echo $useboldtitle?'bold':'normal'; ?>;
     border-bottom: 1px solid #FDFFFF;
     white-space: nowrap;
 }
