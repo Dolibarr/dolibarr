@@ -949,8 +949,12 @@ function dol_move($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
         	}
         	else dol_syslog("files.lib.php::dol_move failed", LOG_WARNING);
         }
-        if (empty($newmask) && ! empty($conf->global->MAIN_UMASK)) $newmask=$conf->global->MAIN_UMASK;
-        @chmod($newpathofdestfile, octdec($newmask));
+        if (empty($newmask)) $newmask=empty($conf->global->MAIN_UMASK)?'0755':$conf->global->MAIN_UMASK;
+        $newmaskdec=octdec($newmask);
+        // Currently method is restricted to files (dol_delete_files previously used is for files, and mask usage if for files too)
+        // to allow mask usage for dir, we shoul introduce a new param "isdir" to 1 to complete newmask like this
+        // if ($isdir) $newmaskdec |= octdec('0111');  // Set x bit required for directories
+        @chmod($newpathofdestfile, $newmaskdesc);
     }
 
     return $result;
