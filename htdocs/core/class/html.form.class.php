@@ -4671,37 +4671,51 @@ class Form
      *	Show a multiselect form from an array.
      *
      *	@param	string	$htmlname		Name of select
-     *	@param	array	$array			Array with array to show
+     *	@param	array	$array			Array with array of fields we could show
+     *  @param  string  $varpage        Id of context for page. Can be set with $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
      *	@return	string					HTML multiselect string
      *  @see selectarray
      */
-    static function multiSelectArrayWithCheckbox($htmlname, $array)
+    static function multiSelectArrayWithCheckbox($htmlname, $array, $varpage)
     {
+        global $user;
+        
+        $tmpvar="MAIN_SELECTEDFIELDS_".$varpage;
+        if (! empty($user->conf->$tmpvar))
+        {
+            $tmparray=explode(',', $user->conf->$tmpvar);
+            foreach($array as $key => $val)
+            {
+                //var_dump($key);
+                //var_dump($tmparray);
+                if (in_array($key, $tmparray)) $array[$key]['checked']=1;
+                else $array[$key]['checked']=0;
+            }
+        }
+        //var_dump($array);
+            
         $lis='';
-        $liststring='';
+        $listcheckedstring='';
         
         foreach($array as $key => $val)
         {
            if (isset($val['cond']) && ! $val['cond']) continue; 
-	       if ($val['label']) 
+           if ($val['label']) 
 	       {
-	           $lis.='<li><input type="checkbox" value="'.$key.'"'.($val['checked']?' checked="checked"':'').'/>'.dol_escape_htmltag($val['label']).'</li>';
-	           $liststring.=$key.',';
+	           $lis.='<li><input type="checkbox" value="'.$key.'"'.(empty($val['checked'])?'':' checked="checked"').'/>'.dol_escape_htmltag($val['label']).'</li>';
+	           $listcheckedstring.=(empty($val['checked'])?'':$key.',');
 	       }
         }
-        
         
         $out ='<!-- Component multiSelectArrayWithCheckbox '.$htmlname.' --> 
             
             <dl class="dropdown"> 
-          
             <dt>
             <a href="#">
               '.img_picto('','list').'    
-              <input type="hidden" class="'.$htmlname.'" name="'.$htmlname.'" value="'.$liststring.'">
+              <input type="hidden" class="'.$htmlname.'" name="'.$htmlname.'" value="'.$listcheckedstring.'">
             </a>
             </dt>
-          
             <dd>
                 <div class="multiselectcheckbox'.$htmlname.'">
                     <ul>
@@ -4730,9 +4744,9 @@ class Form
           });
     
           $(\'.multiselectcheckbox'.$htmlname.' input[type="checkbox"]\').on(\'click\', function () {
-            
+              console.log("A new field was added/removed")
+              $("input:hidden[name=formfilteraction]").val(\'listafterchangingselectedfields\')
               var title = $(this).val() + ",";
-            
               if ($(this).is(\':checked\')) {
                   $(\'.'.$htmlname.'\').val(title + $(\'.'.$htmlname.'\').val());
               } 

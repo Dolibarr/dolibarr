@@ -75,13 +75,16 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('thirdpartylist'));
+$contextpage='thirdpartylist';
+$hookmanager->initHooks(array($contextpage));
 $extrafields = new ExtraFields($db);
 
 
 /*
  * Actions
  */
+
+include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 // special search
 if ($mode == 'search')
@@ -95,25 +98,25 @@ if ($mode == 'search')
     if ($search_categ) $sql.= ", ".MAIN_DB_PREFIX."categorie_societe as cs";
     $sql.= " WHERE s.entity IN (".getEntity('societe', 1).")";
 
-        // For natural search
-        $scrit = explode(' ', $socname);
+    // For natural search
+    $scrit = explode(' ', $socname);
 
-		$fields = array(
-			's.nom',
-			's.code_client',
-			's.email',
-			's.url',
-			's.siren',
-			's.name_alias'
-		);
+	$fields = array(
+		's.nom',
+		's.code_client',
+		's.email',
+		's.url',
+		's.siren',
+		's.name_alias'
+	);
 
-		if (!empty($conf->barcode->enabled)) {
-			$fields[] = 's.barcode';
-		}
+	if (!empty($conf->barcode->enabled)) {
+		$fields[] = 's.barcode';
+	}
 
-        foreach ($scrit as $crit) {
-	        $sql.= natural_search($fields, $crit);
-        }
+    foreach ($scrit as $crit) {
+        $sql.= natural_search($fields, $crit);
+    }
 
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if ($socid) $sql.= " AND s.rowid = ".$socid;
@@ -168,7 +171,7 @@ llxHeader('',$langs->trans("ThirdParty"),$help_url);
 
 
 // Do we click on purge search criteria ?
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
     $search_categ='';
     $search_sale='';
@@ -197,12 +200,14 @@ if ($socname)
 /*
  * Mode List
  */
+
 /*
- REM: Regle sur droits "Voir tous les clients"
- Utilisateur interne socid=0 + Droits voir tous clients        => Voit toute societe
- Utilisateur interne socid=0 + Pas de droits voir tous clients => Ne voit que les societes liees comme commercial
- Utilisateur externe socid=x + Droits voir tous clients        => Ne voit que lui meme
- Utilisateur externe socid=x + Pas de droits voir tous clients => Ne voit que lui meme
+ REM: Rules on permissions to see thirdparties
+ Internal or External user + No permission to see customers => See nothing
+ Internal user socid=0 + Permission to see ALL customers    => See all thirdparties
+ Internal user socid=0 + No permission to see ALL customers => See only thirdparties linked to user that are sale representative
+ External user socid=x + Permission to see ALL customers    => Can see only himself
+ External user socid=x + No permission to see ALL customers => Can see only himself
  */
 $title=$langs->trans("ListOfThirdParties");
 
@@ -315,7 +320,8 @@ if ($resql)
 	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'" name="formfilter">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-
+	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+	
     // Filter on categories
     /* Not possible in this page because list is for ALL third parties type
 	$moreforfilter='';
@@ -362,7 +368,8 @@ if ($resql)
     );
     if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
     {
-        $selectotherfields=$form->multiSelectArrayWithCheckbox('selectotherfields', $arrayfields);
+        $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
+        $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);
     }
     
 	print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
@@ -382,7 +389,7 @@ if ($resql)
     $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
 	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"s.status","",$param,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($selectotherfields, $_SERVER["PHP_SELF"],"",'','','align="right"',$sortfield,$sortorder,'maxwidthsearch ');
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="right"',$sortfield,$sortorder,'maxwidthsearch ');
 	print "</tr>\n";
 
 	// Fields title search

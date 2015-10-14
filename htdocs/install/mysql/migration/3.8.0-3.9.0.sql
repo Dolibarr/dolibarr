@@ -55,3 +55,5 @@ ALTER TABLE llx_adherent ADD COLUMN pass_crypted varchar(128) after pass;
 ALTER TABLE llx_paiement ADD COLUMN ref varchar(30) NOT NULL AFTER rowid;
 
 ALTER TABLE llx_socpeople ADD COLUMN photo varchar(255) AFTER skype;
+
+ALTER TABLE llx_user_param MODIFY COLUMN value text NOT NULL;
