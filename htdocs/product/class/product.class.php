@@ -766,7 +766,7 @@ class Product extends CommonObject
 						if (file_exists($olddir))
 						{
 							include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
-							$res=dol_move($olddir, $newdir);
+							$res = dol_move($olddir, $newdir, '0775');
 							if (! $res)
 							{
 								$this->error='ErrorFailToMoveDir';
