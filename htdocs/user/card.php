@@ -264,22 +264,21 @@ if (($action == 'addgroup' || $action == 'removegroup') && $caneditfield)
         $editgroup->fetch($group);
 		$editgroup->oldcopy=clone $editgroup;
 
-            $object->fetch($id);
-            if ($action == 'addgroup') {
-                $object->SetInGroup($group, ($conf->multicompany->transverse_mode ? GETPOST("entity") : $editgroup->entity));
-            }
-            if ($action == 'removegroup') {
-                $object->RemoveFromGroup($group, ($conf->multicompany->transverse_mode ? GETPOST("entity") : $editgroup->entity));
-            }
+		$object->fetch($id);
+		if ($action == 'addgroup') {
+			$object->SetInGroup($group, ($conf->multicompany->transverse_mode ? GETPOST("entity") : $editgroup->entity));
+		}
+		if ($action == 'removegroup') {
+			$object->RemoveFromGroup($group, ($conf->multicompany->transverse_mode ? GETPOST("entity") : $editgroup->entity));
+		}
 
-            if ($result > 0) {
-                header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
-                exit;
-            } else {
-                setEventMessage($object->error, 'errors');
-            }
-        }
-    }
+		if ($result > 0) {
+			header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
+			exit;
+		} else {
+			setEventMessage($object->error, 'errors');
+		}
+	}
 
     if ($action == 'update' && !$_POST["cancel"]) {
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -1154,14 +1153,14 @@ else
 			dol_fiche_head($head, 'user', $title, 0, 'user');
 
 	        dol_banner_tab($object,'id','',$user->rights->user->user->lire || $user->admin);
-	        
-	        
+
+
 	        print '<div class="fichecenter">';
 	        print '<div class="fichehalfleft">';
-	        
+
 	        print '<div class="underbanner clearboth"></div>';
 	        print '<table class="border tableforfield" width="100%">';
-            
+
             // Login
             print '<tr><td>'.$langs->trans("Login").'</td>';
             if (! empty($object->ldap_sid) && $object->statut==0)
@@ -1345,13 +1344,13 @@ else
 			}
 
 			print '</table>';
-			
+
 	        print '</div>';
 	        print '<div class="fichehalfright"><div class="ficheaddleft">';
-	       
+
 	        print '<div class="underbanner clearboth"></div>';
 	        print '<table class="border tableforfield" width="100%">';
-			
+
         	print '<tr><td>'.$langs->trans("LastConnexion").'</td>';
             print '<td>'.dol_print_date($object->datelastlogin,"dayhour").'</td>';
             print "</tr>\n";
@@ -1445,10 +1444,10 @@ else
 
 			print "</table>\n";
 			print '</div>';
-		
+
         	print '</div></div>';
         	print '<div style="clear:both"></div>';
-			
+
 
             dol_fiche_end();
 
@@ -1694,7 +1693,7 @@ else
 	            print '</td>';
 	            print '</tr>';
 			}
-			
+
             // Lastname
             print "<tr>";
             print '<td class="fieldrequired">'.$langs->trans("Lastname").'</td>';
