@@ -1549,7 +1549,16 @@ div.tabsAction {
     padding: 0em 0em;
     text-align: right;
 }
-
+div.popuptabset {
+	padding: 6px;
+	border: 1px solid #888;
+}
+div.popuptab {
+	padding-top: 3px;
+	padding-bottom: 3px;
+	padding-left: 5px;
+	padding-right: 5px;
+}
 
 a.tabTitle {
 /*    background: #657090;

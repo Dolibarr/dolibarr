@@ -1571,7 +1571,16 @@ div.tabBar {
     box-shadow: 3px 3px 4px #DDD;
 	<?php } ?>
 }
-
+div.popuptabset {
+	padding: 6px;
+	border: 1px solid #888;
+}
+div.popuptab {
+	padding-top: 3px;
+	padding-bottom: 3px;
+	padding-left: 5px;
+	padding-right: 5px;
+}
 div.tabsAction {
     margin: 20px 0em 10px 0em;
     padding: 0em 0em;

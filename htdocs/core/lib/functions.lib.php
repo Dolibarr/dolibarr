@@ -745,7 +745,7 @@ function dol_get_fiche_head($links=array(), $active='', $title='', $notab=0, $pi
 		else
 			$isactive=false;
 
-		if ($i <= $limittoshow || $isactive )
+		if ($i <= $limittoshow || $isactive)
 		{
 			$out.='<div class="inline-block tabsElem'.($isactive ? ' tabsElemActive' : '').((! $isactive && ! empty($conf->global->MAIN_HIDE_INACTIVETAB_ON_PRINT))?' hideonprint':'').'"><!-- id tab = '.(empty($links[$i][2])?'':$links[$i][2]).' -->';
 			if (isset($links[$i][2]) && $links[$i][2] == 'image')
@@ -775,7 +775,13 @@ function dol_get_fiche_head($links=array(), $active='', $title='', $notab=0, $pi
 		}
 		else
 		{
-			$outmore.='<div class="" style="display:inherit; background-color:#f9f9f9; padding-top:5px; padding-right:15px; padding-left:12px;">';
+		    // The popup with the other tabs
+			if (! $popuptab) 
+			{
+			    $popuptab=1;
+			    $outmore.='<div class="popuptabset">';
+			}
+		    $outmore.='<div class="popuptab" style="display:inherit;">';
 			if (isset($links[$i][2]) && $links[$i][2] == 'image')
 			{
 				if (!empty($links[$i][0]))
@@ -788,16 +794,18 @@ function dol_get_fiche_head($links=array(), $active='', $title='', $notab=0, $pi
 				$outmore.='<a'.(! empty($links[$i][2])?' id="'.$links[$i][2].'"':'').' class="inline-block" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
 
 			$outmore.='</div>';
+			
 			$nbintab++;
 		}
 		$displaytab=$i;
 	}
-
+	if ($popuptab) $outmore.='</div>';
+	
 	if ($displaytab > $limittoshow)
 	{
 		$tabsname=str_replace("@", "", $picto);
 		$out.='<div id="moretabs'.$tabsname.'" class="inline-block tabsElem">';
-		$out.='<a href="" data-role="button" style="background-color: #f0f0f0;" class="tab inline-block">'.$langs->trans("More").' <span class="badge">'.$nbintab.'</span></a>';
+		$out.='<a href="#" data-role="button" class="tab moretab inline-block">'.$langs->trans("More").'... ('.$nbintab.')</a>';
 		$out.='<div id="moretabsList'.$tabsname.'" style="position: absolute; left: -999em;text-align: left;margin:0px;padding:2px">'.$outmore.'</div>';
 		$out.="</div>\n";
 
