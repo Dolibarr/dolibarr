@@ -45,36 +45,40 @@ $object = new User($db);
 $object->fetch($id);
 $object->getrights();
 
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('usercard','globalcard'));
 
 /*
  * Actions
  */
 
-if ($_GET["action"] == 'dolibarr2ldap')
-{
-    $db->begin();
 
-    $ldap=new Ldap();
-    $result=$ldap->connect_bind();
+$parameters=array('id'=>$socid);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-    $info=$object->_load_ldap_info();
-    $dn=$object->_load_ldap_dn($info);
-    $olddn=$dn;	// We can say that old dn = dn as we force synchro
+if (empty($reshook)) {
+    if ($_GET["action"] == 'dolibarr2ldap') {
+        $db->begin();
 
-    $result=$ldap->update($dn,$info,$user,$olddn);
+        $ldap = new Ldap();
+        $result = $ldap->connect_bind();
 
-    if ($result >= 0)
-    {
-        setEventMessage($langs->trans("UserSynchronized"));
-        $db->commit();
-    }
-    else
-    {
-        setEventMessage($ldap->error, 'errors');
-        $db->rollback();
+        $info = $object->_load_ldap_info();
+        $dn = $object->_load_ldap_dn($info);
+        $olddn = $dn;    // We can say that old dn = dn as we force synchro
+
+        $result = $ldap->update($dn, $info, $user, $olddn);
+
+        if ($result >= 0) {
+            setEventMessage($langs->trans("UserSynchronized"));
+            $db->commit();
+        } else {
+            setEventMessage($ldap->error, 'errors');
+            $db->rollback();
+        }
     }
 }
-
 
 /*
  * View

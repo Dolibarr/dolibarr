@@ -74,24 +74,32 @@ $searchformtitle=array($langs->trans("Companies"),$langs->trans("Contacts"),$lan
 $form = new Form($db);
 $formadmin=new FormAdmin($db);
 
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('usercard','globalcard'));
 
 /*
  * Actions
  */
-if ($action == 'update' && ($caneditfield || ! empty($user->admin)))
-{
-    if (! $_POST["cancel"])
-    {
-        $tabparam=array();
+$parameters=array('id'=>$socid);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-        if ($_POST["check_MAIN_LANG_DEFAULT"]=="on") $tabparam["MAIN_LANG_DEFAULT"]=$_POST["main_lang_default"];
-        else $tabparam["MAIN_LANG_DEFAULT"]='';
+if (empty($reshook)) {
+    if ($action == 'update' && ($caneditfield || !empty($user->admin))) {
+        if (!$_POST["cancel"]) {
+            $tabparam = array();
 
-        if ($_POST["check_SIZE_LISTE_LIMIT"]=="on") $tabparam["MAIN_SIZE_LISTE_LIMIT"]=$_POST["main_size_liste_limit"];
-        else $tabparam["MAIN_SIZE_LISTE_LIMIT"]='';
+            if ($_POST["check_MAIN_LANG_DEFAULT"] == "on") {
+                $tabparam["MAIN_LANG_DEFAULT"] = $_POST["main_lang_default"];
+            } else {
+                $tabparam["MAIN_LANG_DEFAULT"] = '';
+            }
 
-        if ($_POST["check_MAIN_THEME"]=="on") $tabparam["MAIN_THEME"]=$_POST["main_theme"];
-        else $tabparam["MAIN_THEME"]='';
+            if ($_POST["check_SIZE_LISTE_LIMIT"] == "on") {
+                $tabparam["MAIN_SIZE_LISTE_LIMIT"] = $_POST["main_size_liste_limit"];
+            } else {
+                $tabparam["MAIN_SIZE_LISTE_LIMIT"] = '';
+            }
 
     	$val=(join(',',(colorStringToArray(GETPOST('THEME_ELDY_TOPMENU_BACK1'),array()))));
     	if ($val == '') $tabparam['THEME_ELDY_TOPMENU_BACK1']='';
@@ -108,14 +116,17 @@ if ($action == 'update' && ($caneditfield || ! empty($user->admin)))
         $tabparam["MAIN_SEARCHFORM_SOCIETE"]=$_POST["main_searchform_societe"];
         $tabparam["MAIN_SEARCHFORM_PRODUITSERVICE"]=$_POST["main_searchform_produitservice"];
 
-        $result=dol_set_user_param($db, $conf, $object, $tabparam);
+            $tabparam["MAIN_SEARCHFORM_CONTACT"] = $_POST["main_searchform_contact"];
+            $tabparam["MAIN_SEARCHFORM_SOCIETE"] = $_POST["main_searchform_societe"];
+            $tabparam["MAIN_SEARCHFORM_PRODUITSERVICE"] = $_POST["main_searchform_produitservice"];
 
-        header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
-        exit;
+            $result = dol_set_user_param($db, $conf, $object, $tabparam);
+
+            header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
+            exit;
+        }
     }
 }
-
-
 
 /*
  * View
