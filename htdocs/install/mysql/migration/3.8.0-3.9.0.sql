@@ -61,3 +61,9 @@ ALTER TABLE llx_user_param MODIFY COLUMN value text NOT NULL;
 ALTER TABLE llx_expedition ADD COLUMN import_key varchar(14);
 ALTER TABLE llx_expedition ADD COLUMN extraparams varchar(255);
 
+ALTER TABLE llx_bank_account MODIFY COLUMN code_banque varchar(128);
+ALTER TABLE llx_prelevement_facture_demande MODIFY COLUMN code_banque varchar(128);
+ALTER TABLE llx_prelevement_lignes MODIFY COLUMN code_banque varchar(128);
+ALTER TABLE llx_societe_rib MODIFY COLUMN code_banque varchar(128);
+
+
