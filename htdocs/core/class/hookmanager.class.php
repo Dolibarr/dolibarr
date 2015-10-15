@@ -148,7 +148,8 @@ class HookManager
 				'printAddress',
 				'printSearchForm',
 				'formatEvent',
-				'addCalendarChoice'
+				'addCalendarChoice',
+				'showLinkedObjectBlock'
 				)
 			)) $hooktype='addreplace';
         // Deprecated hook types ('returnvalue')
