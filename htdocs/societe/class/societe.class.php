@@ -3395,12 +3395,14 @@ class Societe extends CommonObject
 
 		// Process
 		foreach ($to_del as $del) {
-			$c->fetch($del);
-			$c->del_type($this, $type_text);
+			if ($c->fetch($del) > 0) {
+				$c->del_type($this, $type_text);
+			}
 		}
 		foreach ($to_add as $add) {
-			$c->fetch($add);
-			$c->add_type($this, $type_text);
+			if ($c->fetch($add) > 0) {
+				$c->add_type($this, $type_text);
+			}
 		}
 
 		return;
