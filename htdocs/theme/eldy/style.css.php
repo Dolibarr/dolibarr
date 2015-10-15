@@ -2026,7 +2026,7 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	border-bottom-color: #BBB;
 	border-bottom-style: solid;
 	
-	margin: 0px 0px 2px 0px;
+	margin: 0px 0px 5px 0px;
 
 	-moz-box-shadow: 2px 2px 4px #CCC;
 	-webkit-box-shadow: 2px 2px 4px #CCC;
