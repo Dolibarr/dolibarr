@@ -2377,11 +2377,16 @@ abstract class CommonObject
 
                         foreach($objectids as $i => $objectid)	// $i is rowid into llx_element_element
                         {
-                            $object = new $classname($this->db);
-                            $ret = $object->fetch($objectid);
-                            if ($ret >= 0)
+                             // origin element is not linked to itself
+                       	    if ((($sourceid) && ($sourceid != $objectid || $sourcetype != $objecttype)) 
+                            || (($targetid) && ($targetid != $objectid || $targettype != $objecttype) ))
                             {
-                                $this->linkedObjects[$objecttype][$i] = $object;
+	                            $object = new $classname($this->db);
+	                            $ret = $object->fetch($objectid);
+	                            if ($ret >= 0)
+	                            {
+	                                $this->linkedObjects[$objecttype][$i] = $object;
+	                            }
                             }
                         }
                     }
