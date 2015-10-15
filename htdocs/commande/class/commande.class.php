@@ -263,14 +263,14 @@ class Commande extends CommonOrder
         // Protection
         if ($this->statut == self::STATUS_VALIDATED)
         {
-            dol_syslog(get_class($this)."::valid no draft status", LOG_WARNING);
+            dol_syslog(get_class($this)."::valid action abandonned: no draft status", LOG_WARNING);
             return 0;
         }
 
         if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->commande->creer))
        	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->commande->order_advance->validate))))
         {
-            $this->error='Permission denied';
+            $this->error='ErrorPermissionDenied';
             dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
             return -1;
         }
@@ -287,7 +287,7 @@ class Commande extends CommonOrder
         $result=$soc->set_as_client();
 
         // Define new ref
-        if (! $error && (preg_match('/^[\(]?PROV/i', $this->ref)))
+        if (! $error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) // empty should not happened, but when it occurs, the test save life
         {
             $num = $this->getNextNumRef($soc);
         }

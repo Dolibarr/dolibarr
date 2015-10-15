@@ -462,7 +462,7 @@ class Propal extends CommonObject
 
             $localtaxes_type=getLocalTaxesFromRate($txtva,0,$this->thirdparty,$mysoc);
 
-            $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, '', $localtaxes_type);
+            $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type);
             $total_ht  = $tabprice[0];
             $total_tva = $tabprice[1];
             $total_ttc = $tabprice[2];
@@ -1063,7 +1063,7 @@ class Propal extends CommonObject
     {
         global $db, $user,$langs,$conf,$hookmanager;
 
-		dol_include_once('/projet/class.project.class.php');
+		dol_include_once('/projet/class/project.class.php');
 
         $this->context['createfromclone']='createfromclone';
 
@@ -1481,12 +1481,12 @@ class Propal extends CommonObject
             $soc->fetch($this->socid);
 
             // Define new ref
-            if (! $error && (preg_match('/^[\(]?PROV/i', $this->ref)))
+            if (! $error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) // empty should not happened, but when it occurs, the test save life
             {
             	$num = $this->getNextNumRef($soc);
             }
             else
-          {
+            {
             	$num = $this->ref;
             }
             $this->newref = $num;

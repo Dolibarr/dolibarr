@@ -104,7 +104,7 @@ class box_project extends ModeleBoxes
                         'td' => 'align="left"',
                         'text' => $objp->ref,
                         'tooltip' => $tooltip,
-                        'url' => DOL_URL_ROOT."/product/card.php?id=".$objp->rowid,
+                        'url' => DOL_URL_ROOT."/projet/card.php?id=".$objp->rowid,
                     );
 
                     $this->info_box_contents[$i][2] = array(

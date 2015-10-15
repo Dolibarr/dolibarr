@@ -1375,7 +1375,6 @@ class Societe extends CommonObject
             {
                 $sql = "DELETE FROM ".MAIN_DB_PREFIX."socpeople";
                 $sql.= " WHERE fk_soc = " . $id;
-                dol_syslog(get_class($this)."::delete", LOG_DEBUG);
                 if (! $this->db->query($sql))
                 {
                     $error++;
@@ -1388,7 +1387,6 @@ class Societe extends CommonObject
             {
                 $sql = "UPDATE ".MAIN_DB_PREFIX."adherent";
                 $sql.= " SET fk_soc = NULL WHERE fk_soc = " . $id;
-                dol_syslog(get_class($this)."::delete", LOG_DEBUG);
                 if (! $this->db->query($sql))
                 {
                     $error++;
@@ -1402,7 +1400,18 @@ class Societe extends CommonObject
             {
                 $sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_rib";
                 $sql.= " WHERE fk_soc = " . $id;
-                dol_syslog(get_class($this)."::Delete", LOG_DEBUG);
+                if (! $this->db->query($sql))
+                {
+                    $error++;
+                    $this->error = $this->db->lasterror();
+                }
+            }
+
+		    // Remove societe_remise_except
+            if (! $error)
+            {
+                $sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_remise_except";
+                $sql.= " WHERE fk_soc = " . $id;
                 if (! $this->db->query($sql))
                 {
                     $error++;
@@ -1415,7 +1424,6 @@ class Societe extends CommonObject
             {
                 $sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_commerciaux";
                 $sql.= " WHERE fk_soc = " . $id;
-                dol_syslog(get_class($this)."::Delete", LOG_DEBUG);
                 if (! $this->db->query($sql))
                 {
                     $error++;
@@ -3378,8 +3386,6 @@ class Societe extends CommonObject
 
 		// Diff
 		if (is_array($existing)) {
-			var_dump($existing);
-			var_dump($categories);
 			$to_del = array_diff($existing, $categories);
 			$to_add = array_diff($categories, $existing);
 		} else {
