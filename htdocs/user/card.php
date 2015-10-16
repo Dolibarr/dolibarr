@@ -152,7 +152,7 @@ if (empty($reshook)) {
         }
     }
 
-// Action Add user
+    // Action Add user
     if ($action == 'add' && $canadduser) {
         $error = 0;
 
@@ -255,14 +255,12 @@ if (empty($reshook)) {
         }
     }
 
-// Action add usergroup
-if (($action == 'addgroup' || $action == 'removegroup') && $caneditfield)
-{
-    if ($group)
-    {
-        $editgroup = new UserGroup($db);
-        $editgroup->fetch($group);
-		$editgroup->oldcopy=clone $editgroup;
+    // Action add usergroup
+    if (($action == 'addgroup' || $action == 'removegroup') && $caneditfield) {
+        if ($group) {
+            $editgroup = new UserGroup($db);
+            $editgroup->fetch($group);
+            $editgroup->oldcopy = clone $editgroup;
 
             $object->fetch($id);
             if ($action == 'addgroup') {
@@ -493,7 +491,6 @@ if (($action == 'addgroup' || $action == 'removegroup') && $caneditfield)
 	        setEventMessage($object->error, 'errors');
         }
     }
-}
 
 // Change password with a new generated one
     if ((($action == 'confirm_password' && $confirm == 'yes')
