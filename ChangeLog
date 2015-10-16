@@ -15,7 +15,76 @@ WARNING: Following changes may create regression for some external modules, but 
 Dolibarr better:
 - Deprecated hidden option MAIN_USE_CUSTOM_TRANSLATION has been removed. Use table llx_overwrite_trans instead.
 - Trigger LINECONTRACT_INSERT has been renamed into LINECONTRACT_CREATE to match common denomination.
+
  
+***** ChangeLog for 3.8.1 compared to 3.8.0 *****
+FIX: #3521 postgresql migration error
+FIX: #3524
+FIX: #3529
+FIX: #3530
+FIX: #3533
+FIX: #3533 Load categories language
+FIX: #3534
+FIX: #3572 Impossible to attach project in order
+FIX: #3599 Not saving legal form
+FIX: #3606
+FIX: #3607 Better categories setting and unsetting
+FIX: #3628
+FIX: #3630 - Wrong balance report when module salaries and donation disabled
+FIX: Add a test to save life when ref of object (invoice ref, order ref, ...) was empty. The was no way to go back to a clean situation, even after vaidating again the object.
+FIX: Admin fiche inter page do not take good action
+FIX: Always use type send in parameters in showCategories method
+FIX: avoid SQL error in getValueFrom common object when all params are not send
+FIX: avoid SQL error when no sortfield send to method
+FIX: bad link into project box
+FIX: Bad title line in project view when using jmobile
+FIX: Bad translation key for project "Overview"
+FIX: Can create Proposal on close thridparty #3526
+FIX: Can't change state on a contact
+FIX: Can't change the admin with default setup
+FIX: Can't delete thirdparty if there is some discounts
+FIX: Can't reopen a canceled invoice.
+FIX: Creation of tables or keys must not be done with a random order.
+FIX: debian install when module mysqli is not installed.
+FIX: Description of tags was mandatory in edit mode but not in create mode. Should not be mandatory.
+FIX: display error on extrafields on ficheinter
+FIX: Email selector contact must not include inactive contact
+FIX: error in SQL due to a previous fix
+FIX: Error retrieving customer prices
+FIX: Event from ical stream should not be movable into calendar view
+FIX: facturestat bad sql when customer view is limited
+FIX: Filter on status of thirdparty list and bad encoding of url
+FIX: icon into export profile may be not correctly output
+FIX: Init into bad var
+FIX: Link of project must be cickable if user has permission to read all projects FIX: Missing information into the alt of project picto
+FIX: List of project for user that are restrited as sale repreentative to some thirdparties.
+FIX: Mass Mailing activity don't display all status
+FIX: Missing contracts into list in page of Refering objects of a thirdparty.
+FIX: Missing menu entry for list of thirdparties when using auguria menu manager
+FIX: Missing validate button if permission are not valid.
+FIX: New adherent from, always redirect on entity
+FIX: not closing CSS.
+FIX: not responsive part for project page
+FIX: Only are showing one object linked
+FIX: order ref must not be translated
+FIX: Payment form for paypal and paybox was not centered.
+FIX: Pb into pagination scroll widget FIX: Style of previous-next card when using dolidroid
+FIX: Regression on bad use of fk_account showing the bad bank account on PDF.
+FIX: Removed warnings
+FIX: remove twice same test
+FIX: select of project using ajax autocomplete option
+FIX: sortder field was missing so manually added values were moved to begin.
+FIX: Syntax error in Debian Apache configuration
+FIX: The admin flag is mising.
+FIX: The filter on thirdparty prices should be visible if there is at least one thirdparty price.
+FIX: Thirdparty is missing on card
+FIX: update2.php test res befre assign it
+FIX: When delete actioncomm also delete actioncomm_resources
+FIX: when editing time spent, date of line suggested was a rubbish value
+FIX: When filter with empty status, by default get canceled status (-1)
+FIX: When update a member login for a member linked to a user, the login of user was not sync (not updated).
+FIX: Wizard for restore does not show import command
+
 
 ***** ChangeLog for 3.8 compared to 3.7.* *****
 For users:
@@ -473,6 +542,12 @@ Dolibarr better:
   warehouse module and your Point Of Sale module setup if you use one.
 - Replaced USER_UPDATE_SESSION trigger with an updateSession hook may break modules using it.
 
+***** ChangeLog for 3.6.5 compared to 3.6.4 *****
+- Fix: [ bug #1776 ] Undefined $deliverycompany variable in pdf_build_address
+- Fix: [ bug #1794 ] Error when cloning Proposal gives error in a malformed page
+
+***** ChangeLog for 3.6.4 compared to 3.6.3 *****
+- Fix: [ bug #2893 ] Dolibarr error when viewing an invoice after changing invoice mask
 
 ***** ChangeLog for 3.6.3 compared to 3.6.2 *****
 - Fix: ref_ext was not saved when recording a customer order from web service

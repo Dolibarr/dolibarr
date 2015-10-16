@@ -430,6 +430,8 @@ if ($id > 0 || ! empty($ref))
 		/*
 		 *  List of time spent
 		 */
+		$tasks = array();
+		
 		$sql = "SELECT t.rowid, t.task_date, t.task_datehour, t.task_date_withhour, t.task_duration, t.fk_user, t.note, t.thm";
 		$sql.= ", u.lastname, u.firstname";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
@@ -444,7 +446,6 @@ if ($id > 0 || ! empty($ref))
 		{
 			$num = $db->num_rows($resql);
 			$i = 0;
-			$tasks = array();
 			while ($i < $num)
 			{
 				$row = $db->fetch_object($resql);
@@ -470,7 +471,7 @@ if ($id > 0 || ! empty($ref))
 		print '<td>'.$langs->trans("By").'</td>';
 		print '<td align="left">'.$langs->trans("Note").'</td>';
 		print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
-		if ($conf->salaries->enabled)
+		if (! empty($conf->salaries->enabled))
 		{
 			print '<td align="right">'.$langs->trans("Value").'</td>';
 		}
@@ -491,11 +492,11 @@ if ($id > 0 || ! empty($ref))
 			print '<td class="nowrap">';
 			if ($_GET['action'] == 'editline' && $_GET['lineid'] == $task_time->rowid)
 			{
-				print $form->select_date($db->jdate($date2?$date2:$date1),'timeline',1,1,2,"timespent_date",1,0,1);
+				print $form->select_date(($date2?$date2:$date1),'timeline',1,1,2,"timespent_date",1,0,1);
 			}
 			else
 			{
-				print dol_print_date($date2?$date2:$date1,($task_time->task_date_withhour?'dayhour':'day'));
+				print dol_print_date(($date2?$date2:$date1),($task_time->task_date_withhour?'dayhour':'day'));
 			}
 			print '</td>';
 

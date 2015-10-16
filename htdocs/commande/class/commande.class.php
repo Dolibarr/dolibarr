@@ -227,14 +227,14 @@ class Commande extends CommonOrder
         // Protection
         if ($this->statut == self::STATUS_VALIDATED)
         {
-            dol_syslog(get_class($this)."::valid no draft status", LOG_WARNING);
+            dol_syslog(get_class($this)."::valid action abandonned: no draft status", LOG_WARNING);
             return 0;
         }
 
         if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->commande->creer))
        	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->commande->order_advance->validate))))
         {
-            $this->error='Permission denied';
+            $this->error='ErrorPermissionDenied';
             dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
             return -1;
         }
@@ -251,7 +251,7 @@ class Commande extends CommonOrder
         $result=$soc->set_as_client();
 
         // Define new ref
-        if (! $error && (preg_match('/^[\(]?PROV/i', $this->ref)))
+        if (! $error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) // empty should not happened, but when it occurs, the test save life
         {
             $num = $this->getNextNumRef($soc);
         }
@@ -1009,116 +1009,112 @@ class Commande extends CommonOrder
 
         $error=0;
 
-        // Signed proposal
-        if ($object->statut == 2)
+        
+        $this->date_commande = dol_now();
+        $this->source = 0;
+
+        $num=count($object->lines);
+        for ($i = 0; $i < $num; $i++)
         {
-            $this->date_commande = dol_now();
-            $this->source = 0;
+            $line = new OrderLine($this->db);
 
-            $num=count($object->lines);
-            for ($i = 0; $i < $num; $i++)
-            {
-                $line = new OrderLine($this->db);
+            $line->libelle           = $object->lines[$i]->libelle;
+            $line->label             = $object->lines[$i]->label;
+            $line->desc              = $object->lines[$i]->desc;
+            $line->price             = $object->lines[$i]->price;
+            $line->subprice          = $object->lines[$i]->subprice;
+            $line->tva_tx            = $object->lines[$i]->tva_tx;
+            $line->localtax1_tx      = $object->lines[$i]->localtax1_tx;
+            $line->localtax2_tx      = $object->lines[$i]->localtax2_tx;
+            $line->qty               = $object->lines[$i]->qty;
+            $line->fk_remise_except  = $object->lines[$i]->fk_remise_except;
+            $line->remise_percent    = $object->lines[$i]->remise_percent;
+            $line->fk_product        = $object->lines[$i]->fk_product;
+            $line->info_bits         = $object->lines[$i]->info_bits;
+            $line->product_type      = $object->lines[$i]->product_type;
+            $line->rang              = $object->lines[$i]->rang;
+            $line->special_code      = $object->lines[$i]->special_code;
+            $line->fk_parent_line    = $object->lines[$i]->fk_parent_line;
+	        $line->fk_unit			 = $object->lines[$i]->fk_unit;
 
-                $line->libelle           = $object->lines[$i]->libelle;
-                $line->label             = $object->lines[$i]->label;
-                $line->desc              = $object->lines[$i]->desc;
-                $line->price             = $object->lines[$i]->price;
-                $line->subprice          = $object->lines[$i]->subprice;
-                $line->tva_tx            = $object->lines[$i]->tva_tx;
-                $line->localtax1_tx      = $object->lines[$i]->localtax1_tx;
-                $line->localtax2_tx      = $object->lines[$i]->localtax2_tx;
-                $line->qty               = $object->lines[$i]->qty;
-                $line->fk_remise_except  = $object->lines[$i]->fk_remise_except;
-                $line->remise_percent    = $object->lines[$i]->remise_percent;
-                $line->fk_product        = $object->lines[$i]->fk_product;
-                $line->info_bits         = $object->lines[$i]->info_bits;
-                $line->product_type      = $object->lines[$i]->product_type;
-                $line->rang              = $object->lines[$i]->rang;
-                $line->special_code      = $object->lines[$i]->special_code;
-                $line->fk_parent_line    = $object->lines[$i]->fk_parent_line;
-	            $line->fk_unit			 = $object->lines[$i]->fk_unit;
+            $line->date_start      	= $object->lines[$i]->date_start;
+            $line->date_end    		= $object->lines[$i]->date_end;
 
-                $line->date_start      	= $object->lines[$i]->date_start;
-                $line->date_end    		= $object->lines[$i]->date_end;
-
-				$line->fk_fournprice	= $object->lines[$i]->fk_fournprice;
-				$marginInfos			= getMarginInfos($object->lines[$i]->subprice, $object->lines[$i]->remise_percent, $object->lines[$i]->tva_tx, $object->lines[$i]->localtax1_tx, $object->lines[$i]->localtax2_tx, $object->lines[$i]->fk_fournprice, $object->lines[$i]->pa_ht);
-				$line->pa_ht			= $marginInfos[0];
-				$line->marge_tx			= $marginInfos[1];
-				$line->marque_tx		= $marginInfos[2];
-
-                // get extrafields from original line
-				$object->lines[$i]->fetch_optionals($object->lines[$i]->rowid);
-				foreach($object->lines[$i]->array_options as $options_key => $value)
-					$line->array_options[$options_key] = $value;
-
-				$this->lines[$i] = $line;
-            }
-
-            $this->socid                = $object->socid;
-            $this->fk_project           = $object->fk_project;
-            $this->cond_reglement_id    = $object->cond_reglement_id;
-            $this->mode_reglement_id    = $object->mode_reglement_id;
-            $this->fk_account           = $object->fk_account;
-            $this->availability_id      = $object->availability_id;
-            $this->demand_reason_id     = $object->demand_reason_id;
-            $this->date_livraison       = $object->date_livraison;
-            $this->shipping_method_id   = $object->shipping_method_id;
-            $this->fk_delivery_address  = $object->fk_delivery_address;
-            $this->contact_id           = $object->contactid;
-            $this->ref_client           = $object->ref_client;
-            $this->note_private         = $object->note_private;
-            $this->note_public          = $object->note_public;
-
-            $this->origin				= $object->element;
-            $this->origin_id			= $object->id;
+			$line->fk_fournprice	= $object->lines[$i]->fk_fournprice;
+			$marginInfos			= getMarginInfos($object->lines[$i]->subprice, $object->lines[$i]->remise_percent, $object->lines[$i]->tva_tx, $object->lines[$i]->localtax1_tx, $object->lines[$i]->localtax2_tx, $object->lines[$i]->fk_fournprice, $object->lines[$i]->pa_ht);
+			$line->pa_ht			= $marginInfos[0];
+			$line->marge_tx			= $marginInfos[1];
+			$line->marque_tx		= $marginInfos[2];
 
             // get extrafields from original line
-			$object->fetch_optionals($object->id);
+			$object->lines[$i]->fetch_optionals($object->lines[$i]->rowid);
+			foreach($object->lines[$i]->array_options as $options_key => $value)
+				$line->array_options[$options_key] = $value;
 
-			$e = new ExtraFields($db);
-			$element_extrafields = $e->fetch_name_optionals_label($this->element);
+			$this->lines[$i] = $line;
+        }
 
-			foreach($object->array_options as $options_key => $value) {
-				if(array_key_exists(str_replace('options_', '', $options_key), $element_extrafields)){
-					$this->array_options[$options_key] = $value;
-				}
+        $this->socid                = $object->socid;
+        $this->fk_project           = $object->fk_project;
+        $this->cond_reglement_id    = $object->cond_reglement_id;
+        $this->mode_reglement_id    = $object->mode_reglement_id;
+        $this->fk_account           = $object->fk_account;
+        $this->availability_id      = $object->availability_id;
+        $this->demand_reason_id     = $object->demand_reason_id;
+        $this->date_livraison       = $object->date_livraison;
+        $this->shipping_method_id   = $object->shipping_method_id;
+        $this->fk_delivery_address  = $object->fk_delivery_address;
+        $this->contact_id           = $object->contactid;
+        $this->ref_client           = $object->ref_client;
+        $this->note_private         = $object->note_private;
+        $this->note_public          = $object->note_public;
+
+        $this->origin				= $object->element;
+        $this->origin_id			= $object->id;
+
+        // get extrafields from original line
+		$object->fetch_optionals($object->id);
+
+		$e = new ExtraFields($db);
+		$element_extrafields = $e->fetch_name_optionals_label($this->element);
+
+		foreach($object->array_options as $options_key => $value) {
+			if(array_key_exists(str_replace('options_', '', $options_key), $element_extrafields)){
+				$this->array_options[$options_key] = $value;
 			}
-            // Possibility to add external linked objects with hooks
-            $this->linked_objects[$this->origin] = $this->origin_id;
-            if (is_array($object->other_linked_objects) && ! empty($object->other_linked_objects))
+		}
+        // Possibility to add external linked objects with hooks
+        $this->linked_objects[$this->origin] = $this->origin_id;
+        if (is_array($object->other_linked_objects) && ! empty($object->other_linked_objects))
+        {
+           	$this->linked_objects = array_merge($this->linked_objects, $object->other_linked_objects);
+        }
+
+        $ret = $this->create($user);
+
+        if ($ret > 0)
+        {
+            // Actions hooked (by external module)
+            $hookmanager->initHooks(array('orderdao'));
+
+            $parameters=array('objFrom'=>$object);
+            $action='';
+            $reshook=$hookmanager->executeHooks('createFrom',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+            if ($reshook < 0) $error++;
+
+            if (! $error)
             {
-            	$this->linked_objects = array_merge($this->linked_objects, $object->other_linked_objects);
-            }
-
-            $ret = $this->create($user);
-
-            if ($ret > 0)
-            {
-                // Actions hooked (by external module)
-                $hookmanager->initHooks(array('orderdao'));
-
-                $parameters=array('objFrom'=>$object);
-                $action='';
-                $reshook=$hookmanager->executeHooks('createFrom',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-                if ($reshook < 0) $error++;
-
-                if (! $error)
+                // Ne pas passer par la commande provisoire
+                if ($conf->global->COMMANDE_VALID_AFTER_CLOSE_PROPAL == 1)
                 {
-                    // Ne pas passer par la commande provisoire
-                    if ($conf->global->COMMANDE_VALID_AFTER_CLOSE_PROPAL == 1)
-                    {
-                        $this->fetch($ret);
-                        $this->valid($user);
-                    }
-                    return $ret;
+                    $this->fetch($ret);
+                    $this->valid($user);
                 }
-                else return -1;
+                return $ret;
             }
             else return -1;
         }
-        else return 0;
+        else return -1;
     }
 
 

@@ -386,7 +386,6 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
 
 	if ($mode == 'source' && ! is_object($sourcecompany)) return -1;
 	if ($mode == 'target' && ! is_object($targetcompany)) return -1;
-	if ($mode == 'delivery' && ! is_object($deliverycompany)) return -1;
 
 	if (! empty($sourcecompany->state_id) && empty($sourcecompany->departement)) $sourcecompany->departement=getState($sourcecompany->state_id); //TODO: Deprecated
 	if (! empty($sourcecompany->state_id) && empty($sourcecompany->state)) $sourcecompany->state=getState($sourcecompany->state_id);
