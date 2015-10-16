@@ -86,22 +86,23 @@ $extrafields = new ExtraFields($db);
 $extralabels = $extrafields->fetch_name_optionals_label('thirdparty');
 $search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
 
+// List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
-	's.nom',
-	's.name_alias',
-	's.code_client',
-    "s.code_fournisseur",
-	's.email',
-	's.url',
-	's.siren',
-    's.siret',
-    's.ape',
-    "s.idprof4",
-    "s.idprof5",
-    "s.idprof6",
-    's.tva_intra'
+	's.nom'=>"ThirdPartyName",
+	's.name_alias'=>"AliasNameShort",
+	's.code_client'=>"CustomerCode",
+    "s.code_fournisseur"=>"SupplierCode",
+	's.email'=>"EMail",
+	's.url'=>"URL",
+    's.tva_intra'=>"VATIntra",
+    's.siren'=>"ProfId1",
+    's.siret'=>"ProfId2",
+    's.ape'=>"ProfId3",
 );
-if (!empty($conf->barcode->enabled)) $fieldstosearchall[] = 's.barcode';
+if (($tmp = $langs->transnoentities("ProfId4".$mysoc->country_code)) && $tmp != "ProfId4".$mysoc->country_code && $tmp != '-') $fieldstosearchall['s.idprof4']='ProfId4';
+if (($tmp = $langs->transnoentities("ProfId5".$mysoc->country_code)) && $tmp != "ProfId5".$mysoc->country_code && $tmp != '-') $fieldstosearchall['s.idprof5']='ProfId5';
+if (($tmp = $langs->transnoentities("ProfId6".$mysoc->country_code)) && $tmp != "ProfId6".$mysoc->country_code && $tmp != '-') $fieldstosearchall['s.idprof6']='ProfId6';
+if (!empty($conf->barcode->enabled)) $fieldstosearchall['s.barcode']='Gencod';
 
 
 /*
@@ -249,7 +250,7 @@ if ($search_categ)    $sql.= " AND s.rowid = cs.fk_soc";   // Join for the neede
 if (! $user->rights->fournisseur->lire) $sql.=" AND (s.fournisseur <> 1 OR s.client <> 0)";    // client=0, fournisseur=0 must be visible
 if ($search_sale)     $sql.= " AND sc.fk_user = ".$db->escape($search_sale);
 if ($search_categ)    $sql.= " AND cs.fk_categorie = ".$db->escape($search_categ);
-if ($search_all)      $sql.= natural_search($fieldstosearchall, $search_all);
+if ($search_all)      $sql.= natural_search(array_keys($fieldstosearchall), $search_all);
 if ($search_nom)      $sql.= natural_search("s.nom",$search_nom);
 if ($search_nom_only) $sql.= natural_search("s.nom",$search_nom_only);
 if ($search_customer_code) $sql.= natural_search("s.code_client",$search_customer_code);
@@ -360,7 +361,13 @@ if ($resql)
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	
-    // Filter on categories
+    if ($search_all)
+    {
+        foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
+        print $langs->trans("FilterOnInto", $search_all, join(', ',$fieldstosearchall));
+    }
+	
+	// Filter on categories
     /* Not possible in this page because list is for ALL third parties type
 	$moreforfilter='';
     if (! empty($conf->categorie->enabled))

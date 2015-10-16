@@ -109,6 +109,14 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 $hookmanager->initHooks(array('projectlist'));
 $extrafields = new ExtraFields($db);
 
+// List of fields to search into when doing a "search in all"
+$fieldstosearchall = array(
+	'p.ref'=>"Ref",
+	'p.title'=>"Label",
+	's.nom'=>"ThirdPartyName",
+    "p.note_public"=>"NotePublic"
+);
+if (empty($user->socid)) $fieldstosearchall["p.note_private"]="NotePrivate";
 
 
 /*
@@ -182,7 +190,7 @@ else if ($year > 0)
 {
     $sql.= " AND p.datee BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
 }
-if ($search_all) $sql .= natural_search(array('p.ref','p.title','s.nom'), $search_all);
+if ($search_all) $sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 if ($search_status >= 0) $sql .= " AND p.fk_statut = ".$db->escape($search_status);
 if ($search_opp_status) 
 {
@@ -235,7 +243,7 @@ if ($resql)
 	print '<form method="GET" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 
-	// Show description of content
+    // Show description of content
 	if ($mine) print $langs->trans("MyProjectsDesc").'<br><br>';
 	else
 	{
@@ -245,8 +253,8 @@ if ($resql)
 
 	if ($search_all)
 	{
-		print $langs->trans("Filter")." (".$langs->trans("Ref").", ".$langs->trans("Label")." ".$langs->trans("or")." ".$langs->trans("ThirdParty")."): ";
-		print '<strong>'.$search_all.'</strong>';
+        foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
+        print $langs->trans("FilterOnInto", $search_all, join(', ',$fieldstosearchall));
 	}
 
 	$colspan=8;

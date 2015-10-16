@@ -119,6 +119,13 @@ if (GETPOST('button_removefilter_x') || GETPOST('button_removefilter.x') || GETP
 }
 if ($search_priv < 0) $search_priv='';
 
+// List of fields to search into when doing a "search in all"
+$fieldstosearchall = array(
+    'p.lastname'=>'Lastname',
+    'p.firstname'=>'Firstname',
+    'p.email'=>'EMail',
+    's.nom'=>"ThirdParty",
+);
 
 
 /*
@@ -226,7 +233,7 @@ else if ($type == "p")        // filtre sur type
 }
 if ($sall)
 {
-    $sql .= natural_search(array('p.lastname', 'p.firstname', 'p.email', 's.nom'), $sall);
+    $sql .= natural_search(array_keys($fieldstosearchall), $sall);
 }
 if (! empty($socid))
 {
@@ -279,11 +286,12 @@ if ($result)
 
     if ($sall)
     {
-        print $langs->trans("Filter")." (".$langs->trans("Lastname").", ".$langs->trans("Firstname").", ".$langs->trans("ThirdParty")." ".$langs->trans("or")." ".$langs->trans("EMail")."): ".$sall;
+        foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
+        print $langs->trans("FilterOnInto", $sall, join(', ',$fieldstosearchall));
     }
 	if ($search_firstlast_only)
 	{
-        print $langs->trans("Filter")." (".$langs->trans("Lastname").", ".$langs->trans("Firstname")."): ".$search_firstlast_only;
+        print $langs->trans("FilterOnInto", $search_firstlast_only, $langs->trans("Lastname").", ".$langs->trans("Firstname"));
 	}
     
     if (! empty($conf->categorie->enabled))

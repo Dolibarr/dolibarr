@@ -108,6 +108,14 @@ $viewstatut=$object_statut;
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('propallist'));
 
+// List of fields to search into when doing a "search in all"
+$fieldstosearchall = array(
+    'p.ref'=>'Ref',
+    'pd.description'=>'Description',
+    's.nom'=>"ThirdParty",
+    'p.note_public'=>'NotePublic',
+);
+if (empty($user->socid)) $fieldstosearchall["p.note_private"]="NotePrivate";
 
 
 /*
@@ -192,7 +200,7 @@ if ($search_montant_ht != '')
 	$sql.= natural_search("p.total_ht", $search_montant_ht, 1);
 }
 if ($sall) {
-    $sql .= natural_search(array('s.nom', 'p.note_private', 'p.note_public', 'pd.description'), $sall);
+    $sql .= natural_search(array_keys($fieldstosearchall), $sall);
 }
 if ($search_product_category > 0) $sql.=" AND cp.fk_categorie = ".$search_product_category;
 if ($socid > 0) $sql.= ' AND s.rowid = '.$socid;
@@ -264,6 +272,13 @@ if ($result)
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 
+    if ($sall)
+    {
+        foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
+        //sort($fieldstosearchall);
+        print $langs->trans("FilterOnInto", $sall, join(', ',$fieldstosearchall));
+    }
+	
 	$i = 0;
 
 	$moreforfilter='';
