@@ -111,6 +111,7 @@ $hookmanager->initHooks(array('propallist'));
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
     'p.ref'=>'Ref',
+    'p.ref_client'=>'CustomerRef',
     'pd.description'=>'Description',
     's.nom'=>"ThirdParty",
     'p.note_public'=>'NotePublic',
@@ -270,7 +271,11 @@ if ($result)
 
 	// Lignes des champs de filtre
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
-	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="action" value="list">';
+	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
     if ($sall)
     {

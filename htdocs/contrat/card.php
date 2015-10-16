@@ -237,6 +237,7 @@ if (empty($reshook))
 	    	$object->fk_project					= GETPOST('projectid','int');
 	    	$object->remise_percent				= GETPOST('remise_percent','alpha');
 	    	$object->ref						= GETPOST('ref','alpha');
+	    	$object->ref_customer				= GETPOST('ref_customer','alpha');
 	    	$object->ref_supplier				= GETPOST('ref_supplier','alpha');
 	
 		    // If creation from another object of another module (Example: origin=propal, originid=1)
@@ -747,7 +748,9 @@ if (empty($reshook))
 		{
 			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("RefNewContract")),'errors');
 		}
-	} else if ($action == 'update_extras') {
+	} 
+	else if ($action == 'update_extras') 
+	{
 		// Fill array 'array_options' with data from update form
 		$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 		$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
@@ -767,9 +770,10 @@ if (empty($reshook))
 			$action = 'edit_extras';
 			setEventMessage($object->error,'errors');
 		}
-	} elseif ($action=='setref_supplier') {
+	} 
+	elseif ($action=='setref_supplier') 
+	{
 		$cancelbutton = GETPOST('cancel');
-	
 		if (!$cancelbutton) {
 	
 			$result = $object->fetch($id);
@@ -790,7 +794,34 @@ if (empty($reshook))
 	        header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $id);
 	        exit;
 	    }
-	} elseif ($action=='setref') {
+	}
+	elseif ($action=='setref_customer') 
+	{
+		$cancelbutton = GETPOST('cancel');
+		
+		if (!$cancelbutton)
+		{
+			$result = $object->fetch($id);
+			if ($result < 0) {
+				setEventMessage($object->errors, 'errors');
+			}
+		
+	        $result = $object->setValueFrom('ref_customer',GETPOST('ref_customer','alpha'));
+	        if ($result < 0) {
+				setEventMessage($object->errors, 'errors');
+				$action = 'editref_customer';
+			} else {
+				header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+				exit;
+			}
+		}
+	    else {
+	        header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $id);
+	        exit;
+	    }
+	}
+	elseif ($action=='setref') 
+	{
 	    $cancelbutton = GETPOST('cancel');
 	
 	    if (!$cancelbutton) {
@@ -1001,14 +1032,18 @@ if ($action == 'create')
     }
 	print '<tr><td class="fieldrequired">'.$langs->trans('Ref').'</td><td colspan="2">'.$tmpcode.'</td></tr>';
 
+	// Ref customer
+	print '<tr><td>'.$langs->trans('RefCustomer').'</td>';
+	print '<td colspan="2"><input type="text" size="5" name="ref_customer" id="ref_customer" value="'.GETPOST('ref_customer','alpha').'"></td></tr>';
+
 	// Ref supplier
 	print '<tr><td>'.$langs->trans('RefSupplier').'</td>';
 	print '<td colspan="2"><input type="text" size="5" name="ref_supplier" id="ref_supplier" value="'.GETPOST('ref_supplier','alpha').'"></td></tr>';
 
-    // Customer
+    // Thirdparty
 	print '<tr>';
-	print '<td class="fieldrequired">'.$langs->trans('Customer').'</td>';
-	if($socid>0)
+	print '<td class="fieldrequired">'.$langs->trans('Thirdparty').'</td>';
+	if ($socid>0)
 	{
 		print '<td colspan="2">';
 		print $soc->getNomUrl(1);
@@ -1018,7 +1053,7 @@ if ($action == 'create')
 	else
 	{
 		print '<td colspan="2">';
-		print $form->select_company('','socid','s.client = 1 OR s.client = 3',1);
+		print $form->select_company('','socid','',1);
 		print '</td>';
 	}
 	print '</tr>'."\n";
@@ -1206,6 +1241,14 @@ else
         }
 
         print '<tr>';
+		print '<td  width="20%">';
+		print $form->editfieldkey("RefCustomer",'ref_customer',$object->ref_customer,$object,$user->rights->contrat->creer);
+		print '</td><td>';
+		print $form->editfieldval("RefCustomer",'ref_customer',$object->ref_customer,$object,$user->rights->contrat->creer);
+		print '</td>';
+		print '</tr>';
+        
+		print '<tr>';
 		print '<td  width="20%">';
 		print $form->editfieldkey("RefSupplier",'ref_supplier',$object->ref_supplier,$object,$user->rights->contrat->creer);
 		print '</td><td>';
