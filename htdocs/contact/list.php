@@ -242,13 +242,13 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 // Add order and limit
 if($view == "recent")
 {
-    $sql.= " ORDER BY p.datec DESC ";
-	$sql.= " ".$db->plimit($conf->liste_limit+1, $offset);
+    $sql.= $db->order("p.datec","DESC");
+    $sql.= $db->plimit($conf->liste_limit+1, $offset);
 }
 else
 {
-    $sql.= " ORDER BY $sortfield $sortorder ";
-	$sql.= " ".$db->plimit($conf->liste_limit+1, $offset);
+    $sql.= $db->order($sortfield,$sortorder);
+    $sql.= $db->plimit($conf->liste_limit+1, $offset);
 }
 
 //print $sql;
