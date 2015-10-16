@@ -132,6 +132,7 @@ class pdf_agrume extends ModelePDFFactures
 		$this->posxdiscount=162;
 		$this->posxprogress=174; // Only displayed for situation invoices
 		$this->postotalht=174;
+		if (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_UNITPRICE)) $this->posxup = $this->posxqty;
 		if (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT)) $this->posxtva=$this->posxup;
 		$this->posxpicture=$this->posxtva - (empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH)?20:$conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH);	// width of images
 		if ($this->page_largeur < 210) // To work with US executive format
@@ -441,49 +442,49 @@ class pdf_agrume extends ModelePDFFactures
 						
 						$tab_height = $tab_height - $height_situation;
 						$tab_top = $nexY+7;
-						
-						$this->page =1;
-						$bottomlasttab=$this->page_hauteur - $heightforinfotot  + 1;
-						
-						// Affiche zone infos
-						$posy=$this->_tableau_info($pdf, $object, $bottomlasttab, $outputlangs);
-						
-						// Affiche zone totaux
-						foreach ($object->lines as $line)
-						{
-							$vatrate=(string) $line->tva_tx;
-							
-							$prev_progress = $line->get_prev_progress();
-							if ($prev_progress > 0) $tvaligne = $line->total_tva * ($line->situation_percent - $prev_progress) / $line->situation_percent;
-							else $tvaligne = $line->total_tva;
-		
-							if ($object->remise_percent) $tvaligne-=($tvaligne*$object->remise_percent)/100;
-						
-							if (($line->info_bits & 0x01) == 0x01) $vatrate.='*';
-							if (! isset($this->tva[$vatrate])) $this->tva[$vatrate]='';
-							$this->tva[$vatrate] += $tvaligne;
-						}
-
-						$posy=$this->_tableau_tot_situation($pdf, $object, $deja_regle, $bottomlasttab, $outputlangs);
-						$this->tva = array();
-						
-						// Pied de page
-						$this->_pagefoot($pdf,$object,$outputlangs,1);
-						if (method_exists($pdf,'AliasNbPages')) $pdf->AliasNbPages();
-				
-						// Page break
-						$pageposbefore=$pdf->getPage();
-						$pdf->AddPage();
-						$pagenb++;
-						if (! empty($tplidx)) $pdf->useTemplate($tplidx);
-						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
-						$pdf->setPage($pageposbefore+1);
-						$showpricebeforepagebreak=0;
-						
-						$iniY = $tab_top_newpage+10;
-						$curY = $tab_top_newpage+10;
-						$nexY = $tab_top_newpage+10;
 					}
+					
+					$this->page =1;
+					$bottomlasttab=$this->page_hauteur - $heightforinfotot  + 1;
+					
+					// Affiche zone infos
+					$posy=$this->_tableau_info($pdf, $object, $bottomlasttab, $outputlangs);
+					
+					// Affiche zone totaux
+					foreach ($object->lines as $line)
+					{
+						$vatrate=(string) $line->tva_tx;
+						
+						$prev_progress = $line->get_prev_progress();
+						if ($prev_progress > 0) $tvaligne = $line->total_tva * ($line->situation_percent - $prev_progress) / $line->situation_percent;
+						else $tvaligne = $line->total_tva;
+	
+						if ($object->remise_percent) $tvaligne-=($tvaligne*$object->remise_percent)/100;
+					
+						if (($line->info_bits & 0x01) == 0x01) $vatrate.='*';
+						if (! isset($this->tva[$vatrate])) $this->tva[$vatrate]='';
+						$this->tva[$vatrate] += $tvaligne;
+					}
+
+					$posy=$this->_tableau_tot_situation($pdf, $object, $deja_regle, $bottomlasttab, $outputlangs);
+					$this->tva = array();
+					
+					// Pied de page
+					$this->_pagefoot($pdf,$object,$outputlangs,1);
+					if (method_exists($pdf,'AliasNbPages')) $pdf->AliasNbPages();
+			
+					// Page break
+					$pageposbefore=$pdf->getPage();
+					$pdf->AddPage();
+					$pagenb++;
+					if (! empty($tplidx)) $pdf->useTemplate($tplidx);
+					if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+					$pdf->setPage($pageposbefore+1);
+					$showpricebeforepagebreak=0;
+					
+					$iniY = $tab_top_newpage+10;
+					$curY = $tab_top_newpage+10;
+					$nexY = $tab_top_newpage+10;
 				}
 				else 
 				{
@@ -592,10 +593,13 @@ class pdf_agrume extends ModelePDFFactures
 					}
 
 					// Unit price before discount
-					$up_excl_tax = pdf_getlineupexcltax($object, $i, $outputlangs, $hidedetails);
-					$pdf->SetXY($this->posxup, $curY);
-					$pdf->MultiCell($this->posxqty-$this->posxup-0.8, 3, $up_excl_tax, 0, 'R', 0);
-
+					if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_UNITPRICE))
+					{
+						$up_excl_tax = pdf_getlineupexcltax($object, $i, $outputlangs, $hidedetails);
+						$pdf->SetXY($this->posxup, $curY);
+						$pdf->MultiCell($this->posxqty-$this->posxup-0.8, 3, $up_excl_tax, 0, 'R', 0);
+					}
+					
 					// Quantity
 					$qty = pdf_getlineqty($object, $i, $outputlangs, $hidedetails);
 					$pdf->SetXY($this->posxqty, $curY);
@@ -1702,12 +1706,16 @@ class pdf_agrume extends ModelePDFFactures
 			}
 		}
 
-		$pdf->line($this->posxup-1, $tab_top, $this->posxup-1, $tab_top + $tab_height);
-		if (empty($hidetop))
+		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_UNITPRICE))
 		{
-			$pdf->SetXY($this->posxup-1, $tab_top+1);
-			$pdf->MultiCell($this->posxqty-$this->posxup-1,2, $outputlangs->transnoentities("PriceUHT"),'','C');
+			$pdf->line($this->posxup-1, $tab_top, $this->posxup-1, $tab_top + $tab_height);
+			if (empty($hidetop))
+			{
+				$pdf->SetXY($this->posxup-1, $tab_top+1);
+				$pdf->MultiCell($this->posxqty-$this->posxup-1,2, $outputlangs->transnoentities("PriceUHT"),'','C');
+			}
 		}
+		
 
 		$pdf->line($this->posxqty-1, $tab_top, $this->posxqty-1, $tab_top + $tab_height);
 		if (empty($hidetop))
