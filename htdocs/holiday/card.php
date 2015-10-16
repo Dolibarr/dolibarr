@@ -84,20 +84,26 @@ if ($action == 'create')
 	    $description = trim(GETPOST('description'));
 	    $userID = GETPOST('userID');
 
+    	// If no start date
+	    if ($type <= 0)
+	    {
+	        setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), 'errors');
+	        $error++;
+	        $action='create';
+	    }
+	    
 	    // If no start date
 	    if (empty($date_debut))
 	    {
 	        header('Location: card.php?action=request&error=nodatedebut');
 	        exit;
 	    }
-
 	    // If no end date
 	    if (empty($date_fin))
 	    {
 	        header('Location: card.php?action=request&error=nodatefin');
 	        exit;
 	    }
-
 	    // If start date after end date
 	    if ($date_debut > $date_fin)
 	    {
@@ -128,22 +134,27 @@ if ($action == 'create')
 	        exit;
 	    }
 
-	    $cp->fk_user = $userid;
-	    $cp->description = $description;
-	    $cp->date_debut = $date_debut;
-	    $cp->date_fin = $date_fin;
-	    $cp->fk_validator = $valideur;
-		$cp->halfday = $halfday;
-		$cp->fk_type = $type;
-
-		$verif = $cp->create($user);
-
+	    $result = 0;
+	    
+	    if (! $error)
+	    {
+    	    $cp->fk_user = $userid;
+    	    $cp->description = $description;
+    	    $cp->date_debut = $date_debut;
+    	    $cp->date_fin = $date_fin;
+    	    $cp->fk_validator = $valideur;
+    		$cp->halfday = $halfday;
+    		$cp->fk_type = $type;
+    
+    		$result = $cp->create($user);
+	    }
+	    
 	    // If no SQL error we redirect to the request card
-	    if ($verif > 0)
+	    if ($result > 0)
 	    {
 			$db->commit();
 
-	    	header('Location: card.php?id='.$verif);
+	    	header('Location: card.php?id='.$result);
 	        exit;
 	    }
 	    else
@@ -151,7 +162,7 @@ if ($action == 'create')
 	    	$db->rollback();
 
 	        // Otherwise we display the request form with the SQL error message
-	        header('Location: card.php?action=request&error=SQL_Create&msg='.$cp->error);
+	        header('Location: card.php?action=request');
 	        exit;
 	    }
     }
