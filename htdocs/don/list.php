@@ -43,6 +43,7 @@ if (! $sortfield) $sortfield="d.datedon";
 $limit = $conf->liste_limit;
 
 $statut=isset($_GET["statut"])?$_GET["statut"]:"-1";
+$search_all=GETPOST('sall','alpha');
 $search_ref=GETPOST('search_ref','alpha');
 $search_company=GETPOST('search_company','alpha');
 $search_name=GETPOST('search_name','alpha');
@@ -51,9 +52,10 @@ $optioncss = GETPOST('optioncss','alpha');
 
 if (!$user->rights->don->lire) accessforbidden();
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
-	$search_ref="";
+	$search_all="";
+    $search_ref="";
 	$search_company="";
 	$search_name="";
 	$search_amount="";
@@ -82,6 +84,10 @@ if ($statut >= 0)
 if (trim($search_ref) != '')
 {
     $sql.= ' AND d.rowid LIKE \'%'.$db->escape(trim($search_ref)) . '%\'';
+}
+if (trim($search_all) != '')
+{
+    $sql .= natural_search(array('d.rowid', 'd.ref', 'd.lastname', 'd.firstname', 'd.societe'), $search_all);
 }
 if (trim($search_company) != '')
 {

@@ -64,7 +64,40 @@ if (GETPOST('search_contract') != '')
 	header("Location: ".DOL_URL_ROOT.'/contrat/list.php?sall='.urlencode(GETPOST('search_contract')));
 	exit;
 }
+if (GETPOST('search_invoice') != '')
+{
+	header("Location: ".DOL_URL_ROOT.'/compta/facture/list.php?sall='.urlencode(GETPOST('search_invoice')));
+	exit;
+}
+if (GETPOST('search_supplier_invoice') != '')
+{
+	header("Location: ".DOL_URL_ROOT.'/fourn/facture/list.php?sall='.urlencode(GETPOST('search_supplier_invoice')));
+	exit;
+}
+if (GETPOST('search_donation') != '')
+{
+	header("Location: ".DOL_URL_ROOT.'/don/list.php?sall='.urlencode(GETPOST('search_donation')));
+	exit;
+}
+if (GETPOST('search_product') != '')
+{
+	header("Location: ".DOL_URL_ROOT.'/product/list.php?sall='.urlencode(GETPOST('search_product')));
+	exit;
+}
+if (GETPOST('search_thirdparty') != '')
+{
+	header("Location: ".DOL_URL_ROOT.'/societe/list.php?mode=search&sall='.urlencode(GETPOST('search_thirdparty')));
+	exit;
+}
+if (GETPOST('search_contact') != '')
+{
+	header("Location: ".DOL_URL_ROOT.'/contact/list.php?mode=search&sall='.urlencode(GETPOST('search_contact')));
+	exit;
+}
 
+
+    
+    
 // If we are here, search was called with no supported criteria
 if (! empty($_SERVER['HTTP_REFERER']))
 {

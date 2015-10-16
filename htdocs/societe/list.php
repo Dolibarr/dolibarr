@@ -43,11 +43,10 @@ $result = restrictedArea($user,'societe',$socid,'');
 
 $search_nom=trim(GETPOST("search_nom"));
 $search_nom_only=trim(GETPOST("search_nom_only"));
-$search_all=trim(GETPOST("search_all"));
+$search_all=trim(GETPOST("sall"));
 $sbarcode=trim(GETPOST("sbarcode"));
 $search_town=trim(GETPOST("search_town"));
 $search_zip=trim(GETPOST("search_zip"));
-$socname=trim(GETPOST("socname"));
 $search_idprof1=trim(GETPOST('search_idprof1'));
 $search_idprof2=trim(GETPOST('search_idprof2'));
 $search_idprof3=trim(GETPOST('search_idprof3'));
@@ -63,7 +62,6 @@ $search_status=GETPOST("search_status",'int');
 
 $optioncss=GETPOST('optioncss','alpha');
 $mode=GETPOST("mode");
-$modesearch=GETPOST("mode_search");
 
 $sortfield=GETPOST("sortfield",'alpha');
 $sortorder=GETPOST("sortorder",'alpha');
@@ -84,6 +82,21 @@ $extrafields = new ExtraFields($db);
 $extralabels = $extrafields->fetch_name_optionals_label('thirdparty');
 $search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
 
+$fieldstosearchall = array(
+	's.nom',
+	's.name_alias',
+	's.code_client',
+    "s.code_fournisseur",
+	's.email',
+	's.url',
+	's.siren',
+    's.siret',
+    's.ape',
+    "s.idprof4","s.idprof5","s.idprof6",
+    's.tva_intra'
+);
+if (!empty($conf->barcode->enabled)) $fieldstosearchall[] = 's.barcode';
+
 
 /*
  * Actions
@@ -94,34 +107,14 @@ include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 // special search
 if ($mode == 'search')
 {
-	$search_nom=$socname;
-
 	$sql = "SELECT s.rowid";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	if ($search_sale || (!$user->rights->societe->client->voir && !$socid)) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
     // We'll need this table joined to the select in order to filter by categ
     if ($search_categ) $sql.= ", ".MAIN_DB_PREFIX."categorie_societe as cs";
     $sql.= " WHERE s.entity IN (".getEntity('societe', 1).")";
-
-    // For natural search
-    $scrit = explode(' ', $socname);
-
-	$fields = array(
-		's.nom',
-		's.code_client',
-		's.email',
-		's.url',
-		's.siren',
-		's.name_alias'
-	);
-
-	if (!empty($conf->barcode->enabled)) {
-		$fields[] = 's.barcode';
-	}
-
-    foreach ($scrit as $crit) {
-        $sql.= natural_search($fields, $crit);
-    }
+    // sall criteria
+    $sql.= natural_search($fields, $sall);
 
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if ($socid) $sql.= " AND s.rowid = ".$socid;
@@ -180,8 +173,6 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
 {
     $search_categ='';
     $search_sale='';
-    $socname="";
-	$search_nom="";
 	$sbarcode="";
 	$search_town="";
 	$search_zip="";
@@ -197,11 +188,6 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
 }
 
 if ($search_status=='') $search_status=1; // always display active thirdparty first
-
-if ($socname)
-{
-	$search_nom=$socname;
-}
 
 
 /*
@@ -251,9 +237,9 @@ if ($search_categ)    $sql.= " AND s.rowid = cs.fk_soc";   // Join for the neede
 if (! $user->rights->fournisseur->lire) $sql.=" AND (s.fournisseur <> 1 OR s.client <> 0)";    // client=0, fournisseur=0 must be visible
 if ($search_sale)     $sql.= " AND sc.fk_user = ".$db->escape($search_sale);
 if ($search_categ)    $sql.= " AND cs.fk_categorie = ".$db->escape($search_categ);
+if ($search_nom)      $sql.= natural_search("s.nom",$search_nom);
 if ($search_nom_only) $sql.= natural_search("s.nom",$search_nom_only);
-if ($search_all)      $sql.= natural_search(array("s.nom", "s.name_alias", "s.code_client", "s.code_fournisseur", "s.email", "s.url","s.siren","s.siret","s.ape","s.idprof4","s.idprof5","s.idprof6"), $search_all);
-if ($search_nom)      $sql.= natural_search(array("s.nom", "s.name_alias", "s.code_client", "s.code_fournisseur", "s.email", "s.url","s.siren","s.siret","s.ape","s.idprof4","s.idprof5","s.idprof6"), $search_nom);
+if ($search_all)      $sql.= natural_search($fieldstosearchall, $search_all);
 if ($search_town)     $sql.= natural_search("s.town",$search_town);
 if ($search_zip)      $sql.= natural_search("s.zip",$search_zip);
 if ($search_idprof1)  $sql.= natural_search("s.siren",$search_idprof1);
@@ -305,7 +291,7 @@ if ($resql)
 	$num = $db->num_rows($resql);
 	$i = 0;
 
-	$param = "&amp;socname=".urlencode($socname);
+	$param = "&amp;sall=".urlencode($sall);
 	$param.= "&amp;search_nom=".urlencode($search_nom);
 	$param.= "&amp;search_town=".urlencode($search_town);
 	$param.= "&amp;search_zip=".urlencode($search_zip);
@@ -386,7 +372,7 @@ if ($resql)
 	// Define list of fields to show into list
     $arrayfields=array(
         's.nom'=>array('label'=>$langs->trans("Company"), 'checked'=>1),
-        's.barcode'=>array('label'=>$langs->trans("BarCode"), 'checked'=>1, 'enabled'=>(! empty($conf->barcode->enabled))),
+        's.barcode'=>array('label'=>$langs->trans("Gencod"), 'checked'=>1, 'enabled'=>(! empty($conf->barcode->enabled))),
         's.town'=>array('label'=>$langs->trans("Town"), 'checked'=>1),
         's.zip'=>array('label'=>$langs->trans("Zip"), 'checked'=>1),
         'country.code_iso'=>array('label'=>$langs->trans("Country"), 'checked'=>1),
@@ -405,7 +391,7 @@ if ($resql)
 
 	print '<tr class="liste_titre">';
 	if (! empty($arrayfields['s.nom']['checked']))            print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
-    if (! empty($arrayfields['s.barcode']['checked']))        print_liste_field_titre($langs->trans("BarCode"), $_SERVER["PHP_SELF"], "s.barcode",$param,'','',$sortfield,$sortorder);
+    if (! empty($arrayfields['s.barcode']['checked']))        print_liste_field_titre($langs->trans("Gencod"), $_SERVER["PHP_SELF"], "s.barcode",$param,'','',$sortfield,$sortorder);
 	if (! empty($arrayfields['s.town']['checked']))           print_liste_field_titre($langs->trans("Town"),$_SERVER["PHP_SELF"],"s.town","",$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['s.zip']['checked']))            print_liste_field_titre($langs->trans("Zip"),$_SERVER["PHP_SELF"],"s.zip","",$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['country.code_iso']['checked'])) print_liste_field_titre($langs->trans("Country"),$_SERVER["PHP_SELF"],"country.code_iso","",$param,'align="center"',$sortfield,$sortorder);
@@ -573,7 +559,7 @@ if ($resql)
 		// Barcode
         if (! empty($arrayfields['s.barcode']['checked']))
 		{
-			print '<td>'.$objp->barcode.'</td>';
+			print '<td>'.$obj->barcode.'</td>';
 		}
 		// Town
         if (! empty($arrayfields['s.town']['checked']))

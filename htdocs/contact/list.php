@@ -40,6 +40,7 @@ $contactid = GETPOST('id','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'contact', $contactid,'');
 
+$sall=GETPOST("sall");
 $search_firstlast_only=GETPOST("search_firstlast_only");
 $search_lastname=GETPOST("search_lastname");
 $search_firstname=GETPOST("search_firstname");
@@ -56,13 +57,13 @@ $search_priv=GETPOST("search_priv");
 $search_categ=GETPOST("search_categ",'int');
 $search_status=GETPOST("search_status",'int');
 if ($search_status=='') $search_status=1; // always display activ customer first
+
 $optioncss = GETPOST('optioncss','alpha');
 
 
 $type=GETPOST("type");
 $view=GETPOST("view");
 
-$sall=GETPOST("contactname");
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
 $page = GETPOST('page', 'int');
@@ -98,8 +99,9 @@ else if ($type == "o")
 	$urlfiche="";
 }
 
-if (GETPOST('button_removefilter_x') || GETPOST('button_removefilter'))	// Both tests are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x') || GETPOST('button_removefilter.x') || GETPOST('button_removefilter'))	// All tests are required to be compatible with all browsers
 {
+    $sall="";
     $search_firstlast_only="";
     $search_lastname="";
     $search_firstname="";
@@ -113,7 +115,6 @@ if (GETPOST('button_removefilter_x') || GETPOST('button_removefilter'))	// Both 
     $search_email="";
     $search_skype="";
     $search_priv="";
-    $sall="";
     $seach_status=1;
 }
 if ($search_priv < 0) $search_priv='';
