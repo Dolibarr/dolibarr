@@ -1432,13 +1432,6 @@ else
 		print '<tr><td>'.$langs->trans("UserTitle").'</td><td class="valeur">'.$object->getCivilityLabel().'&nbsp;</td>';
 		print '</tr>';
 
-		// Lastname
-		print '<tr><td>'.$langs->trans("Lastname").'</td><td class="valeur">'.$object->lastname.'&nbsp;</td>';
-		print '</tr>';
-
-		// Firstname
-		print '<tr><td>'.$langs->trans("Firstname").'</td><td class="valeur">'.$object->firstname.'&nbsp;</td></tr>';
-
 		// Password
 		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
 		{
@@ -1558,6 +1551,22 @@ else
 			else print $langs->trans("NoDolibarrAccess");
 		}
 		print '</td></tr>';
+
+        // Date end subscription
+        print '<tr><td>'.$langs->trans("SubscriptionEndDate").'</td><td class="valeur">';
+        if ($object->datefin)
+        {
+            print dol_print_date($object->datefin,'day');
+            if ($object->hasDelay()) {
+                print " ".img_warning($langs->trans("Late"));
+            }
+        }
+        else
+        {
+            print $langs->trans("SubscriptionNotReceived");
+            if ($object->statut > 0) print " ".img_warning($langs->trans("Late")); // Affiche picto retard uniquement si non brouillon et non resilie
+        }
+        print '</td></tr>';
 
 		print "</table>\n";
 
