@@ -345,7 +345,7 @@ if ($id || $ref)
 					print $form->select_company(GETPOST("id_fourn"),'id_fourn','fournisseur=1',1,0,0,$events);
 
 					$parameters=array('filtre'=>"fournisseur=1",'html_name'=>'id_fourn','selected'=>GETPOST("id_fourn"),'showempty'=>1,'prod_id'=>$product->id);
-				    $reshook=$hookmanager->executeHooks('formCreateThirdpartyOptions',$parameters,$object,$action);
+				    $reshook=$hookmanager->executeHooks('formCreateThirdpartyOptions',$parameters,$product,$action);
 					if (empty($reshook))
 					{
 						if (empty($form->result))
@@ -485,7 +485,7 @@ if ($id || $ref)
 				if (is_object($hookmanager))
 				{
 					$parameters=array('id_fourn'=>$id_fourn,'prod_id'=>$product->id);
-				    $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);
+				    $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$product,$action);
 				}
 
 				print '</table>';
@@ -508,7 +508,7 @@ if ($id || $ref)
 			if ($action != 'add_price' && $action != 'updateprice')
 			{
 				$parameters=array();
-				$reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+				$reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$product,$action);    // Note that $action and $object may have been modified by hook
 				if (empty($reshook))
 				{
 					if ($user->rights->produit->creer || $user->rights->service->creer)
@@ -632,7 +632,7 @@ if ($id || $ref)
 						if (is_object($hookmanager))
 						{
 							$parameters=array('id_pfp'=>$productfourn->product_fourn_price_id,'id_fourn'=>$id_fourn,'prod_id'=>$product->id);
-						    $reshook=$hookmanager->executeHooks('printObjectLine',$parameters,$object,$action);
+						    $reshook=$hookmanager->executeHooks('printObjectLine',$parameters,$product,$action);
 						}
 
 						// Modify-Remove
