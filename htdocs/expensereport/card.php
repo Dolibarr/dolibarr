@@ -1100,13 +1100,13 @@ if ($action == 'create')
 	print '<table class="border" width="100%">';
 	print '<tbody>';
 	print '<tr>';
-	print '<td>'.$langs->trans("DateStart").'</td>';
+	print '<td class="fieldrequired">'.$langs->trans("DateStart").'</td>';
 	print '<td>';
 	$form->select_date($date_start?$date_start:-1,'date_debut',0,0,0,'',1,1);
 	print '</td>';
 	print '</tr>';
 	print '<tr>';
-	print '<td>'.$langs->trans("DateEnd").'</td>';
+	print '<td class="fieldrequired">'.$langs->trans("DateEnd").'</td>';
 	print '<td>';
 	$form->select_date($date_end?$date_end:-1,'date_fin',0,0,0,'',1,1);
 	print '</td>';
