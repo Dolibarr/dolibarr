@@ -3959,12 +3959,14 @@ class Product extends CommonObject
 
 		// Process
 		foreach($to_del as $del) {
-			$c->fetch($del);
-			$c->del_type($this, 'product');
+			if ($c->fetch($del) > 0) {
+				$c->del_type($this, 'product');
+			}
 		}
 		foreach ($to_add as $add) {
-			$c->fetch($add);
-			$c->add_type($this, 'product');
+			if ($c->fetch($add) > 0) {
+				$c->add_type($this, 'product');
+			}
 		}
 
 		return;

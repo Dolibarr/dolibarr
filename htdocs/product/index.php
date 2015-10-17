@@ -314,7 +314,8 @@ if ($result)
                     }
                 }
 				print '<td align="right">';
-    			print price($objp->price).' '.$langs->trans("HT");
+    			if (isset($objp->price_base_type) && $objp->price_base_type == 'TTC') print price($objp->price_ttc).' '.$langs->trans("TTC");
+    			else print price($objp->price).' '.$langs->trans("HT");
     			print '</td>';
 			}
 			print '<td align="right" class="nowrap">';

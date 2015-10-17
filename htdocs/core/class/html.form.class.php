@@ -3235,7 +3235,7 @@ class Form
             if (! empty($more)) {
             	$formconfirm.= '<div class="confirmquestions">'.$more.'</div>';
             }
-            $formconfirm.= ($question ? '<div class="confirmmessage"'.img_help('','').' '.$question . '</div>': '');
+            $formconfirm.= ($question ? '<div class="confirmmessage">'.img_help('','').' '.$question . '</div>': '');
             $formconfirm.= '</div>'."\n";
 
             $formconfirm.= "\n<!-- begin ajax formconfirm page=".$page." -->\n";
@@ -4797,7 +4797,7 @@ class Form
 
 		if ($rendermode == 0)
 		{
-			$cate_arbo = $this->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 64, 0, 1);
+			$cate_arbo = $this->select_all_categories($type, '', 'parent', 64, 0, 1);
 			foreach($categories as $c) {
 				$arrayselected[] = $c->id;
 			}

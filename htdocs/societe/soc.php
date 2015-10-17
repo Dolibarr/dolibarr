@@ -240,6 +240,26 @@ if (empty($reshook))
     {
         require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
+        if (! GETPOST('name'))
+        {
+            setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ThirdPartyName")), 'errors');
+            $error++;
+            $action='create';
+        }
+        if (GETPOST('client') < 0)
+        {
+            setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ProspectCustomer")), 'errors');
+            $error++;
+            $action='create';
+        }
+        if (GETPOST('fournisseur') < 0)
+        {
+            setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Supplier")), 'errors');
+            $error++;
+            $action='create';
+        }
+        
+        
         if ($action == 'update')
         {
         	$ret=$object->fetch($socid);
@@ -962,10 +982,11 @@ else
         print '<tr><td width="25%">'.fieldLabel('ProspectCustomer','customerprospect',1).'</td>';
 	    print '<td width="25%" class="maxwidthonsmartphone"><select class="flat" name="client" id="customerprospect">';
         $selected=isset($_POST['client'])?GETPOST('client'):$object->client;
+        if (GETPOST("type") == '') print '<option value="-1"></option>';
         if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) print '<option value="2"'.($selected==2?' selected':'').'>'.$langs->trans('Prospect').'</option>';
         if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) print '<option value="3"'.($selected==3?' selected':'').'>'.$langs->trans('ProspectCustomer').'</option>';
         if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) print '<option value="1"'.($selected==1?' selected':'').'>'.$langs->trans('Customer').'</option>';
-        print '<option value="0"'.($selected==0?' selected':'').'>'.$langs->trans('NorProspectNorCustomer').'</option>';
+        print '<option value="0"'.((string) $selected == '0'?' selected':'').'>'.$langs->trans('NorProspectNorCustomer').'</option>';
         print '</select></td>';
 
         print '<td width="25%">'.fieldLabel('CustomerCode','customer_code').'</td><td width="25%">';
@@ -984,7 +1005,7 @@ else
             // Supplier
             print '<tr>';
             print '<td>'.fieldLabel('Supplier','fournisseur',1).'</td><td>';
-            print $form->selectyesno("fournisseur",(isset($_POST['fournisseur'])?GETPOST('fournisseur'):$object->fournisseur),1);
+            print $form->selectyesno("fournisseur", (isset($_POST['fournisseur'])?GETPOST('fournisseur'):(GETPOST("type") == '' ? -1 : $object->fournisseur)), 1, 0, (GETPOST("type") == '' ? 1 : 0));
             print '</td>';
             print '<td>'.fieldLabel('SupplierCode','supplier_code').'</td><td>';
             print '<table class="nobordernopadding"><tr><td>';

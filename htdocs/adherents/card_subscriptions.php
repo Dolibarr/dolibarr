@@ -567,33 +567,30 @@ if ($rowid > 0)
 
     dol_fiche_head($head, 'subscription', $langs->trans("Member"), 0, 'user');
 
-    print '<table class="border" width="100%">';
-
     $linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php">'.$langs->trans("BackToList").'</a>';
-
-    // Ref
-    print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
-    print '<td class="valeur" colspan="2">';
-    print $form->showrefnav($object, 'rowid', $linkback);
-    print '</td></tr>';
-
-    $showphoto='<td rowspan="'.$rowspan.'" class="hideonsmartphone" align="center" valign="middle" width="25%">'.$form->showphoto('memberphoto',$object).'</td>';
+    
+    dol_banner_tab($object, 'rowid', $linkback);
+    
+    print '<div class="fichecenter">';
+    
+    print '<div class="underbanner clearboth"></div>';
+    print '<table class="border" width="100%">';
 
     // Login
     if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
     {
-        print '<tr><td>'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.$object->login.'&nbsp;</td>';
+        print '<tr><td class="titlefield">'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.$object->login.'&nbsp;</td>';
         print $showphoto; $showphoto='';
         print '</tr>';
     }
+
+    // Type
+    print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td class="valeur">'.$adht->getNomUrl(1)."</td></tr>\n";
 
     // Morphy
     print '<tr><td>'.$langs->trans("Nature").'</td><td class="valeur" >'.$object->getmorphylib().'</td>';
     print $showphoto; $showphoto='';
     print '</tr>';
-
-    // Type
-    print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">'.$adht->getNomUrl(1)."</td></tr>\n";
 
     // Company
     print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$object->societe.'</td></tr>';
@@ -701,12 +698,11 @@ if ($rowid > 0)
 
     print "</table>\n";
 
+    print '</div>';
+    
     dol_fiche_end();
 
     print '</form>';
-
-
-    dol_htmloutput_errors($errmsg,$errmsgs);
 
 
     /*
