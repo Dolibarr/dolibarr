@@ -68,6 +68,7 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="fac.datef,fac.rowid";
 
+$search_all = GETPOST('sall');
 $search_ref = GETPOST("search_ref","int");
 $search_ref_supplier = GETPOST("search_ref_supplier","alpha");
 $search_label = GETPOST("search_label","alpha");
@@ -86,6 +87,7 @@ $optioncss = GETPOST('optioncss','alpha');
 
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter"))		// Both test must be present to be compatible with all browsers
 {
+    $search_all="";
 	$search_ref="";
 	$search_ref_supplier="";
 	$search_label="";
@@ -96,6 +98,18 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter"))		// Both
 	$month="";
 	$filter="";
 }
+
+// List of fields to search into when doing a "search in all"
+$fieldstosearchall = array(
+    'fac.ref'=>'Ref',
+    'fac.ref_supplier'=>'RefSupplier',
+    //'fd.description'=>'Description',
+    's.nom'=>"ThirdParty",
+    'fac.note_public'=>'NotePublic',
+);
+if (empty($user->socid)) $fieldstosearchall["fac.note_private"]="NotePrivate";
+
+
 
 /*
  * Actions
@@ -157,7 +171,10 @@ if ($filter && $filter != -1)		// GETPOST('filtre') may be a string
 		$sql .= " AND " . $filt[0] . " = " . $filt[1];
 	}
 }
-
+if ($search_all)
+{
+    $sql.= natural_search(array_keys($fieldstosearchall), $search_all);
+}
 if ($search_ref)
 {
 	if (is_numeric($search_ref)) $sql .= natural_search(array('fac.ref'), $search_ref);
@@ -255,6 +272,18 @@ if ($resql)
 	print_barre_liste($langs->trans("BillsSuppliers").($socid?" $soc->name.":""),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="action" value="list">';
+	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
+
+    if ($search_all)
+    {
+        foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
+        print $langs->trans("FilterOnInto", $search_all, join(', ',$fieldstosearchall));
+    }
+    
 	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"fac.ref,fac.rowid","",$param,"",$sortfield,$sortorder);

@@ -61,6 +61,20 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
 	$search_amount="";
 }
 
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('orderlist'));
+
+
+// List of fields to search into when doing a "search in all"
+$fieldstosearchall = array(
+    'd.rowid'=>'Id',
+    'd.ref'=>'Ref',
+    'd.lastname'=>'Lastname',
+    'd.firstname'=>'Firstname',
+);
+    
+
+    
 /*
  * View
  */
@@ -87,7 +101,7 @@ if (trim($search_ref) != '')
 }
 if (trim($search_all) != '')
 {
-    $sql .= natural_search(array('d.rowid', 'd.ref', 'd.lastname', 'd.firstname', 'd.societe'), $search_all);
+    $sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
 if (trim($search_company) != '')
 {
@@ -126,6 +140,18 @@ if ($resql)
 
     print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">'."\n";
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="action" value="list">';
+	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+	print '<input type="hidden" name="type" value="'.$type.'">';
+
+    if ($search_all)
+    {
+        foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
+        print $langs->trans("FilterOnInto", $search_all, join(', ',$fieldstosearchall));
+    }
+    
 	print "<table class=\"noborder\" width=\"100%\">";
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"d.rowid","", $param,"",$sortfield,$sortorder);

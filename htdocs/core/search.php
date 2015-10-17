@@ -109,6 +109,22 @@ if (GETPOST('search_holiday') != '')
 	header("Location: ".DOL_URL_ROOT.'/holiday/list.php?mode=search&sall='.urlencode(GETPOST('search_holiday')));
 	exit;
 }
+if (GETPOST('search_member') != '')
+{
+	header("Location: ".DOL_URL_ROOT.'/adherents/list.php?mode=search&sall='.urlencode(GETPOST('search_member')));
+	exit;
+}
+if (GETPOST('search_project') != '')
+{
+	header("Location: ".DOL_URL_ROOT.'/projet/list.php?mode=search&search_all='.urlencode(GETPOST('search_project')));
+	exit;
+}
+if (GETPOST('search_task') != '')
+{
+	header("Location: ".DOL_URL_ROOT.'/projet/tasks/index.php?mode=search&search_all='.urlencode(GETPOST('search_task')));
+	exit;
+}
+
 
     
 // If we are here, search was called with no supported criteria

@@ -68,30 +68,35 @@ else
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-
-// Search task
+// Search project
 if (! empty($conf->projet->enabled) && $user->rights->projet->lire)
 {
-	$var=false;
-	print '<form method="post" action="'.DOL_URL_ROOT.'/projet/tasks/index.php">';
+	$listofsearchfields['search_task']=array('text'=>'Task');
+}
+
+if (count($listofsearchfields))
+{
+	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<input type="hidden" name="mode" value="'.$mine.'">';
-	print '<input type="hidden" name="search_status" value="-1">';	// All status
-	print '<table class="noborder nohover" width="100%">';
-	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchATask").'</td></tr>';
-	print '<tr '.$bc[$var].'>';
-	print '<td class="nowrap"><label for="sf_ref">'.$langs->trans("Ref").'</label>:</td><td><input type="text" class="flat" name="search_task_ref" id="sf_ref" size="18"></td>';
-	print '<td rowspan="3"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-	//print '<tr '.$bc[$var].'><td class="nowrap"><label for="syear">'.$langs->trans("Year").'</label>:</td><td><input type="text" class="flat" name="search_year" id="search_year" size="18"></td>';
-	print '<tr '.$bc[$var].'><td class="nowrap"><label for="sall">'.$langs->trans("Other").'</label>:</td><td><input type="text" class="flat" name="search_task_label" id="search_task_label" size="18"></td>';
-	print '</tr>';
-	print "</table></form>\n";
-	print "<br>\n";
+	print '<table class="noborder nohover centpercent">';
+	$i=0;
+	foreach($listofsearchfields as $key => $value)
+	{
+		if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
+		print '<tr>';
+		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label>:</td><td><input type="text" class="flat" name="'.$key.'" id="'.$key.'" size="18"></td>';
+		if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
+		print '</tr>';
+		$i++;
+	}
+	print '</table>';	
+	print '</form>';
+	print '<br>';
 }
 
 
 /* Affichage de la liste des projets d'aujourd'hui */
-print '<br><table class="noborder" width="100%">';
+print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td width="50%">'.$langs->trans('ActivityOnProjectToday').'</td>';
 print '<td width="50%" align="right">'.$langs->trans("Time").'</td>';
