@@ -64,7 +64,69 @@ if (GETPOST('search_contract') != '')
 	header("Location: ".DOL_URL_ROOT.'/contrat/list.php?sall='.urlencode(GETPOST('search_contract')));
 	exit;
 }
+if (GETPOST('search_invoice') != '')
+{
+	header("Location: ".DOL_URL_ROOT.'/compta/facture/list.php?sall='.urlencode(GETPOST('search_invoice')));
+	exit;
+}
+if (GETPOST('search_supplier_invoice') != '')
+{
+	header("Location: ".DOL_URL_ROOT.'/fourn/facture/list.php?sall='.urlencode(GETPOST('search_supplier_invoice')));
+	exit;
+}
+if (GETPOST('search_donation') != '')
+{
+	header("Location: ".DOL_URL_ROOT.'/don/list.php?sall='.urlencode(GETPOST('search_donation')));
+	exit;
+}
+if (GETPOST('search_product') != '')
+{
+	header("Location: ".DOL_URL_ROOT.'/product/list.php?sall='.urlencode(GETPOST('search_product')));
+	exit;
+}
+if (GETPOST('search_thirdparty') != '')
+{
+	header("Location: ".DOL_URL_ROOT.'/societe/list.php?mode=search&sall='.urlencode(GETPOST('search_thirdparty')));
+	exit;
+}
+if (GETPOST('search_contact') != '')
+{
+	header("Location: ".DOL_URL_ROOT.'/contact/list.php?mode=search&sall='.urlencode(GETPOST('search_contact')));
+	exit;
+}
+if (GETPOST('search_deplacement') != '')
+{
+	header("Location: ".DOL_URL_ROOT.'/compta/deplacement/list.php?mode=search&sall='.urlencode(GETPOST('search_deplacement')));
+	exit;
+}
+if (GETPOST('search_expensereport') != '')
+{
+	header("Location: ".DOL_URL_ROOT.'/expensereport/list.php?mode=search&sall='.urlencode(GETPOST('search_expensereport')));
+	exit;
+}
+if (GETPOST('search_holiday') != '')
+{
+	header("Location: ".DOL_URL_ROOT.'/holiday/list.php?mode=search&sall='.urlencode(GETPOST('search_holiday')));
+	exit;
+}
+if (GETPOST('search_member') != '')
+{
+	header("Location: ".DOL_URL_ROOT.'/adherents/list.php?mode=search&sall='.urlencode(GETPOST('search_member')));
+	exit;
+}
+if (GETPOST('search_project') != '')
+{
+	header("Location: ".DOL_URL_ROOT.'/projet/list.php?mode=search&search_all='.urlencode(GETPOST('search_project')));
+	exit;
+}
+if (GETPOST('search_task') != '')
+{
+	header("Location: ".DOL_URL_ROOT.'/projet/tasks/index.php?mode=search&search_all='.urlencode(GETPOST('search_task')));
+	exit;
+}
 
+
+    
 // If we are here, search was called with no supported criteria
 if (! empty($_SERVER['HTTP_REFERER']))
 {

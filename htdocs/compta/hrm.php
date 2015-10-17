@@ -71,37 +71,40 @@ print load_fiche_titre($langs->trans("HRMArea"),'', 'title_hrm.png');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-/*
- * Search expenses
- */
+
+if (! empty($conf->holiday->enabled) && $user->rights->holiday->read)
+{
+	$langs->load("holiday");
+    $listofsearchfields['search_holiday']=array('text'=>'TitreRequestCP');
+}
 if (! empty($conf->deplacement->enabled) && $user->rights->deplacement->lire)
 {
 	$langs->load("trips");
-    print '<form method="post" action="'.DOL_URL_ROOT.'/compta/deplacement/list.php">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    print '<table class="noborder nohover" width="100%">';
-    print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchATripAndExpense").'</td></tr>';
-    print "<tr ".$bc[0].">";
-    print "<td><label for=\"search_ref\">".$langs->trans("Ref").'</label>:</td><td><input type="text" name="search_ref" id="search_ref" class="flat" size="18"></td>';
-    print '<td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
-    //print "<tr ".$bc[0]."><td><label for=\"sall\">".$langs->trans("Other").'</label>:</td><td><input type="text" name="sall" id="sall" class="flat" size="18"></td>';
-    print '</tr>';
-    print "</table></form><br>";
+    $listofsearchfields['search_deplacement']=array('text'=>'ExpenseReport');
 }
-
 if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire)
 {
 	$langs->load("trips");
-    print '<form method="post" action="'.DOL_URL_ROOT.'/expensereport/list.php">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    print '<table class="noborder nohover" width="100%">';
-    print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchATripAndExpense").'</td></tr>';
-    print "<tr ".$bc[0].">";
-    print "<td><label for=\"search_ref\">".$langs->trans("Ref").'</label>:</td><td><input type="text" name="search_ref" id="search_ref" class="flat" size="18"></td>';
-    print '<td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
-    //print "<tr ".$bc[0]."><td><label for=\"sall\">".$langs->trans("Other").'</label>:</td><td><input type="text" name="sall" id="sall" class="flat" size="18"></td>';
-    print '</tr>';
-    print "</table></form><br>";
+    $listofsearchfields['search_expensereport']=array('text'=>'ExpenseReport');
+}
+if (count($listofsearchfields))
+{
+	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<table class="noborder nohover centpercent">';
+	$i=0;
+	foreach($listofsearchfields as $key => $value)
+	{
+		if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
+		print '<tr>';
+		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label>:</td><td><input type="text" class="flat" name="'.$key.'" id="'.$key.'" size="18"></td>';
+		if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
+		print '</tr>';
+		$i++;
+	}
+	print '</table>';	
+	print '</form>';
+	print '<br>';
 }
 
 

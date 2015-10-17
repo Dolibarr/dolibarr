@@ -66,4 +66,5 @@ ALTER TABLE llx_prelevement_facture_demande MODIFY COLUMN code_banque varchar(12
 ALTER TABLE llx_prelevement_lignes MODIFY COLUMN code_banque varchar(128);
 ALTER TABLE llx_societe_rib MODIFY COLUMN code_banque varchar(128);
 
+ALTER TABLE llx_contrat ADD COLUMN ref_customer varchar(30);
 

@@ -107,6 +107,16 @@ $hookmanager->initHooks(array('invoicelist'));
 
 $now=dol_now();
 
+// List of fields to search into when doing a "search in all"
+$fieldstosearchall = array(
+    'f.facnumber'=>'Ref',
+    'f.ref_client'=>'RefCustomer',
+    'fd.description'=>'Description',
+    's.nom'=>"ThirdParty",
+    'f.note_public'=>'NotePublic',
+);
+if (empty($user->socid)) $fieldstosearchall["f.note_private"]="NotePrivate";
+
 
 /*
  * Actions
@@ -134,6 +144,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
     $month='';
 }
 
+    
 
 /*
  * View
@@ -232,7 +243,7 @@ if (! $sall)
 }
 else
 {
-    $sql .= natural_search(array('s.nom', 'f.facnumber', 'f.note_public', 'fd.description'), $sall);
+    $sql .= natural_search(array_keys($fieldstosearchall), $sall);
 }
 $sql.= ' ORDER BY ';
 $listfield=explode(',',$sortfield);
@@ -275,7 +286,19 @@ if ($resql)
 
     $i = 0;
     print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="action" value="list">';
+	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
 
+    if ($sall)
+    {
+        foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
+        print $langs->trans("FilterOnInto", $sall, join(', ',$fieldstosearchall));
+    }
+    
  	// If the user can view prospects other than his'
     $moreforfilter='';
  	if ($user->rights->societe->client->voir || $socid)

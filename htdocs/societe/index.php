@@ -56,54 +56,43 @@ print load_fiche_titre($transAreaType,$linkback,'title_companies.png');
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
-/*
- * Search area
- */
-$rowspan=2;
-if (! empty($conf->barcode->enabled)) $rowspan++;
-print '<form method="post" action="'.DOL_URL_ROOT.'/societe/list.php">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<table class="noborder nohover" width="100%">'."\n";
-print '<tr class="liste_titre">';
-print '<th colspan="3">'.$langs->trans("SearchThirdparty").'</th></tr>';
-print "<tr ".$bc[false]."><td>";
-print '<label for="search_nom_only">'.$langs->trans("Name").'</label>:</td><td><input class="flat" type="text" size="14" name="search_nom_only" id="search_nom_only"></td>';
-print '<td rowspan="'.$rowspan.'"><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
-if (! empty($conf->barcode->enabled))
-{
-	print "<tr ".$bc[false]."><td ".$bc[false].">";
-	print '<label for="sbarcode">'.$langs->trans("BarCode").'</label>:</td><td><input class="flat" type="text" size="14" name="sbarcode" id="sbarcode"></td>';
-	//print '<td><input type="submit" class="button" value="'.$langs->trans("Search").'"></td>';
-	print '</tr>';
-}
-print "<tr ".$bc[false]."><td ".$bc[false].">";
-print '<label for="search_all">'.$langs->trans("Other").'</label>:</td><td '.$bc[false].'><input class="flat" type="text" size="14" name="search_all" id="search_all"></td>';
-//print '<td><input type="submit" class="button" value="'.$langs->trans("Search").'"></td>';
-print '</tr>'."\n";
-print "</table></form><br>\n";
 
-/*
- * Search contact
- */
-$rowspan=2;
-if (! empty($conf->barcode->enabled)) $rowspan++;
-print '<form method="post" action="'.DOL_URL_ROOT.'/contact/list.php">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
-print '<table class="noborder nohover" width="100%">'."\n";
-print '<tr class="liste_titre">';
-print '<th colspan="3">'.$langs->trans("SearchContact").'</th></tr>'."\n";
-print "<tr ".$bc[false]."><td>";
-print '<label for="search_nom_only">'.$langs->trans("Name").'</label>:</td><td><input class="flat" type="text" size="14" name="search_firstlast_only" id="search_firstlast_only"></td>';
-print '<td rowspan="'.$rowspan.'"><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>'."\n";
-print "<tr ".$bc[false]."><td ".$bc[false].">";
-print '<label for="search_all">'.$langs->trans("Other").'</label>:</td><td '.$bc[false].'><input class="flat" type="text" size="14" name="contactname" id="contactname"></td>';
-//print '<td><input type="submit" class="button" value="'.$langs->trans("Search").'"></td>';
-print '</tr>'."\n";
-print "</table></form><br>\n";
+// Search thirdparty
+if (! empty($conf->societe->enabled) && $user->rights->societe->lire)
+{
+	$listofsearchfields['search_thirdparty']=array('text'=>'Thirdparty');
+}
+// Search contact/address
+if (! empty($conf->societe->enabled) && $user->rights->societe->lire)
+{
+	$listofsearchfields['search_contact']=array('text'=>'Contact');
+}
+
+if (count($listofsearchfields))
+{
+	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<table class="noborder nohover centpercent">';
+	$i=0;
+	foreach($listofsearchfields as $key => $value)
+	{
+		if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
+		print '<tr>';
+		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label>:</td><td><input type="text" class="flat" name="'.$key.'" id="'.$key.'" size="18"></td>';
+		if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
+		print '</tr>';
+		$i++;
+	}
+	print '</table>';	
+	print '</form>';
+	print '<br>';
+}
+
 
 /*
  * Statistics area
  */
+ 
 $third = array(
 		'customer' => 0,
 		'prospect' => 0,

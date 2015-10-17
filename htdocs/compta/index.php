@@ -90,56 +90,40 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 $max=3;
 
 
-/*
- * Search invoices
- */
+// Search customer invoices
 if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 {
-	print '<form method="post" action="'.DOL_URL_ROOT.'/compta/facture/list.php">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<table class="noborder nohover" width="100%">';
-	print "<tr class=\"liste_titre\">";
-	print '<td colspan="3">'.$langs->trans("SearchACustomerInvoice").'</td></tr>';
-	print "<tr ".$bc[0]."><td><label for=\"sf_ref\">".$langs->trans("Ref").'</label>:</td><td><input type="text" name="sf_ref" id="sf_ref" class="flat" size="18"></td>';
-	print '<td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-	print "<tr ".$bc[0]."><td><label for=\"sall\">".$langs->trans("Other").'</label>:</td><td><input type="text" name="sall" id="sall" class="flat" size="18"></td>';
-	print '</tr>';
-	print "</table></form><br>";
+	$listofsearchfields['search_invoice']=array('text'=>'CustomerInvoice');
 }
-
-/*
- * Search supplier invoices
- */
+// Search supplier invoices
 if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire)
 {
-	print '<form method="post" action="'.DOL_URL_ROOT.'/fourn/facture/list.php">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<table class="noborder nohover" width="100%">';
-	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchASupplierInvoice").'</td></tr>';
-	print "<tr ".$bc[0].">";
-	print "<td><label for=\"search_ref\">".$langs->trans("Ref").'</label>:</td><td><input type="text" name="search_ref" id="search_ref" class="flat" size="18"></td>';
-	print '<td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-	print "<tr ".$bc[0]."><td><label for=\"search_ref_supplier\">".$langs->trans("RefSupplier").'</label>:</td><td><input type="text" name="search_ref_supplier" id="search_ref_supplier" class="flat" size="18"></td>';
-	print '</tr>';
-	print "</table></form><br>";
+	$listofsearchfields['search_supplier_invoice']=array('text'=>'SupplierInvoice');
 }
-
-/*
- * Search donations
- */
 if (! empty($conf->don->enabled) && $user->rights->don->lire)
 {
 	$langs->load("donations");
-    print '<form method="post" action="'.DOL_URL_ROOT.'/don/list.php">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    print '<table class="noborder nohover" width="100%">';
-    print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchADonation").'</td></tr>';
-    print "<tr ".$bc[0].">";
-    print "<td><label for=\"search_ref\">".$langs->trans("Ref").'</label>:</td><td><input type="text" name="search_ref" id="search_ref" class="flat" size="18"></td>';
-    print '<td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
-    //print "<tr ".$bc[0]."><td><label for=\"sall\"".$langs->trans("Other").'</label>:</td><td><input type="text" name="sall" id="sall" class="flat" size="18"></td>';
-    print '</tr>';
-    print "</table></form><br>";
+	$listofsearchfields['search_donation']=array('text'=>'Donation');
+}
+
+if (count($listofsearchfields))
+{
+	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<table class="noborder nohover centpercent">';
+	$i=0;
+	foreach($listofsearchfields as $key => $value)
+	{
+		if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
+		print '<tr>';
+		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label>:</td><td><input type="text" class="flat" name="'.$key.'" id="'.$key.'" size="18"></td>';
+		if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
+		print '</tr>';
+		$i++;
+	}
+	print '</table>';	
+	print '</form>';
+	print '<br>';
 }
 
 /**

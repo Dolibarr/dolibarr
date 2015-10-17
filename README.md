@@ -69,39 +69,22 @@ See the [ChangeLog](ChangeLog) file.
 
 ## FEATURES
 
-### General features
-- Users and groups with finely grained rights
-- Localization in most major languages
-- Very user friendly and easy to use
-- Highly customizable: enable only the modules you need, add user personalized fields, choose your skin, several menu managers (can be used by internal users as a back-office with a particular menu, or by external users as a front-office with another one)
-- Works with PHP 5.3+ and MySQL 4.1+ or PostgreSQL 8.1. (See requirements on the [Wiki](http://wiki.dolibarr.org/index.php/Prerequisite))
-- Compatible with all Cloud solutions that match MySQL, PHP or PostgreSQL prerequisites.
-- An easy to understand, maintain and code interfaces with your own information system (PHP with no heavy framework; trigger and hook architecture)
-- Support for country specific features:
-    - Spanish Tax RE and ISPF
-    - French NPR VAT rate (VAT called "Non Perçue Récupérable" for DOM-TOM)
-    - Canadian double taxes (federal/province) and other countries using cumulative VAT
-    - Tunisian tax stamp
-    - Compatible with [European directives](http://europa.eu/legislation_summaries/taxation/l31057_en.htm) (2006/112/CE ... 2010/45/UE)
--    ...
-
-### Main modules
+### Main modules (all optional)
 
 - Customers, Prospects and/or Suppliers directory
 - Products and/or Services catalog
-- Bank accounts management
-- Customer and Supplier Orders management
 - Commercial proposals management
-- Contracts management
-- Invoices management
+- Customer and Supplier Orders management
+- Invoices and payment management
+- Standing orders management (European SEPA)
+- Bank accounts management
+- Shared calendar
+- Opportunities and/or project management (following project benefit including invoices, expense reports, time spent, ...)
 - Projects management
-- Events management
-- Payments management
-- Standing orders management
+- Contracts management
 - Stock management
 - Shipping management
 - Interventions management
-- PDF or ODT generation for invoice, proposals, orders...
 - Agenda with ical and vcal export for third party tools integration
 - Electronic Document Management (EDM)
 - Foundations members management
@@ -127,6 +110,25 @@ See the [ChangeLog](ChangeLog) file.
 - Payment platforms integration (PayBox, PayPal)
 - …
 
+### Other general features
+- Multi-Users and groups with finely grained rights
+- Localization in most major languages
+- Can manage several companies by adding external module multi-company.
+- Can manage several currencies by adding external module multi-currency.
+- Very user friendly and easy to use
+- Highly customizable: enable only the modules you need, add user personalized fields, choose your skin, several menu managers (can be used by internal users as a back-office with a particular menu, or by external users as a front-office with another one)
+- Works with PHP 5.3+ and MySQL 4.1+ or PostgreSQL 8.1. (See requirements on the [Wiki](http://wiki.dolibarr.org/index.php/Prerequisite))
+- Compatible with all Cloud solutions that match MySQL, PHP or PostgreSQL prerequisites.
+- An easy to understand, maintain and code interfaces with your own information system (PHP with no heavy framework; trigger and hook architecture)
+- Support for country specific features:
+    - Spanish Tax RE and ISPF
+    - French NPR VAT rate (VAT called "Non Perçue Récupérable" for DOM-TOM)
+    - Canadian double taxes (federal/province) and other countries using cumulative VAT
+    - Tunisian tax stamp
+    - Compatible with [European directives](http://europa.eu/legislation_summaries/taxation/l31057_en.htm) (2006/112/CE ... 2010/45/UE)
+- PDF or ODT generation for invoice, proposals, orders...
+- …
+
 ### Extending
 
 Dolibarr can be extended with a lot of other external modules from third party developers available at the [DoliStore](http://www.dolistore.com).
@@ -135,10 +137,7 @@ Dolibarr can be extended with a lot of other external modules from third party d
 
 These are features that Dolibarr does **not** yet fully support:
 
-- Double-entry bookkeeping (only bank and treasury management)
-- Multiple currencies
-- Multiple companies
-    If you want to manage several companies or foundations, you must install the software several times (on same server or not) or use the MultiCompany addon module that allows to manage several companies in one Dolibarr instance (one database but with a logical isolation of datas)
+- Double-entry bookkeeping yet (only bank and treasury management)
 - Tasks dependencies in projects
 - Payroll module
 - Webmail

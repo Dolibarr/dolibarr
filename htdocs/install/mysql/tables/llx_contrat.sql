@@ -22,7 +22,8 @@ create table llx_contrat
 (
   rowid						integer AUTO_INCREMENT PRIMARY KEY,
   ref						varchar(30),		            -- contrat reference
-  ref_supplier				varchar(30),		            -- suplier contract ref
+  ref_customer				varchar(30),		            -- customer contract ref
+  ref_supplier				varchar(30),		            -- supplier contract ref
   ref_ext					varchar(30),		            -- external contract ref
   entity					integer DEFAULT 1 NOT NULL,		-- multi company id
   tms						timestamp,
@@ -44,6 +45,5 @@ create table llx_contrat
   model_pdf					varchar(255),
   import_key				varchar(14),
   extraparams				varchar(255)
-
 )ENGINE=innodb;
 
