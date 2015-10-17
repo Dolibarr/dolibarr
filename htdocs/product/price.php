@@ -208,11 +208,11 @@ if (empty($reshook))
 
 		if (empty($quantity)) {
 			$error ++;
-			setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentities("Qty")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Qty")), null, 'errors');
 		}
 		if (empty($newprice)) {
 			$error ++;
-			setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentities("Price")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Price")), null, 'errors');
 		}
 		if (! $error) {
 			// Calcul du prix HT et du prix unitaire

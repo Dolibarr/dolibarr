@@ -104,13 +104,13 @@ if ($action == 'add' && ! $_POST["cancel"])
 
 	if (! GETPOST('label'))
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv('Label')),'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Label")), null, 'errors');
 		$action='create';
 		$error++;
 	}
 	if (! GETPOST('bank'))
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv('BankName')),'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BankName")), null, 'errors');
 		$action='create';
 		$error++;
 	}

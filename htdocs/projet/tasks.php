@@ -90,13 +90,13 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 	{
 		if (empty($label))
 		{
-			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
 			$action='create';
 			$error++;
 		}
 		else if (empty($_POST['task_parent']))
 		{
-			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("ChildOfTask")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("ChildOfTask")), null, 'errors');
 			$action='create';
 			$error++;
 		}

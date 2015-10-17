@@ -746,7 +746,7 @@ if (empty($reshook))
 		}
 		else
 		{
-			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("RefNewContract")),'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("RefNewContract")), null, 'errors');
 		}
 	} 
 	else if ($action == 'update_extras') 

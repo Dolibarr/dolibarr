@@ -716,7 +716,7 @@ if (empty($reshook))
 	            // Product not selected
 	            $error++;
 	            $langs->load("errors");
-		        setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("ProductOrService")), 'errors');
+		        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ProductOrService")), null, 'errors');
 	        }
 	        if ($idprod == -1)
 	        {
