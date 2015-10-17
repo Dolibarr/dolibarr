@@ -87,7 +87,7 @@ if ($action == 'update' && $user->rights->categorie->creer)
 	{
 	    $error++;
 		$action = 'edit';
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
 	}
 	if (! $error && empty($categorie->error))
 	{

@@ -1506,7 +1506,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
 	else
 	{
 		$langs->load("errors");
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("File")), 'warnings');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("File")), null, 'errors');
 	}
 }
 

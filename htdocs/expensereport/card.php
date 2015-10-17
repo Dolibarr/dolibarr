@@ -833,13 +833,13 @@ if ($action == "addline")
 	if (! GETPOST('fk_c_type_fees') > 0)
 	{
 		$error++;
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")),'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
 		$action='';
 	}
 	if (GETPOST('vatrate') < 0 || GETPOST('vatrate') == '')
 	{
 		$error++;
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Vat")),'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Vat")), null, 'errors');
 		$action='';
 	}
 
@@ -849,7 +849,7 @@ if ($action == "addline")
 		if (empty($object_ligne->fk_projet) || $object_ligne->fk_projet==-1)
 		{
 			$error++;
-			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Project")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Project")), null, 'errors');
 		}
 	}*/
 
@@ -857,13 +857,13 @@ if ($action == "addline")
 	if (empty($object_ligne->date) || $object_ligne->date=="--")
 	{
 		$error++;
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
 	}
 	// Si aucun prix n'est rentré
 	if($object_ligne->value_unit==0)
 	{
 		$error++;
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("UP")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("UP")), null, 'errors');
 	}
 
 	// S'il y'a eu au moins une erreur
@@ -956,13 +956,13 @@ if ($action == "updateligne" )
 	if (! GETPOST('fk_c_type_fees') > 0)
 	{
 		$error++;
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")),'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
 		$action='';
 	}
 	if (GETPOST('vatrate') < 0 || GETPOST('vatrate') == '')
 	{
 		$error++;
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Vat")),'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Vat")), null, 'errors');
 		$action='';
 	}
 
