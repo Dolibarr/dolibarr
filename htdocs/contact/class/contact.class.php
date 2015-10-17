@@ -1144,12 +1144,14 @@ class Contact extends CommonObject
 
 		// Process
 		foreach ($to_del as $del) {
-			$c->fetch($del);
-			$c->del_type($this, 'contact');
+			if ($c->fetch($del) > 0) {
+				$c->del_type($this, 'contact');
+			}
 		}
 		foreach ($to_add as $add) {
-			$c->fetch($add);
-			$c->add_type($this, 'contact');
+			if ($c->fetch($add) > 0) {
+				$c->add_type($this, 'contact');
+			}
 		}
 
 		return;

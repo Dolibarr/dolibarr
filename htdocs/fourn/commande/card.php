@@ -1675,7 +1675,10 @@ elseif (! empty($object->id))
 		$object->date_commande=dol_now();
 
 		// We check if number is temporary number
-		if (preg_match('/^[\(]?PROV/i',$object->ref)) $newref = $object->getNextNumRef($object->thirdparty);
+		if (preg_match('/^[\(]?PROV/i',$object->ref) || empty($object->ref)) // empty should not happened, but when it occurs, the test save life 
+		{
+		    $newref = $object->getNextNumRef($object->thirdparty);
+		}
 		else $newref = $object->ref;
 
 		if ($newref < 0)

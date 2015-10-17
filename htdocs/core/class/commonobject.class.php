@@ -447,18 +447,18 @@ abstract class CommonObject
 
     	$countriesusingstate=array('AU','US','IN','GB','ES','UK','TR');
     	
-    	$contacti=0;
+    	$contactid=0;
     	$thirdpartyid=0;
-    	if ($this->elemet == 'societe')
+    	if ($this->element == 'societe')
     	{
     		$thirdpartyid=$this->id;
     	}
-    	if ($this->elemet == 'contact')
+    	if ($this->element == 'contact')
     	{
     		$contactid=$this->id;
 			$thirdpartyid=$object->fk_soc;
     	}
-        if ($this->elemet == 'user')
+        if ($this->element == 'user')
     	{
     		$contactid=$this->contact_id;
 			$thirdpartyid=$object->fk_soc;
@@ -489,40 +489,40 @@ abstract class CommonObject
 			$outdone++;
 		}
 
-		if ($this->phone_pro || $this->phone_mobile || $this->phone_perso || $this->fax || $this->office_phone || $this->user_mobile || $this->office_fax) $out.=($outdone?'<br>':'');
-    	if ($this->phone && empty($this->phone_pro)) {		// For objects that store pro phone into ->phone
-			$out.=dol_print_phone($this->phone,$country_code['code'],$contactid,$thirdpartyid,'AC_TEL','&nbsp;','phone',$langs->trans("PhonePro")); $outdone++;
+		if (! empty($this->phone_pro) || ! empty($this->phone_mobile) || ! empty($this->phone_perso) || ! empty($this->fax) || ! empty($this->office_phone) || ! empty($this->user_mobile) || ! empty($this->office_fax)) $out.=($outdone?'<br>':'');
+    	if (! empty($this->phone) && empty($this->phone_pro)) {		// For objects that store pro phone into ->phone
+			$out.=dol_print_phone($this->phone,$this->country_code,$contactid,$thirdpartyid,'AC_TEL','&nbsp;','phone',$langs->trans("PhonePro")); $outdone++;
 		}
 		if (! empty($this->phone_pro)) {
-			$out.=dol_print_phone($this->phone_pro,$country_code['code'],$contactid,$thirdpartyid,'AC_TEL','&nbsp;','phone',$langs->trans("PhonePro")); $outdone++;
+			$out.=dol_print_phone($this->phone_pro,$this->country_code,$contactid,$thirdpartyid,'AC_TEL','&nbsp;','phone',$langs->trans("PhonePro")); $outdone++;
 		}
 		if (! empty($this->phone_mobile)) {
-			$out.=dol_print_phone($this->phone_mobile,$country_code['code'],$contactid,$thirdpartyid,'AC_TEL','&nbsp;','phone',$langs->trans("PhoneMobile")); $outdone++;
+			$out.=dol_print_phone($this->phone_mobile,$this->country_code,$contactid,$thirdpartyid,'AC_TEL','&nbsp;','phone',$langs->trans("PhoneMobile")); $outdone++;
 		}
 		if (! empty($this->phone_perso)) {
-			$out.=dol_print_phone($this->phone_perso,$country_code['code'],$contactid,$thirdpartyid,'AC_TEL','&nbsp;','phone',$langs->trans("PhonePerso")); $outdone++;
+			$out.=dol_print_phone($this->phone_perso,$this->country_code,$contactid,$thirdpartyid,'AC_TEL','&nbsp;','phone',$langs->trans("PhonePerso")); $outdone++;
 		}
 		if (! empty($this->fax)) {
-			$out.=dol_print_phone($this->fax,$country_code['code'],$contactid,$thirdpartyid,'AC_FAX','&nbsp;','fax',$langs->trans("Fax")); $outdone++;
+			$out.=dol_print_phone($this->fax,$this->country_code,$contactid,$thirdpartyid,'AC_FAX','&nbsp;','fax',$langs->trans("Fax")); $outdone++;
 		}
     	if (! empty($this->office_phone)) {
-			$out.=dol_print_phone($this->office_phone,$country_code['code'],$contactid,$thirdpartyid,'AC_TEL','&nbsp;','phone',$langs->trans("PhonePro")); $outdone++;
+			$out.=dol_print_phone($this->office_phone,$this->country_code,$contactid,$thirdpartyid,'AC_TEL','&nbsp;','phone',$langs->trans("PhonePro")); $outdone++;
 		}
 		if (! empty($this->user_mobile)) {
-			$out.=dol_print_phone($this->user_mobile,$country_code['code'],$contactid,$thirdpartyid,'AC_TEL','&nbsp;','phone',$langs->trans("PhoneMobile")); $outdone++;
+			$out.=dol_print_phone($this->user_mobile,$this->country_code,$contactid,$thirdpartyid,'AC_TEL','&nbsp;','phone',$langs->trans("PhoneMobile")); $outdone++;
 		}
 		if (! empty($this->office_fax)) {
-			$out.=dol_print_phone($this->fax,$country_code['code'],$contactid,$thirdpartyid,'AC_FAX','&nbsp;','fax',$langs->trans("Fax")); $outdone++;
+			$out.=dol_print_phone($this->fax,$this->country_code,$contactid,$thirdpartyid,'AC_FAX','&nbsp;','fax',$langs->trans("Fax")); $outdone++;
 		}
 		
 		$out.='<div style="clear: both;"></div>';
 		$outdone=0;
-		if ($this->email) 
+		if (! empty($this->email)) 
 		{
 			$out.=dol_print_email($this->email,$this->id,$object->id,'AC_EMAIL',0,0,1);
 			$outdone++;
 		}
-    	if ($this->url) 
+    	if (! empty($this->url)) 
 		{
 			$out.=dol_print_url($this->url,'',0,1);
 			$outdone++;
@@ -3949,10 +3949,10 @@ abstract class CommonObject
    /**
      * Function to show lines of extrafields with output datas
      *
-     * @param	object	$extrafields	Extrafield Object
-     * @param	string	$mode			Show output ('view') or input ('edit') for extrafield
-	 * @param	array	$params			Optionnal parameters. Example: array('colspan'=>2)
-	 * @param	string	$keyprefix		Prefix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param Extrafields   $extrafields    Extrafield Object
+	 * @param string        $mode           Show output (view) or input (edit) for extrafield
+	 * @param array         $params         Optional parameters
+	 * @param string        $keyprefix      Prefix string to add into name and id of field (can be used to avoid duplicate names)
      *
      * @return string
      */
@@ -3983,7 +3983,16 @@ abstract class CommonObject
 						$value=$this->array_options["options_".$key];
 						break;
 					case "edit":
-						$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$this->array_options["options_".$key]);
+						if (isset($_POST["options_" . $key])) {
+							if (is_array($_POST["options_" . $key])) {
+								// $_POST["options"] is an array but following code expects a comma separated string
+								$value = implode(",", $_POST["options_" . $key]);
+							} else {
+								$value = $_POST["options_" . $key];
+							}
+						} else {
+							$value = $this->array_options["options_" . $key];
+						}
 						break;
 				}
 				if ($extrafields->attribute_type[$key] == 'separate')

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2006	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005		Marc Barilley / Ocebo	<marc@ocebo.com>
  * Copyright (C) 2005-2015	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
@@ -151,7 +151,7 @@ if (empty($reshook))
 	// Reopen a closed order
 	else if ($action == 'reopen' && $user->rights->commande->creer)
 	{
-		if ($object->statut == STATUS_CANCELED || $object->statut == Commande::STATUS_CLOSED)
+		if ($object->statut == Commande::STATUS_CANCELED || $object->statut == Commande::STATUS_CLOSED)
 		{
 			$result = $object->set_reopen($user);
 			if ($result > 0)
@@ -166,7 +166,7 @@ if (empty($reshook))
 		}
 	}
 
-	// Suppression de la commande
+	// Remove order
 	else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->commande->supprimer)
 	{
 		$result = $object->delete($user);

@@ -249,7 +249,7 @@ dol_fiche_head($head, 'general', $langs->trans("CommRequests"), 0, 'askpricesupp
 /*
  *  Module numerotation
  */
-print load_fiche_titre($langs->trans("AskPriceSupplierNumberingModules"));
+print load_fiche_titre($langs->trans("AskPriceSupplierNumberingModules"),'','');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -351,7 +351,7 @@ print "</table><br>\n";
  * Document templates generators
  */
 
-print load_fiche_titre($langs->trans("AskPriceSupplierPDFModules"));
+print load_fiche_titre($langs->trans("AskPriceSupplierPDFModules"),'','');
 
 // Load array def with activated templates
 $def = array();
@@ -513,7 +513,7 @@ print '<br>';
  * Other options
  *
  */
-print load_fiche_titre($langs->trans("OtherOptions"));
+print load_fiche_titre($langs->trans("OtherOptions"),'','');
 
 $var=true;
 print "<table class=\"noborder\" width=\"100%\">";
@@ -594,7 +594,7 @@ print '</table>';
  *  Directory
  */
 print '<br>';
-print load_fiche_titre($langs->trans("PathToDocuments"));
+print load_fiche_titre($langs->trans("PathToDocuments"),'','');
 
 print "<table class=\"noborder\" width=\"100%\">\n";
 print "<tr class=\"liste_titre\">\n";

@@ -148,14 +148,16 @@ if ($id > 0 || ! empty($ref))
 
 		print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-		print '<table class="border" width="100%">';
-		print '<tr><td width="20%">'.$langs->trans('ThirdPartyName').'</td>';
-		print '<td colspan="3">';
-		print $form->showrefnav($object,'id','',($user->societe_id?0:1),'rowid','nom');
-		print '</td></tr>';
+
+        dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
+            
+    	print '<div class="fichecenter">';
+    
+        print '<div class="underbanner clearboth"></div>';
+		print '<table class="border centpercent">';
 
 		// Alias names (commercial, trademark or alias names)
-		print '<tr><td valign="top">'.$langs->trans('AliasNames').'</td><td colspan="3">';
+		print '<tr><td class="titlefield">'.$langs->trans('AliasNames').'</td><td colspan="3">';
 		print $object->name_alias;
 		print "</td></tr>";
 
@@ -181,7 +183,11 @@ if ($id > 0 || ! empty($ref))
 		    if ($object->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
 		    print '</td></tr>';
 		}
-		print '</table></form>';
+		print '</table>';
+		
+		print '</div>';
+		
+		print '</form>';
 		print '<br>';
 
 		// Contacts lines (modules that overwrite templates must declare this into descriptor)

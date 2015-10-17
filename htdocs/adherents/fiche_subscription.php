@@ -180,18 +180,24 @@ if ($user->rights->adherent->cotisation->creer && $action == 'edit')
 	$head[$h][2] = 'info';
 	$h++;
 
-	dol_fiche_head($head, 'general', $langs->trans("Subscription"), 0, 'payment');
-
-	print "\n";
 	print '<form name="update" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print "<input type=\"hidden\" name=\"action\" value=\"update\">";
 	print "<input type=\"hidden\" name=\"rowid\" value=\"$rowid\">";
 	print "<input type=\"hidden\" name=\"fk_bank\" value=\"".$subscription->fk_bank."\">";
+	
+	dol_fiche_head($head, 'general', $langs->trans("Subscription"), 0, 'payment');
+
+	print "\n";
 	print '<table class="border" width="100%">';
 
+    $linkback = '<a href="'.DOL_URL_ROOT.'/adherents/cotisations.php">'.$langs->trans("BackToList").'</a>';
+
     // Ref
-    print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td class="valeur" colspan="2">'.$subscription->ref.'&nbsp;</td></tr>';
+    print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
+	print '<td class="valeur" colspan="3">';
+	print $form->showrefnav($subscription, 'rowid', $linkback, 1);
+	print '</td></tr>';	
 
     // Member
 	$adh->ref=$adh->getFullName($langs);
@@ -239,17 +245,17 @@ if ($user->rights->adherent->cotisation->creer && $action == 'edit')
 	    }
 	}
 
-	print '<tr><td colspan="3" align="center">';
-	print '<input type="submit" class="button" name="submit" value="'.$langs->trans("Save").'">';
+	print '</table>';
+	
+	dol_fiche_end();
+	
+    print '<div class="center">';
+    print '<input type="submit" class="button" name="submit" value="'.$langs->trans("Save").'">';
 	print ' &nbsp; &nbsp; &nbsp; ';
 	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</td></tr>';
-
-	print '</table>';
+    print '</div>';
+    
 	print '</form>';
-	print "\n";
-
-	print '</div>';
 	print "\n";
 }
 
@@ -355,8 +361,7 @@ if ($rowid && $action != 'edit')
     print "</table>\n";
     print '</form>';
 
-    print "</div>\n";
-
+    dol_fiche_end();
 
     /*
      * Barre d'actions
@@ -388,6 +393,6 @@ if ($rowid && $action != 'edit')
 }
 
 
-$db->close();
-
 llxFooter();
+
+$db->close();

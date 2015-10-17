@@ -101,19 +101,27 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 // Search project
 if (! empty($conf->projet->enabled) && $user->rights->projet->lire)
 {
-	$var=false;
-	print '<form method="post" action="'.DOL_URL_ROOT.'/projet/list.php">';
+	$listofsearchfields['search_project']=array('text'=>'Project');
+}
+
+if (count($listofsearchfields))
+{
+	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<table class="noborder nohover" width="100%">';
-	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAProject").'</td></tr>';
-	print '<tr '.$bc[$var].'>';
-	print '<td class="nowrap"><label for="sf_ref">'.$langs->trans("Ref").'</label>:</td><td><input type="text" class="flat" name="search_ref" id="sf_ref" size="18"></td>';
-	print '<td rowspan="3"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-	print '<tr '.$bc[$var].'><td class="nowrap"><label for="syear">'.$langs->trans("Year").'</label>:</td><td><input type="text" class="flat" name="search_year" id="search_year" size="18"></td>';
-	print '<tr '.$bc[$var].'><td class="nowrap"><label for="sall">'.$langs->trans("Other").'</label>:</td><td><input type="text" class="flat" name="search_all" id="search_all" size="18"></td>';
-	print '</tr>';
-	print "</table></form>\n";
-	print "<br>\n";
+	print '<table class="noborder nohover centpercent">';
+	$i=0;
+	foreach($listofsearchfields as $key => $value)
+	{
+		if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
+		print '<tr>';
+		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label>:</td><td><input type="text" class="flat" name="'.$key.'" id="'.$key.'" size="18"></td>';
+		if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
+		print '</tr>';
+		$i++;
+	}
+	print '</table>';	
+	print '</form>';
+	print '<br>';
 }
 
 
@@ -229,6 +237,7 @@ $sql.= " AND p.fk_statut = 1";
 if ($mine || empty($user->rights->projet->all->lire)) $sql.= " AND p.rowid IN (".$projectsListId.")";
 if ($socid)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
 $sql.= " GROUP BY s.nom, s.rowid";
+$sql.= $db->order($sortfield, $sortorder);
 
 $var=true;
 $resql = $db->query($sql);

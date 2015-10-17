@@ -486,7 +486,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 	   	{
 	   		print $formother->showColor($conf->global->THEME_ELDY_BACKTITLE1, $langs->trans("Default"));
 	   	}
-    	print ' &nbsp; ('.$langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis").')';
+    	print ' &nbsp; ('.$langs->trans("Default").': <strong>e6e6e6</strong>, '.$langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis").')';
 	    print '</td>';
 
 	    print '</tr>';

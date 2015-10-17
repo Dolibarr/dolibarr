@@ -302,7 +302,7 @@ dol_fiche_head($head, 'general', $langs->trans("Invoices"), 0, 'invoice');
  *  Numbering module
  */
 
-print load_fiche_titre($langs->trans("BillsNumberingModule"));
+print load_fiche_titre($langs->trans("BillsNumberingModule"),'','');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -471,7 +471,7 @@ print '</table>';
  *  Document templates generators
  */
 print '<br>';
-print load_fiche_titre($langs->trans("BillsPDFModules"));
+print load_fiche_titre($langs->trans("BillsPDFModules"),'','');
 
 // Load array def with activated templates
 $type='invoice';
@@ -631,7 +631,7 @@ print '</table>';
  *  Modes de reglement
  */
 print '<br>';
-print load_fiche_titre($langs->trans("SuggestedPaymentModesIfNotDefinedInInvoice"));
+print load_fiche_titre($langs->trans("SuggestedPaymentModesIfNotDefinedInInvoice"),'','');
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
@@ -726,7 +726,7 @@ print "</form>";
 
 
 print "<br>";
-print load_fiche_titre($langs->trans("OtherOptions"));
+print load_fiche_titre($langs->trans("OtherOptions"),'','');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -805,7 +805,7 @@ print '</table>';
  *  Repertoire
  */
 print '<br>';
-print load_fiche_titre($langs->trans("PathToDocuments"));
+print load_fiche_titre($langs->trans("PathToDocuments"),'','');
 
 print '<table class="noborder" width="100%">'."\n";
 print '<tr class="liste_titre">'."\n";
@@ -823,7 +823,7 @@ print "</table>\n";
  * Notifications
  */
 print '<br>';
-print load_fiche_titre($langs->trans("Notifications"));
+print load_fiche_titre($langs->trans("Notifications"),'','');
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';

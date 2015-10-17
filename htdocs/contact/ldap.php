@@ -39,10 +39,10 @@ $id = GETPOST('id', 'int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'contact', $id, 'socpeople&societe');
 
-$contact = new Contact($db);
+$object = new Contact($db);
 if ($id > 0)
 {
-	$contact->fetch($id, $user);
+	$object->fetch($id, $user);
 }
 
 
@@ -57,8 +57,8 @@ if ($action == 'dolibarr2ldap')
 	$ldap=new Ldap();
 	$result=$ldap->connect_bind();
 
-	$info=$contact->_load_ldap_info();
-	$dn=$contact->_load_ldap_dn($info);
+	$info=$object->_load_ldap_info();
+	$dn=$object->_load_ldap_dn($info);
 	$olddn=$dn;	// We can say that old dn = dn as we force synchro
 
 	$result=$ldap->update($dn,$info,$user,$olddn);
@@ -86,40 +86,35 @@ llxHeader('',$title,'EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Em
 
 $form = new Form($db);
 
-$head = contact_prepare_head($contact);
+$head = contact_prepare_head($object);
 
 dol_fiche_head($head, 'ldap', $title, 0, 'contact');
 
+dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '');
+    
+print '<div class="fichecenter">';
 
-print '<table class="border" width="100%">';
-
-// Ref
-print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td colspan="3">';
-print $form->showrefnav($contact,'id');
-print '</td></tr>';
-
-// Name
-print '<tr><td>'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</td><td>'.$contact->lastname.'</td>';
-print '<td>'.$langs->trans("Firstname").'</td><td width="25%">'.$contact->firstname.'</td></tr>';
+print '<div class="underbanner clearboth"></div>';
+print '<table class="border centpercent">';
 
 // Company
-if ($contact->socid > 0)
+if ($object->socid > 0)
 {
-	$objsoc = new Societe($db);
-	$objsoc->fetch($contact->socid);
+	$thirdparty = new Societe($db);
+	$thirdparty->fetch($object->socid);
 
-	print '<tr><td width="20%">'.$langs->trans("ThirdParty").'</td><td colspan="3">'.$objsoc->getNomUrl(1).'</td></tr>';
+	print '<tr><td class="titlefield">'.$langs->trans("ThirdParty").'</td><td colspan="3">'.$thirdparty->getNomUrl(1).'</td></tr>';
 }
 else
 {
-	print '<tr><td width="20%">'.$langs->trans("ThirdParty").'</td><td colspan="3">';
+	print '<tr><td class="titlefield">'.$langs->trans("ThirdParty").'</td><td colspan="3">';
 	print $langs->trans("ContactNotLinkedToCompany");
 	print '</td></tr>';
 }
 
 // Civility
-print '<tr><td>'.$langs->trans("UserTitle").'</td><td colspan="3">';
-print $contact->getCivilityLabel();
+print '<tr><td class="titlefield">'.$langs->trans("UserTitle").'</td><td colspan="3">';
+print $object->getCivilityLabel();
 print '</td></tr>';
 
 // LDAP DN
@@ -135,6 +130,8 @@ print '<tr><td>LDAP '.$langs->trans("LDAPServerPort").'</td><td class="valeur" c
 
 print '</table>';
 
+print '</div>';
+
 dol_fiche_end();
 
 
@@ -146,7 +143,7 @@ print '<div class="tabsAction">';
 
 if (! empty($conf->global->LDAP_CONTACT_ACTIVE) && $conf->global->LDAP_CONTACT_ACTIVE != 'ldap2dolibarr')
 {
-	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$contact->id.'&amp;action=dolibarr2ldap">'.$langs->trans("ForceSynchronize").'</a>';
+	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=dolibarr2ldap">'.$langs->trans("ForceSynchronize").'</a>';
 }
 
 print "</div>\n";
@@ -170,9 +167,9 @@ $ldap=new Ldap();
 $result=$ldap->connect_bind();
 if ($result > 0)
 {
-	$info=$contact->_load_ldap_info();
-	$dn=$contact->_load_ldap_dn($info,1);
-	$search = "(".$contact->_load_ldap_dn($info,2).")";
+	$info=$object->_load_ldap_info();
+	$dn=$object->_load_ldap_dn($info,1);
+	$search = "(".$object->_load_ldap_dn($info,2).")";
 	$records=$ldap->getAttribute($dn,$search);
 
 	//var_dump($records);

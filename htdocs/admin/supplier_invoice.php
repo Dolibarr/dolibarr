@@ -205,7 +205,7 @@ dol_fiche_head($head, 'invoice', $langs->trans("Suppliers"), 0, 'company');
 
 // Supplier invoice numbering module
 
-print load_fiche_titre($langs->trans("SuppliersInvoiceNumberingModel"));
+print load_fiche_titre($langs->trans("SuppliersInvoiceNumberingModel"),'','');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -311,7 +311,7 @@ print '</table><br>';
  * Modeles documents for supplier invoices
  */
 
-print load_fiche_titre($langs->trans("BillsPDFModules"));
+print load_fiche_titre($langs->trans("BillsPDFModules"),'','');
 
 // Defini tableau def de modele
 $def = array();
@@ -453,7 +453,7 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set_SUPPLIER_INVOICE_FREE_TEXT">';
 
-print load_fiche_titre($langs->trans("OtherOptions"));
+print load_fiche_titre($langs->trans("OtherOptions"),'','');
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
@@ -487,7 +487,7 @@ print '</form>';
  * Notifications
  */
 
-print load_fiche_titre($langs->trans("Notifications"));
+print load_fiche_titre($langs->trans("Notifications"),'','');
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';

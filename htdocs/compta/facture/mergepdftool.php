@@ -49,7 +49,7 @@ $builddoc_generatebutton=GETPOST('builddoc_generatebutton');
 $month = GETPOST("month","int");
 $year = GETPOST("year","int");
 $filter = GETPOST("filtre");
-if (GETPOST('button_search'))
+if (GETPOST('button_search') || GETPOST('button_search.x') || GETPOST('button_search_x'))
 {
 	$filter=GETPOST('filtre',2);
 	//if ($filter != 'payed:0') $option='';

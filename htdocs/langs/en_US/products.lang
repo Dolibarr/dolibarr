@@ -1,6 +1,9 @@
 # Dolibarr language file - Source file is en_US - products
 ProductRef=Product ref.
 ProductLabel=Product label
+ProductLabelTranslated=Translated product label
+ProductDescriptionTranslated=Translated product description
+ProductNoteTranslated=Translated product note
 ProductServiceCard=Products/Services card
 Products=Products
 Services=Services
@@ -101,6 +104,7 @@ CorrectStock=Correct stock
 AddPhoto=Add photo
 ListOfStockMovements=List of stock movements
 BuyingPrice=Buying price
+PriceForEachProduct=Products with specific prices
 SupplierCard=Supplier card
 CommercialCard=Commercial card
 AllWays=Path to find your product in stock

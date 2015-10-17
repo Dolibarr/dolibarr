@@ -159,7 +159,8 @@ $sts = array(-1,0,1,2,3);
 
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('prospectlist'));
+$contextpage='prospectlist';
+$hookmanager->initHooks(array($contextpage));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
@@ -167,7 +168,7 @@ $extralabels = $extrafields->fetch_name_optionals_label('thirdparty');
 $search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
 
 // Do we click on purge search criteria ?
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
     $socname="";
 	$stcomm="";
@@ -271,7 +272,7 @@ if ($socname)
 	$sortfield = "s.nom";
 	$sortorder = "ASC";
 }
-// Extra fields
+// Add where from extra fields
 foreach ($search_array_options as $key => $val)
 {
     $crit=$val;
@@ -339,15 +340,14 @@ if ($resql)
  	if ($search_status != '') $param.='&search_status='.$search_status;
  	if ($search_country != '') $param.='&amp;search_country='.$search_country;
  	if ($search_type_thirdparty != '') $param.='&amp;search_type_thirdparty='.$search_type_thirdparty;
-    foreach ($search_array_options as $key => $val)
+    // Add $param from extra fields
+ 	foreach ($search_array_options as $key => $val)
     {
         $crit=$val;
         $tmpkey=preg_replace('/search_options_/','',$key);
         $param.='&search_options_'.$tmpkey.'='.urlencode($val);
     } 	
- 	// $param and $urladd should have the same value
- 	$urladd = $param;
-
+ 	
 	print_barre_liste($langs->trans("ListOfProspects"), $page, $_SERVER["PHP_SELF"], $param, $sortfield,$sortorder,'',$num,$nbtotalofrecords,'title_companies.png');
 
 

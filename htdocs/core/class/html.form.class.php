@@ -3235,10 +3235,10 @@ class Form
             if (! empty($more)) {
             	$formconfirm.= '<div class="confirmquestions">'.$more.'</div>';
             }
-            $formconfirm.= ($question ? '<div class="confirmmessage"'.img_help('','').' '.$question . '</div>': '');
+            $formconfirm.= ($question ? '<div class="confirmmessage">'.img_help('','').' '.$question . '</div>': '');
             $formconfirm.= '</div>'."\n";
 
-            $formconfirm.= "\n<!-- begin ajax formconfirm page=".$page." -->\n";
+            $formconfirm.= "\n<!-- begin ajax form_confirm page=".$page." -->\n";
             $formconfirm.= '<script type="text/javascript">'."\n";
             $formconfirm.= 'jQuery(document).ready(function() {
             $(function() {
@@ -3309,11 +3309,11 @@ class Form
             });
             });
             </script>';
-            $formconfirm.= "<!-- end ajax formconfirm -->\n";
+            $formconfirm.= "<!-- end ajax form_confirm -->\n";
         }
         else
         {
-        	$formconfirm.= "\n<!-- begin formconfirm page=".$page." -->\n";
+        	$formconfirm.= "\n<!-- begin form_confirm page=".$page." -->\n";
 
             $formconfirm.= '<form method="POST" action="'.$page.'" class="notoptoleftroright">'."\n";
             $formconfirm.= '<input type="hidden" name="action" value="'.$action.'">'."\n";
@@ -3346,7 +3346,7 @@ class Form
             $formconfirm.= "</form>\n";
             $formconfirm.= '<br>';
 
-            $formconfirm.= "<!-- end formconfirm -->\n";
+            $formconfirm.= "<!-- end form_confirm -->\n";
         }
 
         return $formconfirm;
@@ -4671,37 +4671,55 @@ class Form
      *	Show a multiselect form from an array.
      *
      *	@param	string	$htmlname		Name of select
-     *	@param	array	$array			Array with array to show
+     *	@param	array	$array			Array with array of fields we could show. This array may be modified according to setup of user.
+     *  @param  string  $varpage        Id of context for page. Can be set with $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
      *	@return	string					HTML multiselect string
      *  @see selectarray
      */
-    static function multiSelectArrayWithCheckbox($htmlname, $array)
+    static function multiSelectArrayWithCheckbox($htmlname, &$array, $varpage)
     {
+        global $user;
+        
+        $tmpvar="MAIN_SELECTEDFIELDS_".$varpage;
+        if (! empty($user->conf->$tmpvar))
+        {
+            $tmparray=explode(',', $user->conf->$tmpvar);
+            foreach($array as $key => $val)
+            {
+                //var_dump($key);
+                //var_dump($tmparray);
+                if (in_array($key, $tmparray)) $array[$key]['checked']=1;
+                else $array[$key]['checked']=0;
+            }
+        }
+        //var_dump($array);
+            
         $lis='';
-        $liststring='';
+        $listcheckedstring='';
         
         foreach($array as $key => $val)
         {
-           if (isset($val['cond']) && ! $val['cond']) continue; 
-	       if ($val['label']) 
+           if (isset($val['enabled']) && ! $val['enabled']) 
+           {
+               unset($array[$key]);     // We don't want this field
+               continue; 
+           }
+           if ($val['label']) 
 	       {
-	           $lis.='<li><input type="checkbox" value="'.$key.'"'.($val['checked']?' checked="checked"':'').'/>'.dol_escape_htmltag($val['label']).'</li>';
-	           $liststring.=$key.',';
+	           $lis.='<li><input type="checkbox" value="'.$key.'"'.(empty($val['checked'])?'':' checked="checked"').'/>'.dol_escape_htmltag($val['label']).'</li>';
+	           $listcheckedstring.=(empty($val['checked'])?'':$key.',');
 	       }
         }
-        
         
         $out ='<!-- Component multiSelectArrayWithCheckbox '.$htmlname.' --> 
             
             <dl class="dropdown"> 
-          
             <dt>
             <a href="#">
               '.img_picto('','list').'    
-              <input type="hidden" class="'.$htmlname.'" name="'.$htmlname.'" value="'.$liststring.'">
+              <input type="hidden" class="'.$htmlname.'" name="'.$htmlname.'" value="'.$listcheckedstring.'">
             </a>
             </dt>
-          
             <dd>
                 <div class="multiselectcheckbox'.$htmlname.'">
                     <ul>
@@ -4730,9 +4748,9 @@ class Form
           });
     
           $(\'.multiselectcheckbox'.$htmlname.' input[type="checkbox"]\').on(\'click\', function () {
-            
+              console.log("A new field was added/removed")
+              $("input:hidden[name=formfilteraction]").val(\'listafterchangingselectedfields\')
               var title = $(this).val() + ",";
-            
               if ($(this).is(\':checked\')) {
                   $(\'.'.$htmlname.'\').val(title + $(\'.'.$htmlname.'\').val());
               } 
@@ -4779,7 +4797,7 @@ class Form
 
 		if ($rendermode == 0)
 		{
-			$cate_arbo = $this->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 64, 0, 1);
+			$cate_arbo = $this->select_all_categories($type, '', 'parent', 64, 0, 1);
 			foreach($categories as $c) {
 				$arrayselected[] = $c->id;
 			}
@@ -5247,9 +5265,9 @@ class Form
             $dir=$conf->societe->multidir_output[$entity];
             $smallfile=$object->logo;
             $smallfile=preg_replace('/(\.png|\.gif|\.jpg|\.jpeg|\.bmp)/i','_small\\1',$smallfile);
-            if ($object->logo) $file=$id.'/logos/thumbs/'.$smallfile;
+            if (! empty($object->logo)) $file=$id.'/logos/thumbs/'.$smallfile;
         }
-        if ($modulepart=='contact')
+        else if ($modulepart=='contact')
         {
             $dir=$conf->societe->multidir_output[$entity].'/contact';
             $file=$id.'/photos/'.$object->photo;
@@ -5257,19 +5275,19 @@ class Form
         else if ($modulepart=='userphoto')
         {
             $dir=$conf->user->dir_output;
-            if ($object->photo) $file=get_exdir($id, 2, 0, 0, $object, 'user').$object->photo;
+            if (! empty($object->photo)) $file=get_exdir($id, 2, 0, 0, $object, 'user').$object->photo;
             if (! empty($conf->global->MAIN_OLD_IMAGE_LINKS)) $altfile=$object->id.".jpg";	// For backward compatibility
             $email=$object->email;
         }
         else if ($modulepart=='memberphoto')
         {
             $dir=$conf->adherent->dir_output;
-            if ($object->photo) $file=get_exdir($id, 2, 0, 0, $object, 'invoice_supplier').'photos/'.$object->photo;
+            if (! empty($object->photo)) $file=get_exdir($id, 2, 0, 0, $object, 'invoice_supplier').'photos/'.$object->photo;
             if (! empty($conf->global->MAIN_OLD_IMAGE_LINKS)) $altfile=$object->id.".jpg";	// For backward compatibility
             $email=$object->email;
         } else {
         	$dir=$conf->$modulepart->dir_output;
-        	if ($object->photo) $file=get_exdir($id, 2, 0, 0, $adherent, 'member').'photos/'.$object->photo;
+        	if (! empty($object->photo)) $file=get_exdir($id, 2, 0, 0, $object, 'member').'photos/'.$object->photo;
         	if (! empty($conf->global->MAIN_OLD_IMAGE_LINKS)) $altfile=$object->id.".jpg";	// For backward compatibility
         	$email=$object->email;
         }

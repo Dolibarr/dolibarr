@@ -58,6 +58,16 @@ function societe_prepare_head(Societe $object)
         $head[$h][2] = 'customer';
         $h++;
     }
+    if (($object->client==1 || $object->client==2 || $object->client==3) && (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)))
+    {
+    	$langs->load("products");
+	    // price
+	    $head[$h][0] = DOL_URL_ROOT.'/societe/price.php?socid='.$object->id;
+	    $head[$h][1] = $langs->trans("CustomerPrices");
+	    $head[$h][2] = 'price';
+	    $h++;
+    }
+
     if (! empty($conf->fournisseur->enabled) && $object->fournisseur && ! empty($user->rights->fournisseur->lire))
     {
         $head[$h][0] = DOL_URL_ROOT.'/fourn/card.php?socid='.$object->id;
@@ -167,16 +177,6 @@ function societe_prepare_head(Societe $object)
 		if($nbFiles > 0) $head[$h][1].= ' <span class="badge">'.$nbFiles.'</span>';
         $head[$h][2] = 'document';
         $h++;
-    }
-
-    if (($object->client==1 || $object->client==2 || $object->client==3) && (! empty ( $conf->global->PRODUIT_CUSTOMER_PRICES )))
-    {
-    	$langs->load("products");
-	    // price
-	    $head[$h][0] = DOL_URL_ROOT.'/societe/price.php?socid='.$object->id;
-	    $head[$h][1] = $langs->trans("CustomerPrices");
-	    $head[$h][2] = 'price';
-	    $h++;
     }
 
     // Log
@@ -647,7 +647,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     $num = $db->num_rows($result);
 
 	$var=true;
-	if ($num)
+	if ($num || (GETPOST('button_search') || GETPOST('button_search.x') || GETPOST('button_search_x')))
     {
         print '<tr class="liste_titre">';
         // Name - Position

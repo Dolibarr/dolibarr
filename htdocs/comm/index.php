@@ -75,83 +75,50 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 // Search proposal
 if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 {
-	$var=false;
-	print '<form method="post" action="'.DOL_URL_ROOT.'/comm/propal/list.php">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<table class="noborder nohover" width="100%">';
-	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAProposal").'</td></tr>';
-	print '<tr '.$bc[$var].'>';
-	print '<td class="nowrap"><label for="sf_ref">'.$langs->trans("Ref").'</label>:</td><td><input type="text" class="flat" name="sf_ref" id="sf_ref" size="18"></td>';
-	print '<td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-	print '<tr '.$bc[$var].'><td class="nowrap"><label for="sall">'.$langs->trans("Other").'</label>:</td><td><input type="text" class="flat" name="sall" id="sall" size="18"></td>';
-	print '</tr>';
-	print "</table></form>\n";
-	print "<br>\n";
+	$listofsearchfields['search_proposal']=array('text'=>'Proposal');
 }
-
 // Search customer order
 if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 {
-	$var=false;
-	print '<form method="post" action="'.DOL_URL_ROOT.'/commande/list.php">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<table class="noborder nohover" width="100%">';
-	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchACustomerOrder").'</td></tr>';
-	print '<tr '.$bc[$var].'><td>';
-	print '<label for="sref">'.$langs->trans("Ref").'</label>:</td><td><input type="text" class="flat" name="sref" id="sref" size=18></td><td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-	print '<tr '.$bc[$var].'><td class="nowrap"><label for="sall">'.$langs->trans("Other").'</label>:</td><td><input type="text" class="flat" name="sall" id="sall" size="18"></td>';
-	print '</tr>';
-	print "</table></form><br>\n";
+	$listofsearchfields['search_customer_order']=array('text'=>'CustomerOrder');
 }
-
 // Search supplier order
 if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande->lire)
 {
-	$var=false;
-	print '<form method="post" action="'.DOL_URL_ROOT.'/fourn/commande/list.php">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<table class="noborder nohover" width="100%">';
-	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchASupplierOrder").'</td></tr>';
-	print '<tr '.$bc[$var].'><td>';
-	print '<label for="search_ref">'.$langs->trans("Ref").'</label>:</td><td><input type="text" class="flat" name="search_ref" id="search_ref" size=18></td><td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-	print '<tr '.$bc[$var].'><td class="nowrap"><label for="search_all">'.$langs->trans("Other").'</label>:</td><td><input type="text" class="flat" name="search_all" id="search_all" size="18"></td>';
-	print '</tr>';
-	print "</table></form><br>\n";
+	$listofsearchfields['search_supplier_order']=array('text'=>'SupplierOrder');
 }
-
+// Search intervention
+if (! empty($conf->ficheinter->enabled) && $user->rights->ficheinter->lire)
+{
+	$listofsearchfields['search_intervention']=array('text'=>'Intervention');
+}
 // Search contract
 if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 {
-	$var=false;
-	print '<form method="post" action="'.DOL_URL_ROOT.'/contrat/list.php">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<table class="noborder nohover" width="100%">';
-	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAContract").'</td></tr>';
-	print '<tr '.$bc[$var].'>';
-	print '<td class="nowrap"><label for="search_contract">'.$langs->trans("Ref").'</label>:</td><td><input type="text" class="flat" name="search_contract" id="search_contract" size="18"></td>';
-	print '<td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-	print '<tr '.$bc[$var].'><td class="nowrap"><label for="sall">'.$langs->trans("Other").'</label>:</td><td><input type="text" class="flat" name="sall" id="sall" size="18"></td>';
-	print '</tr>';
-	print "</table></form>\n";
-	print "<br>";
+	$listofsearchfields['search_contract']=array('text'=>'Contrat');
 }
 
-// Search contract
-if (! empty($conf->ficheinter->enabled) && $user->rights->ficheinter->lire)
+if (count($listofsearchfields))
 {
-	$var=false;
-	print '<form method="post" action="'.DOL_URL_ROOT.'/fichinter/list.php">';
+	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<table class="noborder nohover" width="100%">';
-	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAnIntervention").'</td></tr>';
-	print '<tr '.$bc[$var].'>';
-	print '<td class="nowrap"><label for="search_contract">'.$langs->trans("Ref").'</label>:</td><td><input type="text" class="flat" name="search_inter" id="search_inter" size="18"></td>';
-	print '<td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-	print '<tr '.$bc[$var].'><td class="nowrap"><label for="sall">'.$langs->trans("Other").'</label>:</td><td><input type="text" class="flat" name="sall" id="sall" size="18"></td>';
-	print '</tr>';
-	print "</table></form>\n";
-	print "<br>";
+	print '<table class="noborder nohover centpercent">';
+	$i=0;
+	foreach($listofsearchfields as $key => $value)
+	{
+		if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
+		print '<tr>';
+		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label>:</td><td><input type="text" class="flat" name="'.$key.'" id="'.$key.'" size="18"></td>';
+		if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
+		print '</tr>';
+		$i++;
+	}
+	print '</table>';	
+	print '</form>';
+	print '<br>';
 }
+
+
 
 /*
  * Draft proposals
@@ -172,12 +139,13 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 	$resql=$db->query($sql);
 	if ($resql)
 	{
-		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre">';
-		print '<td colspan="3">'.$langs->trans("ProposalsDraft").'</td></tr>';
-
 		$total = 0;
 		$num = $db->num_rows($resql);
+	    
+		print '<table class="noborder" width="100%">';
+		print '<tr class="liste_titre">';
+		print '<td colspan="3">'.$langs->trans("ProposalsDraft").' <span class="badge">'.$num.'</span></td></tr>';
+
 		if ($num > 0)
 		{
 			$i = 0;
@@ -246,12 +214,13 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 	$resql = $db->query($sql);
 	if ($resql)
 	{
-		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre">';
-		print '<td colspan="3">'.$langs->trans("DraftOrders").'</td></tr>';
-
 		$total = 0;
 		$num = $db->num_rows($resql);
+	    
+		print '<table class="noborder" width="100%">';
+		print '<tr class="liste_titre">';
+		print '<td colspan="3">'.$langs->trans("DraftOrders").' <span class="badge">'.$num.'</span></td></tr>';
+
 		if ($num)
 		{
 			$i = 0;
@@ -329,7 +298,11 @@ if (! empty($conf->societe->enabled) && $user->rights->societe->lire)
 
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td colspan="2">'.$langs->trans("BoxTitleLastCustomersOrProspects",$max).'</td>';
+		print '<td colspan="2">';
+		if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) print $langs->trans("BoxTitleLastCustomersOrProspects",$max);
+        else if (! empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) print $langs->trans("BoxTitleLastModifiedProspects",$max);
+		else print $langs->trans("BoxTitleLastModifiedCustomers",$max);
+		print '</td>';
 		print '<td align="right">'.$langs->trans("DateModificationShort").'</td>';
 		print '</tr>';
 		if ($num)

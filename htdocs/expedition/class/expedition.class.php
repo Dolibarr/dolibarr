@@ -7,7 +7,7 @@
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2014		Cedric GROSS			<c.gross@kreiz-it.fr>
  * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2014       Francis Appels          <francis.appels@yahoo.com>
+ * Copyright (C) 2014-2015  Francis Appels          <francis.appels@yahoo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -568,7 +568,7 @@ class Expedition extends CommonObject
 		$result=$soc->set_as_client();
 
 		// Define new ref
-		if (! $error && (preg_match('/^[\(]?PROV/i', $this->ref)))
+		if (! $error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) // empty should not happened, but when it occurs, the test save life
 		{
 			$numref = $this->getNextNumRef($soc);
 		}
@@ -981,7 +981,7 @@ class Expedition extends CommonObject
 		}
     }
 
-    /**
+	/**
 	 * 	Delete shipment.
 	 *  Warning, do not delete a shipment if a delivery is linked to (with table llx_element_element)
 	 *
@@ -990,9 +990,13 @@ class Expedition extends CommonObject
 	function delete()
 	{
 		global $conf, $langs, $user;
-        require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+		if ($conf->productbatch->enabled)
+		{
+		require_once DOL_DOCUMENT_ROOT.'/expedition/class/expeditionbatch.class.php';
+		}
 		$error=0;
+		$this->error='';
 
 		// Add a protection to refuse deleting if shipment has at least one delivery
 		$this->fetchObjectLinked($this->id, 'shipping', 0, 'delivery');	// Get deliveries linked to this shipment
@@ -1003,15 +1007,6 @@ class Expedition extends CommonObject
 		}
 
 		$this->db->begin();
-
-		if ($conf->productbatch->enabled)
-		{
-            require_once DOL_DOCUMENT_ROOT.'/expedition/class/expeditionbatch.class.php';
-			if (ExpeditionLineBatch::deletefromexp($this->db,$this->id) < 0)
-			{
-				$error++;$this->errors[]="Error ".$this->db->lasterror();
-			}
-		}
 		// Stock control
 		if ($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SHIPMENT && $this->statut > 0)
 		{
@@ -1020,7 +1015,7 @@ class Expedition extends CommonObject
 			$langs->load("agenda");
 
 			// Loop on each product line to add a stock movement
-			$sql = "SELECT cd.fk_product, cd.subprice, ed.qty, ed.fk_entrepot";
+			$sql = "SELECT cd.fk_product, cd.subprice, ed.qty, ed.fk_entrepot, ed.rowid as expeditiondet_id";
 			$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd,";
 			$sql.= " ".MAIN_DB_PREFIX."expeditiondet as ed";
 			$sql.= " WHERE ed.fk_expedition = ".$this->id;
@@ -1035,26 +1030,62 @@ class Expedition extends CommonObject
 				{
 					dol_syslog(get_class($this)."::delete movement index ".$i);
 					$obj = $this->db->fetch_object($resql);
-
-					//var_dump($this->lines[$i]);
+					
 					$mouvS = new MouvementStock($this->db);
-					$mouvS->origin = &$this;
-					// We decrement stock of product (and sub-products)
-					// We use warehouse selected for each line
-					$result=$mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty, $obj->subprice, $langs->trans("ShipmentDeletedInDolibarr",$this->ref));
-					if ($result < 0)
+					// we do not log origin because it will be deleted
+					$mouvS->origin = null;
+					// get lot/serial
+					$lotArray = null;
+					if ($conf->productbatch->enabled) 
 					{
-						$error++;
-						break;
+						$lotArray = ExpeditionLineBatch::fetchAll($this->db,$obj->expeditiondet_id);
+						if (! is_array($lotArray))
+						{
+							$error++;$this->errors[]="Error ".$this->db->lasterror();
+						}
 					}
+					if (empty($lotArray)) {
+						// no lot/serial
+						// We increment stock of product (and sub-products)
+						// We use warehouse selected for each line
+						$result=$mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty, $obj->subprice, $langs->trans("ShipmentDeletedInDolibarr", $this->ref));
+						if ($result < 0)
+						{
+							$error++;$this->errors=$this->errors + $mouvS->errors;
+							break;
+						}
+					}
+					else 
+					{
+						// We increment stock of batches
+						// We use warehouse selected for each line
+						foreach($lotArray as $lot)
+						{
+							$result=$mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $lot->dluo_qty, $obj->subprice, $langs->trans("ShipmentDeletedInDolibarr", $this->ref), $lot->eatby, $lot->sellby, $lot->batch);
+							if ($result < 0)
+							{
+								$error++;$this->errors=$this->errors + $mouvS->errors;
+								break;
+							}
+						}
+					} 
 				}
 			}
 			else
 			{
-				$error++;
+				$error++;$this->errors[]="Error ".$this->db->lasterror();
 			}
 		}
-
+		
+		// delete batch expedition line
+		if (! $error && $conf->productbatch->enabled)
+		{
+			if (ExpeditionLineBatch::deletefromexp($this->db,$this->id) < 0)
+			{
+				$error++;$this->errors[]="Error ".$this->db->lasterror();
+			}
+		}
+		
 		if (! $error)
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."expeditiondet";
@@ -1073,13 +1104,13 @@ class Expedition extends CommonObject
 
 					if ($this->db->query($sql))
 					{
-                        // Call trigger
-                        $result=$this->call_trigger('SHIPPING_DELETE',$user);
-                        if ($result < 0) { $error++; }
-                        // End call triggers
+						// Call trigger
+						$result=$this->call_trigger('SHIPPING_DELETE',$user);
+						if ($result < 0) { $error++; }
+						// End call triggers
 
-			            if (! $error)
-			            {
+						if (! $error)
+						{
 							$this->db->commit();
 
 							// We delete PDFs
@@ -1106,8 +1137,8 @@ class Expedition extends CommonObject
 							}
 
 							return 1;
-			            }
-			            else
+						}
+						else
 						{
 							$this->db->rollback();
 							return -1;

@@ -142,15 +142,15 @@ if ($result > 0)
 
     dol_fiche_head($head, 'notify', $langs->trans("ThirdParty"),0,'company');
 
-
-    print '<table class="border"width="100%">';
-
-    print '<tr><td width="25%">'.$langs->trans("ThirdPartyName").'</td><td colspan="3">';
-    print $form->showrefnav($object,'socid','',($user->societe_id?0:1),'rowid','nom');
-    print '</td></tr>';
+    dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
+        
+    print '<div class="fichecenter">';
+    
+    print '<div class="underbanner clearboth"></div>';
+    print '<table class="border centpercent">';
 
 	// Alias names (commercial, trademark or alias names)
-	print '<tr><td valign="top">'.$langs->trans('AliasNames').'</td><td colspan="3">';
+	print '<tr><td class="titlefield">'.$langs->trans('AliasNames').'</td><td colspan="3">';
 	print $object->name_alias;
 	print "</td></tr>";
 
@@ -186,10 +186,12 @@ if ($result > 0)
     print '</td></tr>';
     print '</table>';
 
-    dol_fiche_end();
-
     // Help
-    print $langs->trans("NotificationsDesc").'<br><br>';
+    print '<br>'.$langs->trans("NotificationsDesc");
+
+    print '</div>';
+    
+    dol_fiche_end();
 
     print "\n";
 
@@ -219,12 +221,12 @@ if ($result > 0)
 
         // Load array of available notifications
         $notificationtrigger=new InterfaceNotification($db);
-        $listofnotifiedevents=$notificationtrigger->getListOfManagedEvents();
+        $listofmanagedeventfornotification=$notificationtrigger->getListOfManagedEvents();
 
-        foreach($listofnotifiedevents as $notifiedevent)
+        foreach($listofmanagedeventfornotification as $managedeventfornotification)
         {
- 			$label=($langs->trans("Notify_".$notifiedevent['code'])!="Notify_".$notifiedevent['code']?$langs->trans("Notify_".$notifiedevent['code']):$notifiedevent['label']);
-            $actions[$notifiedevent['rowid']]=$label;
+ 			$label=($langs->trans("Notify_".$managedeventfornotification['code'])!="Notify_".$managedeventfornotification['code']?$langs->trans("Notify_".$managedeventfornotification['code']):$managedeventfornotification['label']);
+            $actions[$managedeventfornotification['rowid']]=$label;
         }
         print '<tr '.$bc[$var].'><td>';
         print $form->selectarray("contactid",$listofemails);
@@ -248,6 +250,7 @@ if ($result > 0)
 
     print '</table>';
 
+    
     print '</form>';
     print '<br>';
 

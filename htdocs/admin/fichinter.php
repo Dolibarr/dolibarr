@@ -255,7 +255,7 @@ dol_fiche_head($head, 'ficheinter', $langs->trans("Interventions"), 0, 'interven
 
 // Interventions numbering model
 
-print load_fiche_titre($langs->trans("FicheinterNumberingModules"));
+print load_fiche_titre($langs->trans("FicheinterNumberingModules"),'','');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -357,7 +357,7 @@ print '</table><br>';
  *  Documents models for Interventions
  */
 
-print load_fiche_titre($langs->trans("TemplatePDFInterventions"));
+print load_fiche_titre($langs->trans("TemplatePDFInterventions"),'','');
 
 // Defini tableau def des modeles
 $type='ficheinter';
@@ -511,7 +511,7 @@ print "<br>";
  *
  */
 
-print load_fiche_titre($langs->trans("OtherOptions"));
+print load_fiche_titre($langs->trans("OtherOptions"),'','');
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';

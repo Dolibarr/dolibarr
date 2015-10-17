@@ -411,8 +411,10 @@ if (empty($reshook))
  */
 
 
+$title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
+if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/contactnameonly/',$conf->global->MAIN_HTML_TITLE) && $object->lastname) $title=$object->lastname;
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
-llxHeader('',$langs->trans("ContactsAddresses"),$help_url);
+llxHeader('', $title, $help_url);
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);

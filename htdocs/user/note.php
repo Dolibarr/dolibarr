@@ -48,28 +48,30 @@ $feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
 if ($user->id == $id) $feature2=''; // A user can always read its own card
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
-
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('usercard','globalcard'));
 
 /******************************************************************************/
 /*                     Actions                                                */
 /******************************************************************************/
 
-if ($action == 'update' && $user->rights->user->user->creer && ! $_POST["cancel"])
-{
-	$db->begin();
+$parameters=array('id'=>$socid);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-	$res=$object->update_note(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES));
-	if ($res < 0)
-	{
-		$mesg='<div class="error">'.$adh->error.'</div>';
-		$db->rollback();
-	}
-	else
-	{
-		$db->commit();
+if (empty($reshook)) {
+	if ($action == 'update' && $user->rights->user->user->creer && !$_POST["cancel"]) {
+		$db->begin();
+
+		$res = $object->update_note(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES));
+		if ($res < 0) {
+			$mesg = '<div class="error">'.$adh->error.'</div>';
+			$db->rollback();
+		} else {
+			$db->commit();
+		}
 	}
 }
-
 
 
 /******************************************************************************/

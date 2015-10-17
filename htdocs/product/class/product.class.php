@@ -821,7 +821,7 @@ class Product extends CommonObject
 	function delete($id=0)
 	{
 		// Deprecation warning
-		if (0 == $id) {
+		if ($id > 0) {
 			dol_syslog(__METHOD__ . " with parameter is deprecated", LOG_WARNING);
 		}
 
@@ -3959,12 +3959,14 @@ class Product extends CommonObject
 
 		// Process
 		foreach($to_del as $del) {
-			$c->fetch($del);
-			$c->del_type($this, 'product');
+			if ($c->fetch($del) > 0) {
+				$c->del_type($this, 'product');
+			}
 		}
 		foreach ($to_add as $add) {
-			$c->fetch($add);
-			$c->add_type($this, 'product');
+			if ($c->fetch($add) > 0) {
+				$c->add_type($this, 'product');
+			}
 		}
 
 		return;

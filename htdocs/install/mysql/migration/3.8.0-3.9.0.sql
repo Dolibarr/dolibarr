@@ -55,3 +55,16 @@ ALTER TABLE llx_adherent ADD COLUMN pass_crypted varchar(128) after pass;
 ALTER TABLE llx_paiement ADD COLUMN ref varchar(30) NOT NULL AFTER rowid;
 
 ALTER TABLE llx_socpeople ADD COLUMN photo varchar(255) AFTER skype;
+
+ALTER TABLE llx_user_param MODIFY COLUMN value text NOT NULL;
+
+ALTER TABLE llx_expedition ADD COLUMN import_key varchar(14);
+ALTER TABLE llx_expedition ADD COLUMN extraparams varchar(255);
+
+ALTER TABLE llx_bank_account MODIFY COLUMN code_banque varchar(128);
+ALTER TABLE llx_prelevement_facture_demande MODIFY COLUMN code_banque varchar(128);
+ALTER TABLE llx_prelevement_lignes MODIFY COLUMN code_banque varchar(128);
+ALTER TABLE llx_societe_rib MODIFY COLUMN code_banque varchar(128);
+
+ALTER TABLE llx_contrat ADD COLUMN ref_customer varchar(30);
+

@@ -1100,13 +1100,13 @@ if ($action == 'create')
 	print '<table class="border" width="100%">';
 	print '<tbody>';
 	print '<tr>';
-	print '<td>'.$langs->trans("DateStart").'</td>';
+	print '<td class="fieldrequired">'.$langs->trans("DateStart").'</td>';
 	print '<td>';
 	$form->select_date($date_start?$date_start:-1,'date_debut',0,0,0,'',1,1);
 	print '</td>';
 	print '</tr>';
 	print '<tr>';
-	print '<td>'.$langs->trans("DateEnd").'</td>';
+	print '<td class="fieldrequired">'.$langs->trans("DateEnd").'</td>';
 	print '<td>';
 	$form->select_date($date_end?$date_end:-1,'date_fin',0,0,0,'',1,1);
 	print '</td>';
@@ -1321,56 +1321,56 @@ else
 
 				if ($action == 'save')
 				{
-					$ret=$form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("SaveTrip"),$langs->trans("ConfirmSaveTrip"),"confirm_validate","","",1);
+					$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("SaveTrip"),$langs->trans("ConfirmSaveTrip"),"confirm_validate","","",1);
 					if ($ret == 'html') print '<br>';
 				}
 
 				if ($action == 'save_from_refuse')
 				{
-					$ret=$form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("SaveTrip"),$langs->trans("ConfirmSaveTrip"),"confirm_save_from_refuse","","",1);
+					$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("SaveTrip"),$langs->trans("ConfirmSaveTrip"),"confirm_save_from_refuse","","",1);
 					if ($ret == 'html') print '<br>';
 				}
 
 				if ($action == 'delete')
 				{
-					$ret=$form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("DeleteTrip"),$langs->trans("ConfirmDeleteTrip"),"confirm_delete","","",1);
+					$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("DeleteTrip"),$langs->trans("ConfirmDeleteTrip"),"confirm_delete","","",1);
 					if ($ret == 'html') print '<br>';
 				}
 
 				if ($action == 'validate')
 				{
-					$ret=$form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("ValideTrip"),$langs->trans("ConfirmValideTrip"),"confirm_approve","","",1);
+					$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("ValideTrip"),$langs->trans("ConfirmValideTrip"),"confirm_approve","","",1);
 					if ($ret == 'html') print '<br>';
 				}
 
 				if ($action == 'paid')
 				{
-					$ret=$form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("PaidTrip"),$langs->trans("ConfirmPaidTrip"),"confirm_paid","","",1);
+					$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("PaidTrip"),$langs->trans("ConfirmPaidTrip"),"confirm_paid","","",1);
 					if ($ret == 'html') print '<br>';
 				}
 
 				if ($action == 'cancel')
 				{
 					$array_input = array('text'=>$langs->trans("ConfirmCancelTrip"), array('type'=>"text",'label'=>$langs->trans("Comment"),'name'=>"detail_cancel",'size'=>"50",'value'=>""));
-					$ret=$form->formconfirm($_SEVER["PHP_SELF"]."?id=".$id,$langs->trans("Cancel"),"","confirm_cancel",$array_input,"",1);
+					$ret=$form->form_confirm($_SEVER["PHP_SELF"]."?id=".$id,$langs->trans("Cancel"),"","confirm_cancel",$array_input,"",1);
 					if ($ret == 'html') print '<br>';
 				}
 
 				if ($action == 'brouillonner'):
-				$ret=$form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("BrouillonnerTrip"),$langs->trans("ConfirmBrouillonnerTrip"),"confirm_brouillonner","","",1);
+				$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("BrouillonnerTrip"),$langs->trans("ConfirmBrouillonnerTrip"),"confirm_brouillonner","","",1);
 				if ($ret == 'html') print '<br>';
 				endif;
 
 				if ($action == 'refuse')		// Deny
 				{
 					$array_input = array('text'=>$langs->trans("ConfirmRefuseTrip"), array('type'=>"text",'label'=>$langs->trans("Comment"),'name'=>"detail_refuse",'size'=>"50",'value'=>""));
-					$ret=$form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("Deny"),'',"confirm_refuse",$array_input,"yes",1);
+					$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("Deny"),'',"confirm_refuse",$array_input,"yes",1);
 					if ($ret == 'html') print '<br>';
 				}
 
 				if ($action == 'delete_line')
 				{
-					$ret=$form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id."&rowid=".GETPOST('rowid'),$langs->trans("DeleteLine"),$langs->trans("ConfirmDeleteLine"),"confirm_delete_line",'','yes',1);
+					$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id."&rowid=".GETPOST('rowid'),$langs->trans("DeleteLine"),$langs->trans("ConfirmDeleteLine"),"confirm_delete_line",'','yes',1);
 					if ($ret == 'html') print '<br>';
 				}
 
@@ -1669,7 +1669,7 @@ else
 									print img_picto($langs->trans("Document"), "object_generic");
 									print ' <span>'.$piece_comptable.'</span></td>';
 								}
-								print '<td style="text-align:center;">'.$objp->date.'</td>';
+								print '<td style="text-align:center;">'.dol_print_date($db->jdate($objp->date), 'day').'</td>';
 								print '<td style="text-align:center;">';
 								if ($objp->projet_id > 0)
 								{

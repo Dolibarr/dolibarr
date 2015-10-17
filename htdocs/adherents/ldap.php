@@ -44,12 +44,11 @@ if ($user->societe_id > 0)
     $socid = $user->societe_id;
 }
 
-$adh = new Adherent($db);
-$adh->id = $rowid;
-$result=$adh->fetch($rowid);
+$object = new Adherent($db);
+$result=$object->fetch($rowid);
 if (! $result)
 {
-	dol_print_error($db,"Failed to get adherent: ".$adh->error);
+	dol_print_error($db,"Failed to get adherent: ".$object->error);
 	exit;
 }
 
@@ -65,8 +64,8 @@ if ($action == 'dolibarr2ldap')
 	$ldap=new Ldap();
 	$result=$ldap->connect_bind();
 
-	$info=$adh->_load_ldap_info();
-	$dn=$adh->_load_ldap_dn($info);
+	$info=$object->_load_ldap_info();
+	$dn=$object->_load_ldap_dn($info);
 	$olddn=$dn;	// We can say that old dn = dn as we force synchro
 
 	$result=$ldap->update($dn,$info,$user,$olddn);
@@ -93,35 +92,27 @@ llxHeader('',$langs->trans("Member"),'EN:Module_Foundations|FR:Module_Adh&eacute
 
 $form = new Form($db);
 
-$head = member_prepare_head($adh);
+$head = member_prepare_head($object);
 
 dol_fiche_head($head, 'ldap', $langs->trans("Member"), 0, 'user');
 
+$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php">'.$langs->trans("BackToList").'</a>';
 
-print '<table class="border" width="100%">';
+dol_banner_tab($object, 'rowid', $linkback);
 
-// Ref
-print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
-print '<td class="valeur">';
-print $form->showrefnav($adh,'id');
-print '</td></tr>';
+print '<div class="fichecenter">';
 
-// Lastname
-print '<tr><td>'.$langs->trans("Lastname").'</td><td class="valeur">'.$adh->lastname.'&nbsp;</td>';
-print '</tr>';
-
-// Firstname
-print '<tr><td width="15%">'.$langs->trans("Firstname").'</td><td class="valeur">'.$adh->firstname.'&nbsp;</td>';
-print '</tr>';
+print '<div class="underbanner clearboth"></div>';
+print '<table class="border centpercent">';
 
 // Login
-print '<tr><td>'.$langs->trans("Login").'</td><td class="valeur">'.$adh->login.'&nbsp;</td></tr>';
+print '<tr><td class="titlefield">'.$langs->trans("Login").'</td><td class="valeur">'.$object->login.'&nbsp;</td></tr>';
 
 // Password not crypted
 if (! empty($conf->global->LDAP_MEMBER_FIELD_PASSWORD))
 {
 	print '<tr><td>'.$langs->trans("LDAPFieldPasswordNotCrypted").'</td>';
-	print '<td class="valeur">'.$adh->pass.'</td>';
+	print '<td class="valeur">'.$object->pass.'</td>';
 	print "</tr>\n";
 }
 
@@ -129,12 +120,12 @@ if (! empty($conf->global->LDAP_MEMBER_FIELD_PASSWORD))
 if (! empty($conf->global->LDAP_MEMBER_FIELD_PASSWORD_CRYPTED))
 {
 	print '<tr><td>'.$langs->trans("LDAPFieldPasswordCrypted").'</td>';
-	print '<td class="valeur">'.$adh->pass_crypted.'</td>';
+	print '<td class="valeur">'.$object->pass_crypted.'</td>';
 	print "</tr>\n";
 }
 
 // Type
-print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">'.$adh->type."</td></tr>\n";
+print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">'.$object->type."</td></tr>\n";
 
 $langs->load("admin");
 
@@ -155,6 +146,8 @@ print '</table>';
 
 print '</div>';
 
+dol_fiche_end();
+
 /*
  * Barre d'actions
  */
@@ -163,7 +156,7 @@ print '<div class="tabsAction">';
 
 if (! empty($conf->global->LDAP_MEMBER_ACTIVE) && $conf->global->LDAP_MEMBER_ACTIVE != 'ldap2dolibarr')
 {
-	print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$adh->id.'&amp;action=dolibarr2ldap">'.$langs->trans("ForceSynchronize").'</a></div>';
+	print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=dolibarr2ldap">'.$langs->trans("ForceSynchronize").'</a></div>';
 }
 
 print "</div>\n";
@@ -187,9 +180,9 @@ $ldap=new Ldap();
 $result=$ldap->connect_bind();
 if ($result > 0)
 {
-	$info=$adh->_load_ldap_info();
-	$dn=$adh->_load_ldap_dn($info,1);
-	$search = "(".$adh->_load_ldap_dn($info,2).")";
+	$info=$object->_load_ldap_info();
+	$dn=$object->_load_ldap_dn($info,1);
+	$search = "(".$object->_load_ldap_dn($info,2).")";
 
 	if (empty($dn))
 	{

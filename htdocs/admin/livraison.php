@@ -237,7 +237,7 @@ dol_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
  * Livraison numbering model
  */
 
-print load_fiche_titre($langs->trans("DeliveryOrderNumberingModules"));
+print load_fiche_titre($langs->trans("DeliveryOrderNumberingModules"),'','');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -340,7 +340,7 @@ print '</table>';
  *  Documents Models for delivery
  */
 print '<br>';
-print load_fiche_titre($langs->trans("DeliveryOrderModel"));
+print load_fiche_titre($langs->trans("DeliveryOrderModel"),'','');
 
 // Defini tableau def de modele
 $type="delivery";
@@ -487,7 +487,7 @@ print '</table>';
  *  Autres Options
  */
 print "<br>";
-print load_fiche_titre($langs->trans("OtherOptions"));
+print load_fiche_titre($langs->trans("OtherOptions"),'','');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';

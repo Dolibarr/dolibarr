@@ -33,6 +33,8 @@ $langs->load('projects');
 $langs->load('users');
 
 $id=GETPOST('id','int');
+
+$search_all=GETPOST('search_all');
 $search_project=GETPOST('search_project');
 if (! isset($_GET['search_status']) && ! isset($_POST['search_status'])) $search_status=1;
 else $search_status=GETPOST('search_status');
@@ -55,14 +57,21 @@ $page = $page == -1 ? 0 : $page;
 $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 
 // Purge criteria
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
+    $search_all="";
 	$search_project="";
 	$search_status="";
 	$search_task_ref="";
 	$search_task_label="";
 }
 if (empty($search_status) && $search_status == '') $search_status=1;
+
+// List of fields to search into when doing a "search in all"
+$fieldstosearchall = array(
+	't.ref'=>"Ref",
+	't.label'=>"Label",
+);
 
 
 /*
@@ -107,6 +116,7 @@ $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1,$so
 // Get list of tasks in tasksarray and taskarrayfiltered
 // We need all tasks (even not limited to a user because a task assigned to a user can have a parent that is not assigned to him and we need such parents).
 $morewherefilter='';
+if ($search_all)        $morewherefilter.=natural_search(array_keys($fieldstosearchall), $search_all);
 if ($search_task_ref)   $morewherefilter.=natural_search('t.ref', $search_task_ref);
 if ($search_task_label) $morewherefilter.=natural_search('t.label', $search_task_label);
 $tasksarray=$taskstatic->getTasksArray(0, 0, $projectstatic->id, $socid, 0, $search_project, $search_status, $morewherefilter, $search_project_user, $search_task_user);
@@ -114,7 +124,20 @@ $tasksarray=$taskstatic->getTasksArray(0, 0, $projectstatic->id, $socid, 0, $sea
 $tasksrole=($mine ? $taskstatic->getUserRolesForProjectsOrTasks(0,$user,$projectstatic->id,0) : '');
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="list">';
+print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+print '<input type="hidden" name="type" value="'.$type.'">';
 print '<input type="hidden" name="mode" value="'.GETPOST('mode').'">';
+
+if ($search_all)
+{
+    foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
+    print $langs->trans("FilterOnInto", $search_all, join(', ',$fieldstosearchall));
+}
+
 
 // If the user can view users
 if ($user->rights->user->user->lire)
