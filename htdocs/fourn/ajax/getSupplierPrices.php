@@ -49,9 +49,7 @@ if ($idprod > 0)
 {
 	$producttmp=new ProductFournisseur($db);
 	$producttmp->fetch($idprod);
-	// get supplier prices sorted descending on supplier name and supplier ref
-	// TODO create configuration to define best price, current is not optimal
-	$productSupplierArray = $producttmp->list_product_fournisseur_price($idprod, 's.nom, pfp.ref_fourn', 'DESC');
+	$productSupplierArray = $producttmp->list_product_fournisseur_price($idprod);
 	if ( is_array($productSupplierArray))
 	{
 		foreach ($productSupplierArray as $productSupplier)
