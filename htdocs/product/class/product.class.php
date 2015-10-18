@@ -3058,7 +3058,8 @@ class Product extends CommonObject
 	 */
 	function LibStatut($status,$mode=0,$type=0)
 	{
-		global $langs;
+		global $conf, $langs;
+		
 		$langs->load('products');
 		if (!empty($conf->productbatch->enabled)) $langs->load("productbatch");
 
