@@ -49,7 +49,7 @@ if ($idprod > 0)
 {
 	$producttmp=new ProductFournisseur($db);
 	$producttmp->fetch($idprod);
-	$productSupplierArray = $producttmp->list_product_fournisseur_price($idprod);
+	$productSupplierArray = $producttmp->list_product_fournisseur_price($idprod, 's.nom, pfp.quantity, pfp.price');    // We list all price per supplier, and then firstly with the lower quantity. So we can choose first one with enough quantity into list.
 	if ( is_array($productSupplierArray))
 	{
 		foreach ($productSupplierArray as $productSupplier)
