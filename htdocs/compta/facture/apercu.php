@@ -29,6 +29,7 @@
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 if (! empty($conf->projet->enabled)) require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
@@ -79,10 +80,21 @@ if ($id > 0 || ! empty($ref))
          */
         print '<table class="border" width="100%">';
 
-        // Ref
-        print '<tr><td width="25%">'.$langs->trans('Ref').'</td>';
-        print '<td colspan="5">'.$object->ref.'</td>';
-        print '</tr>';
+    	$linkback = '<a href="' . DOL_URL_ROOT . '/compta/facture/list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+    
+    	// Ref
+    	print '<tr><td>' . $langs->trans('Ref') . '</td><td colspan="5">';
+    	$morehtmlref = '';
+    	$discount = new DiscountAbsolute($db);
+    	$result = $discount->fetch(0, $object->id);
+    	if ($result > 0) {
+    		$morehtmlref = ' (' . $langs->trans("CreditNoteConvertedIntoDiscount", $discount->getNomUrl(1, 'discount')) . ')';
+    	}
+    	if ($result < 0) {
+    		dol_print_error('', $discount->error);
+    	}
+    	print $form->showrefnav($object, 'ref', $linkback, 1, 'facnumber', 'ref', $morehtmlref);
+    	print '</td></tr>';
 
         // Ref customer
         print '<tr><td>'.$langs->trans('RefCustomer').'</td>';
