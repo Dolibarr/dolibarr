@@ -3556,7 +3556,7 @@ class Product extends CommonObject
     						{
     							$return.= '<br>';
     							// On propose la generation de la vignette si elle n'existe pas et si la taille est superieure aux limites
-    							if ($photo_vignette && preg_match('/('.$this->regeximgext.')$/i', $photo) && ($product->imgWidth > $maxWidth || $product->imgHeight > $maxHeight))
+    							if ($photo_vignette && preg_match('/('.$this->regeximgext.')$/i', $photo) && ($this->imgWidth > $maxWidth || $this->imgHeight > $maxHeight))
     							{
     								$return.= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=addthumb&amp;file='.urlencode($pdir.$viewfilename).'">'.img_picto($langs->trans('GenerateThumb'),'refresh').'&nbsp;&nbsp;</a>';
     							}
