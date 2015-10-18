@@ -765,8 +765,10 @@ class Product extends CommonObject
 						$newdir = $conf->product->dir_output . "/" . dol_sanitizeFileName($this->ref);
 						if (file_exists($olddir))
 						{
-							include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
-							$res=dol_move($olddir, $newdir);
+							//include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+							//$res = dol_move($olddir, $newdir);
+							// do not use dol_move with directory
+							$res = @rename($olddir, $newdir);
 							if (! $res)
 							{
 								$this->error='ErrorFailToMoveDir';
