@@ -68,12 +68,12 @@ if ($action == 'add')
 
     if (empty($contactid))
     {
-	    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Contact")), 'errors');
+	    setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Contact")), null, 'errors');
         $error++;
     }
     if ($actionid <= 0)
     {
-	    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Action")), 'errors');
+	    setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Action")), null, 'errors');
         $error++;
     }
 

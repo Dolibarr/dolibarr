@@ -119,7 +119,7 @@ if (empty($reshook))
 		{
 			$error++;
 			$langs->load("errors");
-			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("VATRateForSupplierProduct")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("VATRateForSupplierProduct")), null, 'errors');
 		}
 		if (! is_numeric($tva_tx))
 		{
@@ -131,19 +131,19 @@ if (empty($reshook))
 		{
 			$error++;
 			$langs->load("errors");
-			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Qty")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Qty")), null, 'errors');
 		}
 		if (empty($ref_fourn))
 		{
 			$error++;
 			$langs->load("errors");
-			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("RefSupplier")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("RefSupplier")), null, 'errors');
 		}
 		if ($id_fourn <= 0)
 		{
 			$error++;
 			$langs->load("errors");
-			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Supplier")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Supplier")), null, 'errors');
 		}
 		if ($_POST["price"] < 0 || $_POST["price"] == '')
 		{
@@ -151,7 +151,7 @@ if (empty($reshook))
 			{
 				$error++;
 				$langs->load("errors");
-				setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Price")), 'errors');
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Price")), null, 'errors');
 			}
 			else
 			{

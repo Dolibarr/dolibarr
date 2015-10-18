@@ -62,17 +62,17 @@ if ($action == 'add_payment')
 
 	if (! GETPOST('paymenttype', 'int') > 0)
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("PaymentMode")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("PaymentMode")), null, 'errors');
 		$error++;
 	}
 	if ($datepaid == '')
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Date")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Date")), null, 'errors');
 		$error++;
 	}
     if (! empty($conf->banque->enabled) && ! GETPOST('accountid', 'int') > 0)
     {
-        setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("AccountToCredit")), 'errors');
+        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AccountToCredit")), null, 'errors');
         $error++;
     }
 

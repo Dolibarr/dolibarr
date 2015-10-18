@@ -118,12 +118,12 @@ if (empty($reshook))
 	    $error=0;
 	    if (empty($_POST["ref"]))
 	    {
-		    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Ref")), 'errors');
+		    setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Ref")), null, 'errors');
 	        $error++;
 	    }
 	    if (empty($_POST["title"]))
 	    {
-		    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")), 'errors');
+		    setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
 	        $error++;
 	    }
 
@@ -205,13 +205,13 @@ if (empty($reshook))
 	    {
 	        $error++;
 	        //$_GET["id"]=$_POST["id"]; // On retourne sur la fiche projet
-		    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Ref")), 'errors');
+		    setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Ref")), null, 'errors');
 	    }
 	    if (empty($_POST["title"]))
 	    {
 	        $error++;
 	        //$_GET["id"]=$_POST["id"]; // On retourne sur la fiche projet
-		    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")), 'errors');
+		    setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
 	    }
 
 	    $db->begin();

@@ -94,19 +94,19 @@ if ($action == 'send' && ! $_POST['cancel'])
 	}
     if (empty($body))
     {
-        setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Message")),'errors');
+        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Message")), null, 'errors');
         $action='test';
         $error++;
     }
 	if (empty($smsfrom) || ! str_replace('+','',$smsfrom))
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("SmsFrom")),'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("SmsFrom")), null, 'errors');
         $action='test';
 		$error++;
 	}
 	if (empty($sendto) || ! str_replace('+','',$sendto))
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("SmsTo")),'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("SmsTo")), null, 'errors');
         $action='test';
 		$error++;
 	}

@@ -100,7 +100,7 @@ if ($action == 'add' && $user->rights->ecm->setup)
 
 	if (! $ecmdir->label)
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
 		$action = 'create';
 		$ok=false;
 	}

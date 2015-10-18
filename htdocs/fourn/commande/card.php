@@ -359,7 +359,7 @@ if (empty($reshook))
     			// Product not selected
     			$error++;
     			$langs->load("errors");
-    			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("ProductOrService")).' '.$langs->trans("or").' '.$langs->trans("NoPriceDefinedForThisSupplier"), 'errors');
+    			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ProductOrService")).' '.$langs->trans("or").' '.$langs->trans("NoPriceDefinedForThisSupplier"), null, 'errors');
 	    	}
 	    	if ($idprod == -1)
 	    	{
@@ -784,7 +784,7 @@ if (empty($reshook))
 	    }
 	    else
 	    {
-		    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Delivery")), 'errors');
+		    setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Delivery")), null, 'errors');
 	    }
 	}
 

@@ -94,7 +94,7 @@ if ($action == "correct_stock")
 	if (empty($product_id))
 	{
 		$error++;
-		setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Product")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Product")), null, 'errors');
 		$action='correction';
 	}
 	if (! is_numeric($_POST["nbpiece"]))

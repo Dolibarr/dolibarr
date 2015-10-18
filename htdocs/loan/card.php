@@ -89,17 +89,17 @@ if ($action == 'add' && $user->rights->loan->write)
 
 		if (! $datestart)
 		{
-			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("DateStart")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("DateStart")), null, 'errors');
 			$action = 'create';
 		}
 		elseif (! $dateend)
 		{
-			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("DateEnd")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("DateEnd")), null, 'errors');
 			$action = 'create';
 		}
 		elseif (! $_POST["capital"])
 		{
-			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Capital")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Capital")), null, 'errors');
 			$action = 'create';
 		}
 		else

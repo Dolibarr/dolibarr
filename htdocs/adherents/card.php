@@ -257,12 +257,12 @@ if (empty($reshook))
 		if ($morphy != 'mor' && empty($lastname)) {
 			$error++;
 			$langs->load("errors");
-			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Lastname")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Lastname")), null, 'errors');
 		}
 		if ($morphy != 'mor' && (!isset($firstname) || $firstname=='')) {
 			$error++;
 			$langs->load("errors");
-			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Firstname")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Firstname")), null, 'errors');
 		}
 
 		// Create new object
@@ -485,14 +485,14 @@ if (empty($reshook))
 		// Check parameters
 		if (empty($morphy) || $morphy == "-1") {
 			$error++;
-			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Nature")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Nature")), null, 'errors');
 		}
 		// Test si le login existe deja
 		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
 		{
 			if (empty($login)) {
 				$error++;
-				setEventMessage($langs->trans("ErrorFieldRequired",$langs->trans("Login")), 'errors');
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Login")), null, 'errors');
 			}
 			else {
 				$sql = "SELECT login FROM ".MAIN_DB_PREFIX."adherent WHERE login='".$db->escape($login)."'";
@@ -508,22 +508,22 @@ if (empty($reshook))
 			}
 			if (empty($pass)) {
 				$error++;
-				setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Password")), 'errors');
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Password")), null, 'errors');
 			}
 		}
 		if ($morphy != 'mor' && empty($lastname)) {
 			$error++;
 			$langs->load("errors");
-			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Lastname")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Lastname")), null, 'errors');
 		}
 		if ($morphy != 'mor' && (!isset($firstname) || $firstname=='')) {
 			$error++;
 			$langs->load("errors");
-			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Firstname")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Firstname")), null, 'errors');
 		}
 		if (! ($typeid > 0)) {	// Keep () before !
 			$error++;
-			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
 		}
 		if ($conf->global->ADHERENT_MAIL_REQUIRED && ! isValidEMail($email)) {
 			$error++;

@@ -125,7 +125,7 @@ if (empty($reshook))
 		if (! GETPOST('dateend'))
 		{
 			$error++;
-			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("DateEnd")),'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DateEnd")), null, 'errors');
 		}
 		if (! $error)
 		{
@@ -206,13 +206,13 @@ if (empty($reshook))
 		if (empty($datecontrat))
 		{
 			$error++;
-			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date")),'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
 			$action='create';
 		}
 	
 		if ($socid<1)
 		{
-			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Customer")),'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Customer")), null, 'errors');
 			$action='create';
 			$error++;
 		}
@@ -419,12 +419,12 @@ if (empty($reshook))
 	
 	    if ($qty == '')
 	    {
-	    	setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Qty")),'errors');
+	    	setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Qty")), null, 'errors');
 	    	$error++;
 	    }
 	    if (GETPOST('prod_entry_mode') == 'free' && empty($idprod) && empty($product_desc))
 	    {
-	    	setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Description")),'errors');
+	    	setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Description")), null, 'errors');
 	    	$error++;
 	    }
 	
@@ -746,7 +746,7 @@ if (empty($reshook))
 		}
 		else
 		{
-			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("RefNewContract")),'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("RefNewContract")), null, 'errors');
 		}
 	} 
 	else if ($action == 'update_extras') 

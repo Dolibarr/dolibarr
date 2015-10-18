@@ -83,22 +83,22 @@ if ($action == 'add' && $user->rights->tax->charges->creer)
     $actioncode=GETPOST('actioncode');
 	if (! $dateech)
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("DateDue")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("DateDue")), null, 'errors');
 		$action = 'create';
 	}
 	elseif (! $dateperiod)
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Period")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Period")), null, 'errors');
 		$action = 'create';
 	}
 	elseif (! $actioncode > 0)
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Type")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Type")), null, 'errors');
 		$action = 'create';
 	}
 	elseif (empty($amount))
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Amount")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount")), null, 'errors');
 		$action = 'create';
 	}
 	elseif (! is_numeric($amount))
@@ -133,17 +133,17 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->tax->charges->cr
     $amount=GETPOST('amount');
     if (! $dateech)
     {
-        setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("DateDue")), 'errors');
+        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("DateDue")), null, 'errors');
         $action = 'edit';
     }
     elseif (! $dateperiod)
     {
-        setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Period")), 'errors');
+        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Period")), null, 'errors');
         $action = 'edit';
     }
     elseif (empty($amount))
     {
-        setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Amount")), 'errors');
+        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount")), null, 'errors');
         $action = 'edit';
     }
 	else
