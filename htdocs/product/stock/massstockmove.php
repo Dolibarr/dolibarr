@@ -79,17 +79,17 @@ if ($action == 'addline')
 	if (! ($id_product > 0))
 	{
 		$error++;
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Product")),'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Product")), null, 'errors');
 	}
 	if (! ($id_sw > 0))
 	{
 		$error++;
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("WarehouseSource")),'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("WarehouseSource")), null, 'errors');
 	}
 	if (! ($id_tw > 0))
 	{
 		$error++;
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("WarehouseTarget")),'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("WarehouseTarget")), null, 'errors');
 	}
 	if ($id_sw > 0 && $id_tw == $id_sw)
 	{
@@ -100,7 +100,7 @@ if ($action == 'addline')
 	if (! $qty)
 	{
 		$error++;
-	    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Qty")),'errors');
+	    setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Qty")), null, 'errors');
 	}
 
 	// Check a batch number is provided if product need it

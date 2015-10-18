@@ -140,7 +140,7 @@ if ($action == 'setremise')
 		$error=0;
 		if (empty($_POST["desc"]))
 		{
-			setEventMessage($langs->trans("ErrorFieldRequired",$langs->trans("ReasonDiscount")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("ReasonDiscount")), null, 'errors');
 			$error++;
 		}
 

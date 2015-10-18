@@ -242,19 +242,19 @@ if (empty($reshook))
 
         if (! GETPOST('name'))
         {
-            setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ThirdPartyName")), 'errors');
+            setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ThirdPartyName")), null, 'errors');
             $error++;
             $action='create';
         }
         if (GETPOST('client') < 0)
         {
-            setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ProspectCustomer")), 'errors');
+            setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ProspectCustomer")), null, 'errors');
             $error++;
             $action='create';
         }
         if (GETPOST('fournisseur') < 0)
         {
-            setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Supplier")), 'errors');
+            setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Supplier")), null, 'errors');
             $error++;
             $action='create';
         }

@@ -135,25 +135,25 @@ if ($action == 'add')
     $error=0;
     if (! $error && ! $_POST['menu_handler'])
     {
-	    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("MenuHandler")), 'errors');
+	    setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("MenuHandler")), null, 'errors');
         $action = 'create';
         $error++;
     }
     if (! $error && ! $_POST['type'])
     {
-	    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Type")), 'errors');
+	    setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Type")), null, 'errors');
         $action = 'create';
         $error++;
     }
     if (! $error && ! $_POST['url'])
     {
-	    setEventMessage($langs->trans("ErrorFieldRequired",$langs->trans("Url")), 'errors');
+	    setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Url")), null, 'errors');
         $action = 'create';
         $error++;
     }
     if (! $error && ! $_POST['titre'])
     {
-	    setEventMessage($langs->trans("ErrorFieldRequired",$langs->trans("Title")), 'errors');
+	    setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Title")), null, 'errors');
         $action = 'create';
         $error++;
     }

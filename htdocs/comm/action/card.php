@@ -191,14 +191,14 @@ if ($action == 'add')
 	{
 		$error++; $donotclearsession=1;
 		$action = 'create';
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("DateEnd")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DateEnd")), null, 'errors');
 	}
 
 	if (empty($conf->global->AGENDA_USE_EVENT_TYPE) && ! GETPOST('label'))
 	{
 		$error++; $donotclearsession=1;
 		$action = 'create';
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Title")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Title")), null, 'errors');
 	}
 
 	// Initialisation objet cactioncomm
@@ -206,7 +206,7 @@ if ($action == 'add')
 	{
 		$error++; $donotclearsession=1;
 		$action = 'create';
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
 	}
 	else
 	{
@@ -289,20 +289,20 @@ if ($action == 'add')
 	{
 		$error++; $donotclearsession=1;
 		$action = 'create';
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("ActionsOwnedBy")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ActionsOwnedBy")), null, 'errors');
 	}
 	if ($object->type_code == 'AC_RDV' && ($datep == '' || ($datef == '' && empty($fulldayevent))))
 	{
 		$error++; $donotclearsession=1;
 		$action = 'create';
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("DateEnd")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DateEnd")), null, 'errors');
 	}
 
 	if (! GETPOST('apyear') && ! GETPOST('adyear'))
 	{
 		$error++; $donotclearsession=1;
 		$action = 'create';
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
 	}
 
 	// Fill array 'array_options' with data from add form
@@ -450,7 +450,7 @@ if ($action == 'update')
 		{
 			$error++; $donotclearsession=1;
 			$action = 'edit';
-			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
 		}
 		else
 		{
@@ -460,7 +460,7 @@ if ($action == 'update')
 		{
 			$error++; $donotclearsession=1;
 			$action = 'edit';
-			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("ActionsOwnedBy")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ActionsOwnedBy")), null, 'errors');
 		}
 
 		// Fill array 'array_options' with data from add form

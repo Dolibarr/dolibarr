@@ -169,19 +169,19 @@ if (($action == 'send' || $action == 'sendhtml') && ! GETPOST('addfile') && ! GE
 
 	if (empty($_POST["frommail"]))
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("MailFrom")),'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("MailFrom")), null, 'errors');
 		$action='test';
 		$error++;
 	}
 	if (empty($sendto))
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("MailTo")),'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("MailTo")), null, 'errors');
 		$action='test';
 		$error++;
 	}
 	if (! $error)
 	{
-		// Le message est-il en html
+		// Is the message in HTML?
 		$msgishtml=0;	// Message is not HTML
 		if ($action == 'sendhtml') $msgishtml=1;	// Force message to HTML
 
