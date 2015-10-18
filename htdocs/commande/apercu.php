@@ -142,7 +142,7 @@ if ($id > 0 || ! empty($ref))
 			print "</table>\n";
 
 			// Conversion du PDF en image png si fichier png non existant
-			if (! file_exists($fileimage) && ! file_exists($fileimagebis))
+			if ((! file_exists($fileimage) && ! file_exists($fileimagebis)) || (filemtime($fileimage) < filemtime($file)))
 			{
 				if (class_exists("Imagick"))
 				{
