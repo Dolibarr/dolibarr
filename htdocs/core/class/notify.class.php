@@ -143,7 +143,7 @@ class Notify
      */
     function send($action, $object)
     {
-        global $conf,$langs,$mysoc,$dolibarr_main_url_root;
+        global $user,$conf,$langs,$mysoc,$dolibarr_main_url_root;
 
 	    include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
