@@ -1,6 +1,5 @@
 -- ===================================================================
--- Copyright (C) 2008-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
--- Copyright (C) 2009-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+-- Copyright (C) 2015	Laurent Destailleur	<eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -17,21 +16,21 @@
 --
 -- ===================================================================
 
--- DROP TABLE llx_ecm_directories;
-
-CREATE TABLE llx_ecm_directories
+CREATE TABLE llx_ecm_files
 (
   rowid				integer AUTO_INCREMENT PRIMARY KEY,
   label				varchar(64) NOT NULL,
   entity			integer DEFAULT 1 NOT NULL,		-- multi company id
-  fk_parent			integer,
-  description		varchar(255) NOT NULL,
-  cachenbofdoc		integer NOT NULL DEFAULT 0,
-  fullpath    		varchar(10000),
+  filename          varchar(255) NOT NULL,			-- file name only without any directory
+  fullpath    		varchar(10000) NOT NULL,   	    -- relative to dolibarr document dir. example abc/def/myfile
+  fullpath_orig		varchar(10000),	                -- full path of original filename, when file is uploaded from a local computer
+  description		text,
+  keywords          text,                           -- list of keywords, separated with comma
+  cover             text,                           -- is this file a file to use for a cover
   extraparams		varchar(255),					-- for stock other parameters with json format
   date_c			datetime,
   date_m			timestamp,
   fk_user_c			integer,
   fk_user_m			integer,
-  acl				text
+  acl				text							-- for future permission 'per file'
 ) ENGINE=innodb;

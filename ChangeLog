@@ -2,7 +2,9 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
-WARNING: Do not try to make any Dolibarr upgrade if you are running Mysql version 5.5.40.
+WARNING: 
+
+Do not try to make any Dolibarr upgrade if you are running Mysql version 5.5.40.
 Mysql version 5.5.40 has a very critical bug making your data beeing definitely lost.
 You may also experience troubles with Mysql 5.5.41 with error "Lost connection" during migration.
 Upgrading to any other version or any other database system is abolutely required BEFORE trying
@@ -11,7 +13,9 @@ make a Dolibarr upgrade.
 
 ***** ChangeLog for 3.9 compared to 3.8.* *****
 
-WARNING: Following changes may create regression for some external modules, but were necessary to make
+WARNING: 
+
+Following changes may create regression for some external modules, but were necessary to make
 Dolibarr better:
 - Deprecated hidden option MAIN_USE_CUSTOM_TRANSLATION has been removed. Use table llx_overwrite_trans instead.
 - Trigger LINECONTRACT_INSERT has been renamed into LINECONTRACT_CREATE to match common denomination.
@@ -348,9 +352,11 @@ FIX send mail, copy sendto don't read the list of contact
 FIX Properly escape untrusted data to prevent HTML injection.
 FIX send mail, copy sendto don't read the list of contact
 
-Path to save photos of products was moved in 3.7.0 to match path of other attached files. If you had loose
-your photo on the photo tab of products, you can set the constant "PRODUCT_USE_OLD_PATH_FOR_PHOTO" to
-restore old path.
+WARNING:
+
+Path to save photos of products was moved to match path of other attached files. If you had loose your photo
+on the photo tab of products, you can set the constant "PRODUCT_USE_OLD_PATH_FOR_PHOTO" to 1 (home - setup - other)
+to restore old path and get back working links without having to resubmit images.
 
 WARNING:
 
@@ -523,11 +529,14 @@ You may also experience troubles with Mysql 5.5.41 with error "Lost connection" 
 Upgrading to any other version or database system is abolutely required BEFORE trying to
 make a Dolibarr upgrade.
 
-WARNING: Following changes may create regression for some external modules, but was necessary to make
+WARNING: 
+
+Following changes may create regression for some external modules, but was necessary to make
 Dolibarr better:
 
 - Path to save photos of products was moved to match path of other attached files. If you had loose your photo
-  on the photo tab of products, you can set the constant "PRODUCT_USE_OLD_PATH_FOR_PHOTO" to restore old path.
+  on the photo tab of products, you can set the constant "PRODUCT_USE_OLD_PATH_FOR_PHOTO" to 1 (home - setup - other)
+  to restore old path and get back working links without having to resubmit images.
 - If you can't see trips and expenses records, check that you have the new permission "read all
   trips and expenses".
 - Deprecated module "oscommerce" were removed.

@@ -68,3 +68,27 @@ ALTER TABLE llx_societe_rib MODIFY COLUMN code_banque varchar(128);
 
 ALTER TABLE llx_contrat ADD COLUMN ref_customer varchar(30);
 
+
+ALTER TABLE llx_ecm_directories MODIFY COLUMN fullpath varchar(10000);
+
+CREATE TABLE llx_ecm_files
+(
+  rowid				integer AUTO_INCREMENT PRIMARY KEY,
+  label				varchar(64) NOT NULL,
+  entity			integer DEFAULT 1 NOT NULL,		-- multi company id
+  filename          varchar(255) NOT NULL,			-- file name only without any directory
+  fullpath    		varchar(10000) NOT NULL,	    -- relative to dolibarr document dir. example abc/def/myfile
+  fullpath_orig		varchar(10000),    	            -- full path of original filename, when file is uploaded from a local computer
+  description		text,
+  keywords          text,                           -- list of keywords, separated with comma
+  cover             text,                           -- is this file a file to use for a cover
+  extraparams		varchar(255),					-- for stock other parameters with json format
+  date_c			datetime,
+  date_m			timestamp,
+  fk_user_c			integer,
+  fk_user_m			integer,
+  acl				text							-- for future permission 'per file'
+) ENGINE=innodb;
+
+ALTER TABLE llx_ecm_files ADD UNIQUE INDEX uk_ecm_files_fullpath(fullpath);
+

@@ -1618,7 +1618,7 @@ TaskModelModule=Tasks reports document model
 UseSearchToSelectProject=Use autocompletion fields to choose project (instead of using a list box)
 ##### ECM (GED) #####
 ECMSetup = GED Setup
-ECMAutoTree = Automatic tree folder and document
+ECMAutoTree = Show also the automatic tree folder and document
 ##### Fiscal Year #####
 FiscalYears=Fiscal years
 FiscalYear=Fiscal year
