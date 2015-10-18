@@ -2099,26 +2099,26 @@ class Propal extends CommonObject
         $this->fetchObjectLinked($id,$this->element);
         foreach($this->linkedObjectsIds as $objecttype => $objectid)
         {
-            $numi=count($objectid);
-            for ($i=0;$i<$numi;$i++)
+        	// Nouveau système du comon object renvoi des rowid et non un id linéaire de 1 à n
+        	// On parcourt donc une liste d'objets en tant qu'objet unique
+			foreach($objectid as $key => $object)
             {
                 // Cas des factures liees directement
                 if ($objecttype == 'facture')
                 {
-                    $linkedInvoices[] = $objectid[$i];
+                    $linkedInvoices[] = $object;
                 }
                 // Cas des factures liees par un autre objet (ex: commande)
                 else
 				{
-                    $this->fetchObjectLinked($objectid[$i],$objecttype);
+                    $this->fetchObjectLinked($object,$objecttype);
                     foreach($this->linkedObjectsIds as $subobjecttype => $subobjectid)
                     {
-                        $numj=count($subobjectid);
-                        for ($j=0;$j<$numj;$j++)
+						foreach($subobjectid as $subkey => $subobject)
                         {
                         	if ($subobjecttype == 'facture')
                         	{
-                            	$linkedInvoices[] = $subobjectid[$j];
+                            	$linkedInvoices[] = $subobject;
                         	}
                         }
                     }

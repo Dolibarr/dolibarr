@@ -2438,6 +2438,7 @@ class Societe extends CommonObject
             $resql=$this->db->query($sql);
             if ($resql)
             {
+            	$this->parent = $id;
                 return 1;
             }
             else

@@ -1790,6 +1790,9 @@ if (empty($reshook))
 				dol_print_error($db);
 			}
 		}
+
+		if ($error)
+			$action = 'edit_extras';
 	}
 }
 

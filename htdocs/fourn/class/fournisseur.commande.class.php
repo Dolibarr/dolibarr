@@ -464,6 +464,7 @@ class CommandeFournisseur extends CommonOrder
             {
                 $result = 1;
                 $this->log($user, 1, time());	// Statut 1
+                $this->statut = 1;
                 $this->ref = $num;
             }
 
