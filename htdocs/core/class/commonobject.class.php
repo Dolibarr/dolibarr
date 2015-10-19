@@ -1508,6 +1508,36 @@ abstract class CommonObject
 
 
     /**
+     *  Change the warehouse
+     *
+     *  @param      int     $warehouse_id     Id of warehouse
+     *  @return     int              1 if OK, 0 if KO
+     */
+    function setWarehouse($warehouse_id)
+    {
+        if (! $this->table_element) {
+            dol_syslog(get_class($this)."::setWarehouse was called on objet with property table_element not defined",LOG_ERR);
+            return -1;
+        }
+        if ($warehouse_id<0) $warehouse_id='NULL';
+        dol_syslog(get_class($this).'::setWarehouse('.$warehouse_id.')');
+
+        $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
+        $sql.= " SET fk_warehouse = ".$warehouse_id;
+        $sql.= " WHERE rowid=".$this->id;
+
+        if ($this->db->query($sql)) {
+            $this->warehouse_id = ($warehouse_id=='NULL')?null:$warehouse_id;
+            return 1;
+        } else {
+            dol_syslog(get_class($this).'::setWarehouse Error ', LOG_DEBUG);
+            $this->error=$this->db->error();
+            return 0;
+        }
+    }
+
+
+    /**
      *		Set last model used by doc generator
      *
      *		@param		User	$user		User object that make change
