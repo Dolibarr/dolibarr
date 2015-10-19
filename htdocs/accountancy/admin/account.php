@@ -76,7 +76,7 @@ if ($action == 'disable') {
 	
 	$action = 'update';
 	if ($result < 0) {
-		setEventMessages($accounting->error, null, 'errors');
+		setEventMessage($accounting->error, 'errors');
 	}
 } else if ($action == 'enable') {
 	if ($accounting->fetch($id)) {
@@ -84,7 +84,7 @@ if ($action == 'disable') {
 	}
 	$action = 'update';
 	if ($result < 0) {
-		setEventMessages($accounting->error, null, 'errors');
+		setEventMessage($accounting->error, 'errors');
 	}
 }
 

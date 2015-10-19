@@ -125,7 +125,7 @@ else if ($action == 'delete')
 	}
 
 	if ($result < 0) {
-		setEventMessages($accounting->error, null, 'errors');
+		setEventMessage($accounting->error, 'errors');
 	}
 }
 
