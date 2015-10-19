@@ -1203,6 +1203,7 @@ AskPriceSupplierPDFModules=Price requests suppliers documents models
 FreeLegalTextOnAskPriceSupplier=Free text on price requests suppliers
 WatermarkOnDraftAskPriceSupplier=Watermark on draft price requests suppliers (none if empty)
 BANK_ASK_PAYMENT_BANK_DURING_ASKPRICESUPPLIER=Ask for bank account destination of price request
+WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER=Ask for Warehouse Source for order
 ##### Orders #####
 OrdersSetup=Order management setup
 OrdersNumberingModules=Orders numbering models
