@@ -1492,7 +1492,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 
 	    // Login name with tooltip
 		$toprightmenu.='<div class="inline-block nowrap"><div class="inline-block login_block_elem login_block_elem_name" style="padding: 0px;">';
-        $toprightmenu.=$user->getNomurl(0, '', true, 0, 11, 0, 'firstname','alogin');
+        $toprightmenu.=$user->getNomurl(0, '', true, 0, 11, 0, ($user->firstname ? 'firstname' : -1),'alogin');
         $toprightmenu.='</div></div>';
 
 		$toprightmenu.='</div>';
