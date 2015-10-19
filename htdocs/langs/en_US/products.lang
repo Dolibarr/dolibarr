@@ -232,6 +232,10 @@ PriceByQuantityRange=Quantity range
 ProductsDashboard=Products/Services summary
 UpdateOriginalProductLabel=Modify original label
 HelpUpdateOriginalProductLabel=Allows to edit the name of the product
+MultipriceRules=Price level rules
+UseMultipriceRules=Use price level rules
+PercentVariationOver=%% variation over %s
+PercentDiscountOver=%% discount over %s
 ### composition fabrication
 Building=Production and items dispatchment
 Build=Produce

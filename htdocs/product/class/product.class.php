@@ -192,6 +192,12 @@ class Product extends CommonObject
 	public $fk_unit;
 
 	/**
+	 * Price is generated using multiprice rules
+	 * @var int
+	 */
+	public $price_autogen = 0;
+
+	/**
 	 * Regular product
 	 */
 	const TYPE_PRODUCT = 0;
@@ -710,6 +716,7 @@ class Product extends CommonObject
 			$sql.= ", accountancy_code_sell= '" . $this->db->escape($this->accountancy_code_sell)."'";
 			$sql.= ", desiredstock = " . ((isset($this->desiredstock) && $this->desiredstock != '') ? $this->desiredstock : "null");
 	        $sql.= ", fk_unit= " . (!$this->fk_unit ? 'NULL' : $this->fk_unit);
+	        $sql.= ", price_autogen = " . (!$this->price_autogen ? 0 : 1);
 			$sql.= " WHERE rowid = " . $id;
 
 			dol_syslog(get_class($this)."::update", LOG_DEBUG);
@@ -1337,9 +1344,10 @@ class Product extends CommonObject
 	 *  @param		int		$level			0=standard, >0 = level if multilevel prices
 	 *  @param     	int		$newnpr         0=Standard vat rate, 1=Special vat rate for French NPR VAT
 	 *  @param     	int		$newpsq         1 if it has price by quantity
+	 * @param int $ignore_autogen Used to avoid infinite loops
 	 * 	@return		int						<0 if KO, >0 if OK
 	 */
-	function updatePrice($newprice, $newpricebase, $user, $newvat='',$newminprice='', $level=0, $newnpr=0, $newpsq=0)
+	function updatePrice($newprice, $newpricebase, $user, $newvat='',$newminprice='', $level=0, $newnpr=0, $newpsq=0, $ignore_autogen = 0)
 	{
 		global $conf,$langs;
 
@@ -1353,6 +1361,12 @@ class Product extends CommonObject
 
 		// Check parameters
 		if ($newvat == '') $newvat=$this->tva_tx;
+
+		//If multiprices are enabled, then we check if the current product is subject to price autogeneration
+		if (!empty($conf->global->PRODUIT_MULTIPRICES) && !$ignore_autogen && $this->price_autogen) {
+			return $this->generateMultiprices($user, $newprice, $newpricebase, $newvat, $newnpr, $newpsq);
+		}
+
 		if (! empty($newminprice) && ($newminprice > $newprice))
 		{
 			$this->error='ErrorPriceCantBeLowerThanMinPrice';
@@ -1531,7 +1545,7 @@ class Product extends CommonObject
 		$sql.= " weight, weight_units, length, length_units, surface, surface_units, volume, volume_units, barcode, fk_barcode_type, finished,";
 		$sql.= " accountancy_code_buy, accountancy_code_sell, stock, pmp,";
 		$sql.= " datec, tms, import_key, entity, desiredstock, tobatch, fk_unit";
-		$sql.= " , fk_price_expression";
+		$sql.= " , fk_price_expression, price_autogen";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
 		if ($id) $sql.= " WHERE rowid = ".$this->db->escape($id);
 		else
@@ -1608,6 +1622,7 @@ class Product extends CommonObject
 				$this->ref_ext					= $obj->ref_ext;
 				$this->fk_price_expression		= $obj->fk_price_expression;
 				$this->fk_unit					= $obj->fk_unit;
+				$this->price_autogen			= $obj->price_autogen;
 
 				$this->db->free($resql);
 
@@ -3991,5 +4006,65 @@ class Product extends CommonObject
 		);
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+	}
+
+	/**
+	 * Generates prices for a product based on product multiprice generation rules
+	 *
+	 * @param User $user User that updates the prices
+	 * @param float $baseprice Base price
+	 * @param string $price_type Base price type
+	 * @param float $price_vat VAT % tax
+	 * @param int $npr NPR
+	 * @param string $psq ¿?
+	 * @return int -1 KO, 1 OK
+	 */
+	public function generateMultiprices(User $user, $baseprice, $price_type, $price_vat, $npr, $psq)
+	{
+		global $conf, $db;
+
+		$sql = "SELECT * FROM ".MAIN_DB_PREFIX."product_pricerules";
+		$query = $db->query($sql);
+
+		$rules = array();
+
+		while ($result = $db->fetch_object($query)) {
+			$rules[$result->level] = $result;
+		}
+
+		//Because prices can be based on other level's prices, we temporarily store them
+		$prices = array(
+			1 => $baseprice
+		);
+
+		for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
+
+			$price = $baseprice;
+			$price_min = 0;
+
+			if ($i > 1) {
+				//We have to make sure it does exist and it is > 0
+				if (isset($rules[$i]->var_percent) && $rules[$i]->var_percent) {
+					$price = $prices[$rules[$i]->fk_level] * (1 + ($rules[$i]->var_percent/100));
+				}
+			}
+
+			$prices[$i] = $price;
+
+			//We have to make sure it does exist and it is > 0
+			if (isset($rules[$i]->var_min_percent) && $rules[$i]->var_min_percent) {
+				$price_min = $price * (1 - ($rules[$i]->var_min_percent/100));
+			}
+
+			if ($price == $this->multiprices[$i] && ($price_min == $this->multiprices_min[$i])) {
+				continue;
+			}
+
+			if ($this->updatePrice($price, $price_type, $user, $price_vat, $price_min, $i, $npr, $psq, true) < 0) {
+				return -1;
+			}
+		}
+
+		return 1;
 	}
 }

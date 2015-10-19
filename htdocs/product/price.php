@@ -82,39 +82,37 @@ $parameters=array('id'=>$id, 'ref'=>$ref);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-if (empty($reshook))
-{
-	if ($action == 'update_price' && !$cancel && ($user->rights->produit->creer || $user->rights->service->creer))
-	{
+if (empty($reshook)) {
+	if ($action == 'update_price' && !$cancel && ($user->rights->produit->creer || $user->rights->service->creer)) {
+		$newprice = '';
+		$newprice_min = '';
+		$newpricebase = '';
+		$newvat = '';
+
 		$maxpricesupplier = $object->min_recommended_price();
 		$object->fk_price_expression = empty($eid) ? 0 : $eid; //0 discards expression
 
 		// MultiPrix
-		if (! empty($conf->global->PRODUIT_MULTIPRICES))
-		{
-			$newprice = '';
-			$newprice_min = '';
-			$newpricebase = '';
-			$newvat = '';
+		if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
 
-			for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i ++)
-			{
-				if (isset($_POST ["price_" . $i]))
-				{
+			//Shall we generate prices using price rules?
+			$object->price_autogen = GETPOST('usePriceRules') == 'on' ? true : false;
+			$object->update($object->id, $user);
+
+			for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i ++) {
+				if (isset($_POST ["price_".$i])) {
 					$level = $i;
-					$newprice = price2num($_POST ["price_" . $i], 'MU');
-					$newprice_min = price2num($_POST ["price_min_" . $i], 'MU');
-					$newpricebase = $_POST ["multiprices_base_type_" . $i];
-					$newnpr = (preg_match('/\*/', $_POST ["tva_tx_" . $i]) ? 1 : 0);
-					$newvat = str_replace('*', '', $_POST ["tva_tx_" . $i]);
+					$newprice = price2num($_POST ["price_".$i], 'MU');
+					$newprice_min = price2num($_POST ["price_min_".$i], 'MU');
+					$newpricebase = $_POST ["multiprices_base_type_".$i];
+					$newnpr = (preg_match('/\*/', $_POST ["tva_tx_".$i]) ? 1 : 0);
+					$newvat = str_replace('*', '', $_POST ["tva_tx_".$i]);
 					$newpsq = GETPOST('psqflag');
 					$newpsq = empty($newpsq) ? 0 : $newpsq;
 					break; // We found submited price
 				}
 			}
-		}
-		else
-		{
+		} else {
 			$level = 0;
 			$newprice = price2num($_POST ["price"], 'MU');
 			$newprice_min = price2num($_POST ["price_min"], 'MU');
@@ -125,42 +123,39 @@ if (empty($reshook))
 			$newpsq = empty($newpsq) ? 0 : $newpsq;
 		}
 
-		if (! empty($conf->global->PRODUCT_MINIMUM_RECOMMENDED_PRICE) && $newprice_min < $maxpricesupplier)
-		{
-			setEventMessage($langs->trans("MinimumPriceLimit",price($maxpricesupplier,0,'',1,-1,-1,'auto')),'errors');
-			$error++;
-			$action='edit_price';
+		if (!empty($conf->global->PRODUCT_MINIMUM_RECOMMENDED_PRICE) && $newprice_min < $maxpricesupplier) {
+			setEventMessage($langs->trans("MinimumPriceLimit", price($maxpricesupplier, 0, '', 1, - 1, - 1, 'auto')), 'errors');
+			$error ++;
+			$action = 'edit_price';
 		}
 
-		if ($newprice < $newprice_min && ! empty($object->fk_price_expression))
-		{
+		if ($newprice < $newprice_min && !empty($object->fk_price_expression)) {
 			$newprice = $newprice_min; //Set price same as min, the user will not see the
 		}
 
-		if ($object->updatePrice($newprice, $newpricebase, $user, $newvat, $newprice_min, $level, $newnpr, $newpsq) > 0)
-		{
+		$res = $object->updatePrice($newprice, $newpricebase, $user, $newvat, $newprice_min, $level, $newnpr, $newpsq);
+
+		if ($res) {
+
 			if ($object->fk_price_expression != 0) {
 				//Check the expression validity by parsing it
 				$priceparser = new PriceParser($db);
 				$price_result = $priceparser->parseProduct($object);
 				if ($price_result < 0) { //Expression is not valid
-					$error++;
-					$action='edit_price';
+					$error ++;
+					$action = 'edit_price';
 					setEventMessage($priceparser->translatedError(), 'errors');
 				}
 			}
-			if (empty($error) && ! empty($conf->dynamicprices->enabled))
-			{
-				$ret=$object->setPriceExpression($object->fk_price_expression);
-				if ($ret < 0)
-				{
-					$error++;
-					$action='edit_price';
+			if (empty($error) && !empty($conf->dynamicprices->enabled)) {
+				$ret = $object->setPriceExpression($object->fk_price_expression);
+				if ($ret < 0) {
+					$error ++;
+					$action = 'edit_price';
 					setEventMessage($object->error, 'errors');
 				}
 			}
-			if (empty($error))
-			{
+			if (empty($error)) {
 				$action = '';
 				setEventMessage($langs->trans("RecordSaved"));
 			}
@@ -169,6 +164,7 @@ if (empty($reshook))
 			setEventMessage($object->error, 'errors');
 		}
 	}
+
 
 	if ($action == 'delete' && $user->rights->produit->supprimer)
 	{
@@ -785,6 +781,33 @@ if ($action == 'edit_price' && ($user->rights->produit->creer || $user->rights->
 	}
 	else
 	{
+
+		?>
+		<script>
+
+			var showHidePriceRules = function () {
+				var otherPrices = $('div.fiche form:not(:first)');
+				var minPrice1 = $('div.fiche form:first tr:eq(3)');
+
+				console.log('e');
+
+				if (jQuery('input#usePriceRules').prop('checked')) {
+					otherPrices.hide();
+					minPrice1.hide();
+				} else {
+					otherPrices.show();
+					minPrice1.show();
+				}
+			};
+
+			jQuery(document).ready(function () {
+				showHidePriceRules();
+
+				jQuery('input#usePriceRules').click(showHidePriceRules);
+			});
+		</script>
+		<?php
+
 		for($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i ++)
 		{
 			print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
@@ -798,6 +821,7 @@ if ($action == 'edit_price' && ($user->rights->produit->creer || $user->rights->
 
 			// VAT
 			if ($i == 1) {
+				print '<tr><td>' . $langs->trans('UseMultipriceRules'). '</td><td><input type="checkbox" id="usePriceRules" name="usePriceRules" '.($object->price_autogen ? 'checked' : '').'></td></tr>';
 				print '<tr><td>' . $langs->trans("VATRate") . '</td><td>';
 				print $form->load_tva("tva_tx_" . $i, $object->multiprices_tva_tx ["$i"], $mysoc, '', $object->id);
 				print '</td></tr>';

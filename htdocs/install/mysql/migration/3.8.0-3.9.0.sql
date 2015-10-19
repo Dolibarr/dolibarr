@@ -67,6 +67,14 @@ ALTER TABLE llx_prelevement_lignes MODIFY COLUMN code_banque varchar(128);
 ALTER TABLE llx_societe_rib MODIFY COLUMN code_banque varchar(128);
 
 ALTER TABLE llx_contrat ADD COLUMN ref_customer varchar(30);
+CREATE TABLE llx_product_pricerules
+(
+    rowid INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    level INT NOT NULL, -- Which price level is this rule for?
+    fk_level INT NOT NULL, -- Price variations are made over price of X
+    var_percent FLOAT NOT NULL, -- Price variation over based price
+    var_min_percent FLOAT NOT NULL -- Min price discount over general price
+);
 
 
 ALTER TABLE llx_ecm_directories MODIFY COLUMN fullpath varchar(10000);
@@ -94,3 +102,4 @@ ALTER TABLE llx_ecm_files ADD UNIQUE INDEX uk_ecm_files_fullpath(fullpath);
 
 
 ALTER TABLE llx_product ADD COLUMN onportal tinyint DEFAULT 0 after tobuy;
+ALTER TABLE llx_product ADD COLUMN price_autogen TINYINT(1) DEFAULT 0;
