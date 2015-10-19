@@ -492,7 +492,6 @@ if ($id > 0)
 
 	// Nbre max d'elements des petites listes
 	$MAXLIST=$conf->global->MAIN_SIZE_SHORTLISTE_LIMIT;
-	$tableaushown=1;
 
 	// Lien recap
 	print '<table class="noborder" width="100%">';
@@ -684,7 +683,6 @@ if ($id > 0)
             if ($num > 0) {
                 print '<table class="noborder" width="100%">';
 
-                $tableaushown=1;
                 print '<tr class="liste_titre">';
                 print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastSendings",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/expedition/list.php?socid='.$object->id.'">'.$langs->trans("AllSendings").' <span class="badge">'.$num.'</span></a></td>';
                 print '<td width="20px" align="right"><a href="'.DOL_URL_ROOT.'/expedition/stats/index.php?socid='.$object->id.'">'.img_picto($langs->trans("Statistics"),'stats').'</a></td>';
@@ -868,7 +866,6 @@ if ($id > 0)
 			{
 		        print '<table class="noborder" width="100%">';
 
-			    $tableaushown=1;
 				print '<tr class="liste_titre">';
 				print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastCustomersBills",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$object->id.'">'.$langs->trans("AllBills").' <span class="badge">'.$num.'</span></a></td>';
                 print '<td width="20px" align="right"><a href="'.DOL_URL_ROOT.'/compta/facture/stats/index.php?socid='.$object->id.'">'.img_picto($langs->trans("Statistics"),'stats').'</a></td>';
