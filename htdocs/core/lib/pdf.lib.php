@@ -303,12 +303,10 @@ function pdfGetHeightForHtmlContent(&$pdf, $htmlcontent)
     $pdf->startTransaction();
     // store starting values
     $start_y = $pdf->GetY();
-    var_dump($start_y);
+    //var_dump($start_y);
     $start_page = $pdf->getPage();
-    // call your printing functions with your parameters
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // call printing functions with content
     $pdf->writeHTMLCell(0, 0, 0, $start_y, $htmlcontent, 0, 1, false, true, 'J',true);
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     // get the new Y
     $end_y = $pdf->GetY();
     $end_page = $pdf->getPage();
