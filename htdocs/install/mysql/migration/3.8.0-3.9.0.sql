@@ -92,3 +92,5 @@ CREATE TABLE llx_ecm_files
 
 ALTER TABLE llx_ecm_files ADD UNIQUE INDEX uk_ecm_files_fullpath(fullpath);
 
+
+ALTER TABLE llx_product ADD COLUMN onportal tinyint DEFAULT 0 after tobuy;
