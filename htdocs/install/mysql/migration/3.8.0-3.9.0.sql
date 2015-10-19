@@ -69,7 +69,7 @@ ALTER TABLE llx_societe_rib MODIFY COLUMN code_banque varchar(128);
 ALTER TABLE llx_contrat ADD COLUMN ref_customer varchar(30);
 
 
-ALTER TABLE llx_ecm_directories MODIFY COLUMN fullpath varchar(10000);
+ALTER TABLE llx_ecm_directories MODIFY COLUMN fullpath varchar(1000);
 
 CREATE TABLE llx_ecm_files
 (
@@ -77,8 +77,8 @@ CREATE TABLE llx_ecm_files
   label				varchar(64) NOT NULL,
   entity			integer DEFAULT 1 NOT NULL,		-- multi company id
   filename          varchar(255) NOT NULL,			-- file name only without any directory
-  fullpath    		varchar(10000) NOT NULL,	    -- relative to dolibarr document dir. example abc/def/myfile
-  fullpath_orig		varchar(10000),    	            -- full path of original filename, when file is uploaded from a local computer
+  fullpath    		varchar(750) NOT NULL,	        -- relative to dolibarr document dir. example abc/def/myfile
+  fullpath_orig		varchar(750),    	            -- full path of original filename, when file is uploaded from a local computer
   description		text,
   keywords          text,                           -- list of keywords, separated with comma
   cover             text,                           -- is this file a file to use for a cover
@@ -89,6 +89,8 @@ CREATE TABLE llx_ecm_files
   fk_user_m			integer,
   acl				text							-- for future permission 'per file'
 ) ENGINE=innodb;
+
+ALTER TABLE llx_ecm_directories MODIFY COLUMN fullpath varchar(1000);
 
 ALTER TABLE llx_ecm_files ADD UNIQUE INDEX uk_ecm_files_fullpath(fullpath);
 
