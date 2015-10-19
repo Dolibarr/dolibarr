@@ -491,7 +491,7 @@ if ($id > 0)
 
 
 	// Nbre max d'elements des petites listes
-	$MAXLIST=4;
+	$MAXLIST=$conf->global->MAIN_SIZE_SHORTLISTE_LIMIT;
 	$tableaushown=1;
 
 	// Lien recap
