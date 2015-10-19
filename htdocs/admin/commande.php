@@ -251,6 +251,23 @@ else if ($action == 'set_BANK_ASK_PAYMENT_BANK_DURING_ORDER')
     }
 }
 
+// Activate ask for warehouse
+else if ($action == 'set_WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER')
+{
+    $res = dolibarr_set_const($db, "WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER",$value,'chaine',0,'',$conf->entity);
+
+    if (! $res > 0) $error++;
+
+    if (! $error)
+    {
+        setEventMessage($langs->trans("SetupSaved"));
+    }
+    else
+    {
+        setEventMessage($langs->trans("Error"),'errors');
+    }
+}
+
 
 /*
  * View
@@ -628,6 +645,36 @@ else
     $var=!$var;
     print '<tr '.$bc[$var].'><td>';
     print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_ORDER").'</td><td>&nbsp;</td><td align="center">'.$langs->trans('NotAvailable').'</td></tr>';
+}
+
+// Ask for warehouse during order
+if ($conf->stock->enabled)
+{
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>';
+    print $langs->trans("WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER").'</td><td>&nbsp</td><td align="center">';
+    if (! empty($conf->use_javascript_ajax))
+    {
+        print ajax_constantonoff('WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER');
+    }
+    else
+    {
+        if (empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER))
+        {
+            print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER&amp;value=1">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+        }
+        else
+        {
+            print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER&amp;value=0">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
+        }
+    }
+    print '</td></tr>';
+}
+else
+{
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>';
+    print $langs->trans("WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER").'</td><td>&nbsp;</td><td align="center">'.$langs->trans('NotAvailable').'</td></tr>';
 }
 
 print '</table>';
