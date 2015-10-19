@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - install
-InstallEasy=Hem procurat que la instal·lació sigui el més simple possible, vostè només ha de seguir els passos un a un.
-MiscellaneousChecks=Comprovació dels Prerequisits
-DolibarrWelcome=Benvingut a Dolibarr
+InstallEasy=Segueix les instruccions pas a pas.
+MiscellaneousChecks=Comprovació dels prerequisits
+DolibarrWelcome=Benvingut/da a Dolibarr
 ConfFileExists=L'arxiu de configuració <b>%s</b> existeix.
 ConfFileDoesNotExists=El fitxer de configuració <b>%s</b> no existeix!
 ConfFileDoesNotExistsAndCouldNotBeCreated=El fitxer de configuració <b>%s</b> no existeix i no s'ha creat!
@@ -14,7 +14,7 @@ PHPSupportPOSTGETOk=Aquest PHP suporta bé les variables POST i GET.
 PHPSupportPOSTGETKo=És possible que aquest PHP no suport les variables POST i/o GET. Comproveu el paràmetre <b>variables_order</b> del php.ini.
 PHPSupportGD=Aquest PHP suporta les funcions gràfiques GD.
 PHPSupportUTF8=Aquest PHP suporta les funcions UTFB.
-PHPMemoryOK=La seva memòria màxima de sessió PHP aquesta definit a <b>%s</b>. Això hauria de ser suficient.
+PHPMemoryOK=La seva memòria màxima de sessió PHP està definida a <b>%s</b>. Això hauria de ser suficient.
 PHPMemoryTooLow=La seva memòria màxima de sessió PHP està definida a <b>%s</b> bytes. Això és molt poc. Es recomana modificar el paràmetre <b>memory_limit</b> del seu arxiu <b> php.ini</b> a almenys <b>%s</b> octets.
 Recheck=Cliqueu aquí per realitzar un test més exhaustiva
 ErrorPHPDoesNotSupportSessions=La seva instal·lació de PHP no suporta les sessions. Aquesta funcionalitat és necessària per fer funcionar a Dolibarr. Comprovi la seva configuració de PHP.
@@ -209,6 +209,6 @@ MigrationActioncommElement=Actualització de les dades de accions sobre elements
 MigrationPaymentMode=Actualització de les formes de pagament
 MigrationCategorieAssociation=Actualització de les categories
 MigrationEvents=Migració d'esdeveniments per afegir propietari a la taula d'asignació
-
+MigrationReloadModule=Reload module %s
 ShowNotAvailableOptions=Mostra opcions no disponibles
 HideNotAvailableOptions=Amaga opcions no disponibles

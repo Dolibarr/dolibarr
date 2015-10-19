@@ -90,7 +90,7 @@ SelectAtLeastOneField=Vaihda ainakin yksi lähde kenttä-sarakkeen kenttiin vied
 SelectFormat=Valitse tämä tuonti tiedostomuoto
 RunImportFile=Käynnistä tuo tiedosto
 NowClickToRunTheImport=Tarkista tulos tuonti simulointi. Jos kaikki on ok, aloittaa lopullista maahantuontia.
-DataLoadedWithId=Kaikki tiedot ladataan seuraavat tuonti id: <b>%s</b>
+DataLoadedWithId=All data will be loaded with the following import id: <b>%s</b>
 ErrorMissingMandatoryValue=Pakollinen tieto on tyhjä lähdetiedostossa Kentän <b>%s.</b>
 TooMuchErrors=Vielä on <b>%s</b> muulta radoilla virheitä, mutta tuotanto on ollut vähäistä.
 TooMuchWarnings=Vielä on <b>%s</b> muulta linjat varoituksia, mutta tuotanto on ollut vähäistä.
@@ -130,7 +130,7 @@ ExportDateFilter=YYYY, YYYYMM, YYYYMMDD : filters by one year/month/day<br>YYYY+
 ExportNumericFilter='NNNNN' filters by one value<br>'NNNNN+NNNNN' filters over a range of values<br>'&gt;NNNNN' filters by lower values<br>'&gt;NNNNN' filters by higher values
 ## filters
 SelectFilterFields=If you want to filter on some values, just input values here.
-FilterableFields=Champs Filtrables
+FilterableFields=Filterable Fields
 FilteredFields=Filtered fields
 FilteredFieldsValues=Value for filter
 FormatControlRule=Format control rule

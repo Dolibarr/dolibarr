@@ -1,6 +1,8 @@
 # Dolibarr language file - Source file is en_US - projects
 RefProject=کد عکس. پروژه
+ProjectRef=Project ref.
 ProjectId=پروژه کد
+ProjectLabel=Project label
 Project=پروژه
 Projects=پروژه ها
 ProjectStatus=Project status
@@ -27,7 +29,7 @@ OfficerProject=پروژه افسر
 LastProjects=پروژه تاریخ و زمان آخرین٪ بازدید کنندگان
 AllProjects=همه پروژه ها
 OpenedProjects=Opened projects
-OpportunitiesStatusForOpenedProjects=Opportunities status for opened projects
+OpportunitiesStatusForOpenedProjects=Opportunities amount of opened projects by status
 ProjectsList=لیست پروژه ها
 ShowProject=نمایش پروژه
 SetProject=تنظیم پروژه

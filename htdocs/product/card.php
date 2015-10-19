@@ -284,13 +284,7 @@ if (empty($reshook))
             {
 				// Category association
 				$categories = GETPOST('categories');
-				if(!empty($categories)) {
-					$cat = new Categorie($db);
-					foreach($categories as $id_category) {
-						$cat->fetch($id_category);
-						$cat->add_type($object, 'product');
-					}
-				}
+				$object->setCategories($categories);
 
                 header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
                 exit;
@@ -379,21 +373,8 @@ if (empty($reshook))
                     if ($object->update($object->id, $user) > 0)
                     {
 						// Category association
-						// First we delete all categories association
-						$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_product";
-						$sql .= " WHERE fk_product = ".$object->id;
-						$db->query($sql);
-
-						// Then we add the associated categories
 						$categories = GETPOST('categories');
-						if(!empty($categories)) {
-							$cat = new Categorie($db);
-
-							foreach($categories as $id_category) {
-								$cat->fetch($id_category);
-								$cat->add_type($object, 'product');
-							}
-						}
+						$object->setCategories($categories);
 
                         $action = 'view';
                     }

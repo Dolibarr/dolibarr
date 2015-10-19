@@ -39,6 +39,9 @@ InterventionClassifiedUnbilledInDolibarr=Ingrepp %s uppsättning som ofakturerad
 InterventionSentByEMail=Ingrepp %s skickas via e-post
 InterventionDeletedInDolibarr=Ingrepp %s raderad
 SearchAnIntervention=Sök en intervention
+InterventionsArea=Interventions area
+DraftFichinter=Draft interventions
+LastModifiedInterventions=Last %s modified interventions
 ##### Types de contacts #####
 TypeContact_fichinter_internal_INTERREPFOLL=Representanten uppföljning ingripande
 TypeContact_fichinter_internal_INTERVENING=Ingripa
@@ -51,3 +54,14 @@ PacificNumRefModelDesc1=Återgå numero med format %syymm-nnnn där YY är år, 
 PacificNumRefModelError=En intervention kort börjar med $ syymm finns redan och är inte förenligt med denna modell för sekvens. Ta bort den eller byta namn på den för att aktivera denna modul.
 PrintProductsOnFichinter=Trycksaker på interventionskort
 PrintProductsOnFichinterDetails=Insatser skapade utifrån order
+##### Exports #####
+InterId=Intervention id
+InterRef=Intervention ref.
+InterDateCreation=Date creation intervention
+InterDuration=Duration intervention
+InterStatus=Status intervention
+InterNote=Note intervention
+InterLineId=Line id intervention
+InterLineDate=Line date intervention
+InterLineDuration=Line duration intervention
+InterLineDesc=Line description intervention

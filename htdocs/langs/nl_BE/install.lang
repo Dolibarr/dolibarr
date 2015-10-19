@@ -1,0 +1,7 @@
+# Dolibarr language file - Source file is en_US - install
+LastStepDesc=<strong>Laatste stap:</strong> Definieer hier de login en het wachtwoord die u wilt gebruiken om verbinding te maken software. Niet los dit als het is de rekening voor alle anderen te beheren.
+ShowEditTechnicalParameters=Klik hier om verder gevorderde parameters te zien of aan te passen. (expert instellingen)
+WarningUpgrade=Waarschuwing: Heb je een database back-up uitgevoerd? Dit is zeer aanbevolen, als gevolg van een aantal bugs in databases systemen (bijvoorbeeld mysql versie 5.5.40), bepaalde gegevens of tabellen kunnen tijdens dit proces verloren kunnen gaan, dus het is zeer aan te bevelen om een ​​complete dump van je database voordat je de migratie start. Klik op OK om de migratie te starten ...
+ErrorDatabaseVersionForbiddenForMigration=Uw database versie is %s en heeft een kritieke bug die gegevensverlies veroorzaakt als je structuur verandering uitvoert op uw database, welke gedaan worden door het migratieproces. Voor deze reden, zal de migratie niet worden toegestaan ​​totdat u uw database upgrade naar een hogere versie (lijst van gekende versies met bug: %s).
+MigrationDeliveryAddress=Werk de afleveringsadressen voor verzending bij
+MigrationCategorieAssociation=Overzetten van categoriën

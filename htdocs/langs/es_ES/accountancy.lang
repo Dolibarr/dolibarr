@@ -2,11 +2,13 @@
 CHARSET=UTF-8
 ACCOUNTING_EXPORT_SEPARATORCSV=Separador de columnas en el archivo de exportación
 ACCOUNTING_EXPORT_DATE=Formato de fecha en el archivo de exportación
-ACCOUNTING_EXPORT_PIECE=¿Exportar cantidades?
-ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=¿Exportar con la cuenta global?
-ACCOUNTING_EXPORT_LABEL=¿Exportar la etiqueta?
-ACCOUNTING_EXPORT_AMOUNT=¿Exportar el importe?
-ACCOUNTING_EXPORT_DEVISE=¿Exportar la divisa?
+ACCOUNTING_EXPORT_PIECE=Export the number of piece
+ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account
+ACCOUNTING_EXPORT_LABEL=Export the label
+ACCOUNTING_EXPORT_AMOUNT=Export the amount
+ACCOUNTING_EXPORT_DEVISE=Export the devise
+Selectformat=Select the format for the file
+ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
 
 Accounting=Contabilidad
 Globalparameters=Configuración global
@@ -34,6 +36,7 @@ Selectchartofaccounts=Seleccione un plan contable
 Validate=Validar
 Addanaccount=Añadir una cuenta contable
 AccountAccounting=Cuenta contable
+AccountAccountingSuggest=Accounting account suggest
 Ventilation=Contabilizar
 ToDispatch=A realizar
 Dispatched=Realizadas
@@ -48,7 +51,7 @@ NewAccount=Nueva cuenta contable
 Update=Actualizar
 List=Listado
 Create=Crear
-CreateMvts=Create movement
+CreateMvts=Crear movimiento
 UpdateAccount=Modificar una cuenta contable
 UpdateMvts=Modificar un movimiento
 WriteBookKeeping=Registrar los asientos en el libro mayor
@@ -60,10 +63,10 @@ AccountingVentilationSupplier=Contablilización compras
 AccountingVentilationCustomer=Contabilización ventas
 Line=Línea
 
-CAHTF=Total (base imponible) compras a proveedor
+CAHTF=Total purchase supplier before tax
 InvoiceLines=Líneas de factura para contabilizar
 InvoiceLinesDone=Líneas de facturas contabilizadas
-IntoAccount=En la cuenta
+IntoAccount=Ventilate in the accounting account
 
 Ventilate=Contabilizar
 VentilationAuto=Contabilización automática
@@ -84,8 +87,8 @@ ACCOUNTING_LIST_SORT_VENTILATION_DONE=Ordenar las páginas de contabilización "
 
 AccountLength=Longitud de las cuentas contables mostradas en Dolibarr
 AccountLengthDesc=Función para simular una longitud de cuenta contable sustituyendo los espacios por cero. Esta función sólo afecta a la pantalla, no cambia las cuentas contables registradas en Dolibarr. Esta función es necesaria para la exportación, para ser compatible con algunos programas.
-ACCOUNTING_LENGTH_DESCRIPTION=Length for displaying product & services description in listings (Best = 50)
-ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Length for displaying product & services account description form in listings (Best = 50)
+ACCOUNTING_LENGTH_DESCRIPTION=Longitud para la visualización de productos y servicios en los listados (Ideal = 50)
+ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Longitud para la visualización de la descripción de productos y servicios en los listados (Ideal = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Longitud de las cuentas generales
 ACCOUNTING_LENGTH_AACCOUNT=Longitud de las subcuentas
 
@@ -152,7 +155,7 @@ Active=Estado
 NewFiscalYear=Nuevo año fiscal
 
 DescVentilCustomer=Consulte aquí la contabilización anual de sus facturas a clientes
-TotalVente=Total ventas (base imponible)
+TotalVente=Total turnover before tax
 TotalMarge=Total margen ventas
 DescVentilDoneCustomer=Consulte aquí las líneas de facturas a clientes y sus cuentas contables
 DescVentilTodoCustomer=Contabilice sus líneas de facturas a clientes con una cuenta contable
@@ -167,3 +170,4 @@ ValidateHistory=Validar automáticamente
 ErrorAccountancyCodeIsAlreadyUse=Error, no puede eliminar esta cuenta ya que está siendo usada
 
 FicheVentilation=Ficha contable
+GeneralLedgerIsWritten=Operations are written in the general ledger

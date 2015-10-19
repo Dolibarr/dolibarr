@@ -47,7 +47,7 @@ $result=restrictedArea($user,'projet',$id,'');
 
 $object = new Project($db);
 
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not includ_once
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once
 
 if ($id > 0 || ! empty($ref)) {
     $upload_dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($object->ref);

@@ -1,6 +1,8 @@
 # Dolibarr language file - Source file is en_US - projects
 RefProject=Ref. prosjekt
+ProjectRef=Project ref.
 ProjectId=Prosjekt-ID
+ProjectLabel=Project label
 Project=Prosjekt
 Projects=Prosjekter
 ProjectStatus=Prosjektstatus
@@ -27,7 +29,7 @@ OfficerProject=Bas/formann for prosjektet
 LastProjects=Siste %s prosjekter
 AllProjects=Alle prosjekter
 OpenedProjects=Åpnede prosjekter
-OpportunitiesStatusForOpenedProjects=Mulighet-status for åpnede prosjekter
+OpportunitiesStatusForOpenedProjects=Opportunities amount of opened projects by status
 ProjectsList=Oversikt over prosjekter
 ShowProject=Vis prosjekt
 SetProject=Sett prosjekt
@@ -143,8 +145,8 @@ SelectElement=Velg element
 AddElement=Lenke til element
 UnlinkElement=Koble fra element
 # Documents models
-DocumentModelBeluga=Project template for linked objects overview
-DocumentModelBaleine=Project report template for tasks
+DocumentModelBeluga=Oversikt over prosjektmaler for lenkede objekter
+DocumentModelBaleine=Prosjekt-rapportmal for oppgaver
 PlannedWorkload=Planlagt arbeidsmengde
 PlannedWorkloadShort=Arbeidsmengde
 WorkloadOccupation=Tildeling av arbeidsmengde

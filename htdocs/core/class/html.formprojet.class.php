@@ -90,29 +90,30 @@ class FormProjets
 	}
 
 	/**
-	 *	Returns an array with projects qualified for a third party
+	 * Returns an array with projects qualified for a third party
 	 *
-	 *	@param	int		$socid      	Id third party (-1=all, 0=only projects not linked to a third party, id=projects not linked or linked to third party id)
-	 *	@param  int		$selected   	Id project preselected
-	 *	@param  string	$htmlname   	Nom de la zone html
-	 *	@param	int		$maxlength		Maximum length of label
-	 *	@param	int		$option_only	Return only html options lines without the select tag
-	 *	@param	int		$show_empty		Add an empty line
-	 *  @param	int		$discard_closed Discard closed projects (0=Keep,1=hide completely,2=Disable)
-     *  @param	int		$forcefocus		Force focus on field (works with javascript only)
-     *  @param	int		$disabled		Disabled
-	 *  @param int  $mode               0 for HTML mode and 1 for JSON mode
-	 * @param string $filterkey         Key to filter
-	 *	@return int         			Nber of project if OK, <0 if KO
+	 * @param  int     $socid      	       Id third party (-1=all, 0=only projects not linked to a third party, id=projects not linked or linked to third party id)
+	 * @param  int     $selected   	       Id project preselected
+	 * @param  string  $htmlname   	       Nom de la zone html
+	 * @param  int     $maxlength          Maximum length of label
+	 * @param  int     $option_only	       Return only html options lines without the select tag
+	 * @param  int     $show_empty		   Add an empty line
+	 * @param  int     $discard_closed     Discard closed projects (0=Keep,1=hide completely,2=Disable)
+     * @param  int     $forcefocus		   Force focus on field (works with javascript only)
+     * @param  int     $disabled           Disabled
+	 * @param  int     $mode               0 for HTML mode and 1 for array return (to be used by json_encode for example)
+	 * @param  string  $filterkey          Key to filter
+	 * @return int         			       Nb of project if OK, <0 if KO
 	 */
-	function select_projects_list($socid=-1, $selected='', $htmlname='projectid', $maxlength=24, $option_only=0, $show_empty=1, $discard_closed=0, $forcefocus=0, $disabled=0, $mode = 0, $filterkey = '')
+	function select_projects_list($socid=-1, $selected='', $htmlname='projectid', $maxlength=24, $option_only=0, $show_empty=1, $discard_closed=0, $forcefocus=0, $disabled=0, $mode=0, $filterkey = '')
 	{
 		global $user,$conf,$langs;
 
 		require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 		$out='';
-
+        $outarray=array();
+        
 		$hideunselectables = false;
 		if (! empty($conf->global->PROJECT_HIDE_UNSELECTABLES)) $hideunselectables = true;
 

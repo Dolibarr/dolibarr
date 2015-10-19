@@ -6,3 +6,4 @@ ErrorFileNotLinked=Το αρχείο δεν μπορεί να συνδεθεί
 LinkRemoved=Ο σύνδεσμος %s έχει αφαιρεθεί
 ErrorFailedToDeleteLink= Απέτυχε η αφαίρεση του συνδέσμου '<b>%s</b>'
 ErrorFailedToUpdateLink= Απέτυχε η ενημέρωση του σύνδεσμο '<b>%s</b>'
+URLToLink=URL to link

@@ -1,12 +1,14 @@
 # Dolibarr language file - Source file is en_US - ftp
-FTPClientSetup=FTP Client module setup
-NewFTPClient=New FTP connection setup
-FTPArea=FTP Area
-FTPAreaDesc=This screen show you content of a FTP server view
-SetupOfFTPClientModuleNotComplete=Setup of FTP client module seems to be not complete
-FTPFeatureNotSupportedByYourPHP=Your PHP does not support FTP functions
-FailedToConnectToFTPServer=Failed to connect to FTP server (server %s, port %s)
-FailedToConnectToFTPServerWithCredentials=Failed to login to FTP server with defined login/password
-FTPFailedToRemoveFile=Failed to remove file <b>%s</b>.
-FTPFailedToRemoveDir=Failed to remove directory <b>%s</b> (Check permissions and that directory is empty).
+FTPClientSetup=Podešavanja FTP Client modula
+NewFTPClient=Nova FTP konekcija
+FTPArea=Oblast FTP
+FTPAreaDesc=Ovaj ekran vam prikazuje sadržaj FTP servera
+SetupOfFTPClientModuleNotComplete=Podešavanja FTP client modula nisu potpuna
+FTPFeatureNotSupportedByYourPHP=Vaša verzija PHP-a ne omogućava korišćenje FTP-a
+FailedToConnectToFTPServer=Greška u konekcij na FTP server (server %s, port %s)
+FailedToConnectToFTPServerWithCredentials=Pogrešan login/password za konekciju na FTP server
+FTPFailedToRemoveFile=Greška prilikom brisanja fajla <b>%s</b>.
+FTPFailedToRemoveDir=Greška prilkom brisanja foldera  <b>%s</b> (proverite prava i da li je flder pazan).
 FTPPassiveMode=Passive mode
+ChooseAFTPEntryIntoMenu=Choose a FTP entry into menu...
+FailedToGetFile=Failed to get files %s

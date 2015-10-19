@@ -468,6 +468,7 @@ if ($resql)
 	$reshook=$hookmanager->executeHooks('printFieldListSearch',$parameters);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 
+	// Status
     print '<td class="liste_titre" align="right">';
     print $form->selectarray('search_status', array('0'=>$langs->trans('ActivityCeased'),'1'=>$langs->trans('InActivity')),$search_status);
     print '</td>';

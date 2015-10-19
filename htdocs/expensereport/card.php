@@ -1669,7 +1669,7 @@ else
 									print img_picto($langs->trans("Document"), "object_generic");
 									print ' <span>'.$piece_comptable.'</span></td>';
 								}
-								print '<td style="text-align:center;">'.$objp->date.'</td>';
+								print '<td style="text-align:center;">'.dol_print_date($db->jdate($objp->date), 'day').'</td>';
 								print '<td style="text-align:center;">';
 								if ($objp->projet_id > 0)
 								{

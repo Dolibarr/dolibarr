@@ -164,8 +164,7 @@ if ($result)
 		print '<td align="right" class="nowrap">';
 		if ($filteremail)
 		{
-			if ($obj->sendstatut==-1) print $langs->trans("MailingStatusError").' '.img_error();
-			if ($obj->sendstatut==1) print $langs->trans("MailingStatusSent").' '.img_picto($langs->trans("MailingStatusSent"),'statut6');
+			print $email::libStatutDest($obj->sendstatut,2);
 		}
 		else
 		{

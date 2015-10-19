@@ -45,6 +45,5 @@ RulesVATInProducts=- Pour les biens matériels, il inclut les TVA(TAXES) des fac
 RulesVATDueServices=- Pour les services, le rapport inclut les TVA TAXES) des factures dues, payées ou non en se basant sur la date de facture.
 RulesVATDueProducts=- Pour les biens matériels, il inclut les TVA TAXES) des factures en se basant sur la date de facture.
 CalculationRuleDesc=Pour calculer le total de TVA (TPS), il existe 2 modes:<br>Le mode 1 consiste à arrondir la tva (TPS) de chaque ligne et à sommer cet arrondi.<br>Le mode 2 consiste à sommer la tva de chaque ligne puis à l'arrondir.<br>Les résultats peuvent différer de quelques centimes. Le mode par défaut est le mode <b>%s</b>.
-ACCOUNTING_VAT_BUY_ACCOUNT=Code comptable par défaut pour le versement de la TVA (TPS)
 CloneTax=Cloner une charge sociale
 ConfirmCloneTax=Confirmer le clonage de la charge sociale

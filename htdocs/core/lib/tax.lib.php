@@ -79,7 +79,7 @@ function tax_prepare_head(ChargeSociales $object)
  *  @param  int		$y           	Year
  *  @param  string	$date_start  	Start date
  *  @param  string	$date_end    	End date
- *  @param  int		$modetax     	0 or 1 (option vat on debit)
+ *  @param  int		$modetax     	0 or 1 (option vat on debit, 1 => $modecompta = 'CREANCES-DETTES')
  *  @param  string	$direction   	'sell' or 'buy'
  *  @param  int		$m				Month
  *  @return array       			List of customers third parties with vat, -1 if no accountancy module, -2 if not yet developped, -3 if error
