@@ -1694,3 +1694,9 @@ MailToSendSupplierOrder=To send supplier order
 MailToSendSupplierInvoice=To send supplier invoice
 MailToThirdparty=To send email from thirdparty page
 ByDefaultInList=Show by default on list view
+YouUseLastStableVersion=You use the last stable version
+TitleExampleForMajorRelease=Example of message you can use to announce this major release (feel free to use it on your web sites)
+TitleExampleForMaintenanceRelease=Example of message you can use to announce this maintenance release (feel free to use it on your web sites)
+ExampleOfNewsMessageForMajorRelease=Dolibarr ERP & CRM %s is available. Version %s is a major release with a lot of new features for both users and developers. You can download it from the download area of http://www.dolibarr.org portal (subdirectory Stable versions). You can read <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> for complete list of changes.
+ExampleOfNewsMessageForMaintenanceRelease=Dolibarr ERP & CRM %s is available. Version %s is a maintenance version, so it contains only fixes of bugs. We recommend everybody using an older version to upgrade to this one. As any maintenance release, no new features, nor data structure change is present into this version. You can download it from the download area of http://www.dolibarr.org portal (subdirectory Stable versions). You can read <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> for complete list of changes.
+ 
