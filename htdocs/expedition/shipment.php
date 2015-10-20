@@ -128,6 +128,8 @@ if ($action == 'setwarehouse' && $user->rights->commande->creer) {
     $commande = new Commande($db);
     $commande->fetch($id);
     $result = $commande->setWarehouse(GETPOST('warehouse_id', 'int'));
+    if ($result < 0)
+        setEventMessages($commande->error, $commande->errors, 'errors');
 }
 
 
