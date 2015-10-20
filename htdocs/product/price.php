@@ -789,8 +789,6 @@ if ($action == 'edit_price' && ($user->rights->produit->creer || $user->rights->
 				var otherPrices = $('div.fiche form:not(:first)');
 				var minPrice1 = $('div.fiche form:first tr:eq(3)');
 
-				console.log('e');
-
 				if (jQuery('input#usePriceRules').prop('checked')) {
 					otherPrices.hide();
 					minPrice1.hide();
