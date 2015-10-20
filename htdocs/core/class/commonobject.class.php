@@ -2231,13 +2231,18 @@ abstract class CommonObject
 
     /**
      *	Fetch array of objects linked to current object. Links are loaded into this->linkedObjects array and this->linkedObjectsIds
-     *
-     *	@param	int		$sourceid		Object source id
-     *	@param  string	$sourcetype		Object source type
-     *	@param  int		$targetid		Object target id
-     *	@param  string	$targettype		Object target type
+     *  Possible usage for parameters:
+     *  - all parameters empty -> we look all link to current object (current object can be source or target)
+     *  - one couple id+type is provided -> this will set $justsource or $justtarget
+     *  - one couple id+type is provided and other type is provided -> this will set $justsource or $justtarget + criteria on other type
+     *  
+     *  
+     *	@param	int		$sourceid		Object source id (if not defined, id of object)
+     *	@param  string	$sourcetype		Object source type (if not defined, element name of object)
+     *	@param  int		$targetid		Object target id (if not defined, id of object)
+     *	@param  string	$targettype		Object target type (if not defined, elemennt name of object)
      *	@param  string	$clause			'OR' or 'AND' clause used when both source id and target id are provided
-     *  @param	int		$alsosametype	0=Return only links to different object than source. 1=Include also link to objects of same type.
+     *  @param	int		$alsosametype	0=Return only links to object that differs from source. 1=Include also link to objects of same type.
      *	@return	void
      *  @see	add_object_linked, updateObjectLinked, deleteObjectLinked
      */
@@ -2255,12 +2260,12 @@ abstract class CommonObject
 
         if (! empty($sourceid) && ! empty($sourcetype) && empty($targetid))
         {
-        	$justsource=true;
+        	$justsource=true;  // the source (id and type) is a search criteria
         	if (! empty($targettype)) $withtargettype=true;
         }
         if (! empty($targetid) && ! empty($targettype) && empty($sourceid))
         {
-        	$justtarget=true;
+        	$justtarget=true;  // the target (id and type) is a search criteria
         	if (! empty($sourcetype)) $withsourcetype=true;
         }
 
@@ -2309,13 +2314,27 @@ abstract class CommonObject
             while ($i < $num)
             {
                 $obj = $this->db->fetch_object($resql);
-                if ($obj->fk_source == $sourceid)
+                if ($justsource || $justtarget)
                 {
-                    $this->linkedObjectsIds[$obj->targettype][$obj->rowid]=$obj->fk_target;
+                    if ($justsource)
+                    {
+                        $this->linkedObjectsIds[$obj->targettype][$obj->rowid]=$obj->fk_target;
+                    }
+                    else if ($justtarget)
+                    {
+                        $this->linkedObjectsIds[$obj->sourcetype][$obj->rowid]=$obj->fk_source;
+                    }
                 }
-                if ($obj->fk_target == $targetid)
+                else
                 {
-                    $this->linkedObjectsIds[$obj->sourcetype][$obj->rowid]=$obj->fk_source;
+                    if ($obj->fk_source == $sourceid && $obj->sourcetype == $sourcetype)
+                    {
+                        $this->linkedObjectsIds[$obj->targettype][$obj->rowid]=$obj->fk_target;
+                    }
+                    if ($obj->fk_target == $targetid && $obj->targettype == $targettype)
+                    {
+                        $this->linkedObjectsIds[$obj->sourcetype][$obj->rowid]=$obj->fk_source;
+                    }
                 }
                 $i++;
             }
