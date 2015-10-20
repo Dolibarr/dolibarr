@@ -127,6 +127,8 @@ if (count($listofsearchfields))
  */
 if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 {
+	$langs->load("propal");
+
 	$sql = "SELECT p.rowid, p.ref, p.ref_client, p.total_ht, p.tva as total_tva, p.total as total_ttc, s.rowid as socid, s.nom as name, s.client, s.canvas";
     $sql.= ", s.code_client";
 	$sql.= " FROM ".MAIN_DB_PREFIX."propal as p";
