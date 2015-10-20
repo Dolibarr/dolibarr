@@ -105,6 +105,7 @@ ClassifyShipped=Classify delivered
 ClassifyBilled=Classify billed
 ComptaCard=Accountancy card
 DraftOrders=Draft orders
+DraftSuppliersOrders=Draft suppliers orders
 RelatedOrders=Related orders
 RelatedCustomerOrders=Related customer orders
 RelatedSupplierOrders=Related supplier orders
