@@ -123,6 +123,12 @@ if ($action == 'setshippingmethod' && $user->rights->commande->creer) {
     $result=$commande->setShippingMethod(GETPOST('shipping_method_id', 'int'));
 }
 
+// warehouse
+if ($action == 'setwarehouse' && $user->rights->commande->creer) {
+    $commande = new Commande($db);
+    $commande->fetch($id);
+    $result = $commande->setWarehouse(GETPOST('warehouse_id', 'int'));
+}
 
 
 /*
@@ -164,8 +170,8 @@ if ($id > 0 || ! empty($ref))
 		}
 
 		// Onglet commande
-		$nbrow=8;
-		if (! empty($conf->projet->enabled)) $nbrow++;
+		//$nbrow=8;
+		//if (! empty($conf->projet->enabled)) $nbrow++;
 
 		print '<table class="border" width="100%">';
 
@@ -285,6 +291,27 @@ if ($id > 0 || ! empty($ref))
         }
         print '</td>';
         print '</tr>';
+
+        // Warehouse
+        if (! empty($conf->stock->enabled) && ! empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER)) {
+            require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+            $formproduct=new FormProduct($db);
+            print '<tr><td>';
+            print '<table width="100%" class="nobordernopadding"><tr><td>';
+            print $langs->trans('Warehouse');
+            print '</td>';
+            if ($action != 'editwarehouse' && $user->rights->commande->creer)
+                print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editwarehouse&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetWarehouse'),1).'</a></td>';
+            print '</tr></table>';
+            print '</td><td colspan="2">';
+            if ($action == 'editwarehouse') {
+                $formproduct->formSelectWarehouses($_SERVER['PHP_SELF'].'?id='.$commande->id, $commande->warehouse_id, 'warehouse_id', 1);
+            } else {
+                $formproduct->formSelectWarehouses($_SERVER['PHP_SELF'].'?id='.$commande->id, $commande->warehouse_id, 'none');
+            }
+            print '</td>';
+            print '</tr>';
+        }
 
 		// Terms of payment
 		print '<tr><td height="10">';
@@ -529,7 +556,7 @@ if ($id > 0 || ! empty($ref))
 				}
 
 				// Qty ordered
-				print '<td align="center">'.$objp->qty.'</td>';
+				print '<td align="center">' . ($objp->qty!=1?'<span class="badge">'.$objp->qty.'</span>':$objp->qty) . '</td>';
 
 				// Qty already shipped
 				$qtyProdCom=$objp->qty;
@@ -677,7 +704,7 @@ if ($id > 0 || ! empty($ref))
 
 					print '<td'.($warehousecanbeselectedlater?'':' class="fieldrequired"').'>'.$langs->trans("WarehouseSource").'</td>';
 					print '<td>';
-					print $formproduct->selectWarehouses(-1,'entrepot_id','',1);
+					print $formproduct->selectWarehouses(! empty($commande->warehouse_id)?$commande->warehouse_id:-1,'entrepot_id','',1);
 					if (count($formproduct->cache_warehouses) <= 0)
 					{
 						print ' &nbsp; '.$langs->trans("WarehouseSourceNotDefined").' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create">'.$langs->trans("AddOne").'</a>';
