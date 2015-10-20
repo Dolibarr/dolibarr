@@ -3801,10 +3801,10 @@ abstract class CommonObject
 
                     foreach ($tab as $key => $value)
                     {
-                    	// Test fetch_array ! is_int($key) because fetch_array seult is a mix table with Key as alpha and Key as int (depend db engine)
+                    	// Test fetch_array ! is_int($key) because fetch_array result is a mix table with Key as alpha and Key as int (depend db engine)
                         if ($key != 'rowid' && $key != 'tms' && $key != 'fk_member' && ! is_int($key))
                         {
-                            // we can add this attribute to adherent object
+                            // we can add this attribute to object
                             $this->array_options["options_".$key]=$value;
                         }
                     }
@@ -3852,7 +3852,7 @@ abstract class CommonObject
     /**
      *	Add/Update all extra fields values for the current object.
      *  Data to describe values to insert/update are stored into $this->array_options=array('options_codeforfield1'=>'valueforfield1', 'options_codeforfield2'=>'valueforfield2', ...)
-     *  This function delte record with all extrafields and insert them again from the array $this->array_options.
+     *  This function delete record with all extrafields and insert them again from the array $this->array_options.
      *
      *  @return int -1=error, O=did nothing, 1=OK
      */
@@ -3906,12 +3906,25 @@ abstract class CommonObject
 						// 1 : classPath
 						$InfoFieldList = explode(":", $param_list[0]);
 						dol_include_once($InfoFieldList[1]);
-						$object = new $InfoFieldList[0]($this->db);
-						if ($value)
-						{
-							$object->fetch(0,$value);
-							$this->array_options[$key]=$object->id;
-						}
+            			if ($InfoFieldList[0] && class_exists($InfoFieldList[0]))
+            			{
+    						$object = new $InfoFieldList[0]($this->db);
+    						if ($value)
+    						{
+    							$res=$object->fetch(0,$value);
+    							if ($res > 0) $this->array_options[$key]=$object->id;
+    							else 
+    							{
+    							    $this->error="Ref '".$value."' for object '".$object->element."' not found";
+                                    $this->db->rollback();
+                                    return -1;
+    							}
+    						}
+            			}
+            			else
+            			{
+            			    dol_syslog('Error bad setup of extrafield', LOG_WARNING);
+            			}
 						break;
                	}
             }
