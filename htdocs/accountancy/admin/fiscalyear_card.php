@@ -66,7 +66,7 @@ if ($action == 'confirm_delete' && $confirm == "yes")
     }
     else
     {
-        setEventMessage($object->error, 'errors');
+        setEventMessages($object->error, $object->errors, 'errors');
     }
 }
 
@@ -110,7 +110,7 @@ else if ($action == 'add')
            {
             	$db->rollback();
 
-            	setEventMessage($object->error, 'errors');
+            	setEventMessages($object->error, $object->errors, 'errors');
                 $action='create';
             }
         }
@@ -147,7 +147,7 @@ else if ($action == 'update')
         }
         else
         {
-	        setEventMessage($object->error, 'errors');
+	        setEventMessages($object->error, $object->errors, 'errors');
         }
     }
     else
