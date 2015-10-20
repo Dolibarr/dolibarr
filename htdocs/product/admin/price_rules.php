@@ -71,7 +71,7 @@ if ($_POST) {
 
 			//If the level is between range but percent fields are empty, then we ensure it does not exist in DB
 			if ($check1 && !$check2) {
-				$db->query("DELETE FROM ".MAIN_DB_PREFIX."product_pricerules WHERE level = ".(int)$i);
+				$db->query("DELETE FROM ".MAIN_DB_PREFIX."product_pricerules WHERE level = ".(int) $i);
 			}
 
 			continue;
