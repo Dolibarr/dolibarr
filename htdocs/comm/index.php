@@ -184,6 +184,10 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 				print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" align="right">'.price($total)."</td></tr>";
 			}
 		}
+		else
+		{
+			print '<tr colspan="3" '.$bc[$var].'><td>'.$langs->trans("NoProposal").'</td></tr>';
+		}
 		print "</table><br>";
 
 		$db->free($resql);
@@ -258,6 +262,10 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 				$var=!$var;
 				print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" align="right">'.price($total)."</td></tr>";
 			}
+		}
+		else
+		{
+			print '<tr colspan="3" '.$bc[$var].'><td>'.$langs->trans("NoOrder").'</td></tr>';
 		}
 		print "</table><br>";
 
@@ -334,6 +342,10 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande
                 $var=!$var;
                 print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" align="right">'.price($total)."</td></tr>";
             }
+        }
+        else
+        {
+            print '<tr colspan="3" '.$bc[$var].'><td>'.$langs->trans("NoSupplierOrder").'</td></tr>';
         }
         print "</table><br>";
 
