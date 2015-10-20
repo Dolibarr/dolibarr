@@ -146,7 +146,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 	    
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td colspan="3">'.$langs->trans("ProposalsDraft").' <span class="badge">'.$num.'</span></td></tr>';
+		print '<td colspan="3">'.$langs->trans("ProposalsDraft").($num?' <span class="badge">'.$num.'</span>':'').'</td></tr>';
 
 		if ($num > 0)
 		{
@@ -221,7 +221,7 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 	    
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td colspan="3">'.$langs->trans("DraftOrders").' <span class="badge">'.$num.'</span></td></tr>';
+		print '<td colspan="3">'.$langs->trans("DraftOrders").($num?' <span class="badge">'.$num.'</span>':'').'</td></tr>';
 
 		if ($num)
 		{
@@ -297,7 +297,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande
 
         print '<table class="noborder" width="100%">';
         print '<tr class="liste_titre">';
-        print '<td colspan="3">'.$langs->trans("DraftSuppliersOrders").' <span class="badge">'.$num.'</span></td></tr>';
+        print '<td colspan="3">'.$langs->trans("DraftSuppliersOrders").($num?' <span class="badge">'.$num.'</span>':'').'</td></tr>';
 
         if ($num)
         {
