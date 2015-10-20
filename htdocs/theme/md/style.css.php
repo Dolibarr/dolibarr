@@ -1114,12 +1114,16 @@ div.login_block_other { padding-top: 3px; }
 .login_block_elem_name {
 	margin-top: 5px;
 }
+.atoplogin, .atoplogin:hover {
+	color: #<?php echo $colortextbackvmenu; ?> !important;
+	font-weight: normal !important;
+}
 .alogin, .alogin:hover {
 	color: #888 !important;
 	font-weight: normal !important;
 	font-size: <?php echo $fontsizesmaller; ?>px !important;
 }
-.alogin:hover {
+.alogin:hover, .atoplogin:hover {
 	text-decoration:underline !important;
 }
 img.login, img.printer, img.entity {

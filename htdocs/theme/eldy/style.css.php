@@ -1088,13 +1088,16 @@ div.login_block_other { padding-top: 3px; text-align: right; }
 	padding: 0px 0px 0px 4px !important;
 	height: 16px;
 }
-.alogin, .alogin:hover {
+.atoplogin, .atoplogin:hover {
 	color: #<?php echo $colortextbackhmenu; ?> !important;
+	font-weight: normal !important;
+}
+.alogin, .alogin:hover {
 	font-weight: normal !important;
 	font-size: <?php echo $fontsizesmaller; ?>px !important;
 	padding-top: 2px;
 }
-.alogin:hover {
+.alogin:hover, .atoplogin:hover {
 	text-decoration:underline !important;
 }
 img.login, img.printer, img.entity {
