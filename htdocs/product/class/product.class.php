@@ -1363,7 +1363,8 @@ class Product extends CommonObject
 		if ($newvat == '') $newvat=$this->tva_tx;
 
 		//If multiprices are enabled, then we check if the current product is subject to price autogeneration
-		if (!empty($conf->global->PRODUIT_MULTIPRICES) && !$ignore_autogen && $this->price_autogen) {
+		//Price will be modified ONLY when the first one is the one that is being modified
+		if (!empty($conf->global->PRODUIT_MULTIPRICES) && !$ignore_autogen && $this->price_autogen && ($level == 1)) {
 			return $this->generateMultiprices($user, $newprice, $newpricebase, $newvat, $newnpr, $newpsq);
 		}
 
