@@ -1037,7 +1037,6 @@ function complete_elementList_with_modules(&$elementList)
                             if (isset($categ[$objMod->special])) $categ[$objMod->special]++;                    // Array of all different modules categories
                             else $categ[$objMod->special]=1;
                             $dirmod[$i] = $dirroot;
-			    $objMod->module_parts['contactelement']
                             if (! empty($objMod->module_parts['contactelement']))
                             {
                             	$elementList[$objMod->name] = $langs->trans($objMod->name);
