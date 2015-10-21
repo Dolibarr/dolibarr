@@ -1218,8 +1218,8 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             {
             	$tmpplugin=empty($conf->global->MAIN_USE_JQUERY_MULTISELECT)?constant('REQUIRE_JQUERY_MULTISELECT'):$conf->global->MAIN_USE_JQUERY_MULTISELECT;
             	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/'.$tmpplugin.'/'.$tmpplugin.'.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
-                if (file_exists(DOL_DOCUMENT_ROOT.'/includes/jquery/plugins/'.$tmpplugin.'/'.$tmpplugin.'_locale_fr.js')) {
-                    print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/'.$tmpplugin.'/'.$tmpplugin.'_locale_fr.js'.($ext?'?'.$ext:'').'"></script>'."\n";
+                if (file_exists(DOL_DOCUMENT_ROOT.'/includes/jquery/plugins/'.$tmpplugin.'/'.$tmpplugin.'_locale_'.substr($langs->defaultlang, 0, 2).'.js')) {
+                    print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/'.$tmpplugin.'/'.$tmpplugin.'_locale_'.substr($langs->defaultlang, 0, 2).'.js'.($ext?'?'.$ext:'').'"></script>'."\n";
                 }
             }
             // jQuery jMobile
