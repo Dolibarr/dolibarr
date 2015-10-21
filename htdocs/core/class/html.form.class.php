@@ -4562,7 +4562,8 @@ class Form
 			    
 			    $(".'.$htmlname.'").change(function() { 
 			    	alert(\'eee\');
-			    	$(".'.$htmlname.'").select2.clearSearch(); 
+			    	/* $(".'.$htmlname.'").select2("search",""); */
+			    	$(".'.$htmlname.'").select2("val","");  /* reset combo box */
     			} );
 
     			
