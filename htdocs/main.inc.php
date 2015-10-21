@@ -1213,10 +1213,14 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/timepicker/jquery-ui-timepicker-addon.js'.($ext?'?'.$ext:'').'"></script>'."\n";
             	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/timepicker.js.php?lang='.$langs->defaultlang.($ext?'&amp;'.$ext:'').'"></script>'."\n";
             }
-            if (! empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) || defined('REQUIRE_JQUERY_MULTISELECT'))     // jQuery plugin "mutiselect", "multiple-select", "select2", ...
+            // jQuery plugin "mutiselect", "multiple-select", "select2", ...
+            if (! empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) || defined('REQUIRE_JQUERY_MULTISELECT'))
             {
             	$tmpplugin=empty($conf->global->MAIN_USE_JQUERY_MULTISELECT)?constant('REQUIRE_JQUERY_MULTISELECT'):$conf->global->MAIN_USE_JQUERY_MULTISELECT;
             	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/'.$tmpplugin.'/'.$tmpplugin.'.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
+                if (file_exists(DOL_DOCUMENT_ROOT.'/includes/jquery/plugins/'.$tmpplugin.'/'.$tmpplugin.'_locale_fr.js')) {
+                    print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/'.$tmpplugin.'/'.$tmpplugin.'_locale_fr.js'.($ext?'?'.$ext:'').'"></script>'."\n";
+                }
             }
             // jQuery jMobile
             if (! empty($conf->global->MAIN_USE_JQUERY_JMOBILE) || defined('REQUIRE_JQUERY_JMOBILE') || (! empty($conf->dol_use_jmobile) && $conf->dol_use_jmobile > 0))
