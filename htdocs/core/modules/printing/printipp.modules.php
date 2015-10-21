@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2014 Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2014-2015  Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,6 +62,7 @@ class printing_printipp extends PrintingDriver
         $this->conf[] = array('varname'=>'PRINTIPP_PORT', 'required'=>1, 'example'=>'631', 'type'=>'text');
         $this->conf[] = array('varname'=>'PRINTIPP_USER', 'required'=>0, 'example'=>'', 'type'=>'text', 'moreattributes'=>'autocomplete="off"');
         $this->conf[] = array('varname'=>'PRINTIPP_PASSWORD', 'required'=>0, 'example'=>'', 'type'=>'password', 'moreattributes'=>'autocomplete="off"');
+        $this->conf[] = array('enabled'=>1, 'type'=>'submit');
     }
 
     /**
@@ -71,7 +72,7 @@ class printing_printipp extends PrintingDriver
      * @param   string      $module     module
      * @param   string      $subdir     subdirectory of document like for expedition subdir is sendings
      *
-     * @return  string                  '' if OK, Error message if KO
+     * @return  int                     0 if OK, <0 if KO
      */
     function print_file($file, $module, $subdir='')
     {
@@ -107,7 +108,8 @@ class printing_printipp extends PrintingDriver
                 }
                 else
 				{
-                    return 'NoDefaultPrinterDefined';
+                    $this->error = 'NoDefaultPrinterDefined';
+                    return -1;
                 }
             }
         }
@@ -121,7 +123,7 @@ class printing_printipp extends PrintingDriver
         $ipp->setData($fileprint);
         $ipp->printJob();
 
-        return '';
+        return 0;
     }
 
     /**

@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2014       Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2014-2015  Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@ llxHeader("",$langs->trans("Printing"));
 
 print load_fiche_titre($langs->trans("Printing"));
 
+// TODO use modules to only activated modules
 // List Jobs from printing modules
 $printer = new dolPrintIPP($db,$conf->global->PRINTIPP_HOST,$conf->global->PRINTIPP_PORT,$user->login,$conf->global->PRINTIPP_USER,$conf->global->PRINTIPP_PASSWORD);
 $printer->list_jobs('commande');

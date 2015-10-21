@@ -46,11 +46,12 @@ if ($action == 'print_file' and $user->rights->printing->read)
 
             if (! empty($conf->global->{$printer->active})) {
                 $subdir=(GETPOST('printer', 'alpha')=='expedition'?'sending':'');
-                $errorprint = $printer->print_file(GETPOST('file', 'alpha'), GETPOST('printer', 'alpha'), $subdir);
-                //if ($errorprint < 0) {
-                //    setEventMessage($interface->errors, 'errors');
-                //}
-                if ($errorprint=='') {
+                $ret = $printer->print_file(GETPOST('file', 'alpha'), GETPOST('printer', 'alpha'), $subdir);
+                if ($ret < 0) {
+                    setEventMessage($printer->error, 'errors');
+                }
+                if ($ret==0) {
+                    setEventMessage($printer->error, 'warning');
                     setEventMessage($langs->trans("FileWasSentToPrinter", basename(GETPOST('file'))).' '.$langs->trans("ViaModule").' '.$printer->name);
                     $printed++;
                 }
