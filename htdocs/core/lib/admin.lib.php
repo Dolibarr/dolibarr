@@ -678,27 +678,7 @@ function activateModule($value,$withdeps=1)
     $modFile = $modName . ".class.php";
 
     // Loop on each directory to fill $modulesdir
-    $modulesdir = array();
-    foreach ($conf->file->dol_document_root as $type => $dirroot)
-    {
-        $modulesdir[] = $dirroot."/core/modules/";
-
-            $handle=@opendir(dol_osencode($dirroot));
-            if (is_resource($handle))
-            {
-                while (($file = readdir($handle))!==false)
-                {
-                    if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
-                    {
-                        if (is_dir($dirroot . '/' . $file . '/core/modules/'))
-                        {
-                            $modulesdir[] = $dirroot . '/' . $file . '/core/modules/';
-                        }
-                    }
-                }
-                closedir($handle);
-            }
-    }
+    $modulesdir = dolGetModulesDirs();
 
     // Loop on each directory
     $found=false;
@@ -797,27 +777,7 @@ function unActivateModule($value, $requiredby=1)
     $modFile = $modName . ".class.php";
 
     // Loop on each directory to fill $modulesdir
-    $modulesdir = array();
-    foreach ($conf->file->dol_document_root as $type => $dirroot)
-    {
-        $modulesdir[] = $dirroot."/core/modules/";
-
-            $handle=@opendir(dol_osencode($dirroot));
-            if (is_resource($handle))
-            {
-                while (($file = readdir($handle))!==false)
-                {
-                    if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
-                    {
-                        if (is_dir($dirroot . '/' . $file . '/core/modules/'))
-                        {
-                            $modulesdir[] = $dirroot . '/' . $file . '/core/modules/';
-                        }
-                    }
-                }
-                closedir($handle);
-            }
-    }
+    $modulesdir = dolGetModulesDirs();
 
     // Loop on each directory
     $found=false;
@@ -889,31 +849,11 @@ function complete_dictionary_with_modules(&$taborder,&$tabname,&$tablib,&$tabsql
     $orders = array();
     $categ = array();
     $dirmod = array();
-    $modulesdir = array();
+
     $i = 0; // is a sequencer of modules found
     $j = 0; // j is module number. Automatically affected if module number not defined.
 
-    foreach ($conf->file->dol_document_root as $type => $dirroot)
-    {
-        $modulesdir[$dirroot . '/core/modules/'] = $dirroot . '/core/modules/';
-
-        $handle=@opendir($dirroot);
-        if (is_resource($handle))
-        {
-            while (($file = readdir($handle))!==false)
-            {
-            	if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
-                {
-                    if (is_dir($dirroot . '/' . $file . '/core/modules/'))
-                    {
-                        $modulesdir[$dirroot . '/' . $file . '/core/modules/'] = $dirroot . '/' . $file . '/core/modules/';
-                    }
-                }
-            }
-            closedir($handle);
-        }
-    }
-
+    $modulesdir = dolGetModulesDirs();
     foreach ($modulesdir as $dir)
     {
     	// Load modules attributes in arrays (name, numero, orders) from dir directory
@@ -955,13 +895,13 @@ function complete_dictionary_with_modules(&$taborder,&$tabname,&$tablib,&$tabsql
                         if ($modulequalified)
                         {
 							// Load languages files of module
-                            if (isset($objMod->langfiles) && is_array($objMod->langfiles))
-                            {
-                             	foreach($objMod->langfiles as $langfile)
-                              	{
-                               		$langs->load($langfile);
-                               	}
-                           	}
+                        	if (isset($objMod->langfiles) && is_array($objMod->langfiles))
+                            	{
+                             		foreach($objMod->langfiles as $langfile)
+                              		{
+	                               		$langs->load($langfile);
+        	                       	}
+              			}
 
                             $modules[$i] = $objMod;
                             $filename[$i]= $modName;
@@ -1035,30 +975,11 @@ function complete_elementList_with_modules(&$elementList)
     $orders = array();
     $categ = array();
     $dirmod = array();
-    $modulesdir = array();
+
     $i = 0; // is a sequencer of modules found
     $j = 0; // j is module number. Automatically affected if module number not defined.
 
-    foreach ($conf->file->dol_document_root as $type => $dirroot)
-    {
-        $modulesdir[$dirroot . '/core/modules/'] = $dirroot . '/core/modules/';
-
-        $handle=@opendir($dirroot);
-        if (is_resource($handle))
-        {
-            while (($file = readdir($handle))!==false)
-            {
-            	if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
-                {
-                    if (is_dir($dirroot . '/' . $file . '/core/modules/'))
-                    {
-                        $modulesdir[$dirroot . '/' . $file . '/core/modules/'] = $dirroot . '/' . $file . '/core/modules/';
-                    }
-                }
-            }
-            closedir($handle);
-        }
-    }
+    $modulesdir = dolGetModulesDirs();
 
     foreach ($modulesdir as $dir)
     {
@@ -1116,8 +1037,8 @@ function complete_elementList_with_modules(&$elementList)
                             if (isset($categ[$objMod->special])) $categ[$objMod->special]++;                    // Array of all different modules categories
                             else $categ[$objMod->special]=1;
                             $dirmod[$i] = $dirroot;
-
-                            if (! empty($objMod->contactelement))
+			    $objMod->module_parts['contactelement']
+                            if (! empty($objMod->module_parts['contactelement']))
                             {
                             	$elementList[$objMod->name] = $langs->trans($objMod->name);
                                 //exit;
