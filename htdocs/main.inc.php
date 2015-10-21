@@ -1606,7 +1606,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 
     	if (! empty($conf->projet->enabled) && ! empty($conf->global->MAIN_SEARCHFORM_PROJECT) && $user->rights->projet->lire)
 	    {
-	        $langs->load("members");
+	        $langs->load("projects");
 	        $searchform.=printSearchForm(DOL_URL_ROOT.'/projet/list.php', DOL_URL_ROOT.'/projet/list.php', $langs->trans("Projects"), 'project', 'search_all', 'Q', 'searchleftproj', img_object('','projectpub'));
 	    }
 
