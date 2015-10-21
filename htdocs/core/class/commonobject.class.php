@@ -3005,60 +3005,60 @@ abstract class CommonObject
 
 		print '<tr class="liste_titre nodrag nodrop">';
 
-		if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) print '<td align="center" width="5">&nbsp;</td>';
+		if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) print '<td class="linecolnum" align="center" width="5">&nbsp;</td>';
 
 		// Description
-		print '<td>'.$langs->trans('Description').'</td>';
+		print '<td class="linecoldescription">'.$langs->trans('Description').'</td>';
 
 		if ($this->element == 'askpricesupplier')
 		{
-			print '<td align="right"><span id="title_fourn_ref">'.$langs->trans("AskPriceSupplierRefFourn").'</span></td>';
+			print '<td class="linerefsupplier" align="right"><span id="title_fourn_ref">'.$langs->trans("AskPriceSupplierRefFourn").'</span></td>';
 		}
 
 		// VAT
-		print '<td align="right" width="50">'.$langs->trans('VAT').'</td>';
+		print '<td class="linecolvat" align="right" width="50">'.$langs->trans('VAT').'</td>';
 
 		// Price HT
-		print '<td align="right" width="80">'.$langs->trans('PriceUHT').'</td>';
+		print '<td class="linecoluht" align="right" width="80">'.$langs->trans('PriceUHT').'</td>';
 
 		if ($inputalsopricewithtax) print '<td align="right" width="80">'.$langs->trans('PriceUTTC').'</td>';
 
 		// Qty
-		print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';
+		print '<td class="linecolqty" align="right" width="50">'.$langs->trans('Qty').'</td>';
 
 		if($conf->global->PRODUCT_USE_UNITS)
 		{
-			print '<td align="left" width="50">'.$langs->trans('Unit').'</td>';
+			print '<td class="linecoluseunit" align="left" width="50">'.$langs->trans('Unit').'</td>';
 		}
 
 		// Reduction short
-		print '<td align="right" width="50">'.$langs->trans('ReductionShort').'</td>';
+		print '<td class="linecoldiscount" align="right" width="50">'.$langs->trans('ReductionShort').'</td>';
 
 		if ($this->situation_cycle_ref) {
-			print '<td align="right" width="50">' . $langs->trans('Progress') . '</td>';
+			print '<td class="linecolcycleref" align="right" width="50">' . $langs->trans('Progress') . '</td>';
 		}
 
 		if ($usemargins && ! empty($conf->margin->enabled) && empty($user->societe_id))
 		{
 			if ($conf->global->MARGIN_TYPE == "1")
-				print '<td align="right" class="margininfos" width="80">'.$langs->trans('BuyingPrice').'</td>';
+				print '<td class="linecolmargin1 margininfos" align="right" width="80">'.$langs->trans('BuyingPrice').'</td>';
 			else
-				print '<td align="right" class="margininfos" width="80">'.$langs->trans('CostPrice').'</td>';
+				print '<td class="linecolmargin1 margininfos" align="right" width="80">'.$langs->trans('CostPrice').'</td>';
 
 			if (! empty($conf->global->DISPLAY_MARGIN_RATES) && $user->rights->margins->liretous)
-				print '<td align="right" class="margininfos" width="50">'.$langs->trans('MarginRate').'</td>';
+				print '<td class="linecolmargin2 margininfos" align="right" width="50">'.$langs->trans('MarginRate').'</td>';
 			if (! empty($conf->global->DISPLAY_MARK_RATES) && $user->rights->margins->liretous)
-				print '<td align="right" class="margininfos" width="50">'.$langs->trans('MarkRate').'</td>';
+				print '<td class="linecolmargin2 margininfos" align="right" width="50">'.$langs->trans('MarkRate').'</td>';
 		}
 
 		// Total HT
-		print '<td align="right" width="50">'.$langs->trans('TotalHTShort').'</td>';
+		print '<td class="linecolht" align="right" width="50">'.$langs->trans('TotalHTShort').'</td>';
 
-		print '<td></td>';  // No width to allow autodim
+		print '<td class="linecoledit"></td>';  // No width to allow autodim
 
-		print '<td width="10"></td>';
+		print '<td class="linecoldelete" width="10"></td>';
 
-		print '<td width="10"></td>';
+		print '<td class="linecolmove" width="10"></td>';
 
 		print "</tr>\n";
 
@@ -3801,10 +3801,10 @@ abstract class CommonObject
 
                     foreach ($tab as $key => $value)
                     {
-                    	// Test fetch_array ! is_int($key) because fetch_array seult is a mix table with Key as alpha and Key as int (depend db engine)
+                    	// Test fetch_array ! is_int($key) because fetch_array result is a mix table with Key as alpha and Key as int (depend db engine)
                         if ($key != 'rowid' && $key != 'tms' && $key != 'fk_member' && ! is_int($key))
                         {
-                            // we can add this attribute to adherent object
+                            // we can add this attribute to object
                             $this->array_options["options_".$key]=$value;
                         }
                     }
@@ -3852,7 +3852,7 @@ abstract class CommonObject
     /**
      *	Add/Update all extra fields values for the current object.
      *  Data to describe values to insert/update are stored into $this->array_options=array('options_codeforfield1'=>'valueforfield1', 'options_codeforfield2'=>'valueforfield2', ...)
-     *  This function delte record with all extrafields and insert them again from the array $this->array_options.
+     *  This function delete record with all extrafields and insert them again from the array $this->array_options.
      *
      *  @return int -1=error, O=did nothing, 1=OK
      */
@@ -3906,12 +3906,25 @@ abstract class CommonObject
 						// 1 : classPath
 						$InfoFieldList = explode(":", $param_list[0]);
 						dol_include_once($InfoFieldList[1]);
-						$object = new $InfoFieldList[0]($this->db);
-						if ($value)
-						{
-							$object->fetch(0,$value);
-							$this->array_options[$key]=$object->id;
-						}
+            			if ($InfoFieldList[0] && class_exists($InfoFieldList[0]))
+            			{
+    						$object = new $InfoFieldList[0]($this->db);
+    						if ($value)
+    						{
+    							$res=$object->fetch(0,$value);
+    							if ($res > 0) $this->array_options[$key]=$object->id;
+    							else 
+    							{
+    							    $this->error="Ref '".$value."' for object '".$object->element."' not found";
+                                    $this->db->rollback();
+                                    return -1;
+    							}
+    						}
+            			}
+            			else
+            			{
+            			    dol_syslog('Error bad setup of extrafield', LOG_WARNING);
+            			}
 						break;
                	}
             }
