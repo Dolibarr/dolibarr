@@ -121,7 +121,7 @@ class ProductFournisseur extends Product
      */
     function remove_product_fournisseur_price($rowid)
     {
-        global $conf;
+        global $conf, $user;
 
         $this->db->begin();
 
@@ -132,8 +132,21 @@ class ProductFournisseur extends Product
         $resql = $this->db->query($sql);
         if ($resql)
         {
-            $this->db->commit();
-            return 1;
+            // Call trigger
+            $result=$this->call_trigger('SUPPLIER_PRODUCT_BUYPRICE_DELETE',$user);
+            if ($result < 0) $error++;
+            // End call triggers
+
+            if (empty($error))
+            {
+                $this->db->commit();
+                return 1;
+            }
+            else
+            {
+                $this->db->rollback();
+                return -1;
+            }
         }
         else
         {
