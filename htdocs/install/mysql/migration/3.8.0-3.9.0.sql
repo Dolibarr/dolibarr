@@ -71,6 +71,11 @@ ALTER TABLE llx_contrat ADD COLUMN ref_customer varchar(30);
 
 ALTER TABLE llx_ecm_directories MODIFY COLUMN fullpath varchar(750);
 
+ALTER TABLE llx_ecm_directories DROP INDEX idx_ecm_directories;
+ALTER TABLE llx_ecm_directories ADD UNIQUE INDEX uk_ecm_directories (label, fk_parent, entity);
+ALTER TABLE llx_ecm_directories ADD UNIQUE INDEX uk_ecm_directories_fullpath(fullpath);
+
+
 CREATE TABLE llx_ecm_files
 (
   rowid				integer AUTO_INCREMENT PRIMARY KEY,
@@ -90,8 +95,7 @@ CREATE TABLE llx_ecm_files
   acl				text							-- for future permission 'per file'
 ) ENGINE=innodb;
 
-
-ALTER TABLE llx_ecm_directories ADD UNIQUE INDEX uk_ecm_directories_fullpath(fullpath);
+ALTER TABLE llx_ecm_files ADD UNIQUE INDEX uk_ecm_files (label, entity);
 ALTER TABLE llx_ecm_files ADD UNIQUE INDEX uk_ecm_files_fullpath(fullpath);
 
 
