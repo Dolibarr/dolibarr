@@ -580,10 +580,9 @@ class Translate
             $str=$this->tab_translate[$key];
 
     		// Make some string replacement after translation
-    		$replacekey='MAIN_REPLACE_TRANS_'.$this->defaultlang;
-            if (! empty($conf->global->$replacekey))    // Replacement translation variable with string1:newstring1,string2:newstring2
+            $replacekey='MAIN_REPLACE_TRANS_'.$this->defaultlang;
+            if (! empty($conf->global->$replacekey))    // Replacement translation variable with string1:newstring1;string2:newstring2
             {
-        		// Overwrite translation with param MAIN_OVERWRITE_TRANS_xx_XX
                 $tmparray=explode(';', $conf->global->$replacekey);
                 foreach($tmparray as $tmp)
                 {
@@ -660,17 +659,17 @@ class Translate
 		{
 		    $str=$this->tab_translate[$key];
 
-		    // Overwrite translation
-		    $overwritekey='MAIN_OVERWRITE_TRANS_'.$this->defaultlang;
-            if (! empty($conf->global->$overwritekey))    // Overwrite translation with key1:newstring1,key2:newstring2
+    		// Make some string replacement after translation
+            $replacekey='MAIN_REPLACE_TRANS_'.$this->defaultlang;
+            if (! empty($conf->global->$replacekey))    // Replacement translation variable with string1:newstring1;string2:newstring2
             {
-                $tmparray=explode(',', $conf->global->$overwritekey);
+                $tmparray=explode(';', $conf->global->$replacekey);
                 foreach($tmparray as $tmp)
                 {
                     $tmparray2=explode(':',$tmp);
-                	if ($tmparray2[0]==$key) { $str=$tmparray2[1]; break; }
+                    $str=preg_replace('/'.preg_quote($tmparray2[0]).'/',$tmparray2[1],$str);
                 }
-            }
+            }    		
 
             if (! preg_match('/^Format/',$key)) 
             {
@@ -982,7 +981,8 @@ class Translate
 	}
 
 	/**
-	 * Return an array with content of all loaded translation keys (found into this->tab_translate)
+	 * Return an array with content of all loaded translation keys (found into this->tab_translate) so
+	 * we get a substitution array we can use for substitutions (for mail or ODT generation for example)
 	 *
 	 * @return array	Array of translation keys lang_key => string_translation_loaded
 	 */
@@ -996,10 +996,4 @@ class Translate
 
 		return $substitutionarray;
 	}
-}
-
-
-function warning_handler($errno, $errstr, $errfile, $errline, array $errcontext) {
-	global $str;
-	print 'str='.$str;
 }

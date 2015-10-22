@@ -146,9 +146,10 @@ class User extends CommonObject
 	 * 	@param  string	$login       		Si defini, login a utiliser pour recherche
 	 *	@param  string	$sid				Si defini, sid a utiliser pour recherche
 	 * 	@param	int		$loadpersonalconf	Also load personal conf of user (in $user->conf->xxx)
+	 *  @param  int     $entity             If a value is >= 0, we force the search on a specific entity. If -1, means search depens on default setup.
 	 * 	@return	int							<0 if KO, 0 not found, >0 if OK
 	 */
-	function fetch($id='', $login='',$sid='',$loadpersonalconf=1)
+	function fetch($id='', $login='',$sid='',$loadpersonalconf=1, $entity=-1)
 	{
 		global $conf, $user;
 
@@ -177,15 +178,22 @@ class User extends CommonObject
 		$sql.= " u.ref_int, u.ref_ext";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 
-		if ((empty($conf->multicompany->enabled) || empty($conf->multicompany->transverse_mode)) && (! empty($user->entity)))
+		if ($entity < 0)
 		{
-			$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
+    		if ((empty($conf->multicompany->enabled) || empty($conf->multicompany->transverse_mode)) && (! empty($user->entity)))
+    		{
+    			$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
+    		}
+    		else
+    		{
+    			$sql.= " WHERE u.entity IS NOT NULL";    // multicompany is on in transverse mode or user making fetch is on entity 0, so user is allowed to fetch anywhere into database 
+    		}
 		}
-		else
+		else  // The fetch was forced on an entity
 		{
-			$sql.= " WHERE u.entity IS NOT NULL";
+            $sql.= " WHERE u.entity IN (0, ".$conf->entity.")";
 		}
-
+		
 		if ($sid)    // permet une recherche du user par son SID ActiveDirectory ou Samba
 		{
 			$sql.= " AND (u.ldap_sid = '".$this->db->escape($sid)."' OR u.login = '".$this->db->escape($login)."') LIMIT 1";

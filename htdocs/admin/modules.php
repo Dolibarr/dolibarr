@@ -141,7 +141,7 @@ foreach ($modulesdir as $dir)
 
     		    		        if (! $objMod->numero > 0)
     		            		{
-    		         		    	dol_syslog('a module descriptor must have a numero property', LOG_ERR);   
+    		         		    	dol_syslog('The module descriptor '.$modName.' must have a numero property', LOG_ERR);   
     		            		}
 								$j = $objMod->numero;
 								

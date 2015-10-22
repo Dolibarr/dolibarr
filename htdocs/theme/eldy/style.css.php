@@ -671,7 +671,7 @@ $heightmenu=46;			/* height of top menu, part with image */
 $heightmenu2=48;        /* height of top menu, part with login  */
 $disableimages = 0;
 $maxwidthloginblock = 110;
-if (! empty($conf->global->THEME_ELDY_DISABLE_IMAGE) || $dol_optimize_smallscreen) { $disableimages = 1; $maxwidthloginblock = 180; }
+if (! empty($conf->global->THEME_ELDY_DISABLE_IMAGE)) { $disableimages = 1; $maxwidthloginblock = 180; }
 ?>
 
 div#id-top {
@@ -1088,13 +1088,16 @@ div.login_block_other { padding-top: 3px; text-align: right; }
 	padding: 0px 0px 0px 4px !important;
 	height: 16px;
 }
-.alogin, .alogin:hover {
+.atoplogin, .atoplogin:hover {
 	color: #<?php echo $colortextbackhmenu; ?> !important;
+	font-weight: normal !important;
+}
+.alogin, .alogin:hover {
 	font-weight: normal !important;
 	font-size: <?php echo $fontsizesmaller; ?>px !important;
 	padding-top: 2px;
 }
-.alogin:hover {
+.alogin:hover, .atoplogin:hover {
 	text-decoration:underline !important;
 }
 img.login, img.printer, img.entity {
@@ -1143,7 +1146,10 @@ div.vmenu, td.vmenu {
 	<?php } ?>
 }
 
-.menu_contenu { padding-top: 3px; padding-top: 2px; }
+.menu_contenu { 
+	padding-top: 3px; 
+	padding-bottom: 2px;
+}
 #menu_contenu_logo { padding-right: 4px; }
 
 a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; }

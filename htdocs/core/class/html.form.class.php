@@ -4501,7 +4501,7 @@ class Form
 
     /**
      *	Return a HTML select string, built from an array of key+value but content returned into select come from an Ajax call of an URL.
-     *  Note: Do not apply langs->trans function on returned content, content may be entity encoded twice.
+     *  Note: Do not apply langs->trans function on returned content of Ajax service, content may be entity encoded twice.
      *
      *	@param	string	$htmlname       		Name of html select area
      *	@param	string	$url					Url
@@ -4534,9 +4534,14 @@ class Form
 				    		};
 			    		},
 			    		results: function (remoteData, pageNumber, query) {
-			    			console.log(remoteData);
-			    			return {results:[{id:\'none\', text:\'aa\'}, {id:\'rrr\', text:\'Red\'},{id:\'bbb\', text:\'Search a into projects\'}], more:false}
-			    			//return {results:[remoteData], more:false}
+			    			//console.log(remoteData);
+				    	    result = []
+				    	    $.each( remoteData, function( key, value ) {
+				    	       result.push({id: key, text: value});
+                            });
+				    	    //console.log(result);
+			    			//return {results:[{id:\'none\', text:\'aa\'}, {id:\'rrr\', text:\'Red\'},{id:\'bbb\', text:\'Search a into projects\'}], more:false}
+			    			return {results: result, more:false}
     					},
 			    		/*processResults: function (data, page) {
 			    			// parse the results into the format expected by Select2.
@@ -4557,7 +4562,8 @@ class Form
 			    
 			    $(".'.$htmlname.'").change(function() { 
 			    	alert(\'eee\');
-			    	$(".'.$htmlname.'").select2.clearSearch(); 
+			    	/* $(".'.$htmlname.'").select2("search",""); */
+			    	$(".'.$htmlname.'").select2("val","");  /* reset combo box */
     			} );
 
     			

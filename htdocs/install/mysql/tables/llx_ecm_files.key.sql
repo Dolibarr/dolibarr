@@ -17,4 +17,5 @@
 -- ============================================================================
 
 
-ALTER TABLE llx_ecm_files ADD UNIQUE INDEX uk_ecm_files_fullpath(fullpath);
+ALTER TABLE llx_ecm_files ADD UNIQUE INDEX uk_ecm_files (label, entity);
+--ALTER TABLE llx_ecm_files ADD UNIQUE INDEX uk_ecm_files_fullpath(fullpath); Disabled, mysql limits size of index

@@ -111,11 +111,11 @@ if ($action == 'update')
 
     if (! $error)
     {
-        setEventMessage($langs->trans("SetupSaved"));
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
     else
     {
-        setEventMessage($langs->trans("Error"),'errors');
+        setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
 
@@ -126,9 +126,9 @@ if ($action == 'setlistsorttodo') {
 		$error ++;
 	
 	if (! $error) {
-		setEventMessage($langs->trans("SetupSaved"), 'mesgs');
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
-		setEventMessage($langs->trans("Error"), 'mesgs');
+		setEventMessages($langs->trans("Error"), null, 'mesgs');
 	}
 }
 
@@ -138,9 +138,9 @@ if ($action == 'setlistsortdone') {
 	if (! $res > 0)
 		$error ++;
 	if (! $error) {
-		setEventMessage($langs->trans("SetupSaved"), 'mesgs');
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
-		setEventMessage($langs->trans("Error"), 'mesgs');
+		setEventMessages($langs->trans("Error"), null, 'mesgs');
 	}
 }
 

@@ -22,8 +22,8 @@ CREATE TABLE llx_ecm_files
   label				varchar(64) NOT NULL,
   entity			integer DEFAULT 1 NOT NULL,		-- multi company id
   filename          varchar(255) NOT NULL,			-- file name only without any directory
-  fullpath    		varchar(10000) NOT NULL,   	    -- relative to dolibarr document dir. example abc/def/myfile
-  fullpath_orig		varchar(10000),	                -- full path of original filename, when file is uploaded from a local computer
+  fullpath    		varchar(750) NOT NULL,   	    -- relative to dolibarr document dir. example abc/def/myfile
+  fullpath_orig		varchar(750),	                -- full path of original filename, when file is uploaded from a local computer
   description		text,
   keywords          text,                           -- list of keywords, separated with comma
   cover             text,                           -- is this file a file to use for a cover

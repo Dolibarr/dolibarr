@@ -2347,8 +2347,8 @@ if ($action == 'create')
 		}
 
 		print '<tr><td>' . $langs->trans($newclassname) . '</td><td colspan="2">' . $objectsrc->getNomUrl(1);
-		//We check if Origin document has already an invoice attached to it
-		$objectsrc->fetchObjectLinked($originid,'','','facture');
+		// We check if Origin document (id and type is known) has already at least one invoice attached to it
+		$objectsrc->fetchObjectLinked($originid,$origin,'','facture');
 		$cntinvoice=count($objectsrc->linkedObjects['facture']);
 		if ($cntinvoice>=1)
 		{

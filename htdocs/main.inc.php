@@ -515,7 +515,7 @@ if (! defined('NOLOGIN'))
             exit;
         }
 
-        $resultFetchUser=$user->fetch('',$login);
+        $resultFetchUser=$user->fetch('', $login, '', 0, ($entitytotest ? $entitytotest : -1);
         if ($resultFetchUser <= 0)
         {
             dol_syslog('User not found, connexion refused');
@@ -1492,7 +1492,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 
 	    // Login name with tooltip
 		$toprightmenu.='<div class="inline-block nowrap"><div class="inline-block login_block_elem login_block_elem_name" style="padding: 0px;">';
-        $toprightmenu.=$user->getNomurl(0, '', true, 0, 11, 0, 'firstname','alogin');
+        $toprightmenu.=$user->getNomurl(0, '', true, 0, 11, 0, ($user->firstname ? 'firstname' : -1),'atoplogin');
         $toprightmenu.='</div></div>';
 
 		$toprightmenu.='</div>';
@@ -1606,7 +1606,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 
     	if (! empty($conf->projet->enabled) && ! empty($conf->global->MAIN_SEARCHFORM_PROJECT) && $user->rights->projet->lire)
 	    {
-	        $langs->load("members");
+	        $langs->load("projects");
 	        $searchform.=printSearchForm(DOL_URL_ROOT.'/projet/list.php', DOL_URL_ROOT.'/projet/list.php', $langs->trans("Projects"), 'project', 'search_all', 'Q', 'searchleftproj', img_object('','projectpub'));
 	    }
 
