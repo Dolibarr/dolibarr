@@ -886,7 +886,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 	} else {
 		$morehtmlright.=$object->getLibStatut(2);
 	}
-	if (! empty($object->name_nalias)) $morehtmlref.='<div class="refidno">'.$object->name_alias.'</div>';
+	if (! empty($object->name_alias)) $morehtmlref.='<div class="refidno">'.$object->name_alias.'</div>';
 	$morehtmlref.='<div class="refidno">';
 	$morehtmlref.=$object->getBannerAddress('refaddress',$object);
 	$morehtmlref.='</div>';
