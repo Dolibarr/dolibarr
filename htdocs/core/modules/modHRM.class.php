@@ -23,8 +23,7 @@
 include_once (DOL_DOCUMENT_ROOT . "/core/modules/DolibarrModules.class.php");
 
 /**
- * \class 	modHRM
- * \brief 	Class to describe and activate the HRM module
+ * Class to describe and activate the HRM module
  */
 class modHRM extends DolibarrModules
 {
@@ -49,7 +48,7 @@ class modHRM extends DolibarrModules
 		$this->description = "Gestion des ressources humaines";
 		
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = 'develop';
+		$this->version = 'development';
 		
 		$this->const_name = 'MAIN_MODULE_' . strtoupper ( $this->name );
 		$this->special = 0;
