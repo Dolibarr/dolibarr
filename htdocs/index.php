@@ -233,7 +233,7 @@ if (empty($user->societe_id))
 	    // Dashboard Link lines
 	    $links=array(DOL_URL_ROOT.'/comm/list.php',
 	    DOL_URL_ROOT.'/comm/prospect/list.php',
-	    DOL_URL_ROOT.'/fourn/list.php',
+	    DOL_URL_ROOT.'/societe/list.php?type=f',
 	    DOL_URL_ROOT.'/adherents/list.php?statut=1&mainmenu=members',
 	    DOL_URL_ROOT.'/product/list.php?type=0&mainmenu=products',
 	    DOL_URL_ROOT.'/product/list.php?type=1&mainmenu=products',

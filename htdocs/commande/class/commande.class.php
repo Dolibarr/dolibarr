@@ -1145,7 +1145,7 @@ class Commande extends CommonOrder
      *  @param		int				$fk_fournprice		Id supplier price
      *  @param		int				$pa_ht				Buying price (without tax)
      *  @param		string			$label				Label
-	 *  @param		array			$array_options		extrafields array
+	 *  @param		array			$array_options		extrafields array. Example array('options_codeforfield1'=>'valueforfield1', 'options_codeforfield2'=>'valueforfield2', ...)
      * 	@param 		string			$fk_unit 			Code of the unit to use. Null to use the default one
      *	@return     int             					>0 if OK, <0 if KO
      *

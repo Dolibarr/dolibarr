@@ -155,7 +155,7 @@ else
     if (! empty($conf->fournisseur->enabled) && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS))
     {
         $statstring2 = "<tr ".$bc[0].">";
-        $statstring2.= '<td><a href="'.DOL_URL_ROOT.'/fourn/list.php">'.$langs->trans("Suppliers").'</a></td><td align="right">'.round($third['supplier']).'</td>';
+        $statstring2.= '<td><a href="'.DOL_URL_ROOT.'/societe/list.php?type=f">'.$langs->trans("Suppliers").'</a></td><td align="right">'.round($third['supplier']).'</td>';
         $statstring2.= "</tr>";
     }
     print $statstring;
