@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 if (! empty($conf->contrat->enabled)) require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 if (! empty($conf->propal->enabled))  require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 if (! empty($conf->commande->enabled))  require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+if (! empty($conf->fournisseur->enabled)) require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 
 if (! $user->rights->societe->lire) accessforbidden();
 
@@ -65,6 +66,7 @@ $formfile = new FormFile($db);
 $companystatic=new Societe($db);
 if (! empty($conf->propal->enabled)) $propalstatic=new Propal($db);
 if (! empty($conf->commande->enabled)) $orderstatic=new Commande($db);
+if (! empty($conf->fournisseur->enabled)) $supplierorderstatic=new CommandeFournisseur($db);
 
 llxHeader();
 
@@ -125,6 +127,8 @@ if (count($listofsearchfields))
  */
 if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 {
+	$langs->load("propal");
+
 	$sql = "SELECT p.rowid, p.ref, p.ref_client, p.total_ht, p.tva as total_tva, p.total as total_ttc, s.rowid as socid, s.nom as name, s.client, s.canvas";
     $sql.= ", s.code_client";
 	$sql.= " FROM ".MAIN_DB_PREFIX."propal as p";
@@ -144,7 +148,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 	    
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td colspan="3">'.$langs->trans("ProposalsDraft").' <span class="badge">'.$num.'</span></td></tr>';
+		print '<td colspan="3">'.$langs->trans("ProposalsDraft").($num?' <span class="badge">'.$num.'</span>':'').'</td></tr>';
 
 		if ($num > 0)
 		{
@@ -181,6 +185,10 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 				$var=!$var;
 				print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" align="right">'.price($total)."</td></tr>";
 			}
+		}
+		else
+		{
+			print '<tr colspan="3" '.$bc[$var].'><td>'.$langs->trans("NoProposal").'</td></tr>';
 		}
 		print "</table><br>";
 
@@ -219,7 +227,7 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 	    
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td colspan="3">'.$langs->trans("DraftOrders").' <span class="badge">'.$num.'</span></td></tr>';
+		print '<td colspan="3">'.$langs->trans("DraftOrders").($num?' <span class="badge">'.$num.'</span>':'').'</td></tr>';
 
 		if ($num)
 		{
@@ -257,10 +265,96 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 				print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" align="right">'.price($total)."</td></tr>";
 			}
 		}
+		else
+		{
+			print '<tr colspan="3" '.$bc[$var].'><td>'.$langs->trans("NoOrder").'</td></tr>';
+		}
 		print "</table><br>";
 
 		$db->free($resql);
 	}
+	else
+	{
+		dol_print_error($db);
+	}
+}
+
+
+/*
+ * Draft suppliers orders
+ */
+if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande->lire)
+{
+    $langs->load("orders");
+
+    $sql = "SELECT cf.rowid, cf.ref, cf.ref_supplier, cf.total_ttc, s.rowid as socid, s.nom as name, s.client, s.canvas";
+    $sql.= ", s.code_client";
+    $sql.= ", s.code_fournisseur";
+    $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as cf";
+    $sql.= ", ".MAIN_DB_PREFIX."societe as s";
+    if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+    $sql.= " WHERE cf.fk_soc = s.rowid";
+    $sql.= " AND cf.fk_statut = 0";
+    $sql.= " AND cf.entity IN (".getEntity('supplier_order', 1).")";
+    if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+    if ($socid)	$sql.= " AND cf.fk_soc = ".$socid;
+
+    $resql = $db->query($sql);
+    if ($resql)
+    {
+        $total = 0;
+        $num = $db->num_rows($resql);
+
+        print '<table class="noborder" width="100%">';
+        print '<tr class="liste_titre">';
+        print '<td colspan="3">'.$langs->trans("DraftSuppliersOrders").($num?' <span class="badge">'.$num.'</span>':'').'</td></tr>';
+
+        if ($num)
+        {
+            $i = 0;
+            $var = true;
+            while ($i < $num)
+            {
+                $var=!$var;
+                $obj = $db->fetch_object($resql);
+                print '<tr '.$bc[$var].'><td class="nowrap">';
+                $supplierorderstatic->id=$obj->rowid;
+                $supplierorderstatic->ref=$obj->ref;
+                $supplierorderstatic->ref_supplier=$obj->ref_suppliert;
+                $supplierorderstatic->total_ht = $obj->total_ht;
+                $supplierorderstatic->total_tva = $obj->total_tva;
+                $supplierorderstatic->total_ttc = $obj->total_ttc;
+                print $supplierorderstatic->getNomUrl(1);
+                print '</td>';
+                print '<td class="nowrap">';
+                $companystatic->id=$obj->socid;
+                $companystatic->name=$obj->name;
+                $companystatic->client=$obj->client;
+                $companystatic->code_client = $obj->code_client;
+                $companystatic->code_fournisseur = $obj->code_fournisseur;
+                $companystatic->canvas=$obj->canvas;
+                print $companystatic->getNomUrl(1,'customer',16);
+                print '</td>';
+                print '<td align="right" class="nowrap">'.price($obj->total_ttc).'</td></tr>';
+                $i++;
+                $total += $obj->total_ttc;
+            }
+            if ($total>0)
+            {
+                $var=!$var;
+                print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" align="right">'.price($total)."</td></tr>";
+            }
+        }
+        else
+        {
+            print '<tr colspan="3" '.$bc[$var].'><td>'.$langs->trans("NoSupplierOrder").'</td></tr>';
+        }
+        print "</table><br>";
+
+        $db->free($resql);
+    } else {
+        dol_print_error($db);
+    }
 }
 
 
