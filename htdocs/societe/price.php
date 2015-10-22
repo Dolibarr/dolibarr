@@ -447,8 +447,6 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 		print_barre_liste($langs->trans('PriceForEachProduct'), $page, $_SERVEUR ['PHP_SELF'], $option, $sortfield, $sortorder, '', count($prodcustprice->lines), $nbtotalofrecords);
 
-		if (count($prodcustprice->lines) > 0) {
-
 			print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
 			print '<input type="hidden" name="id" value="' . $object->id . '">';
 
@@ -466,6 +464,8 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 			print '<td align="right">' . $langs->trans("ChangedBy") . '</td>';
 			print '<td>&nbsp;</td>';
 			print '</tr>';
+
+		if (count($prodcustprice->lines) > 0) {
 
 			print '<tr class="liste_titre">';
 			print '<td><input type="text" class="flat" name="search_soc" value="' . $search_soc . '" size="20"></td>';
@@ -522,13 +522,14 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 				print "</tr>\n";
 			}
+		} else {
+			print '<tr '.$bc[false].'><td colspan="10">'.$langs->trans('NoPriceSpecificToCustomer').'</td></tr>';
+		}
+
 			print "</table>";
 
 			print "</form>";
-		} else {
-			print $langs->trans('None');
-		}
-
+		
 		/* ************************************************************************** */
 		/*                                                                            */
 		/* Barre d'action                                                             */

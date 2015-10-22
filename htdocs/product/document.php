@@ -216,7 +216,7 @@ if ($object->id)
     include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 
 
-    // Merge propal PDF docuemnt PDF files
+    // Merge propal PDF document PDF files
     if (!empty($conf->global->PRODUIT_PDF_MERGE_PROPAL))
     {
     	$filetomerge = new Propalmergepdfproduct($db);
@@ -233,7 +233,8 @@ if ($object->id)
     	$filearray = dol_dir_list($upload_dir, "files", 0, '', '\.meta$', 'name', SORT_ASC, 1);
 
     	// For each file build select list with PDF extention
-    	if (count($filearray) > 0) {
+    	if (count($filearray) > 0) 
+    	{
     		print '<br>';
     		// Actual file to merge is :
     		if (count($filetomerge->lines) > 0) {
@@ -315,19 +316,23 @@ if ($object->id)
     				$checked = '';
     				$filename = $filetoadd['name'];
 
-    				if ($conf->global->MAIN_MULTILANGS) {
-    					if (array_key_exists($filetoadd['name'] . '_' . $delauft_lang, $filetomerge->lines)) {
+    				if ($conf->global->MAIN_MULTILANGS) 
+    				{
+    					if (array_key_exists($filetoadd['name'] . '_' . $delauft_lang, $filetomerge->lines)) 
+    					{
     						$filename = $filetoadd['name'] . ' - ' . $langs->trans('Language_' . $delauft_lang);
     						$checked = ' checked ';
     					}
-    				} else {
-    					if (array_key_exists($filetoadd['name'], $filetomerge->lines)) {
+    				}
+    				else 
+    				{
+    					if (array_key_exists($filetoadd['name'], $filetomerge->lines)) 
+    					{
     						$checked = ' checked ';
     					}
     				}
 
     				print  '<tr class="' . $style . '"><td>';
-
     				print  '<input type="checkbox" ' . $checked . ' name="filetoadd[]" id="filetoadd" value="' . $filetoadd['name'] . '">' . $filename . '</input>';
     				print  '</td></tr>';
     			}
