@@ -88,9 +88,7 @@ if ($action == 'setdatedelivery' && $user->rights->commande->creer)
 	$commande->fetch($id);
 	$result=$commande->set_date_livraison($user,$datelivraison);
 	if ($result < 0)
-	{
-		$mesg='<div class="error">'.$commande->error.'</div>';
-	}
+		setEventMessages($commande->error, $commande->errors, 'errors');
 }
 
 if ($action == 'setdeliveryaddress' && $user->rights->commande->creer)
@@ -98,6 +96,8 @@ if ($action == 'setdeliveryaddress' && $user->rights->commande->creer)
 	$commande = new Commande($db);
 	$commande->fetch($id);
 	$commande->setDeliveryAddress(GETPOST('delivery_address_id','int'));
+	if ($result < 0)
+		setEventMessages($commande->error, $commande->errors, 'errors');
 }
 
 if ($action == 'setmode' && $user->rights->commande->creer)
@@ -105,7 +105,24 @@ if ($action == 'setmode' && $user->rights->commande->creer)
 	$commande = new Commande($db);
 	$commande->fetch($id);
 	$result = $commande->setPaymentMethods(GETPOST('mode_reglement_id','int'));
-	if ($result < 0) dol_print_error($db,$commande->error);
+	if ($result < 0)
+		setEventMessages($commande->error, $commande->errors, 'errors');
+}
+
+if ($action == 'setavailability' && $user->rights->commande->creer) {
+    $commande = new Commande($db);
+    $commande->fetch($id);
+    $result=$commande->availability(GETPOST('availability_id'));
+    if ($result < 0)
+        setEventMessages($commande->error, $commande->errors, 'errors');
+}
+
+if ($action == 'setdemandreason' && $user->rights->commande->creer) {
+    $commande = new Commande($db);
+    $commande->fetch($id);
+    $result=$commande->demand_reason(GETPOST('demand_reason_id'));
+    if ($result < 0)
+        setEventMessages($commande->error, $commande->errors, 'errors');
 }
 
 if ($action == 'setconditions' && $user->rights->commande->creer)
@@ -113,7 +130,8 @@ if ($action == 'setconditions' && $user->rights->commande->creer)
 	$commande = new Commande($db);
 	$commande->fetch($id);
 	$result=$commande->setPaymentTerms(GETPOST('cond_reglement_id','int'));
-	if ($result < 0) dol_print_error($db,$commande->error);
+	if ($result < 0)
+		setEventMessages($commande->error, $commande->errors, 'errors');
 }
 
 // shipping method
@@ -121,6 +139,8 @@ if ($action == 'setshippingmethod' && $user->rights->commande->creer) {
     $commande = new Commande($db);
     $commande->fetch($id);
     $result=$commande->setShippingMethod(GETPOST('shipping_method_id', 'int'));
+	if ($result < 0)
+		setEventMessages($commande->error, $commande->errors, 'errors');
 }
 
 
