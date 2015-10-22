@@ -69,7 +69,7 @@ $search_refcustomer=GETPOST('search_refcustomer','alpha');
 $search_societe=GETPOST('search_societe','alpha');
 $search_montant_ht=GETPOST('search_montant_ht','alpha');
 $search_montant_ttc=GETPOST('search_montant_ttc','alpha');
-$search_status=GETPOST('search_status','alpha');
+$search_status=GETPOST('search_status','int');
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
