@@ -123,6 +123,8 @@ class ProductFournisseur extends Product
     {
         global $conf, $user;
 
+        $this->db->begin();
+
         // Call trigger
         $result=$this->call_trigger('SUPPLIER_PRODUCT_BUYPRICE_DELETE',$user);
         if ($result < 0) $error++;
@@ -130,7 +132,6 @@ class ProductFournisseur extends Product
 
         if (empty($error))
         {
-            $this->db->begin();
 
             $sql = "DELETE FROM ".MAIN_DB_PREFIX."product_fournisseur_price";
             $sql.= " WHERE rowid = ".$rowid;
