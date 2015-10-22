@@ -1032,20 +1032,23 @@ function pdf_writeLinkedObjects(&$pdf,$object,$outputlangs,$posx,$posy,$w,$h,$al
  *  @param  int				$hideref       		Hide reference
  *  @param  int				$hidedesc           Hide description
  * 	@param	int				$issupplierline		Is it a line for a supplier object ?
- * 	@return	string|null
+ * 	@return	string
  */
 function pdf_writelinedesc(&$pdf,$object,$i,$outputlangs,$w,$h,$posx,$posy,$hideref=0,$hidedesc=0,$issupplierline=0)
 {
 	global $db, $conf, $langs, $hookmanager;
 
 	$reshook=0;
-	if (is_object($hookmanager) && ( (isset($object->lines[$i]->product_type) && $object->lines[$i]->product_type == 9 && ! empty($object->lines[$i]->special_code)) || ! empty($object->lines[$i]->fk_parent_line) ) )
+	//if (is_object($hookmanager) && ( (isset($object->lines[$i]->product_type) && $object->lines[$i]->product_type == 9 && ! empty($object->lines[$i]->special_code)) || ! empty($object->lines[$i]->fk_parent_line) ) )
+	if (is_object($hookmanager))   // Old code is commented on preceding line. Reproduct this test in the pdf_xxx function if you don't want your hook to run
 	{
 		$special_code = $object->lines[$i]->special_code;
 		if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
 		$parameters = array('pdf'=>$pdf,'i'=>$i,'outputlangs'=>$outputlangs,'w'=>$w,'h'=>$h,'posx'=>$posx,'posy'=>$posy,'hideref'=>$hideref,'hidedesc'=>$hidedesc,'issupplierline'=>$issupplierline,'special_code'=>$special_code);
 		$action='';
 		$reshook=$hookmanager->executeHooks('pdf_writelinedesc',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+	
+		if (!empty($hookmanager->resPrint)) return $hookmanager->resPrint;
 	}
 	if (empty($reshook))
 	{
@@ -1054,6 +1057,7 @@ function pdf_writelinedesc(&$pdf,$object,$i,$outputlangs,$w,$h,$posx,$posy,$hide
 		$pdf->writeHTMLCell($w, $h, $posx, $posy, $outputlangs->convToOutputCharset($labelproductservice), 0, 1, false, true, 'J',true);
 		return $labelproductservice;
 	}
+	return '';
 }
 
 /**
@@ -1250,22 +1254,25 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
  *	@param	int			$i					Current line number
  *  @param  Translate	$outputlangs		Object langs for output
  *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
- * 	@return	null|string
+ * 	@return	string
  */
 function pdf_getlinenum($object,$i,$outputlangs,$hidedetails=0)
 {
 	global $hookmanager;
 
-	if (is_object($hookmanager) && (($object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code)) || ! empty($object->lines[$i]->fk_parent_line)))
+	$reshook=0;
+	//if (is_object($hookmanager) && ( (isset($object->lines[$i]->product_type) && $object->lines[$i]->product_type == 9 && ! empty($object->lines[$i]->special_code)) || ! empty($object->lines[$i]->fk_parent_line) ) )
+	if (is_object($hookmanager))   // Old code is commented on preceding line. Reproduct this test in the pdf_xxx function if you don't want your hook to run
 	{
 		$special_code = $object->lines[$i]->special_code;
 		if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
 		// TODO add hook function
 	}
-	else
+	if (empty($reshook))
 	{
 		return dol_htmlentitiesbr($object->lines[$i]->num);
 	}
+	return '';
 }
 
 
@@ -1276,22 +1283,25 @@ function pdf_getlinenum($object,$i,$outputlangs,$hidedetails=0)
  *	@param	int			$i					Current line number
  *  @param  Translate	$outputlangs		Object langs for output
  *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
- * 	@return	null|string
+ * 	@return	string
  */
 function pdf_getlineref($object,$i,$outputlangs,$hidedetails=0)
 {
 	global $hookmanager;
 
-	if (is_object($hookmanager) && (($object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code)) || ! empty($object->lines[$i]->fk_parent_line)))
+	$reshook=0;
+	//if (is_object($hookmanager) && ( (isset($object->lines[$i]->product_type) && $object->lines[$i]->product_type == 9 && ! empty($object->lines[$i]->special_code)) || ! empty($object->lines[$i]->fk_parent_line) ) )
+	if (is_object($hookmanager))   // Old code is commented on preceding line. Reproduct this test in the pdf_xxx function if you don't want your hook to run
 	{
 		$special_code = $object->lines[$i]->special_code;
 		if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
 		// TODO add hook function
 	}
-	else
+	if (empty($reshook))
 	{
 		return dol_htmlentitiesbr($object->lines[$i]->product_ref);
 	}
+	return '';
 }
 
 /**
@@ -1301,22 +1311,25 @@ function pdf_getlineref($object,$i,$outputlangs,$hidedetails=0)
  *	@param	int			$i					Current line number
  *  @param  Translate	$outputlangs		Object langs for output
  *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
- * 	@return	null|string
+ * 	@return	string
  */
 function pdf_getlineref_supplier($object,$i,$outputlangs,$hidedetails=0)
 {
 	global $hookmanager;
 
-	if (is_object($hookmanager) && ( ($object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
+	$reshook=0;
+	//if (is_object($hookmanager) && ( (isset($object->lines[$i]->product_type) && $object->lines[$i]->product_type == 9 && ! empty($object->lines[$i]->special_code)) || ! empty($object->lines[$i]->fk_parent_line) ) )
+	if (is_object($hookmanager))   // Old code is commented on preceding line. Reproduct this test in the pdf_xxx function if you don't want your hook to run
 	{
 		$special_code = $object->lines[$i]->special_code;
 		if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
 		// TODO add hook function
 	}
-	else
+	if (empty($reshook))
 	{
 		return dol_htmlentitiesbr($object->lines[$i]->ref_supplier);
 	}
+	return '';
 }
 
 /**
@@ -1332,7 +1345,9 @@ function pdf_getlinevatrate($object,$i,$outputlangs,$hidedetails=0)
 {
 	global $hookmanager;
 
-	if (is_object($hookmanager) && (($object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code)) || ! empty($object->lines[$i]->fk_parent_line)))
+	$reshook=0;
+	//if (is_object($hookmanager) && ( (isset($object->lines[$i]->product_type) && $object->lines[$i]->product_type == 9 && ! empty($object->lines[$i]->special_code)) || ! empty($object->lines[$i]->fk_parent_line) ) )
+	if (is_object($hookmanager))   // Old code is commented on preceding line. Reproduct this test in the pdf_xxx function if you don't want your hook to run
 	{
 		$special_code = $object->lines[$i]->special_code;
 		if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
@@ -1340,13 +1355,13 @@ function pdf_getlinevatrate($object,$i,$outputlangs,$hidedetails=0)
 		$action='';
 		$reshook = $hookmanager->executeHooks('pdf_getlinevatrate',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 		
-		if(!empty($hookmanager->resPrint)) return $hookmanager->resPrint;
-		else return $reshook;
+		if (!empty($hookmanager->resPrint)) return $hookmanager->resPrint;
 	}
-	else
+	if (empty($reshook))
 	{
 		if (empty($hidedetails) || $hidedetails > 1) return vatrate($object->lines[$i]->tva_tx,1,$object->lines[$i]->info_bits,1);
 	}
+	return '';
 }
 
 /**
@@ -1365,7 +1380,9 @@ function pdf_getlineupexcltax($object,$i,$outputlangs,$hidedetails=0)
 	$sign=1;
 	if (isset($object->type) && $object->type == 2 && ! empty($conf->global->INVOICE_POSITIVE_CREDIT_NOTE)) $sign=-1;
 
-	if (is_object($hookmanager) && (($object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code)) || ! empty($object->lines[$i]->fk_parent_line)))
+	$reshook=0;
+	//if (is_object($hookmanager) && ( (isset($object->lines[$i]->product_type) && $object->lines[$i]->product_type == 9 && ! empty($object->lines[$i]->special_code)) || ! empty($object->lines[$i]->fk_parent_line) ) )
+	if (is_object($hookmanager))   // Old code is commented on preceding line. Reproduct this test in the pdf_xxx function if you don't want your hook to run
 	{
 		$special_code = $object->lines[$i]->special_code;
 		if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
@@ -1373,13 +1390,13 @@ function pdf_getlineupexcltax($object,$i,$outputlangs,$hidedetails=0)
 		$action='';
 		$reshook = $hookmanager->executeHooks('pdf_getlineupexcltax',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 		
-		if(!empty($hookmanager->resPrint)) return $hookmanager->resPrint;
-		else return $reshook;
+		if (!empty($hookmanager->resPrint)) print $hookmanager->resPrint;
 	}
-	else
+	if (empty($reshook))
 	{
 		if (empty($hidedetails) || $hidedetails > 1) return price($sign * $object->lines[$i]->subprice, 0, $outputlangs);
 	}
+	return '';
 }
 
 /**
@@ -1389,25 +1406,29 @@ function pdf_getlineupexcltax($object,$i,$outputlangs,$hidedetails=0)
  *	@param	int			$i					Current line number
  *  @param  Translate	$outputlangs		Object langs for output
  *  @param	int			$hidedetails		Hide value (0 = no,	1 = yes, 2 = just special lines)
- *  @return	void
+ *  @return	string
  */
 function pdf_getlineupwithtax($object,$i,$outputlangs,$hidedetails=0)
 {
 	global $hookmanager;
 
-	if (is_object($hookmanager) && (($object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code)) || ! empty($object->lines[$i]->fk_parent_line)))
+	$reshook=0;
+	//if (is_object($hookmanager) && ( (isset($object->lines[$i]->product_type) && $object->lines[$i]->product_type == 9 && ! empty($object->lines[$i]->special_code)) || ! empty($object->lines[$i]->fk_parent_line) ) )
+	if (is_object($hookmanager))   // Old code is commented on preceding line. Reproduct this test in the pdf_xxx function if you don't want your hook to run
 	{
 		$special_code = $object->lines[$i]->special_code;
 		if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
-		foreach($object->hooks as $modules)
-		{
-			if (method_exists($modules[$special_code],'pdf_getlineupwithtax')) return $modules[$special_code]->pdf_getlineupwithtax($object,$i,$outputlangs,$hidedetails);
-		}
+		$parameters = array('i'=>$i,'outputlangs'=>$outputlangs,'hidedetails'=>$hidedetails,'special_code'=>$special_code);
+		$action='';
+		$reshook = $hookmanager->executeHooks('pdf_getlineupwithtax',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+		
+		if (!empty($hookmanager->resPrint)) print $hookmanager->resPrint;
 	}
-	else
+	if (empty($reshook))
 	{
 		if (empty($hidedetails) || $hidedetails > 1) return price(($object->lines[$i]->subprice) + ($object->lines[$i]->subprice)*($object->lines[$i]->tva_tx)/100, 0, $outputlangs);
 	}
+	return '';
 }
 
 /**
@@ -1423,25 +1444,25 @@ function pdf_getlineqty($object,$i,$outputlangs,$hidedetails=0)
 {
 	global $hookmanager;
 
-	if ($object->lines[$i]->special_code != 3)
+	$reshook=0;
+	//if (is_object($hookmanager) && ( (isset($object->lines[$i]->product_type) && $object->lines[$i]->product_type == 9 && ! empty($object->lines[$i]->special_code)) || ! empty($object->lines[$i]->fk_parent_line) ) )
+	if (is_object($hookmanager))   // Old code is commented on preceding line. Reproduct this test in the pdf_xxx function if you don't want your hook to run
 	{
-		if (is_object($hookmanager) && (( $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
-		{
-			$special_code = $object->lines[$i]->special_code;
-			if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
-			$parameters = array('i'=>$i,'outputlangs'=>$outputlangs,'hidedetails'=>$hidedetails,'special_code'=>$special_code);
-			$action='';
-			$reshook = $hookmanager->executeHooks('pdf_getlineqty',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
-			
-			if(!empty($hookmanager->resPrint)) return $hookmanager->resPrint;
-			else return $reshook;
-			
-		}
-		else
-		{
-			if (empty($hidedetails) || $hidedetails > 1) return $object->lines[$i]->qty;
-		}
+		$special_code = $object->lines[$i]->special_code;
+		if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
+		$parameters = array('i'=>$i,'outputlangs'=>$outputlangs,'hidedetails'=>$hidedetails,'special_code'=>$special_code);
+		$action='';
+		$reshook = $hookmanager->executeHooks('pdf_getlineqty',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+		
+		if(!empty($hookmanager->resPrint)) return $hookmanager->resPrint;
+		else return $reshook;
 	}
+    if (empty($reshook))
+	{
+	   if ($object->lines[$i]->special_code == 3) return '';
+	   if (empty($hidedetails) || $hidedetails > 1) return $object->lines[$i]->qty;
+	}
+	return '';
 }
 
 /**
@@ -1457,24 +1478,24 @@ function pdf_getlineqty_asked($object,$i,$outputlangs,$hidedetails=0)
 {
 	global $hookmanager;
 
-	if ($object->lines[$i]->special_code != 3)
+	$reshook=0;
+	//if (is_object($hookmanager) && ( (isset($object->lines[$i]->product_type) && $object->lines[$i]->product_type == 9 && ! empty($object->lines[$i]->special_code)) || ! empty($object->lines[$i]->fk_parent_line) ) )
+	if (is_object($hookmanager))   // Old code is commented on preceding line. Reproduct this test in the pdf_xxx function if you don't want your hook to run
 	{
-		if (is_object($hookmanager) && (( $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
-		{
-			$special_code = $object->lines[$i]->special_code;
-			if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
-			$parameters = array('i'=>$i,'outputlangs'=>$outputlangs,'hidedetails'=>$hidedetails,'special_code'=>$special_code);
-			$action='';
-			$reshook = $hookmanager->executeHooks('pdf_getlineqty_asked',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
-		
-			if(!empty($hookmanager->resPrint)) return $hookmanager->resPrint;
-			else return $reshook;
-		}
-		else
-		{
-			if (empty($hidedetails) || $hidedetails > 1) return $object->lines[$i]->qty_asked;
-		}
+		$special_code = $object->lines[$i]->special_code;
+		if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
+		$parameters = array('i'=>$i,'outputlangs'=>$outputlangs,'hidedetails'=>$hidedetails,'special_code'=>$special_code);
+		$action='';
+		$reshook = $hookmanager->executeHooks('pdf_getlineqty_asked',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+	
+		if (!empty($hookmanager->resPrint)) return $hookmanager->resPrint;
 	}
+	if (empty($reshook))
+	{
+        if ($object->lines[$i]->special_code == 3) return '';
+        if (empty($hidedetails) || $hidedetails > 1) return $object->lines[$i]->qty_asked;
+	}
+	return '';
 }
 
 /**
@@ -1490,24 +1511,24 @@ function pdf_getlineqty_shipped($object,$i,$outputlangs,$hidedetails=0)
 {
 	global $hookmanager;
 
-	if ($object->lines[$i]->special_code != 3)
+	$reshook=0;
+	//if (is_object($hookmanager) && ( (isset($object->lines[$i]->product_type) && $object->lines[$i]->product_type == 9 && ! empty($object->lines[$i]->special_code)) || ! empty($object->lines[$i]->fk_parent_line) ) )
+	if (is_object($hookmanager))   // Old code is commented on preceding line. Reproduct this test in the pdf_xxx function if you don't want your hook to run
 	{
-		if (is_object($hookmanager) && (( $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
-		{
-			$special_code = $object->lines[$i]->special_code;
-			if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
-			$parameters = array('i'=>$i,'outputlangs'=>$outputlangs,'hidedetails'=>$hidedetails,'special_code'=>$special_code);
-			$action='';
-			$reshook = $hookmanager->executeHooks('pdf_getlineqty_shipped',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
-			
-			if(!empty($hookmanager->resPrint)) return $hookmanager->resPrint;
-			else return $reshook;
-		}
-		else
-		{
-			if (empty($hidedetails) || $hidedetails > 1) return $object->lines[$i]->qty_shipped;
-		}
+		$special_code = $object->lines[$i]->special_code;
+		if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
+		$parameters = array('i'=>$i,'outputlangs'=>$outputlangs,'hidedetails'=>$hidedetails,'special_code'=>$special_code);
+		$action='';
+		$reshook = $hookmanager->executeHooks('pdf_getlineqty_shipped',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+		
+		if(!empty($hookmanager->resPrint)) return $hookmanager->resPrint;
 	}
+	if (empty($reshook))
+	{
+        if ($object->lines[$i]->special_code == 3) return '';
+	    if (empty($hidedetails) || $hidedetails > 1) return $object->lines[$i]->qty_shipped;
+	}
+	return '';
 }
 
 /**
@@ -1517,30 +1538,30 @@ function pdf_getlineqty_shipped($object,$i,$outputlangs,$hidedetails=0)
  *	@param	int			$i					Current line number
  *  @param  Translate	$outputlangs		Object langs for output
  *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
- * 	@return	void
+ * 	@return	string
  */
 function pdf_getlineqty_keeptoship($object,$i,$outputlangs,$hidedetails=0)
 {
 	global $hookmanager;
 
-	if ($object->lines[$i]->special_code != 3)
+	$reshook=0;
+	//if (is_object($hookmanager) && ( (isset($object->lines[$i]->product_type) && $object->lines[$i]->product_type == 9 && ! empty($object->lines[$i]->special_code)) || ! empty($object->lines[$i]->fk_parent_line) ) )
+	if (is_object($hookmanager))   // Old code is commented on preceding line. Reproduct this test in the pdf_xxx function if you don't want your hook to run
 	{
-		if (is_object($hookmanager) && (( $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
-		{
-			$special_code = $object->lines[$i]->special_code;
-			if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
-			$parameters = array('i'=>$i,'outputlangs'=>$outputlangs,'hidedetails'=>$hidedetails,'special_code'=>$special_code);
-			$action='';
-			$reshook = $hookmanager->executeHooks('pdf_getlineqty_keeptoship',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
-			
-			if(!empty($hookmanager->resPrint)) return $hookmanager->resPrint;
-			else return $reshook;
-		}
-		else
-		{
-			if (empty($hidedetails) || $hidedetails > 1) return ($object->lines[$i]->qty_asked - $object->lines[$i]->qty_shipped);
-		}
+		$special_code = $object->lines[$i]->special_code;
+		if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
+		$parameters = array('i'=>$i,'outputlangs'=>$outputlangs,'hidedetails'=>$hidedetails,'special_code'=>$special_code);
+		$action='';
+		$reshook = $hookmanager->executeHooks('pdf_getlineqty_keeptoship',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+		
+		if(!empty($hookmanager->resPrint)) return $hookmanager->resPrint;
 	}
+	if (empty($reshook))
+	{
+        if ($object->lines[$i]->special_code == 3) return '';
+		if (empty($hidedetails) || $hidedetails > 1) return ($object->lines[$i]->qty_asked - $object->lines[$i]->qty_shipped);
+	}
+	return '';
 }
 
 /**
@@ -1556,31 +1577,32 @@ function pdf_getlineqty_keeptoship($object,$i,$outputlangs,$hidedetails=0)
 function pdf_getlineunit($object, $i, $outputlangs, $hidedetails = 0, $hookmanager = false)
 {
 	global $langs;
-	if ($object->lines[$i]->special_code != 3) {
-		if (is_object($hookmanager) && (($object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code)) || !empty($object->lines[$i]->fk_parent_line))) {
-			$special_code = $object->lines[$i]->special_code;
-			if (!empty($object->lines[$i]->fk_parent_line)) {
-				$special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
-			}
-			$parameters = array(
-				'i' => $i,
-				'outputlangs' => $outputlangs,
-				'hidedetails' => $hidedetails,
-				'special_code' => $special_code
-			);
-			$action = '';
-			$reshook = $hookmanager->executeHooks('pdf_getlineunit', $parameters, $object,
-				$action);    // Note that $action and $object may have been modified by some hooks
-				
-			if(!empty($hookmanager->resPrint)) return $hookmanager->resPrint;
-			else return $reshook;
-				
-		} else {
-			if (empty($hidedetails) || $hidedetails > 1) {
-				return $langs->transnoentitiesnoconv($object->lines[$i]->getLabelOfUnit('short'));
-			}
+	
+	$reshook=0;
+	//if (is_object($hookmanager) && ( (isset($object->lines[$i]->product_type) && $object->lines[$i]->product_type == 9 && ! empty($object->lines[$i]->special_code)) || ! empty($object->lines[$i]->fk_parent_line) ) )
+	if (is_object($hookmanager))   // Old code is commented on preceding line. Reproduct this test in the pdf_xxx function if you don't want your hook to run
+	{
+		$special_code = $object->lines[$i]->special_code;
+		if (!empty($object->lines[$i]->fk_parent_line)) {
+			$special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
 		}
+		$parameters = array(
+			'i' => $i,
+			'outputlangs' => $outputlangs,
+			'hidedetails' => $hidedetails,
+			'special_code' => $special_code
+		);
+		$action = '';
+		$reshook = $hookmanager->executeHooks('pdf_getlineunit', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+			
+		if(!empty($hookmanager->resPrint)) return $hookmanager->resPrint;
 	}
+	if (empty($reshook))
+	{
+        if ($object->lines[$i]->special_code == 3) return '';
+	    if (empty($hidedetails) || $hidedetails > 1) return $langs->transnoentitiesnoconv($object->lines[$i]->getLabelOfUnit('short'));
+	}
+	return '';
 }
 
 
@@ -1599,24 +1621,24 @@ function pdf_getlineremisepercent($object,$i,$outputlangs,$hidedetails=0)
 
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-	if ($object->lines[$i]->special_code != 3)
+	$reshook=0;
+	//if (is_object($hookmanager) && ( (isset($object->lines[$i]->product_type) && $object->lines[$i]->product_type == 9 && ! empty($object->lines[$i]->special_code)) || ! empty($object->lines[$i]->fk_parent_line) ) )
+	if (is_object($hookmanager))   // Old code is commented on preceding line. Reproduct this test in the pdf_xxx function if you don't want your hook to run
 	{
-		if (is_object($hookmanager) && ( ($object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
-		{
-			$special_code = $object->lines[$i]->special_code;
-			if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
-			$parameters = array('i'=>$i,'outputlangs'=>$outputlangs,'hidedetails'=>$hidedetails,'special_code'=>$special_code);
-			$action='';
-			$reshook = $hookmanager->executeHooks('pdf_getlineremisepercent',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
-			
-			if(!empty($hookmanager->resPrint)) return $hookmanager->resPrint;
-			else return $reshook;
-		}
-		else
-		{
-			if (empty($hidedetails) || $hidedetails > 1) return dol_print_reduction($object->lines[$i]->remise_percent,$outputlangs);
-		}
+		$special_code = $object->lines[$i]->special_code;
+		if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
+		$parameters = array('i'=>$i,'outputlangs'=>$outputlangs,'hidedetails'=>$hidedetails,'special_code'=>$special_code);
+		$action='';
+		$reshook = $hookmanager->executeHooks('pdf_getlineremisepercent',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+		
+		if(!empty($hookmanager->resPrint)) return $hookmanager->resPrint;
 	}
+	if (empty($reshook))
+	{
+        if ($object->lines[$i]->special_code == 3) return '';
+	    if (empty($hidedetails) || $hidedetails > 1) return dol_print_reduction($object->lines[$i]->remise_percent,$outputlangs);
+	}
+	return '';
 }
 
 /**
@@ -1627,24 +1649,28 @@ function pdf_getlineremisepercent($object,$i,$outputlangs,$hidedetails=0)
  * @param Translate $outputlangs Object langs for output
  * @param int $hidedetails Hide details (0=no, 1=yes, 2=just special lines)
  * @param HookManager $hookmanager Hook manager instance
- * @return void
+ * @return string
  */
 function pdf_getlineprogress($object, $i, $outputlangs, $hidedetails = 0, $hookmanager = null)
 {
-	if ($object->lines[$i]->special_code != 3) {
-		if (is_object($hookmanager) && (($object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code)) || !empty($object->lines[$i]->fk_parent_line))) {
-			$special_code = $object->lines[$i]->special_code;
-			if (!empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
-			$parameters = array('i' => $i, 'outputlangs' => $outputlangs, 'hidedetails' => $hidedetails, 'special_code' => $special_code);
-			$action = '';
-			$reshook = $hookmanager->executeHooks('pdf_getlineprogress', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
-			
-			if(!empty($hookmanager->resPrint)) return $hookmanager->resPrint;
-			else return $reshook;
-		} else {
-			if (empty($hidedetails) || $hidedetails > 1) return $object->lines[$i]->situation_percent . '%';
-		}
+	$reshook=0;
+	//if (is_object($hookmanager) && ( (isset($object->lines[$i]->product_type) && $object->lines[$i]->product_type == 9 && ! empty($object->lines[$i]->special_code)) || ! empty($object->lines[$i]->fk_parent_line) ) )
+	if (is_object($hookmanager))   // Old code is commented on preceding line. Reproduct this test in the pdf_xxx function if you don't want your hook to run
+	{
+		$special_code = $object->lines[$i]->special_code;
+		if (!empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
+		$parameters = array('i' => $i, 'outputlangs' => $outputlangs, 'hidedetails' => $hidedetails, 'special_code' => $special_code);
+		$action = '';
+		$reshook = $hookmanager->executeHooks('pdf_getlineprogress', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+		
+		if(!empty($hookmanager->resPrint)) return $hookmanager->resPrint;
 	}
+	if (empty($reshook))
+	{
+        if ($object->lines[$i]->special_code == 3) return '';
+	    if (empty($hidedetails) || $hidedetails > 1) return $object->lines[$i]->situation_percent . '%';
+	}
+	return '';
 }
 
 /**
@@ -1663,27 +1689,25 @@ function pdf_getlinetotalexcltax($object,$i,$outputlangs,$hidedetails=0)
 	$sign=1;
 	if (isset($object->type) && $object->type == 2 && ! empty($conf->global->INVOICE_POSITIVE_CREDIT_NOTE)) $sign=-1;
 
-	if ($object->lines[$i]->special_code == 3)
+	$reshook=0;
+	//if (is_object($hookmanager) && ( (isset($object->lines[$i]->product_type) && $object->lines[$i]->product_type == 9 && ! empty($object->lines[$i]->special_code)) || ! empty($object->lines[$i]->fk_parent_line) ) )
+	if (is_object($hookmanager))   // Old code is commented on preceding line. Reproduct this test in the pdf_xxx function if you don't want your hook to run
 	{
-		return $outputlangs->transnoentities("Option");
+		$special_code = $object->lines[$i]->special_code;
+		if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
+		$parameters = array('i'=>$i,'outputlangs'=>$outputlangs,'hidedetails'=>$hidedetails,'special_code'=>$special_code, 'sign'=>$sign);
+		$action='';
+		$reshook = $hookmanager->executeHooks('pdf_getlinetotalexcltax',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+		
+		if(!empty($hookmanager->resPrint)) return $hookmanager->resPrint;
 	}
-	else
+    if (empty($reshook))
 	{
-		if (is_object($hookmanager) && (($object->lines[$i]->product_type == 9 && ! empty($object->lines[$i]->special_code)) || ! empty($object->lines[$i]->fk_parent_line)))
-		{
-			$special_code = $object->lines[$i]->special_code;
-			if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
-			$parameters = array('i'=>$i,'outputlangs'=>$outputlangs,'hidedetails'=>$hidedetails,'special_code'=>$special_code);
-			$action='';
-			$reshook = $hookmanager->executeHooks('pdf_getlinetotalexcltax',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
-			
-			if(!empty($hookmanager->resPrint)) return $hookmanager->resPrint;
-			else return $reshook;
-		}
-		else
-		{
-			if (empty($hidedetails) || $hidedetails > 1) return price($sign * $object->lines[$i]->total_ht, 0, $outputlangs);
-		}
+	    if ($object->lines[$i]->special_code == 3)
+    	{
+    		return $outputlangs->transnoentities("Option");
+    	}
+        if (empty($hidedetails) || $hidedetails > 1) return price($sign * $object->lines[$i]->total_ht, 0, $outputlangs);
 	}
 	return '';
 }
@@ -1701,27 +1725,25 @@ function pdf_getlinetotalwithtax($object,$i,$outputlangs,$hidedetails=0)
 {
 	global $hookmanager;
 
-	if ($object->lines[$i]->special_code == 3)
+	$reshook=0;
+	//if (is_object($hookmanager) && ( (isset($object->lines[$i]->product_type) && $object->lines[$i]->product_type == 9 && ! empty($object->lines[$i]->special_code)) || ! empty($object->lines[$i]->fk_parent_line) ) )
+	if (is_object($hookmanager))   // Old code is commented on preceding line. Reproduct this test in the pdf_xxx function if you don't want your hook to run
 	{
-		return $outputlangs->transnoentities("Option");
+		$special_code = $object->lines[$i]->special_code;
+		if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
+		$parameters = array('i'=>$i,'outputlangs'=>$outputlangs,'hidedetails'=>$hidedetails,'special_code'=>$special_code);
+		$action='';
+		$reshook = $hookmanager->executeHooks('pdf_getlinetotalwithtax',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+		
+		if(!empty($hookmanager->resPrint)) return $hookmanager->resPrint;
 	}
-	else
+	if (empty($reshook))
 	{
-		if (is_object($hookmanager) && (($object->lines[$i]->product_type == 9 && ! empty($object->lines[$i]->special_code)) || ! empty($object->lines[$i]->fk_parent_line)))
-		{
-			$special_code = $object->lines[$i]->special_code;
-			if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
-			$parameters = array('i'=>$i,'outputlangs'=>$outputlangs,'hidedetails'=>$hidedetails,'special_code'=>$special_code);
-			$action='';
-			$reshook = $hookmanager->executeHooks('pdf_getlinetotalwithtax',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
-			
-			if(!empty($hookmanager->resPrint)) return $hookmanager->resPrint;
-			else return $reshook;
-		}
-		else
-		{
-			if (empty($hidedetails) || $hidedetails > 1) return price(($object->lines[$i]->total_ht) + ($object->lines[$i]->total_ht)*($object->lines[$i]->tva_tx)/100, 0, $outputlangs);
-		}
+		if ($object->lines[$i]->special_code == 3)
+    	{
+    		return $outputlangs->transnoentities("Option");
+    	}
+		if (empty($hidedetails) || $hidedetails > 1) return price(($object->lines[$i]->total_ht) + ($object->lines[$i]->total_ht)*($object->lines[$i]->tva_tx)/100, 0, $outputlangs);
 	}
 	return '';
 }
