@@ -73,7 +73,7 @@ ALTER TABLE llx_ecm_directories MODIFY COLUMN fullpath varchar(750);
 
 ALTER TABLE llx_ecm_directories DROP INDEX idx_ecm_directories;
 ALTER TABLE llx_ecm_directories ADD UNIQUE INDEX uk_ecm_directories (label, fk_parent, entity);
-ALTER TABLE llx_ecm_directories ADD UNIQUE INDEX uk_ecm_directories_fullpath(fullpath);
+--ALTER TABLE llx_ecm_directories ADD UNIQUE INDEX uk_ecm_directories_fullpath(fullpath);
 
 
 CREATE TABLE llx_ecm_files
@@ -96,7 +96,7 @@ CREATE TABLE llx_ecm_files
 ) ENGINE=innodb;
 
 ALTER TABLE llx_ecm_files ADD UNIQUE INDEX uk_ecm_files (label, entity);
-ALTER TABLE llx_ecm_files ADD UNIQUE INDEX uk_ecm_files_fullpath(fullpath);
+--ALTER TABLE llx_ecm_files ADD UNIQUE INDEX uk_ecm_files_fullpath(fullpath);
 
 
 ALTER TABLE llx_product ADD COLUMN onportal tinyint DEFAULT 0 after tobuy;
