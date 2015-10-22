@@ -100,3 +100,7 @@ ALTER TABLE llx_ecm_files ADD UNIQUE INDEX uk_ecm_files (label, entity);
 
 
 ALTER TABLE llx_product ADD COLUMN onportal tinyint DEFAULT 0 after tobuy;
+
+
+ALTER TABLE llx_user ADD COLUMN employee tinyint DEFAULT 1;
+

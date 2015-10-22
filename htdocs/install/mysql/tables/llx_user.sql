@@ -74,6 +74,7 @@ create table llx_user
   nb_holiday		integer DEFAULT 0,
   thm				double(24,8),
   tjm				double(24,8),
+  employee          tinyint DEFAULT 1,	-- 1 if user is an employee
   salary			double(24,8),
   salaryextra		double(24,8),
   weeklyhours		double(16,8)
