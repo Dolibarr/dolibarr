@@ -1204,6 +1204,7 @@ AskPriceSupplierPDFModules=Price requests suppliers documents models
 FreeLegalTextOnAskPriceSupplier=Free text on price requests suppliers
 WatermarkOnDraftAskPriceSupplier=Watermark on draft price requests suppliers (none if empty)
 BANK_ASK_PAYMENT_BANK_DURING_ASKPRICESUPPLIER=Ask for bank account destination of price request
+WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER=Ask for Warehouse Source for order
 ##### Orders #####
 OrdersSetup=Order management setup
 OrdersNumberingModules=Orders numbering models
@@ -1699,4 +1700,3 @@ TitleExampleForMajorRelease=Example of message you can use to announce this majo
 TitleExampleForMaintenanceRelease=Example of message you can use to announce this maintenance release (feel free to use it on your web sites)
 ExampleOfNewsMessageForMajorRelease=Dolibarr ERP & CRM %s is available. Version %s is a major release with a lot of new features for both users and developers. You can download it from the download area of http://www.dolibarr.org portal (subdirectory Stable versions). You can read <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> for complete list of changes.
 ExampleOfNewsMessageForMaintenanceRelease=Dolibarr ERP & CRM %s is available. Version %s is a maintenance version, so it contains only fixes of bugs. We recommend everybody using an older version to upgrade to this one. As any maintenance release, no new features, nor data structure change is present into this version. You can download it from the download area of http://www.dolibarr.org portal (subdirectory Stable versions). You can read <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> for complete list of changes.
- 
