@@ -94,7 +94,7 @@ function societe_prepare_head(Societe $object)
     }*/
 
     // Tab to link resources
-	if ($conf->resource->enabled && ! empty($conf->global->RESOURCE_ON_THIRDPARTIES))
+	if (! empty($conf->resource->enabled) && ! empty($conf->global->RESOURCE_ON_THIRDPARTIES))
 	{
 		$head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=societe&element_id='.$object->id;
 		$head[$h][1] = $langs->trans("Resources");
@@ -537,7 +537,7 @@ function show_projects($conf,$langs,$db,$object,$backtopage='')
             else
 			{
                 $var = false;
-            	print '<tr '.$bc[$var].'><td colspan="4">'.$langs->trans("None").'</td></tr>';
+            	print '<tr '.$bc[$var].'><td colspan="5">'.$langs->trans("None").'</td></tr>';
             }
             $db->free($result);
         }

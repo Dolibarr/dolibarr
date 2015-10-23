@@ -1,0 +1,5 @@
+# Dolibarr language file - Source file is en_US - accountancy
+ACCOUNTING_EXPORT_LABEL=Export the label
+ACCOUNTING_EXPORT_AMOUNT=Export the amount
+ACCOUNTING_EXPORT_DEVISE=Export the devise
+TotalVente=Total turnover before tax

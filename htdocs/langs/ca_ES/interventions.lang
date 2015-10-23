@@ -39,6 +39,9 @@ InterventionClassifiedUnbilledInDolibarr=Intervenció %s marcada com a no factur
 InterventionSentByEMail=Intervenció %s enviada per email
 InterventionDeletedInDolibarr=Intevenció %s eliminada
 SearchAnIntervention=Cerca una intervenció
+InterventionsArea=Interventions area
+DraftFichinter=Draft interventions
+LastModifiedInterventions=Last %s modified interventions
 ##### Types de contacts #####
 TypeContact_fichinter_internal_INTERREPFOLL=Responsable seguiment de la intervenció
 TypeContact_fichinter_internal_INTERVENING=Interventor
@@ -51,3 +54,14 @@ PacificNumRefModelDesc1=Retorna el número amb el format %syymm-nnnn on yy és l
 PacificNumRefModelError=Una factura que comença per # $$syymm existeix en base i és incompatible amb aquesta numeració. Elemínela o renombrela per activar aquest mòdul.
 PrintProductsOnFichinter=Mostrar els productes a la fitxa d'intervenció
 PrintProductsOnFichinterDetails=Intervencions generades des de comandes
+##### Exports #####
+InterId=Intervention id
+InterRef=Intervention ref.
+InterDateCreation=Date creation intervention
+InterDuration=Duration intervention
+InterStatus=Status intervention
+InterNote=Note intervention
+InterLineId=Line id intervention
+InterLineDate=Line date intervention
+InterLineDuration=Line duration intervention
+InterLineDesc=Line description intervention

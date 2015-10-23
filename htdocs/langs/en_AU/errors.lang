@@ -1,2 +1,2 @@
 # Dolibarr language file - Source file is en_US - errors
-WarningTooManyDataPleaseUseMoreFilters=Too many data. Please use more filters
+ErrorBadFormatValueList=The list value cannot have more than one comma: <u>%s</u>, but need at least one: key,value

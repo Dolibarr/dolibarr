@@ -90,7 +90,7 @@ SelectAtLeastOneField=Включете поне едно поле източни
 SelectFormat=Изберете този файлов формат за внос
 RunImportFile=Стартиране на файл от вноса
 NowClickToRunTheImport=Проверете резултат на внос симулация. Ако всичко е наред, стартиране на окончателен внос.
-DataLoadedWithId=Всички данни ще бъдат натоварени със следния идентификационен номер внос: <b>%s</b>
+DataLoadedWithId=All data will be loaded with the following import id: <b>%s</b>
 ErrorMissingMandatoryValue=Задължителни данни в файла източник за полеви <b>%s</b> е празна.
 TooMuchErrors=Все още <b>%s</b> други линии код с грешки, но продукцията е ограничена.
 TooMuchWarnings=Все още <b>%s</b> други линии източник с предупреждения, но продукцията е ограничена.
@@ -130,7 +130,7 @@ ExportDateFilter=YYYY, YYYYMM, YYYYMMDD : filters by one year/month/day<br>YYYY+
 ExportNumericFilter='NNNNN' filters by one value<br>'NNNNN+NNNNN' filters over a range of values<br>'&gt;NNNNN' filters by lower values<br>'&gt;NNNNN' filters by higher values
 ## filters
 SelectFilterFields=If you want to filter on some values, just input values here.
-FilterableFields=Champs Filtrables
+FilterableFields=Filterable Fields
 FilteredFields=Filtered fields
 FilteredFieldsValues=Value for filter
 FormatControlRule=Format control rule

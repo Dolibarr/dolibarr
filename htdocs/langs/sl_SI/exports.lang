@@ -90,7 +90,7 @@ SelectAtLeastOneField=Vklopite vsaj eno izvorno polje v koloni polj za izvoz
 SelectFormat=Izberite ta format uvozne datoteke
 RunImportFile=Zagon uvoza datoteke
 NowClickToRunTheImport=Preverite rezultat simulacije uvoza. Če je vse ok, zaženite definitivni uvoz.
-DataLoadedWithId=Vsi podatki bodo naloženi z naslednjim uvoznim id: <b>%s<b>
+DataLoadedWithId=All data will be loaded with the following import id: <b>%s</b>
 ErrorMissingMandatoryValue=Obvezen podatek za polje <b>%s</b> v izvorni datoteki je prazen.
 TooMuchErrors=Še vedno je <b>%s</b> ostalih izvornih vrstic z napakami, vendar je izhod omejen.
 TooMuchWarnings=Še vedno je <b>%s</b> ostalih izvornih vrstic z opozorili, vendar je izhod omejen.
@@ -130,7 +130,7 @@ ExportDateFilter=YYYY, YYYYMM, YYYYMMDD : filtrira po enem letu/mesecu/dnevu<br>
 ExportNumericFilter='NNNNN' filtrira po eni vrednosti<br>'NNNNN+NNNNN' filtrira po območju vrednosti<br>'&gt;NNNNN' filtrira po nižjih vrednostih<br>'&gt;NNNNN' filtrira po višjih vrednostih
 ## filters
 SelectFilterFields=Če želite filtrirati po nekaterih vrednostih, jih vnesite tukaj
-FilterableFields=Polja, ki se lahko filtrirajo
+FilterableFields=Filterable Fields
 FilteredFields=Filtrirana polja
 FilteredFieldsValues=Vrednost za filter
 FormatControlRule=Pravilo za kontrolo formata

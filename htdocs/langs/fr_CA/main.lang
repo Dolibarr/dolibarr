@@ -33,4 +33,5 @@ VAT=TPS
 VATs=Taxes de vente
 VATRate=Taux TPS
 Approved=Approuver
+Topic=Subject
 SelectMailModel=Choisir modèle de courriel

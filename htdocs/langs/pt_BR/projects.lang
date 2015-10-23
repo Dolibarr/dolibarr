@@ -20,7 +20,6 @@ ConfirmDeleteATask=Tem certeza que quer eliminar esta tarefa?
 OfficerProject=Responsável do Projeto
 LastProjects=Os %s últimos Projetos
 OpenedProjects=Projetos abertos
-OpportunitiesStatusForOpenedProjects=Status de Oportunidades para projetos abertos
 ShowProject=Adicionar Projeto
 NoProject=Nenhum Projeto Definido
 NbOpenTasks=Nb de tarefas abertas

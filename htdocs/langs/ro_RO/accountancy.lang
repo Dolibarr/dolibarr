@@ -2,11 +2,13 @@
 CHARSET=UTF-8
 ACCOUNTING_EXPORT_SEPARATORCSV=Column separator for export file
 ACCOUNTING_EXPORT_DATE=Date format for export file
-ACCOUNTING_EXPORT_PIECE=Export the number of piece ?
-ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account ?
-ACCOUNTING_EXPORT_LABEL=Export the label ?
-ACCOUNTING_EXPORT_AMOUNT=Export the amount ?
-ACCOUNTING_EXPORT_DEVISE=Export the devise ?
+ACCOUNTING_EXPORT_PIECE=Export the number of piece
+ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account
+ACCOUNTING_EXPORT_LABEL=Export the label
+ACCOUNTING_EXPORT_AMOUNT=Export the amount
+ACCOUNTING_EXPORT_DEVISE=Export the devise
+Selectformat=Select the format for the file
+ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
 
 Accounting=Contabilitate
 Globalparameters=Parametri globali
@@ -34,6 +36,7 @@ Selectchartofaccounts=Selectează un plan de conturi
 Validate=Validează
 Addanaccount=Add un cont contabil
 AccountAccounting=Cont contabil
+AccountAccountingSuggest=Accounting account suggest
 Ventilation=Ventilare
 ToDispatch=De ventilat
 Dispatched=Ventilat
@@ -60,10 +63,10 @@ AccountingVentilationSupplier=Ventilare contabila furnizor
 AccountingVentilationCustomer=Ventilare contabila  client
 Line=Linie
 
-CAHTF=Total cumpărări furnizor fara taxe
+CAHTF=Total purchase supplier before tax
 InvoiceLines=Liniile facturii de ventilat
 InvoiceLinesDone=Liniile facturii ventilate
-IntoAccount=În conturi contabile
+IntoAccount=Ventilate in the accounting account
 
 Ventilate=Ventilează
 VentilationAuto=Ventilare automată
@@ -152,7 +155,7 @@ Active=Extras
 NewFiscalYear=An fiscal nou
 
 DescVentilCustomer=Consultati aici ventilarea contabilă anuală a facturilor de clienților ale dvs.
-TotalVente=Total Cifră de afaceri fără tva
+TotalVente=Total turnover before tax
 TotalMarge=Total Marje vânzări
 DescVentilDoneCustomer=Consultati aici lista liniilor de facturi client și conturile lor  contabile
 DescVentilTodoCustomer=Consultati aici lista liniilor de facturi client cu un cont contabil
@@ -167,3 +170,4 @@ ValidateHistory=Validează automat
 ErrorAccountancyCodeIsAlreadyUse=Eroare, nu puteți șterge acest cont contabil, deoarece este folosit
 
 FicheVentilation=Fişă Ventilare
+GeneralLedgerIsWritten=Operations are written in the general ledger

@@ -1,0 +1,6 @@
+# Dolibarr language file - Source file is en_US - printing
+MenuDirectPrinting=Impresión directa
+DirectPrint=Impresión directa
+PleaseConfigureDriverfromList=Por favor configure el driver seleccionado de la lista.
+STATE_ONLINE=En línea
+STATE_OFFLINE=Fuera de línea

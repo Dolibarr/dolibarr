@@ -1,8 +1,9 @@
-LinkANewFile=Link a new file/document
-LinkedFiles=Linked files and documents
-NoLinkFound=No registered links
-LinkComplete=The file has been linked successfully
-ErrorFileNotLinked=The file could not be linked
-LinkRemoved=The link %s has been removed
-ErrorFailedToDeleteLink= Failed to remove link '<b>%s</b>'
-ErrorFailedToUpdateLink= Failed to update link '<b>%s</b>'
+LinkANewFile=Link ka novom fajlu/dokumentu
+LinkedFiles=Linkovani fajlovi i dokumenti
+NoLinkFound=Nema registrovanih linkova
+LinkComplete=Fajl je uspešno linkovan
+ErrorFileNotLinked=Fajl nije mogao biti linkovan
+LinkRemoved=Link %s je uklonjen
+ErrorFailedToDeleteLink= Greška prilikom uklanjanja linka '<b>%s</b>'
+ErrorFailedToUpdateLink= Greška prilikom ažuriranja linka '<b>%s</b>'
+URLToLink=URL to link

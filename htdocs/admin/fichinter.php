@@ -203,7 +203,6 @@ else if ($action == 'set_FICHINTER_FREE_TEXT')
 else if ($action == 'set_FICHINTER_DRAFT_WATERMARK')
 {
 	$draft= GETPOST('FICHINTER_DRAFT_WATERMARK','alpha');
-
 	$res = dolibarr_set_const($db, "FICHINTER_DRAFT_WATERMARK",trim($draft),'chaine',0,'',$conf->entity);
 
 	if (! $res > 0) $error++;
@@ -544,7 +543,7 @@ print '<input size="50" class="flat" type="text" name="FICHINTER_DRAFT_WATERMARK
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
-
+print '</form>';
 // print products on fichinter
 $var=! $var;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';

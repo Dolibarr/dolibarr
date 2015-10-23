@@ -2,11 +2,13 @@
 CHARSET=UTF-8
 ACCOUNTING_EXPORT_SEPARATORCSV=Column separator for export file
 ACCOUNTING_EXPORT_DATE=Date format for export file
-ACCOUNTING_EXPORT_PIECE=Export the number of piece ?
-ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account ?
-ACCOUNTING_EXPORT_LABEL=Export the label ?
-ACCOUNTING_EXPORT_AMOUNT=Export the amount ?
-ACCOUNTING_EXPORT_DEVISE=Export the devise ?
+ACCOUNTING_EXPORT_PIECE=Export the number of piece
+ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account
+ACCOUNTING_EXPORT_LABEL=Export the label
+ACCOUNTING_EXPORT_AMOUNT=Export the amount
+ACCOUNTING_EXPORT_DEVISE=Export the devise
+Selectformat=Select the format for the file
+ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
 
 Accounting=Regnskab
 Globalparameters=Globale parametre
@@ -34,6 +36,7 @@ Selectchartofaccounts=Vælg en kontoplan
 Validate=Godkend
 Addanaccount=Tilføj en regnskabsmæssig konto
 AccountAccounting=Regnskabsmæssig konto
+AccountAccountingSuggest=Accounting account suggest
 Ventilation=Sammenbrud
 ToDispatch=Afsend
 Dispatched=Afsendt
@@ -60,10 +63,10 @@ AccountingVentilationSupplier=Udspecificer regnskab leverandører
 AccountingVentilationCustomer=Udspecificer regnskab kunder
 Line=Linje
 
-CAHTF=Samlet køb leverandør
+CAHTF=Total purchase supplier before tax
 InvoiceLines=Linjer af faktura, der skal fornyes
 InvoiceLinesDone=Fornyede linjer af faktura
-IntoAccount=I den regnskabsmæssige konto
+IntoAccount=Ventilate in the accounting account
 
 Ventilate=Forny
 VentilationAuto=Udspecificer automatisk
@@ -152,7 +155,7 @@ Active=Erklæring
 NewFiscalYear=Nyt finansår
 
 DescVentilCustomer=Consult here the annual breakdown accounting of your invoices customers
-TotalVente=Samlet omsætning
+TotalVente=Total turnover before tax
 TotalMarge=Samlet salgsforskel
 DescVentilDoneCustomer=Gå til en liste over de linjer af fakturaer kunder og deres regnskabskonto
 DescVentilTodoCustomer=Forny dine linjer ag kundefaktura med en regnskabskonto
@@ -167,3 +170,4 @@ ValidateHistory=Forny automatisk
 ErrorAccountancyCodeIsAlreadyUse=Fejl, kan du ikke slette denne regnskabsmæssige konto, fordi den bruges
 
 FicheVentilation=Breakdown card
+GeneralLedgerIsWritten=Operations are written in the general ledger

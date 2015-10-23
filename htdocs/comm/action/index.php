@@ -1218,7 +1218,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                     	// We decide to choose color of owner of event (event->userownerid is user id of owner, event->userassigned contains all users assigned to event)
                     	if (! empty($cacheusers[$event->userownerid]->color)) $color=$cacheusers[$event->userownerid]->color;
                     }
-                    else if ($event->type_code == 'ICALEVENT')
+                    else if ($event->type_code == 'ICALEVENT')      // Event come from external ical file
                     {
                     	$numical++;
                     	if (! empty($event->icalname)) {
@@ -1228,7 +1228,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                     		$numicals[dol_string_nospecial($event->icalname)]++;
                     	}
                     	$color=$event->icalcolor;
-                    	$cssclass=(! empty($event->icalname)?'family_ext'.md5($event->icalname):'family_other unmovable');
+                    	$cssclass=(! empty($event->icalname)?'family_ext'.md5($event->icalname):'family_other');
                     }
                     else if ($event->type_code == 'BIRTHDAY')
                     {
@@ -1271,6 +1271,10 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 
                     // Defined style to disable drag and drop feature
                     if ($event->type_code =='AC_OTH_AUTO')
+                    {
+                        $cssclass.= " unmovable";
+                    }
+                    else if ($event->type_code == 'ICALEVENT')
                     {
                         $cssclass.= " unmovable";
                     }

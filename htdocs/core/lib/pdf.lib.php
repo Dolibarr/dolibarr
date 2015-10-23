@@ -337,7 +337,6 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
 
 	if ($mode == 'source' && ! is_object($sourcecompany)) return -1;
 	if ($mode == 'target' && ! is_object($targetcompany)) return -1;
-	if ($mode == 'delivery' && ! is_object($deliverycompany)) return -1;
 
 	if (! empty($sourcecompany->state_id) && empty($sourcecompany->departement)) $sourcecompany->departement=getState($sourcecompany->state_id); //TODO: Deprecated
 	if (! empty($sourcecompany->state_id) && empty($sourcecompany->state)) $sourcecompany->state=getState($sourcecompany->state_id);
@@ -1743,7 +1742,7 @@ function pdf_getLinkedObjects($object,$outputlangs)
 				else	// We show both info of order and shipment
 				{
 					$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefOrder") . ' / ' . $outputlangs->transnoentities("RefSending");
-					$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($order->ref) . ($order->ref_client ? ' ('.$order->ref_client.')' : '');
+					$linkedobjects[$objecttype]['ref_value'] = $outputlangs->convToOutputCharset($order->ref) . ($order->ref_client ? ' ('.$order->ref_client.')' : '');
 					$linkedobjects[$objecttype]['ref_value'].= ' / ' . $outputlangs->transnoentities($elementobject->ref);
 					$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("OrderDate") . ' / ' . $outputlangs->transnoentities("DateSending");
 					$linkedobjects[$objecttype]['date_value'] = dol_print_date($order->date,'day','',$outputlangs);

@@ -164,7 +164,6 @@ print '<td>';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" class="button">';
 print '</td>';
 print '<td>'.$langs->trans('MarginTypeDesc');
-print ' ('.$langs->trans("PMPValueShort").')';
 print '</td>';
 print '</tr>';
 print '</form>';

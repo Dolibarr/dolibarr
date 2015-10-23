@@ -1,13 +1,10 @@
 # Dolibarr language file - Source file is en_US - admin
 AntiVirusCommandExample=Example for ClamWin: c:\\Progra~1\\ClamWin\\bin\\clamscan.exe<br>Example for ClamAv: /usr/bin/clamscan
 AntiVirusParamExample=Example for ClamWin: --database="C:\\Program Files (x86)\\ClamWin\\lib"
-ListOfDirectoriesForModelGenODT=List of directories containing templates files with OpenDocument format.<br><br>Put here full path of directories.<br>Add a carriage return between eah directory.<br>To add a directory of the GED module, add here <b>DOL_DATA_ROOT/ecm/yourdirectoryname</b>.<br><br>Files in those directories must end with <b>.odt</b>.
 ExampleOfDirectoriesForModelGen=Examples of syntax:<br>c:\\mydir<br>/home/mydir<br>DOL_DATA_ROOT/ecm/ecmdir
 Permission91=Consultar impuestos e IGV
 Permission92=Crear/modificar impuestos e IGV
 Permission93=Eliminar impuestos e IGV
-Permission171=Read trips and expenses (own and his subordinates)
-Permission771=Read expense reports (own and his subordinates)
 DictionaryVAT=Tasa de IGV (Impuesto sobre ventas en EEUU)
 VATManagement=Gestión IGV
 VATIsUsedDesc=El tipo de IGV propuesto por defecto en las creaciones de presupuestos, facturas, pedidos, etc. Responde a la siguiente regla:<br>Si el vendedor no está sujeto a IVU, IVU por defecto=0. Final de regla.<br>Si el país del vendedor= país del comprador entonces IVU por defecto=IVU del producto vendido. Final de regla.<br>Si vendedor y comprador residen en la Comunidad Europea y el bien vendido= nuevo medio de transportes (auto, barco, avión), IVU por defecto=0 (el IVU debe ser pagado por comprador a la hacienda pública de su país y no al vendedor). Final de regla<br>Si vendedor y comprador residen en la Comunidad Europea y comprador= particular o empresa sin NIF intracomunitario entonces IVU por defecto=IVU del producto vendido. Final de regla.<br>Si vendedor y comprador residen en la Comunidad Europea y comprador= empresa con NIF intracomunitario entonces IVU por defecto=0. Final de regla.<br>Si no, IVU propuesto por defecto=0. Final de regla.<br>

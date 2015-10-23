@@ -128,7 +128,7 @@ if (empty($reshook))
 	// Action clone object
 	if ($action == 'confirm_clone' && $confirm == 'yes')
 	{
-		if (1 == 0 && ! GETPOST('clone_content') && ! GETPOST('clone_receivers'))
+		if (! GETPOST('socid', 3))
 		{
 			setEventMessage($langs->trans("NoCloneOptionsSpecified"), 'errors');
 		}
@@ -140,7 +140,7 @@ if (empty($reshook))
 					header("Location: " . $_SERVER['PHP_SELF'] . '?id=' . $result);
 					exit();
 				} else {
-					setEventMessage($object->error, 'errors');
+					if (count($object->errors) > 0) setEventMessage($object->errors, 'errors');
 					$action = '';
 				}
 			}
@@ -2223,7 +2223,7 @@ if ($action == 'create')
 					}
 
 					$arrayofinvoiceforpropal = $object->getInvoiceArrayList();
-					if ((is_array($arrayofinvoiceforpropal) && count($arrayofinvoiceforpropal) > 0) || ! empty($conf->global->WORKFLOW_PROPAL_CAN_CLASSIFIED_BILLED_WITHOUT_INVOICES))
+					if ((is_array($arrayofinvoiceforpropal) && count($arrayofinvoiceforpropal) > 0) || empty($conf->global->WORKFLOW_PROPAL_NEED_INVOICE_TO_BE_CLASSIFIED_BILLED))
 					{
 						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=classifybilled&amp;socid=' . $object->socid . '">' . $langs->trans("ClassifyBilled") . '</a></div>';
 					}
@@ -2367,7 +2367,7 @@ if ($action == 'create')
 		$formmail->substit['__PROPREF__'] = $object->ref;
 		$formmail->substit['__SIGNATURE__'] = $user->signature;
 		$formmail->substit['__REFCLIENT__'] = $object->ref_client;
-		$formmail->substit['__THIRPARTY_NAME__'] = $object->thirdparty->name;
+		$formmail->substit['__THIRDPARTY_NAME__'] = $object->thirdparty->name;
 		$formmail->substit['__PROJECT_REF__'] = (is_object($object->projet)?$object->projet->ref:'');
 		$formmail->substit['__PERSONALIZED__'] = '';
 		$formmail->substit['__CONTACTCIVNAME__'] = '';

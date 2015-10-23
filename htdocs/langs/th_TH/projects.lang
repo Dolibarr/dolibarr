@@ -1,6 +1,8 @@
 # Dolibarr language file - Source file is en_US - projects
 RefProject=อ้าง โครงการ
+ProjectRef=Project ref.
 ProjectId=Id โครงการ
+ProjectLabel=Project label
 Project=โครงการ
 Projects=โครงการ
 ProjectStatus=สถานะของโครงการ
@@ -27,7 +29,7 @@ OfficerProject=เจ้าหน้าที่โครงการ
 LastProjects=โครงการ% s ล่าสุด
 AllProjects=ทุกโครงการ
 OpenedProjects=เปิดโครงการ
-OpportunitiesStatusForOpenedProjects=สถานะโอกาสสำหรับโครงการที่เปิด
+OpportunitiesStatusForOpenedProjects=Opportunities amount of opened projects by status
 ProjectsList=รายการของโครงการ
 ShowProject=แสดงโครงการ
 SetProject=โครงการตั้ง

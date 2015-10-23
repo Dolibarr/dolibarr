@@ -389,7 +389,7 @@ class CommandeFournisseur extends CommonOrder
             $soc->fetch($this->fourn_id);
 
             // Check if object has a temporary ref
-            if (preg_match('/^[\(]?PROV/i', $this->ref))
+            if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) // empty should not happened, but when it occurs, the test save life
             {
                 $num = $this->getNextNumRef($soc);
             }
@@ -461,6 +461,7 @@ class CommandeFournisseur extends CommonOrder
             {
                 $result = 1;
                 $this->log($user, 1, time());	// Statut 1
+                $this->statut = 1;
                 $this->ref = $num;
             }
 
@@ -685,7 +686,7 @@ class CommandeFournisseur extends CommonOrder
             $soc->fetch($this->fourn_id);
 
             // Check if object has a temporary ref
-            if (preg_match('/^[\(]?PROV/i', $this->ref))
+            if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) // empty should not happened, but when it occurs, the test save life
             {
                 $num = $this->getNextNumRef($soc);
             }
@@ -1571,6 +1572,7 @@ class CommandeFournisseur extends CommonOrder
         $result=$this->call_trigger('ORDER_SUPPLIER_DELETE',$user);
         if ($result < 0)
         {
+        	$this->errors[]='ErrorWhenRunningTrigger';
         	dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
         	return -1;
         }
@@ -1583,6 +1585,8 @@ class CommandeFournisseur extends CommonOrder
         dol_syslog(get_class($this)."::delete", LOG_DEBUG);
         if (! $this->db->query($sql) )
         {
+            $this->error=$this->db->lasterror();
+            $this->errors[]=$this->db->lasterror();
             $error++;
         }
 
@@ -1593,12 +1597,14 @@ class CommandeFournisseur extends CommonOrder
             if ($this->db->affected_rows($resql) < 1)
             {
                 $this->error=$this->db->lasterror();
+                $this->errors[]=$this->db->lasterror();
                 $error++;
             }
         }
         else
         {
             $this->error=$this->db->lasterror();
+            $this->errors[]=$this->db->lasterror();
             $error++;
         }
 
@@ -1608,6 +1614,8 @@ class CommandeFournisseur extends CommonOrder
         	$result=$this->deleteExtraFields();
         	if ($result < 0)
         	{
+        		$this->error='FailToDeleteExtraFields';
+        		$this->errors[]='FailToDeleteExtraFields';
         		$error++;
         		dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
         	}
@@ -1615,7 +1623,11 @@ class CommandeFournisseur extends CommonOrder
 
 		// Delete linked object
     	$res = $this->deleteObjectLinked();
-    	if ($res < 0) $error++;
+    	if ($res < 0) {
+    		$this->error='FailToDeleteObjectLinked';
+    		$this->errors[]='FailToDeleteObjectLinked';
+    		$error++;
+    	}
 
         if (! $error)
         {
@@ -1630,6 +1642,7 @@ class CommandeFournisseur extends CommonOrder
         			if (! dol_delete_file($file,0,0,0,$this)) // For triggers
         			{
         				$this->error='ErrorFailToDeleteFile';
+        				$this->errors[]='ErrorFailToDeleteFile';
         				$error++;
         			}
         		}
@@ -1639,6 +1652,7 @@ class CommandeFournisseur extends CommonOrder
         			if (! $res)
         			{
         				$this->error='ErrorFailToDeleteDir';
+        				$this->errors[]='ErrorFailToDeleteDir';
         				$error++;
         			}
         		}

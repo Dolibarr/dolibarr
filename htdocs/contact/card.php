@@ -224,13 +224,7 @@ if (empty($reshook))
 			} else {
 				// Categories association
 				$contcats = GETPOST( 'contcats', 'array' );
-				if (!empty( $contcats )) {
-					$cat = new Categorie( $db );
-					foreach ($contcats as $id_category) {
-						$cat->fetch( $id_category );
-						$cat->add_type( $object, 'contact' );
-					}
-				}
+				$object->setCategories($contcats);
 			}
         }
 
@@ -304,6 +298,7 @@ if (empty($reshook))
             $object->zip			= GETPOST("zipcode");
             $object->town			= GETPOST("town");
             $object->state_id   	= GETPOST("state_id",'int');
+            $object->fk_departement	= GETPOST("state_id",'int');	// For backward compatibility
             $object->country_id		= GETPOST("country_id",'int');
 
             $object->email			= GETPOST("email",'alpha');
@@ -333,13 +328,8 @@ if (empty($reshook))
 
 				// Then we add the associated categories
 				$categories = GETPOST( 'contcats', 'array' );
-				if (!empty( $categories )) {
-					$cat = new Categorie( $db );
-					foreach ($categories as $id_category) {
-						$cat->fetch( $id_category );
-						$cat->add_type( $object, 'contact' );
-					}
-				}
+				$object->setCategories($categories);
+
                 $object->old_lastname='';
                 $object->old_firstname='';
                 $action = 'view';
