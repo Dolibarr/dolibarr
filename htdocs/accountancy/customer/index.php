@@ -86,7 +86,7 @@ if ($action == 'validatehistory') {
 		setEventMessage($db->lasterror(), 'errors');
 	} else {
 		$db->commit();
-		setEventMessage($langs->trans('Dispatched'), 'mesgs');
+		setEventMessages($langs->trans('Dispatched'), null, 'mesgs');
 	}
 }
 
