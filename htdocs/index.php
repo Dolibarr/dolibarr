@@ -231,8 +231,9 @@ if (empty($user->societe_id))
 	                  "SuppliersInvoices",
 					  "ExpenseReports");
 	    // Dashboard Link lines
-	    $links=array(DOL_URL_ROOT.'/comm/list.php',
-	    DOL_URL_ROOT.'/comm/prospect/list.php',
+	    $links=array(
+	    DOL_URL_ROOT.'/societe/list.php?type=c',
+	    DOL_URL_ROOT.'/societe/list.php?type=p',
 	    DOL_URL_ROOT.'/societe/list.php?type=f',
 	    DOL_URL_ROOT.'/adherents/list.php?statut=1&mainmenu=members',
 	    DOL_URL_ROOT.'/product/list.php?type=0&mainmenu=products',

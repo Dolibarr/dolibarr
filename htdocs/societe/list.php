@@ -31,10 +31,12 @@ include_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 
 $langs->load("companies");
 $langs->load("customers");
 $langs->load("suppliers");
+$langs->load("bills");
 
 // Security check
 $socid = GETPOST('socid','int');
@@ -64,10 +66,14 @@ $search_country=GETPOST("search_country",'int');
 $search_type_thirdparty=GETPOST("search_type_thirdparty",'int');
 $search_type=GETPOST('search_type','alpha');
 $search_status=GETPOST("search_status",'int');
+$search_level_from = GETPOST("search_level_from","alpha");
+$search_level_to   = GETPOST("search_level_to","alpha");
+$search_stcomm=GETPOST('search_stcomm','int');
 
 $type=GETPOST('type');
 $optioncss=GETPOST('optioncss','alpha');
 $mode=GETPOST("mode");
+$action=GETPOST('action');
 
 $sortfield=GETPOST("sortfield",'alpha');
 $sortorder=GETPOST("sortorder",'alpha');
@@ -116,6 +122,7 @@ if (($tmp = $langs->transnoentities("ProfId6".$mysoc->country_code)) && $tmp != 
 if (!empty($conf->barcode->enabled)) $fieldstosearchall['s.barcode']='Gencod';
 
 
+
 /*
  * Actions
  */
@@ -125,6 +132,20 @@ $reshook=$hookmanager->executeHooks('doActions',$parameters);    // Note that $a
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
+
+if (empty($reshook))
+{
+	if ($action == 'setstcomm')
+	{
+		$object = new Client($db);
+		$result=$object->fetch(GETPOST('stcommsocid'));
+		$object->stcomm_id=dol_getIdFromCode($db, GETPOST('stcomm','alpha'), 'c_stcomm');
+		$result=$object->set_commnucation_level($user);
+		if ($result < 0) setEventMessages($object->error,$object->errors,'errors');
+
+		$action='';
+	}
+}
 
 // special search
 /*if ($mode == 'search')
@@ -176,20 +197,6 @@ include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 }
 */
 
-
-/*
- * View
- */
-
-$form=new Form($db);
-$formother=new FormOther($db);
-$companystatic=new Societe($db);
-$formcompany=new FormCompany($db);
-
-$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
-llxHeader('',$langs->trans("ThirdParty"),$help_url);
-
-
 // Do we click on purge search criteria ?
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
@@ -212,14 +219,18 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
 	$search_country='';
 	$search_type_thirdparty='';
 	$search_status='';
+	$search_stcomm='';
+ 	$search_level_from='';
+ 	$search_level_to='';
 	$search_array_options=array();
 }
 
 if ($search_status=='') $search_status=1; // always display active thirdparty first
 
 
+
 /*
- * Mode List
+ * View
  */
 
 /*
@@ -230,13 +241,103 @@ if ($search_status=='') $search_status=1; // always display active thirdparty fi
  External user socid=x + Permission to see ALL customers    => Can see only himself
  External user socid=x + No permission to see ALL customers => Can see only himself
  */
+
+$form=new Form($db);
+$formother=new FormOther($db);
+$companystatic=new Societe($db);
+$formcompany=new FormCompany($db);
+$prospectstatic=new Client($db);
+$prospectstatic->client=2;
+$prospectstatic->loadCacheOfProspStatus();
+
+$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
+llxHeader('',$langs->trans("ThirdParty"),$help_url);
+
+
 $title=$langs->trans("ListOfThirdParties");
 if ($type == 'c' && (empty($search_type) || ($search_type == '1,3'))) $title=$langs->trans("ListOfCustomers");
 if ($type == 'p' && (empty($search_type) || ($search_type == '2,3'))) $title=$langs->trans("ListOfProspects");
 if ($type == 'f' && (empty($search_type) || ($search_type == '4'))) $title=$langs->trans("ListOfSuppliers");
 
-$sql = "SELECT s.rowid, s.nom as name, s.barcode, s.town, s.zip, s.datec, s.code_client, s.code_fournisseur, ";
-$sql.= " st.libelle as stcomm, s.prefix_comm, s.client, s.fournisseur, s.canvas, s.status as status,";
+// If both parameters are set, search for everything BETWEEN them
+if ($search_level_from != '' && $search_level_to != '')
+{
+	// Ensure that these parameters are numbers
+	$search_level_from = (int) $search_level_from;
+	$search_level_to = (int) $search_level_to;
+
+	// If from is greater than to, reverse orders
+	if ($search_level_from > $search_level_to)
+	{
+		$tmp = $search_level_to;
+		$search_level_to = $search_level_from;
+		$search_level_from = $tmp;
+	}
+
+	// Generate the SQL request
+	$sortwhere = '(sortorder BETWEEN '.$search_level_from.' AND '.$search_level_to.') AS is_in_range';
+}
+// If only "from" parameter is set, search for everything GREATER THAN it
+else if ($search_level_from != '')
+{
+	// Ensure that this parameter is a number
+	$search_level_from = (int) $search_level_from;
+
+	// Generate the SQL request
+	$sortwhere = '(sortorder >= '.$search_level_from.') AS is_in_range';
+}
+// If only "to" parameter is set, search for everything LOWER THAN it
+else if ($search_level_to != '')
+{
+	// Ensure that this parameter is a number
+	$search_level_to = (int) $search_level_to;
+
+	// Generate the SQL request
+	$sortwhere = '(sortorder <= '.$search_level_to.') AS is_in_range';
+}
+// If no parameters are set, dont search for anything
+else
+{
+	$sortwhere = '0 as is_in_range';
+}
+
+// Select every potentiels, and note each potentiels which fit in search parameters
+dol_syslog('societe/list.php',LOG_DEBUG);
+$sql = "SELECT code, label, sortorder, ".$sortwhere;
+$sql.= " FROM ".MAIN_DB_PREFIX."c_prospectlevel";
+$sql.= " WHERE active > 0";
+$sql.= " ORDER BY sortorder";
+
+$resql = $db->query($sql);
+if ($resql)
+{
+	$tab_level = array();
+	$search_levels = array();
+
+	while ($obj = $db->fetch_object($resql))
+	{
+		// Compute level text
+		$level=$langs->trans($obj->code);
+		if ($level == $obj->code) $level=$langs->trans($obj->label);
+
+		// Put it in the array sorted by sortorder
+		$tab_level[$obj->sortorder] = $level;
+
+		// If this potentiel fit in parameters, add its code to the $search_levels array
+		if ($obj->is_in_range == 1)
+		{
+			$search_levels[] = '"'.preg_replace('[^A-Za-z0-9_-]', '', $obj->code).'"';
+		}
+	}
+
+	// Implode the $search_levels array so that it can be use in a "IN (...)" where clause.
+	// If no paramters was set, $search_levels will be empty
+	$search_levels = implode(',', $search_levels);
+}
+else dol_print_error($db);
+
+$sql = "SELECT s.rowid, s.nom as name, s.name_alias, s.barcode, s.town, s.zip, s.datec, s.code_client, s.code_fournisseur, ";
+$sql.= " st.libelle as stcomm, s.fk_stcomm as stcomm_id, s.fk_prospectlevel, s.prefix_comm, s.client, s.fournisseur, s.canvas, s.status as status,";
 $sql.= " s.siren as idprof1, s.siret as idprof2, ape as idprof3, idprof4 as idprof4,";
 $sql.= " s.fk_pays, s.tms as date_update, s.datec as date_creation,";
 $sql.= " typent.code as typent_code";
@@ -291,6 +392,8 @@ if ($search_status!='') $sql .= " AND s.status = ".$db->escape($search_status);
 if (!empty($conf->barcode->enabled) && $search_barcode) $sql.= " AND s.barcode LIKE '%".$db->escape($search_barcode)."%'";
 if ($search_country) $sql .= " AND s.fk_pays IN (".$search_country.')';
 if ($search_type_thirdparty) $sql .= " AND s.fk_typent IN (".$search_type_thirdparty.')';
+if ($search_levels)  $sql .= " AND s.fk_prospectlevel IN (".$search_levels.')';
+if ($search_stcomm != '' && $search_stcomm != -2) $sql.= natural_search("s.fk_stcomm",$search_stcomm,2);
 // Add where from extra fields
 foreach ($search_array_options as $key => $val)
 {
@@ -348,6 +451,9 @@ if ($resql)
 	if ($search_type_thirdparty != '') $param.='&amp;search_type_thirdparty='.urlencode($search_type_thirdparty);
 	if ($optioncss != '') $param.='&amp;optioncss='.urlencode($optioncss);
     if ($search_status != '') $param.='&amp;search_status='.urlencode($search_status);
+	if ($search_stcomm != '') $param.='&search_stcomm='.$search_stcomm;
+ 	if ($search_level_from != '') $param.='&search_level_from='.$search_level_from;
+ 	if ($search_level_to != '') $param.='&search_level_to='.$search_level_to;
     if ($type != '') $param.='&amp;type='.urlencode($type);
     // Add $param from extra fields
     foreach ($search_array_options as $key => $val)
@@ -400,7 +506,7 @@ if ($resql)
 			require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 			$moreforfilter.='<div class="divsearchfield">';
 		 	$moreforfilter.=$langs->trans('Categories'). ': ';
-			$moreforfilter.=$formother->select_categories(Categorie::TYPE_CUSTOMER,$search_categ,'search_categ',1);
+			$moreforfilter.=$formother->select_categories('customer',$search_categ,'search_categ',1);
 		 	$moreforfilter.='</div>';
 		}
 	 	// If the user can view prospects other than his'
@@ -419,7 +525,7 @@ if ($resql)
 			require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 			$moreforfilter.='<div class="divsearchfield">';
 			$moreforfilter.=$langs->trans('Categories'). ': ';
-			$moreforfilter.=$formother->select_categories(Categorie::TYPE_SUPPLIER,$search_categ,'search_categ',1);
+			$moreforfilter.=$formother->select_categories('supplier',$search_categ,'search_categ',1);
 			$moreforfilter.='</div>';
 		}
 	}
@@ -436,16 +542,21 @@ if ($resql)
 	// Define list of fields to show into list
 	$checkedcustomercode=(in_array($contextpage, array('thirdpartylist', 'customerlist', 'prospectlist')) ? 1 : 0);
 	$checkedsuppliercode=(in_array($contextpage, array('supplierlist')) ? 1 : 0);
-	$checkedcustomeraccountcode=(in_array($contextpage, array('thirdpartylist', 'customerlist', 'prospectlist')) ? 1 : 0);
+	$checkedcustomeraccountcode=(in_array($contextpage, array('customerlist')) ? 1 : 0);
 	$checkedsupplieraccountcode=(in_array($contextpage, array('supplierlist')) ? 1 : 0);
 	$checkedtypetiers=1;
+	$checkedprofid1=0;
+	$checkedprofid2=0;
+	$checkedprofid3=0;
 	$checkedprofid4=0;
 	$checkedprofid5=0;
 	$checkedprofid6=0;
 	//$checkedprofid4=((($tmp = $langs->transnoentities("ProfId4".$mysoc->country_code)) && $tmp != "ProfId4".$mysoc->country_code && $tmp != '-') ? 1 : 0);
 	//$checkedprofid5=((($tmp = $langs->transnoentities("ProfId5".$mysoc->country_code)) && $tmp != "ProfId5".$mysoc->country_code && $tmp != '-') ? 1 : 0);
 	//$checkedprofid6=((($tmp = $langs->transnoentities("ProfId6".$mysoc->country_code)) && $tmp != "ProfId6".$mysoc->country_code && $tmp != '-') ? 1 : 0);
-    $arrayfields=array(
+	$checkprospectlevel=(in_array($contextpage, array('prospectlist')) ? 1 : 0);
+	$checkstcomm=(in_array($contextpage, array('prospectlist')) ? 1 : 0);
+	$arrayfields=array(
         's.nom'=>array('label'=>$langs->trans("Company"), 'checked'=>1),
         's.barcode'=>array('label'=>$langs->trans("Gencod"), 'checked'=>1, 'enabled'=>(! empty($conf->barcode->enabled))),
         's.code_client'=>array('label'=>$langs->trans("CustomerCodeShort"), 'checked'=>$checkedcustomercode),
@@ -456,12 +567,14 @@ if ($resql)
         's.zip'=>array('label'=>$langs->trans("Zip"), 'checked'=>1),
         'country.code_iso'=>array('label'=>$langs->trans("Country"), 'checked'=>0),
         'typent.code'=>array('label'=>$langs->trans("ThirdPartyType"), 'checked'=>$checkedtypetiers),
-        's.siren'=>array('label'=>$langs->trans("ProfId1Short"), 'checked'=>1),
-        's.siret'=>array('label'=>$langs->trans("ProfId2Short"), 'checked'=>1),
-        's.ape'=>array('label'=>$langs->trans("ProfId3Short"), 'checked'=>1),
+        's.siren'=>array('label'=>$langs->trans("ProfId1Short"), 'checked'=>$checkedprofid1),
+        's.siret'=>array('label'=>$langs->trans("ProfId2Short"), 'checked'=>$checkedprofid2),
+        's.ape'=>array('label'=>$langs->trans("ProfId3Short"), 'checked'=>$checkedprofid3),
         's.idprof4'=>array('label'=>$langs->trans("ProfId4Short"), 'checked'=>$checkedprofid4),
         's.idprof5'=>array('label'=>$langs->trans("ProfId5Short"), 'checked'=>$checkedprofid5),
         's.idprof6'=>array('label'=>$langs->trans("ProfId6Short"), 'checked'=>$checkedprofid6),
+    	's.fk_prospectlevel'=>array('label'=>$langs->trans("ProspectLevelShort"), 'checked'=>$checkprospectlevel),
+    	's.fk_stcomm'=>array('label'=>$langs->trans("StatusProsp"), 'checked'=>$checkstcomm),
         's.status'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>200),
         's.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
         's.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
@@ -488,7 +601,9 @@ if ($resql)
 	if (! empty($arrayfields['s.idprof5']['checked']))        print_liste_field_titre($form->textwithpicto($langs->trans("ProfId5Short"),$textprofid[4],1,0),$_SERVER["PHP_SELF"],"s.idprof5","",$param,'class="nowrap"',$sortfield,$sortorder);
 	if (! empty($arrayfields['s.idprof6']['checked']))        print_liste_field_titre($form->textwithpicto($langs->trans("ProfId6Short"),$textprofid[4],1,0),$_SERVER["PHP_SELF"],"s.idprof6","",$param,'class="nowrap"',$sortfield,$sortorder);
 	print_liste_field_titre('');   // type of customer
-    // Extra fields
+	if (! empty($arrayfields['s.fk_prospectlevel']['checked'])) print_liste_field_titre($arrayfields['s.fk_prospectlevel']['label'],$_SERVER["PHP_SELF"],"s.fk_prospectlevel","",$param,'align="center"',$sortfield,$sortorder);
+	if (! empty($arrayfields['s.fk_stcomm']['checked']))      print_liste_field_titre($arrayfields['s.fk_stcomm']['label'],$_SERVER["PHP_SELF"],"s.fk_stcomm","",$param,'align="center"',$sortfield,$sortorder);
+	// Extra fields
 	if (is_array($extrafields->attribute_list) && count($extrafields->attribute_list))
 	{
 	   foreach($extrafields->attribute_list as $key => $val) 
@@ -623,6 +738,7 @@ if ($resql)
     	print '<input class="flat" size="4" type="text" name="search_idprof6" value="'.dol_escape_htmltag($search_idprof6).'">';
     	print '</td>';
     }
+    
     // Type (customer/prospect/supplier)
     print '<td class="liste_titre" align="middle">';
 	print '<select class="flat" name="search_type">';
@@ -633,6 +749,48 @@ if ($resql)
 	print '<option value="4"'.($search_type=='4'?' selected':'').'>'.$langs->trans('Supplier').'</option>';
 	print '<option value="0"'.($search_type=='0'?' selected':'').'>'.$langs->trans('Others').'</option>';
 	print '</select></td>';
+    
+    if (! empty($arrayfields['s.fk_prospectlevel']['checked']))
+    {
+	    // Prospect level
+	 	print '<td class="liste_titre" align="center">';
+	 	$options_from = '<option value="">&nbsp;</option>';	 	// Generate in $options_from the list of each option sorted
+	 	foreach ($tab_level as $tab_level_sortorder => $tab_level_label)
+	 	{
+	 		$options_from .= '<option value="'.$tab_level_sortorder.'"'.($search_level_from == $tab_level_sortorder ? ' selected':'').'>';
+	 		$options_from .= $langs->trans($tab_level_label);
+	 		$options_from .= '</option>';
+	 	}
+	 	array_reverse($tab_level, true);	// Reverse the list
+	 	$options_to = '<option value="">&nbsp;</option>';		// Generate in $options_to the list of each option sorted in the reversed order
+	 	foreach ($tab_level as $tab_level_sortorder => $tab_level_label)
+	 	{
+	 		$options_to .= '<option value="'.$tab_level_sortorder.'"'.($search_level_to == $tab_level_sortorder ? ' selected':'').'>';
+	 		$options_to .= $langs->trans($tab_level_label);
+	 		$options_to .= '</option>';
+	 	}
+    
+	    // Print these two select
+	 	print $langs->trans("From").' <select class="flat" name="search_level_from">'.$options_from.'</select>';
+	 	print ' ';
+	 	print $langs->trans("to").' <select class="flat" name="search_level_to">'.$options_to.'</select>';
+	
+	    print '</td>';
+    }
+    
+    if (! empty($arrayfields['s.fk_stcomm']['checked']))
+    {
+	    // Prospect status
+	    print '<td class="liste_titre" align="center">';
+	    $arraystcomm=array();
+		foreach($prospectstatic->cacheprospectstatus as $key => $val)
+		{
+			$arraystcomm[$val['id']]=$val['label'];
+		}
+	    print $form->selectarray('search_stcomm', $arraystcomm, $search_stcomm, -2);
+	    print '</td>';
+    }
+        
     // Fields from hook
 	$parameters=array('arrayfields'=>$arrayfields);
     $reshook=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
@@ -671,18 +829,22 @@ if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
 		$var=!$var;
+		
+		$companystatic->id=$obj->rowid;
+		$companystatic->name=$obj->name;
+		$companystatic->canvas=$obj->canvas;
+		$companystatic->client=$obj->client;
+		$companystatic->status=$obj->status;
+		$companystatic->fournisseur=$obj->fournisseur;
+		$companystatic->code_client=$obj->code_client;
+		$companystatic->code_fournisseur=$obj->code_fournisseur;
+        $companystatic->fk_prospectlevel=$obj->fk_prospectlevel;
+        $companystatic->name_alias=$obj->name_alias;
+		
 		print "<tr ".$bc[$var].">";
 		if (! empty($arrayfields['s.nom']['checked']))
 		{
     		print "<td>";
-    		$companystatic->id=$obj->rowid;
-    		$companystatic->name=$obj->name;
-    		$companystatic->canvas=$obj->canvas;
-            $companystatic->client=$obj->client;
-            $companystatic->status=$obj->status;
-            $companystatic->fournisseur=$obj->fournisseur;
-            $companystatic->code_client=$obj->code_client;
-            $companystatic->code_fournisseur=$obj->code_fournisseur;
     		print $companystatic->getNomUrl(1,'',100);
     		print "</td>\n";
 		}
@@ -761,6 +923,7 @@ if ($resql)
         {
             print "<td>".$obj->idprof6."</td>\n";
         }
+        // Type
         print '<td align="center">';
 		$s='';
 		if (($obj->client==1 || $obj->client==3) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))
@@ -782,6 +945,28 @@ if ($resql)
 		}
 		print $s;
 		print '</td>';
+	    if (! empty($arrayfields['s.fk_prospectlevel']['checked']))
+        {
+			// Prospect level
+			print '<td align="center">';
+			print $companystatic->getLibProspLevel();
+			print "</td>";
+        }
+	    if (! empty($arrayfields['s.fk_stcomm']['checked']))
+        {
+	        // Prospect status
+			print '<td align="center" class="nowrap"><div class="nowrap">';
+			print '<div class="inline-block">'.$companystatic->LibProspCommStatut($obj->stcomm_id,2,$prospectstatic->cacheprospectstatus[$obj->stcomm_id]['label']);
+			print '</div> - <div class="inline-block">';
+			foreach($prospectstatic->cacheprospectstatus as $key => $val)
+			{
+				$titlealt='default';
+				if (! empty($val['code']) && ! in_array($val['code'], array('ST_NO', 'ST_NEVER', 'ST_TODO', 'ST_PEND', 'ST_DONE'))) $titlealt=$val['label'];
+				if ($obj->stcomm_id != $val['id']) print '<a class="pictosubstatus" href="'.$_SERVER["PHP_SELF"].'?stcommsocid='.$obj->rowid.'&stcomm='.$val['code'].'&action=setstcomm'.$param.($page?'&page='.urlencode($page):'').'">'.img_action($titlealt,$val['code']).'</a>';
+			}
+			print '</div></div></td>';
+        }
+        		
         // Fields from hook
 	    $parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj);
 		$reshook=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook
