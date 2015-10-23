@@ -60,8 +60,8 @@ if ($action == 'delete')
 {
 	$file=$conf->admin->dir_output.'/'.GETPOST('urlfile');
 	$ret=dol_delete_file($file, 1);
-	if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-	else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+	if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
+	else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
 	$action='';
 }
 
@@ -357,7 +357,7 @@ if ($what == 'postgresql')
 //{
     if ($errormsg)
     {
-    	setEventMessage($langs->trans("Error")." : ".$errormsg, 'errors');
+    	setEventMessages($langs->trans("Error")." : ".$errormsg, null, 'errors');
 
     	$resultstring='';
         $resultstring.='<div class="error">'.$langs->trans("Error")." : ".$errormsg.'</div>';
@@ -368,7 +368,7 @@ if ($what == 'postgresql')
 	{
 		if ($what)
 		{
-	        setEventMessage($langs->trans("BackupFileSuccessfullyCreated").'.<br>'.$langs->trans("YouCanDownloadBackupFile"));
+	        setEventMessages($langs->trans("BackupFileSuccessfullyCreated").'.<br>'.$langs->trans("YouCanDownloadBackupFile"), null, 'mesgs');
 
 	        $resultstring='<div class="ok">';
 	        $resultstring.=$langs->trans("BackupFileSuccessfullyCreated").'.<br>';
@@ -379,7 +379,7 @@ if ($what == 'postgresql')
 		}
 		else
 		{
-			setEventMessage($langs->trans("YouMustRunCommandFromCommandLineAfterLoginToUser",$dolibarr_main_db_user,$dolibarr_main_db_user));
+			setEventMessages($langs->trans("YouMustRunCommandFromCommandLineAfterLoginToUser",$dolibarr_main_db_user,$dolibarr_main_db_user), null, 'mesgs');
 		}
     }
 //}

@@ -109,14 +109,14 @@ if (is_array($changeaccount) && count($changeaccount) > 0) {
 	$resql1 = $db->query($sql1);
 	if (! $resql1) {
 		$error ++;
-		setEventMessage($db->lasterror(), 'errors');
+		setEventMessages($db->lasterror(), null, 'errors');
 	}
 	if (! $error) {
 		$db->commit();
-		setEventMessage($langs->trans('Save'), 'mesgs');
+		setEventMessages($langs->trans('Save'), null, 'mesgs');
 	} else {
 		$db->rollback();
-		setEventMessage($db->lasterror(), 'errors');
+		setEventMessages($db->lasterror(), null, 'errors');
 	}
 }
 

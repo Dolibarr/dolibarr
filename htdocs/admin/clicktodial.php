@@ -41,11 +41,11 @@ if ($action == 'setvalue' && $user->admin)
     $result=dolibarr_set_const($db, "CLICKTODIAL_URL", GETPOST("url"), 'chaine', 0, '', $conf->entity);
     if ($result >= 0)
     {
-		setEventMessage($langs->trans("SetupSaved"));
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
     else
     {
-        setEventMessage($langs->trans("Error"),'errors');
+        setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
 

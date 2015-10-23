@@ -68,7 +68,7 @@ if ($action == 'add' || (GETPOST('add') && $action != 'update'))
 	{
 		if (dolibarr_set_const($db, $constname, $constvalue, 'chaine', 1, $constnote, $entity) >= 0)
 		{
-			setEventMessage($langs->trans("RecordSaved"));
+			setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 			$action="";
 			$constname="";
 			$constvalue="";
@@ -99,7 +99,7 @@ if (! empty($consts) && $action == 'update')
 			}
 		}
 	}
-	if ($nbmodified > 0) setEventMessage($langs->trans("RecordSaved"));
+	if ($nbmodified > 0) setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 	$action='';
 }
 
@@ -122,7 +122,7 @@ if (! empty($consts) && $action == 'delete')
 			}
 		}
 	}
-	if ($nbdeleted > 0) setEventMessage($langs->trans("RecordDeleted"));
+	if ($nbdeleted > 0) setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
 	$action='';
 }
 
@@ -131,7 +131,7 @@ if ($action == 'delete')
 {
 	if (dolibarr_del_const($db, $rowid, $entity) >= 0)
 	{
-		setEventMessage($langs->trans("RecordDeleted"));
+		setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
 	}
 	else
 	{
