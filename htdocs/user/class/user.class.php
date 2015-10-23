@@ -126,13 +126,17 @@ class User extends CommonObject
 	{
 		$this->db = $db;
 
-		// Preference utilisateur
+		// User preference
 		$this->liste_limit = 0;
 		$this->clicktodial_loaded = 0;
 
+		// For cache usage
 		$this->all_permissions_are_loaded = 0;
-		$this->admin=0;
-
+		
+		// Force some default values 
+		$this->admin = 0;
+		$this->employee = 1;
+		
 		$this->conf				    = new stdClass();
 		$this->rights				= new stdClass();
 		$this->rights->user			= new stdClass();
