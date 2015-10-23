@@ -26,6 +26,17 @@
 define('TABLE_ACCOUNTING_ACCOUNT', 'accounting_account');
 define('ACCOUNTING_ACCOUNT_ROWID', 'rowid');
 define('ACCOUNTING_ACCOUNT_ENTITY', 'entity');
+define('ACCOUNTING_ACCOUNT_DATEC', 'datec');
+define('ACCOUNTING_ACCOUNT_TMS', 'tms');
+define('ACCOUNTING_ACCOUNT_FK_PCG_VERSION', 'fk_pcg_version');
+define('ACCOUNTING_ACCOUNT_PCG_TYPE', 'pcg_type');
+define('ACCOUNTING_ACCOUNT_PCG_SUBTYPE', 'pcg_subtype');
+define('ACCOUNTING_ACCOUNT_ACCOUNT_NUMBER', 'account_number');
+define('ACCOUNTING_ACCOUNT_ACCOUNT_PARENT', 'account_parent');
+define('ACCOUNTING_ACCOUNT_LABEL', 'label');
+define('ACCOUNTING_ACCOUNT_FK_USER_AUTHOR', 'fk_user_author');
+define('ACCOUNTING_ACCOUNT_FK_USER_MODIF', 'fk_user_modif');
+define('ACCOUNTING_ACCOUNT_ACTIVE', 'active');
 // table accounting bookkeeping
 // table accounting fiscal year
 // table accounting system
@@ -61,7 +72,7 @@ define('THIRDPARTY_FAX', 'fk_pays');
 define('THIRDPARTY_URL', 'fk_pays');
 define('THIRDPARTY_EMAIL', 'fk_pays');
 define('THIRDPARTY_SKYPE', 'fk_pays');
-define('THIRDPARTY_FK_WORFORCE', 'fk_effectif');
+define('THIRDPARTY_FK_WORKFORCE', 'fk_effectif');
 define('THIRDPARTY_FK_BUSINESS_TYPE', 'fk_typent');
 define('THIRDPARTY_FK_JURIDICAL', 'fk_forme_juridique');
 define('THIRDPARTY_FK_CURRENCY', 'fk_currency');
