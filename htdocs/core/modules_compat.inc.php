@@ -22,6 +22,19 @@
  */
 // VERSION 3.9
 // Compat for db tables
+// table accouting account
+define('TABLE_ACCOUNTING_ACCOUNT', 'accounting_account');
+define('ACCOUNTING_ACCOUNT_ROWID', 'rowid');
+define('ACCOUNTING_ACCOUNT_ENTITY', 'entity');
+// table accounting bookkeeping
+// table accounting fiscal year
+// table accounting system
+// table accountingdebcred
+// table accountingtransaction
+// table actioncomm
+// table actioncomm extrafields
+// table actioncomm resources
+// table adherent
 // table of thirdparty
 define('TABLE_THIRDPARTY', 'societe');
 define('THIRDPARTY_ROWID', 'rowid');
@@ -34,7 +47,7 @@ define('THIRDPARTY_STATUT', 'statut');
 define('THIRDPARTY_PARENT', 'parent');
 define('THIRDPARTY_TMS', 'tms');
 define('THIRDPARTY_DATEC', 'datec');
-define('THIRDPARTY_THIRPARTY_CODE', 'code_client');
+define('THIRDPARTY_THIRDPARTY_CODE', 'code_client');
 define('THIRDPARTY_SUPPLIER_CODE', 'code_fournisseur');
 define('THIRDPARTY_ACCOUNTING_CODE', 'code_compta');
 define('THIRDPARTY_SUPPLIER_ACCOUNTING_CODE', 'code_compta_fournisseur');
