@@ -86,9 +86,13 @@ define('THIRDPARTY_IDPROF6', 'idprof6');
 
 // Compat for Triggers Names
 // Users
-define('USER_CREATE', 'USER_CREATE');
-define('USER_MODIFY', 'USER_MODIFY');
-define('USER_NEW_PASSWORD', 'USER_NEW_PASSWORD');
-define('USER_ENABLEDISABLE', 'USER_ENABLEDISABLE');
-define('USER_DELETE', 'USER_DELETE');
+define('TRIGGER_USER_CREATE', 'USER_CREATE');
+define('TRIGGER_USER_MODIFY', 'USER_MODIFY');
+define('TRIGGER_USER_NEW_PASSWORD', 'USER_NEW_PASSWORD');
+define('TRIGGER_USER_ENABLEDISABLE', 'USER_ENABLEDISABLE');
+define('TRIGGER_USER_DELETE', 'USER_DELETE');
 // ...
+
+// Compat for hook name
+define('HOOK_AFTERLOGIN', 'afterLogin');
+define('HOOK_AFTERLOGIN_VERSION', '2'); // for hook capabilty
