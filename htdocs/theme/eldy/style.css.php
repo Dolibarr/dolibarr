@@ -888,7 +888,6 @@ div.mainmenu.members {
 
 div.mainmenu.products {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/products.png',1) ?>);
-	margin-left: 10px;
 }
 
 div.mainmenu.project {
@@ -3877,7 +3876,22 @@ border-top-right-radius: 6px;
 }
 @media only screen and (max-width: 570px)
 {
-    div.mainmenu {
+	/* Reduce login top right info */
+	.usertextatoplogin {
+		display: none;
+	}
+	div#tmenu_tooltip {
+	<?php if (GETPOST("optioncss") == 'print') {  ?>
+		display:none;
+	<?php } else { ?>
+		padding-<?php echo $right; ?>: 78px;
+	<?php } ?>
+	}
+	div.login_block {
+		top: 9px;
+	}
+	
+	div.mainmenu {
     	min-width: 20px;
     }
 	.topmenuimage {
@@ -3887,9 +3901,8 @@ border-top-right-radius: 6px;
 	#tooltip {
 		position: absolute;
 		width: <?php print dol_size(300,'width'); ?>px;
-	}	
+	}
 }
-
 
 <?php
 if (is_object($db)) $db->close();

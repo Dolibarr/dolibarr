@@ -1842,23 +1842,24 @@ class User extends CommonObject
 	 *  Return a link to the user card (with optionaly the picto)
 	 * 	Use this->id,this->lastname, this->firstname
 	 *
-	 *	@param	int		$withpicto			Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
+	 *	@param	int		$withpictoimg		Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto, -1=Include photo into link, -2=Only picto photo)
 	 *	@param	string	$option				On what the link point to
      *  @param  integer $infologin      	Add connection info to the tooltip
-     *  @param	integer	$notooltip			1=Disable tooltip
+     *  @param	integer	$notooltip			1=Disable tooltip on picto and name
      *  @param	int		$maxlen				Max length of visible user name
      *  @param	int		$hidethirdpartylogo	Hide logo of thirdparty if user is external user
      *  @param  string  $mode               'firstname'=Show only firstname
      *  @param  string  $morecss            Add more css on link
 	 *	@return	string						String with URL
 	 */
-	function getNomUrl($withpicto=0, $option='', $infologin=0, $notooltip=0, $maxlen=24, $hidethirdpartylogo=0, $mode='',$morecss='')
+	function getNomUrl($withpictoimg=0, $option='', $infologin=0, $notooltip=0, $maxlen=24, $hidethirdpartylogo=0, $mode='',$morecss='')
 	{
 		global $langs, $conf, $db;
         global $dolibarr_main_authentication, $dolibarr_main_demo;
         global $menumanager;
 
-
+		if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && $withpictoimg) $withpictoimg=0;
+			
         $result = '';
         $companylink = '';
 
@@ -1908,18 +1909,28 @@ class User extends CommonObject
             if (! empty($_SESSION["disablemodules"])) $label.= '<br><b>'.$langs->trans("DisabledModules").':</b> <br>'.join(', ',explode(',',$_SESSION["disablemodules"]));
         }
 
-
-        $link = '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'"';
+        $link.= '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'"';
         $link.= ($notooltip?'':' title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip'.($morecss?' '.$morecss:'').'"');
         $link.= '>';
 		$linkend='</a>';
 
-        if ($withpicto)
+        if (abs($withpictoimg) == 1) $result.='<div class="nowrap">';
+		$result.=$link;
+        if ($withpictoimg)
         {
-            $result.=($link.img_object(($notooltip?'':$label), 'user', ($notooltip?'':'class="classfortooltip"')).$linkend);
-            if ($withpicto != 2) $result.=' ';
+        	$paddafterimage='';
+            if (abs($withpictoimg) == 1) $paddafterimage='style="padding-right: 3px;"';
+        	if ($withpictoimg > 0) $picto='<div class="inline-block valignmiddle'.($morecss?' userimg'.$morecss:'').'">'.img_object('', 'user', $paddafterimage.' '.($notooltip?'':'class="classfortooltip"')).'</div>';
+        	else $picto='<div class="inline-block valignmiddle'.($morecss?' userimg'.$morecss:'').'"'.($paddafterimage?' '.$paddafterimage:'').'>'.Form::showphoto('userphoto', $this, 0, 0, 0, 'loginphoto').'</div>';
+            $result.=$picto;
 		}
-		$result.= $link . $this->getFullName($langs,'',($mode == 'firstname' ? 2 : -1),$maxlen) . $linkend . $companylink;
+		if (abs($withpictoimg) != 2) 
+		{
+			$result.='<div class="inline-block valignmiddle'.($morecss?' usertext'.$morecss:'').'">'.$this->getFullName($langs,'',($mode == 'firstname' ? 2 : -1),$maxlen).'</div>';
+		}
+		$result.=$linkend;
+		if (abs($withpictoimg) == 1) $result.='</div>';
+		$result.=$companylink;
 		return $result;
 	}
 
