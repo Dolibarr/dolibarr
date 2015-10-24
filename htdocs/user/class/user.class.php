@@ -1862,6 +1862,7 @@ class User extends CommonObject
 			
         $result = '';
         $companylink = '';
+        $link = '';
 
         $label = '<u>' . $langs->trans("User") . '</u>';
         $label.= '<div width="100%">';
@@ -1914,7 +1915,7 @@ class User extends CommonObject
         $link.= '>';
 		$linkend='</a>';
 
-        if (abs($withpictoimg) == 1) $result.='<div class="nowrap">';
+        //if ($withpictoimg == -1) $result.='<div class="nowrap">';
 		$result.=$link;
         if ($withpictoimg)
         {
@@ -1929,7 +1930,7 @@ class User extends CommonObject
 			$result.='<div class="inline-block valignmiddle'.($morecss?' usertext'.$morecss:'').'">'.$this->getFullName($langs,'',($mode == 'firstname' ? 2 : -1),$maxlen).'</div>';
 		}
 		$result.=$linkend;
-		if (abs($withpictoimg) == 1) $result.='</div>';
+		//if ($withpictoimg == -1) $result.='</div>';
 		$result.=$companylink;
 		return $result;
 	}
