@@ -1922,7 +1922,7 @@ class User extends CommonObject
         	$paddafterimage='';
             if (abs($withpictoimg) == 1) $paddafterimage='style="padding-right: 3px;"';
         	if ($withpictoimg > 0) $picto='<div class="inline-block valignmiddle'.($morecss?' userimg'.$morecss:'').'">'.img_object('', 'user', $paddafterimage.' '.($notooltip?'':'class="classfortooltip"')).'</div>';
-        	else $picto='<div class="inline-block valignmiddle'.($morecss?' userimg'.$morecss:'').'"'.($paddafterimage?' '.$paddafterimage:'').'>'.Form::showphoto('userphoto', $this, 0, 0, 0, 'loginphoto').'</div>';
+        	else $picto='<div class="inline-block valignmiddle'.($morecss?' userimg'.$morecss:'').'"'.($paddafterimage?' '.$paddafterimage:'').'>'.Form::showphoto('userphoto', $this, 0, 0, 0, 'loginphoto',0,0).'</div>';
             $result.=$picto;
 		}
 		if (abs($withpictoimg) != 2) 
