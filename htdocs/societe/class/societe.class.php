@@ -1747,12 +1747,12 @@ class Societe extends CommonObject
      *    	Return a link on thirdparty (with picto)
      *
      *		@param	int		$withpicto		Add picto into link (0=No picto, 1=Include picto with link, 2=Picto only)
-     *		@param	string	$option			Target of link ('', 'customer', 'prospect', 'supplier')
+     *		@param	string	$option			Target of link ('', 'customer', 'prospect', 'supplier', 'project')
      *		@param	int		$maxlen			Max length of name
      *      @param	integer	$notooltip		1=Disable tooltip
      *		@return	string					String with URL
      */
-    function getNomUrl($withpicto=0,$option='',$maxlen=0,$notooltip=0)
+    function getNomUrl($withpicto=0, $option='', $maxlen=0, $notooltip=0)
     {
         global $conf,$langs;
 
@@ -1794,6 +1794,16 @@ class Societe extends CommonObject
         {
             $label.= '<u>' . $langs->trans("ShowSupplier") . '</u>';
             $link = '<a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$this->id;
+        }
+        else if ($option == 'agenda')
+        {
+            $label.= '<u>' . $langs->trans("ShowAgenda") . '</u>';
+            $link = '<a href="'.DOL_URL_ROOT.'/societe/agenda.php?socid='.$this->id;
+        }
+        else if ($option == 'project')
+        {
+            $label.= '<u>' . $langs->trans("ShowProject") . '</u>';
+            $link = '<a href="'.DOL_URL_ROOT.'/societe/project.php?socid='.$this->id;
         }
         else if ($option == 'category')
         {
