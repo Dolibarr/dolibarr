@@ -172,6 +172,8 @@ print '</div>';
 
 dol_fiche_end();
 
+
+
 if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 	$prodcustprice = new Productcustomerprice($db);

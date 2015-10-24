@@ -184,7 +184,7 @@ $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('',$title,$help_url);
 
 
-
+/*
 if ($mode == 'search')
 {
 	if ($modesearch == 'soc')
@@ -209,7 +209,7 @@ if ($mode == 'search')
 		$db->free($resql);
 	}
 }
-
+*/
 
 if ($id > 0)
 {
@@ -1021,6 +1021,7 @@ if ($id > 0)
         // List of done actions
 		show_actions_done($conf,$langs,$db,$object);
 	}
+
 }
 else
 {
