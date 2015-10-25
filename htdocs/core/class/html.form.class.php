@@ -5254,11 +5254,11 @@ class Form
      * 		@param	int			$height				Height of photo (auto if 0)
      * 		@param	int			$caneditfield		Add edit fields
      * 		@param	string		$cssclass			CSS name to use on img for photo
-     * 		@param	int			$genericifundef		Use a generic image if no image avaiable
+     * 		@param	string		$imagesize		    'mini', 'small' or '' (original)
      *      @param  int         $addlinktofullsize  Add link to fullsize image
      * 	  	@return string    						HTML code to output photo
      */
-    static function showphoto($modulepart, $object, $width=100, $height=0, $caneditfield=0, $cssclass='photowithmargin', $genericifundef=0,$addlinktofullsize=1)
+    static function showphoto($modulepart, $object, $width=100, $height=0, $caneditfield=0, $cssclass='photowithmargin', $imagesize='',$addlinktofullsize=1)
     {
         global $conf,$langs;
 
@@ -5272,29 +5272,52 @@ class Form
             $dir=$conf->societe->multidir_output[$entity];
             $smallfile=$object->logo;
             $smallfile=preg_replace('/(\.png|\.gif|\.jpg|\.jpeg|\.bmp)/i','_small\\1',$smallfile);
-            if (! empty($object->logo)) $file=$id.'/logos/thumbs/'.$smallfile;
+            if (! empty($object->logo)) 
+            {
+                if ($imagesize == 'mini') $file=$id.'/logos/thumbs/'.getImageFileNameForSize($object->logo, '_mini');
+                else if ($imagesize == 'small') $file=$id.'/logos/thumbs/'.getImageFileNameForSize($object->logo, '_small');
+                else $file=$id.'/logos/thumbs/'.$smallfile;
+            }
         }
         else if ($modulepart=='contact')
         {
             $dir=$conf->societe->multidir_output[$entity].'/contact';
-            $file=$id.'/photos/'.$object->photo;
+            if (! empty($object->photo))
+            {
+                if ($imagesize == 'mini') $file=$id.'/photos/thumbs/'.getImageFileNameForSize($object->photo, '_mini');
+                else if ($imagesize == 'small') $file=$id.'/photos/thumbs/'.getImageFileNameForSize($object->photo, '_small');
+                else $file=$id.'/photos/'.$object->photo;
+            }
         }
         else if ($modulepart=='userphoto')
         {
             $dir=$conf->user->dir_output;
-            if (! empty($object->photo)) $file=get_exdir($id, 2, 0, 0, $object, 'user').$object->photo;
+            if (! empty($object->photo))
+            {
+                //var_dump(getImageFileNameForSize($object->photo, '_mini'));
+                if ($imagesize == 'mini') $file=get_exdir($id, 2, 0, 0, $object, 'user').getImageFileNameForSize($object->photo, '_mini');
+                else if ($imagesize == 'small') $file=get_exdir($id, 2, 0, 0, $object, 'user').getImageFileNameForSize($object->photo, '_small');
+                else $file=get_exdir($id, 2, 0, 0, $object, 'user').$object->photo;
+            }
             if (! empty($conf->global->MAIN_OLD_IMAGE_LINKS)) $altfile=$object->id.".jpg";	// For backward compatibility
             $email=$object->email;
         }
         else if ($modulepart=='memberphoto')
         {
             $dir=$conf->adherent->dir_output;
-            if (! empty($object->photo)) $file=get_exdir($id, 2, 0, 0, $object, 'invoice_supplier').'photos/'.$object->photo;
+            if (! empty($object->photo)) 
+            {
+                if ($imagesize == 'mini') $file=get_exdir($id, 2, 0, 0, $object, 'member').'photos/'.getImageFileNameForSize($object->photo, '_mini');
+                else if ($imagesize == 'small') $file=get_exdir($id, 2, 0, 0, $object, 'member').'photos/'.getImageFileNameForSize($object->photo, '_small');
+                else $file=get_exdir($id, 2, 0, 0, $object, 'member').'photos/'.$object->photo;
+            }
             if (! empty($conf->global->MAIN_OLD_IMAGE_LINKS)) $altfile=$object->id.".jpg";	// For backward compatibility
             $email=$object->email;
-        } else {
+        } 
+        else 
+        {
         	$dir=$conf->$modulepart->dir_output;
-        	if (! empty($object->photo)) $file=get_exdir($id, 2, 0, 0, $object, 'member').'photos/'.$object->photo;
+        	if (! empty($object->photo)) $file=get_exdir($id, 2, 0, 0, $object, $modulepart).'photos/'.$object->photo;
         	if (! empty($conf->global->MAIN_OLD_IMAGE_LINKS)) $altfile=$object->id.".jpg";	// For backward compatibility
         	$email=$object->email;
         }

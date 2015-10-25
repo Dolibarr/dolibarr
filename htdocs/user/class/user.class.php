@@ -1848,7 +1848,7 @@ class User extends CommonObject
      *  @param	integer	$notooltip			1=Disable tooltip on picto and name
      *  @param	int		$maxlen				Max length of visible user name
      *  @param	int		$hidethirdpartylogo	Hide logo of thirdparty if user is external user
-     *  @param  string  $mode               'firstname'=Show only firstname
+     *  @param  string  $mode               ''=Show firstname and lastname, 'firstname'=Show only firstname, 'login'=Show login
      *  @param  string  $morecss            Add more css on link
 	 *	@return	string						String with URL
 	 */
@@ -1885,7 +1885,7 @@ class User extends CommonObject
         if (! empty($this->photo))
         {
         	$label.= '<div class="photointooltip">';
-            $label.= Form::showphoto('userphoto', $this, 80, 0, 0, 'photowithmargin photologintooltip');
+            $label.= Form::showphoto('userphoto', $this, 80, 0, 0, 'photowithmargin photologintooltip', 'small');
         	$label.= '</div><div style="clear: both;"></div>';
         }
 
@@ -1932,13 +1932,14 @@ class User extends CommonObject
         	$paddafterimage='';
             if (abs($withpictoimg) == 1) $paddafterimage='style="padding-right: 3px;"';
         	if ($withpictoimg > 0) $picto='<div class="inline-block valignmiddle'.($morecss?' userimg'.$morecss:'').'">'.img_object('', 'user', $paddafterimage.' '.($notooltip?'':'class="classfortooltip"')).'</div>';
-        	else $picto='<div class="inline-block valignmiddle'.($morecss?' userimg'.$morecss:'').'"'.($paddafterimage?' '.$paddafterimage:'').'>'.Form::showphoto('userphoto', $this, 0, 0, 0, 'loginphoto',0,0).'</div>';
+        	else $picto='<div class="inline-block valignmiddle'.($morecss?' userimg'.$morecss:'').'"'.($paddafterimage?' '.$paddafterimage:'').'>'.Form::showphoto('userphoto', $this, 0, 0, 0, 'loginphoto', 0, 0, 'mini').'</div>';
             $result.=$picto;
 		}
 		if (abs($withpictoimg) != 2) 
 		{
 			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $result.='<div class="inline-block valignmiddle'.($morecss?' usertext'.$morecss:'').'">';
-			$result.=$this->getFullName($langs,'',($mode == 'firstname' ? 2 : -1),$maxlen);
+			if ($mode == 'login') $result.=dol_trunc($this->login, $maxlen);
+			else $result.=$this->getFullName($langs,'',($mode == 'firstname' ? 2 : -1),$maxlen);
 			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $result.='</div>';
 		}
 		$result.=$linkend;
@@ -2398,7 +2399,7 @@ class User extends CommonObject
 		$this->load_parentof();
 
 		// Init $this->users array
-		$sql = "SELECT DISTINCT u.rowid, u.firstname, u.lastname, u.fk_user, u.fk_soc, u.login, u.email, u.gender, u.admin, u.statut, u.entity";	// Distinct reduce pb with old tables with duplicates
+		$sql = "SELECT DISTINCT u.rowid, u.firstname, u.lastname, u.fk_user, u.fk_soc, u.login, u.email, u.gender, u.admin, u.statut, u.photo, u.entity";	// Distinct reduce pb with old tables with duplicates
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 		if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && (! empty($conf->multicompany->transverse_mode) || (! empty($user->admin) && empty($user->entity))))
 		{
@@ -2429,6 +2430,7 @@ class User extends CommonObject
 				$this->users[$obj->rowid]['email'] = $obj->email;
 				$this->users[$obj->rowid]['gender'] = $obj->gender;
 				$this->users[$obj->rowid]['admin'] = $obj->admin;
+				$this->users[$obj->rowid]['photo'] = $obj->photo;
 				$i++;
 			}
 		}
