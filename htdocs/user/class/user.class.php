@@ -1845,7 +1845,7 @@ class User extends CommonObject
 	 *
 	 *	@param	int		$withpictoimg		Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto, -1=Include photo into link, -2=Only picto photo)
 	 *	@param	string	$option				On what the link point to
-     *  @param  integer $infologin      	Add connection info to the tooltip
+     *  @param  integer $infologin      	Add complete info tooltip
      *  @param	integer	$notooltip			1=Disable tooltip on picto and name
      *  @param	int		$maxlen				Max length of visible user name
      *  @param	int		$hidethirdpartylogo	Hide logo of thirdparty if user is external user
