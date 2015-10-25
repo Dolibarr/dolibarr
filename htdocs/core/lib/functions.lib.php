@@ -5223,7 +5223,6 @@ function natural_search($fields, $value, $mode=0, $nofirstand=0)
     return $res;
 }
 
-
 /**
  * Return the filename of file to get the thumbs
  * 
