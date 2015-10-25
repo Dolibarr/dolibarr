@@ -1824,10 +1824,13 @@ class Societe extends CommonObject
         }
 
         if (! empty($this->name))
+        {
             $label.= '<br><b>' . $langs->trans('Name') . ':</b> '. $this->name;
-        if (! empty($this->code_client))
+            if (! empty($this->name_alias)) $label.=' ('.$this->name_alias.')';
+        }
+        if (! empty($this->code_client) && $this->client)
             $label.= '<br><b>' . $langs->trans('CustomerCode') . ':</b> '. $this->code_client;
-        if (! empty($this->code_fournisseur))
+        if (! empty($this->code_fournisseur) && $this->fournisseur)
             $label.= '<br><b>' . $langs->trans('SupplierCode') . ':</b> '. $this->code_fournisseur;
 
         if (! empty($this->logo))
@@ -1841,7 +1844,16 @@ class Societe extends CommonObject
 
         // Add type of canvas
         $link.=(!empty($this->canvas)?'&canvas='.$this->canvas:'').'"';
-        $link.=($notooltip?'':' title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip"');
+        if (empty($notooltip))
+        {
+            if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) 
+            {
+                $label=$langs->trans("ShowCompany");
+                $link.=' alt="'.dol_escape_htmltag($label, 1).'"'; 
+            }
+            $link.= ' title="'.dol_escape_htmltag($label, 1).'"';
+            $link.=' class="classfortooltip"';
+        }
         $link.='>';
         $linkend='</a>';
 

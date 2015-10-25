@@ -1911,7 +1911,17 @@ class User extends CommonObject
         }
 
         $link.= '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'"';
-        $link.= ($notooltip?'':' title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip'.($morecss?' '.$morecss:'').'"');
+        if (empty($notooltip))
+        {
+            if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) 
+            {
+                $langs->load("users");
+                $label=$langs->trans("ShowUser");
+                $link.=' alt="'.dol_escape_htmltag($label, 1).'"'; 
+            }
+            $link.= ' title="'.dol_escape_htmltag($label, 1).'"';
+            $link.= ' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
+        }
         $link.= '>';
 		$linkend='</a>';
 
@@ -1927,7 +1937,9 @@ class User extends CommonObject
 		}
 		if (abs($withpictoimg) != 2) 
 		{
-			$result.='<div class="inline-block valignmiddle'.($morecss?' usertext'.$morecss:'').'">'.$this->getFullName($langs,'',($mode == 'firstname' ? 2 : -1),$maxlen).'</div>';
+			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $result.='<div class="inline-block valignmiddle'.($morecss?' usertext'.$morecss:'').'">';
+			$result.=$this->getFullName($langs,'',($mode == 'firstname' ? 2 : -1),$maxlen);
+			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $result.='</div>';
 		}
 		$result.=$linkend;
 		//if ($withpictoimg == -1) $result.='</div>';

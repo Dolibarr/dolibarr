@@ -103,7 +103,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
  * Informations area
  */
 
-print '<table class="noborder" width="100%">';
+print '<table summary="Login info" class="noborder" width="100%">';
 print '<tr class="liste_titre"><th class="liste_titre" colspan="2">'.$langs->trans("Informations").'</th></tr>';
 print '<tr '.$bc[false].'>';
 print '<td class="nowrap">'.$langs->trans("User").'</td><td>'.$user->getNomUrl(0).'</td></tr>';
@@ -129,7 +129,7 @@ $langs->load("contracts");
 if (empty($user->societe_id))
 {
     print '<br>';
-    print '<table class="noborder" width="100%">';
+    print '<table  summary="'.$langs->trans("DolibarrStateBoard").'" class="noborder" width="100%">';
     print '<tr class="liste_titre">';
     print '<th class="liste_titre" colspan="2">'.$langs->trans("DolibarrStateBoard").'</th>';
     print '<th class="liste_titre" align="right">&nbsp;</th>';
