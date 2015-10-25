@@ -1908,7 +1908,17 @@ else
 	    print $object->name_alias;
 	    print "</td></tr>";
 
-        // Prefix
+    	// Prospect/Customer
+    	print '<tr><td>'.$langs->trans('ProspectCustomer').'</td><td>';
+    	print $object->getLibCustProspStatut();
+    	print '</td></tr>';
+	    
+    	// Prospect/Customer
+    	print '<tr><td>'.$langs->trans('Supplier').'</td><td>';
+    	print yn($object->fournsseur);
+    	print '</td></tr>';
+    	
+    	// Prefix
         if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
         {
             print '<tr><td>'.$langs->trans('Prefix').'</td><td>'.$object->prefix_comm.'</td>';
