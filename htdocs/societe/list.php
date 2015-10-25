@@ -338,8 +338,8 @@ else dol_print_error($db);
 
 $sql = "SELECT s.rowid, s.nom as name, s.name_alias, s.barcode, s.town, s.zip, s.datec, s.code_client, s.code_fournisseur, ";
 $sql.= " st.libelle as stcomm, s.fk_stcomm as stcomm_id, s.fk_prospectlevel, s.prefix_comm, s.client, s.fournisseur, s.canvas, s.status as status,";
-$sql.= " s.siren as idprof1, s.siret as idprof2, ape as idprof3, idprof4 as idprof4,";
-$sql.= " s.fk_pays, s.tms as date_update, s.datec as date_creation,";
+$sql.= " s.siren as idprof1, s.siret as idprof2, ape as idprof3, idprof4 as idprof4, s.fk_pays,";
+$sql.= " s.tms as date_update, s.datec as date_creation,";
 $sql.= " typent.code as typent_code";
 // We'll need these fields in order to filter by sale (including the case where the user can only see his prospects)
 if ($search_sale) $sql .= ", sc.fk_soc, sc.fk_user";
@@ -575,10 +575,10 @@ if ($resql)
         's.idprof6'=>array('label'=>$langs->trans("ProfId6Short"), 'checked'=>$checkedprofid6),
     	's.fk_prospectlevel'=>array('label'=>$langs->trans("ProspectLevelShort"), 'checked'=>$checkprospectlevel),
     	's.fk_stcomm'=>array('label'=>$langs->trans("StatusProsp"), 'checked'=>$checkstcomm),
-        's.status'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>200),
         's.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
         's.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
-    );
+        's.status'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
+	);
     $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
     $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
 	print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
@@ -618,9 +618,9 @@ if ($resql)
 	$parameters=array('arrayfields'=>$arrayfields);
     $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
-	if (! empty($arrayfields['s.status']['checked'])) print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"s.status","",$param,'align="center"',$sortfield,$sortorder);
 	if (! empty($arrayfields['s.datec']['checked']))  print_liste_field_titre($langs->trans("DateCreationShort"),$_SERVER["PHP_SELF"],"s.datec","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
 	if (! empty($arrayfields['s.tms']['checked']))    print_liste_field_titre($langs->trans("DateModificationShort"),$_SERVER["PHP_SELF"],"s.tms","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
+	if (! empty($arrayfields['s.status']['checked'])) print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"s.status","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="right"',$sortfield,$sortorder,'maxwidthsearch ');
 	print "</tr>\n";
 
@@ -795,23 +795,23 @@ if ($resql)
 	$parameters=array('arrayfields'=>$arrayfields);
     $reshook=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
-    if (! empty($arrayfields['s.status']['checked']))
-    {
-        // Status
-        print '<td class="liste_titre" align="center">';
-        print $form->selectarray('search_status', array('0'=>$langs->trans('ActivityCeased'),'1'=>$langs->trans('InActivity')),$search_status);
-        print '</td>';
-    }
+    // Date creation
     if (! empty($arrayfields['s.datec']['checked']))
     {
-        // Date creation
         print '<td class="liste_titre">';
         print '</td>';
     }
+    // Date modification
     if (! empty($arrayfields['s.tms']['checked']))
     {
-        // Date modification
         print '<td class="liste_titre">';
+        print '</td>';
+    }
+    // Status
+    if (! empty($arrayfields['s.status']['checked']))
+    {
+        print '<td class="liste_titre" align="center">';
+        print $form->selectarray('search_status', array('0'=>$langs->trans('ActivityCeased'),'1'=>$langs->trans('InActivity')),$search_status);
         print '</td>';
     }
     // Action column
@@ -971,24 +971,24 @@ if ($resql)
 	    $parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj);
 		$reshook=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook
         print $hookmanager->resPrint;
-        // Status
-        if (! empty($arrayfields['s.status']['checked']))
+        // Date creation
+        if (! empty($arrayfields['s.datec']['checked']))
         {
-            print '<td align="center">'.$companystatic->getLibStatut(3).'</td>';
-        }
-	    if (! empty($arrayfields['s.datec']['checked']))
-        {
-            // Date creation
             print '<td align="center">';
             print dol_print_date($obj->date_creation, 'dayhour');
             print '</td>';
         }
+        // Date modification
         if (! empty($arrayfields['s.tms']['checked']))
         {
-            // Date modification
             print '<td align="center">';
             print dol_print_date($obj->date_update, 'dayhour');
             print '</td>';
+        }
+	    // Status
+        if (! empty($arrayfields['s.status']['checked']))
+        {
+            print '<td align="center">'.$companystatic->getLibStatut(3).'</td>';
         }
         // Action column
         print '<td></td>';
