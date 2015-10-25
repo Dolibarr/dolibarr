@@ -91,6 +91,13 @@ function societe_prepare_head(Societe $object)
     	$head[$h][2] = 'agenda';
     	$h++;
     }
+    if (! empty($conf->projet->enabled) && (!empty($user->rights->projet->lire) ))
+    {
+    	$head[$h][0] = DOL_URL_ROOT.'/societe/project.php?socid='.$object->id;
+    	$head[$h][1] = $langs->trans("Projects");
+    	$head[$h][2] = 'project';
+    	$h++;
+    }
     //show categorie tab
     /*if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire))
     {
@@ -456,9 +463,10 @@ function getFormeJuridiqueLabel($code)
  * 		@param	DoliDB		$db				Database handler
  * 		@param	Object		$object			Third party object
  *      @param  string		$backtopage		Url to go once contact is created
+ *      @param  int         $nocreatelink   1=Hide create project link
  *      @return	void
  */
-function show_projects($conf,$langs,$db,$object,$backtopage='')
+function show_projects($conf, $langs, $db, $object, $backtopage='', $nocreatelink=0)
 {
     global $user;
     global $bc;
@@ -470,7 +478,7 @@ function show_projects($conf,$langs,$db,$object,$backtopage='')
         $langs->load("projects");
 
         $buttoncreate='';
-        if (! empty($conf->projet->enabled) && $user->rights->projet->creer)
+        if (! empty($conf->projet->enabled) && $user->rights->projet->creer && empty($nocreatelink))
         {
             //$buttoncreate='<a class="butAction" href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$object->id.'&action=create&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddProject").'</a>';
 			$buttoncreate='<a class="addnewrecord" href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddProject");
@@ -864,13 +872,13 @@ function show_addresses($conf,$langs,$db,$object,$backtopage='')
 /**
  *    	Show html area with actions to do
  *
- * 		@param	Conf		$conf		Object conf
- * 		@param	Translate	$langs		Object langs
- * 		@param	DoliDB		$db			Object db
- * 		@param	Adherent|Societe		$object		Object third party or member
- * 		@param	Contact		$objcon		Object contact
- *      @param  int			$noprint	Return string but does not output it
- *      @return	mixed					Return html part or void if noprint is 1
+ * 		@param	Conf		$conf		       Object conf
+ * 		@param	Translate	$langs		       Object langs
+ * 		@param	DoliDB		$db			       Object db
+ * 		@param	Adherent|Societe    $object    Object third party or member
+ * 		@param	Contact		$objcon	           Object contact
+ *      @param  int			$noprint	       Return string but does not output it
+ *      @return	mixed						   Return html part or void if noprint is 1
  */
 function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
 {

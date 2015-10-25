@@ -1053,7 +1053,7 @@ function complete_elementList_with_modules(&$elementList)
  *	Show array with constants to edit
  *
  *	@param	array	$tableau		Array of constants
- *	@param	int		$strictw3c		Respect W3C (no form into table)
+ *	@param	int		$strictw3c		0=Include form into table (deprecated), 1=Form is outside table to respect W3C (no form into table), 2=No form nor button at all
  *	@return	void
  */
 function form_constantes($tableau,$strictw3c=0)
@@ -1062,7 +1062,7 @@ function form_constantes($tableau,$strictw3c=0)
 
     $form = new Form($db);
 
-    if (! empty($strictw3c)) print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+    if (! empty($strictw3c) && $strictw3c == 1) print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
@@ -1199,7 +1199,7 @@ function form_constantes($tableau,$strictw3c=0)
     }
     print '</table>';
 
-    if (! empty($strictw3c))
+    if (! empty($strictw3c) && $strictw3c == 1)
     {
     	print '<div align="center"><input type="submit" class="button" value="'.$langs->trans("Update").'" name="update"></div>';
     	print "</form>\n";

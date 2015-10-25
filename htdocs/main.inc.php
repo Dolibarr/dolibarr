@@ -1485,14 +1485,10 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	    // Add login user link
 	    $toprightmenu.='<div class="login_block_user">';
 
-	    // User photo
-	    $toprightmenu.='<div class="inline-block nowrap"><div class="inline-block login_block_elem" style="padding: 0px;">';
-	    $toprightmenu.=$user->getPhotoUrl(0,0,'loginphoto');
-	    $toprightmenu.='</div></div>';
-
-	    // Login name with tooltip
-		$toprightmenu.='<div class="inline-block nowrap"><div class="inline-block login_block_elem login_block_elem_name" style="padding: 0px;">';
-        $toprightmenu.=$user->getNomurl(0, '', true, 0, 11, 0, ($user->firstname ? 'firstname' : -1),'atoplogin');
+	    // Login name with photo and tooltip
+		$mode=-1;
+	    $toprightmenu.='<div class="inline-block nowrap"><div class="inline-block login_block_elem login_block_elem_name" style="padding: 0px;">';
+        $toprightmenu.=$user->getNomUrl($mode, '', true, 0, 11, 0, ($user->firstname ? 'firstname' : -1),'atoplogin');
         $toprightmenu.='</div></div>';
 
 		$toprightmenu.='</div>';

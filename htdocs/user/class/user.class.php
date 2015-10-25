@@ -126,13 +126,17 @@ class User extends CommonObject
 	{
 		$this->db = $db;
 
-		// Preference utilisateur
+		// User preference
 		$this->liste_limit = 0;
 		$this->clicktodial_loaded = 0;
 
+		// For cache usage
 		$this->all_permissions_are_loaded = 0;
-		$this->admin=0;
-
+		
+		// Force some default values 
+		$this->admin = 0;
+		$this->employee = 1;
+		
 		$this->conf				    = new stdClass();
 		$this->rights				= new stdClass();
 		$this->rights->user			= new stdClass();
@@ -1156,7 +1160,7 @@ class User extends CommonObject
 		// Clean parameters
 		$this->lastname     = trim($this->lastname);
 		$this->firstname    = trim($this->firstname);
-		$this->employee    	= trim($this->employee);
+		$this->employee    	= $this->employee?$this->employee:0;
 		$this->login        = trim($this->login);
 		$this->gender       = trim($this->gender);
 		$this->pass         = trim($this->pass);
@@ -1821,14 +1825,15 @@ class User extends CommonObject
 	 *	@param	int		$width			Width of image
 	 *	@param	int		$height			Height of image
 	 *  @param	string	$cssclass		Force a css class
+     * 	@param	string	$imagesize		'mini', 'small' or '' (original)
 	 *	@return	string					String with URL link
 	 */
-	function getPhotoUrl($width, $height, $cssclass='')
+	function getPhotoUrl($width, $height, $cssclass='', $imagesize='')
 	{
 		$result='';
 
 		$result.='<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'">';
-	    $result.=Form::showphoto('userphoto', $this, $width, $height, 0, $cssclass);
+	    $result.=Form::showphoto('userphoto', $this, $width, $height, 0, $cssclass, $imagesize);
 	    $result.='</a>';
 
 	    return $result;
@@ -1838,25 +1843,27 @@ class User extends CommonObject
 	 *  Return a link to the user card (with optionaly the picto)
 	 * 	Use this->id,this->lastname, this->firstname
 	 *
-	 *	@param	int		$withpicto			Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
+	 *	@param	int		$withpictoimg		Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto, -1=Include photo into link, -2=Only picto photo)
 	 *	@param	string	$option				On what the link point to
-     *  @param  integer $infologin      	Add connection info to the tooltip
-     *  @param	integer	$notooltip			1=Disable tooltip
+     *  @param  integer $infologin      	Add complete info tooltip
+     *  @param	integer	$notooltip			1=Disable tooltip on picto and name
      *  @param	int		$maxlen				Max length of visible user name
      *  @param	int		$hidethirdpartylogo	Hide logo of thirdparty if user is external user
-     *  @param  string  $mode               'firstname'=Show only firstname
+     *  @param  string  $mode               ''=Show firstname and lastname, 'firstname'=Show only firstname, 'login'=Show login
      *  @param  string  $morecss            Add more css on link
 	 *	@return	string						String with URL
 	 */
-	function getNomUrl($withpicto=0, $option='', $infologin=0, $notooltip=0, $maxlen=24, $hidethirdpartylogo=0, $mode='',$morecss='')
+	function getNomUrl($withpictoimg=0, $option='', $infologin=0, $notooltip=0, $maxlen=24, $hidethirdpartylogo=0, $mode='',$morecss='')
 	{
 		global $langs, $conf, $db;
         global $dolibarr_main_authentication, $dolibarr_main_demo;
         global $menumanager;
 
-
+		if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && $withpictoimg) $withpictoimg=0;
+			
         $result = '';
         $companylink = '';
+        $link = '';
 
         $label = '<u>' . $langs->trans("User") . '</u>';
         $label.= '<div width="100%">';
@@ -1879,7 +1886,7 @@ class User extends CommonObject
         if (! empty($this->photo))
         {
         	$label.= '<div class="photointooltip">';
-            $label.= Form::showphoto('userphoto', $this, 80, 0, 0, 'photowithmargin photologintooltip');
+            $label.= Form::showphoto('userphoto', $this, 80, 0, 0, 'photowithmargin photologintooltip', 'small', 0, 1);
         	$label.= '</div><div style="clear: both;"></div>';
         }
 
@@ -1904,18 +1911,41 @@ class User extends CommonObject
             if (! empty($_SESSION["disablemodules"])) $label.= '<br><b>'.$langs->trans("DisabledModules").':</b> <br>'.join(', ',explode(',',$_SESSION["disablemodules"]));
         }
 
-
-        $link = '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'"';
-        $link.= ($notooltip?'':' title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip'.($morecss?' '.$morecss:'').'"');
+        $link.= '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'"';
+        if (empty($notooltip))
+        {
+            if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) 
+            {
+                $langs->load("users");
+                $label=$langs->trans("ShowUser");
+                $link.=' alt="'.dol_escape_htmltag($label, 1).'"'; 
+            }
+            $link.= ' title="'.dol_escape_htmltag($label, 1).'"';
+            $link.= ' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
+        }
         $link.= '>';
 		$linkend='</a>';
 
-        if ($withpicto)
+        //if ($withpictoimg == -1) $result.='<div class="nowrap">';
+		$result.=$link;
+        if ($withpictoimg)
         {
-            $result.=($link.img_object(($notooltip?'':$label), 'user', ($notooltip?'':'class="classfortooltip"')).$linkend);
-            if ($withpicto != 2) $result.=' ';
+        	$paddafterimage='';
+            if (abs($withpictoimg) == 1) $paddafterimage='style="padding-right: 3px;"';
+        	if ($withpictoimg > 0) $picto='<div class="inline-block valignmiddle'.($morecss?' userimg'.$morecss:'').'">'.img_object('', 'user', $paddafterimage.' '.($notooltip?'':'class="classfortooltip"')).'</div>';
+        	else $picto='<div class="inline-block valignmiddle'.($morecss?' userimg'.$morecss:'').'"'.($paddafterimage?' '.$paddafterimage:'').'>'.Form::showphoto('userphoto', $this, 0, 0, 0, 'loginphoto', 'mini', 0, 1).'</div>';
+            $result.=$picto;
 		}
-		$result.= $link . $this->getFullName($langs,'',($mode == 'firstname' ? 2 : -1),$maxlen) . $linkend . $companylink;
+		if (abs($withpictoimg) != 2) 
+		{
+			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $result.='<div class="inline-block valignmiddle'.($morecss?' usertext'.$morecss:'').'">';
+			if ($mode == 'login') $result.=dol_trunc($this->login, $maxlen);
+			else $result.=$this->getFullName($langs,'',($mode == 'firstname' ? 2 : -1),$maxlen);
+			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $result.='</div>';
+		}
+		$result.=$linkend;
+		//if ($withpictoimg == -1) $result.='</div>';
+		$result.=$companylink;
 		return $result;
 	}
 
@@ -2370,7 +2400,7 @@ class User extends CommonObject
 		$this->load_parentof();
 
 		// Init $this->users array
-		$sql = "SELECT DISTINCT u.rowid, u.firstname, u.lastname, u.fk_user, u.fk_soc, u.login, u.email, u.gender, u.admin, u.statut, u.entity";	// Distinct reduce pb with old tables with duplicates
+		$sql = "SELECT DISTINCT u.rowid, u.firstname, u.lastname, u.fk_user, u.fk_soc, u.login, u.email, u.gender, u.admin, u.statut, u.photo, u.entity";	// Distinct reduce pb with old tables with duplicates
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 		if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && (! empty($conf->multicompany->transverse_mode) || (! empty($user->admin) && empty($user->entity))))
 		{
@@ -2401,6 +2431,7 @@ class User extends CommonObject
 				$this->users[$obj->rowid]['email'] = $obj->email;
 				$this->users[$obj->rowid]['gender'] = $obj->gender;
 				$this->users[$obj->rowid]['admin'] = $obj->admin;
+				$this->users[$obj->rowid]['photo'] = $obj->photo;
 				$i++;
 			}
 		}
