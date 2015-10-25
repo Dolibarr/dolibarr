@@ -5258,7 +5258,7 @@ class Form
      *      @param  int         $addlinktofullsize  Add link to fullsize image
      * 	  	@return string    						HTML code to output photo
      */
-    static function showphoto($modulepart, $object, $width=100, $height=0, $caneditfield=0, $cssclass='photowithmargin', $imagesize='',$addlinktofullsize=1)
+    static function showphoto($modulepart, $object, $width=100, $height=0, $caneditfield=0, $cssclass='photowithmargin', $imagesize='', $addlinktofullsize=1)
     {
         global $conf,$langs;
 
@@ -5294,7 +5294,6 @@ class Form
             $dir=$conf->user->dir_output;
             if (! empty($object->photo))
             {
-                //var_dump(getImageFileNameForSize($object->photo, '_mini'));
                 if ($imagesize == 'mini') $file=get_exdir($id, 2, 0, 0, $object, 'user').getImageFileNameForSize($object->photo, '_mini');
                 else if ($imagesize == 'small') $file=get_exdir($id, 2, 0, 0, $object, 'user').getImageFileNameForSize($object->photo, '_small');
                 else $file=get_exdir($id, 2, 0, 0, $object, 'user').$object->photo;
