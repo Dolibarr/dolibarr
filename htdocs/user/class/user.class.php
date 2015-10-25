@@ -1886,7 +1886,7 @@ class User extends CommonObject
         if (! empty($this->photo))
         {
         	$label.= '<div class="photointooltip">';
-            $label.= Form::showphoto('userphoto', $this, 80, 0, 0, 'photowithmargin photologintooltip', 'small');
+            $label.= Form::showphoto('userphoto', $this, 80, 0, 0, 'photowithmargin photologintooltip', 'small', 0, 1);
         	$label.= '</div><div style="clear: both;"></div>';
         }
 
@@ -1933,7 +1933,7 @@ class User extends CommonObject
         	$paddafterimage='';
             if (abs($withpictoimg) == 1) $paddafterimage='style="padding-right: 3px;"';
         	if ($withpictoimg > 0) $picto='<div class="inline-block valignmiddle'.($morecss?' userimg'.$morecss:'').'">'.img_object('', 'user', $paddafterimage.' '.($notooltip?'':'class="classfortooltip"')).'</div>';
-        	else $picto='<div class="inline-block valignmiddle'.($morecss?' userimg'.$morecss:'').'"'.($paddafterimage?' '.$paddafterimage:'').'>'.Form::showphoto('userphoto', $this, 0, 0, 0, 'loginphoto', 0, 0, 'mini').'</div>';
+        	else $picto='<div class="inline-block valignmiddle'.($morecss?' userimg'.$morecss:'').'"'.($paddafterimage?' '.$paddafterimage:'').'>'.Form::showphoto('userphoto', $this, 0, 0, 0, 'loginphoto', 'mini', 0, 1).'</div>';
             $result.=$picto;
 		}
 		if (abs($withpictoimg) != 2) 

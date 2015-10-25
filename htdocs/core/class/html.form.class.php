@@ -5256,9 +5256,10 @@ class Form
      * 		@param	string		$cssclass			CSS name to use on img for photo
      * 		@param	string		$imagesize		    'mini', 'small' or '' (original)
      *      @param  int         $addlinktofullsize  Add link to fullsize image
+     *      @param  int         $cache              1=Accept to use image in cache
      * 	  	@return string    						HTML code to output photo
      */
-    static function showphoto($modulepart, $object, $width=100, $height=0, $caneditfield=0, $cssclass='photowithmargin', $imagesize='', $addlinktofullsize=1)
+    static function showphoto($modulepart, $object, $width=100, $height=0, $caneditfield=0, $cssclass='photowithmargin', $imagesize='', $addlinktofullsize=1, $cache=0)
     {
         global $conf,$langs;
 
@@ -5274,8 +5275,8 @@ class Form
             $smallfile=preg_replace('/(\.png|\.gif|\.jpg|\.jpeg|\.bmp)/i','_small\\1',$smallfile);
             if (! empty($object->logo)) 
             {
-                if ($imagesize == 'mini') $file=$id.'/logos/thumbs/'.getImageFileNameForSize($object->logo, '_mini');
-                else if ($imagesize == 'small') $file=$id.'/logos/thumbs/'.getImageFileNameForSize($object->logo, '_small');
+                if ((string) $imagesize == 'mini') $file=$id.'/logos/thumbs/'.getImageFileNameForSize($object->logo, '_mini');
+                else if ((string) $imagesize == 'small') $file=$id.'/logos/thumbs/'.getImageFileNameForSize($object->logo, '_small');
                 else $file=$id.'/logos/thumbs/'.$smallfile;
             }
         }
@@ -5284,8 +5285,8 @@ class Form
             $dir=$conf->societe->multidir_output[$entity].'/contact';
             if (! empty($object->photo))
             {
-                if ($imagesize == 'mini') $file=$id.'/photos/thumbs/'.getImageFileNameForSize($object->photo, '_mini');
-                else if ($imagesize == 'small') $file=$id.'/photos/thumbs/'.getImageFileNameForSize($object->photo, '_small');
+                if ((string) $imagesize == 'mini') $file=$id.'/photos/thumbs/'.getImageFileNameForSize($object->photo, '_mini');
+                else if ((string) $imagesize == 'small') $file=$id.'/photos/thumbs/'.getImageFileNameForSize($object->photo, '_small');
                 else $file=$id.'/photos/'.$object->photo;
             }
         }
@@ -5294,8 +5295,8 @@ class Form
             $dir=$conf->user->dir_output;
             if (! empty($object->photo))
             {
-                if ($imagesize == 'mini') $file=get_exdir($id, 2, 0, 0, $object, 'user').getImageFileNameForSize($object->photo, '_mini');
-                else if ($imagesize == 'small') $file=get_exdir($id, 2, 0, 0, $object, 'user').getImageFileNameForSize($object->photo, '_small');
+                if ((string) $imagesize == 'mini') $file=get_exdir($id, 2, 0, 0, $object, 'user').getImageFileNameForSize($object->photo, '_mini');
+                else if ((string) $imagesize == 'small') $file=get_exdir($id, 2, 0, 0, $object, 'user').getImageFileNameForSize($object->photo, '_small');
                 else $file=get_exdir($id, 2, 0, 0, $object, 'user').$object->photo;
             }
             if (! empty($conf->global->MAIN_OLD_IMAGE_LINKS)) $altfile=$object->id.".jpg";	// For backward compatibility
@@ -5306,8 +5307,8 @@ class Form
             $dir=$conf->adherent->dir_output;
             if (! empty($object->photo)) 
             {
-                if ($imagesize == 'mini') $file=get_exdir($id, 2, 0, 0, $object, 'member').'photos/'.getImageFileNameForSize($object->photo, '_mini');
-                else if ($imagesize == 'small') $file=get_exdir($id, 2, 0, 0, $object, 'member').'photos/'.getImageFileNameForSize($object->photo, '_small');
+                if ((string) $imagesize == 'mini') $file=get_exdir($id, 2, 0, 0, $object, 'member').'photos/'.getImageFileNameForSize($object->photo, '_mini');
+                else if ((string) $imagesize == 'small') $file=get_exdir($id, 2, 0, 0, $object, 'member').'photos/'.getImageFileNameForSize($object->photo, '_small');
                 else $file=get_exdir($id, 2, 0, 0, $object, 'member').'photos/'.$object->photo;
             }
             if (! empty($conf->global->MAIN_OLD_IMAGE_LINKS)) $altfile=$object->id.".jpg";	// For backward compatibility
@@ -5316,14 +5317,18 @@ class Form
         else 
         {
         	$dir=$conf->$modulepart->dir_output;
-        	if (! empty($object->photo)) $file=get_exdir($id, 2, 0, 0, $object, $modulepart).'photos/'.$object->photo;
+        	if (! empty($object->photo)) 
+        	{
+                if ((string) $imagesize == 'mini') $file=get_exdir($id, 2, 0, 0, $object, $modulepart).'photos/'.getImageFileNameForSize($object->photo, '_mini');
+                else if ((string) $imagesize == 'small') $file=get_exdir($id, 2, 0, 0, $object, $modulepart).'photos/'.getImageFileNameForSize($object->photo, '_small');
+        	    else $file=get_exdir($id, 2, 0, 0, $object, $modulepart).'photos/'.$object->photo;
+        	}
         	if (! empty($conf->global->MAIN_OLD_IMAGE_LINKS)) $altfile=$object->id.".jpg";	// For backward compatibility
         	$email=$object->email;
         }
 
         if ($dir)
         {
-            $cache='0';
             if ($file && file_exists($dir."/".$file))
             {
                 if ($addlinktofullsize) $ret.='<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($file).'&cache='.$cache.'">';
