@@ -1283,7 +1283,8 @@ if (empty($reshook))
 			// Ecrase $txtva par celui du produit
 			// Ecrase $base_price_type par celui du produit
 			// Replaces $fk_unit with the product's
-			if (! empty($idprod)) {
+			if (! empty($idprod)) 
+			{
 				$prod = new Product($db);
 				$prod->fetch($idprod);
 
@@ -1304,8 +1305,11 @@ if (empty($reshook))
 						$pu_ttc = $prod->multiprices_ttc[$object->thirdparty->price_level];
 						$price_min = $prod->multiprices_min[$object->thirdparty->price_level];
 						$price_base_type = $prod->multiprices_base_type[$object->thirdparty->price_level];
-						if (isset($prod->multiprices_tva_tx[$object->thirdparty->price_level])) $tva_tx=$prod->multiprices_tva_tx[$object->thirdparty->price_level];
-						if (isset($prod->multiprices_recuperableonly[$object->thirdparty->price_level])) $tva_npr=$prod->multiprices_recuperableonly[$object->thirdparty->price_level];
+						if (! empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL))  // using this option is a bug. kept for backward compatibility
+						{
+                            if (isset($prod->multiprices_tva_tx[$object->thirdparty->price_level])) $tva_tx=$prod->multiprices_tva_tx[$object->thirdparty->price_level];
+                            if (isset($prod->multiprices_recuperableonly[$object->thirdparty->price_level])) $tva_npr=$prod->multiprices_recuperableonly[$object->thirdparty->price_level];
+						}
 					}
 					elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 					{
@@ -1318,26 +1322,30 @@ if (empty($reshook))
 						$result = $prodcustprice->fetch_all('', '', 0, 0, $filter);
 						if ($result) {
 							if (count($prodcustprice->lines) > 0) {
-								$pu_ht = price($prodcustprice->lines [0]->price);
-								$pu_ttc = price($prodcustprice->lines [0]->price_ttc);
-								$price_base_type = $prodcustprice->lines [0]->price_base_type;
-								$prod->tva_tx = $prodcustprice->lines [0]->tva_tx;
+								$pu_ht = price($prodcustprice->lines[0]->price);
+								$pu_ttc = price($prodcustprice->lines[0]->price_ttc);
+								$price_base_type = $prodcustprice->lines[0]->price_base_type;
+								$prod->tva_tx = $prodcustprice->lines[0]->tva_tx;
 							}
 						}
 					}
 
-					// if price ht is forced (ie: calculated by margin rate and cost price)
-					if (! empty($price_ht)) {
+					// if price ht was forced (ie: from gui when calculated by margin rate and cost price)
+					if (! empty($price_ht))
+					{
 						$pu_ht = price2num($price_ht, 'MU');
 						$pu_ttc = price2num($pu_ht * (1 + ($tva_tx / 100)), 'MU');
 					}
-
 					// On reevalue prix selon taux tva car taux tva transaction peut etre different
 					// de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
-					elseif ($tva_tx != $prod->tva_tx) {
-						if ($price_base_type != 'HT') {
+					elseif ($tva_tx != $prod->tva_tx) 
+					{
+						if ($price_base_type != 'HT') 
+						{
 							$pu_ht = price2num($pu_ttc / (1 + ($tva_tx / 100)), 'MU');
-						} else {
+						}
+						else 
+						{
 							$pu_ttc = price2num($pu_ht * (1 + ($tva_tx / 100)), 'MU');
 						}
 					}
