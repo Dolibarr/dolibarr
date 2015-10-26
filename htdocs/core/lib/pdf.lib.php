@@ -1088,6 +1088,12 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 	if ($idprod)
 	{
 		$prodser->fetch($idprod);
+
+        //can change ref in hook
+        if(isset($object->lines[$i]->ref)){
+        $prodser->ref = $object->lines[$i]->ref;
+        }
+
 		// If a predefined product and multilang and on other lang, we renamed label with label translated
 		if (! empty($conf->global->MAIN_MULTILANGS) && ($outputlangs->defaultlang != $langs->defaultlang))
 		{
