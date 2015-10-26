@@ -4,7 +4,7 @@
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2012-2013 Philippe Grand       <philippe.grand@atoo-net.com>
+ * Copyright (C) 2012-2015 Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2015      Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -133,7 +133,7 @@ if (empty($reshook))
 			if ($userid != $user->id && $userid != $object->user_id)
 			{
 				$error++;
-				setEventMessage($langs->trans("ErrorUserPermissionAllowsToLinksToItselfOnly"), 'errors');
+				setEventMessages($langs->trans("ErrorUserPermissionAllowsToLinksToItselfOnly"), null, 'errors');
 			}
 		}
 
@@ -169,7 +169,7 @@ if (empty($reshook))
 						$thirdparty=new Societe($db);
 						$thirdparty->fetch($socid);
 						$error++;
-						setEventMessage($langs->trans("ErrorMemberIsAlreadyLinkedToThisThirdParty",$othermember->getFullName($langs),$othermember->login,$thirdparty->name), 'errors');
+						setEventMessages($langs->trans("ErrorMemberIsAlreadyLinkedToThisThirdParty",$othermember->getFullName($langs),$othermember->login,$thirdparty->name), null, 'errors');
 					}
 				}
 
@@ -195,12 +195,12 @@ if (empty($reshook))
 			if ($result < 0)
 			{
 				$langs->load("errors");
-				setEventMessage($langs->trans($nuser->error), 'errors');
+				setEventMessages($langs->trans($nuser->error), null, 'errors');
 			}
 		}
 		else
 		{
-			setEventMessage($object->error, 'errors');
+			setEventMessages($object->errors, $object->error, 'errors');
 		}
 	}
 
@@ -216,13 +216,13 @@ if (empty($reshook))
 			if ($result < 0)
 			{
 				$langs->load("errors");
-				setEventMessage($langs->trans($company->error), 'errors');
-				setEventMessage($company->errors, 'errors');
+				setEventMessages($langs->trans($company->error), null, 'errors');
+				setEventMessages($company->error, $company->errors, 'errors');
 			}
 		}
 		else
 		{
-			setEventMessage($object->error, 'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 
@@ -236,7 +236,7 @@ if (empty($reshook))
 			$result=$object->send_an_email($langs->transnoentitiesnoconv("ThisIsContentOfYourCard")."\n\n%INFOS%\n\n",$langs->transnoentitiesnoconv("CardContent"));
 
 			$langs->load("mails");
-			setEventMessage($langs->trans("MailSuccessfulySent", $from, $object->email));
+			setEventMessages($langs->trans("MailSuccessfulySent", $from, $object->email), null, 'mesgs');
 		}
 	}
 
@@ -352,7 +352,7 @@ if (empty($reshook))
 							$newfile=$dir.'/'.dol_sanitizeFileName($_FILES['photo']['name']);
 							if (! dol_move_uploaded_file($_FILES['photo']['tmp_name'],$newfile,1,0,$_FILES['photo']['error']) > 0)
 							{
-								setEventMessage($langs->trans("ErrorFailedToSaveFile"), 'errors');
+								setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
 							}
 							else
 							{
@@ -368,7 +368,7 @@ if (empty($reshook))
 					}
 					else
 					{
-						setEventMessage("ErrorBadImageFormat", 'errors');
+						setEventMessages("ErrorBadImageFormat", null, 'errors');
 					}
 				}
 				else
@@ -397,9 +397,9 @@ if (empty($reshook))
 			else
 			{
 				if ($object->error) {
-					setEventMessage($object->error, 'errors');
+					setEventMessages($object->error, $object->errors, 'errors');
 				} else {
-					setEventMessage($object->errors, 'errors');
+					setEventMessages($object->error, $object->errors, 'errors');
 				}
 				$action='';
 			}
@@ -503,7 +503,7 @@ if (empty($reshook))
 				if ($num) {
 					$error++;
 					$langs->load("errors");
-					setEventMessage($langs->trans("ErrorLoginAlreadyExists",$login), 'errors');
+					setEventMessages($langs->trans("ErrorLoginAlreadyExists",$login), null, 'errors');
 				}
 			}
 			if (empty($pass)) {
@@ -528,7 +528,7 @@ if (empty($reshook))
 		if ($conf->global->ADHERENT_MAIL_REQUIRED && ! isValidEMail($email)) {
 			$error++;
 			$langs->load("errors");
-			setEventMessage($langs->trans("ErrorBadEMail",$email), 'errors');
+			setEventMessages($langs->trans("ErrorBadEMail",$email), null, 'errors');
 		}
 		$public=0;
 		if (isset($public)) $public=1;
@@ -554,9 +554,9 @@ if (empty($reshook))
 				$db->rollback();
 
 				if ($object->error) {
-					setEventMessage($object->error, 'errors');
+					setEventMessages($object->error, $object->errors, 'errors');
 				} else {
-					setEventMessage($object->errors, 'errors');
+					setEventMessages($object->error, $object->errors, 'errors');
 				}
 
 				$action = 'create';
@@ -609,7 +609,7 @@ if (empty($reshook))
 				if ($result < 0)
 				{
 					$error++;
-					setEventMessage($object->error, 'errors');
+					setEventMessages($object->error, $object->errors, 'errors');
 				}
 			}
 		}
@@ -617,9 +617,9 @@ if (empty($reshook))
 		{
 			$error++;
 			if ($object->error) {
-				setEventMessage($object->error, 'errors');
+				setEventMessages($object->error, $object->errors, 'errors');
 			} else {
-				setEventMessage($object->errors, 'errors');
+				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
 
@@ -654,7 +654,7 @@ if (empty($reshook))
 				if ($result < 0)
 				{
 					$error++;
-					setEventMessage($object->error, 'errors');
+					setEventMessages($object->error, $object->errors, 'errors');
 				}
 			}
 			else
@@ -662,9 +662,9 @@ if (empty($reshook))
 				$error++;
 
 				if ($object->error) {
-					setEventMessage($object->error, 'errors');
+					setEventMessages($object->error, $object->errors, 'errors');
 				} else {
-					setEventMessage($object->errors, 'errors');
+					setEventMessages($object->error, $object->errors, 'errors');
 				}
 				$action='';
 			}
@@ -683,7 +683,7 @@ if (empty($reshook))
 		{
 			if (!$mailmanspip->del_to_spip($object))
 			{
-				setEventMessage($langs->trans('DeleteIntoSpipError').': '.$mailmanspip->error, 'errors');
+				setEventMessages($langs->trans('DeleteIntoSpipError').': '.$mailmanspip->error, null, 'errors');
 			}
 		}
 	}
@@ -694,7 +694,7 @@ if (empty($reshook))
 		{
 			if (!$mailmanspip->add_to_spip($object))
 			{
-				setEventMessage($langs->trans('AddIntoSpipError').': '.$mailmanspip->error, 'errors');
+				setEventMessages($langs->trans('AddIntoSpipError').': '.$mailmanspip->error, null, 'errors');
 			}
 		}
 	}

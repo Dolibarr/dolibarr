@@ -44,11 +44,11 @@ if ($action == 'setvalue' && $user->admin)
     
     if ($result1 >= 0 && $result2 >= 0)
     {
-		setEventMessage($langs->trans("SetupSaved"));
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
     else
     {
-        setEventMessage($langs->trans("Error"),'errors');
+        setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
 

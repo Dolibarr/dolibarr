@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2011		Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2015	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2015       Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -125,19 +125,19 @@ if ( ($action == 'update' && empty($_POST["cancel"]))
 					$error++;
 					$langs->load("errors");
 					$tmparray=explode(':',$result);
-					setEventMessage($langs->trans('ErrorFileIsInfectedWithAVirus',$tmparray[1]),'errors');
+					setEventMessages($langs->trans('ErrorFileIsInfectedWithAVirus',$tmparray[1]), null, 'errors');
 				}
 				else
 				{
 					$error++;
-					setEventMessage($langs->trans("ErrorFailedToSaveFile"),'errors');
+					setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
 				}
 			}
 			else
 			{
 				$error++;
 				$langs->load("errors");
-				setEventMessage($langs->trans("ErrorBadImageFormat"),'errors');
+				setEventMessages($langs->trans("ErrorBadImageFormat"), null, 'errors');
 			}
 		}
 	}
@@ -230,7 +230,7 @@ if ($action == 'addthumb')
 		{
 			$error++;
 			$langs->load("errors");
-			setEventMessage($langs->trans("ErrorBadImageFormat"),'errors');
+			setEventMessages($langs->trans("ErrorBadImageFormat"), null, 'errors');
 			dol_syslog($langs->transnoentities("ErrorBadImageFormat"),LOG_WARNING);
 		}
 	}
@@ -238,7 +238,7 @@ if ($action == 'addthumb')
 	{
 		$error++;
 		$langs->load("errors");
-		setEventMessage($langs->trans("ErrorFileDoesNotExists",$_GET["file"]),'errors');
+		setEventMessages($langs->trans("ErrorFileDoesNotExists",$_GET["file"]), null, 'errors');
 		dol_syslog($langs->transnoentities("ErrorFileDoesNotExists",$_GET["file"]),LOG_WARNING);
 	}
 }
