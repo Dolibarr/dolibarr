@@ -4512,10 +4512,13 @@ class Form
      *  @param	int		$minimumInputLength		Minimum Input Length
      *  @param	string	$morecss				Add more class to css styles
      *  @param  int     $callurlonselect        If set to 1, some code is added so an url return by the ajax is called when value is selected.
+     *  @param  string  $placeholder            String to use as placeholder
      * 	@return	string							HTML select string.
      */
-    static function selectArrayAjax($htmlname, $url, $id='', $moreparam='', $moreparamtourl='', $disabled=0, $minimumInputLength=1, $morecss='', $callurlonselect=0)
+    static function selectArrayAjax($htmlname, $url, $id='', $moreparam='', $moreparamtourl='', $disabled=0, $minimumInputLength=1, $morecss='', $callurlonselect=0, $placeholder='')
     {
+        global $langs;
+        
     	$out = '';
 
     	$tmpplugin='select2';
@@ -4559,6 +4562,7 @@ class Form
 			    		},*/
 			    		cache: true
 			    	},
+				    placeholder: "'.dol_escape_js($placeholder).'",
 			    	escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
 			    	minimumInputLength: '.$minimumInputLength.',
 			        formatResult: function(result, container, query, escapeMarkup) {

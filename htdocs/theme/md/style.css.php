@@ -1173,6 +1173,10 @@ div.vmenu, td.vmenu {
 	<?php } ?>
 }
 
+.vmenusearchselectcombo {
+	width: 170px;
+}
+
 .menu_contenu { padding-top: 4px; padding-bottom: 3px;}
 #menu_contenu_logo { padding-right: 4px; }
 

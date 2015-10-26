@@ -45,6 +45,8 @@ $search_user=GETPOST('search_user','alpha');
 $search_login=GETPOST('search_login','alpha');
 $search_lastname=GETPOST('search_lastname','alpha');
 $search_firstname=GETPOST('search_firstname','alpha');
+$search_accountancy_code=GETPOST('search_accountancy_code','alpha');
+$search_email=GETPOST('search_email','alpha');
 $search_statut=GETPOST('search_statut','alpha');
 $search_thirdparty=GETPOST('search_thirdparty','alpha');
 $search_supervisor=GETPOST('search_supervisor','alpha');
@@ -82,6 +84,8 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 	$search_login="";
 	$search_lastname="";
 	$search_firstname="";
+	$search_accountancy_code="";
+	$search_email="";
 	$search_statut="";
 	$search_thirdparty="";
 	$search_supervisor="";
@@ -94,8 +98,8 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
 	'u.login'=>"Login",
-	'u.firstname'=>"Firstname",
     'u.lastname'=>"Lastname",
+    'u.firstname'=>"Firstname",
 	'u.accountancy_code'=>"AccountancyCode",
 	'u.email'=>"EMail",
     'u.note'=>"Note"
@@ -124,7 +128,7 @@ $buttonviewhierarchy='<form action="'.DOL_URL_ROOT.'/user/hierarchy.php'.(($sear
 
 print load_fiche_titre($langs->trans("ListOfUsers"), $buttonviewhierarchy);
 
-$sql = "SELECT u.rowid, u.lastname, u.firstname, u.admin, u.fk_soc, u.login, u.email, u.gender, u.photo,";
+$sql = "SELECT u.rowid, u.lastname, u.firstname, u.admin, u.fk_soc, u.login, u.email, u.accountancy_code, u.gender, u.photo,";
 $sql.= " u.datelastlogin, u.datepreviouslogin,";
 $sql.= " u.ldap_sid, u.statut, u.entity,";
 $sql.= " u.tms as date_update, u.datec as date_creation,";
@@ -148,14 +152,16 @@ else
 	$sql.= " WHERE u.entity IN (".getEntity('user',1).")";
 }
 if ($socid > 0) $sql.= " AND u.fk_soc = ".$socid;
-if ($search_user != '')       $sql.=natural_search(array('u.login', 'u.lastname', 'u.firstname'), $search_user);
+//if ($search_user != '')       $sql.=natural_search(array('u.login', 'u.lastname', 'u.firstname'), $search_user);
 if ($search_supervisor > 0)   $sql.= " AND u.fk_user = ".$search_supervisor;
 if ($search_thirdparty != '') $sql.=natural_search(array('s.nom'), $search_thirdparty);
 if ($search_login != '')      $sql.= natural_search("u.login", $search_login);
 if ($search_lastname != '')   $sql.= natural_search("u.lastname", $search_lastname);
 if ($search_firstname != '')  $sql.= natural_search("u.firstname", $search_firstname);
+if ($search_accountancy_code != '')  $sql.= natural_search("u.accountancy_code", $search_accountancy_code);
+if ($search_email != '')  $sql.= natural_search("u.email", $search_email);
 if ($search_statut != '' && $search_statut >= 0) $sql.= " AND (u.statut=".$search_statut.")";
-if ($sall)                    $sql.= natural_search($fieldstosearchall, $sall);
+if ($sall)                    $sql.= natural_search(array_keys($fieldstosearchall), $sall);
 // Add where from extra fields
 foreach ($search_array_options as $key => $val)
 {
@@ -188,6 +194,8 @@ if ($result)
     if ($search_login != '') $param.="&search_login=".$search_login;
     if ($search_lastname != '') $param.="&search_lastname=".$search_lastname;
     if ($search_firstname != '') $param.="&search_firstname=".$search_firstname;
+    if ($search_accountancy_code != '') $param.="&search_accountancy_code=".$search_accountancy_code;
+    if ($search_email != '') $param.="&search_email=".$search_email;
     if ($search_supervisor > 0) $param.="&search_supervisor=".$search_supervisor;
     if ($search_statut != '') $param.="&search_statut=".$search_statut;
     if ($optioncss != '') $param.='&optioncss='.$optioncss;
@@ -217,7 +225,9 @@ if ($result)
         'u.login'=>array('label'=>$langs->trans("Login"), 'checked'=>1),
 	    'u.lastname'=>array('label'=>$langs->trans("Lastname"), 'checked'=>1),
         'u.firstname'=>array('label'=>$langs->trans("Firstname"), 'checked'=>1),
-        'u.fk_soc'=>array('label'=>$langs->trans("Company"), 'checked'=>1),
+        'u.accountancy_code'=>array('label'=>$langs->trans("AccountancyCode"), 'checked'=>0),
+	    'u.email'=>array('label'=>$langs->trans("EMail"), 'checked'=>1),
+	    'u.fk_soc'=>array('label'=>$langs->trans("Company"), 'checked'=>1),
 	    'u.entity'=>array('label'=>$langs->trans("Entity"), 'checked'=>1, 'enabled'=>(! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode))),
 	    'u.fk_user'=>array('label'=>$langs->trans("HierarchicalResponsible"), 'checked'=>1),
 	    'u.datelastlogin'=>array('label'=>$langs->trans("LastConnexion"), 'checked'=>1, 'position'=>100),
@@ -233,6 +243,8 @@ if ($result)
     if (! empty($arrayfields['u.login']['checked']))          print_liste_field_titre($langs->trans("Login"),$_SERVER['PHP_SELF'],"u.login",$param,"","",$sortfield,$sortorder);
     if (! empty($arrayfields['u.lastname']['checked']))       print_liste_field_titre($langs->trans("Lastname"),$_SERVER['PHP_SELF'],"u.lastname",$param,"","",$sortfield,$sortorder);
     if (! empty($arrayfields['u.firstname']['checked']))      print_liste_field_titre($langs->trans("FirstName"),$_SERVER['PHP_SELF'],"u.firstname",$param,"","",$sortfield,$sortorder);
+    if (! empty($arrayfields['u.accountancy_code']['checked'])) print_liste_field_titre($langs->trans("AccountancyCode"),$_SERVER['PHP_SELF'],"u.accountancy_code",$param,"","",$sortfield,$sortorder);
+    if (! empty($arrayfields['u.email']['checked']))          print_liste_field_titre($langs->trans("EMail"),$_SERVER['PHP_SELF'],"u.email",$param,"","",$sortfield,$sortorder);
     if (! empty($arrayfields['u.fk_soc']['checked']))         print_liste_field_titre($langs->trans("Company"),$_SERVER['PHP_SELF'],"u.fk_soc",$param,"","",$sortfield,$sortorder);
     if (! empty($arrayfields['u.entity']['checked']))         print_liste_field_titre($langs->trans("Entity"),$_SERVER['PHP_SELF'],"u.entity",$param,"","",$sortfield,$sortorder);
     if (! empty($arrayfields['u.fk_user']['checked']))        print_liste_field_titre($langs->trans("HierarchicalResponsible"),$_SERVER['PHP_SELF'],"u.fk_user",$param,"","",$sortfield,$sortorder);
@@ -272,6 +284,14 @@ if ($result)
     if (! empty($arrayfields['u.firstname']['checked']))
     {
         print '<td><input type="text" name="search_firstname" size="6" value="'.$search_firstname.'"></td>';
+    }
+    if (! empty($arrayfields['u.accountancy_code']['checked']))
+    {
+        print '<td><input type="text" name="search_accountancy_code" size="4" value="'.$search_accountancy_code.'"></td>';
+    }
+    if (! empty($arrayfields['u.email']['checked']))
+    {
+        print '<td><input type="text" name="search_email" size="6" value="'.$search_email.'"></td>';
     }
     if (! empty($arrayfields['u.fk_soc']['checked']))
     {
@@ -364,13 +384,21 @@ if ($result)
 		}
         if (! empty($arrayfields['u.lastname']['checked']))
 		{
-		      print '<td>'.ucfirst($obj->lastname).'</td>';
+		      print '<td>'.$obj->lastname.'</td>';
 		}
         if (! empty($arrayfields['u.firstname']['checked']))
 		{
-		  print '<td>'.ucfirst($obj->firstname).'</td>';
+		  print '<td>'.$obj->firstname.'</td>';
 		}
-        if (! empty($arrayfields['u.fk_soc']['checked']))
+        if (! empty($arrayfields['u.accountancy_code']['checked']))
+		{
+		  print '<td>'.$obj->accountancy_code.'</td>';
+		}
+        if (! empty($arrayfields['u.email']['checked']))
+		{
+		  print '<td>'.$obj->email.'</td>';
+		}
+		if (! empty($arrayfields['u.fk_soc']['checked']))
 		{
     		print "<td>";
             if ($obj->fk_soc)
