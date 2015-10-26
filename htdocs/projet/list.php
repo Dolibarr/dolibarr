@@ -48,9 +48,9 @@ if ($socid > 0)
 if (!$user->rights->projet->lire) accessforbidden();
 
 
-$sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
-$sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
-$page = isset($_GET["page"])? $_GET["page"]:$_POST["page"];
+$sortfield = GETPOST("sortfield","alpha");
+$sortorder = GETPOST("sortorder");
+$page = GETPOST("page");
 $page = is_numeric($page) ? $page : 0;
 $page = $page == -1 ? 0 : $page;
 
@@ -109,6 +109,14 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 $hookmanager->initHooks(array('projectlist'));
 $extrafields = new ExtraFields($db);
 
+// List of fields to search into when doing a "search in all"
+$fieldstosearchall = array(
+	'p.ref'=>"Ref",
+	'p.title'=>"Label",
+	's.nom'=>"ThirdPartyName",
+    "p.note_public"=>"NotePublic"
+);
+if (empty($user->socid)) $fieldstosearchall["p.note_private"]="NotePrivate";
 
 
 /*
@@ -141,7 +149,7 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_lead_status as cls on p.fk_opp_status = cls.rowid";
 
 // We'll need this table joined to the select in order to filter by sale
-if ($search_sale > 0 || (! $user->rights->societe->client->voir && ! $socid)) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if ($search_sale > 0 || (! $user->rights->societe->client->voir && ! $socid)) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
 if ($search_user > 0)
 {
 	$sql.=", ".MAIN_DB_PREFIX."element_contact as c";
@@ -182,7 +190,7 @@ else if ($year > 0)
 {
     $sql.= " AND p.datee BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
 }
-if ($search_all) $sql .= natural_search(array('p.ref','p.title','s.nom'), $search_all);
+if ($search_all) $sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 if ($search_status >= 0) $sql .= " AND p.fk_statut = ".$db->escape($search_status);
 if ($search_opp_status) 
 {
@@ -191,7 +199,8 @@ if ($search_opp_status)
     if ($search_opp_status == 'none') $sql .= " AND p.fk_opp_status IS NULL";
 }
 if ($search_public!='') $sql .= " AND p.public = ".$db->escape($search_public);
-if ($search_sale > 0 || (! $user->rights->societe->client->voir && ! $socid)) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$search_sale;
+if ($search_sale > 0) $sql.= " AND sc.fk_user = " .$search_sale;
+if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND ((s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id.") OR (s.rowid IS NULL))";
 if ($search_user > 0) $sql.= " AND c.fk_c_type_contact = tc.rowid AND tc.element='project' AND tc.source='internal' AND c.element_id = p.rowid AND c.fk_socpeople = ".$search_user;
 // Add where from hooks
 $parameters=array();
@@ -233,8 +242,13 @@ if ($resql)
 
 	print '<form method="GET" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="action" value="list">';
+	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+	print '<input type="hidden" name="type" value="'.$type.'">';
 
-	// Show description of content
+    // Show description of content
 	if ($mine) print $langs->trans("MyProjectsDesc").'<br><br>';
 	else
 	{
@@ -244,8 +258,8 @@ if ($resql)
 
 	if ($search_all)
 	{
-		print $langs->trans("Filter")." (".$langs->trans("Ref").", ".$langs->trans("Label")." ".$langs->trans("or")." ".$langs->trans("ThirdParty")."): ";
-		print '<strong>'.$search_all.'</strong>';
+        foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
+        print $langs->trans("FilterOnInto", $search_all, join(', ',$fieldstosearchall));
 	}
 
 	$colspan=8;

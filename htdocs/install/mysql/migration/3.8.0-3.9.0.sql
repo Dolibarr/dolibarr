@@ -66,4 +66,37 @@ ALTER TABLE llx_prelevement_facture_demande MODIFY COLUMN code_banque varchar(12
 ALTER TABLE llx_prelevement_lignes MODIFY COLUMN code_banque varchar(128);
 ALTER TABLE llx_societe_rib MODIFY COLUMN code_banque varchar(128);
 
+ALTER TABLE llx_contrat ADD COLUMN ref_customer varchar(30);
+ALTER TABLE llx_commande ADD COLUMN fk_warehouse integer DEFAULT NULL after fk_shipping_method;
 
+ALTER TABLE llx_ecm_directories MODIFY COLUMN fullpath varchar(750);
+
+ALTER TABLE llx_ecm_directories DROP INDEX idx_ecm_directories;
+ALTER TABLE llx_ecm_directories ADD UNIQUE INDEX uk_ecm_directories (label, fk_parent, entity);
+--ALTER TABLE llx_ecm_directories ADD UNIQUE INDEX uk_ecm_directories_fullpath(fullpath);
+
+
+CREATE TABLE llx_ecm_files
+(
+  rowid				integer AUTO_INCREMENT PRIMARY KEY,
+  label				varchar(64) NOT NULL,
+  entity			integer DEFAULT 1 NOT NULL,		-- multi company id
+  filename          varchar(255) NOT NULL,			-- file name only without any directory
+  fullpath    		varchar(750) NOT NULL,	        -- relative to dolibarr document dir. example abc/def/myfile. restricted to 750 because of unique key index on it.
+  fullpath_orig		varchar(2048),    	            -- full path of original filename, when file is uploaded from a local computer
+  description		text,
+  keywords          text,                           -- list of keywords, separated with comma
+  cover             text,                           -- is this file a file to use for a cover
+  extraparams		varchar(255),					-- for stock other parameters with json format
+  date_c			datetime,
+  date_m			timestamp,
+  fk_user_c			integer,
+  fk_user_m			integer,
+  acl				text							-- for future permission 'per file'
+) ENGINE=innodb;
+
+ALTER TABLE llx_ecm_files ADD UNIQUE INDEX uk_ecm_files (label, entity);
+--ALTER TABLE llx_ecm_files ADD UNIQUE INDEX uk_ecm_files_fullpath(fullpath);
+
+
+ALTER TABLE llx_product ADD COLUMN onportal tinyint DEFAULT 0 after tobuy;

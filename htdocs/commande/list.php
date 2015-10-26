@@ -76,7 +76,7 @@ $limit = $conf->liste_limit;
 $viewstatut=GETPOST('viewstatut');
 
 // Purge search criteria
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
     $search_categ='';
     $search_user='';
@@ -94,6 +94,17 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('orderlist'));
+
+// List of fields to search into when doing a "search in all"
+$fieldstosearchall = array(
+    'c.ref'=>'Ref',
+    'c.ref_client'=>'RefCustomerOrder',
+    'pd.description'=>'Description',
+    's.nom'=>"ThirdParty",
+    'c.note_public'=>'NotePublic',
+);
+if (empty($user->socid)) $fieldstosearchall["c.note_private"]="NotePrivate";
+
 
 /*
  * Actions
@@ -139,7 +150,7 @@ if ($search_product_category > 0) $sql.=" AND cp.fk_categorie = ".$search_produc
 if ($socid > 0) $sql.= ' AND s.rowid = '.$socid;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($search_ref) $sql .= natural_search('c.ref', $search_ref);
-if ($sall) $sql .= natural_search(array('c.ref', 'c.note_private'), $sall);
+if ($sall) $sql .= natural_search(array_keys($fieldstosearchall), $sall);
 if ($viewstatut <> '')
 {
 	if ($viewstatut < 4 && $viewstatut > -3)
@@ -259,9 +270,19 @@ if ($resql)
 
 	// Lignes des champs de filtre
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
-	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="action" value="list">';
+	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
 
+    if ($sall)
+    {
+        foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
+        print $langs->trans("FilterOnInto", $sall, join(', ',$fieldstosearchall));
+    }
+	
 	$moreforfilter='';
 
  	// If the user can view prospects other than his'
@@ -305,7 +326,7 @@ if ($resql)
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans('Ref'),$_SERVER["PHP_SELF"],'c.ref','',$param,'width="25%"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('RefCustomerOrder'),$_SERVER["PHP_SELF"],'c.ref_client','',$param,'',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans('Company'),$_SERVER["PHP_SELF"],'s.nom','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('ThirdParty'),$_SERVER["PHP_SELF"],'s.nom','',$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('OrderDate'),$_SERVER["PHP_SELF"],'c.date_commande','',$param, 'align="center"',$sortfield,$sortorder);
 	if (empty($conf->global->ORDER_DISABLE_DELIVERY_DATE)) print_liste_field_titre($langs->trans('DeliveryDate'),$_SERVER["PHP_SELF"],'c.date_livraison','',$param, 'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('AmountHT'),$_SERVER["PHP_SELF"],'c.total_ht','',$param, 'align="right"',$sortfield,$sortorder);

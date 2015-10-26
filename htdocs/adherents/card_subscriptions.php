@@ -567,54 +567,155 @@ if ($rowid > 0)
 
     dol_fiche_head($head, 'subscription', $langs->trans("Member"), 0, 'user');
 
+    $linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php">'.$langs->trans("BackToList").'</a>';
+    
+    dol_banner_tab($object, 'rowid', $linkback);
+    
+    print '<div class="fichecenter">';
+    print '<div class="fichehalfleft">';
+    
+    print '<div class="underbanner clearboth"></div>';
     print '<table class="border" width="100%">';
 
-    $linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php">'.$langs->trans("BackToList").'</a>';
+	// Login
+	if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
+	{
+		print '<tr><td>'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.$object->login.'&nbsp;</td></tr>';
+	}
 
-    // Ref
-    print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
-    print '<td class="valeur" colspan="2">';
-    print $form->showrefnav($object, 'rowid', $linkback);
-    print '</td></tr>';
+	// Type
+	print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">'.$adht->getNomUrl(1)."</td></tr>\n";
 
-    $showphoto='<td rowspan="'.$rowspan.'" class="hideonsmartphone" align="center" valign="middle" width="25%">'.$form->showphoto('memberphoto',$object).'</td>';
+	// Morphy
+	print '<tr><td>'.$langs->trans("Nature").'</td><td class="valeur" >'.$object->getmorphylib().'</td>';
+	print '</tr>';
 
-    // Login
-    if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
-    {
-        print '<tr><td>'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.$object->login.'&nbsp;</td>';
-        print $showphoto; $showphoto='';
-        print '</tr>';
-    }
+	// Company
+	print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$object->societe.'</td></tr>';
 
-    // Morphy
-    print '<tr><td>'.$langs->trans("Nature").'</td><td class="valeur" >'.$object->getmorphylib().'</td>';
-    print $showphoto; $showphoto='';
-    print '</tr>';
+	// Civility
+	print '<tr><td>'.$langs->trans("UserTitle").'</td><td class="valeur">'.$object->getCivilityLabel().'&nbsp;</td>';
+	print '</tr>';
 
-    // Type
-    print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">'.$adht->getNomUrl(1)."</td></tr>\n";
+	// Password
+	if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
+	{
+		print '<tr><td>'.$langs->trans("Password").'</td><td>'.preg_replace('/./i','*',$object->pass);
+		if ((! empty($object->pass) || ! empty($object->pass_crypted)) && empty($object->user_id))
+		{
+		    $langs->load("errors");
+		    $htmltext=$langs->trans("WarningPasswordSetWithNoAccount");
+		    print ' '.$form->textwithpicto('', $htmltext,1,'warning');
+		}
+		print '</td></tr>';
+	}
 
-    // Company
-    print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$object->societe.'</td></tr>';
+	// Skype
+	if (! empty($conf->skype->enabled))
+	{
+		print '<tr><td>'.$langs->trans("Skype").'</td><td class="valeur">'.dol_print_skype($object->skype,0,$object->fk_soc,1).'</td></tr>';
+	}
 
-    // Civility
-    print '<tr><td>'.$langs->trans("UserTitle").'</td><td class="valeur">'.$object->getCivilityLabel().'&nbsp;</td>';
-    print '</tr>';
+    print '</table>';
+    
+    print '</div>';
+    print '<div class="fichehalfright"><div class="ficheaddleft">';
+   
+    print '<div class="underbanner clearboth"></div>';
+    print '<table class="border tableforfield" width="100%">';
+	
+	// Birthday
+	print '<tr><td>'.$langs->trans("Birthday").'</td><td class="valeur">'.dol_print_date($object->birth,'day').'</td></tr>';
 
-    // Lastname
-    print '<tr><td>'.$langs->trans("Lastname").'</td><td class="valeur">'.$object->lastname.'&nbsp;</td>';
-    print '</tr>';
+	// Public
+	print '<tr><td>'.$langs->trans("Public").'</td><td class="valeur">'.yn($object->public).'</td></tr>';
 
-    // Firstname
-    print '<tr><td>'.$langs->trans("Firstname").'</td><td class="valeur">'.$object->firstname.'&nbsp;</td>';
-    print '</tr>';
+	// Categories
+	if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire))
+	{
+		print '<tr><td>' . $langs->trans("Categories") . '</td>';
+		print '<td colspan="2">';
+		print $form->showCategories($object->id, 'member', 1);
+		print '</td></tr>';
+	}
 
-    // EMail
-    print '<tr><td>'.$langs->trans("EMail").'</td><td class="valeur">'.dol_print_email($object->email,0,$object->fk_soc,1).'</td></tr>';
+	// Other attributes
+	$parameters=array('colspan'=>2);
+	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+	if (empty($reshook) && ! empty($extrafields->attribute_label))
+	{
+		print $object->showOptionals($extrafields, 'view', $parameters);
+	}
 
-    // Status
-    print '<tr><td>'.$langs->trans("Status").'</td><td class="valeur">'.$object->getLibStatut(4).'</td></tr>';
+	// Third party Dolibarr
+	if (! empty($conf->societe->enabled))
+	{
+		print '<tr><td>';
+		print '<table class="nobordernopadding" width="100%"><tr><td>';
+		print $langs->trans("LinkedToDolibarrThirdParty");
+		print '</td>';
+		if ($action != 'editthirdparty' && $user->rights->adherent->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editthirdparty&amp;rowid='.$object->id.'">'.img_edit($langs->trans('SetLinkToThirdParty'),1).'</a></td>';
+		print '</tr></table>';
+		print '</td><td colspan="2" class="valeur">';
+		if ($action == 'editthirdparty')
+		{
+			$htmlname='socid';
+			print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" name="form'.$htmlname.'">';
+			print '<input type="hidden" name="rowid" value="'.$object->id.'">';
+			print '<input type="hidden" name="action" value="set'.$htmlname.'">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
+			print '<tr><td>';
+			print $form->select_company($object->fk_soc,'socid','',1);
+			print '</td>';
+			print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+			print '</tr></table></form>';
+		}
+		else
+		{
+			if ($object->fk_soc)
+			{
+				$company=new Societe($db);
+				$result=$company->fetch($object->fk_soc);
+				print $company->getNomUrl(1);
+			}
+			else
+			{
+				print $langs->trans("NoThirdPartyAssociatedToMember");
+			}
+		}
+		print '</td></tr>';
+	}
+
+	// Login Dolibarr
+	print '<tr><td>';
+	print '<table class="nobordernopadding" width="100%"><tr><td>';
+	print $langs->trans("LinkedToDolibarrUser");
+	print '</td>';
+	if ($action != 'editlogin' && $user->rights->adherent->creer)
+	{
+		print '<td align="right">';
+		if ($user->rights->user->user->creer)
+		{
+			print '<a href="'.$_SERVER["PHP_SELF"].'?action=editlogin&amp;rowid='.$object->id.'">'.img_edit($langs->trans('SetLinkToUser'),1).'</a>';
+		}
+		print '</td>';
+	}
+	print '</tr></table>';
+	print '</td><td colspan="2" class="valeur">';
+	if ($action == 'editlogin')
+	{
+		$form->form_users($_SERVER['PHP_SELF'].'?rowid='.$object->id,$object->user_id,'userid','');
+	}
+	else
+	{
+		if ($object->user_id)
+		{
+			$form->form_users($_SERVER['PHP_SELF'].'?rowid='.$object->id,$object->user_id,'none');
+		}
+		else print $langs->trans("NoDolibarrAccess");
+	}
+	print '</td></tr>';
 
     // Date end subscription
     print '<tr><td>'.$langs->trans("SubscriptionEndDate").'</td><td class="valeur">';
@@ -632,81 +733,14 @@ if ($rowid > 0)
     }
     print '</td></tr>';
 
-    // Third party Dolibarr
-    if (! empty($conf->societe->enabled))
-    {
-        print '<tr><td>';
-        print '<table class="nobordernopadding" width="100%"><tr><td>';
-        print $langs->trans("LinkedToDolibarrThirdParty");
-        print '</td>';
-        if ($action != 'editthirdparty' && $user->rights->adherent->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editthirdparty&amp;rowid='.$object->id.'">'.img_edit($langs->trans('SetLinkToThirdParty'),1).'</a></td>';
-        print '</tr></table>';
-        print '</td><td class="valeur">';
-        if ($action == 'editthirdparty')
-        {
-            $htmlname='socid';
-            print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" name="form'.$htmlname.'">';
-            print '<input type="hidden" name="rowid" value="'.$object->id.'">';
-            print '<input type="hidden" name="action" value="set'.$htmlname.'">';
-            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-            print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
-            print '<tr><td>';
-            print $form->select_company($object->fk_soc,'socid','',1);
-            print '</td>';
-            print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
-            print '</tr></table></form>';
-        }
-        else
-        {
-            if ($object->fk_soc)
-            {
-                $company=new Societe($db);
-                $result=$company->fetch($object->fk_soc);
-                print $company->getNomUrl(1);
-            }
-            else
-            {
-                print $langs->trans("NoThirdPartyAssociatedToMember");
-            }
-        }
-        print '</td></tr>';
-    }
-
-    // Login Dolibarr
-    print '<tr><td>';
-    print '<table class="nobordernopadding" width="100%"><tr><td>';
-    print $langs->trans("LinkedToDolibarrUser");
-    print '</td>';
-    if ($action != 'editlogin' && $user->rights->adherent->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editlogin&amp;rowid='.$object->id.'">'.img_edit($langs->trans('SetLinkToUser'),1).'</a></td>';
-    print '</tr></table>';
-    print '</td><td class="valeur">';
-    if ($action == 'editlogin')
-    {
-        /*$include=array();
-         if (empty($user->rights->user->user->creer))    // If can edit only itself user, we can link to itself only
-         {
-         $include=array($object->user_id,$user->id);
-         }*/
-        $form->form_users($_SERVER['PHP_SELF'].'?rowid='.$object->id,$object->user_id,'userid','');
-    }
-    else
-    {
-        if ($object->user_id)
-        {
-            $form->form_users($_SERVER['PHP_SELF'].'?rowid='.$object->id,$object->user_id,'none');
-        }
-        else print $langs->trans("NoDolibarrAccess");
-    }
-    print '</td></tr>';
-
     print "</table>\n";
 
+	print "</div></div></div>\n";
+    print '<div style="clear:both"></div>';
+    
     dol_fiche_end();
 
     print '</form>';
-
-
-    dol_htmloutput_errors($errmsg,$errmsgs);
 
 
     /*

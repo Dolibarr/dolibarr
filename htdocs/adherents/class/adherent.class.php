@@ -1976,12 +1976,14 @@ class Adherent extends CommonObject
 
 		// Process
 		foreach ($to_del as $del) {
-			$c->fetch($del);
-			$c->del_type($this, 'member');
+			if ($c->fetch($del) > 0) {
+				$c->del_type($this, 'member');
+			}
 		}
 		foreach ($to_add as $add) {
-			$c->fetch($add);
-			$c->add_type($this, 'member');
+			if ($c->fetch($add) > 0) {
+				$c->add_type($this, 'member');
+			}
 		}
 
 		return;

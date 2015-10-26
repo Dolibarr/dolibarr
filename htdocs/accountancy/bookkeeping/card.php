@@ -51,7 +51,7 @@ if ($action == "confirm_update") {
 
     $error = 0;
 
-    if ((intval($debit) != 0) && (intval($credit) != 0)) {
+    if ((floatval($debit)!=0.0) && (floatval($credit)!=0.0)) {
         setEventMessage($langs->trans('ErrorDebitCredit'), 'errors');
         $error ++;
     }
@@ -69,11 +69,11 @@ if ($action == "confirm_update") {
             $book->debit = $debit;
             $book->credit = $credit;
 
-            if (! empty($debit)) {
+            if (floatval($debit)!=0.0) {
                 $book->montant = $debit;
                 $book->sens = 'D';
             }
-            if (! empty($credit)) {
+            if (floatval($credit)!=0.0) {
                 $book->montant = $credit;
                 $book->sens = 'C';
             }

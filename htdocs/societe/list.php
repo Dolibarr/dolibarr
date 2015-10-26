@@ -41,29 +41,33 @@ $socid = GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user,'societe',$socid,'');
 
+$search_all=trim(GETPOST("sall"));
 $search_nom=trim(GETPOST("search_nom"));
 $search_nom_only=trim(GETPOST("search_nom_only"));
-$search_all=trim(GETPOST("search_all"));
-$sbarcode=trim(GETPOST("sbarcode"));
+$search_barcode=trim(GETPOST("sbarcode"));
+$search_customer_code=trim(GETPOST('search_customer_code'));
+$search_supplier_code=trim(GETPOST('search_supplier_code'));
+$search_account_customer_code=trim(GETPOST('search_account_customer_code'));
+$search_account_supplier_code=trim(GETPOST('search_account_supplier_code'));
 $search_town=trim(GETPOST("search_town"));
 $search_zip=trim(GETPOST("search_zip"));
-$socname=trim(GETPOST("socname"));
 $search_idprof1=trim(GETPOST('search_idprof1'));
 $search_idprof2=trim(GETPOST('search_idprof2'));
 $search_idprof3=trim(GETPOST('search_idprof3'));
 $search_idprof4=trim(GETPOST('search_idprof4'));
 $search_idprof5=trim(GETPOST('search_idprof5'));
 $search_idprof6=trim(GETPOST('search_idprof6'));
-$search_sale=trim(GETPOST("search_sale"));
-$search_categ=trim(GETPOST("search_categ"));
+$search_sale=trim(GETPOST("search_sale",'int'));
+$search_categ=trim(GETPOST("search_categ",'int'));
 $search_type=trim(GETPOST('search_type'));
 $search_country=GETPOST("search_country",'int');
 $search_type_thirdparty=GETPOST("search_type_thirdparty",'int');
+$search_type=GETPOST('search_type','alpha');
 $search_status=GETPOST("search_status",'int');
 
+$type=GETPOST('type');
 $optioncss=GETPOST('optioncss','alpha');
 $mode=GETPOST("mode");
-$modesearch=GETPOST("mode_search");
 
 $sortfield=GETPOST("sortfield",'alpha');
 $sortorder=GETPOST("sortorder",'alpha');
@@ -77,6 +81,15 @@ $pagenext = $page + 1;
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $contextpage='thirdpartylist';
+/*if ($search_type == '1,3') { $contextpage='customerlist'; $type='c'; }
+if ($search_type == '2,3') { $contextpage='prospectlist'; $type='p'; }
+if ($search_type == '4') { $contextpage='supplierlist'; $type='f'; }
+*/
+if ($type == 'c') { $contextpage='customerlist'; if ($search_type=='') $search_type='1,3'; }
+if ($type == 'p') { $contextpage='prospectlist'; if ($search_type=='') $search_type='2,3'; }
+if ($type == 'f') { $contextpage='supplierlist'; if ($search_type=='') $search_type='4'; }
+
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array($contextpage));
 $extrafields = new ExtraFields($db);
 
@@ -84,44 +97,46 @@ $extrafields = new ExtraFields($db);
 $extralabels = $extrafields->fetch_name_optionals_label('thirdparty');
 $search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
 
+// List of fields to search into when doing a "search in all"
+$fieldstosearchall = array(
+	's.nom'=>"ThirdPartyName",
+	's.name_alias'=>"AliasNameShort",
+	's.code_client'=>"CustomerCode",
+    "s.code_fournisseur"=>"SupplierCode",
+	's.email'=>"EMail",
+	's.url'=>"URL",
+    's.tva_intra'=>"VATIntra",
+    's.siren'=>"ProfId1",
+    's.siret'=>"ProfId2",
+    's.ape'=>"ProfId3",
+);
+if (($tmp = $langs->transnoentities("ProfId4".$mysoc->country_code)) && $tmp != "ProfId4".$mysoc->country_code && $tmp != '-') $fieldstosearchall['s.idprof4']='ProfId4';
+if (($tmp = $langs->transnoentities("ProfId5".$mysoc->country_code)) && $tmp != "ProfId5".$mysoc->country_code && $tmp != '-') $fieldstosearchall['s.idprof5']='ProfId5';
+if (($tmp = $langs->transnoentities("ProfId6".$mysoc->country_code)) && $tmp != "ProfId6".$mysoc->country_code && $tmp != '-') $fieldstosearchall['s.idprof6']='ProfId6';
+if (!empty($conf->barcode->enabled)) $fieldstosearchall['s.barcode']='Gencod';
+
 
 /*
  * Actions
  */
 
+$parameters=array();
+$reshook=$hookmanager->executeHooks('doActions',$parameters);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
 include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 // special search
-if ($mode == 'search')
+/*if ($mode == 'search')
 {
-	$search_nom=$socname;
-
 	$sql = "SELECT s.rowid";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	if ($search_sale || (!$user->rights->societe->client->voir && !$socid)) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
     // We'll need this table joined to the select in order to filter by categ
     if ($search_categ) $sql.= ", ".MAIN_DB_PREFIX."categorie_societe as cs";
     $sql.= " WHERE s.entity IN (".getEntity('societe', 1).")";
-
-    // For natural search
-    $scrit = explode(' ', $socname);
-
-	$fields = array(
-		's.nom',
-		's.code_client',
-		's.email',
-		's.url',
-		's.siren',
-		's.name_alias'
-	);
-
-	if (!empty($conf->barcode->enabled)) {
-		$fields[] = 's.barcode';
-	}
-
-    foreach ($scrit as $crit) {
-        $sql.= natural_search($fields, $crit);
-    }
+    // sall criteria
+    $sql.= natural_search($fields, $sall);
 
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if ($socid) $sql.= " AND s.rowid = ".$socid;
@@ -159,7 +174,7 @@ if ($mode == 'search')
 		$db->free($result);
 	}
 }
-
+*/
 
 
 /*
@@ -167,7 +182,7 @@ if ($mode == 'search')
  */
 
 $form=new Form($db);
-$htmlother=new FormOther($db);
+$formother=new FormOther($db);
 $companystatic=new Societe($db);
 $formcompany=new FormCompany($db);
 
@@ -180,15 +195,19 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
 {
     $search_categ='';
     $search_sale='';
-    $socname="";
-	$search_nom="";
-	$sbarcode="";
+	$search_barcode="";
+    $search_customer_code='';
+    $search_supplier_code='';
+    $search_account_customer_code='';
+    $search_account_supplier_code='';
 	$search_town="";
 	$search_zip="";
 	$search_idprof1='';
 	$search_idprof2='';
 	$search_idprof3='';
 	$search_idprof4='';
+	$search_idprof5='';
+	$search_idprof6='';
 	$search_type='';
 	$search_country='';
 	$search_type_thirdparty='';
@@ -197,11 +216,6 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
 }
 
 if ($search_status=='') $search_status=1; // always display active thirdparty first
-
-if ($socname)
-{
-	$search_nom=$socname;
-}
 
 
 /*
@@ -217,6 +231,9 @@ if ($socname)
  External user socid=x + No permission to see ALL customers => Can see only himself
  */
 $title=$langs->trans("ListOfThirdParties");
+if ($type == 'c' && (empty($search_type) || ($search_type == '1,3'))) $title=$langs->trans("ListOfCustomers");
+if ($type == 'p' && (empty($search_type) || ($search_type == '2,3'))) $title=$langs->trans("ListOfProspects");
+if ($type == 'f' && (empty($search_type) || ($search_type == '4'))) $title=$langs->trans("ListOfSuppliers");
 
 $sql = "SELECT s.rowid, s.nom as name, s.barcode, s.town, s.zip, s.datec, s.code_client, s.code_fournisseur, ";
 $sql.= " st.libelle as stcomm, s.prefix_comm, s.client, s.fournisseur, s.canvas, s.status as status,";
@@ -251,9 +268,13 @@ if ($search_categ)    $sql.= " AND s.rowid = cs.fk_soc";   // Join for the neede
 if (! $user->rights->fournisseur->lire) $sql.=" AND (s.fournisseur <> 1 OR s.client <> 0)";    // client=0, fournisseur=0 must be visible
 if ($search_sale)     $sql.= " AND sc.fk_user = ".$db->escape($search_sale);
 if ($search_categ)    $sql.= " AND cs.fk_categorie = ".$db->escape($search_categ);
+if ($search_all)      $sql.= natural_search(array_keys($fieldstosearchall), $search_all);
+if ($search_nom)      $sql.= natural_search("s.nom",$search_nom);
 if ($search_nom_only) $sql.= natural_search("s.nom",$search_nom_only);
-if ($search_all)      $sql.= natural_search(array("s.nom", "s.name_alias", "s.code_client", "s.code_fournisseur", "s.email", "s.url","s.siren","s.siret","s.ape","s.idprof4","s.idprof5","s.idprof6"), $search_all);
-if ($search_nom)      $sql.= natural_search(array("s.nom", "s.name_alias", "s.code_client", "s.code_fournisseur", "s.email", "s.url","s.siren","s.siret","s.ape","s.idprof4","s.idprof5","s.idprof6"), $search_nom);
+if ($search_customer_code) $sql.= natural_search("s.code_client",$search_customer_code);
+if ($search_supplier_code) $sql.= natural_search("s.code_fournisseur",$search_supplier_code);
+if ($search_account_customer_code) $sql.= natural_search("s.code_compta",$search_account_customer_code);
+if ($search_account_supplier_code) $sql.= natural_search("s.code_compta_fournisseur",$search_account_supplier_code);
 if ($search_town)     $sql.= natural_search("s.town",$search_town);
 if ($search_zip)      $sql.= natural_search("s.zip",$search_zip);
 if ($search_idprof1)  $sql.= natural_search("s.siren",$search_idprof1);
@@ -267,7 +288,7 @@ if ($search_type > 0 && in_array($search_type,array('1,3','2,3'))) $sql .= " AND
 if ($search_type > 0 && in_array($search_type,array('4')))         $sql .= " AND s.fournisseur = 1";
 if ($search_type == '0') $sql .= " AND s.client = 0 AND s.fournisseur = 0";
 if ($search_status!='') $sql .= " AND s.status = ".$db->escape($search_status);
-if (!empty($conf->barcode->enabled) && $sbarcode) $sql.= " AND s.barcode LIKE '%".$db->escape($sbarcode)."%'";
+if (!empty($conf->barcode->enabled) && $search_barcode) $sql.= " AND s.barcode LIKE '%".$db->escape($search_barcode)."%'";
 if ($search_country) $sql .= " AND s.fk_pays IN (".$search_country.')';
 if ($search_type_thirdparty) $sql .= " AND s.fk_typent IN (".$search_type_thirdparty.')';
 // Add where from extra fields
@@ -305,25 +326,35 @@ if ($resql)
 	$num = $db->num_rows($resql);
 	$i = 0;
 
-	$param = "&amp;socname=".urlencode($socname);
-	$param.= "&amp;search_nom=".urlencode($search_nom);
-	$param.= "&amp;search_town=".urlencode($search_town);
-	$param.= "&amp;search_zip=".urlencode($search_zip);
-	$param.= ($sbarcode?"&amp;sbarcode=".urlencode($sbarcode):"");
-	$param.= '&amp;search_idprof1='.urlencode($search_idprof1);
-	$param.= '&amp;search_idprof2='.urlencode($search_idprof2);
-	$param.= '&amp;search_idprof3='.urlencode($search_idprof3);
-	$param.= '&amp;search_idprof4='.urlencode($search_idprof4);
+	if ($sall != '') $param = "&amp;sall=".urlencode($sall);
+ 	if ($search_categ != '') $param.='&amp;search_categ='.urlencode($search_categ);
+ 	if ($search_sale > 0)	$param.='&amp;search_sale='.urlencode($search_sale);
+	if ($search_nom != '') $param.= "&amp;search_nom=".urlencode($search_nom);
+	if ($search_town != '') $param.= "&amp;search_town=".urlencode($search_town);
+	if ($search_zip != '') $param.= "&amp;search_zip=".urlencode($search_zip);
+	if ($search_country != '') $param.= "&amp;search_country=".urlencode($search_country);
+	if ($search_customer_code != '') $param.= "&amp;search_customer_code=".urlencode($search_customer_code);
+	if ($search_supplier_code != '') $param.= "&amp;search_supplier_code=".urlencode($search_supplier_code);
+	if ($search_account_customer_code != '') $param.= "&amp;search_account_customer_code=".urlencode($search_account_customer_code);
+	if ($search_account_supplier_code != '') $param.= "&amp;search_account_supplier_code=".urlencode($search_account_supplier_code);
+	if ($search_barcode != '') $param.= "&amp;sbarcode=".urlencode($search_barcode);
+	if ($search_idprof1 != '') $param.= '&amp;search_idprof1='.urlencode($search_idprof1);
+	if ($search_idprof2 != '') $param.= '&amp;search_idprof2='.urlencode($search_idprof2);
+	if ($search_idprof3 != '') $param.= '&amp;search_idprof3='.urlencode($search_idprof3);
+	if ($search_idprof4 != '') $param.= '&amp;search_idprof4='.urlencode($search_idprof4);
+	if ($search_idprof5 != '') $param.= '&amp;search_idprof5='.urlencode($search_idprof5);
+	if ($search_idprof6 != '') $param.= '&amp;search_idprof6='.urlencode($search_idprof6);
 	if ($search_country != '') $param.='&amp;search_country='.urlencode($search_country);
 	if ($search_type_thirdparty != '') $param.='&amp;search_type_thirdparty='.urlencode($search_type_thirdparty);
 	if ($optioncss != '') $param.='&amp;optioncss='.urlencode($optioncss);
-    if ($search_status != '') $params.='&amp;search_status='.urlencode($search_status);
+    if ($search_status != '') $param.='&amp;search_status='.urlencode($search_status);
+    if ($type != '') $param.='&amp;type='.urlencode($type);
     // Add $param from extra fields
     foreach ($search_array_options as $key => $val)
     {
         $crit=$val;
         $tmpkey=preg_replace('/search_options_/','',$key);
-        $param.='&search_options_'.$tmpkey.'='.urlencode($val);
+        if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
     } 	
     
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_companies');
@@ -336,7 +367,7 @@ if ($resql)
 
 	$langs->load("other");
 	$textprofid=array();
-	foreach(array(1,2,3,4) as $key)
+	foreach(array(1,2,3,4,5,6) as $key)
 	{
 		$label=$langs->transnoentities("ProfId".$key.$mysoc->country_code);
 		$textprofid[$key]='';
@@ -354,58 +385,98 @@ if ($resql)
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	
-    // Filter on categories
-    /* Not possible in this page because list is for ALL third parties type
+    if ($search_all)
+    {
+        foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
+        print $langs->trans("FilterOnInto", $search_all, join(', ',$fieldstosearchall));
+    }
+	
+	// Filter on categories
 	$moreforfilter='';
-    if (! empty($conf->categorie->enabled))
-    {
-        $moreforfilter.='<div class="divsearchfield">';
-        $moreforfilter.=$langs->trans('Categories'). ': ';
-        $moreforfilter.=$htmlother->select_categories(Categories::TYPE_CUSTOMER,$search_categ,'search_categ');
-        $moreforfilter.='</div>';
-    }
-    // If the user can view prospects other than his'
-    if ($user->rights->societe->client->voir || $socid)
-    {
-        $moreforfilter.='<div class="divsearchfield">';
-        $moreforfilter.=$langs->trans('SalesRepresentatives'). ': ';
-        $moreforfilter.=$htmlother->select_salesrepresentatives($search_sale,'search_sale',$user);
-        $moreforfilter.='</div>'; 
-    }
-	*/
+	if ($type == 'c' || $type == 'p')
+	{
+		if (! empty($conf->categorie->enabled))
+		{
+			require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+			$moreforfilter.='<div class="divsearchfield">';
+		 	$moreforfilter.=$langs->trans('Categories'). ': ';
+			$moreforfilter.=$formother->select_categories(Categorie::TYPE_CUSTOMER,$search_categ,'search_categ',1);
+		 	$moreforfilter.='</div>';
+		}
+	 	// If the user can view prospects other than his'
+	 	if ($user->rights->societe->client->voir || $socid)
+	 	{
+		 	$moreforfilter.='<div class="divsearchfield">';
+		 	$moreforfilter.=$langs->trans('SalesRepresentatives'). ': ';
+			$moreforfilter.=$formother->select_salesrepresentatives($search_sale,'search_sale',$user);
+			$moreforfilter.='</div>';
+	 	}
+	}
+	if ($type == 'f')
+	{
+		if (! empty($conf->categorie->enabled))
+		{
+			require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+			$moreforfilter.='<div class="divsearchfield">';
+			$moreforfilter.=$langs->trans('Categories'). ': ';
+			$moreforfilter.=$formother->select_categories(Categorie::TYPE_SUPPLIER,$search_categ,'search_categ',1);
+			$moreforfilter.='</div>';
+		}
+	}
 	if (! empty($moreforfilter))
 	{
 		print '<div class="liste_titre liste_titre_bydiv centpercent">';
 		print $moreforfilter;
-    	$parameters=array();
+    	$parameters=array('type'=>$type);
     	$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
 	    print $hookmanager->resPrint;
 	    print '</div>';
 	}
 
 	// Define list of fields to show into list
+	$checkedcustomercode=(in_array($contextpage, array('thirdpartylist', 'customerlist', 'prospectlist')) ? 1 : 0);
+	$checkedsuppliercode=(in_array($contextpage, array('supplierlist')) ? 1 : 0);
+	$checkedcustomeraccountcode=(in_array($contextpage, array('thirdpartylist', 'customerlist', 'prospectlist')) ? 1 : 0);
+	$checkedsupplieraccountcode=(in_array($contextpage, array('supplierlist')) ? 1 : 0);
+	$checkedtypetiers=1;
+	$checkedprofid4=0;
+	$checkedprofid5=0;
+	$checkedprofid6=0;
+	//$checkedprofid4=((($tmp = $langs->transnoentities("ProfId4".$mysoc->country_code)) && $tmp != "ProfId4".$mysoc->country_code && $tmp != '-') ? 1 : 0);
+	//$checkedprofid5=((($tmp = $langs->transnoentities("ProfId5".$mysoc->country_code)) && $tmp != "ProfId5".$mysoc->country_code && $tmp != '-') ? 1 : 0);
+	//$checkedprofid6=((($tmp = $langs->transnoentities("ProfId6".$mysoc->country_code)) && $tmp != "ProfId6".$mysoc->country_code && $tmp != '-') ? 1 : 0);
     $arrayfields=array(
         's.nom'=>array('label'=>$langs->trans("Company"), 'checked'=>1),
-        's.barcode'=>array('label'=>$langs->trans("BarCode"), 'checked'=>1, 'enabled'=>(! empty($conf->barcode->enabled))),
+        's.barcode'=>array('label'=>$langs->trans("Gencod"), 'checked'=>1, 'enabled'=>(! empty($conf->barcode->enabled))),
+        's.code_client'=>array('label'=>$langs->trans("CustomerCodeShort"), 'checked'=>$checkedcustomercode),
+        's.code_fournisseur'=>array('label'=>$langs->trans("SupplierCodeShort"), 'checked'=>$checkedsuppliercode, 'enabled'=>(! empty($conf->fournisseur->enabled))),
+        's.code_compta'=>array('label'=>$langs->trans("CustomerAccountancyCodeShort"), 'checked'=>$checkedcustomeraccountcode),
+        's.code_compta_fournisseur'=>array('label'=>$langs->trans("SupplierAccountancyCodeShort"), 'checked'=>$checkedsupplieraccountcode, 'enabled'=>(! empty($conf->fournisseur->enabled))),
         's.town'=>array('label'=>$langs->trans("Town"), 'checked'=>1),
         's.zip'=>array('label'=>$langs->trans("Zip"), 'checked'=>1),
-        'country.code_iso'=>array('label'=>$langs->trans("Country"), 'checked'=>1),
-        'typent.code'=>array('label'=>$langs->trans("ThirdPartyType"), 'checked'=>1),
+        'country.code_iso'=>array('label'=>$langs->trans("Country"), 'checked'=>0),
+        'typent.code'=>array('label'=>$langs->trans("ThirdPartyType"), 'checked'=>$checkedtypetiers),
         's.siren'=>array('label'=>$langs->trans("ProfId1Short"), 'checked'=>1),
         's.siret'=>array('label'=>$langs->trans("ProfId2Short"), 'checked'=>1),
         's.ape'=>array('label'=>$langs->trans("ProfId3Short"), 'checked'=>1),
-        's.idprof4'=>array('label'=>$langs->trans("ProfId4Short"), 'checked'=>1),
+        's.idprof4'=>array('label'=>$langs->trans("ProfId4Short"), 'checked'=>$checkedprofid4),
+        's.idprof5'=>array('label'=>$langs->trans("ProfId5Short"), 'checked'=>$checkedprofid5),
+        's.idprof6'=>array('label'=>$langs->trans("ProfId6Short"), 'checked'=>$checkedprofid6),
         's.status'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>200),
         's.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
         's.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
     );
     $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
-    $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);
+    $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
 	print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
 
 	print '<tr class="liste_titre">';
 	if (! empty($arrayfields['s.nom']['checked']))            print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
-    if (! empty($arrayfields['s.barcode']['checked']))        print_liste_field_titre($langs->trans("BarCode"), $_SERVER["PHP_SELF"], "s.barcode",$param,'','',$sortfield,$sortorder);
+    if (! empty($arrayfields['s.barcode']['checked']))        print_liste_field_titre($langs->trans("Gencod"), $_SERVER["PHP_SELF"], "s.barcode",$param,'','',$sortfield,$sortorder);
+	if (! empty($arrayfields['s.code_client']['checked']))             print_liste_field_titre($arrayfields['s.code_client']['label'],$_SERVER["PHP_SELF"],"s.code_client","",$param,'',$sortfield,$sortorder);
+	if (! empty($arrayfields['s.code_fournisseur']['checked']))        print_liste_field_titre($arrayfields['s.code_fournisseur']['label'],$_SERVER["PHP_SELF"],"s.code_fournisseur","",$param,'',$sortfield,$sortorder);
+	if (! empty($arrayfields['s.code_compta']['checked']))             print_liste_field_titre($arrayfields['s.code_compta']['label'],$_SERVER["PHP_SELF"],"s.code_compta","",$param,'',$sortfield,$sortorder);
+	if (! empty($arrayfields['s.code_compta_fournisseur']['checked'])) print_liste_field_titre($arrayfields['s.code_compta_fournisseur']['label'],$_SERVER["PHP_SELF"],"s.code_compta_fournisseur","",$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['s.town']['checked']))           print_liste_field_titre($langs->trans("Town"),$_SERVER["PHP_SELF"],"s.town","",$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['s.zip']['checked']))            print_liste_field_titre($langs->trans("Zip"),$_SERVER["PHP_SELF"],"s.zip","",$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['country.code_iso']['checked'])) print_liste_field_titre($langs->trans("Country"),$_SERVER["PHP_SELF"],"country.code_iso","",$param,'align="center"',$sortfield,$sortorder);
@@ -414,6 +485,8 @@ if ($resql)
 	if (! empty($arrayfields['s.siret']['checked']))          print_liste_field_titre($form->textwithpicto($langs->trans("ProfId2Short"),$textprofid[2],1,0),$_SERVER["PHP_SELF"],"s.siret","",$param,'class="nowrap"',$sortfield,$sortorder);
 	if (! empty($arrayfields['s.ape']['checked']))            print_liste_field_titre($form->textwithpicto($langs->trans("ProfId3Short"),$textprofid[3],1,0),$_SERVER["PHP_SELF"],"s.ape","",$param,'class="nowrap"',$sortfield,$sortorder);
 	if (! empty($arrayfields['s.idprof4']['checked']))        print_liste_field_titre($form->textwithpicto($langs->trans("ProfId4Short"),$textprofid[4],1,0),$_SERVER["PHP_SELF"],"s.idprof4","",$param,'class="nowrap"',$sortfield,$sortorder);
+	if (! empty($arrayfields['s.idprof5']['checked']))        print_liste_field_titre($form->textwithpicto($langs->trans("ProfId5Short"),$textprofid[4],1,0),$_SERVER["PHP_SELF"],"s.idprof5","",$param,'class="nowrap"',$sortfield,$sortorder);
+	if (! empty($arrayfields['s.idprof6']['checked']))        print_liste_field_titre($form->textwithpicto($langs->trans("ProfId6Short"),$textprofid[4],1,0),$_SERVER["PHP_SELF"],"s.idprof6","",$param,'class="nowrap"',$sortfield,$sortorder);
 	print_liste_field_titre('');   // type of customer
     // Extra fields
 	if (is_array($extrafields->attribute_list) && count($extrafields->attribute_list))
@@ -430,7 +503,7 @@ if ($resql)
 	$parameters=array('arrayfields'=>$arrayfields);
     $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
-	if (! empty($arrayfields['s.status']['checked'])) print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"s.status","",$param,'align="right"',$sortfield,$sortorder);
+	if (! empty($arrayfields['s.status']['checked'])) print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"s.status","",$param,'align="center"',$sortfield,$sortorder);
 	if (! empty($arrayfields['s.datec']['checked']))  print_liste_field_titre($langs->trans("DateCreationShort"),$_SERVER["PHP_SELF"],"s.datec","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
 	if (! empty($arrayfields['s.tms']['checked']))    print_liste_field_titre($langs->trans("DateModificationShort"),$_SERVER["PHP_SELF"],"s.tms","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="right"',$sortfield,$sortorder,'maxwidthsearch ');
@@ -449,10 +522,38 @@ if ($resql)
     if (! empty($arrayfields['s.barcode']['checked']))
     {
 		print '<td class="liste_titre">';
-		print '<input class="flat" type="text" name="sbarcode" size="6" value="'.dol_escape_htmltag($sbarcode).'">';
+		print '<input class="flat" type="text" name="sbarcode" size="6" value="'.dol_escape_htmltag($search_barcode).'">';
 		print '</td>';
     }
-	// Town
+	// Customer code
+    if (! empty($arrayfields['s.code_client']['checked']))
+    {
+        print '<td class="liste_titre">';
+    	print '<input class="flat" size="8" type="text" name="search_customer_code" value="'.dol_escape_htmltag($search_customer_code).'">';
+    	print '</td>';
+    }
+	// Supplier code
+    if (! empty($arrayfields['s.code_fournisseur']['checked']))
+    {
+        print '<td class="liste_titre">';
+    	print '<input class="flat" size="8" type="text" name="search_supplier_code" value="'.dol_escape_htmltag($search_supplier_code).'">';
+    	print '</td>';
+    }
+	// Account Customer code
+    if (! empty($arrayfields['s.code_compta']['checked']))
+    {
+        print '<td class="liste_titre">';
+    	print '<input class="flat" size="8" type="text" name="search_account_customer_code" value="'.dol_escape_htmltag($search_account_customer_code).'">';
+    	print '</td>';
+    }
+	// Account Supplier code
+    if (! empty($arrayfields['s.code_compta_fournisseur']['checked']))
+    {
+        print '<td class="liste_titre">';
+    	print '<input class="flat" size="8" type="text" name="search_account_supplier_code" value="'.dol_escape_htmltag($search_account_supplier_code).'">';
+    	print '</td>';
+    }
+    // Town
     if (! empty($arrayfields['s.town']['checked']))
     {
         print '<td class="liste_titre">';
@@ -508,7 +609,21 @@ if ($resql)
     	print '<input class="flat" size="4" type="text" name="search_idprof4" value="'.dol_escape_htmltag($search_idprof4).'">';
     	print '</td>';
     }
-	// Type (customer/prospect/supplier)
+    if (! empty($arrayfields['s.idprof5']['checked']))
+    {
+        // IdProf5
+    	print '<td class="liste_titre">';
+    	print '<input class="flat" size="4" type="text" name="search_idprof5" value="'.dol_escape_htmltag($search_idprof5).'">';
+    	print '</td>';
+    }
+    if (! empty($arrayfields['s.idprof6']['checked']))
+    {
+        // IdProf6
+    	print '<td class="liste_titre">';
+    	print '<input class="flat" size="4" type="text" name="search_idprof6" value="'.dol_escape_htmltag($search_idprof6).'">';
+    	print '</td>';
+    }
+    // Type (customer/prospect/supplier)
     print '<td class="liste_titre" align="middle">';
 	print '<select class="flat" name="search_type">';
 	print '<option value="-1"'.($search_type==''?' selected':'').'>&nbsp;</option>';
@@ -525,7 +640,7 @@ if ($resql)
     if (! empty($arrayfields['s.status']['checked']))
     {
         // Status
-        print '<td class="liste_titre" align="right">';
+        print '<td class="liste_titre" align="center">';
         print $form->selectarray('search_status', array('0'=>$langs->trans('ActivityCeased'),'1'=>$langs->trans('InActivity')),$search_status);
         print '</td>';
     }
@@ -543,6 +658,7 @@ if ($resql)
     }
     // Action column
 	print '<td class="liste_titre" align="right">';
+	if ($type != '') print '<input type="hidden" name="type" value="'.$type.'">';
 	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
 	print '</td>';
@@ -573,7 +689,27 @@ if ($resql)
 		// Barcode
         if (! empty($arrayfields['s.barcode']['checked']))
 		{
-			print '<td>'.$objp->barcode.'</td>';
+			print '<td>'.$obj->barcode.'</td>';
+		}
+    	// Customer code
+        if (! empty($arrayfields['s.code_client']['checked']))
+		{
+			print '<td>'.$obj->code_client.'</td>';
+		}
+	    // Supplier code
+        if (! empty($arrayfields['s.code_fournisseur']['checked']))
+		{
+			print '<td>'.$obj->code_fournisseur.'</td>';
+		}
+    	// Account customer code
+        if (! empty($arrayfields['s.code_compta']['checked']))
+		{
+			print '<td>'.$obj->code_compta.'</td>';
+		}
+	    // Account supplier code
+        if (! empty($arrayfields['s.code_compta_fournisseur']['checked']))
+		{
+			print '<td>'.$obj->code_compta_fournisseur.'</td>';
 		}
 		// Town
         if (! empty($arrayfields['s.town']['checked']))
@@ -613,9 +749,17 @@ if ($resql)
         {
             print "<td>".$obj->idprof3."</td>\n";
         }
-        if (! empty($arrayfields['s.idprof4']['checked']))
+	    if (! empty($arrayfields['s.idprof4']['checked']))
         {
             print "<td>".$obj->idprof4."</td>\n";
+        }
+	    if (! empty($arrayfields['s.idprof5']['checked']))
+        {
+            print "<td>".$obj->idprof5."</td>\n";
+        }
+	    if (! empty($arrayfields['s.idprof6']['checked']))
+        {
+            print "<td>".$obj->idprof6."</td>\n";
         }
         print '<td align="center">';
 		$s='';
@@ -645,7 +789,7 @@ if ($resql)
         // Status
         if (! empty($arrayfields['s.status']['checked']))
         {
-            print '<td align="right">'.$companystatic->getLibStatut(5).'</td>';
+            print '<td align="center">'.$companystatic->getLibStatut(3).'</td>';
         }
 	    if (! empty($arrayfields['s.datec']['checked']))
         {
@@ -687,4 +831,3 @@ else
 llxFooter();
 
 $db->close();
-

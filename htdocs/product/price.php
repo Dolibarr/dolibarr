@@ -9,6 +9,7 @@
  * Copyright (C) 2014 	    Philippe Grand 		    <philippe.grand@atoo-net.com>
  * Copyright (C) 2014		Ion agorria				<ion@agorria.com>
  * Copyright (C) 2015		Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -208,11 +209,11 @@ if (empty($reshook))
 
 		if (empty($quantity)) {
 			$error ++;
-			setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentities("Qty")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Qty")), null, 'errors');
 		}
 		if (empty($newprice)) {
 			$error ++;
-			setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentities("Price")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Price")), null, 'errors');
 		}
 		if (! $error) {
 			// Calcul du prix HT et du prix unitaire
@@ -378,13 +379,13 @@ print '<table class="border" width="100%">';
 
 // Ref
 print '<tr>';
-print '<td width="15%">' . $langs->trans("Ref") . '</td><td colspan="2">';
+print '<td width="20%">' . $langs->trans("Ref") . '</td><td colspan="2">';
 print $form->showrefnav($object, 'ref', '', 1, 'ref');
 print '</td>';
 print '</tr>';
 
 // Label
-print '<tr><td>' . $langs->trans("Label") . '</td><td>' . $object->label . '</td>';
+print '<tr><td>' . $langs->trans("Label") . '</td><td colspan="2">' . $object->label . '</td>';
 
 $isphoto = $object->is_photo_available($conf->product->multidir_output [$object->entity]);
 
@@ -409,8 +410,8 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES))
 		$soc->fetch($socid);
 
 		// Selling price
-		print '<tr><td>' . $langs->trans("SellingPrice") . '</td>';
-		print '<td>';
+		print '<tr>' . $langs->trans("SellingPrice") . '</td>';
+		print '<td colspan="2">';
 		if ($object->multiprices_base_type["$soc->price_level"] == 'TTC') {
 			print price($object->multiprices_ttc["$soc->price_level"]);
 		} else {
@@ -424,7 +425,7 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES))
 		print '</td></tr>';
 
 		// Price min
-		print '<tr><td>' . $langs->trans("MinPrice") . '</td><td>';
+		print '<tr><td>' . $langs->trans("MinPrice") . '</td><td colspan="2">';
 		if ($object->multiprices_base_type["$soc->price_level"] == 'TTC')
 		{
 			print price($object->multiprices_min_ttc["$soc->price_level"]) . ' ' . $langs->trans($object->multiprices_base_type["$soc->price_level"]);
@@ -434,18 +435,16 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES))
 		print '</td></tr>';
 
 		// TVA
-		print '<tr><td>' . $langs->trans("VATRate") . '</td><td>' . vatrate($object->multiprices_tva_tx["$soc->price_level"], true) . '</td></tr>';
+		print '<tr><td>' . $langs->trans("VATRate") . '</td><td colspan="2">' . vatrate($object->multiprices_tva_tx["$soc->price_level"], true) . '</td></tr>';
 	}
 	else
 	{
+		// We show only vat for level 1
+		print '<tr><td>' . $langs->trans("VATRate") . '</td><td colspan="2">' . vatrate($object->multiprices_tva_tx [1], true) . '</td></tr>';
+		print '<tr class="liste_titre"><td style="text-align: center">'.$langs->trans("PriceLevel").'</td><td style="text-align: center">'.$langs->trans("SellingPrice").'</td><td style="text-align: center">'.$langs->trans("MinPrice").'</td></tr>';
+
 		for($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i ++)
 		{
-			// TVA
-			if ($i == 1) 			// We show only vat for level 1
-			{
-				print '<tr><td>' . $langs->trans("VATRate") . '</td><td>' . vatrate($object->multiprices_tva_tx [1], true) . '</td></tr>';
-			}
-
 			print '<tr>';
 
 			// Label of price
@@ -455,20 +454,19 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES))
 			print '</td>';
 
 			if ($object->multiprices_base_type ["$i"] == 'TTC') {
-				print '<td>' . price($object->multiprices_ttc["$i"]);
+				print '<td style="text-align: right">' . price($object->multiprices_ttc["$i"]);
 			} else {
-				print '<td>' . price($object->multiprices["$i"]);
+				print '<td style="text-align: right">' . price($object->multiprices["$i"]);
 			}
 
 			if ($object->multiprices_base_type["$i"]) {
-				print ' ' . $langs->trans($object->multiprices_base_type ["$i"]);
+				print ' '.$langs->trans($object->multiprices_base_type ["$i"]).'</td>';;
 			} else {
-				print ' ' . $langs->trans($object->price_base_type);
+				print ' '.$langs->trans($object->price_base_type).'</td>';;
 			}
-			print '</td></tr>';
 
-			// Prix mini
-			print '<tr><td>' . $langs->trans("MinPrice") . ' ' . $i . '</td><td>';
+			// Prix min
+			print '<td style="text-align: right">';
 			if (empty($object->multiprices_base_type["$i"])) $object->multiprices_base_type["$i"]="HT";
 			if ($object->multiprices_base_type["$i"] == 'TTC')
 			{
@@ -652,7 +650,7 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES))
 }
 
 // Status (to sell)
-print '<tr><td>' . $langs->trans("Status") . ' (' . $langs->trans("Sell") . ')</td><td>';
+print '<tr><td>' . $langs->trans("Status") . ' (' . $langs->trans("Sell") . ')</td><td colspan="2">';
 print $object->getLibStatut(2, 0);
 print '</td></tr>';
 
@@ -702,7 +700,7 @@ if ($action == 'edit_price' && ($user->rights->produit->creer || $user->rights->
 		print '</td></tr>';
 
 		// Price base
-		print '<tr><td width="15%">';
+		print '<tr><td width="20%">';
 		print $langs->trans('PriceBase');
 		print '</td>';
 		print '<td>';
@@ -1286,18 +1284,18 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		print '<td>&nbsp;</td>';
 		print '</tr>';
 
-		print '<tr class="liste_titre">';
-		print '<td><input type="text" class="flat" name="search_soc" value="' . $search_soc . '" size="20"></td>';
-		print '<td colspan="8">&nbsp;</td>';
-		// Print the search button
-		print '<td class="liste_titre" align="right">';
-		print '<input class="liste_titre" name="button_search" type="image" src="' . DOL_URL_ROOT . '/theme/' . $conf->theme . '/img/search.png" value="' . dol_escape_htmltag($langs->trans("Search")) . '" title="' . dol_escape_htmltag($langs->trans("Search")) . '">';
-		print '</td>';
-		print '</tr>';
-
 		if (count($prodcustprice->lines) > 0)
 		{
-			$var = False;
+    		print '<tr class="liste_titre">';
+    		print '<td><input type="text" class="flat" name="search_soc" value="' . $search_soc . '" size="20"></td>';
+    		print '<td colspan="8">&nbsp;</td>';
+    		// Print the search button
+    		print '<td class="liste_titre" align="right">';
+    		print '<input class="liste_titre" name="button_search" type="image" src="' . DOL_URL_ROOT . '/theme/' . $conf->theme . '/img/search.png" value="' . dol_escape_htmltag($langs->trans("Search")) . '" title="' . dol_escape_htmltag($langs->trans("Search")) . '">';
+    		print '</td>';
+    		print '</tr>';
+		    
+		    $var = False;
 
 			foreach ($prodcustprice->lines as $line)
 			{

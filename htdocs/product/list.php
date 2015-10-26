@@ -84,6 +84,24 @@ if ($type=='0') $result=restrictedArea($user,'produit','','','','','',$objcanvas
 else if ($type=='1') $result=restrictedArea($user,'service','','','','','',$objcanvas);
 else $result=restrictedArea($user,'produit|service','','','','','',$objcanvas);
 
+// List of fields to search into when doing a "search in all"
+$fieldstosearchall = array(
+	'p.ref'=>"Ref",
+	'p.label'=>"ProductLabel",
+	'p.description'=>"Description",
+    "p.note"=>"Note",
+);
+// multilang
+if (! empty($conf->global->MAIN_MULTILANGS))
+{
+	$fieldstosearchall['pl.label']='ProductLabelTranslated';
+	$fieldstosearchall['pl.description']='ProductDescriptionTranslated';
+	$fieldstosearchall['pl.note']='ProductNoteTranslated';
+}
+if (! empty($conf->barcode->enabled)) {
+	$fieldstosearchall['p.barcode']='Gencod';
+}
+
 
 /*
  * Actions
@@ -92,6 +110,7 @@ else $result=restrictedArea($user,'produit|service','','','','','',$objcanvas);
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
 	$sref="";
+	$sall="";
 	$sbarcode="";
 	$snom="";
 	$search_categ=0;
@@ -131,8 +150,6 @@ else
 	{
 		$texte = $langs->trans("ProductsAndServices");
 	}
-    // Add what we are searching for
-    if (! empty($sall)) $texte.= " - ".$sall;
 
     $sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type,';
     $sql.= ' p.fk_product_type, p.tms as datem,';
@@ -146,19 +163,7 @@ else
 	$sql.= ' WHERE p.entity IN ('.getEntity('product', 1).')';
 	if ($sall)
 	{
-		// For natural search
-		$params = array('p.ref', 'p.label', 'p.description', 'p.note');
-		// multilang
-		if (! empty($conf->global->MAIN_MULTILANGS))
-		{
-			$params[] = 'pl.label';
-			$params[] = 'pl.description';
-			$params[] = 'pl.note';
-		}
-		if (! empty($conf->barcode->enabled)) {
-			$params[] = 'p.barcode';
-		}
-		$sql .= natural_search($params, $sall);
+		$sql .= natural_search(array_keys($fieldstosearchall), $sall);
 	}
     // if the type is not 1, we show all products (type = 0,2,3)
     if (dol_strlen($type))
@@ -168,16 +173,6 @@ else
     }
 	if ($sref)     $sql .= natural_search('p.ref', $sref);
     if ($sbarcode) $sql .= natural_search('p.barcode', $sbarcode);
-    if ($snom)
-	{
-		$params = array('p.label');
-		// multilang
-		if (! empty($conf->global->MAIN_MULTILANGS))
-		{
-			$params[] = 'pl.label';
-		}
-		$sql .= natural_search($params, $snom);
-	}
     if (isset($tosell) && dol_strlen($tosell) > 0  && $tosell!=-1) $sql.= " AND p.tosell = ".$db->escape($tosell);
     if (isset($tobuy) && dol_strlen($tobuy) > 0  && $tobuy!=-1)   $sql.= " AND p.tobuy = ".$db->escape($tobuy);
     if (dol_strlen($canvas) > 0)                    $sql.= " AND p.canvas = '".$db->escape($canvas)."'";
@@ -188,8 +183,7 @@ else
     if ($fourn_id > 0) $sql.= " AND pfp.fk_soc = ".$fourn_id;
     $sql.= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type,";
     $sql.= " p.fk_product_type, p.tms,";
-    $sql.= " p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte";
-    $sql .= ', p.desiredstock';
+    $sql.= " p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock";
     //if (GETPOST("toolowstock")) $sql.= " HAVING SUM(s.reel) < p.seuil_stock_alerte";    // Not used yet
 
     $nbtotalofrecords = 0;
@@ -242,7 +236,7 @@ else
     	$param.=isset($type)?"&amp;type=".$type:"";
 		if ($optioncss != '') $param.='&optioncss='.$optioncss;
 
-    	print_barre_liste($texte, $page, "list.php", $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords,'title_products.png');
+    	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords,'title_products.png');
 
     	if (! empty($catid))
     	{
@@ -281,6 +275,12 @@ else
     		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
     		print '<input type="hidden" name="type" value="'.$type.'">';
 
+    	    if ($sall)
+            {
+                foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
+                print $langs->trans("FilterOnInto", $sall, join(', ',$fieldstosearchall));
+            }
+            
     		// Filter on categories
     	 	$moreforfilter='';
     	 	$colspan=6;

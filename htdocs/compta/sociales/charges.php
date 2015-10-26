@@ -79,26 +79,26 @@ if ($action == 'add' && $user->rights->tax->charges->creer)
 {
 	$dateech=@dol_mktime(GETPOST('echhour'),GETPOST('echmin'),GETPOST('echsec'),GETPOST('echmonth'),GETPOST('echday'),GETPOST('echyear'));
 	$dateperiod=@dol_mktime(GETPOST('periodhour'),GETPOST('periodmin'),GETPOST('periodsec'),GETPOST('periodmonth'),GETPOST('periodday'),GETPOST('periodyear'));
-    $amount=GETPOST('amount');
+    $amount=price2num(GETPOST('amount'));
     $actioncode=GETPOST('actioncode');
 	if (! $dateech)
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("DateDue")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("DateDue")), null, 'errors');
 		$action = 'create';
 	}
 	elseif (! $dateperiod)
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Period")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Period")), null, 'errors');
 		$action = 'create';
 	}
 	elseif (! $actioncode > 0)
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Type")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Type")), null, 'errors');
 		$action = 'create';
 	}
 	elseif (empty($amount))
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Amount")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount")), null, 'errors');
 		$action = 'create';
 	}
 	elseif (! is_numeric($amount))
@@ -114,7 +114,7 @@ if ($action == 'add' && $user->rights->tax->charges->creer)
 		$chargesociales->lib=GETPOST('label');
 		$chargesociales->date_ech=$dateech;
 		$chargesociales->periode=$dateperiod;
-		$chargesociales->amount=price2num($amount);
+		$chargesociales->amount=$amount;
 
 		$id=$chargesociales->create($user);
 		if ($id <= 0)
@@ -130,23 +130,28 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->tax->charges->cr
 {
     $dateech=dol_mktime(GETPOST('echhour'),GETPOST('echmin'),GETPOST('echsec'),GETPOST('echmonth'),GETPOST('echday'),GETPOST('echyear'));
     $dateperiod=dol_mktime(GETPOST('periodhour'),GETPOST('periodmin'),GETPOST('periodsec'),GETPOST('periodmonth'),GETPOST('periodday'),GETPOST('periodyear'));
-    $amount=GETPOST('amount');
+    $amount=price2num(GETPOST('amount'));
     if (! $dateech)
     {
-        setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("DateDue")), 'errors');
+        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("DateDue")), null, 'errors');
         $action = 'edit';
     }
     elseif (! $dateperiod)
     {
-        setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Period")), 'errors');
+        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Period")), null, 'errors');
         $action = 'edit';
     }
     elseif (empty($amount))
     {
-        setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Amount")), 'errors');
+        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount")), null, 'errors');
         $action = 'edit';
     }
-	else
+	elseif (! is_numeric($amount))
+	{
+		setEventMessage($langs->trans("ErrorFieldMustBeANumeric",$langs->transnoentities("Amount")), 'errors');
+		$action = 'create';
+	}
+    else
 	{
         $chargesociales=new ChargeSociales($db);
         $result=$chargesociales->fetch($id);

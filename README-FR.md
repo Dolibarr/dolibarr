@@ -77,50 +77,56 @@ Voir fichier ChangeLog.
 
 ## CE QUE DOLIBARR PEUT FAIRE
 
-Modules principaux:
+### Modules principaux (tous optionnels):
+
 - Annuaires des prospects et/ou client et/ou fournisseurs
 - Gestion de catalogue de produits et services
-- Gestion de stock
+- Gestion des devis, propositions commerciales
+- Gestion des commandes
+- Gestion des factures clients/fournisseurs et paiements
+- Gestion des virements bancaires SEPA
 - Gestion des comptes bancaires
 - Agenda partagé
-- Gestion des commandes
-- Gestion des devis, propositions commerciales
-- Gestion des factures clients et fournisseurs
+- Suivi des opportunités et/ou projets (suivi de rentabilité incluant les factures, notes de frais, temps consommé valorisé, ...)
 - Gestion de contrats de services
-- Gestion des paiements
-- Gestion des virements bancaires
+- Gestion de stock
 - Gestion des expéditions
 - GED (Gestion Electronique de Documents)
 - EMailings de masse
 - Réalisation de sondages
 - Point de vente/Caisse enregistreuse
+- …
 
-Autres modules:
+### Autres modules:
+
 - Gestion de marque-pages
 - Gestion des promesses de dons
 - Gestion de la TVA NPR (non perçue récupérable - pour les utilisateurs français des DOM-TOM)
 - Rapports
 - Imports/Exports des données
 - Connectivité LDAP
-- Export PDF de tous les éléments (factures, propositions commerciales, commandes, bons expéditions, etc...)
 - De nombreuses autres fonctionnalités issues de modules officiels ou non (AWStats, Bittorrent, Gravatar, Google, Webcalendar...) 
+- …
 
-Divers:
+### Divers:
+
 - Application multi-utilisateurs avec différents niveaux de permissions par module.
+- Peux être multi-société par ajout du module externe multi-société.
+- Peux-être multi-devise par ajout du module externe multi-devise.
 - Plusieurs gestionnaires de menus (possibilité de différencier les menus pour les utilisateurs internes ou externes comme les clients ou fournisseurs).
 - Application simple à utiliser.
 - Plusieurs thèmes visuels.
 - Code simple et facilement personnalisable.
 - Requiert PHP et Mysql ou Postgresql (Voir versions exactes sur http://wiki.dolibarr.org/index.php/Prérequis). 
 - Compatible avec toutes les offres Cloud du marché respectant les prérequis MySQL et PHP ou Postgresql.
+- Export PDF de tous les éléments (factures, propositions commerciales, commandes, bons expéditions, etc...)
 
 
 ## CE QUE DOLIBARR NE PEUT PAS FAIRE (TACHES A FAIRE)
 
 Voici un liste de fonctionnalites pas encore gérées par Dolibarr:
-- Pas de compta analytique double-partie (uniquement gestion de trésorerie).
+- Pas encore de compta analytique double-partie (uniquement gestion de trésorerie).
 - Dolibarr ne gère qu'une seule monnaie à la fois (mono-devise).
-- Dolibarr ne gère en standard qu'une société/institution/association mère (mono-société). Pour en gérer plusieurs (comme vos filiales), il faut, soit faire plusieurs installations de Dolibarr, soit installer le module MultiCompany qui permet de gérer n société/institutions/associations dans une seule instance par une isolation logique des données.
 - Dolibarr ne contient pas de module de Gestion de la paie.
 - Les tâches du module de gestion de projets n'ont pas de dépendance entre elle.
 - Dolibarr ne contient pas de Webmail.

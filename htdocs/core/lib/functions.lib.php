@@ -732,7 +732,8 @@ function dol_get_fiche_head($links=array(), $active='', $title='', $notab=0, $pi
 	$limittoshow=(empty($conf->global->MAIN_MAXTABS_IN_CARD)?99:$conf->global->MAIN_MAXTABS_IN_CARD);
 	$displaytab=0;
 	$nbintab=0;
-
+    $popuptab=0;
+    
 	for ($i = 0 ; $i <= $maxkey ; $i++)
 	{
 		if ((is_numeric($active) && $i == $active) || (! empty($links[$i][2]) && ! is_numeric($active) && $active == $links[$i][2]))
@@ -1496,30 +1497,30 @@ function dol_print_skype($skype,$cid=0,$socid=0,$addlink=0,$max=64)
 /**
  * 	Format phone numbers according to country
  *
- * 	@param	string	$phone 		Phone number to format
- * 	@param 	string	$country 	Country code to use for formatting
- * 	@param 	int		$cid 		Id of contact if known
- * 	@param 	int		$socid 		Id of third party if known
- * 	@param 	string	$addlink	''=no link to create action, 'AC_TEL'=add link to clicktodial (if module enabled) and add link to create event (if conf->global->AGENDA_ADDACTIONFORPHONE set)
- * 	@param 	string	$separ 		Separation between numbers for a better visibility example : xx.xx.xx.xx.xx
- *  @param	string  $withpicto  Show picto
- *  @param	string	$titlealt	Text to show on alt
- * 	@return string 				Formated phone number
+ * 	@param  string  $phone          Phone number to format
+ * 	@param  string  $countrycode    Country code to use for formatting
+ * 	@param 	int		$cid 		    Id of contact if known
+ * 	@param 	int		$socid          Id of third party if known
+ * 	@param 	string	$addlink	    ''=no link to create action, 'AC_TEL'=add link to clicktodial (if module enabled) and add link to create event (if conf->global->AGENDA_ADDACTIONFORPHONE set)
+ * 	@param 	string	$separ 		    Separation between numbers for a better visibility example : xx.xx.xx.xx.xx
+ *  @param	string  $withpicto      Show picto
+ *  @param	string	$titlealt	    Text to show on alt
+ * 	@return string 				    Formated phone number
  */
-function dol_print_phone($phone,$country='',$cid=0,$socid=0,$addlink='',$separ="&nbsp;",$withpicto='',$titlealt='')
+function dol_print_phone($phone,$countrycode='',$cid=0,$socid=0,$addlink='',$separ="&nbsp;",$withpicto='',$titlealt='')
 {
 	global $conf,$user,$langs,$mysoc;
 
 	// Clean phone parameter
 	$phone = preg_replace("/[\s.-]/","",trim($phone));
 	if (empty($phone)) { return ''; }
-	if (empty($country)) $country=$mysoc->country_code;
+	if (empty($countrycode)) $countrycode=$mysoc->country_code;
 
 	// Short format for small screens
 	if ($conf->dol_optimize_smallscreen) $separ='';
 
 	$newphone=$phone;
-	if (strtoupper($country) == "FR")
+	if (strtoupper($countrycode) == "FR")
 	{
 		// France
 		if (dol_strlen($phone) == 10) {
@@ -1688,10 +1689,10 @@ function dol_print_address($address, $htmlid, $mode, $id, $noprint=0)
             $showgmap=$showomap=0;
 
             // TODO Add a hook here
-            if ($mode=='thirdparty' && ! empty($conf->google->enabled) && ! empty($conf->global->GOOGLE_ENABLE_GMAPS)) $showgmap=1;
+            if (($mode=='thirdparty' || $mode =='societe') && ! empty($conf->google->enabled) && ! empty($conf->global->GOOGLE_ENABLE_GMAPS)) $showgmap=1;
             if ($mode=='contact' && ! empty($conf->google->enabled) && ! empty($conf->global->GOOGLE_ENABLE_GMAPS_CONTACTS)) $showgmap=1;
             if ($mode=='member' && ! empty($conf->google->enabled) && ! empty($conf->global->GOOGLE_ENABLE_GMAPS_MEMBERS)) $showgmap=1;
-            if ($mode=='thirdparty' && ! empty($conf->openstreetmap->enabled) && ! empty($conf->global->OPENSTREETMAP_ENABLE_MAPS)) $showomap=1;
+            if (($mode=='thirdparty' || $mode =='societe') && ! empty($conf->openstreetmap->enabled) && ! empty($conf->global->OPENSTREETMAP_ENABLE_MAPS)) $showomap=1;
             if ($mode=='contact' && ! empty($conf->openstreetmap->enabled) && ! empty($conf->global->OPENSTREETMAP_ENABLE_MAPS_CONTACTS)) $showomap=1;
             if ($mode=='member' && ! empty($conf->openstreetmap->enabled) && ! empty($conf->global->OPENSTREETMAP_ENABLE_MAPS_MEMBERS)) $showomap=1;
 
@@ -4383,7 +4384,7 @@ function get_date_range($date_start,$date_end,$format = '',$outputlangs='', $wit
  *
  * @param	string	$firstname		Firstname
  * @param	string	$lastname		Lastname
- * @param	int		$nameorder		-1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname
+ * @param	int		$nameorder		-1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname, 2=Firstname
  * @return	string					Firstname + lastname or Lastname + firstname
  */
 function dolGetFirstLastname($firstname,$lastname,$nameorder=-1)

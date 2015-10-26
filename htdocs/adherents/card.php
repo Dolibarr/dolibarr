@@ -257,12 +257,12 @@ if (empty($reshook))
 		if ($morphy != 'mor' && empty($lastname)) {
 			$error++;
 			$langs->load("errors");
-			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Lastname")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Lastname")), null, 'errors');
 		}
 		if ($morphy != 'mor' && (!isset($firstname) || $firstname=='')) {
 			$error++;
 			$langs->load("errors");
-			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Firstname")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Firstname")), null, 'errors');
 		}
 
 		// Create new object
@@ -485,14 +485,14 @@ if (empty($reshook))
 		// Check parameters
 		if (empty($morphy) || $morphy == "-1") {
 			$error++;
-			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Nature")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Nature")), null, 'errors');
 		}
 		// Test si le login existe deja
 		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
 		{
 			if (empty($login)) {
 				$error++;
-				setEventMessage($langs->trans("ErrorFieldRequired",$langs->trans("Login")), 'errors');
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Login")), null, 'errors');
 			}
 			else {
 				$sql = "SELECT login FROM ".MAIN_DB_PREFIX."adherent WHERE login='".$db->escape($login)."'";
@@ -508,22 +508,22 @@ if (empty($reshook))
 			}
 			if (empty($pass)) {
 				$error++;
-				setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Password")), 'errors');
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Password")), null, 'errors');
 			}
 		}
 		if ($morphy != 'mor' && empty($lastname)) {
 			$error++;
 			$langs->load("errors");
-			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Lastname")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Lastname")), null, 'errors');
 		}
 		if ($morphy != 'mor' && (!isset($firstname) || $firstname=='')) {
 			$error++;
 			$langs->load("errors");
-			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Firstname")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Firstname")), null, 'errors');
 		}
 		if (! ($typeid > 0)) {	// Keep () before !
 			$error++;
-			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
 		}
 		if ($conf->global->ADHERENT_MAIL_REQUIRED && ! isValidEMail($email)) {
 			$error++;
@@ -802,13 +802,6 @@ else
 			print '<tr><td><span class="fieldrequired">'.$langs->trans("Login").' / '.$langs->trans("Id").'</span></td><td><input type="text" name="member_login" size="40" value="'.(isset($_POST["member_login"])?$_POST["member_login"]:$object->login).'"></td></tr>';
 		}
 
-		// Moral-Physique
-		$morphys["phy"] = $langs->trans("Physical");
-		$morphys["mor"] = $langs->trans("Moral");
-		print '<tr><td class="fieldrequired">'.$langs->trans("Nature")."</td><td>\n";
-		print $form->selectarray("morphy", $morphys, GETPOST('morphy','alpha')?GETPOST('morphy','alpha'):$object->morphy, 1);
-		print "</td>\n";
-
 		// Type
 		print '<tr><td class="fieldrequired">'.$langs->trans("MemberType").'</td><td>';
 		$listetype=$adht->liste_array();
@@ -818,6 +811,13 @@ else
 		} else {
 			print '<font class="error">'.$langs->trans("NoTypeDefinedGoToSetup").'</font>';
 		}
+		print "</td>\n";
+
+		// Morphy
+		$morphys["phy"] = $langs->trans("Physical");
+		$morphys["mor"] = $langs->trans("Moral");
+		print '<tr><td class="fieldrequired">'.$langs->trans("Nature")."</td><td>\n";
+		print $form->selectarray("morphy", $morphys, GETPOST('morphy','alpha')?GETPOST('morphy','alpha'):$object->morphy, 1);
 		print "</td>\n";
 
 		// Company
@@ -1050,7 +1050,7 @@ else
 			print '<tr><td><span class="fieldrequired">'.$langs->trans("Login").' / '.$langs->trans("Id").'</span></td><td colspan="2"><input type="text" name="login" size="30" value="'.(isset($_POST["login"])?$_POST["login"]:$object->login).'"></td></tr>';
 		}
 
-		// Physique-Moral
+		// Morphy
 		$morphys["phy"] = $langs->trans("Physical");
 		$morphys["mor"] = $langs->trans("Morale");
 		print '<tr><td><span class="fieldrequired">'.$langs->trans("Nature").'</span></td><td>';
@@ -1402,36 +1402,28 @@ else
 		if (! empty($conf->societe->enabled)) $rowspan++;
 		if (! empty($conf->skype->enabled)) $rowspan++;
 
-		print '<table class="border" width="100%">';
-
 		$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php">'.$langs->trans("BackToList").'</a>';
-
-		// Ref
-		print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
-		print '<td class="valeur" colspan="2">';
-		print $form->showrefnav($object, 'rowid', $linkback);
-		print '</td></tr>';
-
-		$showphoto='<td rowspan="'.$rowspan.'" align="center" class="hideonsmartphone" valign="middle" width="25%">';
-		$showphoto.=$form->showphoto('memberphoto',$object);
-		$showphoto.='</td>';
+		
+		dol_banner_tab($object, 'rowid', $linkback);
+        
+        print '<div class="fichecenter">';
+        print '<div class="fichehalfleft">';
+        
+        print '<div class="underbanner clearboth"></div>';
+		print '<table class="border centpercent">';
 
 		// Login
 		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
 		{
-			print '<tr><td>'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.$object->login.'&nbsp;</td>';
-			// Photo
-			print $showphoto; $showphoto='';
-			print '</tr>';
+			print '<tr><td>'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.$object->login.'&nbsp;</td></tr>';
 		}
-
-		// Morphy
-		print '<tr><td>'.$langs->trans("Nature").'</td><td class="valeur" >'.$object->getmorphylib().'</td>';
-		print $showphoto; $showphoto='';
-		print '</tr>';
 
 		// Type
 		print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">'.$adht->getNomUrl(1)."</td></tr>\n";
+
+		// Morphy
+		print '<tr><td>'.$langs->trans("Nature").'</td><td class="valeur" >'.$object->getmorphylib().'</td>';
+		print '</tr>';
 
 		// Company
 		print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$object->societe.'</td></tr>';
@@ -1439,16 +1431,6 @@ else
 		// Civility
 		print '<tr><td>'.$langs->trans("UserTitle").'</td><td class="valeur">'.$object->getCivilityLabel().'&nbsp;</td>';
 		print '</tr>';
-
-		// Lastname
-		print '<tr><td>'.$langs->trans("Lastname").'</td><td class="valeur">'.$object->lastname.'&nbsp;</td>';
-		print '</tr>';
-
-		// Firstname
-		print '<tr><td>'.$langs->trans("Firstname").'</td><td class="valeur">'.$object->firstname.'&nbsp;</td></tr>';
-
-		// EMail
-		print '<tr><td>'.$langs->trans("EMail").'</td><td class="valeur">'.dol_print_email($object->email,0,$object->fk_soc,1).'</td></tr>';
 
 		// Password
 		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
@@ -1463,47 +1445,25 @@ else
 			print '</td></tr>';
 		}
 
-		// Address
-		print '<tr><td>'.$langs->trans("Address").'</td><td class="valeur">';
-		dol_print_address($object->address,'gmap','member',$object->id);
-		print '</td></tr>';
-
-		// Zip / Town
-		print '<tr><td class="nowrap">'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td class="valeur">'.$object->zip.(($object->zip && $object->town)?' / ':'').$object->town.'</td></tr>';
-
-		// Country
-		print '<tr><td>'.$langs->trans("Country").'</td><td class="valeur">';
-		$img=picto_from_langcode($object->country_code);
-		if ($img) print $img.' ';
-		print getCountry($object->country_code);
-		print '</td></tr>';
-
-		// State
-		print '<tr><td>'.$langs->trans('State').'</td><td class="valeur">'.$object->state.'</td>';
-
-		// Tel pro.
-		print '<tr><td>'.$langs->trans("PhonePro").'</td><td class="valeur">'.dol_print_phone($object->phone,$object->country_code,0,$object->fk_soc,1).'</td></tr>';
-
-		// Tel perso
-		print '<tr><td>'.$langs->trans("PhonePerso").'</td><td class="valeur">'.dol_print_phone($object->phone_perso,$object->country_code,0,$object->fk_soc,1).'</td></tr>';
-
-		// Tel mobile
-		print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td class="valeur">'.dol_print_phone($object->phone_mobile,$object->country_code,0,$object->fk_soc,1).'</td></tr>';
-
     	// Skype
 		if (! empty($conf->skype->enabled))
 		{
 			print '<tr><td>'.$langs->trans("Skype").'</td><td class="valeur">'.dol_print_skype($object->skype,0,$object->fk_soc,1).'</td></tr>';
 		}
 
+        print '</table>';
+        
+        print '</div>';
+        print '<div class="fichehalfright"><div class="ficheaddleft">';
+       
+        print '<div class="underbanner clearboth"></div>';
+        print '<table class="border tableforfield" width="100%">';
+		
 		// Birthday
 		print '<tr><td>'.$langs->trans("Birthday").'</td><td class="valeur">'.dol_print_date($object->birth,'day').'</td></tr>';
 
 		// Public
 		print '<tr><td>'.$langs->trans("Public").'</td><td class="valeur">'.yn($object->public).'</td></tr>';
-
-		// Status
-		print '<tr><td>'.$langs->trans("Status").'</td><td class="valeur">'.$object->getLibStatut(4).'</td></tr>';
 
 		// Categories
 		if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire))
@@ -1592,14 +1552,34 @@ else
 		}
 		print '</td></tr>';
 
+        // Date end subscription
+        print '<tr><td>'.$langs->trans("SubscriptionEndDate").'</td><td class="valeur">';
+        if ($object->datefin)
+        {
+            print dol_print_date($object->datefin,'day');
+            if ($object->hasDelay()) {
+                print " ".img_warning($langs->trans("Late"));
+            }
+        }
+        else
+        {
+            print $langs->trans("SubscriptionNotReceived");
+            if ($object->statut > 0) print " ".img_warning($langs->trans("Late")); // Affiche picto retard uniquement si non brouillon et non resilie
+        }
+        print '</td></tr>';
+
 		print "</table>\n";
 
-		print "</div>\n";
+		print "</div></div></div>\n";
+        print '<div style="clear:both"></div>';
 
-
+        dol_fiche_end();
+        
+        
 		/*
 		 * Hotbar
 		 */
+        
 		print '<div class="tabsAction">';
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been

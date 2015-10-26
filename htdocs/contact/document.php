@@ -95,6 +95,8 @@ if ($object->id)
         $totalsize+=$file['size'];
     }
 
+    $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php">'.$langs->trans("BackToList").'</a>';
+    
     dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '');
         
     print '<div class="fichecenter">';

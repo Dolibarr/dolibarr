@@ -765,8 +765,10 @@ class Product extends CommonObject
 						$newdir = $conf->product->dir_output . "/" . dol_sanitizeFileName($this->ref);
 						if (file_exists($olddir))
 						{
-							include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
-							$res=dol_move($olddir, $newdir);
+							//include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+							//$res = dol_move($olddir, $newdir);
+							// do not use dol_move with directory
+							$res = @rename($olddir, $newdir);
 							if (! $res)
 							{
 								$this->error='ErrorFailToMoveDir';
@@ -3058,7 +3060,8 @@ class Product extends CommonObject
 	 */
 	function LibStatut($status,$mode=0,$type=0)
 	{
-		global $langs;
+		global $conf, $langs;
+		
 		$langs->load('products');
 		if (!empty($conf->productbatch->enabled)) $langs->load("productbatch");
 
@@ -3295,23 +3298,23 @@ class Product extends CommonObject
         if (! empty($conf->commande->enabled))
         {
             $result=$this->load_stats_commande(0,'1,2');
-            if ($result < 0) dol_print_error($db,$this->error);
+            if ($result < 0) dol_print_error($this->db,$this->error);
             $stock_commande_client=$this->stats_commande['qty'];
         }
         if (! empty($conf->expedition->enabled))
         {
             $result=$this->load_stats_sending(0,'1,2');
-            if ($result < 0) dol_print_error($db,$this->error);
+            if ($result < 0) dol_print_error($this->db,$this->error);
             $stock_sending_client=$this->stats_expedition['qty'];
         }
         if (! empty($conf->fournisseur->enabled))
         {
             $result=$this->load_stats_commande_fournisseur(0,'1,2,3,4');
-            if ($result < 0) dol_print_error($db,$this->error);
+            if ($result < 0) dol_print_error($this->db,$this->error);
             $stock_commande_fournisseur=$this->stats_commande_fournisseur['qty'];
 
             $result=$this->load_stats_reception(0,'4');
-            if ($result < 0) dol_print_error($db,$this->error);
+            if ($result < 0) dol_print_error($this->db,$this->error);
             $stock_reception_fournisseur=$this->stats_reception['qty'];
         }
 
@@ -3553,7 +3556,7 @@ class Product extends CommonObject
     						{
     							$return.= '<br>';
     							// On propose la generation de la vignette si elle n'existe pas et si la taille est superieure aux limites
-    							if ($photo_vignette && preg_match('/('.$this->regeximgext.')$/i', $photo) && ($product->imgWidth > $maxWidth || $product->imgHeight > $maxHeight))
+    							if ($photo_vignette && preg_match('/('.$this->regeximgext.')$/i', $photo) && ($this->imgWidth > $maxWidth || $this->imgHeight > $maxHeight))
     							{
     								$return.= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=addthumb&amp;file='.urlencode($pdir.$viewfilename).'">'.img_picto($langs->trans('GenerateThumb'),'refresh').'&nbsp;&nbsp;</a>';
     							}
@@ -3959,12 +3962,14 @@ class Product extends CommonObject
 
 		// Process
 		foreach($to_del as $del) {
-			$c->fetch($del);
-			$c->del_type($this, 'product');
+			if ($c->fetch($del) > 0) {
+				$c->del_type($this, 'product');
+			}
 		}
 		foreach ($to_add as $add) {
-			$c->fetch($add);
-			$c->add_type($this, 'product');
+			if ($c->fetch($add) > 0) {
+				$c->add_type($this, 'product');
+			}
 		}
 
 		return;

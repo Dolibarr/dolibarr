@@ -107,186 +107,184 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook)) {
 
-    if ($action == 'confirm_disable' && $confirm == "yes" && $candisableuser) {
-        if ($id <> $user->id) {
-            $object->fetch($id);
-            $object->setstatus(0);
-            header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
-            exit;
-        }
-    }
-    if ($action == 'confirm_enable' && $confirm == "yes" && $candisableuser) {
-        $error = 0;
+	if ($action == 'confirm_disable' && $confirm == "yes" && $candisableuser) {
+		if ($id <> $user->id) {
+			$object->fetch($id);
+			$object->setstatus(0);
+			header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
+			exit;
+		}
+	}
+	if ($action == 'confirm_enable' && $confirm == "yes" && $candisableuser) {
+		$error = 0;
 
-        if ($id <> $user->id) {
-            $object->fetch($id);
+		if ($id <> $user->id) {
+			$object->fetch($id);
 
-            if (!empty($conf->file->main_limit_users)) {
-                $nb = $object->getNbOfUsers("active");
-                if ($nb >= $conf->file->main_limit_users) {
-                    $error ++;
-                    setEventMessage($langs->trans("YourQuotaOfUsersIsReached"), 'errors');
-                }
-            }
+			if (!empty($conf->file->main_limit_users)) {
+				$nb = $object->getNbOfUsers("active");
+				if ($nb >= $conf->file->main_limit_users) {
+					$error ++;
+					setEventMessage($langs->trans("YourQuotaOfUsersIsReached"), 'errors');
+				}
+			}
 
-            if (!$error) {
-                $object->setstatus(1);
-                header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
-                exit;
-            }
-        }
-    }
+			if (!$error) {
+				$object->setstatus(1);
+				header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
+				exit;
+			}
+		}
+	}
 
-    if ($action == 'confirm_delete' && $confirm == "yes" && $candisableuser) {
-        if ($id <> $user->id) {
-            $object = new User($db);
-            $object->id = $id;
-            $result = $object->delete();
-            if ($result < 0) {
-                $langs->load("errors");
-                setEventMessage($langs->trans("ErrorUserCannotBeDelete"), 'errors');
-            } else {
-                header("Location: index.php");
-                exit;
-            }
-        }
-    }
+	if ($action == 'confirm_delete' && $confirm == "yes" && $candisableuser) {
+		if ($id <> $user->id) {
+			$object = new User($db);
+			$object->id = $id;
+			$result = $object->delete();
+			if ($result < 0) {
+				$langs->load("errors");
+				setEventMessage($langs->trans("ErrorUserCannotBeDelete"), 'errors');
+			} else {
+				header("Location: index.php");
+				exit;
+			}
+		}
+	}
 
-// Action Add user
-    if ($action == 'add' && $canadduser) {
-        $error = 0;
+	// Action Add user
+	if ($action == 'add' && $canadduser) {
+		$error = 0;
 
-        if (!$_POST["lastname"]) {
-            $error ++;
-            setEventMessage($langs->trans("NameNotDefined"), 'errors');
-            $action = "create";       // Go back to create page
-        }
-        if (!$_POST["login"]) {
-            $error ++;
-            setEventMessage($langs->trans("LoginNotDefined"), 'errors');
-            $action = "create";       // Go back to create page
-        }
+		if (!$_POST["lastname"]) {
+			$error ++;
+			setEventMessage($langs->trans("NameNotDefined"), 'errors');
+			$action = "create";       // Go back to create page
+		}
+		if (!$_POST["login"]) {
+			$error ++;
+			setEventMessage($langs->trans("LoginNotDefined"), 'errors');
+			$action = "create";       // Go back to create page
+		}
 
-        if (!empty($conf->file->main_limit_users)) // If option to limit users is set
-        {
-            $nb = $object->getNbOfUsers("active");
-            if ($nb >= $conf->file->main_limit_users) {
-                $error ++;
-                setEventMessage($langs->trans("YourQuotaOfUsersIsReached"), 'errors');
-                $action = "create";       // Go back to create page
-            }
-        }
+		if (!empty($conf->file->main_limit_users)) { // If option to limit users is set
+			$nb = $object->getNbOfUsers("active");
+			if ($nb >= $conf->file->main_limit_users) {
+				$error ++;
+				setEventMessage($langs->trans("YourQuotaOfUsersIsReached"), 'errors');
+				$action = "create";       // Go back to create page
+			}
+		}
 
-        if (!$error) {
-            $object->lastname = GETPOST("lastname", 'alpha');
-            $object->firstname = GETPOST("firstname", 'alpha');
-            $object->login = GETPOST("login", 'alpha');
-            $object->api_key = GETPOST("api_key", 'alpha');
-            $object->gender = GETPOST("gender", 'alpha');
-            $object->admin = GETPOST("admin", 'alpha');
-            $object->office_phone = GETPOST("office_phone", 'alpha');
-            $object->office_fax = GETPOST("office_fax", 'alpha');
-            $object->user_mobile = GETPOST("user_mobile");
-            $object->skype = GETPOST("skype");
-            $object->email = GETPOST("email", 'alpha');
-            $object->job = GETPOST("job", 'alpha');
-            $object->signature = GETPOST("signature");
-            $object->accountancy_code = GETPOST("accountancy_code");
-            $object->note = GETPOST("note");
-            $object->ldap_sid = GETPOST("ldap_sid");
-            $object->fk_user = GETPOST("fk_user") > 0 ? GETPOST("fk_user") : 0;
+		if (!$error) {
+			$object->lastname = GETPOST("lastname", 'alpha');
+			$object->firstname = GETPOST("firstname", 'alpha');
+			$object->login = GETPOST("login", 'alpha');
+			$object->api_key = GETPOST("api_key", 'alpha');
+			$object->gender = GETPOST("gender", 'alpha');
+			$object->admin = GETPOST("admin", 'alpha');
+			$object->office_phone = GETPOST("office_phone", 'alpha');
+			$object->office_fax = GETPOST("office_fax", 'alpha');
+			$object->user_mobile = GETPOST("user_mobile");
+			$object->skype = GETPOST("skype");
+			$object->email = GETPOST("email", 'alpha');
+			$object->job = GETPOST("job", 'alpha');
+			$object->signature = GETPOST("signature");
+			$object->accountancy_code = GETPOST("accountancy_code");
+			$object->note = GETPOST("note");
+			$object->ldap_sid = GETPOST("ldap_sid");
+			$object->fk_user = GETPOST("fk_user") > 0 ? GETPOST("fk_user") : 0;
 
-            $object->thm = GETPOST("thm") != '' ? GETPOST("thm") : '';
-            $object->tjm = GETPOST("tjm") != '' ? GETPOST("tjm") : '';
-            $object->salary = GETPOST("salary") != '' ? GETPOST("salary") : '';
-            $object->salaryextra = GETPOST("salaryextra") != '' ? GETPOST("salaryextra") : '';
-            $object->weeklyhours = GETPOST("weeklyhours") != '' ? GETPOST("weeklyhours") : '';
+			$object->thm = GETPOST("thm") != '' ? GETPOST("thm") : '';
+			$object->tjm = GETPOST("tjm") != '' ? GETPOST("tjm") : '';
+			$object->salary = GETPOST("salary") != '' ? GETPOST("salary") : '';
+			$object->salaryextra = GETPOST("salaryextra") != '' ? GETPOST("salaryextra") : '';
+			$object->weeklyhours = GETPOST("weeklyhours") != '' ? GETPOST("weeklyhours") : '';
 
-            $object->color = GETPOST("color") != '' ? GETPOST("color") : '';
+			$object->color = GETPOST("color") != '' ? GETPOST("color") : '';
 
-            // Fill array 'array_options' with data from add form
-            $ret = $extrafields->setOptionalsFromPost($extralabels, $object);
-            if ($ret < 0) {
-                $error ++;
-            }
+			// Fill array 'array_options' with data from add form
+			$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+			if ($ret < 0) {
+				$error ++;
+			}
 
-            // Set entity property
-            $entity = GETPOST('entity', 'int');
-            if (!empty($conf->multicompany->enabled)) {
-                if (!empty($_POST["superadmin"])) {
-                    $object->entity = 0;
-                } else {
-                    if ($conf->multicompany->transverse_mode) {
-                        $object->entity = 1; // all users are forced into master entity
-                    } else {
-                        $object->entity = ($entity == '' ? 1 : $entity);
-                    }
-                }
-            } else {
-                $object->entity = ($entity == '' ? 1 : $entity);
+			// Set entity property
+			$entity = GETPOST('entity', 'int');
+			if (!empty($conf->multicompany->enabled)) {
+				if (!empty($_POST["superadmin"])) {
+					$object->entity = 0;
+				} else {
+					if ($conf->multicompany->transverse_mode) {
+						$object->entity = 1; // all users are forced into master entity
+					} else {
+						$object->entity = ($entity == '' ? 1 : $entity);
+					}
+				}
+			} else {
+				$object->entity = ($entity == '' ? 1 : $entity);
                 /*if ($user->admin && $user->entity == 0 && GETPOST("admin",'alpha'))
 				{
 				}*/
-            }
+			}
 
-            $db->begin();
+			$db->begin();
 
-            $id = $object->create($user);
-            if ($id > 0) {
-                if (isset($_POST['password']) && trim($_POST['password'])) {
-                    $object->setPassword($user, trim($_POST['password']));
-                }
+			$id = $object->create($user);
+			if ($id > 0) {
+				if (isset($_POST['password']) && trim($_POST['password'])) {
+					$object->setPassword($user, trim($_POST['password']));
+				}
 
-                $db->commit();
+				$db->commit();
 
-                header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
-                exit;
-            } else {
-                $langs->load("errors");
-                $db->rollback();
-                if (is_array($object->errors) && count($object->errors)) {
-                    setEventMessage($object->errors, 'errors');
-                } else {
-                    setEventMessage($object->error, 'errors');
-                }
-                $action = "create";       // Go back to create page
-            }
+				header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
+				exit;
+			} else {
+				$langs->load("errors");
+				$db->rollback();
+				if (is_array($object->errors) && count($object->errors)) {
+					setEventMessage($object->errors, 'errors');
+				} else {
+					setEventMessage($object->error, 'errors');
+				}
+				$action = "create";       // Go back to create page
+			}
+		}
+	}
 
-        }
-    }
+	// Action add usergroup
+	if (($action == 'addgroup' || $action == 'removegroup') && $caneditfield)
+	{
+		if ($group)
+		{
+			$editgroup = new UserGroup($db);
+			$editgroup->fetch($group);
+			$editgroup->oldcopy=clone $editgroup;
 
-// Action add usergroup
-if (($action == 'addgroup' || $action == 'removegroup') && $caneditfield)
-{
-    if ($group)
-    {
-        $editgroup = new UserGroup($db);
-        $editgroup->fetch($group);
-		$editgroup->oldcopy=clone $editgroup;
+			$object->fetch($id);
+			if ($action == 'addgroup') {
+				$object->SetInGroup($group, ($conf->multicompany->transverse_mode ? GETPOST("entity") : $editgroup->entity));
+			}
+			if ($action == 'removegroup') {
+				$object->RemoveFromGroup($group, ($conf->multicompany->transverse_mode ? GETPOST("entity") : $editgroup->entity));
+			}
 
-            $object->fetch($id);
-            if ($action == 'addgroup') {
-                $object->SetInGroup($group, ($conf->multicompany->transverse_mode ? GETPOST("entity") : $editgroup->entity));
-            }
-            if ($action == 'removegroup') {
-                $object->RemoveFromGroup($group, ($conf->multicompany->transverse_mode ? GETPOST("entity") : $editgroup->entity));
-            }
+			if ($result > 0) {
+				header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
+				exit;
+			} else {
+				setEventMessage($object->error, 'errors');
+			}
+		}
+	}
 
-            if ($result > 0) {
-                header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
-                exit;
-            } else {
-                setEventMessage($object->error, 'errors');
-            }
-        }
-    }
+	if ($action == 'update' && !$_POST["cancel"]) {
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-    if ($action == 'update' && !$_POST["cancel"]) {
-        require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
-        if ($caneditfield)    // Case we can edit all field
-        {
-            $error = 0;
+		if ($caneditfield)    // Case we can edit all field
+		{
+			$error = 0;
 
             if (!$_POST["lastname"]) {
                 setEventMessage($langs->trans("NameNotDefined"), 'errors');
@@ -493,9 +491,8 @@ if (($action == 'addgroup' || $action == 'removegroup') && $caneditfield)
 	        setEventMessage($object->error, 'errors');
         }
     }
-}
 
-// Change password with a new generated one
+	// Change password with a new generated one
     if ((($action == 'confirm_password' && $confirm == 'yes')
             || ($action == 'confirm_passwordsend' && $confirm == 'yes')) && $caneditpassword
     ) {
@@ -519,7 +516,7 @@ if (($action == 'addgroup' || $action == 'removegroup') && $caneditfield)
         }
     }
 
-// Action initialisation donnees depuis record LDAP
+	// Action initialisation donnees depuis record LDAP
     if ($action == 'adduserldap') {
         $selecteduser = $_POST['users'];
 
@@ -1154,14 +1151,14 @@ else
 			dol_fiche_head($head, 'user', $title, 0, 'user');
 
 	        dol_banner_tab($object,'id','',$user->rights->user->user->lire || $user->admin);
-	        
-	        
+
+
 	        print '<div class="fichecenter">';
 	        print '<div class="fichehalfleft">';
-	        
+
 	        print '<div class="underbanner clearboth"></div>';
 	        print '<table class="border tableforfield" width="100%">';
-            
+
             // Login
             print '<tr><td>'.$langs->trans("Login").'</td>';
             if (! empty($object->ldap_sid) && $object->statut==0)
@@ -1345,13 +1342,13 @@ else
 			}
 
 			print '</table>';
-			
+
 	        print '</div>';
 	        print '<div class="fichehalfright"><div class="ficheaddleft">';
-	       
+
 	        print '<div class="underbanner clearboth"></div>';
 	        print '<table class="border tableforfield" width="100%">';
-			
+
         	print '<tr><td>'.$langs->trans("LastConnexion").'</td>';
             print '<td>'.dol_print_date($object->datelastlogin,"dayhour").'</td>';
             print "</tr>\n";
@@ -1445,10 +1442,10 @@ else
 
 			print "</table>\n";
 			print '</div>';
-		
+
         	print '</div></div>';
         	print '<div style="clear:both"></div>';
-			
+
 
             dol_fiche_end();
 
@@ -1694,7 +1691,7 @@ else
 	            print '</td>';
 	            print '</tr>';
 			}
-			
+
             // Lastname
             print "<tr>";
             print '<td class="fieldrequired">'.$langs->trans("Lastname").'</td>';
@@ -1812,10 +1809,16 @@ else
             else
             {
                 print '<td>';
-                $nbSuperAdmin = $user->getNbOfUsers('superadmin');
-                if ($user->admin
-                && ($user->id != $object->id)                    // Don't downgrade ourself
-                && ($object->entity > 0 || $nbSuperAdmin > 1)    // Don't downgrade a superadmin if alone
+                $nbAdmin = $user->getNbOfUsers('active','',1);
+                $nbSuperAdmin = $user->getNbOfUsers('active','superadmin',1);
+                //var_dump($nbAdmin);
+                //var_dump($nbSuperAdmin);
+                if ($user->admin								// Need to be admin to allow downgrade of an admin
+                && ($user->id != $object->id)                   // Don't downgrade ourself
+                && (
+                	(empty($conf->multicompany->enabled) && $nbAdmin > 1)
+                	|| (! empty($conf->multicompany->enabled) && ($object->entity > 0 || $nbSuperAdmin > 1))    // Don't downgrade a superadmin if alone
+                	)
                 )
                 {
                     print $form->selectyesno('admin',$object->admin,1);

@@ -125,29 +125,32 @@ if ($result)
 //print '<tr><td width="30%" class="notopnoleft" valign="top">';
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
+// Search contact/address
+if (! empty($conf->adherent->enabled) && $user->rights->adherent->lire)
+{
+	$listofsearchfields['search_member']=array('text'=>'Member');
+}
 
-// Formulaire recherche adherent
-print '<form action="list.php" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="search">';
-print '<table class="noborder nohover" width="100%">';
-print '<tr class="liste_titre">';
-print '<td colspan="3">'.$langs->trans("SearchAMember").'</td>';
-print "</tr>\n";
-$var=false;
-print "<tr ".$bc[$var].">";
-print '<td>';
-print '<label for="search_ref">'.$langs->trans("Ref").'</label>:</td><td><input type="text" name="search_ref" id="search_ref" class="flat" size="16">';
-print '</td><td rowspan="3"><input class="button" type="submit" value="'.$langs->trans("Search").'"></td></tr>';
-print "<tr ".$bc[$var].">";
-print '<td>';
-print '<label for="search_lastname">'.$langs->trans("Name").'</label>:</td><td><input type="text" name="search_lastname" id="search_lastname" class="flat" size="16">';
-print '</td></tr>';
-print "<tr ".$bc[$var].">";
-print '<td>';
-print '<label for="sall">'.$langs->trans("Other").'</label>:</td><td><input type="text" name="sall" id="sall" class="flat" size="16">';
-print '</td></tr>';
-print "</table></form>";
+if (count($listofsearchfields))
+{
+	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<table class="noborder nohover centpercent">';
+	$i=0;
+	foreach($listofsearchfields as $key => $value)
+	{
+		if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
+		print '<tr>';
+		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label>:</td><td><input type="text" class="flat" name="'.$key.'" id="'.$key.'" size="18"></td>';
+		if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
+		print '</tr>';
+		$i++;
+	}
+	print '</table>';	
+	print '</form>';
+	print '<br>';
+}
+
 
 
 /*
@@ -156,7 +159,6 @@ print "</table></form>";
 
 if ($conf->use_javascript_ajax)
 {
-    print '<br>';
     print '<table class="noborder nohover" width="100%">';
     print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").'</td></tr>';
     print '<tr '.$bc[0].'><td align="center" colspan="2">';

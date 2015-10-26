@@ -3235,10 +3235,10 @@ class Form
             if (! empty($more)) {
             	$formconfirm.= '<div class="confirmquestions">'.$more.'</div>';
             }
-            $formconfirm.= ($question ? '<div class="confirmmessage"'.img_help('','').' '.$question . '</div>': '');
+            $formconfirm.= ($question ? '<div class="confirmmessage">'.img_help('','').' '.$question . '</div>': '');
             $formconfirm.= '</div>'."\n";
 
-            $formconfirm.= "\n<!-- begin ajax formconfirm page=".$page." -->\n";
+            $formconfirm.= "\n<!-- begin ajax form_confirm page=".$page." -->\n";
             $formconfirm.= '<script type="text/javascript">'."\n";
             $formconfirm.= 'jQuery(document).ready(function() {
             $(function() {
@@ -3309,11 +3309,11 @@ class Form
             });
             });
             </script>';
-            $formconfirm.= "<!-- end ajax formconfirm -->\n";
+            $formconfirm.= "<!-- end ajax form_confirm -->\n";
         }
         else
         {
-        	$formconfirm.= "\n<!-- begin formconfirm page=".$page." -->\n";
+        	$formconfirm.= "\n<!-- begin form_confirm page=".$page." -->\n";
 
             $formconfirm.= '<form method="POST" action="'.$page.'" class="notoptoleftroright">'."\n";
             $formconfirm.= '<input type="hidden" name="action" value="'.$action.'">'."\n";
@@ -3346,7 +3346,7 @@ class Form
             $formconfirm.= "</form>\n";
             $formconfirm.= '<br>';
 
-            $formconfirm.= "<!-- end formconfirm -->\n";
+            $formconfirm.= "<!-- end form_confirm -->\n";
         }
 
         return $formconfirm;
@@ -4501,7 +4501,7 @@ class Form
 
     /**
      *	Return a HTML select string, built from an array of key+value but content returned into select come from an Ajax call of an URL.
-     *  Note: Do not apply langs->trans function on returned content, content may be entity encoded twice.
+     *  Note: Do not apply langs->trans function on returned content of Ajax service, content may be entity encoded twice.
      *
      *	@param	string	$htmlname       		Name of html select area
      *	@param	string	$url					Url
@@ -4534,9 +4534,14 @@ class Form
 				    		};
 			    		},
 			    		results: function (remoteData, pageNumber, query) {
-			    			console.log(remoteData);
-			    			return {results:[{id:\'none\', text:\'aa\'}, {id:\'rrr\', text:\'Red\'},{id:\'bbb\', text:\'Search a into projects\'}], more:false}
-			    			//return {results:[remoteData], more:false}
+			    			//console.log(remoteData);
+				    	    result = []
+				    	    $.each( remoteData, function( key, value ) {
+				    	       result.push({id: key, text: value});
+                            });
+				    	    //console.log(result);
+			    			//return {results:[{id:\'none\', text:\'aa\'}, {id:\'rrr\', text:\'Red\'},{id:\'bbb\', text:\'Search a into projects\'}], more:false}
+			    			return {results: result, more:false}
     					},
 			    		/*processResults: function (data, page) {
 			    			// parse the results into the format expected by Select2.
@@ -4557,7 +4562,8 @@ class Form
 			    
 			    $(".'.$htmlname.'").change(function() { 
 			    	alert(\'eee\');
-			    	$(".'.$htmlname.'").select2.clearSearch(); 
+			    	/* $(".'.$htmlname.'").select2("search",""); */
+			    	$(".'.$htmlname.'").select2("val","");  /* reset combo box */
     			} );
 
     			
@@ -4797,7 +4803,7 @@ class Form
 
 		if ($rendermode == 0)
 		{
-			$cate_arbo = $this->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 64, 0, 1);
+			$cate_arbo = $this->select_all_categories($type, '', 'parent', 64, 0, 1);
 			foreach($categories as $c) {
 				$arrayselected[] = $c->id;
 			}
@@ -5265,9 +5271,9 @@ class Form
             $dir=$conf->societe->multidir_output[$entity];
             $smallfile=$object->logo;
             $smallfile=preg_replace('/(\.png|\.gif|\.jpg|\.jpeg|\.bmp)/i','_small\\1',$smallfile);
-            if ($object->logo) $file=$id.'/logos/thumbs/'.$smallfile;
+            if (! empty($object->logo)) $file=$id.'/logos/thumbs/'.$smallfile;
         }
-        if ($modulepart=='contact')
+        else if ($modulepart=='contact')
         {
             $dir=$conf->societe->multidir_output[$entity].'/contact';
             $file=$id.'/photos/'.$object->photo;
@@ -5275,19 +5281,19 @@ class Form
         else if ($modulepart=='userphoto')
         {
             $dir=$conf->user->dir_output;
-            if ($object->photo) $file=get_exdir($id, 2, 0, 0, $object, 'user').$object->photo;
+            if (! empty($object->photo)) $file=get_exdir($id, 2, 0, 0, $object, 'user').$object->photo;
             if (! empty($conf->global->MAIN_OLD_IMAGE_LINKS)) $altfile=$object->id.".jpg";	// For backward compatibility
             $email=$object->email;
         }
         else if ($modulepart=='memberphoto')
         {
             $dir=$conf->adherent->dir_output;
-            if ($object->photo) $file=get_exdir($id, 2, 0, 0, $object, 'invoice_supplier').'photos/'.$object->photo;
+            if (! empty($object->photo)) $file=get_exdir($id, 2, 0, 0, $object, 'invoice_supplier').'photos/'.$object->photo;
             if (! empty($conf->global->MAIN_OLD_IMAGE_LINKS)) $altfile=$object->id.".jpg";	// For backward compatibility
             $email=$object->email;
         } else {
         	$dir=$conf->$modulepart->dir_output;
-        	if ($object->photo) $file=get_exdir($id, 2, 0, 0, $adherent, 'member').'photos/'.$object->photo;
+        	if (! empty($object->photo)) $file=get_exdir($id, 2, 0, 0, $object, 'member').'photos/'.$object->photo;
         	if (! empty($conf->global->MAIN_OLD_IMAGE_LINKS)) $altfile=$object->id.".jpg";	// For backward compatibility
         	$email=$object->email;
         }

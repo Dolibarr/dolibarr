@@ -2438,6 +2438,7 @@ class Societe extends CommonObject
             $resql=$this->db->query($sql);
             if ($resql)
             {
+            	$this->parent = $id;
                 return 1;
             }
             else
@@ -3393,8 +3394,6 @@ class Societe extends CommonObject
 
 		// Diff
 		if (is_array($existing)) {
-			var_dump($existing);
-			var_dump($categories);
 			$to_del = array_diff($existing, $categories);
 			$to_add = array_diff($categories, $existing);
 		} else {
@@ -3404,12 +3403,14 @@ class Societe extends CommonObject
 
 		// Process
 		foreach ($to_del as $del) {
-			$c->fetch($del);
-			$c->del_type($this, $type_text);
+			if ($c->fetch($del) > 0) {
+				$c->del_type($this, $type_text);
+			}
 		}
 		foreach ($to_add as $add) {
-			$c->fetch($add);
-			$c->add_type($this, $type_text);
+			if ($c->fetch($add) > 0) {
+				$c->add_type($this, $type_text);
+			}
 		}
 
 		return;

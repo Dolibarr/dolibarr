@@ -68,12 +68,12 @@ if ($action == 'add')
 
     if (empty($contactid))
     {
-	    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Contact")), 'errors');
+	    setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Contact")), null, 'errors');
         $error++;
     }
     if ($actionid <= 0)
     {
-	    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Action")), 'errors');
+	    setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Action")), null, 'errors');
         $error++;
     }
 
@@ -186,12 +186,12 @@ if ($result > 0)
     print '</td></tr>';
     print '</table>';
 
+    // Help
+    print '<br>'.$langs->trans("NotificationsDesc");
+
     print '</div>';
     
     dol_fiche_end();
-
-    // Help
-    print $langs->trans("NotificationsDesc").'<br><br>';
 
     print "\n";
 
@@ -221,12 +221,12 @@ if ($result > 0)
 
         // Load array of available notifications
         $notificationtrigger=new InterfaceNotification($db);
-        $listofnotifiedevents=$notificationtrigger->getListOfManagedEvents();
+        $listofmanagedeventfornotification=$notificationtrigger->getListOfManagedEvents();
 
-        foreach($listofnotifiedevents as $notifiedevent)
+        foreach($listofmanagedeventfornotification as $managedeventfornotification)
         {
- 			$label=($langs->trans("Notify_".$notifiedevent['code'])!="Notify_".$notifiedevent['code']?$langs->trans("Notify_".$notifiedevent['code']):$notifiedevent['label']);
-            $actions[$notifiedevent['rowid']]=$label;
+ 			$label=($langs->trans("Notify_".$managedeventfornotification['code'])!="Notify_".$managedeventfornotification['code']?$langs->trans("Notify_".$managedeventfornotification['code']):$managedeventfornotification['label']);
+            $actions[$managedeventfornotification['rowid']]=$label;
         }
         print '<tr '.$bc[$var].'><td>';
         print $form->selectarray("contactid",$listofemails);

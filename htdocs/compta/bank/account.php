@@ -135,15 +135,15 @@ if ($action == 'add' && $id && ! isset($_POST["cancel"]) && $user->rights->banqu
 
 	if (! $dateop) {
 		$error++;
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->trans("Date")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Date")), null, 'errors');
 	}
 	if (! $operation) {
 		$error++;
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->trans("Type")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Type")), null, 'errors');
 	}
 	if (! $amount) {
 		$error++;
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->trans("Amount")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Amount")), null, 'errors');
 	}
 
 	if (! $error)

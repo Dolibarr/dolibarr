@@ -111,7 +111,7 @@ class ExtraFields
 	 *  @param  string	$elementtype        Element type ('member', 'product', 'thirdparty', ...)
 	 *  @param	int		$unique				Is field unique or not
 	 *  @param	int		$required			Is field required or not
-	 *  @param	string	$default_value		Defaulted value
+	 *  @param	string	$default_value		Defaulted value (Example: '', '0', 'null', 'avalue')
 	 *  @param  array	$param				Params for field
 	 *  @param  int		$alwayseditable		Is attribute always editable regardless of the document status
 	 *  @param	string	$perms				Permission to check
@@ -815,7 +815,9 @@ class ExtraFields
 					{
 						$sqlwhere.= ' WHERE '.$InfoFieldList[4];
 					}
-				}else {
+				}
+				else 
+				{
 					$sqlwhere.= ' WHERE 1';
 				}
 				if (in_array($InfoFieldList[0],array('tablewithentity'))) $sqlwhere.= ' AND entity = '.$conf->entity;	// Some tables may have field, some other not. For the moment we disable it.
@@ -1083,10 +1085,19 @@ class ExtraFields
 			// 1 : classPath
 			$InfoFieldList = explode(":", $param_list[0]);
 			dol_include_once($InfoFieldList[1]);
-			$object = new $InfoFieldList[0]($this->db);
-			$object->fetch($value);
-			$out='<input type="text" class="flat" name="'.$keysuffix.'options_'.$key.$keyprefix.'"  size="20" value="'.$object->ref.'" >';
-
+			if ($InfoFieldList[0] && class_exists($InfoFieldList[0]))
+			{
+                $object = new $InfoFieldList[0]($this->db);
+                $object->fetch($value);
+                $valuetoshow=$object->ref;
+                if ($object->element == 'societe') $valuetoshow=$object->name;  // Special case for thirdparty because ref is id because name is not unique
+                $out.='<input type="text" class="flat" name="'.$keysuffix.'options_'.$key.$keyprefix.'"  size="20" value="'.$valuetoshow.'" >';
+			}
+			else
+			{
+			    dol_syslog('Error bad setup of extrafield', LOG_WARNING);
+			    $out.='Error bad setup of extrafield';
+			}
 		}
 		/* Add comments
 		 if ($type == 'date') $out.=' (YYYY-MM-DD)';
@@ -1324,9 +1335,17 @@ class ExtraFields
 				// 1 : classPath
 				$InfoFieldList = explode(":", $param_list[0]);
 				dol_include_once($InfoFieldList[1]);
-				$object = new $InfoFieldList[0]($this->db);
-				$object->fetch($value);
-				$value=$object->getNomUrl(3);
+				if ($InfoFieldList[0] && class_exists($InfoFieldList[0]))
+    			{
+    				$object = new $InfoFieldList[0]($this->db);
+    				$object->fetch($value);
+    				$value=$object->getNomUrl(3);
+    			}
+	       		else
+			    {
+                    dol_syslog('Error bad setup of extrafield', LOG_WARNING);
+                    $out.='Error bad setup of extrafield';
+                }
 			}
 		}
 		elseif ($type == 'text')
@@ -1451,7 +1470,7 @@ class ExtraFields
 				else if (in_array($key_type,array('checkbox')))
 				{
 					$value_arr=GETPOST($keysuffix."options_".$key.$keyprefix);
-					$value_key=implode($value_arr,',');
+					$value_key=implode(',', $value_arr);
 				}
 				else if (in_array($key_type,array('price','double')))
 				{
