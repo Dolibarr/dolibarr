@@ -515,7 +515,7 @@ if (! defined('NOLOGIN'))
             exit;
         }
 
-        $resultFetchUser=$user->fetch('', $login, '', 0, ($entitytotest ? $entitytotest : -1);
+        $resultFetchUser=$user->fetch('', $login, '', 0, ($entitytotest ? $entitytotest : -1));
         if ($resultFetchUser <= 0)
         {
             dol_syslog('User not found, connexion refused');
@@ -1485,14 +1485,10 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	    // Add login user link
 	    $toprightmenu.='<div class="login_block_user">';
 
-	    // User photo
-	    $toprightmenu.='<div class="inline-block nowrap"><div class="inline-block login_block_elem" style="padding: 0px;">';
-	    $toprightmenu.=$user->getPhotoUrl(0,0,'loginphoto');
-	    $toprightmenu.='</div></div>';
-
-	    // Login name with tooltip
-		$toprightmenu.='<div class="inline-block nowrap"><div class="inline-block login_block_elem login_block_elem_name" style="padding: 0px;">';
-        $toprightmenu.=$user->getNomurl(0, '', true, 0, 11, 0, ($user->firstname ? 'firstname' : -1),'atoplogin');
+	    // Login name with photo and tooltip
+		$mode=-1;
+	    $toprightmenu.='<div class="inline-block nowrap"><div class="inline-block login_block_elem login_block_elem_name" style="padding: 0px;">';
+        $toprightmenu.=$user->getNomUrl($mode, '', true, 0, 11, 0, ($user->firstname ? 'firstname' : -1),'atoplogin');
         $toprightmenu.='</div></div>';
 
 		$toprightmenu.='</div>';
@@ -1608,6 +1604,12 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	    {
 	        $langs->load("projects");
 	        $searchform.=printSearchForm(DOL_URL_ROOT.'/projet/list.php', DOL_URL_ROOT.'/projet/list.php', $langs->trans("Projects"), 'project', 'search_all', 'Q', 'searchleftproj', img_object('','projectpub'));
+	    }
+
+		if (! empty($conf->hrm->enabled) && ! empty($conf->global->MAIN_SEARCHFORM_EMPLOYEE) && $user->rights->hrm->employee->read)
+	    {
+	        $langs->load("hrm");
+	        $searchform.=printSearchForm(DOL_URL_ROOT.'/hrm/employee/list.php', DOL_URL_ROOT.'/hrm/employee/list.php', $langs->trans("Employees"), 'employee', 'search_all', 'M', 'searchleftemployee', img_object('','user'));
 	    }
 
 	    // Execute hook printSearchForm

@@ -184,7 +184,7 @@ $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('',$title,$help_url);
 
 
-
+/*
 if ($mode == 'search')
 {
 	if ($modesearch == 'soc')
@@ -209,7 +209,7 @@ if ($mode == 'search')
 		$db->free($resql);
 	}
 }
-
+*/
 
 if ($id > 0)
 {
@@ -226,7 +226,7 @@ if ($id > 0)
 	print '<table class="border" width="100%">';
 
 	// Alias name (commercial, trademark or alias name)
-	print '<tr><td class="titelfield">'.$langs->trans('AliasNameShort').'</td><td colspan="3">';
+	print '<tr><td class="titelfield">'.$langs->trans('AliasNames').'</td><td colspan="3">';
 	print $object->name_alias;
 	print "</td></tr>";
 
@@ -376,17 +376,6 @@ if ($id > 0)
 		$limit_field_type = (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE)) ? 'numeric' : 'amount';
 		print $form->editfieldval("OutstandingBill",'outstanding_limit',$object->outstanding_limit,$object,$user->rights->societe->creer,$limit_field_type,($object->outstanding_limit != '' ? price($object->outstanding_limit) : ''));
 		if (empty($object->outstanding_limit)) print $langs->trans("NoLimit");
-		// display amount and link to unpaid bill
-		$outstandingBills = $object->get_OutstandingBill();
-		print ' (' . $langs->trans('CurrentOutstandingBill') . ': ';
-		print price($outstandingBills, '', $langs, 0, 0, - 1, $conf->currency);
-		if ($object->outstanding_limit != '') 
-		{
-			if ($outstandingBills > $object->outstanding_limit)
-				print img_warning($langs->trans("OutstandingBillReached"));
-			//print ' / ' . price($soc->outstanding_limit);
-		}
-		print ')';
 		
 		print '</td>';
 		print '</tr>';
@@ -491,14 +480,24 @@ if ($id > 0)
 
 
 	// Nbre max d'elements des petites listes
-	$MAXLIST=4;
-	$tableaushown=1;
+	$MAXLIST=$conf->global->MAIN_SIZE_SHORTLISTE_LIMIT;
 
 	// Lien recap
+	$outstandingBills = $object->get_OutstandingBill();
+	$warn = '';
+	if ($object->outstanding_limit != '' && $object->outstanding_limit < $outstandingBills) 
+	{
+		$warn = img_warning($langs->trans("OutstandingBillReached"));
+	}
+	
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("Summary").'</td>';
-	print '<td align="right"><a href="'.DOL_URL_ROOT.'/compta/recap-compta.php?socid='.$object->id.'">'.$langs->trans("ShowCustomerPreview").'</a></td></tr></table></td>';
+	print '<td>'.$langs->trans("Summary").'</td>';
+	print '<td align="right"><a href="'.DOL_URL_ROOT.'/compta/recap-compta.php?socid='.$object->id.'">'.$langs->trans("ShowCustomerPreview").'</a></td>';
+	print '</tr>';
+	print '<tr class="impair">';
+	print '<td>'.$langs->trans("CurrentOutstandingBill").'</td>';
+	print '<td align="right">'.price($outstandingBills).$warn.'</td>';
 	print '</tr>';
 	print '</table>';
 	print '<br>';
@@ -684,7 +683,6 @@ if ($id > 0)
             if ($num > 0) {
                 print '<table class="noborder" width="100%">';
 
-                $tableaushown=1;
                 print '<tr class="liste_titre">';
                 print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastSendings",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/expedition/list.php?socid='.$object->id.'">'.$langs->trans("AllSendings").' <span class="badge">'.$num.'</span></a></td>';
                 print '<td width="20px" align="right"><a href="'.DOL_URL_ROOT.'/expedition/stats/index.php?socid='.$object->id.'">'.img_picto($langs->trans("Statistics"),'stats').'</a></td>';
@@ -868,7 +866,6 @@ if ($id > 0)
 			{
 		        print '<table class="noborder" width="100%">';
 
-			    $tableaushown=1;
 				print '<tr class="liste_titre">';
 				print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastCustomersBills",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$object->id.'">'.$langs->trans("AllBills").' <span class="badge">'.$num.'</span></a></td>';
                 print '<td width="20px" align="right"><a href="'.DOL_URL_ROOT.'/compta/facture/stats/index.php?socid='.$object->id.'">'.img_picto($langs->trans("Statistics"),'stats').'</a></td>';
@@ -1024,6 +1021,7 @@ if ($id > 0)
         // List of done actions
 		show_actions_done($conf,$langs,$db,$object);
 	}
+
 }
 else
 {

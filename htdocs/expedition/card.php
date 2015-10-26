@@ -520,7 +520,7 @@ if ($action == 'create')
 
             dol_fiche_head('');
 
-            print '<table class="border" width="100%">';
+            print '<table class="border centpercent">';
 
             // Ref
             print '<tr><td width="30%" class="fieldrequired">';
@@ -662,6 +662,8 @@ if ($action == 'create')
 
 
             print '<br>';
+            
+            
             print '<table class="noborder" width="100%">';
 
 
@@ -1533,9 +1535,9 @@ else if ($id || $ref)
 	 */
 	if ($action != 'presend')
 	{
-		print '<table width="100%"><tr><td width="50%" valign="top">';
-
-		$objectref = dol_sanitizeFileName($object->ref);
+        print '<div class="fichecenter"><div class="fichehalfleft">';
+	    
+        $objectref = dol_sanitizeFileName($object->ref);
 		$filedir = $conf->expedition->dir_output . "/sending/" .$objectref;
 
 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
@@ -1552,14 +1554,14 @@ else if ($id || $ref)
 		//$linktoelem = $form->showLinkToObjectBlock($object);
 		//if ($linktoelem) print '<br>'.$linktoelem;
 
-		print '</td><td valign="top" width="50%">';
+		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 		$formactions=new FormActions($db);
 		$somethingshown=$formactions->showactions($object,'shipping',$socid);
 
-		print '</td></tr></table>';
+		print '</div></div></div>';
 	}
 
 	/*

@@ -25,6 +25,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 
 $langs->load("companies");
 if (! empty($conf->facture->enabled)) $langs->load("bills");
@@ -43,6 +44,7 @@ if ($user->societe_id > 0)
  *	View
  */
 
+$form = new Form($db);
 $userstatic=new User($db);
 
 llxHeader();
@@ -58,28 +60,7 @@ if ($socid > 0)
 	$head = societe_prepare_head($societe);
 
 	dol_fiche_head($head, 'customer', $langs->trans("ThirdParty"), 0, 'company');
-
-	print "<table width=\"100%\">\n";
-	print '<tr><td valign="top" width="50%">';
-
-	print '<table class="border" width="100%">';
-
-	// Name
-	print '<tr><td width="20%">'.$langs->trans("Name").'</td><td width="80%" colspan="3">'.$societe->name.'</td></tr>';
-
-	// Prefix
-	if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
-	{
-		print '<tr><td>'.$langs->trans("Prefix").'</td><td colspan="3">';
-		print ($societe->prefix_comm?$societe->prefix_comm:'&nbsp;');
-		print '</td></tr>';
-	}
-
-	print "</table>";
-
-	print "</td></tr></table>\n";
-
-	print '</div>';
+	dol_banner_tab($societe, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
 
 	if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 	{
@@ -87,6 +68,18 @@ if ($socid > 0)
 		print load_fiche_titre($langs->trans("CustomerPreview"));
 
 		print '<table class="noborder" width="100%">';
+		print '<tr class="liste_titre">';
+		print '<td width="100" align="center">'.$langs->trans("Date").'</td>';
+		print '<td>'.$langs->trans("Element").'</td>';
+		print '<td>'.$langs->trans("Status").'</td>';
+		print '<td align="right">'.$langs->trans("Debit").'</td>';
+		print '<td align="right">'.$langs->trans("Credit").'</td>';
+		print '<td align="right">'.$langs->trans("Balance").'</td>';
+		print '<td align="right">'.$langs->trans("Author").'</td>';
+		print '</tr>';
+		
+		$TData = array();
+		$TDataSort = array();
 
 		$sql = "SELECT s.nom, s.rowid as socid, f.facnumber, f.amount, f.datef as df,";
 		$sql.= " f.paye as paye, f.fk_statut as statut, f.rowid as facid,";
@@ -95,30 +88,13 @@ if ($socid > 0)
 		$sql.= " WHERE f.fk_soc = s.rowid AND s.rowid = ".$societe->id;
 		$sql.= " AND f.entity = ".$conf->entity;
 		$sql.= " AND f.fk_user_valid = u.rowid";
-		$sql.= " ORDER BY f.datef DESC";
+		$sql.= " ORDER BY f.datef ASC";
 
 		$resql=$db->query($sql);
 		if ($resql)
 		{
 			$var=true;
 			$num = $db->num_rows($resql);
-
-			print '<tr class="liste_titre">';
-			print '<td width="100" align="center">'.$langs->trans("Date").'</td>';
-			print '<td>&nbsp;</td>';
-			print '<td>'.$langs->trans("Status").'</td>';
-			print '<td align="right">'.$langs->trans("Debit").'</td>';
-			print '<td align="right">'.$langs->trans("Credit").'</td>';
-			print '<td align="right">'.$langs->trans("Balance").'</td>';
-			print '<td>&nbsp;</td>';
-			print '</tr>';
-
-			if (! $num > 0)
-			{
-				print '<tr '.$bc[false].'><td colspan="7">'.$langs->trans("NoInvoice").'</td></tr>';
-			}
-
-			$solde = 0;
 
 			// Boucle sur chaque facture
 			for ($i = 0 ; $i < $num ; $i++)
@@ -133,29 +109,18 @@ if ($socid > 0)
 					continue;
 				}
 				$totalpaye = $fac->getSommePaiement();
-
-				$var=!$var;
-				print "<tr ".$bc[$var].">";
-
-				print "<td align=\"center\">".dol_print_date($fac->date,'day')."</td>\n";
-				print '<td><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$fac->id.'">'.img_object($langs->trans("ShowBill"),"bill")." ".$fac->ref."</a></td>\n";
-
-				print '<td aling="left">'.$fac->getLibStatut(2,$totalpaye).'</td>';
-				print '<td align="right">'.price($fac->total_ttc)."</td>\n";
-				if (($fac->statut == Facture::STATUS_ABANDONED ) || ($fac->statut == Facture::STATUS_CLOSED && ! $fact->close_code) )  $solde = $solde = $solde + $totalpaye;
-				else $solde = $solde + $fac->total_ttc;
-
-				print '<td align="right">&nbsp;</td>';
-				print '<td align="right">'.price($solde)."</td>\n";
-
-				// Author
+				
 				$userstatic->id=$objf->userid;
 				$userstatic->login=$objf->login;
-				print '<td class="nowrap" align="right">';
-				print $userstatic->getLoginUrl(1);
-				print '</td>';
-
-				print "</tr>\n";
+				
+				$TData[] = array(
+					'date' => $fac->date,
+					'link' => $fac->getNomUrl(1),
+					'status' => $fac->getLibStatut(2,$totalpaye),
+					'amount' => $fac->total_ttc,
+					'author' => $userstatic->getLoginUrl(1)
+				);
+				$TDataSort[] = $fac->date;
 
 				// Paiements
 				$sql = "SELECT p.rowid, p.datep as dp, pf.amount, p.statut,";
@@ -166,6 +131,7 @@ if ($socid > 0)
 				$sql.= " WHERE pf.fk_paiement = p.rowid";
 				$sql.= " AND p.entity = ".$conf->entity;
 				$sql.= " AND pf.fk_facture = ".$fac->id;
+				$sql.= " ORDER BY p.datep ASC";
 
 				$resqlp = $db->query($sql);
 				if ($resqlp)
@@ -176,26 +142,21 @@ if ($socid > 0)
 					while ($j < $nump)
 					{
 						$objp = $db->fetch_object($resqlp);
-						//$var=!$var;
-						print "<tr ".$bc[$var].">";
-						print '<td align="center">'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
-						print '<td>';
-						print '&nbsp; &nbsp; &nbsp; '; // Decalage
-						print '<a href="paiement/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowPayment"),"payment").' '.$langs->trans("Payment").' '.$objp->rowid.'</td>';
-						print "<td>&nbsp;</td>\n";
-						print "<td>&nbsp;</td>\n";
-						print '<td align="right">'.price($objp->amount).'</td>';
-						$solde = $solde - $objp->amount;
-						print '<td align="right">'.price($solde)."</td>\n";
-
-						// Author
+						
+						$paymentstatic = new Paiement($db);
+						$paymentstatic->id = $objp->rowid;
+						
 						$userstatic->id=$objp->userid;
 						$userstatic->login=$objp->login;
-						print '<td class="nowrap" align="right">';
-						print $userstatic->getLoginUrl(1);
-						print '</td>';
-
-						print '</tr>';
+						
+						$TData[] = array(
+							'date' => $db->jdate($objp->dp),
+							'link' => $langs->trans("Payment") .' '. $paymentstatic->getNomUrl(1),
+							'status' => '',
+							'amount' => -$objp->amount,
+							'author' => $userstatic->getLoginUrl(1)
+						);
+						$TDataSort[] = $db->jdate($objp->dp);
 
 						$j++;
 					}
@@ -212,9 +173,63 @@ if ($socid > 0)
 		{
 			dol_print_error($db);
 		}
+		
+		if(empty($TData)) {
+			print '<tr '.$bc[false].'><td colspan="7">'.$langs->trans("NoInvoice").'</td></tr>';
+		} else {
+		
+			// Sort array by date
+			asort($TDataSort);
+			array_multisort($TData,$TDataSort);
+			
+			// Balance calculation
+			foreach($TData as &$data1) {
+				$balance += $data1['amount'];
+				$data1['balance'] += $balance;
+			}
+			
+			// Reverse array to have last elements on top
+			$TData = array_reverse($TData);
+			
+			$totalDebit = 0;
+			$totalCredit = 0;
+			
+			// Display array
+			foreach($TData as $data) {
+				$var=!$var;
+				print "<tr ".$bc[$var].">";
+	
+				print "<td align=\"center\">".dol_print_date($data['date'],'day')."</td>\n";
+				print '<td>'.$data['link']."</td>\n";
+	
+				print '<td aling="left">'.$data['status'].'</td>';
+				print '<td align="right">'.(($data['amount'] > 0) ? price(abs($data['amount'])) : '')."</td>\n";
+				$totalDebit += ($data['amount'] > 0) ? abs($data['amount']) : 0;
+				print '<td align="right">'.(($data['amount'] > 0) ? '' : price(abs($data['amount'])))."</td>\n";
+				$totalCredit += ($data['amount'] > 0) ? 0 : abs($data['amount']);
+				print '<td align="right">'.price($data['balance'])."</td>\n";
+	
+				// Author
+				print '<td class="nowrap" align="right">';
+				print $data['author'];
+				print '</td>';
+	
+				print "</tr>\n";
+			}
+			
+			print '<tr class="liste_total">';
+			print '<td colspan="3">&nbsp;</td>';
+			print '<td align="right">'.price($totalDebit).'</td>';
+			print '<td align="right">'.price($totalCredit).'</td>';
+			print '<td colspan="2">&nbsp;</td>';
+			print "</tr>\n";
+		}
+		
 		print "</table>";
 		print "<br>";
 	}
+
+	print '</div>';
 }
 else
 {

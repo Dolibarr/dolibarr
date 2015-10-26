@@ -37,6 +37,7 @@ $langs->load("companies");
 $langs->load("products");
 $langs->load("members");
 $langs->load("projects");
+$langs->load("hrm");
 
 if (! $user->admin) accessforbidden();
 
@@ -46,10 +47,10 @@ $action = GETPOST('action');
 if (! defined("MAIN_MOTD")) define("MAIN_MOTD","");
 
 // List of supported permanent search area
-$searchform=array("MAIN_SEARCHFORM_SOCIETE", "MAIN_SEARCHFORM_CONTACT", "MAIN_SEARCHFORM_PRODUITSERVICE", "MAIN_SEARCHFORM_PRODUITSERVICE_SUPPLIER", "MAIN_SEARCHFORM_ADHERENT", "MAIN_SEARCHFORM_PROJECT");
-$searchformconst=array($conf->global->MAIN_SEARCHFORM_SOCIETE,$conf->global->MAIN_SEARCHFORM_CONTACT,$conf->global->MAIN_SEARCHFORM_PRODUITSERVICE,$conf->global->MAIN_SEARCHFORM_PRODUITSERVICE_SUPPLIER,$conf->global->MAIN_SEARCHFORM_ADHERENT,$conf->global->MAIN_SEARCHFORM_PROJECT);
-$searchformtitle=array($langs->trans("Companies"), $langs->trans("Contacts"), $langs->trans("ProductsAndServices"), $langs->trans("ProductsAndServices").' ('.$langs->trans("SupplierRef").')', $langs->trans("Members"), $langs->trans("Projects"));
-$searchformmodule=array('Module1Name','Module1Name','Module50Name','Module50Name','Module310Name','Module400Name');
+$searchform=array("MAIN_SEARCHFORM_SOCIETE", "MAIN_SEARCHFORM_CONTACT", "MAIN_SEARCHFORM_PRODUITSERVICE", "MAIN_SEARCHFORM_PRODUITSERVICE_SUPPLIER", "MAIN_SEARCHFORM_ADHERENT", "MAIN_SEARCHFORM_PROJECT", "MAIN_SEARCHFORM_EMPLOYEE");
+$searchformconst=array($conf->global->MAIN_SEARCHFORM_SOCIETE,$conf->global->MAIN_SEARCHFORM_CONTACT,$conf->global->MAIN_SEARCHFORM_PRODUITSERVICE,$conf->global->MAIN_SEARCHFORM_PRODUITSERVICE_SUPPLIER,$conf->global->MAIN_SEARCHFORM_ADHERENT,$conf->global->MAIN_SEARCHFORM_PROJECT,$conf->global->MAIN_SEARCHFORM_EMPLOYEE);
+$searchformtitle=array($langs->trans("Companies"), $langs->trans("Contacts"), $langs->trans("ProductsAndServices"), $langs->trans("ProductsAndServices").' ('.$langs->trans("SupplierRef").')', $langs->trans("Members"), $langs->trans("Projects"), $langs->trans("Employees"));
+$searchformmodule=array('Module1Name','Module1Name','Module50Name','Module50Name','Module310Name','Module4000Name');
 
 
 if ($action == 'update')
@@ -57,6 +58,7 @@ if ($action == 'update')
 	dolibarr_set_const($db, "MAIN_LANG_DEFAULT",				$_POST["main_lang_default"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_MULTILANGS",					$_POST["main_multilangs"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_SIZE_LISTE_LIMIT",			$_POST["main_size_liste_limit"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_SIZE_SHORTLISTE_LIMIT",		$_POST["main_size_shortliste_limit"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_DISABLE_JAVASCRIPT",			$_POST["main_disable_javascript"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_BUTTON_HIDE_UNAUTHORIZED",	$_POST["MAIN_BUTTON_HIDE_UNAUTHORIZED"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_START_WEEK",					$_POST["MAIN_START_WEEK"],'chaine',0,'',$conf->entity);
@@ -82,6 +84,7 @@ if ($action == 'update')
 	dolibarr_set_const($db, "MAIN_SEARCHFORM_PRODUITSERVICE_SUPPLIER",$_POST["MAIN_SEARCHFORM_PRODUITSERVICE_SUPPLIER"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_SEARCHFORM_ADHERENT",			$_POST["MAIN_SEARCHFORM_ADHERENT"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_SEARCHFORM_PROJECT",			$_POST["MAIN_SEARCHFORM_PROJECT"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_SEARCHFORM_EMPLOYEE",			$_POST["MAIN_SEARCHFORM_EMPLOYEE"],'chaine',0,'',$conf->entity);
 
 	dolibarr_set_const($db, "MAIN_HELPCENTER_DISABLELINK",		$_POST["MAIN_HELPCENTER_DISABLELINK"],'chaine',0,'',0);	// Param for all entities
 	dolibarr_set_const($db, "MAIN_MOTD",						dol_htmlcleanlastbr($_POST["main_motd"]),'chaine',0,'',$conf->entity);
@@ -204,6 +207,12 @@ if ($action == 'edit')	// Edit
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
+	// Max size of short lists on customer card
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMaxSizeShortListCustomerCard").'</td><td><input class="flat" name="main_size_shortliste_limit" size="4" value="' . $conf->global->MAIN_SIZE_SHORTLISTE_LIMIT . '"></td>';
+	print '<td width="20">&nbsp;</td>';
+	print '</tr>';
+	
     // Disable javascript and ajax
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DisableJavascript").'</td><td>';
@@ -383,6 +392,11 @@ else	// Show
 
 	$var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMaxSizeList").'</td><td>' . $conf->global->MAIN_SIZE_LISTE_LIMIT . '</td>';
+	print '<td width="20">&nbsp;</td>';
+	print "</tr>";
+	
+	$var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMaxSizeShortListCustomerCard").'</td><td>' . $conf->global->MAIN_SIZE_SHORTLISTE_LIMIT . '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print "</tr>";
 

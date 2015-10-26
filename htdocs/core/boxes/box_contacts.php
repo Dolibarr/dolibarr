@@ -63,8 +63,9 @@ class box_contacts extends ModeleBoxes
 		if ($user->rights->societe->lire)
 		{
 			$sql = "SELECT sp.rowid as id, sp.lastname, sp.firstname, sp.civility as civility_id, sp.datec, sp.tms, sp.fk_soc, sp.statut as status";
-			$sql.= ", s.nom as socname";
-            $sql.= ", s.code_client";
+			$sql.= ", sp.address, sp.zip, sp.town, sp.phone, sp.phone_perso, sp.phone_mobile";
+			$sql.= ", s.nom as socname, s.name_alias";
+            $sql.= ", s.client, s.fournisseur, s.code_client, s.code_fournisseur";
 			$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON sp.fk_soc = s.rowid";
 			if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -93,10 +94,21 @@ class box_contacts extends ModeleBoxes
                     $contactstatic->firstname=$objp->firstname;
                     $contactstatic->civility_id=$objp->civility_id;
 					$contactstatic->statut=$objp->status;
-                    $societestatic->id = $objp->fk_soc;
-                    $societestatic->code_client = $objp->code_client;
+                    $contactstatic->phone_pro = $objp->phone;
+                    $contactstatic->phone_perso = $objp->phone_perso;
+                    $contactstatic->phone_mobile = $objp->phone_mobile;
+                    $contactstatic->address = $objp->address;
+                    $contactstatic->zip = $objp->zip;
+                    $contactstatic->town = $objp->town;
+					
+					$societestatic->id = $objp->fk_soc;
                     $societestatic->name = $objp->socname;
-
+                    $societestatic->name_alias = $objp->name_alias;
+                    $societestatic->code_client = $objp->code_client;
+                    $societestatic->code_fournisseur = $objp->code_fournisseur;
+                    $societestatic->client = $objp->client;
+                    $societestatic->fournisseur = $objp->fournisseur;
+                    
                     $this->info_box_contents[$line][] = array(
                         'td' => 'align="left"',
                         'text' => $contactstatic->getNomUrl(1),

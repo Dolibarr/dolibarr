@@ -20,6 +20,7 @@
 
 
 INSERT INTO llx_const (name, value, type, note, visible) values (__ENCRYPT('MAIN_DELAY_EXPENSEREPORTS_TO_PAY')__,__ENCRYPT('31')__,'chaine','Tolérance de retard avant alerte (en jours) sur les notes de frais impayées',0);
+INSERT INTO llx_const (name, value, type, note, visible) values ('MAIN_SIZE_SHORTLISTE_LIMIT','4','chaine','Longueur maximum des listes courtes (fiche client)',0);
 
 ALTER TABLE llx_accounting_system MODIFY COLUMN pcg_version varchar(32);
 ALTER TABLE llx_accountingaccount MODIFY COLUMN fk_pcg_version varchar(32);
@@ -100,3 +101,7 @@ ALTER TABLE llx_ecm_files ADD UNIQUE INDEX uk_ecm_files (label, entity);
 
 
 ALTER TABLE llx_product ADD COLUMN onportal tinyint DEFAULT 0 after tobuy;
+
+
+ALTER TABLE llx_user ADD COLUMN employee tinyint DEFAULT 1;
+
