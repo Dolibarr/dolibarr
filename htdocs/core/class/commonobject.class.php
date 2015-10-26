@@ -4176,4 +4176,66 @@ abstract class CommonObject
 
 		return true;
 	}
+	
+	 /**
+	 * define buy price if not defined
+	 *	set buy price = sell price if ForceBuyingPriceIfNull configured,
+	 *	 else if calculation MARGIN_TYPE = 'pmp' and pmp is calculated, set pmp as buyprice
+	 *	 else set min buy price as buy price
+	 *	 
+	 * @param float		$unitPrice		 product unit price
+	 * @param float		$discountPercent line discount percent
+	 * @param int		$fk_product		 product id
+	 *
+	 * @return	float <0 if ko, buyprice if ok
+	 */
+	public function defineBuyPrice($unitPrice = 0, $discountPercent = 0, $fk_product = 0) 
+	{
+		global $conf;
+	
+		$buyPrice = 0;
+		
+		if (($unitPrice > 0) && (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1))
+		{
+			$buyPrice = $unitPrice * (1 - $discountPercent / 100);
+		}
+		else
+		{
+			require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+			// Get PMP
+			if (! empty($fk_product))
+			{
+				if (isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == 'pmp')
+				{
+					$product = new Product($this->db);
+					$result = $product->fetch($fk_product);
+					if ($result <= 0)
+					{
+						$this->error='ErrorProductIdDoesNotExists';
+						return -1;
+					}
+					if (($product->pmp > 0))
+					{
+						$buyPrice = $product->pmp;
+					}
+					// TODO add option to set PMP of product
+				}
+				else if (isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == '1')
+				{
+					include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+					$productFournisseur = new ProductFournisseur($this->db);
+					if (($result = $productFournisseur->find_min_price_product_fournisseur($fk_product)) > 0)
+					{
+						$buyPrice = $productFournisseur->fourn_price;
+					}
+					else
+					{
+						$this->error = $productFournisseur->error;
+						return -1;
+					}
+				}
+			}
+		}
+		return $buyPrice;
+	}
 }
