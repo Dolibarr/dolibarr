@@ -560,11 +560,16 @@ td.showDragHandle {
 }
 #id-right {	/* This must stay id-right and not be replaced with echo $right */
 	width: 100%;
+<?php if (GETPOST("optioncss") != 'print') { ?>
 	padding-left: 194px;
 	padding-top: 12px;
+<?php } ?>	
 }
 
 .side-nav {
+<?php if (GETPOST("optioncss") == 'print') { ?>
+	display: none;
+<?php } else { ?>
 	background: #FFF;
 	border-right: 1px solid rgba(0,0,0,0.2);
 	bottom: 0;
@@ -600,6 +605,7 @@ td.showDragHandle {
 	-webkit-overflow-scrolling: touch;
 	overflow-x: hidden;
 	overflow-y: auto;
+<?php } ?>
 }
 .side-nav-vert {
 	margin-left: 194px;
