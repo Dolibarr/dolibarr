@@ -78,16 +78,16 @@ if ($action == 'update')
             $result=$menu->update($user);
             if ($result > 0)
             {
-	            setEventMessage($langs->trans("RecordModifiedSuccessfully"));
+	            setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
             }
             else
             {
-	            setEventMessage($menu->error, 'errors');
+	            setEventMessages($menu->error, $menu->errors, 'errors');
             }
         }
         else
         {
-	        setEventMessage($menu->error, 'errors');
+	        setEventMessages($menu->error, $menu->errors, 'errors');
         }
         $_GET["menuId"] = $_POST['menuId'];
         $action = "edit";
@@ -159,13 +159,13 @@ if ($action == 'add')
     }
     if (! $error && $_POST['menuId'] && $_POST['type'] == 'top')
     {
-	    setEventMessage($langs->trans("ErrorTopMenuMustHaveAParentWithId0"), 'errors');
+	    setEventMessages($langs->trans("ErrorTopMenuMustHaveAParentWithId0"), null, 'errors');
         $action = 'create';
         $error++;
     }
     if (! $error && empty($_POST['menuId']) && $_POST['type'] == 'left')
     {
-	    setEventMessage($langs->trans("ErrorLeftMenuMustHaveAParentId"), 'errors');
+	    setEventMessages($langs->trans("ErrorLeftMenuMustHaveAParentId"), null, 'errors');
         $action = 'create';
         $error++;
     }
@@ -204,7 +204,7 @@ if ($action == 'add')
         else
         {
             $action = 'create';
-	        setEventMessage($menu->error, 'errors');
+	        setEventMessages($menu->error, $menu->errors, 'errors');
         }
     }
 }
@@ -222,7 +222,7 @@ if ($action == 'confirm_delete' && $_POST["confirm"] == 'yes')
         $this->db->commit();
 
         llxHeader();
-	    setEventMessage($langs->trans("MenuDeleted"));
+	    setEventMessages($langs->trans("MenuDeleted"), null, 'mesgs');
         llxFooter();
         exit ;
     }

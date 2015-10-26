@@ -521,6 +521,7 @@ jQuery(document).ready(function() {
 	      			if (this.id != 'pmpprice')
 		      		{
 		        		i++;
+                        this.price = parseFloat(this.price);//fix this.price >0
 
 			      		// If margin is calculated on best supplier price, we set it by defaut (but only if value is not 0)
 		      			var defaultbuyprice = '<?php echo ((isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == '1')?'bestsupplierprice':''); ?>';
