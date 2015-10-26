@@ -47,12 +47,14 @@ $action = GETPOST('action');
 if (! defined("MAIN_MOTD")) define("MAIN_MOTD","");
 
 // List of supported permanent search area
-/*
-$searchform=array("MAIN_SEARCHFORM_SOCIETE", "MAIN_SEARCHFORM_CONTACT", "MAIN_SEARCHFORM_PRODUITSERVICE", "MAIN_SEARCHFORM_PRODUITSERVICE_SUPPLIER", "MAIN_SEARCHFORM_ADHERENT", "MAIN_SEARCHFORM_PROJECT", "MAIN_SEARCHFORM_EMPLOYEE");
-$searchformconst=array($conf->global->MAIN_SEARCHFORM_SOCIETE,$conf->global->MAIN_SEARCHFORM_CONTACT,$conf->global->MAIN_SEARCHFORM_PRODUITSERVICE,$conf->global->MAIN_SEARCHFORM_PRODUITSERVICE_SUPPLIER,$conf->global->MAIN_SEARCHFORM_ADHERENT,$conf->global->MAIN_SEARCHFORM_PROJECT,$conf->global->MAIN_SEARCHFORM_EMPLOYEE);
-$searchformtitle=array($langs->trans("Companies"), $langs->trans("Contacts"), $langs->trans("ProductsAndServices"), $langs->trans("ProductsAndServices").' ('.$langs->trans("SupplierRef").')', $langs->trans("Members"), $langs->trans("Projects"), $langs->trans("Employees"));
-$searchformmodule=array('Module1Name','Module1Name','Module50Name','Module50Name','Module310Name','Module4000Name');
-*/
+$searchform=array();
+if (empty($conf->use_javascript_ajax))
+{
+    $searchform=array("MAIN_SEARCHFORM_SOCIETE", "MAIN_SEARCHFORM_CONTACT", "MAIN_SEARCHFORM_PRODUITSERVICE", "MAIN_SEARCHFORM_PRODUITSERVICE_SUPPLIER", "MAIN_SEARCHFORM_ADHERENT", "MAIN_SEARCHFORM_PROJECT", "MAIN_SEARCHFORM_EMPLOYEE");
+    $searchformconst=array($conf->global->MAIN_SEARCHFORM_SOCIETE,$conf->global->MAIN_SEARCHFORM_CONTACT,$conf->global->MAIN_SEARCHFORM_PRODUITSERVICE,$conf->global->MAIN_SEARCHFORM_PRODUITSERVICE_SUPPLIER,$conf->global->MAIN_SEARCHFORM_ADHERENT,$conf->global->MAIN_SEARCHFORM_PROJECT,$conf->global->MAIN_SEARCHFORM_EMPLOYEE);
+    $searchformtitle=array($langs->trans("Companies"), $langs->trans("Contacts"), $langs->trans("ProductsAndServices"), $langs->trans("ProductsAndServices").' ('.$langs->trans("SupplierRef").')', $langs->trans("Members"), $langs->trans("Projects"), $langs->trans("Users"));
+    $searchformmodule=array('Module1Name','Module1Name','Module50Name','Module50Name','Module310Name','Module400Name');
+}
 
 if ($action == 'update')
 {
@@ -167,19 +169,22 @@ if ($action == 'edit')	// Edit
     print '<br>';
 
     // Liste des zone de recherche permanantes supportees
-    print '<table summary="search" class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td width="35%">'.$langs->trans("PermanentLeftSearchForm").'</td><td colspan="2">'.$langs->trans("Activated").'</td></tr>';
-    $var=True;
-    foreach ($searchform as $key => $value)
+    if (! empty($searchform))
     {
-        $var=!$var;
-        print '<tr '.$bc[$var].'><td width="35%">'.$searchformtitle[$key].'</td><td colspan="2">';
-        print $form->selectyesno($searchform[$key],$searchformconst[$key],1);
-        print '</td></tr>';
+        print '<table summary="search" class="noborder" width="100%">';
+        print '<tr class="liste_titre"><td width="35%">'.$langs->trans("PermanentLeftSearchForm").'</td><td colspan="2">'.$langs->trans("Activated").'</td></tr>';
+        $var=True;
+        foreach ($searchform as $key => $value)
+        {
+            $var=!$var;
+            print '<tr '.$bc[$var].'><td width="35%">'.$searchformtitle[$key].'</td><td colspan="2">';
+            print $form->selectyesno($searchform[$key],$searchformconst[$key],1);
+            print '</td></tr>';
+        }
+        print '</table>';
+        print '<br>';
     }
-    print '</table>';
-    print '<br>';
-
+    
     // Other
     print '<table summary="edit" class="noborder" width="100%">';
     print '<tr class="liste_titre"><td width="35%">'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td>';
@@ -361,7 +366,6 @@ else	// Show
 
 
     // List of search forms to show
-    /*
     if (! empty($searchform))
     {
         print '<table class="noborder" width="100%">';
@@ -371,12 +375,13 @@ else	// Show
         {
             $var=!$var;
             print '<tr '.$bc[$var].'><td width="35%">'.$searchformtitle[$key].'</td><td>'.yn($searchformconst[$key]).'</td>';
-    		print '<td align="left">'.$langs->trans("IfModuleEnabled",$langs->transnoentitiesnoconv($searchformmodule[$key]));
+    		print '<td align="left">';
+    		if (! empty($searchformmodule[$key])) print $langs->trans("IfModuleEnabled",$langs->transnoentitiesnoconv($searchformmodule[$key]));
             print '</td></tr>';
         }
         print '</table>';
         print '<br>';
-    }*/
+    }
 
     // Other
     $var=true;
