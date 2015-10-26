@@ -105,3 +105,8 @@ ALTER TABLE llx_product ADD COLUMN onportal tinyint DEFAULT 0 after tobuy;
 
 ALTER TABLE llx_user ADD COLUMN employee tinyint DEFAULT 1;
 
+
+ALTER TABLE llx_projet_task_time ADD COLUMN invoice_id integer DEFAULT NULL;
+ALTER TABLE llx_projet_task_time ADD COLUMN invoice_line_id integer DEFAULT NULL;
+
+
