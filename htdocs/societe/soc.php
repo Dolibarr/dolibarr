@@ -1915,7 +1915,7 @@ else
 	    
     	// Prospect/Customer
     	print '<tr><td>'.$langs->trans('Supplier').'</td><td>';
-    	print yn($object->fournsseur);
+    	print yn($object->fournisseur);
     	print '</td></tr>';
     	
     	// Prefix
