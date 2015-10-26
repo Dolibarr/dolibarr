@@ -4504,16 +4504,17 @@ class Form
      *  Note: Do not apply langs->trans function on returned content of Ajax service, content may be entity encoded twice.
      *
      *	@param	string	$htmlname       		Name of html select area
-     *	@param	string	$url					Url
+     *	@param	string	$url					Url. Must return a json_encode of array(key=>array('text'=>'A text', 'url'=>'An url'), ...)
      *	@param	string	$id             		Preselected key
      *	@param  string	$moreparam      		Add more parameters onto the select tag
      *	@param  string	$moreparamtourl 		Add more parameters onto the Ajax called URL
      * 	@param	int		$disabled				Html select box is disabled
      *  @param	int		$minimumInputLength		Minimum Input Length
      *  @param	string	$morecss				Add more class to css styles
+     *  @param  int     $callurlonselect        If set to 1, some code is added so an url return by the ajax is called when value is selected.
      * 	@return	string							HTML select string.
      */
-    static function selectArrayAjax($htmlname, $url, $id='', $moreparam='', $moreparamtourl='', $disabled=0, $minimumInputLength=1, $morecss='')
+    static function selectArrayAjax($htmlname, $url, $id='', $moreparam='', $moreparamtourl='', $disabled=0, $minimumInputLength=1, $morecss='', $callurlonselect=0)
     {
     	$out = '';
 
@@ -4521,7 +4522,10 @@ class Form
     	$out.='<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
 	    	<script type="text/javascript">
 	    	$(document).ready(function () {
-		    	$(".'.$htmlname.'").select2({
+    	      
+    	      '.($callurlonselect ? 'var saveRemoteData = [];':'').'
+    	    
+              $(".'.$htmlname.'").select2({
 			    	ajax: {
 				    	dir: "ltr",
 				    	url: "'.$url.'",
@@ -4534,12 +4538,13 @@ class Form
 				    		};
 			    		},
 			    		results: function (remoteData, pageNumber, query) {
-			    			//console.log(remoteData);
+			    			console.log(remoteData);
+				    	    saveRemoteData = remoteData;
+				    	    /* format json result for select2 */
 				    	    result = []
 				    	    $.each( remoteData, function( key, value ) {
-				    	       result.push({id: key, text: value});
+				    	       result.push({id: key, text: value.text});
                             });
-				    	    //console.log(result);
 			    			//return {results:[{id:\'none\', text:\'aa\'}, {id:\'rrr\', text:\'Red\'},{id:\'bbb\', text:\'Search a into projects\'}], more:false}
 			    			return {results: result, more:false}
     					},
@@ -4556,17 +4561,23 @@ class Form
 			    	},
 			    	escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
 			    	minimumInputLength: '.$minimumInputLength.',
-			    	//templateResult: formatRepo, // omitted for brevity, see the source of this page
-			    	//templateSelection: formatRepoSelection // omitted for brevity, see the source of this page
+			        formatResult: function(result, container, query, escapeMarkup) {
+                        return escapeMarkup(result.text);
+                    }
 			    });
 			    
-			    $(".'.$htmlname.'").change(function() { 
-			    	alert(\'eee\');
-			    	/* $(".'.$htmlname.'").select2("search",""); */
-			    	$(".'.$htmlname.'").select2("val","");  /* reset combo box */
-    			} );
-
-    			
+                '.($callurlonselect ? '
+                $(".'.$htmlname.'").change(function() { 
+			    	var selected = $(".'.$htmlname.'").select2("val");
+			        $(".'.$htmlname.'").select2("val","");  /* reset visible combo value */
+    			    $.each( saveRemoteData, function( key, value ) {
+    				        if (key == selected)
+    			            {
+    			                 console.log("Do a redirect into selectArrayAjax to "+value.url)
+    			                 location.assign(value.url);
+    			            }
+                    });
+    			});' : '' ) . '
     			
     	});
 	    </script>';
