@@ -229,7 +229,7 @@ class ProductFournisseur extends Product
 				else
 				{
 					$this->db->rollback();
-					return 1;
+					return -1;
 				}
 			}
 			else
@@ -312,7 +312,7 @@ class ProductFournisseur extends Product
         				else
         				{
         					$this->db->rollback();
-        					return 1;
+        					return -1;
         				}
 		            }
 		            else

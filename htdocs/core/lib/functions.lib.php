@@ -886,7 +886,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 	} else {
 		$morehtmlright.=$object->getLibStatut(2);
 	}
-	if (! empty($object->name_nalias)) $morehtmlref.='<div class="refidno">'.$object->name_alias.'</div>';
+	if (! empty($object->name_alias)) $morehtmlref.='<div class="refidno">'.$object->name_alias.'</div>';
 	$morehtmlref.='<div class="refidno">';
 	$morehtmlref.=$object->getBannerAddress('refaddress',$object);
 	$morehtmlref.='</div>';
@@ -1544,9 +1544,9 @@ function dol_print_phone($phone,$countrycode='',$cid=0,$socid=0,$addlink='',$sep
 		}
 	}
 
-	if (! empty($addlink))	// Link on phone number + link to add action (if conf->global->AGENDA_ADDACTIONFORPHONE set)
+	if (! empty($addlink))	// Link on phone number (+ link to add action if conf->global->AGENDA_ADDACTIONFORPHONE set)
 	{
-		if (! empty($conf->browser->phone))	// If phone, we use link of phone
+		if (! empty($conf->browser->phone) || (! empty($conf->clicktodial->enabled) && ! empty($conf->global->CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS)))	// If phone or option for, we use link of phone
 		{
 			$newphone ='<a href="tel:'.$phone.'"';
 			$newphone.='>'.$phone.'</a>';
@@ -1689,10 +1689,10 @@ function dol_print_address($address, $htmlid, $mode, $id, $noprint=0)
             $showgmap=$showomap=0;
 
             // TODO Add a hook here
-            if ($mode=='thirdparty' && ! empty($conf->google->enabled) && ! empty($conf->global->GOOGLE_ENABLE_GMAPS)) $showgmap=1;
+            if (($mode=='thirdparty' || $mode =='societe') && ! empty($conf->google->enabled) && ! empty($conf->global->GOOGLE_ENABLE_GMAPS)) $showgmap=1;
             if ($mode=='contact' && ! empty($conf->google->enabled) && ! empty($conf->global->GOOGLE_ENABLE_GMAPS_CONTACTS)) $showgmap=1;
             if ($mode=='member' && ! empty($conf->google->enabled) && ! empty($conf->global->GOOGLE_ENABLE_GMAPS_MEMBERS)) $showgmap=1;
-            if ($mode=='thirdparty' && ! empty($conf->openstreetmap->enabled) && ! empty($conf->global->OPENSTREETMAP_ENABLE_MAPS)) $showomap=1;
+            if (($mode=='thirdparty' || $mode =='societe') && ! empty($conf->openstreetmap->enabled) && ! empty($conf->global->OPENSTREETMAP_ENABLE_MAPS)) $showomap=1;
             if ($mode=='contact' && ! empty($conf->openstreetmap->enabled) && ! empty($conf->global->OPENSTREETMAP_ENABLE_MAPS_CONTACTS)) $showomap=1;
             if ($mode=='member' && ! empty($conf->openstreetmap->enabled) && ! empty($conf->global->OPENSTREETMAP_ENABLE_MAPS_MEMBERS)) $showomap=1;
 
@@ -4384,7 +4384,7 @@ function get_date_range($date_start,$date_end,$format = '',$outputlangs='', $wit
  *
  * @param	string	$firstname		Firstname
  * @param	string	$lastname		Lastname
- * @param	int		$nameorder		-1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname
+ * @param	int		$nameorder		-1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname, 2=Firstname
  * @return	string					Firstname + lastname or Lastname + firstname
  */
 function dolGetFirstLastname($firstname,$lastname,$nameorder=-1)
@@ -5223,3 +5223,32 @@ function natural_search($fields, $value, $mode=0, $nofirstand=0)
     return $res;
 }
 
+/**
+ * Return the filename of file to get the thumbs
+ * 
+ * @param   string  $file           Original filename
+ * @param   string  $extName        Extension to differenciate thumb file name ('', '_small', '_mini')
+ * @param   string  $extImgTarget   Force image format for thumbs. Use '' to keep same extension than original image.
+ * @return  string                  New file name
+ */
+function getImageFileNameForSize($file, $extName, $extImgTarget='')
+{
+	$dirName = dirname($file);
+	if ($dirName == '.') $dirName='';
+	
+    $fileName = preg_replace('/(\.gif|\.jpeg|\.jpg|\.png|\.bmp)$/i','',$file);	// On enleve extension quelquesoit la casse
+	$fileName = basename($fileName);
+	
+	if (empty($extImgTarget)) $extImgTarget = (preg_match('/\.jpg$/i',$file)?'.jpg':'');
+    if (empty($extImgTarget)) $extImgTarget = (preg_match('/\.jpeg$/i',$file)?'.jpeg':'');
+    if (empty($extImgTarget)) $extImgTarget = (preg_match('/\.gif$/i',$file)?'.gif':'');
+    if (empty($extImgTarget)) $extImgTarget = (preg_match('/\.png$/i',$file)?'.png':'');
+    if (empty($extImgTarget)) $extImgTarget = (preg_match('/\.bmp$/i',$file)?'.bmp':'');
+
+    if (! $extImgTarget) return $file;
+	
+    $subdir='';
+    if ($extName) $subdir = 'thumbs/';
+    
+    return $dirName.$subdir.$fileName.$extName.$extImgTarget; // New filename for thumb
+}

@@ -50,9 +50,9 @@ if (empty($usemargins)) $usemargins=0;
 <!-- BEGIN PHP TEMPLATE objectline_view.tpl.php -->
 <tr <?php echo 'id="row-'.$line->id.'" '.$bcdd[$var]; ?>>
 	<?php if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
-	<td align="center"><?php $coldisplay++; ?><?php echo ($i+1); ?></td>
+	<td class="linecolnum" align="center"><?php $coldisplay++; ?><?php echo ($i+1); ?></td>
 	<?php } ?>
-	<td><?php $coldisplay++; ?><div id="line_<?php echo $line->id; ?>"></div>
+	<td class="linecoldescription"><?php $coldisplay++; ?><div id="line_<?php echo $line->id; ?>"></div>
 	<?php 
 	if (($line->info_bits & 2) == 2) {
 	?>
@@ -125,17 +125,17 @@ if (empty($usemargins)) $usemargins=0;
 	?>
 	</td>
 	<?php if ($object->element == 'askpricesupplier') { ?>
-		<td align="right"><?php echo $line->ref_fourn; ?></td>
+		<td class="linecolrefsupplier" align="right"><?php echo $line->ref_fourn; ?></td>
 	<?php } ?>
-	<td align="right" class="nowrap"><?php $coldisplay++; ?><?php echo vatrate($line->tva_tx,'%',$line->info_bits); ?></td>
+	<td align="right" class="linecolvat nowrap"><?php $coldisplay++; ?><?php echo vatrate($line->tva_tx,'%',$line->info_bits); ?></td>
 
-	<td align="right" class="nowrap"><?php $coldisplay++; ?><?php echo price($line->subprice); ?></td>
+	<td align="right" class="linecoluht nowrap"><?php $coldisplay++; ?><?php echo price($line->subprice); ?></td>
 
 	<?php if ($inputalsopricewithtax) { ?>
-	<td align="right" class="nowrap"><?php $coldisplay++; ?><?php echo (isset($line->pu_ttc)?price($line->pu_ttc):price($line->subprice)); ?></td>
+	<td align="right" class="linecoluttc nowrap"><?php $coldisplay++; ?><?php echo (isset($line->pu_ttc)?price($line->pu_ttc):price($line->subprice)); ?></td>
 	<?php } ?>
 
-	<td align="right" class="nowrap"><?php $coldisplay++; ?>
+	<td align="right" class="linecolqty nowrap"><?php $coldisplay++; ?>
 	<?php if ((($line->info_bits & 2) != 2) && $line->special_code != 3) {
 			// I comment this because it shows info even when not required
 			// for example always visible on invoice but must be visible only if stock module on and stock decrease option is on invoice validation and status is not validated
@@ -148,7 +148,7 @@ if (empty($usemargins)) $usemargins=0;
 	<?php
 	if($conf->global->PRODUCT_USE_UNITS)
 	{
-		print '<td align="left" class="nowrap">';
+		print '<td align="left" class="linecoluseunit nowrap">';
 		$label = $line->getLabelOfUnit('short');
 		if ($label !== '') {
 			print $langs->trans($label);
@@ -158,42 +158,42 @@ if (empty($usemargins)) $usemargins=0;
 	?>
 
 	<?php if (!empty($line->remise_percent) && $line->special_code != 3) { ?>
-	<td align="right"><?php
+	<td class="linecoldiscount" align="right"><?php
 		$coldisplay++;
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 		echo dol_print_reduction($line->remise_percent,$langs);
 	?></td>
 	<?php } else { ?>
-	<td><?php $coldisplay++; ?>&nbsp;</td>
+	<td class="linecoldiscount"><?php $coldisplay++; ?>&nbsp;</td>
 	<?php }
 
 	if ($this->situation_cycle_ref) {
 		$coldisplay++;
-		print '<td align="right" class="nowrap">' . $line->situation_percent . '%</td>';
+		print '<td align="right" class="linecolcycleref nowrap">' . $line->situation_percent . '%</td>';
 	}
 
   	if ($usemargins && ! empty($conf->margin->enabled) && empty($user->societe_id))
   	{
 		$rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT);
   		?>
-  	<td align="right" class="nowrap margininfos"><?php $coldisplay++; ?><?php echo price($line->pa_ht); ?></td>
+  	<td align="right" class="linecolmargin1 nowrap margininfos"><?php $coldisplay++; ?><?php echo price($line->pa_ht); ?></td>
   	<?php if (! empty($conf->global->DISPLAY_MARGIN_RATES) && $user->rights->margins->liretous) { ?>
-  	  <td align="right" class="nowrap margininfos"><?php $coldisplay++; ?><?php echo (($line->pa_ht == 0)?'n/a':price($line->marge_tx, null, null, null, null, $rounding).'%'); ?></td>
+  	  <td align="right" class="linecolmargin2 nowrap margininfos"><?php $coldisplay++; ?><?php echo (($line->pa_ht == 0)?'n/a':price($line->marge_tx, null, null, null, null, $rounding).'%'); ?></td>
   	<?php }
     if (! empty($conf->global->DISPLAY_MARK_RATES) && $user->rights->margins->liretous) {?>
-  	  <td align="right" class="nowrap margininfos"><?php $coldisplay++; ?><?php echo price($line->marque_tx, null, null, null, null, $rounding).'%'; ?></td>
+  	  <td align="right" class="linecolmargin2 nowrap margininfos"><?php $coldisplay++; ?><?php echo price($line->marque_tx, null, null, null, null, $rounding).'%'; ?></td>
     <?php }
   	}
   	?>
 
 	<?php if ($line->special_code == 3)	{ ?>
-	<td align="right" class="nowrap"><?php $coldisplay++; ?><?php echo $langs->trans('Option'); ?></td>
+	<td align="right" class="linecoloption nowrap"><?php $coldisplay++; ?><?php echo $langs->trans('Option'); ?></td>
 	<?php } else { ?>
-	<td align="right" class="nowrap"><?php $coldisplay++; ?><?php echo price($line->total_ht); ?></td>
+	<td align="right" class="liencolht nowrap"><?php $coldisplay++; ?><?php echo price($line->total_ht); ?></td>
 	<?php } ?>
 
 	<?php if ($this->statut == 0  && ($object_rights->creer)) { ?>
-	<td align="center"><?php $coldisplay++; ?>
+	<td class="linecoledit" align="center"><?php $coldisplay++; ?>
 		<?php if (($line->info_bits & 2) == 2) { ?>
 		<?php } else { ?>
 		<a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=editline&amp;lineid='.$line->id.'#line_'.$line->id; ?>">
@@ -202,7 +202,7 @@ if (empty($usemargins)) $usemargins=0;
 		<?php } ?>
 	</td>
 
-	<td align="center"><?php $coldisplay++; ?>
+	<td class="linecoldelete" align="center"><?php $coldisplay++; ?>
 		<?php
 		if ($this->situation_counter == 1 || !$this->situation_cycle_ref) {
 			print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $this->id . '&amp;action=ask_deleteline&amp;lineid=' . $line->id . '">';
@@ -213,7 +213,7 @@ if (empty($usemargins)) $usemargins=0;
 	</td>
 
 	<?php if ($num > 1 && empty($conf->browser->phone) && ($this->situation_counter == 1 || !$this->situation_cycle_ref)) { ?>
-	<td align="center" class="tdlineupdown"><?php $coldisplay++; ?>
+	<td align="center" class="linecolmove tdlineupdown"><?php $coldisplay++; ?>
 		<?php if ($i > 0) { ?>
 		<a class="lineupdown" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=up&amp;rowid='.$line->id; ?>">
 		<?php echo img_up('default',0,'imgupforline'); ?>
@@ -226,7 +226,7 @@ if (empty($usemargins)) $usemargins=0;
 		<?php } ?>
 	</td>
     <?php } else { ?>
-    <td align="center"<?php echo (empty($conf->browser->phone)?' class="tdlineupdown"':''); ?>><?php $coldisplay++; ?></td>
+    <td align="center"<?php echo (empty($conf->browser->phone)?' class="linecolmove tdlineupdown"':' class="linecolmove"'); ?>><?php $coldisplay++; ?></td>
 	<?php } ?>
 <?php } else { ?>
 	<td colspan="3"><?php $coldisplay=$coldisplay+3; ?></td>

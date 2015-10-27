@@ -172,6 +172,8 @@ print '</div>';
 
 dol_fiche_end();
 
+
+
 if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 	$prodcustprice = new Productcustomerprice($db);
@@ -429,105 +431,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 	} 
 	else 
 	{
-
-		// View mode
-
-		// Count total nb of records
-		$nbtotalofrecords = 0;
-		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-			$nbtotalofrecords = $prodcustprice->fetch_all('', '', 0, 0, $filter);
-		}
-
-		$result = $prodcustprice->fetch_all($sortorder, $sortfield, $conf->liste_limit, $offset, $filter);
-		if ($result < 0) {
-			setEventMessage($prodcustprice->error, 'errors');
-		}
-
-		$option = '&search_soc=' . $search_soc . '&id=' . $object->id;
-
-		print_barre_liste($langs->trans('PriceForEachProduct'), $page, $_SERVEUR ['PHP_SELF'], $option, $sortfield, $sortorder, '', count($prodcustprice->lines), $nbtotalofrecords);
-
-		if (count($prodcustprice->lines) > 0) {
-
-			print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
-			print '<input type="hidden" name="id" value="' . $object->id . '">';
-
-			print '<table class="noborder" width="100%">';
-
-			print '<tr class="liste_titre">';
-			print '<td>' . $langs->trans("Product") . '</td>';
-			print '<td>' . $langs->trans("AppliedPricesFrom") . '</td>';
-			print '<td align="center">' . $langs->trans("PriceBase") . '</td>';
-			print '<td align="right">' . $langs->trans("VAT") . '</td>';
-			print '<td align="right">' . $langs->trans("HT") . '</td>';
-			print '<td align="right">' . $langs->trans("TTC") . '</td>';
-			print '<td align="right">' . $langs->trans("MinPrice") . ' ' . $langs->trans("HT") . '</td>';
-			print '<td align="right">' . $langs->trans("MinPrice") . ' ' . $langs->trans("TTC") . '</td>';
-			print '<td align="right">' . $langs->trans("ChangedBy") . '</td>';
-			print '<td>&nbsp;</td>';
-			print '</tr>';
-
-			print '<tr class="liste_titre">';
-			print '<td><input type="text" class="flat" name="search_soc" value="' . $search_soc . '" size="20"></td>';
-			print '<td colspan="8">&nbsp;</td>';
-			// Print the search button
-			print '<td class="liste_titre" align="right">';
-			print '<input class="liste_titre" name="button_search" type="image" src="' . DOL_URL_ROOT . '/theme/' . $conf->theme . '/img/search.png" value="' . dol_escape_htmltag($langs->trans("Search")) . '" title="' . dol_escape_htmltag($langs->trans("Search")) . '">';
-			print '</td>';
-			print '</tr>';
-
-			$var = False;
-
-			foreach($prodcustprice->lines as $line)
-			{
-				print "<tr ".$bc[$var].">";
-
-				$staticprod = new Product($db);
-				$staticprod->fetch($line->fk_product);
-
-				print "<td>" . $staticprod->getNomUrl(1) . "</td>";
-				print "<td>" . dol_print_date($line->datec, "dayhour") . "</td>";
-
-				print '<td align="center">' . $langs->trans($line->price_base_type) . "</td>";
-				print '<td align="right">' . vatrate($line->tva_tx, true, $line->recuperableonly) . "</td>";
-				print '<td align="right">' . price($line->price) . "</td>";
-				print '<td align="right">' . price($line->price_ttc) . "</td>";
-				print '<td align="right">' . price($line->price_min) . '</td>';
-				print '<td align="right">' . price($line->price_min_ttc) . '</td>';
-
-				// User
-				$userstatic = new User($db);
-				$userstatic->fetch($line->fk_user);
-				print '<td align="right">';
-				print $userstatic->getLoginUrl(1);
-				print '</td>';
-
-				// Todo Edit or delete button
-				// Action
-				if ($user->rights->produit->creer || $user->rights->service->creer) {
-					print '<td align="right">';
-					print '<a href="' . $_SERVER["PHP_SELF"] . '?action=showlog_customer_price&amp;socid=' . $object->id . '&amp;prodid=' . $line->fk_product . '">';
-					print img_info();
-					print '</a>';
-					print ' ';
-					print '<a href="' . $_SERVER["PHP_SELF"] . '?action=edit_customer_price&amp;socid=' . $object->id . '&amp;lineid=' . $line->id . '">';
-					print img_edit('default', 0, 'style="vertical-align: middle;"');
-					print '</a>';
-					print ' ';
-					print '<a href="' . $_SERVER["PHP_SELF"] . '?action=delete_customer_price&amp;socid=' . $object->id . '&amp;lineid=' . $line->id . '">';
-					print img_delete('default', 'style="vertical-align: middle;"');
-					print '</a>';
-					print '</td>';
-				}
-
-				print "</tr>\n";
-			}
-			print "</table>";
-
-			print "</form>";
-		} else {
-			print $langs->trans('None');
-		}
+        // View mode
 
 		/* ************************************************************************** */
 		/*                                                                            */
@@ -540,7 +444,112 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		if ($user->rights->produit->creer || $user->rights->service->creer) {
 			print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=add_customer_price&amp;socid=' . $object->id . '">' . $langs->trans("AddCustomerPrice") . '</a></div>';
 		}
-		print "\n</div><br>\n";
+		print "\n</div>\n";
+	    
+	    
+        // Count total nb of records
+        $nbtotalofrecords = 0;
+        if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+        {
+            $nbtotalofrecords = $prodcustprice->fetch_all('', '', 0, 0, $filter);
+        }
+        
+        $result = $prodcustprice->fetch_all($sortorder, $sortfield, $conf->liste_limit, $offset, $filter);
+        if ($result < 0)
+        {
+            setEventMessage($prodcustprice->error, 'errors');
+        }
+        
+        $option = '&search_soc=' . $search_soc . '&id=' . $object->id;
+        
+        print_barre_liste($langs->trans('PriceForEachProduct'), $page, $_SERVEUR['PHP_SELF'], $option, $sortfield, $sortorder, '', count($prodcustprice->lines), $nbtotalofrecords, '');
+        
+        print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
+        print '<input type="hidden" name="id" value="' . $object->id . '">';
+        
+        print '<table class="noborder" width="100%">';
+        
+        print '<tr class="liste_titre">';
+        print '<td>' . $langs->trans("Product") . '</td>';
+        print '<td>' . $langs->trans("AppliedPricesFrom") . '</td>';
+        print '<td align="center">' . $langs->trans("PriceBase") . '</td>';
+        print '<td align="right">' . $langs->trans("VAT") . '</td>';
+        print '<td align="right">' . $langs->trans("HT") . '</td>';
+        print '<td align="right">' . $langs->trans("TTC") . '</td>';
+        print '<td align="right">' . $langs->trans("MinPrice") . ' ' . $langs->trans("HT") . '</td>';
+        print '<td align="right">' . $langs->trans("MinPrice") . ' ' . $langs->trans("TTC") . '</td>';
+        print '<td align="right">' . $langs->trans("ChangedBy") . '</td>';
+        print '<td>&nbsp;</td>';
+        print '</tr>';
+        
+        if (count($prodcustprice->lines) > 0)
+        {
+            
+            print '<tr class="liste_titre">';
+            print '<td><input type="text" class="flat" name="search_soc" value="' . $search_soc . '" size="20"></td>';
+            print '<td colspan="8">&nbsp;</td>';
+            // Print the search button
+            print '<td class="liste_titre" align="right">';
+            print '<input class="liste_titre" name="button_search" type="image" src="' . DOL_URL_ROOT . '/theme/' . $conf->theme . '/img/search.png" value="' . dol_escape_htmltag($langs->trans("Search")) . '" title="' . dol_escape_htmltag($langs->trans("Search")) . '">';
+            print '</td>';
+            print '</tr>';
+            
+            $var = False;
+            
+            foreach ($prodcustprice->lines as $line)
+            {
+                print "<tr " . $bc[$var] . ">";
+                
+                $staticprod = new Product($db);
+                $staticprod->fetch($line->fk_product);
+                
+                print "<td>" . $staticprod->getNomUrl(1) . "</td>";
+                print "<td>" . dol_print_date($line->datec, "dayhour") . "</td>";
+                
+                print '<td align="center">' . $langs->trans($line->price_base_type) . "</td>";
+                print '<td align="right">' . vatrate($line->tva_tx, true, $line->recuperableonly) . "</td>";
+                print '<td align="right">' . price($line->price) . "</td>";
+                print '<td align="right">' . price($line->price_ttc) . "</td>";
+                print '<td align="right">' . price($line->price_min) . '</td>';
+                print '<td align="right">' . price($line->price_min_ttc) . '</td>';
+                
+                // User
+                $userstatic = new User($db);
+                $userstatic->fetch($line->fk_user);
+                print '<td align="right">';
+                print $userstatic->getLoginUrl(1);
+                print '</td>';
+                
+                // Todo Edit or delete button
+                // Action
+                if ($user->rights->produit->creer || $user->rights->service->creer)
+                {
+                    print '<td align="right">';
+                    print '<a href="' . $_SERVER["PHP_SELF"] . '?action=showlog_customer_price&amp;socid=' . $object->id . '&amp;prodid=' . $line->fk_product . '">';
+                    print img_info();
+                    print '</a>';
+                    print ' ';
+                    print '<a href="' . $_SERVER["PHP_SELF"] . '?action=edit_customer_price&amp;socid=' . $object->id . '&amp;lineid=' . $line->id . '">';
+                    print img_edit('default', 0, 'style="vertical-align: middle;"');
+                    print '</a>';
+                    print ' ';
+                    print '<a href="' . $_SERVER["PHP_SELF"] . '?action=delete_customer_price&amp;socid=' . $object->id . '&amp;lineid=' . $line->id . '">';
+                    print img_delete('default', 'style="vertical-align: middle;"');
+                    print '</a>';
+                    print '</td>';
+                }
+                
+                print "</tr>\n";
+            }
+        } else
+        {
+            print '<tr ' . $bc[false] . '><td colspan="10">' . $langs->trans('NoPriceSpecificToCustomer') . '</td></tr>';
+        }
+        
+        print "</table>";
+        
+        print "</form>";
+		
 	}
 }
 

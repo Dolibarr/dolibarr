@@ -499,7 +499,7 @@ div.confirmmessage {
 .maxwidth100 { max-width: 100px; }
 .maxwidth200 { max-width: 200px; }
 .maxwidth300 { max-width: 300px; }
-.titlefield { width: 25%; }
+.titlefield { width: 30%; }
 <?php if (! empty($dol_optimize_smallscreen)) { ?>
 .hideonsmartphone { display: none; }
 .noenlargeonsmartphone { width : 50px !important; display: inline !important; }
@@ -560,11 +560,16 @@ td.showDragHandle {
 }
 #id-right {	/* This must stay id-right and not be replaced with echo $right */
 	width: 100%;
+<?php if (GETPOST("optioncss") != 'print') { ?>
 	padding-left: 194px;
 	padding-top: 12px;
+<?php } ?>	
 }
 
 .side-nav {
+<?php if (GETPOST("optioncss") == 'print') { ?>
+	display: none;
+<?php } else { ?>
 	background: #FFF;
 	border-right: 1px solid rgba(0,0,0,0.2);
 	bottom: 0;
@@ -600,6 +605,7 @@ td.showDragHandle {
 	-webkit-overflow-scrolling: touch;
 	overflow-x: hidden;
 	overflow-y: auto;
+<?php } ?>
 }
 .side-nav-vert {
 	margin-left: 194px;
@@ -708,7 +714,7 @@ $heightmenu=48;			/* height of top menu, part with image */
 $heightmenu2=48;        /* height of top menu, ârt with login  */
 $disableimages = 0;
 $maxwidthloginblock = 110;
-if (! empty($conf->global->THEME_ELDY_DISABLE_IMAGE) || $dol_optimize_smallscreen) { $disableimages = 1; $maxwidthloginblock = 180; }
+if (! empty($conf->global->THEME_ELDY_DISABLE_IMAGE)) { $disableimages = 1; $maxwidthloginblock = 180; }
 ?>
 
 div#tmenu_tooltip {
@@ -731,7 +737,7 @@ div#tmenu_tooltip {
 <?php if (GETPOST("optioncss") == 'print') {  ?>
 	display:none;
 <?php } else { ?>
-	/* padding-<?php echo $right; ?>: <? echo ($maxwidthloginblock - 10); ?>px; */
+	/* padding-<?php echo $right; ?>: <?php echo ($maxwidthloginblock - 10); ?>px; */
 <?php } ?>
 }
 
@@ -913,7 +919,6 @@ div.mainmenu.members {
 
 div.mainmenu.products {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/products.png',1) ?>);
-	margin-left: 10px;
 }
 
 div.mainmenu.project {
@@ -1114,12 +1119,16 @@ div.login_block_other { padding-top: 3px; }
 .login_block_elem_name {
 	margin-top: 5px;
 }
+.atoplogin, .atoplogin:hover {
+	color: #<?php echo $colortextbackvmenu; ?> !important;
+	font-weight: normal !important;
+}
 .alogin, .alogin:hover {
 	color: #888 !important;
 	font-weight: normal !important;
 	font-size: <?php echo $fontsizesmaller; ?>px !important;
 }
-.alogin:hover {
+.alogin:hover, .atoplogin:hover {
 	text-decoration:underline !important;
 }
 img.login, img.printer, img.entity {
@@ -1168,6 +1177,10 @@ div.vmenu, td.vmenu {
 	<?php if (GETPOST("optioncss") == 'print') { ?>
     display: none;
 	<?php } ?>
+}
+
+.vmenusearchselectcombo {
+	width: 170px;
 }
 
 .menu_contenu { padding-top: 4px; padding-bottom: 3px;}
@@ -3711,7 +3724,22 @@ border-top-right-radius: 6px;
 }
 @media only screen and (max-width: 570px)
 {
-    div.mainmenu {
+	/* Reduce login top right info */
+	.usertextatoplogin {
+		display: none;
+	}
+	div#tmenu_tooltip {
+	<?php if (GETPOST("optioncss") == 'print') {  ?>
+		display:none;
+	<?php } else { ?>
+		/* padding-<?php echo $right; ?>: 78px; */
+	<?php } ?>
+	}
+	div.login_block {
+		top: 9px;
+	}
+
+	div.mainmenu {
     	min-width: 20px;
     }
 	.topmenuimage {

@@ -281,7 +281,7 @@ if ($resql)
     if ($search_user > 0)    $param.='&search_user=' .$search_user;
     if ($search_montant_ht != '')  $param.='&search_montant_ht='.$search_montant_ht;
     if ($search_montant_ttc != '') $param.='&search_montant_ttc='.$search_montant_ttc;
-    if ($search_status > 0) $param.='&search_status='.$search_status;
+	if ($search_status != '') $param.='&search_status='.$search_status;
     print_barre_liste($langs->trans('BillsCustomers').' '.($socid?' '.$soc->name:''),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords,'title_accountancy.png');
 
     $i = 0;

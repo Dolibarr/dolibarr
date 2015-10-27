@@ -4501,27 +4501,34 @@ class Form
 
     /**
      *	Return a HTML select string, built from an array of key+value but content returned into select come from an Ajax call of an URL.
-     *  Note: Do not apply langs->trans function on returned content, content may be entity encoded twice.
+     *  Note: Do not apply langs->trans function on returned content of Ajax service, content may be entity encoded twice.
      *
      *	@param	string	$htmlname       		Name of html select area
-     *	@param	string	$url					Url
+     *	@param	string	$url					Url. Must return a json_encode of array(key=>array('text'=>'A text', 'url'=>'An url'), ...)
      *	@param	string	$id             		Preselected key
      *	@param  string	$moreparam      		Add more parameters onto the select tag
      *	@param  string	$moreparamtourl 		Add more parameters onto the Ajax called URL
      * 	@param	int		$disabled				Html select box is disabled
      *  @param	int		$minimumInputLength		Minimum Input Length
      *  @param	string	$morecss				Add more class to css styles
+     *  @param  int     $callurlonselect        If set to 1, some code is added so an url return by the ajax is called when value is selected.
+     *  @param  string  $placeholder            String to use as placeholder
      * 	@return	string							HTML select string.
      */
-    static function selectArrayAjax($htmlname, $url, $id='', $moreparam='', $moreparamtourl='', $disabled=0, $minimumInputLength=1, $morecss='')
+    static function selectArrayAjax($htmlname, $url, $id='', $moreparam='', $moreparamtourl='', $disabled=0, $minimumInputLength=1, $morecss='', $callurlonselect=0, $placeholder='')
     {
+        global $langs;
+        
     	$out = '';
 
     	$tmpplugin='select2';
     	$out.='<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
 	    	<script type="text/javascript">
 	    	$(document).ready(function () {
-		    	$(".'.$htmlname.'").select2({
+    	      
+    	      '.($callurlonselect ? 'var saveRemoteData = [];':'').'
+    	    
+              $(".'.$htmlname.'").select2({
 			    	ajax: {
 				    	dir: "ltr",
 				    	url: "'.$url.'",
@@ -4535,8 +4542,14 @@ class Form
 			    		},
 			    		results: function (remoteData, pageNumber, query) {
 			    			console.log(remoteData);
-			    			return {results:[{id:\'none\', text:\'aa\'}, {id:\'rrr\', text:\'Red\'},{id:\'bbb\', text:\'Search a into projects\'}], more:false}
-			    			//return {results:[remoteData], more:false}
+				    	    saveRemoteData = remoteData;
+				    	    /* format json result for select2 */
+				    	    result = []
+				    	    $.each( remoteData, function( key, value ) {
+				    	       result.push({id: key, text: value.text});
+                            });
+			    			//return {results:[{id:\'none\', text:\'aa\'}, {id:\'rrr\', text:\'Red\'},{id:\'bbb\', text:\'Search a into projects\'}], more:false}
+			    			return {results: result, more:false}
     					},
 			    		/*processResults: function (data, page) {
 			    			// parse the results into the format expected by Select2.
@@ -4549,18 +4562,26 @@ class Form
 			    		},*/
 			    		cache: true
 			    	},
+				    placeholder: "'.dol_escape_js($placeholder).'",
 			    	escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
 			    	minimumInputLength: '.$minimumInputLength.',
-			    	//templateResult: formatRepo, // omitted for brevity, see the source of this page
-			    	//templateSelection: formatRepoSelection // omitted for brevity, see the source of this page
+			        formatResult: function(result, container, query, escapeMarkup) {
+                        return escapeMarkup(result.text);
+                    }
 			    });
 			    
-			    $(".'.$htmlname.'").change(function() { 
-			    	alert(\'eee\');
-			    	$(".'.$htmlname.'").select2.clearSearch(); 
-    			} );
-
-    			
+                '.($callurlonselect ? '
+                $(".'.$htmlname.'").change(function() { 
+			    	var selected = $(".'.$htmlname.'").select2("val");
+			        $(".'.$htmlname.'").select2("val","");  /* reset visible combo value */
+    			    $.each( saveRemoteData, function( key, value ) {
+    				        if (key == selected)
+    			            {
+    			                 console.log("Do a redirect into selectArrayAjax to "+value.url)
+    			                 location.assign(value.url);
+    			            }
+                    });
+    			});' : '' ) . '
     			
     	});
 	    </script>';
@@ -5248,10 +5269,12 @@ class Form
      * 		@param	int			$height				Height of photo (auto if 0)
      * 		@param	int			$caneditfield		Add edit fields
      * 		@param	string		$cssclass			CSS name to use on img for photo
-     * 		@param	int			$genericifundef		Use a generic image if no image avaiable
+     * 		@param	string		$imagesize		    'mini', 'small' or '' (original)
+     *      @param  int         $addlinktofullsize  Add link to fullsize image
+     *      @param  int         $cache              1=Accept to use image in cache
      * 	  	@return string    						HTML code to output photo
      */
-    static function showphoto($modulepart, $object, $width=100, $height=0, $caneditfield=0, $cssclass='photowithmargin', $genericifundef=0)
+    static function showphoto($modulepart, $object, $width=100, $height=0, $caneditfield=0, $cssclass='photowithmargin', $imagesize='', $addlinktofullsize=1, $cache=0)
     {
         global $conf,$langs;
 
@@ -5265,47 +5288,73 @@ class Form
             $dir=$conf->societe->multidir_output[$entity];
             $smallfile=$object->logo;
             $smallfile=preg_replace('/(\.png|\.gif|\.jpg|\.jpeg|\.bmp)/i','_small\\1',$smallfile);
-            if (! empty($object->logo)) $file=$id.'/logos/thumbs/'.$smallfile;
+            if (! empty($object->logo)) 
+            {
+                if ((string) $imagesize == 'mini') $file=$id.'/logos/thumbs/'.getImageFileNameForSize($object->logo, '_mini');
+                else if ((string) $imagesize == 'small') $file=$id.'/logos/thumbs/'.getImageFileNameForSize($object->logo, '_small');
+                else $file=$id.'/logos/thumbs/'.$smallfile;
+            }
         }
         else if ($modulepart=='contact')
         {
             $dir=$conf->societe->multidir_output[$entity].'/contact';
-            $file=$id.'/photos/'.$object->photo;
+            if (! empty($object->photo))
+            {
+                if ((string) $imagesize == 'mini') $file=$id.'/photos/thumbs/'.getImageFileNameForSize($object->photo, '_mini');
+                else if ((string) $imagesize == 'small') $file=$id.'/photos/thumbs/'.getImageFileNameForSize($object->photo, '_small');
+                else $file=$id.'/photos/'.$object->photo;
+            }
         }
         else if ($modulepart=='userphoto')
         {
             $dir=$conf->user->dir_output;
-            if (! empty($object->photo)) $file=get_exdir($id, 2, 0, 0, $object, 'user').$object->photo;
+            if (! empty($object->photo))
+            {
+                if ((string) $imagesize == 'mini') $file=get_exdir($id, 2, 0, 0, $object, 'user').getImageFileNameForSize($object->photo, '_mini');
+                else if ((string) $imagesize == 'small') $file=get_exdir($id, 2, 0, 0, $object, 'user').getImageFileNameForSize($object->photo, '_small');
+                else $file=get_exdir($id, 2, 0, 0, $object, 'user').$object->photo;
+            }
             if (! empty($conf->global->MAIN_OLD_IMAGE_LINKS)) $altfile=$object->id.".jpg";	// For backward compatibility
             $email=$object->email;
         }
         else if ($modulepart=='memberphoto')
         {
             $dir=$conf->adherent->dir_output;
-            if (! empty($object->photo)) $file=get_exdir($id, 2, 0, 0, $object, 'invoice_supplier').'photos/'.$object->photo;
+            if (! empty($object->photo)) 
+            {
+                if ((string) $imagesize == 'mini') $file=get_exdir($id, 2, 0, 0, $object, 'member').'photos/'.getImageFileNameForSize($object->photo, '_mini');
+                else if ((string) $imagesize == 'small') $file=get_exdir($id, 2, 0, 0, $object, 'member').'photos/'.getImageFileNameForSize($object->photo, '_small');
+                else $file=get_exdir($id, 2, 0, 0, $object, 'member').'photos/'.$object->photo;
+            }
             if (! empty($conf->global->MAIN_OLD_IMAGE_LINKS)) $altfile=$object->id.".jpg";	// For backward compatibility
             $email=$object->email;
-        } else {
+        } 
+        else 
+        {
         	$dir=$conf->$modulepart->dir_output;
-        	if (! empty($object->photo)) $file=get_exdir($id, 2, 0, 0, $object, 'member').'photos/'.$object->photo;
+        	if (! empty($object->photo)) 
+        	{
+                if ((string) $imagesize == 'mini') $file=get_exdir($id, 2, 0, 0, $object, $modulepart).'photos/'.getImageFileNameForSize($object->photo, '_mini');
+                else if ((string) $imagesize == 'small') $file=get_exdir($id, 2, 0, 0, $object, $modulepart).'photos/'.getImageFileNameForSize($object->photo, '_small');
+        	    else $file=get_exdir($id, 2, 0, 0, $object, $modulepart).'photos/'.$object->photo;
+        	}
         	if (! empty($conf->global->MAIN_OLD_IMAGE_LINKS)) $altfile=$object->id.".jpg";	// For backward compatibility
         	$email=$object->email;
         }
 
         if ($dir)
         {
-            $cache='0';
             if ($file && file_exists($dir."/".$file))
             {
-                $ret.='<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($file).'&cache='.$cache.'">';
+                if ($addlinktofullsize) $ret.='<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($file).'&cache='.$cache.'">';
                 $ret.='<img alt="Photo" id="photologo'.(preg_replace('/[^a-z]/i','_',$file)).'" class="'.$cssclass.'" '.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($file).'&cache='.$cache.'">';
-                $ret.='</a>';
+                if ($addlinktofullsize) $ret.='</a>';
             }
             else if ($altfile && file_exists($dir."/".$altfile))
             {
-                $ret.='<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($file).'&cache='.$cache.'">';
+                if ($addlinktofullsize) $ret.='<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($file).'&cache='.$cache.'">';
                 $ret.='<img alt="Photo alt" id="photologo'.(preg_replace('/[^a-z]/i','_',$file)).'" class="'.$cssclass.'" '.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($altfile).'&cache='.$cache.'">';
-                $ret.='</a>';
+                if ($addlinktofullsize) $ret.='</a>';
             }
             else
 			{

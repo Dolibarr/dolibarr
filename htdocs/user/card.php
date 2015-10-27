@@ -724,6 +724,12 @@ if (($action == 'create') || ($action == 'adduserldap'))
     }
     print '</td></tr>';
 
+	// Employee
+    print '<tr>';
+    print '<td>'.fieldLabel('Employee','employee',0).'</td><td>';
+    print $form->selectyesno("employee",(isset($_POST['employee'])?GETPOST('employee'):0),1);
+    print '</td></tr>';
+
     // Position/Job
     print '<tr><td>'.$langs->trans("PostOrFunction").'</td>';
     print '<td>';
@@ -1204,6 +1210,11 @@ else
                 print "</td>";
             }
             print '</tr>'."\n";
+
+            // Employee
+            print '<tr><td>'.$langs->trans("Employee").'</td><td colspan="2">';
+            print yn($object->employee);
+            print '</td></tr>'."\n";
 
 	        // Position/Job
             print '<tr><td>'.$langs->trans("PostOrFunction").'</td>';
@@ -1726,6 +1737,12 @@ else
                 print '<input type="hidden" name="firstname" value="'.$object->firstname.'">';
                 print $object->firstname;
             }
+            print '</td></tr>';
+
+            // Employee
+            print '<tr>';
+            print '<td>'.fieldLabel('Employee','employee',0).'</td><td>';
+            print $form->selectyesno("employee",$object->employee,1);
             print '</td></tr>';
 
             // Position/Job

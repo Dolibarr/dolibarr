@@ -246,7 +246,7 @@ if ($resql)
     print '<input type="text" class="flat" size="6" name="search_ref_supplier value="'.dol_escape_htmltag($search_ref_supplier).'">';
     print '</td>';
     print '<td class="liste_titre">';
-    print '<input type="text" class="flat" size="12" name="search_name" value="'.dol_escape_htmltag($search_name).'">';
+    print '<input type="text" class="flat" size="8" name="search_name" value="'.dol_escape_htmltag($search_name).'">';
     print '</td>';
     print '<td class="liste_titre">&nbsp;</td>';
     //print '<td class="liste_titre">&nbsp;</td>';
@@ -292,9 +292,10 @@ if ($resql)
         			$userstatic->id=$val['id'];
         			$userstatic->lastname=$val['lastname'];
         			$userstatic->firstname=$val['firstname'];
-        			print $userstatic->getNomUrl(1);
+        			print '<div class="float">'.$userstatic->getNomUrl(1);
         			$j++;
-        			if ($j < $nbofsalesrepresentative) print '<br/>';
+        			if ($j < $nbofsalesrepresentative) print ', ';
+        			print '</div>';
         		}
         	}
         	else print $langs->trans("NoSalesRepresentativeAffected");

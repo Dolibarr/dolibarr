@@ -26,5 +26,7 @@ create table llx_projet_task_time
   task_duration    double,
   fk_user          integer,
   thm			   double(24,8),
+  invoice_id       integer DEFAULT NULL,				-- If we need to invoice each line of timespent, we can save invoice id here
+  invoice_line_id  integer DEFAULT NULL,                -- If we need to invoice each line of timespent, we can save invoice line id here
   note             text
 )ENGINE=innodb;

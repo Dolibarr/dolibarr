@@ -54,7 +54,7 @@ if ($action == 'ventil' && $user->rights->accounting->ventilation->dispatch) {
 		dol_syslog("/accounting/customer/card.php sql=" . $sql, LOG_DEBUG);
 		$resql = $db->query($sql);
 		if (! $resql) {
-			setEventMessage($db->lasterror(), 'errors');
+			setEventMessages($db->lasterror(), null, 'errors');
 		}
 	} else {
 		header("Location: ./lines.php");

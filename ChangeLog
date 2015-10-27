@@ -19,6 +19,14 @@ Following changes may create regression for some external modules, but were nece
 Dolibarr better:
 - Deprecated hidden option MAIN_USE_CUSTOM_TRANSLATION has been removed. Use table llx_overwrite_trans instead.
 - Trigger LINECONTRACT_INSERT has been renamed into LINECONTRACT_CREATE to match common denomination.
+- A lot hooks used into PDF generation were not correctly implemented. We had to fix this. The result si that
+the following hook were set as hook of type "replace". This means if your module implement such hooks, it must 
+return 0 to execute standard code or 1 to replace standard code (value to output should be set into resPrints instead).
+This is list of hooks modified:
+'pdf_getlinenum', 'pdf_getlineref', 'pdf_getlineref_supplier', 'pdf_getlinevatrate', 'pdf_getlineupexcltax',
+'pdf_getlineupwithtax', 'pdf_getlineqty', 'pdf_getlineqty_asked', 'pdf_getlineqty_shipped', 'pdf_getlineqty_keeptoship',
+'pdf_getlineunit', 'pdf_getlineremisepercent', 'pdf_getlineprogress', 'pdf_getlinetotalexcltax', 'pdf_getlinetotalwithtax'
+
 
  
 ***** ChangeLog for 3.8.1 compared to 3.8.0 *****

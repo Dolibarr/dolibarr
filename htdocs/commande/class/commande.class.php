@@ -702,6 +702,7 @@ class Commande extends CommonOrder
         $sql.= " ref, fk_soc, date_creation, fk_user_author, fk_projet, date_commande, source, note_private, note_public, ref_ext, ref_client, ref_int";
         $sql.= ", model_pdf, fk_cond_reglement, fk_mode_reglement, fk_account, fk_availability, fk_input_reason, date_livraison, fk_delivery_address";
         $sql.= ", fk_shipping_method";
+        $sql.= ", fk_warehouse";
         $sql.= ", remise_absolue, remise_percent";
         $sql.= ", fk_incoterms, location_incoterms";
         $sql.= ", entity";
@@ -724,6 +725,7 @@ class Commande extends CommonOrder
         $sql.= ", ".($this->date_livraison?"'".$this->db->idate($this->date_livraison)."'":"null");
         $sql.= ", ".($this->fk_delivery_address>0?$this->fk_delivery_address:'NULL');
         $sql.= ", ".($this->shipping_method_id>0?$this->shipping_method_id:'NULL');
+        $sql.= ", ".($this->warehouse_id>0?$this->warehouse_id:'NULL');
         $sql.= ", ".($this->remise_absolue>0?$this->db->escape($this->remise_absolue):'NULL');
         $sql.= ", ".($this->remise_percent>0?$this->db->escape($this->remise_percent):0);
         $sql.= ", ".(int) $this->fk_incoterms;
@@ -1063,6 +1065,7 @@ class Commande extends CommonOrder
         $this->demand_reason_id     = $object->demand_reason_id;
         $this->date_livraison       = $object->date_livraison;
         $this->shipping_method_id   = $object->shipping_method_id;
+	$this->warehouse_id         = $object->warehouse_id;
         $this->fk_delivery_address  = $object->fk_delivery_address;
         $this->contact_id           = $object->contactid;
         $this->ref_client           = $object->ref_client;
@@ -1142,7 +1145,7 @@ class Commande extends CommonOrder
      *  @param		int				$fk_fournprice		Id supplier price
      *  @param		int				$pa_ht				Buying price (without tax)
      *  @param		string			$label				Label
-	 *  @param		array			$array_options		extrafields array
+	 *  @param		array			$array_options		extrafields array. Example array('options_codeforfield1'=>'valueforfield1', 'options_codeforfield2'=>'valueforfield2', ...)
      * 	@param 		string			$fk_unit 			Code of the unit to use. Null to use the default one
      *	@return     int             					>0 if OK, <0 if KO
      *
@@ -1432,6 +1435,7 @@ class Commande extends CommonOrder
         $sql.= ', c.date_commande';
         $sql.= ', c.date_livraison';
         $sql.= ', c.fk_shipping_method';
+        $sql.= ', c.fk_warehouse';
         $sql.= ', c.fk_projet, c.remise_percent, c.remise, c.remise_absolue, c.source, c.facture as billed';
         $sql.= ', c.note_private, c.note_public, c.ref_client, c.ref_ext, c.ref_int, c.model_pdf, c.fk_delivery_address, c.extraparams';
         $sql.= ', c.fk_incoterms, c.location_incoterms';
@@ -1499,6 +1503,7 @@ class Commande extends CommonOrder
                 $this->demand_reason_code	= $obj->demand_reason_code;
                 $this->date_livraison		= $this->db->jdate($obj->date_livraison);
                 $this->shipping_method_id   = ($obj->fk_shipping_method>0)?$obj->fk_shipping_method:null;
+                $this->warehouse_id           = ($obj->fk_warehouse>0)?$obj->fk_warehouse:null;
                 $this->fk_delivery_address	= $obj->fk_delivery_address;
 
 				//Incoterms
