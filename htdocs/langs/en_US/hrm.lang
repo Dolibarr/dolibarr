@@ -8,6 +8,7 @@ DeleteEstablishment=Delete establishment
 ConfirmDeleteEstablishment=Are-you sure to delete this establishment ?
 OpenEtablishment=Open establishment
 CloseEtablishment=Close establishment
+ListOfEmployees=List of employees
 Employees=Employees
 Employee=Employee
 NewEmployee=New employee
