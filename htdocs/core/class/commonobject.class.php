@@ -4201,12 +4201,12 @@ abstract class CommonObject
 		}
 		else
 		{
-			require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 			// Get PMP
 			if (! empty($fk_product))
 			{
 				if (isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == 'pmp')
 				{
+					require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 					$product = new Product($this->db);
 					$result = $product->fetch($fk_product);
 					if ($result <= 0)
@@ -4222,7 +4222,7 @@ abstract class CommonObject
 				}
 				else if (isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == '1')
 				{
-					include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+					require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 					$productFournisseur = new ProductFournisseur($this->db);
 					if (($result = $productFournisseur->find_min_price_product_fournisseur($fk_product)) > 0)
 					{
