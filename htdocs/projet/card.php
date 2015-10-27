@@ -624,7 +624,7 @@ else
         print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td>';
         print '<td><input size="40" name="title" value="'.$object->title.'"></td></tr>';
 
-        // Customer
+        // Thirdparty
         print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
 	    $filteronlist='';
 	    if (! empty($conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST)) $filteronlist=$conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST;
@@ -713,7 +713,7 @@ else
 
         // Third party
         print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-        if ($object->thirdparty->id > 0) print $object->thirdparty->getNomUrl(1);
+        if ($object->thirdparty->id > 0) print $object->thirdparty->getNomUrl(1, 'project');
         else print'&nbsp;';
         print '</td></tr>';
 

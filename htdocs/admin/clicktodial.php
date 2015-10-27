@@ -36,16 +36,19 @@ $action = GETPOST("action");
 /*
  *	Actions
  */
+ 
 if ($action == 'setvalue' && $user->admin)
 {
-    $result=dolibarr_set_const($db, "CLICKTODIAL_URL", GETPOST("url"), 'chaine', 0, '', $conf->entity);
-    if ($result >= 0)
+    $result=dolibarr_set_const($db, "CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS", GETPOST("CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS"), 'chaine', 0, '', $conf->entity);
+    $result=dolibarr_set_const($db, "CLICKTODIAL_URL", GETPOST("CLICKTODIAL_URL"), 'chaine', 0, '', $conf->entity);
+    
+    if ($result1 >= 0 && $result2 >= 0)
     {
-		setEventMessage($langs->trans("SetupSaved"));
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
     else
     {
-        setEventMessage($langs->trans("Error"),'errors');
+        setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
 
@@ -73,13 +76,22 @@ $var=true;
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td width="120">'.$langs->trans("Name").'</td>';
+print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
+
 $var=!$var;
-print '<tr '.$bc[$var].'><td valign="top">';
+print '<tr '.$bc[$var].'><td>';
+print $langs->trans("ClickToDialUseTelLink").'</td><td>';
+print $form->selectyesno("CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS", $conf->global->CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS, 1).'<br>';
+print '<br>';
+print $langs->trans("ClickToDialUseTelLinkDesc");
+print '</td></tr>';
+
+$var=!$var;
+print '<tr '.$bc[$var].'><td>';
 print $langs->trans("DefaultLink").'</td><td>';
-print '<input size="92" type="text" name="url" value="'.$conf->global->CLICKTODIAL_URL.'"><br>';
+print '<input size="92" type="text" name="CLICKTODIAL_URL"'.($conf->global->CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS?' disabled="disabled"':'').' value="'.$conf->global->CLICKTODIAL_URL.'"><br>';
 print '<br>';
 print $langs->trans("ClickToDialUrlDesc").'<br>';
 print $langs->trans("Example").':<br>http://myphoneserver/mypage?login=__LOGIN__&password=__PASS__&caller=__PHONEFROM__&called=__PHONETO__';

@@ -699,7 +699,7 @@ div#tmenu_tooltip {
 <?php if (GETPOST("optioncss") == 'print') {  ?>
 	display:none;
 <?php } else { ?>
-	padding-<?php echo $right; ?>: <? echo ($maxwidthloginblock - 10); ?>px;
+	padding-<?php echo $right; ?>: <?php echo ($maxwidthloginblock - 10); ?>px;
 <?php } ?>
 }
 
@@ -888,7 +888,6 @@ div.mainmenu.members {
 
 div.mainmenu.products {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/products.png',1) ?>);
-	margin-left: 10px;
 }
 
 div.mainmenu.project {
@@ -1146,6 +1145,10 @@ div.vmenu, td.vmenu {
 	<?php } ?>
 }
 
+.vmenusearchselectcombo {
+	width: 172px;
+}
+
 .menu_contenu { 
 	padding-top: 3px; 
 	padding-bottom: 2px;
@@ -1220,17 +1223,17 @@ div.blockvmenusearch
 	color: #000000;
 	text-align: <?php print $left; ?>;
 	text-decoration: none;
-    padding-left: 5px;
+    /*padding-left: 5px;
     padding-right: 1px;
     padding-top: 3px;
-    padding-bottom: 3px;
-    margin: 1px 0px 8px 2px;
+    padding-bottom: 3px; */
+    margin: 1px 0px 4px 2px;
 	background: rgb(<?php echo $colorbackvmenu1; ?>);
 
-    border-left: 1px solid #AAA;
+    /*border-left: 1px solid #AAA;
     border-right: 1px solid #BBB;
     border-bottom: 1px solid #BBB;
-    border-top: 1px solid #BBB;
+    border-top: 1px solid #BBB;*/
     /*border-radius: 4px;
 	-moz-border-radius: 4px;
     -moz-box-shadow: 3px 3px 4px #DDD;
@@ -3877,7 +3880,22 @@ border-top-right-radius: 6px;
 }
 @media only screen and (max-width: 570px)
 {
-    div.mainmenu {
+	/* Reduce login top right info */
+	.usertextatoplogin {
+		display: none;
+	}
+	div#tmenu_tooltip {
+	<?php if (GETPOST("optioncss") == 'print') {  ?>
+		display:none;
+	<?php } else { ?>
+		padding-<?php echo $right; ?>: 78px;
+	<?php } ?>
+	}
+	div.login_block {
+		top: 9px;
+	}
+	
+	div.mainmenu {
     	min-width: 20px;
     }
 	.topmenuimage {
@@ -3887,9 +3905,8 @@ border-top-right-radius: 6px;
 	#tooltip {
 		position: absolute;
 		width: <?php print dol_size(300,'width'); ?>px;
-	}	
+	}
 }
-
 
 <?php
 if (is_object($db)) $db->close();

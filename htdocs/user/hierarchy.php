@@ -82,6 +82,7 @@ foreach($fulltree as $key => $val)
 {
 	$userstatic->id=$val['id'];
 	$userstatic->ref=$val['label'];
+	$userstatic->login=$val['login'];
 	$userstatic->firstname=$val['firstname'];
 	$userstatic->lastname=$val['lastname'];
 	$userstatic->statut=$val['statut'];
@@ -90,6 +91,7 @@ foreach($fulltree as $key => $val)
 	$userstatic->societe_id=$val['fk_soc'];
 	$userstatic->admin=$val['admin'];
 	$userstatic->entity=$val['entity'];
+	$userstatic->photo=$val['photo'];
 	
 	$entity=$val['entity'];
 	$entitystring='';
@@ -111,7 +113,7 @@ foreach($fulltree as $key => $val)
 		}
 	}
 
-	$li=$userstatic->getNomUrl(1,'',0,1);
+	$li=$userstatic->getNomUrl(-1,'',0,1);
 	if (! empty($conf->multicompany->enabled) && $userstatic->admin && ! $userstatic->entity)
 	{
 		$li.=img_picto($langs->trans("SuperAdministrator"),'redstar');
@@ -121,12 +123,12 @@ foreach($fulltree as $key => $val)
 		$li.=img_picto($langs->trans("Administrator"),'star');
 	}
 	$li.=' ('.$val['login'].($entitystring?' - '.$entitystring:'').')';
-
+	
 	$data[] = array(
 		'rowid'=>$val['rowid'],
 		'fk_menu'=>$val['fk_user'],
 		'statut'=>$val['statut'],
-		'entry'=>'<table class="nobordernopadding centpercent"><tr><td class="'.($val['statut']?'usertdenabled':'usertddisabled').'">'.$li.'</td><td align="right" class="'.($val['statut']?'usertdenabled':'usertddisabled').'">'.$userstatic->getLibStatut(5).'</td></tr></table>'
+		'entry'=>'<table class="nobordernopadding centpercent"><tr><td class="'.($val['statut']?'usertdenabled':'usertddisabled').'">'.$li.'</td><td align="right" class="'.($val['statut']?'usertdenabled':'usertddisabled').'">'.$userstatic->getLibStatut(3).'</td></tr></table>'
 	);
 }
 

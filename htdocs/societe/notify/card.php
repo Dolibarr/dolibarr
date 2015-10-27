@@ -195,6 +195,8 @@ if ($result > 0)
 
     print "\n";
 
+    print '<br>';
+    
     // Add notification form
     print load_fiche_titre($langs->trans("AddNewNotification"),'','');
 

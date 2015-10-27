@@ -755,5 +755,6 @@ SetRef=Set ref
 SearchIntoThirdparties=Search %s into thirdparties
 SearchIntoContacts=Search %s into contacts
 SearchIntoMembers=Search %s into members
+SearchIntoUsers=Search %s into users
 SearchIntoProductsOrServices=Search %s into products or services
 SearchIntoProjects=Search %s into projects
