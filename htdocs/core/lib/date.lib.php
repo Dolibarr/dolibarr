@@ -144,7 +144,7 @@ function convertTime2Seconds($iHours=0,$iMinutes=0,$iSeconds=0)
 /**	  	Return, in clear text, value of a number of seconds in days, hours and minutes
  *
  *    	@param      int		$iSecond		Number of seconds
- *    	@param      string	$format		    Output format ('all': total delay days hour:min like "2 days 12:30"", 'allhourmin': total delay hours:min like "60:30", 'allhour': total delay hours without min/sec like "60:30", 'fullhour': total delay hour decimal like "60.5" for 60:30, 'hour': only hours part "12", 'min': only minutes part "30", 'sec': only seconds part, 'month': only month part, 'year': only year part);
+ *    	@param      string	$format		    Output format ('all': total delay days hour:min like "2 days 12:30", 'allwithouthour': total delay days without hour part like "2 days", 'allhourmin': total delay with format hours:min like "60:30", 'allhour': total delay hours without min/sec like "60:30", 'fullhour': total delay hour decimal like "60.5" for 60:30, 'hour': only hours part "12", 'min': only minutes part "30", 'sec': only seconds part, 'month': only month part, 'year': only year part);
  *      @param      int		$lengthOfDay    Length of day (default 86400 seconds for 1 day, 28800 for 8 hour)
  *      @param      int		$lengthOfWeek   Length of week (default 7)
  *    	@return     string		 		 	Formated text of duration
@@ -157,7 +157,7 @@ function convertSecondToTime($iSecond, $format='all', $lengthOfDay=86400, $lengt
 	if (empty($lengthOfDay))  $lengthOfDay = 86400;         // 1 day = 24 hours
     if (empty($lengthOfWeek)) $lengthOfWeek = 7;            // 1 week = 7 days
 
-	if ($format == 'all' || $format == 'allhour' || $format == 'allhourmin')
+	if ($format == 'all' || $format == 'allwithouthour' || $format == 'allhour' || $format == 'allhourmin')
 	{
 		if ($iSecond === 0) return '0';	// This is to avoid having 0 return a 12:00 AM for en_US
 

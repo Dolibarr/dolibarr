@@ -126,7 +126,9 @@ if ($action == 'activate_encryptdbpassconf')
 	$result = encodedecode_dbpassconf(1);
 	if ($result > 0)
 	{
-		// database value not required
+	    sleep(3);  // Don't know why but we need to wait file is completely saved before making the reload. Even with flush and clearstatcache, we need to wait.
+	    
+	    // database value not required
 		//dolibarr_set_const($db, "MAIN_DATABASE_PWD_CONFIG_ENCRYPTED", "1");
 		header("Location: security.php");
 		exit;
@@ -141,6 +143,8 @@ else if ($action == 'disable_encryptdbpassconf')
 	$result = encodedecode_dbpassconf(0);
 	if ($result > 0)
 	{
+	    sleep(3);  // Don't know why but we need to wait file is completely saved before making the reload. Even with flush and clearstatcache, we need to wait.
+	    
 		// database value not required
 		//dolibarr_del_const($db, "MAIN_DATABASE_PWD_CONFIG_ENCRYPTED",$conf->entity);
 		header("Location: security.php");
@@ -185,7 +189,7 @@ $form = new Form($db);
 
 llxHeader('',$langs->trans("Passwords"));
 
-print_fiche_titre($langs->trans("SecuritySetup"),'','title_setup');
+print load_fiche_titre($langs->trans("SecuritySetup"),'','title_setup');
 
 print $langs->trans("GeneratedPasswordDesc")."<br>\n";
 print "<br>\n";

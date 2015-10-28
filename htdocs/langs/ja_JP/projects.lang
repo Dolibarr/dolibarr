@@ -1,6 +1,8 @@
 # Dolibarr language file - Source file is en_US - projects
 RefProject=Ref. project
+ProjectRef=Project ref.
 ProjectId=Project Id
+ProjectLabel=Project label
 Project=プロジェクト
 Projects=プロジェクト
 ProjectStatus=Project status
@@ -27,7 +29,7 @@ OfficerProject=役員プロジェクト
 LastProjects=最後%sプロジェクト
 AllProjects=すべてのプロジェクト
 OpenedProjects=Opened projects
-OpportunitiesStatusForOpenedProjects=Opportunities status for opened projects
+OpportunitiesStatusForOpenedProjects=Opportunities amount of opened projects by status
 ProjectsList=プロジェクトのリスト
 ShowProject=プロジェクトを表示する
 SetProject=プロジェクトを設定します。
@@ -143,7 +145,8 @@ SelectElement=Select element
 AddElement=Link to element
 UnlinkElement=Unlink element
 # Documents models
-DocumentModelBaleine=完全なプロジェクトのレポートモデル（logo. ..）
+DocumentModelBeluga=Project template for linked objects overview
+DocumentModelBaleine=Project report template for tasks
 PlannedWorkload=Planned workload
 PlannedWorkloadShort=Workload
 WorkloadOccupation=Workload assignation

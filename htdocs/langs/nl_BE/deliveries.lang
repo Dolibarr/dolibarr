@@ -1,7 +1,0 @@
-# Dolibarr language file - Source file is en_US - deliveries
-Delivery=Aflevering
-Deliveries=Afleveringen
-DeliveryOrder=Ontvangstbon
-CreateDeliveryOrder=Genereer ontvangstbon
-DeliveryMethod=Leveringsmethode
-GoodStatusDeclaration=Heeft de bovenvermelde goederen in goede staat ontvangen,

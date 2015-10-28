@@ -53,7 +53,7 @@ $fuserstatic = new User($db);
 llxHeader();
 
 
-print_fiche_titre($langs->trans("MenuUsersAndGroups"));
+print load_fiche_titre($langs->trans("MenuUsersAndGroups"));
 
 
 //print '<table border="0" width="100%" class="notopnoleftnoright">';

@@ -33,7 +33,7 @@ create table llx_bank_account
   fk_user_author		integer,
   fk_user_modif			integer,
   bank					varchar(60),
-  code_banque			varchar(8),
+  code_banque			varchar(128),
   code_guichet			varchar(6),
   number				varchar(255),
   cle_rib				varchar(5),

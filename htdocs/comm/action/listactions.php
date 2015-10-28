@@ -43,6 +43,7 @@ $actioncode=GETPOST("actioncode","alpha",3);
 $pid=GETPOST("projectid",'int',3);
 $status=GETPOST("status",'alpha');
 $type=GETPOST('type');
+$optioncss = GETPOST('optioncss','alpha');
 $actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_USE_EVENT_TYPE)?'AC_OTH':''));
 $dateselect=dol_mktime(0, 0, 0, GETPOST('dateselectmonth'), GETPOST('dateselectday'), GETPOST('dateselectyear'));
 $datestart=dol_mktime(0, 0, 0, GETPOST('datestartmonth'), GETPOST('datestartday'), GETPOST('datestartyear'));
@@ -134,6 +135,7 @@ $userstatic=new User($db);
 
 $nav='';
 $nav.='<form name="dateselect" action="'.$_SERVER["PHP_SELF"].'?action=show_peruser'.$param.'">';
+if ($optioncss != '') $nav.= '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 if ($actioncode || isset($_GET['actioncode']) || isset($_POST['actioncode'])) $nav.='<input type="hidden" name="actioncode" value="'.$actioncode.'">';
 if ($status || isset($_GET['status']) || isset($_POST['status']))  $nav.='<input type="hidden" name="status" value="'.$status.'">';
 if ($filter)  $nav.='<input type="hidden" name="filter" value="'.$filter.'">';
@@ -165,6 +167,7 @@ if ($showbirthday) $param.="&showbirthday=1";
 if ($pid) $param.="&projectid=".$pid;
 if ($type) $param.="&type=".$type;
 if ($usergroup) $param.="&usergroup=".$usergroup;
+if ($optioncss != '') $param.='&optioncss='.$optioncss;
 
 $sql = "SELECT";
 if ($usergroup > 0) $sql.=" DISTINCT";
@@ -272,6 +275,7 @@ if ($resql)
 
 
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'?'.$param.'">'."\n";
+    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 
 	$i = 0;
 	print '<table class="liste" width="100%">';

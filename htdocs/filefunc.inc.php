@@ -30,7 +30,7 @@
  *  \brief      File that include conf.php file and commons lib like functions.lib.php
  */
 
-if (! defined('DOL_VERSION')) define('DOL_VERSION','3.8.0-beta');
+if (! defined('DOL_VERSION')) define('DOL_VERSION','3.9.0-beta');
 
 if (! defined('EURO')) define('EURO',chr(128));
 
@@ -67,7 +67,9 @@ $conffiletoshow = "htdocs/conf/conf.php";
 
 // Include configuration
 // --- End of part replaced by Dolibarr packager makepack-dolibarr
+
 // Replace conf filename with "conf" parameter on url by GET
+/* Disabled. This is a serious security hole
 if (! empty($_GET['conf']))
 {
 	$confname=basename($_GET['conf']);
@@ -77,7 +79,7 @@ if (! empty($_GET['conf']))
 	$confname=basename(empty($_COOKIE['dolconf']) ? 'conf' : $_COOKIE['dolconf']);
 	$conffile = 'conf/'.$confname.'.php';
 }
-
+*/
 
 // Include configuration
 $result=@include_once $conffile;	// Keep @ because with some error reporting this break the redirect
@@ -205,11 +207,11 @@ define('MAIN_DB_PREFIX',$dolibarr_main_db_prefix);
 // Path to root libraries
 if (! defined('ADODB_PATH'))           { define('ADODB_PATH',           (!isset($dolibarr_lib_ADODB_PATH))?DOL_DOCUMENT_ROOT.'/includes/adodbtime/':(empty($dolibarr_lib_ADODB_PATH)?'':$dolibarr_lib_ADODB_PATH.'/')); }
 if (! defined('FPDF_PATH'))            { define('FPDF_PATH',            (empty($dolibarr_lib_FPDF_PATH))?DOL_DOCUMENT_ROOT.'/includes/fpdf/':$dolibarr_lib_FPDF_PATH.'/'); }	// Used only for package that can't include tcpdf
-if (! defined('TCPDF_PATH'))           { define('TCPDF_PATH',           (empty($dolibarr_lib_TCPDF_PATH))?DOL_DOCUMENT_ROOT.'/includes/tcpdf/':$dolibarr_lib_TCPDF_PATH.'/'); }
+if (! defined('TCPDF_PATH'))           { define('TCPDF_PATH',           (empty($dolibarr_lib_TCPDF_PATH))?DOL_DOCUMENT_ROOT.'/includes/tecnick.com/tcpdf/':$dolibarr_lib_TCPDF_PATH.'/'); }
 if (! defined('FPDI_PATH'))            { define('FPDI_PATH',            (empty($dolibarr_lib_FPDI_PATH))?DOL_DOCUMENT_ROOT.'/includes/fpdfi/':$dolibarr_lib_FPDI_PATH.'/'); }
 if (! defined('TCPDI_PATH'))           { define('TCPDI_PATH',           (empty($dolibarr_lib_TCPDI_PATH))?DOL_DOCUMENT_ROOT.'/includes/tcpdi/':$dolibarr_lib_TCPDI_PATH.'/'); }
 if (! defined('NUSOAP_PATH'))          { define('NUSOAP_PATH',          (!isset($dolibarr_lib_NUSOAP_PATH))?DOL_DOCUMENT_ROOT.'/includes/nusoap/lib/':(empty($dolibarr_lib_NUSOAP_PATH)?'':$dolibarr_lib_NUSOAP_PATH.'/')); }
-if (! defined('PHPEXCEL_PATH'))        { define('PHPEXCEL_PATH',        (!isset($dolibarr_lib_PHPEXCEL_PATH))?DOL_DOCUMENT_ROOT.'/includes/phpexcel/':(empty($dolibarr_lib_PHPEXCEL_PATH)?'':$dolibarr_lib_PHPEXCEL_PATH.'/')); }
+if (! defined('PHPEXCEL_PATH'))        { define('PHPEXCEL_PATH',        (!isset($dolibarr_lib_PHPEXCEL_PATH))?DOL_DOCUMENT_ROOT.'/includes/phpoffice/phpexcel/Classes/':(empty($dolibarr_lib_PHPEXCEL_PATH)?'':$dolibarr_lib_PHPEXCEL_PATH.'/')); }
 if (! defined('GEOIP_PATH'))           { define('GEOIP_PATH',           (!isset($dolibarr_lib_GEOIP_PATH))?DOL_DOCUMENT_ROOT.'/includes/geoip/':(empty($dolibarr_lib_GEOIP_PATH)?'':$dolibarr_lib_GEOIP_PATH.'/')); }
 if (! defined('ODTPHP_PATH'))          { define('ODTPHP_PATH',          (!isset($dolibarr_lib_ODTPHP_PATH))?DOL_DOCUMENT_ROOT.'/includes/odtphp/':(empty($dolibarr_lib_ODTPHP_PATH)?'':$dolibarr_lib_ODTPHP_PATH.'/')); }
 if (! defined('ODTPHP_PATHTOPCLZIP'))  { define('ODTPHP_PATHTOPCLZIP',  (!isset($dolibarr_lib_ODTPHP_PATHTOPCLZIP))?DOL_DOCUMENT_ROOT.'/includes/odtphp/zip/pclzip/':(empty($dolibarr_lib_ODTPHP_PATHTOPCLZIP)?'':$dolibarr_lib_ODTPHP_PATHTOPCLZIP.'/')); }

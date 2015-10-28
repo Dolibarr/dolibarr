@@ -262,7 +262,7 @@ $companystatic = new Societe($db);
 if ($action == 'create' && !$error) {
 
 	llxHeader();
-	print_fiche_titre($langs->trans('NewBill'));
+	print load_fiche_titre($langs->trans('NewBill'));
 
 	$soc = new Societe($db);
 	if ($socid)
@@ -442,7 +442,7 @@ if (($action != 'create' && $action != 'add') && !$error) {
 		$title = $langs->trans('ListOfSupplierOrders');
 		$title .= ' - ' . $langs->trans('StatusOrderReceivedAllShort');
 		$num = $db->num_rows($resql);
-		print_fiche_titre($title);
+		print load_fiche_titre($title);
 		$i = 0;
 		$period = $html->select_date($date_start, 'date_start', 0, 0, 1, '', 1, 0, 1) . ' - ' . $html->select_date($date_end, 'date_end', 0, 0, 1, '', 1, 0, 1);
 		$periodely = $html->select_date($date_starty, 'date_start_dely', 0, 0, 1, '', 1, 0, 1) . ' - ' . $html->select_date($date_endy, 'date_end_dely', 0, 0, 1, '', 1, 0, 1);
@@ -453,7 +453,9 @@ if (($action != 'create' && $action != 'add') && !$error) {
 			$companystatic->nom = $soc->nom;
 			print '<h3>' . $companystatic->getNomUrl(1, 'customer') . '</h3>';
 		}
-
+		
+		print '<form method="get" action="orderstoinvoice.php">';
+		print '<input type="hidden" name="socid" value="' . $socid . '">';
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print_liste_field_titre($langs->trans('Ref'), 'orderstoinvoice.php', 'c.ref', '', '&amp;socid=' . $socid, '', $sortfield, $sortorder);
@@ -465,8 +467,6 @@ if (($action != 'create' && $action != 'add') && !$error) {
 		print "</tr>\n";
 
 		// Lignes des champs de filtre
-		print '<form method="get" action="orderstoinvoice.php">';
-		print '<input type="hidden" name="socid" value="' . $socid . '">';
 		print '<tr class="liste_titre">';
 		print '<td class="liste_titre">';
 		// REF
@@ -497,7 +497,6 @@ if (($action != 'create' && $action != 'add') && !$error) {
 		print '</td>';
 
 		print '</td></tr>';
-		print '</form>';
 
 		print '<form name="orders2invoice" action="orderstoinvoice.php" method="GET">';
 		$var = True;

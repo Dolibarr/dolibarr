@@ -304,7 +304,6 @@ if ($action == 'add')
                     $urlback=DOL_MAIN_URL_ROOT.'/public/paybox/newpayment.php?from=membernewform&source=membersubscription&ref='.$adh->ref;
                     if (price2num(GETPOST('amount'))) $urlback.='&amount='.price2num(GETPOST('amount'));
                     if (GETPOST('email')) $urlback.='&email='.urlencode(GETPOST('email'));
-                    if (! empty($entity)) $urlback.='&entity='.$entity;
                 }
                 else if ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'paypal')
                 {
@@ -315,7 +314,7 @@ if ($action == 'add')
                     {
                     	$urlback.='&securekey='.dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . 'membersubscription' . $adh->ref, 2);
                     }
-                    if (! empty($entity)) $urlback.='&entity='.$entity;
+                    
                 }
                 else
                 {
@@ -324,6 +323,7 @@ if ($action == 'add')
                 }
             }
 
+            if (! empty($entity)) $urlback.='&entity='.$entity;
             dol_syslog("member ".$adh->ref." was created, we redirect to ".$urlback);
             Header("Location: ".$urlback);
             exit;
@@ -367,7 +367,7 @@ $extrafields->fetch_name_optionals_label('adherent');    // fetch optionals attr
 llxHeaderVierge($langs->trans("NewSubscription"));
 
 
-print_titre($langs->trans("NewSubscription"));
+print load_fiche_titre($langs->trans("NewSubscription"));
 
 if (! empty($conf->global->MEMBER_NEWFORM_TEXT)) print $langs->trans($conf->global->MEMBER_NEWFORM_TEXT)."<br>\n";
 else print $langs->trans("NewSubscriptionDesc",$conf->global->MAIN_INFO_SOCIETE_MAIL)."<br>\n";

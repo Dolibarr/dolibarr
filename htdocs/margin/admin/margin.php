@@ -113,14 +113,14 @@ llxHeader('',$langs->trans("margesSetup"));
 
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("margesSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("margesSetup"),$linkback,'title_setup');
 
 
 $head = marges_admin_prepare_head();
 
 dol_fiche_head($head, 'parameters', $langs->trans("Margins"), 0, 'margin');
 
-print_fiche_titre($langs->trans("MemberMainOptions"),'','');
+print load_fiche_titre($langs->trans("MemberMainOptions"),'','');
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td width=300>'.$langs->trans("Description").'</td>';
@@ -164,7 +164,6 @@ print '<td>';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" class="button">';
 print '</td>';
 print '<td>'.$langs->trans('MarginTypeDesc');
-print ' ('.$langs->trans("PMPValueShort").')';
 print '</td>';
 print '</tr>';
 print '</form>';

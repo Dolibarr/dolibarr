@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2011		Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2015	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2015       Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -125,19 +125,19 @@ if ( ($action == 'update' && empty($_POST["cancel"]))
 					$error++;
 					$langs->load("errors");
 					$tmparray=explode(':',$result);
-					setEventMessage($langs->trans('ErrorFileIsInfectedWithAVirus',$tmparray[1]),'errors');
+					setEventMessages($langs->trans('ErrorFileIsInfectedWithAVirus',$tmparray[1]), null, 'errors');
 				}
 				else
 				{
 					$error++;
-					setEventMessage($langs->trans("ErrorFailedToSaveFile"),'errors');
+					setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
 				}
 			}
 			else
 			{
 				$error++;
 				$langs->load("errors");
-				setEventMessage($langs->trans("ErrorBadImageFormat"),'errors');
+				setEventMessages($langs->trans("ErrorBadImageFormat"), null, 'errors');
 			}
 		}
 	}
@@ -230,7 +230,7 @@ if ($action == 'addthumb')
 		{
 			$error++;
 			$langs->load("errors");
-			setEventMessage($langs->trans("ErrorBadImageFormat"),'errors');
+			setEventMessages($langs->trans("ErrorBadImageFormat"), null, 'errors');
 			dol_syslog($langs->transnoentities("ErrorBadImageFormat"),LOG_WARNING);
 		}
 	}
@@ -238,7 +238,7 @@ if ($action == 'addthumb')
 	{
 		$error++;
 		$langs->load("errors");
-		setEventMessage($langs->trans("ErrorFileDoesNotExists",$_GET["file"]),'errors');
+		setEventMessages($langs->trans("ErrorFileDoesNotExists",$_GET["file"]), null, 'errors');
 		dol_syslog($langs->transnoentities("ErrorFileDoesNotExists",$_GET["file"]),LOG_WARNING);
 	}
 }
@@ -277,7 +277,7 @@ $formcompany=new FormCompany($db);
 
 $countrynotdefined='<font class="error">'.$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')</font>';
 
-print_fiche_titre($langs->trans("CompanyFoundation"),'','title_setup');
+print load_fiche_titre($langs->trans("CompanyFoundation"),'','title_setup');
 
 print $langs->trans("CompanyFundationDesc")."<br>\n";
 print "<br>\n";
@@ -380,7 +380,7 @@ if ($action == 'edit' || $action == 'updateedit')
 			print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode('/thumbs/'.$mysoc->logo_mini).'">';
 		}
 	} else {
-		print '<img height="30" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.jpg">';
+		print '<img height="30" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png">';
 	}
 	print '</td></tr></table>';
 	print '</td></tr>';
@@ -414,9 +414,9 @@ if ($action == 'edit' || $action == 'updateedit')
 
 	// Forme juridique
 	$var=!$var;
-	print '<tr '.$bc[$var].'><td><label for="legal_form">'.$langs->trans("JuridicalStatus").'</label></td><td>';
+	print '<tr '.$bc[$var].'><td><label for="forme_juridique_code">'.$langs->trans("JuridicalStatus").'</label></td><td>';
 	if ($mysoc->country_code) {
-		print $formcompany->select_juridicalstatus($conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE, $mysoc->country_code, '', 'legal_form');
+		print $formcompany->select_juridicalstatus($conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE, $mysoc->country_code, '', 'forme_juridique_code');
 	} else {
 		print $countrynotdefined;
 	}
@@ -761,7 +761,7 @@ else
 	// On propose la generation de la vignette si elle n'existe pas
 	if (!is_file($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini) && preg_match('/(\.jpg|\.jpeg|\.png)$/i',$mysoc->logo))
 	{
-		print '<a href="'.$_SERVER["PHP_SELF"].'?action=addthumb&amp;file='.urlencode($mysoc->logo).'">'.img_picto($langs->trans('GenerateThumb'),'refresh').'&nbsp;&nbsp;</a>';
+		print '<a href="'.$_SERVER["PHP_SELF"].'?action=addthumb&amp;file='.urlencode($mysoc->logo).'">'.img_picto($langs->trans('GenerateThumb'),'refresh').'</a>&nbsp;&nbsp;';
 	}
 	else if ($mysoc->logo_mini && is_file($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini))
 	{
@@ -769,7 +769,7 @@ else
 	}
 	else
 	{
-		print '<img height="30" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.jpg">';
+		print '<img height="30" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png">';
 	}
 	print '</td></tr></table>';
 

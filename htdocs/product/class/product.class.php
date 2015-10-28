@@ -55,10 +55,6 @@ class Product extends CommonObject
 
 	var $regeximgext='\.jpg|\.jpeg|\.bmp|\.gif|\.png|\.tiff';
 
-	//! Identifiant unique
-	var $id ;
-	//! Ref
-	var $ref;
 	/*
 	 * @deprecated
 	 * @see label
@@ -128,8 +124,6 @@ class Product extends CommonObject
 	var $status_batch;
 
 	var $customcode;       // Customs code
-    var $country_id;       // Country origin id
-	var $country_code;     // Country origin code (US, FR, ...)
 
 	//! Unites de mesure
 	var $weight;
@@ -146,10 +140,6 @@ class Product extends CommonObject
 
 	//! barcode
 	var $barcode;               // value
-	var $barcode_type;          // id
-	var $barcode_type_code;     // code  (loaded by fetch_barcode). Example 'ean', 'isbn', ...
-	var $barcode_type_label;    // label (loaded by fetch_barcode)
-	var $barcode_type_coder;    // coder (loaded by fetch_barcode). Engine.
 
 	var $stats_propale=array();
 	var $stats_commande=array();
@@ -163,10 +153,6 @@ class Product extends CommonObject
 	var $imgWidth;
 	var $imgHeight;
 
-	//! Canevas a utiliser si le produit n'est pas un produit generique
-	var $canvas;
-
-	var $import_key;
 	var $date_creation;
 	var $date_modification;
 
@@ -182,9 +168,6 @@ class Product extends CommonObject
 	var $stock_warehouse=array();
 
 	var $oldcopy;
-
-	//note not visible on orders and invoices
-	var $note;
 
     var $fk_price_expression;
 
@@ -694,7 +677,7 @@ class Product extends CommonObject
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."product";
 			$sql.= " SET label = '" . $this->db->escape($this->label) ."'";
-			$sql.= ", ref = '" . $this->ref ."'";
+			$sql.= ", ref = '" . $this->db->escape($this->ref) ."'";
 			$sql.= ", ref_ext = ".(! empty($this->ref_ext)?"'".$this->db->escape($this->ref_ext)."'":"null");
 			$sql.= ", tva_tx = " . $this->tva_tx;
 			$sql.= ", recuperableonly = " . $this->tva_npr;
@@ -722,9 +705,9 @@ class Product extends CommonObject
 			$sql.= ", customcode = '" .        $this->db->escape($this->customcode) ."'";
 	        $sql.= ", fk_country = " . ($this->country_id > 0 ? $this->country_id : 'null');
 	        $sql.= ", note = ".(isset($this->note) ? "'" .$this->db->escape($this->note)."'" : 'null');
-			$sql.= ", duration = '" . $this->duration_value . $this->duration_unit ."'";
-			$sql.= ", accountancy_code_buy = '" . $this->accountancy_code_buy."'";
-			$sql.= ", accountancy_code_sell= '" . $this->accountancy_code_sell."'";
+			$sql.= ", duration = '" . $this->db->escape($this->duration_value . $this->duration_unit) ."'";
+			$sql.= ", accountancy_code_buy = '" . $this->db->escape($this->accountancy_code_buy)."'";
+			$sql.= ", accountancy_code_sell= '" . $this->db->escape($this->accountancy_code_sell)."'";
 			$sql.= ", desiredstock = " . ((isset($this->desiredstock) && $this->desiredstock != '') ? $this->desiredstock : "null");
 	        $sql.= ", fk_unit= " . (!$this->fk_unit ? 'NULL' : $this->fk_unit);
 			$sql.= " WHERE rowid = " . $id;
@@ -782,8 +765,10 @@ class Product extends CommonObject
 						$newdir = $conf->product->dir_output . "/" . dol_sanitizeFileName($this->ref);
 						if (file_exists($olddir))
 						{
-							include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
-							$res=dol_move($olddir, $newdir);
+							//include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+							//$res = dol_move($olddir, $newdir);
+							// do not use dol_move with directory
+							$res = @rename($olddir, $newdir);
 							if (! $res)
 							{
 								$this->error='ErrorFailToMoveDir';
@@ -838,7 +823,7 @@ class Product extends CommonObject
 	function delete($id=0)
 	{
 		// Deprecation warning
-		if (0 == $id) {
+		if ($id > 0) {
 			dol_syslog(__METHOD__ . " with parameter is deprecated", LOG_WARNING);
 		}
 
@@ -3075,7 +3060,8 @@ class Product extends CommonObject
 	 */
 	function LibStatut($status,$mode=0,$type=0)
 	{
-		global $langs;
+		global $conf, $langs;
+		
 		$langs->load('products');
 		if (!empty($conf->productbatch->enabled)) $langs->load("productbatch");
 
@@ -3257,7 +3243,7 @@ class Product extends CommonObject
 		$sql = "SELECT ps.reel, ps.fk_entrepot, ps.pmp, ps.rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_stock as ps";
 		$sql.= ", ".MAIN_DB_PREFIX."entrepot as w";
-		$sql.= " WHERE w.entity IN (".getEntity('warehouse', 1).")";
+		$sql.= " WHERE w.entity IN (".getEntity('stock', 1).")";
 		$sql.= " AND w.rowid = ps.fk_entrepot";
 		$sql.= " AND ps.fk_product = ".$this->id;
 
@@ -3312,23 +3298,23 @@ class Product extends CommonObject
         if (! empty($conf->commande->enabled))
         {
             $result=$this->load_stats_commande(0,'1,2');
-            if ($result < 0) dol_print_error($db,$this->error);
+            if ($result < 0) dol_print_error($this->db,$this->error);
             $stock_commande_client=$this->stats_commande['qty'];
         }
         if (! empty($conf->expedition->enabled))
         {
             $result=$this->load_stats_sending(0,'1,2');
-            if ($result < 0) dol_print_error($db,$this->error);
+            if ($result < 0) dol_print_error($this->db,$this->error);
             $stock_sending_client=$this->stats_expedition['qty'];
         }
         if (! empty($conf->fournisseur->enabled))
         {
             $result=$this->load_stats_commande_fournisseur(0,'1,2,3,4');
-            if ($result < 0) dol_print_error($db,$this->error);
+            if ($result < 0) dol_print_error($this->db,$this->error);
             $stock_commande_fournisseur=$this->stats_commande_fournisseur['qty'];
 
             $result=$this->load_stats_reception(0,'4');
-            if ($result < 0) dol_print_error($db,$this->error);
+            if ($result < 0) dol_print_error($this->db,$this->error);
             $stock_reception_fournisseur=$this->stats_reception['qty'];
         }
 
@@ -3570,7 +3556,7 @@ class Product extends CommonObject
     						{
     							$return.= '<br>';
     							// On propose la generation de la vignette si elle n'existe pas et si la taille est superieure aux limites
-    							if ($photo_vignette && preg_match('/('.$this->regeximgext.')$/i', $photo) && ($product->imgWidth > $maxWidth || $product->imgHeight > $maxHeight))
+    							if ($photo_vignette && preg_match('/('.$this->regeximgext.')$/i', $photo) && ($this->imgWidth > $maxWidth || $this->imgHeight > $maxHeight))
     							{
     								$return.= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=addthumb&amp;file='.urlencode($pdir.$viewfilename).'">'.img_picto($langs->trans('GenerateThumb'),'refresh').'&nbsp;&nbsp;</a>';
     							}
@@ -3942,6 +3928,51 @@ class Product extends CommonObject
 		}
 
 		return $maxpricesupplier;
+	}
+
+
+	/**
+	 * Sets object to supplied categories.
+	 *
+	 * Deletes object from existing categories not supplied.
+	 * Adds it to non existing supplied categories.
+	 * Existing categories are left untouch.
+	 *
+	 * @param int[]|int $categories Category or categories IDs
+	 */
+	public function setCategories($categories) {
+		// Handle single category
+		if (! is_array($categories)) {
+			$categories = array($categories);
+		}
+
+		// Get current categories
+		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+		$c = new Categorie($this->db);
+		$existing = $c->containing($this->id, Categorie::TYPE_PRODUCT, 'id');
+
+		// Diff
+		if (is_array($existing)) {
+			$to_del = array_diff($existing, $categories);
+			$to_add = array_diff($categories, $existing);
+		} else {
+			$to_del = array(); // Nothing to delete
+			$to_add = $categories;
+		}
+
+		// Process
+		foreach($to_del as $del) {
+			if ($c->fetch($del) > 0) {
+				$c->del_type($this, 'product');
+			}
+		}
+		foreach ($to_add as $add) {
+			if ($c->fetch($add) > 0) {
+				$c->add_type($this, 'product');
+			}
+		}
+
+		return;
 	}
 
 	/**

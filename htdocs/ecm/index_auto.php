@@ -100,7 +100,7 @@ if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
 	if (empty($_FILES['userfile']['tmp_name']))
 	{
 		$error++;
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("File")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("File")), null, 'errors');
 	}
 
 	if (! $error)
@@ -414,7 +414,7 @@ if (! empty($conf->global->ECM_AUTO_TREE_ENABLED))
 	
 }
 
-print_fiche_titre($langs->trans("ECMArea").' - '.$langs->trans("ECMFileManager"));
+print load_fiche_titre($langs->trans("ECMArea").' - '.$langs->trans("ECMFileManager"));
 
 $helptext1=''; $helptext2='';
 $helptext1.=$langs->trans("ECMAreaDesc");

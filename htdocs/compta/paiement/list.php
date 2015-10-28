@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
+ * Copyright (C) 2015      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +29,8 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 $langs->load("bills");
 $langs->load("compta");
@@ -36,6 +39,10 @@ $langs->load("compta");
 $facid =GETPOST('facid','int');
 $socid =GETPOST('socid','int');
 $userid=GETPOST('userid','int');
+$day	= GETPOST('day','int');
+$month	= GETPOST('month','int');
+$year	= GETPOST('year','int');
+
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'facture',$facid,'');
 
@@ -66,6 +73,9 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 	$search_amount="";
     $search_paymenttype="";
 	$search_company="";
+    $day='';
+    $year='';
+    $month='';
 }
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
@@ -81,11 +91,12 @@ $extrafields = new ExtraFields($db);
 llxHeader('', $langs->trans('ListPayment'));
 
 $form=new Form($db);
+$formother=new FormOther($db);
 
 if (GETPOST("orphelins"))
 {
     // Paiements lies a aucune facture (pour aide au diagnostic)
-    $sql = "SELECT p.rowid, p.datep as dp, p.amount,";
+    $sql = "SELECT p.rowid, p.ref, p.datep as dp, p.amount,";
     $sql.= " p.statut, p.num_paiement,";
     $sql.= " c.code as paiement_code";
 	// Add fields for extrafields
@@ -107,7 +118,7 @@ if (GETPOST("orphelins"))
 }
 else
 {
-    $sql = "SELECT DISTINCT p.rowid, p.datep as dp, p.amount,"; // DISTINCT is to avoid duplicate when there is a link to sales representatives
+    $sql = "SELECT DISTINCT p.rowid, p.ref, p.datep as dp, p.amount,"; // DISTINCT is to avoid duplicate when there is a link to sales representatives
     $sql.= " p.statut, p.num_paiement,";
     $sql.= " c.code as paiement_code,";
     $sql.= " ba.rowid as bid, ba.label,";
@@ -141,7 +152,20 @@ else
         else  $sql.= " AND f.fk_user_author = ".$userid;
     }
     // Search criteria
-    if ($search_ref > 0)       		$sql .=" AND p.rowid=".$search_ref;
+    if ($month > 0)
+    {
+        if ($year > 0 && empty($day))
+        $sql.= " AND p.datep BETWEEN '".$db->idate(dol_get_first_day($year,$month,false))."' AND '".$db->idate(dol_get_last_day($year,$month,false))."'";
+        else if ($year > 0 && ! empty($day))
+        $sql.= " AND p.datep BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year))."'";
+        else
+        $sql.= " AND date_format(p.datep, '%m') = '".$month."'";
+    }
+    else if ($year > 0)
+    {
+        $sql.= " AND p.datep BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
+    }
+    if ($search_ref)       		$sql .=natural_search('p.ref', $search_ref);
     if ($search_account > 0)      	$sql .=" AND b.fk_account=".$search_account;
     if ($search_paymenttype != "")  $sql .=" AND c.code='".$db->escape($search_paymenttype)."'";
     if ($search_amount)      		$sql .=" AND p.amount='".$db->escape(price2num($search_amount))."'";
@@ -194,7 +218,11 @@ if ($resql)
     print '<td align="left">';
     print '<input class="flat" type="text" size="4" name="search_ref" value="'.$search_ref.'">';
     print '</td>';
-    print '<td>&nbsp;</td>';
+    print '<td align="center">';
+    if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.$day.'">';
+    print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
+    $formother->select_year($year?$year:-1,'year',1, 20, 5);
+    print '</td>';
     print '<td align="left">';
     print '<input class="flat" type="text" size="6" name="search_company" value="'.$search_company.'">';
     print '</td>';
@@ -226,7 +254,7 @@ if ($resql)
 
         print '<td>';
         $paymentstatic->id=$objp->rowid;
-        $paymentstatic->ref=$objp->rowid;
+        $paymentstatic->ref=$objp->ref;
         print $paymentstatic->getNomUrl(1);
         print '</td>';
 
@@ -277,6 +305,5 @@ else
     dol_print_error($db);
 }
 
-$db->close();
-
 llxFooter();
+$db->close();

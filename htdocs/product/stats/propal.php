@@ -129,7 +129,7 @@ if ($id > 0 || ! empty($ref))
 		if ($user->rights->propale->lire) {
 			$sql = "SELECT DISTINCT s.nom as name, s.rowid as socid, p.rowid as propalid, p.ref, d.total_ht as amount,";
 			$sql .= " p.ref_client,";
-			$sql .= "p.datep, p.fk_statut as statut, d.qty";
+			$sql .= "p.datep, p.fk_statut as statut, d.rowid, d.qty";
 			if (! $user->rights->societe->client->voir && ! $socid)
 				$sql .= ", sc.fk_soc, sc.fk_user ";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "societe as s";
@@ -191,7 +191,8 @@ if ($id > 0 || ! empty($ref))
 				}
 
 				print_barre_liste($langs->trans("Proposals"), $page, $_SERVER["PHP_SELF"], "&amp;id=$product->id", $sortfield, $sortorder, '', $num, $totalrecords, '');
-				print '<div class="liste_titre">';
+                print '<div class="liste_titre liste_titre_bydiv centpercent">';
+                print '<div class="divsearchfield">';
 				print $langs->trans('Period') . ' (' . $langs->trans("DatePropal") . ') - ';
 				print $langs->trans('Month') . ':<input class="flat" type="text" size="4" name="search_month" value="' . $search_month . '"> ';
 				print $langs->trans('Year') . ':' . $formother->selectyear($search_year ? $search_year : - 1, 'search_year', 1, 20, 5);
@@ -200,9 +201,10 @@ if ($id > 0 || ! empty($ref))
 				print '<input type="image" class="liste_titre" name="button_removefilter" src="' . img_picto($langs->trans("Search"), 'searchclear.png', '', '', 1) . '" value="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '" title="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '">';
 				print '</div>';
 				print '</div>';
+				print '</div>';
 
 				$i = 0;
-				print '<table class="noborder" width="100%">';
+				print '<table class="tagtable liste listwithfilterbefore" width="100%">';
 				print '<tr class="liste_titre">';
 				print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"], "p.rowid", "", $option, '', $sortfield, $sortorder);
 				print_liste_field_titre($langs->trans("Company"), $_SERVER["PHP_SELF"], "s.nom", "", $option, '', $sortfield, $sortorder);

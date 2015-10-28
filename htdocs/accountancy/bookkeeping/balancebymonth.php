@@ -56,7 +56,7 @@ llxHeader('', $langs->trans("Bookkeeping"));
 $textprevyear = '<a href="' . $_SERVER["PHP_SELF"] . '?year=' . ($year_current - 1) . '">' . img_previous() . '</a>';
 $textnextyear = '&nbsp;<a href="' . $_SERVER["PHP_SELF"] . '?year=' . ($year_current + 1) . '">' . img_next() . '</a>';
 
-print_fiche_titre($langs->trans("AccountBalanceByMonth") . ' ' . $textprevyear . ' ' . $langs->trans("Year") . ' ' . $year_start . ' ' . $textnextyear);
+print load_fiche_titre($langs->trans("AccountBalanceByMonth") . ' ' . $textprevyear . ' ' . $langs->trans("Year") . ' ' . $year_start . ' ' . $textnextyear);
 
 $sql = "SELECT count(*) FROM " . MAIN_DB_PREFIX . "facturedet as fd";
 $sql .= " , " . MAIN_DB_PREFIX . "facture as f";

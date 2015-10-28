@@ -40,6 +40,7 @@ $contactid = GETPOST('id','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'contact', $contactid,'');
 
+$sall=GETPOST("sall");
 $search_firstlast_only=GETPOST("search_firstlast_only");
 $search_lastname=GETPOST("search_lastname");
 $search_firstname=GETPOST("search_firstname");
@@ -57,11 +58,12 @@ $search_categ=GETPOST("search_categ",'int');
 $search_status=GETPOST("search_status",'int');
 if ($search_status=='') $search_status=1; // always display activ customer first
 
+$optioncss = GETPOST('optioncss','alpha');
+
 
 $type=GETPOST("type");
 $view=GETPOST("view");
 
-$sall=GETPOST("contactname");
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
 $page = GETPOST('page', 'int');
@@ -97,8 +99,9 @@ else if ($type == "o")
 	$urlfiche="";
 }
 
-if (GETPOST('button_removefilter_x') || GETPOST('button_removefilter'))	// Both tests are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x') || GETPOST('button_removefilter.x') || GETPOST('button_removefilter'))	// All tests are required to be compatible with all browsers
 {
+    $sall="";
     $search_firstlast_only="";
     $search_lastname="";
     $search_firstname="";
@@ -112,11 +115,17 @@ if (GETPOST('button_removefilter_x') || GETPOST('button_removefilter'))	// Both 
     $search_email="";
     $search_skype="";
     $search_priv="";
-    $sall="";
     $seach_status=1;
 }
 if ($search_priv < 0) $search_priv='';
 
+// List of fields to search into when doing a "search in all"
+$fieldstosearchall = array(
+    'p.lastname'=>'Lastname',
+    'p.firstname'=>'Firstname',
+    'p.email'=>'EMail',
+    's.nom'=>"ThirdParty",
+);
 
 
 /*
@@ -224,7 +233,7 @@ else if ($type == "p")        // filtre sur type
 }
 if ($sall)
 {
-    $sql .= natural_search(array('p.lastname', 'p.firstname', 'p.email', 's.nom'), $sall);
+    $sql .= natural_search(array_keys($fieldstosearchall), $sall);
 }
 if (! empty($socid))
 {
@@ -240,13 +249,13 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 // Add order and limit
 if($view == "recent")
 {
-    $sql.= " ORDER BY p.datec DESC ";
-	$sql.= " ".$db->plimit($conf->liste_limit+1, $offset);
+    $sql.= $db->order("p.datec","DESC");
+    $sql.= $db->plimit($conf->liste_limit+1, $offset);
 }
 else
 {
-    $sql.= " ORDER BY $sortfield $sortorder ";
-	$sql.= " ".$db->plimit($conf->liste_limit+1, $offset);
+    $sql.= $db->order($sortfield,$sortorder);
+    $sql.= $db->plimit($conf->liste_limit+1, $offset);
 }
 
 //print $sql;
@@ -261,6 +270,7 @@ if ($result)
     if (!empty($search_categ)) $param.='&search_categ='.htmlspecialchars($search_categ);
     if ($search_status != '') $param.='&amp;search_status='.htmlspecialchars($search_status);
     if ($search_priv == '0' || $search_priv == '1') $param.="&search_priv=".htmlspecialchars($search_priv);
+    if ($optioncss != '') $param.='&optioncss='.$optioncss;
 
 	$num = $db->num_rows($result);
     $i = 0;
@@ -268,34 +278,38 @@ if ($result)
     print_barre_liste($titre, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords,'title_companies.png');
 
     print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    print '<input type="hidden" name="view" value="'.htmlspecialchars($view).'">';
+    print '<input type="hidden" name="view" value="'.dol_escape_htmltag($view).'">';
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
+    if ($sall)
+    {
+        foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
+        print $langs->trans("FilterOnInto", $sall, join(', ',$fieldstosearchall));
+    }
+	if ($search_firstlast_only)
+	{
+        print $langs->trans("FilterOnInto", $search_firstlast_only, $langs->trans("Lastname").", ".$langs->trans("Firstname"));
+	}
+    
     if (! empty($conf->categorie->enabled))
     {
 		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
-    	$moreforfilter.=$langs->trans('Categories'). ': ';
+        $moreforfilter.='<div class="divsearchfield">';
+		$moreforfilter.=$langs->trans('Categories'). ': ';
     	$moreforfilter.=$formother->select_categories(Categorie::TYPE_CONTACT,$search_categ,'search_categ',1);
-    	$moreforfilter.=' &nbsp; &nbsp; &nbsp; ';
+    	$moreforfilter.='</div>';
     }
     if ($moreforfilter)
     {
-    	print '<div class="liste_titre">';
+    	print '<div class="liste_titre liste_titre_bydiv centpercent">';
     	print $moreforfilter;
     	print '</div>';
     }
 
-    if ($sall)
-    {
-        print $langs->trans("Filter")." (".$langs->trans("Lastname").", ".$langs->trans("Firstname").", ".$langs->trans("ThirdParty")." ".$langs->trans("or")." ".$langs->trans("EMail")."): ".$sall;
-    }
-	if ($search_firstlast_only)
-	{
-        print $langs->trans("Filter")." (".$langs->trans("Lastname").", ".$langs->trans("Firstname")."): ".$search_firstlast_only;
-	}
-    print '<table class="liste" width="100%">';
+	print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
 
     // Ligne des titres
     print '<tr class="liste_titre">';

@@ -28,7 +28,7 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *	Classe de description et activation du module export
+ *	Class to describe and enable module export
  */
 class modExport extends DolibarrModules
 {
@@ -58,13 +58,13 @@ class modExport extends DolibarrModules
 		// Config pages
 		$this->config_page_url = array();
 
-		// Dependances
+		// Dependencies
 		$this->depends = array();
 		$this->requiredby = array();
 		$this->phpmin = array(4,2,0);
 		$this->phpmax = array();
 
-		// Constantes
+		// Constants
 		$this->const = array();
 
 		// Boxes

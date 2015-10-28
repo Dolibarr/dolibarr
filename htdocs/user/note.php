@@ -48,28 +48,30 @@ $feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
 if ($user->id == $id) $feature2=''; // A user can always read its own card
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
-
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('usercard','globalcard'));
 
 /******************************************************************************/
 /*                     Actions                                                */
 /******************************************************************************/
 
-if ($action == 'update' && $user->rights->user->user->creer && ! $_POST["cancel"])
-{
-	$db->begin();
+$parameters=array('id'=>$socid);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-	$res=$object->update_note(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES));
-	if ($res < 0)
-	{
-		$mesg='<div class="error">'.$adh->error.'</div>';
-		$db->rollback();
-	}
-	else
-	{
-		$db->commit();
+if (empty($reshook)) {
+	if ($action == 'update' && $user->rights->user->user->creer && !$_POST["cancel"]) {
+		$db->begin();
+
+		$res = $object->update_note(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES));
+		if ($res < 0) {
+			$mesg = '<div class="error">'.$adh->error.'</div>';
+			$db->rollback();
+		} else {
+			$db->commit();
+		}
 	}
 }
-
 
 
 /******************************************************************************/
@@ -87,33 +89,21 @@ if ($id)
 	$title = $langs->trans("User");
 	dol_fiche_head($head, 'note', $title, 0, 'user');
 
-	if ($msg) print '<div class="error">'.$msg.'</div>';
-
-	print "<form method=\"post\" action=\"".$_SERVER['PHP_SELF']."\">";
+    dol_banner_tab($object,'id','',$user->rights->user->user->lire || $user->admin);
+    
+    print '<div class="underbanner clearboth"></div>';
+    
+    print "<form method=\"post\" action=\"".$_SERVER['PHP_SELF']."\">";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
     print '<table class="border" width="100%">';
 
-    // Reference
-	print '<tr><td width="20%">'.$langs->trans('Ref').'</td>';
-	print '<td colspan="3">';
-	print $form->showrefnav($object,'id','',$user->rights->user->user->lire || $user->admin);
-	print '</td>';
-	print '</tr>';
-
-    // Lastname
-    print '<tr><td>'.$langs->trans("Lastname").'</td><td class="valeur" colspan="3">'.$object->lastname.'&nbsp;</td>';
-	print '</tr>';
-
-    // Firstname
-    print '<tr><td>'.$langs->trans("Firstname").'</td><td class="valeur" colspan="3">'.$object->firstname.'&nbsp;</td></tr>';
-
     // Login
-    print '<tr><td>'.$langs->trans("Login").'</td><td class="valeur" colspan="3">'.$object->login.'&nbsp;</td></tr>';
+    print '<tr><td class="titlefield">'.$langs->trans("Login").'</td><td class="valeur">'.$object->login.'&nbsp;</td></tr>';
 
 	// Note
     print '<tr><td class="tdtop">'.$langs->trans("Note").'</td>';
-	print '<td colspan="3">';
+	print '<td>';
 	if ($action == 'edit' && $user->rights->user->user->creer)
 	{
 		print "<input type=\"hidden\" name=\"action\" value=\"update\">";

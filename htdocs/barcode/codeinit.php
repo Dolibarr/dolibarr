@@ -191,7 +191,7 @@ $form=new Form($db);
 
 llxHeader('',$langs->trans("MassBarcodeInit"));
 
-print_fiche_titre($langs->trans("MassBarcodeInit"));
+print load_fiche_titre($langs->trans("MassBarcodeInit"));
 print '<br>';
 
 print $langs->trans("MassBarcodeInitDesc").'<br>';
@@ -211,7 +211,7 @@ if ($conf->societe->enabled)
 {
 	$nbno=$nbtotal=0;
 
-	print_fiche_titre($langs->trans("BarcodeInitForThirdparties"),'','object_company');
+	print load_fiche_titre($langs->trans("BarcodeInitForThirdparties"),'','object_company');
 	print '<br>'."\n";
 	$sql="SELECT count(rowid) as nb FROM ".MAIN_DB_PREFIX."societe where barcode IS NULL or barcode = ''";
 	$resql=$db->query($sql);
@@ -252,7 +252,7 @@ if ($conf->product->enabled || $conf->product->service)
 
 	$nbno=$nbtotal=0;
 
-	print_fiche_titre($langs->trans("BarcodeInitForProductsOrServices"),'','object_product');
+	print load_fiche_titre($langs->trans("BarcodeInitForProductsOrServices"),'','object_product');
 	print '<br>'."\n";
 
 	$sql ="SELECT count(rowid) as nb, fk_product_type, datec";

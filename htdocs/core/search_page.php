@@ -70,14 +70,14 @@ $searchform = '';
 if ((( ! empty($conf->societe->enabled) && (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) || empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))) || ! empty($conf->fournisseur->enabled)) && ! empty($conf->global->MAIN_SEARCHFORM_SOCIETE) && $user->rights->societe->lire)
 {
 	$langs->load("companies");
-	$searchform.=printSearchForm(DOL_URL_ROOT.'/societe/list.php', DOL_URL_ROOT.'/societe/list.php', img_object('','company').' '.$langs->trans("ThirdParties"), 'soc', 'socname');
+	$searchform.=printSearchForm(DOL_URL_ROOT.'/societe/list.php', DOL_URL_ROOT.'/societe/list.php', img_object('','company').' '.$langs->trans("ThirdParties"), 'soc', 'sall', '', 'company');
 	$nbofsearch++;
 }
 
 if (! empty($conf->societe->enabled) && ! empty($conf->global->MAIN_SEARCHFORM_CONTACT) && $user->rights->societe->lire)
 {
 	$langs->load("companies");
-	$searchform.=printSearchForm(DOL_URL_ROOT.'/contact/list.php', DOL_URL_ROOT.'/contact/list.php', img_object('','contact').' '.$langs->trans("Contacts"), 'contact', 'contactname');
+	$searchform.=printSearchForm(DOL_URL_ROOT.'/contact/list.php', DOL_URL_ROOT.'/contact/list.php', img_object('','contact').' '.$langs->trans("Contacts"), 'contact', 'sall', '', 'contact');
 	$nbofsearch++;
 }
 
@@ -85,7 +85,7 @@ if (((! empty($conf->product->enabled) && $user->rights->produit->lire) || (! em
 	&& ! empty($conf->global->MAIN_SEARCHFORM_PRODUITSERVICE))
 {
 	$langs->load("products");
-	$searchform.=printSearchForm(DOL_URL_ROOT.'/product/list.php', DOL_URL_ROOT.'/product/list.php', img_object('','product').' '.$langs->trans("Products")."/".$langs->trans("Services"), 'products', 'sall', '', 'sall'.rand(0,10));
+	$searchform.=printSearchForm(DOL_URL_ROOT.'/product/list.php', DOL_URL_ROOT.'/product/list.php', img_object('','product').' '.$langs->trans("Products")."/".$langs->trans("Services"), 'products', 'sall', '', 'product');
 	$nbofsearch++;
 }
 
@@ -100,7 +100,7 @@ if (((! empty($conf->product->enabled) && $user->rights->produit->lire) || (! em
 if (! empty($conf->adherent->enabled) && ! empty($conf->global->MAIN_SEARCHFORM_ADHERENT) && $user->rights->adherent->lire)
 {
 	$langs->load("members");
-	$searchform.=printSearchForm(DOL_URL_ROOT.'/adherents/list.php', DOL_URL_ROOT.'/adherents/list.php', img_object('','user').' '.$langs->trans("Members"), 'member', 'sall', 'sall'.rand(0,10));
+	$searchform.=printSearchForm(DOL_URL_ROOT.'/adherents/list.php', DOL_URL_ROOT.'/adherents/list.php', img_object('','user').' '.$langs->trans("Members"), 'member', 'sall', '', 'member');
 	$nbofsearch++;
 }
 

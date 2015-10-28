@@ -46,6 +46,7 @@ $search_ht=GETPOST('search_ht');
 $search_ttc=GETPOST('search_ttc');
 $sall=GETPOST('search_all');
 $search_status=(GETPOST('search_status','alpha')!=''?GETPOST('search_status','alpha'):GETPOST('statut','alpha'));	// alpha and not intbecause it can be '6,7'
+$optioncss = GETPOST('optioncss','alpha');
 
 $page  = GETPOST('page','int');
 $socid = GETPOST('socid','int');
@@ -72,6 +73,17 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 }
 
 if ($search_status == '') $search_status=-1;
+
+// List of fields to search into when doing a "search in all"
+$fieldstosearchall = array(
+    'cf.ref'=>'Ref',
+    'cf.ref_supplier'=>'RefSupplier',
+    //'pd.description'=>'Description',
+    's.nom'=>"ThirdParty",
+    'cf.note_public'=>'NotePublic',
+);
+if (empty($user->socid)) $fieldstosearchall["cf.note_private"]="NotePrivate";
+
 
 
 /*
@@ -140,7 +152,7 @@ if ($search_ttc != '')
 }
 if ($sall)
 {
-	$sql .= natural_search(array('cf.ref', 'cf.ref_supplier', 'cf.note_public', 'cf.note_private'), $sall);
+	$sql .= natural_search(array_keys($fieldstosearchall), $sall);
 }
 if ($socid) $sql.= " AND s.rowid = ".$socid;
 
@@ -185,9 +197,23 @@ if ($resql)
 	if ($search_refsupp) 		$param.="&search_refsupp=".$search_refsupp;
 	if ($socid)					$param.="&socid=".$socid;
 	if ($search_status >= 0)  	$param.="&search_status=".$search_status;
+	if ($optioncss != '') $param.='&optioncss='.$optioncss;
 
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords);
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="action" value="list">';
+	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
+	
+    if ($sall)
+    {
+        foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
+        print $langs->trans("FilterOnInto", $sall, join(', ',$fieldstosearchall));
+    }
+	
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"cf.ref","",$param,'',$sortfield,$sortorder);

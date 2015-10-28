@@ -99,13 +99,13 @@ if ($action == "correct_stock" && ! $cancel)
 {
 	if (! (GETPOST("id_entrepot") > 0))
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Warehouse")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
 		$error++;
 		$action='correction';
 	}
 	if (! GETPOST("nbpiece"))
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("NumberOfUnit")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("NumberOfUnit")), null, 'errors');
 		$error++;
 		$action='correction';
 	}
@@ -116,7 +116,7 @@ if ($action == "correct_stock" && ! $cancel)
 		$result=$product->fetch($id);
 
 		if ($product->hasbatch() && (! GETPOST("sellby")) && (! GETPOST("eatby")) && (! GETPOST("batch_number"))) {
-			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("atleast1batchfield")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("atleast1batchfield")), null, 'errors');
 			$error++;
 			$action='correction';
 		}
@@ -186,13 +186,13 @@ if ($action == "transfert_stock" && ! $cancel)
 {
 	if (! (GETPOST("id_entrepot_source",'int') > 0) || ! (GETPOST("id_entrepot_destination",'int') > 0))
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Warehouse")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
 		$error++;
 		$action='transfert';
 	}
 	if (! GETPOST("nbpiece",'int'))
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("NumberOfUnit")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("NumberOfUnit")), null, 'errors');
 		$error++;
 		$action='transfert';
 	}
@@ -335,7 +335,7 @@ if ($action == 'updateline' && GETPOST('save') == $langs->trans('Save'))
         if ($pdluo->id)
         {
             if ((! GETPOST("sellby")) && (! GETPOST("eatby")) && (! GETPOST("batch_number"))) {
-                setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("atleast1batchfield")), 'errors');
+                setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("atleast1batchfield")), null, 'errors');
             }
             else
             {
@@ -617,7 +617,7 @@ if ($id > 0 || $ref)
 	/*
 	if ($_GET["action"] == "definir")
 	{
-		print_titre($langs->trans("SetStock"));
+		print load_fiche_titre($langs->trans("SetStock"));
 		print "<form action=\"product.php?id=$product->id\" method=\"post\">\n";
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="create_stock">';
@@ -655,7 +655,7 @@ if (empty($action) && $product->id)
     }
 
     //if (($user->rights->stock->mouvement->creer) && ! $product->hasbatch())
-    if (($user->rights->stock->mouvement->creer))
+    if ($user->rights->stock->mouvement->creer)
 	{
 		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'&amp;action=transfert">'.$langs->trans("StockMovement").'</a>';
 	}

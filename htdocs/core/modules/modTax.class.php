@@ -31,7 +31,7 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *	Classe de description et activation du module Tax
+ *	Class to describe and enable module Tax
  */
 class modTax extends DolibarrModules
 {
@@ -67,16 +67,16 @@ class modTax extends DolibarrModules
 		// Config pages
 		$this->config_page_url = array("taxes.php");
 
-		// Dependances
+		// Dependencies
 		$this->depends = array();
 		$this->requiredby = array();
 		$this->conflictwith = array();
 		$this->langfiles = array("compta","bills");
 
-		// Constantes
+		// Constants
 		$this->const = array();
 
-		// Boites
+		// Boxes
 		$this->boxes = array();
 
 		// Permissions
@@ -126,7 +126,7 @@ class modTax extends DolibarrModules
 		$this->export_label[$r]='Taxes et charges sociales, et leurs reglements';
 		$this->export_permission[$r]=array(array("tax","charges","export"));
 		$this->export_fields_array[$r]=array('cc.libelle'=>"Type",'c.rowid'=>"IdSocialContribution",'c.libelle'=>"Label",'c.date_ech'=>'DateDue','c.periode'=>'Period','c.amount'=>"AmountExpected","c.paye"=>"Status",'p.rowid'=>'PaymentId','p.datep'=>'DatePayment','p.amount'=>'AmountPayment','p.num_paiement'=>'Numero');
-		$this->export_TypeFields_array[$r]=array('cc.libelle'=>"List:c_chargesociales:libelle:id",'c.libelle'=>"Text",'c.date_ech'=>'Date','c.periode'=>'Period','c.amount'=>"Number","c.paye"=>"Boolean",'p.datep'=>'Date','p.amount'=>'Number','p.num_paiement'=>'Number');
+		$this->export_TypeFields_array[$r]=array('cc.libelle'=>"List:c_chargesociales:libelle:id",'c.libelle'=>"Text",'c.date_ech'=>'Date','c.periode'=>'Period','c.amount'=>"Numeric","c.paye"=>"Boolean",'p.datep'=>'Date','p.amount'=>'Numeric','p.num_paiement'=>'Numeric');
 		$this->export_entities_array[$r]=array('cc.libelle'=>"tax_type",'c.rowid'=>"tax",'c.libelle'=>'tax','c.date_ech'=>'tax','c.periode'=>'tax','c.amount'=>"tax","c.paye"=>"tax",'p.rowid'=>'payment','p.datep'=>'payment','p.amount'=>'payment','p.num_paiement'=>'payment');
 
 		$this->export_sql_start[$r]='SELECT DISTINCT ';

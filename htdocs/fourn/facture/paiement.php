@@ -5,11 +5,9 @@
  * Copyright (C) 2004		Christophe Combelles	<ccomb@free.fr>
  * Copyright (C) 2005		Marc Barilley / Ocebo	<marc@ocebo.com>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
-<<<<<<< HEAD
  * Copyright (C) 2014		Teddy Andreotti			<125155@supinfo.com>
-=======
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
->>>>>>> refs/remotes/origin/3.6
+ * Copyright (C) 2015       Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,6 +44,7 @@ $confirm	= GETPOST('confirm');
 
 $facid=GETPOST('facid','int');
 $socid=GETPOST('socid','int');
+$accountid	= GETPOST('accountid');
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -57,6 +56,7 @@ $pagenext = $page + 1;
 $limit = $conf->liste_limit;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="p.rowid";
+$optioncss = GETPOST('optioncss','alpha');
 
 $amounts = array();
 
@@ -200,7 +200,7 @@ if (empty($reshook))
 
 	        if (! $error)
 	        {
-	            $result=$paiement->addPaymentToBank($user,'payment_supplier','(SupplierInvoicePayment)',$_POST['accountid'],'','');
+	            $result=$paiement->addPaymentToBank($user,'payment_supplier','(SupplierInvoicePayment)',$accountid,'','');
 	            if ($result < 0)
 	            {
 	            	setEventMessage($paiement->error, 'errors');
@@ -273,7 +273,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             $obj = $db->fetch_object($resql);
             $total = $obj->total;
 
-            print_fiche_titre($langs->trans('DoPayment'));
+            print load_fiche_titre($langs->trans('DoPayment'));
 
             print '<form id="payment_form" name="addpaiement" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -304,7 +304,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             if (! empty($conf->banque->enabled))
             {
                 print '<tr><td class="fieldrequired">'.$langs->trans('Account').'</td><td>';
-                $form->select_comptes(empty($_POST['accountid'])?'':$_POST['accountid'],'accountid',0,'',2);
+                $form->select_comptes(empty($accountid)?'':$accountid,'accountid',0,'',2);
                 print '</td></tr>';
             }
             else
@@ -440,7 +440,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                $text.='<br>'.$langs->trans("AllCompletelyPayedInvoiceWillBeClosed");
 	                print '<input type="hidden" name="closepaidinvoices" value="'.GETPOST('closepaidinvoices').'">';
 	            }
-	            $form->form_confirm($_SERVER['PHP_SELF'].'?facid='.$facture->id.'&socid='.$facture->socid.'&type='.$facture->type,$langs->trans('PayedSuppliersPayments'),$text,'confirm_paiement',$formquestion,$preselectedchoice);
+	            print $form->formconfirm($_SERVER['PHP_SELF'].'?facid='.$facture->id.'&socid='.$facture->socid.'&type='.$facture->type,$langs->trans('PayedSuppliersPayments'),$text,'confirm_paiement',$formquestion,$preselectedchoice);
 	        }
 
             print '</form>';
@@ -532,10 +532,12 @@ if (empty($action))
         $paramlist.=(! empty($search_ref)?"&search_ref=".$search_ref:"");
         $paramlist.=(! empty($search_company)?"&search_company=".$search_company:"");
         $paramlist.=(! empty($search_amount)?"&search_amount='".$search_amount:"");
+        if ($optioncss != '') $paramlist.='&optioncss='.$optioncss;
 
         print_barre_liste($langs->trans('SupplierPayments'), $page, $_SERVER["PHP_SELF"],$paramlist,$sortfield,$sortorder,'',$num);
 
         print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
+        if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
         print '<table class="noborder" width="100%">';
         print '<tr class="liste_titre">';
         print_liste_field_titre($langs->trans('RefPayment'),$_SERVER["PHP_SELF"],'p.rowid','',$paramlist,'',$sortfield,$sortorder);

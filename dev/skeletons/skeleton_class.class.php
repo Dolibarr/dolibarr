@@ -35,24 +35,10 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
  * Class Skeleton_Class
  *
  * Put here description of your class
+ * @see CommonObject
  */
 class Skeleton_Class extends CommonObject
 {
-	/**
-	 * @var DoliDb Database handler
-	 */
-	protected $db;
-
-	/**
-	 * @var string Error code (or message)
-	 * @deprecated
-	 * @see Skeleton_Class::errors
-	 */
-	public $error;
-	/**
-	 * @var string[] Error codes (or messages)
-	 */
-	public $errors = array();
 	/**
 	 * @var string Id to identify managed objects
 	 */
@@ -67,10 +53,6 @@ class Skeleton_Class extends CommonObject
 	 */
 	public $lines = array();
 
-	/**
-	 * @var int ID
-	 */
-	public $id;
 	/**
 	 * @var mixed Sample property 1
 	 */
@@ -249,7 +231,7 @@ class Skeleton_Class extends CommonObject
 		}
 		
 		if (!empty($sortfield)) {
-			$sql .= ' ORDER BY ' . $sortfield . ' ' . $sortorder;
+			$sql .= $this->db->order($sortfield,$sortorder);
 		}
 		if (!empty($limit)) {
 		 $sql .=  ' ' . $this->db->plimit($limit + 1, $offset);

@@ -72,7 +72,11 @@ class CommandeFournisseur extends CommonOrder
     var $date_approve;
     var $date_approve2;		// Used when SUPPLIER_ORDER_DOUBLE_APPROVAL is set
     var $date_commande;
-	var $date_livraison;	// Date livraison souhaitee
+
+    /**
+     * Delivery date
+     */
+	var $date_livraison;
     var $total_ht;
     var $total_tva;
     var $total_localtax1;   // Total Local tax 1
@@ -388,7 +392,7 @@ class CommandeFournisseur extends CommonOrder
             $soc->fetch($this->fourn_id);
 
             // Check if object has a temporary ref
-            if (preg_match('/^[\(]?PROV/i', $this->ref))
+            if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) // empty should not happened, but when it occurs, the test save life
             {
                 $num = $this->getNextNumRef($soc);
             }
@@ -460,6 +464,7 @@ class CommandeFournisseur extends CommonOrder
             {
                 $result = 1;
                 $this->log($user, 1, time());	// Statut 1
+                $this->statut = 1;
                 $this->ref = $num;
             }
 
@@ -684,7 +689,7 @@ class CommandeFournisseur extends CommonOrder
             $soc->fetch($this->fourn_id);
 
             // Check if object has a temporary ref
-            if (preg_match('/^[\(]?PROV/i', $this->ref))
+            if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) // empty should not happened, but when it occurs, the test save life
             {
                 $num = $this->getNextNumRef($soc);
             }
@@ -998,7 +1003,7 @@ class CommandeFournisseur extends CommonOrder
         $sql.= ") ";
         $sql.= " VALUES (";
         $sql.= "''";
-        $sql.= ", '".$this->ref_supplier."'";
+        $sql.= ", '".$this->db->escape($this->ref_supplier)."'";
         $sql.= ", '".$this->db->escape($this->note_private)."'";
         $sql.= ", '".$this->db->escape($this->note_public)."'";
         $sql.= ", ".$conf->entity;
@@ -1007,7 +1012,7 @@ class CommandeFournisseur extends CommonOrder
 		$sql.= ", ".($this->date_livraison?"'".$this->db->idate($this->date_livraison)."'":"null");
         $sql.= ", ".$user->id;
         $sql.= ", 0";
-        $sql.= ", " . $this->source;
+        $sql.= ", ".$this->db->escape($this->source);
         $sql.= ", '".$conf->global->COMMANDE_SUPPLIER_ADDON_PDF."'";
         $sql.= ", ".($this->mode_reglement_id > 0 ? $this->mode_reglement_id : 'null');
         $sql.= ", ".($this->cond_reglement_id > 0 ? $this->cond_reglement_id : 'null');
@@ -1133,8 +1138,8 @@ class CommandeFournisseur extends CommonOrder
 
 		$this->db->begin();
 
-        // Load source object
-        $objFrom = dol_clone($this);
+		// Load source object
+		$objFrom = clone $this;
 
         $this->id=0;
         $this->statut=0;
@@ -1570,6 +1575,7 @@ class CommandeFournisseur extends CommonOrder
         $result=$this->call_trigger('ORDER_SUPPLIER_DELETE',$user);
         if ($result < 0)
         {
+        	$this->errors[]='ErrorWhenRunningTrigger';
         	dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
         	return -1;
         }
@@ -1582,6 +1588,8 @@ class CommandeFournisseur extends CommonOrder
         dol_syslog(get_class($this)."::delete", LOG_DEBUG);
         if (! $this->db->query($sql) )
         {
+            $this->error=$this->db->lasterror();
+            $this->errors[]=$this->db->lasterror();
             $error++;
         }
 
@@ -1592,12 +1600,14 @@ class CommandeFournisseur extends CommonOrder
             if ($this->db->affected_rows($resql) < 1)
             {
                 $this->error=$this->db->lasterror();
+                $this->errors[]=$this->db->lasterror();
                 $error++;
             }
         }
         else
         {
             $this->error=$this->db->lasterror();
+            $this->errors[]=$this->db->lasterror();
             $error++;
         }
 
@@ -1607,6 +1617,8 @@ class CommandeFournisseur extends CommonOrder
         	$result=$this->deleteExtraFields();
         	if ($result < 0)
         	{
+        		$this->error='FailToDeleteExtraFields';
+        		$this->errors[]='FailToDeleteExtraFields';
         		$error++;
         		dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
         	}
@@ -1614,7 +1626,11 @@ class CommandeFournisseur extends CommonOrder
 
 		// Delete linked object
     	$res = $this->deleteObjectLinked();
-    	if ($res < 0) $error++;
+    	if ($res < 0) {
+    		$this->error='FailToDeleteObjectLinked';
+    		$this->errors[]='FailToDeleteObjectLinked';
+    		$error++;
+    	}
 
         if (! $error)
         {
@@ -1629,6 +1645,7 @@ class CommandeFournisseur extends CommonOrder
         			if (! dol_delete_file($file,0,0,0,$this)) // For triggers
         			{
         				$this->error='ErrorFailToDeleteFile';
+        				$this->errors[]='ErrorFailToDeleteFile';
         				$error++;
         			}
         		}
@@ -1638,6 +1655,7 @@ class CommandeFournisseur extends CommonOrder
         			if (! $res)
         			{
         				$this->error='ErrorFailToDeleteDir';
+        				$this->errors[]='ErrorFailToDeleteDir';
         				$error++;
         			}
         		}
@@ -2292,7 +2310,7 @@ class CommandeFournisseur extends CommonOrder
         $resql=$this->db->query($sql);
         if ($resql)
         {
-	        $now=dol_now();
+            $commandestatic = new CommandeFournisseur($this->db);
 
 	        $response = new WorkboardResponse();
 	        $response->warning_delay=$conf->commande->fournisseur->warning_delay/60/60/24;
@@ -2304,8 +2322,11 @@ class CommandeFournisseur extends CommonOrder
             {
                 $response->nbtodo++;
 
-				$date_to_test = empty($obj->delivery_date) ? $obj->datec : $obj->delivery_date;
-                if ($obj->fk_statut != 3 && $this->db->jdate($date_to_test) < ($now - $conf->commande->fournisseur->warning_delay)) {
+                $commandestatic->date_livraison = $this->db->jdate($obj->delivery_date);
+                $commandestatic->date_commande = $this->db->jdate($obj->datec);
+                $commandestatic->statut = $obj->fk_statut;
+
+                if ($commandestatic->hasDelay()) {
 	                $response->nbtodolate++;
                 }
             }
@@ -2447,6 +2468,21 @@ class CommandeFournisseur extends CommonOrder
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
 	}
+
+    /**
+     * Is the supplier order delayed?
+     *
+     * @return bool
+     */
+    public function hasDelay()
+    {
+        global $conf;
+
+        $now = dol_now();
+        $date_to_test = empty($this->date_livraison) ? $this->date_commande : $this->date_livraison;
+
+        return ($this->statut != 3) && $date_to_test < ($now - $conf->commande->fournisseur->warning_delay);
+    }
 }
 
 

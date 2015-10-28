@@ -24,7 +24,6 @@ include_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
  */
 class ProjectStats extends Stats
 {
-	protected $db;
 	private $project;
 	public $userid;
 	public $socid;
@@ -44,8 +43,8 @@ class ProjectStats extends Stats
 	/**
 	 * Return all leads grouped by status
 	 *
-	 * @param int $limit Limit results
-	 * @return array|int
+	 * @param  int             $limit Limit results
+	 * @return array|int       Array with value or -1 if error
 	 * @throws Exception
 	 */
 	function getAllProjectByStatus($limit = 5)
@@ -55,11 +54,11 @@ class ProjectStats extends Stats
 		$datay = array ();
 
 		$sql = "SELECT";
-		$sql .= " count(DISTINCT t.rowid), t.fk_opp_status";
-		$sql .= " FROM " . MAIN_DB_PREFIX . "projet as t";
+		$sql .= " SUM(t.opp_amount), t.fk_opp_status, cls.code, cls.label";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "projet as t, ".MAIN_DB_PREFIX."c_lead_status as cls";
 		$sql .= $this->buildWhere();
-		$sql .= " AND t.fk_statut = 1";
-		$sql .= " GROUP BY t.fk_opp_status";
+		$sql .= " AND t.fk_opp_status = cls.rowid AND t.fk_statut = 1";
+		$sql .= " GROUP BY t.fk_opp_status, cls.code, cls.label";
 
 		$result = array ();
 		$res = array ();
@@ -73,13 +72,16 @@ class ProjectStats extends Stats
 			while ( $i < $num ) {
 				$row = $this->db->fetch_row($resql);
 				if ($i < $limit || $num == $limit)
-					$result[$i] = array (
-							$this->projet->status[$row[1]] . '(' . $row[0] . ')',
-							$row[0]
+				{
+				    $label = (($langs->trans("OppStatus".$row[2]) != "OppStatus".$row[2]) ? $langs->trans("OppStatus".$row[2]) : $row[2]);
+					$result[$i] = array(
+						$label. ' (' . price(price2num($row[0], 'MT'), 1, $langs, 1, -1, -1, $conf->currency) . ')',
+						$row[0]
 					);
+				}
 				else
 					$other += $row[1];
-				$i ++;
+				$i++;
 			}
 			if ($num > $limit)
 				$result[$i] = array (
@@ -90,7 +92,7 @@ class ProjectStats extends Stats
 		} else {
 			$this->error = "Error " . $this->db->lasterror();
 			dol_syslog(get_class($this) . '::' . __METHOD__ . ' ' . $this->error, LOG_ERR);
-			return - 1;
+			return -1;
 		}
 
 		return $result;
@@ -368,7 +370,7 @@ class ProjectStats extends Stats
 		if ($foundintocache) // Cache file found and is not too old
 		{
 			dol_syslog(get_class($this) . '::' . __FUNCTION__ . " read data from cache file " . $newpathofdestfile . " " . $filedate . ".");
-			$data = dol_json_decode(file_get_contents($newpathofdestfile), true);
+			$data = json_decode(file_get_contents($newpathofdestfile), true);
 		} else {
 			$year = $startyear;
 			while ( $year <= $endyear ) {
@@ -394,7 +396,7 @@ class ProjectStats extends Stats
 			if (! dol_is_dir($conf->user->dir_temp))
 				dol_mkdir($conf->user->dir_temp);
 			$fp = fopen($newpathofdestfile, 'w');
-			fwrite($fp, dol_json_encode($data));
+			fwrite($fp, json_encode($data));
 			fclose($fp);
 			if (! empty($conf->global->MAIN_UMASK))
 				$newmask = $conf->global->MAIN_UMASK;

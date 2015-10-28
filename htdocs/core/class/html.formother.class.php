@@ -302,14 +302,15 @@ class FormOther
     /**
      * Return select list for categories (to use in form search selectors)
      *
-     * @param	int		$type			Type of categories (0=product, 1=suppliers, 2=customers, 3=members)
-     * @param  integer	$selected     	Preselected value
-     * @param  string	$htmlname      	Name of combo list
+     * @param	int		$type			Type of categories (0=product, 1=supplier, 2=customer, 3=member, 4=contact)
+     * @param   integer	$selected     	Preselected value
+     * @param   string	$htmlname      	Name of combo list
      * @param	int		$nocateg		Show also an entry "Not categorized"
+     * @param   int     $showempty      Add also an empty line
      * @return string		        	Html combo list code
      * @see	select_all_categories
      */
-    function select_categories($type,$selected=0,$htmlname='search_categ',$nocateg=0)
+    function select_categories($type,$selected=0,$htmlname='search_categ',$nocateg=0,$showempty=1)
     {
         global $conf, $langs;
         require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
@@ -331,7 +332,7 @@ class FormOther
 
         // Print a select with each of them
         $moreforfilter.='<select class="flat minwidth100" id="select_categ_'.$htmlname.'" name="'.$htmlname.'"'.$nodatarole.'>';
-        $moreforfilter.='<option value="">&nbsp;</option>';	// Should use -1 to say nothing
+        if ($showempty) $moreforfilter.='<option value="0">&nbsp;</option>';	// Should use -1 to say nothing
 
         if (is_array($tab_categs))
         {
@@ -597,7 +598,7 @@ class FormOther
     	include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
     	$color = colorArrayToHex(colorStringToArray($color,array()),'');
-		if ($color) print '<input type="text" class="colorthumb" disabled style="padding: 1px; margin-top: 0; margin-bottom: 0; width: 36px; background-color: #'.$color.'" value="'.$color.'">';
+		if ($color) print '<input type="text" class="colorthumb" disabled style="padding: 1px; margin-top: 0; margin-bottom: 0; width: 40px; background-color: #'.$color.'" value="'.$color.'">';
 		else print $textifnotdefined;
     }
 

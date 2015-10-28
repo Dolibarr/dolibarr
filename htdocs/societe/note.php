@@ -75,15 +75,15 @@ if ($id > 0)
     print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
-    print '<table class="border" width="100%">';
-
-    print '<tr><td width="25%">'.$langs->trans('ThirdPartyName').'</td>';
-    print '<td colspan="3">';
-    print $form->showrefnav($object,'socid','',($user->societe_id?0:1),'rowid','nom');
-    print '</td></tr>';
+    dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
+        
+    print '<div class="fichecenter">';
+    
+    print '<div class="underbanner clearboth"></div>';
+    print '<table class="border centpercent">';
 
 	// Alias names (commercial, trademark or alias names)
-	print '<tr><td>'.$langs->trans('AliasNames').'</td><td colspan="3">';
+	print '<tr><td class="titlefield">'.$langs->trans('AliasNames').'</td><td colspan="3">';
 	print $object->name_alias;
 	print "</td></tr>";
 
@@ -112,9 +112,12 @@ if ($id > 0)
 
     print "</table>";
 
+    print '</div>';
+    
     print '<br>';
 
-    $colwidth='25';
+    //$colwidth='25';
+    $cssclass='titlefield';
     include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
 

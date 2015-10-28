@@ -10,3 +10,5 @@ FailedToConnectToFTPServerWithCredentials=Klarte ikke å logge inn på FTP-serve
 FTPFailedToRemoveFile=Klarte ikke å fjerne filen <b>%s.</b>
 FTPFailedToRemoveDir=Kunne ikke fjerne katalogen <b>%s</b> (Sjekk tillatelser, og at katalogen er tom).
 FTPPassiveMode=Passiv modus
+ChooseAFTPEntryIntoMenu=Choose a FTP entry into menu...
+FailedToGetFile=Failed to get files %s

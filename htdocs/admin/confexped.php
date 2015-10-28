@@ -74,7 +74,7 @@ $form=new Form($db);
 llxHeader("","");
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("SendingsSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("SendingsSetup"),$linkback,'title_setup');
 print '<br>';
 
 $h = 0;

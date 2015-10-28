@@ -55,7 +55,7 @@ $object = new Project($db);
 $extrafields = new ExtraFields($db);
 
 // Load object
-//include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Can use generic include because when creating a project, ref is defined and we dont want error if fetch fails from ref.
+//include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Can't use generic include because when creating a project, ref is defined and we dont want error if fetch fails from ref.
 if ($id > 0 || ! empty($ref))
 {
     $ret = $object->fetch($id,$ref);	// If we create project, ref may be defined into POST but record does not yet exists into database
@@ -118,12 +118,12 @@ if (empty($reshook))
 	    $error=0;
 	    if (empty($_POST["ref"]))
 	    {
-		    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Ref")), 'errors');
+		    setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Ref")), null, 'errors');
 	        $error++;
 	    }
 	    if (empty($_POST["title"]))
 	    {
-		    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")), 'errors');
+		    setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
 	        $error++;
 	    }
 
@@ -205,20 +205,20 @@ if (empty($reshook))
 	    {
 	        $error++;
 	        //$_GET["id"]=$_POST["id"]; // On retourne sur la fiche projet
-		    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Ref")), 'errors');
+		    setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Ref")), null, 'errors');
 	    }
 	    if (empty($_POST["title"]))
 	    {
 	        $error++;
 	        //$_GET["id"]=$_POST["id"]; // On retourne sur la fiche projet
-		    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")), 'errors');
+		    setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
 	    }
 
 	    $db->begin();
 
 	    if (! $error)
 	    {
-	        $object->oldcopy = dol_clone($object);
+			$object->oldcopy = clone $object;
 
 			$old_start_date = $object->date_start;
 
@@ -310,10 +310,11 @@ if (empty($reshook))
 	    {
 	        $langs->load("other");
 	        $upload_dir =	$conf->projet->dir_output . "/";
-	        $file =	$upload_dir	. '/' .	GETPOST('file');
+	        $urlfile=GETPOST('urlfile','alpha');
+	        $file =	$upload_dir	. '/' .	$filetodelete;
 	        $ret=dol_delete_file($file);
-	        if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-	        else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+	        if ($ret) setEventMessage($langs->trans("FileWasRemoved", $urlfile));
+	        else setEventMessage($langs->trans("ErrorFailToDeleteFile", $urlfile), 'errors');
 	    }
 	}
 
@@ -410,7 +411,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 	$thirdparty=new Societe($db);
 	if ($socid > 0) $thirdparty->fetch($socid);
 
-    print_fiche_titre($langs->trans("NewProject"), '', 'title_project');
+    print load_fiche_titre($langs->trans("NewProject"), '', 'title_project');
 
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -465,6 +466,7 @@ if ($action == 'create' && $user->rights->projet->creer)
     	print $form->textwithtooltip($text.' '.img_help(),$texthelp,1);
     }
     else print $text;
+    print ' <a href="'.DOL_URL_ROOT.'/societe/soc.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").'</a>';
     print '</td></tr>';
 
     // Status
@@ -622,7 +624,7 @@ else
         print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td>';
         print '<td><input size="40" name="title" value="'.$object->title.'"></td></tr>';
 
-        // Customer
+        // Thirdparty
         print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
 	    $filteronlist='';
 	    if (! empty($conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST)) $filteronlist=$conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST;
@@ -711,7 +713,7 @@ else
 
         // Third party
         print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-        if ($object->thirdparty->id > 0) print $object->thirdparty->getNomUrl(1);
+        if ($object->thirdparty->id > 0) print $object->thirdparty->getNomUrl(1, 'project');
         else print'&nbsp;';
         print '</td></tr>';
 
@@ -872,9 +874,8 @@ else
 
     if ($action != 'presend')
     {
-        print '<table width="100%"><tr><td width="50%" valign="top">';
+        print '<div class="fichecenter"><div class="fichehalfleft">';
         print '<a name="builddoc"></a>'; // ancre
-
 
         /*
          * Documents generes
@@ -889,7 +890,7 @@ else
 
         $somethingshown=$formfile->show_documents('project',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf);
 
-        print '</td><td valign="top" width="50%">';
+        print '</div></div class="fichehalfright">';
 
         if (!empty($object->id))
         {
@@ -899,7 +900,7 @@ else
 	        $somethingshown=$formactions->showactions($object,'project',$socid);
         }
 
-        print '</td></tr></table>';
+        print '</div>';
     }
 
     // Hook to add more things on page

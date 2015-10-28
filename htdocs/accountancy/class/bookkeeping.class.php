@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2013-2014 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013-2015 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
  * Copyright (C) 2013-2014 Florian Henry		<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -29,11 +29,6 @@
  */
 class BookKeeping extends CommonObject
 {
-	var $db;
-	var $error;
-	var $errors;
-
-	var $id;
 	var $doc_date;
 	var $doc_type;
 	var $doc_ref;
@@ -225,6 +220,8 @@ class BookKeeping extends CommonObject
 	 */
 	function create($user='')
 	{
+		global $conf;
+
 		$this->piece_num = 0;
 
 		// first check if line not yet in bookkeeping
@@ -278,13 +275,45 @@ class BookKeeping extends CommonObject
 					$this->date_create = $now;
 				}
 
-				$sql = "INSERT INTO " . MAIN_DB_PREFIX . "accounting_bookkeeping (doc_date, ";
-				$sql .= "doc_type, doc_ref,fk_doc,fk_docdet,code_tiers,numero_compte,label_compte,";
-				$sql .= "debit,credit,montant,sens,fk_user_author,import_key,code_journal,piece_num)";
-				$sql .= " VALUES ('" . $this->doc_date . "','" . $this->doc_type . "','" . $this->doc_ref . "'," . $this->fk_doc . ",";
-				$sql .= $this->fk_docdet . ",'" . $this->code_tiers . "','" . $this->numero_compte . "','" . $this->db->escape($this->label_compte) . "',";
-				$sql .= $this->debit . "," . $this->credit . "," . $this->montant . ",'" . $this->sens . "'," . $user->id . ", '";
-				$sql .= $this->date_create . "','" . $this->code_journal . "'," . $this->piece_num . ")";
+				$sql = "INSERT INTO " . MAIN_DB_PREFIX . "accounting_bookkeeping (";
+				
+				$sql .= "doc_date";
+				$sql .= ", doc_type";
+				$sql .= ", doc_ref";
+				$sql .= ", fk_doc";
+				$sql .= ", fk_docdet";
+				$sql .= ", code_tiers";
+				$sql .= ", numero_compte";
+				$sql .= ", label_compte";
+				$sql .= ", debit";
+				$sql .= ", credit";
+				$sql .= ", montant";
+				$sql .= ", sens";
+				$sql .= ", fk_user_author";
+				$sql .= ", import_key";
+				$sql .= ", code_journal";
+				$sql .= ", piece_num";
+
+				$sql .= ") VALUES (";
+				
+				$sql .= "'" . $this->doc_date . "'";
+				$sql .= ",'" . $this->doc_type . "'";
+				$sql .= ",'" . $this->doc_ref . "'";
+				$sql .= "," . $this->fk_doc;
+				$sql .= "," . $this->fk_docdet;
+				$sql .= ",'" . $this->code_tiers . "'";
+				$sql .= ",'" . $this->numero_compte . "'";
+				$sql .= ",'" . $this->db->escape($this->label_compte) . "'";
+				$sql .= "," . $this->debit;
+				$sql .= "," . $this->credit;
+				$sql .= "," . $this->montant;
+				$sql .= ",'" . $this->sens . "'";
+				$sql .= ",'" . $this->fk_user_author."'";
+				$sql .= ",'" . $this->date_create . "'";
+				$sql .= ",'" . $this->code_journal . "'";
+				$sql .= "," . $this->piece_num;
+				
+				$sql .= ")";
 
 				dol_syslog(get_class($this) . ":: create sql=" . $sql, LOG_DEBUG);
 				$resql = $this->db->query($sql);
@@ -296,19 +325,19 @@ class BookKeeping extends CommonObject
 						$result = 0;
 					} else {
 						$result = - 2;
-						dol_syslog("BookKeeping::Create Erreur $result lecture ID");
+						dol_syslog("BookKeeping::Create Error $result lecture ID");
 					}
 				} else {
 					$result = - 1;
-					dol_syslog("BookKeeping::Create Erreur $result INSERT Mysql");
+					dol_syslog("BookKeeping::Create Error $result INSERT Mysql");
 				}
 			} else {
 				$result = - 3;
-				dol_syslog("BookKeeping::Create Erreur $result SELECT Mysql");
+				dol_syslog("BookKeeping::Create Error $result SELECT Mysql");
 			}
 		} else {
 			$result = - 5;
-			dol_syslog("BookKeeping::Create Erreur $result SELECT Mysql");
+			dol_syslog("BookKeeping::Create Error $result SELECT Mysql");
 		}
 
 		return $result;

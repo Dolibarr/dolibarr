@@ -18,7 +18,7 @@
  */
 
 /**
- *   	\file       htdocs/holiday/index.php
+ *   	\file       htdocs/holiday/list.php
  *		\ingroup    holiday
  *		\brief      List of holiday.
  */
@@ -53,6 +53,7 @@ $pagenext = $page + 1;
 
 $id = GETPOST('id','int');
 
+$sall            = GETPOST('sall');
 $search_ref      = GETPOST('search_ref');
 $month_create    = GETPOST('month_create');
 $year_create     = GETPOST('year_create');
@@ -64,7 +65,7 @@ $search_employe  = GETPOST('search_employe');
 $search_valideur = GETPOST('search_valideur');
 $search_statut   = GETPOST('select_statut');
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
 	$search_ref="";
 	$month_create="";
@@ -77,6 +78,12 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 	$search_valideur="";
 	$search_statut="";
 }
+
+// List of fields to search into when doing a "search in all"
+$fieldstosearchall = array(
+    'cp.rowid'=>'Ref',
+    'cp.description'=>'Description',
+);
 
 
 /*
@@ -171,6 +178,12 @@ if(!empty($search_valideur) && $search_valideur != -1) {
 if(!empty($search_statut) && $search_statut != -1) {
     $filter.= " AND cp.statut = '".$db->escape($search_statut)."'\n";
 }
+// Search all
+if (!empty($sall))
+{
+	$filter.= natural_search(array_keys($fieldstosearchall), $sall);
+}
+
 
 /*************************************
  * Fin des filtres de recherche
@@ -198,7 +211,7 @@ else
 // Si erreur SQL
 if ($holiday_payes == '-1')
 {
-    print_fiche_titre($langs->trans('CPTitreMenu'), '', 'title_hrm.png');
+    print load_fiche_titre($langs->trans('CPTitreMenu'), '', 'title_hrm.png');
 
     dol_print_error($db, $langs->trans('Error').' '.$holiday->error);
     exit();
@@ -218,26 +231,13 @@ if ($id > 0)
 	$title = $langs->trans("User");
 	dol_fiche_head($head, 'paidholidays', $title, 0, 'user');
 
-	print '<table class="border" width="100%">';
-
-	// Ref
-	print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
-	print '<td colspan="2">';
-	print $form->showrefnav($fuser,'id','',$user->rights->user->user->lire || $user->admin);
-	print '</td>';
-	print '</tr>';
-
-	// LastName
-	print '<tr><td width="25%">'.$langs->trans("LastName").'</td>';
-	print '<td colspan="2">'.$fuser->lastname.'</td>';
-	print "</tr>\n";
-
-	// FirstName
-	print '<tr><td width="25%">'.$langs->trans("FirstName").'</td>';
-	print '<td colspan="2">'.$fuser->firstname.'</td>';
-	print "</tr>\n";
-
-	print '</table><br>';
+    dol_banner_tab($fuser,'id','',$user->rights->user->user->lire || $user->admin);
+    
+    
+    print '<div class="underbanner clearboth"></div>';
+    
+    print '<br>';
+    
 }
 else
 {
@@ -265,6 +265,18 @@ if ($id > 0) print '</br>';
 
 
 print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="list">';
+print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+
+if ($sall)
+{
+    foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
+    print $langs->trans("FilterOnInto", $sall, join(', ',$fieldstosearchall));
+}
+    
 print '<table class="noborder" width="100%;">';
 print "<tr class=\"liste_titre\">";
 print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"cp.rowid","",'','',$sortfield,$sortorder);
@@ -282,7 +294,7 @@ print "</tr>\n";
 // FILTRES
 print '<tr class="liste_titre">';
 print '<td class="liste_titre" align="left" width="50">';
-print '<input class="flat" size="4" type="text" name="search_ref" value="'.$search_ref.'">';
+print '<input class="flat" size="4" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
 print '</td>';
 
 // DATE CREATE

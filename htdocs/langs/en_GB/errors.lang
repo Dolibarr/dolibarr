@@ -1,0 +1,2 @@
+# Dolibarr language file - Source file is en_US - errors
+ErrorBadFormatValueList=The list value cannot have more than one comma: <u>%s</u>, but need at least one: key,value

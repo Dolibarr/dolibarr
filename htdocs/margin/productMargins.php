@@ -72,9 +72,9 @@ $pagenext = $page + 1;
 $startdate=$enddate='';
 
 if (!empty($_POST['startdatemonth']))
-  $startdate  = dol_mktime(12, 0, 0, $_POST['startdatemonth'], $_POST['startdateday'], $_POST['startdateyear']);
+  $startdate  = dol_mktime(0, 0, 0, $_POST['startdatemonth'], $_POST['startdateday'], $_POST['startdateyear']);
 if (!empty($_POST['enddatemonth']))
-  $enddate  = dol_mktime(12, 0, 0, $_POST['enddatemonth'], $_POST['enddateday'], $_POST['enddateyear']);
+  $enddate  = dol_mktime(23, 59, 59, $_POST['enddatemonth'], $_POST['enddateday'], $_POST['enddateyear']);
 
 
 /*
@@ -89,7 +89,7 @@ $form = new Form($db);
 llxHeader('',$langs->trans("Margins").' - '.$langs->trans("Products"));
 
 $text=$langs->trans("Margins");
-//print_fiche_titre($text);
+//print load_fiche_titre($text);
 
 // Show tabs
 $head=marges_prepare_head($user);

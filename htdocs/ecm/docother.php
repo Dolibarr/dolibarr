@@ -99,7 +99,7 @@ llxHeader();
 
 $form=new Form($db);
 
-print_fiche_titre($langs->trans("ECMAutoOrg"));
+print load_fiche_titre($langs->trans("ECMAutoOrg"));
 
 //$head = societe_prepare_head($societe);
 

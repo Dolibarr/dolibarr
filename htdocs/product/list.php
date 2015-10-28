@@ -54,6 +54,7 @@ $tosell = GETPOST("tosell", 'int');
 $tobuy = GETPOST("tobuy", 'int');
 $fourn_id = GETPOST("fourn_id",'int');
 $catid = GETPOST('catid','int');
+$optioncss = GETPOST('optioncss','alpha');
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -83,14 +84,33 @@ if ($type=='0') $result=restrictedArea($user,'produit','','','','','',$objcanvas
 else if ($type=='1') $result=restrictedArea($user,'service','','','','','',$objcanvas);
 else $result=restrictedArea($user,'produit|service','','','','','',$objcanvas);
 
+// List of fields to search into when doing a "search in all"
+$fieldstosearchall = array(
+	'p.ref'=>"Ref",
+	'p.label'=>"ProductLabel",
+	'p.description'=>"Description",
+    "p.note"=>"Note",
+);
+// multilang
+if (! empty($conf->global->MAIN_MULTILANGS))
+{
+	$fieldstosearchall['pl.label']='ProductLabelTranslated';
+	$fieldstosearchall['pl.description']='ProductDescriptionTranslated';
+	$fieldstosearchall['pl.note']='ProductNoteTranslated';
+}
+if (! empty($conf->barcode->enabled)) {
+	$fieldstosearchall['p.barcode']='Gencod';
+}
+
 
 /*
  * Actions
  */
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
 	$sref="";
+	$sall="";
 	$sbarcode="";
 	$snom="";
 	$search_categ=0;
@@ -130,8 +150,6 @@ else
 	{
 		$texte = $langs->trans("ProductsAndServices");
 	}
-    // Add what we are searching for
-    if (! empty($sall)) $texte.= " - ".$sall;
 
     $sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type,';
     $sql.= ' p.fk_product_type, p.tms as datem,';
@@ -145,19 +163,7 @@ else
 	$sql.= ' WHERE p.entity IN ('.getEntity('product', 1).')';
 	if ($sall)
 	{
-		// For natural search
-		$params = array('p.ref', 'p.label', 'p.description', 'p.note');
-		// multilang
-		if (! empty($conf->global->MAIN_MULTILANGS))
-		{
-			$params[] = 'pl.label';
-			$params[] = 'pl.description';
-			$params[] = 'pl.note';
-		}
-		if (! empty($conf->barcode->enabled)) {
-			$params[] = 'p.barcode';
-		}
-		$sql .= natural_search($params, $sall);
+		$sql .= natural_search(array_keys($fieldstosearchall), $sall);
 	}
     // if the type is not 1, we show all products (type = 0,2,3)
     if (dol_strlen($type))
@@ -167,16 +173,6 @@ else
     }
 	if ($sref)     $sql .= natural_search('p.ref', $sref);
     if ($sbarcode) $sql .= natural_search('p.barcode', $sbarcode);
-    if ($snom)
-	{
-		$params = array('p.label');
-		// multilang
-		if (! empty($conf->global->MAIN_MULTILANGS))
-		{
-			$params[] = 'pl.label';
-		}
-		$sql .= natural_search($params, $snom);
-	}
     if (isset($tosell) && dol_strlen($tosell) > 0  && $tosell!=-1) $sql.= " AND p.tosell = ".$db->escape($tosell);
     if (isset($tobuy) && dol_strlen($tobuy) > 0  && $tobuy!=-1)   $sql.= " AND p.tobuy = ".$db->escape($tobuy);
     if (dol_strlen($canvas) > 0)                    $sql.= " AND p.canvas = '".$db->escape($canvas)."'";
@@ -187,8 +183,7 @@ else
     if ($fourn_id > 0) $sql.= " AND pfp.fk_soc = ".$fourn_id;
     $sql.= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type,";
     $sql.= " p.fk_product_type, p.tms,";
-    $sql.= " p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte";
-    $sql .= ', p.desiredstock';
+    $sql.= " p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock";
     //if (GETPOST("toolowstock")) $sql.= " HAVING SUM(s.reel) < p.seuil_stock_alerte";    // Not used yet
 
     $nbtotalofrecords = 0;
@@ -239,8 +234,9 @@ else
     	$param.=($fourn_id?"&amp;fourn_id=".$fourn_id:"");
     	$param.=($search_categ?"&amp;search_categ=".$search_categ:"");
     	$param.=isset($type)?"&amp;type=".$type:"";
+		if ($optioncss != '') $param.='&optioncss='.$optioncss;
 
-    	print_barre_liste($texte, $page, "list.php", $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords,'title_products.png');
+    	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords,'title_products.png');
 
     	if (! empty($catid))
     	{
@@ -272,14 +268,19 @@ else
     	else
     	{
     		print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
+            if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
     		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     		print '<input type="hidden" name="action" value="list">';
     		print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
     		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
     		print '<input type="hidden" name="type" value="'.$type.'">';
 
-    		print '<table class="liste" width="100%">';
-
+    	    if ($sall)
+            {
+                foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
+                print $langs->trans("FilterOnInto", $sall, join(', ',$fieldstosearchall));
+            }
+            
     		// Filter on categories
     	 	$moreforfilter='';
     	 	$colspan=6;
@@ -291,19 +292,23 @@ else
 
     		if (! empty($conf->categorie->enabled))
     		{
-    		 	$moreforfilter.=$langs->trans('Categories'). ': ';
+                $moreforfilter.='<div class="divsearchfield">';
+    		    $moreforfilter.=$langs->trans('Categories'). ': ';
     			$moreforfilter.=$htmlother->select_categories(Categorie::TYPE_PRODUCT,$search_categ,'search_categ',1);
-    		 	$moreforfilter.=' &nbsp; &nbsp; &nbsp; ';
+    		 	$moreforfilter.='</div>';
     		}
     	 	if ($moreforfilter)
     		{
-    			print '<tr class="liste_titre">';
-    			print '<td class="liste_titre" colspan="'.$colspan.'">';
+        		print '<div class="liste_titre liste_titre_bydiv centpercent">';
     		    print $moreforfilter;
-    		    print '</td></tr>';
+            	$parameters=array();
+            	$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+        	    print $hookmanager->resPrint;
+    		    print '</div>';
     		}
 
     		// Lignes des titres
+    		print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
     		print '<tr class="liste_titre">';
     		print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"], "p.ref",$param,"","",$sortfield,$sortorder);
     		print_liste_field_titre($langs->trans("Label"), $_SERVER["PHP_SELF"], "p.label",$param,"","",$sortfield,$sortorder);
@@ -315,13 +320,13 @@ else
     			$titlefield=$langs->trans("SellingPrice");
     		   	if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
    				{
-					$titlefields=$form->textwithpicto($langs->trans("SellingPrice"), $langs->trans("DefaultPriceRealPriceMayDependOnCustomer"));
+					$titlefield=$form->textwithpicto($langs->trans("SellingPrice"), $langs->trans("DefaultPriceRealPriceMayDependOnCustomer"));
     			}
-    			print_liste_field_titre($titlefields, $_SERVER["PHP_SELF"], "p.price",$param,"",'align="right"',$sortfield,$sortorder);
+    			print_liste_field_titre($titlefield, $_SERVER["PHP_SELF"], "p.price",$param,"",'align="right"',$sortfield,$sortorder);
     		}
-    		if ($user->rights->fournisseur->lire) print '<td class="liste_titre" align="right">'.$langs->trans("BuyingPriceMinShort").'</td>';
-    		if (! empty($conf->stock->enabled) && $user->rights->stock->lire && $type != 1) print '<td class="liste_titre" align="right">'.$langs->trans("DesiredStock").'</td>';
-    		if (! empty($conf->stock->enabled) && $user->rights->stock->lire && $type != 1) print '<td class="liste_titre" align="right">'.$langs->trans("PhysicalStock").'</td>';
+    		if ($user->rights->fournisseur->lire) print_liste_field_titre($langs->trans("BuyingPriceMinShort"), '', '', '', '', 'align="right"');
+    		if (! empty($conf->stock->enabled) && $user->rights->stock->lire && $type != 1) print_liste_field_titre($langs->trans("DesiredStock"), '', '', '', '', 'align="right"');
+    		if (! empty($conf->stock->enabled) && $user->rights->stock->lire && $type != 1) print_liste_field_titre($langs->trans("PhysicalStock"), '', '', '', '', 'align="right"');
     		print_liste_field_titre($langs->trans("Sell"), $_SERVER["PHP_SELF"], "p.tosell",$param,"",'align="center"',$sortfield,$sortorder);
             print_liste_field_titre($langs->trans("Buy"), $_SERVER["PHP_SELF"], "p.tobuy",$param,"",'align="center"',$sortfield,$sortorder);
             print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
@@ -553,7 +558,7 @@ else
     		$param.=($fourn_id?"&fourn_id=".$fourn_id:"");
     		$param.=($search_categ?"&search_categ=".$search_categ:"");
     		$param.=isset($type)?"&type=".$type:"";
-    		print_barre_liste('', $page, "list.php", $param, $sortfield, $sortorder,'',$num,$nbtotalofrecords);
+    		print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '', '', '', 'paginationatbottom');
 
     		$db->free($resql);
 

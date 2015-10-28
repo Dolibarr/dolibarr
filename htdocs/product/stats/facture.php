@@ -22,7 +22,7 @@
 /**
  *	\file       htdocs/product/stats/facture.php
  *	\ingroup    product service facture
- *	\brief      Page des stats des factures clients pour un produit
+ *	\brief      Page of invoice statistics for a product
  */
 
 require '../../main.inc.php';
@@ -128,10 +128,11 @@ if ($id > 0 || ! empty($ref))
 		print '</div>';
 
 
-        if ($user->rights->facture->lire) {
-            $sql = "SELECT distinct s.nom as name, s.rowid as socid, s.code_client,";
-            $sql.= " f.facnumber, d.total_ht as total_ht,";
-            $sql.= " f.datef, f.paye, f.fk_statut as statut, f.rowid as facid, d.qty";
+        if ($user->rights->facture->lire) 
+        {
+            $sql = "SELECT DISTINCT s.nom as name, s.rowid as socid, s.code_client,";
+            $sql.= " f.facnumber, f.datef, f.paye, f.fk_statut as statut, f.rowid as facid,";
+            $sql.= " d.rowid, d.total_ht as total_ht, d.qty";           // We must keep the d.rowid here to not loose record because of the distinct used to ignore duplicate line when link on societe_commerciaux is used
             if (!$user->rights->societe->client->voir && !$socid) $sql.= ", sc.fk_soc, sc.fk_user ";
             $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
             $sql.= ", ".MAIN_DB_PREFIX."facture as f";
@@ -147,24 +148,27 @@ if ($id > 0 || ! empty($ref))
             	$sql.= ' AND YEAR(f.datef) IN (' . $search_year . ')';
             if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
             if ($socid) $sql.= " AND f.fk_soc = ".$socid;
-            $sql.= " ORDER BY $sortfield $sortorder ";
+            $sql.= $db->order($sortfield, $sortorder);
 
             //Calcul total qty and amount for global if full scan list
             $total_ht=0;
             $total_qty=0;
 			$totalrecords=0;
-            if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+            if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) 
+            {
             	$result = $db->query($sql);
-            	if ($result) {
+            	if ($result) 
+            	{
             		$totalrecords = $db->num_rows($result);
-            		while ($objp = $db->fetch_object($result)) {
+            		while ($objp = $db->fetch_object($result)) 
+            		{
             			$total_ht+=$objp->total_ht;
             			$total_qty+=$objp->qty;
             		}
             	}
             }
 
-            $sql.= $db->plimit($conf->liste_limit +1, $offset);
+            $sql.= $db->plimit($conf->liste_limit + 1, $offset);
 
             $result = $db->query($sql);
             if ($result)
@@ -189,7 +193,8 @@ if ($id > 0 || ! empty($ref))
                 }
 
                 print_barre_liste($langs->trans("CustomersInvoices"),$page,$_SERVER["PHP_SELF"],"&amp;id=".$product->id,$sortfield,$sortorder,'',$num,$totalrecords,'');
-                print '<div class="liste_titre">';
+                print '<div class="liste_titre liste_titre_bydiv centpercent">';
+                print '<div class="divsearchfield">';
                 print $langs->trans('Period').' ('.$langs->trans("DateInvoice") .') - ';
 				print $langs->trans('Month') . ':<input class="flat" type="text" size="4" name="search_month" value="' . $search_month . '"> ';
 				print $langs->trans('Year') . ':' . $formother->selectyear($search_year ? $search_year : - 1, 'search_year', 1, 20, 5);
@@ -198,9 +203,10 @@ if ($id > 0 || ! empty($ref))
 				print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
                 print '</div>';
 				print '</div>';
+				print '</div>';
 
                 $i = 0;
-                print '<table class="noborder" width="100%">';
+                print '<table class="tagtable liste listwithfilterbefore" width="100%">';
                 print '<tr class="liste_titre">';
                 print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"s.rowid","",$option,'',$sortfield,$sortorder);
                 print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$option,'',$sortfield,$sortorder);
@@ -214,7 +220,7 @@ if ($id > 0 || ! empty($ref))
                 if ($num > 0)
 				{
                     $var=True;
-                    while ($i < $num && $i < $conf->liste_limit)
+                    while ($i < min($num,$conf->liste_limit))
 					{
                         $objp = $db->fetch_object($result);
                         $var=!$var;

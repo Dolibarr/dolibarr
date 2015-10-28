@@ -22,7 +22,7 @@ create table llx_c_paiement
 (
   id				integer     PRIMARY KEY,
   code       		varchar(6)  NOT NULL,
-  libelle    		varchar(30),
+  libelle    		varchar(62),
   type       		smallint,	-- 0: input money, 1: output money, 2: input and output, 3: other
   active     		tinyint DEFAULT 1  NOT NULL,
   accountancy_code	varchar(32) NULL,

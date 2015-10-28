@@ -84,22 +84,23 @@ if ($object->id > 0)
 
 	dol_fiche_head($head, 'agenda', $langs->trans("Member"),0,'user');
 
-	print '<table class="border" width="100%">';
-
 	$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php">'.$langs->trans("BackToList").'</a>';
-
-	// Reference
-	print '<tr><td width="20%">'.$langs->trans('Ref').'</td>';
-	print '<td colspan="3">';
-	print $form->showrefnav($object, 'id', $linkback);
-	print '</td>';
-	print '</tr>';
+	
+	dol_banner_tab($object, 'rowid', $linkback);
+    
+    print '<div class="fichecenter">';
+    
+    print '<div class="underbanner clearboth"></div>';
+	print '<table class="border centpercent">';
 
 	// Login
 	if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
 	{
-	    print '<tr><td>'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.$object->login.'&nbsp;</td></tr>';
+	    print '<tr><td class="titlefield">'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.$object->login.'&nbsp;</td></tr>';
 	}
+
+	// Type
+	print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td class="valeur">'.$adht->getNomUrl(1)."</td></tr>\n";
 
 	// Morphy
 	print '<tr><td>'.$langs->trans("Nature").'</td><td class="valeur" >'.$object->getmorphylib().'</td>';
@@ -108,9 +109,6 @@ if ($object->id > 0)
 	print '</td>';*/
 	print '</tr>';
 
-	// Type
-	print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">'.$adht->getNomUrl(1)."</td></tr>\n";
-
 	// Company
 	print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$object->societe.'</td></tr>';
 
@@ -118,20 +116,12 @@ if ($object->id > 0)
 	print '<tr><td>'.$langs->trans("UserTitle").'</td><td class="valeur">'.$object->getCivilityLabel().'&nbsp;</td>';
 	print '</tr>';
 
-	// Lastname
-	print '<tr><td>'.$langs->trans("Lastname").'</td><td class="valeur" colspan="3">'.$object->lastname.'&nbsp;</td>';
-	print '</tr>';
-
-	// Firstname
-	print '<tr><td>'.$langs->trans("Firstname").'</td><td class="valeur" colspan="3">'.$object->firstname.'&nbsp;</td></tr>';
-
-	// Status
-	print '<tr><td>'.$langs->trans("Status").'</td><td class="valeur">'.$object->getLibStatut(4).'</td></tr>';
-
 	print '</table>';
 
 	print '</div>';
 
+	dol_fiche_end();
+	
 
     /*
      * Barre d'action

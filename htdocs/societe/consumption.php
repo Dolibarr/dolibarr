@@ -78,6 +78,7 @@ $langs->load("orders");
 $langs->load("suppliers");
 $langs->load("propal");
 $langs->load("interventions");
+$langs->load("contracts");
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('consumptionthirdparty'));
@@ -115,14 +116,15 @@ if (empty($socid))
 $head = societe_prepare_head($object);
 dol_fiche_head($head, 'consumption', $langs->trans("ThirdParty"),0,'company');
 
+dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
+    
+print '<div class="fichecenter">';
+
+print '<div class="underbanner clearboth"></div>';
 print '<table class="border" width="100%">';
-print '<tr><td width="25%">'.$langs->trans('ThirdPartyName').'</td>';
-print '<td colspan="3">';
-print $form->showrefnav($object,'socid','',($user->societe_id?0:1),'rowid','nom');
-print '</td></tr>';
 
 // Alias names (commercial, trademark or alias names)
-print '<tr id="name_alias"><td><label for="name_alias_input">'.$langs->trans('AliasNames').'</label></td>';
+print '<tr id="name_alias"><td class="titlefield"><label for="name_alias_input">'.$langs->trans('AliasNames').'</label></td>';
 print '<td colspan="3">'.$object->name_alias.'</td></tr>';
 
 if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
@@ -149,7 +151,8 @@ if ($object->client)
 	if ($conf->propal->enabled && $user->rights->propal->lire) $elementTypeArray['propal']=$langs->transnoentitiesnoconv('Proposals');
 	if ($conf->commande->enabled && $user->rights->commande->lire) $elementTypeArray['order']=$langs->transnoentitiesnoconv('Orders');
 	if ($conf->facture->enabled && $user->rights->facture->lire) $elementTypeArray['invoice']=$langs->transnoentitiesnoconv('Invoices');
-	if ($conf->ficheinter>enabled && $user->rights->ficheinter->lire) $elementTypeArray['fichinter']=$langs->transnoentitiesnoconv('Interventions');
+	if ($conf->ficheinter->enabled && $user->rights->ficheinter->lire) $elementTypeArray['fichinter']=$langs->transnoentitiesnoconv('Interventions');
+	if ($conf->contrat->enabled && $user->rights->contrat->lire) $elementTypeArray['contract']=$langs->transnoentitiesnoconv('Contracts');
 }
 
 if ($object->fournisseur)
@@ -170,6 +173,8 @@ if ($object->fournisseur)
 	if ($conf->fournisseur->enabled && $user->rights->fournisseur->commande->lire) $elementTypeArray['supplier_order']=$langs->transnoentitiesnoconv('SuppliersOrders');
 }
 print '</table>';
+
+print '</div>';
 
 dol_fiche_end();
 print '<br>';
@@ -219,7 +224,7 @@ if ($type_element == 'propal')
 {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 	$documentstatic=new Propal($db);
-	$sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, \'1\' as doc_type, c.datep as datePrint, c.fk_statut as status, ';
+	$sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, \'1\' as doc_type, c.datep as dateprint, c.fk_statut as status, ';
 	$tables_from = MAIN_DB_PREFIX."propal as c,".MAIN_DB_PREFIX."propaldet as d";
 	$where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".$socid;
 	$where.= " AND d.fk_propal = c.rowid";
@@ -265,10 +270,24 @@ if ($type_element == 'supplier_order')
 	$doc_number='c.ref';
 	$thirdTypeSelect='supplier';
 }
+if ($type_element == 'contract')
+{ 	// Supplier : Show products from orders.
+	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
+	$documentstatic=new Contrat($db);
+	$documentstaticline=new ContratLigne($db);	
+	$sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, \'1\' as doc_type, c.date_contrat as dateprint, d.statut as status, ';
+	$tables_from = MAIN_DB_PREFIX."contrat as c,".MAIN_DB_PREFIX."contratdet as d";
+	$where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".$socid;
+	$where.= " AND d.fk_contrat = c.rowid";
+	$dateprint = 'c.date_valid';
+	$doc_number='c.ref';
+	$thirdTypeSelect='customer';
+}
 
 $sql = $sql_select;
 $sql.= ' d.description as description,';
-if ($type_element != 'fichinter') $sql.= ' d.label, d.fk_product as product_id, d.fk_product as fk_product, d.info_bits, d.date_start, d.date_end, d.qty, d.qty as prod_qty,';
+if ($type_element != 'fichinter' && $type_element != 'contract') $sql.= ' d.label, d.fk_product as product_id, d.fk_product as fk_product, d.info_bits, d.date_start, d.date_end, d.qty, d.qty as prod_qty,';
+if ($type_element == 'contract') $sql.= ' d.label, d.fk_product as product_id, d.fk_product as fk_product, d.info_bits, d.date_ouverture as date_start, d.date_cloture as date_end, d.qty, d.qty as prod_qty,';
 if ($type_element != 'fichinter') $sql.= ' p.ref as ref, p.rowid as prod_id, p.rowid as fk_product, p.fk_product_type as prod_type, p.fk_product_type as fk_product_type,';
 $sql.= " s.rowid as socid ";
 if ($type_element != 'fichinter') $sql.= ", p.ref as prod_ref, p.label as product_label";
@@ -351,6 +370,8 @@ if ($sql_select)
 		$documentstatic->statut=$objp->status;
 		$documentstatic->status=$objp->status;
 		$documentstatic->paye=$objp->paid;
+		
+		if (is_object($documentstaticline)) $documentstaticline->statut=$objp->status;
 
 		$var=!$var;
 		print "<tr ".$bc[$var].">";
@@ -361,7 +382,14 @@ if ($sql_select)
 
 		// Status
 		print '<td align="center">';
-		print $documentstatic->getLibStatut(2);
+		if ($type_element == 'contract')
+		{
+			print $documentstaticline->getLibStatut(2);
+		}
+		else
+		{
+			print $documentstatic->getLibStatut(2);
+		}
 		print '</td>';
 
 		print '<td>';

@@ -414,7 +414,7 @@ else 									// If javascript off
     $link.='</a>';
 }
 
-print_fiche_titre($s, $link.' &nbsp; &nbsp; '.$nav, '');
+print load_fiche_titre($s, $link.' &nbsp; &nbsp; '.$nav, '');
 
 
 // Load events from database into $eventarray
@@ -949,7 +949,7 @@ if (empty($action) || $action == 'show_month')      // View by month
     $newparam=preg_replace('/viewcal=[0-9]+&?/i','',$newparam);
     $newparam=preg_replace('/showbirthday_=/i','showbirthday=',$newparam);	// Restore correct parameter
     $newparam.='&viewcal=1';
-    echo '<table width="100%" class="nocellnopadd cal_month">';
+    echo '<table width="100%" class="noborder nocellnopadd cal_month">';
     echo ' <tr class="liste_titre">';
     $i=0;
     while ($i < 7)
@@ -1026,7 +1026,7 @@ elseif ($action == 'show_week') // View by week
     $newparam=preg_replace('/viewweek=[0-9]+&?/i','',$newparam);
     $newparam=preg_replace('/showbirthday_=/i','showbirthday=',$newparam);	// Restore correct parameter
     $newparam.='&viewweek=1';
-    echo '<table width="100%" class="nocellnopadd cal_month">';
+    echo '<table width="100%" class="noborder nocellnopadd cal_month">';
     echo ' <tr class="liste_titre">';
     $i=0;
     while ($i < 7)
@@ -1083,7 +1083,7 @@ else    // View by day
 
     $timestamp=dol_mktime(12,0,0,$month,$day,$year);
     $arraytimestamp=dol_getdate($timestamp);
-    echo '<table width="100%" class="nocellnopadd cal_month">';
+    echo '<table width="100%" class="noborder nocellnopadd cal_month">';
     echo ' <tr class="liste_titre">';
     echo '  <td align="center">'.$langs->trans("Day".$arraytimestamp['wday'])."</td>\n";
     echo " </tr>\n";
@@ -1210,7 +1210,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                     	// We decide to choose color of owner of event (event->userownerid is user id of owner, event->userassigned contains all users assigned to event)
                     	if (! empty($cacheusers[$event->userownerid]->color)) $color=$cacheusers[$event->userownerid]->color;
                     }
-                    else if ($event->type_code == 'ICALEVENT')
+                    else if ($event->type_code == 'ICALEVENT')      // Event come from external ical file
                     {
                     	$numical++;
                     	if (! empty($event->icalname)) {
@@ -1220,7 +1220,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                     		$numicals[dol_string_nospecial($event->icalname)]++;
                     	}
                     	$color=$event->icalcolor;
-                    	$cssclass=(! empty($event->icalname)?'family_ext'.md5($event->icalname):'family_other unmovable');
+                    	$cssclass=(! empty($event->icalname)?'family_ext'.md5($event->icalname):'family_other');
                     }
                     else if ($event->type_code == 'BIRTHDAY')
                     {
@@ -1263,6 +1263,10 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 
                     // Defined style to disable drag and drop feature
                     if ($event->type_code =='AC_OTH_AUTO')
+                    {
+                        $cssclass.= " unmovable";
+                    }
+                    else if ($event->type_code == 'ICALEVENT')
                     {
                         $cssclass.= " unmovable";
                     }

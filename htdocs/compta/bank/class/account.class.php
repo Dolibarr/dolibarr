@@ -44,9 +44,7 @@ class Account extends CommonObject
      * @see id
      */
     var $rowid;
-    var $id;
 
-    var $ref;
     var $label;
     //! 1=Compte courant/check/carte, 2=Compte liquide, 0=Compte épargne
     var $courant;
@@ -74,10 +72,6 @@ class Account extends CommonObject
     var $state_id;
     var $state_code;
     var $state;
-
-    var $country_id;
-    var $country_code;
-    var $country;
 
     var $type_lib=array();
 
@@ -122,8 +116,10 @@ class Account extends CommonObject
      */
     function canBeConciliated()
     {
+        global $conf;
+
         if (empty($this->rappro)) return -1;
-        if ($this->courant == 2) return -2;
+        if ($this->courant == 2 && empty($conf->global->BANK_CAN_RECONCILIATE_CASHACCOUNT)) return -2;
         if ($this->clos) return -3;
         return 1;
     }
@@ -1086,8 +1082,8 @@ class Account extends CommonObject
     {
         $country_code=$this->getCountryCode();
 
-        if (in_array($country_code,array('CH','DE','FR','ES','GA','IT'))) return 1; // France, Spain, Gabon
-        if (in_array($country_code,array('AU','BE','CA','DK','GR','GB','ID','IE','IR','KR','NL','NZ','UK','US'))) return 2;      // Australia, Great Britain...
+        if (in_array($country_code,array('CH','FR','ES','GA','IT'))) return 1; // France, Spain, Gabon, ...
+        if (in_array($country_code,array('AU','BE','CA','DE','DK','GR','GB','ID','IE','IR','KR','NL','NZ','UK','US'))) return 2;      // Australia, England...
         return 0;
     }
 
@@ -1146,6 +1142,10 @@ class AccountLine extends CommonObject
     var $ref;
     var $datec;
     var $dateo;
+
+    /**
+     * Value date
+     */
     var $datev;
     var $amount;
     var $label;
@@ -1244,7 +1244,6 @@ class AccountLine extends CommonObject
         }
         else
         {
-            dol_print_error($this->db);
             return -1;
         }
     }

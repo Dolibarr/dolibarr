@@ -71,7 +71,7 @@ if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $title=$langs->trans("HomeAr
 
 llxHeader('',$title);
 
-print_fiche_titre($langs->trans("HomeArea"),'','title_home');
+print load_fiche_titre($langs->trans("HomeArea"),'','title_home');
 
 if (! empty($conf->global->MAIN_MOTD))
 {
@@ -103,7 +103,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
  * Informations area
  */
 
-print '<table class="noborder" width="100%">';
+print '<table summary="Login info" class="noborder" width="100%">';
 print '<tr class="liste_titre"><th class="liste_titre" colspan="2">'.$langs->trans("Informations").'</th></tr>';
 print '<tr '.$bc[false].'>';
 print '<td class="nowrap">'.$langs->trans("User").'</td><td>'.$user->getNomUrl(0).'</td></tr>';
@@ -129,7 +129,7 @@ $langs->load("contracts");
 if (empty($user->societe_id))
 {
     print '<br>';
-    print '<table class="noborder" width="100%">';
+    print '<table  summary="'.$langs->trans("DolibarrStateBoard").'" class="noborder" width="100%">';
     print '<tr class="liste_titre">';
     print '<th class="liste_titre" colspan="2">'.$langs->trans("DolibarrStateBoard").'</th>';
     print '<th class="liste_titre" align="right">&nbsp;</th>';
@@ -158,7 +158,8 @@ if (empty($user->societe_id))
 	    ! empty($conf->facture->enabled) && $user->rights->facture->lire,
 	    ! empty($conf->contrat->enabled) && $user->rights->contrat->activer,
 		! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande->lire,
-		! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->lire);
+		! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->lire,
+		! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire);
 	    // Class file containing the method load_state_board for each line
 	    $includes=array(DOL_DOCUMENT_ROOT."/societe/class/client.class.php",
 	    DOL_DOCUMENT_ROOT."/societe/class/client.class.php",
@@ -171,7 +172,8 @@ if (empty($user->societe_id))
 	    DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php",
 	    DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php",
 	    DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.commande.class.php",
-	    DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.facture.class.php");
+	    DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.facture.class.php",
+		DOL_DOCUMENT_ROOT."/expensereport/class/expensereport.class.php");
 	    // Name class containing the method load_state_board for each line
 	    $classes=array('Client',
 	                   'Client',
@@ -184,7 +186,8 @@ if (empty($user->societe_id))
 	                   'Facture',
 	                   'Contrat',
 	                   'CommandeFournisseur',
-	                   'FactureFournisseur');
+	                   'FactureFournisseur',
+					   'ExpenseReport');
 	    // Cle array returned by the method load_state_board for each line
 	    $keys=array('customers',
 	                'prospects',
@@ -197,7 +200,8 @@ if (empty($user->societe_id))
 	                'invoices',
 	                'Contracts',
 	                'supplier_orders',
-	                'supplier_invoices');
+	                'supplier_invoices',
+					'expensereports');
 	    // Dashboard Icon lines
 	    $icons=array('company',
 	                 'company',
@@ -210,7 +214,8 @@ if (empty($user->societe_id))
 	                 'bill',
 	                 'order',
 	                 'order',
-	                 'bill');
+	                 'bill',
+					 'trip');
 	    // Translation keyword
 	    $titres=array("ThirdPartyCustomersStats",
 	                  "ThirdPartyProspectsStats",
@@ -223,11 +228,13 @@ if (empty($user->societe_id))
 	                  "BillsCustomers",
 	                  "Contracts",
 	                  "SuppliersOrders",
-	                  "SuppliersInvoices");
+	                  "SuppliersInvoices",
+					  "ExpenseReports");
 	    // Dashboard Link lines
-	    $links=array(DOL_URL_ROOT.'/comm/list.php',
-	    DOL_URL_ROOT.'/comm/prospect/list.php',
-	    DOL_URL_ROOT.'/fourn/list.php',
+	    $links=array(
+	    DOL_URL_ROOT.'/societe/list.php?type=c',
+	    DOL_URL_ROOT.'/societe/list.php?type=p',
+	    DOL_URL_ROOT.'/societe/list.php?type=f',
 	    DOL_URL_ROOT.'/adherents/list.php?statut=1&mainmenu=members',
 	    DOL_URL_ROOT.'/product/list.php?type=0&mainmenu=products',
 	    DOL_URL_ROOT.'/product/list.php?type=1&mainmenu=products',
@@ -236,7 +243,8 @@ if (empty($user->societe_id))
 	    DOL_URL_ROOT.'/compta/facture/list.php?mainmenu=accountancy',
 	    DOL_URL_ROOT.'/contrat/list.php',
 	    DOL_URL_ROOT.'/fourn/commande/list.php',
-	    DOL_URL_ROOT.'/fourn/facture/list.php');
+	    DOL_URL_ROOT.'/fourn/facture/list.php',
+		DOL_URL_ROOT.'/expensereport/list.php?mainmenu=hrm');
 	    // Translation lang files
 	    $langfile=array("companies",
 	                    "prospects",
@@ -247,7 +255,8 @@ if (empty($user->societe_id))
 	                    "propal",
 	                    "orders",
 	                    "bills",
-						"contracts");
+						"contracts",
+						"trips");
 
 
 	    // Loop and displays each line of table
@@ -400,6 +409,15 @@ if (! empty($conf->adherent->enabled) && $user->rights->adherent->lire && ! $use
     include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
     $board=new Adherent($db);
     $dashboardlines[] = $board->load_board($user);
+}
+
+// Number of expense reports to pay
+if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire)
+{
+    include_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
+    $board=new ExpenseReport($db);
+
+	$dashboardlines[] = $board->load_board($user);
 }
 
 // Calculate total nb of late

@@ -49,36 +49,36 @@ if (in_array($object->element,array('propal', 'askpricesupplier','facture','invo
 <!-- BEGIN PHP TEMPLATE objectline_create.tpl.php -->
 
 <tr class="liste_titre nodrag nodrop">
-	<td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="2"' : ''); ?>>
+	<td class="linecoldescription" <?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="2"' : ''); ?>>
 	<div id="add"></div><span class="hideonsmartphone"><?php echo $langs->trans('AddNewLine'); ?></span><?php // echo $langs->trans("FreeZone"); ?>
 	</td>
 	<?php if ($object->element == 'askpricesupplier') { ?>
-		<td align="right"><span id="title_fourn_ref"><?php echo $langs->trans('AskPriceSupplierRefFourn'); ?></span></td>
+		<tdclass="linecolrefsupplier" align="right"><span id="title_fourn_ref"><?php echo $langs->trans('AskPriceSupplierRefFourn'); ?></span></td>
 	<?php } ?>
-	<td align="right"><span id="title_vat"><?php echo $langs->trans('VAT'); ?></span></td>
-	<td align="right"><span id="title_up_ht"><?php echo $langs->trans('PriceUHT'); ?></span></td>
+	<td class="linecolvat" align="right"><span id="title_vat"><?php echo $langs->trans('VAT'); ?></span></td>
+	<td class="linecoluht" align="right"><span id="title_up_ht"><?php echo $langs->trans('PriceUHT'); ?></span></td>
 	<?php if (! empty($inputalsopricewithtax)) { ?>
-	<td align="right"><span id="title_up_ttc"><?php echo $langs->trans('PriceUTTC'); ?></span></td>
+	<td class="linecoluttc" align="right"><span id="title_up_ttc"><?php echo $langs->trans('PriceUTTC'); ?></span></td>
 	<?php } ?>
-	<td align="right"><?php echo $langs->trans('Qty'); ?></td>
+	<td class="linecolqty" align="right"><?php echo $langs->trans('Qty'); ?></td>
 	<?php
 	if($conf->global->PRODUCT_USE_UNITS)
 	{
-		print '<td align="left">';
+		print '<td class="linecoluseunit" align="left">';
 		print '<span id="title_units">';
 		print $langs->trans('Unit');
 		print '</span></td>';
 	}
 	?>
-	<td align="right"><?php echo $langs->trans('ReductionShort'); ?></td>
+	<td class="linecoldiscount" align="right"><?php echo $langs->trans('ReductionShort'); ?></td>
 	<?php
 	if ($this->situation_cycle_ref) {
-		print '<td align="right">' . $langs->trans('Progress') . '</td>';
+		print '<td class="linecolcycleref" align="right">' . $langs->trans('Progress') . '</td>';
 	}
 	if (! empty($usemargins))
 	{
 		?>
-		<td align="right" class="margininfos">
+		<td align="right" class="margininfos linecolmargin1">
 		<?php
 		if ($conf->global->MARGIN_TYPE == "1")
 			echo $langs->trans('BuyingPrice');
@@ -87,11 +87,11 @@ if (in_array($object->element,array('propal', 'askpricesupplier','facture','invo
 		?>
 		</td>
 		<?php
-		if ($user->rights->margins->creer && ! empty($conf->global->DISPLAY_MARGIN_RATES)) echo '<td align="right" class="margininfos"><span class="np_marginRate">'.$langs->trans('MarginRate').'</span></td>';
-		if ($user->rights->margins->creer && ! empty($conf->global->DISPLAY_MARK_RATES)) 	echo '<td align="right" class="margininfos"><span class="np_markRate">'.$langs->trans('MarkRate').'</span></td>';
+		if ($user->rights->margins->creer && ! empty($conf->global->DISPLAY_MARGIN_RATES)) echo '<td align="right" class="margininfos linecolmargin2"><span class="np_marginRate">'.$langs->trans('MarginRate').'</span></td>';
+		if ($user->rights->margins->creer && ! empty($conf->global->DISPLAY_MARK_RATES)) 	echo '<td align="right" class="margininfos linecolmargin2"><span class="np_markRate">'.$langs->trans('MarkRate').'</span></td>';
 	}
 	?>
-	<td colspan="<?php echo $colspan; ?>">&nbsp;</td>
+	<td class="linecoledit" colspan="<?php echo $colspan; ?>">&nbsp;</td>
 </tr>
 
 <tr <?php echo $bcnd[$var]; ?>>
@@ -102,7 +102,7 @@ else {
 	$coldisplay=0; }
 ?>
 
-	<td class="nobottom"<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="2"' : ''); ?>>
+	<td class="nobottom linecoldescription"<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="2"' : ''); ?>>
 
 	<?php
 
@@ -114,12 +114,12 @@ else {
 	}
 
 	// Free line
-	echo '<span>';
+	echo '<span class="prod_entry_mode_free">';
 	// Show radio free line
 	if ($forceall >= 0 && (! empty($conf->product->enabled) || ! empty($conf->service->enabled)))
 	{
 		echo '<label for="prod_entry_mode_free">';
-		echo '<input type="radio" name="prod_entry_mode" id="prod_entry_mode_free" value="free"';
+		echo '<input type="radio" class="prod_entry_mode_free" name="prod_entry_mode" id="prod_entry_mode_free" value="free"';
 		//echo (GETPOST('prod_entry_mode')=='free' ? ' checked' : ((empty($forceall) && (empty($conf->product->enabled) || empty($conf->service->enabled)))?' checked':'') );
 		echo (GETPOST('prod_entry_mode')=='free' ? ' checked' : '');
 		echo '> ';
@@ -147,9 +147,9 @@ else {
 	if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
 	{
 		if ($forceall >= 0) echo '<br>';
-		echo '<span>';
+		echo '<span class="prod_entry_mode_predef">';
 		echo '<label for="prod_entry_mode_predef">';
-		echo '<input type="radio" name="prod_entry_mode" id="prod_entry_mode_predef" value="predef"'.(GETPOST('prod_entry_mode')=='predef'?' checked':'').'> ';
+		echo '<input type="radio" class="prod_entry_mode_predef" name="prod_entry_mode" id="prod_entry_mode_predef" value="predef"'.(GETPOST('prod_entry_mode')=='predef'?' checked':'').'> ';
 		if (empty($senderissupplier))
 		{
 			if (! empty($conf->product->enabled) && empty($conf->service->enabled)) echo $langs->trans('PredefinedProductsToSell');
@@ -211,33 +211,33 @@ else {
 	</td>
 
 	<?php if ($object->element == 'askpricesupplier') { ?>
-		<td class="nobottom" align="right"><input id="fourn_ref" name="fourn_ref" class="flat" value="" size="12"></td>
+		<td class="nobottom linecolresupplier" align="right"><input id="fourn_ref" name="fourn_ref" class="flat" value="" size="12"></td>
 	<?php } ?>
 
-	<td class="nobottom" align="right"><?php
+	<td class="nobottom linecolvat" align="right"><?php
 	if ($seller->tva_assuj == "0") echo '<input type="hidden" name="tva_tx" id="tva_tx" value="0">'.vatrate(0, true);
 	else echo $form->load_tva('tva_tx', (isset($_POST["tva_tx"])?$_POST["tva_tx"]:-1), $seller, $buyer);
 	?>
 	</td>
-	<td class="nobottom" align="right">
+	<td class="nobottom linecoluht" align="right">
 	<input type="text" size="5" name="price_ht" id="price_ht" class="flat" value="<?php echo (isset($_POST["price_ht"])?$_POST["price_ht"]:''); ?>">
 	</td>
 	<?php if (! empty($inputalsopricewithtax)) { ?>
-	<td class="nobottom" align="right">
+	<td class="nobottom linecoluttc" align="right">
 	<input type="text" size="5" name="price_ttc" id="price_ttc" class="flat" value="<?php echo (isset($_POST["price_ttc"])?$_POST["price_ttc"]:''); ?>">
 	</td>
 	<?php } ?>
-	<td class="nobottom" align="right"><input type="text" size="2" name="qty" id="qty" class="flat" value="<?php echo (isset($_POST["qty"])?$_POST["qty"]:1); ?>">
+	<td class="nobottom linecolqty" align="right"><input type="text" size="2" name="qty" id="qty" class="flat" value="<?php echo (isset($_POST["qty"])?$_POST["qty"]:1); ?>">
 	</td>
 	<?php
 	if($conf->global->PRODUCT_USE_UNITS)
 	{
-		print '<td class="nobottom" align="left">';
+		print '<td class="nobottom linecoluseunit" align="left">';
 		print $form->selectUnits($line->fk_unit, "units");
 		print '</td>';
 	}
 	?>
-	<td class="nobottom nowrap" align="right"><input type="text" size="1" name="remise_percent" id="remise_percent" class="flat" value="<?php echo (isset($_POST["remise_percent"])?$_POST["remise_percent"]:$buyer->remise_percent); ?>"><span class="hideonsmartphone">%</span></td>
+	<td class="nobottom nowrap linecoldiscount" align="right"><input type="text" size="1" name="remise_percent" id="remise_percent" class="flat" value="<?php echo (isset($_POST["remise_percent"])?$_POST["remise_percent"]:$buyer->remise_percent); ?>"><span class="hideonsmartphone">%</span></td>
 	<?php
 	if ($this->situation_cycle_ref) {
 		$coldisplay++;
@@ -246,10 +246,10 @@ else {
 	if (! empty($usemargins))
 	{
 		?>
-		<td class="nobottom" align="right" class="margininfos">
+		<td align="right" class="nobottom margininfos linecolmargin">
 			<!-- For predef product -->
 			<?php if (! empty($conf->product->enabled) || ! empty($conf->service->enabled)) { ?>
-			<select id="fournprice_predef" name="fournprice_predef" class="flat" style="display: none;"></select>
+			<select id="fournprice_predef" name="fournprice_predef" class="flat" data-role="none" style="display: none;"></select>
 			<?php } ?>
 			<!-- For free product -->
 			<input type="text" size="5" id="buying_price" name="buying_price" class="flat" value="<?php echo (isset($_POST["buying_price"])?$_POST["buying_price"]:''); ?>">
@@ -277,7 +277,7 @@ else {
 		}
 	}
 	?>
-	<td class="nobottom" align="center" valign="middle" colspan="<?php echo $colspan; ?>">
+	<td class="nobottom linecoledit" align="center" valign="middle" colspan="<?php echo $colspan; ?>">
 		<input type="submit" class="button" value="<?php echo $langs->trans('Add'); ?>" name="addline" id="addline">
 	</td>
 	<?php
@@ -521,6 +521,7 @@ jQuery(document).ready(function() {
 	      			if (this.id != 'pmpprice')
 		      		{
 		        		i++;
+                        this.price = parseFloat(this.price);//fix this.price >0
 
 			      		// If margin is calculated on best supplier price, we set it by defaut (but only if value is not 0)
 		      			var defaultbuyprice = '<?php echo ((isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == '1')?'bestsupplierprice':''); ?>';
@@ -552,7 +553,7 @@ jQuery(document).ready(function() {
 
 	      		/* Define default price at loading */
 	      		var defaultprice = $("#fournprice_predef").find('option:selected').attr("price");
-	      		$("#buying_price").val(defaultprice);
+	      		$("#buying_price").val(Math.round(defaultprice,<?php print ($conf->global->MAIN_MAX_DECIMALS_UNIT ? $conf->global->MAIN_MAX_DECIMALS_UNIT : 5); ?>));
 
 	      		$("#fournprice_predef").change(function() {
 	      			/* Hide field buying_price according to choice into list (if 'inputprice' or not) */

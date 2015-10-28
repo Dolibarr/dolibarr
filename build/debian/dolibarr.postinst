@@ -40,10 +40,28 @@ enable_install_upgrade_wizard() {
     rm -f /var/lib/dolibarr/documents/install.lock
 }
 
+
+php_install() {
+	if which php5enmod >/dev/null 2>&1 ;then
+		# php5endmod exists for ubuntu only
+		echo "Enable php module mysqli with php5enmod"
+		php5enmod mysqli
+    fi
+}
+
 apache_install() {
 	webserver=$1
+	
+	# Enable Apache 2 alias module
+	if which a2enmod >/dev/null 2>&1 ;then
+		echo "Enable apache module alias with a2enmod"
+		a2enmod alias
+	fi
+	
+	# Enable dolibarr conf
 	if which a2enconf >/dev/null 2>&1 ;then
 		# a2enconf exists for ubuntu only
+		echo "Enable link for Apache config file with a3enconf"
 		a2enconf dolibarr
 	else 
 		if [ -d /etc/$webserver/conf.d ] && [ ! -e /etc/$webserver/conf.d/dolibarr.conf ]; then
@@ -88,11 +106,7 @@ case "$1" in
 			echo This is not a first install
 		fi
 
-		# Apache 2 setup
-		if which a2enmod >/dev/null 2>&1 ;then
-			a2enmod alias
-		fi
-		
+		php_install
 		apache_install
 		lighttpd_install
 		

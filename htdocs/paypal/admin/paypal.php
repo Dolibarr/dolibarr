@@ -93,10 +93,15 @@ llxHeader('',$langs->trans("PaypalSetup"));
 
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("ModuleSetup").' PayPal',$linkback);
+print load_fiche_titre($langs->trans("ModuleSetup").' PayPal',$linkback);
 print '<br>';
 
 $head=paypaladmin_prepare_head();
+
+print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="setvalue">';
+
 
 dol_fiche_head($head, 'paypalaccount', '');
 
@@ -111,10 +116,6 @@ if (! function_exists('curl_version'))
 
 
 print '<br>';
-print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="setvalue">';
-
 
 print '<table class="noborder" width="100%">';
 
@@ -232,11 +233,11 @@ print '</td></tr>';
 
 print '</table>';
 
-print '<br><div class="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div>';
+dol_fiche_end();
+
+print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div>';
 
 print '</form>';
-
-dol_fiche_end();
 
 print '<br><br>';
 
@@ -365,10 +366,10 @@ if (! empty($conf->use_javascript_ajax))
 {
 	print "\n".'<script type="text/javascript">';
 	print '$(document).ready(function () {
-            $("#apidoc").hide();
+            $("#apidoca").hide();
             $("#apidoca").click(function() {
-                $("#apidoca").hide();
                 $("#apidoc").show();
+            	$("#apidoca").hide();
             });
 
             $("#generate_token").click(function() {

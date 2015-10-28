@@ -29,6 +29,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaskpricesupplier.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formmargin.class.php';
 require_once DOL_DOCUMENT_ROOT . '/comm/askpricesupplier/class/askpricesupplier.class.php';
 require_once DOL_DOCUMENT_ROOT . '/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/modules/askpricesupplier/modules_askpricesupplier.php';
@@ -218,7 +219,7 @@ if (empty($reshook))
 		$date_delivery = dol_mktime(12, 0, 0, GETPOST('liv_month'), GETPOST('liv_day'), GETPOST('liv_year'));
 
 		if ($socid < 1) {
-			setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Customer")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Customer")), null, 'errors');
 			$action = 'create';
 			$error ++;
 		}
@@ -433,7 +434,7 @@ if (empty($reshook))
 	// Close proposal
 	else if ($action == 'setstatut' && $user->rights->askpricesupplier->cloturer && ! GETPOST('cancel')) {
 		if (! GETPOST('statut')) {
-			setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentities("CloseAs")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("CloseAs")), null, 'errors');
 			$action = 'statut';
 		} else {
 			// prevent browser refresh from closing proposal several times
@@ -524,17 +525,17 @@ if (empty($reshook))
 		}
 
 		if (GETPOST('prod_entry_mode') == 'free' && empty($idprod) && GETPOST('type') < 0) {
-			setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
 			$error ++;
 		}
 
 		if (GETPOST('prod_entry_mode') == 'free' && empty($idprod) && $price_ht == '') 	// Unit price can be 0 but not ''. Also price can be negative for proposal.
 		{
-			setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("UnitPriceHT")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("UnitPriceHT")), null, 'errors');
 			$error ++;
 		}
 		if (GETPOST('prod_entry_mode') == 'free' && empty($idprod) && empty($product_desc)) {
-			setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Description")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Description")), null, 'errors');
 			$error ++;
 		}
 
@@ -782,7 +783,7 @@ if (empty($reshook))
 
 			// Check parameters
 			if (GETPOST('type') < 0) {
-				setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), 'errors');
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
 				$error ++;
 			}
 		}
@@ -977,6 +978,7 @@ $form = new Form($db);
 $formother = new FormOther($db);
 $formfile = new FormFile($db);
 $formaskpricesupplier = new FormAskPriceSupplier($db);
+$formmargin = new FormMargin($db);
 $companystatic = new Societe($db);
 
 $now = dol_now();
@@ -984,7 +986,7 @@ $now = dol_now();
 // Add new askprice
 if ($action == 'create')
 {
-	print_fiche_titre($langs->trans("NewAskPrice"));
+	print load_fiche_titre($langs->trans("NewAskPrice"));
 
 	$soc = new Societe($db);
 	if ($socid > 0)
@@ -1263,7 +1265,7 @@ if ($action == 'create')
 		print '<br>';
 
 		$title = $langs->trans('ProductsAndServices');
-		print_titre($title);
+		print load_fiche_titre($title);
 
 		print '<table class="noborder" width="100%">';
 
@@ -1500,7 +1502,7 @@ if ($action == 'create')
 	// Margin Infos
 	if (! empty($conf->margin->enabled)) {
 		print '<td valign="top" width="50%" rowspan="4">';
-		$object->displayMarginInfos();
+		$formmargin->displayMarginInfos($object);
 		print '</td>';
 	}
 	print '</tr>';
@@ -1664,7 +1666,7 @@ if ($action == 'create')
 
 				// Create an order
 				if (! empty($conf->commande->enabled) && $object->statut == 2) {
-					if ($user->rights->commande->creer) {
+					if ($user->rights->fournisseur->commande->creer) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="' . DOL_URL_ROOT . '/fourn/commande/card.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '">' . $langs->trans("AddOrder") . '</a></div>';
 					}
 				}
@@ -1761,7 +1763,7 @@ if ($action == 'create')
 			$result = $object->generateDocument(GETPOST('model') ? GETPOST('model') : $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			if ($result <= 0)
 			{
-				dol_print_error($db, $result);
+				dol_print_error($db, $object->error, $object->errors);
 				exit();
 			}
 			$fileparams = dol_most_recent_file($conf->askpricesupplier->dir_output . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
@@ -1770,7 +1772,7 @@ if ($action == 'create')
 
 		print '<div class="clearboth"></div>';
 		print '<br>';
-		print_fiche_titre($langs->trans('SendAskByMail'));
+		print load_fiche_titre($langs->trans('SendAskByMail'));
 
 		dol_fiche_head('');
 
@@ -1800,7 +1802,7 @@ if ($action == 'create')
 		// Tableau des substitutions
 		$formmail->substit['__ASKREF__'] = $object->ref;
 		$formmail->substit['__SIGNATURE__'] = $user->signature;
-		$formmail->substit['__THIRPARTY_NAME__'] = $object->thirdparty->name;
+		$formmail->substit['__THIRDPARTY_NAME__'] = $object->thirdparty->name;
 		$formmail->substit['__PROJECT_REF__'] = (is_object($object->projet)?$object->projet->ref:'');
 		$formmail->substit['__CONTACTCIVNAME__'] = '';
 		$formmail->substit['__PERSONALIZED__'] = '';

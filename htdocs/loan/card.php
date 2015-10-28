@@ -89,17 +89,17 @@ if ($action == 'add' && $user->rights->loan->write)
 
 		if (! $datestart)
 		{
-			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("DateStart")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("DateStart")), null, 'errors');
 			$action = 'create';
 		}
 		elseif (! $dateend)
 		{
-			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("DateEnd")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("DateEnd")), null, 'errors');
 			$action = 'create';
 		}
 		elseif (! $_POST["capital"])
 		{
-			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Capital")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Capital")), null, 'errors');
 			$action = 'create';
 		}
 		else
@@ -183,7 +183,7 @@ if ($action == 'create')
 	//WYSIWYG Editor
     require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
-    print_fiche_titre($langs->trans("NewLoan"));
+    print load_fiche_titre($langs->trans("NewLoan"));
 
     $datec = dol_mktime(12, 0, 0, GETPOST('remonth','int'), GETPOST('reday','int'), GETPOST('reyear','int'));
 

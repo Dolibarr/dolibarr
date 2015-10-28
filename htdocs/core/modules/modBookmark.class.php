@@ -28,7 +28,7 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *	Classe de description et activation du module Bookmark
+ *	Class to describe and enable module Bookmark
  */
 class modBookmark extends DolibarrModules
 {
@@ -66,10 +66,10 @@ class modBookmark extends DolibarrModules
 		// Config pages
 		$this->config_page_url = array('bookmark.php@bookmarks');
 
-		// Constantes
+		// Constants
 		$this->const = array();
 
-		// Boites
+		// Boxes
 		$this->boxes = array(0=>array('file'=>'box_bookmarks.php','enabledbydefaulton'=>'Home'));
 
 		// Permissions

@@ -125,17 +125,17 @@ else if ($action == 'add' && $user->rights->deplacement->creer)
 
         if (! $object->date)
         {
-	        setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date")), 'errors');
+	        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
             $error++;
         }
         if ($object->type == '-1')
         {
-	        setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")), 'errors');
+	        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
             $error++;
         }
         if (! ($object->fk_user > 0))
         {
-	        setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Person")), 'errors');
+	        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Person")), null, 'errors');
             $error++;
         }
 
@@ -240,7 +240,7 @@ if ($action == 'create')
     //WYSIWYG Editor
     require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
-    print_fiche_titre($langs->trans("NewTrip"));
+    print load_fiche_titre($langs->trans("NewTrip"));
 
     $datec = dol_mktime(12, 0, 0, GETPOST('remonth','int'), GETPOST('reday','int'), GETPOST('reyear','int'));
 

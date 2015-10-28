@@ -191,14 +191,14 @@ if ($action == 'add')
 	{
 		$error++; $donotclearsession=1;
 		$action = 'create';
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("DateEnd")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DateEnd")), null, 'errors');
 	}
 
 	if (empty($conf->global->AGENDA_USE_EVENT_TYPE) && ! GETPOST('label'))
 	{
 		$error++; $donotclearsession=1;
 		$action = 'create';
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Title")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Title")), null, 'errors');
 	}
 
 	// Initialisation objet cactioncomm
@@ -206,7 +206,7 @@ if ($action == 'add')
 	{
 		$error++; $donotclearsession=1;
 		$action = 'create';
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
 	}
 	else
 	{
@@ -243,6 +243,8 @@ if ($action == 'add')
 		$object->percentage = $percentage;
 		$object->duree=((float) (GETPOST('dureehour') * 60) + (float) GETPOST('dureemin')) * 60;
 
+		$transparency=(GETPOST("transparency")=='on'?1:0);
+
 		$listofuserid=array();
 		if (! empty($_SESSION['assignedtouser'])) $listofuserid=json_decode($_SESSION['assignedtouser'], true);
 		$i=0;
@@ -251,10 +253,10 @@ if ($action == 'add')
 			if ($i == 0)	// First entry
 			{
 				if ($value['id'] > 0) $object->userownerid=$value['id'];
-				$object->transparency = (GETPOST("transparency")=='on'?1:0);
+				$object->transparency = $transparency;
 			}
 
-			$object->userassigned[$value['id']]=array('id'=>$value['id'], 'transparency'=>(GETPOST("transparency")=='on'?1:0));
+			$object->userassigned[$value['id']]=array('id'=>$value['id'], 'transparency'=>$transparency);
 
 			$i++;
 		}
@@ -287,20 +289,20 @@ if ($action == 'add')
 	{
 		$error++; $donotclearsession=1;
 		$action = 'create';
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("ActionsOwnedBy")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ActionsOwnedBy")), null, 'errors');
 	}
 	if ($object->type_code == 'AC_RDV' && ($datep == '' || ($datef == '' && empty($fulldayevent))))
 	{
 		$error++; $donotclearsession=1;
 		$action = 'create';
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("DateEnd")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DateEnd")), null, 'errors');
 	}
 
 	if (! GETPOST('apyear') && ! GETPOST('adyear'))
 	{
 		$error++; $donotclearsession=1;
 		$action = 'create';
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
 	}
 
 	// Fill array 'array_options' with data from add form
@@ -321,7 +323,7 @@ if ($action == 'add')
 				unset($_SESSION['assignedtouser']);
 
 				$moreparam='';
-				if ($user->id != $object->ownerid) $moreparam="usertodo=-1";	// We force to remove filter so created record is visible when going back to per user view.
+				if ($user->id != $object->userownerid) $moreparam="usertodo=-1";	// We force to remove filter so created record is visible when going back to per user view.
 
 				$db->commit();
 				if (! empty($backtopage))
@@ -405,7 +407,7 @@ if ($action == 'update')
 		if (! $datef && $percentage == 100)
 		{
 			$error++; $donotclearsession=1;
-			setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("DateEnd")),$object->errors,'errors');
+			setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired",$langs->transnoentitiesnoconv("DateEnd")),$object->errors,'errors');
 			$action = 'edit';
 		}
 
@@ -436,6 +438,8 @@ if ($action == 'update')
 			$i++;
 		}
 
+		$object->transparency = $transparency;		// We set transparency on event (even if we can also store it on each user, standard says this property is for event)
+
 		if (! empty($conf->global->AGENDA_ENABLE_DONEBY))
 		{
 			if (GETPOST("doneby")) $object->userdoneid=GETPOST("doneby","int");
@@ -446,7 +450,7 @@ if ($action == 'update')
 		{
 			$error++; $donotclearsession=1;
 			$action = 'edit';
-			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
 		}
 		else
 		{
@@ -456,7 +460,7 @@ if ($action == 'update')
 		{
 			$error++; $donotclearsession=1;
 			$action = 'edit';
-			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("ActionsOwnedBy")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ActionsOwnedBy")), null, 'errors');
 		}
 
 		// Fill array 'array_options' with data from add form
@@ -632,8 +636,8 @@ if ($action == 'create')
 	if ($backtopage) print '<input type="hidden" name="backtopage" value="'.($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"]).'">';
 	if (empty($conf->global->AGENDA_USE_EVENT_TYPE)) print '<input type="hidden" name="actioncode" value="'.dol_getIdFromCode($db, 'AC_OTH', 'c_actioncomm').'">';
 
-	if (GETPOST("actioncode") == 'AC_RDV') print_fiche_titre($langs->trans("AddActionRendezVous"));
-	else print_fiche_titre($langs->trans("AddAnAction"));
+	if (GETPOST("actioncode") == 'AC_RDV') print load_fiche_titre($langs->trans("AddActionRendezVous"));
+	else print load_fiche_titre($langs->trans("AddAnAction"));
 
 	dol_fiche_head();
 
@@ -643,7 +647,8 @@ if ($action == 'create')
 	if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
 	{
 		print '<tr><td width="30%"><span class="fieldrequired">'.$langs->trans("Type").'</span></b></td><td>';
-		$formactions->select_type_actions(GETPOST("actioncode")?GETPOST("actioncode"):$object->type_code, "actioncode","systemauto");
+		$default=(empty($conf->global->AGENDA_USE_EVENT_TYPE_DEFAULT)?'':$conf->global->AGENDA_USE_EVENT_TYPE_DEFAULT);
+		$formactions->select_type_actions(GETPOST("actioncode")?GETPOST("actioncode"):($object->type_code?$object->type_code:$default), "actioncode","systemauto");
 		print '</td></tr>';
 	}
 
@@ -969,7 +974,7 @@ if ($id > 0)
 						else if (jQuery("#recurrulefreq").val() == \'WEEKLY\')
 						{
 							jQuery(".repeateventBYMONTHDAY").hide();
-							jQuery(".repeateventBYDAY").show();	
+							jQuery(".repeateventBYDAY").show();
 						}
 						else
 						{
@@ -982,7 +987,7 @@ if ($id > 0)
 						init_repeat();
 					});
 				});
-				</script>';	
+				</script>';
 			print '</td></tr>';
 		}
 
@@ -1023,7 +1028,7 @@ if ($id > 0)
 			}
 		}
 		print $form->select_dolusers_forevent(($action=='create'?'add':'update'), 'assignedtouser', 1, '', 0, '', '', 0, 0, 0, 'AND u.statut != 0');
-		if (in_array($user->id,array_keys($listofuserid))) print $langs->trans("MyAvailability").':  <input id="transparency" type="checkbox" name="transparency"'.($listofuserid[$user->id]['transparency']?' checked':'').'">'.$langs->trans("Busy");
+		if (in_array($user->id,array_keys($listofuserid))) print $langs->trans("MyAvailability").':  <input id="transparency" type="checkbox" name="transparency"'.($listofuserid[$user->id]['transparency']?' checked':'').'>'.$langs->trans("Busy");
 		print '</td></tr>';
 
 		// Realised by
@@ -1299,7 +1304,16 @@ if ($id > 0)
 			print '<br><br><table class="border" width="100%">';
 			foreach($extrafields->attribute_label as $key=>$label)
 			{
-				$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:(isset($object->array_options['options_'.$key])?$object->array_options['options_'.$key]:''));
+				if (isset($_POST["options_" . $key])) {
+					if (is_array($_POST["options_" . $key])) {
+						// $_POST["options"] is an array but following code expects a comma separated string
+						$value = implode(",", $_POST["options_" . $key]);
+					} else {
+						$value = $_POST["options_" . $key];
+					}
+				} else {
+					$value = $object->array_options["options_" . $key];
+				}
 				print '<tr><td width="30%">'.$label.'</td><td>';
 				print $extrafields->showOutputField($key,$value);
 				print "</td></tr>\n";

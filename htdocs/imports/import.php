@@ -192,7 +192,7 @@ if ($action == 'add_import_model')
 	}
 	else
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("ImportModelName")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("ImportModelName")), null, 'errors');
 	}
 }
 
@@ -1335,10 +1335,10 @@ if ($step == 5 && $datatoimport)
                 	continue;
                 }
                 if ($excludefirstline && $sourcelinenb == 1) continue;
-
+                
                 //
                 $result=$obj->import_insert($arrayrecord,$array_match_file_to_database,$objimport,count($fieldssource),$importid);
-
+                
                 if (count($obj->errors))   $arrayoferrors[$sourcelinenb]=$obj->errors;
                 if (count($obj->warnings)) $arrayofwarnings[$sourcelinenb]=$obj->warnings;
                 if (! count($obj->errors) && ! count($obj->warnings)) $nbok++;

@@ -169,19 +169,19 @@ if (($action == 'send' || $action == 'sendhtml') && ! GETPOST('addfile') && ! GE
 
 	if (empty($_POST["frommail"]))
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("MailFrom")),'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("MailFrom")), null, 'errors');
 		$action='test';
 		$error++;
 	}
 	if (empty($sendto))
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("MailTo")),'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("MailTo")), null, 'errors');
 		$action='test';
 		$error++;
 	}
 	if (! $error)
 	{
-		// Le message est-il en html
+		// Is the message in HTML?
 		$msgishtml=0;	// Message is not HTML
 		if ($action == 'sendhtml') $msgishtml=1;	// Force message to HTML
 
@@ -244,7 +244,7 @@ if (! $server) $server='127.0.0.1';
 $wikihelp='EN:Setup EMails|FR:Paramétrage EMails|ES:Configuración EMails';
 llxHeader('',$langs->trans("Setup"),$wikihelp);
 
-print_fiche_titre($langs->trans("EMailsSetup"),'','title_setup');
+print load_fiche_titre($langs->trans("EMailsSetup"),'','title_setup');
 
 print $langs->trans("EMailsDesc")."<br>\n";
 print "<br>\n";
@@ -660,7 +660,7 @@ else
 	if ($action == 'testconnect')
 	{
 		print '<br>';
-		print_titre($langs->trans("DoTestServerAvailability"));
+		print load_fiche_titre($langs->trans("DoTestServerAvailability"));
 
 		// If we use SSL/TLS
 		if (! empty($conf->global->MAIN_MAIL_EMAIL_TLS) && function_exists('openssl_open')) $server='ssl://'.$server;
@@ -686,7 +686,7 @@ else
 	if ($action == 'test' || $action == 'testhtml')
 	{
 		print '<br>';
-		print_titre($action == 'testhtml'?$langs->trans("DoTestSendHTML"):$langs->trans("DoTestSend"));
+		print load_fiche_titre($action == 'testhtml'?$langs->trans("DoTestSendHTML"):$langs->trans("DoTestSend"));
 
 		// Cree l'objet formulaire mail
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';

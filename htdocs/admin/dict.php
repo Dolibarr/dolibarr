@@ -4,7 +4,7 @@
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2015 Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2011      Remy Younes          <ryounes@gmail.com>
  * Copyright (C) 2012-2015 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2012      Christophe Battarel	<christophe.battarel@ltairis.fr>
@@ -34,6 +34,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
 $langs->load("errors");
@@ -151,7 +152,7 @@ $tabsql[8] = "SELECT t.id    as rowid, t.code as code, t.libelle, t.fk_country a
 $tabsql[9] = "SELECT c.code_iso as code, c.label, c.unicode, c.active FROM ".MAIN_DB_PREFIX."c_currencies AS c";
 $tabsql[10]= "SELECT t.rowid, t.taux, t.localtax1_type, t.localtax1, t.localtax2_type, t.localtax2, c.label as country, c.code as country_code, t.fk_pays as country_id, t.recuperableonly, t.note, t.active, t.accountancy_code_sell, t.accountancy_code_buy FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c WHERE t.fk_pays=c.rowid";
 $tabsql[11]= "SELECT t.rowid as rowid, element, source, code, libelle, active FROM ".MAIN_DB_PREFIX."c_type_contact AS t";
-$tabsql[12]= "SELECT c.rowid as rowid, c.code, c.sortorder, c.libelle, c.libelle_facture, nbjour, fdm, decalage, active FROM ".MAIN_DB_PREFIX.'c_payment_term AS c';
+$tabsql[12]= "SELECT c.rowid as rowid, c.code, c.libelle, c.libelle_facture, c.nbjour, c.fdm, c.decalage, c.active, c.sortorder FROM ".MAIN_DB_PREFIX.'c_payment_term AS c';
 $tabsql[13]= "SELECT c.id    as rowid, c.code, c.libelle, c.type, c.active, c.accountancy_code FROM ".MAIN_DB_PREFIX."c_paiement AS c";
 $tabsql[14]= "SELECT e.rowid as rowid, e.code as code, e.libelle, e.price, e.organization, e.fk_pays as country_id, c.code as country_code, c.label as country, e.active FROM ".MAIN_DB_PREFIX."c_ecotaxe AS e, ".MAIN_DB_PREFIX."c_country as c WHERE e.fk_pays=c.rowid and c.active=1";
 $tabsql[15]= "SELECT rowid   as rowid, code, label as libelle, width, height, unit, active FROM ".MAIN_DB_PREFIX."c_paper_format";
@@ -215,7 +216,7 @@ $tabfield[8] = "code,libelle,country_id,country";
 $tabfield[9] = "code,label,unicode";
 $tabfield[10]= "country_id,country,taux,recuperableonly,localtax1_type,localtax1,localtax2_type,localtax2,accountancy_code_sell,accountancy_code_buy,note";
 $tabfield[11]= "element,source,code,libelle";
-$tabfield[12]= "code,libelle,libelle_facture,nbjour,fdm,decalage";
+$tabfield[12]= "code,libelle,libelle_facture,nbjour,fdm,decalage,sortorder";
 $tabfield[13]= "code,libelle,type,accountancy_code";
 $tabfield[14]= "code,libelle,price,organization,country_id,country";
 $tabfield[15]= "code,libelle,width,height,unit";
@@ -247,7 +248,7 @@ $tabfieldvalue[8] = "code,libelle,country";
 $tabfieldvalue[9] = "code,label,unicode";
 $tabfieldvalue[10]= "country,taux,recuperableonly,localtax1_type,localtax1,localtax2_type,localtax2,accountancy_code_sell,accountancy_code_buy,note";
 $tabfieldvalue[11]= "element,source,code,libelle";
-$tabfieldvalue[12]= "code,libelle,libelle_facture,nbjour,fdm,decalage";
+$tabfieldvalue[12]= "code,libelle,libelle_facture,nbjour,fdm,decalage,sortorder";
 $tabfieldvalue[13]= "code,libelle,type,accountancy_code";
 $tabfieldvalue[14]= "code,libelle,price,organization,country";
 $tabfieldvalue[15]= "code,libelle,width,height,unit";
@@ -279,7 +280,7 @@ $tabfieldinsert[8] = "code,libelle,fk_country";
 $tabfieldinsert[9] = "code_iso,label,unicode";
 $tabfieldinsert[10]= "fk_pays,taux,recuperableonly,localtax1_type,localtax1,localtax2_type,localtax2,accountancy_code_sell,accountancy_code_buy,note";
 $tabfieldinsert[11]= "element,source,code,libelle";
-$tabfieldinsert[12]= "code,libelle,libelle_facture,nbjour,fdm,decalage";
+$tabfieldinsert[12]= "code,libelle,libelle_facture,nbjour,fdm,decalage,sortorder";
 $tabfieldinsert[13]= "code,libelle,type,accountancy_code";
 $tabfieldinsert[14]= "code,libelle,price,organization,fk_pays";
 $tabfieldinsert[15]= "code,label,width,height,unit";
@@ -445,6 +446,7 @@ if ($id == 11)
 	$langs->load("interventions");
 	$elementList = array(
 			''				    => '',
+            'societe'           => $langs->trans('ThirdParty'),
 //			'proposal'          => $langs->trans('Proposal'),
 //			'order'             => $langs->trans('Order'),
 //			'invoice'           => $langs->trans('Bill'),
@@ -464,6 +466,9 @@ if ($id == 11)
 			'fichinter'         => $langs->trans('InterventionCard')
 	);
 	if (! empty($conf->global->MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES)) $elementList["societe"] = $langs->trans('ThirdParty');
+
+	complete_elementList_with_modules($elementList);
+
 	asort($elementList);
 	$sourceList = array(
 			'internal' => $langs->trans('Internal'),
@@ -543,20 +548,20 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
             if ($fieldnamekey == 'deductible') $fieldnamekey = 'Deductible';
             if ($fieldnamekey == 'sortorder') $fieldnamekey = 'SortOrder';
 
-            setEventMessage($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities($fieldnamekey)),'errors');
+            setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities($fieldnamekey)), null, 'errors');
         }
     }
     // Other checks
     if ($tabname[$id] == MAIN_DB_PREFIX."c_actioncomm" && isset($_POST["type"]) && in_array($_POST["type"],array('system','systemauto'))) {
         $ok=0;
-        setEventMessage($langs->transnoentities('ErrorReservedTypeSystemSystemAuto'),'errors');
+        setEventMessages($langs->transnoentities('ErrorReservedTypeSystemSystemAuto'), null, 'errors');
     }
     if (isset($_POST["code"]))
     {
     	if ($_POST["code"]=='0')
     	{
         	$ok=0;
-    		setEventMessage($langs->transnoentities('ErrorCodeCantContainZero'),'errors');
+    		setEventMessages($langs->transnoentities('ErrorCodeCantContainZero'), null, 'errors');
         }
         /*if (!is_numeric($_POST['code']))	// disabled, code may not be in numeric base
     	{
@@ -573,7 +578,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
     	else
     	{
         	$ok=0;
-        	setEventMessage($langs->transnoentities("ErrorFieldRequired",$langs->transnoentities("Country")),'errors');
+        	setEventMessages($langs->transnoentities("ErrorFieldRequired",$langs->transnoentities("Country")), null, 'errors');
     	}
     }
 
@@ -632,13 +637,13 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         $result = $db->query($sql);
         if ($result)	// Add is ok
         {
-            setEventMessage($langs->transnoentities("RecordSaved"));
+            setEventMessages($langs->transnoentities("RecordSaved"), null, 'mesgs');
         	$_POST=array('id'=>$id);	// Clean $_POST array, we keep only
         }
         else
         {
             if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-                setEventMessage($langs->transnoentities("ErrorRecordAlreadyExists"),'errors');
+                setEventMessages($langs->transnoentities("ErrorRecordAlreadyExists"), null, 'errors');
             }
             else {
                 dol_print_error($db);
@@ -682,7 +687,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         $resql = $db->query($sql);
         if (! $resql)
         {
-            setEventMessage($db->error(),'errors');
+            setEventMessage($db->error(), 'errors');
         }
     }
     //$_GET["id"]=GETPOST('id', 'int');       // Force affichage dictionnaire en cours d'edition
@@ -706,7 +711,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes')       // delete
     {
         if ($db->errno() == 'DB_ERROR_CHILD_EXISTS')
         {
-            setEventMessage($langs->transnoentities("ErrorRecordIsUsedByChild"),'errors');
+            setEventMessages($langs->transnoentities("ErrorRecordIsUsedByChild"), null, 'errors');
         }
         else
         {
@@ -812,7 +817,7 @@ if ($id)
     $titre.=' - '.$langs->trans($tablib[$id]);
     $linkback='<a href="'.$_SERVER['PHP_SELF'].'">'.$langs->trans("BackToDictionaryList").'</a>';
 }
-print_fiche_titre($titre,$linkback,'title_setup');
+print load_fiche_titre($titre,$linkback,'title_setup');
 
 if (empty($id))
 {
@@ -899,7 +904,11 @@ if ($id)
 				else $valuetoshow=$langs->trans("Type");
             }
             if ($fieldlist[$field]=='code')            { $valuetoshow=$langs->trans("Code"); }
-            if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label') { $valuetoshow=$langs->trans("Label")."*"; }
+            if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label')
+            {
+            	$valuetoshow=$langs->trans("Label");
+            	if ($id != 25) $valuetoshow.="*";
+            }
             if ($fieldlist[$field]=='libelle_facture') { $valuetoshow=$langs->trans("LabelOnDocuments")."*"; }
             if ($fieldlist[$field]=='country')         {
                 if (in_array('region_id',$fieldlist)) { print '<td>&nbsp;</td>'; continue; }		// For region page, we do not show the country input
@@ -1055,7 +1064,11 @@ if ($id)
                 if ($fieldlist[$field]=='lang')            { $valuetoshow=$langs->trans("Language"); }
                 if ($fieldlist[$field]=='type')            { $valuetoshow=$langs->trans("Type"); }
                 if ($fieldlist[$field]=='code')            { $valuetoshow=$langs->trans("Code"); }
-                if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label') { $valuetoshow=$langs->trans("Label")."*"; }
+                if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label')
+                {
+                	$valuetoshow=$langs->trans("Label");
+                   	if ($id != 25) $valuetoshow.="*";
+                }
                 if ($fieldlist[$field]=='libelle_facture') { $valuetoshow=$langs->trans("LabelOnDocuments")."*"; }
                 if ($fieldlist[$field]=='country')         { $valuetoshow=$langs->trans("Country"); }
                 if ($fieldlist[$field]=='recuperableonly') { $valuetoshow=$langs->trans("NPR"); $align="center"; }
@@ -1586,6 +1599,7 @@ function fieldList($fieldlist, $obj='', $tabname='', $context='')
 			if ($fieldlist[$field]=='accountancy_code') $size='size="10" ';
 			if ($fieldlist[$field]=='accountancy_code_sell') $size='size="10" ';
 			if ($fieldlist[$field]=='accountancy_code_buy') $size='size="10" ';
+			if ($fieldlist[$field]=='sortorder') $size='size="2" ';
 			print '<input type="text" '.$size.' class="flat" value="'.(isset($obj->$fieldlist[$field])?$obj->$fieldlist[$field]:'').'" name="'.$fieldlist[$field].'">';
 			print '</td>';
 		}

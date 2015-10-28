@@ -58,7 +58,7 @@ llxHeader('','','','',0,0,array('http://www.google.com/jsapi'));
 
 $title=$langs->trans("MembersStatisticsByProperties");
 
-print_fiche_titre($title, $mesg);
+print load_fiche_titre($title, $mesg);
 
 dol_mkdir($dir);
 
@@ -112,11 +112,11 @@ if (! count($data))
 }
 else
 {
-	print_fiche_titre($langs->trans("MembersByNature"),'','');
+	print load_fiche_titre($langs->trans("MembersByNature"),'','');
 }
 
 // Print array
-print '<table class="border" width="100%">';
+print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td align="center">'.$langs->trans("Nature").'</td>';
 print '<td align="center">'.$langs->trans("NbOfMembers").'</td>';

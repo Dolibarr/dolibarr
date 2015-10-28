@@ -61,7 +61,7 @@ $arrayofcss=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css')
 llxHeader('',$title,'','',0,0,$arrayofjs,$arrayofcss);
 
 
-print_fiche_titre($title);
+print load_fiche_titre($title);
 
 //print '<table border="0" width="100%" class="notopnoleftnoright">';
 //print '<tr><td valign="top" width="30%" class="notopnoleft">';
@@ -148,12 +148,13 @@ foreach($fulltree as $key => $val)
 	$categstatic->ref=$val['label'];
 	$categstatic->type=$type;
 	$li=$categstatic->getNomUrl(1,'',60);
+	$desc=dol_htmlcleanlastbr($val['description']);
 
 	$data[] = array(
 	'rowid'=>$val['rowid'],
 	'fk_menu'=>$val['fk_parent'],
 	'entry'=>'<table class="nobordernopadding centpercent"><tr><td>'.$li.
-	'</td><td width="50%">'.dolGetFirstLineOfText($val['description']).'</td>'.
+	'</td><td width="50%">'.dolGetFirstLineOfText($desc).'</td>'.
 	'<td align="right" width="20px;"><a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$val['id'].'&type='.$type.'">'.img_view().'</a></td>'.
 	'</tr></table>'
 	);
@@ -178,7 +179,7 @@ if ($nbofentries > 0)
 }
 else
 {
-	print '<tr>';
+	print '<tr '.$bc[0].'>';
 	print '<td colspan="3"><table class="nobordernopadding"><tr class="nobordernopadding"><td>'.img_picto_common('','treemenu/branchbottom.gif').'</td>';
 	print '<td valign="middle">';
 	print $langs->trans("NoCategoryYet");

@@ -10,3 +10,5 @@ FailedToConnectToFTPServerWithCredentials=无法登录到FTP服务器的定义�
 FTPFailedToRemoveFile=无法删除文件<b>%s。</b>
 FTPFailedToRemoveDir=无法删除目录<b>%s（</b>检查权限和目录是空的）。
 FTPPassiveMode=被动模式
+ChooseAFTPEntryIntoMenu=Choose a FTP entry into menu...
+FailedToGetFile=Failed to get files %s

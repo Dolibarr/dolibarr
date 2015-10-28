@@ -157,19 +157,19 @@ print $form->showrefnav($payment,'id','',1,'rowid','id');
 print '</td></tr>';
 
 // Date
-print '<tr><td valign="top">'.$langs->trans('Date').'</td><td colspan="3">'.dol_print_date($payment->datep,'day').'</td></tr>';
+print '<tr><td>'.$langs->trans('Date').'</td><td colspan="3">'.dol_print_date($payment->datep,'day').'</td></tr>';
 
 // Mode
-print '<tr><td valign="top">'.$langs->trans('Mode').'</td><td colspan="3">'.$langs->trans("PaymentType".$payment->type_code).'</td></tr>';
+print '<tr><td>'.$langs->trans('Mode').'</td><td colspan="3">'.$langs->trans("PaymentType".$payment->type_code).'</td></tr>';
 
 // Number
-print '<tr><td valign="top">'.$langs->trans('Number').'</td><td colspan="3">'.$payment->num_payment.'</td></tr>';
+print '<tr><td>'.$langs->trans('Numero').'</td><td colspan="3">'.$payment->num_payment.'</td></tr>';
 
 // Amount
-print '<tr><td valign="top">'.$langs->trans('Amount').'</td><td colspan="3">'.price($payment->amount, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
+print '<tr><td>'.$langs->trans('Amount').'</td><td colspan="3">'.price($payment->amount, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
 
 // Note
-print '<tr><td valign="top">'.$langs->trans('Note').'</td><td colspan="3">'.nl2br($payment->note).'</td></tr>';
+print '<tr><td class="tdtop">'.$langs->trans('Note').'</td><td colspan="3">'.nl2br($payment->note).'</td></tr>';
 
 // Bank account
 if (! empty($conf->banque->enabled))

@@ -49,14 +49,14 @@ $builddoc_generatebutton=GETPOST('builddoc_generatebutton');
 $month = GETPOST("month","int");
 $year = GETPOST("year","int");
 $filter = GETPOST("filtre");
-if (GETPOST('button_search'))
+if (GETPOST('button_search') || GETPOST('button_search.x') || GETPOST('button_search_x'))
 {
 	$filter=GETPOST('filtre',2);
 	//if ($filter != 'payed:0') $option='';
 }
 if ($option == 'late') $filter = 'paye:0';
 if ($option == 'unpaidall') $filter = 'paye:0';
-if ($mode == 'sendremind' && $filter == '') $filter = 'paye:0';
+if ($mode == 'sendmassremind' && $filter == '') $filter = 'paye:0';
 if ($filter == '') $filter = 'paye:0';
 
 $search_user = GETPOST('search_user','int');
@@ -165,10 +165,12 @@ if ($action == 'presend' && GETPOST('sendmail'))
 							'__CHECK_READ__' => '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$obj2->tag.'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>',
 							//'__LASTNAME__' => $obj2->lastname,
 							//'__FIRSTNAME__' => $obj2->firstname,
-							'__REF__' => $object->ref,
+							'__FACREF__' => $object->ref,            // For backward compatibility
+						    '__REF__' => $object->ref,
 							'__REFCLIENT__' => $object->thirdparty->name
 						);
 
+						$subject=make_substitutions($subject, $substitutionarray);
 						$message=make_substitutions($message, $substitutionarray);
 
 						$actiontypecode='AC_FAC';
@@ -196,7 +198,7 @@ if ($action == 'presend' && GETPOST('sendmail'))
 						}
 						else
 						{
-							//$result=$mailfile->sendfile();
+							$result=$mailfile->sendfile();
 							if ($result)
 							{
 								$resultmasssend.=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));		// Must not contain "
@@ -246,12 +248,11 @@ if ($action == 'presend' && GETPOST('sendmail'))
 					}
 				}
 				else
-				{
+				{  
 					$nbignored++;
 					$langs->load("other");
 					$resultmasssend.='<div class="error">'.$langs->trans('ErrorCantReadFile',$file).'</div>';
-					dol_syslog('Failed to read file: '.$file);
-					break ;
+					dol_syslog('Failed to read file: '.$file, LOG_WARNING);
 				}
 			}
 		}
@@ -263,7 +264,7 @@ if ($action == 'presend' && GETPOST('sendmail'))
 		}
 		else
 		{
-			setEventMessage($langs->trans("NoRemindSent"), 'warnings');
+			setEventMessage($langs->trans("NoRemindSent"), 'warnings');  // May be object has no generated PDF file
 		}
 	}
 }
@@ -416,6 +417,7 @@ $search_societe = GETPOST("search_societe");
 $search_paymentmode = GETPOST("search_paymentmode");
 $search_montant_ht = GETPOST("search_montant_ht");
 $search_montant_ttc = GETPOST("search_montant_ttc");
+$search_status = GETPOST("search_status");
 $late = GETPOST("late");
 
 // Do we click on purge search criteria ?
@@ -427,6 +429,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
     $search_paymentmode='';
     $search_montant_ht='';
     $search_montant_ttc='';
+    $search_status='';
 }
 
 $sortfield = GETPOST("sortfield",'alpha');
@@ -482,6 +485,7 @@ if ($search_paymentmode) $sql .= " AND f.fk_mode_reglement = ".$search_paymentmo
 if ($search_montant_ht)  $sql .= " AND f.total = '".$db->escape($search_montant_ht)."'";
 if ($search_montant_ttc) $sql .= " AND f.total_ttc = '".$db->escape($search_montant_ttc)."'";
 if (GETPOST('sf_ref'))   $sql .= " AND f.facnumber LIKE '%".$db->escape(GETPOST('sf_ref'))."%'";
+if ($search_status)      $sql .= " AND f.fk_statut = ".$search_status;
 if ($month > 0)
 {
 	if ($year > 0)
@@ -527,6 +531,7 @@ if ($resql)
 	if ($search_societe)     $param.='&amp;search_paymentmode='.urlencode($search_paymentmode);
 	if ($search_montant_ht)  $param.='&amp;search_montant_ht='.urlencode($search_montant_ht);
 	if ($search_montant_ttc) $param.='&amp;search_montant_ttc='.urlencode($search_montant_ttc);
+	if ($search_status)      $param.='&amp;search_status='.urlencode($search_status);
 	if ($late)               $param.='&amp;late='.urlencode($late);
 	if ($mode)               $param.='&amp;mode='.urlencode($mode);
 	$urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
@@ -543,7 +548,7 @@ if ($resql)
 
 	$param.=(! empty($option)?"&amp;option=".$option:"");
 
-	print_fiche_titre($titre,$link);
+	print load_fiche_titre($titre,$link);
 	//print_barre_liste($titre,$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',0);	// We don't want pagination on this page
 
 	print '<form id="form_unpaid" method="POST" action="'.$_SERVER["PHP_SELF"].'?sortfield='. $sortfield .'&sortorder='. $sortorder .'">';
@@ -556,9 +561,7 @@ if ($resql)
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 		$formmail = new FormMail($db);
 
-		print '<br>';
-		print_fiche_titre($langs->trans("SendRemind"),'','');
-		print '<br>';
+		dol_fiche_head(null, '', $langs->trans("SendRemind"));
 
 		$topicmail="MailTopicSendRemindUnpaidInvoices";
 		$modelmail="facture_relance";
@@ -598,7 +601,8 @@ if ($resql)
 		$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
 
 		print $formmail->get_form();
-		print '<br>'."\n";
+        
+        dol_fiche_end();
 	}
 
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -616,32 +620,38 @@ if ($resql)
 	}
 
 	$i = 0;
-	print '<table class="liste" width="100%">';
 
  	// If the user can view prospects other than his'
     $moreforfilter='';
  	if ($user->rights->societe->client->voir || $socid)
  	{
  		$langs->load("commercial");
+ 		$moreforfilter.='<div class="divsearchfield">';
  		$moreforfilter.=$langs->trans('ThirdPartiesOfSaleRepresentative'). ': ';
 		$moreforfilter.=$formother->select_salesrepresentatives($search_sale,'search_sale',$user);
-	 	$moreforfilter.=' &nbsp; &nbsp; &nbsp; ';
+	 	$moreforfilter.='</div>';
  	}
     // If the user can view prospects other than his'
     if ($user->rights->societe->client->voir || $socid)
     {
+        $moreforfilter.='<div class="divsearchfield">';
         $moreforfilter.=$langs->trans('LinkedToSpecificUsers'). ': ';
         $moreforfilter.=$form->select_dolusers($search_user,'search_user',1);
+        $moreforfilter.='</div>';
     }
-    if ($moreforfilter)
+    if (! empty($moreforfilter))
     {
-        print '<tr class="liste_titre">';
-        print '<td class="liste_titre" colspan="13">';
+        print '<div class="liste_titre liste_titre_bydiv centpercent">';
         print $moreforfilter;
-        print '</td></tr>';
+        $parameters=array();
+        $reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+        print $hookmanager->resPrint;
+        print '</div>';
     }
 
-	print '<tr class="liste_titre">';
+    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">';
+    
+    print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"f.facnumber","",$param,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans('RefCustomer'),$_SERVER["PHP_SELF"],'f.ref_client','',$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"f.datef","",$param,'align="center"',$sortfield,$sortorder);
@@ -734,6 +744,8 @@ if ($resql)
 			$facturestatic->id=$objp->facid;
 			$facturestatic->ref=$objp->facnumber;
 			$facturestatic->type=$objp->type;
+			$facturestatic->statut=$objp->fk_statut;
+			$facturestatic->date_lim_reglement= $db->jdate($objp->datelimite);
 
 			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 
@@ -744,7 +756,9 @@ if ($resql)
 
 			// Warning picto
 			print '<td width="20" class="nobordernopadding nowrap">';
-			if ($date_limit < ($now - $conf->facture->client->warning_delay) && ! $objp->paye && $objp->fk_statut == 1) print img_warning($langs->trans("Late"));
+			if ($facturestatic->hasDelay()) {
+				print img_warning($langs->trans("Late"));
+			}
 			print '</td>';
 
 			// PDF Picto

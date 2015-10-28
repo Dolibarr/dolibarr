@@ -31,7 +31,6 @@ class ExpeditionLineBatch extends CommonObject
 	var $element='expeditionlignebatch';			//!< Id that identify managed objects
 	private static $_table_element='expeditiondet_batch';		//!< Name of table without prefix where object is stored
 
-	var $id;
 	var $sellby;
 	var $eatby;
 	var $batch;
@@ -189,11 +188,12 @@ class ExpeditionLineBatch extends CommonObject
 		$sql.= " WHERE fk_expeditiondet=".(int) $id_line_expdet;
 
 		dol_syslog(__METHOD__ ."", LOG_DEBUG);
-        $resql=$db->query($sql);
-        if ($resql)
-        {
+		$resql=$db->query($sql);
+		if ($resql)
+		{
 			$num=$db->num_rows($resql);
-            $i=0;
+			$i=0;
+			$ret = array();
 			while ($i<$num)
 			{
 				$tmp=new self($db);

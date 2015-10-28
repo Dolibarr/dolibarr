@@ -34,11 +34,6 @@ class Task extends CommonObject
     public $element='project_task';		//!< Id that identify managed objects
     public $table_element='projet_task';	//!< Name of table without prefix where object is stored
 
-    var $id;
-
-	var $ref;
-
-    var $fk_project;
     var $fk_task_parent;
     var $label;
     var $description;
@@ -51,9 +46,6 @@ class Task extends CommonObject
     var $priority;
     var $fk_user_creat;
     var $fk_user_valid;
-    var $statut;
-    var $note_private;
-    var $note_public;
 	var $rang;
 
     var $timespent_id;
@@ -1486,10 +1478,9 @@ class Task extends CommonObject
 	 *  @param  int			$hidedetails    Hide details of lines
 	 *  @param  int			$hidedesc       Hide description
 	 *  @param  int			$hideref        Hide ref
-	 *  @param  HookManager	$hookmanager	Hook manager instance
 	 *  @return int         				0 if KO, 1 if OK
 	 */
-	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0, $hookmanager=false)
+	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
 	{
 		global $conf,$langs;
 

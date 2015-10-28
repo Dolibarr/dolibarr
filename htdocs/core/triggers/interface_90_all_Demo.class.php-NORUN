@@ -167,7 +167,7 @@ class InterfaceDemo extends DolibarrTriggers
 		    case 'CONTRACT_CANCEL':
 		    case 'CONTRACT_CLOSE':
 		    case 'CONTRACT_DELETE':
-		    case 'LINECONTRACT_CREATE':
+		    case 'LINECONTRACT_INSERT':
 		    case 'LINECONTRACT_UPDATE':
 		    case 'LINECONTRACT_DELETE':
 

@@ -54,6 +54,8 @@ if (($object->id != $user->id) && (! $user->rights->user->user->lire))
  * View
  */
 
+$form = new Form($db);
+
 llxHeader();
 
 $object->info($id);
@@ -64,12 +66,24 @@ $title = $langs->trans("User");
 dol_fiche_head($head, 'info', $title, 0, 'user');
 
 
-print '<table width="100%"><tr><td>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php">'.$langs->trans("BackToList").'</a>';
+
+dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '');
+
+
+print '<div class="fichecenter">';
+
+print '<div class="underbanner clearboth"></div>';
+
+print '<br>';
+
 dol_print_object_info($object);
-print '</td></tr></table>';
 
 print '</div>';
 
-$db->close();
+
+dol_fiche_end();
+
 
 llxFooter();
+$db->close();
