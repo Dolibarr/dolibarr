@@ -327,8 +327,8 @@ else
     		if ($user->rights->fournisseur->lire) print_liste_field_titre($langs->trans("BuyingPriceMinShort"), '', '', '', '', 'align="right"');
     		if (! empty($conf->stock->enabled) && $user->rights->stock->lire && $type != 1) print_liste_field_titre($langs->trans("DesiredStock"), '', '', '', '', 'align="right"');
     		if (! empty($conf->stock->enabled) && $user->rights->stock->lire && $type != 1) print_liste_field_titre($langs->trans("PhysicalStock"), '', '', '', '', 'align="right"');
-    		print_liste_field_titre($langs->trans("Sell"), $_SERVER["PHP_SELF"], "p.tosell",$param,"",'align="center"',$sortfield,$sortorder);
-            print_liste_field_titre($langs->trans("Buy"), $_SERVER["PHP_SELF"], "p.tobuy",$param,"",'align="center"',$sortfield,$sortorder);
+    		print_liste_field_titre($langs->trans("Status").' ('.$langs->trans("Sell").')', $_SERVER["PHP_SELF"], "p.tosell",$param,"",'align="center"',$sortfield,$sortorder);
+            print_liste_field_titre($langs->trans("Status").' ('.$langs->trans("Buy").')', $_SERVER["PHP_SELF"], "p.tobuy",$param,"",'align="center"',$sortfield,$sortorder);
             print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
 			print "</tr>\n";
 

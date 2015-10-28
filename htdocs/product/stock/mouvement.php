@@ -504,7 +504,7 @@ if ($resql)
     if (empty($conf->productbatch->enabled)) print '&nbsp;';
     //else print '<br>';
     $syear = $year?$year:-1;
-    print '<input class="flat" type="text" size="2" maxlength="4" placeholder="'.dol_escape_htmltag($langs->trans("Year")).'" name="year" value="'.($syear > 0 ? $syear : '').'">';
+    print '<input class="flat" type="text" size="3" maxlength="4" placeholder="'.dol_escape_htmltag($langs->trans("Year")).'" name="year" value="'.($syear > 0 ? $syear : '').'">';
     //print $formother->selectyear($syear,'year',1, 20, 5);
     print '</td>';
     // Product Ref
@@ -579,10 +579,11 @@ if ($resql)
         print "</td>\n";
         // Product label
         print '<td>';
-        $productstatic->id=$objp->rowid;
+        /*$productstatic->id=$objp->rowid;
         $productstatic->ref=$objp->produit;
         $productstatic->type=$objp->type;
-        print $productstatic->getNomUrl(1,'',16);
+        print $productstatic->getNomUrl(1,'',16);*/
+        print $productstatic->label;
         print "</td>\n";
         // Batch
     	if (! empty($conf->productbatch->enabled))
