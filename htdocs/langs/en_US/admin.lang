@@ -1532,6 +1532,7 @@ DeleteMenu=Delete menu entry
 ConfirmDeleteMenu=Are you sure you want to delete menu entry <b>%s</b> ?
 DeleteLine=Delete line
 ConfirmDeleteLine=Are you sure you want to delete this line ?
+FailedToInitializeMenu=Failed to initialize menu
 ##### Tax #####
 TaxSetup=Taxes, social or fiscal taxes and dividends module setup
 OptionVatMode=VAT due 
