@@ -575,7 +575,7 @@ if ($resql)
         $productstatic->ref=$objp->product_ref;
         $productstatic->label=$objp->produit;
         $productstatic->type=$objp->type;
-        print $productstatic->getNomUrl(1,'',16);
+        print $productstatic->getNomUrl(1,'stock',16);
         print "</td>\n";
         // Product label
         print '<td>';

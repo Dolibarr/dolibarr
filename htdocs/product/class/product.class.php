@@ -2972,7 +2972,7 @@ class Product extends CommonObject
 	 *	Return clicable link of object (with eventually picto)
 	 *
 	 *	@param		int		$withpicto		Add picto into link
-	 *	@param		string	$option			Where point the link
+	 *	@param		string	$option			Where point the link ('stock', 'composition', 'category', 'supplier', '')
 	 *	@param		int		$maxlength		Maxlength of ref
 	 *	@return		string					String with URL
 	 */
