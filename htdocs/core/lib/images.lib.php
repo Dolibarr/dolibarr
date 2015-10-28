@@ -483,7 +483,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
             break;
 		case IMAGETYPE_JPEG:    // 2
             $trans_colour = imagecolorallocatealpha($imgThumb, 255, 255, 255, 0);
-            $extImgTarget = (preg_match('/\.jpeg$/',$file)?'.jpeg':'.jpg');
+            $extImgTarget = (preg_match('/\.jpeg$/i',$file)?'.jpeg':'.jpg');
             $newquality=$quality;
             break;
 		case IMAGETYPE_PNG:	    // 3
@@ -512,7 +512,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 
 	$fileName = preg_replace('/(\.gif|\.jpeg|\.jpg|\.png|\.bmp)$/i','',$file);	// On enleve extension quelquesoit la casse
 	$fileName = basename($fileName);
-	$imgThumbName = $dirthumb.'/'.$fileName.$extName.$extImgTarget; // Chemin complet du fichier de la vignette
+	$imgThumbName = $dirthumb.'/'.getImageFileNameForSize($file, $extName, $extImgTarget); // Chemin complet du fichier de la vignette
 
 	// Check if permission are ok
 	//$fp = fopen($imgThumbName, "w");

@@ -356,7 +356,7 @@ ThemeDir=Skins directory
 ConnectionTimeout=Connexion timeout
 ResponseTimeout=Response timeout
 SmsTestMessage=Test message from __PHONEFROM__ to __PHONETO__
-ModuleMustBeEnabledFirst=Module <b>%s</b> must be enabled first before using this feature.
+ModuleMustBeEnabledFirst=Module <b>%s</b> must be enabled first if you need this feature.
 SecurityToken=Key to secure URLs
 NoSmsEngine=No SMS sender manager available. SMS sender manager are not installed with default distribution (because they depends on an external supplier) but you can find some on %s
 PDF=PDF
@@ -936,7 +936,8 @@ DefaultMenuSmartphoneManager=Smartphone menu manager
 Skin=Skin theme
 DefaultSkin=Default skin theme
 MaxSizeList=Max length for list
-DefaultMaxSizeList=Default max length for list
+DefaultMaxSizeList=Default max length for lists
+DefaultMaxSizeShortList=Default max length for short lists (ie in customer card)
 MessageOfDay=Message of the day
 MessageLogin=Login page message
 PermanentLeftSearchForm=Permanent search form on left menu
@@ -1125,6 +1126,8 @@ EncryptedPasswordInDatabase=To allow the encryption of the passwords in the data
 DisableForgetPasswordLinkOnLogonPage=Do not show the link "Forget password" on login page
 UsersSetup=Users module setup
 UserMailRequired=EMail required to create a new user
+##### HRM setup #####
+HRMSetup=HRM module setup
 ##### Company setup #####
 CompanySetup=Companies module setup
 CompanyCodeChecker=Module for third parties code generation and checking (customer or supplier)
@@ -1559,7 +1562,9 @@ AGENDA_DEFAULT_FILTER_TYPE=Set automatically this type of event into search filt
 AGENDA_DEFAULT_FILTER_STATUS=Set automatically this status for events into search filter of agenda view
 AGENDA_DEFAULT_VIEW=Which tab do you want to open by default when selecting menu Agenda
 ##### ClickToDial #####
-ClickToDialDesc=This module allows to add an icon after phone numbers. A click on this icon will call a server with a particular URL you define below. This can be used to call a call center system from Dolibarr that can call the phone number on a SIP system for example.
+ClickToDialDesc=This module allows to make phone numbers clickable. A click on this icon will call make your phone to call the phone number. This can be used to call a call center system from Dolibarr that can call the phone number on a SIP system for example.
+ClickToDialUseTelLink=Use just a link "tel:" on phone numbers
+ClickToDialUseTelLinkDesc=Use this method if your users have a softphone or an interface install on same computer than the browser, and called when you click on a link in your browser that start with "tel:". If you need a full server solution, you must set this to "No" and fill next field.
 ##### Point Of Sales (CashDesk) #####
 CashDesk=Point of sales
 CashDeskSetup=Point of sales module setup

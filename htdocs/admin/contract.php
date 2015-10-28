@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2011-2013      Juanjo Menent	    <jmenent@2byte.es>
- * Copyright (C) 2011-2014      Philippe Grand	    <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2015      Philippe Grand	    <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,11 +59,11 @@ if ($action == 'updateMask')
 
  	if (! $error)
     {
-        setEventMessage($langs->trans("SetupSaved"));
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
     else
     {
-        setEventMessage($langs->trans("Error"),'errors');
+        setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
 
@@ -101,13 +101,13 @@ else if ($action == 'specimen') // For contract
 		}
 		else
 		{
-			setEventMessage($obj->error,'errors');
+			setEventMessages($obj->error, $obj->errors, 'errors');
 			dol_syslog($obj->error, LOG_ERR);
 		}
 	}
 	else
 	{
-		setEventMessage($langs->trans("ErrorModuleNotFound"),'errors');
+		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
 		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
 }
@@ -132,12 +132,12 @@ if ($action == 'setModuleOptions')
 	if (! $error)
 	{
 		$db->commit();
-		setEventMessage($langs->trans("SetupSaved"));
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
 	else
 	{
 		$db->rollback();
-        setEventMessage($langs->trans("Error"),'errors');
+        setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
 
@@ -194,11 +194,11 @@ else if ($action == 'set_other')
 
  	if (! $error)
     {
-        setEventMessage($langs->trans("SetupSaved"));
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
     else
     {
-        setEventMessage($langs->trans("Error"),'errors');
+        setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
 

@@ -417,6 +417,7 @@ $search_societe = GETPOST("search_societe");
 $search_paymentmode = GETPOST("search_paymentmode");
 $search_montant_ht = GETPOST("search_montant_ht");
 $search_montant_ttc = GETPOST("search_montant_ttc");
+$search_status = GETPOST("search_status");
 $late = GETPOST("late");
 
 // Do we click on purge search criteria ?
@@ -428,6 +429,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
     $search_paymentmode='';
     $search_montant_ht='';
     $search_montant_ttc='';
+    $search_status='';
 }
 
 $sortfield = GETPOST("sortfield",'alpha');
@@ -483,6 +485,7 @@ if ($search_paymentmode) $sql .= " AND f.fk_mode_reglement = ".$search_paymentmo
 if ($search_montant_ht)  $sql .= " AND f.total = '".$db->escape($search_montant_ht)."'";
 if ($search_montant_ttc) $sql .= " AND f.total_ttc = '".$db->escape($search_montant_ttc)."'";
 if (GETPOST('sf_ref'))   $sql .= " AND f.facnumber LIKE '%".$db->escape(GETPOST('sf_ref'))."%'";
+if ($search_status)      $sql .= " AND f.fk_statut = ".$search_status;
 if ($month > 0)
 {
 	if ($year > 0)
@@ -528,6 +531,7 @@ if ($resql)
 	if ($search_societe)     $param.='&amp;search_paymentmode='.urlencode($search_paymentmode);
 	if ($search_montant_ht)  $param.='&amp;search_montant_ht='.urlencode($search_montant_ht);
 	if ($search_montant_ttc) $param.='&amp;search_montant_ttc='.urlencode($search_montant_ttc);
+	if ($search_status)      $param.='&amp;search_status='.urlencode($search_status);
 	if ($late)               $param.='&amp;late='.urlencode($late);
 	if ($mode)               $param.='&amp;mode='.urlencode($mode);
 	$urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;

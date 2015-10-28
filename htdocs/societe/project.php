@@ -22,14 +22,14 @@
  */
 
 /**
- *  \file       htdocs/societe/agenda.php
+ *  \file       htdocs/societe/project.php
  *  \ingroup    societe
- *  \brief      Page of third party events
+ *  \brief      Page of third party projects
  */
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 $langs->load("companies");
 
@@ -39,7 +39,7 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe', $socid, '&societe');
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('agendathirdparty'));
+$hookmanager->initHooks(array('projectthirdparty'));
 
 
 /*
@@ -78,7 +78,7 @@ if ($socid)
 	if (! empty($conf->notification->enabled)) $langs->load("mails");
 	$head = societe_prepare_head($object);
 
-	dol_fiche_head($head, 'agenda', $langs->trans("ThirdParty"),0,'company');
+	dol_fiche_head($head, 'project', $langs->trans("ThirdParty"),0,'company');
 
     dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
         
@@ -121,53 +121,33 @@ if ($socid)
 
 	dol_fiche_end();
 
-
 	
-	/*
+    /*
      * Barre d'action
      */
 
-    $objthirdparty=$object;
-    $objcon=new stdClass();
-	
-    $out='';
-    $permok=$user->rights->agenda->myactions->create;
-    if ((! empty($objthirdparty->id) || ! empty($objcon->id)) && $permok)
-    {
-        //$out.='<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create';
-        if (get_class($objthirdparty) == 'Societe') $out.='&amp;socid='.$objthirdparty->id;
-        $out.=(! empty($objcon->id)?'&amp;contactid='.$objcon->id:'').'&amp;backtopage=1&amp;percentage=-1';
-    	//$out.=$langs->trans("AddAnAction").' ';
-    	//$out.=img_picto($langs->trans("AddAnAction"),'filenew');
-    	//$out.="</a>";
-	}
+    print '<div class="tabsAction">';
 
-	print '<div class="tabsAction">';
-
-    if (! empty($conf->agenda->enabled))
+    if (! empty($conf->projet->enabled))
     {
-    	if (! empty($user->rights->agenda->myactions->create) || ! empty($user->rights->agenda->allactions->create))
+    	if (! empty($conf->projet->enabled) && ! empty($user->rights->projet->creer))
     	{
-        	print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'">'.$langs->trans("AddAction").'</a>';
+        	print '<a class="butAction" href="'.DOL_URL_ROOT.'/projet/card.php?action=create&socid='.$object->id.'&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddProject").'</a>';
     	}
     	else
     	{
-        	print '<a class="butActionRefused" href="#">'.$langs->trans("AddAction").'</a>';
+        	print '<a class="butActionRefused" href="#">'.$langs->trans("AddProject").'</a>';
     	}
     }
 
     print '</div>';
-
+    
+	
     print '<br>';
 
-
-    print load_fiche_titre($langs->trans("ActionsOnCompany"),'','');
-
-    // List of todo actions
-    show_actions_todo($conf,$langs,$db,$object,null,0,1);
-
-    // List of done actions
-    show_actions_done($conf,$langs,$db,$object);
+    
+    // Projects list
+    $result=show_projects($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id, 1);
 }
 
 

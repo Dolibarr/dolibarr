@@ -83,10 +83,10 @@ if ($action == 'validatehistory') {
 	if (! $resql1) {
 		$error ++;
 		$db->rollback();
-		setEventMessage($db->lasterror(), 'errors');
+		setEventMessages($db->lasterror(), null, 'errors');
 	} else {
 		$db->commit();
-		setEventMessage($langs->trans('Dispatched'), 'mesgs');
+		setEventMessages($langs->trans('Dispatched'), null, 'mesgs');
 	}
 }
 

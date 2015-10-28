@@ -61,7 +61,7 @@ if ($action == "save")
 	}
 
 	$db->commit();
-	setEventMessage($langs->trans("SetupSaved"));
+	setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 }
 
 

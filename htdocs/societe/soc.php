@@ -1908,7 +1908,17 @@ else
 	    print $object->name_alias;
 	    print "</td></tr>";
 
-        // Prefix
+    	// Prospect/Customer
+    	print '<tr><td>'.$langs->trans('ProspectCustomer').'</td><td>';
+    	print $object->getLibCustProspStatut();
+    	print '</td></tr>';
+	    
+    	// Prospect/Customer
+    	print '<tr><td>'.$langs->trans('Supplier').'</td><td>';
+    	print yn($object->fournisseur);
+    	print '</td></tr>';
+    	
+    	// Prefix
         if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
         {
             print '<tr><td>'.$langs->trans('Prefix').'</td><td>'.$object->prefix_comm.'</td>';
@@ -2481,9 +2491,6 @@ else
 	        {
 	        	$result=show_addresses($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
 	        }
-
-	        // Projects list
-	        $result=show_projects($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
 		}
     }
 

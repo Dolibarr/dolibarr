@@ -1145,6 +1145,10 @@ div.vmenu, td.vmenu {
 	<?php } ?>
 }
 
+.vmenusearchselectcombo {
+	width: 172px;
+}
+
 .menu_contenu { 
 	padding-top: 3px; 
 	padding-bottom: 2px;
@@ -1219,17 +1223,17 @@ div.blockvmenusearch
 	color: #000000;
 	text-align: <?php print $left; ?>;
 	text-decoration: none;
-    padding-left: 5px;
+    /*padding-left: 5px;
     padding-right: 1px;
     padding-top: 3px;
-    padding-bottom: 3px;
-    margin: 1px 0px 8px 2px;
+    padding-bottom: 3px; */
+    margin: 1px 0px 4px 2px;
 	background: rgb(<?php echo $colorbackvmenu1; ?>);
 
-    border-left: 1px solid #AAA;
+    /*border-left: 1px solid #AAA;
     border-right: 1px solid #BBB;
     border-bottom: 1px solid #BBB;
-    border-top: 1px solid #BBB;
+    border-top: 1px solid #BBB;*/
     /*border-radius: 4px;
 	-moz-border-radius: 4px;
     -moz-box-shadow: 3px 3px 4px #DDD;

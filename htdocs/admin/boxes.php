@@ -85,7 +85,7 @@ if ($action == 'add') {
                     }
                     else
                     {
-                        setEventMessage($db->lasterror(), 'errors');
+                        setEventMessages($db->lasterror(), null, 'errors');
                         $error++;
                     }
                 }
@@ -121,7 +121,7 @@ if ($action == 'add') {
                         $resql = $db->query($sql);
                         if (! $resql)
                         {
-                            setEventMessage($db->lasterror(), 'errors');
+                            setEventMessages($db->lasterror(), null, 'errors');
                             $error++;
                         }
                     }

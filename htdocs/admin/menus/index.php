@@ -186,7 +186,7 @@ elseif ($action == 'confirm_delete' && $confirm == 'yes')
 	{
 		$db->commit();
 
-		setEventMessage($langs->trans("MenuDeleted"));
+		setEventMessages($langs->trans("MenuDeleted"), null, 'mesgs');
 
 		header("Location: ".DOL_URL_ROOT.'/admin/menus/index.php?menu_handler='.$menu_handler);
 		exit ;
@@ -359,7 +359,7 @@ if ($conf->use_javascript_ajax)
 else
 {
 	$langs->load("errors");
-	setEventMessage($langs->trans("ErrorFeatureNeedJavascript"), 'errors');
+	setEventMessages($langs->trans("ErrorFeatureNeedJavascript"), null, 'errors');
 }
 
 print '<br>';

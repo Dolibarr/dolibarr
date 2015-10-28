@@ -34,7 +34,7 @@ $action=GETPOST('action','alpha');
 if (! $user->admin) accessforbidden();
 
 if (GETPOST('msg','alpha')) {
-	setEventMessage(GETPOST('msg','alpha'), 'errors');
+	setEventMessages(GETPOST('msg','alpha'), null, 'errors');
 }
 
 
@@ -63,7 +63,7 @@ if ($action=='install')
 	if (! $original_file)
 	{
 		$langs->load("Error");
-		setEventMessage($langs->trans("ErrorFileRequired"), 'warnings');
+		setEventMessages($langs->trans("ErrorFileRequired"), null, 'warnings');
 		$error++;
 	}
 	else
@@ -71,7 +71,7 @@ if ($action=='install')
 		if (! preg_match('/\.zip/i',$original_file))
 		{
 			$langs->load("errors");
-			setEventMessage($langs->trans("ErrorFileMustBeADolibarrPackage",$original_file), 'errors');
+			setEventMessages($langs->trans("ErrorFileMustBeADolibarrPackage",$original_file), null, 'errors');
 			$error++;
 		}
 	}
@@ -99,7 +99,7 @@ if ($action=='install')
 			if (! empty($result['error']))
 			{
 				$langs->load("errors");
-				setEventMessage($langs->trans($result['error'],$original_file), 'errors');
+				setEventMessages($langs->trans($result['error'],$original_file), null, 'errors');
 				$error++;
 			}
 			else
@@ -116,7 +116,7 @@ if ($action=='install')
 					//var_dump($modulenamedir);
 					if (! dol_is_dir($modulenamedir))
 					{
-						setEventMessage($langs->trans("ErrorModuleFileSeemsToHaveAWrongFormat"), 'errors');
+						setEventMessages($langs->trans("ErrorModuleFileSeemsToHaveAWrongFormat"), null, 'errors');
 						$error++;
 					}
 				}
@@ -128,7 +128,7 @@ if ($action=='install')
 					$result=dolCopyDir($modulenamedir, $dirins.'/'.$modulename, '0444', 1);
 					if ($result <= 0)
 					{
-						setEventMessage($langs->trans("ErrorFailedToCopy"), 'errors');
+						setEventMessages($langs->trans("ErrorFailedToCopy"), null, 'errors');
 						$error++;
 					}
 				}
@@ -142,7 +142,7 @@ if ($action=='install')
 
 	if (! $error)
 	{
-		setEventMessage($langs->trans("SetupIsReadyForUse"));
+		setEventMessages($langs->trans("SetupIsReadyForUse"), null, 'mesgs');
 	}
 }
 
