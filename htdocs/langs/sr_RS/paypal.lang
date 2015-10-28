@@ -1,25 +1,25 @@
 # Dolibarr language file - Source file is en_US - paypal
-PaypalSetup=PayPal module setup
-PaypalDesc=This module offer pages to allow payment on <a href="http://www.paypal.com" target="_blank">PayPal</a> by customers. This can be used for a free payment or for a payment on a particular Dolibarr object (invoice, order, ...)
-PaypalOrCBDoPayment=Pay with credit card or Paypal
-PaypalDoPayment=Pay with Paypal
-PaypalCBDoPayment=Pay with credit card
-PAYPAL_API_SANDBOX=Mode test/sandbox
+PaypalSetup=Podešavanja modula PayPal
+PaypalDesc=Ovaj modul omogućava uplatu preko <a href="http://www.paypal.com" target="_blank">PayPal</a>-a od strane klijenata. Može biti korisna za besplatne uplate ili za uplate vezane za određene Dolibarr objekte (račun, narudžbina, ...)
+PaypalOrCBDoPayment=Uplati kreditnom karticom ili putem PayPal-a
+PaypalDoPayment=Uplati putem PayPal-a
+PaypalCBDoPayment=Uplati kreditnom karticom
+PAYPAL_API_SANDBOX=Test/sandbox mod
 PAYPAL_API_USER=API username
 PAYPAL_API_PASSWORD=API password
 PAYPAL_API_SIGNATURE=API signature
-PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Offer payment "integral" (Credit card+Paypal) or "Paypal" only
-PaypalModeIntegral=Integral
-PaypalModeOnlyPaypal=PayPal only
-PAYPAL_CSS_URL=Optionnal Url of CSS style sheet on payment page
-ThisIsTransactionId=This is id of transaction: <b>%s</b>
-PAYPAL_ADD_PAYMENT_URL=Add the url of Paypal payment when you send a document by mail
-PAYPAL_IPN_MAIL_ADDRESS=E-mail address for the instant notification of payment (IPN)
-PredefinedMailContentLink=You can click on the secure link below to make your payment (PayPal) if it is not already done.\n\n%s\n\n
-YouAreCurrentlyInSandboxMode=You are currently in the "sandbox" mode
-NewPaypalPaymentReceived=New Paypal payment received
-NewPaypalPaymentFailed=New Paypal payment tried but failed
-PAYPAL_PAYONLINE_SENDEMAIL=EMail to warn after a payment (success or not)
-ReturnURLAfterPayment=Return URL after payment
-ValidationOfPaypalPaymentFailed=Validation of Paypal payment failed
-PaypalConfirmPaymentPageWasCalledButFailed=Payment confirmation page for Paypal was called by Paypal but confirmation failed
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Ponudi "integralno" plaćanje (kreditna kartca + PayPal) ili samo "PayPal"
+PaypalModeIntegral=Integralno
+PaypalModeOnlyPaypal=Samo PayPal
+PAYPAL_CSS_URL=Opcioni URL ili CSS na strani za plaćanje
+ThisIsTransactionId=Ovo je ID transakcije: <b>%s</b>
+PAYPAL_ADD_PAYMENT_URL=Ubaci URL PayPal uplate prilikom slanja dokumenta putem mail-a
+PAYPAL_IPN_MAIL_ADDRESS=E-mail adresa za obaveštenje uplate (IPN)
+PredefinedMailContentLink=Možete kliknuti na secure link ispod da biste izvršili uplatu putem PayPal-a (ukoliko to još niste učinili).\n\n%s\n\n
+YouAreCurrentlyInSandboxMode=Trenutno ste u "sandbox" modu
+NewPaypalPaymentReceived=Nova Paypal uplata je primljena
+NewPaypalPaymentFailed=Novi pokušaj uplate Paypal-om nije uspeo
+PAYPAL_PAYONLINE_SENDEMAIL=Email obaveštenja nakon uplate (uspešne ili ne)
+ReturnURLAfterPayment=Povratni URL posle plaćanja
+ValidationOfPaypalPaymentFailed=Potvrda neuspešne Paypal uplate
+PaypalConfirmPaymentPageWasCalledButFailed=Paypal strana za konfirmaciju uplate je pozvana, ali je konfirmacija neuspela

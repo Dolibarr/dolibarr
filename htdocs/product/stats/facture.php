@@ -128,10 +128,11 @@ if ($id > 0 || ! empty($ref))
 		print '</div>';
 
 
-        if ($user->rights->facture->lire) {
-            $sql = "SELECT distinct s.nom as name, s.rowid as socid, s.code_client,";
-            $sql.= " f.facnumber, d.total_ht as total_ht,";
-            $sql.= " f.datef, f.paye, f.fk_statut as statut, f.rowid as facid, d.qty";
+        if ($user->rights->facture->lire) 
+        {
+            $sql = "SELECT DISTINCT s.nom as name, s.rowid as socid, s.code_client,";
+            $sql.= " f.facnumber, f.datef, f.paye, f.fk_statut as statut, f.rowid as facid,";
+            $sql.= " d.rowid, d.total_ht as total_ht, d.qty";           // We must keep the d.rowid here to not loose record because of the distinct used to ignore duplicate line when link on societe_commerciaux is used
             if (!$user->rights->societe->client->voir && !$socid) $sql.= ", sc.fk_soc, sc.fk_user ";
             $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
             $sql.= ", ".MAIN_DB_PREFIX."facture as f";
@@ -147,24 +148,27 @@ if ($id > 0 || ! empty($ref))
             	$sql.= ' AND YEAR(f.datef) IN (' . $search_year . ')';
             if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
             if ($socid) $sql.= " AND f.fk_soc = ".$socid;
-            $sql.= " ORDER BY $sortfield $sortorder ";
+            $sql.= $db->order($sortfield, $sortorder);
 
             //Calcul total qty and amount for global if full scan list
             $total_ht=0;
             $total_qty=0;
 			$totalrecords=0;
-            if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+            if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) 
+            {
             	$result = $db->query($sql);
-            	if ($result) {
+            	if ($result) 
+            	{
             		$totalrecords = $db->num_rows($result);
-            		while ($objp = $db->fetch_object($result)) {
+            		while ($objp = $db->fetch_object($result)) 
+            		{
             			$total_ht+=$objp->total_ht;
             			$total_qty+=$objp->qty;
             		}
             	}
             }
 
-            $sql.= $db->plimit($conf->liste_limit +1, $offset);
+            $sql.= $db->plimit($conf->liste_limit + 1, $offset);
 
             $result = $db->query($sql);
             if ($result)
@@ -214,7 +218,7 @@ if ($id > 0 || ! empty($ref))
                 if ($num > 0)
 				{
                     $var=True;
-                    while ($i < $num && $i < $conf->liste_limit)
+                    while ($i < min($num,$conf->liste_limit))
 					{
                         $objp = $db->fetch_object($result);
                         $var=!$var;

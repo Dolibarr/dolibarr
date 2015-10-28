@@ -1,6 +1,8 @@
 # Dolibarr language file - Source file is en_US - projects
 RefProject=Ref. project
+ProjectRef=Project ref.
 ProjectId=Project Id
+ProjectLabel=Project label
 Project=项目
 Projects=项目
 ProjectStatus=Project status
@@ -27,7 +29,7 @@ OfficerProject=项目主任
 LastProjects=上次%s的项目
 AllProjects=所有项目
 OpenedProjects=Opened projects
-OpportunitiesStatusForOpenedProjects=Opportunities status for opened projects
+OpportunitiesStatusForOpenedProjects=Opportunities amount of opened projects by status
 ProjectsList=项目名单
 ShowProject=显示项目
 SetProject=设置项目

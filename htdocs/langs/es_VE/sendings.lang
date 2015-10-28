@@ -1,0 +1,2 @@
+# Dolibarr language file - Source file is en_US - sendings
+NoProductToShipFoundIntoStock=No se encontraron productos para enviar en el almacén <b>%s</b>. Corrija el sotck o vuelva a elegir otro almacén

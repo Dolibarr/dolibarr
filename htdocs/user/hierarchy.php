@@ -88,7 +88,9 @@ foreach($fulltree as $key => $val)
     $userstatic->email=$val['email'];
     $userstatic->gender=$val['gender'];
 	$userstatic->societe_id=$val['fk_soc'];
-
+	$userstatic->admin=$val['admin'];
+	$userstatic->entity=$val['entity'];
+	
 	$entity=$val['entity'];
 	$entitystring='';
 
@@ -109,7 +111,16 @@ foreach($fulltree as $key => $val)
 		}
 	}
 
-	$li=$userstatic->getNomUrl(1,'').' ('.$val['login'].($entitystring?' - '.$entitystring:'').')';
+	$li=$userstatic->getNomUrl(1,'',0,1);
+	if (! empty($conf->multicompany->enabled) && $userstatic->admin && ! $userstatic->entity)
+	{
+		$li.=img_picto($langs->trans("SuperAdministrator"),'redstar');
+	}
+	else if ($userstatic->admin)
+	{
+		$li.=img_picto($langs->trans("Administrator"),'star');
+	}
+	$li.=' ('.$val['login'].($entitystring?' - '.$entitystring:'').')';
 
 	$data[] = array(
 		'rowid'=>$val['rowid'],

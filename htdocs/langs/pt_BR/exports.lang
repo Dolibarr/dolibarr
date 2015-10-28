@@ -57,7 +57,6 @@ SelectAtLeastOneField=Mude pelo menos um campo de origem na coluna de campos par
 SelectFormat=Escolha este formato de arquivo de importação
 RunImportFile=Arquivo de importação de lançamento
 NowClickToRunTheImport=Verifique o resultado da simulação de importação. Se tudo estiver ok, inicie a importação definitiva.
-DataLoadedWithId=Todos os dados serão carregados com o seguinte ID de <b>importação:% s</b>
 ErrorMissingMandatoryValue=Dados obrigatórios esta vazio no arquivo de origem para o campo.
 TooMuchErrors=Há ainda outras linhas de origem com erros mas a produção tem sido limitado.
 TooMuchWarnings=Há ainda outras linhas de origem com avisos, mas a produção tem sido limitado.

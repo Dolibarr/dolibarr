@@ -540,10 +540,12 @@ class Adherent extends CommonObject
 
                     if ($result >= 0)
                     {
+                        //var_dump($this->user_login);exit;
+                        //var_dump($this->login);exit;
+                        $luser->login=$this->login;
                         $luser->civility_id=$this->civility_id;
                         $luser->firstname=$this->firstname;
                         $luser->lastname=$this->lastname;
-                        $luser->login=$this->user_login;
                         $luser->pass=$this->pass;
                         $luser->societe_id=$this->societe;
 
@@ -1956,6 +1958,51 @@ class Adherent extends CommonObject
             dol_print_error($this->db);
         }
     }
+
+	/**
+	 * Sets object to supplied categories.
+	 *
+	 * Deletes object from existing categories not supplied.
+	 * Adds it to non existing supplied categories.
+	 * Existing categories are left untouch.
+	 *
+	 * @param int[]|int $categories Category or categories IDs
+	 */
+	public function setCategories($categories)
+	{
+		// Handle single category
+		if (!is_array($categories)) {
+			$categories = array($categories);
+		}
+
+		// Get current categories
+		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+		$c = new Categorie($this->db);
+		$existing = $c->containing($this->id, Categorie::TYPE_MEMBER, 'id');
+
+		// Diff
+		if (is_array($existing)) {
+			$to_del = array_diff($existing, $categories);
+			$to_add = array_diff($categories, $existing);
+		} else {
+			$to_del = array(); // Nothing to delete
+			$to_add = $categories;
+		}
+
+		// Process
+		foreach ($to_del as $del) {
+			if ($c->fetch($del) > 0) {
+				$c->del_type($this, 'member');
+			}
+		}
+		foreach ($to_add as $add) {
+			if ($c->fetch($add) > 0) {
+				$c->add_type($this, 'member');
+			}
+		}
+
+		return;
+	}
 
 	/**
 	 * Function used to replace a thirdparty id with another one.

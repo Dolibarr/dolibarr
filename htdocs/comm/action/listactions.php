@@ -199,7 +199,7 @@ if ($status == 'todo') { $sql.= " AND ((a.percent >= 0 AND a.percent < 100) OR (
 if ($filtert > 0 || $usergroup > 0)
 {
     $sql.= " AND (";
-    if ($filtert > 0) $sql.= "ar.fk_element = ".$filtert;
+    if ($filtert > 0) $sql.= "(ar.fk_element = ".$filtert." OR a.fk_user_action=".$filtert.")";
     if ($usergroup > 0) $sql.= ($filtert>0?" OR ":"")." ugu.fk_usergroup = ".$usergroup;
     $sql.= ")";
 }

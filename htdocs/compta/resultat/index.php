@@ -477,85 +477,93 @@ $reshook=$hookmanager->executeHooks('addStatisticLine',$parameters,$object,$acti
 /*
  * Salaries
  */
-
-if ($modecompta == 'CREANCES-DETTES') {
-	$column = 'p.datev';
-} else {
-	$column = 'p.datep';
-}
-
-$subtotal_ht = 0;
-$subtotal_ttc = 0;
-$sql = "SELECT p.label as nom, date_format($column,'%Y-%m') as dm, sum(p.amount) as amount";
-$sql.= " FROM ".MAIN_DB_PREFIX."payment_salary as p";
-$sql.= " WHERE p.entity = ".$conf->entity;
-$sql.= " GROUP BY p.label, dm";
-
-dol_syslog("get social salaries payments");
-$result=$db->query($sql);
-if ($result)
+if (! empty($conf->salaries->enabled))
 {
-	$num = $db->num_rows($result);
-	$var=false;
-	$i = 0;
-	if ($num)
-	{
-		while ($i < $num)
-		{
-			$obj = $db->fetch_object($result);
-
-			if (! isset($decaiss[$obj->dm])) $decaiss[$obj->dm]=0;
-			$decaiss[$obj->dm] += $obj->amount;
-
-			if (! isset($decaiss_ttc[$obj->dm])) $decaiss_ttc[$obj->dm]=0;
-			$decaiss_ttc[$obj->dm] += $obj->amount;
-
-			$i++;
-		}
-	}
-}
-else
-{
-	dol_print_error($db);
+    if ($modecompta == 'CREANCES-DETTES') {
+    	$column = 'p.datev';
+    } else {
+    	$column = 'p.datep';
+    }
+    
+    $subtotal_ht = 0;
+    $subtotal_ttc = 0;
+    $sql = "SELECT p.label as nom, date_format($column,'%Y-%m') as dm, sum(p.amount) as amount";
+    $sql.= " FROM ".MAIN_DB_PREFIX."payment_salary as p";
+    $sql.= " WHERE p.entity = ".$conf->entity;
+    $sql.= " GROUP BY p.label, dm";
+    
+    dol_syslog("get social salaries payments");
+    $result=$db->query($sql);
+    if ($result)
+    {
+    	$num = $db->num_rows($result);
+    	$var=false;
+    	$i = 0;
+    	if ($num)
+    	{
+    		while ($i < $num)
+    		{
+    			$obj = $db->fetch_object($result);
+    
+    			if (! isset($decaiss[$obj->dm])) $decaiss[$obj->dm]=0;
+    			$decaiss[$obj->dm] += $obj->amount;
+    
+    			if (! isset($decaiss_ttc[$obj->dm])) $decaiss_ttc[$obj->dm]=0;
+    			$decaiss_ttc[$obj->dm] += $obj->amount;
+    
+    			$i++;
+    		}
+    	}
+    }
+    else
+    {
+    	dol_print_error($db);
+    }
 }
 
 /*
- * get dunning paiement
-*/
-$subtotal_ht = 0;
-$subtotal_ttc = 0;
-$sql = "SELECT p.societe as nom, p.firstname, p.lastname, date_format(p.datedon,'%Y-%m') as dm, sum(p.amount) as amount";
-$sql.= " FROM ".MAIN_DB_PREFIX."don as p";
-$sql.= " WHERE p.entity = ".$conf->entity;
-$sql.= " AND fk_statut=2";
-$sql.= " GROUP BY p.societe,  p.firstname, p.lastname, dm";
-
-dol_syslog("get social salaries payments");
-$result=$db->query($sql);
-if ($result)
+ * Donation get dunning paiement
+ */
+if (! empty($conf->don->enabled))
 {
-	$num = $db->num_rows($result);
-	$var=false;
-	$i = 0;
-	if ($num)
-	{
-		while ($i < $num)
-		{
-			$obj = $db->fetch_object($result);
-
-			if (! isset($encaiss[$obj->dm])) $encaiss[$obj->dm]=0;
-			$encaiss[$obj->dm] += $obj->amount;
-
-			if (! isset($encaiss_ttc[$obj->dm])) $encaiss_ttc[$obj->dm]=0;
-			$encaiss_ttc[$obj->dm] += $obj->amount;
-
-			$i++;
-		}
-	}
-}
-else
-{
-	dol_print_error($db);
+    $subtotal_ht = 0;
+    $subtotal_ttc = 0;
+    $sql = "SELECT p.societe as nom, p.firstname, p.lastname, date_format(p.datedon,'%Y-%m') as dm, sum(p.amount) as amount";
+    $sql.= " FROM ".MAIN_DB_PREFIX."don as p";
+    $sql.= " WHERE p.entity = ".$conf->entity;
+	if ($modecompta == 'CREANCES-DETTES')
+	   $sql.= " AND fk_statut in (1,2)";
+	else
+	   $sql.= " AND fk_statut=2";
+    $sql.= " GROUP BY p.societe, p.firstname, p.lastname, dm";
+    
+    dol_syslog("get donation payments");
+    $result=$db->query($sql);
+    if ($result)
+    {
+    	$num = $db->num_rows($result);
+    	$var=false;
+    	$i = 0;
+    	if ($num)
+    	{
+    		while ($i < $num)
+    		{
+    			$obj = $db->fetch_object($result);
+    
+    			if (! isset($encaiss[$obj->dm])) $encaiss[$obj->dm]=0;
+    			$encaiss[$obj->dm] += $obj->amount;
+    
+    			if (! isset($encaiss_ttc[$obj->dm])) $encaiss_ttc[$obj->dm]=0;
+    			$encaiss_ttc[$obj->dm] += $obj->amount;
+    
+    			$i++;
+    		}
+    	}
+    }
+    else
+    {
+    	dol_print_error($db);
+    }
 }
 
 /*

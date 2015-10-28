@@ -1286,18 +1286,18 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		print '<td>&nbsp;</td>';
 		print '</tr>';
 
-		print '<tr class="liste_titre">';
-		print '<td><input type="text" class="flat" name="search_soc" value="' . $search_soc . '" size="20"></td>';
-		print '<td colspan="8">&nbsp;</td>';
-		// Print the search button
-		print '<td class="liste_titre" align="right">';
-		print '<input class="liste_titre" name="button_search" type="image" src="' . DOL_URL_ROOT . '/theme/' . $conf->theme . '/img/search.png" value="' . dol_escape_htmltag($langs->trans("Search")) . '" title="' . dol_escape_htmltag($langs->trans("Search")) . '">';
-		print '</td>';
-		print '</tr>';
-
 		if (count($prodcustprice->lines) > 0)
 		{
-			$var = False;
+    		print '<tr class="liste_titre">';
+    		print '<td><input type="text" class="flat" name="search_soc" value="' . $search_soc . '" size="20"></td>';
+    		print '<td colspan="8">&nbsp;</td>';
+    		// Print the search button
+    		print '<td class="liste_titre" align="right">';
+    		print '<input class="liste_titre" name="button_search" type="image" src="' . DOL_URL_ROOT . '/theme/' . $conf->theme . '/img/search.png" value="' . dol_escape_htmltag($langs->trans("Search")) . '" title="' . dol_escape_htmltag($langs->trans("Search")) . '">';
+    		print '</td>';
+    		print '</tr>';
+		    
+		    $var = False;
 
 			foreach ($prodcustprice->lines as $line)
 			{

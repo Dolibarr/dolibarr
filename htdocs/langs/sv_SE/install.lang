@@ -209,6 +209,6 @@ MigrationActioncommElement=Uppdatera uppgifter om åtgärder
 MigrationPaymentMode=Datamigrering betalning mode
 MigrationCategorieAssociation=Migreringskategorier
 MigrationEvents=Överföring av händelser för att lägga till händelseägaren i uppdragslista
-
+MigrationReloadModule=Reload module %s
 ShowNotAvailableOptions=Visa ej tillgängliga val
 HideNotAvailableOptions=Dölj ej tillgängliga val

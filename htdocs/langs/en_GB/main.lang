@@ -25,4 +25,4 @@ IncludedVAT=Included VAT
 TTC=Inc. VAT
 VAT=VAT
 VATRate=VAT Rate
-ShowTransaction=Show transaction
+Topic=Subject

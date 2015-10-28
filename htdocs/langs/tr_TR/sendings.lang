@@ -69,7 +69,7 @@ ProductQtyInCustomersOrdersRunning=Açık müşteri siparişlerindeki ürün mik
 ProductQtyInSuppliersOrdersRunning=Açık tedarikçi siparişlerindeki ürün miktarı
 ProductQtyInShipmentAlreadySent=Gönderilmiş olan ve açık durumdaki müşteri siparişindeki miktar
 ProductQtyInSuppliersShipmentAlreadyRecevied=Açık tedarikçi siparişlerindeki halihazırda teslim alınmış ürün miktarı
-NoProductToShipFoundIntoStock=No product to ship found into warehouse <b>%s</b>. Correct sotck or go back to choose another warehouse.
+NoProductToShipFoundIntoStock=<b>%s</b> deposunda gönderilecek ürün bulunamadı. Stoku düzeltin ya da başka bir depo seçmek için geri dönün.
 
 # Sending methods
 SendingMethodCATCH=Müşteri tarafından

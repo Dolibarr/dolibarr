@@ -209,6 +209,6 @@ MigrationActioncommElement=Atjaunināt informāciju par pasākumiem
 MigrationPaymentMode=Datu migrācija uz maksājumu režīmā
 MigrationCategorieAssociation=Kategoriju migrācija
 MigrationEvents=Migration of events to add event owner into assignement table
-
+MigrationReloadModule=Reload module %s
 ShowNotAvailableOptions=Rādīt nepieejamās iespējas
 HideNotAvailableOptions=Slēpt nepieejamās iespējas

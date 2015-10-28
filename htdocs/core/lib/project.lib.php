@@ -53,7 +53,7 @@ function project_prepare_head($object)
 	|| ! empty($conf->ficheinter->enabled) || ! empty($conf->agenda->enabled) || ! empty($conf->deplacement->enabled))
 	{
 		$head[$h][0] = DOL_URL_ROOT.'/projet/element.php?id='.$object->id;
-		$head[$h][1] = $langs->trans("Overview");
+		$head[$h][1] = $langs->trans("ProjectOverview");
 		$head[$h][2] = 'element';
 		$h++;
 	}
@@ -348,7 +348,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 					$projectstatic->id=$lines[$i]->fk_project;
 					$projectstatic->ref=$lines[$i]->projectref;
 					$projectstatic->public=$lines[$i]->public;
-					if ($lines[$i]->public || in_array($lines[$i]->fk_project,$projectsArrayId)) print $projectstatic->getNomUrl(1);
+					if ($lines[$i]->public || in_array($lines[$i]->fk_project,$projectsArrayId) || ! empty($user->rights->projet->all->lire)) print $projectstatic->getNomUrl(1);
 					else print $projectstatic->getNomUrl(1,'nolink');
 					if ($showlineingray) print '</i>';
 					print "</td>";

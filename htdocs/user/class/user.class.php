@@ -1813,14 +1813,15 @@ class User extends CommonObject
 	 *	@param	int		$width			Width of image
 	 *	@param	int		$height			Height of image
 	 *  @param	string	$cssclass		Force a css class
+     * 	@param	string	$imagesize		'mini', 'small' or '' (original)
 	 *	@return	string					String with URL link
 	 */
-	function getPhotoUrl($width, $height, $cssclass='')
+	function getPhotoUrl($width, $height, $cssclass='', $imagesize='')
 	{
 		$result='';
 
 		$result.='<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'">';
-	    $result.=Form::showphoto('userphoto', $this, $width, $height, 0, $cssclass);
+	    $result.=Form::showphoto('userphoto', $this, $width, $height, 0, $cssclass, $imagesize);
 	    $result.='</a>';
 
 	    return $result;
@@ -2195,25 +2196,27 @@ class User extends CommonObject
 	/**
 	 *  Return number of existing users
 	 *
-	 *  @param	string	$limitTo	Limit to 'active' or 'superadmin' users
-	 *  @param	bool	$all		Return for all entities
+	 *  @param	string	$limitTo	Limit to '' or 'active'
+	 *  @param	string	$option		'superadmin' = return for entity 0 only
+	 *  @param	int		$admin		Filter on admin tag
 	 *  @return int  				Number of users
 	 */
-	function getNbOfUsers($limitTo='active', $all=false)
+	function getNbOfUsers($limitTo, $option='', $admin=-1)
 	{
 		global $conf;
 
 		$sql = "SELECT count(rowid) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user";
-		if ($limitTo == 'superadmin')
+		if ($option == 'superadmin')
 		{
 			$sql.= " WHERE entity = 0";
+			if ($admin >= 0) $sql.= " AND admin = ".$admin;
 		}
 		else
 		{
-			if ($all) $sql.= " WHERE entity > 0"; // all users except superadmins
-			else $sql.= " WHERE entity = ".$conf->entity;
+			$sql.=" WHERE entity IN (".getEntity('user',0).")";
 			if ($limitTo == 'active') $sql.= " AND statut = 1";
+			if ($admin >= 0) $sql.= " AND admin = ".$admin;
 		}
 
 		$resql=$this->db->query($sql);
@@ -2227,7 +2230,7 @@ class User extends CommonObject
 		}
 		else
 		{
-			$this->error=$this->db->error();
+			$this->error=$this->db->lasterror();
 			return -1;
 		}
 	}
@@ -2356,7 +2359,7 @@ class User extends CommonObject
 		$this->load_parentof();
 
 		// Init $this->users array
-		$sql = "SELECT DISTINCT u.rowid, u.firstname, u.lastname, u.fk_user, u.fk_soc, u.login, u.email, u.gender, u.statut, u.entity";	// Distinct reduce pb with old tables with duplicates
+		$sql = "SELECT DISTINCT u.rowid, u.firstname, u.lastname, u.fk_user, u.fk_soc, u.login, u.email, u.gender, u.admin, u.statut, u.entity";	// Distinct reduce pb with old tables with duplicates
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 		if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && (! empty($conf->multicompany->transverse_mode) || (! empty($user->admin) && empty($user->entity))))
 		{
@@ -2386,6 +2389,7 @@ class User extends CommonObject
 				$this->users[$obj->rowid]['entity'] = $obj->entity;
 				$this->users[$obj->rowid]['email'] = $obj->email;
 				$this->users[$obj->rowid]['gender'] = $obj->gender;
+				$this->users[$obj->rowid]['admin'] = $obj->admin;
 				$i++;
 			}
 		}

@@ -209,6 +209,6 @@ MigrationActioncommElement=Oppdater data for handlinger
 MigrationPaymentMode=Datamigrering for betalingsmodus
 MigrationCategorieAssociation=Migrer kategorier
 MigrationEvents=Overføring av hendelser for å legge hendelseseier inn i oppdragstabellen
-
+MigrationReloadModule=Reload module %s
 ShowNotAvailableOptions=Vis utilgjengelige opsjoner
 HideNotAvailableOptions=Gjem utilgjengelige opsjoner

@@ -1,6 +1,8 @@
 # Dolibarr language file - Source file is en_US - projects
 RefProject=Ref. project
+ProjectRef=Project ref.
 ProjectId=Project Id
+ProjectLabel=Project label
 Project=Проект
 Projects=Проекти
 ProjectStatus=Project status
@@ -27,7 +29,7 @@ OfficerProject=Директор проект
 LastProjects=Последни проекти %s
 AllProjects=Всички проекти
 OpenedProjects=Opened projects
-OpportunitiesStatusForOpenedProjects=Opportunities status for opened projects
+OpportunitiesStatusForOpenedProjects=Opportunities amount of opened projects by status
 ProjectsList=Списък на проектите
 ShowProject=Покажи проект
 SetProject=Задайте проект
@@ -148,7 +150,7 @@ DocumentModelBaleine=Project report template for tasks
 PlannedWorkload=Planned workload
 PlannedWorkloadShort=Workload
 WorkloadOccupation=Workload assignation
-ProjectReferers=Refering objects
+ProjectReferers=Референтни обекти
 SearchAProject=Search a project
 SearchATask=Search a task
 ProjectMustBeValidatedFirst=Project must be validated first

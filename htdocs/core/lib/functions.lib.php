@@ -5118,3 +5118,32 @@ function natural_search($fields, $value, $mode=0, $nofirstand=0)
     return $res;
 }
 
+/**
+ * Return the filename of file to get the thumbs
+ * 
+ * @param   string  $file           Original filename
+ * @param   string  $extName        Extension to differenciate thumb file name ('', '_small', '_mini')
+ * @param   string  $extImgTarget   Force image format for thumbs. Use '' to keep same extension than original image.
+ * @return  string                  New file name
+ */
+function getImageFileNameForSize($file, $extName, $extImgTarget='')
+{
+	$dirName = dirname($file);
+	if ($dirName == '.') $dirName='';
+	
+    $fileName = preg_replace('/(\.gif|\.jpeg|\.jpg|\.png|\.bmp)$/i','',$file);	// On enleve extension quelquesoit la casse
+	$fileName = basename($fileName);
+	
+	if (empty($extImgTarget)) $extImgTarget = (preg_match('/\.jpg$/i',$file)?'.jpg':'');
+    if (empty($extImgTarget)) $extImgTarget = (preg_match('/\.jpeg$/i',$file)?'.jpeg':'');
+    if (empty($extImgTarget)) $extImgTarget = (preg_match('/\.gif$/i',$file)?'.gif':'');
+    if (empty($extImgTarget)) $extImgTarget = (preg_match('/\.png$/i',$file)?'.png':'');
+    if (empty($extImgTarget)) $extImgTarget = (preg_match('/\.bmp$/i',$file)?'.bmp':'');
+
+    if (! $extImgTarget) return $file;
+	
+    $subdir='';
+    if ($extName) $subdir = 'thumbs/';
+    
+    return $dirName.$subdir.$fileName.$extName.$extImgTarget; // New filename for thumb
+}

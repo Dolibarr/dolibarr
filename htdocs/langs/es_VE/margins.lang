@@ -1,0 +1,4 @@
+# Dolibarr language file - Source file is en_US - margins
+MargeType1=Margen de proveedor con mejor precio
+MargeType2=Margen de Precio Promedio Ponderado (WAP)
+MarginTypeDesc=Margin on best buying price : Margen de precio de venta - El mejor precio con proveedor definido en la tarjeta del producto <br/>

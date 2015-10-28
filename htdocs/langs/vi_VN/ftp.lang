@@ -10,3 +10,5 @@ FailedToConnectToFTPServerWithCredentials=Không thể đăng nhập vào máy c
 FTPFailedToRemoveFile=Không thể loại bỏ các tập <b>tin% s.</b>
 FTPFailedToRemoveDir=Không thể loại bỏ thư <b>mục% s</b> (Kiểm tra quyền truy cập và thư mục mà là trống).
 FTPPassiveMode=Chế độ thụ động
+ChooseAFTPEntryIntoMenu=Choose a FTP entry into menu...
+FailedToGetFile=Failed to get files %s
