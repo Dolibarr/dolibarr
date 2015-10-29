@@ -102,8 +102,7 @@ if ($action == 'update' && empty($_POST["cancel"]))
 				else
 				{
 					$error++;
-					//TODO: Translate
-					setEventMessage('Failed to initialize menu '.$key.'.', 'errors');
+					setEventMessages($langs->trans("FailedToInitializeMenu").' '.$key, null, 'errors');
 					$db->rollback();
 				}
 			}
