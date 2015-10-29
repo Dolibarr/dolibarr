@@ -1111,7 +1111,7 @@ class ExtraFields
 	 *
 	 * @param   string	$key            Key of attribute
 	 * @param   string	$value          Value to show
-	 * @param	string	$moreparam		More param
+	 * @param	string	$moreparam		To add more parametes on html input tag (only checkbox use html input for output rendering)
 	 * @return	string					Formated value
 	 */
 	function showOutputField($key,$value,$moreparam='')
@@ -1128,6 +1128,8 @@ class ExtraFields
 		$perms=$this->attribute_perms[$key];
 		$list=$this->attribute_list[$key];
 
+		$showsize=0;
+		
 		if ($type == 'date')
 		{
 			$showsize=10;
@@ -1357,11 +1359,59 @@ class ExtraFields
 			$showsize=round($size);
 			if ($showsize > 48) $showsize=48;
 		}
+		
 		//print $type.'-'.$size;
 		$out=$value;
+		
 		return $out;
 	}
 
+	/**
+	 * Return tag to describe alignement to use for this extrafield
+	 *
+	 * @param   string	$key            Key of attribute
+	 * @return	string					Formated value
+	 */
+	function getAlignFlag($key)
+	{
+		global $conf,$langs;
+
+		$type=$this->attribute_type[$key];
+
+		$align='';
+		
+		if ($type == 'date')
+		{
+			$align="center";
+		}
+		elseif ($type == 'datetime')
+		{
+			$align="center";
+		}
+		elseif ($type == 'int')
+		{
+			$align="right";
+		}
+		elseif ($type == 'double')
+		{
+			$align="right";
+		}
+		elseif ($type == 'boolean')
+		{
+			$align="center";
+		}
+		elseif ($type == 'radio')
+		{
+			$align="center";
+		}
+		elseif ($type == 'checkbox')
+		{
+			$align="center";
+		}
+	
+		return $align;
+	}
+	
 	/**
 	 * Return HTML string to print separator extrafield
 	 *

@@ -75,13 +75,14 @@ $optioncss=GETPOST('optioncss','alpha');
 $mode=GETPOST("mode");
 $action=GETPOST('action');
 
+$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
 $sortfield=GETPOST("sortfield",'alpha');
 $sortorder=GETPOST("sortorder",'alpha');
 $page=GETPOST("page",'int');
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="s.nom";
 if ($page == -1) { $page = 0 ; }
-$offset = $conf->liste_limit * $page ;
+$offset = $limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
@@ -296,13 +297,13 @@ if ($search_sale) $sql .= ", sc.fk_soc, sc.fk_user";
 // We'll need these fields in order to filter by categ
 if ($search_categ) $sql .= ", cs.fk_categorie, cs.fk_soc";
 // Add fields from extrafields
-foreach ($extrafields->attribute_list as $key => $val) $sql.=",ef.".$key.' as options_'.$key;
+foreach ($extrafields->attribute_label as $key => $val) $sql.=",ef.".$key.' as options_'.$key;
 // Add fields from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-if (is_array($extrafields->attribute_list) && count($extrafields->attribute_list)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_extrafields as ef on (s.rowid = ef.fk_object)";
+if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_extrafields as ef on (s.rowid = ef.fk_object)";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays) ";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent) ";
 $sql.= " ,".MAIN_DB_PREFIX."c_stcomm as st";
@@ -529,6 +530,14 @@ if ($resql)
         's.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
         's.status'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
 	);
+	// Extra fields
+	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+	{
+	   foreach($extrafields->attribute_label as $key => $val) 
+	   {
+           $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>$extrafields->attribute_list[$key], 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
+	   }
+	}
     $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
     $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
 	print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
@@ -554,14 +563,15 @@ if ($resql)
 	if (! empty($arrayfields['s.fk_prospectlevel']['checked'])) print_liste_field_titre($arrayfields['s.fk_prospectlevel']['label'],$_SERVER["PHP_SELF"],"s.fk_prospectlevel","",$param,'align="center"',$sortfield,$sortorder);
 	if (! empty($arrayfields['s.fk_stcomm']['checked']))      print_liste_field_titre($arrayfields['s.fk_stcomm']['label'],$_SERVER["PHP_SELF"],"s.fk_stcomm","",$param,'align="center"',$sortfield,$sortorder);
 	// Extra fields
-	if (is_array($extrafields->attribute_list) && count($extrafields->attribute_list))
+	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 	{
-	   foreach($extrafields->attribute_list as $key => $val) 
+	   foreach($extrafields->attribute_label as $key => $val) 
 	   {
-	       if ($val)
-	       {
-	           if (! empty($arrayfields["ef.".$key]['checked'])) print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],"ef.".$key,"",$param,"",$sortfield,$sortorder);
-	       }
+           if (! empty($arrayfields["ef.".$key]['checked'])) 
+           {
+				$align=$extrafields->getAlignFlag($key);
+				print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],"ef.".$key,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
+           }
 	   }
 	}
 	// Hook fields
@@ -740,7 +750,18 @@ if ($resql)
 	    print $form->selectarray('search_stcomm', $arraystcomm, $search_stcomm, -2);
 	    print '</td>';
     }
-        
+	// Extra fields
+	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+	{
+	   foreach($extrafields->attribute_label as $key => $val) 
+	   {
+			if (! empty($arrayfields["ef.".$key]['checked'])) 
+			{
+				print '<td class="liste_titre">';
+				print '</td>';
+			}
+	   }
+	}
     // Fields from hook
 	$parameters=array('arrayfields'=>$arrayfields);
     $reshook=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
@@ -879,18 +900,21 @@ if ($resql)
 		if (($obj->client==1 || $obj->client==3) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))
 		{
 	  		$companystatic->name=$langs->trans("Customer");
+	  		$companystatic->name_alias='';
 		    $s.=$companystatic->getNomUrl(0,'customer');
 		}
 		if (($obj->client==2 || $obj->client==3) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
 		{
             if ($s) $s.=" / ";
 		    $companystatic->name=$langs->trans("Prospect");
-            $s.=$companystatic->getNomUrl(0,'prospect');
+	  		$companystatic->name_alias='';
+		    $s.=$companystatic->getNomUrl(0,'prospect');
 		}
 		if (! empty($conf->fournisseur->enabled) && $obj->fournisseur)
 		{
 			if ($s) $s.=" / ";
             $companystatic->name=$langs->trans("Supplier");
+	  		$companystatic->name_alias='';
             $s.=$companystatic->getNomUrl(0,'supplier');
 		}
 		print $s;
@@ -916,7 +940,23 @@ if ($resql)
 			}
 			print '</div></div></td>';
         }
-        		
+		// Extra fields
+		if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+		{
+		   foreach($extrafields->attribute_label as $key => $val) 
+		   {
+				if (! empty($arrayfields["ef.".$key]['checked'])) 
+				{
+					print '<td';
+					$align=$extrafields->getAlignFlag($key);
+					if ($align) print ' align="'.$align.'"';
+					print '>';
+					$tmpkey='options_'.$key;
+					print $extrafields->showOutputField($key, $obj->$tmpkey, '', 1);
+					print '</td>';
+				}
+		   }
+		}
         // Fields from hook
 	    $parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj);
 		$reshook=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook
