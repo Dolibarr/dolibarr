@@ -123,7 +123,7 @@ if (! empty($_POST['removedfile']) || ! empty($_POST['removedfilehtml']))
 		$result = dol_delete_file($pathtodelete,1);
 		if ($result)
 		{
-			setEventMessage($langs->trans("FileWasRemoved"), $filetodelete);
+			setEventMessages(array($langs->trans("FileWasRemoved"), $filetodelete), null, 'mesgs');
 
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 			$formmail = new FormMail($db);
@@ -209,11 +209,11 @@ if (($action == 'send' || $action == 'sendhtml') && ! GETPOST('addfile') && ! GE
 
 		if ($result)
 		{
-			setEventMessage($langs->trans("MailSuccessfulySent",$mailfile->getValidAddress($email_from,2),$mailfile->getValidAddress($sendto,2)));
+			setEventMessages($langs->trans("MailSuccessfulySent",$mailfile->getValidAddress($email_from,2),$mailfile->getValidAddress($sendto,2)), null, 'mesgs');
 		}
 		else
 		{
-			setEventMessage($langs->trans("ResultKo").'<br>'.$mailfile->error.' '.$result,'errors');
+			setEventMessages($langs->trans("ResultKo").'<br>'.$mailfile->error.' '.$result, null, 'errors');
 		}
 
 		$action='';
@@ -677,7 +677,7 @@ else
 				$errormsg .= ' - '.$mail->error;
 			}
 
-			setEventMessage($errormsg, 'errors');
+			setEventMessages($errormsg, null, 'errors');
 		}
 		print '<br>';
 	}
