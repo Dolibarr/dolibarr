@@ -394,7 +394,7 @@ else
 			$totalunit=0;
 			$totalvalue=$totalvaluesell=0;
 
-			$sql = "SELECT p.rowid as rowid, p.ref, p.label as produit, p.fk_product_type as type, p.pmp as ppmp, p.price, p.price_ttc,";
+			$sql = "SELECT p.rowid as rowid, p.ref, p.label as produit, p.fk_product_type as type, p.pmp as ppmp, p.price, p.price_ttc, p.entity,";
 			$sql.= " ps.pmp, ps.reel as value";
 			$sql.= " FROM ".MAIN_DB_PREFIX."product_stock as ps, ".MAIN_DB_PREFIX."product as p";
 			$sql.= " WHERE ps.fk_product = p.rowid";
@@ -438,6 +438,7 @@ else
                     $productstatic->ref = $objp->ref;
                     $productstatic->label = $objp->produit;
 					$productstatic->type=$objp->type;
+					$productstatic->entity=$objp->entity;
 					print $productstatic->getNomUrl(1,'stock',16);
 					print '</td>';
 					print '<td>'.$objp->produit.'</td>';
