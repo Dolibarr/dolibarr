@@ -147,56 +147,6 @@ if (empty($reshook))
 	}
 }
 
-// special search
-/*if ($mode == 'search')
-{
-	$sql = "SELECT s.rowid";
-	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-	if ($search_sale || (!$user->rights->societe->client->voir && !$socid)) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-    // We'll need this table joined to the select in order to filter by categ
-    if ($search_categ) $sql.= ", ".MAIN_DB_PREFIX."categorie_societe as cs";
-    $sql.= " WHERE s.entity IN (".getEntity('societe', 1).")";
-    // sall criteria
-    $sql.= natural_search($fields, $sall);
-
-	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-	if ($socid) $sql.= " AND s.rowid = ".$socid;
-    if ($search_sale) $sql.= " AND s.rowid = sc.fk_soc";        // Join for the needed table to filter by sale
-    if ($search_categ) $sql.= " AND s.rowid = cs.fk_soc";   // Join for the needed table to filter by categ
-	if (! $user->rights->societe->lire || ! $user->rights->fournisseur->lire)
-	{
-		if (! $user->rights->fournisseur->lire) $sql.=" AND s.fournisseur != 1";
-	}
-    // Insert sale filter
-    if ($search_sale)
-    {
-        $sql .= " AND sc.fk_user = ".$search_sale;
-    }
-    // Insert categ filter
-    if ($search_categ)
-    {
-        $sql .= " AND cs.fk_categorie = ".$search_categ;
-    }
-    // Filter on type of thirdparty
-	if ($search_type > 0 && in_array($search_type,array('1,3','2,3'))) $sql .= " AND s.client IN (".$db->escape($search_type).")";
-	if ($search_type > 0 && in_array($search_type,array('4')))         $sql .= " AND s.fournisseur = 1";
-	if ($search_type == '0') $sql .= " AND s.client = 0 AND s.fournisseur = 0";
-
-	$result=$db->query($sql);
-	if ($result)
-	{
-		if ($db->num_rows($result) == 1)
-		{
-			$obj = $db->fetch_object($result);
-			$socid = $obj->rowid;
-			header("Location: ".DOL_URL_ROOT."/societe/soc.php?socid=".$socid);
-			exit;
-		}
-		$db->free($result);
-	}
-}
-*/
-
 // Do we click on purge search criteria ?
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
@@ -584,7 +534,7 @@ if ($resql)
 	print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
 
 	print '<tr class="liste_titre">';
-	if (! empty($arrayfields['s.nom']['checked']))            print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
+	if (! empty($arrayfields['s.nom']['checked']))            print_liste_field_titre($langs->trans("Company"), $_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
     if (! empty($arrayfields['s.barcode']['checked']))        print_liste_field_titre($langs->trans("Gencod"), $_SERVER["PHP_SELF"], "s.barcode",$param,'','',$sortfield,$sortorder);
 	if (! empty($arrayfields['s.code_client']['checked']))             print_liste_field_titre($arrayfields['s.code_client']['label'],$_SERVER["PHP_SELF"],"s.code_client","",$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['s.code_fournisseur']['checked']))        print_liste_field_titre($arrayfields['s.code_fournisseur']['label'],$_SERVER["PHP_SELF"],"s.code_fournisseur","",$param,'',$sortfield,$sortorder);
