@@ -224,3 +224,6 @@ create table llx_budget_lines
   import_key    integer  
 )ENGINE=innodb;
 
+ALTER TABLE llx_c_typent ADD COLUMN position integer NOT NULL DEFAULT 0;
+ALTER TABLE llx_c_forme_juridique ADD COLUMN position integer NOT NULL DEFAULT 0;
+ALTER TABLE llx_c_type_fees ADD COLUMN position integer NOT NULL DEFAULT 0;
