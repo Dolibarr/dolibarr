@@ -194,3 +194,33 @@ ALTER TABLE llx_projet_task_time ADD COLUMN invoice_id integer DEFAULT NULL;
 ALTER TABLE llx_projet_task_time ADD COLUMN invoice_line_id integer DEFAULT NULL;
 
 
+create table llx_stock_lotserial
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  entity          integer,
+  fk_product      integer NOT NULL,				-- Id of product
+  batch           varchar(30) DEFAULT NULL,		-- Lot or serial number
+  eatby           date DEFAULT NULL,			-- Eatby date
+  sellby          date DEFAULT NULL, 			-- Sellby date
+  datec         datetime,
+  tms           timestamp,
+  fk_user_creat integer,
+  fk_user_modif integer,
+  import_key    integer  
+) ENGINE=innodb;
+
+
+create table llx_budget_lines
+(
+  rowid			integer AUTO_INCREMENT PRIMARY KEY,
+  entity		integer NOT NULL DEFAULT 1,
+  label         varchar(255) NOT NULL,
+  fk_project	integer NOT NULL,
+  amount		double(24,8) NOT NULL,
+  datec         datetime,
+  tms           timestamp,
+  fk_user_creat integer,
+  fk_user_modif integer,
+  import_key    integer  
+)ENGINE=innodb;
+

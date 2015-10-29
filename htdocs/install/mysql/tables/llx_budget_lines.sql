@@ -1,5 +1,5 @@
 -- ============================================================================
--- Copyright (C) 2015 Laurent Destailleur  <eldy@users.sourceofrge.net>
+-- Copyright (C) 2015	Laurent Destailleur		<eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -14,21 +14,18 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
--- This table may be used to store eatby and sellby date for a couple
--- product-batch number.
--- ============================================================================
+-- ===========================================================================
 
-create table llx_stock_lotserial
+create table llx_budget_lines
 (
-  rowid           integer AUTO_INCREMENT PRIMARY KEY,
-  entity          integer,
-  fk_product      integer NOT NULL,				-- Id of product
-  batch           varchar(30) DEFAULT NULL,		-- Lot or serial number
-  eatby           date DEFAULT NULL,			-- Eatby date
-  sellby          date DEFAULT NULL, 			-- Sellby date
+  rowid			integer AUTO_INCREMENT PRIMARY KEY,
+  entity		integer NOT NULL DEFAULT 1,
+  label         varchar(255) NOT NULL,
+  fk_project	integer NOT NULL,
+  amount		double(24,8) NOT NULL,
   datec         datetime,
   tms           timestamp,
   fk_user_creat integer,
   fk_user_modif integer,
   import_key    integer  
-) ENGINE=innodb;
+)ENGINE=innodb;
