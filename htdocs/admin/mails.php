@@ -213,7 +213,7 @@ if (($action == 'send' || $action == 'sendhtml') && ! GETPOST('addfile') && ! GE
 		}
 		else
 		{
-			setEventMessage($langs->trans("ResultKo").'<br>'.$mailfile->error.' '.$result,'errors');
+			setEventMessages($langs->trans("ResultKo").'<br>'.$mailfile->error.' '.$result, null, 'errors');
 		}
 
 		$action='';

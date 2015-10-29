@@ -44,12 +44,12 @@ if (GETPOST("action") == 'set_proxy')
 {
     if (GETPOST("MAIN_USE_CONNECT_TIMEOUT") && ! is_numeric(GETPOST("MAIN_USE_CONNECT_TIMEOUT")))
     {
-        setEventMessage($langs->trans("ErrorValueMustBeInteger"),'errors');
+        setEventMessages($langs->trans("ErrorValueMustBeInteger"), null, 'errors');
         $error++;
     }
     if (GETPOST("MAIN_USE_RESPONSE_TIMEOUT") && ! is_numeric(GETPOST("MAIN_USE_RESPONSE_TIMEOUT")))
     {
-        setEventMessage($langs->trans("ErrorValueMustBeInteger"),'errors');
+        setEventMessages($langs->trans("ErrorValueMustBeInteger"), null, 'errors');
         $error++;
     }
 
@@ -68,7 +68,7 @@ if (GETPOST("action") == 'set_proxy')
 
     if (! $error)
     {
-        setEventMessage($langs->trans("RecordModifiedSuccessfully"));
+        setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
     }
 }
 

@@ -119,12 +119,12 @@ if ($action == 'set')
 	if (! $error)
 	{
 		$db->commit();
-		setEventMessage($langs->trans("SetupSaved"));
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
 	else
 	{
 		$db->rollback();
-		setEventMessage($error, 'errors');
+		setEventMessages($error, $errors, 'errors');
 
 	}
 
@@ -140,11 +140,11 @@ if ($action == 'setlevel')
 	if (! $res > 0) $error++;
 	if (! $error)
 	{
-		setEventMessage($langs->trans("SetupSaved"));
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
 	else
 	{
-		setEventMessage($langs->trans("Error"),'errors');
+		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
 

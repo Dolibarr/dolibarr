@@ -135,7 +135,7 @@ if ($action == 'activate_encryptdbpassconf')
 	}
 	else
 	{
-		setEventMessage($langs->trans('InstrucToEncodePass',dol_encode($dolibarr_main_db_pass)),'warnings');	
+		setEventMessages($langs->trans('InstrucToEncodePass',dol_encode($dolibarr_main_db_pass)), null, 'warnings');	
 	}
 }
 else if ($action == 'disable_encryptdbpassconf')
@@ -152,7 +152,7 @@ else if ($action == 'disable_encryptdbpassconf')
 	}
 	else
 	{
-		setEventMessage($langs->trans('InstrucToClearPass',$dolibarr_main_db_pass),'warnings');
+		setEventMessages($langs->trans('InstrucToClearPass',$dolibarr_main_db_pass), null, 'warnings');
 	}
 }
 
