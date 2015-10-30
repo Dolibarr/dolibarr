@@ -210,11 +210,28 @@ create table llx_stock_lotserial
 ) ENGINE=innodb;
 
 
-create table llx_budget_lines
+
+create table llx_budget
 (
   rowid			integer AUTO_INCREMENT PRIMARY KEY,
   entity		integer NOT NULL DEFAULT 1,
   label         varchar(255) NOT NULL,
+  status        integer,
+  note			text,	
+  date_start	date,
+  date_end		date,
+  datec         datetime,
+  tms           timestamp,
+  fk_user_creat integer,
+  fk_user_modif integer,
+  import_key    integer  
+)ENGINE=innodb;
+
+
+create table llx_budget_lines
+(
+  rowid			integer AUTO_INCREMENT PRIMARY KEY,
+  fk_budget     integer NOT NULL,
   fk_project	integer NOT NULL,
   amount		double(24,8) NOT NULL,
   datec         datetime,
@@ -223,6 +240,17 @@ create table llx_budget_lines
   fk_user_modif integer,
   import_key    integer  
 )ENGINE=innodb;
+
+ALTER TABLE llx_budget_lines ADD UNIQUE INDEX uk_budget_lines (fk_budget, fk_project);
+
+-- Supprime orphelins pour permettre montee de la cle
+-- MYSQL V4 DELETE llx_budget_lines FROM llx_budget_lines LEFT JOIN llx_budget ON llx_budget.rowid = llx_budget_lines.fk_budget WHERE llx_budget_lines.rowid IS NULL;
+-- POSTGRESQL V8 DELETE FROM llx_budget_lines USING llx_budget WHERE llx_budget_lines.fk_budget NOT IN (SELECT llx_budget.rowid FROM llx_budget);
+
+ALTER TABLE llx_budget_lines ADD INDEX idx_budget_lines (fk_projet);
+ALTER TABLE llx_budget_lines ADD CONSTRAINT fk_budget_lines_budget FOREIGN KEY (fk_budget) REFERENCES llx_budget (rowid);
+
+
 
 ALTER TABLE llx_c_typent ADD COLUMN position integer NOT NULL DEFAULT 0;
 ALTER TABLE llx_c_forme_juridique ADD COLUMN position integer NOT NULL DEFAULT 0;

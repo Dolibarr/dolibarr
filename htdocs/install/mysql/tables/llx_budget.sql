@@ -16,12 +16,15 @@
 --
 -- ===========================================================================
 
-create table llx_budget_lines
+create table llx_budget
 (
   rowid			integer AUTO_INCREMENT PRIMARY KEY,
-  fk_budget     integer NOT NULL,
-  fk_project	integer NOT NULL,
-  amount		double(24,8) NOT NULL,
+  entity		integer NOT NULL DEFAULT 1,
+  label         varchar(255) NOT NULL,
+  status        integer,
+  note			text,	
+  date_start	date,
+  date_end		date,
   datec         datetime,
   tms           timestamp,
   fk_user_creat integer,
