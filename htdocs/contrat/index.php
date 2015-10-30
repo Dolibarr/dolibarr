@@ -79,12 +79,10 @@ if (! empty($conf->contrat->enabled))
 	print '<form method="post" action="'.DOL_URL_ROOT.'/contrat/list.php">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<table class="noborder nohover" width="100%">';
-	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAContract").'</td></tr>';
+	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
 	print '<tr '.$bc[$var].'>';
-	print '<td class="nowrap">'.$langs->trans("Ref").':</td><td><input type="text" class="flat" name="search_contract" size="18"></td>';
-	print '<td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-	print '<tr '.$bc[$var].'><td class="nowrap">'.$langs->trans("Other").':</td><td><input type="text" class="flat" name="sall" size="18"></td>';
-	print '</tr>';
+	print '<td class="nowrap">'.$langs->trans("Contract").':</td><td><input type="text" class="flat" name="sall" size="18"></td>';
+	print '<td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
 	print "</table></form>\n";
 	print "<br>";
 }

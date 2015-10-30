@@ -53,7 +53,7 @@ $fourn_id = GETPOST("fourn_id",'int');
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if (! $sortfield) $sortfield="stock_physique";
+if (! $sortfield) $sortfield="p.ref";
 if (! $sortorder) $sortorder="ASC";
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
@@ -255,8 +255,8 @@ if ($resql)
 	// TODO Add info of running suppliers/customers orders
 	//print_liste_field_titre($langs->trans("TheoreticalStock"),$_SERVER["PHP_SELF"], "stock_theorique",$param,"",'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre('');
-	print_liste_field_titre($langs->trans("Sell"),$_SERVER["PHP_SELF"], "p.tosell",$param,"",'align="right"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Buy"),$_SERVER["PHP_SELF"], "p.tobuy",$param,"",'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Status").' ('.$langs->trans("Sell").')',$_SERVER["PHP_SELF"], "p.tosell",$param,"",'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Status").' ('.$langs->trans("Buy").')',$_SERVER["PHP_SELF"], "p.tobuy",$param,"",'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
 	// Lignes des champs de filtre

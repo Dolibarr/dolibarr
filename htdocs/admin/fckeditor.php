@@ -121,11 +121,11 @@ if (GETPOST('save','alpha'))
 
 	if (! $error)
     {
-        setEventMessage($langs->trans("SetupSaved"));
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
     else
     {
-        setEventMessage($langs->trans("Error"),'errors');
+        setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
 
@@ -143,7 +143,7 @@ $var=true;
 
 if (empty($conf->use_javascript_ajax))
 {
-	setEventMessage(array($langs->trans("NotAvailable"), $langs->trans("JavascriptDisabled")), 'errors');
+	setEventMessages(array($langs->trans("NotAvailable"), $langs->trans("JavascriptDisabled")), null, 'errors');
 }
 else
 {

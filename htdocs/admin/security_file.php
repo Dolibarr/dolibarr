@@ -86,7 +86,7 @@ else if ($action == 'updateform')
     $res4=dolibarr_set_const($db, "MAIN_UMASK", $_POST["MAIN_UMASK"],'chaine',0,'',$conf->entity);
     $res5=dolibarr_set_const($db, "MAIN_ANTIVIRUS_COMMAND", $_POST["MAIN_ANTIVIRUS_COMMAND"],'chaine',0,'',$conf->entity);
     $res6=dolibarr_set_const($db, "MAIN_ANTIVIRUS_PARAM", $_POST["MAIN_ANTIVIRUS_PARAM"],'chaine',0,'',$conf->entity);
-	if ($res3 && $res4 && $res5 && $res6) setEventMessage($langs->trans("RecordModifiedSuccessfully"));
+	if ($res3 && $res4 && $res5 && $res6) setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
 }
 
 
@@ -97,8 +97,8 @@ else if ($action == 'delete')
 	$langs->load("other");
 	$file = $conf->admin->dir_temp . '/' . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
 	$ret=dol_delete_file($file);
-	if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-	else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+	if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
+	else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
 	Header('Location: '.$_SERVER["PHP_SELF"]);
 	exit;
 }

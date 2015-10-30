@@ -24,5 +24,6 @@ create table llx_c_typent
   libelle    varchar(30),
   fk_country integer NULL,		-- Defined only to have specific list for countries that can't use generic list (like argentina that need type A or B)
   active     tinyint DEFAULT 1   NOT NULL,
-  module     varchar(32) NULL
+  module     varchar(32) NULL,
+  position   integer NOT NULL DEFAULT 0
 )ENGINE=innodb;
