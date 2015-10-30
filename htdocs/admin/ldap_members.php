@@ -53,6 +53,7 @@ if ($action == 'setvalue' && $user->admin)
 	
 	if (! dolibarr_set_const($db, 'LDAP_MEMBER_DN',GETPOST("user"),'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_MEMBER_OBJECT_CLASS',GETPOST("objectclass"),'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_MEMBER_FILTER',GETPOST("filterconnection"),'chaine',0,'',$conf->entity)) $error++;
 	// Members
 	if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_FULLNAME',GETPOST("fieldfullname"),'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_LOGIN',GETPOST("fieldlogin"),'chaine',0,'',$conf->entity)) $error++;
@@ -107,6 +108,8 @@ if ($action == 'setvalue' && $user->admin)
  * View
  */
 
+$form=new Form($db);
+
 llxHeader('',$langs->trans("LDAPSetup"),'EN:Module_LDAP_En|FR:Module_LDAP|ES:M&oacute;dulo_LDAP');
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 
@@ -120,17 +123,15 @@ if (! function_exists("ldap_connect"))
 	setEventMessages($langs->trans("LDAPFunctionsNotAvailableOnPHP"), null, 'errors');
 }
 
+print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=setvalue">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+
 dol_fiche_head($head, 'members', $langs->trans("LDAPSetup"));
 
 
 print $langs->trans("LDAPDescMembers").'<br>';
 print '<br>';
 
-
-print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=setvalue">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-
-$form=new Form($db);
 
 print '<table class="noborder" width="100%">';
 $var=true;
@@ -154,6 +155,14 @@ print '<tr '.$bc[$var].'><td width="25%"><span class="fieldrequired">'.$langs->t
 print '<input size="48" type="text" name="objectclass" value="'.$conf->global->LDAP_MEMBER_OBJECT_CLASS.'">';
 print '</td><td>'.$langs->trans("LDAPMemberObjectClassListExample").'</td>';
 print '<td>&nbsp;</td>';
+print '</tr>';
+
+// Filter, used to filter search
+$var=!$var;
+print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFilterConnection").'</td><td>';
+print '<input size="48" type="text" name="filterconnection" value="'.$conf->global->LDAP_MEMBER_FILTER.'">';
+print '</td><td>'.$langs->trans("LDAPFilterConnectionExample").'</td>';
+print '<td></td>';
 print '</tr>';
 
 print '</table>';
@@ -377,15 +386,16 @@ print '</td><td>&nbsp;</td>';
 print '<td align="right">&nbsp;</td>';
 print '</tr>';
 
-$var=!$var;
-print '<tr '.$bc[$var].'><td colspan="4" align="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td></tr>';
 print '</table>';
+
+print info_admin($langs->trans("LDAPDescValues"));
+
+dol_fiche_end();
+
+print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div>';
 
 print '</form>';
 
-print '</div>';
-
-print info_admin($langs->trans("LDAPDescValues"));
 
 
 /*
@@ -454,6 +464,7 @@ if (function_exists("ldap_connect"))
 
 }
 
-$db->close();
 
 llxFooter();
+
+$db->close();
