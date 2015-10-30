@@ -124,9 +124,9 @@ if ($id > 0 || ! empty($ref))
 
 
         if ($user->rights->facture->lire) {
-            $sql = "SELECT distinct s.nom as name, s.rowid as socid, s.code_client,";
+            $sql = "SELECT s.nom as name, s.rowid as socid, s.code_client,";
             $sql.= " f.facnumber, f.total as total_ht,";
-            $sql.= " f.datef, f.paye, f.fk_statut as statut, f.rowid as facid, d.qty";
+            $sql.= " f.datef, f.paye, f.fk_statut as statut, f.rowid as facid, SUM(d.qty) as qty";
             if (!$user->rights->societe->client->voir && !$socid) $sql.= ", sc.fk_soc, sc.fk_user ";
             $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
             $sql.= ", ".MAIN_DB_PREFIX."facture as f";
@@ -138,6 +138,7 @@ if ($id > 0 || ! empty($ref))
             $sql.= " AND d.fk_product =".$product->id;
             if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
             if ($socid) $sql.= " AND f.fk_soc = $socid";
+            $sql.= " GROUP BY f.rowid ";
             $sql.= " ORDER BY $sortfield $sortorder ";
             $sql.= $db->plimit($conf->liste_limit +1, $offset);
 
