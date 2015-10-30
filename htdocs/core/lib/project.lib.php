@@ -977,7 +977,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks=
 			{
 				$var=!$var;
 				print "<tr ".$bc[$var].">";
-				print '<td class="nowrap">';
+				print '<td>';
 				$projectstatic->ref=$objp->ref;
 				print $projectstatic->getNomUrl(1);
 				print ' - '.dol_trunc($objp->title,24).'</td>';
