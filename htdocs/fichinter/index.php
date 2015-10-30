@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2015	   Charlie Benke		<charlie@patas-monkey.com>
  
@@ -67,11 +67,9 @@ $var=false;
 print '<table class="noborder nohover" width="100%">';
 print '<form method="post" action="'.DOL_URL_ROOT.'/fichinter/list.php">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAnIntervention").'</td></tr>';
+print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
 print '<tr '.$bc[$var].'><td>';
-print $langs->trans("Ref").':</td><td><input type="text" class="flat" name="sref" size=18></td><td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-print '<tr '.$bc[$var].'><td class="nowrap">'.$langs->trans("Other").':</td><td><input type="text" class="flat" name="sall" size="18"></td>';
-print '</tr>';
+print $langs->trans("Intervention").':</td><td><input type="text" class="flat" name="sall" size="18"></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
 print "</form></table><br>\n";
 
 
