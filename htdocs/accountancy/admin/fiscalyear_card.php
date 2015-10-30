@@ -66,7 +66,7 @@ if ($action == 'confirm_delete' && $confirm == "yes")
     }
     else
     {
-        setEventMessage($object->error, 'errors');
+        setEventMessages($object->error, $object->errors, 'errors');
     }
 }
 
@@ -84,12 +84,12 @@ else if ($action == 'add')
 
         if (empty($object->date_start) && empty($object->date_end))
         {
-	        setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date")), 'errors');
+	        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
             $error++;
         }
         if (empty($object->label))
         {
-	        setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Label")), 'errors');
+	        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Label")), null, 'errors');
             $error++;
         }
 
@@ -110,7 +110,7 @@ else if ($action == 'add')
            {
             	$db->rollback();
 
-            	setEventMessage($object->error, 'errors');
+            	setEventMessages($object->error, $object->errors, 'errors');
                 $action='create';
             }
         }
@@ -147,7 +147,7 @@ else if ($action == 'update')
         }
         else
         {
-	        setEventMessage($object->error, 'errors');
+	        setEventMessages($object->error, $object->errors, 'errors');
         }
     }
     else

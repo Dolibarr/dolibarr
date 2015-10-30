@@ -5,7 +5,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio     <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier          <benoit.mortier@opensides.be>
  * Copyright (C) 2010-2013 Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2011-2013 Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2015 Philippe Grand          <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,11 +63,11 @@ if ($action == 'updateMask')
 
 	if (! $error)
 	{
-		setEventMessage($langs->trans("SetupSaved"));
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
 	else
 	{
-		setEventMessage($langs->trans("Error"),'errors');
+		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
 
@@ -106,13 +106,13 @@ if ($action == 'specimen')  // For invoices
     	}
     	else
     	{
-    		setEventMessage($module->error,'errors');
+    		setEventMessages($module->error, $module->errors, 'errors');
     		dol_syslog($module->error, LOG_ERR);
     	}
     }
     else
     {
-    	setEventMessage($langs->trans("ErrorModuleNotFound"),'errors');
+    	setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
     	dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
     }
 }
@@ -174,11 +174,11 @@ if ($action == 'set_SUPPLIER_INVOICE_FREE_TEXT')
 
 	if (! $error)
 	{
-		setEventMessage($langs->trans("SetupSaved"));
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
 	else
 	{
-		setEventMessage($langs->trans("Error"),'errors');
+		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
 
@@ -205,7 +205,7 @@ dol_fiche_head($head, 'invoice', $langs->trans("Suppliers"), 0, 'company');
 
 // Supplier invoice numbering module
 
-print load_fiche_titre($langs->trans("SuppliersInvoiceNumberingModel"));
+print load_fiche_titre($langs->trans("SuppliersInvoiceNumberingModel"),'','');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -311,7 +311,7 @@ print '</table><br>';
  * Modeles documents for supplier invoices
  */
 
-print load_fiche_titre($langs->trans("BillsPDFModules"));
+print load_fiche_titre($langs->trans("BillsPDFModules"),'','');
 
 // Defini tableau def de modele
 $def = array();
@@ -453,7 +453,7 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set_SUPPLIER_INVOICE_FREE_TEXT">';
 
-print load_fiche_titre($langs->trans("OtherOptions"));
+print load_fiche_titre($langs->trans("OtherOptions"),'','');
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
@@ -487,7 +487,7 @@ print '</form>';
  * Notifications
  */
 
-print load_fiche_titre($langs->trans("Notifications"));
+print load_fiche_titre($langs->trans("Notifications"),'','');
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';

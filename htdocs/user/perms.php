@@ -67,43 +67,50 @@ if ($user->id == $id && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user-
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 if ($user->id <> $id && ! $canreaduser) accessforbidden();
 
+$object = new User($db);
+$object->fetch($id);
+$object->getrights();
+
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('usercard','globalcard'));
 
 /**
  * Actions
  */
 
-if ($action == 'addrights' && $caneditperms)
-{
-	$edituser = new User($db);
-	$edituser->fetch($id);
-	//$edituser->addrights($rights, $module, '', $entity); // TODO unused for the moment
-	$edituser->addrights($rights, $module);
+$parameters=array('id'=>$socid);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-	// Si on a touche a ses propres droits, on recharge
-	if ($id == $user->id)
-	{
-		$user->clearrights();
-		$user->getrights();
-		$menumanager->loadMenu();
+if (empty($reshook)) {
+	if ($action == 'addrights' && $caneditperms) {
+		$edituser = new User($db);
+		$edituser->fetch($id);
+		//$edituser->addrights($rights, $module, '', $entity); // TODO unused for the moment
+		$edituser->addrights($rights, $module);
+
+		// Si on a touche a ses propres droits, on recharge
+		if ($id == $user->id) {
+			$user->clearrights();
+			$user->getrights();
+			$menumanager->loadMenu();
+		}
+	}
+
+	if ($action == 'delrights' && $caneditperms) {
+		$edituser = new User($db);
+		$edituser->fetch($id);
+		//$edituser->delrights($rights, $module, '', $entity); // TODO unused for the moment
+		$edituser->delrights($rights, $module);
+
+		// Si on a touche a ses propres droits, on recharge
+		if ($id == $user->id) {
+			$user->clearrights();
+			$user->getrights();
+			$menumanager->loadMenu();
+		}
 	}
 }
-
-if ($action == 'delrights' && $caneditperms)
-{
-	$edituser = new User($db);
-	$edituser->fetch($id);
-	//$edituser->delrights($rights, $module, '', $entity); // TODO unused for the moment
-	$edituser->delrights($rights, $module);
-
-	// Si on a touche a ses propres droits, on recharge
-	if ($id == $user->id)
-	{
-		$user->clearrights();
-		$user->getrights();
-		$menumanager->loadMenu();
-	}
-}
-
 
 
 /**
@@ -113,10 +120,6 @@ if ($action == 'delrights' && $caneditperms)
 llxHeader('',$langs->trans("Permissions"));
 
 $form=new Form($db);
-
-$object = new User($db);
-$object->fetch($id);
-$object->getrights();
 
 $head = user_prepare_head($object);
 
@@ -251,28 +254,13 @@ else
 
 /*
  * Ecran ajout/suppression permission
-*/
+ */
 
-print '<table class="border" width="100%">';
 
-// Ref
-print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
-print '<td>';
-print $form->showrefnav($object,'id','',$user->rights->user->user->lire || $user->admin);
-print '</td>';
-print '</tr>'."\n";
+dol_banner_tab($object,'id','',$user->rights->user->user->lire || $user->admin);
 
-// Lastname
-print '<tr><td width="25%">'.$langs->trans("Lastname").'</td>';
-print '<td>'.$object->lastname.'</td>';
-print '</tr>'."\n";
 
-// Firstname
-print '<tr><td width="25%">'.$langs->trans("Firstname").'</td>';
-print '<td>'.$object->firstname.'</td>';
-print '</tr>'."\n";
-
-print '</table><br>';
+print '<div class="underbanner clearboth"></div>';
 
 if ($user->admin) print info_admin($langs->trans("WarningOnlyPermissionOfActivatedModules"));
 // Show warning about external users
@@ -422,6 +410,7 @@ if ($result)
 }
 else dol_print_error($db);
 print '</table>';
+
 
 // For multicompany transversal mode
 // TODO Place a hook here

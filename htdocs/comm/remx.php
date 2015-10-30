@@ -36,7 +36,7 @@ $action=GETPOST('action','alpha');
 $backtopage=GETPOST('backtopage','alpha');
 
 // Security check
-$socid = GETPOST('id','int');
+$socid = GETPOST('id','int')?GETPOST('id','int'):GETPOST('socid','int');
 if ($user->societe_id > 0)
 {
 	$socid = $user->societe_id;
@@ -140,7 +140,7 @@ if ($action == 'setremise')
 		$error=0;
 		if (empty($_POST["desc"]))
 		{
-			setEventMessage($langs->trans("ErrorFieldRequired",$langs->trans("ReasonDiscount")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("ReasonDiscount")), null, 'errors');
 			$error++;
 		}
 
@@ -212,36 +212,34 @@ llxHeader('',$langs->trans("GlobalDiscount"));
 if ($socid > 0)
 {
 	// On recupere les donnees societes par l'objet
-	$objsoc = new Societe($db);
-	$objsoc->id=$socid;
-	$objsoc->fetch($socid);
+	$object = new Societe($db);
+	$object->fetch($socid);
 
 	/*
 	 * Affichage onglets
 	 */
-	$head = societe_prepare_head($objsoc);
+	$head = societe_prepare_head($object);
 
 
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$objsoc->id.'">';
+	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="setremise">';
     print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 	dol_fiche_head($head, 'absolutediscount', $langs->trans("ThirdParty"),0,'company');
     
-	print '<table class="border" width="100%">';
-
-	// Name
-	print '<tr><td width="38%">'.$langs->trans('Name').'</td>';
-	print '<td>';
-	print $form->showrefnav($objsoc,'id','',1,'rowid','nom');
-	print '</td></tr>';
+    dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
+        
+    print '<div class="fichecenter">';
+    
+    print '<div class="underbanner clearboth"></div>';
+	print '<table class="border centpercent">';
 
 	// Calcul avoirs en cours
 	$remise_all=$remise_user=0;
 	$sql = "SELECT SUM(rc.amount_ht) as amount, rc.fk_user";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe_remise_except as rc";
-	$sql.= " WHERE rc.fk_soc =". $objsoc->id;
+	$sql.= " WHERE rc.fk_soc =". $object->id;
 	$sql.= " AND (fk_facture_line IS NULL AND fk_facture IS NULL)";
 	$sql.= " GROUP BY rc.fk_user";
 	$resql=$db->query($sql);
@@ -256,7 +254,7 @@ if ($socid > 0)
 		dol_print_error($db);
 	}
 
-	print '<tr><td width="38%">'.$langs->trans("CustomerAbsoluteDiscountAllUsers").'</td>';
+	print '<tr><td class="titlefield">'.$langs->trans("CustomerAbsoluteDiscountAllUsers").'</td>';
 	print '<td>'.$remise_all.'&nbsp;'.$langs->trans("Currency".$conf->currency).' '.$langs->trans("HT").'</td></tr>';
 
 	print '<tr><td>'.$langs->trans("CustomerAbsoluteDiscountMy").'</td>';
@@ -271,13 +269,15 @@ if ($socid > 0)
 	print '<span class="hideonsmartphone">&nbsp;'.$langs->trans("Currency".$conf->currency).'</span></td></tr>';
 	print '<tr><td width="38%">'.$langs->trans("VAT").'</td>';
 	print '<td>';
-	print $form->load_tva('tva_tx',GETPOST('tva_tx'),$mysoc,$objsoc);
+	print $form->load_tva('tva_tx',GETPOST('tva_tx'),$mysoc,$object);
 	print '</td></tr>';
 	print '<tr><td>'.$langs->trans("NoteReason").'</td>';
 	print '<td><input type="text" size="60" name="desc" value="'.$_POST["desc"].'"></td></tr>';
 
 	print "</table>";
 
+	print '</div>';
+	
 	dol_fiche_end();
 	
 	print '<div class="center">';
@@ -296,7 +296,7 @@ if ($socid > 0)
 
 	if ($_GET['action'] == 'remove')
 	{
-		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$objsoc->id.'&remid='.$_GET["remid"], $langs->trans('RemoveDiscount'), $langs->trans('ConfirmRemoveDiscount'), 'confirm_remove', '', 0, 1);
+		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&remid='.$_GET["remid"], $langs->trans('RemoveDiscount'), $langs->trans('ConfirmRemoveDiscount'), 'confirm_remove', '', 0, 1);
 	}
 
 	/*
@@ -309,7 +309,7 @@ if ($socid > 0)
 	$sql.= " fa.facnumber as ref, fa.type as type";
 	$sql.= " FROM  ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."societe_remise_except as rc";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as fa ON rc.fk_facture_source = fa.rowid";
-	$sql.= " WHERE rc.fk_soc =". $objsoc->id;
+	$sql.= " WHERE rc.fk_soc =". $object->id;
 	$sql.= " AND u.rowid = rc.fk_user";
 	$sql.= " AND (rc.fk_facture_line IS NULL AND rc.fk_facture IS NULL)";
 	$sql.= " ORDER BY rc.datec DESC";
@@ -375,9 +375,9 @@ if ($socid > 0)
 			if ($user->rights->societe->creer || $user->rights->facture->creer)
 			{
 				print '<td class="nowrap">';
-				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$objsoc->id.'&amp;action=split&amp;remid='.$obj->rowid.'">'.img_picto($langs->trans("SplitDiscount"),'split').'</a>';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=split&amp;remid='.$obj->rowid.'">'.img_picto($langs->trans("SplitDiscount"),'split').'</a>';
 				print ' &nbsp; ';
-				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$objsoc->id.'&amp;action=remove&amp;remid='.$obj->rowid.'">'.img_delete($langs->trans("RemoveDiscount")).'</a>';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=remove&amp;remid='.$obj->rowid.'">'.img_delete($langs->trans("RemoveDiscount")).'</a>';
 				print '</td>';
 			}
 			else print '<td>&nbsp;</td>';
@@ -403,7 +403,7 @@ if ($socid > 0)
 				array('type' => 'text', 'name' => 'amount_ttc_2', 'label' => $langs->trans("AmountTTC").' 2', 'value' => $amount2, 'size' => '5')
 			);
 			$langs->load("dict");
-			print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$objsoc->id.'&remid='.$showconfirminfo['rowid'], $langs->trans('SplitDiscount'), $langs->trans('ConfirmSplitDiscount',price($showconfirminfo['amount_ttc']),$langs->transnoentities("Currency".$conf->currency)), 'confirm_split', $formquestion, 0, 0);
+			print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&remid='.$showconfirminfo['rowid'], $langs->trans('SplitDiscount'), $langs->trans('ConfirmSplitDiscount',price($showconfirminfo['amount_ttc']),$langs->transnoentities("Currency".$conf->currency)), 'confirm_split', $formquestion, 0, 0);
 		}
 	}
 	else
@@ -429,7 +429,7 @@ if ($socid > 0)
 	$sql.= " , ".MAIN_DB_PREFIX."facturedet as fc";
 	$sql.= " , ".MAIN_DB_PREFIX."societe_remise_except as rc";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as fa ON rc.fk_facture_source = fa.rowid";
-	$sql.= " WHERE rc.fk_soc =". $objsoc->id;
+	$sql.= " WHERE rc.fk_soc =". $object->id;
 	$sql.= " AND rc.fk_facture_line = fc.rowid";
 	$sql.= " AND fc.fk_facture = f.rowid";
 	$sql.= " AND rc.fk_user = u.rowid";
@@ -446,7 +446,7 @@ if ($socid > 0)
 	$sql2.= " , ".MAIN_DB_PREFIX."user as u";
 	$sql2.= " , ".MAIN_DB_PREFIX."societe_remise_except as rc";
 	$sql2.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as fa ON rc.fk_facture_source = fa.rowid";
-	$sql2.= " WHERE rc.fk_soc =". $objsoc->id;
+	$sql2.= " WHERE rc.fk_soc =". $object->id;
 	$sql2.= " AND rc.fk_facture = f.rowid";
 	$sql2.= " AND rc.fk_user = u.rowid";
 

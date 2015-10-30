@@ -21,7 +21,7 @@ $module = $object->element;
 $note_public = 'note_public';
 $note_private = 'note_private';
 
-$colwidth=(isset($colwidth)?$colwidth:25);
+$colwidth=(isset($colwidth)?$colwidth:(empty($cssclass)?'25':''));
 
 $permission=(isset($permission)?$permission:(isset($user->rights->$module->creer)?$user->rights->$module->creer:0));    // If already defined by caller page
 $moreparam=(isset($moreparam)?$moreparam:'');
@@ -50,7 +50,7 @@ if (! empty($conf->global->MAIN_AUTO_TIMESTAMP_IN_PRIVATE_NOTES))
 
 // Special cases
 if ($module == 'propal')                { $permission=$user->rights->propale->creer;}
-elseif ($module == 'askpricesupplier')                { $permission=$user->rights->askpricesupplier->creer;}
+elseif ($module == 'askpricesupplier')  { $permission=$user->rights->askpricesupplier->creer;}
 elseif ($module == 'fichinter')         { $permission=$user->rights->ficheinter->creer;}
 elseif ($module == 'project')           { $permission=$user->rights->projet->creer;}
 elseif ($module == 'project_task')      { $permission=$user->rights->projet->creer;}
@@ -69,12 +69,12 @@ else $typeofdata='textarea:12:100';
 <!-- BEGIN PHP TEMPLATE NOTES -->
 <div class="border table-border centpercent">
 	<div class="table-border-row">
-		<div class="table-key-border-col"<?php echo ' style="width: '.$colwidth.'%"'; ?>><?php echo $form->editfieldkey("NotePublic", $note_public, $value_public, $object, $permission, $typeofdata, $moreparam); ?></div>
+		<div class="table-key-border-col<?php echo (empty($cssclass)?'':' '.$cssclass); ?>"<?php echo ($colwidth ? ' style="width: '.$colwidth.'%"' : ''); ?>><?php echo $form->editfieldkey("NotePublic", $note_public, $value_public, $object, $permission, $typeofdata, $moreparam); ?></div>
 		<div class="table-val-border-col"><?php echo $form->editfieldval("NotePublic", $note_public, $value_public, $object, $permission, $typeofdata, '', null, null, $moreparam); ?></div>
 	</div>
 <?php if (empty($user->societe_id)) { ?>
 	<div class="table-border-row">
-		<div class="table-key-border-col"<?php echo ' style="width: '.$colwidth.'%"'; ?>><?php echo $form->editfieldkey("NotePrivate", $note_private, $value_private, $object, $permission, $typeofdata, $moreparam); ?></div>
+		<div class="table-key-border-col<?php echo (empty($cssclass)?'':' '.$cssclass); ?>"<?php echo ($colwidth ? ' style="width: '.$colwidth.'%"' : ''); ?>><?php echo $form->editfieldkey("NotePrivate", $note_private, $value_private, $object, $permission, $typeofdata, $moreparam); ?></div>
 		<div class="table-val-border-col"><?php echo $form->editfieldval("NotePrivate", $note_private, $value_private, $object, $permission, $typeofdata, '', null, null, $moreparam); ?></div>
 	</div>
 <?php } ?>

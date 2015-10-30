@@ -146,6 +146,12 @@ source_file = htdocs/langs/en_US/holiday.lang
 source_lang = en_US
 type = MOZILLAPROPERTIES
 
+[dolibarr.hrm]
+file_filter = htdocs/langs/<lang>/hrm.lang
+source_file = htdocs/langs/en_US/hrm.lang
+source_lang = en_US
+type = MOZILLAPROPERTIES
+
 [dolibarr.incoterm]
 file_filter = htdocs/langs/<lang>/incoterm.lang
 source_file = htdocs/langs/en_US/incoterm.lang

@@ -74,24 +74,32 @@ $searchformtitle=array($langs->trans("Companies"),$langs->trans("Contacts"),$lan
 $form = new Form($db);
 $formadmin=new FormAdmin($db);
 
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('usercard','globalcard'));
 
 /*
  * Actions
  */
-if ($action == 'update' && ($caneditfield || ! empty($user->admin)))
-{
-    if (! $_POST["cancel"])
-    {
-        $tabparam=array();
+$parameters=array('id'=>$socid);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-        if ($_POST["check_MAIN_LANG_DEFAULT"]=="on") $tabparam["MAIN_LANG_DEFAULT"]=$_POST["main_lang_default"];
-        else $tabparam["MAIN_LANG_DEFAULT"]='';
+if (empty($reshook)) {
+    if ($action == 'update' && ($caneditfield || !empty($user->admin))) {
+        if (!$_POST["cancel"]) {
+            $tabparam = array();
 
-        if ($_POST["check_SIZE_LISTE_LIMIT"]=="on") $tabparam["MAIN_SIZE_LISTE_LIMIT"]=$_POST["main_size_liste_limit"];
-        else $tabparam["MAIN_SIZE_LISTE_LIMIT"]='';
+            if ($_POST["check_MAIN_LANG_DEFAULT"] == "on") {
+                $tabparam["MAIN_LANG_DEFAULT"] = $_POST["main_lang_default"];
+            } else {
+                $tabparam["MAIN_LANG_DEFAULT"] = '';
+            }
 
-        if ($_POST["check_MAIN_THEME"]=="on") $tabparam["MAIN_THEME"]=$_POST["main_theme"];
-        else $tabparam["MAIN_THEME"]='';
+            if ($_POST["check_SIZE_LISTE_LIMIT"] == "on") {
+                $tabparam["MAIN_SIZE_LISTE_LIMIT"] = $_POST["main_size_liste_limit"];
+            } else {
+                $tabparam["MAIN_SIZE_LISTE_LIMIT"] = '';
+            }
 
     	$val=(join(',',(colorStringToArray(GETPOST('THEME_ELDY_TOPMENU_BACK1'),array()))));
     	if ($val == '') $tabparam['THEME_ELDY_TOPMENU_BACK1']='';
@@ -108,14 +116,17 @@ if ($action == 'update' && ($caneditfield || ! empty($user->admin)))
         $tabparam["MAIN_SEARCHFORM_SOCIETE"]=$_POST["main_searchform_societe"];
         $tabparam["MAIN_SEARCHFORM_PRODUITSERVICE"]=$_POST["main_searchform_produitservice"];
 
-        $result=dol_set_user_param($db, $conf, $object, $tabparam);
+            $tabparam["MAIN_SEARCHFORM_CONTACT"] = $_POST["main_searchform_contact"];
+            $tabparam["MAIN_SEARCHFORM_SOCIETE"] = $_POST["main_searchform_societe"];
+            $tabparam["MAIN_SEARCHFORM_PRODUITSERVICE"] = $_POST["main_searchform_produitservice"];
 
-        header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
-        exit;
+            $result = dol_set_user_param($db, $conf, $object, $tabparam);
+
+            header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
+            exit;
+        }
     }
 }
-
-
 
 /*
  * View
@@ -136,33 +147,18 @@ if ($action == 'edit')
 }
 
 
-dol_fiche_head($head, 'guisetup', $title, 0, 'user');
-
-
-print '<table class="border" width="100%">';
-
-// Ref
-print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
-print '<td colspan="2">';
-print $form->showrefnav($object,'id','',$user->rights->user->user->lire || $user->admin);
-print '</td>';
-print '</tr>';
-
-// LastName
-print '<tr><td width="25%">'.$langs->trans("LastName").'</td>';
-print '<td colspan="2">'.$object->lastname.'</td>';
-print "</tr>\n";
-
-// FirstName
-print '<tr><td width="25%">'.$langs->trans("FirstName").'</td>';
-print '<td colspan="2">'.$object->firstname.'</td>';
-print "</tr>\n";
-
-print '</table><br>';
-
-
 if ($action == 'edit')
 {
+    dol_fiche_head($head, 'guisetup', $title, 0, 'user');
+    
+    dol_banner_tab($object,'id','',$user->rights->user->user->lire || $user->admin);
+    
+    
+    print '<div class="underbanner clearboth"></div>';
+    
+    print '<br>';
+    
+
     if (! empty($conf->use_javascript_ajax))
     {/*
         print '<script type="text/javascript" language="javascript">
@@ -250,11 +246,18 @@ if ($action == 'edit')
     print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
     print '</div>';
 
-    print '</form>';
-
 }
 else
 {
+    dol_fiche_head($head, 'guisetup', $title, 0, 'user');
+    
+    dol_banner_tab($object,'id','',$user->rights->user->user->lire || $user->admin);
+    
+    
+    print '<div class="underbanner clearboth"></div>';
+    
+    print '<br>';
+    
     $var=true;
 
     print '<table class="noborder" width="100%">';
@@ -310,7 +313,10 @@ else
 
 }
 
-dol_fiche_end();
+if ($action == 'edit')
+{
+    print '</form>';
+}
 
 llxFooter();
 $db->close();

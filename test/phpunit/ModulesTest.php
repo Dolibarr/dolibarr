@@ -133,7 +133,7 @@ class ModulesTest extends PHPUnit_Framework_TestCase
 		'Facture','Fckeditor','Ficheinter','Fournisseur','FTP','GeoIPMaxmind','Gravatar','Holiday','Import','Label','Ldap',
 		'Mailing','MailmanSpip','Margin',
 		'Notification','OpenSurvey','Paybox','Paypal','Prelevement','Product','ProductBatch','Projet','Propale',
-		'Salaries','Service','Skype','Societe','Stock','SyncSupplierWebServices','Syslog','Tax','User','WebServices','Workflow');
+		'Salaries','Service','Skype','Societe','Stock','WebServicesClient','Syslog','Tax','User','WebServices','Workflow');
 		foreach($modulelist as $modlabel)
 		{
     		require_once(DOL_DOCUMENT_ROOT.'/core/modules/mod'.$modlabel.'.class.php');

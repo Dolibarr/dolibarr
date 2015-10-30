@@ -61,7 +61,7 @@ if ($action == 'confirm_rejet')
 		if (empty($daterej))
 		{
 			$error++;
-			setEventMessage($langs->trans("ErrorFieldRequired",$langs->trans("Date")),'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Date")), null, 'errors');
 		}
 
 		elseif ($daterej > dol_now())
@@ -74,7 +74,7 @@ if ($action == 'confirm_rejet')
 		if (GETPOST('motif','alpha') == 0)
 		{
 			$error++;
-			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("RefusedReason")),'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("RefusedReason")), null, 'errors');
 		}
 
 		if ( ! $error )

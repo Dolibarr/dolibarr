@@ -55,12 +55,14 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, 
  *	View
  */
 
+$now=dol_now();
+
 $title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
 
 $form = new Form($db);
 
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
-llxHeader('',$title,$help_url);
+llxHeader('', $title, $help_url);
 
 if ($id > 0)
 {
@@ -77,18 +79,16 @@ if ($id > 0)
     print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
-    print '<table class="border" width="100%">';
+    
+    $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php">'.$langs->trans("BackToList").'</a>';
+    dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '');
+    
+    print '<div class="fichecenter">';
+    
+    print '<div class="underbanner clearboth"></div>';
+    print '<table class="border centpercent">';
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php">'.$langs->trans("BackToList").'</a>';
-
-    // Ref
-    print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td colspan="3">';
-    print $form->showrefnav($object, 'id', $linkback);
-    print '</td></tr>';
-
-    // Name
-    print '<tr><td width="20%">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</td><td width="30%">'.$object->lastname.'</td>';
-    print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="30%">'.$object->firstname.'</td></tr>';
 
     // Company
     if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
@@ -110,7 +110,7 @@ if ($id > 0)
     }
 
     // Civility
-    print '<tr><td>'.$langs->trans("UserTitle").'</td><td colspan="3">';
+    print '<tr><td class="titlefield">'.$langs->trans("UserTitle").'</td><td colspan="3">';
     print $object->getCivilityLabel();
     print '</td></tr>';
 
@@ -120,7 +120,7 @@ if ($id > 0)
     {
     	include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-    	print '<td>'.$langs->trans("DateToBirth").'</td><td colspan="3">'.dol_print_date($object->birthday,"day");
+    	print '<td class="titlefield">'.$langs->trans("DateToBirth").'</td><td colspan="3">'.dol_print_date($object->birthday,"day");
 
     	print ' &nbsp; ';
     	//var_dump($birthdatearray);
@@ -144,9 +144,11 @@ if ($id > 0)
 
     print "</table>";
 
+    print '<div>';
+    
     print '<br>';
 
-    $colwidth='20';
+    $cssclass='titlefield';
     include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
 

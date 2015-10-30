@@ -726,7 +726,7 @@ Handlebars.log = function(level, str) { Handlebars.logger.log(level, str); };
     this.comment = comment;
   };
 
-})();;
+})();
 // lib/handlebars/utils.js
 Handlebars.Exception = function(message) {
   var tmp = Error.prototype.constructor.apply(this, arguments);
@@ -791,7 +791,7 @@ Handlebars.SafeString.prototype.toString = function() {
       }
     }
   };
-})();;
+})();
 // lib/handlebars/compiler/compiler.js
 
 /*jshint eqnull:true*/

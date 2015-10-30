@@ -908,7 +908,7 @@ class Contact extends CommonObject
 	 */
 	function getNomUrl($withpicto=0,$option='',$maxlen=0,$moreparam='')
 	{
-		global $langs;
+		global $conf, $langs;
 
 		$result='';
         $label = '<u>' . $langs->trans("ShowContact") . '</u>';
@@ -923,7 +923,14 @@ class Contact extends CommonObject
         $label.= '<br><b>' . $langs->trans("Phone") . ':</b> '.join(', ',$phonelist);
         $label.= '<br><b>' . $langs->trans("Address") . ':</b> '.dol_format_address($this, 1, ' ', $langs);
 
-        $link = '<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$this->id.$moreparam.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+        $link = '<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$this->id.$moreparam.'"';
+    	if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) 
+        {
+            $label=$langs->trans("ShowContact");
+            $link.=' alt="'.dol_escape_htmltag($label, 1).'"'; 
+        }
+        $link.= ' title="'.dol_escape_htmltag($label, 1).'"';
+        $link.= ' class="classfortooltip">';
 		$linkend='</a>';
 
 		if ($option == 'xxx')
@@ -1144,12 +1151,14 @@ class Contact extends CommonObject
 
 		// Process
 		foreach ($to_del as $del) {
-			$c->fetch($del);
-			$c->del_type($this, 'contact');
+			if ($c->fetch($del) > 0) {
+				$c->del_type($this, 'contact');
+			}
 		}
 		foreach ($to_add as $add) {
-			$c->fetch($add);
-			$c->add_type($this, 'contact');
+			if ($c->fetch($add) > 0) {
+				$c->add_type($this, 'contact');
+			}
 		}
 
 		return;

@@ -484,9 +484,10 @@ class Form
      *  @param  string	$htmlname       Name of html select object
      *  @param  string	$htmloption     Options html on select object
      *  @param	integer	$maxlength		Max length for labels (0=no limit)
+     *  @param	string	$morecss		More css class
      *  @return string           		HTML string with select
      */
-    function select_country($selected='',$htmlname='country_id',$htmloption='',$maxlength=0)
+    function select_country($selected='',$htmlname='country_id',$htmloption='',$maxlength=0,$morecss='minwidth300')
     {
         global $conf,$langs;
 
@@ -507,7 +508,7 @@ class Form
         $resql=$this->db->query($sql);
         if ($resql)
         {
-            $out.= '<select id="select'.$htmlname.'" class="flat selectcountry minwidth300" name="'.$htmlname.'" '.$htmloption.'>';
+            $out.= '<select id="select'.$htmlname.'" class="flat selectcountry'.($morecss?' '.$morecss:'').'" name="'.$htmlname.'" '.$htmloption.'>';
             $num = $this->db->num_rows($resql);
             $i = 0;
             if ($num)
@@ -3234,10 +3235,10 @@ class Form
             if (! empty($more)) {
             	$formconfirm.= '<div class="confirmquestions">'.$more.'</div>';
             }
-            $formconfirm.= ($question ? '<div class="confirmmessage"'.img_help('','').' '.$question . '</div>': '');
+            $formconfirm.= ($question ? '<div class="confirmmessage">'.img_help('','').' '.$question . '</div>': '');
             $formconfirm.= '</div>'."\n";
 
-            $formconfirm.= "\n<!-- begin ajax formconfirm page=".$page." -->\n";
+            $formconfirm.= "\n<!-- begin ajax form_confirm page=".$page." -->\n";
             $formconfirm.= '<script type="text/javascript">'."\n";
             $formconfirm.= 'jQuery(document).ready(function() {
             $(function() {
@@ -3308,11 +3309,11 @@ class Form
             });
             });
             </script>';
-            $formconfirm.= "<!-- end ajax formconfirm -->\n";
+            $formconfirm.= "<!-- end ajax form_confirm -->\n";
         }
         else
         {
-        	$formconfirm.= "\n<!-- begin formconfirm page=".$page." -->\n";
+        	$formconfirm.= "\n<!-- begin form_confirm page=".$page." -->\n";
 
             $formconfirm.= '<form method="POST" action="'.$page.'" class="notoptoleftroright">'."\n";
             $formconfirm.= '<input type="hidden" name="action" value="'.$action.'">'."\n";
@@ -3345,7 +3346,7 @@ class Form
             $formconfirm.= "</form>\n";
             $formconfirm.= '<br>';
 
-            $formconfirm.= "<!-- end formconfirm -->\n";
+            $formconfirm.= "<!-- end form_confirm -->\n";
         }
 
         return $formconfirm;
@@ -4500,27 +4501,34 @@ class Form
 
     /**
      *	Return a HTML select string, built from an array of key+value but content returned into select come from an Ajax call of an URL.
-     *  Note: Do not apply langs->trans function on returned content, content may be entity encoded twice.
+     *  Note: Do not apply langs->trans function on returned content of Ajax service, content may be entity encoded twice.
      *
      *	@param	string	$htmlname       		Name of html select area
-     *	@param	string	$url					Url
+     *	@param	string	$url					Url. Must return a json_encode of array(key=>array('text'=>'A text', 'url'=>'An url'), ...)
      *	@param	string	$id             		Preselected key
      *	@param  string	$moreparam      		Add more parameters onto the select tag
      *	@param  string	$moreparamtourl 		Add more parameters onto the Ajax called URL
      * 	@param	int		$disabled				Html select box is disabled
      *  @param	int		$minimumInputLength		Minimum Input Length
      *  @param	string	$morecss				Add more class to css styles
+     *  @param  int     $callurlonselect        If set to 1, some code is added so an url return by the ajax is called when value is selected.
+     *  @param  string  $placeholder            String to use as placeholder
      * 	@return	string							HTML select string.
      */
-    static function selectArrayAjax($htmlname, $url, $id='', $moreparam='', $moreparamtourl='', $disabled=0, $minimumInputLength=1, $morecss='')
+    static function selectArrayAjax($htmlname, $url, $id='', $moreparam='', $moreparamtourl='', $disabled=0, $minimumInputLength=1, $morecss='', $callurlonselect=0, $placeholder='')
     {
+        global $langs;
+        
     	$out = '';
 
     	$tmpplugin='select2';
     	$out.='<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
 	    	<script type="text/javascript">
 	    	$(document).ready(function () {
-		    	$(".'.$htmlname.'").select2({
+    	      
+    	      '.($callurlonselect ? 'var saveRemoteData = [];':'').'
+    	    
+              $(".'.$htmlname.'").select2({
 			    	ajax: {
 				    	dir: "ltr",
 				    	url: "'.$url.'",
@@ -4534,8 +4542,14 @@ class Form
 			    		},
 			    		results: function (remoteData, pageNumber, query) {
 			    			console.log(remoteData);
-			    			return {results:[{id:\'none\', text:\'aa\'}, {id:\'rrr\', text:\'Red\'},{id:\'bbb\', text:\'Search a into projects\'}], more:false}
-			    			//return {results:[remoteData], more:false}
+				    	    saveRemoteData = remoteData;
+				    	    /* format json result for select2 */
+				    	    result = []
+				    	    $.each( remoteData, function( key, value ) {
+				    	       result.push({id: key, text: value.text});
+                            });
+			    			//return {results:[{id:\'none\', text:\'aa\'}, {id:\'rrr\', text:\'Red\'},{id:\'bbb\', text:\'Search a into projects\'}], more:false}
+			    			return {results: result, more:false}
     					},
 			    		/*processResults: function (data, page) {
 			    			// parse the results into the format expected by Select2.
@@ -4548,18 +4562,26 @@ class Form
 			    		},*/
 			    		cache: true
 			    	},
+				    placeholder: "'.dol_escape_js($placeholder).'",
 			    	escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
 			    	minimumInputLength: '.$minimumInputLength.',
-			    	//templateResult: formatRepo, // omitted for brevity, see the source of this page
-			    	//templateSelection: formatRepoSelection // omitted for brevity, see the source of this page
+			        formatResult: function(result, container, query, escapeMarkup) {
+                        return escapeMarkup(result.text);
+                    }
 			    });
 			    
-			    $(".'.$htmlname.'").change(function() { 
-			    	alert(\'eee\');
-			    	$(".'.$htmlname.'").select2.clearSearch(); 
-    			} );
-
-    			
+                '.($callurlonselect ? '
+                $(".'.$htmlname.'").change(function() { 
+			    	var selected = $(".'.$htmlname.'").select2("val");
+			        $(".'.$htmlname.'").select2("val","");  /* reset visible combo value */
+    			    $.each( saveRemoteData, function( key, value ) {
+    				        if (key == selected)
+    			            {
+    			                 console.log("Do a redirect into selectArrayAjax to "+value.url)
+    			                 location.assign(value.url);
+    			            }
+                    });
+    			});' : '' ) . '
     			
     	});
 	    </script>';
@@ -4590,34 +4612,36 @@ class Form
     {
     	global $conf, $langs;
 
+    	$out = '';
+    	
     	// Add code for jquery to use multiselect
     	if (! empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) || defined('REQUIRE_JQUERY_MULTISELECT'))
     	{
     		$tmpplugin=empty($conf->global->MAIN_USE_JQUERY_MULTISELECT)?constant('REQUIRE_JQUERY_MULTISELECT'):$conf->global->MAIN_USE_JQUERY_MULTISELECT;
-   			print '<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
+   			$out.='<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
     			<script type="text/javascript">
 	    			function formatResult(record) {'."\n";
 						if ($elemtype == 'category')
 						{
-							print '	//return \'<span><img src="'.DOL_URL_ROOT.'/theme/eldy/img/object_category.png'.'"> <a href="'.DOL_URL_ROOT.'/categories/viewcat.php?type=0&id=\'+record.id+\'">\'+record.text+\'</a></span>\';
+							$out.='	//return \'<span><img src="'.DOL_URL_ROOT.'/theme/eldy/img/object_category.png'.'"> <a href="'.DOL_URL_ROOT.'/categories/viewcat.php?type=0&id=\'+record.id+\'">\'+record.text+\'</a></span>\';
 								  	return \'<span><img src="'.DOL_URL_ROOT.'/theme/eldy/img/object_category.png'.'"> \'+record.text+\'</span>\';';
 						}
 						else
 						{
-							print 'return record.text;';
+							$out.='return record.text;';
 						}
-			print '	};
+			$out.= '	};
     				function formatSelection(record) {'."\n";
 						if ($elemtype == 'category')
 						{
-							print '	//return \'<span><img src="'.DOL_URL_ROOT.'/theme/eldy/img/object_category.png'.'"> <a href="'.DOL_URL_ROOT.'/categories/viewcat.php?type=0&id=\'+record.id+\'">\'+record.text+\'</a></span>\';
+							$out.='	//return \'<span><img src="'.DOL_URL_ROOT.'/theme/eldy/img/object_category.png'.'"> <a href="'.DOL_URL_ROOT.'/categories/viewcat.php?type=0&id=\'+record.id+\'">\'+record.text+\'</a></span>\';
 								  	return \'<span><img src="'.DOL_URL_ROOT.'/theme/eldy/img/object_category.png'.'"> \'+record.text+\'</span>\';';
 						}
 						else
 						{
-							print 'return record.text;';
+							$out.='return record.text;';
 						}
-			print '	};
+			$out.= '	};
 	    			$(document).ready(function () {
     					$(\'#'.$htmlname.'\').'.$tmpplugin.'({
     						dir: \'ltr\',
@@ -4635,7 +4659,7 @@ class Form
     	// Try also magic suggest
 
     	// Add data-role="none" to disable jmobile decoration
-		$out = '<select data-role="none" id="'.$htmlname.'" class="multiselect'.($morecss?' '.$morecss:'').'" multiple name="'.$htmlname.'[]"'.($moreattrib?' '.$moreattrib:'').($width?' style="width: '.(preg_match('/%/',$width)?$width:$width.'px').'"':'').'>'."\n";
+		$out .= '<select data-role="none" id="'.$htmlname.'" class="multiselect'.($morecss?' '.$morecss:'').'" multiple name="'.$htmlname.'[]"'.($moreattrib?' '.$moreattrib:'').($width?' style="width: '.(preg_match('/%/',$width)?$width:$width.'px').'"':'').'>'."\n";
     	if (is_array($array) && ! empty($array))
     	{
     		if ($value_as_key) $array=array_combine($array, $array);
@@ -4664,6 +4688,102 @@ class Form
     }
 
 
+    /**
+     *	Show a multiselect form from an array.
+     *
+     *	@param	string	$htmlname		Name of select
+     *	@param	array	$array			Array with array of fields we could show. This array may be modified according to setup of user.
+     *  @param  string  $varpage        Id of context for page. Can be set with $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
+     *	@return	string					HTML multiselect string
+     *  @see selectarray
+     */
+    static function multiSelectArrayWithCheckbox($htmlname, &$array, $varpage)
+    {
+        global $user;
+        
+        $tmpvar="MAIN_SELECTEDFIELDS_".$varpage;
+        if (! empty($user->conf->$tmpvar))
+        {
+            $tmparray=explode(',', $user->conf->$tmpvar);
+            foreach($array as $key => $val)
+            {
+                //var_dump($key);
+                //var_dump($tmparray);
+                if (in_array($key, $tmparray)) $array[$key]['checked']=1;
+                else $array[$key]['checked']=0;
+            }
+        }
+        //var_dump($array);
+            
+        $lis='';
+        $listcheckedstring='';
+        
+        foreach($array as $key => $val)
+        {
+           if (isset($val['enabled']) && ! $val['enabled']) 
+           {
+               unset($array[$key]);     // We don't want this field
+               continue; 
+           }
+           if ($val['label']) 
+	       {
+	           $lis.='<li><input type="checkbox" value="'.$key.'"'.(empty($val['checked'])?'':' checked="checked"').'/>'.dol_escape_htmltag($val['label']).'</li>';
+	           $listcheckedstring.=(empty($val['checked'])?'':$key.',');
+	       }
+        }
+        
+        $out ='<!-- Component multiSelectArrayWithCheckbox '.$htmlname.' --> 
+            
+            <dl class="dropdown"> 
+            <dt>
+            <a href="#">
+              '.img_picto('','list').'    
+              <input type="hidden" class="'.$htmlname.'" name="'.$htmlname.'" value="'.$listcheckedstring.'">
+            </a>
+            </dt>
+            <dd>
+                <div class="multiselectcheckbox'.$htmlname.'">
+                    <ul>
+                    '.$lis.'
+                    </ul>
+                </div>
+            </dd>
+        </dl>
+            
+        <script type="text/javascript">
+          $(".dropdown dt a").on(\'click\', function () {
+              $(".dropdown dd ul").slideToggle(\'fast\');
+          });
+    
+          $(".dropdown dd ul li a").on(\'click\', function () {
+              $(".dropdown dd ul").hide();
+          });
+    
+          function getSelectedValue(id) {
+               return $("#" + id).find("dt a span.value").html();
+          }
+    
+          $(document).bind(\'click\', function (e) {
+              var $clicked = $(e.target);
+              if (!$clicked.parents().hasClass("dropdown")) $(".dropdown dd ul").hide();
+          });
+    
+          $(\'.multiselectcheckbox'.$htmlname.' input[type="checkbox"]\').on(\'click\', function () {
+              console.log("A new field was added/removed")
+              $("input:hidden[name=formfilteraction]").val(\'listafterchangingselectedfields\')
+              var title = $(this).val() + ",";
+              if ($(this).is(\':checked\')) {
+                  $(\'.'.$htmlname.'\').val(title + $(\'.'.$htmlname.'\').val());
+              } 
+              else {
+                  $(\'.'.$htmlname.'\').val( $(\'.'.$htmlname.'\').val().replace(title, \'\') )
+              }
+          });        
+        </script>            
+            
+        ';
+        return $out;
+    }
 
 	/**
 	 * 	Render list of categories linked to object with id $id and type $type
@@ -4698,7 +4818,7 @@ class Form
 
 		if ($rendermode == 0)
 		{
-			$cate_arbo = $this->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 64, 0, 1);
+			$cate_arbo = $this->select_all_categories($type, '', 'parent', 64, 0, 1);
 			foreach($categories as $c) {
 				$arrayselected[] = $c->id;
 			}
@@ -5041,16 +5161,18 @@ class Form
      *    @param	int		$shownav	  	Show Condition (navigation is shown if value is 1)
      *    @param	string	$fieldid   		Nom du champ en base a utiliser pour select next et previous (we make the select max and min on this field)
      *    @param	string	$fieldref   	Nom du champ objet ref (object->ref) a utiliser pour select next et previous
-     *    @param	string	$morehtmlref  	Code html supplementaire a afficher apres ref
+     *    @param	string	$morehtmlref  	More html to show after ref
      *    @param	string	$moreparam  	More param to add in nav link url.
      *	  @param	int		$nodbprefix		Do not include DB prefix to forge table name
+     *	  @param	string	$morehtmlleft	More html code to show before ref
+     *	  @param	string	$morehtmlright	More html code to show before navigation arrows
      * 	  @return	string    				Portion HTML avec ref + boutons nav
      */
-    function showrefnav($object,$paramid,$morehtml='',$shownav=1,$fieldid='rowid',$fieldref='ref',$morehtmlref='',$moreparam='',$nodbprefix=0)
+    function showrefnav($object,$paramid,$morehtml='',$shownav=1,$fieldid='rowid',$fieldref='ref',$morehtmlref='',$moreparam='',$nodbprefix=0,$morehtmlleft='',$morehtmlright='')
     {
     	global $langs,$conf;
 
-        $ret='';
+    	$ret='';
         if (empty($fieldid))  $fieldid='rowid';
         if (empty($fieldref)) $fieldref='ref';
 
@@ -5063,14 +5185,27 @@ class Form
         $next_ref     = $object->ref_next?'<a data-role="button" data-icon="arrow-r" data-iconpos="right" href="'.$_SERVER["PHP_SELF"].'?'.$paramid.'='.urlencode($object->ref_next).$moreparam.'">'.(empty($conf->dol_use_jmobile)?'>':'&nbsp;').'</a>':'';
 
         //print "xx".$previous_ref."x".$next_ref;
-        $ret.='<div style="vertical-align: middle"><div class="inline-block floatleft refid'.(($shownav && ($previous_ref || $next_ref))?' refidpadding':'').'">';
+        $ret.='<div style="vertical-align: middle">';
+        
+		$ret.='<div class="inline-block floatleft">'.$morehtmlleft.'</div>';
+        
+        $ret.='<div class="inline-block floatleft valignmiddle refid'.(($shownav && ($previous_ref || $next_ref))?' refidpadding':'').'">';
 
-        $ret.=dol_htmlentities($object->$fieldref);
+        // For thirdparty and contact, the ref is he id, so we show something else
+        if ($object->element == 'societe')
+        {
+        	$ret.=dol_htmlentities($object->name);
+        }
+        else if (in_array($object->element, array('contact', 'user', 'member')))
+        {
+        	$ret.=dol_htmlentities($object->getFullName($langs));
+        }
+        else $ret.=dol_htmlentities($object->$fieldref);
         if ($morehtmlref)
         {
             $ret.=' '.$morehtmlref;
         }
-			$ret.='</div>';
+		$ret.='</div>';
 
         if ($previous_ref || $next_ref || $morehtml)
         {
@@ -5078,23 +5213,20 @@ class Form
         }
         if ($morehtml)
         {
-            //$ret.='</td><td class="paddingrightonly" align="right">'.$morehtml;
             $ret.='<li class="noborder litext">'.$morehtml.'</li>';
         }
         if ($shownav && ($previous_ref || $next_ref))
         {
-            //$ret.='</td><td class="nobordernopadding" align="center" width="20">'.$previous_ref.'</td>';
-            //$ret.='<td class="nobordernopadding" align="center" width="20">'.$next_ref;
             $ret.='<li class="pagination">'.$previous_ref.'</li>';
             $ret.='<li class="pagination">'.$next_ref.'</li>';
         }
         if ($previous_ref || $next_ref || $morehtml)
         {
-            //$ret.='</td></tr></table>';
             $ret.='</ul></div>';
         }
-		$ret.='</div>';
-
+		$ret.='<div class="statusref">'.$morehtmlright.'</div>';
+        $ret.='</div>';
+		
         return $ret;
     }
 
@@ -5131,15 +5263,18 @@ class Form
     /**
      *    	Return HTML code to output a photo
      *
-     *    	@param	string		$modulepart		Key to define module concerned ('societe', 'userphoto', 'memberphoto')
-     *     	@param  object		$object			Object containing data to retrieve file name
-     * 		@param	int			$width			Width of photo
-     * 		@param	int			$height			Height of photo (auto if 0)
-     * 		@param	int			$caneditfield	Add edit fields
-     * 		@param	string		$cssclass		CSS name to use on img for photo
-     * 	  	@return string    					HTML code to output photo
+     *    	@param	string		$modulepart			Key to define module concerned ('societe', 'userphoto', 'memberphoto')
+     *     	@param  object		$object				Object containing data to retrieve file name
+     * 		@param	int			$width				Width of photo
+     * 		@param	int			$height				Height of photo (auto if 0)
+     * 		@param	int			$caneditfield		Add edit fields
+     * 		@param	string		$cssclass			CSS name to use on img for photo
+     * 		@param	string		$imagesize		    'mini', 'small' or '' (original)
+     *      @param  int         $addlinktofullsize  Add link to fullsize image
+     *      @param  int         $cache              1=Accept to use image in cache
+     * 	  	@return string    						HTML code to output photo
      */
-    static function showphoto($modulepart, $object, $width=100, $height=0, $caneditfield=0, $cssclass='photowithmargin')
+    static function showphoto($modulepart, $object, $width=100, $height=0, $caneditfield=0, $cssclass='photowithmargin', $imagesize='', $addlinktofullsize=1, $cache=0)
     {
         global $conf,$langs;
 
@@ -5153,51 +5288,77 @@ class Form
             $dir=$conf->societe->multidir_output[$entity];
             $smallfile=$object->logo;
             $smallfile=preg_replace('/(\.png|\.gif|\.jpg|\.jpeg|\.bmp)/i','_small\\1',$smallfile);
-            if ($object->logo) $file=$id.'/logos/thumbs/'.$smallfile;
+            if (! empty($object->logo)) 
+            {
+                if ((string) $imagesize == 'mini') $file=$id.'/logos/thumbs/'.getImageFileNameForSize($object->logo, '_mini');
+                else if ((string) $imagesize == 'small') $file=$id.'/logos/thumbs/'.getImageFileNameForSize($object->logo, '_small');
+                else $file=$id.'/logos/thumbs/'.$smallfile;
+            }
         }
-        if ($modulepart=='contact')
+        else if ($modulepart=='contact')
         {
             $dir=$conf->societe->multidir_output[$entity].'/contact';
-            $file=$id.'/photos/'.$object->photo;
+            if (! empty($object->photo))
+            {
+                if ((string) $imagesize == 'mini') $file=$id.'/photos/thumbs/'.getImageFileNameForSize($object->photo, '_mini');
+                else if ((string) $imagesize == 'small') $file=$id.'/photos/thumbs/'.getImageFileNameForSize($object->photo, '_small');
+                else $file=$id.'/photos/'.$object->photo;
+            }
         }
         else if ($modulepart=='userphoto')
         {
             $dir=$conf->user->dir_output;
-            if ($object->photo) $file=get_exdir($id, 2, 0, 0, $object, 'user').$object->photo;
+            if (! empty($object->photo))
+            {
+                if ((string) $imagesize == 'mini') $file=get_exdir($id, 2, 0, 0, $object, 'user').getImageFileNameForSize($object->photo, '_mini');
+                else if ((string) $imagesize == 'small') $file=get_exdir($id, 2, 0, 0, $object, 'user').getImageFileNameForSize($object->photo, '_small');
+                else $file=get_exdir($id, 2, 0, 0, $object, 'user').$object->photo;
+            }
             if (! empty($conf->global->MAIN_OLD_IMAGE_LINKS)) $altfile=$object->id.".jpg";	// For backward compatibility
             $email=$object->email;
         }
         else if ($modulepart=='memberphoto')
         {
             $dir=$conf->adherent->dir_output;
-            if ($object->photo) $file=get_exdir($id, 2, 0, 0, $object, 'invoice_supplier').'photos/'.$object->photo;
+            if (! empty($object->photo)) 
+            {
+                if ((string) $imagesize == 'mini') $file=get_exdir($id, 2, 0, 0, $object, 'member').'photos/'.getImageFileNameForSize($object->photo, '_mini');
+                else if ((string) $imagesize == 'small') $file=get_exdir($id, 2, 0, 0, $object, 'member').'photos/'.getImageFileNameForSize($object->photo, '_small');
+                else $file=get_exdir($id, 2, 0, 0, $object, 'member').'photos/'.$object->photo;
+            }
             if (! empty($conf->global->MAIN_OLD_IMAGE_LINKS)) $altfile=$object->id.".jpg";	// For backward compatibility
             $email=$object->email;
-        } else {
+        } 
+        else 
+        {
         	$dir=$conf->$modulepart->dir_output;
-        	if ($object->photo) $file=get_exdir($id, 2, 0, 0, $adherent, 'member').'photos/'.$object->photo;
+        	if (! empty($object->photo)) 
+        	{
+                if ((string) $imagesize == 'mini') $file=get_exdir($id, 2, 0, 0, $object, $modulepart).'photos/'.getImageFileNameForSize($object->photo, '_mini');
+                else if ((string) $imagesize == 'small') $file=get_exdir($id, 2, 0, 0, $object, $modulepart).'photos/'.getImageFileNameForSize($object->photo, '_small');
+        	    else $file=get_exdir($id, 2, 0, 0, $object, $modulepart).'photos/'.$object->photo;
+        	}
         	if (! empty($conf->global->MAIN_OLD_IMAGE_LINKS)) $altfile=$object->id.".jpg";	// For backward compatibility
         	$email=$object->email;
         }
 
         if ($dir)
         {
-            $cache='0';
             if ($file && file_exists($dir."/".$file))
             {
-                $ret.='<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($file).'&cache='.$cache.'">';
+                if ($addlinktofullsize) $ret.='<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($file).'&cache='.$cache.'">';
                 $ret.='<img alt="Photo" id="photologo'.(preg_replace('/[^a-z]/i','_',$file)).'" class="'.$cssclass.'" '.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($file).'&cache='.$cache.'">';
-                $ret.='</a>';
+                if ($addlinktofullsize) $ret.='</a>';
             }
             else if ($altfile && file_exists($dir."/".$altfile))
             {
-                $ret.='<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($file).'&cache='.$cache.'">';
+                if ($addlinktofullsize) $ret.='<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($file).'&cache='.$cache.'">';
                 $ret.='<img alt="Photo alt" id="photologo'.(preg_replace('/[^a-z]/i','_',$file)).'" class="'.$cssclass.'" '.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($altfile).'&cache='.$cache.'">';
-                $ret.='</a>';
+                if ($addlinktofullsize) $ret.='</a>';
             }
             else
 			{
-				$nophoto='/public/theme/common/nophoto.jpg';
+				$nophoto='/public/theme/common/nophoto.png';
 				if (in_array($modulepart,array('userphoto','contact')))	// For module thar are "physical" users
 				{
 					$nophoto='/public/theme/common/user_anonymous.png';

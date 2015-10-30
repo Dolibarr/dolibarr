@@ -39,6 +39,11 @@ if (empty($user->id))
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
+if (! empty($conf->global->MAIN_ROUNDING_RULE_TOT))
+{
+    print "Parameter MAIN_ROUNDING_RULE_TOT must be set to 0 or not set.\n";
+    exit;
+}
 
 /**
  * Class for PHPUnit tests
@@ -279,11 +284,11 @@ class PricesTest extends PHPUnit_Framework_TestCase
 
 
     /**
-    * Test function addline and update_price
-    *
-    * @return 	boolean
-    * @see		http://wiki.dolibarr.org/index.php/Draft:VAT_calculation_and_rounding#Standard_usage
-    */
+     * Test function addline and update_price
+     *
+     * @return 	boolean
+     * @see		http://wiki.dolibarr.org/index.php/Draft:VAT_calculation_and_rounding#Standard_usage
+     */
     public function testUpdatePrice()
     {
 		//$this->sharedFixture

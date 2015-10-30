@@ -92,7 +92,7 @@ if ($action == 'setvalue' && $user->admin)
     if (! $error)
     {
     	$db->commit();
-    	setEventMessage($langs->trans("SetupSaved"));
+    	setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
     else
     {
@@ -117,7 +117,7 @@ $head = ldap_prepare_head();
 // Test si fonction LDAP actives
 if (! function_exists("ldap_connect"))
 {
-	setEventMessage($langs->trans("LDAPFunctionsNotAvailableOnPHP"),'errors');
+	setEventMessages($langs->trans("LDAPFunctionsNotAvailableOnPHP"), null, 'errors');
 }
 
 dol_fiche_head($head, 'members', $langs->trans("LDAPSetup"));

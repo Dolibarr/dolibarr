@@ -54,12 +54,12 @@ if ($actionsave)
     if ($i >= 4)
     {
         $db->commit();
-        setEventMessage($langs->trans("SetupSaved"));
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
     else
     {
         $db->rollback();
-        setEventMessage($langs->trans("SaveFailed"), 'errors');
+        setEventMessages($langs->trans("SaveFailed"), null, 'errors');
     }
 }
 

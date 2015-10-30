@@ -176,22 +176,24 @@ class FormFile
 	            $out .= '<input type="hidden" id="'.$htmlname.'_link_section_id"  name="link_section_id" value="'.$sectionid.'">';
 	            $out .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
-	            $out .= '<table width="100%" class="nobordernopadding">';
-	            $out .= '<tr>';
-	            $out .= '<td valign="middle" class="nowrap">';
-	            $out .= $langs->trans("URLToLink") . ': ';
+	            $out .= '<div>';
+	            $out .= '<div class="float" style="padding-right: 10px;">';
+	            $out .= '<label for="link">'.$langs->trans("URLToLink") . '</label>: ';
 	            $out .= '<input type="text" name="link" size="'.$maxlength.'" id="link">';
-	            $out .= ' &nbsp; ' . $langs->trans("Label") . ': ';
+	            $out .= '</div>';
+	            $out .= '<div class="float" style="padding-right: 10px;">';
+	            $out .= '<label for="label">'.$langs->trans("Label") . '</label>: ';
 	            $out .= '<input type="text" name="label" id="label">';
 	            $out .= '<input type="hidden" name="objecttype" value="' . $object->element . '">';
 	            $out .= '<input type="hidden" name="objectid" value="' . $object->id . '">';
-	            $out .= '&nbsp;';
+	            $out .= '</div>';
+	            $out .= '<div class="float" style="padding-right: 10px;">';
 	            $out .= '<input type="submit" class="button" name="linkit" value="'.$langs->trans("ToLink").'"';
 	            $out .= (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm)?' disabled':'');
 	            $out .= '>';
-	            $out .= '</td></tr>';
-	            $out .= '</table>';
-
+	            $out .= '</div>';
+                $out .= '</div>';
+                $out .= '<div class="clearboth"></div>';
 	            $out .= '</form><br>';
 	            $parameters = array('socid'=>(isset($GLOBALS['socid'])?$GLOBALS['socid']:''),'id'=>(isset($GLOBALS['id'])?$GLOBALS['id']:''), 'url'=>$url, 'perm'=>$perm);
 	            $res = $hookmanager->executeHooks('formattachOptions',$parameters,$object);
@@ -492,7 +494,7 @@ class FormFile
             $out.= '<input type="hidden" name="action" value="builddoc">';
             $out.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
-            $out.= '<div class="titre">'.$titletoshow.'</div>';
+            $out.= load_fiche_titre($titletoshow, '', '');
             $out.= '<table class="liste formdoc noborder" summary="listofdocumentstable" width="100%">';
 
             $out.= '<tr class="liste_titre">';

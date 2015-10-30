@@ -406,10 +406,11 @@ if (! defined('NOLOGIN'))
                 $langs->load('main');
                 $langs->load('errors');
 
-                $user->trigger_mesg='ErrorBadValueForCode - login='.GETPOST("username","alpha",2);
                 $_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadValueForCode");
                 $test=false;
 
+                // TODO @deprecated Remove this. Hook must be used, not this trigger.
+                $user->trigger_mesg='ErrorBadValueForCode - login='.GETPOST("username","alpha",2);
                 // Call of triggers
                 include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                 $interface=new Interfaces($db);
@@ -480,11 +481,11 @@ if (! defined('NOLOGIN'))
                 $langs->load('errors');
 
                 // Bad password. No authmode has found a good password.
-                $user->trigger_mesg=$langs->trans("ErrorBadLoginPassword").' - login='.GETPOST("username","alpha",2);
                 // We set a generic message if not defined inside function checkLoginPassEntity or subfunctions
                 if (empty($_SESSION["dol_loginmesg"])) $_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadLoginPassword");
 
-                // TODO We should use a hook afterLoginFailed here, not a trigger.
+                // TODO @deprecated Remove this. Hook must be used, not this trigger.
+                $user->trigger_mesg=$langs->trans("ErrorBadLoginPassword").' - login='.GETPOST("username","alpha",2);
                 // Call of triggers
                 include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
                 $interface=new Interfaces($db);
@@ -514,7 +515,7 @@ if (! defined('NOLOGIN'))
             exit;
         }
 
-        $resultFetchUser=$user->fetch('',$login);
+        $resultFetchUser=$user->fetch('', $login, '', 0, ($entitytotest ? $entitytotest : -1));
         if ($resultFetchUser <= 0)
         {
             dol_syslog('User not found, connexion refused');
@@ -527,16 +528,19 @@ if (! defined('NOLOGIN'))
                 $langs->load('main');
                 $langs->load('errors');
 
-                $user->trigger_mesg='ErrorCantLoadUserFromDolibarrDatabase - login='.$login;
                 $_SESSION["dol_loginmesg"]=$langs->trans("ErrorCantLoadUserFromDolibarrDatabase",$login);
+            
+                // TODO @deprecated Remove this. Hook must be used, not this trigger.
+                $user->trigger_mesg='ErrorCantLoadUserFromDolibarrDatabase - login='.$login;
             }
             if ($resultFetchUser < 0)
             {
-                $user->trigger_mesg=$user->error;
                 $_SESSION["dol_loginmesg"]=$user->error;
+            
+                // TODO @deprecated Remove this. Hook must be used, not this trigger.
+                $user->trigger_mesg=$user->error;
             }
 
-            // TODO We should use a hook afterLoginFailed here, not a trigger.
             // Call triggers
             include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
             $interface=new Interfaces($db);
@@ -577,16 +581,20 @@ if (! defined('NOLOGIN'))
                 $langs->load('main');
                 $langs->load('errors');
 
-                $user->trigger_mesg='ErrorCantLoadUserFromDolibarrDatabase - login='.$login;
                 $_SESSION["dol_loginmesg"]=$langs->trans("ErrorCantLoadUserFromDolibarrDatabase",$login);
+                
+                // TODO @deprecated Remove this. Hook must be used, not this trigger.
+                $user->trigger_mesg='ErrorCantLoadUserFromDolibarrDatabase - login='.$login;
             }
             if ($resultFetchUser < 0)
             {
-                $user->trigger_mesg=$user->error;
                 $_SESSION["dol_loginmesg"]=$user->error;
+            
+                // TODO @deprecated Remove this. Hook must be used, not this trigger.
+                $user->trigger_mesg=$user->error;
             }
 
-            // TODO We should use a hook here, not a trigger.
+            // TODO @deprecated Remove this. Hook must be used, not this trigger.
             // Call triggers
             include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
             $interface=new Interfaces($db);
@@ -654,9 +662,8 @@ if (! defined('NOLOGIN'))
 
         $loginfo = 'TZ='.$_SESSION["dol_tz"].';TZString='.$_SESSION["dol_tz_string"].';Screen='.$_SESSION["dol_screenwidth"].'x'.$_SESSION["dol_screenheight"];
 
+        // TODO @deprecated Remove this. Hook must be used, not this trigger.
         $user->trigger_mesg = $loginfo;
-
-        // TODO We should use hook afterLogin here, not a trigger
         // Call triggers
         include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
         $interface=new Interfaces($db);
@@ -683,6 +690,25 @@ if (! defined('NOLOGIN'))
         else
 		{
             $db->commit();
+        }
+        
+        if (! empty($user->conf->MAIN_LANDING_PAGE))    // Example: /index.php
+        {
+            $newpath=dol_buildpath($user->conf->MAIN_LANDING_PAGE, 1);
+            if ($_SERVER["PHP_SELF"] != $newpath)   // not already on landing page (avoid infinite loop)
+            {
+                header('Location: '.$newpath);
+                exit;
+            }
+        }
+        if (! empty($conf->global->MAIN_LANDING_PAGE))    // Example: /index.php
+        {
+            $newpath=dol_buildpath($conf->global->MAIN_LANDING_PAGE, 1);
+            if ($_SERVER["PHP_SELF"] != $newpath)   // not already on landing page (avoid infinite loop)
+            {
+                header('Location: '.$newpath);
+                exit;
+            }
         }
     }
 
@@ -1459,14 +1485,10 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	    // Add login user link
 	    $toprightmenu.='<div class="login_block_user">';
 
-	    // User photo
-	    $toprightmenu.='<div class="inline-block nowrap"><div class="inline-block login_block_elem" style="padding: 0px;">';
-	    $toprightmenu.=$user->getPhotoUrl(0,0,'loginphoto');
-	    $toprightmenu.='</div></div>';
-
-	    // Login name with tooltip
-		$toprightmenu.='<div class="inline-block nowrap"><div class="inline-block login_block_elem login_block_elem_name" style="padding: 0px;">';
-        $toprightmenu.=$user->getNomurl(0, '', true, 0, 11, 0, 'firstname','alogin');
+	    // Login name with photo and tooltip
+		$mode=-1;
+	    $toprightmenu.='<div class="inline-block nowrap"><div class="inline-block login_block_elem login_block_elem_name" style="padding: 0px;">';
+        $toprightmenu.=$user->getNomUrl($mode, '', true, 0, 11, 0, ($user->firstname ? 'firstname' : -1),'atoplogin');
         $toprightmenu.='</div></div>';
 
 		$toprightmenu.='</div>';
@@ -1521,15 +1543,15 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
  *  @param  string	$helppagename    	       	Name of wiki page for help ('' by default).
  * 				     		                   	Syntax is: For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage
  * 									         		       For other external page: http://server/url
- *  @param  string	$moresearchform             Search Form Permanent Supplemental
+ *  @param  string	$notused             		Deprecated. Used in past to add content into left menu. Hooks can be used now.
  *  @param  array	$menu_array_after           Table of menu entries to show after entries of menu handler
  *  @param  int		$leftmenuwithoutmainarea    Must be set to 1. 0 by default for backward compatibility with old modules.
  *  @param  string	$title                      Title of web page
  *  @return	void
  */
-function left_menu($menu_array_before, $helppagename='', $moresearchform='', $menu_array_after='', $leftmenuwithoutmainarea=0, $title='')
+function left_menu($menu_array_before, $helppagename='', $notused='', $menu_array_after='', $leftmenuwithoutmainarea=0, $title='')
 {
-    global $user, $conf, $langs, $db;
+    global $user, $conf, $langs, $db, $form;
     global $hookmanager, $menumanager;
 
     $searchform='';
@@ -1545,54 +1567,69 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 
 	    print "\n";
 
-	    // Define $searchform
-	    if ((( ! empty($conf->societe->enabled) && (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) || empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))) || ! empty($conf->fournisseur->enabled)) && ! empty($conf->global->MAIN_SEARCHFORM_SOCIETE) && $user->rights->societe->lire)
+	    if ($conf->use_javascript_ajax)
 	    {
-	        $langs->load("companies");
-	        $searchform.=printSearchForm(DOL_URL_ROOT.'/societe/list.php', DOL_URL_ROOT.'/societe/list.php', $langs->trans("ThirdParties"), 'soc', 'socname', 'T', 'searchleftt', img_object('','company'));
+    	    if (! is_object($form)) $form=new Form($db);
+    	    $selected=-1;
+            $searchform.=$form->selectArrayAjax('searchselectcombo', DOL_URL_ROOT.'/core/ajax/selectsearchbox.php', $selected, '', '', 0, 1, 'vmenusearchselectcombo', 1, $langs->trans("Search"));
 	    }
-
-	    if (! empty($conf->societe->enabled) && ! empty($conf->global->MAIN_SEARCHFORM_CONTACT) && $user->rights->societe->lire)
+	    else
 	    {
-	        $langs->load("companies");
-	        $searchform.=printSearchForm(DOL_URL_ROOT.'/contact/list.php', DOL_URL_ROOT.'/contact/list.php', $langs->trans("Contacts"), 'contact', 'contactname', '', 'searchleftc', img_object('','contact'));
+    	    // Define $searchform
+    	    if ((( ! empty($conf->societe->enabled) && (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) || empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))) || ! empty($conf->fournisseur->enabled)) && ! empty($conf->global->MAIN_SEARCHFORM_SOCIETE) && $user->rights->societe->lire)
+    	    {
+    	        $langs->load("companies");
+    	        $searchform.=printSearchForm(DOL_URL_ROOT.'/societe/list.php', DOL_URL_ROOT.'/societe/list.php', $langs->trans("ThirdParties"), 'soc', 'sall', 'T', 'searchleftt', img_object('','company'));
+    	    }
+    
+    	    if (! empty($conf->societe->enabled) && ! empty($conf->global->MAIN_SEARCHFORM_CONTACT) && $user->rights->societe->lire)
+    	    {
+    	        $langs->load("companies");
+    	        $searchform.=printSearchForm(DOL_URL_ROOT.'/contact/list.php', DOL_URL_ROOT.'/contact/list.php', $langs->trans("Contacts"), 'contact', 'sall', 'A', 'searchleftc', img_object('','contact'));
+    	    }
+    
+    	    if (((! empty($conf->product->enabled) && $user->rights->produit->lire) || (! empty($conf->service->enabled) && $user->rights->service->lire))
+    	    && ! empty($conf->global->MAIN_SEARCHFORM_PRODUITSERVICE))
+    	    {
+    	        $langs->load("products");
+    	        $searchform.=printSearchForm(DOL_URL_ROOT.'/product/list.php', DOL_URL_ROOT.'/product/list.php', $langs->trans("Products")."/".$langs->trans("Services"), 'products', 'sall', 'P', 'searchleftp', img_object('','product'));
+    	    }
+    
+    	    if (((! empty($conf->product->enabled) && $user->rights->produit->lire) || (! empty($conf->service->enabled) && $user->rights->service->lire)) && ! empty($conf->fournisseur->enabled)
+    	    && ! empty($conf->global->MAIN_SEARCHFORM_PRODUITSERVICE_SUPPLIER))
+    	    {
+    	        $langs->load("products");
+    	        $searchform.=printSearchForm(DOL_URL_ROOT.'/fourn/product/list.php', DOL_URL_ROOT.'/fourn/product/list.php', $langs->trans("SupplierRef"), 'products', 'srefsupplier', '', 'searchlefts', img_object('','product'));
+    	    }
+    
+            if (! empty($conf->projet->enabled) && ! empty($conf->global->MAIN_SEARCHFORM_PROJECT) && $user->rights->projet->lire)
+    	    {
+    	        $langs->load("projects");
+    	        $searchform.=printSearchForm(DOL_URL_ROOT.'/projet/list.php', DOL_URL_ROOT.'/projet/list.php', $langs->trans("Projects"), 'project', 'search_all', 'Q', 'searchleftproj', img_object('','projectpub'));
+    	    }
+    
+    	    if (! empty($conf->adherent->enabled) && ! empty($conf->global->MAIN_SEARCHFORM_ADHERENT) && $user->rights->adherent->lire)
+    	    {
+    	        $langs->load("members");
+    	        $searchform.=printSearchForm(DOL_URL_ROOT.'/adherents/list.php', DOL_URL_ROOT.'/adherents/list.php', $langs->trans("Members"), 'member', 'sall', 'M', 'searchleftm', img_object('','user'));
+    	    }
+    
+    		if (! empty($conf->user->enabled) && ! empty($conf->global->MAIN_SEARCHFORM_USER) && $user->rights->user->user->lire)
+    	    {
+    	        $langs->load("users");
+    	        $searchform.=printSearchForm(DOL_URL_ROOT.'/user/list.php', DOL_URL_ROOT.'/user/list.php', $langs->trans("Users"), 'user', 'sall', 'M', 'searchleftuser', img_object('','user'));
+    	    }
+    
+    	    // Execute hook printSearchForm
+    	    $parameters=array();
+    	    $reshook=$hookmanager->executeHooks('printSearchForm',$parameters);    // Note that $action and $object may have been modified by some hooks
+    		if (empty($reshook))
+    		{
+    			$searchform.=$hookmanager->resPrint;
+    		}
+    		else $searchform=$hookmanager->resPrint;
 	    }
-
-	    if (((! empty($conf->product->enabled) && $user->rights->produit->lire) || (! empty($conf->service->enabled) && $user->rights->service->lire))
-	    && ! empty($conf->global->MAIN_SEARCHFORM_PRODUITSERVICE))
-	    {
-	        $langs->load("products");
-	        $searchform.=printSearchForm(DOL_URL_ROOT.'/product/list.php', DOL_URL_ROOT.'/product/list.php', $langs->trans("Products")."/".$langs->trans("Services"), 'products', 'sall', 'P', 'searchleftp', img_object('','product'));
-	    }
-
-	    if (((! empty($conf->product->enabled) && $user->rights->produit->lire) || (! empty($conf->service->enabled) && $user->rights->service->lire)) && ! empty($conf->fournisseur->enabled)
-	    && ! empty($conf->global->MAIN_SEARCHFORM_PRODUITSERVICE_SUPPLIER))
-	    {
-	        $langs->load("products");
-	        $searchform.=printSearchForm(DOL_URL_ROOT.'/fourn/product/list.php', DOL_URL_ROOT.'/fourn/product/list.php', $langs->trans("SupplierRef"), 'products', 'srefsupplier', '', 'searchlefts', img_object('','product'));
-	    }
-
-	    if (! empty($conf->adherent->enabled) && ! empty($conf->global->MAIN_SEARCHFORM_ADHERENT) && $user->rights->adherent->lire)
-	    {
-	        $langs->load("members");
-	        $searchform.=printSearchForm(DOL_URL_ROOT.'/adherents/list.php', DOL_URL_ROOT.'/adherents/list.php', $langs->trans("Members"), 'member', 'sall', 'M', 'searchleftm', img_object('','user'));
-	    }
-
-    	if (! empty($conf->projet->enabled) && ! empty($conf->global->MAIN_SEARCHFORM_PROJECT) && $user->rights->projet->lire)
-	    {
-	        $langs->load("members");
-	        $searchform.=printSearchForm(DOL_URL_ROOT.'/projet/list.php', DOL_URL_ROOT.'/projet/list.php', $langs->trans("Projects"), 'project', 'search_all', 'M', 'searchleftproj', img_object('','projectpub'));
-	    }
-
-	    // Execute hook printSearchForm
-	    $parameters=array();
-	    $reshook=$hookmanager->executeHooks('printSearchForm',$parameters);    // Note that $action and $object may have been modified by some hooks
-		if (empty($reshook))
-		{
-			$searchform.=$hookmanager->resPrint;
-		}
-		else $searchform=$hookmanager->resPrint;
-
+        
 	    // Define $bookmarks
 	    if (! empty($conf->bookmark->enabled) && $user->rights->bookmark->lire)
 	    {
@@ -1607,13 +1644,8 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 
 	    print '<div class="vmenu">'."\n\n";
 
-	    $menumanager->menu_array = $menu_array_before;
-    	$menumanager->menu_array_after = $menu_array_after;
-	    $menumanager->showmenu('left'); // output menu_array and menu found in database
-
-
-	    // Show other forms
-	    if ($searchform)
+    	// Show other forms
+	    /*if ($searchform)
 	    {
 	        print "\n";
 	        print "<!-- Begin SearchForm -->\n";
@@ -1621,15 +1653,14 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	        print $searchform;
 	        print '</div>'."\n";
 	        print "<!-- End SearchForm -->\n";
-	    }
+	    }*/
 
-	    // More search form
-	    if ($moresearchform)
-	    {
-	        print $moresearchform;
-	    }
+	    $menumanager->menu_array = $menu_array_before;
+    	$menumanager->menu_array_after = $menu_array_after;
+	    $menumanager->showmenu('left', array('searchform'=>$searchform, 'bookmarks'=>$bookmarks)); // output menu_array and menu found in database
 
 	    // Bookmarks
+	    /*
 	    if ($bookmarks)
 	    {
 	        print "\n";
@@ -1638,13 +1669,14 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	        print $bookmarks;
 	        print '</div>'."\n";
 	        print "<!-- End Bookmarks -->\n";
-	    }
+	    }*/
 
-        print "\n";
-        print "<!-- Begin Help Block-->\n";
+        // Dolibarr version + help + bug report link
+		print "\n";
+	    print "<!-- Begin Help Block-->\n";
         print '<div id="blockvmenuhelp" class="blockvmenuhelp">'."\n";
 
-        //Dolibarr version
+        // Version
         $doliurl='http://www.dolibarr.org';
 		//local communities
 		if (preg_match('/fr/i',$langs->defaultlang)) $doliurl='http://www.dolibarr.fr';
@@ -1825,11 +1857,11 @@ function getHelpParamFor($helppagename,$langs)
  *  @param  string	$htmlmodesearch     Value to set into parameter "mode_search" ('soc','contact','products','member',...)
  *  @param  string	$htmlinputname      Field Name input form
  *  @param	string	$accesskey			Accesskey
- *  @param  string  $idname             Complement for id to avoid multiple same id in the page
+ *  @param  string  $prefhtmlinputname  Complement for id to avoid multiple same id in the page
  *  @param	string	$img				Image to use
  *  @return	string
  */
-function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch,$htmlinputname,$accesskey='', $idname='',$img='')
+function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch,$htmlinputname,$accesskey='', $prefhtmlinputname='',$img='')
 {
     global $conf,$langs;
 
@@ -1842,7 +1874,7 @@ function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch,$htmlinput
 	$ret.='<div class="menu_titre menu_titre_search"';
 	if (! empty($conf->global->MAIN_HTML5_PLACEHOLDER)) $ret.=' style="display: inline-block"';
 	$ret.='>';
-	$ret.='<label for="'.$idname.$htmlinputname.'">';
+	$ret.='<label for="'.$prefhtmlinputname.$htmlinputname.'">';
 	$ret.='<a class="vsmenu" href="'.$urlobject.'">';
 	if ($img && ! empty($conf->global->MAIN_HTML5_PLACEHOLDER)) $ret.=$img;
 	else $ret.=$img.' '.$title;
@@ -1856,7 +1888,7 @@ function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch,$htmlinput
     $ret.=($accesskey?' accesskey="'.$accesskey.'"':'');
     if (! empty($conf->global->MAIN_HTML5_PLACEHOLDER)) $ret.=' placeholder="'.strip_tags($title).'"';		// Will work only if MAIN_HTML5_PLACEHOLDER is set to 1
     else $ret.=' title="'.$langs->trans("SearchOf").''.strip_tags($title).'"';
-    $ret.=' name="'.$htmlinputname.'" id="'.$idname.$htmlinputname.'" size="10" />';
+    $ret.=' name="'.$htmlinputname.'" id="'.$prefhtmlinputname.$htmlinputname.'" size="10" />';
     $ret.='<input type="submit" class="button" style="padding-top: 4px; padding-bottom: 4px; padding-left: 6px; padding-right: 6px" value="'.$langs->trans("Go").'">';
     $ret.="</form>\n";
     return $ret;

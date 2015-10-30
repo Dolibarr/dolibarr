@@ -45,36 +45,40 @@ $object = new User($db);
 $object->fetch($id);
 $object->getrights();
 
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('usercard','globalcard'));
 
 /*
  * Actions
  */
 
-if ($_GET["action"] == 'dolibarr2ldap')
-{
-    $db->begin();
 
-    $ldap=new Ldap();
-    $result=$ldap->connect_bind();
+$parameters=array('id'=>$socid);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-    $info=$object->_load_ldap_info();
-    $dn=$object->_load_ldap_dn($info);
-    $olddn=$dn;	// We can say that old dn = dn as we force synchro
+if (empty($reshook)) {
+    if ($_GET["action"] == 'dolibarr2ldap') {
+        $db->begin();
 
-    $result=$ldap->update($dn,$info,$user,$olddn);
+        $ldap = new Ldap();
+        $result = $ldap->connect_bind();
 
-    if ($result >= 0)
-    {
-        setEventMessage($langs->trans("UserSynchronized"));
-        $db->commit();
-    }
-    else
-    {
-        setEventMessage($ldap->error, 'errors');
-        $db->rollback();
+        $info = $object->_load_ldap_info();
+        $dn = $object->_load_ldap_dn($info);
+        $olddn = $dn;    // We can say that old dn = dn as we force synchro
+
+        $result = $ldap->update($dn, $info, $user, $olddn);
+
+        if ($result >= 0) {
+            setEventMessage($langs->trans("UserSynchronized"));
+            $db->commit();
+        } else {
+            setEventMessage($ldap->error, 'errors');
+            $db->rollback();
+        }
     }
 }
-
 
 /*
  * View
@@ -89,27 +93,14 @@ $head = user_prepare_head($object);
 $title = $langs->trans("User");
 dol_fiche_head($head, 'ldap', $title, 0, 'user');
 
+dol_banner_tab($object,'id','',$user->rights->user->user->lire || $user->admin);
+
+print '<div class="underbanner clearboth"></div>';
+
 print '<table class="border" width="100%">';
 
-// Ref
-print '<tr><td width="25%" valign="top">'.$langs->trans("Ref").'</td>';
-print '<td>';
-print $form->showrefnav($object,'id','',$user->rights->user->user->lire || $user->admin);
-print '</td>';
-print '</tr>';
-
-// Lastname
-print '<tr><td width="25%" valign="top">'.$langs->trans("Lastname").'</td>';
-print '<td>'.$object->lastname.'</td>';
-print "</tr>\n";
-
-// Firstname
-print '<tr><td width="25%" valign="top">'.$langs->trans("Firstname").'</td>';
-print '<td>'.$object->firstname.'</td>';
-print "</tr>\n";
-
 // Login
-print '<tr><td width="25%" valign="top">'.$langs->trans("Login").'</td>';
+print '<tr><td class="titlefield">'.$langs->trans("Login").'</td>';
 if ($object->ldap_sid)
 {
     print '<td class="warning">'.$langs->trans("LoginAccountDisableInDolibarr").'</td>';

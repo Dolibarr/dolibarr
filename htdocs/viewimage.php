@@ -173,7 +173,7 @@ else					// Open and return file
     // This test is to avoid error images when image is not available (for example thumbs).
     if (! dol_is_file($original_file))
     {
-        $original_file=DOL_DOCUMENT_ROOT.'/public/theme/common/nophoto.jpg';
+        $original_file=DOL_DOCUMENT_ROOT.'/public/theme/common/nophoto.png';
         /*$error='Error: File '.$_GET["file"].' does not exists or filesystems permissions are not allowed';
         dol_print_error(0,$error);
         print $error;

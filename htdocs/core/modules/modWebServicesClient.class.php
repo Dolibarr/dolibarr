@@ -18,7 +18,7 @@
 /**
  *      \defgroup   webservices     Module webservices
  *      \brief      Module to enable client for supplier WebServices
- *       \file       htdocs/core/modules/modSyncSupplierWebServices.class.php
+ *       \file       htdocs/core/modules/modWebServicesClient.class.php
  *       \ingroup    webservices
  *       \brief      File to describe client for supplier webservices module
  */
@@ -27,7 +27,7 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 /**
  *	Class to describe a sync supplier web services module
  */
-class modSyncSupplierWebServices extends DolibarrModules
+class modWebServicesClient extends DolibarrModules
 {
 
     /**
@@ -38,12 +38,12 @@ class modSyncSupplierWebServices extends DolibarrModules
     function __construct($db)
     {
         $this->db = $db;
-        $this->numero = 2650;
+        $this->numero = 2660;
 
         $this->family = "technic";
         // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
         $this->name = preg_replace('/^mod/i','',get_class($this));
-        $this->description = "Enable the client for external supplier web services";
+        $this->description = "Enable the web service client to call external supplier web services";
         $this->version = 'experimental';                        // 'experimental' or 'dolibarr' or version
         // Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);

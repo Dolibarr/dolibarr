@@ -140,7 +140,7 @@ if ($action == 'add' && $user->rights->categorie->creer)
 	if (! $object->label)
 	{
 		$error++;
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Ref")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Ref")), null, 'errors');
 		$action = 'create';
 	}
 

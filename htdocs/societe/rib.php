@@ -42,9 +42,8 @@ $socid = GETPOST("socid");
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe','','');
 
-$soc = new Societe($db);
-$soc->id = $_GET["socid"];
-$soc->fetch($_GET["socid"]);
+$object = new Societe($db);
+$object->fetch($socid);
 
 $id=GETPOST("id","int");
 $ribid=GETPOST("ribid","int");
@@ -62,7 +61,7 @@ if ($action == 'update' && ! $_POST["cancel"])
 
     $account->fetch($id);
 
-    $account->socid           = $soc->id;
+    $account->socid           = $object->id;
 
 	$account->bank            = $_POST["bank"];
 	$account->label           = $_POST["label"];
@@ -93,7 +92,7 @@ if ($action == 'update' && ! $_POST["cancel"])
 			$account->setAsDefault($id);	// This will make sure there is only one default rib
 		}
 
-		$url=DOL_URL_ROOT.'/societe/rib.php?socid='.$soc->id;
+		$url=DOL_URL_ROOT.'/societe/rib.php?socid='.$object->id;
         header('Location: '.$url);
         exit;
 	}
@@ -105,13 +104,13 @@ if ($action == 'add' && ! $_POST["cancel"])
 
 	if (! GETPOST('label'))
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv('Label')),'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Label")), null, 'errors');
 		$action='create';
 		$error++;
 	}
 	if (! GETPOST('bank'))
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv('BankName')),'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BankName")), null, 'errors');
 		$action='create';
 		$error++;
 	}
@@ -121,7 +120,7 @@ if ($action == 'add' && ! $_POST["cancel"])
 	    // Ajout
 	    $account = new CompanyBankAccount($db);
 
-	    $account->socid           = $soc->id;
+	    $account->socid           = $object->id;
 
 	    $account->bank            = $_POST["bank"];
 	    $account->label           = $_POST["label"];
@@ -146,7 +145,7 @@ if ($action == 'add' && ! $_POST["cancel"])
 	    }
 	    else
 	    {
-	        $url=DOL_URL_ROOT.'/societe/rib.php?socid='.$soc->id;
+	        $url=DOL_URL_ROOT.'/societe/rib.php?socid='.$object->id;
 	        header('Location: '.$url);
 	        exit;
 	    }
@@ -159,7 +158,7 @@ if ($action == 'setasdefault')
     $res = $account->setAsDefault(GETPOST('ribid','int'));
     if ($res)
     {
-        $url=DOL_URL_ROOT.'/societe/rib.php?socid='.$soc->id;
+        $url=DOL_URL_ROOT.'/societe/rib.php?socid='.$object->id;
         header('Location: '.$url);
         exit;
     } else {
@@ -175,7 +174,7 @@ if ($action == 'confirm_delete' && $_GET['confirm'] == 'yes')
 		$result = $account->delete($user);
 		if ($result > 0)
 		{
-			$url = $_SERVER['PHP_SELF']."?socid=".$soc->id;
+			$url = $_SERVER['PHP_SELF']."?socid=".$object->id;
 			header('Location: '.$url);
 			exit;
 		}
@@ -200,27 +199,27 @@ $prelevement = new BonPrelevement($db);
 
 llxHeader();
 
-$head=societe_prepare_head2($soc);
+$head=societe_prepare_head2($object);
 
 
 $account = new CompanyBankAccount($db);
 if (! $id)
-    $account->fetch(0,$soc->id);
+    $account->fetch(0,$object->id);
 else
     $account->fetch($id);
-if (empty($account->socid)) $account->socid=$soc->id;
+if (empty($account->socid)) $account->socid=$object->id;
 
 
 if ($socid && $action == 'edit' && $user->rights->societe->creer)
 {
-    print '<form action="rib.php?socid='.$soc->id.'" method="post">';
+    print '<form action="rib.php?socid='.$object->id.'" method="post">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="update">';
     print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
 }
 if ($socid && $action == 'create' && $user->rights->societe->creer)
 {
-    print '<form action="rib.php?socid='.$soc->id.'" method="post">';
+    print '<form action="rib.php?socid='.$object->id.'" method="post">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="add">';
 }
@@ -234,17 +233,22 @@ if ($socid && $action != 'edit' && $action != "create")
 	// Confirm delete third party
     if ($action == 'delete')
     {
-        print $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$soc->id."&ribid=".($ribid?$ribid:$id), $langs->trans("DeleteARib"), $langs->trans("ConfirmDeleteRib", $account->getRibLabel()), "confirm_delete", '', 0, 1);
+        print $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$object->id."&ribid=".($ribid?$ribid:$id), $langs->trans("DeleteARib"), $langs->trans("ConfirmDeleteRib", $account->getRibLabel()), "confirm_delete", '', 0, 1);
     }
 
-    print load_fiche_titre($langs->trans("DefaultRIB"));
+    dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
+        
+    print '<div class="fichecenter">';
+    
+    print load_fiche_titre($langs->trans("DefaultRIB"), '', '');
 
-    print '<table class="border" width="100%">';
+    print '<div class="underbanner clearboth"></div>';
+    print '<table class="border centpercent">';
 
-    print '<tr><td width="35%">'.$langs->trans("LabelRIB").'</td>';
+    print '<tr><td class="titlefield">'.$langs->trans("LabelRIB").'</td>';
     print '<td colspan="4">'.$account->label.'</td></tr>';
 
-	print '<tr><td valign="top">'.$langs->trans("BankName").'</td>';
+	print '<tr><td>'.$langs->trans("BankName").'</td>';
 	print '<td colspan="4">'.$account->bank.'</td></tr>';
 
 	// Show fields of bank account
@@ -350,7 +354,9 @@ if ($socid && $action != 'edit' && $action != "create")
 		print '<div class="warning">'.$langs->trans("RIBControlError").'</div>';
 	}
 
-    print "<br>";
+    print "</div>";
+    
+    dol_fiche_end();
 
 
     /*
@@ -359,7 +365,7 @@ if ($socid && $action != 'edit' && $action != "create")
 
     print load_fiche_titre($langs->trans("AllRIB"));
 
-    $rib_list = $soc->get_all_rib();
+    $rib_list = $object->get_all_rib();
     $var = false;
     if (is_array($rib_list))
     {
@@ -397,7 +403,7 @@ if ($socid && $action != 'edit' && $action != "create")
             if (! empty($conf->prelevement->enabled))
             {
             	// RUM
-				print '<td>'.$prelevement->buildRumNumber($soc->code_client, $rib->datec, $rib->id).'</td>';
+				print '<td>'.$prelevement->buildRumNumber($object->code_client, $rib->datec, $rib->id).'</td>';
 
 				// FRSTRECUR
 				print '<td>'.$rib->frstrecur.'</td>';
@@ -406,7 +412,7 @@ if ($socid && $action != 'edit' && $action != "create")
             // Default
             print '<td align="center" width="70">';
             if (!$rib->default_rib) {
-                print '<a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$soc->id.'&ribid='.$rib->id.'&action=setasdefault">';
+                print '<a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$object->id.'&ribid='.$rib->id.'&action=setasdefault">';
                 print img_picto($langs->trans("Disabled"),'off');
                 print '</a>';
             } else {
@@ -418,13 +424,13 @@ if ($socid && $action != 'edit' && $action != "create")
             print '<td align="right">';
             if ($user->rights->societe->creer)
             {
-            	print '<a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$soc->id.'&id='.$rib->id.'&action=edit">';
+            	print '<a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$object->id.'&id='.$rib->id.'&action=edit">';
             	print img_picto($langs->trans("Modify"),'edit');
             	print '</a>';
 
            		print '&nbsp;';
 
-           		print '<a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$soc->id.'&id='.$rib->id.'&action=delete">';
+           		print '<a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$object->id.'&id='.$rib->id.'&action=delete">';
            		print img_picto($langs->trans("Delete"),'delete');
            		print '</a>';
             }
@@ -444,7 +450,6 @@ if ($socid && $action != 'edit' && $action != "create")
         dol_print_error($db);
     }
 
-    dol_fiche_end();
 }
 
 // Edit
@@ -452,7 +457,12 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
 {
 	dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"),0,'company');
 
-	print '<table class="border" width="100%">';
+    dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
+        
+    print '<div class="fichecenter">';
+    
+    print '<div class="underbanner clearboth"></div>';
+	print '<table class="border centpercent">';
 
     print '<tr><td valign="top" width="35%" class="fieldrequired">'.$langs->trans("LabelRIB").'</td>';
     print '<td colspan="4"><input size="30" type="text" name="label" value="'.$account->label.'"></td></tr>';
@@ -551,7 +561,7 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
 
     	print '<table class="border" width="100%">';
 
-    	if (empty($account->rum)) $account->rum = $prelevement->buildRumNumber($soc->code_client, $account->datec, $account->id);
+    	if (empty($account->rum)) $account->rum = $prelevement->buildRumNumber($object->code_client, $account->datec, $account->id);
 
     	// RUM
     	print '<tr><td width="35%">'.$langs->trans("RUM").'</td>';
@@ -564,7 +574,9 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
 	    print '</table>';
     }
 
-	dol_fiche_end();
+    print '</div>';
+    
+    dol_fiche_end();
 
 	print '<div align="center">';
 	print '<input class="button" value="'.$langs->trans("Modify").'" type="submit">';
@@ -579,8 +591,12 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
 {
 	dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"),0,'company');
 
-	print '<table class="border" width="100%">';
-
+    dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
+        
+    print '<div class="fichecenter">';
+    
+    print '<div class="underbanner clearboth"></div>';
+	print '<table class="border centpercent">';
 
     print '<tr><td valign="top" width="35%" class="fieldrequired">'.$langs->trans("LabelRIB").'</td>';
     print '<td colspan="4"><input size="30" type="text" name="label" value="'.GETPOST('label').'"></td></tr>';
@@ -657,6 +673,8 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
 	    print '</table>';
     }
 
+    print '</div>';
+    
 	dol_fiche_end();
 
 	print '<div align="center">';
@@ -686,7 +704,7 @@ if ($socid && $action != 'edit' && $action != 'create')
 
 	if ($user->rights->societe->creer)
 	{
-		print '<a class="butAction" href="rib.php?socid='.$soc->id.'&amp;action=create">'.$langs->trans("Add").'</a>';
+		print '<a class="butAction" href="rib.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("Add").'</a>';
 	}
 
 	print '</div>';

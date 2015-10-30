@@ -200,7 +200,7 @@ if ($id > 0 || !empty($ref)) {
          * Confirmation suppression fichier
          */
         if ($action == 'delete') {
-            $ret = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id . '&urlfile=' . urlencode($_GET["urlfile"]),
+            $ret = $form->form_confirm($_SERVER["PHP_SELF"] . '?id=' . $object->id . '&urlfile=' . urlencode($_GET["urlfile"]),
                     $langs->trans('DeleteFile'),
                     $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile',
                     '', 0, 1);

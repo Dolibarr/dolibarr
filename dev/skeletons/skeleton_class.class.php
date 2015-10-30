@@ -231,7 +231,7 @@ class Skeleton_Class extends CommonObject
 		}
 		
 		if (!empty($sortfield)) {
-			$sql .= ' ORDER BY ' . $sortfield . ' ' . $sortorder;
+			$sql .= $this->db->order($sortfield,$sortorder);
 		}
 		if (!empty($limit)) {
 		 $sql .=  ' ' . $this->db->plimit($limit + 1, $offset);

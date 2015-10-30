@@ -54,28 +54,30 @@ if ($action == 'update' || $action == 'add')
 	$constname=GETPOST("constname");
 	$constvalue=GETPOST("constvalue");
 
-	if (($constname=='ADHERENT_CARD_TYPE' || $constname=='ADHERENT_ETIQUETTE_TYPE') && $constvalue == -1) $constvalue='';
-	if ($constname=='ADHERENT_LOGIN_NOT_REQUIRED') // Invert choice
-	{
-		if ($constvalue) $constvalue=0;
-		else $constvalue=1;
-	}
+    // Action mise a jour ou ajout d'une constante
+    if ($action == 'update' || $action == 'add')
+    {
+    	foreach($_POST['constname'] as $key => $val)
+    	{
+    		$constname=$_POST["constname"][$key];
+    		$constvalue=$_POST["constvalue"][$key];
+    		$consttype=$_POST["consttype"][$key];
+    		$constnote=$_POST["constnote"][$key];
 
-	if (in_array($constname,array('ADHERENT_MAIL_VALID','ADHERENT_MAIL_COTIS','ADHERENT_MAIL_RESIL'))) $constvalue=$_POST["constvalue".$constname];
-	$consttype=$_POST["consttype"];
-	$constnote=GETPOST("constnote");
-	$res=dolibarr_set_const($db,$constname,$constvalue,$type[$consttype],0,$constnote,$conf->entity);
-
-	if (! $res > 0) $error++;
-
-	if (! $error)
-	{
-		setEventMessage($langs->trans("SetupSaved"));
-	}
-	else
-	{
-		setEventMessage($langs->trans("Error"),'errors');
-	}
+        	$res=dolibarr_set_const($db,$constname,$constvalue,$type[$consttype],0,$constnote,$conf->entity);
+    		
+    		if (! $res > 0) $error++;
+    	}
+    
+     	if (! $error)
+        {
+            setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+        }
+        else
+        {
+            setEventMessages($langs->trans("Error"), null, 'errors');
+        }
+    }
 }
 
 // Action activation d'un sous module du module adherent
@@ -115,7 +117,6 @@ print load_fiche_titre($langs->trans("MailmanSpipSetup"),$linkback,'title_setup'
 
 $head = mailmanspip_admin_prepare_head();
 
-dol_fiche_head($head, 'spip', $langs->trans("Setup"), 0, 'user');
 
 $var=true;
 
@@ -124,6 +125,10 @@ $var=true;
  */
 if (! empty($conf->global->ADHERENT_USE_SPIP))
 {
+	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+	
+	dol_fiche_head($head, 'spip', $langs->trans("Setup"), 0, 'user');
+    
     //$link=img_picto($langs->trans("Active"),'tick').' ';
     $link='<a href="'.$_SERVER["PHP_SELF"].'?action=unset&value=0&name=ADHERENT_USE_SPIP">';
     //$link.=$langs->trans("Disable");
@@ -139,20 +144,27 @@ if (! empty($conf->global->ADHERENT_USE_SPIP))
 
     print load_fiche_titre($langs->trans('SPIPTitle'), $link, '');
 	print '<br>';
-    form_constantes($constantes);
-    print '<br>';
+    
+	form_constantes($constantes,2);
+	
+    dol_fiche_end();
+
+    print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Update").'" name="update"></div>';
+    
+    print '</form>';
 }
 else
 {
+    dol_fiche_head($head, 'spip', $langs->trans("Setup"), 0, 'user');
+    
     $link='<a href="'.$_SERVER["PHP_SELF"].'?action=set&value=1&name=ADHERENT_USE_SPIP">';
     //$link.=$langs->trans("Activate");
     $link.=img_picto($langs->trans("Disabled"),'switch_off');
     $link.='</a>';
     print load_fiche_titre($langs->trans('SPIPTitle'), $link, '');
+    
+    dol_fiche_end();
 }
-
-
-dol_fiche_end();
 
 llxFooter();
 

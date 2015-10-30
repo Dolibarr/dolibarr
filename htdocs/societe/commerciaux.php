@@ -33,7 +33,7 @@ $langs->load("suppliers");
 $langs->load("banks");
 
 // Security check
-$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+$socid = GETPOST("socid");
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe','','');
 
@@ -50,18 +50,18 @@ if($_GET["socid"] && $_GET["commid"])
 	if ($user->rights->societe->creer)
 	{
 
-		$soc = new Societe($db);
-		$soc->id = $_GET["socid"];
-		$soc->fetch($_GET["socid"]);
+		$object = new Societe($db);
+		$object->id = $_GET["socid"];
+		$object->fetch($_GET["socid"]);
 
 
 		$parameters=array('id'=>$_GET["commid"]);
-		$reshook=$hookmanager->executeHooks('doActions',$parameters,$soc,$action);    // Note that $action and $object may have been modified by some hooks
+		$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 		if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-		if (empty($reshook)) $soc->add_commercial($user, $_GET["commid"]);
+		if (empty($reshook)) $object->add_commercial($user, $_GET["commid"]);
 
-		header("Location: commerciaux.php?socid=".$soc->id);
+		header("Location: commerciaux.php?socid=".$object->id);
 		exit;
 	}
 	else
@@ -71,23 +71,23 @@ if($_GET["socid"] && $_GET["commid"])
 	}
 }
 
-if($_GET["socid"] && $_GET["delcommid"])
+if ($socid && $_GET["delcommid"])
 {
 	$action = 'delete';
 
 	if ($user->rights->societe->creer)
 	{
-		$soc = new Societe($db);
-		$soc->id = $_GET["socid"];
-		$soc->fetch($_GET["socid"]);
+		$object = new Societe($db);
+		$object->id = $_GET["socid"];
+		$object->fetch($_GET["socid"]);
 
 		$parameters=array('id'=>$_GET["delcommid"]);
-		$reshook=$hookmanager->executeHooks('doActions',$parameters,$soc,$action);    // Note that $action and $object may have been modified by some hooks
+		$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 		if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-		if (empty($reshook)) $soc->del_commercial($user, $_GET["delcommid"]);
+		if (empty($reshook)) $object->del_commercial($user, $_GET["delcommid"]);
 
-		header("Location: commerciaux.php?socid=".$soc->id);
+		header("Location: commerciaux.php?socid=".$object->id);
 		exit;
 	}
 	else
@@ -107,63 +107,44 @@ llxHeader('',$langs->trans("ThirdParty"),$help_url);
 
 $form = new Form($db);
 
-if ($_GET["socid"])
+if ($socid)
 {
-	$soc = new Societe($db);
-	$soc->id = $_GET["socid"];
-	$result=$soc->fetch($_GET["socid"]);
+	$object = new Societe($db);
+	$result=$object->fetch($socid);
 
 	$action='view';
 
-	$head=societe_prepare_head2($soc);
+	$head=societe_prepare_head2($object);
 
 	dol_fiche_head($head, 'salesrepresentative', $langs->trans("ThirdParty"),0,'company');
 
-	/*
-	 * Fiche societe en mode visu
-	 */
+    dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
+        
+	print '<div class="fichecenter">';
 
-	print '<table class="border" width="100%">';
-
-    print '<tr><td width="20%">'.$langs->trans('ThirdPartyName').'</td>';
-    print '<td colspan="3">';
-    print $form->showrefnav($soc,'socid','',($user->societe_id?0:1),'rowid','nom');
-    print '</td></tr>';
+    print '<div class="underbanner clearboth"></div>';
+	print '<table class="border centpercent">';
 
 	print '<tr>';
-    print '<td>'.$langs->trans('CustomerCode').'</td><td'.(empty($conf->global->SOCIETE_USEPREFIX)?' colspan="3"':'').'>';
-    print $soc->code_client;
-    if ($soc->check_codeclient() <> 0) print ' '.$langs->trans("WrongCustomerCode");
+    print '<td class="titlefield">'.$langs->trans('CustomerCode').'</td><td'.(empty($conf->global->SOCIETE_USEPREFIX)?' colspan="3"':'').'>';
+    print $object->code_client;
+    if ($object->check_codeclient() <> 0) print ' '.$langs->trans("WrongCustomerCode");
     print '</td>';
     if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
     {
-       print '<td>'.$langs->trans('Prefix').'</td><td>'.$soc->prefix_comm.'</td>';
+       print '<td>'.$langs->trans('Prefix').'</td><td>'.$object->prefix_comm.'</td>';
     }
     print '</td>';
     print '</tr>';
 
-	print "<tr><td valign=\"top\">".$langs->trans('Address')."</td><td colspan=\"3\">".nl2br($soc->address)."</td></tr>";
-
-	print '<tr><td>'.$langs->trans('Zip').'</td><td width="20%">'.$soc->zip."</td>";
-	print '<td>'.$langs->trans('Town').'</td><td>'.$soc->town."</td></tr>";
-
-	print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">'.$soc->country.'</td>';
-
-	print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dol_print_phone($soc->phone,$soc->country_code,0,$soc->id,'AC_TEL').'</td>';
-	print '<td>'.$langs->trans('Fax').'</td><td>'.dol_print_phone($soc->fax,$soc->country_code,0,$soc->id,'AC_FAX').'</td></tr>';
-
-	print '<tr><td>'.$langs->trans('Web').'</td><td colspan="3">';
-	if ($soc->url) { print '<a href="http://'.$soc->url.'">http://'.$soc->url.'</a>'; }
-	print '</td></tr>';
-
 	// Liste les commerciaux
-	print '<tr><td valign="top">'.$langs->trans("SalesRepresentatives").'</td>';
+	print '<tr><td>'.$langs->trans("SalesRepresentatives").'</td>';
 	print '<td colspan="3">';
 
 	$sql = "SELECT u.rowid, u.lastname, u.firstname";
 	$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 	$sql .= " , ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql .= " WHERE sc.fk_soc =".$soc->id;
+	$sql .= " WHERE sc.fk_soc =".$object->id;
 	$sql .= " AND sc.fk_user = u.rowid";
 	$sql .= " ORDER BY u.lastname ASC ";
 	dol_syslog('societe/commerciaux.php::list salesman sql = '.$sql,LOG_DEBUG);
@@ -177,7 +158,7 @@ if ($_GET["socid"])
 		{
 			$obj = $db->fetch_object($resql);
 
- 			$parameters=array('socid'=>$soc->id);
+ 			$parameters=array('socid'=>$object->id);
         	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$obj,$action);    // Note that $action and $object may have been modified by hook
       		if (empty($reshook)) {
 
@@ -210,6 +191,8 @@ if ($_GET["socid"])
 
 	print '</table>';
 	print "</div>\n";
+	
+	dol_fiche_end();
 
 
 	if ($user->rights->societe->creer && $user->rights->societe->client->voir)

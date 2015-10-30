@@ -81,14 +81,14 @@ if ($action == 'update')
 
     if (empty($donation_date))
     {
-	    setEventMessage($langs->trans("ErrorFieldRequired",$langs->trans("Date")), 'errors');
+	    setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Date")), null, 'errors');
         $action = "create";
         $error++;
     }
 
 	if (empty($amount))
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->trans("Amount")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Amount")), null, 'errors');
 		$action = "create";
 		$error++;
 	}
@@ -136,14 +136,14 @@ if ($action == 'add')
 
     if (empty($donation_date))
     {
-	    setEventMessage($langs->trans("ErrorFieldRequired",$langs->trans("Date")), 'errors');
+	    setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Date")), null, 'errors');
         $action = "create";
         $error++;
     }
 
 	if (empty($amount))
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->trans("Amount")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Amount")), null, 'errors');
 		$action = "create";
 		$error++;
 	}

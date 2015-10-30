@@ -97,11 +97,11 @@ if ($action == 'setModuleOptions')
 
  	if (! $error)
     {
-        setEventMessage($langs->trans("SetupSaved"));
+        setEventMessages($langs->trans("SetupSaved"), null, 'msgs');
     }
     else
     {
-        setEventMessage($langs->trans("Error"),'errors');
+        setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
 
@@ -111,11 +111,11 @@ if ($action && $action != 'setcoder' && $action != 'setModuleOptions')
 
  	if (! $error)
     {
-        setEventMessage($langs->trans("SetupSaved"));
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
     else
     {
-        setEventMessage($langs->trans("Error"),'errors');
+        setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
 
@@ -188,7 +188,7 @@ foreach($dirbarcode as $reldir)
 $var=true;
 
 print '<br>';
-print load_fiche_titre($langs->trans("BarcodeEncodeModule"));
+print load_fiche_titre($langs->trans("BarcodeEncodeModule"),'','');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -288,7 +288,7 @@ print "<br>";
  * Autres options
  *
  */
-print load_fiche_titre($langs->trans("OtherOptions"));
+print load_fiche_titre($langs->trans("OtherOptions"),'','');
 
 print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -358,7 +358,7 @@ print '<br>';
 // Select barcode numbering module
 if ($conf->produit->enabled)
 {
-	print load_fiche_titre($langs->trans("BarCodeNumberManager")." (".$langs->trans("Product").")");
+	print load_fiche_titre($langs->trans("BarCodeNumberManager")." (".$langs->trans("Product").")",'','');
 
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';

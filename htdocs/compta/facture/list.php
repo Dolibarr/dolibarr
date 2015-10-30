@@ -107,6 +107,16 @@ $hookmanager->initHooks(array('invoicelist'));
 
 $now=dol_now();
 
+// List of fields to search into when doing a "search in all"
+$fieldstosearchall = array(
+    'f.facnumber'=>'Ref',
+    'f.ref_client'=>'RefCustomer',
+    'fd.description'=>'Description',
+    's.nom'=>"ThirdParty",
+    'f.note_public'=>'NotePublic',
+);
+if (empty($user->socid)) $fieldstosearchall["f.note_private"]="NotePrivate";
+
 
 /*
  * Actions
@@ -134,6 +144,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
     $month='';
 }
 
+    
 
 /*
  * View
@@ -232,7 +243,7 @@ if (! $sall)
 }
 else
 {
-    $sql .= natural_search(array('s.nom', 'f.facnumber', 'f.note_public', 'fd.description'), $sall);
+    $sql .= natural_search(array_keys($fieldstosearchall), $sall);
 }
 $sql.= ' ORDER BY ';
 $listfield=explode(',',$sortfield);
@@ -270,13 +281,24 @@ if ($resql)
     if ($search_user > 0)    $param.='&search_user=' .$search_user;
     if ($search_montant_ht != '')  $param.='&search_montant_ht='.$search_montant_ht;
     if ($search_montant_ttc != '') $param.='&search_montant_ttc='.$search_montant_ttc;
-    if ($search_status > 0) $param.='&search_status='.$search_status;
+	if ($search_status != '') $param.='&search_status='.$search_status;
     print_barre_liste($langs->trans('BillsCustomers').' '.($socid?' '.$soc->name:''),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords,'title_accountancy.png');
 
     $i = 0;
     print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">'."\n";
-    print '<table class="liste" width="100%">';
+    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="action" value="list">';
+	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
 
+    if ($sall)
+    {
+        foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
+        print $langs->trans("FilterOnInto", $sall, join(', ',$fieldstosearchall));
+    }
+    
  	// If the user can view prospects other than his'
     $moreforfilter='';
  	if ($user->rights->societe->client->voir || $socid)
@@ -308,12 +330,16 @@ if ($resql)
 
     if ($moreforfilter)
     {
-        print '<tr class="liste_titre">';
-        print '<td class="liste_titre" colspan="11">';
+   		print '<div class="liste_titre liste_titre_bydiv centpercent">';
         print $moreforfilter;
-        print '</td></tr>';
+    	$parameters=array();
+    	$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+	    print $hookmanager->resPrint;
+        print '</div>';
     }
 
+    print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
+    		
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans('Ref'),$_SERVER['PHP_SELF'],'f.facnumber','',$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('RefCustomer'),$_SERVER["PHP_SELF"],'f.ref_client','',$param,'',$sortfield,$sortorder);

@@ -40,6 +40,11 @@ if (empty($user->id)) {
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
+if (empty($conf->service->enabled))
+{
+	print "Error: Module service must be enabled.\n";
+	exit;
+}
 
 /**
  * Class for PHPUnit tests

@@ -103,7 +103,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
  * Informations area
  */
 
-print '<table class="noborder" width="100%">';
+print '<table summary="Login info" class="noborder" width="100%">';
 print '<tr class="liste_titre"><th class="liste_titre" colspan="2">'.$langs->trans("Informations").'</th></tr>';
 print '<tr '.$bc[false].'>';
 print '<td class="nowrap">'.$langs->trans("User").'</td><td>'.$user->getNomUrl(0).'</td></tr>';
@@ -129,7 +129,7 @@ $langs->load("contracts");
 if (empty($user->societe_id))
 {
     print '<br>';
-    print '<table class="noborder" width="100%">';
+    print '<table  summary="'.$langs->trans("DolibarrStateBoard").'" class="noborder" width="100%">';
     print '<tr class="liste_titre">';
     print '<th class="liste_titre" colspan="2">'.$langs->trans("DolibarrStateBoard").'</th>';
     print '<th class="liste_titre" align="right">&nbsp;</th>';
@@ -231,9 +231,10 @@ if (empty($user->societe_id))
 	                  "SuppliersInvoices",
 					  "ExpenseReports");
 	    // Dashboard Link lines
-	    $links=array(DOL_URL_ROOT.'/comm/list.php',
-	    DOL_URL_ROOT.'/comm/prospect/list.php',
-	    DOL_URL_ROOT.'/fourn/list.php',
+	    $links=array(
+	    DOL_URL_ROOT.'/societe/list.php?type=c',
+	    DOL_URL_ROOT.'/societe/list.php?type=p',
+	    DOL_URL_ROOT.'/societe/list.php?type=f',
 	    DOL_URL_ROOT.'/adherents/list.php?statut=1&mainmenu=members',
 	    DOL_URL_ROOT.'/product/list.php?type=0&mainmenu=products',
 	    DOL_URL_ROOT.'/product/list.php?type=1&mainmenu=products',

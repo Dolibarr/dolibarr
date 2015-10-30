@@ -921,7 +921,7 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists)
  *
  * @param	string  $srcfile            Source file (can't be a directory. use native php @rename() to move a directory)
  * @param   string	$destfile           Destination file (can't be a directory. use native php @rename() to move a directory)
- * @param   integer	$newmask            Mask for new file (0 by default means $conf->global->MAIN_UMASK)
+ * @param   integer	$newmask            Mask in octal string for new file (0 by default means $conf->global->MAIN_UMASK)
  * @param   int		$overwriteifexists  Overwrite file if exists (1 by default)
  * @return  boolean 		            True if OK, false if KO
  */
@@ -949,8 +949,12 @@ function dol_move($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
         	}
         	else dol_syslog("files.lib.php::dol_move failed", LOG_WARNING);
         }
-        if (empty($newmask) && ! empty($conf->global->MAIN_UMASK)) $newmask=$conf->global->MAIN_UMASK;
-        @chmod($newpathofdestfile, octdec($newmask));
+        if (empty($newmask)) $newmask=empty($conf->global->MAIN_UMASK)?'0755':$conf->global->MAIN_UMASK;
+        $newmaskdec=octdec($newmask);
+        // Currently method is restricted to files (dol_delete_files previously used is for files, and mask usage if for files too)
+        // to allow mask usage for dir, we shoul introduce a new param "isdir" to 1 to complete newmask like this
+        // if ($isdir) $newmaskdec |= octdec('0111');  // Set x bit required for directories
+        @chmod($newpathofdestfile, $newmaskdec);
     }
 
     return $result;
@@ -1502,7 +1506,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
 	else
 	{
 		$langs->load("errors");
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("File")), 'warnings');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("File")), null, 'errors');
 	}
 }
 
@@ -1516,7 +1520,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
  * @param   int		$donotdeletefile        1=Do not delete physically file
  * @return	void
  */
-function dol_remove_file_process($filenb,$donotupdatesession=0,$donotdeletefile=0)
+function dol_remove_file_process($filenb,$donotupdatesession=0,$donotdeletefile=1)
 {
 	global $db,$user,$conf,$langs,$_FILES;
 
