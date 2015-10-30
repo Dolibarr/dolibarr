@@ -49,7 +49,7 @@ class modOauth extends DolibarrModules
         $this->family = "technic";
         // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
         $this->name = preg_replace('/^mod/i','',get_class($this));
-		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
+        // Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
         $this->description = "Enable Oauth.";
         $this->version = 'dolibarr';    // 'development' or 'experimental' or 'dolibarr' or version
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
@@ -119,5 +119,29 @@ class modOauth extends DolibarrModules
         //$r++;
 
 
+    }
+
+
+    /**
+     *      Function called when module is enabled.
+     *      The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+     *      It also creates data directories
+     *
+     *      @param      string  $options    Options when enabling module ('', 'noboxes')
+     *      @return     int                 1 if OK, 0 if KO
+     */
+    function init($options='')
+    {
+        global $conf;
+
+        // Clean before activation
+        $this->remove($options);
+
+        $sql = array(
+            "CREATE TABLE IF NOT EXISTS llx_oauth_state (rowid int(11) NOT NULL AUTO_INCREMENT, service varchar(36), state varchar(128), fk_user int(11), fk_adherent int(11), entity int(11), PRIMARY KEY (rowid)) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;",
+            "CREATE TABLE IF NOT EXISTS llx_oauth_token (rowid int(11) NOT NULL AUTO_INCREMENT, service varchar(36), token text, fk_user int(11), fk_adherent int(11), entity int(11), PRIMARY KEY (rowid)) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;",
+            );
+
+        return $this->_init($sql,$options);
     }
 }

@@ -72,7 +72,7 @@ if (! empty($_GET['code'])) {
     // retrieve the CSRF state parameter
     $state = isset($_GET['state']) ? $_GET['state'] : null;
     try {
-        //$token = $storage->retrieveAccessToken('Google');
+        $token = $storage->retrieveAccessToken('Google');
     } catch (Exception $e) {
         print $e->getMessage();
     }

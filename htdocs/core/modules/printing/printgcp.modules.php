@@ -95,8 +95,6 @@ class printing_printgcp extends PrintingDriver
                 $storage->storeAccessToken('Google', $token);
             } catch (Exception $e) {
                 $this->errors[] = $e->getMessage();
-                print '<pre>MissingRefreshToken: '.$e->getMessage().'</pre>';
-                //print '<pre>'.print_r($e,true).'</pre>';
             }
         }
         if (!$conf->oauth->enabled) {
@@ -212,8 +210,6 @@ class printing_printgcp extends PrintingDriver
                 $storage->storeAccessToken('Google', $token);
             } catch (Exception $e) {
                 $this->errors[] = $e->getMessage();
-                print '<pre>MissingRefreshToken: '.$e->getMessage().'</pre>';
-                //print '<pre>'.print_r($e,true).'</pre>';
             }
         }
         // Send a request with api
@@ -248,7 +244,7 @@ class printing_printgcp extends PrintingDriver
     function print_file($file, $module, $subdir='')
     {
         global $conf, $user, $db;
-        // si $module=commande_fournisseur alors $conf->fournisseur->commande->dir_output
+
         $fileprint=$conf->{$module}->dir_output;
         if ($subdir!='') $fileprint.='/'.$subdir;
         $fileprint.='/'.$file;
@@ -314,7 +310,7 @@ class printing_printgcp extends PrintingDriver
                              'content' => base64_encode($contents), // encode file content as base64
                              'contentType' => $contenttype
                             );
-        // Token storage
+        // Dolibarr Token storage
         $storage = new DoliStorage($this->db, $this->conf);
         // Setup the credentials for the requests
         $credentials = new Credentials(
