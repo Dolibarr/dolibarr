@@ -78,12 +78,12 @@ if ($action == 'add' || $action == 'addproduct' || $action == 'update')
 
 	if (! $title) {
 		$error++;
-		setEventMessage($langs->transnoentities("ErrorFieldRequired",$langs->trans("BookmarkTitle")), 'errors');
+		setEventMessages($langs->transnoentities("ErrorFieldRequired",$langs->trans("BookmarkTitle")), null, 'errors');
 	}
 
 	if (! $url) {
 		$error++;
-		setEventMessage($langs->transnoentities("ErrorFieldRequired",$langs->trans("UrlOrLink")), 'errors');
+		setEventMessages($langs->transnoentities("ErrorFieldRequired",$langs->trans("UrlOrLink")), null, 'errors');
 	}
 
 	if (! $error)
@@ -104,11 +104,11 @@ if ($action == 'add' || $action == 'addproduct' || $action == 'update')
 			if ($bookmark->errno == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 			{
 				$langs->load("errors");
-				setEventMessage($langs->transnoentities("WarningBookmarkAlreadyExists"), 'warnings');
+				setEventMessages($langs->transnoentities("WarningBookmarkAlreadyExists"), null, 'warnings');
 			}
 			else
 			{
-				setEventMessage($bookmark->error, 'errors');
+				setEventMessages($bookmark->error, $bookmark->errors, 'errors');
 			}
 			$action = $invertedaction;
 		}

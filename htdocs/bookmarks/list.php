@@ -60,7 +60,7 @@ if ($_GET["action"] == 'delete')
     }
     else
     {
-        setEventMessage($bookmark->error, 'errors');
+        setEventMessages($bookmark->error, $bookmark->errors, 'errors');
     }
 }
 

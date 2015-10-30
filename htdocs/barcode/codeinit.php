@@ -92,7 +92,7 @@ if ($action == 'initbarcodeproducts')
 	if (! is_object($modBarCodeProduct))
 	{
 		$error++;
-		setEventMessage($langs->trans("NoBarcodeNumberingTemplateDefined"),'errors');
+		setEventMessages($langs->trans("NoBarcodeNumberingTemplateDefined"), null, 'errors');
 	}
 
 	if (! $error)
@@ -109,7 +109,7 @@ if ($action == 'initbarcodeproducts')
 			$resql=$db->query($sql);
 			if ($resql)
 			{
-				setEventMessage($langs->trans("AllBarcodeReset"),'mesgs');
+				setEventMessages($langs->trans("AllBarcodeReset"), null, 'mesgs');
 			}
 			else
 			{
@@ -160,7 +160,7 @@ if ($action == 'initbarcodeproducts')
 
 			if (! $error)
 			{
-				setEventMessage($langs->trans("RecordsModified",$nbok),'mesgs');
+				setEventMessages($langs->trans("RecordsModified",$nbok), null, 'mesgs');
 			}
 		}
 
