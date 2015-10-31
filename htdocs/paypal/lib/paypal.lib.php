@@ -406,11 +406,11 @@ function print_paypal_redirect($paymentAmount,$currencyCodeType,$paymentType,$re
         $ErrorLongMsg = urldecode($resArray["L_LONGMESSAGE0"]);
         $ErrorSeverityCode = urldecode($resArray["L_SEVERITYCODE0"]);
 
-        echo "SetExpressCheckout API call failed. <br>\n";
-        echo "Detailed Error Message: " . $ErrorLongMsg." <br>\n";
-        echo "Short Error Message: " . $ErrorShortMsg." <br>\n";
-        echo "Error Code: " . $ErrorCode." <br>\n";
-        echo "Error Severity Code: " . $ErrorSeverityCode." <br>\n";
+        echo $langs->trans('SetExpressCheckoutAPICallFailed') . "<br>\n";
+        echo $langs->trans('DetailedErrorMessage') . ": " . $ErrorLongMsg."<br>\n";
+        echo $langs->trans('ShortErrorMessage') . ": " . $ErrorShortMsg."<br>\n";
+        echo $langs->trans('ErrorCode') . ": " . $ErrorCode."<br>\n";
+        echo $langs->trans('ErrorSeverityCode') . ": " . $ErrorSeverityCode."<br>\n";
     }
 
 }
