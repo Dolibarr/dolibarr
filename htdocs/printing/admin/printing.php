@@ -50,7 +50,7 @@ if (!$mode) $mode='config';
 
 if (($mode == 'test' || $mode == 'setup') && empty($driver))
 {
-    setEventMessage($langs->trans('PleaseSelectaDriverfromList'));
+    setEventMessages($langs->trans('PleaseSelectaDriverfromList'), null);
     header("Location: ".$_SERVER['PHP_SELF'].'?mode=config');
     exit;
 }
@@ -68,7 +68,7 @@ if ($action == 'setconst' && $user->admin)
     if (! $error)
     {
         $db->commit();
-        setEventMessage($langs->trans("SetupSaved"));
+        setEventMessages($langs->trans("SetupSaved"), null);
     }
     else
     {
@@ -88,7 +88,7 @@ if ($action == 'setvalue' && $user->admin)
     if (! $error)
     {
         $db->commit();
-        setEventMessage($langs->trans("SetupSaved"));
+        setEventMessages($langs->trans("SetupSaved"), null);
     }
     else
     {

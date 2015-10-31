@@ -48,18 +48,18 @@ if ($action == 'print_file' and $user->rights->printing->read)
                 $subdir=(GETPOST('printer', 'alpha')=='expedition'?'sending':'');
                 $ret = $printer->print_file(GETPOST('file', 'alpha'), GETPOST('printer', 'alpha'), $subdir);
                 if ($ret < 0) {
-                    setEventMessage($printer->error, 'errors');
+                    setEventMessages($printer->error, $printer->errors, 'errors');
                 }
                 if ($ret==0) {
-                    setEventMessage($printer->error, 'warning');
-                    setEventMessage($langs->trans("FileWasSentToPrinter", basename(GETPOST('file'))).' '.$langs->trans("ViaModule").' '.$printer->name);
+                    setEventMessages($printer->error, $printer->errors, 'warning');
+                    setEventMessages($langs->trans("FileWasSentToPrinter", basename(GETPOST('file'))).' '.$langs->trans("ViaModule").' '.$printer->name, null);
                     $printed++;
                 }
             }
         }
-        if ($printed==0) setEventMessage($langs->trans("NoActivePrintingModuleFound"));
+        if ($printed==0) setEventMessages($langs->trans("NoActivePrintingModuleFound"), null);
     } else {
-        setEventMessage($langs->trans("NoModuleFound"), 'warning');
+        setEventMessages($langs->trans("NoModuleFound"), null, 'warning');
     }
     $action = '';
 }
