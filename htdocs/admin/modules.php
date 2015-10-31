@@ -66,7 +66,7 @@ $familyinfo=array(
 if ($action == 'set' && $user->admin)
 {
     $result=activateModule($value);
-    if ($result) setEventMessage($result, 'errors');
+    if ($result) setEventMessages($result, null, 'errors');
     header("Location: modules.php?mode=".$mode);
 	exit;
 }
@@ -74,7 +74,7 @@ if ($action == 'set' && $user->admin)
 if ($action == 'reset' && $user->admin)
 {
     $result=unActivateModule($value);
-    if ($result) setEventMessage($result, 'errors');
+    if ($result) setEventMessages($result, null, 'errors');
     header("Location: modules.php?mode=".$mode);
 	exit;
 }
@@ -125,7 +125,7 @@ foreach ($modulesdir as $dir)
 		        	if (! empty($modNameLoaded[$modName]))
 		        	{
 		        		$mesg="Error: Module ".$modName." was found twice: Into ".$modNameLoaded[$modName]." and ".$dir.". You probably have an old file on your disk.<br>";
-		        		setEventMessage($mesg, 'warnings');
+		        		setEventMessages($mesg, null, 'warnings');
 		        		dol_syslog($mesg, LOG_ERR);
 						continue;
 		        	}

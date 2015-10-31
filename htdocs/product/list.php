@@ -56,18 +56,28 @@ $fourn_id = GETPOST("fourn_id",'int');
 $catid = GETPOST('catid','int');
 $optioncss = GETPOST('optioncss','alpha');
 
+$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
 if ($page == -1) { $page = 0; }
-$offset = $conf->liste_limit * $page;
+$offset = $liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortfield) $sortfield="p.ref";
 if (! $sortorder) $sortorder="ASC";
 
-$limit = $conf->liste_limit;
+$contextpage='productservicelist';
+if ($type === '1') { $contextpage='servicelist'; if ($search_type=='') $search_type='1'; }
+if ($type === '0') { $contextpage='productlist'; if ($search_type=='') $search_type='0'; }
 
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array($contextpage));
+$extrafields = new ExtraFields($db);
+
+// fetch optionals attributes and labels
+$extralabels = $extrafields->fetch_name_optionals_label('product');
+$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
 
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
 $canvas=GETPOST("canvas");
@@ -107,15 +117,18 @@ if (! empty($conf->barcode->enabled)) {
  * Actions
  */
 
+include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
+
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
-	$sref="";
 	$sall="";
-	$sbarcode="";
+	$sref="";
 	$snom="";
+	$sbarcode="";
 	$search_categ=0;
 	$tosell="";
 	$tobuy="";
+	$search_array_options=array();
 }
 
 
@@ -152,10 +165,17 @@ else
 	}
 
     $sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type,';
-    $sql.= ' p.fk_product_type, p.tms as datem,';
-    $sql.= ' p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock,';
+    $sql.= ' p.fk_product_type, p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock,';
+    $sql.= ' p.datec as date_creation, p.tms as date_update,';
     $sql.= ' MIN(pfp.unitprice) as minsellprice';
+	// Add fields from extrafields
+	foreach ($extrafields->attribute_label as $key => $val) $sql.=",ef.".$key.' as options_'.$key;
+	// Add fields from hooks
+	$parameters=array();
+	$reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
+	$sql.=$hookmanager->resPrint;
     $sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
+	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_extrafields as ef on (p.rowid = ef.fk_object)";
     if (! empty($search_categ) || ! empty($catid)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_product as cp ON p.rowid = cp.fk_product"; // We'll need this table joined to the select in order to filter by categ
    	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
 	// multilang
@@ -181,11 +201,33 @@ else
     if ($search_categ > 0)   $sql.= " AND cp.fk_categorie = ".$db->escape($search_categ);
     if ($search_categ == -2) $sql.= " AND cp.fk_categorie IS NULL";
     if ($fourn_id > 0) $sql.= " AND pfp.fk_soc = ".$fourn_id;
+	// Add where from extra fields
+	foreach ($search_array_options as $key => $val)
+	{
+	    $crit=$val;
+	    $tmpkey=preg_replace('/search_options_/','',$key);
+	    $typ=$extrafields->attribute_type[$tmpkey];
+	    $mode=0;
+	    if (in_array($typ, array('int'))) $mode=1;    // Search on a numeric
+	    if ($val && ( ($crit != '' && ! in_array($typ, array('select'))) || ! empty($crit))) 
+	    {
+	        $sql .= natural_search('ef.'.$tmpkey, $crit, $mode);
+	    }
+	}
+	// Add where from hooks
+	$parameters=array();
+	$reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
+	$sql.=$hookmanager->resPrint;
     $sql.= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type,";
-    $sql.= " p.fk_product_type, p.tms,";
-    $sql.= " p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock";
+    $sql.= " p.fk_product_type, p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock,";
+    $sql.= ' p.datec, p.tms';
+	// Add fields from extrafields
+	foreach ($extrafields->attribute_label as $key => $val) $sql.=",ef.".$key;
+	// Add fields from hooks
+	$parameters=array();
+	$reshook=$hookmanager->executeHooks('printFieldSelect',$parameters);    // Note that $action and $object may have been modified by hook
+	$sql.=$hookmanager->resPrint;
     //if (GETPOST("toolowstock")) $sql.= " HAVING SUM(s.reel) < p.seuil_stock_alerte";    // Not used yet
-
     $nbtotalofrecords = 0;
 	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	{
@@ -230,12 +272,24 @@ else
 		    setEventMessage($langs->trans("ProductDeleted", GETPOST('delprod')));
 	    }
 
-    	$param="&amp;sref=".$sref.($sbarcode?"&amp;sbarcode=".$sbarcode:"")."&amp;snom=".$snom."&amp;sall=".$sall."&amp;tosell=".$tosell."&amp;tobuy=".$tobuy;
-    	$param.=($fourn_id?"&amp;fourn_id=".$fourn_id:"");
-    	$param.=($search_categ?"&amp;search_categ=".$search_categ:"");
-    	$param.=isset($type)?"&amp;type=".$type:"";
+    	if ($sref) $param="&amp;sref=".$sref;
+    	if ($sbarcode) $param.=($sbarcode?"&amp;sbarcode=".$sbarcode:"");
+    	if ($snom) $param.="&amp;snom=".$snom;
+    	if ($sall) $param.="&amp;sall=".$sall;
+    	if ($tosell != '') $param.="&amp;tosell=".$tosell;
+    	if ($tobuy != '') $param.="&amp;tobuy=".$tobuy;
+    	if ($fourn_id) $param.=($fourn_id?"&amp;fourn_id=".$fourn_id:"");
+    	if ($seach_categ) $param.=($search_categ?"&amp;search_categ=".$search_categ:"");
+    	if ($type != '') $param.='&amp;type='.urlencode($type);
 		if ($optioncss != '') $param.='&optioncss='.$optioncss;
-
+        // Add $param from extra fields
+	    foreach ($search_array_options as $key => $val)
+	    {
+	        $crit=$val;
+	        $tmpkey=preg_replace('/search_options_/','',$key);
+	        if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
+	    } 	
+		
     	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords,'title_products.png');
 
     	if (! empty($catid))
@@ -270,6 +324,7 @@ else
     		print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
             if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
     		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
     		print '<input type="hidden" name="action" value="list">';
     		print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
     		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
@@ -283,13 +338,6 @@ else
             
     		// Filter on categories
     	 	$moreforfilter='';
-    	 	$colspan=6;
-    	 	if (! empty($conf->barcode->enabled)) $colspan++;
-    	 	if (! empty($conf->service->enabled) && $type != 0) $colspan++;
-    	 	if (empty($conf->global->PRODUIT_MULTIPRICES)) $colspan++;
-    	 	if ($user->rights->fournisseur->lire) $colspan++;
-    	 	if (! empty($conf->stock->enabled) && $user->rights->stock->lire && $type != 1) $colspan+=2;
-
     		if (! empty($conf->categorie->enabled))
     		{
                 $moreforfilter.='<div class="divsearchfield">';
@@ -307,93 +355,162 @@ else
     		    print '</div>';
     		}
 
-    		// Lignes des titres
-    		print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
-    		print '<tr class="liste_titre">';
-    		print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"], "p.ref",$param,"","",$sortfield,$sortorder);
-    		print_liste_field_titre($langs->trans("Label"), $_SERVER["PHP_SELF"], "p.label",$param,"","",$sortfield,$sortorder);
-    		if (! empty($conf->barcode->enabled)) print_liste_field_titre($langs->trans("BarCode"), $_SERVER["PHP_SELF"], "p.barcode",$param,'','',$sortfield,$sortorder);
-    		print_liste_field_titre($langs->trans("DateModification"), $_SERVER["PHP_SELF"], "p.tms",$param,"",'align="center"',$sortfield,$sortorder);
-    		if (! empty($conf->service->enabled) && $type != 0) print_liste_field_titre($langs->trans("Duration"), $_SERVER["PHP_SELF"], "p.duration",$param,"",'align="center"',$sortfield,$sortorder);
-    		if (empty($conf->global->PRODUIT_MULTIPRICES))
+    	    if (empty($conf->global->PRODUIT_MULTIPRICES))
     		{
-    			$titlefield=$langs->trans("SellingPrice");
+    			$titlesellprice=$langs->trans("SellingPrice");
     		   	if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
    				{
-					$titlefield=$form->textwithpicto($langs->trans("SellingPrice"), $langs->trans("DefaultPriceRealPriceMayDependOnCustomer"));
+					$titlesellprice=$form->textwithpicto($langs->trans("SellingPrice"), $langs->trans("DefaultPriceRealPriceMayDependOnCustomer"));
     			}
-    			print_liste_field_titre($titlefield, $_SERVER["PHP_SELF"], "p.price",$param,"",'align="right"',$sortfield,$sortorder);
     		}
-    		if ($user->rights->fournisseur->lire) print_liste_field_titre($langs->trans("BuyingPriceMinShort"), '', '', '', '', 'align="right"');
-    		if (! empty($conf->stock->enabled) && $user->rights->stock->lire && $type != 1) print_liste_field_titre($langs->trans("DesiredStock"), '', '', '', '', 'align="right"');
-    		if (! empty($conf->stock->enabled) && $user->rights->stock->lire && $type != 1) print_liste_field_titre($langs->trans("PhysicalStock"), '', '', '', '', 'align="right"');
-    		print_liste_field_titre($langs->trans("Sell"), $_SERVER["PHP_SELF"], "p.tosell",$param,"",'align="center"',$sortfield,$sortorder);
-            print_liste_field_titre($langs->trans("Buy"), $_SERVER["PHP_SELF"], "p.tobuy",$param,"",'align="center"',$sortfield,$sortorder);
-            print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
+    		
+    		$arrayfields=array(
+		        'p.ref'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
+		        'p.label'=>array('label'=>$langs->trans("Label"), 'checked'=>1),
+				'p.barcode'=>array('label'=>$langs->trans("Gencod"), 'checked'=>($contextpage != 'servicelist'), 'enabled'=>(! empty($conf->barcode->enabled))),
+		        'p.duration'=>array('label'=>$langs->trans("Duration"), 'checked'=>($contextpage != 'productlist'), 'enabled'=>(! empty($conf->service->enabled))),
+				'p.sellprice'=>array('label'=>$titlesellprice, 'checked'=>1, 'enabled'=>empty($conf->global->PRODUIT_MULTIPRICES)),
+			    'p.minbuyprice'=>array('label'=>$langs->trans("BuyingPriceMinShort"), 'checked'=>1, 'enabled'=>(! empty($user->rights->fournisseur->lire))),
+				'p.desiredstock'=>array('label'=>$langs->trans("DesiredStock"), 'checked'=>1, 'enabled'=>(! empty($conf->stock->enabled) && $user->rights->stock->lire && $contextpage != 'service')),
+				'p.stock'=>array('label'=>$langs->trans("PhysicalStock"), 'checked'=>1, 'enabled'=>(! empty($conf->stock->enabled) && $user->rights->stock->lire && $contextpage != 'service')),
+				'p.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
+		        'p.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
+		        'p.tosell'=>array('label'=>$langs->trans("Status").' ('.$langs->trans("Sell").')', 'checked'=>1, 'position'=>1000),
+		        'p.tobuy'=>array('label'=>$langs->trans("Status").' ('.$langs->trans("Purchases").')', 'checked'=>1, 'position'=>1000)
+			);
+    		// Extra fields
+			if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+			{
+			   foreach($extrafields->attribute_label as $key => $val) 
+			   {
+		           $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>$extrafields->attribute_list[$key], 'position'=>$extrafields->attribute_pos[$key]);
+			   }
+			}
+    		$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
+		    $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
+			print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
+    		print '<tr class="liste_titre">';
+    		if (! empty($arrayfields['p.ref']['checked']))  print_liste_field_titre($arrayfields['p.ref']['label'], $_SERVER["PHP_SELF"],"p.ref","",$param,"",$sortfield,$sortorder);
+    		if (! empty($arrayfields['p.label']['checked']))  print_liste_field_titre($arrayfields['p.label']['label'], $_SERVER["PHP_SELF"],"p.label","",$param,"",$sortfield,$sortorder);
+    		if (! empty($arrayfields['p.barcode']['checked']))  print_liste_field_titre($arrayfields['p.barcode']['label'], $_SERVER["PHP_SELF"],"p.barcode","",$param,"",$sortfield,$sortorder);
+    		if (! empty($arrayfields['p.duration']['checked']))  print_liste_field_titre($arrayfields['p.duration']['label'], $_SERVER["PHP_SELF"],"p.duration","",$param,"",$sortfield,$sortorder);
+    		if (! empty($arrayfields['p.sellprice']['checked']))  print_liste_field_titre($arrayfields['p.sellprice']['label'], $_SERVER["PHP_SELF"],"","",$param,'align="right"',$sortfield,$sortorder);
+    		if (! empty($arrayfields['p.minbuyprice']['checked']))  print_liste_field_titre($arrayfields['p.minbuyprice']['label'], $_SERVER["PHP_SELF"],"","",$param,'align="right"',$sortfield,$sortorder);
+    		if (! empty($arrayfields['p.desiredstock']['checked']))  print_liste_field_titre($arrayfields['p.desiredstock']['label'], $_SERVER["PHP_SELF"],"p.desirestock","",$param,'align="right"',$sortfield,$sortorder);
+    		if (! empty($arrayfields['p.stock']['checked']))  print_liste_field_titre($arrayfields['p.stock']['label'], $_SERVER["PHP_SELF"],"p.stock","",$param,'align="right"',$sortfield,$sortorder);
+    		if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+			{
+			   foreach($extrafields->attribute_label as $key => $val) 
+			   {
+		           if (! empty($arrayfields["ef.".$key]['checked'])) 
+		           {
+						$align=$extrafields->getAlignFlag($key);
+						print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],"ef.".$key,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
+		           }
+			   }
+			}
+    		// Hook fields
+			$parameters=array('arrayfields'=>$arrayfields);
+		    $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+		    print $hookmanager->resPrint;
+			if (! empty($arrayfields['p.datec']['checked']))  print_liste_field_titre($arrayfields['p.datec']['label'],$_SERVER["PHP_SELF"],"p.datec","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
+			if (! empty($arrayfields['p.tms']['checked']))    print_liste_field_titre($arrayfields['p.tms']['label'],$_SERVER["PHP_SELF"],"p.tms","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
+			if (! empty($arrayfields['p.tosell']['checked'])) print_liste_field_titre($langs->trans("Status").' ('.$langs->trans("Sell").')',$_SERVER["PHP_SELF"],"p.tosell","",$param,'align="center"',$sortfield,$sortorder);
+			if (! empty($arrayfields['p.tobuy']['checked']))  print_liste_field_titre($langs->trans("Status").' ('.$langs->trans("Buy").')',$_SERVER["PHP_SELF"],"p.tobuy","",$param,'align="center"',$sortfield,$sortorder);
+			print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="right"',$sortfield,$sortorder,'maxwidthsearch ');
 			print "</tr>\n";
 
-    		// Lignes des champs de filtre
+    		// Lines with input filters
     		print '<tr class="liste_titre">';
-    		print '<td class="liste_titre" align="left">';
-    		print '<input class="flat" type="text" name="sref" size="8" value="'.dol_escape_htmltag($sref).'">';
-    		print '</td>';
-    		print '<td class="liste_titre" align="left">';
-    		print '<input class="flat" type="text" name="snom" size="12" value="'.dol_escape_htmltag($snom).'">';
-    		print '</td>';
+    		if (! empty($arrayfields['p.ref']['checked']))
+    		{
+    			print '<td class="liste_titre" align="left">';
+    			print '<input class="flat" type="text" name="sref" size="8" value="'.dol_escape_htmltag($sref).'">';
+    			print '</td>';
+    		}
+    		if (! empty($arrayfields['p.label']['checked']))
+    		{
+    			print '<td class="liste_titre" align="left">';
+		   		print '<input class="flat" type="text" name="snom" size="12" value="'.dol_escape_htmltag($snom).'">';
+    			print '</td>';
+    		}
     		// Barcode
-    		if (! empty($conf->barcode->enabled))
+    		if (! empty($arrayfields['p.barcode']['checked']))
     		{
     			print '<td class="liste_titre">';
     			print '<input class="flat" type="text" name="sbarcode" size="6" value="'.dol_escape_htmltag($sbarcode).'">';
     			print '</td>';
     		}
-    		// Date modification
-    		print '<td class="liste_titre">';
-    		print '&nbsp;';
-    		print '</td>';
-
     		// Duration
-    		if (! empty($conf->service->enabled) && $type != 0)
+			if (! empty($arrayfields['p.duration']['checked']))
     		{
     			print '<td class="liste_titre">';
     			print '&nbsp;';
     			print '</td>';
     		}
-
     		// Sell price
-            if (empty($conf->global->PRODUIT_MULTIPRICES))
+			if (! empty($arrayfields['p.sellprice']['checked']))
             {
         		print '<td class="liste_titre" align="right">';
         		print '</td>';
             }
-
     		// Minimum buying Price
-    		if ($user->rights->fournisseur->lire) {
-    			print '<td class="liste_titre">';
-    			print '&nbsp;';
-    			print '</td>';
-    		}
-
-    		// Stock
-    		if (! empty($conf->stock->enabled) && $user->rights->stock->lire && $type != 1)
+			if (! empty($arrayfields['p.minbuyprice']['checked']))
     		{
     			print '<td class="liste_titre">';
     			print '&nbsp;';
     			print '</td>';
-    			//desiredstock
+    		}
+    		// Desired stock
+			if (! empty($arrayfields['p.desiredstock']['checked']))
+    		{
     			print '<td class="liste_titre">';
     			print '&nbsp;';
     			print '</td>';
     		}
-
-    		print '<td class="liste_titre" align="center">';
-            print $form->selectarray('tosell', array('0'=>$langs->trans('ProductStatusNotOnSellShort'),'1'=>$langs->trans('ProductStatusOnSellShort')),$tosell,1);
-            print '</td >';
-
-            print '<td class="liste_titre" align="center">';
-            print $form->selectarray('tobuy', array('0'=>$langs->trans('ProductStatusNotOnBuyShort'),'1'=>$langs->trans('ProductStatusOnBuyShort')),$tobuy,1);
-            print '</td>';
-
+    		// Stock
+			if (! empty($arrayfields['p.stock']['checked']))
+    		{
+    			print '<td class="liste_titre">';
+    			print '&nbsp;';
+    			print '</td>';
+    		}
+    		// Extra fields
+			if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+			{
+			   foreach($extrafields->attribute_label as $key => $val) 
+			   {
+					if (! empty($arrayfields["ef.".$key]['checked'])) print '<td class="liste_titre"></td>';
+			   }
+			}
+    		// Fields from hook
+			$parameters=array('arrayfields'=>$arrayfields);
+		    $reshook=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
+		    print $hookmanager->resPrint;
+		    // Date creation
+		    if (! empty($arrayfields['p.datec']['checked']))
+		    {
+		        print '<td class="liste_titre">';
+		        print '</td>';
+		    }
+		    // Date modification
+		    if (! empty($arrayfields['p.tms']['checked']))
+		    {
+		        print '<td class="liste_titre">';
+		        print '</td>';
+		    }
+    		if (! empty($arrayfields['p.tosell']['checked']))
+    		{
+	    		print '<td class="liste_titre" align="center">';
+	            print $form->selectarray('tosell', array('0'=>$langs->trans('ProductStatusNotOnSellShort'),'1'=>$langs->trans('ProductStatusOnSellShort')),$tosell,1);
+	            print '</td >';
+    		}
+			if (! empty($arrayfields['p.tobuy']['checked']))
+    		{
+	            print '<td class="liste_titre" align="center">';
+	            print $form->selectarray('tobuy', array('0'=>$langs->trans('ProductStatusNotOnBuyShort'),'1'=>$langs->trans('ProductStatusOnBuyShort')),$tobuy,1);
+	            print '</td>';
+    		}
     		print '<td class="liste_titre nowrap" align="right">';
     		print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
     		print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("RemoveFilter"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
@@ -427,32 +544,38 @@ else
     				}
     			}
 
-    			$var=!$var;
-    			print '<tr '.$bc[$var].'>';
-
-    			// Ref
-    			print '<td class="nowrap">';
     			$product_static->id = $objp->rowid;
     			$product_static->ref = $objp->ref;
                 $product_static->label = $objp->label;
     			$product_static->type = $objp->fk_product_type;
-    			print $product_static->getNomUrl(1,'',24);
-    			print "</td>\n";
+                $product_static->status_buy = $objp->tobuy;
+                $product_static->status     = $objp->tosell;
 
+    			$var=!$var;
+    			print '<tr '.$bc[$var].'>';
+
+    			// Ref
+			    if (! empty($arrayfields['p.ref']['checked']))
+			    {
+	    			print '<td class="nowrap">';
+	    			print $product_static->getNomUrl(1,'',24);
+	    			print "</td>\n";
+			    }
+			    
     			// Label
-    			print '<td>'.dol_trunc($objp->label,40).'</td>';
-
+			    if (! empty($arrayfields['p.label']['checked']))
+			    {
+			    	print '<td>'.dol_trunc($objp->label,40).'</td>';
+			    }
+			    
     			// Barcode
-    			if (! empty($conf->barcode->enabled))
-    			{
+			    if (! empty($arrayfields['p.barcode']['checked']))
+			    {
     				print '<td>'.$objp->barcode.'</td>';
     			}
 
-    			// Modification Date
-    			print '<td align="center">'.dol_print_date($db->jdate($objp->datem),'day')."</td>\n";
-
     			// Duration
-    			if (! empty($conf->service->enabled) && $type != 0)
+ 			    if (! empty($arrayfields['p.duration']['checked']))
     			{
     				print '<td align="center">';
     				if (preg_match('/([0-9]+)[a-z]/i',$objp->duration))
@@ -468,7 +591,7 @@ else
     			}
 
     			// Sell price
-    			if (empty($conf->global->PRODUIT_MULTIPRICES))
+ 			    if (! empty($arrayfields['p.sellprice']['checked']))
     			{
     			    print '<td align="right">';
     			    if ($objp->tosell)
@@ -480,7 +603,7 @@ else
     			}
 
     			// Better buy price
-    			if ($user->rights->fournisseur->lire)
+ 			    if (! empty($arrayfields['p.minbuyprice']['checked']))
     			{
         			print  '<td align="right">';
     			    if ($objp->tobuy && $objp->minsellprice != '')
@@ -502,62 +625,102 @@ else
         			print '</td>';
     			}
 
-    			// Show stock
-    			if (! empty($conf->stock->enabled) && $user->rights->stock->lire && $type != 1)
+        		if (! empty($conf->stock->enabled) && $user->rights->stock->lire && $type != 1)	// To optimize call of load_stock
     			{
     				if ($objp->fk_product_type != 1)
     				{
     					$product_static->id = $objp->rowid;
     					$product_static->load_stock();
-                        print '<td align="right">';
-                        print $objp->desiredstock;
-                        print '</td>';
-    					print '<td align="right">';
-                        if ($product_static->stock_reel < $objp->seuil_stock_alerte) print img_warning($langs->trans("StockTooLow")).' ';
-        				print $product_static->stock_reel;
-    					print '</td>';
-    				}
-    				else
-    				{
-		    			print '<td>';
-		    			print '&nbsp;';
-		    			print '</td>';
-		    			print '<td>';
-		    			print '&nbsp;';
-		    			print '</td>';
     				}
     			}
-
-                $product_static->status_buy = $objp->tobuy;
-                $product_static->status     = $objp->tosell;
+    			
+    			// Desired stock
+		        if (! empty($arrayfields['p.desiredstock']['checked']))
+        		{
+                    print '<td align="right">';
+    				if ($objp->fk_product_type != 1)
+    				{
+                        print $objp->desiredstock;
+    				}
+        		}
+				// Stock
+		        if (! empty($arrayfields['p.stock']['checked']))
+        		{
+    				print '</td>';
+   					print '<td align="right">';
+    				if ($objp->fk_product_type != 1)
+    				{
+   						if ($product_static->stock_reel < $objp->seuil_stock_alerte) print img_warning($langs->trans("StockTooLow")).' ';
+      					print $product_static->stock_reel;
+    				}
+    				print '</td>';
+    			}
+    			
+   				// Extra fields
+				if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+				{
+				   foreach($extrafields->attribute_label as $key => $val) 
+				   {
+						if (! empty($arrayfields["ef.".$key]['checked'])) 
+						{
+							print '<td';
+							$align=$extrafields->getAlignFlag($key);
+							if ($align) print ' align="'.$align.'"';
+							print '>';
+							$tmpkey='options_'.$key;
+							print $extrafields->showOutputField($key, $objp->$tmpkey, '', 1);
+							print '</td>';
+						}
+				   }
+				}
+		        // Fields from hook
+			    $parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj);
+				$reshook=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook
+		        print $hookmanager->resPrint;
+		        // Date creation
+		        if (! empty($arrayfields['p.datec']['checked']))
+		        {
+		            print '<td align="center">';
+		            print dol_print_date($objp->date_creation, 'dayhour');
+		            print '</td>';
+		        }
+		        // Date modification
+		        if (! empty($arrayfields['p.tms']['checked']))
+		        {
+		            print '<td align="center">';
+		            print dol_print_date($objp->date_update, 'dayhour');
+		            print '</td>';
+		        }    			
+    			
                 // Status (to sell)
-                print '<td align="center" nowrap="nowrap">';
-                if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
-                    print ajax_object_onoff($product_static, 'status', 'tosell', 'ProductStatusOnSell', 'ProductStatusNotOnSell');
-                } else {
-                    print $product_static->LibStatut($objp->tosell,5,0);
-                }
-                print '</td>';
-
+		        if (! empty($arrayfields['p.tosell']['checked']))
+        		{
+	                print '<td align="center" nowrap="nowrap">';
+	                if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
+	                    print ajax_object_onoff($product_static, 'status', 'tosell', 'ProductStatusOnSell', 'ProductStatusNotOnSell');
+	                } else {
+	                    print $product_static->LibStatut($objp->tosell,5,0);
+	                }
+	                print '</td>';
+        		}
                 // Status (to buy)
-                print '<td align="center" nowrap="nowrap">';
-                if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
-                    print ajax_object_onoff($product_static, 'status_buy', 'tobuy', 'ProductStatusOnBuy', 'ProductStatusNotOnBuy');
-                } else {
-                    print $product_static->LibStatut($objp->tobuy,5,1);
-                }
-                print '</td>';
-
+		        if (! empty($arrayfields['p.tobuy']['checked']))
+        		{
+	        		print '<td align="center" nowrap="nowrap">';
+	                if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
+	                    print ajax_object_onoff($product_static, 'status_buy', 'tobuy', 'ProductStatusOnBuy', 'ProductStatusNotOnBuy');
+	                } else {
+	                    print $product_static->LibStatut($objp->tobuy,5,1);
+	                }
+	                print '</td>';
+        		}
+        		// Action	
                 print '<td>&nbsp;</td>';
 
                 print "</tr>\n";
     			$i++;
     		}
 
-    		$param="&sref=".$sref.($sbarcode?"&sbarcode=".$sbarcode:"")."&snom=".$snom."&sall=".$sall."&tosell=".$tosell."&tobuy=".$tobuy;
-    		$param.=($fourn_id?"&fourn_id=".$fourn_id:"");
-    		$param.=($search_categ?"&search_categ=".$search_categ:"");
-    		$param.=isset($type)?"&type=".$type:"";
     		print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '', '', '', 'paginationatbottom');
 
     		$db->free($resql);

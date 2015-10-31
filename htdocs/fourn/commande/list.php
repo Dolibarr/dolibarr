@@ -38,13 +38,13 @@ $langs->load("orders");
 $langs->load("sendings");
 
 
+$sall=GETPOST('search_all');
 $search_ref=GETPOST('search_ref');
 $search_refsupp=GETPOST('search_refsupp');
 $search_company=GETPOST('search_company');
 $search_user=GETPOST('search_user');
 $search_ht=GETPOST('search_ht');
 $search_ttc=GETPOST('search_ttc');
-$sall=GETPOST('search_all');
 $search_status=(GETPOST('search_status','alpha')!=''?GETPOST('search_status','alpha'):GETPOST('statut','alpha'));	// alpha and not intbecause it can be '6,7'
 $optioncss = GETPOST('optioncss','alpha');
 

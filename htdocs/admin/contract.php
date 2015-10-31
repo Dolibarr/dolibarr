@@ -63,7 +63,7 @@ if ($action == 'updateMask')
     }
     else
     {
-        setEventMessage($langs->trans("Error"), null, 'errors');
+        setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
 

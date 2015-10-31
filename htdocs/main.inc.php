@@ -1543,13 +1543,13 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
  *  @param  string	$helppagename    	       	Name of wiki page for help ('' by default).
  * 				     		                   	Syntax is: For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage
  * 									         		       For other external page: http://server/url
- *  @param  string	$moresearchform             Search Form Permanent Supplemental
+ *  @param  string	$notused             		Deprecated. Used in past to add content into left menu. Hooks can be used now.
  *  @param  array	$menu_array_after           Table of menu entries to show after entries of menu handler
  *  @param  int		$leftmenuwithoutmainarea    Must be set to 1. 0 by default for backward compatibility with old modules.
  *  @param  string	$title                      Title of web page
  *  @return	void
  */
-function left_menu($menu_array_before, $helppagename='', $moresearchform='', $menu_array_after='', $leftmenuwithoutmainarea=0, $title='')
+function left_menu($menu_array_before, $helppagename='', $notused='', $menu_array_after='', $leftmenuwithoutmainarea=0, $title='')
 {
     global $user, $conf, $langs, $db, $form;
     global $hookmanager, $menumanager;
@@ -1644,13 +1644,8 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 
 	    print '<div class="vmenu">'."\n\n";
 
-	    $menumanager->menu_array = $menu_array_before;
-    	$menumanager->menu_array_after = $menu_array_after;
-	    $menumanager->showmenu('left'); // output menu_array and menu found in database
-
-
-	    // Show other forms
-	    if ($searchform)
+    	// Show other forms
+	    /*if ($searchform)
 	    {
 	        print "\n";
 	        print "<!-- Begin SearchForm -->\n";
@@ -1658,15 +1653,14 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	        print $searchform;
 	        print '</div>'."\n";
 	        print "<!-- End SearchForm -->\n";
-	    }
+	    }*/
 
-	    // More search form
-	    if ($moresearchform)
-	    {
-	        print $moresearchform;
-	    }
+	    $menumanager->menu_array = $menu_array_before;
+    	$menumanager->menu_array_after = $menu_array_after;
+	    $menumanager->showmenu('left', array('searchform'=>$searchform, 'bookmarks'=>$bookmarks)); // output menu_array and menu found in database
 
 	    // Bookmarks
+	    /*
 	    if ($bookmarks)
 	    {
 	        print "\n";
@@ -1675,13 +1669,14 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	        print $bookmarks;
 	        print '</div>'."\n";
 	        print "<!-- End Bookmarks -->\n";
-	    }
+	    }*/
 
-        print "\n";
-        print "<!-- Begin Help Block-->\n";
+        // Dolibarr version + help + bug report link
+		print "\n";
+	    print "<!-- Begin Help Block-->\n";
         print '<div id="blockvmenuhelp" class="blockvmenuhelp">'."\n";
 
-        //Dolibarr version
+        // Version
         $doliurl='http://www.dolibarr.org';
 		//local communities
 		if (preg_match('/fr/i',$langs->defaultlang)) $doliurl='http://www.dolibarr.fr';

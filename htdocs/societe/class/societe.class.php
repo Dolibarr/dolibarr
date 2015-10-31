@@ -1760,7 +1760,7 @@ class Societe extends CommonObject
 
         if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;
 
-		if ($conf->global->SOCIETE_ADD_REF_IN_LIST && (!empty($withpicto)))
+		if (! empty($conf->global->SOCIETE_ADD_REF_IN_LIST) && (!empty($withpicto)))
 		{
 			if (($this->client) && (! empty ( $this->code_client ))) {
 				$code = $this->code_client . ' - ';
@@ -1771,9 +1771,7 @@ class Societe extends CommonObject
 			$name =$code.' '.$name;
 		}
 
-	    if (!empty($this->name_alias)) {
-		    $name .= ' ('.$this->name_alias.')';
-	    }
+	    if (!empty($this->name_alias)) $name .= ' ('.$this->name_alias.')';
 
         $result=''; $label='';
         $link=''; $linkend='';

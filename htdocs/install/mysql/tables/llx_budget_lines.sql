@@ -1,6 +1,5 @@
--- ========================================================================
--- Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- ============================================================================
+-- Copyright (C) 2015	Laurent Destailleur		<eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -15,17 +14,17 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
--- ========================================================================
+-- ===========================================================================
 
-create table llx_c_forme_juridique
+create table llx_budget_lines
 (
-  rowid      	integer AUTO_INCREMENT PRIMARY KEY,
-  code       	integer NOT NULL,
-  fk_pays    	integer NOT NULL,
-  libelle    	varchar(255),
-  isvatexempted	tinyint DEFAULT 0  NOT NULL,
-  active     	tinyint DEFAULT 1  NOT NULL,
-  module        varchar(32) NULL,
-  position      integer NOT NULL DEFAULT 0
+  rowid			integer AUTO_INCREMENT PRIMARY KEY,
+  fk_budget     integer NOT NULL,
+  fk_project	integer NOT NULL,
+  amount		double(24,8) NOT NULL,
+  datec         datetime,
+  tms           timestamp,
+  fk_user_creat integer,
+  fk_user_modif integer,
+  import_key    integer  
 )ENGINE=innodb;
-

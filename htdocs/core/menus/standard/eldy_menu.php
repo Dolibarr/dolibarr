@@ -112,9 +112,10 @@ class MenuManager
      *  Show menu
      *
      *	@param	string	$mode			'top', 'left', 'jmobile'
+     *  @param	array	$moredata		An array with more data to output
      *  @return string
      */
-    function showmenu($mode)
+    function showmenu($mode, $moredata=null)
     {
     	global $conf, $langs, $user;
 
@@ -132,7 +133,7 @@ class MenuManager
         if (empty($conf->global->MAIN_MENU_INVERT))
         {
         	if ($mode == 'top')  print_eldy_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,0);
-        	if ($mode == 'left') print_left_eldy_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu,$this->menu,0);
+        	if ($mode == 'left') print_left_eldy_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu,$this->menu,0,'','',$moredata);
         }
         else
 		{
