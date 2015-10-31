@@ -46,6 +46,7 @@ class printing_printgcp extends PrintingDriver
 
     const LOGIN_URL = 'https://accounts.google.com/o/oauth2/token';
     const PRINTERS_SEARCH_URL = 'https://www.google.com/cloudprint/search';
+    const PRINTERS_GET_JOBS = 'https://www.google.com/cloudprint/jobs';
     const PRINT_URL = 'https://www.google.com/cloudprint/submit';
 
     /**
@@ -345,6 +346,88 @@ class printing_printgcp extends PrintingDriver
         $response = json_decode($apiService->request(self::PRINT_URL, 'POST', $post_fields), true);
         //print '<tr><td><pre>'.print_r($response, true).'</pre></td></tr>';
         return array('status' =>$response['success'],'errorcode' =>$response['errorCode'],'errormessage'=>$response['message']);
+    }
+
+
+    /**
+     *  List jobs print
+     *
+     *  @return void
+     */
+    function list_jobs()
+    {
+        global $conf, $db, $bc;
+        // Token storage
+        $storage = new DoliStorage($this->db, $this->conf);
+        // Setup the credentials for the requests
+        $credentials = new Credentials(
+            $this->google_id,
+            $this->google_secret,
+            DOL_MAIN_URL_ROOT.'/core/modules/oauth/getgoogleoauthcallback.php'
+        );
+        $serviceFactory = new \OAuth\ServiceFactory();
+        $apiService = $serviceFactory->createService('Google', $credentials, $storage, array());
+        // Check if we have auth token
+        $token_ok=true;
+        try {
+            $token = $storage->retrieveAccessToken('Google');
+        } catch (Exception $e) {
+            $this->errors[] = $e->getMessage();
+            $token_ok = false;
+        }
+        $expire = false;
+        // Is token expired or will token expire in the next 30 seconds
+        if ($token_ok) {
+            $expire = ($token->getEndOfLife() !== -9002 && $token->getEndOfLife() !== -9001 && time() > ($token->getEndOfLife() - 30));
+        }
+
+        // Token expired so we refresh it
+        if ($token_ok && $expire) {
+            try {
+                // il faut sauvegarder le refresh token car google ne le donne qu'une seule fois
+                $refreshtoken = $token->getRefreshToken();
+                $token = $apiService->refreshAccessToken($token);
+                $token->setRefreshToken($refreshtoken);
+                $storage->storeAccessToken('Google', $token);
+            } catch (Exception $e) {
+                $this->errors[] = $e->getMessage();
+            }
+        }
+        // Getting Jobs
+        // Send a request with api
+        try {
+            $response = $apiService->request(self::PRINTERS_GET_JOBS);
+        } catch (Exception $e) {
+            $this->errors[] = $e->getMessage();
+            print '<pre>'.print_r($e->getMessage(),true).'</pre>';
+        }
+        $responsedata = json_decode($response, true);
+        //print '<pre>'.print_r($responsedata,true).'</pre>';
+        print '<table width="100%" class="noborder">';
+        print '<tr class="liste_titre">';
+        print "<td>Id</td>";
+        print "<td>Owner</td>";
+        print "<td>Printer</td>";
+        print "<td>File</td>";
+        print "<td>Status</td>";
+        print "<td>Cancel</td>";
+        print "</tr>\n";
+        $var = True;
+        $jobs = $responsedata['jobs'];
+        //print '<pre>'.print_r($jobs['0'],true).'</pre>';
+        foreach ($jobs as $value )
+        {
+            $var=!$var;
+            print "<tr ".$bc[$var].">";
+            print '<td>'.$value['id'].'</td>';
+            print '<td>'.$value['ownerId'].'</td>';
+            print '<td>'.$value['printerName'].'</td>';
+            print '<td>'.$value['title'].'</td>';
+            print '<td>'.$value['status'].'</td>';
+            print '<td>&nbsp;</td>';
+            print '</tr>';
+        }
+        print "</table>";
     }
 
 }
