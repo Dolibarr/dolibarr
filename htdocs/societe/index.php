@@ -60,7 +60,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 // Search thirdparty
 if (! empty($conf->societe->enabled) && $user->rights->societe->lire)
 {
-	$listofsearchfields['search_thirdparty']=array('text'=>'Thirdparty');
+	$listofsearchfields['search_thirdparty']=array('text'=>'ThirdParty');
 }
 // Search contact/address
 if (! empty($conf->societe->enabled) && $user->rights->societe->lire)
