@@ -54,12 +54,12 @@ if ($id > 0 || ! empty($ref))
 	if ($ret == 0)
 	{
 		$langs->load("errors");
-		setEventMessage($langs->trans('ErrorRecordNotFound'), 'errors');
+		setEventMessages($langs->trans('ErrorRecordNotFound'), null, 'errors');
 		$error++;
 	}
 	else if ($ret < 0)
 	{
-		setEventMessage($object->error, 'errors');
+		setEventMessages($object->error, $object->errors, 'errors');
 		$error++;
 	}
 }
@@ -96,11 +96,11 @@ if ($action == 'addcontact' && $user->rights->propale->creer)
 		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 		{
 			$langs->load("errors");
-			setEventMessage($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), 'errors');
+			setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
 		}
 		else
 		{
-			setEventMessage($object->error, 'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 }
