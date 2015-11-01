@@ -50,7 +50,7 @@ class modReceiptPrinter extends DolibarrModules
         // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
         $this->name = preg_replace('/^mod/i','',get_class($this));
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
-        $this->description = "Receipt Printer.";
+        $this->description = "ReceiptPrinterDesc";
         $this->version = 'dolibarr';    // 'development' or 'experimental' or 'dolibarr' or version
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
         // Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
@@ -70,7 +70,7 @@ class modReceiptPrinter extends DolibarrModules
         $this->depends = array();
         $this->requiredby = array();
         $this->phpmin = array(5,1);                     // Minimum version of PHP required by module
-        $this->need_dolibarr_version = array(3,7,-2);   // Minimum version of Dolibarr required by module
+        $this->need_dolibarr_version = array(3,9,-2);   // Minimum version of Dolibarr required by module
         $this->conflictwith = array();
         $this->langfiles = array("receiptprinter");
 
