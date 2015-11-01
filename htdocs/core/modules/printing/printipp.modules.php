@@ -228,13 +228,15 @@ class printing_printipp extends PrintingDriver
     /**
      *  List jobs print
      *
-     * @param   string      $module     module
+     *  @param   string      $module     module
      *
-     *  @return void
+     *  @return  int                     0 if OK, >0 if KO
      */
     function list_jobs($module)
     {
         global $conf, $db, $bc;
+        $error = 0;
+        $html = '';
         include_once DOL_DOCUMENT_ROOT.'/includes/printipp/CupsPrintIPP.php';
         $ipp = new CupsPrintIPP();
         $ipp->setLog(DOL_DATA_ROOT.'/dolibarr_printipp.log','file',3); // logging very verbose
@@ -259,32 +261,39 @@ class printing_printipp extends PrintingDriver
             }
         }
         // Getting Jobs
-        $ipp->getJobs(false,0,'completed',false);
-        print '<table width="100%" class="noborder">';
-        print '<tr class="liste_titre">';
-        print "<td>Id</td>";
-        print "<td>Owner</td>";
-        print "<td>Printer</td>";
-        print "<td>File</td>";
-        print "<td>Status</td>";
-        print "<td>Cancel</td>";
-        print "</tr>\n";
+        try {
+            $ipp->getJobs(false,0,'completed',false);
+        } catch (Exception $e) {
+            $this->errors[] = $e->getMessage();
+            $error++;
+        }
+        $html .= '<table width="100%" class="noborder">';
+        $html .= '<tr class="liste_titre">';
+        $html .= '<td>Id</td>';
+        $html .= '<td>Owner</td>';
+        $html .= '<td>Printer</td>';
+        $html .= '<td>File</td>';
+        $html .= '<td>Status</td>';
+        $html .= '<td>Cancel</td>';
+        $html .= '</tr>'."\n";
         $jobs = $ipp->jobs_attributes;
         $var = True;
-        //print '<pre>'.print_r($jobs,true).'</pre>';
+        //$html .= '<pre>'.print_r($jobs,true).'</pre>';
         foreach ($jobs as $value )
         {
-            $var=!$var;
-            print "<tr ".$bc[$var].">";
-            print '<td>'.$value->job_id->_value0.'</td>';
-            print '<td>'.$value->job_originating_user_name->_value0.'</td>';
-            print '<td>'.$value->printer_uri->_value0.'</td>';
-            print '<td>'.$value->job_name->_value0.'</td>';
-            print '<td>'.$value->job_state->_value0.'</td>';
-            print '<td>'.$value->job_uri->_value0.'</td>';
-            print '</tr>';
+            $var = !$var;
+            $html .= '<tr '.$bc[$var].'>';
+            $html .= '<td>'.$value->job_id->_value0.'</td>';
+            $html .= '<td>'.$value->job_originating_user_name->_value0.'</td>';
+            $html .= '<td>'.$value->printer_uri->_value0.'</td>';
+            $html .= '<td>'.$value->job_name->_value0.'</td>';
+            $html .= '<td>'.$value->job_state->_value0.'</td>';
+            $html .= '<td>'.$value->job_uri->_value0.'</td>';
+            $html .= '</tr>';
         }
-        print "</table>";
+        $html .= "</table>";
+        $this->resprint = $html;
+        return $error;
     }
 
 }

@@ -352,11 +352,13 @@ class printing_printgcp extends PrintingDriver
     /**
      *  List jobs print
      *
-     *  @return void
+     *  @return  int                     0 if OK, >0 if KO
      */
     function list_jobs()
     {
         global $conf, $db, $bc;
+        $error = 0;
+        $html = '';
         // Token storage
         $storage = new DoliStorage($this->db, $this->conf);
         // Setup the credentials for the requests
@@ -374,6 +376,7 @@ class printing_printgcp extends PrintingDriver
         } catch (Exception $e) {
             $this->errors[] = $e->getMessage();
             $token_ok = false;
+            $error++;
         }
         $expire = false;
         // Is token expired or will token expire in the next 30 seconds
@@ -391,6 +394,7 @@ class printing_printgcp extends PrintingDriver
                 $storage->storeAccessToken('Google', $token);
             } catch (Exception $e) {
                 $this->errors[] = $e->getMessage();
+                $error++;
             }
         }
         // Getting Jobs
@@ -399,35 +403,37 @@ class printing_printgcp extends PrintingDriver
             $response = $apiService->request(self::PRINTERS_GET_JOBS);
         } catch (Exception $e) {
             $this->errors[] = $e->getMessage();
-            print '<pre>'.print_r($e->getMessage(),true).'</pre>';
+            $error++;
         }
         $responsedata = json_decode($response, true);
-        //print '<pre>'.print_r($responsedata,true).'</pre>';
-        print '<table width="100%" class="noborder">';
-        print '<tr class="liste_titre">';
-        print "<td>Id</td>";
-        print "<td>Owner</td>";
-        print "<td>Printer</td>";
-        print "<td>File</td>";
-        print "<td>Status</td>";
-        print "<td>Cancel</td>";
-        print "</tr>\n";
+        //$html .= '<pre>'.print_r($responsedata,true).'</pre>';
+        $html .= '<table width="100%" class="noborder">';
+        $html .= '<tr class="liste_titre">';
+        $html .= "<td>Id</td>";
+        $html .= "<td>Owner</td>";
+        $html .= '<td>Printer</td>';
+        $html .= '<td>File</td>';
+        $html .= '<td>Status</td>';
+        $html .= '<td>Cancel</td>';
+        $html .= '</tr>'."\n";
         $var = True;
         $jobs = $responsedata['jobs'];
-        //print '<pre>'.print_r($jobs['0'],true).'</pre>';
+        //$html .= '<pre>'.print_r($jobs['0'],true).'</pre>';
         foreach ($jobs as $value )
         {
-            $var=!$var;
-            print "<tr ".$bc[$var].">";
-            print '<td>'.$value['id'].'</td>';
-            print '<td>'.$value['ownerId'].'</td>';
-            print '<td>'.$value['printerName'].'</td>';
-            print '<td>'.$value['title'].'</td>';
-            print '<td>'.$value['status'].'</td>';
-            print '<td>&nbsp;</td>';
-            print '</tr>';
+            $var = !$var;
+            $html .= '<tr '.$bc[$var].'>';
+            $html .= '<td>'.$value['id'].'</td>';
+            $html .= '<td>'.$value['ownerId'].'</td>';
+            $html .= '<td>'.$value['printerName'].'</td>';
+            $html .= '<td>'.$value['title'].'</td>';
+            $html .= '<td>'.$value['status'].'</td>';
+            $html .= '<td>&nbsp;</td>';
+            $html .= '</tr>';
         }
-        print "</table>";
+        $html .= '</table>';
+        $this->resprint = $html;
+        return $error;
     }
 
 }

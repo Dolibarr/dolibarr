@@ -39,7 +39,11 @@ foreach ($result as $driver) {
     $printer = new $classname($db);
     if ($conf->global->{$printer->active}) {
         //$printer->list_jobs('commande');
-        $printer->list_jobs();
+        if ($printer->list_jobs()==0) {
+            print $printer->resprint;
+        } else {
+            setEventMessages($printer->error, $printer->errors, 'errors');
+        }
     }
 }
 
