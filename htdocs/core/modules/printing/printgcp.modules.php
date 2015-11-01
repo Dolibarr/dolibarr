@@ -42,6 +42,8 @@ class printing_printgcp extends PrintingDriver
     var $conf = array();
     var $google_id = '';
     var $google_secret = '';
+    var $error;
+    var $errors = array();
     var $db;
 
     const LOGIN_URL = 'https://accounts.google.com/o/oauth2/token';
@@ -122,11 +124,12 @@ class printing_printgcp extends PrintingDriver
     /**
      *  Return list of available printers
      *
-     *  @return string                html list of printers
+     *  @return  int                     0 if OK, >0 if KO
      */
     function listAvailablePrinters()
     {
         global $bc, $conf, $langs;
+        $error = 0;
         $langs->load('printing');
         $var=true;
 
@@ -145,7 +148,7 @@ class printing_printgcp extends PrintingDriver
         $var = true;
         foreach ($list['available'] as $printer_det)
         {
-            $var=!$var;
+            $var = !$var;
             $html.= "<tr ".$bc[$var].">";
             $html.= '<td>'.$printer_det['name'].'</td>';
             $html.= '<td>'.$printer_det['displayName'].'</td>';
@@ -165,8 +168,8 @@ class printing_printgcp extends PrintingDriver
             $html.= '</td>';
             $html.= '</tr>'."\n";
         }
-
-        return $html;
+        $this->resprint = $html;
+        return $error;
     }
 
 
@@ -240,15 +243,19 @@ class printing_printgcp extends PrintingDriver
      * @param   string      $file       file
      * @param   string      $module     module
      * @param   string      $subdir     subdir for file
-     * @return  int                     0 if OK, <0 if KO
+     * @return  int                     0 if OK, >0 if KO
      */
     function print_file($file, $module, $subdir='')
     {
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
         global $conf, $user, $db;
+        $error = 0;
 
         $fileprint=$conf->{$module}->dir_output;
         if ($subdir!='') $fileprint.='/'.$subdir;
         $fileprint.='/'.$file;
+        $mimetype = dol_mimetype($fileprint);
         // select printer uri for module order, propal,...
         $sql = "SELECT rowid, printer_id, copy FROM ".MAIN_DB_PREFIX."printing WHERE module='".$module."' AND driver='printgcp' AND userid=".$user->id;
         $result = $db->query($sql);
@@ -267,18 +274,18 @@ class printing_printgcp extends PrintingDriver
                 }
                 else
                 {
-                    return 'NoDefaultPrinterDefined';
+                    $this->errors[] = 'NoDefaultPrinterDefined';
+                    $error++;
+                    return $error;
                 }
             }
         }
         else dol_print_error($db);
 
-        $ret = $this->sendPrintToPrinter($printer_id, $file, $fileprint, 'application/pdf');
-        $this->error = 'PRINTGCP: '.$ret['errormessage'];
-        if ($ret['status']==1) 
-            return 0;
-        else
-            return -1;
+        $ret = $this->sendPrintToPrinter($printer_id, $file, $fileprint, $mimetype);
+        $this->errors = 'PRINTGCP: '.mb_convert_encoding($ret['errormessage'], "UTF-8");
+        if ($ret['status']!=1) $error++;
+        return $error;
     }
 
     /**

@@ -256,7 +256,11 @@ if ($mode == 'test' && $user->admin)
         $printer = new $classname($db);
         //print '<pre>'.print_r($printer, true).'</pre>';
         if (count($printer->getlist_available_printers())) {
-            print $printer->listAvailablePrinters();
+            if ($printer->listAvailablePrinters()==0) {
+                print $printer->resprint;
+            } else {
+                setEventMessages($printer->error, $printer->errors, 'errors');
+            }
         }
         else {
             print $langs->trans('PleaseConfigureDriverfromList');

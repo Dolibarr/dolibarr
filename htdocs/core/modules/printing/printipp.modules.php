@@ -41,6 +41,7 @@ class printing_printipp extends PrintingDriver
     var $user;
     var $password;
     var $error;
+    var $errors = array();
     var $db;
 
 
@@ -72,11 +73,12 @@ class printing_printipp extends PrintingDriver
      * @param   string      $module     module
      * @param   string      $subdir     subdirectory of document like for expedition subdir is sendings
      *
-     * @return  int                     0 if OK, <0 if KO
+     * @return  int                     0 if OK, >0 if KO
      */
     function print_file($file, $module, $subdir='')
     {
         global $conf, $user, $db;
+        $error = 0;
 
         include_once DOL_DOCUMENT_ROOT.'/includes/printipp/CupsPrintIPP.php';
 
@@ -108,8 +110,9 @@ class printing_printipp extends PrintingDriver
                 }
                 else
 				{
-                    $this->error = 'NoDefaultPrinterDefined';
-                    return -1;
+                    $this->errors[] = 'NoDefaultPrinterDefined';
+                    $error++;
+                    return $error;
                 }
             }
         }
@@ -121,19 +124,26 @@ class printing_printipp extends PrintingDriver
         if ($subdir!='') $fileprint.='/'.$subdir;
         $fileprint.='/'.$file;
         $ipp->setData($fileprint);
-        $ipp->printJob();
+        try {
+            $ipp->printJob();
+        } catch (Exception $e) {
+            $this->errors[] = $e->getMessage();
+            $error++;
+        }
+        if ($error==0) $this->errors[] = 'PRINTIPP: Job added';
 
-        return 0;
+        return $error;
     }
 
     /**
      *  Return list of available printers
      *
-     *  @return string                html list of printers
+     *  @return  int                     0 if OK, >0 if KO
      */
     function listAvailablePrinters()
     {
         global $bc, $conf, $langs;
+        $error = 0;
         $var=true;
 
         $html = '<tr class="liste_titre">';
@@ -180,8 +190,8 @@ class printing_printipp extends PrintingDriver
 			$html.= '</td>';
             $html.= '</tr>'."\n";
         }
-
-        return $html;
+        $this->resprint = $html;
+        return $error;
     }
 
     /**
