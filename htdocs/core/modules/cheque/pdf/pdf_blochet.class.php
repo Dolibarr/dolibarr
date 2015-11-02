@@ -376,7 +376,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		//$showdetails=0;
-		//return pdf_pagefoot($pdf,$outputlangs,'BANK_CHEQUERECEIPT_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
+		return pdf_pagefoot($pdf,$outputlangs,'BANK_CHEQUERECEIPT_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
 		$paramfreetext='BANK_CHEQUERECEIPT_FREE_TEXT';
 		$marge_basse=$this->marge_basse;
 		$marge_gauche=$this->marge_gauche;
@@ -388,7 +388,45 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		$pdf->SetFont('','', $default_font_size - 3);
 		$pdf->SetDrawColor(224,224,224);
 
+		// The start of the bottom of this page footer is positioned according to # of lines
+    	$freetextheight=0;
+    	if ($line)	// Free text
+    	{
+    		//$line="eee<br>\nfd<strong>sf</strong>sdf<br>\nghfghg<br>";
+    	    if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))   // by default
+    		{
+    			$width=20000; $align='L';	// By default, ask a manual break: We use a large value 20000, to not have automatic wrap. This make user understand, he need to add CR on its text.
+        		if (! empty($conf->global->MAIN_USE_AUTOWRAP_ON_FREETEXT)) {
+        			$width=200; $align='C';
+        		}
+    		    $freetextheight=$pdf->getStringHeight($width,$line);
+    		}
+    		else
+    		{
+                $freetextheight=pdfGetHeightForHtmlContent($pdf,dol_htmlentitiesbr($line, 1, 'UTF-8', 0));      // New method (works for HTML content)
+                //print '<br>'.$freetextheight;exit;
+    		}
+    	}
+
+		$marginwithfooter=$marge_basse + $freetextheight;
+    	$posy=$marginwithfooter+0;
+    
+    	if ($line)	// Free text
+    	{
+    		$pdf->SetXY($dims['lm'],-$posy);
+    		if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))   // by default
+    		{
+                $pdf->MultiCell(0, 3, $line, 0, $align, 0);
+    		}
+    		else
+    		{
+                $pdf->writeHTMLCell($pdf->page_largeur - $pdf->margin_left - $pdf->margin_right, $freetextheight, $dims['lm'], $dims['hk']-$marginwithfooter, dol_htmlentitiesbr($line, 1, 'UTF-8', 0));
+    		}
+    		$posy-=$freetextheight;
+    	}
+    	
 		// On positionne le debut du bas de page selon nbre de lignes de ce bas de page
+		/*
 		$nbofline=dol_nboflines_bis($line,0,$outputlangs->charset_output);
 		//print 'e'.$line.'t'.dol_nboflines($line);exit;
 		$posy=$marge_basse + ($nbofline*3);
@@ -398,7 +436,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 			$pdf->SetXY($marge_gauche,-$posy);
 			$pdf->MultiCell(20000, 3, $line, 0, 'L', 0);	// Use a large value 20000, to not have automatic wrap. This make user understand, he need to add CR on its text.
 			$posy-=($nbofline*3);	// 6 of ligne + 3 of MultiCell
-		}
+		}*/
 
 		$pdf->SetY(-$posy);
 		$pdf->line($marge_gauche, $page_hauteur-$posy, 200, $page_hauteur-$posy);
