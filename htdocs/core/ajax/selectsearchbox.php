@@ -107,6 +107,10 @@ if (! empty($conf->contrat->enabled) && empty($conf->global->MAIN_SEARCHFORM_CON
 {
 	$arrayresult['searchintocontract']=array('text'=>img_picto('','object_contract').' '.$langs->trans("SearchIntoContracts", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/contrat/list.php?sall='.urlencode($search_boxvalue));
 }
+if (! empty($conf->expensereport->enabled) && empty($conf->global->MAIN_SEARCHFORM_EXPENSEREPORT_DISABLED) && $user->rights->expensereport->lire)
+{
+	$arrayresult['searchintoexpensereport']=array('text'=>img_picto('','object_trip').' '.$langs->trans("SearchIntoExpenseReports", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/expensereport/list.php?sall='.urlencode($search_boxvalue));
+}
 
 
 /* Do we really need this. We already have a select for users, and we should be able to filter into user list on employee flag 
