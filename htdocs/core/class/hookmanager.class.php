@@ -163,7 +163,9 @@ class HookManager
 				'printAddress',
 				'printSearchForm',
 				'formatEvent',
-				'addCalendarChoice'
+                'addCalendarChoice',
+                'printObjectLine',
+                'printObjectSubLine'
 				)
 			)) $hooktype='addreplace';
         // Deprecated hook types ('returnvalue')
