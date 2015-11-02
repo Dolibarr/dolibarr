@@ -75,6 +75,7 @@ abstract class CommonDocGenerator
             'myuser_mobile'=>$user->user_mobile,
             'myuser_email'=>$user->email,
         	'myuser_logo'=>$user->photo,
+        	'myuser_job'=>$user->job,
             'myuser_web'=>''	// url not exist in $user object
         );
     }
