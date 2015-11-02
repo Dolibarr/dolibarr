@@ -138,22 +138,21 @@ class ProductFournisseur extends Product
 
             dol_syslog(get_class($this)."::remove_product_fournisseur_price", LOG_DEBUG);
             $resql = $this->db->query($sql);
-            if ($resql)
-            {
-                $this->db->commit();
-                return 1;
-            }
-            else
+            if (!$resql)
             {
                 $this->error=$this->db->lasterror();
-                $this->db->rollback();
-                return -1;
+                $error++;
             }
         }
-        else
-        {
+
+        if (empty($error)){
+            $this->db->commit();
+            return 1;
+        }else{
+            $this->db->rollback();
             return -1;
         }
+
     }
 
 
