@@ -872,6 +872,8 @@ if (empty($reshook))
 		}
 	}
 
+	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
+
 
 	/*
 	 * Create an order

@@ -121,26 +121,38 @@ class ProductFournisseur extends Product
      */
     function remove_product_fournisseur_price($rowid)
     {
-        global $conf;
+        global $conf, $user;
 
         $this->db->begin();
 
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."product_fournisseur_price";
-        $sql.= " WHERE rowid = ".$rowid;
+        // Call trigger
+        $result=$this->call_trigger('SUPPLIER_PRODUCT_BUYPRICE_DELETE',$user);
+        if ($result < 0) $error++;
+        // End call triggers
 
-        dol_syslog(get_class($this)."::remove_product_fournisseur_price", LOG_DEBUG);
-        $resql = $this->db->query($sql);
-        if ($resql)
+        if (empty($error))
         {
+
+            $sql = "DELETE FROM ".MAIN_DB_PREFIX."product_fournisseur_price";
+            $sql.= " WHERE rowid = ".$rowid;
+
+            dol_syslog(get_class($this)."::remove_product_fournisseur_price", LOG_DEBUG);
+            $resql = $this->db->query($sql);
+            if (!$resql)
+            {
+                $this->error=$this->db->lasterror();
+                $error++;
+            }
+        }
+
+        if (empty($error)){
             $this->db->commit();
             return 1;
-        }
-        else
-        {
-            $this->error=$this->db->lasterror();
+        }else{
             $this->db->rollback();
             return -1;
         }
+
     }
 
 
