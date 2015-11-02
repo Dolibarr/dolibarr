@@ -133,18 +133,6 @@ function product_prepare_head($object)
 	$head[$h][2] = 'documents';
 	$h++;
 
-
-	// More tabs from canvas
-	// TODO Is this still used ?
-	if (isset($object->onglets) && is_array($object->onglets))
-	{
-		foreach ($object->onglets as $onglet)
-		{
-			$head[$h] = $onglet;
-			$h++;
-		}
-	}
-
     complete_head_from_modules($conf,$langs,$object,$head,$h,'product', 'remove');
 
 	return $head;
