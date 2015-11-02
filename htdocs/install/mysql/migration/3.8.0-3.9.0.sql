@@ -105,21 +105,6 @@ ALTER TABLE llx_product ADD COLUMN onportal tinyint DEFAULT 0 after tobuy;
 ALTER TABLE llx_user ADD COLUMN employee tinyint DEFAULT 1;
 
 
-create table llx_stock_lotserial
-(
-  rowid           integer AUTO_INCREMENT PRIMARY KEY,
-  datec           datetime,
-  tms             timestamp,
-  fk_user_creat   integer,
-  fk_user_modif   integer,
-  fk_product      integer NOT NULL,				-- Id of product
-  batch           varchar(30) DEFAULT NULL,		-- Lot or serial number
-  eatby           date DEFAULT NULL,			-- Eatby date
-  sellby          date DEFAULT NULL 			-- Sellby date
-) ENGINE=innodb;
-
-
-
 CREATE TABLE IF NOT EXISTS llx_c_hrm_function
 (
   rowid     integer     PRIMARY KEY,
