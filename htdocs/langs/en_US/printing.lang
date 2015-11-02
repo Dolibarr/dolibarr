@@ -81,3 +81,5 @@ STATE_IPP_none=None
 MEDIA_IPP_stationery=Stationery
 MEDIA_IPP_thermal=Thermal
 IPP_COLOR_print-black=BW Printer
+GoogleAuthNotConfigured=Google OAuth setup not done. Enable module OAuth and set a Google ID/Secret.
+GoogleAuthConfigured=Google OAuth credentials found.

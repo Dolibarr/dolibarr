@@ -294,7 +294,14 @@ print '<input type="hidden" name="action" value="update">';
 /*
  *  Parameters
  */
-dol_fiche_head($head, $mode, $langs->trans("ModuleSetup"), 0, 'technic');
+dol_fiche_head(array(), '', '', 0, 'technic');
+
+
+// Define $urlwithroot
+$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
+//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+
 
 print '<table class="noborder" width="100%">';
 
@@ -307,6 +314,24 @@ foreach ($list as $key)
     $label = $langs->trans($key[0]); 
     print '<td colspan="2">'.$label.'</td></tr>';
 
+    if (in_array($key[0], array('OAUTH_GOOGLE_NAME')))
+    {
+        $redirect_uri=$urlwithroot.'/core/modules/oauth/getgoogleoauthcallback.php';
+        $var = !$var;
+        print '<tr '.$bc[$var].' class="value">';
+        print '<td>'.$langs->trans("UseTheFollowingUrlAsRedirectURI").'</td>';
+        print '<td><textarea style="width: 80%">'.$redirect_uri.'</textarea>';
+        print '</td></tr>';
+    }
+    else
+    {
+        $var = !$var;
+        print '<tr '.$bc[$var].' class="value">';
+        print '<td>'.$langs->trans("UseTheFollowingUrlAsRedirectURI").'</td>';
+        print '<td>'.$langs->trans("FeatureNotYetSupported").'</td>';
+        print '</td></tr>';
+    }
+        
     // Api Id
     $var = !$var;
     print '<tr '.$bc[$var].' class="value">';

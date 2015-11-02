@@ -58,8 +58,13 @@ class printing_printgcp extends PrintingDriver
      */
     function __construct($db)
     {
-        global $conf;
+        global $conf, $dolibarr_main_url_root;
 
+        // Define $urlwithroot
+        $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+        $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
+        //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+        
         $this->db = $db;
         $this->google_id = $conf->global->OAUTH_GOOGLE_ID;
         $this->google_secret = $conf->global->OAUTH_GOOGLE_SECRET;
@@ -70,7 +75,7 @@ class printing_printgcp extends PrintingDriver
         $credentials = new Credentials(
             $this->google_id,
             $this->google_secret,
-            DOL_MAIN_URL_ROOT.'/core/modules/oauth/getgoogleoauthcallback.php'
+            $urlwithroot.'/core/modules/oauth/getgoogleoauthcallback.php'
         );
         $access = ($storage->hasAccessToken('Google')?'HasAccessToken':'NoAccessToken');
         $serviceFactory = new \OAuth\ServiceFactory();
@@ -103,6 +108,7 @@ class printing_printgcp extends PrintingDriver
         if (!$conf->oauth->enabled) {
             $this->conf[] = array('varname'=>'PRINTGCP_INFO', 'info'=>'ModuleAuthNotActive', 'type'=>'info');
         } else {
+         
             if ($this->google_id != '' && $this->google_secret != '') {
                 $this->conf[] = array('varname'=>'PRINTGCP_INFO', 'info'=>'GoogleAuthConfigured', 'type'=>'info');
                 $this->conf[] = array('varname'=>'PRINTGCP_TOKEN_ACCESS', 'info'=>$access, 'type'=>'info');
@@ -112,7 +118,7 @@ class printing_printgcp extends PrintingDriver
                     $this->conf[] = array('varname'=>'PRINTGCP_TOKEN_EXPIRED', 'info'=>($expire?'Yes':'No'), 'type'=>'info');
                     $this->conf[] = array('varname'=>'PRINTGCP_TOKEN_EXPIRE_AT', 'info'=>(date("Y-m-d H:i:s", $token->getEndOfLife())), 'type'=>'info');
                 }
-                $this->conf[] = array('varname'=>'PRINTGCP_AUTHLINK', 'link'=>DOL_MAIN_URL_ROOT.'/core/modules/oauth/getgoogleoauthcallback.php', 'type'=>'authlink');
+                $this->conf[] = array('varname'=>'PRINTGCP_AUTHLINK', 'link'=>$urlwithroot.'/core/modules/oauth/getgoogleoauthcallback.php', 'type'=>'authlink');
             } else {
                 $this->conf[] = array('varname'=>'PRINTGCP_INFO', 'info'=>'GoogleAuthNotConfigured', 'type'=>'info');
             }

@@ -1,5 +1,7 @@
 # Dolibarr language file - Source file is en_US - oauth
 ConfigOAuth=Oauth Configuration
+NoAccessToken=No token access saved.
+UseTheFollowingUrlAsRedirectURI=Use the following URL as the Redirect URI when creating your credential on your OAuth provider:
 OAUTH_AMAZON_NAME=Api Amazon
 OAUTH_AMAZON_ID=Api Amazon Id
 OAUTH_AMAZON_SECRET=Api Amazon Secret

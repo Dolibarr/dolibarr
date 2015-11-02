@@ -31,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/printing/lib/printing.lib.php';
 
 $langs->load("admin");
 $langs->load("printing");
+$langs->load("oauth");
 
 if (! $user->admin) accessforbidden();
 
@@ -178,15 +179,17 @@ if ($mode == 'setup' && $user->admin)
     }
 
     print '</table>';
+    
+    dol_fiche_end();
+    
     if (! empty($driver))
     {
         if ($submit_enabled) {
             print '<div class="center"><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Modify")).'"></div>';
         }
     }
-    print '</form>';
-    dol_fiche_end();
 
+    print '</form>';
 }
 if ($mode == 'config' && $user->admin)
 {
