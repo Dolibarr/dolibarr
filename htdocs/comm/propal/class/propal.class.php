@@ -496,17 +496,7 @@ class Propal extends CommonObject
             $this->line->date_start=$date_start;
             $this->line->date_end=$date_end;
 
-
-			// infos marge
-			if (!empty($fk_product) && empty($fk_fournprice) && empty($pa_ht)) {
-			    // by external module, take lowest buying price
-			    include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
-			    $productFournisseur = new ProductFournisseur($this->db);
-			    $productFournisseur->find_min_price_product_fournisseur($fk_product);
-			    $this->line->fk_fournprice = $productFournisseur->product_fourn_price_id;
-			} else {
-			    $this->line->fk_fournprice = $fk_fournprice;
-			}
+			$this->line->fk_fournprice = $fk_fournprice;
 			$this->line->pa_ht = $pa_ht;
 
             // Mise en option de la ligne
@@ -660,16 +650,7 @@ class Propal extends CommonObject
             $this->line->skip_update_total	= $skip_update_total;
             $this->line->fk_unit	= $fk_unit;
 
-            // infos marge
-            if (!empty($fk_product) && empty($fk_fournprice) && empty($pa_ht)) {
-                // by external module, take lowest buying price
-                include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
-			    $productFournisseur = new ProductFournisseur($this->db);
-			    $productFournisseur->find_min_price_product_fournisseur($fk_product);
-			    $this->line->fk_fournprice = $productFournisseur->product_fourn_price_id;
-			} else {
-			    $this->line->fk_fournprice = $fk_fournprice;
-			}
+			$this->line->fk_fournprice = $fk_fournprice;
             $this->line->pa_ht = $pa_ht;
 
             $this->line->date_start=$date_start;
@@ -3124,11 +3105,18 @@ class PropaleLigne  extends CommonObjectLine
 
         if (empty($this->pa_ht)) $this->pa_ht=0;
 
-        // si prix d'achat non renseigne et utilise pour calcul des marges alors prix achat = prix vente
-        if ($this->pa_ht == 0) {
-        	if ($this->subprice > 0 && (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1))
-        		$this->pa_ht = $this->subprice * (1 - $this->remise_percent / 100);
-        }
+       // if buy price not defined, define buyprice as configured in margin admin
+		if ($this->pa_ht == 0) 
+		{
+			if (($result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product)) < 0)
+			{
+				return $result;
+			}
+			else
+			{
+				$this->pa_ht = $result;
+			}
+		}
 
         // Check parameters
         if ($this->product_type < 0) return -1;
@@ -3296,10 +3284,17 @@ class PropaleLigne  extends CommonObjectLine
 
 		if (empty($this->pa_ht)) $this->pa_ht=0;
 
-		// si prix d'achat non renseigne et utilise pour calcul des marges alors prix achat = prix vente
-		if ($this->pa_ht == 0) {
-			if ($this->subprice > 0 && (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1))
-				$this->pa_ht = $this->subprice * (1 - $this->remise_percent / 100);
+		// if buy price not defined, define buyprice as configured in margin admin
+		if ($this->pa_ht == 0) 
+		{
+			if (($result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product)) < 0)
+			{
+				return $result;
+			}
+			else
+			{
+				$this->pa_ht = $result;
+			}
 		}
 
         $this->db->begin();

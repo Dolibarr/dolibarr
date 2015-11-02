@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -92,7 +92,7 @@ if (! empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_SEARCHFORM
 }
 if (! empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_SEARCHFORM_SUPPLIER_ORDER_DISABLED) && $user->rights->fournisseur->commande->lire)
 {
-	$arrayresult['searchintosupplierorder']=array('text'=>img_picto('','object_propal').' '.$langs->trans("SearchIntoSupplierOrders", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/fourn/commande/list.php?search_all='.urlencode($search_boxvalue));
+	$arrayresult['searchintosupplierorder']=array('text'=>img_picto('','object_order').' '.$langs->trans("SearchIntoSupplierOrders", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/fourn/commande/list.php?search_all='.urlencode($search_boxvalue));
 }
 if (! empty($conf->askpricesupplier->enabled) && empty($conf->global->MAIN_SEARCHFORM_SUPPLIER_PROPAL_DISABLED) && $user->rights->askpricesupplier->lire)
 {

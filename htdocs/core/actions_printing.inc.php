@@ -46,7 +46,12 @@ if ($action == 'print_file' and $user->rights->printing->read)
 
             if (! empty($conf->global->{$printer->active})) {
                 $subdir=(GETPOST('printer', 'alpha')=='expedition'?'sending':'');
-                $ret = $printer->print_file(GETPOST('file', 'alpha'), GETPOST('printer', 'alpha'), $subdir);
+                $module = GETPOST('printer', 'alpha');
+                if ($module =='commande_fournisseur') {
+                    $module = 'fournisseur';
+                    $subdir = 'commande';
+                }
+                $ret = $printer->print_file(GETPOST('file', 'alpha'), $module, $subdir);
                 if ($ret > 0) {
                     //print '<pre>'.print_r($printer->errors, true).'</pre>';
                     setEventMessages($printer->error, $printer->errors, 'errors');

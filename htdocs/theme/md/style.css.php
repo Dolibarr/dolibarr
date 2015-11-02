@@ -165,7 +165,7 @@ if ($tmpval <= 360) { $colortextbackvmenu='FFFFFF'; }
 else { $colortextbackvmenu='111111'; }
 $tmppart=explode(',',$colorbacktitle1);
 $tmpval=(! empty($tmppart[1]) ? $tmppart[1] : '')+(! empty($tmppart[2]) ? $tmppart[2] : '')+(! empty($tmppart[3]) ? $tmppart[3] : '');
-if ($tmpval <= 360) { $colortexttitle='FFFFFF'; $colorshadowtitle='888888'; }
+if ($tmpval <= 260) { $colortexttitle='FFFFFF'; $colorshadowtitle='888888'; }
 else { $colortexttitle='111111'; $colorshadowtitle='FFFFFF'; }
 $tmppart=explode(',',$colorbacktabcard1);
 $tmpval=(! empty($tmppart[1]) ? $tmppart[1] : '')+(! empty($tmppart[2]) ? $tmppart[2] : '')+(! empty($tmppart[3]) ? $tmppart[3] : '');
@@ -687,7 +687,7 @@ div.divphotoref {
 div.statusref {
 	float: right;
 	padding-right: 12px;
-	margin-top: 7px;
+	margin-top: 8px;
 	margin-bottom: 10px;
 }
 img.photoref {

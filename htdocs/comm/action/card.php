@@ -140,7 +140,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes')
 {
 	if (1 == 0 && ! GETPOST('clone_content') && ! GETPOST('clone_receivers'))
 	{
-		setEventMessage($langs->trans("NoCloneOptionsSpecified"), 'errors');
+		setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
 	}
 	else
 	{
@@ -151,7 +151,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes')
 				header("Location: " . $_SERVER['PHP_SELF'] . '?id=' . $result);
 				exit();
 			} else {
-				setEventMessage($object->error, 'errors');
+				setEventMessages($object->error, $object->errors, 'errors');
 				$action = '';
 			}
 		}
@@ -347,7 +347,7 @@ if ($action == 'add')
 				$db->rollback();
 				$langs->load("errors");
 				$error=$langs->trans($object->error);
-				setEventMessage($error,'errors');
+				setEventMessages($error, null, 'errors');
 				$action = 'create'; $donotclearsession=1;
 			}
 		}
@@ -551,8 +551,7 @@ if ($action == 'mupdate')
         $result=$object->update($user);
         if ($result < 0)
         {
-            setEventMessage($object->error,'errors');
-            setEventMessage($object->errors,'errors');
+            setEventMessages($object->error, $object->errors, 'errors');
         }
     }
     if (! empty($backtopage))

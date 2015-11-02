@@ -63,7 +63,7 @@ if ($action == 'setvalue' && $user->admin)
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_MAIL',GETPOST("fieldmail"),'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_PHONE',GETPOST("fieldphone"),'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_MOBILE',GETPOST("fieldmobile"),'chaine',0,'',$conf->entity)) $error++;
-  if (! dolibarr_set_const($db, 'LDAP_FIELD_SKYPE',GETPOST("fieldskype"),'chaine',0,'',$conf->entity)) $error++;
+    if (! dolibarr_set_const($db, 'LDAP_FIELD_SKYPE',GETPOST("fieldskype"),'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_FAX',GETPOST("fieldfax"),'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_DESCRIPTION',GETPOST("fielddescription"),'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_SID',GETPOST("fieldsid"),'chaine',0,'',$conf->entity)) $error++;
@@ -93,6 +93,8 @@ if ($action == 'setvalue' && $user->admin)
  * Visu
  */
 
+$form=new Form($db);
+
 llxHeader('',$langs->trans("LDAPSetup"),'EN:Module_LDAP_En|FR:Module_LDAP|ES:M&oacute;dulo_LDAP');
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 
@@ -106,17 +108,18 @@ if (! function_exists("ldap_connect"))
 	setEventMessages($langs->trans("LDAPFunctionsNotAvailableOnPHP"), null, 'errors');
 }
 
+
+print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=setvalue">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+
+
 dol_fiche_head($head, 'users', $langs->trans("LDAPSetup"));
 
 print $langs->trans("LDAPDescUsers").'<br>';
 print '<br>';
 
 
-print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=setvalue">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
-
-$form=new Form($db);
 
 print '<table class="noborder" width="100%">';
 $var=true;
@@ -141,8 +144,7 @@ print '</td><td>'.$langs->trans("LDAPUserObjectClassListExample").'</td>';
 print '<td>&nbsp;</td>';
 print '</tr>';
 
-// Filtre
-//Utilise pour filtrer la recherche
+// Filter, used to filter search
 $var=!$var;
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFilterConnection").'</td><td>';
 print '<input size="48" type="text" name="filterconnection" value="'.$conf->global->LDAP_FILTER_CONNECTION.'">';
@@ -281,15 +283,15 @@ print '</td><td>'.$langs->trans("LDAPFieldSidExample").'</td>';
 print '<td align="right"><input type="radio" name="key" value="LDAP_FIELD_SID"'.(($conf->global->LDAP_KEY_USERS && $conf->global->LDAP_KEY_USERS==$conf->global->LDAP_FIELD_SID)?' checked':'')."></td>";
 print '</tr>';
 
-$var=!$var;
-print '<tr '.$bc[$var].'><td colspan="4" align="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td></tr>';
 print '</table>';
 
-print '</form>';
-
-print '</div>';
-
 print info_admin($langs->trans("LDAPDescValues"));
+
+dol_fiche_end();
+
+print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div>';
+
+print '</form>';
 
 
 /*
@@ -392,7 +394,7 @@ if (function_exists("ldap_connect"))
 				$conf->global->LDAP_FIELD_PASSWORD_CRYPTED,
 				$conf->global->LDAP_FIELD_PHONE,
 				$conf->global->LDAP_FIELD_FAX,
-        $conf->global->LDAP_FIELD_SKYPE,
+        		$conf->global->LDAP_FIELD_SKYPE,
 				$conf->global->LDAP_FIELD_MOBILE,
 				$conf->global->LDAP_FIELD_MAIL,
 				$conf->global->LDAP_FIELD_TITLE,
