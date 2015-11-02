@@ -51,19 +51,22 @@ if ($action == 'print_file' and $user->rights->printing->read)
                     $module = 'fournisseur';
                     $subdir = 'commande';
                 }
-                $errorprint = $printer->print_file(GETPOST('file', 'alpha'), $module, $subdir);
-                //if ($errorprint < 0) {
-                //    setEventMessage($interface->errors, 'errors');
-                //}
-                if ($errorprint=='') {
-                    setEventMessage($langs->trans("FileWasSentToPrinter", basename(GETPOST('file'))).' '.$langs->trans("ViaModule").' '.$printer->name);
+                $ret = $printer->print_file(GETPOST('file', 'alpha'), $module, $subdir);
+                if ($ret > 0) {
+                    //print '<pre>'.print_r($printer->errors, true).'</pre>';
+                    setEventMessages($printer->error, $printer->errors, 'errors');
+                }
+                if ($ret==0) {
+                    //print '<pre>'.print_r($printer->errors, true).'</pre>';
+                    setEventMessages($printer->error, $printer->errors);
+                    setEventMessages($langs->trans("FileWasSentToPrinter", basename(GETPOST('file'))).' '.$langs->trans("ViaModule").' '.$printer->name, null);
                     $printed++;
                 }
             }
         }
-        if ($printed==0) setEventMessage($langs->trans("NoActivePrintingModuleFound"));
+        if ($printed==0) setEventMessages($langs->trans("NoActivePrintingModuleFound"), null, 'warnings');
     } else {
-        setEventMessage($langs->trans("NoModuleFound"), 'warning');
+        setEventMessages($langs->trans("NoModuleFound"), null, 'warnings');
     }
     $action = '';
 }

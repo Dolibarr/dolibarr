@@ -25,6 +25,7 @@ PEAR Mail_MIME         1.8.9         BSD                         Yes            
 odtPHP                 1.0.1         GPL-2+  b                   Yes             Library to build/edit ODT files
 PHPExcel               1.8.0         LGPL-2.1+                   Yes             Read/Write XLS files, read ODS files
 php-iban               1.4.7         LGPL-3+                     Yes             Parse and validate IBAN (and IIBAN) bank account information in PHP
+PHPoAuthLib            0.8.2         MIT License                 Yes             Library to provide oauth1 and oauth2 to different service
 PHPPrintIPP            1.3           GPL-2+                      Yes             Library to send print IPP requests
 Raven-php              0.12.1        MIT License                 Yes             Used for server-side error logging with Sentry logger
 Restler                3.0           LGPL-3+                     Yes             Library to develop REST Web services
