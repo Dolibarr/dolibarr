@@ -30,7 +30,7 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *  Class to describe and activate module Direct Printing
+ *  Class to describe and activate module OAuth
  */
 class modOauth extends DolibarrModules
 {
@@ -50,8 +50,8 @@ class modOauth extends DolibarrModules
         // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
         $this->name = preg_replace('/^mod/i','',get_class($this));
         // Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
-        $this->description = "Enable Oauth.";
-        $this->version = 'dolibarr';    // 'development' or 'experimental' or 'dolibarr' or version
+        $this->description = "Enable OAuth authentication";
+        $this->version = 'development';    // 'development' or 'experimental' or 'dolibarr' or version
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
         // Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
         $this->special = 1;
@@ -93,7 +93,7 @@ class modOauth extends DolibarrModules
         // $this->rights[$r][5]     Niveau 2 pour nommer permission dans code
 
         $r++;
-        $this->rights[$r][0] = 66001;
+        $this->rights[$r][0] = 66000;
         $this->rights[$r][1] = 'OauthAccess';
         $this->rights[$r][2] = 'r';
         $this->rights[$r][3] = 1;
