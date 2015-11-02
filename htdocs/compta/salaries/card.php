@@ -296,10 +296,12 @@ if ($action == 'create')
 	if (! empty($conf->banque->enabled))
 	{
 		// Number
-		print '<tr><td><label for="num_payment">'.$langs->trans('Numero');
-		print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
-		print '</label></td>';
-		print '<td><input name="num_payment" id="num_payment" type="text" value="'.GETPOST("num_payment").'"></td></tr>'."\n";
+		print '<tr><td>';
+		print fieldLabel('Numero','number',0);
+		print '&nbsp;';
+		print '<em>('.fieldLabel('ChequeOrTransferNumber','number',0).')</em></td><td>';
+		print '<input name="num_payment" id="number" type="text" value="'.GETPOST("num_payment").'">';
+		print '</td></tr>';
 	}
 
 	// Other attributes
