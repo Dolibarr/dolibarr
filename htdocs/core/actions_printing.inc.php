@@ -59,9 +59,9 @@ if ($action == 'print_file' and $user->rights->printing->read)
                 }
             }
         }
-        if ($printed==0) setEventMessages($langs->trans("NoActivePrintingModuleFound"), null, 'warning');
+        if ($printed==0) setEventMessages($langs->trans("NoActivePrintingModuleFound"), null, 'warnings');
     } else {
-        setEventMessages($langs->trans("NoModuleFound"), null, 'warning');
+        setEventMessages($langs->trans("NoModuleFound"), null, 'warnings');
     }
     $action = '';
 }
