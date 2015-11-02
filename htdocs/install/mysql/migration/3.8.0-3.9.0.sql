@@ -71,7 +71,6 @@ ALTER TABLE llx_contrat ADD COLUMN ref_customer varchar(30);
 ALTER TABLE llx_commande ADD COLUMN fk_warehouse integer DEFAULT NULL after fk_shipping_method;
 
 ALTER TABLE llx_ecm_directories MODIFY COLUMN fullpath varchar(750);
-
 ALTER TABLE llx_ecm_directories DROP INDEX idx_ecm_directories;
 ALTER TABLE llx_ecm_directories ADD UNIQUE INDEX uk_ecm_directories (label, fk_parent, entity);
 --ALTER TABLE llx_ecm_directories ADD UNIQUE INDEX uk_ecm_directories_fullpath(fullpath);
@@ -134,12 +133,12 @@ CREATE TABLE IF NOT EXISTS llx_c_hrm_function
 INSERT INTO llx_c_hrm_function (rowid, pos, code, label, c_level, active) VALUES(1,  5, 'EXECBOARD', 'Executive board', 0, 1);
 INSERT INTO llx_c_hrm_function (rowid, pos, code, label, c_level, active) VALUES(2, 10, 'MANAGDIR', 'Managing director', 1, 1);
 INSERT INTO llx_c_hrm_function (rowid, pos, code, label, c_level, active) VALUES(3, 15, 'ACCOUNTMANAG', 'Account manager', 0, 1);
-INSERT INTO llx_c_hrm_function (rowid, pos, code, label, c_level, active) VALUES(3, 20, 'ENGAGDIR', 'Engagement director', 1, 1);
-INSERT INTO llx_c_hrm_function (rowid, pos, code, label, c_level, active) VALUES(4, 25, 'DIRECTOR', 'Director', 1, 1);
-INSERT INTO llx_c_hrm_function (rowid, pos, code, label, c_level, active) VALUES(5, 30, 'PROJMANAG', 'Project manager', 0, 1);
-INSERT INTO llx_c_hrm_function (rowid, pos, code, label, c_level, active) VALUES(6, 35, 'DEPHEAD', 'Department head', 0, 1);
-INSERT INTO llx_c_hrm_function (rowid, pos, code, label, c_level, active) VALUES(7, 40, 'SECRETAR', 'Secretary', 0, 1);
-INSERT INTO llx_c_hrm_function (rowid, pos, code, label, c_level, active) VALUES(8, 45, 'EMPLOYEE', 'Department employee', 0, 1);
+INSERT INTO llx_c_hrm_function (rowid, pos, code, label, c_level, active) VALUES(4, 20, 'ENGAGDIR', 'Engagement director', 1, 1);
+INSERT INTO llx_c_hrm_function (rowid, pos, code, label, c_level, active) VALUES(5, 25, 'DIRECTOR', 'Director', 1, 1);
+INSERT INTO llx_c_hrm_function (rowid, pos, code, label, c_level, active) VALUES(6, 30, 'PROJMANAG', 'Project manager', 0, 1);
+INSERT INTO llx_c_hrm_function (rowid, pos, code, label, c_level, active) VALUES(7, 35, 'DEPHEAD', 'Department head', 0, 1);
+INSERT INTO llx_c_hrm_function (rowid, pos, code, label, c_level, active) VALUES(8, 40, 'SECRETAR', 'Secretary', 0, 1);
+INSERT INTO llx_c_hrm_function (rowid, pos, code, label, c_level, active) VALUES(9, 45, 'EMPLOYEE', 'Department employee', 0, 1);
 
 CREATE TABLE IF NOT EXISTS llx_c_hrm_department
 (
@@ -255,3 +254,15 @@ ALTER TABLE llx_budget_lines ADD CONSTRAINT fk_budget_lines_budget FOREIGN KEY (
 ALTER TABLE llx_c_typent ADD COLUMN position integer NOT NULL DEFAULT 0;
 ALTER TABLE llx_c_forme_juridique ADD COLUMN position integer NOT NULL DEFAULT 0;
 ALTER TABLE llx_c_type_fees ADD COLUMN position integer NOT NULL DEFAULT 0;
+
+-- NEW Level multiprice generator based on per cent variations over base price
+CREATE TABLE llx_product_pricerules
+(
+    rowid INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    level INT NOT NULL, -- Which price level is this rule for?
+    fk_level INT NOT NULL, -- Price variations are made over price of X
+    var_percent FLOAT NOT NULL, -- Price variation over based price
+    var_min_percent FLOAT NOT NULL -- Min price discount over general price
+);
+ALTER TABLE llx_product ADD COLUMN price_autogen TINYINT(1) DEFAULT 0;
+ALTER TABLE llx_product_pricerules ADD CONSTRAINT unique_level UNIQUE (level);
