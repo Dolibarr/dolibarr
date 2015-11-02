@@ -371,7 +371,7 @@ print '<br>';
 $sql = "SELECT c.ref, c.fk_soc, ";
 $sql.= " cd.rowid as cid, cd.statut, cd.label, cd.fk_product, cd.description as note, cd.fk_contrat, cd.date_fin_validite,";
 $sql.= " s.nom as name,";
-$sql.= " p.rowid as pid, p.ref as pref, p.label as plabel, p.fk_product_type as ptype";
+$sql.= " p.rowid as pid, p.ref as pref, p.label as plabel, p.fk_product_type as ptype, p.entity as pentity";
 $sql.= " FROM (".MAIN_DB_PREFIX."contrat as c";
 $sql.= ", ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -413,6 +413,7 @@ if ($resql)
     		$productstatic->id=$obj->fk_product;
             $productstatic->type=$obj->ptype;
             $productstatic->ref=$obj->pref;
+			$productstatic->entity=$obj->pentity;
             print $productstatic->getNomUrl(1,'',20);
 		}
 		else
@@ -449,7 +450,7 @@ print '<br>';
 // Not activated services
 $sql = "SELECT c.ref, c.fk_soc, cd.rowid as cid, cd.statut, cd.label, cd.fk_product, cd.description as note, cd.fk_contrat,";
 $sql.= " s.nom as name,";
-$sql.= " p.rowid as pid, p.ref as pref, p.label as plabel, p.fk_product_type as ptype";
+$sql.= " p.rowid as pid, p.ref as pref, p.label as plabel, p.fk_product_type as ptype, p.entity as pentity";
 $sql.= " FROM (".MAIN_DB_PREFIX."contrat as c";
 $sql.= ", ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -493,6 +494,7 @@ if ($resql)
     		$productstatic->id=$obj->fk_product;
             $productstatic->type=$obj->ptype;
             $productstatic->ref=$obj->pref;
+			$productstatic->entity=$obj->pentity;
             print $productstatic->getNomUrl(1,'',20);
 		}
 		else
@@ -528,7 +530,7 @@ print '<br>';
 // Expired services
 $sql = "SELECT c.ref, c.fk_soc, cd.rowid as cid, cd.statut, cd.label, cd.fk_product, cd.description as note, cd.fk_contrat,";
 $sql.= " s.nom as name,";
-$sql.= " p.rowid as pid, p.ref as pref, p.label as plabel, p.fk_product_type as ptype";
+$sql.= " p.rowid as pid, p.ref as pref, p.label as plabel, p.fk_product_type as ptype, p.entity as pentity";
 $sql.= " FROM (".MAIN_DB_PREFIX."contrat as c";
 $sql.= ", ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -573,6 +575,7 @@ if ($resql)
     		$productstatic->id=$obj->fk_product;
             $productstatic->type=$obj->ptype;
             $productstatic->ref=$obj->pref;
+			$productstatic->entity=$obj->pentity;
             print $productstatic->getNomUrl(1,'',20);
 		}
 		else
