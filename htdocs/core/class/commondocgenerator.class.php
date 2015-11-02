@@ -75,6 +75,7 @@ abstract class CommonDocGenerator
             'myuser_mobile'=>$user->user_mobile,
             'myuser_email'=>$user->email,
         	'myuser_logo'=>$user->photo,
+        	'myuser_job'=>$user->job,
             'myuser_web'=>''	// url not exist in $user object
         );
     }
@@ -388,11 +389,16 @@ abstract class CommonDocGenerator
 		// Add vat by rates
 		foreach ($object->lines as $line)
 		{
+		    // $line->tva_tx format depends on database field accuraty, no reliable. This is kept for backward comaptibility 
 			if (empty($resarray[$array_key.'_total_vat_'.$line->tva_tx])) $resarray[$array_key.'_total_vat_'.$line->tva_tx]=0;
 			$resarray[$array_key.'_total_vat_'.$line->tva_tx]+=$line->total_tva;
 			$resarray[$array_key.'_total_vat_locale_'.$line->tva_tx]=price($resarray[$array_key.'_total_vat_'.$line->tva_tx]);
+		    // $vatformated is vat without not expected chars (so 20, or 8.5 or 5.99 for example)
+			$vatformated=vatrate($line->tva_tx);
+			if (empty($resarray[$array_key.'_total_vat_'.$vatformated])) $resarray[$array_key.'_total_vat_'.$vatformated]=0;
+			$resarray[$array_key.'_total_vat_'.$vatformated]+=$line->total_tva;
+			$resarray[$array_key.'_total_vat_locale_'.$vatformated]=price($resarray[$array_key.'_total_vat_'.$vatformated]);
 		}
-
 		// Retrieve extrafields
 		if (is_array($object->array_options) && count($object->array_options))
 		{

@@ -323,7 +323,7 @@ if ($action == 'add')
 				unset($_SESSION['assignedtouser']);
 
 				$moreparam='';
-				if ($user->id != $object->ownerid) $moreparam="usertodo=-1";	// We force to remove filter so created record is visible when going back to per user view.
+				if ($user->id != $object->userownerid) $moreparam="usertodo=-1";	// We force to remove filter so created record is visible when going back to per user view.
 
 				$db->commit();
 				if (! empty($backtopage))

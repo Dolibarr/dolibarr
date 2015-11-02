@@ -81,7 +81,6 @@ $year = GETPOST("year","int");
 $day_lim	= GETPOST('day_lim','int');
 $month_lim	= GETPOST('month_lim','int');
 $year_lim	= GETPOST('year_lim','int');
-$filter = GETPOST("filtre");
 
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter"))		// Both test must be present to be compatible with all browsers
 {
@@ -91,9 +90,9 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter"))		// Both
 	$search_company="";
 	$search_amount_no_tax="";
 	$search_amount_all_tax="";
+	$search_status="";
 	$year="";
 	$month="";
-	$filter="";
 }
 
 /*
@@ -146,15 +145,6 @@ if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc
 if ($socid)
 {
 	$sql .= " AND s.rowid = ".$socid;
-}
-if ($filter && $filter != -1)		// GETPOST('filtre') may be a string
-{
-	$filtrearr = explode(",", $filter);
-	foreach ($filtrearr as $fil)
-	{
-		$filt = explode(":", $fil);
-		$sql .= " AND " . $filt[0] . " = " . $filt[1];
-	}
 }
 
 if ($search_ref)
@@ -214,7 +204,7 @@ if ($search_amount_all_tax != '')
 
 if ($search_status != '')
 {
-	$sql.= " AND fac.fk_statut = '".$db->escape($search_status)."'";
+	$sql.= " AND fac.fk_statut = ".$search_status;
 }
 
 $nbtotalofrecords = 0;
@@ -248,7 +238,7 @@ if ($resql)
 	if ($search_company)      	$param.='&search_company='.urlencode($search_company);
 	if ($search_amount_no_tax)	$param.='&search_amount_no_tax='.urlencode($search_amount_no_tax);
 	if ($search_amount_all_tax)	$param.='&search_amount_all_tax='.urlencode($search_amount_all_tax);
-	if ($filter && $filter != -1) $param.='&filtre='.urlencode($filter);
+	if ($search_status >= 0)  	$param.="&search_status=".$search_status;
 
 	print_barre_liste($langs->trans("BillsSuppliers").($socid?" $soc->name.":""),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
@@ -305,8 +295,8 @@ if ($resql)
 	print '</td><td class="liste_titre" align="right">';
 	print '<input class="flat" type="text" size="6" name="search_amount_all_tax" value="'.$search_amount_all_tax.'">';
 	print '</td><td class="liste_titre" align="right">';
-	$liststatus=array('fac.fk_statut:0'=>$langs->trans("Draft"),'fac.fk_statut:1,paye:0'=>$langs->trans("Unpaid"), 'paye:1'=>$langs->trans("Paid"));
-	print $form->selectarray('filtre', $liststatus, $filter, 1);
+	$liststatus=array('0'=>$langs->trans("Draft"),'1'=>$langs->trans("Unpaid"), '2'=>$langs->trans("Paid"));
+	print $form->selectarray('filtre', $liststatus, $search_status, 1);
 	print '</td><td class="liste_titre" align="right">';
 	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';

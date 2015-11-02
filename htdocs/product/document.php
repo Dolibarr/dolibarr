@@ -70,8 +70,10 @@ if ($id > 0 || ! empty($ref))
 {
     $result = $object->fetch($id, $ref);
 
-    if (! empty($conf->product->enabled)) $upload_dir = $conf->product->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
-    elseif (! empty($conf->service->enabled)) $upload_dir = $conf->service->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
+    if (! empty($conf->product->enabled)) $upload_dir = $conf->product->multidir_output[$object->entity].'/';
+    elseif (! empty($conf->service->enabled)) $upload_dir = $conf->service->multidir_output[$object->entity].'/';
+	if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) $upload_dir.= get_exdir($object->id,2,0,0,$object,'product').$object->id."/photos";
+	else $upload_dir.= dol_sanitizeFileName($object->ref);
 }
 $modulepart='produit';
 

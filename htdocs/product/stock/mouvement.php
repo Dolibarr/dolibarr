@@ -164,7 +164,7 @@ $form=new Form($db);
 $formother=new FormOther($db);
 $formproduct=new FormProduct($db);
 
-$sql = "SELECT p.rowid, p.ref as product_ref, p.label as produit, p.fk_product_type as type,";
+$sql = "SELECT p.rowid, p.ref as product_ref, p.label as produit, p.fk_product_type as type, p.entity,";
 $sql.= " e.label as stock, e.rowid as entrepot_id, e.lieu,";
 $sql.= " m.rowid as mid, m.value, m.datem, m.fk_user_author, m.label, m.inventorycode, m.fk_origin, m.origintype,";
 $sql.= " m.batch,m.eatby,m.sellby,";
@@ -575,6 +575,7 @@ if ($resql)
         $productstatic->ref=$objp->product_ref;
         $productstatic->label=$objp->produit;
         $productstatic->type=$objp->type;
+        $productstatic->entity=$objp->entity;
         print $productstatic->getNomUrl(1,'',16);
         print "</td>\n";
         // Product label

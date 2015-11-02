@@ -86,7 +86,7 @@ if ($fourn_id)
 	$supplier->fetch($fourn_id);
 }
 
-$sql = "SELECT p.rowid, p.label, p.ref, p.fk_product_type,";
+$sql = "SELECT p.rowid, p.label, p.ref, p.fk_product_type, p.entity,";
 $sql.= " ppf.fk_soc, ppf.ref_fourn, ppf.price as price, ppf.quantity as qty, ppf.unitprice,";
 $sql.= " s.rowid as socid, s.nom as name";
 $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
@@ -212,6 +212,7 @@ if ($resql)
 		$productstatic->id=$objp->rowid;
 		$productstatic->ref=$objp->ref;
 		$productstatic->type=$objp->fk_product_type;
+		$productstatic->entity=$objp->entity;
 		print $productstatic->getNomUrl(1,'supplier');
 		print '</td>';
 

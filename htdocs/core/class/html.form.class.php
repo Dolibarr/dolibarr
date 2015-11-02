@@ -3233,7 +3233,7 @@ class Form
             if (! empty($more)) {
             	$formconfirm.= '<div class="confirmquestions">'.$more.'</div>';
             }
-            $formconfirm.= ($question ? '<div class="confirmmessage"'.img_help('','').' '.$question . '</div>': '');
+            $formconfirm.= ($question ? '<div class="confirmmessage">'.img_help('','').' '.$question . '</div>': '');
             $formconfirm.= '</div>'."\n";
 
             $formconfirm.= "\n<!-- begin ajax form_confirm page=".$page." -->\n";
@@ -5135,9 +5135,10 @@ class Form
      * 		@param	int			$height			Height of photo (auto if 0)
      * 		@param	int			$caneditfield	Add edit fields
      * 		@param	string		$cssclass		CSS name to use on img for photo
+     * 		@param	string		$imagesize		'mini', 'small' or '' (original)
      * 	  	@return string    					HTML code to output photo
      */
-    static function showphoto($modulepart, $object, $width=100, $height=0, $caneditfield=0, $cssclass='photowithmargin')
+    static function showphoto($modulepart, $object, $width=100, $height=0, $caneditfield=0, $cssclass='photowithmargin', $imagesize='')
     {
         global $conf,$langs;
 
@@ -5156,7 +5157,12 @@ class Form
         else if ($modulepart=='userphoto')
         {
             $dir=$conf->user->dir_output;
-            if ($object->photo) $file=get_exdir($id, 2, 0, 0, $object, 'user').$object->photo;
+            if (! empty($object->photo))
+            {
+                if ((string) $imagesize == 'mini') $file=get_exdir($id, 2, 0, 0, $object, 'user').getImageFileNameForSize($object->photo, '_mini');
+                else if ((string) $imagesize == 'small') $file=get_exdir($id, 2, 0, 0, $object, 'user').getImageFileNameForSize($object->photo, '_small');
+                else $file=get_exdir($id, 2, 0, 0, $object, 'user').$object->photo;
+            }
             if (! empty($conf->global->MAIN_OLD_IMAGE_LINKS)) $altfile=$object->id.".jpg";	// For backward compatibility
             $email=$object->email;
         }
