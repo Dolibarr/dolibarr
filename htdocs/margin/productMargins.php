@@ -162,7 +162,7 @@ if (! empty($conf->global->DISPLAY_MARK_RATES)) {
 print "</table>";
 print '</form>';
 
-$sql = "SELECT p.label, p.rowid, p.fk_product_type, p.ref,";
+$sql = "SELECT p.label, p.rowid, p.fk_product_type, p.ref, p.entity as pentity,";
 if ($id > 0) $sql.= " d.fk_product,";
 if ($id > 0) $sql.= " f.rowid as facid, f.facnumber, f.total as total_ht, f.datef, f.paye, f.fk_statut as statut,";
 $sql.= " sum(d.total_ht) as selling_price,";
@@ -264,6 +264,7 @@ if ($result)
 				$product_static->id=$objp->rowid;
 				$product_static->ref=$objp->ref;
 				$product_static->label=$objp->label;
+				$product_static->entity=$objp->pentity;
 				$text=$product_static->getNomUrl(1);
 				print $text.= ' - '.$objp->label;
 				print "</td>\n";

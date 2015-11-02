@@ -980,6 +980,7 @@ Delays_MAIN_DELAY_CUSTOMER_BILLS_UNPAYED=Tolerence delay (in days) before alert 
 Delays_MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE=Tolerance delay (in days) before alert on pending bank reconciliation
 Delays_MAIN_DELAY_MEMBERS=Tolerance delay (in days) before alert on delayed membership fee
 Delays_MAIN_DELAY_CHEQUES_TO_DEPOSIT=Tolerance delay (in days) before alert for cheques deposit to do
+Delays_MAIN_DELAY_EXPENSEREPORTS=Tolerance delay (in days) before alert for expense reports to approve
 SetupDescription1=All parameters available in the setup area allow you to setup Dolibarr before starting using it.
 SetupDescription2=The 2 most important setup steps are the 2 first ones in the left setup menu, this means Company/foundation setup page and Modules setup page:
 SetupDescription3=Parameters in menu <a href="%s">Setup -> Company/foundation</a> are required because input information is used on Dolibarr displays and to modify Dolibarr behaviour (for example for features related to your country).
@@ -1117,6 +1118,9 @@ EmptyNumRefModelDesc=The code is free. This code can be modified at any time.
 ##### Module password generation
 PasswordGenerationStandard=Return a password generated according to internal Dolibarr algorithm: 8 characters containing shared numbers and characters in lowercase.
 PasswordGenerationNone=Do not suggest any generated password. Password must be type in manually.
+PasswordGenerationPerso=Return a password according to your personally defined configuration.
+SetupPerso=According to your configuration
+PasswordPatternDesc=Password pattern description
 ##### Users setup #####
 UserGroupSetup=Users and groups module setup
 GeneratePassword=Suggest a generated password

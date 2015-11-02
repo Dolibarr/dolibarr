@@ -288,7 +288,7 @@ $sql = $sql_select;
 $sql.= ' d.description as description,';
 if ($type_element != 'fichinter' && $type_element != 'contract') $sql.= ' d.label, d.fk_product as product_id, d.fk_product as fk_product, d.info_bits, d.date_start, d.date_end, d.qty, d.qty as prod_qty,';
 if ($type_element == 'contract') $sql.= ' d.label, d.fk_product as product_id, d.fk_product as fk_product, d.info_bits, d.date_ouverture as date_start, d.date_cloture as date_end, d.qty, d.qty as prod_qty,';
-if ($type_element != 'fichinter') $sql.= ' p.ref as ref, p.rowid as prod_id, p.rowid as fk_product, p.fk_product_type as prod_type, p.fk_product_type as fk_product_type,';
+if ($type_element != 'fichinter') $sql.= ' p.ref as ref, p.rowid as prod_id, p.rowid as fk_product, p.fk_product_type as prod_type, p.fk_product_type as fk_product_type, p.entity as pentity,';
 $sql.= " s.rowid as socid ";
 if ($type_element != 'fichinter') $sql.= ", p.ref as prod_ref, p.label as product_label";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".$tables_from;
@@ -405,6 +405,7 @@ if ($sql_select)
 			$product_static->type=$objp->fk_product_type;
 			$product_static->id=$objp->fk_product;
 			$product_static->ref=$objp->ref;
+			$product_static->entity=$objp->pentity;
 			$text=$product_static->getNomUrl(1);
 		}
 
