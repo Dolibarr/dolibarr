@@ -1391,6 +1391,8 @@ abstract class CommonObject
     		if ($this->db->query($sql))
     		{
     			$this->mode_reglement_id = $id;
+    			// for supplier
+    			if (get_class($this) == 'Fournisseur') $this->mode_reglement_supplier_id = $id;
     			return 1;
     		}
     		else
@@ -1431,6 +1433,8 @@ abstract class CommonObject
     		if ($this->db->query($sql))
     		{
     			$this->cond_reglement_id = $id;
+    			// for supplier
+    			if (get_class($this) == 'Fournisseur') $this->cond_reglement_supplier_id = $id;
     			$this->cond_reglement = $id;	// for compatibility
     			return 1;
     		}
