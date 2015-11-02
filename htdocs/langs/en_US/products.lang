@@ -69,6 +69,7 @@ ProductStatusNotOnBuyShort=Not for purchase
 UpdatePrice=Update price
 UpdateVAT=Update vat
 UpdateDefaultPrice=Update default price
+UpdateLevelPrices=Update prices for each level
 AppliedPricesFrom=Applied prices from
 SellingPrice=Selling price
 SellingPriceHT=Selling price (net of tax)
@@ -236,7 +237,7 @@ ProductsDashboard=Products/Services summary
 UpdateOriginalProductLabel=Modify original label
 HelpUpdateOriginalProductLabel=Allows to edit the name of the product
 MultipriceRules=Price level rules
-UseMultipriceRules=Use price level rules
+UseMultipriceRules=Use price level rules (defined into product module setup) to autocalculate prices of all other level according to first level
 PercentVariationOver=%% variation over %s
 PercentDiscountOver=%% discount over %s
 ### composition fabrication
