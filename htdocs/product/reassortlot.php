@@ -345,7 +345,7 @@ if ($resql)
 
 		// Warehouse
 		print '<td>';
-		$warehousetmp->fetch($obj->fk_entrepot);
+		$warehousetmp->fetch($objp->fk_entrepot);
 		print $warehousetmp->getNomUrl(1);
 		print '</td>';
 		print '<td align="center">'.$objp->batch.'</td>';
