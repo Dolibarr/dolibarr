@@ -320,7 +320,7 @@ foreach ($list as $key)
         $var = !$var;
         print '<tr '.$bc[$var].' class="value">';
         print '<td>'.$langs->trans("UseTheFollowingUrlAsRedirectURI").'</td>';
-        print '<td><textarea style="width: 80%">'.$redirect_uri.'</textarea>';
+        print '<td><input style="width: 80%" type"text" name="uri'.$key[0].'" value="'.$redirect_uri.'">';
         print '</td></tr>';
     }
     else
