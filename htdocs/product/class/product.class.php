@@ -1344,10 +1344,10 @@ class Product extends CommonObject
 	 *  @param		int		$level			0=standard, >0 = level if multilevel prices
 	 *  @param     	int		$newnpr         0=Standard vat rate, 1=Special vat rate for French NPR VAT
 	 *  @param     	int		$newpsq         1 if it has price by quantity
-	 * @param int $ignore_autogen Used to avoid infinite loops
+	 *  @param 		int 	$ignore_autogen Used to avoid infinite loops
 	 * 	@return		int						<0 if KO, >0 if OK
 	 */
-	function updatePrice($newprice, $newpricebase, $user, $newvat='',$newminprice='', $level=0, $newnpr=0, $newpsq=0, $ignore_autogen = 0)
+	function updatePrice($newprice, $newpricebase, $user, $newvat='',$newminprice='', $level=0, $newnpr=0, $newpsq=0, $ignore_autogen=0)
 	{
 		global $conf,$langs;
 
@@ -1362,9 +1362,10 @@ class Product extends CommonObject
 		// Check parameters
 		if ($newvat == '') $newvat=$this->tva_tx;
 
-		//If multiprices are enabled, then we check if the current product is subject to price autogeneration
-		//Price will be modified ONLY when the first one is the one that is being modified
-		if (!empty($conf->global->PRODUIT_MULTIPRICES) && !$ignore_autogen && $this->price_autogen && ($level == 1)) {
+		// If multiprices are enabled, then we check if the current product is subject to price autogeneration
+		// Price will be modified ONLY when the first one is the one that is being modified
+		if (!empty($conf->global->PRODUIT_MULTIPRICES) && !$ignore_autogen && $this->price_autogen && ($level == 1)) 
+		{
 			return $this->generateMultiprices($user, $newprice, $newpricebase, $newvat, $newnpr, $newpsq);
 		}
 
@@ -4024,6 +4025,7 @@ class Product extends CommonObject
 	{
 		global $conf, $db;
 
+		// FIXME USing * into select is forbidden
 		$sql = "SELECT * FROM ".MAIN_DB_PREFIX."product_pricerules";
 		$query = $db->query($sql);
 

@@ -24,7 +24,7 @@ StartDate=Start date
 EndDate=End date
 Launch=Start
 ForceBuyingPriceIfNull=Force buying price if null
-ForceBuyingPriceIfNullDetails=if "ON", margin will be zero on line (buying price = selling price), otherwise ("OFF"), marge will be equal to selling price (buying price = 0)
+ForceBuyingPriceIfNullDetails=If cost/buy price not defined, and this option "ON", margin will be zero on line (buying price = selling price), otherwise ("OFF"), marge will be equal to suggested default.
 MARGIN_METHODE_FOR_DISCOUNT=Margin method for global discounts
 UseDiscountAsProduct=As a product
 UseDiscountAsService=As a service

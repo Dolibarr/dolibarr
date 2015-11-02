@@ -641,7 +641,7 @@ div.divphotoref {
 div.statusref {
 	float: right;
 	padding-right: 12px;
-	margin-top: 6px;
+	margin-top: 7px;
 	margin-bottom: 10px;
 }
 img.photoref {

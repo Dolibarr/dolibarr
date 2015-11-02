@@ -133,18 +133,6 @@ function product_prepare_head($object)
 	$head[$h][2] = 'documents';
 	$h++;
 
-
-	// More tabs from canvas
-	// TODO Is this still used ?
-	if (isset($object->onglets) && is_array($object->onglets))
-	{
-		foreach ($object->onglets as $onglet)
-		{
-			$head[$h] = $onglet;
-			$h++;
-		}
-	}
-
     complete_head_from_modules($conf,$langs,$object,$head,$h,'product', 'remove');
 
 	return $head;
@@ -167,7 +155,8 @@ function product_admin_prepare_head()
 	$head[$h][2] = 'general';
 	$h++;
 
-	if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
+	if (!empty($conf->global->PRODUIT_MULTIPRICES) && ! empty($conf->global->PRODUIT_MULTIPRICES_ALLOW_AUTOCALC_PRICELEVEL))
+	{
 		$head[$h] = array(
 			0 => DOL_URL_ROOT."/product/admin/price_rules.php",
 			1 => $langs->trans('MultipriceRules'),

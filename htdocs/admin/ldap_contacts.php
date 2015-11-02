@@ -92,6 +92,8 @@ if ($action == 'setvalue' && $user->admin)
  * View
  */
 
+$form=new Form($db);
+
 llxHeader('',$langs->trans("LDAPSetup"),'EN:Module_LDAP_En|FR:Module_LDAP|ES:M&oacute;dulo_LDAP');
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 
@@ -113,8 +115,6 @@ print '<br>';
 
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=setvalue">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-
-$form=new Form($db);
 
 print '<table class="noborder" width="100%">';
 $var=true;
@@ -263,16 +263,16 @@ print '</td><td>&nbsp;</td>';
 print '<td align="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_COUNTRY"'.($conf->global->LDAP_KEY_CONTACTS && $conf->global->LDAP_KEY_CONTACTS==$conf->global->LDAP_CONTACT_FIELD_COUNTRY?' checked':'')."></td>";
 print '</tr>';
 
-
-$var=!$var;
-print '<tr '.$bc[$var].'><td colspan="4" align="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td></tr>';
 print '</table>';
+
+print info_admin($langs->trans("LDAPDescValues"));
+
+dol_fiche_end();
+
+print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div>';
 
 print '</form>';
 
-print '</div>';
-
-print info_admin($langs->trans("LDAPDescValues"));
 
 /*
  * Test de la connexion

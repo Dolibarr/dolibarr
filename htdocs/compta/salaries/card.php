@@ -201,7 +201,11 @@ if ($id)
 	}
 }
 
-// Formulaire saisie salaire
+/* ************************************************************************** */
+/*                                                                            */
+/* create mode                                                                */
+/*                                                                            */
+/* ************************************************************************** */
 if ($action == 'create')
 {
 	$year_current = strftime("%Y",dol_now());
@@ -231,50 +235,64 @@ if ($action == 'create')
 	
 	print '<table class="border" width="100%">';
 
-	print "<tr>";
-	print '<td class="fieldrequired"><label for="datep">'.$langs->trans("DatePayment").'</label></td><td>';
+	// Date payment
+	print '<tr><td>';
+	print fieldLabel('DatePayment','datep',1).'</td><td>';
 	print $form->select_date((empty($datep)?-1:$datep),"datep",'','','','add',1,1);
 	print '</td></tr>';
 
-	print '<tr><td><label for="datev">'.$langs->trans("DateValue").'</label></td><td>';
+	// Date value for bank
+	print '<tr><td>';
+	print fieldLabel('DateValue','datev',0).'</td><td>';
 	print $form->select_date((empty($datev)?-1:$datev),"datev",'','','','add',1,1);
 	print '</td></tr>';
 
 	// Employee
-	print "<tr>";
-	print '<td class="fieldrequired"><label for="fk_user">'.$langs->trans("Employee").'</label></td><td>';
+	print '<tr><td>';
+	print fieldLabel('Employee','fk_user',1).'</td><td>';
 	print $form->select_dolusers(GETPOST('fk_user','int'),'fk_user',1);
 	print '</td></tr>';
 
 	// Label
-	print '<tr><td class="fieldrequired"><label for="label">'.$langs->trans("Label").'</label></td><td><input name="label" id="label" size="40" value="'.($_POST["label"]?$_POST["label"]:$langs->trans("SalaryPayment")).'"></td></tr>';
+	print '<tr><td>';
+	print fieldLabel('Label','label',1).'</td><td>';
+	print '<input name="label" id="label" size="40" value="'.($_POST["label"]?$_POST["label"]:$langs->trans("SalaryPayment")).'">';
+	print '</td></tr>';
 
-	print "<tr>";
-	print '<td class="fieldrequired"><label for="datesp">'.$langs->trans("DateStartPeriod").'</label></td><td>';
+	// Date start period
+	print '<tr><td>';
+	print fieldLabel('DateStartPeriod','datesp',1).'</td><td>';
 	print $form->select_date($datesp,"datesp",'','','','add');
 	print '</td></tr>';
 
-	print '<tr><td class="fieldrequired"><label for="dateep">'.$langs->trans("DateEndPeriod").'</label></td><td>';
+	// Date end period
+	print '<tr><td>';
+	print fieldLabel('DateEndPeriod','dateep',1).'</td><td>';
 	print $form->select_date($dateep,"dateep",'','','','add');
 	print '</td></tr>';
 
 	// Amount
-	print '<tr><td class="fieldrequired"><label for="amount">'.$langs->trans("Amount").'</label></td><td><input name="amount" id="amount" size="10" value="'.GETPOST("amount").'"></td></tr>';
+	print '<tr><td>';
+	print fieldLabel('Amount','amount',1).'</td><td>';
+	print '<input name="amount" id="amount" size="10" value="'.GETPOST("amount").'">';
+	print '</td></tr>';
 
 	// Bank
 	if (! empty($conf->banque->enabled))
 	{
-		print '<tr><td class="fieldrequired"><label for="selectaccountid">'.$langs->trans("Account").'</label></td><td>';
+		print '<tr><td>';
+		print fieldLabel('Account','selectaccountid',1).'</td><td>';
 		$form->select_comptes($_POST["accountid"],"accountid",0,'',1);  // Affiche liste des comptes courant
 		print '</td></tr>';
 	}
 
 	// Type payment
-	print '<tr><td class="fieldrequired"><label for="selectpaymenttype">'.$langs->trans("PaymentMode").'</label></td><td>';
+	print '<tr><td>';
+	print fieldLabel('PaymentMode','selectpaymenttype',1).'</td><td>';
 	$form->select_types_paiements(GETPOST("paymenttype"), "paymenttype");
-	print "</td>\n";
-	print "</tr>";
+	print '</td></tr>';
 
+	// Number
 	if (! empty($conf->banque->enabled))
 	{
 		// Number
@@ -304,7 +322,7 @@ if ($action == 'create')
 
 /* ************************************************************************** */
 /*                                                                            */
-/* Barre d'action                                                             */
+/* View mode                                                                  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -322,8 +340,8 @@ if ($id)
 	print $object->ref;
 	print '</td></tr>';
 
-	// Person
-	print '<tr><td>'.$langs->trans("Person").'</td><td>';
+	// Employee
+	print '<tr><td>'.$langs->trans("Employee").'</td><td>';
 	$usersal=new User($db);
 	$usersal->fetch($object->fk_user);
 	print $usersal->getNomUrl(1);

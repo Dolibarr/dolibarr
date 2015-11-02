@@ -716,28 +716,30 @@ if (! $action || $action == 'delete' || $action == 'showlog_customer_price' || $
 {
 	print "\n" . '<div class="tabsAction">' . "\n";
 
-	if (empty($conf->global->PRODUIT_MULTIPRICES))
+	if (empty($conf->global->PRODUIT_MULTIPRICES))	// For everyone, except multiprices
 	{
     	if ($user->rights->produit->creer || $user->rights->service->creer) {
     		print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?action=edit_price&amp;id=' . $object->id . '">' . $langs->trans("UpdateDefaultPrice") . '</a></div>';
     	}
 	}
-	else
+
+	if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
+	{
+	    if ($user->rights->produit->creer || $user->rights->service->creer) {
+	 		print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=add_customer_price&amp;id=' . $object->id . '">' . $langs->trans("AddCustomerPrice") . '</a></div>';
+	  	}
+	}
+	
+	if (! empty($conf->global->PRODUIT_MULTIPRICES))
 	{
 	    if ($user->rights->produit->creer || $user->rights->service->creer) {
     		print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?action=edit_vat&amp;id=' . $object->id . '">' . $langs->trans("UpdateVAT") . '</a></div>';
     	}
 	    
 	    if ($user->rights->produit->creer || $user->rights->service->creer) {
-    		print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?action=edit_price&amp;id=' . $object->id . '">' . $langs->trans("UpdateDefaultPrice") . '</a></div>';
+    		print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?action=edit_price&amp;id=' . $object->id . '">' . $langs->trans("UpdateLevelPrices") . '</a></div>';
     	}
 	}
-    if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
-    {
-        if ($user->rights->produit->creer || $user->rights->service->creer) {
-    		print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=add_customer_price&amp;id=' . $object->id . '">' . $langs->trans("AddCustomerPrice") . '</a></div>';
-    	}
-    }
     
 	print "\n</div>\n";
 }
@@ -912,11 +914,16 @@ if ($action == 'edit_price' && ($user->rights->produit->creer || $user->rights->
 		</script>
 		<?php
 
+		if (! empty($conf->global->PRODUIT_MULTIPRICES) && ! empty($conf->global->PRODUIT_MULTIPRICES_ALLOW_AUTOCALC_PRICELEVEL))
+		{
+			print $langs->trans('UseMultipriceRules'). ' <input type="checkbox" id="usePriceRules" name="usePriceRules" '.($object->price_autogen ? 'checked' : '').'><br><br>';
+		}
+		
 		for($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i ++)
 		{
-		    if ($i > 1) print '<br>';
 		    
 			print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
+		    if ($i > 1) print '<br>';
 			print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
 			print '<input type="hidden" name="action" value="update_price">';
 			print '<input type="hidden" name="id" value="' . $object->id . '">';
@@ -928,9 +935,8 @@ if ($action == 'edit_price' && ($user->rights->produit->creer || $user->rights->
 			print '<table class="border" width="100%">';
 
 			// VAT
-			if (! empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL))
+			if (! empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL))	// This option is kept for backward compatibility but has no sense
 			{
-				print '<tr><td>' . $langs->trans('UseMultipriceRules'). '</td><td><input type="checkbox" id="usePriceRules" name="usePriceRules" '.($object->price_autogen ? 'checked' : '').'></td></tr>';
 				print '<tr><td>' . $langs->trans("VATRate") . '</td><td>';
 				print $form->load_tva("tva_tx_" . $i, $object->multiprices_tva_tx["$i"], $mysoc, '', $object->id);
 				print '</td></tr>';

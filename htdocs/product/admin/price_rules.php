@@ -1,6 +1,5 @@
 <?php
-
-/*
+/**
  * Copyright (C) 2015 Marcos García	<marcosgdf@gmail.com
  *
  * This program is free software; you can redistribute it and/or modify
@@ -15,6 +14,9 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * Page to set how to autocalculate price for each level when option
+ * PRODUCT_MULTIPRICE is on.
  */
 
 require '../../main.inc.php';
@@ -125,10 +127,16 @@ llxHeader('', $langs->trans('MultipriceRules'));
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($title,$linkback,'title_setup');
 
+
+
+print '<form method="POST">';
+
 $head = product_admin_prepare_head();
 dol_fiche_head($head, 'generator', $tab, 0, 'product');
 
-print load_fiche_titre($langs->trans('MultipriceRules'));
+print $langs->trans("MultiPriceRuleDesc").'<br><br>';
+
+print load_fiche_titre($langs->trans('MultipriceRules'), '', '');
 
 //Array that contains the number of prices available
 $price_options = array();
@@ -149,8 +157,6 @@ $genPriceOptions = function($level) use ($price_options) {
 };
 
 ?>
-
-<form method="post">
 
 	<table class="noborder">
 		<tr class="liste_titre">
@@ -184,13 +190,16 @@ $genPriceOptions = function($level) use ($price_options) {
 		<?php endfor ?>
 	</table>
 
-	<br>
+<?php 
 
-	<div style="text-align: center">
-		<input type="submit" value="<?php echo $langs->trans('Save') ?>" class="button">
-	</div>
-</form>
+dol_fiche_end();
 
-<?php
+print '<div style="text-align: center">
+		<input type="submit" value="'.$langs->trans('Save').'" class="button">
+	</div>';
+	
+print '</form>';
 
 llxFooter();
+
+$db->close();

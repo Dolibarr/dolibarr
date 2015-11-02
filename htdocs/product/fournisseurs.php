@@ -95,9 +95,14 @@ if (empty($reshook))
 	{
 		if ($rowid)
 		{
-			$result=$object->remove_product_fournisseur_price($rowid);
 			$action = '';
-			setEventMessage($langs->trans("PriceRemoved"));
+			$result=$product->remove_product_fournisseur_price($rowid);
+			if($result > 0){
+				setEventMessage($langs->trans("PriceRemoved"));
+			}else{
+				$error++;
+				setEventMessages($product->error, $product->errors, 'errors');
+			}
 		}
 	}
 
