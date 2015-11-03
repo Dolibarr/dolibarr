@@ -122,7 +122,7 @@ class dolReceiptPrinter extends Escpos
     }
 
     /**
-     * Constructor
+     * list printers
      *
      * @return  int                     0 if OK; >0 if KO
      */
@@ -146,6 +146,35 @@ class dolReceiptPrinter extends Escpos
             $this->errors[] = $this->db->lasterror;
         }
         $this->listprinters = $obj;
+        return $error;
+    }
+
+
+    /**
+     * List printers templates
+     *
+     * @return  int                     0 if OK; >0 if KO
+     */
+    function listPrintersTemplates()
+    {
+        global $conf;
+        $error = 0;
+        $line = 0;
+        $sql = 'SELECT rowid, name, template';
+        $sql.= ' FROM '.MAIN_DB_PREFIX.'printer_receipt_template';
+        $sql.= ' WHERE entity = '.$conf->entity;
+        $resql = $this->db->query($sql);
+        if ($resql) {
+            $num = $this->db->num_rows($resql);
+            while ($line < $num) {
+                $obj[] = $this->db->fetch_array($resql);
+                $line++;
+            }
+        } else {
+            $error++;
+            $this->errors[] = $this->db->lasterror;
+        }
+        $this->listprinterstemplates = $obj;
         return $error;
     }
 
@@ -243,7 +272,7 @@ class dolReceiptPrinter extends Escpos
     }
 
     /**
-     *  Function to Send Test äge to Printer
+     *  Function to Send Test page to Printer
      *
      *  @param    int       $printerid      Printer id
      *  @return  int                        0 if OK; >0 if KO
@@ -305,6 +334,27 @@ class dolReceiptPrinter extends Escpos
                 $error++;
             }
         }
+        return $error;
+    }
+
+    /**
+     *  Function to Print Receipt Ticket
+     *
+     *  @param   object    $object          order or invoice object
+     *  @param   int       $template        Template id
+     *  @param   int       $printerid       Printer id
+     *  @return  int                        0 if OK; >0 if KO
+     */
+    function SendToPrinter($object, $template, $printerid)
+    {
+        global $conf;
+        $error = 0;
+
+        // parse template
+
+
+        // print ticket
+
         return $error;
     }
 
