@@ -12,7 +12,7 @@ Dolibarr uses some external libraries released under different licenses. This is
 Component              Version       License                     GPL Compatible  Usage
 -------------------------------------------------------------------------------------
 PHP libraries:
-AdoDb-Date             0.33          Modified BSD License        Yes             Date convertion (not into rpm package)
+AdoDb-Date             0.36          Modified BSD License        Yes             Date convertion (not into rpm package)
 ChromePHP              4.1.0         Apache Software License 2.0 Yes             Return server log to chrome browser console
 CKEditor               4.3.3         LGPL-2.1+                   Yes             Editor WYSIWYG
 EvalMath               1.0           BSD                         Yes             Safe math expressions evaluation
