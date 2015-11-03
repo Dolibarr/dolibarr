@@ -239,6 +239,9 @@ if ($mode == 'config' && $user->admin)
                     case 4:
                         $connector = 'CONNECTOR_WINDOWS_PRINT';
                         break;
+                    case 5:
+                        $connector = 'CONNECTOR_JAVA';
+                        break;
                     default:
                         $connector = 'CONNECTOR_UNKNOWN';
                         break;

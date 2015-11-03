@@ -93,7 +93,7 @@ class modReceiptPrinter extends DolibarrModules
         // $this->rights[$r][5]     Niveau 2 pour nommer permission dans code
 
         $r++;
-        $this->rights[$r][0] = 67001;
+        $this->rights[$r][0] = 67000;
         $this->rights[$r][1] = 'ReceiptPrinter';
         $this->rights[$r][2] = 'r';
         $this->rights[$r][3] = 1;
@@ -120,4 +120,26 @@ class modReceiptPrinter extends DolibarrModules
 
 
     }
+
+
+    /**
+     *      Function called when module is enabled.
+     *      The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+     *      It also creates data directories
+     *
+     *      @param      string  $options    Options when enabling module ('', 'noboxes')
+     *      @return     int                 1 if OK, 0 if KO
+     */
+    function init($options='')
+    {
+        global $conf;
+        // Clean before activation
+        $this->remove($options);
+        $sql = array(
+            "CREATE TABLE IF NOT EXISTS llx_printer_receipt (rowid int(11) NOT NULL AUTO_INCREMENT, name varchar(128), fk_type int(11), parameter varchar(128), entity int(11), PRIMARY KEY (rowid)) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;",
+            "CREATE TABLE IF NOT EXISTS llx_printer_receipt_template (rowid int(11) NOT NULL AUTO_INCREMENT, name varchar(128), template text, entity int(11), PRIMARY KEY (rowid)) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;",
+            );
+        return $this->_init($sql,$options);
+    }
+
 }
