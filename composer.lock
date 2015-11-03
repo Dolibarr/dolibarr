@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "1c6ca041da94484642adcbde492ad50b",
+    "hash": "335eb7bd5c2eb116fd2da80b4f48e857",
     "packages": [
         {
             "name": "ccampbell/chromephp",
@@ -422,7 +422,7 @@
             "time": "2015-08-04 07:52:49"
         },
         {
-            "name": "tecnick.com/tcpdf",
+            "name": "tecnickcom/tcpdf",
             "version": "6.2.6",
             "source": {
                 "type": "git",
@@ -482,7 +482,6 @@
                 "pdf417",
                 "qrcode"
             ],
-            "abandoned": "tecnickcom/tcpdf",
             "time": "2015-01-28 18:51:40"
         }
     ],
