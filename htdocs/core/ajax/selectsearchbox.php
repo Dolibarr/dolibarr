@@ -99,13 +99,17 @@ if (! empty($conf->askpricesupplier->enabled) && empty($conf->global->MAIN_SEARC
 	$arrayresult['searchintosupplierpropal']=array('text'=>img_picto('','object_propal').' '.$langs->trans("SearchIntoSupplierProposals", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/askpricesupplier/list.php?sall='.urlencode($search_boxvalue));
 }
 
+if (! empty($conf->contrat->enabled) && empty($conf->global->MAIN_SEARCHFORM_CONTRACT_DISABLED) && $user->rights->contrat->lire)
+{
+	$arrayresult['searchintocontract']=array('text'=>img_picto('','object_contract').' '.$langs->trans("SearchIntoContracts", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/contrat/list.php?sall='.urlencode($search_boxvalue));
+}
 if (! empty($conf->ficheinter->enabled) && empty($conf->global->MAIN_SEARCHFORM_FICHINTER_DISABLED) && $user->rights->ficheinter->lire)
 {
 	$arrayresult['searchintointervention']=array('text'=>img_picto('','object_intervention').' '.$langs->trans("SearchIntoInterventions", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/fichinter/list.php?sall='.urlencode($search_boxvalue));
 }
-if (! empty($conf->contrat->enabled) && empty($conf->global->MAIN_SEARCHFORM_CONTRACT_DISABLED) && $user->rights->contrat->lire)
+if (! empty($conf->expensereport->enabled) && empty($conf->global->MAIN_SEARCHFORM_EXPENSEREPORT_DISABLED) && $user->rights->expensereport->lire)
 {
-	$arrayresult['searchintocontract']=array('text'=>img_picto('','object_contract').' '.$langs->trans("SearchIntoContracts", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/contrat/list.php?sall='.urlencode($search_boxvalue));
+	$arrayresult['searchintoexpensereport']=array('text'=>img_picto('','object_trip').' '.$langs->trans("SearchIntoExpenseReports", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/expensereport/list.php?sall='.urlencode($search_boxvalue));
 }
 
 

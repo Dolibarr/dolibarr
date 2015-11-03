@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2014 Frederic France      <frederic.france@free.fr>
+/* Copyright (C) 2013       Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2014-2015  Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/printing/lib/printing.lib.php';
 
 $langs->load("admin");
 $langs->load("printing");
+$langs->load("oauth");
 
 if (! $user->admin) accessforbidden();
 
@@ -50,7 +51,7 @@ if (!$mode) $mode='config';
 
 if (($mode == 'test' || $mode == 'setup') && empty($driver))
 {
-    setEventMessage($langs->trans('PleaseSelectaDriverfromList'));
+    setEventMessages($langs->trans('PleaseSelectaDriverfromList'), null);
     header("Location: ".$_SERVER['PHP_SELF'].'?mode=config');
     exit;
 }
@@ -68,7 +69,7 @@ if ($action == 'setconst' && $user->admin)
     if (! $error)
     {
         $db->commit();
-        setEventMessage($langs->trans("SetupSaved"));
+        setEventMessages($langs->trans("SetupSaved"), null);
     }
     else
     {
@@ -88,7 +89,7 @@ if ($action == 'setvalue' && $user->admin)
     if (! $error)
     {
         $db->commit();
-        setEventMessage($langs->trans("SetupSaved"));
+        setEventMessages($langs->trans("SetupSaved"), null);
     }
     else
     {
@@ -126,7 +127,9 @@ if ($mode == 'setup' && $user->admin)
     print '<tr class="liste_titre">';
     print '<th>'.$langs->trans("Parameters").'</th>';
     print '<th>'.$langs->trans("Value").'</th>';
+    print '<th>&nbsp;</th>';
     print "</tr>\n";
+    $submit_enabled=0;
 
     if (! empty($driver))
     {
@@ -136,17 +139,39 @@ if ($mode == 'setup' && $user->admin)
         $printer = new $classname($db);
         //print '<pre>'.print_r($printer, true).'</pre>';
         $i=0;
+        $submit_enabled=0;
         foreach ($printer->conf as $key)
         {
             $var=!$var;
-            print '<tr '.$bc[$var].'>';
-            print '<td'.($key['required']?' class=required':'').'>'.$langs->trans($key['varname']).'</td><td>';
-            print '<input size="32" type="'.(empty($key['type'])?'text':$key['type']).'" name="setupdriver['.$i.'][value]" value="'.$conf->global->{$key['varname']}.'"';
-            print isset($key['moreattributes'])?$key['moreattributes']:'';
-            print '>';
-            print '<input type="hidden" name="setupdriver['.$i.'][varname]" value="'.$key['varname'].'">';
-            print '&nbsp;'.($key['example']!=''?$langs->trans("Example").' : '.$key['example']:'');
-            print '</tr>';
+            switch ($key['type']) {
+                case "text":
+                case "password":
+                    print '<tr '.$bc[$var].'>';
+                    print '<td'.($key['required']?' class=required':'').'>'.$langs->trans($key['varname']).'</td>';
+                    print '<td><input size="32" type="'.(empty($key['type'])?'text':$key['type']).'" name="setupdriver['.$i.'][value]" value="'.$conf->global->{$key['varname']}.'"';
+                    print isset($key['moreattributes'])?' '.$key['moreattributes']:'';
+                    print '><input type="hidden" name="setupdriver['.$i.'][varname]" value="'.$key['varname'].'"></td>';
+                    print '<td>&nbsp;'.($key['example']!=''?$langs->trans("Example").' : '.$key['example']:'').'</td>';
+                    print '</tr>'."\n";
+                    break;
+                case "authlink":
+                    print '<tr '.$bc[$var].'>';
+                    print '<td>'.$langs->trans($key['varname']).'</td>';
+                    print '<td class="button"><a href="'.$key['link'].'">'.$langs->trans('RequestAccess').'</a></td>';
+                    print '<td>&nbsp;</td>';
+                    print '</tr>'."\n";
+                    break;
+                case "info":
+                    print '<tr '.$bc[$var].'>';
+                    print '<td'.($key['required']?' class=required':'').'>'.$langs->trans($key['varname']).'</td>';
+                    print '<td>'.$langs->trans($key['info']).'</td>';
+                    print '<td>&nbsp;</td>';
+                    print '</tr>'."\n";
+                    break;
+                case "submit":
+                    if ($key['enabled']) $submit_enabled=1;
+                    break;
+            }
             $i++;
         }
     } else {
@@ -154,13 +179,17 @@ if ($mode == 'setup' && $user->admin)
     }
 
     print '</table>';
+    
+    dol_fiche_end();
+    
     if (! empty($driver))
     {
-        print '<div class="center"><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Modify")).'"></center>';
+        if ($submit_enabled) {
+            print '<div class="center"><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Modify")).'"></div>';
+        }
     }
-    print '</form>';
-    dol_fiche_end();
 
+    print '</form>';
 }
 if ($mode == 'config' && $user->admin)
 {
@@ -230,7 +259,11 @@ if ($mode == 'test' && $user->admin)
         $printer = new $classname($db);
         //print '<pre>'.print_r($printer, true).'</pre>';
         if (count($printer->getlist_available_printers())) {
-            print $printer->listAvailablePrinters();
+            if ($printer->listAvailablePrinters()==0) {
+                print $printer->resprint;
+            } else {
+                setEventMessages($printer->error, $printer->errors, 'errors');
+            }
         }
         else {
             print $langs->trans('PleaseConfigureDriverfromList');

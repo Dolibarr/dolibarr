@@ -2541,7 +2541,8 @@ else if ($id > 0 || ! empty($ref))
 			$qualified_for_stock_change = $object->hasProductsOrServices(1);
 		}
 
-		if ($object->type != Facture::TYPE_DEPOSIT && ! empty($conf->global->STOCK_CALCULATE_ON_BILL) && $qualified_for_stock_change && $object->statut >= 1) {
+		if ($object->type != Facture::TYPE_DEPOSIT && ! empty($conf->global->STOCK_CALCULATE_ON_BILL) && $qualified_for_stock_change && $object->statut >= 1) 
+		{
 			$langs->load("stocks");
 			require_once DOL_DOCUMENT_ROOT . '/product/class/html.formproduct.class.php';
 			$formproduct = new FormProduct($db);
@@ -2731,17 +2732,19 @@ else if ($id > 0 || ! empty($ref))
 	}
 
 	// Clone confirmation
-	if ($action == 'clone') {
+	if ($action == 'clone') 
+	{
 		// Create an array for form
 		$formquestion = array(
 							// 'text' => $langs->trans("ConfirmClone"),
 							// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1)
-							array('type' => 'other','name' => 'socid','label' => $langs->trans("SelectThirdParty"),'value' => $form->select_company('', 'socid', '(s.client=1 OR s.client=2 OR s.client=3)', 1)));
+							array('type' => 'other','name' => 'socid','label' => $langs->trans("SelectThirdParty"),'value' => $form->select_company($object->socid, 'socid', '(s.client=1 OR s.client=2 OR s.client=3)', 1)));
 		// Paiement incomplet. On demande si motif = escompte ou autre
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?facid=' . $object->id, $langs->trans('CloneInvoice'), $langs->trans('ConfirmCloneInvoice', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	}
 
-	if (! $formconfirm) {
+	if (! $formconfirm) 
+	{
 		$parameters = array('lineid' => $lineid);
 		$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;

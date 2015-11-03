@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2014 Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2014-2015  Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,11 @@
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/printing/modules_printing.php';
+require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
+use OAuth\Common\Storage\Session;
+use OAuth\Common\Storage\DoliStorage;
+use OAuth\Common\Consumer\Credentials;
+use OAuth\OAuth2\Service\Google;
 
 /**
  *     Class to provide printing with Google Cloud Print
@@ -35,14 +40,16 @@ class printing_printgcp extends PrintingDriver
     var $picto = 'printer';
     var $active = 'PRINTING_PRINTGCP';
     var $conf = array();
-    var $login = '';
-    var $password = '';
-    var $authtoken = '';
+    var $google_id = '';
+    var $google_secret = '';
+    var $error;
+    var $errors = array();
     var $db;
 
-    const LOGIN_URL = 'https://www.google.com/accounts/ClientLogin';
-    const PRINTERS_SEARCH_URL = 'https://www.google.com/cloudprint/interface/search';
-    const PRINT_URL = 'https://www.google.com/cloudprint/interface/submit';
+    const LOGIN_URL = 'https://accounts.google.com/o/oauth2/token';
+    const PRINTERS_SEARCH_URL = 'https://www.google.com/cloudprint/search';
+    const PRINTERS_GET_JOBS = 'https://www.google.com/cloudprint/jobs';
+    const PRINT_URL = 'https://www.google.com/cloudprint/submit';
 
     /**
      *  Constructor
@@ -51,24 +58,84 @@ class printing_printgcp extends PrintingDriver
      */
     function __construct($db)
     {
-        global $conf;
+        global $conf, $dolibarr_main_url_root;
 
+        // Define $urlwithroot
+        $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+        $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
+        //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+        
         $this->db = $db;
-        $this->login = $conf->global->PRINTGCP_LOGIN;
-        $this->password = $conf->global->PRINTGCP_PASSWORD;
-        $this->authtoken = $conf->global->PRINTGCP_AUTHTOKEN;
-        $this->conf[] = array('varname'=>'PRINTGCP_LOGIN', 'required'=>1, 'example'=>'user@gmail.com', 'type'=>'text');
-        $this->conf[] = array('varname'=>'PRINTGCP_PASSWORD', 'required'=>1, 'example'=>'', 'type'=>'password');
+        $this->google_id = $conf->global->OAUTH_GOOGLE_ID;
+        $this->google_secret = $conf->global->OAUTH_GOOGLE_SECRET;
+        // Token storage
+        $storage = new DoliStorage($this->db, $this->conf);
+        //$storage->clearToken('Google');
+        // Setup the credentials for the requests
+        $credentials = new Credentials(
+            $this->google_id,
+            $this->google_secret,
+            $urlwithroot.'/core/modules/oauth/getgoogleoauthcallback.php'
+        );
+        $access = ($storage->hasAccessToken('Google')?'HasAccessToken':'NoAccessToken');
+        $serviceFactory = new \OAuth\ServiceFactory();
+        $apiService = $serviceFactory->createService('Google', $credentials, $storage, array());
+        $token_ok=true;
+        try {
+            $token = $storage->retrieveAccessToken('Google');
+        } catch (Exception $e) {
+            $this->errors[] = $e->getMessage();
+            $token_ok = false;
+        }
+        $expire = false;
+        // Is token expired or will token expire in the next 30 seconds
+        if ($token_ok) {
+            $expire = ($token->getEndOfLife() !== -9002 && $token->getEndOfLife() !== -9001 && time() > ($token->getEndOfLife() - 30));
+        }
+
+        // Token expired so we refresh it
+        if ($token_ok && $expire) {
+            try {
+                // il faut sauvegarder le refresh token car google ne le donne qu'une seule fois
+                $refreshtoken = $token->getRefreshToken();
+                $token = $apiService->refreshAccessToken($token);
+                $token->setRefreshToken($refreshtoken);
+                $storage->storeAccessToken('Google', $token);
+            } catch (Exception $e) {
+                $this->errors[] = $e->getMessage();
+            }
+        }
+        if (!$conf->oauth->enabled) {
+            $this->conf[] = array('varname'=>'PRINTGCP_INFO', 'info'=>'ModuleAuthNotActive', 'type'=>'info');
+        } else {
+         
+            if ($this->google_id != '' && $this->google_secret != '') {
+                $this->conf[] = array('varname'=>'PRINTGCP_INFO', 'info'=>'GoogleAuthConfigured', 'type'=>'info');
+                $this->conf[] = array('varname'=>'PRINTGCP_TOKEN_ACCESS', 'info'=>$access, 'type'=>'info');
+                if ($token_ok) {
+                    $refreshtoken = $token->getRefreshToken();
+                    $this->conf[] = array('varname'=>'PRINTGCP_TOKEN_REFRESH', 'info'=>((! empty($refreshtoken))?'Yes':'No'), 'type'=>'info');
+                    $this->conf[] = array('varname'=>'PRINTGCP_TOKEN_EXPIRED', 'info'=>($expire?'Yes':'No'), 'type'=>'info');
+                    $this->conf[] = array('varname'=>'PRINTGCP_TOKEN_EXPIRE_AT', 'info'=>(date("Y-m-d H:i:s", $token->getEndOfLife())), 'type'=>'info');
+                }
+                $this->conf[] = array('varname'=>'PRINTGCP_AUTHLINK', 'link'=>$urlwithroot.'/core/modules/oauth/getgoogleoauthcallback.php', 'type'=>'authlink');
+            } else {
+                $this->conf[] = array('varname'=>'PRINTGCP_INFO', 'info'=>'GoogleAuthNotConfigured', 'type'=>'info');
+            }
+        }
+        // do not display submit button
+        $this->conf[] = array('enabled'=>0, 'type'=>'submit');
     }
 
     /**
      *  Return list of available printers
      *
-     *  @return string                html list of printers
+     *  @return  int                     0 if OK, >0 if KO
      */
     function listAvailablePrinters()
     {
         global $bc, $conf, $langs;
+        $error = 0;
         $langs->load('printing');
         $var=true;
 
@@ -87,7 +154,7 @@ class printing_printgcp extends PrintingDriver
         $var = true;
         foreach ($list['available'] as $printer_det)
         {
-            $var=!$var;
+            $var = !$var;
             $html.= "<tr ".$bc[$var].">";
             $html.= '<td>'.$printer_det['name'].'</td>';
             $html.= '<td>'.$printer_det['displayName'].'</td>';
@@ -107,52 +174,73 @@ class printing_printgcp extends PrintingDriver
             $html.= '</td>';
             $html.= '</tr>'."\n";
         }
-
-        return $html;
+        $this->resprint = $html;
+        return $error;
     }
+
 
     /**
      *  Return list of available printers
      *
-     *  @return array                list of printers
+     *  @return array      list of printers
      */
     function getlist_available_printers()
     {
-        global $conf,$db;
-        if ($this->authtoken=='') {
-            $this->GoogleLogin();
-        }
-        $ret['available'] = $this->get_printer_detail();
-        return $ret;
-    }
-
-    /**
-     *  List of printers
-     *
-     *  @return array      list of printers
-     */
-    function get_printer_detail()
-    {
+        // Token storage
+        $storage = new DoliStorage($this->db, $this->conf);
+        // Setup the credentials for the requests
+        $credentials = new Credentials(
+            $this->google_id,
+            $this->google_secret,
+            DOL_MAIN_URL_ROOT.'/core/modules/oauth/getgoogleoauthcallback.php'
+        );
+        $serviceFactory = new \OAuth\ServiceFactory();
+        $apiService = $serviceFactory->createService('Google', $credentials, $storage, array());
         // Check if we have auth token
-        if(empty($this->authtoken)) {
-            // We don't have auth token so throw exception
-            throw new Exception("Please first login to Google by calling loginToGoogle function");
+        $token_ok=true;
+        try {
+            $token = $storage->retrieveAccessToken('Google');
+        } catch (Exception $e) {
+            $this->errors[] = $e->getMessage();
+            $token_ok = false;
         }
-        // Prepare auth headers with auth token
-        $authheaders = array("Authorization: GoogleLogin auth=".$this->authtoken,
-                             "GData-Version: 3.0",
-                            );
-        // Make Http call to get printers added by user to Google Cloud Print
-        $responsedata = $this->makeCurl(self::PRINTERS_SEARCH_URL,array(),$authheaders);
-        $printers = json_decode($responsedata);
+        $expire = false;
+        // Is token expired or will token expire in the next 30 seconds
+        if ($token_ok) {
+            $expire = ($token->getEndOfLife() !== -9002 && $token->getEndOfLife() !== -9001 && time() > ($token->getEndOfLife() - 30));
+        }
+
+        // Token expired so we refresh it
+        if ($token_ok && $expire) {
+            try {
+                // il faut sauvegarder le refresh token car google ne le donne qu'une seule fois
+                $refreshtoken = $token->getRefreshToken();
+                $token = $apiService->refreshAccessToken($token);
+                $token->setRefreshToken($refreshtoken);
+                $storage->storeAccessToken('Google', $token);
+            } catch (Exception $e) {
+                $this->errors[] = $e->getMessage();
+            }
+        }
+        // Send a request with api
+        try {
+            $response = $apiService->request(self::PRINTERS_SEARCH_URL);
+        } catch (Exception $e) {
+            $this->errors[] = $e->getMessage();
+            print '<pre>'.print_r($e->getMessage(),true).'</pre>';
+        }
+        //print '<tr><td><pre>'.print_r($response, true).'</pre></td></tr>';
+        $responsedata = json_decode($response, true);
+        $printers = $responsedata['printers'];
         // Check if we have printers?
-        if(is_null($printers)) {
+        if(count($printers)==0) {
             // We dont have printers so return blank array
-            return array();
+            $ret['available'] =  array();
         } else {
             // We have printers so returns printers as array
-            return $this->parsePrinters($printers);
+            $ret['available'] =  $printers;
         }
+        return $ret;
     }
 
     /**
@@ -161,18 +249,19 @@ class printing_printgcp extends PrintingDriver
      * @param   string      $file       file
      * @param   string      $module     module
      * @param   string      $subdir     subdir for file
-     * @return  string                  '' if OK, Error message if KO
+     * @return  int                     0 if OK, >0 if KO
      */
     function print_file($file, $module, $subdir='')
     {
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
         global $conf, $user, $db;
-        if ($this->authtoken=='') {
-            $this->GoogleLogin();
-        }
-        // si $module=commande_fournisseur alors $conf->fournisseur->commande->dir_output
+        $error = 0;
+
         $fileprint=$conf->{$module}->dir_output;
         if ($subdir!='') $fileprint.='/'.$subdir;
         $fileprint.='/'.$file;
+        $mimetype = dol_mimetype($fileprint);
         // select printer uri for module order, propal,...
         $sql = "SELECT rowid, printer_id, copy FROM ".MAIN_DB_PREFIX."printing WHERE module='".$module."' AND driver='printgcp' AND userid=".$user->id;
         $result = $db->query($sql);
@@ -181,7 +270,7 @@ class printing_printgcp extends PrintingDriver
             $obj = $this->db->fetch_object($result);
             if ($obj)
             {
-                $printer_id=$obj->printer_id;
+                $printer_id = $obj->printer_id;
             }
             else
             {
@@ -191,13 +280,18 @@ class printing_printgcp extends PrintingDriver
                 }
                 else
                 {
-                    return 'NoDefaultPrinterDefined';
+                    $this->errors[] = 'NoDefaultPrinterDefined';
+                    $error++;
+                    return $error;
                 }
             }
         }
         else dol_print_error($db);
 
-        $this->sendPrintToPrinter($printer_id, $file, $fileprint, 'application/pdf');
+        $ret = $this->sendPrintToPrinter($printer_id, $file, $fileprint, $mimetype);
+        $this->errors = 'PRINTGCP: '.mb_convert_encoding($ret['errormessage'], "UTF-8");
+        if ($ret['status']!=1) $error++;
+        return $error;
     }
 
     /**
@@ -209,24 +303,16 @@ class printing_printgcp extends PrintingDriver
      *  @param  string      $contenttype    File content type by example application/pdf, image/png
      *  @return array                       status array
      */
-    public function sendPrintToPrinter($printerid,$printjobtitle,$filepath,$contenttype)
+    public function sendPrintToPrinter($printerid, $printjobtitle, $filepath, $contenttype)
     {
-        $errors=0;
-        // Check auth token
-        if(empty($this->authtoken)) {
-            $errors++;
-            setEventMessage('Please first login to Google', 'warning');
-        }
         // Check if printer id
         if(empty($printerid)) {
-            $errors++;
-            setEventMessage('No provided printer ID', 'warning');
+            return array('status' =>0, 'errorcode' =>'','errormessage'=>'No provided printer ID');
         }
         // Open the file which needs to be print
         $handle = fopen($filepath, "rb");
         if(!$handle) {
-            $errors++;
-            setEventMessage('Could not read the file.');
+            return array('status' =>0, 'errorcode' =>'','errormessage'=>'Could not read the file.');
         }
         // Read file content
         $contents = fread($handle, filesize($filepath));
@@ -238,118 +324,129 @@ class printing_printgcp extends PrintingDriver
                              'content' => base64_encode($contents), // encode file content as base64
                              'contentType' => $contenttype
                             );
-        // Prepare authorization headers
-        $authheaders = array("Authorization: GoogleLogin auth=" . $this->authtoken);
-        // Make http call for sending print Job
-        $response = json_decode($this->makeCurl(self::PRINT_URL,$post_fields,$authheaders));
-        // Has document been successfully sent?
-        if($response->success=="1") {
-            return array('status' =>true,'errorcode' =>'','errormessage'=>"");
-        } else {
-            return array('status' =>false,'errorcode' =>$response->errorCode,'errormessage'=>$response->message);
+        // Dolibarr Token storage
+        $storage = new DoliStorage($this->db, $this->conf);
+        // Setup the credentials for the requests
+        $credentials = new Credentials(
+            $this->google_id,
+            $this->google_secret,
+            DOL_MAIN_URL_ROOT.'/core/modules/oauth/getoauthcallback.php?service=google'
+        );
+        $serviceFactory = new \OAuth\ServiceFactory();
+        $apiService = $serviceFactory->createService('Google', $credentials, $storage, array());
+
+        // Check if we have auth token and refresh it
+        $token_ok=true;
+        try {
+            $token = $storage->retrieveAccessToken('Google');
+        } catch (Exception $e) {
+            $this->errors[] = $e->getMessage();
+            $token_ok = false;
         }
-    }
-
-
-    /**
-     *  Login into Google Account
-     *
-     *  @return boolean           true or false
-     */
-    function GoogleLogin()
-    {
-        global $db, $conf;
-        // Prepare post fields required for the login
-        $loginpostfields = array("accountType" => "HOSTED_OR_GOOGLE",
-                                 "Email" => $this->login,
-                                 "Passwd" => $this->password,
-                                 "service" => "cloudprint",
-                                 "source" => "GCP"
-                                );
-        // Get the Auth token
-        $loginresponse = $this->makeCurl(self::LOGIN_URL,$loginpostfields);
-        $token = $this->getAuthToken($loginresponse);
-        if(! empty($token)&&!is_null($token)) {
-            $this->authtoken = $token;
-            $result=dolibarr_set_const($db, 'PRINTGCP_AUTHTOKEN', $token, 'chaine', 0, '', $conf->entity);
-            return true;
-        } else {
-            return false;
-        }
-
-    }
-
-    /**
-     *  Parse json response and return printers array
-     *
-     *  @param  string    $jsonobj  Json response object
-     *  @return array               return array of printers
-     */
-    private function parsePrinters($jsonobj)
-    {
-        $printers = array();
-        if (isset($jsonobj->printers)) {
-            foreach ($jsonobj->printers as $gcpprinter) {
-                $printers[] = array('id' =>$gcpprinter->id,
-                                    'name' =>$gcpprinter->name,
-                                    'defaultDisplayName' =>$gcpprinter->defaultDisplayName,
-                                    'displayName' =>$gcpprinter->displayName,
-                                    'ownerId' =>$gcpprinter->ownerId,
-                                    'ownerName' =>$gcpprinter->ownerName,
-                                    'connectionStatus' =>$gcpprinter->connectionStatus,
-                                    'status' =>$gcpprinter->status,
-                                    'type' =>$gcpprinter->type
-                                    );
+        if ($token_ok) {
+            try {
+                // il faut sauvegarder le refresh token car google ne le donne qu'une seule fois
+                $refreshtoken = $token->getRefreshToken();
+                $token = $apiService->refreshAccessToken($token);
+                $token->setRefreshToken($refreshtoken);
+                $storage->storeAccessToken('Google', $token);
+            } catch (Exception $e) {
+                $this->errors[] = $e->getMessage();
             }
         }
-        return $printers;
+
+        // Send a request with api
+        $response = json_decode($apiService->request(self::PRINT_URL, 'POST', $post_fields), true);
+        //print '<tr><td><pre>'.print_r($response, true).'</pre></td></tr>';
+        return array('status' =>$response['success'],'errorcode' =>$response['errorCode'],'errormessage'=>$response['message']);
     }
+
 
     /**
-     *  Parse data to get auth token
+     *  List jobs print
      *
-     *  @param      string  $response   response from curl
-     *  @return     string              token
+     *  @return  int                     0 if OK, >0 if KO
      */
-    private function getAuthToken($response)
+    function list_jobs()
     {
-        // Search Auth tag
-        preg_match("/Auth=([a-z0-9_-]+)/i", $response, $matches);
-        $authtoken = @$matches[1];
-        return $authtoken;
-    }
-
-    /**
-     *  Make a curl request
-     *
-     *  @param  string  	$url            url to hit
-     *  @param  array   	$postfields     array of post fields
-     *  @param  string[]   	$headers        array of http headers
-     *  @return string                   	response from curl
-     */
-    private function makeCurl($url, $postfields=array(), $headers=array())
-    {
-        // Curl Init
-        $curl = curl_init($url);
-        // Curl post request
-        if(! empty($postfields)) {
-            // As is HTTP post curl request so set post fields
-            curl_setopt($curl, CURLOPT_POST, true);
-            curl_setopt($curl, CURLOPT_POSTFIELDS, $postfields);
+        global $conf, $db, $bc;
+        $error = 0;
+        $html = '';
+        // Token storage
+        $storage = new DoliStorage($this->db, $this->conf);
+        // Setup the credentials for the requests
+        $credentials = new Credentials(
+            $this->google_id,
+            $this->google_secret,
+            DOL_MAIN_URL_ROOT.'/core/modules/oauth/getgoogleoauthcallback.php'
+        );
+        $serviceFactory = new \OAuth\ServiceFactory();
+        $apiService = $serviceFactory->createService('Google', $credentials, $storage, array());
+        // Check if we have auth token
+        $token_ok=true;
+        try {
+            $token = $storage->retrieveAccessToken('Google');
+        } catch (Exception $e) {
+            $this->errors[] = $e->getMessage();
+            $token_ok = false;
+            $error++;
         }
-        // Curl request headers
-        if(! empty($headers)) {
-            // As curl requires header so set headers here
-            curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+        $expire = false;
+        // Is token expired or will token expire in the next 30 seconds
+        if ($token_ok) {
+            $expire = ($token->getEndOfLife() !== -9002 && $token->getEndOfLife() !== -9001 && time() > ($token->getEndOfLife() - 30));
         }
-        curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-        // Execute the curl and return response
-        $response = curl_exec($curl);
-        curl_close($curl);
-        return $response;
-    }
 
+        // Token expired so we refresh it
+        if ($token_ok && $expire) {
+            try {
+                // il faut sauvegarder le refresh token car google ne le donne qu'une seule fois
+                $refreshtoken = $token->getRefreshToken();
+                $token = $apiService->refreshAccessToken($token);
+                $token->setRefreshToken($refreshtoken);
+                $storage->storeAccessToken('Google', $token);
+            } catch (Exception $e) {
+                $this->errors[] = $e->getMessage();
+                $error++;
+            }
+        }
+        // Getting Jobs
+        // Send a request with api
+        try {
+            $response = $apiService->request(self::PRINTERS_GET_JOBS);
+        } catch (Exception $e) {
+            $this->errors[] = $e->getMessage();
+            $error++;
+        }
+        $responsedata = json_decode($response, true);
+        //$html .= '<pre>'.print_r($responsedata,true).'</pre>';
+        $html .= '<table width="100%" class="noborder">';
+        $html .= '<tr class="liste_titre">';
+        $html .= "<td>Id</td>";
+        $html .= "<td>Owner</td>";
+        $html .= '<td>Printer</td>';
+        $html .= '<td>File</td>';
+        $html .= '<td>Status</td>';
+        $html .= '<td>Cancel</td>';
+        $html .= '</tr>'."\n";
+        $var = True;
+        $jobs = $responsedata['jobs'];
+        //$html .= '<pre>'.print_r($jobs['0'],true).'</pre>';
+        foreach ($jobs as $value )
+        {
+            $var = !$var;
+            $html .= '<tr '.$bc[$var].'>';
+            $html .= '<td>'.$value['id'].'</td>';
+            $html .= '<td>'.$value['ownerId'].'</td>';
+            $html .= '<td>'.$value['printerName'].'</td>';
+            $html .= '<td>'.$value['title'].'</td>';
+            $html .= '<td>'.$value['status'].'</td>';
+            $html .= '<td>&nbsp;</td>';
+            $html .= '</tr>';
+        }
+        $html .= '</table>';
+        $this->resprint = $html;
+        return $error;
+    }
 
 }

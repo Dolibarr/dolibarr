@@ -175,6 +175,7 @@ ProjectWeightedOppAmountOfProjectsByMonth=Weighted amount of opportunities by mo
 ProjectOpenedProjectByOppStatus=Opened project/lead by opportunity status
 ProjectsStatistics=Statistics on projects/leads
 TaskAssignedToEnterTime=Task assigned. Entering time on this task should be possible.
+IdTaskTime=Id task time
 OpenedProjectsByThirdparties=Opened projects by thirdparties
 OpportunityTotalAmount=Opportunities total amount
 OpportunityPonderatedAmount=Opportunities weighted amount

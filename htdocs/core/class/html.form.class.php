@@ -4562,6 +4562,7 @@ class Form
 			    		},*/
 			    		cache: true
 			    	},
+			        dropdownCssClass: "css-'.$htmlname.'", 
 				    placeholder: "'.dol_escape_js($placeholder).'",
 			    	escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
 			    	minimumInputLength: '.$minimumInputLength.',

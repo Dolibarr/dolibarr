@@ -34,6 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
 $langs->load('projects');
+$langs->load('users');
 
 $action=GETPOST('action');
 $mode=GETPOST("mode");
