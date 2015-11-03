@@ -294,6 +294,17 @@ if ($mode == 'config' && $user->admin)
     }
     print '</form>';
 
+    print '<div><p></div>';
+    dol_fiche_head();
+    print '<table class="noborder" width="100%">'."\n";
+    $var=true;
+    print '<tr><td>'.$langs->trans("CONNECTOR_DUMMY").':</td><td>'.$langs->trans("CONNECTOR_DUMMY_HELP").'</td></tr>';
+    print '<td>'.$langs->trans("CONNECTOR_NETWORK_PRINT").':</td><td>'.$langs->trans("CONNECTOR_NETWORK_PRINT_HELP").'</td></tr>';
+    print '<td>'.$langs->trans("CONNECTOR_FILE_PRINT").':</td><td>'.$langs->trans("CONNECTOR_FILE_PRINT_HELP").'</td></tr>';
+    print '<td>'.$langs->trans("CONNECTOR_WINDOWS_PRINT").':</td><td>'.$langs->trans("CONNECTOR_WINDOWS_PRINT_HELP").'</td></tr>';
+    //print '<td>'.$langs->trans("CONNECTOR_JAVA").':</td><td>'.$langs->trans("CONNECTOR_JAVA_HELP").'</td></tr>';
+    print '</table>';
+    dol_fiche_end();
 }
 
 if ($mode == 'template' && $user->admin)
