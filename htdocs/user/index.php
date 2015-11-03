@@ -523,14 +523,14 @@ if ($result)
         if (! empty($arrayfields['u.datec']['checked']))
         {
             print '<td align="center">';
-            print dol_print_date($obj->date_creation, 'dayhour');
+            print dol_print_date($db->jdate($obj->date_creation), 'dayhour');
             print '</td>';
         }
         // Date modification
         if (! empty($arrayfields['u.tms']['checked']))
         {
             print '<td align="center">';
-            print dol_print_date($obj->date_update, 'dayhour');
+            print dol_print_date($db->jdate($obj->date_update), 'dayhour');
             print '</td>';
         }
         // Status
