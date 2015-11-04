@@ -43,7 +43,6 @@ $sall=GETPOST('sall','alpha');
 $search_user=GETPOST('search_user','alpha');
 
 $userstatic=new User($db);
-$companystatic = new Societe($db);
 $search_statut=GETPOST('search_statut','int');
 
 if ($search_statut == '') $search_statut='1';

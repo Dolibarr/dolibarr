@@ -692,15 +692,6 @@ if (! defined('NOLOGIN'))
             $db->commit();
         }
         
-        if (! empty($user->conf->MAIN_LANDING_PAGE))    // Example: /index.php
-        {
-            $newpath=dol_buildpath($user->conf->MAIN_LANDING_PAGE, 1);
-            if ($_SERVER["PHP_SELF"] != $newpath)   // not already on landing page (avoid infinite loop)
-            {
-                header('Location: '.$newpath);
-                exit;
-            }
-        }
         if (! empty($conf->global->MAIN_LANDING_PAGE))    // Example: /index.php
         {
             $newpath=dol_buildpath($conf->global->MAIN_LANDING_PAGE, 1);
