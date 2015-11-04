@@ -3860,7 +3860,7 @@ function get_exdir($num,$level,$alpha,$withoutslash,$object,$modulepart)
 
 	$path = '';
 
-	if (! empty($level) && in_array($modulepart, array('cheque','user','category','holiday','shipment', 'member','don','donation','supplier_invoice','invoice_supplier')))
+	if (! empty($level) && in_array($modulepart, array('cheque', 'user', 'category', 'holiday', 'shipment', 'member', 'don', 'donation', 'supplier_invoice', 'invoice_supplier', 'mailing')))
 	{
 		// This part should be removed once all code is using "get_exdir" to forge path, with all parameters provided
 		if (empty($alpha)) $num = preg_replace('/([^0-9])/i','',$num);
