@@ -15,10 +15,10 @@
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 -- ============================================================================
 
-CREATE TABLE llx_opensurvey_user_studs (
-    id_users INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    nom VARCHAR(64) NOT NULL,
-    id_sondage VARCHAR(16) NOT NULL,
-    reponses VARCHAR(100) NOT NULL,		-- Not used for 'F' surveys
-    tms timestamp
+CREATE TABLE llx_opensurvey_formquestions (
+	rowid INTEGER AUTO_INCREMENT NOT NULL PRIMARY KEY,
+	id_sondage VARCHAR(16),
+	question TEXT,
+    available_answers TEXT								-- List of available answers
 ) ENGINE=InnoDB;
+

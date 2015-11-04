@@ -251,3 +251,30 @@ CREATE TABLE llx_product_pricerules
 );
 ALTER TABLE llx_product ADD COLUMN price_autogen TINYINT(1) DEFAULT 0;
 ALTER TABLE llx_product_pricerules ADD CONSTRAINT unique_level UNIQUE (level);
+
+
+-- Delete deprecated fields
+ALTER TABLE llx_opensurvey_sondage DROP COLUMN survey_link_visible;
+ALTER TABLE llx_opensurvey_sondage DROP INDEX idx_id_sondage_admin;
+ALTER TABLE llx_opensurvey_sondage DROP COLUMN id_sondage_admin;
+ALTER TABLE llx_opensurvey_sondage DROP COLUMN canedit;
+ALTER TABLE llx_opensurvey_sondage DROP COLUMN origin;
+
+DROP TABLE llx_opensurvey_sujet_studs;
+
+
+
+CREATE TABLE llx_opensurvey_formquestions (
+	rowid INTEGER AUTO_INCREMENT NOT NULL PRIMARY KEY,
+	id_sondage VARCHAR(16),
+	question TEXT,
+    available_answers TEXT								-- List of available answers
+) ENGINE=InnoDB;
+
+CREATE TABLE llx_opensurvey_user_formanswers (
+    fk_user_survey INTEGER NOT NULL,
+    fk_question INTEGER NOT NULL,
+    reponses TEXT
+) ENGINE=InnoDB;
+
+

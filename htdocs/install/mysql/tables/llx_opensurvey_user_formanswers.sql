@@ -1,5 +1,5 @@
 -- ============================================================================
--- Copyright (C) 2013 Laurent Destailleur <eldy@users.sourceforge.net>
+-- Copyright (C) 2015 Laurent Destailleur <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -15,10 +15,8 @@
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 -- ============================================================================
 
-CREATE TABLE llx_opensurvey_user_studs (
-    id_users INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    nom VARCHAR(64) NOT NULL,
-    id_sondage VARCHAR(16) NOT NULL,
-    reponses VARCHAR(100) NOT NULL,		-- Not used for 'F' surveys
-    tms timestamp
+CREATE TABLE llx_opensurvey_user_formanswers (
+    fk_user_survey INTEGER NOT NULL,
+    fk_question INTEGER NOT NULL,
+    reponses TEXT
 ) ENGINE=InnoDB;
