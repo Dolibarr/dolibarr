@@ -3764,7 +3764,7 @@ function get_exdir($num,$level,$alpha,$withoutslash,$object,$modulepart)
 	// TODO if object is null, load it from id and modulepart.
 
 
-	if (! empty($level) && in_array($modulepart, array('cheque','user','category','holiday','shipment', 'member','don','donation','supplier_invoice','invoice_supplier','product')))
+	if (! empty($level) && in_array($modulepart, array('cheque', 'user', 'category', 'holiday', 'shipment', 'member', 'don', 'donation', 'supplier_invoice', 'invoice_supplier', 'product', 'mailing')))
 	{
 		// This part should be removed once all code is using "get_exdir" to forge path, with all parameters provided
 		if (empty($alpha)) $num = preg_replace('/([^0-9])/i','',$num);
