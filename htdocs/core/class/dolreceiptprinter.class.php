@@ -106,6 +106,7 @@ class dolReceiptPrinter extends Escpos
     const CONNECTOR_WINDOWS_PRINT = 4;
     //const CONNECTOR_JAVA = 5;
     var $db;
+    var $tags;
     var $error;
     var $errors;
 
@@ -119,6 +120,76 @@ class dolReceiptPrinter extends Escpos
     function __construct($db)
     {
         $this->db=$db;
+        $this->tags = array(
+            'dol_align_left',
+            'dol_align_center',
+            'dol_align_right',
+            'dol_use_font_a',
+            'dol_use_font_b',
+            'dol_use_font_c',
+            'dol_bold',
+            '/dol_bold',
+            'dol_double_height',
+            '/dol_double_height',
+            'dol_double_width',
+            '/dol_double_width',
+            'dol_underline',
+            '/dol_underline',
+            'dol_underline_2dots',
+            '/dol_underline',
+            'dol_emphasized',
+            '/dol_emphasized',
+            'dol_switch_colors',
+            '/dol_switch_colors',
+            'dol_print_barcode',
+            'dol_print_barcode_customer_id',
+            'dol_set_print_width_57',
+            'dol_cut_paper_full',
+            'dol_cut_paper_partial',
+            'dol_open_drawer',
+            'dol_activate_buzzer',
+            'dol_print_qrcode',
+            'dol_print_date',
+            'dol_print_date_time',
+            'dol_print_year',
+            'dol_print_month_letters',
+            'dol_print_month',
+            'dol_print_day',
+            'dol_print_day_letters',
+            'dol_print_table',
+            'dol_print_cutlery',
+            'dol_print_payment',
+            'dol_print_logo',
+            'dol_print_logo_old',
+            'dol_print_order_lines',
+            'dol_print_order_tax',
+            'dol_print_order_local_tax',
+            'dol_print_order_total',
+            'dol_print_order_number',
+            'dol_print_order_number_unique',
+            'dol_print_customer_first_name',
+            'dol_print_customer_last_name',
+            'dol_print_customer_mail',
+            'dol_print_customer_telephone',
+            'dol_print_customer_mobile',
+            'dol_print_customer_skype',
+            'dol_print_customer_tax_number',
+            'dol_print_customer_account_balance',
+            'dol_print_vendor_last_name',
+            'dol_print_vendor_first_name',
+            'dol_print_vendor_mail',
+            'dol_print_customer_points',
+            'dol_print_order_points',
+            'dol_print_if_customer',
+            'dol_print_if_vendor',
+            'dol_print_if_happy_hour',
+            'dol_print_if_num_order_unique',
+            'dol_print_if_customer_points',
+            'dol_print_if_order_points',
+            'dol_print_if_customer_tax_number',
+            'dol_print_if_customer_account_balance_positive',
+        );
+
     }
 
     /**
@@ -216,7 +287,7 @@ class dolReceiptPrinter extends Escpos
         $error = 0;
         $sql = 'INSERT INTO '.MAIN_DB_PREFIX.'printer_receipt';
         $sql.= ' (name, fk_type, parameter, entity)';
-        $sql.= ' VALUES ("'.$name.'", '.$type.', "'.$parameter.'", '.$conf->entity.')';
+        $sql.= ' VALUES ("'.$this->db->escape($name).'", '.$type.', "'.$this->db->escape($parameter).'", '.$conf->entity.')';
         $resql = $this->db->query($sql);
         if (! $resql) {
             $error++;
@@ -239,9 +310,9 @@ class dolReceiptPrinter extends Escpos
         global $conf;
         $error = 0;
         $sql = 'UPDATE '.MAIN_DB_PREFIX.'printer_receipt';
-        $sql.= ' SET name="'.$name.'"';
+        $sql.= ' SET name="'.$this->db->escape($name).'"';
         $sql.= ', fk_type='.$type;
-        $sql.= ', parameter="'.$parameter.'"';
+        $sql.= ', parameter="'.$this->db->escape($parameter).'"';
         $sql.= ' WHERE rowid='.$printerid;
         $resql = $this->db->query($sql);
         if (! $resql) {
@@ -270,6 +341,31 @@ class dolReceiptPrinter extends Escpos
         }
         return $error;
     }
+
+    /**
+     *  Function to Update a printer template in db
+     *
+     *  @param    string    $name           Template name
+     *  @param    int       $template       Template
+     *  @param    int       $templateid     Template id
+     *  @return   int                       0 if OK; >0 if KO
+     */
+    function UpdateTemplate($name, $template, $templateid)
+    {
+        global $conf;
+        $error = 0;
+        $sql = 'UPDATE '.MAIN_DB_PREFIX.'printer_receipt_template';
+        $sql.= ' SET name="'.$this->db->escape($name).'"';
+        $sql.= ', template="'.$this->db->escape($template).'"';
+        $sql.= ' WHERE rowid='.$templateid;
+        $resql = $this->db->query($sql);
+        if (! $resql) {
+            $error++;
+            $this->errors[] = $this->db->lasterror;
+        }
+        return $error;
+    }
+
 
     /**
      *  Function to Send Test page to Printer

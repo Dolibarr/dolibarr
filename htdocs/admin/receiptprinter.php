@@ -36,16 +36,20 @@ if (! $user->admin) accessforbidden();
 
 $action = GETPOST('action','alpha');
 $mode = GETPOST('mode','alpha');
-$value = GETPOST('value','alpha');
-$varname = GETPOST('varname', 'alpha');
+
 $printername = GETPOST('printername', 'alpha');
 $printerid = GETPOST('printerid', 'int');
 $parameter = GETPOST('parameter', 'alpha');
+
+$template = GETPOST('template', 'alpha');
+$templatename = GETPOST('templatename', 'alpha');
+$templateid = GETPOST('templateid', 'int');
 
 $printer = new dolReceiptPrinter($db);
 
 if (!$mode) $mode='config';
 
+// used in library escpos maybe useful if php doesn't support gzdecode
 if (!function_exists('gzdecode')) {
     function gzdecode($data)
     {
@@ -164,6 +168,35 @@ if ($action == 'testprinter' && $user->admin)
         else
         {
             setEventMessages($printer->error, $printer->errors, 'errors');
+        }
+    }
+    $action = '';
+}
+
+
+if ($action == 'updatetemplate' && $user->admin)
+{
+    $error=0;
+    $db->begin();
+    if (empty($templateid)) {
+        $error++;
+        setEventMessages($langs->trans("TemplateIdEmpty"), null, 'errors');
+    }
+
+    if (! $error)
+    {
+        $result= $printer->UpdateTemplate($templatename, $template, $templateid);
+        if ($result > 0) $error++;
+
+        if (! $error)
+        {
+            $db->commit();
+            setEventMessages($langs->trans("TemplateUpdated",$templatename), null);
+        }
+        else
+        {
+            $db->rollback();
+            dol_print_error($db);
         }
     }
     $action = '';
@@ -309,76 +342,6 @@ if ($mode == 'config' && $user->admin)
 
 if ($mode == 'template' && $user->admin)
 {
-     $tags = array(
-        'dol_align_left',
-        'dol_align_center',
-        'dol_align_right',
-        'dol_use_font_a',
-        'dol_use_font_b',
-        'dol_use_font_c',
-        'dol_bold',
-        '/dol_bold',
-        'dol_double_height',
-        '/dol_double_height',
-        'dol_double_width',
-        '/dol_double_width',
-        'dol_underline',
-        '/dol_underline',
-        'dol_underline_2dots',
-        '/dol_underline',
-        'dol_emphasized',
-        '/dol_emphasized',
-        'dol_switch_colors',
-        '/dol_switch_colors',
-        'dol_print_barcode',
-        'dol_print_barcode_customer_id',
-        'dol_set_print_width_57',
-        'dol_cut_paper_full',
-        'dol_cut_paper_partial',
-        'dol_open_drawer',
-        'dol_activate_buzzer',
-        'dol_print_qrcode',
-        'dol_print_date',
-        'dol_print_date_time',
-        'dol_print_year',
-        'dol_print_month_letters',
-        'dol_print_month',
-        'dol_print_day',
-        'dol_print_day_letters',
-        'dol_print_table',
-        'dol_print_cutlery',
-        'dol_print_payment',
-        'dol_print_logo',
-        'dol_print_logo_old',
-        'dol_print_order_lines',
-        'dol_print_order_tax',
-        'dol_print_order_local_tax',
-        'dol_print_order_total',
-        'dol_print_order_number',
-        'dol_print_order_number_unique',
-        'dol_print_customer_first_name',
-        'dol_print_customer_last_name',
-        'dol_print_customer_mail',
-        'dol_print_customer_telephone',
-        'dol_print_customer_mobile',
-        'dol_print_customer_skype',
-        'dol_print_customer_tax_number',
-        'dol_print_customer_account_balance',
-        'dol_print_vendor_last_name',
-        'dol_print_vendor_first_name',
-        'dol_print_vendor_mail',
-        'dol_print_customer_points',
-        'dol_print_order_points',
-        'dol_print_if_customer',
-        'dol_print_if_vendor',
-        'dol_print_if_happy_hour',
-        'dol_print_if_num_order_unique',
-        'dol_print_if_customer_points',
-        'dol_print_if_order_points',
-        'dol_print_if_customer_tax_number',
-        'dol_print_if_customer_account_balance_positive',
-    );
-
     print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?mode=template" autocomplete="off">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     if ($action!='edittemplate') {
@@ -410,9 +373,9 @@ if ($mode == 'template' && $user->admin)
             if ($action=='edittemplate' && $printer->listprinterstemplates[$line]['rowid']==$templateid) {
                 print '<input type="hidden" name="templateid" value="'.$printer->listprinterstemplates[$line]['rowid'].'">';
                 print '<td><input size="50" type="text" name="templatename" value="'.$printer->listprinterstemplates[$line]['name'].'"></td>';
-                // TODO doleditor
-                print '<td><input size="120" type="text" name="templatename" value="'.$printer->listprinterstemplates[$line]['template'].'"></td>';
-                print '<td></td>';
+                print '<td><textarea name="template" wrap="soft" cols="120" rows="12">'.$printer->listprinterstemplates[$line]['template'].'</textarea>';
+                print '</td>';
+                //print '<td></td>';
                 print '<td></td>';
                 print '<td></td>';
             } else {
@@ -423,11 +386,11 @@ if ($mode == 'template' && $user->admin)
                 print img_picto($langs->trans("Edit"),'edit');
                 print '</a></td>';
                 // delete icon
-                print '<td><a href="'.$_SERVER['PHP_SELF'].'?mode=template&amp;action=deletetemplate&amp;templateid='.$printer->listprinterstemplates[$line]['rowid'].'&amp;printername='.$printer->listprinters[$line]['name'].'">';
+                print '<td><a href="'.$_SERVER['PHP_SELF'].'?mode=template&amp;action=deletetemplate&amp;templateid='.$printer->listprinterstemplates[$line]['rowid'].'&amp;templatename='.$printer->listprinterstemplates[$line]['name'].'">';
                 print img_picto($langs->trans("Delete"),'delete');
                 print '</a></td>';
                 // test icon
-                print '<td><a href="'.$_SERVER['PHP_SELF'].'?mode=template&amp;action=testtemplate&amp;templateid='.$printer->listprinterstemplates[$line]['rowid'].'&amp;printername='.$printer->listprinters[$line]['name'].'">';
+                print '<td><a href="'.$_SERVER['PHP_SELF'].'?mode=template&amp;action=testtemplate&amp;templateid='.$printer->listprinterstemplates[$line]['rowid'].'&amp;templatename='.$printer->listprinterstemplates[$line]['name'].'">';
                 print img_picto($langs->trans("TestPrinterTemplate"),'printer');
                 print '</a></td>';
             }
@@ -449,10 +412,10 @@ if ($mode == 'template' && $user->admin)
     print '<th>'.$langs->trans("Tag").'</th>';
     print '<th>'.$langs->trans("Description").'</th>';
     print "</tr>\n";
-    for ($tag=0; $tag < count($tags); $tag++) {
+    for ($tag=0; $tag < count($printer->tags); $tag++) {
         $var = !$var;
         print '<tr '.$bc[$var].'>';
-        print '<td>&lt;'.$tags[$tag].'&gt;</td><td>'.$langs->trans(strtoupper($tags[$tag])).'</td>';
+        print '<td>&lt;'.$printer->tags[$tag].'&gt;</td><td>'.$langs->trans(strtoupper($printer->tags[$tag])).'</td>';
         print '</tr>';
     }
     print '</table>';
