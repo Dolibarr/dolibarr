@@ -231,7 +231,9 @@ if ($id > 0)
 	$title = $langs->trans("User");
 	dol_fiche_head($head, 'paidholidays', $title, 0, 'user');
 
-    dol_banner_tab($fuser,'id','',$user->rights->user->user->lire || $user->admin);
+	$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
+	
+    dol_banner_tab($fuser,'id',$linkback,$user->rights->user->user->lire || $user->admin);
     
     
     print '<div class="underbanner clearboth"></div>';
