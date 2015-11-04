@@ -5,13 +5,13 @@
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2007-2011	Jean Heimburger			<jean@tiaris.info>
  * Copyright (C) 2010-2013	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2012      Cedric Salvador      	<csalvador@gpcsolutions.fr>
  * Copyright (C) 2013-2014	Cedric GROSS			<c.gross@kreiz-it.fr>
  * Copyright (C) 2013-2015	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2011-2014	Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2014		Henry Florian			<florian.henry@open-concept.pro>
- * Copyright (C) 2014		Philippe Grand			<philippe.grand@atoo-net.com>
- * Copyright (C) 2014		Ion agorria			<ion@agorria.com>
+ * Copyright (C) 2014-2015	Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2014		Ion agorria				<ion@agorria.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2774,11 +2774,11 @@ class Product extends CommonObject
 					'entity'=>$this->entity
 				);
 
-				// Recursive call if there is childs to child
-				if (is_array($desc_pere['childs']))
+				// Recursive call if there are children to child
+				if (is_array($desc_pere['children']))
 				{
 					//print 'YYY We go down for '.$desc_pere[3]." -> \n";
-					$this->fetch_prod_arbo($desc_pere['childs'], $compl_path.$desc_pere[3]." -> ", $desc_pere[1]*$multiply, $level+1, $id);
+					$this->fetch_prod_arbo($desc_pere['children'], $compl_path.$desc_pere[3]." -> ", $desc_pere[1]*$multiply, $level+1, $id);
 				}
 			}
 		}
@@ -2915,13 +2915,13 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *  Return childs of product $id
+	 *  Return children of product $id
 	 *
-	 * 	@param		int		$id					Id of product to search childs of
+	 * 	@param		int		$id					Id of product to search children of
 	 *  @param		int		$firstlevelonly		Return only direct child
 	 *  @return     array       				Prod
 	 */
-	function getChildsArbo($id, $firstlevelonly=0)
+	function getChildrenArbo($id, $firstlevelonly=0)
 	{
 		$sql = "SELECT p.rowid, p.label as label, pa.qty as qty, pa.fk_product_fils as id, p.fk_product_type, pa.incdec";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
@@ -2930,7 +2930,7 @@ class Product extends CommonObject
 		$sql.= " AND pa.fk_product_pere = ".$id;
 		$sql.= " AND pa.fk_product_fils != ".$id;	// This should not happens, it is to avoid infinite loop if it happens
 
-		dol_syslog(get_class($this).'::getChildsArbo', LOG_DEBUG);
+		dol_syslog(get_class($this).'::getChildrenArbo', LOG_DEBUG);
 		$res  = $this->db->query($sql);
 		if ($res)
 		{
@@ -2948,10 +2948,10 @@ class Product extends CommonObject
 				//$prods[$this->db->escape($rec['label'])]= array(0=>$rec['id'],1=>$rec['qty']);
 				if (empty($firstlevelonly))
 				{
-					$listofchilds=$this->getChildsArbo($rec['id']);
-					foreach($listofchilds as $keyChild => $valueChild)
+					$listofchildren=$this->getChildrenArbo($rec['id']);
+					foreach($listofchildren as $keyChild => $valueChild)
 					{
-						$prods[$rec['rowid']]['childs'][$keyChild] = $valueChild;
+						$prods[$rec['rowid']]['children'][$keyChild] = $valueChild;
 					}
 				}
 			}
@@ -2976,12 +2976,12 @@ class Product extends CommonObject
 		$parent = $this->getParent();
 		foreach($parent as $key => $value)		// key=label, value[0]=id
 		{
-			foreach($this->getChildsArbo($value[0]) as $keyChild => $valueChild)
+			foreach($this->getChildrenArbo($value[0]) as $keyChild => $valueChild)
 			{
 				$parent[$key][$keyChild] = $valueChild;
 			}
 		}
-		foreach($parent as $key => $value)		// key=label, value is array of childs
+		foreach($parent as $key => $value)		// key=label, value is array of children
 		{
 			$this->sousprods[$key] = $value;
 		}

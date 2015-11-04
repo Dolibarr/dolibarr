@@ -2498,7 +2498,7 @@ class User extends CommonObject
 	}
 
 	/**
-	 *	For user id_user and its childs available in this->users, define property fullpath and fullname
+	 *	For user id_user and its children available in this->users, define property fullpath and fullname
 	 *
 	 * 	@param		int		$id_user		id_user entry to update
 	 * 	@param		int		$protection		Deep counter to avoid infinite loop

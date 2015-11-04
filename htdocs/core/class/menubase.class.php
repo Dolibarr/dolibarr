@@ -431,7 +431,7 @@ class Menubase
         // We initialize newmenu with first already found menu entries
         $this->newmenu = $newmenu;
 
-        // Now edit this->newmenu->list to add entries found into tabMenu that are childs of mainmenu claimed, using the fk_menu link (old method)
+        // Now edit this->newmenu->list to add entries found into tabMenu that are children of mainmenu claimed, using the fk_menu link (old method)
         $this->recur($tabMenu, $menutopid, 1);
 
         // Now update this->newmenu->list when fk_menu value is -1 (left menu added by modules with no top menu)

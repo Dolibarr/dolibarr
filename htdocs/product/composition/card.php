@@ -251,8 +251,8 @@ if ($id > 0 || ! empty($ref))
 		$object->get_sousproduits_arbo();			// Load $object->sousprod
 		$prods_arbo=$object->get_arbo_each_prod();
 		$nbofsubsubproducts=count($prods_arbo);		// This include sub sub product into nb
-		$prodschild = $object->getChildsArbo($id,1);
-		$nbofsubproducts=count($prodschild);		// This include only first level of childs
+		$prodschild = $object->getChildrenArbo($id,1);
+		$nbofsubproducts=count($prodschild);		// This include only first level of children
 
 
 		// Number of parent virtual products
