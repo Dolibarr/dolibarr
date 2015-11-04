@@ -84,6 +84,7 @@ $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 if ($id > 0 || ! empty($ref))
 {
 	$ret=$object->fetch($id, $ref);
+	$object->fetch_thirdparty();
 }
 
 $permissionnote=$user->rights->fournisseur->facture->creer;	// Used by the include of actions_setnotes.inc.php
@@ -2097,10 +2098,10 @@ else
 
        	global $forceall, $senderissupplier, $dateSelector, $inputalsopricewithtax;
 		$forceall=1; $senderissupplier=1; $dateSelector=0; $inputalsopricewithtax=1;
-
+		
 		// Show object lines
 		if (! empty($object->lines))
-			$ret = $object->printObjectLines($action, $soc, $mysoc, $lineid, 1);
+			$ret = $object->printObjectLines($action, $societe, $mysoc, $lineid, 1);
 
 		$num=count($object->lines);
 
