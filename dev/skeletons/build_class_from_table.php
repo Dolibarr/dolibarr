@@ -450,186 +450,137 @@ else $error++;
 
 
 
-//--------------------------------
-// Build skeleton_script.php
-//--------------------------------
+//--------------------------------------------------------------------
+// Build skeleton_script.php, skeleton_list.php and skeleton_card.php
+//--------------------------------------------------------------------
 
-// Read skeleton_script.php file
-$skeletonfile=$path.'skeleton_script.php';
-$sourcecontent=file_get_contents($skeletonfile);
-if (! $sourcecontent)
+$skeletonfiles=array(
+    $path.'skeleton_script.php' => 'out.'.$classmin.'_script.php', 
+    $path.'skeleton_list.php' => 'out.'.$classmin.'_list.php', 
+    $path.'skeleton_card.php' => 'out.'.$classmin.'_card.php'
+    );
+    
+foreach ($skeletonfiles as $skeletonfile => $outfile)
 {
-	print "\n";
-	print "Error: Failed to read skeleton sample '".$skeletonfile."'\n";
-	print "Try to run script from skeletons directory.\n";
-	exit;
+    $sourcecontent=file_get_contents($skeletonfile);
+    if (! $sourcecontent)
+    {
+    	print "\n";
+    	print "Error: Failed to read skeleton sample '".$skeletonfile."'\n";
+    	print "Try to run script from skeletons directory.\n";
+    	exit;
+    }
+    
+    // Define output variables
+    $targetcontent=$sourcecontent;
+    
+    // Substitute module name
+    $targetcontent=preg_replace('/dev\/skeletons/', $module, $targetcontent);
+    $targetcontent=preg_replace('/mymodule othermodule1 othermodule2/', $module, $targetcontent);
+    $targetcontent=preg_replace('/mymodule/', $module, $targetcontent);
+    
+    // Substitute class name
+    $targetcontent=preg_replace('/skeleton_class\.class\.php/', $classmin.'.class.php', $targetcontent);
+    $targetcontent=preg_replace('/skeleton_script\.php/', $classmin.'_script.php', $targetcontent);
+    $targetcontent=preg_replace('/\$element = \'skeleton\'/', '\$element=\''.$classmin.'\'', $targetcontent);
+    $targetcontent=preg_replace('/\$table_element = \'skeleton\'/', '\$table_element=\''.$classmin.'\'', $targetcontent);
+    $targetcontent=preg_replace('/Skeleton_Class/', $classname, $targetcontent);
+    $targetcontent=preg_replace('/skeletons/', $classmin, $targetcontent);
+    $targetcontent=preg_replace('/skeleton/', $classmin, $targetcontent);
+    
+    // Substitute comments
+    $targetcontent=preg_replace('/This file is an example to create a new class file/', 'Put here description of this class', $targetcontent);
+    $targetcontent=preg_replace('/\s*\/\/\.\.\./', '', $targetcontent);
+    $targetcontent=preg_replace('/Put here some comments/','Initialy built by build_class_from_table on '.strftime('%Y-%m-%d %H:%M',mktime()), $targetcontent);
+    
+    // Substitute table name
+    $targetcontent=preg_replace('/MAIN_DB_PREFIX."mytable/', 'MAIN_DB_PREFIX."'.$tablenoprefix, $targetcontent);
+        
+    // Substitute GETPOST search_fieldx
+    $varprop="\n";
+    $cleanparam='';
+    foreach($property as $key => $prop)
+    {
+    	if ($prop['field'] != 'rowid' && $prop['field'] != 'id' && ! $prop['istime'])
+    	{
+    	    if ($prop['isint']) $varprop.='$search_'.$prop['field']."=GETPOST('search_".$prop['field']."','int');\n";
+    	    else $varprop.='$search_'.$prop['field']."=GETPOST('search_".$prop['field']."','alpha');\n";
+    	}
+    }
+    $targetcontent=preg_replace('/'.preg_quote('$search_field1=GETPOST("search_field1");','/').'/', $varprop, $targetcontent);
+    $targetcontent=preg_replace('/'.preg_quote('$search_field2=GETPOST("search_field2");','/').'/', '', $targetcontent);
+    
+    // Substitute GETPOST fieldx
+    $varprop="\n";
+    $cleanparam='';
+    foreach($property as $key => $prop)
+    {
+    	if ($prop['field'] != 'rowid' && $prop['field'] != 'id' && ! $prop['istime'])
+    	{
+    	    if ($prop['isint']) $varprop.="\t\$object->".$prop['field']."=GETPOST('".$prop['field']."','int');\n";
+    	    else $varprop.="\t\$object->".$prop['field']."=GETPOST('".$prop['field']."','alpha');\n";
+    	}
+    }
+    $targetcontent=preg_replace('/'.preg_quote('$object->prop1=GETPOST("field1");','/').'/', $varprop, $targetcontent);
+    $targetcontent=preg_replace('/'.preg_quote('$object->prop2=GETPOST("field2");','/').'/', '', $targetcontent);
+    
+    // Substitute fetch/select parameters
+    $targetcontent=preg_replace('/\$sql\s*\.= " t\.field1,";/', $varpropselect, $targetcontent);
+    $targetcontent=preg_replace('/\$sql\s*\.= " t\.field2";/', '', $targetcontent);
+    
+    // Substitute where for search
+    $varprop="\n";
+    $cleanparam='';
+    foreach($property as $key => $prop)
+    {
+    	if ($prop['field'] != 'rowid' && $prop['field'] != 'id' && ! $prop['istime'])
+    	{
+    	    $varprop.='if ($search_'.$prop['field'].') $sql.= natural_search("'.$prop['field'].'",$search_'.$prop['field'].');'."\n";
+    	}
+    }
+    $targetcontent=preg_replace('/'.preg_quote('if ($search_field1) $sql.= natural_search("field1",$search_field1);','/').'/', $varprop, $targetcontent);
+    $targetcontent=preg_replace('/'.preg_quote('if ($search_field2) $sql.= natural_search("field2",$search_field2);','/').'/', '', $targetcontent);
+    
+    // Substitute print_liste_field_titre
+    $varprop="\n";
+    $cleanparam='';
+    foreach($property as $key => $prop)
+    {
+    	if ($prop['field'] != 'rowid' && $prop['field'] != 'id' && ! $prop['istime'])
+    	{
+    	    $varprop.="print_liste_field_titre(\$langs->trans('".$prop['field']."'),\$_SERVER['PHP_SELF'],'t.".$prop['field']."','',\$param,'',\$sortfield,\$sortorder);\n";
+    	}
+    }
+    
+    $targetcontent=preg_replace('/'.preg_quote("print_liste_field_titre(\$langs->trans('field1'),\$_SERVER['PHP_SELF'],'t.field1','',\$param,'',\$sortfield,\$sortorder);",'/').'/', $varprop, $targetcontent);
+    $targetcontent=preg_replace('/'.preg_quote("print_liste_field_titre(\$langs->trans('field2'),\$_SERVER['PHP_SELF'],'t.field1','',\$param,'',\$sortfield,\$sortorder);",'/').'/', '', $targetcontent);
+    
+    // Substitute where for <td>.fieldx.</td>
+    $varprop="\n";
+    $cleanparam='';
+    foreach($property as $key => $prop)
+    {
+    	if ($prop['field'] != 'rowid' && $prop['field'] != 'id' && ! $prop['istime'])
+    	{
+    	    $varprop.="print '<td>'.\$obj->".$prop['field'].".'</td>';\n";
+    	}
+    }
+    $targetcontent=preg_replace('/'.preg_quote("print '<td>'.\$obj->field1.'</td>';",'/').'/', $varprop, $targetcontent);
+    $targetcontent=preg_replace('/'.preg_quote("print '<td>'.\$obj->field2.'</td>';",'/').'/', '', $targetcontent);
+
+    // Build file
+    $fp=fopen($outfile,"w");
+    if ($fp)
+    {
+    	fputs($fp, $targetcontent);
+    	fclose($fp);
+    	print "File '".$outfile."' has been built in current directory.\n";
+    }
+    else $error++;
 }
-
-// Define output variables
-$outfile='out.'.$classmin.'_script.php';
-$targetcontent=$sourcecontent;
-
-// Substitute module name
-$targetcontent=preg_replace('/dev\/skeletons/', $module, $targetcontent);
-$targetcontent=preg_replace('/mymodule othermodule1 othermodule2/', $module, $targetcontent);
-$targetcontent=preg_replace('/mymodule/', $module, $targetcontent);
-
-// Substitute class name
-$targetcontent=preg_replace('/skeleton_class\.class\.php/', $classmin.'.class.php', $targetcontent);
-$targetcontent=preg_replace('/skeleton_script\.php/', $classmin.'_script.php', $targetcontent);
-$targetcontent=preg_replace('/\$element = \'skeleton\'/', '\$element=\''.$classmin.'\'', $targetcontent);
-$targetcontent=preg_replace('/\$table_element = \'skeleton\'/', '\$table_element=\''.$classmin.'\'', $targetcontent);
-$targetcontent=preg_replace('/Skeleton_Class/', $classname, $targetcontent);
-$targetcontent=preg_replace('/skeletons/', $classmin, $targetcontent);
-$targetcontent=preg_replace('/skeleton/', $classmin, $targetcontent);
-
-// Substitute comments
-$targetcontent=preg_replace('/This file is an example to create a new class file/', 'Put here description of this class', $targetcontent);
-$targetcontent=preg_replace('/\s*\/\/\.\.\./', '', $targetcontent);
-$targetcontent=preg_replace('/Put here some comments/','Initialy built by build_class_from_table on '.strftime('%Y-%m-%d %H:%M',mktime()), $targetcontent);
-
-// Substitute table name
-$targetcontent=preg_replace('/MAIN_DB_PREFIX."mytable/', 'MAIN_DB_PREFIX."'.$tablenoprefix, $targetcontent);
-
-// Build file
-$fp=fopen($outfile,"w");
-if ($fp)
-{
-	fputs($fp, $targetcontent);
-	fclose($fp);
-	print "File '".$outfile."' has been built in current directory.\n";
-}
-else $error++;
-
-
-
-//--------------------------------
-// Build skeleton_page.php
-//--------------------------------
-
-// Read skeleton_page.php file
-$skeletonfile=$path.'skeleton_page.php';
-$sourcecontent=file_get_contents($skeletonfile);
-if (! $sourcecontent)
-{
-    print "\n";
-    print "Error: Failed to read skeleton sample '".$skeletonfile."'\n";
-    print "Try to run script from skeletons directory.\n";
-    exit;
-}
-
-// Define output variables
-$outfile='out.'.$classmin.'_page.php';
-$targetcontent=$sourcecontent;
-
-// Substitute module name
-$targetcontent=preg_replace('/dev\/skeletons/', $module, $targetcontent);
-$targetcontent=preg_replace('/mymodule othermodule1 othermodule2/', $module, $targetcontent);
-$targetcontent=preg_replace('/mymodule/', $module, $targetcontent);
-
-// Substitute class name
-$targetcontent=preg_replace('/skeleton_class\.class\.php/', $classmin.'.class.php', $targetcontent);
-$targetcontent=preg_replace('/skeleton_script\.php/', $classmin.'_script.php', $targetcontent);
-$targetcontent=preg_replace('/\$element = \'skeleton\'/', '\$element=\''.$classmin.'\'', $targetcontent);
-$targetcontent=preg_replace('/\$table_element = \'skeleton\'/', '\$table_element=\''.$classmin.'\'', $targetcontent);
-$targetcontent=preg_replace('/Skeleton_Class/', $classname, $targetcontent);
-$targetcontent=preg_replace('/skeletons/', $classmin, $targetcontent);
-$targetcontent=preg_replace('/skeleton/', $classmin, $targetcontent);
-
-// Substitute comments
-$targetcontent=preg_replace('/This file is an example to create a new class file/', 'Put here description of this class', $targetcontent);
-$targetcontent=preg_replace('/\s*\/\/\.\.\./', '', $targetcontent);
-$targetcontent=preg_replace('/Put here some comments/','Initialy built by build_class_from_table on '.strftime('%Y-%m-%d %H:%M',mktime()), $targetcontent);
-
-// Substitute table name
-$targetcontent=preg_replace('/MAIN_DB_PREFIX."mytable/', 'MAIN_DB_PREFIX."'.$tablenoprefix, $targetcontent);
-
-// Substitute GETPOST search_fieldx
-$varprop="\n";
-$cleanparam='';
-foreach($property as $key => $prop)
-{
-	if ($prop['field'] != 'rowid' && $prop['field'] != 'id' && ! $prop['istime'])
-	{
-	    if ($prop['isint']) $varprop.='$search_'.$prop['field']."=GETPOST('search_".$prop['field']."','int');\n";
-	    else $varprop.='$search_'.$prop['field']."=GETPOST('search_".$prop['field']."','alpha');\n";
-	}
-}
-$targetcontent=preg_replace('/'.preg_quote('$search_field1=GETPOST("search_field1");','/').'/', $varprop, $targetcontent);
-$targetcontent=preg_replace('/'.preg_quote('$search_field2=GETPOST("search_field2");','/').'/', '', $targetcontent);
-
-// Substitute GETPOST fieldx
-$varprop="\n";
-$cleanparam='';
-foreach($property as $key => $prop)
-{
-	if ($prop['field'] != 'rowid' && $prop['field'] != 'id' && ! $prop['istime'])
-	{
-	    if ($prop['isint']) $varprop.="\t\$object->".$prop['field']."=GETPOST('".$prop['field']."','int');\n";
-	    else $varprop.="\t\$object->".$prop['field']."=GETPOST('".$prop['field']."','alpha');\n";
-	}
-}
-$targetcontent=preg_replace('/'.preg_quote('$object->prop1=GETPOST("field1");','/').'/', $varprop, $targetcontent);
-$targetcontent=preg_replace('/'.preg_quote('$object->prop2=GETPOST("field2");','/').'/', '', $targetcontent);
-
-// Substitute fetch/select parameters
-$targetcontent=preg_replace('/\$sql\s*\.= " t\.field1,";/', $varpropselect, $targetcontent);
-$targetcontent=preg_replace('/\$sql\s*\.= " t\.field2";/', '', $targetcontent);
-
-// Substitute where for search
-$varprop="\n";
-$cleanparam='';
-foreach($property as $key => $prop)
-{
-	if ($prop['field'] != 'rowid' && $prop['field'] != 'id' && ! $prop['istime'])
-	{
-	    $varprop.='if ($search_'.$prop['field'].') $sql.= natural_search("'.$prop['field'].'",$search_'.$prop['field'].');'."\n";
-	}
-}
-$targetcontent=preg_replace('/'.preg_quote('if ($search_field1) $sql.= natural_search("field1",$search_field1);','/').'/', $varprop, $targetcontent);
-$targetcontent=preg_replace('/'.preg_quote('if ($search_field2) $sql.= natural_search("field2",$search_field2);','/').'/', '', $targetcontent);
-
-// Substitute print_liste_field_titre
-$varprop="\n";
-$cleanparam='';
-foreach($property as $key => $prop)
-{
-	if ($prop['field'] != 'rowid' && $prop['field'] != 'id' && ! $prop['istime'])
-	{
-	    $varprop.="print_liste_field_titre(\$langs->trans('".$prop['field']."'),\$_SERVER['PHP_SELF'],'t.".$prop['field']."','',\$param,'',\$sortfield,\$sortorder);\n";
-	}
-}
-
-$targetcontent=preg_replace('/'.preg_quote("print_liste_field_titre(\$langs->trans('field1'),\$_SERVER['PHP_SELF'],'t.field1','',\$param,'',\$sortfield,\$sortorder);",'/').'/', $varprop, $targetcontent);
-$targetcontent=preg_replace('/'.preg_quote("print_liste_field_titre(\$langs->trans('field2'),\$_SERVER['PHP_SELF'],'t.field1','',\$param,'',\$sortfield,\$sortorder);",'/').'/', '', $targetcontent);
-
-// Substitute where for <td>.fieldx.</td>
-$varprop="\n";
-$cleanparam='';
-foreach($property as $key => $prop)
-{
-	if ($prop['field'] != 'rowid' && $prop['field'] != 'id' && ! $prop['istime'])
-	{
-	    $varprop.="print '<td>'.\$obj->".$prop['field'].".'</td>';\n";
-	}
-}
-$targetcontent=preg_replace('/'.preg_quote("print '<td>'.\$obj->field1.'</td>';",'/').'/', $varprop, $targetcontent);
-$targetcontent=preg_replace('/'.preg_quote("print '<td>'.\$obj->field2.'</td>';",'/').'/', '', $targetcontent);
-
-                
-
-// Build file
-$fp=fopen($outfile,"w");
-if ($fp)
-{
-    fputs($fp, $targetcontent);
-    fclose($fp);
-    print "File '".$outfile."' has been built in current directory.\n";
-}
-else $error++;
 
 
 // -------------------- END OF BUILD_CLASS_FROM_TABLE SCRIPT --------------------
 
-print "You can now rename generated files by removing the 'out.' prefix in their name and store them into directory /yourmodule/class.\n";
+print "You can now rename generated files by removing the 'out.' prefix in their name and store them into directory /yourmodule/class (for .class.php file) or /yourmodule.\n";
 return $error;

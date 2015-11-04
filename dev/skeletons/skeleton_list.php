@@ -17,7 +17,7 @@
  */
 
 /**
- *   	\file       dev/skeletons/skeleton_page.php
+ *   	\file       dev/skeletons/skeleton_list.php
  *		\ingroup    mymodule othermodule1 othermodule2
  *		\brief      This file is an example of a php page
  *					Put here some comments
@@ -93,89 +93,6 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
-	// Action to add record
-	if ($action == 'add')
-	{
-		if (GETPOST('cancel'))
-		{
-			$urltogo=$backtopage?$backtopage:dol_buildpath('/mymodule/list.php',1);
-			header("Location: ".$urltogo);
-			exit;
-		}
-
-		$error=0;
-
-		/* object_prop_getpost_prop */
-		$object->prop1=GETPOST("field1");
-		$object->prop2=GETPOST("field2");
-
-		if (empty($object->ref))
-		{
-			$error++;
-			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Ref")),'errors');
-		}
-
-		if (! $error)
-		{
-			$result=$object->create($user);
-			if ($result > 0)
-			{
-				// Creation OK
-				$urltogo=$backtopage?$backtopage:dol_buildpath('/mymodule/list.php',1);
-				header("Location: ".$urltogo);
-				exit;
-			}
-			{
-				// Creation KO
-				if (! empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
-				else  setEventMessages($object->error, null, 'errors');
-				$action='create';
-			}
-		}
-		else
-		{
-			$action='create';
-		}
-	}
-
-	// Cancel
-	if ($action == 'update' && GETPOST('cancel')) $action='view';
-
-	// Action to update record
-	if ($action == 'update' && ! GETPOST('cancel'))
-	{
-		$error=0;
-
-		$object->prop1=GETPOST("field1");
-		$object->prop2=GETPOST("field2");
-
-		if (empty($object->ref))
-		{
-			$error++;
-			setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired",$langs->transnoentitiesnoconv("Ref")),null,'errors');
-		}
-
-		if (! $error)
-		{
-			$result=$object->update($user);
-			if ($result > 0)
-			{
-				$action='view';
-			}
-			else
-			{
-				// Creation KO
-				if (! empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
-				else setEventMessages($object->error, null, 'errors');
-				$action='edit';
-			}
-		}
-		else
-		{
-			$action='edit';
-		}
-	}
-
 	// Action to delete
 	if ($action == 'confirm_delete')
 	{
@@ -184,7 +101,7 @@ if (empty($reshook))
 		{
 			// Delete OK
 			setEventMessages("RecordDeleted", null, 'mesgs');
-			header("Location: ".dol_buildpath('/buildingmanagement/list.php',1));
+			header("Location: ".dol_buildpath('/mymodule/list.php',1));
 			exit;
 		}
 		else
@@ -344,100 +261,6 @@ if ($action == 'list' || (empty($id) && $action != 'create'))
         $error++;
         dol_print_error($db);
     }
-}
-
-
-
-// Part to create
-if ($action == 'create')
-{
-	print load_fiche_titre($langs->trans("NewSkeleton"));
-
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="action" value="add">';
-	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-
-	dol_fiche_head();
-
-	print '<table class="border centpercent">'."\n";
-	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td>';
-	print '<input class="flat" type="text" size="36" name="label" value="'.$label.'">';
-	print '</td></tr>';
-
-	print '</table>'."\n";
-
-	dol_fiche_end();
-
-	print '<div class="center"><input type="submit" class="button" name="add" value="'.$langs->trans("Create").'"> &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></div>';
-
-	print '</form>';
-}
-
-
-
-// Part to edit record
-if (($id || $ref) && $action == 'edit')
-{
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-
-	dol_fiche_head();
-
-	print '<input type="hidden" name="action" value="add">';
-	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-	print '<input type="hidden" name="id" value="'.$object->id.'">';
-
-	dol_fiche_end();
-
-	print '<div class="center"><input type="submit" class="button" name="add" value="'.$langs->trans("Create").'"></div>';
-
-	print '</form>';
-}
-
-
-
-// Part to show record
-if ($id && (empty($action) || $action == 'view'))
-{
-	dol_fiche_head();
-
-
-
-	dol_fiche_end();
-
-
-	// Buttons
-	print '<div class="tabsAction">'."\n";
-	$parameters=array();
-	$reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-
-	if (empty($reshook))
-	{
-		if ($user->rights->mymodule->write)
-		{
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>'."\n";
-		}
-
-		if ($user->rights->mymodule->delete)
-		{
-			if ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile))	// We can't use preloaded confirm form with jmobile
-			{
-				print '<div class="inline-block divButAction"><span id="action-delete" class="butActionDelete">'.$langs->trans('Delete').'</span></div>'."\n";
-			}
-			else
-			{
-				print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a></div>'."\n";
-			}
-		}
-	}
-	print '</div>'."\n";
-
-
-	// Example 2 : Adding links to objects
-	//$somethingshown=$form->showLinkedObjectBlock($object);
-	//$linktoelem = $form->showLinkToObjectBlock($object);
-	//if ($linktoelem) print '<br>'.$linktoelem;
-
 }
 
 
