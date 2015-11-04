@@ -1003,7 +1003,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
         if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="author" title="Dolibarr Development Team" href="http://www.dolibarr.org">'."\n";
 
         // Displays title
-        $appli='Dolibarr';
+        $appli=constant('DOL_APPLICATION_TITLE');
         if (!empty($conf->global->MAIN_APPLICATION_TITLE)) $appli=$conf->global->MAIN_APPLICATION_TITLE;
 
         if ($title && ! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/noapp/',$conf->global->MAIN_HTML_TITLE)) print '<title>'.dol_htmlentities($title).'</title>';
@@ -1443,7 +1443,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	    //$form=new Form($db);
 
 	    // Define link to login card
-	    $appli='Dolibarr';
+        $appli=constant('DOL_APPLICATION_TITLE');
 	    if (! empty($conf->global->MAIN_APPLICATION_TITLE))
 	    {
 	    	$appli=$conf->global->MAIN_APPLICATION_TITLE;
@@ -1677,7 +1677,7 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
 		if (preg_match('/it/i',$langs->defaultlang)) $doliurl='http://www.dolibarr.it';
 		if (preg_match('/gr/i',$langs->defaultlang)) $doliurl='http://www.dolibarr.gr';
 
-	    $appli='Dolibarr';
+        $appli=constant('DOL_APPLICATION_TITLE');
 	    if (! empty($conf->global->MAIN_APPLICATION_TITLE))
 	    {
 	    	$appli=$conf->global->MAIN_APPLICATION_TITLE; $doliurl='';
