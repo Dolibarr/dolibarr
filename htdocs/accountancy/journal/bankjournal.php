@@ -264,7 +264,7 @@ if ($result) {
  */
 
 // Write bookkeeping
-if ($action == 'writeBookKeeping')
+if ($action == 'writebookkeeping')
 {
 	$error = 0;
 	foreach ( $tabpay as $key => $val )
@@ -406,10 +406,32 @@ if ($action == 'writeBookKeeping')
 	}
 }
 // Export
-if ($action == 'export_csv')
-{
+if ($action == 'export_csv') {
 	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
-	$bank_journal = $conf->global->ACCOUNTING_BANK_JOURNAL;
+	
+	// Journal
+	$bank = "SELECT rowid, label, accountancy_journal";
+	$bank.= " FROM ".MAIN_DB_PREFIX."bank_account";
+	$bank.= " WHERE entity = ".$conf->entity;
+	$bank.= " AND rowid = '".$id_accountancy_journal."'";
+
+	$resql = $db->query($bank);
+	if ($resql)
+	{
+        if ($db->num_rows($resql))
+        {
+            $obj = $db->fetch_object($resql);
+
+			$journal = $objp->accountancy_journal;
+        }
+        return 1;
+    }
+    else
+    {
+        dol_print_error($this->db);
+        return -1;
+    }
+	//$journal = $conf->global->ACCOUNTING_BANK_JOURNAL;
 
 	header('Content-Type: text/csv');
 	header('Content-Disposition: attachment;filename=journal_banque.csv');
@@ -421,16 +443,16 @@ if ($action == 'export_csv')
 		$sep = ";";
 		
 		foreach ( $tabpay as $key => $val ) {
-			$date = dol_print_date($db->jdate($val["date"]), '%d%m%Y');
-
-
 			$companystatic->id = $tabcompany[$key]['id'];
 			$companystatic->name = $tabcompany[$key]['name'];
+			$companystatic->client = $tabcompany[$key]['code_client'];
+
+			$date = dol_print_date($db->jdate($val["date"]), '%d%m%Y');
 
 			// Bank
 			foreach ( $tabbq[$key] as $k => $mt ) {
 				print $date . $sep;
-				print $bank_journal . $sep;
+				print $journal . $sep;
 				print length_accountg(html_entity_decode($k)) . $sep;
 				print $sep;
 				print ($mt < 0 ? 'C' : 'D') . $sep;
@@ -448,7 +470,7 @@ if ($action == 'export_csv')
 					if ($mt)
 					{
 						print $date . $sep;
-						print $bank_journal . $sep;
+						print $journal . $sep;
 						if ($val["lib"] == '(SupplierInvoicePayment)') {
 							print length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER) . $sep;
 						} else {
@@ -470,8 +492,8 @@ if ($action == 'export_csv')
 					if (1)
 					{
 						print $date . $sep;
-						print $bank_journal . $sep;
-						print $conf->global->ACCOUNTING_ACCOUNT_SUSPENSE . $sep;
+						print $journal . $sep;
+						print length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE) . $sep;
 						print $sep;
 						print ($mt < 0 ? 'D' : 'C') . $sep;
 						print ($mt <= 0 ? price(- $mt) : $mt) . $sep;
@@ -482,8 +504,7 @@ if ($action == 'export_csv')
 				}
 			}
 		}
-	} else 	// Model Classic Export
-	{
+	} else { 	// Model Classic Export
 		foreach ( $tabpay as $key => $val ) {
 			$date = dol_print_date($db->jdate($val["date"]), 'day');
 
@@ -525,7 +546,7 @@ if ($action == 'export_csv')
 					{
 						print '"' . $date . '"' . $sep;
 						print '"' . $val["ref"] . '"' . $sep;
-						print '"' . $conf->global->ACCOUNTING_ACCOUNT_SUSPENSE . '"' . $sep;
+						print '"' . length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE) . '"' . $sep;
 						print '"' . $langs->trans("Bank") . '"' . $sep;
 						print '"' . ($mt < 0 ? price(- $mt) : '') . '"' . $sep;
 						print '"' . ($mt >= 0 ? price($mt) : '') . '"';
@@ -535,15 +556,13 @@ if ($action == 'export_csv')
 			}
 		}
 	}
-}
-else
-{
-
+} else {
 	$form = new Form($db);
 
 	llxHeader('', $langs->trans("BankJournal"));
 
 	$namereport = $langs->trans("BankJournal");
+	$namereport.= "&nbsp;" . $journal;
 	$description = $langs->trans("DescBankJournal");
 	$period = $form->select_date($date_start, 'date_start', 0, 0, 0, '', 1, 0, 1) . ' - ' . $form->select_date($date_end, 'date_end', 0, 0, 0, '', 1, 0, 1);
 
@@ -553,9 +572,11 @@ else
 	$head[$h][1] = $langs->trans("Report");
 	$head[$h][2] = 'report';
 
-	dol_fiche_head($head, $hselected);
+	dol_fiche_head($head, 'report');
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id_account='.$id_accountancy_journal.'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+
 	print '<table width="100%" class="border">';
 
 	// Title
@@ -594,8 +615,8 @@ else
 	
 	print '<input type="button" class="button" style="float: right;" value="' . $langs->trans("Export") . '" onclick="launch_export();" />';
 
-	print '<input type="button" class="button" value="' . $langs->trans("WriteBookKeeping") . '" onclick="writeBookKeeping();" />';
-
+	print '<input type="button" class="button" value="' . $langs->trans("WriteBookKeeping") . '" onclick="writebookkeeping();" />';
+	
 	print '
 	<script type="text/javascript">
 		function launch_export() {
@@ -603,8 +624,8 @@ else
 			$("div.fiche div.tabBar form input[type=\"submit\"]").click();
 		    $("div.fiche div.tabBar form input[name=\"action\"]").val("");
 		}
-		function writeBookKeeping() {
-		    $("div.fiche div.tabBar form input[name=\"action\"]").val("writeBookKeeping");
+		function writebookkeeping() {
+		    $("div.fiche div.tabBar form input[name=\"action\"]").val("writebookkeeping");
 			$("div.fiche div.tabBar form input[type=\"submit\"]").click();
 		    $("div.fiche div.tabBar form input[name=\"action\"]").val("");
 		}
@@ -674,8 +695,9 @@ else
 				print "<tr " . $bc[$var] . ">";
 				print "<td>" . $date . "</td>";
 				print "<td>" . $reflabel . "</td>";
-				print "<td>" . $conf->global->ACCOUNTING_ACCOUNT_SUSPENSE . "</td>";
+				print "<td>" . length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE) . "</td>";
 				print "<td>" . $langs->trans('ThirdParty') . "</td>";
+				print "<td>&nbsp;</td>";
 				print "<td align='right'>" . ($mt < 0 ? price(- $mt) : '') . "</td>";
 				print "<td align='right'>" . ($mt >= 0 ? price($mt) : '') . "</td>";
 				print "</tr>";
