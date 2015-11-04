@@ -1042,7 +1042,7 @@ if ($action == 'create')
 
     // Thirdparty
 	print '<tr>';
-	print '<td class="fieldrequired">'.$langs->trans('Thirdparty').'</td>';
+	print '<td class="fieldrequired">'.$langs->trans('ThirdParty').'</td>';
 	if ($socid>0)
 	{
 		print '<td colspan="2">';
