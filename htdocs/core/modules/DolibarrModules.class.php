@@ -32,7 +32,7 @@
  *
  * Parent class for module descriptor class files
  */
-abstract class DolibarrModules
+class DolibarrModules
 {
     /**
      * @var DoliDb Database handler
@@ -199,10 +199,14 @@ abstract class DolibarrModules
 	 *
 	 * @param DoliDB		$db      Database handler
 	 */
-	//public function __construct($db);
+	public function __construct($db)
+	{
+		$this->db = $db;
+	}
 	// We should but can't set this as abstract because this will make dolibarr hang
 	// after migration due to old module not implementing. We must wait PHP is able to make
 	// a try catch on Fatal error to manage this correctly.
+	// We need constructor into function unActivateModule into admin.lib.php
 
     /**
      * Enables a module.
