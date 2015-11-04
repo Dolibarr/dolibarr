@@ -66,10 +66,10 @@
  * <dol_print_order_total>                          Print order total
  * <dol_print_order_number>                         Print order number
  * <dol_print_order_number_unique>                  Print order number after validation
- * <dol_print_customer_first_name>                  Print customer firstname
- * <dol_print_customer_last_name>                   Print customer name
+ * <dol_print_customer_firstname>                   Print customer firstname
+ * <dol_print_customer_lastname>                    Print customer name
  * <dol_print_customer_mail>                        Print customer mail
- * <dol_print_customer_telephone>                   Print customer phone
+ * <dol_print_customer_phone>                       Print customer phone
  * <dol_print_customer_mobile>                      Print customer mobile
  * <dol_print_customer_skype>                       Print customer skype
  * <dol_print_customer_tax_number>                  Print customer VAT number
@@ -107,6 +107,8 @@ class dolReceiptPrinter extends Escpos
     //const CONNECTOR_JAVA = 5;
     var $db;
     var $tags;
+    var $printer;
+    var $template;
     var $error;
     var $errors;
 
@@ -167,16 +169,16 @@ class dolReceiptPrinter extends Escpos
             'dol_print_order_total',
             'dol_print_order_number',
             'dol_print_order_number_unique',
-            'dol_print_customer_first_name',
-            'dol_print_customer_last_name',
+            'dol_print_customer_firstname',
+            'dol_print_customer_lastname',
             'dol_print_customer_mail',
-            'dol_print_customer_telephone',
+            'dol_print_customer_phone',
             'dol_print_customer_mobile',
             'dol_print_customer_skype',
             'dol_print_customer_tax_number',
             'dol_print_customer_account_balance',
-            'dol_print_vendor_last_name',
-            'dol_print_vendor_first_name',
+            'dol_print_vendor_lastname',
+            'dol_print_vendor_firstname',
             'dol_print_vendor_mail',
             'dol_print_customer_points',
             'dol_print_order_points',
@@ -377,54 +379,22 @@ class dolReceiptPrinter extends Escpos
     {
         global $conf;
         $error = 0;
-        $sql = 'SELECT rowid, name, fk_type, parameter';
-        $sql.= ' FROM '.MAIN_DB_PREFIX.'printer_receipt';
-        $sql.= ' WHERE rowid = '.$printerid;
-        $sql.= ' AND entity = '.$conf->entity;
-        $resql = $this->db->query($sql);
-        if ($resql) {
-            $obj = $this->db->fetch_array($resql);
+        $img = new EscposImage(DOL_DOCUMENT_ROOT .'/theme/common/dolibarr_logo_bw.png');
+        $ret = $this->InitPrinter($printerid);
+        if ($ret>0) {
+            setEventMessages($this->error, $this->errors, 'errors');
         } else {
-            $error++;
-            $this->errors[] = $this->db->lasterror;
-        }
-        //print '<pre>'.print_r($obj, true).'</pre>';
-        if (! $error) {
-            $parameter = $obj['parameter'];
             try {
-                switch ($obj['fk_type']) {
-                    case 1:
-                        require_once DOL_DOCUMENT_ROOT .'/includes/escpos/src/DummyPrintConnector.php';
-                        $connector = new DummyPrintConnector();
-                        break;
-                    case 2:
-                        $connector = new FilePrintConnector($parameter);
-                        break;
-                    case 3:
-                        $parameters = explode(':', $parameter);
-                        $connector = new NetworkPrintConnector($parameters[0], $parameters[1]);
-                        break;
-                    case 4:
-                        $connector = new WindowsPrintConnector($parameter);
-                        break;
-                    default:
-                        $connector = 'CONNECTOR_UNKNOWN';
-                        break;
-                }
-                $testprinter = new Escpos($connector);
-                $img = new EscposImage(DOL_DOCUMENT_ROOT .'/theme/common/dolibarr_logo_bw.png');
-                $testprinter -> graphics($img);
-                $testprinter -> text("Hello World!\n");
+                $this->printer->graphics($img);
+                $this->printer->text("Hello World!\n");
                 $testStr = "Testing 123";
-                $testprinter -> qrCode($testStr);
-                $testprinter -> text("Most simple example\n");
-                $testprinter -> feed();
-                $testprinter -> cut();
-                //print '<pre>'.print_r($connector, true).'</pre>';
-                $testprinter -> close();
+                $this->printer->qrCode($testStr);
+                $this->printer->text("Most simple example\n");
+                $this->printer->feed();
+                $this->printer->cut();
+                //print '<pre>'.print_r($this->connector, true).'</pre>';
+                $this->printer->close();
 
-                //print '<pre>'.print_r($connector, true).'</pre>';
-                //print '<pre>'.print_r($testprinter, true).'</pre>';
             } catch (Exception $e) {
                 $this->errors[] = $e->getMessage();
                 $error++;
@@ -437,21 +407,186 @@ class dolReceiptPrinter extends Escpos
      *  Function to Print Receipt Ticket
      *
      *  @param   object    $object          order or invoice object
-     *  @param   int       $template        Template id
+     *  @param   int       $templateid      Template id
      *  @param   int       $printerid       Printer id
      *  @return  int                        0 if OK; >0 if KO
      */
-    function SendToPrinter($object, $template, $printerid)
+    function SendToPrinter($object, $templateid, $printerid)
     {
         global $conf;
         $error = 0;
+        $ret = $this->loadTemplate($templateid);
+
+        // tags a remplacer par leur valeur avant de parser
+        $this->template = str_replace('<dol_print_num_order>', $object->id, $this->template);
+        $this->template = str_replace('<dol_print_customer_firstname>', $object->customer_firstname, $this->template);
+        $this->template = str_replace('<dol_print_customer_lastname>', $object->customer_lastname, $this->template);
+        $this->template = str_replace('<dol_print_customer_mail>', $object->customer_mail, $this->template);
+        $this->template = str_replace('<dol_print_customer_phone>', $object->customer_phone, $this->template);
+        $this->template = str_replace('<dol_print_customer_mobile>', $object->customer_mobile, $this->template);
+        $this->template = str_replace('<dol_print_customer_skype>', $object->customer_skype, $this->template);
+        $this->template = str_replace('<dol_print_customer_tax_number>', $object->customer_tax_number, $this->template);
+        $this->template = str_replace('<dol_print_customer_account_balance>', $object->customer_account_balance, $this->template);
+        $this->template = str_replace('<dol_print_vendor_firstname>', $object->vendor_firstname, $this->template);
+        $this->template = str_replace('<dol_print_vendor_lastname>', $object->vendor_lastname, $this->template);
 
         // parse template
-
-
+        $p = xml_parser_create();
+        xml_parse_into_struct($p, $this->template, $vals, $index);
+        xml_parser_free($p);
+        //print '<pre>'.print_r($index, true).'</pre>';
+        //print '<pre>'.print_r($vals, true).'</pre>';
         // print ticket
+        $level = 0;
+        $ret = $this->InitPrinter($printerid);
+        if ($ret>0) {
+            setEventMessages($this->error, $this->errors, 'errors');
+        } else {
+            for ($line=0; $line < count($vals); $line++) {
+                switch ($vals[$line]['tag']) {
+                    case 'DOL_ALIGN_CENTER':
+                        $this->printer->setJustification(Escpos::JUSTIFY_CENTER);
+                        $this->printer->text($vals[$line]['value']);
+                        break;
+                    case 'DOL_ALIGN_RIGHT':
+                        $this->printer->setJustification(Escpos::JUSTIFY_RIGHT);
+                        break;
+                    case 'DOL_ALIGN_LEFT':
+                        $this->printer->setJustification(Escpos::JUSTIFY_LEFT);
+                        break;
+                    case 'DOL_OPEN_DRAWER':
+                        $this->printer->pulse();
+                        break;
+                    case 'DOL_PRINT_BARCODE':
+                        // $vals[$line]['value'] -> barcode($content, $type)
+                        $this->printer->barcode($object->barcode);
+                        break;
+                    case 'DOL_PRINT_DATE_TIME':
+                        $this->printer->text($object->date);
+                        break;
+                    case 'DOL_PRINT_QRCODE':
+                        // $vals[$line]['value'] -> qrCode($content, $ec, $size, $model)
+                        $this->printer->qrcode($vals[$line]['value']);
+                        break;
+                    case 'DOL_CUT_PAPER_FULL':
+                        $this->printer->cut(Escpos::CUT_FULL);
+                        break;
+                    case 'DOL_CUT_PAPER_PARTIAL':
+                        $this->printer->cut(Escpos::CUT_PARTIAL);
+                        break;
+                    case 'DOL_USE_FONT_A':
+                        $this->printer->setFont(Escpos::FONT_A);
+                        $this->printer->text($vals[$line]['value']);
+                        break;
+                    case 'DOL_USE_FONT_B':
+                        $this->printer->setFont(Escpos::FONT_B);
+                        $this->printer->text($vals[$line]['value']);
+                        break;
+                    case 'DOL_USE_FONT_C':
+                        $this->printer->setFont(Escpos::FONT_C);
+                        $this->printer->text($vals[$line]['value']);
+                        break;
+                    default:
+                        $this->printer->text($vals[$line]['value']);
+                        $this->errors[] = 'UnknowTag: &lt;'.strtolower($vals[$line]['tag']).'&gt;';
+                        $error++;
+                        break;
+                }
+            }
+            // Close and print
+            // uncomment next line to see content sent to printer
+            //print '<pre>'.print_r($this->connector, true).'</pre>';
+            $this->printer->close();
+
+        }
+        return $error;
+    }
+
+    /**
+     *  Function to load Template
+     *
+     *  @param   int       $templateid        Template id
+     *  @return  int                        0 if OK; >0 if KO
+     */
+    function loadTemplate($templateid)
+    {
+        global $conf;
+        $error = 0;
+        $sql = 'SELECT template';
+        $sql.= ' FROM '.MAIN_DB_PREFIX.'printer_receipt_template';
+        $sql.= ' WHERE rowid='.$templateid;
+        $sql.= ' AND entity = '.$conf->entity;
+        $resql = $this->db->query($sql);
+        if ($resql) {
+            $obj = $this->db->fetch_array($resql);
+        } else {
+            $error++;
+            $this->errors[] = $this->db->lasterror;
+        }
+        if (empty($obj)) {
+            $error++;
+            $this->errors[] = 'TemplateDontExist';
+        } else {
+            $this->template = $obj['0'];
+        }
 
         return $error;
     }
 
+
+    /**
+     *  Function Init Printer
+     *
+     *  @param   int       $printerid       Printer id
+     *  @return  int                        0 if OK; >0 if KO
+     */
+    function InitPrinter($printerid)
+    {
+        global $conf;
+        $error=0;
+        $sql = 'SELECT rowid, name, fk_type, parameter';
+        $sql.= ' FROM '.MAIN_DB_PREFIX.'printer_receipt';
+        $sql.= ' WHERE rowid = '.$printerid;
+        $sql.= ' AND entity = '.$conf->entity;
+        $resql = $this->db->query($sql);
+        if ($resql) {
+            $obj = $this->db->fetch_array($resql);
+        } else {
+            $error++;
+            $this->errors[] = $this->db->lasterror;
+        }
+        if (empty($obj)) {
+            $error++;
+            $this->errors[] = 'PrinterDontExist';
+        }
+        if (! $error) {
+            $parameter = $obj['parameter'];
+            try {
+                switch ($obj['fk_type']) {
+                    case 1:
+                        require_once DOL_DOCUMENT_ROOT .'/includes/escpos/src/DummyPrintConnector.php';
+                        $this->connector = new DummyPrintConnector();
+                        break;
+                    case 2:
+                        $this->connector = new FilePrintConnector($parameter);
+                        break;
+                    case 3:
+                        $parameters = explode(':', $parameter);
+                        $this->connector = new NetworkPrintConnector($parameters[0], $parameters[1]);
+                        break;
+                    case 4:
+                        $this->connector = new WindowsPrintConnector($parameter);
+                        break;
+                    default:
+                        $this->connector = 'CONNECTOR_UNKNOWN';
+                        break;
+                }
+                $this->printer = new Escpos($this->connector);
+            } catch (Exception $e) {
+                $this->errors[] = $e->getMessage();
+                $error++;
+            }
+        }
+        return $error;
+    }
 }

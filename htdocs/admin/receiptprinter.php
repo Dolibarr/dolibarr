@@ -375,7 +375,7 @@ if ($mode == 'template' && $user->admin)
                 print '<td><input size="50" type="text" name="templatename" value="'.$printer->listprinterstemplates[$line]['name'].'"></td>';
                 print '<td><textarea name="template" wrap="soft" cols="120" rows="12">'.$printer->listprinterstemplates[$line]['template'].'</textarea>';
                 print '</td>';
-                //print '<td></td>';
+                print '<td></td>';
                 print '<td></td>';
                 print '<td></td>';
             } else {
@@ -424,6 +424,17 @@ if ($mode == 'template' && $user->admin)
 
 }
 
+// to remove after test
+$object->date = '2015-11-02 22:30:25';
+$object->id = 1234;
+$object->customer_firstname  = 'John';
+$object->customer_lastname  = 'Deuf';
+$object->vendor_firstname  = 'Jim';
+$object->vendor_lastname  = 'Big';
+
+$object->barcode = '3700123862396';
+//$printer->sendToPrinter($object, 1, 16);
+//setEventMessages($printer->error, $printer->errors, 'errors');
 
 llxFooter();
 
