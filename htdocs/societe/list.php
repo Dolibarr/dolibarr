@@ -61,11 +61,10 @@ $search_idprof5=trim(GETPOST('search_idprof5'));
 $search_idprof6=trim(GETPOST('search_idprof6'));
 $search_sale=trim(GETPOST("search_sale",'int'));
 $search_categ=trim(GETPOST("search_categ",'int'));
-$search_type=trim(GETPOST('search_type'));
 $search_country=GETPOST("search_country",'int');
 $search_type_thirdparty=GETPOST("search_type_thirdparty",'int');
-$search_type=GETPOST('search_type','alpha');
 $search_status=GETPOST("search_status",'int');
+$search_type=GETPOST('search_type','alpha');
 $search_level_from = GETPOST("search_level_from","alpha");
 $search_level_to   = GETPOST("search_level_to","alpha");
 $search_stcomm=GETPOST('search_stcomm','int');
@@ -965,14 +964,14 @@ if ($resql)
         if (! empty($arrayfields['s.datec']['checked']))
         {
             print '<td align="center">';
-            print dol_print_date($obj->date_creation, 'dayhour');
+            print dol_print_date($db->jdate($obj->date_creation), 'dayhour');
             print '</td>';
         }
         // Date modification
         if (! empty($arrayfields['s.tms']['checked']))
         {
             print '<td align="center">';
-            print dol_print_date($obj->date_update, 'dayhour');
+            print dol_print_date($db->jdate($obj->date_update), 'dayhour');
             print '</td>';
         }
 	    // Status
