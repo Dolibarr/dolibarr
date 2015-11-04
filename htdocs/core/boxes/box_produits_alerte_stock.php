@@ -66,7 +66,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 
 		if ($user->rights->produit->lire || $user->rights->service->lire)
 		{
-			$sql = "SELECT p.rowid, p.label, p.price, p.ref, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.tosell, p.tobuy, p.seuil_stock_alerte,";
+			$sql = "SELECT p.rowid, p.label, p.price, p.ref, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.tosell, p.tobuy, p.seuil_stock_alerte,p.entity,";
 			$sql.= " SUM(".$db->ifsql("s.reel IS NULL","0","s.reel").") as total_stock";
 			$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as s on p.rowid = s.fk_product";
@@ -110,6 +110,7 @@ class box_produits_alerte_stock extends ModeleBoxes
                     $productstatic->ref = $objp->ref;
                     $productstatic->type = $objp->fk_product_type;
                     $productstatic->label = $objp->label;
+					$productstatic->entity = $objp->entity;
 
                     $this->info_box_contents[$line][] = array(
                         'td' => 'align="left"',
