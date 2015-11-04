@@ -18,6 +18,7 @@
  */
 
 // Variable $upload_dir must be defined when entering here
+// Variable $upload_dirold may also exists.
 
 // Send file/link
 if (GETPOST('sendit') && ! empty($conf->global->MAIN_UPLOAD_DOC))
@@ -54,16 +55,18 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes')
 		{
        		$urlfile=basename($urlfile);
 			$file = $upload_dir . "/" . $urlfile;
+			if (! empty($upload_dirold)) $fileold = $upload_dirold . "/" . $urlfile;
 		}
         $linkid = GETPOST('linkid', 'int');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
 
         if ($urlfile)
         {
-	        $dir = dirname($file).'/'; // Chemin du dossier contenant l'image d'origine
-	        $dirthumb = $dir.'/thumbs/'; // Chemin du dossier contenant la vignette
+	        $dir = dirname($file).'/';     // Chemin du dossier contenant l'image d'origine
+	        $dirthumb = $dir.'/thumbs/';   // Chemin du dossier contenant la vignette
 
             $ret = dol_delete_file($file, 0, 0, 0, $object);
-
+            if (! empty($fileold)) dol_delete_file($fileold, 0, 0, 0, $object);     // Delete file using old path
+            
 	        // Si elle existe, on efface la vignette
 	        if (preg_match('/(\.jpg|\.jpeg|\.bmp|\.gif|\.png|\.tiff)$/i',$file,$regs))
 	        {
