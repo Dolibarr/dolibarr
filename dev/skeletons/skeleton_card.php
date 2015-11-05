@@ -255,8 +255,10 @@ if ($action == 'create')
 // Part to edit record
 if (($id || $ref) && $action == 'edit')
 {
+	print load_fiche_titre($langs->trans("MyModule"));
+    
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="action" value="add">';
+	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
 	
@@ -265,11 +267,13 @@ if (($id || $ref) && $action == 'edit')
 	print '<table class="border centpercent">'."\n";
 	// print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input class="flat" type="text" size="36" name="label" value="'.$label.'"></td></tr>';
 	// LIST_OF_TD_LABEL_FIELDS_EDIT
-	print '</td>';
+	print '</table>';
 	
 	dol_fiche_end();
 
-	print '<div class="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'"></div>';
+	print '<div class="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+	print ' &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '</div>';
 
 	print '</form>';
 }
@@ -279,12 +283,14 @@ if (($id || $ref) && $action == 'edit')
 // Part to show record
 if ($id && (empty($action) || $action == 'view'))
 {
+	print load_fiche_titre($langs->trans("MyModule"));
+    
 	dol_fiche_head();
 
 	print '<table class="border centpercent">'."\n";
 	// print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input class="flat" type="text" size="36" name="label" value="'.$label.'"></td></tr>';
 	// LIST_OF_TD_LABEL_FIELDS_VIEW
-	print '</td>';
+	print '</table>';
 	
 	dol_fiche_end();
 

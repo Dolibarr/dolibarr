@@ -639,7 +639,7 @@ foreach ($skeletonfiles as $skeletonfile => $outfile)
     {
     	if ($prop['field'] != 'rowid' && $prop['field'] != 'id' && ! $prop['istime'])
     	{
-    	    $varprop.="print '<tr><td class=\"fieldrequired\">'.\$langs->trans(\"Field".$prop['field']."\").'</td><td>".$prop['field']."</td></tr>';\n";
+    	    $varprop.="print '<tr><td class=\"fieldrequired\">'.\$langs->trans(\"Field".$prop['field']."\").'</td><td>\$object->".$prop['field']."</td></tr>';\n";
     	}
     }
     $targetcontent=preg_replace('/LIST_OF_TD_LABEL_FIELDS_VIEW/', $varprop, $targetcontent);
