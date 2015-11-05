@@ -906,6 +906,7 @@ class Commande extends CommonOrder
         // Clear fields
         $this->user_author_id     = $user->id;
         $this->user_valid         = '';
+		$this->date				  = dol_now();
         $this->date_creation      = '';
         $this->date_validation    = '';
         $this->ref_client         = '';
