@@ -612,6 +612,11 @@ class Societe extends CommonObject
             }
         }
 
+		if (! $this->country_id) {
+			$this->errors[] = 'ErrorCountryRequired';
+			$result = -1;
+		}
+
         return $result;
     }
 

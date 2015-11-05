@@ -1051,7 +1051,7 @@ else
         print '</td></tr>';
 
         // Country
-        print '<tr><td width="25%">'.fieldLabel('Country','selectcountry_id').'</td><td colspan="3" class="maxwidthonsmartphone">';
+        print '<tr><td width="25%" class="fieldrequired">'.fieldLabel('Country','selectcountry_id').'</td><td colspan="3" class="maxwidthonsmartphone">';
         print $form->select_country((GETPOST('country_id')!=''?GETPOST('country_id'):$object->country_id));
         if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
         print '</td></tr>';
@@ -1597,7 +1597,7 @@ else
             print '</td></tr>';
 
             // Country
-            print '<tr><td>'.fieldLabel('Country','selectcounty_id').'</td><td colspan="3">';
+            print '<tr><td class="fieldrequired">'.fieldLabel('Country','selectcounty_id').'</td><td colspan="3">';
             print $form->select_country((GETPOST('country_id')!=''?GETPOST('country_id'):$object->country_id),'country_id');
             if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
             print '</td></tr>';
