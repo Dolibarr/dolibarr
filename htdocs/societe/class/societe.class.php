@@ -1448,7 +1448,7 @@ class Societe extends CommonObject
                 return -1;
             }
         }
-		else dol_syslog("Can't remove thirdparty with id ".$id.". There is ".$objectisused." childs", LOG_WARNING);
+		else dol_syslog("Can't remove thirdparty with id ".$id.". There is ".$objectisused." children", LOG_WARNING);
         return 0;
     }
 

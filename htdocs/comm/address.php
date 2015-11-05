@@ -106,7 +106,7 @@ if ($action == 'add' || $action == 'update')
         }
         else
         {
-	        setEventMessage($object->error, 'errors');
+	        setEventMessages($object->error, $object->errors, 'errors');
             $action='create';
         }
     }
@@ -147,7 +147,7 @@ if ($action == 'add' || $action == 'update')
         else
         {
             $reload = 0;
-	        setEventMessage($object->error, 'errors');
+	        setEventMessages($object->error, $object->errors, 'errors');
             $action= "edit";
         }
     }

@@ -788,7 +788,7 @@ class Categorie extends CommonObject
 	}
 
 	/**
-	 * Return childs of a category
+	 * Return children of a category
 	 *
 	 * @return	array|int   <0 KO, array ok
 	 */
@@ -950,7 +950,7 @@ class Categorie extends CommonObject
 	}
 
 	/**
-	 *	For category id_categ and its childs available in this->cats, define property fullpath and fulllabel
+	 *	For category id_categ and its children available in this->cats, define property fullpath and fulllabel
 	 *
 	 * 	@param		int		$id_categ		id_categ entry to update
 	 * 	@param		int		$protection		Deep counter to avoid infinite loop

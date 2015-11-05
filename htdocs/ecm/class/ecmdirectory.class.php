@@ -609,7 +609,7 @@ class EcmDirectory // extends CommonObject
 	}
 
 	/**
-	 *	Define properties fullpath, fullrelativename, fulllabel of a directory of array this->cats and all its childs.
+	 *	Define properties fullpath, fullrelativename, fulllabel of a directory of array this->cats and all its children.
 	 *  Separator between directories is always '/', whatever is OS.
 	 *
 	 * 	@param	int		$id_categ		id_categ entry to update

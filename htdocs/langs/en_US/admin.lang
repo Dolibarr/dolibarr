@@ -1423,6 +1423,7 @@ SetDefaultBarcodeTypeThirdParties=Default barcode type to use for third parties
 UseUnits=Define a unit of measure for Quantity during order, proposal or invoice lines edition
 ProductCodeChecker= Module for product code generation and checking (product or service)
 ProductOtherConf= Product / Service configuration
+IsNotAdir=is not a directory!
 ##### Syslog #####
 SyslogSetup=Logs module setup
 SyslogOutput=Logs outputs
