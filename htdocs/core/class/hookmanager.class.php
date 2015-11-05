@@ -169,7 +169,7 @@ class HookManager
 				)
 			)) $hooktype='addreplace';
         // Deprecated hook types ('returnvalue')
-        if (preg_match('/^pdf_/',$method) && $method != 'pdf_writelinedesc') $hooktype='returnvalue';		// pdf_xxx except pdf_writelinedesc are 'returnvalue' hooks. When there is 2 hooks of this type, only last one win. TODO Move them into 'output' or 'addreplace' hooks.
+        //if (preg_match('/^pdf_/',$method) && $method != 'pdf_writelinedesc') $hooktype='returnvalue';		// pdf_xxx except pdf_writelinedesc are 'returnvalue' hooks. When there is 2 hooks of this type, only last one win. TODO Move them into 'output' or 'addreplace' hooks.
         if ($method == 'insertExtraFields')
         {
         	$hooktype='returnvalue';	// deprecated. TODO Remove all code with "executeHooks('insertExtraFields'" as soon as there is a trigger available.
