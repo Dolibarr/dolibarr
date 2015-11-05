@@ -364,6 +364,7 @@ HideAnyVATInformationOnPDF=Cacher toutes les informations en rapport avec la TVA
 HideDescOnPDF=Cacher la description des produits sur les PDF générés
 HideRefOnPDF=Cacher la référence des produits sur les PDF générés
 HideDetailsOnPDF=Cacher les détails des lignes de produits sur les PDF générés
+PlaceCustomerAddressToIsoLocation=Utiliser l'emplacement ISO pour l'addresse du destinatire
 Library=Bibliothèque
 UrlGenerationParameters=Sécurisation des URLs
 SecurityTokenIsUnique=Utiliser un paramètre securekey unique pour chaque URL ?
