@@ -369,7 +369,7 @@ else
 			print_liste_field_titre($langs->trans("Product"),"", "p.ref","&amp;id=".$id,"","",$sortfield,$sortorder);
 			print_liste_field_titre($langs->trans("Label"),"", "p.label","&amp;id=".$id,"","",$sortfield,$sortorder);
             print_liste_field_titre($langs->trans("Units"),"", "ps.reel","&amp;id=".$id,"",'align="right"',$sortfield,$sortorder);
-            print_liste_field_titre($langs->trans("AverageUnitPricePMPShort"),"", "ps.pmp","&amp;id=".$id,"",'align="right"',$sortfield,$sortorder);
+            print_liste_field_titre($langs->trans("AverageUnitPricePMPShort"),"", "p.pmp","&amp;id=".$id,"",'align="right"',$sortfield,$sortorder);
 			print_liste_field_titre($langs->trans("EstimatedStockValueShort"),"", "","&amp;id=".$id,"",'align="right"',$sortfield,$sortorder);
             if (empty($conf->global->PRODUIT_MULTIPRICES)) print_liste_field_titre($langs->trans("SellPriceMin"),"", "p.price","&amp;id=".$id,"",'align="right"',$sortfield,$sortorder);
             if (empty($conf->global->PRODUIT_MULTIPRICES)) print_liste_field_titre($langs->trans("EstimatedStockValueSellShort"),"", "","&amp;id=".$id,"",'align="right"',$sortfield,$sortorder);
@@ -431,10 +431,10 @@ else
 					$totalunit+=$objp->value;
 
                     // Price buy PMP
-					print '<td align="right">'.price(price2num($objp->pmp,'MU')).'</td>';
+					print '<td align="right">'.price(price2num($objp->ppmp,'MU')).'</td>';
                     // Total PMP
-					print '<td align="right">'.price(price2num($objp->pmp*$objp->value,'MT')).'</td>';
-					$totalvalue+=price2num($objp->pmp*$objp->value,'MT');
+					print '<td align="right">'.price(price2num($objp->ppmp*$objp->value,'MT')).'</td>';
+					$totalvalue+=price2num($objp->ppmp*$objp->value,'MT');
 
                     // Price sell min
                     if (empty($conf->global->PRODUIT_MULTIPRICES))
