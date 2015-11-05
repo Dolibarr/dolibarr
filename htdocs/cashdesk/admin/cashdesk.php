@@ -175,7 +175,7 @@ if (! empty($conf->receiptprinter->enabled))
 {
     $var=! $var;
     print '<tr '.$bc[$var].'><td>';
-    print $langs->trans("DolibarrReceiptPrinter");
+    print $langs->trans("DolibarrReceiptPrinter").' ('.$langs->trans("FeatureNotYetAvailable").')';
     print '<td colspan="2">';
     print $form->selectyesno("CASHDESK_DOLIBAR_RECEIPT_PRINTER",$conf->global->CASHDESK_DOLIBAR_RECEIPT_PRINTER,1);
     print "</td></tr>\n";
