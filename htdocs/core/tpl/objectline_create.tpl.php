@@ -451,7 +451,7 @@ jQuery(document).ready(function() {
 		<?php if (! empty($usemargins) && $user->rights->margins->creer) { ?>
 
 		/* Code for margin */
-  		$("#fournprice_predef options").remove();
+  		$("#fournprice_predef").find("option").remove();
 		$("#fournprice_predef").hide();
 		$("#buying_price").val("").show();
   		$.post('<?php echo DOL_URL_ROOT; ?>/fourn/ajax/getSupplierPrices.php', { 'idprod': $(this).val() }, function(data) {
