@@ -138,14 +138,15 @@ class DoliStorage implements TokenStorageInterface
     {
         // TODO
         // get previously saved tokens
-        $tokens = $this->session->get($this->key);
+        //$tokens = $this->retrieveAccessToken($service);
 
-        if (is_array($tokens) && array_key_exists($service, $tokens)) {
-            unset($tokens[$service]);
+        //if (is_array($tokens) && array_key_exists($service, $tokens)) {
+        //    unset($tokens[$service]);
 
-            // Replace the stored tokens array
-            $this->conf->set($this->key, $tokens);
-        }
+            $sql = "DELETE FROM ".MAIN_DB_PREFIX."oauth_token";
+            $sql.= " WHERE service='".$service."'";
+            $resql = $this->db->query($sql);
+        //}
 
         // allow chaining
         return $this;
@@ -182,8 +183,6 @@ class DoliStorage implements TokenStorageInterface
     public function storeAuthorizationState($service, $state)
     {
         // TODO save or update
-        // get previously saved tokens
-        //$states = $this->conf->get($this->stateKey);
 
         if (!is_array($states)) {
             $states = array();
@@ -192,10 +191,22 @@ class DoliStorage implements TokenStorageInterface
         $states[$service] = $state;
         $this->states[$service] = $state;
 
-        // save
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."oauth_state (service, state, entity)";
-        $sql.= " VALUES ('".$service."', '".$state."', 1)";
+        $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."oauth_state";
+        $sql.= " WHERE service='".$service."' AND entity=1";
         $resql = $this->db->query($sql);
+        $obj = $this->db->fetch_array($resql);
+        if ($obj) {
+            // update
+            $sql = "UPDATE ".MAIN_DB_PREFIX."oauth_state";
+            $sql.= " SET state='".$this->db->escape($state)."'";
+            $sql.= " WHERE rowid='".$obj['rowid']."'";
+            $resql = $this->db->query($sql);
+        } else {
+            // save
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX."oauth_state (service, state, entity)";
+            $sql.= " VALUES ('".$service."', '".$state."', 1)";
+            $resql = $this->db->query($sql);
+        }
 
         // allow chaining
         return $this;

@@ -118,7 +118,11 @@ class printing_printgcp extends PrintingDriver
                     $this->conf[] = array('varname'=>'PRINTGCP_TOKEN_EXPIRED', 'info'=>($expire?'Yes':'No'), 'type'=>'info');
                     $this->conf[] = array('varname'=>'PRINTGCP_TOKEN_EXPIRE_AT', 'info'=>(date("Y-m-d H:i:s", $token->getEndOfLife())), 'type'=>'info');
                 }
-                $this->conf[] = array('varname'=>'PRINTGCP_AUTHLINK', 'link'=>$urlwithroot.'/core/modules/oauth/getgoogleoauthcallback.php', 'type'=>'authlink');
+                if (!$storage->hasAccessToken('Google')) {
+                    $this->conf[] = array('varname'=>'PRINTGCP_AUTHLINK', 'link'=>$urlwithroot.'/core/modules/oauth/getgoogleoauthcallback.php', 'type'=>'authlink');
+                } else {
+                    $this->conf[] = array('varname'=>'PRINTGCP_DELETE_TOKEN', 'link'=>$urlwithroot.'/core/modules/oauth/getgoogleoauthcallback.php?action=delete', 'type'=>'delete');
+                }
             } else {
                 $this->conf[] = array('varname'=>'PRINTGCP_INFO', 'info'=>'GoogleAuthNotConfigured', 'type'=>'info');
             }

@@ -161,6 +161,13 @@ if ($mode == 'setup' && $user->admin)
                     print '<td>&nbsp;</td>';
                     print '</tr>'."\n";
                     break;
+                case "delete":
+                    print '<tr '.$bc[$var].'>';
+                    print '<td>'.$langs->trans($key['varname']).'</td>';
+                    print '<td class="button"><a href="'.$key['link'].'">'.$langs->trans('DeleteAccess').'</a></td>';
+                    print '<td>&nbsp;</td>';
+                    print '</tr>'."\n";
+                    break;
                 case "info":
                     print '<tr '.$bc[$var].'>';
                     print '<td'.($key['required']?' class=required':'').'>'.$langs->trans($key['varname']).'</td>';
