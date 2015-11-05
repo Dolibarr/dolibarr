@@ -47,7 +47,7 @@ include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
 dol_include_once('/mymodule/class/skeleton_class.class.php');
 
 // Load traductions files requiredby by page
-$langs->load("companies");
+$langs->load("mymodule");
 $langs->load("other");
 
 // Get parameters
