@@ -895,7 +895,7 @@ if ($action == 'edit_price' && ($user->rights->produit->creer || $user->rights->
 
 			var showHidePriceRules = function () {
 				var otherPrices = $('div.fiche form:not(:first)');
-				var minPrice1 = $('div.fiche form:first tr:eq(3)');
+				var minPrice1 = $('div.fiche form:first tr:eq(1)');
 
 				if (jQuery('input#usePriceRules').prop('checked')) {
 					otherPrices.hide();
@@ -914,16 +914,14 @@ if ($action == 'edit_price' && ($user->rights->produit->creer || $user->rights->
 		</script>
 		<?php
 
-		if (! empty($conf->global->PRODUIT_MULTIPRICES) && ! empty($conf->global->PRODUIT_MULTIPRICES_ALLOW_AUTOCALC_PRICELEVEL))
-		{
-			print $langs->trans('UseMultipriceRules'). ' <input type="checkbox" id="usePriceRules" name="usePriceRules" '.($object->price_autogen ? 'checked' : '').'><br><br>';
-		}
-		
 		for($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i ++)
 		{
 		    
 			print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
 		    if ($i > 1) print '<br>';
+			elseif (! empty($conf->global->PRODUIT_MULTIPRICES) && ! empty($conf->global->PRODUIT_MULTIPRICES_ALLOW_AUTOCALC_PRICELEVEL)) {
+				print $langs->trans('UseMultipriceRules'). ' <input type="checkbox" id="usePriceRules" name="usePriceRules" value="on" '.($object->price_autogen ? 'checked' : '').'><br><br>';
+			}
 			print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
 			print '<input type="hidden" name="action" value="update_price">';
 			print '<input type="hidden" name="id" value="' . $object->id . '">';
