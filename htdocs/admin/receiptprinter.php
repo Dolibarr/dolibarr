@@ -425,7 +425,7 @@ if ($mode == 'template' && $user->admin)
 }
 
 // to remove after test
-$object->date = '2015-11-02 22:30:25';
+$object->date_time = '2015-11-02 22:30:25';
 $object->id = 1234;
 $object->customer_firstname  = 'John';
 $object->customer_lastname  = 'Deuf';
