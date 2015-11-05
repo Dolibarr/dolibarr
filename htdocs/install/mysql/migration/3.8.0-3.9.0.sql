@@ -18,6 +18,9 @@
 -- -- VPGSQL8.2 DELETE FROM llx_usergroup_user      WHERE fk_user      NOT IN (SELECT rowid from llx_user);
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
+-- Fix bad data
+update llx_opensurvey_sondage set format = 'D' where format = 'D+';
+update llx_opensurvey_sondage set format = 'A' where format = 'A+';
 
 INSERT INTO llx_const (name, value, type, note, visible) values (__ENCRYPT('MAIN_DELAY_EXPENSEREPORTS_TO_PAY')__,__ENCRYPT('31')__,'chaine','Tolérance de retard avant alerte (en jours) sur les notes de frais impayées',0);
 INSERT INTO llx_const (name, value, type, note, visible) values ('MAIN_SIZE_SHORTLISTE_LIMIT','4','chaine','Longueur maximum des listes courtes (fiche client)',0);
@@ -174,6 +177,7 @@ CREATE TABLE IF NOT EXISTS llx_establishment (
 ) ENGINE=InnoDB;
 
 
+
 ALTER TABLE llx_projet_task_time ADD COLUMN invoice_id integer DEFAULT NULL;
 ALTER TABLE llx_projet_task_time ADD COLUMN invoice_line_id integer DEFAULT NULL;
 
@@ -194,6 +198,7 @@ create table llx_stock_lotserial
 ) ENGINE=innodb;
 
 
+-- Add budget tables
 
 create table llx_budget
 (
@@ -235,10 +240,11 @@ ALTER TABLE llx_budget_lines ADD INDEX idx_budget_lines (fk_project);
 ALTER TABLE llx_budget_lines ADD CONSTRAINT fk_budget_lines_budget FOREIGN KEY (fk_budget) REFERENCES llx_budget (rowid);
 
 
-
+-- Add position field
 ALTER TABLE llx_c_typent ADD COLUMN position integer NOT NULL DEFAULT 0;
 ALTER TABLE llx_c_forme_juridique ADD COLUMN position integer NOT NULL DEFAULT 0;
 ALTER TABLE llx_c_type_fees ADD COLUMN position integer NOT NULL DEFAULT 0;
+
 
 -- NEW Level multiprice generator based on per cent variations over base price
 CREATE TABLE llx_product_pricerules
@@ -261,8 +267,6 @@ ALTER TABLE llx_opensurvey_sondage DROP COLUMN canedit;
 ALTER TABLE llx_opensurvey_sondage DROP COLUMN origin;
 
 DROP TABLE llx_opensurvey_sujet_studs;
-
-
 
 CREATE TABLE llx_opensurvey_formquestions (
 	rowid INTEGER AUTO_INCREMENT NOT NULL PRIMARY KEY,

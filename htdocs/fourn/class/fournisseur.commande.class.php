@@ -2295,7 +2295,7 @@ class CommandeFournisseur extends CommonOrder
 
         $clause = " WHERE";
 
-        $sql = "SELECT c.rowid, c.date_creation as datec, c.fk_statut,c.date_livraison as delivery_date";
+        $sql = "SELECT c.rowid, c.date_creation as datec, c.date_commande, c.fk_statut, c.date_livraison as delivery_date";
         $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
         if (!$user->rights->societe->client->voir && !$user->societe_id)
         {
@@ -2315,7 +2315,7 @@ class CommandeFournisseur extends CommonOrder
 	        $response = new WorkboardResponse();
 	        $response->warning_delay=$conf->commande->fournisseur->warning_delay/60/60/24;
 	        $response->label=$langs->trans("SuppliersOrdersToProcess");
-	        $response->url=DOL_URL_ROOT.'/fourn/commande/index.php';
+	        $response->url=DOL_URL_ROOT.'/fourn/commande/list.php?statut=1,2,3';
 	        $response->img=img_object($langs->trans("Orders"),"order");
 
             while ($obj=$this->db->fetch_object($resql))
@@ -2323,7 +2323,7 @@ class CommandeFournisseur extends CommonOrder
                 $response->nbtodo++;
 
                 $commandestatic->date_livraison = $this->db->jdate($obj->delivery_date);
-                $commandestatic->date_commande = $this->db->jdate($obj->datec);
+                $commandestatic->date_commande = $this->db->jdate($obj->date_commande);
                 $commandestatic->statut = $obj->fk_statut;
 
                 if ($commandestatic->hasDelay()) {
@@ -2477,11 +2477,11 @@ class CommandeFournisseur extends CommonOrder
     public function hasDelay()
     {
         global $conf;
-
+		
         $now = dol_now();
         $date_to_test = empty($this->date_livraison) ? $this->date_commande : $this->date_livraison;
-
-        return ($this->statut != 3) && $date_to_test < ($now - $conf->commande->fournisseur->warning_delay);
+        
+        return ($this->statut != 3) && $date_to_test && $date_to_test < ($now - $conf->commande->fournisseur->warning_delay);
     }
 }
 
