@@ -3744,14 +3744,13 @@ function yn($yesno, $case=1, $color=0)
 
 /**
  *	Return a path to have a directory according to object.
- *  New usage:       $conf->product->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 1, $object, 'modulepart')
- *  Old usage:       '001' with level 3->"0/0/1/", '015' with level 3->"0/1/5/"
- *  Old usage:       'ABC-1' with level 3 ->"0/0/1/", '015' with level 1->"5/"
+ *  Examples:       '001' with level 3->"0/0/1/", '015' with level 3->"0/1/5/"
+ *  Examples:       'ABC-1' with level 3 ->"0/0/1/", '015' with level 1->"5/"
  *
- *	@param	string	$num            Id of object (deprecated, $object will be used in future)
- *	@param  int		$level		    Level of subdirs to return (1, 2 or 3 levels). (deprecated, global option will be used in future)
- * 	@param	int		$alpha		    0=Keep number only to forge path, 1=Use alpha part afer the - (By default, use 0). (deprecated, global option will be used in future)
- *  @param  int		$withoutslash   0=With slash at end (except if '/', we return ''), 1=without slash at end
+ *	@param	string	$num            Id of object
+ *	@param  int		$level		    Level of subdirs to return (1, 2 or 3 levels)
+ * 	@param	int		$alpha		    0=Keep number only to forge path, 1=Use alpha part afer the - (By default, use 0).
+ *  @param  int		$withoutslash   0=With slash at end, 1=without slash at end (except if '/', we return '')
  *  @param	Object	$object			Object
  *  @param	string	$modulepart		Type of object ('invoice_supplier, 'donation', 'invoice', ...')
  *  @return	string					Dir to use ending. Example '' or '1/' or '1/2/'
@@ -3762,7 +3761,10 @@ function get_exdir($num,$level,$alpha,$withoutslash,$object,$modulepart)
 
 	$path = '';
 
-	if (! empty($level) && in_array($modulepart, array('cheque','user','category','holiday','shipment', 'member','don','donation','supplier_invoice','invoice_supplier')))
+	// TODO if object is null, load it from id and modulepart.
+
+
+	if (! empty($level) && in_array($modulepart, array('cheque', 'user', 'category', 'holiday', 'shipment', 'member', 'don', 'donation', 'supplier_invoice', 'invoice_supplier', 'product', 'mailing')))
 	{
 		// This part should be removed once all code is using "get_exdir" to forge path, with all parameters provided
 		if (empty($alpha)) $num = preg_replace('/([^0-9])/i','',$num);
@@ -3776,7 +3778,7 @@ function get_exdir($num,$level,$alpha,$withoutslash,$object,$modulepart)
 	{
 		// TODO
 		// We will introduce here a common way of forging path for document storage
-		// Here, object->id, object->ref and object->modulepart are required.
+		// Here, $num=id, ref and modulepart are required.
 
 	}
 
