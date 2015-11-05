@@ -369,7 +369,8 @@ class printing_printgcp extends PrintingDriver
      */
     function list_jobs()
     {
-        global $conf, $db, $bc;
+        global $conf, $db, $langs, $bc;
+        
         $error = 0;
         $html = '';
         // Token storage
@@ -432,20 +433,31 @@ class printing_printgcp extends PrintingDriver
         $var = True;
         $jobs = $responsedata['jobs'];
         //$html .= '<pre>'.print_r($jobs['0'],true).'</pre>';
-        foreach ($jobs as $value )
+        if (is_array($jobs))
         {
-            $var = !$var;
-            $html .= '<tr '.$bc[$var].'>';
-            $html .= '<td>'.$value['id'].'</td>';
-            $html .= '<td>'.$value['ownerId'].'</td>';
-            $html .= '<td>'.$value['printerName'].'</td>';
-            $html .= '<td>'.$value['title'].'</td>';
-            $html .= '<td>'.$value['status'].'</td>';
-            $html .= '<td>&nbsp;</td>';
-            $html .= '</tr>';
+            foreach ($jobs as $value)
+            {
+                $var = !$var;
+                $html .= '<tr '.$bc[$var].'>';
+                $html .= '<td>'.$value['id'].'</td>';
+                $html .= '<td>'.$value['ownerId'].'</td>';
+                $html .= '<td>'.$value['printerName'].'</td>';
+                $html .= '<td>'.$value['title'].'</td>';
+                $html .= '<td>'.$value['status'].'</td>';
+                $html .= '<td>&nbsp;</td>';
+                $html .= '</tr>';
+            }
+        }
+        else
+        {
+                $html .= '<tr '.$bc[$var].'>';
+                $html .= '<td colspan="6">'.$langs->trans("None").'</td>';
+                $html .= '</tr>';
         }
         $html .= '</table>';
+        
         $this->resprint = $html;
+        
         return $error;
     }
 
