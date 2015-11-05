@@ -418,7 +418,7 @@ class Entrepot extends CommonObject
 	{
 		$ret=array();
 
-		$sql = "SELECT sum(ps.reel) as nb, sum(ps.reel * ps.pmp) as value";
+		$sql = "SELECT sum(ps.reel) as nb, sum(ps.reel * p.pmp) as value";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_stock as ps";
 		$sql.= ", ".MAIN_DB_PREFIX."product as p";
 		$sql.= " WHERE ps.fk_entrepot = ".$this->id;
