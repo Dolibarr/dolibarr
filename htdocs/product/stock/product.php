@@ -578,9 +578,10 @@ if ( (! empty($conf->productbatch->enabled)) && $product->hasbatch()) {
 	print '</tr>';
 }
 
-$sql = "SELECT e.rowid, e.label, ps.reel, ps.pmp, ps.rowid as product_stock_id";
+$sql = "SELECT e.rowid, e.label, ps.reel, p.pmp, ps.rowid as product_stock_id";
 $sql.= " FROM ".MAIN_DB_PREFIX."entrepot as e,";
 $sql.= " ".MAIN_DB_PREFIX."product_stock as ps";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = ps.fk_product";
 $sql.= " WHERE ps.reel != 0";
 $sql.= " AND ps.fk_entrepot = e.rowid";
 $sql.= " AND e.entity IN (".getEntity('stock',1).")";
