@@ -1021,8 +1021,6 @@ class Propal extends CommonObject
     {
         global $db, $user,$langs,$conf,$hookmanager;
 
-		dol_include_once('/projet/class/project.class.php');
-
         $this->context['createfromclone']='createfromclone';
 
         $error=0;
@@ -1049,13 +1047,13 @@ class Propal extends CommonObject
                 $clonedObj->mode_reglement_id	= (! empty($objsoc->mode_reglement_id) ? $objsoc->mode_reglement_id : 0);
                 $clonedObj->fk_delivery_address	= '';
             	
-            	$project = new Project($db);
-				if ($this->fk_project > 0 && $project->fetch($this->fk_project)) {
-					if ($project->socid <= 0) $clonedObj->fk_project = $this->fk_project;
-					else $clonedObj->fk_project = '';
-				} else {
-					$clonedObj->fk_project = '';
-				}
+                if (!empty($conf->projet->enabled))
+                {
+                    $project = new Project($db);
+
+                    if ($this->fk_project > 0 && $project->fetch($this->fk_project) && $project->socid > 0)
+                        $clonedObj->fk_project = '';
+                }
             }
 
             // reset ref_client
