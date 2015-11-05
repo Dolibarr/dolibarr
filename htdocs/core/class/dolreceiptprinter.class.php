@@ -92,7 +92,7 @@
  *
  */
 
-require_once DOL_DOCUMENT_ROOT .'/includes/escpos/Escpos.php';
+require_once DOL_DOCUMENT_ROOT .'/includes/mike42/escpos-php/Escpos.php';
 
  
 /**

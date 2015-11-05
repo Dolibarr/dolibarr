@@ -433,8 +433,8 @@ $object->vendor_firstname  = 'Jim';
 $object->vendor_lastname  = 'Big';
 
 $object->barcode = '3700123862396';
-$printer->sendToPrinter($object, 1, 16);
-setEventMessages($printer->error, $printer->errors, 'errors');
+//$printer->sendToPrinter($object, 1, 16);
+//setEventMessages($printer->error, $printer->errors, 'errors');
 
 llxFooter();
 
