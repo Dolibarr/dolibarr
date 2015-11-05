@@ -1184,6 +1184,7 @@ CreditNotePDFModules=Credit note document models
 CreditNote=Credit note
 CreditNotes=Credit notes
 ForceInvoiceDate=Force invoice date to validation date
+AllowCreditNoteWithoutRelatedInvoice=Allow to create credit note without a related invoice
 DisableRepeatable=Disable repeatable invoices
 SuggestedPaymentModesIfNotDefinedInInvoice=Suggested payments mode on invoice by default if not defined for invoice
 EnableEditDeleteValidInvoice=Enable the possibility to edit/delete valid invoice with no payment

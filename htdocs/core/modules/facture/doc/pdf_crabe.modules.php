@@ -1503,7 +1503,7 @@ class pdf_crabe extends ModelePDFFactures
 			$pdf->SetTextColor(0,0,60);
 			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("ReplacementInvoice").' : '.$outputlangs->convToOutputCharset($objectreplaced->ref), '', 'R');
 		}
-		if ($object->type == 2)
+		if ($object->type == 2 && !empty($object->fk_facture_source))
 		{
 			$objectreplaced=new Facture($this->db);
 			$objectreplaced->fetch($object->fk_facture_source);
