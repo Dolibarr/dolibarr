@@ -1,10 +1,11 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
     "hash": "d88b5c84a9ea1af354d867ba2e2ab251",
+    "content-hash": "85e60ec7f8ab593387c7bd10d8db860d",
     "packages": [
         {
             "name": "ccampbell/chromephp",
