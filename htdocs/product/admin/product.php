@@ -518,8 +518,7 @@ if (! empty($conf->global->PRODUCT_CANVAS_ABILITY))
 	}
 	else
 	{
-		//TODO: Translate
-		print "<tr><td><b>ERROR</b>: $dir is not a directory !</td></tr>\n";
+		setEventMessages($dir.' '.$langs->trans("IsNotADir"), null, 'errors');
 	}
 }
 
