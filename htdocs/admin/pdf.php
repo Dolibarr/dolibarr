@@ -62,7 +62,8 @@ if ($action == 'update')
 	dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS", $_POST["MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_HIDE_DESC",    $_POST["MAIN_GENERATE_DOCUMENTS_HIDE_DESC"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_HIDE_REF",     $_POST["MAIN_GENERATE_DOCUMENTS_HIDE_REF"],'chaine',0,'',$conf->entity);
-
+	dolibarr_set_const($db, "MAIN_PDF_USE_ISO_LOCATION",     $_POST["MAIN_PDF_USE_ISO_LOCATION"],'chaine',0,'',$conf->entity);
+	
 	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
 	exit;
 }
@@ -245,6 +246,12 @@ if ($action == 'edit')	// Edit
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("HideDetailsOnPDF").'</td><td>';
     print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS',(! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS))?$conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS:0,1);
+    print '</td></tr>';
+
+ 	// Place customer adress to the ISO location
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("PlaceCustomerAddressToIsoLocation").'</td><td>';
+	print $form->selectyesno('MAIN_PDF_USE_ISO_LOCATION',(! empty($conf->global->MAIN_PDF_USE_ISO_LOCATION))?$conf->global->MAIN_PDF_USE_ISO_LOCATION:0,1);
     print '</td></tr>';
 
 
@@ -444,6 +451,10 @@ else	// Show
 	print yn($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS,1);
 	print '</td></tr>';
 
+	$var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("PlaceCustomerAddressToIsoLocation").'</td><td colspan="2">';
+	print yn($conf->global->MAIN_PDF_USE_ISO_LOCATION,1);
+	print '</td></tr>';
 
 	print '</table>';
 
