@@ -5157,7 +5157,7 @@ class Form
      *    To add a particular filter on select, you must set $object->next_prev_filter to SQL criteria.
      *
      *    @param	object	$object			Object to show
-     *    @param	string	$paramid   		Name of parameter to use to name the id into the URL link
+     *    @param	string	$paramid   		Name of parameter to use to name the id into the URL next/previous link
      *    @param	string	$morehtml  		More html content to output just before the nav bar
      *    @param	int		$shownav	  	Show Condition (navigation is shown if value is 1)
      *    @param	string	$fieldid   		Nom du champ en base a utiliser pour select next et previous (we make the select max and min on this field)
@@ -5192,7 +5192,7 @@ class Form
         
         $ret.='<div class="inline-block floatleft valignmiddle refid'.(($shownav && ($previous_ref || $next_ref))?' refidpadding':'').'">';
 
-        // For thirdparty and contact, the ref is he id, so we show something else
+        // For thirdparty and contact, the ref is the id, so we show something else
         if ($object->element == 'societe')
         {
         	$ret.=dol_htmlentities($object->name);
@@ -5360,7 +5360,7 @@ class Form
             else
 			{
 				$nophoto='/public/theme/common/nophoto.png';
-				if (in_array($modulepart,array('userphoto','contact')))	// For module thar are "physical" users
+				if (in_array($modulepart,array('userphoto','contact')))	// For module that are "physical" users
 				{
 					$nophoto='/public/theme/common/user_anonymous.png';
 					if ($object->gender == 'man') $nophoto='/public/theme/common/user_man.png';
