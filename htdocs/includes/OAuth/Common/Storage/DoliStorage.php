@@ -86,6 +86,10 @@ class DoliStorage implements TokenStorageInterface
      */
     public function storeAccessToken($service, TokenInterface $token)
     {
+        //var_dump("storeAccessToken");
+        //var_dump($token);
+        dol_syslog("storeAccessToken");
+        
         $serializedToken = serialize($token);
         $this->tokens[$service] = $token;
 
@@ -95,6 +99,10 @@ class DoliStorage implements TokenStorageInterface
         $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."oauth_token";
         $sql.= " WHERE service='".$service."' AND entity=1";
         $resql = $this->db->query($sql);
+        if (! $resql)
+        {
+            dol_print_error($this->db);
+        }
         $obj = $this->db->fetch_array($resql);
         if ($obj) {
             // update
@@ -108,7 +116,8 @@ class DoliStorage implements TokenStorageInterface
             $sql.= " VALUES ('".$service."', '".$this->db->escape($serializedToken)."', 1)";
             $resql = $this->db->query($sql);
         }
-
+        //print $sql;
+        
         // allow chaining
         return $this;
     }
@@ -122,8 +131,13 @@ class DoliStorage implements TokenStorageInterface
         $sql = "SELECT token FROM ".MAIN_DB_PREFIX."oauth_token";
         $sql.= " WHERE service='".$service."'";
         $resql = $this->db->query($sql);
+        if (! $resql)
+        {
+            dol_print_error($this->db);
+        }
         $result = $this->db->fetch_array($resql);
-        $token = unserialize($result[token]);
+        $token = unserialize($result['token']);
+        
         $this->tokens[$service] = $token;
 
         return is_array($this->tokens)
@@ -194,6 +208,10 @@ class DoliStorage implements TokenStorageInterface
         $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."oauth_state";
         $sql.= " WHERE service='".$service."' AND entity=1";
         $resql = $this->db->query($sql);
+        if (! $resql)
+        {
+            dol_print_error($this->db);
+        }
         $obj = $this->db->fetch_array($resql);
         if ($obj) {
             // update

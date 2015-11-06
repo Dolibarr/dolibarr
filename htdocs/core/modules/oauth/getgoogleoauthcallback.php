@@ -30,14 +30,25 @@ use OAuth\Common\Consumer\Credentials;
 use OAuth\Common\Token\TokenInterface;
 use OAuth\OAuth2\Service\Google;
 
+// Define $urlwithroot
+$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
+//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+
+
+
 $action = GETPOST('action', 'alpha');
+$backtourl = GETPOST('backtourl', 'alpha');
+
 
 /**
  * Create a new instance of the URI class with the current URI, stripping the query string
  */
 $uriFactory = new \OAuth\Common\Http\Uri\UriFactory();
-$currentUri = $uriFactory->createFromSuperGlobalArray($_SERVER);
-$currentUri->setQuery('');
+//$currentUri = $uriFactory->createFromSuperGlobalArray($_SERVER);
+//$currentUri->setQuery('');
+$currentUri = $uriFactory->createFromAbsolute($urlwithroot.'/core/modules/oauth/getgoogleoauthcallback.php');
+
 
 /**
  * Load the credential for the service
@@ -45,14 +56,22 @@ $currentUri->setQuery('');
 
 /** @var $serviceFactory \OAuth\ServiceFactory An OAuth service factory. */
 $serviceFactory = new \OAuth\ServiceFactory();
+$httpClient = new \OAuth\Common\Http\Client\CurlClient();
+// TODO Set options for proxy and timeout
+// $params=array('CURLXXX'=>value, ...)
+//$httpClient->setCurlParameters($params);
+$serviceFactory->setHttpClient($httpClient);
+
 // Dolibarr storage
 $storage = new DoliStorage($db, $conf);
+
 // Setup the credentials for the requests
 $credentials = new Credentials(
     $conf->global->OAUTH_GOOGLE_ID,
     $conf->global->OAUTH_GOOGLE_SECRET,
     $currentUri->getAbsoluteUri()
 );
+
 
 // Instantiate the Api service using the credentials, http client and storage mechanism for the token
 /** @var $apiService Service */
@@ -61,80 +80,71 @@ $apiService = $serviceFactory->createService('Google', $credentials, $storage, a
 
 // access type needed for google refresh token
 $apiService->setAccessType('offline');
-if ($action == 'delete') {
-    // delete token
-    llxHeader('',$langs->trans("OAuthSetup"));
 
-    $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-    print load_fiche_titre($langs->trans("OAuthSetup"),$linkback,'title_setup');
-    dol_fiche_head();
+$langs->load("oauth");
+
+
+/*
+ * Actions
+ */
+
+
+if ($action == 'delete') 
+{
     $storage->clearToken('Google');
-    dol_fiche_end();
+    
+    setEventMessages($langs->trans('TokenDeleted'), null, 'mesgs');
+    
+    header('Location: ' . $backtourl);
+    exit();
+} 
 
+if (! empty($_GET['code']))     // We are coming from Google oauth page
+{
+    //llxHeader('',$langs->trans("OAuthSetup"));
 
-} elseif (! empty($_GET['code'])) {
-    llxHeader('',$langs->trans("OAuthSetup"));
+    //$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+    //print load_fiche_titre($langs->trans("OAuthSetup"),$linkback,'title_setup');
 
-    $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-    print load_fiche_titre($langs->trans("OAuthSetup"),$linkback,'title_setup');
-
-    dol_fiche_head();
+    //dol_fiche_head();
     // retrieve the CSRF state parameter
     $state = isset($_GET['state']) ? $_GET['state'] : null;
-    print '<table>';
-    // looking for a token already stored in db
-    //try {
-    //    $token = $storage->retrieveAccessToken('Google');
-    //    $old_token=1;
-    //} catch (Exception $e) {
-    //    $old_token=0;
-    //}
-    //if ($old_token==1) {
-    //    print '<tr><td>'.$langs->trans('OldTokenStored').'</td><td></td></tr>';
-    //    print '<tr><td><pre>'.print_r($token,true).'</pre></td></tr>';
-    //}
-    //$refreshtoken = $token->getRefreshToken();
+    //print '<table>';
 
     // This was a callback request from service, get the token
     try {
-        $apiService->requestAccessToken($_GET['code'], $state);
+        //var_dump($_GET['code']);
+        //var_dump($state);
+        //var_dump($apiService);      // OAuth\OAuth2\Service\Google
+        $token = $apiService->requestAccessToken($_GET['code'], $state);
+        
+        setEventMessages($langs->trans('NewTokenStored'), null, 'mesgs');
     } catch (Exception $e) {
         print $e->getMessage();
     }
-    //print '<pre>'.print_r($apiService,true).'</pre>';
 
-    // retrieve new token in db
-    try {
-        $token = $storage->retrieveAccessToken('Google');
-        $new_token=1;
-    } catch (Exception $e) {
-        $new_token=0;
-    }
-    $newrefreshtoken = $token->getRefreshToken();
-    if (empty($newrefreshtoken) && ! empty($refreshtoken)) {
-        $token->setRefreshToken($refreshtoken);
-        $storage->storeAccessToken('Google', $token);
-    }
-    if ($new_token==1) {
-        print '<tr><td>'.$langs->trans('NewTokenStored').'</td><td></td></tr>';
-        print '<tr><td><pre>'.print_r($token,true).'</pre></td></tr>';
-    }
-    //print '<td><pre>'.print_r($token,true).'</pre></td>';
-    //$apiService->refreshAccessToken($token);
-    //print '<pre>'.print_r($apiService,true).'</pre>';
-    //$token = $storage->retrieveAccessToken('Google');
-    //print '<td><pre>'.print_r($token,true).'</pre></td>';
-    print '<td><a href="https://security.google.com/settings/security/permissions" target="_blank">Applications associées à votre compte</a></td>';
-    print '</table>';
-
-    dol_fiche_end();
-} else {
+    $backtourl = $_SESSION["backtourlsavedbeforeoauthjump"];
+    unset($_SESSION["backtourlsavedbeforeoauthjump"]);
+    
+    header('Location: ' . $backtourl);
+    exit();
+}
+else 
+{
+    $_SESSION["backtourlsavedbeforeoauthjump"]=$backtourl;
+    
     $url = $apiService->getAuthorizationUri();
     // we go on google authorization page
     header('Location: ' . $url);
     exit();
 }
 
-llxFooter();
+
+/*
+ * View
+ */
+
+// No view at all, just actions
 
 $db->close();
+
