@@ -476,7 +476,7 @@ ALTER TABLE llx_societe_extrafields DROP INDEX idx_societe_extrafields;
 ALTER TABLE llx_societe_extrafields ADD UNIQUE INDEX uk_societe_extrafields (fk_object);
 
 -- Module Donation
-ALTER TABLE llx_don ADD COLUMN fk_country integer NOT NULL after country;
+ALTER TABLE llx_don ADD COLUMN fk_country integer NOT NULL DEFAULT 0 after country;
 ALTER TABLE llx_don CHANGE COLUMN fk_paiement fk_payment integer;
 ALTER TABLE llx_don ADD COLUMN paid smallint default 0 NOT NULL after fk_payment;
 ALTER TABLE llx_don CHANGE COLUMN fk_don_projet fk_projet integer NULL;
