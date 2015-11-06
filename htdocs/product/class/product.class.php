@@ -717,6 +717,7 @@ class Product extends CommonObject
 			$sql.= ", desiredstock = " . ((isset($this->desiredstock) && $this->desiredstock != '') ? $this->desiredstock : "null");
 	        $sql.= ", fk_unit= " . (!$this->fk_unit ? 'NULL' : $this->fk_unit);
 	        $sql.= ", price_autogen = " . (!$this->price_autogen ? 0 : 1);
+			$sql.= ", fk_price_expression = ".($this->fk_price_expression != 0 ? $this->fk_price_expression : 'NULL');
 			$sql.= " WHERE rowid = " . $id;
 
 			dol_syslog(get_class($this)."::update", LOG_DEBUG);
@@ -1495,33 +1496,15 @@ class Product extends CommonObject
      *
      *  @param  int     $expression_id	Expression
      *  @return int                 	<0 if KO, >0 if OK
+	 * @deprecated Use Product::update instead
      */
     function setPriceExpression($expression_id)
     {
-        global $conf;
+		global $user;
 
-        // Clean parameters
-        $this->db->begin();
-        $expression_id = $expression_id != 0 ? $expression_id : 'NULL';
+		$this->fk_price_expression = $expression_id;
 
-        $sql = "UPDATE ".MAIN_DB_PREFIX."product";
-        $sql.= " SET fk_price_expression = ".$expression_id;
-        $sql.= " WHERE rowid = ".$this->id;
-
-        dol_syslog(get_class($this)."::setPriceExpression", LOG_DEBUG);
-
-        $resql = $this->db->query($sql);
-        if ($resql)
-        {
-            $this->db->commit();
-            return 1;
-        }
-        else
-        {
-            $this->error=$this->db->error()." sql=".$sql;
-            $this->db->rollback();
-            return -1;
-        }
+		return $this->update($this->id, $user);
     }
 
 	/**
