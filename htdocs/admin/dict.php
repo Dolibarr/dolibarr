@@ -510,7 +510,7 @@ if ($id == 10)
 }
 
 
-// Actions ajout ou modification d'une entree dans un dictionnaire de donnee
+// Actions add or modify an entry into a dictionary
 if (GETPOST('actionadd') || GETPOST('actionmodify'))
 {
     $listfield=explode(',',$tabfield[$id]);
@@ -581,7 +581,12 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         	setEventMessages($langs->transnoentities("ErrorFieldRequired",$langs->transnoentities("Country")), null, 'errors');
     	}
     }
-
+    if ($id == 3 && ! is_numeric($_POST["code"]))
+    {
+       	$ok=0;
+       	setEventMessages($langs->transnoentities("ErrorFieldMustBeANumeric",$langs->transnoentities("Code")), null, 'errors');
+    }
+    
 	// Clean some parameters
     if (isset($_POST["localtax1"]) && empty($_POST["localtax1"])) $_POST["localtax1"]='0';	// If empty, we force to 0
     if (isset($_POST["localtax2"]) && empty($_POST["localtax2"])) $_POST["localtax2"]='0';	// If empty, we force to 0
