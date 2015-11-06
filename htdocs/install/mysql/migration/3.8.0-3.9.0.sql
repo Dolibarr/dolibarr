@@ -51,16 +51,16 @@ create table llx_overwrite_trans
   transvalue      text
 )ENGINE=innodb;
 
-ALTER TABLE llx_payment_salary ADD COLUMN datec datetime after tms;
+ALTER TABLE llx_payment_salary ADD COLUMN datec datetime AFTER tms;
 ALTER TABLE llx_payment_salary CHANGE COLUMN fk_user_creat fk_user_author integer;
 
-ALTER TABLE llx_adherent ADD COLUMN pass_crypted varchar(128) after pass;
+ALTER TABLE llx_adherent ADD COLUMN pass_crypted varchar(128) AFTER pass;
 
-ALTER TABLE llx_paiement ADD COLUMN ref varchar(30) NOT NULL AFTER rowid;
+ALTER TABLE llx_paiement ADD COLUMN ref varchar(30) NOT NULL DEFAULT '' AFTER rowid;
 
 ALTER TABLE llx_socpeople ADD COLUMN photo varchar(255) AFTER skype;
 
-ALTER TABLE llx_user_param MODIFY COLUMN value text NOT NULL;
+ALTER TABLE llx_user_param MODIFY COLUMN value text NOT NULL DEFAULT '';
 
 ALTER TABLE llx_expedition ADD COLUMN import_key varchar(14);
 ALTER TABLE llx_expedition ADD COLUMN extraparams varchar(255);
@@ -71,7 +71,7 @@ ALTER TABLE llx_prelevement_lignes MODIFY COLUMN code_banque varchar(128);
 ALTER TABLE llx_societe_rib MODIFY COLUMN code_banque varchar(128);
 
 ALTER TABLE llx_contrat ADD COLUMN ref_customer varchar(30);
-ALTER TABLE llx_commande ADD COLUMN fk_warehouse integer DEFAULT NULL after fk_shipping_method;
+ALTER TABLE llx_commande ADD COLUMN fk_warehouse integer DEFAULT NULL AFTER fk_shipping_method;
 
 ALTER TABLE llx_ecm_directories MODIFY COLUMN fullpath varchar(750);
 ALTER TABLE llx_ecm_directories DROP INDEX idx_ecm_directories;
@@ -102,7 +102,7 @@ ALTER TABLE llx_ecm_files ADD UNIQUE INDEX uk_ecm_files (label, entity);
 --ALTER TABLE llx_ecm_files ADD UNIQUE INDEX uk_ecm_files_fullpath(fullpath);
 
 
-ALTER TABLE llx_product ADD COLUMN onportal tinyint DEFAULT 0 after tobuy;
+ALTER TABLE llx_product ADD COLUMN onportal tinyint DEFAULT 0 AFTER tobuy;
 
 
 ALTER TABLE llx_user ADD COLUMN employee tinyint DEFAULT 1;
