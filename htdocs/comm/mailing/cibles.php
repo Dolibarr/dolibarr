@@ -80,7 +80,7 @@ if ($action == 'add')
 	    //print $dir."\n<br>";
 	    dol_syslog("Scan directory ".$dir." for modules");
 
-	    // Chargement de la classe
+	    // Loading Class
 	    $file = $dir."/".$module.".modules.php";
 	    $classname = "mailing_".$module;
 
@@ -267,7 +267,7 @@ if ($object->fetch($id) >= 0)
 			// Loop on each submodule
             foreach($modulenames as $modulename)
             {
-				// Chargement de la classe
+				// Loading Class
 				$file = $dir.$modulename.".modules.php";
 				$classname = "mailing_".$modulename;
 				require_once $file;
