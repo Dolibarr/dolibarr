@@ -117,7 +117,7 @@ if (empty($reshook))
 	{
 		if (empty($_REQUEST["clone_content"]) && empty($_REQUEST["clone_receivers"]))
 		{
-			setEventMessage($langs->trans("NoCloneOptionsSpecified"), 'errors');
+			setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
 		}
 		else
 		{
@@ -129,7 +129,7 @@ if (empty($reshook))
 			}
 			else
 			{
-				setEventMessage($object->error, 'errors');
+				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
 	    $action='';
@@ -141,14 +141,14 @@ if (empty($reshook))
 		if (empty($conf->global->MAILING_LIMIT_SENDBYWEB))
 		{
 			// As security measure, we don't allow send from the GUI
-			setEventMessage($langs->trans("MailingNeedCommand"), 'warnings');
-			setEventMessage('<textarea cols="70" rows="'.ROWS_2.'" wrap="soft">php ./scripts/emailings/mailing-send.php '.$object->id.'</textarea>', 'warnings');
-			setEventMessage($langs->trans("MailingNeedCommand2"), 'warnings');
+			setEventMessages($langs->trans("MailingNeedCommand"), null, 'warnings');
+			setEventMessages('<textarea cols="70" rows="'.ROWS_2.'" wrap="soft">php ./scripts/emailings/mailing-send.php '.$object->id.'</textarea>', null, 'warnings');
+			setEventMessages($langs->trans("MailingNeedCommand2"), null, 'warnings');
 			$action='';
 		}
 		else if ($conf->global->MAILING_LIMIT_SENDBYWEB < 0)
 		{
-			setEventMessage($langs->trans("NotEnoughPermissions"), 'warnings');
+			setEventMessages($langs->trans("NotEnoughPermissions"), null, 'warnings');
 			$action='';
 		}
 		else
@@ -351,27 +351,27 @@ if (empty($reshook))
 				}
 				else
 				{
-					setEventMessage($langs->transnoentitiesnoconv("NoMoreRecipientToSendTo"));
+					setEventMessages($langs->transnoentitiesnoconv("NoMoreRecipientToSendTo"), null, 'mesgs');
 				}
 
 				// Loop finished, set global statut of mail
 				if ($nbko > 0)
 				{
 					$statut=2;	// Status 'sent partially' (because at least one error)
-					if ($nbok > 0) 	setEventMessage($langs->transnoentitiesnoconv("EMailSentToNRecipients",$nbok));
-					else setEventMessage($langs->transnoentitiesnoconv("EMailSentToNRecipients",$nbok));
+					if ($nbok > 0) 	setEventMessages($langs->transnoentitiesnoconv("EMailSentToNRecipients",$nbok), null, 'mesgs');
+					else setEventMessage($langs->transnoentitiesnoconv("EMailSentToNRecipients",$nbok), null, 'mesgs');
 				}
 				else
 				{
 					if ($nbok >= $num)
 					{
 						$statut=3;	// Send to everybody
-						setEventMessage($langs->transnoentitiesnoconv("EMailSentToNRecipients",$nbok));
+						setEventMessages($langs->transnoentitiesnoconv("EMailSentToNRecipients",$nbok), null, 'mesgs');
 					}
 					else
 					{
 						$statut=2;	// Status 'sent partially' (because not send to everybody)
-						setEventMessage($langs->transnoentitiesnoconv("EMailSentToNRecipients",$nbok));
+						setEventMessages($langs->transnoentitiesnoconv("EMailSentToNRecipients",$nbok), null, 'mesgs');
 					}
 				}
 
@@ -443,11 +443,11 @@ if (empty($reshook))
 			$result=$mailfile->sendfile();
 			if ($result)
 			{
-				setEventMessage($langs->trans("MailSuccessfulySent",$mailfile->getValidAddress($object->email_from,2),$mailfile->getValidAddress($object->sendto,2)));
+				setEventMessages($langs->trans("MailSuccessfulySent",$mailfile->getValidAddress($object->email_from,2),$mailfile->getValidAddress($object->sendto,2)), null, 'mesgs');
 			}
 			else
 			{
-				setEventMessage($langs->trans("ResultKo").'<br>'.$mailfile->error.' '.$result, 'errors');
+				setEventMessages($langs->trans("ResultKo").'<br>'.$mailfile->error.' '.$result, null, 'errors');
 			}
 
 			$action='';
@@ -488,7 +488,7 @@ if (empty($reshook))
 			$mesgs[] = $object->error;
 		}
 
-		setEventMessage($mesgs, 'errors');
+		setEventMessages($mesg, $mesgs, 'errors');
 		$action="create";
 	}
 
@@ -518,7 +518,7 @@ if (empty($reshook))
 			$mesg = $object->error;
 		}
 
-		setEventMessage($mesg, 'errors');
+		setEventMessages($mesg, $mesgs, 'errors');
 		$action="";
 	}
 
@@ -582,7 +582,7 @@ if (empty($reshook))
 				$mesgs[] =$object->error;
 			}
 
-			setEventMessage($mesgs, 'errors');
+			setEventMessages($mesg, $mesgs, 'errors');
 			$action="edit";
 		}
 		else
@@ -597,7 +597,7 @@ if (empty($reshook))
 		if ($object->id > 0)
 		{
 			$object->valid($user);
-			setEventMessage($langs->trans("MailingSuccessfullyValidated"));
+			setEventMessages($langs->trans("MailingSuccessfullyValidated"), null, 'mesgs');
 			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 			exit;
 		}
@@ -628,7 +628,7 @@ if (empty($reshook))
 			}
 			else
 			{
-				setEventMessage($object->error, 'errors');
+				setEventMessages($object->error, $object->errors, 'errors');
 				$db->rollback();
 			}
 		}
@@ -764,18 +764,18 @@ else
 					// You ensure that every user is using its own SMTP server.
 					$linktoadminemailbefore='<a href="'.DOL_URL_ROOT.'/admin/mails.php">';
 					$linktoadminemailend='</a>';
-					setEventMessage($langs->trans("MailSendSetupIs", $listofmethods[$sendingmode]), 'warnings');
-					setEventMessage($langs->trans("MailSendSetupIs2", $linktoadminemailbefore, $linktoadminemailend, $langs->transnoentitiesnoconv("MAIN_MAIL_SENDMODE"), $listofmethods['smtps']), 'warnings');
-					if (! empty($conf->global->MAILING_SMTP_SETUP_EMAILS_FOR_QUESTIONS)) setEventMessage($langs->trans("MailSendSetupIs3", $conf->global->MAILING_SMTP_SETUP_EMAILS_FOR_QUESTIONS), 'warnings');
+					setEventMessages($langs->trans("MailSendSetupIs", $listofmethods[$sendingmode]), null, 'warnings');
+					setEventMessages($langs->trans("MailSendSetupIs2", $linktoadminemailbefore, $linktoadminemailend, $langs->transnoentitiesnoconv("MAIN_MAIL_SENDMODE"), $listofmethods['smtps']), null, 'warnings');
+					if (! empty($conf->global->MAILING_SMTP_SETUP_EMAILS_FOR_QUESTIONS)) setEventMessages($langs->trans("MailSendSetupIs3", $conf->global->MAILING_SMTP_SETUP_EMAILS_FOR_QUESTIONS), null, 'warnings');
 					$_GET["action"]='';
 				}
 				else if (empty($conf->global->MAILING_LIMIT_SENDBYWEB))
 				{
 					// Pour des raisons de securite, on ne permet pas cette fonction via l'IHM,
 					// on affiche donc juste un message
-					setEventMessage($langs->trans("MailingNeedCommand"), 'warnings');
-					setEventMessage('<textarea cols="60" rows="'.ROWS_1.'" wrap="soft">php ./scripts/emailings/mailing-send.php '.$object->id.'</textarea>', 'warnings');
-					setEventMessage($langs->trans("MailingNeedCommand2"), 'warnings');
+					setEventMessages($langs->trans("MailingNeedCommand"), null, 'warnings');
+					setEventMessages('<textarea cols="60" rows="'.ROWS_1.'" wrap="soft">php ./scripts/emailings/mailing-send.php '.$object->id.'</textarea>', null, 'warnings');
+					setEventMessages($langs->trans("MailingNeedCommand2"), null, 'warnings');
 					$_GET["action"]='';
 				}
 				else

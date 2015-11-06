@@ -62,7 +62,7 @@ if ($action == 'builddoc')
 	$result=$cat->write_file(GETPOST('id','int'));
 	if ($result < 0)
 	{
-		setEventMessage($cat->error, 'errors');
+		setEventMessages($cat->error, $cat->errors, 'errors');
 	}
 }
 
