@@ -84,11 +84,13 @@ class Product extends CommonObject
 	//! Base price ('TTC' for price including tax or 'HT' for net price)
 	var $price_base_type;
 	//! Arrays for multiprices
-	var $multiprices=array();
-	var $multiprices_ttc=array();
-	var $multiprices_base_type=array();
-	var $multiprices_tva_tx=array();
-	var $multiprices_recuperableonly=array();
+	public $multiprices=array();
+	public $multiprices_ttc=array();
+	public $multiprices_base_type=array();
+	public $multiprices_min=array();
+	public $multiprices_min_ttc=array();
+	public $multiprices_tva_tx=array();
+	public $multiprices_recuperableonly=array();
 	//! Price by quantity arrays
 	var $price_by_qty;
 	var $prices_by_qty=array();
@@ -124,6 +126,12 @@ class Product extends CommonObject
 	var $status_batch;
 
 	var $customcode;       // Customs code
+
+	/**
+	 * Product URL
+	 * @var string
+	 */
+	public $url;
 
 	//! Unites de mesure
 	var $weight;
@@ -717,6 +725,7 @@ class Product extends CommonObject
 			$sql.= ", desiredstock = " . ((isset($this->desiredstock) && $this->desiredstock != '') ? $this->desiredstock : "null");
 	        $sql.= ", fk_unit= " . (!$this->fk_unit ? 'NULL' : $this->fk_unit);
 	        $sql.= ", price_autogen = " . (!$this->price_autogen ? 0 : 1);
+			$sql.= ", fk_price_expression = ".($this->fk_price_expression != 0 ? $this->fk_price_expression : 'NULL');
 			$sql.= " WHERE rowid = " . $id;
 
 			dol_syslog(get_class($this)."::update", LOG_DEBUG);
@@ -1443,6 +1452,14 @@ class Product extends CommonObject
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
+				$this->multiprices[$level] = $price;
+				$this->multiprices_ttc[$level] = $price_ttc;
+				$this->multiprices_min[$level]= $price_min;
+				$this->multiprices_min_ttc[$level]= $price_min_ttc;
+				$this->multiprices_base_type[$level]= $newpricebase;
+				$this->multiprices_tva_tx[$level]= $newvat;
+				$this->multiprices_recuperableonly[$level]= $newnpr;
+
 				$this->price = $price;
 				$this->price_ttc = $price_ttc;
 				$this->price_min = $price_min;
@@ -1487,33 +1504,15 @@ class Product extends CommonObject
      *
      *  @param  int     $expression_id	Expression
      *  @return int                 	<0 if KO, >0 if OK
+	 * @deprecated Use Product::update instead
      */
     function setPriceExpression($expression_id)
     {
-        global $conf;
+		global $user;
 
-        // Clean parameters
-        $this->db->begin();
-        $expression_id = $expression_id != 0 ? $expression_id : 'NULL';
+		$this->fk_price_expression = $expression_id;
 
-        $sql = "UPDATE ".MAIN_DB_PREFIX."product";
-        $sql.= " SET fk_price_expression = ".$expression_id;
-        $sql.= " WHERE rowid = ".$this->id;
-
-        dol_syslog(get_class($this)."::setPriceExpression", LOG_DEBUG);
-
-        $resql = $this->db->query($sql);
-        if ($resql)
-        {
-            $this->db->commit();
-            return 1;
-        }
-        else
-        {
-            $this->error=$this->db->error()." sql=".$sql;
-            $this->db->rollback();
-            return -1;
-        }
+		return $this->update($this->id, $user);
     }
 
 	/**

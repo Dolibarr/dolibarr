@@ -56,16 +56,16 @@ create table llx_overwrite_trans
   transvalue      text
 )ENGINE=innodb;
 
-ALTER TABLE llx_payment_salary ADD COLUMN datec datetime after tms;
+ALTER TABLE llx_payment_salary ADD COLUMN datec datetime AFTER tms;
 ALTER TABLE llx_payment_salary CHANGE COLUMN fk_user_creat fk_user_author integer;
 
-ALTER TABLE llx_adherent ADD COLUMN pass_crypted varchar(128) after pass;
+ALTER TABLE llx_adherent ADD COLUMN pass_crypted varchar(128) AFTER pass;
 
-ALTER TABLE llx_paiement ADD COLUMN ref varchar(30) NOT NULL AFTER rowid;
+ALTER TABLE llx_paiement ADD COLUMN ref varchar(30) NOT NULL DEFAULT '' AFTER rowid;
 
 ALTER TABLE llx_socpeople ADD COLUMN photo varchar(255) AFTER skype;
 
-ALTER TABLE llx_user_param MODIFY COLUMN value text NOT NULL;
+ALTER TABLE llx_user_param MODIFY COLUMN value text NOT NULL DEFAULT '';
 
 ALTER TABLE llx_expedition ADD COLUMN import_key varchar(14);
 ALTER TABLE llx_expedition ADD COLUMN extraparams varchar(255);
@@ -76,7 +76,7 @@ ALTER TABLE llx_prelevement_lignes MODIFY COLUMN code_banque varchar(128);
 ALTER TABLE llx_societe_rib MODIFY COLUMN code_banque varchar(128);
 
 ALTER TABLE llx_contrat ADD COLUMN ref_customer varchar(30);
-ALTER TABLE llx_commande ADD COLUMN fk_warehouse integer DEFAULT NULL after fk_shipping_method;
+ALTER TABLE llx_commande ADD COLUMN fk_warehouse integer DEFAULT NULL AFTER fk_shipping_method;
 
 ALTER TABLE llx_ecm_directories MODIFY COLUMN fullpath varchar(750);
 ALTER TABLE llx_ecm_directories DROP INDEX idx_ecm_directories;
@@ -107,20 +107,20 @@ ALTER TABLE llx_ecm_files ADD UNIQUE INDEX uk_ecm_files (label, entity);
 --ALTER TABLE llx_ecm_files ADD UNIQUE INDEX uk_ecm_files_fullpath(fullpath);
 
 
-ALTER TABLE llx_product ADD COLUMN onportal tinyint DEFAULT 0 after tobuy;
+ALTER TABLE llx_product ADD COLUMN onportal smallint DEFAULT 0 AFTER tobuy;
 
 
-ALTER TABLE llx_user ADD COLUMN employee tinyint DEFAULT 1;
+ALTER TABLE llx_user ADD COLUMN employee smallint DEFAULT 1;
 
 
 CREATE TABLE IF NOT EXISTS llx_c_hrm_function
 (
   rowid     integer     PRIMARY KEY,
-  pos   	tinyint DEFAULT 0 NOT NULL,
+  pos   	smallint DEFAULT 0 NOT NULL,
   code    	varchar(16) NOT NULL,
   label 	varchar(50),
-  c_level   tinyint DEFAULT 0 NOT NULL,
-  active  	tinyint DEFAULT 1  NOT NULL
+  c_level   smallint DEFAULT 0 NOT NULL,
+  active  	smallint DEFAULT 1  NOT NULL
 )ENGINE=innodb;
 
 INSERT INTO llx_c_hrm_function (rowid, pos, code, label, c_level, active) VALUES(1,  5, 'EXECBOARD', 'Executive board', 0, 1);
@@ -136,10 +136,10 @@ INSERT INTO llx_c_hrm_function (rowid, pos, code, label, c_level, active) VALUES
 CREATE TABLE IF NOT EXISTS llx_c_hrm_department
 (
   rowid      	integer     PRIMARY KEY,
-  pos   		tinyint DEFAULT 0 NOT NULL,
+  pos   		smallint DEFAULT 0 NOT NULL,
   code    		varchar(16) NOT NULL,
   label 		varchar(50),
-  active  		tinyint DEFAULT 1  NOT NULL
+  active  		smallint DEFAULT 1  NOT NULL
 )ENGINE=innodb;
 
 INSERT INTO llx_c_hrm_department (rowid, pos, code, label, active) VALUES(1, 5,'MANAGEMENT', 'Management', 1);
@@ -178,7 +178,7 @@ CREATE TABLE IF NOT EXISTS llx_establishment (
   fk_user_mod		integer NOT NULL,
   datec				datetime NOT NULL,
   tms				timestamp NOT NULL,
-  status            tinyint DEFAULT 1
+  status            smallint DEFAULT 1
 ) ENGINE=InnoDB;
 
 
@@ -260,7 +260,7 @@ CREATE TABLE llx_product_pricerules
     var_percent FLOAT NOT NULL, -- Price variation over based price
     var_min_percent FLOAT NOT NULL -- Min price discount over general price
 );
-ALTER TABLE llx_product ADD COLUMN price_autogen TINYINT(1) DEFAULT 0;
+ALTER TABLE llx_product ADD COLUMN price_autogen smallint DEFAULT 0;
 ALTER TABLE llx_product_pricerules ADD CONSTRAINT unique_level UNIQUE (level);
 
 

@@ -221,7 +221,7 @@ if (is_resource($handle))
     {
         if (preg_match('/(modGeneratePass[a-z]+)\.class\.php/i',$file,$reg))
         {
-            // Chargement de la classe de numerotation
+            // Charging the numbering class
             $classname = $reg[1];
             require_once $dir.'/'.$file;
 
