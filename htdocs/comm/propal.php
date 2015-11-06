@@ -1276,7 +1276,7 @@ if ($action == 'create')
 
 	// Ref customer
 	print '<tr><td>' . $langs->trans('RefCustomer') . '</td><td colspan="2">';
-	print '<input type="text" name="ref_client" value=""></td>';
+	print '<input type="text" name="ref_client" value="'.GETPOST('ref_client').'"></td>';
 	print '</tr>';
 
 	// Third party
@@ -1290,6 +1290,17 @@ if ($action == 'create')
 	} else {
 		print '<td colspan="2">';
 		print $form->select_company('', 'socid', '(s.client = 1 OR s.client = 2 OR s.client = 3) AND status=1', 1);
+		// reload page to retrieve customer informations
+		print '<script type="text/javascript">
+		$(document).ready(function() {';
+		print '
+			$("#socid").change(function() {
+				var socid = $(this).val();
+				// reload page
+				window.location.href = "'.$_SERVER["PHP_SELF"].'?action=create&socid="+socid+"&ref_client="+$("input[name=ref_client]").val();
+			});
+		});
+		</script>';
 		print '</td>';
 	}
 	print '</tr>' . "\n";
