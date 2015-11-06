@@ -92,7 +92,7 @@
  *
  */
 
-require_once DOL_DOCUMENT_ROOT .'/includes/escpos/Escpos.php';
+require_once DOL_DOCUMENT_ROOT .'/includes/mike42/escpos-php/Escpos.php';
 
  
 /**
@@ -429,6 +429,7 @@ class dolReceiptPrinter extends Escpos
         $this->template = str_replace('<dol_print_customer_account_balance>', $object->customer_account_balance, $this->template);
         $this->template = str_replace('<dol_print_vendor_firstname>', $object->vendor_firstname, $this->template);
         $this->template = str_replace('<dol_print_vendor_lastname>', $object->vendor_lastname, $this->template);
+        $this->template = str_replace('<dol_print_date_time>', $object->date_time, $this->template);
 
         // parse template
         $p = xml_parser_create();
@@ -438,6 +439,7 @@ class dolReceiptPrinter extends Escpos
         //print '<pre>'.print_r($vals, true).'</pre>';
         // print ticket
         $level = 0;
+        $html = '<table border="1" style="width:210px"><pre>';
         $ret = $this->InitPrinter($printerid);
         if ($ret>0) {
             setEventMessages($this->error, $this->errors, 'errors');
@@ -446,33 +448,37 @@ class dolReceiptPrinter extends Escpos
                 switch ($vals[$line]['tag']) {
                     case 'DOL_ALIGN_CENTER':
                         $this->printer->setJustification(Escpos::JUSTIFY_CENTER);
+                        $html.='<center>';
                         $this->printer->text($vals[$line]['value']);
                         break;
                     case 'DOL_ALIGN_RIGHT':
                         $this->printer->setJustification(Escpos::JUSTIFY_RIGHT);
+                        $html.='<right>';
                         break;
                     case 'DOL_ALIGN_LEFT':
                         $this->printer->setJustification(Escpos::JUSTIFY_LEFT);
+                        $html.='<left>';
                         break;
                     case 'DOL_OPEN_DRAWER':
                         $this->printer->pulse();
+                        $html.= ' &#991;'.nl2br($vals[$line]['value']);
                         break;
                     case 'DOL_PRINT_BARCODE':
                         // $vals[$line]['value'] -> barcode($content, $type)
                         $this->printer->barcode($object->barcode);
                         break;
-                    case 'DOL_PRINT_DATE_TIME':
-                        $this->printer->text($object->date);
-                        break;
                     case 'DOL_PRINT_QRCODE':
                         // $vals[$line]['value'] -> qrCode($content, $ec, $size, $model)
                         $this->printer->qrcode($vals[$line]['value']);
+                        $html.='QRCODE: '.$vals[$line]['value'];
                         break;
                     case 'DOL_CUT_PAPER_FULL':
                         $this->printer->cut(Escpos::CUT_FULL);
+                        $html.= ' &#9986;'.nl2br($vals[$line]['value']);
                         break;
                     case 'DOL_CUT_PAPER_PARTIAL':
                         $this->printer->cut(Escpos::CUT_PARTIAL);
+                        $html.= ' &#9986;'.nl2br($vals[$line]['value']);
                         break;
                     case 'DOL_USE_FONT_A':
                         $this->printer->setFont(Escpos::FONT_A);
@@ -488,11 +494,14 @@ class dolReceiptPrinter extends Escpos
                         break;
                     default:
                         $this->printer->text($vals[$line]['value']);
+                        $html.= nl2br($vals[$line]['value']);
                         $this->errors[] = 'UnknowTag: &lt;'.strtolower($vals[$line]['tag']).'&gt;';
                         $error++;
                         break;
                 }
             }
+            $html.= '</pre></table>';
+            print $html;
             // Close and print
             // uncomment next line to see content sent to printer
             //print '<pre>'.print_r($this->connector, true).'</pre>';

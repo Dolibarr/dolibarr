@@ -87,6 +87,8 @@ class printing_printgcp extends PrintingDriver
             $this->errors[] = $e->getMessage();
             $token_ok = false;
         }
+        //var_dump($this->errors);exit;
+        
         $expire = false;
         // Is token expired or will token expire in the next 30 seconds
         if ($token_ok) {
@@ -116,9 +118,13 @@ class printing_printgcp extends PrintingDriver
                     $refreshtoken = $token->getRefreshToken();
                     $this->conf[] = array('varname'=>'PRINTGCP_TOKEN_REFRESH', 'info'=>((! empty($refreshtoken))?'Yes':'No'), 'type'=>'info');
                     $this->conf[] = array('varname'=>'PRINTGCP_TOKEN_EXPIRED', 'info'=>($expire?'Yes':'No'), 'type'=>'info');
-                    $this->conf[] = array('varname'=>'PRINTGCP_TOKEN_EXPIRE_AT', 'info'=>(date("Y-m-d H:i:s", $token->getEndOfLife())), 'type'=>'info');
+                    $this->conf[] = array('varname'=>'PRINTGCP_TOKEN_EXPIRE_AT', 'info'=>(dol_print_date($token->getEndOfLife(), "dayhour")), 'type'=>'info');
                 }
-                $this->conf[] = array('varname'=>'PRINTGCP_AUTHLINK', 'link'=>$urlwithroot.'/core/modules/oauth/getgoogleoauthcallback.php', 'type'=>'authlink');
+                if (!$storage->hasAccessToken('Google')) {
+                    $this->conf[] = array('varname'=>'PRINTGCP_AUTHLINK', 'link'=>$urlwithroot.'/core/modules/oauth/getgoogleoauthcallback.php?backtourl='.urlencode(DOL_URL_ROOT.'/printing/admin/printing.php?mode=setup&driver=printgcp'), 'type'=>'authlink');
+                } else {
+                    $this->conf[] = array('varname'=>'PRINTGCP_DELETE_TOKEN', 'link'=>$urlwithroot.'/core/modules/oauth/getgoogleoauthcallback.php?action=delete&backtourl='.urlencode(DOL_URL_ROOT.'/printing/admin/printing.php?mode=setup&driver=printgcp'), 'type'=>'delete');
+                }
             } else {
                 $this->conf[] = array('varname'=>'PRINTGCP_INFO', 'info'=>'GoogleAuthNotConfigured', 'type'=>'info');
             }

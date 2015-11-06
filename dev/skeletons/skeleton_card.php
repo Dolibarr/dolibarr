@@ -47,7 +47,7 @@ include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
 dol_include_once('/mymodule/class/skeleton_class.class.php');
 
 // Load traductions files requiredby by page
-$langs->load("companies");
+$langs->load("mymodule");
 $langs->load("other");
 
 // Get parameters
@@ -230,7 +230,7 @@ jQuery(document).ready(function() {
 // Part to create
 if ($action == 'create')
 {
-	print load_fiche_titre($langs->trans("NewSkeleton"));
+	print load_fiche_titre($langs->trans("NewMyModule"));
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="action" value="add">';
@@ -239,10 +239,8 @@ if ($action == 'create')
 	dol_fiche_head();
 
 	print '<table class="border centpercent">'."\n";
-	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td>';
-	print '<input class="flat" type="text" size="36" name="label" value="'.$label.'">';
-	print '</td></tr>';
-
+	// print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input class="flat" type="text" size="36" name="label" value="'.$label.'"></td></tr>';
+	// LIST_OF_TD_LABEL_FIELDS_CREATE
 	print '</table>'."\n";
 
 	dol_fiche_end();
@@ -257,17 +255,25 @@ if ($action == 'create')
 // Part to edit record
 if (($id || $ref) && $action == 'edit')
 {
+	print load_fiche_titre($langs->trans("MyModule"));
+    
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-
-	dol_fiche_head();
-
-	print '<input type="hidden" name="action" value="add">';
+	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
+	
+	dol_fiche_head();
 
+	print '<table class="border centpercent">'."\n";
+	// print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input class="flat" type="text" size="36" name="label" value="'.$label.'"></td></tr>';
+	// LIST_OF_TD_LABEL_FIELDS_EDIT
+	print '</table>';
+	
 	dol_fiche_end();
 
-	print '<div class="center"><input type="submit" class="button" name="add" value="'.$langs->trans("Create").'"></div>';
+	print '<div class="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+	print ' &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '</div>';
 
 	print '</form>';
 }
@@ -277,10 +283,15 @@ if (($id || $ref) && $action == 'edit')
 // Part to show record
 if ($id && (empty($action) || $action == 'view'))
 {
+	print load_fiche_titre($langs->trans("MyModule"));
+    
 	dol_fiche_head();
 
-
-
+	print '<table class="border centpercent">'."\n";
+	// print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input class="flat" type="text" size="36" name="label" value="'.$label.'"></td></tr>';
+	// LIST_OF_TD_LABEL_FIELDS_VIEW
+	print '</table>';
+	
 	dol_fiche_end();
 
 

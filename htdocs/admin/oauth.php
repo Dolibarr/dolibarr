@@ -27,6 +27,13 @@ require '../main.inc.php';
 // required Class
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
+
+// Define $urlwithroot
+$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
+//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+
+
 $langs->load("admin");
 $langs->load("oauth");
 
@@ -36,6 +43,8 @@ if (!$user->admin)
 
 $action = GETPOST('action', 'alpha');
 
+// Supported OAUTH
+$supportedoauth2array=array('OAUTH_GOOGLE_NAME');
 // API access parameters OAUTH
 $list = array (
             array(
@@ -297,11 +306,7 @@ print '<input type="hidden" name="action" value="update">';
 dol_fiche_head(array(), '', '', 0, 'technic');
 
 
-// Define $urlwithroot
-$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
-$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
-//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
-
+print $langs->trans("ListOfSupportedOauthProviders").'<br><br>';
 
 print '<table class="noborder" width="100%">';
 
@@ -309,12 +314,16 @@ $var = true;
 
 foreach ($list as $key)
 {
+    $supported=0;
+    if (in_array($key[0], $supportedoauth2array)) $supported=1;
+    if (! $supported) continue;     // show only supported
+        
     print '<tr class="liste_titre">';
     // Api Name
     $label = $langs->trans($key[0]); 
     print '<td colspan="2">'.$label.'</td></tr>';
 
-    if (in_array($key[0], array('OAUTH_GOOGLE_NAME')))
+    if ($supported)
     {
         $redirect_uri=$urlwithroot.'/core/modules/oauth/getgoogleoauthcallback.php';
         $var = !$var;

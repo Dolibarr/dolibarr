@@ -524,6 +524,19 @@ foreach ($skeletonfiles as $skeletonfile => $outfile)
     $targetcontent=preg_replace('/'.preg_quote('$object->prop1=GETPOST("field1");','/').'/', $varprop, $targetcontent);
     $targetcontent=preg_replace('/'.preg_quote('$object->prop2=GETPOST("field2");','/').'/', '', $targetcontent);
     
+    // Substitute reset search_field = '';
+    $varprop="\n";
+    $cleanparam='';
+    foreach($property as $key => $prop)
+    {
+    	if ($prop['field'] != 'rowid' && $prop['field'] != 'id' && ! $prop['istime'])
+    	{
+    	    $varprop.='$search_'.$prop['field']."='';\n";
+    	}
+    }
+    $targetcontent=preg_replace('/'.preg_quote('$search_field1=\'\';','/').'/', $varprop, $targetcontent);
+    $targetcontent=preg_replace('/'.preg_quote('$search_field2=\'\';','/').'/', '', $targetcontent);
+    
     // Substitute fetch/select parameters
     $targetcontent=preg_replace('/\$sql\s*\.= " t\.field1,";/', $varpropselect, $targetcontent);
     $targetcontent=preg_replace('/\$sql\s*\.= " t\.field2";/', '', $targetcontent);
@@ -541,6 +554,32 @@ foreach ($skeletonfiles as $skeletonfile => $outfile)
     $targetcontent=preg_replace('/'.preg_quote('if ($search_field1) $sql.= natural_search("field1",$search_field1);','/').'/', $varprop, $targetcontent);
     $targetcontent=preg_replace('/'.preg_quote('if ($search_field2) $sql.= natural_search("field2",$search_field2);','/').'/', '', $targetcontent);
     
+    // substitute $params.=
+    $varprop="\n";
+    $cleanparam='';
+    foreach($property as $key => $prop)
+    {
+    	if ($prop['field'] != 'rowid' && $prop['field'] != 'id' && ! $prop['istime'])
+    	{
+    	    $varprop.="if (\$search_".$prop['field']." != '') \$params.= '&amp;search_".$prop['field']."='.urlencode(\$search_".$prop['field'].");\n";
+    	}
+    }
+    $targetcontent=preg_replace('/'.preg_quote("if (\$search_field1 != '') \$params.= '&amp;search_field1='.urlencode(\$search_field1);",'/').'/', $varprop, $targetcontent);
+    $targetcontent=preg_replace('/'.preg_quote("if (\$search_field2 != '') \$params.= '&amp;search_field2='.urlencode(\$search_field2);",'/').'/', '', $targetcontent);
+    
+    // Substitute arrayfields
+    $varprop="\n";
+    $cleanparam='';
+    foreach($property as $key => $prop)
+    {
+    	if ($prop['field'] != 'rowid' && $prop['field'] != 'id' && ! $prop['istime'])
+    	{
+    	    $varprop.="'t.".$prop['field']."'=>array('label'=>\$langs->trans(\"Field".$prop['field']."\"), 'checked'=>1),\n";
+    	}
+    }
+    $targetcontent=preg_replace('/'.preg_quote("'t.field1'=>array('label'=>\$langs->trans(\"Field1\"), 'checked'=>1),",'/').'/', $varprop, $targetcontent);
+    $targetcontent=preg_replace('/'.preg_quote("'t.field2'=>array('label'=>\$langs->trans(\"Field2\"), 'checked'=>1),",'/').'/', '', $targetcontent);
+    
     // Substitute print_liste_field_titre
     $varprop="\n";
     $cleanparam='';
@@ -548,12 +587,24 @@ foreach ($skeletonfiles as $skeletonfile => $outfile)
     {
     	if ($prop['field'] != 'rowid' && $prop['field'] != 'id' && ! $prop['istime'])
     	{
-    	    $varprop.="print_liste_field_titre(\$langs->trans('".$prop['field']."'),\$_SERVER['PHP_SELF'],'t.".$prop['field']."','',\$param,'',\$sortfield,\$sortorder);\n";
+    	    $varprop.="if (! empty(\$arrayfields['t.".$prop['field']."']['checked'])) print_liste_field_titre(\$arrayfields['t.".$prop['field']."']['label'],\$_SERVER['PHP_SELF'],'t.".$prop['field']."','',\$param,'',\$sortfield,\$sortorder);\n";
     	}
     }
+    $targetcontent=preg_replace('/'.preg_quote("if (! empty(\$arrayfields['t.field1']['checked'])) print_liste_field_titre(\$langs->trans('field1'),\$_SERVER['PHP_SELF'],'t.field1','',\$param,'',\$sortfield,\$sortorder);",'/').'/', $varprop, $targetcontent);
+    $targetcontent=preg_replace('/'.preg_quote("if (! empty(\$arrayfields['t.field2']['checked'])) print_liste_field_titre(\$langs->trans('field2'),\$_SERVER['PHP_SELF'],'t.field2','',\$param,'',\$sortfield,\$sortorder);",'/').'/', '', $targetcontent);
     
-    $targetcontent=preg_replace('/'.preg_quote("print_liste_field_titre(\$langs->trans('field1'),\$_SERVER['PHP_SELF'],'t.field1','',\$param,'',\$sortfield,\$sortorder);",'/').'/', $varprop, $targetcontent);
-    $targetcontent=preg_replace('/'.preg_quote("print_liste_field_titre(\$langs->trans('field2'),\$_SERVER['PHP_SELF'],'t.field1','',\$param,'',\$sortfield,\$sortorder);",'/').'/', '', $targetcontent);
+    // Substitute fields title search
+    $varprop="\n";
+    $cleanparam='';
+    foreach($property as $key => $prop)
+    {
+    	if ($prop['field'] != 'rowid' && $prop['field'] != 'id' && ! $prop['istime'])
+    	{
+    	    $varprop.="if (! empty(\$arrayfields['t.".$prop['field']."']['checked'])) print '<td class=\"liste_titre\"><input type=\"text\" class=\"flat\" name=\"search_".$prop['field']."\" value=\"'.\$search_".$prop['field'].".'\" size=\"10\"></td>';\n";
+    	}
+    }
+    $targetcontent=preg_replace('/'.preg_quote("if (! empty(\$arrayfields['t.field1']['checked'])) print '<td class=\"liste_titre\"><input type=\"text\" class=\"flat\" name=\"search_field1\" value=\"'.\$search_field1.'\" size=\"10\"></td>';",'/').'/', $varprop, $targetcontent);
+    $targetcontent=preg_replace('/'.preg_quote("if (! empty(\$arrayfields['t.field2']['checked'])) print '<td class=\"liste_titre\"><input type=\"text\" class=\"flat\" name=\"search_field2\" value=\"'.\$search_field2.'\" size=\"10\"></td>';",'/').'/', '', $targetcontent);
     
     // Substitute where for <td>.fieldx.</td>
     $varprop="\n";
@@ -562,12 +613,38 @@ foreach ($skeletonfiles as $skeletonfile => $outfile)
     {
     	if ($prop['field'] != 'rowid' && $prop['field'] != 'id' && ! $prop['istime'])
     	{
-    	    $varprop.="print '<td>'.\$obj->".$prop['field'].".'</td>';\n";
+    	    $varprop.="if (! empty(\$arrayfields['t.".$prop['field']."']['checked'])) print '<td>'.\$obj->".$prop['field'].".'</td>';\n";
     	}
     }
-    $targetcontent=preg_replace('/'.preg_quote("print '<td>'.\$obj->field1.'</td>';",'/').'/', $varprop, $targetcontent);
-    $targetcontent=preg_replace('/'.preg_quote("print '<td>'.\$obj->field2.'</td>';",'/').'/', '', $targetcontent);
+    $targetcontent=preg_replace('/'.preg_quote("if (! empty(\$arrayfields['t.field1']['checked'])) print '<td>'.\$obj->field1.'</td>';",'/').'/', $varprop, $targetcontent);
+    $targetcontent=preg_replace('/'.preg_quote("if (! empty(\$arrayfields['t.field2']['checked'])) print '<td>'.\$obj->field2.'</td>';",'/').'/', '', $targetcontent);
 
+    // LIST_OF_TD_LABEL_FIELDS_CREATE and EDIT - List of td for card view 
+    $varprop="\n";
+    $cleanparam='';
+    foreach($property as $key => $prop)
+    {
+    	if ($prop['field'] != 'rowid' && $prop['field'] != 'id' && ! $prop['istime'])
+    	{
+    	    $varprop.="print '<tr><td class=\"fieldrequired\">'.\$langs->trans(\"Field".$prop['field']."\").'</td><td><input class=\"flat\" type=\"text\" name=\"".$prop['field']."\" value=\"'.\$".$prop['field'].".'\"></td></tr>';\n";
+    	}
+    }
+    $targetcontent=preg_replace('/LIST_OF_TD_LABEL_FIELDS_CREATE/', $varprop, $targetcontent);
+    $targetcontent=preg_replace('/LIST_OF_TD_LABEL_FIELDS_EDIT/', $varprop, $targetcontent);
+    
+    // LIST_OF_TD_LABEL_FIELDS_VIEW - List of td for card view 
+    $varprop="\n";
+    $cleanparam='';
+    foreach($property as $key => $prop)
+    {
+    	if ($prop['field'] != 'rowid' && $prop['field'] != 'id' && ! $prop['istime'])
+    	{
+    	    $varprop.="print '<tr><td class=\"fieldrequired\">'.\$langs->trans(\"Field".$prop['field']."\").'</td><td>\$object->".$prop['field']."</td></tr>';\n";
+    	}
+    }
+    $targetcontent=preg_replace('/LIST_OF_TD_LABEL_FIELDS_VIEW/', $varprop, $targetcontent);
+    
+    
     // Build file
     $fp=fopen($outfile,"w");
     if ($fp)

@@ -508,7 +508,7 @@ jQuery(document).ready(function() {
 			?>
 
 		/* Code for margin */
-  		$("#fournprice_predef options").remove();
+  		$("#fournprice_predef").find("option").remove();
 		$("#fournprice_predef").hide();
 		$("#buying_price").val("").show();
 		/* Call post to load content of combo list fournprice_predef */
