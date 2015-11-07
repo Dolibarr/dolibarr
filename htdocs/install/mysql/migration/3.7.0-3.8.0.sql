@@ -148,8 +148,6 @@ CREATE TABLE llx_printing
  userid integer
 )ENGINE=innodb;
 
-ALTER TABLE llx_product_fournisseur_price ADD COLUMN fk_price_expression integer DEFAULT NULL;
-
 -- Add situation invoices
 ALTER TABLE llx_facture ADD COLUMN situation_cycle_ref smallint;
 ALTER TABLE llx_facture ADD COLUMN situation_counter smallint;
