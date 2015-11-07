@@ -38,7 +38,7 @@ $langs->load("products");
 $langs->load("bills");
 $langs->load("other");
 
-$id		= GETPOST('id','int');
+$id		= GETPOST('id','int');         // For this page, id can also be 'all'
 $ref	= GETPOST('ref');
 $mode	= (GETPOST('mode') ? GETPOST('mode') : 'byunit');
 $error	= 0;
@@ -56,16 +56,24 @@ $result=restrictedArea($user,'produit|service',$fieldvalue,'product&product','',
 /*
  *	View
  */
+ 
 $form = new Form($db);
 
-if (! empty($id) || ! empty($ref))
+if (! empty($id) || ! empty($ref) || GETPOST('id') == 'all')
 {
 	$object = new Product($db);
-	$result = $object->fetch($id,$ref);
-
-	llxHeader("","",$langs->trans("CardProduct".$object->type));
-
-	if ($result)
+    if (! empty($id) || ! empty($ref))
+    {
+        $result = $object->fetch($id,$ref);
+        llxHeader("",$langs->trans("CardProduct".$object->type));
+    }
+    else
+    {
+        llxHeader("",$langs->trans("ProductStatistics"));
+    }
+	
+    
+	if ($result && (! empty($id) || ! empty($ref)))
 	{
 		$head=product_prepare_head($object);
 		$titre=$langs->trans("CardProduct".$object->type);
@@ -73,37 +81,18 @@ if (! empty($id) || ! empty($ref))
 
 		dol_fiche_head($head, 'stats', $titre, 0, $picto);
 
-		print '<table class="border" width="100%">';
-
-		// Reference
-		print '<tr>';
-		print '<td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">';
-		print $form->showrefnav($object,'ref','',1,'ref');
-		print '</td>';
-		print '</tr>';
-
-		// Label
-		print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$object->label.'</td></tr>';
-
-		// Status (to sell)
-		print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td>';
-		print $object->getLibStatut(2,0);
-		print '</td></tr>';
-
-		// Status (to buy)
-		print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Buy").')</td><td>';
-		print $object->getLibStatut(2,1);
-		print '</td></tr>';
-
-		print '</table>';
-
+        dol_banner_tab($object, 'ref', '', ($user->societe_id?0:1), 'ref');
+        
 		dol_fiche_end();
-
-
+	}
+	
+	
+	if ($result)
+	{
 		// Choice of stats
 		if (! empty($conf->dol_use_jmobile)) print "\n".'<div class="fichecenter"><div class="nowrap">'."\n";
 
-		if ($mode == 'bynumber') print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&mode=byunit">';
+		if ($mode == 'bynumber') print '<a href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id')?GETPOST('id'):$object->id).'&mode=byunit">';
 		else print img_picto('','tick').' ';
 		print $langs->trans("StatsByNumberOfUnits");
 		if ($mode == 'bynumber') print '</a>';
@@ -111,7 +100,7 @@ if (! empty($id) || ! empty($ref))
 		if (! empty($conf->dol_use_jmobile)) print '</div>'."\n".'<div class="nowrap">'."\n";
 		else print ' &nbsp; / &nbsp; ';
 
-		if ($mode == 'byunit') print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&mode=bynumber">';
+		if ($mode == 'byunit') print '<a href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id')?GETPOST('id'):$object->id).'&mode=bynumber">';
 		else print img_picto('','tick').' ';
 		print $langs->trans("StatsByNumberOfEntities");
 		if ($mode == 'byunit') print '</a>';
@@ -237,13 +226,13 @@ if (! empty($id) || ! empty($ref))
 			if ($graphfiles[$key]['output'] && ! $px->isGraphKo())
 			{
 			    if (file_exists($dir."/".$graphfiles[$key]['file']) && filemtime($dir."/".$graphfiles[$key]['file'])) print '<td>'.$langs->trans("GeneratedOn",dol_print_date(filemtime($dir."/".$graphfiles[$key]['file']),"dayhour")).'</td>';
-			    else print '<td>'.$langs->trans("GeneratedOn",dol_print_date(dol_now()),"dayhour").'</td>';
+			    else print '<td>'.$langs->trans("GeneratedOn",dol_print_date(dol_now(),"dayhour")).'</td>';
 			}
 			else
 			{
 				print '<td>'.($mesg?'<font class="error">'.$mesg.'</font>':$langs->trans("ChartNotGenerated")).'</td>';
 			}
-			print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=recalcul&amp;mode='.$mode.'">'.img_picto($langs->trans("ReCalculate"),'refresh').'</a></td>';
+			print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id')?GETPOST('id'):$object->id).'&amp;action=recalcul&amp;mode='.$mode.'">'.img_picto($langs->trans("ReCalculate"),'refresh').'</a></td>';
 			print '</tr>';
 			print '</table>';
 

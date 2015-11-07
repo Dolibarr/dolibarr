@@ -399,14 +399,15 @@ if ($id > 0 || $ref)
         print '<div class="underbanner clearboth"></div>';
         print '<table class="border tableforfield" width="100%">';
 		
-		if ($conf->productbatch->enabled) {
-			print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td>';
+		if ($conf->productbatch->enabled) 
+		{
+			print '<tr><td class="titlefield">'.$langs->trans("ManageLotSerial").'</td><td>';
 			print $object->getLibStatut(0,2);
 			print '</td></tr>';
 		}
 
 		// PMP
-		print '<tr><td>'.$langs->trans("AverageUnitPricePMP").'</td>';
+		print '<tr><td class="titlefield">'.$langs->trans("AverageUnitPricePMP").'</td>';
 		print '<td>';
 		if ($object->pmp > 0) print price($object->pmp).' '.$langs->trans("HT");
 		print '</td>';

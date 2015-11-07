@@ -91,7 +91,7 @@ if ($id > 0 || ! empty($ref))
         print '<table class="border tableforfield" width="100%">';
 
 		// Total Margin
-		print '<tr><td>'.$langs->trans("TotalMargin").'</td><td colspan="3">';
+		print '<tr><td class="titlefield">'.$langs->trans("TotalMargin").'</td><td colspan="3">';
 		print '<span id="totalMargin"></span>'; // set by jquery (see below)
 		print '</td></tr>';
 

@@ -4513,22 +4513,25 @@ class Form
      *  @param	string	$morecss				Add more class to css styles
      *  @param  int     $callurlonselect        If set to 1, some code is added so an url return by the ajax is called when value is selected.
      *  @param  string  $placeholder            String to use as placeholder
-     * 	@return	string							HTML select string.
+     *  @param  string  $acceptdelayedhtml      1 if caller request to have html delayed content not returned but saved into global $delayedhtmlcontent (so caller can show it at end of page to avoid flash FOUC effect)
+     * 	@return	string   						HTML select string
      */
-    static function selectArrayAjax($htmlname, $url, $id='', $moreparam='', $moreparamtourl='', $disabled=0, $minimumInputLength=1, $morecss='', $callurlonselect=0, $placeholder='')
+    static function selectArrayAjax($htmlname, $url, $id='', $moreparam='', $moreparamtourl='', $disabled=0, $minimumInputLength=1, $morecss='', $callurlonselect=0, $placeholder='', $acceptdelayedhtml=0)
     {
         global $langs;
+        global $delayedhtmlcontent;      
         
-    	$out = '';
-
     	$tmpplugin='select2';
-    	$out.='<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
+        
+    	$out='<input type="text" class="'.$htmlname.($morecss?' '.$morecss:'').'" '.($moreparam?$moreparam.' ':'').'name="'.$htmlname.'">';
+    	
+    	$outdelayed='<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
 	    	<script type="text/javascript">
 	    	$(document).ready(function () {
     	      
-    	      '.($callurlonselect ? 'var saveRemoteData = [];':'').'
+    	        '.($callurlonselect ? 'var saveRemoteData = [];':'').'
     	    
-              $(".'.$htmlname.'").select2({
+                $(".'.$htmlname.'").select2({
 			    	ajax: {
 				    	dir: "ltr",
 				    	url: "'.$url.'",
@@ -4584,12 +4587,17 @@ class Form
                     });
     			});' : '' ) . '
     			
-    	});
-	    </script>';
+    	   });
+	       </script>';
 
-
-		$out.='<input type="text" class="'.$htmlname.($morecss?' '.$morecss:'').'" '.($moreparam?$moreparam.' ':'').'name="'.$htmlname.'">';
-		
+		if ($acceptdelayedhtml)
+		{
+		    $delayedhtmlcontent.=$outdelayed;
+		}
+		else
+		{
+		    $out.=$outdelayed;
+		}
 		return $out;
     }
 
