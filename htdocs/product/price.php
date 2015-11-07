@@ -402,34 +402,13 @@ $titre = $langs->trans("CardProduct" . $object->type);
 $picto = ($object->type == Product::TYPE_SERVICE ? 'service' : 'product');
 dol_fiche_head($head, 'price', $titre, 0, $picto);
 
-print '<table class="border" width="100%">';
+dol_banner_tab($object, 'ref', '', ($user->societe_id?0:1), 'ref');
 
-// Ref
-print '<tr>';
-print '<td width="20%">' . $langs->trans("Ref") . '</td><td colspan="2">';
-print $form->showrefnav($object, 'ref', '', 1, 'ref');
-print '</td>';
-print '</tr>';
 
-// Label
-print '<tr><td>' . $langs->trans("Label") . '</td><td colspan="2">' . $object->label . '</td>';
+print '<div class="fichecenter">';
 
-$isphoto = $object->is_photo_available($conf->product->multidir_output [$object->entity]);
-
-$nblignes = 5;
-if ($isphoto) {
-	// Photo
-	print '<td valign="middle" align="center" width="30%" rowspan="' . $nblignes . '">';
-	print $object->show_photos($conf->product->multidir_output [$object->entity], 1, 1, 0, 0, 0, 80);
-	print '</td>';
-}
-
-print '</tr>';
-
-// Status (to sell)
-print '<tr><td>' . $langs->trans("Status") . ' (' . $langs->trans("Sell") . ')</td><td colspan="2">';
-print $object->getLibStatut(2, 0);
-print '</td></tr>';
+print '<div class="underbanner clearboth"></div>';
+print '<table class="border tableforfield" width="100%">';
 
 // MultiPrix
 if (! empty($conf->global->PRODUIT_MULTIPRICES))
@@ -442,7 +421,7 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES))
 		$soc->fetch($socid);
 
 		// Selling price
-		print '<tr>' . $langs->trans("SellingPrice") . '</td>';
+		print '<tr><td class="titlefield">' . $langs->trans("SellingPrice") . '</td>';
 		print '<td colspan="2">';
 		if ($object->multiprices_base_type["$soc->price_level"] == 'TTC') {
 			print price($object->multiprices_ttc["$soc->price_level"]);
@@ -483,12 +462,12 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES))
 		if (! empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL))  // using this option is a bug. kept for backward compatibility
 		{
     	   // We show only vat for level 1
-	       print '<tr><td>' . $langs->trans("VATRate") . '</td><td colspan="2">' . vatrate($object->multiprices_tva_tx [1], true) . '</td></tr>';
+	       print '<tr><td class="titlefield">' . $langs->trans("VATRate") . '</td><td colspan="2">' . vatrate($object->multiprices_tva_tx [1], true) . '</td></tr>';
 		}
 		else
 		{
             // TVA
-	        print '<tr><td>' . $langs->trans("VATRate") . '</td><td>' . vatrate($object->tva_tx . ($object->tva_npr ? '*' : ''), true) . '</td></tr>';
+	        print '<tr><td class="titlefield">' . $langs->trans("VATRate") . '</td><td>' . vatrate($object->tva_tx . ($object->tva_npr ? '*' : ''), true) . '</td></tr>';
 		}
 	   
 		print '<tr class="liste_titre"><td style="text-align: center">'.$langs->trans("PriceLevel").'</td><td style="text-align: center">'.$langs->trans("SellingPrice").'</td><td style="text-align: center">'.$langs->trans("MinPrice").'</td></tr>';
@@ -605,7 +584,7 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES))
 else 
 {
 	// TVA
-	print '<tr><td>' . $langs->trans("VATRate") . '</td><td>' . vatrate($object->tva_tx . ($object->tva_npr ? '*' : ''), true) . '</td></tr>';
+	print '<tr><td class="titlefield">' . $langs->trans("VATRate") . '</td><td>' . vatrate($object->tva_tx . ($object->tva_npr ? '*' : ''), true) . '</td></tr>';
 
 	// Price
 	print '<tr><td>' . $langs->trans("SellingPrice") . '</td><td>';
@@ -702,6 +681,10 @@ else
 }
 
 print "</table>\n";
+
+print '</div>';
+print '<div style="clear:both"></div>';
+   
 
 dol_fiche_end();
 
