@@ -282,9 +282,14 @@ else
 		$found=true;
 	}
 
-	$mesprevnext ="<a href=\"releve.php?rel=prev&amp;num=$num&amp;ve=$ve&amp;account=$object->id\">".img_previous()."</a> &nbsp;";
-	$mesprevnext.= $langs->trans("AccountStatement")." $num";
-	$mesprevnext.=" &nbsp; <a href=\"releve.php?rel=next&amp;num=$num&amp;ve=$ve&amp;account=$object->id\">".img_next()."</a>";
+    $mesprevnext='';
+	$mesprevnext.='<div class="pagination"><ul>';
+	$mesprevnext.='<li class="pagination"><a data-role="button" data-icon="arrow-l" data-iconpos="left" href="'.$_SERVER["PHP_SELF"].'?rel=prev&amp;num='.$num.'&amp;ve='.$ve.'&amp;account='.$object->id.'"><</a></li>';
+	//$mesprevnext.=' &nbsp; ';
+	$mesprevnext.='<li class="pagination"><span class="inactive">'.$langs->trans("AccountStatement")." ".$num.'</span></li>';
+	//$mesprevnext.=' &nbsp; ';
+    $mesprevnext.='<li class="pagination"><a data-role="button" data-icon="arrow-r" data-iconpos="right" href="'.$_SERVER["PHP_SELF"].'?rel=next&amp;num='.$num.'&amp;ve='.$ve.'&amp;account='.$object->id.'">></a></li>';
+    $mesprevnext.='</ul></div>';
 	print load_fiche_titre($langs->trans("AccountStatement").' '.$num.', '.$langs->trans("BankAccount").' : '.$object->getNomUrl(0),$mesprevnext, 'title_bank.png');
 	print '<br>';
 
