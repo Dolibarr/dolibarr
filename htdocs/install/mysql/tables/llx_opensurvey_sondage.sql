@@ -29,5 +29,5 @@ CREATE TABLE llx_opensurvey_sondage (
 	allow_comments tinyint NOT NULL DEFAULT 1,
 	allow_spy tinyint NOT NULL DEFAULT 1,
 	tms TIMESTAMP,
-	sujet TEXT,									-- Not filled if format = 'F'. Question are into table llx_opensurvey_formquestions
+	sujet TEXT									-- Not filled if format = 'F'. Question are into table llx_opensurvey_formquestions
 ) ENGINE=InnoDB;
