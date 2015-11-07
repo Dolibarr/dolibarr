@@ -44,16 +44,16 @@ $langs->load("bills");
 $action = GETPOST('action', 'alpha');
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOST('socid', 'int')?GETPOST('socid', 'int'):GETPOST('id', 'int');
 if ($user->societe_id)
 	$socid = $user->societe_id;
 $result = restrictedArea($user, 'societe', $socid, '&societe');
 
-/**
- * ***************************************************
- * Price by customer
- * ****************************************************
+
+/*
+ * Actions
  */
+
 if ($action == 'add_customer_price_confirm' && ! $_POST ["cancel"] && ($user->rights->produit->creer || $user->rights->service->creer)) {
 
 	$update_child_soc = GETPOST('updatechildprice');
@@ -114,91 +114,92 @@ if ($action == 'update_customer_price_confirm' && ! $_POST ["cancel"] && ($user-
 	$action = '';
 }
 
+
 /*
  * View
  */
 
 $form = new Form($db);
 
-$soc = new Societe($db);
+$object = new Societe($db);
 
-$result = $soc->fetch($socid);
+$result = $object->fetch($socid);
 llxHeader("", $langs->trans("ThirdParty") . '-' . $langs->trans('PriceByCustomer'));
 
 if (! empty($conf->notification->enabled))
 	$langs->load("mails");
-$head = societe_prepare_head($soc);
+$head = societe_prepare_head($object);
 
 dol_fiche_head($head, 'price', $langs->trans("ThirdParty"), 0, 'company');
 
 print '<table class="border" width="100%">';
 
 print '<tr><td width="25%">' . $langs->trans("ThirdPartyName") . '</td><td colspan="3">';
-print $form->showrefnav($soc, 'socid', '', ($user->societe_id ? 0 : 1), 'rowid', 'nom');
+print $form->showrefnav($object, 'socid', '', ($user->societe_id ? 0 : 1), 'rowid', 'nom');
 print '</td></tr>';
 
 // Alias names (commercial, trademark or alias names)
 print '<tr><td>'.$langs->trans('AliasNames').'</td><td colspan="3">';
-print $soc->name_alias;
+print $object->name_alias;
 print "</td></tr>";
 
 if (! empty($conf->global->SOCIETE_USEPREFIX)) // Old not used prefix field
 {
-	print '<tr><td>' . $langs->trans('Prefix') . '</td><td colspan="3">' . $soc->prefix_comm . '</td></tr>';
+	print '<tr><td>' . $langs->trans('Prefix') . '</td><td colspan="3">' . $object->prefix_comm . '</td></tr>';
 }
 
-if ($soc->client) {
+if ($object->client) {
 	print '<tr><td>';
 	print $langs->trans('CustomerCode') . '</td><td colspan="3">';
-	print $soc->code_client;
-	if ($soc->check_codeclient() != 0)
+	print $object->code_client;
+	if ($object->check_codeclient() != 0)
 		print ' <font class="error">(' . $langs->trans("WrongCustomerCode") . ')</font>';
 	print '</td></tr>';
 }
 
-if ($soc->fournisseur) {
+if ($object->fournisseur) {
 	print '<tr><td>';
 	print $langs->trans('SupplierCode') . '</td><td colspan="3">';
-	print $soc->code_fournisseur;
-	if ($soc->check_codefournisseur() != 0)
+	print $object->code_fournisseur;
+	if ($object->check_codefournisseur() != 0)
 		print ' <font class="error">(' . $langs->trans("WrongSupplierCode") . ')</font>';
 	print '</td></tr>';
 }
 
 if (! empty($conf->barcode->enabled)) {
-	print '<tr><td>' . $langs->trans('Gencod') . '</td><td colspan="3">' . $soc->barcode . '</td></tr>';
+	print '<tr><td>' . $langs->trans('Gencod') . '</td><td colspan="3">' . $object->barcode . '</td></tr>';
 }
 
 print "<tr><td>" . $langs->trans('Address') . "</td><td colspan=\"3\">";
-dol_print_address($soc->address, 'gmap', 'thirdparty', $soc->id);
+dol_print_address($object->address, 'gmap', 'thirdparty', $object->id);
 print "</td></tr>";
 
 // Zip / Town
-print '<tr><td width="25%">' . $langs->trans('Zip') . '</td><td width="25%">' . $soc->zip . "</td>";
-print '<td width="25%">' . $langs->trans('Town') . '</td><td width="25%">' . $soc->town . "</td></tr>";
+print '<tr><td width="25%">' . $langs->trans('Zip') . '</td><td width="25%">' . $object->zip . "</td>";
+print '<td width="25%">' . $langs->trans('Town') . '</td><td width="25%">' . $object->town . "</td></tr>";
 
 // Country
-if ($soc->country) {
+if ($object->country) {
 	print '<tr><td>' . $langs->trans('Country') . '</td><td colspan="3">';
-	$img = picto_from_langcode($soc->country_code);
+	$img = picto_from_langcode($object->country_code);
 	print($img ? $img . ' ' : '');
-	print $soc->country;
+	print $object->country;
 	print '</td></tr>';
 }
 
 // EMail
 print '<tr><td>' . $langs->trans('EMail') . '</td><td colspan="3">';
-print dol_print_email($soc->email, 0, $soc->id, 'AC_EMAIL');
+print dol_print_email($object->email, 0, $object->id, 'AC_EMAIL');
 print '</td></tr>';
 
 // Web
 print '<tr><td>' . $langs->trans('Web') . '</td><td colspan="3">';
-print dol_print_url($soc->url);
+print dol_print_url($object->url);
 print '</td></tr>';
 
 // Phone / Fax
-print '<tr><td>' . $langs->trans('Phone') . '</td><td>' . dol_print_phone($soc->tel, $soc->country_code, 0, $soc->id, 'AC_TEL') . '</td>';
-print '<td>' . $langs->trans('Fax') . '</td><td>' . dol_print_phone($soc->fax, $soc->country_code, 0, $soc->id, 'AC_FAX') . '</td></tr>';
+print '<tr><td>' . $langs->trans('Phone') . '</td><td>' . dol_print_phone($object->tel, $object->country_code, 0, $object->id, 'AC_TEL') . '</td>';
+print '<td>' . $langs->trans('Fax') . '</td><td>' . dol_print_phone($object->fax, $object->country_code, 0, $object->id, 'AC_FAX') . '</td></tr>';
 
 print '</table>';
 
@@ -224,7 +225,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 		// Build filter to diplay only concerned lines
 	$filter = array (
-		't.fk_soc' => $soc->id
+		't.fk_soc' => $object->id
 	);
 
 	$search_soc = GETPOST('search_soc');
@@ -238,10 +239,10 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 		print_fiche_titre($langs->trans('PriceByCustomer'));
 
-		print '<form action="' . $_SERVER["PHP_SELF"] . '?socid=' . $soc->id . '" method="POST">';
+		print '<form action="' . $_SERVER["PHP_SELF"] . '?socid=' . $object->id . '" method="POST">';
 		print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 		print '<input type="hidden" name="action" value="add_customer_price_confirm">';
-		print '<input type="hidden" name="socid" value="' . $soc->id . '">';
+		print '<input type="hidden" name="socid" value="' . $object->id . '">';
 		print '<table class="border" width="100%">';
 		print '<tr>';
 		print '<td>' . $langs->trans('Product') . '</td>';
@@ -316,7 +317,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 			setEventMessage($prodcustprice->error, 'errors');
 		}
 
-		print '<form action="' . $_SERVER["PHP_SELF"] . '?socid=' . $soc->id . '" method="POST">';
+		print '<form action="' . $_SERVER["PHP_SELF"] . '?socid=' . $object->id . '" method="POST">';
 		print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 		print '<input type="hidden" name="action" value="update_customer_price_confirm">';
 		print '<input type="hidden" name="lineid" value="' . $prodcustprice->id . '">';
@@ -456,7 +457,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		}
 
 		print "\n" . '<div class="tabsAction">' . "\n";
-		print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?socid=' . $soc->id . '">' . $langs->trans("Ok") . '</a></div>';
+		print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?socid=' . $object->id . '">' . $langs->trans("Ok") . '</a></div>';
 		print "\n</div><br>\n";
 	} else {
 
@@ -536,15 +537,15 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 				// Action
 				if ($user->rights->produit->creer || $user->rights->service->creer) {
 					print '<td align="right">';
-					print '<a href="' . $_SERVER["PHP_SELF"] . '?action=showlog_customer_price&amp;socid=' . $soc->id . '&amp;prodid=' . $line->fk_product . '">';
+					print '<a href="' . $_SERVER["PHP_SELF"] . '?action=showlog_customer_price&amp;socid=' . $object->id . '&amp;prodid=' . $line->fk_product . '">';
 					print img_info();
 					print '</a>';
 					print ' ';
-					print '<a href="' . $_SERVER["PHP_SELF"] . '?action=edit_customer_price&amp;socid=' . $soc->id . '&amp;lineid=' . $line->id . '">';
+					print '<a href="' . $_SERVER["PHP_SELF"] . '?action=edit_customer_price&amp;socid=' . $object->id . '&amp;lineid=' . $line->id . '">';
 					print img_edit('default', 0, 'style="vertical-align: middle;"');
 					print '</a>';
 					print ' ';
-					print '<a href="' . $_SERVER["PHP_SELF"] . '?action=delete_customer_price&amp;socid=' . $soc->id . '&amp;lineid=' . $line->id . '">';
+					print '<a href="' . $_SERVER["PHP_SELF"] . '?action=delete_customer_price&amp;socid=' . $object->id . '&amp;lineid=' . $line->id . '">';
 					print img_delete('default', 'style="vertical-align: middle;"');
 					print '</a>';
 					print '</td>';
@@ -568,7 +569,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print "\n" . '<div class="tabsAction">' . "\n";
 
 		if ($user->rights->produit->creer || $user->rights->service->creer) {
-			print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=add_customer_price&amp;socid=' . $soc->id . '">' . $langs->trans("AddCustomerPrice") . '</a></div>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=add_customer_price&amp;socid=' . $object->id . '">' . $langs->trans("AddCustomerPrice") . '</a></div>';
 		}
 		print "\n</div><br>\n";
 	}

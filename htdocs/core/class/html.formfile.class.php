@@ -820,7 +820,12 @@ class FormFile
 						if ($object->element == 'member') $relativepath=get_exdir($object->id,2,0,0,$object,'member').$relativepath;				// TODO Call using a defined value for $relativepath
 						if ($object->element == 'project_task') $relativepath='Call_not_supported_._Call_function_using_a_defined_relative_path_.';
 					}
-
+					// For backward compatiblity, we detect file is stored into an old path
+					if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO) && $file['level1name'] == 'photos')
+	                {
+	                    $relativepath=preg_replace('/^.*\/produit\//','',$file['path']).'/';
+	                }
+					
 					$var=!$var;
 					print '<tr '.$bc[$var].'>';
 					print '<td>';
