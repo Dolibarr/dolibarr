@@ -6,7 +6,7 @@
  * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
  * Copyright (C) 2010-2014 Juanjo Menent         <jmenent@2byte.es>
- * Copyright (C) 2010-2011 Philippe Grand        <philippe.grand@atoo-net.com>
+ * Copyright (C) 2010-2015 Philippe Grand        <philippe.grand@atoo-net.com>
  * Copyright (C) 2012-2013 Christophe Battarel   <christophe.battarel@altairis.fr>
  * Copyright (C) 2012      Cedric Salvador       <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013-2014 Florian Henry		 <florian.henry@open-concept.pro>
@@ -131,7 +131,7 @@ if (empty($reshook))
 	{
 		if (! GETPOST('socid', 3))
 		{
-			setEventMessage($langs->trans("NoCloneOptionsSpecified"), 'errors');
+			setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
 		}
 		else
 		{
@@ -141,7 +141,7 @@ if (empty($reshook))
 					header("Location: " . $_SERVER['PHP_SELF'] . '?id=' . $result);
 					exit();
 				} else {
-					if (count($object->errors) > 0) setEventMessage($object->errors, 'errors');
+					if (count($object->errors) > 0) setEventMessages($object->error, $object->errors, 'errors');
 					$action = '';
 				}
 			}
@@ -157,7 +157,7 @@ if (empty($reshook))
 			exit();
 		} else {
 			$langs->load("errors");
-			setEventMessage($langs->trans($object->error), 'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 
@@ -211,8 +211,8 @@ if (empty($reshook))
 			}
 		} else {
 			$langs->load("errors");
-			if (count($object->errors) > 0) setEventMessage($object->errors, 'errors');
-			else setEventMessage($langs->trans($object->error), 'errors');
+			if (count($object->errors) > 0) setEventMessages($object->error, $object->errors, 'errors');
+			else setEventMessages($langs->trans($object->error), null, 'errors');
 		}
 	}
 
@@ -318,7 +318,7 @@ if (empty($reshook))
 
 					$id = $object->create_from($user);
 				} else {
-					setEventMessage($langs->trans("ErrorFailedToCopyProposal", GETPOST('copie_propal')), 'errors');
+					setEventMessages($langs->trans("ErrorFailedToCopyProposal", GETPOST('copie_propal')), null, 'errors');
 				}
 			} else {
 				$object->ref = GETPOST('ref');
@@ -507,7 +507,7 @@ if (empty($reshook))
 						if ($result < 0)
 						{
 							$error++;
-							setEventMessage($langs->trans("ErrorFailedToAddContact"), 'errors');
+							setEventMessages($langs->trans("ErrorFailedToAddContact"), null, 'errors');
 						}
 					}
 
@@ -671,7 +671,7 @@ if (empty($reshook))
 			if ($object->id > 0) {
 				$result = $object->insert_discount($_POST["remise_id"]);
 				if ($result < 0) {
-					setEventMessage($object->error, 'errors');
+					setEventMessages($object->error, $object->errors, 'errors');
 				}
 			}
 		}
@@ -875,7 +875,7 @@ if (empty($reshook))
 
 			if (! empty($price_min) && (price2num($pu_ht) * (1 - price2num($remise_percent) / 100) < price2num($price_min))) {
 				$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, - 1, $conf->currency));
-				setEventMessage($mesg, 'errors');
+				setEventMessages($mesg, null, 'errors');
 			} else {
 				// Insert line
 				$result = $object->addline($desc, $pu_ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $price_base_type, $pu_ttc, $info_bits, $type, - 1, 0, GETPOST('fk_parent_line'), $fournprice, $buyingprice, $label, $date_start, $date_end, $array_options, $fk_unit);
@@ -929,13 +929,13 @@ if (empty($reshook))
 				} else {
 					$db->rollback();
 
-					setEventMessage($object->error, 'errors');
+					setEventMessages($object->error, $object->errors, 'errors');
 				}
 			}
 		}
 	}
 
-	// Mise a jour d'une ligne dans la propale
+	// Update a line within proposal
 	else if ($action == 'updateligne' && $user->rights->propal->creer && GETPOST('save'))
 	{
 		// Define info_bits
@@ -991,7 +991,7 @@ if (empty($reshook))
 			$label = ((GETPOST('update_label') && GETPOST('product_label')) ? GETPOST('product_label') : '');
 
 			if ($price_min && (price2num($pu_ht) * (1 - price2num(GETPOST('remise_percent')) / 100) < price2num($price_min))) {
-				setEventMessage($langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, - 1, $conf->currency)), 'errors');
+				setEventMessages($langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, - 1, $conf->currency)), null, 'errors');
 				$error ++;
 			}
 		} else {
@@ -1040,7 +1040,7 @@ if (empty($reshook))
 			} else {
 				$db->rollback();
 
-				setEventMessage($object->error, 'errors');
+				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
 	}
@@ -1137,9 +1137,9 @@ if (empty($reshook))
 			} else {
 				if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 					$langs->load("errors");
-					setEventMessage($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), 'errors');
+					setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
 				} else {
-					setEventMessage($object->error, 'errors');
+					setEventMessages($object->error, $object->errors, 'errors');
 				}
 			}
 		}
@@ -1636,13 +1636,13 @@ if ($action == 'create')
 	else if ($action == 'validate') {
 		$error = 0;
 
-		// on verifie si l'objet est en numerotation provisoire
+		// We verifie whether the object is provisionally numbering
 		$ref = substr($object->ref, 1, 4);
 		if ($ref == 'PROV') {
 			$numref = $object->getNextNumRef($soc);
 			if (empty($numref)) {
 				$error ++;
-				setEventMessage($object->error, 'errors');
+				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		} else {
 			$numref = $object->ref;

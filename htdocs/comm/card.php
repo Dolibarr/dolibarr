@@ -105,7 +105,7 @@ if (empty($reshook))
 		$result=$object->fetch($id);
 		$object->code_compta=$_POST["customeraccountancycode"];
 		$result=$object->update($object->id,$user,1,1,0);
-		if ($result < 0) setEventMessage($object->error,$object->errors,'errors');
+		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 	}
 
 	// conditions de reglement
@@ -113,7 +113,7 @@ if (empty($reshook))
 	{
 		$object->fetch($id);
 		$result=$object->setPaymentTerms(GETPOST('cond_reglement_id','int'));
-		if ($result < 0) setEventMessage($object->error,$object->errors,'errors');
+		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 	}
 
 	// mode de reglement
@@ -121,7 +121,7 @@ if (empty($reshook))
 	{
 		$object->fetch($id);
 		$result=$object->setPaymentMethods(GETPOST('mode_reglement_id','int'));
-		if ($result < 0) setEventMessage($object->error,$object->errors,'errors');
+		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 	}
 
 	// assujetissement a la TVA
@@ -130,7 +130,7 @@ if (empty($reshook))
 		$object->fetch($id);
 		$object->tva_assuj=$_POST['assujtva_value'];
 		$result=$object->update($object->id);
-		if ($result < 0) setEventMessage($object->error,$object->errors,'errors');
+		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 	}
 
 	// set prospect level
@@ -157,7 +157,7 @@ if (empty($reshook))
 		$object->fetch($id);
 		$object->outstanding_limit=GETPOST('outstanding_limit');
 		$result=$object->set_OutstandingBill($user);
-		if ($result < 0) setEventMessage($object->error,$object->errors,'errors');
+		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
 
