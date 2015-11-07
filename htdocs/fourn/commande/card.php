@@ -704,15 +704,14 @@ if (empty($reshook))
 
 	if ($action == 'confirm_commande' && $confirm	== 'yes' &&	$user->rights->fournisseur->commande->commander)
 	{
-	    $result	= $object->commande($user, $_REQUEST["datecommande"],	$_REQUEST["methode"], $_REQUEST['comment']);
+	    $result = $object->commande($user, $_REQUEST["datecommande"],	$_REQUEST["methode"], $_REQUEST['comment']);
 	    if ($result > 0)
 	    {
 	        if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 		        $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	        }
-	        header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
-	        exit;
-	    }
+            $action = '';
+        }
 	    else
 	    {
             setEventMessages($object->error, $object->errors, 'errors');

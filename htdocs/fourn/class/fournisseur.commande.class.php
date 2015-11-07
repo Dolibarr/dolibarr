@@ -946,16 +946,24 @@ class CommandeFournisseur extends CommonOrder
             dol_syslog(get_class($this)."::commande", LOG_DEBUG);
             if ($this->db->query($sql))
             {
+                $this->statut = 3;
+                $this->methode_commande_id = $methode;
+                $this->date_commande = $this->db->idate($date);
                 $result = 1;
                 $this->log($user, 3, $date, $comment);
             }
             else
             {
+                $this->error = $this->db->lasterror();
+                $this->errors[] = $this->db->lasterror();
                 $result = -1;
             }
         }
         else
         {
+            $result = -1;
+            $this->error = 'Not Authorized';
+            $this->errors[] = 'Not Authorized';
             dol_syslog(get_class($this)."::commande User not Authorized", LOG_ERR);
         }
         return $result ;
