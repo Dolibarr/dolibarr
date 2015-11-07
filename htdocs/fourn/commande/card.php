@@ -766,15 +766,15 @@ if (empty($reshook))
 	    {
 	        $date_liv = dol_mktime(GETPOST('rehour'),GETPOST('remin'),GETPOST('resec'),GETPOST("remonth"),GETPOST("reday"),GETPOST("reyear"));
 
-	        $result	= $object->Livraison($user, $date_liv, GETPOST("type"), GETPOST("comment"));
+	        $result = $object->Livraison($user, $date_liv, GETPOST("type"), GETPOST("comment"));
 	        if ($result > 0)
 	        {
-	            header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
-	            exit;
-	        }
+                setEventMessages($langs->trans("DeliveryStateSaved"), null);
+                $action = '';
+            }
 	        else if($result == -3)
 	        {
-	        	setEventMessage($langs->trans("NotAuthorized"), 'errors');
+                setEventMessages($object->error, $object->errors, 'errors');
 	        }
 	        else
 	        {

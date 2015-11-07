@@ -1837,6 +1837,7 @@ class CommandeFournisseur extends CommonOrder
                 if ($resql)
                 {
                     $result = 0;
+                    $this->statut = $statut;
                     $result=$this->log($user, $statut, $date, $comment);
 
                     $this->db->commit();
@@ -1851,6 +1852,8 @@ class CommandeFournisseur extends CommonOrder
         }
         else
         {
+            $this->error = 'Not Authorized';
+            $this->errors[] = 'Not Authorized';
             dol_syslog(get_class($this)."::Livraison Not Authorized");
             $result = -3;
         }
