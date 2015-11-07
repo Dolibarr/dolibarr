@@ -2193,11 +2193,12 @@ class Product extends CommonObject
 	/**
 	 *  Return nb of units or customers invoices in which product is included
 	 *
-	 *  @param  	int		$socid      Limit count on a particular third party id
-	 *  @param		string	$mode		'byunit'=number of unit, 'bynumber'=nb of entities
-	 * 	@return   	array       		<0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
+	 *  @param  	int		$socid                   Limit count on a particular third party id
+	 *  @param		string	$mode		             'byunit'=number of unit, 'bynumber'=nb of entities
+	 *  @param      int     $filteronproducttype     0=To filter on product only, 1=To filter on services only
+	 * 	@return   	array       		             <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
 	 */
-	function get_nb_vente($socid,$mode)
+	function get_nb_vente($socid, $mode, $filteronproducttype=-1)
 	{
 		global $conf;
 		global $user;
@@ -2205,9 +2206,11 @@ class Product extends CommonObject
 		$sql = "SELECT sum(d.qty), date_format(f.datef, '%Y%m')";
 		if ($mode == 'bynumber') $sql.= ", count(DISTINCT f.rowid)";
 		$sql.= " FROM ".MAIN_DB_PREFIX."facturedet as d, ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s";
+		if ($filteronproducttype >= 0) $sql.=", ".MAIN_DB_PREFIX."product as p";
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE f.rowid = d.fk_facture";
 		if ($this->id > 0) $sql.= " AND d.fk_product =".$this->id;
+		if ($filteronproducttype >= 0) $sql.= " AND p.rowid = d.fk_product AND p.fk_product_type =".$filteronproducttype;
 		$sql.= " AND f.fk_soc = s.rowid";
 		$sql.= " AND f.entity IN (".getEntity('facture', 1).")";
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
@@ -2222,11 +2225,12 @@ class Product extends CommonObject
 	/**
 	 *  Return nb of units or supplier invoices in which product is included
 	 *
-	 *  @param  	int		$socid      Limit count on a particular third party id
-	 * 	@param		string	$mode		'byunit'=number of unit, 'bynumber'=nb of entities
-	 * 	@return   	array       		<0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
+	 *  @param  	int		$socid                   Limit count on a particular third party id
+	 * 	@param		string	$mode		             'byunit'=number of unit, 'bynumber'=nb of entities
+	 *  @param      int     $filteronproducttype     0=To filter on product only, 1=To filter on services only
+	 * 	@return   	array       		             <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
 	 */
-	function get_nb_achat($socid,$mode)
+	function get_nb_achat($socid, $mode, $filteronproducttype=-1)
 	{
 		global $conf;
 		global $user;
@@ -2234,9 +2238,11 @@ class Product extends CommonObject
 		$sql = "SELECT sum(d.qty), date_format(f.datef, '%Y%m')";
 		if ($mode == 'bynumber') $sql.= ", count(DISTINCT f.rowid)";
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn_det as d, ".MAIN_DB_PREFIX."facture_fourn as f, ".MAIN_DB_PREFIX."societe as s";
-		if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        if ($filteronproducttype >= 0) $sql.=", ".MAIN_DB_PREFIX."product as p";
+        if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE f.rowid = d.fk_facture_fourn";
 		if ($this->id > 0) $sql.= " AND d.fk_product =".$this->id;
+		if ($filteronproducttype >= 0) $sql.= " AND p.rowid = d.fk_product AND p.fk_product_type =".$filteronproducttype;
 		$sql.= " AND f.fk_soc = s.rowid";
 		$sql.= " AND f.entity IN (".getEntity('facture_fourn', 1).")";
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
@@ -2251,11 +2257,12 @@ class Product extends CommonObject
 	/**
 	 *  Return nb of units or proposals in which product is included
 	 *
-	 *  @param  	int		$socid      Limit count on a particular third party id
-	 * 	@param		string	$mode		'byunit'=number of unit, 'bynumber'=nb of entities
-	 * 	@return   	array       		<0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
+	 *  @param  	int		$socid                   Limit count on a particular third party id
+	 * 	@param		string	$mode		             'byunit'=number of unit, 'bynumber'=nb of entities
+	 *  @param      int     $filteronproducttype     0=To filter on product only, 1=To filter on services only
+	 * 	@return   	array       		             <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
 	 */
-	function get_nb_propal($socid,$mode)
+	function get_nb_propal($socid, $mode, $filteronproducttype=-1)
 	{
 		global $conf;
 		global $user;
@@ -2263,9 +2270,11 @@ class Product extends CommonObject
 		$sql = "SELECT sum(d.qty), date_format(p.datep, '%Y%m')";
 		if ($mode == 'bynumber') $sql.= ", count(DISTINCT p.rowid)";
 		$sql.= " FROM ".MAIN_DB_PREFIX."propaldet as d, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."societe as s";
+        if ($filteronproducttype >= 0) $sql.=", ".MAIN_DB_PREFIX."product as prod";		
 		if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE p.rowid = d.fk_propal";
 		if ($this->id > 0) $sql.= " AND d.fk_product =".$this->id;
+		if ($filteronproducttype >= 0) $sql.= " AND prod.rowid = d.fk_product AND prod.fk_product_type =".$filteronproducttype;
 		$sql.= " AND p.fk_soc = s.rowid";
 		$sql.= " AND p.entity IN (".getEntity('propal', 1).")";
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
@@ -2279,20 +2288,23 @@ class Product extends CommonObject
 	/**
 	 *  Return nb of units or orders in which product is included
 	 *
-	 *  @param  	int		$socid      Limit count on a particular third party id
-	 *  @param		string	$mode		'byunit'=number of unit, 'bynumber'=nb of entities
-	 * 	@return   	array       		<0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
+	 *  @param  	int		$socid                   Limit count on a particular third party id
+	 *  @param		string	$mode		             'byunit'=number of unit, 'bynumber'=nb of entities
+	 *  @param      int     $filteronproducttype     0=To filter on product only, 1=To filter on services only
+	 * 	@return   	array       		             <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
 	 */
-	function get_nb_order($socid,$mode)
+	function get_nb_order($socid, $mode, $filteronproducttype=-1)
 	{
 		global $conf, $user;
 
 		$sql = "SELECT sum(d.qty), date_format(c.date_commande, '%Y%m')";
 		if ($mode == 'bynumber') $sql.= ", count(DISTINCT c.rowid)";
 		$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as d, ".MAIN_DB_PREFIX."commande as c, ".MAIN_DB_PREFIX."societe as s";
-		if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        if ($filteronproducttype >= 0) $sql.=", ".MAIN_DB_PREFIX."product as p";
+        if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE c.rowid = d.fk_commande";
 		if ($this->id > 0) $sql.= " AND d.fk_product =".$this->id;
+		if ($filteronproducttype >= 0) $sql.= " AND p.rowid = d.fk_product AND p.fk_product_type =".$filteronproducttype;
 		$sql.= " AND c.fk_soc = s.rowid";
 		$sql.= " AND c.entity IN (".getEntity('commande', 1).")";
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
@@ -2306,20 +2318,23 @@ class Product extends CommonObject
 	/**
 	 *  Return nb of units or orders in which product is included
 	 *
-	 *  @param  	int		$socid      Limit count on a particular third party id
-	 *  @param		string	$mode		'byunit'=number of unit, 'bynumber'=nb of entities
-	 * 	@return   	array       		<0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
+	 *  @param  	int		$socid                   Limit count on a particular third party id
+	 *  @param		string	$mode		             'byunit'=number of unit, 'bynumber'=nb of entities
+	 *  @param      int     $filteronproducttype     0=To filter on product only, 1=To filter on services only
+	 * 	@return   	array       		             <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
 	 */
-	function get_nb_ordersupplier($socid,$mode)
+	function get_nb_ordersupplier($socid, $mode, $filteronproducttype=-1)
 	{
 		global $conf, $user;
 
 		$sql = "SELECT sum(d.qty), date_format(c.date_commande, '%Y%m')";
 		if ($mode == 'bynumber') $sql.= ", count(DISTINCT c.rowid)";
 		$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as d, ".MAIN_DB_PREFIX."commande_fournisseur as c, ".MAIN_DB_PREFIX."societe as s";
+        if ($filteronproducttype >= 0) $sql.=", ".MAIN_DB_PREFIX."product as p";		
 		if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE c.rowid = d.fk_commande";
 		if ($this->id > 0) $sql.= " AND d.fk_product =".$this->id;
+		if ($filteronproducttype >= 0) $sql.= " AND p.rowid = d.fk_product AND p.fk_product_type =".$filteronproducttype;
 		$sql.= " AND c.fk_soc = s.rowid";
 		$sql.= " AND c.entity IN (".getEntity('commande_fournisseur', 1).")";
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
