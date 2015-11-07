@@ -62,14 +62,38 @@ $form = new Form($db);
 if (! empty($id) || ! empty($ref) || GETPOST('id') == 'all')
 {
 	$object = new Product($db);
-    if (! empty($id) || ! empty($ref))
+    if (GETPOST('id') == 'all')
     {
-        $result = $object->fetch($id,$ref);
-        llxHeader("",$langs->trans("CardProduct".$object->type));
+        llxHeader("",$langs->trans("ProductStatistics"));
+
+   	    $type = GETPOST('type');
+	    
+       	$helpurl='';
+        if ($type == '0')
+        {
+            $helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
+            //$title=$langs->trans("StatisticsOfProducts");
+            $title=$langs->trans("Statistics");
+        }
+        else if ($type == '1')
+        {
+            $helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+            //$title=$langs->trans("StatisticsOfServices");
+            $title=$langs->trans("Statistics");
+        }
+        else
+        {
+            $helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+            //$title=$langs->trans("StatisticsOfProductsOrServices");
+            $title=$langs->trans("Statistics");
+        }
+        
+        print load_fiche_titre($title, $mesg,'title_products.png');
     }
     else
     {
-        llxHeader("",$langs->trans("ProductStatistics"));
+        $result = $object->fetch($id,$ref);
+        llxHeader("",$langs->trans("CardProduct".$object->type));
     }
 	
     
@@ -85,14 +109,70 @@ if (! empty($id) || ! empty($ref) || GETPOST('id') == 'all')
         
 		dol_fiche_end();
 	}
-	
-	
-	if ($result)
+	if (GETPOST('id') == 'all')
 	{
+        $h=0;
+        $head = array();
+        
+        $head[$h][0] = DOL_URL_ROOT.'/product/stats/card.php?id=all';
+        $head[$h][1] = $langs->trans("Chart");
+        $head[$h][2] = 'chart';
+        $h++;
+        
+    	$title = $langs->trans("ListProductServiceByPopularity");
+        if ((string) $type == '1') {
+        	$title = $langs->trans("ListServiceByPopularity");
+        }
+        if ((string) $type == '0') {
+        	$title = $langs->trans("ListProductByPopularity");
+        }
+        
+        $head[$h][0] = DOL_URL_ROOT.'/product/popuprop.php'.($type != ''?'?type='.$type:'');
+        $head[$h][1] = $title;
+        $head[$h][2] = 'popularityprop';
+        $h++;
+        
+        dol_fiche_head($head,'chart',$langs->trans("Statistics"));   
+	}
+	
+	
+	if ($result || GETPOST('id') == 'all')
+	{
+	    if (GETPOST('id') == 'all')
+	    {
+    		// Choice of type of product
+    		if (! empty($conf->dol_use_jmobile)) print "\n".'<div class="fichecenter"><div class="nowrap">'."\n";
+    
+    		if ((string) $type != '0') print '<a href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id')?GETPOST('id'):$object->id).'&type=0">';
+    		else print img_picto('','tick').' ';
+    		print $langs->trans("Products");
+    		if ((string) $type != '0') print '</a>';
+    
+    		if (! empty($conf->dol_use_jmobile)) print '</div>'."\n".'<div class="nowrap">'."\n";
+    		else print ' &nbsp; / &nbsp; ';
+    
+    		if ((string) $type != '1') print '<a href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id')?GETPOST('id'):$object->id).'&type=1">';
+    		else print img_picto('','tick').' ';
+    		print $langs->trans("Services");
+    		if ((string) $type != '1') print '</a>';
+    
+    		if (! empty($conf->dol_use_jmobile)) print '</div>'."\n".'<div class="nowrap">'."\n";
+    		else print ' &nbsp; / &nbsp; ';
+    
+    		if ((string) $type == '0' || (string) $type == '1') print '<a href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id')?GETPOST('id'):$object->id).'">';
+    		else print img_picto('','tick').' ';
+    		print $langs->trans("ProductsAndServices");
+    		if ((string) $type == '0' || (string) $type == '1') print '</a>';
+    		
+    		if (! empty($conf->dol_use_jmobile)) print '</div></div>';
+    		else print '<br>';
+    		print '<br>';
+	    }
+	    
 		// Choice of stats
 		if (! empty($conf->dol_use_jmobile)) print "\n".'<div class="fichecenter"><div class="nowrap">'."\n";
 
-		if ($mode == 'bynumber') print '<a href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id')?GETPOST('id'):$object->id).'&mode=byunit">';
+		if ($mode == 'bynumber') print '<a href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id')?GETPOST('id'):$object->id).($type != '' ? '&type='.$type:'').'&mode=byunit">';
 		else print img_picto('','tick').' ';
 		print $langs->trans("StatsByNumberOfUnits");
 		if ($mode == 'bynumber') print '</a>';
@@ -100,7 +180,7 @@ if (! empty($id) || ! empty($ref) || GETPOST('id') == 'all')
 		if (! empty($conf->dol_use_jmobile)) print '</div>'."\n".'<div class="nowrap">'."\n";
 		else print ' &nbsp; / &nbsp; ';
 
-		if ($mode == 'byunit') print '<a href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id')?GETPOST('id'):$object->id).'&mode=bynumber">';
+		if ($mode == 'byunit') print '<a href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id')?GETPOST('id'):$object->id).($type != '' ? '&type='.$type:'').'&mode=bynumber">';
 		else print img_picto('','tick').' ';
 		print $langs->trans("StatsByNumberOfEntities");
 		if ($mode == 'byunit') print '</a>';
@@ -255,10 +335,11 @@ if (! empty($id) || ! empty($ref) || GETPOST('id') == 'all')
 			print "\n".'</div></div></div>';
 			print '<div class="clear"><div class="fichecenter"><br></div></div>'."\n";
 		}
-
-		print '<div class="tabsAction">';
-		print '</div>';
-
+	}
+	
+	if (GETPOST('id') == 'all')
+	{
+	    dol_fiche_end();
 	}
 }
 else
