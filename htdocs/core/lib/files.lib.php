@@ -1048,7 +1048,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
 			if ($savingdocmask)
 			{
 				$destpath=$upload_dir . "/" . preg_replace('/__file__/',$_FILES[$varfiles]['name'],$savingdocmask);
-				$destfile=dol_osencode(preg_replace('/__file__/',$_FILES[$varfiles]['name'],$savingdocmask));
+				$destfile=preg_replace('/__file__/',$_FILES[$varfiles]['name'],$savingdocmask);
 			}
 
 			$resupload = dol_move_uploaded_file($_FILES[$varfiles]['tmp_name'], $destpath, $allowoverwrite, 0, $_FILES[$varfiles]['error'], 0, $varfiles);
