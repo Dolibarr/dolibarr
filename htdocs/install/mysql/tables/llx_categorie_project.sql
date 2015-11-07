@@ -1,5 +1,6 @@
 -- ============================================================================
--- Copyright (C) 2015	Laurent Destailleur		<eldy@users.sourceforge.net>
+-- Copyright (C) 2007 Patrick Raguin <patrick.raguin@gmail.com>	
+-- Copyright (C) 2012 Juanjo Menent  <jmenent@2byte.es>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -14,17 +15,11 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
--- ===========================================================================
+-- ============================================================================
 
-create table llx_budget_lines
+create table llx_categorie_project
 (
-  rowid				integer AUTO_INCREMENT PRIMARY KEY,
-  fk_budget     	integer NOT NULL,
-  fk_project_ids	varchar(255) NOT NULL,		-- 'IDS:x,y' = List of project ids related to this budget. If budget is dedicated to projects not yet started, we recommand to create a project "Projects to come". 'FILTER:x=y' = Can also be a dynamic rule to select projects.
-  amount			double(24,8) NOT NULL,
-  datec        		datetime,
-  tms           	timestamp,
-  fk_user_creat 	integer,
-  fk_user_modif 	integer,
-  import_key    	integer  
+  fk_categorie  integer NOT NULL,
+  fk_project    integer NOT NULL,
+  import_key    varchar(14)
 )ENGINE=innodb;

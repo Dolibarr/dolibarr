@@ -226,7 +226,7 @@ create table llx_budget_lines
 (
   rowid			integer AUTO_INCREMENT PRIMARY KEY,
   fk_budget     integer NOT NULL,
-  fk_project	integer NOT NULL,
+  fk_project_ids	varchar(255) NOT NULL,		-- List of project ids related to this budget. If budget is dedicated to projects not yet started, we recommand to create a project "Projects to come".
   amount		double(24,8) NOT NULL,
   datec         datetime,
   tms           timestamp,
@@ -285,5 +285,25 @@ CREATE TABLE llx_opensurvey_user_formanswers (
     fk_question INTEGER NOT NULL,
     reponses TEXT
 ) ENGINE=InnoDB;
+
+
+
+
+create table llx_categorie_project
+(
+  fk_categorie  integer NOT NULL,
+  fk_project    integer NOT NULL,
+  import_key    varchar(14)
+)ENGINE=innodb;
+
+ALTER TABLE llx_categorie_project ADD PRIMARY KEY pk_categorie_project (fk_categorie, fk_project);
+ALTER TABLE llx_categorie_project ADD INDEX idx_categorie_project_fk_categorie (fk_categorie);
+ALTER TABLE llx_categorie_project ADD INDEX idx_categorie_project_fk_project (fk_project);
+
+ALTER TABLE llx_categorie_project ADD CONSTRAINT fk_categorie_project_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
+ALTER TABLE llx_categorie_project ADD CONSTRAINT fk_categorie_project_fk_project   FOREIGN KEY (fk_project) REFERENCES llx_project (rowid);
+
+
+
 
 

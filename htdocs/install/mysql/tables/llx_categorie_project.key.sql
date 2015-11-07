@@ -1,5 +1,5 @@
 -- ============================================================================
--- Copyright (C) 2015	Laurent Destailleur		<eldy@users.sourceforge.net>
+-- Copyright (C) 2007 Patrick Raguin       <patrick.raguin@gmail.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -14,17 +14,11 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
--- ===========================================================================
+-- ============================================================================
 
-create table llx_budget_lines
-(
-  rowid				integer AUTO_INCREMENT PRIMARY KEY,
-  fk_budget     	integer NOT NULL,
-  fk_project_ids	varchar(255) NOT NULL,		-- 'IDS:x,y' = List of project ids related to this budget. If budget is dedicated to projects not yet started, we recommand to create a project "Projects to come". 'FILTER:x=y' = Can also be a dynamic rule to select projects.
-  amount			double(24,8) NOT NULL,
-  datec        		datetime,
-  tms           	timestamp,
-  fk_user_creat 	integer,
-  fk_user_modif 	integer,
-  import_key    	integer  
-)ENGINE=innodb;
+ALTER TABLE llx_categorie_project ADD PRIMARY KEY pk_categorie_project (fk_categorie, fk_project);
+ALTER TABLE llx_categorie_project ADD INDEX idx_categorie_project_fk_categorie (fk_categorie);
+ALTER TABLE llx_categorie_project ADD INDEX idx_categorie_project_fk_project (fk_project);
+
+ALTER TABLE llx_categorie_project ADD CONSTRAINT fk_categorie_project_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
+ALTER TABLE llx_categorie_project ADD CONSTRAINT fk_categorie_project_fk_project   FOREIGN KEY (fk_project) REFERENCES llx_project (rowid);
