@@ -1366,6 +1366,9 @@ if ($action == 'create' && $user->rights->commande->creer) {
 	if ($socid > 0)
 		$res = $soc->fetch($socid);
 
+	$projectid = 0;
+	$remise_absolue = 0;
+
 	if (! empty($origin) && ! empty($originid)) {
 		// Parse element/subelement (ex: project_task)
 		$element = $subelement = $origin;
@@ -1423,17 +1426,26 @@ if ($action == 'create' && $user->rights->commande->creer) {
 			$srccontactslist = $objectsrc->liste_contact(- 1, 'external', 1);
 		}
 	}
-	else
-	{
-		$cond_reglement_id  = $soc->cond_reglement_id;
-		$mode_reglement_id  = $soc->mode_reglement_id;
-		$availability_id    = $soc->availability_id;
-		$demand_reason_id   = $soc->demand_reason_id;
-		$remise_percent     = $soc->remise_percent;
-		$remise_absolue     = 0;
-		$dateinvoice        = empty($conf->global->MAIN_AUTOFILL_DATE)?-1:'';
-		$projectid          = 0;
+
+	if (!$cond_reglement_id) {
+		$cond_reglement_id = $soc->cond_reglement_id;
 	}
+	if (!$mode_reglement_id) {
+		$mode_reglement_id = $soc->mode_reglement_id;
+	}
+	if (!$availability_id) {
+		$availability_id = $soc->availability_id;
+	}
+	if (!$demand_reason_id) {
+		$demand_reason_id = $soc->demand_reason_id;
+	}
+	if (!$remise_percent) {
+		$remise_percent = $soc->remise_percent;
+	}
+	if (!$dateinvoice) {
+		$dateinvoice = empty($conf->global->MAIN_AUTOFILL_DATE) ? - 1 : '';
+	}
+
 	$absolute_discount=$soc->getAvailableDiscounts();
 
 	$nbrow = 10;
