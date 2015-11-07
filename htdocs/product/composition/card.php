@@ -193,8 +193,8 @@ if ($id > 0 || ! empty($ref))
 		print "<tr>";
 
 		$nblignes=6;
-		if ($object->isproduct() && ! empty($conf->stock->enabled)) $nblignes++;
-		if ($object->isservice()) $nblignes++;
+		if ($object->isProduct() && ! empty($conf->stock->enabled)) $nblignes++;
+		if ($object->isService()) $nblignes++;
 
 			// Reference
 			print '<td width="25%">'.$langs->trans("Ref").'</td><td>';

@@ -521,7 +521,7 @@ if ($id > 0 || $ref)
 			{
 				// Suppliers list title
 				print '<table class="noborder" width="100%">';
-				if ($object->isproduct()) $nblignefour=4;
+				if ($object->isProduct()) $nblignefour=4;
 				else $nblignefour=4;
 
 				$param="&id=".$object->id;

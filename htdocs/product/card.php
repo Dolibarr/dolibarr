@@ -1038,7 +1038,7 @@ else
             require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
             $type = $langs->trans('Product');
-            if ($object->isservice()) $type = $langs->trans('Service');
+            if ($object->isService()) $type = $langs->trans('Service');
             //print load_fiche_titre($langs->trans('Modify').' '.$type.' : '.(is_object($object->oldcopy)?$object->oldcopy->ref:$object->ref), "");
 
             // Main official, simple, and not duplicated code
@@ -1144,7 +1144,7 @@ else
 
             // Stock
             /*
-            if ($object->isproduct() && ! empty($conf->stock->enabled))
+            if ($object->isProduct() && ! empty($conf->stock->enabled))
             {
                 print "<tr>".'<td>'.$langs->trans("StockLimit").'</td><td>';
                 print '<input name="seuil_stock_alerte" size="4" value="'.$object->seuil_stock_alerte.'">';
@@ -1169,7 +1169,7 @@ else
                 print '</td></tr>';
             }
 
-            if ($object->isservice())
+            if ($object->isService())
             {
                 // Duration
                 print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="3"><input name="duration_value" size="3" maxlength="5" value="'.$object->duration_value.'">';
@@ -1435,7 +1435,7 @@ else
                 print '</td></tr>';
             }
 
-            if ($object->isservice())
+            if ($object->isService())
             {
                 // Duration
                 print '<tr><td class="titlefield">'.$langs->trans("Duration").'</td><td colspan="2">'.$object->duration_value.'&nbsp;';

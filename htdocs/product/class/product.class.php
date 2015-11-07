@@ -3789,7 +3789,7 @@ class Product extends CommonObject
      *
      * @return  boolean     True if it's a product
      */
-	function isproduct()
+	function isProduct()
 	{
 		return ($this->type == Product::TYPE_PRODUCT ? true : false);
 	}
@@ -3799,7 +3799,7 @@ class Product extends CommonObject
      *
      * @return  boolean     True if it's a service
      */
-	function isservice()
+	function isService()
 	{
 		return ($this->type == Product::TYPE_SERVICE ? true : false);
 	}

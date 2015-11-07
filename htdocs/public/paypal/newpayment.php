@@ -720,7 +720,7 @@ if (GETPOST("source") == 'contractline' && $valid)
 	$duration='';
 	if ($contractline->fk_product)
 	{
-		if ($product->isservice() && $product->duration_value > 0)
+		if ($product->isService() && $product->duration_value > 0)
 		{
 			$label=$langs->trans("Duration");
 
