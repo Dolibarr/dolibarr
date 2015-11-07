@@ -257,7 +257,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
     $dateinvoice=($datefacture==''?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:''):$datefacture);
 
     $sql = 'SELECT s.nom as name, s.rowid as socid,';
-    $sql.= ' f.rowid, f.ref, f.ref_supplier, f.amount, f.total_ttc as total';
+    $sql.= ' f.rowid, f.ref, f.ref_supplier, f.amount, f.total_ttc as total, fk_mode_reglement, fk_account';
     if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
     $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'facture_fourn as f';
     if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -292,11 +292,11 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             print $supplierstatic->getNomUrl(1,'supplier');
             print '</td></tr>';
             print '<tr><td class="fieldrequired">'.$langs->trans('Date').'</td><td>';
-            $form->select_date($dateinvoice,'','','','',"addpaiement",1,1);
+            $form->select_date($dateinvoice,'','','','',"addpaiement",1,1,0,0,'','',$object->date);
             print '</td>';
             print '<td>'.$langs->trans('Comments').'</td></tr>';
             print '<tr><td class="fieldrequired">'.$langs->trans('PaymentMode').'</td><td>';
-            $form->select_types_paiements(empty($_POST['paiementid'])?'':$_POST['paiementid'],'paiementid');
+            $form->select_types_paiements(empty($_POST['paiementid'])?$obj->fk_mode_reglement:$_POST['paiementid'],'paiementid');
             print '</td>';
             print '<td rowspan="3" valign="top">';
             print '<textarea name="comment" wrap="soft" cols="60" rows="'.ROWS_3.'">'.(empty($_POST['comment'])?'':$_POST['comment']).'</textarea></td></tr>';
@@ -304,7 +304,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             if (! empty($conf->banque->enabled))
             {
                 print '<tr><td class="fieldrequired">'.$langs->trans('Account').'</td><td>';
-                $form->select_comptes(empty($accountid)?'':$accountid,'accountid',0,'',2);
+                $form->select_comptes(empty($accountid)?$obj->fk_account:$accountid,'accountid',0,'',2);
                 print '</td></tr>';
             }
             else

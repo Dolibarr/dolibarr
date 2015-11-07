@@ -415,7 +415,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
         print '<tr><td><span class="fieldrequired">'.$langs->trans('Date').'</span></td><td>';
         $datepayment = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
         $datepayment= ($datepayment == '' ? (empty($conf->global->MAIN_AUTOFILL_DATE)?-1:'') : $datepayment);
-        $form->select_date($datepayment,'','','',0,"add_paiement",1,1);
+        $form->select_date($datepayment,'','','',0,"add_paiement",1,1,0,0,'','',$facture->date);
         print '</td>';
         print '<td>'.$langs->trans('Comments').'</td></tr>';
 

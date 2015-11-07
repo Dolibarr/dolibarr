@@ -4057,10 +4057,11 @@ class Form
      * 	@param 	int			$disabled		Disable input fields
      *  @param  int			$fullday        When a checkbox with this html name is on, hour and day are set with 00:00 or 23:59
      *  @param	string		$addplusone		Add a link "+1 hour". Value must be name of another select_date field.
+     *  @param  datetime    $adddateof      Add a link "Date of invoice" using the following date.
      * 	@return	mixed						Nothing or string if nooutput is 1
      *  @see	form_date
      */
-    function select_date($set_time='', $prefix='re', $h=0, $m=0, $empty=0, $form_name="", $d=1, $addnowlink=0, $nooutput=0, $disabled=0, $fullday='', $addplusone='')
+    function select_date($set_time='', $prefix='re', $h=0, $m=0, $empty=0, $form_name="", $d=1, $addnowlink=0, $nooutput=0, $disabled=0, $fullday='', $addplusone='', $adddateof='')
     {
         global $conf,$langs;
 
@@ -4317,6 +4318,13 @@ class Form
                 $retstring.='</button> ';
             }
         }
+
+        // Add a "Plus one hour" link
+        if ($conf->use_javascript_ajax && $adddateof)
+        {
+            $tmparray=dol_getdate($adddateof);
+            $retstring.=' - <button class="dpInvisibleButtons datenowlink" id="dateofinvoice" type="button" name="_dateofinvoice" value="now" onclick="jQuery(\'#re\').val(\''.dol_print_date($adddateof,'day').'\');jQuery(\'#reday\').val(\''.$tmparray['mday'].'\');jQuery(\'#remonth\').val(\''.$tmparray['mon'].'\');jQuery(\'#reyear\').val(\''.$tmparray['year'].'\');">'.$langs->trans("DateInvoice").'</a>';
+        }    
 
         if (! empty($nooutput)) return $retstring;
 

@@ -63,6 +63,7 @@ class Facture extends CommonInvoice
 	var $author;
 	var $fk_user_author;
 	var $fk_user_valid;
+	var $date;              // Date invoice
 	var $date_creation;		// Creation date
 	var $date_validation;	// Validation date
 	var $datem;
