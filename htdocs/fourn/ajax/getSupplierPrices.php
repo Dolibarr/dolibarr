@@ -38,7 +38,7 @@ $langs->load('stocks');
 
 /*
  * View
-*/
+ */
 
 top_httphead();
 
@@ -59,7 +59,7 @@ if ($idprod > 0)
 	$sql.= " WHERE pfp.fk_product = ".$idprod;
 	$sql.= " AND p.tobuy = 1";
 	$sql.= " AND s.fournisseur = 1";
-	$sql.= " ORDER BY s.nom, pfp.ref_fourn DESC";
+	$sql.= " ORDER BY pfp.unitprice, s.nom, pfp.ref_fourn DESC";           // Best price first
 
 	dol_syslog("Ajax::getSupplierPrices", LOG_DEBUG);
 	$result=$db->query($sql);
@@ -117,7 +117,7 @@ if ($idprod > 0)
 				$label = price($price,0,$langs,0,0,-1,$conf->currency)."/".$langs->trans("Unit");
 				if ($objp->ref_fourn) $label.=' ('.$objp->ref_fourn.')';
 
-				$prices[] = array("id" => $objp->idprodfournprice, "price" => price($price,0,'',0), "label" => $label, "title" => $title);
+				$prices[] = array("id" => $objp->idprodfournprice, "price" => price2num($price,0,'',0), "label" => $label, "title" => $title);  // For price field, we must use price2num(), for label or title, price()
 				$i++;
 			}
 

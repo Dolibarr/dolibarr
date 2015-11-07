@@ -1890,7 +1890,7 @@ class Facture extends CommonInvoice
 							$mouvP = new MouvementStock($this->db);
 							$mouvP->origin = &$this;
 							// We decrease stock for product
-							if ($this->type == self::TYPE_CREDIT_NOTE) $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarr",$num));
+							if ($this->type == self::TYPE_CREDIT_NOTE) $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->trans("InvoiceValidatedInDolibarr",$num));
 							else $result=$mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarr",$num));
 							if ($result < 0) {
 								$error++;
@@ -3672,11 +3672,16 @@ class Facture extends CommonInvoice
 	/**
 	 * Checks if the invoice is the last in its cycle
 	 *
-	 * @return int 0 or 1 if OK, -1 if error
+	 * @return bool Last of the cycle status
 	 *
 	 */
 	function is_last_in_cycle()
 	{
+		if (empty($this->situation_cycle_ref)) {
+			// No point in testing anything if we're not inside a cycle
+			return false;
+		}
+
 		$sql = 'SELECT max(situation_counter) FROM ' . MAIN_DB_PREFIX . 'facture WHERE situation_cycle_ref = ' . $this->situation_cycle_ref;
 		$resql = $this->db->query($sql);
 
@@ -3687,8 +3692,7 @@ class Facture extends CommonInvoice
 		} else {
 			$this->error = $this->db->lasterror();
 			dol_syslog(get_class($this) . "::select Error " . $this->error, LOG_ERR);
-			$this->db->rollback();
-			return -1;
+			return false;
 		}
 	}
 
