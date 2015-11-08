@@ -359,7 +359,7 @@ if (empty($reshook))
 				{
 					$statut=2;	// Status 'sent partially' (because at least one error)
 					if ($nbok > 0) 	setEventMessages($langs->transnoentitiesnoconv("EMailSentToNRecipients",$nbok), null, 'mesgs');
-					else setEventMessage($langs->transnoentitiesnoconv("EMailSentToNRecipients",$nbok), null, 'mesgs');
+					else setEventMessages($langs->transnoentitiesnoconv("EMailSentToNRecipients",$nbok), null, 'mesgs');
 				}
 				else
 				{
