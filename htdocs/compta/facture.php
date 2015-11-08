@@ -1860,6 +1860,8 @@ if ($action == 'create')
 	if ($socid > 0)
 		$res = $soc->fetch($socid);
 
+	$remise_absolue = 0;
+
 	if (! empty($origin) && ! empty($originid))
 	{
 		// Parse element/subelement (ex: project_task)
@@ -1916,14 +1918,21 @@ if ($action == 'create')
 		}
 		$dateinvoice = empty($conf->global->MAIN_AUTOFILL_DATE) ? -1 : '';	// Dot not set 0 here (0 for a date is 1970)
 	}
-	else
-	{
-		$cond_reglement_id 	= $soc->cond_reglement_id;
-		$mode_reglement_id 	= $soc->mode_reglement_id;
-		$remise_percent 	= $soc->remise_percent;
-		$remise_absolue 	= 0;
-		$dateinvoice		= (empty($dateinvoice)?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:''):$dateinvoice);		// Do not set 0 here (0 for a date is 1970)
+
+	if (!$cond_reglement_id) {
+		$cond_reglement_id = $soc->cond_reglement_id;
 	}
+	if (!$mode_reglement_id) {
+		$mode_reglement_id = $soc->mode_reglement_id;
+	}
+	if (!$remise_percent) {
+		$remise_percent = $soc->remise_percent;
+	}
+	if (!$dateinvoice) {
+		// Do not set 0 here (0 for a date is 1970)
+		$dateinvoice = (empty($dateinvoice)?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:''):$dateinvoice);
+	}
+
 	$absolute_discount = $soc->getAvailableDiscounts();
 
 	if (! empty($conf->use_javascript_ajax))
