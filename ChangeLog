@@ -10,6 +10,7 @@ make a Dolibarr upgrade.
 
 
 ***** ChangeLog for 3.8.2 compared to 3.8.1 *****
+FIX: Add a protection to not make release if ChangeLog was not generated.
 FIX: 1/ update_extra() function must not be in  "if(!empty(MAIN_DISABLE_CONTACTS_TAB)" test. 2/ Reindented code
 FIX: #3240
 FIX: #3541 Bypass authentication when user was created using LDAP
