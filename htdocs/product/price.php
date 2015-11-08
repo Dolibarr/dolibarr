@@ -179,12 +179,6 @@ if (empty($reshook))
 			);
 		}
 
-		if (!$error && $object->update($object->id, $user) < 1) {
-			$error++;
-			setEventMessage($object->error, 'errors');
-			$action = 'edit_price';
-		}
-
 		if (!$error) {
 			$db->begin();
 
@@ -213,6 +207,11 @@ if (empty($reshook))
 					break;
 				}
 			}
+		}
+
+		if (!$error && $object->update($object->id, $user) < 0) {
+			$error++;
+			setEventMessage($object->error, 'errors');
 		}
 
 		if (empty($error)) {
