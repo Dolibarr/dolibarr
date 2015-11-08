@@ -1166,7 +1166,7 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 			$ref_prodserv = "";
 			if (! empty($conf->global->PRODUCT_ADD_TYPE_IN_DOCUMENTS))   // In standard mode, we do not show this
 			{
-				if ($prodser->isservice())
+				if ($prodser->isService())
 				{
 					$prefix_prodserv = $outputlangs->transnoentitiesnoconv("Service")." ";
 				}
