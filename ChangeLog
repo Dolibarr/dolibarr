@@ -8,6 +8,7 @@ You may also experience troubles with Mysql 5.5.41 with error "Lost connection" 
 Upgrading to any other version or database system is abolutely required BEFORE trying to
 make a Dolibarr upgrade.
 
+
 ***** ChangeLog for 3.7.2 compared to 3.7.1 *****
 FIX [ bug #2855 ] Wrong translation key in localtax report page
 FIX [ bug #1852 ] JS error when editing a customer order line
