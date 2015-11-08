@@ -258,7 +258,7 @@ class ExtraFields
 
 		if (! empty($attrname) && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname) && ! is_numeric($attrname))
 		{
-			if(is_array($param) and count($param) > 0)
+			if(is_array($param) && count($param) > 0)
 			{
 				$params = $this->db->escape(serialize($param));
 			}
