@@ -290,7 +290,7 @@ else
 	//$mesprevnext.=' &nbsp; ';
     $mesprevnext.='<li class="pagination"><a data-role="button" data-icon="arrow-r" data-iconpos="right" href="'.$_SERVER["PHP_SELF"].'?rel=next&amp;num='.$num.'&amp;ve='.$ve.'&amp;account='.$object->id.'">></a></li>';
     $mesprevnext.='</ul></div>';
-	print load_fiche_titre($langs->trans("AccountStatement").' '.$num.', '.$langs->trans("BankAccount").' : '.$object->getNomUrl(0),$mesprevnext, 'title_bank.png');
+	print load_fiche_titre($langs->trans("AccountStatement").' '.$num.', '.$langs->trans("BankAccount").' : '.$object->getNomUrl(0, 'receipts'), $mesprevnext, 'title_bank.png');
 	print '<br>';
 
 	print "<form method=\"post\" action=\"releve.php\">";
