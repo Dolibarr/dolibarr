@@ -300,7 +300,7 @@ ALTER TABLE llx_categorie_project ADD INDEX idx_categorie_project_fk_categorie (
 ALTER TABLE llx_categorie_project ADD INDEX idx_categorie_project_fk_project (fk_project);
 
 ALTER TABLE llx_categorie_project ADD CONSTRAINT fk_categorie_project_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
-ALTER TABLE llx_categorie_project ADD CONSTRAINT fk_categorie_project_fk_project   FOREIGN KEY (fk_project) REFERENCES llx_project (rowid);
+ALTER TABLE llx_categorie_project ADD CONSTRAINT fk_categorie_project_fk_project   FOREIGN KEY (fk_project) REFERENCES llx_projet (rowid);
 
 
 
