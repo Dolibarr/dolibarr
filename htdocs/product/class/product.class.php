@@ -3804,7 +3804,7 @@ class Product extends CommonObject
      *
      * @return  boolean     True if it's a product
      */
-	function isproduct()
+	function isProduct()
 	{
 		return ($this->type == Product::TYPE_PRODUCT ? true : false);
 	}
@@ -3814,7 +3814,7 @@ class Product extends CommonObject
      *
      * @return  boolean     True if it's a service
      */
-	function isservice()
+	function isService()
 	{
 		return ($this->type == Product::TYPE_SERVICE ? true : false);
 	}
@@ -4087,5 +4087,20 @@ class Product extends CommonObject
 		}
 
 		return 1;
+	}
+
+	/**
+	 * Returns the rights used for this class
+	 * @return stdClass
+	 */
+	public function getRights()
+	{
+		global $user;
+
+		if ($this->isProduct()) {
+			return $user->rights->produit;
+		} else {
+			return $user->rights->service;
+		}
 	}
 }

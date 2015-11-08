@@ -5,6 +5,7 @@
  * Copyright (C) 2012       Cédric Salvador     <csalvador@gpcsolutions.fr>
  * Copyright (C) 2014		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2015		Marcos García		<marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -315,13 +316,38 @@ else {
 <?php
 if ((! empty($conf->service->enabled) || ($object->element == 'contrat')) && $dateSelector && GETPOST('type') != '0')	// We show date field if required
 {
-	if(! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) $colspan = 10;
-	else $colspan = 9;
-	if($this->situation_cycle_ref) $colspan++;
-	if (! empty($inputalsopricewithtax)) $colspan++;	// We add 1 if col total ttc
-	if (in_array($object->element,array('propal','askpricesupplier','facture','invoice','commande','order','order_supplier','invoice_supplier'))) $colspan++;	// With this, there is a column move button
+	$colspan = 6;
+
+	if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
+		$colspan++;
+	}
+	if ($this->situation_cycle_ref) {
+		$colspan++;
+	}
+	// We add 1 if col total ttc
+	if (!empty($inputalsopricewithtax)) {
+		$colspan++;
+	}
 	if ($conf->global->PRODUCT_USE_UNITS) {
 		$colspan++;
+	}
+	if (count($object->lines)) {
+		//There will be an edit and a delete button
+		$colspan += 2;
+
+		// With this, there is a column move button ONLY if lines > 1
+		if (in_array($object->element, array(
+			'propal',
+			'askpricesupplier',
+			'facture',
+			'invoice',
+			'commande',
+			'order',
+			'order_supplier',
+			'invoice_supplier'
+		))) {
+			$colspan++;
+		}
 	}
 
 	if (! empty($usemargins))
