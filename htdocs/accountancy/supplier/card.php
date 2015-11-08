@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004       Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2005       Simon TOSSER          <simon@kornog-computing.com>
- * Copyright (C) 2013-2014  Alexandre Spangaro    <alexandre.spangaro@gmail.com>
+ * Copyright (C) 2013-2015  Alexandre Spangaro    <alexandre.spangaro@gmail.com>
  * Copyright (C) 2013-2014  Olivier Geffroy       <jeff@jeffinfo.com>
  * Copyright (C) 2013-2014	Florian Henry	      <florian.henry@open-concept.pro>
  * Copyright (C) 2014	    Juanjo Menent		  <jmenent@2byte.es>
@@ -22,7 +22,7 @@
  */
 /**
  * \file		htdocs/accountancy/supplier/card.php
- * \ingroup		Accounting Expert
+ * \ingroup		Accountancy
  * \brief		Card supplier ventilation
  */
 
@@ -85,7 +85,8 @@ if ($_GET["id"]) {
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON p.rowid = l.fk_product";
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accountingaccount as aa ON l.fk_code_ventilation = aa.rowid";
 	$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "facture_fourn as f ON f.rowid = l.fk_facture_fourn ";
-	$sql .= " WHERE f.fk_statut > 0 AND l.rowid = " . $id;
+	$sql .= " WHERE f.fk_statut > 0";
+	$sql .= " AND l.rowid = " . $id;
 	if (! empty($conf->multicompany->enabled)) {
 		$sql .= " AND f.entity = '" . $conf->entity . "'";
 	}
