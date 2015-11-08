@@ -401,7 +401,14 @@ if ($socid && $action != 'edit' && $action != "create")
         }
 
         if (count($rib_list) == 0) {
-            print '<tr '.$bc[0].'><td colspan="7" align="center">'.$langs->trans("NoBANRecord").'</td></tr>';
+
+			if (! empty($conf->prelevement->enabled)) {
+				$colspan = 8;
+			} else {
+				$colspan = 7;
+			}
+
+            print '<tr '.$bc[0].'><td colspan="'.$colspan.'" align="center">'.$langs->trans("NoBANRecord").'</td></tr>';
         }
 
         print '</table>';

@@ -1,7 +1,7 @@
-<?PHP
+<?php
 /* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
  * Copyright (C) 2013-2014 Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2014 Alexandre Spangaro	<alexandre.spangaro@gmail.com>
+ * Copyright (C) 2013-2015 Alexandre Spangaro	<alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 
 /**
  * \file		htdocs/accountancy/customer/card.php
- * \ingroup		Accounting Expert
+ * \ingroup		Accountancy
  * \brief		Card customer ventilation
  */
 
@@ -84,7 +84,11 @@ if (! empty($id)) {
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON p.rowid = l.fk_product";
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accountingaccount as aa ON l.fk_code_ventilation = aa.rowid";
 	$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "facture as f ON f.rowid = l.fk_facture";
-	$sql .= " WHERE f.fk_statut > 0 AND l.rowid = " . $id;
+	$sql .= " WHERE f.fk_statut > 0";
+	$sql .= " AND l.rowid = " . $id;
+	if (! empty($conf->multicompany->enabled)) {
+		$sql .= " AND f.entity = '" . $conf->entity . "'";
+	}
 	
 	if (! empty($conf->multicompany->enabled)) {
 		$sql .= " AND f.entity = '" . $conf->entity . "'";
