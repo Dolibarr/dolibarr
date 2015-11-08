@@ -226,7 +226,7 @@ if ($resql)
 	print '<input type="hidden" name="account" value="'.$acct->id.'">';
 
     print '<strong>'.$langs->trans("InputReceiptNumber").'</strong>: ';
-    print '<input class="flat" name="num_releve" type="text" value="'.(GETPOST('num_releve')?GETPOST('num_releve'):$last_releve).'" size="10">';
+    print '<input class="flat" name="num_releve" type="text" value="'.(GETPOST('num_releve')?GETPOST('num_releve'):'').'" size="10">';  // The only default value is value we just entered
     print '<br>';
     if ($options)
     {
