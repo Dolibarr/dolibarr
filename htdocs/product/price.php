@@ -929,8 +929,8 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 		<script>
 
 			var showHidePriceRules = function () {
-				var otherPrices = $('div.fiche form table:not(:first), div.fiche form table:first tr:not(:first)');
-				var minPrice1 = $('div.fiche form:first tr:eq(1)');
+				var otherPrices = $('div.fiche form table tbody tr:not(:first)');
+				var minPrice1 = $('div.fiche form input[name="price_min[1]"]');
 
 				if (jQuery('input#usePriceRules').prop('checked')) {
 					otherPrices.hide();
@@ -959,7 +959,7 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 		}
 
 		print '<table class="noborder">';
-		print '<tr class="liste_titre">
+		print '<thead><tr class="liste_titre">
 		<td style="text-align: center">'.$langs->trans("PriceLevel").'</td>';
 		if (!empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL)) {
 			print '<td style="text-align: center">'.$langs->trans("VATRate").'</td>';
@@ -969,7 +969,7 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 		if (!empty($conf->global->PRODUCT_MINIMUM_RECOMMENDED_PRICE)) {
 			print '<td></td>';
 		}
-		print '</tr>';
+		print '</tr></thead><tbody>';
 
 		for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i ++) {
 			$var = !$var;
@@ -1015,7 +1015,7 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 			print '</tr>';
 		}
 
-		print '</table><br><div style="text-align: center">';
+		print '</tbody></table><br><div style="text-align: center">';
 		print '<input type="submit" class="button" value="' . $langs->trans("Save") . '">';
 		print '&nbsp;&nbsp;&nbsp;';
 		print '<input type="submit" class="button" name="cancel" value="' . $langs->trans("Cancel") . '"></div>';
