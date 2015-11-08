@@ -157,6 +157,7 @@ if (empty($num))
 		}
 
 		print '</div>';
+		print '<br><br>';
 		
 
 		print_barre_liste('', $page, $_SERVER["PHP_SELF"], "&account=".$object->id, $sortfield, $sortorder,'',$numrows);
