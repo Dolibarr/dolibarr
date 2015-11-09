@@ -4670,7 +4670,7 @@ class Form
     			foreach ($array as $key => $value)
     			{
     				$out.= '<option value="'.$key.'"';
-    				if (is_array($selected) && ! empty($selected) && in_array($key, $selected))
+    				if (is_array($selected) && ! empty($selected) && in_array($key, $selected) && !empty($key))
     				{
     					$out.= ' selected';
     				}
