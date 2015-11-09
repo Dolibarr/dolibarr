@@ -171,6 +171,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
 									}
     							});
     						}
+    						console.log("ajax_autocompleter new value selected, we trigger change");
     						$("#search_'.$htmlname.'").trigger("change");	// To tell that input text field was modified
     					}
     					,delay: 500

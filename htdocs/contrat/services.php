@@ -98,7 +98,7 @@ llxHeader();
 $sql = "SELECT c.rowid as cid, c.ref, c.statut as cstatut,";
 $sql.= " s.rowid as socid, s.nom as name,";
 $sql.= " cd.rowid, cd.description, cd.statut,";
-$sql.= " p.rowid as pid, p.ref as pref, p.label as label, p.fk_product_type as ptype,";
+$sql.= " p.rowid as pid, p.ref as pref, p.label as label, p.fk_product_type as ptype, p.entity as pentity,";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " sc.fk_soc, sc.fk_user,";
 $sql.= " cd.date_ouverture_prevue,";
 $sql.= " cd.date_ouverture,";
@@ -225,6 +225,7 @@ if ($resql)
 			$productstatic->id=$obj->pid;
 			$productstatic->type=$obj->ptype;
 			$productstatic->ref=$obj->pref;
+			$productstatic->entity=$obj->pentity;
 			print $productstatic->getNomUrl(1,'',20);
             print $obj->label?' - '.dol_trunc($obj->label,16):'';
             if (! empty($obj->description) && ! empty($conf->global->PRODUCT_DESC_IN_LIST)) print '<br>'.dol_nl2br($obj->description);

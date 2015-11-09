@@ -88,8 +88,14 @@ if ($socid > 0)
 {
 	$fourn = new Fournisseur($db);
 	$fourn->fetch($socid);
-	$title .= ' ('.$fourn->name.')';
+	$title .= ' - '.$fourn->name;
 }
+if (GETPOST('statut','alpha')) 
+{
+    if (GETPOST('statut','alpha') == '1,2,3') $title.=' - '.$langs->trans("StatusOrderToProcessShort");
+    else $title.=' - '.$langs->trans($commandestatic->statuts[GETPOST('statut','alpha')]);
+}
+
 
 llxHeader('',$title);
 
@@ -145,9 +151,9 @@ if ($sall)
 if ($socid) $sql.= " AND s.rowid = ".$socid;
 
 //Required triple check because statut=0 means draft filter
-if (GETPOST('statut', 'int') !== '')
+if (GETPOST('statut', 'alpha') !== '')
 {
-	$sql .= " AND cf.fk_statut IN (".GETPOST('statut').")";
+	$sql .= " AND cf.fk_statut IN (".GETPOST('statut', 'alpha').")";
 }
 if ($search_refsupp)
 {
@@ -219,7 +225,7 @@ if ($resql)
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre" align="right">';
-	$formorder->selectSupplierOrderStatus($search_status,1,'search_status');
+	$formorder->selectSupplierOrderStatus((strstr($search_status, ',')?-1:$search_status),1,'search_status');
 	print '</td>';
 	print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';

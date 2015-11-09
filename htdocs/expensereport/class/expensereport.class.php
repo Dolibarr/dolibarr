@@ -1543,7 +1543,7 @@ class ExpenseReport extends CommonObject
 	        $response->warning_delay=$conf->expensereport->payment->warning_delay/60/60/24;
 	        $response->label=$langs->trans("ExpenseReportsToPay");
 	        $response->url=DOL_URL_ROOT.'/expensereport/list.php?mainmenu=hrm&amp;statut=5';
-	        $response->img=img_object($langs->trans("ExpenseReports"),"user");
+	        $response->img=img_object($langs->trans("ExpenseReports"),"trip");
 
             while ($obj=$this->db->fetch_object($resql))
             {

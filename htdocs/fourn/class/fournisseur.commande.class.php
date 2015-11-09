@@ -2292,7 +2292,7 @@ class CommandeFournisseur extends CommonOrder
 
         $clause = " WHERE";
 
-        $sql = "SELECT c.rowid, c.date_creation as datec, c.fk_statut,c.date_livraison as delivery_date";
+        $sql = "SELECT c.rowid, c.date_creation as datec, c.date_commande, c.fk_statut, c.date_livraison as delivery_date";
         $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
         if (!$user->rights->societe->client->voir && !$user->societe_id)
         {
@@ -2312,15 +2312,15 @@ class CommandeFournisseur extends CommonOrder
 	        $response = new WorkboardResponse();
 	        $response->warning_delay=$conf->commande->fournisseur->warning_delay/60/60/24;
 	        $response->label=$langs->trans("SuppliersOrdersToProcess");
-	        $response->url=DOL_URL_ROOT.'/fourn/commande/index.php';
+	        $response->url=DOL_URL_ROOT.'/fourn/commande/list.php?statut=1,2,3';
 	        $response->img=img_object($langs->trans("Orders"),"order");
 
             while ($obj=$this->db->fetch_object($resql))
             {
                 $response->nbtodo++;
 
-				$date_to_test = empty($obj->delivery_date) ? $obj->datec : $obj->delivery_date;
-                if ($obj->fk_statut != 3 && $this->db->jdate($date_to_test) < ($now - $conf->commande->fournisseur->warning_delay)) {
+				$date_to_test = empty($obj->delivery_date) ? $obj->date_commande : $obj->delivery_date;
+                if ($obj->fk_statut != 3 && $date_to_test && $this->db->jdate($date_to_test) < ($now - $conf->commande->fournisseur->warning_delay)) {
 	                $response->nbtodolate++;
                 }
             }

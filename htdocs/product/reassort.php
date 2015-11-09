@@ -101,7 +101,7 @@ $htmlother=new FormOther($db);
 
 $title=$langs->trans("ProductsAndServices");
 
-$sql = 'SELECT p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type,';
+$sql = 'SELECT p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type,p.entity,';
 $sql.= ' p.fk_product_type, p.tms as datem,';
 $sql.= ' p.duration, p.tosell as statut, p.tobuy, p.seuil_stock_alerte, p.desiredstock,';
 $sql.= ' SUM(s.reel) as stock_physique';
@@ -307,6 +307,7 @@ if ($resql)
 		$product_static->id=$objp->rowid;
         $product_static->label = $objp->label;
 		$product_static->type=$objp->fk_product_type;
+		$product_static->entity=$objp->entity;
 		print $product_static->getNomUrl(1,'',16);
 		//if ($objp->stock_theorique < $objp->seuil_stock_alerte) print ' '.img_warning($langs->trans("StockTooLow"));
 		print '</td>';

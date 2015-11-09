@@ -300,8 +300,8 @@ class modProjet extends DolibarrModules
         	}
         }
         // End add extra fields
-		$this->export_fields_array[$r]=array_merge($this->export_fields_array[$r], array('ptt.task_date'=>'TaskTimeDate','ptt.task_duration'=>"TimesSpent",'ptt.fk_user'=>"TaskTimeUser",'ptt.note'=>"TaskTimeNote"));
-        $this->export_entities_array[$r]=array_merge($this->export_entities_array[$r], array('ptt.task_date'=>'task_time','ptt.task_duration'=>"task_time",'ptt.fk_user'=>"task_time",'ptt.note'=>"task_time"));
+		$this->export_fields_array[$r]=array_merge($this->export_fields_array[$r], array('ptt.rowid'=>'IdTaskTime','ptt.task_date'=>'TaskTimeDate','ptt.task_duration'=>"TimesSpent",'ptt.fk_user'=>"TaskTimeUser",'ptt.note'=>"TaskTimeNote"));
+        $this->export_entities_array[$r]=array_merge($this->export_entities_array[$r], array('ptt.rowid'=>'task_time','ptt.task_date'=>'task_time','ptt.task_duration'=>"task_time",'ptt.fk_user'=>"task_time",'ptt.note'=>"task_time"));
 
         $this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'projet as p';

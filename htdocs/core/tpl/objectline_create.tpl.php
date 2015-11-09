@@ -492,6 +492,7 @@ jQuery(document).ready(function() {
 	});
 
 	$("#prod_entry_mode_predef").on( "click", function() {
+		console.log("click prod_entry_mode_predef");
 		setforpredef();
 		jQuery('#trlinefordates').show();
 	});
@@ -499,6 +500,7 @@ jQuery(document).ready(function() {
 	/* When changing predefined product, we reload list of supplier prices */
 	$("#idprod, #idprodfournprice").change(function()
 	{
+		console.log("change #idprod, #idprodfournprice, conf->global->MARGIN_TYPE=<?php echo $conf->global->MARGIN_TYPE ?>");
 		setforpredef();
 		jQuery('#trlinefordates').show();
 
@@ -509,7 +511,7 @@ jQuery(document).ready(function() {
 			?>
 
 		/* Code for margin */
-  		$("#fournprice_predef options").remove();
+  		$("#fournprice_predef").find("option").remove();
 		$("#fournprice_predef").hide();
 		$("#buying_price").val("").show();
 		/* Call post to load content of combo list fournprice_predef */
@@ -519,6 +521,7 @@ jQuery(document).ready(function() {
     	  		var options = '';
     	  		var defaultkey = '';
     	  		var defaultprice = '';
+	      		var bestpricefound = 0;
 	      		var i = 0;
 	      		$(data).each(function() {
 	      			if (this.id != 'pmpprice')
@@ -526,23 +529,22 @@ jQuery(document).ready(function() {
 		        		i++;
 
 			      		// If margin is calculated on best supplier price, we set it by defaut (but only if value is not 0)
-		      			var defaultbuyprice = '<?php echo ((isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == '1')?'bestsupplierprice':''); ?>';
-		      			if (i == 1 && this.price > 0 && 'bestsupplierprice' == defaultbuyprice) { defaultkey = this.id; defaultprice = this.price; }
-
-		        		options += '<option value="'+this.id+'" price="'+this.price+'"';
-		        		if (this.price > 0 && i == 1) { defaultkey = this.id; defaultprice = this.price; }
-		        		options += '>'+this.label+'</option>';
+		      			var defaultbuyprice = '<?php echo ((isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == '1')?'bestsupplierprice':''); ?>';	// We set here default value to use
+			      		console.log(this.id+" "+this.price+" "+defaultbuyprice+" "+(this.price > 0));
+		      			if (bestpricefound == 0 && this.price > 0 && 'bestsupplierprice' == defaultbuyprice) { defaultkey = this.id; defaultprice = this.price; bestpricefound=1; }	// bestpricefound is used to take the first price > 0
 		      		}
 	      			if (this.id == 'pmpprice')
 	      			{
 	      				// If margin is calculated on PMP, we set it by defaut (but only if value is not 0)
 		      			var defaultbuyprice = '<?php echo ((isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == 'pmp')?'pmp':''); ?>';
+			      		console.log(this.id+" "+this.price+" "+defaultbuyprice);
 		      			if (this.price > 0 && 'pmp' == defaultbuyprice) { defaultkey = this.id; defaultprice = this.price; }
-
-	    	      		options += '<option value="'+this.id+'" price="'+this.price+'">'+this.label+'</option>';
 	      			}
+	        		options += '<option value="'+this.id+'" price="'+this.price+'">'+this.label+'</option>';
 	      		});
 	      		options += '<option value="inputprice" price="'+defaultprice+'"><?php echo $langs->trans("InputPrice"); ?></option>';
+
+	      		console.log("defaultkey="+defaultkey);
 
 	      		$("#fournprice_predef").html(options).show();
 	      		if (defaultkey != '')
@@ -558,6 +560,7 @@ jQuery(document).ready(function() {
 	      		$("#buying_price").val(Math.round(defaultprice,<?php print ($conf->global->MAIN_MAX_DECIMALS_UNIT ? $conf->global->MAIN_MAX_DECIMALS_UNIT : 5); ?>));
 
 	      		$("#fournprice_predef").change(function() {
+		      		console.log("change on fournprice_predef");
 	      			/* Hide field buying_price according to choice into list (if 'inputprice' or not) */
 					var linevalue=$(this).find('option:selected').val();
 	        		var pricevalue = $(this).find('option:selected').attr("price");

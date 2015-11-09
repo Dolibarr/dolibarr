@@ -337,7 +337,7 @@ if ($object->id > 0)
 
 		//Query from product/liste.php
 		$sql = 'SELECT p.rowid, p.ref, p.label, pfp.tms,';
-		$sql.= ' p.fk_product_type';
+		$sql.= ' p.fk_product_type, p.entity';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'product_fournisseur_price as pfp';
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = pfp.fk_product";
 		$sql.= ' WHERE p.entity IN ('.getEntity('product', 1).')';
@@ -361,6 +361,7 @@ if ($object->id > 0)
 				$productstatic->ref = $objp->ref;
 				$productstatic->label = $objp->label;
 				$productstatic->type = $objp->fk_product_type;
+				$productstatic->entity = $objp->entity;
 
 				print "<tr ".$bc[$var].">";
 				print '<td class="nowrap">';

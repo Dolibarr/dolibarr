@@ -14,7 +14,7 @@
 -- To make pk to be auto increment (mysql):    VMYSQL4.3 ALTER TABLE llx_c_shipment_mode CHANGE COLUMN rowid rowid INTEGER NOT NULL AUTO_INCREMENT;
 -- To make pk to be auto increment (postgres): VPGSQL8.2 NOT POSSIBLE. MUST DELETE/CREATE TABLE
 -- To set a field as NULL:                     VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name DROP NOT NULL;
--- To set a field as default NULL:             VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name SET DEFAULT NULL;
+-- To set a field as DEFAULT NULL:             VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name SET DEFAULT NULL;
 -- To delete orphelins:                        VMYSQL4.1 DELETE FROM llx_usergroup_user WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 -- To delete orphelins:                        VPGSQL8.2 DELETE FROM llx_usergroup_user WHERE fk_user NOT IN (SELECT rowid from llx_user);
 
@@ -30,8 +30,8 @@ insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,localtax1,localtax1_typ
 -- Taiwan VAT Rates
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 2131, 213, '5', '0', 'VAT 5%', 1);
 
-ALTER TABLE llx_societe_rib ADD COLUMN rum varchar(32) after default_rib;
-ALTER TABLE llx_societe_rib ADD COLUMN frstrecur varchar(16) default 'FRST' after rum;
+ALTER TABLE llx_societe_rib ADD COLUMN rum varchar(32) AFTER default_rib;
+ALTER TABLE llx_societe_rib ADD COLUMN frstrecur varchar(16) DEFAULT 'FRST' AFTER rum;
 
 ALTER TABLE llx_cronjob ADD COLUMN entity integer DEFAULT 0;
 ALTER TABLE llx_cronjob MODIFY COLUMN params text NULL;
@@ -45,16 +45,16 @@ create table llx_loan
   tms							timestamp,
   label							varchar(80) NOT NULL,
   fk_bank						integer,
-  capital						real     default 0 NOT NULL,
+  capital						real     DEFAULT 0 NOT NULL,
   datestart						date,
   dateend						date,
   nbterm						real,
   rate							double  NOT NULL,
   note_private                  text,
   note_public                   text,
-  capital_position				real     default 0,
+  capital_position				real     DEFAULT 0,
   date_position					date,
-  paid							smallint default 0 NOT NULL,
+  paid							smallint DEFAULT 0 NOT NULL,
   accountancy_account_capital	varchar(32),
   accountancy_account_insurance	varchar(32),
   accountancy_account_interest	varchar(32),
@@ -83,10 +83,10 @@ create table llx_payment_loan
 )ENGINE=innodb;
 
 ALTER TABLE llx_extrafields ADD COLUMN fieldrequired integer DEFAULT 0;
-ALTER TABLE llx_extrafields ADD COLUMN perms varchar(255) after fieldrequired;
-ALTER TABLE llx_extrafields ADD COLUMN list integer DEFAULT 0 after perms;
+ALTER TABLE llx_extrafields ADD COLUMN perms varchar(255) AFTER fieldrequired;
+ALTER TABLE llx_extrafields ADD COLUMN list integer DEFAULT 0 AFTER perms;
 
-ALTER TABLE llx_payment_salary ADD COLUMN salary real after datev;
+ALTER TABLE llx_payment_salary ADD COLUMN salary real AFTER datev;
 
 ALTER TABLE llx_payment_salary ADD INDEX idx_payment_salary_ref (num_payment);
 ALTER TABLE llx_payment_salary ADD INDEX idx_payment_salary_user (fk_user, entity);
@@ -98,7 +98,7 @@ ALTER TABLE llx_payment_salary ADD CONSTRAINT fk_payment_salary_user FOREIGN KEY
 
 
 UPDATE llx_projet_task_time SET task_datehour = task_date where task_datehour IS NULL;
-ALTER TABLE llx_projet_task_time ADD COLUMN task_date_withhour integer DEFAULT 0 after task_datehour;
+ALTER TABLE llx_projet_task_time ADD COLUMN task_date_withhour integer DEFAULT 0 AFTER task_datehour;
 
 ALTER TABLE llx_projet_task MODIFY COLUMN duration_effective real DEFAULT 0 NULL;
 ALTER TABLE llx_projet_task MODIFY COLUMN planned_workload real DEFAULT 0 NULL;
@@ -129,8 +129,8 @@ ALTER TABLE llx_product_fournisseur_price ADD COLUMN fk_supplier_price_expressio
 ALTER TABLE llx_product ADD COLUMN fk_price_expression integer DEFAULT NULL;
 ALTER TABLE llx_product_price ADD COLUMN fk_price_expression integer DEFAULT NULL;
 
-ALTER TABLE llx_product ADD COLUMN fifo double(24,8) after pmp;
-ALTER TABLE llx_product ADD COLUMN lifo double(24,8) after fifo;
+ALTER TABLE llx_product ADD COLUMN fifo double(24,8) AFTER pmp;
+ALTER TABLE llx_product ADD COLUMN lifo double(24,8) AFTER fifo;
 
   
 --create table for user conf of printing driver
@@ -147,8 +147,6 @@ CREATE TABLE llx_printing
  driver varchar(16) NOT NULL,
  userid integer
 )ENGINE=innodb;
-
-ALTER TABLE llx_product_fournisseur_price ADD COLUMN fk_price_expression integer DEFAULT NULL;
 
 -- Add situation invoices
 ALTER TABLE llx_facture ADD COLUMN situation_cycle_ref smallint;
@@ -244,7 +242,7 @@ CREATE TABLE llx_expensereport (
   fk_user_cancel 	integer DEFAULT NULL,
   fk_statut			integer NOT NULL,		-- 1=brouillon, 2=validé (attente approb), 4=annulé, 5=approuvé, 6=payed, 99=refusé
   fk_c_paiement 	integer DEFAULT NULL,
-  paid 				smallint default 0 NOT NULL,
+  paid 				smallint DEFAULT 0 NOT NULL,
   note_public		text,
   note_private 		text,
   detail_refuse 	varchar(255) DEFAULT NULL,
@@ -330,15 +328,15 @@ ALTER TABLE llx_facture_fourn_det_extrafields ADD INDEX idx_facture_fourn_det_ex
 
 ALTER TABLE llx_facture_fourn_det ADD COLUMN special_code	 integer DEFAULT 0;
 ALTER TABLE llx_facture_fourn_det ADD COLUMN rang integer DEFAULT 0;
-ALTER TABLE llx_facture_fourn_det ADD COLUMN fk_parent_line integer NULL after fk_facture_fourn;
+ALTER TABLE llx_facture_fourn_det ADD COLUMN fk_parent_line integer NULL AFTER fk_facture_fourn;
 
 ALTER TABLE llx_commande_fournisseurdet ADD COLUMN special_code	 integer DEFAULT 0;
 ALTER TABLE llx_commande_fournisseurdet ADD COLUMN rang integer DEFAULT 0;
-ALTER TABLE llx_commande_fournisseurdet ADD COLUMN fk_parent_line integer NULL after fk_commande;
+ALTER TABLE llx_commande_fournisseurdet ADD COLUMN fk_parent_line integer NULL AFTER fk_commande;
 
 ALTER TABLE llx_projet ADD COLUMN date_close datetime DEFAULT NULL;
 ALTER TABLE llx_projet ADD COLUMN fk_user_close integer DEFAULT NULL;
-ALTER TABLE llx_projet ADD COLUMN fk_opp_status integer DEFAULT NULL after fk_statut;
+ALTER TABLE llx_projet ADD COLUMN fk_opp_status integer DEFAULT NULL AFTER fk_statut;
 ALTER TABLE llx_projet ADD COLUMN opp_amount double(24,8) DEFAULT NULL;
 
 
@@ -430,8 +428,8 @@ CREATE TABLE llx_askpricesupplierdet_extrafields (
 -- End Module AskPriceSupplier --
 
 
-ALTER TABLE llx_commande_fournisseur ADD COLUMN date_approve2 datetime after date_approve;
-ALTER TABLE llx_commande_fournisseur ADD COLUMN fk_user_approve2 integer after fk_user_approve;
+ALTER TABLE llx_commande_fournisseur ADD COLUMN date_approve2 datetime AFTER date_approve;
+ALTER TABLE llx_commande_fournisseur ADD COLUMN fk_user_approve2 integer AFTER fk_user_approve;
 
 ALTER TABLE llx_societe ADD COLUMN fk_incoterms integer;
 ALTER TABLE llx_societe ADD COLUMN location_incoterms varchar(255);
@@ -476,9 +474,9 @@ ALTER TABLE llx_societe_extrafields DROP INDEX idx_societe_extrafields;
 ALTER TABLE llx_societe_extrafields ADD UNIQUE INDEX uk_societe_extrafields (fk_object);
 
 -- Module Donation
-ALTER TABLE llx_don ADD COLUMN fk_country integer NOT NULL after country;
+ALTER TABLE llx_don ADD COLUMN fk_country integer NOT NULL DEFAULT 0 AFTER country;
 ALTER TABLE llx_don CHANGE COLUMN fk_paiement fk_payment integer;
-ALTER TABLE llx_don ADD COLUMN paid smallint default 0 NOT NULL after fk_payment;
+ALTER TABLE llx_don ADD COLUMN paid smallint DEFAULT 0 NOT NULL AFTER fk_payment;
 ALTER TABLE llx_don CHANGE COLUMN fk_don_projet fk_projet integer NULL;
 ALTER TABLE llx_don CHANGE COLUMN fk_project fk_projet integer NULL;
 
@@ -569,7 +567,7 @@ create table llx_c_price_global_variable_updater
 )ENGINE=innodb;
 
 ALTER TABLE llx_adherent CHANGE COLUMN note note_private text DEFAULT NULL;
-ALTER TABLE llx_adherent ADD COLUMN note_public text DEFAULT NULL after note_private;
+ALTER TABLE llx_adherent ADD COLUMN note_public text DEFAULT NULL AFTER note_private;
 
 CREATE TABLE IF NOT EXISTS llx_propal_merge_pdf_product (
   rowid integer NOT NULL auto_increment PRIMARY KEY,
@@ -607,28 +605,28 @@ INSERT INTO llx_c_units ( code, label, short_label, active) VALUES ('M2','square
 INSERT INTO llx_c_units ( code, label, short_label, active) VALUES ('M3','cubic meter','m3', 1);
 INSERT INTO llx_c_units ( code, label, short_label, active) VALUES ('L','liter','l', 1);
 
-alter table llx_product add fk_unit integer default NULL;
+alter table llx_product add fk_unit integer DEFAULT NULL;
 ALTER TABLE llx_product ADD CONSTRAINT fk_product_fk_unit FOREIGN KEY (fk_unit) REFERENCES llx_c_units (rowid);
 
-alter table llx_facturedet_rec add fk_unit integer default NULL;
+alter table llx_facturedet_rec add fk_unit integer DEFAULT NULL;
 ALTER TABLE llx_facturedet_rec ADD CONSTRAINT fk_facturedet_rec_fk_unit FOREIGN KEY (fk_unit) REFERENCES llx_c_units (rowid);
 
-alter table llx_facturedet add fk_unit integer default NULL;
+alter table llx_facturedet add fk_unit integer DEFAULT NULL;
 ALTER TABLE llx_facturedet ADD CONSTRAINT fk_facturedet_fk_unit FOREIGN KEY (fk_unit) REFERENCES llx_c_units (rowid);
 
-alter table llx_propaldet add fk_unit integer default NULL;
+alter table llx_propaldet add fk_unit integer DEFAULT NULL;
 ALTER TABLE llx_propaldet ADD CONSTRAINT fk_propaldet_fk_unit FOREIGN KEY (fk_unit) REFERENCES llx_c_units (rowid);
 
-alter table llx_commandedet add fk_unit integer default NULL;
+alter table llx_commandedet add fk_unit integer DEFAULT NULL;
 ALTER TABLE llx_commandedet ADD CONSTRAINT fk_commandedet_fk_unit FOREIGN KEY (fk_unit) REFERENCES llx_c_units (rowid);
 
-alter table llx_contratdet add fk_unit integer default NULL;
+alter table llx_contratdet add fk_unit integer DEFAULT NULL;
 ALTER TABLE llx_contratdet ADD CONSTRAINT fk_contratdet_fk_unit FOREIGN KEY (fk_unit) REFERENCES llx_c_units (rowid);
 
-alter table llx_commande_fournisseurdet add fk_unit integer default NULL;
+alter table llx_commande_fournisseurdet add fk_unit integer DEFAULT NULL;
 ALTER TABLE llx_commande_fournisseurdet ADD CONSTRAINT fk_commande_fournisseurdet_fk_unit FOREIGN KEY (fk_unit) REFERENCES llx_c_units (rowid);
 
-alter table llx_facture_fourn_det add fk_unit integer default NULL;
+alter table llx_facture_fourn_det add fk_unit integer DEFAULT NULL;
 ALTER TABLE llx_facture_fourn_det ADD CONSTRAINT fk_facture_fourn_det_fk_unit FOREIGN KEY (fk_unit) REFERENCES llx_c_units (rowid);
 
 
@@ -794,3 +792,8 @@ DELETE FROM llx_c_regions WHERE code_region=420 and fk_pays=4;
 ALTER TABLE llx_c_paiement MODIFY COLUMN libelle varchar(62);
 
 ALTER TABLE llx_societe_remise_except MODIFY COLUMN description text NOT NULL;
+
+-- Fix bad data
+update llx_opensurvey_sondage set format = 'D' where format = 'D+';
+update llx_opensurvey_sondage set format = 'A' where format = 'A+';
+
