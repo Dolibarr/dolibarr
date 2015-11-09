@@ -619,17 +619,28 @@ foreach ($skeletonfiles as $skeletonfile => $outfile)
     $targetcontent=preg_replace('/'.preg_quote("if (! empty(\$arrayfields['t.field1']['checked'])) print '<td>'.\$obj->field1.'</td>';",'/').'/', $varprop, $targetcontent);
     $targetcontent=preg_replace('/'.preg_quote("if (! empty(\$arrayfields['t.field2']['checked'])) print '<td>'.\$obj->field2.'</td>';",'/').'/', '', $targetcontent);
 
-    // LIST_OF_TD_LABEL_FIELDS_CREATE and EDIT - List of td for card view 
+    // LIST_OF_TD_LABEL_FIELDS_CREATE - List of td for card view 
     $varprop="\n";
     $cleanparam='';
     foreach($property as $key => $prop)
     {
     	if ($prop['field'] != 'rowid' && $prop['field'] != 'id' && ! $prop['istime'])
     	{
-    	    $varprop.="print '<tr><td class=\"fieldrequired\">'.\$langs->trans(\"Field".$prop['field']."\").'</td><td><input class=\"flat\" type=\"text\" name=\"".$prop['field']."\" value=\"'.\$".$prop['field'].".'\"></td></tr>';\n";
+    	    $varprop.="print '<tr><td class=\"fieldrequired\">'.\$langs->trans(\"Field".$prop['field']."\").'</td><td><input class=\"flat\" type=\"text\" name=\"".$prop['field']."\" value=\"'.GETPOST('".$prop['field']."').'\"></td></tr>';\n";
     	}
     }
     $targetcontent=preg_replace('/LIST_OF_TD_LABEL_FIELDS_CREATE/', $varprop, $targetcontent);
+
+    // LIST_OF_TD_LABEL_FIELDS_EDIT - List of td for card view 
+    $varprop="\n";
+    $cleanparam='';
+    foreach($property as $key => $prop)
+    {
+    	if ($prop['field'] != 'rowid' && $prop['field'] != 'id' && ! $prop['istime'])
+    	{
+    	    $varprop.="print '<tr><td class=\"fieldrequired\">'.\$langs->trans(\"Field".$prop['field']."\").'</td><td><input class=\"flat\" type=\"text\" name=\"".$prop['field']."\" value=\"'.\$object->".$prop['field'].".'\"></td></tr>';\n";
+    	}
+    }
     $targetcontent=preg_replace('/LIST_OF_TD_LABEL_FIELDS_EDIT/', $varprop, $targetcontent);
     
     // LIST_OF_TD_LABEL_FIELDS_VIEW - List of td for card view 

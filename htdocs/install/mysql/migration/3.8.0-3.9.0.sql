@@ -65,6 +65,7 @@ ALTER TABLE llx_paiement ADD COLUMN ref varchar(30) NOT NULL DEFAULT '' AFTER ro
 
 ALTER TABLE llx_socpeople ADD COLUMN photo varchar(255) AFTER skype;
 
+ALTER TABLE llx_user_param MODIFY COLUMN param varchar(255) NOT NULL DEFAULT '';
 ALTER TABLE llx_user_param MODIFY COLUMN value text NOT NULL DEFAULT '';
 
 ALTER TABLE llx_expedition ADD COLUMN import_key varchar(14);

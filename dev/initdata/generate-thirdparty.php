@@ -20,8 +20,8 @@
  */
 
 /**
- *      \file       dev/initdata/generate-societe.php
- *      \brief      Script de generation de donnees aleatoires pour les societes
+ *      \file       dev/initdata/generate-thirdparty.php
+ *      \brief      Script example to inject random thirdparties (for load tests)
  */
 
 // Test si mode batch
