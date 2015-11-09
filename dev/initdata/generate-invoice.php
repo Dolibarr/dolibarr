@@ -19,8 +19,8 @@
  */
 
 /**
- *      \file       dev/intdata/generate-facture.php
- *		\brief      Script de generation de donnees aleatoires pour les factures
+ *      \file       dev/intdata/generate-invoice.php
+ *		\brief      Script example to inject random customer invoices (for load tests)
  */
 
 // Test si mode batch

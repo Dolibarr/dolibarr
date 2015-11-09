@@ -20,8 +20,8 @@
  */
 
 /**
- *      \file       dev/initdata/generate-produit.php
- *		\brief      Script de generation de donnees aleatoires pour les produits
+ *      \file       dev/initdata/generate-product.php
+ *		\brief      Script example to inject random products (for load tests)
  */
 
 // Test si mode batch

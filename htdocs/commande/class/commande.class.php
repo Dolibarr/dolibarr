@@ -417,7 +417,7 @@ class Commande extends CommonOrder
                     {
                         $mouvP = new MouvementStock($this->db);
                         // We increment stock of product (and sub-products)
-                        $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("OrderBackToDraftInDolibarr",$this->ref));
+                        $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->trans("OrderBackToDraftInDolibarr",$this->ref));
                         if ($result < 0) { $error++; }
                     }
                 }
@@ -601,7 +601,7 @@ class Commande extends CommonOrder
 					{
 						$mouvP = new MouvementStock($this->db);
 						// We increment stock of product (and sub-products)
-						$result=$mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("OrderCanceledInDolibarr",$this->ref));
+						$result=$mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->trans("OrderCanceledInDolibarr",$this->ref));  // price is 0, we don't want WAP to be changed
 						if ($result < 0)
 						{
 							$error++;
@@ -777,7 +777,9 @@ class Commande extends CommonOrder
                         $this->lines[$i]->pa_ht,
                     	$this->lines[$i]->label,
                     	$this->lines[$i]->array_options,
-	                    $this->lines[$i]->fk_unit
+	                    $this->lines[$i]->fk_unit,
+                        $this->element,
+                        $this->lines[$i]->id
                     );
                     if ($result < 0)
                     {
@@ -950,6 +952,7 @@ class Commande extends CommonOrder
         // Clear fields
         $this->user_author_id     = $user->id;
         $this->user_valid         = '';
+		$this->date				  = dol_now();
         $this->date_creation      = '';
         $this->date_validation    = '';
         $this->ref_client         = '';
@@ -2321,6 +2324,7 @@ class Commande extends CommonOrder
 	function classifyBilled()
 	{
 		global $conf, $user, $langs;
+        $error = 0;
 
 		$this->db->begin();
 
@@ -2635,6 +2639,7 @@ class Commande extends CommonOrder
         global $hookmanager, $conf;
 
     	$action='create';
+        $error = 0;
 
     	// Actions on extra fields (by external module or standard code)
     	// TODO le hook fait double emploi avec le trigger !!
@@ -2871,7 +2876,7 @@ class Commande extends CommonOrder
      */
     function LibStatut($statut,$billed,$mode)
     {
-        global $langs;
+        global $langs, $conf;
         //print 'x'.$statut.'-'.$billed;
         if ($mode == 0)
         {

@@ -1,7 +1,5 @@
 -- ============================================================================
--- Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+-- Copyright (C) 2007 Patrick Raguin       <patrick.raguin@gmail.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -16,20 +14,11 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
--- ===========================================================================
+-- ============================================================================
 
-create table llx_user_param
-(
-  fk_user       integer      NOT NULL,
-  entity        integer DEFAULT 1 NOT NULL,	-- multi company id
-  param         varchar(255)  NOT NULL,
-  value         text NOT NULL
-)ENGINE=innodb;
+ALTER TABLE llx_categorie_project ADD PRIMARY KEY pk_categorie_project (fk_categorie, fk_project);
+ALTER TABLE llx_categorie_project ADD INDEX idx_categorie_project_fk_categorie (fk_categorie);
+ALTER TABLE llx_categorie_project ADD INDEX idx_categorie_project_fk_project (fk_project);
 
--- 
--- List of codes for the field entity
---
--- 1 : first company param
--- 2 : second company param
--- 3 : etc...
---
+ALTER TABLE llx_categorie_project ADD CONSTRAINT fk_categorie_project_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
+ALTER TABLE llx_categorie_project ADD CONSTRAINT fk_categorie_project_fk_project_rowid FOREIGN KEY (fk_project) REFERENCES llx_projet (rowid);

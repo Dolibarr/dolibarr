@@ -157,7 +157,7 @@ llxHeader('','MyPageName','');
 $form=new Form($db);
 
 // Put here content of your page
-print load_fiche_titre('PageTitle');
+$title = $langs->trans('MyModuleListTitle');
 
 // Example : Adding jquery code
 print '<script type="text/javascript" language="javascript">
@@ -310,7 +310,7 @@ if ($resql)
     print $hookmanager->resPrint;
 	if (! empty($arrayfields['t.datec']['checked']))  print_liste_field_titre($langs->trans("DateCreationShort"),$_SERVER["PHP_SELF"],"t.datec","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
 	if (! empty($arrayfields['t.tms']['checked']))    print_liste_field_titre($langs->trans("DateModificationShort"),$_SERVER["PHP_SELF"],"t.tms","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
-	//if (! empty($arrayfields['u.statut']['checked'])) print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"u.statut","",$param,'align="center"',$sortfield,$sortorder);
+	//if (! empty($arrayfields['t.status']['checked'])) print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"t.status","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="right"',$sortfield,$sortorder,'maxwidthsearch ');
     print '</tr>'."\n";
 

@@ -4,7 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "f441e6348ae7862942693cab10810418",
+    "hash": "d88b5c84a9ea1af354d867ba2e2ab251",
+    "content-hash": "85e60ec7f8ab593387c7bd10d8db860d",
     "packages": [
         {
             "name": "ccampbell/chromephp",
@@ -125,6 +126,64 @@
             "description": "Traditional FirePHPCore library for sending PHP variables to the browser.",
             "homepage": "https://github.com/firephp/firephp-core",
             "time": "2013-04-23 15:28:20"
+        },
+        {
+            "name": "mike42/escpos-php",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mike42/escpos-php.git",
+                "reference": "0564ff94de45564221eca99c4cd5ab24492894c2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mike42/escpos-php/zipball/0564ff94de45564221eca99c4cd5ab24492894c2",
+                "reference": "0564ff94de45564221eca99c4cd5ab24492894c2",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.5.*"
+            },
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Roni Saha",
+                    "email": "roni.cse@gmail.com"
+                },
+                {
+                    "name": "Michael Billington",
+                    "email": "michael.billington@gmail.com"
+                },
+                {
+                    "name": "Gergely Radics",
+                    "email": "gerifield@ustream.tv"
+                },
+                {
+                    "name": "Warren Doyle",
+                    "email": "w.doyle@fuelled.co"
+                },
+                {
+                    "name": "vharo",
+                    "email": "vharo@geepok.com"
+                }
+            ],
+            "description": "Thermal receipt printer library, for use with ESC/POS compatible printers",
+            "homepage": "https://github.com/mike42/escpos-php",
+            "keywords": [
+                "ESC-POS",
+                "driver",
+                "escpos",
+                "print",
+                "receipt"
+            ],
+            "time": "2015-11-02 10:50:46"
         },
         {
             "name": "mobiledetect/mobiledetectlib",
@@ -424,13 +483,16 @@
                 "pdf417",
                 "qrcode"
             ],
+            "abandoned": "tecnickcom/tcpdf",
             "time": "2015-01-28 18:51:40"
         }
     ],
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "mike42/escpos-php": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

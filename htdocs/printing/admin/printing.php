@@ -137,7 +137,8 @@ if ($mode == 'setup' && $user->admin)
         $classname = 'printing_'.$driver;
         $langs->load($driver);
         $printer = new $classname($db);
-        //print '<pre>'.print_r($printer, true).'</pre>';
+        //var_dump($printer);
+        
         $i=0;
         $submit_enabled=0;
         foreach ($printer->conf as $key)
@@ -157,7 +158,14 @@ if ($mode == 'setup' && $user->admin)
                 case "authlink":
                     print '<tr '.$bc[$var].'>';
                     print '<td>'.$langs->trans($key['varname']).'</td>';
-                    print '<td class="button"><a href="'.$key['link'].'">'.$langs->trans('RequestAccess').'</a></td>';
+                    print '<td><a class="button" href="'.$key['link'].'">'.$langs->trans('RequestAccess').'</a></td>';
+                    print '<td>&nbsp;</td>';
+                    print '</tr>'."\n";
+                    break;
+                case "delete":
+                    print '<tr '.$bc[$var].'>';
+                    print '<td>'.$langs->trans($key['varname']).'</td>';
+                    print '<td><a class="button" href="'.$key['link'].'">'.$langs->trans('DeleteAccess').'</a></td>';
                     print '<td>&nbsp;</td>';
                     print '</tr>'."\n";
                     break;

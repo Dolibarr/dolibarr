@@ -70,8 +70,8 @@ if ($id > 0 || ! empty($ref))
 {
     $result = $object->fetch($id, $ref);
 
-    if (! empty($conf->product->enabled)) $upload_dir = $conf->product->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 1, $object, 'product').dol_sanitizeFileName($object->ref);
-    elseif (! empty($conf->service->enabled)) $upload_dir = $conf->service->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 1, $object, 'product').dol_sanitizeFileName($object->ref);
+    if (! empty($conf->product->enabled)) $upload_dir = $conf->product->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 0, $object, 'product').dol_sanitizeFileName($object->ref);
+    elseif (! empty($conf->service->enabled)) $upload_dir = $conf->service->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 0, $object, 'product').dol_sanitizeFileName($object->ref);
     
 	if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))    // For backward compatiblity, we scan also old dirs
 	{
@@ -195,33 +195,21 @@ if ($object->id)
 	}
 	
 
-    print '<table class="border" width="100%">';
+    dol_banner_tab($object, 'ref', '', ($user->societe_id?0:1), 'ref');
+    
+    print '<div class="fichecenter">';
+    
+    print '<div class="underbanner clearboth"></div>';
+    print '<table class="border tableforfield" width="100%">';
 
-    // Ref
-    print '<tr>';
-    print '<td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">';
-	print $form->showrefnav($object,'ref','',1,'ref');
-    print '</td>';
-    print '</tr>';
-
-    // Label
-    print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$object->label.'</td></tr>';
-
-	// Status (to sell)
-	print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td>';
-	print $object->getLibStatut(2,0);
-	print '</td></tr>';
-
-	// Status (to buy)
-	print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Buy").')</td><td>';
-	print $object->getLibStatut(2,1);
-	print '</td></tr>';
-
-    print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
+    print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
     print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
     print '</table>';
 
     print '</div>';
+    print '<div style="clear:both"></div>';
+    
+    dol_fiche_end();
 
     $modulepart = 'produit';
     $permission = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer));

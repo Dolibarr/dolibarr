@@ -1,7 +1,6 @@
 -- ============================================================================
--- Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+-- Copyright (C) 2007 Patrick Raguin <patrick.raguin@gmail.com>	
+-- Copyright (C) 2012 Juanjo Menent  <jmenent@2byte.es>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -16,20 +15,11 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
--- ===========================================================================
+-- ============================================================================
 
-create table llx_user_param
+create table llx_categorie_project
 (
-  fk_user       integer      NOT NULL,
-  entity        integer DEFAULT 1 NOT NULL,	-- multi company id
-  param         varchar(255)  NOT NULL,
-  value         text NOT NULL
+  fk_categorie  integer NOT NULL,
+  fk_project    integer NOT NULL,
+  import_key    varchar(14)
 )ENGINE=innodb;
-
--- 
--- List of codes for the field entity
---
--- 1 : first company param
--- 2 : second company param
--- 3 : etc...
---

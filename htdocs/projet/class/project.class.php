@@ -453,7 +453,9 @@ class Project extends CommonObject
     function get_element_list($type, $tablename, $datefieldname='', $dates='', $datee='')
     {
         $elements = array();
-
+        
+        if ($this->id <= 0) return $elements;
+        
 		if ($type == 'agenda')
         {
             $sql = "SELECT id as rowid FROM " . MAIN_DB_PREFIX . "actioncomm WHERE fk_project=" . $this->id;
@@ -929,6 +931,7 @@ class Project extends CommonObject
         $this->date_c = $now;
         $this->date_m = $now;
         $this->date_start = $now;
+        $this->date_end = $now + (3600 * 24 * 365);
         $this->note_public = 'SPECIMEN';
 		$this->fk_ele = 20000;
         $this->opp_amount = 20000;

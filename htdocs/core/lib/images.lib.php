@@ -512,7 +512,9 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 
 	$fileName = preg_replace('/(\.gif|\.jpeg|\.jpg|\.png|\.bmp)$/i','',$file);	// On enleve extension quelquesoit la casse
 	$fileName = basename($fileName);
-	$imgThumbName = $dirthumb.'/'.getImageFileNameForSize($file, $extName, $extImgTarget); // Chemin complet du fichier de la vignette
+	//$imgThumbName = $dirthumb.'/'.getImageFileNameForSize(basename($file), $extName, $extImgTarget);   // Full path of thumb file
+	$imgThumbName = getImageFileNameForSize($file, $extName, $extImgTarget);   // Full path of thumb file
+
 
 	// Check if permission are ok
 	//$fp = fopen($imgThumbName, "w");

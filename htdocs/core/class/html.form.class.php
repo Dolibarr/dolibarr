@@ -1546,7 +1546,7 @@ class Form
             		print img_picto($langs->trans("Search"), 'search');
             	}
             }
-            print '<input type="text" size="20" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.$placeholder.' autofocus />';
+            print '<input type="text" size="20" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.$placeholder.' />';
             if ($hidelabel == 3) {
             	print img_picto($langs->trans("Search"), 'search');
             }
@@ -1663,7 +1663,7 @@ class Form
             require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
             $num = $this->db->num_rows($result);
 
-            $out.='<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'" autofocus>';
+            $out.='<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
             $out.='<option value="0" selected>&nbsp;</option>';
 
             $i = 0;
@@ -4057,10 +4057,11 @@ class Form
      * 	@param 	int			$disabled		Disable input fields
      *  @param  int			$fullday        When a checkbox with this html name is on, hour and day are set with 00:00 or 23:59
      *  @param	string		$addplusone		Add a link "+1 hour". Value must be name of another select_date field.
+     *  @param  datetime    $adddateof      Add a link "Date of invoice" using the following date.
      * 	@return	mixed						Nothing or string if nooutput is 1
      *  @see	form_date
      */
-    function select_date($set_time='', $prefix='re', $h=0, $m=0, $empty=0, $form_name="", $d=1, $addnowlink=0, $nooutput=0, $disabled=0, $fullday='', $addplusone='')
+    function select_date($set_time='', $prefix='re', $h=0, $m=0, $empty=0, $form_name="", $d=1, $addnowlink=0, $nooutput=0, $disabled=0, $fullday='', $addplusone='', $adddateof='')
     {
         global $conf,$langs;
 
@@ -4318,6 +4319,13 @@ class Form
             }
         }
 
+        // Add a "Plus one hour" link
+        if ($conf->use_javascript_ajax && $adddateof)
+        {
+            $tmparray=dol_getdate($adddateof);
+            $retstring.=' - <button class="dpInvisibleButtons datenowlink" id="dateofinvoice" type="button" name="_dateofinvoice" value="now" onclick="jQuery(\'#re\').val(\''.dol_print_date($adddateof,'day').'\');jQuery(\'#reday\').val(\''.$tmparray['mday'].'\');jQuery(\'#remonth\').val(\''.$tmparray['mon'].'\');jQuery(\'#reyear\').val(\''.$tmparray['year'].'\');">'.$langs->trans("DateInvoice").'</a>';
+        }    
+
         if (! empty($nooutput)) return $retstring;
 
         print $retstring;
@@ -4513,22 +4521,26 @@ class Form
      *  @param	string	$morecss				Add more class to css styles
      *  @param  int     $callurlonselect        If set to 1, some code is added so an url return by the ajax is called when value is selected.
      *  @param  string  $placeholder            String to use as placeholder
-     * 	@return	string							HTML select string.
+     *  @param  string  $acceptdelayedhtml      1 if caller request to have html delayed content not returned but saved into global $delayedhtmlcontent (so caller can show it at end of page to avoid flash FOUC effect)
+     * 	@return	string   						HTML select string
      */
-    static function selectArrayAjax($htmlname, $url, $id='', $moreparam='', $moreparamtourl='', $disabled=0, $minimumInputLength=1, $morecss='', $callurlonselect=0, $placeholder='')
+    static function selectArrayAjax($htmlname, $url, $id='', $moreparam='', $moreparamtourl='', $disabled=0, $minimumInputLength=1, $morecss='', $callurlonselect=0, $placeholder='', $acceptdelayedhtml=0)
     {
         global $langs;
+        global $delayedhtmlcontent;      
         
-    	$out = '';
-
     	$tmpplugin='select2';
-    	$out.='<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
+        
+    	$out='<input type="text" class="'.$htmlname.($morecss?' '.$morecss:'').'" '.($moreparam?$moreparam.' ':'').'name="'.$htmlname.'">';
+    	
+    	// TODO Use an internal dolibarr component instead of select2
+    	$outdelayed='<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
 	    	<script type="text/javascript">
 	    	$(document).ready(function () {
     	      
-    	      '.($callurlonselect ? 'var saveRemoteData = [];':'').'
+    	        '.($callurlonselect ? 'var saveRemoteData = [];':'').'
     	    
-              $(".'.$htmlname.'").select2({
+                $(".'.$htmlname.'").select2({
 			    	ajax: {
 				    	dir: "ltr",
 				    	url: "'.$url.'",
@@ -4584,12 +4596,17 @@ class Form
                     });
     			});' : '' ) . '
     			
-    	});
-	    </script>';
+    	   });
+	       </script>';
 
-
-		$out.='<input type="text" class="'.$htmlname.($morecss?' '.$morecss:'').'" '.($moreparam?$moreparam.' ':'').'name="'.$htmlname.'">';
-		
+		if ($acceptdelayedhtml)
+		{
+		    $delayedhtmlcontent.=$outdelayed;
+		}
+		else
+		{
+		    $out.=$outdelayed;
+		}
 		return $out;
     }
 
@@ -5157,7 +5174,7 @@ class Form
      *    To add a particular filter on select, you must set $object->next_prev_filter to SQL criteria.
      *
      *    @param	object	$object			Object to show
-     *    @param	string	$paramid   		Name of parameter to use to name the id into the URL link
+     *    @param	string	$paramid   		Name of parameter to use to name the id into the URL next/previous link
      *    @param	string	$morehtml  		More html content to output just before the nav bar
      *    @param	int		$shownav	  	Show Condition (navigation is shown if value is 1)
      *    @param	string	$fieldid   		Nom du champ en base a utiliser pour select next et previous (we make the select max and min on this field)
@@ -5192,7 +5209,7 @@ class Form
         
         $ret.='<div class="inline-block floatleft valignmiddle refid'.(($shownav && ($previous_ref || $next_ref))?' refidpadding':'').'">';
 
-        // For thirdparty and contact, the ref is he id, so we show something else
+        // For thirdparty and contact, the ref is the id, so we show something else
         if ($object->element == 'societe')
         {
         	$ret.=dol_htmlentities($object->name);
@@ -5360,7 +5377,7 @@ class Form
             else
 			{
 				$nophoto='/public/theme/common/nophoto.png';
-				if (in_array($modulepart,array('userphoto','contact')))	// For module thar are "physical" users
+				if (in_array($modulepart,array('userphoto','contact')))	// For module that are "physical" users
 				{
 					$nophoto='/public/theme/common/user_anonymous.png';
 					if ($object->gender == 'man') $nophoto='/public/theme/common/user_man.png';
