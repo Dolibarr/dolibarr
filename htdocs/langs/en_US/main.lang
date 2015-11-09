@@ -59,6 +59,7 @@ ErrorCantLoadUserFromDolibarrDatabase=Failed to find user <b>%s</b> in Dolibarr 
 ErrorNoVATRateDefinedForSellerCountry=Error, no vat rates defined for country '%s'.
 ErrorNoSocialContributionForSellerCountry=Error, no social/fiscal taxes type defined for country '%s'.
 ErrorFailedToSaveFile=Error, failed to save file.
+NotAuthorized=You are not authorized to do that.
 SetDate=Set date
 SelectDate=Select a date
 SeeAlso=See also %s
