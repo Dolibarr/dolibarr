@@ -3818,16 +3818,12 @@ class Facture extends CommonInvoice
 	 */
 	function is_last_in_cycle()
 	{
-<<<<<<< HEAD
-		$sql = 'SELECT max(situation_counter) FROM ' . MAIN_DB_PREFIX . 'facture WHERE situation_cycle_ref = ' . (int) $this->situation_cycle_ref . ' AND entity in ('.getEntity('facture').')';
-=======
 		if (empty($this->situation_cycle_ref)) {
 			// No point in testing anything if we're not inside a cycle
 			return false;
 		}
 
-		$sql = 'SELECT max(situation_counter) FROM ' . MAIN_DB_PREFIX . 'facture WHERE situation_cycle_ref = ' . $this->situation_cycle_ref;
->>>>>>> 71fa347e8e0a5f3bfbf7f76b0bbeb826d3a1b771
+		$sql = 'SELECT max(situation_counter) FROM ' . MAIN_DB_PREFIX . 'facture WHERE situation_cycle_ref = ' . (int) $this->situation_cycle_ref . ' AND entity in ('.getEntity('facture').')';
 		$resql = $this->db->query($sql);
 
 		if ($resql && $resql->num_rows > 0) {
