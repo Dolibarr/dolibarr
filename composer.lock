@@ -5,7 +5,6 @@
         "This file is @generated automatically"
     ],
     "hash": "d88b5c84a9ea1af354d867ba2e2ab251",
-    "content-hash": "85e60ec7f8ab593387c7bd10d8db860d",
     "packages": [
         {
             "name": "ccampbell/chromephp",
