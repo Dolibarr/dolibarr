@@ -174,7 +174,7 @@ if ($action == "correct_stock" && ! $cancel)
 			}
 			else
 			{
-			    setEventMessage($product->error,'errors');
+			    setEventMessages($product->error, $product->errors, 'errors');
 			    $action='correction';
 			}
 		}
