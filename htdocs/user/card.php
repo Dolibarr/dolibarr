@@ -697,7 +697,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     print '<tr>';
 
     // Lastname
-    print '<td width="160"><span class="fieldrequired">'.$langs->trans("Lastname").'</span></td>';
+    print '<td class="titlefield"><span class="fieldrequired">'.$langs->trans("Lastname").'</span></td>';
     print '<td>';
     if (! empty($ldap_lastname))
     {
@@ -1168,7 +1168,7 @@ else
 	        print '<table class="border tableforfield" width="100%">';
 
             // Login
-            print '<tr><td>'.$langs->trans("Login").'</td>';
+            print '<tr><td class="titlefield">'.$langs->trans("Login").'</td>';
             if (! empty($object->ldap_sid) && $object->statut==0)
             {
                 print '<td class="error">'.$langs->trans("LoginAccountDisableInDolibarr").'</td>';
@@ -1362,7 +1362,7 @@ else
 	        print '<div class="underbanner clearboth"></div>';
 	        print '<table class="border tableforfield" width="100%">';
 
-        	print '<tr><td>'.$langs->trans("LastConnexion").'</td>';
+        	print '<tr><td class="titlefield">'.$langs->trans("LastConnexion").'</td>';
             print '<td>'.dol_print_date($object->datelastlogin,"dayhour").'</td>';
             print "</tr>\n";
 
