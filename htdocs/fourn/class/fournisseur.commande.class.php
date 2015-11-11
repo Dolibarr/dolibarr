@@ -481,7 +481,7 @@ class CommandeFournisseur extends CommonOrder
         }
         else
         {
-            $this->error='Not Authorized';
+            $this->error='NotAuthorized';
             dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
             return -1;
         }
@@ -936,6 +936,7 @@ class CommandeFournisseur extends CommonOrder
      */
     function commande($user, $date, $methode, $comment='')
     {
+        global $langs;
         dol_syslog(get_class($this)."::commande");
         $result = 0;
         if ($user->rights->fournisseur->commande->commander)
@@ -946,16 +947,24 @@ class CommandeFournisseur extends CommonOrder
             dol_syslog(get_class($this)."::commande", LOG_DEBUG);
             if ($this->db->query($sql))
             {
+                $this->statut = 3;
+                $this->methode_commande_id = $methode;
+                $this->date_commande = $this->db->idate($date);
                 $result = 1;
                 $this->log($user, 3, $date, $comment);
             }
             else
             {
+                $this->error = $this->db->lasterror();
+                $this->errors[] = $this->db->lasterror();
                 $result = -1;
             }
         }
         else
         {
+            $result = -1;
+            $this->error = $langs->trans('NotAuthorized');
+            $this->errors[] = $lanfs->trans('NotAuthorized');
             dol_syslog(get_class($this)."::commande User not Authorized", LOG_ERR);
         }
         return $result ;
@@ -1762,7 +1771,7 @@ class CommandeFournisseur extends CommonOrder
      */
     function Livraison($user, $date, $type, $comment)
     {
-    	global $conf;
+    	global $conf, $langs;
 
         $result = 0;
 		$error = 0;
@@ -1829,6 +1838,7 @@ class CommandeFournisseur extends CommonOrder
                 if ($resql)
                 {
                     $result = 0;
+                    $this->statut = $statut;
                     $result=$this->log($user, $statut, $date, $comment);
 
                     $this->db->commit();
@@ -1843,6 +1853,8 @@ class CommandeFournisseur extends CommonOrder
         }
         else
         {
+            $this->error = $langs->trans('NotAuthorized');
+            $this->errors[] = $langs->trans('NotAuthorized');
             dol_syslog(get_class($this)."::Livraison Not Authorized");
             $result = -3;
         }
@@ -1992,6 +2004,7 @@ class CommandeFournisseur extends CommonOrder
 
         if (! $error)
         {
+            $this->statut = $status;
             $this->db->commit();
             return 1;
         }
@@ -2295,7 +2308,7 @@ class CommandeFournisseur extends CommonOrder
 
         $clause = " WHERE";
 
-        $sql = "SELECT c.rowid, c.date_creation as datec, c.fk_statut,c.date_livraison as delivery_date";
+        $sql = "SELECT c.rowid, c.date_creation as datec, c.date_commande, c.fk_statut, c.date_livraison as delivery_date";
         $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
         if (!$user->rights->societe->client->voir && !$user->societe_id)
         {
@@ -2315,7 +2328,7 @@ class CommandeFournisseur extends CommonOrder
 	        $response = new WorkboardResponse();
 	        $response->warning_delay=$conf->commande->fournisseur->warning_delay/60/60/24;
 	        $response->label=$langs->trans("SuppliersOrdersToProcess");
-	        $response->url=DOL_URL_ROOT.'/fourn/commande/index.php';
+	        $response->url=DOL_URL_ROOT.'/fourn/commande/list.php?statut=1,2,3';
 	        $response->img=img_object($langs->trans("Orders"),"order");
 
             while ($obj=$this->db->fetch_object($resql))
@@ -2323,7 +2336,7 @@ class CommandeFournisseur extends CommonOrder
                 $response->nbtodo++;
 
                 $commandestatic->date_livraison = $this->db->jdate($obj->delivery_date);
-                $commandestatic->date_commande = $this->db->jdate($obj->datec);
+                $commandestatic->date_commande = $this->db->jdate($obj->date_commande);
                 $commandestatic->statut = $obj->fk_statut;
 
                 if ($commandestatic->hasDelay()) {
@@ -2477,11 +2490,11 @@ class CommandeFournisseur extends CommonOrder
     public function hasDelay()
     {
         global $conf;
-
+		
         $now = dol_now();
         $date_to_test = empty($this->date_livraison) ? $this->date_commande : $this->date_livraison;
-
-        return ($this->statut != 3) && $date_to_test < ($now - $conf->commande->fournisseur->warning_delay);
+        
+        return ($this->statut != 3) && $date_to_test && $date_to_test < ($now - $conf->commande->fournisseur->warning_delay);
     }
 }
 

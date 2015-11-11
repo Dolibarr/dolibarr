@@ -122,7 +122,7 @@ if ($user->rights->categorie->supprimer && $action == 'confirm_delete' && $confi
 	}
 	else
 	{
-		setEventMessage($object->error, 'errors');
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
 
@@ -137,13 +137,13 @@ if ($type == Categorie::TYPE_PRODUCT && $elemid && $action == 'addintocategory' 
 	$result=$object->add_type($newobject,$elementtype);
 	if ($result >= 0)
 	{
-		setEventMessage($langs->trans("WasAddedSuccessfully",$newobject->ref));
+		setEventMessages($langs->trans("WasAddedSuccessfully",$newobject->ref), null, 'mesgs');
 	}
 	else
 	{
 		if ($cat->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 		{
-			setEventMessage($langs->trans("ObjectAlreadyLinkedToCategory"),'warnings');
+			setEventMessages($langs->trans("ObjectAlreadyLinkedToCategory"), null, 'warnings');
 		}
 		else
 		{

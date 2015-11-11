@@ -21,12 +21,14 @@
 create table llx_stock_lotserial
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
-  datec           datetime,
-  tms             timestamp,
-  fk_user_creat   integer,
-  fk_user_modif   integer,
+  entity          integer,
   fk_product      integer NOT NULL,				-- Id of product
   batch           varchar(30) DEFAULT NULL,		-- Lot or serial number
   eatby           date DEFAULT NULL,			-- Eatby date
-  sellby          date DEFAULT NULL 			-- Sellby date
+  sellby          date DEFAULT NULL, 			-- Sellby date
+  datec         datetime,
+  tms           timestamp,
+  fk_user_creat integer,
+  fk_user_modif integer,
+  import_key    integer  
 ) ENGINE=innodb;

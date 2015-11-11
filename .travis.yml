@@ -131,7 +131,7 @@ script:
 # - cat upgrade370380.log
  - php upgrade2.php 3.7.0 3.8.0 ignoredbversion > upgrade370380-2.log
  - php upgrade.php 3.8.0 3.9.0 ignoredbversion > upgrade380390.log
- - cat upgrade380390.log
+# - cat upgrade380390.log
  - php upgrade2.php 3.8.0 3.9.0 ignoredbversion > upgrade380390-2.log
 # - cat upgrade380390-2.log
  - cd ../..

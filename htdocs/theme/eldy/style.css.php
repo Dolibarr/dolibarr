@@ -641,7 +641,7 @@ div.divphotoref {
 div.statusref {
 	float: right;
 	padding-right: 12px;
-	margin-top: 6px;
+	margin-top: 7px;
 	margin-bottom: 10px;
 }
 img.photoref {
@@ -3532,6 +3532,12 @@ a span.select2-chosen
 .select2-results .select2-no-results, .select2-results .select2-searching, .select2-results .select2-ajax-error, .select2-results .select2-selection-limit
 {
 	background: #FFFFFF;
+}
+.select2-results {
+	max-height:	400px;
+}
+.css-searchselectcombo ul.select2-results {
+	max-height:	none;
 }
 .select2-container-multi.select2-container-disabled .select2-choices {
 	background-color: #FFFFFF;

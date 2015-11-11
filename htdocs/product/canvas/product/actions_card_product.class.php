@@ -341,7 +341,7 @@ class ActionsCardProduct
 		$sql = 'SELECT DISTINCT ';
 
 		// Fields requiered
-		$sql.= 'p.rowid, p.price_base_type, p.fk_product_type, p.seuil_stock_alerte';
+		$sql.= 'p.rowid, p.price_base_type, p.fk_product_type, p.seuil_stock_alerte, p.entity';
 
 		// Fields not requiered
 		foreach($this->field_list as $field)
@@ -417,6 +417,7 @@ class ActionsCardProduct
 							$this->id 		= $obj->rowid;
 							$this->ref 		= $obj->$alias;
 							$this->type 	= $obj->fk_product_type;
+							$this->entity	= $obj->entity;
 							$datas[$alias] 	= $this->getNomUrl(1,'',24);
 						}
 						else if ($alias == 'stock')

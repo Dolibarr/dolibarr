@@ -139,7 +139,7 @@ if ($action == 'search')
 {
 	$current_lang = $langs->getDefaultLang();
 
-    $sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type,';
+    $sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type, p.entity,';
     $sql.= ' p.fk_product_type, p.tms as datem';
 	if (! empty($conf->global->MAIN_MULTILANGS)) $sql.= ', pl.label as labelm, pl.description as descriptionm';
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
@@ -193,8 +193,8 @@ if ($id > 0 || ! empty($ref))
 		print "<tr>";
 
 		$nblignes=6;
-		if ($object->isproduct() && ! empty($conf->stock->enabled)) $nblignes++;
-		if ($object->isservice()) $nblignes++;
+		if ($object->isProduct() && ! empty($conf->stock->enabled)) $nblignes++;
+		if ($object->isService()) $nblignes++;
 
 			// Reference
 			print '<td width="25%">'.$langs->trans("Ref").'</td><td>';
@@ -278,6 +278,7 @@ if ($id > 0 || ! empty($ref))
 					$productstatic->type=$value["fk_product_type"];
 					$productstatic->ref=$value['ref'];
 					$productstatic->label=$value['label'];
+					$productstatic->entity=$value['entity'];
 
 					$class=($class=='impair')?'pair':'impair';
 					print '<tr class="'.$class.'">';
@@ -334,6 +335,7 @@ if ($id > 0 || ! empty($ref))
 					$productstatic->id=$value['id'];
 					$productstatic->type=$value['type'];
 					$productstatic->label=$value['label'];
+					$productstatic->entity=$value['entity'];
 
 					if ($value['level'] <= 1)
 					{
@@ -542,6 +544,7 @@ if ($id > 0 || ! empty($ref))
 						$productstatic->ref=$objp->ref;
 						$productstatic->label=$objp->label;
 						$productstatic->type=$objp->type;
+						$productstatic->entity=$objp->entity;
 
 						print '<td>'.$productstatic->getNomUrl(1,'',24).'</td>';
 						$labeltoshow=$objp->label;

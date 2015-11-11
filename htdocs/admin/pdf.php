@@ -62,7 +62,8 @@ if ($action == 'update')
 	dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS", $_POST["MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_HIDE_DESC",    $_POST["MAIN_GENERATE_DOCUMENTS_HIDE_DESC"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_HIDE_REF",     $_POST["MAIN_GENERATE_DOCUMENTS_HIDE_REF"],'chaine',0,'',$conf->entity);
-
+	dolibarr_set_const($db, "MAIN_PDF_USE_ISO_LOCATION",     $_POST["MAIN_PDF_USE_ISO_LOCATION"],'chaine',0,'',$conf->entity);
+	
 	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
 	exit;
 }
@@ -134,6 +135,12 @@ if ($action == 'edit')	// Edit
 	$var=true;
     print '<table summary="more" class="noborder" width="100%">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+
+    // Hide VAT Intra on address
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("ShowVATIntaInAddress").'</td><td>';
+    print $form->selectyesno('MAIN_TVAINTRA_NOT_IN_ADDRESS',(! empty($conf->global->MAIN_TVAINTRA_NOT_IN_ADDRESS))?$conf->global->MAIN_TVAINTRA_NOT_IN_ADDRESS:0,1);
+    print '</td></tr>';
 
     // Show prof id 1 in address into pdf
     $var=!$var;
@@ -223,12 +230,6 @@ if ($action == 'edit')	// Edit
 	print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT',(! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))?$conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT:0,1);
     print '</td></tr>';
 
-    // Hide Tva Intra on adress
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("ShowVATIntaInAddress").'</td><td>';
-    print $form->selectyesno('MAIN_TVAINTRA_NOT_IN_ADDRESS',(! empty($conf->global->MAIN_TVAINTRA_NOT_IN_ADDRESS))?$conf->global->MAIN_TVAINTRA_NOT_IN_ADDRESS:0,1);
-    print '</td></tr>';
-
     //Desc
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("HideDescOnPDF").'</td><td>';
@@ -245,6 +246,12 @@ if ($action == 'edit')	// Edit
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("HideDetailsOnPDF").'</td><td>';
     print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS',(! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS))?$conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS:0,1);
+    print '</td></tr>';
+
+ 	// Place customer adress to the ISO location
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("PlaceCustomerAddressToIsoLocation").'</td><td>';
+	print $form->selectyesno('MAIN_PDF_USE_ISO_LOCATION',(! empty($conf->global->MAIN_PDF_USE_ISO_LOCATION))?$conf->global->MAIN_PDF_USE_ISO_LOCATION:0,1);
     print '</td></tr>';
 
 
@@ -302,6 +309,12 @@ else	// Show
 	print load_fiche_titre($langs->trans("PDFAddressForging"),'','').'<br>';
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+
+	// Hide Intra VAT on address
+	$var=!$var;
+	print '<tr '.$bc[$var].'><td>'.$langs->trans("ShowVATIntaInAddress").'</td><td colspan="2">';
+	print yn($conf->global->MAIN_TVAINTRA_NOT_IN_ADDRESS,1);
+	print '</td></tr>';
 
     // Show prof id 1 in address into pdf
     $var=!$var;
@@ -386,13 +399,6 @@ else	// Show
     print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px" colspan="2">'.$langs->trans("Value").'</td></tr>';
 
 
-    // Hide any PDF informations
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("HideAnyVATInformationOnPDF").'</td><td colspan="2">';
-    print yn($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT,1);
-    print '</td></tr>';
-
-
 	// Encrypt and protect PDF
 	$var=!$var;
 	print "<tr ".$bc[$var].">";
@@ -421,11 +427,11 @@ else	// Show
 	print "</td>";
 	print '</tr>';
 
-	// Hide Tva Intra on adress
-	$var=!$var;
-	print '<tr '.$bc[$var].'><td>'.$langs->trans("ShowVATIntaInAddress").'</td><td colspan="2">';
-	print yn($conf->global->MAIN_TVAINTRA_NOT_IN_ADDRESS,1);
-	print '</td></tr>';
+    // Hide any PDF informations
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("HideAnyVATInformationOnPDF").'</td><td colspan="2">';
+    print yn($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT,1);
+    print '</td></tr>';
 
 	//Desc
 	$var=!$var;
@@ -445,6 +451,10 @@ else	// Show
 	print yn($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS,1);
 	print '</td></tr>';
 
+	$var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("PlaceCustomerAddressToIsoLocation").'</td><td colspan="2">';
+	print yn($conf->global->MAIN_PDF_USE_ISO_LOCATION,1);
+	print '</td></tr>';
 
 	print '</table>';
 

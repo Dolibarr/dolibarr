@@ -32,7 +32,10 @@ $langs->load("users");
 // Security check
 $id = GETPOST('id','int');
 $object = new User($db);
-$object->fetch($id);
+if ($id > 0 || ! empty($ref))
+{
+	$result = $object->fetch($id, $ref);
+}
 
 // Security check
 $socid=0;
@@ -58,17 +61,18 @@ $form = new Form($db);
 
 llxHeader();
 
-$object->info($id);
-
 $head = user_prepare_head($object);
 
 $title = $langs->trans("User");
 dol_fiche_head($head, 'info', $title, 0, 'user');
 
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php">'.$langs->trans("BackToList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
 
-dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '');
+dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
+
+
+$object->info($id); // This overwrite ->ref with login instead of id
 
 
 print '<div class="fichecenter">';

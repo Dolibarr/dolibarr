@@ -283,12 +283,25 @@ IMG;
 	 */
 	private function _parse($type='content')
 	{
+	    // Search all tags fou into condition to complete $this->vars, so we will proceed all tests even if not defined
+	    $reg='@\[!--\sIF\s([{}a-zA-Z_]+)\s--\]@smU';
+	    preg_match_all($reg, $this->contentXml, $matches, PREG_SET_ORDER);
+	    //var_dump($this->vars);exit;
+	    foreach($matches as $match)   // For each match, if there is no entry into this->vars, we add it
+		{
+		    if (! empty($match[1]) && ! isset($this->vars[$match[1]]))
+			{
+			    $this->vars[$match[1]] = '';     // Not defined, so we set it to '', we just need entry into this->vars for next loop
+			}
+	    }
+	    //var_dump($this->vars);exit;
+	    
 		// Conditionals substitution
 		// Note: must be done before static substitution, else the variable will be replaced by its value and the conditional won't work anymore
-		foreach($this->vars as $key => $value)
+	    foreach($this->vars as $key => $value)
 		{
 			// If value is true (not 0 nor false nor null nor empty string)
-			if($value)
+			if ($value)
 			{
 				// Remove the IF tag
 				$this->contentXml = str_replace('[!-- IF '.$key.' --]', '', $this->contentXml);

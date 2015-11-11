@@ -181,11 +181,11 @@ class pdf_azur extends ModelePDFPropales
 				if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))
 				{
 					$pdir[0] = get_exdir($objphoto->id,2,0,0,$objphoto,'product') . $objphoto->id ."/photos/";
-					$pdir[1] = dol_sanitizeFileName($objphoto->ref).'/';
+					$pdir[1] = get_exdir(0,0,0,0,$objphoto,'product') . dol_sanitizeFileName($objphoto->ref).'/';
 				}
 				else
 				{
-					$pdir[0] = dol_sanitizeFileName($objphoto->ref).'/';				// default
+					$pdir[0] = get_exdir(0,0,0,0,$objphoto,'product') . dol_sanitizeFileName($objphoto->ref).'/';				// default
 					$pdir[1] = get_exdir($objphoto->id,2,0,0,$objphoto,'product') . $objphoto->id ."/photos/";	// alternative
 				}
 

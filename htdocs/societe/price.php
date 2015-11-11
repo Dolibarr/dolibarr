@@ -44,16 +44,16 @@ $langs->load("bills");
 $action = GETPOST('action', 'alpha');
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOST('socid', 'int')?GETPOST('socid', 'int'):GETPOST('id', 'int');
 if ($user->societe_id)
 	$socid = $user->societe_id;
 $result = restrictedArea($user, 'societe', $socid, '&societe');
 
-/**
- * ***************************************************
- * Price by customer
- * ****************************************************
+
+/*
+ * Actions
  */
+
 if ($action == 'add_customer_price_confirm' && ! $_POST ["cancel"] && ($user->rights->produit->creer || $user->rights->service->creer)) {
 
 	$update_child_soc = GETPOST('updatechildprice');
@@ -113,6 +113,7 @@ if ($action == 'update_customer_price_confirm' && ! $_POST ["cancel"] && ($user-
 
 	$action = '';
 }
+
 
 /*
  * View

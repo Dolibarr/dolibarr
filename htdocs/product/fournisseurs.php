@@ -95,9 +95,14 @@ if (empty($reshook))
 	{
 		if ($rowid)
 		{
-			$result=$object->remove_product_fournisseur_price($rowid);
 			$action = '';
-			setEventMessage($langs->trans("PriceRemoved"));
+			$result=$product->remove_product_fournisseur_price($rowid);
+			if($result > 0){
+				setEventMessage($langs->trans("PriceRemoved"));
+			}else{
+				$error++;
+				setEventMessages($product->error, $product->errors, 'errors');
+			}
 		}
 	}
 
@@ -259,21 +264,15 @@ if ($id > 0 || $ref)
 			$picto=($object->type== Product::TYPE_SERVICE?'service':'product');
 			dol_fiche_head($head, 'suppliers', $titre, 0, $picto);
 
-
-			print '<table class="border" width="100%">';
-
-			// Reference
-			print '<tr>';
-			print '<td width="15%">'.$langs->trans("Ref").'</td><td colspan="2">';
-			print $form->showrefnav($object,'ref','',1,'ref');
-			print '</td>';
-			print '</tr>';
-
-			// Label
-			print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$object->label.'</td></tr>';
+            dol_banner_tab($object, 'ref', '', ($user->societe_id?0:1), 'ref');
+            
+            print '<div class="fichecenter">';
+            
+            print '<div class="underbanner clearboth"></div>';
+            print '<table class="border tableforfield" width="100%">';
 
 			// Minimum Price
-			print '<tr><td>'.$langs->trans("BuyingPriceMin").'</td>';
+			print '<tr><td class="titlefield">'.$langs->trans("BuyingPriceMin").'</td>';
             print '<td colspan="2">';
 			$product_fourn = new ProductFournisseur($db);
 			if ($product_fourn->find_min_price_product_fournisseur($object->id) > 0)
@@ -283,14 +282,13 @@ if ($id > 0 || $ref)
 			}
             print '</td></tr>';
 
-			// Status (to buy)
-			print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Buy").')</td><td>';
-			print $object->getLibStatut(2,1);
-			print '</td></tr>';
-
 			print '</table>';
 
-			print "</div>\n";
+            print '</div>';
+            print '<div style="clear:both"></div>';
+			
+			dol_fiche_end();
+			
 
 			// Form to add or update a price
 			if (($action == 'add_price' || $action == 'updateprice' ) && ($user->rights->produit->creer || $user->rights->service->creer))
@@ -523,7 +521,7 @@ if ($id > 0 || $ref)
 			{
 				// Suppliers list title
 				print '<table class="noborder" width="100%">';
-				if ($object->isproduct()) $nblignefour=4;
+				if ($object->isProduct()) $nblignefour=4;
 				else $nblignefour=4;
 
 				$param="&id=".$object->id;

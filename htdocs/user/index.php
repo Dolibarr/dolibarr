@@ -55,14 +55,15 @@ $optioncss = GETPOST('optioncss','alpha');
 
 if ($search_statut == '') $search_statut='1';
 
+// Load variable for pagination
+$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
 $page = GETPOST('page','int');
 if ($page == -1) { $page = 0; }
-$offset = $conf->liste_limit * $page;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-$limit = $conf->liste_limit;
 if (! $sortfield) $sortfield="u.login";
 if (! $sortorder) $sortorder="ASC";
 
@@ -77,23 +78,6 @@ $search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search
 $userstatic=new User($db);
 $companystatic = new Societe($db);
 $form = new Form($db);
-
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
-{
-	$search_user="";
-	$search_login="";
-	$search_lastname="";
-	$search_firstname="";
-	$search_accountancy_code="";
-	$search_email="";
-	$search_statut="";
-	$search_thirdparty="";
-	$search_supervisor="";
-	$search_datelastlogin="";
-	$search_datepreviouslogin="";
-	$search_date_creation="";
-	$search_date_update="";
-}
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
@@ -116,6 +100,24 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") ||GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
+{
+	$search_user="";
+	$search_login="";
+	$search_lastname="";
+	$search_firstname="";
+	$search_accountancy_code="";
+	$search_email="";
+	$search_statut="";
+	$search_thirdparty="";
+	$search_supervisor="";
+	$search_datelastlogin="";
+	$search_datepreviouslogin="";
+	$search_date_creation="";
+	$search_date_update="";
+	$search_array_options=array();
+}
+
 
 
 /*
@@ -135,12 +137,13 @@ $sql.= " u.tms as date_update, u.datec as date_creation,";
 $sql.= " u2.rowid as id2, u2.login as login2, u2.firstname as firstname2, u2.lastname as lastname2, u2.admin as admin2, u2.fk_soc as fk_soc2, u2.email as email2, u2.gender as gender2, u2.photo as photo2, u2.entity as entity2,";
 $sql.= " s.nom as name, s.canvas";
 // Add fields from extrafields
-foreach ($extrafields->attribute_list as $key => $val) $sql.=",ef.".$key.' as options_'.$key;
+foreach ($extrafields->attribute_label as $key => $val) $sql.=",ef.".$key.' as options_'.$key;
 // Add fields from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
+if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user_extrafields as ef on (u.rowid = ef.fk_object)";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_soc = s.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u2 ON u.fk_user = u2.rowid";
 if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && (! empty($conf->multicompany->transverse_mode) || (! empty($user->admin) && empty($user->entity))))
@@ -236,9 +239,17 @@ if ($result)
         'u.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
         'u.statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
 	);
+	// Extra fields
+	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+	{
+	   foreach($extrafields->attribute_label as $key => $val) 
+	   {
+           $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>$extrafields->attribute_list[$key], 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
+	   }
+	}
     $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
     $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
-    print '<table class="noborder" width="100%">';
+    print '<table class="liste">';
     print '<tr class="liste_titre">';
     if (! empty($arrayfields['u.login']['checked']))          print_liste_field_titre($langs->trans("Login"),$_SERVER['PHP_SELF'],"u.login",$param,"","",$sortfield,$sortorder);
     if (! empty($arrayfields['u.lastname']['checked']))       print_liste_field_titre($langs->trans("Lastname"),$_SERVER['PHP_SELF'],"u.lastname",$param,"","",$sortfield,$sortorder);
@@ -251,17 +262,18 @@ if ($result)
     if (! empty($arrayfields['u.datelastlogin']['checked']))  print_liste_field_titre($langs->trans("LastConnexion"),$_SERVER['PHP_SELF'],"u.datelastlogin",$param,"",'align="center"',$sortfield,$sortorder);
     if (! empty($arrayfields['u.datepreviouslogin']['checked'])) print_liste_field_titre($langs->trans("PreviousConnexion"),$_SERVER['PHP_SELF'],"u.datepreviouslogin",$param,"",'align="center"',$sortfield,$sortorder);
 	// Extra fields
-	if (is_array($extrafields->attribute_list) && count($extrafields->attribute_list))
+	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 	{
-	   foreach($extrafields->attribute_list as $key => $val) 
+	   foreach($extrafields->attribute_label as $key => $val) 
 	   {
-	       if ($val)
-	       {
-	           if (! empty($arrayfields["ef.".$key]['checked'])) print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],"ef.".$key,"",$param,"",$sortfield,$sortorder);
-	       }
+           if (! empty($arrayfields["ef.".$key]['checked'])) 
+           {
+				$align=$extrafields->getAlignFlag($key);
+				print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],"ef.".$key,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
+           }
 	   }
 	}
-	// Hook fields
+    // Hook fields
 	$parameters=array('arrayfields'=>$arrayfields);
     $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
@@ -313,7 +325,14 @@ if ($result)
     {
         print '<td></td>';
     }
-    
+	// Extra fields
+	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+	{
+	   foreach($extrafields->attribute_label as $key => $val) 
+	   {
+			if (! empty($arrayfields["ef.".$key]['checked'])) print '<td class="liste_titre"></td>';
+	   }
+	}
     // Fields from hook
 	$parameters=array('arrayfields'=>$arrayfields);
     $reshook=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
@@ -480,22 +499,39 @@ if ($result)
             print '<td class="nowrap" align="center">'.dol_print_date($db->jdate($obj->datepreviouslogin),"dayhour").'</td>';
     	}
         
+    	// Extra fields
+		if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+		{
+		   foreach($extrafields->attribute_label as $key => $val) 
+		   {
+				if (! empty($arrayfields["ef.".$key]['checked'])) 
+				{
+					print '<td';
+					$align=$extrafields->getAlignFlag($key);
+					if ($align) print ' align="'.$align.'"';
+					print '>';
+					$tmpkey='options_'.$key;
+					print $extrafields->showOutputField($key, $obj->$tmpkey, '', 1);
+					print '</td>';
+				}
+		   }
+		}
         // Fields from hook
 	    $parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj);
 		$reshook=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook
         print $hookmanager->resPrint;
-        // Date creation
+    	// Date creation
         if (! empty($arrayfields['u.datec']['checked']))
         {
             print '<td align="center">';
-            print dol_print_date($obj->date_creation, 'dayhour');
+            print dol_print_date($db->jdate($obj->date_creation), 'dayhour');
             print '</td>';
         }
         // Date modification
         if (! empty($arrayfields['u.tms']['checked']))
         {
             print '<td align="center">';
-            print dol_print_date($obj->date_update, 'dayhour');
+            print dol_print_date($db->jdate($obj->date_update), 'dayhour');
             print '</td>';
         }
         // Status
