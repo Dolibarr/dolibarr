@@ -38,7 +38,7 @@ We officially support versions N, N − 1 and N − 2 for N the latest version a
 Choose your base branch accordingly.
 
 ### General rules
-Please don't edit the ChangeLog file. A project manager will update it from your commit messages.
+Please don't edit the ChangeLog file. File will be generated from your commit messages during release process by the project manager.
 
 ### <a name=commits></a>Commits
 Use clear commit messages with the following structure:
@@ -50,7 +50,7 @@ LONGDESC
 ```
 
 #### Keyword
-In uppercase to appear in ChangeLog when generated.
+In uppercase if you want to have the log comment appears into the generated ChangeLog file.
 
 The keyword can be ommitted if your commit does not fit in any of the following categories:
 - Fix: for a bug fix
@@ -96,6 +96,10 @@ When submitting a pull request, use same rule as [Commits](#commits) for the mes
 
 If your pull request only contains one commit, GitHub will be smart enough to fill it for you.
 Otherwise, please be a bit verbose about what you're providing.
+
+You Pull Request must pass the Continuous Integration checks.
+Also, if you want to include a new external library (into htdocs/includes directory), please ask before to the project
+leader to see if such a library can be accepted.
 
 ### Resources
 [Developer documentation](http://wiki.dolibarr.org/index.php/Developer_documentation)
