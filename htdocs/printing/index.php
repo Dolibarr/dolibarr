@@ -27,21 +27,27 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/printing/modules_printing.php';
 
 llxHeader("",$langs->trans("Printing"));
 
-print load_fiche_titre($langs->trans("Printing"));
+print_barre_liste($langs->trans("Printing"), 0, $_SERVER["PHP_SELF"], '', '', '', '<a class="button" href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("Refresh").'</a>', 0);
+
+print $langs->trans("DirectPrintingJobsDesc").'<br><br>';
 
 // List Jobs from printing modules
 $object = new PrintingDriver($db);
 $result = $object->listDrivers($db, 10);
-foreach ($result as $driver) {
+foreach ($result as $driver) 
+{
     require_once DOL_DOCUMENT_ROOT.'/core/modules/printing/'.$driver.'.modules.php';
     $classname = 'printing_'.$driver;
     $langs->load($driver);
     $printer = new $classname($db);
-    if ($conf->global->{$printer->active}) {
+    if ($conf->global->{$printer->active}) 
+    {
         //$printer->list_jobs('commande');
-        if ($printer->list_jobs()==0) {
-            print $printer->resprint;
-        } else {
+        $result = $printer->list_jobs();
+        print $printer->resprint;
+        
+        if ($result > 0) 
+        {
             setEventMessages($printer->error, $printer->errors, 'errors');
         }
     }

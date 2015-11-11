@@ -65,17 +65,17 @@ if ($action == 'confirm_split' && GETPOST("confirm") == 'yes')
 	if (! $res > 0)
 	{
 		$error++;
-		setEventMessage($langs->trans("ErrorFailedToLoadDiscount"), 'errors');
+		setEventMessages($langs->trans("ErrorFailedToLoadDiscount"), null, 'errors');
 	}
 	if (! $error && price2num($_POST["amount_ttc_1"]+$_POST["amount_ttc_2"]) != $discount->amount_ttc)
 	{
 		$error++;
-		setEventMessage($langs->trans("TotalOfTwoDiscountMustEqualsOriginal"), 'errors');
+		setEventMessages($langs->trans("TotalOfTwoDiscountMustEqualsOriginal"), null, 'errors');
 	}
 	if (! $error && $discount->fk_facture_line)
 	{
 		$error++;
-		setEventMessage($langs->trans("ErrorCantSplitAUsedDiscount"), 'errors');
+		setEventMessages($langs->trans("ErrorCantSplitAUsedDiscount"), null, 'errors');
 	}
 	if (! $error)
 	{
@@ -166,13 +166,13 @@ if ($action == 'setremise')
 			else
 			{
 				$error++;
-				setEventMessage($soc->error, 'errors');
+				setEventMessages($soc->error, $soc->errors, 'errors');
 			}
 		}
 	}
 	else
 	{
-		setEventMessage($langs->trans("ErrorFieldFormat",$langs->trans("NewGlobalDiscount")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldFormat",$langs->trans("NewGlobalDiscount")), null, 'errors');
 	}
 }
 
@@ -194,7 +194,7 @@ if (GETPOST("action") == 'confirm_remove' && GETPOST("confirm")=='yes')
 	}
 	else
 	{
-		setEventMessage($discount->error, 'errors');
+		setEventMessages($discount->error, $discount->errors, 'errors');
 		$db->rollback();
 	}
 }
@@ -216,7 +216,7 @@ if ($socid > 0)
 	$object->fetch($socid);
 
 	/*
-	 * Affichage onglets
+	 * Display tabs
 	 */
 	$head = societe_prepare_head($object);
 
@@ -300,7 +300,7 @@ if ($socid > 0)
 	}
 
 	/*
-	 * Liste remises fixes restant en cours (= liees a acune facture ni ligne de facture)
+	 * Liste remises fixes restant en cours (= liees a aucune facture ni ligne de facture)
 	 */
 	$sql = "SELECT rc.rowid, rc.amount_ht, rc.amount_tva, rc.amount_ttc, rc.tva_tx,";
 	$sql.= " rc.datec as dc, rc.description,";

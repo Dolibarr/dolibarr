@@ -201,15 +201,15 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	 *
 	 * @param DoliDB		$db      Database handler
 	 */
+	public function __construct($db)
+	{
+		$this->db = $db;
+	}
 	// We should but can't set this as abstract because this will make dolibarr hang
 	// after migration due to old module not implementing. We must wait PHP is able to make
 	// a try catch on Fatal error to manage this correctly.
-    function __construct($db)
-    {
-        $this->db=$db;
-    }
-	
-    
+	// We need constructor into function unActivateModule into admin.lib.php
+
     /**
      * Enables a module.
      * Inserts all informations into database

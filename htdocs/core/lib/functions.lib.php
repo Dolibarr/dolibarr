@@ -854,7 +854,7 @@ function dol_get_fiche_end($notab=0)
  *  Show tab footer of a card
  *
  *  @param	object	$object			Object to show
- *  @param	string	$paramid   		Name of parameter to use to name the id into the URL link
+ *  @param	string	$paramid   		Name of parameter to use to name the id into the URL next/previous link
  *  @param	string	$morehtml  		More html content to output just before the nav bar
  *  @param	int		$shownav	  	Show Condition (navigation is shown if value is 1)
  *  @param	string	$fieldid   		Nom du champ en base a utiliser pour select next et previous (we make the select max and min on this field)
@@ -870,28 +870,67 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 {
 	global $conf, $form, $user, $langs;
 
-	//$showlogo=$object->logo;
-	$showlogo=1;
+	$maxvisiblephotos=1;
+	$showimage=1;
 	$showbarcode=empty($conf->barcode->enabled)?0:($object->barcode?1:0);
 	if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) $showbarcode=0;
-	$modulepart='societe';
+	$modulepart='unknown';
+	if ($object->element == 'societe') $modulepart='societe';
 	if ($object->element == 'contact') $modulepart='contact';
 	if ($object->element == 'member') $modulepart='memberphoto';
 	if ($object->element == 'user') $modulepart='userphoto';
+	if ($object->element == 'product') $modulepart='product';
 
 	print '<div class="arearef heightref valignmiddle" width="100%">';
-	if ($showlogo)    $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$form->showphoto($modulepart,$object,0,0,0,'photoref').'</div>';
+	if ($object->element == 'product')
+	{
+	    $width=80; $cssclass='photoref';
+        $showimage=$object->is_photo_available($conf->product->multidir_output[$object->entity]);
+	    $maxvisiblephotos=(isset($conf->global->PRODUCT_MAX_VISIBLE_PHOTO)?$conf->global->PRODUCT_MAX_VISIBLE_PHOTO:5);
+		if ($conf->browser->phone) $maxvisiblephotos=1;
+		if ($showimage) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$object->show_photos($conf->product->multidir_output[$object->entity],1,-$maxvisiblephotos,0,0,0,$width,0).'</div>';
+        else 
+        {
+			$nophoto='/public/theme/common/nophoto.png';
+            $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="'.DOL_URL_ROOT.$nophoto.'"></div>';
+        }
+	}
+	else 
+	{
+	    if ($showimage) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$form->showphoto($modulepart,$object,0,0,0,'photoref','',1,0,$maxvisiblephotos).'</div>';
+	}
 	if ($showbarcode) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$form->showbarcode($object).'</div>';
 	if ($object->element == 'societe' && ! empty($conf->use_javascript_ajax) && $user->rights->societe->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
 		$morehtmlright.=ajax_object_onoff($object, 'status', 'status', 'InActivity', 'ActivityCeased');
-	} else {
+	} 
+	elseif ($object->element == 'product')
+	{
+	    //$morehtmlright.=$langs->trans("Status").' ('.$langs->trans("Sell").') ';
+        if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
+            $morehtmlright.=ajax_object_onoff($object, 'status', 'tosell', 'ProductStatusOnSell', 'ProductStatusNotOnSell');
+        } else {
+            $morehtmlright.=$object->getLibStatut(2,0);
+        }
+        $morehtmlright.=' &nbsp; ';
+        //$morehtmlright.=$langs->trans("Status").' ('.$langs->trans("Buy").') ';
+	    if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
+            $morehtmlright.=ajax_object_onoff($object, 'status_buy', 'tobuy', 'ProductStatusOnBuy', 'ProductStatusNotOnBuy');
+        } else {
+            $morehtmlright.=$object->getLibStatut(2,1);
+        }
+	}
+	else {
 		$morehtmlright.=$object->getLibStatut(2);
 	}
-	if (! empty($object->name_alias)) $morehtmlref.='<div class="refidno">'.$object->name_alias.'</div>';
-	$morehtmlref.='<div class="refidno">';
-	$morehtmlref.=$object->getBannerAddress('refaddress',$object);
-	$morehtmlref.='</div>';
-	if (! empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && in_array($object->element, array('societe', 'contact', 'member')))
+	if (! empty($object->name_alias)) $morehtmlref.='<div class="refidno">'.$object->name_alias.'</div>';      // For thirdparty
+	if (! empty($object->label))      $morehtmlref.='<div class="refidno">'.$object->label.'</div>';           // For product
+	if ($object->element != 'product') 
+	{
+    	$morehtmlref.='<div class="refidno">';
+    	$morehtmlref.=$object->getBannerAddress('refaddress',$object);
+    	$morehtmlref.='</div>';
+	}
+	if (! empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && in_array($object->element, array('societe', 'contact', 'member', 'product')))
 	{
 		$morehtmlref.='<div style="clear: both;"></div><div class="refidno">';
 		$morehtmlref.=$langs->trans("TechnicalID").': '.$object->id;
@@ -3860,7 +3899,7 @@ function get_exdir($num,$level,$alpha,$withoutslash,$object,$modulepart)
 
 	$path = '';
 
-	if (! empty($level) && in_array($modulepart, array('cheque','user','category','holiday','shipment', 'member','don','donation','supplier_invoice','invoice_supplier')))
+	if (! empty($level) && in_array($modulepart, array('cheque','user','category','holiday','shipment', 'member','don','donation','supplier_invoice','invoice_supplier','mailing')))
 	{
 		// This part should be removed once all code is using "get_exdir" to forge path, with all parameters provided
 		if (empty($alpha)) $num = preg_replace('/([^0-9])/i','',$num);
@@ -5154,6 +5193,10 @@ function natural_search($fields, $value, $mode=0, $nofirstand=0)
 {
     global $db,$langs;
 
+    if ($mode == 0)
+    {
+    	$value=preg_replace('/\*/','%',$value);	// Replace * with %
+    }
     if ($mode == 1)
     {
     	$value=preg_replace('/([<>=]+)\s+([0-9'.preg_quote($langs->trans("DecimalSeparator"),'/').'\-])/','\1\2',$value);	// Clean string '< 10' into '<10' so we can the explode on space to get all tests to do
@@ -5225,17 +5268,17 @@ function natural_search($fields, $value, $mode=0, $nofirstand=0)
 /**
  * Return the filename of file to get the thumbs
  *
- * @param   string  $file           Original filename
+ * @param   string  $file           Original filename (full or relative path)
  * @param   string  $extName        Extension to differenciate thumb file name ('', '_small', '_mini')
- * @param   string  $extImgTarget   Force image format for thumbs. Use '' to keep same extension than original image.
- * @return  string                  New file name
+ * @param   string  $extImgTarget   Force image extension for thumbs. Use '' to keep same extension than original image.
+ * @return  string                  New file name (full or relative path, including the thumbs/)
  */
 function getImageFileNameForSize($file, $extName, $extImgTarget='')
 {
 	$dirName = dirname($file);
 	if ($dirName == '.') $dirName='';
 
-    $fileName = preg_replace('/(\.gif|\.jpeg|\.jpg|\.png|\.bmp)$/i','',$file);	// On enleve extension quelquesoit la casse
+    $fileName = preg_replace('/(\.gif|\.jpeg|\.jpg|\.png|\.bmp)$/i','',$file);	// We remove extension, whatever is its case
 	$fileName = basename($fileName);
 
 	if (empty($extImgTarget)) $extImgTarget = (preg_match('/\.jpg$/i',$file)?'.jpg':'');
@@ -5249,5 +5292,5 @@ function getImageFileNameForSize($file, $extName, $extImgTarget='')
     $subdir='';
     if ($extName) $subdir = 'thumbs/';
 
-    return $dirName.$subdir.$fileName.$extName.$extImgTarget; // New filename for thumb
+    return ($dirName?$dirName.'/':'').$subdir.$fileName.$extName.$extImgTarget; // New filename for thumb
 }

@@ -68,7 +68,6 @@ print "Test 4d: a select with ajax refresh and with onchange call of url<br>\n";
 $selected=-1;
 print $form->selectArrayAjax('testselectc', DOL_URL_ROOT.'/core/ajax/selectsearchbox.php', $selected, 'style="min-width: 250px;"', '', 0, 1, '', 1);
 
-
 print '<br><br>'."\n";
 
 // Test5a: form->select_thirdparty

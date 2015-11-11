@@ -93,7 +93,9 @@ $head = user_prepare_head($object);
 $title = $langs->trans("User");
 dol_fiche_head($head, 'ldap', $title, 0, 'user');
 
-dol_banner_tab($object,'id','',$user->rights->user->user->lire || $user->admin);
+$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
+
+dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
 
 print '<div class="underbanner clearboth"></div>';
 

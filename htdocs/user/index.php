@@ -55,6 +55,7 @@ $optioncss = GETPOST('optioncss','alpha');
 
 if ($search_statut == '') $search_statut='1';
 
+// Load variable for pagination
 $limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
@@ -78,24 +79,6 @@ $userstatic=new User($db);
 $companystatic = new Societe($db);
 $form = new Form($db);
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
-{
-	$search_user="";
-	$search_login="";
-	$search_lastname="";
-	$search_firstname="";
-	$search_accountancy_code="";
-	$search_email="";
-	$search_statut="";
-	$search_thirdparty="";
-	$search_supervisor="";
-	$search_datelastlogin="";
-	$search_datepreviouslogin="";
-	$search_date_creation="";
-	$search_date_update="";
-	$search_array_options=array();
-}
-
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
 	'u.login'=>"Login",
@@ -116,6 +99,24 @@ $reshook=$hookmanager->executeHooks('doActions',$parameters);    // Note that $a
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
+
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") ||GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
+{
+	$search_user="";
+	$search_login="";
+	$search_lastname="";
+	$search_firstname="";
+	$search_accountancy_code="";
+	$search_email="";
+	$search_statut="";
+	$search_thirdparty="";
+	$search_supervisor="";
+	$search_datelastlogin="";
+	$search_datepreviouslogin="";
+	$search_date_creation="";
+	$search_date_update="";
+	$search_array_options=array();
+}
 
 
 
@@ -248,7 +249,7 @@ if ($result)
 	}
     $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
     $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
-    print '<table class="noborder" width="100%">';
+    print '<table class="liste">';
     print '<tr class="liste_titre">';
     if (! empty($arrayfields['u.login']['checked']))          print_liste_field_titre($langs->trans("Login"),$_SERVER['PHP_SELF'],"u.login",$param,"","",$sortfield,$sortorder);
     if (! empty($arrayfields['u.lastname']['checked']))       print_liste_field_titre($langs->trans("Lastname"),$_SERVER['PHP_SELF'],"u.lastname",$param,"","",$sortfield,$sortorder);
@@ -523,14 +524,14 @@ if ($result)
         if (! empty($arrayfields['u.datec']['checked']))
         {
             print '<td align="center">';
-            print dol_print_date($obj->date_creation, 'dayhour');
+            print dol_print_date($db->jdate($obj->date_creation), 'dayhour');
             print '</td>';
         }
         // Date modification
         if (! empty($arrayfields['u.tms']['checked']))
         {
             print '<td align="center">';
-            print dol_print_date($obj->date_update, 'dayhour');
+            print dol_print_date($db->jdate($obj->date_update), 'dayhour');
             print '</td>';
         }
         // Status

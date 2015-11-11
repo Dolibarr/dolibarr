@@ -86,6 +86,10 @@ class DoliStorage implements TokenStorageInterface
      */
     public function storeAccessToken($service, TokenInterface $token)
     {
+        //var_dump("storeAccessToken");
+        //var_dump($token);
+        dol_syslog("storeAccessToken");
+        
         $serializedToken = serialize($token);
         $this->tokens[$service] = $token;
 
@@ -95,6 +99,10 @@ class DoliStorage implements TokenStorageInterface
         $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."oauth_token";
         $sql.= " WHERE service='".$service."' AND entity=1";
         $resql = $this->db->query($sql);
+        if (! $resql)
+        {
+            dol_print_error($this->db);
+        }
         $obj = $this->db->fetch_array($resql);
         if ($obj) {
             // update
@@ -108,7 +116,8 @@ class DoliStorage implements TokenStorageInterface
             $sql.= " VALUES ('".$service."', '".$this->db->escape($serializedToken)."', 1)";
             $resql = $this->db->query($sql);
         }
-
+        //print $sql;
+        
         // allow chaining
         return $this;
     }
@@ -122,8 +131,13 @@ class DoliStorage implements TokenStorageInterface
         $sql = "SELECT token FROM ".MAIN_DB_PREFIX."oauth_token";
         $sql.= " WHERE service='".$service."'";
         $resql = $this->db->query($sql);
+        if (! $resql)
+        {
+            dol_print_error($this->db);
+        }
         $result = $this->db->fetch_array($resql);
-        $token = unserialize($result[token]);
+        $token = unserialize($result['token']);
+        
         $this->tokens[$service] = $token;
 
         return is_array($this->tokens)
@@ -138,14 +152,15 @@ class DoliStorage implements TokenStorageInterface
     {
         // TODO
         // get previously saved tokens
-        $tokens = $this->session->get($this->key);
+        //$tokens = $this->retrieveAccessToken($service);
 
-        if (is_array($tokens) && array_key_exists($service, $tokens)) {
-            unset($tokens[$service]);
+        //if (is_array($tokens) && array_key_exists($service, $tokens)) {
+        //    unset($tokens[$service]);
 
-            // Replace the stored tokens array
-            $this->conf->set($this->key, $tokens);
-        }
+            $sql = "DELETE FROM ".MAIN_DB_PREFIX."oauth_token";
+            $sql.= " WHERE service='".$service."'";
+            $resql = $this->db->query($sql);
+        //}
 
         // allow chaining
         return $this;
@@ -182,8 +197,6 @@ class DoliStorage implements TokenStorageInterface
     public function storeAuthorizationState($service, $state)
     {
         // TODO save or update
-        // get previously saved tokens
-        //$states = $this->conf->get($this->stateKey);
 
         if (!is_array($states)) {
             $states = array();
@@ -192,10 +205,26 @@ class DoliStorage implements TokenStorageInterface
         $states[$service] = $state;
         $this->states[$service] = $state;
 
-        // save
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."oauth_state (service, state, entity)";
-        $sql.= " VALUES ('".$service."', '".$state."', 1)";
+        $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."oauth_state";
+        $sql.= " WHERE service='".$service."' AND entity=1";
         $resql = $this->db->query($sql);
+        if (! $resql)
+        {
+            dol_print_error($this->db);
+        }
+        $obj = $this->db->fetch_array($resql);
+        if ($obj) {
+            // update
+            $sql = "UPDATE ".MAIN_DB_PREFIX."oauth_state";
+            $sql.= " SET state='".$this->db->escape($state)."'";
+            $sql.= " WHERE rowid='".$obj['rowid']."'";
+            $resql = $this->db->query($sql);
+        } else {
+            // save
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX."oauth_state (service, state, entity)";
+            $sql.= " VALUES ('".$service."', '".$state."', 1)";
+            $resql = $this->db->query($sql);
+        }
 
         // allow chaining
         return $this;

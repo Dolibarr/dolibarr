@@ -92,7 +92,7 @@ $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('usercard','globalcard'));
 
 
@@ -697,7 +697,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     print '<tr>';
 
     // Lastname
-    print '<td width="160"><span class="fieldrequired">'.$langs->trans("Lastname").'</span></td>';
+    print '<td class="titlefield"><span class="fieldrequired">'.$langs->trans("Lastname").'</span></td>';
     print '<td>';
     if (! empty($ldap_lastname))
     {
@@ -1156,7 +1156,9 @@ else
         {
 			dol_fiche_head($head, 'user', $title, 0, 'user');
 
-	        dol_banner_tab($object,'id','',$user->rights->user->user->lire || $user->admin);
+            $linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
+			
+	        dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
 
 
 	        print '<div class="fichecenter">';
@@ -1166,7 +1168,7 @@ else
 	        print '<table class="border tableforfield" width="100%">';
 
             // Login
-            print '<tr><td>'.$langs->trans("Login").'</td>';
+            print '<tr><td class="titlefield">'.$langs->trans("Login").'</td>';
             if (! empty($object->ldap_sid) && $object->statut==0)
             {
                 print '<td class="error">'.$langs->trans("LoginAccountDisableInDolibarr").'</td>';
@@ -1360,7 +1362,7 @@ else
 	        print '<div class="underbanner clearboth"></div>';
 	        print '<table class="border tableforfield" width="100%">';
 
-        	print '<tr><td>'.$langs->trans("LastConnexion").'</td>';
+        	print '<tr><td class="titlefield">'.$langs->trans("LastConnexion").'</td>';
             print '<td>'.dol_print_date($object->datelastlogin,"dayhour").'</td>';
             print "</tr>\n";
 

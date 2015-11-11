@@ -20,8 +20,8 @@
  */
 
 /**
- * 	    \file       dev/initdata/generate-commande.php
- * 		\brief      Script de generation de donnees aleatoires pour les commandes
+ * 	    \file       dev/initdata/generate-order.php
+ * 		\brief      Script example to inject random orders (for load tests)
  */
 
 // Test si mode batch

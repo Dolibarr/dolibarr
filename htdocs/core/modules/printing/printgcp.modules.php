@@ -87,6 +87,8 @@ class printing_printgcp extends PrintingDriver
             $this->errors[] = $e->getMessage();
             $token_ok = false;
         }
+        //var_dump($this->errors);exit;
+        
         $expire = false;
         // Is token expired or will token expire in the next 30 seconds
         if ($token_ok) {
@@ -116,9 +118,13 @@ class printing_printgcp extends PrintingDriver
                     $refreshtoken = $token->getRefreshToken();
                     $this->conf[] = array('varname'=>'PRINTGCP_TOKEN_REFRESH', 'info'=>((! empty($refreshtoken))?'Yes':'No'), 'type'=>'info');
                     $this->conf[] = array('varname'=>'PRINTGCP_TOKEN_EXPIRED', 'info'=>($expire?'Yes':'No'), 'type'=>'info');
-                    $this->conf[] = array('varname'=>'PRINTGCP_TOKEN_EXPIRE_AT', 'info'=>(date("Y-m-d H:i:s", $token->getEndOfLife())), 'type'=>'info');
+                    $this->conf[] = array('varname'=>'PRINTGCP_TOKEN_EXPIRE_AT', 'info'=>(dol_print_date($token->getEndOfLife(), "dayhour")), 'type'=>'info');
                 }
-                $this->conf[] = array('varname'=>'PRINTGCP_AUTHLINK', 'link'=>$urlwithroot.'/core/modules/oauth/getgoogleoauthcallback.php', 'type'=>'authlink');
+                if (!$storage->hasAccessToken('Google')) {
+                    $this->conf[] = array('varname'=>'PRINTGCP_AUTHLINK', 'link'=>$urlwithroot.'/core/modules/oauth/getgoogleoauthcallback.php?backtourl='.urlencode(DOL_URL_ROOT.'/printing/admin/printing.php?mode=setup&driver=printgcp'), 'type'=>'authlink');
+                } else {
+                    $this->conf[] = array('varname'=>'PRINTGCP_DELETE_TOKEN', 'link'=>$urlwithroot.'/core/modules/oauth/getgoogleoauthcallback.php?action=delete&backtourl='.urlencode(DOL_URL_ROOT.'/printing/admin/printing.php?mode=setup&driver=printgcp'), 'type'=>'delete');
+                }
             } else {
                 $this->conf[] = array('varname'=>'PRINTGCP_INFO', 'info'=>'GoogleAuthNotConfigured', 'type'=>'info');
             }
@@ -369,7 +375,8 @@ class printing_printgcp extends PrintingDriver
      */
     function list_jobs()
     {
-        global $conf, $db, $bc;
+        global $conf, $db, $langs, $bc;
+        
         $error = 0;
         $html = '';
         // Token storage
@@ -432,20 +439,31 @@ class printing_printgcp extends PrintingDriver
         $var = True;
         $jobs = $responsedata['jobs'];
         //$html .= '<pre>'.print_r($jobs['0'],true).'</pre>';
-        foreach ($jobs as $value )
+        if (is_array($jobs))
         {
-            $var = !$var;
-            $html .= '<tr '.$bc[$var].'>';
-            $html .= '<td>'.$value['id'].'</td>';
-            $html .= '<td>'.$value['ownerId'].'</td>';
-            $html .= '<td>'.$value['printerName'].'</td>';
-            $html .= '<td>'.$value['title'].'</td>';
-            $html .= '<td>'.$value['status'].'</td>';
-            $html .= '<td>&nbsp;</td>';
-            $html .= '</tr>';
+            foreach ($jobs as $value)
+            {
+                $var = !$var;
+                $html .= '<tr '.$bc[$var].'>';
+                $html .= '<td>'.$value['id'].'</td>';
+                $html .= '<td>'.$value['ownerId'].'</td>';
+                $html .= '<td>'.$value['printerName'].'</td>';
+                $html .= '<td>'.$value['title'].'</td>';
+                $html .= '<td>'.$value['status'].'</td>';
+                $html .= '<td>&nbsp;</td>';
+                $html .= '</tr>';
+            }
+        }
+        else
+        {
+                $html .= '<tr '.$bc[$var].'>';
+                $html .= '<td colspan="6">'.$langs->trans("None").'</td>';
+                $html .= '</tr>';
         }
         $html .= '</table>';
+        
         $this->resprint = $html;
+        
         return $error;
     }
 

@@ -20,8 +20,8 @@
  */
 
 /**
- *	    \file       dev/initdata/generate-propale.php
- *		\brief      Script de generation de donnees aleatoires pour les propales
+ *	    \file       dev/initdata/generate-proposal.php
+ *		\brief      Script example to inject random proposals (for load tests)
  */
 
 // Test si mode batch

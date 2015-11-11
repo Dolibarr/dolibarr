@@ -107,7 +107,7 @@ class Export
 
 						if ($enabled)
 						{
-							// Chargement de la classe
+							// Loading Class
 							$file = $dir.$modulename.".class.php";
 							$classname = $modulename;
 							require_once $file;
