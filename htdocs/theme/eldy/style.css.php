@@ -31,7 +31,7 @@ if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC','1');
 if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK',1);
 if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL',1);
 if (! defined('NOLOGIN'))         define('NOLOGIN',1);          // File must be accessed by logon page so without login
-if (! defined('NOREQUIREMENU'))   define('NOREQUIREMENU',1);
+//if (! defined('NOREQUIREMENU'))   define('NOREQUIREMENU',1);  // We need top menu content
 if (! defined('NOREQUIREHTML'))   define('NOREQUIREHTML',1);
 if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX','1');
 
@@ -214,6 +214,11 @@ print 'dol_screenheight='.$_SESSION['dol_screenheight']."\n";
 print '*/'."\n";
 
 if (! empty($conf->dol_optimize_smallscreen)) $fontsize=11;
+
+
+//$nb=$menumanager->showmenu('topnb');
+//print $nb;
+
 ?>
 
 /* ============================================================================== */

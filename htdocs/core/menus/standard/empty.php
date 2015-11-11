@@ -62,7 +62,7 @@ class MenuManager
 	 *
      *	@param	string	$mode			'top', 'left', 'jmobile'
      *  @param	array	$moredata		An array with more data to output
-     *  @return	string
+     *  @return int                     0 or nb of top menu entries if $mode = 'topnb'
 	 */
 	function showmenu($mode, $moredata=null)
 	{
@@ -78,6 +78,11 @@ class MenuManager
 		$noout=0;
 		if ($mode == 'jmobile') $noout=1;
 
+		if ($mode == 'topnb')
+		{
+		    return 1;
+		}
+		
 		if ($mode == 'top' || $mode == 'jmobile')
 		{
 			if (empty($noout)) print_start_menu_array_empty();
