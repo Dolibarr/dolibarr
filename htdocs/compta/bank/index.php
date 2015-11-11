@@ -113,7 +113,7 @@ foreach ($accounts as $key=>$type)
 		{
 			$result=$acc->load_board($user,$acc->id);
             if ($result<0) {
-                setEventMessage($acc->error, 'errors');
+                setEventMessages($acc->error, $acc->errors, 'errors');
             } else {
                 print $result->nbtodo;
                 if ($result->nbtodolate) print ' ('.$result->nbtodolate.img_warning($langs->trans("Late")).')';
@@ -229,7 +229,7 @@ foreach ($accounts as $key=>$type)
 		{
 			$result=$acc->load_board($user,$acc->id);
             if ($result<0) {
-                setEventMessage($acc->error, 'errors');
+                setEventMessages($acc->error, $acc->errors, 'errors');
             } else {
                 print $result->nbtodo;
                 if ($result->nbtodolate) print ' ('.$result->nbtodolate.img_warning($langs->trans("Late")).')';

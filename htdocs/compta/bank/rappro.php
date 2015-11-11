@@ -71,7 +71,7 @@ if ($action == 'rappro' && $user->rights->banque->consolidate)
 					$result=$bankline->update_conciliation($user,$_POST["cat"]);
 					if ($result < 0)
 					{
-						setEventMessage($bankline->error, 'errors');
+						setEventMessages($bankline->error, $bankline->errors, 'errors');
 						$error++;
 						break;
 					}
@@ -83,7 +83,7 @@ if ($action == 'rappro' && $user->rights->banque->consolidate)
     {
     	$error++;
     	$langs->load("errors");
-	    setEventMessage($langs->trans("ErrorPleaseTypeBankTransactionReportName"), 'errors');
+	    setEventMessages($langs->trans("ErrorPleaseTypeBankTransactionReportName"), null, 'errors');
     }
 
     if (! $error)
