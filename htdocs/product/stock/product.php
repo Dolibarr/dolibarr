@@ -174,7 +174,7 @@ if ($action == "correct_stock" && ! $cancel)
 			}
 			else
 			{
-			    setEventMessage($object->error,'errors');
+			    setEventMessages($object->error, $object->errors, 'errors');
 			    $action='correction';
 			}
 		}
@@ -198,7 +198,7 @@ if ($action == "transfert_stock" && ! $cancel)
 	}
 	if (GETPOST("id_entrepot_source",'int') == GETPOST("id_entrepot_destination",'int'))
 	{
-		setEventMessage($langs->trans("ErrorSrcAndTargetWarehouseMustDiffers"), 'errors');
+		setEventMessages($langs->trans("ErrorSrcAndTargetWarehouseMustDiffers"), null, 'errors');
 		$error++;
 		$action='transfert';
 	}
