@@ -65,7 +65,7 @@ You can use a Web server and a supported database (MySQL recommended) to install
 
 *Note: migration process can safely be done multiple times.*
 
-## NEWS
+## WHAT'S NEW
 
 See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog) file.
 
@@ -155,7 +155,7 @@ Dolibarr is the work of many contributors over the years and uses some fine libr
 
 See [COPYRIGHT](https://github.com/Dolibarr/dolibarr/blob/develop/COPYRIGHT) file.
 
-## SOCIAL NETWORKS
+## NEWS AND SOCIAL NETWORKS
 
 Follow Dolibarr project on:
 
