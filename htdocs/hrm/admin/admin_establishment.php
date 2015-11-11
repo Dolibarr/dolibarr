@@ -33,9 +33,13 @@ if (! $user->admin)
 
 $error=0;
 
-$action = GETPOST('action', 'alpha');
-
-$object = new Establishment($db);
+// List of statut
+static $tmpstatus2label=array(
+		'0'=>'OpenEtablishment',
+		'1'=>'CloseEtablishment'
+);
+$status2label=array('');
+foreach ($tmpstatus2label as $key => $val) $status2label[$key]=$langs->trans($val);
 
 /*
  * Actions
@@ -44,10 +48,24 @@ $object = new Establishment($db);
 /*
  * View
  */
-$page_name = "Establishments";
-llxHeader('', $langs->trans($page_name));
+llxHeader('', $langs->trans("Establishments"));
+
+$sortorder     = GETPOST("sortorder");
+$sortfield     = GETPOST("sortfield");
+if (!$sortorder) $sortorder="DESC";
+if (!$sortfield) $sortfield="e.rowid";
+
+if ($page == -1) {
+	$page = 0 ;
+}
+
+$offset = $conf->liste_limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+$limit = $conf->liste_limit;
 
 $form = new Form($db);
+$establishmenttmp=new Establishment($db);
 
 dol_htmloutput_mesg($mesg);
 
@@ -62,43 +80,50 @@ dol_fiche_head($head, 'establishments', $langs->trans("HRM"), 0, "user");
 $sql = "SELECT e.rowid, e.name, e.address, e.zip, e.town, e.status";
 $sql.= " FROM ".MAIN_DB_PREFIX."establishment as e";
 $sql.= " WHERE e.entity = ".$conf->entity;
+$sql.= $db->order($sortfield,$sortorder);
+$sql.= $db->plimit($limit+1, $offset);
 
 $result = $db->query($sql);
 if ($result)
 {
-	$var=false;
-    $num = $db->num_rows($result);
-
-    $i = 0;
+	$num = $db->num_rows($result);
+	$i = 0;
 
 	// Load attribute_label
 	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("Ref").'</td>';
-	print '<td>'.$langs->trans("Name").'</td>';
-	print '<td>'.$langs->trans("Address").'</td>';
-	print '<td>'.$langs->trans("Zipcode").'</td>';
-	print '<td>'.$langs->trans("Town").'</td>';
-	print '<td align="right">'.$langs->trans("Status").'</td>';
-	print '</tr>';
+	print "<tr class=\"liste_titre\">";
+	print_liste_field_titre($langs->trans("Name"),$_SERVER["PHP_SELF"],"e.name","","","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Address"),$_SERVER["PHP_SELF"],"e.address","","","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Zipcode"),$_SERVER["PHP_SELF"],"e.zip","","","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Town"),$_SERVER["PHP_SELF"],"e.town","","","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"e.status","","",'align="right"',$sortfield,$sortorder);
+	print "</tr>\n";
 
-	if ($num)
+	$var=true;
+
+	if ($num > 0)
     {
 	    $establishmentstatic=new Establishment($db);
 
-		while ($i < $num && $i < $max)
-        {
+		while ($i < min($num,$limit))
+		{
             $obj = $db->fetch_object($result);
-            $fiscalyearstatic->id=$obj->rowid;
-            print '<tr '.$bc[$var].'>';
-			print '<td><a href="admin_establishment_card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowEstablishment"),"building").' '.$obj->rowid.'</a></td>';
-            print '<td align="left">'.$obj->name.'</td>';
+            
+			$establishmentstatic->id=$obj->rowid;
+			$establishmentstatic->name=$obj->name;
+
+			$var=!$var;
+			print '<tr '.$bc[$var].'>';
+			print '<td>'.$establishmentstatic->getNomUrl(1).'</td>';
             print '<td align="left">'.$obj->address.'</td>';
 			print '<td align="left">'.$obj->zip.'</td>';
 			print '<td align="left">'.$obj->town.'</td>';
-            print '<td align="right">'.$establishmentstatic->LibStatut($obj->status,5).'</td>';
-            print '</tr>';
-            $var=!$var;
+
+            print '<td align="right">';
+			print $establishmenttmp->getLibStatus(5);
+			print '</td>';
+            print "</tr>\n";
+
             $i++;
         }
 

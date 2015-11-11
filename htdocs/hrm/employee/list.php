@@ -169,8 +169,8 @@ if ($result)
 	    $employeestatic->email=$obj->email;
 	    $employeestatic->gender=$obj->gender;
 	    $employeestatic->societe_id=$obj->fk_soc;
-	    $employeestatic->firstname='';
-		$employeestatic->lastname=$obj->login;
+	    $userstatic->firstname=$obj->firstname;
+		$userstatic->lastname=$obj->lastname;
 
 		$li=$employeestatic->getNomUrl(1,'',0,0,24,1);
 
