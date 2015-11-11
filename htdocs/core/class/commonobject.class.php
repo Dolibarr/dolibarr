@@ -2876,7 +2876,7 @@ abstract class CommonObject
      *
      *    @param	int		$id_incoterm     Id of incoterm to set or '' to remove
 	 * 	  @param 	string  $location		 location of incoterm
-     *    @return	int     		>0 if KO, <0 if OK
+     *    @return	int     		<0 if KO, >0 if OK
      */
     function setIncoterms($id_incoterm, $location)
     {
