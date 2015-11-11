@@ -67,26 +67,41 @@ class Employee extends CommonObject
 	 * @param	int		$id		Id of record to load
 	 * @return	int				<0 if KO, >0 if OK
 	 */
-	function fetch($id)
+	function fetch($id='')
 	{
-		$sql = "SELECT rowid, firstname, lastname, status, fk_user";
-		$sql.= " FROM ".MAIN_DB_PREFIX."user";
+		global $conf, $user;
+
+		$sql = "SELECT e.rowid, e.firstname, e.lastname, e.gender, e.email, e.statut, e.entity, e.fk_user";
+		$sql.= " FROM ".MAIN_DB_PREFIX."user as e";
 		$sql.= " WHERE rowid = ".$id;
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
-		if ( $result )
+		if ($result)
 		{
 			$obj = $this->db->fetch_object($result);
+			if ($obj)
+			{
+				$this->id			= $obj->rowid;
+				$this->lastname		= $obj->lastname;
+				$this->firstname 	= $obj->firstname;
+				$this->gender       = $obj->gender;
+				$this->address		= $obj->address;
+				$this->zip			= $obj->zip;
+				$this->town			= $obj->town;
+				$this->statut		= $obj->statut;
+				$this->photo		= $obj->photo;
 
-			$this->id			= $obj->rowid;
-			$this->name			= $obj->name;
-			$this->address		= $obj->address;
-			$this->zip			= $obj->zip;
-			$this->town			= $obj->town;
-			$this->status	    = $obj->status;
+				$this->db->free($result);
+			}
+			else
+			{
+				$this->error="EMPLOYEENOTFOUND";
+				dol_syslog(get_class($this)."::fetch user not found", LOG_DEBUG);
 
-			return 1;
+				$this->db->free($result);
+				return 0;
+			}
 		}
 		else
 		{

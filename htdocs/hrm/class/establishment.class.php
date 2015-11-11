@@ -34,6 +34,7 @@ class Establishment extends CommonObject
 	public $fk_element = 'fk_establishment';
 	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
+	var $id;
 	var $rowid;
 
 	var $name;
@@ -42,6 +43,8 @@ class Establishment extends CommonObject
 	var $town;
 	var $status;		// 0=open, 1=closed
 	var $entity;
+
+	var $country_id;
 
 	var $statuts=array();
 	var $statuts_short=array();
@@ -69,11 +72,17 @@ class Establishment extends CommonObject
 	 */
 	function create($user)
 	{
-		global $conf;
+		global $conf, $langs;
 
 		$error = 0;
-
+		$ret = 0;
 		$now=dol_now();
+
+        // Clean parameters
+        $this->address=($this->address>0?$this->address:$this->address);
+        $this->zip=($this->zip>0?$this->zip:$this->zip);
+        $this->town=($this->town>0?$this->town:$this->town);
+        $this->country_id=($this->country_id>0?$this->country_id:$this->country_id);
 
 		$this->db->begin();
 
@@ -83,21 +92,21 @@ class Establishment extends CommonObject
 		$sql.= ", zip";
 		$sql.= ", town";
 		$sql.= ", status";
+		$sql.= ", fk_country";
 		$sql.= ", entity";
 		$sql.= ", datec";
 		$sql.= ", fk_user_author";
 		$sql.= ") VALUES (";
-		$sql.= " '".$this->name."'";
-		$sql.= ", '".$this->address."'";
-		$sql.= ", '".$this->zip."'";
-		$sql.= ", '".$this->town."'";
+		$sql.= " '".$this->db->escape($this->name)."'";
+		$sql.= ", '".$this->db->escape($this->address)."'";
+        $sql.= ", '".$this->db->escape($this->zip)."'";
+        $sql.= ", '".$this->db->escape($this->town)."'";
+		$sql.= ", ".$this->country_id;
 		$sql.= ", ".$this->status;
 		$sql.= ", ".$conf->entity;
 		$sql.= ", '".$this->db->idate($now)."'";
 		$sql.= ", ". $user->id;
 		$sql.= ")";
-
-		$this->db->begin();
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -148,6 +157,7 @@ class Establishment extends CommonObject
 		$sql .= ", address = '".$this->address."'";
 		$sql .= ", zip = '".$this->zip."'";
 		$sql .= ", town = '".$this->town."'";
+		
 		$sql .= ", status = '".$this->status."'";
 		$sql .= ", fk_user_mod = " . $user->id;
 		$sql .= " WHERE rowid = ".$this->id;
@@ -257,23 +267,23 @@ class Establishment extends CommonObject
 		}
 		if ($mode == 2)
 		{
-			if ($status==0) return img_picto($langs->trans($this->statuts_short[$status]),'status4').' '.$langs->trans($this->statuts_short[$status]);
-			if ($status==1) return img_picto($langs->trans($this->statuts_short[$status]),'status8').' '.$langs->trans($this->statuts_short[$status]);
+			if ($status==0) return img_picto($langs->trans($this->statuts_short[$status]),'statut4').' '.$langs->trans($this->statuts_short[$status]);
+			if ($status==1) return img_picto($langs->trans($this->statuts_short[$status]),'statut8').' '.$langs->trans($this->statuts_short[$status]);
 		}
 		if ($mode == 3)
 		{
-			if ($status==0 && ! empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]),'status4');
-			if ($status==1 && ! empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]),'status8');
+			if ($status==0 && ! empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]),'statut4');
+			if ($status==1 && ! empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]),'statut8');
 		}
 		if ($mode == 4)
 		{
-			if ($status==0 && ! empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]),'status4').' '.$langs->trans($this->statuts[$status]);
-			if ($status==1 && ! empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]),'status8').' '.$langs->trans($this->statuts[$status]);
+			if ($status==0 && ! empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]),'statut4').' '.$langs->trans($this->statuts[$status]);
+			if ($status==1 && ! empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]),'statut8').' '.$langs->trans($this->statuts[$status]);
 		}
 		if ($mode == 5)
 		{
-			if ($status==0 && ! empty($this->statuts_short[$status])) return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'status4');
-			if ($status==1 && ! empty($this->statuts_short[$status])) return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'status8');
+			if ($status==0 && ! empty($this->statuts_short[$status])) return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut4');
+			if ($status==1 && ! empty($this->statuts_short[$status])) return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut8');
 		}
 	}
 
@@ -298,20 +308,22 @@ class Establishment extends CommonObject
 			{
 				$obj = $this->db->fetch_object($result);
 				$this->id = $obj->rowid;
+
+				$this->date_creation     = $this->db->jdate($obj->datec);
 				if ($obj->fk_user_author)
 				{
 					$cuser = new User($this->db);
 					$cuser->fetch($obj->fk_user_author);
 					$this->user_creation = $cuser;
 				}
-				if ($obj->fk_user_modif)
+				if ($obj->fk_user_mod)
 				{
 					$muser = new User($this->db);
 					$muser->fetch($obj->fk_user_mod);
 					$this->user_modification = $muser;
+
+					$this->date_modification = $this->db->jdate($obj->tms);
 				}
-				$this->date_creation     = $this->db->jdate($obj->datec);
-				$this->date_modification = $this->db->jdate($obj->tms);
 			}
 			$this->db->free($result);
 		}
@@ -321,4 +333,28 @@ class Establishment extends CommonObject
 		}
 	}
 
+    /**
+     *  Return clicable name (with picto eventually)
+     *
+     *  @param      int     $withpicto      0=No picto, 1=Include picto into link, 2=Only picto
+     *  @return     string                  String with URL
+     */
+    function getNomUrl($withpicto=0)
+    {
+        global $langs;
+
+        $result='';
+
+        $link = '<a href="'.DOL_URL_ROOT.'/hrm/establishment/card.php?id='.$this->id.'">';
+        $linkend='</a>';
+
+        $picto='building';
+
+        $label=$langs->trans("Show").': '.$this->name;
+
+        if ($withpicto) $result.=($link.img_object($label,$picto).$linkend);
+        if ($withpicto && $withpicto != 2) $result.=' ';
+        if ($withpicto != 2) $result.=$link.$this->name.$linkend;
+        return $result;
+    }
 }
