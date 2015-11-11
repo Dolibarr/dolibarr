@@ -145,7 +145,10 @@ abstract class PHPExcel_Reader_Abstract implements PHPExcel_Reader_IReader
 	 */
 	public function setLoadSheetsOnly($value = NULL)
 	{
-		$this->_loadSheetsOnly = is_array($value) ?
+        if ($value === NULL)
+            return $this->setLoadAllSheets();
+
+        $this->_loadSheetsOnly = is_array($value) ?
 			$value : array($value);
 		return $this;
 	}
@@ -224,4 +227,29 @@ abstract class PHPExcel_Reader_Abstract implements PHPExcel_Reader_IReader
 		return $readable;
 	}
 
+	/**
+	 * Scan theXML for use of <!ENTITY to prevent XXE/XEE attacks
+	 *
+	 * @param 	string 		$xml
+	 * @throws PHPExcel_Reader_Exception
+	 */
+	public function securityScan($xml)
+	{
+        $pattern = '/\\0?' . implode('\\0?', str_split('<!DOCTYPE')) . '\\0?/';
+        if (preg_match($pattern, $xml)) { 
+            throw new PHPExcel_Reader_Exception('Detected use of ENTITY in XML, spreadsheet file load() aborted to prevent XXE/XEE attacks');
+        }
+        return $xml;
+    }
+
+	/**
+	 * Scan theXML for use of <!ENTITY to prevent XXE/XEE attacks
+	 *
+	 * @param 	string 		$filestream
+	 * @throws PHPExcel_Reader_Exception
+	 */
+	public function securityScanFile($filestream)
+	{
+        return $this->securityScan(file_get_contents($filestream));
+    }
 }
