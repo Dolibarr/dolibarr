@@ -73,21 +73,21 @@ if ($socid > 0)
 
     dol_fiche_head($head, 'margin', $langs->trans("ThirdParty"),0,'company');
 
-    print '<table class="border" width="100%">';
-
-    print '<tr><td width="20%">'.$langs->trans('ThirdPartyName').'</td>';
-    print '<td colspan="3">';
-    print $form->showrefnav($object,'socid','',($user->societe_id?0:1),'rowid','nom');
-    print '</td></tr>';
-
-    if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
-    {
-        print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
-    }
+    dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
+    
+    print '<div class="fichecenter">';
+    
+    print '<div class="underbanner clearboth"></div>';
+    print '<table class="border tableforfield" width="100%">';
+    
+    // Alias names (commercial, trademark or alias names)
+    print '<tr><td class="titlefield">'.$langs->trans('AliasNames').'</td><td>';
+    print $object->name_alias;
+    print "</td></tr>";
 
     if ($object->client)
     {
-        print '<tr><td>';
+        print '<tr><td class="titlefield">';
         print $langs->trans('CustomerCode').'</td><td colspan="3">';
         print $object->code_client;
         if ($object->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
@@ -96,7 +96,7 @@ if ($socid > 0)
 
     if ($object->fournisseur)
     {
-        print '<tr><td>';
+        print '<tr><td class="titlefield">';
         print $langs->trans('SupplierCode').'</td><td colspan="3">';
         print $object->code_fournisseur;
         if ($object->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
@@ -104,7 +104,7 @@ if ($socid > 0)
     }
 
     // Total Margin
-    print '<tr><td>'.$langs->trans("TotalMargin").'</td><td colspan="3">';
+    print '<tr><td class="titlefield">'.$langs->trans("TotalMargin").'</td><td colspan="3">';
     print '<span id="totalMargin"></span>'; // set by jquery (see below)
     print '</td></tr>';
 
@@ -123,7 +123,11 @@ if ($socid > 0)
     }
 
     print "</table>";
+    
+    dol_fiche_end();
+    
     print '</div>';
+    print '<div style="clear:both"></div>';
 
 
     $sql = "SELECT distinct s.nom, s.rowid as socid, s.code_client,";

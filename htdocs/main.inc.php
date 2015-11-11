@@ -931,7 +931,7 @@ if (! function_exists("llxHeader"))
 		}
 		if (empty($conf->dol_hide_leftmenu))
 		{
-			left_menu('', $help_url, '', '', 1, $title);
+			left_menu('', $help_url, '', '', 1, $title, 1);
 		}
 
 		// main area
@@ -1401,13 +1401,6 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 			</script>' . "\n";
 		}
 
-		// Wrapper to show tooltips
-		print '<script type="text/javascript">
-	jQuery(document).ready(function () {
-		jQuery(".classfortooltip").tipTip({maxWidth: "'.dol_size(600,'width').'px", edgeOffset: 10, delay: 50, fadeIn: 50, fadeOut: 50});
-	});
-</script>' . "\n";
-
 		// Raven.js for client-side Sentry logging support
 		if (array_key_exists('mod_syslog_sentry', $conf->loghandlers) && ! empty($conf->global->SYSLOG_SENTRY_DSN)) 
 		{
@@ -1539,9 +1532,10 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
  *  @param  array	$menu_array_after           Table of menu entries to show after entries of menu handler
  *  @param  int		$leftmenuwithoutmainarea    Must be set to 1. 0 by default for backward compatibility with old modules.
  *  @param  string	$title                      Title of web page
+ *  @param  string  $acceptdelayedhtml          1 if caller request to have html delayed content not returned but saved into global $delayedhtmlcontent (so caller can show it at end of page to avoid flash FOUC effect)
  *  @return	void
  */
-function left_menu($menu_array_before, $helppagename='', $notused='', $menu_array_after='', $leftmenuwithoutmainarea=0, $title='')
+function left_menu($menu_array_before, $helppagename='', $notused='', $menu_array_after='', $leftmenuwithoutmainarea=0, $title='', $acceptdelayedhtml=0)
 {
     global $user, $conf, $langs, $db, $form;
     global $hookmanager, $menumanager;
@@ -1563,7 +1557,7 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
 	    {
     	    if (! is_object($form)) $form=new Form($db);
     	    $selected=-1;
-            $searchform.=$form->selectArrayAjax('searchselectcombo', DOL_URL_ROOT.'/core/ajax/selectsearchbox.php', $selected, '', '', 0, 1, 'vmenusearchselectcombo', 1, $langs->trans("Search"));
+            $searchform.=$form->selectArrayAjax('searchselectcombo', DOL_URL_ROOT.'/core/ajax/selectsearchbox.php', $selected, '', '', 0, 1, 'vmenusearchselectcombo', 1, $langs->trans("Search"), 1);
 	    }
 	    else
 	    {
@@ -1770,7 +1764,6 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
     print "\n";
     print '<!-- Begin right area -->'."\n";
 
-
     if (empty($leftmenuwithoutmainarea)) main_area($title);
 }
 
@@ -1892,6 +1885,7 @@ if (! function_exists("llxFooter"))
     /**
      * Show HTML footer
      * Close div /DIV data-role=page + /DIV class=fiche + /DIV /DIV main layout + /BODY + /HTML.
+     * If global var $delayedhtmlcontent was filled, we output it just before closing the body. 
      *
      * @param	string	$comment    A text to add as HTML comment into HTML generated page
 	 * @param	string	$zone		'private' (for private pages) or 'public' (for public pages)
@@ -1900,7 +1894,8 @@ if (! function_exists("llxFooter"))
     function llxFooter($comment='',$zone='private')
     {
         global $conf, $langs;
-
+        global $delayedhtmlcontent;
+        
         // Global html output events ($mesgs, $errors, $warnings)
         dol_htmloutput_events();
 
@@ -1937,6 +1932,18 @@ if (! function_exists("llxFooter"))
         //var_dump($langs);		// Uncommment to see the property _tab_loaded to see which language file were loaded
 
         if (empty($conf->dol_hide_leftmenu) && empty($conf->dol_use_jmobile) && empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print '</div> <!-- End div id-container -->'."\n";	// End div container
+        
+        if (! empty($delayedhtmlcontent)) print $delayedhtmlcontent;
+        
+		// Wrapper to show tooltips
+		print "\n<!-- JS CODE TO ENABLE tipTip on all object with class classfortooltip -->\n";
+		print '<script type="text/javascript">
+        	jQuery(document).ready(function () {
+        		jQuery(".classfortooltip").tipTip({maxWidth: "'.dol_size(600,'width').'px", edgeOffset: 10, delay: 50, fadeIn: 50, fadeOut: 50});
+        	});
+        </script>' . "\n";
+
+        
         print "</body>\n";
         print "</html>\n";
     }

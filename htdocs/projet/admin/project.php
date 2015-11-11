@@ -104,7 +104,7 @@ else if ($action == 'specimen')
 
 	$project = new Project($db);
 	$project->initAsSpecimen();
-
+    
 	// Search template files
 	$file=''; $classname=''; $filefound=0;
 	$dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);

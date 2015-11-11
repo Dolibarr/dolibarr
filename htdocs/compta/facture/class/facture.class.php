@@ -63,6 +63,7 @@ class Facture extends CommonInvoice
 	var $author;
 	var $fk_user_author;
 	var $fk_user_valid;
+	var $date;              // Date invoice
 	var $date_creation;		// Creation date
 	var $date_validation;	// Validation date
 	var $datem;
@@ -385,6 +386,8 @@ class Facture extends CommonInvoice
 				{
 					$newinvoiceline=$this->lines[$i];
 					$newinvoiceline->fk_facture=$this->id;
+                    $newinvoiceline->origin = $this->element;
+                    $newinvoiceline->origin_id = $this->lines[$i]->id;
 					if ($result >= 0 && ($newinvoiceline->info_bits & 0x01) == 0)	// We keep only lines with first bit = 0
 					{
 						// Reset fk_parent_line for no child products and special product
@@ -441,8 +444,8 @@ class Facture extends CommonInvoice
 							$this->lines[$i]->product_type,
 							$this->lines[$i]->rang,
 							$this->lines[$i]->special_code,
-							'',
-							0,
+                            $this->element,
+                            $this->lines[$i]->id,
 							$fk_parent_line,
 							$this->lines[$i]->fk_fournprice,
 							$this->lines[$i]->pa_ht,
@@ -873,7 +876,7 @@ class Facture extends CommonInvoice
 	 */
 	function getNomUrl($withpicto=0,$option='',$max=0,$short=0,$moretitle='')
 	{
-		global $langs;
+		global $langs, $conf;
 
 		$result='';
 

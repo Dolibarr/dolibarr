@@ -86,16 +86,17 @@ if ($id > 0 || ! empty($ref)) {
 	$product = new Product($db);
 	$result = $product->fetch($id, $ref);
 
-	$parameters = array (
-			'id' => $id
-	);
+	$object = $product;
+	
+	$parameters = array ('id' => $id);
 	$reshook = $hookmanager->executeHooks('doActions', $parameters, $product, $action); // Note that $action and $object may have been modified by some hooks
 	if ($reshook < 0)
 		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 	llxHeader("", "", $langs->trans("CardProduct" . $product->type));
 
-	if ($result > 0) {
+	if ($result > 0) 
+	{
 		$head = product_prepare_head($product);
 		$titre = $langs->trans("CardProduct" . $product->type);
 		$picto = ($product->type == Product::TYPE_SERVICE ? 'service' : 'product');
@@ -105,34 +106,22 @@ if ($id > 0 || ! empty($ref)) {
 		if ($reshook < 0)
 			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-		print '<table class="border" width="100%">';
-
-		// Reference
-		print '<tr>';
-		print '<td width="30%">' . $langs->trans("Ref") . '</td><td colspan="3">';
-		print $form->showrefnav($product, 'ref', '', 1, 'ref');
-		print '</td>';
-		print '</tr>';
-
-		// Libelle
-		print '<tr><td>' . $langs->trans("Label") . '</td><td colspan="3">' . $product->label . '</td>';
-		print '</tr>';
-
-		// Status (to sell)
-		print '<tr><td>' . $langs->trans("Status") . ' (' . $langs->trans("Sell") . ')</td><td colspan="3">';
-		print $product->getLibStatut(2, 0);
-		print '</td></tr>';
-
-		// Status (to buy)
-		print '<tr><td>' . $langs->trans("Status") . ' (' . $langs->trans("Buy") . ')</td><td colspan="3">';
-		print $product->getLibStatut(2, 1);
-		print '</td></tr>';
+        dol_banner_tab($object, 'ref', '', ($user->societe_id?0:1), 'ref');
+        
+        print '<div class="fichecenter">';
+        
+        print '<div class="underbanner clearboth"></div>';
+        print '<table class="border tableforfield" width="100%">';
 
 		show_stats_for_company($product, $socid);
 
 		print "</table>";
 
-		print '</div>';
+        print '</div>';
+        print '<div style="clear:both"></div>';
+		
+		dol_fiche_end();
+		
 
 		if ($user->rights->fournisseur->commande->lire)
 		{

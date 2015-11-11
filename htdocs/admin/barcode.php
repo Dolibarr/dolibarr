@@ -162,7 +162,7 @@ foreach($dirbarcode as $reldir)
 					{
 						$filebis=$reg[1];
 
-						// Chargement de la classe de codage
+						// Loading encoding class
 						require_once $newdir.$file;
 						$classname = "mod".ucfirst($filebis);
 						$module = new $classname($db);

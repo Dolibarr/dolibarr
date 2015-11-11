@@ -58,9 +58,9 @@ if ($cancel == $langs->trans("Cancel"))
 
 if ($action == 'delete' && GETPOST('langtodelete','alpha'))
 {
-	$product = new Product($db);
-	$product->fetch($id);
-	$product->delMultiLangs(GETPOST('langtodelete','alpha'));
+	$object = new Product($db);
+	$object->fetch($id);
+	$object->delMultiLangs(GETPOST('langtodelete','alpha'));
 }
 
 // Add translation
@@ -68,33 +68,33 @@ if ($action == 'vadd' &&
 $cancel != $langs->trans("Cancel") &&
 ($user->rights->produit->creer || $user->rights->service->creer))
 {
-	$product = new Product($db);
-	$product->fetch($id);
+	$object = new Product($db);
+	$object->fetch($id);
 	$current_lang = $langs->getDefaultLang();
 
 	// update de l'objet
 	if ( $_POST["forcelangprod"] == $current_lang )
 	{
-		$product->label			= $_POST["libelle"];
-		$product->description	= dol_htmlcleanlastbr($_POST["desc"]);
-		$product->note			= dol_htmlcleanlastbr($_POST["note"]);
+		$object->label			= $_POST["libelle"];
+		$object->description	= dol_htmlcleanlastbr($_POST["desc"]);
+		$object->note			= dol_htmlcleanlastbr($_POST["note"]);
 	}
 	else
 	{
-		$product->multilangs[$_POST["forcelangprod"]]["label"]			= $_POST["libelle"];
-		$product->multilangs[$_POST["forcelangprod"]]["description"]	= dol_htmlcleanlastbr($_POST["desc"]);
-		$product->multilangs[$_POST["forcelangprod"]]["note"]			= dol_htmlcleanlastbr($_POST["note"]);
+		$object->multilangs[$_POST["forcelangprod"]]["label"]			= $_POST["libelle"];
+		$object->multilangs[$_POST["forcelangprod"]]["description"]	= dol_htmlcleanlastbr($_POST["desc"]);
+		$object->multilangs[$_POST["forcelangprod"]]["note"]			= dol_htmlcleanlastbr($_POST["note"]);
 	}
 
 	// sauvegarde en base
-	if ( $product->setMultiLangs() > 0 )
+	if ( $object->setMultiLangs() > 0 )
 	{
 		$action = '';
 	}
 	else
 	{
 		$action = 'add';
-		setEventMessage($product->error,'errors');
+		setEventMessage($object->error,'errors');
 	}
 }
 
@@ -103,34 +103,34 @@ if ($action == 'vedit' &&
 $cancel != $langs->trans("Cancel") &&
 ($user->rights->produit->creer || $user->rights->service->creer))
 {
-	$product = new Product($db);
-	$product->fetch($id);
+	$object = new Product($db);
+	$object->fetch($id);
 	$current_lang = $langs->getDefaultLang();
 
-	foreach ( $product->multilangs as $key => $value ) // enregistrement des nouvelles valeurs dans l'objet
+	foreach ( $object->multilangs as $key => $value ) // enregistrement des nouvelles valeurs dans l'objet
 	{
 		if ( $key == $current_lang )
 		{
-			$product->label			= $_POST["libelle-".$key];
-			$product->description	= dol_htmlcleanlastbr($_POST["desc-".$key]);
-			$product->note			= dol_htmlcleanlastbr($_POST["note-".$key]);
+			$object->label			= $_POST["libelle-".$key];
+			$object->description	= dol_htmlcleanlastbr($_POST["desc-".$key]);
+			$object->note			= dol_htmlcleanlastbr($_POST["note-".$key]);
 		}
 		else
 		{
-			$product->multilangs[$key]["label"]			= $_POST["libelle-".$key];
-			$product->multilangs[$key]["description"]	= dol_htmlcleanlastbr($_POST["desc-".$key]);
-			$product->multilangs[$key]["note"]			= dol_htmlcleanlastbr($_POST["note-".$key]);
+			$object->multilangs[$key]["label"]			= $_POST["libelle-".$key];
+			$object->multilangs[$key]["description"]	= dol_htmlcleanlastbr($_POST["desc-".$key]);
+			$object->multilangs[$key]["note"]			= dol_htmlcleanlastbr($_POST["note-".$key]);
 		}
 	}
 
-	if ( $product->setMultiLangs() > 0 )
+	if ( $object->setMultiLangs() > 0 )
 	{
 		$action = '';
 	}
 	else
 	{
 		$action = 'edit';
-		setEventMessage($product->error,'errors');
+		setEventMessage($object->error,'errors');
 	}
 }
 
@@ -139,24 +139,24 @@ if ($action == 'vdelete' &&
 $cancel != $langs->trans("Cancel") &&
 ($user->rights->produit->creer || $user->rights->service->creer))
 {
-	$product = new Product($db);
-	$product->fetch($id);
+	$object = new Product($db);
+	$object->fetch($id);
 	$langtodelete=GETPOST('langdel','alpha');
 
 
-	if ( $product->delMultiLangs($langtodelete) > 0 )
+	if ( $object->delMultiLangs($langtodelete) > 0 )
 	{
 		$action = '';
 	}
 	else
 	{
 		$action = 'edit';
-		setEventMessage($product->error,'errors');
+		setEventMessage($object->error,'errors');
 	}
 }
 
-$product = new Product($db);
-$result = $product->fetch($id,$ref);
+$object = new Product($db);
+$result = $object->fetch($id,$ref);
 
 
 /*
@@ -168,20 +168,10 @@ llxHeader("","",$langs->trans("Translation"));
 $form = new Form($db);
 $formadmin=new FormAdmin($db);
 
-$head=product_prepare_head($product);
-$titre=$langs->trans("CardProduct".$product->type);
-$picto=($product->type==Product::TYPE_SERVICE?'service':'product');
-dol_fiche_head($head, 'translation', $titre, 0, $picto);
+$head=product_prepare_head($object);
+$titre=$langs->trans("CardProduct".$object->type);
+$picto=($object->type==Product::TYPE_SERVICE?'service':'product');
 
-print '<table class="border" width="100%">';
-
-// Reference
-print '<tr>';
-print '<td width="15%">'.$langs->trans("Ref").'</td><td colspan="2">';
-print $form->showrefnav($product,'ref','',1,'ref');
-print '</td>';
-print '</tr>';
-print '</table>';
 
 if ($action == 'edit')
 {
@@ -191,33 +181,40 @@ if ($action == 'edit')
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="vedit">';
-	print '<input type="hidden" name="id" value="'.$product->id.'">';
+	print '<input type="hidden" name="id" value="'.$object->id.'">';
 
-	if (! empty($product->multilangs))
+    dol_fiche_head($head, 'translation', $titre, 0, $picto);
+    
+    dol_banner_tab($object, 'ref', '', ($user->societe_id?0:1), 'ref');
+	
+	if (! empty($object->multilangs))
 	{
-		foreach ($product->multilangs as $key => $value)
+		foreach ($object->multilangs as $key => $value)
 		{
-			print "<br><b><u>".$langs->trans('Language_'.$key)." :</u></b><br>";
+			$s=picto_from_langcode($key);
+			print "<br>".($s?$s.' ':'')." <b>".$langs->trans('Language_'.$key).":</b> ".'<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&langtodelete='.$key.'">'.img_delete('', '')."</a><br>";
+		    
 			print '<table class="border" width="100%">';
-			print '<tr><td valign="top" width="15%" class="fieldrequired">'.$langs->trans('Label').'</td><td><input name="libelle-'.$key.'" size="40" value="'.$product->multilangs[$key]["label"].'"></td></tr>';
+			print '<tr><td valign="top" width="15%" class="fieldrequired">'.$langs->trans('Label').'</td><td><input name="libelle-'.$key.'" size="40" value="'.$object->multilangs[$key]["label"].'"></td></tr>';
 			print '<tr><td valign="top" width="15%">'.$langs->trans('Description').'</td><td>';
 
-			$doleditor = new DolEditor("desc-$key", $product->multilangs[$key]["description"], '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 3, 80);
+			$doleditor = new DolEditor("desc-$key", $object->multilangs[$key]["description"], '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 3, 80);
 			$doleditor->Create();
 
 			print '</td></tr>';
 			print '<tr><td valign="top" width="15%">'.$langs->trans('Note').'</td><td>';
 
-			$doleditor = new DolEditor("note-$key", $product->multilangs[$key]["note"], '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 3, 80);
+			$doleditor = new DolEditor("note-$key", $object->multilangs[$key]["note"], '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 3, 80);
 			$doleditor->Create();
 
 			print '</td></tr>';
-			print '<tr height="30px"><td colspan="2" align="right"><a class="butAction" href="'.DOL_URL_ROOT.'/product/traduction.php?action=vdelete&id='.$product->id.'&langdel='.$key.'">'.$langs->trans("Delete").'</a></td></tr>';
 			print '</table>';
 		}
 	}
 
-	print '<br><div class="center">';
+    dol_fiche_end();
+    
+	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
@@ -228,25 +225,30 @@ if ($action == 'edit')
 }
 else
 {
-	$cnt_trans = 0;
-	if (! empty($product->multilangs))
+    dol_fiche_head($head, 'translation', $titre, 0, $picto);
+    
+    dol_banner_tab($object, 'ref', '', ($user->societe_id?0:1), 'ref');
+    
+    $cnt_trans = 0;
+	if (! empty($object->multilangs))
 	{
-		foreach ($product->multilangs as $key => $value)
+		foreach ($object->multilangs as $key => $value)
 		{
 			$cnt_trans++;
 			$s=picto_from_langcode($key);
-			print "<br>".($s?$s.' ':'')." <b>".$langs->trans('Language_'.$key).":</b> ".'<a href="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'&action=delete&langtodelete='.$key.'">'.img_delete('', '')."</a><br>";
+			print "<br>".($s?$s.' ':'')." <b>".$langs->trans('Language_'.$key).":</b> ".'<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&langtodelete='.$key.'">'.img_delete('', '')."</a><br>";
 			print '<table class="border" width="100%">';
-			print '<tr><td width="15%">'.$langs->trans('Label').'</td><td>'.$product->multilangs[$key]["label"].'</td></tr>';
-			print '<tr><td width="15%">'.$langs->trans('Description').'</td><td>'.$product->multilangs[$key]["description"].'</td></tr>';
-			print '<tr><td width="15%">'.$langs->trans('Note').'</td><td>'.$product->multilangs[$key]["note"].'</td></tr>';
+			print '<tr><td width="15%">'.$langs->trans('Label').'</td><td>'.$object->multilangs[$key]["label"].'</td></tr>';
+			print '<tr><td width="15%">'.$langs->trans('Description').'</td><td>'.$object->multilangs[$key]["description"].'</td></tr>';
+			print '<tr><td width="15%">'.$langs->trans('Note').'</td><td>'.$object->multilangs[$key]["note"].'</td></tr>';
 			print '</table>';
 		}
 	}
 	if (! $cnt_trans) print '<br>'. $langs->trans('NoTranslation');
+
+	dol_fiche_end();
 }
 
-print "</div>\n";
 
 
 /* ************************************************************************** */
@@ -260,8 +262,8 @@ print "\n<div class=\"tabsAction\">\n";
 if ($action == '')
 if ($user->rights->produit->creer || $user->rights->service->creer)
 {
-	print '<a class="butAction" href="'.DOL_URL_ROOT.'/product/traduction.php?action=add&id='.$product->id.'">'.$langs->trans("Add").'</a>';
-	print '<a class="butAction" href="'.DOL_URL_ROOT.'/product/traduction.php?action=edit&id='.$product->id.'">'.$langs->trans("Update").'</a>';
+	print '<a class="butAction" href="'.DOL_URL_ROOT.'/product/traduction.php?action=add&id='.$object->id.'">'.$langs->trans("Add").'</a>';
+	print '<a class="butAction" href="'.DOL_URL_ROOT.'/product/traduction.php?action=edit&id='.$object->id.'">'.$langs->trans("Update").'</a>';
 }
 
 print "\n</div>\n";
@@ -284,7 +286,7 @@ if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service
 
 	print '<table class="border" width="100%">';
 	print '<tr><td valign="top" width="15%" class="fieldrequired">'.$langs->trans('Language').'</td><td>';
-    print $formadmin->select_language('','forcelangprod',0,$product->multilangs,1);
+    print $formadmin->select_language('','forcelangprod',0,$object->multilangs,1);
 	print '</td></tr>';
 	print '<tr><td valign="top" width="15%" class="fieldrequired">'.$langs->trans('Label').'</td><td><input name="libelle" size="40"></td></tr>';
 	print '<tr><td valign="top" width="15%">'.$langs->trans('Description').'</td><td>';

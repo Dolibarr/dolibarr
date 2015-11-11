@@ -20,7 +20,7 @@ create table llx_budget
 (
   rowid			integer AUTO_INCREMENT PRIMARY KEY,
   entity		integer NOT NULL DEFAULT 1,
-  label         varchar(255) NOT NULL,
+  label         varchar(255) NOT NULL,					-- For example 'Global budget for year' or 'Budget for each project'
   status        integer,
   note			text,	
   date_start	date,

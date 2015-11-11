@@ -2,7 +2,7 @@
 /* Copyright (C) 2005      Patrick Rouillon     <patrick@rouillon.net>
  * Copyright (C) 2005-2009 Destailleur Laurent  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin		<regis.houssin@capnetworks.com>
- * Copyright (C) 2011-2012 Philippe Grand       <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2015 Philippe Grand       <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,12 +54,12 @@ if ($id > 0 || ! empty($ref))
 	if ($ret == 0)
 	{
 		$langs->load("errors");
-		setEventMessage($langs->trans('ErrorRecordNotFound'), 'errors');
+		setEventMessages($langs->trans('ErrorRecordNotFound'), null, 'errors');
 		$error++;
 	}
 	else if ($ret < 0)
 	{
-		setEventMessage($object->error, 'errors');
+		setEventMessages($object->error, $object->errors, 'errors');
 		$error++;
 	}
 }
@@ -75,7 +75,7 @@ else
 
 
 /*
- * Ajout d'un nouveau contact
+ * Add a new contact
  */
 
 if ($action == 'addcontact' && $user->rights->propale->creer)
@@ -96,16 +96,16 @@ if ($action == 'addcontact' && $user->rights->propale->creer)
 		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 		{
 			$langs->load("errors");
-			setEventMessage($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), 'errors');
+			setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
 		}
 		else
 		{
-			setEventMessage($object->error, 'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 }
 
-// Bascule du statut d'un contact
+// Toggle the status of a contact
 else if ($action == 'swapstatut' && $user->rights->propale->creer)
 {
 	if ($object->id > 0)
@@ -114,7 +114,7 @@ else if ($action == 'swapstatut' && $user->rights->propale->creer)
 	}
 }
 
-// Efface un contact
+// Deletes a contact
 else if ($action == 'deletecontact' && $user->rights->propale->creer)
 {
 	$result = $object->delete_contact($lineid);

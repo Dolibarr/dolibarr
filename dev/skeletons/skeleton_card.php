@@ -281,12 +281,17 @@ if (($id || $ref) && $action == 'edit')
 
 
 // Part to show record
-if ($id && (empty($action) || $action == 'view'))
+if ($id && (empty($action) || $action == 'view' || $action == 'delete'))
 {
 	print load_fiche_titre($langs->trans("MyModule"));
     
 	dol_fiche_head();
 
+	if ($action == 'delete') {
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('DeleteMyOjbect'), $langs->trans('ConfirmDeleteMyObject'), 'confirm_delete', '', 0, 1);
+		print $formconfirm;
+	}
+	
 	print '<table class="border centpercent">'."\n";
 	// print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input class="flat" type="text" size="36" name="label" value="'.$label.'"></td></tr>';
 	// LIST_OF_TD_LABEL_FIELDS_VIEW
@@ -310,14 +315,7 @@ if ($id && (empty($action) || $action == 'view'))
 
 		if ($user->rights->mymodule->delete)
 		{
-			if ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile))	// We can't use preloaded confirm form with jmobile
-			{
-				print '<div class="inline-block divButAction"><span id="action-delete" class="butActionDelete">'.$langs->trans('Delete').'</span></div>'."\n";
-			}
-			else
-			{
-				print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a></div>'."\n";
-			}
+			print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a></div>'."\n";
 		}
 	}
 	print '</div>'."\n";

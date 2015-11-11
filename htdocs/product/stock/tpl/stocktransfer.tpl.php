@@ -21,7 +21,11 @@
 
 <!-- BEGIN PHP TEMPLATE STOCKCORRECTION.TPL.PHP -->
 <?php
-		$pdluoid=GETPOST('pdluoid','int');
+        if (! is_object($product)) $product=$object;
+
+        $langs->load("productbatch");
+        
+        $pdluoid=GETPOST('pdluoid','int');
 
 	    $pdluo = new Productbatch($db);
 

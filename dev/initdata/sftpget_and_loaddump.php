@@ -15,6 +15,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  * or see http://www.gnu.org/
+ * 
+ * Get a distant dump file and load it into a mysql database
  */
 
 $sapi_type = php_sapi_name();
@@ -32,9 +34,10 @@ $error=0;
 
 $sourceserver=isset($argv[1])?$argv[1]:'';		// user@server:/src/file
 $password=isset($argv[2])?$argv[2]:'';
-$database=isset($argv[3])?$argv[3]:'';
-$loginbase=isset($argv[4])?$argv[4]:'';
-$passwordbase=isset($argv[5])?$argv[5]:'';
+$dataserver=isset($argv[3])?$argv[3]:'';
+$database=isset($argv[4])?$argv[4]:'';
+$loginbase=isset($argv[5])?$argv[5]:'';
+$passwordbase=isset($argv[6])?$argv[6]:'';
 
 // Include Dolibarr environment
 $res=0;
@@ -64,7 +67,7 @@ if (preg_match('/^(.*)@(.*):(.*)$/',$sourceserver,$reg))
 }
 if (empty($sourceserver) || empty($server) || empty($login) || empty($sourcefile) || empty($password) || empty($database) || empty($loginbase) || empty($passwordbase))
 {
-	print "Usage: $script_file login@server:/src/file.(sql|gz|bz2) passssh database loginbase passbase\n";
+	print "Usage: $script_file login@server:/src/file.(sql|gz|bz2) passssh databaseserver databasename loginbase passbase\n";
 	print "Return code: 0 if success, <>0 if error\n";
 	print "Warning, this script may take a long time.\n";
 	exit(-1);
@@ -108,14 +111,14 @@ if ($connection)
 		print 'Get file '.$sourcefile.' into '.$targetdir.$targetfile."\n";
 		ssh2_scp_recv($connection, $sourcefile, $targetdir.$targetfile);
 
-		$fullcommand="cat ".$targetdir.$targetfile." | mysql -u".$loginbase." -p".$passwordbase." -D ".$database;
+		$fullcommand="cat ".$targetdir.$targetfile." | mysql -h".$databaseserver." -u".$loginbase." -p".$passwordbase." -D ".$database;
 		if (preg_match('/\.bz2$/',$targetfile))
 		{
-			$fullcommand="bzip2 -c -d ".$targetdir.$targetfile." | mysql -u".$loginbase." -p".$passwordbase." -D ".$database;
+			$fullcommand="bzip2 -c -d ".$targetdir.$targetfile." | mysql -h".$databaseserver." -u".$loginbase." -p".$passwordbase." -D ".$database;
 		}
 		if (preg_match('/\.gz$/',$targetfile))
 		{
-			$fullcommand="gzip -d ".$targetdir.$targetfile." | mysql -u".$loginbase." -p".$passwordbase." -D ".$database;
+			$fullcommand="gzip -d ".$targetdir.$targetfile." | mysql -h".$databaseserver." -u".$loginbase." -p".$passwordbase." -D ".$database;
 		}
 		print "Load dump with ".$fullcommand."\n";
 		$output=array();

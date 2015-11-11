@@ -18,6 +18,11 @@
 -- -- VPGSQL8.2 DELETE FROM llx_usergroup_user      WHERE fk_user      NOT IN (SELECT rowid from llx_user);
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
+
+-- Was done into a 3.8 fix, so we must do it also in 3.9 
+ALTER TABLE llx_don ADD COLUMN fk_country integer NOT NULL DEFAULT 0 after country;
+
+
 -- Fix bad data
 update llx_opensurvey_sondage set format = 'D' where format = 'D+';
 update llx_opensurvey_sondage set format = 'A' where format = 'A+';
@@ -51,16 +56,17 @@ create table llx_overwrite_trans
   transvalue      text
 )ENGINE=innodb;
 
-ALTER TABLE llx_payment_salary ADD COLUMN datec datetime after tms;
+ALTER TABLE llx_payment_salary ADD COLUMN datec datetime AFTER tms;
 ALTER TABLE llx_payment_salary CHANGE COLUMN fk_user_creat fk_user_author integer;
 
-ALTER TABLE llx_adherent ADD COLUMN pass_crypted varchar(128) after pass;
+ALTER TABLE llx_adherent ADD COLUMN pass_crypted varchar(128) AFTER pass;
 
-ALTER TABLE llx_paiement ADD COLUMN ref varchar(30) NOT NULL AFTER rowid;
+ALTER TABLE llx_paiement ADD COLUMN ref varchar(30) NOT NULL DEFAULT '' AFTER rowid;
 
 ALTER TABLE llx_socpeople ADD COLUMN photo varchar(255) AFTER skype;
 
-ALTER TABLE llx_user_param MODIFY COLUMN value text NOT NULL;
+ALTER TABLE llx_user_param MODIFY COLUMN param varchar(255) NOT NULL DEFAULT '';
+ALTER TABLE llx_user_param MODIFY COLUMN value text NOT NULL DEFAULT '';
 
 ALTER TABLE llx_expedition ADD COLUMN import_key varchar(14);
 ALTER TABLE llx_expedition ADD COLUMN extraparams varchar(255);
@@ -71,7 +77,7 @@ ALTER TABLE llx_prelevement_lignes MODIFY COLUMN code_banque varchar(128);
 ALTER TABLE llx_societe_rib MODIFY COLUMN code_banque varchar(128);
 
 ALTER TABLE llx_contrat ADD COLUMN ref_customer varchar(30);
-ALTER TABLE llx_commande ADD COLUMN fk_warehouse integer DEFAULT NULL after fk_shipping_method;
+ALTER TABLE llx_commande ADD COLUMN fk_warehouse integer DEFAULT NULL AFTER fk_shipping_method;
 
 ALTER TABLE llx_ecm_directories MODIFY COLUMN fullpath varchar(750);
 ALTER TABLE llx_ecm_directories DROP INDEX idx_ecm_directories;
@@ -102,20 +108,21 @@ ALTER TABLE llx_ecm_files ADD UNIQUE INDEX uk_ecm_files (label, entity);
 --ALTER TABLE llx_ecm_files ADD UNIQUE INDEX uk_ecm_files_fullpath(fullpath);
 
 
-ALTER TABLE llx_product ADD COLUMN onportal tinyint DEFAULT 0 after tobuy;
+ALTER TABLE llx_product ADD COLUMN onportal smallint DEFAULT 0 AFTER tobuy;
 
 
-ALTER TABLE llx_user ADD COLUMN employee tinyint DEFAULT 1;
+ALTER TABLE llx_user ADD COLUMN employee smallint DEFAULT 1 AFTER ref_int;
+ALTER TABLE llx_user ADD COLUMN fk_establishment integer DEFAULT 0 AFTER employee;
 
 
 CREATE TABLE IF NOT EXISTS llx_c_hrm_function
 (
   rowid     integer     PRIMARY KEY,
-  pos   	tinyint DEFAULT 0 NOT NULL,
+  pos   	smallint DEFAULT 0 NOT NULL,
   code    	varchar(16) NOT NULL,
   label 	varchar(50),
-  c_level   tinyint DEFAULT 0 NOT NULL,
-  active  	tinyint DEFAULT 1  NOT NULL
+  c_level   smallint DEFAULT 0 NOT NULL,
+  active  	smallint DEFAULT 1  NOT NULL
 )ENGINE=innodb;
 
 INSERT INTO llx_c_hrm_function (rowid, pos, code, label, c_level, active) VALUES(1,  5, 'EXECBOARD', 'Executive board', 0, 1);
@@ -131,10 +138,10 @@ INSERT INTO llx_c_hrm_function (rowid, pos, code, label, c_level, active) VALUES
 CREATE TABLE IF NOT EXISTS llx_c_hrm_department
 (
   rowid      	integer     PRIMARY KEY,
-  pos   		tinyint DEFAULT 0 NOT NULL,
+  pos   		smallint DEFAULT 0 NOT NULL,
   code    		varchar(16) NOT NULL,
   label 		varchar(50),
-  active  		tinyint DEFAULT 1  NOT NULL
+  active  		smallint DEFAULT 1  NOT NULL
 )ENGINE=innodb;
 
 INSERT INTO llx_c_hrm_department (rowid, pos, code, label, active) VALUES(1, 5,'MANAGEMENT', 'Management', 1);
@@ -173,7 +180,7 @@ CREATE TABLE IF NOT EXISTS llx_establishment (
   fk_user_mod		integer NOT NULL,
   datec				datetime NOT NULL,
   tms				timestamp NOT NULL,
-  status            tinyint DEFAULT 1
+  status            smallint DEFAULT 1
 ) ENGINE=InnoDB;
 
 
@@ -221,7 +228,7 @@ create table llx_budget_lines
 (
   rowid			integer AUTO_INCREMENT PRIMARY KEY,
   fk_budget     integer NOT NULL,
-  fk_project	integer NOT NULL,
+  fk_project_ids	varchar(255) NOT NULL,		-- List of project ids related to this budget. If budget is dedicated to projects not yet started, we recommand to create a project "Projects to come".
   amount		double(24,8) NOT NULL,
   datec         datetime,
   tms           timestamp,
@@ -230,13 +237,12 @@ create table llx_budget_lines
   import_key    integer  
 )ENGINE=innodb;
 
-ALTER TABLE llx_budget_lines ADD UNIQUE INDEX uk_budget_lines (fk_budget, fk_project);
+ALTER TABLE llx_budget_lines ADD UNIQUE INDEX uk_budget_lines (fk_budget, fk_project_ids);
 
 -- Supprime orphelins pour permettre montee de la cle
 -- MYSQL V4 DELETE llx_budget_lines FROM llx_budget_lines LEFT JOIN llx_budget ON llx_budget.rowid = llx_budget_lines.fk_budget WHERE llx_budget_lines.rowid IS NULL;
 -- POSTGRESQL V8 DELETE FROM llx_budget_lines USING llx_budget WHERE llx_budget_lines.fk_budget NOT IN (SELECT llx_budget.rowid FROM llx_budget);
 
-ALTER TABLE llx_budget_lines ADD INDEX idx_budget_lines (fk_project);
 ALTER TABLE llx_budget_lines ADD CONSTRAINT fk_budget_lines_budget FOREIGN KEY (fk_budget) REFERENCES llx_budget (rowid);
 
 
@@ -255,7 +261,7 @@ CREATE TABLE llx_product_pricerules
     var_percent FLOAT NOT NULL, -- Price variation over based price
     var_min_percent FLOAT NOT NULL -- Min price discount over general price
 );
-ALTER TABLE llx_product ADD COLUMN price_autogen TINYINT(1) DEFAULT 0;
+ALTER TABLE llx_product ADD COLUMN price_autogen smallint DEFAULT 0;
 ALTER TABLE llx_product_pricerules ADD CONSTRAINT unique_level UNIQUE (level);
 
 
@@ -280,5 +286,25 @@ CREATE TABLE llx_opensurvey_user_formanswers (
     fk_question INTEGER NOT NULL,
     reponses TEXT
 ) ENGINE=InnoDB;
+
+
+
+
+create table llx_categorie_project
+(
+  fk_categorie  integer NOT NULL,
+  fk_project    integer NOT NULL,
+  import_key    varchar(14)
+)ENGINE=innodb;
+
+ALTER TABLE llx_categorie_project ADD PRIMARY KEY pk_categorie_project (fk_categorie, fk_project);
+ALTER TABLE llx_categorie_project ADD INDEX idx_categorie_project_fk_categorie (fk_categorie);
+ALTER TABLE llx_categorie_project ADD INDEX idx_categorie_project_fk_project (fk_project);
+
+ALTER TABLE llx_categorie_project ADD CONSTRAINT fk_categorie_project_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
+ALTER TABLE llx_categorie_project ADD CONSTRAINT fk_categorie_project_fk_project   FOREIGN KEY (fk_project) REFERENCES llx_projet (rowid);
+
+
+
 
 

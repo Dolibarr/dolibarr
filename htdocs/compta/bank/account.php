@@ -152,13 +152,13 @@ if ($action == 'add' && $id && ! isset($_POST["cancel"]) && $user->rights->banqu
 		$insertid = $object->addline($dateop, $operation, $label, $amount, $num_chq, $cat1, $user);
 		if ($insertid > 0)
 		{
-			setEventMessage($langs->trans("RecordSaved"));
+			setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 			header("Location: ".$_SERVER['PHP_SELF']."?id=".$id."&action=addline");
 			exit;
 		}
 		else
 		{
-			setEventMessage($object->error, 'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 	else
@@ -378,19 +378,6 @@ if ($id > 0 || ! empty($ref))
 	{
 		print '<div class="tabsAction">';
 
-		if ($object->type != 2 && $object->rappro) 
-		{ 
-			// If not cash account and can be reconciliate
-			if ($user->rights->banque->consolidate) 
-			{
-				print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/bank/rappro.php?account='.$object->id.($vline?'&amp;vline='.$vline:'').'">'.$langs->trans("Conciliate").'</a>';
-			}
-			else
-			{
-				print '<a class="butActionRefused" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("Conciliate").'</a>';
-			}
-		}
-
 		if ($action != 'addline') 
 		{
 			if (empty($conf->global->BANK_DISABLE_DIRECT_INPUT)) 
@@ -409,6 +396,20 @@ if ($id > 0 || ! empty($ref))
                 print '<a class="butActionRefused" title="'.$langs->trans("FeatureDisabled").'" href="#">'.$langs->trans("AddBankRecord").'</a>';
             }
         }
+
+		if ($object->type != 2 && $object->rappro) 
+		{ 
+			// If not cash account and can be reconciliate
+			if ($user->rights->banque->consolidate) 
+			{
+				print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/bank/rappro.php?account='.$object->id.($vline?'&amp;vline='.$vline:'').'">'.$langs->trans("Conciliate").'</a>';
+			}
+			else
+			{
+				print '<a class="butActionRefused" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("Conciliate").'</a>';
+			}
+		}
+
         print '</div>';
     }
 	
