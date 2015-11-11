@@ -84,9 +84,7 @@ else if ($action == 'add')
 			$object->address 		= GETPOST('address', 'alpha');
 			$object->zip 			= GETPOST('zipcode', 'alpha');
 			$object->town			= GETPOST('town', 'alpha');
-			$object->country_id		= GETPOST('country_id','int')?GETPOST('country_id','int'):$mysoc->country_id;
-			$object->country_id		= $object->country_id?$object->country_id:$mysoc->country_id;
-			$object->country_id 	= $_POST["country_id"];
+			$object->country_id     = $_POST["country_id"];
 			$object->status     	= GETPOST('status','int');
 			$object->fk_user_author	= $user->id;
 			$object->datec			= dol_now();
@@ -135,7 +133,7 @@ else if ($action == 'update')
 			$object->address 		= GETPOST('address', 'alpha');
 			$object->zip 			= GETPOST('zipcode', 'alpha');
 			$object->town			= GETPOST('town', 'alpha');
-			$object->country_id     = GETPOST('country_id', 'int');
+			$object->country_id     = $_POST["country_id"];
 			$object->fk_user_mod	= $user->id;
 
 			$result = $object->update();
@@ -364,7 +362,14 @@ else if ($id)
 			// Country
 			print '<tr>';
 			print '<td>'.$langs->trans("Country").'</td>';
-			print '<td colspan="2">'.getCountry($object->fk_country,1).'</td>';
+			print '<td colspan="2">';
+			if ($object->country_id > 0)
+			{
+				$img=picto_from_langcode($object->country_code);
+				print $img?$img.' ':'';
+				print getCountry($object->getCountryCode(),0,$db);
+			}
+			print '</td>';
 			print '</tr>';
 
             // Status

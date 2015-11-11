@@ -182,9 +182,11 @@ class Establishment extends CommonObject
 	*/
 	function fetch($id)
 	{
-		$sql = "SELECT rowid, name, address, zip, town, status";
-		$sql.= " FROM ".MAIN_DB_PREFIX."establishment";
-		$sql.= " WHERE rowid = ".$id;
+		$sql = "SELECT e.rowid, e.name, e.address, e.zip, e.town, e.status, e.fk_country as country_id,";
+		$sql.= ' c.code as country_code, c.label as country';
+		$sql.= " FROM ".MAIN_DB_PREFIX."establishment as e";
+        $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON e.fk_country = c.rowid';
+		$sql.= " WHERE e.rowid = ".$id;
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -198,6 +200,10 @@ class Establishment extends CommonObject
 			$this->zip			= $obj->zip;
 			$this->town			= $obj->town;
 			$this->status	    = $obj->status;
+
+            $this->country_id   = $obj->country_id;
+            $this->country_code = $obj->country_code;
+            $this->country      = $obj->country;			
 
 			return 1;
 		}
@@ -356,5 +362,23 @@ class Establishment extends CommonObject
         if ($withpicto && $withpicto != 2) $result.=' ';
         if ($withpicto != 2) $result.=$link.$this->name.$linkend;
         return $result;
+    }
+
+	/**
+     * 	Return account country code
+     *
+     *	@return		string		country code
+     */
+    function getCountryCode()
+    {
+        global $mysoc;
+
+        // We return country code of bank account
+        if (! empty($this->country_code)) return $this->country_code;
+
+        // We return country code of managed company
+        if (! empty($mysoc->country_code)) return $mysoc->country_code;
+
+        return '';
     }
 }
