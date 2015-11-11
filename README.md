@@ -67,7 +67,7 @@ You can use a Web server and a supported database (MySQL recommended) to install
 
 ## NEWS
 
-See the [ChangeLog](ChangeLog) file.
+See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog) file.
 
 ## FEATURES
 
