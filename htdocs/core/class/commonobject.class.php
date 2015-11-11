@@ -2866,6 +2866,7 @@ abstract class CommonObject
 		}
 		else
 		{
+            $this->errors[] = $this->db->lasterror();
 			return false;
 		}
 	}
@@ -2903,6 +2904,7 @@ abstract class CommonObject
             }
             else
 			{
+                $this->errors[] = $this->db->lasterror();
                 return -1;
             }
         }

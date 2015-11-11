@@ -156,8 +156,7 @@ if (empty($reshook))
 			$result = $object->set_reopen($user);
 			if ($result > 0)
 			{
-				header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
-				exit;
+                setEventMessages($langs->trans('OrderReopened', $object->ref), null);
 			}
 			else
 			{
@@ -529,16 +528,25 @@ if (empty($reshook))
 	elseif ($action == 'set_incoterms' && !empty($conf->incoterm->enabled))
     {
     	$result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
+        if ($result < 0) {
+            setEventMessages($object->error, $object->errors, 'errors');
+        }
     }
 
 	// bank account
 	else if ($action == 'setbankaccount' && $user->rights->commande->creer) {
 	    $result=$object->setBankAccount(GETPOST('fk_account', 'int'));
+        if ($result < 0) {
+            setEventMessages($object->error, $object->errors, 'errors');
+        }
 	}
 
 	// shipping method
 	else if ($action == 'setshippingmethod' && $user->rights->commande->creer) {
 	    $result = $object->setShippingMethod(GETPOST('shipping_method_id', 'int'));
+        if ($result < 0) {
+            setEventMessages($object->error, $object->errors, 'errors');
+        }
 	}
 
 	else if ($action == 'setremisepercent' && $user->rights->commande->creer) {
