@@ -18,3 +18,5 @@ doxygen_warnings.log
 Thumbs.db
 # Vagrant generated files
 .vagrant
+# Composer installed repositories
+/htdocs/includes/**/.git
