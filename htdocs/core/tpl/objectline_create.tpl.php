@@ -523,7 +523,6 @@ jQuery(document).ready(function() {
 	/* When changing predefined product, we reload list of supplier prices */
 	$("#idprod, #idprodfournprice").change(function()
 	{
-		console.log("change #idprod, #idprodfournprice, conf->global->MARGIN_TYPE=<?php echo $conf->global->MARGIN_TYPE ?>");
 		setforpredef();
 		jQuery('#trlinefordates').show();
 
