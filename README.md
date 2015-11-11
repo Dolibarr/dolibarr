@@ -16,9 +16,9 @@ You can use it as a standalone application or as a web application to be able to
 
 Dolibarr is released under the terms of the GNU General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version (GPL-3+).
 
-See the [COPYING](COPYING) file for a full copy of the license.
+See the [COPYING](https://github.com/Dolibarr/dolibarr/blob/develop/COPYING) file for a full copy of the license.
 
-Other licenses apply for some included dependencies. See [COPYRIGHT](COPYRIGHT) for a full list.
+Other licenses apply for some included dependencies. See [COPYRIGHT](https://github.com/Dolibarr/dolibarr/blob/develop/COPYRIGHT) for a full list.
 
 ## INSTALLING
 
@@ -153,7 +153,7 @@ Administrator, user, developer and translator's documentations are available alo
 
 Dolibarr is the work of many contributors over the years and uses some fine libraries.
 
-See [COPYRIGHT](COPYRIGHT) file.
+See [COPYRIGHT](https://github.com/Dolibarr/dolibarr/blob/develop/COPYRIGHT) file.
 
 ## SOCIAL NETWORKS
 
