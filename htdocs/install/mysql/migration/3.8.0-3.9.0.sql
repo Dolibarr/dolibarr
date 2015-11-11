@@ -111,7 +111,8 @@ ALTER TABLE llx_ecm_files ADD UNIQUE INDEX uk_ecm_files (label, entity);
 ALTER TABLE llx_product ADD COLUMN onportal smallint DEFAULT 0 AFTER tobuy;
 
 
-ALTER TABLE llx_user ADD COLUMN employee smallint DEFAULT 1;
+ALTER TABLE llx_user ADD COLUMN employee smallint DEFAULT 1 AFTER ref_int;
+ALTER TABLE llx_user ADD COLUMN fk_establishment integer DEFAULT 0 AFTER employee;
 
 
 CREATE TABLE IF NOT EXISTS llx_c_hrm_function
