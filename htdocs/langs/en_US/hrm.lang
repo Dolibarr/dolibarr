@@ -1,6 +1,7 @@
 # Dolibarr language file - en_US - hrm
 CHARSET=UTF-8
-
+# Admin
+HRM_EMAIL_EXTERNAL_SERVICE=Email to prevent HRM external service
 Establishments=Establishments
 Establishment=Establishment
 NewEstablishment=New establishment
@@ -8,6 +9,7 @@ DeleteEstablishment=Delete establishment
 ConfirmDeleteEstablishment=Are-you sure to delete this establishment ?
 OpenEtablishment=Open establishment
 CloseEtablishment=Close establishment
+# Module
 ListOfEmployees=List of employees
 Employees=Employees
 Employee=Employee
