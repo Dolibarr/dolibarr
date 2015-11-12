@@ -989,17 +989,8 @@ class Commande extends CommonOrder
         $this->date_validation    = '';
         $this->ref_client         = '';
 
-        // Set ref
-		$this->ref = '(PROV)';
-
         // Create clone
         $result=$this->create($user);
-        if ($result < 0) $error++;
-
-		// Set new ref
-		$newref='(PROV'.$this->id.')';
-        $sql = 'UPDATE '.MAIN_DB_PREFIX."commande SET ref='".$this->db->escape($newref)."' WHERE rowid=".$this->id;
-        $result=$this->db->query($sql);
         if ($result < 0) $error++;
 
         if (! $error)
