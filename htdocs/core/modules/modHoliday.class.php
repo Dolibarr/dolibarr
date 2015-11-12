@@ -113,7 +113,7 @@ class modHoliday extends DolibarrModules
 		// 'contact'          to add a tab in contact view
 		// 'categories_x'	  to add a tab in category view (replace 'x' by type of category (0=product, 1=supplier, 2=customer, 3=member)
 		$this->tabs = array('user:+paidholidays:CPTitreMenu:holiday:$user->rights->holiday->read:/holiday/list.php?mainmenu=holiday&id=__ID__');
-		$this->tabs = array('employee:+paidholidays:CPTitreMenu:holiday:$user->rights->holiday->read:/holiday/list.php?mainmenu=holiday&id=__ID__');
+		$this->tabs = array('employee:+paidholidays:CPTitreMenu:holiday:$user->rights->holiday->read:/holiday/list.php?mainmenu=holiday&mode=employee&id=__ID__');
 
 		// Boxes
 		$this->boxes = array();			// List of boxes
