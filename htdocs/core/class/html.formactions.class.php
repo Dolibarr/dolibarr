@@ -246,7 +246,8 @@ class FormActions
      *  @param  string		$htmlname       Nom champ formulaire
      *  @param	string		$excludetype	Type to exclude
      *  @param	string		$onlyautoornot	Group list by auto events or not: We keep only the 2 generic lines (AC_OTH and AC_OTH_AUTO)
-     *  @param	int			$hideinfohelp	1=Do not show info help
+     *  @param	int		$hideinfohelp	1=Do not show info help
+     *  @param  int		$multiselect    1=Allow multiselect of action type for filter or search
      * 	@return	void
      */
     function select_type_actions($selected='',$htmlname='actioncode',$excludetype='',$onlyautoornot=0, $hideinfohelp=0, $multiselect=0)
