@@ -91,8 +91,8 @@ class modHRM extends DolibarrModules
 				MAIN_DB_PREFIX."c_hrm_function"
 			),
 			'tablib'=>array(
-				"DepartmentDict",
-				"FunctionDict"
+				"DictionaryDepartment",
+				"DictionaryFunction"
 			),
 			'tabsql'=>array(
 				'SELECT rowid, pos, code, label, active FROM '.MAIN_DB_PREFIX.'c_hrm_department',
