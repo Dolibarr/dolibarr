@@ -885,9 +885,10 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 		} else {
 			print '<input name="price_min" size="10" value="' . price($object->price_min) . '">';
 		}
+		print '</td>';
 		if ( !empty($conf->global->PRODUCT_MINIMUM_RECOMMENDED_PRICE))
 		{
-			print '</td><td align="left">'.$langs->trans("MinimumRecommendedPrice", price($maxpricesupplier,0,'',1,-1,-1,'auto')).' '.img_warning().'</td>';
+			print '<td align="left">'.$langs->trans("MinimumRecommendedPrice", price($maxpricesupplier,0,'',1,-1,-1,'auto')).' '.img_warning().'</td>';
 		}
 		print '</tr>';
 
