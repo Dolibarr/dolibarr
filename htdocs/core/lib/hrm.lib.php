@@ -36,7 +36,7 @@ function employee_prepare_head($object) {
 	
 	$head [$h] [0] = DOL_URL_ROOT.'/hrm/employee/card.php?id=' . $object->id;
 	$head [$h] [1] = $langs->trans("Card");
-	$head [$h] [2] = 'card';
+	$head [$h] [2] = 'employee';
 	$h ++;
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'employee');
