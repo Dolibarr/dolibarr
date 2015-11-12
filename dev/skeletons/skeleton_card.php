@@ -112,7 +112,7 @@ if (empty($reshook))
 		if (empty($object->ref))
 		{
 			$error++;
-			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Ref")),'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Ref")), null, 'errors');
 		}
 
 		if (! $error)
@@ -152,7 +152,7 @@ if (empty($reshook))
 		if (empty($object->ref))
 		{
 			$error++;
-			setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired",$langs->transnoentitiesnoconv("Ref")),null,'errors');
+			setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired",$langs->transnoentitiesnoconv("Ref")), null, 'errors');
 		}
 
 		if (! $error)
@@ -189,8 +189,8 @@ if (empty($reshook))
 		}
 		else
 		{
-			if (! empty($object->errors)) setEventMessages(null,$object->errors,'errors');
-			else setEventMessages($object->error,null,'errors');
+			if (! empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
+			else setEventMessages($object->error, null, 'errors');
 		}
 	}
 }
