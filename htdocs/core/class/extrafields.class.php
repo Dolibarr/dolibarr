@@ -742,7 +742,7 @@ class ExtraFields
 			if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_EXTRAFIELDS_USE_SELECT2))
 			{
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-				$out.= ajax_combobox($keysuffix.'options_'.$key.$keyprefix, array(), 0);
+				$out.= ajax_combobox($keysuffix.'options_'.$key.$keyprefix, array(), $conf->global->MAIN_USE_SEARCH_TO_SELECT, $conf->global->MAIN_SELECT_MIN_SIZE_OPTION);
 			}
 
 			$out.='<select class="flat" name="'.$keysuffix.'options_'.$key.$keyprefix.'" id="options_'.$key.$keyprefix.'" '.($moreparam?$moreparam:'').'>';
@@ -763,7 +763,7 @@ class ExtraFields
 			if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_EXTRAFIELDS_USE_SELECT2))
 			{
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-				$out.= ajax_combobox($keysuffix.'options_'.$key.$keyprefix, array(), 0);
+				$out.= ajax_combobox($keysuffix.'options_'.$key.$keyprefix, array(), $conf->global->MAIN_USE_SEARCH_TO_SELECT, $conf->global->MAIN_SELECT_MIN_SIZE_OPTION);
 			}
 
 			$out.='<select class="flat" name="'.$keysuffix.'options_'.$key.$keyprefix.'" id="options_'.$key.$keyprefix.'" '.($moreparam?$moreparam:'').'>';

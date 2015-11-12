@@ -338,10 +338,11 @@ function ajax_dialog($title,$message,$w=350,$h=150)
  * @param	string	$htmlname					Name of html select field ('myid' or '.myclass')
  * @param	array	$events						More events option. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
  * @param  	int		$minLengthToAutocomplete	Minimum length of input string to start autocomplete
+ * @param  	int		$minNumberItemsUseFilter	Minimum select items's number to start to use the string filter
  * @param	int		$forcefocus					Force focus on field
  * @return	string								Return html string to convert a select field into a combo, or '' if feature has been disabled for some reason.
  */
-function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $forcefocus=0)
+function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $minNumberItemsUseFilter=0, $forcefocus=0)
 {
 	global $conf;
 
@@ -351,15 +352,19 @@ function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $
 	if (empty($conf->use_javascript_ajax)) return '';
 
 	if (empty($minLengthToAutocomplete)) $minLengthToAutocomplete=0;
-
+	if (empty($minNumberItemsUseFilter)) $minNumberItemsUseFilter=0;
     $tmpplugin='select2';
     $msg='<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
           <script type="text/javascript">
         	$(document).ready(function () {
+        		var countselect = $(\''.(preg_match('/^\./',$htmlname)?$htmlname:'#'.$htmlname).' option\').size();
+				var customMinimumLength = '.$minLengthToAutocomplete.';
+				if('.$minLengthToAutocomplete.' != 0 && countselect < '.$minNumberItemsUseFilter.')
+					customMinimumLength = 0;
         		$(\''.(preg_match('/^\./',$htmlname)?$htmlname:'#'.$htmlname).'\').'.$tmpplugin.'({
         		    dir: \'ltr\',
         			width: \'resolve\',		/* off or resolve */
-					minimumInputLength: '.$minLengthToAutocomplete.'
+					minimumInputLength: customMinimumLength
 				})';
 	if ($forcefocus) $msg.= '.select2(\'focus\')';
 	$msg.= ';'."\n";

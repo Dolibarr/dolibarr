@@ -62,6 +62,8 @@ if ($action == 'update')
 	dolibarr_set_const($db, "MAIN_MULTILANGS",					$_POST["main_multilangs"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_SIZE_LISTE_LIMIT",			$_POST["main_size_liste_limit"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_SIZE_SHORTLISTE_LIMIT",		$_POST["main_size_shortliste_limit"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_SELECT_MIN_SIZE_OPTION",		$_POST["main_select_min_size_option"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_USE_SEARCH_TO_SELECT",		$_POST["main_use_search_to_select"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_DISABLE_JAVASCRIPT",			$_POST["main_disable_javascript"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_BUTTON_HIDE_UNAUTHORIZED",	$_POST["MAIN_BUTTON_HIDE_UNAUTHORIZED"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_START_WEEK",					$_POST["MAIN_START_WEEK"],'chaine',0,'',$conf->entity);
@@ -212,6 +214,18 @@ if ($action == 'edit')	// Edit
 	// Max size of lists
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMaxSizeList").'</td><td><input class="flat" name="main_size_liste_limit" size="4" value="' . $conf->global->MAIN_SIZE_LISTE_LIMIT . '"></td>';
+	print '<td width="20">&nbsp;</td>';
+	print '</tr>';
+
+	// Filter jquery select with number keypress
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultUseSearchToSelect").'</td><td><input class="flat" name="main_use_search_to_select" size="4" value="' . $conf->global->MAIN_USE_SEARCH_TO_SELECT . '"></td>';
+	print '<td width="20">&nbsp;</td>';
+	print '</tr>';
+
+	// Minimum jquery size of select to see keypress filter
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultSelectMinOption").'</td><td><input class="flat" name="main_select_min_size_option" size="4" value="' . $conf->global->MAIN_SELECT_MIN_SIZE_OPTION . '"></td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
@@ -408,6 +422,16 @@ else	// Show
 	
 	$var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMaxSizeShortList").'</td><td>' . $conf->global->MAIN_SIZE_SHORTLISTE_LIMIT . '</td>';
+	print '<td width="20">&nbsp;</td>';
+	print "</tr>";
+
+	$var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultUseSearchToSelect").'</td><td>' . $conf->global->MAIN_USE_SEARCH_TO_SELECT . '</td>';
+	print '<td width="20">&nbsp;</td>';
+	print "</tr>";
+
+	$var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultSelectMinOption").'</td><td>' . $conf->global->MAIN_SELECT_MIN_SIZE_OPTION . '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print "</tr>";
 

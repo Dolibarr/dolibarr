@@ -89,10 +89,10 @@ class FormResource
 
     	if ($resourcestat)
     	{
-    		if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT) && ! $forcecombo)
+    		if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_USE_SEARCH_TO_SELECT) && ! $forcecombo)
     		{
     			//$minLength = (is_numeric($conf->global->COMPANY_USE_SEARCH_TO_SELECT)?$conf->global->COMPANY_USE_SEARCH_TO_SELECT:2);
-    			$out.= ajax_combobox($htmlname, $event, $conf->global->COMPANY_USE_SEARCH_TO_SELECT);
+    			$out.= ajax_combobox($htmlname, $event, $conf->global->MAIN_USE_SEARCH_TO_SELECT, $conf->global->MAIN_SELECT_MIN_SIZE_OPTION);
     		}
 
     		// Construct $out and $outarray
