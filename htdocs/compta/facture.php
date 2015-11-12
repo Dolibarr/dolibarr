@@ -1960,6 +1960,19 @@ if ($action == 'create')
 	{
 		print '<td colspan="2">';
 		print $form->select_company('', 'socid', 's.client = 1 OR s.client = 3', 1);
+		// reload page to retrieve customer informations
+		if (!empty($conf->global->RELOAD_PAGE_ON_CUSTOMER_CHANGE))
+		{
+			print '<script type="text/javascript">
+			$(document).ready(function() {
+				$("#socid").change(function() {
+					var socid = $(this).val();
+					// reload page
+					window.location.href = "'.$_SERVER["PHP_SELF"].'?action=create&socid="+socid;
+				});
+			});
+			</script>';
+		}
 		print '</td>';
 	}
 	print '</tr>' . "\n";
