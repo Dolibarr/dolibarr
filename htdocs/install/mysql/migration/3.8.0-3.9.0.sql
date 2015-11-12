@@ -32,6 +32,8 @@ INSERT INTO llx_const (name, value, type, note, visible) values ('MAIN_SIZE_SHOR
 
 ALTER TABLE llx_accounting_system MODIFY COLUMN pcg_version varchar(32);
 ALTER TABLE llx_accountingaccount MODIFY COLUMN fk_pcg_version varchar(32);
+ALTER TABLE llx_accountingaccount RENAME TO llx_accounting_account;
+ALTER TABLE llx_accounting_account ADD INDEX idx_accounting_account_account_number (account_number);
 
 UPDATE llx_const SET name = __ENCRYPT('ACCOUNTING_EXPORT_PREFIX_SPEC')__ WHERE __DECRYPT('name')__ = 'EXPORT_PREFIX_SPEC';
 
@@ -39,8 +41,6 @@ UPDATE llx_const set value = __ENCRYPT('eldy')__ WHERE __DECRYPT('value')__ = 'a
 UPDATE llx_const set value = __ENCRYPT('eldy')__ WHERE __DECRYPT('value')__ = 'bureau2crea';
 UPDATE llx_const set value = __ENCRYPT('eldy')__ WHERE __DECRYPT('value')__ = 'amarok';
 UPDATE llx_const set value = __ENCRYPT('eldy')__ WHERE __DECRYPT('value')__ = 'cameleo';
-
-ALTER TABLE llx_accountingaccount RENAME TO llx_accounting_account;
 
 ALTER TABLE llx_societe ADD COLUMN model_pdf varchar(255);
 
