@@ -104,7 +104,7 @@ if ($user->rights->banque->modifier && $action == "update")
 
 	if ($ac->courant == 2 && $_POST['value'] != 'LIQ')
 	{
-		setEventMessage($langs->trans("ErrorCashAccountAcceptsOnlyCashMoney"), 'errors');
+		setEventMessages($langs->trans("ErrorCashAccountAcceptsOnlyCashMoney"), null, 'errors');
 		$error++;
 	}
 
@@ -146,7 +146,7 @@ if ($user->rights->banque->modifier && $action == "update")
 		$result = $db->query($sql);
 		if ($result)
 		{
-			setEventMessage($langs->trans("RecordSaved"));
+			setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 			$db->commit();
 		}
 		else
@@ -184,7 +184,7 @@ if ($user->rights->banque->consolidate && ($action == 'num_releve' || $action ==
         $result = $db->query($sql);
         if ($result)
         {
-	        setEventMessage($langs->trans("RecordSaved"));
+	        setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
             $db->commit();
         }
         else
@@ -205,7 +205,7 @@ $form = new Form($db);
 
 llxHeader();
 
-// On initialise la liste des categories
+// The list of categories is initialized
 $sql = "SELECT rowid, label";
 $sql.= " FROM ".MAIN_DB_PREFIX."bank_categ";
 $sql.= " ORDER BY label";

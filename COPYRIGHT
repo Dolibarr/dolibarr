@@ -12,7 +12,7 @@ Dolibarr uses some external libraries released under different licenses. This is
 Component              Version       License                     GPL Compatible  Usage
 -------------------------------------------------------------------------------------
 PHP libraries:
-AdoDb-Date             0.33          Modified BSD License        Yes             Date convertion (not into rpm package)
+AdoDb-Date             0.36          Modified BSD License        Yes             Date convertion (not into rpm package)
 ChromePHP              4.1.0         Apache Software License 2.0 Yes             Return server log to chrome browser console
 CKEditor               4.3.3         LGPL-2.1+                   Yes             Editor WYSIWYG
 EvalMath               1.0           BSD                         Yes             Safe math expressions evaluation
@@ -24,7 +24,7 @@ Mobiledetect           2.8.3         MIT License                 Yes            
 NuSoap                 0.9.5         LGPL 2.1+                   Yes             Library to develop SOAP Web services (not into rpm and deb package)
 PEAR Mail_MIME         1.8.9         BSD                         Yes             NuSoap dependency
 odtPHP                 1.0.1         GPL-2+  b                   Yes             Library to build/edit ODT files
-PHPExcel               1.8.0         LGPL-2.1+                   Yes             Read/Write XLS files, read ODS files
+PHPExcel               1.8.1         LGPL-2.1+                   Yes             Read/Write XLS files, read ODS files
 php-iban               1.4.7         LGPL-3+                     Yes             Parse and validate IBAN (and IIBAN) bank account information in PHP
 PHPoAuthLib            0.8.2         MIT License                 Yes             Library to provide oauth1 and oauth2 to different service
 PHPPrintIPP            1.3           GPL-2+                      Yes             Library to send print IPP requests
@@ -54,7 +54,7 @@ jQuery TableDnD        0.6           GPL and MIT License         Yes            
 jQuery Timepicker      1.1.0         GPL and MIT License         Yes             JS library Timepicker addon for Datepicker
 jQuery Tiptip          1.3           GPL and MIT License         Yes             JS library for tooltips
 jsGantt                1.2           BSD License                 Yes             JS library (to build Gantt reports)
-JsTimezoneDetect       1.0.4         MIT License                 Yes             JS library to detect user timezone
+JsTimezoneDetect       1.0.6         MIT License                 Yes             JS library to detect user timezone
 Raven.js               1.1.19        MIT License                 Yes             Used for client-side error logging with Sentry logger
 
 For licenses compatibility informations:

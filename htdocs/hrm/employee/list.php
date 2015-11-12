@@ -169,8 +169,8 @@ if ($result)
 	    $employeestatic->email=$obj->email;
 	    $employeestatic->gender=$obj->gender;
 	    $employeestatic->societe_id=$obj->fk_soc;
-	    $employeestatic->firstname='';
-		$employeestatic->lastname=$obj->login;
+	    $employeestatic->firstname=$obj->firstname;
+		$employeestatic->lastname=$obj->lastname;
 
 		$li=$employeestatic->getNomUrl(1,'',0,0,24,1);
 
@@ -203,8 +203,7 @@ if ($result)
         print '</td>';
 
         // Statut
-		$employeestatic->statut=$obj->statut;
-		print '<td align="right">'.$employeestatic->getLibStatut(5).'</td>';
+		print '<td align="center">'.$employeestatic->getLibStatut(5).'</td>';
         print '<td>&nbsp;</td>';
         print "</tr>\n";
         $i++;

@@ -122,6 +122,34 @@ $fieldstosearchall = array(
     's.nom'=>"ThirdParty",
 );
 
+// Definition of fields for list
+$arrayfields=array(
+    'p.lastname'=>array('label'=>$langs->trans("Lastname"), 'checked'=>1),
+    'p.firstname'=>array('label'=>$langs->trans("Firsname"), 'checked'=>1),
+    'p.poste'=>array('label'=>$langs->trans("Post"), 'checked'=>1),
+    'p.town'=>array('label'=>$langs->trans("Town"), 'checked'=>0),
+    'p.zip'=>array('label'=>$langs->trans("Zip"), 'checked'=>0),
+    'p.phone'=>array('label'=>$langs->trans("PhonePro"), 'checked'=>1),
+    'p.phone_perso'=>array('label'=>$langs->trans("PhonePerso"), 'checked'=>0),
+    'p.phone_mobile'=>array('label'=>$langs->trans("PhoneMobile"), 'checked'=>1),
+    'p.fax'=>array('label'=>$langs->trans("Fax"), 'checked'=>1),
+    'p.email'=>array('label'=>$langs->trans("Email"), 'checked'=>1),
+    'p.skype'=>array('label'=>$langs->trans("Skype"), 'checked'=>1, 'enabled'=>(! empty($conf->skype->enabled))),
+    'p.thirdparty'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>1, 'enabled'=>empty($conf->global->SOCIETE_DISABLE_CONTACTS)),
+    'p.priv'=>array('label'=>$langs->trans("ContactVisibility"), 'checked'=>1, 'position'=>200),
+    'p.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
+    'p.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
+    'p.statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
+);
+// Extra fields
+if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+{
+   foreach($extrafields->attribute_label as $key => $val) 
+   {
+       $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>$extrafields->attribute_list[$key], 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
+   }
+}
+
 
 /*
  * Actions
@@ -386,35 +414,10 @@ if ($result)
     	print '</div>';
     }
 
-	$arrayfields=array(
-        'p.lastname'=>array('label'=>$langs->trans("Lastname"), 'checked'=>1),
-        'p.firstname'=>array('label'=>$langs->trans("Firsname"), 'checked'=>1),
-        'p.poste'=>array('label'=>$langs->trans("Post"), 'checked'=>1),
-	    'p.town'=>array('label'=>$langs->trans("Town"), 'checked'=>0),
-        'p.zip'=>array('label'=>$langs->trans("Zip"), 'checked'=>0),
-	    'p.phone'=>array('label'=>$langs->trans("PhonePro"), 'checked'=>1),
-	    'p.phone_perso'=>array('label'=>$langs->trans("PhonePerso"), 'checked'=>0),
-	    'p.phone_mobile'=>array('label'=>$langs->trans("PhoneMobile"), 'checked'=>1),
-	    'p.fax'=>array('label'=>$langs->trans("Fax"), 'checked'=>1),
-	    'p.email'=>array('label'=>$langs->trans("Email"), 'checked'=>1),
-	    'p.skype'=>array('label'=>$langs->trans("Skype"), 'checked'=>1, 'enabled'=>(! empty($conf->skype->enabled))),
-	    'p.thirdparty'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>1, 'enabled'=>empty($conf->global->SOCIETE_DISABLE_CONTACTS)),
-	    'p.priv'=>array('label'=>$langs->trans("ContactVisibility"), 'checked'=>1, 'position'=>200),
-        'p.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
-        'p.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
-        'p.statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
-	);
-	// Extra fields
-	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
-	{
-	   foreach($extrafields->attribute_label as $key => $val) 
-	   {
-           $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>$extrafields->attribute_list[$key], 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
-	   }
-	}
     $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
     $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
-	print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
+    
+    print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
 
     // Ligne des titres
     print '<tr class="liste_titre">';

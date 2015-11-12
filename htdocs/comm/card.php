@@ -139,7 +139,7 @@ if (empty($reshook))
 		$object->fetch($id);
 		$object->fk_prospectlevel=GETPOST('prospect_level_id','alpha');
 		$result=$object->set_prospect_level($user);
-		if ($result < 0) setEventMessage($object->error,$object->errors,'errors');
+		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 	}
 
 	// set communication status
@@ -148,7 +148,7 @@ if (empty($reshook))
 		$object->fetch($id);
 		$object->stcomm_id=dol_getIdFromCode($db, GETPOST('stcomm','alpha'), 'c_stcomm');
 		$result=$object->set_commnucation_level($user);
-		if ($result < 0) setEventMessages($object->error,$object->errors,'errors');
+		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 	}
 
 	// update outstandng limit

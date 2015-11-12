@@ -70,6 +70,7 @@ ValidateOrder=Validate order
 UnvalidateOrder=Unvalidate order
 DeleteOrder=Delete order
 CancelOrder=Cancel order
+OrderReopened= Order %s Reopened
 AddOrder=Create order
 AddToMyOrders=Add to my orders
 AddToOtherOrders=Add to other orders

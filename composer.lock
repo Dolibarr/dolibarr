@@ -4,8 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "d88b5c84a9ea1af354d867ba2e2ab251",
-    "content-hash": "85e60ec7f8ab593387c7bd10d8db860d",
+    "hash": "335eb7bd5c2eb116fd2da80b4f48e857",
     "packages": [
         {
             "name": "ccampbell/chromephp",
@@ -52,16 +51,16 @@
         },
         {
             "name": "ckeditor/ckeditor",
-            "version": "4.3.3",
+            "version": "dev-full/4.3.x",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ckeditor/ckeditor-releases.git",
-                "reference": "0068dd540ce8bf1815abb7b5455c55354bc56334"
+                "reference": "0b7c3f1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ckeditor/ckeditor-releases/zipball/0068dd540ce8bf1815abb7b5455c55354bc56334",
-                "reference": "0068dd540ce8bf1815abb7b5455c55354bc56334",
+                "url": "https://api.github.com/repos/ckeditor/ckeditor-releases/zipball/252e512e911f21d880ea542fe162c4643885b317",
+                "reference": "0b7c3f1",
                 "shasum": ""
             },
             "type": "library",
@@ -89,7 +88,7 @@
                 "text",
                 "wysiwyg"
             ],
-            "time": "2014-02-26 15:34:37"
+            "time": "2014-02-26 15:43:10"
         },
         {
             "name": "firephp/firephp-core",
@@ -239,16 +238,16 @@
         },
         {
             "name": "phpoffice/phpexcel",
-            "version": "1.8.0",
+            "version": "1.8.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHPOffice/PHPExcel.git",
-                "reference": "e69a5e4d0ffa7fb6f171859e0a04346e580df30b"
+                "reference": "372c7cbb695a6f6f1e62649381aeaa37e7e70b32"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHPOffice/PHPExcel/zipball/e69a5e4d0ffa7fb6f171859e0a04346e580df30b",
-                "reference": "e69a5e4d0ffa7fb6f171859e0a04346e580df30b",
+                "url": "https://api.github.com/repos/PHPOffice/PHPExcel/zipball/372c7cbb695a6f6f1e62649381aeaa37e7e70b32",
+                "reference": "372c7cbb695a6f6f1e62649381aeaa37e7e70b32",
                 "shasum": ""
             },
             "require": {
@@ -292,7 +291,7 @@
                 "xls",
                 "xlsx"
             ],
-            "time": "2014-03-02 15:22:49"
+            "time": "2015-05-01 07:00:55"
         },
         {
             "name": "raven/raven",
@@ -423,7 +422,7 @@
             "time": "2015-08-04 07:52:49"
         },
         {
-            "name": "tecnick.com/tcpdf",
+            "name": "tecnickcom/tcpdf",
             "version": "6.2.6",
             "source": {
                 "type": "git",
@@ -483,7 +482,6 @@
                 "pdf417",
                 "qrcode"
             ],
-            "abandoned": "tecnickcom/tcpdf",
             "time": "2015-01-28 18:51:40"
         }
     ],
@@ -491,6 +489,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
+        "ckeditor/ckeditor": 20,
         "mike42/escpos-php": 20
     },
     "prefer-stable": false,
