@@ -263,6 +263,10 @@ function GETPOST($paramname,$check='',$method=0,$filter=NULL,$options=NULL)
 	            $out=trim($out);
 	            if (preg_match('/[^a-z]+/i',$out)) $out='';
 	            break;
+	        case 'aZ09':
+	            $out=trim($out);
+	            if (preg_match('/[^a-z0-9]+/i',$out)) $out='';
+	            break;
 	        case 'array':
 	            if (! is_array($out) || empty($out)) $out=array();
 	            break;
