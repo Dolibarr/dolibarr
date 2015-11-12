@@ -194,7 +194,8 @@ if (empty($reshook)) {
 			$object->note = GETPOST("note");
 			$object->ldap_sid = GETPOST("ldap_sid");
 			$object->fk_user = GETPOST("fk_user") > 0 ? GETPOST("fk_user") : 0;
-
+            $object->employee = GETPOST('employee');
+            
 			$object->thm = GETPOST("thm") != '' ? GETPOST("thm") : '';
 			$object->tjm = GETPOST("tjm") != '' ? GETPOST("tjm") : '';
 			$object->salary = GETPOST("salary") != '' ? GETPOST("salary") : '';
@@ -324,7 +325,8 @@ if (empty($reshook)) {
                 $object->accountancy_code = GETPOST("accountancy_code");
                 $object->openid = GETPOST("openid");
                 $object->fk_user = GETPOST("fk_user") > 0 ? GETPOST("fk_user") : 0;
-
+                $object->employee = GETPOST('employee');
+                
                 $object->thm = GETPOST("thm") != '' ? GETPOST("thm") : '';
                 $object->tjm = GETPOST("tjm") != '' ? GETPOST("tjm") : '';
                 $object->salary = GETPOST("salary") != '' ? GETPOST("salary") : '';
