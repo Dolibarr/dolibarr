@@ -53,7 +53,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	$langs->load("companies");
 
 	// Filters
-	print '<form name="listactionsfilter" class="listactionsfilter" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
+	print '<form name="listactionsfilter" class="listactionsfilter" action="' . $_SERVER["PHP_SELF"] . '" method="get">';
 	print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 	print '<input type="hidden" name="year" value="' . $year . '">';
 	print '<input type="hidden" name="month" value="' . $month . '">';
@@ -86,7 +86,8 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print '<td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
 		print $langs->trans("Type");
 		print ' &nbsp;</td><td class="nowrap maxwidthonsmartphone" style="padding-bottom: 2px; padding-right: 4px;">';
-		print $formactions->select_type_actions($actioncode, "actioncode", '', (empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : 0));
+		//select_type_actions($selected='',$htmlname='actioncode',$excludetype='',$onlyautoornot=0, $hideinfohelp=0, $multiselect=true)
+		print $formactions->select_type_actions($actioncode, "actioncode", '', (empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : 0), 0, 1);
 		print '</td></tr>';
 
 		print '<tr>';
