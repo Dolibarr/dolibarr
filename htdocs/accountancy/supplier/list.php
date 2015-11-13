@@ -21,7 +21,7 @@
 
 /**
  * \file		htdocs/accountancy/supplier/list.php
- * \ingroup		Accounting Expert
+ * \ingroup		Accountancy
  * \brief		Ventilation page from suppliers invoices
  */
 require '../../main.inc.php';
@@ -171,19 +171,27 @@ if ($action == 'ventil' && !empty($btn_ventil)) {
  *
  */
 
-$sql = "SELECT f.ref, f.rowid as facid, f.ref_supplier, l.fk_product, l.description, l.total_ht as price, l.rowid, l.fk_code_ventilation, l.tva_tx as tva_tx_line, ";
+if (! empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)) {
+	$limit = $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION;
+} else if ($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION <= 0) {
+	$limit = $conf->liste_limit;
+} else {
+	$limit = $conf->liste_limit;
+}
+
+$offset = $limit * $page;
+
+$sql = "SELECT f.ref, f.rowid as facid, f.ref_supplier, f.datef, l.fk_product, l.description, l.total_ht as price, l.rowid, l.fk_code_ventilation, l.product_type as type_l, l.tva_tx as tva_tx_line, ";
 $sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type, p.accountancy_code_buy as code_buy, p.tva_tx as tva_tx_prod";
 $sql .= " , aa.rowid as aarowid";
-$sql .= " , f.datef";
-$sql .= " , l.product_type as type_l";
 $sql .= " FROM " . MAIN_DB_PREFIX . "facture_fourn as f";
 $sql .= " INNER JOIN " . MAIN_DB_PREFIX . "facture_fourn_det as l ON f.rowid = l.fk_facture_fourn";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON p.rowid = l.fk_product";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accountingaccount as aa ON p.accountancy_code_buy = aa.account_number";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_system as accsys ON accsys.pcg_version = aa.fk_pcg_version";
 $sql .= " WHERE f.fk_statut > 0 AND fk_code_ventilation <= 0";
+$sql .= " AND product_type <= 2";
 $sql .= " AND (accsys.rowid='" . $conf->global->CHARTOFACCOUNTS . "' OR p.accountancy_code_sell IS NULL OR p.accountancy_code_buy ='')";
-
 // Add search filter like
 if (strlen(trim($search_invoice))) {
 	$sql .= " AND (f.ref like '%" . $search_invoice . "%')";
