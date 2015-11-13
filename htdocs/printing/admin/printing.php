@@ -45,6 +45,7 @@ if (! empty($driver)) $langs->load($driver);
 
 if (!$mode) $mode='config';
 
+
 /*
  * Action
  */
@@ -155,25 +156,18 @@ if ($mode == 'setup' && $user->admin)
                     print '<td>&nbsp;'.($key['example']!=''?$langs->trans("Example").' : '.$key['example']:'').'</td>';
                     print '</tr>'."\n";
                     break;
-                case "authlink":
-                    print '<tr '.$bc[$var].'>';
-                    print '<td>'.$langs->trans($key['varname']).'</td>';
-                    print '<td><a class="button" href="'.$key['link'].'">'.$langs->trans('RequestAccess').'</a></td>';
-                    print '<td>&nbsp;</td>';
-                    print '</tr>'."\n";
-                    break;
-                case "delete":
-                    print '<tr '.$bc[$var].'>';
-                    print '<td>'.$langs->trans($key['varname']).'</td>';
-                    print '<td><a class="button" href="'.$key['link'].'">'.$langs->trans('DeleteAccess').'</a></td>';
-                    print '<td>&nbsp;</td>';
-                    print '</tr>'."\n";
-                    break;
-                case "info":
+                case "info":    // Google Api setup or Google OAuth Token
                     print '<tr '.$bc[$var].'>';
                     print '<td'.($key['required']?' class=required':'').'>'.$langs->trans($key['varname']).'</td>';
                     print '<td>'.$langs->trans($key['info']).'</td>';
-                    print '<td>&nbsp;</td>';
+                    print '<td>';
+                    if ($key['varname'] == 'PRINTGCP_TOKEN_ACCESS')
+                    {
+                        if (! empty($key['delete'])) print '<a class="button" href="'.$key['delete'].'">'.$langs->trans('DeleteAccess').'</a><br><br>';
+                        print '<a class="button" href="'.$key['renew'].'">'.$langs->trans('RequestAccess').'</a><br><br>';
+                        print $langs->trans("ToCheckDeleteTokenOnProvider", 'Google').': <a href="https://security.google.com/settings/security/permissions" target="_google">https://security.google.com/settings/security/permissions</a>';
+                    }
+                    print '</td>';
                     print '</tr>'."\n";
                     break;
                 case "submit":
@@ -225,7 +219,7 @@ if ($mode == 'config' && $user->admin)
         //print '<pre>'.print_r($printer, true).'</pre>';
         $var=!$var;
         print '<tr '.$bc[$var].'>';
-        print '<td>'.img_picto('', $printer->picto).$langs->trans($printer->desc).'</td>';
+        print '<td>'.img_picto('', $printer->picto).' '.$langs->trans($printer->desc).'</td>';
         print '<td class="center">';
         if (! empty($conf->use_javascript_ajax))
         {

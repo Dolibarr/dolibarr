@@ -24,10 +24,8 @@
 
 require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
-use OAuth\Common\Storage\Session;
 use OAuth\Common\Storage\DoliStorage;
 use OAuth\Common\Consumer\Credentials;
-use OAuth\Common\Token\TokenInterface;
 use OAuth\OAuth2\Service\Google;
 
 // Define $urlwithroot
@@ -72,11 +70,18 @@ $credentials = new Credentials(
     $currentUri->getAbsoluteUri()
 );
 
+$requestedpermissionsarray=array();
+if (GETPOST('state')) $requestedpermissionsarray=explode(',', GETPOST('state'));       // Example: 'userinfo_email,userinfo_profile,cloud_print'. 'state' parameter is standard to retrieve some parameters back
+if ($action != 'delete' && empty($requestedpermissionsarray))
+{
+    print 'Error, parameter state is not defined';
+    exit;
+}
+//var_dump($requestedpermissionsarray);exit;
 
 // Instantiate the Api service using the credentials, http client and storage mechanism for the token
 /** @var $apiService Service */
-// TODO remove hardcoded array
-$apiService = $serviceFactory->createService('Google', $credentials, $storage, array('userinfo_email', 'userinfo_profile', 'cloud_print'));
+$apiService = $serviceFactory->createService('Google', $credentials, $storage, $requestedpermissionsarray);
 
 // access type needed for google refresh token
 $apiService->setAccessType('offline');
@@ -129,11 +134,18 @@ if (! empty($_GET['code']))     // We are coming from Google oauth page
     header('Location: ' . $backtourl);
     exit();
 }
-else 
+else // If entry on page with no parameter, we arrive here
 {
     $_SESSION["backtourlsavedbeforeoauthjump"]=$backtourl;
     
-    $url = $apiService->getAuthorizationUri();
+    if (GETPOST('state'))
+    {
+        $url = $apiService->getAuthorizationUri(array('state'=>GETPOST('state')));
+    }
+    else
+    {
+        $url = $apiService->getAuthorizationUri();      // Parameter state will be randomly generated
+    }
     // we go on google authorization page
     header('Location: ' . $url);
     exit();
