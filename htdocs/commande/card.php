@@ -1264,7 +1264,8 @@ if ($action == 'create' && $user->rights->commande->creer) {
 			}
 			if (!$dateorder) {
 				// Do not set 0 here (0 for a date is 1970)
-				$dateorder = (empty($dateinvoice)?(empty($conf->global->MAIN_AUTOFILL_DATE_ODER)?-1:''):$dateorder);			
+				$dateorder = (empty($dateinvoice)?(empty($conf->global->MAIN_AUTOFILL_DATE_ODER)?-1:''):$dateorder);
+			}
 		} else {
 			// For compatibility
 			if ($element == 'order' || $element == 'commande') {
