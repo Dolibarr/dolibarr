@@ -497,6 +497,7 @@ div.confirmmessage {
 .minwidth200 { min-width: 200px; }
 .minwidth300 { min-width: 300px; }
 .maxwidth100 { max-width: 100px; }
+.maxwidth150 { max-width: 150px; }
 .maxwidth200 { max-width: 200px; }
 .maxwidth300 { max-width: 300px; }
 .titlefield { width: 30%; }
