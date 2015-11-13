@@ -315,9 +315,43 @@ Dolibarr better:
   warehouse module and your Point Of Sale module setup if you use one.
 - Replaced USER_UPDATE_SESSION trigger with an updateSession hook may break modules using it.
 
+
 ***** ChangeLog for 3.6.5 compared to 3.6.4 *****
-- Fix: [ bug #1776 ] Undefined $deliverycompany variable in pdf_build_address
-- Fix: [ bug #1794 ] Error when cloning Proposal gives error in a malformed page
+FIX: #2957 : missing $langs object for trigger
+FIX: #2983 Load gravatar avatar images securely over HTTPS
+FIX: #3009: Better filtering to prevent SQL injection
+FIX: #3841 creation of a task completed has not status set to finished by default
+FIX: #3890 Expected transactions bank account page, shows negative numbers
+FIX: #3928 Creating a Customer order and a Customer invoice from a project, does not inherit payment conditions and method of payment of customer card
+FIX: bad calculation for stock value
+FIX: bad stock valo
+FIX: bad stock valorisation
+FIX: [ bug #2893 ] Dolibarr error when viewing an invoice after changing invoice mask
+FIX: button create payment hide if tax amount is less than 1
+FIX: change object statut on close shipping and remove erratic db commit
+FIX: change order date on clone (as everywhere else)
+FIX: Close #2835 Customer prices of a product shows incorrect history order
+FIX: Close #2837 Product list table column header does not match column body
+FIX: Close bug #2861 Undefined variable $res when migrating from 3.6.2 to 3.7.0
+FIX: Close bug #2891 Category hooks do not work
+FIX: Close bug #2976: "Report" tab is the current tab but it is not marked as selected by the UI
+FIX: contact country had wrong display if the country dont have translate
+FIX: double db escape add too quote
+FIX: End log must use same level then start log.
+FIX: error in SQL due to a previous fix
+FIX: event for restricted user was restricted if company null
+FIX: facturestat bad sql when customer view is limited
+FIX: If supplier invoice block linked element is display after other block total HT amount is not reset to 0 and sum other block (like customer orders values)
+FIX: keep filter by category or by not enough stock if we switch page
+FIX: no need to remove file into mail form, the temp dir will be deleted after any sending
+FIX: no projet_task_time id from trigger TASK_TIMESPENT_CREATE
+FIX: pmp
+FIX: send mail, copy sendto don't read the list of contact
+FIX: The hours of date filter aren't correct
+FIX: tool export handle the type "select" extrafields and return the value instead of id
+FIX: top links menu have target attribute with wrong value
+FIX: total amount in tpl linked object are not reset
+FIX: when multicompany was enabled, this function didn't check just on the good entity (problem when both company use same mask)
 
 ***** ChangeLog for 3.6.4 compared to 3.6.3 *****
 - Fix: [ bug #2893 ] Dolibarr error when viewing an invoice after changing invoice mask

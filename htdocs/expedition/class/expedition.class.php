@@ -34,7 +34,7 @@ if (! empty($conf->propal->enabled)) require_once DOL_DOCUMENT_ROOT.'/comm/propa
 if (! empty($conf->commande->enabled)) require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 if (! empty($conf->productbatch->enabled)) require_once DOL_DOCUMENT_ROOT.'/expedition/class/expeditionbatch.class.php';
 
-
+ 
 /**
  *	Class to manage shipments
  */
