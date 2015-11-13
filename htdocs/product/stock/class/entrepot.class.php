@@ -358,7 +358,7 @@ class Entrepot extends CommonObject
 
 		$sql = "SELECT rowid, label";
 		$sql.= " FROM ".MAIN_DB_PREFIX."entrepot";
-		$sql.= " WHERE entity IN (".getEntity('warehouse', 1).")";
+		$sql.= " WHERE entity IN (".getEntity('stock', 1).")";
 		$sql.= " AND statut = ".$status;
 
 		$result = $this->db->query($sql);
@@ -418,7 +418,7 @@ class Entrepot extends CommonObject
 	{
 		$ret=array();
 
-		$sql = "SELECT sum(ps.reel) as nb, sum(ps.reel * ps.pmp) as value";
+		$sql = "SELECT sum(ps.reel) as nb, sum(ps.reel * p.pmp) as value";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_stock as ps";
 		$sql.= ", ".MAIN_DB_PREFIX."product as p";
 		$sql.= " WHERE ps.fk_entrepot = ".$this->id;
