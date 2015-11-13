@@ -392,7 +392,7 @@ if ($id > 0 || ! empty($ref))
 			print '<td class="nowrap">';
 			print img_object('','user','class="hideonsmartphone"');
 			$contactsoftask=$object->getListContactId('internal');
-			if (count($contactsoftask)>0)
+			/*if (count($contactsoftask)>0)
 			{
 				$userid=$contactsoftask[0];
 				print $form->select_dolusers((GETPOST('userid')?GETPOST('userid'):$userid), 'userid', 0, '', 0, '', $contactsoftask, 0, 0, 0, '', 0, $langs->trans("ResourceNotAssignedToTask"));
@@ -400,7 +400,10 @@ if ($id > 0 || ! empty($ref))
 			else
 			{
 				print img_error($langs->trans('FirstAddRessourceToAllocateTime')).$langs->trans('FirstAddRessourceToAllocateTime');
-			}
+			}*/
+			$userid = $user->id;
+			print $form->select_dolusers((GETPOST('userid')?GETPOST('userid'):$userid), 'userid', 0, '', 0, '', '', 0, 0, 0, '', 0, $langs->trans("ResourceNotAssignedToTask"));
+			
 			print '</td>';
 
 			// Note
