@@ -1689,3 +1689,5 @@ MailToSendSupplierRequestForQuotation=Pour l'envoi de demande de prix fournisseu
 MailToSendSupplierOrder=Pour l'envoi de commande fournisseur
 MailToSendSupplierInvoice=Pour l'envoi de facture fournisseur
 MailToThirdparty=Pour l'envoi d'email depuis la fiche Tiers
+DefaultUseSearchToSelect=Nombre de caractères à entrer pour commencer l'affichage d'une liste déroulante
+DefaultSelectMinOption=Nombre d'élements néccessaires à une liste déroulante pour commancer à utiliser le filtre à caractères

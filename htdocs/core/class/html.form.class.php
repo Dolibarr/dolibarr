@@ -933,7 +933,7 @@ class Form
            	if ($conf->use_javascript_ajax && ! $forcecombo)
             {
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-            	$comboenhancement =ajax_combobox($htmlname, $events, $conf->global->COMPANY_USE_SEARCH_TO_SELECT);
+            	$comboenhancement =ajax_combobox($htmlname, $events, $conf->global->MAIN_USE_SEARCH_TO_SELECT, $conf->global->MAIN_SELECT_MIN_SIZE_OPTION);
             	$out.= $comboenhancement;
             	$nodatarole=($comboenhancement?' data-role="none"':'');
             }
@@ -1139,7 +1139,7 @@ class Form
             if ($conf->use_javascript_ajax && ! $forcecombo && ! $options_only)
             {
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-            	$comboenhancement = ajax_combobox($htmlname, $events, $conf->global->CONTACT_USE_SEARCH_TO_SELECT);
+            	$comboenhancement = ajax_combobox($htmlname, $events, $conf->global->MAIN_USE_SEARCH_TO_SELECT, $conf->global->MAIN_SELECT_MIN_SIZE_OPTION);
             	$out.= $comboenhancement;
             	$nodatarole=($comboenhancement?' data-role="none"':'');
             }
