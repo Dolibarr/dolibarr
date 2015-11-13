@@ -2,6 +2,7 @@
 /* Copyright (C) 2008-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2015	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2015		Marcos García		<marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1440,6 +1441,9 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
 			// Define $destpath (path to file including filename) and $destfile (only filename)
 			$destpath=$upload_dir . "/" . $_FILES[$varfiles]['name'];
 			$destfile=$_FILES[$varfiles]['name'];
+
+			$savingdocmask = dol_sanitizeFileName($savingdocmask);
+
 			if ($savingdocmask)
 			{
 				$destpath=$upload_dir . "/" . preg_replace('/__file__/',$_FILES[$varfiles]['name'],$savingdocmask);

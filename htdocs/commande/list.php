@@ -302,8 +302,8 @@ if ($resql)
 	    $moreforfilter.=$form->select_dolusers($search_user, 'search_user', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 	 	$moreforfilter.='</div>';
 	}
-	// If the user can view categories or products
-	if ($conf->categorie->enabled && $user->rights->produit->lire)
+	// If the user can view prospects other than his'
+	if ($conf->categorie->enabled && ($user->rights->produit->lire || $user->rights->service->lire))
 	{
 		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$moreforfilter.='<div class="divsearchfield">';

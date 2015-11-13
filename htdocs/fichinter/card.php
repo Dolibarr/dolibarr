@@ -113,6 +113,7 @@ if (empty($reshook))
 	if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->ficheinter->creer)
 	{
 		$result = $object->setValid($user);
+
 		if ($result >= 0)
 		{
 			// Define output language

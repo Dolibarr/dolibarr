@@ -29,6 +29,63 @@ This is list of hooks modified:
 
 
  
+***** ChangeLog for 3.8.2 compared to 3.8.1 *****
+FIX: Add a protection to not make release if ChangeLog was not generated.
+FIX: 1/ update_extra() function must not be in  "if(!empty(MAIN_DISABLE_CONTACTS_TAB)" test. 2/ Reindented code
+FIX: #3240
+FIX: #3541 Bypass authentication when user was created using LDAP
+FIX: #3605 deleting a shipping
+FIX: #3661 Margin is not selected correctly when adding a product
+FIX: #3689 Bug on workflow module
+FIX: #3724 Bug: Blank page after cloning proposal if we changed client
+FIX: #3726 Better support for PRODUCT_USE_OLD_PATH_FOR_PHOTO
+FIX: #3726 Not showing images on product card
+FIX: #3757 Can't set amount in a social contribution with some languages
+FIX: #3786 Translation of select box.
+FIX: #3841 creation of a task completed has not status set to finished by default
+FIX: #3878 Storing and deleting files on emailing was done at wrong place
+FIX: #3880
+FIX: #3882
+FIX: action not appear before an update because of a lack of line in action ressource
+FIX: add tag myuser_job into ODT replacement
+FIX: Avoid changing the state to a thirdparty who shouldn't be contacted anymore
+FIX: bad calculation for stock value
+FIX: Bad parameters
+FIX: Bad picto for expense report
+FIX: bad property so after creating an event from calendar, filter were lost.
+FIX: bad stock valorisation
+FIX: better fix to generate a PROV ref after clone
+FIX: bug invoice classified in propale next update commonobject class in 3.8
+FIX: Can export a field into task time table with export project profile
+FIX: change order date on clone (as everywhere else)
+FIX: clone customer order create new order with validate ref and not with PROV
+FIX: Contacts are not added to the list with the status "no contact"
+FIX: Default thirdparty when cloning invoice was not set.
+FIX: double db escape add too quote
+FIX: event's data lost on user assign update
+FIX: Filter in customer price per product of a thirdparty returned error
+FIX: filters on supplier invoices list are not used, search_status instead
+FIX: fix HTML into formconfirm box
+FIX: IF autocomplete was set on thirdparty list, it was not possible to open list of extrafields.
+FIX: If no end date is set on survey, we should be able to vote.
+FIX: loss data also if update was cancel by error of ended state with no end date, try a generic patch
+FIX: no need to remove file into mail form, the temp dir will be deleted after any sending
+FIX: pmp calculation
+FIX: Preview pages was not using correct style for ref
+FIX: project was not retrieved on invoice creation form
+FIX: Revert option WORKFLOW_PROPAL_CAN_CLASSIFIED_BILLED_WITHOUT_INVOICES into option WORKFLOW_PROPAL_NEED_INVOICE_TO_BE_CLASSIFIED_BILLED for better compatibility with old versions
+FIX: Search status not saved into list
+FIX: search_status not used in mergefusiontool
+FIX: Show category selector if we have permission to view products or services
+FIX: Show product image on getNomUrl()
+FIX: skeleton class must use db->order rather than ORDER BY into fetchAll
+FIX: Societe::set_parent() function needs societe object to be fetched to update parent
+FIX: supplier rights for orderToInvoice
+FIX: tag object_total_vat_x need x to be a string with unknown decimal lenght. Now use for x the real vat real with no more decimal (x = 20 or x = 8.5 or x = 5.99, ...)
+FIX: The preview of PDF was never refreshed if PDF document was changed
+FIX: The thumb of user into top menu was using the image in full size. This make a large download at each page call. We must use the mini thumbs.
+FIX: Total in summary was not same than into detail on the referrer page.
+
 ***** ChangeLog for 3.8.1 compared to 3.8.0 *****
 FIX: #3521 postgresql migration error
 FIX: #3524
@@ -315,25 +372,94 @@ Dolibarr better:
   to make difference between creation from contact or not.
 - Function get_exdir require now 6 parameters. This is to prepare a future feature.
 
+
 ***** ChangeLog for 3.7.2 compared to 3.7.1 *****
-FIX [ bug #2855 ] Wrong translation key in localtax report page
-FIX [ bug #1852 ] JS error when editing a customer order line
-FIX [ bug #2900 ] Courtesy title is not stored in create thirdparty form
-FIX [ bug #3055 ] Product image thumbnails were not deleted after deleting the image
-FIX [ bug 1634 ] Error deleting a project when it had many linked objects
-FIX [ bug 1925 ] "Link to order" option in supplier invoices is not working properly
-FIX [ bug #3198 ] Trigger LINECONTRACT_INSERT passes Contrat as $object instead of ContratLigne
-FIX: Not showing delivery date on rouget pdf
+FIX: #2957 : missing $langs object for trigger
+FIX: #2983 Load gravatar avatar images securely over HTTPS
+FIX: #3009: Better filtering to prevent SQL injection
+FIX: #3091 TotalHT amount in supplier order is bold unlike the rest of Dolibarr
+FIX: #3262 Webservice getProductsForCategory()
+FIX: #3318
+FIX: [ #3460 ] Selected bank account was not saved when an error happened when trying to create a customer invoice
+FIX: #3530
+FIX: #3630 - Wrong balance report when module salaries and donation disabled
+FIX: #3679 Error when deleting a Localtax2 special payment
+FIX: #3707 Thirdparty bank account page table has a glitch
+FIX: #3724 Bug: Blank page after cloning proposal with changed client
+FIX: #3836 Unable to upload a document to an invoice under some circunstances
+FIX: #3841 creation of a task completed has not status set to finished by default
+FIX: Add a protection to not make release if ChangeLog was not generated.
+FIX: adjusted test for affecting supplier reference
+FIX: Admin fiche inter page do not take good action
+FIX: Avoid warning strict mode when hosting server do not have php5_curl installed
+FIX: bad calculation for stock value
+FIX: Bad condition into invoice export request making reporting too many rows.
+FIX: bad stock valorisation
+FIX: Bad visualization of suppliers name on Incomes-Expenses mode
+FIX: Better management error into the color conversion functions
+FIX: [ bug 1634 ] Error deleting a project when it had many linked objects
+FIX: [ bug 1925 ] "Link to order" option in supplier invoices is not working properly
+FIX: [ bug #2893 ] Dolibarr error when viewing an invoice after changing invoice mask
+FIX: [ bug #3211 ] Error about sold to pay (Montant encours)
+FIX: [ bug #3321 ] Users with certain permissions were shown a "forbidden access" page even if they had the rights
+FIX: [ bug #3358 ] Tasks box does not work with PostgreSQL
+FIX: [ bug #3383 ] Company name is overlapped with company direction in PDF models
+FIX: [ bug #3426 ] Unable to create an invoice from a contract with extrafields
+FIX: [ bug #3431 ] Invoice bank account is not respected
+FIX: [ bug #3432 ] Spaces should be removed from IBAN when formatting it
+FIX: Can create Proposal on close thridparty #3526
+FIX: change order date on clone (as everywhere else)
+FIX: Close #2835 Customer prices of a product shows incorrect history order
+FIX: Close #2837 Product list table column header does not match column body
+FIX: Close bug #2855 Wrong translation key in localtax report page
+FIX: Close bug #2861 Undefined variable $res when migrating from 3.6.2 to 3.7.0
+FIX: Close bug #2891 Category hooks do not work
+FIX: Close bug #2900 Courtesy title is not stored in create thirdparty form
+FIX: Close bug #2976: "Report" tab is the current tab but it is not marked as selected by the UI
+FIX: contact country had wrong display if the country dont have translate
+FIX: Display country name instead of country id (display country id makes no sense on vcard files)
+FIX: display error on extrafields on ficheinter
+FIX: double db escape add too quote
+FIX: Email selector contact must not include inactive contact
+FIX: End log must use same level then start log.
+FIX: error in SQL due to a previous fix
+FIX: event's data lost on user assign update
+FIX: Export of tags for contact and member
+FIX: facturestat bad sql when customer view is limited
+FIX: if multicompany enabled, call to undifend method _setCookie instead of setCookie
+FIX: If supplier invoice block linked element is display after other block total HT amount is not reset to 0 and sum other block (like customer orders values)
+FIX: keep filter by category or by not enough stock if we switch page
+FIX: Line break display as a block
+FIX: load propal langs for availability traduction
+FIX: loss data also if update was cancel by error of ended state with no end date, try a generic patch
+FIX: Mass Mailing activity don't display all status
+FIX: Missing to set context into workflow actions, so triggers can't know we are creating an invoice from order or an order from a proposal.
+FIX: multientity warehouse management
+FIX: New adherent from, always redirect on entity
+FIX: No check warehouse is provided if module stock is not enabled.
+FIX: no need to remove file into mail form, the temp dir will be deleted after any sending
+FIX: no projet_task_time id from trigger TASK_TIMESPENT_CREATE
 FIX: Not showing task extrafields when creating from left menu
-FIX [ bug #3288 ] Tasks box is not properly drawn
-FIX [ bug #3211 ] Outstading bill amount of a client showed wrong amounts
-FIX [ bug #3321 ] Users with certain permissions were shown a "forbidden access" page even if they had the rights
-FIX [ bug #3426 ] Unable to create an invoice from a contract with extrafields
-FIX [ bug #3431 ] Invoice bank account is not respected
-FIX [ bug #3432 ] Spaces should be removed from IBAN when formatting it
-FIX [ bug #3358 ] Tasks box does not work with PostgreSQL
-FIX [ bug #3383 ] Company name is overlapped with company direction in PDF models
-FIX [ bug #3460 ] Bank account is not saved when creating a customer invoice and facing an error message
+FIX: only active customer should be return into new invoice creation select list
+FIX: Payed invoices are showed as canceled FIX: Bad date filter on customer order
+FIX: WAP calculation
+FIX: Save of filters into export profiles failed.
+FIX: supplier rights for orderToInvoice
+FIX: Syntax error in Debian Apache configuration
+FIX: The hours of date filter aren't correct
+FIX: tool export handle the type "select" extrafields and return the value instead of id
+FIX: total amount in tpl linked object are not reset
+FIX: translate Jabberid on contact page with edit view
+FIX: translation for 1 word do not work if product/service module are disabled because the translation search in products.lang
+FIX: update2.php test res befre assign it
+FIX: When delete actioncomm also delete actioncomm_resources
+FIX: when fetch_optionnal_by_label in Extrafields with $this->db cannot work because this->db is never instanciated
+FIX: when mailing is deleted, the targets list was kept in database
+FIX: when multicompany was enabled, this function didn't check just on the good entity (problem when both company use same mask)
+FIX: When we add an user on event in create mode, we lose linked object
+FIX: When we automatically creta an order from a proposal with workflow module, if some extrafields of propal don't exist in order object, insertExtraFields() function tries to insert extrafields in unexistant column of commande_extrafields table.
+FIX: When we clone a propal, if it has a project which is not assigned to a third, it was not on new propal because fk_project was always set to empty string if new propal is for another third.
+FIX: XSS security using the onerror and missing escapement on type of member page.
 
 NEW: Created new ContratLigne::insert function
 
@@ -559,9 +685,43 @@ Dolibarr better:
   warehouse module and your Point Of Sale module setup if you use one.
 - Replaced USER_UPDATE_SESSION trigger with an updateSession hook may break modules using it.
 
+
 ***** ChangeLog for 3.6.5 compared to 3.6.4 *****
-- Fix: [ bug #1776 ] Undefined $deliverycompany variable in pdf_build_address
-- Fix: [ bug #1794 ] Error when cloning Proposal gives error in a malformed page
+FIX: #2957 : missing $langs object for trigger
+FIX: #2983 Load gravatar avatar images securely over HTTPS
+FIX: #3009: Better filtering to prevent SQL injection
+FIX: #3841 creation of a task completed has not status set to finished by default
+FIX: #3890 Expected transactions bank account page, shows negative numbers
+FIX: #3928 Creating a Customer order and a Customer invoice from a project, does not inherit payment conditions and method of payment of customer card
+FIX: bad calculation for stock value
+FIX: bad stock valo
+FIX: bad stock valorisation
+FIX: [ bug #2893 ] Dolibarr error when viewing an invoice after changing invoice mask
+FIX: button create payment hide if tax amount is less than 1
+FIX: change object statut on close shipping and remove erratic db commit
+FIX: change order date on clone (as everywhere else)
+FIX: Close #2835 Customer prices of a product shows incorrect history order
+FIX: Close #2837 Product list table column header does not match column body
+FIX: Close bug #2861 Undefined variable $res when migrating from 3.6.2 to 3.7.0
+FIX: Close bug #2891 Category hooks do not work
+FIX: Close bug #2976: "Report" tab is the current tab but it is not marked as selected by the UI
+FIX: contact country had wrong display if the country dont have translate
+FIX: double db escape add too quote
+FIX: End log must use same level then start log.
+FIX: error in SQL due to a previous fix
+FIX: event for restricted user was restricted if company null
+FIX: facturestat bad sql when customer view is limited
+FIX: If supplier invoice block linked element is display after other block total HT amount is not reset to 0 and sum other block (like customer orders values)
+FIX: keep filter by category or by not enough stock if we switch page
+FIX: no need to remove file into mail form, the temp dir will be deleted after any sending
+FIX: no projet_task_time id from trigger TASK_TIMESPENT_CREATE
+FIX: pmp
+FIX: send mail, copy sendto don't read the list of contact
+FIX: The hours of date filter aren't correct
+FIX: tool export handle the type "select" extrafields and return the value instead of id
+FIX: top links menu have target attribute with wrong value
+FIX: total amount in tpl linked object are not reset
+FIX: when multicompany was enabled, this function didn't check just on the good entity (problem when both company use same mask)
 
 ***** ChangeLog for 3.6.4 compared to 3.6.3 *****
 - Fix: [ bug #2893 ] Dolibarr error when viewing an invoice after changing invoice mask

@@ -3633,23 +3633,27 @@ class Facture extends CommonInvoice
 	/**
 	 * Checks if the invoice is the last in its cycle
 	 *
-	 * @return int 0 or 1 if OK, -1 if error
+	 * @return bool Last of the cycle status
 	 *
 	 */
 	function is_last_in_cycle()
 	{
-		$sql = 'SELECT max(situation_counter) FROM ' . MAIN_DB_PREFIX . 'facture WHERE situation_cycle_ref = ' . $this->situation_cycle_ref;
-		$resql = $this->db->query($sql);
-
-		if ($resql && $resql->num_rows > 0) {
-			$res = $this->db->fetch_array($resql);
-			$last = $res['max(situation_counter)'];
-			return ($last == $this->situation_counter);
+		if (!empty($this->situation_cycle_ref)) {
+			// No point in testing anything if we're not inside a cycle
+			$sql = 'SELECT max(situation_counter) FROM ' . MAIN_DB_PREFIX . 'facture WHERE situation_cycle_ref = ' . $this->situation_cycle_ref;
+			$resql = $this->db->query($sql);
+	
+			if ($resql && $resql->num_rows > 0) {
+				$res = $this->db->fetch_array($resql);
+				$last = $res['max(situation_counter)'];
+				return ($last == $this->situation_counter);
+			} else {
+				$this->error = $this->db->lasterror();
+				dol_syslog(get_class($this) . "::select Error " . $this->error, LOG_ERR);
+				return false;
+			}
 		} else {
-			$this->error = $this->db->lasterror();
-			dol_syslog(get_class($this) . "::select Error " . $this->error, LOG_ERR);
-			$this->db->rollback();
-			return -1;
+			return true;
 		}
 	}
 
