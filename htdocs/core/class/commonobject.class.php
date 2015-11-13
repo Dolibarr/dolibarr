@@ -3564,16 +3564,16 @@ abstract class CommonObject
         else return 0;
     }
 
-   /**
-     * Function to show lines of extrafields with output datas
-     *
-     * @param	object	$extrafields	Extrafield Object
-     * @param	string	$mode			Show output (view) or input (edit) for extrafield
-	 * @param	array	$params			Optionnal parameters
-	 * @param	string	$keyprefix		Prefix string to add into name and id of field (can be used to avoid duplicate names)
-     *
-     * @return string
-     */
+	/**
+	 * Function to show lines of extrafields with output datas
+	 *
+	 * @param Extrafields   $extrafields    Extrafield Object
+	 * @param string        $mode           Show output (view) or input (edit) for extrafield
+	 * @param array         $params         Optional parameters
+	 * @param string        $keyprefix      Prefix string to add into name and id of field (can be used to avoid duplicate names)
+	 *
+	 * @return string
+	 */
     function showOptionals($extrafields, $mode='view', $params=0, $keyprefix='')
     {
 		global $_POST, $conf;
@@ -3601,7 +3601,16 @@ abstract class CommonObject
 						$value=$this->array_options["options_".$key];
 						break;
 					case "edit":
-						$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$this->array_options["options_".$key]);
+						if (isset($_POST["options_" . $key])) {
+							if (is_array($_POST["options_" . $key])) {
+								// $_POST["options"] is an array but following code expects a comma separated string
+								$value = implode(",", $_POST["options_" . $key]);
+							} else {
+								$value = $_POST["options_" . $key];
+							}
+						} else {
+							$value = $this->array_options["options_" . $key];
+						}
 						break;
 				}
 				if ($extrafields->attribute_type[$key] == 'separate')

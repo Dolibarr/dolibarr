@@ -116,7 +116,7 @@ if ($resql)
                 $oldemail = $obj->email;
                 $olduid = $obj->uid;
                 $oldlang = $obj->lang;
-                $oldsalerepresentative=dolGetFirstLastname($obj->firstname, $obj->lastname);;
+                $oldsalerepresentative=dolGetFirstLastname($obj->firstname, $obj->lastname);
                 $message = '';
                 $total = 0;
                 $foundtoprocess = 0;

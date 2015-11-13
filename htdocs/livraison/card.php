@@ -383,7 +383,7 @@ if ($action == 'create')
 			 */
 			print '<td align="center">';
 			$quantite_livree = $commande->livraisons[$line->id];
-			print $quantite_livree;;
+			print $quantite_livree;
 			print '</td>';
 
 			$quantite_commandee = $line->qty;

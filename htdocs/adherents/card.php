@@ -249,7 +249,7 @@ if (empty($reshook))
 		}
 		$lastname=$_POST["lastname"];
 		$firstname=$_POST["firstname"];
-		$morphy=$morphy=$_POST["morphy"];;
+		$morphy=$morphy=$_POST["morphy"];
 		if ($morphy != 'mor' && empty($lastname)) {
 			$error++;
 			$langs->load("errors");

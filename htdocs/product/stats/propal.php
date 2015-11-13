@@ -113,8 +113,8 @@ if ($id > 0 || ! empty($ref))
 		print '</div>';
 
 
-		$sql = "SELECT DISTINCT s.nom as name, s.rowid as socid, p.rowid as propalid, p.ref, p.total_ht as amount,";
-		$sql.= "p.datep, p.fk_statut as statut, d.qty";
+		$sql = "SELECT s.nom as name, s.rowid as socid, p.rowid as propalid, p.ref, p.total_ht as amount,";
+		$sql.= "p.datep, p.fk_statut as statut, SUM(d.qty) as qty";
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= ", sc.fk_soc, sc.fk_user ";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 		$sql.= ",".MAIN_DB_PREFIX."propal as p";
@@ -126,6 +126,7 @@ if ($id > 0 || ! empty($ref))
 		$sql.= " AND d.fk_product =".$product->id;
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 		if ($socid) $sql.= " AND p.fk_soc = ".$socid;
+		$sql.= " GROUP BY p.rowid ";
 		$sql.= " ORDER BY $sortfield $sortorder ";
 		$sql.= $db->plimit($conf->liste_limit +1, $offset);
 

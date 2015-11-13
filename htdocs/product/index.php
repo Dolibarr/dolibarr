@@ -299,7 +299,7 @@ if ($result)
 			if (empty($conf->global->PRODUIT_MULTIPRICES))
 			{
 				print '<td align="right">';
-    			if ($objp->price_base_type == 'TTC') print price($objp->price_ttc).' '.$langs->trans("TTC");
+    			if (isset($objp->price_base_type) && $objp->price_base_type == 'TTC') print price($objp->price_ttc).' '.$langs->trans("TTC");
     			else print price($objp->price).' '.$langs->trans("HT");
     			print '</td>';
 			}
