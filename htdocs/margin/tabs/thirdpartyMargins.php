@@ -124,12 +124,13 @@ if ($socid > 0)
 
     print "</table>";
     
-    dol_fiche_end();
-    
     print '</div>';
     print '<div style="clear:both"></div>';
 
-
+    dol_fiche_end();
+    
+    print '<br>';
+    
     $sql = "SELECT distinct s.nom, s.rowid as socid, s.code_client,";
     $sql.= " f.rowid as facid, f.facnumber, f.total as total_ht,";
     $sql.= " f.datef, f.paye, f.fk_statut as statut, f.type,";

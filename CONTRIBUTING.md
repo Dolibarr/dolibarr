@@ -97,7 +97,7 @@ When submitting a pull request, use same rule as [Commits](#commits) for the mes
 If your pull request only contains one commit, GitHub will be smart enough to fill it for you.
 Otherwise, please be a bit verbose about what you're providing.
 
-You Pull Request must pass the Continuous Integration checks.
+Your Pull Request must pass the Continuous Integration checks.
 Also, if you want to include a new external library (into htdocs/includes directory), please ask before to the project
 leader to see if such a library can be accepted.
 

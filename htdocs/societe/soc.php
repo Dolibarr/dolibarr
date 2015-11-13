@@ -2138,6 +2138,14 @@ else
         print '<tr><td>'.$langs->trans("ThirdPartyType").'</td><td>'.$object->typent.'</td>';
         print '<tr><td>'.$langs->trans("Staff").'</td><td>'.$object->effectif.'</td></tr>';
 
+        print '</table>';
+        
+        print '</div>';
+        print '<div class="fichehalfright"><div class="ficheaddleft">';
+       
+        print '<div class="underbanner clearboth"></div>';
+        print '<table class="border tableforfield" width="100%">';
+        
         // Legal
         print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td>'.$object->forme_juridique.'</td></tr>';
 
@@ -2147,14 +2155,6 @@ else
         else print '&nbsp;';
         print '</td></tr>';
 
-        print '</table>';
-        
-        print '</div>';
-        print '<div class="fichehalfright"><div class="ficheaddleft">';
-       
-        print '<div class="underbanner clearboth"></div>';
-        print '<table class="border tableforfield" width="100%">';
-        
         // Default language
         if (! empty($conf->global->MAIN_MULTILANGS))
         {

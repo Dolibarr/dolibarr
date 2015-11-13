@@ -113,18 +113,20 @@ class printing_printgcp extends PrintingDriver
          
             if ($this->google_id != '' && $this->google_secret != '') {
                 $this->conf[] = array('varname'=>'PRINTGCP_INFO', 'info'=>'GoogleAuthConfigured', 'type'=>'info');
-                $this->conf[] = array('varname'=>'PRINTGCP_TOKEN_ACCESS', 'info'=>$access, 'type'=>'info');
+                $this->conf[] = array('varname'=>'PRINTGCP_TOKEN_ACCESS', 'info'=>$access, 'type'=>'info', 'renew'=>$urlwithroot.'/core/modules/oauth/getgoogleoauthcallback.php?state=userinfo_email,userinfo_profile,cloud_print&backtourl='.urlencode(DOL_URL_ROOT.'/printing/admin/printing.php?mode=setup&driver=printgcp'), 'delete'=>($storage->hasAccessToken('Google')?$urlwithroot.'/core/modules/oauth/getgoogleoauthcallback.php?action=delete&backtourl='.urlencode(DOL_URL_ROOT.'/printing/admin/printing.php?mode=setup&driver=printgcp'):''));
                 if ($token_ok) {
                     $refreshtoken = $token->getRefreshToken();
-                    $this->conf[] = array('varname'=>'PRINTGCP_TOKEN_REFRESH', 'info'=>((! empty($refreshtoken))?'Yes':'No'), 'type'=>'info');
-                    $this->conf[] = array('varname'=>'PRINTGCP_TOKEN_EXPIRED', 'info'=>($expire?'Yes':'No'), 'type'=>'info');
+                    $this->conf[] = array('varname'=>'PRINTGCP_TOKEN_REFRESH',   'info'=>((! empty($refreshtoken))?'Yes':'No'), 'type'=>'info');
+                    $this->conf[] = array('varname'=>'PRINTGCP_TOKEN_EXPIRED',   'info'=>($expire?'Yes':'No'), 'type'=>'info');
                     $this->conf[] = array('varname'=>'PRINTGCP_TOKEN_EXPIRE_AT', 'info'=>(dol_print_date($token->getEndOfLife(), "dayhour")), 'type'=>'info');
                 }
-                if (!$storage->hasAccessToken('Google')) {
+                /*
+                if ($storage->hasAccessToken('Google')) {
                     $this->conf[] = array('varname'=>'PRINTGCP_AUTHLINK', 'link'=>$urlwithroot.'/core/modules/oauth/getgoogleoauthcallback.php?backtourl='.urlencode(DOL_URL_ROOT.'/printing/admin/printing.php?mode=setup&driver=printgcp'), 'type'=>'authlink');
-                } else {
                     $this->conf[] = array('varname'=>'PRINTGCP_DELETE_TOKEN', 'link'=>$urlwithroot.'/core/modules/oauth/getgoogleoauthcallback.php?action=delete&backtourl='.urlencode(DOL_URL_ROOT.'/printing/admin/printing.php?mode=setup&driver=printgcp'), 'type'=>'delete');
-                }
+                } else {
+                    $this->conf[] = array('varname'=>'PRINTGCP_AUTHLINK', 'link'=>$urlwithroot.'/core/modules/oauth/getgoogleoauthcallback.php?backtourl='.urlencode(DOL_URL_ROOT.'/printing/admin/printing.php?mode=setup&driver=printgcp'), 'type'=>'authlink');
+                }*/
             } else {
                 $this->conf[] = array('varname'=>'PRINTGCP_INFO', 'info'=>'GoogleAuthNotConfigured', 'type'=>'info');
             }

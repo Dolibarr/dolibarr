@@ -232,7 +232,7 @@ body {
 <?php } else { ?>
 	background: rgb(<?php print $colorbackbody; ?>);
 <?php } ?>
-	color: #101010;
+	color: rgb(<?php echo $colortext; ?>);
 	font-size: <?php print $fontsize ?>px;
 	font-family: <?php print $fontlist ?>;
     margin-top: 0;
@@ -3595,6 +3595,9 @@ a span.select2-chosen
   overflow: hidden;
 }
 
+.noborderoncategories {
+	border: none !important;
+}
 
 /* ============================================================================== */
 /*  Multiselect with checkbox                                                     */

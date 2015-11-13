@@ -263,6 +263,10 @@ function GETPOST($paramname,$check='',$method=0,$filter=NULL,$options=NULL)
 	            $out=trim($out);
 	            if (preg_match('/[^a-z]+/i',$out)) $out='';
 	            break;
+	        case 'aZ09':
+	            $out=trim($out);
+	            if (preg_match('/[^a-z0-9]+/i',$out)) $out='';
+	            break;
 	        case 'array':
 	            if (! is_array($out) || empty($out)) $out=array();
 	            break;
@@ -5043,6 +5047,22 @@ function printCommonFooter($zone='private')
 
 	if (! empty($conf->global->MAIN_HTML_FOOTER)) print $conf->global->MAIN_HTML_FOOTER."\n";
 
+	print "\n";
+	print '<script type="text/javascript" language="javascript">jQuery(document).ready(function() {'."\n";
+	
+	print '<!-- If page_y set, we set scollbar with it -->'."\n";
+	print "page_y=getParameterByName('page_y', 0);";
+	print "if (page_y > 0) $('html, body').scrollTop(page_y);";
+	
+	print '<!-- Set handler to add page_y param on some a href links -->'."\n";
+	print 'jQuery(".reposition").click(function() {
+	           var page_y = $(document).scrollTop();
+	           this.href=this.href+\'&page_y=\'+page_y;
+	           });';
+	print '});'."\n";
+	
+	print '</script>'."\n";
+	
 	// Google Analytics (need Google module)
 	if (! empty($conf->google->enabled) && ! empty($conf->global->MAIN_GOOGLE_AN_ID))
 	{

@@ -152,7 +152,8 @@ if (($action == 'send' || $action == 'sendhtml') && ! GETPOST('addfile') && ! GE
 	$subject    = $_POST['subject'];
 	$body       = $_POST['message'];
 	$deliveryreceipt= $_POST["deliveryreceipt"];
-
+	$trackid    = GETPOST('trackid');
+	
 	//Check if we have to decode HTML
 	if (!empty($conf->global->FCKEDITOR_ENABLE_MAILING) && dol_textishtml(dol_html_entity_decode($body, ENT_COMPAT | ENT_HTML401))) {
 		$body=dol_html_entity_decode($body, ENT_COMPAT | ENT_HTML401);
@@ -202,7 +203,9 @@ if (($action == 'send' || $action == 'sendhtml') && ! GETPOST('addfile') && ! GE
             $sendtoccc,
             $deliveryreceipt,
             $msgishtml,
-            $errors_to
+            $errors_to,
+        	'',
+        	$trackid	
         );
 
 		$result=$mailfile->sendfile();
@@ -693,6 +696,7 @@ else
 		$formmail = new FormMail($db);
 		$formmail->fromname = (isset($_POST['fromname'])?$_POST['fromname']:$conf->global->MAIN_MAIL_EMAIL_FROM);
 		$formmail->frommail = (isset($_POST['frommail'])?$_POST['frommail']:$conf->global->MAIN_MAIL_EMAIL_FROM);
+		$formmail->trackid='test';
 		$formmail->withfromreadonly=0;
 		$formmail->withsubstit=0;
 		$formmail->withfrom=1;

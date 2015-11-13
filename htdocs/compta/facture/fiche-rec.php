@@ -70,7 +70,7 @@ if ($action == 'add')
 {
 	if (! GETPOST('titre'))
 	{
-		setEventMessage($langs->transnoentities("ErrorFieldRequired",$langs->trans("Title")), 'errors');
+		setEventMessages($langs->transnoentities("ErrorFieldRequired",$langs->trans("Title")), null, 'errors');
 		$action = "create";
 		$error++;
 	}
@@ -88,13 +88,13 @@ if ($action == 'add')
 		}
 		else
 		{
-			setEventMessage($object->error, 'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 			$action = "create";
 		}
 	}
 }
 
-// Suppression
+// Delete
 if ($action == 'delete' && $user->rights->facture->supprimer)
 {
 	$object->fetch($id);
