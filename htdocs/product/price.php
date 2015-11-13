@@ -179,12 +179,6 @@ if (empty($reshook))
 			);
 		}
 
-		if (!$error && $object->update($object->id, $user) < 1) {
-			$error++;
-			setEventMessage($object->error, 'errors');
-			$action = 'edit_price';
-		}
-
 		if (!$error) {
 			$db->begin();
 
@@ -213,6 +207,11 @@ if (empty($reshook))
 					break;
 				}
 			}
+		}
+
+		if (!$error && $object->update($object->id, $user) < 0) {
+			$error++;
+			setEventMessage($object->error, 'errors');
 		}
 
 		if (empty($error)) {
@@ -713,7 +712,7 @@ print "</table>\n";
 
 print '</div>';
 print '<div style="clear:both"></div>';
-   
+
 
 dol_fiche_end();
 
@@ -793,7 +792,7 @@ if ($action == 'edit_vat' && ($user->rights->produit->creer || $user->rights->se
 	print '<br></form><br>';
 }
  
-if ($action == 'edit_price' && ($user->rights->produit->creer || $user->rights->service->creer))
+if ($action == 'edit_price' && $object->getRights()->creer)
 {
 	print load_fiche_titre($langs->trans("NewPrice"), '');
 
@@ -809,7 +808,7 @@ if ($action == 'edit_price' && ($user->rights->produit->creer || $user->rights->
 		print '<table class="border" width="100%">';
 
 		// VAT
-		print '<tr><td>' . $langs->trans("VATRate") . '</td><td>';
+		print '<tr><td>' . $langs->trans("VATRate") . '</td><td colspan="2">';
 		print $form->load_tva("tva_tx", $object->tva_tx, $mysoc, '', $object->id, $object->tva_npr);
 		print '</td></tr>';
 
@@ -817,7 +816,7 @@ if ($action == 'edit_price' && ($user->rights->produit->creer || $user->rights->
 		print '<tr><td width="20%">';
 		print $langs->trans('PriceBase');
 		print '</td>';
-		print '<td>';
+		print '<td colspan="2">';
 		print $form->selectPriceBaseType($object->price_base_type, "price_base_type");
 		print '</td>';
 		print '</tr>';
@@ -825,7 +824,7 @@ if ($action == 'edit_price' && ($user->rights->produit->creer || $user->rights->
  		// Only show price mode and expression selector if module is enabled
 		if (! empty($conf->dynamicprices->enabled)) {
 			// Price mode selector
-			print '<tr><td>'.$langs->trans("PriceMode").'</td><td>';
+			print '<tr><td>'.$langs->trans("PriceMode").'</td><td colspan="2">';
 			$price_expression = new PriceExpression($db);
 			$price_expression_list = array(0 => $langs->trans("PriceNumeric")); //Put the numeric mode as first option
 			foreach ($price_expression->list_price_expression() as $entry) {
@@ -835,17 +834,18 @@ if ($action == 'edit_price' && ($user->rights->produit->creer || $user->rights->
 			print $form->selectarray('eid', $price_expression_list, $price_expression_preselection);
 			print '&nbsp; <div id="expression_editor" class="button">'.$langs->trans("PriceExpressionEditor").'</div>';
 			print '</td></tr>';
+
 			// This code hides the numeric price input if is not selected, loads the editor page if editor button is pressed
-			print '<script type="text/javascript">
-				jQuery(document).ready(run);
-				function run() {
-					jQuery("#expression_editor").click(on_click);
+			?>
+
+			<script type="text/javascript">
+				jQuery(document).ready(function() {
+					jQuery("#expression_editor").click(function() {
+						window.location = "<?php echo DOL_URL_ROOT ?>/product/dynamic_price/editor.php?id=<?php echo $id ?>&tab=price&eid=" + $("#eid").attr("value");
+					});
 					jQuery("#eid").change(on_change);
 					on_change();
-				}
-				function on_click() {
-					window.location = "'.DOL_URL_ROOT.'/product/dynamic_price/editor.php?id='.$id.'&tab=price&eid=" + $("#eid").attr("value");
-				}
+				});
 				function on_change() {
 					if ($("#eid").attr("value") == 0) {
 						jQuery("#price_numeric").show();
@@ -853,7 +853,8 @@ if ($action == 'edit_price' && ($user->rights->produit->creer || $user->rights->
 						jQuery("#price_numeric").hide();
 					}
 				}
-			</script>';
+			</script>
+			<?php
 		}
 
 		// Price
@@ -862,7 +863,7 @@ if ($action == 'edit_price' && ($user->rights->produit->creer || $user->rights->
 		print '<tr id="price_numeric"><td width="20%">';
 		$text = $langs->trans('SellingPrice');
 		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
-		print '</td><td>';
+		print '</td><td colspan="2">';
 		if ($object->price_base_type == 'TTC') {
 			print '<input name="price" size="10" value="' . price($product->price_ttc) . '">';
 		} else {
@@ -874,16 +875,22 @@ if ($action == 'edit_price' && ($user->rights->produit->creer || $user->rights->
 		print '<tr><td>';
 		$text = $langs->trans('MinPrice');
 		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
-		if ($object->price_base_type == 'TTC') {
-			print '<td><input name="price_min" size="10" value="' . price($object->price_min_ttc) . '">';
-		} else {
-			print '<td><input name="price_min" size="10" value="' . price($object->price_min) . '">';
+		print '</td><td';
+		if (empty($conf->global->PRODUCT_MINIMUM_RECOMMENDED_PRICE)) {
+			print ' colspan="2"';
 		}
+		print '>';
+		if ($object->price_base_type == 'TTC') {
+			print '<input name="price_min" size="10" value="' . price($object->price_min_ttc) . '">';
+		} else {
+			print '<input name="price_min" size="10" value="' . price($object->price_min) . '">';
+		}
+		print '</td>';
 		if ( !empty($conf->global->PRODUCT_MINIMUM_RECOMMENDED_PRICE))
 		{
 			print '<td align="left">'.$langs->trans("MinimumRecommendedPrice", price($maxpricesupplier,0,'',1,-1,-1,'auto')).' '.img_warning().'</td>';
 		}
-		print '</td></tr>';
+		print '</tr>';
 
 		print '</table>';
 
@@ -906,8 +913,8 @@ if ($action == 'edit_price' && ($user->rights->produit->creer || $user->rights->
 		<script>
 
 			var showHidePriceRules = function () {
-				var otherPrices = $('div.fiche form table:not(:first), div.fiche form table:first tr:not(:first)');
-				var minPrice1 = $('div.fiche form:first tr:eq(1)');
+				var otherPrices = $('div.fiche form table tbody tr:not(:first)');
+				var minPrice1 = $('div.fiche form input[name="price_min[1]"]');
 
 				if (jQuery('input#usePriceRules').prop('checked')) {
 					otherPrices.hide();
@@ -927,65 +934,72 @@ if ($action == 'edit_price' && ($user->rights->produit->creer || $user->rights->
 		<?php
 
 		print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
+		print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
+		print '<input type="hidden" name="action" value="update_price">';
+		print '<input type="hidden" name="id" value="' . $object->id . '">';
 
-		for($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i ++)
-		{
+		if (! empty($conf->global->PRODUIT_MULTIPRICES) && ! empty($conf->global->PRODUIT_MULTIPRICES_ALLOW_AUTOCALC_PRICELEVEL)) {
+			print $langs->trans('UseMultipriceRules'). ' <input type="checkbox" id="usePriceRules" name="usePriceRules" '.($object->price_autogen ? 'checked' : '').'><br><br>';
+		}
 
-			if ($i > 1) print '<br>';
-			elseif (! empty($conf->global->PRODUIT_MULTIPRICES) && ! empty($conf->global->PRODUIT_MULTIPRICES_ALLOW_AUTOCALC_PRICELEVEL)) {
-				print $langs->trans('UseMultipriceRules'). ' <input type="checkbox" id="usePriceRules" name="usePriceRules" '.($object->price_autogen ? 'checked' : '').'><br><br>';
-			}
-			print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
-			print '<input type="hidden" name="action" value="update_price">';
-			print '<input type="hidden" name="id" value="' . $object->id . '">';
-			if (empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL))
-			{
-				print '<input type="hidden" name="tva_tx[' . $i . ']" value="' . $object->tva_tx . '">';
-			}
-			
-			print '<table class="border" width="100%">';
+		print '<table class="noborder">';
+		print '<thead><tr class="liste_titre">
+		<td style="text-align: center">'.$langs->trans("PriceLevel").'</td>';
+		if (!empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL)) {
+			print '<td style="text-align: center">'.$langs->trans("VATRate").'</td>';
+		}
+		print '<td style="text-align: center">'.$langs->trans("SellingPrice").'</td>
+		<td style="text-align: center">'.$langs->trans("MinPrice").'</td>';
+		if (!empty($conf->global->PRODUCT_MINIMUM_RECOMMENDED_PRICE)) {
+			print '<td></td>';
+		}
+		print '</tr></thead><tbody>';
+
+		for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i ++) {
+			$var = !$var;
+
+			print '<tr '.$bc[$var].'>';
+			print '<td>';
+			print $form->textwithpicto($langs->trans('SellingPrice') . ' ' . $i, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
+			print '</td>';
 
 			// VAT
-			if (! empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL))	// This option is kept for backward compatibility but has no sense
-			{
-				print '<tr><td>' . $langs->trans("VATRate") . '</td><td>';
+			if (empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL)) {
+				print '<input type="hidden" name="tva_tx[' . $i . ']" value="' . $object->tva_tx . '">';
+			} else {
+				// This option is kept for backward compatibility but has no sense
+				print '<td style="text-align: center">';
 				print $form->load_tva("tva_tx[" . $i.']', $object->multiprices_tva_tx[$i], $mysoc, '', $object->id);
-				print '</td></tr>';
+				print '</td>';
 			}
-			
+
 			// Selling price
-			print '<tr><td width="20%">';
-			$text = $langs->trans('SellingPrice') . ' ' . $i;
-			print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
-			print '</td><td>';
+			print '<td style="text-align: center">';
 			if ($object->multiprices_base_type [$i] == 'TTC') {
 				print '<input name="price[' . $i . ']" size="10" value="' . price($object->multiprices_ttc [$i]) . '">';
 			} else {
 				print '<input name="price[' . $i . ']" size="10" value="' . price($object->multiprices [$i]) . '">';
 			}
 			print '&nbsp;'.$form->selectPriceBaseType($object->multiprices_base_type [$i], "multiprices_base_type[" . $i."]");
-			print '</td></tr>';
+			print '</td>';
 
 			// Min price
-			print '<tr><td>';
-			$text = $langs->trans('MinPrice') . ' ' . $i;
-			print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
+			print '<td style="text-align: center">';
 			if ($object->multiprices_base_type [$i] == 'TTC') {
-				print '<td><input name="price_min[' . $i . ']" size="10" value="' . price($object->multiprices_min_ttc [$i]) . '">';
+				print '<input name="price_min[' . $i . ']" size="10" value="' . price($object->multiprices_min_ttc [$i]) . '">';
 			} else {
-				print '<td><input name="price_min[' . $i . ']" size="10" value="' . price($object->multiprices_min [$i]) . '">';
+				print '<input name="price_min[' . $i . ']" size="10" value="' . price($object->multiprices_min [$i]) . '">';
 			}
 			if ( !empty($conf->global->PRODUCT_MINIMUM_RECOMMENDED_PRICE))
 			{
 				print '<td align="left">'.$langs->trans("MinimumRecommendedPrice", price($maxpricesupplier,0,'',1,-1,-1,'auto')).' '.img_warning().'</td>';
 			}
-			print '</td></tr>';
+			print '</td>';
 
-			print '</table>';
-
+			print '</tr>';
 		}
 
-		print '<br><div style="text-align: center">';
+		print '</tbody></table><br><div style="text-align: center">';
 		print '<input type="submit" class="button" value="' . $langs->trans("Save") . '">';
 		print '&nbsp;&nbsp;&nbsp;';
 		print '<input type="submit" class="button" name="cancel" value="' . $langs->trans("Cancel") . '"></div>';
