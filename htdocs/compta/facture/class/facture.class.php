@@ -3818,7 +3818,7 @@ class Facture extends CommonInvoice
 	 */
 	function is_last_in_cycle()
 	{
-		if (empty($this->situation_cycle_ref)) {
+		if (!empty($this->situation_cycle_ref)) {
 			// No point in testing anything if we're not inside a cycle
 			return false;
 		}
