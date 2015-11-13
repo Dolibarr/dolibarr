@@ -3595,6 +3595,9 @@ a span.select2-chosen
   overflow: hidden;
 }
 
+.noborderoncategories {
+	border: none !important;
+}
 
 /* ============================================================================== */
 /*  Multiselect with checkbox                                                     */
