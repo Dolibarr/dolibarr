@@ -149,6 +149,10 @@ These are features that Dolibarr does **not** yet fully support:
 
 Administrator, user, developer and translator's documentations are available along with other community resources on the [Wiki](http://wiki.dolibarr.org).
 
+## CONTRIBUTING
+
+See file [CONTRIBUTING](https://github.com/Dolibarr/dolibarr/blob/develop/CONTRIBUTING.md)
+
 ## CREDITS
 
 Dolibarr is the work of many contributors over the years and uses some fine libraries.
