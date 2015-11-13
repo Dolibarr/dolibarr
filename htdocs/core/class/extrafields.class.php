@@ -739,7 +739,7 @@ class ExtraFields
 		elseif ($type == 'select')
 		{
 			$out = '';
-			if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_EXTRAFIELDS_USE_SELECT2))
+			if (! empty($conf->use_javascript_ajax))
 			{
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
 				$out.= ajax_combobox($keysuffix.'options_'.$key.$keyprefix, array(), $conf->global->MAIN_USE_SEARCH_TO_SELECT, $conf->global->MAIN_SELECT_MIN_SIZE_OPTION);
@@ -760,7 +760,7 @@ class ExtraFields
 		elseif ($type == 'sellist')
 		{
 			$out = '';
-			if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_EXTRAFIELDS_USE_SELECT2))
+			if (! empty($conf->use_javascript_ajax))
 			{
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
 				$out.= ajax_combobox($keysuffix.'options_'.$key.$keyprefix, array(), $conf->global->MAIN_USE_SEARCH_TO_SELECT, $conf->global->MAIN_SELECT_MIN_SIZE_OPTION);
