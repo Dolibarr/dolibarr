@@ -322,7 +322,7 @@ if ($result)
 	    print '</div>';
 	}
 
-	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">';
+	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 	
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans('Ref'),$_SERVER["PHP_SELF"],'p.ref','',$param,'',$sortfield,$sortorder);
