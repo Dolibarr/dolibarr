@@ -87,7 +87,8 @@ else if ($action == 'updateform')
 
 $form = new Form($db);
 
-llxHeader('',$langs->trans("Miscellaneous"));
+$wikihelp='EN:Setup_Security|FR:Paramétrage_Sécurité|ES:Configuración_Seguridad';
+llxHeader('',$langs->trans("Miscellaneous"),$wikihelp);
 
 print load_fiche_titre($langs->trans("SecuritySetup"),'','title_setup');
 

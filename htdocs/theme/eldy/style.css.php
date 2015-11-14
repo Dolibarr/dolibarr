@@ -1160,6 +1160,8 @@ div.vmenu, td.vmenu {
 	padding-bottom: 2px;
 }
 #menu_contenu_logo { padding-right: 4px; }
+.companylogo { }
+.searchform { padding-top: 4px; }
 
 a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; }
 font.vmenudisabled  { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #aaa; }

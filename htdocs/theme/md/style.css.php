@@ -1186,6 +1186,8 @@ div.vmenu, td.vmenu {
 
 .menu_contenu { padding-top: 4px; padding-bottom: 3px;}
 #menu_contenu_logo { padding-right: 4px; }
+.companylogo { padding-top: 4px; }
+.searchform { padding-top: 8px; }
 
 a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; }
 font.vmenudisabled  { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #93a5aa; }
