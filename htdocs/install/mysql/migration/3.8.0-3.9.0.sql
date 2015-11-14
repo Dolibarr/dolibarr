@@ -305,6 +305,8 @@ ALTER TABLE llx_categorie_project ADD CONSTRAINT fk_categorie_project_categorie_
 ALTER TABLE llx_categorie_project ADD CONSTRAINT fk_categorie_project_fk_project   FOREIGN KEY (fk_project) REFERENCES llx_projet (rowid);
 
 
-
+ALTER TABLE llx_c_tva ADD COLUMN code varchar(10) DEFAULT '' after fk_pays;
+DROP INDEX uk_c_tva_id ON llx_c_tva;
+ALTER TABLE llx_c_tva ADD UNIQUE INDEX uk_c_tva_id (fk_pays, code, taux, recuperableonly);
 
 

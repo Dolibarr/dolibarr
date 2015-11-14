@@ -3857,12 +3857,12 @@ class Form
 
         dol_syslog(__METHOD__, LOG_DEBUG);
 
-        $sql  = "SELECT DISTINCT t.taux, t.recuperableonly";
+        $sql  = "SELECT DISTINCT t.code, t.taux, t.recuperableonly";
     	$sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
     	$sql.= " WHERE t.fk_pays = c.rowid";
     	$sql.= " AND t.active > 0";
     	$sql.= " AND c.code IN (".$country_code.")";
-    	$sql.= " ORDER BY t.taux ASC, t.recuperableonly ASC";
+    	$sql.= " ORDER BY t.code ASC, t.taux ASC, t.recuperableonly ASC";
 
     	$resql=$this->db->query($sql);
     	if ($resql)
@@ -3873,8 +3873,9 @@ class Form
     			for ($i = 0; $i < $num; $i++)
     			{
     				$obj = $this->db->fetch_object($resql);
+    				$this->cache_vatrates[$i]['code']	= $obj->code;
     				$this->cache_vatrates[$i]['txtva']	= $obj->taux;
-    				$this->cache_vatrates[$i]['libtva']	= $obj->taux.'%';
+    				$this->cache_vatrates[$i]['libtva']	= $obj->taux.'%'.($obj->code?' ('.$obj->code.')':'');   // Label must contains only 0-9 , . % or *
     				$this->cache_vatrates[$i]['nprtva']	= $obj->recuperableonly;
     			}
 
@@ -3897,7 +3898,7 @@ class Form
      *  Output an HTML select vat rate.
      *  The name of this function should be selectVat. We keep bad name for compatibility purpose.
      *
-     *  @param	string	$htmlname           Name of html select field
+     *  @param	string	$htmlname           Name of HTML select field
      *  @param  float	$selectedrate       Force preselected vat rate. Use '' for no forcing.
      *  @param  Societe	$societe_vendeuse   Thirdparty seller
      *  @param  Societe	$societe_acheteuse  Thirdparty buyer
@@ -3910,10 +3911,11 @@ class Form
 	 *                                      Si vendeur et acheteur dans Communauté européenne et acheteur= particulier alors TVA par défaut=TVA du produit vendu. Fin de règle.
 	 *                                      Si vendeur et acheteur dans Communauté européenne et acheteur= entreprise alors TVA par défaut=0. Fin de règle.
      *                  					Sinon la TVA proposee par defaut=0. Fin de regle.
-     *  @param	bool	$options_only		Return options only (for ajax treatment)
+     *  @param	bool	$options_only		Return HTML options lines only (for ajax treatment)
+     *  @param  int     $addcode            Add code into key in select list
      *  @return	string
      */
-    function load_tva($htmlname='tauxtva', $selectedrate='', $societe_vendeuse='', $societe_acheteuse='', $idprod=0, $info_bits=0, $type='', $options_only=false)
+    function load_tva($htmlname='tauxtva', $selectedrate='', $societe_vendeuse='', $societe_acheteuse='', $idprod=0, $info_bits=0, $type='', $options_only=false, $addcode=0)
     {
         global $langs,$conf,$mysoc;
 
@@ -4016,13 +4018,16 @@ class Form
 
         		$return.= '<option value="'.$rate['txtva'];
         		$return.= $rate['nprtva'] ? '*': '';
+        		if ($addcode && $rate['code']) $return.=' ('.$rate['code'].')';
         		$return.= '"';
         		if ($rate['txtva'] == $defaulttx && $rate['nprtva'] == $defaultnpr)
         		{
         			$return.= ' selected';
         		}
         		$return.= '>'.vatrate($rate['libtva']);
+        		//$return.=($rate['code']?' '.$rate['code']:'');
         		$return.= $rate['nprtva'] ? ' *': '';
+        		
         		$return.= '</option>';
         	}
 

@@ -217,7 +217,7 @@ else {
 
 	<td class="nobottom linecolvat" align="right"><?php
 	if ($seller->tva_assuj == "0") echo '<input type="hidden" name="tva_tx" id="tva_tx" value="0">'.vatrate(0, true);
-	else echo $form->load_tva('tva_tx', (isset($_POST["tva_tx"])?$_POST["tva_tx"]:-1), $seller, $buyer);
+	else echo $form->load_tva('tva_tx', (isset($_POST["tva_tx"])?$_POST["tva_tx"]:-1), $seller, $buyer, 0, 0, '', false, 1);
 	?>
 	</td>
 	<td class="nobottom linecoluht" align="right">

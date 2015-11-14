@@ -1401,12 +1401,12 @@ if (empty($reshook))
 
 			// Margin
 			$fournprice = price2num(GETPOST('fournprice' . $predef) ? GETPOST('fournprice' . $predef) : '');
-			$buyingprice = price2num(GETPOST('buying_price' . $predef) != '' ? GETPOST('buying_price' . $predef) : '');    // If buying_price is '0', we muste keep this value
+			$buyingprice = price2num(GETPOST('buying_price' . $predef) != '' ? GETPOST('buying_price' . $predef) : '');    // If buying_price is '0', we must keep this value
 
 			// Local Taxes
-			$localtax1_tx = get_localtax($tva_tx, 1, $object->thirdparty);
-			$localtax2_tx = get_localtax($tva_tx, 2, $object->thirdparty);
-
+			$localtax1_tx = get_localtax($tva_tx, 1, $object->thirdparty, $mysoc);
+			$localtax2_tx = get_localtax($tva_tx, 2, $object->thirdparty, $mysoc);
+			
 			$info_bits = 0;
 			if ($tva_npr)
 				$info_bits |= 0x01;

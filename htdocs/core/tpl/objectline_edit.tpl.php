@@ -111,7 +111,7 @@ $coldisplay=-1; // We remove first td
 	<?php
 	$coldisplay++;
 	if ($this->situation_counter == 1 || !$this->situation_cycle_ref) {
-		print '<td align="right">' . $form->load_tva('tva_tx',$line->tva_tx,$seller,$buyer,0,$line->info_bits,$line->product_type) . '</td>';
+		print '<td align="right">' . $form->load_tva('tva_tx', $line->tva_tx, $seller, $buyer, 0, $line->info_bits, $line->product_type, false, 1) . '</td>';
 	} else {
 		print '<td align="right"><input size="1" type="text" class="flat" name="tva_tx" value="' . price($line->tva_tx) . '" readonly />%</td>';
 	}

@@ -1314,7 +1314,8 @@ class CommandeFournisseur extends CommonOrder
             // la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
 
             $localtaxes_type=getLocalTaxesFromRate($txtva,0,$mysoc,$this->thirdparty);
-
+            $txtva = preg_replace('/\s*\(.*\)/','',$txtva);  // Remove code into vatrate.
+            
             $tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $product_type, $this->thirdparty, $localtaxes_type);
             $total_ht  = $tabprice[0];
             $total_tva = $tabprice[1];
@@ -2072,7 +2073,8 @@ class CommandeFournisseur extends CommonOrder
             // la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
 
             $localtaxes_type=getLocalTaxesFromRate($txtva,0,$mysoc, $this->thirdparty);
-
+            $txtva = preg_replace('/\s*\(.*\)/','',$txtva);  // Remove code into vatrate.
+            
             $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type);
             $total_ht  = $tabprice[0];
             $total_tva = $tabprice[1];
