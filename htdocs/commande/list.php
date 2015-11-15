@@ -444,7 +444,7 @@ if ($resql)
                     }
                     $text_info .= $generic_commande->lines[$lig]->qty.' X '.$generic_commande->lines[$lig]->ref.'&nbsp;'.dol_trunc($generic_commande->lines[$lig]->product_label, 25);
                     $text_stock_reel = $generic_product->stock_reel.'/'.$stock_order;
-                    if ($generic_product->stock_reel<$generic_commande->lines[$lig]->qty) {
+                    if (($generic_product->stock_reel < $generic_commande->lines[$lig]->qty) || ($stock_order > $generic_product->stock_reel)) {
                         $notshippable++;
                         $text_info.='<span class="warning">'.$langs->trans('Available').'&nbsp;:&nbsp;'.$text_stock_reel.'</span>';
                     } else {
