@@ -27,8 +27,8 @@
  */
 
 /**
- *	\file       htdocs/comm/propal/class/propal.class.php
- *	\brief      File of class to manage proposals
+ *	\file       htdocs/supplier_proposal/class/supplier_propal.class.php
+ *	\brief      File of class to manage supplier proposals
  */
 
 require_once DOL_DOCUMENT_ROOT .'/fourn/class/fournisseur.product.class.php';
@@ -40,12 +40,12 @@ require_once DOL_DOCUMENT_ROOT .'/margin/lib/margins.lib.php';
 /**
  *	Class to manage price ask supplier
  */
-class AskPriceSupplier extends CommonObject
+class SupplierProposal extends CommonObject
 {
-    public $element='askpricesupplier';
-    public $table_element='askpricesupplier';
-    public $table_element_line='askpricesupplierdet';
-    public $fk_element='fk_askpricesupplier';
+    public $element='supplier_proposal';
+    public $table_element='supplier_proposal';
+    public $table_element_line='supplier_proposaldet';
+    public $fk_element='fk_supplier_proposal';
     protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
     /**
@@ -136,31 +136,31 @@ class AskPriceSupplier extends CommonObject
      *
      *	@param      DoliDB	$db         Database handler
      *	@param      int		$socid		Id third party
-     *	@param      int		$askpricesupplierid   Id askpricesupplier
+     *	@param      int		$supplier_proposalid   Id supplier_proposal
      */
-    function __construct($db, $socid="", $askpricesupplierid=0)
+    function __construct($db, $socid="", $supplier_proposalid=0)
     {
         global $conf,$langs;
 
         $this->db = $db;
         $this->socid = $socid;
-        $this->id = $askpricesupplierid;
+        $this->id = $supplier_proposalid;
         $this->products = array();
         $this->remise = 0;
         $this->remise_percent = 0;
         $this->remise_absolue = 0;
 
-        $langs->load("askpricesupplier");
-        $this->labelstatut[0]=(! empty($conf->global->ASKPRICESUPPLIER_STATUS_DRAFT_LABEL) ? $conf->global->ASKPRICESUPPLIER_STATUS_DRAFT_LABEL : $langs->trans("AskpricesupplierStatusDraft"));
-        $this->labelstatut[1]=(! empty($conf->global->ASKPRICESUPPLIER_STATUS_VALIDATED_LABEL) ? $conf->global->ASKPRICESUPPLIER_STATUS_VALIDATED_LABEL : $langs->trans("AskpricesupplierStatusValidated"));
-        $this->labelstatut[2]=(! empty($conf->global->ASKPRICESUPPLIER_STATUS_SIGNED_LABEL) ? $conf->global->ASKPRICESUPPLIER_STATUS_SIGNED_LABEL : $langs->trans("AskpricesupplierStatusSigned"));
-        $this->labelstatut[3]=(! empty($conf->global->ASKPRICESUPPLIER_STATUS_NOTSIGNED_LABEL) ? $conf->global->ASKPRICESUPPLIER_STATUS_NOTSIGNED_LABEL : $langs->trans("AskpricesupplierStatusNotSigned"));
-        $this->labelstatut[4]=(! empty($conf->global->ASKPRICESUPPLIER_STATUS_BILLED_LABEL) ? $conf->global->ASKPRICESUPPLIER_STATUS_BILLED_LABEL : $langs->trans("AskpricesupplierStatusBilled"));
-        $this->labelstatut_short[0]=(! empty($conf->global->ASKPRICESUPPLIER_STATUS_DRAFTSHORT_LABEL) ? $conf->global->ASKPRICESUPPLIER_STATUS_DRAFTSHORT_LABEL : $langs->trans("AskpricesupplierStatusDraftShort"));
-        $this->labelstatut_short[1]=(! empty($conf->global->ASKPRICESUPPLIER_STATUS_VALIDATEDSHORT_LABEL) ? $conf->global->ASKPRICESUPPLIER_STATUS_VALIDATEDSHORT_LABEL : $langs->trans("Opened"));
-        $this->labelstatut_short[2]=(! empty($conf->global->ASKPRICESUPPLIER_STATUS_SIGNEDSHORT_LABEL) ? $conf->global->ASKPRICESUPPLIER_STATUS_SIGNEDSHORT_LABEL : $langs->trans("AskpricesupplierStatusSignedShort"));
-        $this->labelstatut_short[3]=(! empty($conf->global->ASKPRICESUPPLIER_STATUS_NOTSIGNEDSHORT_LABEL) ? $conf->global->ASKPRICESUPPLIER_STATUS_NOTSIGNEDSHORT_LABEL : $langs->trans("AskpricesupplierStatusNotSignedShort"));
-        $this->labelstatut_short[4]=(! empty($conf->global->ASKPRICESUPPLIER_STATUS_BILLEDSHORT_LABEL) ? $conf->global->ASKPRICESUPPLIER_STATUS_BILLEDSHORT_LABEL : $langs->trans("AskpricesupplierStatusBilledShort"));
+        $langs->load("supplier_proposal");
+        $this->labelstatut[0]=(! empty($conf->global->SUPPLIER_PROPOSAL_STATUS_DRAFT_LABEL) ? $conf->global->SUPPLIER_PROPOSAL_STATUS_DRAFT_LABEL : $langs->trans("AskpricesupplierStatusDraft"));
+        $this->labelstatut[1]=(! empty($conf->global->SUPPLIER_PROPOSAL_STATUS_VALIDATED_LABEL) ? $conf->global->SUPPLIER_PROPOSAL_STATUS_VALIDATED_LABEL : $langs->trans("AskpricesupplierStatusValidated"));
+        $this->labelstatut[2]=(! empty($conf->global->SUPPLIER_PROPOSAL_STATUS_SIGNED_LABEL) ? $conf->global->SUPPLIER_PROPOSAL_STATUS_SIGNED_LABEL : $langs->trans("AskpricesupplierStatusSigned"));
+        $this->labelstatut[3]=(! empty($conf->global->SUPPLIER_PROPOSAL_STATUS_NOTSIGNED_LABEL) ? $conf->global->SUPPLIER_PROPOSAL_STATUS_NOTSIGNED_LABEL : $langs->trans("AskpricesupplierStatusNotSigned"));
+        $this->labelstatut[4]=(! empty($conf->global->SUPPLIER_PROPOSAL_STATUS_BILLED_LABEL) ? $conf->global->SUPPLIER_PROPOSAL_STATUS_BILLED_LABEL : $langs->trans("AskpricesupplierStatusBilled"));
+        $this->labelstatut_short[0]=(! empty($conf->global->SUPPLIER_PROPOSAL_STATUS_DRAFTSHORT_LABEL) ? $conf->global->SUPPLIER_PROPOSAL_STATUS_DRAFTSHORT_LABEL : $langs->trans("AskpricesupplierStatusDraftShort"));
+        $this->labelstatut_short[1]=(! empty($conf->global->SUPPLIER_PROPOSAL_STATUS_VALIDATEDSHORT_LABEL) ? $conf->global->SUPPLIER_PROPOSAL_STATUS_VALIDATEDSHORT_LABEL : $langs->trans("Opened"));
+        $this->labelstatut_short[2]=(! empty($conf->global->SUPPLIER_PROPOSAL_STATUS_SIGNEDSHORT_LABEL) ? $conf->global->SUPPLIER_PROPOSAL_STATUS_SIGNEDSHORT_LABEL : $langs->trans("AskpricesupplierStatusSignedShort"));
+        $this->labelstatut_short[3]=(! empty($conf->global->SUPPLIER_PROPOSAL_STATUS_NOTSIGNEDSHORT_LABEL) ? $conf->global->SUPPLIER_PROPOSAL_STATUS_NOTSIGNEDSHORT_LABEL : $langs->trans("AskpricesupplierStatusNotSignedShort"));
+        $this->labelstatut_short[4]=(! empty($conf->global->SUPPLIER_PROPOSAL_STATUS_BILLEDSHORT_LABEL) ? $conf->global->SUPPLIER_PROPOSAL_STATUS_BILLEDSHORT_LABEL : $langs->trans("AskpricesupplierStatusBilledShort"));
     }
 
 
@@ -205,7 +205,7 @@ class AskPriceSupplier extends CommonObject
                 $price = $prod->price;
             }
 
-            $line = new AskPriceSupplierLine($this->db);
+            $line = new SupplierProposalLine($this->db);
 
             $line->fk_product=$idproduct;
             $line->desc=$productdesc;
@@ -245,27 +245,27 @@ class AskPriceSupplier extends CommonObject
                 return -5;
             }
 
-            $askpricesupplierligne=new AskPriceSupplierLine($this->db);
-            $askpricesupplierligne->fk_askpricesupplier=$this->id;
-            $askpricesupplierligne->fk_remise_except=$remise->id;
-            $askpricesupplierligne->desc=$remise->description;   	// Description ligne
-            $askpricesupplierligne->tva_tx=$remise->tva_tx;
-            $askpricesupplierligne->subprice=-$remise->amount_ht;
-            $askpricesupplierligne->fk_product=0;					// Id produit predefini
-            $askpricesupplierligne->qty=1;
-            $askpricesupplierligne->remise=0;
-            $askpricesupplierligne->remise_percent=0;
-            $askpricesupplierligne->rang=-1;
-            $askpricesupplierligne->info_bits=2;
+            $supplier_proposalligne=new SupplierProposalLine($this->db);
+            $supplier_proposalligne->fk_supplier_proposal=$this->id;
+            $supplier_proposalligne->fk_remise_except=$remise->id;
+            $supplier_proposalligne->desc=$remise->description;   	// Description ligne
+            $supplier_proposalligne->tva_tx=$remise->tva_tx;
+            $supplier_proposalligne->subprice=-$remise->amount_ht;
+            $supplier_proposalligne->fk_product=0;					// Id produit predefini
+            $supplier_proposalligne->qty=1;
+            $supplier_proposalligne->remise=0;
+            $supplier_proposalligne->remise_percent=0;
+            $supplier_proposalligne->rang=-1;
+            $supplier_proposalligne->info_bits=2;
 
             // TODO deprecated
-            $askpricesupplierligne->price=-$remise->amount_ht;
+            $supplier_proposalligne->price=-$remise->amount_ht;
 
-            $askpricesupplierligne->total_ht  = -$remise->amount_ht;
-            $askpricesupplierligne->total_tva = -$remise->amount_tva;
-            $askpricesupplierligne->total_ttc = -$remise->amount_ttc;
+            $supplier_proposalligne->total_ht  = -$remise->amount_ht;
+            $supplier_proposalligne->total_tva = -$remise->amount_tva;
+            $supplier_proposalligne->total_ttc = -$remise->amount_ttc;
 
-            $result=$askpricesupplierligne->insert();
+            $result=$supplier_proposalligne->insert();
             if ($result > 0)
             {
                 $result=$this->update_price(1);
@@ -282,7 +282,7 @@ class AskPriceSupplier extends CommonObject
             }
             else
             {
-                $this->error=$askpricesupplierligne->error;
+                $this->error=$supplier_proposalligne->error;
                 $this->db->rollback();
                 return -2;
             }
@@ -329,7 +329,7 @@ class AskPriceSupplier extends CommonObject
     {
     	global $mysoc;
 
-        dol_syslog(get_class($this)."::addline askpricesupplierid=$this->id, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_except=$remise_percent, price_base_type=$price_base_type, pu_ttc=$pu_ttc, info_bits=$info_bits, type=$type");
+        dol_syslog(get_class($this)."::addline supplier_proposalid=$this->id, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_except=$remise_percent, price_base_type=$price_base_type, pu_ttc=$pu_ttc, info_bits=$info_bits, type=$type");
         include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
         // Clean parameters
@@ -397,9 +397,9 @@ class AskPriceSupplier extends CommonObject
             }
 
             // Insert line
-            $this->line=new AskPriceSupplierLine($this->db);
+            $this->line=new SupplierProposalLine($this->db);
 
-            $this->line->fk_askpricesupplier=$this->id;
+            $this->line->fk_supplier_proposal=$this->id;
             $this->line->label=$label;
             $this->line->desc=$desc;
             $this->line->qty=$qty;
@@ -547,10 +547,10 @@ class AskPriceSupplier extends CommonObject
             }
 
             // Update line
-            $this->line=new AskPriceSupplierLine($this->db);
+            $this->line=new SupplierProposalLine($this->db);
 
             // Stock previous line records
-            $staticline=new AskPriceSupplierLine($this->db);
+            $staticline=new SupplierProposalLine($this->db);
             $staticline->fetch($rowid);
             $this->line->oldline = $staticline;
 
@@ -612,7 +612,7 @@ class AskPriceSupplier extends CommonObject
 
                 $this->update_price(1);
 
-                $this->fk_askpricesupplier = $this->id;
+                $this->fk_supplier_proposal = $this->id;
                 $this->rowid = $rowid;
 
                 $this->db->commit();
@@ -643,7 +643,7 @@ class AskPriceSupplier extends CommonObject
     {
         if ($this->statut == 0)
         {
-            $line=new AskPriceSupplierLine($this->db);
+            $line=new SupplierProposalLine($this->db);
 
             // For triggers
             $line->fetch($lineid);
@@ -708,7 +708,7 @@ class AskPriceSupplier extends CommonObject
         $this->db->begin();
 
         // Insert into database
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."askpricesupplier (";
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."supplier_proposal (";
         $sql.= "fk_soc";
         $sql.= ", price";
         $sql.= ", remise";
@@ -757,12 +757,12 @@ class AskPriceSupplier extends CommonObject
         $resql=$this->db->query($sql);
         if ($resql)
         {
-            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."askpricesupplier");
+            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."supplier_proposal");
 
             if ($this->id)
             {
                 $this->ref='(PROV'.$this->id.')';
-                $sql = 'UPDATE '.MAIN_DB_PREFIX."askpricesupplier SET ref='".$this->ref."' WHERE rowid=".$this->id;
+                $sql = 'UPDATE '.MAIN_DB_PREFIX."supplier_proposal SET ref='".$this->ref."' WHERE rowid=".$this->id;
 
                 dol_syslog(get_class($this)."::create", LOG_DEBUG);
                 $resql=$this->db->query($sql);
@@ -836,7 +836,7 @@ class AskPriceSupplier extends CommonObject
                     	$action='update';
 
                     	// Actions on extra fields (by external module or standard code)
-                    	$hookmanager->initHooks(array('askpricesupplierdao'));
+                    	$hookmanager->initHooks(array('supplier_proposaldao'));
                     	$parameters=array('socid'=>$this->id);
                     	$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
                     	if (empty($reshook))
@@ -855,7 +855,7 @@ class AskPriceSupplier extends CommonObject
                         if (! $notrigger)
                         {
                             // Call trigger
-                            $result=$this->call_trigger('ASKPRICESUPPLIER_CREATE',$user);
+                            $result=$this->call_trigger('SUPPLIER_PROPOSAL_CREATE',$user);
                             if ($result < 0) { $error++; }
                             // End call triggers
                         }
@@ -895,7 +895,7 @@ class AskPriceSupplier extends CommonObject
 
 
     /**
-     *	Insert into DB a askpricesupplier object completely defined by its data members (ex, results from copy).
+     *	Insert into DB a supplier_proposal object completely defined by its data members (ex, results from copy).
      *
      *	@param 		User	$user	User that create
      *	@return    	int				Id of the new object if ok, <0 if ko
@@ -953,7 +953,7 @@ class AskPriceSupplier extends CommonObject
         $this->id=0;
         $this->statut=0;
 
-        if (empty($conf->global->ASKPRICESUPPLIER_ADDON) || ! is_readable(DOL_DOCUMENT_ROOT ."/core/modules/askpricesupplier/".$conf->global->ASKPRICESUPPLIER_ADDON.".php"))
+        if (empty($conf->global->SUPPLIER_PROPOSAL_ADDON) || ! is_readable(DOL_DOCUMENT_ROOT ."/core/modules/supplier_proposal/".$conf->global->SUPPLIER_PROPOSAL_ADDON.".php"))
         {
             $this->error='ErrorSetupNotComplete';
             return -1;
@@ -965,10 +965,10 @@ class AskPriceSupplier extends CommonObject
         $this->date			= $now;
 
         // Set ref
-        require_once DOL_DOCUMENT_ROOT ."/core/modules/askpricesupplier/".$conf->global->ASKPRICESUPPLIER_ADDON.'.php';
-        $obj = $conf->global->ASKPRICESUPPLIER_ADDON;
-        $modAskPriceSupplier = new $obj;
-        $this->ref = $modAskPriceSupplier->getNextValue($objsoc,$this);
+        require_once DOL_DOCUMENT_ROOT ."/core/modules/supplier_proposal/".$conf->global->SUPPLIER_PROPOSAL_ADDON.'.php';
+        $obj = $conf->global->SUPPLIER_PROPOSAL_ADDON;
+        $modSupplierProposal = new $obj;
+        $this->ref = $modSupplierProposal->getNextValue($objsoc,$this);
 
         // Create clone
         $result=$this->create($user);
@@ -986,7 +986,7 @@ class AskPriceSupplier extends CommonObject
             }
 
             // Call trigger
-            $result=$this->call_trigger('ASKPRICESUPPLIER_CLONE',$user);
+            $result=$this->call_trigger('SUPPLIER_PROPOSAL_CLONE',$user);
             if ($result < 0) { $error++; }
             // End call triggers
         }
@@ -1031,7 +1031,7 @@ class AskPriceSupplier extends CommonObject
         $sql.= ", c.label as statut_label";
         $sql.= ", cr.code as cond_reglement_code, cr.libelle as cond_reglement, cr.libelle_facture as cond_reglement_libelle_doc";
         $sql.= ", cp.code as mode_reglement_code, cp.libelle as mode_reglement";
-        $sql.= " FROM ".MAIN_DB_PREFIX."c_propalst as c, ".MAIN_DB_PREFIX."askpricesupplier as p";
+        $sql.= " FROM ".MAIN_DB_PREFIX."c_propalst as c, ".MAIN_DB_PREFIX."supplier_proposal as p";
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as cp ON p.fk_mode_reglement = cp.id';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as cr ON p.fk_cond_reglement = cr.rowid';
         $sql.= " WHERE p.fk_statut = c.id";
@@ -1109,13 +1109,13 @@ class AskPriceSupplier extends CommonObject
                 /*
                  * Lignes askprice liees a un produit ou non
                  */
-                $sql = "SELECT d.rowid, d.fk_askpricesupplier, d.fk_parent_line, d.label as custom_label, d.description, d.price, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.qty, d.fk_remise_except, d.remise_percent, d.subprice, d.fk_product,";
+                $sql = "SELECT d.rowid, d.fk_supplier_proposal, d.fk_parent_line, d.label as custom_label, d.description, d.price, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.qty, d.fk_remise_except, d.remise_percent, d.subprice, d.fk_product,";
 				$sql.= " d.info_bits, d.total_ht, d.total_tva, d.total_localtax1, d.total_localtax2, d.total_ttc, d.fk_product_fournisseur_price as fk_fournprice, d.buy_price_ht as pa_ht, d.special_code, d.rang, d.product_type,";
                 $sql.= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label as product_label,';
                 $sql.= ' d.ref_fourn as ref_produit_fourn';
-                $sql.= " FROM ".MAIN_DB_PREFIX."askpricesupplierdet as d";
+                $sql.= " FROM ".MAIN_DB_PREFIX."supplier_proposaldet as d";
                 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON d.fk_product = p.rowid";
-                $sql.= " WHERE d.fk_askpricesupplier = ".$this->id;
+                $sql.= " WHERE d.fk_supplier_proposal = ".$this->id;
                 $sql.= " ORDER by d.rang";
 
                 $result = $this->db->query($sql);
@@ -1128,10 +1128,10 @@ class AskPriceSupplier extends CommonObject
                     {
                         $objp                   = $this->db->fetch_object($result);
 
-                        $line                   = new AskPriceSupplierLine($this->db);
+                        $line                   = new SupplierProposalLine($this->db);
 
                         $line->rowid			= $objp->rowid;
-                        $line->fk_askpricesupplier		= $objp->fk_askpricesupplier;
+                        $line->fk_supplier_proposal		= $objp->fk_supplier_proposal;
                         $line->fk_parent_line	= $objp->fk_parent_line;
                         $line->product_type     = $objp->product_type;
                         $line->label            = $objp->custom_label;
@@ -1213,7 +1213,7 @@ class AskPriceSupplier extends CommonObject
     	$action='update';
 
     	// Actions on extra fields (by external module or standard code)
-    	$hookmanager->initHooks(array('askpricesupplierdao'));
+    	$hookmanager->initHooks(array('supplier_proposaldao'));
     	$parameters=array('id'=>$this->id);
     	$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
     	if (empty($reshook))
@@ -1256,8 +1256,8 @@ class AskPriceSupplier extends CommonObject
         $error=0;
         $now=dol_now();
 
-        if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->askpricesupplier->creer))
-       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->askpricesupplier->validate)))
+        if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->supplier_proposal->creer))
+       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->supplier_proposal->validate)))
         {
             $this->db->begin();
 
@@ -1276,7 +1276,7 @@ class AskPriceSupplier extends CommonObject
             }
             $this->newref = $num;
 
-            $sql = "UPDATE ".MAIN_DB_PREFIX."askpricesupplier";
+            $sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposal";
             $sql.= " SET ref = '".$num."',";
             $sql.= " fk_statut = 1, date_valid='".$this->db->idate($now)."', fk_user_valid=".$user->id;
             $sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
@@ -1293,7 +1293,7 @@ class AskPriceSupplier extends CommonObject
 			if (! $error && ! $notrigger)
 			{
                 // Call trigger
-                $result=$this->call_trigger('ASKPRICESUPPLIER_VALIDATE',$user);
+                $result=$this->call_trigger('SUPPLIER_PROPOSAL_VALIDATE',$user);
                 if ($result < 0) { $error++; }
                 // End call triggers
             }
@@ -1309,8 +1309,8 @@ class AskPriceSupplier extends CommonObject
             		// to  not lose the linked files
             		$oldref = dol_sanitizeFileName($this->ref);
             		$newref = dol_sanitizeFileName($num);
-            		$dirsource = $conf->askpricesupplier->dir_output.'/'.$oldref;
-            		$dirdest = $conf->askpricesupplier->dir_output.'/'.$newref;
+            		$dirsource = $conf->supplier_proposal->dir_output.'/'.$oldref;
+            		$dirdest = $conf->supplier_proposal->dir_output.'/'.$newref;
 
             		if (file_exists($dirsource))
             		{
@@ -1319,7 +1319,7 @@ class AskPriceSupplier extends CommonObject
             			{
             				dol_syslog("Rename ok");
             				// Rename docs starting with $oldref with $newref
-            				$listoffiles=dol_dir_list($conf->askpricesupplier->dir_output.'/'.$newref, 'files', 1, '^'.preg_quote($oldref,'/'));
+            				$listoffiles=dol_dir_list($conf->supplier_proposal->dir_output.'/'.$newref, 'files', 1, '^'.preg_quote($oldref,'/'));
             				foreach($listoffiles as $fileentry)
             				{
             					$dirsource=$fileentry['name'];
@@ -1358,9 +1358,9 @@ class AskPriceSupplier extends CommonObject
      */
     function set_date_livraison($user, $date_livraison)
     {
-        if (! empty($user->rights->askpricesupplier->creer))
+        if (! empty($user->rights->supplier_proposal->creer))
         {
-            $sql = "UPDATE ".MAIN_DB_PREFIX."askpricesupplier ";
+            $sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposal ";
             $sql.= " SET date_livraison = ".($date_livraison!=''?"'".$this->db->idate($date_livraison)."'":'null');
             $sql.= " WHERE rowid = ".$this->id;
 
@@ -1389,11 +1389,11 @@ class AskPriceSupplier extends CommonObject
     {
         $remise=trim($remise)?trim($remise):0;
 
-        if (! empty($user->rights->askpricesupplier->creer))
+        if (! empty($user->rights->supplier_proposal->creer))
         {
             $remise = price2num($remise);
 
-            $sql = "UPDATE ".MAIN_DB_PREFIX."askpricesupplier SET remise_percent = ".$remise;
+            $sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposal SET remise_percent = ".$remise;
             $sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
 
             if ($this->db->query($sql) )
@@ -1422,11 +1422,11 @@ class AskPriceSupplier extends CommonObject
     {
         $remise=trim($remise)?trim($remise):0;
 
-        if (! empty($user->rights->askpricesupplier->creer))
+        if (! empty($user->rights->supplier_proposal->creer))
         {
             $remise = price2num($remise);
 
-            $sql = "UPDATE ".MAIN_DB_PREFIX."askpricesupplier ";
+            $sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposal ";
             $sql.= " SET remise_absolue = ".$remise;
             $sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
 
@@ -1462,7 +1462,7 @@ class AskPriceSupplier extends CommonObject
         $this->statut = $statut;
         $error=0;
 
-        $sql = "UPDATE ".MAIN_DB_PREFIX."askpricesupplier";
+        $sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposal";
         $sql.= " SET fk_statut = ".$this->statut.",";
 		if (! empty($note)) $sql.= " note_private = '".$this->db->escape($note)."',";
         $sql.= " date_cloture=NULL, fk_user_cloture=NULL";
@@ -1480,7 +1480,7 @@ class AskPriceSupplier extends CommonObject
 			if (! $notrigger)
 			{
                 // Call trigger
-                $result=$this->call_trigger('ASKPRICESUPPLIER_REOPEN',$user);
+                $result=$this->call_trigger('SUPPLIER_PROPOSAL_REOPEN',$user);
                 if ($result < 0) { $error++; }
                 // End call triggers
 			}
@@ -1526,20 +1526,20 @@ class AskPriceSupplier extends CommonObject
 
         $this->db->begin();
 
-        $sql = "UPDATE ".MAIN_DB_PREFIX."askpricesupplier";
+        $sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposal";
         $sql.= " SET fk_statut = ".$statut.", note_private = '".$this->db->escape($note)."', date_cloture='".$this->db->idate($now)."', fk_user_cloture=".$user->id;
         $sql.= " WHERE rowid = ".$this->id;
 
         $resql=$this->db->query($sql);
         if ($resql)
         {
-        	$modelpdf=$conf->global->ASKPRICESUPPLIER_ADDON_PDF_ODT_CLOSED?$conf->global->ASKPRICESUPPLIER_ADDON_PDF_ODT_CLOSED:$this->modelpdf;
-        	$trigger_name='ASKPRICESUPPLIER_CLOSE_REFUSED';
+        	$modelpdf=$conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_CLOSED?$conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_CLOSED:$this->modelpdf;
+        	$trigger_name='SUPPLIER_PROPOSAL_CLOSE_REFUSED';
 
             if ($statut == 2)
             {
-            	$trigger_name='ASKPRICESUPPLIER_CLOSE_SIGNED';
-				$modelpdf=$conf->global->ASKPRICESUPPLIER_ADDON_PDF_ODT_TOBILL?$conf->global->ASKPRICESUPPLIER_ADDON_PDF_ODT_TOBILL:$this->modelpdf;
+            	$trigger_name='SUPPLIER_PROPOSAL_CLOSE_SIGNED';
+				$modelpdf=$conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_TOBILL?$conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_TOBILL:$this->modelpdf;
 
                 // The connected company is classified as a client
                 $soc=new Societe($this->db);
@@ -1559,7 +1559,7 @@ class AskPriceSupplier extends CommonObject
             }
             if ($statut == 4)
             {
-            	$trigger_name='ASKPRICESUPPLIER_CLASSIFY_BILLED';
+            	$trigger_name='SUPPLIER_PROPOSAL_CLASSIFY_BILLED';
             }
 
             if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
@@ -1697,7 +1697,7 @@ class AskPriceSupplier extends CommonObject
     {
         global $conf,$langs;
 
-        $sql = "UPDATE ".MAIN_DB_PREFIX."askpricesupplier SET fk_statut = 0";
+        $sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposal SET fk_statut = 0";
         $sql.= " WHERE rowid = ".$this->id;
 
         if ($this->db->query($sql))
@@ -1733,10 +1733,10 @@ class AskPriceSupplier extends CommonObject
         $ga = array();
 
         $sql = "SELECT s.rowid, s.nom as name, s.client,";
-        $sql.= " p.rowid as askpricesupplierid, p.fk_statut, p.total_ht, p.ref, p.remise, ";
+        $sql.= " p.rowid as supplier_proposalid, p.fk_statut, p.total_ht, p.ref, p.remise, ";
         $sql.= " p.datep as dp, p.fin_validite as datelimite";
         if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", sc.fk_soc, sc.fk_user";
-        $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."askpricesupplier as p, ".MAIN_DB_PREFIX."c_propalst as c";
+        $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."supplier_proposal as p, ".MAIN_DB_PREFIX."c_propalst as c";
 		if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
         $sql.= " WHERE p.entity = ".$conf->entity;
         $sql.= " AND p.fk_soc = s.rowid";
@@ -1764,15 +1764,15 @@ class AskPriceSupplier extends CommonObject
 
                     if ($shortlist == 1)
                     {
-                        $ga[$obj->askpricesupplierid] = $obj->ref;
+                        $ga[$obj->supplier_proposalid] = $obj->ref;
                     }
                     else if ($shortlist == 2)
                     {
-                        $ga[$obj->askpricesupplierid] = $obj->ref.' ('.$obj->name.')';
+                        $ga[$obj->supplier_proposalid] = $obj->ref.' ('.$obj->name.')';
                     }
                     else
 					{
-                        $ga[$i]['id']	= $obj->askpricesupplierid;
+                        $ga[$i]['id']	= $obj->supplier_proposalid;
                         $ga[$i]['ref'] 	= $obj->ref;
                         $ga[$i]['name'] = $obj->name;
                     }
@@ -1808,17 +1808,17 @@ class AskPriceSupplier extends CommonObject
         if (! $notrigger)
         {
             // Call trigger
-            $result=$this->call_trigger('ASKPRICESUPPLIER_DELETE',$user);
+            $result=$this->call_trigger('SUPPLIER_PROPOSAL_DELETE',$user);
             if ($result < 0) { $error++; }
             // End call triggers
         }
 
         if (! $error)
         {
-            $sql = "DELETE FROM ".MAIN_DB_PREFIX."askpricesupplierdet WHERE fk_askpricesupplier = ".$this->id;
+            $sql = "DELETE FROM ".MAIN_DB_PREFIX."supplier_proposaldet WHERE fk_supplier_proposal = ".$this->id;
             if ($this->db->query($sql))
             {
-                $sql = "DELETE FROM ".MAIN_DB_PREFIX."askpricesupplier WHERE rowid = ".$this->id;
+                $sql = "DELETE FROM ".MAIN_DB_PREFIX."supplier_proposal WHERE rowid = ".$this->id;
                 if ($this->db->query($sql))
                 {
                     // Delete linked object
@@ -1829,9 +1829,9 @@ class AskPriceSupplier extends CommonObject
                     {
                         // We remove directory
                         $ref = dol_sanitizeFileName($this->ref);
-                        if ($conf->askpricesupplier->dir_output && !empty($this->ref))
+                        if ($conf->supplier_proposal->dir_output && !empty($this->ref))
                         {
-                            $dir = $conf->askpricesupplier->dir_output . "/" . $ref ;
+                            $dir = $conf->supplier_proposal->dir_output . "/" . $ref ;
                             $file = $dir . "/" . $ref . ".pdf";
                             if (file_exists($file))
                             {
@@ -1909,7 +1909,7 @@ class AskPriceSupplier extends CommonObject
     }
 
     /**
-     *	Object AskPriceSupplier Information
+     *	Object SupplierProposal Information
      *
      * 	@param	int		$id		Proposal id
      *  @return	void
@@ -1919,7 +1919,7 @@ class AskPriceSupplier extends CommonObject
         $sql = "SELECT c.rowid, ";
         $sql.= " c.datec, c.date_valid as datev, c.date_cloture as dateo,";
         $sql.= " c.fk_user_author, c.fk_user_valid, c.fk_user_cloture";
-        $sql.= " FROM ".MAIN_DB_PREFIX."askpricesupplier as c";
+        $sql.= " FROM ".MAIN_DB_PREFIX."supplier_proposal as c";
         $sql.= " WHERE c.rowid = ".$id;
 
         $result = $this->db->query($sql);
@@ -1987,7 +1987,7 @@ class AskPriceSupplier extends CommonObject
 	function LibStatut($statut,$mode=1)
     {
 		global $langs;
-		$langs->load("askpricesupplier");
+		$langs->load("supplier_proposal");
 
 		if ($statut==0) $statuttrans='statut0';
 		if ($statut==1) $statuttrans='statut1';
@@ -2021,7 +2021,7 @@ class AskPriceSupplier extends CommonObject
         $clause = " WHERE";
 
         $sql = "SELECT p.rowid, p.ref, p.datec as datec";
-        $sql.= " FROM ".MAIN_DB_PREFIX."askpricesupplier as p";
+        $sql.= " FROM ".MAIN_DB_PREFIX."supplier_proposal as p";
         if (!$user->rights->societe->client->voir && !$user->societe_id)
         {
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON p.fk_soc = sc.fk_soc";
@@ -2036,8 +2036,8 @@ class AskPriceSupplier extends CommonObject
         $resql=$this->db->query($sql);
         if ($resql)
         {
-            if ($mode == 'opened') $delay_warning=$conf->askpricesupplier->cloture->warning_delay;
-            if ($mode == 'signed') $delay_warning=$conf->askpricesupplier->facturation->warning_delay;
+            if ($mode == 'opened') $delay_warning=$conf->supplier_proposal->cloture->warning_delay;
+            if ($mode == 'signed') $delay_warning=$conf->supplier_proposal->facturation->warning_delay;
 
             // This assignment in condition is not a bug. It allows walking the results.
             while ($obj=$this->db->fetch_object($resql))
@@ -2110,7 +2110,7 @@ class AskPriceSupplier extends CommonObject
         $xnbp = 0;
         while ($xnbp < $nbp)
         {
-            $line=new AskPriceSupplierLine($this->db);
+            $line=new SupplierProposalLine($this->db);
             $line->desc=$langs->trans("Description")." ".$xnbp;
             $line->qty=1;
             $line->subprice=100;
@@ -2159,7 +2159,7 @@ class AskPriceSupplier extends CommonObject
         $clause = "WHERE";
 
         $sql = "SELECT count(p.rowid) as nb";
-        $sql.= " FROM ".MAIN_DB_PREFIX."askpricesupplier as p";
+        $sql.= " FROM ".MAIN_DB_PREFIX."supplier_proposal as p";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON p.fk_soc = s.rowid";
         if (!$user->rights->societe->client->voir && !$user->societe_id)
         {
@@ -2191,7 +2191,7 @@ class AskPriceSupplier extends CommonObject
 
     /**
      *  Returns the reference to the following non used Proposal used depending on the active numbering module
-     *  defined into ASKPRICESUPPLIER_ADDON
+     *  defined into SUPPLIER_PROPOSAL_ADDON
      *
      *  @param	Societe		$soc  	Object thirdparty
      *  @return string      		Reference libre pour la propale
@@ -2199,20 +2199,20 @@ class AskPriceSupplier extends CommonObject
     function getNextNumRef($soc)
     {
         global $conf, $db, $langs;
-        $langs->load("askpricesupplier");
+        $langs->load("supplier_proposal");
 
-        if (! empty($conf->global->ASKPRICESUPPLIER_ADDON))
+        if (! empty($conf->global->SUPPLIER_PROPOSAL_ADDON))
         {
         	$mybool=false;
 
-            $file = $conf->global->ASKPRICESUPPLIER_ADDON.".php";
-            $classname = $conf->global->ASKPRICESUPPLIER_ADDON;
+            $file = $conf->global->SUPPLIER_PROPOSAL_ADDON.".php";
+            $classname = $conf->global->SUPPLIER_PROPOSAL_ADDON;
 
             // Include file with class
             $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
             foreach ($dirmodels as $reldir) {
 
-                $dir = dol_buildpath($reldir."core/modules/askpricesupplier/");
+                $dir = dol_buildpath($reldir."core/modules/supplier_proposal/");
 
                 // Load file with numbering class (if found)
                 $mybool|=@include_once $dir.$file;
@@ -2262,14 +2262,14 @@ class AskPriceSupplier extends CommonObject
         $label=$langs->trans("ShowAskpricesupplier").': '.$this->ref;
         $linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
         if ($option == '') {
-            $link = '<a href="'.DOL_URL_ROOT.'/comm/askpricesupplier/card.php?id='.$this->id. $get_params .$linkclose;
+            $link = '<a href="'.DOL_URL_ROOT.'/supplier_proposal/card.php?id='.$this->id. $get_params .$linkclose;
         }
         if ($option == 'document') {
-            $link = '<a href="'.DOL_URL_ROOT.'/comm/askpricesupplier/document.php?id='.$this->id. $get_params .$linkclose;
+            $link = '<a href="'.DOL_URL_ROOT.'/supplier_proposal/document.php?id='.$this->id. $get_params .$linkclose;
         }
         $linkend='</a>';
 
-        $picto='askpricesupplier';
+        $picto='supplier_proposal';
 
 
         if ($withpicto)
@@ -2293,9 +2293,9 @@ class AskPriceSupplier extends CommonObject
         $sql.= ' pt.product_type, pt.rang, pt.fk_parent_line,';
         $sql.= ' p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid,';
         $sql.= ' p.description as product_desc, pt.ref_fourn as ref_produit_fourn';
-        $sql.= ' FROM '.MAIN_DB_PREFIX.'askpricesupplierdet as pt';
+        $sql.= ' FROM '.MAIN_DB_PREFIX.'supplier_proposaldet as pt';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product=p.rowid';
-        $sql.= ' WHERE pt.fk_askpricesupplier = '.$this->id;
+        $sql.= ' WHERE pt.fk_supplier_proposal = '.$this->id;
         $sql.= ' ORDER BY pt.rang ASC, pt.rowid';
 
         dol_syslog(get_class($this).'::getLinesArray', LOG_DEBUG);
@@ -2309,7 +2309,7 @@ class AskPriceSupplier extends CommonObject
             {
                 $obj = $this->db->fetch_object($resql);
 
-                $this->lines[$i]					= new AskPriceSupplierLine($this->db);
+                $this->lines[$i]					= new SupplierProposalLine($this->db);
                 $this->lines[$i]->id				= $obj->rowid; // for backward compatibility
                 $this->lines[$i]->rowid				= $obj->rowid;
                 $this->lines[$i]->label 			= $obj->custom_label;
@@ -2367,14 +2367,14 @@ class AskPriceSupplier extends CommonObject
 	{
 		global $conf,$user,$langs;
 
-		$langs->load("askpricesupplier");
+		$langs->load("supplier_proposal");
 
 		// Positionne le modele sur le nom du modele a utiliser
 		if (! dol_strlen($modele))
 		{
-			if (! empty($conf->global->ASKPRICESUPPLIER_ADDON_PDF))
+			if (! empty($conf->global->SUPPLIER_PROPOSAL_ADDON_PDF))
 			{
-				$modele = $conf->global->ASKPRICESUPPLIER_ADDON_PDF;
+				$modele = $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF;
 			}
 			else
 			{
@@ -2382,7 +2382,7 @@ class AskPriceSupplier extends CommonObject
 			}
 		}
 
-		$modelpath = "core/modules/askpricesupplier/doc/";
+		$modelpath = "core/modules/supplier_proposal/doc/";
 
 		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	}
@@ -2434,22 +2434,22 @@ class AskPriceSupplier extends CommonObject
 
 
 /**
- *	\class      AskPriceSupplierLine
- *	\brief      Class to manage askpricesupplier lines
+ *	\class      SupplierProposalLine
+ *	\brief      Class to manage supplier_proposal lines
  */
-class AskPriceSupplierLine  extends CommonObject
+class SupplierProposalLine  extends CommonObject
 {
     var $db;
     var $error;
 
-    public $element='askpricesupplierdet';
-    public $table_element='askpricesupplierdet';
+    public $element='supplier_proposaldet';
+    public $table_element='supplier_proposaldet';
 
     var $oldline;
 
-    // From llx_askpricesupplierdet
+    // From llx_supplier_proposaldet
     var $rowid;
-    var $fk_askpricesupplier;
+    var $fk_supplier_proposal;
     var $fk_parent_line;
     var $desc;          	// Description ligne
     var $fk_product;		// Id produit predefini
@@ -2558,13 +2558,13 @@ class AskPriceSupplierLine  extends CommonObject
      */
 	function fetch($rowid)
 	{
-		$sql = 'SELECT pd.rowid, pd.fk_askpricesupplier, pd.fk_parent_line, pd.fk_product, pd.label as custom_label, pd.description, pd.price, pd.qty, pd.tva_tx,';
+		$sql = 'SELECT pd.rowid, pd.fk_supplier_proposal, pd.fk_parent_line, pd.fk_product, pd.label as custom_label, pd.description, pd.price, pd.qty, pd.tva_tx,';
 		$sql.= ' pd.remise, pd.remise_percent, pd.fk_remise_except, pd.subprice,';
 		$sql.= ' pd.info_bits, pd.total_ht, pd.total_tva, pd.total_ttc, pd.fk_product_fournisseur_price as fk_fournprice, pd.buy_price_ht as pa_ht, pd.special_code, pd.rang,';
 		$sql.= ' pd.localtax1_tx, pd.localtax2_tx, pd.total_localtax1, pd.total_localtax2,';
 		$sql.= ' p.ref as product_ref, p.label as product_label, p.description as product_desc,';
 		$sql.= ' pd.product_type, pd.ref_fourn as ref_produit_fourn';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'askpricesupplierdet as pd';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'supplier_proposaldet as pd';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pd.fk_product = p.rowid';
 		$sql.= ' WHERE pd.rowid = '.$rowid;
 
@@ -2574,7 +2574,7 @@ class AskPriceSupplierLine  extends CommonObject
 			$objp = $this->db->fetch_object($result);
 
 			$this->rowid			= $objp->rowid;
-			$this->fk_askpricesupplier		= $objp->fk_askpricesupplier;
+			$this->fk_supplier_proposal		= $objp->fk_supplier_proposal;
 			$this->fk_parent_line	= $objp->fk_parent_line;
 			$this->label			= $objp->custom_label;
 			$this->desc				= $objp->description;
@@ -2670,14 +2670,14 @@ class AskPriceSupplierLine  extends CommonObject
         $this->db->begin();
 
         // Insert line into database
-        $sql = 'INSERT INTO '.MAIN_DB_PREFIX.'askpricesupplierdet';
-        $sql.= ' (fk_askpricesupplier, fk_parent_line, label, description, fk_product, product_type,';
+        $sql = 'INSERT INTO '.MAIN_DB_PREFIX.'supplier_proposaldet';
+        $sql.= ' (fk_supplier_proposal, fk_parent_line, label, description, fk_product, product_type,';
 		$sql.= ' fk_remise_except, qty, tva_tx, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type,';
         $sql.= ' subprice, remise_percent, ';
         $sql.= ' info_bits, ';
         $sql.= ' total_ht, total_tva, total_localtax1, total_localtax2, total_ttc, fk_product_fournisseur_price, buy_price_ht, special_code, rang,';
         $sql.= ' ref_fourn)';
-        $sql.= " VALUES (".$this->fk_askpricesupplier.",";
+        $sql.= " VALUES (".$this->fk_supplier_proposal.",";
         $sql.= " ".($this->fk_parent_line>0?"'".$this->fk_parent_line."'":"null").",";
         $sql.= " ".(! empty($this->label)?"'".$this->db->escape($this->label)."'":"null").",";
         $sql.= " '".$this->db->escape($this->desc)."',";
@@ -2709,7 +2709,7 @@ class AskPriceSupplierLine  extends CommonObject
         $resql=$this->db->query($sql);
         if ($resql)
         {
-            $this->rowid=$this->db->last_insert_id(MAIN_DB_PREFIX.'askpricesupplierdet');
+            $this->rowid=$this->db->last_insert_id(MAIN_DB_PREFIX.'supplier_proposaldet');
 
             if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
             {
@@ -2724,7 +2724,7 @@ class AskPriceSupplierLine  extends CommonObject
             if (! $notrigger)
             {
                 // Call trigger
-                $result=$this->call_trigger('LINEASKPRICESUPPLIER_INSERT',$user);
+                $result=$this->call_trigger('LINESUPPLIER_PROPOSAL_INSERT',$user);
                 if ($result < 0)
                 {
                     $this->db->rollback();
@@ -2756,8 +2756,8 @@ class AskPriceSupplierLine  extends CommonObject
         $error=0;
         $this->db->begin();
 
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."askpricesupplierdet WHERE rowid = ".$this->rowid;
-        dol_syslog("AskPriceSupplierLine::delete", LOG_DEBUG);
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."supplier_proposaldet WHERE rowid = ".$this->rowid;
+        dol_syslog("SupplierProposalLine::delete", LOG_DEBUG);
         if ($this->db->query($sql) )
         {
 
@@ -2774,7 +2774,7 @@ class AskPriceSupplierLine  extends CommonObject
         	}
 
             // Call trigger
-            $result=$this->call_trigger('LINEASKPRICESUPLLIER_DELETE',$user);
+            $result=$this->call_trigger('LINESUPPLIER_PROPOSAL_DELETE',$user);
             if ($result < 0)
             {
                 $this->db->rollback();
@@ -2842,7 +2842,7 @@ class AskPriceSupplierLine  extends CommonObject
         $this->db->begin();
 
         // Mise a jour ligne en base
-        $sql = "UPDATE ".MAIN_DB_PREFIX."askpricesupplierdet SET";
+        $sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposaldet SET";
         $sql.= " description='".$this->db->escape($this->desc)."'";
         $sql.= " , label=".(! empty($this->label)?"'".$this->db->escape($this->label)."'":"null");
         $sql.= " , product_type=".$this->product_type;
@@ -2890,7 +2890,7 @@ class AskPriceSupplierLine  extends CommonObject
             if (! $notrigger)
             {
                 // Call trigger
-                $result=$this->call_trigger('LINEASKPRICESUPPLIER_UPDATE',$user);
+                $result=$this->call_trigger('LINESUPPLIER_PROPOSAL_UPDATE',$user);
                 if ($result < 0)
                 {
                     $this->db->rollback();
@@ -2921,13 +2921,13 @@ class AskPriceSupplierLine  extends CommonObject
         $this->db->begin();
 
         // Mise a jour ligne en base
-        $sql = "UPDATE ".MAIN_DB_PREFIX."askpricesupplierdet SET";
+        $sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposaldet SET";
         $sql.= " total_ht=".price2num($this->total_ht,'MT')."";
         $sql.= ",total_tva=".price2num($this->total_tva,'MT')."";
         $sql.= ",total_ttc=".price2num($this->total_ttc,'MT')."";
         $sql.= " WHERE rowid = ".$this->rowid;
 
-        dol_syslog("AskPriceSupplierLine::update_total", LOG_DEBUG);
+        dol_syslog("SupplierProposalLine::update_total", LOG_DEBUG);
 
         $resql=$this->db->query($sql);
         if ($resql)

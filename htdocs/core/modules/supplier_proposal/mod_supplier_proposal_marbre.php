@@ -23,13 +23,13 @@
  *		\brief      File of class to manage commercial proposal numbering rules Marbre
  */
 
-require_once DOL_DOCUMENT_ROOT .'/core/modules/askpricesupplier/modules_askpricesupplier.php';
+require_once DOL_DOCUMENT_ROOT .'/core/modules/supplier_proposal/modules_supplier_proposal.php';
 
 
 /**
  *	Class to manage customer order numbering rules Marbre
  */
-class mod_askpricesupplier_marbre extends ModeleNumRefAskPriceSupplier
+class mod_supplier_proposal_marbre extends ModeleNumRefSupplierProposal
 {
 	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
 	var $prefix='DF';
@@ -74,7 +74,7 @@ class mod_askpricesupplier_marbre extends ModeleNumRefAskPriceSupplier
 
 		$posindice=8;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
-		$sql.= " FROM ".MAIN_DB_PREFIX."askpricesupplier";
+		$sql.= " FROM ".MAIN_DB_PREFIX."supplier_proposal";
 		$sql.= " WHERE ref LIKE '".$this->prefix."____-%'";
 		$sql.= " AND entity = ".$conf->entity;
 
@@ -101,17 +101,17 @@ class mod_askpricesupplier_marbre extends ModeleNumRefAskPriceSupplier
 	 *  Return next value
 	 *
 	 *  @param	Societe		$objsoc     Object third party
-	 * 	@param	Propal		$askpricesupplier		Object commercial proposal
+	 * 	@param	Propal		$supplier_proposal		Object commercial proposal
 	 *  @return string      			Next value
 	 */
-	function getNextValue($objsoc,$askpricesupplier)
+	function getNextValue($objsoc,$supplier_proposal)
 	{
 		global $db,$conf;
 
 		// D'abord on recupere la valeur max
 		$posindice=8;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";	// This is standard SQL
-		$sql.= " FROM ".MAIN_DB_PREFIX."askpricesupplier";
+		$sql.= " FROM ".MAIN_DB_PREFIX."supplier_proposal";
 		$sql.= " WHERE ref LIKE '".$this->prefix."____-%'";
 		$sql.= " AND entity = ".$conf->entity;
 

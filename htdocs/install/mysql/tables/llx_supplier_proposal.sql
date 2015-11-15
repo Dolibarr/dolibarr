@@ -15,7 +15,7 @@
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 -- ========================================================================
 
-CREATE TABLE llx_askpricesupplier (
+CREATE TABLE llx_supplier_proposal (
   rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
   ref varchar(30) NOT NULL,
   entity integer NOT NULL DEFAULT '1',

@@ -25,15 +25,15 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-require '../../main.inc.php';
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaskpricesupplier.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formsupplier_proposal.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formmargin.class.php';
-require_once DOL_DOCUMENT_ROOT . '/comm/askpricesupplier/class/askpricesupplier.class.php';
+require_once DOL_DOCUMENT_ROOT . '/supplier_proposal/class/supplier_proposal.class.php';
 require_once DOL_DOCUMENT_ROOT . '/comm/action/class/actioncomm.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/modules/askpricesupplier/modules_askpricesupplier.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/askpricesupplier.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/modules/supplier_proposal/modules_supplier_proposal.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/supplier_proposal.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 if (! empty($conf->projet->enabled)) {
@@ -42,7 +42,7 @@ if (! empty($conf->projet->enabled)) {
 }
 
 $langs->load('companies');
-$langs->load('askpricesupplier');
+$langs->load('supplier_proposal');
 $langs->load('compta');
 $langs->load('bills');
 $langs->load('orders');
@@ -74,9 +74,9 @@ $NBLINES = 4;
 
 // Security check
 if (! empty($user->societe_id)) $socid = $user->societe_id;
-$result = restrictedArea($user, 'askpricesupplier', $id);
+$result = restrictedArea($user, 'supplier_proposal', $id);
 
-$object = new AskPriceSupplier($db);
+$object = new SupplierProposal($db);
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
@@ -92,9 +92,9 @@ if ($id > 0 || ! empty($ref)) {
 }
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('askpricesuppliercard','globalcard'));
+$hookmanager->initHooks(array('supplier_proposalcard','globalcard'));
 
-$permissionnote = $user->rights->askpricesupplier->creer; // Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->rights->supplier_proposal->creer; // Used by the include of actions_setnotes.inc.php
 
 
 /*
@@ -134,11 +134,11 @@ if (empty($reshook))
 	}
 
 	// Delete askprice
-	else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->askpricesupplier->supprimer)
+	else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->supplier_proposal->supprimer)
 	{
 		$result = $object->delete($user);
 		if ($result > 0) {
-			header('Location: ' . DOL_URL_ROOT . '/comm/askpricesupplier/list.php');
+			header('Location: ' . DOL_URL_ROOT . '/supplier_proposal/list.php');
 			exit();
 		} else {
 			$langs->load("errors");
@@ -147,7 +147,7 @@ if (empty($reshook))
 	}
 
 	// Remove line
-	else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->askpricesupplier->creer)
+	else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->supplier_proposal->creer)
 	{
 		$result = $object->deleteline($lineid);
 		// reorder lines
@@ -172,8 +172,8 @@ if (empty($reshook))
 
 	// Validation
 	else if ($action == 'confirm_validate' && $confirm == 'yes' &&
-        ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->askpricesupplier->creer))
-       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->askpricesupplier->validate)))
+        ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->supplier_proposal->creer))
+       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->supplier_proposal->validate)))
 	)
 	{
 		$result = $object->valid($user);
@@ -205,7 +205,7 @@ if (empty($reshook))
 		}
 	}
 
-	else if ($action == 'setdate_livraison' && $user->rights->askpricesupplier->creer)
+	else if ($action == 'setdate_livraison' && $user->rights->supplier_proposal->creer)
 	{
 		$result = $object->set_date_livraison($user, dol_mktime(12, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']));
 		if ($result < 0)
@@ -213,7 +213,7 @@ if (empty($reshook))
 	}
 
 	// Create askprice
-	else if ($action == 'add' && $user->rights->askpricesupplier->creer)
+	else if ($action == 'add' && $user->rights->supplier_proposal->creer)
 	{
 		$object->socid = $socid;
 		$object->fetch_thirdparty();
@@ -231,9 +231,9 @@ if (empty($reshook))
 			$db->begin();
 
 			// Si on a selectionne une demande a copier, on realise la copie
-			if (GETPOST('createmode') == 'copy' && GETPOST('copie_askpricesupplier'))
+			if (GETPOST('createmode') == 'copy' && GETPOST('copie_supplier_proposal'))
 			{
-				if ($object->fetch(GETPOST('copie_askpricesupplier')) > 0) {
+				if ($object->fetch(GETPOST('copie_supplier_proposal')) > 0) {
 					$object->ref = GETPOST('ref');
 					$object->date_livraison = $date_delivery;
 	                $object->shipping_method_id = GETPOST('shipping_method_id', 'int');
@@ -251,7 +251,7 @@ if (empty($reshook))
 
 					$id = $object->create_from($user);
 				} else {
-					setEventMessages($langs->trans("ErrorFailedToCopyProposal", GETPOST('copie_askpricesupplier')), null, 'errors');
+					setEventMessages($langs->trans("ErrorFailedToCopyProposal", GETPOST('copie_supplier_proposal')), null, 'errors');
 				}
 			} else {
 				$object->ref = GETPOST('ref');
@@ -291,8 +291,8 @@ if (empty($reshook))
 			{
 				if ($origin && $originid)
 				{
-					$element = 'comm/askpricesupplier';
-					$subelement = 'askpricesupplier';
+					$element = 'supplier_proposal';
+					$subelement = 'supplier_proposal';
 
 					$object->origin = $origin;
 					$object->origin_id = $originid;
@@ -426,7 +426,7 @@ if (empty($reshook))
 	}
 
 	// Reopen proposal
-	else if ($action == 'confirm_reopen' && $user->rights->askpricesupplier->cloturer && ! GETPOST('cancel')) {
+	else if ($action == 'confirm_reopen' && $user->rights->supplier_proposal->cloturer && ! GETPOST('cancel')) {
 		// prevent browser refresh from reopening proposal several times
 		if ($object->statut == 2 || $object->statut == 3 || $object->statut == 4) {
 			$object->reopen($user, 1);
@@ -434,7 +434,7 @@ if (empty($reshook))
 	}
 
 	// Close proposal
-	else if ($action == 'setstatut' && $user->rights->askpricesupplier->cloturer && ! GETPOST('cancel')) {
+	else if ($action == 'setstatut' && $user->rights->supplier_proposal->cloturer && ! GETPOST('cancel')) {
 		if (! GETPOST('statut')) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("CloseAs")), null, 'errors');
 			$action = 'statut';
@@ -455,15 +455,15 @@ if (empty($reshook))
 
 	// Actions to send emails
 	$actiontypecode='AC_ASKPRICE';
-	$trigger_name='ASKPRICESUPPLIER_SENTBYMAIL';
+	$trigger_name='SUPPLIER_PROPOSAL_SENTBYMAIL';
 	$paramname='id';
-	$mode='emailfromaskpricesupplier';
+	$mode='emailfromsupplier_proposal';
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 
 
 	// Go back to draft
-	if ($action == 'modif' && $user->rights->askpricesupplier->creer)
+	if ($action == 'modif' && $user->rights->supplier_proposal->creer)
 	{
 		$object->set_draft($user);
 
@@ -481,7 +481,7 @@ if (empty($reshook))
 		}
 	}
 
-	else if ($action == "setabsolutediscount" && $user->rights->askpricesupplier->creer) {
+	else if ($action == "setabsolutediscount" && $user->rights->supplier_proposal->creer) {
 		if ($_POST["remise_id"]) {
 			if ($object->id > 0) {
 				$result = $object->insert_discount($_POST["remise_id"]);
@@ -493,7 +493,7 @@ if (empty($reshook))
 	}
 
 	// Add line
-	else if ($action == 'addline' && $user->rights->askpricesupplier->creer) {
+	else if ($action == 'addline' && $user->rights->supplier_proposal->creer) {
 
 		// Set if we used free entry or predefined product
 		$predef='';
@@ -725,7 +725,7 @@ if (empty($reshook))
 	}
 
 	// Mise a jour d'une ligne dans la demande de prix
-	else if ($action == 'updateligne' && $user->rights->askpricesupplier->creer && GETPOST('save') == $langs->trans("Save")) {
+	else if ($action == 'updateligne' && $user->rights->supplier_proposal->creer && GETPOST('save') == $langs->trans("Save")) {
 		// Define info_bits
 		$info_bits = 0;
 		if (preg_match('/\*/', GETPOST('tva_tx')))
@@ -830,13 +830,13 @@ if (empty($reshook))
 		}
 	}
 
-	else if ($action == 'updateligne' && $user->rights->askpricesupplier->creer && GETPOST('cancel') == $langs->trans('Cancel')) {
+	else if ($action == 'updateligne' && $user->rights->supplier_proposal->creer && GETPOST('cancel') == $langs->trans('Cancel')) {
 		header('Location: ' . $_SERVER['PHP_SELF'] . '?id=' . $object->id); // Pour reaffichage de la fiche en cours d'edition
 		exit();
 	}
 
 	// Generation doc (depuis lien ou depuis cartouche doc)
-	else if ($action == 'builddoc' && $user->rights->askpricesupplier->creer) {
+	else if ($action == 'builddoc' && $user->rights->supplier_proposal->creer) {
 		if (GETPOST('model')) {
 			$object->setDocModel($user, GETPOST('model'));
 		}
@@ -858,12 +858,12 @@ if (empty($reshook))
 	}
 
 	// Remove file in doc form
-	else if ($action == 'remove_file' && $user->rights->askpricesupplier->creer) {
+	else if ($action == 'remove_file' && $user->rights->supplier_proposal->creer) {
 		if ($object->id > 0) {
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
 			$langs->load("other");
-			$upload_dir = $conf->askpricesupplier->dir_output;
+			$upload_dir = $conf->supplier_proposal->dir_output;
 			$file = $upload_dir . '/' . GETPOST('file');
 			$ret = dol_delete_file($file, 0, 0, 0, $object);
 			if ($ret)
@@ -874,30 +874,30 @@ if (empty($reshook))
 	}
 
 	// Set project
-	else if ($action == 'classin' && $user->rights->askpricesupplier->creer) {
+	else if ($action == 'classin' && $user->rights->supplier_proposal->creer) {
 		$object->setProject($_POST['projectid']);
 	}
 
 	// Delai de livraison
-	else if ($action == 'setavailability' && $user->rights->askpricesupplier->creer) {
+	else if ($action == 'setavailability' && $user->rights->supplier_proposal->creer) {
 		$result = $object->availability($_POST['availability_id']);
 	}
 
 	// Conditions de reglement
-	else if ($action == 'setconditions' && $user->rights->askpricesupplier->creer) {
+	else if ($action == 'setconditions' && $user->rights->supplier_proposal->creer) {
 		$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'));
 	}
 
-	else if ($action == 'setremisepercent' && $user->rights->askpricesupplier->creer) {
+	else if ($action == 'setremisepercent' && $user->rights->supplier_proposal->creer) {
 		$result = $object->set_remise_percent($user, $_POST['remise_percent']);
 	}
 
-	else if ($action == 'setremiseabsolue' && $user->rights->askpricesupplier->creer) {
+	else if ($action == 'setremiseabsolue' && $user->rights->supplier_proposal->creer) {
 		$result = $object->set_remise_absolue($user, $_POST['remise_absolue']);
 	}
 
 	// Mode de reglement
-	else if ($action == 'setmode' && $user->rights->askpricesupplier->creer) {
+	else if ($action == 'setmode' && $user->rights->supplier_proposal->creer) {
 		$result = $object->setPaymentMethods(GETPOST('mode_reglement_id', 'int'));
 	}
 
@@ -905,7 +905,7 @@ if (empty($reshook))
 	 * Ordonnancement des lignes
 	*/
 
-	else if ($action == 'up' && $user->rights->askpricesupplier->creer) {
+	else if ($action == 'up' && $user->rights->supplier_proposal->creer) {
 		$object->line_up(GETPOST('rowid'));
 
 		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
@@ -924,7 +924,7 @@ if (empty($reshook))
 		exit();
 	}
 
-	else if ($action == 'down' && $user->rights->askpricesupplier->creer) {
+	else if ($action == 'down' && $user->rights->supplier_proposal->creer) {
 		$object->line_down(GETPOST('rowid'));
 
 		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
@@ -950,7 +950,7 @@ if (empty($reshook))
 
 		if (! $error) {
 			// Actions on extra fields (by external module or standard code)
-			$hookmanager->initHooks(array('askpricesupplierdao'));
+			$hookmanager->initHooks(array('supplier_proposaldao'));
 			$parameters = array('id' => $object->id);
 			$reshook = $hookmanager->executeHooks('insertExtraFields', $parameters, $object, $action); // Note that $action and $object may have been
 			                                                                                           // modified by
@@ -979,7 +979,7 @@ llxHeader('', $langs->trans('CommRequests'), 'EN:Ask_Price_Supplier|FR:Demande_d
 $form = new Form($db);
 $formother = new FormOther($db);
 $formfile = new FormFile($db);
-$formaskpricesupplier = new FormAskPriceSupplier($db);
+$formsupplier_proposal = new FormSupplierProposal($db);
 $formmargin = new FormMargin($db);
 $companystatic = new Societe($db);
 
@@ -997,8 +997,8 @@ if ($action == 'create')
 	// Load objectsrc
 	if (! empty($origin) && ! empty($originid))
 	{
-		$element = 'comm/askpricesupplier';
-		$subelement = 'askpricesupplier';
+		$element = 'supplier_proposal';
+		$subelement = 'supplier_proposal';
 
 		dol_include_once('/' . $element . '/class/' . $subelement . '.class.php');
 
@@ -1025,7 +1025,7 @@ if ($action == 'create')
 
 	}
 
-	$object = new AskPriceSupplier($db);
+	$object = new SupplierProposal($db);
 
 	print '<form name="addprop" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
 	print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
@@ -1100,8 +1100,8 @@ if ($action == 'create')
 	print '<tr>';
 	print '<td>' . $langs->trans("DefaultModel") . '</td>';
 	print '<td colspan="2">';
-	$liste = ModelePDFAskPriceSupplier::liste_modeles($db);
-	print $form->selectarray('model', $liste, ($conf->global->ASKPRICESUPPLIER_ADDON_PDF_ODT_DEFAULT ? $conf->global->ASKPRICESUPPLIER_ADDON_PDF_ODT_DEFAULT : $conf->global->ASKPRICESUPPLIER_ADDON_PDF));
+	$liste = ModelePDFSupplierProposal::liste_modeles($db);
+	print $form->selectarray('model', $liste, ($conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_DEFAULT ? $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_DEFAULT : $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF));
 	print "</td></tr>";
 
 	// Project
@@ -1177,10 +1177,10 @@ if ($action == 'create')
 	 * Combobox pour la fonction de copie
  	 */
 
-	if (empty($conf->global->ASKPRICESUPPLIER_CLONE_ON_CREATE_PAGE)) print '<input type="hidden" name="createmode" value="empty">';
+	if (empty($conf->global->SUPPLIER_PROPOSAL_CLONE_ON_CREATE_PAGE)) print '<input type="hidden" name="createmode" value="empty">';
 
-	if (! empty($conf->global->ASKPRICESUPPLIER_CLONE_ON_CREATE_PAGE) || ! empty($conf->global->PRODUCT_SHOW_WHEN_CREATE)) print '<br><table>';
-	if (! empty($conf->global->ASKPRICESUPPLIER_CLONE_ON_CREATE_PAGE))
+	if (! empty($conf->global->SUPPLIER_PROPOSAL_CLONE_ON_CREATE_PAGE) || ! empty($conf->global->PRODUCT_SHOW_WHEN_CREATE)) print '<br><table>';
+	if (! empty($conf->global->SUPPLIER_PROPOSAL_CLONE_ON_CREATE_PAGE))
 	{
 		// For backward compatibility
 		print '<tr>';
@@ -1191,7 +1191,7 @@ if ($action == 'create')
 		$liste_ask [0] = '';
 
 		$sql = "SELECT p.rowid as id, p.ref, s.nom";
-		$sql .= " FROM " . MAIN_DB_PREFIX . "askpricesupplier p";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "supplier_proposal p";
 		$sql .= ", " . MAIN_DB_PREFIX . "societe s";
 		$sql .= " WHERE s.rowid = p.fk_soc";
 		$sql .= " AND p.entity = " . $conf->entity;
@@ -1208,7 +1208,7 @@ if ($action == 'create')
 				$liste_ask [$row [0]] = $askPriceSupplierRefAndSocName;
 				$i ++;
 			}
-			print $form->selectarray("copie_askpricesupplier", $liste_ask, 0);
+			print $form->selectarray("copie_supplier_proposal", $liste_ask, 0);
 		} else {
 			dol_print_error($db);
 		}
@@ -1249,7 +1249,7 @@ if ($action == 'create')
 		}
 		print '</td></tr>';
 	}
-	if (! empty($conf->global->ASKPRICESUPPLIER_CLONE_ON_CREATE_PAGE) || ! empty($conf->global->PRODUCT_SHOW_WHEN_CREATE)) print '</table>';
+	if (! empty($conf->global->SUPPLIER_PROPOSAL_CLONE_ON_CREATE_PAGE) || ! empty($conf->global->PRODUCT_SHOW_WHEN_CREATE)) print '</table>';
 
 	dol_fiche_end();
 
@@ -1284,8 +1284,8 @@ if ($action == 'create')
 	$soc = new Societe($db);
 	$soc->fetch($object->socid);
 
-	$head = askpricesupplier_prepare_head($object);
-	dol_fiche_head($head, 'comm', $langs->trans('CommRequest'), 0, 'askpricesupplier');
+	$head = supplier_proposal_prepare_head($object);
+	dol_fiche_head($head, 'comm', $langs->trans('CommRequest'), 0, 'supplier_proposal');
 
 	$formconfirm = '';
 
@@ -1338,7 +1338,7 @@ if ($action == 'create')
 			require_once DOL_DOCUMENT_ROOT . '/core/class/notify.class.php';
 			$notify = new Notify($db);
 			$text .= '<br>';
-			$text .= $notify->confirmMessage('ASKPRICESUPPLIER_VALIDATE', $object->socid, $object);
+			$text .= $notify->confirmMessage('SUPPLIER_PROPOSAL_VALIDATE', $object->socid, $object);
 		}
 
 		if (! $error)
@@ -1357,7 +1357,7 @@ if ($action == 'create')
 
 	print '<table class="border" width="100%">';
 
-	$linkback = '<a href="' . DOL_URL_ROOT . '/comm/askpricesupplier/list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+	$linkback = '<a href="' . DOL_URL_ROOT . '/supplier_proposal/list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
 	// Ref
 	print '<tr><td>' . $langs->trans('Ref') . '</td><td colspan="5">';
@@ -1431,7 +1431,7 @@ if ($action == 'create')
 		print '<tr><td>';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('Project') . '</td>';
-		if ($user->rights->askpricesupplier->creer) {
+		if ($user->rights->supplier_proposal->creer) {
 			if ($action != 'classify')
 				print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a></td>';
 			print '</tr></table>';
@@ -1479,7 +1479,7 @@ if ($action == 'create')
 	    print '<table width="100%" class="nobordernopadding"><tr><td>';
 	    print $langs->trans('BankAccount');
 	    print '</td>';
-	    if ($action != 'editbankaccount' && $user->rights->askpricesupplier->creer)
+	    if ($action != 'editbankaccount' && $user->rights->supplier_proposal->creer)
 	        print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'),1).'</a></td>';
 	    print '</tr></table>';
 	    print '</td><td colspan="3">';
@@ -1574,7 +1574,7 @@ if ($action == 'create')
 		$ret = $object->printObjectLines($action, $mysoc, $soc, $lineid, 1);
 
 	// Form to add new line
-	if ($object->statut == 0 && $user->rights->askpricesupplier->creer)
+	if ($object->statut == 0 && $user->rights->supplier_proposal->creer)
 	{
 		if ($action != 'editline')
 		{
@@ -1600,7 +1600,7 @@ if ($action == 'create')
 		 * Form to close proposal (signed or not)
 		 */
 		$form_close = '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="post">';
-		$form_close .= '<p class="notice">'.$langs->trans('AskPriceSupplierRefFournNotice').'</p>';
+		$form_close .= '<p class="notice">'.$langs->trans('SupplierProposalRefFournNotice').'</p>';
 		$form_close .= '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 		$form_close .= '<table class="border" width="100%">';
 		$form_close .= '<tr><td width="150"  align="left">' . $langs->trans("CloseAs") . '</td><td align="left">';
@@ -1639,8 +1639,8 @@ if ($action == 'create')
 			{
 				// Validate
 				if ($object->statut == 0 && $object->total_ttc >= 0 && count($object->lines) > 0 &&
-			        ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->askpricesupplier->creer))
-       				|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->askpricesupplier->validate)))
+			        ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->supplier_proposal->creer))
+       				|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->supplier_proposal->validate)))
 				) {
 					if (count($object->lines) > 0)
 						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=validate">' . $langs->trans('Validate') . '</a></div>';
@@ -1648,19 +1648,19 @@ if ($action == 'create')
 				}
 
 				// Edit
-				if ($object->statut == 1 && $user->rights->askpricesupplier->creer) {
+				if ($object->statut == 1 && $user->rights->supplier_proposal->creer) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=modif">' . $langs->trans('Modify') . '</a></div>';
 				}
 
 				// ReOpen
-				if (($object->statut == 2 || $object->statut == 3 || $object->statut == 4) && $user->rights->askpricesupplier->cloturer) {
+				if (($object->statut == 2 || $object->statut == 3 || $object->statut == 4) && $user->rights->supplier_proposal->cloturer) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=reopen' . (empty($conf->global->MAIN_JUMP_TAG) ? '' : '#reopen') . '"';
 					print '>' . $langs->trans('ReOpen') . '</a></div>';
 				}
 
 				// Send
 				if ($object->statut == 1 || $object->statut == 2) {
-					if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->askpricesupplier->send) {
+					if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->supplier_proposal->send) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=presend&amp;mode=init">' . $langs->trans('SendByMail') . '</a></div>';
 					} else
 						print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">' . $langs->trans('SendByMail') . '</a></div>';
@@ -1674,18 +1674,18 @@ if ($action == 'create')
 				}
 
 				// Close
-				if ($object->statut == 1 && $user->rights->askpricesupplier->cloturer) {
+				if ($object->statut == 1 && $user->rights->supplier_proposal->cloturer) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=statut' . (empty($conf->global->MAIN_JUMP_TAG) ? '' : '#close') . '"';
 					print '>' . $langs->trans('Close') . '</a></div>';
 				}
 
 				// Clone
-				if ($user->rights->askpricesupplier->creer) {
+				if ($user->rights->supplier_proposal->creer) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&amp;socid=' . $object->socid . '&amp;action=clone&amp;object=' . $object->element . '">' . $langs->trans("ToClone") . '</a></div>';
 				}
 
 				// Delete
-				if ($user->rights->askpricesupplier->supprimer) {
+				if ($user->rights->supplier_proposal->supprimer) {
 					print '<div class="inline-block divButAction"><a class="butActionDelete" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=delete"';
 					print '>' . $langs->trans('Delete') . '</a></div>';
 				}
@@ -1704,14 +1704,14 @@ if ($action == 'create')
 		 * Documents generes
 		 */
 		$filename = dol_sanitizeFileName($object->ref);
-		$filedir = $conf->askpricesupplier->dir_output . "/" . dol_sanitizeFileName($object->ref);
+		$filedir = $conf->supplier_proposal->dir_output . "/" . dol_sanitizeFileName($object->ref);
 		$urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
-		$genallowed = $user->rights->askpricesupplier->creer;
-		$delallowed = $user->rights->askpricesupplier->supprimer;
+		$genallowed = $user->rights->supplier_proposal->creer;
+		$delallowed = $user->rights->supplier_proposal->supprimer;
 
 		$var = true;
 
-		$somethingshown = $formfile->show_documents('askpricesupplier', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
+		$somethingshown = $formfile->show_documents('supplier_proposal', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
 
 		// Linked object block
 		$somethingshown = $form->showLinkedObjectBlock($object);
@@ -1725,7 +1725,7 @@ if ($action == 'create')
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 		$formactions = new FormActions($db);
-		$somethingshown = $formactions->showactions($object, 'askpricesupplier', $socid);
+		$somethingshown = $formactions->showactions($object, 'supplier_proposal', $socid);
 
 		print '</div></div></div>';
 	}
@@ -1742,7 +1742,7 @@ if ($action == 'create')
 
 		$ref = dol_sanitizeFileName($object->ref);
 		include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
-		$fileparams = dol_most_recent_file($conf->askpricesupplier->dir_output . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
+		$fileparams = dol_most_recent_file($conf->supplier_proposal->dir_output . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
 		$file = $fileparams['fullname'];
 
 		// Define output language
@@ -1768,7 +1768,7 @@ if ($action == 'create')
 				dol_print_error($db, $object->error, $object->errors);
 				exit();
 			}
-			$fileparams = dol_most_recent_file($conf->askpricesupplier->dir_output . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
+			$fileparams = dol_most_recent_file($conf->supplier_proposal->dir_output . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
 			$file = $fileparams['fullname'];
 		}
 
@@ -1821,7 +1821,7 @@ if ($action == 'create')
 
 		// Tableau des parametres complementaires
 		$formmail->param['action'] = 'send';
-		$formmail->param['models'] = 'askpricesupplier_send';
+		$formmail->param['models'] = 'supplier_proposal_send';
 		$formmail->param['models_id']=GETPOST('modelmailselected','int');
 		$formmail->param['id'] = $object->id;
 		$formmail->param['returnurl'] = $_SERVER["PHP_SELF"] . '?id=' . $object->id;

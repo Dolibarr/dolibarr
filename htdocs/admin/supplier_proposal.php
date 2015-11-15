@@ -25,12 +25,12 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/comm/askpricesupplier/class/askpricesupplier.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/askpricesupplier.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/supplier_proposal.lib.php';
 $langs->load("admin");
 $langs->load("errors");
 $langs->load('other');
-$langs->load('askpricesupplier');
+$langs->load('supplier_proposal');
 
 if (! $user->admin) accessforbidden();
 
@@ -38,7 +38,7 @@ $action = GETPOST('action','alpha');
 $value = GETPOST('value','alpha');
 $label = GETPOST('label','alpha');
 $scandir = GETPOST('scandir','alpha');
-$type='askpricesupplier';
+$type='supplier_proposal';
 
 /*
  * Actions
@@ -46,9 +46,9 @@ $type='askpricesupplier';
 $error=0;
 if ($action == 'updateMask')
 {
-	$maskconstaskpricesupplier=GETPOST('maskconstaskpricesupplier','alpha');
-	$maskaskpricesupplier=GETPOST('maskaskpricesupplier','alpha');
-	if ($maskconstaskpricesupplier) $res = dolibarr_set_const($db,$maskconstaskpricesupplier,$maskaskpricesupplier,'chaine',0,'',$conf->entity);
+	$maskconstsupplier_proposal=GETPOST('maskconstsupplier_proposal','alpha');
+	$masksupplier_proposal=GETPOST('masksupplier_proposal','alpha');
+	if ($maskconstsupplier_proposal) $res = dolibarr_set_const($db,$maskconstsupplier_proposal,$masksupplier_proposal,'chaine',0,'',$conf->entity);
 
 	if (! $res > 0) $error++;
 
@@ -66,15 +66,15 @@ if ($action == 'specimen')
 {
 	$modele=GETPOST('module','alpha');
 
-	$askpricesupplier = new AskPriceSupplier($db);
-	$askpricesupplier->initAsSpecimen();
+	$supplier_proposal = new SupplierProposal($db);
+	$supplier_proposal->initAsSpecimen();
 
 	// Search template files
 	$file=''; $classname=''; $filefound=0;
 	$dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
 	foreach($dirmodels as $reldir)
 	{
-	    $file=dol_buildpath($reldir."core/modules/askpricesupplier/doc/pdf_".$modele.".modules.php");
+	    $file=dol_buildpath($reldir."core/modules/supplier_proposal/doc/pdf_".$modele.".modules.php");
 		if (file_exists($file))
 		{
 			$filefound=1;
@@ -89,9 +89,9 @@ if ($action == 'specimen')
 
 		$module = new $classname($db);
 
-		if ($module->write_file($askpricesupplier,$langs) > 0)
+		if ($module->write_file($supplier_proposal,$langs) > 0)
 		{
-			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=askpricesupplier&file=SPECIMEN.pdf");
+			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=supplier_proposal&file=SPECIMEN.pdf");
 			return;
 		}
 		else
@@ -107,11 +107,11 @@ if ($action == 'specimen')
 	}
 }
 
-if ($action == 'set_ASKPRICESUPPLIER_DRAFT_WATERMARK')
+if ($action == 'set_SUPPLIER_PROPOSAL_DRAFT_WATERMARK')
 {
-	$draft = GETPOST('ASKPRICESUPPLIER_DRAFT_WATERMARK','alpha');
+	$draft = GETPOST('SUPPLIER_PROPOSAL_DRAFT_WATERMARK','alpha');
 
-	$res = dolibarr_set_const($db, "ASKPRICESUPPLIER_DRAFT_WATERMARK",trim($draft),'chaine',0,'',$conf->entity);
+	$res = dolibarr_set_const($db, "SUPPLIER_PROPOSAL_DRAFT_WATERMARK",trim($draft),'chaine',0,'',$conf->entity);
 	if (! $res > 0) $error++;
 
  	if (! $error)
@@ -124,11 +124,11 @@ if ($action == 'set_ASKPRICESUPPLIER_DRAFT_WATERMARK')
 	}
 }
 
-if ($action == 'set_ASKPRICESUPPLIER_FREE_TEXT')
+if ($action == 'set_SUPPLIER_PROPOSAL_FREE_TEXT')
 {
-	$freetext = GETPOST('ASKPRICESUPPLIER_FREE_TEXT');	// No alpha here, we want exact string
+	$freetext = GETPOST('SUPPLIER_PROPOSAL_FREE_TEXT');	// No alpha here, we want exact string
 
-	$res = dolibarr_set_const($db, "ASKPRICESUPPLIER_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
+	$res = dolibarr_set_const($db, "SUPPLIER_PROPOSAL_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
 
 	if (! $res > 0) $error++;
 
@@ -142,9 +142,9 @@ if ($action == 'set_ASKPRICESUPPLIER_FREE_TEXT')
 	}
 }
 
-if ($action == 'set_BANK_ASK_PAYMENT_BANK_DURING_ASKPRICESUPPLIER')
+if ($action == 'set_BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL')
 {
-    $res = dolibarr_set_const($db, "BANK_ASK_PAYMENT_BANK_DURING_ASKPRICESUPPLIER",$value,'chaine',0,'',$conf->entity);
+    $res = dolibarr_set_const($db, "BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL",$value,'chaine',0,'',$conf->entity);
 
     if (! $res > 0) $error++;
 
@@ -198,15 +198,15 @@ else if ($action == 'del')
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0)
 	{
-        if ($conf->global->ASKPRICESUPPLIER_ADDON_PDF == "$value") dolibarr_del_const($db, 'ASKPRICESUPPLIER_ADDON_PDF',$conf->entity);
+        if ($conf->global->SUPPLIER_PROPOSAL_ADDON_PDF == "$value") dolibarr_del_const($db, 'SUPPLIER_PROPOSAL_ADDON_PDF',$conf->entity);
 	}
 }
 
 else if ($action == 'setdoc')
 {
-    if (dolibarr_set_const($db, "ASKPRICESUPPLIER_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
+    if (dolibarr_set_const($db, "SUPPLIER_PROPOSAL_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
 	{
-		$conf->global->ASKPRICESUPPLIER_ADDON_PDF = $value;
+		$conf->global->SUPPLIER_PROPOSAL_ADDON_PDF = $value;
 	}
 
 	// On active le modele
@@ -222,7 +222,7 @@ else if ($action == 'setmod')
 	// TODO Verifier si module numerotation choisi peut etre active
 	// par appel methode canBeActivated
 
-	dolibarr_set_const($db, "ASKPRICESUPPLIER_ADDON",$value,'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "SUPPLIER_PROPOSAL_ADDON",$value,'chaine',0,'',$conf->entity);
 }
 
 
@@ -233,23 +233,23 @@ else if ($action == 'setmod')
 $dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
 
 
-llxHeader('',$langs->trans("AskPriceSupplierSetup"));
+llxHeader('',$langs->trans("SupplierProposalSetup"));
 
 $form=new Form($db);
 
 //if ($mesg) print $mesg;
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("AskPriceSupplierSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("SupplierProposalSetup"),$linkback,'title_setup');
 
-$head = askpricesupplier_admin_prepare_head();
+$head = supplier_proposal_admin_prepare_head();
 
-dol_fiche_head($head, 'general', $langs->trans("CommRequests"), 0, 'askpricesupplier');
+dol_fiche_head($head, 'general', $langs->trans("CommRequests"), 0, 'supplier_proposal');
 
 /*
  *  Module numerotation
  */
-print load_fiche_titre($langs->trans("AskPriceSupplierNumberingModules"),'','');
+print load_fiche_titre($langs->trans("SupplierProposalNumberingModules"),'','');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -263,7 +263,7 @@ print '</tr>'."\n";
 clearstatcache();
 foreach ($dirmodels as $reldir)
 {
-	$dir = dol_buildpath($reldir."core/modules/askpricesupplier/");
+	$dir = dol_buildpath($reldir."core/modules/supplier_proposal/");
 
 	if (is_dir($dir))
 	{
@@ -274,7 +274,7 @@ foreach ($dirmodels as $reldir)
 
 			while (($file = readdir($handle))!==false)
 			{
-				if (substr($file, 0, 21) == 'mod_askpricesupplier_' && substr($file, dol_strlen($file)-3, 3) == 'php')
+				if (substr($file, 0, 21) == 'mod_supplier_proposal_' && substr($file, dol_strlen($file)-3, 3) == 'php')
 				{
 					$file = substr($file, 0, dol_strlen($file)-4);
 
@@ -302,7 +302,7 @@ foreach ($dirmodels as $reldir)
                         print '</td>'."\n";
 
 						print '<td align="center">';
-						if ($conf->global->ASKPRICESUPPLIER_ADDON == "$file")
+						if ($conf->global->SUPPLIER_PROPOSAL_ADDON == "$file")
 						{
 							print img_picto($langs->trans("Activated"),'switch_on');
 						}
@@ -314,13 +314,13 @@ foreach ($dirmodels as $reldir)
 						}
 						print '</td>';
 
-						$askpricesupplier=new AskPriceSupplier($db);
-						$askpricesupplier->initAsSpecimen();
+						$supplier_proposal=new SupplierProposal($db);
+						$supplier_proposal->initAsSpecimen();
 
 						// Info
 						$htmltooltip='';
 						$htmltooltip.=''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
-						$nextval=$module->getNextValue($mysoc,$askpricesupplier);
+						$nextval=$module->getNextValue($mysoc,$supplier_proposal);
                         if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
                             $htmltooltip.=''.$langs->trans("NextValue").': ';
                             if ($nextval) {
@@ -351,7 +351,7 @@ print "</table><br>\n";
  * Document templates generators
  */
 
-print load_fiche_titre($langs->trans("AskPriceSupplierPDFModules"),'','');
+print load_fiche_titre($langs->trans("SupplierProposalPDFModules"),'','');
 
 // Load array def with activated templates
 $def = array();
@@ -394,7 +394,7 @@ foreach ($dirmodels as $reldir)
 {
     foreach (array('','/doc') as $valdir)
     {
-    	$dir = dol_buildpath($reldir."core/modules/askpricesupplier".$valdir);
+    	$dir = dol_buildpath($reldir."core/modules/supplier_proposal".$valdir);
 
         if (is_dir($dir))
         {
@@ -452,7 +452,7 @@ foreach ($dirmodels as $reldir)
 
 	                            // Defaut
 	                            print "<td align=\"center\">";
-	                            if ($conf->global->ASKPRICESUPPLIER_ADDON_PDF == "$name")
+	                            if ($conf->global->SUPPLIER_PROPOSAL_ADDON_PDF == "$name")
 	                            {
 	                                print img_picto($langs->trans("Default"),'on');
 	                            }
@@ -526,10 +526,10 @@ print "</tr>";
 $var=! $var;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="set_ASKPRICESUPPLIER_FREE_TEXT">';
+print '<input type="hidden" name="action" value="set_SUPPLIER_PROPOSAL_FREE_TEXT">';
 print '<tr '.$bc[$var].'><td colspan="2">';
-print $langs->trans("FreeLegalTextOnAskPriceSupplier").' ('.$langs->trans("AddCRIfTooLong").')<br>';
-$variablename='ASKPRICESUPPLIER_FREE_TEXT';
+print $langs->trans("FreeLegalTextOnSupplierProposal").' ('.$langs->trans("AddCRIfTooLong").')<br>';
+$variablename='SUPPLIER_PROPOSAL_FREE_TEXT';
 if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 {
     print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
@@ -548,10 +548,10 @@ print '</form>';
 $var=!$var;
 print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print "<input type=\"hidden\" name=\"action\" value=\"set_ASKPRICESUPPLIER_DRAFT_WATERMARK\">";
+print "<input type=\"hidden\" name=\"action\" value=\"set_SUPPLIER_PROPOSAL_DRAFT_WATERMARK\">";
 print '<tr '.$bc[$var].'><td colspan="2">';
-print $langs->trans("WatermarkOnDraftAskPriceSupplier").'<br>';
-print '<input size="50" class="flat" type="text" name="ASKPRICESUPPLIER_DRAFT_WATERMARK" value="'.$conf->global->ASKPRICESUPPLIER_DRAFT_WATERMARK.'">';
+print $langs->trans("WatermarkOnDraftSupplierProposal").'<br>';
+print '<input size="50" class="flat" type="text" name="SUPPLIER_PROPOSAL_DRAFT_WATERMARK" value="'.$conf->global->SUPPLIER_PROPOSAL_DRAFT_WATERMARK.'">';
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
@@ -561,20 +561,20 @@ if ($conf->banque->enabled)
 {
     $var=!$var;
     print '<tr '.$bc[$var].'><td>';
-    print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_ASKPRICESUPPLIER").'</td><td>&nbsp</td><td align="right">';
+    print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL").'</td><td>&nbsp</td><td align="right">';
     if (! empty($conf->use_javascript_ajax))
     {
-        print ajax_constantonoff('BANK_ASK_PAYMENT_BANK_DURING_ASKPRICESUPPLIER');
+        print ajax_constantonoff('BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL');
     }
     else
     {
-        if (empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_ASKPRICESUPPLIER))
+        if (empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL))
         {
-            print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_BANK_ASK_PAYMENT_BANK_DURING_ASKPRICESUPPLIER&amp;value=1">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+            print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL&amp;value=1">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
         }
         else
         {
-            print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_BANK_ASK_PAYMENT_BANK_DURING_ASKPRICESUPPLIER&amp;value=0">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
+            print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL&amp;value=0">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
         }
     }
     print '</td></tr>';
@@ -583,7 +583,7 @@ else
 {
     $var=!$var;
     print '<tr '.$bc[$var].'><td>';
-    print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_ASKPRICESUPPLIER").'</td><td>&nbsp;</td><td align="center">'.$langs->trans('NotAvailable').'</td></tr>';
+    print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL").'</td><td>&nbsp;</td><td align="center">'.$langs->trans('NotAvailable').'</td></tr>';
 }
 
 print '</table>';
@@ -601,7 +601,7 @@ print "<tr class=\"liste_titre\">\n";
 print "  <td>".$langs->trans("Name")."</td>\n";
 print "  <td>".$langs->trans("Value")."</td>\n";
 print "</tr>\n";
-print "<tr ".$bc[false].">\n  <td width=\"140\">".$langs->trans("PathDirectory")."</td>\n  <td>".$conf->askpricesupplier->dir_output."</td>\n</tr>\n";
+print "<tr ".$bc[false].">\n  <td width=\"140\">".$langs->trans("PathDirectory")."</td>\n  <td>".$conf->supplier_proposal->dir_output."</td>\n</tr>\n";
 print "</table>\n<br>";
 
 $db->close();

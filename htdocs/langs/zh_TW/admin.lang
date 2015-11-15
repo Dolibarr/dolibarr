@@ -1193,13 +1193,13 @@ UseOptionLineIfNoQuantity=一個產品線/服務的，是作為一個選項視�
 FreeLegalTextOnProposal=可在下面輸入額外的建議書資訊
 WatermarkOnDraftProposal=Watermark on draft commercial proposals (none if empty)
 BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL=Ask for bank account destination of proposal
-##### AskPriceSupplier #####
-AskPriceSupplierSetup=Price requests suppliers module setup
-AskPriceSupplierNumberingModules=Price requests suppliers numbering models
-AskPriceSupplierPDFModules=Price requests suppliers documents models
-FreeLegalTextOnAskPriceSupplier=Free text on price requests suppliers
-WatermarkOnDraftAskPriceSupplier=Watermark on draft price requests suppliers (none if empty)
-BANK_ASK_PAYMENT_BANK_DURING_ASKPRICESUPPLIER=Ask for bank account destination of price request
+##### SupplierProposal #####
+SupplierProposalSetup=Price requests suppliers module setup
+SupplierProposalNumberingModules=Price requests suppliers numbering models
+SupplierProposalPDFModules=Price requests suppliers documents models
+FreeLegalTextOnSupplierProposal=Free text on price requests suppliers
+WatermarkOnDraftSupplierProposal=Watermark on draft price requests suppliers (none if empty)
+BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL=Ask for bank account destination of price request
 ##### Orders #####
 OrdersSetup=設定訂單管理模組
 OrdersNumberingModules=訂單編號模組

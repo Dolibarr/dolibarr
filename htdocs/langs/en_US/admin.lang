@@ -846,14 +846,12 @@ VATIsUsedExampleFR=In France, it means companies or organisations having a real 
 VATIsNotUsedExampleFR=In France, it means associations that are non VAT declared or companies, organisations or liberal professions that have chosen the micro enterprise fiscal system (VAT in franchise) and paid a franchise VAT without any VAT declaration.  This choice will display the reference "Non applicable VAT - art-293B of CGI" on invoices.
 ##### Local Taxes #####
 LTRate=Rate
-LocalTax1IsUsed=Use second tax
 LocalTax1IsNotUsed=Do not use second tax
 LocalTax1IsUsedDesc=Use a second type of tax (other than VAT)
 LocalTax1IsNotUsedDesc=Do not use other type of tax (other than VAT)
 LocalTax1Management=Second type of tax
 LocalTax1IsUsedExample=
 LocalTax1IsNotUsedExample=
-LocalTax2IsUsed=Use third tax
 LocalTax2IsNotUsed=Do not use third tax
 LocalTax2IsUsedDesc=Use a third type of tax (other than VAT)
 LocalTax2IsNotUsedDesc=Do not use other type of tax (other than VAT)
@@ -1208,13 +1206,13 @@ UseOptionLineIfNoQuantity=A line of product/service with a zero amount is consid
 FreeLegalTextOnProposal=Free text on commercial proposals
 WatermarkOnDraftProposal=Watermark on draft commercial proposals (none if empty)
 BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL=Ask for bank account destination of proposal
-##### AskPriceSupplier #####
-AskPriceSupplierSetup=Price requests suppliers module setup
-AskPriceSupplierNumberingModules=Price requests suppliers numbering models
-AskPriceSupplierPDFModules=Price requests suppliers documents models
-FreeLegalTextOnAskPriceSupplier=Free text on price requests suppliers
-WatermarkOnDraftAskPriceSupplier=Watermark on draft price requests suppliers (none if empty)
-BANK_ASK_PAYMENT_BANK_DURING_ASKPRICESUPPLIER=Ask for bank account destination of price request
+##### SupplierProposal #####
+SupplierProposalSetup=Price requests suppliers module setup
+SupplierProposalNumberingModules=Price requests suppliers numbering models
+SupplierProposalPDFModules=Price requests suppliers documents models
+FreeLegalTextOnSupplierProposal=Free text on price requests suppliers
+WatermarkOnDraftSupplierProposal=Watermark on draft price requests suppliers (none if empty)
+BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL=Ask for bank account destination of price request
 WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER=Ask for Warehouse Source for order
 ##### Orders #####
 OrdersSetup=Order management setup

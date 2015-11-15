@@ -23,12 +23,12 @@
  *      \brief      Page d'affichage des infos d'une proposition commerciale
  */
 
-require '../../main.inc.php';
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/comm/askpricesupplier/class/askpricesupplier.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/askpricesupplier.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/supplier_proposal.lib.php';
 
-$langs->load('askpricesupplier');
+$langs->load('supplier_proposal');
 $langs->load('compta');
 
 $id=GETPOST('id','int');
@@ -36,7 +36,7 @@ $socid=GETPOST('socid','int');
 
 // Security check
 if (! empty($user->societe_id)) $socid=$user->societe_id;
-$result = restrictedArea($user, 'askpricesupplier', $id);
+$result = restrictedArea($user, 'supplier_proposal', $id);
 
 
 /*
@@ -45,12 +45,12 @@ $result = restrictedArea($user, 'askpricesupplier', $id);
 
 llxHeader('',$langs->trans('CommRequest'),'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur');
 
-$object = new AskPriceSupplier($db);
+$object = new SupplierProposal($db);
 $object->fetch($id);
 $object->fetch_thirdparty();
 
-$head = askpricesupplier_prepare_head($object);
-dol_fiche_head($head, 'info', $langs->trans('CommRequest'), 0, 'askpricesupplier');
+$head = supplier_proposal_prepare_head($object);
+dol_fiche_head($head, 'info', $langs->trans('CommRequest'), 0, 'supplier_proposal');
 
 $object->info($object->id);
 

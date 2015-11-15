@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';   // Requ
 /**
  *	Classe mere des modeles de propale
  */
-abstract class ModelePDFAskPriceSupplier extends CommonDocGenerator
+abstract class ModelePDFSupplierProposal extends CommonDocGenerator
 {
 	var $error='';
 
@@ -50,7 +50,7 @@ abstract class ModelePDFAskPriceSupplier extends CommonDocGenerator
 	{
 		global $conf;
 
-		$type='askpricesupplier';
+		$type='supplier_proposal';
 		$liste=array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -64,7 +64,7 @@ abstract class ModelePDFAskPriceSupplier extends CommonDocGenerator
 /**
  *	Classe mere des modeles de numerotation des references de propales
  */
-abstract class ModeleNumRefAskPriceSupplier
+abstract class ModeleNumRefSupplierProposal
 {
 	var $error='';
 
@@ -86,7 +86,7 @@ abstract class ModeleNumRefAskPriceSupplier
 	function info()
 	{
 		global $langs;
-		$langs->load("askpricesupplier");
+		$langs->load("supplier_proposal");
 		return $langs->trans("NoDescription");
 	}
 
@@ -98,7 +98,7 @@ abstract class ModeleNumRefAskPriceSupplier
 	function getExample()
 	{
 		global $langs;
-		$langs->load("askpricesupplier");
+		$langs->load("supplier_proposal");
 		return $langs->trans("NoExample");
 	}
 
@@ -149,17 +149,17 @@ abstract class ModeleNumRefAskPriceSupplier
  *  Create a document onto disk according to template module.
  *
  * 	@param	    DoliDB		$db  			Database handler
- * 	@param	    AskPriceSupplier		$object			Object askpricesupplier
+ * 	@param	    SupplierProposal		$object			Object supplier_proposal
  * 	@param	    string		$modele			Force model to use ('' to not force)
  * 	@param		Translate	$outputlangs	Object langs to use for output
  *  @param      int			$hidedetails    Hide details of lines
  *  @param      int			$hidedesc       Hide description
  *  @param      int			$hideref        Hide ref
  * 	@return     int         				0 if KO, 1 if OK
- * @deprecated Use the new function generateDocument of AskPriceSupplier class
- * @see AskPriceSupplier::generateDocument()
+ * @deprecated Use the new function generateDocument of SupplierProposal class
+ * @see SupplierProposal::generateDocument()
  */
-function askpricesupplier_pdf_create(DoliDB $db, AskPriceSupplier $object, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+function supplier_proposal_pdf_create(DoliDB $db, SupplierProposal $object, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
 {
 	dol_syslog(__METHOD__ . " is deprecated", LOG_WARNING);
 

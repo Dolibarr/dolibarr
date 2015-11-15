@@ -29,7 +29,7 @@ $langs = $GLOBALS['langs'];
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 
 echo '<br>';
-print load_fiche_titre($langs->trans('RelatedAskPriceSupplier'));
+print load_fiche_titre($langs->trans('RelatedSupplierProposal'));
 ?>
 <table class="noborder allwidth">
 <tr class="liste_titre">
@@ -48,11 +48,11 @@ foreach($linkedObjectBlock as $key => $objectlink)
 	$var=!$var;
 ?>
 <tr <?php echo $bc[$var]; ?> ><td>
-	<a href="<?php echo DOL_URL_ROOT.'/comm/askpricesupplier/card.php?id='.$objectlink->id ?>"><?php echo img_object($langs->trans("ShowAskPriceSupplier"),"askpricesupplier").' '.$objectlink->ref; ?></a></td>
+	<a href="<?php echo DOL_URL_ROOT.'/supplier_proposal/card.php?id='.$objectlink->id ?>"><?php echo img_object($langs->trans("ShowSupplierProposal"),"supplier_proposal").' '.$objectlink->ref; ?></a></td>
 	<td></td>
 	<td align="center"><?php echo dol_print_date($objectlink->datec,'day'); ?></td>
 	<td align="right"><?php
-		if ($user->rights->askpricesupplier->lire) {
+		if ($user->rights->supplier_proposal->lire) {
 			$total = $total + $objectlink->total_ht;
 			echo price($objectlink->total_ht);
 		} ?></td>
@@ -66,7 +66,7 @@ foreach($linkedObjectBlock as $key => $objectlink)
 <tr class="liste_total">
 	<td align="left" colspan="3"><?php echo $langs->trans('TotalHT'); ?></td>
 	<td align="right"><?php
-		if ($user->rights->askpricesupplier->lire) {
+		if ($user->rights->supplier_proposal->lire) {
 			echo price($total);
 		} ?></td>
 	<td></td>

@@ -25,7 +25,7 @@
 /**
  *	Class to manage generation of HTML components for proposal management
  */
-class FormAskPriceSupplier
+class FormSupplierProposal
 {
 	var $db;
 	var $error;
@@ -49,18 +49,18 @@ class FormAskPriceSupplier
      *    @param	int		$short		Use short labels
      *    @return	void
      */
-    function selectAskPriceSupplierStatus($selected='',$short=0)
+    function selectSupplierProposalStatus($selected='',$short=0)
     {
         global $langs;
 
         $sql = "SELECT id, code, label, active FROM ".MAIN_DB_PREFIX."c_propalst";
         $sql .= " WHERE active = 1";
 
-        dol_syslog(get_class($this)."::selectAskPriceSupplierStatus", LOG_DEBUG);
+        dol_syslog(get_class($this)."::selectSupplierProposalStatus", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
-            print '<select class="flat" name="askpricesupplier_statut">';
+            print '<select class="flat" name="supplier_proposal_statut">';
             print '<option value="">&nbsp;</option>';
             $num = $this->db->num_rows($resql);
             $i = 0;

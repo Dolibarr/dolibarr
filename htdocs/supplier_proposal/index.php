@@ -23,11 +23,11 @@
  *	\brief      Home page of proposal area
  */
 
-require '../../main.inc.php';
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT .'/comm/askpricesupplier/class/askpricesupplier.class.php';
+require_once DOL_DOCUMENT_ROOT .'/supplier_proposal/class/supplier_proposal.class.php';
 
-$langs->load("askpricesupplier");
+$langs->load("supplier_proposal");
 $langs->load("companies");
 
 // Security check
@@ -37,22 +37,22 @@ if (isset($user->societe_id) && $user->societe_id  > 0)
 	$action = '';
 	$socid = $user->societe_id;
 }
-$result = restrictedArea($user, 'askpricesupplier');
+$result = restrictedArea($user, 'supplier_proposal');
 
 
 /*
  * View
  */
 $now=dol_now();
-$askpricesupplierstatic=new AskPriceSupplier($db);
+$supplier_proposalstatic=new SupplierProposal($db);
 $companystatic=new Societe($db);
 $form = new Form($db);
 $formfile = new FormFile($db);
 $help_url="EN:Module_Ask_Price_Supplier|FR:Module_Demande_de_prix_fournisseur";
 
-llxHeader("",$langs->trans("AskPriceSupplierArea"),$help_url);
+llxHeader("",$langs->trans("SupplierProposalArea"),$help_url);
 
-print load_fiche_titre($langs->trans("AskPriceSupplierArea"));
+print load_fiche_titre($langs->trans("SupplierProposalArea"));
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
@@ -61,7 +61,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
  * Search form
  */
 $var=false;
-print '<form method="post" action="'.DOL_URL_ROOT.'/comm/askpricesupplier/list.php">';
+print '<form method="post" action="'.DOL_URL_ROOT.'/supplier_proposal/list.php">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<table class="noborder nohover" width="100%">';
 print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchRequest").'</td></tr>';
@@ -78,7 +78,7 @@ print "</table></form><br>\n";
 
 $sql = "SELECT count(p.rowid), p.fk_statut";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-$sql.= ", ".MAIN_DB_PREFIX."askpricesupplier as p";
+$sql.= ", ".MAIN_DB_PREFIX."supplier_proposal as p";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE p.fk_soc = s.rowid";
 $sql.= " AND p.entity = ".$conf->entity;
@@ -119,12 +119,12 @@ if ($resql)
     $listofstatus=array(0,1,2,3,4);
     foreach ($listofstatus as $status)
     {
-        $dataseries[]=array('label'=>$askpricesupplierstatic->LibStatut($status,1),'data'=>(isset($vals[$status])?(int) $vals[$status]:0));
+        $dataseries[]=array('label'=>$supplier_proposalstatic->LibStatut($status,1),'data'=>(isset($vals[$status])?(int) $vals[$status]:0));
         if (! $conf->use_javascript_ajax)
         {
             $var=!$var;
             print "<tr ".$bc[$var].">";
-            print '<td>'.$askpricesupplierstatic->LibStatut($status,0).'</td>';
+            print '<td>'.$supplier_proposalstatic->LibStatut($status,0).'</td>';
             print '<td align="right"><a href="list.php?statut='.$status.'">'.(isset($vals[$status])?$vals[$status]:0).'</a></td>';
             print "</tr>\n";
         }
@@ -149,10 +149,10 @@ else
 /*
  * Draft askprice
  */
-if (! empty($conf->askpricesupplier->enabled))
+if (! empty($conf->supplier_proposal->enabled))
 {
 	$sql = "SELECT c.rowid, c.ref, s.nom as socname, s.rowid as socid, s.canvas, s.client";
-	$sql.= " FROM ".MAIN_DB_PREFIX."askpricesupplier as c";
+	$sql.= " FROM ".MAIN_DB_PREFIX."supplier_proposal as c";
 	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE c.fk_soc = s.rowid";
@@ -167,7 +167,7 @@ if (! empty($conf->askpricesupplier->enabled))
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td colspan="2">'.$langs->trans("DraftRequests").'</td></tr>';
-		$langs->load("askpricesupplier");
+		$langs->load("supplier_proposal");
 		$num = $db->num_rows($resql);
 		if ($num)
 		{
@@ -179,9 +179,9 @@ if (! empty($conf->askpricesupplier->enabled))
 				$obj = $db->fetch_object($resql);
 				print "<tr ".$bc[$var].">";
 
-				$askpricesupplierstatic->id=$obj->rowid;
-				$askpricesupplierstatic->ref=$obj->ref;
-				print '<td class="nowrap">'.$askpricesupplierstatic->getNomUrl(1).'</td>';
+				$supplier_proposalstatic->id=$obj->rowid;
+				$supplier_proposalstatic->ref=$obj->ref;
+				print '<td class="nowrap">'.$supplier_proposalstatic->getNomUrl(1).'</td>';
 
 				$companystatic->id=$obj->socid;
 				$companystatic->name=$obj->socname;
@@ -208,7 +208,7 @@ $max=5;
 
 $sql = "SELECT c.rowid, c.ref, c.fk_statut, s.nom as socname, s.rowid as socid, s.canvas, s.client,";
 $sql.= " date_cloture as datec";
-$sql.= " FROM ".MAIN_DB_PREFIX."askpricesupplier as c";
+$sql.= " FROM ".MAIN_DB_PREFIX."supplier_proposal as c";
 $sql.= ", ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE c.fk_soc = s.rowid";
@@ -239,12 +239,12 @@ if ($resql)
 			print "<tr ".$bc[$var].">";
 			print '<td width="20%" class="nowrap">';
 
-			$askpricesupplierstatic->id=$obj->rowid;
-			$askpricesupplierstatic->ref=$obj->ref;
+			$supplier_proposalstatic->id=$obj->rowid;
+			$supplier_proposalstatic->ref=$obj->ref;
 
 			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 			print '<td width="96" class="nobordernopadding nowrap">';
-			print $askpricesupplierstatic->getNomUrl(1);
+			print $supplier_proposalstatic->getNomUrl(1);
 			print '</td>';
 
 			print '<td width="16" class="nobordernopadding nowrap">';
@@ -253,9 +253,9 @@ if ($resql)
 
 			print '<td width="16" align="right" class="nobordernopadding">';
 			$filename=dol_sanitizeFileName($obj->ref);
-			$filedir=$conf->askpricesupplier->dir_output . '/' . dol_sanitizeFileName($obj->ref);
+			$filedir=$conf->supplier_proposal->dir_output . '/' . dol_sanitizeFileName($obj->ref);
 			$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
-			print $formfile->getDocumentsLink($askpricesupplierstatic->element, $filename, $filedir);
+			print $formfile->getDocumentsLink($supplier_proposalstatic->element, $filename, $filedir);
 			print '</td></tr></table>';
 
 			print '</td>';
@@ -267,7 +267,7 @@ if ($resql)
 			print '<td>'.$companystatic->getNomUrl(1,'customer').'</td>';
 
 			print '<td>'.dol_print_date($db->jdate($obj->datec),'day').'</td>';
-			print '<td align="right">'.$askpricesupplierstatic->LibStatut($obj->fk_statut,5).'</td>';
+			print '<td align="right">'.$supplier_proposalstatic->LibStatut($obj->fk_statut,5).'</td>';
 			print '</tr>';
 			$i++;
 		}
@@ -280,15 +280,15 @@ else dol_print_error($db);
 /*
  * Opened askprice
  */
-if (! empty($conf->askpricesupplier->enabled) && $user->rights->askpricesupplier->lire)
+if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->lire)
 {
-	$langs->load("askpricesupplier");
+	$langs->load("supplier_proposal");
 
 	$now=dol_now();
 
-	$sql = "SELECT s.nom as socname, s.rowid as socid, s.canvas, s.client, p.rowid as askpricesupplierid, p.total as total_ttc, p.total_ht, p.ref, p.fk_statut, p.datec as dp";
+	$sql = "SELECT s.nom as socname, s.rowid as socid, s.canvas, s.client, p.rowid as supplier_proposalid, p.total as total_ttc, p.total_ht, p.ref, p.fk_statut, p.datec as dp";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-	$sql.= ", ".MAIN_DB_PREFIX."askpricesupplier as p";
+	$sql.= ", ".MAIN_DB_PREFIX."supplier_proposal as p";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE p.fk_soc = s.rowid";
 	$sql.= " AND p.entity = ".$conf->entity;
@@ -308,7 +308,7 @@ if (! empty($conf->askpricesupplier->enabled) && $user->rights->askpricesupplier
 			$var=true;
 
 			print '<table class="noborder" width="100%">';
-			print '<tr class="liste_titre"><td colspan="5">'.$langs->trans("RequestsOpened").' <a href="'.DOL_URL_ROOT.'/comm/askpricesupplier/list.php?viewstatut=1"><span class="badge">'.$num.'</span></a></td></tr>';
+			print '<tr class="liste_titre"><td colspan="5">'.$langs->trans("RequestsOpened").' <a href="'.DOL_URL_ROOT.'/supplier_proposal/list.php?viewstatut=1"><span class="badge">'.$num.'</span></a></td></tr>';
 
 			$nbofloop=min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD)?500:$conf->global->MAIN_MAXLIST_OVERLOAD));
 			while ($i < $nbofloop)
@@ -320,21 +320,21 @@ if (! empty($conf->askpricesupplier->enabled) && $user->rights->askpricesupplier
 				// Ref
 				print '<td class="nowrap" width="140">';
 
-				$askpricesupplierstatic->id=$obj->askpricesupplierid;
-				$askpricesupplierstatic->ref=$obj->ref;
+				$supplier_proposalstatic->id=$obj->supplier_proposalid;
+				$supplier_proposalstatic->ref=$obj->ref;
 
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 				print '<td class="nobordernopadding nowrap">';
-				print $askpricesupplierstatic->getNomUrl(1);
+				print $supplier_proposalstatic->getNomUrl(1);
 				print '</td>';
 				print '<td width="18" class="nobordernopadding nowrap">';
-				if ($db->jdate($obj->dfv) < ($now - $conf->askpricesupplier->cloture->warning_delay)) print img_warning($langs->trans("Late"));
+				if ($db->jdate($obj->dfv) < ($now - $conf->supplier_proposal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
 				print '</td>';
 				print '<td width="16" align="center" class="nobordernopadding">';
 				$filename=dol_sanitizeFileName($obj->ref);
-				$filedir=$conf->askpricesupplier->dir_output . '/' . dol_sanitizeFileName($obj->ref);
-				$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->askpricesupplierid;
-				print $formfile->getDocumentsLink($askpricesupplierstatic->element, $filename, $filedir);
+				$filedir=$conf->supplier_proposal->dir_output . '/' . dol_sanitizeFileName($obj->ref);
+				$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->supplier_proposalid;
+				print $formfile->getDocumentsLink($supplier_proposalstatic->element, $filename, $filedir);
 				print '</td></tr></table>';
 
 				print "</td>";
@@ -348,7 +348,7 @@ if (! empty($conf->askpricesupplier->enabled) && $user->rights->askpricesupplier
 				print '<td align="right">';
 				print dol_print_date($db->jdate($obj->dp),'day').'</td>'."\n";
 				print '<td align="right">'.price($obj->total_ttc).'</td>';
-				print '<td align="center" width="14">'.$askpricesupplierstatic->LibStatut($obj->fk_statut,3).'</td>'."\n";
+				print '<td align="center" width="14">'.$supplier_proposalstatic->LibStatut($obj->fk_statut,3).'</td>'."\n";
 				print '</tr>'."\n";
 				$i++;
 				$total += $obj->total_ttc;

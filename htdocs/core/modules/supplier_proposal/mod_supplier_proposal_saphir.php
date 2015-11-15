@@ -25,13 +25,13 @@
  * \brief      File that contains the numbering module rules Saphir
  */
 
-require_once DOL_DOCUMENT_ROOT .'/core/modules/askpricesupplier/modules_askpricesupplier.php';
+require_once DOL_DOCUMENT_ROOT .'/core/modules/supplier_proposal/modules_supplier_proposal.php';
 
 
 /**
  * Class of file that contains the numbering module rules Saphir
  */
-class mod_askpricesupplier_saphir extends ModeleNumRefAskPriceSupplier
+class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
 {
 	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
 	var $error = '';
@@ -55,7 +55,7 @@ class mod_askpricesupplier_saphir extends ModeleNumRefAskPriceSupplier
 		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		$texte.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		$texte.= '<input type="hidden" name="action" value="updateMask">';
-		$texte.= '<input type="hidden" name="maskconstaskpricesupplier" value="ASKPRICESUPPLIER_SAPHIR_MASK">';
+		$texte.= '<input type="hidden" name="maskconstsupplier_proposal" value="SUPPLIER_PROPOSAL_SAPHIR_MASK">';
 		$texte.= '<table class="nobordernopadding" width="100%">';
 
 		$tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("CommRequest"),$langs->transnoentities("CommRequest"));
@@ -66,7 +66,7 @@ class mod_askpricesupplier_saphir extends ModeleNumRefAskPriceSupplier
 
 		// Parametrage du prefix
 		$texte.= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskaskpricesupplier" value="'.$conf->global->ASKPRICESUPPLIER_SAPHIR_MASK.'">',$tooltip,1,1).'</td>';
+		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="masksupplier_proposal" value="'.$conf->global->SUPPLIER_PROPOSAL_SAPHIR_MASK.'">',$tooltip,1,1).'</td>';
 
 		$texte.= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 
@@ -103,17 +103,17 @@ class mod_askpricesupplier_saphir extends ModeleNumRefAskPriceSupplier
 	 *  Return next value
 	 *
 	 *  @param	Societe		$objsoc     		Object third party
-	 * 	@param	Propal		$askpricesupplier	Object askpricesupplier
+	 * 	@param	Propal		$supplier_proposal	Object supplier_proposal
 	 *  @return string      					Value if OK, 0 if KO
 	 */
-	function getNextValue($objsoc,$askpricesupplier)
+	function getNextValue($objsoc,$supplier_proposal)
 	{
 		global $db,$conf;
 
 		require_once DOL_DOCUMENT_ROOT .'/core/lib/functions2.lib.php';
 
 		// On defini critere recherche compteur
-		$mask=$conf->global->ASKPRICESUPPLIER_SAPHIR_MASK;
+		$mask=$conf->global->SUPPLIER_PROPOSAL_SAPHIR_MASK;
 
 		if (! $mask)
 		{
@@ -121,9 +121,9 @@ class mod_askpricesupplier_saphir extends ModeleNumRefAskPriceSupplier
 			return 0;
 		}
 
-		$date=$askpricesupplier->datep;
+		$date=$supplier_proposal->datep;
 		$customercode=$objsoc->code_client;
-		$numFinal=get_next_value($db,$mask,'askpricesupplier','ref','',$customercode,$date);
+		$numFinal=get_next_value($db,$mask,'supplier_proposal','ref','',$customercode,$date);
 
 		return  $numFinal;
 	}

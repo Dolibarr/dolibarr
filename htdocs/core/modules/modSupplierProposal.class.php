@@ -21,11 +21,11 @@
  */
 
 /**
- *	\defgroup   askpricesupplier     Module askpricesupplier
+ *	\defgroup   supplier_proposal     Module supplier_proposal
  *	\brief      Module to request supplier price proposals
- *	\file       htdocs/core/modules/modAskPriceSupplier.class.php
- *	\ingroup    askpricesupplier
- *	\brief      File to describe and activate module AskPriceSupplier
+ *	\file       htdocs/core/modules/modSupplierProposal.class.php
+ *	\ingroup    supplier_proposal
+ *	\brief      File to describe and activate module SupplierProposal
  */
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
@@ -33,7 +33,7 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 /**
  *	Class to describe and enable module AskPriceSupllier
  */
-class modAskPriceSupplier extends DolibarrModules
+class modSupplierProposal extends DolibarrModules
 {
 
 	/**
@@ -50,43 +50,43 @@ class modAskPriceSupplier extends DolibarrModules
 
 		$this->family = "products";
 		$this->name = preg_replace('/^mod/i','',get_class($this));
-		$this->description = "askpricesupplierDESC";
+		$this->description = "supplier_proposalDESC";
 
 		$this->version = 'experimental';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 0;
-		$this->picto='askpricesupplier';
+		$this->picto='supplier_proposal';
 
 		$this->dirs = array();
 
 		// Dependancies
 		$this->depends = array('modFournisseur');
 		$this->requiredby = array();
-		$this->config_page_url = array("askpricesupplier.php");
-		$this->langfiles = array("askpricesupplier");
+		$this->config_page_url = array("supplier_proposal.php");
+		$this->langfiles = array("supplier_proposal");
 
 		// Constants
 		$this->const = array();
 		$r=0;
 
-		$this->const[$r][0] = "ASKPRICESUPPLIER_ADDON_PDF";
+		$this->const[$r][0] = "SUPPLIER_PROPOSAL_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "aurore";
 		$this->const[$r][3] = 'Name of submodule to generate PDF for supplier quotation request';
 		$this->const[$r][4] = 0;
 		$r++;
 
-		$this->const[$r][0] = "ASKPRICESUPPLIER_ADDON";
+		$this->const[$r][0] = "SUPPLIER_PROPOSAL_ADDON";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "mod_askpricesupplier_marbre";
+		$this->const[$r][2] = "mod_supplier_proposal_marbre";
 		$this->const[$r][3] = 'Name of submodule to number supplier quotation request';
 		$this->const[$r][4] = 0;
 		$r++;
 
-		$this->const[$r][0] = "ASKPRICESUPPLIER_ADDON_PDF_ODT_PATH";
+		$this->const[$r][0] = "SUPPLIER_PROPOSAL_ADDON_PDF_ODT_PATH";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/askpricesupplier";
+		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/supplier_proposal";
 		$this->const[$r][3] = "";
 		$this->const[$r][4] = 0;
 
@@ -95,7 +95,7 @@ class modAskPriceSupplier extends DolibarrModules
 
 		// Permissions
 		$this->rights = array();
-		$this->rights_class = 'askpricesupplier';
+		$this->rights_class = 'supplier_proposal';
 		$r=0;
 
 		$r++;
@@ -142,40 +142,40 @@ class modAskPriceSupplier extends DolibarrModules
 		$this->menu[$r]=array(
 			'fk_menu'=>'fk_mainmenu=commercial',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type'=>'left',			                // This is a Left menu entry
-			'titre'=>'askpricesupplierMENU_LEFT_TITLE',
-			'leftmenu'=>'askpricesuppliersubmenu',
-			'url'=>'/comm/askpricesupplier/index.php',
-			'langs'=>'askpricesupplier',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'enabled'=>'$conf->askpricesupplier->enabled',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms'=>'$user->rights->askpricesupplier->lire',	// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+			'titre'=>'supplier_proposalMENU_LEFT_TITLE',
+			'leftmenu'=>'supplier_proposalsubmenu',
+			'url'=>'/supplier_proposal/index.php',
+			'langs'=>'supplier_proposal',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+			'enabled'=>'$conf->supplier_proposal->enabled',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+			'perms'=>'$user->rights->supplier_proposal->lire',	// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
-            'position'=>30
+            'position'=>300
 		);
 		$r++;
 
 		$this->menu[$r]=array(
-			'fk_menu'=>'fk_mainmenu=commercial,fk_leftmenu=askpricesuppliersubmenu',
+			'fk_menu'=>'fk_mainmenu=commercial,fk_leftmenu=supplier_proposalsubmenu',
 			'type'=>'left',
-			'titre'=>'askpricesupplierMENU_LEFT_TITLE_NEW',
-			'url'=>'/comm/askpricesupplier/card.php?action=create',
-			'langs'=>'askpricesupplier',
-			'enabled'=>'$conf->askpricesupplier->enabled',
-			'perms'=>'$user->rights->askpricesupplier->creer',
+			'titre'=>'supplier_proposalMENU_LEFT_TITLE_NEW',
+			'url'=>'/supplier_proposal/card.php?action=create',
+			'langs'=>'supplier_proposal',
+			'enabled'=>'$conf->supplier_proposal->enabled',
+			'perms'=>'$user->rights->supplier_proposal->creer',
 			'user'=>2,
-            'position'=>31
+            'position'=>301
 		);
 		$r++;
 
 		$this->menu[$r]=array(
-			'fk_menu'=>'fk_mainmenu=commercial,fk_leftmenu=askpricesuppliersubmenu',
+			'fk_menu'=>'fk_mainmenu=commercial,fk_leftmenu=supplier_proposalsubmenu',
 			'type'=>'left',
-			'titre'=>'askpricesupplierMENU_LEFT_TITLE_LIST',
-			'url'=>'/comm/askpricesupplier/list.php',
-			'langs'=>'askpricesupplier',
-			'enabled'=>'$conf->askpricesupplier->enabled',
-			'perms'=>'$user->rights->askpricesupplier->lire',
+			'titre'=>'supplier_proposalMENU_LEFT_TITLE_LIST',
+			'url'=>'/supplier_proposal/list.php',
+			'langs'=>'supplier_proposal',
+			'enabled'=>'$conf->supplier_proposal->enabled',
+			'perms'=>'$user->rights->supplier_proposal->lire',
 			'user'=>2,
-            'position'=>32
+            'position'=>302
 		);
 		$r++;
 	}
@@ -197,9 +197,9 @@ class modAskPriceSupplier extends DolibarrModules
 		$this->remove($options);
 
 		//ODT template
-		$src=DOL_DOCUMENT_ROOT.'/install/doctemplates/askpricesupplier/template_askpricesupplier.odt';
-		$dirodt=DOL_DATA_ROOT.'/doctemplates/askpricesupplier';
-		$dest=$dirodt.'/template_askpricesupplier.odt';
+		$src=DOL_DOCUMENT_ROOT.'/install/doctemplates/supplier_proposal/template_supplier_proposal.odt';
+		$dirodt=DOL_DATA_ROOT.'/doctemplates/supplier_proposal';
+		$dest=$dirodt.'/template_supplier_proposal.odt';
 
 		if (file_exists($src) && ! file_exists($dest))
 		{
@@ -216,9 +216,29 @@ class modAskPriceSupplier extends DolibarrModules
 
 		$sql = array(
 				"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][2]."' AND entity = ".$conf->entity,
-				"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->const[0][2]."','askpricesupplier',".$conf->entity.")",
+				"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->const[0][2]."','supplier_proposal',".$conf->entity.")",
 		);
 
 		return $this->_init($sql, $options);
 	}
+	
+	
+
+	/**
+	 * Function called when module is disabled.
+	 * Remove from database constants, boxes and permissions from Dolibarr database.
+	 * Data directories are not deleted
+	 *
+	 * @param      string	$options    Options when enabling module ('', 'noboxes')
+	 * @return     int             	1 if OK, 0 if KO
+	 */
+	public function remove($options = '')
+	{
+	    $sql = array(
+	        "DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE module = 'askpricesupplier'"
+	    );
+	
+	    return $this->_remove($sql, $options);
+	}	
+	
 }

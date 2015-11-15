@@ -40,8 +40,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-if (! empty($conf->askpricesupplier->enabled))
-	require DOL_DOCUMENT_ROOT . '/comm/askpricesupplier/class/askpricesupplier.class.php';
+if (! empty($conf->supplier_proposal->enabled))
+	require DOL_DOCUMENT_ROOT . '/supplier_proposal/class/supplier_proposal.class.php';
 if (!empty($conf->produit->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 if (!empty($conf->projet->enabled))
@@ -54,7 +54,7 @@ $langs->load('sendings');
 $langs->load('companies');
 $langs->load('bills');
 $langs->load('propal');
-$langs->load('askpricesupplier');
+$langs->load('supplier_proposal');
 $langs->load('deliveries');
 $langs->load('products');
 $langs->load('stocks');
@@ -916,8 +916,8 @@ if (empty($reshook))
        			// If creation from another object of another module (Example: origin=propal, originid=1)
 				if (! empty($origin) && ! empty($originid))
 				{
-					$element = 'comm/askpricesupplier';
-					$subelement = 'askpricesupplier';
+					$element = 'supplier_proposal';
+					$subelement = 'supplier_proposal';
 
 					$object->origin = $origin;
 					$object->origin_id = $originid;
@@ -1429,8 +1429,8 @@ if ($action=='create')
 			$subelement = $regs [2];
 		}
 
-		$element = 'comm/askpricesupplier';
-		$subelement = 'askpricesupplier';
+		$element = 'supplier_proposal';
+		$subelement = 'supplier_proposal';
 
 		dol_include_once('/' . $element . '/class/' . $subelement . '.class.php');
 
@@ -1579,8 +1579,8 @@ if ($action=='create')
 		print '<input type="hidden" name="originid"       value="' . $objectsrc->id . '">';
 
 		$newclassname = $classname;
-		if ($newclassname == 'AskPriceSupplier')
-			$newclassname = 'CommercialAskPriceSupplier';
+		if ($newclassname == 'SupplierProposal')
+			$newclassname = 'CommercialSupplierProposal';
 		print '<tr><td>' . $langs->trans($newclassname) . '</td><td colspan="2">' . $objectsrc->getNomUrl(1) . '</td></tr>';
 		print '<tr><td>' . $langs->trans('TotalHT') . '</td><td colspan="2">' . price($objectsrc->total_ht) . '</td></tr>';
 		print '<tr><td>' . $langs->trans('TotalVAT') . '</td><td colspan="2">' . price($objectsrc->total_tva) . "</td></tr>";

@@ -25,7 +25,7 @@
  *	\ingroup    propale
  *	\brief      Fichier de la classe permettant de generer les propales au modele Azur
  */
-require_once DOL_DOCUMENT_ROOT.'/core/modules/askpricesupplier/modules_askpricesupplier.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_proposal/modules_supplier_proposal.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 /**
  *	Class to generate PDF proposal Azur
  */
-class pdf_aurore extends ModelePDFAskPriceSupplier
+class pdf_aurore extends ModelePDFSupplierProposal
 {
 	var $db;
 	var $name;
@@ -103,7 +103,7 @@ class pdf_aurore extends ModelePDFAskPriceSupplier
 		// Define position of columns
 		$this->posxdesc=$this->marge_gauche+1;
 		$this->posxtva=102;
-		$this->posxup=116;
+		$this->posxup=126;
 		$this->posxqty=145;
 		$this->posxdiscount=162;
 		$this->postotalht=174;
@@ -149,14 +149,14 @@ class pdf_aurore extends ModelePDFAskPriceSupplier
 		$outputlangs->load("dict");
 		$outputlangs->load("companies");
 		$outputlangs->load("bills");
-		$outputlangs->load("askpricesupplier");
+		$outputlangs->load("supplier_proposal");
 		$outputlangs->load("products");
 
 		$nblignes = count($object->lines);
 
 		// Loop on each lines to detect if there is at least one image to show
 		$realpatharray=array();
-		if (! empty($conf->global->MAIN_GENERATE_ASKPRICESUPPLIER_WITH_PICTURE))
+		if (! empty($conf->global->MAIN_GENERATE_SUPPLIER_PROPOSAL_WITH_PICTURE))
 		{
 			for ($i = 0 ; $i < $nblignes ; $i++)
 			{
@@ -182,7 +182,7 @@ class pdf_aurore extends ModelePDFAskPriceSupplier
 		}
 		if (count($realpatharray) == 0) $this->posxpicture=$this->posxtva;
 
-		if ($conf->askpricesupplier->dir_output)
+		if ($conf->supplier_proposal->dir_output)
 		{
 			$object->fetch_thirdparty();
 
@@ -191,13 +191,13 @@ class pdf_aurore extends ModelePDFAskPriceSupplier
 			// Definition of $dir and $file
 			if ($object->specimen)
 			{
-				$dir = $conf->askpricesupplier->dir_output;
+				$dir = $conf->supplier_proposal->dir_output;
 				$file = $dir . "/SPECIMEN.pdf";
 			}
 			else
 			{
 				$objectref = dol_sanitizeFileName($object->ref);
-				$dir = $conf->askpricesupplier->dir_output . "/" . $objectref;
+				$dir = $conf->supplier_proposal->dir_output . "/" . $objectref;
 				$file = $dir . "/" . $objectref . ".pdf";
 			}
 
@@ -421,6 +421,7 @@ class pdf_aurore extends ModelePDFAskPriceSupplier
 					$pdf->SetFont('','', $default_font_size - 1);   // On repositionne la police par defaut
 
 					// VAT Rate
+					/*
 					if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
 					{
 						$vat_rate = pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails);
@@ -433,13 +434,15 @@ class pdf_aurore extends ModelePDFAskPriceSupplier
 					$pdf->SetXY($this->posxup, $curY);
 					if ($up_excl_tax > 0)
 						$pdf->MultiCell($this->posxqty-$this->posxup-0.8, 3, $up_excl_tax, 0, 'R', 0);
-
+                    */
+					
 					// Quantity
 					$qty = pdf_getlineqty($object, $i, $outputlangs, $hidedetails);
 					$pdf->SetXY($this->posxqty, $curY);
 					$pdf->MultiCell($this->posxdiscount-$this->posxqty-0.8, 3, $qty, 0, 'R');	// Enough for 6 chars
 
 					// Discount on line
+					/*
 					if ($object->lines[$i]->remise_percent)
 					{
 						$pdf->SetXY($this->posxdiscount-2, $curY);
@@ -452,7 +455,8 @@ class pdf_aurore extends ModelePDFAskPriceSupplier
 					$pdf->SetXY($this->postotalht, $curY);
 					if ($total_excl_tax > 0)
 						$pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->postotalht, 3, $total_excl_tax, 0, 'R', 0);
-
+                    */
+					
 					// Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
 					$tvaligne=$object->lines[$i]->total_tva;
 					$localtax1ligne=$object->lines[$i]->total_localtax1;
@@ -591,7 +595,7 @@ class pdf_aurore extends ModelePDFAskPriceSupplier
 		}
 		else
 		{
-			$this->error=$langs->trans("ErrorConstantNotDefined","ASKSUPPLIERPICE_OUTPUTDIR");
+			$this->error=$langs->trans("ErrorConstantNotDefined","SUPPLIER_PROPOSAL_OUTPUTDIR");
 			return 0;
 		}
 	}
@@ -685,7 +689,7 @@ class pdf_aurore extends ModelePDFAskPriceSupplier
 		}*/
 
 		// Show payments conditions
-		if (empty($conf->global->ASKPRICESUPPLIER_PDF_HIDE_PAYMENTTERMCOND) && ($object->cond_reglement_code || $object->cond_reglement))
+		if (empty($conf->global->SUPPLIER_PROPOSAL_PDF_HIDE_PAYMENTTERMCOND) && ($object->cond_reglement_code || $object->cond_reglement))
 		{
 			$pdf->SetFont('','B', $default_font_size - 2);
 			$pdf->SetXY($this->marge_gauche, $posy);
@@ -715,7 +719,7 @@ class pdf_aurore extends ModelePDFAskPriceSupplier
 			$posy=$pdf->GetY()+3;
 		}
 
-		if (empty($conf->global->ASKPRICESUPPLIER_PDF_HIDE_PAYMENTTERMCOND))
+		if (empty($conf->global->SUPPLIER_PROPOSAL_PDF_HIDE_PAYMENTTERMCOND))
 		{
 			// Show payment mode
 			if ($object->mode_reglement_code
@@ -1148,7 +1152,7 @@ class pdf_aurore extends ModelePDFAskPriceSupplier
 		if (empty($hidetop))
 		{
 			$pdf->SetXY($this->posxup-1, $tab_top+1);
-			$pdf->MultiCell($this->posxqty-$this->posxup-1,2, $outputlangs->transnoentities("AskPriceSupplierUHT"),'','C');
+			$pdf->MultiCell($this->posxqty-$this->posxup-1,2, $outputlangs->transnoentities("PriceUHT"),'','C');
 		}
 
 		$pdf->line($this->posxqty-1, $tab_top, $this->posxqty-1, $tab_top + $tab_height);
@@ -1193,7 +1197,7 @@ class pdf_aurore extends ModelePDFAskPriceSupplier
 
 		$outputlangs->load("main");
 		$outputlangs->load("bills");
-		$outputlangs->load("askpricesupplier");
+		$outputlangs->load("supplier_proposal");
 		$outputlangs->load("companies");
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
@@ -1201,9 +1205,9 @@ class pdf_aurore extends ModelePDFAskPriceSupplier
 		pdf_pagehead($pdf,$outputlangs,$this->page_hauteur);
 
 		//  Show Draft Watermark
-		if($object->statut==0 && (! empty($conf->global->ASKPRICESUPPLIER_DRAFT_WATERMARK)) )
+		if($object->statut==0 && (! empty($conf->global->SUPPLIER_PROPOSAL_DRAFT_WATERMARK)) )
 		{
-            pdf_watermark($pdf,$outputlangs,$this->page_hauteur,$this->page_largeur,'mm',$conf->global->ASKPRICESUPPLIER_DRAFT_WATERMARK);
+            pdf_watermark($pdf,$outputlangs,$this->page_hauteur,$this->page_largeur,'mm',$conf->global->SUPPLIER_PROPOSAL_DRAFT_WATERMARK);
 		}
 
 		$pdf->SetTextColor(0,0,60);
@@ -1264,7 +1268,7 @@ class pdf_aurore extends ModelePDFAskPriceSupplier
 		$posy+=4;
 		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
-		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("AskPriceSupplierDate")." : " . dol_print_date($object->date_livraison,"day",false,$outputlangs,true), '', 'R');
+		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("SupplierProposalDate")." : " . dol_print_date($object->date_livraison,"day",false,$outputlangs,true), '', 'R');
 */
 
 		if ($object->client->code_client)
@@ -1386,7 +1390,7 @@ class pdf_aurore extends ModelePDFAskPriceSupplier
 	function _pagefoot(&$pdf,$object,$outputlangs,$hidefreetext=0)
 	{
 		$showdetails=0;
-		return pdf_pagefoot($pdf,$outputlangs,'ASKPRICESUPPLIER_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
+		return pdf_pagefoot($pdf,$outputlangs,'SUPPLIER_PROPOSAL_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
 	}
 
 }

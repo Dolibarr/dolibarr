@@ -48,7 +48,8 @@ $boxes = array();
 
 if ($action == 'addconst')
 {
-    dolibarr_set_const($db, "MAIN_BOXES_MAXLINES",$_POST["MAIN_BOXES_MAXLINES"],'',0,'',$conf->entity);
+    dolibarr_set_const($db, "MAIN_BOXES_MAXLINES", $_POST["MAIN_BOXES_MAXLINES"],'',0,'',$conf->entity);
+    dolibarr_set_const($db, "MAIN_ACTIVATE_FILECACHE", $_POST["MAIN_ACTIVATE_FILECACHE"],'chaine',0,'',$conf->entity);
 }
 
 if ($action == 'add') {
@@ -456,8 +457,8 @@ $var=false;
 print '<tr class="liste_titre">';
 print '<td class="liste_titre">'.$langs->trans("Parameter").'</td>';
 print '<td class="liste_titre">'.$langs->trans("Value").'</td>';
-print '<td class="liste_titre"></td>';
 print '</tr>';
+
 print '<tr '.$bc[$var].'>';
 print '<td>';
 print $langs->trans("MaxNbOfLinesForBoxes");
@@ -465,12 +466,21 @@ print '</td>'."\n";
 print '<td>';
 print '<input type="text" class="flat" size="6" name="MAIN_BOXES_MAXLINES" value="'.$conf->global->MAIN_BOXES_MAXLINES.'">';
 print '</td>';
-print '<td align="right">';
-print '<input type="submit" class="button" value="'.$langs->trans("Save").'" name="Button">';
-print '</td>'."\n";
 print '</tr>';
 
+// Activate FileCache - Developement
+if ($conf->global->MAIN_FEATURES_LEVEL == 2 || ! empty($conf->global->MAIN_ACTIVATE_FILECACHE)) {
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("EnableFileCache").'</td><td>';
+    print $form->selectyesno('MAIN_ACTIVATE_FILECACHE',$conf->global->MAIN_ACTIVATE_FILECACHE,1);
+    print '</td>';
+    print '</tr>';
+}
+
 print '</table>';
+
+print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Save").'" name="Button"></div>';
+
 print '</form>';
 print "\n".'<!-- End Other Const -->'."\n";
 

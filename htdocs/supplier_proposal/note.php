@@ -25,11 +25,11 @@
  *	\brief      Fiche d'information sur une proposition commerciale
  */
 
-require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/comm/askpricesupplier/class/askpricesupplier.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/askpricesupplier.lib.php';
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/supplier_proposal.lib.php';
 
-$langs->load('askpricesupplier');
+$langs->load('supplier_proposal');
 $langs->load('compta');
 $langs->load('bills');
 
@@ -39,9 +39,9 @@ $action=GETPOST('action','alpha');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'askpricesupplier', $id, 'askpricesupplier');
+$result = restrictedArea($user, 'supplier_proposal', $id, 'supplier_proposal');
 
-$object = new AskPriceSupplier($db);
+$object = new SupplierProposal($db);
 
 
 
@@ -49,7 +49,7 @@ $object = new AskPriceSupplier($db);
 /*                     Actions                                                */
 /******************************************************************************/
 
-$permissionnote=$user->rights->askpricesupplier->creer;	// Used by the include of actions_setnotes.inc.php
+$permissionnote=$user->rights->supplier_proposal->creer;	// Used by the include of actions_setnotes.inc.php
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not includ_once
 
@@ -74,12 +74,12 @@ if ($id > 0 || ! empty($ref))
 		$societe = new Societe($db);
 		if ( $societe->fetch($object->socid) )
 		{
-			$head = askpricesupplier_prepare_head($object);
-			dol_fiche_head($head, 'note', $langs->trans('CommRequest'), 0, 'askpricesupplier');
+			$head = supplier_proposal_prepare_head($object);
+			dol_fiche_head($head, 'note', $langs->trans('CommRequest'), 0, 'supplier_proposal');
 
 			print '<table class="border" width="100%">';
 
-			$linkback = '<a href="'.DOL_URL_ROOT.'/comm/askpricesupplier/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans('BackToList').'</a>';
+			$linkback = '<a href="'.DOL_URL_ROOT.'/supplier_proposal/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans('BackToList').'</a>';
 
 			// Ref
 			print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="3">';
@@ -92,7 +92,7 @@ if ($id > 0 || ! empty($ref))
 			print "<tr><td>".$langs->trans("Supplier")."</td>";
 			print '<td colspan="3">'.$object->client->getNomUrl(1).'</td></tr>';
 			
-			print '<tr><td>'.$langs->trans('AskPriceSupplierDate').'</td><td colspan="3">';
+			print '<tr><td>'.$langs->trans('SupplierProposalDate').'</td><td colspan="3">';
 			print dol_print_date($object->date_livraison,'daytext');
 			print '</td>';
 			print '</tr>';

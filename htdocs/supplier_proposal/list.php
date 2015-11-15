@@ -30,17 +30,17 @@
  *	\brief      	Page of commercial proposals card and list
  */
 
-require '../../main.inc.php';
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaskpricesupplier.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsupplier_proposal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/comm/askpricesupplier/class/askpricesupplier.class.php';
+require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
 if (! empty($conf->projet->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 $langs->load('companies');
-$langs->load('askpricesupplier');
+$langs->load('supplier_proposal');
 $langs->load('compta');
 $langs->load('bills');
 $langs->load('orders');
@@ -55,7 +55,7 @@ $search_societe=GETPOST('search_societe','alpha');
 $search_montant_ht=GETPOST('search_montant_ht','alpha');
 $search_author=GETPOST('search_author','alpha');
 $viewstatut=$db->escape(GETPOST('viewstatut'));
-$object_statut=$db->escape(GETPOST('askpricesupplier_statut'));
+$object_statut=$db->escape(GETPOST('supplier_proposal_statut'));
 
 $sall=GETPOST("sall");
 $mesg=(GETPOST("msg") ? GETPOST("msg") : GETPOST("mesg"));
@@ -66,7 +66,7 @@ $month=GETPOST("month");
 $NBLINES=4;
 
 // Security check
-$module='askpricesupplier';
+$module='supplier_proposal';
 $dbtable='';
 $objectid='';
 if (! empty($user->societe_id))	$socid=$user->societe_id;
@@ -98,7 +98,7 @@ $viewstatut=$object_statut;
 
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('askpricesupplierlist'));
+$hookmanager->initHooks(array('supplier_proposallist'));
 
 
 
@@ -122,7 +122,7 @@ llxHeader('',$langs->trans('CommRequest'),'EN:Ask_Price_Supplier|FR:Demande_de_p
 $form = new Form($db);
 $formother = new FormOther($db);
 $formfile = new FormFile($db);
-$formaskpricesupplier = new FormAskPriceSupplier($db);
+$formsupplier_proposal = new FormSupplierProposal($db);
 $companystatic=new Societe($db);
 
 $now=dol_now();
@@ -141,11 +141,11 @@ $limit = $conf->liste_limit;
 
 
 $sql = 'SELECT s.rowid, s.nom as name, s.town, s.client, s.code_client,';
-$sql.= ' p.rowid as askpricesupplierid, p.note_private, p.total_ht, p.ref, p.fk_statut, p.fk_user_author, p.date_livraison as dp,';
+$sql.= ' p.rowid as supplier_proposalid, p.note_private, p.total_ht, p.ref, p.fk_statut, p.fk_user_author, p.date_livraison as dp,';
 if (! $user->rights->societe->client->voir && ! $socid) $sql .= " sc.fk_soc, sc.fk_user,";
 $sql.= ' u.login';
-$sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'askpricesupplier as p';
-if ($sall) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'askpricesupplierdet as pd ON p.rowid=pd.fk_askpricesupplier';
+$sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'supplier_proposal as p';
+if ($sall) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'supplier_proposaldet as pd ON p.rowid=pd.fk_supplier_proposal';
 $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON p.fk_user_author = u.rowid';
 // We'll need this table joined to the select in order to filter by sale
 if ($search_sale > 0 || (! $user->rights->societe->client->voir && ! $socid)) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -198,7 +198,7 @@ else if ($year > 0)
 if ($search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$search_sale;
 if ($search_user > 0)
 {
-    $sql.= " AND c.fk_c_type_contact = tc.rowid AND tc.element='askpricesupplier' AND tc.source='internal' AND c.element_id = p.rowid AND c.fk_socpeople = ".$search_user;
+    $sql.= " AND c.fk_c_type_contact = tc.rowid AND tc.element='supplier_proposal' AND tc.source='internal' AND c.element_id = p.rowid AND c.fk_socpeople = ".$search_user;
 }
 
 
@@ -217,7 +217,7 @@ $result=$db->query($sql);
 
 if ($result)
 {
-	$objectstatic=new AskPriceSupplier($db);
+	$objectstatic=new SupplierProposal($db);
 	$userstatic=new User($db);
 	$num = $db->num_rows($result);
 
@@ -236,7 +236,7 @@ if ($result)
 	if ($search_sale > 0)    $param.='&search_sale='.$search_sale;
 	if ($search_montant_ht)  $param.='&search_montant_ht='.$search_montant_ht;
 	if ($search_author)  	 $param.='&search_author='.$search_author;
-	print_barre_liste($langs->trans('ListOfAskPriceSupplier').' '.($socid?'- '.$soc->name:''), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
+	print_barre_liste($langs->trans('ListOfSupplierProposal').' '.($socid?'- '.$soc->name:''), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
 
 	// Lignes des champs de filtre
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
@@ -277,7 +277,7 @@ if ($result)
     print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans('Ref'),$_SERVER["PHP_SELF"],'p.ref','',$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('Company'),$_SERVER["PHP_SELF"],'s.nom','',$param,'',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans('AskPriceSupplierDate'),$_SERVER["PHP_SELF"],'p.date_livraison','',$param, 'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('SupplierProposalDate'),$_SERVER["PHP_SELF"],'p.date_livraison','',$param, 'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('AmountHT'),$_SERVER["PHP_SELF"],'p.total_ht','',$param, 'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('Author'),$_SERVER["PHP_SELF"],'u.login','',$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('Status'),$_SERVER["PHP_SELF"],'p.fk_statut','',$param,'align="right"',$sortfield,$sortorder);
@@ -310,7 +310,7 @@ if ($result)
 	print '<input class="flat" size="10" type="text" name="search_author" value="'.$search_author.'">';
 	print '</td>';
 	print '<td class="liste_titre" align="right">';
-	$formaskpricesupplier->selectAskPriceSupplierStatus($viewstatut,1);
+	$formsupplier_proposal->selectSupplierProposalStatus($viewstatut,1);
 	print '</td>';
 
 	print '<td class="liste_titre" align="right">';
@@ -332,7 +332,7 @@ if ($result)
 		print '<tr '.$bc[$var].'>';
 		print '<td class="nowrap">';
 
-		$objectstatic->id=$objp->askpricesupplierid;
+		$objectstatic->id=$objp->supplier_proposalid;
 		$objectstatic->ref=$objp->ref;
 
 		print '<table class="nobordernopadding"><tr class="nocellnopadd">';
@@ -341,11 +341,11 @@ if ($result)
 		print '</td>';
 
 		print '<td style="min-width: 20px" class="nobordernopadding nowrap">';
-		if ($objp->fk_statut == 1 && $db->jdate($objp->dfv) < ($now - $conf->askpricesupplier->cloture->warning_delay)) print img_warning($langs->trans("Late"));
+		if ($objp->fk_statut == 1 && $db->jdate($objp->dfv) < ($now - $conf->supplier_proposal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
 		if (! empty($objp->note_private))
 		{
 			print ' <span class="note">';
-			print '<a href="'.DOL_URL_ROOT.'/comm/askpricesupplier/note.php?id='.$objp->askpricesupplierid.'">'.img_picto($langs->trans("ViewPrivateNote"),'object_generic').'</a>';
+			print '<a href="'.DOL_URL_ROOT.'/supplier_proposal/note.php?id='.$objp->supplier_proposalid.'">'.img_picto($langs->trans("ViewPrivateNote"),'object_generic').'</a>';
 			print '</span>';
 		}
 		print '</td>';
@@ -353,8 +353,8 @@ if ($result)
 		// Ref
 		print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
 		$filename=dol_sanitizeFileName($objp->ref);
-		$filedir=$conf->askpricesupplier->dir_output . '/' . dol_sanitizeFileName($objp->ref);
-		$urlsource=$_SERVER['PHP_SELF'].'?id='.$objp->askpricesupplierid;
+		$filedir=$conf->supplier_proposal->dir_output . '/' . dol_sanitizeFileName($objp->ref);
+		$urlsource=$_SERVER['PHP_SELF'].'?id='.$objp->supplier_proposalid;
 		print $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
 		print '</td></tr></table>';
 

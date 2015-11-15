@@ -15,9 +15,10 @@
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 -- ========================================================================
 
-CREATE TABLE llx_askpricesupplier_extrafields (
+CREATE TABLE llx_supplier_proposaldet_extrafields (
   rowid integer AUTO_INCREMENT PRIMARY KEY,
   tms timestamp,
   fk_object integer NOT NULL,
   import_key varchar(14) DEFAULT NULL
 ) ENGINE=innodb;
+

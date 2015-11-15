@@ -382,46 +382,51 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 
     print '</td></tr>';
 
-    // Use Hover
-    $var=!$var;
+	// BackgroundColor
     if ($foruserprofile)
-    {
-        /* Must first change option to choose color of highlight insteado of yes or no.
-        print '<tr '.$bc[$var].'>';
-        print '<td>'.$langs->trans("HighlightLinesOnMouseHover").'</td>';
-        print '<td><input '.$bc[$var].' name="check_THEME_ELDY_USE_HOVER" disabled="disabled" type="checkbox" '.($conf->global->THEME_ELDY_USE_HOVER?" checked":"").'></td>';
-	    print '<td align="left" class="nowrap" width="20%"><input '.$bc[$var].' name="check_MAIN_THEME"'.($edit?'':' disabled').' type="checkbox" '.($selected_theme?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
-        print '<td><input '.$bc[$var].' name="check_THEME_ELDY_USE_HOVER"'.($edit?'':' disabled="disabled"').' type="checkbox" '.($hoverdisabled?"":" checked").'>';
-        print ' &nbsp; ('.$langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis").')';
-        print '</td>';
-        print '</tr>';
-        */
-    }
-    else
-    {
-        print '<tr '.$bc[$var].'>';
-        print '<td>'.$langs->trans("HighlightLinesColor").'</td>';
-        print '<td colspan="'.($colspan-1).'">';
-        //print '<input '.$bc[$var].' name="check_THEME_ELDY_USE_HOVER"'.($edit?'':' disabled').' type="checkbox" '.($hoverdisabled?"":" checked").'>';
-        //print ' &nbsp; ('.$langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis").')';
+	{
+	    /*$var=!$var;
+	    print '<tr '.$bc[$var].'>';
+	    print '<td>'.$langs->trans("TopMenuBackgroundColor").'</td>';
+        print '<td>'.($conf->global->THEME_ELDY_TOPMENU_BACK1?$conf->global->THEME_ELDY_TOPMENU_BACK1:$langs->trans("Default")).'</td>';
+        print '<td align="left" class="nowrap" width="20%"><input '.$bc[$var].' name="check_THEME_ELDY_TOPMENU_BACK1" id="check_THEME_ELDY_TOPMENU_BACK1" type="checkbox" '.(! empty($object->conf->THEME_ELDY_TOPMENU_BACK1)?" checked":"");
+        print (empty($dolibarr_main_demo) && $edit)?'':' disabled="disabled"';	// Disabled for demo
+        print '> '.$langs->trans("UsePersonalValue").'</td>';
+        print '<td>';
 	    if ($edit)
 	    {
-	   	    if ($conf->global->THEME_ELDY_USE_HOVER == '1') $color='edf4fb';
-	   		else $color = colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_USE_HOVER,array()),'');
-	        print $formother->selectColor($color,'THEME_ELDY_USE_HOVER','formcolor',1).' ';
+			print $formother->selectColor(colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_TOPMENU_BACK1,array()),''),'THEME_ELDY_TOPMENU_BACK1','formcolor',1).' ';
 	    }
 	   	else
 	   	{
-	   	    if ($conf->global->THEME_ELDY_USE_HOVER == '1') $color='edf4fb';
-	   		else $color = colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_USE_HOVER,array()),'');
-			if ($color) print '<input type="text" class="colorthumb" disabled="disabled" style="padding: 1px; margin-top: 0; margin-bottom: 0; width: 40px; background-color: #'.$color.'" value="'.$color.'">';
-			else print $langs->trans("None");
+	   		$color = colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_TOPMENU_BACK1,array()),'');
+			if ($color) print '<input type="text" class="colorthumb" disabled style="padding: 1px; margin-top: 0; margin-bottom: 0; width: 40px; background-color: #'.$color.'" value="'.$color.'">';
+			else print '';
 	   	}
-    	print ' &nbsp; ('.$langs->trans("Default").': <strong>edf4fb</strong>, '.$langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis").')';
-        print '</td>';
-        print '</tr>';
-    }
-
+    	if ($edit) print '<br>('.$langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis").')';
+	    print '</td>';*/	    
+	}
+	else
+	{
+	    $var=!$var;
+	    print '<tr '.$bc[$var].'>';
+	    print '<td>'.$langs->trans("BackgroundColor").'</td>';
+	    print '<td colspan="'.($colspan-1).'">';
+	    //var_dump($conf->global->THEME_ELDY_BACKBODY);
+	    if ($edit)
+	    {
+			print $formother->selectColor(colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_BACKBODY,array()),''),'THEME_ELDY_BACKBODY','formcolor',1).' ';
+	    }
+	   	else
+	   	{
+	   		$color = colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_BACKBODY,array()),'');
+			if ($color) print '<input type="text" class="colorthumb" disabled="disabled" style="padding: 1px; margin-top: 0; margin-bottom: 0; width: 40px; background-color: #'.$color.'" value="'.$color.'">';
+			else print $langs->trans("Default");
+	   	}
+    	print ' &nbsp; ('.$langs->trans("Default").': <strong>ffffff</strong>, '.$langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis").')';
+	    print '</td>';
+	}
+	
 	// TopMenuBackgroundColor
     if ($foruserprofile)
 	{
@@ -490,6 +495,90 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 	    print '</td>';
 
 	    print '</tr>';
+	}
+	
+	// Use Hover
+	$var=!$var;
+	if ($foruserprofile)
+	{
+	    /* Must first change option to choose color of highlight instead of yes or no.
+	     print '<tr '.$bc[$var].'>';
+	     print '<td>'.$langs->trans("HighlightLinesOnMouseHover").'</td>';
+	     print '<td><input '.$bc[$var].' name="check_THEME_ELDY_USE_HOVER" disabled="disabled" type="checkbox" '.($conf->global->THEME_ELDY_USE_HOVER?" checked":"").'></td>';
+	     print '<td align="left" class="nowrap" width="20%"><input '.$bc[$var].' name="check_MAIN_THEME"'.($edit?'':' disabled').' type="checkbox" '.($selected_theme?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
+	     print '<td><input '.$bc[$var].' name="check_THEME_ELDY_USE_HOVER"'.($edit?'':' disabled="disabled"').' type="checkbox" '.($hoverdisabled?"":" checked").'>';
+	     print ' &nbsp; ('.$langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis").')';
+	     print '</td>';
+	     print '</tr>';
+	     */
+	}
+	else
+	{
+	    print '<tr '.$bc[$var].'>';
+	    print '<td>'.$langs->trans("HighlightLinesColor").'</td>';
+	    print '<td colspan="'.($colspan-1).'">';
+	    //print '<input '.$bc[$var].' name="check_THEME_ELDY_USE_HOVER"'.($edit?'':' disabled').' type="checkbox" '.($hoverdisabled?"":" checked").'>';
+	    //print ' &nbsp; ('.$langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis").')';
+	    if ($edit)
+	    {
+	        if ($conf->global->THEME_ELDY_USE_HOVER == '1') $color='edf4fb';
+	        else $color = colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_USE_HOVER,array()),'');
+	        print $formother->selectColor($color,'THEME_ELDY_USE_HOVER','formcolor',1).' ';
+	    }
+	    else
+	    {
+	        if ($conf->global->THEME_ELDY_USE_HOVER == '1') $color='edf4fb';
+	        else $color = colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_USE_HOVER,array()),'');
+	        if ($color) print '<input type="text" class="colorthumb" disabled="disabled" style="padding: 1px; margin-top: 0; margin-bottom: 0; width: 40px; background-color: #'.$color.'" value="'.$color.'">';
+	        else print $langs->trans("None");
+	    }
+	    print ' &nbsp; ('.$langs->trans("Default").': <strong>edf4fb</strong>, '.$langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis").')';
+	    print '</td>';
+	    print '</tr>';
+	}
+	
+	// TopMenuBackgroundColor
+    if ($foruserprofile)
+	{
+	    /*$var=!$var;
+	    print '<tr '.$bc[$var].'>';
+	    print '<td>'.$langs->trans("TopMenuBackgroundColor").'</td>';
+        print '<td>'.($conf->global->THEME_ELDY_TOPMENU_BACK1?$conf->global->THEME_ELDY_TOPMENU_BACK1:$langs->trans("Default")).'</td>';
+        print '<td align="left" class="nowrap" width="20%"><input '.$bc[$var].' name="check_THEME_ELDY_TOPMENU_BACK1" id="check_THEME_ELDY_TOPMENU_BACK1" type="checkbox" '.(! empty($object->conf->THEME_ELDY_TOPMENU_BACK1)?" checked":"");
+        print (empty($dolibarr_main_demo) && $edit)?'':' disabled="disabled"';	// Disabled for demo
+        print '> '.$langs->trans("UsePersonalValue").'</td>';
+        print '<td>';
+	    if ($edit)
+	    {
+			print $formother->selectColor(colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_TOPMENU_BACK1,array()),''),'THEME_ELDY_TOPMENU_BACK1','formcolor',1).' ';
+	    }
+	   	else
+	   	{
+	   		$color = colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_TOPMENU_BACK1,array()),'');
+			if ($color) print '<input type="text" class="colorthumb" disabled style="padding: 1px; margin-top: 0; margin-bottom: 0; width: 40px; background-color: #'.$color.'" value="'.$color.'">';
+			else print '';
+	   	}
+    	if ($edit) print '<br>('.$langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis").')';
+	    print '</td>';*/	    
+	}
+	else
+	{
+	    $var=!$var;
+	    print '<tr '.$bc[$var].'>';
+	    print '<td>'.$langs->trans("LinkColor").'</td>';
+	    print '<td colspan="'.($colspan-1).'">';
+	    if ($edit)
+	    {
+			print $formother->selectColor(colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_TEXTLINK,array()),''),'THEME_ELDY_TEXTLINK','formcolor',1).' ';
+	    }
+	   	else
+	   	{
+	   		$color = colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_TEXTLINK,array()),'');
+			if ($color) print '<input type="text" class="colorthumb" disabled="disabled" style="padding: 1px; margin-top: 0; margin-bottom: 0; width: 40px; background-color: #'.$color.'" value="'.$color.'">';
+			else print $langs->trans("Default");
+	   	}
+    	print ' &nbsp; ('.$langs->trans("Default").': <strong>000078</strong>, '.$langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis").')';
+	    print '</td>';
 	}
 	
     print '</table>';

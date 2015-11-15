@@ -1193,13 +1193,13 @@ UseOptionLineIfNoQuantity=Una línia de producte/servei que té una quantitat nu
 FreeLegalTextOnProposal=Text lliure en pressupostos
 WatermarkOnDraftProposal=Marca d'aigua en pressupostos esborrany (en cas d'estar buit)
 BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL=Preguntar compte bancari del pressupost
-##### AskPriceSupplier #####
-AskPriceSupplierSetup=Configuració del mòdul Sol·licituds a proveïdor
-AskPriceSupplierNumberingModules=Mòdels de numeració de solicitut de preus a proveïdor
-AskPriceSupplierPDFModules=Mòdels de docuements de solicituts de preus de proveïdors
-FreeLegalTextOnAskPriceSupplier=Text lliure en sol·licituds de preus a proveïdors
-WatermarkOnDraftAskPriceSupplier=Marca d'aigua en sol·licituds de preus a proveïdors (en cas de estar buit)
-BANK_ASK_PAYMENT_BANK_DURING_ASKPRICESUPPLIER=Preguntar per compte bancari per utilitzar en el pressupost
+##### SupplierProposal #####
+SupplierProposalSetup=Configuració del mòdul Sol·licituds a proveïdor
+SupplierProposalNumberingModules=Mòdels de numeració de solicitut de preus a proveïdor
+SupplierProposalPDFModules=Mòdels de docuements de solicituts de preus de proveïdors
+FreeLegalTextOnSupplierProposal=Text lliure en sol·licituds de preus a proveïdors
+WatermarkOnDraftSupplierProposal=Marca d'aigua en sol·licituds de preus a proveïdors (en cas de estar buit)
+BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL=Preguntar per compte bancari per utilitzar en el pressupost
 ##### Orders #####
 OrdersSetup=Configuració del mòdul comandes
 OrdersNumberingModules=Mòduls de numeració de les comandes

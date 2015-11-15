@@ -25,9 +25,9 @@
  *       \brief      Management page of documents attached to a business proposal
  */
 
-require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/comm/askpricesupplier/class/askpricesupplier.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/askpricesupplier.lib.php';
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/supplier_proposal.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
@@ -47,7 +47,7 @@ if (! empty($user->societe_id))
 	$action='';
 	$socid = $user->societe_id;
 }
-$result = restrictedArea($user, 'askpricesupplier', $id);
+$result = restrictedArea($user, 'supplier_proposal', $id);
 
 // Get parameters
 $sortfield = GETPOST("sortfield",'alpha');
@@ -60,12 +60,12 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="name";
 
-$object = new AskPriceSupplier($db);
+$object = new SupplierProposal($db);
 $object->fetch($id,$ref);
 if ($object->id > 0)
 {
 	$object->fetch_thirdparty();
-	$upload_dir = $conf->askpricesupplier->dir_output.'/'.dol_sanitizeFileName($object->ref);
+	$upload_dir = $conf->supplier_proposal->dir_output.'/'.dol_sanitizeFileName($object->ref);
 	include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
 }
 
@@ -80,10 +80,10 @@ $form = new Form($db);
 
 if ($object->id > 0)
 {
-	$upload_dir = $conf->askpricesupplier->dir_output.'/'.dol_sanitizeFileName($object->ref);
+	$upload_dir = $conf->supplier_proposal->dir_output.'/'.dol_sanitizeFileName($object->ref);
 
-	$head = askpricesupplier_prepare_head($object);
-	dol_fiche_head($head, 'document', $langs->trans('CommRequest'), 0, 'askpricesupplier');
+	$head = supplier_proposal_prepare_head($object);
+	dol_fiche_head($head, 'document', $langs->trans('CommRequest'), 0, 'supplier_proposal');
 
 	// Construit liste des fichiers
 	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
@@ -95,7 +95,7 @@ if ($object->id > 0)
 
 	print '<table class="border"width="100%">';
 
-	$linkback='<a href="'.DOL_URL_ROOT.'/comm/askpricesupplier/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+	$linkback='<a href="'.DOL_URL_ROOT.'/supplier_proposal/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
 	// Ref
 	print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="3">';
@@ -113,8 +113,8 @@ if ($object->id > 0)
 
 	print '</div>';
 
-	$modulepart = 'askpricesupplier';
-	$permission = $user->rights->askpricesupplier->creer;
+	$modulepart = 'supplier_proposal';
+	$permission = $user->rights->supplier_proposal->creer;
 	$param = '&id=' . $object->id;
 	include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 }

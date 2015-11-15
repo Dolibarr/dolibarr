@@ -22,7 +22,7 @@
  */
 
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/askpricesupplier.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/supplier_proposal.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 
@@ -31,7 +31,7 @@ if (!$user->admin)
 
 $langs->load("admin");
 $langs->load("other");
-$langs->load("askpricesupplier");
+$langs->load("supplier_proposal");
 
 $extrafields = new ExtraFields($db);
 $form = new Form($db);
@@ -44,7 +44,7 @@ foreach ($tmptype2label as $key => $val) $type2label[$key]=$langs->trans($val);
 $action=GETPOST('action', 'alpha');
 $attrname=GETPOST('attrname', 'alpha');
 
-$elementtype='askpricesupplierdet'; //Must be the $table_element of the class that manage extrafield
+$elementtype='supplier_proposaldet'; //Must be the $table_element of the class that manage extrafield
 
 if (!$user->admin) accessforbidden();
 
@@ -63,14 +63,14 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
 
 $textobject=$langs->transnoentitiesnoconv("CommRequests");
 
-llxHeader('',$langs->trans("AskPriceSupplierSetup"));
+llxHeader('',$langs->trans("SupplierProposalSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("AskPriceSupplierSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("SupplierProposalSetup"),$linkback,'title_setup');
 
-$head = askpricesupplier_admin_prepare_head();
+$head = supplier_proposal_admin_prepare_head();
 
-dol_fiche_head($head, 'attributeslines', $langs->trans("CommRequests"), 0, 'askpricesupplier');
+dol_fiche_head($head, 'attributeslines', $langs->trans("CommRequests"), 0, 'supplier_proposal');
 
 
 print $langs->trans("DefineHereComplementaryAttributes",$textobject).'<br>'."\n";
