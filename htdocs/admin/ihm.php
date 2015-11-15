@@ -61,7 +61,7 @@ if (empty($conf->use_javascript_ajax))
  * Action
  */
 
-if ($action == 'cancel')
+if (GETPOST('cancel'))
 {
     $action='';
 }
@@ -335,9 +335,9 @@ if ($action == 'edit')	// Edit
 
 
     print '<br><div class="center">';
-    print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
+    print '<input class="button" type="submit" name="submit" value="'.$langs->trans("Save").'">';
     print ' &nbsp; ';
-    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=cancel">'.$langs->trans("Cancel").'</a>';
+    print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
     print '</div>';
 
     print '</form>';
