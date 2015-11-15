@@ -279,7 +279,7 @@ if (empty($user->societe_id))
 	            $var=!$var;
 	            if (!empty($langfile[$key])) $langs->load($langfile[$key]);
 	            $text=$langs->trans($titres[$key]);
-	            print '<a href="'.$links[$key].'" class="nobold nounderline">';
+	            print '<a href="'.$links[$key].'" class="thumbstat nobold nounderline">';
 	            print '<div class="boxstats">';
 	            print img_object("",$icons[$key]).' '.$text.'<br>';
 	            //print '</a>';

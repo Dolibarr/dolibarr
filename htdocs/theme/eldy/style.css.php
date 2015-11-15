@@ -90,10 +90,10 @@ $colorbacklinepair1='250,250,250';    // line pair
 $colorbacklinepair2='248,248,248';    // line pair
 $colorbacklinepairhover='238,246,252';    // line pair
 $colorbackbody='255,255,255';
-//$colortexttitlenotab='40,0,70';
 $colortexttitlenotab='80,80,0';
 $colortexttitle='';
 $colortext='';
+$colortextlink='0,0,70';
 $fontsize='12';
 $fontsizesmaller='11';
 $usegradient=1;
@@ -121,6 +121,7 @@ if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
     $conf->global->THEME_ELDY_BACKBODY='255,255,255';
     //$conf->global->THEME_ELDY_TEXTTITLE='0,0,0';
     $conf->global->THEME_ELDY_TEXT='0,0,0';
+    $conf->global->THEME_ELDY_TEXTLINK='0,0,70';
     
     $conf->global->THEME_ELDY_FONT_SIZE1='12';
     $conf->global->THEME_ELDY_FONT_SIZE2='11';
@@ -142,6 +143,7 @@ $colorbacklinepairhover=empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empt
 $colorbackbody       =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_BACKBODY)     ?$colorbackbody:$conf->global->THEME_ELDY_BACKBODY)          :(empty($user->conf->THEME_ELDY_BACKBODY)?$colorbackbody:$user->conf->THEME_ELDY_BACKBODY);
 $colortexttitle      =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TEXTTITLE)    ?$colortext:$conf->global->THEME_ELDY_TEXTTITLE)             :(empty($user->conf->THEME_ELDY_TEXTTITLE)?$colortexttitle:$user->conf->THEME_ELDY_TEXTTITLE);
 $colortext           =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TEXT)         ?$colortext:$conf->global->THEME_ELDY_TEXT)                  :(empty($user->conf->THEME_ELDY_TEXT)?$colortext:$user->conf->THEME_ELDY_TEXT);
+$colortextlink       =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TEXTLINK)     ?$colortext:$conf->global->THEME_ELDY_TEXTLINK)              :(empty($user->conf->THEME_ELDY_TEXTLINK)?$colortextlink:$user->conf->THEME_ELDY_TEXTLINK);
 $fontsize            =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_FONT_SIZE1)   ?$fontsize:$conf->global->THEME_ELDY_FONT_SIZE1)             :(empty($user->conf->THEME_ELDY_FONT_SIZE1)?$fontsize:$user->conf->THEME_ELDY_FONT_SIZE1);
 $fontsizesmaller     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_FONT_SIZE2)   ?$fontsize:$conf->global->THEME_ELDY_FONT_SIZE2)             :(empty($user->conf->THEME_ELDY_FONT_SIZE2)?$fontsize:$user->conf->THEME_ELDY_FONT_SIZE2);
 
@@ -191,6 +193,7 @@ if ($colorbacklinepairhover != '') $colorbacklinepairhover=join(',',colorStringT
 $colorbackbody=join(',',colorStringToArray($colorbackbody));
 $colortexttitle=join(',',colorStringToArray($colortexttitle));
 $colortext=join(',',colorStringToArray($colortext));
+$colortextlink=join(',',colorStringToArray($colortextlink));
 
 print '/*'."\n";
 print 'colorbackbody='.$colorbackbody."\n";
@@ -204,6 +207,7 @@ print 'colorbacklinepair2='.$colorbacklinepair2."\n";
 print 'colorbacklinepairhover='.$colorbacklinepairhover."\n";
 print '$colortexttitle='.$colortexttitle."\n";
 print '$colortext='.$colortext."\n";
+print '$colortextlink='.$colortextlink."\n";
 print 'dol_hide_topmenu='.$dol_hide_topmenu."\n";
 print 'dol_hide_leftmenu='.$dol_hide_leftmenu."\n";
 print 'dol_optimize_smallscreen='.$dol_optimize_smallscreen."\n";
@@ -242,9 +246,10 @@ body {
     <?php print 'direction: '.$langs->trans("DIRECTION").";\n"; ?>
 }
 
-a:link, a:visited, a:hover, a:active { font-family: <?php print $fontlist ?>; font-weight: bold; color: #000; text-decoration: none;  }
+th a, .thumbstat, a.tab { color: rgb(<?php print $colortexttitle; ?>) !important; }
 
-a:hover { text-decoration: underline; color: #000000;}
+a:link, a:visited, a:hover, a:active { font-family: <?php print $fontlist ?>; font-weight: bold; color: rgb(<?php print $colortextlink; ?>); text-decoration: none;  }
+a:hover { text-decoration: underline; color: rgb(<?php print $colortextlink; ?>); }
 
 <?php if (empty($dol_use_jmobile)) { ?>
 
