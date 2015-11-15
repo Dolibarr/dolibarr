@@ -166,18 +166,18 @@ if ($action == 'delete')
 			{
 				$object->error=$accountline->error;
 				$db->rollback();
-				setEventMessage($object->error,'errors');
+				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
 		else
 		{
 			$db->rollback();
-			setEventMessage($object->error,'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 	else
 	{
-		setEventMessage('Error try do delete a line linked to a conciliated bank transaction','errors');
+		setEventMessages('Error try do delete a line linked to a conciliated bank transaction', null, 'errors');
 	}
 }
 
