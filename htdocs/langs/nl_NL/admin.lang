@@ -1193,13 +1193,13 @@ UseOptionLineIfNoQuantity=Product- / dienstregels met een waarde van 0 gebruiken
 FreeLegalTextOnProposal=Vrije tekst op Offertes
 WatermarkOnDraftProposal=Watermerk op ontwerp offertes (geen indien leeg)
 BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL=Vraag naar bankrekening bestemming van het voorstel
-##### AskPriceSupplier #####
-AskPriceSupplierSetup=Prijsaanvragen leveranciers module instelling
-AskPriceSupplierNumberingModules=Prijsaanvragen leveranciers nummering modellen
-AskPriceSupplierPDFModules=Prijsaanvragen leveranciers documenten modellen
-FreeLegalTextOnAskPriceSupplier=Vrije tekst op leveranciers prijsaanvragen
-WatermarkOnDraftAskPriceSupplier=Watermerk op ontwerp leveranciers prijsaanvraag ​​(geen als leeg)
-BANK_ASK_PAYMENT_BANK_DURING_ASKPRICESUPPLIER=Vraag naar bankrekening bestemming van prijsaanvraag
+##### SupplierProposal #####
+SupplierProposalSetup=Prijsaanvragen leveranciers module instelling
+SupplierProposalNumberingModules=Prijsaanvragen leveranciers nummering modellen
+SupplierProposalPDFModules=Prijsaanvragen leveranciers documenten modellen
+FreeLegalTextOnSupplierProposal=Vrije tekst op leveranciers prijsaanvragen
+WatermarkOnDraftSupplierProposal=Watermerk op ontwerp leveranciers prijsaanvraag ​​(geen als leeg)
+BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL=Vraag naar bankrekening bestemming van prijsaanvraag
 ##### Orders #####
 OrdersSetup=Opdrachtenbeheerinstellingen
 OrdersNumberingModules=Opdrachtennummeringmodules

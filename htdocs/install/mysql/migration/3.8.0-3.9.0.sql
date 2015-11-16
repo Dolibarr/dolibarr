@@ -23,6 +23,12 @@
 ALTER TABLE llx_don ADD COLUMN fk_country integer NOT NULL DEFAULT 0 after country;
 
 
+ALTER TABLE llx_askpricesupplier RENAME TO llx_supplier_proposal;
+ALTER TABLE llx_askpricesupplierdet RENAME TO llx_supplier_proposaldet;
+ALTER TABLE llx_askpricesupplier_extrafields RENAME TO llx_supplier_proposal_extrafields;
+ALTER TABLE llx_askpricesupplierdet_extrafields RENAME TO llx_supplier_proposaldet_extrafields;
+ALTER TABLE llx_supplier_proposaldet CHANGE COLUMN fk_asksupplierprice fk_supplier_proposal integer NOT NULL;
+
 -- Fix bad data
 update llx_opensurvey_sondage set format = 'D' where format = 'D+';
 update llx_opensurvey_sondage set format = 'A' where format = 'A+';

@@ -1193,13 +1193,13 @@ UseOptionLineIfNoQuantity=A line of product/service with a zero amount is consid
 FreeLegalTextOnProposal=Free text on commercial proposals
 WatermarkOnDraftProposal=Watermark on draft commercial proposals (none if empty)
 BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL=Ask for bank account destination of proposal
-##### AskPriceSupplier #####
-AskPriceSupplierSetup=Price requests suppliers module setup
-AskPriceSupplierNumberingModules=Price requests suppliers numbering models
-AskPriceSupplierPDFModules=Price requests suppliers documents models
-FreeLegalTextOnAskPriceSupplier=Free text on price requests suppliers
-WatermarkOnDraftAskPriceSupplier=Watermark on draft price requests suppliers (none if empty)
-BANK_ASK_PAYMENT_BANK_DURING_ASKPRICESUPPLIER=Ask for bank account destination of price request
+##### SupplierProposal #####
+SupplierProposalSetup=Price requests suppliers module setup
+SupplierProposalNumberingModules=Price requests suppliers numbering models
+SupplierProposalPDFModules=Price requests suppliers documents models
+FreeLegalTextOnSupplierProposal=Free text on price requests suppliers
+WatermarkOnDraftSupplierProposal=Watermark on draft price requests suppliers (none if empty)
+BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL=Ask for bank account destination of price request
 ##### Orders #####
 OrdersSetup=Order management setup
 OrdersNumberingModules=Orders numbering models

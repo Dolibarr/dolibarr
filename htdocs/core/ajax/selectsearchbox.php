@@ -94,9 +94,9 @@ if (! empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_SEARCHFORM
 {
 	$arrayresult['searchintosupplierorder']=array('text'=>img_picto('','object_order').' '.$langs->trans("SearchIntoSupplierOrders", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/fourn/commande/list.php?search_all='.urlencode($search_boxvalue));
 }
-if (! empty($conf->askpricesupplier->enabled) && empty($conf->global->MAIN_SEARCHFORM_SUPPLIER_PROPAL_DISABLED) && $user->rights->askpricesupplier->lire)
+if (! empty($conf->supplier_proposal->enabled) && empty($conf->global->MAIN_SEARCHFORM_SUPPLIER_PROPAL_DISABLED) && $user->rights->supplier_proposal->lire)
 {
-	$arrayresult['searchintosupplierpropal']=array('text'=>img_picto('','object_propal').' '.$langs->trans("SearchIntoSupplierProposals", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/askpricesupplier/list.php?sall='.urlencode($search_boxvalue));
+	$arrayresult['searchintosupplierpropal']=array('text'=>img_picto('','object_propal').' '.$langs->trans("SearchIntoSupplierProposals", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/supplier_proposal/list.php?sall='.urlencode($search_boxvalue));
 }
 
 if (! empty($conf->contrat->enabled) && empty($conf->global->MAIN_SEARCHFORM_CONTRACT_DISABLED) && $user->rights->contrat->lire)

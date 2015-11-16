@@ -486,7 +486,7 @@ if ($id == 25)
 			'shipping_send'  => $langs->trans('MailToSendShipment'),
 			'fichinter_send' => $langs->trans('MailToSendIntervention'),
 
-			'askpricesupplier_send'  => $langs->trans('MailToSendSupplierRequestForQuotation'),
+			'supplier_proposal_send'  => $langs->trans('MailToSendSupplierRequestForQuotation'),
 			'order_supplier_send'    => $langs->trans('MailToSendSupplierOrder'),
 			'invoice_supplier_send'  => $langs->trans('MailToSendSupplierInvoice'),
 

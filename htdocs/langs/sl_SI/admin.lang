@@ -1193,13 +1193,13 @@ UseOptionLineIfNoQuantity=Vrstica proizvoda/storitve z vrednostjo 0 se smatra ko
 FreeLegalTextOnProposal=Poljubno besedilo na komercialni ponudbi
 WatermarkOnDraftProposal=Vodni tisk na osnutkih komercialnih ponudb (brez, če je prazno)
 BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL=Vprašajte za ciljni bančni račun ponudbe
-##### AskPriceSupplier #####
-AskPriceSupplierSetup=Nastavitev modula cenovnih zahtevkov za dobavitelje
-AskPriceSupplierNumberingModules=Modeli številčenja cenovnih zahtevkov za dobavitelje
-AskPriceSupplierPDFModules=Modeli dokumentiranja cenovnih zahtevkov za dobavitelje
-FreeLegalTextOnAskPriceSupplier=Prosti tekst na cenovnih zahtevkov dobaviteljev
-WatermarkOnDraftAskPriceSupplier=Vodni tisk na osnutkih cenovnih zahtevkov za dobavitelje (brez, če je prazno)
-BANK_ASK_PAYMENT_BANK_DURING_ASKPRICESUPPLIER=Vprašaj za končni bančni račun cenovnega zahtevka
+##### SupplierProposal #####
+SupplierProposalSetup=Nastavitev modula cenovnih zahtevkov za dobavitelje
+SupplierProposalNumberingModules=Modeli številčenja cenovnih zahtevkov za dobavitelje
+SupplierProposalPDFModules=Modeli dokumentiranja cenovnih zahtevkov za dobavitelje
+FreeLegalTextOnSupplierProposal=Prosti tekst na cenovnih zahtevkov dobaviteljev
+WatermarkOnDraftSupplierProposal=Vodni tisk na osnutkih cenovnih zahtevkov za dobavitelje (brez, če je prazno)
+BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL=Vprašaj za končni bančni račun cenovnega zahtevka
 ##### Orders #####
 OrdersSetup=Nastavitve upravljanja z naročili
 OrdersNumberingModules=Moduli za številčenje naročil

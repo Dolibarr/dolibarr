@@ -1193,13 +1193,13 @@ UseOptionLineIfNoQuantity=En rad av produkt / tjänst med en nolla belopp anses 
 FreeLegalTextOnProposal=Fri text på affärsförslag
 WatermarkOnDraftProposal=Vattenstämpel på utkast till affärsförslag (ingen om tom)
 BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL=Be om bankkonto destination förslag
-##### AskPriceSupplier #####
-AskPriceSupplierSetup=Pris begär leverantörer modul konfiguration
-AskPriceSupplierNumberingModules=Pris förfrågningar leverantörer numrerings modeller
-AskPriceSupplierPDFModules=Pris begär leverantörer dokument modeller
-FreeLegalTextOnAskPriceSupplier=Fritext på förfrågningar pris leverantörer
-WatermarkOnDraftAskPriceSupplier=Vattenstämpel om förslaget pris begär leverantörer (ingen om tom)
-BANK_ASK_PAYMENT_BANK_DURING_ASKPRICESUPPLIER=Fråga efter bankkonto destination pris begäran
+##### SupplierProposal #####
+SupplierProposalSetup=Pris begär leverantörer modul konfiguration
+SupplierProposalNumberingModules=Pris förfrågningar leverantörer numrerings modeller
+SupplierProposalPDFModules=Pris begär leverantörer dokument modeller
+FreeLegalTextOnSupplierProposal=Fritext på förfrågningar pris leverantörer
+WatermarkOnDraftSupplierProposal=Vattenstämpel om förslaget pris begär leverantörer (ingen om tom)
+BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL=Fråga efter bankkonto destination pris begäran
 ##### Orders #####
 OrdersSetup=Beställ ledning setup
 OrdersNumberingModules=Beställningar numrering moduler
