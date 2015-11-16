@@ -572,7 +572,7 @@ class CommandeFournisseur extends CommonOrder
      */
     function getNomUrl($withpicto=0,$option='')
     {
-        global $langs;
+        global $langs, $conf;
 
         $result='';
         $label = '<u>' . $langs->trans("ShowOrder") . '</u>';
