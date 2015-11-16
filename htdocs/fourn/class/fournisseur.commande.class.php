@@ -54,7 +54,7 @@ class CommandeFournisseur extends CommonOrder
 
 	/**
 	 * Supplier invoice reference
-     * @var string
+	 * @var string
 	 */
     var $ref;
     var $ref_supplier;
