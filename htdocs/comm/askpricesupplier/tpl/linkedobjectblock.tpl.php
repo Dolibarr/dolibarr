@@ -43,6 +43,7 @@ print_titre($langs->trans('RelatedAskPriceSupplier'));
 <?php
 $var=true;
 $total=0;
+
 foreach($linkedObjectBlock as $key => $objectlink)
 {
 	$var=!$var;

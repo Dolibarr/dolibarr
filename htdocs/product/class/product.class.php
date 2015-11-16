@@ -44,7 +44,8 @@ class Product extends CommonObject
 	public $element='product';
 	public $table_element='product';
 	public $fk_element='fk_product';
-	protected $childtables=array('askpricesupplierdet', 'propaldet','commandedet','facturedet','contratdet','facture_fourn_det','commande_fournisseurdet');    // To test if we can delete object
+
+	protected $childtables=array('askpricesupplierdet','propaldet','commandedet','facturedet','contratdet','facture_fourn_det','commande_fournisseurdet');    // To test if we can delete object
 	protected $isnolinkedbythird = 1;     // No field fk_soc
 	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
@@ -2501,29 +2502,7 @@ class Product extends CommonObject
 
 		$now=dol_now();
 
-		if ($ref_fourn)
-		{
-    		$sql = "SELECT rowid, fk_product";
-    		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price";
-    		$sql.= " WHERE fk_soc = ".$id_fourn;
-    		$sql.= " AND ref_fourn = '".$ref_fourn."'";
-    		$sql.= " AND fk_product != ".$this->id;
-    		$sql.= " AND entity = ".$conf->entity;
-
-    		dol_syslog(get_class($this)."::add_fournisseur", LOG_DEBUG);
-    		$resql=$this->db->query($sql);
-    		if ($resql)
-    		{
-    			$obj = $this->db->fetch_object($resql);
-                if ($obj)
-                {
-        			// If the supplier ref already exists but for another product (duplicate ref is accepted for different quantity only or different companies)
-                    $this->product_id_already_linked = $obj->fk_product;
-    				return -3;
-    			}
-                $this->db->free($resql);
-    		}
-		}
+		
 
 		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price";

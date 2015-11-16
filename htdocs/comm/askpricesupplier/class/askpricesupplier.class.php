@@ -59,6 +59,7 @@ class AskPriceSupplier extends CommonObject
     var $client;		// Objet societe client (a charger par fetch_client)
 
     var $fk_project;
+
 	/**
 	 * @deprecated
 	 * @see user_author_id
@@ -67,6 +68,7 @@ class AskPriceSupplier extends CommonObject
     var $ref;
 	var $ref_fourn;  //Reference saisie lors de l'ajout d'une ligne à la demande
     var $statut;					// 0 (draft), 1 (validated), 2 (signed), 3 (not signed), 4 (billed)
+
     var $date;						// Date of proposal
     var $date_livraison;
 
@@ -93,7 +95,6 @@ class AskPriceSupplier extends CommonObject
 	 * @var int
 	 */
 	public $date_validation;
-
 
     var $user_author_id;
     var $user_valid_id;
@@ -129,11 +130,13 @@ class AskPriceSupplier extends CommonObject
     var $remise;
     var $remise_percent;
     var $remise_absolue;
+
 	/**
 	 * @deprecated
 	 * @see note_public, note_private
 	 */
     var $note;
+	
     var $note_private;
     var $note_public;
     var $shipping_method_id;
@@ -1543,6 +1546,14 @@ class AskPriceSupplier extends CommonObject
     {
         global $langs,$conf;
 
+		$allRefIsChecked = $this->checkRefProduct();
+
+		if (!$allRefIsChecked)
+		{
+			$this->error=$langs->trans('AskpricesupplierErrorRefCheck');
+			return 0;
+		}
+
         $this->statut = $statut;
         $error=0;
         $now=dol_now();
@@ -1638,7 +1649,7 @@ class AskPriceSupplier extends CommonObject
 				continue;
 
 			$idProductFourn = $productsupplier->find_min_price_product_fournisseur($product->fk_product, $product->qty);
-			$res = $productsupplier->fetch($idProductFourn);
+			if ($idProductFourn > 0) $productsupplier->fetch($idProductFourn);
 
 			if ($productsupplier->id) {
 				if ($productsupplier->fourn_qty == $product->qty) {
@@ -1667,6 +1678,7 @@ class AskPriceSupplier extends CommonObject
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'product_fournisseur_price SET '.(!empty($product->ref_fourn) ? 'ref_fourn = "'.$product->ref_fourn.'", ' : '').' price ='.$price.', unitprice ='.$unitPrice.' WHERE rowid = '.$idProductFournPrice;
 
 		$resql = $this->db->query($sql);
+
 		if (!$resql) {
 			$this->error=$this->db->error();
             $this->db->rollback();
@@ -1703,6 +1715,7 @@ class AskPriceSupplier extends CommonObject
 		$sql .= '(datec, fk_product, fk_soc, ref_fourn, price, quantity, unitprice, tva_tx, fk_user) VALUES ('.implode(',', $values).')';
 
 		$resql = $this->db->query($sql);
+
 		if (!$resql) {
 			$this->error=$this->db->error();
             $this->db->rollback();
@@ -2452,6 +2465,21 @@ class AskPriceSupplier extends CommonObject
         }
     }
 
+	/**
+	 * Permet de vérifier que chaque référence fournisseur est saisie dans la demande de prix au moement de clôturer
+	 * 
+	 * @return	int		0 if KO, 1 if OK
+	 */
+	function checkRefProduct()
+	{
+		foreach ($this->lines as $line)
+		{
+			$ref_fourn = trim($line->ref_fourn);
+			if (empty($ref_fourn)) return 0;
+		}
+		
+		return 1;
+	}
 
 }
 
@@ -2476,6 +2504,7 @@ class AskPriceSupplierLine  extends CommonObject
     var $fk_parent_line;
     var $desc;          	// Description ligne
     var $fk_product;		// Id produit predefini
+
 	/**
 	 * @deprecated
 	 * @see product_type
