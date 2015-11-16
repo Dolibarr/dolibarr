@@ -1854,6 +1854,8 @@ if ($action == 'create')
 		$res = $soc->fetch($socid);
 
 	// Load objectsrc
+	$remise_absolue = 0;
+
 	if (! empty($origin) && ! empty($originid))
 	{
 		// Parse element/subelement (ex: project_task)
@@ -1865,6 +1867,20 @@ if ($action == 'create')
 
 		if ($element == 'project') {
 			$projectid = $originid;
+			
+			if (!$cond_reglement_id) {
+				$cond_reglement_id = $soc->cond_reglement_id;
+			}
+			if (!$mode_reglement_id) {
+				$mode_reglement_id = $soc->mode_reglement_id;
+			}
+			if (!$remise_percent) {
+				$remise_percent = $soc->remise_percent;
+			}
+			if (!$dateinvoice) {
+				// Do not set 0 here (0 for a date is 1970)
+				$dateinvoice = (empty($dateinvoice)?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:''):$dateinvoice);
+			}			
 		} else {
 			// For compatibility
 			if ($element == 'order' || $element == 'commande') {
@@ -1909,7 +1925,6 @@ if ($action == 'create')
 			$objectsrc->fetch_optionals($originid);
 			$object->array_options = $objectsrc->array_options;
 		}
-		$dateinvoice = empty($conf->global->MAIN_AUTOFILL_DATE) ? -1 : '';	// Dot not set 0 here (0 for a date is 1970)
 	}
 	else
 	{
@@ -1920,6 +1935,7 @@ if ($action == 'create')
 		$remise_absolue 	= 0;
 		$dateinvoice		= (empty($dateinvoice)?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:''):$dateinvoice);		// Do not set 0 here (0 for a date is 1970)
 	}
+
 	$absolute_discount = $soc->getAvailableDiscounts();
 
 	if (! empty($conf->use_javascript_ajax))
