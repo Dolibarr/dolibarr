@@ -249,7 +249,6 @@ if (empty($reshook))
             $object->volume             	 = GETPOST('volume');
             $object->volume_units       	 = GETPOST('volume_units');
             $object->finished           	 = GETPOST('finished');
-            $object->hidden             	 = GETPOST('hidden')=='yes'?1:0;
 	        $object->fk_unit                 = GETPOST('units');
             $object->accountancy_code_sell = GETPOST('accountancy_code_sell');
             $object->accountancy_code_buy  = GETPOST('accountancy_code_buy');
@@ -335,7 +334,6 @@ if (empty($reshook))
                 $object->volume                 = GETPOST('volume');
                 $object->volume_units           = GETPOST('volume_units');
                 $object->finished               = GETPOST('finished');
-                $object->hidden                 = GETPOST('hidden')=='yes'?1:0;
 
 	            $units = GETPOST('units', 'int');
 
@@ -1239,16 +1237,9 @@ else
             	print $object->showOptionals($extrafields,'edit');
             }
 
-            // Note
-            print '<tr><td class="tdtop">'.$langs->trans("NoteNotVisibleOnBill").'</td><td colspan="3">';
-
-            $doleditor = new DolEditor('note', $object->note, '', 140, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 4, 80);
-            $doleditor->Create();
-
-            print "</td></tr>";
-
-			if($conf->categorie->enabled) {
-				// Categories
+			// Tags-Categories
+            if ($conf->categorie->enabled) 
+			{
 				print '<tr><td class="tdtop">'.$langs->trans("Categories").'</td><td colspan="3">';
 				$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 64, 0, 1);
 				$c = new Categorie($db);
@@ -1259,6 +1250,14 @@ else
 				print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
 				print "</td></tr>";
 			}
+
+            // Note
+            print '<tr><td class="tdtop">'.$langs->trans("NoteNotVisibleOnBill").'</td><td colspan="3">';
+
+            $doleditor = new DolEditor('note', $object->note, '', 140, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 4, 80);
+            $doleditor->Create();
+
+            print "</td></tr>";
 
             print '</table>';
 
@@ -1298,58 +1297,29 @@ else
         // Fiche en mode visu
         else
 		{
-            $head=product_prepare_head($object);
+            $showbarcode=empty($conf->barcode->enabled)?0:1;
+            if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) $showbarcode=0;
+
+		    $head=product_prepare_head($object);
             $titre=$langs->trans("CardProduct".$object->type);
             $picto=($object->type== Product::TYPE_SERVICE?'service':'product');
             dol_fiche_head($head, 'card', $titre, 0, $picto);
 
-            $showphoto=$object->is_photo_available($conf->product->multidir_output[$object->entity]);
-            $showbarcode=empty($conf->barcode->enabled)?0:1;
-            if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) $showbarcode=0;
-
-            // En mode visu
-            print '<table class="border" width="100%"><tr>';
-
-            // Ref
-            print '<td width="15%">'.$langs->trans("Ref").'</td><td colspan="'.(2+(($showphoto||$showbarcode)?1:0)).'">';
-            print $form->showrefnav($object,'ref','',1,'ref');
-            print '</td>';
-
-            print '</tr>';
-
-            // Label
-            print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$object->label.'</td>';
-
-            $nblignes=7;
-            if (! empty($conf->produit->enabled) && ! empty($conf->service->enabled)) $nblignes++;
-            if ($showbarcode) $nblignes+=2;
-            if ($object->type!= Product::TYPE_SERVICE) $nblignes++;
-            if (empty($conf->global->PRODUCT_DISABLE_CUSTOM_INFO)) $nblignes+=2;
-            if ($object->isservice()) $nblignes++;
-            else $nblignes+=4;
-
-            // Photo
-            if ($showphoto || $showbarcode)
-            {
-                print '<td valign="middle" align="center" width="25%" rowspan="'.$nblignes.'">';
-				print '<div class="photolist">';
-				$maxvisiblephotos=(isset($conf->global->PRODUCT_MAX_VISIBLE_PHOTO)?$conf->global->PRODUCT_MAX_VISIBLE_PHOTO:5);
-				if ($conf->browser->phone) $maxvisiblephotos=1;
-                if ($showphoto)   print $object->show_photos($conf->product->multidir_output[$object->entity],1,$maxvisiblephotos,0,0,0,80);
-                if ($showphoto && $showbarcode) print '<br><br>';
-                if ($showbarcode) print $form->showbarcode($object);
-				print '</div>';
-                print '</td>';
-            }
-
-            print '</tr>';
-
+            dol_banner_tab($object, 'ref', '', ($user->societe_id?0:1), 'ref');
+            
+            
+            print '<div class="fichecenter">';
+            print '<div class="fichehalfleft">';
+            
+            print '<div class="underbanner clearboth"></div>';
+            print '<table class="border tableforfield" width="100%">';
+            
             // Type
             if (! empty($conf->produit->enabled) && ! empty($conf->service->enabled))
             {
             	// TODO change for compatibility with edit in place
             	$typeformat='select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
-                print '<tr><td>'.$form->editfieldkey("Type",'fk_product_type',$object->type,$object,$user->rights->produit->creer||$user->rights->service->creer,$typeformat).'</td><td colspan="2">';
+                print '<tr><td class="titlefield">'.$form->editfieldkey("Type",'fk_product_type',$object->type,$object,$user->rights->produit->creer||$user->rights->service->creer,$typeformat).'</td><td colspan="2">';
                 print $form->editfieldval("Type",'fk_product_type',$object->type,$object,$user->rights->produit->creer||$user->rights->service->creer,$typeformat);
                 print '</td></tr>';
             }
@@ -1412,6 +1382,7 @@ else
             print '</td></tr>';
 
             // Status (to sell)
+            /*
             print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td colspan="2">';
             if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
                 print ajax_object_onoff($object, 'status', 'tosell', 'ProductStatusOnSell', 'ProductStatusNotOnSell');
@@ -1428,7 +1399,8 @@ else
                 print $object->getLibStatut(2,1);
             }
             print '</td></tr>';
-
+            */
+            
             // Batch number management (to batch)
             if (! empty($conf->productbatch->enabled)) {
                 print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td colspan="2">';
@@ -1448,10 +1420,17 @@ else
 			print dol_print_url($object->url);
             print '</td></tr>';
 
+            print '</table>';
+            print '</div>';
+            print '<div class="fichehalfright"><div class="ficheaddleft">';
+       
+            print '<div class="underbanner clearboth"></div>';
+            print '<table class="border tableforfield" width="100%">';
+            
             // Nature
             if($object->type!= Product::TYPE_SERVICE)
             {
-                print '<tr><td>'.$langs->trans("Nature").'</td><td colspan="2">';
+                print '<tr><td class="titlefield">'.$langs->trans("Nature").'</td><td colspan="2">';
                 print $object->getLibFinished();
                 print '</td></tr>';
             }
@@ -1459,7 +1438,7 @@ else
             if ($object->isservice())
             {
                 // Duration
-                print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="2">'.$object->duration_value.'&nbsp;';
+                print '<tr><td class="titlefield">'.$langs->trans("Duration").'</td><td colspan="2">'.$object->duration_value.'&nbsp;';
                 if ($object->duration_value > 1)
                 {
                     $dur=array("h"=>$langs->trans("Hours"),"d"=>$langs->trans("Days"),"w"=>$langs->trans("Weeks"),"m"=>$langs->trans("Months"),"y"=>$langs->trans("Years"));
@@ -1475,7 +1454,7 @@ else
             else
             {
                 // Weight
-                print '<tr><td>'.$langs->trans("Weight").'</td><td colspan="2">';
+                print '<tr><td class="titlefield">'.$langs->trans("Weight").'</td><td colspan="2">';
                 if ($object->weight != '')
                 {
                     print $object->weight." ".measuring_units_string($object->weight_units,"weight");
@@ -1549,11 +1528,6 @@ else
             	print $object->showOptionals($extrafields);
             }
 
-            // Note
-            print '<!-- show Note --> '."\n";
-            print '<tr><td class="tdtop">'.$langs->trans("Note").'</td><td colspan="'.(2+(($showphoto||$showbarcode)?1:0)).'">'.(dol_textishtml($object->note)?$object->note:dol_nl2br($object->note,1,true)).'</td></tr>'."\n";
-            print '<!-- End show Note --> '."\n";
-
 			// Categories
 			if($conf->categorie->enabled) {
 				print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td colspan="3">';
@@ -1561,8 +1535,17 @@ else
 				print "</td></tr>";
 			}
 
-            print "</table>\n";
+            // Note
+            print '<!-- show Note --> '."\n";
+            print '<tr><td class="tdtop">'.$langs->trans("Note").'</td><td colspan="'.(2+(($showphoto||$showbarcode)?1:0)).'">'.(dol_textishtml($object->note)?$object->note:dol_nl2br($object->note,1,true)).'</td></tr>'."\n";
+            print '<!-- End show Note --> '."\n";
 
+            print "</table>\n";
+    		print '</div>';
+    		
+            print '</div></div>';
+            print '<div style="clear:both"></div>';
+        
             dol_fiche_end();
         }
 

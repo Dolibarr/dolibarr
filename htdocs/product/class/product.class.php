@@ -84,11 +84,13 @@ class Product extends CommonObject
 	//! Base price ('TTC' for price including tax or 'HT' for net price)
 	var $price_base_type;
 	//! Arrays for multiprices
-	var $multiprices=array();
-	var $multiprices_ttc=array();
-	var $multiprices_base_type=array();
-	var $multiprices_tva_tx=array();
-	var $multiprices_recuperableonly=array();
+	public $multiprices=array();
+	public $multiprices_ttc=array();
+	public $multiprices_base_type=array();
+	public $multiprices_min=array();
+	public $multiprices_min_ttc=array();
+	public $multiprices_tva_tx=array();
+	public $multiprices_recuperableonly=array();
 	//! Price by quantity arrays
 	var $price_by_qty;
 	var $prices_by_qty=array();
@@ -124,6 +126,12 @@ class Product extends CommonObject
 	var $status_batch;
 
 	var $customcode;       // Customs code
+
+	/**
+	 * Product URL
+	 * @var string
+	 */
+	public $url;
 
 	//! Unites de mesure
 	var $weight;
@@ -190,6 +198,12 @@ class Product extends CommonObject
 	 * @var string
 	 */
 	public $fk_unit;
+
+	/**
+	 * Price is generated using multiprice rules
+	 * @var int
+	 */
+	public $price_autogen = 0;
 
 	/**
 	 * Regular product
@@ -710,6 +724,8 @@ class Product extends CommonObject
 			$sql.= ", accountancy_code_sell= '" . $this->db->escape($this->accountancy_code_sell)."'";
 			$sql.= ", desiredstock = " . ((isset($this->desiredstock) && $this->desiredstock != '') ? $this->desiredstock : "null");
 	        $sql.= ", fk_unit= " . (!$this->fk_unit ? 'NULL' : $this->fk_unit);
+	        $sql.= ", price_autogen = " . (!$this->price_autogen ? 0 : 1);
+			$sql.= ", fk_price_expression = ".($this->fk_price_expression != 0 ? $this->fk_price_expression : 'NULL');
 			$sql.= " WHERE rowid = " . $id;
 
 			dol_syslog(get_class($this)."::update", LOG_DEBUG);
@@ -765,8 +781,10 @@ class Product extends CommonObject
 						$newdir = $conf->product->dir_output . "/" . dol_sanitizeFileName($this->ref);
 						if (file_exists($olddir))
 						{
-							include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
-							$res=dol_move($olddir, $newdir);
+							//include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+							//$res = dol_move($olddir, $newdir);
+							// do not use dol_move with directory
+							$res = @rename($olddir, $newdir);
 							if (! $res)
 							{
 								$this->error='ErrorFailToMoveDir';
@@ -1335,9 +1353,10 @@ class Product extends CommonObject
 	 *  @param		int		$level			0=standard, >0 = level if multilevel prices
 	 *  @param     	int		$newnpr         0=Standard vat rate, 1=Special vat rate for French NPR VAT
 	 *  @param     	int		$newpsq         1 if it has price by quantity
+	 *  @param 		int 	$ignore_autogen Used to avoid infinite loops
 	 * 	@return		int						<0 if KO, >0 if OK
 	 */
-	function updatePrice($newprice, $newpricebase, $user, $newvat='',$newminprice='', $level=0, $newnpr=0, $newpsq=0)
+	function updatePrice($newprice, $newpricebase, $user, $newvat='',$newminprice='', $level=0, $newnpr=0, $newpsq=0, $ignore_autogen=0)
 	{
 		global $conf,$langs;
 
@@ -1351,6 +1370,14 @@ class Product extends CommonObject
 
 		// Check parameters
 		if ($newvat == '') $newvat=$this->tva_tx;
+
+		// If multiprices are enabled, then we check if the current product is subject to price autogeneration
+		// Price will be modified ONLY when the first one is the one that is being modified
+		if (!empty($conf->global->PRODUIT_MULTIPRICES) && !$ignore_autogen && $this->price_autogen && ($level == 1)) 
+		{
+			return $this->generateMultiprices($user, $newprice, $newpricebase, $newvat, $newnpr, $newpsq);
+		}
+
 		if (! empty($newminprice) && ($newminprice > $newprice))
 		{
 			$this->error='ErrorPriceCantBeLowerThanMinPrice';
@@ -1425,6 +1452,14 @@ class Product extends CommonObject
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
+				$this->multiprices[$level] = $price;
+				$this->multiprices_ttc[$level] = $price_ttc;
+				$this->multiprices_min[$level]= $price_min;
+				$this->multiprices_min_ttc[$level]= $price_min_ttc;
+				$this->multiprices_base_type[$level]= $newpricebase;
+				$this->multiprices_tva_tx[$level]= $newvat;
+				$this->multiprices_recuperableonly[$level]= $newnpr;
+
 				$this->price = $price;
 				$this->price_ttc = $price_ttc;
 				$this->price_min = $price_min;
@@ -1469,33 +1504,15 @@ class Product extends CommonObject
      *
      *  @param  int     $expression_id	Expression
      *  @return int                 	<0 if KO, >0 if OK
+	 * @deprecated Use Product::update instead
      */
     function setPriceExpression($expression_id)
     {
-        global $conf;
+		global $user;
 
-        // Clean parameters
-        $this->db->begin();
-        $expression_id = $expression_id != 0 ? $expression_id : 'NULL';
+		$this->fk_price_expression = $expression_id;
 
-        $sql = "UPDATE ".MAIN_DB_PREFIX."product";
-        $sql.= " SET fk_price_expression = ".$expression_id;
-        $sql.= " WHERE rowid = ".$this->id;
-
-        dol_syslog(get_class($this)."::setPriceExpression", LOG_DEBUG);
-
-        $resql = $this->db->query($sql);
-        if ($resql)
-        {
-            $this->db->commit();
-            return 1;
-        }
-        else
-        {
-            $this->error=$this->db->error()." sql=".$sql;
-            $this->db->rollback();
-            return -1;
-        }
+		return $this->update($this->id, $user);
     }
 
 	/**
@@ -1529,7 +1546,7 @@ class Product extends CommonObject
 		$sql.= " weight, weight_units, length, length_units, surface, surface_units, volume, volume_units, barcode, fk_barcode_type, finished,";
 		$sql.= " accountancy_code_buy, accountancy_code_sell, stock, pmp,";
 		$sql.= " datec, tms, import_key, entity, desiredstock, tobatch, fk_unit";
-		$sql.= " , fk_price_expression";
+		$sql.= " , fk_price_expression, price_autogen";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
 		if ($id) $sql.= " WHERE rowid = ".$this->db->escape($id);
 		else
@@ -1606,6 +1623,7 @@ class Product extends CommonObject
 				$this->ref_ext					= $obj->ref_ext;
 				$this->fk_price_expression		= $obj->fk_price_expression;
 				$this->fk_unit					= $obj->fk_unit;
+				$this->price_autogen			= $obj->price_autogen;
 
 				$this->db->free($resql);
 
@@ -2751,7 +2769,8 @@ class Product extends CommonObject
 					'type'=>$type,				// Nb of units that compose parent product
 					'desiredstock'=>$this->desiredstock,
 					'level'=>$level,
-					'incdec'=>$incdec
+					'incdec'=>$incdec,
+					'entity'=>$this->entity
 				);
 
 				// Recursive call if there is childs to child
@@ -2833,7 +2852,7 @@ class Product extends CommonObject
 	 */
 	function getFather()
 	{
-		$sql = "SELECT p.rowid, p.label as label, p.ref as ref, pa.fk_product_pere as id, p.fk_product_type, pa.qty, pa.incdec";
+		$sql = "SELECT p.rowid, p.label as label, p.ref as ref, pa.fk_product_pere as id, p.fk_product_type, pa.qty, pa.incdec, p.entity";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_association as pa,";
 		$sql.= " ".MAIN_DB_PREFIX."product as p";
 		$sql.= " WHERE p.rowid = pa.fk_product_pere";
@@ -2851,6 +2870,7 @@ class Product extends CommonObject
 				$prods[$record['id']]['qty'] = $record['qty'];
 				$prods[$record['id']]['incdec'] = $record['incdec'];
 				$prods[$record['id']]['fk_product_type'] =  $record['fk_product_type'];
+				$prods[$record['id']]['entity'] =  $record['entity'];
 			}
 			return $prods;
 		}
@@ -2970,7 +2990,7 @@ class Product extends CommonObject
 	 *	Return clicable link of object (with eventually picto)
 	 *
 	 *	@param		int		$withpicto		Add picto into link
-	 *	@param		string	$option			Where point the link
+	 *	@param		string	$option			Where point the link ('stock', 'composition', 'category', 'supplier', '')
 	 *	@param		int		$maxlength		Maxlength of ref
 	 *	@return		string					String with URL
 	 */
@@ -3058,7 +3078,8 @@ class Product extends CommonObject
 	 */
 	function LibStatut($status,$mode=0,$type=0)
 	{
-		global $langs;
+		global $conf, $langs;
+		
 		$langs->load('products');
 		if (!empty($conf->productbatch->enabled)) $langs->load("productbatch");
 
@@ -3295,23 +3316,23 @@ class Product extends CommonObject
         if (! empty($conf->commande->enabled))
         {
             $result=$this->load_stats_commande(0,'1,2');
-            if ($result < 0) dol_print_error($db,$this->error);
+            if ($result < 0) dol_print_error($this->db,$this->error);
             $stock_commande_client=$this->stats_commande['qty'];
         }
         if (! empty($conf->expedition->enabled))
         {
             $result=$this->load_stats_sending(0,'1,2');
-            if ($result < 0) dol_print_error($db,$this->error);
+            if ($result < 0) dol_print_error($this->db,$this->error);
             $stock_sending_client=$this->stats_expedition['qty'];
         }
         if (! empty($conf->fournisseur->enabled))
         {
             $result=$this->load_stats_commande_fournisseur(0,'1,2,3,4');
-            if ($result < 0) dol_print_error($db,$this->error);
+            if ($result < 0) dol_print_error($this->db,$this->error);
             $stock_commande_fournisseur=$this->stats_commande_fournisseur['qty'];
 
             $result=$this->load_stats_reception(0,'4');
-            if ($result < 0) dol_print_error($db,$this->error);
+            if ($result < 0) dol_print_error($this->db,$this->error);
             $stock_reception_fournisseur=$this->stats_reception['qty'];
         }
 
@@ -3392,7 +3413,7 @@ class Product extends CommonObject
 
 		$dir = $sdir;
 		if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) $dir .= '/'. get_exdir($this->id,2,0,0,$this,'product') . $this->id ."/photos";
-		else $dir .= '/'.dol_sanitizeFileName($this->ref);
+		else $dir .= '/'.get_exdir(0,0,0,0,$this,'product').dol_sanitizeFileName($this->ref);
 
 		dol_mkdir($dir);
 
@@ -3430,7 +3451,7 @@ class Product extends CommonObject
 
 		$dir = $sdir;
 		if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) $dir .= '/'. get_exdir($this->id,2,0,0,$this,'product') . $this->id ."/photos/";
-		else $dir .= '/'.dol_sanitizeFileName($this->ref).'/';
+		else $dir .= '/'.get_exdir(0,0,0,0,$this,'product').dol_sanitizeFileName($this->ref).'/';
 
 		$nbphoto=0;
 
@@ -3463,9 +3484,10 @@ class Product extends CommonObject
 	 * 	@param		int		$showaction		1=Show icon with action links (resize, delete)
 	 * 	@param		int		$maxHeight		Max height of image when size=1
 	 * 	@param		int		$maxWidth		Max width of image when size=1
+	 *  @param      int     $nolink         Do not add a href link to view enlarged imaged into a new tab
 	 *  @return     string					Html code to show photo. Number of photos shown is saved in this->nbphoto
 	 */
-	function show_photos($sdir,$size=0,$nbmax=0,$nbbyrow=5,$showfilename=0,$showaction=0,$maxHeight=120,$maxWidth=160)
+	function show_photos($sdir,$size=0,$nbmax=0,$nbbyrow=5,$showfilename=0,$showaction=0,$maxHeight=120,$maxWidth=160,$nolink=0)
 	{
 		global $conf,$user,$langs;
 
@@ -3481,8 +3503,8 @@ class Product extends CommonObject
 		}
 		else
 		{
-			$dir .= $this->ref.'/';
-			$pdir .= $this->ref.'/';
+			$dir .= get_exdir(0,0,0,0,$this,'product').$this->ref.'/';
+			$pdir .= get_exdir(0,0,0,0,$this,'product').$this->ref.'/';
 		}
 
 		$dirthumb = $dir.'thumbs/';
@@ -3530,7 +3552,7 @@ class Product extends CommonObject
     						else if ($nbbyrow < 0) $return .= '<div class="inline-block">';
 
     						$return.= "\n";
-    						$return.= '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&entity='.$this->entity.'&file='.urlencode($pdir.$photo).'" class="aphoto" target="_blank">';
+    						if (empty($nolink)) $return.= '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&entity='.$this->entity.'&file='.urlencode($pdir.$photo).'" class="aphoto" target="_blank">';
 
     						// Show image (width height=$maxHeight)
     						// Si fichier vignette disponible et image source trop grande, on utilise la vignette, sinon on utilise photo origine
@@ -3546,14 +3568,15 @@ class Product extends CommonObject
     							$return.= '<img class="photo photowithmargin" border="0" '.($conf->dol_use_jmobile?'max-height':'height').'="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&entity='.$this->entity.'&file='.urlencode($pdir.$photo).'" title="'.dol_escape_htmltag($alt).'">';
     						}
 
-    						$return.= '</a>'."\n";
+    						if (empty($nolink)) $return.= '</a>';
+    						$return.="\n";
 
     						if ($showfilename) $return.= '<br>'.$viewfilename;
     						if ($showaction)
     						{
     							$return.= '<br>';
     							// On propose la generation de la vignette si elle n'existe pas et si la taille est superieure aux limites
-    							if ($photo_vignette && preg_match('/('.$this->regeximgext.')$/i', $photo) && ($product->imgWidth > $maxWidth || $product->imgHeight > $maxHeight))
+    							if ($photo_vignette && preg_match('/('.$this->regeximgext.')$/i', $photo) && ($this->imgWidth > $maxWidth || $this->imgHeight > $maxHeight))
     							{
     								$return.= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=addthumb&amp;file='.urlencode($pdir.$viewfilename).'">'.img_picto($langs->trans('GenerateThumb'),'refresh').'&nbsp;&nbsp;</a>';
     							}
@@ -3988,5 +4011,66 @@ class Product extends CommonObject
 		);
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+	}
+
+	/**
+	 * Generates prices for a product based on product multiprice generation rules
+	 *
+	 * @param User $user User that updates the prices
+	 * @param float $baseprice Base price
+	 * @param string $price_type Base price type
+	 * @param float $price_vat VAT % tax
+	 * @param int $npr NPR
+	 * @param string $psq ¿?
+	 * @return int -1 KO, 1 OK
+	 */
+	public function generateMultiprices(User $user, $baseprice, $price_type, $price_vat, $npr, $psq)
+	{
+		global $conf, $db;
+
+		// FIXME USing * into select is forbidden
+		$sql = "SELECT * FROM ".MAIN_DB_PREFIX."product_pricerules";
+		$query = $db->query($sql);
+
+		$rules = array();
+
+		while ($result = $db->fetch_object($query)) {
+			$rules[$result->level] = $result;
+		}
+
+		//Because prices can be based on other level's prices, we temporarily store them
+		$prices = array(
+			1 => $baseprice
+		);
+
+		for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
+
+			$price = $baseprice;
+			$price_min = 0;
+
+			if ($i > 1) {
+				//We have to make sure it does exist and it is > 0
+				if (isset($rules[$i]->var_percent) && $rules[$i]->var_percent) {
+					$price = $prices[$rules[$i]->fk_level] * (1 + ($rules[$i]->var_percent/100));
+				}
+			}
+
+			$prices[$i] = $price;
+
+			//We have to make sure it does exist and it is > 0
+			if (isset($rules[$i]->var_min_percent) && $rules[$i]->var_min_percent) {
+				$price_min = $price * (1 - ($rules[$i]->var_min_percent/100));
+			}
+
+			if ($price == $this->multiprices[$i] && ($price_min == $this->multiprices_min[$i])) {
+				continue;
+			}
+
+			if ($this->updatePrice($price, $price_type, $user, $price_vat, $price_min, $i, $npr, $psq, true) < 0) {
+				return -1;
+			}
+		}
+
+		return 1;
 	}
 }

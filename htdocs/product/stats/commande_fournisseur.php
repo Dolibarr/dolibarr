@@ -134,10 +134,11 @@ if ($id > 0 || ! empty($ref)) {
 
 		print '</div>';
 
-		if ($user->rights->fournisseur->commande->lire) {
-			$sql = "SELECT distinct s.nom as name, s.rowid as socid, s.code_client,";
+		if ($user->rights->fournisseur->commande->lire)
+		{
+			$sql = "SELECT DISTINCT s.nom as name, s.rowid as socid, s.code_client,";
 			$sql .= " c.rowid, d.total_ht as total_ht, c.ref,";
-			$sql .= " c.date_commande, c.fk_statut as statut, c.rowid as commandeid, d.qty";
+			$sql .= " c.date_commande, c.fk_statut as statut, c.rowid as commandeid, d.rowid, d.qty";
 			if (! $user->rights->societe->client->voir && ! $socid)
 				$sql .= ", sc.fk_soc, sc.fk_user ";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "societe as s";

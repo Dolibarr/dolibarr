@@ -242,19 +242,19 @@ if (empty($reshook))
 
         if (! GETPOST('name'))
         {
-            setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ThirdPartyName")), 'errors');
+            setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ThirdPartyName")), null, 'errors');
             $error++;
             $action='create';
         }
         if (GETPOST('client') < 0)
         {
-            setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ProspectCustomer")), 'errors');
+            setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ProspectCustomer")), null, 'errors');
             $error++;
             $action='create';
         }
         if (GETPOST('fournisseur') < 0)
         {
-            setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Supplier")), 'errors');
+            setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Supplier")), null, 'errors');
             $error++;
             $action='create';
         }
@@ -680,6 +680,7 @@ if (empty($reshook))
     // Set parent company
     if ($action == 'set_thirdparty' && $user->rights->societe->creer)
     {
+    	$object->fetch($socid);
     	$result = $object->set_parent(GETPOST('editparentcompany','int'));
     }
 
@@ -1907,7 +1908,17 @@ else
 	    print $object->name_alias;
 	    print "</td></tr>";
 
-        // Prefix
+    	// Prospect/Customer
+    	print '<tr><td>'.$langs->trans('ProspectCustomer').'</td><td>';
+    	print $object->getLibCustProspStatut();
+    	print '</td></tr>';
+	    
+    	// Prospect/Customer
+    	print '<tr><td>'.$langs->trans('Supplier').'</td><td>';
+    	print yn($object->fournisseur);
+    	print '</td></tr>';
+    	
+    	// Prefix
         if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
         {
             print '<tr><td>'.$langs->trans('Prefix').'</td><td>'.$object->prefix_comm.'</td>';
@@ -2480,9 +2491,6 @@ else
 	        {
 	        	$result=show_addresses($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
 	        }
-
-	        // Projects list
-	        $result=show_projects($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
 		}
     }
 

@@ -165,7 +165,7 @@ if ($tmpval <= 360) { $colortextbackvmenu='FFFFFF'; }
 else { $colortextbackvmenu='111111'; }
 $tmppart=explode(',',$colorbacktitle1);
 $tmpval=(! empty($tmppart[1]) ? $tmppart[1] : '')+(! empty($tmppart[2]) ? $tmppart[2] : '')+(! empty($tmppart[3]) ? $tmppart[3] : '');
-if ($tmpval <= 360) { $colortexttitle='FFFFFF'; $colorshadowtitle='888888'; }
+if ($tmpval <= 260) { $colortexttitle='FFFFFF'; $colorshadowtitle='888888'; }
 else { $colortexttitle='111111'; $colorshadowtitle='FFFFFF'; }
 $tmppart=explode(',',$colorbacktabcard1);
 $tmpval=(! empty($tmppart[1]) ? $tmppart[1] : '')+(! empty($tmppart[2]) ? $tmppart[2] : '')+(! empty($tmppart[3]) ? $tmppart[3] : '');
@@ -230,7 +230,7 @@ body {
     <?php print 'direction: '.$langs->trans("DIRECTION").";\n"; ?>
 }
 
-a:link, a:visited, a:hover, a:active { font-family: <?php print $fontlist ?>; font-weight: bold; color: #4A4A4A; text-decoration: none;  }
+a:link, a:visited, a:hover, a:active { font-family: <?php print $fontlist ?>; font-weight: bold; color: #000; text-decoration: none;  }
 
 a:hover { text-decoration: underline; color: #000000;}
 
@@ -499,7 +499,7 @@ div.confirmmessage {
 .maxwidth100 { max-width: 100px; }
 .maxwidth200 { max-width: 200px; }
 .maxwidth300 { max-width: 300px; }
-.titlefield { width: 25%; }
+.titlefield { width: 30%; }
 <?php if (! empty($dol_optimize_smallscreen)) { ?>
 .hideonsmartphone { display: none; }
 .noenlargeonsmartphone { width : 50px !important; display: inline !important; }
@@ -560,11 +560,16 @@ td.showDragHandle {
 }
 #id-right {	/* This must stay id-right and not be replaced with echo $right */
 	width: 100%;
+<?php if (GETPOST("optioncss") != 'print') { ?>
 	padding-left: 194px;
 	padding-top: 12px;
+<?php } ?>	
 }
 
 .side-nav {
+<?php if (GETPOST("optioncss") == 'print') { ?>
+	display: none;
+<?php } else { ?>
 	background: #FFF;
 	border-right: 1px solid rgba(0,0,0,0.2);
 	bottom: 0;
@@ -600,6 +605,7 @@ td.showDragHandle {
 	-webkit-overflow-scrolling: touch;
 	overflow-x: hidden;
 	overflow-y: auto;
+<?php } ?>
 }
 .side-nav-vert {
 	margin-left: 194px;
@@ -681,7 +687,7 @@ div.divphotoref {
 div.statusref {
 	float: right;
 	padding-right: 12px;
-	margin-top: 7px;
+	margin-top: 8px;
 	margin-bottom: 10px;
 }
 img.photoref {
@@ -708,7 +714,7 @@ $heightmenu=48;			/* height of top menu, part with image */
 $heightmenu2=48;        /* height of top menu, ârt with login  */
 $disableimages = 0;
 $maxwidthloginblock = 110;
-if (! empty($conf->global->THEME_ELDY_DISABLE_IMAGE) || $dol_optimize_smallscreen) { $disableimages = 1; $maxwidthloginblock = 180; }
+if (! empty($conf->global->THEME_ELDY_DISABLE_IMAGE)) { $disableimages = 1; $maxwidthloginblock = 180; }
 ?>
 
 div#tmenu_tooltip {
@@ -731,7 +737,7 @@ div#tmenu_tooltip {
 <?php if (GETPOST("optioncss") == 'print') {  ?>
 	display:none;
 <?php } else { ?>
-	/* padding-<?php echo $right; ?>: <? echo ($maxwidthloginblock - 10); ?>px; */
+	/* padding-<?php echo $right; ?>: <?php echo ($maxwidthloginblock - 10); ?>px; */
 <?php } ?>
 }
 
@@ -913,7 +919,6 @@ div.mainmenu.members {
 
 div.mainmenu.products {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/products.png',1) ?>);
-	margin-left: 10px;
 }
 
 div.mainmenu.project {
@@ -1114,12 +1119,16 @@ div.login_block_other { padding-top: 3px; }
 .login_block_elem_name {
 	margin-top: 5px;
 }
+.atoplogin, .atoplogin:hover {
+	color: #<?php echo $colortextbackvmenu; ?> !important;
+	font-weight: normal !important;
+}
 .alogin, .alogin:hover {
 	color: #888 !important;
 	font-weight: normal !important;
 	font-size: <?php echo $fontsizesmaller; ?>px !important;
 }
-.alogin:hover {
+.alogin:hover, .atoplogin:hover {
 	text-decoration:underline !important;
 }
 img.login, img.printer, img.entity {
@@ -1168,6 +1177,10 @@ div.vmenu, td.vmenu {
 	<?php if (GETPOST("optioncss") == 'print') { ?>
     display: none;
 	<?php } ?>
+}
+
+.vmenusearchselectcombo {
+	width: 170px;
 }
 
 .menu_contenu { padding-top: 4px; padding-bottom: 3px;}
@@ -3372,6 +3385,12 @@ a span.select2-chosen
 {
 	background: #FFFFFF;
 }
+.select2-results {
+	max-height:	400px;
+}
+.css-searchselectcombo ul.select2-results {
+	max-height:	none;
+}
 .select2-container-multi.select2-container-disabled .select2-choices {
 	background-color: #FFFFFF;
 	background-image: none;
@@ -3711,7 +3730,22 @@ border-top-right-radius: 6px;
 }
 @media only screen and (max-width: 570px)
 {
-    div.mainmenu {
+	/* Reduce login top right info */
+	.usertextatoplogin {
+		display: none;
+	}
+	div#tmenu_tooltip {
+	<?php if (GETPOST("optioncss") == 'print') {  ?>
+		display:none;
+	<?php } else { ?>
+		/* padding-<?php echo $right; ?>: 78px; */
+	<?php } ?>
+	}
+	div.login_block {
+		top: 9px;
+	}
+
+	div.mainmenu {
     	min-width: 20px;
     }
 	.topmenuimage {

@@ -60,7 +60,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 // Search thirdparty
 if (! empty($conf->societe->enabled) && $user->rights->societe->lire)
 {
-	$listofsearchfields['search_thirdparty']=array('text'=>'Thirdparty');
+	$listofsearchfields['search_thirdparty']=array('text'=>'ThirdParty');
 }
 // Search contact/address
 if (! empty($conf->societe->enabled) && $user->rights->societe->lire)
@@ -143,19 +143,19 @@ else
     if (! empty($conf->societe->enabled) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS))
     {
         $statstring = "<tr ".$bc[0].">";
-        $statstring.= '<td><a href="'.DOL_URL_ROOT.'/comm/prospect/list.php">'.$langs->trans("Prospects").'</a></td><td align="right">'.round($third['prospect']).'</td>';
+        $statstring.= '<td><a href="'.DOL_URL_ROOT.'/societe/list.php?type=p">'.$langs->trans("Prospects").'</a></td><td align="right">'.round($third['prospect']).'</td>';
         $statstring.= "</tr>";
     }
     if (! empty($conf->societe->enabled) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS))
     {
         $statstring.= "<tr ".$bc[1].">";
-        $statstring.= '<td><a href="'.DOL_URL_ROOT.'/comm/list.php">'.$langs->trans("Customers").'</a></td><td align="right">'.round($third['customer']).'</td>';
+        $statstring.= '<td><a href="'.DOL_URL_ROOT.'/societe/list.php?type=c">'.$langs->trans("Customers").'</a></td><td align="right">'.round($third['customer']).'</td>';
         $statstring.= "</tr>";
     }
     if (! empty($conf->fournisseur->enabled) && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS))
     {
         $statstring2 = "<tr ".$bc[0].">";
-        $statstring2.= '<td><a href="'.DOL_URL_ROOT.'/fourn/list.php">'.$langs->trans("Suppliers").'</a></td><td align="right">'.round($third['supplier']).'</td>';
+        $statstring2.= '<td><a href="'.DOL_URL_ROOT.'/societe/list.php?type=f">'.$langs->trans("Suppliers").'</a></td><td align="right">'.round($third['supplier']).'</td>';
         $statstring2.= "</tr>";
     }
     print $statstring;

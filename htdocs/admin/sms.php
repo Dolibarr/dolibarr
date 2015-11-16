@@ -88,25 +88,25 @@ if ($action == 'send' && ! $_POST['cancel'])
 
 	if (! empty($formsms->error))
 	{
-		setEventMessage($formsms->error,'errors');
+		setEventMessages($formsms->error, $formsms->errors, 'errors');
 	    $action='test';
 	    $error++;
 	}
     if (empty($body))
     {
-        setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Message")),'errors');
+        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Message")), null, 'errors');
         $action='test';
         $error++;
     }
 	if (empty($smsfrom) || ! str_replace('+','',$smsfrom))
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("SmsFrom")),'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("SmsFrom")), null, 'errors');
         $action='test';
 		$error++;
 	}
 	if (empty($sendto) || ! str_replace('+','',$sendto))
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("SmsTo")),'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("SmsTo")), null, 'errors');
         $action='test';
 		$error++;
 	}
@@ -123,11 +123,11 @@ if ($action == 'send' && ! $_POST['cancel'])
 
 		if ($result)
 		{
-			setEventMessage($langs->trans("SmsSuccessfulySent",$smsfrom,$sendto));
+			setEventMessages($langs->trans("SmsSuccessfulySent",$smsfrom,$sendto), null, 'mesgs');
 		}
 		else
 		{
-			setEventMessage($langs->trans("ResultKo"),'errors');
+			setEventMessages($langs->trans("ResultKo"), null, 'errors');
 		}
 
 		$action='';

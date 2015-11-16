@@ -125,17 +125,17 @@ else if ($action == 'add' && $user->rights->deplacement->creer)
 
         if (! $object->date)
         {
-	        setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date")), 'errors');
+	        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
             $error++;
         }
         if ($object->type == '-1')
         {
-	        setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")), 'errors');
+	        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
             $error++;
         }
         if (! ($object->fk_user > 0))
         {
-	        setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Person")), 'errors');
+	        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Person")), null, 'errors');
             $error++;
         }
 

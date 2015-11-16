@@ -46,12 +46,13 @@ create table llx_product
   price_base_type			varchar(3)   DEFAULT 'HT',
   tva_tx					double(6,3),					  -- Default VAT rate of product
   recuperableonly           integer NOT NULL DEFAULT '0',  -- French NPR VAT
-  localtax1_tx				double(6,3)  DEFAULT 0,         -- Spanish local VAT 1 
+  localtax1_tx				double(6,3)  DEFAULT 0,         -- Spanish local VAT 1
   localtax2_tx				double(6,3)  DEFAULT 0,         -- Spanish local VAT 2
   fk_user_author			integer DEFAULT NULL,			  -- user making creation
   fk_user_modif             integer,                         -- user making last change
   tosell					tinyint      DEFAULT 1,	          -- Product you sell
   tobuy						tinyint      DEFAULT 1,            -- Product you buy
+  onportal     				tinyint      DEFAULT 0,	          -- If it is a product you sell and you want to sell it on portal (module website must be on)
   tobatch					tinyint      DEFAULT 0 NOT NULL,  -- Is it a product that need a batch or eat-by management
   fk_product_type			integer      DEFAULT 0,			-- Type of product: 0 for regular product, 1 for service, 9 for other (used by external module)
   duration					varchar(6),
@@ -80,5 +81,6 @@ create table llx_product
   import_key				varchar(14),					-- Import key
   fk_price_expression integer,                     -- Link to the rule for dynamic price calculation
   desiredstock              integer      DEFAULT 0,
-  fk_unit					integer      DEFAULT NULL
+  fk_unit					integer      DEFAULT NULL,
+  price_autogen TINYINT DEFAULT 0
 )ENGINE=innodb;

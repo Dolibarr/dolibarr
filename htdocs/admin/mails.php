@@ -123,7 +123,7 @@ if (! empty($_POST['removedfile']) || ! empty($_POST['removedfilehtml']))
 		$result = dol_delete_file($pathtodelete,1);
 		if ($result)
 		{
-			setEventMessage($langs->trans("FileWasRemoved"), $filetodelete);
+			setEventMessages(array($langs->trans("FileWasRemoved"), $filetodelete), null, 'mesgs');
 
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 			$formmail = new FormMail($db);
@@ -169,19 +169,19 @@ if (($action == 'send' || $action == 'sendhtml') && ! GETPOST('addfile') && ! GE
 
 	if (empty($_POST["frommail"]))
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("MailFrom")),'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("MailFrom")), null, 'errors');
 		$action='test';
 		$error++;
 	}
 	if (empty($sendto))
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("MailTo")),'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("MailTo")), null, 'errors');
 		$action='test';
 		$error++;
 	}
 	if (! $error)
 	{
-		// Le message est-il en html
+		// Is the message in HTML?
 		$msgishtml=0;	// Message is not HTML
 		if ($action == 'sendhtml') $msgishtml=1;	// Force message to HTML
 
@@ -209,11 +209,11 @@ if (($action == 'send' || $action == 'sendhtml') && ! GETPOST('addfile') && ! GE
 
 		if ($result)
 		{
-			setEventMessage($langs->trans("MailSuccessfulySent",$mailfile->getValidAddress($email_from,2),$mailfile->getValidAddress($sendto,2)));
+			setEventMessages($langs->trans("MailSuccessfulySent",$mailfile->getValidAddress($email_from,2),$mailfile->getValidAddress($sendto,2)), null, 'mesgs');
 		}
 		else
 		{
-			setEventMessage($langs->trans("ResultKo").'<br>'.$mailfile->error.' '.$result,'errors');
+			setEventMessages($langs->trans("ResultKo").'<br>'.$mailfile->error.' '.$result, null, 'errors');
 		}
 
 		$action='';
@@ -677,7 +677,7 @@ else
 				$errormsg .= ' - '.$mail->error;
 			}
 
-			setEventMessage($errormsg, 'errors');
+			setEventMessages($errormsg, null, 'errors');
 		}
 		print '<br>';
 	}

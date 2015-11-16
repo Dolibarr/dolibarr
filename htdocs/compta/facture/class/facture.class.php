@@ -385,6 +385,8 @@ class Facture extends CommonInvoice
 				{
 					$newinvoiceline=$this->lines[$i];
 					$newinvoiceline->fk_facture=$this->id;
+                    $newinvoiceline->origin = $this->element;
+                    $newinvoiceline->origin_id = $this->lines[$i]->id;
 					if ($result >= 0 && ($newinvoiceline->info_bits & 0x01) == 0)	// We keep only lines with first bit = 0
 					{
 						// Reset fk_parent_line for no child products and special product
@@ -441,8 +443,8 @@ class Facture extends CommonInvoice
 							$this->lines[$i]->product_type,
 							$this->lines[$i]->rang,
 							$this->lines[$i]->special_code,
-							'',
-							0,
+                            $this->element,
+                            $this->lines[$i]->id,
 							$fk_parent_line,
 							$this->lines[$i]->fk_fournprice,
 							$this->lines[$i]->pa_ht,
@@ -873,7 +875,7 @@ class Facture extends CommonInvoice
 	 */
 	function getNomUrl($withpicto=0,$option='',$max=0,$short=0,$moretitle='')
 	{
-		global $langs;
+		global $langs, $conf;
 
 		$result='';
 
@@ -1853,7 +1855,7 @@ class Facture extends CommonInvoice
 							$mouvP = new MouvementStock($this->db);
 							$mouvP->origin = &$this;
 							// We decrease stock for product
-							if ($this->type == self::TYPE_CREDIT_NOTE) $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarr",$num));
+							if ($this->type == self::TYPE_CREDIT_NOTE) $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->trans("InvoiceValidatedInDolibarr",$num));
 							else $result=$mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarr",$num));
 							if ($result < 0) {
 								$error++;
@@ -2361,16 +2363,7 @@ class Facture extends CommonInvoice
 			$this->line->situation_percent  = $situation_percent;
 			$this->line->fk_unit				= $fk_unit;
 
-			// infos marge
-			if (!empty($fk_product) && empty($fk_fournprice) && empty($pa_ht)) {
-			    // POS or external module, take lowest buying price
-			    include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
-			    $productFournisseur = new ProductFournisseur($this->db);
-			    $productFournisseur->find_min_price_product_fournisseur($fk_product);
-			    $this->line->fk_fournprice = $productFournisseur->product_fourn_price_id;
-			} else {
-			    $this->line->fk_fournprice = $fk_fournprice;
-			}
+			$this->line->fk_fournprice = $fk_fournprice;
 			$this->line->pa_ht = $pa_ht;
 
 			if (is_array($array_options) && count($array_options)>0) {
@@ -3861,7 +3854,9 @@ class FactureLigne extends CommonInvoiceLine
 
 		$error=0;
 
-		dol_syslog(get_class($this)."::insert rang=".$this->rang, LOG_DEBUG);
+        $pa_ht_isemptystring = (empty($this->pa_ht) && $this->pa_ht == ''); // If true, we can use a default value. If this->pa_ht = '0', we must use '0'.
+		
+        dol_syslog(get_class($this)."::insert rang=".$this->rang, LOG_DEBUG);
 
 		// Clean parameters
 		$this->desc=trim($this->desc);
@@ -3880,13 +3875,19 @@ class FactureLigne extends CommonInvoiceLine
 		if (empty($this->fk_parent_line)) $this->fk_parent_line=0;
 		if (empty($this->fk_prev_id)) $this->fk_prev_id = 'null';
 		if (empty($this->situation_percent)) $this->situation_percent = 0;
-
 		if (empty($this->pa_ht)) $this->pa_ht=0;
 
-		// si prix d'achat non renseigne et utilise pour calcul des marges alors prix achat = prix vente
-		if ($this->pa_ht == 0) {
-			if ($this->subprice > 0 && (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1))
-				$this->pa_ht = $this->subprice * (1 - $this->remise_percent / 100);
+		// if buy price not defined, define buyprice as configured in margin admin
+		if ($this->pa_ht == 0 && $pa_ht_isemptystring) 
+		{
+			if (($result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product)) < 0)
+			{
+				return $result;
+			}
+			else
+			{
+				$this->pa_ht = $result;
+			}
 		}
 
 		// Check parameters
@@ -3904,14 +3905,6 @@ class FactureLigne extends CommonInvoiceLine
 				$this->error='ErrorProductIdDoesNotExists';
 				return -1;
 			}
-		}
-
-		// POS or by external module, take lowest buying price
-		if (!empty($this->fk_product) && empty($this->fk_fournprice) && empty($this->pa_ht)) {
-		    include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
-		    $productFournisseur = new ProductFournisseur($this->db);
-		    $productFournisseur->find_min_price_product_fournisseur($this->fk_product);
-		    $this->fk_fournprice = $productFournisseur->product_fourn_price_id;
 		}
 
 		$this->db->begin();
@@ -4060,6 +4053,8 @@ class FactureLigne extends CommonInvoiceLine
 
 		$error=0;
 
+		$pa_ht_isemptystring = (empty($this->pa_ht) && $this->pa_ht == ''); // If true, we can use a default value. If this->pa_ht = '0', we must use '0'.
+		
 		// Clean parameters
 		$this->desc=trim($this->desc);
 		if (empty($this->tva_tx)) $this->tva_tx=0;
@@ -4075,16 +4070,22 @@ class FactureLigne extends CommonInvoiceLine
 		if (empty($this->product_type)) $this->product_type=0;
 		if (empty($this->fk_parent_line)) $this->fk_parent_line=0;
 		if (is_null($this->situation_percent)) $this->situation_percent=100;
-
+		if (empty($this->pa_ht)) $this->pa_ht=0;
+		
 		// Check parameters
 		if ($this->product_type < 0) return -1;
 
-		if (empty($this->pa_ht)) $this->pa_ht=0;
-
-		// si prix d'achat non renseigne et utilise pour calcul des marges alors prix achat = prix vente
-		if ($this->pa_ht == 0) {
-			if ($this->subprice > 0 && (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1))
-				$this->pa_ht = $this->subprice * (1 - $this->remise_percent / 100);
+		// if buy price not defined, define buyprice as configured in margin admin
+		if ($this->pa_ht == 0 && $pa_ht_isemptystring) 
+		{
+			if (($result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product)) < 0)
+			{
+				return $result;
+			}
+			else
+			{
+				$this->pa_ht = $result;
+			}
 		}
 
 		$this->db->begin();

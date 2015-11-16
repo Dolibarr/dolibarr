@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2013      Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2014 Marcos García				<marcosgdf@gmail.com>
+/* Copyright (C) 2013-2015 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2014      Marcos García       <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ if ($result <= 0) dol_print_error('','Failed to get survey id '.$numsondage);
 $nblignes=$object->fetch_lines();
 
 //If the survey has not yet finished, then it can be modified
-$canbemodified = ($object->date_fin > dol_now());
+$canbemodified = (empty($object->date_fin) || $object->date_fin > dol_now());
 
 
 /*
@@ -67,12 +67,12 @@ if (GETPOST('ajoutcomment'))
 	if (! GETPOST('comment'))
 	{
 		$error++;
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Comment")),'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Comment")), null, 'errors');
 	}
 	if (! GETPOST('commentuser'))
 	{
 		$error++;
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("User")),'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("User")), null, 'errors');
 	}
 
 	if (! $error)
@@ -164,7 +164,7 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x"))		// bout
 	}
 	else
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Name")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Name")), null, 'errors');
 	}
 }
 

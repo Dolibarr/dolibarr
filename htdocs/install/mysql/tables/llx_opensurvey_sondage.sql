@@ -24,10 +24,10 @@ CREATE TABLE llx_opensurvey_sondage (
 	fk_user_creat integer NOT NULL,
 	titre TEXT NOT NULL,
 	date_fin DATETIME NOT NULL,
-	format VARCHAR(2) NOT NULL,
+	format VARCHAR(2) NOT NULL,                 -- 'A' = Text choice (choices are saved into sujet field), 'D' = Date choice (choices are saved into sujet field), 'F' = Form survey
 	mailsonde tinyint NOT NULL DEFAULT 0,
 	allow_comments tinyint NOT NULL DEFAULT 1,
 	allow_spy tinyint NOT NULL DEFAULT 1,
 	tms TIMESTAMP,
-	sujet TEXT
+	sujet TEXT,									-- Not filled if format = 'F'. Question are into table llx_opensurvey_formquestions
 ) ENGINE=InnoDB;

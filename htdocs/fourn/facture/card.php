@@ -716,7 +716,7 @@ if (empty($reshook))
 	            // Product not selected
 	            $error++;
 	            $langs->load("errors");
-		        setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("ProductOrService")), 'errors');
+		        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ProductOrService")), null, 'errors');
 	        }
 	        if ($idprod == -1)
 	        {
@@ -1515,8 +1515,8 @@ if ($action == 'create')
 	        $txt=$langs->trans("SupplierOrder");
         }
         print '<tr><td>'.$txt.'</td><td colspan="2">'.$objectsrc->getNomUrl(1);
-        //We check if Origin document has already an invoice attached to it
-        $objectsrc->fetchObjectLinked($originid,'','','invoice_supplier');
+        // We check if Origin document (id and type is known) has already at least one invoice attached to it
+        $objectsrc->fetchObjectLinked($originid,$origin,'','invoice_supplier');
         $cntinvoice=count($objectsrc->linkedObjects['invoice_supplier']);
         if ($cntinvoice>=1)
         {

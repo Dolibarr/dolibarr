@@ -82,52 +82,51 @@ class box_task extends ModeleBoxes
 
 			$sql = "SELECT pt.fk_statut, count(pt.rowid) as nb, sum(ptt.task_duration) as durationtot, sum(pt.planned_workload) as plannedtot";
 			$sql.= " FROM ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."projet_task_time as ptt";
-			$sql.= " WHERE DATE_FORMAT(pt.datec,'%Y') = '".date("Y")."' ";
+			$sql.= " WHERE pt.datec BETWEEN '".$this->db->idate(dol_get_first_day(date("Y"), 1))."' AND '".$this->db->idate(dol_get_last_day(date("Y"), 12))."'";
 			$sql.= " AND pt.rowid = ptt.fk_task";
 			$sql.= " GROUP BY pt.fk_statut ";
 			$sql.= " ORDER BY pt.fk_statut DESC";
 			$sql.= $db->plimit($max, 0);
 
 			$result = $db->query($sql);
-
-			if ($result) {
+			if ($result) 
+			{
 				$num = $db->num_rows($result);
 				$i = 0;
-                while ($i < $num) {
-                    $this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"','logo' => 'object_projecttask');
-
+                while ($i < $num) 
+                {
                     $objp = $db->fetch_object($result);
-                    $this->info_box_contents[$i][1] = array(
+                    $this->info_box_contents[$i][] = array(
                         'td' => 'align="left"',
-                        'text' =>$langs->trans("Task")."&nbsp;".$taskstatic->LibStatut($objp->fk_statut,0),
+                        'text' =>$langs->trans("Task")." ".$taskstatic->LibStatut($objp->fk_statut,0),
                     );
 
-                    $this->info_box_contents[$i][2] = array(
+                    $this->info_box_contents[$i][] = array(
                         'td' => 'align="right"',
                         'text' => $objp->nb."&nbsp;".$langs->trans("Tasks"),
                         'url' => DOL_URL_ROOT."/projet/tasks/index.php?leftmenu=projects&viewstatut=".$objp->fk_statut,
                     );
 					$totalnb += $objp->nb;
-					$this->info_box_contents[$i][3] = array('td' => 'align="right"', 'text' => ConvertSecondToTime($objp->plannedtot,'all',25200,5));
+					$this->info_box_contents[$i][] = array('td' => 'align="right"', 'text' => ConvertSecondToTime($objp->plannedtot,'all',25200,5));
 					$totalplannedtot += $objp->plannedtot;
-					$this->info_box_contents[$i][4] = array('td' => 'align="right"', 'text' => ConvertSecondToTime($objp->durationtot,'all',25200,5));
+					$this->info_box_contents[$i][] = array('td' => 'align="right"', 'text' => ConvertSecondToTime($objp->durationtot,'all',25200,5));
 					$totaldurationtot += $objp->durationtot;
 
-					$this->info_box_contents[$i][5] = array('td' => 'align="right" width="18"', 'text' => $taskstatic->LibStatut($objp->fk_statut,3));
+					$this->info_box_contents[$i][] = array('td' => 'align="right" width="18"', 'text' => $taskstatic->LibStatut($objp->fk_statut,3));
 
 					$i++;
 				}
 			}
+			else dol_print_error($this->db);
 		}
 
 
 		// Add the sum à the bottom of the boxes
-		$this->info_box_contents[$i][0] = array('tr' => 'class="liste_total"', 'td' => 'align="left"', 'text' => $langs->trans("Total")."&nbsp;".$textHead);
-		$this->info_box_contents[$i][1] = array('td' => '', 'text' => "");
-		$this->info_box_contents[$i][2] = array('td' => 'align="right" ', 'text' => number_format($totalnb, 0, ',', ' ')."&nbsp;".$langs->trans("Tasks"));
-		$this->info_box_contents[$i][3] = array('td' => 'align="right" ', 'text' => ConvertSecondToTime($totalplannedtot,'all',25200,5));
-		$this->info_box_contents[$i][4] = array('td' => 'align="right" ', 'text' => ConvertSecondToTime($totaldurationtot,'all',25200,5));
-		$this->info_box_contents[$i][5] = array('td' => '', 'text' => "");
+		$this->info_box_contents[$i][] = array('tr' => 'class="liste_total"', 'td' => 'align="left"', 'text' => $langs->trans("Total")."&nbsp;".$textHead);
+		$this->info_box_contents[$i][] = array('td' => 'align="right" ', 'text' => number_format($totalnb, 0, ',', ' ')."&nbsp;".$langs->trans("Tasks"));
+		$this->info_box_contents[$i][] = array('td' => 'align="right" ', 'text' => ConvertSecondToTime($totalplannedtot,'all',25200,5));
+		$this->info_box_contents[$i][] = array('td' => 'align="right" ', 'text' => ConvertSecondToTime($totaldurationtot,'all',25200,5));
+		$this->info_box_contents[$i][] = array('td' => '', 'text' => "");
 
 	}
 

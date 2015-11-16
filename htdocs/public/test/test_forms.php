@@ -64,11 +64,9 @@ print $form->selectarray('selectarray',$array);
 
 print '<br><br>'."\n";
 
-print "Test 4d: a select with ajax refresh<br>\n";
-//$array=array(0=>'',1=>'Search into xxx',2=>'Search into yyy',3=>'Search into zzz');
-$array=array();
+print "Test 4d: a select with ajax refresh and with onchange call of url<br>\n";
 $selected=-1;
-print $form->selectArrayAjax('testselectc', DOL_URL_ROOT.'/core/ajax/selectsearchbox.php', $selected, 'style="min-width: 250px;"', '', 0, 1, '');
+print $form->selectArrayAjax('testselectc', DOL_URL_ROOT.'/core/ajax/selectsearchbox.php', $selected, 'style="min-width: 250px;"', '', 0, 1, '', 1);
 
 
 print '<br><br>'."\n";

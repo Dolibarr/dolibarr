@@ -14,6 +14,11 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
+-- Change are done into list pages to use the new code to manage
+-- selection by users of fields. Once all changes are done with new
+-- code, we will be able to use this table to store the content of
+-- the $arrayfields table.
+-- Table not used / not required for the moment.
 -- ========================================================================
 
 create table llx_c_field_list

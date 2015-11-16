@@ -84,7 +84,7 @@ class ModeleImports
     			{
     				$moduleid=$reg[1];
 
-    				// Chargement de la classe
+    				// Loading Class
     				$file = $dir."/import_".$moduleid.".modules.php";
     				$classname = "Import".ucfirst($moduleid);
 

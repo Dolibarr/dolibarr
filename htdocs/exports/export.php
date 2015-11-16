@@ -320,7 +320,7 @@ if ($action == 'add_export_model')
 	}
 	else
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("ExportModelName")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("ExportModelName")), null, 'errors');
 	}
 }
 

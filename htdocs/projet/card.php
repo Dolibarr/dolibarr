@@ -118,12 +118,12 @@ if (empty($reshook))
 	    $error=0;
 	    if (empty($_POST["ref"]))
 	    {
-		    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Ref")), 'errors');
+		    setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Ref")), null, 'errors');
 	        $error++;
 	    }
 	    if (empty($_POST["title"]))
 	    {
-		    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")), 'errors');
+		    setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
 	        $error++;
 	    }
 
@@ -205,13 +205,13 @@ if (empty($reshook))
 	    {
 	        $error++;
 	        //$_GET["id"]=$_POST["id"]; // On retourne sur la fiche projet
-		    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Ref")), 'errors');
+		    setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Ref")), null, 'errors');
 	    }
 	    if (empty($_POST["title"]))
 	    {
 	        $error++;
 	        //$_GET["id"]=$_POST["id"]; // On retourne sur la fiche projet
-		    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")), 'errors');
+		    setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
 	    }
 
 	    $db->begin();
@@ -624,7 +624,7 @@ else
         print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td>';
         print '<td><input size="40" name="title" value="'.$object->title.'"></td></tr>';
 
-        // Customer
+        // Thirdparty
         print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
 	    $filteronlist='';
 	    if (! empty($conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST)) $filteronlist=$conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST;
@@ -713,7 +713,7 @@ else
 
         // Third party
         print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-        if ($object->thirdparty->id > 0) print $object->thirdparty->getNomUrl(1);
+        if ($object->thirdparty->id > 0) print $object->thirdparty->getNomUrl(1, 'project');
         else print'&nbsp;';
         print '</td></tr>';
 

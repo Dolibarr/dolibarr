@@ -779,7 +779,7 @@ print '<div class="tabsAction">';
 
 if ($user->societe_id == 0 && ! empty($object->id) && $object->statut == 0 && $user->rights->banque->cheque)
 {
-	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=valide&amp;sortfield='.$sortfield.'&amp;sortorder='.$sortorder.'">'.$langs->trans('Valid').'</a>';
+	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=valide&amp;sortfield='.$sortfield.'&amp;sortorder='.$sortorder.'">'.$langs->trans('Validate').'</a>';
 }
 
 if ($user->societe_id == 0 && ! empty($object->id) && $user->rights->banque->cheque)
@@ -806,6 +806,7 @@ if ($action != 'new')
 }
 
 
-$db->close();
 
 llxFooter();
+
+$db->close();

@@ -135,15 +135,15 @@ if ($action == 'add' && $id && ! isset($_POST["cancel"]) && $user->rights->banqu
 
 	if (! $dateop) {
 		$error++;
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->trans("Date")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Date")), null, 'errors');
 	}
 	if (! $operation) {
 		$error++;
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->trans("Type")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Type")), null, 'errors');
 	}
 	if (! $amount) {
 		$error++;
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->trans("Amount")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Amount")), null, 'errors');
 	}
 
 	if (! $error)
@@ -952,7 +952,7 @@ if ($id > 0 || ! empty($ref))
 			if ($sep > 0) print '&nbsp;';	// If we had at least one line in future
 			else print $langs->trans("CurrentBalance");
 			print ' '.$object->currency_code.'</td>';
-			print '<td align="right" class="nowrap"><b>'.price($total, 0, $langs, 0, 0, -1, $object->currency_code).'</b></td>';
+			print '<td align="right" class="nowrap"><b>'.price($total).'</b></td>';
 			print '<td>&nbsp;</td>';
 			print '</tr>';
 		} else {
@@ -961,9 +961,9 @@ if ($id > 0 || ! empty($ref))
 			if ($sep > 0) print '&nbsp;';	// If we had at least one line in future
 			else print $langs->trans("Total");
 			print ' '.$object->currency_code.'</td>';
-			print '<td align="right" class="nowrap"><b>'.price($total_deb*-1, 0, $langs, 0, 0, -1, $object->currency_code).'</b></td>';
-			print '<td align="right" class="nowrap"><b>'.price($total_cred, 0, $langs, 0, 0, -1, $object->currency_code).'</b></td>';
-			print '<td align="right" class="nowrap"><b>'.price($total_cred-($total_deb*-1), 0, $langs, 0, 0, -1, $object->currency_code).'</b></td>';
+			print '<td align="right" class="nowrap"><b>'.price($total_deb*-1).'</b></td>';
+			print '<td align="right" class="nowrap"><b>'.price($total_cred).'</b></td>';
+			print '<td align="right" class="nowrap"><b>'.price($total_cred-($total_deb*-1)).'</b></td>';
 			print '<td>&nbsp;</td>';
 			print '</tr>';
 		}

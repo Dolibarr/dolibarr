@@ -220,7 +220,7 @@ if ($action == 'writebookkeeping')
 			$result = $bookkeeping->create();
 			if ($result < 0) {
 				$error ++;
-				setEventMessage($object->errors, 'errors');
+				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
 
@@ -250,7 +250,7 @@ if ($action == 'writebookkeeping')
 					$result = $bookkeeping->create();
 					if ($result < 0) {
 						$error ++;
-						setEventMessage($object->errors, 'errors');
+						setEventMessages($object->error, $object->errors, 'errors');
 					}
 				}
 			}
@@ -282,14 +282,14 @@ if ($action == 'writebookkeeping')
 				$result = $bookkeeping->create();
 				if ($result < 0) {
 					$error ++;
-					setEventMessage($object->errors, 'errors');
+					setEventMessages($object->error, $object->errors, 'errors');
 				}
 			}
 		}
 	}
 
 	if (empty($error)) {
-		setEventMessage($langs->trans("GeneralLedgerIsWritten"),'mesgs');
+		setEventMessages($langs->trans("GeneralLedgerIsWritten"), null, 'mesgs');
 	}
 }
 

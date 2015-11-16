@@ -111,7 +111,7 @@ class ExtraFields
 	 *  @param  string	$elementtype        Element type ('member', 'product', 'thirdparty', ...)
 	 *  @param	int		$unique				Is field unique or not
 	 *  @param	int		$required			Is field required or not
-	 *  @param	string	$default_value		Defaulted value
+	 *  @param	string	$default_value		Defaulted value (Example: '', '0', 'null', 'avalue')
 	 *  @param  array	$param				Params for field
 	 *  @param  int		$alwayseditable		Is attribute always editable regardless of the document status
 	 *  @param	string	$perms				Permission to check
@@ -739,10 +739,10 @@ class ExtraFields
 		elseif ($type == 'select')
 		{
 			$out = '';
-			if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT) && ! $forcecombo)
+			if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_EXTRAFIELDS_USE_SELECT2))
 			{
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-				$out.= ajax_combobox($keysuffix.'options_'.$key.$keyprefix, array(), $conf->global->COMPANY_USE_SEARCH_TO_SELECT);
+				$out.= ajax_combobox($keysuffix.'options_'.$key.$keyprefix, array(), 0);
 			}
 
 			$out.='<select class="flat" name="'.$keysuffix.'options_'.$key.$keyprefix.'" id="options_'.$key.$keyprefix.'" '.($moreparam?$moreparam:'').'>';
@@ -760,10 +760,10 @@ class ExtraFields
 		elseif ($type == 'sellist')
 		{
 			$out = '';
-			if ($conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT && ! $forcecombo)
+			if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_EXTRAFIELDS_USE_SELECT2))
 			{
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-				$out.= ajax_combobox($keysuffix.'options_'.$key.$keyprefix, array(), $conf->global->COMPANY_USE_SEARCH_TO_SELECT);
+				$out.= ajax_combobox($keysuffix.'options_'.$key.$keyprefix, array(), 0);
 			}
 
 			$out.='<select class="flat" name="'.$keysuffix.'options_'.$key.$keyprefix.'" id="options_'.$key.$keyprefix.'" '.($moreparam?$moreparam:'').'>';
@@ -1085,10 +1085,19 @@ class ExtraFields
 			// 1 : classPath
 			$InfoFieldList = explode(":", $param_list[0]);
 			dol_include_once($InfoFieldList[1]);
-			$object = new $InfoFieldList[0]($this->db);
-			$object->fetch($value);
-			$out='<input type="text" class="flat" name="'.$keysuffix.'options_'.$key.$keyprefix.'"  size="20" value="'.$object->ref.'" >';
-
+			if ($InfoFieldList[0] && class_exists($InfoFieldList[0]))
+			{
+                $object = new $InfoFieldList[0]($this->db);
+                $object->fetch($value);
+                $valuetoshow=$object->ref;
+                if ($object->element == 'societe') $valuetoshow=$object->name;  // Special case for thirdparty because ref is id because name is not unique
+                $out.='<input type="text" class="flat" name="'.$keysuffix.'options_'.$key.$keyprefix.'"  size="20" value="'.$valuetoshow.'" >';
+			}
+			else
+			{
+			    dol_syslog('Error bad setup of extrafield', LOG_WARNING);
+			    $out.='Error bad setup of extrafield';
+			}
 		}
 		/* Add comments
 		 if ($type == 'date') $out.=' (YYYY-MM-DD)';
@@ -1102,7 +1111,7 @@ class ExtraFields
 	 *
 	 * @param   string	$key            Key of attribute
 	 * @param   string	$value          Value to show
-	 * @param	string	$moreparam		More param
+	 * @param	string	$moreparam		To add more parametes on html input tag (only checkbox use html input for output rendering)
 	 * @return	string					Formated value
 	 */
 	function showOutputField($key,$value,$moreparam='')
@@ -1119,6 +1128,8 @@ class ExtraFields
 		$perms=$this->attribute_perms[$key];
 		$list=$this->attribute_list[$key];
 
+		$showsize=0;
+		
 		if ($type == 'date')
 		{
 			$showsize=10;
@@ -1326,9 +1337,17 @@ class ExtraFields
 				// 1 : classPath
 				$InfoFieldList = explode(":", $param_list[0]);
 				dol_include_once($InfoFieldList[1]);
-				$object = new $InfoFieldList[0]($this->db);
-				$object->fetch($value);
-				$value=$object->getNomUrl(3);
+				if ($InfoFieldList[0] && class_exists($InfoFieldList[0]))
+    			{
+    				$object = new $InfoFieldList[0]($this->db);
+    				$object->fetch($value);
+    				$value=$object->getNomUrl(3);
+    			}
+	       		else
+			    {
+                    dol_syslog('Error bad setup of extrafield', LOG_WARNING);
+                    $out.='Error bad setup of extrafield';
+                }
 			}
 		}
 		elseif ($type == 'text')
@@ -1340,11 +1359,59 @@ class ExtraFields
 			$showsize=round($size);
 			if ($showsize > 48) $showsize=48;
 		}
+		
 		//print $type.'-'.$size;
 		$out=$value;
+		
 		return $out;
 	}
 
+	/**
+	 * Return tag to describe alignement to use for this extrafield
+	 *
+	 * @param   string	$key            Key of attribute
+	 * @return	string					Formated value
+	 */
+	function getAlignFlag($key)
+	{
+		global $conf,$langs;
+
+		$type=$this->attribute_type[$key];
+
+		$align='';
+		
+		if ($type == 'date')
+		{
+			$align="center";
+		}
+		elseif ($type == 'datetime')
+		{
+			$align="center";
+		}
+		elseif ($type == 'int')
+		{
+			$align="right";
+		}
+		elseif ($type == 'double')
+		{
+			$align="right";
+		}
+		elseif ($type == 'boolean')
+		{
+			$align="center";
+		}
+		elseif ($type == 'radio')
+		{
+			$align="center";
+		}
+		elseif ($type == 'checkbox')
+		{
+			$align="center";
+		}
+	
+		return $align;
+	}
+	
 	/**
 	 * Return HTML string to print separator extrafield
 	 *

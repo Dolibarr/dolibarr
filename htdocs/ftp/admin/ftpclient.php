@@ -62,13 +62,13 @@ if ($action == 'add' || GETPOST('modify','alpha'))
 	if (! GETPOST("$ftp_name",'alpha'))
 	{
 		$error=1;
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Label")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Label")), null, 'errors');
 	}
 
 	if (! GETPOST("$ftp_server",'alpha'))
 	{
 		$error=1;
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Server")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Server")), null, 'errors');
 	}
 
     if (! $error)

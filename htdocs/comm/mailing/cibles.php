@@ -80,7 +80,7 @@ if ($action == 'add')
 	    //print $dir."\n<br>";
 	    dol_syslog("Scan directory ".$dir." for modules");
 
-	    // Chargement de la classe
+	    // Loading Class
 	    $file = $dir."/".$module.".modules.php";
 	    $classname = "mailing_".$module;
 
@@ -100,24 +100,24 @@ if ($action == 'add')
 	}
 	if ($result > 0)
 	{
-		setEventMessage($langs->trans("XTargetsAdded",$result),'mesgs');
+		setEventMessages($langs->trans("XTargetsAdded",$result), null, 'mesgs');
 
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 		exit;
 	}
 	if ($result == 0)
 	{
-		setEventMessage($langs->trans("WarningNoEMailsAdded"),'warnings');
+		setEventMessages($langs->trans("WarningNoEMailsAdded"), null, 'warnings');
 	}
 	if ($result < 0)
 	{
-		setEventMessage($langs->trans("Error").($obj->error?' '.$obj->error:''),'errors');
+		setEventMessages($langs->trans("Error").($obj->error?' '.$obj->error:''), null, 'errors');
 	}
 }
 
 if (GETPOST('clearlist'))
 {
-	// Chargement de la classe
+	// Loading Class
 	$obj = new MailingTargets($db);
 	$obj->clear_target($id);
 
@@ -267,7 +267,7 @@ if ($object->fetch($id) >= 0)
 			// Loop on each submodule
             foreach($modulenames as $modulename)
             {
-				// Chargement de la classe
+				// Loading Class
 				$file = $dir.$modulename.".modules.php";
 				$classname = "mailing_".$modulename;
 				require_once $file;

@@ -65,11 +65,11 @@ if ($action == 'update' || $action == 'add')
 
  	if (! $error)
     {
-        setEventMessage($langs->trans("SetupSaved"));
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
     else
     {
-        setEventMessage($langs->trans("Error"),'errors');
+        setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
 
@@ -99,7 +99,7 @@ if (($action == 'testsubscribe' || $action == 'testunsubscribe') && ! empty($con
     if (! isValidEmail($email))
     {
         $langs->load("errors");
-        setEventMessage($langs->trans("ErrorBadEMail",$email),'errors');
+        setEventMessages($langs->trans("ErrorBadEMail",$email), null, 'errors');
     }
     else
     {
@@ -118,11 +118,11 @@ if (($action == 'testsubscribe' || $action == 'testunsubscribe') && ! empty($con
 			if ($result < 0)
 			{
 				$error++;
-				setEventMessage($mailmanspip->error,'errors');
+				setEventMessages($mailmanspip->error,$mailmanspip->errors,'errors');
 			}
 			else
 			{
-				setEventMessage($langs->trans("MailmanCreationSuccess"));
+				setEventMessages($langs->trans("MailmanCreationSuccess"), null);
 			}
         }
         if ($action == 'testunsubscribe')
@@ -131,11 +131,11 @@ if (($action == 'testsubscribe' || $action == 'testunsubscribe') && ! empty($con
         			if ($result < 0)
 			{
 				$error++;
-				setEventMessage($mailmanspip->error,'errors');
+				setEventMessages($mailmanspip->error,$mailmanspip->errors,'errors');
 			}
 			else
 			{
-				setEventMessage($langs->trans("MailmanDeletionSuccess"));
+				setEventMessages($langs->trans("MailmanDeletionSuccess"), null);
 			}
         }
     }
@@ -156,12 +156,15 @@ print load_fiche_titre($langs->trans("MailmanSpipSetup"),$linkback,'title_setup'
 
 $head = mailmanspip_admin_prepare_head();
 
-dol_fiche_head($head, 'mailman', $langs->trans("Setup"), 0, 'user');
 
 $var=true;
 
 if (! empty($conf->global->ADHERENT_USE_MAILMAN))
 {
+    print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+
+    dol_fiche_head($head, 'mailman', $langs->trans("Setup"), 0, 'user');
+    
     //$link=img_picto($langs->trans("Active"),'tick').' ';
     $link='<a href="'.$_SERVER["PHP_SELF"].'?action=unset&value=0&name=ADHERENT_USE_MAILMAN">';
     //$link.=$langs->trans("Disable");
@@ -200,21 +203,30 @@ if (! empty($conf->global->ADHERENT_USE_MAILMAN))
 	});
     </script>';
 
-    form_constantes($constantes,1);
-
+    form_constantes($constantes,2);
+    
     print '*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
     print '%LISTE%, %MAILMAN_ADMINPW%, %EMAIL% <br>';
+    
+    dol_fiche_end();
+
+    print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Update").'" name="update"></div>';
+
+    print '</form>';
 }
 else
 {
+    dol_fiche_head($head, 'mailman', $langs->trans("Setup"), 0, 'user');
+    
     $link='<a href="'.$_SERVER["PHP_SELF"].'?action=set&value=1&name=ADHERENT_USE_MAILMAN">';
     //$link.=img_$langs->trans("Activate")
     $link.=img_picto($langs->trans("Disabled"),'switch_off');
     $link.='</a>';
     print load_fiche_titre($langs->trans('MailmanTitle'), $link,'');
+
+    dol_fiche_end();
 }
 
-dol_fiche_end();
 
 if (! empty($conf->global->ADHERENT_USE_MAILMAN))
 {

@@ -97,11 +97,11 @@ if ($action == 'setModuleOptions')
 
  	if (! $error)
     {
-        setEventMessage($langs->trans("SetupSaved"));
+        setEventMessages($langs->trans("SetupSaved"), null, 'msgs');
     }
     else
     {
-        setEventMessage($langs->trans("Error"),'errors');
+        setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
 
@@ -111,11 +111,11 @@ if ($action && $action != 'setcoder' && $action != 'setModuleOptions')
 
  	if (! $error)
     {
-        setEventMessage($langs->trans("SetupSaved"));
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
     else
     {
-        setEventMessage($langs->trans("Error"),'errors');
+        setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
 
@@ -162,7 +162,7 @@ foreach($dirbarcode as $reldir)
 					{
 						$filebis=$reg[1];
 
-						// Chargement de la classe de codage
+						// Loading encoding class
 						require_once $newdir.$file;
 						$classname = "mod".ucfirst($filebis);
 						$module = new $classname($db);

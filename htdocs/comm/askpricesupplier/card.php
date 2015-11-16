@@ -114,7 +114,7 @@ if (empty($reshook))
 	{
 		if (1 == 0 && ! GETPOST('clone_content') && ! GETPOST('clone_receivers'))
 		{
-			setEventMessage($langs->trans("NoCloneOptionsSpecified"), 'errors');
+			setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
 		}
 		else
 		{
@@ -123,8 +123,10 @@ if (empty($reshook))
 				if ($result > 0) {
 					header("Location: " . $_SERVER['PHP_SELF'] . '?id=' . $result);
 					exit();
-				} else {
-					setEventMessage($object->error, 'errors');
+				} 
+				else 
+				{
+					setEventMessages($object->error, $object->errors, 'errors');
 					$action = '';
 				}
 			}
@@ -140,7 +142,7 @@ if (empty($reshook))
 			exit();
 		} else {
 			$langs->load("errors");
-			setEventMessage($langs->trans($object->error), 'errors');
+			setEventMessages($langs->trans($object->error), null, 'errors');
 		}
 	}
 
@@ -198,8 +200,8 @@ if (empty($reshook))
 			}
 		} else {
 			$langs->load("errors");
-			if (count($object->errors) > 0) setEventMessage($object->errors, 'errors');
-			else setEventMessage($langs->trans($object->error), 'errors');
+			if (count($object->errors) > 0) setEventMessages($object->error, $object->errors, 'errors');
+			else setEventMessages($langs->trans($object->error), null, 'errors');
 		}
 	}
 
@@ -219,7 +221,7 @@ if (empty($reshook))
 		$date_delivery = dol_mktime(12, 0, 0, GETPOST('liv_month'), GETPOST('liv_day'), GETPOST('liv_year'));
 
 		if ($socid < 1) {
-			setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Customer")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Customer")), null, 'errors');
 			$action = 'create';
 			$error ++;
 		}
@@ -249,7 +251,7 @@ if (empty($reshook))
 
 					$id = $object->create_from($user);
 				} else {
-					setEventMessage($langs->trans("ErrorFailedToCopyProposal", GETPOST('copie_askpricesupplier')), 'errors');
+					setEventMessages($langs->trans("ErrorFailedToCopyProposal", GETPOST('copie_askpricesupplier')), null, 'errors');
 				}
 			} else {
 				$object->ref = GETPOST('ref');
@@ -434,7 +436,7 @@ if (empty($reshook))
 	// Close proposal
 	else if ($action == 'setstatut' && $user->rights->askpricesupplier->cloturer && ! GETPOST('cancel')) {
 		if (! GETPOST('statut')) {
-			setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentities("CloseAs")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("CloseAs")), null, 'errors');
 			$action = 'statut';
 		} else {
 			// prevent browser refresh from closing proposal several times
@@ -484,7 +486,7 @@ if (empty($reshook))
 			if ($object->id > 0) {
 				$result = $object->insert_discount($_POST["remise_id"]);
 				if ($result < 0) {
-					setEventMessage($object->error, 'errors');
+					setEventMessages($object->error, $object->errors, 'errors');
 				}
 			}
 		}
@@ -525,17 +527,17 @@ if (empty($reshook))
 		}
 
 		if (GETPOST('prod_entry_mode') == 'free' && empty($idprod) && GETPOST('type') < 0) {
-			setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
 			$error ++;
 		}
 
 		if (GETPOST('prod_entry_mode') == 'free' && empty($idprod) && $price_ht == '') 	// Unit price can be 0 but not ''. Also price can be negative for proposal.
 		{
-			setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("UnitPriceHT")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("UnitPriceHT")), null, 'errors');
 			$error ++;
 		}
 		if (GETPOST('prod_entry_mode') == 'free' && empty($idprod) && empty($product_desc)) {
-			setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Description")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Description")), null, 'errors');
 			$error ++;
 		}
 
@@ -674,7 +676,7 @@ if (empty($reshook))
 
 			if (! empty($price_min) && (price2num($pu_ht) * (1 - price2num($remise_percent) / 100) < price2num($price_min))) {
 				$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, - 1, $conf->currency));
-				setEventMessage($mesg, 'errors');
+				setEventMessages($mesg, null, 'errors');
 			} else {
 				// Insert line
 				$ref_fourn = GETPOST('fourn_ref');
@@ -716,7 +718,7 @@ if (empty($reshook))
 				} else {
 					$db->rollback();
 
-					setEventMessage($object->error, 'errors');
+					setEventMessages($object->error, $object->errors, 'errors');
 				}
 			}
 		}
@@ -741,7 +743,7 @@ if (empty($reshook))
 
 		// Add buying price
 		$fournprice = (GETPOST('fournprice') ? GETPOST('fournprice') : '');
-		$buyingprice = (GETPOST('buying_price') ? GETPOST('buying_price') : '');
+		$buyingprice = (GETPOST('buying_price') != '' ? GETPOST('buying_price') : '');    // If buying_price is '0', we muste keep this value 
 
 		// Extrafields
 		$extrafieldsline = new ExtraFields($db);
@@ -774,7 +776,7 @@ if (empty($reshook))
 			$label = ((GETPOST('update_label') && GETPOST('product_label')) ? GETPOST('product_label') : '');
 
 			if ($price_min && (price2num($pu_ht) * (1 - price2num(GETPOST('remise_percent')) / 100) < price2num($price_min))) {
-				setEventMessage($langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, - 1, $conf->currency)), 'errors');
+				setEventMessages($langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, - 1, $conf->currency)), null, 'errors');
 				$error ++;
 			}
 		} else {
@@ -783,7 +785,7 @@ if (empty($reshook))
 
 			// Check parameters
 			if (GETPOST('type') < 0) {
-				setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), 'errors');
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
 				$error ++;
 			}
 		}
@@ -823,7 +825,7 @@ if (empty($reshook))
 			} else {
 				$db->rollback();
 
-				setEventMessage($object->error, 'errors');
+				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
 	}
@@ -865,9 +867,9 @@ if (empty($reshook))
 			$file = $upload_dir . '/' . GETPOST('file');
 			$ret = dol_delete_file($file, 0, 0, 0, $object);
 			if ($ret)
-				setEventMessage($langs->trans("FileWasRemoved", GETPOST('file')));
+				setEventMessages($langs->trans("FileWasRemoved", GETPOST('file')), null, 'mesgs');
 			else
-				setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('file')), 'errors');
+				setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('file')), null, 'errors');
 		}
 	}
 
@@ -1325,7 +1327,7 @@ if ($action == 'create')
 			$numref = $object->getNextNumRef($soc);
 			if (empty($numref)) {
 				$error ++;
-				setEventMessage($object->error, 'errors');
+				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		} else {
 			$numref = $object->ref;

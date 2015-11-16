@@ -17,6 +17,7 @@
         "ext-curl": "*",
         "ccampbell/chromephp": "^4.1",
         "ckeditor/ckeditor": "4.3.3",
+        "mike42/escpos-php": "dev-master",
         "mobiledetect/mobiledetectlib": "2.8.3",
         "phpoffice/phpexcel": "1.8.0",
         "restler/framework": "^3.0",

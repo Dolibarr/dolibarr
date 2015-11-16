@@ -68,12 +68,12 @@ if ($action == 'add')
 
     if (empty($contactid))
     {
-	    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Contact")), 'errors');
+	    setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Contact")), null, 'errors');
         $error++;
     }
     if ($actionid <= 0)
     {
-	    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Action")), 'errors');
+	    setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Action")), null, 'errors');
         $error++;
     }
 
@@ -195,6 +195,8 @@ if ($result > 0)
 
     print "\n";
 
+    print '<br>';
+    
     // Add notification form
     print load_fiche_titre($langs->trans("AddNewNotification"),'','');
 

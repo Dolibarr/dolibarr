@@ -409,14 +409,15 @@ function print_end_menu_array()
  * @param	DoliDB		$db                 Database handler
  * @param 	array		$menu_array_before  Table of menu entries to show before entries of menu handler (menu->liste filled with menu->add)
  * @param   array		$menu_array_after   Table of menu entries to show after entries of menu handler (menu->liste filled with menu->add)
- * @param	array		$tabMenu       	If array with menu entries already loaded, we put this array here (in most cases, it's empty)
+ * @param	array		$tabMenu       		If array with menu entries already loaded, we put this array here (in most cases, it's empty)
  * @param	Menu		$menu				Object Menu to return back list of menu entries
  * @param	int			$noout				Disable output (Initialise &$menu only).
  * @param	string		$forcemainmenu		'x'=Force mainmenu to mainmenu='x'
  * @param	string		$forceleftmenu		'all'=Force leftmenu to '' (= all)
+ * @param	array		$moredata			An array with more data to output
  * @return	int								nb of menu entries
  */
-function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu,&$menu,$noout=0,$forcemainmenu='',$forceleftmenu='')
+function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu,&$menu,$noout=0,$forcemainmenu='',$forceleftmenu='',$moredata=null)
 {
 	global $user,$conf,$langs,$dolibarr_main_db_name,$mysoc;
 
@@ -449,6 +450,16 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 		print '</div>'."\n";
 	}
 
+	if (is_array($moredata) && ! empty($moredata['searchform']))
+	{
+        print "\n";
+        print "<!-- Begin SearchForm -->\n";
+        print '<div id="blockvmenusearch" class="blockvmenusearch">'."\n";
+        print $moredata['searchform'];
+        print '</div>'."\n";
+        print "<!-- End SearchForm -->\n";
+	}
+	
 	/**
 	 * We update newmenu with entries found into database
 	 * --------------------------------------------------
@@ -590,13 +601,13 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 			if (! empty($conf->societe->enabled) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
 			{
 				$langs->load("commercial");
-				$newmenu->add("/comm/prospect/list.php?leftmenu=prospects", $langs->trans("ListProspectsShort"), 1, $user->rights->societe->lire, '', $mainmenu, 'prospects');
+				$newmenu->add("/societe/list.php?type=p&leftmenu=prospects", $langs->trans("ListProspectsShort"), 1, $user->rights->societe->lire, '', $mainmenu, 'prospects');
 				/* no more required, there is a filter that can do more
-				if (empty($leftmenu) || $leftmenu=="prospects") $newmenu->add("/comm/prospect/list.php?sortfield=s.datec&amp;sortorder=desc&amp;begin=&amp;search_stcomm=-1", $langs->trans("LastProspectDoNotContact"), 2, $user->rights->societe->lire);
-				if (empty($leftmenu) || $leftmenu=="prospects") $newmenu->add("/comm/prospect/list.php?sortfield=s.datec&amp;sortorder=desc&amp;begin=&amp;search_stcomm=0", $langs->trans("LastProspectNeverContacted"), 2, $user->rights->societe->lire);
-				if (empty($leftmenu) || $leftmenu=="prospects") $newmenu->add("/comm/prospect/list.php?sortfield=s.datec&amp;sortorder=desc&amp;begin=&amp;search_stcomm=1", $langs->trans("LastProspectToContact"), 2, $user->rights->societe->lire);
-				if (empty($leftmenu) || $leftmenu=="prospects") $newmenu->add("/comm/prospect/list.php?sortfield=s.datec&amp;sortorder=desc&amp;begin=&amp;search_stcomm=2", $langs->trans("LastProspectContactInProcess"), 2, $user->rights->societe->lire);
-				if (empty($leftmenu) || $leftmenu=="prospects") $newmenu->add("/comm/prospect/list.php?sortfield=s.datec&amp;sortorder=desc&amp;begin=&amp;search_stcomm=3", $langs->trans("LastProspectContactDone"), 2, $user->rights->societe->lire);
+				if (empty($leftmenu) || $leftmenu=="prospects") $newmenu->add("/societe/list.php?type=p&amp;sortfield=s.datec&amp;sortorder=desc&amp;begin=&amp;search_stcomm=-1", $langs->trans("LastProspectDoNotContact"), 2, $user->rights->societe->lire);
+				if (empty($leftmenu) || $leftmenu=="prospects") $newmenu->add("/societe/list.php?type=p&amp;sortfield=s.datec&amp;sortorder=desc&amp;begin=&amp;search_stcomm=0", $langs->trans("LastProspectNeverContacted"), 2, $user->rights->societe->lire);
+				if (empty($leftmenu) || $leftmenu=="prospects") $newmenu->add("/societe/list.php?type=p&amp;sortfield=s.datec&amp;sortorder=desc&amp;begin=&amp;search_stcomm=1", $langs->trans("LastProspectToContact"), 2, $user->rights->societe->lire);
+				if (empty($leftmenu) || $leftmenu=="prospects") $newmenu->add("/societe/list.php?type=p&amp;sortfield=s.datec&amp;sortorder=desc&amp;begin=&amp;search_stcomm=2", $langs->trans("LastProspectContactInProcess"), 2, $user->rights->societe->lire);
+				if (empty($leftmenu) || $leftmenu=="prospects") $newmenu->add("/societe/list.php?type=p&amp;sortfield=s.datec&amp;sortorder=desc&amp;begin=&amp;search_stcomm=3", $langs->trans("LastProspectContactDone"), 2, $user->rights->societe->lire);
 				*/
 				$newmenu->add("/societe/soc.php?leftmenu=prospects&amp;action=create&amp;type=p", $langs->trans("MenuNewProspect"), 2, $user->rights->societe->creer);
 				//$newmenu->add("/contact/list.php?leftmenu=customers&amp;type=p", $langs->trans("Contacts"), 2, $user->rights->societe->contact->lire);
@@ -606,7 +617,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 			if (! empty($conf->societe->enabled) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))
 			{
 				$langs->load("commercial");
-				$newmenu->add("/comm/list.php?leftmenu=customers", $langs->trans("ListCustomersShort"), 1, $user->rights->societe->lire, '', $mainmenu, 'customers');
+				$newmenu->add("/societe/list.php?type=c&leftmenu=customers", $langs->trans("ListCustomersShort"), 1, $user->rights->societe->lire, '', $mainmenu, 'customers');
 
 				$newmenu->add("/societe/soc.php?leftmenu=customers&amp;action=create&amp;type=c", $langs->trans("MenuNewCustomer"), 2, $user->rights->societe->creer);
 				//$newmenu->add("/contact/list.php?leftmenu=customers&amp;type=c", $langs->trans("Contacts"), 2, $user->rights->societe->contact->lire);
@@ -616,10 +627,8 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 			if (! empty($conf->societe->enabled) && ! empty($conf->fournisseur->enabled))
 			{
 				$langs->load("suppliers");
-				$newmenu->add("/fourn/list.php?leftmenu=suppliers", $langs->trans("ListSuppliersShort"), 1, $user->rights->fournisseur->lire, '', $mainmenu, 'suppliers');
+				$newmenu->add("/societe/list.php?type=f&leftmenu=suppliers", $langs->trans("ListSuppliersShort"), 1, $user->rights->fournisseur->lire, '', $mainmenu, 'suppliers');
 				$newmenu->add("/societe/soc.php?leftmenu=suppliers&amp;action=create&amp;type=f",$langs->trans("MenuNewSupplier"), 2, $user->rights->societe->creer && $user->rights->fournisseur->lire);
-				//$newmenu->add("/fourn/list.php?leftmenu=suppliers", $langs->trans("List"), 2, $user->rights->societe->lire && $user->rights->fournisseur->lire);
-				//$newmenu->add("/contact/list.php?leftmenu=suppliers&amp;type=f",$langs->trans("Contacts"), 2, $user->rights->societe->lire && $user->rights->fournisseur->lire && $user->rights->societe->contact->lire);
 			}
 
 			// Contacts
@@ -1146,7 +1155,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 
 				// Security check
 				$newmenu->add("/societe/soc.php?leftmenu=suppliers&amp;action=create&amp;type=f",$langs->trans("NewSupplier"), 1, $user->rights->societe->creer && $user->rights->fournisseur->lire);
-				$newmenu->add("/fourn/list.php",$langs->trans("List"), 1, $user->rights->societe->lire && $user->rights->fournisseur->lire);
+				$newmenu->add("/societe/list.php?type=f",$langs->trans("List"), 1, $user->rights->societe->lire && $user->rights->fournisseur->lire);
 				$newmenu->add("/contact/list.php?leftmenu=suppliers&amp;type=f",$langs->trans("Contacts"), 1, $user->rights->societe->contact->lire && $user->rights->fournisseur->lire);
 				$newmenu->add("/fourn/stats.php",$langs->trans("Statistics"), 1, $user->rights->societe->lire && $user->rights->fournisseur->lire);
 			}
@@ -1409,11 +1418,11 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				$blockvmenuopened=true;
 				if ($altok % 2 == 0)
 				{
-					print '<div class="blockvmenuimpair'.$invert.($alt == 1 ? ' blockvmenufirst':'').'">'."\n";
+					print '<div class="blockvmenuimpair'.$invert.($altok == 1 ? ' blockvmenufirst':'').'">'."\n";
 				}
 				else
 				{
-					print '<div class="blockvmenupair'.$invert.($alt == 1 ? ' blockvmenufirst':'').'">'."\n";
+					print '<div class="blockvmenupair'.$invert.($altok == 1 ? ' blockvmenufirst':'').'">'."\n";
 				}
 			}
 
@@ -1486,6 +1495,16 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 		if ($altok) print '<div class="blockvmenuend"></div>';
 	}
 
+	if (is_array($moredata) && ! empty($moredata['bookmarks']))
+	{
+	        print "\n";
+	        print "<!-- Begin Bookmarks -->\n";
+	        print '<div id="blockvmenubookmarks" class="blockvmenubookmarks">'."\n";
+	        print $moredata['bookmarks'];
+	        print '</div>'."\n";
+	        print "<!-- End Bookmarks -->\n";
+	}
+	
 	return count($menu_array);
 }
 

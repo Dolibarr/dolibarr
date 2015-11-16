@@ -116,7 +116,7 @@ if ($action == 'update') {
 				
 				$result=$accounting->fetch($accounting_account_id,null,1);
 				if ($result<0) {
-					//setEventMessage(null, $accounting->errors,'errors');
+					//setEventMessages(null, $accounting->errors, 'errors');
 					$msg .= '<div><font color="red">' . $langs->trans("ErrorDB") . ' : ' . $langs->trans("Product") . ' ' . $productid . ' ' . $langs->trans("NotVentilatedinAccount") . ' : id=' . $accounting_account_id . '<br/> <pre>' . $sql . '</pre></font></div>';
 				} else {
 					

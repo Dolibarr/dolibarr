@@ -222,7 +222,7 @@ if (empty($reshook))
 
 		if (empty($datep)) {
 			$error ++;
-			setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
 		}
 
 		if (! $error) {
@@ -267,18 +267,19 @@ if (empty($reshook))
 		$duration = GETPOST('duree_validite');
 
 		if (empty($datep)) {
-			setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
 			$action = 'create';
 			$error ++;
 		}
 		if (empty($duration)) {
-			setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ValidityDuration")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ValidityDuration")), null, 'errors');
 			$action = 'create';
 			$error ++;
 		}
 
 		if ($socid < 1) {
-			setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Customer")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Customer")), null, 'errors');
+			
 			$action = 'create';
 			$error ++;
 		}
@@ -575,7 +576,7 @@ if (empty($reshook))
 	else if ($action == 'setstatut' && $user->rights->propal->cloturer && ! GETPOST('cancel'))
 	{
 		if (! GETPOST('statut')) {
-			setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentities("CloseAs")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CloseAs")), null, 'errors');
 			$action = 'statut';
 		} else {
 			// prevent browser refresh from closing proposal several times
@@ -621,7 +622,7 @@ if (empty($reshook))
 	else if ($action == 'setstatut' && $user->rights->propal->cloturer && ! GETPOST('cancel'))
 	{
 		if (! GETPOST('statut')) {
-			setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentities("CloseAs")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CloseAs")), null, 'errors');
 			$action = 'statut';
 		} else {
 			// prevent browser refresh from closing proposal several times
@@ -710,17 +711,17 @@ if (empty($reshook))
 		}
 
 		if (GETPOST('prod_entry_mode') == 'free' && empty($idprod) && GETPOST('type') < 0) {
-			setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
 			$error ++;
 		}
 
 		if (GETPOST('prod_entry_mode') == 'free' && empty($idprod) && $price_ht == '') 	// Unit price can be 0 but not ''. Also price can be negative for proposal.
 		{
-			setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("UnitPriceHT")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("UnitPriceHT")), null, 'errors');
 			$error ++;
 		}
 		if (GETPOST('prod_entry_mode') == 'free' && empty($idprod) && empty($product_desc)) {
-			setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Description")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Description")), null, 'errors');
 			$error ++;
 		}
 
@@ -858,8 +859,8 @@ if (empty($reshook))
 			}
 
 			// Margin
-			$fournprice = (GETPOST('fournprice' . $predef) ? GETPOST('fournprice' . $predef) : '');
-			$buyingprice = (GETPOST('buying_price' . $predef) ? GETPOST('buying_price' . $predef) : '');
+			$fournprice = price2num(GETPOST('fournprice' . $predef) ? GETPOST('fournprice' . $predef) : '');
+			$buyingprice = price2num(GETPOST('buying_price' . $predef) != '' ? GETPOST('buying_price' . $predef) : '');    // If buying_price is '0', we muste keep this value
 
 			$date_start = dol_mktime(0, 0, 0, GETPOST('date_start' . $predef . 'month'), GETPOST('date_start' . $predef . 'day'), GETPOST('date_start' . $predef . 'year'));
 			$date_end = dol_mktime(0, 0, 0, GETPOST('date_end' . $predef . 'month'), GETPOST('date_end' . $predef . 'day'), GETPOST('date_end' . $predef . 'year'));
@@ -953,8 +954,8 @@ if (empty($reshook))
 		$pu_ht = GETPOST('price_ht');
 
 		// Add buying price
-		$fournprice = (GETPOST('fournprice') ? GETPOST('fournprice') : '');
-		$buyingprice = (GETPOST('buying_price') ? GETPOST('buying_price') : '');
+		$fournprice = price2num(GETPOST('fournprice') ? GETPOST('fournprice') : '');
+		$buyingprice = price2num(GETPOST('buying_price') != '' ? GETPOST('buying_price') : '');    // If buying_price is '0', we muste keep this value 
 
 		$date_start = dol_mktime(0, 0, 0, GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
 		$date_end = dol_mktime(0, 0, 0, GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
@@ -999,7 +1000,7 @@ if (empty($reshook))
 
 			// Check parameters
 			if (GETPOST('type') < 0) {
-				setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), 'errors');
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
 				$error ++;
 			}
 		}
@@ -2180,7 +2181,7 @@ if ($action == 'create')
 					}
 
 					$arrayofinvoiceforpropal = $object->getInvoiceArrayList();
-					if ((is_array($arrayofinvoiceforpropal) && count($arrayofinvoiceforpropal) > 0) || ! empty($conf->global->WORKFLOW_PROPAL_CAN_CLASSIFIED_BILLED_WITHOUT_INVOICES))
+					if ((is_array($arrayofinvoiceforpropal) && count($arrayofinvoiceforpropal) > 0) || empty($conf->global->WORKFLOW_PROPAL_NEED_INVOICE_TO_BE_CLASSIFIED_BILLED))
 					{
 						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=classifybilled&amp;socid=' . $object->socid . '">' . $langs->trans("ClassifyBilled") . '</a></div>';
 					}

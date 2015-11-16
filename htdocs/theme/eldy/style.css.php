@@ -237,7 +237,7 @@ body {
     <?php print 'direction: '.$langs->trans("DIRECTION").";\n"; ?>
 }
 
-a:link, a:visited, a:hover, a:active { font-family: <?php print $fontlist ?>; font-weight: bold; color: #4A4A4A; text-decoration: none;  }
+a:link, a:visited, a:hover, a:active { font-family: <?php print $fontlist ?>; font-weight: bold; color: #000; text-decoration: none;  }
 
 a:hover { text-decoration: underline; color: #000000;}
 
@@ -641,7 +641,7 @@ div.divphotoref {
 div.statusref {
 	float: right;
 	padding-right: 12px;
-	margin-top: 6px;
+	margin-top: 7px;
 	margin-bottom: 10px;
 }
 img.photoref {
@@ -671,7 +671,7 @@ $heightmenu=46;			/* height of top menu, part with image */
 $heightmenu2=48;        /* height of top menu, part with login  */
 $disableimages = 0;
 $maxwidthloginblock = 110;
-if (! empty($conf->global->THEME_ELDY_DISABLE_IMAGE) || $dol_optimize_smallscreen) { $disableimages = 1; $maxwidthloginblock = 180; }
+if (! empty($conf->global->THEME_ELDY_DISABLE_IMAGE)) { $disableimages = 1; $maxwidthloginblock = 180; }
 ?>
 
 div#id-top {
@@ -699,7 +699,7 @@ div#tmenu_tooltip {
 <?php if (GETPOST("optioncss") == 'print') {  ?>
 	display:none;
 <?php } else { ?>
-	padding-<?php echo $right; ?>: <? echo ($maxwidthloginblock - 10); ?>px;
+	padding-<?php echo $right; ?>: <?php echo ($maxwidthloginblock - 10); ?>px;
 <?php } ?>
 }
 
@@ -888,7 +888,6 @@ div.mainmenu.members {
 
 div.mainmenu.products {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/products.png',1) ?>);
-	margin-left: 10px;
 }
 
 div.mainmenu.project {
@@ -1088,13 +1087,16 @@ div.login_block_other { padding-top: 3px; text-align: right; }
 	padding: 0px 0px 0px 4px !important;
 	height: 16px;
 }
-.alogin, .alogin:hover {
+.atoplogin, .atoplogin:hover {
 	color: #<?php echo $colortextbackhmenu; ?> !important;
+	font-weight: normal !important;
+}
+.alogin, .alogin:hover {
 	font-weight: normal !important;
 	font-size: <?php echo $fontsizesmaller; ?>px !important;
 	padding-top: 2px;
 }
-.alogin:hover {
+.alogin:hover, .atoplogin:hover {
 	text-decoration:underline !important;
 }
 img.login, img.printer, img.entity {
@@ -1143,7 +1145,14 @@ div.vmenu, td.vmenu {
 	<?php } ?>
 }
 
-.menu_contenu { padding-top: 3px; padding-top: 2px; }
+.vmenusearchselectcombo {
+	width: 172px;
+}
+
+.menu_contenu { 
+	padding-top: 3px; 
+	padding-bottom: 2px;
+}
 #menu_contenu_logo { padding-right: 4px; }
 
 a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; }
@@ -1214,17 +1223,17 @@ div.blockvmenusearch
 	color: #000000;
 	text-align: <?php print $left; ?>;
 	text-decoration: none;
-    padding-left: 5px;
+    /*padding-left: 5px;
     padding-right: 1px;
     padding-top: 3px;
-    padding-bottom: 3px;
-    margin: 1px 0px 8px 2px;
+    padding-bottom: 3px; */
+    margin: 1px 0px 4px 2px;
 	background: rgb(<?php echo $colorbackvmenu1; ?>);
 
-    border-left: 1px solid #AAA;
+    /*border-left: 1px solid #AAA;
     border-right: 1px solid #BBB;
     border-bottom: 1px solid #BBB;
-    border-top: 1px solid #BBB;
+    border-top: 1px solid #BBB;*/
     /*border-radius: 4px;
 	-moz-border-radius: 4px;
     -moz-box-shadow: 3px 3px 4px #DDD;
@@ -3524,6 +3533,12 @@ a span.select2-chosen
 {
 	background: #FFFFFF;
 }
+.select2-results {
+	max-height:	400px;
+}
+.css-searchselectcombo ul.select2-results {
+	max-height:	none;
+}
 .select2-container-multi.select2-container-disabled .select2-choices {
 	background-color: #FFFFFF;
 	background-image: none;
@@ -3871,7 +3886,22 @@ border-top-right-radius: 6px;
 }
 @media only screen and (max-width: 570px)
 {
-    div.mainmenu {
+	/* Reduce login top right info */
+	.usertextatoplogin {
+		display: none;
+	}
+	div#tmenu_tooltip {
+	<?php if (GETPOST("optioncss") == 'print') {  ?>
+		display:none;
+	<?php } else { ?>
+		padding-<?php echo $right; ?>: 78px;
+	<?php } ?>
+	}
+	div.login_block {
+		top: 9px;
+	}
+	
+	div.mainmenu {
     	min-width: 20px;
     }
 	.topmenuimage {
@@ -3881,9 +3911,8 @@ border-top-right-radius: 6px;
 	#tooltip {
 		position: absolute;
 		width: <?php print dol_size(300,'width'); ?>px;
-	}	
+	}
 }
-
 
 <?php
 if (is_object($db)) $db->close();

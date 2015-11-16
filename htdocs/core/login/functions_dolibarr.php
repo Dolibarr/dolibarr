@@ -91,7 +91,7 @@ function check_user_password_dolibarr($usertotest,$passwordtotest,$entitytotest=
 				if (! $passok)
 				{
 					if ((! $passcrypted || $passtyped)
-						&& ($passtyped == $passclear))
+						&& ($passclear && ($passtyped == $passclear)))
 					{
 						$passok=true;
 						dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentification ok - found pass in database");

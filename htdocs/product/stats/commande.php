@@ -128,9 +128,9 @@ if ($id > 0 || ! empty($ref))
 
 		if ($user->rights->commande->lire)
 		{
-			$sql = "SELECT distinct s.nom as name, s.rowid as socid, s.code_client, c.rowid, d.total_ht as total_ht, c.ref,";
-			$sql .= " c.ref_client,";
-			$sql.= " c.date_commande, c.fk_statut as statut, c.facture, c.rowid as commandeid, d.qty";
+			$sql = "SELECT DISTINCT s.nom as name, s.rowid as socid, s.code_client, c.rowid, d.total_ht as total_ht, c.ref,";
+			$sql.= " c.ref_client,";
+			$sql.= " c.date_commande, c.fk_statut as statut, c.facture, c.rowid as commandeid, d.rowid, d.qty";
 			if (!$user->rights->societe->client->voir && !$socid) $sql.= ", sc.fk_soc, sc.fk_user ";
 			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 			$sql.= ", ".MAIN_DB_PREFIX."commande as c";

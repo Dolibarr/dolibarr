@@ -87,7 +87,7 @@ if ($action == 'create')
     	// If no start date
 	    if ($type <= 0)
 	    {
-	        setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), 'errors');
+	        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
 	        $error++;
 	        $action='create';
 	    }

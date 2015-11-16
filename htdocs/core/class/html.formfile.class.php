@@ -176,22 +176,24 @@ class FormFile
 	            $out .= '<input type="hidden" id="'.$htmlname.'_link_section_id"  name="link_section_id" value="'.$sectionid.'">';
 	            $out .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
-	            $out .= '<table width="100%" class="nobordernopadding">';
-	            $out .= '<tr>';
-	            $out .= '<td valign="middle" class="nowrap">';
-	            $out .= $langs->trans("URLToLink") . ': ';
+	            $out .= '<div>';
+	            $out .= '<div class="float" style="padding-right: 10px;">';
+	            $out .= '<label for="link">'.$langs->trans("URLToLink") . '</label>: ';
 	            $out .= '<input type="text" name="link" size="'.$maxlength.'" id="link">';
-	            $out .= ' &nbsp; ' . $langs->trans("Label") . ': ';
+	            $out .= '</div>';
+	            $out .= '<div class="float" style="padding-right: 10px;">';
+	            $out .= '<label for="label">'.$langs->trans("Label") . '</label>: ';
 	            $out .= '<input type="text" name="label" id="label">';
 	            $out .= '<input type="hidden" name="objecttype" value="' . $object->element . '">';
 	            $out .= '<input type="hidden" name="objectid" value="' . $object->id . '">';
-	            $out .= '&nbsp;';
+	            $out .= '</div>';
+	            $out .= '<div class="float" style="padding-right: 10px;">';
 	            $out .= '<input type="submit" class="button" name="linkit" value="'.$langs->trans("ToLink").'"';
 	            $out .= (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm)?' disabled':'');
 	            $out .= '>';
-	            $out .= '</td></tr>';
-	            $out .= '</table>';
-
+	            $out .= '</div>';
+                $out .= '</div>';
+                $out .= '<div class="clearboth"></div>';
 	            $out .= '</form><br>';
 	            $parameters = array('socid'=>(isset($GLOBALS['socid'])?$GLOBALS['socid']:''),'id'=>(isset($GLOBALS['id'])?$GLOBALS['id']:''), 'url'=>$url, 'perm'=>$perm);
 	            $res = $hookmanager->executeHooks('formattachOptions',$parameters,$object);
@@ -283,7 +285,7 @@ class FormFile
         }
 
         $printer=0;
-        if (in_array($modulepart,array('facture','askpricesupplier','propal','proposal','order','commande','expedition')))	// The direct print feature is implemented only for such elements
+        if (in_array($modulepart,array('facture','askpricesupplier','propal','proposal','order','commande','expedition', 'commande_fournisseur')))	// The direct print feature is implemented only for such elements
         {
             $printer = (!empty($user->rights->printing->read) && !empty($conf->printing->enabled))?true:false;
         }
@@ -492,7 +494,7 @@ class FormFile
             $out.= '<input type="hidden" name="action" value="builddoc">';
             $out.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
-            $out.= '<div class="titre">'.$titletoshow.'</div>';
+            $out.= load_fiche_titre($titletoshow, '', '');
             $out.= '<table class="liste formdoc noborder" summary="listofdocumentstable" width="100%">';
 
             $out.= '<tr class="liste_titre">';
@@ -820,7 +822,12 @@ class FormFile
 						if ($object->element == 'member') $relativepath=get_exdir($object->id,2,0,0,$object,'member').$relativepath;				// TODO Call using a defined value for $relativepath
 						if ($object->element == 'project_task') $relativepath='Call_not_supported_._Call_function_using_a_defined_relative_path_.';
 					}
-
+					// For backward compatiblity, we detect file is stored into an old path
+					if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO) && $file['level1name'] == 'photos')
+	                {
+	                    $relativepath=preg_replace('/^.*\/produit\//','',$file['path']).'/';
+	                }
+					
 					$var=!$var;
 					print '<tr '.$bc[$var].'>';
 					print '<td>';

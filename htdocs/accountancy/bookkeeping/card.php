@@ -51,8 +51,8 @@ if ($action == "confirm_update") {
 
     $error = 0;
 
-    if ((intval($debit) != 0) && (intval($credit) != 0)) {
-        setEventMessage($langs->trans('ErrorDebitCredit'), 'errors');
+    if ((floatval($debit)!=0.0) && (floatval($credit)!=0.0)) {
+        setEventMessages($langs->trans('ErrorDebitCredit'), null, 'errors');
         $error ++;
     }
 
@@ -61,7 +61,7 @@ if ($action == "confirm_update") {
 
         $result = $book->fetch($id);
         if ($result < 0) {
-            setEventMessage($book->errors, 'errors');
+            setEventMessages($book->error, $book->errors, 'errors');
         } else {
             $book->numero_compte = $numero_compte;
             $book->code_tiers = $code_tiers;
@@ -69,20 +69,20 @@ if ($action == "confirm_update") {
             $book->debit = $debit;
             $book->credit = $credit;
 
-            if (! empty($debit)) {
+            if (floatval($debit)!=0.0) {
                 $book->montant = $debit;
                 $book->sens = 'D';
             }
-            if (! empty($credit)) {
+            if (floatval($credit)!=0.0) {
                 $book->montant = $credit;
                 $book->sens = 'C';
             }
 
             $result = $book->update();
             if ($result < 0) {
-                setEventMessage($book->errors, 'errors');
+                setEventMessages($book->error, $book->errors, 'errors');
             } else {
-                setEventMessage($langs->trans('Saved'), 'mesgs');
+                setEventMessages($langs->trans('Saved'), null, 'mesgs');
                 $action = '';
             }
         }
@@ -93,7 +93,7 @@ else if ($action == "add") {
     $error = 0;
 
     if ((intval($debit) != 0) && (intval($credit) != 0)) {
-        setEventMessage($langs->trans('ErrorDebitCredit'), 'errors');
+        setEventMessages($langs->trans('ErrorDebitCredit'), null, 'errors');
         $error ++;
     }
 
@@ -124,9 +124,9 @@ else if ($action == "add") {
 
         $result = $book->create_std($user);
         if ($result < 0) {
-            setEventMessage($book->errors, 'errors');
+            setEventMessages($book->error, $book->errors, 'errors');
         } else {
-            setEventMessage($langs->trans('Saved'), 'mesgs');
+            setEventMessages($langs->trans('Saved'), null, 'mesgs');
             $action = '';
         }
     }
@@ -140,11 +140,11 @@ else if ($action == "confirm_delete") {
     $piece_num = $book->piece_num;
 
     if ($result < 0) {
-        setEventMessage($book->errors, 'errors');
+        setEventMessages($book->error, $book->errors, 'errors');
     } else {
         $result = $book->delete($user);
         if ($result < 0) {
-            setEventMessage($book->errors, 'errors');
+            setEventMessages($book->error, $book->errors, 'errors');
         }
     }
     $action = '';
@@ -168,9 +168,9 @@ else if ($action == "confirm_create") {
 
     $result = $book->create_std($user);
     if ($result < 0) {
-        setEventMessage($book->errors, 'errors');
+        setEventMessages($book->error, $book->errors, 'errors');
     } else {
-        setEventMessage($langs->trans('Saved'), 'mesgs');
+        setEventMessages($langs->trans('Saved'), null, 'mesgs');
         $action = '';
         $piece_num = $book->piece_num;
     }
@@ -246,7 +246,7 @@ if ($action == 'create') {
     $book = new BookKeeping($db);
     $result = $book->fetch_per_mvt($piece_num);
     if ($result < 0) {
-        setEventMessage($book->errors, 'errors');
+        setEventMessages($book->error, $book->errors, 'errors');
     }
     if (! empty($book->piece_num)) {
 
@@ -277,7 +277,7 @@ if ($action == 'create') {
 
         $result = $book->fetch_all_per_mvt($piece_num);
         if ($result < 0) {
-            setEventMessage($book->errors, 'errors');
+            setEventMessages($book->error, $book->errors, 'errors');
         } else {
 
             print load_fiche_titre($langs->trans("ListeMvts"));

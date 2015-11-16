@@ -1391,6 +1391,8 @@ abstract class CommonObject
     		if ($this->db->query($sql))
     		{
     			$this->mode_reglement_id = $id;
+    			// for supplier
+    			if (get_class($this) == 'Fournisseur') $this->mode_reglement_supplier_id = $id;
     			return 1;
     		}
     		else
@@ -1431,6 +1433,8 @@ abstract class CommonObject
     		if ($this->db->query($sql))
     		{
     			$this->cond_reglement_id = $id;
+    			// for supplier
+    			if (get_class($this) == 'Fournisseur') $this->cond_reglement_supplier_id = $id;
     			$this->cond_reglement = $id;	// for compatibility
     			return 1;
     		}
@@ -1501,6 +1505,36 @@ abstract class CommonObject
             return 1;
         } else {
             dol_syslog(get_class($this).'::setShippingMethod Error ', LOG_DEBUG);
+            $this->error=$this->db->error();
+            return 0;
+        }
+    }
+
+
+    /**
+     *  Change the warehouse
+     *
+     *  @param      int     $warehouse_id     Id of warehouse
+     *  @return     int              1 if OK, 0 if KO
+     */
+    function setWarehouse($warehouse_id)
+    {
+        if (! $this->table_element) {
+            dol_syslog(get_class($this)."::setWarehouse was called on objet with property table_element not defined",LOG_ERR);
+            return -1;
+        }
+        if ($warehouse_id<0) $warehouse_id='NULL';
+        dol_syslog(get_class($this).'::setWarehouse('.$warehouse_id.')');
+
+        $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
+        $sql.= " SET fk_warehouse = ".$warehouse_id;
+        $sql.= " WHERE rowid=".$this->id;
+
+        if ($this->db->query($sql)) {
+            $this->warehouse_id = ($warehouse_id=='NULL')?null:$warehouse_id;
+            return 1;
+        } else {
+            dol_syslog(get_class($this).'::setWarehouse Error ', LOG_DEBUG);
             $this->error=$this->db->error();
             return 0;
         }
@@ -2231,13 +2265,18 @@ abstract class CommonObject
 
     /**
      *	Fetch array of objects linked to current object. Links are loaded into this->linkedObjects array and this->linkedObjectsIds
-     *
-     *	@param	int		$sourceid		Object source id
-     *	@param  string	$sourcetype		Object source type
-     *	@param  int		$targetid		Object target id
-     *	@param  string	$targettype		Object target type
+     *  Possible usage for parameters:
+     *  - all parameters empty -> we look all link to current object (current object can be source or target)
+     *  - one couple id+type is provided -> this will set $justsource or $justtarget
+     *  - one couple id+type is provided and other type is provided -> this will set $justsource or $justtarget + criteria on other type
+     *  
+     *  
+     *	@param	int		$sourceid		Object source id (if not defined, id of object)
+     *	@param  string	$sourcetype		Object source type (if not defined, element name of object)
+     *	@param  int		$targetid		Object target id (if not defined, id of object)
+     *	@param  string	$targettype		Object target type (if not defined, elemennt name of object)
      *	@param  string	$clause			'OR' or 'AND' clause used when both source id and target id are provided
-     *  @param	int		$alsosametype	0=Return only links to different object than source. 1=Include also link to objects of same type.
+     *  @param	int		$alsosametype	0=Return only links to object that differs from source. 1=Include also link to objects of same type.
      *	@return	void
      *  @see	add_object_linked, updateObjectLinked, deleteObjectLinked
      */
@@ -2255,12 +2294,12 @@ abstract class CommonObject
 
         if (! empty($sourceid) && ! empty($sourcetype) && empty($targetid))
         {
-        	$justsource=true;
+        	$justsource=true;  // the source (id and type) is a search criteria
         	if (! empty($targettype)) $withtargettype=true;
         }
         if (! empty($targetid) && ! empty($targettype) && empty($sourceid))
         {
-        	$justtarget=true;
+        	$justtarget=true;  // the target (id and type) is a search criteria
         	if (! empty($sourcetype)) $withsourcetype=true;
         }
 
@@ -2309,13 +2348,27 @@ abstract class CommonObject
             while ($i < $num)
             {
                 $obj = $this->db->fetch_object($resql);
-                if ($obj->fk_source == $sourceid)
+                if ($justsource || $justtarget)
                 {
-                    $this->linkedObjectsIds[$obj->targettype][$obj->rowid]=$obj->fk_target;
+                    if ($justsource)
+                    {
+                        $this->linkedObjectsIds[$obj->targettype][$obj->rowid]=$obj->fk_target;
+                    }
+                    else if ($justtarget)
+                    {
+                        $this->linkedObjectsIds[$obj->sourcetype][$obj->rowid]=$obj->fk_source;
+                    }
                 }
-                if ($obj->fk_target == $targetid)
+                else
                 {
-                    $this->linkedObjectsIds[$obj->sourcetype][$obj->rowid]=$obj->fk_source;
+                    if ($obj->fk_source == $sourceid && $obj->sourcetype == $sourcetype)
+                    {
+                        $this->linkedObjectsIds[$obj->targettype][$obj->rowid]=$obj->fk_target;
+                    }
+                    if ($obj->fk_target == $targetid && $obj->targettype == $targettype)
+                    {
+                        $this->linkedObjectsIds[$obj->sourcetype][$obj->rowid]=$obj->fk_source;
+                    }
                 }
                 $i++;
             }
@@ -2986,60 +3039,60 @@ abstract class CommonObject
 
 		print '<tr class="liste_titre nodrag nodrop">';
 
-		if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) print '<td align="center" width="5">&nbsp;</td>';
+		if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) print '<td class="linecolnum" align="center" width="5">&nbsp;</td>';
 
 		// Description
-		print '<td>'.$langs->trans('Description').'</td>';
+		print '<td class="linecoldescription">'.$langs->trans('Description').'</td>';
 
 		if ($this->element == 'askpricesupplier')
 		{
-			print '<td align="right"><span id="title_fourn_ref">'.$langs->trans("AskPriceSupplierRefFourn").'</span></td>';
+			print '<td class="linerefsupplier" align="right"><span id="title_fourn_ref">'.$langs->trans("AskPriceSupplierRefFourn").'</span></td>';
 		}
 
 		// VAT
-		print '<td align="right" width="50">'.$langs->trans('VAT').'</td>';
+		print '<td class="linecolvat" align="right" width="50">'.$langs->trans('VAT').'</td>';
 
 		// Price HT
-		print '<td align="right" width="80">'.$langs->trans('PriceUHT').'</td>';
+		print '<td class="linecoluht" align="right" width="80">'.$langs->trans('PriceUHT').'</td>';
 
 		if ($inputalsopricewithtax) print '<td align="right" width="80">'.$langs->trans('PriceUTTC').'</td>';
 
 		// Qty
-		print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';
+		print '<td class="linecolqty" align="right" width="50">'.$langs->trans('Qty').'</td>';
 
 		if($conf->global->PRODUCT_USE_UNITS)
 		{
-			print '<td align="left" width="50">'.$langs->trans('Unit').'</td>';
+			print '<td class="linecoluseunit" align="left" width="50">'.$langs->trans('Unit').'</td>';
 		}
 
 		// Reduction short
-		print '<td align="right" width="50">'.$langs->trans('ReductionShort').'</td>';
+		print '<td class="linecoldiscount" align="right" width="50">'.$langs->trans('ReductionShort').'</td>';
 
 		if ($this->situation_cycle_ref) {
-			print '<td align="right" width="50">' . $langs->trans('Progress') . '</td>';
+			print '<td class="linecolcycleref" align="right" width="50">' . $langs->trans('Progress') . '</td>';
 		}
 
 		if ($usemargins && ! empty($conf->margin->enabled) && empty($user->societe_id))
 		{
 			if ($conf->global->MARGIN_TYPE == "1")
-				print '<td align="right" class="margininfos" width="80">'.$langs->trans('BuyingPrice').'</td>';
+				print '<td class="linecolmargin1 margininfos" align="right" width="80">'.$langs->trans('BuyingPrice').'</td>';
 			else
-				print '<td align="right" class="margininfos" width="80">'.$langs->trans('CostPrice').'</td>';
+				print '<td class="linecolmargin1 margininfos" align="right" width="80">'.$langs->trans('CostPrice').'</td>';
 
 			if (! empty($conf->global->DISPLAY_MARGIN_RATES) && $user->rights->margins->liretous)
-				print '<td align="right" class="margininfos" width="50">'.$langs->trans('MarginRate').'</td>';
+				print '<td class="linecolmargin2 margininfos" align="right" width="50">'.$langs->trans('MarginRate').'</td>';
 			if (! empty($conf->global->DISPLAY_MARK_RATES) && $user->rights->margins->liretous)
-				print '<td align="right" class="margininfos" width="50">'.$langs->trans('MarkRate').'</td>';
+				print '<td class="linecolmargin2 margininfos" align="right" width="50">'.$langs->trans('MarkRate').'</td>';
 		}
 
 		// Total HT
-		print '<td align="right" width="50">'.$langs->trans('TotalHTShort').'</td>';
+		print '<td class="linecolht" align="right" width="50">'.$langs->trans('TotalHTShort').'</td>';
 
-		print '<td></td>';  // No width to allow autodim
+		print '<td class="linecoledit"></td>';  // No width to allow autodim
 
-		print '<td width="10"></td>';
+		print '<td class="linecoldelete" width="10"></td>';
 
-		print '<td width="10"></td>';
+		print '<td class="linecolmove" width="10"></td>';
 
 		print "</tr>\n";
 
@@ -3059,20 +3112,21 @@ abstract class CommonObject
 
 			$var=!$var;
 
-			if (is_object($hookmanager) && (($line->product_type == 9 && ! empty($line->special_code)) || ! empty($line->fk_parent_line)))
+			//if (is_object($hookmanager) && (($line->product_type == 9 && ! empty($line->special_code)) || ! empty($line->fk_parent_line)))
+            if (is_object($hookmanager))   // Old code is commented on preceding line.
 			{
 				if (empty($line->fk_parent_line))
 				{
 					$parameters = array('line'=>$line,'var'=>$var,'num'=>$num,'i'=>$i,'dateSelector'=>$dateSelector,'seller'=>$seller,'buyer'=>$buyer,'selected'=>$selected, 'extrafieldsline'=>$extrafieldsline);
-					$hookmanager->executeHooks('printObjectLine', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
+                    $reshook = $hookmanager->executeHooks('printObjectLine', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
 				}
 				else
 				{
 					$parameters = array('line'=>$line,'var'=>$var,'num'=>$num,'i'=>$i,'dateSelector'=>$dateSelector,'seller'=>$seller,'buyer'=>$buyer,'selected'=>$selected, 'extrafieldsline'=>$extrafieldsline);
-					$hookmanager->executeHooks('printObjectSubLine', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
+                    $reshook = $hookmanager->executeHooks('printObjectSubLine', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
 				}
 			}
-			else
+            if (empty($reshook))
 			{
 				$this->printObjectLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected,$extrafieldsline);
 			}
@@ -3122,6 +3176,9 @@ abstract class CommonObject
 			{
 				$product_static = new Product($this->db);
 				$product_static->fetch($line->fk_product);
+
+                $product_static->ref = $line->ref; //can change ref in hook
+                $product_static->label = $line->label; //can change label in hook
 				$text=$product_static->getNomUrl(1);
 
 				// Define output language and label
@@ -3782,10 +3839,10 @@ abstract class CommonObject
 
                     foreach ($tab as $key => $value)
                     {
-                    	// Test fetch_array ! is_int($key) because fetch_array seult is a mix table with Key as alpha and Key as int (depend db engine)
+                    	// Test fetch_array ! is_int($key) because fetch_array result is a mix table with Key as alpha and Key as int (depend db engine)
                         if ($key != 'rowid' && $key != 'tms' && $key != 'fk_member' && ! is_int($key))
                         {
-                            // we can add this attribute to adherent object
+                            // we can add this attribute to object
                             $this->array_options["options_".$key]=$value;
                         }
                     }
@@ -3833,7 +3890,7 @@ abstract class CommonObject
     /**
      *	Add/Update all extra fields values for the current object.
      *  Data to describe values to insert/update are stored into $this->array_options=array('options_codeforfield1'=>'valueforfield1', 'options_codeforfield2'=>'valueforfield2', ...)
-     *  This function delte record with all extrafields and insert them again from the array $this->array_options.
+     *  This function delete record with all extrafields and insert them again from the array $this->array_options.
      *
      *  @return int -1=error, O=did nothing, 1=OK
      */
@@ -3887,12 +3944,25 @@ abstract class CommonObject
 						// 1 : classPath
 						$InfoFieldList = explode(":", $param_list[0]);
 						dol_include_once($InfoFieldList[1]);
-						$object = new $InfoFieldList[0]($this->db);
-						if ($value)
-						{
-							$object->fetch(0,$value);
-							$this->array_options[$key]=$object->id;
-						}
+            			if ($InfoFieldList[0] && class_exists($InfoFieldList[0]))
+            			{
+    						$object = new $InfoFieldList[0]($this->db);
+    						if ($value)
+    						{
+    							$res=$object->fetch(0,$value);
+    							if ($res > 0) $this->array_options[$key]=$object->id;
+    							else 
+    							{
+    							    $this->error="Ref '".$value."' for object '".$object->element."' not found";
+                                    $this->db->rollback();
+                                    return -1;
+    							}
+    						}
+            			}
+            			else
+            			{
+            			    dol_syslog('Error bad setup of extrafield', LOG_WARNING);
+            			}
 						break;
                	}
             }
@@ -4113,5 +4183,67 @@ abstract class CommonObject
 		}
 
 		return true;
+	}
+	
+	 /**
+	 * define buy price if not defined
+	 *	set buy price = sell price if ForceBuyingPriceIfNull configured,
+	 *	 else if calculation MARGIN_TYPE = 'pmp' and pmp is calculated, set pmp as buyprice
+	 *	 else set min buy price as buy price
+	 *	 
+	 * @param float		$unitPrice		 product unit price
+	 * @param float		$discountPercent line discount percent
+	 * @param int		$fk_product		 product id
+	 *
+	 * @return	float <0 if ko, buyprice if ok
+	 */
+	public function defineBuyPrice($unitPrice = 0, $discountPercent = 0, $fk_product = 0) 
+	{
+		global $conf;
+	
+		$buyPrice = 0;
+		
+		if (($unitPrice > 0) && (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1))
+		{
+			$buyPrice = $unitPrice * (1 - $discountPercent / 100);
+		}
+		else
+		{
+			// Get PMP
+			if (! empty($fk_product))
+			{
+				if (isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == 'pmp')
+				{
+					require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+					$product = new Product($this->db);
+					$result = $product->fetch($fk_product);
+					if ($result <= 0)
+					{
+						$this->error='ErrorProductIdDoesNotExists';
+						return -1;
+					}
+					if (($product->pmp > 0))
+					{
+						$buyPrice = $product->pmp;
+					}
+					// TODO add option to set PMP of product
+				}
+				else if (isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == '1')
+				{
+					require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+					$productFournisseur = new ProductFournisseur($this->db);
+					if (($result = $productFournisseur->find_min_price_product_fournisseur($fk_product)) > 0)
+					{
+						$buyPrice = $productFournisseur->fourn_price;
+					}
+					else
+					{
+						$this->error = $productFournisseur->error;
+						return -1;
+					}
+				}
+			}
+		}
+		return $buyPrice;
 	}
 }

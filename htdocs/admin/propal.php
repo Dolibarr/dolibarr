@@ -59,11 +59,11 @@ if ($action == 'updateMask')
 
  	if (! $error)
 	{
-		setEventMessage($langs->trans("SetupSaved"));
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
 	else
 	{
-		setEventMessage($langs->trans("Error"),'errors');
+		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
 
@@ -101,13 +101,13 @@ if ($action == 'specimen')
 		}
 		else
 		{
-			setEventMessage($module->error,'errors');
+			setEventMessages($module->error, $module->errors, 'errors');
 			dol_syslog($module->error, LOG_ERR);
 		}
 	}
 	else
 	{
-		setEventMessage($langs->trans("ErrorModuleNotFound"),'errors');
+		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
 		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
 }
@@ -121,11 +121,11 @@ if ($action == 'set_PROPALE_DRAFT_WATERMARK')
 
  	if (! $error)
 	{
-		setEventMessage($langs->trans("SetupSaved"));
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
 	else
 	{
-		setEventMessage($langs->trans("Error"),'errors');
+		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
 
@@ -139,11 +139,11 @@ if ($action == 'set_PROPOSAL_FREE_TEXT')
 
  	if (! $error)
 	{
-		setEventMessage($langs->trans("SetupSaved"));
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
 	else
 	{
-		setEventMessage($langs->trans("Error"),'errors');
+		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
 
@@ -155,11 +155,11 @@ if ($action == 'setdefaultduration')
 
  	if (! $error)
 	{
-		setEventMessage($langs->trans("SetupSaved"));
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
 	else
 	{
-		setEventMessage($langs->trans("Error"),'errors');
+		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
 
@@ -171,11 +171,11 @@ if ($action == 'set_BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL')
 
     if (! $error)
     {
-        setEventMessage($langs->trans("SetupSaved"));
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
     else
     {
-        setEventMessage($langs->trans("Error"),'errors');
+        setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
 
@@ -199,12 +199,12 @@ if ($action == 'setModuleOptions')
 	if (! $error)
 	{
 		$db->commit();
-		setEventMessage($langs->trans("SetupSaved"));
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
 	else
 	{
 		$db->rollback();
-		setEventMessage($langs->trans("Error"),'errors');
+		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
 

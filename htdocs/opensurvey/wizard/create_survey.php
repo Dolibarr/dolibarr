@@ -144,7 +144,7 @@ print '<table class="border" width="100%">'."\n";
 print '<tr><td class="fieldrequired">'. $langs->trans("PollTitle") .'</td><td><input type="text" name="titre" size="40" maxlength="80" value="'.$_SESSION["titre"].'"></td>'."\n";
 if (! $_SESSION["titre"] && (GETPOST('creation_sondage_date') || GETPOST('creation_sondage_autre')))
 {
-	setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("PollTitle")), 'errors');
+	setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("PollTitle")), null, 'errors');
 }
 
 print '</tr>'."\n";

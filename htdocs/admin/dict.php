@@ -4,7 +4,7 @@
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2015 Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2011      Remy Younes          <ryounes@gmail.com>
  * Copyright (C) 2012-2015 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2012      Christophe Battarel	<christophe.battarel@ltairis.fr>
@@ -34,6 +34,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
 $langs->load("errors");
@@ -465,6 +466,9 @@ if ($id == 11)
 			'fichinter'         => $langs->trans('InterventionCard')
 	);
 	if (! empty($conf->global->MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES)) $elementList["societe"] = $langs->trans('ThirdParty');
+
+	complete_elementList_with_modules($elementList);
+
 	asort($elementList);
 	$sourceList = array(
 			'internal' => $langs->trans('Internal'),
@@ -506,7 +510,7 @@ if ($id == 10)
 }
 
 
-// Actions ajout ou modification d'une entree dans un dictionnaire de donnee
+// Actions add or modify an entry into a dictionary
 if (GETPOST('actionadd') || GETPOST('actionmodify'))
 {
     $listfield=explode(',',$tabfield[$id]);
@@ -518,8 +522,8 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
     $ok=1;
     foreach ($listfield as $f => $value)
     {
-        if ($value == 'country_id' && in_array($tablib[$id],array('DictionaryVAT','DictionaryRegion','DictionaryCompanyType','DictionaryHolidayTypes'))) continue;		// For some pages, country is not mandatory
-    	if ($value == 'country' && in_array($tablib[$id],array('DictionaryCanton','DictionaryCompanyType'))) continue;		// For some pages, country is not mandatory
+        if ($value == 'country_id' && in_array($tablib[$id],array('DictionaryVAT','DictionaryRegion','DictionaryCompanyType','DictionaryHolidayTypes', 'DictionaryRevenueStamp'))) continue;		// For some pages, country is not mandatory
+    	if ($value == 'country' && in_array($tablib[$id],array('DictionaryCanton','DictionaryCompanyType', 'DictionaryRevenueStamp'))) continue;		// For some pages, country is not mandatory
         if ($value == 'localtax1' && empty($_POST['localtax1_type'])) continue;
         if ($value == 'localtax2' && empty($_POST['localtax2_type'])) continue;
         if ($value == 'color' && empty($_POST['color'])) continue;
@@ -544,20 +548,20 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
             if ($fieldnamekey == 'deductible') $fieldnamekey = 'Deductible';
             if ($fieldnamekey == 'sortorder') $fieldnamekey = 'SortOrder';
 
-            setEventMessage($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities($fieldnamekey)),'errors');
+            setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities($fieldnamekey)), null, 'errors');
         }
     }
     // Other checks
     if ($tabname[$id] == MAIN_DB_PREFIX."c_actioncomm" && isset($_POST["type"]) && in_array($_POST["type"],array('system','systemauto'))) {
         $ok=0;
-        setEventMessage($langs->transnoentities('ErrorReservedTypeSystemSystemAuto'),'errors');
+        setEventMessages($langs->transnoentities('ErrorReservedTypeSystemSystemAuto'), null, 'errors');
     }
     if (isset($_POST["code"]))
     {
     	if ($_POST["code"]=='0')
     	{
         	$ok=0;
-    		setEventMessage($langs->transnoentities('ErrorCodeCantContainZero'),'errors');
+    		setEventMessages($langs->transnoentities('ErrorCodeCantContainZero'), null, 'errors');
         }
         /*if (!is_numeric($_POST['code']))	// disabled, code may not be in numeric base
     	{
@@ -574,10 +578,15 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
     	else
     	{
         	$ok=0;
-        	setEventMessage($langs->transnoentities("ErrorFieldRequired",$langs->transnoentities("Country")),'errors');
+        	setEventMessages($langs->transnoentities("ErrorFieldRequired",$langs->transnoentities("Country")), null, 'errors');
     	}
     }
-
+    if ($id == 3 && ! is_numeric($_POST["code"]))
+    {
+       	$ok=0;
+       	setEventMessages($langs->transnoentities("ErrorFieldMustBeANumeric",$langs->transnoentities("Code")), null, 'errors');
+    }
+    
 	// Clean some parameters
     if (isset($_POST["localtax1"]) && empty($_POST["localtax1"])) $_POST["localtax1"]='0';	// If empty, we force to 0
     if (isset($_POST["localtax2"]) && empty($_POST["localtax2"])) $_POST["localtax2"]='0';	// If empty, we force to 0
@@ -633,13 +642,13 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         $result = $db->query($sql);
         if ($result)	// Add is ok
         {
-            setEventMessage($langs->transnoentities("RecordSaved"));
+            setEventMessages($langs->transnoentities("RecordSaved"), null, 'mesgs');
         	$_POST=array('id'=>$id);	// Clean $_POST array, we keep only
         }
         else
         {
             if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-                setEventMessage($langs->transnoentities("ErrorRecordAlreadyExists"),'errors');
+                setEventMessages($langs->transnoentities("ErrorRecordAlreadyExists"), null, 'errors');
             }
             else {
                 dol_print_error($db);
@@ -683,7 +692,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         $resql = $db->query($sql);
         if (! $resql)
         {
-            setEventMessage($db->error(),'errors');
+            setEventMessage($db->error(), 'errors');
         }
     }
     //$_GET["id"]=GETPOST('id', 'int');       // Force affichage dictionnaire en cours d'edition
@@ -707,7 +716,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes')       // delete
     {
         if ($db->errno() == 'DB_ERROR_CHILD_EXISTS')
         {
-            setEventMessage($langs->transnoentities("ErrorRecordIsUsedByChild"),'errors');
+            setEventMessages($langs->transnoentities("ErrorRecordIsUsedByChild"), null, 'errors');
         }
         else
         {

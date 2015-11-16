@@ -231,7 +231,7 @@ if (empty($reshook))
 		}
 
 		if ($socid < 1) {
-			setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Customer")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Customer")), null, 'errors');
 			$action = 'create';
 			$error++;
 		}
@@ -354,7 +354,7 @@ if (empty($reshook))
 									$array_options = $lines[$i]->array_options;
 								}
 
-								$result = $object->addline($desc, $lines[$i]->subprice, $lines[$i]->qty, $lines[$i]->tva_tx, $lines[$i]->localtax1_tx, $lines[$i]->localtax2_tx, $lines[$i]->fk_product, $lines[$i]->remise_percent, $lines[$i]->info_bits, $lines[$i]->fk_remise_except, 'HT', 0, $date_start, $date_end, $product_type, $lines[$i]->rang, $lines[$i]->special_code, $fk_parent_line, $lines[$i]->fk_fournprice, $lines[$i]->pa_ht, $label, $array_options, $lines[$i]->fk_unit);
+								$result = $object->addline($desc, $lines[$i]->subprice, $lines[$i]->qty, $lines[$i]->tva_tx, $lines[$i]->localtax1_tx, $lines[$i]->localtax2_tx, $lines[$i]->fk_product, $lines[$i]->remise_percent, $lines[$i]->info_bits, $lines[$i]->fk_remise_except, 'HT', 0, $date_start, $date_end, $product_type, $lines[$i]->rang, $lines[$i]->special_code, $fk_parent_line, $lines[$i]->fk_fournprice, $lines[$i]->pa_ht, $label, $array_options, $lines[$i]->fk_unit, $object->origin, $lines[$i]->rowid);
 
 								if ($result < 0) {
 									$error++;
@@ -595,7 +595,7 @@ if (empty($reshook))
 		}
 		if (GETPOST('prod_entry_mode') == 'free' && empty($idprod) && (! ($price_ht >= 0) || $price_ht == '')) 	// Unit price can be 0 but not ''
 		{
-			setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("UnitPriceHT")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("UnitPriceHT")), null, 'errors');
 			$error++;
 		}
 		if ($qty == '') {
@@ -733,8 +733,8 @@ if (empty($reshook))
 			}
 
 			// Margin
-			$fournprice = (GETPOST('fournprice' . $predef) ? GETPOST('fournprice' . $predef) : '');
-			$buyingprice = (GETPOST('buying_price' . $predef) ? GETPOST('buying_price' . $predef) : '');
+			$fournprice = price2num(GETPOST('fournprice' . $predef) ? GETPOST('fournprice' . $predef) : '');
+			$buyingprice = price2num(GETPOST('buying_price' . $predef) != '' ? GETPOST('buying_price' . $predef) : '');    // If buying_price is '0', we muste keep this value
 
 			// Local Taxes
 			$localtax1_tx = get_localtax($tva_tx, 1, $object->thirdparty);
@@ -833,8 +833,8 @@ if (empty($reshook))
 		$localtax2_rate = get_localtax($vat_rate, 2, $object->thirdparty, $mysoc);
 
 		// Add buying price
-		$fournprice = (GETPOST('fournprice') ? GETPOST('fournprice') : '');
-		$buyingprice = (GETPOST('buying_price') ? GETPOST('buying_price') : '');
+		$fournprice = price2num(GETPOST('fournprice') ? GETPOST('fournprice') : '');
+		$buyingprice = price2num(GETPOST('buying_price') != '' ? GETPOST('buying_price') : '');    // If buying_price is '0', we muste keep this value
 
 		// Extrafields Lines
 		$extrafieldsline = new ExtraFields($db);
@@ -875,7 +875,7 @@ if (empty($reshook))
 
 			// Check parameters
 			if (GETPOST('type') < 0) {
-				setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), 'errors');
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
 				$error++;
 			}
 		}
@@ -1166,9 +1166,9 @@ if (empty($reshook))
 
 
 
-	if (! $error && ! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->commande->creer) 
+	if (! $error && ! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->commande->creer)
 	{
-		if ($action == 'addcontact') 
+		if ($action == 'addcontact')
 		{
 			if ($object->id > 0) {
 				$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
@@ -1189,7 +1189,7 @@ if (empty($reshook))
 		}
 
 		// bascule du statut d'un contact
-		else if ($action == 'swapstatut') 
+		else if ($action == 'swapstatut')
 		{
 			if ($object->id > 0) {
 				$result = $object->swapContactStatus(GETPOST('ligne'));
@@ -1199,7 +1199,7 @@ if (empty($reshook))
 		}
 
 		// Efface un contact
-		else if ($action == 'deletecontact') 
+		else if ($action == 'deletecontact')
 		{
 			$result = $object->delete_contact($lineid);
 
@@ -1433,7 +1433,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 	print '</td></tr>';
 
 	// TODO How record was recorded OrderMode (llx_c_input_method)
-	
+
 	// Project
 	if (! empty($conf->projet->enabled) && $socid > 0)
 	{
@@ -1996,7 +1996,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		print '</td></tr>';
 
     	// TODO How record was recorded OrderMode (llx_c_input_method)
-		
+
 		// Project
 		if (! empty($conf->projet->enabled))
 		{

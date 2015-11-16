@@ -125,7 +125,7 @@ if (empty($reshook))
 		if (! GETPOST('dateend'))
 		{
 			$error++;
-			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("DateEnd")),'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DateEnd")), null, 'errors');
 		}
 		if (! $error)
 		{
@@ -206,13 +206,13 @@ if (empty($reshook))
 		if (empty($datecontrat))
 		{
 			$error++;
-			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date")),'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
 			$action='create';
 		}
 	
 		if ($socid<1)
 		{
-			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Customer")),'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Customer")), null, 'errors');
 			$action='create';
 			$error++;
 		}
@@ -419,12 +419,12 @@ if (empty($reshook))
 	
 	    if ($qty == '')
 	    {
-	    	setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Qty")),'errors');
+	    	setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Qty")), null, 'errors');
 	    	$error++;
 	    }
 	    if (GETPOST('prod_entry_mode') == 'free' && empty($idprod) && empty($product_desc))
 	    {
-	    	setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Description")),'errors');
+	    	setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Description")), null, 'errors');
 	    	$error++;
 	    }
 	
@@ -746,7 +746,7 @@ if (empty($reshook))
 		}
 		else
 		{
-			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("RefNewContract")),'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("RefNewContract")), null, 'errors');
 		}
 	} 
 	else if ($action == 'update_extras') 
@@ -1042,7 +1042,7 @@ if ($action == 'create')
 
     // Thirdparty
 	print '<tr>';
-	print '<td class="fieldrequired">'.$langs->trans('Thirdparty').'</td>';
+	print '<td class="fieldrequired">'.$langs->trans('ThirdParty').'</td>';
 	if ($socid>0)
 	{
 		print '<td colspan="2">';
@@ -1366,7 +1366,7 @@ else
             $sql.= " cd.date_fin_validite as date_fin, cd.date_cloture as date_fin_reelle,";
             $sql.= " cd.commentaire as comment, cd.fk_product_fournisseur_price as fk_fournprice, cd.buy_price_ht as pa_ht,";
 	        $sql.= " cd.fk_unit,";
-            $sql.= " p.rowid as pid, p.ref as pref, p.label as label, p.fk_product_type as ptype";
+            $sql.= " p.rowid as pid, p.ref as pref, p.label as label, p.fk_product_type as ptype, p.entity as pentity";
             $sql.= " FROM ".MAIN_DB_PREFIX."contratdet as cd";
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
             $sql.= " WHERE cd.rowid = ".$object->lines[$cursorline-1]->id;
@@ -1401,6 +1401,7 @@ else
                         $productstatic->id=$objp->fk_product;
                         $productstatic->type=$objp->ptype;
                         $productstatic->ref=$objp->pref;
+						$productstatic->entity=$objp->pentity;
                         $text = $productstatic->getNomUrl(1,'',20);
                         if ($objp->label)
                         {
@@ -1527,6 +1528,7 @@ else
                         $productstatic->id=$objp->fk_product;
                         $productstatic->type=$objp->ptype;
                         $productstatic->ref=$objp->pref;
+						$productstatic->entity=$objp->pentity;
                         print $productstatic->getNomUrl(1,'',20);
                         print $objp->label?' - '.dol_trunc($objp->label,16):'';
                         print '<br>';

@@ -68,7 +68,7 @@ if ($action == 'setvalue' && $user->admin)
     if (! $error)
     {
     	$db->commit();
-    	setEventMessage($langs->trans("SetupSaved"));
+    	setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
     else
     {
@@ -93,7 +93,7 @@ $head = ldap_prepare_head();
 // Test si fonction LDAP actives
 if (! function_exists("ldap_connect"))
 {
-	setEventMessage($langs->trans("LDAPFunctionsNotAvailableOnPHP"),'errors');
+	setEventMessages($langs->trans("LDAPFunctionsNotAvailableOnPHP"), null, 'errors');
 }
 
 dol_fiche_head($head, 'groups', $langs->trans("LDAPSetup"));
@@ -177,16 +177,16 @@ print '</td><td>'.$langs->trans("LDAPFieldGroupMembersExample").'</td>';
 print '<td align="right"><input type="radio" name="key" value="LDAP_GROUP_FIELD_GROUPMEMBERS"'.(($conf->global->LDAP_KEY_GROUPS && $conf->global->LDAP_KEY_GROUPS==$conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS)?' checked':'')."></td>";
 print '</tr>';
 
-
-$var=!$var;
-print '<tr '.$bc[$var].'><td colspan="4" align="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td></tr>';
 print '</table>';
+
+print info_admin($langs->trans("LDAPDescValues"));
+
+dol_fiche_end();
+
+print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div>';
 
 print '</form>';
 
-print '</div>';
-
-print info_admin($langs->trans("LDAPDescValues"));
 
 /*
  * Test de la connexion

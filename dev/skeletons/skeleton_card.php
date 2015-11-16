@@ -17,7 +17,7 @@
  */
 
 /**
- *   	\file       dev/skeletons/skeleton_page.php
+ *   	\file       dev/skeletons/skeleton_card.php
  *		\ingroup    mymodule othermodule1 othermodule2
  *		\brief      This file is an example of a php page
  *					Put here some comments
@@ -47,7 +47,7 @@ include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
 dol_include_once('/mymodule/class/skeleton_class.class.php');
 
 // Load traductions files requiredby by page
-$langs->load("companies");
+$langs->load("mymodule");
 $langs->load("other");
 
 // Get parameters
@@ -184,7 +184,7 @@ if (empty($reshook))
 		{
 			// Delete OK
 			setEventMessages("RecordDeleted", null, 'mesgs');
-			header("Location: ".dol_buildpath('/buildingmanagement/list.php',1));
+			header("Location: ".dol_buildpath('/mymodule/list.php',1));
 			exit;
 		}
 		else
@@ -227,131 +227,10 @@ jQuery(document).ready(function() {
 </script>';
 
 
-// Part to show a list
-if ($action == 'list' || (empty($id) && $action != 'create'))
-{
-	// Put here content of your page
-	print load_fiche_titre('PageTitle');
-    
-	$sql = "SELECT";
-    $sql.= " t.rowid,";
-    $sql.= " t.field1,";
-    $sql.= " t.field2";
-	// Add fields for extrafields
-	foreach ($extrafields->attribute_list as $key => $val) $sql.=",ef.".$key.' as options_'.$key;
-	// Add fields from hooks
-	$parameters=array();
-	$reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
-	$sql.=$hookmanager->resPrint;
-    $sql.= " FROM ".MAIN_DB_PREFIX."mytable as t";
-    $sql.= " WHERE 1 = 1";
-    if ($search_field1) $sql.= natural_search("field1",$search_field1);
-    if ($search_field2) $sql.= natural_search("field2",$search_field2);
-    
-	// Add where from hooks
-	$parameters=array();
-	$reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
-	$sql.=$hookmanager->resPrint;
-
-    // Count total nb of records
-    $nbtotalofrecords = 0;
-    if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
-    {
-    	$result = $db->query($sql);
-    	$nbtotalofrecords = $db->num_rows($result);
-    }	
-	
-    $sql.= $db->order($sortfield, $sortorder);
-	$sql.= $db->plimit($conf->liste_limit+1, $offset);
-    
-
-    dol_syslog($script_file, LOG_DEBUG);
-    $resql=$db->query($sql);
-    if ($resql)
-    {
-        $num = $db->num_rows($resql);
-        
-        $params='';
-    	$params.= '&amp;search_field1='.urlencode($search_field1);
-    	$params.= '&amp;search_field2='.urlencode($search_field2);
-        
-        print_barre_liste($title, $page, $_SERVER["PHP_SELF"],$params,$sortfield,$sortorder,'',$num,$nbtotalofrecords,'title_companies');
-        
-    
-    	print '<form method="GET" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
-    
-    	if (! empty($moreforfilter))
-    	{
-    		print '<div class="liste_titre liste_titre_bydiv centpercent">';
-    		print $moreforfilter;
-        	$parameters=array();
-        	$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
-    	    print $hookmanager->resPrint;
-    	    print '</div>';
-    	}
-    
-    	print '<table class="liste">'."\n";
-    
-        // Fields title
-        print '<tr class="liste_titre">';
-        print_liste_field_titre($langs->trans('field1'),$_SERVER['PHP_SELF'],'t.field1','',$param,'',$sortfield,$sortorder);
-        print_liste_field_titre($langs->trans('field2'),$_SERVER['PHP_SELF'],'t.field2','',$param,'',$sortfield,$sortorder);
-        $parameters=array();
-        $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
-        print $hookmanager->resPrint;
-        print '</tr>'."\n";
-    
-        // Fields title search
-    	print '<tr class="liste_titre">';
-    	print '<td class="liste_titre"><input type="text" class="flat" name="search_field1" value="'.$search_field1.'" size="10"></td>';
-    	print '<td class="liste_titre"><input type="text" class="flat" name="search_field2" value="'.$search_field2.'" size="10"></td>';
-        $parameters=array();
-        $reshook=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
-        print $hookmanager->resPrint;
-        print '</tr>'."\n";
-            
-        
-        $i = 0;
-        while ($i < $num)
-        {
-            $obj = $db->fetch_object($resql);
-            if ($obj)
-            {
-                // You can use here results
-                print '<tr>';
-                print '<td>'.$obj->field1.'</td>';
-                print '<td>'.$obj->field2.'</td>';
-		        $parameters=array('obj' => $obj);
-        		$reshook=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook
-                print $hookmanager->resPrint;
-        		print '</tr>';
-            }
-            $i++;
-        }
-        
-        $db->free($resql);
-    
-    	$parameters=array('sql' => $sql);
-    	$reshook=$hookmanager->executeHooks('printFieldListFooter',$parameters);    // Note that $action and $object may have been modified by hook
-    	print $hookmanager->resPrint;
-    
-    	print "</table>\n";
-    	print "</form>\n";
-        
-    }
-    else
-	{
-        $error++;
-        dol_print_error($db);
-    }
-}
-
-
-
 // Part to create
 if ($action == 'create')
 {
-	print load_fiche_titre($langs->trans("NewSkeleton"));
+	print load_fiche_titre($langs->trans("NewMyModule"));
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="action" value="add">';
@@ -360,10 +239,8 @@ if ($action == 'create')
 	dol_fiche_head();
 
 	print '<table class="border centpercent">'."\n";
-	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td>';
-	print '<input class="flat" type="text" size="36" name="label" value="'.$label.'">';
-	print '</td></tr>';
-
+	// print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input class="flat" type="text" size="36" name="label" value="'.$label.'"></td></tr>';
+	// LIST_OF_TD_LABEL_FIELDS_CREATE
 	print '</table>'."\n";
 
 	dol_fiche_end();
@@ -378,17 +255,25 @@ if ($action == 'create')
 // Part to edit record
 if (($id || $ref) && $action == 'edit')
 {
+	print load_fiche_titre($langs->trans("MyModule"));
+    
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-
-	dol_fiche_head();
-
-	print '<input type="hidden" name="action" value="add">';
+	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
+	
+	dol_fiche_head();
 
+	print '<table class="border centpercent">'."\n";
+	// print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input class="flat" type="text" size="36" name="label" value="'.$label.'"></td></tr>';
+	// LIST_OF_TD_LABEL_FIELDS_EDIT
+	print '</table>';
+	
 	dol_fiche_end();
 
-	print '<div class="center"><input type="submit" class="button" name="add" value="'.$langs->trans("Create").'"></div>';
+	print '<div class="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+	print ' &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '</div>';
 
 	print '</form>';
 }
@@ -398,10 +283,15 @@ if (($id || $ref) && $action == 'edit')
 // Part to show record
 if ($id && (empty($action) || $action == 'view'))
 {
+	print load_fiche_titre($langs->trans("MyModule"));
+    
 	dol_fiche_head();
 
-
-
+	print '<table class="border centpercent">'."\n";
+	// print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input class="flat" type="text" size="36" name="label" value="'.$label.'"></td></tr>';
+	// LIST_OF_TD_LABEL_FIELDS_VIEW
+	print '</table>';
+	
 	dol_fiche_end();
 
 

@@ -121,17 +121,34 @@ if ($socid)
 
 	dol_fiche_end();
 
-    /*
+
+	
+	/*
      * Barre d'action
      */
 
-    print '<div class="tabsAction">';
+    $objthirdparty=$object;
+    $objcon=new stdClass();
+	
+    $out='';
+    $permok=$user->rights->agenda->myactions->create;
+    if ((! empty($objthirdparty->id) || ! empty($objcon->id)) && $permok)
+    {
+        //$out.='<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create';
+        if (get_class($objthirdparty) == 'Societe') $out.='&amp;socid='.$objthirdparty->id;
+        $out.=(! empty($objcon->id)?'&amp;contactid='.$objcon->id:'').'&amp;backtopage=1&amp;percentage=-1';
+    	//$out.=$langs->trans("AddAnAction").' ';
+    	//$out.=img_picto($langs->trans("AddAnAction"),'filenew');
+    	//$out.="</a>";
+	}
+
+	print '<div class="tabsAction">';
 
     if (! empty($conf->agenda->enabled))
     {
     	if (! empty($user->rights->agenda->myactions->create) || ! empty($user->rights->agenda->allactions->create))
     	{
-        	print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&socid='.$socid.'">'.$langs->trans("AddAction").'</a>';
+        	print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'">'.$langs->trans("AddAction").'</a>';
     	}
     	else
     	{
@@ -143,25 +160,11 @@ if ($socid)
 
     print '<br>';
 
-    $objthirdparty=$object;
-    $objcon=new stdClass();
 
-    $out='';
-    $permok=$user->rights->agenda->myactions->create;
-    if ((! empty($objthirdparty->id) || ! empty($objcon->id)) && $permok)
-    {
-        $out.='<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create';
-        if (get_class($objthirdparty) == 'Societe') $out.='&amp;socid='.$objthirdparty->id;
-        $out.=(! empty($objcon->id)?'&amp;contactid='.$objcon->id:'').'&amp;backtopage=1&amp;percentage=-1">';
-    	$out.=$langs->trans("AddAnAction").' ';
-    	$out.=img_picto($langs->trans("AddAnAction"),'filenew');
-    	$out.="</a>";
-	}
-
-    print load_fiche_titre($langs->trans("ActionsOnCompany"),$out,'');
+    print load_fiche_titre($langs->trans("ActionsOnCompany"),'','');
 
     // List of todo actions
-    show_actions_todo($conf,$langs,$db,$object);
+    show_actions_todo($conf,$langs,$db,$object,null,0,1);
 
     // List of done actions
     show_actions_done($conf,$langs,$db,$object);

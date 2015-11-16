@@ -72,7 +72,7 @@ if ($actionsave)
 
 		if (! empty($src) && ! dol_is_url($src))
 		{
-			setEventMessage($langs->trans("ErrorParamMustBeAnUrl"),'errors');
+			setEventMessages($langs->trans("ErrorParamMustBeAnUrl"), null, 'errors');
 			$error++;
 			$errorsaved++;
 			break;
@@ -104,12 +104,12 @@ if ($actionsave)
     if (! $error)
     {
         $db->commit();
-        setEventMessage($langs->trans("SetupSaved"));
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
     else
     {
         $db->rollback();
-        if (empty($errorsaved))	setEventMessage($langs->trans("Error"),'errors');
+        if (empty($errorsaved))	setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
 
