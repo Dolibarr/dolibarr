@@ -68,7 +68,7 @@ if ($action == 'confirm_rejet')
 		{
 			$error++;
 			$langs->load("error");
-			setEventMessage($langs->transnoentities("ErrorDateMustBeBeforeToday"),'errors');
+			setEventMessages($langs->transnoentities("ErrorDateMustBeBeforeToday"), null, 'errors');
 		}
 
 		if (GETPOST('motif','alpha') == 0)
@@ -261,7 +261,7 @@ if ($id)
 	if ($sortfield == "") $sortfield="pl.fk_soc";
 
 	/*
-	 * Liste des factures
+	 * List of invoices
 	 */
 	$sql = "SELECT pf.rowid";
 	$sql.= " ,f.rowid as facid, f.facnumber as ref, f.total_ttc, f.paye, f.fk_statut";

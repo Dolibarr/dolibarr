@@ -118,7 +118,7 @@ if (empty($reshook))
 		            {
 		            	$langs->load("errors");
 		                //$error++;
-		                setEventMessage($langs->transnoentities("WarningPaymentDateLowerThanInvoiceDate", dol_print_date($datepaye,'day'), dol_print_date($tmpinvoice->date, 'day'), $tmpinvoice->ref), 'warnings');
+		                setEventMessages($langs->transnoentities("WarningPaymentDateLowerThanInvoiceDate", dol_print_date($datepaye,'day'), dol_print_date($tmpinvoice->date, 'day'), $tmpinvoice->ref), null, 'warnings');
 		            }
 	            }
 
@@ -129,7 +129,7 @@ if (empty($reshook))
 	    // Check parameters
 	    if (! GETPOST('paiementcode'))
 	    {
-	        setEventMessage($langs->transnoentities('ErrorFieldRequired',$langs->transnoentities('PaymentMode')), 'errors');
+	        setEventMessages($langs->transnoentities('ErrorFieldRequired',$langs->transnoentities('PaymentMode')), null, 'errors');
 	        $error++;
 	    }
 
@@ -138,20 +138,20 @@ if (empty($reshook))
 	        // If bank module is on, account is required to enter a payment
 	        if (GETPOST('accountid') <= 0)
 	        {
-	            setEventMessage($langs->transnoentities('ErrorFieldRequired',$langs->transnoentities('AccountToCredit')), 'errors');
+	            setEventMessages($langs->transnoentities('ErrorFieldRequired',$langs->transnoentities('AccountToCredit')), null, 'errors');
 	            $error++;
 	        }
 	    }
 
 	    if (empty($totalpayment) && empty($atleastonepaymentnotnull))
 	    {
-	        setEventMessage($langs->transnoentities('ErrorFieldRequired',$langs->trans('PaymentAmount')), 'errors');
+	        setEventMessages($langs->transnoentities('ErrorFieldRequired',$langs->trans('PaymentAmount')), null, 'errors');
 	        $error++;
 	    }
 
 	    if (empty($datepaye))
 	    {
-	        setEventMessage($langs->transnoentities('ErrorFieldRequired',$langs->transnoentities('Date')), 'errors');
+	        setEventMessages($langs->transnoentities('ErrorFieldRequired',$langs->transnoentities('Date')), null, 'errors');
 	        $error++;
 	    }
 	}
@@ -194,7 +194,7 @@ if (empty($reshook))
 	    	// Si module bank actif, un compte est obligatoire lors de la saisie d'un paiement
 	    	if (GETPOST('accountid') <= 0)
 	    	{
-	    		setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentities('AccountToCredit')), 'errors');
+	    		setEventMessages($langs->trans('ErrorFieldRequired',$langs->transnoentities('AccountToCredit')), null, 'errors');
 	    		$error++;
 	    	}
 	    }
@@ -212,7 +212,7 @@ if (empty($reshook))
 	    	$paiement_id = $paiement->create($user, (GETPOST('closepaidinvoices')=='on'?1:0));
 	    	if ($paiement_id < 0)
 	        {
-	            setEventMessage($paiement->error, 'errors');
+	            setEventMessages($paiement->error, $paiement->errors, 'errors');
 	            $error++;
 	        }
 	    }
@@ -224,7 +224,7 @@ if (empty($reshook))
 	        $result=$paiement->addPaymentToBank($user,'payment',$label,GETPOST('accountid'),GETPOST('chqemetteur'),GETPOST('chqbank'));
 	        if ($result < 0)
 	        {
-	            setEventMessage($paiement->error, 'errors');
+	            setEventMessages($paiement->error, $paiement->errors, 'errors');
 	            $error++;
 	        }
 	    }
