@@ -114,7 +114,7 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 		else
 		{
 			$db->rollback();
-			setEventMessage($tva->error, 'errors');
+			setEventMessages($tva->error, $tva->errors, 'errors');
 			$action="create";
 		}
 	}
@@ -150,18 +150,18 @@ if ($action == 'delete')
 			{
 				$tva->error=$accountline->error;
 				$db->rollback();
-				setEventMessage($tva->error,'errors');
+				setEventMessages($tva->error, $tva->errors, 'errors');
 			}
 	    }
 	    else
 	    {
 	        $db->rollback();
-	        setEventMessage($tva->error,'errors');
+	        setEventMessages($tva->error, $tva->errors, 'errors');
 	    }
 	}
 	else
 	{
-        setEventMessage('Error try do delete a line linked to a conciliated bank transaction','errors');
+        setEventMessages('Error try do delete a line linked to a conciliated bank transaction', null, 'errors');
 	}
 }
 
