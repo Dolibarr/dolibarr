@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2015	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2013  Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2014       Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2014-2015  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 201		Charlie Benke           <charlies@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1525,7 +1525,7 @@ else if ($id > 0 || ! empty($ref))
 					print '<td align="right">';
 					$selectmode='select';
 					if (! empty($conf->global->INTERVENTION_ADDLINE_FREEDUREATION)) $selectmode='text';
-					$form->select_duration('duration',$objp->duree, $selectmode);
+					$form->select_duration('duration',$objp->duree,0, $selectmode);
 					print '</td>';
 
 					print '<td align="center" colspan="5" valign="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
