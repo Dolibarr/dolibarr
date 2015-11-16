@@ -77,7 +77,7 @@ function marges_prepare_head()
 		$h++;
 	}
 
-	if ($user->rights->margin->read->all) {
+	if ($user->rights->margins->read->all) {
 		$title = 'UserMargins';
 	} else {
 		$title = 'SalesRepresentativeMargins';
