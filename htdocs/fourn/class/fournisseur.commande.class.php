@@ -53,12 +53,10 @@ class CommandeFournisseur extends CommonOrder
     var $id;
 
 	/**
-	 * TODO: Remove
-	 * @deprecated
-	 * @see product_ref
+	 * Supplier invoice reference
+     * @var string
 	 */
     var $ref;
-    var $product_ref;
     var $ref_supplier;
     var $brouillon;
     var $statut;			// 0=Draft -> 1=Validated -> 2=Approved -> 3=Process runing -> 4=Received partially -> 5=Received totally -> (reopen) 4=Received partially
