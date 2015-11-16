@@ -164,10 +164,15 @@ foreach ($modulesdir as $dir)
 		    					
 		    			            $special = $objMod->special;
 		    			            $familykey = $objMod->family;
+		    			            $moduleposition = ($objMod->module_position?$objMod->module_position:'500');
+		    			            if ($moduleposition == 500 && ($objMod->isCoreOrExternalModule() == 'external'))
+		    			            {
+		    			                $moduleposition = 800;
+		    			            }
 		    			            
 		    			            if ($special == 1) $familykey='interface';
 		    			            
-		    			            $orders[$i]  = $familyinfo[$familykey]['position']."_".$familykey."_".$j;   // Sort by family, then by module number
+		    			            $orders[$i]  = $familyinfo[$familykey]['position']."_".$familykey."_".$moduleposition."_".$j;   // Sort by family, then by module position then number
 		    						$dirmod[$i]  = $dir;
 		    			            // Set categ[$i]
 		    						$specialstring = isset($specialtostring[$special])?$specialtostring[$special]:'unknown';
@@ -312,7 +317,7 @@ if ($mode != 'marketplace')
     foreach ($orders as $key => $value)
     {
         $tab=explode('_',$value);
-        $familypos=$tab[0]; $familykey=$tab[1]; $numero=$tab[2];
+        $familyposition=$tab[0]; $familykey=$tab[1]; $module_position=$tab[2]; $numero=$tab[3];
 
         $modName = $filename[$key];
     	$objMod  = $modules[$key];
@@ -426,12 +431,13 @@ if ($mode != 'marketplace')
         	}
         	else
         	{
-        		print '<a class="reposition" href="modules.php?id='.$objMod->numero.'&amp;action=reset&amp;value=' . $modName . '&amp;mode=' . $mode . '">';
+        		print '<a class="reposition" href="modules.php?id='.$objMod->numero.'&amp;module_position='.$module_position.'&amp;action=reset&amp;value=' . $modName . '&amp;mode=' . $mode . '">';
         		print img_picto($langs->trans("Activated"),'switch_on');
         		print '</a>';
         	}
         	print '</td>'."\n";
 
+        	// Config link
         	if (! empty($objMod->config_page_url) && !$disableSetup)
         	{
         		if (is_array($objMod->config_page_url))
@@ -489,7 +495,7 @@ if ($mode != 'marketplace')
         	else
         	{
 	        	// Module non actif
-	        	print '<a class="reposition" href="modules.php?id='.$objMod->numero.'&amp;action=set&amp;value=' . $modName . '&amp;mode=' . $mode . '">';
+	        	print '<a class="reposition" href="modules.php?id='.$objMod->numero.'&amp;module_position='.$module_position.'&amp;action=set&amp;value=' . $modName . '&amp;mode=' . $mode . '">';
 	        	print img_picto($langs->trans("Disabled"),'switch_off');
 	        	print "</a>\n";
         	}
