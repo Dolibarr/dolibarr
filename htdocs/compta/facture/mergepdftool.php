@@ -107,14 +107,14 @@ if ($action == 'presend' && GETPOST('sendmail'))
 	if (!isset($user->email))
 	{
 		$error++;
-		setEventMessage("NoSenderEmailDefined");
+		setEventMessages($langs->trans("NoSenderEmailDefined"), null, 'warnings');
 	}
 
 	$countToSend = count($_POST['toSend']);
 	if (empty($countToSend))
 	{
 		$error++;
-		setEventMessage("InvoiceNotChecked","warnings");
+		setEventMessages($langs->trans("InvoiceNotChecked"), null, 'warnings');
 	}
 
 	if (! $error)
@@ -260,11 +260,11 @@ if ($action == 'presend' && GETPOST('sendmail'))
 		if ($nbsent)
 		{
 			$action='';	// Do not show form post if there was at least one successfull sent
-			setEventMessage($nbsent. '/'.$countToSend.' '.$langs->trans("RemindSent"));
+			setEventMessages($nbsent. '/'.$countToSend.' '.$langs->trans("RemindSent"), null, 'mesgs');
 		}
 		else
 		{
-			setEventMessage($langs->trans("NoRemindSent"), 'warnings');  // May be object has no generated PDF file
+			setEventMessages($langs->trans("NoRemindSent"), null, 'warnings');  // May be object has no generated PDF file
 		}
 	}
 }
@@ -349,16 +349,16 @@ if ($action == "builddoc" && $user->rights->facture->lire && ! GETPOST('button_s
 			@chmod($file, octdec($conf->global->MAIN_UMASK));
 
 			$langs->load("exports");
-			setEventMessage($langs->trans('FileSuccessfullyBuilt',$filename.'_'.dol_print_date($now,'dayhourlog')));
+			setEventMessages($langs->trans('FileSuccessfullyBuilt',$filename.'_'.dol_print_date($now,'dayhourlog')), null, 'mesgs');
 		}
 		else
 		{
-			setEventMessage($langs->trans('NoPDFAvailableForChecked'),'errors');
+			setEventMessages($langs->trans('NoPDFAvailableForChecked'), null, 'errors');
 		}
 	}
 	else
 	{
-		setEventMessage($langs->trans('InvoiceNotChecked'), 'warnings');
+		setEventMessages($langs->trans('InvoiceNotChecked'), null, 'warnings');
 	}
 }
 
@@ -371,8 +371,8 @@ if ($action == 'remove_file')
 	$upload_dir = $diroutputpdf;
 	$file = $upload_dir . '/' . GETPOST('file');
 	$ret=dol_delete_file($file);
-	if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-	else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+	if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
+	else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
 	$action='';
 }
 
@@ -574,6 +574,15 @@ if ($resql)
 		$formmail->fromid   = $user->id;
 		$formmail->fromname = $user->getFullName($langs);
 		$formmail->frommail = $user->email;
+		if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 1))	// If bit 1 is set
+		{
+			$formmail->trackid='inv'.$object->id;
+		}
+		if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2))	// If bit 2 is set
+		{
+			include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+			$formmail->frommail=dolAddEmailTrackId($formmail->frommail, 'inv'.$object->id);
+		}		
 		$formmail->withfrom=1;
 		$liste=array();
 		$formmail->withto=$langs->trans("AllRecipientSelectedForRemind");

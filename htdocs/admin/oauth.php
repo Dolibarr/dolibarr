@@ -43,8 +43,9 @@ if (!$user->admin)
 
 $action = GETPOST('action', 'alpha');
 
-// Supported OAUTH
-$supportedoauth2array=array('OAUTH_GOOGLE_NAME');
+// Supported OAUTH (a provider is supported when a file xxx_oauth2callback.php is available into htdocs/core/modules/oauth)
+$supportedoauth2array=array('OAUTH_GOOGLE_NAME'=>'google');
+
 // API access parameters OAUTH
 $list = array (
             array(
@@ -315,7 +316,7 @@ $var = true;
 foreach ($list as $key)
 {
     $supported=0;
-    if (in_array($key[0], $supportedoauth2array)) $supported=1;
+    if (in_array($key[0], array_keys($supportedoauth2array))) $supported=1;
     if (! $supported) continue;     // show only supported
         
     print '<tr class="liste_titre">';
@@ -325,7 +326,7 @@ foreach ($list as $key)
 
     if ($supported)
     {
-        $redirect_uri=$urlwithroot.'/core/modules/oauth/getgoogleoauthcallback.php';
+        $redirect_uri=$urlwithroot.'/core/modules/oauth/'.$supportedoauth2array[$key[0]].'_oauthcallback.php';
         $var = !$var;
         print '<tr '.$bc[$var].' class="value">';
         print '<td>'.$langs->trans("UseTheFollowingUrlAsRedirectURI").'</td>';

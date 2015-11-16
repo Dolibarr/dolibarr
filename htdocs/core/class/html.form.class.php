@@ -76,7 +76,7 @@ class Form
      * @param   string	$htmlname		Name of select field ('edit' prefix will be added)
      * @param   string	$preselected	Name of Value to show/edit (not used in this function)
      * @param	object	$object			Object
-     * @param	boolean	$perm			Permission to allow button to edit parameter
+     * @param	boolean	$perm			Permission to allow button to edit parameter. Set it to 0 to have a not edited field.
      * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'numeric:99', 'text' or 'textarea:rows:cols', 'day' or 'datepicker', 'ckeditor:dolibarr_zzz:width:height:savemethod:1:rows:cols', 'select;xxx[:class]'...)
      * @param	string	$moreparam		More param to add on a href URL
      * @return	string					HTML edit field
@@ -104,11 +104,11 @@ class Form
         }
         else
 		{
-            $ret.='<table class="nobordernopadding" width="100%"><tr><td class="nowrap">';
+            if (GETPOST('action') != 'edit'.$htmlname && $perm) $ret.='<table class="nobordernopadding" width="100%"><tr><td class="nowrap">';
             $ret.=$langs->trans($text);
-            $ret.='</td>';
+            if (GETPOST('action') != 'edit'.$htmlname && $perm) $ret.='</td>';
             if (GETPOST('action') != 'edit'.$htmlname && $perm) $ret.='<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit'.$htmlname.'&amp;id='.$object->id.$moreparam.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
-            $ret.='</tr></table>';
+            if (GETPOST('action') != 'edit'.$htmlname && $perm) $ret.='</tr></table>';
         }
 
         return $ret;
@@ -3857,12 +3857,12 @@ class Form
 
         dol_syslog(__METHOD__, LOG_DEBUG);
 
-        $sql  = "SELECT DISTINCT t.taux, t.recuperableonly";
+        $sql  = "SELECT DISTINCT t.code, t.taux, t.recuperableonly";
     	$sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
     	$sql.= " WHERE t.fk_pays = c.rowid";
     	$sql.= " AND t.active > 0";
     	$sql.= " AND c.code IN (".$country_code.")";
-    	$sql.= " ORDER BY t.taux ASC, t.recuperableonly ASC";
+    	$sql.= " ORDER BY t.code ASC, t.taux ASC, t.recuperableonly ASC";
 
     	$resql=$this->db->query($sql);
     	if ($resql)
@@ -3873,8 +3873,9 @@ class Form
     			for ($i = 0; $i < $num; $i++)
     			{
     				$obj = $this->db->fetch_object($resql);
+    				$this->cache_vatrates[$i]['code']	= $obj->code;
     				$this->cache_vatrates[$i]['txtva']	= $obj->taux;
-    				$this->cache_vatrates[$i]['libtva']	= $obj->taux.'%';
+    				$this->cache_vatrates[$i]['libtva']	= $obj->taux.'%'.($obj->code?' ('.$obj->code.')':'');   // Label must contains only 0-9 , . % or *
     				$this->cache_vatrates[$i]['nprtva']	= $obj->recuperableonly;
     			}
 
@@ -3897,7 +3898,7 @@ class Form
      *  Output an HTML select vat rate.
      *  The name of this function should be selectVat. We keep bad name for compatibility purpose.
      *
-     *  @param	string	$htmlname           Name of html select field
+     *  @param	string	$htmlname           Name of HTML select field
      *  @param  float	$selectedrate       Force preselected vat rate. Use '' for no forcing.
      *  @param  Societe	$societe_vendeuse   Thirdparty seller
      *  @param  Societe	$societe_acheteuse  Thirdparty buyer
@@ -3910,10 +3911,11 @@ class Form
 	 *                                      Si vendeur et acheteur dans Communauté européenne et acheteur= particulier alors TVA par défaut=TVA du produit vendu. Fin de règle.
 	 *                                      Si vendeur et acheteur dans Communauté européenne et acheteur= entreprise alors TVA par défaut=0. Fin de règle.
      *                  					Sinon la TVA proposee par defaut=0. Fin de regle.
-     *  @param	bool	$options_only		Return options only (for ajax treatment)
+     *  @param	bool	$options_only		Return HTML options lines only (for ajax treatment)
+     *  @param  int     $addcode            Add code into key in select list
      *  @return	string
      */
-    function load_tva($htmlname='tauxtva', $selectedrate='', $societe_vendeuse='', $societe_acheteuse='', $idprod=0, $info_bits=0, $type='', $options_only=false)
+    function load_tva($htmlname='tauxtva', $selectedrate='', $societe_vendeuse='', $societe_acheteuse='', $idprod=0, $info_bits=0, $type='', $options_only=false, $addcode=0)
     {
         global $langs,$conf,$mysoc;
 
@@ -4016,13 +4018,16 @@ class Form
 
         		$return.= '<option value="'.$rate['txtva'];
         		$return.= $rate['nprtva'] ? '*': '';
+        		if ($addcode && $rate['code']) $return.=' ('.$rate['code'].')';
         		$return.= '"';
         		if ($rate['txtva'] == $defaulttx && $rate['nprtva'] == $defaultnpr)
         		{
         			$return.= ' selected';
         		}
         		$return.= '>'.vatrate($rate['libtva']);
+        		//$return.=($rate['code']?' '.$rate['code']:'');
         		$return.= $rate['nprtva'] ? ' *': '';
+        		
         		$return.= '</option>';
         	}
 
@@ -4057,10 +4062,11 @@ class Form
      * 	@param 	int			$disabled		Disable input fields
      *  @param  int			$fullday        When a checkbox with this html name is on, hour and day are set with 00:00 or 23:59
      *  @param	string		$addplusone		Add a link "+1 hour". Value must be name of another select_date field.
+     *  @param  datetime    $adddateof      Add a link "Date of invoice" using the following date.
      * 	@return	mixed						Nothing or string if nooutput is 1
      *  @see	form_date
      */
-    function select_date($set_time='', $prefix='re', $h=0, $m=0, $empty=0, $form_name="", $d=1, $addnowlink=0, $nooutput=0, $disabled=0, $fullday='', $addplusone='')
+    function select_date($set_time='', $prefix='re', $h=0, $m=0, $empty=0, $form_name="", $d=1, $addnowlink=0, $nooutput=0, $disabled=0, $fullday='', $addplusone='', $adddateof='')
     {
         global $conf,$langs;
 
@@ -4318,6 +4324,13 @@ class Form
             }
         }
 
+        // Add a "Plus one hour" link
+        if ($conf->use_javascript_ajax && $adddateof)
+        {
+            $tmparray=dol_getdate($adddateof);
+            $retstring.=' - <button class="dpInvisibleButtons datenowlink" id="dateofinvoice" type="button" name="_dateofinvoice" value="now" onclick="jQuery(\'#re\').val(\''.dol_print_date($adddateof,'day').'\');jQuery(\'#reday\').val(\''.$tmparray['mday'].'\');jQuery(\'#remonth\').val(\''.$tmparray['mon'].'\');jQuery(\'#reyear\').val(\''.$tmparray['year'].'\');">'.$langs->trans("DateInvoice").'</a>';
+        }    
+
         if (! empty($nooutput)) return $retstring;
 
         print $retstring;
@@ -4513,22 +4526,26 @@ class Form
      *  @param	string	$morecss				Add more class to css styles
      *  @param  int     $callurlonselect        If set to 1, some code is added so an url return by the ajax is called when value is selected.
      *  @param  string  $placeholder            String to use as placeholder
-     * 	@return	string							HTML select string.
+     *  @param  string  $acceptdelayedhtml      1 if caller request to have html delayed content not returned but saved into global $delayedhtmlcontent (so caller can show it at end of page to avoid flash FOUC effect)
+     * 	@return	string   						HTML select string
      */
-    static function selectArrayAjax($htmlname, $url, $id='', $moreparam='', $moreparamtourl='', $disabled=0, $minimumInputLength=1, $morecss='', $callurlonselect=0, $placeholder='')
+    static function selectArrayAjax($htmlname, $url, $id='', $moreparam='', $moreparamtourl='', $disabled=0, $minimumInputLength=1, $morecss='', $callurlonselect=0, $placeholder='', $acceptdelayedhtml=0)
     {
         global $langs;
+        global $delayedhtmlcontent;      
         
-    	$out = '';
-
     	$tmpplugin='select2';
-    	$out.='<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
+        
+    	$out='<input type="text" class="'.$htmlname.($morecss?' '.$morecss:'').'" '.($moreparam?$moreparam.' ':'').'name="'.$htmlname.'">';
+    	
+    	// TODO Use an internal dolibarr component instead of select2
+    	$outdelayed='<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
 	    	<script type="text/javascript">
 	    	$(document).ready(function () {
     	      
-    	      '.($callurlonselect ? 'var saveRemoteData = [];':'').'
+    	        '.($callurlonselect ? 'var saveRemoteData = [];':'').'
     	    
-              $(".'.$htmlname.'").select2({
+                $(".'.$htmlname.'").select2({
 			    	ajax: {
 				    	dir: "ltr",
 				    	url: "'.$url.'",
@@ -4584,12 +4601,17 @@ class Form
                     });
     			});' : '' ) . '
     			
-    	});
-	    </script>';
+    	   });
+	       </script>';
 
-
-		$out.='<input type="text" class="'.$htmlname.($morecss?' '.$morecss:'').'" '.($moreparam?$moreparam.' ':'').'name="'.$htmlname.'">';
-		
+		if ($acceptdelayedhtml)
+		{
+		    $delayedhtmlcontent.=$outdelayed;
+		}
+		else
+		{
+		    $out.=$outdelayed;
+		}
 		return $out;
     }
 
@@ -4670,7 +4692,7 @@ class Form
     			foreach ($array as $key => $value)
     			{
     				$out.= '<option value="'.$key.'"';
-    				if (is_array($selected) && ! empty($selected) && in_array($key, $selected))
+    				if (is_array($selected) && ! empty($selected) && in_array($key, $selected) && !empty($key))
     				{
     					$out.= ' selected';
     				}
@@ -4811,7 +4833,7 @@ class Form
 				$ways = $c->print_all_ways();       // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formated text
 				foreach($ways as $way)
 				{
-					$toprint[] = '<li class="select2-search-choice-dolibarr"'.($c->color?' style="background: #'.$c->color.'"':'').'>'.img_object('','category').' '.$way.'</li>';
+					$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories"'.($c->color?' style="background: #'.$c->color.';"':'').'>'.img_object('','category').' '.$way.'</li>';
 				}
 			}
 			return '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">'.implode(' ', $toprint).'</ul></div>';
@@ -4873,9 +4895,9 @@ class Form
         			$tplpath = 'comm/'.$element;
         			if (empty($conf->propal->enabled)) continue;	// Do not show if module disabled
         		}
-        		else if ($objecttype == 'askpricesupplier')           {
+        		else if ($objecttype == 'supplier_proposal')           {
         			$tplpath = 'comm/'.$element;
-        			if (empty($conf->askpricesupplier->enabled)) continue;	// Do not show if module disabled
+        			if (empty($conf->supplier_proposal->enabled)) continue;	// Do not show if module disabled
         		}
         		else if ($objecttype == 'shipping' || $objecttype == 'shipment') {
         			$tplpath = 'expedition';

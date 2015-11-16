@@ -40,21 +40,6 @@ $socid=0;
 if ($user->societe_id > 0)
 	$socid = $user->societe_id;
 
-$sall=GETPOST('sall','alpha');
-$search_user=GETPOST('search_user','alpha');
-$search_login=GETPOST('search_login','alpha');
-$search_lastname=GETPOST('search_lastname','alpha');
-$search_firstname=GETPOST('search_firstname','alpha');
-$search_accountancy_code=GETPOST('search_accountancy_code','alpha');
-$search_email=GETPOST('search_email','alpha');
-$search_statut=GETPOST('search_statut','alpha');
-$search_thirdparty=GETPOST('search_thirdparty','alpha');
-$search_supervisor=GETPOST('search_supervisor','alpha');
-$search_previousconn=GETPOST('search_previousconn','alpha');
-$optioncss = GETPOST('optioncss','alpha');
-
-if ($search_statut == '') $search_statut='1';
-
 // Load variable for pagination
 $limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
 $sortfield = GETPOST('sortfield','alpha');
@@ -89,6 +74,53 @@ $fieldstosearchall = array(
     'u.note'=>"Note"
 );
 
+// Definition of fields for list
+$arrayfields=array(
+    'u.login'=>array('label'=>$langs->trans("Login"), 'checked'=>1),
+    'u.lastname'=>array('label'=>$langs->trans("Lastname"), 'checked'=>1),
+    'u.firstname'=>array('label'=>$langs->trans("Firstname"), 'checked'=>1),
+    'u.gender'=>array('label'=>$langs->trans("Gender"), 'checked'=>0),
+    'u.employee'=>array('label'=>$langs->trans("Employee"), 'checked'=>0),
+    'u.accountancy_code'=>array('label'=>$langs->trans("AccountancyCode"), 'checked'=>0),
+    'u.email'=>array('label'=>$langs->trans("EMail"), 'checked'=>1),
+    'u.fk_soc'=>array('label'=>$langs->trans("Company"), 'checked'=>1),
+    'u.entity'=>array('label'=>$langs->trans("Entity"), 'checked'=>1, 'enabled'=>(! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode))),
+    'u.fk_user'=>array('label'=>$langs->trans("HierarchicalResponsible"), 'checked'=>1),
+    'u.datelastlogin'=>array('label'=>$langs->trans("LastConnexion"), 'checked'=>1, 'position'=>100),
+    'u.datepreviouslogin'=>array('label'=>$langs->trans("PreviousConnexion"), 'checked'=>0, 'position'=>110),
+    'u.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
+    'u.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
+    'u.statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
+);
+// Extra fields
+if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+{
+   foreach($extrafields->attribute_label as $key => $val) 
+   {
+       $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>$extrafields->attribute_list[$key], 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
+   }
+}
+
+// Init search fields
+$sall=GETPOST('sall','alpha');
+$search_user=GETPOST('search_user','alpha');
+$search_login=GETPOST('search_login','alpha');
+$search_lastname=GETPOST('search_lastname','alpha');
+$search_firstname=GETPOST('search_firstname','alpha');
+$search_gender=GETPOST('search_gender','alpha');
+$search_employee=GETPOST('search_employee','alpha');
+$search_accountancy_code=GETPOST('search_accountancy_code','alpha');
+$search_email=GETPOST('search_email','alpha');
+$search_statut=GETPOST('search_statut','alpha');
+$search_thirdparty=GETPOST('search_thirdparty','alpha');
+$search_supervisor=GETPOST('search_supervisor','alpha');
+$search_previousconn=GETPOST('search_previousconn','alpha');
+$optioncss = GETPOST('optioncss','alpha');
+
+// Default search
+if ($search_statut == '') $search_statut='1';
+
+
 
 /*
  * Actions
@@ -106,6 +138,8 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") ||GETPO
 	$search_login="";
 	$search_lastname="";
 	$search_firstname="";
+	$search_gender="";
+	$search_employee="";
 	$search_accountancy_code="";
 	$search_email="";
 	$search_statut="";
@@ -130,7 +164,7 @@ $buttonviewhierarchy='<form action="'.DOL_URL_ROOT.'/user/hierarchy.php'.(($sear
 
 print load_fiche_titre($langs->trans("ListOfUsers"), $buttonviewhierarchy);
 
-$sql = "SELECT u.rowid, u.lastname, u.firstname, u.admin, u.fk_soc, u.login, u.email, u.accountancy_code, u.gender, u.photo,";
+$sql = "SELECT u.rowid, u.lastname, u.firstname, u.admin, u.fk_soc, u.login, u.email, u.accountancy_code, u.gender, u.employee, u.photo,";
 $sql.= " u.datelastlogin, u.datepreviouslogin,";
 $sql.= " u.ldap_sid, u.statut, u.entity,";
 $sql.= " u.tms as date_update, u.datec as date_creation,";
@@ -161,6 +195,8 @@ if ($search_thirdparty != '') $sql.=natural_search(array('s.nom'), $search_third
 if ($search_login != '')      $sql.= natural_search("u.login", $search_login);
 if ($search_lastname != '')   $sql.= natural_search("u.lastname", $search_lastname);
 if ($search_firstname != '')  $sql.= natural_search("u.firstname", $search_firstname);
+if ($search_gender != '' && $search_gender != '-1')     $sql.= " AND u.gender = '".$search_gender."'";
+if ($search_employee >= 0)    $sql.= natural_search("u.employee", $search_employee);
 if ($search_accountancy_code != '')  $sql.= natural_search("u.accountancy_code", $search_accountancy_code);
 if ($search_email != '')  $sql.= natural_search("u.email", $search_email);
 if ($search_statut != '' && $search_statut >= 0) $sql.= " AND (u.statut=".$search_statut.")";
@@ -197,6 +233,8 @@ if ($result)
     if ($search_login != '') $param.="&search_login=".$search_login;
     if ($search_lastname != '') $param.="&search_lastname=".$search_lastname;
     if ($search_firstname != '') $param.="&search_firstname=".$search_firstname;
+    if ($search_gender != '') $param.="&search_gender=".$search_gender;
+    if ($search_employee != '') $param.="&search_employee=".$search_employee;
     if ($search_accountancy_code != '') $param.="&search_accountancy_code=".$search_accountancy_code;
     if ($search_email != '') $param.="&search_email=".$search_email;
     if ($search_supervisor > 0) $param.="&search_supervisor=".$search_supervisor;
@@ -224,36 +262,16 @@ if ($result)
         print $langs->trans("FilterOnInto", $sall, join(', ',$fieldstosearchall));
     }
 	
-	$arrayfields=array(
-        'u.login'=>array('label'=>$langs->trans("Login"), 'checked'=>1),
-	    'u.lastname'=>array('label'=>$langs->trans("Lastname"), 'checked'=>1),
-        'u.firstname'=>array('label'=>$langs->trans("Firstname"), 'checked'=>1),
-        'u.accountancy_code'=>array('label'=>$langs->trans("AccountancyCode"), 'checked'=>0),
-	    'u.email'=>array('label'=>$langs->trans("EMail"), 'checked'=>1),
-	    'u.fk_soc'=>array('label'=>$langs->trans("Company"), 'checked'=>1),
-	    'u.entity'=>array('label'=>$langs->trans("Entity"), 'checked'=>1, 'enabled'=>(! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode))),
-	    'u.fk_user'=>array('label'=>$langs->trans("HierarchicalResponsible"), 'checked'=>1),
-	    'u.datelastlogin'=>array('label'=>$langs->trans("LastConnexion"), 'checked'=>1, 'position'=>100),
-	    'u.datepreviouslogin'=>array('label'=>$langs->trans("PreviousConnexion"), 'checked'=>0, 'position'=>110),
-	    'u.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
-        'u.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
-        'u.statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
-	);
-	// Extra fields
-	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
-	{
-	   foreach($extrafields->attribute_label as $key => $val) 
-	   {
-           $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>$extrafields->attribute_list[$key], 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
-	   }
-	}
-    $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
-    $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
-    print '<table class="liste">';
+	$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
+	$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
+    
+	print '<table class="liste">';
     print '<tr class="liste_titre">';
     if (! empty($arrayfields['u.login']['checked']))          print_liste_field_titre($langs->trans("Login"),$_SERVER['PHP_SELF'],"u.login",$param,"","",$sortfield,$sortorder);
     if (! empty($arrayfields['u.lastname']['checked']))       print_liste_field_titre($langs->trans("Lastname"),$_SERVER['PHP_SELF'],"u.lastname",$param,"","",$sortfield,$sortorder);
     if (! empty($arrayfields['u.firstname']['checked']))      print_liste_field_titre($langs->trans("FirstName"),$_SERVER['PHP_SELF'],"u.firstname",$param,"","",$sortfield,$sortorder);
+    if (! empty($arrayfields['u.gender']['checked']))         print_liste_field_titre($langs->trans("Gender"),$_SERVER['PHP_SELF'],"u.gender",$param,"","",$sortfield,$sortorder);
+    if (! empty($arrayfields['u.employee']['checked']))       print_liste_field_titre($langs->trans("Employee"),$_SERVER['PHP_SELF'],"u.employee",$param,"","",$sortfield,$sortorder);
     if (! empty($arrayfields['u.accountancy_code']['checked'])) print_liste_field_titre($langs->trans("AccountancyCode"),$_SERVER['PHP_SELF'],"u.accountancy_code",$param,"","",$sortfield,$sortorder);
     if (! empty($arrayfields['u.email']['checked']))          print_liste_field_titre($langs->trans("EMail"),$_SERVER['PHP_SELF'],"u.email",$param,"","",$sortfield,$sortorder);
     if (! empty($arrayfields['u.fk_soc']['checked']))         print_liste_field_titre($langs->trans("Company"),$_SERVER['PHP_SELF'],"u.fk_soc",$param,"","",$sortfield,$sortorder);
@@ -296,6 +314,19 @@ if ($result)
     if (! empty($arrayfields['u.firstname']['checked']))
     {
         print '<td><input type="text" name="search_firstname" size="6" value="'.$search_firstname.'"></td>';
+    }
+    if (! empty($arrayfields['u.gender']['checked']))
+    {
+        print '<td>';
+        $arraygender=array('man'=>$langs->trans("Genderman"),'woman'=>$langs->trans("Genderwoman"));
+        print $form->selectarray('search_gender', $arraygender, $search_gender, 1);        
+        print '</td>';
+    }
+    if (! empty($arrayfields['u.employee']['checked']))
+    {
+        print '<td>';
+        print $form->selectyesno('search_employee', $search_employee, 1, false, 1);
+        print '</td>';
     }
     if (! empty($arrayfields['u.accountancy_code']['checked']))
     {
@@ -382,6 +413,7 @@ if ($result)
 	    $userstatic->societe_id=$obj->fk_soc;
 	    $userstatic->firstname=$obj->firstname;
 		$userstatic->lastname=$obj->lastname;
+		$userstatic->employee=$obj->employee;
 		$userstatic->photo=$obj->photo;
         
 		$li=$userstatic->getNomUrl(-1,'',0,0,24,1,'login');
@@ -409,7 +441,17 @@ if ($result)
 		{
 		  print '<td>'.$obj->firstname.'</td>';
 		}
-        if (! empty($arrayfields['u.accountancy_code']['checked']))
+        if (! empty($arrayfields['u.gender']['checked']))
+		{
+		  print '<td>';
+		  if ($obj->gender) print $langs->trans("Gender".$obj->gender);
+		  print '</td>';
+		}
+        if (! empty($arrayfields['u.employee']['checked']))
+		{
+		  print '<td>'.yn($obj->employee).'</td>';
+		}
+		if (! empty($arrayfields['u.accountancy_code']['checked']))
 		{
 		  print '<td>'.$obj->accountancy_code.'</td>';
 		}

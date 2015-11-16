@@ -23,6 +23,12 @@
 ALTER TABLE llx_don ADD COLUMN fk_country integer NOT NULL DEFAULT 0 after country;
 
 
+ALTER TABLE llx_askpricesupplier RENAME TO llx_supplier_proposal;
+ALTER TABLE llx_askpricesupplierdet RENAME TO llx_supplier_proposaldet;
+ALTER TABLE llx_askpricesupplier_extrafields RENAME TO llx_supplier_proposal_extrafields;
+ALTER TABLE llx_askpricesupplierdet_extrafields RENAME TO llx_supplier_proposaldet_extrafields;
+ALTER TABLE llx_supplier_proposaldet CHANGE COLUMN fk_asksupplierprice fk_supplier_proposal integer NOT NULL;
+
 -- Fix bad data
 update llx_opensurvey_sondage set format = 'D' where format = 'D+';
 update llx_opensurvey_sondage set format = 'A' where format = 'A+';
@@ -32,6 +38,8 @@ INSERT INTO llx_const (name, value, type, note, visible) values ('MAIN_SIZE_SHOR
 
 ALTER TABLE llx_accounting_system MODIFY COLUMN pcg_version varchar(32);
 ALTER TABLE llx_accountingaccount MODIFY COLUMN fk_pcg_version varchar(32);
+ALTER TABLE llx_accountingaccount RENAME TO llx_accounting_account;
+ALTER TABLE llx_accounting_account ADD INDEX idx_accounting_account_account_number (account_number);
 
 UPDATE llx_const SET name = __ENCRYPT('ACCOUNTING_EXPORT_PREFIX_SPEC')__ WHERE __DECRYPT('name')__ = 'EXPORT_PREFIX_SPEC';
 
@@ -39,8 +47,6 @@ UPDATE llx_const set value = __ENCRYPT('eldy')__ WHERE __DECRYPT('value')__ = 'a
 UPDATE llx_const set value = __ENCRYPT('eldy')__ WHERE __DECRYPT('value')__ = 'bureau2crea';
 UPDATE llx_const set value = __ENCRYPT('eldy')__ WHERE __DECRYPT('value')__ = 'amarok';
 UPDATE llx_const set value = __ENCRYPT('eldy')__ WHERE __DECRYPT('value')__ = 'cameleo';
-
-ALTER TABLE llx_accountingaccount RENAME TO llx_accounting_account;
 
 ALTER TABLE llx_societe ADD COLUMN model_pdf varchar(255);
 
@@ -65,6 +71,7 @@ ALTER TABLE llx_paiement ADD COLUMN ref varchar(30) NOT NULL DEFAULT '' AFTER ro
 
 ALTER TABLE llx_socpeople ADD COLUMN photo varchar(255) AFTER skype;
 
+ALTER TABLE llx_user_param MODIFY COLUMN param varchar(255) NOT NULL DEFAULT '';
 ALTER TABLE llx_user_param MODIFY COLUMN value text NOT NULL DEFAULT '';
 
 ALTER TABLE llx_expedition ADD COLUMN import_key varchar(14);
@@ -110,7 +117,8 @@ ALTER TABLE llx_ecm_files ADD UNIQUE INDEX uk_ecm_files (label, entity);
 ALTER TABLE llx_product ADD COLUMN onportal smallint DEFAULT 0 AFTER tobuy;
 
 
-ALTER TABLE llx_user ADD COLUMN employee smallint DEFAULT 1;
+ALTER TABLE llx_user ADD COLUMN employee smallint DEFAULT 1 AFTER ref_int;
+ALTER TABLE llx_user ADD COLUMN fk_establishment integer DEFAULT 0 AFTER employee;
 
 
 CREATE TABLE IF NOT EXISTS llx_c_hrm_function
@@ -226,7 +234,7 @@ create table llx_budget_lines
 (
   rowid			integer AUTO_INCREMENT PRIMARY KEY,
   fk_budget     integer NOT NULL,
-  fk_project	integer NOT NULL,
+  fk_project_ids	varchar(255) NOT NULL,		-- List of project ids related to this budget. If budget is dedicated to projects not yet started, we recommand to create a project "Projects to come".
   amount		double(24,8) NOT NULL,
   datec         datetime,
   tms           timestamp,
@@ -235,13 +243,12 @@ create table llx_budget_lines
   import_key    integer  
 )ENGINE=innodb;
 
-ALTER TABLE llx_budget_lines ADD UNIQUE INDEX uk_budget_lines (fk_budget, fk_project);
+ALTER TABLE llx_budget_lines ADD UNIQUE INDEX uk_budget_lines (fk_budget, fk_project_ids);
 
 -- Supprime orphelins pour permettre montee de la cle
 -- MYSQL V4 DELETE llx_budget_lines FROM llx_budget_lines LEFT JOIN llx_budget ON llx_budget.rowid = llx_budget_lines.fk_budget WHERE llx_budget_lines.rowid IS NULL;
 -- POSTGRESQL V8 DELETE FROM llx_budget_lines USING llx_budget WHERE llx_budget_lines.fk_budget NOT IN (SELECT llx_budget.rowid FROM llx_budget);
 
-ALTER TABLE llx_budget_lines ADD INDEX idx_budget_lines (fk_project);
 ALTER TABLE llx_budget_lines ADD CONSTRAINT fk_budget_lines_budget FOREIGN KEY (fk_budget) REFERENCES llx_budget (rowid);
 
 
@@ -285,5 +292,27 @@ CREATE TABLE llx_opensurvey_user_formanswers (
     fk_question INTEGER NOT NULL,
     reponses TEXT
 ) ENGINE=InnoDB;
+
+
+
+
+create table llx_categorie_project
+(
+  fk_categorie  integer NOT NULL,
+  fk_project    integer NOT NULL,
+  import_key    varchar(14)
+)ENGINE=innodb;
+
+ALTER TABLE llx_categorie_project ADD PRIMARY KEY pk_categorie_project (fk_categorie, fk_project);
+ALTER TABLE llx_categorie_project ADD INDEX idx_categorie_project_fk_categorie (fk_categorie);
+ALTER TABLE llx_categorie_project ADD INDEX idx_categorie_project_fk_project (fk_project);
+
+ALTER TABLE llx_categorie_project ADD CONSTRAINT fk_categorie_project_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
+ALTER TABLE llx_categorie_project ADD CONSTRAINT fk_categorie_project_fk_project   FOREIGN KEY (fk_project) REFERENCES llx_projet (rowid);
+
+
+ALTER TABLE llx_c_tva ADD COLUMN code varchar(10) DEFAULT '' after fk_pays;
+DROP INDEX uk_c_tva_id ON llx_c_tva;
+ALTER TABLE llx_c_tva ADD UNIQUE INDEX uk_c_tva_id (fk_pays, code, taux, recuperableonly);
 
 

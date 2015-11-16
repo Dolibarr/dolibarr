@@ -4,7 +4,7 @@ How to contribute to Dolibarr
 Bug reports and feature requests
 --------------------------------
 
-<a name=not-a-support-forum></a>*Note*: Issues are not a support forum. If you need help using the software, please use [the forums](http://www.dolibarr.org/forum).
+<a name="not-a-support-forum"></a>*Note*: Issues are not a support forum. If you need help using the software, please use [the forums](http://www.dolibarr.org/forum).
 
 Issues are managed on [GitHub](https://github.com/Dolibarr/dolibarr/Issues).
 
@@ -13,9 +13,9 @@ Issues are managed on [GitHub](https://github.com/Dolibarr/dolibarr/Issues).
 4. Tell us the version you are using!
 3. Write a report with as much detail as possible (Use [screenshots](https://help.github.com/articles/issue-attachments) or even screencasts and provide logging and debugging informations whenever possible).
 
-We're still figuring out how to migrate old issues to GitHub. In the meantime, they are still available at [Doliforge](https://doliforge.org/projects/dolibarr).
 
-<a name=code></a>Code
+
+<a name="code"></a>Code
 ---------------------
 
 ### Basic workflow
@@ -26,7 +26,7 @@ We're still figuring out how to migrate old issues to GitHub. In the meantime, t
 4. Commit and push your changes.
 5. [Make a pull request](https://help.github.com/articles/creating-a-pull-request).
 
-### <a name=branches></a>Branches
+### <a name="branches"></a>Branches
 
 Unless you're fixing a bug, all pull requests should be made against the *develop* branch.
 
@@ -38,9 +38,9 @@ We officially support versions N, N − 1 and N − 2 for N the latest version a
 Choose your base branch accordingly.
 
 ### General rules
-Please don't edit the ChangeLog file. A project manager will update it from your commit messages.
+Please don't edit the ChangeLog file. File will be generated from your commit messages during release process by the project manager.
 
-### <a name=commits></a>Commits
+### <a name="commits"></a>Commits
 Use clear commit messages with the following structure:
 
 ```
@@ -50,7 +50,7 @@ LONGDESC
 ```
 
 #### Keyword
-In uppercase to appear in ChangeLog when generated.
+In uppercase if you want to have the log comment appears into the generated ChangeLog file.
 
 The keyword can be ommitted if your commit does not fit in any of the following categories:
 - Fix: for a bug fix
@@ -96,6 +96,13 @@ When submitting a pull request, use same rule as [Commits](#commits) for the mes
 
 If your pull request only contains one commit, GitHub will be smart enough to fill it for you.
 Otherwise, please be a bit verbose about what you're providing.
+
+Your Pull Request must pass the Continuous Integration checks.
+Also, some code changes need a prior approbation:
+
+* if you want to include a new external library (into htdocs/includes directory), please ask before to the project leader to see if such a library can be accepted.
+
+* if you add a new table, you must first create a page on http://wiki.dolibarr.org/index.php/Category:Table_SQL (copy an existing page changing its name to see it into this index page). Than ask the project leader if the new data model you plan to add can be accepted as you suggest.
 
 ### Resources
 [Developer documentation](http://wiki.dolibarr.org/index.php/Developer_documentation)

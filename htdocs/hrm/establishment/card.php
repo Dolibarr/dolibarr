@@ -81,21 +81,15 @@ else if ($action == 'add')
 
         if (empty($error))
         {
-			$tmparray=getCountry(GETPOST('country_id','int'),'all',$db,$langs,0);
-			if (! empty($tmparray['id']))
-			{
-				$object->country_id   =$tmparray['id'];
-				$object->country_code =$tmparray['code'];
-				$object->country_label=$tmparray['label'];
-			}
-
 			$object->address 		= GETPOST('address', 'alpha');
 			$object->zip 			= GETPOST('zipcode', 'alpha');
 			$object->town			= GETPOST('town', 'alpha');
-			$object->fk_pays		= $object->country_id;
+			$object->country_id     = $_POST["country_id"];
 			$object->status     	= GETPOST('status','int');
 			$object->fk_user_author	= $user->id;
 			$object->datec			= dol_now();
+
+			
 
 			$id = $object->create($user);
 
@@ -103,12 +97,11 @@ else if ($action == 'add')
             {
                 header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
                 exit;
-            }
-            else
-            {
-	            setEventMessage($object->error, 'errors');
-                $action='create';
-            }
+			}
+			else
+			{
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
         }
         else
         {
@@ -131,12 +124,7 @@ else if ($action == 'update')
 
 		$name = GETPOST('name', 'alpha');
 		if (empty($name)) {
-			setEventMessage($langs->trans('ErrorFieldRequired', $langs->trans('NameProperty')), 'errors');
-			$error ++;
-		}
-		$typeid = GETPOST('typeid', 'int');
-		if (empty($typeid)) {
-			setEventMessage($langs->trans('ErrorFieldRequired', $langs->trans('TypeProperty')), 'errors');
+			setEventMessage($langs->trans('ErrorFieldRequired', $langs->trans('Name')), 'errors');
 			$error ++;
 		}
 
@@ -145,25 +133,23 @@ else if ($action == 'update')
 			$object->address 		= GETPOST('address', 'alpha');
 			$object->zip 			= GETPOST('zipcode', 'alpha');
 			$object->town			= GETPOST('town', 'alpha');
-			$object->fk_pays		= GETPOST('country_id', 'int');
-			$object->rowid 			= GETPOST('id');
+			$object->country_id     = $_POST["country_id"];
 			$object->fk_user_mod	= $user->id;
 
-			$id = $object->update();
+			$result = $object->update();
 
-            if ($id > 0)
+            if ($result > 0)
             {
-                header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
+                header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $_POST['id']);
                 exit;
             }
-            else
-            {
-	            setEventMessage($object->error, 'errors');
-                $action='create';
-            }
+			else
+			{
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
 		}
 	} else {
-        header("Location: card.php?id=" . $id);
+        header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $_POST['id']);
         exit;
 	}
 }
@@ -193,11 +179,11 @@ if ($action == 'create')
     print '<table class="border" width="100%">';
 
 	// Name
-    print '<tr><td class="fieldrequired"><label for="name">'.$langs->trans("Name").'</label></td><td><input name="name" id="name" size="32" value="' . GETPOST("name") . '"></td></tr>';
+    print '<tr><td>'. fieldLabel('Name','name',1).'</td><td><input name="name" id="name" size="32" value="' . GETPOST("name") . '"></td></tr>';
 
 	// Address
 	print '<tr>';
-	print '<td><label for="address">' . $langs->trans("Address") . '</label></td>';
+	print '<td>'.fieldLabel('Address','address',0).'</td>';
 	print '<td>';
 	print '<input name="address" id="address" size="32" value="' . $object->address . '">';
 	print '</td>';
@@ -205,7 +191,7 @@ if ($action == 'create')
 
 	// Zipcode
 	print '<tr>';
-	print '<td><label for="zipcode">' . $langs->trans('Zip') . '</label></td>';
+	print '<td>'.fieldLabel('Zip','zipcode',0).'</td>';
 	print '<td>';
 	print $formcompany->select_ziptown(GETPOST('zipcode', 'alpha'), 'zipcode', array (
 			'town',
@@ -216,7 +202,7 @@ if ($action == 'create')
 	
 	// Town
 	print '<tr>';
-	print '<td><label for="town">' . $langs->trans('Town') . '</label></td>';
+	print '<td>'.fieldLabel('Town','town',0).'</td>';
 	print '<td>';
 	print $formcompany->select_ziptown(GETPOST('town', 'alpha'), 'town', array (
 			'zipcode',
@@ -227,7 +213,7 @@ if ($action == 'create')
 
 	// Country
 	print '<tr>';
-	print '<td><label for="selectcountry_id">' . $langs->trans("Country") . '</label></td>';
+	print '<td>'.fieldLabel('Country','selectcountry_id',0).'</td>';
 	print '<td class="maxwidthonsmartphone">';
 	print $form->select_country($mysoc->country_id,'country_id');
 		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
@@ -236,7 +222,7 @@ if ($action == 'create')
 
 	// Status
     print '<tr>';
-    print '<td class="fieldrequired"><label for="status">'.$langs->trans("Status").'</label></td>';
+    print '<td>'.fieldLabel('Status','status',1).'</td>';
 	print '<td>';
 	print $form->selectarray('status',$status2label,GETPOST('status'));
     print '</td></tr>';
@@ -273,46 +259,43 @@ else if ($id)
 
             // Ref
             print "<tr>";
-            print '<td width="20%">'.$langs->trans("Ref").'</td><td>';
-            print $object->rowid;
+            print '<td width="25%">'.$langs->trans("Ref").'</td><td>';
+            print $object->id;
             print '</td></tr>';
 
             // Name
-            print '<tr><td class="fieldrequired"><label for="name">'.$langs->trans("Name").'</label></td><td>';
+            print '<tr><td>'.fieldLabel('Name','name',1).'</td><td>';
             print '<input name="name" id="name" class="flat" size="32" value="'.$object->name.'">';
             print '</td></tr>';
 
 			// Address
-			print '<tr>';
-			print '<td><label for="address">' . $langs->trans("Address") . '</label></td>';
+			print '<tr><td>'.fieldLabel('Address','address',0).'</td>';
 			print '<td>';
 			print '<input name="address" id="address" size="32" value="' . $object->address . '">';
-			print '</td>';
-			print '</tr>';
+			print '</td></tr>';
 
 			// Zipcode / Town
-			print '<tr><td><label for="zipcode">' . $langs->trans('Zip') . '</label></td><td>';
+			print '<tr><td>'.fieldLabel('Zip','zipcode',0).'</td><td>';
 			print $formcompany->select_ziptown($object->zip, 'zipcode', array (
 					'town',
 					'selectcountry_id' 
 			), 6) . '</tr>';
-			print '<tr><td><label for="town">' . $langs->trans('Town') . '</label></td><td>';
+			print '<tr><td>'.fieldLabel('Town','town',0).'</td><td>';
 			print $formcompany->select_ziptown($object->town, 'town', array (
 					'zipcode',
 					'selectcountry_id' 
 			)) . '</td></tr>';
 
 			// Country
-			print '<tr>';
-			print '<td><label for="selectcountry_id">' . $langs->trans("Country") . '</label></td>';
+			print '<tr><td>'.fieldLabel('Country','selectcountry_id',0).'</td>';
 			print '<td class="maxwidthonsmartphone">';
-			print $form->select_country($object->fk_pays,'country_id');
+			print $form->select_country($object->fk_country,'country_id');
 				if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 			print '</td>';
 			print '</tr>';			
 
 			// Status
-			print '<tr><td><label for="status">'.$langs->trans("Status").'</label></td><td>';
+			print '<tr><td>'.fieldLabel('Status','status',1).'</td><td>';
 			print $form->selectarray('status',$status2label,$object->status);
 			print '</td></tr>';
 
@@ -347,7 +330,7 @@ else if ($id)
 
             // Ref
             print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td width="50%">';
-            print $object->rowid;
+            print $object->id;
 			print '</td><td width="25%">';
 			print $linkback;
             print '</td></tr>';
@@ -379,7 +362,14 @@ else if ($id)
 			// Country
 			print '<tr>';
 			print '<td>'.$langs->trans("Country").'</td>';
-			print '<td colspan="2">'.getCountry($object->fk_pays,1).'</td>';
+			print '<td colspan="2">';
+			if ($object->country_id > 0)
+			{
+				$img=picto_from_langcode($object->country_code);
+				print $img?$img.' ':'';
+				print getCountry($object->getCountryCode(),0,$db);
+			}
+			print '</td>';
 			print '</tr>';
 
             // Status

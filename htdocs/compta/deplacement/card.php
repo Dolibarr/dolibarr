@@ -71,7 +71,7 @@ if ($action == 'validate' && $user->rights->deplacement->creer)
         }
         else
         {
-	        setEventMessage($object->error, 'errors');
+	        setEventMessages($object->error, $object->errors, 'errors');
         }
     }
 }
@@ -89,7 +89,7 @@ else if ($action == 'classifyrefunded' && $user->rights->deplacement->creer)
         }
         else
         {
-	        setEventMessage($object->error, 'errors');
+	        setEventMessages($object->error, $object->errors, 'errors');
         }
     }
 }
@@ -104,7 +104,7 @@ else if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->depl
     }
     else
     {
-	    setEventMessage($object->error, 'errors');
+	    setEventMessages($object->error, $object->errors, 'errors');
     }
 }
 
@@ -150,7 +150,7 @@ else if ($action == 'add' && $user->rights->deplacement->creer)
             }
             else
             {
-	            setEventMessage($object->error, 'errors');
+	            setEventMessages($object->error, $object->errors, 'errors');
                 $action='create';
             }
         }
@@ -190,7 +190,7 @@ else if ($action == 'update' && $user->rights->deplacement->creer)
         }
         else
         {
-	        setEventMessage($object->error, 'errors');
+	        setEventMessages($object->error, $object->errors, 'errors');
         }
     }
     else
@@ -411,8 +411,8 @@ else if ($id)
         }
         else
         {
-            /*
-             * Confirmation de la suppression du deplacement
+           /*
+            * Confirm delete trip 
             */
             if ($action == 'delete')
             {

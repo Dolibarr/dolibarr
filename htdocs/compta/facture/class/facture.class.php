@@ -63,6 +63,7 @@ class Facture extends CommonInvoice
 	var $author;
 	var $fk_user_author;
 	var $fk_user_valid;
+	var $date;              // Date invoice
 	var $date_creation;		// Creation date
 	var $date_validation;	// Validation date
 	var $datem;
@@ -897,7 +898,7 @@ class Facture extends CommonInvoice
         if (! empty($this->total_ht))
             $label.= '<br><b>' . $langs->trans('AmountHT') . ':</b> ' . price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
         if (! empty($this->total_tva))
-            $label.= '<br><b>' . $langs->trans('TVA') . ':</b> ' . price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
+            $label.= '<br><b>' . $langs->trans('VAT') . ':</b> ' . price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
         if (! empty($this->total_ttc))
             $label.= '<br><b>' . $langs->trans('AmountTTC') . ':</b> ' . price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
 		if ($this->type == self::TYPE_REPLACEMENT) $label=$langs->transnoentitiesnoconv("ShowInvoiceReplace").': '.$this->ref;
@@ -2044,8 +2045,8 @@ class Facture extends CommonInvoice
 	 * 		@param    	double		$pu_ht              Unit price without tax (> 0 even for credit note)
 	 * 		@param    	double		$qty             	Quantity
 	 * 		@param    	double		$txtva           	Force vat rate, -1 for auto
-	 * 		@param		double		$txlocaltax1		Local tax 1 rate
-	 *  	@param		double		$txlocaltax2		Local tax 2 rate
+	 * 		@param		double		$txlocaltax1		Local tax 1 rate (deprecated)
+	 *  	@param		double		$txlocaltax2		Local tax 2 rate (deprecated)
 	 *		@param    	int			$fk_product      	Id of predefined product/service
 	 * 		@param    	double		$remise_percent  	Percent of discount on line
 	 * 		@param    	int	$date_start      	Date start of service
@@ -2140,6 +2141,7 @@ class Facture extends CommonInvoice
 			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
 
 			$localtaxes_type=getLocalTaxesFromRate($txtva,0,$this->thirdparty, $mysoc);
+			$txtva = preg_replace('/\s*\(.*\)/','',$txtva);  // Remove code into vatrate.
 
 			$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $product_type, $mysoc, $localtaxes_type, $situation_percent);
 
@@ -2298,7 +2300,8 @@ class Facture extends CommonInvoice
 			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
 
 			$localtaxes_type=getLocalTaxesFromRate($txtva,0,$this->thirdparty, $mysoc);
-
+			$txtva = preg_replace('/\s*\(.*\)/','',$txtva);  // Remove code into vatrate.
+					
 			$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type, $situation_percent);
 
 			$total_ht  = $tabprice[0];
@@ -3632,23 +3635,27 @@ class Facture extends CommonInvoice
 	/**
 	 * Checks if the invoice is the last in its cycle
 	 *
-	 * @return int 0 or 1 if OK, -1 if error
+	 * @return bool Last of the cycle status
 	 *
 	 */
 	function is_last_in_cycle()
 	{
-		$sql = 'SELECT max(situation_counter) FROM ' . MAIN_DB_PREFIX . 'facture WHERE situation_cycle_ref = ' . $this->situation_cycle_ref;
-		$resql = $this->db->query($sql);
-
-		if ($resql && $resql->num_rows > 0) {
-			$res = $this->db->fetch_array($resql);
-			$last = $res['max(situation_counter)'];
-			return ($last == $this->situation_counter);
+		if (!empty($this->situation_cycle_ref)) {
+			// No point in testing anything if we're not inside a cycle
+			$sql = 'SELECT max(situation_counter) FROM ' . MAIN_DB_PREFIX . 'facture WHERE situation_cycle_ref = ' . $this->situation_cycle_ref;
+			$resql = $this->db->query($sql);
+	
+			if ($resql && $resql->num_rows > 0) {
+				$res = $this->db->fetch_array($resql);
+				$last = $res['max(situation_counter)'];
+				return ($last == $this->situation_counter);
+			} else {
+				$this->error = $this->db->lasterror();
+				dol_syslog(get_class($this) . "::select Error " . $this->error, LOG_ERR);
+				return false;
+			}
 		} else {
-			$this->error = $this->db->lasterror();
-			dol_syslog(get_class($this) . "::select Error " . $this->error, LOG_ERR);
-			$this->db->rollback();
-			return -1;
+			return true;
 		}
 	}
 

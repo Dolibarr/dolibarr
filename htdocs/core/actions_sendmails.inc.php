@@ -221,11 +221,12 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 			$filename = $attachedfiles['names'];
 			$mimetype = $attachedfiles['mimes'];
 
-			$trackid = GETPOST('trackid','aZ');
+			$trackid = GETPOST('trackid','aZ09');
 
-			if($conf->dolimail->enabled)
+			// Feature to push mail sent into Sent folder
+			if (! empty($conf->dolimail->enabled))
 			{
-				$mailfromid = explode ("#", $_POST['frommail'],3);
+				$mailfromid = explode("#", $_POST['frommail'],3);	// $_POST['frommail'] = 'aaa#Sent# <aaa@aaa.com>'	// TODO Use a better way to define Sent dir.
 				if (count($mailfromid)==0) $from = $_POST['fromname'] . ' <' . $_POST['frommail'] .'>';
 				else
 				{
@@ -243,7 +244,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 					{
 					
 						$folder=str_replace($ref, '', $mailboxconfig->folder_cache_key);
-						if (!$folder) $folder = "Sent";
+						if (!$folder) $folder = "Sent";	// Default Sent folder
 					
 						$mailboxconfig->mbox = imap_open($mailboxconfig->get_connector_url().$folder, $mailboxconfig->mailbox_imap_login, $mailboxconfig->mailbox_imap_password);
 						if (FALSE === $mailboxconfig->mbox) 
@@ -276,17 +277,16 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 				if ($result)
 				{
 					$error=0;
-					if($conf->dolimail->enabled)
+					if (! empty($conf->dolimail->enabled))
 					{
-						$mid = (GETPOST('mid','int') ? GETPOST('mid','int') : 0);
+						$mid = (GETPOST('mid','int') ? GETPOST('mid','int') : 0);	// Original mail id is set ?
 						if ($mid)
 						{
-							// set imap flag answered if it is a answered mail
-							
+							// set imap flag answered if it is an answered mail
 							$dolimail=new DoliMail($db);
 							$dolimail->id = $mid;
 							$res=$dolimail->set_prop($user, 'answered',1);
-				  	}	
+				  		}	
 						if ($imap==1)
 						{
 							// write mail to IMAP Server

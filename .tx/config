@@ -332,6 +332,12 @@ source_file = htdocs/langs/en_US/suppliers.lang
 source_lang = en_US
 type = MOZILLAPROPERTIES
 
+[dolibarr.supplier_proposal]
+file_filter = htdocs/langs/<lang>/supplier_proposal.lang
+source_file = htdocs/langs/en_US/supplier_proposal.lang
+source_lang = en_US
+type = MOZILLAPROPERTIES
+
 [dolibarr.trips]
 file_filter = htdocs/langs/<lang>/trips.lang
 source_file = htdocs/langs/en_US/trips.lang

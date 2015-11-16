@@ -56,24 +56,28 @@ if (empty($conf->use_javascript_ajax))
     $searchformmodule=array('Module1Name','Module1Name','Module50Name','Module50Name','Module310Name','Module400Name');
 }
 
+
+/*
+ * Action
+ */
+
+if (GETPOST('cancel'))
+{
+    $action='';
+}
+
 if ($action == 'update')
 {
 	dolibarr_set_const($db, "MAIN_LANG_DEFAULT",				$_POST["main_lang_default"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_MULTILANGS",					$_POST["main_multilangs"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_SIZE_LISTE_LIMIT",			$_POST["main_size_liste_limit"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_SIZE_SHORTLISTE_LIMIT",		$_POST["main_size_shortliste_limit"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_DISABLE_JAVASCRIPT",			$_POST["main_disable_javascript"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_BUTTON_HIDE_UNAUTHORIZED",	$_POST["MAIN_BUTTON_HIDE_UNAUTHORIZED"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_START_WEEK",					$_POST["MAIN_START_WEEK"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_DEFAULT_WORKING_DAYS",		$_POST["MAIN_DEFAULT_WORKING_DAYS"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_DEFAULT_WORKING_HOURS",		$_POST["MAIN_DEFAULT_WORKING_HOURS"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_SHOW_LOGO",					$_POST["MAIN_SHOW_LOGO"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_ACTIVATE_FILECACHE",          $_POST["MAIN_ACTIVATE_FILECACHE"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_FIRSTNAME_NAME_POSITION",		$_POST["MAIN_FIRSTNAME_NAME_POSITION"],'chaine',0,'',$conf->entity);
 
 	dolibarr_set_const($db, "MAIN_THEME",						$_POST["main_theme"],'chaine',0,'',$conf->entity);
 
-	$val=(join(',',(colorStringToArray(GETPOST('THEME_ELDY_TOPMENU_BACK1'),array()))));
+	$val=(join(',',(colorStringToArray(GETPOST('THEME_ELDY_BACKBODY'),array()))));
+	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_BACKBODY', $conf->entity);
+    else dolibarr_set_const($db, 'THEME_ELDY_BACKBODY', join(',',colorStringToArray(GETPOST('THEME_ELDY_BACKBODY'),array())),'chaine',0,'',$conf->entity);
+	
+    $val=(join(',',(colorStringToArray(GETPOST('THEME_ELDY_TOPMENU_BACK1'),array()))));
 	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_TOPMENU_BACK1', $conf->entity);
     else dolibarr_set_const($db, 'THEME_ELDY_TOPMENU_BACK1', join(',',colorStringToArray(GETPOST('THEME_ELDY_TOPMENU_BACK1'),array())),'chaine',0,'',$conf->entity);
 
@@ -81,7 +85,14 @@ if ($action == 'update')
 	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_BACKTITLE1', $conf->entity);
     else dolibarr_set_const($db, 'THEME_ELDY_BACKTITLE1', join(',',colorStringToArray(GETPOST('THEME_ELDY_BACKTITLE1'),array())),'chaine',0,'',$conf->entity);
 
-    /*
+	if (GETPOST('THEME_ELDY_USE_HOVER') == '') dolibarr_del_const($db, "THEME_ELDY_USE_HOVER", $conf->entity);
+	else dolibarr_set_const($db, "THEME_ELDY_USE_HOVER", $_POST["THEME_ELDY_USE_HOVER"], 'chaine', 0, '', $conf->entity);
+
+	$val=(join(',',(colorStringToArray(GETPOST('THEME_ELDY_TEXTLINK'),array()))));
+	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_TEXTLINK', $conf->entity);
+    else dolibarr_set_const($db, 'THEME_ELDY_TEXTLINK', join(',',colorStringToArray(GETPOST('THEME_ELDY_TEXTLINK'),array())),'chaine',0,'',$conf->entity);
+	
+	/*
     dolibarr_set_const($db, "MAIN_SEARCHFORM_CONTACT",			$_POST["MAIN_SEARCHFORM_CONTACT"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_SEARCHFORM_SOCIETE",			$_POST["MAIN_SEARCHFORM_SOCIETE"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_SEARCHFORM_PRODUITSERVICE",	$_POST["MAIN_SEARCHFORM_PRODUITSERVICE"],'chaine',0,'',$conf->entity);
@@ -91,14 +102,21 @@ if ($action == 'update')
 	dolibarr_set_const($db, "MAIN_SEARCHFORM_EMPLOYEE",			$_POST["MAIN_SEARCHFORM_EMPLOYEE"],'chaine',0,'',$conf->entity);
     */
     
+    dolibarr_set_const($db, "MAIN_SIZE_LISTE_LIMIT",			$_POST["main_size_liste_limit"],'chaine',0,'',$conf->entity);
+    dolibarr_set_const($db, "MAIN_SIZE_SHORTLISTE_LIMIT",		$_POST["main_size_shortliste_limit"],'chaine',0,'',$conf->entity);
+    dolibarr_set_const($db, "MAIN_DISABLE_JAVASCRIPT",			$_POST["main_disable_javascript"],'chaine',0,'',$conf->entity);
+    dolibarr_set_const($db, "MAIN_BUTTON_HIDE_UNAUTHORIZED",	$_POST["MAIN_BUTTON_HIDE_UNAUTHORIZED"],'chaine',0,'',$conf->entity);
+    dolibarr_set_const($db, "MAIN_START_WEEK",					$_POST["MAIN_START_WEEK"],'chaine',0,'',$conf->entity);
+    dolibarr_set_const($db, "MAIN_DEFAULT_WORKING_DAYS",		$_POST["MAIN_DEFAULT_WORKING_DAYS"],'chaine',0,'',$conf->entity);
+    dolibarr_set_const($db, "MAIN_DEFAULT_WORKING_HOURS",		$_POST["MAIN_DEFAULT_WORKING_HOURS"],'chaine',0,'',$conf->entity);
+    dolibarr_set_const($db, "MAIN_SHOW_LOGO",					$_POST["MAIN_SHOW_LOGO"],'chaine',0,'',$conf->entity);
+    dolibarr_set_const($db, "MAIN_FIRSTNAME_NAME_POSITION",		$_POST["MAIN_FIRSTNAME_NAME_POSITION"],'chaine',0,'',$conf->entity);
+    
 	dolibarr_set_const($db, "MAIN_HELPCENTER_DISABLELINK",		$_POST["MAIN_HELPCENTER_DISABLELINK"],'chaine',0,'',0);	// Param for all entities
 	dolibarr_set_const($db, "MAIN_MOTD",						dol_htmlcleanlastbr($_POST["main_motd"]),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_HOME",						dol_htmlcleanlastbr($_POST["main_home"]),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_HELP_DISABLELINK",			$_POST["MAIN_HELP_DISABLELINK"],'chaine',0,'',0);	    // Param for all entities
 	dolibarr_set_const($db, "MAIN_BUGTRACK_ENABLELINK",         $_POST["MAIN_BUGTRACK_ENABLELINK"],'chaine',0,'',$conf->entity);
-
-	if (GETPOST('THEME_ELDY_USE_HOVER') == '') dolibarr_del_const($db, "THEME_ELDY_USE_HOVER", $conf->entity);
-	else dolibarr_set_const($db, "THEME_ELDY_USE_HOVER", $_POST["THEME_ELDY_USE_HOVER"], 'chaine', 0, '', $conf->entity);
 
 	// This one is not always defined
 	if (isset($_POST["MAIN_USE_PREVIEW_TABS"])) dolibarr_set_const($db, "MAIN_USE_PREVIEW_TABS", $_POST["MAIN_USE_PREVIEW_TABS"],'chaine',0,'',$conf->entity);
@@ -198,16 +216,6 @@ if ($action == 'edit')	// Edit
     print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
-
-    // Activate FileCache - Developement
-    if ($conf->global->MAIN_FEATURES_LEVEL == 2 || ! empty($conf->global->MAIN_ACTIVATE_FILECACHE)) {
-        $var=!$var;
-        print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("EnableFileCache").'</td><td>';
-        print $form->selectyesno('MAIN_ACTIVATE_FILECACHE',$conf->global->MAIN_ACTIVATE_FILECACHE,1);
-        print '</td>';
-        print '<td width="20">&nbsp;</td>';
-            print '</tr>';
-        }
 
 	// Max size of lists
     $var=!$var;
@@ -327,11 +335,12 @@ if ($action == 'edit')	// Edit
 
 
     print '<br><div class="center">';
-    print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
+    print '<input class="button" type="submit" name="submit" value="'.$langs->trans("Save").'">';
+    print ' &nbsp; ';
+    print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
     print '</div>';
 
     print '</form>';
-    print '<br>';
 }
 else	// Show
 {
@@ -392,14 +401,6 @@ else	// Show
     print '<tr '.$bc[$var].'><td>'.$langs->trans("EnableShowLogo").'</td><td>' . yn($conf->global->MAIN_SHOW_LOGO) . '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print "</tr>";
-
-    // Activate FileCache - Developement
-    if ($conf->global->MAIN_FEATURES_LEVEL == 2 || ! empty($conf->global->MAIN_ACTIVATE_FILECACHE)) {
-        $var=!$var;
-        print '<tr '.$bc[$var].'><td>'.$langs->trans("EnableFileCache").'</td><td>' . yn($conf->global->MAIN_ACTIVATE_FILECACHE) . '</td>';
-        print '<td width="20">&nbsp;</td>';
-        print "</tr>";
-    }
 
 	$var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMaxSizeList").'</td><td>' . $conf->global->MAIN_SIZE_LISTE_LIMIT . '</td>';
@@ -505,7 +506,6 @@ else	// Show
     print '<div class="tabsAction">';
     print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
     print '</div>';
-	print '<br>';
 }
 
 

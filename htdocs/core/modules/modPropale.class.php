@@ -175,7 +175,43 @@ class modPropale extends DolibarrModules
 		$this->export_TypeFields_array[$r]=array('s.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','co.code'=>'Text','s.phone'=>'Text','s.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text','c.ref'=>"Text",'c.ref_client'=>"Text",'c.datec'=>"Date",'c.datep'=>"Date",'c.fin_validite'=>"Date",'c.remise_percent'=>"Numeric",'c.total_ht'=>"Numeric",'c.total'=>"Numeric",'c.fk_statut'=>'Status','c.note_public'=>"Text",'c.date_livraison'=>'Date','cd.description'=>"Text",'cd.product_type'=>'Boolean','cd.tva_tx'=>"Numeric",'cd.qty'=>"Numeric",'cd.total_ht'=>"Numeric",'cd.total_tva'=>"Numeric",'cd.total_ttc'=>"Numeric",'p.ref'=>'Text','p.label'=>'Text');
 		$this->export_entities_array[$r]=array('s.rowid'=>"company",'s.nom'=>'company','s.address'=>'company','s.zip'=>'company','s.town'=>'company','co.code'=>'company','s.phone'=>'company','s.siren'=>'company','s.ape'=>'company','s.idprof4'=>'company','s.siret'=>'company','c.rowid'=>"propal",'c.ref'=>"propal",'c.ref_client'=>"propal",'c.fk_soc'=>"propal",'c.datec'=>"propal",'c.datep'=>"propal",'c.fin_validite'=>"propal",'c.remise_percent'=>"propal",'c.total_ht'=>"propal",'c.total'=>"propal",'c.fk_statut'=>"propal",'c.note_public'=>"propal",'c.date_livraison'=>"propal",'cd.rowid'=>'propal_line','cd.label'=>"propal_line",'cd.description'=>"propal_line",'cd.product_type'=>'propal_line','cd.tva_tx'=>"propal_line",'cd.qty'=>"propal_line",'cd.total_ht'=>"propal_line",'cd.total_tva'=>"propal_line",'cd.total_ttc'=>"propal_line",'p.rowid'=>'product','p.ref'=>'product','p.label'=>'product');
 		$this->export_dependencies_array[$r]=array('propal_line'=>'cd.rowid','product'=>'cd.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
-
+		// Add extra fields
+		$sql="SELECT name, label, type FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'propal' AND entity IN (0, ".$conf->entity.')';
+		$resql=$this->db->query($sql);
+		if ($resql)    // This can fail when class is used on old database (during migration for example)
+		{
+		    while ($obj=$this->db->fetch_object($resql))
+		    {
+		        $fieldname='extra.'.$obj->name;
+		        $fieldlabel=ucfirst($obj->label);
+				$typeFilter="Text";
+				switch($obj->type)
+				{
+					case 'int':
+					case 'double':
+					case 'price':
+						$typeFilter="Numeric";
+						break;
+					case 'date':
+					case 'datetime':
+						$typeFilter="Date";
+						break;
+					case 'boolean':
+						$typeFilter="Boolean";
+						break;
+					case 'sellist':
+						$tmp='';
+						$tmpparam=unserialize($obj->param);	// $tmp ay be array 'options' => array 'c_currencies:code_iso:code_iso' => null
+						if ($tmpparam['options'] && is_array($tmpparam['options'])) $tmp=array_shift(array_keys($tmpparam['options']));
+						if (preg_match('/[a-z0-9_]+:[a-z0-9_]+:[a-z0-9_]+/', $tmp)) $typeFilter="List:".$tmp;
+						break;
+				}
+		        $this->export_fields_array[$r][$fieldname]=$fieldlabel;
+				$this->export_TypeFields_array[$r][$fieldname]=$typeFilter;
+		        $this->export_entities_array[$r][$fieldname]='propal';
+		    }
+		}
+		// End add extra fields
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'societe as s ';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as co ON s.fk_pays = co.rowid,';

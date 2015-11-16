@@ -71,7 +71,7 @@ if ($action == 'rappro' && $user->rights->banque->consolidate)
 					$result=$bankline->update_conciliation($user,$_POST["cat"]);
 					if ($result < 0)
 					{
-						setEventMessage($bankline->error, 'errors');
+						setEventMessages($bankline->error, $bankline->errors, 'errors');
 						$error++;
 						break;
 					}
@@ -83,7 +83,7 @@ if ($action == 'rappro' && $user->rights->banque->consolidate)
     {
     	$error++;
     	$langs->load("errors");
-	    setEventMessage($langs->trans("ErrorPleaseTypeBankTransactionReportName"), 'errors');
+	    setEventMessages($langs->trans("ErrorPleaseTypeBankTransactionReportName"), null, 'errors');
     }
 
     if (! $error)
@@ -186,7 +186,7 @@ if ($resql)
     print '<br>';
 
     // Show last bank receipts
-    $nbmax=5;
+    $nbmax=15;      // We accept to show last 15 receipts (so we can have more than one year)
     $liste="";
     $sql = "SELECT DISTINCT num_releve FROM ".MAIN_DB_PREFIX."bank";
     $sql.= " WHERE fk_account=".$acct->id." AND num_releve IS NOT NULL";
@@ -226,7 +226,7 @@ if ($resql)
 	print '<input type="hidden" name="account" value="'.$acct->id.'">';
 
     print '<strong>'.$langs->trans("InputReceiptNumber").'</strong>: ';
-    print '<input class="flat" name="num_releve" type="text" value="'.(GETPOST('num_releve')?GETPOST('num_releve'):$last_releve).'" size="10">';
+    print '<input class="flat" name="num_releve" type="text" value="'.(GETPOST('num_releve')?GETPOST('num_releve'):'').'" size="10">';  // The only default value is value we just entered
     print '<br>';
     if ($options)
     {

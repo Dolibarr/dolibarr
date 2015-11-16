@@ -27,6 +27,7 @@
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 
@@ -38,7 +39,7 @@ $langs->load("products");
 $langs->load("bills");
 $langs->load("other");
 
-$id		= GETPOST('id','int');
+$id		= GETPOST('id','int');         // For this page, id can also be 'all'
 $ref	= GETPOST('ref');
 $mode	= (GETPOST('mode') ? GETPOST('mode') : 'byunit');
 $error	= 0;
@@ -56,16 +57,48 @@ $result=restrictedArea($user,'produit|service',$fieldvalue,'product&product','',
 /*
  *	View
  */
+ 
 $form = new Form($db);
 
-if (! empty($id) || ! empty($ref))
+if (! empty($id) || ! empty($ref) || GETPOST('id') == 'all')
 {
 	$object = new Product($db);
-	$result = $object->fetch($id,$ref);
+    if (GETPOST('id') == 'all')
+    {
+        llxHeader("",$langs->trans("ProductStatistics"));
 
-	llxHeader("","",$langs->trans("CardProduct".$object->type));
-
-	if ($result)
+   	    $type = GETPOST('type');
+	    
+       	$helpurl='';
+        if ($type == '0')
+        {
+            $helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
+            //$title=$langs->trans("StatisticsOfProducts");
+            $title=$langs->trans("Statistics");
+        }
+        else if ($type == '1')
+        {
+            $helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+            //$title=$langs->trans("StatisticsOfServices");
+            $title=$langs->trans("Statistics");
+        }
+        else
+        {
+            $helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+            //$title=$langs->trans("StatisticsOfProductsOrServices");
+            $title=$langs->trans("Statistics");
+        }
+        
+        print load_fiche_titre($title, $mesg,'title_products.png');
+    }
+    else
+    {
+        $result = $object->fetch($id,$ref);
+        llxHeader("",$langs->trans("CardProduct".$object->type));
+    }
+	
+    
+	if ($result && (! empty($id) || ! empty($ref)))
 	{
 		$head=product_prepare_head($object);
 		$titre=$langs->trans("CardProduct".$object->type);
@@ -73,37 +106,74 @@ if (! empty($id) || ! empty($ref))
 
 		dol_fiche_head($head, 'stats', $titre, 0, $picto);
 
-		print '<table class="border" width="100%">';
-
-		// Reference
-		print '<tr>';
-		print '<td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">';
-		print $form->showrefnav($object,'ref','',1,'ref');
-		print '</td>';
-		print '</tr>';
-
-		// Label
-		print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$object->label.'</td></tr>';
-
-		// Status (to sell)
-		print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td>';
-		print $object->getLibStatut(2,0);
-		print '</td></tr>';
-
-		// Status (to buy)
-		print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Buy").')</td><td>';
-		print $object->getLibStatut(2,1);
-		print '</td></tr>';
-
-		print '</table>';
-
+        dol_banner_tab($object, 'ref', '', ($user->societe_id?0:1), 'ref');
+        
 		dol_fiche_end();
-
-
+	}
+	if (GETPOST('id') == 'all')
+	{
+        $h=0;
+        $head = array();
+        
+        $head[$h][0] = DOL_URL_ROOT.'/product/stats/card.php?id=all';
+        $head[$h][1] = $langs->trans("Chart");
+        $head[$h][2] = 'chart';
+        $h++;
+        
+    	$title = $langs->trans("ListProductServiceByPopularity");
+        if ((string) $type == '1') {
+        	$title = $langs->trans("ListServiceByPopularity");
+        }
+        if ((string) $type == '0') {
+        	$title = $langs->trans("ListProductByPopularity");
+        }
+        
+        $head[$h][0] = DOL_URL_ROOT.'/product/popuprop.php'.($type != ''?'?type='.$type:'');
+        $head[$h][1] = $title;
+        $head[$h][2] = 'popularityprop';
+        $h++;
+        
+        dol_fiche_head($head,'chart',$langs->trans("Statistics"));   
+	}
+	
+	
+	if ($result || GETPOST('id') == 'all')
+	{
+	    if (GETPOST('id') == 'all')
+	    {
+    		// Choice of type of product
+    		if (! empty($conf->dol_use_jmobile)) print "\n".'<div class="fichecenter"><div class="nowrap">'."\n";
+    
+    		if ((string) $type != '0') print '<a href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id')?GETPOST('id'):$object->id).'&type=0">';
+    		else print img_picto('','tick').' ';
+    		print $langs->trans("Products");
+    		if ((string) $type != '0') print '</a>';
+    
+    		if (! empty($conf->dol_use_jmobile)) print '</div>'."\n".'<div class="nowrap">'."\n";
+    		else print ' &nbsp; / &nbsp; ';
+    
+    		if ((string) $type != '1') print '<a href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id')?GETPOST('id'):$object->id).'&type=1">';
+    		else print img_picto('','tick').' ';
+    		print $langs->trans("Services");
+    		if ((string) $type != '1') print '</a>';
+    
+    		if (! empty($conf->dol_use_jmobile)) print '</div>'."\n".'<div class="nowrap">'."\n";
+    		else print ' &nbsp; / &nbsp; ';
+    
+    		if ((string) $type == '0' || (string) $type == '1') print '<a href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id')?GETPOST('id'):$object->id).'">';
+    		else print img_picto('','tick').' ';
+    		print $langs->trans("ProductsAndServices");
+    		if ((string) $type == '0' || (string) $type == '1') print '</a>';
+    		
+    		if (! empty($conf->dol_use_jmobile)) print '</div></div>';
+    		else print '<br>';
+    		print '<br>';
+	    }
+	    
 		// Choice of stats
 		if (! empty($conf->dol_use_jmobile)) print "\n".'<div class="fichecenter"><div class="nowrap">'."\n";
 
-		if ($mode == 'bynumber') print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&mode=byunit">';
+		if ($mode == 'bynumber') print '<a href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id')?GETPOST('id'):$object->id).($type != '' ? '&type='.$type:'').'&mode=byunit">';
 		else print img_picto('','tick').' ';
 		print $langs->trans("StatsByNumberOfUnits");
 		if ($mode == 'bynumber') print '</a>';
@@ -111,7 +181,7 @@ if (! empty($id) || ! empty($ref))
 		if (! empty($conf->dol_use_jmobile)) print '</div>'."\n".'<div class="nowrap">'."\n";
 		else print ' &nbsp; / &nbsp; ';
 
-		if ($mode == 'byunit') print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&mode=bynumber">';
+		if ($mode == 'byunit') print '<a href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id')?GETPOST('id'):$object->id).($type != '' ? '&type='.$type:'').'&mode=bynumber">';
 		else print img_picto('','tick').' ';
 		print $langs->trans("StatsByNumberOfEntities");
 		if ($mode == 'byunit') print '</a>';
@@ -135,19 +205,19 @@ if (! empty($id) || ! empty($ref))
 
 		$graphfiles=array(
 		'propal'           =>array('modulepart'=>'productstats_proposals',
-		'file' => $object->id.'/propal12m.png',
+		'file' => $object->id.'/propal12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.'.png',
 		'label' => ($mode=='byunit'?$langs->transnoentitiesnoconv("NumberOfUnitsProposals"):$langs->transnoentitiesnoconv("NumberOfProposals"))),
 		'orders'           =>array('modulepart'=>'productstats_orders',
-		'file' => $object->id.'/orders12m.png',
+		'file' => $object->id.'/orders12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.'.png',
 		'label' => ($mode=='byunit'?$langs->transnoentitiesnoconv("NumberOfUnitsCustomerOrders"):$langs->transnoentitiesnoconv("NumberOfCustomerOrders"))),
 		'invoices'         =>array('modulepart'=>'productstats_invoices',
-		'file' => $object->id.'/invoices12m.png',
+		'file' => $object->id.'/invoices12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.'.png',
 		'label' => ($mode=='byunit'?$langs->transnoentitiesnoconv("NumberOfUnitsCustomerInvoices"):$langs->transnoentitiesnoconv("NumberOfCustomerInvoices"))),
 		'orderssuppliers'=>array('modulepart'=>'productstats_orderssuppliers',
-		'file' => $object->id.'/orderssuppliers12m.png',
+		'file' => $object->id.'/orderssuppliers12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.'.png',
 		'label' => ($mode=='byunit'?$langs->transnoentitiesnoconv("NumberOfUnitsSupplierOrders"):$langs->transnoentitiesnoconv("NumberOfSupplierOrders"))),
 		'invoicessuppliers'=>array('modulepart'=>'productstats_invoicessuppliers',
-		'file' => $object->id.'/invoicessuppliers12m.png',
+		'file' => $object->id.'/invoicessuppliers12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.'.png',
 		'label' => ($mode=='byunit'?$langs->transnoentitiesnoconv("NumberOfUnitsSupplierInvoices"):$langs->transnoentitiesnoconv("NumberOfSupplierInvoices"))),
 		);
 
@@ -164,13 +234,21 @@ if (! empty($id) || ! empty($ref))
 
 					$graph_data = array();
 
-					// TODO Test si deja existant et recent, on ne genere pas
-					if ($key == 'propal')            $graph_data = $object->get_nb_propal($socid,$mode);
-					if ($key == 'orders')            $graph_data = $object->get_nb_order($socid,$mode);
-					if ($key == 'invoices')          $graph_data = $object->get_nb_vente($socid,$mode);
-					if ($key == 'invoicessuppliers') $graph_data = $object->get_nb_achat($socid,$mode);
-					if ($key == 'orderssuppliers')   $graph_data = $object->get_nb_ordersupplier($socid,$mode);
-
+					if (dol_is_file($dir . '/' . $graphfiles[$key]['file']))
+					{
+    					// TODO Load cachefile $graphfiles[$key]['file']
+					}
+					else
+					{
+    					if ($key == 'propal')            $graph_data = $object->get_nb_propal($socid,$mode,((string) $type != '' ? $type : -1));
+    					if ($key == 'orders')            $graph_data = $object->get_nb_order($socid,$mode,((string) $type != '' ? $type : -1));
+    					if ($key == 'invoices')          $graph_data = $object->get_nb_vente($socid,$mode,((string) $type != '' ? $type : -1));
+    					if ($key == 'invoicessuppliers') $graph_data = $object->get_nb_achat($socid,$mode,((string) $type != '' ? $type : -1));
+    					if ($key == 'orderssuppliers')   $graph_data = $object->get_nb_ordersupplier($socid,$mode,((string) $type != '' ? $type : -1));
+    				
+    					// TODO Save cachefile $graphfiles[$key]['file']
+					}
+					
 					if (is_array($graph_data))
 					{
 						$px->SetData($graph_data);
@@ -237,13 +315,13 @@ if (! empty($id) || ! empty($ref))
 			if ($graphfiles[$key]['output'] && ! $px->isGraphKo())
 			{
 			    if (file_exists($dir."/".$graphfiles[$key]['file']) && filemtime($dir."/".$graphfiles[$key]['file'])) print '<td>'.$langs->trans("GeneratedOn",dol_print_date(filemtime($dir."/".$graphfiles[$key]['file']),"dayhour")).'</td>';
-			    else print '<td>'.$langs->trans("GeneratedOn",dol_print_date(dol_now()),"dayhour").'</td>';
+			    else print '<td>'.$langs->trans("GeneratedOn",dol_print_date(dol_now(),"dayhour")).'</td>';
 			}
 			else
 			{
 				print '<td>'.($mesg?'<font class="error">'.$mesg.'</font>':$langs->trans("ChartNotGenerated")).'</td>';
 			}
-			print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=recalcul&amp;mode='.$mode.'">'.img_picto($langs->trans("ReCalculate"),'refresh').'</a></td>';
+			print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id')?GETPOST('id'):$object->id).((string) $type != ''?'&amp;type='.$type:'').'&amp;action=recalcul&amp;mode='.$mode.'">'.img_picto($langs->trans("ReCalculate"),'refresh').'</a></td>';
 			print '</tr>';
 			print '</table>';
 
@@ -266,10 +344,11 @@ if (! empty($id) || ! empty($ref))
 			print "\n".'</div></div></div>';
 			print '<div class="clear"><div class="fichecenter"><br></div></div>'."\n";
 		}
-
-		print '<div class="tabsAction">';
-		print '</div>';
-
+	}
+	
+	if (GETPOST('id') == 'all')
+	{
+	    dol_fiche_end();
 	}
 }
 else

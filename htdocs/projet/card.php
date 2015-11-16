@@ -450,10 +450,13 @@ if ($action == 'create' && $user->rights->projet->creer)
     if (is_numeric($defaultref) && $defaultref <= 0) $defaultref='';
 
     // Ref
-    print '<tr><td><span class="fieldrequired">'.$langs->trans("Ref").'</span></td><td><input size="12" type="text" name="ref" value="'.($_POST["ref"]?$_POST["ref"]:$defaultref).'"></td></tr>';
+    $suggestedref=($_POST["ref"]?$_POST["ref"]:$defaultref);
+    print '<tr><td><span class="fieldrequired">'.$langs->trans("Ref").'</span></td><td><input size="12" type="text" name="ref" value="'.$suggestedref.'">';
+    print ' '.$form->textwithpicto('', $langs->trans("YouCanCompleteRef", $suggestedref));
+    print '</td></tr>';
 
     // Label
-    print '<tr><td><span class="fieldrequired">'.$langs->trans("Label").'</span></td><td><input size="40" type="text" name="title" value="'.GETPOST("title").'"></td></tr>';
+    print '<tr><td><span class="fieldrequired">'.$langs->trans("Label").'</span></td><td><input size="80" type="text" name="title" value="'.GETPOST("title").'"></td></tr>';
 
     // Thirdparty
     print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
@@ -617,12 +620,15 @@ else
         print '<table class="border" width="100%">';
 
         // Ref
+        $suggestedref=$object->ref;
         print '<tr><td class="fieldrequired" width="30%">'.$langs->trans("Ref").'</td>';
-        print '<td><input size="12" name="ref" value="'.$object->ref.'"></td></tr>';
+        print '<td><input size="12" name="ref" value="'.$suggestedref.'">';
+        print ' '.$form->textwithpicto('', $langs->trans("YouCanCompleteRef", $suggestedref));
+        print '</td></tr>';
 
         // Label
         print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td>';
-        print '<td><input size="40" name="title" value="'.$object->title.'"></td></tr>';
+        print '<td><input size="80" name="title" value="'.$object->title.'"></td></tr>';
 
         // Thirdparty
         print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';

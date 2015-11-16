@@ -549,7 +549,7 @@ class Tva extends CommonObject
         $result = $this->db->query($sql);
         if ($result)
         {
-            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."tva");    // TODO should be called paiementtva
+            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."tva");    // TODO should be called 'payment_vat'
 
             // Call trigger
             //XXX: Should be done just befor commit no ?

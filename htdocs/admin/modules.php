@@ -37,6 +37,7 @@ $langs->load("admin");
 $mode=GETPOST('mode', 'alpha')?GETPOST('mode', 'alpha'):(isset($_SESSION['mode'])?$_SESSION['mode']:0);
 $action=GETPOST('action','alpha');
 $value=GETPOST('value', 'alpha');
+$page_y=GETPOST('page_y','int');
 
 if (! $user->admin)
 	accessforbidden();
@@ -67,7 +68,7 @@ if ($action == 'set' && $user->admin)
 {
     $result=activateModule($value);
     if ($result) setEventMessages($result, null, 'errors');
-    header("Location: modules.php?mode=".$mode);
+    header("Location: modules.php?mode=".$mode.($page_y?'&page_y='.$page_y:''));
 	exit;
 }
 
@@ -75,7 +76,7 @@ if ($action == 'reset' && $user->admin)
 {
     $result=unActivateModule($value);
     if ($result) setEventMessages($result, null, 'errors');
-    header("Location: modules.php?mode=".$mode);
+    header("Location: modules.php?mode=".$mode.($page_y?'&page_y='.$page_y:''));
 	exit;
 }
 
@@ -425,7 +426,7 @@ if ($mode != 'marketplace')
         	}
         	else
         	{
-        		print '<a href="modules.php?id='.$objMod->numero.'&amp;action=reset&amp;value=' . $modName . '&amp;mode=' . $mode . '">';
+        		print '<a class="reposition" href="modules.php?id='.$objMod->numero.'&amp;action=reset&amp;value=' . $modName . '&amp;mode=' . $mode . '">';
         		print img_picto($langs->trans("Activated"),'switch_on');
         		print '</a>';
         	}
@@ -488,7 +489,7 @@ if ($mode != 'marketplace')
         	else
         	{
 	        	// Module non actif
-	        	print '<a href="modules.php?id='.$objMod->numero.'&amp;action=set&amp;value=' . $modName . '&amp;mode=' . $mode . '">';
+	        	print '<a class="reposition" href="modules.php?id='.$objMod->numero.'&amp;action=set&amp;value=' . $modName . '&amp;mode=' . $mode . '">';
 	        	print img_picto($langs->trans("Disabled"),'switch_off');
 	        	print "</a>\n";
         	}

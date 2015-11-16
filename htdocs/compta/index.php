@@ -580,7 +580,7 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 			print '<td align="center">'.$langs->trans("DateDue").'</td>';
 			print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
 			print '<td align="right">'.$langs->trans("Paid").'</td>';
-			print '<td>&nbsp;</td>';
+			print '<td align="center" width="16">&nbsp;</td>';
 			print '</tr>';
 			if ($num)
 			{

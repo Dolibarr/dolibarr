@@ -40,8 +40,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-if (! empty($conf->askpricesupplier->enabled))
-	require DOL_DOCUMENT_ROOT . '/comm/askpricesupplier/class/askpricesupplier.class.php';
+if (! empty($conf->supplier_proposal->enabled))
+	require DOL_DOCUMENT_ROOT . '/supplier_proposal/class/supplier_proposal.class.php';
 if (!empty($conf->produit->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 if (!empty($conf->projet->enabled))
@@ -54,7 +54,7 @@ $langs->load('sendings');
 $langs->load('companies');
 $langs->load('bills');
 $langs->load('propal');
-$langs->load('askpricesupplier');
+$langs->load('supplier_proposal');
 $langs->load('deliveries');
 $langs->load('products');
 $langs->load('stocks');
@@ -704,15 +704,14 @@ if (empty($reshook))
 
 	if ($action == 'confirm_commande' && $confirm	== 'yes' &&	$user->rights->fournisseur->commande->commander)
 	{
-	    $result	= $object->commande($user, $_REQUEST["datecommande"],	$_REQUEST["methode"], $_REQUEST['comment']);
+	    $result = $object->commande($user, $_REQUEST["datecommande"],	$_REQUEST["methode"], $_REQUEST['comment']);
 	    if ($result > 0)
 	    {
 	        if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 		        $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	        }
-	        header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
-	        exit;
-	    }
+            $action = '';
+        }
 	    else
 	    {
             setEventMessages($object->error, $object->errors, 'errors');
@@ -767,15 +766,15 @@ if (empty($reshook))
 	    {
 	        $date_liv = dol_mktime(GETPOST('rehour'),GETPOST('remin'),GETPOST('resec'),GETPOST("remonth"),GETPOST("reday"),GETPOST("reyear"));
 
-	        $result	= $object->Livraison($user, $date_liv, GETPOST("type"), GETPOST("comment"));
+	        $result = $object->Livraison($user, $date_liv, GETPOST("type"), GETPOST("comment"));
 	        if ($result > 0)
 	        {
-	            header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
-	            exit;
-	        }
+                setEventMessages($langs->trans("DeliveryStateSaved"), null);
+                $action = '';
+            }
 	        else if($result == -3)
 	        {
-	        	setEventMessage($langs->trans("NotAuthorized"), 'errors');
+                setEventMessages($object->error, $object->errors, 'errors');
 	        }
 	        else
 	        {
@@ -917,8 +916,8 @@ if (empty($reshook))
        			// If creation from another object of another module (Example: origin=propal, originid=1)
 				if (! empty($origin) && ! empty($originid))
 				{
-					$element = 'comm/askpricesupplier';
-					$subelement = 'askpricesupplier';
+					$element = 'supplier_proposal';
+					$subelement = 'supplier_proposal';
 
 					$object->origin = $origin;
 					$object->origin_id = $originid;
@@ -1430,8 +1429,8 @@ if ($action=='create')
 			$subelement = $regs [2];
 		}
 
-		$element = 'comm/askpricesupplier';
-		$subelement = 'askpricesupplier';
+		$element = 'supplier_proposal';
+		$subelement = 'supplier_proposal';
 
 		dol_include_once('/' . $element . '/class/' . $subelement . '.class.php');
 
@@ -1580,8 +1579,8 @@ if ($action=='create')
 		print '<input type="hidden" name="originid"       value="' . $objectsrc->id . '">';
 
 		$newclassname = $classname;
-		if ($newclassname == 'AskPriceSupplier')
-			$newclassname = 'CommercialAskPriceSupplier';
+		if ($newclassname == 'SupplierProposal')
+			$newclassname = 'CommercialSupplierProposal';
 		print '<tr><td>' . $langs->trans($newclassname) . '</td><td colspan="2">' . $objectsrc->getNomUrl(1) . '</td></tr>';
 		print '<tr><td>' . $langs->trans('TotalHT') . '</td><td colspan="2">' . price($objectsrc->total_ht) . '</td></tr>';
 		print '<tr><td>' . $langs->trans('TotalVAT') . '</td><td colspan="2">' . price($objectsrc->total_tva) . "</td></tr>";
@@ -2322,6 +2321,15 @@ elseif (! empty($object->id))
 		$formmail->fromid   = $user->id;
 		$formmail->fromname = $user->getFullName($langs);
 		$formmail->frommail = $user->email;
+		if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 1))	// If bit 1 is set
+		{
+			$formmail->trackid='sor'.$object->id;
+		}
+		if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2))	// If bit 2 is set
+		{
+			include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+			$formmail->frommail=dolAddEmailTrackId($formmail->frommail, 'sor'.$object->id);
+		}		
 		$formmail->withfrom=1;
 		$liste=array();
 		foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key=>$value)	$liste[$key]=$value;

@@ -84,6 +84,7 @@ $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 if ($id > 0 || ! empty($ref))
 {
 	$ret=$object->fetch($id, $ref);
+	$object->fetch_thirdparty();
 }
 
 $permissionnote=$user->rights->fournisseur->facture->creer;	// Used by the include of actions_setnotes.inc.php
@@ -1521,7 +1522,7 @@ if ($action == 'create')
         if ($cntinvoice>=1)
         {
         	setEventMessage('WarningBillExist','warnings');
-        	echo ' ('.$langs->trans('LatestRelatedBill').end($objectsrc->linkedObjects['facture'])->getNomUrl(1).')';
+        	echo ' ('.$langs->trans('LatestRelatedBill').end($objectsrc->linkedObjects['invoice_supplier'])->getNomUrl(1).')';
         }
         echo '</td></tr>';
         print '<tr><td>'.$langs->trans('TotalHT').'</td><td colspan="2">'.price($objectsrc->total_ht).'</td></tr>';
@@ -2101,10 +2102,10 @@ else
 
        	global $forceall, $senderissupplier, $dateSelector, $inputalsopricewithtax;
 		$forceall=1; $senderissupplier=1; $dateSelector=0; $inputalsopricewithtax=1;
-
+		
 		// Show object lines
 		if (! empty($object->lines))
-			$ret = $object->printObjectLines($action, $soc, $mysoc, $lineid, 1);
+			$ret = $object->printObjectLines($action, $societe, $mysoc, $lineid, 1);
 
 		$num=count($object->lines);
 
@@ -2322,6 +2323,15 @@ else
             $formmail->fromid   = $user->id;
             $formmail->fromname = $user->getFullName($langs);
             $formmail->frommail = $user->email;
+            if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 1))	// If bit 1 is set
+            {
+            	$formmail->trackid='sin'.$object->id;
+            }
+            if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2))	// If bit 2 is set
+            {
+            	include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+            	$formmail->frommail=dolAddEmailTrackId($formmail->frommail, 'sin'.$object->id);
+            }            
             $formmail->withfrom=1;
 			$liste=array();
 			foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key=>$value)	$liste[$key]=$value;

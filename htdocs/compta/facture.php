@@ -1401,12 +1401,12 @@ if (empty($reshook))
 
 			// Margin
 			$fournprice = price2num(GETPOST('fournprice' . $predef) ? GETPOST('fournprice' . $predef) : '');
-			$buyingprice = price2num(GETPOST('buying_price' . $predef) != '' ? GETPOST('buying_price' . $predef) : '');    // If buying_price is '0', we muste keep this value
+			$buyingprice = price2num(GETPOST('buying_price' . $predef) != '' ? GETPOST('buying_price' . $predef) : '');    // If buying_price is '0', we must keep this value
 
 			// Local Taxes
-			$localtax1_tx = get_localtax($tva_tx, 1, $object->thirdparty);
-			$localtax2_tx = get_localtax($tva_tx, 2, $object->thirdparty);
-
+			$localtax1_tx = get_localtax($tva_tx, 1, $object->thirdparty, $mysoc);
+			$localtax2_tx = get_localtax($tva_tx, 2, $object->thirdparty, $mysoc);
+			
 			$info_bits = 0;
 			if ($tva_npr)
 				$info_bits |= 0x01;
@@ -1843,6 +1843,8 @@ if ($action == 'create')
 		$res = $soc->fetch($socid);
 
 	// Load objectsrc
+	$remise_absolue = 0;
+
 	if (! empty($origin) && ! empty($originid))
 	{
 		// Parse element/subelement (ex: project_task)
@@ -1854,6 +1856,20 @@ if ($action == 'create')
 
 		if ($element == 'project') {
 			$projectid = $originid;
+			
+			if (!$cond_reglement_id) {
+				$cond_reglement_id = $soc->cond_reglement_id;
+			}
+			if (!$mode_reglement_id) {
+				$mode_reglement_id = $soc->mode_reglement_id;
+			}
+			if (!$remise_percent) {
+				$remise_percent = $soc->remise_percent;
+			}
+			if (!$dateinvoice) {
+				// Do not set 0 here (0 for a date is 1970)
+				$dateinvoice = (empty($dateinvoice)?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:''):$dateinvoice);
+			}			
 		} else {
 			// For compatibility
 			if ($element == 'order' || $element == 'commande') {
@@ -1898,7 +1914,6 @@ if ($action == 'create')
 			$objectsrc->fetch_optionals($originid);
 			$object->array_options = $objectsrc->array_options;
 		}
-		$dateinvoice = empty($conf->global->MAIN_AUTOFILL_DATE) ? -1 : '';	// Dot not set 0 here (0 for a date is 1970)
 	}
 	else
 	{
@@ -1909,6 +1924,7 @@ if ($action == 'create')
 		$remise_absolue 	= 0;
 		$dateinvoice		= (empty($dateinvoice)?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:''):$dateinvoice);		// Do not set 0 here (0 for a date is 1970)
 	}
+
 	$absolute_discount = $soc->getAvailableDiscounts();
 
 	if (! empty($conf->use_javascript_ajax))
@@ -1959,7 +1975,20 @@ if ($action == 'create')
 	else
 	{
 		print '<td colspan="2">';
-		print $form->select_company('', 'socid', 's.client = 1 OR s.client = 3', 1);
+		print $form->select_company('', 'socid', '(s.client = 1 OR s.client = 3) AND status=1', 1);
+		// Option to reload page to retrieve customer informations. Note, this clear other input
+		if (!empty($conf->global->RELOAD_PAGE_ON_CUSTOMER_CHANGE))
+		{
+			print '<script type="text/javascript">
+			$(document).ready(function() {
+				$("#socid").change(function() {
+					var socid = $(this).val();
+					// reload page
+					window.location.href = "'.$_SERVER["PHP_SELF"].'?action=create&socid="+socid;
+				});
+			});
+			</script>';
+		}
 		print '</td>';
 	}
 	print '</tr>' . "\n";
@@ -3839,6 +3868,15 @@ else if ($id > 0 || ! empty($ref))
 		$formmail->fromid = $user->id;
 		$formmail->fromname = $user->getFullName($langs);
 		$formmail->frommail = $user->email;
+		if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 1))	// If bit 1 is set
+		{
+			$formmail->trackid='inv'.$object->id;
+		}
+		if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2))	// If bit 2 is set
+		{
+			include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+			$formmail->frommail=dolAddEmailTrackId($formmail->frommail, 'inv'.$object->id);
+		}		
 		$formmail->withfrom = 1;
 		$liste = array();
 		foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key => $value) {

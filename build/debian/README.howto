@@ -239,7 +239,7 @@ http://packages.qa.debian.org/t/tcpdf.html
 
 ##### Create/Maintain dolibarr package
 
-To update dolibarr debian package when upstream version has changed
+To update dolibarr debian package when upstream (official version of external project) has changed:
 
 * You can git clone debian git repo
 > git clone git.debian.org:/git/collab-maint/dolibarr.git [dolibarr-debian]
@@ -284,10 +284,10 @@ Then check/modify also the user/date signature:
 - Name and email must match value into debian/control file (Entry added here is used by next step).
 
 
-To update dolibarr debian package when only files into debian has changed
+To update dolibarr debian package when only files into debian has changed, or if you include manually backport:
 
 * Change files and commit.
-* Add a tag debian/x.y.z+dfsgw-2 (increase the last 1 into 2)
+* Add a tag debian/x.y.z+dfsgw-2 (increase the last 1 into 2, 3...)
 
 
 Once files has been prepared, it's time to test:

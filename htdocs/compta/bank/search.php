@@ -179,19 +179,23 @@ if ($resql)
 	print '<form method="post" action="search.php" name="search_form">'."\n";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
 
+	$moreforfilter = '';
+	
+	$moreforfilter.='<div class="divsearchfield">';
 	$moreforfilter .= $langs->trans('Period') . ' ('.$langs->trans('DateOperationShort').') : ' . $langs->trans('StartDate') . ' ';
 	$moreforfilter .= $form->select_date($search_dt_start, 'search_start_dt', 0, 0, 1, "search_form", 1, 0, 1);
 	$moreforfilter .= ' - ';
 	$moreforfilter .= $langs->trans('EndDate') . ' ' . $form->select_date($search_dt_end, 'search_end_dt', 0, 0, 1, "search_form", 1, 0, 1);
+	$moreforfilter .= '</div>';
 
-
-	if ($moreforfilter) {
+	if ($moreforfilter) 
+	{
 		print '<div class="liste_titre liste_titre_bydiv centpercent">';
 		print $moreforfilter;
 		print '</div>'."\n";
 	}
 
-	print '<table class="liste">'."\n";
+	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans('Ref'),$_SERVER['PHP_SELF'],'b.rowid','',$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('DateOperationShort'),$_SERVER['PHP_SELF'],'b.dateo','',$param,'align="center"',$sortfield,$sortorder);
