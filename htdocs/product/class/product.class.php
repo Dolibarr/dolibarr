@@ -738,7 +738,7 @@ class Product extends CommonObject
 				// Multilangs
 				if (! empty($conf->global->MAIN_MULTILANGS))
 				{
-					if ( $this->setMultiLangs() < 0)
+					if ( $this->setMultiLangs($user) < 0)
 					{
 						$this->error=$langs->trans("Error")." : ".$this->db->error()." - ".$sql;
 						return -2;
@@ -968,9 +968,11 @@ class Product extends CommonObject
 	/**
 	 *	Update or add a translation for a product
 	 *
+	 *	@param  User	$user       Object user making update
+	 *
 	 *	@return		int		<0 if KO, >0 if OK
 	 */
-	function setMultiLangs()
+	function setMultiLangs($user)
 	{
 		global $langs;
 
@@ -1049,6 +1051,15 @@ class Product extends CommonObject
 				// language is not current language and we didn't provide a multilang description for this language
 			}
 		}
+
+		// Call trigger
+		$result = $this->call_trigger('PRODUCT_SET_MULTILANGS',$user);
+		if ($result < 0) {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+		// End call triggers
+
 		return 1;
 	}
 
