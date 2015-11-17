@@ -64,6 +64,9 @@ insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  9
 insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  93,'13055',0,'Provence-Alpes-Côte d''Azur');
 insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  94,'2A004',0,'Corse');
 
+-- Regions Austria (id country=41)
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  41, 4101, '', 0, 'Österreich', 1);
+
 -- Regions Belgium (id country=2)
 insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 2, 201,     '',1,'Flandre');
 insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 2, 202,     '',2,'Wallonie');

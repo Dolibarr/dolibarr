@@ -138,6 +138,16 @@ insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,no
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (11,'94','94028',2,'VAL-DE-MARNE','Val-de-Marne');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (11,'95','95500',2,'VAL-D OISE','Val-d Oise');
 
+-- Provinces Austria (id country=41)
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (4101,'B','BURGENLAND','Burgenland',1);
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (4101,'K','KAERNTEN','Kärnten',1);
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (4101,'N','NIEDEROESTERREICH','Niederösterreich',1);
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (4101,'O','OBEROESTERREICH','Oberösterreich',1);
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (4101,'S','SALZBURG','Salzburg',1);
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (4101,'ST','STEIERMARK','Steiermark',1);
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (4101,'T','TIROL','Tirol',1);
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (4101,'V','VORARLBERG','Vorarlberg',1);
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (4101,'W','WIEN','Wien',1);
 
 -- Provinces Belgium (id country=2)
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (201,'01','',1,'ANVERS','Anvers');
