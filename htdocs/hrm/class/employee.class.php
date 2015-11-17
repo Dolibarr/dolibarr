@@ -145,7 +145,7 @@ class Employee extends CommonObject
         	$label.= '</div><div style="clear: both;"></div>';
         }
 
-        $link.= '<a href="'.DOL_URL_ROOT.'/hrm/employee/card.php?id='.$this->id.'"';
+        $link.= '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'&mode=employee"';
         if (empty($notooltip))
         {
             if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) 

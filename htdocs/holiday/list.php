@@ -32,7 +32,6 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/common.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/hrm.lib.php';
 
 $langs->load('users');
 $langs->load('holidays');
@@ -230,17 +229,16 @@ if ($id > 0)
 {
 	if ($mode == 'employee') // For HRM module development
 	{
-		$head = employee_prepare_head($fuser);
 		$title = $langs->trans("Employee");
 		$linkback = '<a href="'.DOL_URL_ROOT.'/hrm/employee/list.php">'.$langs->trans("BackToList").'</a>';
 	}
 	else
 	{
-		$head = user_prepare_head($fuser);
 		$title = $langs->trans("User");
 		$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
 	}
 
+	$head = user_prepare_head($fuser);
 	
 	dol_fiche_head($head, 'paidholidays', $title, 0, 'user');
 
