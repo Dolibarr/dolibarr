@@ -215,7 +215,7 @@ print '*/'."\n";
 if (! empty($conf->dol_optimize_smallscreen)) $fontsize=11;
 
 
-//$nb=$menumanager->showmenu('topnb');
+$nbtopmenuentries=$menumanager->showmenu('topnb');
 //print $nb;
 
 ?>
@@ -3872,6 +3872,17 @@ border-top-right-radius: 6px;
 }
 @media only screen and (max-width: 767px)
 {
+	.imgopensurveywizard { width:95%; height: auto; }
+	
+	#tooltip {
+		position: absolute;
+		width: <?php print dol_size(350,'width'); ?>px;
+	}	
+
+}
+
+@media only screen and (max-width: <?php echo $nbtopmenuentries * 85; ?>px)
+{
 	.mainmenuaspan {
     	display: none;
     }
@@ -3888,13 +3899,6 @@ border-top-right-radius: 6px;
 	div.tmenuleft {
 		display: none;
 	}
-	
-	.imgopensurveywizard { width:95%; height: auto; }
-	
-	#tooltip {
-		position: absolute;
-		width: <?php print dol_size(350,'width'); ?>px;
-	}	
 }
 @media only screen and (max-width: 570px)
 {
@@ -3910,7 +3914,8 @@ border-top-right-radius: 6px;
 	<?php } ?>
 	}
 	div.login_block {
-		top: 9px;
+		top: 4px;
+		max-width: 82px;
 	}
 	
 	div.mainmenu {
