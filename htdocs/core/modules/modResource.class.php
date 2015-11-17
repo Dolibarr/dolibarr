@@ -47,12 +47,14 @@ class modResource extends DolibarrModules
 		// Use a free id here
 		// (See in Home -> System information -> Dolibarr for list of used modules id).
 		$this->numero = 63000;
+		
 		// Key text used to identify module (for permissions, menus, etc...)
 		$this->rights_class = 'resource';
 
 		// Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
 		// It is used to group modules in module setup page
 		$this->family = "projects";
+		$this->module_position = 20;
 		// Module label (no space allowed)
 		// used if translation string 'ModuleXXXName' not found
 		// (where XXX is value of numeric property 'numero' of module)

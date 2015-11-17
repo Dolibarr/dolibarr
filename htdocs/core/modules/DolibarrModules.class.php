@@ -35,19 +35,29 @@
 class DolibarrModules           // Can not be abstract, because we need to instantiant it into unActivateModule to be able to disable a module whose files were removed.
 {
     /**
+     * @var DoliDb Database handler
+     */
+    public $db;
+
+    /**
      * @var int Module unique ID
      */
     public $numero;
 
     /**
+     * @var string Family
+     */
+    public $family;
+    
+    /**
+     * @var int module_position
+     */
+    public $module_position=500;
+    
+    /**
      * @var string Module name
      */
     public $name;
-
-	/**
-     * @var DoliDb Database handler
-     */
-    public $db;
 
     /**
      * @var array Paths to create when module is activated
