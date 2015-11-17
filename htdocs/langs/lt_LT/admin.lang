@@ -1193,13 +1193,13 @@ UseOptionLineIfNoQuantity=Produkto/paslaugos linija su nuline suma yra laikoma g
 FreeLegalTextOnProposal=Laisvas tekstas komerciniame pasiūlyme
 WatermarkOnDraftProposal=Vandens ženklas komercinių pasiūlymų projekte (nėra, jei lapas tuščias)
 BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL=Klausti pasiūlyme esančios banko sąskaitos paskirties
-##### AskPriceSupplier #####
-AskPriceSupplierSetup=Tiekėjų modulyje kainos prašymo nustatymas
-AskPriceSupplierNumberingModules=Tiekėjų modulyje kainos prašymų numeracijos modeliai
-AskPriceSupplierPDFModules=Tiekėjų modulyje kainos prašymų dokumentų modeliai
-FreeLegalTextOnAskPriceSupplier=Laisvas tekstas kainos prašymuose
-WatermarkOnDraftAskPriceSupplier=Vandens ženklas ant kainų prašymų tiekėjų (nėra jei tuščias)
-BANK_ASK_PAYMENT_BANK_DURING_ASKPRICESUPPLIER=Klausti banko sąskaitos paskirties ant kainos užklausos
+##### SupplierProposal #####
+SupplierProposalSetup=Tiekėjų modulyje kainos prašymo nustatymas
+SupplierProposalNumberingModules=Tiekėjų modulyje kainos prašymų numeracijos modeliai
+SupplierProposalPDFModules=Tiekėjų modulyje kainos prašymų dokumentų modeliai
+FreeLegalTextOnSupplierProposal=Laisvas tekstas kainos prašymuose
+WatermarkOnDraftSupplierProposal=Vandens ženklas ant kainų prašymų tiekėjų (nėra jei tuščias)
+BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL=Klausti banko sąskaitos paskirties ant kainos užklausos
 ##### Orders #####
 OrdersSetup=Užsakymų valdymo nuostatos
 OrdersNumberingModules=Užsakymų numeracijos modeliai

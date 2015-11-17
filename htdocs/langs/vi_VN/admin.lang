@@ -1193,13 +1193,13 @@ UseOptionLineIfNoQuantity=A line of product/service with a zero amount is consid
 FreeLegalTextOnProposal=Free text on commercial proposals
 WatermarkOnDraftProposal=Watermark on draft commercial proposals (none if empty)
 BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL=Yêu cầu tài khoản ngân hàng của đơn hàng đề xuất
-##### AskPriceSupplier #####
-AskPriceSupplierSetup=Cài đặt module đề nghị giá nhà cung cấp
-AskPriceSupplierNumberingModules=Kiểu đánh số cho đề nghị giá nhà cung cấp
-AskPriceSupplierPDFModules=Kiểu chứng từ đề nghị giá nhà cung cấp
-FreeLegalTextOnAskPriceSupplier=Free text trên đề nghị giá nhà cung cấp
-WatermarkOnDraftAskPriceSupplier=Watermark trên dự thảo đề nghị giá nhà cung cấp (không nếu rỗng)
-BANK_ASK_PAYMENT_BANK_DURING_ASKPRICESUPPLIER=Yêu cầu số tài khoản ngân hàng trên đề nghị giá
+##### SupplierProposal #####
+SupplierProposalSetup=Cài đặt module đề nghị giá nhà cung cấp
+SupplierProposalNumberingModules=Kiểu đánh số cho đề nghị giá nhà cung cấp
+SupplierProposalPDFModules=Kiểu chứng từ đề nghị giá nhà cung cấp
+FreeLegalTextOnSupplierProposal=Free text trên đề nghị giá nhà cung cấp
+WatermarkOnDraftSupplierProposal=Watermark trên dự thảo đề nghị giá nhà cung cấp (không nếu rỗng)
+BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL=Yêu cầu số tài khoản ngân hàng trên đề nghị giá
 ##### Orders #####
 OrdersSetup=Cài đặt quản lý đơn hàng
 OrdersNumberingModules=Mô hình đánh số đơn hàng

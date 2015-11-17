@@ -48,6 +48,7 @@ class modStock extends DolibarrModules
 		$this->numero = 52;
 
 		$this->family = "products";
+		$this->module_position = 40;
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "Gestion des stocks";

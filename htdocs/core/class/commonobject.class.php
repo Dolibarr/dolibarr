@@ -2183,7 +2183,7 @@ abstract class CommonObject
             if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier') $fieldtva='total_tva';
             if ($this->element == 'propal')                                                $fieldttc='total';
             if ($this->element == 'expensereport')                                         $fieldtva='total_tva';
-            if ($this->element == 'askpricesupplier')                                      $fieldttc='total';
+            if ($this->element == 'supplier_proposal')                                      $fieldttc='total';
 
             if (empty($nodatabaseupdate))
             {
@@ -2394,8 +2394,8 @@ abstract class CommonObject
                     else if ($objecttype == 'propal')			{
                         $classpath = 'comm/propal/class';
                     }
-                    else if ($objecttype == 'askpricesupplier')			{
-                        $classpath = 'comm/askpricesupplier/class';
+                    else if ($objecttype == 'supplier_proposal')			{
+                        $classpath = 'supplier_proposal/class';
                     }
                     else if ($objecttype == 'shipping')			{
                         $classpath = 'expedition/class'; $subelement = 'expedition'; $module = 'expedition_bon';
@@ -3046,9 +3046,9 @@ abstract class CommonObject
 		// Description
 		print '<td class="linecoldescription">'.$langs->trans('Description').'</td>';
 
-		if ($this->element == 'askpricesupplier')
+		if ($this->element == 'supplier_proposal')
 		{
-			print '<td class="linerefsupplier" align="right"><span id="title_fourn_ref">'.$langs->trans("AskPriceSupplierRefFourn").'</span></td>';
+			print '<td class="linerefsupplier" align="right"><span id="title_fourn_ref">'.$langs->trans("SupplierProposalRefFourn").'</span></td>';
 		}
 
 		// VAT

@@ -44,7 +44,7 @@ class Product extends CommonObject
 	public $element='product';
 	public $table_element='product';
 	public $fk_element='fk_product';
-	protected $childtables=array('askpricesupplierdet', 'propaldet','commandedet','facturedet','contratdet','facture_fourn_det','commande_fournisseurdet');    // To test if we can delete object
+	protected $childtables=array('supplier_proposaldet', 'propaldet','commandedet','facturedet','contratdet','facture_fourn_det','commande_fournisseurdet');    // To test if we can delete object
 	protected $isnolinkedbythird = 1;     // No field fk_soc
 	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
@@ -738,7 +738,7 @@ class Product extends CommonObject
 				// Multilangs
 				if (! empty($conf->global->MAIN_MULTILANGS))
 				{
-					if ( $this->setMultiLangs() < 0)
+					if ( $this->setMultiLangs($user) < 0)
 					{
 						$this->error=$langs->trans("Error")." : ".$this->db->error()." - ".$sql;
 						return -2;
@@ -968,9 +968,11 @@ class Product extends CommonObject
 	/**
 	 *	Update or add a translation for a product
 	 *
+	 *	@param  User	$user       Object user making update
+	 *
 	 *	@return		int		<0 if KO, >0 if OK
 	 */
-	function setMultiLangs()
+	function setMultiLangs($user)
 	{
 		global $langs;
 
@@ -1049,6 +1051,15 @@ class Product extends CommonObject
 				// language is not current language and we didn't provide a multilang description for this language
 			}
 		}
+
+		// Call trigger
+		$result = $this->call_trigger('PRODUCT_SET_MULTILANGS',$user);
+		if ($result < 0) {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+		// End call triggers
+
 		return 1;
 	}
 
@@ -3492,13 +3503,13 @@ class Product extends CommonObject
 	 *	TODO Move this into html.formproduct.class.php
 	 *
 	 *  @param      string	$sdir        	Directory to scan
-	 *  @param      int		$size        	0=original size, 1 use thumbnail if possible
+	 *  @param      int		$size        	0=original size, 1='small' use thumbnail if possible
 	 *  @param      int		$nbmax       	Nombre maximum de photos (0=pas de max)
 	 *  @param      int		$nbbyrow     	Number of image per line or -1 to use div. Used only if size=1.
 	 * 	@param		int		$showfilename	1=Show filename
 	 * 	@param		int		$showaction		1=Show icon with action links (resize, delete)
-	 * 	@param		int		$maxHeight		Max height of image when size=1
-	 * 	@param		int		$maxWidth		Max width of image when size=1
+	 * 	@param		int		$maxHeight		Max height of original image when size='small' (so we can use original even if small requested). If 0, always use 'small' thumb image.
+	 * 	@param		int		$maxWidth		Max width of original image when size='small'
 	 *  @param      int     $nolink         Do not add a href link to view enlarged imaged into a new tab
 	 *  @return     string					Html code to show photo. Number of photos shown is saved in this->nbphoto
 	 */
@@ -3546,14 +3557,12 @@ class Product extends CommonObject
     					$photo = $file;
     					$viewfilename = $file;
 
-    					if ($size == 1) {   // Format vignette
-    						// On determine nom du fichier vignette
-    						$photo_vignette='';
-    						if (preg_match('/(\.jpg|\.bmp|\.gif|\.png|\.tiff)$/i', $photo, $regs)) {
-    							$photo_vignette=preg_replace('/'.$regs[0].'/i', '', $photo)."_small".$regs[0];
-    							if (! dol_is_file($dirthumb.$photo_vignette)) $photo_vignette='';
-    						}
+    					if ($size == 1 || $size == 'small') {   // Format vignette
 
+    						// Find name of thumb file
+    						$photo_vignette=basename(getImageFileNameForSize($dir.$file, '_small', '.png'));
+    						if (! dol_is_file($dirthumb.$photo_vignette)) $photo_vignette='';
+    						
     						// Get filesize of original file
     						$imgarray=dol_getImageSize($dir.$photo);
 
@@ -3573,7 +3582,8 @@ class Product extends CommonObject
     						// Si fichier vignette disponible et image source trop grande, on utilise la vignette, sinon on utilise photo origine
     						$alt=$langs->transnoentitiesnoconv('File').': '.$pdir.$photo;
     						$alt.=' - '.$langs->transnoentitiesnoconv('Size').': '.$imgarray['width'].'x'.$imgarray['height'];
-    						if ($photo_vignette && $imgarray['height'] > $maxHeight)
+    						
+    						if (empty($maxHeight) || $photo_vignette && $imgarray['height'] > $maxHeight)
     						{
     							$return.= '<!-- Show thumb -->';
     							$return.= '<img class="photo photowithmargin" border="0" '.($conf->dol_use_jmobile?'max-height':'height').'="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&entity='.$this->entity.'&file='.urlencode($pdirthumb.$photo_vignette).'" title="'.dol_escape_htmltag($alt).'">';
@@ -3615,7 +3625,7 @@ class Product extends CommonObject
     						else if ($nbbyrow < 0) $return.='</div>';
     					}
 
-    					if ($size == 0) {     // Format origine
+    					if (empty($size)) {     // Format origine
     						$return.= '<img class="photo photowithmargin" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&entity='.$this->entity.'&file='.urlencode($pdir.$photo).'">';
 
     						if ($showfilename) $return.= '<br>'.$viewfilename;
@@ -3639,7 +3649,7 @@ class Product extends CommonObject
     			}
             }
 
-			if ($size==1)
+			if ($size==1 || $size='small')
 			{
 				if ($nbbyrow > 0)
 				{

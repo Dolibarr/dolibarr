@@ -171,7 +171,7 @@ class FormActions
         	if ($typeelement == 'invoice')   $title=$langs->trans('ActionsOnBill');
         	elseif ($typeelement == 'invoice_supplier' || $typeelement == 'supplier_invoice') $title=$langs->trans('ActionsOnBill');
         	elseif ($typeelement == 'propal')    $title=$langs->trans('ActionsOnPropal');
-        	elseif ($typeelement == 'askpricesupplier')    $title=$langs->trans('ActionsOnAskPriceSupplier');
+        	elseif ($typeelement == 'supplier_proposal')    $title=$langs->trans('ActionsOnSupplierProposal');
         	elseif ($typeelement == 'order')     $title=$langs->trans('ActionsOnOrder');
         	elseif ($typeelement == 'order_supplier' || $typeelement == 'supplier_order')   $title=$langs->trans('ActionsOnOrder');
         	elseif ($typeelement == 'project')   $title=$langs->trans('ActionsOnProject');

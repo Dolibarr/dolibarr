@@ -255,6 +255,7 @@ if (empty($reshook))
 			$object->demand_reason_id = GETPOST('demand_reason_id');
 			$object->date_livraison = $datelivraison;
 	        $object->shipping_method_id = GETPOST('shipping_method_id', 'int');
+            $object->warehouse_id = GETPOST('warehouse_id', 'int');
 			$object->fk_delivery_address = GETPOST('fk_address');
 			$object->contactid = GETPOST('contactid');
 			$object->fk_incoterms = GETPOST('incoterm_id', 'int');
@@ -548,6 +549,14 @@ if (empty($reshook))
             setEventMessages($object->error, $object->errors, 'errors');
         }
 	}
+
+    // warehouse
+    else if ($action == 'setwarehouse' && $user->rights->commande->creer) {
+        $result = $object->setWarehouse(GETPOST('warehouse_id', 'int'));
+        if ($result < 0) {
+            setEventMessages($object->error, $object->errors, 'errors');
+        }
+    }
 
 	else if ($action == 'setremisepercent' && $user->rights->commande->creer) {
 		$result = $object->set_remise($user, GETPOST('remise_percent'));
@@ -1249,8 +1258,10 @@ if ($action == 'create' && $user->rights->commande->creer)
 	if ($socid > 0)
 		$res = $soc->fetch($socid);
 
-	if (! empty($origin) && ! empty($originid))
-	{
+	$projectid = 0;
+	$remise_absolue = 0;
+		
+	if (! empty($origin) && ! empty($originid)) {
 		// Parse element/subelement (ex: project_task)
 		$element = $subelement = $origin;
 		if (preg_match('/^([^_]+)_([^_]+)/i', $origin, $regs)) {
@@ -1260,6 +1271,20 @@ if ($action == 'create' && $user->rights->commande->creer)
 
 		if ($element == 'project') {
 			$projectid = $originid;
+			
+			if (!$cond_reglement_id) {
+				$cond_reglement_id = $soc->cond_reglement_id;
+			}
+			if (!$mode_reglement_id) {
+				$mode_reglement_id = $soc->mode_reglement_id;
+			}
+			if (!$remise_percent) {
+				$remise_percent = $soc->remise_percent;
+			}
+			if (!$dateorder) {
+				// Do not set 0 here (0 for a date is 1970)
+				$dateorder = (empty($dateinvoice)?(empty($conf->global->MAIN_AUTOFILL_DATE_ODER)?-1:''):$dateorder);
+			}
 		} else {
 			// For compatibility
 			if ($element == 'order' || $element == 'commande') {
@@ -1295,6 +1320,7 @@ if ($action == 'create' && $user->rights->commande->creer)
             $fk_account         = (! empty($objectsrc->fk_account)?$objectsrc->fk_account:(! empty($soc->fk_account)?$soc->fk_account:0));
 			$availability_id	= (!empty($objectsrc->availability_id)?$objectsrc->availability_id:(!empty($soc->availability_id)?$soc->availability_id:0));
             $shipping_method_id = (! empty($objectsrc->shipping_method_id)?$objectsrc->shipping_method_id:(! empty($soc->shipping_method_id)?$soc->shipping_method_id:0));
+            $warehouse_id       = (! empty($objectsrc->warehouse_id)?$objectsrc->warehouse_id:(! empty($soc->warehouse_id)?$soc->warehouse_id:0));
 			$demand_reason_id	= (!empty($objectsrc->demand_reason_id)?$objectsrc->demand_reason_id:(!empty($soc->demand_reason_id)?$soc->demand_reason_id:0));
 			$remise_percent		= (!empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(!empty($soc->remise_percent)?$soc->remise_percent:0));
 			$remise_absolue		= (!empty($objectsrc->remise_absolue)?$objectsrc->remise_absolue:(!empty($soc->remise_absolue)?$soc->remise_absolue:0));
@@ -1316,6 +1342,7 @@ if ($action == 'create' && $user->rights->commande->creer)
         $fk_account         = $soc->fk_account;
 		$availability_id    = $soc->availability_id;
         $shipping_method_id = $soc->shipping_method_id;
+        $warehouse_id       = $soc->warehouse_id;
 		$demand_reason_id   = $soc->demand_reason_id;
 		$remise_percent     = $soc->remise_percent;
 		$remise_absolue     = 0;
@@ -1448,6 +1475,15 @@ if ($action == 'create' && $user->rights->commande->creer)
         print '</td></tr>';
     }
 
+    // Warehouse
+    if (! empty($conf->expedition->enabled) && ! empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER)) {
+        require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+        $formproduct=new FormProduct($db);
+        print '<tr><td>' . $langs->trans('Warehouse') . '</td><td colspan="2">';
+        print $formproduct->selectWarehouses($warehouse_id, 'warehouse_id', '', 1);
+        print '</td></tr>';
+    }
+
 	// What trigger creation
 	print '<tr><td>' . $langs->trans('Source') . '</td><td colspan="2">';
 	$form->selectInputReason($demand_reason_id, 'demand_reason_id', '', 1);
@@ -1536,9 +1572,23 @@ if ($action == 'create' && $user->rights->commande->creer)
 		print '<input type="hidden" name="origin"         value="' . $objectsrc->element . '">';
 		print '<input type="hidden" name="originid"       value="' . $objectsrc->id . '">';
 
-		$newclassname = $classname;
-		if ($newclassname == 'Propal')
-			$newclassname = 'CommercialProposal';
+		switch ($classname) {
+			case 'Propal':
+				$newclassname = 'CommercialProposal';
+				break;
+			case 'Commande':
+				$newclassname = 'Order';
+				break;
+			case 'Expedition':
+				$newclassname = 'Sending';
+				break;
+			case 'Contrat':
+				$newclassname = 'Contract';
+				break;
+			default:
+				$newclassname = $classname;
+		}
+		
 		print '<tr><td>' . $langs->trans($newclassname) . '</td><td colspan="2">' . $objectsrc->getNomUrl(1) . '</td></tr>';
 		print '<tr><td>' . $langs->trans('TotalHT') . '</td><td colspan="2">' . price($objectsrc->total_ht) . '</td></tr>';
 		print '<tr><td>' . $langs->trans('TotalVAT') . '</td><td colspan="2">' . price($objectsrc->total_tva) . "</td></tr>";
@@ -1941,6 +1991,27 @@ if ($action == 'create' && $user->rights->commande->creer)
                 $form->formSelectShippingMethod($_SERVER['PHP_SELF'].'?id='.$object->id, $object->shipping_method_id, 'shipping_method_id', 1);
             } else {
                 $form->formSelectShippingMethod($_SERVER['PHP_SELF'].'?id='.$object->id, $object->shipping_method_id, 'none');
+            }
+            print '</td>';
+            print '</tr>';
+        }
+
+        // Warehouse
+        if (! empty($conf->expedition->enabled) && ! empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER)) {
+            require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+            $formproduct=new FormProduct($db);
+            print '<tr><td>';
+            print '<table width="100%" class="nobordernopadding"><tr><td>';
+            print $langs->trans('Warehouse');
+            print '</td>';
+            if ($action != 'editwarehouse' && $user->rights->commande->creer)
+                print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editwarehouse&amp;id='.$object->id.'">'.img_edit($langs->trans('SetWarehouse'),1).'</a></td>';
+            print '</tr></table>';
+            print '</td><td colspan="3">';
+            if ($action == 'editwarehouse') {
+                $formproduct->formSelectWarehouses($_SERVER['PHP_SELF'].'?id='.$object->id, $object->warehouse_id, 'warehouse_id', 1);
+            } else {
+                $formproduct->formSelectWarehouses($_SERVER['PHP_SELF'].'?id='.$object->id, $object->warehouse_id, 'none');
             }
             print '</td>';
             print '</tr>';

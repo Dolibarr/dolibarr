@@ -131,10 +131,9 @@ if (empty($user->societe_id))
     print '<br>';
     print '<table  summary="'.$langs->trans("DolibarrStateBoard").'" class="noborder" width="100%">';
     print '<tr class="liste_titre">';
-    print '<th class="liste_titre" colspan="2">'.$langs->trans("DolibarrStateBoard").'</th>';
-    print '<th class="liste_titre" align="right">&nbsp;</th>';
+    print '<th class="liste_titre">'.$langs->trans("DolibarrStateBoard").'</th>';
     print '</tr>';
-    print '<tr class="impair"><td colspan="3" class="tdboxstats nohover">';
+    print '<tr class="impair"><td class="tdboxstats nohover">';
 
     $var=true;
 
@@ -279,7 +278,7 @@ if (empty($user->societe_id))
 	            $var=!$var;
 	            if (!empty($langfile[$key])) $langs->load($langfile[$key]);
 	            $text=$langs->trans($titres[$key]);
-	            print '<a href="'.$links[$key].'" class="nobold nounderline">';
+	            print '<a href="'.$links[$key].'" class="thumbstat nobold nounderline">';
 	            print '<div class="boxstats">';
 	            print img_object("",$icons[$key]).' '.$text.'<br>';
 	            //print '</a>';

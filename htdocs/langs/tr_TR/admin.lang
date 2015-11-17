@@ -1193,13 +1193,13 @@ UseOptionLineIfNoQuantity=Sıfır tutarında olan ürün/hizmet satırını bir 
 FreeLegalTextOnProposal=Teklifler üzerinde serbest metin
 WatermarkOnDraftProposal=Taslak tekliflerde filigran (boşsa yoktur)
 BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL=Teklif için banka hesabı iste
-##### AskPriceSupplier #####
-AskPriceSupplierSetup=Tedarikçi fiyat isteği modülü kurulumu
-AskPriceSupplierNumberingModules=Tedarikçi fiyat isteği numaralandırma modülü
-AskPriceSupplierPDFModules=Tedarikçi fiyat isteği belge modelleri
-FreeLegalTextOnAskPriceSupplier=Tedarikçi fiyat isteği üzerinde serbest metin
-WatermarkOnDraftAskPriceSupplier=Taslak tedarikçi fiyat istekleri üzerinde filigran (boşsa yok)
-BANK_ASK_PAYMENT_BANK_DURING_ASKPRICESUPPLIER=Fiyat isteklerinde hedef banka hesabı iste
+##### SupplierProposal #####
+SupplierProposalSetup=Tedarikçi fiyat isteği modülü kurulumu
+SupplierProposalNumberingModules=Tedarikçi fiyat isteği numaralandırma modülü
+SupplierProposalPDFModules=Tedarikçi fiyat isteği belge modelleri
+FreeLegalTextOnSupplierProposal=Tedarikçi fiyat isteği üzerinde serbest metin
+WatermarkOnDraftSupplierProposal=Taslak tedarikçi fiyat istekleri üzerinde filigran (boşsa yok)
+BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL=Fiyat isteklerinde hedef banka hesabı iste
 ##### Orders #####
 OrdersSetup=Sipariş yönetimi kurulumu
 OrdersNumberingModules=Sipariş numaralandırma modülü

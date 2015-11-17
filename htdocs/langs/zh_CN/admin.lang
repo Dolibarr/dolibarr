@@ -1193,13 +1193,13 @@ UseOptionLineIfNoQuantity=定量为0的产品或服务项视为可选项*
 FreeLegalTextOnProposal=报价单中的额外说明文本
 WatermarkOnDraftProposal=为商业计划书草案添加水印(如果空)
 BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL=询问银行账户
-##### AskPriceSupplier #####
-AskPriceSupplierSetup=Price requests suppliers module setup
-AskPriceSupplierNumberingModules=Price requests suppliers numbering models
-AskPriceSupplierPDFModules=Price requests suppliers documents models
-FreeLegalTextOnAskPriceSupplier=Free text on price requests suppliers
-WatermarkOnDraftAskPriceSupplier=Watermark on draft price requests suppliers (none if empty)
-BANK_ASK_PAYMENT_BANK_DURING_ASKPRICESUPPLIER=Ask for bank account destination of price request
+##### SupplierProposal #####
+SupplierProposalSetup=Price requests suppliers module setup
+SupplierProposalNumberingModules=Price requests suppliers numbering models
+SupplierProposalPDFModules=Price requests suppliers documents models
+FreeLegalTextOnSupplierProposal=Free text on price requests suppliers
+WatermarkOnDraftSupplierProposal=Watermark on draft price requests suppliers (none if empty)
+BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL=Ask for bank account destination of price request
 ##### Orders #####
 OrdersSetup=订单管理设置
 OrdersNumberingModules=订单编号模块

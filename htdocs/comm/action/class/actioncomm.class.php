@@ -189,6 +189,7 @@ class ActionComm extends CommonObject
         // Check parameters
         if (empty($this->userownerid))
         {
+            dol_syslog("You tried to create an event but mandatory property ownerid was not defined", LOG_WARNING);
         	$this->errors[]='ErrorPropertyUserowneridNotDefined';
         	return -1;
         }

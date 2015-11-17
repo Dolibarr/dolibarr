@@ -1508,9 +1508,11 @@ class Categorie extends CommonObject
 	/**
 	 *	Update ou cree les traductions des infos produits
 	 *
+	 *	@param	User	$user		Object user
+	 *
 	 *	@return		int		<0 if KO, >0 if OK
 	 */
-	function setMultiLangs()
+	function setMultiLangs($user)
 	{
 	    global $langs;
 
@@ -1574,6 +1576,15 @@ class Categorie extends CommonObject
 	            }
 	        }
 	    }
+
+			// Call trigger
+			$result = $this->call_trigger('CATEGORY_SET_MULTILANGS',$user);
+			if ($result < 0) {
+				$this->error = $this->db->lasterror();
+				return -1;
+			}
+			// End call triggers
+
 	    return 1;
 	}
 

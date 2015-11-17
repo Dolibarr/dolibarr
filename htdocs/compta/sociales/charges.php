@@ -103,7 +103,7 @@ if ($action == 'add' && $user->rights->tax->charges->creer)
 	}
 	elseif (! is_numeric($amount))
 	{
-		setEventMessage($langs->trans("ErrorFieldMustBeANumeric",$langs->transnoentities("Amount")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldMustBeANumeric",$langs->transnoentities("Amount")), null, 'errors');
 		$action = 'create';
 	}
 	else
@@ -148,7 +148,7 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->tax->charges->cr
     }
 	elseif (! is_numeric($amount))
 	{
-		setEventMessage($langs->trans("ErrorFieldMustBeANumeric",$langs->transnoentities("Amount")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldMustBeANumeric",$langs->transnoentities("Amount")), null, 'errors');
 		$action = 'create';
 	}
     else
@@ -164,7 +164,7 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->tax->charges->cr
         $result=$chargesociales->update($user);
         if ($result <= 0)
         {
-            setEventMessage($chargesociales->error, 'errors');
+            setEventMessages($chargesociales->error, $chargesociales->errors, 'errors');
         }
 	}
 }

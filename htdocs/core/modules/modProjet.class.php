@@ -50,6 +50,7 @@ class modProjet extends DolibarrModules
 		$this->numero = 400;
 
 		$this->family = "projects";
+		$this->module_position = 10;
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "Gestion des projets";

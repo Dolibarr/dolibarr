@@ -3857,12 +3857,12 @@ class Form
 
         dol_syslog(__METHOD__, LOG_DEBUG);
 
-        $sql  = "SELECT DISTINCT t.taux, t.recuperableonly";
+        $sql  = "SELECT DISTINCT t.code, t.taux, t.recuperableonly";
     	$sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
     	$sql.= " WHERE t.fk_pays = c.rowid";
     	$sql.= " AND t.active > 0";
     	$sql.= " AND c.code IN (".$country_code.")";
-    	$sql.= " ORDER BY t.taux ASC, t.recuperableonly ASC";
+    	$sql.= " ORDER BY t.code ASC, t.taux ASC, t.recuperableonly ASC";
 
     	$resql=$this->db->query($sql);
     	if ($resql)
@@ -3873,8 +3873,9 @@ class Form
     			for ($i = 0; $i < $num; $i++)
     			{
     				$obj = $this->db->fetch_object($resql);
+    				$this->cache_vatrates[$i]['code']	= $obj->code;
     				$this->cache_vatrates[$i]['txtva']	= $obj->taux;
-    				$this->cache_vatrates[$i]['libtva']	= $obj->taux.'%';
+    				$this->cache_vatrates[$i]['libtva']	= $obj->taux.'%'.($obj->code?' ('.$obj->code.')':'');   // Label must contains only 0-9 , . % or *
     				$this->cache_vatrates[$i]['nprtva']	= $obj->recuperableonly;
     			}
 
@@ -3897,7 +3898,7 @@ class Form
      *  Output an HTML select vat rate.
      *  The name of this function should be selectVat. We keep bad name for compatibility purpose.
      *
-     *  @param	string	$htmlname           Name of html select field
+     *  @param	string	$htmlname           Name of HTML select field
      *  @param  float	$selectedrate       Force preselected vat rate. Use '' for no forcing.
      *  @param  Societe	$societe_vendeuse   Thirdparty seller
      *  @param  Societe	$societe_acheteuse  Thirdparty buyer
@@ -3910,10 +3911,11 @@ class Form
 	 *                                      Si vendeur et acheteur dans Communauté européenne et acheteur= particulier alors TVA par défaut=TVA du produit vendu. Fin de règle.
 	 *                                      Si vendeur et acheteur dans Communauté européenne et acheteur= entreprise alors TVA par défaut=0. Fin de règle.
      *                  					Sinon la TVA proposee par defaut=0. Fin de regle.
-     *  @param	bool	$options_only		Return options only (for ajax treatment)
+     *  @param	bool	$options_only		Return HTML options lines only (for ajax treatment)
+     *  @param  int     $addcode            Add code into key in select list
      *  @return	string
      */
-    function load_tva($htmlname='tauxtva', $selectedrate='', $societe_vendeuse='', $societe_acheteuse='', $idprod=0, $info_bits=0, $type='', $options_only=false)
+    function load_tva($htmlname='tauxtva', $selectedrate='', $societe_vendeuse='', $societe_acheteuse='', $idprod=0, $info_bits=0, $type='', $options_only=false, $addcode=0)
     {
         global $langs,$conf,$mysoc;
 
@@ -4016,13 +4018,16 @@ class Form
 
         		$return.= '<option value="'.$rate['txtva'];
         		$return.= $rate['nprtva'] ? '*': '';
+        		if ($addcode && $rate['code']) $return.=' ('.$rate['code'].')';
         		$return.= '"';
         		if ($rate['txtva'] == $defaulttx && $rate['nprtva'] == $defaultnpr)
         		{
         			$return.= ' selected';
         		}
         		$return.= '>'.vatrate($rate['libtva']);
+        		//$return.=($rate['code']?' '.$rate['code']:'');
         		$return.= $rate['nprtva'] ? ' *': '';
+        		
         		$return.= '</option>';
         	}
 
@@ -4890,9 +4895,9 @@ class Form
         			$tplpath = 'comm/'.$element;
         			if (empty($conf->propal->enabled)) continue;	// Do not show if module disabled
         		}
-        		else if ($objecttype == 'askpricesupplier')           {
+        		else if ($objecttype == 'supplier_proposal')           {
         			$tplpath = 'comm/'.$element;
-        			if (empty($conf->askpricesupplier->enabled)) continue;	// Do not show if module disabled
+        			if (empty($conf->supplier_proposal->enabled)) continue;	// Do not show if module disabled
         		}
         		else if ($objecttype == 'shipping' || $objecttype == 'shipment') {
         			$tplpath = 'expedition';
@@ -5299,7 +5304,7 @@ class Form
         $entity = (! empty($object->entity) ? $object->entity : $conf->entity);
         $id = (! empty($object->id) ? $object->id : $object->rowid);
 
-        $ret='';$dir='';$file='';$altfile='';$email='';
+        $ret='';$dir='';$file='';$originalfile='';$altfile='';$email='';
 
         if ($modulepart=='societe')
         {
@@ -5308,9 +5313,11 @@ class Form
             $smallfile=preg_replace('/(\.png|\.gif|\.jpg|\.jpeg|\.bmp)/i','_small\\1',$smallfile);
             if (! empty($object->logo)) 
             {
+                // TODO Introduce get_exdir
                 if ((string) $imagesize == 'mini') $file=$id.'/logos/thumbs/'.getImageFileNameForSize($object->logo, '_mini');
                 else if ((string) $imagesize == 'small') $file=$id.'/logos/thumbs/'.getImageFileNameForSize($object->logo, '_small');
                 else $file=$id.'/logos/thumbs/'.$smallfile;
+                $originalfile=$id.'/logos/thumbs/'.$smallfile;
             }
         }
         else if ($modulepart=='contact')
@@ -5318,9 +5325,11 @@ class Form
             $dir=$conf->societe->multidir_output[$entity].'/contact';
             if (! empty($object->photo))
             {
+                // TODO Introduce get_exdir
                 if ((string) $imagesize == 'mini') $file=$id.'/photos/thumbs/'.getImageFileNameForSize($object->photo, '_mini');
                 else if ((string) $imagesize == 'small') $file=$id.'/photos/thumbs/'.getImageFileNameForSize($object->photo, '_small');
                 else $file=$id.'/photos/'.$object->photo;
+                $originalfile=$id.'/photos/'.$object->photo;
             }
         }
         else if ($modulepart=='userphoto')
@@ -5331,6 +5340,7 @@ class Form
                 if ((string) $imagesize == 'mini') $file=get_exdir($id, 2, 0, 0, $object, 'user').getImageFileNameForSize($object->photo, '_mini');
                 else if ((string) $imagesize == 'small') $file=get_exdir($id, 2, 0, 0, $object, 'user').getImageFileNameForSize($object->photo, '_small');
                 else $file=get_exdir($id, 2, 0, 0, $object, 'user').$object->photo;
+                $originalfile=get_exdir($id, 2, 0, 0, $object, 'user').$object->photo;
             }
             if (! empty($conf->global->MAIN_OLD_IMAGE_LINKS)) $altfile=$object->id.".jpg";	// For backward compatibility
             $email=$object->email;
@@ -5343,6 +5353,7 @@ class Form
                 if ((string) $imagesize == 'mini') $file=get_exdir($id, 2, 0, 0, $object, 'member').'photos/'.getImageFileNameForSize($object->photo, '_mini');
                 else if ((string) $imagesize == 'small') $file=get_exdir($id, 2, 0, 0, $object, 'member').'photos/'.getImageFileNameForSize($object->photo, '_small');
                 else $file=get_exdir($id, 2, 0, 0, $object, 'member').'photos/'.$object->photo;
+                $originalfile=get_exdir($id, 2, 0, 0, $object, 'member').'photos/'.$object->photo;
             }
             if (! empty($conf->global->MAIN_OLD_IMAGE_LINKS)) $altfile=$object->id.".jpg";	// For backward compatibility
             $email=$object->email;
@@ -5355,6 +5366,7 @@ class Form
                 if ((string) $imagesize == 'mini') $file=get_exdir($id, 2, 0, 0, $object, $modulepart).'photos/'.getImageFileNameForSize($object->photo, '_mini');
                 else if ((string) $imagesize == 'small') $file=get_exdir($id, 2, 0, 0, $object, $modulepart).'photos/'.getImageFileNameForSize($object->photo, '_small');
         	    else $file=get_exdir($id, 2, 0, 0, $object, $modulepart).'photos/'.$object->photo;
+        	    $originalfile=get_exdir($id, 2, 0, 0, $object, $modulepart).'photos/'.$object->photo;
         	}
         	if (! empty($conf->global->MAIN_OLD_IMAGE_LINKS)) $altfile=$object->id.".jpg";	// For backward compatibility
         	$email=$object->email;
@@ -5364,13 +5376,13 @@ class Form
         {
             if ($file && file_exists($dir."/".$file))
             {
-                if ($addlinktofullsize) $ret.='<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($file).'&cache='.$cache.'">';
+                if ($addlinktofullsize) $ret.='<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($originalfile).'&cache='.$cache.'">';
                 $ret.='<img alt="Photo" id="photologo'.(preg_replace('/[^a-z]/i','_',$file)).'" class="'.$cssclass.'" '.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($file).'&cache='.$cache.'">';
                 if ($addlinktofullsize) $ret.='</a>';
             }
             else if ($altfile && file_exists($dir."/".$altfile))
             {
-                if ($addlinktofullsize) $ret.='<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($file).'&cache='.$cache.'">';
+                if ($addlinktofullsize) $ret.='<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($originalfile).'&cache='.$cache.'">';
                 $ret.='<img alt="Photo alt" id="photologo'.(preg_replace('/[^a-z]/i','_',$file)).'" class="'.$cssclass.'" '.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($altfile).'&cache='.$cache.'">';
                 if ($addlinktofullsize) $ret.='</a>';
             }

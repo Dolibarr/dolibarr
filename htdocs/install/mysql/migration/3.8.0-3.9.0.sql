@@ -15,6 +15,7 @@
 -- To make pk to be auto increment (postgres): VPGSQL8.2 NOT POSSIBLE. MUST DELETE/CREATE TABLE
 -- To set a field as NULL:                     VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name DROP NOT NULL;
 -- To set a field as default NULL:             VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name SET DEFAULT NULL;
+-- Note: fields with type BLOB/TEXT can't have default value.
 -- -- VPGSQL8.2 DELETE FROM llx_usergroup_user      WHERE fk_user      NOT IN (SELECT rowid from llx_user);
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
@@ -22,6 +23,12 @@
 -- Was done into a 3.8 fix, so we must do it also in 3.9 
 ALTER TABLE llx_don ADD COLUMN fk_country integer NOT NULL DEFAULT 0 after country;
 
+
+ALTER TABLE llx_askpricesupplier RENAME TO llx_supplier_proposal;
+ALTER TABLE llx_askpricesupplierdet RENAME TO llx_supplier_proposaldet;
+ALTER TABLE llx_askpricesupplier_extrafields RENAME TO llx_supplier_proposal_extrafields;
+ALTER TABLE llx_askpricesupplierdet_extrafields RENAME TO llx_supplier_proposaldet_extrafields;
+ALTER TABLE llx_supplier_proposaldet CHANGE COLUMN fk_asksupplierprice fk_supplier_proposal integer NOT NULL;
 
 -- Fix bad data
 update llx_opensurvey_sondage set format = 'D' where format = 'D+';
@@ -48,6 +55,11 @@ ALTER TABLE llx_societe_commerciaux ADD COLUMN import_key varchar(14) AFTER fk_u
 
 ALTER TABLE llx_categorie ADD COLUMN color varchar(8);
 
+ALTER TABLE llx_cronjob ADD COLUMN maxrun     integer NOT NULL DEFAULT 0;
+ALTER TABLE llx_cronjob ADD COLUMN autodelete integer DEFAULT 0;
+ALTER TABLE llx_cronjob ADD COLUMN fk_mailing integer DEFAULT NULL;
+
+
 create table llx_overwrite_trans
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
@@ -66,7 +78,7 @@ ALTER TABLE llx_paiement ADD COLUMN ref varchar(30) NOT NULL DEFAULT '' AFTER ro
 ALTER TABLE llx_socpeople ADD COLUMN photo varchar(255) AFTER skype;
 
 ALTER TABLE llx_user_param MODIFY COLUMN param varchar(255) NOT NULL DEFAULT '';
-ALTER TABLE llx_user_param MODIFY COLUMN value text NOT NULL DEFAULT '';
+ALTER TABLE llx_user_param MODIFY COLUMN value text NOT NULL;
 
 ALTER TABLE llx_expedition ADD COLUMN import_key varchar(14);
 ALTER TABLE llx_expedition ADD COLUMN extraparams varchar(255);
@@ -305,6 +317,131 @@ ALTER TABLE llx_categorie_project ADD CONSTRAINT fk_categorie_project_categorie_
 ALTER TABLE llx_categorie_project ADD CONSTRAINT fk_categorie_project_fk_project   FOREIGN KEY (fk_project) REFERENCES llx_projet (rowid);
 
 
+ALTER TABLE llx_c_tva ADD COLUMN code varchar(10) DEFAULT '' after fk_pays;
+DROP INDEX uk_c_tva_id ON llx_c_tva;
+ALTER TABLE llx_c_tva ADD UNIQUE INDEX uk_c_tva_id (fk_pays, code, taux, recuperableonly);
 
+-- Regions Bolivia (id country=52)
+INSERT INTO  llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values ( 52, 5201, '', 0, 'Chuquisaca', 1);
+INSERT INTO  llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values ( 52, 5202, '', 0, 'La Paz', 1);
+INSERT INTO  llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values ( 52, 5203, '', 0, 'Cochabamba', 1);
+INSERT INTO  llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values ( 52, 5204, '', 0, 'Oruro', 1);
+INSERT INTO  llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values ( 52, 5205, '', 0, 'Potosí', 1);
+INSERT INTO  llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values ( 52, 5206, '', 0, 'Tarija', 1);
+INSERT INTO  llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values ( 52, 5207, '', 0, 'Santa Cruz', 1);
+INSERT INTO  llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values ( 52, 5208, '', 0, 'El Beni', 1);
+INSERT INTO  llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values ( 52, 5209, '', 0, 'Pando', 1);
 
-
+-- Provinces Bolivia (id country=52)
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('001', 5201, '', 0, '', 'Belisario Boeto', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('002', 5201, '', 0, '', 'Hernando Siles', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('003', 5201, '', 0, '', 'Jaime Zudáñez', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('004', 5201, '', 0, '', 'Juana Azurduy de Padilla', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('005', 5201, '', 0, '', 'Luis Calvo', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('006', 5201, '', 0, '', 'Nor Cinti', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('007', 5201, '', 0, '', 'Oropeza', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('008', 5201, '', 0, '', 'Sud Cinti', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('009', 5201, '', 0, '', 'Tomina', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('010', 5201, '', 0, '', 'Yamparáez', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('011', 5202, '', 0, '', 'Abel Iturralde', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('012', 5202, '', 0, '', 'Aroma', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('013', 5202, '', 0, '', 'Bautista Saavedra', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('014', 5202, '', 0, '', 'Caranavi', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('015', 5202, '', 0, '', 'Eliodoro Camacho', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('016', 5202, '', 0, '', 'Franz Tamayo', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('017', 5202, '', 0, '', 'Gualberto Villarroel', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('018', 5202, '', 0, '', 'Ingaví', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('019', 5202, '', 0, '', 'Inquisivi', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('020', 5202, '', 0, '', 'José Ramón Loayza', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('021', 5202, '', 0, '', 'Larecaja', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('022', 5202, '', 0, '', 'Los Andes (Bolivia)', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('023', 5202, '', 0, '', 'Manco Kapac', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('024', 5202, '', 0, '', 'Muñecas', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('025', 5202, '', 0, '', 'Nor Yungas', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('026', 5202, '', 0, '', 'Omasuyos', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('027', 5202, '', 0, '', 'Pacajes', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('028', 5202, '', 0, '', 'Pedro Domingo Murillo', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('029', 5202, '', 0, '', 'Sud Yungas', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('030', 5202, '', 0, '', 'General José Manuel Pando', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('031', 5203, '', 0, '', 'Arani', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('032', 5203, '', 0, '', 'Arque', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('033', 5203, '', 0, '', 'Ayopaya', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('034', 5203, '', 0, '', 'Bolívar (Bolivia)', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('035', 5203, '', 0, '', 'Campero', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('036', 5203, '', 0, '', 'Capinota', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('037', 5203, '', 0, '', 'Cercado (Cochabamba)', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('038', 5203, '', 0, '', 'Esteban Arze', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('039', 5203, '', 0, '', 'Germán Jordán', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('040', 5203, '', 0, '', 'José Carrasco', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('041', 5203, '', 0, '', 'Mizque', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('042', 5203, '', 0, '', 'Punata', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('043', 5203, '', 0, '', 'Quillacollo', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('044', 5203, '', 0, '', 'Tapacarí', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('045', 5203, '', 0, '', 'Tiraque', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('046', 5203, '', 0, '', 'Chapare', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('047', 5204, '', 0, '', 'Carangas', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('048', 5204, '', 0, '', 'Cercado (Oruro)', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('049', 5204, '', 0, '', 'Eduardo Avaroa', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('050', 5204, '', 0, '', 'Ladislao Cabrera', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('051', 5204, '', 0, '', 'Litoral de Atacama', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('052', 5204, '', 0, '', 'Mejillones', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('053', 5204, '', 0, '', 'Nor Carangas', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('054', 5204, '', 0, '', 'Pantaleón Dalence', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('055', 5204, '', 0, '', 'Poopó', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('056', 5204, '', 0, '', 'Sabaya', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('057', 5204, '', 0, '', 'Sajama', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('058', 5204, '', 0, '', 'San Pedro de Totora', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('059', 5204, '', 0, '', 'Saucarí', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('060', 5204, '', 0, '', 'Sebastián Pagador', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('061', 5204, '', 0, '', 'Sud Carangas', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('062', 5204, '', 0, '', 'Tomás Barrón', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('063', 5205, '', 0, '', 'Alonso de Ibáñez', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('064', 5205, '', 0, '', 'Antonio Quijarro', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('065', 5205, '', 0, '', 'Bernardino Bilbao', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('066', 5205, '', 0, '', 'Charcas (Potosí)', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('067', 5205, '', 0, '', 'Chayanta', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('068', 5205, '', 0, '', 'Cornelio Saavedra', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('069', 5205, '', 0, '', 'Daniel Campos', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('070', 5205, '', 0, '', 'Enrique Baldivieso', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('071', 5205, '', 0, '', 'José María Linares', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('072', 5205, '', 0, '', 'Modesto Omiste', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('073', 5205, '', 0, '', 'Nor Chichas', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('074', 5205, '', 0, '', 'Nor Lípez', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('075', 5205, '', 0, '', 'Rafael Bustillo', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('076', 5205, '', 0, '', 'Sud Chichas', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('077', 5205, '', 0, '', 'Sud Lípez', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('078', 5205, '', 0, '', 'Tomás Frías', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('079', 5206, '', 0, '', 'Aniceto Arce', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('080', 5206, '', 0, '', 'Burdet O''Connor', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('081', 5206, '', 0, '', 'Cercado (Tarija)', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('082', 5206, '', 0, '', 'Eustaquio Méndez', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('083', 5206, '', 0, '', 'José María Avilés', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('084', 5206, '', 0, '', 'Gran Chaco', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('085', 5207, '', 0, '', 'Andrés Ibáñez', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('086', 5207, '', 0, '', 'Caballero', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('087', 5207, '', 0, '', 'Chiquitos', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('088', 5207, '', 0, '', 'Cordillera (Bolivia)', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('089', 5207, '', 0, '', 'Florida', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('090', 5207, '', 0, '', 'Germán Busch', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('091', 5207, '', 0, '', 'Guarayos', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('092', 5207, '', 0, '', 'Ichilo', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('093', 5207, '', 0, '', 'Obispo Santistevan', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('094', 5207, '', 0, '', 'Sara', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('095', 5207, '', 0, '', 'Vallegrande', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('096', 5207, '', 0, '', 'Velasco', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('097', 5207, '', 0, '', 'Warnes', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('098', 5207, '', 0, '', 'Ángel Sandóval', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('099', 5207, '', 0, '', 'Ñuflo de Chaves', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('100', 5208, '', 0, '', 'Cercado (Beni)', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('101', 5208, '', 0, '', 'Iténez', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('102', 5208, '', 0, '', 'Mamoré', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('103', 5208, '', 0, '', 'Marbán', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('104', 5208, '', 0, '', 'Moxos', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('105', 5208, '', 0, '', 'Vaca Díez', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('106', 5208, '', 0, '', 'Yacuma', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('107', 5208, '', 0, '', 'General José Ballivián Segurola', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('108', 5209, '', 0, '', 'Abuná', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('109', 5209, '', 0, '', 'Madre de Dios', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('110', 5209, '', 0, '', 'Manuripi', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('111', 5209, '', 0, '', 'Nicolás Suárez', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('112', 5209, '', 0, '', 'General Federico Román', 1);

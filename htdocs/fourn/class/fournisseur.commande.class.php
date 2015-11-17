@@ -113,7 +113,7 @@ class CommandeFournisseur extends CommonOrder
 	 * @var CommandeFournisseurLigne[]
 	 */
 	public $lines = array();
-	//Ajout pour askpricesupplier
+	//Ajout pour supplier_proposal
 	var $origin;
     var $origin_id;
     var $linked_objects=array();
@@ -589,7 +589,7 @@ class CommandeFournisseur extends CommonOrder
         if (! empty($this->total_ht))
             $label.= '<br><b>' . $langs->trans('AmountHT') . ':</b> ' . price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
         if (! empty($this->total_tva))
-            $label.= '<br><b>' . $langs->trans('TVA') . ':</b> ' . price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
+            $label.= '<br><b>' . $langs->trans('VAT') . ':</b> ' . price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
         if (! empty($this->total_ttc))
             $label.= '<br><b>' . $langs->trans('AmountTTC') . ':</b> ' . price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
 
@@ -1314,7 +1314,8 @@ class CommandeFournisseur extends CommonOrder
             // la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
 
             $localtaxes_type=getLocalTaxesFromRate($txtva,0,$mysoc,$this->thirdparty);
-
+            $txtva = preg_replace('/\s*\(.*\)/','',$txtva);  // Remove code into vatrate.
+            
             $tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $product_type, $this->thirdparty, $localtaxes_type);
             $total_ht  = $tabprice[0];
             $total_tva = $tabprice[1];
@@ -2072,7 +2073,8 @@ class CommandeFournisseur extends CommonOrder
             // la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
 
             $localtaxes_type=getLocalTaxesFromRate($txtva,0,$mysoc, $this->thirdparty);
-
+            $txtva = preg_replace('/\s*\(.*\)/','',$txtva);  // Remove code into vatrate.
+            
             $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type);
             $total_ht  = $tabprice[0];
             $total_tva = $tabprice[1];

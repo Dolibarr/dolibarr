@@ -34,7 +34,7 @@ if (! empty($conf->propal->enabled)) require_once DOL_DOCUMENT_ROOT.'/comm/propa
 if (! empty($conf->commande->enabled)) require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 if (! empty($conf->productbatch->enabled)) require_once DOL_DOCUMENT_ROOT.'/expedition/class/expeditionbatch.class.php';
 
-
+ 
 /**
  *	Class to manage shipments
  */
@@ -1048,7 +1048,7 @@ class Expedition extends CommonObject
 						// no lot/serial
 						// We increment stock of product (and sub-products)
 						// We use warehouse selected for each line
-						$result=$mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty, 0, $langs->trans("ShipmentDeletedInDolibarr", $this->ref));  // price is set to 0 because we dont want to see WAP changed
+						$result=$mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty, 0, $langs->trans("ShipmentDeletedInDolibarr", $this->ref));  // Price is set to 0, because we don't want to see WAP changed
 						if ($result < 0)
 						{
 							$error++;$this->errors=$this->errors + $mouvS->errors;
@@ -1061,7 +1061,7 @@ class Expedition extends CommonObject
 						// We use warehouse selected for each line
 						foreach($lotArray as $lot)
 						{
-							$result=$mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $lot->dluo_qty, 0, $langs->trans("ShipmentDeletedInDolibarr", $this->ref), $lot->eatby, $lot->sellby, $lot->batch);  // price is set to 0 because we dont want to see WAP changed
+							$result=$mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $lot->dluo_qty, 0, $langs->trans("ShipmentDeletedInDolibarr", $this->ref), $lot->eatby, $lot->sellby, $lot->batch);  // Price is set to 0, because we don't want to see WAP changed
 							if ($result < 0)
 							{
 								$error++;$this->errors=$this->errors + $mouvS->errors;

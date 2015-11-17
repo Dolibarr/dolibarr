@@ -1193,13 +1193,13 @@ UseOptionLineIfNoQuantity=Una línea de producto/servicio que tiene una cantidad
 FreeLegalTextOnProposal=Texto libre en presupuestos
 WatermarkOnDraftProposal=Marca de agua en presupuestos borrador (en caso de estar vacío)
 BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL=Preguntar por cuenta bancaria a usar en el presupuesto
-##### AskPriceSupplier #####
-AskPriceSupplierSetup=Configuración del módulo Solicitudes a proveedor
-AskPriceSupplierNumberingModules=Modelos de numeración de solicitud de precios a proveedor
-AskPriceSupplierPDFModules=Modelos de documentos de solicitud de precios a proveedores
-FreeLegalTextOnAskPriceSupplier=Texto libre en solicitudes de precios a proveedores
-WatermarkOnDraftAskPriceSupplier=Marca de agua en solicitudes de precios a proveedor (en caso de estar vacío)
-BANK_ASK_PAYMENT_BANK_DURING_ASKPRICESUPPLIER=Preguntar por cuenta bancaria a usar en el presupuesto
+##### SupplierProposal #####
+SupplierProposalSetup=Configuración del módulo Solicitudes a proveedor
+SupplierProposalNumberingModules=Modelos de numeración de solicitud de precios a proveedor
+SupplierProposalPDFModules=Modelos de documentos de solicitud de precios a proveedores
+FreeLegalTextOnSupplierProposal=Texto libre en solicitudes de precios a proveedores
+WatermarkOnDraftSupplierProposal=Marca de agua en solicitudes de precios a proveedor (en caso de estar vacío)
+BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL=Preguntar por cuenta bancaria a usar en el presupuesto
 ##### Orders #####
 OrdersSetup=Configuración del módulo pedidos
 OrdersNumberingModules=Módulos de numeración de los pedidos

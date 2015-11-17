@@ -1193,13 +1193,13 @@ UseOptionLineIfNoQuantity=สายผลิตภัณฑ์ / บริกา
 FreeLegalTextOnProposal=ข้อความฟรีเกี่ยวกับข้อเสนอในเชิงพาณิชย์
 WatermarkOnDraftProposal=ลายน้ำในร่างข้อเสนอในเชิงพาณิชย์ (ไม่มีถ้าว่างเปล่า)
 BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL=ขอปลายทางบัญชีธนาคารของข้อเสนอ
-##### AskPriceSupplier #####
-AskPriceSupplierSetup=ราคาขอซัพพลายเออร์ที่ติดตั้งโมดูล
-AskPriceSupplierNumberingModules=ราคาผู้ผลิตร้องขอหมายเลขรุ่น
-AskPriceSupplierPDFModules=ราคาขอซัพพลายเออร์รูปแบบเอกสาร
-FreeLegalTextOnAskPriceSupplier=ข้อความฟรีในราคาผู้ผลิตร้องขอ
-WatermarkOnDraftAskPriceSupplier=ลายน้ำราคาร่างซัพพลายเออร์ขอ (ไม่เลยถ้าว่างเปล่า)
-BANK_ASK_PAYMENT_BANK_DURING_ASKPRICESUPPLIER=ขอบัญชีธนาคารปลายทางของการร้องขอราคา
+##### SupplierProposal #####
+SupplierProposalSetup=ราคาขอซัพพลายเออร์ที่ติดตั้งโมดูล
+SupplierProposalNumberingModules=ราคาผู้ผลิตร้องขอหมายเลขรุ่น
+SupplierProposalPDFModules=ราคาขอซัพพลายเออร์รูปแบบเอกสาร
+FreeLegalTextOnSupplierProposal=ข้อความฟรีในราคาผู้ผลิตร้องขอ
+WatermarkOnDraftSupplierProposal=ลายน้ำราคาร่างซัพพลายเออร์ขอ (ไม่เลยถ้าว่างเปล่า)
+BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL=ขอบัญชีธนาคารปลายทางของการร้องขอราคา
 ##### Orders #####
 OrdersSetup=การตั้งค่าการจัดการการสั่งซื้อ
 OrdersNumberingModules=สั่งซื้อจำนวนรุ่น

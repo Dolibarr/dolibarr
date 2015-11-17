@@ -173,7 +173,7 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 		 *	This class is an enhanced FPDI class that support method writeHTMLCell
 		 */
 		class FPDI_DolExtended extends FPDI
-		{
+        {
 			/**
 			 * __call
 			 *
@@ -726,7 +726,8 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 		$ibanDisplay_temp = str_replace(' ', '', $outputlangs->convToOutputCharset($account->iban));
 		$ibanDisplay = "";
 
-		for($i = 0; $i < dol_strlen($ibanDisplay_temp); $i++)
+		$nbIbanDisplay_temp = dol_strlen($ibanDisplay_temp);
+		for ($i = 0; $i < $nbIbanDisplay_temp; $i++)
 		{
 			$ibanDisplay .= $ibanDisplay_temp[$i];
 			if($i%4 == 3 && $i > 0)	$ibanDisplay .= " ";
