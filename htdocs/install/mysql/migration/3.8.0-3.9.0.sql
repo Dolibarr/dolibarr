@@ -55,6 +55,11 @@ ALTER TABLE llx_societe_commerciaux ADD COLUMN import_key varchar(14) AFTER fk_u
 
 ALTER TABLE llx_categorie ADD COLUMN color varchar(8);
 
+ALTER TABLE llx_cronjob ADD COLUMN maxrun     integer NOT NULL DEFAULT 0;
+ALTER TABLE llx_cronjob ADD COLUMN autodelete integer DEFAULT 0;
+ALTER TABLE llx_cronjob ADD COLUMN fk_mailing integer DEFAULT NULL;
+
+
 create table llx_overwrite_trans
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
