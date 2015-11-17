@@ -39,7 +39,6 @@ $langs->load('holidays');
 // Protection if external user
 if ($user->societe_id > 0) accessforbidden();
 
-$mode = GETPOST("mode",'alpha');
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
@@ -227,17 +226,8 @@ $formother = new FormOther($db);
 
 if ($id > 0)
 {
-	if ($mode == 'employee') // For HRM module development
-	{
-		$title = $langs->trans("Employee");
-		$linkback = '<a href="'.DOL_URL_ROOT.'/hrm/employee/list.php">'.$langs->trans("BackToList").'</a>';
-	}
-	else
-	{
-		$title = $langs->trans("User");
-		$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
-	}
-
+	$title = $langs->trans("User");
+	$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
 	$head = user_prepare_head($fuser);
 	
 	dol_fiche_head($head, 'paidholidays', $title, 0, 'user');
