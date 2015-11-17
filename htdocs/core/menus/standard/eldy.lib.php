@@ -196,9 +196,9 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0)
 	}
 
 	// HRM
-	$tmpentry=array('enabled'=>(! empty($conf->holiday->enabled) || ! empty($conf->deplacement->enabled) || ! empty($conf->expensereport->enabled)),
-	'perms'=>(! empty($user->rights->holiday->write) || ! empty($user->rights->deplacement->lire) || ! empty($user->rights->expensereport->lire)),
-	'module'=>'holiday|deplacement|expensereport');
+	$tmpentry=array('enabled'=>(! empty($conf->hrm->enabled) || ! empty($conf->holiday->enabled) || ! empty($conf->deplacement->enabled) || ! empty($conf->expensereport->enabled)),
+	'perms'=>(! empty($user->rights->hrm->employee->read) || ! empty($user->rights->holiday->write) || ! empty($user->rights->deplacement->lire) || ! empty($user->rights->expensereport->lire)),
+	'module'=>'hrm|holiday|deplacement|expensereport');
 	$showmode=dol_eldy_showmenu($type_user, $tmpentry, $listofmodulesforexternal);
 	if ($showmode)
 	{
@@ -1229,6 +1229,16 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 		*/
 		if ($mainmenu == 'hrm')
 		{
+			// HRM module
+			if (! empty($conf->hrm->enabled))
+			{
+				$langs->load("hrm");
+
+				$newmenu->add("/user/index.php?&leftmenu=hrm&mode=employee", $langs->trans("Employees"), 0, $user->rights->hrm->employee->read, '', $mainmenu, 'hrm');
+				$newmenu->add("/user/card.php?&action=create", $langs->trans("NewEmployee"), 1,$user->rights->hrm->employee->write);
+				$newmenu->add("/user/index.php?&leftmenu=hrm&mode=employee", $langs->trans("List"), 1,$user->rights->hrm->employee->read);
+			}
+
 			// Leave/Holiday/Vacation module
 			if (! empty($conf->holiday->enabled))
 			{
