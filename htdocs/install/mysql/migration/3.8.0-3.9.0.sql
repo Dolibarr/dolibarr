@@ -15,6 +15,7 @@
 -- To make pk to be auto increment (postgres): VPGSQL8.2 NOT POSSIBLE. MUST DELETE/CREATE TABLE
 -- To set a field as NULL:                     VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name DROP NOT NULL;
 -- To set a field as default NULL:             VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name SET DEFAULT NULL;
+-- Note: fields with type BLOB/TEXT can't have default value.
 -- -- VPGSQL8.2 DELETE FROM llx_usergroup_user      WHERE fk_user      NOT IN (SELECT rowid from llx_user);
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
@@ -54,6 +55,11 @@ ALTER TABLE llx_societe_commerciaux ADD COLUMN import_key varchar(14) AFTER fk_u
 
 ALTER TABLE llx_categorie ADD COLUMN color varchar(8);
 
+ALTER TABLE llx_cronjob ADD COLUMN maxrun     integer NOT NULL DEFAULT 0;
+ALTER TABLE llx_cronjob ADD COLUMN autodelete integer DEFAULT 0;
+ALTER TABLE llx_cronjob ADD COLUMN fk_mailing integer DEFAULT NULL;
+
+
 create table llx_overwrite_trans
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
@@ -72,7 +78,7 @@ ALTER TABLE llx_paiement ADD COLUMN ref varchar(30) NOT NULL DEFAULT '' AFTER ro
 ALTER TABLE llx_socpeople ADD COLUMN photo varchar(255) AFTER skype;
 
 ALTER TABLE llx_user_param MODIFY COLUMN param varchar(255) NOT NULL DEFAULT '';
-ALTER TABLE llx_user_param MODIFY COLUMN value text NOT NULL DEFAULT '';
+ALTER TABLE llx_user_param MODIFY COLUMN value text NOT NULL;
 
 ALTER TABLE llx_expedition ADD COLUMN import_key varchar(14);
 ALTER TABLE llx_expedition ADD COLUMN extraparams varchar(255);
