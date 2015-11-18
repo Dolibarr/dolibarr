@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C)    2013    Cédric Salvador    <csalvador@gpcsolutions.fr>
  * Copyright (C)    2015    Marcos García      <marcosgdf@gmail.com>
+ * Copyright (C)    2015    Ferran Marcet      <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +26,10 @@ if (GETPOST('sendit') && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
     if ($object->id)
     {
-        dol_add_file_process($upload_dir, 0, 1, 'userfile', GETPOST('savingdocmask'));
+    	if (! empty($upload_dirold) && ! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))
+            dol_add_file_process($upload_dirold, 0, 1, 'userfile', GETPOST('savingdocmask'));
+        else
+            dol_add_file_process($upload_dir, 0, 1, 'userfile', GETPOST('savingdocmask'));
     }
 }
 elseif (GETPOST('linkit') && ! empty($conf->global->MAIN_UPLOAD_DOC))
