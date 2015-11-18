@@ -1689,6 +1689,10 @@ function dol_substr($string,$start,$length,$stringencoding='')
 	if (empty($stringencoding)) $stringencoding=$langs->charset_output;
 
 	$ret='';
+	if (function_exists('iconv_substr'))
+	{
+		$ret=iconv_substr($string,$start,$length,$stringencoding);
+	}
 	if (function_exists('mb_substr'))
 	{
 		$ret=mb_substr($string,$start,$length,$stringencoding);
