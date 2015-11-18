@@ -382,18 +382,12 @@ if ($id || $ref)
 				print '</td>';
 				print '</tr>';
 
-				// Charges ????
-				if ($conf->global->PRODUCT_CHARGES)
-				{
-					if (! empty($conf->margin->enabled))
-					{
-						print '<tr>';
-						print '<td>'.$langs->trans("Charges").'</td>';
-						print '<td><input class="flat" name="charges" size="8" value="'.(GETPOST('charges')?price(GETPOST('charges')):(isset($product->fourn_charges)?price($product->fourn_charges):'')).'">';
-		        		print '</td>';
-						print '</tr>';
-					}
-				}
+				// Charges 
+				print '<tr>';
+				print '<td>'.$langs->trans("Charges").'</td>';
+				print '<td><input class="flat" name="charges" size="8" value="'.(GETPOST('charges')?price(GETPOST('charges')):(isset($product->fourn_charges)?price($product->fourn_charges):'')).'">';
+        		print '</td>';
+				print '</tr>';
 
 				if (is_object($hookmanager))
 				{
@@ -446,18 +440,14 @@ if ($id || $ref)
 				print_liste_field_titre($langs->trans("QtyMin"),$_SERVER["PHP_SELF"],"pfp.quantity","",$param,'align="right"',$sortfield,$sortorder);
 				print '<td class="liste_titre" align="right">'.$langs->trans("VATRate").'</td>';
 				print '<td class="liste_titre" align="right">'.$langs->trans("PriceQtyMinHT").'</td>';
-				// Charges ????
-				if ($conf->global->PRODUCT_CHARGES)
-				{
-					if (! empty($conf->margin->enabled)) print '<td align="right">'.$langs->trans("Charges").'</td>';
-				}
+				// Charges
+				print '<td align="right">'.$langs->trans("Charges").'</td>';
+				
 				print_liste_field_titre($langs->trans("UnitPriceHT"),$_SERVER["PHP_SELF"],"pfp.unitprice","",$param,'align="right"',$sortfield,$sortorder);
 				print '<td class="liste_titre" align="right">'.$langs->trans("DiscountQtyMin").'</td>';
-				// Charges ????
-				if ($conf->global->PRODUCT_CHARGES)
-				{
-					if (! empty($conf->margin->enabled)) print '<td align="right">'.$langs->trans("UnitCharges").'</td>';
-				}
+				// Charges
+				print '<td align="right">'.$langs->trans("UnitCharges").'</td>';
+				
 				print '<td class="liste_titre"></td>';
 				print "</tr>\n";
 
@@ -502,16 +492,10 @@ if ($id || $ref)
 						print $productfourn->fourn_price?price($productfourn->fourn_price):"";
 						print '</td>';
 
-						// Charges ????
-						if ($conf->global->PRODUCT_CHARGES)
-						{
-							if (! empty($conf->margin->enabled))
-							{
-								print '<td align="right">';
-								print $productfourn->fourn_charges?price($productfourn->fourn_charges):"";
-								print '</td>';
-							}
-						}
+						// Charges
+						print '<td align="right">';
+						print $productfourn->fourn_charges?price($productfourn->fourn_charges):"";
+						print '</td>';
 
 						// Unit price
 						print '<td align="right">';
@@ -524,17 +508,11 @@ if ($id || $ref)
 						print price2num($productfourn->fourn_remise_percent).'%';
 						print '</td>';
 
-						// Charges ????
-						if ($conf->global->PRODUCT_CHARGES)
-						{
-							if (! empty($conf->margin->enabled))
-							{
-								print '<td align="right">';
-								print $productfourn->fourn_unitcharges?price($productfourn->fourn_unitcharges) : ($productfourn->fourn_qty?price($productfourn->fourn_charges/$productfourn->fourn_qty):"&nbsp;");
-								print '</td>';
-							}
-						}
-
+						// Charges
+						print '<td align="right">';
+						print $productfourn->fourn_unitcharges?price($productfourn->fourn_unitcharges) : ($productfourn->fourn_qty?price($productfourn->fourn_charges/$productfourn->fourn_qty):"&nbsp;");
+						print '</td>';
+						
 						if (is_object($hookmanager))
 						{
 							$parameters=array('id_pfp'=>$productfourn->product_fourn_price_id,'id_fourn'=>$id_fourn,'prod_id'=>$product->id);
