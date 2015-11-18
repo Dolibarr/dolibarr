@@ -38,6 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 if (! empty($conf->ldap->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
 if (! empty($conf->adherent->enabled)) require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
@@ -183,6 +184,11 @@ if (empty($reshook)) {
 			$object->api_key = GETPOST("api_key", 'alpha');
 			$object->gender = GETPOST("gender", 'alpha');
 			$object->admin = GETPOST("admin", 'alpha');
+			$object->address = GETPOST('address', 'alpha');
+			$object->zip = GETPOST('zipcode', 'alpha');
+			$object->town = GETPOST('town', 'alpha');
+			$object->country_id = GETPOST('country_id', 'int');
+			$object->state_id = GETPOST('state_id', 'int');
 			$object->office_phone = GETPOST("office_phone", 'alpha');
 			$object->office_fax = GETPOST("office_fax", 'alpha');
 			$object->user_mobile = GETPOST("user_mobile");
@@ -315,7 +321,12 @@ if (empty($reshook)) {
                 $object->pass = GETPOST("password");
                 $object->api_key = (GETPOST("api_key", 'alpha')) ? GETPOST("api_key", 'alpha') : $object->api_key;
                 $object->admin = empty($user->admin) ? 0 : GETPOST("admin"); // A user can only be set admin by an admin
-                $object->office_phone = GETPOST("office_phone", 'alpha');
+                $object->address = GETPOST('address', 'alpha');
+				$object->zip = GETPOST('zipcode', 'alpha');
+				$object->town = GETPOST('town', 'alpha');
+				$object->country_id = GETPOST('country_id', 'int');
+				$object->state_id = GETPOST('state_id', 'int');
+				$object->office_phone = GETPOST("office_phone", 'alpha');
                 $object->office_fax = GETPOST("office_fax", 'alpha');
                 $object->user_mobile = GETPOST("user_mobile");
                 $object->skype = GETPOST("skype");
@@ -578,6 +589,7 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 $formother=new FormOther($db);
+$formcompany = new FormCompany($db);
 
 llxHeader('',$langs->trans("UserCard"));
 
@@ -865,6 +877,37 @@ if (($action == 'create') || ($action == 'adduserldap'))
     print $form->textwithpicto($langs->trans("Internal"),$langs->trans("InternalExternalDesc"), 1, 'help', '', 0, 2);
     print '</td></tr>';
 
+    // Address
+    print '<tr><td class="tdtop">'.fieldLabel('Address','address').'</td>';
+	print '<td><textarea name="address" id="address" cols="80" rows="3" wrap="soft">';
+    print $object->address;
+    print '</textarea></td></tr>';
+
+    // Zip
+    print '<tr><td>'.fieldLabel('Zip','zipcode').'</td><td>';
+    print $formcompany->select_ziptown($object->zip,'zipcode',array('town','selectcountry_id','state_id'),6);
+    print '</td></tr>';
+
+	// Town
+	print '<tr><td>'.fieldLabel('Town','town').'</td><td>';
+    print $formcompany->select_ziptown($object->town,'town',array('zipcode','selectcountry_id','state_id'));
+    print '</td></tr>';
+
+    // Country
+    print '<tr><td>'.fieldLabel('Country','selectcountry_id').'</td><td class="maxwidthonsmartphone">';
+    print $form->select_country((GETPOST('country_id')!=''?GETPOST('country_id'):$object->country_id));
+    if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+    print '</td></tr>';
+
+    // State
+    if (empty($conf->global->USER_DISABLE_STATE))
+    {
+        print '<tr><td>'.fieldLabel('State','state_id').'</td><td class="maxwidthonsmartphone">';
+        if ($object->country_id) print $formcompany->select_state($object->state_id,$object->country_code);
+        else print $countrynotdefined;
+        print '</td></tr>';
+    }
+		
     // Tel
     print '<tr><td>'.$langs->trans("PhonePro").'</td>';
     print '<td>';
@@ -1918,6 +1961,36 @@ else
 	           	if ($object->ldap_sid) print ' ('.$langs->trans("DomainUser").')';
             }
            	print '</td></tr>';
+
+			// Address
+            print '<tr><td class="tdtop">'.fieldLabel('Address','address').'</td>';
+	        print '<td><textarea name="address" id="address" cols="80" rows="3" wrap="soft">';
+            print $object->address;
+            print '</textarea></td></tr>';
+
+            // Zip
+            print '<tr><td>'.fieldLabel('Zip','zipcode').'</td><td>';
+            print $formcompany->select_ziptown($object->zip, 'zipcode', array('town', 'selectcountry_id', 'state_id'), 6);
+            print '</td></tr>';
+
+			// Town
+			print '<tr><td>'.fieldLabel('Town','town').'</td><td>';
+            print $formcompany->select_ziptown($object->town, 'town', array('zipcode', 'selectcountry_id', 'state_id'));
+            print '</td></tr>';
+
+            // Country
+            print '<tr><td>'.fieldLabel('Country','selectcounty_id').'</td><td>';
+            print $form->select_country((GETPOST('country_id')!=''?GETPOST('country_id'):$object->country_id),'country_id');
+            if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+            print '</td></tr>';
+
+            // State
+            if (empty($conf->global->USER_DISABLE_STATE))
+            {
+                print '<tr><td>'.fieldLabel('State','state_id').'</td><td colspan="3">';
+                print $formcompany->select_state($object->state_id,$object->country_code);
+                print '</td></tr>';
+            }
 
             // Tel pro
             print "<tr>".'<td>'.$langs->trans("PhonePro").'</td>';
