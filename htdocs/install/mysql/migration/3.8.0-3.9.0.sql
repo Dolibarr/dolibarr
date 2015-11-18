@@ -9,8 +9,10 @@
 -- To drop a column:        ALTER TABLE llx_table DROP COLUMN oldname;
 -- To change type of field: ALTER TABLE llx_table MODIFY COLUMN name varchar(60);
 -- To drop a foreign key:   ALTER TABLE llx_table DROP FOREIGN KEY fk_name;
--- To restrict request to Mysql version x.y use -- VMYSQLx.y
--- To restrict request to Pgsql version x.y use -- VPGSQLx.y
+-- To drop an index:        -- VMYSQL4.0 DROP INDEX nomindex on llx_table
+-- To drop an index:        -- VPGSQL8.0 DROP INDEX nomindex
+-- To restrict request to Mysql version x.y minimum use -- VMYSQLx.y
+-- To restrict request to Pgsql version x.y minimum use -- VPGSQLx.y
 -- To make pk to be auto increment (mysql):    VMYSQL4.3 ALTER TABLE llx_c_shipment_mode CHANGE COLUMN rowid rowid INTEGER NOT NULL AUTO_INCREMENT;
 -- To make pk to be auto increment (postgres): VPGSQL8.2 NOT POSSIBLE. MUST DELETE/CREATE TABLE
 -- To set a field as NULL:                     VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name DROP NOT NULL;
