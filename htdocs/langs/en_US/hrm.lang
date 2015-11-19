@@ -1,5 +1,6 @@
 # Dolibarr language file - en_US - hrm
 CHARSET=UTF-8
+DictionaryContract=HRM - Type contract list
 
 Establishments=Establishments
 Establishment=Establishment

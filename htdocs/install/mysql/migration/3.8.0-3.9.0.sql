@@ -195,6 +195,30 @@ CREATE TABLE IF NOT EXISTS llx_establishment (
   status            smallint DEFAULT 1
 ) ENGINE=InnoDB;
 
+CREATE TABLE llx_user_contract 
+(
+    rowid                   integer AUTO_INCREMENT PRIMARY KEY,
+    entity                  integer DEFAULT 1 NOT NULL, -- multi company id
+	fk_user                 integer NOT NULL,
+	type_contract           integer NOT NULL,
+	date_start_contract     date NOT NULL,
+	date_end_contract       date NULL,	
+	date_dpae               date NULL,
+	date_medicalexam        date NULL,
+	date_sign_employee      date NULL,
+	date_sign_management    date NULL,
+	description             VARCHAR(255),
+	fk_user_author          integer,
+	fk_user_modif           integer,
+	datec                   datetime,
+    tms                     timestamp
+) 
+ENGINE=innodb;
+
+INSERT INTO llx_c_hrm_contract (rowid, pos, code, label, active) VALUES(1, 1,'CDI', 'contrat duree indeterminee', 1);
+INSERT INTO llx_c_hrm_contract (rowid, pos, code, label, active) VALUES(2, 2,'CDD', 'contra duree determinee', 1);
+INSERT INTO llx_c_hrm_contract (rowid, pos, code, label, active) VALUES(3, 3,'CA', 'contrat apprentissage', 1);
+INSERT INTO llx_c_hrm_contract (rowid, pos, code, label, active) VALUES(4, 4,'CP', 'contrat professionalisation', 1);
 
 
 ALTER TABLE llx_projet_task_time ADD COLUMN invoice_id integer DEFAULT NULL;
