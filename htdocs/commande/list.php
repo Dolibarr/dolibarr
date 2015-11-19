@@ -404,6 +404,7 @@ if ($resql)
         // Shippable Icon
         if (($objp->fk_statut > 0) && ($objp->fk_statut < 3) && ! empty($conf->global->SHIPPABLE_ORDER_ICON_IN_LIST)) {
             $notshippable=0;
+            $warning = 0;
             $text_info='';
             $nbprod=0;
             for ($lig=0; $lig<(count($generic_commande->lines)); $lig++) {
@@ -444,7 +445,11 @@ if ($resql)
                     }
                     $text_info .= $generic_commande->lines[$lig]->qty.' X '.$generic_commande->lines[$lig]->ref.'&nbsp;'.dol_trunc($generic_commande->lines[$lig]->product_label, 25);
                     $text_stock_reel = $generic_product->stock_reel.'/'.$stock_order;
-                    if (($generic_product->stock_reel < $generic_commande->lines[$lig]->qty) || ($stock_order > $generic_product->stock_reel)) {
+                    if ($stock_order > $generic_product->stock_reel && ! ($generic_product->stock_reel < $generic_commande->lines[$lig]->qty)) {
+                        $warning++;
+                        $text_warning.='<span class="warning">'.$langs->trans('Available').'&nbsp;:&nbsp;'.$text_stock_reel.'</span>';
+                    }
+                    if ($generic_product->stock_reel < $generic_commande->lines[$lig]->qty) {
                         $notshippable++;
                         $text_info.='<span class="warning">'.$langs->trans('Available').'&nbsp;:&nbsp;'.$text_stock_reel.'</span>';
                     } else {
@@ -467,6 +472,11 @@ if ($resql)
             if ($nbprod>0) {
                 print '<td>';
                 print $form->textwithtooltip('',$text_info,2,1,$text_icon,'',2);
+                print '</td>';
+            }
+            if ($warning) {
+                print '<td>';
+                print $form->textwithtooltip('', $langs->trans('NotEnoughForAllOrders').'<br>'.$text_warning, 2, 1, img_picto('', 'error'),'',2);
                 print '</td>';
             }
         }
