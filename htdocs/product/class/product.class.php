@@ -4123,7 +4123,7 @@ class Product extends CommonObject
      */
     function info($id)
     {
-        $sql = "SELECT p.rowid, p.datec as date_creation, p.tms as date_modification,";
+        $sql = "SELECT p.rowid, p.ref, p.datec as date_creation, p.tms as date_modification,";
         $sql.= " p.fk_user_author, p.fk_user_modif";
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as p";
         $sql.= " WHERE p.rowid = ".$id;
@@ -4149,7 +4149,7 @@ class Product extends CommonObject
                     $this->user_modification = $muser;
                 }
 
-                $this->ref			     = $obj->name;
+                $this->ref			     = $obj->ref;
                 $this->date_creation     = $this->db->jdate($obj->date_creation);
                 $this->date_modification = $this->db->jdate($obj->date_modification);
             }
