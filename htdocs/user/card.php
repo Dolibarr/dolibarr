@@ -903,8 +903,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     if (empty($conf->global->USER_DISABLE_STATE))
     {
         print '<tr><td>'.fieldLabel('State','state_id').'</td><td class="maxwidthonsmartphone">';
-        if ($object->country_id) print $formcompany->select_state($object->state_id,$object->country_code);
-        else print $countrynotdefined;
+        print $formcompany->select_state($object->state_id,$object->country_code, 'state_id');
         print '</td></tr>';
     }
 		
@@ -1987,8 +1986,8 @@ else
             // State
             if (empty($conf->global->USER_DISABLE_STATE))
             {
-                print '<tr><td>'.fieldLabel('State','state_id').'</td><td colspan="3">';
-                print $formcompany->select_state($object->state_id,$object->country_code);
+                print '<tr><td>'.fieldLabel('State','state_id').'</td><td>';
+                print $formcompany->select_state($object->state_id,$object->country_code, 'state_id');
                 print '</td></tr>';
             }
 

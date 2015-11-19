@@ -169,7 +169,7 @@ class User extends CommonObject
 
 		// Get user
 		$sql = "SELECT u.rowid, u.lastname, u.firstname, u.employee, u.gender, u.email, u.job, u.skype, u.signature, u.office_phone, u.office_fax, u.user_mobile,";
-		$sql.= " u.address, u.zip, u.town, u.fk_state, u.fk_country as country_id,";
+		$sql.= " u.address, u.zip, u.town, u.fk_state as state_id, u.fk_country as country_id,";
 		$sql.= " u.admin, u.login, u.note,";
 		$sql.= " u.pass, u.pass_crypted, u.pass_temp, u.api_key,";
 		$sql.= " u.fk_soc, u.fk_socpeople, u.fk_member, u.fk_user, u.ldap_sid,";
@@ -258,7 +258,7 @@ class User extends CommonObject
                 $this->country_code = $obj->country_id?$obj->country_code:'';
                 $this->country 		= $obj->country_id?($langs->trans('Country'.$obj->country_code)!='Country'.$obj->country_code?$langs->transnoentities('Country'.$obj->country_code):$obj->country):'';
 
-                $this->state_id     = $obj->fk_departement;
+                $this->state_id     = $obj->state_id;
                 $this->state_code   = $obj->state_code;
                 $this->state        = ($obj->state!='-'?$obj->state:'');
 
