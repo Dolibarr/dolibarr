@@ -88,37 +88,46 @@ class modHRM extends DolibarrModules
 			'langs'=>'hrm',
 			'tabname'=>array(
 				MAIN_DB_PREFIX."c_hrm_department",
-				MAIN_DB_PREFIX."c_hrm_function"
+				MAIN_DB_PREFIX."c_hrm_function",
+				MAIN_DB_PREFIX."c_hrm_contract"
 			),
 			'tablib'=>array(
 				"DepartmentDict",
-				"FunctionDict"
+				"FunctionDict",
+				"DictionaryContract",
 			),
 			'tabsql'=>array(
 				'SELECT rowid, pos, code, label, active FROM '.MAIN_DB_PREFIX.'c_hrm_department',
-				'SELECT rowid, pos, code, label, c_level, active FROM '.MAIN_DB_PREFIX.'c_hrm_department'
+				'SELECT rowid, pos, code, label, c_level, active FROM '.MAIN_DB_PREFIX.'c_hrm_function',
+				'SELECT rowid, pos, code, label, active FROM '.MAIN_DB_PREFIX.'c_hrm_contract'
 			),
 			'tabsqlsort'=>array(
+				'rowid ASC',
 				'rowid ASC',
 				'rowid ASC'
 			),
 			'tabfield'=>array(
 				"code,label",
+				"code,label",
 				"code,label"
 			),
 			'tabfieldvalue'=>array(
+				"code,label",
 				"code,label",
 				"code,label"
 			),
 			'tabfieldinsert'=>array(
 				"code,label",
+				"code,label",
 				"code,label"
 			),
 			'tabrowid'=>array(
 				"rowid",
+				"rowid",
 				"rowid"
 			),
 			'tabcond'=>array(
+				'$conf->hrm->enabled',
 				'$conf->hrm->enabled',
 				'$conf->hrm->enabled'
 			)

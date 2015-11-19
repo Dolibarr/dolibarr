@@ -203,6 +203,11 @@ CREATE TABLE llx_user_contract
 ) 
 ENGINE=innodb;
 
+INSERT INTO llx_c_hrm_contract (rowid, pos, code, label, active) VALUES(1, 1,'CDI', 'contrat duree indeterminee', 1);
+INSERT INTO llx_c_hrm_contract (rowid, pos, code, label, active) VALUES(2, 2,'CDD', 'contra duree determinee', 1);
+INSERT INTO llx_c_hrm_contract (rowid, pos, code, label, active) VALUES(3, 3,'CA', 'contrat apprentissage', 1);
+INSERT INTO llx_c_hrm_contract (rowid, pos, code, label, active) VALUES(4, 4,'CP', 'contrat professionalisation', 1);
+
 
 ALTER TABLE llx_projet_task_time ADD COLUMN invoice_id integer DEFAULT NULL;
 ALTER TABLE llx_projet_task_time ADD COLUMN invoice_line_id integer DEFAULT NULL;
