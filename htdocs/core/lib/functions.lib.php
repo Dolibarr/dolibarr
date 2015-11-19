@@ -1693,7 +1693,7 @@ function dol_substr($string,$start,$length,$stringencoding='')
 	{
 		$ret=iconv_substr($string,$start,$length,$stringencoding);
 	}
-	if (function_exists('mb_substr'))
+	else if (function_exists('mb_substr'))
 	{
 		$ret=mb_substr($string,$start,$length,$stringencoding);
 	}
