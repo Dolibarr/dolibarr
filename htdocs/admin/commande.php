@@ -234,6 +234,23 @@ else if ($action=="setshippableiconinlist") {
     }
 }
 
+// Activate paid status for order
+else if ($action == 'set_ACTIVATE_PAID_STATUS_FOR_ORDER')
+{
+    $res = dolibarr_set_const($db, "ACTIVATE_PAID_STATUS_FOR_ORDER", $value, 'chaine', 0, '', $conf->entity);
+
+    if (! $res > 0) $error++;
+
+    if (! $error)
+    {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    }
+    else
+    {
+        setEventMessages($langs->trans("Error"), null, 'errors');
+    }
+}
+
 // Activate ask for payment bank
 else if ($action == 'set_BANK_ASK_PAYMENT_BANK_DURING_ORDER')
 {
@@ -616,6 +633,27 @@ if (!empty($conf->global->SHIPPABLE_ORDER_ICON_IN_LIST)) {
 }
 print '</a></td>';
 print '</tr>';
+
+// Activate Paid status for order
+$var=!$var;
+print '<tr '.$bc[$var].'><td>';
+print $langs->trans("ACTIVATE_PAID_STATUS_FOR_ORDER").'</td><td>&nbsp</td><td align="center">';
+if (! empty($conf->use_javascript_ajax))
+{
+    print ajax_constantonoff('ACTIVATE_PAID_STATUS_FOR_ORDER');
+}
+else
+{
+    if (empty($conf->global->ACTIVATE_PAID_STATUS_FOR_ORDER))
+    {
+        print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_ACTIVATE_PAID_STATUS_FOR_ORDER&amp;value=1">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+    }
+    else
+    {
+        print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_ACTIVATE_PAID_STATUS_FOR_ORDER&amp;value=0">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
+    }
+}
+print '</td></tr>';
 
 // Ask for payment bank during order
 if ($conf->banque->enabled)

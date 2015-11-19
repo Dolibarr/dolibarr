@@ -85,6 +85,7 @@ ALTER TABLE llx_societe_rib MODIFY COLUMN code_banque varchar(128);
 
 ALTER TABLE llx_contrat ADD COLUMN ref_customer varchar(30);
 ALTER TABLE llx_commande ADD COLUMN fk_warehouse integer DEFAULT NULL AFTER fk_shipping_method;
+ALTER TABLE llx_commande ADD COLUMN paye tinyint DEFAULT 0 AFTER facture;
 
 ALTER TABLE llx_ecm_directories MODIFY COLUMN fullpath varchar(750);
 ALTER TABLE llx_ecm_directories DROP INDEX idx_ecm_directories;
@@ -440,3 +441,6 @@ INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, nc
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('110', 5209, '', 0, '', 'Manuripi', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('111', 5209, '', 0, '', 'Nicolás Suárez', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('112', 5209, '', 0, '', 'General Federico Román', 1);
+
+INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUES ('ORDER_SET_PAID','Customer order Paid','Executed when a customer order is set paid','commande',4);
+INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUES ('ORDER_SET_UNPAID','Customer order Not Paid','Executed when a customer order is set not paid','commande',4);
