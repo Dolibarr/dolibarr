@@ -3315,7 +3315,7 @@ class Commande extends CommonOrder
 
 
 /**
- *  Class to mange order lines
+ *  Class to manage order lines
  */
 class OrderLine extends CommonOrderLine
 {
