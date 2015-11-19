@@ -1470,22 +1470,22 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
 					$imgThumbMini = vignette($destpath, 160, 120, '_mini', 50, "thumbs");
 				}
 
-				setEventMessage($langs->trans("FileTransferComplete"));
+				setEventMessages($langs->trans("FileTransferComplete"), null, 'mesgs');
 			}
 			else
 			{
 				$langs->load("errors");
 				if ($resupload < 0)	// Unknown error
 				{
-					setEventMessage($langs->trans("ErrorFileNotUploaded"), 'errors');
+					setEventMessages($langs->trans("ErrorFileNotUploaded"), null, 'errors');
 				}
 				else if (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload))	// Files infected by a virus
 				{
-					setEventMessage($langs->trans("ErrorFileIsInfectedWithAVirus"), 'errors');
+					setEventMessages($langs->trans("ErrorFileIsInfectedWithAVirus"), null, 'errors');
 				}
 				else	// Known error
 				{
-					setEventMessage($langs->trans($resupload), 'errors');
+					setEventMessages($langs->trans($resupload), null, 'errors');
 				}
 			}
 		}
@@ -1501,9 +1501,9 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
 			$res = $linkObject->create($user);
 			$langs->load('link');
 			if ($res > 0) {
-				setEventMessage($langs->trans("LinkComplete"));
+				setEventMessages($langs->trans("LinkComplete"), null, 'mesgs');
 			} else {
-				setEventMessage($langs->trans("ErrorFileNotLinked"), 'errors');
+				setEventMessages($langs->trans("ErrorFileNotLinked"), null, 'errors');
 			}
 		}
 	}
@@ -1549,7 +1549,7 @@ function dol_remove_file_process($filenb,$donotupdatesession=0,$donotdeletefile=
 			if (empty($donotdeletefile))
 			{
 				$langs->load("other");
-				setEventMessage($langs->trans("FileWasRemoved",$filetodelete));
+				setEventMessages($langs->trans("FileWasRemoved",$filetodelete), null, 'mesgs');
 			}
 			if (empty($donotupdatesession))
 			{

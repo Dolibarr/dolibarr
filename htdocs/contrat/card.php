@@ -116,7 +116,7 @@ if (empty($reshook))
 	        exit;
 	    }
 	    else {
-	        setEventMessage($object->error,'errors');
+	        setEventMessages($object->error, $object->errors, 'errors');
 	    }
 	}
 	
@@ -137,7 +137,7 @@ if (empty($reshook))
 		    }
 		    else 
 		    {
-		        setEventMessage($object->error,'errors');
+		        setEventMessages($object->error, $object->errors, 'errors');
 		    }
 		}
 	}
@@ -267,7 +267,7 @@ if (empty($reshook))
 	
 		        $id = $object->create($user);
 		        if ($id < 0) {
-		        	setEventMessage($object->error,'errors');
+		        	setEventMessages($object->error, $object->errors, 'errors');
 		        }
 	
 		        if ($id > 0)
@@ -364,13 +364,13 @@ if (empty($reshook))
 		            }
 		            else
 		            {
-		                setEventMessage($srcobject->error,'errors');
+		                setEventMessages($srcobject->error, $srcobject->errors, 'errors');
 		                $error++;
 		            }
 		        }
 		        else
 		        {
-		            setEventMessage($object->error,'errors');
+		            setEventMessages($object->error, $object->errors, 'errors');
 		            $error++;
 		        }
 		    }
@@ -383,7 +383,7 @@ if (empty($reshook))
 		            exit;
 		        }
 		        else {
-		        	setEventMessage($object->error,'errors');
+		        	setEventMessages($object->error, $object->errors, 'errors');
 		        }
 		        $action='create';
 			}
@@ -612,7 +612,7 @@ if (empty($reshook))
 	        }
 	        else
 	        {
-	        	setEventMessage($object->error,'errors');
+	        	setEventMessages($object->error, $object->errors, 'errors');
 	        }
 	    }
 	}
@@ -676,13 +676,13 @@ if (empty($reshook))
 	        }
 	        else
 	        {
-	        	setEventMessage($objectline->error,'errors');
+	        	setEventMessages($objectline->error, $objectline->errors, 'errors');
 	            $db->rollback();
 	        }
 	    }
 	    else
 	    {
-	    	setEventMessage($objectline->error,'errors');
+	    	setEventMessages($objectline->error, $objectline->errors, 'errors');
 	    }
 	}
 	
@@ -697,7 +697,7 @@ if (empty($reshook))
 	    }
 	    else
 	    {
-	    	setEventMessage($object->error,'errors');
+	    	setEventMessages($object->error, $object->errors, 'errors');
 	    }
 	}
 	
@@ -722,7 +722,7 @@ if (empty($reshook))
 		}
 		else
 		{
-			setEventMessage($object->error,'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 	
@@ -741,7 +741,7 @@ if (empty($reshook))
 			}
 			else
 			{
-				setEventMessage($object->error,'errors');
+				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
 		else
@@ -768,7 +768,7 @@ if (empty($reshook))
 	
 		if ($error) {
 			$action = 'edit_extras';
-			setEventMessage($object->error,'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} 
 	elseif ($action=='setref_supplier') 
@@ -778,12 +778,12 @@ if (empty($reshook))
 	
 			$result = $object->fetch($id);
 			if ($result < 0) {
-				setEventMessage($object->errors, 'errors');
+				setEventMessages($object->error, $object->errors, 'errors');
 			}
 	
 	        $result = $object->setValueFrom('ref_supplier',GETPOST('ref_supplier','alpha'));
 			if ($result < 0) {
-				setEventMessage($object->errors, 'errors');
+				setEventMessages($object->error, $object->errors, 'errors');
 				$action = 'editref_supplier';
 			} else {
 				header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
@@ -803,12 +803,12 @@ if (empty($reshook))
 		{
 			$result = $object->fetch($id);
 			if ($result < 0) {
-				setEventMessage($object->errors, 'errors');
+				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		
 	        $result = $object->setValueFrom('ref_customer',GETPOST('ref_customer','alpha'));
 	        if ($result < 0) {
-				setEventMessage($object->errors, 'errors');
+				setEventMessages($object->error, $object->errors, 'errors');
 				$action = 'editref_customer';
 			} else {
 				header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
@@ -827,12 +827,12 @@ if (empty($reshook))
 	    if (!$cancelbutton) {
 	        $result = $object->fetch($id);
 	        if ($result < 0) {
-	            setEventMessage($object->errors, 'errors');
+	            setEventMessages($object->error, $object->errors, 'errors');
 	        }
 	
 	        $result = $object->setValueFrom('ref',GETPOST('ref','alpha'));;
 	        if ($result < 0) {
-	            setEventMessage($object->errors, 'errors');
+	            setEventMessages($object->error, $object->errors, 'errors');
 	            $action = 'editref';
 	        } else {
 	            header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $object->id);
@@ -876,8 +876,8 @@ if (empty($reshook))
 			$upload_dir = $conf->contrat->dir_output;
 			$file = $upload_dir . '/' . GETPOST('file');
 			$ret = dol_delete_file($file, 0, 0, 0, $object);
-			if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('file')));
-			else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('file')), 'errors');
+			if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('file')), null, 'mesgs');
+			else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('file')), null, 'errors');
 		}
 	}
 	
@@ -898,11 +898,11 @@ if (empty($reshook))
 				if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 				{
 					$langs->load("errors");
-					setEventMessage($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"),'errors');
+					setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
 				}
 				else
 				{
-					setEventMessage($object->error,'errors');
+					setEventMessages($object->error, $object->errors, 'errors');
 				}
 			}
 		}
@@ -924,7 +924,7 @@ if (empty($reshook))
 				exit;
 			}
 			else {
-				setEventMessage($object->error,'errors');
+				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
 	}
