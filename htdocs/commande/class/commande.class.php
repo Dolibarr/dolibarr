@@ -112,7 +112,7 @@ class Commande extends CommonOrder
     var $nbtodolate;
 
     /**
-     * ERR Not engouch stock
+     * ERR Not enough stock
      */
     const STOCK_NOT_ENOUGH_FOR_ORDER = -3;
 
