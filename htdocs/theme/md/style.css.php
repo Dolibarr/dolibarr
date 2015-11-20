@@ -32,7 +32,7 @@ if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC','1');
 if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK',1);
 if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL',1);
 if (! defined('NOLOGIN'))         define('NOLOGIN',1);          // File must be accessed by logon page so without login
-if (! defined('NOREQUIREMENU'))   define('NOREQUIREMENU',1);
+//if (! defined('NOREQUIREMENU'))   define('NOREQUIREMENU',1);
 if (! defined('NOREQUIREHTML'))   define('NOREQUIREHTML',1);
 if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX','1');
 
@@ -209,6 +209,9 @@ print 'dol_screenheight='.$_SESSION['dol_screenheight']."\n";
 print '*/'."\n";
 
 if (! empty($conf->dol_optimize_smallscreen)) $fontsize=11;
+
+$nbtopmenuentries=$menumanager->showmenu('topnb');
+
 ?>
 
 /* ============================================================================== */
@@ -3712,6 +3715,16 @@ border-top-right-radius: 6px;
 }
 @media only screen and (max-width: 767px)
 {
+	.imgopensurveywizard { width:95%; height: auto; }
+	
+	#tooltip {
+		position: absolute;
+		width: <?php print dol_size(350,'width'); ?>px;
+	}
+}
+
+@media only screen and (max-width:  <?php echo ($nbtopmenuentries * 85) + 200; ?>px)
+{
 	.mainmenuaspan {
     	display: none;
     }
@@ -3727,13 +3740,6 @@ border-top-right-radius: 6px;
 	}
 	div.tmenuleft {
 		display: none;
-	}
-	
-	.imgopensurveywizard { width:95%; height: auto; }
-	
-	#tooltip {
-		position: absolute;
-		width: <?php print dol_size(350,'width'); ?>px;
 	}
 }
 @media only screen and (max-width: 570px)

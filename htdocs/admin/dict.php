@@ -692,7 +692,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         $resql = $db->query($sql);
         if (! $resql)
         {
-            setEventMessage($db->error(), 'errors');
+            setEventMessages($db->error(), null, 'errors');
         }
     }
     //$_GET["id"]=GETPOST('id', 'int');       // Force affichage dictionnaire en cours d'edition

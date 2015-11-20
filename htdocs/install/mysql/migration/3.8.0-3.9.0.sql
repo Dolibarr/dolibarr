@@ -55,6 +55,11 @@ ALTER TABLE llx_societe_commerciaux ADD COLUMN import_key varchar(14) AFTER fk_u
 
 ALTER TABLE llx_categorie ADD COLUMN color varchar(8);
 
+ALTER TABLE llx_cronjob ADD COLUMN maxrun     integer NOT NULL DEFAULT 0;
+ALTER TABLE llx_cronjob ADD COLUMN autodelete integer DEFAULT 0;
+ALTER TABLE llx_cronjob ADD COLUMN fk_mailing integer DEFAULT NULL;
+
+
 create table llx_overwrite_trans
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
@@ -441,6 +446,7 @@ INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, nc
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('110', 5209, '', 0, '', 'Manuripi', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('111', 5209, '', 0, '', 'Nicolás Suárez', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('112', 5209, '', 0, '', 'General Federico Román', 1);
+
 
 INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUES ('ORDER_SET_PAID','Customer order Paid','Executed when a customer order is set paid','commande',4);
 INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUES ('ORDER_SET_UNPAID','Customer order Not Paid','Executed when a customer order is set not paid','commande',4);
