@@ -45,6 +45,7 @@ if (! empty($conf->multicompany->enabled)) dol_include_once('/multicompany/class
 
 $id			= GETPOST('id','int');
 $action		= GETPOST('action','alpha');
+$mode		= GETPOST('mode','alpha');
 $confirm	= GETPOST('confirm','alpha');
 $subaction	= GETPOST('subaction','alpha');
 $group		= GETPOST("group","int",3);
@@ -1108,8 +1109,18 @@ else
         }
 
         // Show tabs
+		if ($mode == 'employee') // For HRM module development
+		{
+			$title = $langs->trans("Employee");
+			$linkback = '<a href="'.DOL_URL_ROOT.'/hrm/employee/list.php">'.$langs->trans("BackToList").'</a>';
+		}
+		else
+		{
+			$title = $langs->trans("User");
+			$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
+		}
+
         $head = user_prepare_head($object);
-        $title = $langs->trans("User");
 
         /*
          * Confirmation reinitialisation mot de passe
@@ -1158,9 +1169,7 @@ else
         {
 			dol_fiche_head($head, 'user', $title, 0, 'user');
 
-            $linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
-			
-	        dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
+            dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
 
 
 	        print '<div class="fichecenter">';
