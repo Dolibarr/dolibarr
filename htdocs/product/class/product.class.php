@@ -1067,9 +1067,11 @@ class Product extends CommonObject
 	 *	Delete a language for this product
 	 *
 	 *  @param		string	$langtodelete		Language code to delete
+	 *	@param		User	$user       Object user making delete
+	 *
 	 *	@return		int							<0 if KO, >0 if OK
 	 */
-	function delMultiLangs($langtodelete)
+	function delMultiLangs($langtodelete, $user)
 	{
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_lang";
 		$sql.= " WHERE fk_product=".$this->id." AND lang='".$this->db->escape($langtodelete)."'";
@@ -1078,6 +1080,14 @@ class Product extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result)
 		{
+			// Call trigger
+			$result = $this->call_trigger('PRODUCT_DEL_MULTILANGS',$user);
+			if ($result < 0) {
+				$this->error = $this->db->lasterror();
+				dol_syslog(get_class($this).'::delMultiLangs error='.$this->error, LOG_ERR);
+				return -1;
+			}
+			// End call triggers
 			return 1;
 		}
 		else
