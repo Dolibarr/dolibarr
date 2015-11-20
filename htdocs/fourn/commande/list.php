@@ -167,6 +167,12 @@ if (GETPOST('statut', 'alpha') !== '')
 {
 	$sql .= " AND cf.fk_statut IN (".GETPOST('statut', 'alpha').")";
 }
+
+if (GETPOST('billed', 'int') !== '')
+{
+	$sql .= " AND cf.billed IN (".GETPOST('billed', 'int').")";
+}
+
 if ($search_refsupp)
 {
 	$sql.= " AND (cf.ref_supplier LIKE '%".$db->escape($search_refsupp)."%')";

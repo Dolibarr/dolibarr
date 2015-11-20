@@ -93,6 +93,9 @@ ALTER TABLE llx_societe_rib MODIFY COLUMN code_banque varchar(128);
 ALTER TABLE llx_contrat ADD COLUMN ref_customer varchar(30);
 ALTER TABLE llx_commande ADD COLUMN fk_warehouse integer DEFAULT NULL AFTER fk_shipping_method;
 
+ALTER TABLE llx_commande_fournisseur ADD COLUMN billed smallint DEFAULT 0 AFTER fk_statut;
+ALTER TABLE llx_commande_fournisseur ADD INDEX billed (billed);
+
 ALTER TABLE llx_ecm_directories MODIFY COLUMN fullpath varchar(750);
 ALTER TABLE llx_ecm_directories DROP INDEX idx_ecm_directories;
 ALTER TABLE llx_ecm_directories ADD UNIQUE INDEX uk_ecm_directories (label, fk_parent, entity);
