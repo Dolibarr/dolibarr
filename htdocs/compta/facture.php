@@ -402,7 +402,7 @@ if (empty($reshook))
 					$langs->load("errors");
 				$error ++;
 
-				setEventMessage($langs->trans('ErrorProdIdIsMandatory', $langs->transcountry('ProfId' . $i, $object->thirdparty->country_code)), 'errors');
+				setEventMessages($langs->trans('ErrorProdIdIsMandatory', $langs->transcountry('ProfId' . $i, $object->thirdparty->country_code)), null, 'errors');
 			}
 		}
 
@@ -418,7 +418,7 @@ if (empty($reshook))
 		{
 			if (! $idwarehouse || $idwarehouse == - 1) {
 				$error ++;
-				setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Warehouse")), 'errors');
+				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
 				$action = '';
 			}
 		}
@@ -448,7 +448,7 @@ if (empty($reshook))
 			}
 			else
 			{
-				if (count($object->errors)) setEventMessage($object->errors, 'errors');
+				if (count($object->errors)) setEventMessages(null, $object->errors, 'errors');
 				else setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
@@ -1054,7 +1054,7 @@ if (empty($reshook))
 										if ($discountid > 0) {
 											$result = $object->insert_discount($discountid); // This include link_to_invoice
 										} else {
-											setEventMessage($discount->error, 'errors');
+											setEventMessages($discount->error, $discount->errors, 'errors');
 											$error ++;
 											break;
 										}

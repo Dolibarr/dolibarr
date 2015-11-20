@@ -47,7 +47,7 @@ if (preg_match('/set_(.*)/',$action,$reg))
     }
     else
     {
-        setEventMessage($db->lasterror(),'errors');
+        setEventMessages($db->lasterror(), null, 'errors');
     }
 }
 
@@ -61,7 +61,7 @@ if (preg_match('/del_(.*)/',$action,$reg))
     }
     else
     {
-         setEventMessage($db->lasterror(),'errors');
+         setEventMessages($db->lasterror(), null, 'errors');
     }
 }
 

@@ -105,7 +105,7 @@ if ($action=='purge' && ! preg_match('/^confirm/i',$choice) && ($choice != 'allf
 
 	if ($count) $mesg=$langs->trans("PurgeNDirectoriesDeleted", $count);
 	else $mesg=$langs->trans("PurgeNothingToDelete");
-	setEventMessage($mesg);
+	setEventMessages($mesg, null, 'mesgs');
 }
 
 
