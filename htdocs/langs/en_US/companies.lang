@@ -89,8 +89,10 @@ VATIsNotUsed=VAT is not used
 CopyAddressFromSoc=Fill address with thirdparty address
 NoEmailDefined=There is no email defined
 ##### Local Taxes #####
+LocalTax1IsUsed=Use second tax
 LocalTax1IsUsedES= RE is used
 LocalTax1IsNotUsedES= RE is not used
+LocalTax2IsUsed=Use third tax
 LocalTax2IsUsedES= IRPF is used
 LocalTax2IsNotUsedES= IRPF is not used
 LocalTax1ES=RE

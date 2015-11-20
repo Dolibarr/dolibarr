@@ -1194,13 +1194,13 @@ UseOptionLineIfNoQuantity=Une ligne de produit/service ayant une quantité nulle
 FreeLegalTextOnProposal=Mention complémentaire sur les propositions commerciales
 WatermarkOnDraftProposal=Filigrane sur les brouillons de propositions commerciales (aucun si vide)
 BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL=Saisir le compte bancaire cible lors de la proposition commerciale
-##### AskPriceSupplier #####
-AskPriceSupplierSetup=Configuration du module Demande de tarifs forunisseurs
-AskPriceSupplierNumberingModules=Modèles de numérotation des demandes de prix
-AskPriceSupplierPDFModules=Modèles de documents des demandes de prix
-FreeLegalTextOnAskPriceSupplier=Texte libre sur les demande de tarifs fournisseurs
-WatermarkOnDraftAskPriceSupplier=Filigrane sur le document de demande de prix fournisseurs (aucun si vide)
-BANK_ASK_PAYMENT_BANK_DURING_ASKPRICESUPPLIER=Demander le compte bancaire cible durant la création de la demande de prix fournisseur
+##### SupplierProposal #####
+SupplierProposalSetup=Configuration du module Demande de tarifs forunisseurs
+SupplierProposalNumberingModules=Modèles de numérotation des demandes de prix
+SupplierProposalPDFModules=Modèles de documents des demandes de prix
+FreeLegalTextOnSupplierProposal=Texte libre sur les demande de tarifs fournisseurs
+WatermarkOnDraftSupplierProposal=Filigrane sur le document de demande de prix fournisseurs (aucun si vide)
+BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL=Demander le compte bancaire cible durant la création de la demande de prix fournisseur
 ##### Orders #####
 OrdersSetup=Configuration du module Commandes
 OrdersNumberingModules=Modèles de numérotation des commandes

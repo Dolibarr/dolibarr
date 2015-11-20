@@ -738,6 +738,15 @@ function dol_get_fiche_head($links=array(), $active='', $title='', $notab=0, $pi
 	$displaytab=0;
 	$nbintab=0;
     $popuptab=0;
+	for ($i = 0 ; $i <= $maxkey ; $i++)
+	{
+		if ((is_numeric($active) && $i == $active) || (! empty($links[$i][2]) && ! is_numeric($active) && $active == $links[$i][2]))
+		{
+			// si l'active est présent dans la box
+			if ($i >= $limittoshow)
+				$limittoshow--;
+		}
+	}
 
 	for ($i = 0 ; $i <= $maxkey ; $i++)
 	{
@@ -745,13 +754,11 @@ function dol_get_fiche_head($links=array(), $active='', $title='', $notab=0, $pi
 		{
 			$isactive=true;
 			$bactive=true;
-			if ($i <=$limittoshow)
-				$limittoshow++;
 		}
 		else
 			$isactive=false;
 
-		if ($i <= $limittoshow || $isactive)
+		if ($i < $limittoshow || $isactive)
 		{
 			$out.='<div class="inline-block tabsElem'.($isactive ? ' tabsElemActive' : '').((! $isactive && ! empty($conf->global->MAIN_HIDE_INACTIVETAB_ON_PRINT))?' hideonprint':'').'"><!-- id tab = '.(empty($links[$i][2])?'':$links[$i][2]).' -->';
 			if (isset($links[$i][2]) && $links[$i][2] == 'image')
@@ -892,7 +899,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
         $showimage=$object->is_photo_available($conf->product->multidir_output[$object->entity]);
 	    $maxvisiblephotos=(isset($conf->global->PRODUCT_MAX_VISIBLE_PHOTO)?$conf->global->PRODUCT_MAX_VISIBLE_PHOTO:5);
 		if ($conf->browser->phone) $maxvisiblephotos=1;
-		if ($showimage) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$object->show_photos($conf->product->multidir_output[$object->entity],1,-$maxvisiblephotos,0,0,0,$width,0).'</div>';
+		if ($showimage) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$object->show_photos($conf->product->multidir_output[$object->entity],'small',-$maxvisiblephotos,0,0,0,$width,0).'</div>';
         else 
         {
 			$nophoto='/public/theme/common/nophoto.png';
@@ -901,7 +908,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 	}
 	else 
 	{
-	    if ($showimage) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$form->showphoto($modulepart,$object,0,0,0,'photoref','',1,0,$maxvisiblephotos).'</div>';
+	    if ($showimage) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$form->showphoto($modulepart,$object,0,0,0,'photoref','small',1,0,$maxvisiblephotos).'</div>';
 	}
 	if ($showbarcode) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$form->showbarcode($object).'</div>';
 	if ($object->element == 'societe' && ! empty($conf->use_javascript_ajax) && $user->rights->societe->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
@@ -3088,11 +3095,17 @@ function print_fleche_navigation($page, $file, $options='', $nextpage=0, $betwee
  */
 function vatrate($rate,$addpercent=false,$info_bits=0,$usestarfornpr=0)
 {
-	// Test for compatibility
-	if (preg_match('/%/',$rate))
+    $morelabel='';
+    
+    if (preg_match('/%/',$rate))
 	{
 		$rate=str_replace('%','',$rate);
 		$addpercent=true;
+	}
+	if (preg_match('/\((.*)\)/',$rate,$reg))
+	{
+	    $morelabel=' ('.$reg[1].')';
+	    $rate=preg_replace('/'.preg_quote($morelabel,'/').'/','',$rate);
 	}
 	if (preg_match('/\*/',$rate) || preg_match('/'.constant('MAIN_LABEL_MENTION_NPR').'/i',$rate))
 	{
@@ -3102,6 +3115,7 @@ function vatrate($rate,$addpercent=false,$info_bits=0,$usestarfornpr=0)
 
 	$ret=price($rate,0,'',0,0).($addpercent?'%':'');
 	if ($info_bits & 1) $ret.=' '.($usestarfornpr?'*':constant('MAIN_LABEL_MENTION_NPR'));
+	$ret.=$morelabel;
 	return $ret;
 }
 
@@ -3283,35 +3297,43 @@ function price2num($amount,$rounding='',$alreadysqlnb=0)
 }
 
 /**
- *	Return localtax rate for a particular vat, when selling a product with vat $tva, from a $thirdparty_buyer to a $thirdparty_seller
+ *	Return localtax rate for a particular vat, when selling a product with vat $vatrate, from a $thirdparty_buyer to a $thirdparty_seller
  *  Note: This function applies same rules than get_default_tva
  *
- * 	@param	float		$tva			        Vat taxe
+ * 	@param	float		$vatrate		        Vat rate
  * 	@param  int			$local		         	Local tax to search and return (1 or 2 return only tax rate 1 or tax rate 2)
  *  @param  Societe		$thirdparty_buyer    	Object of buying third party
  *  @param	Societe		$thirdparty_seller		Object of selling third party
- * 	@return	mixed			   					0 if not found, localtax if found
+ * 	@return	mixed			   					0 if not found, localtax rate if found
  *  @see get_default_tva
  */
-function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
+function get_localtax($vatrate, $local, $thirdparty_buyer="", $thirdparty_seller="")
 {
 	global $db, $conf, $mysoc;
 
 	if (empty($thirdparty_seller) || ! is_object($thirdparty_seller)) $thirdparty_seller=$mysoc;
 
-	dol_syslog("get_localtax tva=".$tva." local=".$local." thirdparty_buyer id=".(is_object($thirdparty_buyer)?$thirdparty_buyer->id:'')."/country_code=".(is_object($thirdparty_buyer)?$thirdparty_buyer->country_code:'')." thirdparty_seller id=".$thirdparty_seller->id."/country_code=".$thirdparty_seller->country_code." thirdparty_seller localtax1_assuj=".$thirdparty_seller->localtax1_assuj."  thirdparty_seller localtax2_assuj=".$thirdparty_seller->localtax2_assuj);
+	dol_syslog("get_localtax tva=".$vatrate." local=".$local." thirdparty_buyer id=".(is_object($thirdparty_buyer)?$thirdparty_buyer->id:'')."/country_code=".(is_object($thirdparty_buyer)?$thirdparty_buyer->country_code:'')." thirdparty_seller id=".$thirdparty_seller->id."/country_code=".$thirdparty_seller->country_code." thirdparty_seller localtax1_assuj=".$thirdparty_seller->localtax1_assuj."  thirdparty_seller localtax2_assuj=".$thirdparty_seller->localtax2_assuj);
 
-	if($thirdparty_buyer->country_code!=$thirdparty_seller->country_code)
+	$vatratecleaned = $vatrate;
+	if (preg_match('/^(.*)\s*\((.*)\)$/', $vatrate, $reg))      // If vat is "xx (yy)"
+	{
+        $vatratecleaned = $reg[1];
+	    $vatratecode = $reg[2];
+	}
+	
+	/*if ($thirdparty_buyer->country_code != $thirdparty_seller->country_code)
 	{
 		return 0;
-	}
+	}*/
+	
 	// Some test to guess with no need to make database access
 	if ($mysoc->country_code == 'ES') // For spain localtaxes 1 and 2, tax is qualified if buyer use local taxe
 	{
 		if ($local == 1)
 		{
-			if(! $mysoc->localtax1_assuj) return 0;
-			if ($thirdparty_seller->id==$mysoc->id)
+			if (! $mysoc->localtax1_assuj) return 0;
+			if ($thirdparty_seller->id == $mysoc->id)
 			{
 				if (! $thirdparty_buyer->localtax1_assuj) return 0;
 			}
@@ -3323,8 +3345,8 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 
 		if ($local == 2)
 		{
-			if(! $mysoc->localtax2_assuj) return 0;
-			if ($thirdparty_seller->id==$mysoc->id )
+			if (! $mysoc->localtax2_assuj) return 0;
+			if ($thirdparty_seller->id == $mysoc->id)
 			{
 				if (! $thirdparty_buyer->localtax2_assuj) return 0;
 			}
@@ -3350,63 +3372,72 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 	}*/
 
 	// Search local taxes
-	if ($local==1)
+	if ($mysoc->country_code == 'ES' || ! empty($conf->global->MAIN_GET_LOCALTAXES_VALUES_FROM_THIRDPARTY))
 	{
-		if($thirdparty_seller!=$mysoc )
-		{
-			if(!isOnlyOneLocalTax($local))
-			{
-				return $thirdparty_seller->localtax1_value;
-			}
-		}
-		else
-		{
-			if(!isOnlyOneLocalTax($local))
-			{
-				return $conf->global->MAIN_INFO_VALUE_LOCALTAX1;
-			}
-		}
-	}
-	if ($local==2)
-	{
-		if($thirdparty_seller!=$mysoc)
-		{
-			if(!isOnlyOneLocalTax($local))
-			{
-				return $thirdparty_seller->localtax2_value;
-			}
-		}
-		else
-		{
-			if(!isOnlyOneLocalTax($local))
-			{
-				return $conf->global->MAIN_INFO_VALUE_LOCALTAX2;
-			}
-		}
+    	if ($local==1)
+    	{
+    		if ($thirdparty_seller != $mysoc)
+    		{
+    			if (!isOnlyOneLocalTax($local))  // TODO We should provide $vatrate to search on correct line and not always on line with highest vat rate
+    			{
+    				return $thirdparty_seller->localtax1_value;
+    			}
+    		}
+    		else  // i am the seller
+    		{
+    			if (!isOnlyOneLocalTax($local))  // TODO If seller is me, why not always returning this, even if there is only one locatax vat.
+    			{
+    				return $conf->global->MAIN_INFO_VALUE_LOCALTAX1;
+    			}
+    		}
+    	}
+    	if ($local==2)
+    	{
+    		if ($thirdparty_seller != $mysoc)
+    		{
+    			if (!isOnlyOneLocalTax($local))  // TODO We should provide $vatrate to search on correct line and not always on line with highest vat rate
+    			// TODO We should also return value defined on thirdparty only if defined
+    			{
+    				return $thirdparty_seller->localtax2_value;
+    			}
+    		}
+    		else  // i am the seller
+    		{
+    			if (!isOnlyOneLocalTax($local))  // This is for spain only, we don't return value found into datbase even if there is only one locatax vat.
+    			{
+    				return $conf->global->MAIN_INFO_VALUE_LOCALTAX2;
+    			}
+    		}
+    	}
 	}
 
+	// By default, search value of local tax on line of common tax
 	$sql  = "SELECT t.localtax1, t.localtax2, t.localtax1_type, t.localtax2_type";
-	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
-	$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$thirdparty_seller->country_code."'";
-	$sql .= " AND t.taux = ".((float) $tva)." AND t.active = 1";
-	dol_syslog("get_localtax", LOG_DEBUG);
-	$resql=$db->query($sql);
-	if ($resql)
-	{
-		$obj = $db->fetch_object($resql);
-		if ($local==1) return $obj->localtax1;
-		elseif ($local==2) return $obj->localtax2;
-	}
+   	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
+   	$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$thirdparty_seller->country_code."'";
+   	$sql .= " AND t.taux = ".((float) $vatratecleaned)." AND t.active = 1";
+   	if ($vatratecode) $sql.= " AND t.code ='".$vatratecode."'";
+   	dol_syslog("get_localtax", LOG_DEBUG);
+   	$resql=$db->query($sql);
 
+   	if ($resql)
+   	{
+   		$obj = $db->fetch_object($resql);
+   		if ($local==1) return $obj->localtax1;
+   		elseif ($local==2) return $obj->localtax2;
+	}
+	
 	return 0;
 }
 
 
 /**
- * Return true if LocalTax is unique
+ * Return true if LocalTax (1 or 2) is unique.
+ * Example: If localtax1 is 5 on line with highest common vat rate, return true
+ * Example: If localtax1 is 5:8:15 on line with highest common vat rate, return false
  *
- * @param int 	$local	Local taxt to test
- * @return boolean 		True if LocalTax have multiple values, False if not
+ * @param   int 	$local	Local tax to test (1 or 2)
+ * @return  boolean 		True if LocalTax have multiple values, False if not
  */
 function isOnlyOneLocalTax($local)
 {
@@ -3414,7 +3445,7 @@ function isOnlyOneLocalTax($local)
 
 	$valors=explode(":", $tax);
 
-	if(count($valors)>1)
+	if (count($valors)>1)
 	{
 		return false;
 	}
@@ -3425,7 +3456,7 @@ function isOnlyOneLocalTax($local)
 }
 
 /**
- * Get values of localtaxes
+ * Get values of localtaxes (1 or 2) for company country for the common vat with the highest value
  *
  * @param	int		$local 	LocalTax to get
  * @return	number			Values of localtax
@@ -3435,9 +3466,10 @@ function get_localtax_by_third($local)
 	global $db, $mysoc;
 	$sql ="SELECT t.localtax1, t.localtax2 ";
 	$sql.=" FROM ".MAIN_DB_PREFIX."c_tva as t inner join ".MAIN_DB_PREFIX."c_country as c ON c.rowid=t.fk_pays";
-	$sql.=" WHERE c.code = '".$mysoc->country_code."' AND t.taux=(SELECT max(tt.taux)";
-	$sql.=" FROM ".MAIN_DB_PREFIX."c_tva as tt inner join ".MAIN_DB_PREFIX."c_country as c ON c.rowid=tt.fk_pays";
-	$sql.=" WHERE c.code = '".$mysoc->country_code."')";
+	$sql.=" WHERE c.code = '".$mysoc->country_code."' AND t.active = 1 AND t.taux=(";
+	$sql.="  SELECT max(tt.taux) FROM ".MAIN_DB_PREFIX."c_tva as tt inner join ".MAIN_DB_PREFIX."c_country as c ON c.rowid=tt.fk_pays";
+	$sql.="  WHERE c.code = '".$mysoc->country_code."' AND tt.active = 1";
+	$sql.="  )";
 
 	$resql=$db->query($sql);
 	if ($resql)
@@ -3456,7 +3488,7 @@ function get_localtax_by_third($local)
  *  Get type and rate of localtaxes for a particular vat rate/country fo thirdparty
  *  TODO
  *  This function is also called to retrieve type for building PDF. Such call of function must be removed.
- *  Instead this function must be called when adding a line to get (array of localtax and type) and
+ *  Instead this function must be called when adding a line to get the array of localtax and type, and then
  *  provide it to the function calcul_price_total.
  *
  *  @param	float	$vatrate			VAT Rate
@@ -3467,15 +3499,24 @@ function get_localtax_by_third($local)
  */
 function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller)
 {
-	global $db;
+	global $db, $mysoc;
 
 	dol_syslog("getLocalTaxesFromRate vatrate=".$vatrate." local=".$local);
 
+	$vatratecleaned = $vatrate;
+	if (preg_match('/^(.*)\s*\((.*)\)$/', $vatrate, $reg))      // If vat is "xx (yy)"
+	{
+	    $vatratecleaned = $reg[1];
+	    $vatratecode = $reg[2];
+	}
+	
 	// Search local taxes
 	$sql  = "SELECT t.localtax1, t.localtax1_type, t.localtax2, t.localtax2_type, t.accountancy_code_sell, t.accountancy_code_buy";
 	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
-	$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$buyer->country_code."'";
-	$sql .= " AND t.taux = ".((float) $vatrate)." AND t.active = 1";
+	if ($mysoc->country_code == 'ES') $sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$buyer->country_code."'";
+	else $sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$seller->country_code."'";
+	$sql .= " AND t.taux = ".((float) $vatratecleaned)." AND t.active = 1";
+	if ($vatratecode) $sql.= " AND t.code ='".$vatratecode."'";
 
 	$resql=$db->query($sql);
 	if ($resql)
@@ -5057,8 +5098,9 @@ function printCommonFooter($zone='private')
 	print '<!-- Set handler to add page_y param on some a href links -->'."\n";
 	print 'jQuery(".reposition").click(function() {
 	           var page_y = $(document).scrollTop();
+	           /* alert(page_y); */
 	           this.href=this.href+\'&page_y=\'+page_y;
-	           });';
+	           });'."\n";
 	print '});'."\n";
 	
 	print '</script>'."\n";
@@ -5290,7 +5332,7 @@ function natural_search($fields, $value, $mode=0, $nofirstand=0)
  *
  * @param   string  $file           Original filename (full or relative path)
  * @param   string  $extName        Extension to differenciate thumb file name ('', '_small', '_mini')
- * @param   string  $extImgTarget   Force image extension for thumbs. Use '' to keep same extension than original image.
+ * @param   string  $extImgTarget   Force image extension for thumbs. Use '' to keep same extension than original image. Use '.png' for generated thumb files.
  * @return  string                  New file name (full or relative path, including the thumbs/)
  */
 function getImageFileNameForSize($file, $extName, $extImgTarget='')

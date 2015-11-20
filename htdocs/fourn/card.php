@@ -541,10 +541,10 @@ if ($object->id > 0)
 		print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddBill").'</a>';
 	}
 
-	if ($conf->askpricesupplier->enabled && $user->rights->askpricesupplier->creer)
+	if ($conf->supplier_proposal->enabled && $user->rights->supplier_proposal->creer)
 	{
-		$langs->load("askpricesupplier");
-		print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/askpricesupplier/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddAskPriceSupplier").'</a>';
+		$langs->load("supplier_proposal");
+		print '<a class="butAction" href="'.DOL_URL_ROOT.'/supplier_proposal/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddSupplierProposal").'</a>';
 	}
 
 	if ($user->rights->fournisseur->facture->creer)

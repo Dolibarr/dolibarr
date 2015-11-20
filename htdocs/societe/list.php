@@ -37,6 +37,7 @@ $langs->load("companies");
 $langs->load("customers");
 $langs->load("suppliers");
 $langs->load("bills");
+$langs->load("compta");
 
 // Security check
 $socid = GETPOST('socid','int');

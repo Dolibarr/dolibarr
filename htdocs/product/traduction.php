@@ -87,7 +87,7 @@ $cancel != $langs->trans("Cancel") &&
 	}
 
 	// sauvegarde en base
-	if ( $object->setMultiLangs() > 0 )
+	if ( $object->setMultiLangs($user) > 0 )
 	{
 		$action = '';
 	}
@@ -123,7 +123,7 @@ $cancel != $langs->trans("Cancel") &&
 		}
 	}
 
-	if ( $object->setMultiLangs() > 0 )
+	if ( $object->setMultiLangs($user) > 0 )
 	{
 		$action = '';
 	}

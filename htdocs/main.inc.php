@@ -927,7 +927,7 @@ if (! function_exists("llxHeader"))
 		// top menu and left menu area
 		if (empty($conf->dol_hide_topmenu))
 		{
-			top_menu($head, $title, $target, $disablejs, $disablehead, $arrayofjs, $arrayofcss, $morequerystring);
+			top_menu($head, $title, $target, $disablejs, $disablehead, $arrayofjs, $arrayofcss, $morequerystring, $help_url);
 		}
 		if (empty($conf->dol_hide_leftmenu))
 		{
@@ -1327,9 +1327,12 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
  *	@param		array	$arrayofjs			Array of js files to add in header
  *	@param		array	$arrayofcss			Array of css files to add in header
  *  @param		string	$morequerystring	Query string to add to the link "print" to get same parameters (use only if autodetect fails)
+ *  @param      string	$helppagename    	Name of wiki page for help ('' by default).
+ * 				     		                Syntax is: For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage
+ * 									                   For other external page: http://server/url
  *  @return		void
  */
-function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='', $morequerystring='')
+function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='', $morequerystring='', $helppagename='')
 {
     global $user, $conf, $langs, $db;
     global $dolibarr_main_authentication, $dolibarr_main_demo;
@@ -1501,6 +1504,44 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	        $toprightmenu.=Form::textwithtooltip('',$langs->trans("PrintContentArea"),2,1,$text,'login_block_elem',2);
 	    }
 
+	    // Link to Dolibarr wiki pages
+	    if (empty($conf->global->MAIN_HELP_DISABLELINK))
+	    {
+	        $langs->load("help");
+	    
+	        $helpbaseurl='';
+	        $helppage='';
+	        $mode='';
+
+	        if (empty($helppagename)) $helppagename='EN:User_documentation|FR:Documentation_utilisateur|ES:Documentación_usuarios';
+	    
+	        // Get helpbaseurl, helppage and mode from helppagename and langs
+	        $arrayres=getHelpParamFor($helppagename,$langs);
+	        $helpbaseurl=$arrayres['helpbaseurl'];
+	        $helppage=$arrayres['helppage'];
+	        $mode=$arrayres['mode'];
+	    
+	        // Link to help pages
+	        if ($helpbaseurl && $helppage)
+	        {
+	            $text='';
+	            $title='';
+	            //$text.='<div id="blockvmenuhelpwiki" class="blockvmenuhelp">';
+	            $title.=$langs->trans($mode == 'wiki' ? 'GoToWikiHelpPage': 'GoToHelpPage');
+	            if ($mode == 'wiki') $title.=' - '.$langs->trans("PageWiki").' &quot;'.dol_escape_htmltag(strtr($helppage,'_',' ')).'&quot;';
+	            $text.='<a class="help" target="_blank" href="';
+	            if ($mode == 'wiki') $text.=sprintf($helpbaseurl,urlencode(html_entity_decode($helppage)));
+	            else $text.=sprintf($helpbaseurl,$helppage);
+	            $text.='">';
+	            $text.=img_picto('', 'helpdoc').' ';
+	            //$toprightmenu.=$langs->trans($mode == 'wiki' ? 'OnlineHelp': 'Help');
+	            //if ($mode == 'wiki') $text.=' ('.dol_trunc(strtr($helppage,'_',' '),8).')';
+	            $text.='</a>';
+	            //$toprightmenu.='</div>'."\n";
+	            $toprightmenu.=Form::textwithtooltip('',$title,2,1,$text,'login_block_elem',2);
+	        }
+	    }
+	    
 		// Logout link
 	    $toprightmenu.=Form::textwithtooltip('',$logouthtmltext,2,1,$logouttext,'login_block_elem',2);
 
@@ -1689,39 +1730,6 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
 	    if ($doliurl) print '</a>';
 	    print '</div>'."\n";
 
-	    // Link to Dolibarr wiki pages
-	    if ($helppagename && empty($conf->global->MAIN_HELP_DISABLELINK))
-	    {
-	        $langs->load("help");
-
-	        $helpbaseurl='';
-	        $helppage='';
-	        $mode='';
-
-	        // Get helpbaseurl, helppage and mode from helppagename and langs
-	        $arrayres=getHelpParamFor($helppagename,$langs);
-	        $helpbaseurl=$arrayres['helpbaseurl'];
-	        $helppage=$arrayres['helppage'];
-	        $mode=$arrayres['mode'];
-
-	        // Link to help pages
-	        if ($helpbaseurl && $helppage)
-	        {
-	            print '<div id="blockvmenuhelpwiki" class="blockvmenuhelp">';
-	            print '<a class="help" target="_blank" title="'.$langs->trans($mode == 'wiki' ? 'GoToWikiHelpPage': 'GoToHelpPage');
-	            if ($mode == 'wiki') print ' - '.$langs->trans("PageWiki").' &quot;'.dol_escape_htmltag(strtr($helppage,'_',' ')).'&quot;';
-	            print '" href="';
-	            if ($mode == 'wiki') print sprintf($helpbaseurl,urlencode(html_entity_decode($helppage)));
-	            else print sprintf($helpbaseurl,$helppage);
-	            print '">';
-	            print img_picto('', 'helpdoc').' ';
-	            print $langs->trans($mode == 'wiki' ? 'OnlineHelp': 'Help');
-	            //if ($mode == 'wiki') print ' ('.dol_trunc(strtr($helppage,'_',' '),8).')';
-	            print '</a>';
-	            print '</div>'."\n";
-	        }
-	    }
-
 		// Link to bugtrack
 		if (! empty($conf->global->MAIN_BUGTRACK_ENABLELINK))
 		{
@@ -1856,7 +1864,7 @@ function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch,$htmlinput
     }
 
     $ret='';
-    $ret.='<form action="'.$urlaction.'" method="post">';
+    $ret.='<form action="'.$urlaction.'" method="post" class="searchform">';
 	$ret.='<div class="menu_titre menu_titre_search"';
 	if (! empty($conf->global->MAIN_HTML5_PLACEHOLDER)) $ret.=' style="display: inline-block"';
 	$ret.='>';

@@ -1193,13 +1193,13 @@ UseOptionLineIfNoQuantity=Linia produktów / usług z zerową ilość jest trakt
 FreeLegalTextOnProposal=Darmowy tekstu propozycji
 WatermarkOnDraftProposal=Znak wodny projektów wniosków komercyjnych (brak jeśli pusty)
 BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL=Zapytaj o rachunku bankowego przeznaczenia propozycji
-##### AskPriceSupplier #####
-AskPriceSupplierSetup=Cena żąda konfiguracji modułu dostawcy
-AskPriceSupplierNumberingModules=Wnioski Cena dostawcy numeracji modeli
-AskPriceSupplierPDFModules=Cena żąda dostawców modele dokumenty
-FreeLegalTextOnAskPriceSupplier=Bezpłatne tekst na podania Ceny dostawców
-WatermarkOnDraftAskPriceSupplier=Znak wodny na projekt cenie żąda dostawców (brak jeśli pusty)
-BANK_ASK_PAYMENT_BANK_DURING_ASKPRICESUPPLIER=Zapytaj o rachunku bankowego przeznaczenia zamówienie cena
+##### SupplierProposal #####
+SupplierProposalSetup=Cena żąda konfiguracji modułu dostawcy
+SupplierProposalNumberingModules=Wnioski Cena dostawcy numeracji modeli
+SupplierProposalPDFModules=Cena żąda dostawców modele dokumenty
+FreeLegalTextOnSupplierProposal=Bezpłatne tekst na podania Ceny dostawców
+WatermarkOnDraftSupplierProposal=Znak wodny na projekt cenie żąda dostawców (brak jeśli pusty)
+BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL=Zapytaj o rachunku bankowego przeznaczenia zamówienie cena
 ##### Orders #####
 OrdersSetup=Zamówienia zarządzania konfiguracją
 OrdersNumberingModules=Zamówienia numeracji modules
