@@ -66,7 +66,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->don->supp
 	}
 	else
 	{
-		setEventMessage($payment->error, 'errors');
+		setEventMessages($payment->error, $payment->errors, 'errors');
         $db->rollback();
 	}
 }
@@ -104,7 +104,7 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->don->cree
 	}
 	else
 	{
-		setEventMessage($payment->error);
+		setEventMessages($payment->error, $payment->errors, 'errors');
 		$db->rollback();
 	}
 }

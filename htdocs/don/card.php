@@ -192,8 +192,7 @@ if ($action == 'confirm_delete' && GETPOST("confirm") == "yes" && $user->rights-
     else
     {
         dol_syslog($object->error,LOG_DEBUG);
-        setEventMessage($object->error,'errors');
-        setEventMessage($object->errors,'errors');
+        setEventMessages($object->error, $object->errors, 'errors');
     }
 }
 if ($action == 'valid_promesse')
@@ -204,7 +203,7 @@ if ($action == 'valid_promesse')
 		exit;
 	}
     else {
-	    setEventMessage($object->error, 'errors');
+	    setEventMessages($object->error, $object->errors, 'errors');
     }
 }
 if ($action == 'set_cancel')
@@ -215,7 +214,7 @@ if ($action == 'set_cancel')
         exit;
     }
     else {
-	    setEventMessage($object->error, 'errors');
+	    setEventMessages($object->error, $object->errors, 'errors');
     }
 }
 if ($action == 'set_paid')
@@ -226,7 +225,7 @@ if ($action == 'set_paid')
 		exit;
 	}
     else {
-	    setEventMessage($object->error, 'errors');
+	    setEventMessages($object->error, $object->errors, 'errors');
     }
 }
 // Remove file in doc form
@@ -243,8 +242,8 @@ if ($action == 'remove_file')
 		$upload_dir = $conf->don->dir_output;
 		$file = $upload_dir . '/' . GETPOST('file');
 		$ret=dol_delete_file($file,0,0,0,$object);
-		if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-		else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+		if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
+		else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
 		$action='';
 	}
 }

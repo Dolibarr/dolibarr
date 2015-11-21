@@ -291,12 +291,12 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 						{
 							// write mail to IMAP Server
 							$movemail = $mailboxconfig->putMail($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,$folder,$deliveryreceipt,$mailfile); 
-							if ($movemail) setEventMessage($langs->trans("MailMovedToImapFolder",$folder),'mesgs');
-							else setEventMessage($langs->trans("MailMovedToImapFolder_Warning",$folder),'warnings'); 
+							if ($movemail) setEventMessages($langs->trans("MailMovedToImapFolder",$folder), null, 'mesgs');
+							else setEventMessages($langs->trans("MailMovedToImapFolder_Warning",$folder), null, 'warnings'); 
 				 	 	}
 				 	}
 				 	
-					// Initialisation donnees
+					// Initialisation of datas
 					$object->socid			= $sendtosocid;	// To link to a company
 					$object->sendtoid		= $sendtoid;	// To link to a contact/address
 					$object->actiontypecode	= $actiontypecode;
@@ -305,14 +305,14 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 					$object->fk_element		= $object->id;
 					$object->elementtype	= $object->element;
 
-					// Appel des triggers
+					// Call of triggers
 					include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 					$interface=new Interfaces($db);
 					$result=$interface->run_triggers($trigger_name,$object,$user,$langs,$conf);
 					if ($result < 0) {
 						$error++; $this->errors=$interface->errors;
 					}
-					// Fin appel triggers
+					// End call of triggers
 
 					if ($error)
 					{
