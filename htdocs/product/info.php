@@ -1,7 +1,5 @@
 <?php
-/* Copyright (C) 2004-2009	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@capnetworks.com>
- * Copyright (C) 2010		Juanjo Menent		<jmenent@2byte.es>
+/* Copyright (C) 2015		Maxime Kohlhaas		<maxime@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,36 +16,37 @@
  */
 
 /**
- *      \file       htdocs/societe/info.php
- *      \ingroup    societe
- *      \brief      Page des informations d'une societe
+ *      \file       htdocs/product/info.php
+ *      \ingroup    product
+ *      \brief      Information page for product
  */
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
-$langs->load("companies");
+$langs->load("product");
 $langs->load("other");
 if (! empty($conf->notification->enabled)) $langs->load("mails");
 
 // Security check
-$socid = GETPOST('socid','int');
-if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'societe', $socid, '&societe');
+$id = GETPOST('id','int');
+$ref = GETPOST('ref','alpha');
+
+$result=restrictedArea($user,'produit|service',$id,'product&product');
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('infothirdparty'));
+$hookmanager->initHooks(array('infoproduct'));
 
-$object = new Societe($db);
+$object = new Product($db);
 
 
 /*
  *	Actions
  */
 
-$parameters=array('id'=>$socid);
+$parameters=array('id'=>$id);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
@@ -59,14 +58,15 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 $form=new Form($b);
 
-$title=$langs->trans("ThirdParty");
-if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name.' - '.$langs->trans("Info");
-$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
+$title=$langs->trans("Product");
+$helpurl='';
+if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT)) $helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
+if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE)) $helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 llxHeader('',$title,$help_url);
 
-if ($socid > 0)
+if ($id > 0 || $ref)
 {
-	$result = $object->fetch($socid);
+	$result = $object->fetch($id,$ref);
 	if (! $result)
 	{
 		$langs->load("errors");
@@ -77,15 +77,17 @@ if ($socid > 0)
 
 		exit;
 	}
-
-	$head = societe_prepare_head($object);
-
-	dol_fiche_head($head, 'info', $langs->trans("ThirdParty"), 0, 'company');
-
-	dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
 	
-	$object->info($socid);
+	$head=product_prepare_head($object);
+    $titre=$langs->trans("CardProduct".$object->type);
+    $picto=($object->type== Product::TYPE_SERVICE?'service':'product');
+    dol_fiche_head($head, 'info', $titre, 0, $picto);
 
+	$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
+
+	dol_banner_tab($object, 'ref', '', ($user->societe_id?0:1), 'ref');
+	
+	$object->info($object->id);
 
 	print '<div class="fichecenter">';
 
