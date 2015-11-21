@@ -508,7 +508,10 @@ class MouvementStock
 				break;
 		}
 		
-		$origin->fetch($fk_origin);
-		return $origin->getNomUrl(1);
+		if ($origin->fetch($fk_origin) > 0) {
+			return $origin->getNomUrl(1);
+		}
+
+		return '';
 	}
 }
