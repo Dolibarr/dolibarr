@@ -53,12 +53,10 @@ class CommandeFournisseur extends CommonOrder
     var $id;
 
 	/**
-	 * TODO: Remove
-	 * @deprecated
-	 * @see product_ref
+	 * Supplier invoice reference
+	 * @var string
 	 */
     var $ref;
-    var $product_ref;
     var $ref_supplier;
     var $brouillon;
     var $statut;			// 0=Draft -> 1=Validated -> 2=Approved -> 3=Process runing -> 4=Received partially -> 5=Received totally -> (reopen) 4=Received partially
@@ -586,7 +584,7 @@ class CommandeFournisseur extends CommonOrder
      */
     function getNomUrl($withpicto=0,$option='')
     {
-        global $langs;
+        global $langs, $conf;
 
         $result='';
         $label = '<u>' . $langs->trans("ShowOrder") . '</u>';
@@ -1254,7 +1252,9 @@ class CommandeFournisseur extends CommonOrder
      */
 	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0.0, $txlocaltax2=0.0, $fk_product=0, $fk_prod_fourn_price=0, $fourn_ref='', $remise_percent=0.0, $price_base_type='HT', $pu_ttc=0.0, $type=0, $info_bits=0, $notrigger=false, $date_start=null, $date_end=null, $array_options=0, $fk_unit=null)
     {
-        global $langs,$mysoc;
+        global $langs,$mysoc, $conf;
+
+        $error = 0;
 
         dol_syslog(get_class($this)."::addline $desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2. $fk_product, $fk_prod_fourn_price, $fourn_ref, $remise_percent, $price_base_type, $pu_ttc, $type, $fk_unit");
         include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';

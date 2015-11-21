@@ -871,6 +871,7 @@ class FormMail extends Form
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
+			$num=$this->db->num_rows($resql);
 			$this->lines_model=array();
 			while ($obj = $this->db->fetch_object($resql))
 			{
