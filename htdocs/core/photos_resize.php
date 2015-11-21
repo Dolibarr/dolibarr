@@ -139,7 +139,7 @@ if ($action == 'confirm_resize' && (isset($_POST["file"]) != "") && (isset($_POS
 	}
 	else
 	{
-		setEventMessage($result, 'errors');
+		setEventMessages($result, null, 'errors');
 		$_GET['file']=$_POST["file"];
 		$action='';
 	}
@@ -168,7 +168,7 @@ if ($action == 'confirm_crop')
 	}
 	else
 	{
-		setEventMessage($result, 'errors');
+		setEventMessages($result, null, 'errors');
 		$_GET['file']=$_POST["file"];
 		$action='';
 	}

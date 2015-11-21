@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005-2010  Laurent Destailleur  	<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2015	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2013       Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2013-2015  Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2015       Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -71,13 +71,13 @@ if ($action == 'specimen')
         }
         else
         {
-            setEventMessage($obj->error,'errors');
+            setEventMessages($obj->error, $obj->errors, 'errors');
             dol_syslog($obj->error, LOG_ERR);
         }
     }
     else
     {
-        setEventMessage($langs->trans("ErrorModuleNotFound"),'errors');
+        setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
         dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
     }
 }
@@ -126,11 +126,11 @@ if ($action == 'set_DONATION_ACCOUNTINGACCOUNT')
 
  	if (! $error)
     {
-        setEventMessage($langs->trans("SetupSaved"));
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
     else
     {
-        setEventMessage($langs->trans("Error"),'errors');
+        setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
 
@@ -144,11 +144,11 @@ if ($action == 'set_DONATION_MESSAGE')
 
  	if (! $error)
     {
-        setEventMessage($langs->trans("SetupSaved"));
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
     else
     {
-        setEventMessage($langs->trans("Error"),'errors');
+        setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
 
@@ -160,9 +160,9 @@ else if ($action == 'setart200') {
 		$error ++;
 
 	if (! $error) {
-		setEventMessage($langs->trans("SetupSaved"), 'mesgs');
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
-		setEventMessage($langs->trans("Error"), 'mesgs');
+		setEventMessages($langs->trans("Error"), null, 'mesgs');
 	}
 }
 else if ($action == 'setart238') {
@@ -172,9 +172,9 @@ else if ($action == 'setart238') {
 		$error ++;
 
 	if (! $error) {
-		setEventMessage($langs->trans("SetupSaved"), 'mesgs');
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
-		setEventMessage($langs->trans("Error"), 'mesgs');
+		setEventMessages($langs->trans("Error"), null, 'mesgs');
 	}
 }
 else if ($action == 'setart885') {
@@ -184,9 +184,9 @@ else if ($action == 'setart885') {
 		$error ++;
 
 	if (! $error) {
-		setEventMessage($langs->trans("SetupSaved"), 'mesgs');
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
-		setEventMessage($langs->trans("Error"), 'mesgs');
+		setEventMessages($langs->trans("Error"), null, 'mesgs');
 	}
 }
 
