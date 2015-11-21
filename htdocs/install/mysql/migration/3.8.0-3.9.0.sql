@@ -79,7 +79,8 @@ ALTER TABLE llx_paiement ADD COLUMN ref varchar(30) NOT NULL DEFAULT '' AFTER ro
 
 ALTER TABLE llx_socpeople ADD COLUMN photo varchar(255) AFTER skype;
 
-ALTER TABLE llx_user_param MODIFY COLUMN param varchar(255) NOT NULL DEFAULT '';
+UPDATE llx_user_param SET param='ToDelete' WHERE param IS NULL;
+ALTER TABLE llx_user_param MODIFY COLUMN param varchar(255) NOT NULL;
 ALTER TABLE llx_user_param MODIFY COLUMN value text NOT NULL;
 
 ALTER TABLE llx_expedition ADD COLUMN import_key varchar(14);
@@ -323,7 +324,8 @@ ALTER TABLE llx_categorie_project ADD CONSTRAINT fk_categorie_project_fk_project
 
 
 ALTER TABLE llx_c_tva ADD COLUMN code varchar(10) DEFAULT '' after fk_pays;
-DROP INDEX uk_c_tva_id ON llx_c_tva;
+-- VMYSQL4.0 DROP INDEX uk_c_tva_id ON llx_c_tva;
+-- VPGSQL8.0 DROP INDEX uk_c_tva_id;
 ALTER TABLE llx_c_tva ADD UNIQUE INDEX uk_c_tva_id (fk_pays, code, taux, recuperableonly);
 
 -- Regions Bolivia (id country=52)
