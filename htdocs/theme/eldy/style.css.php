@@ -1157,7 +1157,7 @@ div.vmenu, td.vmenu {
 }
 
 .menu_contenu { 
-	padding-top: 3px; 
+	padding-top: 5px; 
 	padding-bottom: 2px;
 }
 #menu_contenu_logo { padding-right: 4px; }

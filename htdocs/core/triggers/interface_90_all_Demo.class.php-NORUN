@@ -101,6 +101,7 @@ class InterfaceDemo extends DolibarrTriggers
 		    case 'PRODUCT_DELETE':
 		    case 'PRODUCT_PRICE_MODIFY':
 		    case 'PRODUCT_SET_MULTILANGS':
+		    case 'PRODUCT_DEL_MULTILANGS':
 
 			//Stock mouvement
 		    case 'STOCK_MOVEMENT':

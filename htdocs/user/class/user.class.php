@@ -52,6 +52,12 @@ class User extends CommonObject
 	var $skype;
 	var $job;
 	var $signature;
+	var $address;
+    var $zip;
+    var $town;
+    var $state_id;
+    var $state_code;
+    var $state;
 	var $office_phone;
 	var $office_fax;
 	var $user_mobile;
@@ -156,13 +162,14 @@ class User extends CommonObject
 	 */
 	function fetch($id='', $login='',$sid='',$loadpersonalconf=1, $entity=-1)
 	{
-		global $conf, $user;
+		global $langs, $conf, $user;
 
 		// Clean parameters
 		$login=trim($login);
 
 		// Get user
 		$sql = "SELECT u.rowid, u.lastname, u.firstname, u.employee, u.gender, u.email, u.job, u.skype, u.signature, u.office_phone, u.office_fax, u.user_mobile,";
+		$sql.= " u.address, u.zip, u.town, u.fk_state as state_id, u.fk_country as country_id,";
 		$sql.= " u.admin, u.login, u.note,";
 		$sql.= " u.pass, u.pass_crypted, u.pass_temp, u.api_key,";
 		$sql.= " u.fk_soc, u.fk_socpeople, u.fk_member, u.fk_user, u.ldap_sid,";
@@ -180,8 +187,12 @@ class User extends CommonObject
 		$sql.= " u.salaryextra,";
 		$sql.= " u.weeklyhours,";
 		$sql.= " u.color,";
-		$sql.= " u.ref_int, u.ref_ext";
+		$sql.= " u.ref_int, u.ref_ext,";
+        $sql.= " c.code as country_code, c.label as country,";
+        $sql.= " d.code_departement as state_code, d.nom as state";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON u.fk_country = c.rowid";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as d ON u.fk_state = d.rowid";
 
 		if ($entity < 0)
 		{
@@ -238,6 +249,19 @@ class User extends CommonObject
 				$this->pass			= $obj->pass;
 				$this->pass_temp	= $obj->pass_temp;
                 $this->api_key		= $obj->api_key;
+
+                $this->address 		= $obj->address;
+                $this->zip 			= $obj->zip;
+                $this->town 		= $obj->town;
+
+                $this->country_id   = $obj->country_id;
+                $this->country_code = $obj->country_id?$obj->country_code:'';
+                $this->country 		= $obj->country_id?($langs->trans('Country'.$obj->country_code)!='Country'.$obj->country_code?$langs->transnoentities('Country'.$obj->country_code):$obj->country):'';
+
+                $this->state_id     = $obj->state_id;
+                $this->state_code   = $obj->state_code;
+                $this->state        = ($obj->state!='-'?$obj->state:'');
+
 				$this->office_phone	= $obj->office_phone;
 				$this->office_fax   = $obj->office_fax;
 				$this->user_mobile  = $obj->user_mobile;
@@ -960,7 +984,7 @@ class User extends CommonObject
 
 		$error=0;
 
-		// Positionne parametres
+		// Define parameters
 		$this->admin		= 0;
 		$this->lastname		= $contact->lastname;
 		$this->firstname	= $contact->firstname;
@@ -1165,6 +1189,11 @@ class User extends CommonObject
 		$this->gender       = trim($this->gender);
 		$this->pass         = trim($this->pass);
         $this->api_key      = trim($this->api_key);
+		$this->address		= $this->address?trim($this->address):trim($this->address);
+        $this->zip			= $this->zip?trim($this->zip):trim($this->zip);
+        $this->town			= $this->town?trim($this->town):trim($this->town);
+        $this->state_id		= trim($this->state_id);
+        $this->country_id	= ($this->country_id > 0)?$this->country_id:0;
 		$this->office_phone = trim($this->office_phone);
 		$this->office_fax   = trim($this->office_fax);
 		$this->user_mobile  = trim($this->user_mobile);

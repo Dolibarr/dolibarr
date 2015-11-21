@@ -112,7 +112,7 @@ class Commande extends CommonOrder
     var $nbtodolate;
 
     /**
-     * ERR Not engouch stock
+     * ERR Not enough stock
      */
     const STOCK_NOT_ENOUGH_FOR_ORDER = -3;
 
@@ -3315,7 +3315,7 @@ class Commande extends CommonOrder
 
 
 /**
- *  Class to mange order lines
+ *  Class to manage order lines
  */
 class OrderLine extends CommonOrderLine
 {

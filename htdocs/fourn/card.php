@@ -366,8 +366,10 @@ if ($object->id > 0)
 		$sql2.= ' AND s.rowid = '.$object->id;
 		// Show orders with status validated, shipping started and delivered (well any order we can bill)
 		$sql2.= " AND c.fk_statut IN (5)";
+		$sql2.= " AND c.billed = 0";
 		// Find order that are not already invoiced
-		$sql2 .= " AND c.rowid NOT IN (SELECT fk_source FROM " . MAIN_DB_PREFIX . "element_element WHERE targettype='invoice_supplier')";
+		// just need to check received status because we have the billed status now
+		//$sql2 .= " AND c.rowid NOT IN (SELECT fk_source FROM " . MAIN_DB_PREFIX . "element_element WHERE targettype='invoice_supplier')";
 		$resql2=$db->query($sql2);
 		if ($resql2) {
 			$orders2invoice = $db->num_rows($resql2);

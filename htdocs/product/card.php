@@ -1305,7 +1305,7 @@ else
             $picto=($object->type== Product::TYPE_SERVICE?'service':'product');
             dol_fiche_head($head, 'card', $titre, 0, $picto);
 
-            dol_banner_tab($object, 'ref', '', ($user->societe_id?0:1), 'ref');
+            dol_banner_tab($object, 'id', '', ($user->societe_id?0:1), 'ref');
             
             
             print '<div class="fichecenter">';

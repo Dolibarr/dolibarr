@@ -726,6 +726,7 @@ class Product extends CommonObject
 	        $sql.= ", fk_unit= " . (!$this->fk_unit ? 'NULL' : $this->fk_unit);
 	        $sql.= ", price_autogen = " . (!$this->price_autogen ? 0 : 1);
 			$sql.= ", fk_price_expression = ".($this->fk_price_expression != 0 ? $this->fk_price_expression : 'NULL');
+			$sql.= ", fk_user_modif = ".($user->id > 0 ? $user->id : 'NULL');
 			$sql.= " WHERE rowid = " . $id;
 
 			dol_syslog(get_class($this)."::update", LOG_DEBUG);
@@ -1067,9 +1068,11 @@ class Product extends CommonObject
 	 *	Delete a language for this product
 	 *
 	 *  @param		string	$langtodelete		Language code to delete
+	 *	@param		User	$user       Object user making delete
+	 *
 	 *	@return		int							<0 if KO, >0 if OK
 	 */
-	function delMultiLangs($langtodelete)
+	function delMultiLangs($langtodelete, $user)
 	{
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_lang";
 		$sql.= " WHERE fk_product=".$this->id." AND lang='".$this->db->escape($langtodelete)."'";
@@ -1078,6 +1081,14 @@ class Product extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result)
 		{
+			// Call trigger
+			$result = $this->call_trigger('PRODUCT_DEL_MULTILANGS',$user);
+			if ($result < 0) {
+				$this->error = $this->db->lasterror();
+				dol_syslog(get_class($this).'::delMultiLangs error='.$this->error, LOG_ERR);
+				return -1;
+			}
+			// End call triggers
 			return 1;
 		}
 		else
@@ -4113,4 +4124,52 @@ class Product extends CommonObject
 			return $user->rights->service;
 		}
 	}
+	
+    /**
+     *  Load information for tab info
+     *
+     *  @param  int		$id     Id of thirdparty to load
+     *  @return	void
+     */
+    function info($id)
+    {
+        $sql = "SELECT p.rowid, p.ref, p.datec as date_creation, p.tms as date_modification,";
+        $sql.= " p.fk_user_author, p.fk_user_modif";
+        $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as p";
+        $sql.= " WHERE p.rowid = ".$id;
+
+        $result=$this->db->query($sql);
+        if ($result)
+        {
+            if ($this->db->num_rows($result))
+            {
+                $obj = $this->db->fetch_object($result);
+
+                $this->id = $obj->rowid;
+
+                if ($obj->fk_user_author) {
+                    $cuser = new User($this->db);
+                    $cuser->fetch($obj->fk_user_author);
+                    $this->user_creation     = $cuser;
+                }
+
+                if ($obj->fk_user_modif) {
+                    $muser = new User($this->db);
+                    $muser->fetch($obj->fk_user_modif);
+                    $this->user_modification = $muser;
+                }
+
+                $this->ref			     = $obj->ref;
+                $this->date_creation     = $this->db->jdate($obj->date_creation);
+                $this->date_modification = $this->db->jdate($obj->date_modification);
+            }
+
+            $this->db->free($result);
+
+        }
+        else
+		{
+            dol_print_error($this->db);
+        }
+    }
 }

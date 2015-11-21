@@ -235,6 +235,17 @@ if (empty($reshook))
 	}
 
 	/*
+	 * Classify supplier order as billed
+	 */
+	if ($action == 'classifybilled' && $user->rights->fournisseur->commande->creer)
+	{
+		$ret=$object->classifyBilled();
+		if ($ret < 0) {
+			setEventMessage($object->error, 'errors');
+		}
+	}
+
+	/*
 	 *	Add a line into product
 	 */
 	if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
@@ -2725,18 +2736,19 @@ elseif (! empty($object->id))
 				// Create bill
 				if (! empty($conf->facture->enabled))
 				{
-					if (! empty($conf->fournisseur->enabled) && ($object->statut >= 2 && $object->statut != 9))  // 2 means accepted
+					if (! empty($conf->fournisseur->enabled) && ($object->statut >= 2 && $object->billed != 1))  // 2 means accepted
 					{
 						if ($user->rights->fournisseur->facture->creer)
 						{
 							print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a>';
 						}
-
-						//if ($user->rights->fournisseur->commande->creer && $object->statut > 2)
-						//{
-						//	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans("ClassifyBilled").'</a>';
-						//}
+					
+						if ($user->rights->fournisseur->commande->creer && $object->statut >= 2 && !empty($object->linkedObjectsIds['invoice_supplier']))
+						{
+							print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans("ClassifyBilled").'</a>';
+						}
 					}
+
 				}
 
 				// Create a remote order using WebService only if module is activated

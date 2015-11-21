@@ -9,8 +9,10 @@
 -- To drop a column:        ALTER TABLE llx_table DROP COLUMN oldname;
 -- To change type of field: ALTER TABLE llx_table MODIFY COLUMN name varchar(60);
 -- To drop a foreign key:   ALTER TABLE llx_table DROP FOREIGN KEY fk_name;
--- To restrict request to Mysql version x.y use -- VMYSQLx.y
--- To restrict request to Pgsql version x.y use -- VPGSQLx.y
+-- To drop an index:        -- VMYSQL4.0 DROP INDEX nomindex on llx_table
+-- To drop an index:        -- VPGSQL8.0 DROP INDEX nomindex
+-- To restrict request to Mysql version x.y minimum use -- VMYSQLx.y
+-- To restrict request to Pgsql version x.y minimum use -- VPGSQLx.y
 -- To make pk to be auto increment (mysql):    VMYSQL4.3 ALTER TABLE llx_c_shipment_mode CHANGE COLUMN rowid rowid INTEGER NOT NULL AUTO_INCREMENT;
 -- To make pk to be auto increment (postgres): VPGSQL8.2 NOT POSSIBLE. MUST DELETE/CREATE TABLE
 -- To set a field as NULL:                     VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name DROP NOT NULL;
@@ -77,7 +79,8 @@ ALTER TABLE llx_paiement ADD COLUMN ref varchar(30) NOT NULL DEFAULT '' AFTER ro
 
 ALTER TABLE llx_socpeople ADD COLUMN photo varchar(255) AFTER skype;
 
-ALTER TABLE llx_user_param MODIFY COLUMN param varchar(255) NOT NULL DEFAULT '';
+UPDATE llx_user_param SET param='ToDelete' WHERE param IS NULL;
+ALTER TABLE llx_user_param MODIFY COLUMN param varchar(255) NOT NULL;
 ALTER TABLE llx_user_param MODIFY COLUMN value text NOT NULL;
 
 ALTER TABLE llx_expedition ADD COLUMN import_key varchar(14);
@@ -90,6 +93,9 @@ ALTER TABLE llx_societe_rib MODIFY COLUMN code_banque varchar(128);
 
 ALTER TABLE llx_contrat ADD COLUMN ref_customer varchar(30);
 ALTER TABLE llx_commande ADD COLUMN fk_warehouse integer DEFAULT NULL AFTER fk_shipping_method;
+
+ALTER TABLE llx_commande_fournisseur ADD COLUMN billed smallint DEFAULT 0 AFTER fk_statut;
+ALTER TABLE llx_commande_fournisseur ADD INDEX billed (billed);
 
 ALTER TABLE llx_ecm_directories MODIFY COLUMN fullpath varchar(750);
 ALTER TABLE llx_ecm_directories DROP INDEX idx_ecm_directories;
@@ -318,7 +324,8 @@ ALTER TABLE llx_categorie_project ADD CONSTRAINT fk_categorie_project_fk_project
 
 
 ALTER TABLE llx_c_tva ADD COLUMN code varchar(10) DEFAULT '' after fk_pays;
-DROP INDEX uk_c_tva_id ON llx_c_tva;
+-- VMYSQL4.0 DROP INDEX uk_c_tva_id ON llx_c_tva;
+-- VPGSQL8.0 DROP INDEX uk_c_tva_id;
 ALTER TABLE llx_c_tva ADD UNIQUE INDEX uk_c_tva_id (fk_pays, code, taux, recuperableonly);
 
 -- Regions Bolivia (id country=52)
