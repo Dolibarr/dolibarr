@@ -636,10 +636,11 @@ class ExtraFields
 	 * @param  string  $moreparam      To add more parametes on html input tag
 	 * @param  string  $keyprefix      Prefix string to add into name and id of field (can be used to avoid duplicate names)
 	 * @param  string  $keysuffix      Suffix string to add into name and id of field (can be used to avoid duplicate names)
-	 * @param  int     $showsize       Value for size attribute
+	 * @param  int     $showsize       Value for size attributed
+	 * @param  int     $objectid       Current object id
 	 * @return string
 	 */
-	function showInputField($key,$value,$moreparam='',$keyprefix='',$keysuffix='',$showsize=0)
+	function showInputField($key,$value,$moreparam='',$keyprefix='',$keysuffix='',$showsize=0, $objectid=0)
 	{
 		global $conf,$langs;
 
@@ -805,6 +806,17 @@ class ExtraFields
 				$sql.= ' FROM '.MAIN_DB_PREFIX .$InfoFieldList[0];
 				if (!empty($InfoFieldList[4]))
 				{
+					// can use SELECT request
+					if (strpos($InfoFieldList[4], '$SEL$')!==false) {
+						$InfoFieldList[4]=str_replace('$SEL$','SELECT',$InfoFieldList[4]);
+					}
+					
+					// current object id can be use into filter
+					if (strpos($InfoFieldList[4], '$ID$')!==false && !empty($objectid)) {
+						$InfoFieldList[4]=str_replace('$ID$',$objectid,$InfoFieldList[4]);
+					} else {
+						$InfoFieldList[4]=str_replace('$ID$','0',$InfoFieldList[4]);
+					}
 					//We have to join on extrafield table
 					if (strpos($InfoFieldList[4], 'extra')!==false)
 					{
@@ -820,7 +832,11 @@ class ExtraFields
 				{
 					$sqlwhere.= ' WHERE 1';
 				}
-				if (in_array($InfoFieldList[0],array('tablewithentity'))) $sqlwhere.= ' AND entity = '.$conf->entity;	// Some tables may have field, some other not. For the moment we disable it.
+				// Some tables may have field, some other not. For the moment we disable it.
+				if (in_array($InfoFieldList[0],array('tablewithentity'))) 
+				{
+					$sqlwhere.= ' AND entity = '.$conf->entity;	
+				}
 				$sql.=$sqlwhere;
 				//print $sql;
 
@@ -978,6 +994,19 @@ class ExtraFields
 				$sql = 'SELECT ' . $keyList;
 				$sql .= ' FROM ' . MAIN_DB_PREFIX . $InfoFieldList[0];
 				if (! empty($InfoFieldList[4])) {
+					
+					// can use SELECT request
+					if (strpos($InfoFieldList[4], '$SEL$')!==false) {
+						$InfoFieldList[4]=str_replace('$SEL$','SELECT',$InfoFieldList[4]);
+					}
+					
+					// current object id can be use into filter
+					if (strpos($InfoFieldList[4], '$ID$')!==false && !empty($objectid)) {
+						$InfoFieldList[4]=str_replace('$ID$',$objectid,$InfoFieldList[4]);
+					} else {
+						$InfoFieldList[4]=str_replace('$ID$','0',$InfoFieldList[4]);
+					}
+					
 					// We have to join on extrafield table
 					if (strpos($InfoFieldList[4], 'extra') !== false) {
 						$sql .= ' as main, ' . MAIN_DB_PREFIX . $InfoFieldList[0] . '_extrafields as extra';
@@ -988,12 +1017,14 @@ class ExtraFields
 				} else {
 					$sqlwhere .= ' WHERE 1';
 				}
-				if (in_array($InfoFieldList[0], array (
-						'tablewithentity'
-				)))
-					$sqlwhere .= ' AND entity = ' . $conf->entity; // Some tables may have field, some other not. For the moment we disable it.
-						                                                                                                      // $sql.=preg_replace('/^ AND /','',$sqlwhere);
-						                                                                                                      // print $sql;
+				// Some tables may have field, some other not. For the moment we disable it.
+				if (in_array($InfoFieldList[0], array ('tablewithentity'))) 
+				{
+					$sqlwhere .= ' AND entity = ' . $conf->entity;
+				}
+				// $sql.=preg_replace('/^ AND /','',$sqlwhere);
+				// print $sql;
+				
 				$sql .= $sqlwhere;
 				dol_syslog(get_class($this) . '::showInputField type=chkbxlst',LOG_DEBUG);
 				$resql = $this->db->query($sql);
