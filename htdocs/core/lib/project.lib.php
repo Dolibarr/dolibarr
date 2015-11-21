@@ -895,9 +895,10 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks=
 	$title=$langs->trans("Projects");
 	if (strcmp($statut, '') && $statut >= 0) $title=$langs->trans("Projects").' '.$langs->trans($projectstatic->statuts_long[$statut]);
 
+	$arrayidtypeofcontact=array();
+	
 	print '<table class="noborder" width="100%">';
 
-	$sql = "SELECT p.rowid as projectid, p.ref, p.title, p.fk_user_creat, p.public, p.fk_statut as status, p.fk_opp_status as opp_status, p.opp_amount, COUNT(DISTINCT t.rowid) as nb";	// We use DISTINCT here because line can be doubled if task has 2 links to same user
 	$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 	if ($mytasks)
 	{
@@ -916,9 +917,9 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks=
 	{
 		$sql.= " AND p.rowid = t.fk_projet";
 		$sql.= " AND ec.element_id = t.rowid";
-		$sql.= " AND ctc.rowid = ec.fk_c_type_contact";
-		$sql.= " AND ctc.element = 'project_task'";
 		$sql.= " AND ec.fk_socpeople = ".$user->id;
+		$sql.= " AND ec.fk_c_type_contact = ctc.rowid";   // Replace the 2 lines with ec.fk_c_type_contact in $arrayidtypeofcontact
+		$sql.= " AND ctc.element = 'project_task'";
 	}
 	if ($statut >= 0)
 	{
@@ -938,14 +939,40 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks=
 			$sql.= " AND (p.datee IS NULL OR p.datee >= ".$db->idate(dol_get_first_day($project_year_filter,1,false)).")";
 		}
 	}
-	$sql.= " GROUP BY p.rowid, p.ref, p.title, p.fk_user_creat, p.public, p.fk_statut, p.fk_opp_status, p.opp_amount";
-	$sql.= " ORDER BY p.title, p.ref";
+	
+	// Get id of project we must show tasks
+	$arrayidofprojects=array();
+	$sql1 = "SELECT p.rowid as projectid";
+	$sql1.= $sql; 
+	$resql = $db->query($sql1);
+	if ($resql)
+	{
+	    $i=0;
+		$num = $db->num_rows($resql);
+		while ($i < $num)
+		{
+			$objp = $db->fetch_object($resql);
+            $arrayidofprojects[$objp->projectid]=$objp->projectid;
+			$i++;
+		}
+	}
+	else dol_print_error($db);
+	if (empty($arrayidofprojects)) $arrayidofprojects[0]=-1;
+	
+	// Get list of project with calculation on tasks
+	$sql2 = "SELECT p.rowid as projectid, p.ref, p.title, p.fk_user_creat, p.public, p.fk_statut as status, p.fk_opp_status as opp_status, p.opp_amount,";
+	$sql2.= " COUNT(t.rowid) as nb, SUM(t.planned_workload) as planned_workload, SUM(t.planned_workload * t.progress / 100) as declared_progess_workload";
+	$sql2.= " FROM ".MAIN_DB_PREFIX."projet as p";
+	$sql2.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t ON p.rowid = t.fk_projet";
+	$sql2.= " WHERE p.rowid IN (".join(',',$arrayidofprojects).")";
+	$sql2.= " GROUP BY p.rowid, p.ref, p.title, p.fk_user_creat, p.public, p.fk_statut, p.fk_opp_status, p.opp_amount";
+	$sql2.= " ORDER BY p.title, p.ref";
 
 	$var=true;
-	$resql = $db->query($sql);
-	if ( $resql )
+	$resql = $db->query($sql2);
+	if ($resql)
 	{
-		$total_task = 0;
+	   $total_task = 0;
 		$total_opp_amount = 0;
 		$ponderated_opp_amount = 0;
 
@@ -959,7 +986,12 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks=
     		print_liste_field_titre($langs->trans("OpportunityAmount"),"","","","",'align="right"',$sortfield,$sortorder);
     		print_liste_field_titre($langs->trans("OpportunityStatus"),"","","","",'align="right"',$sortfield,$sortorder);
     	}
-    	if (empty($conf->global->PROJECT_HIDE_TASKS)) print_liste_field_titre($langs->trans("Tasks"),"","","","",'align="right"',$sortfield,$sortorder);
+    	if (empty($conf->global->PROJECT_HIDE_TASKS)) 
+    	{
+            print_liste_field_titre($langs->trans("Tasks"),"","","","",'align="right"',$sortfield,$sortorder);
+            print_liste_field_titre($langs->trans("PlannedWorkload"),"","","","",'align="right"',$sortfield,$sortorder);
+            print_liste_field_titre($langs->trans("ProgressDeclared"),"","","","",'align="right"',$sortfield,$sortorder);
+    	}
     	print_liste_field_titre($langs->trans("Status"),"","","","",'align="right"',$sortfield,$sortorder);
     	print "</tr>\n";
 		
@@ -993,7 +1025,22 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks=
 					print '</td>';
 				}
 				$projectstatic->statut = $objp->status;
-				if (empty($conf->global->PROJECT_HIDE_TASKS)) print '<td align="right">'.$objp->nb.'</td>';
+				if (empty($conf->global->PROJECT_HIDE_TASKS)) 
+				{
+				    print '<td align="right">'.$objp->nb.'</td>';
+    	       
+    				$plannedworkload=$objp->planned_workload;
+    				$total_plannedworkload+=$plannedworkload;
+    				print '<td align="right">'.($plannedworkload?convertSecondToTime($plannedworkload):'').'</td>';
+    
+    				$declaredprogressworkload=$objp->declared_progess_workload;
+    				$total_declaredprogressworkload+=$declaredprogressworkload;
+    				print '<td align="right">';
+    				//print $objp->planned_workload.'-'.$objp->declared_progess_workload."<br>";
+    				print ($plannedworkload?round(100*$declaredprogressworkload/$plannedworkload,0).'%':'');
+    				print '</td>';
+				}
+				
 				print '<td align="right">'.$projectstatic->getLibStatut(3).'</td>';
 				print "</tr>\n";
 
@@ -1012,7 +1059,12 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks=
 			print '<td class="liste_total" align="right">'.price($total_opp_amount, 0, '', 1, -1, -1, $conf->currency).'</td>';
 			print '<td class="liste_total" align="right">'.$form->textwithpicto(price($ponderated_opp_amount, 0, '', 1, -1, -1, $conf->currency), $langs->trans("OpportunityPonderatedAmount"), 1).'</td>';
 		}
-		if (empty($conf->global->PROJECT_HIDE_TASKS)) print '<td class="liste_total" align="right">'.$total_task.'</td>';
+		if (empty($conf->global->PROJECT_HIDE_TASKS)) 
+		{
+            print '<td class="liste_total" align="right">'.$total_task.'</td>';
+            print '<td class="liste_total" align="right">'.($total_plannedworkload?convertSecondToTime($total_plannedworkload):'').'</td>';
+            print '<td class="liste_total" align="right">'.($total_plannedworkload?round(100*$total_declaredprogressworkload/$total_plannedworkload,0).'%':'').'</td>';
+		}
 		print '<td class="liste_total"></td>';
         print '</tr>';
         

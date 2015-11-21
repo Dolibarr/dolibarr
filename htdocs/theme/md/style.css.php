@@ -707,9 +707,10 @@ img.photoref {
     box-shadow: 3px 3px 4px #DDD;
 }
 .underrefbanner {
+}
+.underbanner {
 	border-bottom: 2px solid #888;
 }
-
 
 
 /* ============================================================================== */

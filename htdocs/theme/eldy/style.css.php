@@ -2459,7 +2459,6 @@ input.liste_titre {
     color: #332266;
     font-weight: normal;
     white-space: nowrap;
-    padding: 4px;
 }
 form.liste_total div {
     border-top: 1px solid #DDDDDD;
