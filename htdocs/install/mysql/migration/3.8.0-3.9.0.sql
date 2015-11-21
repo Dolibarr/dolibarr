@@ -448,5 +448,4 @@ INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, nc
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('112', 5209, '', 0, '', 'General Federico Román', 1);
 
 
-INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUES ('ORDER_SET_PAID','Customer order Paid','Executed when a customer order is set paid','commande',4);
-INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUES ('ORDER_SET_UNPAID','Customer order Not Paid','Executed when a customer order is set not paid','commande',4);
+INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUES ('ORDER_PAID','Customer order Paid','Executed when changing a customer order paid status','commande',4);

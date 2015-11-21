@@ -560,7 +560,7 @@ if (empty($reshook))
 
     // mark as paid
     else if ($action == 'setpaid' && $user->rights->commande->creer) {
-        $result = $object->setPaid();
+        $result = $object->setPaid(1);
         if ($result <0) {
             setEventMessages($object->error, $object->errors, 'errors');
             $action = '';
@@ -569,7 +569,7 @@ if (empty($reshook))
 
     // mark as unpaid
     else if ($action == 'setunpaid' && $user->rights->commande->creer) {
-        $result = $object->setUnPaid();
+        $result = $object->setPaid(0);
         if ($result <0) {
             setEventMessages($object->error, $object->errors, 'errors');
             $action = '';

@@ -2375,22 +2375,23 @@ class Commande extends CommonOrder
     /**
      *  Mark the order as paid
      *
-     *  @return     int     <0 if ko, >0 if ok
+     *  @param      int     $paid       1 paid; 0 not paid
+     *  @return     int                 <0 if ko, >0 if ok
      */
-    function setPaid()
+    function setPaid($paid)
     {
         global $conf, $user, $langs;
 
         $this->db->begin();
 
-        $sql = 'UPDATE '.MAIN_DB_PREFIX.'commande SET paye = 1';
+        $sql = 'UPDATE '.MAIN_DB_PREFIX.'commande SET paye = '.$paid;
         $sql .= ' WHERE rowid = '.$this->id;
 
         dol_syslog(get_class($this)."::setPaid", LOG_DEBUG);
         if ($this->db->query($sql) )
         {
             // Call triggers
-            $result=$this->call_trigger('ORDER_SET_PAID',$user);
+            $result=$this->call_trigger('ORDER_PAID',$user);
             if ($result < 0) {
                 $error++;
                 $this->errors=$interface->errors;
@@ -2402,54 +2403,12 @@ class Commande extends CommonOrder
         }
         if (! $error)
         {
-            $this->paye = 1;
+            $this->paye = $paid;
 
             $this->db->commit();
             return 1;
         } else {
             dol_syslog(get_class($this)."::setPaid Error ".$this->error, LOG_ERR);
-            $this->db->rollback();
-            return -1;
-        }
-    }
-
-
-    /**
-     *  Mark the order as unpaid
-     *
-     *  @return     int     <0 if ko, >0 if ok
-     */
-    function setUnPaid()
-    {
-        global $conf, $user, $langs;
-
-        $this->db->begin();
-
-        $sql = 'UPDATE '.MAIN_DB_PREFIX.'commande SET paye = 0';
-        $sql .= ' WHERE rowid = '.$this->id;
-
-        dol_syslog(get_class($this)."::setUnPaid", LOG_DEBUG);
-        if ($this->db->query($sql) )
-        {
-            // Call triggers
-            $result=$this->call_trigger('ORDER_SET_UNPAID',$user);
-            if ($result < 0) {
-                $error++;
-                $this->errors=$interface->errors;
-            }
-            // End call triggers
-        } else {
-            $error++;
-            $this->errors[]=$this->db->error();
-        }
-        if (! $error)
-        {
-            $this->paye = 0;
-
-            $this->db->commit();
-            return 1;
-        } else {
-            dol_syslog(get_class($this)."::setUnPaid Error", LOG_ERR);
             $this->db->rollback();
             return -1;
         }
