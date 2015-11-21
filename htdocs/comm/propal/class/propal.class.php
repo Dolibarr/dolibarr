@@ -1134,7 +1134,7 @@ class Propal extends CommonObject
             }
 
             // Call trigger
-            $result=$this->call_trigger('PROPAL_CLONE',$user);
+            $result=$clonedObj->call_trigger('PROPAL_CLONE',$user);
             if ($result < 0) { $error++; }
             // End call triggers
         }

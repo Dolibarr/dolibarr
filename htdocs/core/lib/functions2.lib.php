@@ -817,7 +817,14 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     //print "masktri=".$masktri." maskcounter=".$maskcounter." maskraz=".$maskraz." maskoffset=".$maskoffset."<br>\n";
 
     // Define $sqlstring
-    $posnumstart=strrpos($maskwithnocode,$maskcounter);	// Pos of counter in final string (from 0 to ...)
+    if (function_exists('mb_strrpos')) 
+    	{
+    	$posnumstart=mb_strrpos($maskwithnocode,$maskcounter, 'UTF-8');
+	} 
+	else 
+	{
+    	$posnumstart=strrpos($maskwithnocode,$maskcounter);
+	}	// Pos of counter in final string (from 0 to ...)
     if ($posnumstart < 0) return 'ErrorBadMaskFailedToLocatePosOfSequence';
     $sqlstring='SUBSTRING('.$field.', '.($posnumstart+1).', '.dol_strlen($maskcounter).')';
 
