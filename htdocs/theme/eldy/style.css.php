@@ -2456,7 +2456,7 @@ input.liste_titre {
 	background: #F0F0F0;
 }
 .noborder tr.liste_total td, tr.liste_total td, form.liste_total div {
-    color: #332266;
+    color: #552266;
     font-weight: normal;
     white-space: nowrap;
 }

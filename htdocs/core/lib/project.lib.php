@@ -878,16 +878,18 @@ function searchTaskInChild(&$inc, $parent, &$lines, &$taskrole)
  * @param   int		$mytasks            Limited to task i am contact to
  * @param	int		$statut				-1=No filter on statut, 0 or 1 = Filter on status
  * @param	array	$listofoppstatus	List of opportunity status
+ * @param   array   $hiddenfields       List of fields to not show
  * @return	void
  */
-function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks=0, $statut=-1, $listofoppstatus=array())
+function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks=0, $statut=-1, $listofoppstatus=array(),$hiddenfields=array())
 {
 	global $langs,$conf,$user,$bc;
 
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 	$projectstatic=new Project($db);
-
+    $thirdpartystatic=new Societe($db);
+    
 	$sortfield='';
 	$sortorder='';
 	$project_year_filter=0;
@@ -960,12 +962,13 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks=
 	if (empty($arrayidofprojects)) $arrayidofprojects[0]=-1;
 	
 	// Get list of project with calculation on tasks
-	$sql2 = "SELECT p.rowid as projectid, p.ref, p.title, p.fk_user_creat, p.public, p.fk_statut as status, p.fk_opp_status as opp_status, p.opp_amount,";
+	$sql2 = "SELECT p.rowid as projectid, p.ref, p.title, p.fk_soc, s.nom as socname, p.fk_user_creat, p.public, p.fk_statut as status, p.fk_opp_status as opp_status, p.opp_amount,";
 	$sql2.= " COUNT(t.rowid) as nb, SUM(t.planned_workload) as planned_workload, SUM(t.planned_workload * t.progress / 100) as declared_progess_workload";
 	$sql2.= " FROM ".MAIN_DB_PREFIX."projet as p";
+	$sql2.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = p.fk_soc";
 	$sql2.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t ON p.rowid = t.fk_projet";
 	$sql2.= " WHERE p.rowid IN (".join(',',$arrayidofprojects).")";
-	$sql2.= " GROUP BY p.rowid, p.ref, p.title, p.fk_user_creat, p.public, p.fk_statut, p.fk_opp_status, p.opp_amount";
+	$sql2.= " GROUP BY p.rowid, p.ref, p.title, p.fk_soc, p.fk_user_creat, p.public, p.fk_statut, p.fk_opp_status, p.opp_amount";
 	$sql2.= " ORDER BY p.title, p.ref";
 
 	$var=true;
@@ -981,6 +984,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks=
 
     	print '<tr class="liste_titre">';
     	print_liste_field_titre($title.' <span class="badge">'.$num.'</span>',$_SERVER["PHP_SELF"],"","","","",$sortfield,$sortorder);
+    	print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER["PHP_SELF"],"","","","",$sortfield,$sortorder);
     	if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
     	{
     		print_liste_field_titre($langs->trans("OpportunityAmount"),"","","","",'align="right"',$sortfield,$sortorder);
@@ -990,7 +994,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks=
     	{
             print_liste_field_titre($langs->trans("Tasks"),"","","","",'align="right"',$sortfield,$sortorder);
             print_liste_field_titre($langs->trans("PlannedWorkload"),"","","","",'align="right"',$sortfield,$sortorder);
-            print_liste_field_titre($langs->trans("ProgressDeclared"),"","","","",'align="right"',$sortfield,$sortorder);
+            if (! in_array('declaredprogress', $hiddenfields)) print_liste_field_titre($langs->trans("ProgressDeclared"),"","","","",'align="right"',$sortfield,$sortorder);
     	}
     	print_liste_field_titre($langs->trans("Status"),"","","","",'align="right"',$sortfield,$sortorder);
     	print "</tr>\n";
@@ -1014,6 +1018,15 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks=
 				print $projectstatic->getNomUrl(1);
 				print ' - '.dol_trunc($objp->title,24);
 				print '</td>';
+				print '<td>';
+				if ($objp->fk_soc > 0)
+				{
+    				$thirdpartystatic->id=$objp->fk_soc;
+    				$thirdpartystatic->ref=$objp->socname;
+    				$thirdpartystatic->name=$objp->socname;
+    				print $thirdpartystatic->getNomUrl(1);
+				}
+				print '</td>';
 				if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 				{
 					print '<td align="right">';
@@ -1033,12 +1046,15 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks=
     				$total_plannedworkload+=$plannedworkload;
     				print '<td align="right">'.($plannedworkload?convertSecondToTime($plannedworkload):'').'</td>';
     
-    				$declaredprogressworkload=$objp->declared_progess_workload;
-    				$total_declaredprogressworkload+=$declaredprogressworkload;
-    				print '<td align="right">';
-    				//print $objp->planned_workload.'-'.$objp->declared_progess_workload."<br>";
-    				print ($plannedworkload?round(100*$declaredprogressworkload/$plannedworkload,0).'%':'');
-    				print '</td>';
+    				if (! in_array('declaredprogress', $hiddenfields)) 
+    				{
+    				    $declaredprogressworkload=$objp->declared_progess_workload;
+        				$total_declaredprogressworkload+=$declaredprogressworkload;
+        				print '<td align="right">';
+        				//print $objp->planned_workload.'-'.$objp->declared_progess_workload."<br>";
+        				print ($plannedworkload?round(100*$declaredprogressworkload/$plannedworkload,0).'%':'');
+        				print '</td>';
+    				}
 				}
 				
 				print '<td align="right">'.$projectstatic->getLibStatut(3).'</td>';
@@ -1053,7 +1069,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks=
 		}
 
 		print '<tr class="liste_total">';
-		print '<td>'.$langs->trans("Total")."</td>";
+		print '<td colspan="2">'.$langs->trans("Total")."</td>";
 		if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 		{
 			print '<td class="liste_total" align="right">'.price($total_opp_amount, 0, '', 1, -1, -1, $conf->currency).'</td>';
@@ -1063,7 +1079,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks=
 		{
             print '<td class="liste_total" align="right">'.$total_task.'</td>';
             print '<td class="liste_total" align="right">'.($total_plannedworkload?convertSecondToTime($total_plannedworkload):'').'</td>';
-            print '<td class="liste_total" align="right">'.($total_plannedworkload?round(100*$total_declaredprogressworkload/$total_plannedworkload,0).'%':'').'</td>';
+            if (! in_array('declaredprogress', $hiddenfields)) print '<td class="liste_total" align="right">'.($total_plannedworkload?round(100*$total_declaredprogressworkload/$total_plannedworkload,0).'%':'').'</td>';
 		}
 		print '<td class="liste_total"></td>';
         print '</tr>';
