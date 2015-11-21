@@ -88,23 +88,23 @@ if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
    			$langs->load("errors");
 			if ($resupload < 0)	// Unknown error
 			{
-				setEventMessage($langs->trans("ErrorFileNotUploaded"), 'errors');
+				setEventMessages($langs->trans("ErrorFileNotUploaded"), null, 'errors');
 			}
 			else if (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload))	// Files infected by a virus
 			{
-				setEventMessage($langs->trans("ErrorFileIsInfectedWithAVirus"), 'errors');
+				setEventMessages($langs->trans("ErrorFileIsInfectedWithAVirus"), null, 'errors');
 			}
 			else	// Known error
 			{
-				setEventMessage($langs->trans($resupload), 'errors');
+				setEventMessages($langs->trans($resupload), null, 'errors');
 			}
 	    }
 	}
 	else
 	{
-	    // Echec transfert (fichier depassant la limite ?)
+	    // Failed transfer (exceeding the limit file?)
 		$langs->load("errors");
-		setEventMessage($langs->trans("ErrorFailToCreateDir",$upload_dir), 'errors');
+		setEventMessages($langs->trans("ErrorFailToCreateDir",$upload_dir), null, 'errors');
 	}
 }
 
@@ -133,7 +133,7 @@ if ($action == 'confirm_deletedir' && $confirm == 'yes')
 	else
 	{
 		$langs->load('errors');
-		setEventMessage($langs->trans($ecmdir->error,$ecmdir->label), 'errors');
+		setEventMessages($langs->trans($ecmdir->error,$ecmdir->label), null, 'errors');
 	}
 }
 
@@ -164,7 +164,7 @@ if ($action == 'update' && ! GETPOST('cancel'))
 			if (! $result)
 			{
 				$langs->load('errors');
-				setEventMessage($langs->trans('ErrorFailToRenameDir',$olddir,$newdir), 'errors');
+				setEventMessages($langs->trans('ErrorFailToRenameDir',$olddir,$newdir), null, 'errors');
 				$error++;
 			}
 		}
@@ -184,7 +184,7 @@ if ($action == 'update' && ! GETPOST('cancel'))
 	else
 	{
 		$db->rollback();
-		setEventMessage($ecmdir->error, 'errors');
+		setEventMessages($ecmdir->error, $ecmdir->errors, 'errors');
 	}
 }
 
@@ -201,7 +201,7 @@ llxHeader();
 $form=new Form($db);
 
 
-// Construit liste des fichiers
+// Built the file List
 $filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 $totalsize=0;
 foreach($filearray as $key => $file)
@@ -349,7 +349,7 @@ if ($action == 'delete_dir')
 $formfile=new FormFile($db);
 
 /*
-// Affiche formulaire upload
+// Display upload form
 if ($user->rights->ecm->upload)
 {
 	$formfile->form_attach_new_file(DOL_URL_ROOT.'/ecm/docmine.php','',0,$section);
