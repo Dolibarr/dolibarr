@@ -143,7 +143,7 @@ if (empty($reshook))
     	$object->fetch($id);
     	if ($object->setstatus(0)<0)
     	{
-    	    setEventMessage($object->error,'errors');
+    	    setEventMessages($object->error, $object->errors, 'errors');
     	}
     	else
     	{
@@ -158,7 +158,7 @@ if (empty($reshook))
     	$object->fetch($id);
         	if ($object->setstatus(1)<0)
     	{
-    	    setEventMessage($object->error,'errors');
+    	    setEventMessages($object->error, $object->errors, 'errors');
     	}
     	else
     	{
@@ -397,8 +397,7 @@ if (empty($reshook))
             }
             else
             {
-                setEventMessage($object->error,'errors');
-                setEventMessage($object->errors,'errors');
+                setEventMessages($object->error, $object->errors, 'errors');
                 $action = 'edit';
             }
         }

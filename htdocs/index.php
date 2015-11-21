@@ -432,14 +432,17 @@ foreach($dashboardlines as $tmp)
 }
 $rowspan = count($valid_dashboardlines);
 
+// We calculate $totallate. Must be defined before start of next loop because it is show in first fetch on next loop
 foreach($valid_dashboardlines as $board)
 {
     if ($board->nbtodolate > 0) {
 	    $totallate += $board->nbtodolate;
     }
+}
 
-	// Show dashboard
-
+// Show dashboard
+foreach($valid_dashboardlines as $board)
+{
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="16">'.$board->img.'</td><td>'.$board->label.'</td>';
     print '<td align="right"><a href="'.$board->url.'">'.$board->nbtodo.'</a></td>';

@@ -726,6 +726,7 @@ class Product extends CommonObject
 	        $sql.= ", fk_unit= " . (!$this->fk_unit ? 'NULL' : $this->fk_unit);
 	        $sql.= ", price_autogen = " . (!$this->price_autogen ? 0 : 1);
 			$sql.= ", fk_price_expression = ".($this->fk_price_expression != 0 ? $this->fk_price_expression : 'NULL');
+			$sql.= ", fk_user_modif = ".($user->id > 0 ? $user->id : 'NULL');
 			$sql.= " WHERE rowid = " . $id;
 
 			dol_syslog(get_class($this)."::update", LOG_DEBUG);
@@ -738,7 +739,7 @@ class Product extends CommonObject
 				// Multilangs
 				if (! empty($conf->global->MAIN_MULTILANGS))
 				{
-					if ( $this->setMultiLangs() < 0)
+					if ( $this->setMultiLangs($user) < 0)
 					{
 						$this->error=$langs->trans("Error")." : ".$this->db->error()." - ".$sql;
 						return -2;
@@ -968,9 +969,11 @@ class Product extends CommonObject
 	/**
 	 *	Update or add a translation for a product
 	 *
+	 *	@param  User	$user       Object user making update
+	 *
 	 *	@return		int		<0 if KO, >0 if OK
 	 */
-	function setMultiLangs()
+	function setMultiLangs($user)
 	{
 		global $langs;
 
@@ -1049,6 +1052,15 @@ class Product extends CommonObject
 				// language is not current language and we didn't provide a multilang description for this language
 			}
 		}
+
+		// Call trigger
+		$result = $this->call_trigger('PRODUCT_SET_MULTILANGS',$user);
+		if ($result < 0) {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+		// End call triggers
+
 		return 1;
 	}
 
@@ -1056,9 +1068,11 @@ class Product extends CommonObject
 	 *	Delete a language for this product
 	 *
 	 *  @param		string	$langtodelete		Language code to delete
+	 *	@param		User	$user       Object user making delete
+	 *
 	 *	@return		int							<0 if KO, >0 if OK
 	 */
-	function delMultiLangs($langtodelete)
+	function delMultiLangs($langtodelete, $user)
 	{
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_lang";
 		$sql.= " WHERE fk_product=".$this->id." AND lang='".$this->db->escape($langtodelete)."'";
@@ -1067,6 +1081,14 @@ class Product extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result)
 		{
+			// Call trigger
+			$result = $this->call_trigger('PRODUCT_DEL_MULTILANGS',$user);
+			if ($result < 0) {
+				$this->error = $this->db->lasterror();
+				dol_syslog(get_class($this).'::delMultiLangs error='.$this->error, LOG_ERR);
+				return -1;
+			}
+			// End call triggers
 			return 1;
 		}
 		else
@@ -3492,13 +3514,13 @@ class Product extends CommonObject
 	 *	TODO Move this into html.formproduct.class.php
 	 *
 	 *  @param      string	$sdir        	Directory to scan
-	 *  @param      int		$size        	0=original size, 1 use thumbnail if possible
+	 *  @param      int		$size        	0=original size, 1='small' use thumbnail if possible
 	 *  @param      int		$nbmax       	Nombre maximum de photos (0=pas de max)
 	 *  @param      int		$nbbyrow     	Number of image per line or -1 to use div. Used only if size=1.
 	 * 	@param		int		$showfilename	1=Show filename
 	 * 	@param		int		$showaction		1=Show icon with action links (resize, delete)
-	 * 	@param		int		$maxHeight		Max height of image when size=1
-	 * 	@param		int		$maxWidth		Max width of image when size=1
+	 * 	@param		int		$maxHeight		Max height of original image when size='small' (so we can use original even if small requested). If 0, always use 'small' thumb image.
+	 * 	@param		int		$maxWidth		Max width of original image when size='small'
 	 *  @param      int     $nolink         Do not add a href link to view enlarged imaged into a new tab
 	 *  @return     string					Html code to show photo. Number of photos shown is saved in this->nbphoto
 	 */
@@ -3546,14 +3568,12 @@ class Product extends CommonObject
     					$photo = $file;
     					$viewfilename = $file;
 
-    					if ($size == 1) {   // Format vignette
-    						// On determine nom du fichier vignette
-    						$photo_vignette='';
-    						if (preg_match('/(\.jpg|\.bmp|\.gif|\.png|\.tiff)$/i', $photo, $regs)) {
-    							$photo_vignette=preg_replace('/'.$regs[0].'/i', '', $photo)."_small".$regs[0];
-    							if (! dol_is_file($dirthumb.$photo_vignette)) $photo_vignette='';
-    						}
+    					if ($size == 1 || $size == 'small') {   // Format vignette
 
+    						// Find name of thumb file
+    						$photo_vignette=basename(getImageFileNameForSize($dir.$file, '_small', '.png'));
+    						if (! dol_is_file($dirthumb.$photo_vignette)) $photo_vignette='';
+    						
     						// Get filesize of original file
     						$imgarray=dol_getImageSize($dir.$photo);
 
@@ -3573,7 +3593,8 @@ class Product extends CommonObject
     						// Si fichier vignette disponible et image source trop grande, on utilise la vignette, sinon on utilise photo origine
     						$alt=$langs->transnoentitiesnoconv('File').': '.$pdir.$photo;
     						$alt.=' - '.$langs->transnoentitiesnoconv('Size').': '.$imgarray['width'].'x'.$imgarray['height'];
-    						if ($photo_vignette && $imgarray['height'] > $maxHeight)
+    						
+    						if (empty($maxHeight) || $photo_vignette && $imgarray['height'] > $maxHeight)
     						{
     							$return.= '<!-- Show thumb -->';
     							$return.= '<img class="photo photowithmargin" border="0" '.($conf->dol_use_jmobile?'max-height':'height').'="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&entity='.$this->entity.'&file='.urlencode($pdirthumb.$photo_vignette).'" title="'.dol_escape_htmltag($alt).'">';
@@ -3615,7 +3636,7 @@ class Product extends CommonObject
     						else if ($nbbyrow < 0) $return.='</div>';
     					}
 
-    					if ($size == 0) {     // Format origine
+    					if (empty($size)) {     // Format origine
     						$return.= '<img class="photo photowithmargin" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&entity='.$this->entity.'&file='.urlencode($pdir.$photo).'">';
 
     						if ($showfilename) $return.= '<br>'.$viewfilename;
@@ -3639,7 +3660,7 @@ class Product extends CommonObject
     			}
             }
 
-			if ($size==1)
+			if ($size==1 || $size='small')
 			{
 				if ($nbbyrow > 0)
 				{
@@ -4103,4 +4124,52 @@ class Product extends CommonObject
 			return $user->rights->service;
 		}
 	}
+	
+    /**
+     *  Load information for tab info
+     *
+     *  @param  int		$id     Id of thirdparty to load
+     *  @return	void
+     */
+    function info($id)
+    {
+        $sql = "SELECT p.rowid, p.ref, p.datec as date_creation, p.tms as date_modification,";
+        $sql.= " p.fk_user_author, p.fk_user_modif";
+        $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as p";
+        $sql.= " WHERE p.rowid = ".$id;
+
+        $result=$this->db->query($sql);
+        if ($result)
+        {
+            if ($this->db->num_rows($result))
+            {
+                $obj = $this->db->fetch_object($result);
+
+                $this->id = $obj->rowid;
+
+                if ($obj->fk_user_author) {
+                    $cuser = new User($this->db);
+                    $cuser->fetch($obj->fk_user_author);
+                    $this->user_creation     = $cuser;
+                }
+
+                if ($obj->fk_user_modif) {
+                    $muser = new User($this->db);
+                    $muser->fetch($obj->fk_user_modif);
+                    $this->user_modification = $muser;
+                }
+
+                $this->ref			     = $obj->ref;
+                $this->date_creation     = $this->db->jdate($obj->date_creation);
+                $this->date_modification = $this->db->jdate($obj->date_modification);
+            }
+
+            $this->db->free($result);
+
+        }
+        else
+		{
+            dol_print_error($this->db);
+        }
+    }
 }

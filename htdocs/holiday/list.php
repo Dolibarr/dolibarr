@@ -226,13 +226,12 @@ $formother = new FormOther($db);
 
 if ($id > 0)
 {
-	$head = user_prepare_head($fuser);
-
 	$title = $langs->trans("User");
+	$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
+	$head = user_prepare_head($fuser);
+	
 	dol_fiche_head($head, 'paidholidays', $title, 0, 'user');
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
-	
     dol_banner_tab($fuser,'id',$linkback,$user->rights->user->user->lire || $user->admin);
     
     

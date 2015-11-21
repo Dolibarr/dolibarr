@@ -77,7 +77,7 @@ class modHRM extends DolibarrModules
 		); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array (
 			3,
-			7 
+			8 
 		); // Minimum version of Dolibarr required by module
 		$this->langfiles = array (
 			"hrm" 
@@ -91,8 +91,8 @@ class modHRM extends DolibarrModules
 				MAIN_DB_PREFIX."c_hrm_function"
 			),
 			'tablib'=>array(
-				"DepartmentDict",
-				"FunctionDict"
+				"DictionaryDepartment",
+				"DictionaryFunction"
 			),
 			'tabsql'=>array(
 				'SELECT rowid, pos, code, label, active FROM '.MAIN_DB_PREFIX.'c_hrm_department',
@@ -166,67 +166,6 @@ class modHRM extends DolibarrModules
 		// Main menu entries
 		$this->menus = array (); // List of menus to add
 		$r = 0;
-
-		$this->menu[$r] = array (
-				'fk_menu' => 'fk_mainmenu=hrm',
-				'type' => 'left',
-				'titre' => 'Employees',
-				'leftmenu' => 'employee',
-				'mainmenu' => 'hrm',
-				'url' => '/hrm/employee/index.php',
-				'langs' => 'hrm',
-				'position' => 100,
-				'enabled' => '$user->rights->hrm->employee->read',
-				'perms' => '$user->rights->hrm->employee->read',
-				'target' => '',
-				'user' => 0 
-		);
-		$r ++;
-
-		$this->menu[$r] = array(
-			'fk_menu' => 'fk_mainmenu=hrm,fk_leftmenu=employee',
-			'type' => 'left',
-			'titre' => 'NewEmployee',
-			'mainmenu' => 'hrm',
-			'url' => '/hrm/employee/card.php?action=create',
-			'langs' => 'hrm',
-			'position' => 101,
-			'enabled' => '$user->rights->hrm->employee->write',
-			'perms' => '$user->rights->hrm->employee->write',
-			'target' => '',
-			'user' => 0
-		);
-		$r ++;
-
-		$this->menu[$r] = array(
-			'fk_menu' => 'fk_mainmenu=hrm,fk_leftmenu=employee',
-			'type' => 'left',
-			'titre' => 'List',
-			'mainmenu' => 'hrm',
-			'url' => '/hrm/employee/list.php',
-			'langs' => 'hrm',
-			'position' => 102,
-			'enabled' => '$user->rights->hrm->employee->read',
-			'perms' => '$user->rights->hrm->employee->read',
-			'target' => '',
-			'user' => 0
-		);
-		$r ++;
-
-		$this->menu[$r] = array(
-			'fk_menu' => 'fk_mainmenu=hrm,fk_leftmenu=employee',
-			'type' => 'left',
-			'titre' => 'Statistics',
-			'mainmenu' => 'hrm',
-			'url' => '/hrm/employee/stats.php',
-			'langs' => 'hrm',
-			'position' => 103,
-			'enabled' => '$user->rights->hrm->employee->read',
-			'perms' => '$user->rights->hrm->employee->read',
-			'target' => '',
-			'user' => 0
-		);
-		$r ++;
 	}
 	
 	/**

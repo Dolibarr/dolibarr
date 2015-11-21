@@ -60,7 +60,7 @@ if ($action == 'delete' && GETPOST('langtodelete','alpha'))
 {
 	$object = new Product($db);
 	$object->fetch($id);
-	$object->delMultiLangs(GETPOST('langtodelete','alpha'));
+	$object->delMultiLangs(GETPOST('langtodelete','alpha'), $user);
 }
 
 // Add translation
@@ -87,7 +87,7 @@ $cancel != $langs->trans("Cancel") &&
 	}
 
 	// sauvegarde en base
-	if ( $object->setMultiLangs() > 0 )
+	if ( $object->setMultiLangs($user) > 0 )
 	{
 		$action = '';
 	}
@@ -123,7 +123,7 @@ $cancel != $langs->trans("Cancel") &&
 		}
 	}
 
-	if ( $object->setMultiLangs() > 0 )
+	if ( $object->setMultiLangs($user) > 0 )
 	{
 		$action = '';
 	}
@@ -144,7 +144,7 @@ $cancel != $langs->trans("Cancel") &&
 	$langtodelete=GETPOST('langdel','alpha');
 
 
-	if ( $object->delMultiLangs($langtodelete) > 0 )
+	if ( $object->delMultiLangs($langtodelete, $user) > 0 )
 	{
 		$action = '';
 	}

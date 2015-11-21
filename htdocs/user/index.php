@@ -40,6 +40,9 @@ $socid=0;
 if ($user->societe_id > 0)
 	$socid = $user->societe_id;
 
+// Load mode employee
+$mode = GETPOST("mode", 'alpha');
+
 // Load variable for pagination
 $limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
 $sortfield = GETPOST('sortfield','alpha');
@@ -188,6 +191,7 @@ else
 {
 	$sql.= " WHERE u.entity IN (".getEntity('user',1).")";
 }
+if ($mode = "employee") $sql.= " AND u.employee = 1";
 if ($socid > 0) $sql.= " AND u.fk_soc = ".$socid;
 //if ($search_user != '')       $sql.=natural_search(array('u.login', 'u.lastname', 'u.firstname'), $search_user);
 if ($search_supervisor > 0)   $sql.= " AND u.fk_user = ".$search_supervisor;
