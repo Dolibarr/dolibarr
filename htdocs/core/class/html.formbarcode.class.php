@@ -94,6 +94,9 @@ class FormBarCode
         foreach($barcodelist as $key => $value)
         {
             if ($encoding) {
+                $res = 0;
+                $result = false;
+
                 foreach ($dirbarcode as $reldir) {
                     $dir = dol_buildpath($reldir, 0);
                     $newdir = dol_osencode($dir);
