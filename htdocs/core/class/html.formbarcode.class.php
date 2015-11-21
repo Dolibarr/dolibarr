@@ -51,9 +51,10 @@ class FormBarCode
      *  @param 	array	$barcodelist	Array of barcodes generators
      *  @param  int		$code_id        Id du code barre
      *  @param  int		$idForm			Id du formulaire
+     * @param string $encoding Encoding to test
      * 	@return	string					HTML select string
      */
-    function setBarcodeEncoder($selected,$barcodelist,$code_id,$idForm='formbarcode')
+    function setBarcodeEncoder($selected,$barcodelist,$code_id,$idForm='formbarcode', $encoding = null)
     {
         global $conf, $langs;
 
@@ -87,10 +88,43 @@ class FormBarCode
         $select_encoder.= '<select id="select'.$idForm.'" class="flat" name="coder">';
         $select_encoder.= '<option value="0"'.($selected==0?' selected':'').' '.$disable.'>'.$langs->trans('Disable').'</option>';
         $select_encoder.= '<option value="-1" disabled>--------------------</option>';
+
+        $dirbarcode=array_merge(array("/core/modules/barcode/doc/"), $conf->modules_parts['barcode']);
+
         foreach($barcodelist as $key => $value)
         {
-            $select_encoder.= '<option value="'.$key.'"'.($selected==$key?' selected':'').'>'.$value.'</option>';
+            if ($encoding) {
+                foreach ($dirbarcode as $reldir) {
+                    $dir = dol_buildpath($reldir, 0);
+                    $newdir = dol_osencode($dir);
+
+                    // Check if directory exists (we do not use dol_is_dir to avoid loading files.lib.php)
+                    if (!is_dir($newdir)) {
+                        continue;
+                    }
+
+                    $result = @include_once $newdir.$key.'.modules.php';
+                    if ($result) {
+                        break;
+                    }
+                }
+
+                if ($result) {
+                    $classname = "mod".ucfirst($key);
+                    if (class_exists($classname)) {
+                        $module = new $classname($this->db);
+                        $res = $module->encodingIsSupported($encoding);
+                    }
+                }
+            } else {
+                $res = 1;
+            }
+
+            if ($res > 0) {
+                $select_encoder .= '<option value="'.$key.'"'.($selected == $key ? ' selected' : '').'>'.$value.'</option>';
+            }
         }
+
         $select_encoder.= '</select></form>';
 
         return $select_encoder;
