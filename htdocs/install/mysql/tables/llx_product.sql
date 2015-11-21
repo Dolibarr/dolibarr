@@ -58,11 +58,11 @@ create table llx_product
   duration					varchar(6),
   seuil_stock_alerte		integer      DEFAULT 0,
   url						varchar(255),
-  barcode					varchar(255) DEFAULT NULL,
-  fk_barcode_type			integer      DEFAULT NULL,
+  barcode					varchar(255) DEFAULT NULL,		-- barcode
+  fk_barcode_type			integer      DEFAULT NULL,		-- barcode type
   accountancy_code_sell		varchar(32),                    -- Selling accountancy code
   accountancy_code_buy		varchar(32),                    -- Buying accountancy code
-  partnumber				varchar(32),                    -- Not used. Used by external modules.
+  partnumber				varchar(32),                    -- Part/Serial number. TODO To use it into screen if not a duplicate of barcode.
   weight					float        DEFAULT NULL,
   weight_units				tinyint      DEFAULT NULL,
   length					float        DEFAULT NULL,
