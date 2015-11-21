@@ -765,7 +765,6 @@ class CommandeFournisseur extends CommonOrder
 
                 if (! $error)
                 {
-                	$this->ref=$newref;
                 	if ($movetoapprovestatus) $this->statut = 2;
 					else $this->statut = 1;
            			if (empty($secondlevel))	// standard or first level approval
