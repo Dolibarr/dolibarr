@@ -980,7 +980,8 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks=
 				print '<td>';
 				$projectstatic->ref=$objp->ref;
 				print $projectstatic->getNomUrl(1);
-				print ' - '.dol_trunc($objp->title,24).'</td>';
+				print ' - '.dol_trunc($objp->title,24);
+				print '</td>';
 				if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 				{
 					print '<td align="right">';
@@ -1004,14 +1005,17 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks=
 			$i++;
 		}
 
-		print '<tr><td>'.$langs->trans("Total")."</td>";
+		print '<tr class="liste_total">';
+		print '<td>'.$langs->trans("Total")."</td>";
 		if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 		{
-			print '<td align="right">'.price($total_opp_amount, 0, '', 1, -1, -1, $conf->currency).'</td>';
-			print '<td align="right">'.$form->textwithpicto(price($ponderated_opp_amount, 0, '', 1, -1, -1, $conf->currency), $langs->trans("OpportunityPonderatedAmount"), 1).'</td>';
+			print '<td class="liste_total" align="right">'.price($total_opp_amount, 0, '', 1, -1, -1, $conf->currency).'</td>';
+			print '<td class="liste_total" align="right">'.$form->textwithpicto(price($ponderated_opp_amount, 0, '', 1, -1, -1, $conf->currency), $langs->trans("OpportunityPonderatedAmount"), 1).'</td>';
 		}
-		if (empty($conf->global->PROJECT_HIDE_TASKS)) print '<td align="right">'.$total_task.'</td>';
-
+		if (empty($conf->global->PROJECT_HIDE_TASKS)) print '<td class="liste_total" align="right">'.$total_task.'</td>';
+		print '<td class="liste_total"></td>';
+        print '</tr>';
+        
 		$db->free($resql);
 	}
 	else
