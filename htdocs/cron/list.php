@@ -85,7 +85,7 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->cron->del
 	$result = $object->delete($user);
 
 	if ($result < 0) {
-		setEventMessage($object->error,'errors');
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
 
@@ -98,20 +98,20 @@ if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->ex
 
 	$result = $object->run_jobs($user->login);
 	if ($result < 0) {
-		setEventMessage($object->error,'errors');
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 	else
 	{
 		$res = $object->reprogram_jobs($user->login);
 		if ($res > 0)
 		{
-			if ($object->lastresult > 0) setEventMessage($langs->trans("JobFinished"),'warnings');
-			else setEventMessage($langs->trans("JobFinished"),'mesgs');
+			if ($object->lastresult > 0) setEventMessages($langs->trans("JobFinished"), null, 'warnings');
+			else setEventMessages($langs->trans("JobFinished"), null, 'mesgs');
 			$action='';
 		}
 		else
 		{
-			setEventMessage($object->error,'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 			$action='';
 		}
 	}
@@ -147,12 +147,12 @@ if ($action == 'execute')
 
 }
 
-// liste des jobs creer
+// list of jobs created
 $object = new Cronjob($db);
 $result=$object->fetch_all($sortorder, $sortfield, $limit, $offset, $status, $filter);
 if ($result < 0)
 {
-	setEventMessage($object->error,'errors');
+	setEventMessages($object->error, $object->errors, 'errors');
 }
 
 

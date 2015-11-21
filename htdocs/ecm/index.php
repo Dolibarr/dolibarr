@@ -117,22 +117,22 @@ if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
 				$langs->load("errors");
 				if ($resupload < 0)	// Unknown error
 				{
-					setEventMessage($langs->trans("ErrorFileNotUploaded"), 'errors');
+					setEventMessages($langs->trans("ErrorFileNotUploaded"), null, 'errors');
 				}
 				else if (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload))	// Files infected by a virus
 				{
-					setEventMessage($langs->trans("ErrorFileIsInfectedWithAVirus"), 'errors');
+					setEventMessages($langs->trans("ErrorFileIsInfectedWithAVirus"), null, 'errors');
 				}
 				else	// Known error
 				{
-					setEventMessage($langs->trans($resupload), 'errors');
+					setEventMessages($langs->trans($resupload), null, 'errors');
 				}
 			}
 		}
 		else
 		{
 			$langs->load("errors");
-			setEventMessage($langs->trans("ErrorFailToCreateDir",$upload_dir), 'errors');
+			setEventMessages($langs->trans("ErrorFailToCreateDir",$upload_dir), null, 'errors');
 		}
 	}
 }
@@ -154,7 +154,7 @@ if ($action == 'add' && $user->rights->ecm->setup)
 	}
 	else
 	{
-		setEventMessage('Error '.$langs->trans($ecmdir->error), 'errors');
+		setEventMessages('Error '.$langs->trans($ecmdir->error), null, 'errors');
 		$action = "create";
 	}
 
@@ -182,8 +182,8 @@ if ($action == 'confirm_deletefile')
     	$file = $upload_dir . "/" . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_POST are already decoded by PHP).
 
     	$ret=dol_delete_file($file);
-    	if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-    	else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+    	if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
+    	else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
 
     	$result=$ecmdir->changeNbOfFiles('-');
 
@@ -196,7 +196,7 @@ if ($action == 'confirm_deletefile')
 if ($action == 'confirm_deletesection' && GETPOST('confirm') == 'yes')
 {
 	$result=$ecmdir->delete($user);
-	setEventMessage($langs->trans("ECMSectionWasRemoved", $ecmdir->label));
+	setEventMessages($langs->trans("ECMSectionWasRemoved", $ecmdir->label), null, 'mesgs');
 
     clearstatcache();
 }

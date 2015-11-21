@@ -83,7 +83,7 @@ if(! empty($_POST['removAll']))
 		$result = dol_delete_file($pathtodelete,1); // Delete uploded Files 
 	
 		$langs->load("other");
-		setEventMessage($langs->trans("FileWasRemoved",$filetodelete));
+		setEventMessages($langs->trans("FileWasRemoved",$filetodelete), null, 'mesgs');
 		
 		$formmail->remove_attached_files($key); // Update Session
 	}
@@ -119,14 +119,14 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 			$possibleuser=$dolimail->get_from_user_by_mail($_POST['sendto'],"1"); // suche in llx_societe and socpeople
 			if (!$possibleaccounts && !$possibleuser) 
 			{
-					setEventMessage($langs->trans('ErrorFailedToFindSocieteRecord',$_POST['sendto']),'errors');
+					setEventMessages($langs->trans('ErrorFailedToFindSocieteRecord',$_POST['sendto']), null, 'errors');
 			}
 			elseif (count($possibleaccounts)>1) 
 			{
 					$sendtosocid=$possibleaccounts[1]['id'];
 					$result=$object->fetch($sendtosocid);
 					
-					setEventMessage($langs->trans('ErrorFoundMoreThanOneRecordWithEmail',$_POST['sendto'],$object->name));
+					setEventMessages($langs->trans('ErrorFoundMoreThanOneRecordWithEmail',$_POST['sendto'],$object->name), null, 'mesgs');
 			}
 			else 
 			{
@@ -251,7 +251,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 						{
 							$info = FALSE;
 							$err = $langs->trans('Error3_Imap_Connection_Error');
-							setEventMessage($err,$mailboxconfig->element,'errors');
+							setEventMessages($err,$mailboxconfig->element, null, 'errors');
 						} 
 						else 
 						{
@@ -291,12 +291,12 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 						{
 							// write mail to IMAP Server
 							$movemail = $mailboxconfig->putMail($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,$folder,$deliveryreceipt,$mailfile); 
-							if ($movemail) setEventMessage($langs->trans("MailMovedToImapFolder",$folder),'mesgs');
-							else setEventMessage($langs->trans("MailMovedToImapFolder_Warning",$folder),'warnings'); 
+							if ($movemail) setEventMessages($langs->trans("MailMovedToImapFolder",$folder), null, 'mesgs');
+							else setEventMessages($langs->trans("MailMovedToImapFolder_Warning",$folder), null, 'warnings'); 
 				 	 	}
 				 	}
 				 	
-					// Initialisation donnees
+					// Initialisation of datas
 					$object->socid			= $sendtosocid;	// To link to a company
 					$object->sendtoid		= $sendtoid;	// To link to a contact/address
 					$object->actiontypecode	= $actiontypecode;
@@ -305,14 +305,14 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 					$object->fk_element		= $object->id;
 					$object->elementtype	= $object->element;
 
-					// Appel des triggers
+					// Call of triggers
 					include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 					$interface=new Interfaces($db);
 					$result=$interface->run_triggers($trigger_name,$object,$user,$langs,$conf);
 					if ($result < 0) {
 						$error++; $this->errors=$interface->errors;
 					}
-					// Fin appel triggers
+					// End call of triggers
 
 					if ($error)
 					{
@@ -323,7 +323,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 						// Redirect here
 						// This avoid sending mail twice if going out and then back to page
 						$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));
-						setEventMessage($mesg);
+						setEventMessages($mesg, null, 'mesgs');
 						if($conf->dolimail->enabled) header('Location: '.$_SERVER["PHP_SELF"].'?'.($paramname?$paramname:'id').'='.$object->id.'&'.($paramname2?$paramname2:'mid').'='.$parm2val);
 						else	header('Location: '.$_SERVER["PHP_SELF"].'?'.($paramname?$paramname:'id').'='.$object->id);
 						exit;
@@ -344,7 +344,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 					}
 					$mesg.='</div>';
 
-					setEventMessage($mesg,'warnings');
+					setEventMessages($mesg, null, 'warnings');
 					$action = 'presend';
 				}
 			}
@@ -359,7 +359,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 		else
 		{
 			$langs->load("errors");
-			setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("MailTo")),'warnings');
+			setEventMessages($langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("MailTo")), null, 'warnings');
 			dol_syslog('Try to send email with no recipiend defined', LOG_WARNING);
 			$action = 'presend';
 		}
@@ -367,7 +367,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 	else
 	{
 		$langs->load("other");
-		setEventMessage($langs->trans('ErrorFailedToReadEntity',$object->element),'errors');
+		setEventMessages($langs->trans('ErrorFailedToReadEntity',$object->element), null, 'errors');
 		dol_syslog('Failed to read data of object id='.$object->id.' element='.$object->element);
 		$action = 'presend';
 	}

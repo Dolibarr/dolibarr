@@ -117,18 +117,18 @@ if ($action == 'add' && $user->rights->ecm->setup)
 		else
 		{
 			$langs->load("errors");
-			setEventMessage($langs->trans($ecmdir->error), 'errors');
-			setEventMessage($ecmdir->errors, 'errors');
+			setEventMessages($langs->trans($ecmdir->error), null, 'errors');
+			setEventMessages($ecmdir->error, $ecmdir->errors, 'errors');
 			$action = 'create';
 		}
 	}
 }
 
-// Suppression fichier
+// Deleting file
 else if ($action == 'confirm_deletesection' && $confirm == 'yes')
 {
 	$result=$ecmdir->delete($user);
-	setEventMessage($langs->trans("ECMSectionWasRemoved", $ecmdir->label));
+	setEventMessages($langs->trans("ECMSectionWasRemoved", $ecmdir->label), null, 'mesgs');
 }
 
 
