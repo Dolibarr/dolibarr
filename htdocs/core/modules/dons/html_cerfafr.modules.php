@@ -46,7 +46,7 @@ class html_cerfafr extends ModeleDon
 
         $this->db = $db;
         $this->name = "cerfafr";
-        $this->description = 'Modèles de reçu de dons - fr_FR - Cerfa 11580*03';
+        $this->description = $langs->trans('DonationsReceiptModel').' - fr_FR - Cerfa 11580*03';
 
         // Dimension page for size A4
         $this->type = 'html';
