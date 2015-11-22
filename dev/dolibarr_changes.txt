@@ -95,3 +95,13 @@ JQUERYFILETREE:
 ---------------
 * Remove directory htdocs/includes/jquery/plugins/jqueryFileTree/connectors
 
+
+
+RESTLER:
+--------
+
+   if ($className == 'Luracast\Restler\string') return;
+   if ($className == 'Luracast\Restler\mixed') return;
+
+
+        

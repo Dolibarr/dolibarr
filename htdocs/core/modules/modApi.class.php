@@ -75,7 +75,7 @@ class modApi extends DolibarrModules
 		$this->dirs = array();
 
 		// Config pages. Put here list of php page, stored into api/admin directory, to use to setup module.
-		$this->config_page_url = array("api.php@api");
+		$this->config_page_url = array("index.php@api");
 
 		// Dependencies
 		$this->hidden = false;			// A condition to hide module

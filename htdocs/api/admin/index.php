@@ -20,9 +20,9 @@
  */
 
 /**
- *      \file       htdocs/api/admin/api.php
+ *      \file       htdocs/api/admin/index.php
  *		\ingroup    api
- *		\brief      Page to setup api module
+ *		\brief      Page to setup Webservices REST module
  */
 
 require '../../main.inc.php';
@@ -95,17 +95,18 @@ print '</tr>';
 print '</table>';
 print '<br><br>';
 
-// API endpoint
-print '<u>'.$langs->trans("ApiEndPointIs").':</u><br>';
-$url=DOL_MAIN_URL_ROOT.'/public/api/';
-print img_picto('','object_globe.png').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
-$url=DOL_MAIN_URL_ROOT.'/public/api/.json';
-print img_picto('','object_globe.png').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
-
 // Explorer
 print '<u>'.$langs->trans("ApiExporerIs").':</u><br>';
-$url=DOL_MAIN_URL_ROOT.'/public/api/explorer/index.html';
+$url=DOL_MAIN_URL_ROOT.'/api/admin/explorer.php';
 print img_picto('','object_globe.png').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
+
+// API endpoint
+/*print '<u>'.$langs->trans("ApiEndPointIs").':</u><br>';
+$url=DOL_MAIN_URL_ROOT.'/api/index.php/xxx/list';
+print img_picto('','object_globe.png').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
+$url=DOL_MAIN_URL_ROOT.'/api/xxx/list.json';
+print img_picto('','object_globe.png').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
+*/
 
 print '<br>';
 print '<br>';

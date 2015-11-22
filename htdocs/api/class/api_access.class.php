@@ -15,7 +15,21 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+// Create the autoloader for Luracast
+require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/AutoLoader.php';
+call_user_func(function () {
+    $loader = Luracast\Restler\AutoLoader::instance();
+    spl_autoload_register($loader);
+    return $loader;
+});
+
+require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/iAuthenticate.php';
+require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/iUseAuthentication.php';
+require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/Resources.php';
+require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/Defaults.php';
+require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/RestException.php';
 use \Luracast\Restler\iAuthenticate;
+use \Luracast\Restler\iUseAuthentication;
 use \Luracast\Restler\Resources;
 use \Luracast\Restler\Defaults;
 use \Luracast\Restler\RestException;

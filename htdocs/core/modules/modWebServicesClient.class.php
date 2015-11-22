@@ -57,7 +57,7 @@ class modWebServicesClient extends DolibarrModules
 
         // Config pages
         //-------------
-        //$this->config_page_url = array("webservices.php@webservices");
+        //$this->config_page_url = array();
 
         // Dependancies
         //-------------
