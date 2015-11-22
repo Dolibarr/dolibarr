@@ -17,9 +17,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+require_once DOL_DOCUMENT_ROOT . '/includes/autoload.php';
 require_once DOL_DOCUMENT_ROOT . '/core/modules/syslog/logHandler.php';
-require_once DOL_DOCUMENT_ROOT . '/includes/raven/raven/lib/Raven/Autoloader.php';
-Raven_Autoloader::register();
 
 /**
  * Class to manage logging to Sentry
