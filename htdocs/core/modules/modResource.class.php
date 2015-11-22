@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2013-2014 Jean-François Ferry <jfefe@aternatik.fr>
+ * Copyright (C) 2015      Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -153,10 +154,6 @@ class modResource extends DolibarrModules
 		// 'categories_x'		to add a tab in category view
 		// (reresource 'x' by type of category (0=product, 1=supplier, 2=customer, 3=member)
 
-		$this->tabs = array(
-//			'thirdparty:+resources:Resources:resource:$user->rights->resource->read:/resource/element_resource.php?element=societe&element_id=__ID__'
-		);
-
 		// Boxes
 		// Add here list of php file(s) stored in core/boxes that contains class to show a box.
 		$this->boxes = array(); // Boxes list
@@ -250,6 +247,21 @@ class modResource extends DolibarrModules
 			'user'=> 0
 		);
 
+		$this->menu[$r++]=array(
+			'fk_menu'=>'fk_mainmenu=tools,fk_leftmenu=resource', //On utilise les ancres définis dans le menu parent déclaré au dessus
+			'type'=> 'left', // Toujours un menu gauche
+			'titre'=> 'List',
+			'mainmenu'=> 'tools',
+			'leftmenu'=> '', // On n'indique rien ici car on ne souhaite pas intégrer de sous-menus à ce menu
+			'url'=> '/resource/list.php',
+			'langs'=> 'resource',
+			'position'=> 102,
+			'enabled'=> '1',
+			'perms'=> '$user->rights->resource->read',
+			'target'=> '',
+			'user'=> 0
+		);
+		
 		// Exports
 		$r = 1;
 

@@ -79,7 +79,7 @@ class Resource extends CommonObject
     	// Insert request
     	$sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."(";
 
-    	$sql.= " entity,";
+    	$sql.= "entity,";
     	$sql.= "ref,";
     	$sql.= "description,";
     	$sql.= "fk_code_type_resource,";

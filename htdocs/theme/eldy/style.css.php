@@ -2606,6 +2606,7 @@ div.ok {
   color: #114466;
 }
 
+/* Warning message */
 div.warning {
   color: #302020;
   padding: 0.3em 0.3em 0.3em 0.3em;
@@ -2618,14 +2619,7 @@ div.warning {
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
-div.error {
-  color: #550000; font-weight: bold;
-  padding: 0.3em 0.3em 0.3em 0.3em;
-  margin: 0.5em 0em 0.5em 0em;
-  border: 1px solid #DC9CAB;
-  -moz-border-radius: 4px;
-  -webkit-border-radius: 4px;
-  border-radius: 4px;
+/* Error message */
   background: #EFCFCF;
 }
 
@@ -2642,6 +2636,9 @@ div.info {
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
+div.warning a, div.info a, div.error a {
+	color: rgb(<?php echo $colortext; ?>);
+}
 
 /*
  *   Liens Payes/Non payes
