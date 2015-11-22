@@ -1376,7 +1376,7 @@ class Form
                         $out.= '>';
                     }
 
-                    $out.= $userstatic->getFullName($langs, 0, 0, $maxlength);
+                    $out.= $userstatic->getFullName($langs, 0, -1, $maxlength);
                     // Complete name with more info
                     $moreinfo=0;
                     if (! empty($conf->global->MAIN_SHOW_LOGIN))

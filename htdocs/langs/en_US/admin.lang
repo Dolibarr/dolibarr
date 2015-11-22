@@ -366,7 +366,7 @@ HideAnyVATInformationOnPDF=Hide all information related to VAT on generated PDF
 HideDescOnPDF=Hide products description on generated PDF
 HideRefOnPDF=Hide products ref. on generated PDF
 HideDetailsOnPDF=Hide products lines details on generated PDF
-PlaceCustomerAddressToIsoLocation=Use ISO location for customer address
+PlaceCustomerAddressToIsoLocation=Use french standard position (La Posteà for customer address position
 Library=Library
 UrlGenerationParameters=Parameters to secure URLs
 SecurityTokenIsUnique=Use a unique securekey parameter for each URL
@@ -1116,7 +1116,7 @@ GetBarCode=Get barcode
 EmptyNumRefModelDesc=The code is free. This code can be modified at any time.
 ##### Module password generation
 PasswordGenerationStandard=Return a password generated according to internal Dolibarr algorithm: 8 characters containing shared numbers and characters in lowercase.
-PasswordGenerationNone=Do not suggest any generated password. Password must be type in manually.
+PasswordGenerationNone=Do not suggest any generated password. Password must be typed in manually.
 PasswordGenerationPerso=Return a password according to your personally defined configuration.
 SetupPerso=According to your configuration
 PasswordPatternDesc=Password pattern description
@@ -1674,6 +1674,7 @@ InstallModuleFromWebHasBeenDisabledByFile=Install of external module from applic
 ConfFileMuseContainCustom=Installing an external module from application save the module files into directory <strong>%s</strong>. To have this directory processed by Dolibarr, you must setup your <strong>conf/conf.php</strong> to have option<br>- <strong>$dolibarr_main_url_root_alt</strong> enabled to value <strong>$dolibarr_main_url_root_alt="/custom"</strong><br>- <strong>$dolibarr_main_document_root_alt</strong> enabled to value <strong>"%s/custom"</strong> 
 HighlightLinesOnMouseHover=Highlight table lines when mouse move passes over
 HighlightLinesColor=Color of highlight line when mouse move passes over (keep empty for no highlight)
+LinkColor=Color of links
 PressF5AfterChangingThis=Press F5 on keyboard after changing this value to have it effective
 NotSupportedByAllThemes=Will works with eldy theme but is not supported by all themes
 BackgroundColor=Background color
