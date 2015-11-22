@@ -76,7 +76,7 @@ if ($action == 'addprinter' && $user->admin)
 
     if (! $error)
     {
-        $result= $printer->AddPrinter($printername, GETPOST('printertypeid', 'int'), $parameter);
+        $result= $printer->AddPrinter($printername, GETPOST('printertypeid', 'int'), GETPOST('printerprofileid', 'int'), $parameter);
         if ($result > 0) $error++;
 
         if (! $error)
@@ -132,7 +132,7 @@ if ($action == 'updateprinter' && $user->admin)
 
     if (! $error)
     {
-        $result= $printer->UpdatePrinter($printername, GETPOST('printertypeid', 'int'), $parameter, $printerid);
+        $result= $printer->UpdatePrinter($printername, GETPOST('printertypeid', 'int'), GETPOST('printerprofileid', 'int'), $parameter, $printerid);
         if ($result > 0) $error++;
 
         if (! $error)
@@ -235,6 +235,7 @@ if ($mode == 'config' && $user->admin)
     print '<tr class="liste_titre">';
     print '<th>'.$langs->trans("Name").'</th>';
     print '<th>'.$langs->trans("Type").'</th>';
+    print '<th>'.$langs->trans("Profile").'</th>';
     print '<th>'.$langs->trans("Parameters").'</th>';
     print '<th></th>';
     print '<th></th>';
@@ -252,6 +253,8 @@ if ($mode == 'config' && $user->admin)
                 print '<td><input size="50" type="text" name="printername" value="'.$printer->listprinters[$line]['name'].'"></td>';
                 $ret = $printer->selectTypePrinter($printer->listprinters[$line]['fk_type']);
                 print '<td>'.$printer->resprint.'</td>';
+                $ret = $printer->selectProfilePrinter($printer->listprinters[$line]['fk_profile']);
+                print '<td>'.$printer->profileresprint.'</td>';
                 print '<td><input size="60" type="text" name="parameter" value="'.$printer->listprinters[$line]['parameter'].'"></td>';
                 print '<td></td>';
                 print '<td></td>';
@@ -259,27 +262,8 @@ if ($mode == 'config' && $user->admin)
                 print '</tr>';
              } else {
                 print '<td>'.$printer->listprinters[$line]['name'].'</td>';
-                switch ($printer->listprinters[$line]['fk_type']) {
-                    case 1:
-                        $connector = 'CONNECTOR_DUMMY';
-                        break;
-                    case 2:
-                        $connector = 'CONNECTOR_FILE_PRINT';
-                        break;
-                    case 3:
-                        $connector = 'CONNECTOR_NETWORK_PRINT';
-                        break;
-                    case 4:
-                        $connector = 'CONNECTOR_WINDOWS_PRINT';
-                        break;
-                    case 5:
-                        $connector = 'CONNECTOR_JAVA';
-                        break;
-                    default:
-                        $connector = 'CONNECTOR_UNKNOWN';
-                        break;
-                }
-                print '<td>'.$langs->trans($connector).'</td>';
+                print '<td>'.$langs->trans($printer->listprinters[$line]['fk_type_name']).'</td>';
+                print '<td>'.$langs->trans($printer->listprinters[$line]['fk_profile_name']).'</td>';
                 print '<td>'.$printer->listprinters[$line]['parameter'].'</td>';
                 // edit icon
                 print '<td><a href="'.$_SERVER['PHP_SELF'].'?mode=config&amp;action=editprinter&amp;printerid='.$printer->listprinters[$line]['rowid'].'">';
@@ -311,6 +295,8 @@ if ($mode == 'config' && $user->admin)
         print '<td><input size="50" type="text" name="printername"></td>';
         $ret = $printer->selectTypePrinter();
         print '<td>'.$printer->resprint.'</td>';
+        $ret = $printer->selectProfilePrinter();
+        print '<td>'.$printer->profileresprint.'</td>';
         print '<td><input size="60" type="text" name="parameter"></td>';
         print '<td></td>';
         print '<td></td>';
