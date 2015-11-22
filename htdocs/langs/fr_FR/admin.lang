@@ -1656,6 +1656,7 @@ InstallModuleFromWebHasBeenDisabledByFile=L'installation de module externe depui
 ConfFileMuseContainCustom=Installé un module externe pour l'application enregistre les fichiers de module dans le répertoire <strong>%s</strong>. Pour avoir ce répertoire vu par Dolibarr, vous devez configurer votre <strong>conf/conf.php</strong> d'avoir l'option <br> - <strong>$dolibarr_main_url_root_alt</strong> activé à la valeur <strong>$dolibarr_main_url_root_alt="/custom"</strong><br> - <strong>$dolibarr_main_document_root_alt</strong> activé à la valeur <strong>"%s/custom"</strong>
 HighlightLinesOnMouseHover=Mettez en surbrillance les lignes de la table lorsque la souris passe au-dessus
 HighlightLinesColor=Couleur de surbrillance de la ligne quand la souris passe au dessus (garder vide pour ne pas avoir de surbrillance)
+LinkColor=Couleur des liens
 PressF5AfterChangingThis=Appuyez sur F5 sur le clavier après avoir modifié cette valeur pour que le changement soit effectif
 NotSupportedByAllThemes=Fonctionne avec le thème eldy mais n'est pas pris en charge par tous les thèmes
 BackgroundColor=Couleur de fond
