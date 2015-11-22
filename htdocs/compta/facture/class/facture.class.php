@@ -257,7 +257,7 @@ class Facture extends CommonInvoice
 			$this->fk_incoterms		 = $_facrec->fk_incoterms;
 			$this->location_incoterms= $_facrec->location_incoterms;
 
-			// Clean parametres
+			// Clean parameters
 			if (! $this->type) $this->type = self::TYPE_STANDARD;
 			$this->ref_client=trim($this->ref_client);
 			$this->note_private=trim($this->note_private);
@@ -1017,7 +1017,7 @@ class Facture extends CommonInvoice
 
 				if ($this->statut == self::STATUS_DRAFT)	$this->brouillon = 1;
 
-				// Retreive all extrafield for invoice
+				// Retrieve all extrafield for invoice
 				// fetch optionals attributes and labels
 				require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 				$extrafields=new ExtraFields($this->db);
@@ -1386,7 +1386,7 @@ class Facture extends CommonInvoice
 
 		dol_syslog(get_class($this)."::delete rowid=".$rowid, LOG_DEBUG);
 
-		// TODO Test if there is at least on payment. If yes, refuse to delete.
+		// TODO Test if there is at least one payment. If yes, refuse to delete.
 
 		$error=0;
 		$this->db->begin();
@@ -1448,7 +1448,7 @@ class Facture extends CommonInvoice
 				}
 			}
 
-			// If we decrament stock on invoice validation, we increment
+			// If we decrement stock on invoice validation, we increment
 			if ($this->type != self::TYPE_DEPOSIT && $result >= 0 && ! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_BILL) && $idwarehouse!=-1)
 			{
 				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
@@ -2152,7 +2152,7 @@ class Facture extends CommonInvoice
 			$total_localtax2 = $tabprice[10];
 			$pu_ht = $tabprice[3];
 
-			// Rang to use
+			// Rank to use
 			$rangtouse = $rang;
 			if ($rangtouse == -1)
 			{
