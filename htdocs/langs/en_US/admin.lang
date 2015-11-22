@@ -1570,7 +1570,7 @@ AGENDA_DEFAULT_VIEW=Which tab do you want to open by default when selecting menu
 ##### ClickToDial #####
 ClickToDialDesc=This module allows to make phone numbers clickable. A click on this icon will call make your phone to call the phone number. This can be used to call a call center system from Dolibarr that can call the phone number on a SIP system for example.
 ClickToDialUseTelLink=Use just a link "tel:" on phone numbers
-ClickToDialUseTelLinkDesc=Use this method if your users have a softphone or an interface install on same computer than the browser, and called when you click on a link in your browser that start with "tel:". If you need a full server solution, you must set this to "No" and fill next field.
+ClickToDialUseTelLinkDesc=Use this method if your users have a softphone or a software interface installed on same computer than the browser, and called when you click on a link in your browser that start with "tel:". If you need a full server solution (no need of local software installation), you must set this to "No" and fill next field.
 ##### Point Of Sales (CashDesk) #####
 CashDesk=Point of sales
 CashDeskSetup=Point of sales module setup
