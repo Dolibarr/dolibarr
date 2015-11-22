@@ -91,7 +91,7 @@ class DolibarrApi
         // If object has lines, remove $db property
         if(isset($object->lines) && count($object->lines) > 0)  {
             $nboflines = count($object->lines);
-        	for ($i=0; $i < $nbofline; $i++)
+        	for ($i=0; $i < $nboflines; $i++)
             {
                 $this->_cleanObjectDatas($object->lines[$i]);
             }
