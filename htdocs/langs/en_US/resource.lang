@@ -17,6 +17,7 @@ ResourceFormLabel_description=Resource description
 
 ResourcesLinkedToElement=Resources linked to element
 
+ShowResource=Show resource
 ShowResourcePlanning=Show resource planning
 GotoDate=Go to date
 
