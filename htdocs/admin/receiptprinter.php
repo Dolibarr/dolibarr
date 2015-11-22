@@ -286,6 +286,7 @@ if ($mode == 'config' && $user->admin)
         print '<tr class="liste_titre">';
         print '<th>'.$langs->trans("Name").'</th>';
         print '<th>'.$langs->trans("Type").'</th>';
+        print '<th>'.$langs->trans("Profile").'</th>';
         print '<th>'.$langs->trans("Parameters").'</th>';
         print '<th></th>';
         print '<th></th>';
@@ -315,13 +316,24 @@ if ($mode == 'config' && $user->admin)
 
     print '<div><p></div>';
     dol_fiche_head();
+    print $langs->trans("ReceiptPrinterTypeDesc")."<br><br>\n";
     print '<table class="noborder" width="100%">'."\n";
-    $var=true;
-    print '<tr><td>'.$langs->trans("CONNECTOR_DUMMY").':</td><td>'.$langs->trans("CONNECTOR_DUMMY_HELP").'</td></tr>';
-    print '<td>'.$langs->trans("CONNECTOR_NETWORK_PRINT").':</td><td>'.$langs->trans("CONNECTOR_NETWORK_PRINT_HELP").'</td></tr>';
-    print '<td>'.$langs->trans("CONNECTOR_FILE_PRINT").':</td><td>'.$langs->trans("CONNECTOR_FILE_PRINT_HELP").'</td></tr>';
-    print '<td>'.$langs->trans("CONNECTOR_WINDOWS_PRINT").':</td><td>'.$langs->trans("CONNECTOR_WINDOWS_PRINT_HELP").'</td></tr>';
-    //print '<td>'.$langs->trans("CONNECTOR_JAVA").':</td><td>'.$langs->trans("CONNECTOR_JAVA_HELP").'</td></tr>';
+    print '<tr '.$bc[1].'><td>'.$langs->trans("CONNECTOR_DUMMY").':</td><td>'.$langs->trans("CONNECTOR_DUMMY_HELP").'</td></tr>';
+    print '<tr '.$bc[0].'><td>'.$langs->trans("CONNECTOR_NETWORK_PRINT").':</td><td>'.$langs->trans("CONNECTOR_NETWORK_PRINT_HELP").'</td></tr>';
+    print '<tr '.$bc[1].'><td>'.$langs->trans("CONNECTOR_FILE_PRINT").':</td><td>'.$langs->trans("CONNECTOR_FILE_PRINT_HELP").'</td></tr>';
+    print '<tr '.$bc[0].'><td>'.$langs->trans("CONNECTOR_WINDOWS_PRINT").':</td><td>'.$langs->trans("CONNECTOR_WINDOWS_PRINT_HELP").'</td></tr>';
+    //print '<tr '.$bc[1].'><td>'.$langs->trans("CONNECTOR_JAVA").':</td><td>'.$langs->trans("CONNECTOR_JAVA_HELP").'</td></tr>';
+    print '</table>';
+    dol_fiche_end();
+    print '<div><p></div>';
+    dol_fiche_head();
+    print $langs->trans("ReceiptPrinterProfileDesc")."<br><br>\n";
+    print '<table class="noborder" width="100%">'."\n";
+    print '<tr '.$bc[1].'><td>'.$langs->trans("PROFILE_DEFAULT").':</td><td>'.$langs->trans("PROFILE_DEFAULT_HELP").'</td></tr>';
+    print '<tr '.$bc[0].'><td>'.$langs->trans("PROFILE_SIMPLE").':</td><td>'.$langs->trans("PROFILE_SIMPLE_HELP").'</td></tr>';
+    print '<tr '.$bc[1].'><td>'.$langs->trans("PROFILE_EPOSTEP").':</td><td>'.$langs->trans("PROFILE_EPOSTEP_HELP").'</td></tr>';
+    print '<tr '.$bc[0].'><td>'.$langs->trans("PROFILE_P822D").':</td><td>'.$langs->trans("PROFILE_P822D_HELP").'</td></tr>';
+    print '<tr '.$bc[1].'><td>'.$langs->trans("PROFILE_STAR").':</td><td>'.$langs->trans("PROFILE_STAR_HELP").'</td></tr>';
     print '</table>';
     dol_fiche_end();
 }

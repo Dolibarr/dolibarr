@@ -234,19 +234,19 @@ class dolReceiptPrinter extends Escpos
                 }
                 switch ($row['fk_profile']) {
                     case 0:
-                        $row['fk_profile_name'] = 'DEFAULT';
+                        $row['fk_profile_name'] = 'PROFILE_DEFAULT';
                         break;
                     case 1:
-                        $row['fk_profile_name'] = 'SIMPLE';
+                        $row['fk_profile_name'] = 'PROFILE_SIMPLE';
                         break;
                     case 2:
-                        $row['fk_profile_name'] = 'EPOSTEP';
+                        $row['fk_profile_name'] = 'PROFILE_EPOSTEP';
                         break;
                     case 3:
-                        $row['fk_profile_name'] = 'P822D';
+                        $row['fk_profile_name'] = 'PROFILE_P822D';
                         break;
                     default:
-                        $row['fk_profile_name'] = 'STAR';
+                        $row['fk_profile_name'] = 'PROFILE_STAR';
                         break;
                 }
                 $obj[] = $row;
@@ -326,11 +326,11 @@ class dolReceiptPrinter extends Escpos
         global $langs;
         $error = 0;
         $html = '<select class="flat" name="'.$htmlname.'">';
-        $html.= '<option value="0" '.($selected==0?'selected="selected"':'').'>'.$langs->trans('DEFAULT').'</option>';
-        $html.= '<option value="1" '.($selected==1?'selected="selected"':'').'>'.$langs->trans('SIMPLE').'</option>';
-        $html.= '<option value="2" '.($selected==2?'selected="selected"':'').'>'.$langs->trans('EPOSTEP').'</option>';
-        $html.= '<option value="3" '.($selected==3?'selected="selected"':'').'>'.$langs->trans('P822D').'</option>';
-        $html.= '<option value="4" '.($selected==4?'selected="selected"':'').'>'.$langs->trans('STAR').'</option>';
+        $html.= '<option value="0" '.($selected==0?'selected="selected"':'').'>'.$langs->trans('PROFILE_DEFAULT').'</option>';
+        $html.= '<option value="1" '.($selected==1?'selected="selected"':'').'>'.$langs->trans('PROFILE_SIMPLE').'</option>';
+        $html.= '<option value="2" '.($selected==2?'selected="selected"':'').'>'.$langs->trans('PROFILE_EPOSTEP').'</option>';
+        $html.= '<option value="3" '.($selected==3?'selected="selected"':'').'>'.$langs->trans('PROFILE_P822D').'</option>';
+        $html.= '<option value="4" '.($selected==4?'selected="selected"':'').'>'.$langs->trans('PROFILE_STAR').'</option>';
         $html.= '</select>';
 
         $this->profileresprint = $html;
