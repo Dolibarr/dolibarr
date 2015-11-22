@@ -76,7 +76,7 @@ if ($action == 'addprinter' && $user->admin)
 
     if (! $error)
     {
-        $result= $printer->AddPrinter($printername, GETPOST('printertypeid', 'int'), $parameter);
+        $result= $printer->AddPrinter($printername, GETPOST('printertypeid', 'int'), GETPOST('printerprofileid', 'int'), $parameter);
         if ($result > 0) $error++;
 
         if (! $error)
@@ -132,7 +132,7 @@ if ($action == 'updateprinter' && $user->admin)
 
     if (! $error)
     {
-        $result= $printer->UpdatePrinter($printername, GETPOST('printertypeid', 'int'), $parameter, $printerid);
+        $result= $printer->UpdatePrinter($printername, GETPOST('printertypeid', 'int'), GETPOST('printerprofileid', 'int'), $parameter, $printerid);
         if ($result > 0) $error++;
 
         if (! $error)
@@ -235,6 +235,7 @@ if ($mode == 'config' && $user->admin)
     print '<tr class="liste_titre">';
     print '<th>'.$langs->trans("Name").'</th>';
     print '<th>'.$langs->trans("Type").'</th>';
+    print '<th>'.$langs->trans("Profile").'</th>';
     print '<th>'.$langs->trans("Parameters").'</th>';
     print '<th></th>';
     print '<th></th>';
@@ -252,6 +253,8 @@ if ($mode == 'config' && $user->admin)
                 print '<td><input size="50" type="text" name="printername" value="'.$printer->listprinters[$line]['name'].'"></td>';
                 $ret = $printer->selectTypePrinter($printer->listprinters[$line]['fk_type']);
                 print '<td>'.$printer->resprint.'</td>';
+                $ret = $printer->selectProfilePrinter($printer->listprinters[$line]['fk_profile']);
+                print '<td>'.$printer->profileresprint.'</td>';
                 print '<td><input size="60" type="text" name="parameter" value="'.$printer->listprinters[$line]['parameter'].'"></td>';
                 print '<td></td>';
                 print '<td></td>';
@@ -259,27 +262,8 @@ if ($mode == 'config' && $user->admin)
                 print '</tr>';
              } else {
                 print '<td>'.$printer->listprinters[$line]['name'].'</td>';
-                switch ($printer->listprinters[$line]['fk_type']) {
-                    case 1:
-                        $connector = 'CONNECTOR_DUMMY';
-                        break;
-                    case 2:
-                        $connector = 'CONNECTOR_FILE_PRINT';
-                        break;
-                    case 3:
-                        $connector = 'CONNECTOR_NETWORK_PRINT';
-                        break;
-                    case 4:
-                        $connector = 'CONNECTOR_WINDOWS_PRINT';
-                        break;
-                    case 5:
-                        $connector = 'CONNECTOR_JAVA';
-                        break;
-                    default:
-                        $connector = 'CONNECTOR_UNKNOWN';
-                        break;
-                }
-                print '<td>'.$langs->trans($connector).'</td>';
+                print '<td>'.$langs->trans($printer->listprinters[$line]['fk_type_name']).'</td>';
+                print '<td>'.$langs->trans($printer->listprinters[$line]['fk_profile_name']).'</td>';
                 print '<td>'.$printer->listprinters[$line]['parameter'].'</td>';
                 // edit icon
                 print '<td><a href="'.$_SERVER['PHP_SELF'].'?mode=config&amp;action=editprinter&amp;printerid='.$printer->listprinters[$line]['rowid'].'">';
@@ -302,6 +286,7 @@ if ($mode == 'config' && $user->admin)
         print '<tr class="liste_titre">';
         print '<th>'.$langs->trans("Name").'</th>';
         print '<th>'.$langs->trans("Type").'</th>';
+        print '<th>'.$langs->trans("Profile").'</th>';
         print '<th>'.$langs->trans("Parameters").'</th>';
         print '<th></th>';
         print '<th></th>';
@@ -311,6 +296,8 @@ if ($mode == 'config' && $user->admin)
         print '<td><input size="50" type="text" name="printername"></td>';
         $ret = $printer->selectTypePrinter();
         print '<td>'.$printer->resprint.'</td>';
+        $ret = $printer->selectProfilePrinter();
+        print '<td>'.$printer->profileresprint.'</td>';
         print '<td><input size="60" type="text" name="parameter"></td>';
         print '<td></td>';
         print '<td></td>';
@@ -329,13 +316,24 @@ if ($mode == 'config' && $user->admin)
 
     print '<div><p></div>';
     dol_fiche_head();
+    print $langs->trans("ReceiptPrinterTypeDesc")."<br><br>\n";
     print '<table class="noborder" width="100%">'."\n";
-    $var=true;
-    print '<tr><td>'.$langs->trans("CONNECTOR_DUMMY").':</td><td>'.$langs->trans("CONNECTOR_DUMMY_HELP").'</td></tr>';
-    print '<td>'.$langs->trans("CONNECTOR_NETWORK_PRINT").':</td><td>'.$langs->trans("CONNECTOR_NETWORK_PRINT_HELP").'</td></tr>';
-    print '<td>'.$langs->trans("CONNECTOR_FILE_PRINT").':</td><td>'.$langs->trans("CONNECTOR_FILE_PRINT_HELP").'</td></tr>';
-    print '<td>'.$langs->trans("CONNECTOR_WINDOWS_PRINT").':</td><td>'.$langs->trans("CONNECTOR_WINDOWS_PRINT_HELP").'</td></tr>';
-    //print '<td>'.$langs->trans("CONNECTOR_JAVA").':</td><td>'.$langs->trans("CONNECTOR_JAVA_HELP").'</td></tr>';
+    print '<tr '.$bc[1].'><td>'.$langs->trans("CONNECTOR_DUMMY").':</td><td>'.$langs->trans("CONNECTOR_DUMMY_HELP").'</td></tr>';
+    print '<tr '.$bc[0].'><td>'.$langs->trans("CONNECTOR_NETWORK_PRINT").':</td><td>'.$langs->trans("CONNECTOR_NETWORK_PRINT_HELP").'</td></tr>';
+    print '<tr '.$bc[1].'><td>'.$langs->trans("CONNECTOR_FILE_PRINT").':</td><td>'.$langs->trans("CONNECTOR_FILE_PRINT_HELP").'</td></tr>';
+    print '<tr '.$bc[0].'><td>'.$langs->trans("CONNECTOR_WINDOWS_PRINT").':</td><td>'.$langs->trans("CONNECTOR_WINDOWS_PRINT_HELP").'</td></tr>';
+    //print '<tr '.$bc[1].'><td>'.$langs->trans("CONNECTOR_JAVA").':</td><td>'.$langs->trans("CONNECTOR_JAVA_HELP").'</td></tr>';
+    print '</table>';
+    dol_fiche_end();
+    print '<div><p></div>';
+    dol_fiche_head();
+    print $langs->trans("ReceiptPrinterProfileDesc")."<br><br>\n";
+    print '<table class="noborder" width="100%">'."\n";
+    print '<tr '.$bc[1].'><td>'.$langs->trans("PROFILE_DEFAULT").':</td><td>'.$langs->trans("PROFILE_DEFAULT_HELP").'</td></tr>';
+    print '<tr '.$bc[0].'><td>'.$langs->trans("PROFILE_SIMPLE").':</td><td>'.$langs->trans("PROFILE_SIMPLE_HELP").'</td></tr>';
+    print '<tr '.$bc[1].'><td>'.$langs->trans("PROFILE_EPOSTEP").':</td><td>'.$langs->trans("PROFILE_EPOSTEP_HELP").'</td></tr>';
+    print '<tr '.$bc[0].'><td>'.$langs->trans("PROFILE_P822D").':</td><td>'.$langs->trans("PROFILE_P822D_HELP").'</td></tr>';
+    print '<tr '.$bc[1].'><td>'.$langs->trans("PROFILE_STAR").':</td><td>'.$langs->trans("PROFILE_STAR_HELP").'</td></tr>';
     print '</table>';
     dol_fiche_end();
 }

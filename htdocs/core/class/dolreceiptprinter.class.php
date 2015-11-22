@@ -74,8 +74,8 @@
  * <dol_print_customer_skype>                       Print customer skype
  * <dol_print_customer_tax_number>                  Print customer VAT number
  * <dol_print_customer_account_balance>             Print customer account balance
- * <dol_print_vendor_last_name>                     Print vendor name
- * <dol_print_vendor_first_name>                    Print vendor firstname
+ * <dol_print_vendor_lastname>                      Print vendor name
+ * <dol_print_vendor_firstname>                     Print vendor firstname
  * <dol_print_vendor_mail>                          Print vendor mail
  * <dol_print_customer_points>                      Print customer points
  * <dol_print_order_points>                         Print number of points for this order
@@ -204,14 +204,52 @@ class dolReceiptPrinter extends Escpos
         global $conf;
         $error = 0;
         $line = 0;
-        $sql = 'SELECT rowid, name, fk_type, parameter';
+        $sql = 'SELECT rowid, name, fk_type, fk_profile, parameter';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'printer_receipt';
         $sql.= ' WHERE entity = '.$conf->entity;
         $resql = $this->db->query($sql);
         if ($resql) {
             $num = $this->db->num_rows($resql);
             while ($line < $num) {
-                $obj[] = $this->db->fetch_array($resql);
+                $row = $this->db->fetch_array($resql);
+                switch ($row['fk_type']) {
+                    case 1:
+                        $row['fk_type_name'] = 'CONNECTOR_DUMMY';
+                        break;
+                    case 2:
+                        $row['fk_type_name'] = 'CONNECTOR_FILE_PRINT';
+                        break;
+                    case 3:
+                        $row['fk_type_name'] = 'CONNECTOR_NETWORK_PRINT';
+                        break;
+                    case 4:
+                        $row['fk_type_name'] = 'CONNECTOR_WINDOWS_PRINT';
+                        break;
+                    case 5:
+                        $row['fk_type_name'] = 'CONNECTOR_JAVA';
+                        break;
+                    default:
+                        $row['fk_type_name'] = 'CONNECTOR_UNKNOWN';
+                        break;
+                }
+                switch ($row['fk_profile']) {
+                    case 0:
+                        $row['fk_profile_name'] = 'PROFILE_DEFAULT';
+                        break;
+                    case 1:
+                        $row['fk_profile_name'] = 'PROFILE_SIMPLE';
+                        break;
+                    case 2:
+                        $row['fk_profile_name'] = 'PROFILE_EPOSTEP';
+                        break;
+                    case 3:
+                        $row['fk_profile_name'] = 'PROFILE_P822D';
+                        break;
+                    default:
+                        $row['fk_profile_name'] = 'PROFILE_STAR';
+                        break;
+                }
+                $obj[] = $row;
                 $line++;
             }
         } else {
@@ -275,21 +313,47 @@ class dolReceiptPrinter extends Escpos
         return $error;
     }
 
+
+    /**
+     *  Form to Select Profile printer
+     *
+     *  @param    string    $selected       Id printer profile pre-selected
+     *  @param    string    $htmlname       select html name
+     *  @return  int                        0 if OK; >0 if KO
+     */
+    function selectProfilePrinter($selected='', $htmlname='printerprofileid')
+    {
+        global $langs;
+        $error = 0;
+        $html = '<select class="flat" name="'.$htmlname.'">';
+        $html.= '<option value="0" '.($selected==0?'selected="selected"':'').'>'.$langs->trans('PROFILE_DEFAULT').'</option>';
+        $html.= '<option value="1" '.($selected==1?'selected="selected"':'').'>'.$langs->trans('PROFILE_SIMPLE').'</option>';
+        $html.= '<option value="2" '.($selected==2?'selected="selected"':'').'>'.$langs->trans('PROFILE_EPOSTEP').'</option>';
+        $html.= '<option value="3" '.($selected==3?'selected="selected"':'').'>'.$langs->trans('PROFILE_P822D').'</option>';
+        $html.= '<option value="4" '.($selected==4?'selected="selected"':'').'>'.$langs->trans('PROFILE_STAR').'</option>';
+        $html.= '</select>';
+
+        $this->profileresprint = $html;
+        return $error;
+    }
+
+
     /**
      *  Function to Add a printer in db
      *
      *  @param    string    $name           Printer name
      *  @param    int       $type           Printer type
+     *  @param    int       $profile        Printer profile
      *  @param    string    $parameter      Printer parameter
      *  @return  int                        0 if OK; >0 if KO
      */
-    function AddPrinter($name, $type, $parameter)
+    function AddPrinter($name, $type, $profile, $parameter)
     {
         global $conf;
         $error = 0;
         $sql = 'INSERT INTO '.MAIN_DB_PREFIX.'printer_receipt';
-        $sql.= ' (name, fk_type, parameter, entity)';
-        $sql.= ' VALUES ("'.$this->db->escape($name).'", '.$type.', "'.$this->db->escape($parameter).'", '.$conf->entity.')';
+        $sql.= ' (name, fk_type, fk_profile, parameter, entity)';
+        $sql.= ' VALUES ("'.$this->db->escape($name).'", '.$type.', '.$profile.', "'.$this->db->escape($parameter).'", '.$conf->entity.')';
         $resql = $this->db->query($sql);
         if (! $resql) {
             $error++;
@@ -303,17 +367,19 @@ class dolReceiptPrinter extends Escpos
      *
      *  @param    string    $name           Printer name
      *  @param    int       $type           Printer type
+     *  @param    int       $profile        Printer profile
      *  @param    string    $parameter      Printer parameter
      *  @param    int       $printerid      Printer id
      *  @return  int                        0 if OK; >0 if KO
      */
-    function UpdatePrinter($name, $type, $parameter, $printerid)
+    function UpdatePrinter($name, $type, $profile, $parameter, $printerid)
     {
         global $conf;
         $error = 0;
         $sql = 'UPDATE '.MAIN_DB_PREFIX.'printer_receipt';
         $sql.= ' SET name="'.$this->db->escape($name).'"';
         $sql.= ', fk_type='.$type;
+        $sql.= ', fk_profile='.$profile;
         $sql.= ', parameter="'.$this->db->escape($parameter).'"';
         $sql.= ' WHERE rowid='.$printerid;
         $resql = $this->db->query($sql);
@@ -427,9 +493,20 @@ class dolReceiptPrinter extends Escpos
         $this->template = str_replace('<dol_print_customer_skype>', $object->customer_skype, $this->template);
         $this->template = str_replace('<dol_print_customer_tax_number>', $object->customer_tax_number, $this->template);
         $this->template = str_replace('<dol_print_customer_account_balance>', $object->customer_account_balance, $this->template);
+        $this->template = str_replace('<dol_print_customer_points>', $object->customer_points, $this->template);
+        $this->template = str_replace('<dol_print_order_points>', $object->order_points, $this->template);
         $this->template = str_replace('<dol_print_vendor_firstname>', $object->vendor_firstname, $this->template);
         $this->template = str_replace('<dol_print_vendor_lastname>', $object->vendor_lastname, $this->template);
+        $this->template = str_replace('<dol_print_vendor_mail>', $object->vendor_mail, $this->template);
+        $this->template = str_replace('<dol_print_date>', $object->date, $this->template);
         $this->template = str_replace('<dol_print_date_time>', $object->date_time, $this->template);
+        $this->template = str_replace('<dol_print_year>', $object->date_time, $this->template);
+        $this->template = str_replace('<dol_print_month_letters>', $object->date_time, $this->template);
+        $this->template = str_replace('<dol_print_month>', $object->date_time, $this->template);
+        $this->template = str_replace('<dol_print_day>', $object->date_time, $this->template);
+        $this->template = str_replace('<dol_print_day_letters>', $object->date_time, $this->template);
+        $this->template = str_replace('<dol_print_table>', $object->table, $this->template);
+        $this->template = str_replace('<dol_print_cutlery>', $object->cutlery, $this->template);
 
         // parse template
         $p = xml_parser_create();
@@ -463,9 +540,17 @@ class dolReceiptPrinter extends Escpos
                         $this->printer->pulse();
                         $html.= ' &#991;'.nl2br($vals[$line]['value']);
                         break;
+                    case 'DOL_ACTIVATE_BUZZER':
+                        //$this->printer->buzzer();
+                        $html.= ' &#x266b;'.nl2br($vals[$line]['value']);
+                        break;
                     case 'DOL_PRINT_BARCODE':
                         // $vals[$line]['value'] -> barcode($content, $type)
                         $this->printer->barcode($object->barcode);
+                        break;
+                    case 'DOL_PRINT_BARCODE_CUSTOMER_ID':
+                        // $vals[$line]['value'] -> barcode($content, $type)
+                        $this->printer->barcode($object->customer_id);
                         break;
                     case 'DOL_PRINT_QRCODE':
                         // $vals[$line]['value'] -> qrCode($content, $ec, $size, $model)
@@ -553,7 +638,7 @@ class dolReceiptPrinter extends Escpos
     {
         global $conf;
         $error=0;
-        $sql = 'SELECT rowid, name, fk_type, parameter';
+        $sql = 'SELECT rowid, name, fk_type, fk_profile, parameter';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'printer_receipt';
         $sql.= ' WHERE rowid = '.$printerid;
         $sql.= ' AND entity = '.$conf->entity;
@@ -573,7 +658,7 @@ class dolReceiptPrinter extends Escpos
             try {
                 switch ($obj['fk_type']) {
                     case 1:
-                        require_once DOL_DOCUMENT_ROOT .'/includes/escpos/src/DummyPrintConnector.php';
+                        require_once DOL_DOCUMENT_ROOT .'/includes/mike42/escpos-php/src/DummyPrintConnector.php';
                         $this->connector = new DummyPrintConnector();
                         break;
                     case 2:
