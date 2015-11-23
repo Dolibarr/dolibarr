@@ -147,7 +147,7 @@ if ($action == 'add')
     }
     if (! $error && ! $_POST['url'])
     {
-	    setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Url")), null, 'errors');
+	    setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("URL")), null, 'errors');
         $action = 'create';
         $error++;
     }

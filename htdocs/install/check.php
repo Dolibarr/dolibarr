@@ -30,7 +30,7 @@ include_once 'inc.php';
 
 $err = 0;
 $allowinstall = 0;
-$allowupgrade = 0;
+$allowupgrade = false;
 $checksok = 1;
 
 $setuplang=GETPOST("selectlang",'',3)?GETPOST("selectlang",'',3):$langs->getDefaultLang();
@@ -181,11 +181,11 @@ if (is_readable($conffile) && filesize($conffile) > 8)
 	if ($databaseok)
 	{
 		// Already installed for all parts (config and database). We can propose upgrade.
-		$allowupgrade=1;
+		$allowupgrade=true;
 	}
 	else
 	{
-		$allowupgrade=0;
+		$allowupgrade=false;
 	}
 }
 else
@@ -216,7 +216,7 @@ else
 	}
 
 	// First install, we can't upgrade
-	$allowupgrade=0;
+	$allowupgrade=false;
 }
 
 
@@ -382,6 +382,7 @@ else
 			$allowupgrade=false;
 		}
 		if (defined("MAIN_NOT_INSTALLED")) $allowupgrade=false;
+		if (GETPOST('allowupgrade')) $allowupgrade=true;
 		$migrationscript=array(	array('from'=>'3.0.0', 'to'=>'3.1.0'),
 								array('from'=>'3.1.0', 'to'=>'3.2.0'),
 								array('from'=>'3.2.0', 'to'=>'3.3.0'),

@@ -1695,9 +1695,14 @@ span.tabspan {
 
 div.divButAction { margin-bottom: 1.4em; }
 
+span.butAction, span.butActionDelete {
+	cursor: pointer;
+}
+
 .butAction, .butAction:link, .butAction:visited, .butAction:hover, .butAction:active, .butActionDelete, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active {
 	text-decoration: none;
 	margin: 0em <?php echo ($dol_optimize_smallscreen?'0.7':'0.9'); ?>em;
+	padding: 0.6em <?php echo ($dol_optimize_smallscreen?'0.4':'0.7'); ?>em;
 	font-family: <?php print $fontlist ?>;
 /*  for bootstrap look
   color: #fff;
@@ -1727,9 +1732,16 @@ div.divButAction { margin-bottom: 1.4em; }
   border-color: #c5c5c5;
   border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25);
   display: inline-block;
-  padding: 4px 14px;
   text-align: center;
   cursor: pointer;
+  color: #fff;
+  background: rgb(<?php echo $colorbackhmenu1 ?>);
+  background-image: linear-gradient(top, rgba(255,255,255,.1) 0%, rgba(0,0,0,.4) 100%);
+    background-image: -o-linear-gradient(top, rgba(255,255,255,.1) 0%, rgba(0,0,0,.4) 100%);
+    background-image: -moz-linear-gradient(top, rgba(255,255,255,.1) 0%, rgba(0,0,0,.4) 100%);
+    background-image: -webkit-linear-gradient(top, rgba(255,255,255,.1) 0%, rgba(0,0,0,.4) 100%);
+    background-image: -ms-linear-gradient(top, rgba(255,255,255,.1) 0%, rgba(0,0,0,.4) 100%);
+
   color: #333333;
   text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
   background-color: #f5f5f5;
@@ -1738,6 +1750,7 @@ div.divButAction { margin-bottom: 1.4em; }
   background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e6);
   background-image: -o-linear-gradient(top, #ffffff, #e6e6e6);
   background-image: linear-gradient(to bottom, #ffffff, #e6e6e6);
+
   background-repeat: repeat-x;
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', endColorstr='#ffe6e6e6', GradientType=0);
   border-color: #e6e6e6 #e6e6e6 #bfbfbf;
@@ -1789,13 +1802,13 @@ div.divButAction { margin-bottom: 1.4em; }
 	white-space: nowrap !important;
 	cursor: not-allowed !important;
 	margin: 0em <?php echo ($dol_optimize_smallscreen?'0.7':'0.9'); ?>em;
+	padding: 0.6em <?php echo ($dol_optimize_smallscreen?'0.4':'0.7'); ?>em;
     font-family: <?php print $fontlist ?> !important;
 /* for bootstrap look
   color: #333;
   background-color: #e6e6e6;
   border-color: #adadad;
   display: inline-block;
-  padding: 6px 12px;
   margin-bottom: 0;
   font-weight: normal !important;
   line-height: 1.42857143;
@@ -1817,7 +1830,8 @@ div.divButAction { margin-bottom: 1.4em; }
   border-color: #c5c5c5;
   border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25);
   display: inline-block;
-  padding: 4px 14px;
+  margin: 0em <?php echo ($dol_optimize_smallscreen?'0.7':'0.9'); ?>em;
+  padding: 0.6em <?php echo ($dol_optimize_smallscreen?'0.4':'0.7'); ?>em;
   text-align: center;
   cursor: pointer;
   color: #999 !important;
@@ -1841,16 +1855,7 @@ div.divButAction { margin-bottom: 1.4em; }
   -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
   -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
-}
 
-<?php if (! empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED)) { ?>
-.butActionRefused {
-	display: none;
-}
-<?php } ?>
-
-span.butAction, span.butActionDelete {
-	cursor: pointer;
 }
 
 /* Prepare for bootstrap look
@@ -1922,6 +1927,12 @@ a.butAction:link, a.butAction:visited, a.butAction:hover, a.butAction:active {
 	color: #FFFFFF;
 }
 End bootstrap */
+
+<?php if (! empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED)) { ?>
+.butActionRefused {
+	display: none;
+}
+<?php } ?>
 
 
 
@@ -2341,7 +2352,12 @@ table.dataTable td {
 }
 tr.even td, tr.pair td, tr.odd td, tr.impair td, form.odd div.tagtd, form.impair div.tagtd, form.pair div.tagtd, div.impair div.tagtd, div.pair div.tagtd, div.liste_titre div.tagtd {
     padding: 5px 2px 5px 3px;
+}
+tr.even td, tr.pair td, tr.odd td, tr.impair td, form.odd div.tagtd, form.impair div.tagtd, form.pair div.tagtd, div.impair div.tagtd, div.pair div.tagtd, div.liste_titre div.tagtd {
     border-bottom: 1px solid #ddd;
+}
+tr.even:last-child td, tr.pair:last-child td, tr.odd:last-child td, tr.impair:last-child td {
+    border-bottom: 0px !important;
 }
 tr.even td .nobordernopadding tr td, tr.pair td .nobordernopadding tr td, tr.impair td .nobordernopadding tr td, tr.odd td .nobordernopadding tr td {
     border-bottom: 0px !important;
@@ -2440,13 +2456,13 @@ input.liste_titre {
 	background: #F0F0F0;
 }
 .noborder tr.liste_total td, tr.liste_total td, form.liste_total div {
-    border-top: 1px solid #DDDDDD;
-    color: #332266;
+    color: #552266;
     font-weight: normal;
     white-space: nowrap;
-    padding: 4px;
 }
-
+form.liste_total div {
+    border-top: 1px solid #DDDDDD;
+}
 
 .tableforservicepart1 .impair, .tableforservicepart1 .pair, .tableforservicepart2 .impair, .tableforservicepart2 .pair {
 	background: #FFF;
@@ -2590,6 +2606,7 @@ div.ok {
   color: #114466;
 }
 
+/* Warning message */
 div.warning {
   color: #302020;
   padding: 0.3em 0.3em 0.3em 0.3em;
@@ -2602,14 +2619,7 @@ div.warning {
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
-div.error {
-  color: #550000; font-weight: bold;
-  padding: 0.3em 0.3em 0.3em 0.3em;
-  margin: 0.5em 0em 0.5em 0em;
-  border: 1px solid #DC9CAB;
-  -moz-border-radius: 4px;
-  -webkit-border-radius: 4px;
-  border-radius: 4px;
+/* Error message */
   background: #EFCFCF;
 }
 
@@ -2626,6 +2636,9 @@ div.info {
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
+div.warning a, div.info a, div.error a {
+	color: rgb(<?php echo $colortext; ?>);
+}
 
 /*
  *   Liens Payes/Non payes

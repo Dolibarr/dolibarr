@@ -240,14 +240,14 @@ class FormActions
 
 
     /**
-     *  Output list of type of event
+     *  Output html select list of type of event
      *
      *  @param	string		$selected       Type pre-selected (can be 'manual', 'auto' or 'AC_xxx')
      *  @param  string		$htmlname       Nom champ formulaire
      *  @param	string		$excludetype	Type to exclude
      *  @param	string		$onlyautoornot	Group list by auto events or not: We keep only the 2 generic lines (AC_OTH and AC_OTH_AUTO)
-     *  @param	int		$hideinfohelp	1=Do not show info help
-     *  @param  int		$multiselect    1=Allow multiselect of action type for filter or search
+     *  @param	int		    $hideinfohelp	1=Do not show info help
+     *  @param  int		    $multiselect    1=Allow multiselect of action type for filter or search
      * 	@return	void
      */
     function select_type_actions($selected='',$htmlname='actioncode',$excludetype='',$onlyautoornot=0, $hideinfohelp=0, $multiselect=0)
@@ -270,9 +270,10 @@ class FormActions
 
        	if (! empty($conf->global->AGENDA_ALWAYS_HIDE_AUTO)) unset($arraylist['AC_OTH_AUTO']);
 
-		if($multiselect==1) {
+		if ($multiselect==1) 
+		{
 	        if(!is_array($selected) && !empty($selected)) $selected = explode(',', $selected);
-			print $form->multiselectarray($htmlname, $arraylist,$selected,0, 0, '', 0, 200);
+			print $form->multiselectarray($htmlname, $arraylist, $selected, 0, 0, '', 0, 0);
 			
 		}
 		else {

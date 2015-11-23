@@ -165,7 +165,9 @@ class HookManager
 				'formatEvent',
                 'addCalendarChoice',
                 'printObjectLine',
-                'printObjectSubLine'
+                'printObjectSubLine',
+				'createDictionaryFieldList',
+				'editDictionaryFieldlist'
 				)
 			)) $hooktype='addreplace';
         // Deprecated hook types ('returnvalue')

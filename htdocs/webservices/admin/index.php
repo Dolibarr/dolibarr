@@ -19,7 +19,7 @@
  */
 
 /**
- *      \file       htdocs/webservices/admin/webservices.php
+ *      \file       htdocs/webservices/admin/index.php
  *		\ingroup    webservices
  *		\brief      Page to setup webservices module
  */

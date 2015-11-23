@@ -216,7 +216,7 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 
 
 // List of draft projects
-print_projecttasks_array($db,$form,$socid,$projectsListId,0,0,$listofoppstatus);
+print_projecttasks_array($db,$form,$socid,$projectsListId,0,0,$listofoppstatus,array('declaredprogress'));
 
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';

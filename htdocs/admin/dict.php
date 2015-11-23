@@ -335,7 +335,7 @@ $tabrowid[29]= "";
 
 // Condition to show dictionary in setup page
 $tabcond=array();
-$tabcond[1] = true;
+$tabcond[1] = (! empty($conf->societe->enabled));
 $tabcond[2] = true;
 $tabcond[3] = true;
 $tabcond[4] = true;
@@ -345,7 +345,7 @@ $tabcond[7] = ! empty($conf->tax->enabled);
 $tabcond[8] = ! empty($conf->societe->enabled);
 $tabcond[9] = true;
 $tabcond[10]= true;
-$tabcond[11]= true;
+$tabcond[11]= (! empty($conf->societe->enabled));
 $tabcond[12]= (! empty($conf->commande->enabled) || ! empty($conf->propal->enabled) || ! empty($conf->facture->enabled) || ! empty($conf->fournisseur->enabled));
 $tabcond[13]= (! empty($conf->commande->enabled) || ! empty($conf->propal->enabled) || ! empty($conf->facture->enabled) || ! empty($conf->fournisseur->enabled));
 $tabcond[14]= (! empty($conf->product->enabled) && ! empty($conf->ecotax->enabled));

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -17,9 +17,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once DOL_DOCUMENT_ROOT . '/core/modules/syslog/logHandler.php';
-require_once DOL_DOCUMENT_ROOT . '/includes/raven/raven/lib/Raven/Autoloader.php';
-Raven_Autoloader::register();
+require_once DOL_DOCUMENT_ROOT.'/core/modules/syslog/logHandler.php';
+if (file_exists(DOL_DOCUMENT_ROOT.'/includes/raven/raven/lib/Raven/Autoloader.php'))
+{
+    require_once DOL_DOCUMENT_ROOT.'/includes/raven/raven/lib/Raven/Autoloader.php';
+    Raven_Autoloader::register();
+}
 
 /**
  * Class to manage logging to Sentry
@@ -71,7 +74,7 @@ class mod_syslog_sentry extends LogHandler implements LogHandlerInterface
 	 */
 	public function isActive()
 	{
-		return 1;
+		return file_exists(DOL_DOCUMENT_ROOT.'/includes/raven/raven/lib/Raven/Autoloader.php');
 	}
 
 	/**

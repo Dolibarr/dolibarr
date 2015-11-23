@@ -138,7 +138,8 @@ else {
 		// Show type selector
 		if ($forceall >= 0)
 		{
-			echo $langs->trans("FreeLineOfType");
+		    if (empty($conf->product->enabled) || empty($conf->service->enabled)) echo $langs->trans("Type");
+			else echo $langs->trans("FreeLineOfType");
 			echo ' ';
 		}
 	}
@@ -512,7 +513,17 @@ jQuery(document).ready(function() {
 	$("#select_type").change(function()
 	{
 		setforfree();
-		if (jQuery('#select_type').val() >= 0) jQuery('#dp_desc').focus();
+		if (jQuery('#select_type').val() >= 0) 
+		{
+			/* focus work on a standard textarea but not if field was replaced with CKEDITOR */
+			jQuery('#dp_desc').focus();
+			/* focus if CKEDITOR */
+			if (CKEDITOR)
+			{
+				var editor = CKEDITOR.instances['dp_desc'];
+   				if (editor) { editor.focus(); }
+			}
+		}
 		if (jQuery('#select_type').val() == '0') jQuery('#trlinefordates').hide();
 		else jQuery('#trlinefordates').show();
 	});
@@ -608,8 +619,17 @@ jQuery(document).ready(function() {
   		<?php } ?>
 
   		/* To set focus */
-  		if (jQuery('#idprod').val() > 0) jQuery('#dp_desc').focus();
-		if (jQuery('#idprodfournprice').val() > 0) jQuery('#dp_desc').focus();
+  		if (jQuery('#idprod').val() > 0 || jQuery('#idprodfournprice').val() > 0) 
+  	  	{
+			/* focus work on a standard textarea but not if field was replaced with CKEDITOR */
+			jQuery('#dp_desc').focus();
+			/* focus if CKEDITOR */
+			if (CKEDITOR)
+			{
+				var editor = CKEDITOR.instances['dp_desc'];
+   				if (editor) { editor.focus(); }
+			}
+  	  	}
 	});
 
 	<?php if (GETPOST('prod_entry_mode') == 'predef') { // When we submit with a predef product and it fails we must start with predef ?>

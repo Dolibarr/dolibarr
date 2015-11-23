@@ -4221,7 +4221,7 @@ abstract class CommonObject
 					$result = $product->fetch($fk_product);
 					if ($result <= 0)
 					{
-						$this->error='ErrorProductIdDoesNotExists';
+						$this->errors[] = 'ErrorProductIdDoesNotExists';
 						return -1;
 					}
 					if (($product->pmp > 0))
@@ -4238,10 +4238,10 @@ abstract class CommonObject
 					{
 						$buyPrice = $productFournisseur->fourn_price;
 					}
-					else
+					else if ($result < 0)
 					{
-						$this->error = $productFournisseur->error;
-						return -1;
+						$this->errors[] = $productFournisseur->error;
+						return -2;
 					}
 				}
 			}

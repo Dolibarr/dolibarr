@@ -301,7 +301,7 @@ class FormMail extends Form
         	$result = $this->fetchAllEMailTemplate($this->param["models"], $user, $outputlangs);
         	if ($result<0)
         	{
-        		setEventMessage($this->error,'errors');
+        		setEventMessages($this->error, $this->errors, 'errors');
         	}
         	$modelmail_array=array();
         	foreach($this->lines_model as $line)
@@ -871,6 +871,7 @@ class FormMail extends Form
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
+			$num=$this->db->num_rows($resql);
 			$this->lines_model=array();
 			while ($obj = $this->db->fetch_object($resql))
 			{

@@ -707,9 +707,10 @@ img.photoref {
     box-shadow: 3px 3px 4px #DDD;
 }
 .underrefbanner {
+}
+.underbanner {
 	border-bottom: 2px solid #888;
 }
-
 
 
 /* ============================================================================== */
@@ -1684,7 +1685,14 @@ span.tabspan {
 
 div.divButAction { margin-bottom: 1.4em; }
 
-.butAction, .butAction:link, .butAction:visited, .butAction:hover, .butAction:active, .butActionDelete, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active {
+span.butAction, span.butActionDelete {
+	cursor: pointer;
+}
+
+
+/*
+.butAction, .butAction:link, .butAction:visited, .butAction:hover, .butAction:active, .butActionDelete, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active 
+{
 	text-decoration: none;
 	white-space: nowrap;
 	padding: 0.4em <?php echo ($dol_optimize_smallscreen?'0.4':'0.7'); ?>em;
@@ -1700,7 +1708,7 @@ div.divButAction { margin-bottom: 1.4em; }
 	border-radius:0px 2px 0px 2px;
     -moz-box-shadow: 2px 2px 3px #f4f4f4;
     -webkit-box-shadow: 2px 2px 3px #f4f4f4;
-    box-shadow: 2px 2px 3px #f4f4f4;
+    box-shadow: 2px 2px 3px #f4f4f4;  
 }
 
 .butAction:hover   {
@@ -1734,24 +1742,15 @@ div.divButAction { margin-bottom: 1.4em; }
     -webkit-box-shadow: 3px 3px 4px #f4f4f4;
     box-shadow: 3px 3px 4px #f4f4f4;
 }
+*/
 
-<?php if (! empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED)) { ?>
-.butActionRefused {
-	display: none;
-}
-<?php } ?>
-
-span.butAction, span.butActionDelete {
-	cursor: pointer;
-}
-
-/* Prepare for bootstrap look
+/* Prepare for bootstrap look */
 .butAction, .butActionDelete, .butActionRefused {
 	border-color: #c5c5c5;
 	border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25);
 	display: inline-block;
-	padding: 4px 14px;
-	margin-bottom: 0;
+    padding: 0.4em <?php echo ($dol_optimize_smallscreen?'0.4':'0.7'); ?>em;
+    margin: 0em <?php echo ($dol_optimize_smallscreen?'0.7':'0.9'); ?>em;
 	line-height: 20px;
 	text-align: center;
 	vertical-align: middle;
@@ -1780,7 +1779,7 @@ span.butAction, span.butActionDelete {
 }
 
 .butAction {
-	color: #ffffff;
+	color: #ffffff !important;
 	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
 	background-color: #006dcc;
 	background-image: -moz-linear-gradient(top, #0088cc, #0044cc);
@@ -1796,7 +1795,7 @@ span.butAction, span.butActionDelete {
 }
 
 .butActionDelete {
-	color: #ffffff;
+	color: #ffffff !important;
 	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
 	background-color: #cc6d00;
 	background-image: -moz-linear-gradient(top, #cc8800, #cc4400);
@@ -1813,7 +1812,26 @@ span.butAction, span.butActionDelete {
 a.butAction:link, a.butAction:visited, a.butAction:hover, a.butAction:active {
 	color: #FFFFFF;
 }
-End bootstrap */
+
+.butActionRefused {
+	color: #AAAAAA !important;
+	cursor: not-allowed !important;
+}
+
+a.butAction:hover, a.butActionDelete:hover, a.butActionRefused:hover {
+    text-decoration: none;
+}
+a.butAction:hover, a.butActionDelete:hover {
+	opacity: 0.9;
+}
+
+/* End bootstrap */
+
+<?php if (! empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED)) { ?>
+.butActionRefused {
+	display: none;
+}
+<?php } ?>
 
 
 
@@ -2446,6 +2464,7 @@ div.ok {
   color: #114466;
 }
 
+/* Warning message */
 div.warning {
   color: #302020;
   padding: 0.3em 0.3em 0.3em 0.3em;
@@ -2458,6 +2477,7 @@ div.warning {
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
+/* Error message */
 div.error {
   color: #550000; font-weight: bold;
   padding: 0.3em 0.3em 0.3em 0.3em;
@@ -2482,6 +2502,9 @@ div.info {
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
+div.warning a, div.info a, div.error a {
+	color: rgb(<?php echo $colortext; ?>);
+}
 
 /*
  *   Liens Payes/Non payes

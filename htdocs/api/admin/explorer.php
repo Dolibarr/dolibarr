@@ -25,22 +25,22 @@
  *
  *
  */
-if (! defined("NOLOGIN"))        define("NOLOGIN",'1');
 
-$res=0;
-if (! $res && file_exists("../../main.inc.php")) $res=include '../../main.inc.php';
-if (! $res) die("Include of main fails");
-
-require_once DOL_DOCUMENT_ROOT.'/api/restler.php';
+require_once '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/api/class/api.class.php';
 require_once DOL_DOCUMENT_ROOT.'/api/class/api_access.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+
+
+/*
+ * View
+ */
 
 // Enable and test if module Api is enabled
 if (empty($conf->global->MAIN_MODULE_API))
 {
     $langs->load("admin");
-    dol_syslog("Call Dolibarr API interfaces with module disabled");
+    dol_syslog("Call Dolibarr API interfaces with module REST disabled");
     print $langs->trans("WarningModuleNotActive",'Api').'.<br><br>';
     print $langs->trans("ToActivateModule");
     exit;
@@ -54,6 +54,8 @@ $api->r->addAPIClass('Luracast\\Restler\\Resources'); //this creates resources.j
 $api->r->addAPIClass('DolibarrApiInit',''); // Just for url root page
 $api->r->setSupportedFormats('JsonFormat', 'XmlFormat');
 $api->r->addAuthenticationClass('DolibarrApiAccess','');
+
+$listofapis = array();
 
 $modulesdir = dolGetModulesDirs();
 foreach ($modulesdir as $dir)
@@ -116,6 +118,17 @@ foreach ($modulesdir as $dir)
                                 {
                                     dol_syslog("Found API classname=".$classname);    
                                     $api->r->addAPIClass($classname,'');
+                                    
+                                    /*
+                                    require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/Routes.php';
+                                    $tmpclass = new ReflectionClass($classname);
+                                    try {
+                                        $classMetadata = CommentParser::parse($tmpclass->getDocComment());
+                                    } catch (Exception $e) {
+                                        throw new RestException(500, "Error while parsing comments of `$classname` class. " . $e->getMessage());
+                                    }*/
+                                    
+                                    //$listofapis[]=array('classname'=>$classname, 'fullpath'=>$file_searched);
                                 }
                             }
                         }
@@ -126,4 +139,27 @@ foreach ($modulesdir as $dir)
     }
 }
 
-$api->r->handle(); //serve the response
+
+$listofapis=Routes::toArray();
+//var_dump($listofapis);
+
+
+llxHeader();
+
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+print load_fiche_titre($langs->trans("ApiSetup"),$linkback,'title_setup');
+
+
+foreach($listofapis['v1'] as $key => $val)
+{
+    if ($key)
+    {
+        //print $key.' - '.$val['classname'].' - '.$val['fullpath']." - ".DOL_MAIN_URL_ROOT.'/api/index.php/'.strtolower(preg_replace('/Api$/','',$val['classname']))."/xxx<br>\n";
+        $url=DOL_MAIN_URL_ROOT.'/api/index.php/'.$key;
+        print img_picto('','object_globe.png').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
+        
+    }
+}
+
+llxFooter();
+

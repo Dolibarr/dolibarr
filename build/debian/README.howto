@@ -29,6 +29,9 @@ Files are saved int .gnupg directory
 [DEFAULT]
 pristine-tar = True
 
+[buildpackage]
+ignore-branch = True
+
 [git-buildpackage]
 sign-tags = True
 export-dir = ../build-area/

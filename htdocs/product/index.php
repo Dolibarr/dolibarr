@@ -369,6 +369,7 @@ $db->close();
 function activitytrim($product_type)
 {
 	global $conf,$langs,$db;
+	global $bc;
 
 	// We display the last 3 years
 	$yearofbegindate=date('Y',dol_time_plus_duree(time(), -3, "y"));
@@ -415,6 +416,8 @@ function activitytrim($product_type)
 		}
 		$i = 0;
 
+		$var=true;
+		
 		while ($i < $num)
 		{
 			$objp = $db->fetch_object($result);
@@ -422,7 +425,8 @@ function activitytrim($product_type)
 			{
 				if ($trim1+$trim2+$trim3+$trim4 > 0)
 				{
-					print '<tr ><td align=left>'.$tmpyear.'</td>';
+				    $var=!$var;
+					print '<tr '.$bc[$var].'><td align=left>'.$tmpyear.'</td>';
 					print '<td align=right>'.price($trim1).'</td>';
 					print '<td align=right>'.price($trim2).'</td>';
 					print '<td align=right>'.price($trim3).'</td>';
@@ -455,7 +459,8 @@ function activitytrim($product_type)
 		}
 		if ($trim1+$trim2+$trim3+$trim4 > 0)
 		{
-			print '<tr ><td align=left>'.$tmpyear.'</td>';
+		    $var=!$var;
+			print '<tr '.$bc[$var].'><td align=left>'.$tmpyear.'</td>';
 			print '<td align=right>'.price($trim1).'</td>';
 			print '<td align=right>'.price($trim2).'</td>';
 			print '<td align=right>'.price($trim3).'</td>';

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2013	Jean-François Ferry	 <jfefe@aternatik.fr>
  * Copyright (C) 2015	Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015	Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -111,9 +112,9 @@ if ($action == 'confirm_add_resource')
 	}
 }
 
+
 /*
  * View
- *
  */
 
 $form=new Form($db);
@@ -146,7 +147,7 @@ if (! $action)
 	// Type
 	print '<tr><td width="20%">'.$langs->trans("ResourceType").'</td>';
 	print '<td>';
-	$ret = $formresource->select_types_resource($object->fk_code_type_resource,'fk_code_type_resource','',2);
+	$ret = $formresource->select_types_resource($object->fk_code_type_resource, 'fk_code_type_resource', '', 2, 1);
 	print '</td></tr>';
 
 	// Description
@@ -168,7 +169,7 @@ if (! $action)
 
 	echo '<div align="center">',
 	'<input type="submit" class="button" name="add" value="'.$langs->trans('Save').'" />',
-	'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
+	' &nbsp; ',
 	'<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'" />',
 	'</div>';
 

@@ -49,7 +49,7 @@ if (!empty($id))
 	$result=$object->fetch($id);
 	if ($result < 0)
 	{
-		setEventMessage($object->error,'errors');
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
 
@@ -73,7 +73,7 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->cron->del
 
 	if ($result < 0)
 	{
-		setEventMessage($object->error,'errors');
+		setEventMessages($object->error, $object->errors, 'errors');
 		$action='edit';
 	}
 	else
@@ -90,7 +90,7 @@ if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->ex
 
 	if ($result < 0)
 	{
-		setEventMessage($object->error,'errors');
+		setEventMessages($object->error, $object->errors, 'errors');
 		$action='';
 	}
 	else
@@ -98,13 +98,13 @@ if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->ex
 		$res = $object->reprogram_jobs($user->login);
 		if ($res > 0)
 		{
-			if ($object->lastresult > 0) setEventMessage($langs->trans("JobFinished"),'warnings');
-			else setEventMessage($langs->trans("JobFinished"),'mesgs');
+			if ($object->lastresult > 0) setEventMessages($langs->trans("JobFinished"), null, 'warnings');
+			else setEventMessages($langs->trans("JobFinished"), null, 'mesgs');
 			$action='';
 		}
 		else
 		{
-			setEventMessage($object->error,'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 			$action='';
 		}
 	}
@@ -134,11 +134,11 @@ if ($action=='add')
 
 	// test du Resultat de la requete
 	if ($result < 0) {
-		setEventMessage($object->error,'errors');
+		setEventMessages($object->error, $object->errors, 'errors');
 		$action='create';
 	}
 	else {
-		setEventMessage($langs->trans('CronSaveSucess'),'mesgs');
+		setEventMessages($langs->trans('CronSaveSucess'), null, 'mesgs');
 		$action='';
 	}
 }
@@ -168,11 +168,11 @@ if ($action=='update')
 
 	// test du Resultat de la requete
 	if ($result < 0) {
-		setEventMessage($object->error,'errors');
+		setEventMessages($object->error, $object->errors, 'errors');
 		$action='edit';
 	}
 	else {
-		setEventMessage($langs->trans('CronSaveSucess'),'mesgs');
+		setEventMessages($langs->trans('CronSaveSucess'), null, 'mesgs');
 		$action='';
 	}
 }
@@ -186,11 +186,11 @@ if ($action=='activate')
 
 	// test du Resultat de la requete
 	if ($result < 0) {
-		setEventMessage($object->error,'errors');
+		setEventMessages($object->error, $object->errors, 'errors');
 		$action='edit';
 	}
 	else {
-		setEventMessage($langs->trans('CronSaveSucess'),'mesgs');
+		setEventMessages($langs->trans('CronSaveSucess'), null, 'mesgs');
 		$action='';
 	}
 }
@@ -204,11 +204,11 @@ if ($action=='inactive')
 
 	// test du Resultat de la requete
 	if ($result < 0) {
-		setEventMessage($object->error,'errors');
+		setEventMessages($object->error, $object->errors, 'errors');
 		$action='edit';
 	}
 	else {
-		setEventMessage($langs->trans('CronSaveSucess'),'mesgs');
+		setEventMessages($langs->trans('CronSaveSucess'), null, 'mesgs');
 		$action='';
 	}
 }
@@ -277,7 +277,7 @@ if ($action == 'execute'){
 
 if (empty($object->status) && $action != 'create')
 {
-	setEventMessage($langs->trans("CronTaskInactive"), 'warnings');
+	setEventMessages($langs->trans("CronTaskInactive"), null, 'warnings');
 }
 
 if (($action=="create") || ($action=="edit"))

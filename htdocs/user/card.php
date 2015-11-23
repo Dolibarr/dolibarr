@@ -1286,8 +1286,7 @@ else
             if(! empty($conf->api->enabled) && $user->admin) {
                 print '<tr><td>'.$langs->trans("ApiKey").'</td>';
                 print '<td>';
-                if (! empty($object->api_key))
-                    print $langs->trans("Hidden");
+                if (! empty($object->api_key)) print preg_replace('/./','*',$object->api_key);
                 print '</td></tr>';
             }
 
