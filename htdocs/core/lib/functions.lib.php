@@ -13,6 +13,7 @@
  * Copyright (C) 2014      Cédric GROSS         <c.gross@kreiz-it.fr>
  * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
+ * Copyright (C) 2015       Ferran Marcet		<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -3762,7 +3763,7 @@ function get_exdir($num,$level,$alpha,$withoutslash,$object,$modulepart)
 
 	$path = '';
 
-	if (! empty($level) && in_array($modulepart, array('cheque','user','category','holiday','shipment', 'member','don','donation','supplier_invoice','invoice_supplier','mailing')))
+	if (! empty($level) && in_array($modulepart, array('cheque','user','category','holiday','shipment', 'member','don','donation','supplier_invoice','invoice_supplier','mailing','product')))
 	{
 		// This part should be removed once all code is using "get_exdir" to forge path, with all parameters provided
 		if (empty($alpha)) $num = preg_replace('/([^0-9])/i','',$num);
