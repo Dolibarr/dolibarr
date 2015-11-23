@@ -74,7 +74,7 @@ if ($action == 'addcontact' && $user->rights->contrat->creer)
 			$mesg = $object->error;
 		}
 
-		setEventMessage($mesg, 'errors');
+		setEventMessages($mesg, null, 'errors');
 	}
 }
 

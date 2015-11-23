@@ -31,14 +31,8 @@ require_once DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php";
  */
 class Resource extends CommonObject
 {
-	var $db;							//!< To store db handler
-	var $error;							//!< To return error code (or message)
-	var $errors=array();				//!< To return several error codes (or messages)
 	var $element='resource';			//!< Id that identify managed objects
 	var $table_element='resource';	//!< Name of table without prefix where object is stored
-
-    var $id;
-
 
 	var $resource_id;
 	var $resource_type;
@@ -49,7 +43,6 @@ class Resource extends CommonObject
 	var $fk_user_create;
 	var $type_label;
 	var $tms='';
-
 
     /**
      *  Constructor
@@ -86,7 +79,7 @@ class Resource extends CommonObject
     	// Insert request
     	$sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."(";
 
-    	$sql.= " entity,";
+    	$sql.= "entity,";
     	$sql.= "ref,";
     	$sql.= "description,";
     	$sql.= "fk_code_type_resource,";

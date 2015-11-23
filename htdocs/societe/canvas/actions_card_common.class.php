@@ -279,7 +279,7 @@ abstract class ActionsCardCommon
                         exit;
                     }
 
-                    $oldsoccanvas = dol_clone($this->object);
+					$oldsoccanvas = clone $this->object;
 
                     // To avoid setting code if third party is not concerned. But if it had values, we keep them.
                     if (empty($this->object->client) && empty($oldsoccanvas->code_client))             $this->object->code_client='';

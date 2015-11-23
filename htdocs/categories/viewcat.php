@@ -29,6 +29,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/categories.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 
 $langs->load("categories");
@@ -121,7 +122,7 @@ if ($user->rights->categorie->supprimer && $action == 'confirm_delete' && $confi
 	}
 	else
 	{
-		setEventMessage($object->error, 'errors');
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
 
@@ -136,13 +137,13 @@ if ($type == Categorie::TYPE_PRODUCT && $elemid && $action == 'addintocategory' 
 	$result=$object->add_type($newobject,$elementtype);
 	if ($result >= 0)
 	{
-		setEventMessage($langs->trans("WasAddedSuccessfully",$newobject->ref));
+		setEventMessages($langs->trans("WasAddedSuccessfully",$newobject->ref), null, 'mesgs');
 	}
 	else
 	{
 		if ($cat->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 		{
-			setEventMessage($langs->trans("ObjectAlreadyLinkedToCategory"),'warnings');
+			setEventMessages($langs->trans("ObjectAlreadyLinkedToCategory"), null, 'warnings');
 		}
 		else
 		{
@@ -159,6 +160,7 @@ if ($type == Categorie::TYPE_PRODUCT && $elemid && $action == 'addintocategory' 
  */
 
 $form = new Form($db);
+$formother = new FormOther($db);
 
 llxHeader("","",$langs->trans("Categories"));
 
@@ -197,9 +199,15 @@ foreach ($ways as $way)
 print '</td></tr>';
 
 // Description
-print '<tr><td width="20%" class="notopnoleft">';
+print '<tr><td class="notopnoleft">';
 print $langs->trans("Description").'</td><td>';
 print dol_htmlentitiesbr($object->description);
+print '</td></tr>';
+
+// Color
+print '<tr><td class="notopnoleft">';
+print $langs->trans("Color").'</td><td>';
+print $formother->showColor($object->color);
 print '</td></tr>';
 
 $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook

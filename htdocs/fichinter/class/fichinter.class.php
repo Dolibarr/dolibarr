@@ -43,24 +43,16 @@ class Fichinter extends CommonObject
 	 */
 	protected $table_ref_field = 'ref';
 
-	var $id;
-
 	var $socid;		// Id client
-	var $client;		// Objet societe client (a charger par fetch_client)
 
 	var $author;
-	var $ref;
 	var $datec;
 	var $datev;
 	var $datem;
 	var $duration;
 	var $statut;		// 0=draft, 1=validated, 2=invoiced
 	var $description;
-	var $note_private;
-	var $note_public;
-	var $fk_project;
 	var $fk_contrat;
-	var $modelpdf;
 	var $extraparams=array();
 
 	var $lines = array();

@@ -73,6 +73,7 @@ $search_opp_status=GETPOST("search_opp_status",'alpha');
 $search_public=GETPOST("search_public",'int');
 $search_user=GETPOST('search_user','int');
 $search_sale=GETPOST('search_sale','int');
+$optioncss = GETPOST('optioncss','alpha');
 
 $day	= GETPOST('day','int');
 $month	= GETPOST('month','int');
@@ -108,6 +109,14 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 $hookmanager->initHooks(array('projectlist'));
 $extrafields = new ExtraFields($db);
 
+// List of fields to search into when doing a "search in all"
+$fieldstosearchall = array(
+	'p.ref'=>"Ref",
+	'p.title'=>"Label",
+	's.nom'=>"ThirdPartyName",
+    "p.note_public"=>"NotePublic"
+);
+if (empty($user->socid)) $fieldstosearchall["p.note_private"]="NotePrivate";
 
 
 /*
@@ -181,7 +190,7 @@ else if ($year > 0)
 {
     $sql.= " AND p.datee BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
 }
-if ($search_all) $sql .= natural_search(array('p.ref','p.title','s.nom'), $search_all);
+if ($search_all) $sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 if ($search_status >= 0) $sql .= " AND p.fk_statut = ".$db->escape($search_status);
 if ($search_opp_status) 
 {
@@ -224,6 +233,7 @@ if ($resql)
 	if ($search_public != '') 		$param.='&search_public='.$search_public;
 	if ($search_user > 0)    		$param.='&search_user='.$search_user;
 	if ($search_sale > 0)    		$param.='&search_sale='.$search_sale;
+	if ($optioncss != '') $param.='&optioncss='.$optioncss;
 
 
 	$text=$langs->trans("Projects");
@@ -231,8 +241,14 @@ if ($resql)
 	print_barre_liste($text, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, "", $num,'','title_project');
 
 	print '<form method="GET" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="action" value="list">';
+	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+	print '<input type="hidden" name="type" value="'.$type.'">';
 
-	// Show description of content
+    // Show description of content
 	if ($mine) print $langs->trans("MyProjectsDesc").'<br><br>';
 	else
 	{
@@ -242,8 +258,8 @@ if ($resql)
 
 	if ($search_all)
 	{
-		print $langs->trans("Filter")." (".$langs->trans("Ref").", ".$langs->trans("Label")." ".$langs->trans("or")." ".$langs->trans("ThirdParty")."): ";
-		print '<strong>'.$search_all.'</strong>';
+        foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
+        print $langs->trans("FilterOnInto", $search_all) . join(', ',$fieldstosearchall);
 	}
 
 	$colspan=8;
@@ -272,15 +288,18 @@ if ($resql)
 	if (! empty($moreforfilter))
 	{
 		print '<div class="liste_titre liste_titre_bydiv centpercent">';
+        //print '<tr class="liste_titre">';
+        //print '<td class="liste_titre" colspan="'.$colspan.'">';
 		print $moreforfilter;
     	$parameters=array();
     	$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
     	print $hookmanager->resPrint;
     	print '</div>';
-	}
+        //print '</td></tr>';
+    }
 
-	print '<table class="liste" width="100%">';
-	
+	print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
+    		
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"p.ref","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"p.title","",$param,"",$sortfield,$sortorder);

@@ -32,7 +32,7 @@
  *
  * Parent class for module descriptor class files
  */
-abstract class DolibarrModules
+class DolibarrModules           // Can not be abstract, because we need to instantiant it into unActivateModule to be able to disable a module whose files were removed.
 {
     /**
      * @var DoliDb Database handler
@@ -40,11 +40,24 @@ abstract class DolibarrModules
     public $db;
 
     /**
-     * @var string Relative path to module style sheet
-     * @deprecated
-     * @see module_parts
+     * @var int Module unique ID
      */
-    public $style_sheet = '';
+    public $numero;
+
+    /**
+     * @var string Family
+     */
+    public $family;
+    
+    /**
+     * @var int module_position
+     */
+    public $module_position=500;
+    
+    /**
+     * @var string Module name
+     */
+    public $name;
 
     /**
      * @var array Paths to create when module is activated
@@ -135,16 +148,6 @@ abstract class DolibarrModules
     public $error;
 
     /**
-     * @var int Module unique ID
-     */
-    public $numero;
-
-    /**
-     * @var string Module name
-     */
-    public $name;
-
-    /**
      * @var string Module version
      */
     public $version;
@@ -193,16 +196,29 @@ abstract class DolibarrModules
      * @var bool Module is enabled globally (Multicompany support)
      */
     public $core_enabled;
+    
+    /**
+     * @var string Relative path to module style sheet
+     * @deprecated
+     * @see module_parts
+     */
+    public $style_sheet = '';
 
+    
+	
 	/**
 	 * Constructor. Define names, constants, directories, boxes, permissions
 	 *
 	 * @param DoliDB		$db      Database handler
 	 */
-	//public function __construct($db);
+	public function __construct($db)
+	{
+		$this->db = $db;
+	}
 	// We should but can't set this as abstract because this will make dolibarr hang
 	// after migration due to old module not implementing. We must wait PHP is able to make
 	// a try catch on Fatal error to manage this correctly.
+	// We need constructor into function unActivateModule into admin.lib.php
 
     /**
      * Enables a module.
@@ -465,6 +481,7 @@ abstract class DolibarrModules
         if ($this->version == 'dolibarr' || $this->version == 'dolibarr_deprecated') return 'core';
         if (! empty($this->version) && ! in_array($this->version,array('experimental','development'))) return 'external';
         if (! empty($this->editor_name) || ! empty($this->editor_web)) return 'external';
+        if ($this->numero >= 100000) return 'external';
         return 'unknown';
     }
 
@@ -1396,7 +1413,7 @@ print $sql;
                 }
                 if (! $foundparent)
                 {
-                    $this->error="ErrorBadDefinitionOfMenuArrayInModuleDescriptor (bad value for key fk_menu)";
+                    $this->error="ErrorBadDefinitionOfMenuArrayInModuleDescriptor";
                     dol_syslog(get_class($this)."::insert_menus ".$this->error." ".$this->menu[$key]['fk_menu'], LOG_ERR);
                     $err++;
                 }

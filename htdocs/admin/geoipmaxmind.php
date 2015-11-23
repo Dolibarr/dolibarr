@@ -46,7 +46,7 @@ if ($action == 'set')
 
 	if (! $gimcdf && ! file_exists($gimcdf))
 	{
-		setEventMessage($langs->trans("ErrorFileNotFound",$gimcdf),'errors');
+		setEventMessages($langs->trans("ErrorFileNotFound",$gimcdf), null, 'errors');
 		$error++;
 	}
 
@@ -57,11 +57,11 @@ if ($action == 'set')
 
 		if (! $error)
 		{
-			setEventMessage($langs->trans("SetupSaved"));
+			setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 		}
 		else
 		{
-			setEventMessage($langs->trans("Error"),'errors');
+			setEventMessages($langs->trans("Error"), null, 'errors');
 		}
 	}
 }
@@ -76,7 +76,7 @@ $form=new Form($db);
 llxHeader();
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("GeoIPMaxmindSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("GeoIPMaxmindSetup"),$linkback,'title_setup');
 print '<br>';
 
 $version='';

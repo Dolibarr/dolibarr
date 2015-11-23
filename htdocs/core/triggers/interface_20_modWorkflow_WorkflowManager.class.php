@@ -61,6 +61,10 @@ class InterfaceWorkflowManager extends DolibarrTriggers
                 include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
                 $newobject = new Commande($this->db);
 
+                $newobject->context['createfrompropal'] = 'createfrompropal';
+                $newobject->context['origin'] = $object->element;
+                $newobject->context['origin_id'] = $object->id;
+                
                 $ret=$newobject->createFromProposal($object);
                 if ($ret < 0) { $this->error=$newobject->error; $this->errors[]=$newobject->error; }
                 return $ret;
@@ -76,6 +80,10 @@ class InterfaceWorkflowManager extends DolibarrTriggers
                 include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
                 $newobject = new Facture($this->db);
 
+                $newobject->context['createfromorder'] = 'createfromorder';
+                $newobject->context['origin'] = $object->element;
+                $newobject->context['origin_id'] = $object->id;
+                
                 $ret=$newobject->createFromOrder($object);
                 if ($ret < 0) { $this->error=$newobject->error; $this->errors[]=$newobject->error; }
                 return $ret;

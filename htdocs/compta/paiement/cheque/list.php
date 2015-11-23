@@ -117,7 +117,7 @@ if ($resql)
 	print_barre_liste($langs->trans("MenuChequeDeposits"), $page, $_SERVER["PHP_SELF"], $params, $sortfield, $sortorder, '', $num);
 
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<table class="liste" width="100%">';
+	print '<table class="liste">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"bc.number","",$params,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"dp","",$params,'align="center"',$sortfield,$sortorder);
@@ -148,42 +148,52 @@ if ($resql)
 	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
     print "</td></tr>\n";
 
-	$var=true;
-	while ($i < min($num,$limit))
-	{
-		$objp = $db->fetch_object($resql);
-		$var=!$var;
-		print "<tr ".$bc[$var].">";
-
-		// Num ref cheque
-		print '<td width="80">';
-		$checkdepositstatic->id=$objp->rowid;
-		$checkdepositstatic->ref=($objp->ref?$objp->ref:$objp->rowid);
-		$checkdepositstatic->statut=$objp->statut;
-		print $checkdepositstatic->getNomUrl(1);
-		print '</td>';
-
-		// Date
-		print '<td align="center">'.dol_print_date($db->jdate($objp->dp),'day').'</td>';  // TODO Use date hour
-
-		// Bank
-		print '<td>';
-		if ($objp->bid) print '<a href="'.DOL_URL_ROOT.'/compta/bank/account.php?account='.$objp->bid.'">'.img_object($langs->trans("ShowAccount"),'account').' '.$objp->label.'</a>';
-		else print '&nbsp;';
-		print '</td>';
-
-		// Number of cheques
-		print '<td align="right">'.$objp->nbcheque.'</td>';
-
-		// Amount
-		print '<td align="right">'.price($objp->amount).'</td>';
-
-		// Statut
-		print '<td align="right">';
-		print $checkdepositstatic->LibStatut($objp->statut,5);
-		print "</td></tr>\n";
-		$i++;
-	}
+    if ($num > 0)
+    {
+    	$var=true;
+    	while ($i < min($num,$limit))
+    	{
+    		$objp = $db->fetch_object($resql);
+    		$var=!$var;
+    		print "<tr ".$bc[$var].">";
+    
+    		// Num ref cheque
+    		print '<td width="80">';
+    		$checkdepositstatic->id=$objp->rowid;
+    		$checkdepositstatic->ref=($objp->ref?$objp->ref:$objp->rowid);
+    		$checkdepositstatic->statut=$objp->statut;
+    		print $checkdepositstatic->getNomUrl(1);
+    		print '</td>';
+    
+    		// Date
+    		print '<td align="center">'.dol_print_date($db->jdate($objp->dp),'day').'</td>';  // TODO Use date hour
+    
+    		// Bank
+    		print '<td>';
+    		if ($objp->bid) print '<a href="'.DOL_URL_ROOT.'/compta/bank/account.php?account='.$objp->bid.'">'.img_object($langs->trans("ShowAccount"),'account').' '.$objp->label.'</a>';
+    		else print '&nbsp;';
+    		print '</td>';
+    
+    		// Number of cheques
+    		print '<td align="right">'.$objp->nbcheque.'</td>';
+    
+    		// Amount
+    		print '<td align="right">'.price($objp->amount).'</td>';
+    
+    		// Statut
+    		print '<td align="right">';
+    		print $checkdepositstatic->LibStatut($objp->statut,5);
+    		print "</td></tr>\n";
+    		$i++;
+    	}
+    }
+    else
+    {
+   		$var=!$var;
+   		print "<tr ".$bc[$var].">";
+   		print '<td colspan="6">'.$langs->trans("None")."</td>";
+   		print '</tr>';
+    }
 	print "</table>";
 	print "</form>\n";
 }
@@ -192,6 +202,6 @@ else
 	dol_print_error($db);
 }
 
-$db->close();
 
 llxFooter();
+$db->close();

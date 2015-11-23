@@ -21,7 +21,7 @@
 <!-- BEGIN PHP TEMPLATE ADHERENTCARD_CREATE.TPL.PHP DEFAULT -->
 
 <?php
-print_fiche_titre($this->control->tpl['title']);
+print load_fiche_titre($this->control->tpl['title']);
 
 dol_htmloutput_errors((is_numeric($object->error)?'':$object->error),$object->errors);
 

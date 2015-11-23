@@ -76,14 +76,14 @@ if ($_POST["action"] == 'import') {
 				
 				$result = $accounting->create($user);
 				if ($result > 0) {
-					setEventMessage($langs->trans("AccountingAccountAdd"), 'mesgs');
+					setEventMessages($langs->trans("AccountingAccountAdd"), null, 'mesgs');
 				} else {
-					setEventMessage($accounting->error, 'errors');
+					setEventMessages($accounting->error, $accounting->errors, 'errors');
 				}
 				$cpt ++;
 			}
 		} else {
-			setEventMessage($langs->trans('AccountPlanNotFoundCheckSetting'), 'errors');
+			setEventMessages($langs->trans('AccountPlanNotFoundCheckSetting'), null, 'errors');
 		}
 	} else {
 		print '<div><font color="red">' . $langs->trans("AnyLineImport") . '</font></div>';
@@ -124,7 +124,7 @@ if ($result) {
 	print '<input type="hidden" name="action" value="import">';
 	
 	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td>' . $langs->trans("accountingaccount") . '</td>';
+	print '<tr class="liste_titre"><td>' . $langs->trans("AccountAccouting") . '</td>';
 	print '<td>' . $langs->trans("label") . '</td>';
 	print '<td>' . $langs->trans("Accountparent") . '</td>';
 	print '<td>' . $langs->trans("Pcgtype") . '</td>';

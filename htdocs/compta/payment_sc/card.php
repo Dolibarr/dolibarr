@@ -70,7 +70,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->tax->char
 	}
 	else
 	{
-		setEventMessage($paiement->error, 'errors');
+		setEventMessages($paiement->error, $paiement->errors, 'errors');
         $db->rollback();
 	}
 }
@@ -108,7 +108,7 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->tax->char
 	}
 	else
 	{
-		setEventMessage($paiement->error);
+		setEventMessages($paiement->error, $paiement->errors, 'errors');
 		$db->rollback();
 	}
 }
@@ -140,7 +140,7 @@ $h++;
 dol_fiche_head($head, $hselected, $langs->trans("PaymentSocialContribution"), 0, 'payment');
 
 /*
- * Confirmation de la suppression du paiement
+ * Deletion confirmation of payment
  */
 if ($action == 'delete')
 {
@@ -149,7 +149,7 @@ if ($action == 'delete')
 }
 
 /*
- * Confirmation de la validation du paiement
+ * Validation confirmation of payment
  */
 if ($action == 'valide')
 {

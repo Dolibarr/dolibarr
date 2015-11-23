@@ -43,7 +43,7 @@ if ($action == 'update')
     || $_POST["MAIN_MAX_DECIMALS_SHOWN"] > $MAXDEC)
     {
         $error++;
-	    setEventMessage($langs->trans("ErrorDecimalLargerThanAreForbidden",$MAXDEC), 'errors');
+	    setEventMessages($langs->trans("ErrorDecimalLargerThanAreForbidden",$MAXDEC), null, 'errors');
     }
 
     if ($_POST["MAIN_MAX_DECIMALS_UNIT"]  < 0
@@ -52,7 +52,7 @@ if ($action == 'update')
     {
         $langs->load("errors");
         $error++;
-	    setEventMessage($langs->trans("ErrorNegativeValueNotAllowed"), 'errors');
+	    setEventMessages($langs->trans("ErrorNegativeValueNotAllowed"), null, 'errors');
     }
 
     if ($_POST["MAIN_ROUNDING_RULE_TOT"])
@@ -61,7 +61,7 @@ if ($action == 'update')
         {
             $langs->load("errors");
             $error++;
-	        setEventMessage($langs->trans("ErrorMAIN_ROUNDING_RULE_TOTCanMAIN_MAX_DECIMALS_TOT"), 'errors');
+	        setEventMessages($langs->trans("ErrorMAIN_ROUNDING_RULE_TOTCanMAIN_MAX_DECIMALS_TOT"), null, 'errors');
         }
     }
 
@@ -88,7 +88,7 @@ $form=new Form($db);
 
 llxHeader();
 
-print_fiche_titre($langs->trans("LimitsSetup"),'','title_setup');
+print load_fiche_titre($langs->trans("LimitsSetup"),'','title_setup');
 
 
 print $langs->trans("LimitsDesc")."<br>\n";

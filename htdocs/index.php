@@ -71,7 +71,7 @@ if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $title=$langs->trans("HomeAr
 
 llxHeader('',$title);
 
-print_fiche_titre($langs->trans("HomeArea"),'','title_home');
+print load_fiche_titre($langs->trans("HomeArea"),'','title_home');
 
 if (! empty($conf->global->MAIN_MOTD))
 {
@@ -103,7 +103,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
  * Informations area
  */
 
-print '<table class="noborder" width="100%">';
+print '<table summary="Login info" class="noborder" width="100%">';
 print '<tr class="liste_titre"><th class="liste_titre" colspan="2">'.$langs->trans("Informations").'</th></tr>';
 print '<tr '.$bc[false].'>';
 print '<td class="nowrap">'.$langs->trans("User").'</td><td>'.$user->getNomUrl(0).'</td></tr>';
@@ -129,12 +129,11 @@ $langs->load("contracts");
 if (empty($user->societe_id))
 {
     print '<br>';
-    print '<table class="noborder" width="100%">';
+    print '<table  summary="'.$langs->trans("DolibarrStateBoard").'" class="noborder" width="100%">';
     print '<tr class="liste_titre">';
-    print '<th class="liste_titre" colspan="2">'.$langs->trans("DolibarrStateBoard").'</th>';
-    print '<th class="liste_titre" align="right">&nbsp;</th>';
+    print '<th class="liste_titre">'.$langs->trans("DolibarrStateBoard").'</th>';
     print '</tr>';
-    print '<tr class="impair"><td colspan="3" class="tdboxstats nohover">';
+    print '<tr class="impair"><td class="tdboxstats nohover">';
 
     $var=true;
 
@@ -231,9 +230,10 @@ if (empty($user->societe_id))
 	                  "SuppliersInvoices",
 					  "ExpenseReports");
 	    // Dashboard Link lines
-	    $links=array(DOL_URL_ROOT.'/comm/list.php',
-	    DOL_URL_ROOT.'/comm/prospect/list.php',
-	    DOL_URL_ROOT.'/fourn/list.php',
+	    $links=array(
+	    DOL_URL_ROOT.'/societe/list.php?type=c',
+	    DOL_URL_ROOT.'/societe/list.php?type=p',
+	    DOL_URL_ROOT.'/societe/list.php?type=f',
 	    DOL_URL_ROOT.'/adherents/list.php?statut=1&mainmenu=members',
 	    DOL_URL_ROOT.'/product/list.php?type=0&mainmenu=products',
 	    DOL_URL_ROOT.'/product/list.php?type=1&mainmenu=products',
@@ -278,7 +278,7 @@ if (empty($user->societe_id))
 	            $var=!$var;
 	            if (!empty($langfile[$key])) $langs->load($langfile[$key]);
 	            $text=$langs->trans($titres[$key]);
-	            print '<a href="'.$links[$key].'" class="nobold nounderline">';
+	            print '<a href="'.$links[$key].'" class="thumbstat nobold nounderline">';
 	            print '<div class="boxstats">';
 	            print img_object("",$icons[$key]).' '.$text.'<br>';
 	            //print '</a>';
@@ -432,14 +432,17 @@ foreach($dashboardlines as $tmp)
 }
 $rowspan = count($valid_dashboardlines);
 
+// We calculate $totallate. Must be defined before start of next loop because it is show in first fetch on next loop
 foreach($valid_dashboardlines as $board)
 {
     if ($board->nbtodolate > 0) {
 	    $totallate += $board->nbtodolate;
     }
+}
 
-	// Show dashboard
-
+// Show dashboard
+foreach($valid_dashboardlines as $board)
+{
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="16">'.$board->img.'</td><td>'.$board->label.'</td>';
     print '<td align="right"><a href="'.$board->url.'">'.$board->nbtodo.'</a></td>';

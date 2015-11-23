@@ -23,7 +23,7 @@
  */
 /**
  * \file		htdocs/accountancy/supplier/card.php
- * \ingroup		Accounting Expert
+ * \ingroup		Accountancy
  * \brief		Card supplier ventilation
  */
 
@@ -55,7 +55,7 @@ if ($action == 'ventil' && $user->rights->accounting->ventilation->dispatch) {
 		dol_syslog('accountancy/supplier/card.php:: $sql=' . $sql);
 		$resql = $db->query($sql);
 		if (! $resql) {
-			setEventMessage($db->lasterror(), 'errors');
+			setEventMessages($db->lasterror(), null, 'errors');
 		}
 	} else {
 		header("Location: ./lines.php");
@@ -85,10 +85,9 @@ if (! empty($id)) {
 	$sql .= ", aa.account_number, aa.label";
 	$sql .= " FROM " . MAIN_DB_PREFIX . "facture_fourn_det as l";
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON p.rowid = l.fk_product";
-	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accountingaccount as aa ON l.fk_code_ventilation = aa.rowid";
+	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON l.fk_code_ventilation = aa.rowid";
 	$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "facture_fourn as f ON f.rowid = l.fk_facture_fourn ";
 	$sql .= " WHERE f.fk_statut > 0 AND l.rowid = " . $id;
-	
 	if (! empty($conf->multicompany->enabled)) {
 		$sql .= " AND f.entity IN (" . getEntity("facture_fourn", 1) . ")";
 	}
@@ -107,7 +106,7 @@ if (! empty($id)) {
 			print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
 			print '<input type="hidden" name="action" value="ventil">';
 			
-			print_fiche_titre($langs->trans('SuppliersVentilation'),'','title_setup');
+			print load_fiche_titre($langs->trans('SuppliersVentilation'),'','title_setup');
 
             dol_fiche_head();
 			

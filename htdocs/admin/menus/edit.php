@@ -78,16 +78,16 @@ if ($action == 'update')
             $result=$menu->update($user);
             if ($result > 0)
             {
-	            setEventMessage($langs->trans("RecordModifiedSuccessfully"));
+	            setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
             }
             else
             {
-	            setEventMessage($menu->error, 'errors');
+	            setEventMessages($menu->error, $menu->errors, 'errors');
             }
         }
         else
         {
-	        setEventMessage($menu->error, 'errors');
+	        setEventMessages($menu->error, $menu->errors, 'errors');
         }
         $_GET["menuId"] = $_POST['menuId'];
         $action = "edit";
@@ -135,37 +135,37 @@ if ($action == 'add')
     $error=0;
     if (! $error && ! $_POST['menu_handler'])
     {
-	    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("MenuHandler")), 'errors');
+	    setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("MenuHandler")), null, 'errors');
         $action = 'create';
         $error++;
     }
     if (! $error && ! $_POST['type'])
     {
-	    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Type")), 'errors');
+	    setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Type")), null, 'errors');
         $action = 'create';
         $error++;
     }
     if (! $error && ! $_POST['url'])
     {
-	    setEventMessage($langs->trans("ErrorFieldRequired",$langs->trans("Url")), 'errors');
+	    setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("URL")), null, 'errors');
         $action = 'create';
         $error++;
     }
     if (! $error && ! $_POST['titre'])
     {
-	    setEventMessage($langs->trans("ErrorFieldRequired",$langs->trans("Title")), 'errors');
+	    setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Title")), null, 'errors');
         $action = 'create';
         $error++;
     }
     if (! $error && $_POST['menuId'] && $_POST['type'] == 'top')
     {
-	    setEventMessage($langs->trans("ErrorTopMenuMustHaveAParentWithId0"), 'errors');
+	    setEventMessages($langs->trans("ErrorTopMenuMustHaveAParentWithId0"), null, 'errors');
         $action = 'create';
         $error++;
     }
     if (! $error && empty($_POST['menuId']) && $_POST['type'] == 'left')
     {
-	    setEventMessage($langs->trans("ErrorLeftMenuMustHaveAParentId"), 'errors');
+	    setEventMessages($langs->trans("ErrorLeftMenuMustHaveAParentId"), null, 'errors');
         $action = 'create';
         $error++;
     }
@@ -204,7 +204,7 @@ if ($action == 'add')
         else
         {
             $action = 'create';
-	        setEventMessage($menu->error, 'errors');
+	        setEventMessages($menu->error, $menu->errors, 'errors');
         }
     }
 }
@@ -222,7 +222,7 @@ if ($action == 'confirm_delete' && $_POST["confirm"] == 'yes')
         $this->db->commit();
 
         llxHeader();
-	    setEventMessage($langs->trans("MenuDeleted"));
+	    setEventMessages($langs->trans("MenuDeleted"), null, 'mesgs');
         llxFooter();
         exit ;
     }
@@ -270,7 +270,7 @@ if ($action == 'create')
     });
     </script>';
 
-    print_fiche_titre($langs->trans("NewMenu"),'','title_setup');
+    print load_fiche_titre($langs->trans("NewMenu"),'','title_setup');
 
     print '<form action="./edit.php?action=add&menuId='.$_GET['menuId'].'" method="post" name="formmenucreate">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -379,7 +379,7 @@ if ($action == 'create')
 }
 elseif ($action == 'edit')
 {
-    print_fiche_titre($langs->trans("ModifMenu"),'','title_setup');
+    print load_fiche_titre($langs->trans("ModifMenu"),'','title_setup');
     print '<br>';
 
     print '<form action="./edit.php?action=update" method="POST" name="formmenuedit">';

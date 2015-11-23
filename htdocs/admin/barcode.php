@@ -97,11 +97,11 @@ if ($action == 'setModuleOptions')
 
  	if (! $error)
     {
-        setEventMessage($langs->trans("SetupSaved"));
+        setEventMessages($langs->trans("SetupSaved"), null, 'msgs');
     }
     else
     {
-        setEventMessage($langs->trans("Error"),'errors');
+        setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
 
@@ -111,11 +111,11 @@ if ($action && $action != 'setcoder' && $action != 'setModuleOptions')
 
  	if (! $error)
     {
-        setEventMessage($langs->trans("SetupSaved"));
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
     else
     {
-        setEventMessage($langs->trans("Error"),'errors');
+        setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
 
@@ -130,7 +130,7 @@ $help_url='EN:Module_Barcode|FR:Module_Codes_Barre|ES:Módulo Código de barra';
 llxHeader('',$langs->trans("BarcodeSetup"),$help_url);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("BarcodeSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("BarcodeSetup"),$linkback,'title_setup');
 
 // Detect bar codes modules
 $barcodelist=array();
@@ -162,7 +162,7 @@ foreach($dirbarcode as $reldir)
 					{
 						$filebis=$reg[1];
 
-						// Chargement de la classe de codage
+						// Loading encoding class
 						require_once $newdir.$file;
 						$classname = "mod".ucfirst($filebis);
 						$module = new $classname($db);
@@ -188,7 +188,7 @@ foreach($dirbarcode as $reldir)
 $var=true;
 
 print '<br>';
-print_titre($langs->trans("BarcodeEncodeModule"));
+print load_fiche_titre($langs->trans("BarcodeEncodeModule"),'','');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -288,7 +288,7 @@ print "<br>";
  * Autres options
  *
  */
-print_titre($langs->trans("OtherOptions"));
+print load_fiche_titre($langs->trans("OtherOptions"),'','');
 
 print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -358,7 +358,7 @@ print '<br>';
 // Select barcode numbering module
 if ($conf->produit->enabled)
 {
-	print_titre($langs->trans("BarCodeNumberManager")." (".$langs->trans("Product").")");
+	print load_fiche_titre($langs->trans("BarCodeNumberManager")." (".$langs->trans("Product").")",'','');
 
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';

@@ -408,8 +408,18 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 					}
 				}
 				else {
-					try {
-					$odfHandler->saveToDisk($file);
+				    try {
+					   $odfHandler->creator = $user->getFullName($outputlangs);
+					   $odfHandler->title = $object->builddoc_filename;
+					   $odfHandler->subject = $object->builddoc_filename;
+					   
+					   if (! empty($conf->global->ODT_ADD_DOLIBARR_ID))
+					   {
+    					  $odfHandler->userdefined['dol_id'] = $object->id;
+	   		  		      $odfHandler->userdefined['dol_element'] = $object->element;
+					   }
+					   
+					   $odfHandler->saveToDisk($file);
 					}catch (Exception $e){
 						$this->error=$e->getMessage();
 						return -1;

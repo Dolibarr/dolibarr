@@ -142,14 +142,14 @@ function getEntity($element=false, $shared=0)
  */
 function getBrowserInfo($user_agent)
 {
-	include_once DOL_DOCUMENT_ROOT.'/includes/mobiledetect/mobiledetect.class.php';
+	include_once DOL_DOCUMENT_ROOT.'/includes/mobiledetect/mobiledetectlib/Mobile_Detect.php';
 
 	$name='unknown';
 	$version='';
 	$os='unknown';
 	$phone = '';
 
-	$detectmobile = new MobileDetect(null, $user_agent);
+	$detectmobile = new Mobile_Detect(null, $user_agent);
 	$tablet = $detectmobile->isTablet();
 
 	if ($detectmobile->isMobile()) {
@@ -179,6 +179,7 @@ function getBrowserInfo($user_agent)
 
 	// OS
 	if (preg_match('/linux/i', $user_agent))	{ $os='linux'; }
+	elseif (preg_match('/macintosh/i', $user_agent))	{ $os='macintosh'; }
 
 	// Name
 	if (preg_match('/firefox(\/|\s)([\d\.]*)/i', $user_agent, $reg))  { $name='firefox';   $version=$reg[2]; }
@@ -261,6 +262,10 @@ function GETPOST($paramname,$check='',$method=0,$filter=NULL,$options=NULL)
 	        case 'aZ':
 	            $out=trim($out);
 	            if (preg_match('/[^a-z]+/i',$out)) $out='';
+	            break;
+	        case 'aZ09':
+	            $out=trim($out);
+	            if (preg_match('/[^a-z0-9]+/i',$out)) $out='';
 	            break;
 	        case 'array':
 	            if (! is_array($out) || empty($out)) $out=array();
@@ -397,7 +402,7 @@ function dol_clone($object)
 {
 	dol_syslog(__FUNCTION__ . " is deprecated", LOG_WARNING);
 
-	$myclone=clone($object);
+	$myclone = clone $object;
 	return $myclone;
 }
 
@@ -693,16 +698,16 @@ function dol_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto
  *  Show tab header of a card
  *
  *	@param	array	$links				Array of tabs
- *	@param	int		$active     		Active tab name
+ *	@param	string	$active     		Active tab name
  *	@param  string	$title      		Title
  *	@param  int		$notab				0=Add tab header, 1=no tab header. If you set this to 1, using dol_fiche_end() to close tab is not required.
  * 	@param	string	$picto				Add a picto on tab title
  *	@param	int		$pictoisfullpath	If 1, image path is a full path. If you set this to 1, you can use url returned by dol_buildpath('/mymodyle/img/myimg.png',1) for $picto.
  * 	@return	string
  */
-function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto='', $pictoisfullpath=0)
+function dol_get_fiche_head($links=array(), $active='', $title='', $notab=0, $picto='', $pictoisfullpath=0)
 {
-	global $conf,$langs;
+	global $conf,$langs, $hookmanager;
 
 	$out="\n".'<div class="tabs" data-role="controlgroup" data-type="horizontal">'."\n";
 
@@ -732,6 +737,16 @@ function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $p
 	$limittoshow=(empty($conf->global->MAIN_MAXTABS_IN_CARD)?99:$conf->global->MAIN_MAXTABS_IN_CARD);
 	$displaytab=0;
 	$nbintab=0;
+    $popuptab=0;
+	for ($i = 0 ; $i <= $maxkey ; $i++)
+	{
+		if ((is_numeric($active) && $i == $active) || (! empty($links[$i][2]) && ! is_numeric($active) && $active == $links[$i][2]))
+		{
+			// si l'active est présent dans la box
+			if ($i >= $limittoshow)
+				$limittoshow--;
+		}
+	}
 
 	for ($i = 0 ; $i <= $maxkey ; $i++)
 	{
@@ -739,13 +754,11 @@ function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $p
 		{
 			$isactive=true;
 			$bactive=true;
-			if ($i <=$limittoshow)
-				$limittoshow++;
 		}
 		else
 			$isactive=false;
 
-		if ($i <= $limittoshow || $isactive )
+		if ($i < $limittoshow || $isactive)
 		{
 			$out.='<div class="inline-block tabsElem'.($isactive ? ' tabsElemActive' : '').((! $isactive && ! empty($conf->global->MAIN_HIDE_INACTIVETAB_ON_PRINT))?' hideonprint':'').'"><!-- id tab = '.(empty($links[$i][2])?'':$links[$i][2]).' -->';
 			if (isset($links[$i][2]) && $links[$i][2] == 'image')
@@ -775,7 +788,13 @@ function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $p
 		}
 		else
 		{
-			$outmore.='<div class="" style="display:inherit; background-color:#f9f9f9; padding-top:5px; padding-right:15px; padding-left:12px;">';
+		    // The popup with the other tabs
+			if (! $popuptab)
+			{
+			    $popuptab=1;
+			    $outmore.='<div class="popuptabset">';
+			}
+		    $outmore.='<div class="popuptab" style="display:inherit;">';
 			if (isset($links[$i][2]) && $links[$i][2] == 'image')
 			{
 				if (!empty($links[$i][0]))
@@ -788,16 +807,18 @@ function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $p
 				$outmore.='<a'.(! empty($links[$i][2])?' id="'.$links[$i][2].'"':'').' class="inline-block" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
 
 			$outmore.='</div>';
+
 			$nbintab++;
 		}
 		$displaytab=$i;
 	}
+	if ($popuptab) $outmore.='</div>';
 
 	if ($displaytab > $limittoshow)
 	{
 		$tabsname=str_replace("@", "", $picto);
 		$out.='<div id="moretabs'.$tabsname.'" class="inline-block tabsElem">';
-		$out.='<a href="" data-role="button" style="background-color: #f0f0f0;" class="tab inline-block">'.$langs->trans("More").' <span class="badge">'.$nbintab.'</span></a>';
+		$out.='<a href="#" data-role="button" class="tab moretab inline-block">'.$langs->trans("More").'... ('.$nbintab.')</a>';
 		$out.='<div id="moretabsList'.$tabsname.'" style="position: absolute; left: -999em;text-align: left;margin:0px;padding:2px">'.$outmore.'</div>';
 		$out.="</div>\n";
 
@@ -808,8 +829,11 @@ function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $p
 	}
 
 	$out.="</div>\n";
-	
+
 	if (! $notab) $out.="\n".'<div class="tabBar">'."\n";
+
+	$parameters=array('tabname' => $active);
+	$reshook=$hookmanager->executeHooks('printTabsHead',$parameters);    // Note that $action and $object may have been modified by some hooks
 
 	return $out;
 }
@@ -835,6 +859,97 @@ function dol_get_fiche_end($notab=0)
 {
 	if (! $notab) return "\n</div>\n";
 	else return '';
+}
+
+/**
+ *  Show tab footer of a card
+ *
+ *  @param	object	$object			Object to show
+ *  @param	string	$paramid   		Name of parameter to use to name the id into the URL next/previous link
+ *  @param	string	$morehtml  		More html content to output just before the nav bar
+ *  @param	int		$shownav	  	Show Condition (navigation is shown if value is 1)
+ *  @param	string	$fieldid   		Nom du champ en base a utiliser pour select next et previous (we make the select max and min on this field)
+ *  @param	string	$fieldref   	Nom du champ objet ref (object->ref) a utiliser pour select next et previous
+ *  @param	string	$morehtmlref  	More html to show after ref
+ *  @param	string	$moreparam  	More param to add in nav link url.
+ *	@param	int		$nodbprefix		Do not include DB prefix to forge table name
+ *	@param	string	$morehtmlleft	More html code to show before ref
+ *	@param	string	$morehtmlright	More html code to show before navigation arrows
+ *  @return	void
+ */
+function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='rowid', $fieldref='ref', $morehtmlref='', $moreparam='', $nodbprefix=0, $morehtmlleft='', $morehtmlright='')
+{
+	global $conf, $form, $user, $langs;
+
+	$maxvisiblephotos=1;
+	$showimage=1;
+	$showbarcode=empty($conf->barcode->enabled)?0:($object->barcode?1:0);
+	if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) $showbarcode=0;
+	$modulepart='unknown';
+	if ($object->element == 'societe') $modulepart='societe';
+	if ($object->element == 'contact') $modulepart='contact';
+	if ($object->element == 'member') $modulepart='memberphoto';
+	if ($object->element == 'user') $modulepart='userphoto';
+	if ($object->element == 'product') $modulepart='product';
+
+	print '<div class="arearef heightref valignmiddle" width="100%">';
+	if ($object->element == 'product')
+	{
+	    $width=80; $cssclass='photoref';
+        $showimage=$object->is_photo_available($conf->product->multidir_output[$object->entity]);
+	    $maxvisiblephotos=(isset($conf->global->PRODUCT_MAX_VISIBLE_PHOTO)?$conf->global->PRODUCT_MAX_VISIBLE_PHOTO:5);
+		if ($conf->browser->phone) $maxvisiblephotos=1;
+		if ($showimage) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$object->show_photos($conf->product->multidir_output[$object->entity],'small',-$maxvisiblephotos,0,0,0,$width,0).'</div>';
+        else 
+        {
+			$nophoto='/public/theme/common/nophoto.png';
+            $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="'.DOL_URL_ROOT.$nophoto.'"></div>';
+        }
+	}
+	else 
+	{
+	    if ($showimage) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$form->showphoto($modulepart,$object,0,0,0,'photoref','small',1,0,$maxvisiblephotos).'</div>';
+	}
+	if ($showbarcode) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$form->showbarcode($object).'</div>';
+	if ($object->element == 'societe' && ! empty($conf->use_javascript_ajax) && $user->rights->societe->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
+		$morehtmlright.=ajax_object_onoff($object, 'status', 'status', 'InActivity', 'ActivityCeased');
+	} 
+	elseif ($object->element == 'product')
+	{
+	    //$morehtmlright.=$langs->trans("Status").' ('.$langs->trans("Sell").') ';
+        if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
+            $morehtmlright.=ajax_object_onoff($object, 'status', 'tosell', 'ProductStatusOnSell', 'ProductStatusNotOnSell');
+        } else {
+            $morehtmlright.=$object->getLibStatut(2,0);
+        }
+        $morehtmlright.=' &nbsp; ';
+        //$morehtmlright.=$langs->trans("Status").' ('.$langs->trans("Buy").') ';
+	    if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
+            $morehtmlright.=ajax_object_onoff($object, 'status_buy', 'tobuy', 'ProductStatusOnBuy', 'ProductStatusNotOnBuy');
+        } else {
+            $morehtmlright.=$object->getLibStatut(2,1);
+        }
+	}
+	else {
+		$morehtmlright.=$object->getLibStatut(2);
+	}
+	if (! empty($object->name_alias)) $morehtmlref.='<div class="refidno">'.$object->name_alias.'</div>';      // For thirdparty
+	if (! empty($object->label))      $morehtmlref.='<div class="refidno">'.$object->label.'</div>';           // For product
+	if ($object->element != 'product') 
+	{
+    	$morehtmlref.='<div class="refidno">';
+    	$morehtmlref.=$object->getBannerAddress('refaddress',$object);
+    	$morehtmlref.='</div>';
+	}
+	if (! empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && in_array($object->element, array('societe', 'contact', 'member', 'product')))
+	{
+		$morehtmlref.='<div style="clear: both;"></div><div class="refidno">';
+		$morehtmlref.=$langs->trans("TechnicalID").': '.$object->id;
+		$morehtmlref.='</div>';
+	}
+	print $form->showrefnav($object, $paramid, $morehtml, $shownav, $fieldid, $fieldref, $morehtmlref, $moreparam, $nodbprefix, $morehtmlleft, $morehtmlright);
+	print '</div>';
+	print '<div class="underrefbanner clearboth"></div>';
 }
 
 /**
@@ -912,7 +1027,7 @@ function dol_format_address($object,$withcountry=0,$sep="\n",$outputlangs='')
 	else if (in_array($object->country_code,array('ES','TR'))) // ES: title firstname name \n address lines \n zip town \n state \n country
 	{
 		$ret .= ($ret ? $sep : '' ).$object->zip;
-		$ret .= ($object->town?' '.$object->town:'');
+		$ret .= ($object->town?(($object->zip?' ':'').$object->town):'');
 		if ($object->state && in_array($object->country_code,$countriesusingstate))
 		{
 			$ret.="\n".$object->state;
@@ -921,11 +1036,11 @@ function dol_format_address($object,$withcountry=0,$sep="\n",$outputlangs='')
 
 	else                                        		// Other: title firstname name \n address lines \n zip town \n country
 	{
-		$ret .= ($ret ? $sep : '' ).$object->zip;
-		$ret .= ($object->town?' '.$object->town:'');
+		$ret .= $object->zip ? (($ret ? $sep : '' ).$object->zip) : '';
+		$ret .= ($object->town?(($object->zip?' ':$sep).$object->town):'');
 		if ($object->state && in_array($object->country_code,$countriesusingstate))
 		{
-			$ret.=", ".$object->state;
+			$ret.=($ret?", ":'').$object->state;
 		}
 	}
 	if (! is_object($outputlangs)) $outputlangs=$langs;
@@ -1312,20 +1427,25 @@ function dol_print_size($size,$shortvalue=0,$shortunit=0)
  * @param	string		$url		Url to show
  * @param	string		$target		Target for link
  * @param	int			$max		Max number of characters to show
+ * @param	int			$withpicto	With picto
  * @return	string					HTML Link
  */
-function dol_print_url($url,$target='_blank',$max=32)
+function dol_print_url($url,$target='_blank',$max=32,$withpicto=0)
 {
+	global $langs;
+
 	if (empty($url)) return '';
 
 	$link='<a href="';
 	if (! preg_match('/^http/i',$url)) $link.='http://';
 	$link.=$url;
-	if ($target) $link.='" target="'.$target.'">';
+	$link.='"';
+	if ($target) $link.=' target="'.$target.'"';
+	$link.='>';
 	if (! preg_match('/^http/i',$url)) $link.='http://';
 	$link.=dol_trunc($url,$max);
 	$link.='</a>';
-	return $link;
+	return '<div class="nospan float" style="margin-right: 10px">'.($withpicto?img_picto($langs->trans("Url"), 'object_globe.png').' ':'').$link.'</div>';
 }
 
 /**
@@ -1428,29 +1548,30 @@ function dol_print_skype($skype,$cid=0,$socid=0,$addlink=0,$max=64)
 /**
  * 	Format phone numbers according to country
  *
- * 	@param	string	$phone 		Phone number to format
- * 	@param 	string	$country 	Country code to use for formatting
- * 	@param 	int		$cid 		Id of contact if known
- * 	@param 	int		$socid 		Id of third party if known
- * 	@param 	string		$addlink	''=no link to create action, 'AC_TEL'=add link to clicktodial (if module enabled) and add link to create event (if conf->global->AGENDA_ADDACTIONFORPHONE set)
- * 	@param 	string	$separ 		Separation between numbers for a better visibility example : xx.xx.xx.xx.xx
- *  @param	string  $withpicto  Show picto
- * 	@return string 				Formated phone number
+ * 	@param  string  $phone          Phone number to format
+ * 	@param  string  $countrycode    Country code to use for formatting
+ * 	@param 	int		$cid 		    Id of contact if known
+ * 	@param 	int		$socid          Id of third party if known
+ * 	@param 	string	$addlink	    ''=no link to create action, 'AC_TEL'=add link to clicktodial (if module enabled) and add link to create event (if conf->global->AGENDA_ADDACTIONFORPHONE set)
+ * 	@param 	string	$separ 		    Separation between numbers for a better visibility example : xx.xx.xx.xx.xx
+ *  @param	string  $withpicto      Show picto
+ *  @param	string	$titlealt	    Text to show on alt
+ * 	@return string 				    Formated phone number
  */
-function dol_print_phone($phone,$country='',$cid=0,$socid=0,$addlink='',$separ="&nbsp;",$withpicto='')
+function dol_print_phone($phone,$countrycode='',$cid=0,$socid=0,$addlink='',$separ="&nbsp;",$withpicto='',$titlealt='')
 {
 	global $conf,$user,$langs,$mysoc;
 
 	// Clean phone parameter
 	$phone = preg_replace("/[\s.-]/","",trim($phone));
 	if (empty($phone)) { return ''; }
-	if (empty($country)) $country=$mysoc->country_code;
+	if (empty($countrycode)) $countrycode=$mysoc->country_code;
 
 	// Short format for small screens
 	if ($conf->dol_optimize_smallscreen) $separ='';
 
 	$newphone=$phone;
-	if (strtoupper($country) == "FR")
+	if (strtoupper($countrycode) == "FR")
 	{
 		// France
 		if (dol_strlen($phone) == 10) {
@@ -1474,9 +1595,9 @@ function dol_print_phone($phone,$country='',$cid=0,$socid=0,$addlink='',$separ="
 		}
 	}
 
-	if (! empty($addlink))	// Link on phone number + link to add action (if conf->global->AGENDA_ADDACTIONFORPHONE set)
+	if (! empty($addlink))	// Link on phone number (+ link to add action if conf->global->AGENDA_ADDACTIONFORPHONE set)
 	{
-		if (! empty($conf->browser->phone))	// If phone, we use link of phone
+		if (! empty($conf->browser->phone) || (! empty($conf->clicktodial->enabled) && ! empty($conf->global->CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS)))	// If phone or option for, we use link of phone
 		{
 			$newphone ='<a href="tel:'.$phone.'"';
 			$newphone.='>'.$phone.'</a>';
@@ -1517,7 +1638,11 @@ function dol_print_phone($phone,$country='',$cid=0,$socid=0,$addlink='',$separ="
 		}
 	}
 
-	return '<div class="nospan float" style="margin-right: 10px">'.($withpicto?img_picto(($withpicto=='fax'?$langs->trans("Fax"):$langs->trans("Phone")), 'object_'.($withpicto=='fax'?'phoning_fax':'phoning').'.png').' ':'').$newphone.'</div>';
+	if (empty($titlealt))
+	{
+		$titlealt=($withpicto=='fax'?$langs->trans("Fax"):$langs->trans("Phone"));
+	}
+	return '<div class="nospan float" style="margin-right: 10px">'.($withpicto?img_picto($titlealt, 'object_'.($withpicto=='fax'?'phoning_fax':'phoning').'.png').' ':'').$newphone.'</div>';
 }
 
 /**
@@ -1588,47 +1713,54 @@ function dol_user_country()
 /**
  *  Format address string
  *
- *  @param	string	$address     Address
- *  @param  int		$htmlid      Html ID (for example 'gmap')
- *  @param  int		$mode        thirdparty|contact|member|other
- *  @param  int		$id          Id of object
- *  @return void
+ *  @param	string	$address    Address
+ *  @param  int		$htmlid     Html ID (for example 'gmap')
+ *  @param  int		$mode       thirdparty|contact|member|other
+ *  @param  int		$id         Id of object
+ *  @param	int		$noprint	No output. Result is the function return
+ *  @return string|void			Nothing if noprint is 0, formatted address if noprint is 1
  *  @see dol_format_address
  */
-function dol_print_address($address, $htmlid, $mode, $id)
+function dol_print_address($address, $htmlid, $mode, $id, $noprint=0)
 {
 	global $conf, $user, $langs, $hookmanager;
+
+	$out = '';
 
 	if ($address)
 	{
         if ($hookmanager) {
             $parameters = array('element' => $mode, 'id' => $id);
             $reshook = $hookmanager->executeHooks('printAddress', $parameters, $address);
-            print $hookmanager->resPrint;
+            $out.=$hookmanager->resPrint;
         }
-        if (empty($reshook)) {
-            print nl2br($address);
+        if (empty($reshook))
+        {
+            $out.=nl2br($address);
             $showgmap=$showomap=0;
-            if ($mode=='thirdparty' && ! empty($conf->google->enabled) && ! empty($conf->global->GOOGLE_ENABLE_GMAPS)) $showgmap=1;
+
+            // TODO Add a hook here
+            if (($mode=='thirdparty' || $mode =='societe') && ! empty($conf->google->enabled) && ! empty($conf->global->GOOGLE_ENABLE_GMAPS)) $showgmap=1;
             if ($mode=='contact' && ! empty($conf->google->enabled) && ! empty($conf->global->GOOGLE_ENABLE_GMAPS_CONTACTS)) $showgmap=1;
             if ($mode=='member' && ! empty($conf->google->enabled) && ! empty($conf->global->GOOGLE_ENABLE_GMAPS_MEMBERS)) $showgmap=1;
-            if ($mode=='thirdparty' && ! empty($conf->openstreetmap->enabled) && ! empty($conf->global->OPENSTREETMAP_ENABLE_MAPS)) $showomap=1;
+            if (($mode=='thirdparty' || $mode =='societe') && ! empty($conf->openstreetmap->enabled) && ! empty($conf->global->OPENSTREETMAP_ENABLE_MAPS)) $showomap=1;
             if ($mode=='contact' && ! empty($conf->openstreetmap->enabled) && ! empty($conf->global->OPENSTREETMAP_ENABLE_MAPS_CONTACTS)) $showomap=1;
             if ($mode=='member' && ! empty($conf->openstreetmap->enabled) && ! empty($conf->global->OPENSTREETMAP_ENABLE_MAPS_MEMBERS)) $showomap=1;
 
-            // TODO Add a hook here
             if ($showgmap)
             {
                 $url=dol_buildpath('/google/gmaps.php?mode='.$mode.'&id='.$id,1);
-                print ' <a href="'.$url.'" target="_gmaps"><img id="'.$htmlid.'" border="0" src="'.DOL_URL_ROOT.'/theme/common/gmap.png"></a>';
+                $out.=' <a href="'.$url.'" target="_gmaps"><img id="'.$htmlid.'" border="0" src="'.DOL_URL_ROOT.'/theme/common/gmap.png"></a>';
             }
             if ($showomap)
             {
                 $url=dol_buildpath('/openstreetmap/maps.php?mode='.$mode.'&id='.$id,1);
-                print ' <a href="'.$url.'" target="_gmaps"><img id="'.$htmlid.'_openstreetmap" border="0" src="'.DOL_URL_ROOT.'/theme/common/gmap.png"></a>';
+                $out.=' <a href="'.$url.'" target="_gmaps"><img id="'.$htmlid.'_openstreetmap" border="0" src="'.DOL_URL_ROOT.'/theme/common/gmap.png"></a>';
             }
         }
 	}
+	if ($noprint) return $out;
+	else print $out;
 }
 
 
@@ -2666,6 +2798,7 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
 
 	$sortorder=strtoupper($sortorder);
 	$out='';
+    $sortimg='';
 
 	$tag='th';
 	if ($thead==2) $tag='div';
@@ -2675,25 +2808,33 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
 	if ($field && ($sortfield == $field || $sortfield == preg_replace("/^[^\.]+\./","",$field))) $out.= '<'.$tag.' class="'.$prefix.'liste_titre_sel" '. $moreattrib.'>';
 	else $out.= '<'.$tag.' class="'.$prefix.'liste_titre" '. $moreattrib.'>';
 
-	if (! empty($conf->dol_optimize_smallscreen) && empty($thead) && $field)    // If this is a sort field
+	if (empty($thead) && $field)    // If this is a sort field
 	{
 		$options=preg_replace('/sortfield=([a-zA-Z0-9,\s\.]+)/i','',$moreparam);
 		$options=preg_replace('/sortorder=([a-zA-Z0-9,\s\.]+)/i','',$options);
 		$options=preg_replace('/&+/i','&',$options);
 		if (! preg_match('/^&/',$options)) $options='&'.$options;
 
-		if ($sortorder == 'DESC' ) 	$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">';
-		if ($sortorder == 'ASC' ) 	$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">';
+		if ($field != $sortfield)
+		{
+            if ($sortorder == 'DESC') $out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">';
+            if ($sortorder == 'ASC' || ! $sortorder) $out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">';
+		}
+		else
+		{
+            if ($sortorder == 'DESC' || ! $sortorder) $out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">';
+            if ($sortorder == 'ASC') $out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">';
+		}
 	}
 
 	$out.=$name;
 
-	if (! empty($conf->dol_optimize_smallscreen) && empty($thead) && $field)    // If this is a sort field
+	if (empty($thead) && $field)    // If this is a sort field
 	{
 		$out.='</a>';
 	}
 
-	if (empty($conf->dol_optimize_smallscreen) && empty($thead) && $field)    // If this is a sort field
+	if (empty($thead) && $field)    // If this is a sort field
 	{
 		$options=preg_replace('/sortfield=([a-zA-Z0-9,\s\.]+)/i','',$moreparam);
 		$options=preg_replace('/sortorder=([a-zA-Z0-9,\s\.]+)/i','',$options);
@@ -2701,27 +2842,33 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
 		if (! preg_match('/^&/',$options)) $options='&'.$options;
 
 		//print "&nbsp;";
-		$out.= '<img width="2" src="'.DOL_URL_ROOT.'/theme/common/transparent.png" alt=""><span class="nowrap">';
+		$sortimg.= '<img width="2" src="'.DOL_URL_ROOT.'/theme/common/transparent.png" alt="">';
+		$sortimg.= '<span class="nowrap">';
 
 		if (! $sortorder || $field != $sortfield)
 		{
-			$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
-			$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
+			//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
+			//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
 		}
 		else
 		{
 			if ($sortorder == 'DESC' ) {
-				$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
-				$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",1).'</a>';
+				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
+				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",1).'</a>';
+				$sortimg.= img_up("Z-A",0);
 			}
 			if ($sortorder == 'ASC' ) {
-				$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",1).'</a>';
-				$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
+				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",1).'</a>';
+				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
+				$sortimg.= img_down("A-Z",0);
 			}
 		}
 
-		$out.= '</span>';
+		$sortimg.= '</span>';
 	}
+
+	$out.=$sortimg;
+
 	$out.='</'.$tag.'>';
 
 	return $out;
@@ -2733,7 +2880,7 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
  *	@param	string	$title			Title to show
  *	@return	string					Title to show
  *  @deprecated						Use load_fiche_titre instead
- *  @see print_fiche_titre, load_fiche_titre
+ *  @see load_fiche_titre
  */
 function print_titre($title)
 {
@@ -2807,9 +2954,10 @@ function load_fiche_titre($titre, $mesg='', $picto='title_generic.png', $pictois
  *	@param	string	$picto				Icon to use before title (should be a 32x32 transparent png file)
  *	@param	int		$pictoisfullpath	1=Icon name is a full absolute url of image
  *  @param	string	$morehtml			More html to show
+ *  @param  string  $morecss            More css to the table
  *	@return	void
  */
-function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='', $center='', $num=-1, $totalnboflines=0, $picto='title_generic.png', $pictoisfullpath=0, $morehtml='')
+function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='', $center='', $num=-1, $totalnboflines=0, $picto='title_generic.png', $pictoisfullpath=0, $morehtml='', $morecss='')
 {
 	global $conf,$langs;
 
@@ -2827,7 +2975,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 
 	print "\n";
 	print "<!-- Begin title '".$titre."' -->\n";
-	print '<table width="100%" border="0" class="notopnoleftnoright" style="margin-bottom: 6px;"><tr>';
+	print '<table width="100%" border="0" class="notopnoleftnoright'.($morecss?' '.$morecss:'').'" style="margin-bottom: 6px;"><tr>';
 
 	// Left
 	if ($picto && $titre) print '<td class="nobordernopadding hideonsmartphone" width="40" align="left" valign="middle">'.img_picto('', $picto, '', $pictoisfullpath).'</td>';
@@ -2861,7 +3009,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 				if ($cpt > 2) $pagelist.='<li'.(empty($conf->dol_use_jmobile)?' class="pagination"':'').'><span '.(empty($conf->dol_use_jmobile)?'class="inactive"':'data-role="button"').'>...</span></li>';
 				else if ($cpt == 2) $pagelist.='<li'.(empty($conf->dol_use_jmobile)?' class="pagination"':'').'><a '.(empty($conf->dol_use_jmobile)?'':'data-role="button" ').'href="'.$file.'?page=1'.$options.'&amp;sortfield='.$sortfield.'&amp;sortorder='.$sortorder.'">2</a></li>';
 			}
-			
+
 			do
 			{
 				if ($cpt==$page)
@@ -2875,7 +3023,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 				$cpt++;
 			}
 			while ($cpt < $nbpages && $cpt<=$page+$maxnbofpage);
-			
+
 			if ($cpt<$nbpages)
 			{
 				if ($cpt<$nbpages-2) $pagelist.= '<li'.(empty($conf->dol_use_jmobile)?' class="pagination"':'').'><span '.(empty($conf->dol_use_jmobile)?'class="inactive"':'data-role="button"').'>...</span></li>';
@@ -2947,11 +3095,17 @@ function print_fleche_navigation($page, $file, $options='', $nextpage=0, $betwee
  */
 function vatrate($rate,$addpercent=false,$info_bits=0,$usestarfornpr=0)
 {
-	// Test for compatibility
-	if (preg_match('/%/',$rate))
+    $morelabel='';
+    
+    if (preg_match('/%/',$rate))
 	{
 		$rate=str_replace('%','',$rate);
 		$addpercent=true;
+	}
+	if (preg_match('/\((.*)\)/',$rate,$reg))
+	{
+	    $morelabel=' ('.$reg[1].')';
+	    $rate=preg_replace('/'.preg_quote($morelabel,'/').'/','',$rate);
 	}
 	if (preg_match('/\*/',$rate) || preg_match('/'.constant('MAIN_LABEL_MENTION_NPR').'/i',$rate))
 	{
@@ -2961,6 +3115,7 @@ function vatrate($rate,$addpercent=false,$info_bits=0,$usestarfornpr=0)
 
 	$ret=price($rate,0,'',0,0).($addpercent?'%':'');
 	if ($info_bits & 1) $ret.=' '.($usestarfornpr?'*':constant('MAIN_LABEL_MENTION_NPR'));
+	$ret.=$morelabel;
 	return $ret;
 }
 
@@ -3142,35 +3297,43 @@ function price2num($amount,$rounding='',$alreadysqlnb=0)
 }
 
 /**
- *	Return localtax rate for a particular vat, when selling a product with vat $tva, from a $thirdparty_buyer to a $thirdparty_seller
+ *	Return localtax rate for a particular vat, when selling a product with vat $vatrate, from a $thirdparty_buyer to a $thirdparty_seller
  *  Note: This function applies same rules than get_default_tva
  *
- * 	@param	float		$tva			        Vat taxe
+ * 	@param	float		$vatrate		        Vat rate
  * 	@param  int			$local		         	Local tax to search and return (1 or 2 return only tax rate 1 or tax rate 2)
  *  @param  Societe		$thirdparty_buyer    	Object of buying third party
  *  @param	Societe		$thirdparty_seller		Object of selling third party
- * 	@return	mixed			   					0 if not found, localtax if found
+ * 	@return	mixed			   					0 if not found, localtax rate if found
  *  @see get_default_tva
  */
-function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
+function get_localtax($vatrate, $local, $thirdparty_buyer="", $thirdparty_seller="")
 {
 	global $db, $conf, $mysoc;
 
 	if (empty($thirdparty_seller) || ! is_object($thirdparty_seller)) $thirdparty_seller=$mysoc;
 
-	dol_syslog("get_localtax tva=".$tva." local=".$local." thirdparty_buyer id=".(is_object($thirdparty_buyer)?$thirdparty_buyer->id:'')."/country_code=".(is_object($thirdparty_buyer)?$thirdparty_buyer->country_code:'')." thirdparty_seller id=".$thirdparty_seller->id."/country_code=".$thirdparty_seller->country_code." thirdparty_seller localtax1_assuj=".$thirdparty_seller->localtax1_assuj."  thirdparty_seller localtax2_assuj=".$thirdparty_seller->localtax2_assuj);
+	dol_syslog("get_localtax tva=".$vatrate." local=".$local." thirdparty_buyer id=".(is_object($thirdparty_buyer)?$thirdparty_buyer->id:'')."/country_code=".(is_object($thirdparty_buyer)?$thirdparty_buyer->country_code:'')." thirdparty_seller id=".$thirdparty_seller->id."/country_code=".$thirdparty_seller->country_code." thirdparty_seller localtax1_assuj=".$thirdparty_seller->localtax1_assuj."  thirdparty_seller localtax2_assuj=".$thirdparty_seller->localtax2_assuj);
 
-	if($thirdparty_buyer->country_code!=$thirdparty_seller->country_code)
+	$vatratecleaned = $vatrate;
+	if (preg_match('/^(.*)\s*\((.*)\)$/', $vatrate, $reg))      // If vat is "xx (yy)"
+	{
+        $vatratecleaned = $reg[1];
+	    $vatratecode = $reg[2];
+	}
+	
+	/*if ($thirdparty_buyer->country_code != $thirdparty_seller->country_code)
 	{
 		return 0;
-	}
+	}*/
+	
 	// Some test to guess with no need to make database access
 	if ($mysoc->country_code == 'ES') // For spain localtaxes 1 and 2, tax is qualified if buyer use local taxe
 	{
 		if ($local == 1)
 		{
-			if(! $mysoc->localtax1_assuj) return 0;
-			if ($thirdparty_seller->id==$mysoc->id)
+			if (! $mysoc->localtax1_assuj) return 0;
+			if ($thirdparty_seller->id == $mysoc->id)
 			{
 				if (! $thirdparty_buyer->localtax1_assuj) return 0;
 			}
@@ -3182,8 +3345,8 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 
 		if ($local == 2)
 		{
-			if(! $mysoc->localtax2_assuj) return 0;
-			if ($thirdparty_seller->id==$mysoc->id )
+			if (! $mysoc->localtax2_assuj) return 0;
+			if ($thirdparty_seller->id == $mysoc->id)
 			{
 				if (! $thirdparty_buyer->localtax2_assuj) return 0;
 			}
@@ -3209,63 +3372,72 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 	}*/
 
 	// Search local taxes
-	if ($local==1)
+	if ($mysoc->country_code == 'ES' || ! empty($conf->global->MAIN_GET_LOCALTAXES_VALUES_FROM_THIRDPARTY))
 	{
-		if($thirdparty_seller!=$mysoc )
-		{
-			if(!isOnlyOneLocalTax($local))
-			{
-				return $thirdparty_seller->localtax1_value;
-			}
-		}
-		else
-		{
-			if(!isOnlyOneLocalTax($local))
-			{
-				return $conf->global->MAIN_INFO_VALUE_LOCALTAX1;
-			}
-		}
-	}
-	if ($local==2)
-	{
-		if($thirdparty_seller!=$mysoc)
-		{
-			if(!isOnlyOneLocalTax($local))
-			{
-				return $thirdparty_seller->localtax2_value;
-			}
-		}
-		else
-		{
-			if(!isOnlyOneLocalTax($local))
-			{
-				return $conf->global->MAIN_INFO_VALUE_LOCALTAX2;
-			}
-		}
+    	if ($local==1)
+    	{
+    		if ($thirdparty_seller != $mysoc)
+    		{
+    			if (!isOnlyOneLocalTax($local))  // TODO We should provide $vatrate to search on correct line and not always on line with highest vat rate
+    			{
+    				return $thirdparty_seller->localtax1_value;
+    			}
+    		}
+    		else  // i am the seller
+    		{
+    			if (!isOnlyOneLocalTax($local))  // TODO If seller is me, why not always returning this, even if there is only one locatax vat.
+    			{
+    				return $conf->global->MAIN_INFO_VALUE_LOCALTAX1;
+    			}
+    		}
+    	}
+    	if ($local==2)
+    	{
+    		if ($thirdparty_seller != $mysoc)
+    		{
+    			if (!isOnlyOneLocalTax($local))  // TODO We should provide $vatrate to search on correct line and not always on line with highest vat rate
+    			// TODO We should also return value defined on thirdparty only if defined
+    			{
+    				return $thirdparty_seller->localtax2_value;
+    			}
+    		}
+    		else  // i am the seller
+    		{
+    			if (!isOnlyOneLocalTax($local))  // This is for spain only, we don't return value found into datbase even if there is only one locatax vat.
+    			{
+    				return $conf->global->MAIN_INFO_VALUE_LOCALTAX2;
+    			}
+    		}
+    	}
 	}
 
+	// By default, search value of local tax on line of common tax
 	$sql  = "SELECT t.localtax1, t.localtax2, t.localtax1_type, t.localtax2_type";
-	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
-	$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$thirdparty_seller->country_code."'";
-	$sql .= " AND t.taux = ".((float) $tva)." AND t.active = 1";
-	dol_syslog("get_localtax", LOG_DEBUG);
-	$resql=$db->query($sql);
-	if ($resql)
-	{
-		$obj = $db->fetch_object($resql);
-		if ($local==1) return $obj->localtax1;
-		elseif ($local==2) return $obj->localtax2;
-	}
+   	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
+   	$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$thirdparty_seller->country_code."'";
+   	$sql .= " AND t.taux = ".((float) $vatratecleaned)." AND t.active = 1";
+   	if ($vatratecode) $sql.= " AND t.code ='".$vatratecode."'";
+   	dol_syslog("get_localtax", LOG_DEBUG);
+   	$resql=$db->query($sql);
 
+   	if ($resql)
+   	{
+   		$obj = $db->fetch_object($resql);
+   		if ($local==1) return $obj->localtax1;
+   		elseif ($local==2) return $obj->localtax2;
+	}
+	
 	return 0;
 }
 
 
 /**
- * Return true if LocalTax is unique
+ * Return true if LocalTax (1 or 2) is unique.
+ * Example: If localtax1 is 5 on line with highest common vat rate, return true
+ * Example: If localtax1 is 5:8:15 on line with highest common vat rate, return false
  *
- * @param int 	$local	Local taxt to test
- * @return boolean 		True if LocalTax have multiple values, False if not
+ * @param   int 	$local	Local tax to test (1 or 2)
+ * @return  boolean 		True if LocalTax have multiple values, False if not
  */
 function isOnlyOneLocalTax($local)
 {
@@ -3273,7 +3445,7 @@ function isOnlyOneLocalTax($local)
 
 	$valors=explode(":", $tax);
 
-	if(count($valors)>1)
+	if (count($valors)>1)
 	{
 		return false;
 	}
@@ -3284,7 +3456,7 @@ function isOnlyOneLocalTax($local)
 }
 
 /**
- * Get values of localtaxes
+ * Get values of localtaxes (1 or 2) for company country for the common vat with the highest value
  *
  * @param	int		$local 	LocalTax to get
  * @return	number			Values of localtax
@@ -3294,9 +3466,10 @@ function get_localtax_by_third($local)
 	global $db, $mysoc;
 	$sql ="SELECT t.localtax1, t.localtax2 ";
 	$sql.=" FROM ".MAIN_DB_PREFIX."c_tva as t inner join ".MAIN_DB_PREFIX."c_country as c ON c.rowid=t.fk_pays";
-	$sql.=" WHERE c.code = '".$mysoc->country_code."' AND t.taux=(SELECT max(tt.taux)";
-	$sql.=" FROM ".MAIN_DB_PREFIX."c_tva as tt inner join ".MAIN_DB_PREFIX."c_country as c ON c.rowid=tt.fk_pays";
-	$sql.=" WHERE c.code = '".$mysoc->country_code."')";
+	$sql.=" WHERE c.code = '".$mysoc->country_code."' AND t.active = 1 AND t.taux=(";
+	$sql.="  SELECT max(tt.taux) FROM ".MAIN_DB_PREFIX."c_tva as tt inner join ".MAIN_DB_PREFIX."c_country as c ON c.rowid=tt.fk_pays";
+	$sql.="  WHERE c.code = '".$mysoc->country_code."' AND tt.active = 1";
+	$sql.="  )";
 
 	$resql=$db->query($sql);
 	if ($resql)
@@ -3315,7 +3488,7 @@ function get_localtax_by_third($local)
  *  Get type and rate of localtaxes for a particular vat rate/country fo thirdparty
  *  TODO
  *  This function is also called to retrieve type for building PDF. Such call of function must be removed.
- *  Instead this function must be called when adding a line to get (array of localtax and type) and
+ *  Instead this function must be called when adding a line to get the array of localtax and type, and then
  *  provide it to the function calcul_price_total.
  *
  *  @param	float	$vatrate			VAT Rate
@@ -3326,15 +3499,24 @@ function get_localtax_by_third($local)
  */
 function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller)
 {
-	global $db;
+	global $db, $mysoc;
 
 	dol_syslog("getLocalTaxesFromRate vatrate=".$vatrate." local=".$local);
 
+	$vatratecleaned = $vatrate;
+	if (preg_match('/^(.*)\s*\((.*)\)$/', $vatrate, $reg))      // If vat is "xx (yy)"
+	{
+	    $vatratecleaned = $reg[1];
+	    $vatratecode = $reg[2];
+	}
+	
 	// Search local taxes
 	$sql  = "SELECT t.localtax1, t.localtax1_type, t.localtax2, t.localtax2_type, t.accountancy_code_sell, t.accountancy_code_buy";
 	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
-	$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$buyer->country_code."'";
-	$sql .= " AND t.taux = ".((float) $vatrate)." AND t.active = 1";
+	if ($mysoc->country_code == 'ES') $sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$buyer->country_code."'";
+	else $sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$seller->country_code."'";
+	$sql .= " AND t.taux = ".((float) $vatratecleaned)." AND t.active = 1";
+	if ($vatratecode) $sql.= " AND t.code ='".$vatratecode."'";
 
 	$resql=$db->query($sql);
 	if ($resql)
@@ -3762,7 +3944,7 @@ function get_exdir($num,$level,$alpha,$withoutslash,$object,$modulepart)
 
 	$path = '';
 
-	if (! empty($level) && in_array($modulepart, array('cheque','user','category','holiday','shipment', 'member','don','donation','supplier_invoice','invoice_supplier')))
+	if (! empty($level) && in_array($modulepart, array('cheque','user','category','holiday','shipment', 'member','don','donation','supplier_invoice','invoice_supplier','mailing')))
 	{
 		// This part should be removed once all code is using "get_exdir" to forge path, with all parameters provided
 		if (empty($alpha)) $num = preg_replace('/([^0-9])/i','',$num);
@@ -4285,7 +4467,7 @@ function get_date_range($date_start,$date_end,$format = '',$outputlangs='', $wit
  *
  * @param	string	$firstname		Firstname
  * @param	string	$lastname		Lastname
- * @param	int		$nameorder		-1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname
+ * @param	int		$nameorder		-1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname, 2=Firstname
  * @return	string					Firstname + lastname or Lastname + firstname
  */
 function dolGetFirstLastname($firstname,$lastname,$nameorder=-1)
@@ -4295,11 +4477,15 @@ function dolGetFirstLastname($firstname,$lastname,$nameorder=-1)
 	$ret='';
 	// If order not defined, we use the setup
 	if ($nameorder < 0) $nameorder=(empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION));
-	if ($nameorder)
+	if ($nameorder && ((string) $nameorder != '2'))
 	{
-		$ret.=$firstname;
+        $ret.=$firstname;
 		if ($firstname && $lastname) $ret.=' ';
 		$ret.=$lastname;
+	}
+	else if ($nameorder == 2)
+	{
+	   $ret.=$firstname;
 	}
 	else
 	{
@@ -4846,6 +5032,8 @@ function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode=
 				}
 				else if (count($values) == 5)       // deprecated
 				{
+					dol_syslog('Passing 5 values in tabs module_parts is deprecated. Please update to 6 with permissions.', LOG_WARNING);
+
 					if ($values[0] != $type) continue;
 					if ($values[3]) $langs->load($values[3]);
 					if (preg_match('/SUBSTITUTION_([^_]+)/i',$values[2],$reg))
@@ -4892,7 +5080,7 @@ function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode=
  */
 function printCommonFooter($zone='private')
 {
-	global $conf;
+	global $conf, $hookmanager;
 	global $micro_start_time;
 
 	if ($zone == 'private') print "\n".'<!-- Common footer for private page -->'."\n";
@@ -4900,6 +5088,23 @@ function printCommonFooter($zone='private')
 
 	if (! empty($conf->global->MAIN_HTML_FOOTER)) print $conf->global->MAIN_HTML_FOOTER."\n";
 
+	print "\n";
+	print '<script type="text/javascript" language="javascript">jQuery(document).ready(function() {'."\n";
+	
+	print '<!-- If page_y set, we set scollbar with it -->'."\n";
+	print "page_y=getParameterByName('page_y', 0);";
+	print "if (page_y > 0) $('html, body').scrollTop(page_y);";
+	
+	print '<!-- Set handler to add page_y param on some a href links -->'."\n";
+	print 'jQuery(".reposition").click(function() {
+	           var page_y = $(document).scrollTop();
+	           /* alert(page_y); */
+	           this.href=this.href+\'&page_y=\'+page_y;
+	           });'."\n";
+	print '});'."\n";
+	
+	print '</script>'."\n";
+	
 	// Google Analytics (need Google module)
 	if (! empty($conf->google->enabled) && ! empty($conf->global->MAIN_GOOGLE_AN_ID))
 	{
@@ -4929,7 +5134,7 @@ function printCommonFooter($zone='private')
 		print 'MAIN_OPTIMIZE_SPEED='.(isset($conf->global->MAIN_OPTIMIZE_SPEED)?$conf->global->MAIN_OPTIMIZE_SPEED:'off');
 		if ($micro_start_time)
 		{
-			$micro_end_time=dol_microtime_float();
+			$micro_end_time = microtime(true);
 			print ' - Build time: '.ceil(1000*($micro_end_time-$micro_start_time)).' ms';
 		}
 		if (function_exists("memory_get_usage"))
@@ -4970,6 +5175,8 @@ function printCommonFooter($zone='private')
 		print "End of log output -->\n";
 	}
 
+	$parameters=array();
+	$reshook=$hookmanager->executeHooks('printCommonFooter',$parameters);    // Note that $action and $object may have been modified by some hooks
 }
 
 /**
@@ -5048,6 +5255,10 @@ function natural_search($fields, $value, $mode=0, $nofirstand=0)
 {
     global $db,$langs;
 
+    if ($mode == 0)
+    {
+    	$value=preg_replace('/\*/','%',$value);	// Replace * with %
+    }
     if ($mode == 1)
     {
     	$value=preg_replace('/([<>=]+)\s+([0-9'.preg_quote($langs->trans("DecimalSeparator"),'/').'\-])/','\1\2',$value);	// Clean string '< 10' into '<10' so we can the explode on space to get all tests to do
@@ -5118,20 +5329,20 @@ function natural_search($fields, $value, $mode=0, $nofirstand=0)
 
 /**
  * Return the filename of file to get the thumbs
- * 
- * @param   string  $file           Original filename
+ *
+ * @param   string  $file           Original filename (full or relative path)
  * @param   string  $extName        Extension to differenciate thumb file name ('', '_small', '_mini')
- * @param   string  $extImgTarget   Force image format for thumbs. Use '' to keep same extension than original image.
- * @return  string                  New file name
+ * @param   string  $extImgTarget   Force image extension for thumbs. Use '' to keep same extension than original image. Use '.png' for generated thumb files.
+ * @return  string                  New file name (full or relative path, including the thumbs/)
  */
 function getImageFileNameForSize($file, $extName, $extImgTarget='')
 {
 	$dirName = dirname($file);
 	if ($dirName == '.') $dirName='';
-	
-    $fileName = preg_replace('/(\.gif|\.jpeg|\.jpg|\.png|\.bmp)$/i','',$file);	// On enleve extension quelquesoit la casse
+
+    $fileName = preg_replace('/(\.gif|\.jpeg|\.jpg|\.png|\.bmp)$/i','',$file);	// We remove extension, whatever is its case
 	$fileName = basename($fileName);
-	
+
 	if (empty($extImgTarget)) $extImgTarget = (preg_match('/\.jpg$/i',$file)?'.jpg':'');
     if (empty($extImgTarget)) $extImgTarget = (preg_match('/\.jpeg$/i',$file)?'.jpeg':'');
     if (empty($extImgTarget)) $extImgTarget = (preg_match('/\.gif$/i',$file)?'.gif':'');
@@ -5139,9 +5350,9 @@ function getImageFileNameForSize($file, $extName, $extImgTarget='')
     if (empty($extImgTarget)) $extImgTarget = (preg_match('/\.bmp$/i',$file)?'.bmp':'');
 
     if (! $extImgTarget) return $file;
-	
+
     $subdir='';
     if ($extName) $subdir = 'thumbs/';
-    
-    return $dirName.$subdir.$fileName.$extName.$extImgTarget; // New filename for thumb
+
+    return ($dirName?$dirName.'/':'').$subdir.$fileName.$extName.$extImgTarget; // New filename for thumb
 }

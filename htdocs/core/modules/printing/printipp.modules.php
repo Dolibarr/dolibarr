@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2014 Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2014-2015  Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,6 +41,7 @@ class printing_printipp extends PrintingDriver
     var $user;
     var $password;
     var $error;
+    var $errors = array();
     var $db;
 
 
@@ -62,6 +63,7 @@ class printing_printipp extends PrintingDriver
         $this->conf[] = array('varname'=>'PRINTIPP_PORT', 'required'=>1, 'example'=>'631', 'type'=>'text');
         $this->conf[] = array('varname'=>'PRINTIPP_USER', 'required'=>0, 'example'=>'', 'type'=>'text', 'moreattributes'=>'autocomplete="off"');
         $this->conf[] = array('varname'=>'PRINTIPP_PASSWORD', 'required'=>0, 'example'=>'', 'type'=>'password', 'moreattributes'=>'autocomplete="off"');
+        $this->conf[] = array('enabled'=>1, 'type'=>'submit');
     }
 
     /**
@@ -71,11 +73,12 @@ class printing_printipp extends PrintingDriver
      * @param   string      $module     module
      * @param   string      $subdir     subdirectory of document like for expedition subdir is sendings
      *
-     * @return  string                  '' if OK, Error message if KO
+     * @return  int                     0 if OK, >0 if KO
      */
     function print_file($file, $module, $subdir='')
     {
         global $conf, $user, $db;
+        $error = 0;
 
         include_once DOL_DOCUMENT_ROOT.'/includes/printipp/CupsPrintIPP.php';
 
@@ -107,7 +110,9 @@ class printing_printipp extends PrintingDriver
                 }
                 else
 				{
-                    return 'NoDefaultPrinterDefined';
+                    $this->errors[] = 'NoDefaultPrinterDefined';
+                    $error++;
+                    return $error;
                 }
             }
         }
@@ -119,19 +124,26 @@ class printing_printipp extends PrintingDriver
         if ($subdir!='') $fileprint.='/'.$subdir;
         $fileprint.='/'.$file;
         $ipp->setData($fileprint);
-        $ipp->printJob();
+        try {
+            $ipp->printJob();
+        } catch (Exception $e) {
+            $this->errors[] = $e->getMessage();
+            $error++;
+        }
+        if ($error==0) $this->errors[] = 'PRINTIPP: Job added';
 
-        return '';
+        return $error;
     }
 
     /**
      *  Return list of available printers
      *
-     *  @return string                html list of printers
+     *  @return  int                     0 if OK, >0 if KO
      */
     function listAvailablePrinters()
     {
         global $bc, $conf, $langs;
+        $error = 0;
         $var=true;
 
         $html = '<tr class="liste_titre">';
@@ -178,8 +190,8 @@ class printing_printipp extends PrintingDriver
 			$html.= '</td>';
             $html.= '</tr>'."\n";
         }
-
-        return $html;
+        $this->resprint = $html;
+        return $error;
     }
 
     /**
@@ -226,13 +238,15 @@ class printing_printipp extends PrintingDriver
     /**
      *  List jobs print
      *
-     * @param   string      $module     module
+     *  @param   string      $module     module
      *
-     *  @return void
+     *  @return  int                     0 if OK, >0 if KO
      */
     function list_jobs($module)
     {
         global $conf, $db, $bc;
+        $error = 0;
+        $html = '';
         include_once DOL_DOCUMENT_ROOT.'/includes/printipp/CupsPrintIPP.php';
         $ipp = new CupsPrintIPP();
         $ipp->setLog(DOL_DATA_ROOT.'/dolibarr_printipp.log','file',3); // logging very verbose
@@ -257,32 +271,39 @@ class printing_printipp extends PrintingDriver
             }
         }
         // Getting Jobs
-        $ipp->getJobs(false,0,'completed',false);
-        print '<table width="100%" class="noborder">';
-        print '<tr class="liste_titre">';
-        print "<td>Id</td>";
-        print "<td>Owner</td>";
-        print "<td>Printer</td>";
-        print "<td>File</td>";
-        print "<td>Status</td>";
-        print "<td>Cancel</td>";
-        print "</tr>\n";
+        try {
+            $ipp->getJobs(false,0,'completed',false);
+        } catch (Exception $e) {
+            $this->errors[] = $e->getMessage();
+            $error++;
+        }
+        $html .= '<table width="100%" class="noborder">';
+        $html .= '<tr class="liste_titre">';
+        $html .= '<td>Id</td>';
+        $html .= '<td>Owner</td>';
+        $html .= '<td>Printer</td>';
+        $html .= '<td>File</td>';
+        $html .= '<td>Status</td>';
+        $html .= '<td>Cancel</td>';
+        $html .= '</tr>'."\n";
         $jobs = $ipp->jobs_attributes;
         $var = True;
-        //print '<pre>'.print_r($jobs,true).'</pre>';
+        //$html .= '<pre>'.print_r($jobs,true).'</pre>';
         foreach ($jobs as $value )
         {
-            $var=!$var;
-            print "<tr ".$bc[$var].">";
-            print '<td>'.$value->job_id->_value0.'</td>';
-            print '<td>'.$value->job_originating_user_name->_value0.'</td>';
-            print '<td>'.$value->printer_uri->_value0.'</td>';
-            print '<td>'.$value->job_name->_value0.'</td>';
-            print '<td>'.$value->job_state->_value0.'</td>';
-            print '<td>'.$value->job_uri->_value0.'</td>';
-            print '</tr>';
+            $var = !$var;
+            $html .= '<tr '.$bc[$var].'>';
+            $html .= '<td>'.$value->job_id->_value0.'</td>';
+            $html .= '<td>'.$value->job_originating_user_name->_value0.'</td>';
+            $html .= '<td>'.$value->printer_uri->_value0.'</td>';
+            $html .= '<td>'.$value->job_name->_value0.'</td>';
+            $html .= '<td>'.$value->job_state->_value0.'</td>';
+            $html .= '<td>'.$value->job_uri->_value0.'</td>';
+            $html .= '</tr>';
         }
-        print "</table>";
+        $html .= "</table>";
+        $this->resprint = $html;
+        return $error;
     }
 
 }

@@ -38,14 +38,15 @@ $langs->load("orders");
 $langs->load("sendings");
 
 
+$sall=GETPOST('search_all');
 $search_ref=GETPOST('search_ref');
 $search_refsupp=GETPOST('search_refsupp');
 $search_company=GETPOST('search_company');
 $search_user=GETPOST('search_user');
 $search_ht=GETPOST('search_ht');
 $search_ttc=GETPOST('search_ttc');
-$sall=GETPOST('search_all');
 $search_status=(GETPOST('search_status','alpha')!=''?GETPOST('search_status','alpha'):GETPOST('statut','alpha'));	// alpha and not intbecause it can be '6,7'
+$optioncss = GETPOST('optioncss','alpha');
 
 $page  = GETPOST('page','int');
 $socid = GETPOST('socid','int');
@@ -73,6 +74,17 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 
 if ($search_status == '') $search_status=-1;
 
+// List of fields to search into when doing a "search in all"
+$fieldstosearchall = array(
+    'cf.ref'=>'Ref',
+    'cf.ref_supplier'=>'RefSupplier',
+    //'pd.description'=>'Description',
+    's.nom'=>"ThirdParty",
+    'cf.note_public'=>'NotePublic',
+);
+if (empty($user->socid)) $fieldstosearchall["cf.note_private"]="NotePrivate";
+
+
 
 /*
  *	View
@@ -88,8 +100,14 @@ if ($socid > 0)
 {
 	$fourn = new Fournisseur($db);
 	$fourn->fetch($socid);
-	$title .= ' ('.$fourn->name.')';
+	$title .= ' - '.$fourn->name;
 }
+if (GETPOST('statut','alpha')) 
+{
+    if (GETPOST('statut','alpha') == '1,2,3') $title.=' - '.$langs->trans("StatusOrderToProcessShort");
+    else $title.=' - '.$langs->trans($commandestatic->statuts[GETPOST('statut','alpha')]);
+}
+
 
 llxHeader('',$title);
 
@@ -140,15 +158,21 @@ if ($search_ttc != '')
 }
 if ($sall)
 {
-	$sql .= natural_search(array('cf.ref', 'cf.ref_supplier', 'cf.note_public', 'cf.note_private'), $sall);
+	$sql .= natural_search(array_keys($fieldstosearchall), $sall);
 }
 if ($socid) $sql.= " AND s.rowid = ".$socid;
 
 //Required triple check because statut=0 means draft filter
-if (GETPOST('statut', 'int') !== '')
+if (GETPOST('statut', 'alpha') !== '')
 {
-	$sql .= " AND cf.fk_statut IN (".GETPOST('statut').")";
+	$sql .= " AND cf.fk_statut IN (".GETPOST('statut', 'alpha').")";
 }
+
+if (GETPOST('billed', 'int') !== '')
+{
+	$sql .= " AND cf.billed IN (".GETPOST('billed', 'int').")";
+}
+
 if ($search_refsupp)
 {
 	$sql.= " AND (cf.ref_supplier LIKE '%".$db->escape($search_refsupp)."%')";
@@ -185,9 +209,23 @@ if ($resql)
 	if ($search_refsupp) 		$param.="&search_refsupp=".$search_refsupp;
 	if ($socid)					$param.="&socid=".$socid;
 	if ($search_status >= 0)  	$param.="&search_status=".$search_status;
+	if ($optioncss != '') $param.='&optioncss='.$optioncss;
 
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords);
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="action" value="list">';
+	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
+	
+    if ($sall)
+    {
+        foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
+        print $langs->trans("FilterOnInto", $sall, join(', ',$fieldstosearchall));
+    }
+	
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"cf.ref","",$param,'',$sortfield,$sortorder);
@@ -219,7 +257,7 @@ if ($resql)
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre" align="right">';
-	$formorder->selectSupplierOrderStatus($search_status,1,'search_status');
+	$formorder->selectSupplierOrderStatus((strstr($search_status, ',')?-1:$search_status),1,'search_status');
 	print '</td>';
 	print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';

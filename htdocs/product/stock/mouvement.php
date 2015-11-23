@@ -94,7 +94,7 @@ if ($action == "correct_stock")
 	if (empty($product_id))
 	{
 		$error++;
-		setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Product")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Product")), null, 'errors');
 		$action='correction';
 	}
 	if (! is_numeric($_POST["nbpiece"]))
@@ -358,7 +358,7 @@ if ($resql)
 	/*
     if ($action == "correction")
     {
-        print_titre($langs->trans("StockCorrection"));
+        print load_fiche_titre($langs->trans("StockCorrection"));
         print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="post">'."\n";
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="action" value="correct_stock">';
@@ -399,7 +399,7 @@ if ($resql)
 
     if ($action == "transfert")
     {
-        print_titre($langs->trans("Transfer"));
+        print load_fiche_titre($langs->trans("Transfer"));
         print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="post">'."\n";
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="action" value="transfert_stock">';
@@ -504,7 +504,7 @@ if ($resql)
     if (empty($conf->productbatch->enabled)) print '&nbsp;';
     //else print '<br>';
     $syear = $year?$year:-1;
-    print '<input class="flat" type="text" size="2" maxlength="4" placeholder="'.dol_escape_htmltag($langs->trans("Year")).'" name="year" value="'.($syear > 0 ? $syear : '').'">';
+    print '<input class="flat" type="text" size="3" maxlength="4" placeholder="'.dol_escape_htmltag($langs->trans("Year")).'" name="year" value="'.($syear > 0 ? $syear : '').'">';
     //print $formother->selectyear($syear,'year',1, 20, 5);
     print '</td>';
     // Product Ref
@@ -576,14 +576,15 @@ if ($resql)
         $productstatic->label=$objp->produit;
         $productstatic->type=$objp->type;
         $productstatic->entity=$objp->entity;
-        print $productstatic->getNomUrl(1,'',16);
+        print $productstatic->getNomUrl(1,'stock',16);
         print "</td>\n";
         // Product label
         print '<td>';
-        $productstatic->id=$objp->rowid;
+        /*$productstatic->id=$objp->rowid;
         $productstatic->ref=$objp->produit;
         $productstatic->type=$objp->type;
-        print $productstatic->getNomUrl(1,'',16);
+        print $productstatic->getNomUrl(1,'',16);*/
+        print $productstatic->label;
         print "</td>\n";
         // Batch
     	if (! empty($conf->productbatch->enabled))

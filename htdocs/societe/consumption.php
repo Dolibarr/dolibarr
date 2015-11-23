@@ -116,14 +116,15 @@ if (empty($socid))
 $head = societe_prepare_head($object);
 dol_fiche_head($head, 'consumption', $langs->trans("ThirdParty"),0,'company');
 
+dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
+    
+print '<div class="fichecenter">';
+
+print '<div class="underbanner clearboth"></div>';
 print '<table class="border" width="100%">';
-print '<tr><td width="25%">'.$langs->trans('ThirdPartyName').'</td>';
-print '<td colspan="3">';
-print $form->showrefnav($object,'socid','',($user->societe_id?0:1),'rowid','nom');
-print '</td></tr>';
 
 // Alias names (commercial, trademark or alias names)
-print '<tr id="name_alias"><td><label for="name_alias_input">'.$langs->trans('AliasNames').'</label></td>';
+print '<tr id="name_alias"><td class="titlefield"><label for="name_alias_input">'.$langs->trans('AliasNames').'</label></td>';
 print '<td colspan="3">'.$object->name_alias.'</td></tr>';
 
 if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
@@ -172,6 +173,8 @@ if ($object->fournisseur)
 	if ($conf->fournisseur->enabled && $user->rights->fournisseur->commande->lire) $elementTypeArray['supplier_order']=$langs->transnoentitiesnoconv('SuppliersOrders');
 }
 print '</table>';
+
+print '</div>';
 
 dol_fiche_end();
 print '<br>';

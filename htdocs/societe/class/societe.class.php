@@ -43,7 +43,7 @@ class Societe extends CommonObject
     public $element='societe';
     public $table_element = 'societe';
 	public $fk_element='fk_soc';
-    protected $childtables=array("askpricesupplier","propal","commande","facture","contrat","facture_fourn","commande_fournisseur","projet");    // To test if we can delete object
+    protected $childtables=array("supplier_proposal","propal","commande","facture","contrat","facture_fourn","commande_fournisseur","projet");    // To test if we can delete object
 
     /**
      * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
@@ -51,8 +51,6 @@ class Societe extends CommonObject
      */
     protected $ismultientitymanaged = 1;
 
-    public $id;
-    public $name;
     public $entity;
 
     /**
@@ -63,9 +61,6 @@ class Societe extends CommonObject
      */
     public $nom;
 
-    var $firstname;
-    var $lastname;
-
 	/**
 	 * Alias names (commercial, trademark or alias names)
 	 * @var string
@@ -73,7 +68,6 @@ class Societe extends CommonObject
 	public $name_alias;
 
     public $particulier;
-    public $civility_id;
     public $address;
     public $zip;
     public $town;
@@ -113,9 +107,6 @@ class Societe extends CommonObject
      * @see country
      */
     var $pays;
-    var $country_id;
-    var $country_code;
-    var $country;
 
 	/**
 	 * Phone number
@@ -149,26 +140,6 @@ class Societe extends CommonObject
      * @var string
      */
     var $barcode;
-    /**
-     * ID of bardode type
-     * @var int
-     */
-    var $barcode_type;
-    /**
-     * code (loaded by fetch_barcode)
-     * @var string
-     */
-    var $barcode_type_code;
-    /**
-     * label (loaded by fetch_barcode)
-     * @var string
-     */
-    var $barcode_type_label;
-    /**
-     * coder (loaded by fetch_barcode)
-     * @var string
-     */
-    var $barcode_type_coder;
 
     // 6 professional id (usage depends on country)
 
@@ -233,8 +204,6 @@ class Societe extends CommonObject
     var $forme_juridique;
 
     var $remise_percent;
-    var $mode_reglement_id;
-    var $cond_reglement_id;
     var $mode_reglement_supplier_id;
     var $cond_reglement_supplier_id;
 	var $fk_prospectlevel;
@@ -419,7 +388,7 @@ class Societe extends CommonObject
      *    @param	User	$user       Object of user that ask creation
      *    @return   int         		>= 0 if OK, < 0 if KO
      */
-    function create($user='')
+    function create($user)
     {
         global $langs,$conf;
 
@@ -484,7 +453,7 @@ class Societe extends CommonObject
                     $this->add_commercial($user, $this->commercial_id);
                 }
                 // si un commercial cree un client il lui est affecte automatiquement
-                else if (!$user->rights->societe->client->voir)
+                else if (empty($user->rights->societe->client->voir))
                 {
                     $this->add_commercial($user, $user->id);
                 }
@@ -708,8 +677,8 @@ class Societe extends CommonObject
         $this->localtax1_value=trim($this->localtax1_value);
         $this->localtax2_value=trim($this->localtax2_value);
 
-        $this->capital=price2num(trim($this->capital),'MT');
-        if (empty($this->capital) || ! is_numeric($this->capital)) $this->capital = 0;
+        if ($this->capital != '') $this->capital=price2num(trim($this->capital));
+        if (! is_numeric($this->capital)) $this->capital = '';     // '' = undef
 
         $this->effectif_id=trim($this->effectif_id);
         $this->forme_juridique_code=trim($this->forme_juridique_code);
@@ -837,7 +806,7 @@ class Societe extends CommonObject
             }
             else $sql .=",localtax2_value =0.000";
 
-            $sql .= ",capital = ".$this->capital;
+            $sql .= ",capital = ".($this->capital == '' ? "null" : $this->capital);
 
             $sql .= ",prefix_comm = ".(! empty($this->prefix_comm)?"'".$this->db->escape($this->prefix_comm)."'":"null");
 
@@ -1012,7 +981,7 @@ class Societe extends CommonObject
         $sql .= ', s.status';
         $sql .= ', s.price_level';
         $sql .= ', s.tms as date_modification';
-        $sql .= ', s.phone, s.fax, s.email, s.skype, s.url, s.zip, s.town, s.note_private, s.note_public, s.client, s.fournisseur';
+        $sql .= ', s.phone, s.fax, s.email, s.skype, s.url, s.zip, s.town, s.note_private, s.note_public, s.model_pdf, s.client, s.fournisseur';
         $sql .= ', s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4, s.idprof5, s.idprof6';
         $sql .= ', s.capital, s.tva_intra';
         $sql .= ', s.fk_typent as typent_id';
@@ -1154,6 +1123,7 @@ class Societe extends CommonObject
                 $this->note = $obj->note_private; // TODO Deprecated for backward comtability
                 $this->note_private = $obj->note_private;
                 $this->note_public = $obj->note_public;
+                $this->modelpdf = $obj->model_pdf;
                 $this->default_lang = $obj->default_lang;
                 $this->logo = $obj->logo;
 
@@ -1777,12 +1747,12 @@ class Societe extends CommonObject
      *    	Return a link on thirdparty (with picto)
      *
      *		@param	int		$withpicto		Add picto into link (0=No picto, 1=Include picto with link, 2=Picto only)
-     *		@param	string	$option			Target of link ('', 'customer', 'prospect', 'supplier')
+     *		@param	string	$option			Target of link ('', 'customer', 'prospect', 'supplier', 'project')
      *		@param	int		$maxlen			Max length of name
      *      @param	integer	$notooltip		1=Disable tooltip
      *		@return	string					String with URL
      */
-    function getNomUrl($withpicto=0,$option='',$maxlen=0,$notooltip=0)
+    function getNomUrl($withpicto=0, $option='', $maxlen=0, $notooltip=0)
     {
         global $conf,$langs;
 
@@ -1790,7 +1760,7 @@ class Societe extends CommonObject
 
         if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;
 
-		if ($conf->global->SOCIETE_ADD_REF_IN_LIST && (!empty($withpicto)))
+		if (! empty($conf->global->SOCIETE_ADD_REF_IN_LIST) && (!empty($withpicto)))
 		{
 			if (($this->client) && (! empty ( $this->code_client ))) {
 				$code = $this->code_client . ' - ';
@@ -1801,9 +1771,7 @@ class Societe extends CommonObject
 			$name =$code.' '.$name;
 		}
 
-	    if (!empty($this->name_alias)) {
-		    $name .= ' ('.$this->name_alias.')';
-	    }
+	    if (!empty($this->name_alias)) $name .= ' ('.$this->name_alias.')';
 
         $result=''; $label='';
         $link=''; $linkend='';
@@ -1825,6 +1793,16 @@ class Societe extends CommonObject
             $label.= '<u>' . $langs->trans("ShowSupplier") . '</u>';
             $link = '<a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$this->id;
         }
+        else if ($option == 'agenda')
+        {
+            $label.= '<u>' . $langs->trans("ShowAgenda") . '</u>';
+            $link = '<a href="'.DOL_URL_ROOT.'/societe/agenda.php?socid='.$this->id;
+        }
+        else if ($option == 'project')
+        {
+            $label.= '<u>' . $langs->trans("ShowProject") . '</u>';
+            $link = '<a href="'.DOL_URL_ROOT.'/societe/project.php?socid='.$this->id;
+        }
         else if ($option == 'category')
         {
             $label.= '<u>' . $langs->trans("ShowCategory") . '</u>';
@@ -1844,10 +1822,13 @@ class Societe extends CommonObject
         }
 
         if (! empty($this->name))
+        {
             $label.= '<br><b>' . $langs->trans('Name') . ':</b> '. $this->name;
-        if (! empty($this->code_client))
+            if (! empty($this->name_alias)) $label.=' ('.$this->name_alias.')';
+        }
+        if (! empty($this->code_client) && $this->client)
             $label.= '<br><b>' . $langs->trans('CustomerCode') . ':</b> '. $this->code_client;
-        if (! empty($this->code_fournisseur))
+        if (! empty($this->code_fournisseur) && $this->fournisseur)
             $label.= '<br><b>' . $langs->trans('SupplierCode') . ':</b> '. $this->code_fournisseur;
 
         if (! empty($this->logo))
@@ -1861,7 +1842,16 @@ class Societe extends CommonObject
 
         // Add type of canvas
         $link.=(!empty($this->canvas)?'&canvas='.$this->canvas:'').'"';
-        $link.=($notooltip?'':' title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip"');
+        if (empty($notooltip))
+        {
+            if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) 
+            {
+                $label=$langs->trans("ShowCompany");
+                $link.=' alt="'.dol_escape_htmltag($label, 1).'"'; 
+            }
+            $link.= ' title="'.dol_escape_htmltag($label, 1).'"';
+            $link.=' class="classfortooltip"';
+        }
         $link.='>';
         $linkend='</a>';
 
@@ -3351,6 +3341,43 @@ class Societe extends CommonObject
 
 	}
 
+	
+	/**
+	 *  Create a document onto disk according to template module.
+	 *
+	 *	@param	string		$modele			Generator to use. Caller must set it to obj->modelpdf or GETPOST('modelpdf') for example.
+	 *	@param	Translate	$outputlangs	objet lang a utiliser pour traduction
+	 *  @param  int			$hidedetails    Hide details of lines
+	 *  @param  int			$hidedesc       Hide description
+	 *  @param  int			$hideref        Hide ref
+	 *	@return int        					<0 if KO, >0 if OK
+	 */
+	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+	{
+		global $conf,$user,$langs;
+
+		// Positionne le modele sur le nom du modele a utiliser
+		if (! dol_strlen($modele))
+		{
+			if (! empty($conf->global->COMPANY_ADDON_PDF))
+			{
+				$modele = $conf->global->COMPANY_ADDON_PDF;
+			}
+			else
+			{
+				print $langs->trans("Error")." ".$langs->trans("Error_COMPANY_ADDON_PDF_NotDefined");
+                return 0;
+			}
+		}
+
+		$modelpath = "core/modules/societe/doc/";
+
+		$result=$this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+
+		return $result;
+	}
+	
+	
 	/**
 	 * Sets object to supplied categories.
 	 *

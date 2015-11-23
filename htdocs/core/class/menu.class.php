@@ -98,4 +98,18 @@ class Menu
     	if (count($this->liste) > 1) array_pop($this->liste);
     }
 
+    /**
+     * Return number of visible entries (gray or not)
+     * 
+     *  @return int     Number of visible (gray or not) menu entries
+     */
+    function getNbOfVisibleMenuEntries()
+    {
+        $nb=0;
+        foreach($this->liste as $val)
+        {
+            if (! empty($val['enabled'])) $nb++;
+        }
+        return $nb;
+    }
 }

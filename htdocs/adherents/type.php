@@ -166,9 +166,9 @@ $form=new Form($db);
 if (! $rowid && $action != 'create' && $action != 'edit')
 {
 
-	print_fiche_titre($langs->trans("MembersTypes"));
+	print load_fiche_titre($langs->trans("MembersTypes"));
 
-	dol_fiche_head('');
+	//dol_fiche_head('');
 
 	$sql = "SELECT d.rowid, d.libelle, d.cotisation, d.vote";
 	$sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
@@ -211,7 +211,7 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 		dol_print_error($db);
 	}
 
-	dol_fiche_end();
+	//dol_fiche_end();
 
 	/*
 	 * Hotbar
@@ -238,7 +238,7 @@ if ($action == 'create')
 {
 	$object = new AdherentType($db);
 
-	print_fiche_titre($langs->trans("NewMemberType"));
+	print load_fiche_titre($langs->trans("NewMemberType"));
 
 	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';

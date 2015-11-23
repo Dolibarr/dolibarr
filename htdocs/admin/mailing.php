@@ -64,12 +64,12 @@ if ($action == 'setvalue')
     if (! $error)
     {
     	$db->commit();
-    	setEventMessage($langs->trans("SetupSaved"));
+    	setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
     else
     {
     	$db->rollback();
-    	setEventMessage($langs->trans("Error"),'errors');
+    	setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
 
@@ -81,7 +81,7 @@ if ($action == 'setvalue')
 llxHeader('',$langs->trans("MailingSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("MailingSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("MailingSetup"),$linkback,'title_setup');
 
 if (! empty($conf->use_javascript_ajax))
 {

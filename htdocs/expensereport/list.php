@@ -39,6 +39,7 @@ $socid = $_GET["socid"]?$_GET["socid"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'expensereport','','');
 
+$sall         = GETPOST('sall');
 $search_ref   = GETPOST('search_ref');
 $search_user  = GETPOST('search_user','int');
 $search_amount_ht = GETPOST('search_amount_ht','alpha');
@@ -48,6 +49,7 @@ $month_start  = GETPOST("month_start","int");
 $year_start   = GETPOST("year_start","int");
 $month_end    = GETPOST("month_end","int");
 $year_end     = GETPOST("year_end","int");
+$optioncss = GETPOST('optioncss','alpha');
 
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter"))		// Both test must be present to be compatible with all browsers
 {
@@ -64,6 +66,14 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter"))		// Both
 
 if ($search_status == '') $search_status=-1;
 if ($search_user == '') $search_user=-1;
+
+// List of fields to search into when doing a "search in all"
+$fieldstosearchall = array(
+    'd.ref'=>'Ref',
+    'u.lastname'=>'Lastname',
+    'u.firstname'=>"Firstname",
+);
+
 
 /*
  * View
@@ -100,6 +110,11 @@ $sql.= " FROM ".MAIN_DB_PREFIX."expensereport as d";
 $sql.= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON d.fk_user_author = u.rowid";
 $sql.= " WHERE d.entity = ".$conf->entity;
 
+// Search all
+if (!empty($sall))
+{
+	$sql.= natural_search(array_keys($fieldstosearchall), $sall);
+}
 // Ref
 if(!empty($search_ref)){
 	$sql.= " AND d.ref LIKE '%".$db->escape($search_ref)."%'";
@@ -177,9 +192,21 @@ if ($resql)
 	if ($search_amount_ht)		$param.="&search_amount_ht=".$search_amount_ht;
 	if ($search_amount_ttc)		$param.="&search_amount_ttc=".$search_amount_ttc;
 	if ($search_status >= 0)  	$param.="&search_status=".$search_status;
+	if ($optioncss != '') $param.='&optioncss='.$optioncss;
 
 	print_barre_liste($langs->trans("ListTripsAndExpenses"), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
+    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="action" value="list">';
+	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+
+    if ($sall)
+    {
+        foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
+        print $langs->trans("FilterOnInto", $sall, join(', ',$fieldstosearchall));
+    }
 
 	print '<table class="noborder" width="100%">';
 	print "<tr class=\"liste_titre\">";
@@ -214,7 +241,7 @@ if ($resql)
 	// User
 	if ($user->rights->expensereport->readall || $user->rights->expensereport->lire_tous){
 		print '<td class="liste_titre" align="left">';
-		$html->select_users($search_user,"search_user",1,"",0,'');
+		$html->select_dolusers($search_user,"search_user",1,"",0,'');
 		print '</td>';
 	} else {
 		print '<td class="liste_titre">&nbsp;</td>';

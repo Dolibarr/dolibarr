@@ -107,7 +107,7 @@ class Export
 
 						if ($enabled)
 						{
-							// Chargement de la classe
+							// Loading Class
 							$file = $dir.$modulename.".class.php";
 							$classname = $modulename;
 							require_once $file;
@@ -556,7 +556,7 @@ class Export
 			$filename.='.'.$objmodel->getDriverExtension();
 			$dirname=$conf->export->dir_temp.'/'.$user->id;
 
-			$outputlangs=dol_clone($langs);	// We clone to have an object we can modify (for example to change output charset by csv handler) without changing original value
+			$outputlangs = clone $langs; // We clone to have an object we can modify (for example to change output charset by csv handler) without changing original value
 
 			// Open file
 			dol_mkdir($dirname);

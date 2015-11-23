@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2011-2014      Juanjo Menent <jmenent@2byte.es>
+ * Copyright (C) 2015			Marcos García <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -104,7 +105,7 @@ if ($_GET["action"] == 'delete')
 			if ($result > 0)
 			{
 				$db->commit();
-				header("Location: ".DOL_URL_ROOT.'/compta/localtax/reglement.php');
+				header("Location: ".DOL_URL_ROOT.'/compta/localtax/reglement.php?localTaxType='.$localtax->ltt);
 				exit;
 			}
 			else
@@ -154,7 +155,7 @@ if ($_GET["action"] == 'create')
     print '<input type="hidden" name="localTaxType" value="'.$lttype.'">';
     print '<input type="hidden" name="action" value="add">';
 
-    print_fiche_titre($langs->transcountry($lttype==2?"newLT2Payment":"newLT1Payment",$mysoc->country_code));
+    print load_fiche_titre($langs->transcountry($lttype==2?"newLT2Payment":"newLT1Payment",$mysoc->country_code));
     
     if ($mesg) print $mesg;
 

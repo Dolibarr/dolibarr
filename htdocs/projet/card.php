@@ -118,12 +118,12 @@ if (empty($reshook))
 	    $error=0;
 	    if (empty($_POST["ref"]))
 	    {
-		    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Ref")), 'errors');
+		    setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Ref")), null, 'errors');
 	        $error++;
 	    }
 	    if (empty($_POST["title"]))
 	    {
-		    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")), 'errors');
+		    setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
 	        $error++;
 	    }
 
@@ -205,20 +205,20 @@ if (empty($reshook))
 	    {
 	        $error++;
 	        //$_GET["id"]=$_POST["id"]; // On retourne sur la fiche projet
-		    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Ref")), 'errors');
+		    setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Ref")), null, 'errors');
 	    }
 	    if (empty($_POST["title"]))
 	    {
 	        $error++;
 	        //$_GET["id"]=$_POST["id"]; // On retourne sur la fiche projet
-		    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")), 'errors');
+		    setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
 	    }
 
 	    $db->begin();
 
 	    if (! $error)
 	    {
-	        $object->oldcopy = dol_clone($object);
+			$object->oldcopy = clone $object;
 
 			$old_start_date = $object->date_start;
 
@@ -411,7 +411,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 	$thirdparty=new Societe($db);
 	if ($socid > 0) $thirdparty->fetch($socid);
 
-    print_fiche_titre($langs->trans("NewProject"), '', 'title_project');
+    print load_fiche_titre($langs->trans("NewProject"), '', 'title_project');
 
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -450,10 +450,13 @@ if ($action == 'create' && $user->rights->projet->creer)
     if (is_numeric($defaultref) && $defaultref <= 0) $defaultref='';
 
     // Ref
-    print '<tr><td><span class="fieldrequired">'.$langs->trans("Ref").'</span></td><td><input size="12" type="text" name="ref" value="'.($_POST["ref"]?$_POST["ref"]:$defaultref).'"></td></tr>';
+    $suggestedref=($_POST["ref"]?$_POST["ref"]:$defaultref);
+    print '<tr><td><span class="fieldrequired">'.$langs->trans("Ref").'</span></td><td><input size="12" type="text" name="ref" value="'.$suggestedref.'">';
+    print ' '.$form->textwithpicto('', $langs->trans("YouCanCompleteRef", $suggestedref));
+    print '</td></tr>';
 
     // Label
-    print '<tr><td><span class="fieldrequired">'.$langs->trans("Label").'</span></td><td><input size="40" type="text" name="title" value="'.GETPOST("title").'"></td></tr>';
+    print '<tr><td><span class="fieldrequired">'.$langs->trans("Label").'</span></td><td><input size="80" type="text" name="title" value="'.GETPOST("title").'"></td></tr>';
 
     // Thirdparty
     print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
@@ -617,14 +620,17 @@ else
         print '<table class="border" width="100%">';
 
         // Ref
+        $suggestedref=$object->ref;
         print '<tr><td class="fieldrequired" width="30%">'.$langs->trans("Ref").'</td>';
-        print '<td><input size="12" name="ref" value="'.$object->ref.'"></td></tr>';
+        print '<td><input size="12" name="ref" value="'.$suggestedref.'">';
+        print ' '.$form->textwithpicto('', $langs->trans("YouCanCompleteRef", $suggestedref));
+        print '</td></tr>';
 
         // Label
         print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td>';
-        print '<td><input size="40" name="title" value="'.$object->title.'"></td></tr>';
+        print '<td><input size="80" name="title" value="'.$object->title.'"></td></tr>';
 
-        // Customer
+        // Thirdparty
         print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
 	    $filteronlist='';
 	    if (! empty($conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST)) $filteronlist=$conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST;
@@ -713,7 +719,7 @@ else
 
         // Third party
         print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-        if ($object->thirdparty->id > 0) print $object->thirdparty->getNomUrl(1);
+        if ($object->thirdparty->id > 0) print $object->thirdparty->getNomUrl(1, 'project');
         else print'&nbsp;';
         print '</td></tr>';
 

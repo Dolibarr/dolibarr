@@ -108,7 +108,7 @@ class Ldap
 	{
 		global $conf;
 
-		//Server
+		// Server
 		if (! empty($conf->global->LDAP_SERVER_HOST))       $this->server[] = $conf->global->LDAP_SERVER_HOST;
 		if (! empty($conf->global->LDAP_SERVER_HOST_SLAVE)) $this->server[] = $conf->global->LDAP_SERVER_HOST_SLAVE;
 		$this->serverPort          = $conf->global->LDAP_SERVER_PORT;
@@ -120,9 +120,11 @@ class Ldap
 		$this->searchPassword      = $conf->global->LDAP_ADMIN_PASS;
 		$this->people              = $conf->global->LDAP_USER_DN;
 		$this->groups              = $conf->global->LDAP_GROUP_DN;
-		$this->filter              = $conf->global->LDAP_FILTER_CONNECTION;
 
-		//Users
+		$this->filter              = $conf->global->LDAP_FILTER_CONNECTION;	// Filter on user
+		$this->filtermember        = $conf->global->LDAP_MEMBER_FILTER;		// Filter on member
+		
+		// Users
 		$this->attr_login      = $conf->global->LDAP_FIELD_LOGIN; //unix
 		$this->attr_sambalogin = $conf->global->LDAP_FIELD_LOGIN_SAMBA; //samba, activedirectory
 		$this->attr_name       = $conf->global->LDAP_FIELD_NAME;
@@ -891,14 +893,14 @@ class Ldap
 	}
 
 	/**
-	 * 	Returns an array containing a details of elements
+	 * 	Returns an array containing a details or list of LDAP record(s)
 	 * 	ldapsearch -LLLx -hlocalhost -Dcn=admin,dc=parinux,dc=org -w password -b "ou=adherents,ou=people,dc=parinux,dc=org" userPassword
 	 *
-	 *	@param	string	$search			 	Valeur champ cle recherche, sinon '*' pour tous.
+	 *	@param	string	$search			 	Value of fiel to search, '*' for all. Not used if $activefilter is set.
 	 *	@param	string	$userDn			 	DN (Ex: ou=adherents,ou=people,dc=parinux,dc=org)
 	 *	@param	string	$useridentifier 	Name of key field (Ex: uid)
 	 *	@param	array	$attributeArray 	Array of fields required. Note this array must also contains field $useridentifier (Ex: sn,userPassword)
-	 *	@param	int		$activefilter		1=use field this->filter as filter instead of parameter $search
+	 *	@param	int		$activefilter		'1' or 'user'=use field this->filter as filter instead of parameter $search, 'member'=use field this->filtermember as filter
 	 *	@param	array	$attributeAsArray 	Array of fields wanted as an array not a string
 	 *	@return	array						Array of [id_record][ldap_field]=value
 	 */
@@ -906,7 +908,7 @@ class Ldap
 	{
 		$fulllist=array();
 
-		dol_syslog(get_class($this)."::getRecords search=".$search." userDn=".$userDn." useridentifier=".$useridentifier." attributeArray=array(".join(',',$attributeArray).")");
+		dol_syslog(get_class($this)."::getRecords search=".$search." userDn=".$userDn." useridentifier=".$useridentifier." attributeArray=array(".join(',',$attributeArray).") activefilter=".$activefilter);
 
 		// if the directory is AD, then bind first with the search user first
 		if ($this->serverType == "activedirectory")
@@ -916,15 +918,19 @@ class Ldap
 		}
 
 		// Define filter
-		if ($activefilter == 1)
+		if (! empty($activefilter))
 		{
-			if ($this->filter)
+			if (((string) $activefilter == '1' || (string) $activefilter == 'user') && $this->filter)
 			{
 				$filter = '('.$this->filter.')';
 			}
-			else
+			elseif (((string) $activefilter == 'member') && $this->filter)
 			{
-				$filter='('.$useridentifier.'=*)';
+				$filter = '('.$this->filtermember.')';
+			}
+			else	// If this->filter is empty, make fiter on * (all)
+			{
+				$filter = '('.$useridentifier.'=*)';
 			}
 		}
 		else

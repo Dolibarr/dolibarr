@@ -174,7 +174,7 @@ llxHeader("",$langs->trans("WarehouseCard"),$help_url);
 
 if ($action == 'create')
 {
-	print_fiche_titre($langs->trans("NewWarehouse"));
+	print load_fiche_titre($langs->trans("NewWarehouse"));
 
 	print "<form action=\"card.php\" method=\"post\">\n";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';

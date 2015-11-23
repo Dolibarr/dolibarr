@@ -44,9 +44,7 @@ class Account extends CommonObject
      * @see id
      */
     var $rowid;
-    var $id;
 
-    var $ref;
     var $label;
     //! 1=Compte courant/check/carte, 2=Compte liquide, 0=Compte épargne
     var $courant;
@@ -74,10 +72,6 @@ class Account extends CommonObject
     var $state_id;
     var $state_code;
     var $state;
-
-    var $country_id;
-    var $country_code;
-    var $country;
 
     var $type_lib=array();
 
@@ -1004,7 +998,12 @@ class Account extends CommonObject
             $link = '<a href="'.DOL_URL_ROOT.'/compta/bank/account.php?account='.$this->id.$linkclose;
             $linkend='</a>';
         }
-
+        else if ($mode == 'receipts')
+        {
+            $link = '<a href="'.DOL_URL_ROOT.'/compta/bank/releve.php?account='.$this->id.$linkclose;
+            $linkend='</a>';
+        }
+        
         if ($withpicto) $result.=($link.img_object($label, 'account', 'class="classfortooltip"').$linkend.' ');
         $result.=$link.$this->label.$linkend;
         return $result;
@@ -1088,8 +1087,8 @@ class Account extends CommonObject
     {
         $country_code=$this->getCountryCode();
 
-        if (in_array($country_code,array('CH','DE','FR','ES','GA','IT'))) return 1; // France, Spain, Gabon
-        if (in_array($country_code,array('AU','BE','CA','DK','GR','GB','ID','IE','IR','KR','NL','NZ','UK','US'))) return 2;      // Australia, Great Britain...
+        if (in_array($country_code,array('CH','FR','ES','GA','IT'))) return 1; // France, Spain, Gabon, ...
+        if (in_array($country_code,array('AU','BE','CA','DE','DK','GR','GB','ID','IE','IR','KR','NL','NZ','UK','US'))) return 2;      // Australia, England...
         return 0;
     }
 
@@ -1148,6 +1147,10 @@ class AccountLine extends CommonObject
     var $ref;
     var $datec;
     var $dateo;
+
+    /**
+     * Value date
+     */
     var $datev;
     var $amount;
     var $label;

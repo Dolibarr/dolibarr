@@ -88,14 +88,14 @@ $cancel != $langs->trans("Cancel") &&
 	}
 
 	// sauvegarde en base
-	if ( $object->setMultiLangs() > 0 )
+	if ( $object->setMultiLangs($user) > 0 )
 	{
 		$action = '';
 	}
 	else
 	{
 		$action = 'add';
-		setEventMessage($object->error, 'errors');
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
 
@@ -121,14 +121,14 @@ $cancel != $langs->trans("Cancel") &&
 		}
 	}
 
-	if ( $object->setMultiLangs() > 0 )
+	if ( $object->setMultiLangs($user) > 0 )
 	{
 		$action = '';
 	}
 	else
 	{
 		$action = 'edit';
-		setEventMessage($object->error, 'errors');
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
 

@@ -67,43 +67,50 @@ if ($user->id == $id && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user-
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 if ($user->id <> $id && ! $canreaduser) accessforbidden();
 
+$object = new User($db);
+$object->fetch($id);
+$object->getrights();
+
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('usercard','globalcard'));
 
 /**
  * Actions
  */
 
-if ($action == 'addrights' && $caneditperms)
-{
-	$edituser = new User($db);
-	$edituser->fetch($id);
-	//$edituser->addrights($rights, $module, '', $entity); // TODO unused for the moment
-	$edituser->addrights($rights, $module);
+$parameters=array('id'=>$socid);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-	// Si on a touche a ses propres droits, on recharge
-	if ($id == $user->id)
-	{
-		$user->clearrights();
-		$user->getrights();
-		$menumanager->loadMenu();
+if (empty($reshook)) {
+	if ($action == 'addrights' && $caneditperms) {
+		$edituser = new User($db);
+		$edituser->fetch($id);
+		//$edituser->addrights($rights, $module, '', $entity); // TODO unused for the moment
+		$edituser->addrights($rights, $module);
+
+		// Si on a touche a ses propres droits, on recharge
+		if ($id == $user->id) {
+			$user->clearrights();
+			$user->getrights();
+			$menumanager->loadMenu();
+		}
+	}
+
+	if ($action == 'delrights' && $caneditperms) {
+		$edituser = new User($db);
+		$edituser->fetch($id);
+		//$edituser->delrights($rights, $module, '', $entity); // TODO unused for the moment
+		$edituser->delrights($rights, $module);
+
+		// Si on a touche a ses propres droits, on recharge
+		if ($id == $user->id) {
+			$user->clearrights();
+			$user->getrights();
+			$menumanager->loadMenu();
+		}
 	}
 }
-
-if ($action == 'delrights' && $caneditperms)
-{
-	$edituser = new User($db);
-	$edituser->fetch($id);
-	//$edituser->delrights($rights, $module, '', $entity); // TODO unused for the moment
-	$edituser->delrights($rights, $module);
-
-	// Si on a touche a ses propres droits, on recharge
-	if ($id == $user->id)
-	{
-		$user->clearrights();
-		$user->getrights();
-		$menumanager->loadMenu();
-	}
-}
-
 
 
 /**
@@ -113,10 +120,6 @@ if ($action == 'delrights' && $caneditperms)
 llxHeader('',$langs->trans("Permissions"));
 
 $form=new Form($db);
-
-$object = new User($db);
-$object->fetch($id);
-$object->getrights();
 
 $head = user_prepare_head($object);
 
@@ -251,28 +254,14 @@ else
 
 /*
  * Ecran ajout/suppression permission
-*/
+ */
 
-print '<table class="border" width="100%">';
+$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
 
-// Ref
-print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
-print '<td>';
-print $form->showrefnav($object,'id','',$user->rights->user->user->lire || $user->admin);
-print '</td>';
-print '</tr>'."\n";
+dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
 
-// Lastname
-print '<tr><td width="25%">'.$langs->trans("Lastname").'</td>';
-print '<td>'.$object->lastname.'</td>';
-print '</tr>'."\n";
 
-// Firstname
-print '<tr><td width="25%">'.$langs->trans("Firstname").'</td>';
-print '<td>'.$object->firstname.'</td>';
-print '</tr>'."\n";
-
-print '</table><br>';
+print '<div class="underbanner clearboth"></div>';
 
 if ($user->admin) print info_admin($langs->trans("WarningOnlyPermissionOfActivatedModules"));
 // Show warning about external users
@@ -342,9 +331,9 @@ if ($result)
         		print '<td class="nowrap">'.img_object('',$picto).' '.$objMod->getName();
         		print '<a name="'.$objMod->getName().'">&nbsp;</a></td>';
         		print '<td align="center" class="nowrap">';
-        		print '<a title="'.dol_escape_htmltag($langs->trans("All")).'" alt="'.dol_escape_htmltag($langs->trans("All")).'" href="perms.php?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;module='.$obj->module.'#'.$objMod->getName().'">'.$langs->trans("All")."</a>";
+        		print '<a class="reposition" title="'.dol_escape_htmltag($langs->trans("All")).'" alt="'.dol_escape_htmltag($langs->trans("All")).'" href="perms.php?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;module='.$obj->module.'">'.$langs->trans("All")."</a>";
         		print '/';
-        		print '<a title="'.dol_escape_htmltag($langs->trans("None")).'" alt="'.dol_escape_htmltag($langs->trans("None")).'" href="perms.php?id='.$object->id.'&amp;action=delrights&amp;entity='.$entity.'&amp;module='.$obj->module.'#'.$objMod->getName().'">'.$langs->trans("None")."</a>";
+        		print '<a class="reposition" title="'.dol_escape_htmltag($langs->trans("None")).'" alt="'.dol_escape_htmltag($langs->trans("None")).'" href="perms.php?id='.$object->id.'&amp;action=delrights&amp;entity='.$entity.'&amp;module='.$obj->module.'">'.$langs->trans("None")."</a>";
         		print '</td>';
         		print '<td colspan="2">&nbsp;</td>';
         		print '</tr>'."\n";
@@ -371,7 +360,7 @@ if ($result)
         {
         	if ($caneditperms)
         	{
-        		print '<td align="center"><a href="perms.php?id='.$object->id.'&amp;action=delrights&amp;rights='.$obj->id.'#'.$objMod->getName().'">'.img_edit_remove($langs->trans("Remove")).'</a></td>';
+        		print '<td align="center"><a class="reposition" href="perms.php?id='.$object->id.'&amp;action=delrights&amp;rights='.$obj->id.'">'.img_edit_remove($langs->trans("Remove")).'</a></td>';
         	}
         	print '<td align="center" class="nowrap">';
         	print img_picto($langs->trans("Active"),'tick');
@@ -397,7 +386,7 @@ if ($result)
 	        	// Do not own permission
 	        	if ($caneditperms)
 	        	{
-	        		print '<td align="center"><a href="perms.php?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;rights='.$obj->id.'#'.$objMod->getName().'">'.img_edit_add($langs->trans("Add")).'</a></td>';
+	        		print '<td align="center"><a class="reposition" href="perms.php?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;rights='.$obj->id.'">'.img_edit_add($langs->trans("Add")).'</a></td>';
 	        	}
 	        	print '<td>&nbsp</td>';
 	        }
@@ -407,7 +396,7 @@ if ($result)
         	// Do not own permission
         	if ($caneditperms)
         	{
-        		print '<td align="center"><a href="perms.php?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;rights='.$obj->id.'#'.$objMod->getName().'">'.img_edit_add($langs->trans("Add")).'</a></td>';
+        		print '<td align="center"><a class="reposition" href="perms.php?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;rights='.$obj->id.'">'.img_edit_add($langs->trans("Add")).'</a></td>';
         	}
         	print '<td>&nbsp</td>';
         }
@@ -422,6 +411,7 @@ if ($result)
 }
 else dol_print_error($db);
 print '</table>';
+
 
 // For multicompany transversal mode
 // TODO Place a hook here

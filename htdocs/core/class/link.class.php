@@ -31,7 +31,6 @@ class Link extends CommonObject
     public $element = 'link';
     public $table_element = 'links';
 
-    public $id;
     public $entity;
     public $datea;
     public $url;

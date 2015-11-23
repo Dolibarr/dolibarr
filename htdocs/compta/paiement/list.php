@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
+ * Copyright (C) 2015      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -95,7 +96,7 @@ $formother=new FormOther($db);
 if (GETPOST("orphelins"))
 {
     // Paiements lies a aucune facture (pour aide au diagnostic)
-    $sql = "SELECT p.rowid, p.datep as dp, p.amount,";
+    $sql = "SELECT p.rowid, p.ref, p.datep as dp, p.amount,";
     $sql.= " p.statut, p.num_paiement,";
     $sql.= " c.code as paiement_code";
 	// Add fields for extrafields
@@ -117,7 +118,7 @@ if (GETPOST("orphelins"))
 }
 else
 {
-    $sql = "SELECT DISTINCT p.rowid, p.datep as dp, p.amount,"; // DISTINCT is to avoid duplicate when there is a link to sales representatives
+    $sql = "SELECT DISTINCT p.rowid, p.ref, p.datep as dp, p.amount,"; // DISTINCT is to avoid duplicate when there is a link to sales representatives
     $sql.= " p.statut, p.num_paiement,";
     $sql.= " c.code as paiement_code,";
     $sql.= " ba.rowid as bid, ba.label,";
@@ -164,7 +165,7 @@ else
     {
         $sql.= " AND p.datep BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
     }
-    if ($search_ref > 0)       		$sql .=" AND p.rowid=".$search_ref;
+    if ($search_ref)       		$sql .=natural_search('p.ref', $search_ref);
     if ($search_account > 0)      	$sql .=" AND b.fk_account=".$search_account;
     if ($search_paymenttype != "")  $sql .=" AND c.code='".$db->escape($search_paymenttype)."'";
     if ($search_amount)      		$sql .=" AND p.amount='".$db->escape(price2num($search_amount))."'";
@@ -253,7 +254,7 @@ if ($resql)
 
         print '<td>';
         $paymentstatic->id=$objp->rowid;
-        $paymentstatic->ref=$objp->rowid;
+        $paymentstatic->ref=$objp->ref;
         print $paymentstatic->getNomUrl(1);
         print '</td>';
 
@@ -304,6 +305,5 @@ else
     dol_print_error($db);
 }
 
-$db->close();
-
 llxFooter();
+$db->close();

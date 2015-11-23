@@ -833,13 +833,13 @@ if ($action == "addline")
 	if (! GETPOST('fk_c_type_fees') > 0)
 	{
 		$error++;
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")),'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
 		$action='';
 	}
 	if (GETPOST('vatrate') < 0 || GETPOST('vatrate') == '')
 	{
 		$error++;
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Vat")),'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Vat")), null, 'errors');
 		$action='';
 	}
 
@@ -849,7 +849,7 @@ if ($action == "addline")
 		if (empty($object_ligne->fk_projet) || $object_ligne->fk_projet==-1)
 		{
 			$error++;
-			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Project")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Project")), null, 'errors');
 		}
 	}*/
 
@@ -857,13 +857,13 @@ if ($action == "addline")
 	if (empty($object_ligne->date) || $object_ligne->date=="--")
 	{
 		$error++;
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
 	}
 	// Si aucun prix n'est rentré
 	if($object_ligne->value_unit==0)
 	{
 		$error++;
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("UP")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("UP")), null, 'errors');
 	}
 
 	// S'il y'a eu au moins une erreur
@@ -956,13 +956,13 @@ if ($action == "updateligne" )
 	if (! GETPOST('fk_c_type_fees') > 0)
 	{
 		$error++;
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")),'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
 		$action='';
 	}
 	if (GETPOST('vatrate') < 0 || GETPOST('vatrate') == '')
 	{
 		$error++;
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Vat")),'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Vat")), null, 'errors');
 		$action='';
 	}
 
@@ -1089,7 +1089,7 @@ if (! empty($conf->global->DEPLACEMENT_TO_CLEAN))
 // Create
 if ($action == 'create')
 {
-	print print_fiche_titre($langs->trans("NewTrip"));
+	print load_fiche_titre($langs->trans("NewTrip"));
 
 	print '<form action="'.$_SERVER['PHP_SELF'].'" method="post" name="create">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -1100,13 +1100,13 @@ if ($action == 'create')
 	print '<table class="border" width="100%">';
 	print '<tbody>';
 	print '<tr>';
-	print '<td>'.$langs->trans("DateStart").'</td>';
+	print '<td class="fieldrequired">'.$langs->trans("DateStart").'</td>';
 	print '<td>';
 	$form->select_date($date_start?$date_start:-1,'date_debut',0,0,0,'',1,1);
 	print '</td>';
 	print '</tr>';
 	print '<tr>';
-	print '<td>'.$langs->trans("DateEnd").'</td>';
+	print '<td class="fieldrequired">'.$langs->trans("DateEnd").'</td>';
 	print '<td>';
 	$form->select_date($date_end?$date_end:-1,'date_fin',0,0,0,'',1,1);
 	print '</td>';
@@ -1178,7 +1178,7 @@ else
 			{
 				if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous))
 				{
-					print_fiche_titre($langs->trans('TripCard'));
+					print load_fiche_titre($langs->trans('TripCard'));
 
 					print '<div class="tabBar">';
 					print $langs->trans('NotUserRightToView');
@@ -1772,7 +1772,7 @@ else
 					// Add a line
 					if (($object->fk_statut==0 || $object->fk_statut==99) && $action != 'editline')
 					{
-						print_fiche_titre($langs->trans("AddLine"),'','');
+						print load_fiche_titre($langs->trans("AddLine"),'','');
 
 						print '<form method="post" action="'.$_SERVER['PHP_SELF'].'" name="addline">';
 						print '<input type="hidden" name="id" value="'.$object->id.'">';

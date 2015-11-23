@@ -65,7 +65,7 @@ jQuery(document).ready(function() {
 </script>
 <?php
 
-print_fiche_titre($langs->trans("Restore"),'','title_setup');
+print load_fiche_titre($langs->trans("Restore"),'','title_setup');
 
 print $langs->trans("RestoreDesc",DOL_DATA_ROOT).'<br><br>';
 ?>

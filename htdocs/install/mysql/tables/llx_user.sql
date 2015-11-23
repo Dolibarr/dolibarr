@@ -25,6 +25,9 @@ create table llx_user
 
   ref_ext			varchar(50),				-- reference into an external system (not used by dolibarr)
   ref_int			varchar(50),				-- reference into an internal system (deprecated)
+  
+  employee          tinyint        DEFAULT 1,   -- 1 if user is an employee
+  fk_establishment  integer        DEFAULT 0,
 
   datec             datetime,
   tms               timestamp,

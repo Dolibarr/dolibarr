@@ -90,13 +90,13 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 	{
 		if (empty($label))
 		{
-			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
 			$action='create';
 			$error++;
 		}
 		else if (empty($_POST['task_parent']))
 		{
-			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("ChildOfTask")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("ChildOfTask")), null, 'errors');
 			$action='create';
 			$error++;
 		}
@@ -266,7 +266,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 {
 	if ($id > 0 || ! empty($ref)) print '<br>';
 
-	print_fiche_titre($langs->trans("NewTask"), '', 'title_project');
+	print load_fiche_titre($langs->trans("NewTask"), '', 'title_project');
 
 	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -305,7 +305,14 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 
 	print '<tr><td>'.$langs->trans("AffectedTo").'</td><td>';
 	$contactsofproject=(! empty($object->id)?$object->getListContactId('internal'):'');
-	$form->select_users($user->id,'userid',0,'',0,'',$contactsofproject);
+	if (count($contactsofproject))
+	{
+		print $form->select_dolusers($user->id,'userid',0,'',0,'',$contactsofproject);
+	}
+	else
+	{
+		print $langs->trans("NoUserAssignedToTheProject");
+	}
 	print '</td></tr>';
 
 	// Date start

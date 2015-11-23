@@ -50,6 +50,7 @@ class modAgenda extends DolibarrModules
 		$this->numero = 2400;
 
 		$this->family = "projects";
+		$this->module_position = 15;
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "Gestion de l'agenda et des actions";
@@ -72,7 +73,7 @@ class modAgenda extends DolibarrModules
 		$this->requiredby = array();
 		$this->langfiles = array("companies");
 
-		// Constantes
+		// Constants
 		//-----------
 		$this->const = array();
 		$this->const[15] = array("MAIN_AGENDA_ACTIONAUTO_COMPANY_SENTBYMAIL","chaine","1");

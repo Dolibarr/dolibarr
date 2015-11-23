@@ -63,7 +63,12 @@ class FactureFournisseur extends CommonInvoice
 	 * @see FactureFournisseur::STATUS_DRAFT, FactureFournisseur::STATUS_VALIDATED, FactureFournisseur::STATUS_PAID, FactureFournisseur::STATUS_ABANDONED
 	 */
     var $statut;
-    //! 1 si facture payee COMPLETEMENT, 0 sinon (ce champ ne devrait plus servir car insuffisant)
+
+    /**
+     * Set to 1 if the invoice is completely paid, otherwise is 0
+     * @var int
+     * @deprecated Use statuses stored in self::statut
+     */
     var $paye;
 
     var $author;
@@ -1264,7 +1269,8 @@ class FactureFournisseur extends CommonInvoice
         // la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
 
         $localtaxes_type=getLocalTaxesFromRate($vatrate,0,$mysoc, $this->thirdparty);
-
+        $txtva = preg_replace('/\s*\(.*\)/','',$txtva);  // Remove code into vatrate.
+        
         $tabprice = calcul_price_total($qty, $pu, $remise_percent, $vatrate, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type);
         $total_ht  = $tabprice[0];
         $total_tva = $tabprice[1];
@@ -1413,7 +1419,7 @@ class FactureFournisseur extends CommonInvoice
     {
         global $conf, $user, $langs;
 
-        $sql = 'SELECT ff.rowid, ff.date_lim_reglement as datefin';
+        $sql = 'SELECT ff.rowid, ff.date_lim_reglement as datefin, ff.fk_statut';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as ff';
         if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
         $sql.= ' WHERE ff.paye=0';
@@ -1434,10 +1440,16 @@ class FactureFournisseur extends CommonInvoice
 	        $response->url=DOL_URL_ROOT.'/fourn/facture/list.php?filtre=fac.fk_statut:1,paye:0';
 	        $response->img=img_object($langs->trans("Bills"),"bill");
 
+            $facturestatic = new FactureFournisseur($this->db);
+
             while ($obj=$this->db->fetch_object($resql))
             {
                 $response->nbtodo++;
-                if (! empty($obj->datefin) && $this->db->jdate($obj->datefin) < ($now - $conf->facture->fournisseur->warning_delay)) {
+
+                $facturestatic->date_echeance = $this->db->jdate($obj->datefin);
+                $facturestatic->statut = $obj->fk_statut;
+
+                if ($facturestatic->hasDelay()) {
 	                $response->nbtodolate++;
                 }
             }
@@ -1474,7 +1486,7 @@ class FactureFournisseur extends CommonInvoice
         if (! empty($this->total_ht))
             $label.= '<br><b>' . $langs->trans('AmountHT') . ':</b> ' . price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
         if (! empty($this->total_tva))
-            $label.= '<br><b>' . $langs->trans('TVA') . ':</b> ' . price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
+            $label.= '<br><b>' . $langs->trans('VAT') . ':</b> ' . price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
         if (! empty($this->total_ttc))
             $label.= '<br><b>' . $langs->trans('AmountTTC') . ':</b> ' . price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
 
@@ -1826,6 +1838,24 @@ class FactureFournisseur extends CommonInvoice
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
 	}
+
+    /**
+     * Is the payment of the supplier invoice having a delay?
+     *
+     * @return bool
+     */
+    public function hasDelay()
+    {
+        global $conf;
+
+        $now = dol_now();
+
+        if (!$this->date_echeance) {
+            return false;
+        }
+
+        return ($this->statut == self::STATUS_VALIDATED) && ($this->date_echeance < ($now - $conf->facture->fournisseur->warning_delay));
+    }
 }
 
 

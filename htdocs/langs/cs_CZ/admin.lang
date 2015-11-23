@@ -1193,13 +1193,13 @@ UseOptionLineIfNoQuantity=Řada výrobků / služeb s nulové hodnoty je považo
 FreeLegalTextOnProposal=Volný text o obchodních návrhů
 WatermarkOnDraftProposal=Vodoznak na předloh návrhů komerčních (none-li prázdný)
 BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL=Zeptejte se na umístění bankovního účtu nabídky
-##### AskPriceSupplier #####
-AskPriceSupplierSetup=Cena požaduje nastavení dodavatelé modul
-AskPriceSupplierNumberingModules=Price requests suppliers numbering models
-AskPriceSupplierPDFModules=Price requests suppliers documents models
-FreeLegalTextOnAskPriceSupplier=Volný text na žádosti o cenový dodavatele
-WatermarkOnDraftAskPriceSupplier=Watermark on draft price requests suppliers (none if empty)
-BANK_ASK_PAYMENT_BANK_DURING_ASKPRICESUPPLIER=Zeptejte se na bankovní účet destinaci nabídce ceny
+##### SupplierProposal #####
+SupplierProposalSetup=Cena požaduje nastavení dodavatelé modul
+SupplierProposalNumberingModules=Price requests suppliers numbering models
+SupplierProposalPDFModules=Price requests suppliers documents models
+FreeLegalTextOnSupplierProposal=Volný text na žádosti o cenový dodavatele
+WatermarkOnDraftSupplierProposal=Watermark on draft price requests suppliers (none if empty)
+BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL=Zeptejte se na bankovní účet destinaci nabídce ceny
 ##### Orders #####
 OrdersSetup=Objednat řízení nastavení
 OrdersNumberingModules=Objednávky číslování modelů

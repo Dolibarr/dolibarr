@@ -135,15 +135,15 @@ if ($action == 'add' && $id && ! isset($_POST["cancel"]) && $user->rights->banqu
 
 	if (! $dateop) {
 		$error++;
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->trans("Date")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Date")), null, 'errors');
 	}
 	if (! $operation) {
 		$error++;
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->trans("Type")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Type")), null, 'errors');
 	}
 	if (! $amount) {
 		$error++;
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->trans("Amount")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Amount")), null, 'errors');
 	}
 
 	if (! $error)
@@ -152,13 +152,13 @@ if ($action == 'add' && $id && ! isset($_POST["cancel"]) && $user->rights->banqu
 		$insertid = $object->addline($dateop, $operation, $label, $amount, $num_chq, $cat1, $user);
 		if ($insertid > 0)
 		{
-			setEventMessage($langs->trans("RecordSaved"));
+			setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 			header("Location: ".$_SERVER['PHP_SELF']."?id=".$id."&action=addline");
 			exit;
 		}
 		else
 		{
-			setEventMessage($object->error, 'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 	else
@@ -378,19 +378,6 @@ if ($id > 0 || ! empty($ref))
 	{
 		print '<div class="tabsAction">';
 
-		if ($object->type != 2 && $object->rappro) 
-		{ 
-			// If not cash account and can be reconciliate
-			if ($user->rights->banque->consolidate) 
-			{
-				print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/bank/rappro.php?account='.$object->id.($vline?'&amp;vline='.$vline:'').'">'.$langs->trans("Conciliate").'</a>';
-			}
-			else
-			{
-				print '<a class="butActionRefused" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("Conciliate").'</a>';
-			}
-		}
-
 		if ($action != 'addline') 
 		{
 			if (empty($conf->global->BANK_DISABLE_DIRECT_INPUT)) 
@@ -409,6 +396,20 @@ if ($id > 0 || ! empty($ref))
                 print '<a class="butActionRefused" title="'.$langs->trans("FeatureDisabled").'" href="#">'.$langs->trans("AddBankRecord").'</a>';
             }
         }
+
+		if ($object->type != 2 && $object->rappro) 
+		{ 
+			// If not cash account and can be reconciliate
+			if ($user->rights->banque->consolidate) 
+			{
+				print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/bank/rappro.php?account='.$object->id.($vline?'&amp;vline='.$vline:'').'">'.$langs->trans("Conciliate").'</a>';
+			}
+			else
+			{
+				print '<a class="butActionRefused" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("Conciliate").'</a>';
+			}
+		}
+
         print '</div>';
     }
 	
@@ -469,7 +470,7 @@ if ($id > 0 || ! empty($ref))
 	// Form to add a transaction with no invoice
 	if ($user->rights->banque->modifier && $action == 'addline')
 	{
-        print_fiche_titre($langs->trans("AddBankRecordLong"),'','');
+        print load_fiche_titre($langs->trans("AddBankRecordLong"),'','');
 
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
@@ -952,7 +953,7 @@ if ($id > 0 || ! empty($ref))
 			if ($sep > 0) print '&nbsp;';	// If we had at least one line in future
 			else print $langs->trans("CurrentBalance");
 			print ' '.$object->currency_code.'</td>';
-			print '<td align="right" class="nowrap"><b>'.price($total, 0, $langs, 0, 0, -1, $object->currency_code).'</b></td>';
+			print '<td align="right" class="nowrap"><b>'.price($total).'</b></td>';
 			print '<td>&nbsp;</td>';
 			print '</tr>';
 		} else {
@@ -961,9 +962,9 @@ if ($id > 0 || ! empty($ref))
 			if ($sep > 0) print '&nbsp;';	// If we had at least one line in future
 			else print $langs->trans("Total");
 			print ' '.$object->currency_code.'</td>';
-			print '<td align="right" class="nowrap"><b>'.price($total_deb*-1, 0, $langs, 0, 0, -1, $object->currency_code).'</b></td>';
-			print '<td align="right" class="nowrap"><b>'.price($total_cred, 0, $langs, 0, 0, -1, $object->currency_code).'</b></td>';
-			print '<td align="right" class="nowrap"><b>'.price($total_cred-($total_deb*-1), 0, $langs, 0, 0, -1, $object->currency_code).'</b></td>';
+			print '<td align="right" class="nowrap"><b>'.price($total_deb*-1).'</b></td>';
+			print '<td align="right" class="nowrap"><b>'.price($total_cred).'</b></td>';
+			print '<td align="right" class="nowrap"><b>'.price($total_cred-($total_deb*-1)).'</b></td>';
 			print '<td>&nbsp;</td>';
 			print '</tr>';
 		}

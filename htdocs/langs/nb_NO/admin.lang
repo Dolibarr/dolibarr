@@ -1193,13 +1193,13 @@ UseOptionLineIfNoQuantity=En vare/tjeneste med med null i kvantum blir betraktet
 FreeLegalTextOnProposal=Fritekst på tilbud
 WatermarkOnDraftProposal=Vannmerke på tilbudskladder (ingen hvis tom)
 BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL=Be om bakkonto for tilbudet
-##### AskPriceSupplier #####
-AskPriceSupplierSetup=Oppsett av modulen leverandør-prisforespørsler
-AskPriceSupplierNumberingModules=Leverandør-prisforespørsel nummereringsmodeller
-AskPriceSupplierPDFModules=Leverandør-prisforespørsel dokumentmodeller
-FreeLegalTextOnAskPriceSupplier=Fritekst på leverandør-prisforespørsel
-WatermarkOnDraftAskPriceSupplier=Vannmerke på kladder av leverandør-prisforepørsler (ingen hvis tom)
-BANK_ASK_PAYMENT_BANK_DURING_ASKPRICESUPPLIER=Be  om bankkonto for prisforespørsel
+##### SupplierProposal #####
+SupplierProposalSetup=Oppsett av modulen leverandør-prisforespørsler
+SupplierProposalNumberingModules=Leverandør-prisforespørsel nummereringsmodeller
+SupplierProposalPDFModules=Leverandør-prisforespørsel dokumentmodeller
+FreeLegalTextOnSupplierProposal=Fritekst på leverandør-prisforespørsel
+WatermarkOnDraftSupplierProposal=Vannmerke på kladder av leverandør-prisforepørsler (ingen hvis tom)
+BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL=Be  om bankkonto for prisforespørsel
 ##### Orders #####
 OrdersSetup=Innstillinger for ordre
 OrdersNumberingModules=Nummereringsmodul for ordre

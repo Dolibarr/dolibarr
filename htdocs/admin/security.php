@@ -135,7 +135,7 @@ if ($action == 'activate_encryptdbpassconf')
 	}
 	else
 	{
-		setEventMessage($langs->trans('InstrucToEncodePass',dol_encode($dolibarr_main_db_pass)),'warnings');	
+		setEventMessages($langs->trans('InstrucToEncodePass',dol_encode($dolibarr_main_db_pass)), null, 'warnings');	
 	}
 }
 else if ($action == 'disable_encryptdbpassconf')
@@ -152,7 +152,7 @@ else if ($action == 'disable_encryptdbpassconf')
 	}
 	else
 	{
-		setEventMessage($langs->trans('InstrucToClearPass',$dolibarr_main_db_pass),'warnings');
+		setEventMessages($langs->trans('InstrucToClearPass',$dolibarr_main_db_pass), null, 'warnings');
 	}
 }
 
@@ -187,9 +187,10 @@ if ($action == 'maj_pattern')
  */
 $form = new Form($db);
 
-llxHeader('',$langs->trans("Passwords"));
+$wikihelp='EN:Setup_Security|FR:Paramétrage_Sécurité|ES:Configuración_Seguridad';
+llxHeader('',$langs->trans("Passwords"),$wikihelp);
 
-print_fiche_titre($langs->trans("SecuritySetup"),'','title_setup');
+print load_fiche_titre($langs->trans("SecuritySetup"),'','title_setup');
 
 print $langs->trans("GeneratedPasswordDesc")."<br>\n";
 print "<br>\n";
@@ -221,7 +222,7 @@ if (is_resource($handle))
     {
         if (preg_match('/(modGeneratePass[a-z]+)\.class\.php/i',$file,$reg))
         {
-            // Chargement de la classe de numerotation
+            // Charging the numbering class
             $classname = $reg[1];
             require_once $dir.'/'.$file;
 

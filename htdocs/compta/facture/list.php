@@ -3,7 +3,7 @@
  * Copyright (C) 2004      Eric Seigne           <eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2012 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2013 Regis Houssin         <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2015 Regis Houssin         <regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
  * Copyright (C) 2010-2012 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
@@ -107,6 +107,16 @@ $hookmanager->initHooks(array('invoicelist'));
 
 $now=dol_now();
 
+// List of fields to search into when doing a "search in all"
+$fieldstosearchall = array(
+    'f.facnumber'=>'Ref',
+    'f.ref_client'=>'RefCustomer',
+    'fd.description'=>'Description',
+    's.nom'=>"ThirdParty",
+    'f.note_public'=>'NotePublic',
+);
+if (empty($user->socid)) $fieldstosearchall["f.note_private"]="NotePrivate";
+
 
 /*
  * Actions
@@ -134,6 +144,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
     $month='';
 }
 
+    
 
 /*
  * View
@@ -232,7 +243,7 @@ if (! $sall)
 }
 else
 {
-    $sql .= natural_search(array('s.nom', 'f.facnumber', 'f.note_public', 'fd.description'), $sall);
+    $sql .= natural_search(array_keys($fieldstosearchall), $sall);
 }
 $sql.= ' ORDER BY ';
 $listfield=explode(',',$sortfield);
@@ -275,8 +286,19 @@ if ($resql)
 
     $i = 0;
     print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">'."\n";
-    print '<table class="liste" width="100%">';
+    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="action" value="list">';
+	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
 
+    if ($sall)
+    {
+        foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
+        print $langs->trans("FilterOnInto", $sall, join(', ',$fieldstosearchall));
+    }
+    
  	// If the user can view prospects other than his'
     $moreforfilter='';
  	if ($user->rights->societe->client->voir || $socid)
@@ -296,7 +318,7 @@ if ($resql)
 	 	$moreforfilter.='</div>';
     }
 	// If the user can view prospects other than his'
-	if ($conf->categorie->enabled && $user->rights->produit->lire)
+	if ($conf->categorie->enabled && ($user->rights->produit->lire || $user->rights->service->lire))
 	{
 		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$moreforfilter.='<div class="divsearchfield">';
@@ -305,15 +327,20 @@ if ($resql)
 		$moreforfilter.=$form->selectarray('search_product_category', $cate_arbo, $search_product_category, 1, 0, 0, '', 0, 0, 0, 0, '', 1);
 		$moreforfilter.='</div>';
 	}
+    $parameters=array();
+    $reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+	if (empty($reshook)) $moreforfilter .= $hookmanager->resPrint;
+	else $moreforfilter = $hookmanager->resPrint;
 
     if ($moreforfilter)
     {
-        print '<tr class="liste_titre">';
-        print '<td class="liste_titre" colspan="11">';
+   		print '<div class="liste_titre liste_titre_bydiv centpercent">';
         print $moreforfilter;
-        print '</td></tr>';
+        print '</div>';
     }
 
+    print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
+    		
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans('Ref'),$_SERVER['PHP_SELF'],'f.facnumber','',$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('RefCustomer'),$_SERVER["PHP_SELF"],'f.ref_client','',$param,'',$sortfield,$sortorder);
@@ -380,6 +407,8 @@ if ($resql)
             $facturestatic->id=$objp->facid;
             $facturestatic->ref=$objp->facnumber;
             $facturestatic->type=$objp->type;
+            $facturestatic->statut = $objp->fk_statut;
+            $facturestatic->date_lim_reglement = $db->jdate($objp->datelimite);
             $notetoshow=dol_string_nohtmltag(($user->societe_id>0?$objp->note_public:$objp->note),1);
             $paiement = $facturestatic->getSommePaiement();
 
@@ -419,7 +448,7 @@ if ($resql)
 
             // Date limit
             print '<td align="center" class="nowrap">'.dol_print_date($datelimit,'day');
-            if ($datelimit < ($now - $conf->facture->client->warning_delay) && ! $objp->paye && $objp->fk_statut == 1 && ! $paiement)
+            if ($facturestatic->hasDelay())
             {
                 print img_warning($langs->trans('Late'));
             }

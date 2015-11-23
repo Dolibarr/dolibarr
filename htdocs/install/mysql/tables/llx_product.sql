@@ -46,22 +46,23 @@ create table llx_product
   price_base_type			varchar(3)   DEFAULT 'HT',
   tva_tx					double(6,3),					  -- Default VAT rate of product
   recuperableonly           integer NOT NULL DEFAULT '0',  -- French NPR VAT
-  localtax1_tx				double(6,3)  DEFAULT 0,         -- Spanish local VAT 1 
+  localtax1_tx				double(6,3)  DEFAULT 0,         -- Spanish local VAT 1
   localtax2_tx				double(6,3)  DEFAULT 0,         -- Spanish local VAT 2
   fk_user_author			integer DEFAULT NULL,			  -- user making creation
   fk_user_modif             integer,                         -- user making last change
   tosell					tinyint      DEFAULT 1,	          -- Product you sell
   tobuy						tinyint      DEFAULT 1,            -- Product you buy
+  onportal     				tinyint      DEFAULT 0,	          -- If it is a product you sell and you want to sell it on portal (module website must be on)
   tobatch					tinyint      DEFAULT 0 NOT NULL,  -- Is it a product that need a batch or eat-by management
   fk_product_type			integer      DEFAULT 0,			-- Type of product: 0 for regular product, 1 for service, 9 for other (used by external module)
   duration					varchar(6),
   seuil_stock_alerte		integer      DEFAULT 0,
   url						varchar(255),
-  barcode					varchar(255) DEFAULT NULL,
-  fk_barcode_type			integer      DEFAULT NULL,
+  barcode					varchar(255) DEFAULT NULL,		-- barcode
+  fk_barcode_type			integer      DEFAULT NULL,		-- barcode type
   accountancy_code_sell		varchar(32),                    -- Selling accountancy code
   accountancy_code_buy		varchar(32),                    -- Buying accountancy code
-  partnumber				varchar(32),                    -- Not used. Used by external modules.
+  partnumber				varchar(32),                    -- Part/Serial number. TODO To use it into screen if not a duplicate of barcode.
   weight					float        DEFAULT NULL,
   weight_units				tinyint      DEFAULT NULL,
   length					float        DEFAULT NULL,
@@ -80,5 +81,6 @@ create table llx_product
   import_key				varchar(14),					-- Import key
   fk_price_expression integer,                     -- Link to the rule for dynamic price calculation
   desiredstock              integer      DEFAULT 0,
-  fk_unit					integer      DEFAULT NULL
+  fk_unit					integer      DEFAULT NULL,
+  price_autogen TINYINT DEFAULT 0
 )ENGINE=innodb;

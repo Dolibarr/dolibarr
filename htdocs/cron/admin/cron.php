@@ -37,7 +37,7 @@ if (! $user->admin)
 
 $actionsave=GETPOST("save");
 
-// Sauvegardes parametres
+// Save parameters
 if (!empty($actionsave))
 {
 	$i=0;
@@ -49,12 +49,12 @@ if (!empty($actionsave))
 	if ($i >= 1)
 	{
 		$db->commit();
-		setEventMessage($langs->trans("SetupSaved"));
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
 	else
 	{
 		$db->rollback();
-		setEventMessage($langs->trans("Error"), 'errors');
+		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
 
@@ -66,7 +66,7 @@ if (!empty($actionsave))
 llxHeader();
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("CronSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("CronSetup"),$linkback,'title_setup');
 
 // Configuration header
 $head = cronadmin_prepare_head();

@@ -65,7 +65,7 @@ llxHeader();
 $title=$langs->trans("TripsAndExpensesStatistics");
 $dir=$conf->expensereport->dir_temp;
 
-print_fiche_titre($title, $mesg);
+print load_fiche_titre($title, $mesg);
 
 dol_mkdir($dir);
 
@@ -211,7 +211,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 // Show filter box
 print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
-print '<table class="border" width="100%">';
+print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 // Company
 /*
@@ -237,8 +237,8 @@ print '</table>';
 print '</form>';
 print '<br><br>';
 
-print '<table class="border" width="100%">';
-print '<tr height="24">';
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre" height="24">';
 print '<td align="center">'.$langs->trans("Year").'</td>';
 print '<td align="center">'.$langs->trans("Number").'</td>';
 print '<td align="center">'.$langs->trans("AmountTotal").'</td>';

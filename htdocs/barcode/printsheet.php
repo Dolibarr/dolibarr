@@ -68,7 +68,7 @@ if (GETPOST('submitproduct') && GETPOST('submitproduct'))
 
 		if (empty($forbarcode) || empty($fk_barcode_type))
 		{
-			setEventMessage($langs->trans("DefinitionOfBarCodeForProductNotComplete",$producttmp->getNomUrl()), 'warnings');
+			setEventMessages($langs->trans("DefinitionOfBarCodeForProductNotComplete",$producttmp->getNomUrl()), null, 'warnings');
 		}
 	}
 }
@@ -85,7 +85,7 @@ if (GETPOST('submitthirdparty') && GETPOST('submitthirdparty'))
 
 		if (empty($forbarcode) || empty($fk_barcode_type))
 		{
-			setEventMessage($langs->trans("DefinitionOfBarCodeForProductNotComplete",$thirdpartytmp->getNomUrl()), 'warnings');
+			setEventMessages($langs->trans("DefinitionOfBarCodeForProductNotComplete",$thirdpartytmp->getNomUrl()), null, 'warnings');
 		}
 	}
 }
@@ -96,12 +96,12 @@ if ($action == 'builddoc')
 
 	if (empty($forbarcode))			// barcode value
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("BarcodeValue")),'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BarcodeValue")), null, 'errors');
 		$error++;
 	}
 	if (empty($fk_barcode_type))		// barcode type = barcode encoding
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("BarcodeType")),'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BarcodeType")), null, 'errors');
 		$error++;
 	}
 
@@ -114,7 +114,7 @@ if ($action == 'builddoc')
 		if ($result <= 0)
 		{
 			$error++;
-			setEventMessage('Failed to get bar code type information '.$stdobject->error, 'errors');
+			setEventMessages('Failed to get bar code type information '.$stdobject->error, $stdobject->errors, 'errors');
 		}
 	}
 
@@ -158,13 +158,13 @@ if ($action == 'builddoc')
 				if ($result <= 0 || ! dol_is_file($barcodeimage))
 				{
 					$error++;
-					setEventMessage('Failed to generate image file of barcode for code='.$code.' encoding='.$encoding.' file='.basename($barcodeimage), 'errors');
+					setEventMessages('Failed to generate image file of barcode for code='.$code.' encoding='.$encoding.' file='.basename($barcodeimage), null, 'errors');
 				}
 			}
 			else
 			{
 				$error++;
-				setEventMessage("Error, encoding ".$encoding." is not supported by encoder ".$generator.'. You must choose another barcode type or install a barcode generation engine that support '.$encoding, 'errors');
+				setEventMessages("Error, encoding ".$encoding." is not supported by encoder ".$generator.'. You must choose another barcode type or install a barcode generation engine that support '.$encoding, null, 'errors');
 			}
 		} else {
 			$template = 'tcpdflabel';
@@ -261,7 +261,7 @@ $form=new Form($db);
 
 llxHeader('',$langs->trans("BarCodePrintsheet"));
 
-print_fiche_titre($langs->trans("BarCodePrintsheet"));
+print load_fiche_titre($langs->trans("BarCodePrintsheet"));
 print '<br>';
 
 print $langs->trans("PageToGenerateBarCodeSheets",$langs->transnoentitiesnoconv("BuildPageToPrint")).'<br>';

@@ -27,6 +27,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 $langs->load("categories");
 
@@ -39,6 +40,7 @@ $confirm=GETPOST('confirm');
 $socid=GETPOST('socid','int');
 $label=GETPOST('label');
 $description=GETPOST('description');
+$color=GETPOST('color','alpha');
 $visible=GETPOST('visible');
 $parent=GETPOST('parent');
 
@@ -71,6 +73,7 @@ if ($action == 'update' && $user->rights->categorie->creer)
 
 	$categorie->label          = $label;
 	$categorie->description    = dol_htmlcleanlastbr($description);
+	$categorie->color          = $color;
 	$categorie->socid          = ($socid ? $socid : 'null');
 	$categorie->visible        = $visible;
 
@@ -84,9 +87,9 @@ if ($action == 'update' && $user->rights->categorie->creer)
 	{
 	    $error++;
 		$action = 'edit';
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
 	}
-	if (empty($categorie->error))
+	if (! $error && empty($categorie->error))
 	{
 		$ret = $extrafields->setOptionalsFromPost($extralabels,$categorie);
 		if ($ret < 0) $error++;
@@ -98,12 +101,12 @@ if ($action == 'update' && $user->rights->categorie->creer)
 		}
 		else
 		{
-			setEventMessage($categorie->error, 'errors');
+			setEventMessages($categorie->error, $categorie->errors, 'errors');
 		}
 	}
 	else
 	{
-		setEventMessage($categorie->error, 'errors');
+		setEventMessages($categorie->error, $categorie->errors, 'errors');
 	}
 }
 
@@ -114,10 +117,11 @@ if ($action == 'update' && $user->rights->categorie->creer)
  */
 
 $form = new Form($db);
+$formother = new FormOther($db);
 
 llxHeader("","",$langs->trans("Categories"));
 
-print_fiche_titre($langs->trans("ModifCat"));
+print load_fiche_titre($langs->trans("ModifCat"));
 
 $object->fetch($id);
 
@@ -146,6 +150,13 @@ print '<td >';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 $doleditor=new DolEditor('description',$object->description,'',200,'dolibarr_notes','',false,true,$conf->fckeditor->enabled,ROWS_6,50);
 $doleditor->Create();
+print '</td></tr>';
+
+// Color
+print '<tr>';
+print '<td>'.$langs->trans("Color").'</td>';
+print '<td >';
+print $formother->selectColor($object->color, 'color');
 print '</td></tr>';
 
 // Parent category

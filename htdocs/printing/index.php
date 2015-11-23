@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2014       Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2014-2015  Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,15 +23,35 @@
  */
 
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/dolprintipp.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/printing/modules_printing.php';
 
 llxHeader("",$langs->trans("Printing"));
 
-print_fiche_titre($langs->trans("Printing"));
+print_barre_liste($langs->trans("Printing"), 0, $_SERVER["PHP_SELF"], '', '', '', '<a class="button" href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("Refresh").'</a>', 0);
+
+print $langs->trans("DirectPrintingJobsDesc").'<br><br>';
 
 // List Jobs from printing modules
-$printer = new dolPrintIPP($db,$conf->global->PRINTIPP_HOST,$conf->global->PRINTIPP_PORT,$user->login,$conf->global->PRINTIPP_USER,$conf->global->PRINTIPP_PASSWORD);
-$printer->list_jobs('commande');
+$object = new PrintingDriver($db);
+$result = $object->listDrivers($db, 10);
+foreach ($result as $driver) 
+{
+    require_once DOL_DOCUMENT_ROOT.'/core/modules/printing/'.$driver.'.modules.php';
+    $classname = 'printing_'.$driver;
+    $langs->load($driver);
+    $printer = new $classname($db);
+    if ($conf->global->{$printer->active}) 
+    {
+        //$printer->list_jobs('commande');
+        $result = $printer->list_jobs();
+        print $printer->resprint;
+        
+        if ($result > 0) 
+        {
+            setEventMessages($printer->error, $printer->errors, 'errors');
+        }
+    }
+}
 
 llxFooter();
 

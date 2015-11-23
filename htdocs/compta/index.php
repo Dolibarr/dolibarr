@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2015 	   Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2015      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
@@ -81,7 +81,7 @@ $thirdpartystatic = new Societe($db);
 
 llxHeader("",$langs->trans("AccountancyTreasuryArea"));
 
-print_fiche_titre($langs->trans("AccountancyTreasuryArea"),'','title_accountancy.png');
+print load_fiche_titre($langs->trans("AccountancyTreasuryArea"),'','title_accountancy.png');
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -90,56 +90,40 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 $max=3;
 
 
-/*
- * Search invoices
- */
+// Search customer invoices
 if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 {
-	print '<form method="post" action="'.DOL_URL_ROOT.'/compta/facture/list.php">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<table class="noborder nohover" width="100%">';
-	print "<tr class=\"liste_titre\">";
-	print '<td colspan="3">'.$langs->trans("SearchACustomerInvoice").'</td></tr>';
-	print "<tr ".$bc[0]."><td><label for=\"sf_ref\">".$langs->trans("Ref").'</label>:</td><td><input type="text" name="sf_ref" id="sf_ref" class="flat" size="18"></td>';
-	print '<td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-	print "<tr ".$bc[0]."><td><label for=\"sall\">".$langs->trans("Other").'</label>:</td><td><input type="text" name="sall" id="sall" class="flat" size="18"></td>';
-	print '</tr>';
-	print "</table></form><br>";
+	$listofsearchfields['search_invoice']=array('text'=>'CustomerInvoice');
 }
-
-/*
- * Search supplier invoices
- */
+// Search supplier invoices
 if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire)
 {
-	print '<form method="post" action="'.DOL_URL_ROOT.'/fourn/facture/list.php">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<table class="noborder nohover" width="100%">';
-	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchASupplierInvoice").'</td></tr>';
-	print "<tr ".$bc[0].">";
-	print "<td><label for=\"search_ref\">".$langs->trans("Ref").'</label>:</td><td><input type="text" name="search_ref" id="search_ref" class="flat" size="18"></td>';
-	print '<td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-	print "<tr ".$bc[0]."><td><label for=\"search_ref_supplier\">".$langs->trans("RefSupplier").'</label>:</td><td><input type="text" name="search_ref_supplier" id="search_ref_supplier" class="flat" size="18"></td>';
-	print '</tr>';
-	print "</table></form><br>";
+	$listofsearchfields['search_supplier_invoice']=array('text'=>'SupplierInvoice');
 }
-
-/*
- * Search donations
- */
 if (! empty($conf->don->enabled) && $user->rights->don->lire)
 {
 	$langs->load("donations");
-    print '<form method="post" action="'.DOL_URL_ROOT.'/don/list.php">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    print '<table class="noborder nohover" width="100%">';
-    print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchADonation").'</td></tr>';
-    print "<tr ".$bc[0].">";
-    print "<td><label for=\"search_ref\">".$langs->trans("Ref").'</label>:</td><td><input type="text" name="search_ref" id="search_ref" class="flat" size="18"></td>';
-    print '<td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
-    //print "<tr ".$bc[0]."><td><label for=\"sall\"".$langs->trans("Other").'</label>:</td><td><input type="text" name="sall" id="sall" class="flat" size="18"></td>';
-    print '</tr>';
-    print "</table></form><br>";
+	$listofsearchfields['search_donation']=array('text'=>'Donation');
+}
+
+if (count($listofsearchfields))
+{
+	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<table class="noborder nohover centpercent">';
+	$i=0;
+	foreach($listofsearchfields as $key => $value)
+	{
+		if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
+		print '<tr>';
+		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label>:</td><td><input type="text" class="flat" name="'.$key.'" id="'.$key.'" size="18"></td>';
+		if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
+		print '</tr>';
+		$i++;
+	}
+	print '</table>';	
+	print '</form>';
+	print '<br>';
 }
 
 /**
@@ -359,11 +343,15 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
                 $facturestatic->total_ht=$obj->total_ht;
                 $facturestatic->total_tva=$obj->total_tva;
                 $facturestatic->total_ttc=$obj->total_ttc;
+				$facturestatic->statut = $obj->fk_statut;
+				$facturestatic->date_lim_reglement = $db->jdate($obj->datelimite);
 				$facturestatic->type=$obj->type;
 				print $facturestatic->getNomUrl(1,'');
 				print '</td>';
 				print '<td width="20" class="nobordernopadding nowrap">';
-				if ($obj->fk_statut == 1 && ! $obj->paye && $db->jdate($obj->datelimite) < ($now - $conf->facture->client->warning_delay)) print img_warning($langs->trans("Late"));
+				if ($facturestatic->hasDelay()) {
+					print img_warning($langs->trans("Late"));
+				}
 				print '</td>';
 				print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
 				$filename=dol_sanitizeFileName($obj->facnumber);
@@ -592,7 +580,7 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 			print '<td align="center">'.$langs->trans("DateDue").'</td>';
 			print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
 			print '<td align="right">'.$langs->trans("Paid").'</td>';
-			print '<td>&nbsp;</td>';
+			print '<td align="center" width="16">&nbsp;</td>';
 			print '</tr>';
 			if ($num)
 			{
@@ -777,6 +765,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("BillsCustomersUnpaid",$num).' <a href="'.DOL_URL_ROOT.'/compta/facture/list.php?search_status=1"><span class="badge">'.$num.'</span></a></td>';
+		print '<td align="right">'.$langs->trans("DateDue").'</td>';
 		if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td align="right">'.$langs->trans("AmountHT").'</td>';
 		print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
 		print '<td align="right">'.$langs->trans("Received").'</td>';
@@ -801,10 +790,14 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
                 $facturestatic->total_tva=$obj->total_tva;
                 $facturestatic->total_ttc=$obj->total_ttc;
 				$facturestatic->type=$obj->type;
+				$facturestatic->statut = $obj->fk_statut;
+				$facturestatic->date_lim_reglement = $db->jdate($obj->datelimite);
 				print $facturestatic->getNomUrl(1,'');
 				print '</td>';
 				print '<td width="20" class="nobordernopadding nowrap">';
-				if ($db->jdate($obj->datelimite) < ($now - $conf->facture->client->warning_delay)) print img_warning($langs->trans("Late"));
+				if ($facturestatic->hasDelay()) {
+					print img_warning($langs->trans("Late"));
+				}
 				print '</td>';
 				print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
 				$filename=dol_sanitizeFileName($obj->facnumber);
@@ -822,6 +815,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
                 $societestatic->code_fournisseur = $obj->code_fournisseur;
 				print $societestatic->getNomUrl(1,'customer',44);
 				print '</td>';
+				print '<td align="right">'.dol_print_date($db->jdate($obj->datelimite),'day').'</td>';
 				if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td align="right">'.price($obj->total_ht).'</td>';
 				print '<td align="right">'.price($obj->total_ttc).'</td>';
 				print '<td align="right">'.price($obj->am).'</td>';
@@ -836,6 +830,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 			}
 
 			print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").' &nbsp; <font style="font-weight: normal">('.$langs->trans("RemainderToTake").': '.price($total_ttc-$totalam).')</font> </td>';
+			print '<td>&nbsp;</td>';
 			if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td align="right">'.price($total).'</td>';
 			print '<td align="right">'.price($total_ttc).'</td>';
 			print '<td align="right">'.price($totalam).'</td>';
@@ -844,7 +839,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 		}
 		else
 		{
-			$colspan=5;
+			$colspan=6;
 			if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) $colspan++;
 			print '<tr '.$bc[$var].'><td colspan="'.$colspan.'">'.$langs->trans("NoInvoice").'</td></tr>';
 		}
@@ -865,6 +860,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 	$facstatic=new FactureFournisseur($db);
 
 	$sql = "SELECT ff.rowid, ff.ref, ff.fk_statut, ff.libelle, ff.total_ht, ff.total_tva, ff.total_ttc, ff.paye";
+	$sql.= ", ff.date_lim_reglement";
 	$sql.= ", s.nom as name";
     $sql.= ", s.rowid as socid";
     $sql.= ", s.code_client";
@@ -881,6 +877,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 	if ($socid) $sql.= " AND ff.fk_soc = ".$socid;
 	$sql.= " GROUP BY ff.rowid, ff.ref, ff.fk_statut, ff.libelle, ff.total_ht, ff.tva, ff.total_tva, ff.total_ttc, ff.paye,";
 	$sql.= " s.nom, s.rowid, s.code_client, s.code_fournisseur";
+	$sql.= " ORDER BY ff.date_lim_reglement ASC";
 
 	$resql=$db->query($sql);
 	if ($resql)
@@ -890,6 +887,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("BillsSuppliersUnpaid",$num).' <a href="'.DOL_URL_ROOT.'/fourn/facture/impayees.php"><span class="badge">'.$num.'</span></a></td>';
+		print '<td align="right">'.$langs->trans("DateDue").'</td>';
 		if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td align="right">'.$langs->trans("AmountHT").'</td>';
 		print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
 		print '<td align="right">'.$langs->trans("Paid").'</td>';
@@ -918,6 +916,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
                 $societestatic->code_client = $obj->code_client;
                 $societestatic->code_fournisseur = $obj->code_fournisseur;
 				print '<td>'.$societestatic->getNomUrl(1, 'supplier', 44).'</td>';
+				print '<td align="right">'.dol_print_date($db->jdate($obj->date_lim_reglement),'day').'</td>';
 				if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td align="right">'.price($obj->total_ht).'</td>';
 				print '<td align="right">'.price($obj->total_ttc).'</td>';
 				print '<td align="right">'.price($obj->am).'</td>';
@@ -931,6 +930,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 			}
 
 			print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").' &nbsp; <font style="font-weight: normal">('.$langs->trans("RemainderToPay").': '.price($total_ttc-$totalam).')</font> </td>';
+			print '<td>&nbsp;</td>';
 			if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td align="right">'.price($total).'</td>';
 			print '<td align="right">'.price($total_ttc).'</td>';
 			print '<td align="right">'.price($totalam).'</td>';
@@ -939,7 +939,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 		}
 		else
 		{
-			$colspan=5;
+			$colspan=6;
 			if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) $colspan++;
 			print '<tr '.$bc[$var].'><td colspan="'.$colspan.'">'.$langs->trans("NoInvoice").'</td></tr>';
 		}

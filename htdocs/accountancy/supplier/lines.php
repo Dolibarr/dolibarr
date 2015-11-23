@@ -115,14 +115,14 @@ if (is_array($changeaccount) && count($changeaccount) > 0) {
 	$resql1 = $db->query($sql1);
 	if (! $resql1) {
 		$error ++;
-		setEventMessage($db->lasterror(), 'errors');
+		setEventMessages($db->lasterror(), null, 'errors');
 	}
 	if (! $error) {
 		$db->commit();
-		setEventMessage($langs->trans('Save'), 'mesgs');
+		setEventMessages($langs->trans('Save'), null, 'mesgs');
 	} else {
 		$db->rollback();
-		setEventMessage($db->lasterror(), 'errors');
+		setEventMessages($db->lasterror(), null, 'errors');
 	}
 }
 
@@ -156,7 +156,7 @@ print  '<script type="text/javascript">
 $sql = "SELECT f.ref as facnumber, f.rowid as facid, l.fk_product, l.description, l.total_ht , l.qty, l.rowid, l.tva_tx, aa.label, aa.account_number, ";
 $sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type";
 $sql .= " FROM " . MAIN_DB_PREFIX . "facture_fourn as f";
-$sql .= " , " . MAIN_DB_PREFIX . "accountingaccount as aa";
+$sql .= " , " . MAIN_DB_PREFIX . "accounting_account as aa";
 $sql .= " , " . MAIN_DB_PREFIX . "facture_fourn_det as l";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON p.rowid = l.fk_product";
 $sql .= " WHERE f.rowid = l.fk_facture_fourn and f.fk_statut >= 1 AND l.fk_code_ventilation <> 0 ";

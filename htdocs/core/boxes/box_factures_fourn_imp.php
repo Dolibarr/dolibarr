@@ -86,22 +86,35 @@ class box_factures_fourn_imp extends ModeleBoxes
 			if ($result)
 			{
 				$num = $db->num_rows($result);
-				$now=dol_now();
 
 				$line = 0;
 				$l_due_date = $langs->trans('Late').' ('.$langs->trans('DateEcheance').': %s)';
+
+                $facturestatic = new FactureFournisseur($db);
 
 				while ($line < $num)
 				{
 					$objp = $db->fetch_object($result);
 					$datelimite=$db->jdate($objp->datelimite);
+					$date=$db->jdate($objp->df);
+					$datem=$db->jdate($objp->tms);
+					$facturestatic->id = $objp->facid;
+					$facturestatic->ref = $objp->ref;
+					$facturestatic->total_ht = $objp->total_ht;
+					$facturestatic->total_tva = $objp->total_tva;
+					$facturestatic->total_ttc = $objp->total_ttc;
+					$facturestatic->date_echeance = $datelimite;
+					$facturestatic->statut = $objp->fk_statut;
 					$thirdpartytmp->id = $objp->socid;
-                    $thirdpartytmp->name = $objp->name;
-                    $thirdpartytmp->code_client = $objp->code_client;
+					$thirdpartytmp->name = $objp->name;
+					$thirdpartytmp->fournisseur = 1;
+                    $thirdpartytmp->code_fournisseur = $objp->code_fournisseur;
                     $thirdpartytmp->logo = $objp->logo;
 
 					$late='';
-					if ($datelimite && $datelimite < ($now - $conf->facture->fournisseur->warning_delay)) $late=img_warning(sprintf($l_due_date,dol_print_date($datelimite,'day')));
+					if ($facturestatic->hasDelay()) {
+                        $late=img_warning(sprintf($l_due_date,dol_print_date($datelimite,'day')));
+                    }
 
                     $tooltip = $langs->trans('SupplierInvoice') . ': ' . ($objp->ref?$objp->ref:$objp->facid) . '<br>' . $langs->trans('RefSupplier') . ': ' . $objp->ref_supplier;
                     $this->info_box_contents[$line][] = array(
@@ -113,10 +126,9 @@ class box_factures_fourn_imp extends ModeleBoxes
 
                     $this->info_box_contents[$line][] = array(
                         'td' => 'align="left"',
-                        'text' => ($objp->ref?$objp->ref:$objp->facid),
+                        'text' => $facturestatic->getNomUrl(1),
                         'text2'=> $late,
-                        'tooltip' => $tooltip,
-                        'url' => DOL_URL_ROOT."/fourn/facture/card.php?facid=".$objp->facid,
+                        'asisi' => 1
                     );
 
                     $this->info_box_contents[$line][] = array(

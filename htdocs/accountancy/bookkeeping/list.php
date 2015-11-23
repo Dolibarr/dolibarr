@@ -74,7 +74,7 @@ if ($action == 'delbookkeeping') {
 		$result = $object->delete_by_importkey($import_key);
 		Header("Location: list.php");
 		if ($result < 0) {
-			setEventMessage($object->errors, 'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 } // Export
@@ -86,7 +86,7 @@ else if ($action == 'export_csv') {
 	$object = new BookKeeping($db);
 	$result = $object->export_bookkeping('ebp');
 	if ($result < 0) {
-		setEventMessage($object->errors, 'errors');
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 	
 	foreach ( $object->linesexport as $line ) {

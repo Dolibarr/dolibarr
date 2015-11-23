@@ -530,7 +530,7 @@ foreach ($listofreferent as $key => $value)
 			$addform.='</form>';
 		}
 
-		print_fiche_titre($langs->trans($title), $addform, '');
+		print load_fiche_titre($langs->trans($title), $addform, '');
 
 		print '<table class="noborder" width="100%">';
 

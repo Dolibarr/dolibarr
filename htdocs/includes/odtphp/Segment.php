@@ -6,7 +6,6 @@ class SegmentException extends Exception
  * Class for handling templating segments with odt files
  * You need PHP 5.2 at least
  * You need Zip Extension or PclZip library
- * Encoding : ISO-8859-1
  *
  * @copyright  GPL License 2008 - Julien Pauli - Cyril PIERRE de GEYER - Anaska (http://www.anaska.com)
  * @copyright  GPL License 2012 - Stephen Larroque - lrq3000@gmail.com
