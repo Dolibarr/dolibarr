@@ -3772,8 +3772,15 @@ function get_exdir($num,$level,$alpha,$withoutslash,$object,$modulepart)
 		if ($level == 2) $path = substr($num,1,1).'/'.substr($num,0,1);
 		if ($level == 3) $path = substr($num,2,1).'/'.substr($num,1,1).'/'.substr($num,0,1);
 	}
-	else
+	elseif (! empty($level) && $modulepart == 'product') 
 	{
+		$num = substr("000".$num, -$level);
+		if ($level == 1) $path = substr($num,0,1);
+		if ($level == 2) $path = substr($num,1,1).'/'.substr($num,0,1);
+		if ($level == 3) $path = substr($num,2,1).'/'.substr($num,1,1).'/'.substr($num,0,1);
+	}
+	else 
+	{		
 		// TODO
 		// We will introduce here a common way of forging path for document storage
 		// Here, object->id, object->ref and object->modulepart are required.
