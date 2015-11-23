@@ -3897,7 +3897,7 @@ class FactureLigne extends CommonInvoiceLine
 		if (empty($this->special_code)) $this->special_code=0;
 		if (empty($this->fk_parent_line)) $this->fk_parent_line=0;
 		if (empty($this->fk_prev_id)) $this->fk_prev_id = 'null';
-		if (empty($this->situation_percent)) $this->situation_percent = 0;
+		if (empty($this->situation_percent)) $this->situation_percent = 100;
 
 		if (empty($this->pa_ht)) $this->pa_ht=0;
 
