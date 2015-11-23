@@ -3762,18 +3762,11 @@ function get_exdir($num,$level,$alpha,$withoutslash,$object,$modulepart)
 
 	$path = '';
 
-	if (! empty($level) && in_array($modulepart, array('cheque','user','category','holiday','shipment', 'member','don','donation','supplier_invoice','invoice_supplier','mailing')))
+	if (! empty($level) && in_array($modulepart, array('cheque','user','category','holiday','shipment', 'member','don','donation','supplier_invoice','invoice_supplier','mailing', 'product')))
 	{
 		// This part should be removed once all code is using "get_exdir" to forge path, with all parameters provided
 		if (empty($alpha)) $num = preg_replace('/([^0-9])/i','',$num);
 		else $num = preg_replace('/^.*\-/i','',$num);
-		$num = substr("000".$num, -$level);
-		if ($level == 1) $path = substr($num,0,1);
-		if ($level == 2) $path = substr($num,1,1).'/'.substr($num,0,1);
-		if ($level == 3) $path = substr($num,2,1).'/'.substr($num,1,1).'/'.substr($num,0,1);
-	}
-	elseif (! empty($level) && $modulepart == 'product') 
-	{
 		$num = substr("000".$num, -$level);
 		if ($level == 1) $path = substr($num,0,1);
 		if ($level == 2) $path = substr($num,1,1).'/'.substr($num,0,1);
