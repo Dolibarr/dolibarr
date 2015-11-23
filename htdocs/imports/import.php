@@ -896,8 +896,9 @@ if ($step == 4 && $datatoimport)
 		}
 		else
 		{
-		    if ($objimport->array_import_convertvalue[0][$code]['rule']=='fetchidfromref')    $htmltext.=$langs->trans("SourceExample").': <b>'.$langs->transnoentitiesnoconv("ExampleAnyRefFoundIntoElement",$entitylang).($example?' ('.$langs->transnoentitiesnoconv("Example").': '.$example.')':'').'</b><br>';
-		    if ($objimport->array_import_convertvalue[0][$code]['rule']=='fetchidfromcodeid') $htmltext.=$langs->trans("SourceExample").': <b>'.$langs->trans("ExampleAnyCodeOrIdFoundIntoDictionary",$langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$code]['dict'])).($example?' ('.$langs->transnoentitiesnoconv("Example").': '.$example.')':'').'</b><br>';
+		    if ($objimport->array_import_convertvalue[0][$code]['rule']=='fetchidfromref')        $htmltext.=$langs->trans("SourceExample").': <b>'.$langs->transnoentitiesnoconv("ExampleAnyRefFoundIntoElement",$entitylang).($example?' ('.$langs->transnoentitiesnoconv("Example").': '.$example.')':'').'</b><br>';
+		    elseif ($objimport->array_import_convertvalue[0][$code]['rule']=='fetchidfromcodeid') $htmltext.=$langs->trans("SourceExample").': <b>'.$langs->trans("ExampleAnyCodeOrIdFoundIntoDictionary",$langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$code]['dict'])).($example?' ('.$langs->transnoentitiesnoconv("Example").': '.$example.')':'').'</b><br>';
+		    elseif ($example) $htmltext.=$langs->trans("SourceExample").': <b>'.$example.'</b><br>';
 		}
 		// Format control rule
 		if (! empty($objimport->array_import_regex[0][$code]))
