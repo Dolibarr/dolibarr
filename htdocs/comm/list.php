@@ -55,6 +55,7 @@ $search_zipcode=GETPOST("search_zipcode");
 $search_town=GETPOST("search_town");
 $search_code=GETPOST("search_code");
 $search_compta=GETPOST("search_compta");
+$search_country		= GETPOST("search_country",'int');
 $search_status= GETPOST("search_status",'int');
 
 // Load sale and categ filters
@@ -89,6 +90,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
     $search_code='';
     $search_compta='';
     $search_status='';
+	$search_country = '';
 }
 
 if ($search_status=='') $search_status=1; // always display activ customer first
@@ -107,6 +109,7 @@ llxHeader('',$langs->trans("ThirdParty"),$help_url);
 
 $sql = "SELECT s.rowid, s.nom as name, s.name_alias, s.client, s.zip, s.town, st.libelle as stcomm, s.prefix_comm, s.code_client, s.code_compta, s.status as status,";
 $sql.= " s.datec, s.canvas";
+$sql .= ", s.fk_pays, sp.code as country_code, sp.label as countrylabel ";
 if ((!$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
 // Add fields for extrafields
 foreach ($extrafields->attribute_list as $key => $val) $sql.=",ef.".$key.' as options_'.$key;
@@ -115,6 +118,7 @@ $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country sp ON s.fk_pays = sp.rowid  ";
 if (! empty($search_categ) || ! empty($catid)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_societe as cs ON s.rowid = cs.fk_soc"; // We need this table joined to the select in order to filter by categ
 if ((!$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
 $sql.= ", ".MAIN_DB_PREFIX."c_stcomm as st";
@@ -131,6 +135,7 @@ if ($search_categ == -2) $sql.= " AND cs.fk_categorie IS NULL";
 if ($search_company)     $sql.= natural_search(array('s.nom', 's.name_alias'), $search_company);
 if ($search_zipcode)     $sql.= natural_search("s.zip", $search_zipcode);
 if ($search_town)        $sql.= natural_search('s.town', $search_town);
+if ($search_country > 0) $sql.= " AND s.fk_pays = ".$search_country;
 if ($search_code)        $sql.= natural_search("s.code_client", $search_code);
 if ($search_compta)      $sql.= natural_search("s.code_compta", $search_compta);
 if ($search_status!='')  $sql.= " AND s.status = ".$db->escape($search_status);
@@ -161,6 +166,7 @@ if ($result)
  	if ($search_categ != '') $param.='&amp;search_categ='.$search_categ;
  	if ($search_sale > 0)	$param.='&amp;search_sale='.$search_sale;
  	if ($search_status != '') $param.='&amp;search_status='.$search_status;
+	if ($search_country > 0) $param.='&amp;search_country='.$search_country;
 
 	print_barre_liste($langs->trans("ListOfCustomers"), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords,'title_companies.png');
 
@@ -198,6 +204,7 @@ if ($result)
 	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Zip"),$_SERVER["PHP_SELF"],"s.zip","",$param,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Town"),$_SERVER["PHP_SELF"],"s.town","",$param,"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Country"),$_SERVER["PHP_SELF"],"s.fk_pays","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("CustomerCode"),$_SERVER["PHP_SELF"],"s.code_client","",$param,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("AccountancyCode"),$_SERVER["PHP_SELF"],"s.code_compta","",$param,'align="left"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"datec","",$param,'align="right"',$sortfield,$sortorder);
@@ -220,6 +227,10 @@ if ($result)
 
 	print '<td class="liste_titre">';
     print '<input type="text" class="flat" name="search_town" value="'.$search_town.'" size="10">';
+    print '</td>';
+    
+    print '<td class="liste_titre">';
+  	print $form->select_country($search_country, "search_country" );
     print '</td>';
 
     print '<td class="liste_titre">';
@@ -270,6 +281,7 @@ if ($result)
 		print '</td>';
 		print '<td>'.$obj->zip.'</td>';
         print '<td>'.$obj->town.'</td>';
+        print '<td>'.(($obj->country_code)?$langs->transnoentities('Country'.$obj->country_code):'').'</td>';
         print '<td>'.$obj->code_client.'</td>';
         print '<td>'.$obj->code_compta.'</td>';
         print '<td align="right">'.dol_print_date($db->jdate($obj->datec),'day').'</td>';
