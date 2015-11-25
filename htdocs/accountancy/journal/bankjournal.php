@@ -57,7 +57,7 @@ $langs->load("bank");
 $langs->load('bills');
 $langs->load("accountancy");
 
-$id_accountancy_journal = GETPOST('id_account');
+$id_accountancy_journal = GETPOST('id_account','int');
 
 $date_startmonth = GETPOST('date_startmonth');
 $date_startday = GETPOST('date_startday');
@@ -470,7 +470,7 @@ if ($action == 'export_csv')
 					if ($mt)
 					{
 						print $date . $sep;
-						print $bank_journal . $sep;
+						print $journal . $sep;
 						if ($val["lib"] == '(SupplierInvoicePayment)') {
 							print length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER) . $sep;
 						} else {
@@ -492,8 +492,8 @@ if ($action == 'export_csv')
 					if (1)
 					{
 						print $date . $sep;
-						print $bank_journal . $sep;
-						print $conf->global->ACCOUNTING_ACCOUNT_SUSPENSE . $sep;
+						print $journal . $sep;
+						print length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE) . $sep;
 						print $sep;
 						print ($mt < 0 ? 'D' : 'C') . $sep;
 						print ($mt <= 0 ? price(- $mt) : $mt) . $sep;
@@ -547,7 +547,7 @@ if ($action == 'export_csv')
 					{
 						print '"' . $date . '"' . $sep;
 						print '"' . $val["ref"] . '"' . $sep;
-						print '"' . $conf->global->ACCOUNTING_ACCOUNT_SUSPENSE . '"' . $sep;
+						print '"' . length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE) . '"' . $sep;
 						print '"' . $langs->trans("Bank") . '"' . $sep;
 						print '"' . ($mt < 0 ? price(- $mt) : '') . '"' . $sep;
 						print '"' . ($mt >= 0 ? price($mt) : '') . '"';
@@ -696,7 +696,7 @@ else
 				print "<tr " . $bc[$var] . ">";
 				print "<td>" . $date . "</td>";
 				print "<td>" . $reflabel . "</td>";
-				print "<td>" . $conf->global->ACCOUNTING_ACCOUNT_SUSPENSE . "</td>";
+				print "<td>" . length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE) . "</td>";
 				print "<td>" . $langs->trans('ThirdParty') . "</td>";
 				print "<td>&nbsp;</td>";
 				print "<td align='right'>" . ($mt < 0 ? price(- $mt) : '') . "</td>";
