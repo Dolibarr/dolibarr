@@ -24,9 +24,7 @@
 //
 
 $(document).ready(function () {
-
     var timezone = jstz.determine();
-
     // Detect and save TZ and DST
 	var rightNow = new Date();
 	var jan1 = new Date(rightNow.getFullYear(), 0, 1, 0, 0, 0, 0);
