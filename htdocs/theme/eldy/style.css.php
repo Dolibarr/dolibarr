@@ -94,7 +94,7 @@ $colortexttitlenotab='80,80,0';
 $colortexttitle='0,0,0';
 $colortext='0,0,0';
 $colortextlink='0,0,120';
-$fontsize='12';
+$fontsize='13';
 $fontsizesmaller='11';
 $usegradient=1;
 $useboldtitle=1;
@@ -118,7 +118,7 @@ if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
     $conf->global->THEME_ELDY_LINEPAIR2='248,248,248';
     $conf->global->THEME_ELDY_LINEPAIRHOVER='238,246,252';
     $conf->global->THEME_ELDY_TEXT='0,0,0';
-    $conf->global->THEME_ELDY_FONT_SIZE1='12';
+    $conf->global->THEME_ELDY_FONT_SIZE1='13';
     $conf->global->THEME_ELDY_FONT_SIZE2='11';
 }
 //var_dump($conf->global->THEME_ELDY_BACKBODY);
@@ -210,6 +210,7 @@ print 'dol_no_mouse_hover='.$dol_no_mouse_hover."\n";
 print 'dol_use_jmobile='.$dol_use_jmobile."\n";
 print 'dol_screenwidth='.$_SESSION['dol_screenwidth']."\n";
 print 'dol_screenheight='.$_SESSION['dol_screenheight']."\n";
+print 'fontsize='.$fontsize."\n";
 print '*/'."\n";
 
 if (! empty($conf->dol_optimize_smallscreen)) $fontsize=11;
@@ -1142,7 +1143,7 @@ div.vmenu, td.vmenu {
     padding: 0px;
     padding-bottom: 0px;
     padding-top: 1px;
-    width: 174px;
+    width: 190px;
 }
 
 .vmenu {
@@ -1153,7 +1154,7 @@ div.vmenu, td.vmenu {
 }
 
 .vmenusearchselectcombo {
-	width: 172px;
+	width: 188px;
 }
 
 .menu_contenu { 
@@ -3895,7 +3896,7 @@ border-top-right-radius: 6px;
 
 }
 
-@media only screen and (max-width: <?php echo $nbtopmenuentries * 85; ?>px)
+@media only screen and (max-width: <?php echo round($nbtopmenuentries * $fontsize * 7, 0) + 10; ?>px)
 {
 	.mainmenuaspan {
     	display: none;
