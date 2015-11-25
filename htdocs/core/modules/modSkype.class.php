@@ -42,8 +42,8 @@ class modSkype extends DolibarrModules
         $this->db = $db;
         $this->numero = 3100;
 
-		    // Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
-		    // It is used to group modules in module setup page
+		// Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
+		// It is used to group modules in module setup page
         $this->family = "crm";
         // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
         $this->name = preg_replace('/^mod/i','',get_class($this));
@@ -61,7 +61,7 @@ class modSkype extends DolibarrModules
 
         // Config pages
         //-------------
-        $this->config_page_url = array();
+        $this->config_page_url = array("skype.php");
 
         // Dependancies
         //-------------
