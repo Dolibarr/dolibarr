@@ -893,7 +893,6 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
                     input.focus();
                 });
         },
-
         destroy: function() {
             this.input.remove();
             this.button.remove();
