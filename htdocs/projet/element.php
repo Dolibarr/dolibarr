@@ -510,7 +510,7 @@ foreach ($listofreferent as $key => $value)
 		$idtofilterthirdparty=0;
 		if (! in_array($tablename, array('facture_fourn', 'commande_fourn'))) $idtofilterthirdparty=$object->thirdparty->id;
 
-		$selectList=$formproject->select_element($tablename, $idtofilterthirdparty, 'minwidth200');
+		$selectList=$formproject->select_element($tablename, $idtofilterthirdparty, 'minwidth300');
 		if (! $selectList || ($selectList<0))
 		{
 			setEventMessages($formproject->error,$formproject->errors,'errors');
