@@ -289,6 +289,15 @@
 
 	<rule ref="PEAR.Functions.FunctionCallSignature" />
 
+    <rule ref="PEAR.Functions.FunctionCallSignature.CloseBracketLine">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Functions.FunctionCallSignature.ContentAfterOpenBracket">
+        <severity>0</severity>
+    </rule>
+	<rule ref="PEAR.Functions.FunctionCallSignature.EmptyLine">
+	    <severity>0</severity>
+	</rule>
 	<rule ref="PEAR.Functions.FunctionCallSignature.Indent">
 	    <severity>0</severity>
 	</rule>
@@ -302,12 +311,6 @@
         <severity>0</severity>
     </rule>
     <rule ref="PEAR.Functions.FunctionCallSignature.SpaceAfterCloseBracket">
-        <severity>0</severity>
-    </rule>
-    <rule ref="PEAR.Functions.FunctionCallSignature.CloseBracketLine">
-        <severity>0</severity>
-    </rule>
-    <rule ref="PEAR.Functions.FunctionCallSignature.ContentAfterOpenBracket">
         <severity>0</severity>
     </rule>
 	
