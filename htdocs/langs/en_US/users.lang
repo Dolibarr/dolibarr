@@ -119,3 +119,4 @@ HierarchicView=Hierarchical view
 UseTypeFieldToChange=Use field Type to change
 OpenIDURL=OpenID URL
 LoginUsingOpenID=Use OpenID to login
+DisabledInMonoUserMode=Disabled in maintenance mode
