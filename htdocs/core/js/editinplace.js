@@ -25,7 +25,6 @@ $(document).ready(function() {
 	var element = $('#jeditable_element').html();
 	var table_element = $('#jeditable_table_element').html();
 	var fk_element = $('#jeditable_fk_element').html();
-	
 	if ($('.editval_textarea').length > 0) {
 		$('.editval_textarea').editable(urlSaveInPlace, {
 			type		: 'textarea',

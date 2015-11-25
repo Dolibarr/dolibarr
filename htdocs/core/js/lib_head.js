@@ -862,14 +862,12 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
                     }
                 })
                 .addClass( "ui-widget ui-widget-content ui-corner-left dolibarrcombobox" );
-
             input.data("ui-autocomplete")._renderItem = function( ul, item ) {
                 return $("<li></li>")
                     .data( "item.autocomplete", item )
                     .append( "<a>" + item.label + "</a>" )
                     .appendTo( ul );
             };
-
             this.button = $( "<button type=\'button\'>&nbsp;</button>" )
                 .attr( "tabIndex", -1 )
                 .attr( "title", "Show All Items" )
@@ -888,7 +886,6 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
                         input.autocomplete( "close" );
                         return;
                     }
-
                     // pass empty string as value to search for, displaying all results
                     input.autocomplete({ minLength: 0 });
                     input.autocomplete( "search", "" );
@@ -896,7 +893,6 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
                     input.focus();
                 });
         },
-
         destroy: function() {
             this.input.remove();
             this.button.remove();
