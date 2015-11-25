@@ -2620,6 +2620,7 @@ div.warning {
 }
 
 /* Error message */
+div.error {
   background: #EFCFCF;
 }
 
