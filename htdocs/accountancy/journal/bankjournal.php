@@ -55,7 +55,7 @@ $langs->load("bank");
 $langs->load('bills');
 $langs->load("accountancy");
 
-$id_accountancy_journal = GETPOST('id_account','int');
+$id_bank_account = GETPOST('id_account','int');
 
 $date_startmonth = GETPOST('date_startmonth');
 $date_startday = GETPOST('date_startday');
@@ -66,7 +66,7 @@ $date_endyear = GETPOST('date_endyear');
 $action = GETPOST('action');
 
 // Security check
-if ($user->societe_id > 0 && empty($id_accountancy_journal))
+if ($user->societe_id > 0 && empty($id_bank_account))
 	accessforbidden();
 
 /*
@@ -98,7 +98,7 @@ $sql .= " FROM " . MAIN_DB_PREFIX . "bank as b";
 $sql .= " JOIN " . MAIN_DB_PREFIX . "bank_account as ba on b.fk_account=ba.rowid";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "bank_url as bu1 ON bu1.fk_bank = b.rowid AND bu1.type='company'";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe as soc on bu1.url_id=soc.rowid";
-$sql .= " WHERE ba.rowid=".$id_accountancy_journal;
+$sql .= " WHERE ba.rowid=".$id_bank_account;
 if (! empty($conf->multicompany->enabled)) {
 	$sql .= " AND ba.entity = " . $conf->entity;
 }
@@ -403,29 +403,6 @@ if ($action == 'writebookkeeping')
 // Export
 if ($action == 'export_csv') {
 	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
-	
-	// Journal
-	$bank = "SELECT rowid, label, accountancy_journal";
-	$bank.= " FROM ".MAIN_DB_PREFIX."bank_account";
-	$bank.= " WHERE entity = ".$conf->entity;
-	$bank.= " AND rowid = '".$id_accountancy_journal."'";
-
-	$resql = $db->query($bank);
-	if ($resql)
-	{
-        if ($db->num_rows($resql))
-        {
-            $obj = $db->fetch_object($resql);
-
-			$journal = $objp->accountancy_journal;
-        }
-        return 1;
-    }
-    else
-    {
-        dol_print_error($this->db);
-        return -1;
-    }
 	$journal = $conf->global->ACCOUNTING_BANK_JOURNAL;
 
 	header('Content-Type: text/csv');
@@ -560,59 +537,9 @@ if ($action == 'export_csv') {
 	$builddate = time();
 	$description = $langs->trans("DescFinanceJournal") . '<br>';
 	$period = $form->select_date($date_start, 'date_start', 0, 0, 0, '', 1, 0, 1) . ' - ' . $form->select_date($date_end, 'date_end', 0, 0, 0, '', 1, 0, 1);
-	//report_header($nom, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''), '');
+	$varlink = 'id_account='.$id_bank_account;
+	report_header($nom, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''), '', $varlink);
 	
-	// Report header
-	$h=0;
-	$head[$h][0] = $_SERVER["PHP_SELF"].'?id_account='.$id_accountancy_journal;
-	$head[$h][1] = $langs->trans("Report");
-	$head[$h][2] = 'report';
-
-	dol_fiche_head($head, 'report');
-
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id_account='.$id_accountancy_journal.'">';
-	print '<table width="100%" class="border">';
-
-	// Ligne de titre
-	print '<tr>';
-	print '<td valign="top" width="110">'.$langs->trans("ReportName").'</td>';
-	print '<td>';
-	print $nom;
-	print '</td>';
-	print '</tr>';
-
-	// Ligne de la periode d'analyse du rapport
-	print '<tr>';
-	print '<td>'.$langs->trans("ReportPeriod").'</td>';
-	print '<td>';
-	print $period;
-	print '</td>';
-	print '</tr>';
-
-	// Ligne de description
-	print '<tr>';
-	print '<td valign="top">'.$langs->trans("ReportDescription").'</td>';
-	print '<td colspan="3">'.$description.'</td>';
-	print '</tr>';
-
-	// Ligne d'export
-	print '<tr>';
-	print '<td>'.$langs->trans("GeneratedOn").'</td>';
-	print '<td>';
-	print dol_print_date($builddate);
-	print '</td></tr>';
-
-	print '<tr>';
-	print '<td colspan="4" align="center"><input type="submit" class="button" name="submit" value="'.$langs->trans("Refresh").'"></td>';
-	print '</tr>';
-
-	print '</table>';
-
-	print '</form>';
-
-	print '</div>';
-	//End Report header
-
 	print '<input type="button" class="button" style="float: right;" value="' . $langs->trans("Export") . '" onclick="launch_export();" />';
 
 	print '<input type="button" class="button" value="' . $langs->trans("WriteBookKeeping") . '" onclick="writebookkeeping();" />';
