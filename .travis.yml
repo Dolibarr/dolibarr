@@ -53,6 +53,7 @@ before_script:
  - htdocs/includes/squizlabs/php_codesniffer/scripts/phpcs --version
 # - which phpcs
 # - phpcs --version
+ - htdocs/includes/squizlabs/php_codesniffer/scripts/phpcs -i
 # - phpcs -i
  - echo Create dir $(pwd)/htdocs/documents
  - sudo mkdir -p $(pwd)/htdocs/documents/admin/temp;
