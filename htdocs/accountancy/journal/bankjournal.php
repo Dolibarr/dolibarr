@@ -55,7 +55,7 @@ $langs->load("bank");
 $langs->load('bills');
 $langs->load("accountancy");
 
-$id_accountancy_journal = GETPOST('id_account');
+$id_accountancy_journal = GETPOST('id_account','int');
 
 $date_startmonth = GETPOST('date_startmonth');
 $date_startday = GETPOST('date_startday');
@@ -66,17 +66,12 @@ $date_endyear = GETPOST('date_endyear');
 $action = GETPOST('action');
 
 // Security check
-if ($user->societe_id > 0)
+if ($user->societe_id > 0 && empty($id_accountancy_journal))
 	accessforbidden();
 
 /*
  * View
  */
-if (empty($id_accountancy_journal))
-{
-	accessforbidden();
-}
-
 $year_current = strftime("%Y", dol_now());
 $pastmonth = strftime("%m", dol_now()) - 1;
 $pastmonthyear = $year_current;
@@ -431,7 +426,7 @@ if ($action == 'export_csv') {
         dol_print_error($this->db);
         return -1;
     }
-	//$journal = $conf->global->ACCOUNTING_BANK_JOURNAL;
+	$journal = $conf->global->ACCOUNTING_BANK_JOURNAL;
 
 	header('Content-Type: text/csv');
 	header('Content-Disposition: attachment;filename=journal_banque.csv');
@@ -559,14 +554,15 @@ if ($action == 'export_csv') {
 } else {
 	$form = new Form($db);
 
-	llxHeader('', $langs->trans("BankJournal"));
+	llxHeader('', $langs->trans("FinanceJournal"));
 
-	$namereport = $langs->trans("BankJournal");
-	$namereport.= "&nbsp;" . $journal;
-	$description = $langs->trans("DescBankJournal");
+	$nom = $langs->trans("FinanceJournal");
+	$builddate = time();
+	$description = $langs->trans("DescFinanceJournal") . '<br>';
 	$period = $form->select_date($date_start, 'date_start', 0, 0, 0, '', 1, 0, 1) . ' - ' . $form->select_date($date_end, 'date_end', 0, 0, 0, '', 1, 0, 1);
-
-	// Report
+	//report_header($nom, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''), '');
+	
+	// Report header
 	$h=0;
 	$head[$h][0] = $_SERVER["PHP_SELF"].'?id_account='.$id_accountancy_journal;
 	$head[$h][1] = $langs->trans("Report");
@@ -575,32 +571,36 @@ if ($action == 'export_csv') {
 	dol_fiche_head($head, 'report');
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id_account='.$id_accountancy_journal.'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-
 	print '<table width="100%" class="border">';
 
-	// Title
+	// Ligne de titre
 	print '<tr>';
 	print '<td valign="top" width="110">'.$langs->trans("ReportName").'</td>';
-	print '<td colspan="3">'.$namereport.'</td>';
+	print '<td>';
+	print $nom;
 	print '</td>';
 	print '</tr>';
 
-	// Period report
+	// Ligne de la periode d'analyse du rapport
 	print '<tr>';
 	print '<td>'.$langs->trans("ReportPeriod").'</td>';
-	if (! $periodlink) print '<td colspan="3">';
-	else print '<td>';
-	if ($period) print $period;
-	if ($periodlink) print '</td><td colspan="2">'.$periodlink;
+	print '<td>';
+	print $period;
 	print '</td>';
 	print '</tr>';
 
-	// Description
+	// Ligne de description
 	print '<tr>';
 	print '<td valign="top">'.$langs->trans("ReportDescription").'</td>';
 	print '<td colspan="3">'.$description.'</td>';
 	print '</tr>';
+
+	// Ligne d'export
+	print '<tr>';
+	print '<td>'.$langs->trans("GeneratedOn").'</td>';
+	print '<td>';
+	print dol_print_date($builddate);
+	print '</td></tr>';
 
 	print '<tr>';
 	print '<td colspan="4" align="center"><input type="submit" class="button" name="submit" value="'.$langs->trans("Refresh").'"></td>';
@@ -611,8 +611,8 @@ if ($action == 'export_csv') {
 	print '</form>';
 
 	print '</div>';
-	// End report
-	
+	//End Report header
+
 	print '<input type="button" class="button" style="float: right;" value="' . $langs->trans("Export") . '" onclick="launch_export();" />';
 
 	print '<input type="button" class="button" value="' . $langs->trans("WriteBookKeeping") . '" onclick="writebookkeeping();" />';
