@@ -125,7 +125,7 @@ PurchasesJournal=Purchases journal
 DescSellsJournal=Sells journal
 DescPurchasesJournal=Purchases journal
 BankJournal=Bank journal
-DescBankJournal=Bank journal including all the types of payments other than cash	
+DescBankJournal=Bank journal including all the types of payments other than cash
 CashJournal=Cash journal
 DescCashJournal=Cash journal including the type of payment cash
 
