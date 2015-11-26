@@ -25,10 +25,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 $langs->load("admin");
 
-if (! $user->admin)
-	accessforbidden();
-
-$action = GETPOST('action', 'alpha');
+if (! $user->admin) accessforbidden();
 
 /*
  * Actions
@@ -65,15 +62,14 @@ else if (preg_match('/del_(.*)/',$action,$reg))
 /*
  * View
  */
+$help_url='';
 llxHeader('', $langs->trans('Parameters'));
 
-$form = new Form($db);
-
-dol_htmloutput_mesg($mesg);
-
-// Subheader
 $linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php">' . $langs->trans("BackToModuleList") . '</a>';
 print load_fiche_titre($langs->trans("SkypeSetup"), $linkback);
+
+$var=true;
+$form = new Form($db);
 
 // Configuration header
 $h = 0;
@@ -86,12 +82,6 @@ $h ++;
 
 dol_fiche_head($head, 'parameters', $langs->trans("Skype"), 0, "skype");
 
-if (! $conf->use_javascript_ajax) {
-	print '<form method="post" action="' . $_SERVER["PHP_SELF"] . '" enctype="multipart/form-data">';
-	print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
-	print '<input type="hidden" name="action" value="setvar">';
-}
-
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td colspan="3">' . $langs->trans('Parameters') . '</td>';
@@ -99,9 +89,11 @@ print "</tr>\n";
 
 $var = ! $var;
 
-print '<tr ' . $bc[$var] . '><td>' . $langs->trans("SkypeDeactivateInUser") . '</td>';
+print '<tr ' . $bc[$var] . '>';
+print '<td>' . $langs->trans("SkypeDeactivateInUser") . '</td>';
 print '<td align="left">';
-if ($conf->use_javascript_ajax) {
+if ($conf->use_javascript_ajax)
+{
 	print ajax_constantonoff('SKYPE_DEACTIVATE_IN_USER');
 }
 else
@@ -118,9 +110,11 @@ else
 print '</td>';
 print '</tr>';
 
-print '<tr ' . $bc[$var] . '><td>' . $langs->trans("SkypeDeactivateInContact") . '</td>';
+print '<tr ' . $bc[$var] . '>';
+print '<td>' . $langs->trans("SkypeDeactivateInContact") . '</td>';
 print '<td align="left">';
-if ($conf->use_javascript_ajax) {
+if ($conf->use_javascript_ajax)
+{
 	print ajax_constantonoff('SKYPE_DEACTIVATE_IN_CONTACT');
 }
 else
@@ -137,9 +131,11 @@ else
 print '</td>';
 print '</tr>';
 
-print '<tr ' . $bc[$var] . '><td>' . $langs->trans("SkypeDeactivateInMember") . '</td>';
+print '<tr ' . $bc[$var] . '>';
+print '<td>' . $langs->trans("SkypeDeactivateInMember") . '</td>';
 print '<td align="left">';
-if ($conf->use_javascript_ajax) {
+if ($conf->use_javascript_ajax)
+{
 	print ajax_constantonoff('SKYPE_DEACTIVATE_IN_MEMBER');
 }
 else
