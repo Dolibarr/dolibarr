@@ -422,9 +422,10 @@ class FormProjets
 	 *    @param	string		$table_element		Table of the element to update
 	 *    @param	int			$socid				If of thirdparty to use as filter
 	 *    @param	string		$morecss			More CSS
+	 *    @param    int         $limitonstatus      Add filters to limit length of list to opened status (for example to avoid ERR_RESPONSE_HEADERS_TOO_BIG on project/element.php page). TODO To implement
 	 *    @return	int|string						The HTML select list of element or '' if nothing or -1 if KO
 	 */
-	function select_element($table_element, $socid=0, $morecss='')
+	function select_element($table_element, $socid=0, $morecss='', $limitonstatus=-2)
 	{
 		global $conf, $langs;
 
@@ -433,7 +434,9 @@ class FormProjets
 		$linkedtothirdparty=false;
 		if (! in_array($table_element, array('don','expensereport_det','expensereport'))) $linkedtothirdparty=true;
 
+		$sqlfilter='';
 		$projectkey="fk_projet";
+		//print $table_element;
 		switch ($table_element)
 		{
 			case "facture":
@@ -443,7 +446,8 @@ class FormProjets
 				$sql = "SELECT t.rowid, t.ref, t.ref_supplier";
 				break;
 			case "commande_fourn":
-				$sql = "SELECT t.rowid, t.ref, t.ref_supplier";
+			case "commande_fournisseur":
+			    $sql = "SELECT t.rowid, t.ref, t.ref_supplier";
 				break;
 			case "facture_rec":
 				$sql = "SELECT t.rowid, t.titre as ref";
@@ -457,6 +461,11 @@ class FormProjets
 				/*$sql = "SELECT rowid, '' as ref";	// table is llx_expensereport_det
 				$projectkey="fk_projet";
 				break;*/
+		    case "commande":
+		    case "contrat":
+			case "fichinter":
+			    $sql = "SELECT t.rowid, t.ref";
+			    break;
 			default:
 				$sql = "SELECT t.rowid, t.ref";
 				break;
@@ -468,6 +477,7 @@ class FormProjets
 		if (! empty($socid) && $linkedtothirdparty) $sql.= " AND t.fk_soc=".$socid;
 		if (! in_array($table_element, array('expensereport_det'))) $sql.= ' AND t.entity='.getEntity('project');
 		if ($linkedtothirdparty) $sql.=" AND s.rowid = t.fk_soc";
+		if ($sqlfilter) $sql.= " AND ".$sqlfilter;
 		$sql.= " ORDER BY ref DESC";
 
 		dol_syslog(get_class($this).'::select_element', LOG_DEBUG);

@@ -1120,17 +1120,18 @@ img.loginphoto {
     height: 16px;
 }
 .span-icon-user {
-	background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/object_user.png',1); ?>) no-repeat scroll 7px 7px;
-}
-.span-icon-password {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/lock.png',1); ?>);
+	/* background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/object_user.png',1); ?>); */
 	background-repeat: no-repeat;
 }
-/*
-.span-icon-user input, .span-icon-password input {
-	margin-right: 30px;
+.span-icon-password {
+	/* background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/lock.png',1); ?>); */
+	background-repeat: no-repeat;
 }
-*/
+
+.span-icon-user input, .span-icon-password input {
+	/* margin-left: 18px; */
+	margin-left: 0px;
+}
 
 /* ============================================================================== */
 /* Menu gauche                                                                    */
