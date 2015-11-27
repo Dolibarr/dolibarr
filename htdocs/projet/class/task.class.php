@@ -133,14 +133,6 @@ class Task extends CommonObject
         if (! $error)
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."projet_task");
-
-            if (! $notrigger)
-            {
-                // Call trigger
-                $result=$this->call_trigger('TASK_CREATE',$user);
-                if ($result < 0) { $error++; }
-                // End call triggers
-            }
         }
 
         // Update extrafield
@@ -155,6 +147,17 @@ class Task extends CommonObject
         		}
         	}
         }
+		
+		if(! $error)
+		{
+            if (! $notrigger)
+            {
+                // Call trigger
+                $result=$this->call_trigger('TASK_CREATE',$user);
+                if ($result < 0) { $error++; }
+                // End call triggers
+            }
+		}
 
         // Commit or rollback
         if ($error)
@@ -300,17 +303,6 @@ class Task extends CommonObject
         $resql = $this->db->query($sql);
         if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
-        if (! $error)
-        {
-            if (! $notrigger)
-            {
-                // Call trigger
-                $result=$this->call_trigger('TASK_MODIFY',$user);
-                if ($result < 0) { $error++; }
-                // End call triggers
-            }
-        }
-
         //Update extrafield
         if (!$error) {
         	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
@@ -321,6 +313,17 @@ class Task extends CommonObject
         			$error++;
         		}
         	}
+        }
+
+        if (! $error)
+        {
+            if (! $notrigger)
+            {
+                // Call trigger
+                $result=$this->call_trigger('TASK_MODIFY',$user);
+                if ($result < 0) { $error++; }
+                // End call triggers
+            }
         }
 
         // Commit or rollback

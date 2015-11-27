@@ -174,14 +174,6 @@ class Project extends CommonObject
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . "projet");
             $ret = $this->id;
-
-            if (!$notrigger)
-            {
-                // Call trigger
-                $result=$this->call_trigger('PROJECT_CREATE',$user);
-                if ($result < 0) { $error++; }
-                // End call triggers
-            }
         }
         else
         {
@@ -201,6 +193,17 @@ class Project extends CommonObject
         		}
         	}
         }
+		
+		if (!$error)
+		{
+            if (!$notrigger)
+            {
+                // Call trigger
+                $result=$this->call_trigger('PROJECT_CREATE',$user);
+                if ($result < 0) { $error++; }
+                // End call triggers
+            }
+		}
 
         if (!$error && !empty($conf->global->MAIN_DISABLEDRAFTSTATUS))
         {
@@ -263,13 +266,6 @@ class Project extends CommonObject
             $resql=$this->db->query($sql);
             if ($resql)
             {
-                if (!$notrigger)
-                {
-                    // Call trigger
-                    $result=$this->call_trigger('PROJECT_MODIFY',$user);
-                    if ($result < 0) { $error++; }
-                    // End call triggers
-                }
 
                 //Update extrafield
                 if (!$error) {
@@ -281,6 +277,14 @@ class Project extends CommonObject
                 			$error++;
                 		}
                 	}
+                }
+				
+                if (!$notrigger)
+                {
+                    // Call trigger
+                    $result=$this->call_trigger('PROJECT_MODIFY',$user);
+                    if ($result < 0) { $error++; }
+                    // End call triggers
                 }
 
                 if (! $error && (is_object($this->oldcopy) && $this->oldcopy->ref != $this->ref))
