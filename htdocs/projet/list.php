@@ -276,15 +276,16 @@ if ($resql)
 		$moreforfilter.=$formother->select_salesrepresentatives($search_sale, 'search_sale', $user, 0, 1, 'maxwidth300');
 		$moreforfilter.='</div>';
 	}
-	// If the user can view prospects other than his'
 
-	if (($user->rights->societe->client->voir || $socid) && !$mine)
-	{
-		$moreforfilter.='<div class="divsearchfield">';
-		$moreforfilter.=$langs->trans('ProjectsWithThisUserAsContact'). ': ';
-		$moreforfilter.=$form->select_dolusers($search_user, 'search_user', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
-		$moreforfilter.='</div>';
-	}
+	// If the user can view prospects other than his'
+    if ($mine) $search_user=$user->id;
+	$moreforfilter.='<div class="divsearchfield">';
+	$moreforfilter.=$langs->trans('ProjectsWithThisUserAsContact'). ': ';
+	$includeonly='';
+	if (empty($user->rights->user->user->lire)) $includeonly=array($user->id);
+	$moreforfilter.=$form->select_dolusers($search_user, 'search_user', 1, '', 0, $includeonly, '', 0, 0, 0, '', 0, '', 'maxwidth300');
+	$moreforfilter.='</div>';
+
 	if (! empty($moreforfilter))
 	{
 		print '<div class="liste_titre liste_titre_bydiv centpercent">';
