@@ -240,7 +240,9 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 		print '<div class="menu_titre" id="menu_titre_logo"></div>';
 		print '<div class="menu_top" id="menu_top_logo"></div>';
 		print '<div class="menu_contenu" id="menu_contenu_logo">';
-		print '<div class="center"><img title="'.dol_escape_htmltag($title).'" alt="" src="'.$urllogo.'" style="max-width: 80%"></div>'."\n";
+		print '<a class="center" href="'.DOL_URL_ROOT.'/index.php?mainmenu=home&amp;leftmenu=" alt="'.dol_escape_htmltag($langs->trans("Home")).'" title="'.dol_escape_htmltag($langs->trans("Home")).'">';
+		print '<div class="center"><img src="'.$urllogo.'" style="max-width: 80%"></div>'."\n";
+		print '</a>';
 		print '</div>';
 		print '<div class="menu_end" id="menu_end_logo"></div>';
 		print '</div>'."\n";
