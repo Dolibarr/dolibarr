@@ -133,7 +133,7 @@ if ($resql)
     {
         print '<tr '.$bc[false].'><td align="center" colspan="2">';
         $data=array('series'=>$dataseries);
-        dol_print_graph('stats',300,180,$data,1,'pie',1);
+        dol_print_graph('stats',300,180,$data,1,'pie',1,'',0);
         print '</td></tr>';
     }
 

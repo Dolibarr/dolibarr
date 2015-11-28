@@ -97,7 +97,12 @@ if (! empty($conf->ficheinter->enabled) && $user->rights->ficheinter->lire)
 // Search contract
 if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 {
-	$listofsearchfields['search_contract']=array('text'=>'Contrat');
+    $listofsearchfields['search_contract']=array('text'=>'Contrat');
+}
+// Search contract
+if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->lire)
+{
+    $listofsearchfields['search_supplier_proposal']=array('text'=>'SupplierProposalShort');
 }
 
 if (count($listofsearchfields))

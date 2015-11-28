@@ -1607,8 +1607,8 @@ if ($action == 'create')
 		$form_close .= '<input type="hidden" name="action" value="setstatut">';
 		$form_close .= '<select id="statut" name="statut" class="flat">';
 		$form_close .= '<option value="0">&nbsp;</option>';
-		$form_close .= '<option value="2">' . $langs->trans('AskpricesupplierStatusSigned') . '</option>';
-		$form_close .= '<option value="3">' . $langs->trans('AskpricesupplierStatusNotSigned') . '</option>';
+		$form_close .= '<option value="2">' . $langs->trans('SupplierProposalStatusSigned') . '</option>';
+		$form_close .= '<option value="3">' . $langs->trans('SupplierProposalStatusNotSigned') . '</option>';
 		$form_close .= '</select>';
 		$form_close .= '</td></tr>';
 		$form_close .= '<tr><td width="150" align="left">' . $langs->trans('Note') . '</td><td align="left"><textarea cols="70" rows="' . ROWS_3 . '" wrap="soft" name="note">';

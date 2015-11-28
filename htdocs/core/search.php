@@ -74,6 +74,11 @@ if (GETPOST('search_supplier_invoice') != '')
 	header("Location: ".DOL_URL_ROOT.'/fourn/facture/list.php?sall='.urlencode(GETPOST('search_supplier_invoice')));
 	exit;
 }
+if (GETPOST('search_supplier_proposal') != '')
+{
+	header("Location: ".DOL_URL_ROOT.'/supplier_proposal/list.php?sall='.urlencode(GETPOST('search_supplier_proposal')));
+	exit;
+}
 if (GETPOST('search_donation') != '')
 {
 	header("Location: ".DOL_URL_ROOT.'/don/list.php?sall='.urlencode(GETPOST('search_donation')));
