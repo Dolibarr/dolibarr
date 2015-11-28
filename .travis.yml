@@ -45,6 +45,8 @@ before_script:
  - which phpunit
  - phpunit --version
  - echo Install phpcs then show installed rules
+ - cp composer.json composer.json.old
+ - cp composer.json.phpcs composer.json
  - composer self-update
  - composer require squizlabs/php_codesniffer:${PHPCS_VERSION}
  - composer install
