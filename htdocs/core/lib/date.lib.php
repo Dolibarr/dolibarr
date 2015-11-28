@@ -542,6 +542,7 @@ function dol_get_first_day_week($day,$month,$year,$gm=false)
  *  @param      string		$countrycode        Country code
  *	@param      int			$lastday            Last day is included, 0: no, 1:yes
  *	@return   	int								Nombre de jours feries
+ *  @see num_between_day, num_open_day
  */
 function num_public_holiday($timestampStart, $timestampEnd, $countrycode='FR', $lastday=0)
 {
@@ -722,6 +723,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $countrycode='FR', $
  *	@param	   int			$timestampEnd       Timestamp end UTC
  *	@param     int			$lastday            Last day is included, 0: no, 1:yes
  *	@return    int								Number of days
+ *  @see also num_public_holiday, num_open_day
  */
 function num_between_day($timestampStart, $timestampEnd, $lastday=0)
 {
@@ -751,6 +753,7 @@ function num_between_day($timestampStart, $timestampEnd, $lastday=0)
  *  @param		int			$halfday			Tag to define half day when holiday start and end
  *  @param      string		$country_code       Country code (company country code if not defined)
  *	@return    	int								Number of days or hours
+ *  @see also num_between_day, num_public_holiday
  */
 function num_open_day($timestampStart, $timestampEnd, $inhour=0, $lastday=0, $halfday=0, $country_code='')
 {
