@@ -100,7 +100,10 @@ if ($resql)
 	$var=true;
 
     $param="";
-    if ($optioncss != '') $param.='&optioncss='.$optioncss;
+    if ($search_ref) $param.="&amp;search_ref=".$search_ref;
+    if ($search_label) $param.="&amp;search_label=".$search_user;
+    if ($search_amount) $param.="&amp;search_amount=".$search_amount_ht;
+    if ($optioncss != '') $param.='&amp;optioncss='.$optioncss;
 
     print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">'."\n";
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
