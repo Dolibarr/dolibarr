@@ -540,9 +540,11 @@ function dol_get_first_day_week($day,$month,$year,$gm=false)
  *	@param	    int			$timestampStart     Timestamp de debut
  *	@param	    int			$timestampEnd       Timestamp de fin
  *  @param      string		$countrycode        Country code
+ *	@param      int			$lastday            Last day is included, 0: no, 1:yes
  *	@return   	int								Nombre de jours feries
+ *  @see num_between_day, num_open_day
  */
-function num_public_holiday($timestampStart, $timestampEnd, $countrycode='FR')
+function num_public_holiday($timestampStart, $timestampEnd, $countrycode='FR', $lastday=0)
 {
 	$nbFerie = 0;
 
@@ -550,7 +552,8 @@ function num_public_holiday($timestampStart, $timestampEnd, $countrycode='FR')
 	if ((($timestampEnd - $timestampStart) % 86400) != 0) return 'ErrorDates must use same hours and must be GMT dates';
 
 	$i=0;
-	while ($timestampStart < $timestampEnd && ($i < 50000))		// Loop end when equals (Test on i is a security loop to avoid infinite loop)
+	while (( ($lastday == 0 && $timestampStart < $timestampEnd) || ($lastday && $timestampStart <= $timestampEnd) )
+	    && ($i < 50000))		// Loop end when equals (Test on i is a security loop to avoid infinite loop)
 	{
 		$ferie=false;
 		$countryfound=0;
@@ -718,8 +721,9 @@ function num_public_holiday($timestampStart, $timestampEnd, $countrycode='FR')
  *
  *	@param	   int			$timestampStart     Timestamp start UTC
  *	@param	   int			$timestampEnd       Timestamp end UTC
- *	@param     int			$lastday            Last day is included, 0: non, 1:oui
+ *	@param     int			$lastday            Last day is included, 0: no, 1:yes
  *	@return    int								Number of days
+ *  @see also num_public_holiday, num_open_day
  */
 function num_between_day($timestampStart, $timestampEnd, $lastday=0)
 {
@@ -749,6 +753,7 @@ function num_between_day($timestampStart, $timestampEnd, $lastday=0)
  *  @param		int			$halfday			Tag to define half day when holiday start and end
  *  @param      string		$country_code       Country code (company country code if not defined)
  *	@return    	int								Number of days or hours
+ *  @see also num_between_day, num_public_holiday
  */
 function num_open_day($timestampStart, $timestampEnd, $inhour=0, $lastday=0, $halfday=0, $country_code='')
 {
@@ -766,7 +771,7 @@ function num_open_day($timestampStart, $timestampEnd, $inhour=0, $lastday=0, $ha
 	if ($timestampStart < $timestampEnd)
 	{
 		$numdays = num_between_day($timestampStart, $timestampEnd, $lastday);
-		$numholidays = num_public_holiday($timestampStart, $timestampEnd, $country_code);
+		$numholidays = num_public_holiday($timestampStart, $timestampEnd, $country_code, $lastday);
 		$nbOpenDay = $numdays - $numholidays;
 		$nbOpenDay.= " " . $langs->trans("Days");
 		if ($inhour == 1 && $nbOpenDay <= 3) $nbOpenDay = $nbOpenDay*24 . $langs->trans("HourShort");

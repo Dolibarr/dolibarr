@@ -610,12 +610,6 @@ if ($rowid > 0)
 		print '</td></tr>';
 	}
 
-	// Skype
-	if (! empty($conf->skype->enabled))
-	{
-		print '<tr><td>'.$langs->trans("Skype").'</td><td class="valeur">'.dol_print_skype($object->skype,0,$object->fk_soc,1).'</td></tr>';
-	}
-
     print '</table>';
     
     print '</div>';

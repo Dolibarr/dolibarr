@@ -273,7 +273,7 @@ if ($resql)
     if ($search_all)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-        print $langs->transnoentities("FilterOnInto", $search_all, join(', ',$fieldstosearchall));
+        print $langs->trans("FilterOnInto", $search_all) . join(', ',$fieldstosearchall);
     }
     
 	print '<table class="liste" width="100%">';

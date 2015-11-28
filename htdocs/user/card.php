@@ -193,7 +193,7 @@ if (empty($reshook)) {
 			$object->office_phone = GETPOST("office_phone", 'alpha');
 			$object->office_fax = GETPOST("office_fax", 'alpha');
 			$object->user_mobile = GETPOST("user_mobile");
-			$object->skype = GETPOST("skype");
+			$object->skype = GETPOST("skype", 'alpha');
 			$object->email = GETPOST("email", 'alpha');
 			$object->job = GETPOST("job", 'alpha');
 			$object->signature = GETPOST("signature");
@@ -330,7 +330,7 @@ if (empty($reshook)) {
 				$object->office_phone = GETPOST("office_phone", 'alpha');
                 $object->office_fax = GETPOST("office_fax", 'alpha');
                 $object->user_mobile = GETPOST("user_mobile");
-                $object->skype = GETPOST("skype");
+                $object->skype = GETPOST("skype", 'alpha');
                 $object->email = GETPOST("email", 'alpha');
                 $object->job = GETPOST("job", 'alpha');
                 $object->signature = GETPOST("signature");
@@ -1323,14 +1323,6 @@ else
             	print '<tr><td>'.$langs->trans("Type").'</td><td>';
             	print $langs->trans("DomainUser",$ldap->domainFQDN);
             	print '</td></tr>'."\n";
-            }
-
-            // Skype
-            if (! empty($conf->skype->enabled))
-            {
-				print '<tr><td>'.$langs->trans("Skype").'</td>';
-                print '<td>'.dol_print_skype($object->skype,0,0,1).'</td>';
-                print "</tr>\n";
             }
 
             // Signature

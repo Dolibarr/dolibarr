@@ -25,9 +25,9 @@
  */
 
 /**
- *	\file       	htdocs/comm/propal/list.php
- *	\ingroup    	propal
- *	\brief      	Page of commercial proposals card and list
+ *	\file       	htdocs/supplier_proposal/list.php
+ *	\ingroup    	supplier_proposal
+ *	\brief      	Page of supplier proposals card and list
  */
 
 require '../main.inc.php';
@@ -95,6 +95,16 @@ if (GETPOST("button_removefilter") || GETPOST("button_removefilter_x"))	// Both 
 
 if($object_statut != '')
 $viewstatut=$object_statut;
+
+// List of fields to search into when doing a "search in all"
+$fieldstosearchall = array(
+    'p.ref'=>'Ref',
+    's.nom'=>'Supplier',
+    'pd.description'=>'Description',
+    'p.note_private'=>"NotePrivate",
+    'p.note_public'=>'NotePublic',
+);
+
 
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
@@ -175,7 +185,7 @@ if ($search_montant_ht)
 	$sql.= " AND p.total_ht='".$db->escape(price2num(trim($search_montant_ht)))."'";
 }
 if ($sall) {
-    $sql .= natural_search(array('s.nom', 'p.note_private', 'p.note_public', 'pd.description'), $sall);
+    $sql .= natural_search(array_keys($fieldstosearchall), $sall);
 }
 if ($socid) $sql.= ' AND s.rowid = '.$socid;
 if ($viewstatut <> '')
@@ -240,7 +250,19 @@ if ($result)
 
 	// Lignes des champs de filtre
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
-
+	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="action" value="list">';
+	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+	
+	if ($sall)
+	{
+	    foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
+	    //sort($fieldstosearchall);
+	    print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+	}
+	
 	$i = 0;
 
 	$moreforfilter='';
@@ -276,7 +298,7 @@ if ($result)
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">';
     print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans('Ref'),$_SERVER["PHP_SELF"],'p.ref','',$param,'',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans('Company'),$_SERVER["PHP_SELF"],'s.nom','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('Supplier'),$_SERVER["PHP_SELF"],'s.nom','',$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('SupplierProposalDate'),$_SERVER["PHP_SELF"],'p.date_livraison','',$param, 'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('AmountHT'),$_SERVER["PHP_SELF"],'p.total_ht','',$param, 'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('Author'),$_SERVER["PHP_SELF"],'u.login','',$param,'align="center"',$sortfield,$sortorder);

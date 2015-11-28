@@ -151,16 +151,16 @@ class SupplierProposal extends CommonObject
         $this->remise_absolue = 0;
 
         $langs->load("supplier_proposal");
-        $this->labelstatut[0]=(! empty($conf->global->SUPPLIER_PROPOSAL_STATUS_DRAFT_LABEL) ? $conf->global->SUPPLIER_PROPOSAL_STATUS_DRAFT_LABEL : $langs->trans("AskpricesupplierStatusDraft"));
-        $this->labelstatut[1]=(! empty($conf->global->SUPPLIER_PROPOSAL_STATUS_VALIDATED_LABEL) ? $conf->global->SUPPLIER_PROPOSAL_STATUS_VALIDATED_LABEL : $langs->trans("AskpricesupplierStatusValidated"));
-        $this->labelstatut[2]=(! empty($conf->global->SUPPLIER_PROPOSAL_STATUS_SIGNED_LABEL) ? $conf->global->SUPPLIER_PROPOSAL_STATUS_SIGNED_LABEL : $langs->trans("AskpricesupplierStatusSigned"));
-        $this->labelstatut[3]=(! empty($conf->global->SUPPLIER_PROPOSAL_STATUS_NOTSIGNED_LABEL) ? $conf->global->SUPPLIER_PROPOSAL_STATUS_NOTSIGNED_LABEL : $langs->trans("AskpricesupplierStatusNotSigned"));
-        $this->labelstatut[4]=(! empty($conf->global->SUPPLIER_PROPOSAL_STATUS_BILLED_LABEL) ? $conf->global->SUPPLIER_PROPOSAL_STATUS_BILLED_LABEL : $langs->trans("AskpricesupplierStatusBilled"));
-        $this->labelstatut_short[0]=(! empty($conf->global->SUPPLIER_PROPOSAL_STATUS_DRAFTSHORT_LABEL) ? $conf->global->SUPPLIER_PROPOSAL_STATUS_DRAFTSHORT_LABEL : $langs->trans("AskpricesupplierStatusDraftShort"));
+        $this->labelstatut[0]=(! empty($conf->global->SUPPLIER_PROPOSAL_STATUS_DRAFT_LABEL) ? $conf->global->SUPPLIER_PROPOSAL_STATUS_DRAFT_LABEL : $langs->trans("SupplierProposalStatusDraft"));
+        $this->labelstatut[1]=(! empty($conf->global->SUPPLIER_PROPOSAL_STATUS_VALIDATED_LABEL) ? $conf->global->SUPPLIER_PROPOSAL_STATUS_VALIDATED_LABEL : $langs->trans("SupplierProposalStatusValidated"));
+        $this->labelstatut[2]=(! empty($conf->global->SUPPLIER_PROPOSAL_STATUS_SIGNED_LABEL) ? $conf->global->SUPPLIER_PROPOSAL_STATUS_SIGNED_LABEL : $langs->trans("SupplierProposalStatusSigned"));
+        $this->labelstatut[3]=(! empty($conf->global->SUPPLIER_PROPOSAL_STATUS_NOTSIGNED_LABEL) ? $conf->global->SUPPLIER_PROPOSAL_STATUS_NOTSIGNED_LABEL : $langs->trans("SupplierProposalStatusNotSigned"));
+        $this->labelstatut[4]=(! empty($conf->global->SUPPLIER_PROPOSAL_STATUS_BILLED_LABEL) ? $conf->global->SUPPLIER_PROPOSAL_STATUS_BILLED_LABEL : $langs->trans("SupplierProposalStatusBilled"));
+        $this->labelstatut_short[0]=(! empty($conf->global->SUPPLIER_PROPOSAL_STATUS_DRAFTSHORT_LABEL) ? $conf->global->SUPPLIER_PROPOSAL_STATUS_DRAFTSHORT_LABEL : $langs->trans("SupplierProposalStatusDraftShort"));
         $this->labelstatut_short[1]=(! empty($conf->global->SUPPLIER_PROPOSAL_STATUS_VALIDATEDSHORT_LABEL) ? $conf->global->SUPPLIER_PROPOSAL_STATUS_VALIDATEDSHORT_LABEL : $langs->trans("Opened"));
-        $this->labelstatut_short[2]=(! empty($conf->global->SUPPLIER_PROPOSAL_STATUS_SIGNEDSHORT_LABEL) ? $conf->global->SUPPLIER_PROPOSAL_STATUS_SIGNEDSHORT_LABEL : $langs->trans("AskpricesupplierStatusSignedShort"));
-        $this->labelstatut_short[3]=(! empty($conf->global->SUPPLIER_PROPOSAL_STATUS_NOTSIGNEDSHORT_LABEL) ? $conf->global->SUPPLIER_PROPOSAL_STATUS_NOTSIGNEDSHORT_LABEL : $langs->trans("AskpricesupplierStatusNotSignedShort"));
-        $this->labelstatut_short[4]=(! empty($conf->global->SUPPLIER_PROPOSAL_STATUS_BILLEDSHORT_LABEL) ? $conf->global->SUPPLIER_PROPOSAL_STATUS_BILLEDSHORT_LABEL : $langs->trans("AskpricesupplierStatusBilledShort"));
+        $this->labelstatut_short[2]=(! empty($conf->global->SUPPLIER_PROPOSAL_STATUS_SIGNEDSHORT_LABEL) ? $conf->global->SUPPLIER_PROPOSAL_STATUS_SIGNEDSHORT_LABEL : $langs->trans("SupplierProposalStatusSignedShort"));
+        $this->labelstatut_short[3]=(! empty($conf->global->SUPPLIER_PROPOSAL_STATUS_NOTSIGNEDSHORT_LABEL) ? $conf->global->SUPPLIER_PROPOSAL_STATUS_NOTSIGNEDSHORT_LABEL : $langs->trans("SupplierProposalStatusNotSignedShort"));
+        $this->labelstatut_short[4]=(! empty($conf->global->SUPPLIER_PROPOSAL_STATUS_BILLEDSHORT_LABEL) ? $conf->global->SUPPLIER_PROPOSAL_STATUS_BILLEDSHORT_LABEL : $langs->trans("SupplierProposalStatusBilledShort"));
     }
 
 
@@ -627,7 +627,7 @@ class SupplierProposal extends CommonObject
         }
         else
         {
-            dol_syslog(get_class($this)."::updateline Erreur -2 Askpricesupplier en mode incompatible pour cette action");
+            dol_syslog(get_class($this)."::updateline Erreur -2 SupplierProposal en mode incompatible pour cette action");
             return -2;
         }
     }
@@ -2259,7 +2259,7 @@ class SupplierProposal extends CommonObject
         global $langs;
 
         $result='';
-        $label=$langs->trans("ShowAskpricesupplier").': '.$this->ref;
+        $label=$langs->trans("ShowSupplierProposal").': '.$this->ref;
         $linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
         if ($option == '') {
             $link = '<a href="'.DOL_URL_ROOT.'/supplier_proposal/card.php?id='.$this->id. $get_params .$linkclose;

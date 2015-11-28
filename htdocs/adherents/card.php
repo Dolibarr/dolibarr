@@ -1400,7 +1400,6 @@ else
 		$rowspan=17;
 		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) $rowspan++;
 		if (! empty($conf->societe->enabled)) $rowspan++;
-		if (! empty($conf->skype->enabled)) $rowspan++;
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php">'.$langs->trans("BackToList").'</a>';
 		
@@ -1443,12 +1442,6 @@ else
 			    print ' '.$form->textwithpicto('', $htmltext,1,'warning');
 			}
 			print '</td></tr>';
-		}
-
-    	// Skype
-		if (! empty($conf->skype->enabled))
-		{
-			print '<tr><td>'.$langs->trans("Skype").'</td><td class="valeur">'.dol_print_skype($object->skype,0,$object->fk_soc,1).'</td></tr>';
 		}
 
         print '</table>';

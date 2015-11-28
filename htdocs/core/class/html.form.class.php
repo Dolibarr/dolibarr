@@ -4954,7 +4954,7 @@ class Form
 		if (((! is_array($restrictlinksto)) || in_array('order',$restrictlinksto))
 			&& ! empty($conf->commande->enabled))
 		{
-			$linktoelem.=($linktoelem?' &nbsp; ':'').'<a href="#" id="linktoorder">' . $langs->trans('LinkedOrder') . '</a>';
+			$linktoelem.=($linktoelem?' &nbsp; ':'').'<a href="#linktoorder" id="linktoorder">' . $langs->trans('LinkedOrder') . '</a>';
 
 			print '
 				<script type="text/javascript" language="javascript">
@@ -5020,7 +5020,7 @@ class Form
 		if (((! is_array($restrictlinksto)) || in_array('supplier_order',$restrictlinksto))
 			&& ! empty($conf->fournisseur->enabled))
 		{
-			$linktoelem.=($linktoelem?' &nbsp; ':'').'<a href="#" id="linktoorder">' . $langs->trans('LinkedOrder') . '</a>';
+			$linktoelem.=($linktoelem?' &nbsp; ':'').'<a href="#linktoorder" id="linktoorder">' . $langs->trans('LinkedOrder') . '</a>';
 
 			print '
 			<script type="text/javascript" language="javascript">

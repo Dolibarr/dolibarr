@@ -275,7 +275,7 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 if ($sall)
 {
     foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-    print $langs->trans("FilterOnInto", $sall, join(', ',$fieldstosearchall));
+    print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
 }
     
 print '<table class="noborder" width="100%;">';
