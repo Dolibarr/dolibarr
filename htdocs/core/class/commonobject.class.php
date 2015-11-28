@@ -530,7 +530,9 @@ abstract class CommonObject
 		}
 		if (! empty($conf->skype->enabled))
 		{
-			if ($this->skype) $out.=($outdone?'<br>':'').dol_print_skype($this->skype,$this->id,$object->id,'AC_SKYPE');
+			$out.='<div style="clear: both;"></div>';
+			if ($this->skype) $out.=dol_print_skype($this->skype,$this->id,$object->id,'AC_SKYPE');
+			$outdone++;
 		}
 		
 		$out.='<!-- END Part to show address block -->';

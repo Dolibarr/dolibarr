@@ -61,7 +61,7 @@ class modSkype extends DolibarrModules
 
         // Config pages
         //-------------
-        $this->config_page_url = array("skype.php");
+        $this->config_page_url = array();
 
         // Dependancies
         //-------------

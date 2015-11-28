@@ -540,7 +540,7 @@ Module2800Desc=FTP Client
 Module2900Name=GeoIPMaxmind
 Module2900Desc=GeoIP Maxmind conversions capabilities
 Module3100Name=Skype
-Module3100Desc=Add a Skype button into card of adherents / third parties / contacts
+Module3100Desc=Add a Skype button into card of users / third parties / contacts / members
 Module4000Name=HRM
 Module4000Desc=Human resources management
 Module5000Name=Multi-company
@@ -1249,11 +1249,6 @@ AddSubscriptionIntoAccount=Suggest by default to create a bank transaction, in b
 AdherentLoginRequired= Manage a Login for each member
 AdherentMailRequired=EMail required to create a new member
 MemberSendInformationByMailByDefault=Checkbox to send mail confirmation to members (validation or new subscription) is on by default
-##### Skype setup #####
-SkypeSetup=Skype module setup
-SkypeDeactivateInUser=Deactivate Skype in user card
-SkypeDeactivateInContact=Deactivate Skype in contact card
-SkypeDeactivateInMember=Deactivate Skype in member card
 ##### LDAP setup #####
 LDAPSetup=LDAP Setup
 LDAPGlobalParameters=Global parameters
