@@ -242,15 +242,14 @@ if ($action == 'create')
 
 	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="action" value="add">';
 
     dol_fiche_head('');
 
 	print '<table class="border" width="100%">';
 	print '<tbody>';
 
-	print '<input type="hidden" name="action" value="add">';
-
-	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" name="libelle" size="40"></td></tr>';
+	print '<tr><td width="25%" class="fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" name="libelle" size="40"></td></tr>';
 
 	print '<tr><td>'.$langs->trans("SubscriptionRequired").'</td><td>';
 	print $form->selectyesno("cotisation",1,1);

@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2013      Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2013      Alexandre Spangaro 	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013-2015 Alexandre Spangaro 	<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2014      Juanjo Menent	 	<jmenent@2byte.es>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  *
@@ -1154,12 +1154,6 @@ else
         if (!empty($conf->mailing->enabled))
         {
         	print '<tr><td>'.$langs->trans("No_Email").'</td><td>'.yn($object->no_email).'</td></tr>';
-        }
-
-        // Skype
-        if (! empty($conf->skype->enabled))
-        {
-            print '<tr><td>'.$langs->trans("Skype").'</td><td>'.dol_print_skype($object->skype,0,$object->fk_soc,1).'</td></tr>';
         }
 
         print '<tr><td>'.$langs->trans("ContactVisibility").'</td><td>';

@@ -9,6 +9,7 @@
  * Copyright (C) 2012-2015 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2012-2015 Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2015      Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -529,7 +530,9 @@ abstract class CommonObject
 		}
 		if (! empty($conf->skype->enabled))
 		{
-			if ($this->skype) $out.=($outdone?'<br>':'').dol_print_skype($this->skype,$this->id,$object->id,'AC_SKYPE');
+			$out.='<div style="clear: both;"></div>';
+			if ($this->skype) $out.=dol_print_skype($this->skype,$this->id,$object->id,'AC_SKYPE');
+			$outdone++;
 		}
 		
 		$out.='<!-- END Part to show address block -->';

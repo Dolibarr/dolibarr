@@ -1520,14 +1520,18 @@ function dol_print_skype($skype,$cid=0,$socid=0,$addlink=0,$max=64)
 
 	if (! empty($addlink))
 	{
-		$newskype='<a href="skype:';
+		$newskype =img_picto($langs->trans("Skype"), 'object_skype.png');
+		$newskype.= '&nbsp;';
+		$newskype.=dol_trunc($skype,$max);
+		$newskype.= '&nbsp;';
+		$newskype.='<a href="skype:';
 		$newskype.=dol_trunc($skype,$max);
 		$newskype.='?call" alt="'.$langs->trans("Call").'&nbsp;'.$skype.'" title="'.$langs->trans("Call").'&nbsp;'.$skype.'">';
-		$newskype.='<img src="../theme/common/skype_callbutton.png" border="0">';
-		$newskype.='</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="skype:';
+		$newskype.='<img src="'.DOL_URL_ROOT.'/theme/common/skype_callbutton.png" border="0">';
+		$newskype.='</a>&nbsp;&nbsp;&nbsp;<a href="skype:';
 		$newskype.=dol_trunc($skype,$max);
 		$newskype.='?chat" alt="'.$langs->trans("Chat").'&nbsp;'.$skype.'" title="'.$langs->trans("Chat").'&nbsp;'.$skype.'">';
-		$newskype.='<img src="../theme/common/skype_chatbutton.png" border="0">';
+		$newskype.='<img src="'.DOL_URL_ROOT.'/theme/common/skype_chatbutton.png" border="0">';
 		$newskype.='</a>';
 
 		if (($cid || $socid) && ! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
