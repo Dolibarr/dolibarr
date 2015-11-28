@@ -148,7 +148,7 @@ class FormProjets
 			if (! empty($conf->use_javascript_ajax))
 			{
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-	           	$comboenhancement = ajax_combobox($htmlname, '', 0, $forcefocus);
+	           	$comboenhancement = ajax_combobox($htmlname, array(), 0, $forcefocus);
             	$out.=$comboenhancement;
             	$nodatarole=($comboenhancement?' data-role="none"':'');
             	$minmax='minwidth100 maxwidth300';
