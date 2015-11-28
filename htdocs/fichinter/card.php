@@ -6,6 +6,7 @@
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 201		Charlie Benke           <charlies@patas-monkey.com>
+ * Copyright (C) 2015       Abbes Bahfir            <bafbes@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -466,7 +467,7 @@ if (empty($reshook))
 	// Add line
 	else if ($action == "addline" && $user->rights->ficheinter->creer)
 	{
-		if (!GETPOST('np_desc'))
+		if (!GETPOST('np_desc')&&($conf->global->FICHINTER_EMPTY_LINE_DESC!=1))
 		{
 			$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Description")).'</div>';
 			$error++;
@@ -1569,9 +1570,11 @@ else if ($id > 0 || ! empty($ref))
 				print '<tr '.$bcnd[$var].">\n";
 				print '<td>';
 				// editeur wysiwyg
-				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-				$doleditor=new DolEditor('np_desc',GETPOST('np_desc','alpha'),'',100,'dolibarr_details','',false,true,$conf->global->FCKEDITOR_ENABLE_DETAILS,ROWS_2,70);
-				$doleditor->Create();
+                		if ($conf->global->FICHINTER_EMPTY_LINE_DESC != 1) {
+					require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+					$doleditor=new DolEditor('np_desc',GETPOST('np_desc','alpha'),'',100,'dolibarr_details','',false,true,$conf->global->FCKEDITOR_ENABLE_DETAILS,ROWS_2,70);
+					$doleditor->Create();
+                		}
 				print '</td>';
 
 				// Date intervention
