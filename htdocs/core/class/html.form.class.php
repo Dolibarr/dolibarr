@@ -4231,7 +4231,7 @@ class Form
                 $retstring.='<option value="'.$hour.'"'.(($hour == $shour)?' selected':'').'>'.$hour.(empty($conf->dol_optimize_smallscreen)?'':'H').'</option>';
             }
             $retstring.='</select>';
-            if (empty($conf->dol_optimize_smallscreen)) $retstring.=":";
+            if ($m && empty($conf->dol_optimize_smallscreen)) $retstring.=":";
         }
 
         if ($m)
