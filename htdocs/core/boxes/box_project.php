@@ -115,7 +115,7 @@ class box_project extends ModeleBoxes
 					$sql ="SELECT count(*) as nb, sum(progress) as totprogress";
 					$sql.=" FROM ".MAIN_DB_PREFIX."projet as p LEFT JOIN ".MAIN_DB_PREFIX."projet_task as pt on pt.fk_projet = p.rowid";
 					$sql.=" WHERE p.entity = ".$conf->entity;
-
+					$sql.=" AND p.rowid = ".$objp->rowid;
 					$resultTask = $db->query($sql);
 					if ($resultTask) {
 						$objTask = $db->fetch_object($resultTask);
