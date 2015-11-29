@@ -251,7 +251,9 @@ if ($resql)
 	if ($viewstatut == -3)
 	$title.=' - '.$langs->trans('StatusOrderValidated').', '.(empty($conf->expedition->enabled)?'':$langs->trans("StatusOrderSent").', ').$langs->trans('StatusOrderToBill');
 
-	$param='&socid='.$socid.'&viewstatut='.$viewstatut;
+	$param='';
+	if ($socid > 0)             $param.='&socid='.$socid;
+	if ($viewstatut != '')      $param.='&viewstatut='.$viewstatut;
 	if ($ordermonth)      		$param.='&ordermonth='.$ordermonth;
 	if ($orderyear)       		$param.='&orderyear='.$orderyear;
 	if ($deliverymonth)   		$param.='&deliverymonth='.$deliverymonth;
@@ -262,14 +264,13 @@ if ($resql)
 	if ($search_user > 0) 		$param.='&search_user='.$search_user;
 	if ($search_sale > 0) 		$param.='&search_sale='.$search_sale;
 	if ($search_total_ht != '') $param.='&search_total_ht='.$search_total_ht;
-	if ($optioncss != '') $param.='&optioncss='.$optioncss;
+	if ($optioncss != '')       $param.='&optioncss='.$optioncss;
 
 	$num = $db->num_rows($resql);
 	print_barre_liste($title, $page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords,'title_commercial.png');
-	$i = 0;
-
+	
 	// Lignes des champs de filtre
-	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="list">';
@@ -376,7 +377,8 @@ if ($resql)
 	$total=0;
 	$subtotal=0;
     $productstat_cache=array();
-
+    $i=0;
+    
     $generic_commande = new Commande($db);
     $generic_product = new Product($db);
     while ($i < min($num,$limit))
@@ -413,8 +415,8 @@ if ($resql)
                 $text_info='';
                 $nbprod=0;
                 
-                $num = count($generic_commande->lines); // Loop on each line of order
-                for ($lig=0; $lig < $num; $lig++) 
+                $numlines = count($generic_commande->lines); // Loop on each line of order
+                for ($lig=0; $lig < $numlines; $lig++) 
                 {
                     if ($generic_commande->lines[$lig]->product_type == 0 && $generic_commande->lines[$lig]->fk_product > 0)  // If line is a product and not a service
                     {
@@ -497,6 +499,7 @@ if ($resql)
                     $text_info = $langs->trans('NonShippable').'<br>'.$text_info;
                 }
             }
+            
             print '<td>';
             if ($nbprod)
             {
