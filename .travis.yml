@@ -29,7 +29,8 @@ matrix:
     - php: 7.0
 
 env:
- - DB=mysql
+# - DB=mysql PHPCS_VERSION=">=1.5.1,<2.0"
+ - DB=mysql PHPCS_VERSION=">=2.0"
 # - DB=postgres  
 
 before_script: 
@@ -44,11 +45,18 @@ before_script:
  - which phpunit
  - phpunit --version
  - echo Install phpcs then show installed rules
- - pyrus install pear/PHP_CodeSniffer
+ - cp composer.json composer.json.old
+ - cp composer.json.phpcs composer.json
+ - composer self-update
+ - composer require squizlabs/php_codesniffer:${PHPCS_VERSION}
+ - composer install
  - phpenv rehash
- - which phpcs
- - phpcs --version
- - phpcs -i
+ - ln -s `pwd` htdocs/includes/squizlabs/php_codesniffer/CodeSniffer/Standards/PHPCompatibility
+ - htdocs/includes/squizlabs/php_codesniffer/scripts/phpcs --version
+# - which phpcs
+# - phpcs --version
+ - htdocs/includes/squizlabs/php_codesniffer/scripts/phpcs -i
+# - phpcs -i
  - echo Create dir $(pwd)/htdocs/documents
  - sudo mkdir -p $(pwd)/htdocs/documents/admin/temp;
  - sudo touch $(pwd)/htdocs/documents/dolibarr.log;
@@ -139,7 +147,7 @@ script:
  - phpunit -d memory_limit=-1 --configuration test/phpunit/phpunittest.xml test/phpunit/AllTests.php
  - date
 # - phpcs -p --warning-severity=0 -s --report-summary --standard=dev/codesniffer/ruleset.xml --tab-width=4 --ignore=/build/html/,/dev/vagrant/,/documents/,/includes/,/test/report/ htdocs/core/class/dolgraph.class.php 2>&1
- - phpcs -p --warning-severity=0 -s --report-checkstyle --report-summary --standard=dev/codesniffer/ruleset.xml --tab-width=4 --ignore=/htdocs/conf/conf.php,/build/html/,/dev/vagrant/,/documents/,/includes/,/test/report/ . 2>&1
+ - htdocs/includes/squizlabs/php_codesniffer/scripts/phpcs -p --warning-severity=0 -s --report-checkstyle --report-summary --standard=dev/codesniffer/ruleset.xml --tab-width=4 --ignore=/htdocs/conf/conf.php,/build/html/,/dev/vagrant/,/documents/,/includes/,/test/report/ . 2>&1
  - date
 
 after_script:
