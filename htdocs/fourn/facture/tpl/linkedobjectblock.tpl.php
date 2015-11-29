@@ -65,7 +65,7 @@ foreach($linkedObjectBlock as $key => $objectlink)
 }
 ?>
 <tr class="liste_total">
-	<td align="left" colspan="2"><?php echo $langs->trans("TotalHT"); ?></td>
+	<td align="left" colspan="3"><?php echo $langs->trans("TotalHT"); ?></td>
 	<td align="right"><?php
 		if ($user->rights->fournisseur->facture->lire) {
 			echo price($total);
