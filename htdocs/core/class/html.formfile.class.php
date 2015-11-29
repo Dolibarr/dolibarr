@@ -526,7 +526,9 @@ class FormFile
                 include_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
                 $formadmin=new FormAdmin($this->db);
                 $defaultlang=$codelang?$codelang:$langs->getDefaultLang();
-                $out.= $formadmin->select_language($defaultlang);
+                $morecss='maxwidth150';
+                if (! empty($conf->browser->phone)) $morecss='maxwidth100';
+                $out.= $formadmin->select_language($defaultlang, 'lang_id', 0, 0, 0, 0, 0, $morecss);
             }
             else
             {
