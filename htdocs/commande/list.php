@@ -41,6 +41,7 @@ require_once DOL_DOCUMENT_ROOT .'/product/class/product.class.php';
 $langs->load('orders');
 $langs->load('deliveries');
 $langs->load('companies');
+$langs->load('compta');
 
 $orderyear=GETPOST("orderyear","int");
 $ordermonth=GETPOST("ordermonth","int");
@@ -56,6 +57,7 @@ $search_user=GETPOST('search_user','int');
 $search_sale=GETPOST('search_sale','int');
 $search_total_ht=GETPOST('search_total_ht','alpha');
 $optioncss = GETPOST('optioncss','alpha');
+$billed = GETPOST('billed','int');
 
 // Security check
 $id = (GETPOST('orderid')?GETPOST('orderid'):GETPOST('id','int'));
@@ -90,6 +92,8 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
     $ordermonth='';
     $deliverymonth='';
     $deliveryyear='';
+    $viewstatut='';
+    $billed='';
 }
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
@@ -151,6 +155,7 @@ if ($socid > 0) $sql.= ' AND s.rowid = '.$socid;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($search_ref) $sql .= natural_search('c.ref', $search_ref);
 if ($sall) $sql .= natural_search(array_keys($fieldstosearchall), $sall);
+if ($billed != '' && $billed >= 0) $sql.=' AND c.facture = '.$billed;
 if ($viewstatut <> '')
 {
 	if ($viewstatut < 4 && $viewstatut > -3)
@@ -336,7 +341,8 @@ if ($resql)
     $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
 	print_liste_field_titre($langs->trans('Status'),$_SERVER["PHP_SELF"],'c.fk_statut','',$param,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
+	print_liste_field_titre($langs->trans('Billed'),$_SERVER["PHP_SELF"],'c.facture','',$param,'align="center"',$sortfield,$sortorder,'');
+	print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'',$param,'',$sortfield,$sortorder,'maxwidthsearch ');
 	print '</tr>';
 
 	print '<tr class="liste_titre">';
@@ -366,8 +372,11 @@ if ($resql)
 	print '<input class="flat" type="text" size="6" name="search_total_ht" value="'.$search_total_ht.'">';
 	print '</td>';
 	print '<td align="right">';
-	$liststatus=array('0'=>$langs->trans("StatusOrderDraftShort"), '1'=>$langs->trans("StatusOrderValidated"), '2'=>$langs->trans("StatusOrderSentShort"), '3'=>$langs->trans("StatusOrderToBill"), '4'=>$langs->trans("StatusOrderProcessed"), '-1'=>$langs->trans("StatusOrderCanceledShort"));
+	$liststatus=array('0'=>$langs->trans("StatusOrderDraftShort"), '1'=>$langs->trans("StatusOrderValidated"), '2'=>$langs->trans("StatusOrderSentShort"), '3'=>$langs->trans("StatusOrderDelivered"), '-1'=>$langs->trans("StatusOrderCanceledShort"));
 	print $form->selectarray('viewstatut', $liststatus, $viewstatut, -4);
+	print '</td>';
+	print '<td align="center">';
+	print $form->selectyesno('billed', $billed, 1, 0, 1);
 	print '</td>';
 	print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
@@ -575,6 +584,9 @@ if ($resql)
 		// Statut
 		print '<td align="right" class="nowrap">'.$generic_commande->LibStatut($objp->fk_statut,$objp->facturee,5).'</td>';
 
+		// Billed
+		print '<td align="center">'.yn($objp->facturee).'</td>';
+		
 		print '<td></td>';
 
 		print '</tr>';
@@ -591,6 +603,7 @@ if ($resql)
 		print '<td class="nowrap" colspan="5">'.$langs->trans('TotalHT').'</td>';
 		// Total HT
 		print '<td align="right" class="nowrap">'.price($total).'</td>';
+		print '<td></td>';
 		print '<td></td>';
 		print '<td></td>';
 		print '</tr>';

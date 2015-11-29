@@ -29,7 +29,7 @@ $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 
 $langs->load("sendings");
 echo '<br>';
-print load_fiche_titre($langs->trans('RelatedShippings'));
+print load_fiche_titre($langs->trans('RelatedShippings'), '', '');
 
 ?>
 <table class="noborder allwidth">
