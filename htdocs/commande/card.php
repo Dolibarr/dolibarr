@@ -558,6 +558,24 @@ if (empty($reshook))
         }
     }
 
+    // mark as paid
+    else if ($action == 'setpaid' && $user->rights->commande->creer) {
+        $result = $object->setPaid(1);
+        if ($result <0) {
+            setEventMessages($object->error, $object->errors, 'errors');
+            $action = '';
+        }
+    }
+
+    // mark as unpaid
+    else if ($action == 'setunpaid' && $user->rights->commande->creer) {
+        $result = $object->setPaid(0);
+        if ($result <0) {
+            setEventMessages($object->error, $object->errors, 'errors');
+            $action = '';
+        }
+    }
+
 	else if ($action == 'setremisepercent' && $user->rights->commande->creer) {
 		$result = $object->set_remise($user, GETPOST('remise_percent'));
 	}
@@ -2293,6 +2311,16 @@ if ($action == 'create' && $user->rights->commande->creer)
 				if ($object->statut == Commande::STATUS_VALIDATED && $user->rights->commande->creer) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id=' . $object->id . '&amp;action=modif">' . $langs->trans('Modify') . '</a></div>';
 				}
+                if (! empty($conf->global->ACTIVATE_PAID_STATUS_FOR_ORDER)) {
+                    // Mark as paid
+                    if ($object->statut > 0 && $object->statut < 2 && $user->rights->commande->creer && $object->paye == 0) {
+                        print '<a class="butAction" href="card.php?id='.$object->id.'&amp;action=setpaid">'.$langs->trans('MarkAsPaid').'</a>';
+                    }
+                    // Mark as unpaid
+                    if ($object->statut > 0 && $object->statut < 2 && $user->rights->commande->creer && $object->paye == 1) {
+                        print '<a class="butAction" href="card.php?id='.$object->id.'&amp;action=setunpaid">'.$langs->trans('MarkAsUnPaid').'</a>';
+                    }
+                }
 				// Create event
 				if ($conf->agenda->enabled && ! empty($conf->global->MAIN_ADD_EVENT_ON_ELEMENT_CARD)) 				// Add hidden condition because this is not a
 				                                                                                      // "workflow" action so should appears somewhere else on

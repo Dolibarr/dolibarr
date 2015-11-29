@@ -81,6 +81,7 @@ class box_commandes extends ModeleBoxes
             $sql.= ", c.total_ht";
             $sql.= ", c.tva as total_tva";
             $sql.= ", c.total_ttc";
+            $sql.= ", c.paye";
             $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
             $sql.= ", ".MAIN_DB_PREFIX."commande as c";
             if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -147,7 +148,7 @@ class box_commandes extends ModeleBoxes
 
                     $this->info_box_contents[$line][] = array(
                         'td' => 'align="right" width="18"',
-                        'text' => $commandestatic->LibStatut($objp->fk_statut,$objp->facture,3),
+                        'text' => $commandestatic->LibStatut($objp->fk_statut,$objp->facture,3, $objp->paye),
                     );
 
                     $line++;

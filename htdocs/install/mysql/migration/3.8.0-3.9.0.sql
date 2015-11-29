@@ -93,6 +93,7 @@ ALTER TABLE llx_societe_rib MODIFY COLUMN code_banque varchar(128);
 
 ALTER TABLE llx_contrat ADD COLUMN ref_customer varchar(30);
 ALTER TABLE llx_commande ADD COLUMN fk_warehouse integer DEFAULT NULL AFTER fk_shipping_method;
+ALTER TABLE llx_commande ADD COLUMN paye tinyint DEFAULT 0 AFTER facture;
 
 ALTER TABLE llx_commande_fournisseur ADD COLUMN billed smallint DEFAULT 0 AFTER fk_statut;
 ALTER TABLE llx_commande_fournisseur ADD INDEX billed (billed);
@@ -452,3 +453,6 @@ INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, nc
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('110', 5209, '', 0, '', 'Manuripi', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('111', 5209, '', 0, '', 'Nicolás Suárez', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('112', 5209, '', 0, '', 'General Federico Román', 1);
+
+
+INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUES ('ORDER_PAID','Customer order Paid','Executed when changing a customer order paid status','commande',4);

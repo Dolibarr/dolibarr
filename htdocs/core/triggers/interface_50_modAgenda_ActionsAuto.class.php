@@ -190,6 +190,17 @@ class InterfaceActionsAuto extends DolibarrTriggers
 
 			$object->sendtoid=0;
 		}
+        elseif ($action == 'ORDER_PAID')
+        {
+            $langs->load("orders");
+
+            $object->actiontypecode='AC_OTH_AUTO';
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("OrderChangePaidInDolibarr",($object->newref?$object->newref:$object->ref));
+            $object->actionmsg=$langs->transnoentities("OrderChangePaidInDolibarr",($object->newref?$object->newref:$object->ref));
+            $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+
+            $object->sendtoid=0;
+        }
 		elseif ($action == 'ORDER_CLOSE')
         {
             $langs->load("other");

@@ -230,8 +230,9 @@ $max=5;
  * Last modified orders
  */
 
-$sql = "SELECT c.rowid, c.ref, c.fk_statut, c.facture, c.date_cloture as datec, c.tms as datem,";
-$sql.= " s.nom as name, s.rowid as socid";
+$sql = "SELECT c.rowid, c.ref, c.fk_statut, c.facture, c.date_cloture as datec, c.tms as datem";
+$sql.= ", c.paye";
+$sql.= ", s.nom as name, s.rowid as socid";
 $sql.= ", s.client";
 $sql.= ", s.code_client";
 $sql.= ", s.canvas";
@@ -297,7 +298,7 @@ if ($resql)
             print $companystatic->getNomUrl(1,'company',16);
             print '</td>';
 			print '<td>'.dol_print_date($db->jdate($obj->datem),'day').'</td>';
-			print '<td align="right">'.$commandestatic->LibStatut($obj->fk_statut,$obj->facture,5).'</td>';
+			print '<td align="right">'.$commandestatic->LibStatut($obj->fk_statut,$obj->facture,5, $obj->paye).'</td>';
 			print '</tr>';
 			$i++;
 		}
@@ -312,7 +313,7 @@ else dol_print_error($db);
  */
 if (! empty($conf->commande->enabled))
 {
-	$sql = "SELECT c.rowid, c.ref, c.fk_statut, c.facture, s.nom as name, s.rowid as socid";
+	$sql = "SELECT c.rowid, c.ref, c.fk_statut, c.facture, c.paye, s.nom as name, s.rowid as socid";
     $sql.= ", s.client";
     $sql.= ", s.code_client";
     $sql.= ", s.canvas";
@@ -377,7 +378,7 @@ if (! empty($conf->commande->enabled))
                 print $companystatic->getNomUrl(1,'company',24);
                 print '</td>';
 
-				print '<td align="right">'.$commandestatic->LibStatut($obj->fk_statut,$obj->facture,5).'</td>';
+				print '<td align="right">'.$commandestatic->LibStatut($obj->fk_statut,$obj->facture,5, $obj->paye).'</td>';
 
 				print '</tr>';
 				$i++;
@@ -394,7 +395,7 @@ if (! empty($conf->commande->enabled))
  */
 if (! empty($conf->commande->enabled))
 {
-	$sql = "SELECT c.rowid, c.ref, c.fk_statut, c.facture, s.nom as name, s.rowid as socid";
+	$sql = "SELECT c.rowid, c.ref, c.fk_statut, c.facture, c.paye, s.nom as name, s.rowid as socid";
     $sql.= ", s.client";
     $sql.= ", s.code_client";
     $sql.= ", s.canvas";
@@ -459,7 +460,7 @@ if (! empty($conf->commande->enabled))
 				print $companystatic->getNomUrl(1,'company');
 				print '</td>';
 
-				print '<td align="right">'.$commandestatic->LibStatut($obj->fk_statut,$obj->facture,5).'</td>';
+				print '<td align="right">'.$commandestatic->LibStatut($obj->fk_statut,$obj->facture,5, $obj->paye).'</td>';
 
 				print '</tr>';
 				$i++;

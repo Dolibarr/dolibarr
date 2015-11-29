@@ -56,6 +56,7 @@ create table llx_commande
   model_pdf				varchar(255),
 
   facture				tinyint   default 0,
+  paye                  tinyint   default 0,
   fk_account			integer,						-- bank account
   fk_currency			varchar(3),						-- currency code
   fk_cond_reglement		integer,						-- condition de reglement
