@@ -178,11 +178,11 @@ class FormFile
 
 	            $out .= '<div>';
 	            $out .= '<div class="float" style="padding-right: 10px;">';
-	            $out .= '<label for="link">'.$langs->trans("URLToLink") . '</label>: ';
+	            $out .= '<label for="link">'.$langs->trans("URLToLink") . ':</label> ';
 	            $out .= '<input type="text" name="link" size="'.$maxlength.'" id="link">';
 	            $out .= '</div>';
 	            $out .= '<div class="float" style="padding-right: 10px;">';
-	            $out .= '<label for="label">'.$langs->trans("Label") . '</label>: ';
+	            $out .= '<label for="label">'.$langs->trans("Label") . ':</label> ';
 	            $out .= '<input type="text" name="label" id="label">';
 	            $out .= '<input type="hidden" name="objecttype" value="' . $object->element . '">';
 	            $out .= '<input type="hidden" name="objectid" value="' . $object->id . '">';
