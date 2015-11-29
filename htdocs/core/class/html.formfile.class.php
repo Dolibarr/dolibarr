@@ -178,12 +178,12 @@ class FormFile
 
 	            $out .= '<div>';
 	            $out .= '<div class="float" style="padding-right: 10px;">';
-	            $out .= '<label for="link">'.$langs->trans("URLToLink") . ':</label> ';
-	            $out .= '<input type="text" name="link" size="'.$maxlength.'" id="link">';
+	            if (! empty($conf->global->OPTIMIZEFORTEXTBROWSER)) $out .= '<label for="link">'.$langs->trans("URLToLink") . ':</label> ';
+	            $out .= '<input type="text" name="link" size="'.$maxlength.'" id="link" placeholder="'.dol_escape_htmltag($langs->trans("URLToLink")).'">';
 	            $out .= '</div>';
 	            $out .= '<div class="float" style="padding-right: 10px;">';
-	            $out .= '<label for="label">'.$langs->trans("Label") . ':</label> ';
-	            $out .= '<input type="text" name="label" id="label">';
+	            if (! empty($conf->global->OPTIMIZEFORTEXTBROWSER)) $out .= '<label for="label">'.$langs->trans("Label") . ':</label> ';
+	            $out .= '<input type="text" name="label" id="label" placeholder="'.dol_escape_htmltag($langs->trans("Label")).'">';
 	            $out .= '<input type="hidden" name="objecttype" value="' . $object->element . '">';
 	            $out .= '<input type="hidden" name="objectid" value="' . $object->id . '">';
 	            $out .= '</div>';
