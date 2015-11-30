@@ -77,7 +77,7 @@ class Form
      * @param   string	$preselected	Name of Value to show/edit (not used in this function)
      * @param	object	$object			Object
      * @param	boolean	$perm			Permission to allow button to edit parameter. Set it to 0 to have a not edited field.
-     * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'numeric:99', 'text' or 'textarea:rows:cols', 'day' or 'datepicker', 'ckeditor:dolibarr_zzz:width:height:savemethod:1:rows:cols', 'select;xxx[:class]'...)
+     * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols', 'day' or 'datepicker', 'ckeditor:dolibarr_zzz:width:height:savemethod:1:rows:cols', 'select;xxx[:class]'...)
      * @param	string	$moreparam		More param to add on a href URL
      * @return	string					HTML edit field
      */
@@ -122,7 +122,7 @@ class Form
      * @param	string	$value			Value to show/edit
      * @param	object	$object			Object
      * @param	boolean	$perm			Permission to allow button to edit parameter
-     * @param	string	$typeofdata		Type of data ('string' by default, 'amount', 'email', 'numeric:99', 'text' or 'textarea:rows:cols', 'day' or 'datepicker', 'ckeditor:dolibarr_zzz:width:height:savemethod:toolbarstartexpanded:rows:cols', 'select:xxx'...)
+     * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols', 'day' or 'datepicker', 'ckeditor:dolibarr_zzz:width:height:savemethod:toolbarstartexpanded:rows:cols', 'select:xxx'...)
      * @param	string	$editvalue		When in edit mode, use this value as $value instead of value (for example, you can provide here a formated price instead of value). Use '' to use same than $value
      * @param	object	$extObject		External object
      * @param	mixed	$custommsg		String or Array of custom messages : eg array('success' => 'MyMessage', 'error' => 'MyMessage')
@@ -154,10 +154,15 @@ class Form
                 $ret.='<input type="hidden" name="id" value="'.$object->id.'">';
                 $ret.='<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
                 $ret.='<tr><td>';
-                if (preg_match('/^(string|email|numeric|amount)/',$typeofdata))
+                if (preg_match('/^(string|email)/',$typeofdata))
                 {
                     $tmp=explode(':',$typeofdata);
                     $ret.='<input type="text" id="'.$htmlname.'" name="'.$htmlname.'" value="'.($editvalue?$editvalue:$value).'"'.($tmp[1]?' size="'.$tmp[1].'"':'').'>';
+                }
+                else if (preg_match('/^(numeric|amount)/',$typeofdata))
+                {
+                    $tmp=explode(':',$typeofdata);
+                    $ret.='<input type="text" id="'.$htmlname.'" name="'.$htmlname.'" value="'.price(price2num($editvalue?$editvalue:$value)).'"'.($tmp[1]?' size="'.$tmp[1].'"':'').'>';
                 }
                 else if (preg_match('/^text/',$typeofdata) || preg_match('/^note/',$typeofdata))
                 {
@@ -203,8 +208,8 @@ class Form
             }
             else
 			{
-				if ($typeofdata == 'email')   $ret.=dol_print_email($value,0,0,0,0,1);
-                elseif ($typeofdata == 'amount')   $ret.=($value != '' ? price($value,'',$langs,0,-1,-1,$conf->currency) : '');
+				if (preg_match('/^(email)/',$typeofdata))              $ret.=dol_print_email($value,0,0,0,0,1);
+                elseif (preg_match('/^(amount|numeric)/',$typeofdata)) $ret.=($value != '' ? price($value,'',$langs,0,-1,-1,$conf->currency) : '');
                 elseif (preg_match('/^text/',$typeofdata) || preg_match('/^note/',$typeofdata))  $ret.=dol_htmlentitiesbr($value);
                 elseif ($typeofdata == 'day' || $typeofdata == 'datepicker') $ret.=dol_print_date($value,'day');
                 elseif ($typeofdata == 'dayhour' || $typeofdata == 'datehourpicker') $ret.=dol_print_date($value,'dayhour');

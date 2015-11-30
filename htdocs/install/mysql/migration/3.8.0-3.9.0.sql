@@ -97,6 +97,8 @@ ALTER TABLE llx_commande ADD COLUMN fk_warehouse integer DEFAULT NULL AFTER fk_s
 ALTER TABLE llx_commande_fournisseur ADD COLUMN billed smallint DEFAULT 0 AFTER fk_statut;
 ALTER TABLE llx_commande_fournisseur ADD INDEX billed (billed);
 
+ALTER TABLE llx_product ADD COLUMN cost_price	double(24,8) DEFAULT NULL;
+
 ALTER TABLE llx_ecm_directories MODIFY COLUMN fullpath varchar(750);
 ALTER TABLE llx_ecm_directories DROP INDEX idx_ecm_directories;
 ALTER TABLE llx_ecm_directories ADD UNIQUE INDEX uk_ecm_directories (label, fk_parent, entity);

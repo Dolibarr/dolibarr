@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2008  Laurent Destailleur     <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2007       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2009-2010  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
@@ -46,14 +46,16 @@ function product_prepare_head($object)
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT."/product/price.php?id=".$object->id;
-	$head[$h][1] = $langs->trans("CustomerPrices");
+	$head[$h][1] = $langs->trans("SellingPrices");
 	$head[$h][2] = 'price';
 	$h++;
 
-	if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire)
+	if ((! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire)
+	|| (! empty($conf->margin->enabled) && $user->rights->margin->liretous)
+	)
 	{
 		$head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$object->id;
-		$head[$h][1] = $langs->trans("SuppliersPrices");
+		$head[$h][1] = $langs->trans("BuyingPrices");
 		$head[$h][2] = 'suppliers';
 		$h++;
 	}
