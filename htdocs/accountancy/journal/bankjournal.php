@@ -114,6 +114,11 @@ $chargestatic = new ChargeSociales($db);
 $paymentvatstatic = new TVA($db);
 $paymentsalstatic = new PaymentSalary($db);
 
+// Get code of finance journal
+$bank_code_journal = new Account($db);
+$result=$bank_code_journal->fetch($id_bank_account);
+$journal=$bank_code_journal->accountancy_journal;
+
 dol_syslog("accountancy/journal/bankjournal.php:: sql=" . $sql, LOG_DEBUG);
 $result = $db->query($sql);
 if ($result) {
@@ -280,7 +285,7 @@ if ($action == 'writebookkeeping')
 			$bookkeeping->sens = ($mt >= 0) ? 'D' : 'C';
 			$bookkeeping->debit = ($mt >= 0 ? $mt : 0);
 			$bookkeeping->credit = ($mt < 0 ? - $mt : 0);
-			$bookkeeping->code_journal = $conf->global->ACCOUNTING_BANK_JOURNAL;
+			$bookkeeping->code_journal = $journal;
 			$bookkeeping->fk_user_author = $user->id;
 
 			if ($tabtype[$key] == 'payment') {
@@ -331,7 +336,7 @@ if ($action == 'writebookkeeping')
 			$bookkeeping->sens = ($mt < 0) ? 'D' : 'C';
 			$bookkeeping->debit = ($mt < 0 ? - $mt : 0);
 			$bookkeeping->credit = ($mt >= 0) ? $mt : 0;
-			$bookkeeping->code_journal = $conf->global->ACCOUNTING_BANK_JOURNAL;
+			$bookkeeping->code_journal = $journal;
 			$bookkeeping->fk_user_author = $user->id;
 
 			if ($tabtype[$key] == 'sc') {
@@ -403,7 +408,6 @@ if ($action == 'writebookkeeping')
 // Export
 if ($action == 'export_csv') {
 	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
-	$journal = $conf->global->ACCOUNTING_BANK_JOURNAL;
 
 	header('Content-Type: text/csv');
 	header('Content-Disposition: attachment;filename=journal_banque.csv');
@@ -533,7 +537,7 @@ if ($action == 'export_csv') {
 
 	llxHeader('', $langs->trans("FinanceJournal"));
 
-	$nom = $langs->trans("FinanceJournal");
+	$nom = $langs->trans("FinanceJournal" . ' - ' . $journal);
 	$builddate = time();
 	$description = $langs->trans("DescFinanceJournal") . '<br>';
 	$period = $form->select_date($date_start, 'date_start', 0, 0, 0, '', 1, 0, 1) . ' - ' . $form->select_date($date_end, 'date_end', 0, 0, 0, '', 1, 0, 1);
