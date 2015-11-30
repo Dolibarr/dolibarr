@@ -79,7 +79,7 @@ class pdf_baleine extends ModelePDFProjects
 		$this->posxref=$this->marge_gauche+1;
 		$this->posxlabel=$this->marge_gauche+25;
 		$this->posxworkload=$this->marge_gauche+100;
-		$this->posxprogress=$this->marge_gauche+140;
+		$this->posxprogress=$this->marge_gauche+130;
 		$this->posxdatestart=$this->marge_gauche+150;
 		$this->posxdateend=$this->marge_gauche+170;
 	}
