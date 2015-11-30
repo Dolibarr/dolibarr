@@ -3044,7 +3044,7 @@ li.cal_event       { border: none; list-style-type: none; }
 /* CSS for treeview */
 .treeview ul { background-color: transparent !important; margin-top: 0; }
 .treeview li { background-color: transparent !important; padding: 0 0 0 16px !important; min-height: 20px; }
-.treeview .hover { color: black !important; }
+.treeview .hover { color: rgb(<?php print $colortextlink; ?>) !important; text-decoration: underline !important; }
 
 
 
