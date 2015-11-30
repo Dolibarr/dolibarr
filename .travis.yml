@@ -47,7 +47,7 @@ before_script:
  - cp composer.json composer.json.old
  - cp composer.json.phpcs composer.json
  - composer self-update
- - composer require squizlabs/php_codesniffer:">=2.0"
+ - composer require squizlabs/php_codesniffer:"^2.0.0"
  - composer install
  - phpenv rehash
  - htdocs/includes/squizlabs/php_codesniffer/scripts/phpcs --version
