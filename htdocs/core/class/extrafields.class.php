@@ -1551,7 +1551,7 @@ class ExtraFields
 				else if (in_array($key_type,array('checkbox')))
 				{
 					$value_arr=GETPOST($keysuffix."options_".$key.$keyprefix);
-					$value_key=implode(',', $value_arr);
+					$value_key=implode(',', (array)$value_arr);
 				}
 				else if (in_array($key_type,array('price','double')))
 				{
