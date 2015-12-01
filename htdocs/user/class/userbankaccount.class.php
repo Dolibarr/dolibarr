@@ -35,8 +35,6 @@ class UserBankAccount extends Account
 {
     var $socid;
 
-    var $default_rib;
-
     var $datec;
     var $datem;
 
@@ -54,7 +52,6 @@ class UserBankAccount extends Account
         $this->clos = 0;
         $this->solde = 0;
         $this->error_number = 0;
-        $this->default_rib = 0;
         return 1;
     }
 
@@ -178,30 +175,6 @@ class UserBankAccount extends Account
         }
         else
         {
-            dol_print_error($this->db);
-            return -1;
-        }
-    }
-
-    /**
-     *  Delete a rib from database
-     *
-     *	@param	User	$user	User deleting
-     *  @return int         	<0 if KO, >0 if OK
-     */
-    function delete($user)
-    {
-        global $conf;
-
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rib";
-        $sql.= " WHERE rowid  = ".$this->id;
-
-        dol_syslog(get_class($this)."::delete", LOG_DEBUG);
-        $result = $this->db->query($sql);
-        if ($result) {
-            return 1;
-        }
-        else {
             dol_print_error($this->db);
             return -1;
         }
