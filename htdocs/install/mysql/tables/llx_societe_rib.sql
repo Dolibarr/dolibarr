@@ -19,11 +19,10 @@
 --
 -- =============================================================================
 
-create table llx_user_rib
+create table llx_societe_rib
 (
   rowid          integer AUTO_INCREMENT PRIMARY KEY,
-  fk_user        integer      NOT NULL,
-  entity         integer DEFAULT 1 NOT NULL,	-- multi company id
+  fk_soc         integer NOT NULL,
   datec          datetime,
   tms            timestamp,
   label          varchar(30),
@@ -32,10 +31,15 @@ create table llx_user_rib
   code_guichet   varchar(6),    -- desk code
   number         varchar(255),  -- account number
   cle_rib        varchar(5),    -- key of bank account
-  bic            varchar(11),   -- 11 according to ISO 9362
+  bic            varchar(20),  -- 11 according to ISO 9362 (we keep 20 for backward compatibility)
   iban_prefix    varchar(34),	-- full iban. 34 according to ISO 13616
   domiciliation  varchar(255),
   proprio        varchar(60),
   owner_address  varchar(255),
-  default_rib    smallint NOT NULL DEFAULT 0
+  default_rib    smallint NOT NULL DEFAULT 0,
+  
+  rum            varchar(32),	 				-- RUM value to use for SEPA generation
+  frstrecur      varchar(16) default 'FRST',  -- 'FRST' or 'RECUR'
+
+  import_key     varchar(14)    -- import key
 )ENGINE=innodb;
