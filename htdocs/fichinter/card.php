@@ -467,7 +467,7 @@ if (empty($reshook))
 	// Add line
 	else if ($action == "addline" && $user->rights->ficheinter->creer)
 	{
-		if (!GETPOST('np_desc')&&($conf->global->FICHINTER_EMPTY_LINE_DESC!=1))
+		if (!GETPOST('np_desc') && $conf->global->FICHINTER_EMPTY_LINE_DESC!=1 )
  		{
 			$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Description")).'</div>';
 			$error++;
