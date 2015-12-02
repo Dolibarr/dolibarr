@@ -483,6 +483,72 @@ class Form
     }
 
     /**
+     * Generate select HTML to choose massaction
+     * 
+     * @parama	string	$selected		Selected value
+     * @param	int		$arrayofaction	array('code'=>'label', ...)
+     * @param	string					Select list
+     */
+    function selectMassAction($selected, $arrayofaction)
+    {
+    	global $conf,$langs,$hookmanager;
+    	
+    	if (count($arrayofaction) == 0) return;
+    	
+    	$disabled=0;
+    	$ret='<div class="centpercent center"><select class="flat hideobject massaction massactionselect" name="massaction"'.($disabled?' disabled="disabled"':'').'>';
+    	$ret.='<option value="0"'.($disabled?' disabled="disabled"':'').'>-- '.$langs->trans("SelectAction").' --</option>';
+    	foreach($arrayofaction as $code => $label)
+    	{
+    		$ret.='<option value="'.$code.'"'.($disabled?' disabled="disabled"':'').'>'.$label.'</option>';
+    	}
+    	$ret.='</select>';
+    	$ret.='<input type="submit" name="confirmmassaction" disabled="disabled" class="button hideobject massaction massactionconfirmed" value="'.dol_escape_htmltag($langs->trans("Confirm")).'">';
+    	$ret.='</div>';
+    	
+    	$ret.='<!-- JS CODE TO ENABLE mass action select -->
+		<script type="text/javascript">
+    	jQuery(document).ready(function () {
+    		function initCheckForSelect()
+    		{
+    			atleastoneselected=0;
+	    		jQuery(".checkforselect").each(function( index ) {
+	  				/* console.log( index + ": " + $( this ).text() ); */
+	  				if ($(this).is(\':checked\')) atleastoneselected++;
+	  			});
+	  			console.log(atleastoneselected);
+	  			if (atleastoneselected)
+	  			{
+	  				jQuery(".massaction").show();
+	  			}
+	  			else
+	  			{
+	  				jQuery(".massaction").hide();
+	  			}
+    		}
+    		initCheckForSelect();
+    		jQuery(".checkforselect").click(function() {
+    			initCheckForSelect();
+	  		});
+	  		jQuery(".massactionselect").change(function() {
+	  			console.log( $( this ).val() );
+	  			if ($(this).val() != \'0\')
+	  			{
+	  				jQuery(".massactionconfirmed").prop(\'disabled\', false);
+	  			}
+	  			else
+	  			{
+	  				jQuery(".massactionconfirmed").prop(\'disabled\', true);
+	  			}
+	  		});
+    	});
+		</script>
+    	';
+    	
+    	return $ret;
+    }
+    
+    /**
      *  Return combo list of activated countries, into language of user
      *
      *  @param	string	$selected       Id or Code or Label of preselected country
@@ -2648,7 +2714,7 @@ class Form
      *      @param  int		$maxlength      Max length of label
      * 		@return	void
      */
-    function select_types_paiements($selected='',$htmlname='paiementtype',$filtertype='',$format=0, $empty=0, $noadmininfo=0,$maxlength=0)
+    function select_types_paiements($selected='', $htmlname='paiementtype', $filtertype='', $format=0, $empty=0, $noadmininfo=0, $maxlength=0)
     {
         global $langs,$user;
 

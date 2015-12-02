@@ -698,6 +698,7 @@ Deductible=Deductible
 from=from
 toward=toward
 Access=Access
+SelectAction=Select action
 HelpCopyToClipboard=Use Ctrl+C to copy to clipboard
 SaveUploadedFileWithMask=Save file on server with name "<strong>%s</strong>" (otherwise "%s")
 OriginFileName=Original filename

@@ -648,7 +648,7 @@ class FormMail extends Form
         			}
         			if ($this->param["models"]=='facture_send')
         			{
-        				$url=getPaypalPaymentUrl(0,'invoice',$this->substit['__FACREF__']);
+        				$url=getPaypalPaymentUrl(0,'invoice',$this->substit['__REF__']);
         				$this->substit['__PERSONALIZED__']=str_replace('\n',"\n",$langs->transnoentitiesnoconv("PredefinedMailContentLink",$url));
         			}
         		}
@@ -692,7 +692,7 @@ class FormMail extends Form
 						else $this->withfckeditor=0;
         			}
 
-        			$doleditor=new DolEditor('message',$defaultmessage,'',280,$this->ckeditortoolbar,'In',true,true,$this->withfckeditor,8,72);
+        			$doleditor=new DolEditor('message',$defaultmessage,'',280,$this->ckeditortoolbar,'In',true,true,$this->withfckeditor,8,'95%');
         			$out.= $doleditor->Create(1);
         		}
         		$out.= "</td></tr>\n";
