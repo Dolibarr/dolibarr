@@ -196,7 +196,7 @@ if (empty($reshook))
 
 	if ($action == 'reopen')	// no test on permission here, permission to use will depends on status
 	{
-	    if (in_array($object->statut, array(1, 2, 3, 5, 6, 7, 9)))
+	    if (in_array($object->statut, array(1, 2, 3, 5, 6, 7, 9)) || ($object->statut == 4 && $object->billed))
 	    {
 	        if ($object->statut == 1) $newstatus=0;	// Validated->Draft
 	        else if ($object->statut == 2) $newstatus=0;	// Approved->Draft
@@ -205,13 +205,20 @@ if (empty($reshook))
 	        else if ($object->statut == 6) $newstatus=2;	// Canceled->Approved
 	        else if ($object->statut == 7) $newstatus=3;	// Canceled->Process running
 	        else if ($object->statut == 9) $newstatus=1;	// Refused->Validated
-
+            else $newstatus = 2;
+            
 	        $db->begin();
 
 	        $result = $object->setStatus($user, $newstatus);
 	        if ($result > 0)
 	        {
-	        	if ($newstatus == 0)
+		        $sql = 'UPDATE '.MAIN_DB_PREFIX.'commande_fournisseur';
+	        	$sql.= ' SET billed = 0';
+	        	$sql.= ' WHERE rowid = '.$object->id;
+
+	        	$resql=$db->query($sql);
+	            
+	            if ($newstatus == 0)
 	        	{
 		        	$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande_fournisseur';
 	        		$sql.= ' SET fk_user_approve = null, fk_user_approve2 = null, date_approve = null, date_approve2 = null';
@@ -719,6 +726,14 @@ if (empty($reshook))
 	    if ($result > 0)
 	    {
 	        if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+	            $outputlangs = $langs;
+	            $newlang = '';
+	            if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
+	            if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+	            if (! empty($newlang)) {
+	                $outputlangs = new Translate("", $conf);
+	                $outputlangs->setDefaultLang($newlang);
+	            }
 		        $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	        }
             $action = '';
@@ -780,6 +795,7 @@ if (empty($reshook))
 	        $result = $object->Livraison($user, $date_liv, GETPOST("type"), GETPOST("comment"));
 	        if ($result > 0)
 	        {
+	            $langs->load("deliveries");
                 setEventMessages($langs->trans("DeliveryStateSaved"), null);
                 $action = '';
             }
@@ -2725,7 +2741,7 @@ elseif (! empty($object->id))
 						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("Disapprove").'</a>';
 					}
 				}
-				if (in_array($object->statut, array(3, 5, 6, 7, 9)))
+				if (in_array($object->statut, array(3, 5, 6, 7, 9)) || ($object->statut == 4 && $object->billed))
 				{
 					if ($user->rights->fournisseur->commande->commander)
 					{

@@ -29,7 +29,7 @@ $langs = $GLOBALS['langs'];
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 
 echo '<br>';
-print load_fiche_titre($langs->trans('RelatedSupplierProposal'));
+print load_fiche_titre($langs->trans('RelatedSupplierProposal'), '', '');
 ?>
 <table class="noborder allwidth">
 <tr class="liste_titre">

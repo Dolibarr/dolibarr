@@ -41,6 +41,7 @@ require_once DOL_DOCUMENT_ROOT .'/product/class/product.class.php';
 $langs->load('orders');
 $langs->load('deliveries');
 $langs->load('companies');
+$langs->load('compta');
 
 $orderyear=GETPOST("orderyear","int");
 $ordermonth=GETPOST("ordermonth","int");
@@ -56,6 +57,7 @@ $search_user=GETPOST('search_user','int');
 $search_sale=GETPOST('search_sale','int');
 $search_total_ht=GETPOST('search_total_ht','alpha');
 $optioncss = GETPOST('optioncss','alpha');
+$billed = GETPOST('billed','int');
 
 // Security check
 $id = (GETPOST('orderid')?GETPOST('orderid'):GETPOST('id','int'));
@@ -90,6 +92,8 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
     $ordermonth='';
     $deliverymonth='';
     $deliveryyear='';
+    $viewstatut='';
+    $billed='';
 }
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
@@ -132,7 +136,7 @@ llxHeader('',$langs->trans("Orders"),$help_url);
 $sql = 'SELECT';
 if ($sall || $search_product_category > 0) $sql = 'SELECT DISTINCT';
 $sql.= ' s.nom as name, s.rowid as socid, s.client, s.code_client, c.rowid, c.ref, c.total_ht, c.tva as total_tva, c.total_ttc, c.ref_client,';
-$sql.= ' c.date_valid, c.date_commande, c.note_private, c.date_livraison as date_delivery, c.fk_statut, c.facture as facturee';
+$sql.= ' c.date_valid, c.date_commande, c.note_private, c.date_livraison as date_delivery, c.fk_statut, c.facture as billed';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 $sql.= ', '.MAIN_DB_PREFIX.'commande as c';
 if ($sall || $search_product_category > 0) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'commandedet as pd ON c.rowid=pd.fk_commande';
@@ -151,6 +155,7 @@ if ($socid > 0) $sql.= ' AND s.rowid = '.$socid;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($search_ref) $sql .= natural_search('c.ref', $search_ref);
 if ($sall) $sql .= natural_search(array_keys($fieldstosearchall), $sall);
+if ($billed != '' && $billed >= 0) $sql.=' AND c.facture = '.$billed;
 if ($viewstatut <> '')
 {
 	if ($viewstatut < 4 && $viewstatut > -3)
@@ -251,7 +256,9 @@ if ($resql)
 	if ($viewstatut == -3)
 	$title.=' - '.$langs->trans('StatusOrderValidated').', '.(empty($conf->expedition->enabled)?'':$langs->trans("StatusOrderSent").', ').$langs->trans('StatusOrderToBill');
 
-	$param='&socid='.$socid.'&viewstatut='.$viewstatut;
+	$param='';
+	if ($socid > 0)             $param.='&socid='.$socid;
+	if ($viewstatut != '')      $param.='&viewstatut='.$viewstatut;
 	if ($ordermonth)      		$param.='&ordermonth='.$ordermonth;
 	if ($orderyear)       		$param.='&orderyear='.$orderyear;
 	if ($deliverymonth)   		$param.='&deliverymonth='.$deliverymonth;
@@ -262,14 +269,13 @@ if ($resql)
 	if ($search_user > 0) 		$param.='&search_user='.$search_user;
 	if ($search_sale > 0) 		$param.='&search_sale='.$search_sale;
 	if ($search_total_ht != '') $param.='&search_total_ht='.$search_total_ht;
-	if ($optioncss != '') $param.='&optioncss='.$optioncss;
+	if ($optioncss != '')       $param.='&optioncss='.$optioncss;
 
 	$num = $db->num_rows($resql);
 	print_barre_liste($title, $page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords,'title_commercial.png');
-	$i = 0;
-
+	
 	// Lignes des champs de filtre
-	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="list">';
@@ -335,7 +341,8 @@ if ($resql)
     $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
 	print_liste_field_titre($langs->trans('Status'),$_SERVER["PHP_SELF"],'c.fk_statut','',$param,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
+	print_liste_field_titre($langs->trans('Billed'),$_SERVER["PHP_SELF"],'c.facture','',$param,'align="center"',$sortfield,$sortorder,'');
+	print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'',$param,'',$sortfield,$sortorder,'maxwidthsearch ');
 	print '</tr>';
 
 	print '<tr class="liste_titre">';
@@ -365,8 +372,11 @@ if ($resql)
 	print '<input class="flat" type="text" size="6" name="search_total_ht" value="'.$search_total_ht.'">';
 	print '</td>';
 	print '<td align="right">';
-	$liststatus=array('0'=>$langs->trans("StatusOrderDraftShort"), '1'=>$langs->trans("StatusOrderValidated"), '2'=>$langs->trans("StatusOrderSentShort"), '3'=>$langs->trans("StatusOrderToBill"), '4'=>$langs->trans("StatusOrderProcessed"), '-1'=>$langs->trans("StatusOrderCanceledShort"));
+	$liststatus=array('0'=>$langs->trans("StatusOrderDraftShort"), '1'=>$langs->trans("StatusOrderValidated"), '2'=>$langs->trans("StatusOrderSentShort"), '3'=>$langs->trans("StatusOrderDelivered"), '-1'=>$langs->trans("StatusOrderCanceledShort"));
 	print $form->selectarray('viewstatut', $liststatus, $viewstatut, -4);
+	print '</td>';
+	print '<td align="center">';
+	print $form->selectyesno('billed', $billed, 1, 0, 1);
 	print '</td>';
 	print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
@@ -376,7 +386,8 @@ if ($resql)
 	$total=0;
 	$subtotal=0;
     $productstat_cache=array();
-
+    $i=0;
+    
     $generic_commande = new Commande($db);
     $generic_product = new Product($db);
     while ($i < min($num,$limit))
@@ -413,8 +424,8 @@ if ($resql)
                 $text_info='';
                 $nbprod=0;
                 
-                $num = count($generic_commande->lines); // Loop on each line of order
-                for ($lig=0; $lig < $num; $lig++) 
+                $numlines = count($generic_commande->lines); // Loop on each line of order
+                for ($lig=0; $lig < $numlines; $lig++) 
                 {
                     if ($generic_commande->lines[$lig]->product_type == 0 && $generic_commande->lines[$lig]->fk_product > 0)  // If line is a product and not a service
                     {
@@ -497,6 +508,7 @@ if ($resql)
                     $text_info = $langs->trans('NonShippable').'<br>'.$text_info;
                 }
             }
+            
             print '<td>';
             if ($nbprod)
             {
@@ -547,7 +559,7 @@ if ($resql)
 		{
 			if ($user->rights->facture->creer)
 			{
-				if (($objp->fk_statut > 0 && $objp->fk_statut < 3) || ($objp->fk_statut == 3 && $objp->facturee == 0))
+				if (($objp->fk_statut > 0 && $objp->fk_statut < 3) || ($objp->fk_statut == 3 && $objp->billed == 0))
 				{
 					print '&nbsp;<a href="'.DOL_URL_ROOT.'/commande/orderstoinvoice.php?socid='.$companystatic->id.'">';
 					print img_picto($langs->trans("CreateInvoiceForThisCustomer").' : '.$companystatic->name, 'object_bill', 'hideonsmartphone').'</a>';
@@ -570,8 +582,11 @@ if ($resql)
 		print '<td align="right" class="nowrap">'.price($objp->total_ht).'</td>';
 
 		// Statut
-		print '<td align="right" class="nowrap">'.$generic_commande->LibStatut($objp->fk_statut,$objp->facturee,5).'</td>';
+		print '<td align="right" class="nowrap">'.$generic_commande->LibStatut($objp->fk_statut, $objp->billed, 5, 1).'</td>';
 
+		// Billed
+		print '<td align="center">'.yn($objp->billed).'</td>';
+		
 		print '<td></td>';
 
 		print '</tr>';
@@ -588,6 +603,7 @@ if ($resql)
 		print '<td class="nowrap" colspan="5">'.$langs->trans('TotalHT').'</td>';
 		// Total HT
 		print '<td align="right" class="nowrap">'.price($total).'</td>';
+		print '<td></td>';
 		print '<td></td>';
 		print '<td></td>';
 		print '</tr>';

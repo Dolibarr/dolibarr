@@ -4302,7 +4302,7 @@ class Form
                 $retstring.='<option value="'.$hour.'"'.(($hour == $shour)?' selected':'').'>'.$hour.(empty($conf->dol_optimize_smallscreen)?'':'H').'</option>';
             }
             $retstring.='</select>';
-            if (empty($conf->dol_optimize_smallscreen)) $retstring.=":";
+            if ($m && empty($conf->dol_optimize_smallscreen)) $retstring.=":";
         }
 
         if ($m)
@@ -5165,7 +5165,7 @@ class Form
      *	@param	string		$value			Pre-selected value
      *	@param	int			$option			0 return yes/no, 1 return 1/0
      *	@param	bool		$disabled		true or false
-     *  @param	useempty	$useempty		1=Add empty line
+     *  @param	int      	$useempty		1=Add empty line
      *	@return	mixed						See option
      */
     function selectyesno($htmlname,$value='',$option=0,$disabled=false,$useempty='')

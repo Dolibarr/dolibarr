@@ -26,6 +26,10 @@
 ALTER TABLE llx_don ADD COLUMN fk_country integer NOT NULL DEFAULT 0 after country;
 
 
+UPDATE llx_commande_fourn set billed=1 where statut = 8;
+UPDATE llx_commande_fourn set statut=5 where statut = 8 and billed=1;
+
+
 ALTER TABLE llx_askpricesupplier RENAME TO llx_supplier_proposal;
 ALTER TABLE llx_askpricesupplierdet RENAME TO llx_supplier_proposaldet;
 ALTER TABLE llx_askpricesupplier_extrafields RENAME TO llx_supplier_proposal_extrafields;

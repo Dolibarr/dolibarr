@@ -1565,13 +1565,14 @@ else
 					    if ($objp->fk_product) print '<select id="fournprice" name="fournprice"></select>';
 						print '<input id="buying_price" type="text" size="5" name="buying_price" value="'.price($objp->pa_ht,0,'',0).'"></td>';
 					}
-                    print '<td align="center" rowspan="2" valign="middle"><input type="submit" class="button" name="save" value="'.$langs->trans("Modify").'">';
+                    print '<td align="center">';
+                    print '<input type="submit" class="button" name="save" value="'.$langs->trans("Modify").'">';
                     print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
                     print '</td>';
 
-                    $colspan=5;
+                    $colspan=6;
                     if (! empty($conf->margin->enabled) && ! empty($conf->global->MARGIN_SHOW_ON_CONTRACT)) $colspan++;
-	              if($conf->global->PRODUCT_USE_UNITS) $colspan++;
+	                if($conf->global->PRODUCT_USE_UNITS) $colspan++;
 
                     // Ligne dates prevues
                     print "<tr ".$bc[$var].">";
@@ -1746,22 +1747,23 @@ else
                     }
                 }
 
-                print '<tr '.$bc[$var].'><td>'.$langs->trans("DateServiceActivate").'</td><td>';
+                print '<tr '.$bc[$var].'>';
+                print '<td class="nohover">'.$langs->trans("DateServiceActivate").'</td><td>';
                 print $form->select_date($dateactstart,'',$usehm,$usehm,'',"active",1,0,1);
                 print '</td>';
 
-                print '<td>'.$langs->trans("DateEndPlanned").'</td><td>';
+                print '<td class="nohover">'.$langs->trans("DateEndPlanned").'</td><td>';
                 print $form->select_date($dateactend,"end",$usehm,$usehm,'',"active",1,0,1);
                 print '</td>';
 
-                print '<td align="center" rowspan="2" valign="middle">';
+                print '<td align="center nohover" rowspan="2" valign="middle">';
                 print '<input type="submit" class="button" name="activate" value="'.$langs->trans("Activate").'"><br>';
                 print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
                 print '</td>';
 
                 print '</tr>';
 
-                print '<tr '.$bc[$var].'><td>'.$langs->trans("Comment").'</td><td colspan="'.($conf->margin->enabled?4:3).'"><input size="80" type="text" name="comment" value="'.$_POST["comment"].'"></td></tr>';
+                print '<tr '.$bc[$var].'><td class="nohover">'.$langs->trans("Comment").'</td><td class="nohover" colspan="'.($conf->margin->enabled?4:3).'"><input size="80" type="text" name="comment" value="'.$_POST["comment"].'"></td></tr>';
 
                 print '</table>';
 
@@ -1798,7 +1800,7 @@ else
                 $now=dol_now();
                 if ($dateactend > $now) $dateactend=$now;
 
-                print '<tr '.$bc[$var].'><td colspan="2">';
+                print '<tr '.$bc[$var].'><td colspan="2" class="nohover">';
                 if ($objp->statut >= 4)
                 {
                     if ($objp->statut == 4)
@@ -1809,11 +1811,12 @@ else
                 }
                 print '</td>';
 
-                print '<td align="right" rowspan="2"><input type="submit" class="button" name="close" value="'.$langs->trans("Close").'"><br>';
+                print '<td align="right" rowspan="2" class="nohover">';
+                print '<input type="submit" class="button" name="close" value="'.$langs->trans("Close").'"><br>';
                 print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
                 print '</td></tr>';
 
-                print '<tr '.$bc[$var].'><td>'.$langs->trans("Comment").'</td><td><input size="70" type="text" class="flat" name="comment" value="'.GETPOST('comment').'"></td></tr>';
+                print '<tr '.$bc[$var].'><td class="nohover">'.$langs->trans("Comment").'</td><td class="nohover"><input size="70" type="text" class="flat" name="comment" value="'.GETPOST('comment').'"></td></tr>';
                 print '</table>';
 
                 print '</form>';

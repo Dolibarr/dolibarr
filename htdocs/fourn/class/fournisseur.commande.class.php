@@ -63,6 +63,9 @@ class CommandeFournisseur extends CommonOrder
     //                                                              -> 7=Canceled/Never received -> (reopen) 3=Process runing
     //									              -> 6=Canceled -> (reopen) 2=Approved
     //  		                                      -> 9=Refused  -> (reopen) 1=Validated
+    //  Note: billed or not is on another field "billed"
+    var $statuts;           // List of status
+    
     var $socid;
     var $fourn_id;
     var $date;
@@ -138,7 +141,7 @@ class CommandeFournisseur extends CommonOrder
         $this->statuts[5] = 'StatusOrderReceivedAll';
         $this->statuts[6] = 'StatusOrderCanceled';	// Approved->Canceled
         $this->statuts[7] = 'StatusOrderCanceled';	// Process running->canceled
-        $this->statuts[8] = 'StatusOrderBilled';	// Everything is finish, order received totally and bill received
+        //$this->statuts[8] = 'StatusOrderBilled';	// Everything is finish, order received totally and bill received
         $this->statuts[9] = 'StatusOrderRefused';
     }
 
@@ -510,8 +513,10 @@ class CommandeFournisseur extends CommonOrder
         global $langs;
         $langs->load('orders');
 
-		if($statut==5 && $this->billed == 1) $statut = 8;
-
+        $billedtext='';
+		//if ($statut==5 && $this->billed == 1) $statut = 8;
+        if ($this->billed == 1) $billedtext=$langs->trans("Billed");
+        
         // List of language codes for status
         $statutshort[0] = 'StatusOrderDraftShort';
         $statutshort[1] = 'StatusOrderValidatedShort';
@@ -521,7 +526,7 @@ class CommandeFournisseur extends CommonOrder
         $statutshort[5] = 'StatusOrderReceivedAllShort';
         $statutshort[6] = 'StatusOrderCanceledShort';
         $statutshort[7] = 'StatusOrderCanceledShort';
-        $statutshort[8] = 'StatusOrderBilledShort';
+        //$statutshort[8] = 'StatusOrderBilledShort';
         $statutshort[9] = 'StatusOrderRefusedShort';
 
         if ($mode == 0)
@@ -550,15 +555,15 @@ class CommandeFournisseur extends CommonOrder
         }
         if ($mode == 4)
         {
-            if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]),'statut0').' '.$langs->trans($this->statuts[$statut]);
-            if ($statut==1) return img_picto($langs->trans($this->statuts[$statut]),'statut1').' '.$langs->trans($this->statuts[$statut]);
-            if ($statut==2) return img_picto($langs->trans($this->statuts[$statut]),'statut3').' '.$langs->trans($this->statuts[$statut]);
-            if ($statut==3) return img_picto($langs->trans($this->statuts[$statut]),'statut3').' '.$langs->trans($this->statuts[$statut]);
-            if ($statut==4) return img_picto($langs->trans($this->statuts[$statut]),'statut3').' '.$langs->trans($this->statuts[$statut]);
-            if ($statut==5) return img_picto($langs->trans($this->statuts[$statut]),'statut6').' '.$langs->trans($this->statuts[$statut]);
-            if ($statut==6 || $statut==7) return img_picto($langs->trans($this->statuts[$statut]),'statut5').' '.$langs->trans($this->statuts[$statut]);
-			if ($statut==8) return img_picto($langs->trans($this->statuts[$statut]),'statut6').' '.$langs->trans($this->statuts[$statut]);
-            if ($statut==9) return img_picto($langs->trans($this->statuts[$statut]),'statut5').' '.$langs->trans($this->statuts[$statut]);
+            if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]),'statut0').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
+            if ($statut==1) return img_picto($langs->trans($this->statuts[$statut]),'statut1').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
+            if ($statut==2) return img_picto($langs->trans($this->statuts[$statut]),'statut3').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
+            if ($statut==3) return img_picto($langs->trans($this->statuts[$statut]),'statut3').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
+            if ($statut==4) return img_picto($langs->trans($this->statuts[$statut]),'statut3').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
+            if ($statut==5) return img_picto($langs->trans($this->statuts[$statut]),'statut6').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
+            if ($statut==6 || $statut==7) return img_picto($langs->trans($this->statuts[$statut]),'statut5').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
+			if ($statut==8) return img_picto($langs->trans($this->statuts[$statut]),'statut6').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
+            if ($statut==9) return img_picto($langs->trans($this->statuts[$statut]),'statut5').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
         }
         if ($mode == 5)
         {
