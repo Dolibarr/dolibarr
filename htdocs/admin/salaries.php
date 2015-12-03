@@ -113,11 +113,11 @@ print '</tr>';
 
 print "</table>\n";
 
-print '</form>';
-
 dol_fiche_end();
 
 print '<div style="text-align:center"><input type="submit" class="button" value="'.$langs->trans('Modify').'" name="button"></div>';
+
+print '</form>';
 
 llxFooter();
 $db->close();
