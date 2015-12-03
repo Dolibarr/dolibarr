@@ -485,9 +485,9 @@ class Form
     /**
      * Generate select HTML to choose massaction
      * 
-     * @parama	string	$selected		Selected value
+     * @param	string	$selected		Selected value
      * @param	int		$arrayofaction	array('code'=>'label', ...)
-     * @param	string					Select list
+     * @return	string					Select list
      */
     function selectMassAction($selected, $arrayofaction)
     {
