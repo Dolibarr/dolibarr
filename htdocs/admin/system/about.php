@@ -59,38 +59,38 @@ $result = getURLContent('http://sourceforge.net/projects/dolibarr/rss');
 $sfurl = simplexml_load_string($result['content']);
 if ($sfurl)
 {
-    $title=$sfurl->channel[0]->item[0]->title;
+    $i=0;
+    $version='0.0';
+    while (! empty($sfurl->channel[0]->item[$i]->title) && $i < 10000)
+    {
+        $title=$sfurl->channel[0]->item[$i]->title;
+        if (preg_match('/([0-9]+\.([0-9\.]+))/', $title, $reg))
+        {
+            $newversion=$reg[1];
+            $newversionarray=explode('.',$newversion);
+            $versionarray=explode('.',$version);
+            //var_dump($newversionarray);var_dump($versionarray);
+            if (versioncompare($newversionarray, $versionarray) > 0) $version=$newversion;
+        }
+        $i++;
+    }
 
-	function word_limiter($text, $limit = 30, $chars = '0123456789.')
-	{
-	    if (strlen( $text ) > $limit)
-	    {
-	        $words = str_word_count($text, 2, $chars);
-	        $words = array_reverse($words, TRUE);
-	        foreach($words as $length => $word) {
-	            if ($length + strlen( $word ) >= $limit)
-	            {
-	                array_shift($words);
-	            } else {
-	                break;
-	            }
-	        }
-	        $words = array_reverse($words);
-	        $text = implode(" ", $words) . '';
-	    }
-	    return $text;
-	}
-
-	$str = word_limiter($title);
-	$str = preg_replace('/[^0-9\.]/', '', $str);
-	print ' ('.$langs->trans("LastStableVersion").': <b>'.$str.'</b>';
-	if (DOL_VERSION == $str)
-	{
-	    $youuselaststable=1;
-        print $langs->trans("YouUseLastStableVersion");  
-	}
-	print ')';
+    // Show version
+    if ($version != '0.0') 
+    {
+        print ' ('.$langs->trans("LastStableVersion").': <b>'.$version.'</b>';
+    	if (DOL_VERSION == $version)
+    	{
+    	    $youuselaststable=1;
+            print $langs->trans("YouUseLastStableVersion");  
+    	}
+    	print ')';
+    }
 	print ' / <a href="http://www.gnu.org/copyleft/gpl.html">GNU-GPL v3+</a></li>';
+}
+else
+{
+    print $langs->trans("LastStableVersion").' : <b>' .$langs->trans("UpdateServerOffline").'</b><br>';
 }
 
 

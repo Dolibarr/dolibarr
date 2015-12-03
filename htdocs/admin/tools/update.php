@@ -188,7 +188,9 @@ if ($sfurl)
         }
         $i++;
     }
-	print $langs->trans("LastStableVersion").' : <b>'. ($version?$version:$langs->trans("Unknown")) .'</b><br>';
+    
+    // Show version
+	print $langs->trans("LastStableVersion").' : <b>'. (($version != '0.0')?$version:$langs->trans("Unknown")) .'</b><br>';
 }
 else
 {
