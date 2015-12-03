@@ -31,7 +31,6 @@ create table llx_product
 
   datec						datetime,
   tms						timestamp,
-  virtual					tinyint	  DEFAULT 0 NOT NULL,	-- Not used. Used by external modules. Value 0 for physical product, 1 for virtual product
   fk_parent					integer	  DEFAULT 0,			-- Not used. Used by external modules. Virtual product id
 
   label						varchar(255) NOT NULL,
@@ -76,7 +75,7 @@ create table llx_product
   fifo						double(24,8),							-- To store valuation of stock calculated using fifo method, for this product
   lifo						double(24,8),							-- To store valuation of stock calculated using lifo method, for this product
   canvas					varchar(32)  DEFAULT NULL,
-  finished					tinyint      DEFAULT NULL,
+  finished					tinyint      DEFAULT NULL,		-- 1=manufactured product, 0=matiere premiere
   hidden					tinyint      DEFAULT 0,			-- Not used. Deprecated.
   import_key				varchar(14),					-- Import key
   fk_price_expression integer,                     -- Link to the rule for dynamic price calculation
