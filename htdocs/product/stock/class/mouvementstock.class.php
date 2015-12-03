@@ -451,7 +451,7 @@ class MouvementStock extends CommonObject
 	 * @param	int			$qty	Quantity of product with batch number
 	 * @return 	int   				<0 if KO, else return productbatch id
 	 */
-	function _create_batch($dluo, $qty ) {
+	function _create_batch($dluo, $qty) {
 		$pdluo=New Productbatch($this->db);
 
 		//Try to find an existing record with batch same batch number or id
@@ -497,7 +497,15 @@ class MouvementStock extends CommonObject
 
 	}
 
-	function get_origin($fk_origin, $origintype) {
+	/**
+	 * Return Url link of origin object
+	 * 
+	 * @param  int     $fk_origin      Id origin
+	 * @param  int     $origintype     Type origin
+	 * @return string
+	 */
+	function get_origin($fk_origin, $origintype) 
+	{
 		switch ($origintype) {
 			case 'commande':
 				require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
@@ -525,7 +533,10 @@ class MouvementStock extends CommonObject
 				break;
 		}
 
-		$origin->fetch($fk_origin);
-		return $origin->getNomUrl(1);
+		if ($origin->fetch($fk_origin) > 0) {
+			return $origin->getNomUrl(1);
+		}
+
+		return '';
 	}
 }
