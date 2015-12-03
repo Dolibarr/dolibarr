@@ -46,6 +46,7 @@ $rowid=GETPOST('rowid','int');
 $action=GETPOST('action', 'alpha');
 $cancel=GETPOST('cancel', 'alpha');
 $socid=GETPOST('socid', 'int');
+$cost_price=GETPOST('cost_price', 'int');
 $backtopage=GETPOST('backtopage','alpha');
 $error=0;
 
@@ -91,17 +92,37 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
+	if ($action == 'setcost_price')
+	{
+		if ($id)
+		{
+			$result=$object->fetch($id);
+			$result=$object->setValueFrom('cost_price', price2num($cost_price));
+			if ($result > 0)
+			{
+				$object->cost_price = price2num($cost_price);
+				setEventMessage($langs->trans("RecordSaved"));
+			}
+			else
+			{
+				$error++;
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
+		}
+		$action='';
+	}
+	
 	if ($action == 'remove_pf')
 	{
-		if ($rowid)
+		if ($rowid)	// id of product supplier price to remove
 		{
 			$action = '';
-			$result=$product->remove_product_fournisseur_price($rowid);
+			$result=$object->remove_product_fournisseur_price($rowid);
 			if($result > 0){
 				setEventMessage($langs->trans("PriceRemoved"));
 			}else{
 				$error++;
-				setEventMessages($product->error, $product->errors, 'errors');
+				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
 	}
@@ -282,6 +303,17 @@ if ($id > 0 || $ref)
 			}
             print '</td></tr>';
 
+			// Cost price. Can be used for margin module for option "calculate margin on explicit cost price
+            // Accountancy sell code
+            print '<tr><td>';
+			$textdesc =$langs->trans("CostPriceDescription");
+			$textdesc.="<br>".$langs->trans("CostPriceUsage");
+			$text=$form->textwithpicto($langs->trans("CostPrice"), $textdesc, 1, 'help', '');
+            print $form->editfieldkey($text,'cost_price',$object->cost_price,$object,$user->rights->produit->creer||$user->rights->service->creer,'amount:6');
+            print '</td><td colspan="2">';
+            print $form->editfieldval($text,'cost_price',$object->cost_price,$object,$user->rights->produit->creer||$user->rights->service->creer,'amount:6');
+            print '</td></tr>';
+            
 			print '</table>';
 
             print '</div>';
@@ -463,7 +495,7 @@ if ($id > 0 || $ref)
 				print '<td><input class="flat" name="delivery_time_days" size="4" value="'.($rowid ? $object->delivery_time_days : '').'">&nbsp;'.$langs->trans('days').'</td>';
 				print '</tr>';
 
-				// Charges ????
+				// Option to define a transport cost on supplier price
 				if ($conf->global->PRODUCT_CHARGES)
 				{
 					if (! empty($conf->margin->enabled))

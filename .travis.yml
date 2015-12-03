@@ -29,8 +29,7 @@ matrix:
     - php: 7.0
 
 env:
-# - DB=mysql PHPCS_VERSION=">=1.5.1,<2.0"
- - DB=mysql PHPCS_VERSION=">=2.0"
+ - DB=mysql
 # - DB=postgres  
 
 before_script: 
@@ -48,10 +47,9 @@ before_script:
  - cp composer.json composer.json.old
  - cp composer.json.phpcs composer.json
  - composer self-update
- - composer require squizlabs/php_codesniffer:${PHPCS_VERSION}
+ - composer require squizlabs/php_codesniffer:"^2.0.0"
  - composer install
  - phpenv rehash
- - ln -s `pwd` htdocs/includes/squizlabs/php_codesniffer/CodeSniffer/Standards/PHPCompatibility
  - htdocs/includes/squizlabs/php_codesniffer/scripts/phpcs --version
 # - which phpcs
 # - phpcs --version

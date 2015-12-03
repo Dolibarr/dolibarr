@@ -74,6 +74,7 @@ PaymentsAlreadyDone=Payments already done
 PaymentsBackAlreadyDone=Payments back already done
 PaymentRule=Payment rule
 PaymentMode=Payment type
+PaymentModeShort=Payment type
 PaymentTerm=Payment term
 PaymentConditions=Payment terms
 PaymentConditionsShort=Payment terms

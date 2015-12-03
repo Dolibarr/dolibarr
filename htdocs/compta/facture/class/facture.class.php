@@ -3687,11 +3687,9 @@ class Facture extends CommonInvoice
 
 		$now = dol_now();
 
-		//Paid invoices have status STATUS_CLOSED
-		if (!$this->statut != Facture::STATUS_VALIDATED) {
-			return false;
-		}
-
+		// Paid invoices have status STATUS_CLOSED
+		if ($this->statut != Facture::STATUS_VALIDATED) return false;
+		
 		return $this->date_lim_reglement < ($now - $conf->facture->client->warning_delay);
 	}
 }
