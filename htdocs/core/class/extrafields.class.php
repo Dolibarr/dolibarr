@@ -765,7 +765,7 @@ class ExtraFields
 				}
 				else 
 				{
-					$sqlwhere.= ' WHERE 1';
+					$sqlwhere.= ' WHERE 1=1';
 				}
 				if (in_array($InfoFieldList[0],array('tablewithentity'))) $sqlwhere.= ' AND entity = '.$conf->entity;	// Some tables may have field, some other not. For the moment we disable it.
 				$sql.=$sqlwhere;
