@@ -419,7 +419,7 @@ if (! empty($holiday->holiday))
 if($holiday_payes == '2')
 {
     print '<tr>';
-    print '<td colspan="9" '.$bc[false].'">'.$langs->trans('None').'</td>';
+    print '<td colspan="10" '.$bc[false].'">'.$langs->trans('None').'</td>';
     print '</tr>';
 }
 
