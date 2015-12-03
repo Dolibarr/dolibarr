@@ -467,7 +467,7 @@ if (empty($reshook))
 	// Add line
 	else if ($action == "addline" && $user->rights->ficheinter->creer)
 	{
-		if (!GETPOST('np_desc') && $conf->global->FICHINTER_EMPTY_LINE_DESC!=1 )
+		if (!GETPOST('np_desc') && empty($conf->global->FICHINTER_EMPTY_LINE_DESC) )
  		{
 			$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Description")).'</div>';
 			$error++;
@@ -1570,7 +1570,7 @@ else if ($id > 0 || ! empty($ref))
 				print '<tr '.$bcnd[$var] . ">\n";
                 print '<td>';
                 // editeur wysiwyg
-                if ($conf->global->FICHINTER_EMPTY_LINE_DESC != 1) {
+                if (empty($conf->global->FICHINTER_EMPTY_LINE_DESC)) {
                     require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
                     $doleditor = new DolEditor('np_desc', GETPOST('np_desc', 'alpha'), '', 100, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_DETAILS, ROWS_2, 70);
                     $doleditor->Create();
