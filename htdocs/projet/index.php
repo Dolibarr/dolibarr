@@ -132,7 +132,7 @@ include DOL_DOCUMENT_ROOT.'/projet/graph_opportunities.inc.php';
 
 
 // List of draft projects
-print_projecttasks_array($db,$form,$socid,$projectsListId,0,0,$listofoppstatus,array('declaredprogress'));
+print_projecttasks_array($db, $form, $socid, $projectsListId, 0, 0, $listofoppstatus, array('projectlabel', 'plannedworkload', 'declaredprogress'));
 
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';

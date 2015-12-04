@@ -185,6 +185,10 @@ $colortexttitle=join(',',colorStringToArray($colortexttitle));
 $colortext=join(',',colorStringToArray($colortext));
 $colortextlink=join(',',colorStringToArray($colortextlink));
 
+if (! empty($conf->dol_optimize_smallscreen)) $fontsize=11;
+
+$nbtopmenuentries=$menumanager->showmenu('topnb');
+
 print '/*'."\n";
 print 'colorbackbody='.$colorbackbody."\n";
 print 'colorbackvmenu1='.$colorbackvmenu1."\n";
@@ -205,11 +209,8 @@ print 'dol_no_mouse_hover='.$dol_no_mouse_hover."\n";
 print 'dol_use_jmobile='.$dol_use_jmobile."\n";
 print 'dol_screenwidth='.$_SESSION['dol_screenwidth']."\n";
 print 'dol_screenheight='.$_SESSION['dol_screenheight']."\n";
+print 'nbtopmenuentries='.$nbtopmenuentries."\n";
 print '*/'."\n";
-
-if (! empty($conf->dol_optimize_smallscreen)) $fontsize=11;
-
-$nbtopmenuentries=$menumanager->showmenu('topnb');
 
 ?>
 
@@ -1933,11 +1934,11 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	border-style: solid;
 
 	margin: 0px 0px 2px 0px;
-
+    /*
 	-moz-box-shadow: 2px 2px 4px #CCC;
 	-webkit-box-shadow: 2px 2px 4px #CCC;
 	box-shadow: 2px 2px 4px #CCC;
-
+    */
 	-moz-border-radius: 0.1em;
 	-webkit-border-radius: 0.1em;
 	border-radius: 0.1em;
@@ -1953,14 +1954,14 @@ table.noborder tr, div.noborder form {
 	border-left-width: 1px;
 	border-left-color: #BBBBBB;
 	border-left-style: solid;
-	height: 26px;
+	min-height: 26px;
 }
 
 table.liste th, table.noborder th {
 	padding: 5px 2px 5px 3px;			/* t r b l */
 }
 table.noborder th, table.noborder td, div.noborder form, div.noborder form div {
-	padding: 1px 2px 1px 3px;			/* t r b l */
+	padding: 4px 2px 4px 3px;			/* t r b l */
 }
 
 table.nobordernopadding {
@@ -2211,7 +2212,7 @@ table.dataTable td {
 }
 tr.even td, tr.pair td, tr.odd td, tr.impair td, form.odd div.tagtd, form.impair div.tagtd, form.pair div.tagtd, div.impair div.tagtd, div.pair div.tagtd, div.liste_titre div.tagtd {
     padding: 5px 2px 5px 3px;
-    border-bottom: 1px solid #f4f4f4;
+    border-bottom: 1px solid #eee;
 }
 tr.even td .nobordernopadding tr td, tr.pair td .nobordernopadding tr td, tr.impair td .nobordernopadding tr td, tr.odd td .nobordernopadding tr td {
     border-bottom: 0px !important;
@@ -2309,14 +2310,15 @@ input.liste_titre {
 }
 
 .noborder tr.liste_total, .noborder tr.liste_total td, tr.liste_total, form.liste_total {
-	background: #F0F0F0;
+	/* background: #F0F0F0; */
 }
 .noborder tr.liste_total td, tr.liste_total td, form.liste_total div {
-    border-top: 1px solid #f4f4f4;
+    /* border-top: 1px solid #f4f4f4; */
     color: #332266;
     font-weight: normal;
     white-space: nowrap;
     padding: 4px;
+    height: 20px;
 }
 
 
@@ -3734,7 +3736,23 @@ border-top-right-radius: 6px;
 
 
 
-/* CSS style used for small screen */
+::-webkit-scrollbar {
+    width: 10px;
+}
+::-webkit-scrollbar-button {
+    background: #aaa
+}
+::-webkit-scrollbar-track-piece {
+    background: #fff
+}
+::-webkit-scrollbar-thumb {
+    background: #ddd
+}​
+
+
+
+
+/***** CSS style used for small screen *****/
 
 .imgopensurveywizard
 {
@@ -3750,7 +3768,7 @@ border-top-right-radius: 6px;
 	}
 }
 
-@media only screen and (max-width:  <?php echo ($nbtopmenuentries * 85) + 200; ?>px)
+@media only screen and (max-width:  <?php echo round($nbtopmenuentries * $fontsize * 7, 0) + 200; ?>px)
 {
 	.mainmenuaspan {
     	display: none;
