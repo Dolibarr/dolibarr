@@ -94,7 +94,7 @@ function user_prepare_head($object)
     // $this->tabs = array('entity:-tabname);   												to remove a tab
     complete_head_from_modules($conf,$langs,$object,$head,$h,'user');
 
-	if (! empty($conf->hrm->enabled))
+	if (! empty($conf->hrm->enabled) && $user->rights->hrm->employee->read)
     {
 		// Bank
     	$head[$h][0] = DOL_URL_ROOT.'/user/bank.php?id='.$object->id;
