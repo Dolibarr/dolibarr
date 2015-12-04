@@ -318,7 +318,6 @@ if ($resql)
 	}
 
 	// If the user can view prospects other than his'
-    if ($mine) $search_user=$user->id;
 	$moreforfilter.='<div class="divsearchfield">';
 	$moreforfilter.=$langs->trans('ProjectsWithThisUserAsContact'). ': ';
 	$includeonly='';

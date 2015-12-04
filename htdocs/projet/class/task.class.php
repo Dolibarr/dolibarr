@@ -575,25 +575,60 @@ class Task extends CommonObject
         if ($mode == 0)
         {
             $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
+            if ($filteronprojuser > 0)
+            {
+                $sql.= ", ".MAIN_DB_PREFIX."element_contact as ec";
+                $sql.= ", ".MAIN_DB_PREFIX."c_type_contact as ctc";
+            }
             $sql.= ", ".MAIN_DB_PREFIX."projet_task as t";
+            if ($filterontaskuser > 0)
+            {
+                $sql.= ", ".MAIN_DB_PREFIX."element_contact as ec2";
+                $sql.= ", ".MAIN_DB_PREFIX."c_type_contact as ctc2";
+            }
             $sql.= " WHERE p.entity = ".$conf->entity;
             $sql.= " AND t.fk_projet = p.rowid";
         }
         elseif ($mode == 1)
         {
             $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
-            $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t on t.fk_projet = p.rowid";
+            if ($filteronprojuser > 0)
+            {
+                $sql.= ", ".MAIN_DB_PREFIX."element_contact as ec";
+                $sql.= ", ".MAIN_DB_PREFIX."c_type_contact as ctc";
+            }
+            if ($filterontaskuser > 0)
+            {
+                $sql.= ", ".MAIN_DB_PREFIX."projet_task as t";
+                $sql.= ", ".MAIN_DB_PREFIX."element_contact as ec2";
+                $sql.= ", ".MAIN_DB_PREFIX."c_type_contact as ctc2";
+            }
+            else 
+            {
+                $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t on t.fk_projet = p.rowid";
+            }
             $sql.= " WHERE p.entity = ".$conf->entity;
         }
         else return 'BadValueForParameterMode';
 
         if ($filteronprojuser > 0)
         {
-			// TODO
+            $sql.= " AND p.rowid = ec.element_id";
+            $sql.= " AND ctc.rowid = ec.fk_c_type_contact";
+            $sql.= " AND ctc.element = 'project'";
+            $sql.= " AND ec.fk_socpeople = ".$filteronprojuser;
+            $sql.= " AND ec.statut = 4";
+            $sql.= " AND ctc.source = 'internal'";
         }
         if ($filterontaskuser > 0)
         {
-			// TODO
+            $sql.= " AND t.fk_projet = p.rowid";
+            $sql.= " AND p.rowid = ec2.element_id";
+            $sql.= " AND ctc2.rowid = ec2.fk_c_type_contact";
+            $sql.= " AND ctc2.element = 'project_task'";
+            $sql.= " AND ec2.fk_socpeople = ".$filterontaskuser;
+            $sql.= " AND ec2.statut = 4";
+            $sql.= " AND ctc2.source = 'internal'";
         }
         if ($socid)	$sql.= " AND p.fk_soc = ".$socid;
         if ($projectid) $sql.= " AND p.rowid in (".$projectid.")";

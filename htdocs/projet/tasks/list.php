@@ -128,7 +128,7 @@ if ($search_all)        $morewherefilter.=natural_search(array_keys($fieldstosea
 if ($search_task_ref)   $morewherefilter.=natural_search('t.ref', $search_task_ref);
 if ($search_task_label) $morewherefilter.=natural_search('t.label', $search_task_label);
 
-$tasksarray=$taskstatic->getTasksArray(0, 0, $projectstatic->id, $socid, 0, $search_project, $search_status, $morewherefilter, $search_project_user, $search_task_user);
+$tasksarray=$taskstatic->getTasksArray(0, 0, $projectstatic->id, $socid, 0, $search_project, $search_status, $morewherefilter, $search_project_user, 0);    // We don't use filter on task user. Because sometimes a task is assigned but not the parent one and we want to show also parent, so filtering is done during output
 $tasksrole=$taskstatic->getUserRolesForProjectsOrTasks(0, ($tuser->id?$tuser:null), $projectstatic->id, 0, $search_status); // We load also tasks limited to a particular user
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -156,7 +156,6 @@ $moreforfilter.=$form->select_dolusers($search_project_user, 'search_project_use
 $moreforfilter.='</div>';
 
 // If the user can view users
-if ($mine) $search_task_user=$user->id;
 $moreforfilter.='<div class="divsearchfield">';
 $moreforfilter.=$langs->trans('TasksWithThisUserAsContact'). ': ';
 $includeonly='';
