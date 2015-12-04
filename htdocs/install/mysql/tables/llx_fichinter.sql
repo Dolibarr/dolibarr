@@ -34,6 +34,8 @@ create table llx_fichinter
   fk_user_modif     integer,                   -- user making last change
   fk_user_valid		integer,                   -- valideur de la fiche
   fk_statut			smallint  DEFAULT 0,
+  dateo				date,						-- date de début d'intervention
+  datee				date,						-- date de fin d'intervention
   duree				real,                       -- duree totale de l'intervention
   description		text,
   note_private		text,
