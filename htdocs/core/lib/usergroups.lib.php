@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2006-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2015	    Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -92,6 +93,15 @@ function user_prepare_head($object)
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname);   												to remove a tab
     complete_head_from_modules($conf,$langs,$object,$head,$h,'user');
+
+	if (! empty($conf->hrm->enabled) && $user->rights->hrm->employee->read)
+    {
+		// Bank
+    	$head[$h][0] = DOL_URL_ROOT.'/user/bank.php?id='.$object->id;
+    	$head[$h][1] = $langs->trans("Bank");
+    	$head[$h][2] = 'bank';
+    	$h++;
+	}
 
     //Info on users is visible only by internal user
     if (empty($user->societe_id))
