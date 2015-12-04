@@ -12,10 +12,16 @@
 
 		<!-- List of all tests -->
 
+	
+	<!-- Rules from Internal Standard -->
+	
 	<rule ref="Internal.NoCodeFound">
 		<severity>0</severity>
 	</rule>
 
+	
+	<!-- Rules from Generic Standard -->
+		
 	<rule ref="Generic.CodeAnalysis.EmptyStatement" />
 
 	<rule ref="Generic.CodeAnalysis.EmptyStatement.DetectedCATCH">
@@ -40,9 +46,6 @@
 	<rule ref="Generic.CodeAnalysis.EmptyStatement.NotAllowedWarning">
 		<severity>0</severity>
 	</rule>
-
-    <!-- The closing ?> tag MUST be omitted from files containing only PHP. -->
-    <!-- <rule ref="Zend.Files.ClosingTag"/> -->
 
     <!-- <rule ref="Generic.CodeAnalysis.ForLoopShouldBeWhileLoop" /> -->
 
@@ -161,8 +164,6 @@
         <severity>0</severity>
 	</rule>
     
-    <rule ref="Generic.VersionControl.SubversionProperties" />
-
 	<!-- Disallow usage of tab -->
 	<!--  <rule ref="Generic.WhiteSpace.DisallowTabIndent" /> -->
 
@@ -170,102 +171,46 @@
 	<!-- Disabled as this does not support tab -->
 	<!-- <rule ref="Generic.WhiteSpace.ScopeIndent" /> -->
 
-	<rule ref="PEAR.Classes.ClassDeclaration" />
+
+
+    <!-- Rules from PEAR Standard -->
+
+    <rule ref="PEAR.Classes.ClassDeclaration" />
 
     <!-- Check for duplicate class names -->
     <!-- <rule ref="Generic.Classes.DuplicateClassName" /> -->
 
     <rule ref="PEAR.Commenting.ClassComment" />
-    <rule ref="PEAR.Commenting.ClassComment.MissingTag">
-        <severity>0</severity>
-    </rule>
-    <rule ref="PEAR.Commenting.ClassComment.Missing@authorTag">
-        <severity>0</severity>
-    </rule>
-    <rule ref="PEAR.Commenting.ClassComment.Missing@categoryTag">
-        <severity>0</severity>
-    </rule>
-    <rule ref="PEAR.Commenting.ClassComment.Missing@licenseTag">
-        <severity>0</severity>
-    </rule>
-    <rule ref="PEAR.Commenting.ClassComment.Missing@linkTag">
-        <severity>0</severity>
-    </rule>
-    <rule ref="PEAR.Commenting.ClassComment.Missing@packageTag">
-        <severity>0</severity>
-    </rule>
-    <rule ref="PEAR.Commenting.FunctionComment.SpacingAfterParamType">
-        <severity>0</severity>
-    </rule>
-    <rule ref="PEAR.Commenting.FunctionComment.SpacingAfterParamName">
-        <severity>0</severity>
-    </rule>
+
     <!-- TODO Remove this and fix reported errors -->
     <rule ref="PEAR.Commenting.ClassComment.Missing">
         <severity>0</severity>
     </rule>
-    <rule ref="PEAR.Commenting.FunctionComment.MissingReturn">
-        <severity>0</severity>
-    </rule>
-    <rule ref="PEAR.Commenting.FunctionComment.ReturnNotRequired">
-        <severity>0</severity>
-    </rule>
-    <rule ref="PEAR.Commenting.FunctionComment.Missing">
-        <severity>0</severity>
-    </rule>
     
-    <rule ref="PEAR.Commenting.ClassComment.Missing@authorTag">
-        <severity>0</severity>
-    </rule>
-    <rule ref="PEAR.Commenting.ClassComment.Missing@categoryTag">
-        <severity>0</severity>
-    </rule>
-    <rule ref="PEAR.Commenting.ClassComment.Missing@licenseTag">
-        <severity>0</severity>
-    </rule>
-    <rule ref="PEAR.Commenting.ClassComment.Missing@linkTag">
-        <severity>0</severity>
-    </rule>
-    <rule ref="PEAR.Commenting.ClassComment.Missing@packageTag">
-        <severity>0</severity>
-    </rule>
-    
+    <rule ref="PEAR.Commenting.ClassComment.MissingTag" />
+
     <rule ref="PEAR.Commenting.ClassComment.MissingAuthorTag">
         <severity>0</severity>
     </rule>
+
     <rule ref="PEAR.Commenting.ClassComment.MissingCategoryTag">
         <severity>0</severity>
     </rule>
+
     <rule ref="PEAR.Commenting.ClassComment.MissingLicenseTag">
         <severity>0</severity>
     </rule>
+
     <rule ref="PEAR.Commenting.ClassComment.MissingLinkTag">
         <severity>0</severity>
     </rule>
+        
     <rule ref="PEAR.Commenting.ClassComment.MissingPackageTag">
         <severity>0</severity>
     </rule>
-    
-    <rule ref="PEAR.Commenting.FunctionComment.SpacingAfterParamType">
-        <severity>0</severity>
-    </rule>
-    <rule ref="PEAR.Commenting.FunctionComment.SpacingAfterParamName">
-        <severity>0</severity>
-    </rule>
-    <!-- TODO Remove this and fix reported errors -->
-    <rule ref="PEAR.Commenting.ClassComment.Missing">
-        <severity>0</severity>
-    </rule>
-    <rule ref="PEAR.Commenting.FunctionComment.MissingReturn">
-        <severity>0</severity>
-    </rule>
-    <rule ref="PEAR.Commenting.FunctionComment.ReturnNotRequired">
-        <severity>0</severity>
-    </rule>
-    <rule ref="PEAR.Commenting.FunctionComment.Missing">
-        <severity>0</severity>
-    </rule>
         
+
+   
     <!-- 
     <rule ref="PEAR.Commenting.FileComment" />
     <rule ref="PEAR.Commenting.FileComment.WrongStyle">
@@ -278,15 +223,40 @@
         <severity>0</severity>
     </rule>
     -->
-    <rule ref="PEAR.Commenting.FunctionComment.WrongStyle">
-        <severity>0</severity>
-    </rule>
     
+    <rule ref="PEAR.Commenting.FunctionComment" />
+
     <rule ref="PEAR.Commenting.FunctionComment.Empty">
         <severity>5</severity>
     </rule>
     
-    <rule ref="PEAR.Commenting.FunctionComment" />
+	<rule ref="PEAR.Commenting.FunctionComment.MissingReturn">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.FunctionComment.Missing">
+        <severity>0</severity>
+    </rule>
+    
+    <rule ref="PEAR.Commenting.FunctionComment.SpacingAfterParamType" />
+
+    <rule ref="PEAR.Commenting.FunctionComment.SpacingAfterParamName">
+        <severity>0</severity>
+    </rule>
+
+    <rule ref="PEAR.Commenting.FunctionComment.SpacingAfterParamType">
+        <severity>0</severity>
+    </rule>
+
+    <rule ref="PEAR.Commenting.FunctionComment.SpacingAfterParamName" />
+
+    <rule ref="PEAR.Commenting.FunctionComment.ReturnNotRequired">
+        <severity>0</severity>
+    </rule>
+    
+    <rule ref="PEAR.Commenting.FunctionComment.WrongStyle">
+        <severity>0</severity>
+    </rule>
+    
     <rule ref="PEAR.Commenting.FunctionComment.SpacingBeforeParamType">
         <severity>0</severity>
     </rule>
@@ -319,6 +289,15 @@
 
 	<rule ref="PEAR.Functions.FunctionCallSignature" />
 
+    <rule ref="PEAR.Functions.FunctionCallSignature.CloseBracketLine">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Functions.FunctionCallSignature.ContentAfterOpenBracket">
+        <severity>0</severity>
+    </rule>
+	<rule ref="PEAR.Functions.FunctionCallSignature.EmptyLine">
+	    <severity>0</severity>
+	</rule>
 	<rule ref="PEAR.Functions.FunctionCallSignature.Indent">
 	    <severity>0</severity>
 	</rule>
@@ -332,12 +311,6 @@
         <severity>0</severity>
     </rule>
     <rule ref="PEAR.Functions.FunctionCallSignature.SpaceAfterCloseBracket">
-        <severity>0</severity>
-    </rule>
-    <rule ref="PEAR.Functions.FunctionCallSignature.CloseBracketLine">
-        <severity>0</severity>
-    </rule>
-    <rule ref="PEAR.Functions.FunctionCallSignature.ContentAfterOpenBracket">
         <severity>0</severity>
     </rule>
 	
@@ -371,15 +344,20 @@
 	<rule ref="PEAR.NamingConventions.ValidFunctionName.FunctionNoCaptial">
         <severity>0</severity>
 	</rule>
+
 	<rule ref="PEAR.NamingConventions.ValidFunctionName.NotCamelCaps">
         <severity>0</severity>
 	</rule>
 	<rule ref="PEAR.NamingConventions.ValidFunctionName.PrivateNoUnderscore">
         <severity>0</severity>
 	</rule>
-
 	<rule ref="PEAR.NamingConventions.ValidVariableName" />
 
+	<!-- This is not in PSR2 -->
+	<rule ref="PEAR.NamingConventions.ValidVariableName.PrivateNoUnderscore">
+        <severity>0</severity>
+    </rule>
+	
 	<rule ref="PEAR.WhiteSpace.ObjectOperatorIndent" />
 
 	<!-- Need to be commented to be disabled
@@ -394,5 +372,11 @@
     
     <!-- Already found as a Generic rule -->
 	<!-- <rule ref="PEAR.WhiteSpace.ScopeIndent" /> -->
+
+
+	<!-- Rules from Zend Standard-->
+
+    <!-- The closing ?> tag MUST be omitted from files containing only PHP. -->
+    <rule ref="Zend.Files.ClosingTag"/>
 
 </ruleset>
