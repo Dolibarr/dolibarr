@@ -282,6 +282,10 @@ input.removedassigned  {
 	vertical-align: text-bottom;
 	margin-bottom: -3px;
 }
+input.smallpadd {
+	padding-left: 0px !important;
+	padding-right: 0px !important;
+}
 <?php } ?>
 
 select.flat, form.flat select {

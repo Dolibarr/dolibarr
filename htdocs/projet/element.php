@@ -125,7 +125,7 @@ print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
 // Define a complementary filter for search of next/prev ref.
 if (! $user->rights->projet->all->lire)
 {
-    $projectsListId = $object->getProjectsAuthorizedForUser($user,$mine,0);
+    $projectsListId = $object->getProjectsAuthorizedForUser($user,0,0);
     $object->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
 }
 print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');

@@ -60,8 +60,6 @@ $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$mine = $_REQUEST['mode']=='mine' ? 1 : 0;
-
 $search_all=GETPOST("search_all");
 $search_ref=GETPOST("search_ref");
 $search_label=GETPOST("search_label");
@@ -74,6 +72,9 @@ $search_public=GETPOST("search_public",'int');
 $search_user=GETPOST('search_user','int');
 $search_sale=GETPOST('search_sale','int');
 $optioncss = GETPOST('optioncss','alpha');
+
+$mine = $_REQUEST['mode']=='mine' ? 1 : 0;
+if ($mine) $search_user = $user->id;
 
 $day	= GETPOST('day','int');
 $month	= GETPOST('month','int');
@@ -306,7 +307,7 @@ if ($resql)
 	if (empty($conf->global->PROJECT_LIST_HIDE_STARTDATE)) $colspan++;
 
 	
-	// If the user can view prospects other than his'
+	// If the user can view thirdparties other than his'
 	if ($user->rights->societe->client->voir || $socid)
 	{
 		$langs->load("commercial");

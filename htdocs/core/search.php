@@ -126,7 +126,7 @@ if (GETPOST('search_project') != '')
 }
 if (GETPOST('search_task') != '')
 {
-	header("Location: ".DOL_URL_ROOT.'/projet/tasks/index.php?mode=search&search_all='.urlencode(GETPOST('search_task')));
+	header("Location: ".DOL_URL_ROOT.'/projet/tasks/list.php?mode=search&search_all='.urlencode(GETPOST('search_task')));
 	exit;
 }
 

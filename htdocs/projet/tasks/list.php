@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -18,7 +18,7 @@
  */
 
 /**
- *	\file       htdocs/projet/tasks/index.php
+ *	\file       htdocs/projet/tasks/list.php
  *	\ingroup    project
  *	\brief      List all task of a project
  */
@@ -43,6 +43,9 @@ $search_task_label=GETPOST('search_task_label');
 $search_project_user=GETPOST('search_project_user');
 $search_task_user=GETPOST('search_task_user');
 
+$mine = $_REQUEST['mode']=='mine' ? 1 : 0;
+if ($mine) $search_task_user = $user->id;
+
 // Security check
 $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
@@ -54,8 +57,6 @@ $page = GETPOST("page");
 $page = is_numeric($page) ? $page : 0;
 $page = $page == -1 ? 0 : $page;
 
-$mine = $_REQUEST['mode']=='mine' ? 1 : 0;
-
 // Purge criteria
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
@@ -64,6 +65,8 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
 	$search_status="";
 	$search_task_ref="";
 	$search_task_label="";
+	$search_task_user=-1;
+	$search_project_user=-1;
 }
 if (empty($search_status) && $search_status == '') $search_status=1;
 
@@ -88,6 +91,10 @@ $fieldstosearchall = array(
 $form=new Form($db);
 $projectstatic = new Project($db);
 $taskstatic = new Task($db);
+$puser=new User($db);
+$tuser=new User($db);
+if ($search_project_user > 0) $puser->fetch($search_project_user);
+if ($search_task_user > 0) $tuser->fetch($search_task_user);
 
 $title=$langs->trans("Activities");
 if ($mine) $title=$langs->trans("MyActivities");
@@ -112,6 +119,7 @@ else
 
 // Get list of project id allowed to user (in a string list separated by coma)
 $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1,$socid);
+//var_dump($projectsListId);
 
 // Get list of tasks in tasksarray and taskarrayfiltered
 // We need all tasks (even not limited to a user because a task assigned to a user can have a parent that is not assigned to him and we need such parents).
@@ -119,9 +127,9 @@ $morewherefilter='';
 if ($search_all)        $morewherefilter.=natural_search(array_keys($fieldstosearchall), $search_all);
 if ($search_task_ref)   $morewherefilter.=natural_search('t.ref', $search_task_ref);
 if ($search_task_label) $morewherefilter.=natural_search('t.label', $search_task_label);
+
 $tasksarray=$taskstatic->getTasksArray(0, 0, $projectstatic->id, $socid, 0, $search_project, $search_status, $morewherefilter, $search_project_user, $search_task_user);
-// We load also tasks limited to a particular user
-$tasksrole=($mine ? $taskstatic->getUserRolesForProjectsOrTasks(0,$user,$projectstatic->id,0) : '');
+$tasksrole=$taskstatic->getUserRolesForProjectsOrTasks(0, ($tuser->id?$tuser:null), $projectstatic->id, 0, $search_status); // We load also tasks limited to a particular user
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -130,7 +138,6 @@ print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
-print '<input type="hidden" name="mode" value="'.GETPOST('mode').'">';
 
 if ($search_all)
 {
@@ -140,20 +147,23 @@ if ($search_all)
 
 
 // If the user can view users
-if ($user->rights->user->user->lire)
-{
-	$moreforfilter.='<div class="divsearchfield">';
-    $moreforfilter.=$langs->trans('ProjectsWithThisUserAsContact'). ' ';
-    $moreforfilter.=$form->select_dolusers($search_project_user, 'search_project_user', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
-	$moreforfilter.='</div>';
-}
-if ($user->rights->user->user->lire)
-{
-	$moreforfilter.='<div class="divsearchfield">';
-    $moreforfilter.=$langs->trans('TasksWithThisUserAsContact'). ' ';
-    $moreforfilter.=$form->select_dolusers($search_task_user, 'search_task_user', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
-	$moreforfilter.='</div>';
-}
+//if ($mine) $search_project_user=$user->id;    // We want by default all project. "mine" is a filter for task contact on this page
+$moreforfilter.='<div class="divsearchfield">';
+$moreforfilter.=$langs->trans('ProjectsWithThisUserAsContact'). ' ';
+$includeonly='';
+if (empty($user->rights->user->user->lire)) $includeonly=array($user->id);
+$moreforfilter.=$form->select_dolusers($search_project_user, 'search_project_user', 1, '', 0, $includeonly, '', 0, 0, 0, '', 0, '', 'maxwidth300');
+$moreforfilter.='</div>';
+
+// If the user can view users
+if ($mine) $search_task_user=$user->id;
+$moreforfilter.='<div class="divsearchfield">';
+$moreforfilter.=$langs->trans('TasksWithThisUserAsContact'). ': ';
+$includeonly='';
+if (empty($user->rights->user->user->lire)) $includeonly=array($user->id);
+$moreforfilter.=$form->select_dolusers($search_task_user, 'search_task_user', 1, '', 0, $includeonly, '', 0, 0, 0, '', 0, '', 'maxwidth300');
+$moreforfilter.='</div>';
+
 if (! empty($moreforfilter))
 {
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
@@ -217,6 +227,7 @@ else
 {
 	// Show all lines in taskarray (recursive function to go down on tree)
 	$j=0; $level=0;
+	//var_dump($tasksarray);
 	$nboftaskshown=projectLinesa($j, 0, $tasksarray, $level, true, 1, $tasksrole, $projectsListId, 0);
 }
 
