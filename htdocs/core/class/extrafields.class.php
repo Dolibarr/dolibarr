@@ -986,7 +986,7 @@ class ExtraFields
 						$sqlwhere .= ' WHERE ' . $InfoFieldList[4];
 					}
 				} else {
-					$sqlwhere .= ' WHERE 1';
+					$sqlwhere .= ' WHERE 1=1';
 				}
 				if (in_array($InfoFieldList[0], array (
 						'tablewithentity'
