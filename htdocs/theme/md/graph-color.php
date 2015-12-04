@@ -17,8 +17,8 @@
  */
 
 /**
- *	\file       htdocs/theme/eldy/graph-color.php
- *	\brief      File to declare colors to use to build graphics with theme Eldy
+ *	\file       htdocs/theme/md/graph-color.php
+ *	\brief      File to declare colors to use to build graphics with theme Material Design
  *  \ingroup    core
  *
  *  To include file, do this:
