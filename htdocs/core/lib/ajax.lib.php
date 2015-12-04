@@ -170,8 +170,8 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
     					}
     					,delay: 500
 					}).data("ui-autocomplete")._renderItem = function( ul, item ) {
-						return $("<li></li>")
-						.data( "item.autocomplete", item )
+						return $("<li>")
+						.data( "ui-autocomplete-item", item ) // jQuery UI > 1.10.0
 						.append( \'<a><span class="tag">\' + item.label + "</span></a>" )
 						.appendTo(ul);
 					};

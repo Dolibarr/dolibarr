@@ -178,6 +178,7 @@ TaskAssignedToEnterTime=Tâche assignée. La saisie de temps sur cette tâche de
 OpenedProjectsByThirdparties=Projets ouverts par tiers
 OpportunityTotalAmount=Montant total des opportunités
 OpportunityPonderatedAmount=Montant pondéré des opportunités
+OpportunityPonderatedAmountDesc=Montant pondéré par la probabilité (dépendante du statut) des opportunités
 OppStatusPROSP=Prospection
 OppStatusQUAL=Qualification
 OppStatusPROPO=Proposition

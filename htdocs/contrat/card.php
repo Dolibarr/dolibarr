@@ -830,10 +830,34 @@ if (empty($reshook))
 	            setEventMessages($object->error, $object->errors, 'errors');
 	        }
 	
-	        $result = $object->setValueFrom('ref',GETPOST('ref','alpha'));;
+	        $result = $object->setValueFrom('ref',GETPOST('ref','alpha'));
 	        if ($result < 0) {
 	            setEventMessages($object->error, $object->errors, 'errors');
 	            $action = 'editref';
+	        } else {
+	            header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $object->id);
+	            exit;
+	        }
+	    }
+	    else {
+	        header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $id);
+	        exit;
+	    }
+	} 
+	elseif ($action=='setdate_contrat') 
+	{
+	    $cancelbutton = GETPOST('cancel');
+	
+	    if (!$cancelbutton) {
+	        $result = $object->fetch($id);
+	        if ($result < 0) {
+	            setEventMessages($object->error, $object->errors, 'errors');
+	        }
+			$datacontrat=dol_mktime(GETPOST('date_contrathour'), GETPOST('date_contratmin'), 0, GETPOST('date_contratmonth'), GETPOST('date_contratday'), GETPOST('date_contratyear'));
+	        $result = $object->setValueFrom('date_contrat',$datacontrat,'',null,'date');
+	        if ($result < 0) {
+	            setEventMessages($object->error, $object->errors, 'errors');
+	            $action = 'editdate_contrat';
 	        } else {
 	            header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $object->id);
 	            exit;
@@ -1278,8 +1302,15 @@ else
         print "</td></tr>";
 
         // Date
-        print '<tr><td>'.$langs->trans("Date").'</td>';
-        print '<td colspan="3">'.dol_print_date($object->date_contrat,"dayhour")."</td></tr>\n";
+        print '<tr>';
+		print '<td  width="20%">';
+		print $form->editfieldkey("Date",'date_contrat',$object->date_contrat,$object,$user->rights->contrat->creer);
+		print '</td><td>';
+		print $form->editfieldval("Date",'date_contrat',$object->date_contrat,$object,$user->rights->contrat->creer,'datehourpicker');
+		print '</td>';
+		print '</tr>';
+       /* print '<tr><td>'.$langs->trans("Date").'</td>';
+        print '<td colspan="3">'.dol_print_date($object->date_contrat,"dayhour")."</td></tr>\n";*/
 
         // Projet
         if (! empty($conf->projet->enabled))

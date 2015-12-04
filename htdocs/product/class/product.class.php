@@ -1563,7 +1563,7 @@ class Product extends CommonObject
 		}
 
 		$sql = "SELECT rowid, ref, ref_ext, label, description, url, note, customcode, fk_country, price, price_ttc,";
-		$sql.= " price_min, price_min_ttc, price_base_type, tva_tx, recuperableonly as tva_npr, localtax1_tx, localtax2_tx, tosell,";
+		$sql.= " price_min, price_min_ttc, price_base_type, cost_price, tva_tx, recuperableonly as tva_npr, localtax1_tx, localtax2_tx, tosell,";
 		$sql.= " tobuy, fk_product_type, duration, seuil_stock_alerte, canvas,";
 		$sql.= " weight, weight_units, length, length_units, surface, surface_units, volume, volume_units, barcode, fk_barcode_type, finished,";
 		$sql.= " accountancy_code_buy, accountancy_code_sell, stock, pmp,";
@@ -1606,6 +1606,7 @@ class Product extends CommonObject
 				$this->price_min				= $obj->price_min;
 				$this->price_min_ttc			= $obj->price_min_ttc;
 				$this->price_base_type			= $obj->price_base_type;
+				$this->cost_price    			= $obj->cost_price;
 				$this->tva_tx					= $obj->tva_tx;
 				//! French VAT NPR
 				$this->tva_npr					= $obj->tva_npr;

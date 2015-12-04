@@ -84,8 +84,58 @@ $syear	= GETPOST('syear','int');
 
 if ($search_status == '') $search_status=-1;	// -1 or 1
 
-// Purge criteria
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$contextpage='projectlist';
+
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array($contextpage));
+$extrafields = new ExtraFields($db);
+
+// fetch optionals attributes and labels
+$extralabels = $extrafields->fetch_name_optionals_label('project');
+$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+
+// List of fields to search into when doing a "search in all"
+$fieldstosearchall = array(
+	'p.ref'=>"Ref",
+	'p.title'=>"Label",
+	's.nom'=>"ThirdPartyName",
+    "p.note_public"=>"NotePublic"
+);
+if (empty($user->socid)) $fieldstosearchall["p.note_private"]="NotePrivate";
+
+$arrayfields=array(
+    'p.ref'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
+    'p.label'=>array('label'=>$langs->trans("Label"), 'checked'=>1),
+    's.nom'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>1),
+    'commerical'=>array('label'=>$langs->trans("SaleRepresentative"), 'checked'=>1),
+	'p.date_start'=>array('label'=>$langs->trans("DateStart"), 'checked'=>1, 'position'=>100),
+    'p.date_end'=>array('label'=>$langs->trans("DateEnd"), 'checked'=>1, 'position'=>101),
+    'p.visibility'=>array('label'=>$langs->trans("Visibility"), 'checked'=>1, 'position'=>102),
+    'p.opportunity_amount'=>array('label'=>$langs->trans("OpportunityAmount"), 'checked'=>1, 'enabled'=>$conf->global->PROJECT_USE_OPPORTUNITIES, 'position'=>103),
+	'p.opportunity_status'=>array('label'=>$langs->trans("OpportunityStatus"), 'checked'=>1, 'enabled'=>$conf->global->PROJECT_USE_OPPORTUNITIES, 'position'=>104),
+	'p.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
+    'p.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
+    'p.status'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
+);
+// Extra fields
+if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+{
+   foreach($extrafields->attribute_label as $key => $val) 
+   {
+       $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>$extrafields->attribute_list[$key], 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
+   }
+}
+
+
+/*
+ * Actions
+ */
+
+include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
+
+// Do we click on purge search criteria ?
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
 	$search_all='';
 	$search_ref="";
@@ -103,20 +153,9 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 	$sday="";
 	$smonth="";
 	$syear="";
+	$search_array_options=array();
 }
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('projectlist'));
-$extrafields = new ExtraFields($db);
-
-// List of fields to search into when doing a "search in all"
-$fieldstosearchall = array(
-	'p.ref'=>"Ref",
-	'p.title'=>"Label",
-	's.nom'=>"ThirdPartyName",
-    "p.note_public"=>"NotePublic"
-);
-if (empty($user->socid)) $fieldstosearchall["p.note_private"]="NotePrivate";
 
 
 /*

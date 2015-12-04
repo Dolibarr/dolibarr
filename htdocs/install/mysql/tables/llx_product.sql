@@ -31,7 +31,6 @@ create table llx_product
 
   datec						datetime,
   tms						timestamp,
-  virtual					tinyint	  DEFAULT 0 NOT NULL,	-- Not used. Used by external modules. Value 0 for physical product, 1 for virtual product
   fk_parent					integer	  DEFAULT 0,			-- Not used. Used by external modules. Virtual product id
 
   label						varchar(255) NOT NULL,
@@ -44,8 +43,9 @@ create table llx_product
   price_min					double(24,8) DEFAULT 0,
   price_min_ttc				double(24,8) DEFAULT 0,
   price_base_type			varchar(3)   DEFAULT 'HT',
-  tva_tx					double(6,3),					  -- Default VAT rate of product
-  recuperableonly           integer NOT NULL DEFAULT '0',  -- French NPR VAT
+  cost_price			    double(24,8) DEFAULT NULL,      -- Cost price without tax. Can be used for margin calculation.
+  tva_tx					double(6,3),					-- Default VAT rate of product
+  recuperableonly           integer NOT NULL DEFAULT '0',   -- French NPR VAT
   localtax1_tx				double(6,3)  DEFAULT 0,         -- Spanish local VAT 1
   localtax2_tx				double(6,3)  DEFAULT 0,         -- Spanish local VAT 2
   fk_user_author			integer DEFAULT NULL,			  -- user making creation
@@ -76,7 +76,7 @@ create table llx_product
   fifo						double(24,8),							-- To store valuation of stock calculated using fifo method, for this product
   lifo						double(24,8),							-- To store valuation of stock calculated using lifo method, for this product
   canvas					varchar(32)  DEFAULT NULL,
-  finished					tinyint      DEFAULT NULL,
+  finished					tinyint      DEFAULT NULL,		-- 1=manufactured product, 0=matiere premiere
   hidden					tinyint      DEFAULT 0,			-- Not used. Deprecated.
   import_key				varchar(14),					-- Import key
   fk_price_expression integer,                     -- Link to the rule for dynamic price calculation
