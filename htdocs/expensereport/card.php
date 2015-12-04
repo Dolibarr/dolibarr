@@ -139,7 +139,7 @@ if ($action == 'add' && $user->rights->expensereport->creer)
 	if ($object->periode_existe($user,$object->date_debut,$object->date_fin))
 	{
 		$error++;
-		setEventMessage($langs->trans("ErrorDoubleDeclaration"),'errors');
+		setEventMessages($langs->trans("ErrorDoubleDeclaration"), null, 'errors');
 		$action='create';
 	}
 
@@ -267,7 +267,7 @@ if ($action == "confirm_validate" && GETPOST("confirm") == "yes" && $id > 0 && $
 				if ($result)
 				{
 					$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($emailFrom,2),$mailfile->getValidAddress($emailTo,2));
-					setEventMessage($mesg);
+					setEventMessages($mesg, null, 'mesgs');
 					header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
 					exit;
 				}
@@ -279,11 +279,11 @@ if ($action == "confirm_validate" && GETPOST("confirm") == "yes" && $id > 0 && $
 						$mesg='';
 						$mesg.=$langs->trans('ErrorFailedToSendMail', $emailFrom, $emailTo);
 						$mesg.='<br>'.$mailfile->error;
-						setEventMessage($mesg,'errors');
+						setEventMessages($mesg, null, 'errors');
 					}
 					else
 					{
-						setEventMessage('No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS', 'warnings');
+						setEventMessages('No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS', null, 'warnings');
 					}
 				}
 			}
@@ -295,7 +295,7 @@ if ($action == "confirm_validate" && GETPOST("confirm") == "yes" && $id > 0 && $
 		}
 		else
 		{
-			setEventMessage($langs->trans("NoEmailSentBadSenderOrRecipientEmail"), 'warnings');
+			setEventMessages($langs->trans("NoEmailSentBadSenderOrRecipientEmail"), null, 'warnings');
 			$action='';
 		}
 	}
@@ -490,15 +490,15 @@ if ($action == "confirm_approve" && GETPOST("confirm") == "yes" && $id > 0 && $u
 					// SEND
 					$result=$mailfile->sendfile();
 					if ($result):
-						setEventMessage($langs->trans("MailSuccessfulySent",$emailFrom,$emailTo));
+						setEventMessages($langs->trans("MailSuccessfulySent",$emailFrom,$emailTo), null, 'mesgs');
 						Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
 						exit;
 					else:
-						setEventMessage($langs->trans("ErrorFailedToSendMail",$emailFrom,$emailTo),'errors');
+						setEventMessages($langs->trans("ErrorFailedToSendMail",$emailFrom,$emailTo), null, 'errors');
 					endif;
 
 				else:
-					setEventMessage($langs->trans("ErrorFailedToSendMail",$emailFrom,$emailTo),'errors');
+					setEventMessages($langs->trans("ErrorFailedToSendMail",$emailFrom,$emailTo), null, 'errors');
 				endif;
 				// END - Send mail
 			else : // if ($resultPDF)
@@ -576,13 +576,13 @@ if ($action == "confirm_refuse" && GETPOST('confirm')=="yes" && $id > 0 && $user
 				$result=$mailfile->sendfile();
 				if ($result)
 				{
-					setEventMessage($langs->trans("MailSuccessfulySent",$emailFrom,$emailTo));
+					setEventMessages($langs->trans("MailSuccessfulySent",$emailFrom,$emailTo), null, 'mesgs');
 					Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
 					exit;
 				}
 				else
 				{
-					setEventMessage($langs->trans("ErrorFailedToSendMail",$emailFrom,$emailTo),'errors');
+					setEventMessages($langs->trans("ErrorFailedToSendMail",$emailFrom,$emailTo), null, 'errors');
 					$mesg="Impossible d'envoyer l'email.";
 				}
 				// END - Send mail
@@ -1059,8 +1059,8 @@ else if ($action == 'remove_file')
 		$upload_dir = $conf->expensereport->dir_output;
 		$file = $upload_dir . '/' . GETPOST('file');
 		$ret=dol_delete_file($file,0,0,0,$object);
-		if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-		else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+		if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
+		else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
 		$action='';
 	}
 }
