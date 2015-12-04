@@ -568,12 +568,12 @@ td.showDragHandle {
 #id-left {
 	min-height: 100%;
 	position: relative;
-	width: 193px;
+	width: 213px;
 }
 #id-right {	/* This must stay id-right and not be replaced with echo $right */
 	width: 100%;
 <?php if (GETPOST("optioncss") != 'print') { ?>
-	padding-left: 194px;
+	padding-left: 224px;
 	padding-top: 12px;
 <?php } ?>	
 }
@@ -620,7 +620,7 @@ td.showDragHandle {
 <?php } ?>
 }
 .side-nav-vert {
-	margin-left: 194px;
+	margin-left: 228px;
 }
 
 
@@ -1106,7 +1106,7 @@ div.login_block {
 	text-align: center;
 	vertical-align: middle;
 	background: #FFF;
-	width: 193px;
+	width: 228px;
 	height: 42px;
 	<?php if (GETPOST("optioncss") == 'print') { ?>
 	display: none;
@@ -1188,7 +1188,7 @@ div.vmenu, td.vmenu {
     padding: 0px;
     padding-bottom: 0px;
     padding-top: 0px;
-    width: 174px;
+    width: 222px;
 }
 
 .vmenu {
@@ -1199,7 +1199,7 @@ div.vmenu, td.vmenu {
 }
 
 .vmenusearchselectcombo {
-	width: 170px;
+	width: 202px;
 }
 
 .menu_contenu { padding-top: 4px; padding-bottom: 3px;}
@@ -1233,6 +1233,9 @@ div.blockvmenupair, div.blockvmenuimpair, div.blockvmenubookmarks
 
     padding-bottom: 10px;
     border-bottom: 1px solid #e0e0e0;
+}
+a.vsmenu.addbookmarkpicto {
+    padding-right: 10px;
 }
 
 div.blockvmenusearch

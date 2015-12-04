@@ -79,7 +79,7 @@ $dol_use_jmobile=$conf->dol_use_jmobile;
 //var_dump($user->conf->THEME_ELDY_RGB);
 
 // Colors
-$colorbackhmenu1='140,150,180';      // topmenu
+$colorbackhmenu1='120,130,170';      // topmenu
 $colorbackvmenu1='255,255,255';      // vmenu
 $colorbacktitle1='230,230,230';      // title of array
 $colorbacktabcard1='255,255,255';  // card
@@ -101,7 +101,7 @@ $useboldtitle=1;
 
 // Case of option always editable
 if (! isset($conf->global->THEME_ELDY_BACKBODY)) $conf->global->THEME_ELDY_BACKBODY='255,255,255';
-if (! isset($conf->global->THEME_ELDY_TOPMENU_BACK1)) $conf->global->THEME_ELDY_TOPMENU_BACK1='140,150,180';
+if (! isset($conf->global->THEME_ELDY_TOPMENU_BACK1)) $conf->global->THEME_ELDY_TOPMENU_BACK1='120,130,170';
 if (! isset($conf->global->THEME_ELDY_BACKTITLE1)) $conf->global->THEME_ELDY_BACKTITLE1='230,230,230';
 if (! isset($conf->global->THEME_ELDY_USE_HOVER)) $conf->global->THEME_ELDY_USE_HOVER=='238,246,252';
 if (! isset($conf->global->THEME_ELDY_TEXTLINK)) $conf->global->THEME_ELDY_TEXTLINK='0,0,120';
@@ -1183,6 +1183,9 @@ a.help:link, a.help:visited, a.help:hover, a.help:active { font-size:<?php print
 .vmenu div.blockvmenufirst, .vmenu div.blockvmenulogo, .vmenu div.blockvmenubookmarks
 {
     border-top: 1px solid #BBB;
+}
+a.vsmenu.addbookmarkpicto {
+    padding-right: 10px;
 }
 .vmenu div.blockvmenubookmarks, .vmenu div.blockvmenuend, .vmenu div.blockvmenulogo
 {
