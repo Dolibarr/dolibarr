@@ -2214,6 +2214,9 @@ tr.even td, tr.pair td, tr.odd td, tr.impair td, form.odd div.tagtd, form.impair
     padding: 5px 2px 5px 3px;
     border-bottom: 1px solid #eee;
 }
+tr.even:last-child td, tr.pair:last-child td, tr.odd:last-child td, tr.impair:last-child td {
+    border-bottom: 0px !important;
+}
 tr.even td .nobordernopadding tr td, tr.pair td .nobordernopadding tr td, tr.impair td .nobordernopadding tr td, tr.odd td .nobordernopadding tr td {
     border-bottom: 0px !important;
 }
