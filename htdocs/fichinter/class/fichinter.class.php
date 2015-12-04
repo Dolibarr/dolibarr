@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2013 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2015      Charlie Benke        <charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,6 +49,8 @@ class Fichinter extends CommonObject
 	var $author;
 	var $datec;
 	var $datev;
+	var $dateo;
+	var $datee;
 	var $datem;
 	var $duration;
 	var $statut;		// 0=draft, 1=validated, 2=invoiced
@@ -277,7 +280,7 @@ class Fichinter extends CommonObject
 	function fetch($rowid,$ref='')
 	{
 		$sql = "SELECT f.rowid, f.ref, f.description, f.fk_soc, f.fk_statut,";
-		$sql.= " f.datec,";
+		$sql.= " f.datec, f.dateo, f.datee,";
 		$sql.= " f.date_valid as datev,";
 		$sql.= " f.tms as datem,";
 		$sql.= " f.duree, f.fk_projet, f.note_public, f.note_private, f.model_pdf, f.extraparams, fk_contrat";
@@ -300,6 +303,8 @@ class Fichinter extends CommonObject
 				$this->statut       = $obj->fk_statut;
 				$this->duration     = $obj->duree;
 				$this->datec        = $this->db->jdate($obj->datec);
+				$this->datee        = $this->db->jdate($obj->dateo);
+				$this->dateo        = $this->db->jdate($obj->datee);
 				$this->datev        = $this->db->jdate($obj->datev);
 				$this->datem        = $this->db->jdate($obj->datem);
 				$this->fk_project   = $obj->fk_projet;
