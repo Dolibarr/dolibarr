@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2014      Charles-Fr Benke	    <charles.fr@benke.fr>
+ * Copyright (C) 2014-2015 Charlie Benke	<charlie@patas-monkey.com>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -329,6 +329,96 @@ if ($result)
 
         print "</table>\n";
         print "<!-- End last thirdparties modified -->\n";
+        
+/*
+ * best customer with number of invoice (and not invoiced)
+ */
+$max=15;
+$sql = "SELECT s.rowid, s.nom as name, s.client, s.fournisseur, s.canvas, s.tms as datem, s.status as status, count(*) as nbfact, sum(if (f.paye=1,1,0)) as nbfactpaye";
+$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as f";
+if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+$sql.= ' WHERE s.entity IN ('.getEntity('societe', 1).')';
+$sql.= ' AND s.rowid = f.fk_soc';
+if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+if ($socid)	$sql.= " AND s.rowid = ".$socid;
+if (! $user->rights->fournisseur->lire) $sql.=" AND (s.fournisseur != 1 OR s.client != 0)";
+$sql.= " GROUP BY s.rowid, s.nom , s.client, s.fournisseur, s.canvas, s.tms , s.status ";
+$sql.= $db->order("nbfact","DESC");
+$sql.= $db->plimit($max,0);
+
+$result = $db->query($sql);
+if ($result)
+{
+    $num = $db->num_rows($result);
+
+    $i = 0;
+
+    if ($num > 0)
+    {
+        $transRecordedType = $langs->trans("BestCustomers",$max);
+
+        print '<table class="noborder" width="100%">';
+        print '<tr class="liste_titre"><th colspan="2">'.$transRecordedType.'</td>';
+        print '<th align="right">'.$langs->trans('NbFact').'</td>';
+        print '<th align="right">'.$langs->trans('Status').'</td>';
+        print '</tr>';
+
+        $var=True;
+
+        while ($i < $num)
+        {
+            $objp = $db->fetch_object($result);
+
+            $var=!$var;
+            print "<tr ".$bc[$var].">";
+            // Name
+            print '<td class="nowrap">';
+            $thirdparty_static->id=$objp->rowid;
+            $thirdparty_static->name=$objp->name;
+            $thirdparty_static->client=$objp->client;
+            $thirdparty_static->fournisseur=$objp->fournisseur;
+            $thirdparty_static->nbfact=$objp->nbfact;
+	    $thirdparty_static->nbfactpaye=$objp->nbfactpaye;
+	    $thirdparty_static->status=$objp->status;
+            $thirdparty_static->canvas=$objp->canvas;
+            print $thirdparty_static->getNomUrl(1);
+            print "</td>\n";
+            // Type
+            print '<td align="center">';
+            if ($thirdparty_static->client==1 || $thirdparty_static->client==3)
+            {
+            	$thirdparty_static->name=$langs->trans("Customer");
+            	print $thirdparty_static->getNomUrl(0,'customer');
+            }
+            if ($thirdparty_static->client == 3 && empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) print " / ";
+            if (($thirdparty_static->client==2 || $thirdparty_static->client==3) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
+            {
+            	$thirdparty_static->name=$langs->trans("Prospect");
+            	print $thirdparty_static->getNomUrl(0,'prospect');
+            }
+            if (! empty($conf->fournisseur->enabled) && $thirdparty_static->fournisseur)
+            {
+                if ($thirdparty_static->client) print " / ";
+            	$thirdparty_static->name=$langs->trans("Supplier");
+            	print $thirdparty_static->getNomUrl(0,'supplier');
+            }
+            print '</td>';
+            // Last modified date
+            print '<td align="right">';
+			print $thirdparty_static->nbfact;
+			$impaye = $thirdparty_static->nbfact - $thirdparty_static->nbfactpaye;
+            print ( $impaye != 0 ? '('.$impaye.')':'');
+            print "</td>";
+            print '<td align="right" class="nowrap">';
+            print $thirdparty_static->getLibStatut(3);
+            print "</td>";
+            print "</tr>\n";
+            $i++;
+        }
+
+        $db->free();
+
+        print "</table>";
     }
 }
 else
