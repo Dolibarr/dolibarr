@@ -1503,7 +1503,6 @@ class ExpenseReport extends CommonObject
             $this->error=$this->db->error();
             return -1;
         }
-
     }
 
     /**
