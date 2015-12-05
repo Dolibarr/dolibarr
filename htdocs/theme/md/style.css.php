@@ -572,8 +572,9 @@ td.showDragHandle {
 }
 #id-right {	/* This must stay id-right and not be replaced with echo $right */
 	width: 100%;
+	padding-bottom: 10px;
 <?php if (GETPOST("optioncss") != 'print') { ?>
-	padding-left: 224px;
+	padding-left: 229px;
 	padding-top: 12px;
 <?php } ?>	
 }
@@ -626,7 +627,7 @@ td.showDragHandle {
 
 div.fiche {
 	margin-<?php print $left; ?>: <?php print (GETPOST("optioncss") == 'print'?6:((empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT))?($dol_hide_leftmenu?'4':'20'):'24')); ?>px;
-	margin-<?php print $right; ?>: <?php print (GETPOST("optioncss") == 'print'?8:(empty($conf->dol_optimize_smallscreen)?'12':'4')); ?>px;
+	margin-<?php print $right; ?>: <?php print (GETPOST("optioncss") == 'print'?8:(empty($conf->dol_optimize_smallscreen)?'16':'4')); ?>px;
 	<?php if (! empty($conf->dol_hide_leftmenu) && ! empty($conf->dol_hide_topmenu)) print 'margin-top: 4px;'; ?>
 	margin-bottom: 15px;
 }
@@ -837,13 +838,18 @@ li.tmenu, li.tmenusel {
 	font-weight: normal;
 }
 li.tmenusel, li.tmenu:hover {
+/*
     background-image: -o-linear-gradient(bottom, rgba(250,250,250,0.3) 0%, rgba(0,0,0,0.3) 100%) !important;
     background-image: -moz-linear-gradient(bottom, rgba(0,0,0,0.5) 0%, rgba(250,250,250,0) 100%) !important;
     background-image: -webkit-linear-gradient(bottom, rgba(0,0,0,0.3) 0%, rgba(250,250,250,0) 100%) !important;
     background-image: -ms-linear-gradient(bottom, rgba(250,250,250,0.3) 0%, rgba(0,0,0,0.3) 100%) !important;
     background-image: linear-gradient(bottom, rgba(250,250,250,0.3) 0%, rgba(0,0,0,0.3) 100%) !important;
 	background: rgb(<?php echo $colorbackhmenu1 ?>);
+*/
 	/* background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/nav-overlay3.png',1); ?>) 50% 0 repeat-x !important; Nicer but problem when menu wrap on 2 lines */
+}
+li.tmenusel, li.tmenu:hover {
+	opacity: .50; /* show only a slight shadow */
 }
 .tmenuend .tmenuleft { width: 0px; }
 /* .tmenuend { display: none; } */
@@ -2256,7 +2262,6 @@ div.liste_titre_bydiv {
 	border-collapse: collapse;
 	display: table;
 	padding: 2px 0px 2px 0;
-	box-shadow: 2px 2px 4px #CCC;
 	width: calc(100% - 1px);	/* 1px more, i don't know why */
 }
 tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable.tr
@@ -2723,10 +2728,10 @@ img.datecallink { padding-left: 2px !important; padding-right: 2px !important; }
 table.dp {
     width: 180px;
     background-color: #FFFFFF;
-    border-top: solid 2px #f4f4f4;
+    /*border-top: solid 2px #f4f4f4;
     border-<?php print $left; ?>: solid 2px #f4f4f4;
     border-<?php print $right; ?>: solid 1px #222222;
-    border-bottom: solid 1px #222222;
+    border-bottom: solid 1px #222222; */
     padding: 0px;
 	border-spacing: 0px;
 	border-collapse: collapse;
@@ -2735,7 +2740,7 @@ table.dp {
 /* Barre titre */
 .dpHead,.tpHead,.tpHour td:Hover .tpHead{
 	font-weight:bold;
-	background-color:#b3c5cc;
+	background-color: #888;
 	color:white;
 	font-size:11px;
 	cursor:auto;
@@ -2743,7 +2748,7 @@ table.dp {
 /* Barre navigation */
 .dpButtons,.tpButtons {
 	text-align:center;
-	background-color:#617389;
+	background-color: #888;
 	color:#FFFFFF;
 	font-weight:bold;
 	cursor:pointer;
@@ -2778,7 +2783,7 @@ table.dp {
     padding:0px;
     font-size:9px;
     border-width:0px;
-    color:#0B63A2;
+    color: #eee;
     vertical-align:middle;
     cursor: pointer;
 }

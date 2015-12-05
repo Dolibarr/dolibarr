@@ -180,6 +180,7 @@ YouCanCompleteRef=If you want to complete the ref with some information (to use 
 OpenedProjectsByThirdparties=Opened projects by thirdparties
 OpportunityTotalAmount=Opportunities total amount
 OpportunityPonderatedAmount=Opportunities weighted amount
+OpportunityPonderatedAmountDesc=Opportunities amount weighted with probability (depending on status of opportunity)
 OppStatusPROSP=Prospection
 OppStatusQUAL=Qualification
 OppStatusPROPO=Proposal
