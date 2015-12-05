@@ -165,7 +165,7 @@ if ($action == 'create')
 	print '</td><td class="hideonsmartphone">'.$langs->trans("ChooseIfANewWindowMustBeOpenedOnClickOnBookmark").'</td></tr>';
 
 	print '<tr><td>'.$langs->trans("Owner").'</td><td>';
-	print $form->select_dolusers(isset($_POST['userid'])?$_POST['userid']:$user->id,'userid',1);
+	print $form->select_dolusers(isset($_POST['userid'])?$_POST['userid']:$user->id, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 	print '</td><td class="hideonsmartphone">&nbsp;</td></tr>';
 
 	// Position
@@ -262,7 +262,7 @@ if ($id > 0 && ! preg_match('/^add/i',$action))
 	print '<tr><td>'.$langs->trans("Owner").'</td><td>';
 	if ($action == 'edit' && $user->admin)
 	{
-		print $form->select_dolusers(isset($_POST['userid'])?$_POST['userid']:($bookmark->fk_user?$bookmark->fk_user:''),'userid',1);
+		print $form->select_dolusers(isset($_POST['userid'])?$_POST['userid']:($bookmark->fk_user?$bookmark->fk_user:''), 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 	}
 	else
 	{

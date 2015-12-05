@@ -1612,7 +1612,9 @@ div.tabsAction {
     padding: 0em 0em;
     text-align: right;
 }
-
+div.tabsAction > a {
+	margin-bottom: 16px !important;
+}
 
 a.tabTitle {
 /*    background: #657090;
@@ -2364,7 +2366,7 @@ tr.even td, tr.pair td, tr.odd td, tr.impair td, form.odd div.tagtd, form.impair
 tr.even td, tr.pair td, tr.odd td, tr.impair td, form.odd div.tagtd, form.impair div.tagtd, form.pair div.tagtd, div.impair div.tagtd, div.pair div.tagtd, div.liste_titre div.tagtd {
     border-bottom: 1px solid #ddd;
 }
-tr.even:last-child td, tr.pair:last-child td, tr.odd:last-child td, tr.impair:last-child td {
+tr.even:last-of-type td, tr.pair:last-of-type td, tr.odd:last-of-type td, tr.impair:last-of-type td {
     border-bottom: 0px !important;
 }
 tr.even td .nobordernopadding tr td, tr.pair td .nobordernopadding tr td, tr.impair td .nobordernopadding tr td, tr.odd td .nobordernopadding tr td {

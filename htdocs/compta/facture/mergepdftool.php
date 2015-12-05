@@ -637,7 +637,7 @@ if ($resql)
  		$langs->load("commercial");
  		$moreforfilter.='<div class="divsearchfield">';
  		$moreforfilter.=$langs->trans('ThirdPartiesOfSaleRepresentative'). ': ';
-		$moreforfilter.=$formother->select_salesrepresentatives($search_sale,'search_sale',$user);
+		$moreforfilter.=$formother->select_salesrepresentatives($search_sale,'search_sale',$user, 0, 1, 'maxwidth300');
 	 	$moreforfilter.='</div>';
  	}
     // If the user can view prospects other than his'
@@ -645,7 +645,7 @@ if ($resql)
     {
         $moreforfilter.='<div class="divsearchfield">';
         $moreforfilter.=$langs->trans('LinkedToSpecificUsers'). ': ';
-        $moreforfilter.=$form->select_dolusers($search_user,'search_user',1);
+        $moreforfilter.=$form->select_dolusers($search_user, 'search_user', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
         $moreforfilter.='</div>';
     }
     if (! empty($moreforfilter))

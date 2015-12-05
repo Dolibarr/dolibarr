@@ -1007,7 +1007,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     // Hierarchy
     print '<tr><td>'.$langs->trans("HierarchicalResponsible").'</td>';
     print '<td>';
-    print $form->select_dolusers($object->fk_user,'fk_user',1,array($object->id),0,'',0,$conf->entity);
+    print $form->select_dolusers($object->fk_user, 'fk_user', 1, array($object->id), 0, '', 0, $conf->entity, 0, 0, '', 0, '', 'maxwidth300');
     print '</td>';
     print "</tr>\n";
 
@@ -2107,7 +2107,7 @@ else
             print '<td>';
             if ($caneditfield)
             {
-            	print $form->select_dolusers($object->fk_user,'fk_user',1,array($object->id),0,'',0,$object->entity);
+            	print $form->select_dolusers($object->fk_user, 'fk_user', 1, array($object->id), 0, '', 0, $object->entity, 0, 0, '', 0, '', 'maxwidth300');
             }
             else
           {

@@ -936,7 +936,7 @@ else
 
 		// Login Dolibarr
 		print '<tr><td>'.$langs->trans("LinkedToDolibarrUser").'</td><td class="valeur">';
-		print $form->select_dolusers($object->user_id,'userid',1);
+		print $form->select_dolusers($object->user_id, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 		print '</td></tr>';
 		*/
         print '<tbody>';

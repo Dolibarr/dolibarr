@@ -514,7 +514,7 @@ if ($resql)
 	 	{
 		 	$moreforfilter.='<div class="divsearchfield">';
 		 	$moreforfilter.=$langs->trans('SalesRepresentatives'). ': ';
-			$moreforfilter.=$formother->select_salesrepresentatives($search_sale,'search_sale',$user);
+			$moreforfilter.=$formother->select_salesrepresentatives($search_sale,'search_sale',$user, 0, 1, 'maxwidth300');
 			$moreforfilter.='</div>';
 	 	}
 	}

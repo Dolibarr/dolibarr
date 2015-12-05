@@ -307,7 +307,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	$contactsofproject=(! empty($object->id)?$object->getListContactId('internal'):'');
 	if (count($contactsofproject))
 	{
-		print $form->select_dolusers($user->id,'userid',0,'',0,'',$contactsofproject);
+		print $form->select_dolusers($user->id, 'userid', 0, '', 0, '', $contactsofproject, 0, 0, 0, '', 0, '', 'maxwidth300');
 	}
 	else
 	{
