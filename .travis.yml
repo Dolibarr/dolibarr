@@ -17,7 +17,6 @@ services:
 # This will tell travis to run phpunit
 language: php
 php:
-# - "5.2" is not supported because pyrus to install PHP_Codesniffer is not available
  - 5.3
  - 5.4
  - 5.5 
@@ -51,9 +50,9 @@ before_script:
  - composer install
  - phpenv rehash
  - htdocs/includes/squizlabs/php_codesniffer/scripts/phpcs --version
+ - htdocs/includes/squizlabs/php_codesniffer/scripts/phpcs -i
 # - which phpcs
 # - phpcs --version
- - htdocs/includes/squizlabs/php_codesniffer/scripts/phpcs -i
 # - phpcs -i
  - echo Create dir $(pwd)/htdocs/documents
  - sudo mkdir -p $(pwd)/htdocs/documents/admin/temp;
@@ -72,10 +71,10 @@ before_script:
  - sh -c "if [ '$PHPV' = '5.4' ]; then echo 'zend_extension_ts = xdebug.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi"
  - cat ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
  - echo Mysql version
- # INSTALL MYSQL 5.6
- # (https://github.com/piwik/piwik/commit/20bd2e1c24e5d673dce3feb256204ad48c29f160)
- # TODO: Remove when mysql 5.6 is provided by travis.
- # Otherwise, our migrations will raise a syntax error.
+# INSTALL MYSQL 5.6
+# (https://github.com/piwik/piwik/commit/20bd2e1c24e5d673dce3feb256204ad48c29f160)
+# TODO: Remove when mysql 5.6 is provided by travis.
+# Otherwise, our migrations will raise a syntax error.
 # - "sudo apt-get remove mysql-common mysql-server-5.5 mysql-server-core-5.5 mysql-client-5.5 mysql-client-core-5.5"
 # - "sudo apt-get autoremove"
 # - "sudo apt-get install libaio1"
@@ -87,7 +86,7 @@ before_script:
 # - "sudo sed -i'' 's/log_slow_queries/slow_query_log/' /etc/mysql/my.cnf"
 # - "sudo sed -i'' 's/basedir[^=]\\+=.*$/basedir = \\/opt\\/mysql\\/server-5.6/' /etc/mysql/my.cnf"
 # - "sudo /etc/init.d/mysql.server start"
- # /END MYSQL 5.6- mysql --version
+# /END MYSQL 5.6- mysql --version
  - mysql --version
  - mysql -e "SELECT VERSION();"
  - echo Init database
