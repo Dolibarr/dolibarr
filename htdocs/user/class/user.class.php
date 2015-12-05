@@ -2594,6 +2594,7 @@ class User extends CommonObject
         $sql = "SELECT count(u.rowid) as nb";
         $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
         $sql.= " WHERE u.statut > 0";
+        //$sql.= " AND employee != 0";
         $sql.= " AND u.entity IN (".getEntity('user', 1).")";
 
         $resql=$this->db->query($sql);
