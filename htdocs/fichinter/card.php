@@ -1289,13 +1289,6 @@ else if ($id > 0 || ! empty($ref))
 		print $object->datev ? dol_print_date($object->datev, 'daytext') : '&nbsp;';
 		print '</td>';
 		print '</tr>';
-
-		// Date End
-		print '<tr><td>'.$langs->trans("Datee").'</td>';
-		print '<td colspan="3">';
-		print $object->datee ? dol_print_date($object->datee, 'daytext') : '&nbsp;';
-		print '</td>';
-		print '</tr>';
 		
 		// Date Start
 		print '<tr><td>'.$langs->trans("Dateo").'</td>';
