@@ -79,7 +79,7 @@ $fieldstosearchall = array(
  * View
  */
 
-$html = new Form($db);
+$form = new Form($db);
 $formother = new FormOther($db);
 $expensereporttmp=new ExpenseReport($db);
 
@@ -247,7 +247,7 @@ if ($resql)
 	// User
 	if ($user->rights->expensereport->readall || $user->rights->expensereport->lire_tous){
 		print '<td class="liste_titre" align="left">';
-		$html->select_dolusers($search_user,"search_user",1,"",0,'');
+		print $form->select_dolusers($search_user,"search_user",1,"",0,'');
 		print '</td>';
 	} else {
 		print '<td class="liste_titre">&nbsp;</td>';

@@ -507,13 +507,13 @@ if ($action == 'create' && $user->rights->projet->creer)
 
 	    // Opportunity amount
 	    print '<tr><td>'.$langs->trans("OpportunityAmount").'</td>';
-	    print '<td><input size="4" type="text" name="opp_amount" value="'.(GETPOST('opp_amount')!=''?price(GETPOST('opp_amount')):'').'"></td>';
+	    print '<td><input size="5" type="text" name="opp_amount" value="'.(GETPOST('opp_amount')!=''?price(GETPOST('opp_amount')):'').'"></td>';
 	    print '</tr>';
     }
 
 	// Budget
 	print '<tr><td>'.$langs->trans("Budget").'</td>';
-	print '<td><input size="6" type="text" name="budget_amount" value="'.(GETPOST('budget_amount')!=''?price(GETPOST('budget_amount')):'').'"></td>';
+	print '<td><input size="5" type="text" name="budget_amount" value="'.(GETPOST('budget_amount')!=''?price(GETPOST('budget_amount')):'').'"></td>';
 	print '</tr>';
 
     // Description
@@ -672,13 +672,13 @@ else
 
 		    // Opportunity amount
 		    print '<tr><td>'.$langs->trans("OpportunityAmount").'</td>';
-		    print '<td><input size="6" type="text" name="opp_amount" value="'.(isset($_POST['opp_amount'])?GETPOST('opp_amount'):(strcmp($object->opp_amount,'')?price($object->opp_amount):'')).'"></td>';
+		    print '<td><input size="5" type="text" name="opp_amount" value="'.(isset($_POST['opp_amount'])?GETPOST('opp_amount'):(strcmp($object->opp_amount,'')?price($object->opp_amount):'')).'"></td>';
 		    print '</tr>';
 	    }
 
 	    // Budget
 	    print '<tr><td>'.$langs->trans("Budget").'</td>';
-	    print '<td><input size="6" type="text" name="budget_amount" value="'.(isset($_POST['budget_amount'])?GETPOST('budget_amount'):(strcmp($object->budget_amount,'')?price($object->budget_amount):'')).'"></td>';
+	    print '<td><input size="5" type="text" name="budget_amount" value="'.(isset($_POST['budget_amount'])?GETPOST('budget_amount'):(strcmp($object->budget_amount,'')?price($object->budget_amount):'')).'"></td>';
 	    print '</tr>';
 
 	    // Description

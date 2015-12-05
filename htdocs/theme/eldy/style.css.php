@@ -64,7 +64,7 @@ $theme='eldy';	// Value of theme
 if (! empty($conf->global->MAIN_OVERWRITE_THEME_RES)) { $path='/'.$conf->global->MAIN_OVERWRITE_THEME_RES; $theme=$conf->global->MAIN_OVERWRITE_THEME_RES; }
 
 // Define image path files and other constants
-$fontlist='arial,tahoma,verdana,helvetica';    //$fontlist='Helvetica, Verdana, Arial, sans-serif';
+$fontlist='roboto,arial,tahoma,verdana,helvetica';    //$fontlist='helvetica, verdana, arial, sans-serif';
 $img_head='';
 $img_button=dol_buildpath($path.'/theme/'.$theme.'/img/button_bg.png',1);
 $dol_hide_topmenu=$conf->dol_hide_topmenu;

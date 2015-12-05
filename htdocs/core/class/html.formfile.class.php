@@ -176,18 +176,18 @@ class FormFile
 	            $out .= '<input type="hidden" id="'.$htmlname.'_link_section_id"  name="link_section_id" value="'.$sectionid.'">';
 	            $out .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
-	            $out .= '<div>';
-	            $out .= '<div class="float" style="padding-right: 10px;">';
+	            $out .= '<div class="valignmiddle" >';
+	            $out .= '<div class="inline-block" style="padding-right: 10px;">';
 	            if (! empty($conf->global->OPTIMIZEFORTEXTBROWSER)) $out .= '<label for="link">'.$langs->trans("URLToLink") . ':</label> ';
 	            $out .= '<input type="text" name="link" size="'.$maxlength.'" id="link" placeholder="'.dol_escape_htmltag($langs->trans("URLToLink")).'">';
 	            $out .= '</div>';
-	            $out .= '<div class="float" style="padding-right: 10px;">';
+	            $out .= '<div class="inline-block" style="padding-right: 10px;">';
 	            if (! empty($conf->global->OPTIMIZEFORTEXTBROWSER)) $out .= '<label for="label">'.$langs->trans("Label") . ':</label> ';
 	            $out .= '<input type="text" name="label" id="label" placeholder="'.dol_escape_htmltag($langs->trans("Label")).'">';
 	            $out .= '<input type="hidden" name="objecttype" value="' . $object->element . '">';
 	            $out .= '<input type="hidden" name="objectid" value="' . $object->id . '">';
 	            $out .= '</div>';
-	            $out .= '<div class="float" style="padding-right: 10px;">';
+	            $out .= '<div class="inline-block" style="padding-right: 10px;">';
 	            $out .= '<input type="submit" class="button" name="linkit" value="'.$langs->trans("ToLink").'"';
 	            $out .= (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm)?' disabled':'');
 	            $out .= '>';

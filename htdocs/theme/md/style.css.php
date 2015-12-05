@@ -65,7 +65,7 @@ $theme='md';	// Value of theme
 if (! empty($conf->global->MAIN_OVERWRITE_THEME_RES)) { $path='/'.$conf->global->MAIN_OVERWRITE_THEME_RES; $theme=$conf->global->MAIN_OVERWRITE_THEME_RES; }
 
 // Define image path files and other constants
-$fontlist='Open Sans,sans-serif';    //$fontlist='Verdana,Helvetica,Arial,sans-serif';
+$fontlist='roboto,arial,tahoma,verdana,helvetica';    //$fontlist='verdana,helvetica,arial,sans-serif';
 $img_head='';
 $img_button=dol_buildpath($path.'/theme/'.$theme.'/img/button_bg.png',1);
 $dol_hide_topmenu=$conf->dol_hide_topmenu;
@@ -1704,62 +1704,8 @@ span.butAction, span.butActionDelete {
 }
 
 
-/*
-.butAction, .butAction:link, .butAction:visited, .butAction:hover, .butAction:active, .butActionDelete, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active 
-{
-	text-decoration: none;
-	white-space: nowrap;
-	padding: 0.4em <?php echo ($dol_optimize_smallscreen?'0.4':'0.7'); ?>em;
-	margin: 0em <?php echo ($dol_optimize_smallscreen?'0.7':'0.9'); ?>em;
-	font-family: <?php print $fontlist ?>;
-
-	font-weight: bold;
-	background: white;
-	border: 1px solid #8CACBB;
-	color: #434956;
-    -moz-border-radius:0px 2px 0px 2px;
-	-webkit-border-radius:0px 2px 0px 2px;
-	border-radius:0px 2px 0px 2px;
-    -moz-box-shadow: 2px 2px 3px #f4f4f4;
-    -webkit-box-shadow: 2px 2px 3px #f4f4f4;
-    box-shadow: 2px 2px 3px #f4f4f4;  
-}
-
-.butAction:hover   {
-	background: #dee7ec;
-}
-
-.butActionDelete, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active {
-	border: 1px solid #997777;
-}
-
-.butActionDelete:hover {
-	background: #FFe7ec;
-}
-
-.butActionRefused {
-	text-decoration: none !important;
-	white-space: nowrap !important;
-	cursor: not-allowed;
-	padding: 0.4em <?php echo ($dol_optimize_smallscreen?'0.4':'0.7'); ?>em;
-	margin: 0em <?php echo ($dol_optimize_smallscreen?'0.7':'0.9'); ?>em;
-    font-family: <?php print $fontlist ?> !important;
-
-	font-weight: bold !important;
-	background: white !important;
-	border: 1px solid #AAAAAA !important;
-	color: #AAAAAA !important;
-    -moz-border-radius:0px 2px 0px 2px;
-	-webkit-border-radius:0px 2px 0px 2px;
-	border-radius:0px 2px 0px 2px;
-    -moz-box-shadow: 3px 3px 4px #f4f4f4;
-    -webkit-box-shadow: 3px 3px 4px #f4f4f4;
-    box-shadow: 3px 3px 4px #f4f4f4;
-}
-*/
-
 /* Prepare for bootstrap look */
-.butAction, .butActionDelete, .butActionRefused {
+.button, .butAction, .butActionDelete, .butActionRefused {
 	border-color: #c5c5c5;
 	border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25);
 	display: inline-block;
@@ -1792,7 +1738,7 @@ span.butAction, span.butActionDelete {
 	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
-.butAction {
+.button, .butAction {
 	color: #ffffff !important;
 	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
 	background-color: #006dcc;
@@ -1807,7 +1753,21 @@ span.butAction, span.butActionDelete {
 	border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
 	filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
 }
-
+.button:disabled, .butAction:disabled {
+    color: #666 !important;
+    text-shadow: none;
+    border-color: #555;
+    cursor: not-allowed;
+    
+    background-color: #f5f5f5;
+    background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#e6e6e6));
+    background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e6);
+    background-image: -o-linear-gradient(top, #ffffff, #e6e6e6);
+    background-image: linear-gradient(to bottom, #ffffff, #e6e6e6);
+    background-repeat: repeat-x    
+}
+   
 .butActionDelete {
 	color: #ffffff !important;
 	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
@@ -1946,7 +1906,7 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	border-color: #BBB;
 	border-style: solid;
 
-	margin: 0px 0px 2px 0px;
+	margin: 0px 0px 8px 0px;
     /*
 	-moz-box-shadow: 2px 2px 4px #CCC;
 	-webkit-box-shadow: 2px 2px 4px #CCC;
@@ -3465,7 +3425,7 @@ a span.select2-chosen
   line-height: 13px;
   color: #333;
   cursor: default;
-  border: 1px solid #aaaaaa;
+  border: 1px solid #ddd;
   border-radius: 3px;
   -webkit-box-shadow: 0 0 2px #fff inset, 0 1px 0 rgba(0, 0, 0, 0.05);
   box-shadow: 0 0 2px #fff inset, 0 1px 0 rgba(0, 0, 0, 0.05);
