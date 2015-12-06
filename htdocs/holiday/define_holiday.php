@@ -130,10 +130,15 @@ elseif($action == 'add_event')
         $add_holiday = $holiday->getValueEventCp($event);
         $new_holiday = $nb_holiday + $add_holiday;
 
-        // On ajoute la modification dans le LOG
-        $holiday->addLogCP($user->id,$userCP, $holiday->getNameEventCp($event),$new_holiday);
+        // add event to existing types of vacation
+        foreach ($typeleaves as $key => $leave) {
+        	$vacationTypeID = $leave['rowid'];
 
-        $holiday->updateSoldeCP($userCP,$new_holiday);
+	        // On ajoute la modification dans le LOG
+	        $holiday->addLogCP($user->id,$userCP, $holiday->getNameEventCp($event),$new_holiday, $vacationTypeID);
+
+	        $holiday->updateSoldeCP($userCP,$new_holiday, $vacationTypeID);
+        }
 
 		setEventMessages('AddEventToUserOkCP', '', 'mesgs');
     }
