@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/html.formventilation.class.ph
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 
 // Langs
 $langs->load("compta");
@@ -179,7 +180,7 @@ if ($result) {
 	while ( $i < min($num_lines, $limit) ) {
 		$objp = $db->fetch_object($result);
 		$var = ! $var;
-		$codeCompta = $objp->account_number . ' ' . $objp->label;
+		$codeCompta = length_accountg($objp->account_number) . ' ' . $objp->label;
 		
 		print "<tr $bc[$var]>";
 		

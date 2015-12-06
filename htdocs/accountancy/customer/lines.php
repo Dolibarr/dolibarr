@@ -32,6 +32,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/html.formventilation.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 
 // langs
 $langs->load("bills");
@@ -50,7 +51,6 @@ if (! $user->rights->accounting->ventilation->dispatch)
 $formventilation = new FormVentilation($db);
 
 // change account
-
 $changeaccount = GETPOST('changeaccount');
 
 $is_search = GETPOST('button_search_x');
@@ -180,7 +180,7 @@ if ($result) {
 	$var = True;
 	while ( $objp = $db->fetch_object($result) ) {
 		$var = ! $var;
-		$codeCompta = $objp->account_number . ' ' . $objp->label;
+		$codeCompta = length_accountg($objp->account_number) . ' ' . $objp->label;
 		
 		print "<tr $bc[$var]>";
 		
