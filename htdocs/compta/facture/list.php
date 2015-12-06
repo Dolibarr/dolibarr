@@ -138,7 +138,7 @@ if (empty($reshook))
 	if (! empty($massaction) && count($toselect) < 1)
 	{
 		$error++;
-		setEventMessage("NoLineChecked","warnings");
+		setEventMessages($langs->trans("NoLineChecked"), null, "warnings");
 	}
 
 	if (! $error && $massaction == 'confirm_presend')
