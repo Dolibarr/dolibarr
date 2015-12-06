@@ -247,7 +247,7 @@ if ($resql)
 	// User
 	if ($user->rights->expensereport->readall || $user->rights->expensereport->lire_tous){
 		print '<td class="liste_titre" align="left">';
-		print $form->select_dolusers($search_user, 'search_user', 1, '' 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+		print $form->select_dolusers($search_user, 'search_user', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 		print '</td>';
 	} else {
 		print '<td class="liste_titre">&nbsp;</td>';
