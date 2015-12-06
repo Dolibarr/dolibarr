@@ -53,8 +53,6 @@ AddLineMini=Add
 Date_DEBUT=Period date start
 Date_FIN=Period date end
 ModePaiement=Payment mode
-Note=Note
-Project=Project
 
 VALIDATOR=User responsible for approval
 VALIDOR=Approved by

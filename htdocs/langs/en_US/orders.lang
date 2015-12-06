@@ -64,7 +64,6 @@ SearchOrder=Search order
 SearchACustomerOrder=Search a customer order
 SearchASupplierOrder=Search a supplier order
 ShipProduct=Ship product
-Discount=Discount
 CreateOrder=Create Order
 RefuseOrder=Refuse order
 ApproveOrder=Approve order

@@ -2833,7 +2833,7 @@ else if ($id > 0 || ! empty($ref))
 	print '<tr><td>' . $langs->trans('Company') . '</td>';
 	print '</td><td colspan="5">';
 	if (! empty($conf->global->FACTURE_CHANGE_THIRDPARTY) && $action != 'editthirdparty' && $object->brouillon && $user->rights->facture->creer)
-		print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editthirdparty&amp;facid=' . $object->id . '">' . img_edit($langs->trans('SetLinkToThirdParty'), 1) . '</a></td>';
+		print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editthirdparty&amp;facid=' . $object->id . '">' . img_edit($langs->trans('SetLinkToAnotherThirdParty'), 1) . '</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="5">';
 	if ($action == 'editthirdparty') {

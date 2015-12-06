@@ -1,82 +1,102 @@
+#!/usr/bin/php
 <?php
-/* Copyright (c) 2015 Tommaso Basilici <t.basilici@19.coop>
-*
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 2 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
+/* Copyright (c) 2015 Tommaso Basilici    <t.basilici@19.coop>
+ * Copyright (c) 2015 Laurent Destailleur <eldy@destailleur.fr>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 
-echo "<html>";
-echo "<head>";
+$sapi_type = php_sapi_name();
+$script_file = basename(__FILE__);
+$path=dirname(__FILE__).'/';
 
-echo "<STYLE type=\"text/css\">
+$web=0;
 
-table {
-	background: #f5f5f5;
-	border-collapse: separate;
-	box-shadow: inset 0 1px 0 #fff;
-	font-size: 12px;
-	line-height: 24px;
-	margin: 30px auto;
-	text-align: left;
-	width: 800px;
-}
-
-th {
-	background-color: #777;
-	border-left: 1px solid #555;
-	border-right: 1px solid #777;
-	border-top: 1px solid #555;
-	border-bottom: 1px solid #333;
-	color: #fff;
-  	font-weight: bold;
-	padding: 10px 15px;
-	position: relative;
-	text-shadow: 0 1px 0 #000;
-}
-
-td {
-	border-right: 1px solid #fff;
-	border-left: 1px solid #e8e8e8;
-	border-top: 1px solid #fff;
-	border-bottom: 1px solid #e8e8e8;
-	padding: 10px 15px;
-	position: relative;
+// Test if batch mode
+if (substr($sapi_type, 0, 3) == 'cgi') 
+{
+    $web=1;
 }
 
 
-tr {
-	background-color: #f1f1f1;
-
+if ($web)
+{
+    echo "<html>";
+    echo "<head>";
+    
+    echo "<STYLE type=\"text/css\">
+    
+    table {
+    	background: #f5f5f5;
+    	border-collapse: separate;
+    	box-shadow: inset 0 1px 0 #fff;
+    	font-size: 12px;
+    	line-height: 24px;
+    	margin: 30px auto;
+    	text-align: left;
+    	width: 800px;
+    }
+    
+    th {
+    	background-color: #777;
+    	border-left: 1px solid #555;
+    	border-right: 1px solid #777;
+    	border-top: 1px solid #555;
+    	border-bottom: 1px solid #333;
+    	color: #fff;
+      	font-weight: bold;
+    	padding: 10px 15px;
+    	position: relative;
+    	text-shadow: 0 1px 0 #000;
+    }
+    
+    td {
+    	border-right: 1px solid #fff;
+    	border-left: 1px solid #e8e8e8;
+    	border-top: 1px solid #fff;
+    	border-bottom: 1px solid #e8e8e8;
+    	padding: 10px 15px;
+    	position: relative;
+    }
+    
+    
+    tr {
+    	background-color: #f1f1f1;
+    
+    }
+    
+    tr:nth-child(odd) td {
+    	background-color: #f1f1f1;
+    }
+    
+    </STYLE>";
+    
+    echo "<body>";
 }
 
-tr:nth-child(odd) td {
-	background-color: #f1f1f1;
-}
+echo "If you call this file with the argument \"?unused=true\" it searches for the translation strings that exist in en_US but are never used.\n";
+if ($web) print "<br>";
+echo "IMPORTANT: that can take quite a lot of time (up to 10 minutes), you need to tune the max_execution_time on your php.ini accordingly.\n";
+if ($web) print "<br>";
 
-</STYLE>";
-
-echo "<body>";
-
-echo "If you call this file with the argument \"?unused=true\" it searches for the translation strings that exist in en_US but are never used.<br>";
-echo "IMPORTANT: that can take quite a lot of time (up to 10 minutes), you need to tune the max_execution_time on your php.ini accordingly.<br>";
-echo "Happy translating :)<br>";
 
 
 // STEP 1 - Search duplicates keys
 
 
 // directory containing the php and lang files
-$htdocs 	= "../../htdocs/";
+$htdocs 	= $path."/../../htdocs/";
 
 // directory containing the english lang files
 $workdir 	= $htdocs."langs/en_US/";
@@ -114,8 +134,10 @@ foreach ($files AS $file) {
 	}
 }
 
-foreach ($langstrings_3d AS $filename => $file) {
-	foreach ($file AS $linenum => $value) {
+foreach ($langstrings_3d AS $filename => $file) 
+{
+	foreach ($file AS $linenum => $value) 
+	{
 		$keys = array_keys($langstrings_full, $value);
 		if (count($keys)>1)
 		{
@@ -126,30 +148,95 @@ foreach ($langstrings_3d AS $filename => $file) {
 	}
 }
 
-echo "<h2>Duplicate strings in lang files in $workdir - ".count($dups)." found</h2>";
+if ($web) print "<h2>";
+print "Duplicate strings in lang files in $workdir - ".count($dups)." found\n";
+if ($web) print "</h2>";
 
-echo "<table border_bottom=1> ";
-echo "<thead><tr><th align=\"center\">#</th><th>String</th><th>File and lines</th></thead>";
-echo "<tbody>";
-$count = 0;
-foreach ($dups as $string => $pages) {
-	$count++;
-	echo "<tr>";
-	echo "<td align=\"center\">$count</td>";
-	echo "<td>$string</td>";
-	echo "<td>";
-	foreach ($pages AS $page => $lines ) {
-		echo "$page ";
-		foreach ($lines as $line => $translatedvalue) {
-			//echo "($line - ".(substr($translatedvalue,0,20)).") ";
-			echo "($line - ".htmlentities($translatedvalue).") ";
-		}
-		echo "<br>";
-	}
-	echo "</td></tr>\n";
+if ($web)
+{
+    echo '<table border_bottom="1">'."\n";
+    echo "<thead><tr><th align=\"center\">#</th><th>String</th><th>File and lines</th></thead>\n";
+    echo "<tbody>\n";
 }
-echo "</tbody>";
-echo "</table>";
+
+$sduplicateinsamefile='';
+$sinmainandother='';
+$sininstallandadmin='';
+$sother='';
+
+$count = 0;
+foreach ($dups as $string => $pages) 
+{
+	$count++;
+	$s='';
+	
+	// Keyword $string
+	if ($web) $s.="<tr>";
+	if ($web) $s.="<td align=\"center\">";
+	if ($web) $s.=$count;
+	if ($web) $s.="</td>";
+	if ($web) $s.="<td>";
+	$s.=$string;
+	if ($web) $s.="</td>";
+	if ($web) $s.="<td>";
+	if (! $web) $s.= ' : ';
+	
+	// Loop on each files keyword was found
+    $duplicateinsamefile=0;
+	$inmain=0;
+    $inadmin=0;
+	foreach ($pages AS $file => $lines) 
+	{
+        if ($file == 'main.lang') { $inmain=1; $inadmin=0; }
+        if ($file == 'admin.lang' && ! $inmain) { $inadmin=1; }
+        
+	    $s.=$file." ";
+	    
+	    // Loop on each line keword was found into file.
+	    $listoffilesforthisentry=array();
+	    foreach ($lines as $line => $translatedvalue) 
+		{
+            if (! empty($listoffilesforthisentry[$file])) $duplicateinsamefile=1;
+            $listoffilesforthisentry[$file]=1;
+        
+			$s.= "(".$line." - ".htmlentities($translatedvalue).") ";
+		}
+		if ($web) $s.="<br>";
+	}
+	if ($web) $s.="</td></tr>";
+	$s.="\n";
+	
+	if ($duplicateinsamefile) $sduplicateinsamefile .= $s;
+	else if ($inmain) $sinmainandother .= $s;
+	else if ($inadmin) $sininstallandadmin .= $s;
+	else $sother .= $s;
+}
+
+if (! $web) print "\n***** Entries duplicated in same file\n";
+print $sduplicateinsamefile;
+if (! $web && empty($sduplicateinsamefile)) print "None\n";
+if (! $web) print "\n";
+
+if (! $web) print "***** Entries in main and another (keep only entry in main)\n";
+print $sinmainandother;
+if (! $web && empty($sinmainandother)) print "None\n";
+if (! $web) print "\n";
+
+if (! $web) print "***** Entries in admin and another\n";
+print $sininstallandadmin;
+if (! $web && empty($sininstallandadmin)) print "None\n";
+if (! $web) print "\n";
+
+if (! $web) print "***** Other\n";
+print $sother;
+if (! $web && empty($sother)) print "None\n";
+if (! $web) print "\n";
+
+if ($web)
+{
+    echo "</tbody>\n";
+    echo "</table>\n";
+}
 
 
 // STEP 2 - Search key not used
@@ -168,12 +255,20 @@ if (! empty($_REQUEST['unused']) && $_REQUEST['unused'] == 'true')
 		}
 	}
 
-	echo "<h2>Strings in en_US that are never used</h2>";
-	echo "<pre>";
+	if ($web) print "<h2>\n";
+	print "Strings in en_US that are never used\n";
+	if ($web) print "</h2>\n";
+	if ($web) echo "<pre>";
 	print_r($unused);
-	echo "</pre>";
+	if ($web) echo "</pre>\n";
 }
 
 echo "\n";
-echo "</body>";
-echo "</html>";
+if ($web)
+{
+    echo "</body>\n";
+    echo "</html>\n";
+}
+
+exit;
+

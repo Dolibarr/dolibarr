@@ -3,8 +3,6 @@
 # No errors
 NoErrorCommitIsDone=No error, we commit
 # Errors
-Error=Error
-Errors=Errors
 ErrorButCommitIsDone=Errors found but we validate despite this
 ErrorBadEMail=EMail %s is wrong
 ErrorBadUrl=Url %s is wrong
