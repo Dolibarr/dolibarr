@@ -724,6 +724,9 @@ ViewList=List view
 Mandatory=Mandatory
 Hello=Hello
 Sincerely=Sincerely
+DeleteLine=Delete line
+ConfirmDeleteLine=Are you sure you want to delete this line ?
+
 # Week day
 Monday=Monday
 Tuesday=Tuesday
