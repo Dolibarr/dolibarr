@@ -14,41 +14,40 @@ make a Dolibarr upgrade.
 
 ***** ChangeLog for 3.9 compared to 3.8.* *****
 For users:
+NEW: A new and more modern look for "eldy" theme.
+NEW: Introduce a new theme called "Material Design". 
 NEW: #3767 Allow changing multiple prices of a product at once
 NEW: Add a button to purge criteria in user list
 NEW: Add a filter field to restrict list of member when doing a LDAP list request. Use also this filter into ldap command line script making sync from ldap to dolibarr.
 NEW: Add all assigned users and all extrafields data in new event when we createFromClone
 NEW: Add hidden option to use standard position address in crabe model For electronic sending solutions
 NEW: Add a refresh button on page list of direct print jobs.
-NEW: Add a tab document in donation card
+NEW: Add a tab "document" in donation card
 NEW: Add cancel button on thirdparty create page
 NEW: Add chart of product statistics
 NEW: Add color on categories
-NEW: Add css on column of detail lines to allow module to easily manipulate fields.
+NEW: Add css class and ids on column of detail lines to allow module to easily manipulate fields.
 NEW: Add date value filter on account records list
-NEW: Added __PROJECT_NAME__ tag for customer invoice emails
-NEW: Add exemple of setup for multitail to render dolibarr log files
-NEW: Add experimental option PDF_ALLOW_HTML_FOR_FREE_TEXT to be able to enter pdf footer text with wysiwyg editor.
+NEW: Add __PROJECT_NAME__ tag for customer invoice emails
+NEW: Add option PDF_ALLOW_HTML_FOR_FREE_TEXT to be able to enter pdf footer text with wysiwyg editor.
 NEW: Add fields into llx_cronjobs to be able to use job table to queue one shot jobs.
 NEW: Add filter on status on invoice list
 NEW: Add filter on status on shipments
 NEW: Add gender property managed on user card FIX: Better error messages when uploading photo of user when permission to write are not granted
-NEW: Add help tooltips on fields of dictionary edit pages. Fix: visible list of tasks are for opened project only.
+NEW: Add help tooltips on fields of dictionary edit pages.
 NEW: Add hidden option MAIN_MAILFORM_DISABLE_ENTERKEY to disable the key enter into the form to send email.
-NEW: add hook in send mail
+NEW: Add hook in send mail
 NEW: Add hooks on list of members to allow an external module to add more fields into list view.
 NEW: Add hooks to allow an external module to complete list of events into calendar views.
-NEW: add $ID$ into extrafields management to allow use current object id on filter for select list from table and checkbox list from table
-NEW: add info page on product card
+NEW: Add $ID$ into extrafields management to allow use of current object id on filter for select list from table and checkbox list from table
+NEW: Add info page on product card
 NEW: Add into about page, a sample text to use to promote new version release (visible only if version is last stable)
 NEW: Add none/all selection into list of files for FTP browser module
 NEW: Add opportunity amount on project card.
-NEW: Add option THEME_ELDY_DISABLE_IMAGE to disable images into menu eldy.
 NEW: Add parameter to add a link to use "date of invoice" in one click when fille a payment card.
 NEW: Add planned workload and declared progress on project summary list on project home page (data aggregated from tasks of project)
-NEW: add "productpricecard" hook and uniformize code
+NEW: Add "productpricecard" hook and uniformize code
 NEW: Add ref and label of project into export
-NEW: add restler framework First step to build REST API into Dolibarr
 NEW: Add status into filters of graph
 NEW: Add tab document on salaries payment
 NEW: Add thumb of users into thumbs stats on home page
@@ -116,13 +115,9 @@ NEW: Show which fields are used for search when doing a generic search from the 
 NEW: Statistic graphs on products offer a filter on product type (product / service or both)
 NEW: Support logging to a Sentry server
 NEW: Syslog displays configuration errors
-NEW: [ task 1191 ] AJAX selector for projects
-NEW: [ task #3768 ] Improve product multiprices view
-NEW: [ task #851 ] Add a new field: Commercial name
 NEW: The clicktodial module is now able to provide link "tel:" on phone numbers. So it is also possible to use clicktodial with a client solution like the "xivo" local client.
 NEW: The conditional IF into ODT templates works also on not defined var so we can show data only if defined. Close #3819
 NEW: The free text in PDF footer can now be a HTML content. So the WYSIWYG editor is on by default to edit it into module setup.
-NEW: The line where mouse is over can be highlight with option THEME_ELDY_USE_HOVER (on by default)
 NEW: The quick search box on left menu can also search into expense reports.
 NEW: The search box and the bookmarks are now rendered by the menu manager.
 NEW: The thirdparties tabs, the contacts tabs and the members tabs are now presented using a new top banner, saving space and using a same way to show address, status and navigation arrows.
@@ -147,6 +142,8 @@ NEW: Introduce function dolGetFirstLineOfText
 NEW: Introduce a method getDefaultCreateValueForField for developers to get a default value to use for a form in create mode. Implement it for public and private notes.
 NEW: A module can add its entries into cron module.
 NEW: Framework feature. To have a page being loaded at same scrollbar level after a click on a href link, just add the class "reposition" on this link.
+NEW: Add exemple of setup for multitail to render dolibarr log files
+NEW: Add restler framework. First step to build REST API into Dolibarr.
 
 
 WARNING: 
