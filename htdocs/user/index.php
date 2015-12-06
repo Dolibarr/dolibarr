@@ -266,10 +266,12 @@ if ($result)
         print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
     }
 	
+    $moreforfilter='';
+    
 	$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
 	$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
     
-	print '<table class="liste">';
+    print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
     print '<tr class="liste_titre">';
     if (! empty($arrayfields['u.login']['checked']))          print_liste_field_titre($langs->trans("Login"),$_SERVER['PHP_SELF'],"u.login",$param,"","",$sortfield,$sortorder);
     if (! empty($arrayfields['u.lastname']['checked']))       print_liste_field_titre($langs->trans("Lastname"),$_SERVER['PHP_SELF'],"u.lastname",$param,"","",$sortfield,$sortorder);
