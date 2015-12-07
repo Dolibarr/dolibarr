@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "8359ca16a39a2910cad7f36784d10972",
-    "content-hash": "a7d53767afa4dc32484fac05f6ffde67",
+    "hash": "d8229cbb9aea945c9ca803bbe54d7aa7",
+    "content-hash": "47929ed42fb67e5159ccec6a3a5a45eb",
     "packages": [
         {
             "name": "ccampbell/chromephp",
@@ -151,22 +151,24 @@
         },
         {
             "name": "mobiledetect/mobiledetectlib",
-            "version": "2.8.3",
+            "version": "2.8.17",
             "source": {
                 "type": "git",
                 "url": "https://github.com/serbanghita/Mobile-Detect.git",
-                "reference": "f5753e4b90daffe50c902e99df5ce3c58fca3fee"
+                "reference": "b87da5f63a76e9615a0c74fcf168657b1ea7e41d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/serbanghita/Mobile-Detect/zipball/f5753e4b90daffe50c902e99df5ce3c58fca3fee",
-                "reference": "f5753e4b90daffe50c902e99df5ce3c58fca3fee",
+                "url": "https://api.github.com/repos/serbanghita/Mobile-Detect/zipball/b87da5f63a76e9615a0c74fcf168657b1ea7e41d",
+                "reference": "b87da5f63a76e9615a0c74fcf168657b1ea7e41d",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.0.0"
             },
             "require-dev": {
+                "codeclimate/php-test-reporter": "dev-master",
+                "johnkary/phpunit-speedtrap": "~1.0@dev",
                 "phpunit/phpunit": "*"
             },
             "type": "library",
@@ -186,7 +188,7 @@
                 {
                     "name": "Serban Ghita",
                     "email": "serbanghita@gmail.com",
-                    "homepage": "http://ghita.org",
+                    "homepage": "http://mobiledetect.net",
                     "role": "Developer"
                 }
             ],
@@ -199,7 +201,7 @@
                 "mobile detector",
                 "php mobile detect"
             ],
-            "time": "2014-07-10 20:00:25"
+            "time": "2015-09-17 14:45:21"
         },
         {
             "name": "phpoffice/phpexcel",

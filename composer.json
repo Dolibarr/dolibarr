@@ -18,7 +18,7 @@
         "ccampbell/chromephp": "^4.1",
         "ckeditor/ckeditor": "dev-full/4.3.x#0b7c3f1",
         "mike42/escpos-php": "dev-master",
-        "mobiledetect/mobiledetectlib": "2.8.3",
+        "mobiledetect/mobiledetectlib": "2.8.17",
         "phpoffice/phpexcel": "1.8.1",
         "restler/framework": "^3.0",
         "tecnickcom/tcpdf": "6.2.12"
