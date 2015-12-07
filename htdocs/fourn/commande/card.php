@@ -95,9 +95,6 @@ $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
-//Date prefix
-$date_pf = '';
-
 // Load object
 if ($id > 0 || ! empty($ref))
 {
@@ -263,8 +260,8 @@ if (empty($reshook))
 		// Set if we used free entry or predefined product
 		$predef='';
 		$product_desc=(GETPOST('dp_desc')?GETPOST('dp_desc'):'');
-		$date_start=dol_mktime(GETPOST('date_start'.$date_pf.'hour'), GETPOST('date_start'.$date_pf.'min'), 0, GETPOST('date_start'.$date_pf.'month'), GETPOST('date_start'.$date_pf.'day'), GETPOST('date_start'.$date_pf.'year'));
-		$date_end=dol_mktime(GETPOST('date_end'.$date_pf.'hour'), GETPOST('date_end'.$date_pf.'min'), 0, GETPOST('date_end'.$date_pf.'month'), GETPOST('date_end'.$date_pf.'day'), GETPOST('date_end'.$date_pf.'year'));
+		$date_start=dol_mktime(GETPOST('date_start'.$predef.'hour'), GETPOST('date_start'.$predef.'min'), GETPOST('date_start' . $predef . 'sec'), GETPOST('date_start'.$predef.'month'), GETPOST('date_start'.$predef.'day'), GETPOST('date_start'.$predef.'year'));
+		$date_end=dol_mktime(GETPOST('date_end'.$predef.'hour'), GETPOST('date_end'.$predef.'min'), GETPOST('date_end' . $predef . 'sec'), GETPOST('date_end'.$predef.'month'), GETPOST('date_end'.$predef.'day'), GETPOST('date_end'.$predef.'year'));
 		if (GETPOST('prod_entry_mode') == 'free')
 		{
 			$idprod=0;
@@ -506,8 +503,8 @@ if (empty($reshook))
 	        if (!$res) dol_print_error($db);
 	    }
 
-	    $date_start=dol_mktime(GETPOST('date_start'.$date_pf.'hour'), GETPOST('date_start'.$date_pf.'min'), 0, GETPOST('date_start'.$date_pf.'month'), GETPOST('date_start'.$date_pf.'day'), GETPOST('date_start'.$date_pf.'year'));
-	    $date_end=dol_mktime(GETPOST('date_end'.$date_pf.'hour'), GETPOST('date_end'.$date_pf.'min'), 0, GETPOST('date_end'.$date_pf.'month'), GETPOST('date_end'.$date_pf.'day'), GETPOST('date_end'.$date_pf.'year'));
+	    $date_start=dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), GETPOST('date_startsec'), GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
+	    $date_end=dol_mktime(GETPOST('date_endhour'), GETPOST('date_endmin'), GETPOST('date_endsec'), GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
 
 	    $localtax1_tx=get_localtax($tva_tx,1,$mysoc,$object->thirdparty);
 	    $localtax2_tx=get_localtax($tva_tx,2,$mysoc,$object->thirdparty);

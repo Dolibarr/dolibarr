@@ -575,8 +575,8 @@ if (empty($reshook))
 	            $type = $_POST["type"]?$_POST["type"]:0;
 	        }
 
-	    	$date_start=dol_mktime(GETPOST('date_start'.$date_pf.'hour'), GETPOST('date_start'.$date_pf.'min'), 0, GETPOST('date_start'.$date_pf.'month'), GETPOST('date_start'.$date_pf.'day'), GETPOST('date_start'.$date_pf.'year'));
-	    	$date_end=dol_mktime(GETPOST('date_end'.$date_pf.'hour'), GETPOST('date_end'.$date_pf.'min'), 0, GETPOST('date_end'.$date_pf.'month'), GETPOST('date_end'.$date_pf.'day'), GETPOST('date_end'.$date_pf.'year'));
+		    $date_start=dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), GETPOST('date_startsec'), GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
+		    $date_end=dol_mktime(GETPOST('date_endhour'), GETPOST('date_endmin'), GETPOST('date_endsec'), GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
 
 	        $localtax1_tx= get_localtax($_POST['tauxtva'], 1, $mysoc,$object->thirdparty);
 	        $localtax2_tx= get_localtax($_POST['tauxtva'], 2, $mysoc,$object->thirdparty);
@@ -639,6 +639,9 @@ if (empty($reshook))
 
 		$qty = GETPOST('qty'.$predef);
 		$remise_percent=GETPOST('remise_percent'.$predef);
+
+		$date_start=dol_mktime(GETPOST('date_start'.$predef.'hour'), GETPOST('date_start'.$predef.'min'), GETPOST('date_start' . $predef . 'sec'), GETPOST('date_start'.$predef.'month'), GETPOST('date_start'.$predef.'day'), GETPOST('date_start'.$predef.'year'));
+		$date_end=dol_mktime(GETPOST('date_end'.$predef.'hour'), GETPOST('date_end'.$predef.'min'), GETPOST('date_end' . $predef . 'sec'), GETPOST('date_end'.$predef.'month'), GETPOST('date_end'.$predef.'day'), GETPOST('date_end'.$predef.'year'));
 
 	    // Extrafields
 	    $extrafieldsline = new ExtraFields($db);
@@ -710,7 +713,7 @@ if (empty($reshook))
 	            $price_base_type = 'HT';
 
 	            // TODO Save the product supplier ref into database into field ref_supplier (must rename field ref into ref_supplier first)
-	            $result=$object->addline($desc, $productsupplier->fourn_pu, $tvatx, $localtax1_tx, $localtax2_tx, $qty, $idprod, $remise_percent, '', '', 0, $npr, $price_base_type, $type, -1, 0, $array_options, $productsupplier->fk_unit);
+	            $result=$object->addline($desc, $productsupplier->fourn_pu, $tvatx, $localtax1_tx, $localtax2_tx, $qty, $idprod, $remise_percent, $date_start, $date_end, 0, $npr, $price_base_type, $type, -1, 0, $array_options, $productsupplier->fk_unit);
 	        }
 	    	if ($idprod == -2 || $idprod == 0)
 	        {
@@ -757,7 +760,7 @@ if (empty($reshook))
 	            $price_base_type = 'HT';
 	        }
 
-			$result=$object->addline($product_desc, $ht, $tva_tx, $localtax1_tx, $localtax2_tx, $qty, 0, $remise_percent, $datestart, $dateend, 0, $npr, $price_base_type, $type, -1, 0, $array_options, $fk_unit);
+			$result=$object->addline($product_desc, $ht, $tva_tx, $localtax1_tx, $localtax2_tx, $qty, 0, $remise_percent, $date_start, $date_end, 0, $npr, $price_base_type, $type, -1, 0, $array_options, $fk_unit);
 	    }
 
 	    //print "xx".$tva_tx; exit;
