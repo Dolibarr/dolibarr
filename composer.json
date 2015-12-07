@@ -21,9 +21,7 @@
         "mobiledetect/mobiledetectlib": "2.8.3",
         "phpoffice/phpexcel": "1.8.1",
         "restler/framework": "^3.0",
-        "tecnickcom/tcpdf": "6.2.12",
-        "raven/raven": "^0.12.0",
-        "firephp/firephp-core": "^0.4.0"
+        "tecnickcom/tcpdf": "6.2.12"
     },
     "suggest": {
         "ext-mysqlnd": "To use with MySQL or MariaDB",
@@ -38,7 +36,9 @@
         "ext-mbstring": "Handle non UTF-8 databases",
         "ext-soap": "Native SOAP",
         "ext-zip": "ODT and Excel support",
-        "ext-xml": "Excel support"
+        "ext-xml": "Excel support",
+        "firephp/firephp-core": "Logging to Firebug console support",
+        "raven/raven": "Sentry logging server support"
     },
     "config": {
         "vendor-dir": "htdocs/includes"
