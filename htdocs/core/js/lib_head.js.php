@@ -1,25 +1,49 @@
-// Copyright (C) 2005-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
-// Copyright (C) 2005-2014 Regis Houssin        <regis.houssin@capnetworks.com>
-//
-// This program is free software; you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation; either version 3 of the License, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
-// or see http://www.gnu.org/
+<?php
+/* Copyright (C) 2005-2014  Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2014  Regis Houssin       <regis.houssin@capnetworks.com>
+ * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * or see http://www.gnu.org/
+ */
 
-//
-// \file       htdocs/core/js/lib_head.js
-// \brief      File that include javascript functions (included if option use_javascript activated)
-//
+/**
+ * \file       htdocs/core/js/lib_head.js.php
+ * \brief      File that include javascript functions (included if option use_javascript activated)
+ */
 
+//if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
+//if (! defined('NOREQUIREDB'))   define('NOREQUIREDB','1');
+if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC','1');
+//if (! defined('NOREQUIRETRAN')) define('NOREQUIRETRAN','1');	// Not disabled cause need to do translations
+if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK',1);
+if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL',1);
+if (! defined('NOLOGIN'))         define('NOLOGIN',1);
+if (! defined('NOREQUIREMENU'))   define('NOREQUIREMENU',1);
+if (! defined('NOREQUIREHTML'))   define('NOREQUIREHTML',1);
+if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX','1');
+
+session_cache_limiter(FALSE);
+
+require_once '../../main.inc.php';
+
+// Define javascript type
+header('Content-type: text/javascript; charset=UTF-8');
+// Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
+if (empty($dolibarr_nocache)) header('Cache-Control: max-age=3600, public, must-revalidate');
+else header('Cache-Control: no-cache');
+?>
 
 /*
  * ================================================================= 
@@ -923,7 +947,6 @@ function copyToClipboard(text,text2)
 	return false;
 }
 
-
 /*
  * Provide a function to get an URL GET parameter in javascript 
  * 
@@ -937,4 +960,100 @@ function getParameterByName(name, valueifnotfound)
     var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
         results = regex.exec(location.search);
     return results === null ? valueifnotfound : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+
+// Code in the public domain from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/round
+(function() {
+	/**
+	 * Decimal adjustment of a number.
+	 *
+	 * @param {String}  type  The type of adjustment.
+	 * @param {Number}  value The number.
+	 * @param {Integer} exp   The exponent (the 10 logarithm of the adjustment base).
+	 * @returns {Number} The adjusted value.
+	 */
+	function decimalAdjust(type, value, exp) {
+		// If the exp is undefined or zero...
+		if (typeof exp === 'undefined' || +exp === 0) {
+			return Math[type](value);
+		}
+		value = +value;
+		exp = +exp;
+		// If the value is not a number or the exp is not an integer...
+		if (isNaN(value) || !(typeof exp === 'number' && exp % 1 === 0)) {
+			return NaN;
+		}
+		// Shift
+		value = value.toString().split('e');
+		value = Math[type](+(value[0] + 'e' + (value[1] ? (+value[1] - exp) : -exp)));
+		// Shift back
+		value = value.toString().split('e');
+		return +(value[0] + 'e' + (value[1] ? (+value[1] + exp) : exp));
+	}
+
+	// Decimal round
+	if (!Math.round10) {
+		Math.round10 = function(value, exp) {
+			return decimalAdjust('round', value, exp);
+		};
+	}
+	// Decimal floor
+	if (!Math.floor10) {
+		Math.floor10 = function(value, exp) {
+			return decimalAdjust('floor', value, exp);
+		};
+	}
+	// Decimal ceil
+	if (!Math.ceil10) {
+		Math.ceil10 = function(value, exp) {
+			return decimalAdjust('ceil', value, exp);
+		};
+	}
+})();
+
+
+/**
+ * Function similar to PHP price2num()
+ *
+ * @param {number|string} amount    The amount to convert/clean
+ * @returns {string}                The amount in universal numeric format (Example: '99.99999')
+ * @todo Implement rounding parameter
+ */
+function price2numjs(amount) {
+	if (amount == '') return '';
+
+	<?php
+				$dec = ',';
+		$thousand = ' ';
+		if ($langs->transnoentitiesnoconv("SeparatorDecimal") != "SeparatorDecimal") {
+			$dec = $langs->transnoentitiesnoconv("SeparatorDecimal");
+		}
+		if ($langs->transnoentitiesnoconv("SeparatorThousand") != "SeparatorThousand") {
+			$thousand = $langs->transnoentitiesnoconv("SeparatorThousand");
+		}
+		print "var dec='" . $dec . "'; var thousand='" . $thousand . "';\n";    // Set var in javascript
+	?>
+
+	var main_max_dec_shown = <?php echo $conf->global->MAIN_MAX_DECIMALS_SHOWN; ?>;
+	var main_rounding_unit = <?php echo $conf->global->MAIN_MAX_DECIMALS_UNIT; ?>;
+	var main_rounding_tot = <?php echo $conf->global->MAIN_MAX_DECIMALS_TOT; ?>;
+
+	var amount = amount.toString();
+
+	// rounding for unit price
+	var rounding = main_rounding_unit;
+	var pos = amount.indexOf(dec);
+	var decpart = '';
+	if (pos >= 0) decpart = amount.substr(pos + 1).replace('/0+$/i', '');    // Remove 0 for decimal part
+	var nbdec = decpart.length;
+	if (nbdec > rounding) rounding = nbdec;
+	// If rounding higher than max shown
+	if (rounding > main_max_dec_shown) rounding = main_max_dec_shown;
+
+	if (thousand != ',' && thousand != '.') amount = amount.replace(',', '.');
+	amount = amount.replace(' ', '');            // To avoid spaces
+	amount = amount.replace(thousand, '');        // Replace of thousand before replace of dec to avoid pb if thousand is .
+	amount = amount.replace(dec, '.');
+
+	return Math.round10(amount, rounding);
 }
