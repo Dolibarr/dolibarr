@@ -702,8 +702,10 @@ function hash_call($methodName,$nvpStr)
      exit;*/
     curl_setopt($ch, CURLOPT_URL, $API_Endpoint);
     curl_setopt($ch, CURLOPT_VERBOSE, 1);
-	//curl_setopt($ch, CURLOPT_SSLVERSION, 3); // Force SSLv3
+	//curl_setopt($ch, CURLOPT_SSLVERSION, 3); // unsecure, no more accepted
     curl_setopt($ch, CURLOPT_SSLVERSION, 1); // Force TLSv1
+    // After 14 january 2016 paypal will accept tls v1.2 and no more tls v1
+    //curl_setopt($ch, CURLOPT_SSLVERSION, 6); // Force TLSv1.2
 
     //turning off the server and peer verification(TrustManager Concept).
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
