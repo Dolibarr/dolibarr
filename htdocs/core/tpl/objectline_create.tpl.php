@@ -517,12 +517,6 @@ jQuery(document).ready(function() {
 		{
 			/* focus work on a standard textarea but not if field was replaced with CKEDITOR */
 			jQuery('#dp_desc').focus();
-			/* focus if CKEDITOR */
-			if (CKEDITOR)
-			{
-				var editor = CKEDITOR.instances['dp_desc'];
-   				if (editor) { editor.focus(); }
-			}
 		}
 		if (jQuery('#select_type').val() == '0') jQuery('#trlinefordates').hide();
 		else jQuery('#trlinefordates').show();
