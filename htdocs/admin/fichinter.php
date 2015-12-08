@@ -578,4 +578,3 @@ print '<br>';
 
 llxFooter();
 $db->close();
-
