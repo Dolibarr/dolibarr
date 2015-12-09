@@ -376,7 +376,7 @@ class BookKeeping extends CommonObject
 	/**
 	 * Delete bookkepping by importkey
 	 *
-	 * @param	string 	$importkey		Import key
+	 * @param	string 	$delyear		year to delete
 	 * @return	int						Result
 	 */
 	function delete_by_year($delyear) {
