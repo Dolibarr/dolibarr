@@ -5,4 +5,3 @@
 //
 // This file will be filled by installer
 //
-?>
