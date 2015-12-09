@@ -515,7 +515,7 @@ jQuery(document).ready(function() {
 		setforfree();
 		if (jQuery('#select_type').val() >= 0) 
 		{
-			/* focus work on a standard textarea but not if field was replaced with CKEDITOR */
+			/* focus work on a standard textarea */
 			jQuery('#dp_desc').focus();
 		}
 		if (jQuery('#select_type').val() == '0') jQuery('#trlinefordates').hide();
@@ -615,14 +615,8 @@ jQuery(document).ready(function() {
   		/* To set focus */
   		if (jQuery('#idprod').val() > 0 || jQuery('#idprodfournprice').val() > 0) 
   	  	{
-			/* focus work on a standard textarea but not if field was replaced with CKEDITOR */
+			/* focus work on a standard textarea */
 			jQuery('#dp_desc').focus();
-			/* focus if CKEDITOR */
-			if (CKEDITOR)
-			{
-				var editor = CKEDITOR.instances['dp_desc'];
-   				if (editor) { editor.focus(); }
-			}
   	  	}
 	});
 
