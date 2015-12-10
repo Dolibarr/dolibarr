@@ -51,6 +51,8 @@ if ($action == 'setvalue' && $user->admin)
     if (! $result > 0) $error++;
     $result=dolibarr_set_const($db, "PAYPAL_API_SIGNATURE",GETPOST('PAYPAL_API_SIGNATURE','alpha'),'chaine',0,'',$conf->entity);
     if (! $result > 0) $error++;
+    $result=dolibarr_set_const($db, "PAYPAL_SSLVERSION",GETPOST('PAYPAL_SSLVERSION','alpha'),'chaine',0,'',$conf->entity);
+    if (! $result > 0) $error++;
     $result=dolibarr_set_const($db, "PAYPAL_CREDITOR",GETPOST('PAYPAL_CREDITOR','alpha'),'chaine',0,'',$conf->entity);
     if (! $result > 0) $error++;
     $result=dolibarr_set_const($db, "PAYPAL_API_INTEGRAL_OR_PAYPALONLY",GETPOST('PAYPAL_API_INTEGRAL_OR_PAYPALONLY','alpha'),'chaine',0,'',$conf->entity);
