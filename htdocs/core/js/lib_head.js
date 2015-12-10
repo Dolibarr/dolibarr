@@ -864,8 +864,8 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
                 .addClass( "ui-widget ui-widget-content ui-corner-left dolibarrcombobox" );
 
             input.data("ui-autocomplete")._renderItem = function( ul, item ) {
-                return $("<li></li>")
-                    .data( "item.autocomplete", item )
+                return $("<li>")
+                    .data( "ui-autocomplete-item", item ) // jQuery UI > 1.10.0
                     .append( "<a>" + item.label + "</a>" )
                     .appendTo( ul );
             };
@@ -924,28 +924,17 @@ function copyToClipboard(text,text2)
 }
 
 
-/* 
- * Timer for delayed keyup function
- * 
- * TODO Who use this ?
- */
 /*
-(function($){
-	$.widget("ui.onDelayedKeyup", {
-	    _init : function() {
-	        var self = this;
-	        $(this.element).bind('keyup input', function() {
-	            if(typeof(window['inputTimeout']) != "undefined"){
-	                window.clearTimeout(inputTimeout);
-	            }  
-	            var handler = self.options.handler;
-	            window['inputTimeout'] = window.setTimeout(function() { handler.call(self.element) }, self.options.delay);
-	        });
-	    },
-	    options: {
-	        handler: $.noop(),
-	        delay: 500
-	    }
-	});
-})(jQuery);
-*/
+ * Provide a function to get an URL GET parameter in javascript 
+ * 
+ * @param 	string	name				Name of parameter
+ * @param	mixed	valueifnotfound		Value if not found
+ * @return	string						Value
+ */
+function getParameterByName(name, valueifnotfound) 
+{
+    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+        results = regex.exec(location.search);
+    return results === null ? valueifnotfound : decodeURIComponent(results[1].replace(/\+/g, " "));
+}

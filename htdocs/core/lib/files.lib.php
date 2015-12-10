@@ -2,6 +2,7 @@
 /* Copyright (C) 2008-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2015	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2015		Marcos García		<marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1440,6 +1441,9 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
 			// Define $destpath (path to file including filename) and $destfile (only filename)
 			$destpath=$upload_dir . "/" . $_FILES[$varfiles]['name'];
 			$destfile=$_FILES[$varfiles]['name'];
+
+			$savingdocmask = dol_sanitizeFileName($savingdocmask);
+
 			if ($savingdocmask)
 			{
 				$destpath=$upload_dir . "/" . preg_replace('/__file__/',$_FILES[$varfiles]['name'],$savingdocmask);
@@ -1466,22 +1470,22 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
 					$imgThumbMini = vignette($destpath, 160, 120, '_mini', 50, "thumbs");
 				}
 
-				setEventMessage($langs->trans("FileTransferComplete"));
+				setEventMessages($langs->trans("FileTransferComplete"), null, 'mesgs');
 			}
 			else
 			{
 				$langs->load("errors");
 				if ($resupload < 0)	// Unknown error
 				{
-					setEventMessage($langs->trans("ErrorFileNotUploaded"), 'errors');
+					setEventMessages($langs->trans("ErrorFileNotUploaded"), null, 'errors');
 				}
 				else if (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload))	// Files infected by a virus
 				{
-					setEventMessage($langs->trans("ErrorFileIsInfectedWithAVirus"), 'errors');
+					setEventMessages($langs->trans("ErrorFileIsInfectedWithAVirus"), null, 'errors');
 				}
 				else	// Known error
 				{
-					setEventMessage($langs->trans($resupload), 'errors');
+					setEventMessages($langs->trans($resupload), null, 'errors');
 				}
 			}
 		}
@@ -1497,9 +1501,9 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
 			$res = $linkObject->create($user);
 			$langs->load('link');
 			if ($res > 0) {
-				setEventMessage($langs->trans("LinkComplete"));
+				setEventMessages($langs->trans("LinkComplete"), null, 'mesgs');
 			} else {
-				setEventMessage($langs->trans("ErrorFileNotLinked"), 'errors');
+				setEventMessages($langs->trans("ErrorFileNotLinked"), null, 'errors');
 			}
 		}
 	}
@@ -1545,7 +1549,7 @@ function dol_remove_file_process($filenb,$donotupdatesession=0,$donotdeletefile=
 			if (empty($donotdeletefile))
 			{
 				$langs->load("other");
-				setEventMessage($langs->trans("FileWasRemoved",$filetodelete));
+				setEventMessages($langs->trans("FileWasRemoved",$filetodelete), null, 'mesgs');
 			}
 			if (empty($donotupdatesession))
 			{

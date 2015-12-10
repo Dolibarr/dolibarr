@@ -105,7 +105,6 @@ DetailPosition=Sort number to define menu position
 PersonalizedMenusNotSupported=Personalized menus not supported
 AllMenus=All
 NotConfigured=Module not configured
-Setup=Setup
 Activation=Activation
 Active=Active
 SetupShort=Setup
@@ -193,15 +192,12 @@ ExportOptions=Export Options
 AddDropDatabase=Add DROP DATABASE command
 AddDropTable=Add DROP TABLE command
 ExportStructure=Structure
-Datas=Data
 NameColumn=Name columns
 ExtendedInsert=Extended INSERT
 NoLockBeforeInsert=No lock commands around INSERT 
 DelayedInsert=Delayed insert
 EncodeBinariesInHexa=Encode binary data in hexadecimal
 IgnoreDuplicateRecords=Ignore errors of duplicate records (INSERT IGNORE)
-Yes=Yes
-No=No
 AutoDetectLang=Autodetect (browser language)
 FeatureDisabledInDemo=Feature disabled in demo
 Rights=Permissions
@@ -333,7 +329,7 @@ UMaskExplanation=This parameter allow you to define permissions set by default o
 SeeWikiForAllTeam=Take a look at the wiki page for full list of all actors and their organisation
 UseACacheDelay= Delay for caching export response in seconds (0 or empty for no cache)
 DisableLinkToHelpCenter=Hide link "<b>Need help or support</b>" on login page
-DisableLinkToHelp=Hide link "<b>%s Online help</b>" on left menu
+DisableLinkToHelp=Hide link to online help "<b>%s</b>"
 AddCRIfTooLong=There is no automatic wrapping, so if line is out of page on documents because too long, you must add yourself carriage returns in the textarea.
 ModuleDisabled=Module disabled
 ModuleDisabledSoNoEvent=Module disabled so event never created
@@ -366,6 +362,7 @@ HideAnyVATInformationOnPDF=Hide all information related to VAT on generated PDF
 HideDescOnPDF=Hide products description on generated PDF
 HideRefOnPDF=Hide products ref. on generated PDF
 HideDetailsOnPDF=Hide products lines details on generated PDF
+PlaceCustomerAddressToIsoLocation=Use french standard position (La Posteà for customer address position
 Library=Library
 UrlGenerationParameters=Parameters to secure URLs
 SecurityTokenIsUnique=Use a unique securekey parameter for each URL
@@ -396,8 +393,8 @@ ExtrafieldLink=Link to an object
 ExtrafieldParamHelpselect=Parameters list have to be like key,value<br><br> for example : <br>1,value1<br>2,value2<br>3,value3<br>...<br><br>In order to have the list depending on another :<br>1,value1|parent_list_code:parent_key<br>2,value2|parent_list_code:parent_key
 ExtrafieldParamHelpcheckbox=Parameters list have to be like key,value<br><br> for example : <br>1,value1<br>2,value2<br>3,value3<br>...
 ExtrafieldParamHelpradio=Parameters list have to be like key,value<br><br> for example : <br>1,value1<br>2,value2<br>3,value3<br>...
-ExtrafieldParamHelpsellist=Parameters list comes from a table<br>Syntax : table_name:label_field:id_field::filter<br>Example : c_typent:libelle:id::filter<br><br>filter can be a simple test (eg active=1) to display only active value <br> if you want to filter on extrafields use syntaxt  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another :<br>c_typent:libelle:id:parent_list_code|parent_column:filter
-ExtrafieldParamHelpchkbxlst=Parameters list comes from a table<br>Syntax : table_name:label_field:id_field::filter<br>Example : c_typent:libelle:id::filter<br><br>filter can be a simple test (eg active=1) to display only active value <br> if you want to filter on extrafields use syntaxt  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another :<br>c_typent:libelle:id:parent_list_code|parent_column:filter  
+ExtrafieldParamHelpsellist=Parameters list comes from a table<br>Syntax : table_name:label_field:id_field::filter<br>Example : c_typent:libelle:id::filter<br><br>filter can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter witch is the current id of current object<br>To do a SELECT in filter use $SEL$<br>if you want to filter on extrafields use syntaxt  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another :<br>c_typent:libelle:id:parent_list_code|parent_column:filter 
+ExtrafieldParamHelpchkbxlst=Parameters list comes from a table<br>Syntax : table_name:label_field:id_field::filter<br>Example : c_typent:libelle:id::filter<br><br>filter can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter witch is the current id of current object<br>To do a SELECT in filter use $SEL$<br>if you want to filter on extrafields use syntaxt  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another :<br>c_typent:libelle:id:parent_list_code|parent_column:filter
 ExtrafieldParamHelplink=Parameters must be ObjectName:Classpath<br>Syntax : ObjectName:Classpath<br>Example : Societe:societe/class/societe.class.php  
 LibraryToBuildPDF=Library used to build PDF
 WarningUsingFPDF=Warning: Your <b>conf.php</b> contains directive <b>dolibarr_pdf_force_fpdf=1</b>. This means you use the FPDF library to generate PDF files. This library is old and does not support a lot of features (Unicode, image transparency, cyrillic, arab and asiatic languages, ...), so you may experience errors during PDF generation.<br>To solve this and have a full support of PDF generation, please download <a href="http://www.tcpdf.org/" target="_blank">TCPDF library</a>, then comment or remove the line <b>$dolibarr_pdf_force_fpdf=1</b>, and add instead <b>$dolibarr_lib_TCPDF_PATH='path_to_TCPDF_dir'</b>   
@@ -539,7 +536,7 @@ Module2800Desc=FTP Client
 Module2900Name=GeoIPMaxmind
 Module2900Desc=GeoIP Maxmind conversions capabilities
 Module3100Name=Skype
-Module3100Desc=Add a Skype button into card of adherents / third parties / contacts
+Module3100Desc=Add a Skype button into card of users / third parties / contacts / members
 Module4000Name=HRM
 Module4000Desc=Human resources management
 Module5000Name=Multi-company
@@ -845,14 +842,12 @@ VATIsUsedExampleFR=In France, it means companies or organisations having a real 
 VATIsNotUsedExampleFR=In France, it means associations that are non VAT declared or companies, organisations or liberal professions that have chosen the micro enterprise fiscal system (VAT in franchise) and paid a franchise VAT without any VAT declaration.  This choice will display the reference "Non applicable VAT - art-293B of CGI" on invoices.
 ##### Local Taxes #####
 LTRate=Rate
-LocalTax1IsUsed=Use second tax
 LocalTax1IsNotUsed=Do not use second tax
 LocalTax1IsUsedDesc=Use a second type of tax (other than VAT)
 LocalTax1IsNotUsedDesc=Do not use other type of tax (other than VAT)
 LocalTax1Management=Second type of tax
 LocalTax1IsUsedExample=
 LocalTax1IsNotUsedExample=
-LocalTax2IsUsed=Use third tax
 LocalTax2IsNotUsed=Do not use third tax
 LocalTax2IsUsedDesc=Use a third type of tax (other than VAT)
 LocalTax2IsNotUsedDesc=Do not use other type of tax (other than VAT)
@@ -927,7 +922,6 @@ MenuCompanySetup=Company/Foundation
 MenuNewUser=New user
 MenuTopManager=Top menu manager
 MenuLeftManager=Left menu manager
-MenuManager=Menu manager
 MenuSmartphoneManager=Smartphone menu manager
 DefaultMenuTopManager=Top menu manager
 DefaultMenuLeftManager=Left menu manager
@@ -980,6 +974,7 @@ Delays_MAIN_DELAY_CUSTOMER_BILLS_UNPAYED=Tolerence delay (in days) before alert 
 Delays_MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE=Tolerance delay (in days) before alert on pending bank reconciliation
 Delays_MAIN_DELAY_MEMBERS=Tolerance delay (in days) before alert on delayed membership fee
 Delays_MAIN_DELAY_CHEQUES_TO_DEPOSIT=Tolerance delay (in days) before alert for cheques deposit to do
+Delays_MAIN_DELAY_EXPENSEREPORTS=Tolerance delay (in days) before alert for expense reports to approve
 SetupDescription1=All parameters available in the setup area allow you to setup Dolibarr before starting using it.
 SetupDescription2=The 2 most important setup steps are the 2 first ones in the left setup menu, this means Company/foundation setup page and Modules setup page:
 SetupDescription3=Parameters in menu <a href="%s">Setup -> Company/foundation</a> are required because input information is used on Dolibarr displays and to modify Dolibarr behaviour (for example for features related to your country).
@@ -1110,13 +1105,15 @@ XDebugInstalled=XDebug is loaded.
 XCacheInstalled=XCache is loaded.
 AddRefInList=Display customer/supplier ref into list (select list or combobox) and most of hyperlink. Third parties will appears with name "CC12345 - SC45678 - The big company coorp", instead of "The big company coorp".
 FieldEdition=Edition of field %s
-FixTZ=TimeZone fix
 FillThisOnlyIfRequired=Example: +2 (fill only if timezone offset problems are experienced)
 GetBarCode=Get barcode
 EmptyNumRefModelDesc=The code is free. This code can be modified at any time.
 ##### Module password generation
 PasswordGenerationStandard=Return a password generated according to internal Dolibarr algorithm: 8 characters containing shared numbers and characters in lowercase.
-PasswordGenerationNone=Do not suggest any generated password. Password must be type in manually.
+PasswordGenerationNone=Do not suggest any generated password. Password must be typed in manually.
+PasswordGenerationPerso=Return a password according to your personally defined configuration.
+SetupPerso=According to your configuration
+PasswordPatternDesc=Password pattern description
 ##### Users setup #####
 UserGroupSetup=Users and groups module setup
 GeneratePassword=Suggest a generated password
@@ -1126,6 +1123,8 @@ EncryptedPasswordInDatabase=To allow the encryption of the passwords in the data
 DisableForgetPasswordLinkOnLogonPage=Do not show the link "Forget password" on login page
 UsersSetup=Users module setup
 UserMailRequired=EMail required to create a new user
+##### HRM setup #####
+HRMSetup=HRM module setup
 ##### Company setup #####
 CompanySetup=Companies module setup
 CompanyCodeChecker=Module for third parties code generation and checking (customer or supplier)
@@ -1178,6 +1177,7 @@ CreditNotePDFModules=Credit note document models
 CreditNote=Credit note
 CreditNotes=Credit notes
 ForceInvoiceDate=Force invoice date to validation date
+AllowCreditNoteWithoutRelatedInvoice=Allow to create credit note without a related invoice
 DisableRepeatable=Disable repeatable invoices
 SuggestedPaymentModesIfNotDefinedInInvoice=Suggested payments mode on invoice by default if not defined for invoice
 EnableEditDeleteValidInvoice=Enable the possibility to edit/delete valid invoice with no payment
@@ -1200,13 +1200,13 @@ UseOptionLineIfNoQuantity=A line of product/service with a zero amount is consid
 FreeLegalTextOnProposal=Free text on commercial proposals
 WatermarkOnDraftProposal=Watermark on draft commercial proposals (none if empty)
 BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL=Ask for bank account destination of proposal
-##### AskPriceSupplier #####
-AskPriceSupplierSetup=Price requests suppliers module setup
-AskPriceSupplierNumberingModules=Price requests suppliers numbering models
-AskPriceSupplierPDFModules=Price requests suppliers documents models
-FreeLegalTextOnAskPriceSupplier=Free text on price requests suppliers
-WatermarkOnDraftAskPriceSupplier=Watermark on draft price requests suppliers (none if empty)
-BANK_ASK_PAYMENT_BANK_DURING_ASKPRICESUPPLIER=Ask for bank account destination of price request
+##### SupplierProposal #####
+SupplierProposalSetup=Price requests suppliers module setup
+SupplierProposalNumberingModules=Price requests suppliers numbering models
+SupplierProposalPDFModules=Price requests suppliers documents models
+FreeLegalTextOnSupplierProposal=Free text on price requests suppliers
+WatermarkOnDraftSupplierProposal=Watermark on draft price requests suppliers (none if empty)
+BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL=Ask for bank account destination of price request
 WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER=Ask for Warehouse Source for order
 ##### Orders #####
 OrdersSetup=Order management setup
@@ -1417,6 +1417,7 @@ SetDefaultBarcodeTypeThirdParties=Default barcode type to use for third parties
 UseUnits=Define a unit of measure for Quantity during order, proposal or invoice lines edition
 ProductCodeChecker= Module for product code generation and checking (product or service)
 ProductOtherConf= Product / Service configuration
+IsNotADir=is not a directory!
 ##### Syslog #####
 SyslogSetup=Logs module setup
 SyslogOutput=Logs outputs
@@ -1528,8 +1529,7 @@ DetailLevel=Level (-1:top menu, 0:header menu, >0 menu and sub menu)
 ModifMenu=Menu change
 DeleteMenu=Delete menu entry
 ConfirmDeleteMenu=Are you sure you want to delete menu entry <b>%s</b> ?
-DeleteLine=Delete line
-ConfirmDeleteLine=Are you sure you want to delete this line ?
+FailedToInitializeMenu=Failed to initialize menu
 ##### Tax #####
 TaxSetup=Taxes, social or fiscal taxes and dividends module setup
 OptionVatMode=VAT due 
@@ -1562,7 +1562,7 @@ AGENDA_DEFAULT_VIEW=Which tab do you want to open by default when selecting menu
 ##### ClickToDial #####
 ClickToDialDesc=This module allows to make phone numbers clickable. A click on this icon will call make your phone to call the phone number. This can be used to call a call center system from Dolibarr that can call the phone number on a SIP system for example.
 ClickToDialUseTelLink=Use just a link "tel:" on phone numbers
-ClickToDialUseTelLinkDesc=Use this method if your users have a softphone or an interface install on same computer than the browser, and called when you click on a link in your browser that start with "tel:". If you need a full server solution, you must set this to "No" and fill next field.
+ClickToDialUseTelLinkDesc=Use this method if your users have a softphone or a software interface installed on same computer than the browser, and called when you click on a link in your browser that start with "tel:". If you need a full server solution (no need of local software installation), you must set this to "No" and fill next field.
 ##### Point Of Sales (CashDesk) #####
 CashDesk=Point of sales
 CashDeskSetup=Point of sales module setup
@@ -1588,7 +1588,7 @@ EndPointIs=SOAP clients must send their requests to the Dolibarr endpoint availa
 ApiSetup=API module setup
 ApiDesc=By enabling this module, Dolibarr become a REST server to provide miscellaneous web services.
 KeyForApiAccess=Key to use API (parameter "api_key")
-ApiProductionMode=Enable production mode
+ApiProductionMode=Enable production mode (this will activate use of a caches for services management)
 ApiEndPointIs=You can access to the API at url
 ApiExporerIs=You can explore the API at url
 OnlyActiveElementsAreExposed=Only elements from enabled modules are exposed
@@ -1636,8 +1636,6 @@ OpenFiscalYear=Open fiscal year
 CloseFiscalYear=Close fiscal year
 DeleteFiscalYear=Delete fiscal year
 ConfirmDeleteFiscalYear=Are you sure to delete this fiscal year ?
-Opened=Open
-Closed=Closed
 AlwaysEditable=Can always be edited
 IsHidden=Is not visible
 MAIN_APPLICATION_TITLE=Force visible name of application (warning: setting your own name here may break autofill login feature when using DoliDroid mobile application)
@@ -1666,7 +1664,8 @@ SomethingMakeInstallFromWebNotPossible2=For this reason, process to upgrade desc
 InstallModuleFromWebHasBeenDisabledByFile=Install of external module from application has been disabled by your administrator. You must ask him to remove the file <strong>%s</strong> to allow this feature.
 ConfFileMuseContainCustom=Installing an external module from application save the module files into directory <strong>%s</strong>. To have this directory processed by Dolibarr, you must setup your <strong>conf/conf.php</strong> to have option<br>- <strong>$dolibarr_main_url_root_alt</strong> enabled to value <strong>$dolibarr_main_url_root_alt="/custom"</strong><br>- <strong>$dolibarr_main_document_root_alt</strong> enabled to value <strong>"%s/custom"</strong> 
 HighlightLinesOnMouseHover=Highlight table lines when mouse move passes over
-HighlightLinesColor=Color of highlight line when mouse move passes over (keep empty for no highlight)
+HighlightLinesColor=Highlight color of the line when the mouse passes over (keep empty for no highlight)
+LinkColor=Color of links
 PressF5AfterChangingThis=Press F5 on keyboard after changing this value to have it effective
 NotSupportedByAllThemes=Will works with eldy theme but is not supported by all themes
 BackgroundColor=Background color
@@ -1706,3 +1705,4 @@ TitleExampleForMajorRelease=Example of message you can use to announce this majo
 TitleExampleForMaintenanceRelease=Example of message you can use to announce this maintenance release (feel free to use it on your web sites)
 ExampleOfNewsMessageForMajorRelease=Dolibarr ERP & CRM %s is available. Version %s is a major release with a lot of new features for both users and developers. You can download it from the download area of http://www.dolibarr.org portal (subdirectory Stable versions). You can read <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> for complete list of changes.
 ExampleOfNewsMessageForMaintenanceRelease=Dolibarr ERP & CRM %s is available. Version %s is a maintenance version, so it contains only fixes of bugs. We recommend everybody using an older version to upgrade to this one. As any maintenance release, no new features, nor data structure change is present into this version. You can download it from the download area of http://www.dolibarr.org portal (subdirectory Stable versions). You can read <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> for complete list of changes.
+MultiPriceRuleDesc=When option "Several level of prices per product/service" is on, you can define different prices (one per price level) for each product. To save you time, you can enter here rule to have price for each level autocalculated according to price of first level, so you will have to enter only price for first level on each product. This page is here to save you time and can be usefull only if your prices for each leve are relative to first level. You can ignore this page in most cases.

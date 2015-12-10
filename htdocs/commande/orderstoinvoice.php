@@ -6,6 +6,7 @@
  * Copyright (C) 2012	   Andreu Bisquerra Gaya  	<jove@bisquerra.com>
  * Copyright (C) 2012	   David Rodriguez Martinez <davidrm146@gmail.com>
  * Copyright (C) 2012	   Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2015	   Ferran Marcet			<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,7 +75,7 @@ if ($action == 'create')
 	if (is_array($selected) == false)
 	{
 		$error++;
-		setEventMessage($langs->trans('Error_OrderNotChecked'), 'errors');
+		setEventMessages($langs->trans('Error_OrderNotChecked'), null, 'errors');
 	}
 	else
 	{
@@ -179,6 +180,7 @@ if (($action == 'create' || $action == 'add') && !$error)
 					$object->origin_id = $orders_id[$ii];
 					$object->linked_objects = $orders_id;
 					$id = $object->create($user);
+					$object->fetch_thirdparty();
 
 					if ($id>0)
 					{
@@ -251,7 +253,7 @@ if (($action == 'create' || $action == 'add') && !$error)
 										}
 										else
 										{
-											setEventMessage($discount->error, 'errors');
+											setEventMessages($discount->error, $discount->errors, 'errors');
 											$error++;
 											break;
 										}
@@ -320,7 +322,7 @@ if (($action == 'create' || $action == 'add') && !$error)
 							}
 							else
 							{
-								setEventMessage($objectsrc->error, 'errors');
+								setEventMessages($objectsrc->error, $objectsrc->errors, 'errors');
 								$error++;
 							}
 							$ii++;
@@ -328,7 +330,7 @@ if (($action == 'create' || $action == 'add') && !$error)
 					}
 					else
 					{
-						setEventMessage($object->error, 'errors');
+						setEventMessages($object->error, $object->errors, 'errors');
 						$error++;
 					}
 				}
@@ -348,7 +350,7 @@ if (($action == 'create' || $action == 'add') && !$error)
 			$action='create';
 			$_GET["origin"]=$_POST["origin"];
 			$_GET["originid"]=$_POST["originid"];
-			setEventMessage($object->error, 'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 			$error++;
 		}
 	}

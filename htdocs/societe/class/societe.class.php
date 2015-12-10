@@ -43,7 +43,7 @@ class Societe extends CommonObject
     public $element='societe';
     public $table_element = 'societe';
 	public $fk_element='fk_soc';
-    protected $childtables=array("askpricesupplier","propal","commande","facture","contrat","facture_fourn","commande_fournisseur","projet");    // To test if we can delete object
+    protected $childtables=array("supplier_proposal","propal","commande","facture","contrat","facture_fourn","commande_fournisseur","projet");    // To test if we can delete object
 
     /**
      * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
@@ -1760,7 +1760,7 @@ class Societe extends CommonObject
 
         if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;
 
-		if ($conf->global->SOCIETE_ADD_REF_IN_LIST && (!empty($withpicto)))
+		if (! empty($conf->global->SOCIETE_ADD_REF_IN_LIST) && (!empty($withpicto)))
 		{
 			if (($this->client) && (! empty ( $this->code_client ))) {
 				$code = $this->code_client . ' - ';
@@ -1771,9 +1771,7 @@ class Societe extends CommonObject
 			$name =$code.' '.$name;
 		}
 
-	    if (!empty($this->name_alias)) {
-		    $name .= ' ('.$this->name_alias.')';
-	    }
+	    if (!empty($this->name_alias)) $name .= ' ('.$this->name_alias.')';
 
         $result=''; $label='';
         $link=''; $linkend='';

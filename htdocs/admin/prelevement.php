@@ -81,12 +81,12 @@ if ($action == "set")
     if (! $error)
 	{
 		$db->commit();
-		setEventMessage($langs->trans("SetupSaved"));
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
 	else
 	{
 		$db->rollback();
-		setEventMessage($langs->trans("Error"),'errors');
+		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
 
@@ -135,7 +135,7 @@ print "</tr>";
 print '<tr class="impair"><td>'.$langs->trans("ResponsibleUser").'</td>';
 print '<td align="left">';
 print '<input type="hidden" name="nom0" value="PRELEVEMENT_USER">';
-print $form->select_dolusers($conf->global->PRELEVEMENT_USER,'value0',1);
+print $form->select_dolusers($conf->global->PRELEVEMENT_USER, 'value0', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 print '</td>';
 print '</tr>';
 

@@ -116,7 +116,7 @@ if (empty($reshook))
 	        exit;
 	    }
 	    else {
-	        setEventMessage($object->error,'errors');
+	        setEventMessages($object->error, $object->errors, 'errors');
 	    }
 	}
 	
@@ -137,7 +137,7 @@ if (empty($reshook))
 		    }
 		    else 
 		    {
-		        setEventMessage($object->error,'errors');
+		        setEventMessages($object->error, $object->errors, 'errors');
 		    }
 		}
 	}
@@ -267,7 +267,7 @@ if (empty($reshook))
 	
 		        $id = $object->create($user);
 		        if ($id < 0) {
-		        	setEventMessage($object->error,'errors');
+		        	setEventMessages($object->error, $object->errors, 'errors');
 		        }
 	
 		        if ($id > 0)
@@ -364,13 +364,13 @@ if (empty($reshook))
 		            }
 		            else
 		            {
-		                setEventMessage($srcobject->error,'errors');
+		                setEventMessages($srcobject->error, $srcobject->errors, 'errors');
 		                $error++;
 		            }
 		        }
 		        else
 		        {
-		            setEventMessage($object->error,'errors');
+		            setEventMessages($object->error, $object->errors, 'errors');
 		            $error++;
 		        }
 		    }
@@ -383,7 +383,7 @@ if (empty($reshook))
 		            exit;
 		        }
 		        else {
-		        	setEventMessage($object->error,'errors');
+		        	setEventMessages($object->error, $object->errors, 'errors');
 		        }
 		        $action='create';
 			}
@@ -612,7 +612,7 @@ if (empty($reshook))
 	        }
 	        else
 	        {
-	        	setEventMessage($object->error,'errors');
+	        	setEventMessages($object->error, $object->errors, 'errors');
 	        }
 	    }
 	}
@@ -676,13 +676,13 @@ if (empty($reshook))
 	        }
 	        else
 	        {
-	        	setEventMessage($objectline->error,'errors');
+	        	setEventMessages($objectline->error, $objectline->errors, 'errors');
 	            $db->rollback();
 	        }
 	    }
 	    else
 	    {
-	    	setEventMessage($objectline->error,'errors');
+	    	setEventMessages($objectline->error, $objectline->errors, 'errors');
 	    }
 	}
 	
@@ -697,7 +697,7 @@ if (empty($reshook))
 	    }
 	    else
 	    {
-	    	setEventMessage($object->error,'errors');
+	    	setEventMessages($object->error, $object->errors, 'errors');
 	    }
 	}
 	
@@ -722,7 +722,7 @@ if (empty($reshook))
 		}
 		else
 		{
-			setEventMessage($object->error,'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 	
@@ -741,7 +741,7 @@ if (empty($reshook))
 			}
 			else
 			{
-				setEventMessage($object->error,'errors');
+				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
 		else
@@ -768,7 +768,7 @@ if (empty($reshook))
 	
 		if ($error) {
 			$action = 'edit_extras';
-			setEventMessage($object->error,'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} 
 	elseif ($action=='setref_supplier') 
@@ -778,12 +778,12 @@ if (empty($reshook))
 	
 			$result = $object->fetch($id);
 			if ($result < 0) {
-				setEventMessage($object->errors, 'errors');
+				setEventMessages($object->error, $object->errors, 'errors');
 			}
 	
 	        $result = $object->setValueFrom('ref_supplier',GETPOST('ref_supplier','alpha'));
 			if ($result < 0) {
-				setEventMessage($object->errors, 'errors');
+				setEventMessages($object->error, $object->errors, 'errors');
 				$action = 'editref_supplier';
 			} else {
 				header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
@@ -803,12 +803,12 @@ if (empty($reshook))
 		{
 			$result = $object->fetch($id);
 			if ($result < 0) {
-				setEventMessage($object->errors, 'errors');
+				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		
 	        $result = $object->setValueFrom('ref_customer',GETPOST('ref_customer','alpha'));
 	        if ($result < 0) {
-				setEventMessage($object->errors, 'errors');
+				setEventMessages($object->error, $object->errors, 'errors');
 				$action = 'editref_customer';
 			} else {
 				header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
@@ -827,13 +827,37 @@ if (empty($reshook))
 	    if (!$cancelbutton) {
 	        $result = $object->fetch($id);
 	        if ($result < 0) {
-	            setEventMessage($object->errors, 'errors');
+	            setEventMessages($object->error, $object->errors, 'errors');
 	        }
 	
-	        $result = $object->setValueFrom('ref',GETPOST('ref','alpha'));;
+	        $result = $object->setValueFrom('ref',GETPOST('ref','alpha'));
 	        if ($result < 0) {
-	            setEventMessage($object->errors, 'errors');
+	            setEventMessages($object->error, $object->errors, 'errors');
 	            $action = 'editref';
+	        } else {
+	            header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $object->id);
+	            exit;
+	        }
+	    }
+	    else {
+	        header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $id);
+	        exit;
+	    }
+	} 
+	elseif ($action=='setdate_contrat') 
+	{
+	    $cancelbutton = GETPOST('cancel');
+	
+	    if (!$cancelbutton) {
+	        $result = $object->fetch($id);
+	        if ($result < 0) {
+	            setEventMessages($object->error, $object->errors, 'errors');
+	        }
+			$datacontrat=dol_mktime(GETPOST('date_contrathour'), GETPOST('date_contratmin'), 0, GETPOST('date_contratmonth'), GETPOST('date_contratday'), GETPOST('date_contratyear'));
+	        $result = $object->setValueFrom('date_contrat',$datacontrat,'',null,'date');
+	        if ($result < 0) {
+	            setEventMessages($object->error, $object->errors, 'errors');
+	            $action = 'editdate_contrat';
 	        } else {
 	            header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $object->id);
 	            exit;
@@ -876,8 +900,8 @@ if (empty($reshook))
 			$upload_dir = $conf->contrat->dir_output;
 			$file = $upload_dir . '/' . GETPOST('file');
 			$ret = dol_delete_file($file, 0, 0, 0, $object);
-			if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('file')));
-			else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('file')), 'errors');
+			if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('file')), null, 'mesgs');
+			else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('file')), null, 'errors');
 		}
 	}
 	
@@ -898,11 +922,11 @@ if (empty($reshook))
 				if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 				{
 					$langs->load("errors");
-					setEventMessage($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"),'errors');
+					setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
 				}
 				else
 				{
-					setEventMessage($object->error,'errors');
+					setEventMessages($object->error, $object->errors, 'errors');
 				}
 			}
 		}
@@ -924,7 +948,7 @@ if (empty($reshook))
 				exit;
 			}
 			else {
-				setEventMessage($object->error,'errors');
+				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
 	}
@@ -1042,7 +1066,7 @@ if ($action == 'create')
 
     // Thirdparty
 	print '<tr>';
-	print '<td class="fieldrequired">'.$langs->trans('Thirdparty').'</td>';
+	print '<td class="fieldrequired">'.$langs->trans('ThirdParty').'</td>';
 	if ($socid>0)
 	{
 		print '<td colspan="2">';
@@ -1278,8 +1302,15 @@ else
         print "</td></tr>";
 
         // Date
-        print '<tr><td>'.$langs->trans("Date").'</td>';
-        print '<td colspan="3">'.dol_print_date($object->date_contrat,"dayhour")."</td></tr>\n";
+        print '<tr>';
+		print '<td  width="20%">';
+		print $form->editfieldkey("Date",'date_contrat',$object->date_contrat,$object,$user->rights->contrat->creer);
+		print '</td><td>';
+		print $form->editfieldval("Date",'date_contrat',$object->date_contrat,$object,$user->rights->contrat->creer,'datehourpicker');
+		print '</td>';
+		print '</tr>';
+       /* print '<tr><td>'.$langs->trans("Date").'</td>';
+        print '<td colspan="3">'.dol_print_date($object->date_contrat,"dayhour")."</td></tr>\n";*/
 
         // Projet
         if (! empty($conf->projet->enabled))
@@ -1366,7 +1397,7 @@ else
             $sql.= " cd.date_fin_validite as date_fin, cd.date_cloture as date_fin_reelle,";
             $sql.= " cd.commentaire as comment, cd.fk_product_fournisseur_price as fk_fournprice, cd.buy_price_ht as pa_ht,";
 	        $sql.= " cd.fk_unit,";
-            $sql.= " p.rowid as pid, p.ref as pref, p.label as label, p.fk_product_type as ptype";
+            $sql.= " p.rowid as pid, p.ref as pref, p.label as label, p.fk_product_type as ptype, p.entity as pentity";
             $sql.= " FROM ".MAIN_DB_PREFIX."contratdet as cd";
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
             $sql.= " WHERE cd.rowid = ".$object->lines[$cursorline-1]->id;
@@ -1401,6 +1432,7 @@ else
                         $productstatic->id=$objp->fk_product;
                         $productstatic->type=$objp->ptype;
                         $productstatic->ref=$objp->pref;
+						$productstatic->entity=$objp->pentity;
                         $text = $productstatic->getNomUrl(1,'',20);
                         if ($objp->label)
                         {
@@ -1527,6 +1559,7 @@ else
                         $productstatic->id=$objp->fk_product;
                         $productstatic->type=$objp->ptype;
                         $productstatic->ref=$objp->pref;
+						$productstatic->entity=$objp->pentity;
                         print $productstatic->getNomUrl(1,'',20);
                         print $objp->label?' - '.dol_trunc($objp->label,16):'';
                         print '<br>';
@@ -1563,13 +1596,14 @@ else
 					    if ($objp->fk_product) print '<select id="fournprice" name="fournprice"></select>';
 						print '<input id="buying_price" type="text" size="5" name="buying_price" value="'.price($objp->pa_ht,0,'',0).'"></td>';
 					}
-                    print '<td align="center" rowspan="2" valign="middle"><input type="submit" class="button" name="save" value="'.$langs->trans("Modify").'">';
+                    print '<td align="center">';
+                    print '<input type="submit" class="button" name="save" value="'.$langs->trans("Modify").'">';
                     print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
                     print '</td>';
 
-                    $colspan=5;
+                    $colspan=6;
                     if (! empty($conf->margin->enabled) && ! empty($conf->global->MARGIN_SHOW_ON_CONTRACT)) $colspan++;
-	              if($conf->global->PRODUCT_USE_UNITS) $colspan++;
+	                if($conf->global->PRODUCT_USE_UNITS) $colspan++;
 
                     // Ligne dates prevues
                     print "<tr ".$bc[$var].">";
@@ -1744,22 +1778,23 @@ else
                     }
                 }
 
-                print '<tr '.$bc[$var].'><td>'.$langs->trans("DateServiceActivate").'</td><td>';
+                print '<tr '.$bc[$var].'>';
+                print '<td class="nohover">'.$langs->trans("DateServiceActivate").'</td><td>';
                 print $form->select_date($dateactstart,'',$usehm,$usehm,'',"active",1,0,1);
                 print '</td>';
 
-                print '<td>'.$langs->trans("DateEndPlanned").'</td><td>';
+                print '<td class="nohover">'.$langs->trans("DateEndPlanned").'</td><td>';
                 print $form->select_date($dateactend,"end",$usehm,$usehm,'',"active",1,0,1);
                 print '</td>';
 
-                print '<td align="center" rowspan="2" valign="middle">';
+                print '<td align="center nohover" rowspan="2" valign="middle">';
                 print '<input type="submit" class="button" name="activate" value="'.$langs->trans("Activate").'"><br>';
                 print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
                 print '</td>';
 
                 print '</tr>';
 
-                print '<tr '.$bc[$var].'><td>'.$langs->trans("Comment").'</td><td colspan="'.($conf->margin->enabled?4:3).'"><input size="80" type="text" name="comment" value="'.$_POST["comment"].'"></td></tr>';
+                print '<tr '.$bc[$var].'><td class="nohover">'.$langs->trans("Comment").'</td><td class="nohover" colspan="'.($conf->margin->enabled?4:3).'"><input size="80" type="text" name="comment" value="'.$_POST["comment"].'"></td></tr>';
 
                 print '</table>';
 
@@ -1796,7 +1831,7 @@ else
                 $now=dol_now();
                 if ($dateactend > $now) $dateactend=$now;
 
-                print '<tr '.$bc[$var].'><td colspan="2">';
+                print '<tr '.$bc[$var].'><td colspan="2" class="nohover">';
                 if ($objp->statut >= 4)
                 {
                     if ($objp->statut == 4)
@@ -1807,11 +1842,12 @@ else
                 }
                 print '</td>';
 
-                print '<td align="right" rowspan="2"><input type="submit" class="button" name="close" value="'.$langs->trans("Close").'"><br>';
+                print '<td align="right" rowspan="2" class="nohover">';
+                print '<input type="submit" class="button" name="close" value="'.$langs->trans("Close").'"><br>';
                 print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
                 print '</td></tr>';
 
-                print '<tr '.$bc[$var].'><td>'.$langs->trans("Comment").'</td><td><input size="70" type="text" class="flat" name="comment" value="'.GETPOST('comment').'"></td></tr>';
+                print '<tr '.$bc[$var].'><td class="nohover">'.$langs->trans("Comment").'</td><td class="nohover"><input size="70" type="text" class="flat" name="comment" value="'.GETPOST('comment').'"></td></tr>';
                 print '</table>';
 
                 print '</form>';

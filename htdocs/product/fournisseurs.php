@@ -46,6 +46,7 @@ $rowid=GETPOST('rowid','int');
 $action=GETPOST('action', 'alpha');
 $cancel=GETPOST('cancel', 'alpha');
 $socid=GETPOST('socid', 'int');
+$cost_price=GETPOST('cost_price', 'int');
 $backtopage=GETPOST('backtopage','alpha');
 $error=0;
 
@@ -91,13 +92,38 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
+	if ($action == 'setcost_price')
+	{
+		if ($id)
+		{
+			$result=$object->fetch($id);
+			$result=$object->setValueFrom('cost_price', price2num($cost_price));
+			if ($result > 0)
+			{
+				$object->cost_price = price2num($cost_price);
+				setEventMessage($langs->trans("RecordSaved"));
+			}
+			else
+			{
+				$error++;
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
+		}
+		$action='';
+	}
+	
 	if ($action == 'remove_pf')
 	{
-		if ($rowid)
+		if ($rowid)	// id of product supplier price to remove
 		{
-			$result=$object->remove_product_fournisseur_price($rowid);
 			$action = '';
-			setEventMessage($langs->trans("PriceRemoved"));
+			$result=$object->remove_product_fournisseur_price($rowid);
+			if($result > 0){
+				setEventMessage($langs->trans("PriceRemoved"));
+			}else{
+				$error++;
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
 		}
 	}
 
@@ -259,21 +285,15 @@ if ($id > 0 || $ref)
 			$picto=($object->type== Product::TYPE_SERVICE?'service':'product');
 			dol_fiche_head($head, 'suppliers', $titre, 0, $picto);
 
-
-			print '<table class="border" width="100%">';
-
-			// Reference
-			print '<tr>';
-			print '<td width="15%">'.$langs->trans("Ref").'</td><td colspan="2">';
-			print $form->showrefnav($object,'ref','',1,'ref');
-			print '</td>';
-			print '</tr>';
-
-			// Label
-			print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$object->label.'</td></tr>';
+            dol_banner_tab($object, 'ref', '', ($user->societe_id?0:1), 'ref');
+            
+            print '<div class="fichecenter">';
+            
+            print '<div class="underbanner clearboth"></div>';
+            print '<table class="border tableforfield" width="100%">';
 
 			// Minimum Price
-			print '<tr><td>'.$langs->trans("BuyingPriceMin").'</td>';
+			print '<tr><td class="titlefield">'.$langs->trans("BuyingPriceMin").'</td>';
             print '<td colspan="2">';
 			$product_fourn = new ProductFournisseur($db);
 			if ($product_fourn->find_min_price_product_fournisseur($object->id) > 0)
@@ -283,14 +303,24 @@ if ($id > 0 || $ref)
 			}
             print '</td></tr>';
 
-			// Status (to buy)
-			print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Buy").')</td><td>';
-			print $object->getLibStatut(2,1);
-			print '</td></tr>';
-
+			// Cost price. Can be used for margin module for option "calculate margin on explicit cost price
+            // Accountancy sell code
+            print '<tr><td>';
+			$textdesc =$langs->trans("CostPriceDescription");
+			$textdesc.="<br>".$langs->trans("CostPriceUsage");
+			$text=$form->textwithpicto($langs->trans("CostPrice"), $textdesc, 1, 'help', '');
+            print $form->editfieldkey($text,'cost_price',$object->cost_price,$object,$user->rights->produit->creer||$user->rights->service->creer,'amount:6');
+            print '</td><td colspan="2">';
+            print $form->editfieldval($text,'cost_price',$object->cost_price,$object,$user->rights->produit->creer||$user->rights->service->creer,'amount:6');
+            print '</td></tr>';
+            
 			print '</table>';
 
-			print "</div>\n";
+            print '</div>';
+            print '<div style="clear:both"></div>';
+			
+			dol_fiche_end();
+			
 
 			// Form to add or update a price
 			if (($action == 'add_price' || $action == 'updateprice' ) && ($user->rights->produit->creer || $user->rights->service->creer))
@@ -465,7 +495,7 @@ if ($id > 0 || $ref)
 				print '<td><input class="flat" name="delivery_time_days" size="4" value="'.($rowid ? $object->delivery_time_days : '').'">&nbsp;'.$langs->trans('days').'</td>';
 				print '</tr>';
 
-				// Charges ????
+				// Option to define a transport cost on supplier price
 				if ($conf->global->PRODUCT_CHARGES)
 				{
 					if (! empty($conf->margin->enabled))
@@ -523,7 +553,7 @@ if ($id > 0 || $ref)
 			{
 				// Suppliers list title
 				print '<table class="noborder" width="100%">';
-				if ($object->isproduct()) $nblignefour=4;
+				if ($object->isProduct()) $nblignefour=4;
 				else $nblignefour=4;
 
 				$param="&id=".$object->id;

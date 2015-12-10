@@ -66,7 +66,7 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
  * View
  */
 
-$textobject=$langs->transnoentitiesnoconv("OrderLines");
+$textobject=$langs->transnoentitiesnoconv("Orders");
 
 llxHeader('',$langs->trans("OrdersSetup"));
 

@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2013      Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2013      Alexandre Spangaro 	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013-2015 Alexandre Spangaro 	<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2014      Juanjo Menent	 	<jmenent@2byte.es>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  *
@@ -143,7 +143,7 @@ if (empty($reshook))
     	$object->fetch($id);
     	if ($object->setstatus(0)<0)
     	{
-    	    setEventMessage($object->error,'errors');
+    	    setEventMessages($object->error, $object->errors, 'errors');
     	}
     	else
     	{
@@ -158,7 +158,7 @@ if (empty($reshook))
     	$object->fetch($id);
         	if ($object->setstatus(1)<0)
     	{
-    	    setEventMessage($object->error,'errors');
+    	    setEventMessages($object->error, $object->errors, 'errors');
     	}
     	else
     	{
@@ -397,8 +397,7 @@ if (empty($reshook))
             }
             else
             {
-                setEventMessage($object->error,'errors');
-                setEventMessage($object->errors,'errors');
+                setEventMessages($object->error, $object->errors, 'errors');
                 $action = 'edit';
             }
         }
@@ -1056,17 +1055,6 @@ else
         print '<div class="underbanner clearboth"></div>';
         print '<table class="border tableforfield" width="100%">';
 
-
-        // Ref
-        /*print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td colspan="3">';
-        print $form->showrefnav($object, 'id', $linkback);
-        print '</td></tr>';
-
-        // Name
-        print '<tr><td width="20%">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</td><td width="30%">'.$object->lastname.'</td>';
-        print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="30%">'.$object->firstname.'</td>';
-		*/
-        
         // Company
         if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
         {
@@ -1083,20 +1071,6 @@ else
             print '</td>';
         }
 
-        // Photo
-        /*
-        if ($object->photo)
-        {
-            print '<td rowspan="6" style="text-align: center;" width="25%">';
-            print $form->showphoto('contact',$object);
-            print '</td>';
-        } else {
-            print '<td rowspan="6" style="text-align: center;" width="25%">';
-            print '&nbsp;';
-            print '</td>';
-        }
-		*/
-        
         print '</tr>';
 
         // Civility
@@ -1107,46 +1081,11 @@ else
         // Role
         print '<tr><td>'.$langs->trans("PostOrFunction").'</td><td>'.$object->poste.'</td></tr>';
 
-        // Address
-        /*
-        print '<tr><td>'.$langs->trans("Address").'</td><td colspan="2">';
-        dol_print_address($object->address,'gmap','contact',$object->id);
-        print '</td></tr>';
-
-        // Zip/Town
-        print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td colspan="2">';
-        print $object->zip;
-        if ($object->zip) print '&nbsp;';
-        print $object->town.'</td></tr>';
-
-        // Country
-        print '<tr><td>'.$langs->trans("Country").'</td><td colspan="2">';
-        $img=picto_from_langcode($object->country_code);
-        if ($img) print $img.' ';
-        print $object->country;
-        print '</td></tr>';
-
-        // State
-        if (empty($conf->global->SOCIETE_DISABLE_STATE))
-        {
-            print '<tr><td>'.$langs->trans('State').'</td><td>'.$object->state.'</td></tr>';
-        }*/
-
-        // Phone
-        /*
-        print '<tr><td>'.$langs->trans("PhonePro").'</td><td>'.dol_print_phone($object->phone_pro,$object->country_code,$object->id,$object->socid,'AC_TEL').'</td>';
-        print '<td>'.$langs->trans("PhonePerso").'</td><td>'.dol_print_phone($object->phone_perso,$object->country_code,$object->id,$object->socid,'AC_TEL').'</td></tr>';
-
-        print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td>'.dol_print_phone($object->phone_mobile,$object->country_code,$object->id,$object->socid,'AC_TEL').'</td>';
-        print '<td>'.$langs->trans("Fax").'</td><td>'.dol_print_phone($object->fax,$object->country_code,$object->id,$object->socid,'AC_FAX').'</td></tr>';
-		*/
-        
         // Email
-        //print '<tr><td>'.$langs->trans("EMail").'</td><td>'.dol_print_email($object->email,$object->id,$object->socid,'AC_EMAIL').'</td></tr>';
         if (! empty($conf->mailing->enabled))
         {
             $langs->load("mails");
-            print '<tr><td class="nowrap">'.$langs->trans("NbOfEMailingsSend").'</td>';
+            print '<tr><td>'.$langs->trans("NbOfEMailingsSend").'</td>';
             print '<td><a href="'.DOL_URL_ROOT.'/comm/mailing/list.php?filteremail='.urlencode($object->email).'">'.$object->getNbOfEMailings().'</a></td></tr>';
         }
 
@@ -1155,12 +1094,6 @@ else
         if (!empty($conf->mailing->enabled))
         {
         	print '<tr><td>'.$langs->trans("No_Email").'</td><td>'.yn($object->no_email).'</td></tr>';
-        }
-
-        // Skype
-        if (! empty($conf->skype->enabled))
-        {
-            print '<tr><td>'.$langs->trans("Skype").'</td><td>'.dol_print_skype($object->skype,0,$object->fk_soc,1).'</td></tr>';
         }
 
         print '<tr><td>'.$langs->trans("ContactVisibility").'</td><td>';

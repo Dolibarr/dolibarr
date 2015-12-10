@@ -113,18 +113,18 @@ if ($action == 'add')
 			if (! $error)
 			{
 				$mesgs = $langs->trans("TransferFromToDone","<a href=\"account.php?account=".$accountfrom->id."\">".$accountfrom->label."</a>","<a href=\"account.php?account=".$accountto->id."\">".$accountto->label."</a>",$amount,$langs->transnoentities("Currency".$conf->currency));
-				setEventMessage($mesgs);
+				setEventMessages($mesgs, null, 'mesgs');
 				$db->commit();
 			}
 			else
 			{
-				setEventMessage($accountfrom->error.' '.$accountto->error, 'errors');
+				setEventMessages($accountfrom->error.' '.$accountto->error, null, 'errors');
 				$db->rollback();
 			}
 		}
 		else
 		{
-			setEventMessage($langs->trans("ErrorFromToAccountsMustDiffers"), 'errors');
+			setEventMessages($langs->trans("ErrorFromToAccountsMustDiffers"), null, 'errors');
 		}
 	}
 }
@@ -132,7 +132,7 @@ if ($action == 'add')
 
 
 /*
- * Affichage
+ * View
  */
 
 llxHeader();

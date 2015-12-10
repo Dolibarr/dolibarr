@@ -38,6 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 if (! empty($conf->ldap->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
 if (! empty($conf->adherent->enabled)) require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
@@ -45,6 +46,7 @@ if (! empty($conf->multicompany->enabled)) dol_include_once('/multicompany/class
 
 $id			= GETPOST('id','int');
 $action		= GETPOST('action','alpha');
+$mode		= GETPOST('mode','alpha');
 $confirm	= GETPOST('confirm','alpha');
 $subaction	= GETPOST('subaction','alpha');
 $group		= GETPOST("group","int",3);
@@ -92,7 +94,7 @@ $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('usercard','globalcard'));
 
 
@@ -183,10 +185,15 @@ if (empty($reshook)) {
 			$object->api_key = GETPOST("api_key", 'alpha');
 			$object->gender = GETPOST("gender", 'alpha');
 			$object->admin = GETPOST("admin", 'alpha');
+			$object->address = GETPOST('address', 'alpha');
+			$object->zip = GETPOST('zipcode', 'alpha');
+			$object->town = GETPOST('town', 'alpha');
+			$object->country_id = GETPOST('country_id', 'int');
+			$object->state_id = GETPOST('state_id', 'int');
 			$object->office_phone = GETPOST("office_phone", 'alpha');
 			$object->office_fax = GETPOST("office_fax", 'alpha');
 			$object->user_mobile = GETPOST("user_mobile");
-			$object->skype = GETPOST("skype");
+			$object->skype = GETPOST("skype", 'alpha');
 			$object->email = GETPOST("email", 'alpha');
 			$object->job = GETPOST("job", 'alpha');
 			$object->signature = GETPOST("signature");
@@ -194,7 +201,8 @@ if (empty($reshook)) {
 			$object->note = GETPOST("note");
 			$object->ldap_sid = GETPOST("ldap_sid");
 			$object->fk_user = GETPOST("fk_user") > 0 ? GETPOST("fk_user") : 0;
-
+            $object->employee = GETPOST('employee');
+            
 			$object->thm = GETPOST("thm") != '' ? GETPOST("thm") : '';
 			$object->tjm = GETPOST("tjm") != '' ? GETPOST("tjm") : '';
 			$object->salary = GETPOST("salary") != '' ? GETPOST("salary") : '';
@@ -314,17 +322,23 @@ if (empty($reshook)) {
                 $object->pass = GETPOST("password");
                 $object->api_key = (GETPOST("api_key", 'alpha')) ? GETPOST("api_key", 'alpha') : $object->api_key;
                 $object->admin = empty($user->admin) ? 0 : GETPOST("admin"); // A user can only be set admin by an admin
-                $object->office_phone = GETPOST("office_phone", 'alpha');
+                $object->address = GETPOST('address', 'alpha');
+				$object->zip = GETPOST('zipcode', 'alpha');
+				$object->town = GETPOST('town', 'alpha');
+				$object->country_id = GETPOST('country_id', 'int');
+				$object->state_id = GETPOST('state_id', 'int');
+				$object->office_phone = GETPOST("office_phone", 'alpha');
                 $object->office_fax = GETPOST("office_fax", 'alpha');
                 $object->user_mobile = GETPOST("user_mobile");
-                $object->skype = GETPOST("skype");
+                $object->skype = GETPOST("skype", 'alpha');
                 $object->email = GETPOST("email", 'alpha');
                 $object->job = GETPOST("job", 'alpha');
                 $object->signature = GETPOST("signature");
                 $object->accountancy_code = GETPOST("accountancy_code");
                 $object->openid = GETPOST("openid");
                 $object->fk_user = GETPOST("fk_user") > 0 ? GETPOST("fk_user") : 0;
-
+                $object->employee = GETPOST('employee');
+                
                 $object->thm = GETPOST("thm") != '' ? GETPOST("thm") : '';
                 $object->tjm = GETPOST("tjm") != '' ? GETPOST("tjm") : '';
                 $object->salary = GETPOST("salary") != '' ? GETPOST("salary") : '';
@@ -576,6 +590,7 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 $formother=new FormOther($db);
+$formcompany = new FormCompany($db);
 
 llxHeader('',$langs->trans("UserCard"));
 
@@ -697,7 +712,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     print '<tr>';
 
     // Lastname
-    print '<td width="160"><span class="fieldrequired">'.$langs->trans("Lastname").'</span></td>';
+    print '<td class="titlefield"><span class="fieldrequired">'.$langs->trans("Lastname").'</span></td>';
     print '<td>';
     if (! empty($ldap_lastname))
     {
@@ -863,6 +878,36 @@ if (($action == 'create') || ($action == 'adduserldap'))
     print $form->textwithpicto($langs->trans("Internal"),$langs->trans("InternalExternalDesc"), 1, 'help', '', 0, 2);
     print '</td></tr>';
 
+    // Address
+    print '<tr><td class="tdtop">'.fieldLabel('Address','address').'</td>';
+	print '<td><textarea name="address" id="address" cols="80" rows="3" wrap="soft">';
+    print $object->address;
+    print '</textarea></td></tr>';
+
+    // Zip
+    print '<tr><td>'.fieldLabel('Zip','zipcode').'</td><td>';
+    print $formcompany->select_ziptown($object->zip,'zipcode',array('town','selectcountry_id','state_id'),6);
+    print '</td></tr>';
+
+	// Town
+	print '<tr><td>'.fieldLabel('Town','town').'</td><td>';
+    print $formcompany->select_ziptown($object->town,'town',array('zipcode','selectcountry_id','state_id'));
+    print '</td></tr>';
+
+    // Country
+    print '<tr><td>'.fieldLabel('Country','selectcountry_id').'</td><td class="maxwidthonsmartphone">';
+    print $form->select_country((GETPOST('country_id')!=''?GETPOST('country_id'):$object->country_id));
+    if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+    print '</td></tr>';
+
+    // State
+    if (empty($conf->global->USER_DISABLE_STATE))
+    {
+        print '<tr><td>'.fieldLabel('State','state_id').'</td><td class="maxwidthonsmartphone">';
+        print $formcompany->select_state($object->state_id,$object->country_code, 'state_id');
+        print '</td></tr>';
+    }
+		
     // Tel
     print '<tr><td>'.$langs->trans("PhonePro").'</td>';
     print '<td>';
@@ -962,7 +1007,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     // Hierarchy
     print '<tr><td>'.$langs->trans("HierarchicalResponsible").'</td>';
     print '<td>';
-    print $form->select_dolusers($object->fk_user,'fk_user',1,array($object->id),0,'',0,$conf->entity);
+    print $form->select_dolusers($object->fk_user, 'fk_user', 1, array($object->id), 0, '', 0, $conf->entity, 0, 0, '', 0, '', 'maxwidth300');
     print '</td>';
     print "</tr>\n";
 
@@ -971,14 +1016,20 @@ if (($action == 'create') || ($action == 'adduserldap'))
 		$langs->load("salaries");
 
 	    // THM
-	    print '<tr><td>'.$langs->trans("THM").'</td>';
+	    print '<tr><td>';
+		$text=$langs->trans("THM");
+		print $form->textwithpicto($text, $langs->trans("THMDescription"), 1, 'help', 'classthm');
+	    print '</td>';
 	    print '<td>';
 	    print '<input size="8" type="text" name="thm" value="'.GETPOST('thm').'">';
 	    print '</td>';
 	    print "</tr>\n";
 
 	    // TJM
-	    print '<tr><td>'.$langs->trans("TJM").'</td>';
+	    print '<tr><td>';
+		$text=$langs->trans("TJM");
+		print $form->textwithpicto($text, $langs->trans("TJMDescription"), 1, 'help', 'classtjm');
+	    print '</td>';
 	    print '<td>';
 	    print '<input size="8" type="text" name="tjm" value="'.GETPOST('tjm').'">';
 	    print '</td>';
@@ -1106,8 +1157,18 @@ else
         }
 
         // Show tabs
+		if ($mode == 'employee') // For HRM module development
+		{
+			$title = $langs->trans("Employee");
+			$linkback = '<a href="'.DOL_URL_ROOT.'/hrm/employee/list.php">'.$langs->trans("BackToList").'</a>';
+		}
+		else
+		{
+			$title = $langs->trans("User");
+			$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
+		}
+
         $head = user_prepare_head($object);
-        $title = $langs->trans("User");
 
         /*
          * Confirmation reinitialisation mot de passe
@@ -1156,7 +1217,7 @@ else
         {
 			dol_fiche_head($head, 'user', $title, 0, 'user');
 
-	        dol_banner_tab($object,'id','',$user->rights->user->user->lire || $user->admin);
+            dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
 
 
 	        print '<div class="fichecenter">';
@@ -1166,7 +1227,7 @@ else
 	        print '<table class="border tableforfield" width="100%">';
 
             // Login
-            print '<tr><td>'.$langs->trans("Login").'</td>';
+            print '<tr><td class="titlefield">'.$langs->trans("Login").'</td>';
             if (! empty($object->ldap_sid) && $object->statut==0)
             {
                 print '<td class="error">'.$langs->trans("LoginAccountDisableInDolibarr").'</td>';
@@ -1231,8 +1292,7 @@ else
             if(! empty($conf->api->enabled) && $user->admin) {
                 print '<tr><td>'.$langs->trans("ApiKey").'</td>';
                 print '<td>';
-                if (! empty($object->api_key))
-                    print $langs->trans("Hidden");
+                if (! empty($object->api_key)) print preg_replace('/./','*',$object->api_key);
                 print '</td></tr>';
             }
 
@@ -1269,14 +1329,6 @@ else
             	print '<tr><td>'.$langs->trans("Type").'</td><td>';
             	print $langs->trans("DomainUser",$ldap->domainFQDN);
             	print '</td></tr>'."\n";
-            }
-
-            // Skype
-            if (! empty($conf->skype->enabled))
-            {
-				print '<tr><td>'.$langs->trans("Skype").'</td>';
-                print '<td>'.dol_print_skype($object->skype,0,0,1).'</td>';
-                print "</tr>\n";
             }
 
             // Signature
@@ -1360,7 +1412,7 @@ else
 	        print '<div class="underbanner clearboth"></div>';
 	        print '<table class="border tableforfield" width="100%">';
 
-        	print '<tr><td>'.$langs->trans("LastConnexion").'</td>';
+        	print '<tr><td class="titlefield">'.$langs->trans("LastConnexion").'</td>';
             print '<td>'.dol_print_date($object->datelastlogin,"dayhour").'</td>';
             print "</tr>\n";
 
@@ -1915,6 +1967,36 @@ else
             }
            	print '</td></tr>';
 
+			// Address
+            print '<tr><td class="tdtop">'.fieldLabel('Address','address').'</td>';
+	        print '<td><textarea name="address" id="address" cols="80" rows="3" wrap="soft">';
+            print $object->address;
+            print '</textarea></td></tr>';
+
+            // Zip
+            print '<tr><td>'.fieldLabel('Zip','zipcode').'</td><td>';
+            print $formcompany->select_ziptown($object->zip, 'zipcode', array('town', 'selectcountry_id', 'state_id'), 6);
+            print '</td></tr>';
+
+			// Town
+			print '<tr><td>'.fieldLabel('Town','town').'</td><td>';
+            print $formcompany->select_ziptown($object->town, 'town', array('zipcode', 'selectcountry_id', 'state_id'));
+            print '</td></tr>';
+
+            // Country
+            print '<tr><td>'.fieldLabel('Country','selectcounty_id').'</td><td>';
+            print $form->select_country((GETPOST('country_id')!=''?GETPOST('country_id'):$object->country_id),'country_id');
+            if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+            print '</td></tr>';
+
+            // State
+            if (empty($conf->global->USER_DISABLE_STATE))
+            {
+                print '<tr><td>'.fieldLabel('State','state_id').'</td><td>';
+                print $formcompany->select_state($object->state_id,$object->country_code, 'state_id');
+                print '</td></tr>';
+            }
+
             // Tel pro
             print "<tr>".'<td>'.$langs->trans("PhonePro").'</td>';
             print '<td>';
@@ -2025,7 +2107,7 @@ else
             print '<td>';
             if ($caneditfield)
             {
-            	print $form->select_dolusers($object->fk_user,'fk_user',1,array($object->id),0,'',0,$object->entity);
+            	print $form->select_dolusers($object->fk_user, 'fk_user', 1, array($object->id), 0, '', 0, $object->entity, 0, 0, '', 0, '', 'maxwidth300');
             }
             else
           {

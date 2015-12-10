@@ -40,8 +40,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-if (! empty($conf->askpricesupplier->enabled))
-	require DOL_DOCUMENT_ROOT . '/comm/askpricesupplier/class/askpricesupplier.class.php';
+if (! empty($conf->supplier_proposal->enabled))
+	require DOL_DOCUMENT_ROOT . '/supplier_proposal/class/supplier_proposal.class.php';
 if (!empty($conf->produit->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 if (!empty($conf->projet->enabled))
@@ -54,7 +54,7 @@ $langs->load('sendings');
 $langs->load('companies');
 $langs->load('bills');
 $langs->load('propal');
-$langs->load('askpricesupplier');
+$langs->load('supplier_proposal');
 $langs->load('deliveries');
 $langs->load('products');
 $langs->load('stocks');
@@ -94,9 +94,6 @@ $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
-
-//Date prefix
-$date_pf = '';
 
 // Load object
 if ($id > 0 || ! empty($ref))
@@ -196,7 +193,7 @@ if (empty($reshook))
 
 	if ($action == 'reopen')	// no test on permission here, permission to use will depends on status
 	{
-	    if (in_array($object->statut, array(1, 2, 3, 5, 6, 7, 9)))
+	    if (in_array($object->statut, array(1, 2, 3, 5, 6, 7, 9)) || ($object->statut == 4 && $object->billed))
 	    {
 	        if ($object->statut == 1) $newstatus=0;	// Validated->Draft
 	        else if ($object->statut == 2) $newstatus=0;	// Approved->Draft
@@ -205,13 +202,20 @@ if (empty($reshook))
 	        else if ($object->statut == 6) $newstatus=2;	// Canceled->Approved
 	        else if ($object->statut == 7) $newstatus=3;	// Canceled->Process running
 	        else if ($object->statut == 9) $newstatus=1;	// Refused->Validated
-
+            else $newstatus = 2;
+            
 	        $db->begin();
 
 	        $result = $object->setStatus($user, $newstatus);
 	        if ($result > 0)
 	        {
-	        	if ($newstatus == 0)
+		        $sql = 'UPDATE '.MAIN_DB_PREFIX.'commande_fournisseur';
+	        	$sql.= ' SET billed = 0';
+	        	$sql.= ' WHERE rowid = '.$object->id;
+
+	        	$resql=$db->query($sql);
+	            
+	            if ($newstatus == 0)
 	        	{
 		        	$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande_fournisseur';
 	        		$sql.= ' SET fk_user_approve = null, fk_user_approve2 = null, date_approve = null, date_approve2 = null';
@@ -235,6 +239,17 @@ if (empty($reshook))
 	}
 
 	/*
+	 * Classify supplier order as billed
+	 */
+	if ($action == 'classifybilled' && $user->rights->fournisseur->commande->creer)
+	{
+		$ret=$object->classifyBilled();
+		if ($ret < 0) {
+			setEventMessage($object->error, 'errors');
+		}
+	}
+
+	/*
 	 *	Add a line into product
 	 */
 	if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
@@ -245,8 +260,8 @@ if (empty($reshook))
 		// Set if we used free entry or predefined product
 		$predef='';
 		$product_desc=(GETPOST('dp_desc')?GETPOST('dp_desc'):'');
-		$date_start=dol_mktime(GETPOST('date_start'.$date_pf.'hour'), GETPOST('date_start'.$date_pf.'min'), 0, GETPOST('date_start'.$date_pf.'month'), GETPOST('date_start'.$date_pf.'day'), GETPOST('date_start'.$date_pf.'year'));
-		$date_end=dol_mktime(GETPOST('date_end'.$date_pf.'hour'), GETPOST('date_end'.$date_pf.'min'), 0, GETPOST('date_end'.$date_pf.'month'), GETPOST('date_end'.$date_pf.'day'), GETPOST('date_end'.$date_pf.'year'));
+		$date_start=dol_mktime(GETPOST('date_start'.$predef.'hour'), GETPOST('date_start'.$predef.'min'), GETPOST('date_start' . $predef . 'sec'), GETPOST('date_start'.$predef.'month'), GETPOST('date_start'.$predef.'day'), GETPOST('date_start'.$predef.'year'));
+		$date_end=dol_mktime(GETPOST('date_end'.$predef.'hour'), GETPOST('date_end'.$predef.'min'), GETPOST('date_end' . $predef . 'sec'), GETPOST('date_end'.$predef.'month'), GETPOST('date_end'.$predef.'day'), GETPOST('date_end'.$predef.'year'));
 		if (GETPOST('prod_entry_mode') == 'free')
 		{
 			$idprod=0;
@@ -488,8 +503,8 @@ if (empty($reshook))
 	        if (!$res) dol_print_error($db);
 	    }
 
-	    $date_start=dol_mktime(GETPOST('date_start'.$date_pf.'hour'), GETPOST('date_start'.$date_pf.'min'), 0, GETPOST('date_start'.$date_pf.'month'), GETPOST('date_start'.$date_pf.'day'), GETPOST('date_start'.$date_pf.'year'));
-	    $date_end=dol_mktime(GETPOST('date_end'.$date_pf.'hour'), GETPOST('date_end'.$date_pf.'min'), 0, GETPOST('date_end'.$date_pf.'month'), GETPOST('date_end'.$date_pf.'day'), GETPOST('date_end'.$date_pf.'year'));
+	    $date_start=dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), GETPOST('date_startsec'), GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
+	    $date_end=dol_mktime(GETPOST('date_endhour'), GETPOST('date_endmin'), GETPOST('date_endsec'), GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
 
 	    $localtax1_tx=get_localtax($tva_tx,1,$mysoc,$object->thirdparty);
 	    $localtax2_tx=get_localtax($tva_tx,2,$mysoc,$object->thirdparty);
@@ -704,15 +719,22 @@ if (empty($reshook))
 
 	if ($action == 'confirm_commande' && $confirm	== 'yes' &&	$user->rights->fournisseur->commande->commander)
 	{
-	    $result	= $object->commande($user, $_REQUEST["datecommande"],	$_REQUEST["methode"], $_REQUEST['comment']);
+	    $result = $object->commande($user, $_REQUEST["datecommande"],	$_REQUEST["methode"], $_REQUEST['comment']);
 	    if ($result > 0)
 	    {
 	        if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+	            $outputlangs = $langs;
+	            $newlang = '';
+	            if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
+	            if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+	            if (! empty($newlang)) {
+	                $outputlangs = new Translate("", $conf);
+	                $outputlangs->setDefaultLang($newlang);
+	            }
 		        $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	        }
-	        header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
-	        exit;
-	    }
+            $action = '';
+        }
 	    else
 	    {
             setEventMessages($object->error, $object->errors, 'errors');
@@ -767,15 +789,16 @@ if (empty($reshook))
 	    {
 	        $date_liv = dol_mktime(GETPOST('rehour'),GETPOST('remin'),GETPOST('resec'),GETPOST("remonth"),GETPOST("reday"),GETPOST("reyear"));
 
-	        $result	= $object->Livraison($user, $date_liv, GETPOST("type"), GETPOST("comment"));
+	        $result = $object->Livraison($user, $date_liv, GETPOST("type"), GETPOST("comment"));
 	        if ($result > 0)
 	        {
-	            header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
-	            exit;
-	        }
+	            $langs->load("deliveries");
+                setEventMessages($langs->trans("DeliveryStateSaved"), null);
+                $action = '';
+            }
 	        else if($result == -3)
 	        {
-	        	setEventMessage($langs->trans("NotAuthorized"), 'errors');
+                setEventMessages($object->error, $object->errors, 'errors');
 	        }
 	        else
 	        {
@@ -872,6 +895,8 @@ if (empty($reshook))
 		}
 	}
 
+	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
+
 
 	/*
 	 * Create an order
@@ -915,8 +940,8 @@ if (empty($reshook))
        			// If creation from another object of another module (Example: origin=propal, originid=1)
 				if (! empty($origin) && ! empty($originid))
 				{
-					$element = 'comm/askpricesupplier';
-					$subelement = 'askpricesupplier';
+					$element = 'supplier_proposal';
+					$subelement = 'supplier_proposal';
 
 					$object->origin = $origin;
 					$object->origin_id = $originid;
@@ -1428,8 +1453,8 @@ if ($action=='create')
 			$subelement = $regs [2];
 		}
 
-		$element = 'comm/askpricesupplier';
-		$subelement = 'askpricesupplier';
+		$element = 'supplier_proposal';
+		$subelement = 'supplier_proposal';
 
 		dol_include_once('/' . $element . '/class/' . $subelement . '.class.php');
 
@@ -1578,8 +1603,8 @@ if ($action=='create')
 		print '<input type="hidden" name="originid"       value="' . $objectsrc->id . '">';
 
 		$newclassname = $classname;
-		if ($newclassname == 'AskPriceSupplier')
-			$newclassname = 'CommercialAskPriceSupplier';
+		if ($newclassname == 'SupplierProposal')
+			$newclassname = 'CommercialSupplierProposal';
 		print '<tr><td>' . $langs->trans($newclassname) . '</td><td colspan="2">' . $objectsrc->getNomUrl(1) . '</td></tr>';
 		print '<tr><td>' . $langs->trans('TotalHT') . '</td><td colspan="2">' . price($objectsrc->total_ht) . '</td></tr>';
 		print '<tr><td>' . $langs->trans('TotalVAT') . '</td><td colspan="2">' . price($objectsrc->total_tva) . "</td></tr>";
@@ -2320,6 +2345,15 @@ elseif (! empty($object->id))
 		$formmail->fromid   = $user->id;
 		$formmail->fromname = $user->getFullName($langs);
 		$formmail->frommail = $user->email;
+		if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 1))	// If bit 1 is set
+		{
+			$formmail->trackid='sor'.$object->id;
+		}
+		if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2))	// If bit 2 is set
+		{
+			include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+			$formmail->frommail=dolAddEmailTrackId($formmail->frommail, 'sor'.$object->id);
+		}		
 		$formmail->withfrom=1;
 		$liste=array();
 		foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key=>$value)	$liste[$key]=$value;
@@ -2704,7 +2738,7 @@ elseif (! empty($object->id))
 						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("Disapprove").'</a>';
 					}
 				}
-				if (in_array($object->statut, array(3, 5, 6, 7, 9)))
+				if (in_array($object->statut, array(3, 5, 6, 7, 9)) || ($object->statut == 4 && $object->billed))
 				{
 					if ($user->rights->fournisseur->commande->commander)
 					{
@@ -2715,18 +2749,19 @@ elseif (! empty($object->id))
 				// Create bill
 				if (! empty($conf->facture->enabled))
 				{
-					if (! empty($conf->fournisseur->enabled) && ($object->statut >= 2 && $object->statut != 9))  // 2 means accepted
+					if (! empty($conf->fournisseur->enabled) && ($object->statut >= 2 && $object->billed != 1))  // 2 means accepted
 					{
 						if ($user->rights->fournisseur->facture->creer)
 						{
 							print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a>';
 						}
-
-						//if ($user->rights->fournisseur->commande->creer && $object->statut > 2)
-						//{
-						//	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans("ClassifyBilled").'</a>';
-						//}
+					
+						if ($user->rights->fournisseur->commande->creer && $object->statut >= 2 && !empty($object->linkedObjectsIds['invoice_supplier']))
+						{
+							print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans("ClassifyBilled").'</a>';
+						}
 					}
+
 				}
 
 				// Create a remote order using WebService only if module is activated

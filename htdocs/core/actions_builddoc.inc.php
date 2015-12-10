@@ -102,7 +102,7 @@ if ($action == 'remove_file' && $permissioncreate)
     $filetodelete=GETPOST('file','alpha');
     $file =	$upload_dir	. '/' .	$filetodelete;
     $ret=dol_delete_file($file,0,0,0,$object);
-    if ($ret) setEventMessage($langs->trans("FileWasRemoved", $filetodelete));
-    else setEventMessage($langs->trans("ErrorFailToDeleteFile", $filetodelete), 'errors');
+    if ($ret) setEventMessages($langs->trans("FileWasRemoved", $filetodelete), null, 'mesgs');
+    else setEventMessages($langs->trans("ErrorFailToDeleteFile", $filetodelete), null, 'errors');
 }
 

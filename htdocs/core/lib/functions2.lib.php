@@ -817,7 +817,14 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     //print "masktri=".$masktri." maskcounter=".$maskcounter." maskraz=".$maskraz." maskoffset=".$maskoffset."<br>\n";
 
     // Define $sqlstring
-    $posnumstart=strrpos($maskwithnocode,$maskcounter);	// Pos of counter in final string (from 0 to ...)
+    if (function_exists('mb_strrpos')) 
+    	{
+    	$posnumstart=mb_strrpos($maskwithnocode,$maskcounter, 'UTF-8');
+	} 
+	else 
+	{
+    	$posnumstart=strrpos($maskwithnocode,$maskcounter);
+	}	// Pos of counter in final string (from 0 to ...)
     if ($posnumstart < 0) return 'ErrorBadMaskFailedToLocatePosOfSequence';
     $sqlstring='SUBSTRING('.$field.', '.($posnumstart+1).', '.dol_strlen($maskcounter).')';
 
@@ -1608,8 +1615,8 @@ function dolGetElementUrl($objectid,$objecttype,$withpicto=0,$option='')
 	if ($objecttype == 'propal')  {
 		$classpath = 'comm/propal/class';
 	}
-	if ($objecttype == 'askpricesupplier')  {
-		$classpath = 'comm/askpricesupplier/class';
+	if ($objecttype == 'supplier_proposal')  {
+		$classpath = 'supplier_proposal/class';
 	}
 	if ($objecttype == 'shipping') {
 		$classpath = 'expedition/class';
@@ -1842,8 +1849,8 @@ function getElementProperties($element_type)
     if ($element_type == 'propal')  {
         $classpath = 'comm/propal/class';
     }
-    if ($element_type == 'askpricesupplier')  {
-        $classpath = 'comm/askpricesupplier/class';
+    if ($element_type == 'supplier_proposal')  {
+        $classpath = 'supplier_proposal/class';
     }
     if ($element_type == 'shipping') {
         $classpath = 'expedition/class';

@@ -263,7 +263,7 @@ class ExtraFields
 
 		if (! empty($attrname) && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname) && ! is_numeric($attrname))
 		{
-			if(is_array($param) and count($param) > 0)
+			if(is_array($param) && count($param) > 0)
 			{
 				$params = $this->db->escape(serialize($param));
 			}
@@ -647,10 +647,11 @@ class ExtraFields
 	 * @param  string  $moreparam      To add more parametes on html input tag
 	 * @param  string  $keyprefix      Prefix string to add into name and id of field (can be used to avoid duplicate names)
 	 * @param  string  $keysuffix      Suffix string to add into name and id of field (can be used to avoid duplicate names)
-	 * @param  int     $showsize       Value for size attribute
+	 * @param  int     $showsize       Value for size attributed
+	 * @param  int     $objectid       Current object id
 	 * @return string
 	 */
-	function showInputField($key,$value,$moreparam='',$keyprefix='',$keysuffix='',$showsize=0)
+	function showInputField($key,$value,$moreparam='',$keyprefix='',$keysuffix='',$showsize=0, $objectid=0)
 	{
 		global $conf,$langs;
 
@@ -750,10 +751,10 @@ class ExtraFields
 		elseif ($type == 'select')
 		{
 			$out = '';
-			if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT) && ! $forcecombo)
+			if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_EXTRAFIELDS_USE_SELECT2))
 			{
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-				$out.= ajax_combobox($keysuffix.'options_'.$key.$keyprefix, array(), $conf->global->COMPANY_USE_SEARCH_TO_SELECT);
+				$out.= ajax_combobox($keysuffix.'options_'.$key.$keyprefix, array(), 0);
 			}
 
 			$out.='<select class="flat" name="'.$keysuffix.'options_'.$key.$keyprefix.'" id="options_'.$key.$keyprefix.'" '.($moreparam?$moreparam:'').'>';
@@ -771,10 +772,10 @@ class ExtraFields
 		elseif ($type == 'sellist')
 		{
 			$out = '';
-			if ($conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT && ! $forcecombo)
+			if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_EXTRAFIELDS_USE_SELECT2))
 			{
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-				$out.= ajax_combobox($keysuffix.'options_'.$key.$keyprefix, array(), $conf->global->COMPANY_USE_SEARCH_TO_SELECT);
+				$out.= ajax_combobox($keysuffix.'options_'.$key.$keyprefix, array(), 0);
 			}
 
 			$out.='<select class="flat" name="'.$keysuffix.'options_'.$key.$keyprefix.'" id="options_'.$key.$keyprefix.'" '.($moreparam?$moreparam:'').'>';
@@ -816,6 +817,17 @@ class ExtraFields
 				$sql.= ' FROM '.MAIN_DB_PREFIX .$InfoFieldList[0];
 				if (!empty($InfoFieldList[4]))
 				{
+					// can use SELECT request
+					if (strpos($InfoFieldList[4], '$SEL$')!==false) {
+						$InfoFieldList[4]=str_replace('$SEL$','SELECT',$InfoFieldList[4]);
+					}
+					
+					// current object id can be use into filter
+					if (strpos($InfoFieldList[4], '$ID$')!==false && !empty($objectid)) {
+						$InfoFieldList[4]=str_replace('$ID$',$objectid,$InfoFieldList[4]);
+					} else {
+						$InfoFieldList[4]=str_replace('$ID$','0',$InfoFieldList[4]);
+					}
 					//We have to join on extrafield table
 					if (strpos($InfoFieldList[4], 'extra')!==false)
 					{
@@ -831,7 +843,11 @@ class ExtraFields
 				{
 					$sqlwhere.= ' WHERE 1';
 				}
-				if (in_array($InfoFieldList[0],array('tablewithentity'))) $sqlwhere.= ' AND entity = '.$conf->entity;	// Some tables may have field, some other not. For the moment we disable it.
+				// Some tables may have field, some other not. For the moment we disable it.
+				if (in_array($InfoFieldList[0],array('tablewithentity'))) 
+				{
+					$sqlwhere.= ' AND entity = '.$conf->entity;	
+				}
 				$sql.=$sqlwhere;
 				//print $sql;
 
@@ -989,6 +1005,19 @@ class ExtraFields
 				$sql = 'SELECT ' . $keyList;
 				$sql .= ' FROM ' . MAIN_DB_PREFIX . $InfoFieldList[0];
 				if (! empty($InfoFieldList[4])) {
+					
+					// can use SELECT request
+					if (strpos($InfoFieldList[4], '$SEL$')!==false) {
+						$InfoFieldList[4]=str_replace('$SEL$','SELECT',$InfoFieldList[4]);
+					}
+					
+					// current object id can be use into filter
+					if (strpos($InfoFieldList[4], '$ID$')!==false && !empty($objectid)) {
+						$InfoFieldList[4]=str_replace('$ID$',$objectid,$InfoFieldList[4]);
+					} else {
+						$InfoFieldList[4]=str_replace('$ID$','0',$InfoFieldList[4]);
+					}
+					
 					// We have to join on extrafield table
 					if (strpos($InfoFieldList[4], 'extra') !== false) {
 						$sql .= ' as main, ' . MAIN_DB_PREFIX . $InfoFieldList[0] . '_extrafields as extra';
@@ -999,12 +1028,14 @@ class ExtraFields
 				} else {
 					$sqlwhere .= ' WHERE 1';
 				}
-				if (in_array($InfoFieldList[0], array (
-						'tablewithentity'
-				)))
-					$sqlwhere .= ' AND entity = ' . $conf->entity; // Some tables may have field, some other not. For the moment we disable it.
-						                                                                                                      // $sql.=preg_replace('/^ AND /','',$sqlwhere);
-						                                                                                                      // print $sql;
+				// Some tables may have field, some other not. For the moment we disable it.
+				if (in_array($InfoFieldList[0], array ('tablewithentity'))) 
+				{
+					$sqlwhere .= ' AND entity = ' . $conf->entity;
+				}
+				// $sql.=preg_replace('/^ AND /','',$sqlwhere);
+				// print $sql;
+				
 				$sql .= $sqlwhere;
 				dol_syslog(get_class($this) . '::showInputField type=chkbxlst',LOG_DEBUG);
 				$resql = $this->db->query($sql);
@@ -1122,7 +1153,7 @@ class ExtraFields
 	 *
 	 * @param   string	$key            Key of attribute
 	 * @param   string	$value          Value to show
-	 * @param	string	$moreparam		More param
+	 * @param	string	$moreparam		To add more parametes on html input tag (only checkbox use html input for output rendering)
 	 * @return	string					Formated value
 	 */
 	function showOutputField($key,$value,$moreparam='')
@@ -1139,6 +1170,8 @@ class ExtraFields
 		$perms=$this->attribute_perms[$key];
 		$list=$this->attribute_list[$key];
 
+		$showsize=0;
+		
 		if ($type == 'date')
 		{
 			$showsize=10;
@@ -1368,11 +1401,59 @@ class ExtraFields
 			$showsize=round($size);
 			if ($showsize > 48) $showsize=48;
 		}
+		
 		//print $type.'-'.$size;
 		$out=$value;
+		
 		return $out;
 	}
 
+	/**
+	 * Return tag to describe alignement to use for this extrafield
+	 *
+	 * @param   string	$key            Key of attribute
+	 * @return	string					Formated value
+	 */
+	function getAlignFlag($key)
+	{
+		global $conf,$langs;
+
+		$type=$this->attribute_type[$key];
+
+		$align='';
+		
+		if ($type == 'date')
+		{
+			$align="center";
+		}
+		elseif ($type == 'datetime')
+		{
+			$align="center";
+		}
+		elseif ($type == 'int')
+		{
+			$align="right";
+		}
+		elseif ($type == 'double')
+		{
+			$align="right";
+		}
+		elseif ($type == 'boolean')
+		{
+			$align="center";
+		}
+		elseif ($type == 'radio')
+		{
+			$align="center";
+		}
+		elseif ($type == 'checkbox')
+		{
+			$align="center";
+		}
+	
+		return $align;
+	}
+	
 	/**
 	 * Return HTML string to print separator extrafield
 	 *
@@ -1441,7 +1522,7 @@ class ExtraFields
 
 			if($nofillrequired) {
 				$langs->load('errors');
-				setEventMessage($langs->trans('ErrorFieldsRequired').' : '.implode(', ',$error_field_required),'errors');
+				setEventMessages($langs->trans('ErrorFieldsRequired').' : '.implode(', ',$error_field_required), null, 'errors');
 				return -1;
 			}
 			else {
@@ -1481,6 +1562,8 @@ class ExtraFields
 				else if (in_array($key_type,array('checkbox')))
 				{
 					$value_arr=GETPOST($keysuffix."options_".$key.$keyprefix);
+					// Make sure we get an array even if there's only one checkbox
+					$value_arr=(array) $value_arr;
 					$value_key=implode(',', $value_arr);
 				}
 				else if (in_array($key_type,array('price','double')))

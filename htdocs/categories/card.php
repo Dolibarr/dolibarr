@@ -155,7 +155,7 @@ if ($action == 'add' && $user->rights->categorie->creer)
 		}
 		else
 		{
-			setEventMessage($object->error,'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 }

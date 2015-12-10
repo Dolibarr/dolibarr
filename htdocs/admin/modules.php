@@ -37,6 +37,7 @@ $langs->load("admin");
 $mode=GETPOST('mode', 'alpha')?GETPOST('mode', 'alpha'):(isset($_SESSION['mode'])?$_SESSION['mode']:0);
 $action=GETPOST('action','alpha');
 $value=GETPOST('value', 'alpha');
+$page_y=GETPOST('page_y','int');
 
 if (! $user->admin)
 	accessforbidden();
@@ -66,16 +67,16 @@ $familyinfo=array(
 if ($action == 'set' && $user->admin)
 {
     $result=activateModule($value);
-    if ($result) setEventMessage($result, 'errors');
-    header("Location: modules.php?mode=".$mode);
+    if ($result) setEventMessages($result, null, 'errors');
+    header("Location: modules.php?mode=".$mode.($page_y?'&page_y='.$page_y:''));
 	exit;
 }
 
 if ($action == 'reset' && $user->admin)
 {
     $result=unActivateModule($value);
-    if ($result) setEventMessage($result, 'errors');
-    header("Location: modules.php?mode=".$mode);
+    if ($result) setEventMessages($result, null, 'errors');
+    header("Location: modules.php?mode=".$mode.($page_y?'&page_y='.$page_y:''));
 	exit;
 }
 
@@ -125,7 +126,7 @@ foreach ($modulesdir as $dir)
 		        	if (! empty($modNameLoaded[$modName]))
 		        	{
 		        		$mesg="Error: Module ".$modName." was found twice: Into ".$modNameLoaded[$modName]." and ".$dir.". You probably have an old file on your disk.<br>";
-		        		setEventMessage($mesg, 'warnings');
+		        		setEventMessages($mesg, null, 'warnings');
 		        		dol_syslog($mesg, LOG_ERR);
 						continue;
 		        	}
@@ -163,10 +164,15 @@ foreach ($modulesdir as $dir)
 		    					
 		    			            $special = $objMod->special;
 		    			            $familykey = $objMod->family;
+		    			            $moduleposition = ($objMod->module_position?$objMod->module_position:'500');
+		    			            if ($moduleposition == 500 && ($objMod->isCoreOrExternalModule() == 'external'))
+		    			            {
+		    			                $moduleposition = 800;
+		    			            }
 		    			            
 		    			            if ($special == 1) $familykey='interface';
 		    			            
-		    			            $orders[$i]  = $familyinfo[$familykey]['position']."_".$familykey."_".$j;   // Sort by family, then by module number
+		    			            $orders[$i]  = $familyinfo[$familykey]['position']."_".$familykey."_".$moduleposition."_".$j;   // Sort by family, then by module position then number
 		    						$dirmod[$i]  = $dir;
 		    			            // Set categ[$i]
 		    						$specialstring = isset($specialtostring[$special])?$specialtostring[$special]:'unknown';
@@ -311,7 +317,7 @@ if ($mode != 'marketplace')
     foreach ($orders as $key => $value)
     {
         $tab=explode('_',$value);
-        $familypos=$tab[0]; $familykey=$tab[1]; $numero=$tab[2];
+        $familyposition=$tab[0]; $familykey=$tab[1]; $module_position=$tab[2]; $numero=$tab[3];
 
         $modName = $filename[$key];
     	$objMod  = $modules[$key];
@@ -425,12 +431,13 @@ if ($mode != 'marketplace')
         	}
         	else
         	{
-        		print '<a href="modules.php?id='.$objMod->numero.'&amp;action=reset&amp;value=' . $modName . '&amp;mode=' . $mode . '">';
+        		print '<a class="reposition" href="modules.php?id='.$objMod->numero.'&amp;module_position='.$module_position.'&amp;action=reset&amp;value=' . $modName . '&amp;mode=' . $mode . '">';
         		print img_picto($langs->trans("Activated"),'switch_on');
         		print '</a>';
         	}
         	print '</td>'."\n";
 
+        	// Config link
         	if (! empty($objMod->config_page_url) && !$disableSetup)
         	{
         		if (is_array($objMod->config_page_url))
@@ -488,7 +495,7 @@ if ($mode != 'marketplace')
         	else
         	{
 	        	// Module non actif
-	        	print '<a href="modules.php?id='.$objMod->numero.'&amp;action=set&amp;value=' . $modName . '&amp;mode=' . $mode . '">';
+	        	print '<a class="reposition" href="modules.php?id='.$objMod->numero.'&amp;module_position='.$module_position.'&amp;action=set&amp;value=' . $modName . '&amp;mode=' . $mode . '">';
 	        	print img_picto($langs->trans("Disabled"),'switch_off');
 	        	print "</a>\n";
         	}

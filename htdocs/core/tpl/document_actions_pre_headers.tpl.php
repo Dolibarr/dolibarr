@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C)    2013    Cédric Salvador    <csalvador@gpcsolutions.fr>
  * Copyright (C)    2015    Marcos García      <marcosgdf@gmail.com>
+ * Copyright (C)    2015    Ferran Marcet      <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,13 +24,17 @@
 
 
 // Variable $upload_dir must be defined when entering here
+// Variable $upload_dirold may also exists.
 
 // Send file/link
 if (GETPOST('sendit') && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
     if ($object->id)
     {
-        dol_add_file_process($upload_dir, 0, 1, 'userfile', GETPOST('savingdocmask'));
+    	if (! empty($upload_dirold) && ! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))
+            dol_add_file_process($upload_dirold, 0, 1, 'userfile', GETPOST('savingdocmask'));
+        else
+            dol_add_file_process($upload_dir, 0, 1, 'userfile', GETPOST('savingdocmask'));
     }
 }
 elseif (GETPOST('linkit') && ! empty($conf->global->MAIN_UPLOAD_DOC))
@@ -59,16 +64,18 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes')
 		{
        		$urlfile=basename($urlfile);
 			$file = $upload_dir . "/" . $urlfile;
+			if (! empty($upload_dirold)) $fileold = $upload_dirold . "/" . $urlfile;
 		}
         $linkid = GETPOST('linkid', 'int');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
 
         if ($urlfile)
         {
-	        $dir = dirname($file).'/'; // Chemin du dossier contenant l'image d'origine
-	        $dirthumb = $dir.'/thumbs/'; // Chemin du dossier contenant la vignette
+	        $dir = dirname($file).'/';     // Chemin du dossier contenant l'image d'origine
+	        $dirthumb = $dir.'/thumbs/';   // Chemin du dossier contenant la vignette
 
             $ret = dol_delete_file($file, 0, 0, 0, $object);
-
+            if (! empty($fileold)) dol_delete_file($fileold, 0, 0, 0, $object);     // Delete file using old path
+            
 	        // Si elle existe, on efface la vignette
 	        if (preg_match('/(\.jpg|\.jpeg|\.bmp|\.gif|\.png|\.tiff)$/i',$file,$regs))
 	        {
@@ -85,8 +92,8 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes')
 		        }
 	        }
 
-            if ($ret) setEventMessage($langs->trans("FileWasRemoved", $urlfile));
-            else setEventMessage($langs->trans("ErrorFailToDeleteFile", $urlfile), 'errors');
+            if ($ret) setEventMessages($langs->trans("FileWasRemoved", $urlfile), null, 'mesgs');
+            else setEventMessages($langs->trans("ErrorFailToDeleteFile", $urlfile), null, 'errors');
         }
         elseif ($linkid)
         {
@@ -98,12 +105,12 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes')
 
             $langs->load('link');
             if ($res > 0) {
-                setEventMessage($langs->trans("LinkRemoved", $link->label));
+                setEventMessages($langs->trans("LinkRemoved", $link->label), null, 'mesgs');
             } else {
                 if (count($link->errors)) {
                     setEventMessages('', $link->errors, 'errors');
                 } else {
-                    setEventMessage($langs->trans("ErrorFailedToDeleteLink", $link->label), 'errors');
+                    setEventMessages($langs->trans("ErrorFailedToDeleteLink", $link->label), null, 'errors');
                 }
             }
         }
@@ -129,7 +136,7 @@ elseif ($action == 'confirm_updateline' && GETPOST('save') && GETPOST('link', 'a
         $res = $link->update($user);
         if (!$res)
         {
-            setEventMessage($langs->trans("ErrorFailedToUpdateLink", $link->label));
+            setEventMessages($langs->trans("ErrorFailedToUpdateLink", $link->label), null, 'mesgs');
         }
     }
     else

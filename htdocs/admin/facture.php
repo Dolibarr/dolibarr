@@ -69,11 +69,11 @@ if ($action == 'updateMask')
 
  	if (! $error)
     {
-        setEventMessage($langs->trans("SetupSaved"));
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
     else
     {
-        setEventMessage($langs->trans("Error"),'errors');
+        setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
 
@@ -111,13 +111,13 @@ if ($action == 'specimen')
     	}
     	else
     	{
-    		setEventMessage($module->error,'errors');
+    		setEventMessages($module->error, $module->errors, 'errors');
     		dol_syslog($module->error, LOG_ERR);
     	}
     }
     else
     {
-    	setEventMessage($langs->trans("ErrorModuleNotFound"),'errors');
+    	setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
     	dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
     }
 }
@@ -139,11 +139,11 @@ if ($action == 'setModuleOptions')
 
  	if (! $error)
     {
-        setEventMessage($langs->trans("SetupSaved"));
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
     else
     {
-        setEventMessage($langs->trans("Error"),'errors');
+        setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
 
@@ -200,11 +200,11 @@ if ($action == 'setribchq')
 
  	if (! $error)
     {
-        setEventMessage($langs->trans("SetupSaved"));
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
     else
     {
-        setEventMessage($langs->trans("Error"),'errors');
+        setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
 
@@ -218,11 +218,11 @@ if ($action == 'set_FACTURE_DRAFT_WATERMARK')
 
  	if (! $error)
     {
-        setEventMessage($langs->trans("SetupSaved"));
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
     else
     {
-        setEventMessage($langs->trans("Error"),'errors');
+        setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
 
@@ -236,11 +236,11 @@ if ($action == 'set_INVOICE_FREE_TEXT')
 
  	if (! $error)
     {
-        setEventMessage($langs->trans("SetupSaved"));
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
     else
     {
-        setEventMessage($langs->trans("Error"),'errors');
+        setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
 
@@ -254,11 +254,11 @@ if ($action == 'setforcedate')
 
  	if (! $error)
     {
-        setEventMessage($langs->trans("SetupSaved"));
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
     else
     {
-        setEventMessage($langs->trans("Error"),'errors');
+        setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
 
@@ -272,11 +272,11 @@ if ($action == 'set_FAC_AUTO_FILLJS')
 
 	if (! $error)
 	{
-		setEventMessage($langs->trans("SetupSaved"));
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
 	else
 	{
-		setEventMessage($langs->trans("Error"),'errors');
+		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
 
@@ -344,7 +344,7 @@ foreach ($dirmodels as $reldir)
                     $classname = preg_replace('/\-.*$/','',$classname);
                     if (! class_exists($classname) && is_readable($dir.$filebis) && (preg_match('/mod_/',$filebis) || preg_match('/mod_/',$classname)) && substr($filebis, dol_strlen($filebis)-3, 3) == 'php')
                     {
-                        // Chargement de la classe de numerotation
+                        // Charging the numbering class
                         require_once $dir.$filebis;
 
                         $module = new $classname($db);
@@ -750,6 +750,20 @@ print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" /
 print "</td></tr>\n";
 print '</form>';
 
+// Add js auto fill amount on paiement form
+$var=! $var;
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
+print '<input type="hidden" name="action" value="set_FAC_AUTO_FILLJS" />';
+print '<tr '.$bc[$var].'><td>';
+print $langs->trans("JSOnPaimentBill");
+print '</td><td width="60" align="center">';
+print $form->selectyesno("FAC_AUTO_FILLJS",$conf->global->FAC_AUTO_FILLJS,1);
+print '</td><td align="right">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" />';
+print "</td></tr>\n";
+print '</form>';
+
 $var=! $var;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
@@ -779,20 +793,6 @@ print '<input type="hidden" name="action" value="set_FACTURE_DRAFT_WATERMARK" />
 print '<tr '.$bc[$var].'><td colspan="2">';
 print $langs->trans("WatermarkOnDraftBill").'<br>';
 print '<input size="50" class="flat" type="text" name="FACTURE_DRAFT_WATERMARK" value="'.$conf->global->FACTURE_DRAFT_WATERMARK.'" />';
-print '</td><td align="right">';
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" />';
-print "</td></tr>\n";
-print '</form>';
-
-// Add js auto fill amount on paiement form
-$var=! $var;
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
-print '<input type="hidden" name="action" value="set_FAC_AUTO_FILLJS" />';
-print '<tr '.$bc[$var].'><td>';
-print $langs->trans("JSOnPaimentBill");
-print '</td><td width="60" align="center">';
-print $form->selectyesno("FAC_AUTO_FILLJS",$conf->global->FAC_AUTO_FILLJS,1);
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" />';
 print "</td></tr>\n";

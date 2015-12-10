@@ -227,7 +227,7 @@ if ($id > 0 || ! empty($ref))
 			// Define a complementary filter for search of next/prev ref.
 			if (! $user->rights->projet->all->lire)
 			{
-				$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,0);
+				$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,0);
 				$projectstatic->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
 			}
 			print $form->showrefnav($projectstatic,'project_ref','',1,'ref','ref','',$param.'&withproject=1');
@@ -402,7 +402,7 @@ if ($id > 0 || ! empty($ref))
 			print '</td><td colspan="3">';
 			if (! GETPOST('withproject') || empty($projectstatic->id))
 			{
-				$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1);
+				$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,1);
 				$object->next_prev_filter=" fk_projet in (".$projectsListId.")";
 			}
 			else $object->next_prev_filter=" fk_projet = ".$projectstatic->id;

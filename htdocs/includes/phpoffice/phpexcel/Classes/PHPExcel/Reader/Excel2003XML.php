@@ -49,14 +49,14 @@ class PHPExcel_Reader_Excel2003XML extends PHPExcel_Reader_Abstract implements P
 	 *
 	 * @var array
 	 */
-	private $_styles = array();
+	protected $_styles = array();
 
 	/**
 	 * Character set used in the file
 	 *
 	 * @var string
 	 */
-	private $_charSet = 'UTF-8';
+	protected $_charSet = 'UTF-8';
 
 
 	/**
@@ -137,7 +137,7 @@ class PHPExcel_Reader_Excel2003XML extends PHPExcel_Reader_Abstract implements P
 
 		$worksheetNames = array();
 
-		$xml = simplexml_load_file($pFilename, 'SimpleXMLElement', PHPExcel_Settings::getLibXmlLoaderOptions());
+		$xml = simplexml_load_string($this->securityScan(file_get_contents($pFilename)), 'SimpleXMLElement', PHPExcel_Settings::getLibXmlLoaderOptions());
 		$namespaces = $xml->getNamespaces(true);
 
 		$xml_ss = $xml->children($namespaces['ss']);
@@ -165,7 +165,7 @@ class PHPExcel_Reader_Excel2003XML extends PHPExcel_Reader_Abstract implements P
 
 		$worksheetInfo = array();
 
-		$xml = simplexml_load_file($pFilename, 'SimpleXMLElement', PHPExcel_Settings::getLibXmlLoaderOptions());
+		$xml = simplexml_load_string($this->securityScan(file_get_contents($pFilename)), 'SimpleXMLElement', PHPExcel_Settings::getLibXmlLoaderOptions());
 		$namespaces = $xml->getNamespaces(true);
 
 		$worksheetID = 1;
@@ -232,13 +232,14 @@ class PHPExcel_Reader_Excel2003XML extends PHPExcel_Reader_Abstract implements P
 	{
 		// Create new PHPExcel
 		$objPHPExcel = new PHPExcel();
+        $objPHPExcel->removeSheetByIndex(0);
 
 		// Load into this instance
 		return $this->loadIntoExisting($pFilename, $objPHPExcel);
 	}
 
 
-	private static function identifyFixedStyleValue($styleList,&$styleAttributeValue) {
+	protected static function identifyFixedStyleValue($styleList,&$styleAttributeValue) {
 		$styleAttributeValue = strtolower($styleAttributeValue);
 		foreach($styleList as $style) {
 			if ($styleAttributeValue == strtolower($style)) {
@@ -255,7 +256,7 @@ class PHPExcel_Reader_Excel2003XML extends PHPExcel_Reader_Abstract implements P
  	 * @param pxs
  	 * @return
  	 */
- 	private static function _pixel2WidthUnits($pxs) {
+ 	protected static function _pixel2WidthUnits($pxs) {
 		$UNIT_OFFSET_MAP = array(0, 36, 73, 109, 146, 182, 219);
 
 		$widthUnits = 256 * ($pxs / 7);
@@ -269,7 +270,7 @@ class PHPExcel_Reader_Excel2003XML extends PHPExcel_Reader_Abstract implements P
 	 * @param widthUnits
 	 * @return
 	 */
-	private static function _widthUnits2Pixel($widthUnits) {
+	protected static function _widthUnits2Pixel($widthUnits) {
 		$pixels = ($widthUnits / 256) * 7;
 		$offsetWidthUnits = $widthUnits % 256;
 		$pixels += round($offsetWidthUnits / (256 / 7));
@@ -277,7 +278,7 @@ class PHPExcel_Reader_Excel2003XML extends PHPExcel_Reader_Abstract implements P
 	}
 
 
-	private static function _hex2str($hex) {
+	protected static function _hex2str($hex) {
 		return chr(hexdec($hex[1]));
 	}
 
@@ -330,7 +331,7 @@ class PHPExcel_Reader_Excel2003XML extends PHPExcel_Reader_Abstract implements P
 			throw new PHPExcel_Reader_Exception($pFilename . " is an Invalid Spreadsheet file.");
 		}
 
-		$xml = simplexml_load_file($pFilename, 'SimpleXMLElement', PHPExcel_Settings::getLibXmlLoaderOptions());
+		$xml = simplexml_load_string($this->securityScan(file_get_contents($pFilename)), 'SimpleXMLElement', PHPExcel_Settings::getLibXmlLoaderOptions());
 		$namespaces = $xml->getNamespaces(true);
 
 		$docProps = $objPHPExcel->getProperties();
@@ -576,6 +577,7 @@ class PHPExcel_Reader_Excel2003XML extends PHPExcel_Reader_Abstract implements P
 
 			$rowID = 1;
 			if (isset($worksheet->Table->Row)) {
+                $additionalMergedCells = 0;
 				foreach($worksheet->Table->Row as $rowData) {
 					$rowHasData = false;
 					$row_ss = $rowData->attributes($namespaces['ss']);
@@ -602,6 +604,7 @@ class PHPExcel_Reader_Excel2003XML extends PHPExcel_Reader_Abstract implements P
 						if ((isset($cell_ss['MergeAcross'])) || (isset($cell_ss['MergeDown']))) {
 							$columnTo = $columnID;
 							if (isset($cell_ss['MergeAcross'])) {
+                                $additionalMergedCells += (int)$cell_ss['MergeAcross'];
 								$columnTo = PHPExcel_Cell::stringFromColumnIndex(PHPExcel_Cell::columnIndexFromString($columnID) + $cell_ss['MergeAcross'] -1);
 							}
 							$rowTo = $rowID;
@@ -759,6 +762,10 @@ class PHPExcel_Reader_Excel2003XML extends PHPExcel_Reader_Abstract implements P
 							}
 						}
 						++$columnID;
+                        while ($additionalMergedCells > 0) {
+                            ++$columnID;
+                            $additionalMergedCells--;
+                        }
 					}
 
 					if ($rowHasData) {
@@ -783,7 +790,7 @@ class PHPExcel_Reader_Excel2003XML extends PHPExcel_Reader_Abstract implements P
 	}
 
 
-	private static function _convertStringEncoding($string,$charset) {
+	protected static function _convertStringEncoding($string,$charset) {
 		if ($charset != 'UTF-8') {
 			return PHPExcel_Shared_String::ConvertEncoding($string,'UTF-8',$charset);
 		}
@@ -791,7 +798,7 @@ class PHPExcel_Reader_Excel2003XML extends PHPExcel_Reader_Abstract implements P
 	}
 
 
-	private function _parseRichText($is = '') {
+	protected function _parseRichText($is = '') {
 		$value = new PHPExcel_RichText();
 
 		$value->createText(self::_convertStringEncoding($is,$this->_charSet));

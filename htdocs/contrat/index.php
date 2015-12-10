@@ -79,12 +79,10 @@ if (! empty($conf->contrat->enabled))
 	print '<form method="post" action="'.DOL_URL_ROOT.'/contrat/list.php">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<table class="noborder nohover" width="100%">';
-	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAContract").'</td></tr>';
+	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
 	print '<tr '.$bc[$var].'>';
-	print '<td class="nowrap">'.$langs->trans("Ref").':</td><td><input type="text" class="flat" name="search_contract" size="18"></td>';
-	print '<td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-	print '<tr '.$bc[$var].'><td class="nowrap">'.$langs->trans("Other").':</td><td><input type="text" class="flat" name="sall" size="18"></td>';
-	print '</tr>';
+	print '<td class="nowrap">'.$langs->trans("Contract").':</td><td><input type="text" class="flat" name="sall" size="18"></td>';
+	print '<td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
 	print "</table></form>\n";
 	print "<br>";
 }
@@ -371,7 +369,7 @@ print '<br>';
 $sql = "SELECT c.ref, c.fk_soc, ";
 $sql.= " cd.rowid as cid, cd.statut, cd.label, cd.fk_product, cd.description as note, cd.fk_contrat, cd.date_fin_validite,";
 $sql.= " s.nom as name,";
-$sql.= " p.rowid as pid, p.ref as pref, p.label as plabel, p.fk_product_type as ptype";
+$sql.= " p.rowid as pid, p.ref as pref, p.label as plabel, p.fk_product_type as ptype, p.entity as pentity";
 $sql.= " FROM (".MAIN_DB_PREFIX."contrat as c";
 $sql.= ", ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -413,6 +411,7 @@ if ($resql)
     		$productstatic->id=$obj->fk_product;
             $productstatic->type=$obj->ptype;
             $productstatic->ref=$obj->pref;
+			$productstatic->entity=$obj->pentity;
             print $productstatic->getNomUrl(1,'',20);
 		}
 		else
@@ -449,7 +448,7 @@ print '<br>';
 // Not activated services
 $sql = "SELECT c.ref, c.fk_soc, cd.rowid as cid, cd.statut, cd.label, cd.fk_product, cd.description as note, cd.fk_contrat,";
 $sql.= " s.nom as name,";
-$sql.= " p.rowid as pid, p.ref as pref, p.label as plabel, p.fk_product_type as ptype";
+$sql.= " p.rowid as pid, p.ref as pref, p.label as plabel, p.fk_product_type as ptype, p.entity as pentity";
 $sql.= " FROM (".MAIN_DB_PREFIX."contrat as c";
 $sql.= ", ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -493,6 +492,7 @@ if ($resql)
     		$productstatic->id=$obj->fk_product;
             $productstatic->type=$obj->ptype;
             $productstatic->ref=$obj->pref;
+			$productstatic->entity=$obj->pentity;
             print $productstatic->getNomUrl(1,'',20);
 		}
 		else
@@ -528,7 +528,7 @@ print '<br>';
 // Expired services
 $sql = "SELECT c.ref, c.fk_soc, cd.rowid as cid, cd.statut, cd.label, cd.fk_product, cd.description as note, cd.fk_contrat,";
 $sql.= " s.nom as name,";
-$sql.= " p.rowid as pid, p.ref as pref, p.label as plabel, p.fk_product_type as ptype";
+$sql.= " p.rowid as pid, p.ref as pref, p.label as plabel, p.fk_product_type as ptype, p.entity as pentity";
 $sql.= " FROM (".MAIN_DB_PREFIX."contrat as c";
 $sql.= ", ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -573,6 +573,7 @@ if ($resql)
     		$productstatic->id=$obj->fk_product;
             $productstatic->type=$obj->ptype;
             $productstatic->ref=$obj->pref;
+			$productstatic->entity=$obj->pentity;
             print $productstatic->getNomUrl(1,'',20);
 		}
 		else

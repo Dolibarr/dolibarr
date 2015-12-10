@@ -61,7 +61,7 @@ if ($action == "save")
 	}
 
 	$db->commit();
-	setEventMessage($langs->trans("SetupSaved"));
+	setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 }
 
 
@@ -70,7 +70,8 @@ if ($action == "save")
  * View
  */
 
-llxHeader('',$langs->trans("Audit"));
+$wikihelp='EN:Setup_Security|FR:Paramétrage_Sécurité|ES:Configuración_Seguridad';
+llxHeader('',$langs->trans("Audit"),$wikihelp);
 
 //$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("SecuritySetup"),'','title_setup');

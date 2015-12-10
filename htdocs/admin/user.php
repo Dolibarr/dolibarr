@@ -100,7 +100,7 @@ print load_fiche_titre($langs->trans("UsersSetup"),$linkback,'title_setup');
 
 $head=user_admin_prepare_head();
 
-dol_fiche_head($head,'card', $langs->trans("User"), 0, 'user');
+dol_fiche_head($head,'card', $langs->trans("MenuUsersAndGroups"), 0, 'user');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';

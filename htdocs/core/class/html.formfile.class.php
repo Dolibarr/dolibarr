@@ -176,18 +176,18 @@ class FormFile
 	            $out .= '<input type="hidden" id="'.$htmlname.'_link_section_id"  name="link_section_id" value="'.$sectionid.'">';
 	            $out .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
-	            $out .= '<div>';
-	            $out .= '<div class="float" style="padding-right: 10px;">';
-	            $out .= '<label for="link">'.$langs->trans("URLToLink") . '</label>: ';
-	            $out .= '<input type="text" name="link" size="'.$maxlength.'" id="link">';
+	            $out .= '<div class="valignmiddle" >';
+	            $out .= '<div class="inline-block" style="padding-right: 10px;">';
+	            if (! empty($conf->global->OPTIMIZEFORTEXTBROWSER)) $out .= '<label for="link">'.$langs->trans("URLToLink") . ':</label> ';
+	            $out .= '<input type="text" name="link" size="'.$maxlength.'" id="link" placeholder="'.dol_escape_htmltag($langs->trans("URLToLink")).'">';
 	            $out .= '</div>';
-	            $out .= '<div class="float" style="padding-right: 10px;">';
-	            $out .= '<label for="label">'.$langs->trans("Label") . '</label>: ';
-	            $out .= '<input type="text" name="label" id="label">';
+	            $out .= '<div class="inline-block" style="padding-right: 10px;">';
+	            if (! empty($conf->global->OPTIMIZEFORTEXTBROWSER)) $out .= '<label for="label">'.$langs->trans("Label") . ':</label> ';
+	            $out .= '<input type="text" name="label" id="label" placeholder="'.dol_escape_htmltag($langs->trans("Label")).'">';
 	            $out .= '<input type="hidden" name="objecttype" value="' . $object->element . '">';
 	            $out .= '<input type="hidden" name="objectid" value="' . $object->id . '">';
 	            $out .= '</div>';
-	            $out .= '<div class="float" style="padding-right: 10px;">';
+	            $out .= '<div class="inline-block" style="padding-right: 10px;">';
 	            $out .= '<input type="submit" class="button" name="linkit" value="'.$langs->trans("ToLink").'"';
 	            $out .= (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm)?' disabled':'');
 	            $out .= '>';
@@ -285,7 +285,7 @@ class FormFile
         }
 
         $printer=0;
-        if (in_array($modulepart,array('facture','askpricesupplier','propal','proposal','order','commande','expedition')))	// The direct print feature is implemented only for such elements
+        if (in_array($modulepart,array('facture','supplier_proposal','propal','proposal','order','commande','expedition', 'commande_fournisseur')))	// The direct print feature is implemented only for such elements
         {
             $printer = (!empty($user->rights->printing->read) && !empty($conf->printing->enabled))?true:false;
         }
@@ -329,13 +329,13 @@ class FormFile
                     $modellist=ModelePDFPropales::liste_modeles($this->db);
                 }
             }
-			else if ($modulepart == 'askpricesupplier')
+			else if ($modulepart == 'supplier_proposal')
             {
                 if (is_array($genallowed)) $modellist=$genallowed;
                 else
                 {
-                    include_once DOL_DOCUMENT_ROOT.'/core/modules/askpricesupplier/modules_askpricesupplier.php';
-                    $modellist=ModelePDFAskPriceSupplier::liste_modeles($this->db);
+                    include_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_proposal/modules_supplier_proposal.php';
+                    $modellist=ModelePDFSupplierProposal::liste_modeles($this->db);
                 }
             }
             else if ($modulepart == 'commande')
@@ -526,7 +526,9 @@ class FormFile
                 include_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
                 $formadmin=new FormAdmin($this->db);
                 $defaultlang=$codelang?$codelang:$langs->getDefaultLang();
-                $out.= $formadmin->select_language($defaultlang);
+                $morecss='maxwidth150';
+                if (! empty($conf->browser->phone)) $morecss='maxwidth100';
+                $out.= $formadmin->select_language($defaultlang, 'lang_id', 0, 0, 0, 0, 0, $morecss);
             }
             else
             {
@@ -822,7 +824,12 @@ class FormFile
 						if ($object->element == 'member') $relativepath=get_exdir($object->id,2,0,0,$object,'member').$relativepath;				// TODO Call using a defined value for $relativepath
 						if ($object->element == 'project_task') $relativepath='Call_not_supported_._Call_function_using_a_defined_relative_path_.';
 					}
-
+					// For backward compatiblity, we detect file is stored into an old path
+					if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO) && $file['level1name'] == 'photos')
+	                {
+	                    $relativepath=preg_replace('/^.*\/produit\//','',$file['path']).'/';
+	                }
+					
 					$var=!$var;
 					print '<tr '.$bc[$var].'>';
 					print '<td>';
@@ -987,10 +994,10 @@ class FormFile
             include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
             $object_instance=new Propal($this->db);
         }
-        else if ($modulepart == 'askpricesupplier')
+        else if ($modulepart == 'supplier_proposal')
         {
-            include_once DOL_DOCUMENT_ROOT.'/comm/askpricesupplier/class/askpricesupplier.class.php';
-            $object_instance=new AskPriceSupplier($this->db);
+            include_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
+            $object_instance=new SupplierProposal($this->db);
         }
         else if ($modulepart == 'order')
         {
@@ -1053,7 +1060,7 @@ class FormFile
                 if ($modulepart == 'invoice')          { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:''); }
                 if ($modulepart == 'invoice_supplier') { preg_match('/([^\/]+)\/[^\/]+$/',$relativefile,$reg); $ref=(isset($reg[1])?$reg[1]:''); if (is_numeric($ref)) { $id=$ref; $ref=''; } }	// $ref may be also id with old supplier invoices
                 if ($modulepart == 'propal')           { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:''); }
-				if ($modulepart == 'askpricesupplier') { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:''); }
+				if ($modulepart == 'supplier_proposal') { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:''); }
                 if ($modulepart == 'order')            { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:''); }
                 if ($modulepart == 'order_supplier')   { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:''); }
                 if ($modulepart == 'contract')         { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:''); }

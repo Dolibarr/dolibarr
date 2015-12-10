@@ -83,7 +83,7 @@ if (is_resource($handle))
                 $modulename=$reg[1];
        			if ($modulename == 'example') continue;
 
-                // Chargement de la classe
+                // Loading Class
                 $file = $dir."/".$modulename.".modules.php";
                 $classname = "mailing_".$modulename;
                 require_once $file;

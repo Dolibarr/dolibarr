@@ -146,7 +146,7 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 			}
 			else if (empty($projectid))
 			{
-				header("Location: ".DOL_URL_ROOT.'/projet/tasks/index.php'.(empty($mode)?'':'?mode='.$mode));
+				header("Location: ".DOL_URL_ROOT.'/projet/tasks/list.php'.(empty($mode)?'':'?mode='.$mode));
 				exit;
 			}
 			$id = $projectid;
@@ -162,7 +162,7 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 		else if (empty($id))
 		{
 			// We go back on task list
-			header("Location: ".DOL_URL_ROOT.'/projet/tasks/index.php'.(empty($mode)?'':'?mode='.$mode));
+			header("Location: ".DOL_URL_ROOT.'/projet/tasks/list.php'.(empty($mode)?'':'?mode='.$mode));
 			exit;
 		}
 	}
@@ -215,7 +215,7 @@ if ($id > 0 || ! empty($ref))
 	// Define a complementary filter for search of next/prev ref.
 	if (! $user->rights->projet->all->lire)
 	{
-		$projectsListId = $object->getProjectsAuthorizedForUser($user,$mine,0);
+		$projectsListId = $object->getProjectsAuthorizedForUser($user,0,0);
 		$object->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
 	}
 	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '', $param);
@@ -305,7 +305,14 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 
 	print '<tr><td>'.$langs->trans("AffectedTo").'</td><td>';
 	$contactsofproject=(! empty($object->id)?$object->getListContactId('internal'):'');
-	$form->select_dolusers($user->id,'userid',0,'',0,'',$contactsofproject);
+	if (count($contactsofproject))
+	{
+		print $form->select_dolusers($user->id, 'userid', 0, '', 0, '', $contactsofproject, 0, 0, 0, '', 0, '', 'maxwidth300');
+	}
+	else
+	{
+		print $langs->trans("NoUserAssignedToTheProject");
+	}
 	print '</td></tr>';
 
 	// Date start

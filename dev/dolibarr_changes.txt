@@ -69,7 +69,7 @@ Add tcpdi.php
 Add tcpdi_parser.php and replace:
 require_once(dirname(__FILE__).'/include/tcpdf_filters.php');
 with:
-require_once(dirname(__FILE__).'/../tecnick.com/tcpdf/include/tcpdf_filters.php');
+require_once(dirname(__FILE__).'/../tecnickcom/tcpdf/include/tcpdf_filters.php');
 
 
 
@@ -95,3 +95,13 @@ JQUERYFILETREE:
 ---------------
 * Remove directory htdocs/includes/jquery/plugins/jqueryFileTree/connectors
 
+
+
+RESTLER:
+--------
+
+   if ($className == 'Luracast\Restler\string') return;
+   if ($className == 'Luracast\Restler\mixed') return;
+
+
+        

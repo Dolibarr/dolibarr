@@ -168,7 +168,7 @@ if ($resql)
     if ($sall)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-        print $langs->trans("FilterOnInto", $sall, join(', ',$fieldstosearchall));
+        print $langs->trans("FilterOnInto", $all) . join(', ',$fieldstosearchall);
     }
     
     // If the user can view prospects other than his'
@@ -178,7 +178,7 @@ if ($resql)
     	$langs->load("commercial");
     	$moreforfilter.='<div class="divsearchfield">';
     	$moreforfilter.=$langs->trans('ThirdPartiesOfSaleRepresentative'). ': ';
-    	$moreforfilter.=$formother->select_salesrepresentatives($search_sale,'search_sale',$user);
+    	$moreforfilter.=$formother->select_salesrepresentatives($search_sale,'search_sale',$user,0,1,'maxwidth300');
     	$moreforfilter.='</div>';
     }
 	// If the user can view other users
@@ -190,7 +190,7 @@ if ($resql)
 	 	$moreforfilter.='</div>';
 	}
 	// If the user can view categories of products
-	if ($conf->categorie->enabled && $user->rights->produit->lire)
+	if ($conf->categorie->enabled && ($user->rights->produit->lire || $user->rights->service->lire))
 	{
 		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$moreforfilter.='<div class="divsearchfield">';
@@ -200,13 +200,14 @@ if ($resql)
 		$moreforfilter.='</div>';
 	}
     
+    $parameters=array();
+    $reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+	if (empty($reshook)) $moreforfilter .= $hookmanager->resPrint;
+	else $moreforfilter = $hookmanager->resPrint;
     if (! empty($moreforfilter))
     {
         print '<div class="liste_titre liste_titre_bydiv centpercent">';
         print $moreforfilter;
-        $parameters=array();
-        $reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
-        print $hookmanager->resPrint;
         print '</div>';
     }
 

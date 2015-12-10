@@ -48,7 +48,7 @@
  */
 
 // include class for decoding filters
-require_once(dirname(__FILE__).'/../tecnick.com/tcpdf/include/tcpdf_filters.php');
+require_once(dirname(__FILE__).'/../tecnickcom/tcpdf/include/tcpdf_filters.php');
 
 if (!defined ('PDF_TYPE_NULL'))
     define ('PDF_TYPE_NULL', 0);

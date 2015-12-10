@@ -78,15 +78,13 @@ if ($socid > 0)
 		exit;
 	}
 
-	$object->info($socid);
-
 	$head = societe_prepare_head($object);
 
 	dol_fiche_head($head, 'info', $langs->trans("ThirdParty"), 0, 'company');
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php">'.$langs->trans("BackToList").'</a>';
-
-	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '');
+	dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
+	
+	$object->info($socid);
 
 
 	print '<div class="fichecenter">';

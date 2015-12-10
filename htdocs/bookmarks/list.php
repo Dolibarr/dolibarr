@@ -60,7 +60,7 @@ if ($_GET["action"] == 'delete')
     }
     else
     {
-        setEventMessage($bookmark->error, 'errors');
+        setEventMessages($bookmark->error, $bookmark->errors, 'errors');
     }
 }
 
@@ -218,7 +218,7 @@ if ($user->rights->bookmark->creer)
 
 print '</div>';
 
-
+llxFooter();
 $db->close();
 
-llxFooter();
+

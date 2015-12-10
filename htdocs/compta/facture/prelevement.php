@@ -75,12 +75,12 @@ if ($action == "new")
         {
         	$db->commit();
 
-            setEventMessage($langs->trans("RecordSaved"));
+            setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
         }
         else
 		{
         	$db->rollback();
-        	setEventMessage($object->error, $object->errors, 'errors');
+        	setEventMessages($object->error, $object->errors, 'errors');
         }
     }
     $action='';

@@ -998,7 +998,12 @@ class Account extends CommonObject
             $link = '<a href="'.DOL_URL_ROOT.'/compta/bank/account.php?account='.$this->id.$linkclose;
             $linkend='</a>';
         }
-
+        else if ($mode == 'receipts')
+        {
+            $link = '<a href="'.DOL_URL_ROOT.'/compta/bank/releve.php?account='.$this->id.$linkclose;
+            $linkend='</a>';
+        }
+        
         if ($withpicto) $result.=($link.img_object($label, 'account', 'class="classfortooltip"').$linkend.' ');
         $result.=$link.$this->label.$linkend;
         return $result;

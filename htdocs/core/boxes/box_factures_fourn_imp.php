@@ -96,12 +96,20 @@ class box_factures_fourn_imp extends ModeleBoxes
 				{
 					$objp = $db->fetch_object($result);
 					$datelimite=$db->jdate($objp->datelimite);
+					$date=$db->jdate($objp->df);
+					$datem=$db->jdate($objp->tms);
+					$facturestatic->id = $objp->facid;
+					$facturestatic->ref = $objp->ref;
+					$facturestatic->total_ht = $objp->total_ht;
+					$facturestatic->total_tva = $objp->total_tva;
+					$facturestatic->total_ttc = $objp->total_ttc;
+					$facturestatic->date_echeance = $datelimite;
+					$facturestatic->statut = $objp->fk_statut;
 					$thirdpartytmp->id = $objp->socid;
-                    $thirdpartytmp->name = $objp->name;
-                    $thirdpartytmp->code_client = $objp->code_client;
+					$thirdpartytmp->name = $objp->name;
+					$thirdpartytmp->fournisseur = 1;
+                    $thirdpartytmp->code_fournisseur = $objp->code_fournisseur;
                     $thirdpartytmp->logo = $objp->logo;
-                    $facturestatic->date_echeance = $datelimite;
-                    $facturestatic->statut = $objp->fk_statut;
 
 					$late='';
 					if ($facturestatic->hasDelay()) {
@@ -118,10 +126,9 @@ class box_factures_fourn_imp extends ModeleBoxes
 
                     $this->info_box_contents[$line][] = array(
                         'td' => 'align="left"',
-                        'text' => ($objp->ref?$objp->ref:$objp->facid),
+                        'text' => $facturestatic->getNomUrl(1),
                         'text2'=> $late,
-                        'tooltip' => $tooltip,
-                        'url' => DOL_URL_ROOT."/fourn/facture/card.php?facid=".$objp->facid,
+                        'asisi' => 1
                     );
 
                     $this->info_box_contents[$line][] = array(

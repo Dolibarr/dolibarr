@@ -692,15 +692,6 @@ if (! defined('NOLOGIN'))
             $db->commit();
         }
         
-        if (! empty($user->conf->MAIN_LANDING_PAGE))    // Example: /index.php
-        {
-            $newpath=dol_buildpath($user->conf->MAIN_LANDING_PAGE, 1);
-            if ($_SERVER["PHP_SELF"] != $newpath)   // not already on landing page (avoid infinite loop)
-            {
-                header('Location: '.$newpath);
-                exit;
-            }
-        }
         if (! empty($conf->global->MAIN_LANDING_PAGE))    // Example: /index.php
         {
             $newpath=dol_buildpath($conf->global->MAIN_LANDING_PAGE, 1);
@@ -936,11 +927,11 @@ if (! function_exists("llxHeader"))
 		// top menu and left menu area
 		if (empty($conf->dol_hide_topmenu))
 		{
-			top_menu($head, $title, $target, $disablejs, $disablehead, $arrayofjs, $arrayofcss, $morequerystring);
+			top_menu($head, $title, $target, $disablejs, $disablehead, $arrayofjs, $arrayofcss, $morequerystring, $help_url);
 		}
 		if (empty($conf->dol_hide_leftmenu))
 		{
-			left_menu('', $help_url, '', '', 1, $title);
+			left_menu('', $help_url, '', '', 1, $title, 1);
 		}
 
 		// main area
@@ -1012,7 +1003,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
         if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="author" title="Dolibarr Development Team" href="http://www.dolibarr.org">'."\n";
 
         // Displays title
-        $appli='Dolibarr';
+        $appli=constant('DOL_APPLICATION_TITLE');
         if (!empty($conf->global->MAIN_APPLICATION_TITLE)) $appli=$conf->global->MAIN_APPLICATION_TITLE;
 
         if ($title && ! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/noapp/',$conf->global->MAIN_HTML_TITLE)) print '<title>'.dol_htmlentities($title).'</title>';
@@ -1020,8 +1011,9 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
         else print "<title>".dol_htmlentities($appli)."</title>";
         print "\n";
 
-        $ext='';
-        if (! empty($conf->dol_use_jmobile)) $ext='version='.urlencode(DOL_VERSION);
+        //$ext='';
+        //if (! empty($conf->dol_use_jmobile)) $ext='version='.urlencode(DOL_VERSION);
+        $ext='version='.urlencode(DOL_VERSION);
         if (GETPOST('version')) $ext='version='.GETPOST('version','int');	// usefull to force no cache on css/js
 
         if (! defined('DISABLE_JQUERY') && ! $disablejs && $conf->use_javascript_ajax)
@@ -1217,6 +1209,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             {
             	$tmpplugin=empty($conf->global->MAIN_USE_JQUERY_MULTISELECT)?constant('REQUIRE_JQUERY_MULTISELECT'):$conf->global->MAIN_USE_JQUERY_MULTISELECT;
             	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/'.$tmpplugin.'/'.$tmpplugin.'.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
+                print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/select2_locale.js.php'.($ext?'?'.$ext:'').'"></script>'."\n";
             }
             // jQuery jMobile
             if (! empty($conf->global->MAIN_USE_JQUERY_JMOBILE) || defined('REQUIRE_JQUERY_JMOBILE') || (! empty($conf->dol_use_jmobile) && $conf->dol_use_jmobile > 0))
@@ -1276,7 +1269,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 
             // Global js function
             print '<!-- Includes JS of Dolibarr -->'."\n";
-            print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/lib_head.js'.($ext?'?'.$ext:'').'"></script>'."\n";
+            print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/lib_head.js?version='.urlencode(DOL_VERSION).($ext?'&amp;'.$ext:'').'"></script>'."\n";
 
             // Add datepicker default options
             print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/datepicker.js.php?lang='.$langs->defaultlang.($ext?'&amp;'.$ext:'').'"></script>'."\n";
@@ -1335,9 +1328,12 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
  *	@param		array	$arrayofjs			Array of js files to add in header
  *	@param		array	$arrayofcss			Array of css files to add in header
  *  @param		string	$morequerystring	Query string to add to the link "print" to get same parameters (use only if autodetect fails)
+ *  @param      string	$helppagename    	Name of wiki page for help ('' by default).
+ * 				     		                Syntax is: For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage
+ * 									                   For other external page: http://server/url
  *  @return		void
  */
-function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='', $morequerystring='')
+function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='', $morequerystring='', $helppagename='')
 {
     global $user, $conf, $langs, $db;
     global $dolibarr_main_authentication, $dolibarr_main_demo;
@@ -1409,13 +1405,6 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 			</script>' . "\n";
 		}
 
-		// Wrapper to show tooltips
-		print '<script type="text/javascript">
-	jQuery(document).ready(function () {
-		jQuery(".classfortooltip").tipTip({maxWidth: "'.dol_size(600,'width').'px", edgeOffset: 10, delay: 50, fadeIn: 50, fadeOut: 50});
-	});
-</script>' . "\n";
-
 		// Raven.js for client-side Sentry logging support
 		if (array_key_exists('mod_syslog_sentry', $conf->loghandlers) && ! empty($conf->global->SYSLOG_SENTRY_DSN)) 
 		{
@@ -1451,7 +1440,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	    //$form=new Form($db);
 
 	    // Define link to login card
-	    $appli='Dolibarr';
+        $appli=constant('DOL_APPLICATION_TITLE');
 	    if (! empty($conf->global->MAIN_APPLICATION_TITLE))
 	    {
 	    	$appli=$conf->global->MAIN_APPLICATION_TITLE;
@@ -1462,7 +1451,8 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	    	else $appli.=" ".DOL_VERSION;
 	    }
 	    else $appli.=" ".DOL_VERSION;
-		if (! empty($conf->global->MAIN_FEATURES_LEVEL)) $appli.="<br>".$langs->trans("LevelOfFeature").': '.$conf->global->MAIN_FEATURES_LEVEL;
+
+	    if (! empty($conf->global->MAIN_FEATURES_LEVEL)) $appli.="<br>".$langs->trans("LevelOfFeature").': '.$conf->global->MAIN_FEATURES_LEVEL;
 
 	    $logouttext='';
 	    $logouthtmltext=$appli.'<br>';
@@ -1471,13 +1461,13 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	    	$logouthtmltext.=$langs->trans("Logout").'<br>';
 
 	    	$logouttext .='<a href="'.DOL_URL_ROOT.'/user/logout.php">';
-	        $logouttext .= img_picto($langs->trans('Logout').":".$langs->trans('Logout'), 'logout.png', 'class="login"', 0, 0, 1);
+	        $logouttext .= img_picto($langs->trans('Logout').":".$langs->trans('Logout'), 'logout_top.png', 'class="login"', 0, 0, 1);
 	        $logouttext .='</a>';
 	    }
 	    else
 	    {
 	    	$logouthtmltext.=$langs->trans("NoLogoutProcessWithAuthMode",$_SESSION["dol_authmode"]);
-	        $logouttext .= img_picto($langs->trans('Logout').":".$langs->trans('Logout'), 'logout.png', 'class="login"', 0, 0, 1);
+	        $logouttext .= img_picto($langs->trans('Logout').":".$langs->trans('Logout'), 'logout_top.png', 'class="login"', 0, 0, 1);
 	    }
 
 	    print '<div class="login_block">'."\n";
@@ -1510,11 +1500,49 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	        $qs=$_SERVER["QUERY_STRING"];
 	        $qs.=(($qs && $morequerystring)?'&':'').$morequerystring;
 	        $text ='<a href="'.$_SERVER["PHP_SELF"].'?'.$qs.($qs?'&':'').'optioncss=print" target="_blank">';
-	        $text.= img_picto(":".$langs->trans("PrintContentArea"), 'printer.png', 'class="printer"');
+	        $text.= img_picto(":".$langs->trans("PrintContentArea"), 'printer_top.png', 'class="printer"');
 	        $text.='</a>';
 	        $toprightmenu.=Form::textwithtooltip('',$langs->trans("PrintContentArea"),2,1,$text,'login_block_elem',2);
 	    }
 
+	    // Link to Dolibarr wiki pages
+	    if (empty($conf->global->MAIN_HELP_DISABLELINK))
+	    {
+	        $langs->load("help");
+	    
+	        $helpbaseurl='';
+	        $helppage='';
+	        $mode='';
+
+	        if (empty($helppagename)) $helppagename='EN:User_documentation|FR:Documentation_utilisateur|ES:Documentación_usuarios';
+	    
+	        // Get helpbaseurl, helppage and mode from helppagename and langs
+	        $arrayres=getHelpParamFor($helppagename,$langs);
+	        $helpbaseurl=$arrayres['helpbaseurl'];
+	        $helppage=$arrayres['helppage'];
+	        $mode=$arrayres['mode'];
+	    
+	        // Link to help pages
+	        if ($helpbaseurl && $helppage)
+	        {
+	            $text='';
+	            $title='';
+	            //$text.='<div id="blockvmenuhelpwiki" class="blockvmenuhelp">';
+	            $title.=$langs->trans($mode == 'wiki' ? 'GoToWikiHelpPage': 'GoToHelpPage');
+	            if ($mode == 'wiki') $title.=' - '.$langs->trans("PageWiki").' &quot;'.dol_escape_htmltag(strtr($helppage,'_',' ')).'&quot;';
+	            $text.='<a class="help" target="_blank" href="';
+	            if ($mode == 'wiki') $text.=sprintf($helpbaseurl,urlencode(html_entity_decode($helppage)));
+	            else $text.=sprintf($helpbaseurl,$helppage);
+	            $text.='">';
+	            $text.=img_picto('', 'helpdoc_top').' ';
+	            //$toprightmenu.=$langs->trans($mode == 'wiki' ? 'OnlineHelp': 'Help');
+	            //if ($mode == 'wiki') $text.=' ('.dol_trunc(strtr($helppage,'_',' '),8).')';
+	            $text.='</a>';
+	            //$toprightmenu.='</div>'."\n";
+	            $toprightmenu.=Form::textwithtooltip('',$title,2,1,$text,'login_block_elem',2);
+	        }
+	    }
+	    
 		// Logout link
 	    $toprightmenu.=Form::textwithtooltip('',$logouthtmltext,2,1,$logouttext,'login_block_elem',2);
 
@@ -1543,13 +1571,14 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
  *  @param  string	$helppagename    	       	Name of wiki page for help ('' by default).
  * 				     		                   	Syntax is: For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage
  * 									         		       For other external page: http://server/url
- *  @param  string	$moresearchform             Search Form Permanent Supplemental
+ *  @param  string	$notused             		Deprecated. Used in past to add content into left menu. Hooks can be used now.
  *  @param  array	$menu_array_after           Table of menu entries to show after entries of menu handler
  *  @param  int		$leftmenuwithoutmainarea    Must be set to 1. 0 by default for backward compatibility with old modules.
  *  @param  string	$title                      Title of web page
+ *  @param  string  $acceptdelayedhtml          1 if caller request to have html delayed content not returned but saved into global $delayedhtmlcontent (so caller can show it at end of page to avoid flash FOUC effect)
  *  @return	void
  */
-function left_menu($menu_array_before, $helppagename='', $moresearchform='', $menu_array_after='', $leftmenuwithoutmainarea=0, $title='')
+function left_menu($menu_array_before, $helppagename='', $notused='', $menu_array_after='', $leftmenuwithoutmainarea=0, $title='', $acceptdelayedhtml=0)
 {
     global $user, $conf, $langs, $db, $form;
     global $hookmanager, $menumanager;
@@ -1571,7 +1600,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	    {
     	    if (! is_object($form)) $form=new Form($db);
     	    $selected=-1;
-            $searchform.=$form->selectArrayAjax('searchselectcombo', DOL_URL_ROOT.'/core/ajax/selectsearchbox.php', $selected, '', '', 0, 1, 'vmenusearchselectcombo', 1, $langs->trans("Search"));
+            $searchform.=$form->selectArrayAjax('searchselectcombo', DOL_URL_ROOT.'/core/ajax/selectsearchbox.php', $selected, '', '', 0, 1, 'vmenusearchselectcombo', 1, $langs->trans("Search"), 1);
 	    }
 	    else
 	    {
@@ -1619,17 +1648,17 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
     	        $langs->load("users");
     	        $searchform.=printSearchForm(DOL_URL_ROOT.'/user/list.php', DOL_URL_ROOT.'/user/list.php', $langs->trans("Users"), 'user', 'sall', 'M', 'searchleftuser', img_object('','user'));
     	    }
-    
-    	    // Execute hook printSearchForm
-    	    $parameters=array();
-    	    $reshook=$hookmanager->executeHooks('printSearchForm',$parameters);    // Note that $action and $object may have been modified by some hooks
-    		if (empty($reshook))
-    		{
-    			$searchform.=$hookmanager->resPrint;
-    		}
-    		else $searchform=$hookmanager->resPrint;
 	    }
         
+	    // Execute hook printSearchForm
+	    $parameters=array('searchform'=>$searchform);
+	    $reshook=$hookmanager->executeHooks('printSearchForm',$parameters);    // Note that $action and $object may have been modified by some hooks
+		if (empty($reshook))
+		{
+			$searchform.=$hookmanager->resPrint;
+		}
+		else $searchform=$hookmanager->resPrint;
+
 	    // Define $bookmarks
 	    if (! empty($conf->bookmark->enabled) && $user->rights->bookmark->lire)
 	    {
@@ -1644,13 +1673,8 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 
 	    print '<div class="vmenu">'."\n\n";
 
-	    $menumanager->menu_array = $menu_array_before;
-    	$menumanager->menu_array_after = $menu_array_after;
-	    $menumanager->showmenu('left'); // output menu_array and menu found in database
-
-
-	    // Show other forms
-	    if ($searchform)
+    	// Show other forms
+	    /*if ($searchform)
 	    {
 	        print "\n";
 	        print "<!-- Begin SearchForm -->\n";
@@ -1658,15 +1682,14 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	        print $searchform;
 	        print '</div>'."\n";
 	        print "<!-- End SearchForm -->\n";
-	    }
+	    }*/
 
-	    // More search form
-	    if ($moresearchform)
-	    {
-	        print $moresearchform;
-	    }
+	    $menumanager->menu_array = $menu_array_before;
+    	$menumanager->menu_array_after = $menu_array_after;
+	    $menumanager->showmenu('left', array('searchform'=>$searchform, 'bookmarks'=>$bookmarks)); // output menu_array and menu found in database
 
 	    // Bookmarks
+	    /*
 	    if ($bookmarks)
 	    {
 	        print "\n";
@@ -1675,13 +1698,14 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	        print $bookmarks;
 	        print '</div>'."\n";
 	        print "<!-- End Bookmarks -->\n";
-	    }
+	    }*/
 
-        print "\n";
-        print "<!-- Begin Help Block-->\n";
+        // Dolibarr version + help + bug report link
+		print "\n";
+	    print "<!-- Begin Help Block-->\n";
         print '<div id="blockvmenuhelp" class="blockvmenuhelp">'."\n";
 
-        //Dolibarr version
+        // Version
         $doliurl='http://www.dolibarr.org';
 		//local communities
 		if (preg_match('/fr/i',$langs->defaultlang)) $doliurl='http://www.dolibarr.fr';
@@ -1690,7 +1714,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 		if (preg_match('/it/i',$langs->defaultlang)) $doliurl='http://www.dolibarr.it';
 		if (preg_match('/gr/i',$langs->defaultlang)) $doliurl='http://www.dolibarr.gr';
 
-	    $appli='Dolibarr';
+        $appli=constant('DOL_APPLICATION_TITLE');
 	    if (! empty($conf->global->MAIN_APPLICATION_TITLE))
 	    {
 	    	$appli=$conf->global->MAIN_APPLICATION_TITLE; $doliurl='';
@@ -1706,39 +1730,6 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	    print $appli;
 	    if ($doliurl) print '</a>';
 	    print '</div>'."\n";
-
-	    // Link to Dolibarr wiki pages
-	    if ($helppagename && empty($conf->global->MAIN_HELP_DISABLELINK))
-	    {
-	        $langs->load("help");
-
-	        $helpbaseurl='';
-	        $helppage='';
-	        $mode='';
-
-	        // Get helpbaseurl, helppage and mode from helppagename and langs
-	        $arrayres=getHelpParamFor($helppagename,$langs);
-	        $helpbaseurl=$arrayres['helpbaseurl'];
-	        $helppage=$arrayres['helppage'];
-	        $mode=$arrayres['mode'];
-
-	        // Link to help pages
-	        if ($helpbaseurl && $helppage)
-	        {
-	            print '<div id="blockvmenuhelpwiki" class="blockvmenuhelp">';
-	            print '<a class="help" target="_blank" title="'.$langs->trans($mode == 'wiki' ? 'GoToWikiHelpPage': 'GoToHelpPage');
-	            if ($mode == 'wiki') print ' - '.$langs->trans("PageWiki").' &quot;'.dol_escape_htmltag(strtr($helppage,'_',' ')).'&quot;';
-	            print '" href="';
-	            if ($mode == 'wiki') print sprintf($helpbaseurl,urlencode(html_entity_decode($helppage)));
-	            else print sprintf($helpbaseurl,$helppage);
-	            print '">';
-	            print img_picto('', 'helpdoc').' ';
-	            print $langs->trans($mode == 'wiki' ? 'OnlineHelp': 'Help');
-	            //if ($mode == 'wiki') print ' ('.dol_trunc(strtr($helppage,'_',' '),8).')';
-	            print '</a>';
-	            print '</div>'."\n";
-	        }
-	    }
 
 		// Link to bugtrack
 		if (! empty($conf->global->MAIN_BUGTRACK_ENABLELINK))
@@ -1758,9 +1749,9 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 			$bugbaseurl.= urlencode("- **URL**: " . $_SERVER["REQUEST_URI"] . "\n");
 			$bugbaseurl.= urlencode("\n");
 			$bugbaseurl.= urlencode("# Report\n");
-			print '<p id="blockvmenuhelpbugreport" class="blockvmenuhelp">';
+			print '<div id="blockvmenuhelpbugreport" class="blockvmenuhelp">';
 			print '<a class="help" target="_blank" href="'.$bugbaseurl.'">'.$langs->trans("FindBug").'</a>';
-			print '</p>';
+			print '</div>';
 		}
 
         print "</div>\n";
@@ -1782,7 +1773,6 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 
     print "\n";
     print '<!-- Begin right area -->'."\n";
-
 
     if (empty($leftmenuwithoutmainarea)) main_area($title);
 }
@@ -1875,7 +1865,7 @@ function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch,$htmlinput
     }
 
     $ret='';
-    $ret.='<form action="'.$urlaction.'" method="post">';
+    $ret.='<form action="'.$urlaction.'" method="post" class="searchform">';
 	$ret.='<div class="menu_titre menu_titre_search"';
 	if (! empty($conf->global->MAIN_HTML5_PLACEHOLDER)) $ret.=' style="display: inline-block"';
 	$ret.='>';
@@ -1905,6 +1895,7 @@ if (! function_exists("llxFooter"))
     /**
      * Show HTML footer
      * Close div /DIV data-role=page + /DIV class=fiche + /DIV /DIV main layout + /BODY + /HTML.
+     * If global var $delayedhtmlcontent was filled, we output it just before closing the body. 
      *
      * @param	string	$comment    A text to add as HTML comment into HTML generated page
 	 * @param	string	$zone		'private' (for private pages) or 'public' (for public pages)
@@ -1913,7 +1904,8 @@ if (! function_exists("llxFooter"))
     function llxFooter($comment='',$zone='private')
     {
         global $conf, $langs;
-
+        global $delayedhtmlcontent;
+        
         // Global html output events ($mesgs, $errors, $warnings)
         dol_htmloutput_events();
 
@@ -1950,6 +1942,18 @@ if (! function_exists("llxFooter"))
         //var_dump($langs);		// Uncommment to see the property _tab_loaded to see which language file were loaded
 
         if (empty($conf->dol_hide_leftmenu) && empty($conf->dol_use_jmobile) && empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print '</div> <!-- End div id-container -->'."\n";	// End div container
+        
+        if (! empty($delayedhtmlcontent)) print $delayedhtmlcontent;
+        
+		// Wrapper to show tooltips
+		print "\n<!-- JS CODE TO ENABLE tipTip on all object with class classfortooltip -->\n";
+		print '<script type="text/javascript">
+        	jQuery(document).ready(function () {
+        		jQuery(".classfortooltip").tipTip({maxWidth: "'.dol_size(600,'width').'px", edgeOffset: 10, delay: 50, fadeIn: 50, fadeOut: 50});
+        	});
+        </script>' . "\n";
+
+        
         print "</body>\n";
         print "</html>\n";
     }

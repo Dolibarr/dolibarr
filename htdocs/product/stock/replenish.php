@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013		Cédric Salvador		<csalvador@gpcsolutions.fr>
- * Copyright (C) 2013-2014	Laurent Destaileur	<ely@users.sourceforge.net>
+ * Copyright (C) 2013-2015	Laurent Destaileur	<ely@users.sourceforge.net>
  * Copyright (C) 2014		Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -445,8 +445,8 @@ if ($usevirtualstock == 0) $stocklabel = $langs->trans('PhysicalStock');
 
 
 // Lines of title
-print '<tr class="liste_titre"><td><input type="checkbox" onClick="toggle(this)" /></td>';
-
+print '<tr class="liste_titre">';
+print_liste_field_titre('<input type="checkbox" onClick="toggle(this)" />', $_SERVER["PHP_SELF"], '');
 print_liste_field_titre($langs->trans('Ref'), $_SERVER["PHP_SELF"], 'p.ref', $param, '', '', $sortfield, $sortorder);
 print_liste_field_titre($langs->trans('Label'), $_SERVER["PHP_SELF"], 'p.label', $param, '', '', $sortfield, $sortorder);
 if (!empty($conf->service->enabled) && $type == 1) print_liste_field_titre($langs->trans('Duration'), $_SERVER["PHP_SELF"], 'p.duration', $param, '', 'align="center"', $sortfield, $sortorder);

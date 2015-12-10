@@ -146,7 +146,8 @@ if ($action == 'delete')
 
 $form = new Form($db);
 
-llxHeader('',$langs->trans("OtherSetup"));
+$wikihelp='EN:Setup_Other|FR:Paramétrage_Divers|ES:Configuración_Varios';
+llxHeader('',$langs->trans("Setup"),$wikihelp);
 
 // Add logic to show/hide buttons
 if ($conf->use_javascript_ajax)

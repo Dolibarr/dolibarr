@@ -9,6 +9,7 @@
  * Copyright (C) 2012-2015 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2012-2015 Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2015      Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -363,6 +364,7 @@ abstract class CommonObject
 			dol_print_error(get_class()."::isExistingObject ".$error, LOG_ERR);
 			return -1;
 		}
+		if ($ref || $ref_ext) $sql.= " AND entity = ".$conf->entity;
 
 		dol_syslog(get_class()."::isExistingObject", LOG_DEBUG);
 		$resql = $db->query($sql);
@@ -529,7 +531,9 @@ abstract class CommonObject
 		}
 		if (! empty($conf->skype->enabled))
 		{
-			if ($this->skype) $out.=($outdone?'<br>':'').dol_print_skype($this->skype,$this->id,$object->id,'AC_SKYPE');
+			$out.='<div style="clear: both;"></div>';
+			if ($this->skype) $out.=dol_print_skype($this->skype,$this->id,$object->id,'AC_SKYPE');
+			$outdone++;
 		}
 		
 		$out.='<!-- END Part to show address block -->';
@@ -1391,6 +1395,8 @@ abstract class CommonObject
     		if ($this->db->query($sql))
     		{
     			$this->mode_reglement_id = $id;
+    			// for supplier
+    			if (get_class($this) == 'Fournisseur') $this->mode_reglement_supplier_id = $id;
     			return 1;
     		}
     		else
@@ -1431,6 +1437,8 @@ abstract class CommonObject
     		if ($this->db->query($sql))
     		{
     			$this->cond_reglement_id = $id;
+    			// for supplier
+    			if (get_class($this) == 'Fournisseur') $this->cond_reglement_supplier_id = $id;
     			$this->cond_reglement = $id;	// for compatibility
     			return 1;
     		}
@@ -2179,7 +2187,7 @@ abstract class CommonObject
             if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier') $fieldtva='total_tva';
             if ($this->element == 'propal')                                                $fieldttc='total';
             if ($this->element == 'expensereport')                                         $fieldtva='total_tva';
-            if ($this->element == 'askpricesupplier')                                      $fieldttc='total';
+            if ($this->element == 'supplier_proposal')                                      $fieldttc='total';
 
             if (empty($nodatabaseupdate))
             {
@@ -2390,8 +2398,8 @@ abstract class CommonObject
                     else if ($objecttype == 'propal')			{
                         $classpath = 'comm/propal/class';
                     }
-                    else if ($objecttype == 'askpricesupplier')			{
-                        $classpath = 'comm/askpricesupplier/class';
+                    else if ($objecttype == 'supplier_proposal')			{
+                        $classpath = 'supplier_proposal/class';
                     }
                     else if ($objecttype == 'shipping')			{
                         $classpath = 'expedition/class'; $subelement = 'expedition'; $module = 'expedition_bon';
@@ -2862,6 +2870,7 @@ abstract class CommonObject
 		}
 		else
 		{
+            $this->errors[] = $this->db->lasterror();
 			return false;
 		}
 	}
@@ -2899,6 +2908,7 @@ abstract class CommonObject
             }
             else
 			{
+                $this->errors[] = $this->db->lasterror();
                 return -1;
             }
         }
@@ -3040,9 +3050,9 @@ abstract class CommonObject
 		// Description
 		print '<td class="linecoldescription">'.$langs->trans('Description').'</td>';
 
-		if ($this->element == 'askpricesupplier')
+		if ($this->element == 'supplier_proposal')
 		{
-			print '<td class="linerefsupplier" align="right"><span id="title_fourn_ref">'.$langs->trans("AskPriceSupplierRefFourn").'</span></td>';
+			print '<td class="linerefsupplier" align="right"><span id="title_fourn_ref">'.$langs->trans("SupplierProposalRefFourn").'</span></td>';
 		}
 
 		// VAT
@@ -3108,20 +3118,21 @@ abstract class CommonObject
 
 			$var=!$var;
 
-			if (is_object($hookmanager) && (($line->product_type == 9 && ! empty($line->special_code)) || ! empty($line->fk_parent_line)))
+			//if (is_object($hookmanager) && (($line->product_type == 9 && ! empty($line->special_code)) || ! empty($line->fk_parent_line)))
+            if (is_object($hookmanager))   // Old code is commented on preceding line.
 			{
 				if (empty($line->fk_parent_line))
 				{
 					$parameters = array('line'=>$line,'var'=>$var,'num'=>$num,'i'=>$i,'dateSelector'=>$dateSelector,'seller'=>$seller,'buyer'=>$buyer,'selected'=>$selected, 'extrafieldsline'=>$extrafieldsline);
-					$hookmanager->executeHooks('printObjectLine', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
+                    $reshook = $hookmanager->executeHooks('printObjectLine', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
 				}
 				else
 				{
 					$parameters = array('line'=>$line,'var'=>$var,'num'=>$num,'i'=>$i,'dateSelector'=>$dateSelector,'seller'=>$seller,'buyer'=>$buyer,'selected'=>$selected, 'extrafieldsline'=>$extrafieldsline);
-					$hookmanager->executeHooks('printObjectSubLine', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
+                    $reshook = $hookmanager->executeHooks('printObjectSubLine', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
 				}
 			}
-			else
+            if (empty($reshook))
 			{
 				$this->printObjectLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected,$extrafieldsline);
 			}
@@ -3171,6 +3182,9 @@ abstract class CommonObject
 			{
 				$product_static = new Product($this->db);
 				$product_static->fetch($line->fk_product);
+
+                $product_static->ref = $line->ref; //can change ref in hook
+                $product_static->label = $line->label; //can change label in hook
 				$text=$product_static->getNomUrl(1);
 
 				// Define output language and label
@@ -4095,7 +4109,7 @@ abstract class CommonObject
 						$out .= $extrafields->showOutputField($key,$value);
 						break;
 					case "edit":
-						$out .= $extrafields->showInputField($key,$value,'',$keyprefix);
+						$out .= $extrafields->showInputField($key,$value,'',$keyprefix,'',0,$this->id);
 						break;
 					}
 
@@ -4175,5 +4189,67 @@ abstract class CommonObject
 		}
 
 		return true;
+	}
+	
+	 /**
+	 * define buy price if not defined
+	 *	set buy price = sell price if ForceBuyingPriceIfNull configured,
+	 *	 else if calculation MARGIN_TYPE = 'pmp' and pmp is calculated, set pmp as buyprice
+	 *	 else set min buy price as buy price
+	 *	 
+	 * @param float		$unitPrice		 product unit price
+	 * @param float		$discountPercent line discount percent
+	 * @param int		$fk_product		 product id
+	 *
+	 * @return	float <0 if ko, buyprice if ok
+	 */
+	public function defineBuyPrice($unitPrice = 0, $discountPercent = 0, $fk_product = 0) 
+	{
+		global $conf;
+	
+		$buyPrice = 0;
+		
+		if (($unitPrice > 0) && (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1))
+		{
+			$buyPrice = $unitPrice * (1 - $discountPercent / 100);
+		}
+		else
+		{
+			// Get PMP
+			if (! empty($fk_product))
+			{
+				if (isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == 'pmp')
+				{
+					require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+					$product = new Product($this->db);
+					$result = $product->fetch($fk_product);
+					if ($result <= 0)
+					{
+						$this->errors[] = 'ErrorProductIdDoesNotExists';
+						return -1;
+					}
+					if (($product->pmp > 0))
+					{
+						$buyPrice = $product->pmp;
+					}
+					// TODO add option to set PMP of product
+				}
+				else if (isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == '1')
+				{
+					require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+					$productFournisseur = new ProductFournisseur($this->db);
+					if (($result = $productFournisseur->find_min_price_product_fournisseur($fk_product)) > 0)
+					{
+						$buyPrice = $productFournisseur->fourn_price;
+					}
+					else if ($result < 0)
+					{
+						$this->errors[] = $productFournisseur->error;
+						return -2;
+					}
+				}
+			}
+		}
+		return $buyPrice;
 	}
 }

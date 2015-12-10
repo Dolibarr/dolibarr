@@ -39,7 +39,7 @@ $langs->load('stocks');
 
 /*
  * View
-*/
+ */
 
 top_httphead();
 
@@ -49,7 +49,11 @@ if ($idprod > 0)
 {
 	$producttmp=new ProductFournisseur($db);
 	$producttmp->fetch($idprod);
-	$productSupplierArray = $producttmp->list_product_fournisseur_price($idprod, 's.nom, pfp.quantity, pfp.price');    // We list all price per supplier, and then firstly with the lower quantity. So we can choose first one with enough quantity into list.
+
+	$sorttouse = 's.nom, pfp.quantity, pfp.price';
+	if (GETPOST('bestpricefirst')) $sorttouse = 'pfp.unitprice, s.nom, pfp.quantity, pfp.price';
+	
+	$productSupplierArray = $producttmp->list_product_fournisseur_price($idprod, $sorttouse);    // We list all price per supplier, and then firstly with the lower quantity. So we can choose first one with enough quantity into list.
 	if ( is_array($productSupplierArray))
 	{
 		foreach ($productSupplierArray as $productSupplier)
@@ -81,13 +85,13 @@ if ($idprod > 0)
 			$label = price($price,0,$langs,0,0,-1,$conf->currency)."/".$langs->trans("Unit");
 			if ($productSupplier->fourn_ref) $label.=' ('.$productSupplier->fourn_ref.')';
 			
-			$prices[] = array("id" => $productSupplier->product_fourn_price_id, "price" => price($price,0,'',0), "label" => $label, "title" => $title);
+			$prices[] = array("id" => $productSupplier->product_fourn_price_id, "price" => price2num($price,0,'',0), "label" => $label, "title" => $title);  // For price field, we must use price2num(), for label or title, price()
 		}
 	}
 	
 	// Add price for pmp
 	$price=$producttmp->pmp;
-	$prices[] = array("id" => 'pmpprice', "price" => $price, "label" => $langs->trans("PMPValueShort").': '.price($price,0,$langs,0,0,-1,$conf->currency), "title" => $langs->trans("PMPValueShort").': '.price($price,0,$langs,0,0,-1,$conf->currency));
+	$prices[] = array("id" => 'pmpprice', "price" => price2num($price), "label" => $langs->trans("PMPValueShort").': '.price($price,0,$langs,0,0,-1,$conf->currency), "title" => $langs->trans("PMPValueShort").': '.price($price,0,$langs,0,0,-1,$conf->currency));  // For price field, we must use price2num(), for label or title, price()
 }
 
 echo json_encode($prices);

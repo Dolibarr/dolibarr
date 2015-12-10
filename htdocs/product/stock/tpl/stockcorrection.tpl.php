@@ -21,7 +21,9 @@
 
 <!-- BEGIN PHP TEMPLATE STOCKCORRECTION.TPL.PHP -->
 <?php
-$langs->load("productbatch");
+        if (! is_object($product)) $product=$object;
+
+        $langs->load("productbatch");
 
 		if (empty($id)) $id = $object->id;
 

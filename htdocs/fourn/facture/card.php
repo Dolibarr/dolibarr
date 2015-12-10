@@ -84,6 +84,7 @@ $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 if ($id > 0 || ! empty($ref))
 {
 	$ret=$object->fetch($id, $ref);
+	$object->fetch_thirdparty();
 }
 
 $permissionnote=$user->rights->fournisseur->facture->creer;	// Used by the include of actions_setnotes.inc.php
@@ -574,8 +575,8 @@ if (empty($reshook))
 	            $type = $_POST["type"]?$_POST["type"]:0;
 	        }
 
-	    	$date_start=dol_mktime(GETPOST('date_start'.$date_pf.'hour'), GETPOST('date_start'.$date_pf.'min'), 0, GETPOST('date_start'.$date_pf.'month'), GETPOST('date_start'.$date_pf.'day'), GETPOST('date_start'.$date_pf.'year'));
-	    	$date_end=dol_mktime(GETPOST('date_end'.$date_pf.'hour'), GETPOST('date_end'.$date_pf.'min'), 0, GETPOST('date_end'.$date_pf.'month'), GETPOST('date_end'.$date_pf.'day'), GETPOST('date_end'.$date_pf.'year'));
+		    $date_start=dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), GETPOST('date_startsec'), GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
+		    $date_end=dol_mktime(GETPOST('date_endhour'), GETPOST('date_endmin'), GETPOST('date_endsec'), GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
 
 	        $localtax1_tx= get_localtax($_POST['tauxtva'], 1, $mysoc,$object->thirdparty);
 	        $localtax2_tx= get_localtax($_POST['tauxtva'], 2, $mysoc,$object->thirdparty);
@@ -638,6 +639,9 @@ if (empty($reshook))
 
 		$qty = GETPOST('qty'.$predef);
 		$remise_percent=GETPOST('remise_percent'.$predef);
+
+		$date_start=dol_mktime(GETPOST('date_start'.$predef.'hour'), GETPOST('date_start'.$predef.'min'), GETPOST('date_start' . $predef . 'sec'), GETPOST('date_start'.$predef.'month'), GETPOST('date_start'.$predef.'day'), GETPOST('date_start'.$predef.'year'));
+		$date_end=dol_mktime(GETPOST('date_end'.$predef.'hour'), GETPOST('date_end'.$predef.'min'), GETPOST('date_end' . $predef . 'sec'), GETPOST('date_end'.$predef.'month'), GETPOST('date_end'.$predef.'day'), GETPOST('date_end'.$predef.'year'));
 
 	    // Extrafields
 	    $extrafieldsline = new ExtraFields($db);
@@ -709,7 +713,7 @@ if (empty($reshook))
 	            $price_base_type = 'HT';
 
 	            // TODO Save the product supplier ref into database into field ref_supplier (must rename field ref into ref_supplier first)
-	            $result=$object->addline($desc, $productsupplier->fourn_pu, $tvatx, $localtax1_tx, $localtax2_tx, $qty, $idprod, $remise_percent, '', '', 0, $npr, $price_base_type, $type, -1, 0, $array_options, $productsupplier->fk_unit);
+	            $result=$object->addline($desc, $productsupplier->fourn_pu, $tvatx, $localtax1_tx, $localtax2_tx, $qty, $idprod, $remise_percent, $date_start, $date_end, 0, $npr, $price_base_type, $type, -1, 0, $array_options, $productsupplier->fk_unit);
 	        }
 	    	if ($idprod == -2 || $idprod == 0)
 	        {
@@ -756,7 +760,7 @@ if (empty($reshook))
 	            $price_base_type = 'HT';
 	        }
 
-			$result=$object->addline($product_desc, $ht, $tva_tx, $localtax1_tx, $localtax2_tx, $qty, 0, $remise_percent, $datestart, $dateend, 0, $npr, $price_base_type, $type, -1, 0, $array_options, $fk_unit);
+			$result=$object->addline($product_desc, $ht, $tva_tx, $localtax1_tx, $localtax2_tx, $qty, 0, $remise_percent, $date_start, $date_end, 0, $npr, $price_base_type, $type, -1, 0, $array_options, $fk_unit);
 	    }
 
 	    //print "xx".$tva_tx; exit;
@@ -1521,7 +1525,7 @@ if ($action == 'create')
         if ($cntinvoice>=1)
         {
         	setEventMessage('WarningBillExist','warnings');
-        	echo ' ('.$langs->trans('LatestRelatedBill').end($objectsrc->linkedObjects['facture'])->getNomUrl(1).')';
+        	echo ' ('.$langs->trans('LatestRelatedBill').end($objectsrc->linkedObjects['invoice_supplier'])->getNomUrl(1).')';
         }
         echo '</td></tr>';
         print '<tr><td>'.$langs->trans('TotalHT').'</td><td colspan="2">'.price($objectsrc->total_ht).'</td></tr>';
@@ -2101,10 +2105,10 @@ else
 
        	global $forceall, $senderissupplier, $dateSelector, $inputalsopricewithtax;
 		$forceall=1; $senderissupplier=1; $dateSelector=0; $inputalsopricewithtax=1;
-
+		
 		// Show object lines
 		if (! empty($object->lines))
-			$ret = $object->printObjectLines($action, $soc, $mysoc, $lineid, 1);
+			$ret = $object->printObjectLines($action, $societe, $mysoc, $lineid, 1);
 
 		$num=count($object->lines);
 
@@ -2322,19 +2326,28 @@ else
             $formmail->fromid   = $user->id;
             $formmail->fromname = $user->getFullName($langs);
             $formmail->frommail = $user->email;
+            if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 1))	// If bit 1 is set
+            {
+            	$formmail->trackid='sin'.$object->id;
+            }
+            if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2))	// If bit 2 is set
+            {
+            	include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+            	$formmail->frommail=dolAddEmailTrackId($formmail->frommail, 'sin'.$object->id);
+            }            
             $formmail->withfrom=1;
 			$liste=array();
 			foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key=>$value)	$liste[$key]=$value;
 			$formmail->withto=GETPOST("sendto")?GETPOST("sendto"):$liste;
 			$formmail->withtocc=$liste;
             $formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
-            $formmail->withtopic=$outputlangs->trans('SendBillRef','__FACREF__');
+            $formmail->withtopic=$outputlangs->trans('SendBillRef','__REF__');
             $formmail->withfile=2;
             $formmail->withbody=1;
             $formmail->withdeliveryreceipt=1;
             $formmail->withcancel=1;
             // Tableau des substitutions
-            $formmail->substit['__FACREF__']=$object->ref;
+            $formmail->substit['__REF__']=$object->ref;
             $formmail->substit['__SIGNATURE__']=$user->signature;
             $formmail->substit['__PERSONALIZED__']='';
             $formmail->substit['__CONTACTCIVNAME__']='';

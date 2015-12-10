@@ -17,7 +17,6 @@ services:
 # This will tell travis to run phpunit
 language: php
 php:
-# - "5.2" is not supported because pyrus to install PHP_Codesniffer is not available
  - 5.3
  - 5.4
  - 5.5 
@@ -44,11 +43,17 @@ before_script:
  - which phpunit
  - phpunit --version
  - echo Install phpcs then show installed rules
- - pyrus install pear/PHP_CodeSniffer
+ - cp composer.json composer.json.old
+ - cp composer.json.phpcs composer.json
+ - composer self-update
+ - composer require squizlabs/php_codesniffer:"^2.0.0"
+ - composer install
  - phpenv rehash
- - which phpcs
- - phpcs --version
- - phpcs -i
+ - htdocs/includes/squizlabs/php_codesniffer/scripts/phpcs --version
+ - htdocs/includes/squizlabs/php_codesniffer/scripts/phpcs -i
+# - which phpcs
+# - phpcs --version
+# - phpcs -i
  - echo Create dir $(pwd)/htdocs/documents
  - sudo mkdir -p $(pwd)/htdocs/documents/admin/temp;
  - sudo touch $(pwd)/htdocs/documents/dolibarr.log;
@@ -66,24 +71,24 @@ before_script:
  - sh -c "if [ '$PHPV' = '5.4' ]; then echo 'zend_extension_ts = xdebug.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi"
  - cat ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
  - echo Mysql version
- # INSTALL MYSQL 5.6
- # (https://github.com/piwik/piwik/commit/20bd2e1c24e5d673dce3feb256204ad48c29f160)
- # TODO: Remove when mysql 5.6 is provided by travis.
- # Otherwise, our migrations will raise a syntax error.
- - "sudo apt-get remove mysql-common mysql-server-5.5 mysql-server-core-5.5 mysql-client-5.5 mysql-client-core-5.5"
- - "sudo apt-get autoremove"
- - "sudo apt-get install libaio1"
- - "wget -O mysql-5.6.14.deb http://dev.mysql.com/get/Downloads/MySQL-5.6/mysql-5.6.14-debian6.0-x86_64.deb/from/http://cdn.mysql.com/"
- - "sudo dpkg -i mysql-5.6.14.deb"
- - "sudo cp /opt/mysql/server-5.6/support-files/mysql.server /etc/init.d/mysql.server"
- - "sudo ln -s /opt/mysql/server-5.6/bin/* /usr/bin/"
- - "sudo sed -i'' 's/table_cache/table_open_cache/' /etc/mysql/my.cnf"
- - "sudo sed -i'' 's/log_slow_queries/slow_query_log/' /etc/mysql/my.cnf"
- - "sudo sed -i'' 's/basedir[^=]\\+=.*$/basedir = \\/opt\\/mysql\\/server-5.6/' /etc/mysql/my.cnf"
- - "sudo /etc/init.d/mysql.server start"
+# INSTALL MYSQL 5.6
+# (https://github.com/piwik/piwik/commit/20bd2e1c24e5d673dce3feb256204ad48c29f160)
+# TODO: Remove when mysql 5.6 is provided by travis.
+# Otherwise, our migrations will raise a syntax error.
+# - "sudo apt-get remove mysql-common mysql-server-5.5 mysql-server-core-5.5 mysql-client-5.5 mysql-client-core-5.5"
+# - "sudo apt-get autoremove"
+# - "sudo apt-get install libaio1"
+# - "wget -O mysql-5.6.14.deb http://dev.mysql.com/get/Downloads/MySQL-5.6/mysql-5.6.14-debian6.0-x86_64.deb/from/http://cdn.mysql.com/"
+# - "sudo dpkg -i mysql-5.6.14.deb"
+# - "sudo cp /opt/mysql/server-5.6/support-files/mysql.server /etc/init.d/mysql.server"
+# - "sudo ln -s /opt/mysql/server-5.6/bin/* /usr/bin/"
+# - "sudo sed -i'' 's/table_cache/table_open_cache/' /etc/mysql/my.cnf"
+# - "sudo sed -i'' 's/log_slow_queries/slow_query_log/' /etc/mysql/my.cnf"
+# - "sudo sed -i'' 's/basedir[^=]\\+=.*$/basedir = \\/opt\\/mysql\\/server-5.6/' /etc/mysql/my.cnf"
+# - "sudo /etc/init.d/mysql.server start"
+# /END MYSQL 5.6- mysql --version
  - mysql --version
  - mysql -e "SELECT VERSION();"
- # /END MYSQL 5.6- mysql --version
  - echo Init database
  - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'DROP DATABASE IF EXISTS myapp_test;' -U postgres; fi"
  - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'CREATE DATABASE myapp_test;' -U postgres; fi"
@@ -131,7 +136,7 @@ script:
 # - cat upgrade370380.log
  - php upgrade2.php 3.7.0 3.8.0 ignoredbversion > upgrade370380-2.log
  - php upgrade.php 3.8.0 3.9.0 ignoredbversion > upgrade380390.log
- - cat upgrade380390.log
+# - cat upgrade380390.log
  - php upgrade2.php 3.8.0 3.9.0 ignoredbversion > upgrade380390-2.log
 # - cat upgrade380390-2.log
  - cd ../..
@@ -139,7 +144,7 @@ script:
  - phpunit -d memory_limit=-1 --configuration test/phpunit/phpunittest.xml test/phpunit/AllTests.php
  - date
 # - phpcs -p --warning-severity=0 -s --report-summary --standard=dev/codesniffer/ruleset.xml --tab-width=4 --ignore=/build/html/,/dev/vagrant/,/documents/,/includes/,/test/report/ htdocs/core/class/dolgraph.class.php 2>&1
- - phpcs -p --warning-severity=0 -s --report-checkstyle --report-summary --standard=dev/codesniffer/ruleset.xml --tab-width=4 --ignore=/htdocs/conf/conf.php,/build/html/,/dev/vagrant/,/documents/,/includes/,/test/report/ . 2>&1
+ - htdocs/includes/squizlabs/php_codesniffer/scripts/phpcs -p --warning-severity=0 -s --report-checkstyle --report-summary --standard=dev/codesniffer/ruleset.xml --tab-width=4 --ignore=/htdocs/conf/conf.php,/build/html/,/dev/vagrant/,/documents/,/includes/,/test/report/ . 2>&1
  - date
 
 after_script:

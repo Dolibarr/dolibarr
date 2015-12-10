@@ -55,15 +55,15 @@ if ( $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
    			$langs->load("errors");
 			if ($resupload < 0)	// Unknown error
 			{
-				setEventMessage($langs->trans("ErrorFileNotUploaded"), 'errors');
+				setEventMessages($langs->trans("ErrorFileNotUploaded"), null, 'errors');
 			}
 			else if (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload))	// Files infected by a virus
 			{
-				setEventMessage($langs->trans("ErrorFileIsInfectedWithAVirus"), 'errors');
+				setEventMessages($langs->trans("ErrorFileIsInfectedWithAVirus"), null, 'errors');
 			}
 			else	// Known error
 			{
-				setEventMessage($langs->trans($resupload), 'errors');
+				setEventMessages($langs->trans($resupload), null, 'errors');
 			}
 	    }
 	}
@@ -81,8 +81,8 @@ if ($_POST['action'] == 'confirm_deletefile' && $_POST['confirm'] == 'yes')
     $langs->load("other");
 	$file = $upload_dir . "/" . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
 	$ret=dol_delete_file($file);
-	if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-	else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+	if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
+	else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
 }
 
 
@@ -106,7 +106,7 @@ print load_fiche_titre($langs->trans("ECMAutoOrg"));
 
 
 /*
- * Confirmation de la suppression d'une ligne produit
+ * Confirmation of deleting a product line
  */
 if ($_GET['action'] == 'delete_file')
 {
@@ -114,7 +114,7 @@ if ($_GET['action'] == 'delete_file')
 
 }
 
-// Construit liste des fichiers
+// Construct files list
 clearstatcache();
 $totalsize=0;
 $filearray=array();

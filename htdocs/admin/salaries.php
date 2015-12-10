@@ -60,11 +60,11 @@ if ($action == 'update')
 
     if (! $error)
     {
-        setEventMessage($langs->trans("SetupSaved"));
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
     else
     {
-        setEventMessage($langs->trans("Error"),'errors');
+        setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
 
@@ -113,11 +113,11 @@ print '</tr>';
 
 print "</table>\n";
 
-print '</form>';
-
 dol_fiche_end();
 
 print '<div style="text-align:center"><input type="submit" class="button" value="'.$langs->trans('Modify').'" name="button"></div>';
+
+print '</form>';
 
 llxFooter();
 $db->close();

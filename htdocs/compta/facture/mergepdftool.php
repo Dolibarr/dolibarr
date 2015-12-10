@@ -107,14 +107,14 @@ if ($action == 'presend' && GETPOST('sendmail'))
 	if (!isset($user->email))
 	{
 		$error++;
-		setEventMessage("NoSenderEmailDefined");
+		setEventMessages($langs->trans("NoSenderEmailDefined"), null, 'warnings');
 	}
 
 	$countToSend = count($_POST['toSend']);
 	if (empty($countToSend))
 	{
 		$error++;
-		setEventMessage("InvoiceNotChecked","warnings");
+		setEventMessages($langs->trans("InvoiceNotChecked"), null, 'warnings');
 	}
 
 	if (! $error)
@@ -260,11 +260,11 @@ if ($action == 'presend' && GETPOST('sendmail'))
 		if ($nbsent)
 		{
 			$action='';	// Do not show form post if there was at least one successfull sent
-			setEventMessage($nbsent. '/'.$countToSend.' '.$langs->trans("RemindSent"));
+			setEventMessages($nbsent. '/'.$countToSend.' '.$langs->trans("RemindSent"), null, 'mesgs');
 		}
 		else
 		{
-			setEventMessage($langs->trans("NoRemindSent"), 'warnings');  // May be object has no generated PDF file
+			setEventMessages($langs->trans("NoRemindSent"), null, 'warnings');  // May be object has no generated PDF file
 		}
 	}
 }
@@ -349,16 +349,16 @@ if ($action == "builddoc" && $user->rights->facture->lire && ! GETPOST('button_s
 			@chmod($file, octdec($conf->global->MAIN_UMASK));
 
 			$langs->load("exports");
-			setEventMessage($langs->trans('FileSuccessfullyBuilt',$filename.'_'.dol_print_date($now,'dayhourlog')));
+			setEventMessages($langs->trans('FileSuccessfullyBuilt',$filename.'_'.dol_print_date($now,'dayhourlog')), null, 'mesgs');
 		}
 		else
 		{
-			setEventMessage($langs->trans('NoPDFAvailableForChecked'),'errors');
+			setEventMessages($langs->trans('NoPDFAvailableForChecked'), null, 'errors');
 		}
 	}
 	else
 	{
-		setEventMessage($langs->trans('InvoiceNotChecked'), 'warnings');
+		setEventMessages($langs->trans('InvoiceNotChecked'), null, 'warnings');
 	}
 }
 
@@ -371,8 +371,8 @@ if ($action == 'remove_file')
 	$upload_dir = $diroutputpdf;
 	$file = $upload_dir . '/' . GETPOST('file');
 	$ret=dol_delete_file($file);
-	if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-	else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+	if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
+	else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
 	$action='';
 }
 
@@ -574,6 +574,15 @@ if ($resql)
 		$formmail->fromid   = $user->id;
 		$formmail->fromname = $user->getFullName($langs);
 		$formmail->frommail = $user->email;
+		if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 1))	// If bit 1 is set
+		{
+			$formmail->trackid='inv'.$object->id;
+		}
+		if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2))	// If bit 2 is set
+		{
+			include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+			$formmail->frommail=dolAddEmailTrackId($formmail->frommail, 'inv'.$object->id);
+		}		
 		$formmail->withfrom=1;
 		$liste=array();
 		$formmail->withto=$langs->trans("AllRecipientSelectedForRemind");
@@ -581,13 +590,13 @@ if ($resql)
 		$formmail->withtoreadonly=1;
 		$formmail->withtocc=1;
 		$formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
-		$formmail->withtopic=$langs->transnoentities($topicmail, '__FACREF__', '__REFCLIENT__');
+		$formmail->withtopic=$langs->transnoentities($topicmail, '__REF__', '__REFCLIENT__');
 		$formmail->withfile=$langs->trans("EachInvoiceWillBeAttachedToEmail");
 		$formmail->withbody=1;
 		$formmail->withdeliveryreceipt=1;
 		$formmail->withcancel=1;
 		// Tableau des substitutions
-		//$formmail->substit['__FACREF__']='';
+		//$formmail->substit['__REF__']='';
 		$formmail->substit['__SIGNATURE__']=$user->signature;
 		//$formmail->substit['__REFCLIENT__']='';
 		$formmail->substit['__PERSONALIZED__']='';
@@ -628,7 +637,7 @@ if ($resql)
  		$langs->load("commercial");
  		$moreforfilter.='<div class="divsearchfield">';
  		$moreforfilter.=$langs->trans('ThirdPartiesOfSaleRepresentative'). ': ';
-		$moreforfilter.=$formother->select_salesrepresentatives($search_sale,'search_sale',$user);
+		$moreforfilter.=$formother->select_salesrepresentatives($search_sale,'search_sale',$user, 0, 1, 'maxwidth300');
 	 	$moreforfilter.='</div>';
  	}
     // If the user can view prospects other than his'
@@ -636,7 +645,7 @@ if ($resql)
     {
         $moreforfilter.='<div class="divsearchfield">';
         $moreforfilter.=$langs->trans('LinkedToSpecificUsers'). ': ';
-        $moreforfilter.=$form->select_dolusers($search_user,'search_user',1);
+        $moreforfilter.=$form->select_dolusers($search_user, 'search_user', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
         $moreforfilter.='</div>';
     }
     if (! empty($moreforfilter))

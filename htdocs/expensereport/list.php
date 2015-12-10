@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003     	Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008	Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015	Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004     	Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2009	Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2015       Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
@@ -79,7 +79,7 @@ $fieldstosearchall = array(
  * View
  */
 
-$html = new Form($db);
+$form = new Form($db);
 $formother = new FormOther($db);
 $expensereporttmp=new ExpenseReport($db);
 
@@ -177,6 +177,12 @@ if (empty($user->rights->expensereport->readall) && empty($user->rights->expense
 }
 
 $sql.= $db->order($sortfield,$sortorder);
+$nbtotalofrecords = 0;
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+{
+    $result = $db->query($sql);
+    $nbtotalofrecords = $db->num_rows($result);
+}
 $sql.= $db->plimit($limit+1, $offset);
 
 //print $sql;
@@ -241,7 +247,7 @@ if ($resql)
 	// User
 	if ($user->rights->expensereport->readall || $user->rights->expensereport->lire_tous){
 		print '<td class="liste_titre" align="left">';
-		$html->select_dolusers($search_user,"search_user",1,"",0,'');
+		print $form->select_dolusers($search_user, 'search_user', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 		print '</td>';
 	} else {
 		print '<td class="liste_titre">&nbsp;</td>';
@@ -257,7 +263,7 @@ if ($resql)
 
 	// Status
 	print '<td class="liste_titre" align="right">';
-	select_expensereport_statut($search_status,'search_status');
+	select_expensereport_statut($search_status,'search_status',1,1);
 	print '</td>';
 
 	print '<td class="liste_titre" align="right">';

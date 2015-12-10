@@ -56,7 +56,7 @@ $fourn_id = GETPOST("fourn_id",'int');
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if (! $sortfield) $sortfield="stock_physique";
+if (! $sortfield) $sortfield="p.ref";
 if (! $sortorder) $sortorder="ASC";
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
@@ -104,7 +104,7 @@ $htmlother=new FormOther($db);
 
 $title=$langs->trans("ProductsAndServices");
 
-$sql = 'SELECT p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type,';
+$sql = 'SELECT p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type,p.entity,';
 $sql.= ' p.fk_product_type, p.tms as datem,';
 $sql.= ' p.duration, p.tosell as statut, p.tobuy, p.seuil_stock_alerte, p.desiredstock,';
 $sql.= ' s.fk_entrepot,';
@@ -266,9 +266,9 @@ if ($resql)
 	print_liste_field_titre($langs->trans("PhysicalStock"), $_SERVER["PHP_SELF"], "stock_physique",$param,"",'align="right"',$sortfield,$sortorder);
 	// TODO Add info of running suppliers/customers orders
 	//print_liste_field_titre($langs->trans("TheoreticalStock"),$_SERVER["PHP_SELF"], "stock_theorique",$param,"",'align="right"',$sortfield,$sortorder);
-	print '<td class="liste_titre">&nbsp;</td>';
-	print_liste_field_titre($langs->trans("Sell"),$_SERVER["PHP_SELF"], "p.tosell",$param,"",'align="right"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Buy"),$_SERVER["PHP_SELF"], "p.tobuy",$param,"",'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre('');
+	print_liste_field_titre($langs->trans("Status").' ('.$langs->trans("Sell").')',$_SERVER["PHP_SELF"], "p.tosell",$param,"",'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Status").' ('.$langs->trans("Buy").')',$_SERVER["PHP_SELF"], "p.tobuy",$param,"",'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
 	// Lignes des champs de filtre
@@ -329,6 +329,7 @@ if ($resql)
 		$product_static->id=$objp->rowid;
         $product_static->label = $objp->label;
 		$product_static->type=$objp->fk_product_type;
+		$product_static->entity=$objp->entity;
 		print $product_static->getNomUrl(1,'',16);
 		//if ($objp->stock_theorique < $objp->seuil_stock_alerte) print ' '.img_warning($langs->trans("StockTooLow"));
 		print '</td>';
@@ -349,7 +350,7 @@ if ($resql)
 
 		// Warehouse
 		print '<td>';
-		$warehousetmp->fetch($obj->fk_entrepot);
+		$warehousetmp->fetch($objp->fk_entrepot);
 		print $warehousetmp->getNomUrl(1);
 		print '</td>';
 		print '<td align="center">'.$objp->batch.'</td>';

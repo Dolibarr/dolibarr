@@ -1193,13 +1193,13 @@ UseOptionLineIfNoQuantity=Produkt-/Servicezeilen mit Nullmenge zulässig
 FreeLegalTextOnProposal=Freier Rechtstext für Angebote
 WatermarkOnDraftProposal=Wasserzeichen auf Angebots-Entwurf (keines, falls leer)
 BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL=Fragen Sie nach dem Bankkonto bei einem Angebot
-##### AskPriceSupplier #####
-AskPriceSupplierSetup=Lieferanten Preisauskunft Moduleinstellungen
-AskPriceSupplierNumberingModules=Nummerierungsmodul Preisanfragen Lieferanten 
-AskPriceSupplierPDFModules=Lieferanten Preisauskunft Dokumentvorlagen
-FreeLegalTextOnAskPriceSupplier=Freier Text auf Preisauskunft Lieferanten
-WatermarkOnDraftAskPriceSupplier=Wasserzeichen auf Lieferanten-Preisauskunft Entwurf (keines, wenn leer)
-BANK_ASK_PAYMENT_BANK_DURING_ASKPRICESUPPLIER=Fragen Sie nach Bankkonto Bestimmungsort von der Preisauskunft
+##### SupplierProposal #####
+SupplierProposalSetup=Lieferanten Preisauskunft Moduleinstellungen
+SupplierProposalNumberingModules=Nummerierungsmodul Preisanfragen Lieferanten 
+SupplierProposalPDFModules=Lieferanten Preisauskunft Dokumentvorlagen
+FreeLegalTextOnSupplierProposal=Freier Text auf Preisauskunft Lieferanten
+WatermarkOnDraftSupplierProposal=Wasserzeichen auf Lieferanten-Preisauskunft Entwurf (keines, wenn leer)
+BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL=Fragen Sie nach Bankkonto Bestimmungsort von der Preisauskunft
 ##### Orders #####
 OrdersSetup=Bestellverwaltungseinstellungen
 OrdersNumberingModules=Bestellnumerierungs-Module

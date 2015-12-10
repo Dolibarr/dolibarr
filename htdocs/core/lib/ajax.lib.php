@@ -52,16 +52,13 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
 					// Remove product id before select another product
 					// use keyup instead change to avoid loosing the product id
 					$("input#search_'.$htmlname.'").keydown(function() {
-						//console.log(\'purge_id_after_keydown\');
 						$("#'.$htmlname.'").val("");
 					});
 					$("input#search_'.$htmlname.'").change(function() {
-						//console.log(\'change\');
 						$("#'.$htmlname.'").trigger("change");
 					});
 					// Check when keyup
 					$("input#search_'.$htmlname.'").keyup(function() {
-							//console.log(\'keyup\');
 						    if ($(this).val().length == 0)
 						    {
 	                            $("#search_'.$htmlname.'").val("");
@@ -127,7 +124,6 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
 						dataType: "json",
     					minLength: '.$minLength.',
     					select: function( event, ui ) {		// Function ran when new value is selected into javascript combo
-							//console.log(\'set value of id with \'+ui.item.id);
     						$("#'.$htmlname.'").val(ui.item.id).trigger("change");	// Select new value
     						// Disable an element
     						if (options.option_disabled) {
@@ -171,12 +167,11 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
 									}
     							});
     						}
-    						$("#search_'.$htmlname.'").trigger("change");	// To tell that input text field was modified
     					}
     					,delay: 500
 					}).data("ui-autocomplete")._renderItem = function( ul, item ) {
-						return $("<li></li>")
-						.data( "item.autocomplete", item )
+						return $("<li>")
+						.data( "ui-autocomplete-item", item ) // jQuery UI > 1.10.0
 						.append( \'<a><span class="tag">\' + item.label + "</span></a>" )
 						.appendTo(ul);
 					};
@@ -350,7 +345,7 @@ function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $
 {
 	global $conf;
 
-	//if (! empty($conf->browser->phone)) return '';	// combobox disabled for smartphones (does not works)
+	if (! empty($conf->browser->phone)) return '';	// select2 disabled for smartphones with standard browser (does not works, popup appears outside screen)
 	if (! empty($conf->dol_use_jmobile)) return '';	// select2 works with jmobile but it breaks the autosize feature of jmobile.
 	if (! empty($conf->global->MAIN_DISABLE_AJAX_COMBOX)) return '';
 	if (empty($conf->use_javascript_ajax)) return '';

@@ -4,8 +4,9 @@
  * Copyright (C) 2005-2015	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2013  Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2014       Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2014-2015  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 201		Charlie Benke           <charlies@patas-monkey.com>
+ * Copyright (C) 2015       Abbes Bahfir            <bafbes@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -113,6 +114,7 @@ if (empty($reshook))
 	if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->ficheinter->creer)
 	{
 		$result = $object->setValid($user);
+
 		if ($result >= 0)
 		{
 			// Define output language
@@ -465,8 +467,8 @@ if (empty($reshook))
 	// Add line
 	else if ($action == "addline" && $user->rights->ficheinter->creer)
 	{
-		if (!GETPOST('np_desc'))
-		{
+		if (!GETPOST('np_desc') && empty($conf->global->FICHINTER_EMPTY_LINE_DESC) )
+ 		{
 			$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Description")).'</div>';
 			$error++;
 		}
@@ -1524,7 +1526,7 @@ else if ($id > 0 || ! empty($ref))
 					print '<td align="right">';
 					$selectmode='select';
 					if (! empty($conf->global->INTERVENTION_ADDLINE_FREEDUREATION)) $selectmode='text';
-					$form->select_duration('duration',$objp->duree, $selectmode);
+					$form->select_duration('duration',$objp->duree,0, $selectmode);
 					print '</td>';
 
 					print '<td align="center" colspan="5" valign="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
@@ -1565,16 +1567,18 @@ else if ($id > 0 || ! empty($ref))
 
 				$var=true;
 
-				print '<tr '.$bcnd[$var].">\n";
-				print '<td>';
-				// editeur wysiwyg
-				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-				$doleditor=new DolEditor('np_desc',GETPOST('np_desc','alpha'),'',100,'dolibarr_details','',false,true,$conf->global->FCKEDITOR_ENABLE_DETAILS,ROWS_2,70);
-				$doleditor->Create();
-				print '</td>';
+				print '<tr '.$bcnd[$var] . ">\n";
+                print '<td>';
+                // editeur wysiwyg
+                if (empty($conf->global->FICHINTER_EMPTY_LINE_DESC)) {
+                    require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
+                    $doleditor = new DolEditor('np_desc', GETPOST('np_desc', 'alpha'), '', 100, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_DETAILS, ROWS_2, 70);
+                    $doleditor->Create();
+                }
+                print '</td>';
 
-				// Date intervention
-				print '<td align="center" class="nowrap">';
+                // Date intervention
+                print '<td align="center" class="nowrap">';
 				$now=dol_now();
 				$timearray=dol_getdate($now);
 				if (! GETPOST('diday','int')) $timewithnohour=dol_mktime(0,0,0,$timearray['mon'],$timearray['mday'],$timearray['year']);
@@ -1816,6 +1820,15 @@ else if ($id > 0 || ! empty($ref))
 		$formmail->fromid   = $user->id;
 		$formmail->fromname = $user->getFullName($langs);
 		$formmail->frommail = $user->email;
+		if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 1))	// If bit 1 is set
+		{
+			$formmail->trackid='int'.$object->id;
+		}
+		if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2))	// If bit 2 is set
+		{
+			include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+			$formmail->frommail=dolAddEmailTrackId($formmail->frommail, 'int'.$object->id);
+		}		
 		$formmail->withfrom=1;
 		$liste=array();
 		foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key=>$value)	$liste[$key]=$value;

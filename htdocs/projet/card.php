@@ -450,10 +450,13 @@ if ($action == 'create' && $user->rights->projet->creer)
     if (is_numeric($defaultref) && $defaultref <= 0) $defaultref='';
 
     // Ref
-    print '<tr><td><span class="fieldrequired">'.$langs->trans("Ref").'</span></td><td><input size="12" type="text" name="ref" value="'.($_POST["ref"]?$_POST["ref"]:$defaultref).'"></td></tr>';
+    $suggestedref=($_POST["ref"]?$_POST["ref"]:$defaultref);
+    print '<tr><td><span class="fieldrequired">'.$langs->trans("Ref").'</span></td><td><input size="12" type="text" name="ref" value="'.$suggestedref.'">';
+    print ' '.$form->textwithpicto('', $langs->trans("YouCanCompleteRef", $suggestedref));
+    print '</td></tr>';
 
     // Label
-    print '<tr><td><span class="fieldrequired">'.$langs->trans("Label").'</span></td><td><input size="40" type="text" name="title" value="'.GETPOST("title").'"></td></tr>';
+    print '<tr><td><span class="fieldrequired">'.$langs->trans("Label").'</span></td><td><input size="80" type="text" name="title" value="'.GETPOST("title").'"></td></tr>';
 
     // Thirdparty
     print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
@@ -504,13 +507,13 @@ if ($action == 'create' && $user->rights->projet->creer)
 
 	    // Opportunity amount
 	    print '<tr><td>'.$langs->trans("OpportunityAmount").'</td>';
-	    print '<td><input size="4" type="text" name="opp_amount" value="'.(GETPOST('opp_amount')!=''?price(GETPOST('opp_amount')):'').'"></td>';
+	    print '<td><input size="5" type="text" name="opp_amount" value="'.(GETPOST('opp_amount')!=''?price(GETPOST('opp_amount')):'').'"></td>';
 	    print '</tr>';
     }
 
 	// Budget
 	print '<tr><td>'.$langs->trans("Budget").'</td>';
-	print '<td><input size="6" type="text" name="budget_amount" value="'.(GETPOST('budget_amount')!=''?price(GETPOST('budget_amount')):'').'"></td>';
+	print '<td><input size="5" type="text" name="budget_amount" value="'.(GETPOST('budget_amount')!=''?price(GETPOST('budget_amount')):'').'"></td>';
 	print '</tr>';
 
     // Description
@@ -617,12 +620,15 @@ else
         print '<table class="border" width="100%">';
 
         // Ref
+        $suggestedref=$object->ref;
         print '<tr><td class="fieldrequired" width="30%">'.$langs->trans("Ref").'</td>';
-        print '<td><input size="12" name="ref" value="'.$object->ref.'"></td></tr>';
+        print '<td><input size="12" name="ref" value="'.$suggestedref.'">';
+        print ' '.$form->textwithpicto('', $langs->trans("YouCanCompleteRef", $suggestedref));
+        print '</td></tr>';
 
         // Label
         print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td>';
-        print '<td><input size="40" name="title" value="'.$object->title.'"></td></tr>';
+        print '<td><input size="80" name="title" value="'.$object->title.'"></td></tr>';
 
         // Thirdparty
         print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
@@ -666,13 +672,13 @@ else
 
 		    // Opportunity amount
 		    print '<tr><td>'.$langs->trans("OpportunityAmount").'</td>';
-		    print '<td><input size="6" type="text" name="opp_amount" value="'.(isset($_POST['opp_amount'])?GETPOST('opp_amount'):(strcmp($object->opp_amount,'')?price($object->opp_amount):'')).'"></td>';
+		    print '<td><input size="5" type="text" name="opp_amount" value="'.(isset($_POST['opp_amount'])?GETPOST('opp_amount'):(strcmp($object->opp_amount,'')?price($object->opp_amount):'')).'"></td>';
 		    print '</tr>';
 	    }
 
 	    // Budget
 	    print '<tr><td>'.$langs->trans("Budget").'</td>';
-	    print '<td><input size="6" type="text" name="budget_amount" value="'.(isset($_POST['budget_amount'])?GETPOST('budget_amount'):(strcmp($object->budget_amount,'')?price($object->budget_amount):'')).'"></td>';
+	    print '<td><input size="5" type="text" name="budget_amount" value="'.(isset($_POST['budget_amount'])?GETPOST('budget_amount'):(strcmp($object->budget_amount,'')?price($object->budget_amount):'')).'"></td>';
 	    print '</tr>';
 
 	    // Description
@@ -702,7 +708,7 @@ else
         // Define a complementary filter for search of next/prev ref.
         if (! $user->rights->projet->all->lire)
         {
-            $objectsListId = $object->getProjectsAuthorizedForUser($user,$mine,0);
+            $objectsListId = $object->getProjectsAuthorizedForUser($user,0,0);
             $object->next_prev_filter=" rowid in (".(count($objectsListId)?join(',',array_keys($objectsListId)):'0').")";
         }
         print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');

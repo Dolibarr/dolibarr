@@ -121,9 +121,9 @@ abstract class DolibarrTriggers
 		$langs->load("admin");
 
 		if ($this->version == self::VERSION_DEVELOPMENT) {
-			return $langs->trans("Development");
+			return $langs->trans("VersionDevelopment");
 		} elseif ($this->version == self::VERSION_EXPERIMENTAL) {
-			return $langs->trans("Experimental");
+			return $langs->trans("VersionExperimental");
 		} elseif ($this->version == self::VERSION_DOLIBARR) {
 			return DOL_VERSION;
 		} elseif ($this->version) {

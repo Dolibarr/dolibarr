@@ -51,8 +51,9 @@ $select_pricing_rules=array(
 );
 if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 {
-	$select_pricing_rules['PRODUIT_CUSTOMER_PRICES_BY_QTY'] = $langs->trans('PriceByQuantity').' ('.$langs->trans("Experimental").')';	// TODO If this is enabled, price must be hidden when price by qty is enabled, also price for quantity must be used when adding product into order/propal/invoice
-	$select_pricing_rules['PRODUIT_CUSTOMER_PRICES_BY_QTY&PRODUIT_MULTIPRICES'] = $langs->trans('MultiPricesAbility') . '+' . $langs->trans('PriceByQuantity').' ('.$langs->trans("Experimental").')';
+    $langs->load("admin");
+	$select_pricing_rules['PRODUIT_CUSTOMER_PRICES_BY_QTY'] = $langs->trans('PriceByQuantity').' ('.$langs->trans("VersionExperimental").')';	// TODO If this is enabled, price must be hidden when price by qty is enabled, also price for quantity must be used when adding product into order/propal/invoice
+	$select_pricing_rules['PRODUIT_CUSTOMER_PRICES_BY_QTY&PRODUIT_MULTIPRICES'] = $langs->trans('MultiPricesAbility') . '+' . $langs->trans('PriceByQuantity').' ('.$langs->trans("VersionExperimental").')';
 }
 
 // Clean param
@@ -518,8 +519,7 @@ if (! empty($conf->global->PRODUCT_CANVAS_ABILITY))
 	}
 	else
 	{
-		//TODO: Translate
-		print "<tr><td><b>ERROR</b>: $dir is not a directory !</td></tr>\n";
+		setEventMessages($dir.' '.$langs->trans("IsNotADir"), null, 'errors');
 	}
 }
 

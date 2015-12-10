@@ -510,7 +510,7 @@ abstract class ActionsCardCommon
             $this->tpl['yn_assujtva'] = $form->selectyesno('assujtva_value',$this->tpl['tva_assuj'],1);	// Assujeti par defaut en creation
 
             // Select users
-            $this->tpl['select_users'] = $form->select_dolusers($this->object->commercial_id,'commercial_id',1);
+            $this->tpl['select_users'] = $form->select_dolusers($this->object->commercial_id, 'commercial_id', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 
             // Local Tax
             // TODO mettre dans une classe propre au pays

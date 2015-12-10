@@ -133,12 +133,19 @@ Voici un liste de fonctionnalites pas encore gérées par Dolibarr:
 - Dolibarr ne fait pas le café (pas encore). 
 
 
-## RESEAUX SOCIAUX
+## ACTUALITES ET RESEAUX SOCIAUX
 
-Suivez le projet Dolibarr project sur
+Suivez le projet Dolibarr project sur les réseaux francophones
 
-Facebook: <https://www.facebook.com/dolibarr.fr>
+- Facebook: <https://www.facebook.com/dolibarr.fr>
+- Google+: <https://plus.google.com/+DolibarrFrance>
+- Twitter: <http://www.twitter.com/dolibarr_france>
 
-Google+: <https://plus.google.com/+DolibarrFrance>
+ou sur les réseaux anglophones
 
-Twitter: <http://www.twitter.com/dolibarr_france>
+- [Facebook](https://www.facebook.com/dolibarr)
+- [Google+](https://plus.google.com/+DolibarrOrg)
+- [Twitter](http://www.twitter.com/dolibarr)
+- [LinkedIn](https://www.linkedin.com/company/association-dolibarr)
+- [YouTube](https://www.youtube.com/user/DolibarrERPCRM)
+- [GitHub](https://github.com/Dolibarr/dolibarr)

@@ -194,7 +194,7 @@ class Mailing extends CommonObject
 		$sql.= ", m.date_envoi";
 		$sql.= ", m.extraparams";
 		$sql.= " FROM ".MAIN_DB_PREFIX."mailing as m";
-		$sql.= " WHERE m.rowid = ".$rowid;
+		$sql.= " WHERE m.rowid = ".(int) $rowid;
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$result=$this->db->query($sql);

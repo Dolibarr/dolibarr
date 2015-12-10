@@ -398,7 +398,7 @@ else
                 print '<table class="noborder" width="100%">'."\n";
                 print '<tr class="liste_titre"><td class="liste_titre" width="25%">'.$langs->trans("NonAffectedUsers").'</td>'."\n";
                 print '<td>';
-                print $form->select_dolusers('','user',1,$exclude,0,'','',$object->entity);
+                print $form->select_dolusers('', 'user', 1, $exclude, 0, '', '', $object->entity, 0, 0, '', 0, '', 'maxwidth300');
                 print ' &nbsp; ';
                 // Multicompany
                 if (! empty($conf->multicompany->enabled) && is_object($mc))

@@ -226,12 +226,13 @@ $formother = new FormOther($db);
 
 if ($id > 0)
 {
-	$head = user_prepare_head($fuser);
-
 	$title = $langs->trans("User");
+	$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
+	$head = user_prepare_head($fuser);
+	
 	dol_fiche_head($head, 'paidholidays', $title, 0, 'user');
 
-    dol_banner_tab($fuser,'id','',$user->rights->user->user->lire || $user->admin);
+    dol_banner_tab($fuser,'id',$linkback,$user->rights->user->user->lire || $user->admin);
     
     
     print '<div class="underbanner clearboth"></div>';
@@ -274,7 +275,7 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 if ($sall)
 {
     foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-    print $langs->trans("FilterOnInto", $sall, join(', ',$fieldstosearchall));
+    print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
 }
     
 print '<table class="noborder" width="100%;">';
@@ -418,7 +419,7 @@ if (! empty($holiday->holiday))
 if($holiday_payes == '2')
 {
     print '<tr>';
-    print '<td colspan="9" '.$bc[false].'">'.$langs->trans('None').'</td>';
+    print '<td colspan="10" '.$bc[false].'">'.$langs->trans('None').'</td>';
     print '</tr>';
 }
 

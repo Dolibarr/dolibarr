@@ -112,9 +112,10 @@ class MenuManager
      *  Show menu
      *
      *	@param	string	$mode			'top', 'left', 'jmobile'
-     *  @return string
+     *  @param	array	$moredata		An array with more data to output
+     *  @return int                     0 or nb of top menu entries if $mode = 'topnb'
      */
-    function showmenu($mode)
+    function showmenu($mode, $moredata=null)
     {
     	global $conf, $langs, $user;
 
@@ -122,8 +123,8 @@ class MenuManager
 
         if ($this->type_user == 1)
         {
-        	$conf->global->MAIN_SEARCHFORM_SOCIETE=0;
-        	$conf->global->MAIN_SEARCHFORM_CONTACT=0;
+        	$conf->global->MAIN_SEARCHFORM_SOCIETE_DISABLED=0;
+        	$conf->global->MAIN_SEARCHFORM_CONTACT_DISABLED=1;
         }
 
 		require_once DOL_DOCUMENT_ROOT.'/core/class/menu.class.php';
@@ -132,7 +133,7 @@ class MenuManager
         if (empty($conf->global->MAIN_MENU_INVERT))
         {
         	if ($mode == 'top')  print_eldy_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,0);
-        	if ($mode == 'left') print_left_eldy_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu,$this->menu,0);
+        	if ($mode == 'left') print_left_eldy_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu,$this->menu,0,'','',$moredata);
         }
         else
 		{
@@ -141,6 +142,12 @@ class MenuManager
         	if ($mode == 'left') print_eldy_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,0);
 		}
 
+		if ($mode == 'topnb')
+		{
+		    print_eldy_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,1);
+		    return $this->menu->getNbOfVisibleMenuEntries();
+		}
+		    
         if ($mode == 'jmobile')
         {
             print_eldy_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,1);
@@ -237,6 +244,7 @@ class MenuManager
         unset($this->menu);
 
         //print 'xx'.$mode;
+        return 0;
     }
 
 }

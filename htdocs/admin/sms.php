@@ -88,7 +88,7 @@ if ($action == 'send' && ! $_POST['cancel'])
 
 	if (! empty($formsms->error))
 	{
-		setEventMessage($formsms->error,'errors');
+		setEventMessages($formsms->error, $formsms->errors, 'errors');
 	    $action='test';
 	    $error++;
 	}
@@ -123,11 +123,11 @@ if ($action == 'send' && ! $_POST['cancel'])
 
 		if ($result)
 		{
-			setEventMessage($langs->trans("SmsSuccessfulySent",$smsfrom,$sendto));
+			setEventMessages($langs->trans("SmsSuccessfulySent",$smsfrom,$sendto), null, 'mesgs');
 		}
 		else
 		{
-			setEventMessage($langs->trans("ResultKo"),'errors');
+			setEventMessages($langs->trans("ResultKo"), null, 'errors');
 		}
 
 		$action='';

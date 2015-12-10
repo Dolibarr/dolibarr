@@ -125,7 +125,7 @@ print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
 // Define a complementary filter for search of next/prev ref.
 if (! $user->rights->projet->all->lire)
 {
-    $projectsListId = $object->getProjectsAuthorizedForUser($user,$mine,0);
+    $projectsListId = $object->getProjectsAuthorizedForUser($user,0,0);
     $object->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
 }
 print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
@@ -510,24 +510,27 @@ foreach ($listofreferent as $key => $value)
 		$idtofilterthirdparty=0;
 		if (! in_array($tablename, array('facture_fourn', 'commande_fourn'))) $idtofilterthirdparty=$object->thirdparty->id;
 
-		$selectList=$formproject->select_element($tablename, $idtofilterthirdparty, 'minwidth200');
-		if (! $selectList || ($selectList<0))
-		{
-			setEventMessages($formproject->error,$formproject->errors,'errors');
-		}
-		elseif($selectList)
-		{
-			// Define form with the combo list of elements to link
-			$addform.='<form action="'.$_SERVER["PHP_SELF"].'?id='.$projectid.'" method="post">';
-			$addform.='<input type="hidden" name="tablename" value="'.$tablename.'">';
-			$addform.='<input type="hidden" name="action" value="addelement">';
-			$addform.='<input type="hidden" name="datesrfc" value="'.dol_print_date($dates,'dayhourrfc').'">';
-			$addform.='<input type="hidden" name="dateerfc" value="'.dol_print_date($datee,'dayhourrfc').'">';
-			$addform.='<table><tr><td>'.$langs->trans("SelectElement").'</td>';
-			$addform.='<td>'.$selectList.'</td>';
-			$addform.='<td><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("AddElement")).'"></td>';
-			$addform.='</tr></table>';
-			$addform.='</form>';
+       	if (empty($conf->global->PROJECT_LINK_DISABLE)) 
+       	{
+			$selectList=$formproject->select_element($tablename, $idtofilterthirdparty, 'minwidth300');
+			if (! $selectList || ($selectList<0))
+			{
+				setEventMessages($formproject->error,$formproject->errors,'errors');
+			}
+			elseif($selectList)
+			{
+				// Define form with the combo list of elements to link
+				$addform.='<form action="'.$_SERVER["PHP_SELF"].'?id='.$projectid.'" method="post">';
+				$addform.='<input type="hidden" name="tablename" value="'.$tablename.'">';
+				$addform.='<input type="hidden" name="action" value="addelement">';
+				$addform.='<input type="hidden" name="datesrfc" value="'.dol_print_date($dates,'dayhourrfc').'">';
+				$addform.='<input type="hidden" name="dateerfc" value="'.dol_print_date($datee,'dayhourrfc').'">';
+				$addform.='<table><tr><td>'.$langs->trans("SelectElement").'</td>';
+				$addform.='<td>'.$selectList.'</td>';
+				$addform.='<td><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("AddElement")).'"></td>';
+				$addform.='</tr></table>';
+				$addform.='</form>';
+			}
 		}
 
 		print load_fiche_titre($langs->trans($title), $addform, '');

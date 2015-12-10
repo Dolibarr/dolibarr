@@ -101,12 +101,12 @@ if ($action == 'update' && $user->rights->categorie->creer)
 		}
 		else
 		{
-			setEventMessage($categorie->error, 'errors');
+			setEventMessages($categorie->error, $categorie->errors, 'errors');
 		}
 	}
 	else
 	{
-		setEventMessage($categorie->error, 'errors');
+		setEventMessages($categorie->error, $categorie->errors, 'errors');
 	}
 }
 

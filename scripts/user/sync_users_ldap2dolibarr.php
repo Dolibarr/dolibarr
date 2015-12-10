@@ -106,7 +106,8 @@ print "port=".$conf->global->LDAP_SERVER_PORT."\n";
 print "login=".$conf->global->LDAP_ADMIN_DN."\n";
 print "pass=".preg_replace('/./i','*',$conf->global->LDAP_ADMIN_PASS)."\n";
 print "DN to extract=".$conf->global->LDAP_USER_DN."\n";
-print 'Filter=('.$conf->global->LDAP_KEY_USERS.'=*)'."\n";
+if (! empty($conf->global->LDAP_FILTER_CONNECTION)) print 'Filter=('.$conf->global->LDAP_FILTER_CONNECTION.')'."\n";	// Note: filter is defined into function getRecords
+else print 'Filter=('.$conf->global->LDAP_KEY_USERS.'=*)'."\n";
 print "----- To Dolibarr database:\n";
 print "type=".$conf->db->type."\n";
 print "host=".$conf->db->host."\n";
@@ -177,7 +178,7 @@ if ($result >= 0)
 	// We disable synchro Dolibarr-LDAP
 	$conf->global->LDAP_SYNCHRO_ACTIVE=0;
 
-	$ldaprecords = $ldap->getRecords('*',$conf->global->LDAP_USER_DN, $conf->global->LDAP_KEY_USERS, $required_fields, 0);
+	$ldaprecords = $ldap->getRecords('*',$conf->global->LDAP_USER_DN, $conf->global->LDAP_KEY_USERS, $required_fields, 'user');	// Fiter on 'user' filter param
 	if (is_array($ldaprecords))
 	{
 		$db->begin();

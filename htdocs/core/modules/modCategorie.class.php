@@ -259,6 +259,45 @@ class modCategorie extends DolibarrModules
 			's.url'=>"company",
 			's.email'=>"company"
 		); // We define here only fields that use another picto
+		
+        // Add extra fields
+        $sql="SELECT name, label, type, param FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'socpeople'";
+        $resql=$this->db->query($sql);
+        if ($resql)    // This can fail when class is used on old database (during migration for example)
+        {
+        	while ($obj=$this->db->fetch_object($resql))
+        	{
+        		$fieldname='extra.'.$obj->name;
+        		$fieldlabel=ucfirst($obj->label);
+        		$typeFilter="Text";
+        		switch($obj->type)
+        		{
+        			case 'int':
+        			case 'double':
+        			case 'price':
+        				$typeFilter="Numeric";
+        				break;
+        			case 'date':
+        			case 'datetime':
+        				$typeFilter="Date";
+        				break;
+        			case 'boolean':
+        				$typeFilter="Boolean";
+        				break;
+        			case 'sellist':
+        				$typeFilter="List:".$obj->param;
+        				break;
+					case 'select':
+						$typeFilter="Select:".$obj->param;
+						break;
+        		}
+        		$this->export_fields_array[$r][$fieldname]=$fieldlabel;
+        		$this->export_TypeFields_array[$r][$fieldname]=$typeFilter;
+        		$this->export_entities_array[$r][$fieldname]='contact';
+        	}
+        }
+        // End add axtra fields
+        
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM ' . MAIN_DB_PREFIX . 'categorie as u, '.MAIN_DB_PREFIX . 'categorie_contact as cp, '.MAIN_DB_PREFIX . 'socpeople as p';
 		$this->export_sql_end[$r] .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'c_country as country ON p.fk_pays = country.rowid';

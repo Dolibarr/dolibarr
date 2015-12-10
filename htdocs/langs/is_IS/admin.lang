@@ -1193,13 +1193,13 @@ UseOptionLineIfNoQuantity=A lína af vöru / þjónustu með núll upphæð er t
 FreeLegalTextOnProposal=Frjáls texti um viðskiptabanka tillögur
 WatermarkOnDraftProposal=Watermark on draft commercial proposals (none if empty)
 BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL=Ask for bank account destination of proposal
-##### AskPriceSupplier #####
-AskPriceSupplierSetup=Price requests suppliers module setup
-AskPriceSupplierNumberingModules=Price requests suppliers numbering models
-AskPriceSupplierPDFModules=Price requests suppliers documents models
-FreeLegalTextOnAskPriceSupplier=Free text on price requests suppliers
-WatermarkOnDraftAskPriceSupplier=Watermark on draft price requests suppliers (none if empty)
-BANK_ASK_PAYMENT_BANK_DURING_ASKPRICESUPPLIER=Ask for bank account destination of price request
+##### SupplierProposal #####
+SupplierProposalSetup=Price requests suppliers module setup
+SupplierProposalNumberingModules=Price requests suppliers numbering models
+SupplierProposalPDFModules=Price requests suppliers documents models
+FreeLegalTextOnSupplierProposal=Free text on price requests suppliers
+WatermarkOnDraftSupplierProposal=Watermark on draft price requests suppliers (none if empty)
+BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL=Ask for bank account destination of price request
 ##### Orders #####
 OrdersSetup=Stjórn Order's skipulag
 OrdersNumberingModules=Pantanir tala mát

@@ -256,8 +256,9 @@ else
  * Ecran ajout/suppression permission
  */
 
+$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
 
-dol_banner_tab($object,'id','',$user->rights->user->user->lire || $user->admin);
+dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
 
 
 print '<div class="underbanner clearboth"></div>';
@@ -330,9 +331,9 @@ if ($result)
         		print '<td class="nowrap">'.img_object('',$picto).' '.$objMod->getName();
         		print '<a name="'.$objMod->getName().'">&nbsp;</a></td>';
         		print '<td align="center" class="nowrap">';
-        		print '<a title="'.dol_escape_htmltag($langs->trans("All")).'" alt="'.dol_escape_htmltag($langs->trans("All")).'" href="perms.php?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;module='.$obj->module.'#'.$objMod->getName().'">'.$langs->trans("All")."</a>";
+        		print '<a class="reposition" title="'.dol_escape_htmltag($langs->trans("All")).'" alt="'.dol_escape_htmltag($langs->trans("All")).'" href="perms.php?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;module='.$obj->module.'">'.$langs->trans("All")."</a>";
         		print '/';
-        		print '<a title="'.dol_escape_htmltag($langs->trans("None")).'" alt="'.dol_escape_htmltag($langs->trans("None")).'" href="perms.php?id='.$object->id.'&amp;action=delrights&amp;entity='.$entity.'&amp;module='.$obj->module.'#'.$objMod->getName().'">'.$langs->trans("None")."</a>";
+        		print '<a class="reposition" title="'.dol_escape_htmltag($langs->trans("None")).'" alt="'.dol_escape_htmltag($langs->trans("None")).'" href="perms.php?id='.$object->id.'&amp;action=delrights&amp;entity='.$entity.'&amp;module='.$obj->module.'">'.$langs->trans("None")."</a>";
         		print '</td>';
         		print '<td colspan="2">&nbsp;</td>';
         		print '</tr>'."\n";
@@ -359,7 +360,7 @@ if ($result)
         {
         	if ($caneditperms)
         	{
-        		print '<td align="center"><a href="perms.php?id='.$object->id.'&amp;action=delrights&amp;rights='.$obj->id.'#'.$objMod->getName().'">'.img_edit_remove($langs->trans("Remove")).'</a></td>';
+        		print '<td align="center"><a class="reposition" href="perms.php?id='.$object->id.'&amp;action=delrights&amp;rights='.$obj->id.'">'.img_edit_remove($langs->trans("Remove")).'</a></td>';
         	}
         	print '<td align="center" class="nowrap">';
         	print img_picto($langs->trans("Active"),'tick');
@@ -385,7 +386,7 @@ if ($result)
 	        	// Do not own permission
 	        	if ($caneditperms)
 	        	{
-	        		print '<td align="center"><a href="perms.php?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;rights='.$obj->id.'#'.$objMod->getName().'">'.img_edit_add($langs->trans("Add")).'</a></td>';
+	        		print '<td align="center"><a class="reposition" href="perms.php?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;rights='.$obj->id.'">'.img_edit_add($langs->trans("Add")).'</a></td>';
 	        	}
 	        	print '<td>&nbsp</td>';
 	        }
@@ -395,7 +396,7 @@ if ($result)
         	// Do not own permission
         	if ($caneditperms)
         	{
-        		print '<td align="center"><a href="perms.php?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;rights='.$obj->id.'#'.$objMod->getName().'">'.img_edit_add($langs->trans("Add")).'</a></td>';
+        		print '<td align="center"><a class="reposition" href="perms.php?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;rights='.$obj->id.'">'.img_edit_add($langs->trans("Add")).'</a></td>';
         	}
         	print '<td>&nbsp</td>';
         }

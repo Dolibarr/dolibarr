@@ -54,11 +54,11 @@ if ($action == 'updateMask')
 
     if (! $error)
     {
-        setEventMessage($langs->trans("SetupSaved"));
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
     else
     {
-        setEventMessage($langs->trans("Error"),'errors');
+        setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
 
@@ -130,7 +130,7 @@ foreach ($dirmodels as $reldir)
                     $classname = preg_replace('/\-.*$/','',$classname);
                     if (! class_exists($classname) && is_readable($dir.$filebis) && (preg_match('/mod_/',$filebis) || preg_match('/mod_/',$classname)) && substr($filebis, dol_strlen($filebis)-3, 3) == 'php')
                     {
-                        // Chargement de la classe de numerotation
+                        // Charging the numbering class
                         require_once $dir.$filebis;
 
                         $module = new $classname($db);

@@ -62,7 +62,8 @@ if ($action == 'remove')
  * View
  */
 
-llxHeader('',$langs->trans("DefaultRights"));
+$wikihelp='EN:Setup_Security|FR:Paramétrage_Sécurité|ES:Configuración_Seguridad';
+llxHeader('',$langs->trans("DefaultRights"), $wikihelp);
 
 print load_fiche_titre($langs->trans("SecuritySetup"),'','title_setup');
 

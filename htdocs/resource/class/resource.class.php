@@ -22,7 +22,6 @@
 
  */
 
-// Put here all includes required by your class file
 require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php";
 
@@ -79,7 +78,7 @@ class Resource extends CommonObject
     	// Insert request
     	$sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."(";
 
-    	$sql.= " entity,";
+    	$sql.= "entity,";
     	$sql.= "ref,";
     	$sql.= "description,";
     	$sql.= "fk_code_type_resource,";
@@ -396,7 +395,13 @@ class Resource extends CommonObject
     	}
     	$sql.= " GROUP BY t.rowid";
     	$sql.= $this->db->order($sortfield,$sortorder);
-    	if ($limit) $sql.= $this->db->plimit($limit+1,$offset);
+        $this->num_all = 0;
+        if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+        {
+            $result = $this->db->query($sql);
+            $this->num_all = $this->db->num_rows($result);
+        }
+    	if ($limit) $sql.= $this->db->plimit($limit, $offset);
     	dol_syslog(get_class($this)."::fetch_all", LOG_DEBUG);
 
     	$resql=$this->db->query($sql);

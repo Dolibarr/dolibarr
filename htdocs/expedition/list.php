@@ -61,6 +61,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
     $search_ref_exp='';
     $search_ref_liv='';
     $search_company='';
+    $viewstatut='';
 }
 
 /*
@@ -159,7 +160,9 @@ if ($resql)
 		print '<td class="liste_titre">&nbsp;</td>';
 	}
 	// Status
-	print '<td></td>';
+	print '<td align="right">';
+	print $form->selectarray('viewstatut', array('0'=>$langs->trans('StatusSendingDraftShort'),'1'=>$langs->trans('StatusSendingValidatedShort'),'2'=>$langs->trans('StatusSendingProcessedShort')),$viewstatut,1);
+	print '</td>';
 	// Search
 	print '<td class="liste_titre" align="right">';
 	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';

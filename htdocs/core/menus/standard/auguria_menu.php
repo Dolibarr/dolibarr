@@ -157,10 +157,11 @@ class MenuManager
     /**
      *  Show menu
      *
-     *	@param	string	$mode		'top', 'left', 'jmobile'
-     *  @return	string
+     *	@param	string	$mode		    'top', 'left', 'jmobile'
+     *  @param	array	$moredata		An array with more data to output
+     *  @return int                     0 or nb of top menu entries if $mode = 'topnb'
 	 */
-	function showmenu($mode)
+	function showmenu($mode, $moredata=null)
 	{
     	global $conf, $langs, $user;
 
@@ -168,15 +169,22 @@ class MenuManager
 
         if ($this->type_user == 1)
         {
-        	$conf->global->MAIN_SEARCHFORM_SOCIETE=0;
-	        $conf->global->MAIN_SEARCHFORM_CONTACT=0;
+        	$conf->global->MAIN_SEARCHFORM_SOCIETE_DISABLED=1;
+	        $conf->global->MAIN_SEARCHFORM_CONTACT_DISABLED=1;
         }
 
 		require_once DOL_DOCUMENT_ROOT.'/core/class/menu.class.php';
         $this->menu=new Menu();
 
         if ($mode == 'top')  print_auguria_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,0);
-        if ($mode == 'left') print_left_auguria_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu,$this->menu,0);
+        if ($mode == 'left') print_left_auguria_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu,$this->menu,0,'','',$moredata);
+		
+		if ($mode == 'topnb')
+		{
+		    print_auguria_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,1);
+		    return $this->menu->getNbOfVisibleMenuEntries();
+		}
+		    
         if ($mode == 'jmobile')
         {
         	print_auguria_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,1);
