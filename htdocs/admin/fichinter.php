@@ -576,6 +576,5 @@ print '</table>';
 
 print '<br>';
 
-$db->close();
-
 llxFooter();
+$db->close();
