@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit
 	backupGlobals="false"
-	strict="true"
 	colors="false"
-	verbose="false"
+	verbose="true"
+	stopOnFailure="true"
+	stopOnIncomplete="false"
 	bootstrap="bootstrap.php"
 	convertErrorsToExceptions="true"
 	convertNoticesToExceptions="true"
 	convertWarningsToExceptions="true"
-	mapTestClassNameToCoveredClassName="true"
-	timeoutForSmallTests="2">
+	mapTestClassNameToCoveredClassName="true">
 
 	<php>
 		<ini name="error_reporting" value="-1"/>
@@ -17,9 +17,11 @@
 	</php>
 
   <testsuite name="All Mobile Detect tests">
-    <directory suffix="Test.php">./</directory>
+ 	<directory suffix="Test.php">./</directory>
   </testsuite>
 
-
+	<listeners>
+	    <listener class="JohnKary\PHPUnit\Listener\SpeedTrapListener" />
+	</listeners>
 
 </phpunit>
