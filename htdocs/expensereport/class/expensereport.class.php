@@ -1590,7 +1590,7 @@ class ExpenseReportLine
      *
      * @param DoliDB    $db     Handlet database
      */
-    function ExpenseReportLine($db)
+    function __construct($db)
     {
         $this->db= $db;
     }
