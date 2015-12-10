@@ -59,12 +59,12 @@ if ($action == 'update')
     if ($i >= 2)
     {
         $db->commit();
-	    setEventMessage($langs->trans("SetupSaved"));
+	    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
     else
     {
         $db->rollback();
-	    setEventMessage($db->lasterror(), 'errors');
+	    setEventMessages($db->lasterror(), null, 'errors');
     }
 }
 

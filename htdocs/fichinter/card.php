@@ -386,7 +386,7 @@ if (empty($reshook))
 
 		$result=$object->update($user);
 		if ($result<0) {
-			setEventMessage($object->error,'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 
@@ -429,8 +429,8 @@ if (empty($reshook))
 		$upload_dir = $conf->ficheinter->dir_output;
 		$file = $upload_dir . '/' . GETPOST('file');
 		$ret=dol_delete_file($file,0,0,0,$object);
-		if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-		else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+		if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
+		else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
 	}
 
 	// Set into a project
@@ -451,7 +451,7 @@ if (empty($reshook))
 	{
 		$result=$object->delete($user);
 		if ($result<0) {
-			setEventMessage($object->error,'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 
 		header('Location: '.DOL_URL_ROOT.'/fichinter/list.php?leftmenu=ficheinter');
@@ -802,7 +802,7 @@ if (empty($reshook))
 				if ($result)
 				{
 					$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));
-					setEventMessage($mesg);
+					setEventMessages($mesg, null, 'mesgs');
 					$error=0;
 
 					// Initialisation donnees
@@ -1216,7 +1216,7 @@ else if ($id > 0 || ! empty($ref))
 			if (empty($numref))
 			{
 				$error++;
-				setEventMessage($object->error, 'errors');
+				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
 		else
