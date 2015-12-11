@@ -25,7 +25,7 @@
 /**
  *	\file		htdocs/accountancy/journal/bankjournal.php
  *	\ingroup	Accounting Expert
- *	\brief		Page with sells journal
+ *	\brief		Page with bank journal
  */
 
 require '../../main.inc.php';
@@ -65,6 +65,8 @@ $date_endmonth = GETPOST('date_endmonth');
 $date_endday = GETPOST('date_endday');
 $date_endyear = GETPOST('date_endyear');
 $action = GETPOST('action');
+
+$now = dol_now();
 
 // Security check
 if ($user->societe_id > 0 && empty($id_bank_account))
@@ -121,7 +123,7 @@ $bank_code_journal = new Account($db);
 $result=$bank_code_journal->fetch($id_bank_account);
 $journal=$bank_code_journal->accountancy_journal;
 
-dol_syslog("accountancy/journal/bankjournal.php:: sql=" . $sql, LOG_DEBUG);
+dol_syslog("accountancy/journal/bankjournal.php", LOG_DEBUG);
 $result = $db->query($sql);
 if ($result) {
 
@@ -280,6 +282,8 @@ if ($result) {
 // Write bookkeeping
 if ($action == 'writebookkeeping')
 {
+	$now=dol_now();
+	
 	$error = 0;
 	foreach ( $tabpay as $key => $val )
 	{
@@ -301,6 +305,7 @@ if ($action == 'writebookkeeping')
 			$bookkeeping->credit = ($mt < 0 ? - $mt : 0);
 			$bookkeeping->code_journal = $journal;
 			$bookkeeping->fk_user_author = $user->id;
+			$bookkeeping->date_create=$now;
 
 			if ($tabtype[$key] == 'payment') {
 
@@ -317,7 +322,7 @@ if ($action == 'writebookkeeping')
 				}
 			} else if ($tabtype[$key] == 'payment_supplier') {
 
-				$sqlmid = 'SELECT facf.facnumber';
+				$sqlmid = 'SELECT facf.ref_supplier,facf.ref';
 				$sqlmid .= " FROM " . MAIN_DB_PREFIX . "facture_fourn facf ";
 				$sqlmid .= " INNER JOIN " . MAIN_DB_PREFIX . "paiementfourn_facturefourn as payfacf ON  payfacf.fk_facturefourn=facf.rowid";
 				$sqlmid .= " INNER JOIN " . MAIN_DB_PREFIX . "paiementfourn as payf ON  payfacf.fk_paiementfourn=payf.rowid";
@@ -326,14 +331,14 @@ if ($action == 'writebookkeeping')
 				$resultmid = $db->query($sqlmid);
 				if ($resultmid) {
 					$objmid = $db->fetch_object($resultmid);
-					$bookkeeping->doc_ref = $objmid->facnumber;
+					$bookkeeping->doc_ref = $objmid->ref_supplier.' ('.$objmid->ref.')';;
 				}
 			}
 
 			$result = $bookkeeping->create();
 			if ($result < 0) {
 				$error ++;
-				setEventMessage($object->errors, 'errors');
+				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
 		// Third party
@@ -352,6 +357,7 @@ if ($action == 'writebookkeeping')
 			$bookkeeping->credit = ($mt >= 0) ? $mt : 0;
 			$bookkeeping->code_journal = $journal;
 			$bookkeeping->fk_user_author = $user->id;
+			$bookkeeping->date_create=$now;
 
 			if ($tabtype[$key] == 'sc') {
 				$bookkeeping->code_tiers = '';
@@ -373,7 +379,7 @@ if ($action == 'writebookkeeping')
 				$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER;
 			} else if ($tabtype[$key] == 'payment_supplier') {
 
-				$sqlmid = 'SELECT facf.facnumber';
+				$sqlmid = 'SELECT facf.ref_supplier,facf.ref';
 				$sqlmid .= " FROM " . MAIN_DB_PREFIX . "facture_fourn facf ";
 				$sqlmid .= " INNER JOIN " . MAIN_DB_PREFIX . "paiementfourn_facturefourn as payfacf ON  payfacf.fk_facturefourn=facf.rowid";
 				$sqlmid .= " INNER JOIN " . MAIN_DB_PREFIX . "paiementfourn as payf ON  payfacf.fk_paiementfourn=payf.rowid";
@@ -382,7 +388,7 @@ if ($action == 'writebookkeeping')
 				$resultmid = $db->query($sqlmid);
 				if ($resultmid) {
 					$objmid = $db->fetch_object($resultmid);
-					$bookkeeping->doc_ref = $objmid->facnumber;
+					$bookkeeping->doc_ref = $objmid->ref_supplier.' ('.$objmid->ref.')';
 				}
 				$bookkeeping->code_tiers = $k;
 				$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER;
@@ -410,17 +416,18 @@ if ($action == 'writebookkeeping')
 			$result = $bookkeeping->create();
 			if ($result < 0) {
 				$error ++;
-				setEventMessage($object->errors, 'errors');
+				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
 	}
 
 	if (empty($error)) {
-		setEventMessage($langs->trans("GeneralLedgerIsWritten"),'mesgs');
+		setEventMessages($langs->trans("GeneralLedgerIsWritten"), null, 'mesgs');
 	}
 }
 // Export
-if ($action == 'export_csv') {
+if ($action == 'export_csv')
+{
 	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
 
 	header('Content-Type: text/csv');
@@ -497,7 +504,8 @@ if ($action == 'export_csv') {
 				}
 			}
 		}
-	} else { 	// Model Classic Export
+	} else 	// Model Classic Export
+	{
 		foreach ( $tabpay as $key => $val ) {
 			$date = dol_print_date($db->jdate($val["date"]), 'day');
 
