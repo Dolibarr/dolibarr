@@ -148,7 +148,7 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 				{
 					dol_syslog('No dispatch for line '.$key.' as no warehouse choosed');
 					$text = $langs->transnoentities('Warehouse').', '.$langs->transnoentities('Line').' ' .($numline);
-					setEventMessage($langs->trans('ErrorFieldRequired',$text), 'errors');
+					setEventMessages($langs->trans('ErrorFieldRequired',$text), null, 'errors');
 					$error++;
 				}
 
@@ -187,7 +187,7 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 				{
 					dol_syslog('No dispatch for line '.$key.' as no warehouse choosed');
 					$text = $langs->transnoentities('Warehouse').', '.$langs->transnoentities('Line').' ' .($numline).'-'.($reg[1]+1);
-					setEventMessage($langs->trans('ErrorFieldRequired',$text), 'errors');
+					setEventMessages($langs->trans('ErrorFieldRequired',$text), null, 'errors');
 					$error++;
 				}
 
@@ -195,7 +195,7 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 				{
 					dol_syslog('No dispatch for line '.$key.' as serial/eat-by/sellby date are not set');
 					$text = $langs->transnoentities('atleast1batchfield').', '.$langs->transnoentities('Line').' ' .($numline).'-'.($reg[1]+1);
-					setEventMessage($langs->trans('ErrorFieldRequired',$text), 'errors');
+					setEventMessages($langs->trans('ErrorFieldRequired',$text), null, 'errors');
 					$error++;
 				}
 

@@ -1,3 +1,24 @@
+6.2.12 (2015-09-12)
+	- fix composer package name to tecnickcom/tcpdf
+
+6.2.11 (2015-08-02)
+	- Bug #1070 "PNG regression in 6.2.9 (they appear as their alpha channel)" was fixed.
+	- Bug #1069 "Encoded SRC URLs in <img> tags don't work anymore" was fixed.
+
+6.2.10 (2015-07-28)
+	- Minor mod to PNG parsing.
+	- Make dependency on mcrypt optional.
+
+6.2.8 (2015-04-29)
+	- Removed unwanted file.
+
+6.2.7 (2015-04-28)
+	- Merged PR 17: Avoid warning when iterating a non-array variable.
+	- Merged PR 16: Improve MuliCell param definition.
+	- Improved column check (PR 15).
+	- Merged PR 11: Use stream_is_local instead of limit to file://.
+	- Merged PR 10: ImageMagick link on README.txt.
+
 6.2.6 (2015-01-28)
 	- Bug #1008 "UTC offset sing breaks PDF/A-1b compliance" was fixed.
 
