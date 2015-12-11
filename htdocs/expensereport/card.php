@@ -1198,9 +1198,8 @@ else
 					print $langs->trans('NotUserRightToView');
 					print '</div>';
 
-					$db->close();
-
 					llxFooter();
+					$db->close();
 
 					exit;
 				}

@@ -307,7 +307,5 @@ if ($_GET["action"] == 'create')
 	print "</form>\n";
 }
 
-
-$db->close();
-
 llxFooter();
+$db->close();
