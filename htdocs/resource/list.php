@@ -83,8 +83,6 @@ $form=new Form($db);
 $pagetitle=$langs->trans('ResourcePageIndex');
 llxHeader('',$pagetitle,'');
 
-print load_fiche_titre($pagetitle,'','title_generic');
-
 // Confirmation suppression resource line
 if ($action == 'delete_resource')
 {
