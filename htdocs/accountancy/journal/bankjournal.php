@@ -709,7 +709,6 @@ else
 
 	print "</table>";
 
-	// End of page
-	llxFooter();
 }
+llxFooter();
 $db->close();
