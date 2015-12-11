@@ -113,7 +113,7 @@ if ($action == 'add')
 	}
 	else
 	{
-		setEventMessage($object->error, 'errors');
+		setEventMessages($object->error, $object->errors, 'errors');
 		$db->rollback();
 
 		$_GET["commande_id"]=$_POST["commande_id"];
@@ -216,8 +216,8 @@ elseif ($action == 'remove_file')
 	$upload_dir =	$conf->expedition->dir_output . "/receipt";
 	$file =	$upload_dir	. '/' .	GETPOST('file');
 	$ret=dol_delete_file($file,0,0,0,$object);
-	if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-	else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+	if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
+	else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
 }
 
 

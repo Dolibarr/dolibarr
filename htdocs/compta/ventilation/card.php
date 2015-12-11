@@ -160,6 +160,5 @@ else
     print "Error ID incorrect";
 }
 
-$db->close();
-
 llxFooter();
+$db->close();

@@ -218,7 +218,5 @@ print '</table>';
 
 print '</div>';
 
-
-$db->close();
-
 llxFooter();
+$db->close();

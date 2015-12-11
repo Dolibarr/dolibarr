@@ -707,6 +707,5 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 }
 print '</table>';
 
-$db->close();
-
 llxFooter();
+$db->close();

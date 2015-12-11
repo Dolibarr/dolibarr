@@ -247,9 +247,5 @@ else
 	dol_print_error($db);
 }
 
-
-
-
-$db->close();
-
 llxFooter();
+$db->close();
