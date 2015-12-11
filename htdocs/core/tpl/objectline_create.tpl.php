@@ -518,7 +518,7 @@ jQuery(document).ready(function() {
 			/* focus work on a standard textarea but not if field was replaced with CKEDITOR */
 			jQuery('#dp_desc').focus();
 			/* focus if CKEDITOR */
-			if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined" && CKEDITOR.instances[key] != "undefined")
+			if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined")
 			{
 				var editor = CKEDITOR.instances['dp_desc'];
    				if (editor) { editor.focus(); }
@@ -624,7 +624,7 @@ jQuery(document).ready(function() {
 			/* focus work on a standard textarea but not if field was replaced with CKEDITOR */
 			jQuery('#dp_desc').focus();
 			/* focus if CKEDITOR */
-			if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined" && CKEDITOR.instances[key] != "undefined")
+			if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined")
 			{
 				var editor = CKEDITOR.instances['dp_desc'];
    				if (editor) { editor.focus(); }
