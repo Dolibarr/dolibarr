@@ -353,7 +353,5 @@ if ($_POST["action"] == "search" && ! $num)
 	print $langs->trans("NoRecordFound");
 }
 
-
-$db->close();
-
 llxFooter();
+$db->close();

@@ -118,6 +118,5 @@ if ($resql)
     print "</table>";
 }
 
-$db->close();
-
 llxFooter();
+$db->close();
