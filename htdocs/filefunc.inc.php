@@ -80,6 +80,12 @@ if (! empty($_GET['conf']))
 	$conffile = 'conf/'.$confname.'.php';
 }
 */
+if (!empty($_GET['conf'])) {
+    setcookie('dolconf', $_GET['conf']);
+    $conffile = 'conf/' . $_GET['conf'] . '.php';
+} else {
+    $conffile = 'conf/' . (!empty($_COOKIE['dolconf']) ? $_COOKIE['dolconf'] : 'conf') . '.php';
+}
 
 // Include configuration
 $result=@include_once $conffile;	// Keep @ because with some error reporting this break the redirect
