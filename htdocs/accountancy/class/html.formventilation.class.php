@@ -70,7 +70,7 @@ class FormVentilation extends Form
 					$selected = ' selected ';
 				}
 
-				$out .= '<OPTION value="' . $obj->import_key . '"' . $selected . '>' . $obj->import_key . '</OPTION>';
+				$out .= '<OPTION value="' . $obj->import_key . '"' . $selected . '>' . dol_print_date($obj->import_key,'dayhourtext') . '</OPTION>';
 
 				$i ++;
 			}
