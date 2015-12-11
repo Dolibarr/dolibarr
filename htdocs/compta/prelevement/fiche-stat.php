@@ -159,6 +159,5 @@ if ($prev_id)
 	}
 }
 
-$db->close();
-
 llxFooter();
+$db->close();

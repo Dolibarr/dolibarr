@@ -375,7 +375,7 @@ if ($object->id > 0)
 			$orders2invoice = $db->num_rows($resql2);
 			$db->free($resql2);
 		} else {
-			setEventMessage($db->lasterror(),'errors');
+			setEventMessages($db->lasterror(), null, 'errors');
 		}
 
 		// TODO move to DAO class

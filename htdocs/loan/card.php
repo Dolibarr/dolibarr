@@ -54,11 +54,11 @@ if ($action == 'confirm_paid' && $confirm == 'yes')
 	$result = $object->set_paid($user);
     if ($result > 0)
     {
-        setEventMessage($langs->trans('LoanPaid'));
+        setEventMessages($langs->trans('LoanPaid'), null, 'mesgs');
     }
     else
     {
-        setEventMessage($loan->error, 'errors');
+        setEventMessages($loan->error, null, 'errors');
     }
 }
 
@@ -69,13 +69,13 @@ if ($action == 'confirm_delete' && $confirm == 'yes')
 	$result=$object->delete($user);
 	if ($result > 0)
 	{
-		setEventMessage($langs->trans('LoanDeleted'));
+		setEventMessages($langs->trans('LoanDeleted'), null, 'mesgs');
 		header("Location: index.php");
 		exit;
 	}
 	else
 	{
-		setEventMessage($loan->error, 'errors');
+		setEventMessages($loan->error, null, 'errors');
 	}
 }
 
@@ -121,7 +121,7 @@ if ($action == 'add' && $user->rights->loan->write)
 			$id=$object->create($user);
 			if ($id <= 0)
 			{
-				setEventMessage($object->error, 'errors');
+				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
 	}
@@ -157,7 +157,7 @@ else if ($action == 'update' && $user->rights->loan->write)
         }
         else
         {
-	        setEventMessage($object->error, 'errors');
+	        setEventMessages($object->error, $object->errors, 'errors');
         }
     }
     else

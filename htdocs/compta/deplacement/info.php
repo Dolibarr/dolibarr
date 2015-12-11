@@ -58,6 +58,5 @@ if ($id)
     print '</div>';
 }
 
-$db->close();
-
 llxFooter();
+$db->close();
