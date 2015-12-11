@@ -171,3 +171,4 @@ if ($messagetoshow)
 
 
 llxFooter();
+$db->close();

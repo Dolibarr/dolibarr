@@ -621,6 +621,5 @@ if (empty($action))
     }
 }
 
-$db->close();
-
 llxFooter();
+$db->close();

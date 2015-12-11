@@ -256,7 +256,5 @@ if ($socid)
 
 }
 
-
-$db->close();
-
 llxFooter();
+$db->close();
