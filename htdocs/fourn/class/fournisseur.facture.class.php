@@ -1282,7 +1282,7 @@ class FactureFournisseur extends CommonInvoice
             if ($result > 0)
             {
                 $product_type = $product->type;
-                if ($product_type == Product::TYPE_SERVICE && $product->duration_value && $product->duration_unit)
+                if ($product_type == Product::TYPE_SERVICE && $date_start && $date_end && $product->duration_value && $product->duration_unit)
                 {
                     require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
                     $durationqty = calculateDurationQuantity($date_start, $date_end, $product->duration_value, $product->duration_unit);

@@ -429,7 +429,7 @@ class Propal extends CommonObject
 				{
 					$product_type = $product->type;
 
-					if ($product_type == Product::TYPE_SERVICE && $product->duration_value && $product->duration_unit)
+					if ($product_type == Product::TYPE_SERVICE && $date_start && $date_end && $product->duration_value && $product->duration_unit)
 					{
 						require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 						$durationqty = calculateDurationQuantity($date_start, $date_end, $product->duration_value, $product->duration_unit);
@@ -627,7 +627,7 @@ class Propal extends CommonObject
 				$result=$product->fetch($this->line->fk_product);
 				if ($result > 0)
 				{
-					if ($product->type == Product::TYPE_SERVICE && $product->duration_value && $product->duration_unit)
+					if ($product->type == Product::TYPE_SERVICE && $date_start && $date_end && $product->duration_value && $product->duration_unit)
 					{
 						require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 						$durationqty = calculateDurationQuantity($date_start, $date_end, $product->duration_value, $product->duration_unit);
@@ -945,7 +945,7 @@ class Propal extends CommonObject
                         {
                             $error++;
                             $this->error=$this->db->error;
-                            dol_print_error($this->db);
+                            dol_print_error($this->db, "Error addline: ".$result);
                             break;
                         }
                         // Defined the new fk_parent_line

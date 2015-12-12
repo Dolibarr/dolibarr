@@ -1310,7 +1310,7 @@ class CommandeFournisseur extends CommonOrder
                 if ($prod->fetch($fk_product) > 0)
                 {
                     $product_type = $prod->type;
-                    if ($product_type == Product::TYPE_SERVICE && $prod->duration_value && $prod->duration_unit)
+                    if ($product_type == Product::TYPE_SERVICE && $date_start && $date_end && $prod->duration_value && $prod->duration_unit)
                     {
                         require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
                         $durationqty = calculateDurationQuantity($date_start, $date_end, $prod->duration_value, $prod->duration_unit);
@@ -2119,7 +2119,7 @@ class CommandeFournisseur extends CommonOrder
 				$result=$product->fetch($line->fk_product);
 				if ($result > 0)
 				{
-					if ($product->type == Product::TYPE_SERVICE && $product->duration_value && $product->duration_unit)
+					if ($product->type == Product::TYPE_SERVICE && $date_start && $date_end && $product->duration_value && $product->duration_unit)
 					{
 						require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 						$durationqty = calculateDurationQuantity($date_start, $date_end, $product->duration_value, $product->duration_unit);
