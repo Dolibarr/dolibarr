@@ -85,9 +85,11 @@ if ($action == 'add_prod' && ($user->rights->produit->creer || $user->rights->se
 				$error++;
 				$action = 're-edit';
 				if ($object->error == "isFatherOfThis") {
-					setEventMessage($langs->trans("ErrorAssociationIsFatherOfThis"), 'errors');
-				} else {
-					setEventMessage($object->error, 'errors');
+					setEventMessages($langs->trans("ErrorAssociationIsFatherOfThis"), null, 'errors');
+				} 
+				else 
+				{
+					setEventMessages($object->error, $object->errors, 'errors');
 				}
 			}
 		}
@@ -101,7 +103,7 @@ if ($action == 'add_prod' && ($user->rights->produit->creer || $user->rights->se
 			{
 				$error++;
 				$action = 're-edit';
-				setEventMessage($object->error, 'errors');
+				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
 	}
