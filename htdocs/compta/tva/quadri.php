@@ -313,7 +313,5 @@ print '</table>';
 echo '</td></tr>';
 echo '</table>';
 
-
-$db->close();
-
 llxFooter();
+$db->close();

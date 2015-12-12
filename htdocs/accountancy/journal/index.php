@@ -42,5 +42,5 @@ llxHeader('', 'Journaux', '');
 $form = new Form($db);
 
 // End of page
-$db->close();
 llxFooter();
+$db->close();

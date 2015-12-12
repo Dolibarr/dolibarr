@@ -464,43 +464,6 @@ if (! empty($usemargins) && $user->rights->margins->creer)
 		return true;
 	}
 
-
-	/* Function similar to price2num in PHP */
-	function price2numjs(num)
-	{
-		if (num == '') return '';
-
-		<?php
-		$dec=','; $thousand=' ';
-		if ($langs->transnoentitiesnoconv("SeparatorDecimal") != "SeparatorDecimal")  $dec=$langs->transnoentitiesnoconv("SeparatorDecimal");
-		if ($langs->transnoentitiesnoconv("SeparatorThousand")!= "SeparatorThousand") $thousand=$langs->transnoentitiesnoconv("SeparatorThousand");
-		print "var dec='".$dec."'; var thousand='".$thousand."';\n";	// Set var in javascript
-		?>
-
-		var main_max_dec_shown = <?php echo $conf->global->MAIN_MAX_DECIMALS_SHOWN; ?>;
-		var main_rounding_unit = <?php echo $conf->global->MAIN_MAX_DECIMALS_UNIT; ?>;
-		var main_rounding_tot = <?php echo $conf->global->MAIN_MAX_DECIMALS_TOT; ?>;
-
-		var amount = num.toString();
-
-		// rounding for unit price
-		var rounding = main_rounding_unit;
-		var pos = amount.indexOf(dec);
-		var decpart = '';
-		if (pos >= 0) decpart = amount.substr(pos+1).replace('/0+$/i','');	// Supprime les 0 de fin de partie decimale
-		var nbdec = decpart.length;
-		if (nbdec > rounding) rounding = nbdec;
-	    // If rounding higher than max shown
-	    if (rounding > main_max_dec_shown) rounding = main_max_dec_shown;
-
-		if (thousand != ',' && thousand != '.') amount=amount.replace(',','.');
-		amount=amount.replace(' ','');			// To avoid spaces
-		amount=amount.replace(thousand,'');		// Replace of thousand before replace of dec to avoid pb if thousand is .
-		amount=amount.replace(dec,'.');
-
-		return parseFloat(amount).toFixed(rounding);
-	}
-
 <?php
 }
 ?>
@@ -594,7 +557,7 @@ jQuery(document).ready(function() {
 
 	      		/* Define default price at loading */
 	      		var defaultprice = $("#fournprice_predef").find('option:selected').attr("price");
-	      		$("#buying_price").val(Math.round(defaultprice,<?php print ($conf->global->MAIN_MAX_DECIMALS_UNIT ? $conf->global->MAIN_MAX_DECIMALS_UNIT : 5); ?>));
+			    $("#buying_price").val(defaultprice);
 
 	      		$("#fournprice_predef").change(function() {
 		      		console.log("change on fournprice_predef");

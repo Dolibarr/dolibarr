@@ -30,6 +30,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/html.formventilation.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // Langs
 $langs->load("accountancy");
@@ -52,6 +53,7 @@ if ($sortfield == "")
 $offset = $conf->liste_limit * $page;
 
 $formventilation = new FormVentilation($db);
+$formother = new FormOther($db);
 
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
@@ -77,7 +79,20 @@ if ($action == 'delbookkeeping') {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
-} // Export
+}
+elseif ($action == 'delbookkeepingyear') {
+	
+	$delyear = GETPOST('delyear', 'int');
+	
+	if (! empty($delyear)) {
+		$object = new BookKeeping($db);
+		$result = $object->delete_by_year($delyear);
+		Header("Location: list.php");
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
+}// Export
 else if ($action == 'export_csv') {
 	
 	header('Content-Type: text/csv');
@@ -147,11 +162,21 @@ else {
 		
 		print_barre_liste($langs->trans("Bookkeeping"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num);
 		
-		print '<form name="add" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
+		/*print '<form name="add" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
 		print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
 		print '<input type="hidden" name="action" value="delbookkeeping">';
 		
 		print $formventilation->select_bookkeeping_importkey('importkey', GETPOST('importkey'));
+		
+		print '<div class="inline-block divButAction"><input type="submit" class="butAction" value="' . $langs->trans("DelBookKeeping") . '" /></div>';
+		
+		print '</form>';*/
+		
+		print '<form name="add" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
+		print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
+		print '<input type="hidden" name="action" value="delbookkeepingyear">';
+		
+		print $formother->select_year(GETPOST('delyear'),'delyear');
 		
 		print '<div class="inline-block divButAction"><input type="submit" class="butAction" value="' . $langs->trans("DelBookKeeping") . '" /></div>';
 		

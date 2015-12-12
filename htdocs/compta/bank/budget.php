@@ -97,6 +97,5 @@ else
 }
 print "</table>";
 
-$db->close();
-
 llxFooter();
+$db->close();
