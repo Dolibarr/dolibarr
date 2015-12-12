@@ -493,7 +493,7 @@ class FactureFournisseur extends CommonInvoice
     function fetch_lines()
     {
         $sql = 'SELECT f.rowid, f.ref as ref_supplier, f.description, f.pu_ht, f.pu_ttc, f.qty, f.remise_percent, f.tva_tx';
-        $sql.= ', f.localtax1_tx, f.localtax2_tx, f.total_localtax1, f.total_localtax2 ';
+        $sql.= ', f.localtax1_tx, f.localtax2_tx, f.total_localtax1, f.total_localtax2, f.date_start, f.date_end';
         $sql.= ', f.total_ht, f.tva as total_tva, f.total_ttc, f.fk_product, f.product_type, f.info_bits, f.rang, f.special_code, f.fk_parent_line, f.fk_unit';
         $sql.= ', p.rowid as product_id, p.ref as product_ref, p.label as label, p.description as product_desc';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn_det as f';
@@ -545,6 +545,8 @@ class FactureFournisseur extends CommonInvoice
                     $line->fk_parent_line    = $obj->fk_parent_line;
                     $line->special_code		= $obj->special_code;
                     $line->rang       		= $obj->rang;
+                    $line->date_start       = $this->db->jdate($obj->date_start);
+                    $line->date_end         = $this->db->jdate($obj->date_end);
                     $line->fk_unit           = $obj->fk_unit;
 
 	                $this->lines[$i] = $line;
@@ -1183,7 +1185,7 @@ class FactureFournisseur extends CommonInvoice
         {
             $idligne = $this->db->last_insert_id(MAIN_DB_PREFIX.'facture_fourn_det');
 
-            $result=$this->updateline($idligne, $desc, $pu, $txtva, $txlocaltax1, $txlocaltax2, $qty, $fk_product, $price_base_type, $info_bits, $type, $remise_percent, true, '', '', $array_options, $fk_unit);
+            $result=$this->updateline($idligne, $desc, $pu, $txtva, $txlocaltax1, $txlocaltax2, $qty, $fk_product, $price_base_type, $info_bits, $type, $remise_percent, true, $date_start, $date_end, $array_options, $fk_unit);
             if ($result > 0)
             {
                 $this->rowid = $idligne;
@@ -1243,7 +1245,7 @@ class FactureFournisseur extends CommonInvoice
      */
     function updateline($id, $desc, $pu, $vatrate, $txlocaltax1=0, $txlocaltax2=0, $qty=1, $idproduct=0, $price_base_type='HT', $info_bits=0, $type=0, $remise_percent=0, $notrigger=false, $date_start='', $date_end='', $array_options=0, $fk_unit = null)
     {
-    	global $mysoc;
+    	global $mysoc, $langs;
         dol_syslog(get_class($this)."::updateline $id,$desc,$pu,$vatrate,$qty,$idproduct,$price_base_type,$info_bits,$type,$remise_percent,$fk_unit", LOG_DEBUG);
         include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
@@ -1270,8 +1272,29 @@ class FactureFournisseur extends CommonInvoice
 
         $localtaxes_type=getLocalTaxesFromRate($vatrate,0,$mysoc, $this->thirdparty);
         $txtva = preg_replace('/\s*\(.*\)/','',$txtva);  // Remove code into vatrate.
+
+        $durationqty = 1;
+        $product_type = $type;
+        if ($idproduct)
+        {
+            $product=new Product($this->db);
+            $result=$product->fetch($idproduct);
+            if ($result > 0)
+            {
+                $product_type = $product->type;
+                if ($product_type == Product::TYPE_SERVICE && $product->duration_value && $product->duration_unit)
+                {
+                    require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+                    $durationqty = calculateDurationQuantity($date_start, $date_end, $product->duration_value, $product->duration_unit);
+                    if ($durationqty <= 0) {
+                        $this->error = $langs->trans('DateRangeShortForDuration');
+                        return -2;
+                    }
+                }
+            }
+        }
         
-        $tabprice = calcul_price_total($qty, $pu, $remise_percent, $vatrate, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type);
+        $tabprice = calcul_price_total($qty * $durationqty, $pu, $remise_percent, $vatrate, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type);
         $total_ht  = $tabprice[0];
         $total_tva = $tabprice[1];
         $total_ttc = $tabprice[2];
@@ -1281,17 +1304,6 @@ class FactureFournisseur extends CommonInvoice
         $total_localtax1 = $tabprice[9];
         $total_localtax2 = $tabprice[10];
         if (empty($info_bits)) $info_bits=0;
-
-        if ($idproduct)
-        {
-            $product=new Product($this->db);
-            $result=$product->fetch($idproduct);
-            $product_type = $product->type;
-        }
-        else
-        {
-            $product_type = $type;
-        }
 
 	    $line = new SupplierInvoiceLine($this->db);
 
@@ -1318,6 +1330,8 @@ class FactureFournisseur extends CommonInvoice
 	    $line->fk_product = $idproduct;
 	    $line->product_type = $product_type;
 	    $line->info_bits = $info_bits;
+	    $line->date_start = $date_start;
+	    $line->date_end = $date_end;
 	    $line->fk_unit = $fk_unit;
 	    $line->array_options = $array_options;
 
@@ -1970,6 +1984,8 @@ class SupplierInvoiceLine extends CommonObjectLine
 	public $rang;
 	public $localtax1_type;
 	public $localtax2_type;
+	public $date_start;
+	public $date_end;
 
 
 	/**
@@ -1990,7 +2006,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 	 */
 	public function fetch($rowid)
 	{
-		$sql = 'SELECT f.rowid, f.ref as ref_supplier, f.description, f.pu_ht, f.pu_ttc, f.qty, f.remise_percent, f.tva_tx';
+		$sql = 'SELECT f.rowid, f.ref as ref_supplier, f.description, f.pu_ht, f.pu_ttc, f.qty, f.remise_percent, f.tva_tx, f.date_start, f.date_end';
 		$sql.= ', f.localtax1_type, f.localtax2_type, f.localtax1_tx, f.localtax2_tx, f.total_localtax1, f.total_localtax2 ';
 		$sql.= ', f.total_ht, f.tva as total_tva, f.total_ttc, f.fk_product, f.product_type, f.info_bits, f.rang, f.special_code, f.fk_parent_line, f.fk_unit';
 		$sql.= ', p.rowid as product_id, p.ref as product_ref, p.label as label, p.description as product_desc';
@@ -2044,6 +2060,8 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$this->fk_parent_line    = $obj->fk_parent_line;
 		$this->special_code		= $obj->special_code;
 		$this->rang       		= $obj->rang;
+		$this->date_start       = $this->db->jdate($obj->date_start);
+		$this->date_end         = $this->db->jdate($obj->date_end);
 		$this->fk_unit           = $obj->fk_unit;
 
 		return 1;
@@ -2162,6 +2180,8 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$sql.= ", fk_product = ".$fk_product;
 		$sql.= ", product_type = ".$this->product_type;
 		$sql.= ", info_bits = ".$this->info_bits;
+		$sql.= ", date_start = ".(! empty($this->date_start)?"'".$this->db->idate($this->date_start)."'":"null");
+		$sql.= ", date_end = ".(! empty($this->date_end)?"'".$this->db->idate($this->date_end)."'":"null");
 		$sql.= ", fk_unit = ".$fk_unit;
 		$sql.= " WHERE rowid = ".$this->id;
 

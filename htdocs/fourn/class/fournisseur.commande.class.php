@@ -1302,18 +1302,30 @@ class CommandeFournisseur extends CommonOrder
         {
             $this->db->begin();
 
+            $durationqty = 1;
+            $product_type = $type;
             if ($fk_product > 0)
             {
                 $prod = new Product($this->db, $fk_product);
                 if ($prod->fetch($fk_product) > 0)
                 {
-                    $result=$prod->get_buyprice($fk_prod_fourn_price,$qty,$fk_product,$fourn_ref);
+                    $product_type = $prod->type;
+                    if ($product_type == Product::TYPE_SERVICE && $prod->duration_value && $prod->duration_unit)
+                    {
+                        require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+                        $durationqty = calculateDurationQuantity($date_start, $date_end, $prod->duration_value, $prod->duration_unit);
+                        if ($durationqty <= 0) {
+                            $this->error = $langs->trans('DateRangeShortForDuration');
+                            return -2;
+                        }
+                    }
+
+                    $result=$prod->get_buyprice($fk_prod_fourn_price,$qty * $durationqty,$fk_product,$fourn_ref);
                     if ($result > 0)
                     {
                         $label = $prod->libelle;
                         $pu    = $prod->fourn_pu;
                         $ref   = $prod->ref_fourn;
-                        $product_type = $prod->type;
                     }
                     if ($result == 0 || $result == -1)
                     {
@@ -1337,10 +1349,6 @@ class CommandeFournisseur extends CommonOrder
                     return -1;
                 }
             }
-            else
-            {
-                $product_type = $type;
-            }
 
             // Calcul du total TTC et de la TVA pour la ligne a partir de
             // qty, pu, remise_percent et txtva
@@ -1350,7 +1358,7 @@ class CommandeFournisseur extends CommonOrder
             $localtaxes_type=getLocalTaxesFromRate($txtva,0,$mysoc,$this->thirdparty);
             $txtva = preg_replace('/\s*\(.*\)/','',$txtva);  // Remove code into vatrate.
             
-            $tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $product_type, $this->thirdparty, $localtaxes_type);
+            $tabprice = calcul_price_total($qty * $durationqty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $product_type, $this->thirdparty, $localtaxes_type);
             $total_ht  = $tabprice[0];
             $total_tva = $tabprice[1];
             $total_ttc = $tabprice[2];
@@ -2073,7 +2081,7 @@ class CommandeFournisseur extends CommonOrder
      */
     function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0, $txlocaltax2=0, $price_base_type='HT', $info_bits=0, $type=0, $notrigger=false, $date_start='', $date_end='', $array_options=0, $fk_unit=null)
     {
-    	global $mysoc;
+    	global $langs, $mysoc;
         dol_syslog(get_class($this)."::updateline $rowid, $desc, $pu, $qty, $remise_percent, $txtva, $price_base_type, $info_bits, $type, $fk_unit");
         include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
@@ -2101,6 +2109,28 @@ class CommandeFournisseur extends CommonOrder
             // Check parameters
             if ($type < 0) return -1;
 
+            //Get line and calculate duration qty
+			$durationqty = 1;
+            $line = new CommandeFournisseurLigne($this->db);
+            $line->fetch($rowid);
+			if (!empty($line->fk_product))
+			{
+				$product=new Product($this->db);
+				$result=$product->fetch($line->fk_product);
+				if ($result > 0)
+				{
+					if ($product->type == Product::TYPE_SERVICE && $product->duration_value && $product->duration_unit)
+					{
+						require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+						$durationqty = calculateDurationQuantity($date_start, $date_end, $product->duration_value, $product->duration_unit);
+						if ($durationqty <= 0) {
+							$this->error = $langs->trans('DateRangeShortForDuration');
+							return -4 ;
+						}
+					}
+				}
+			}
+
             // Calcul du total TTC et de la TVA pour la ligne a partir de
             // qty, pu, remise_percent et txtva
             // TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
@@ -2109,7 +2139,7 @@ class CommandeFournisseur extends CommonOrder
             $localtaxes_type=getLocalTaxesFromRate($txtva,0,$mysoc, $this->thirdparty);
             $txtva = preg_replace('/\s*\(.*\)/','',$txtva);  // Remove code into vatrate.
             
-            $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type);
+            $tabprice=calcul_price_total($qty * $durationqty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type);
             $total_ht  = $tabprice[0];
             $total_tva = $tabprice[1];
             $total_ttc = $tabprice[2];

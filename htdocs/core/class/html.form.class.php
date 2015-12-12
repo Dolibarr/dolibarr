@@ -1861,6 +1861,8 @@ class Form
         $outlabel=$objp->label;
         $outdesc=$objp->description;
         $outtype=$objp->fk_product_type;
+        $outdurationvalue=$outtype == Product::TYPE_SERVICE?substr($objp->duration,0,dol_strlen($objp->duration)-1):'';
+        $outdurationunit=$outtype == Product::TYPE_SERVICE?substr($objp->duration,-1):'';
 
         $opt = '<option value="'.$objp->rowid.'"';
         $opt.= ($objp->rowid == $selected)?' selected':'';
@@ -2005,24 +2007,19 @@ class Form
             $outval.=' - '.$langs->transnoentities("Stock").':'.$objp->stock;
         }
 
-        if ($objp->duration)
+        if ($outdurationvalue && $outdurationunit)
         {
-            $duration_value = substr($objp->duration,0,dol_strlen($objp->duration)-1);
-            $duration_unit = substr($objp->duration,-1);
-            if ($duration_value > 1)
+            $da=array("h"=>$langs->trans("Hour"),"d"=>$langs->trans("Day"),"w"=>$langs->trans("Week"),"m"=>$langs->trans("Month"),"y"=>$langs->trans("Year"));
+            if (isset($da[$outdurationunit]))
             {
-                $dur=array("h"=>$langs->trans("Hours"),"d"=>$langs->trans("Days"),"w"=>$langs->trans("Weeks"),"m"=>$langs->trans("Months"),"y"=>$langs->trans("Years"));
+                $key = $da[$outdurationunit].($outdurationvalue > 1?'s':'');
+                $opt.= ' - '.$outdurationvalue.' '.$langs->trans($key);
+                $outval.=' - '.$outdurationvalue.' '.$langs->transnoentities($key);
             }
-            else
-            {
-                $dur=array("h"=>$langs->trans("Hour"),"d"=>$langs->trans("Day"),"w"=>$langs->trans("Week"),"m"=>$langs->trans("Month"),"y"=>$langs->trans("Year"));
-            }
-            $opt.= ' - '.$duration_value.' '.$langs->trans($dur[$duration_unit]);
-            $outval.=' - '.$duration_value.' '.$langs->transnoentities($dur[$duration_unit]);
         }
 
         $opt.= "</option>\n";
-		$optJson = array('key'=>$outkey, 'value'=>$outref, 'label'=>$outval, 'label2'=>$outlabel, 'desc'=>$outdesc, 'type'=>$outtype, 'price_ht'=>$outprice_ht, 'price_ttc'=>$outprice_ttc, 'pricebasetype'=>$outpricebasetype, 'tva_tx'=>$outtva_tx, 'qty'=>$outqty, 'discount'=>$outdiscount);
+		$optJson = array('key'=>$outkey, 'value'=>$outref, 'label'=>$outval, 'label2'=>$outlabel, 'desc'=>$outdesc, 'type'=>$outtype, 'price_ht'=>$outprice_ht, 'price_ttc'=>$outprice_ttc, 'pricebasetype'=>$outpricebasetype, 'tva_tx'=>$outtva_tx, 'qty'=>$outqty, 'discount'=>$outdiscount, 'durationvalue'=>$outdurationvalue, 'durationunit'=>$outdurationunit);
 	}
 
     /**
@@ -2078,7 +2075,7 @@ class Form
 
         $langs->load('stocks');
 
-        $sql = "SELECT p.rowid, p.label, p.ref, p.price, p.duration,";
+        $sql = "SELECT p.rowid, p.label, p.ref, p.price, p.duration, p.fk_product_type,";
         $sql.= " pfp.ref_fourn, pfp.rowid as idprodfournprice, pfp.price as fprice, pfp.quantity, pfp.remise_percent, pfp.remise, pfp.unitprice,";
         $sql.= " pfp.fk_supplier_price_expression, pfp.fk_product, pfp.tva_tx, s.nom as name";
         $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
@@ -2136,6 +2133,9 @@ class Form
                 $outval='';
                 $outqty=1;
 				$outdiscount=0;
+                $outtype=$objp->fk_product_type;
+                $outdurationvalue=$outtype == Product::TYPE_SERVICE?substr($objp->duration,0,dol_strlen($objp->duration)-1):'';
+                $outdurationunit=$outtype == Product::TYPE_SERVICE?substr($objp->duration,-1):'';
 
                 $opt = '<option value="'.$objp->idprodfournprice.'"';
                 if ($selected && $selected == $objp->idprodfournprice) $opt.= ' selected';
@@ -2223,7 +2223,7 @@ class Form
                 // "key" value of json key array is used by jQuery automatically as selected value
                 // "label" value of json key array is used by jQuery automatically as text for combo box
                 $out.=$opt;
-                array_push($outarray, array('key'=>$outkey, 'value'=>$outref, 'label'=>$outval, 'qty'=>$outqty, 'discount'=>$outdiscount, 'disabled'=>(empty($objp->idprodfournprice)?true:false)));
+                array_push($outarray, array('key'=>$outkey, 'value'=>$outref, 'label'=>$outval, 'qty'=>$outqty, 'discount'=>$outdiscount, 'type'=>$outtype, 'durationvalue'=>$outdurationvalue, 'durationunit'=>$outdurationunit, 'disabled'=>(empty($objp->idprodfournprice)?true:false)));
 				// Exemple of var_dump $outarray
 				// array(1) {[0]=>array(6) {[key"]=>string(1) "2" ["value"]=>string(3) "ppp"
 				//           ["label"]=>string(76) "ppp (<strong>f</strong>ff2) - ppp - 20,00 Euros/1unité (20,00 Euros/unité)"
