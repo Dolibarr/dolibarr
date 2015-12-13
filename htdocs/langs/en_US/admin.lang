@@ -1664,6 +1664,7 @@ InstallModuleFromWebHasBeenDisabledByFile=Install of external module from applic
 ConfFileMuseContainCustom=Installing an external module from application save the module files into directory <strong>%s</strong>. To have this directory processed by Dolibarr, you must setup your <strong>conf/conf.php</strong> to have option<br>- <strong>$dolibarr_main_url_root_alt</strong> enabled to value <strong>$dolibarr_main_url_root_alt="/custom"</strong><br>- <strong>$dolibarr_main_document_root_alt</strong> enabled to value <strong>"%s/custom"</strong> 
 HighlightLinesOnMouseHover=Highlight table lines when mouse move passes over
 HighlightLinesColor=Highlight color of the line when the mouse passes over (keep empty for no highlight)
+TextTitleColor=Color of page title
 LinkColor=Color of links
 PressF5AfterChangingThis=Press F5 on keyboard after changing this value to have it effective
 NotSupportedByAllThemes=Will works with eldy theme but is not supported by all themes
