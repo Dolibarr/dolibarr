@@ -156,13 +156,13 @@ if (GETPOST('confirmation'))
 		}
 
 		if (isset($errheure)) {
-			setEventMessage($langs->trans("ErrorBadFormat"), 'errors');
+			setEventMessages($langs->trans("ErrorBadFormat"), null, 'errors');
 		}
 	}
 
 	//If just one day and no other time options, error message
 	if (count($_SESSION["totalchoixjour"])=="1" && $_POST["horaires0"][0]=="" && $_POST["horaires0"][1]=="" && $_POST["horaires0"][2]=="" && $_POST["horaires0"][3]=="" && $_POST["horaires0"][4]=="") {
-		setEventMessage($langs->trans("MoreChoices"), 'errors');
+		setEventMessages($langs->trans("MoreChoices"), null, 'errors');
 		$erreur=true;
 	}
 

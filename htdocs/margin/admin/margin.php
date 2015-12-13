@@ -73,7 +73,7 @@ if ($action == 'remises')
 {
     if (dolibarr_set_const($db, 'MARGIN_METHODE_FOR_DISCOUNT', $_POST['MARGIN_METHODE_FOR_DISCOUNT'], 'chaine', 0, '', $conf->entity) > 0)
     {
-          setEventMessage($langs->trans("RecordModifiedSuccessfully"));
+          setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
     }
     else
     {
@@ -85,7 +85,7 @@ if ($action == 'typemarges')
 {
     if (dolibarr_set_const($db, 'MARGIN_TYPE', $_POST['MARGIN_TYPE'], 'chaine', 0, '', $conf->entity) > 0)
     {
-          setEventMessage($langs->trans("RecordModifiedSuccessfully"));
+          setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
     }
     else
     {
@@ -97,7 +97,7 @@ if ($action == 'contact')
 {
     if (dolibarr_set_const($db, 'AGENT_CONTACT_TYPE', $_POST['AGENT_CONTACT_TYPE'], 'chaine', 0, '', $conf->entity) > 0)
     {
-          setEventMessage($langs->trans("RecordModifiedSuccessfully"));
+          setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
     }
     else
     {

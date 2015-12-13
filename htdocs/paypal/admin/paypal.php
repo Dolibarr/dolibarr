@@ -75,7 +75,7 @@ if ($action == 'setvalue' && $user->admin)
 	if (! $error)
   	{
   		$db->commit();
-  		setEventMessage($langs->trans("SetupSaved"));
+  		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
   	}
   	else
   	{
@@ -113,7 +113,7 @@ print $langs->trans("PaypalDesc")."<br>\n";
 if (! function_exists('curl_version'))
 {
 	$langs->load("errors");
-	setEventMessage($langs->trans("ErrorPhpCurlNotInstalled"), 'errors');
+	setEventMessages($langs->trans("ErrorPhpCurlNotInstalled"), null, 'errors');
 }
 
 
