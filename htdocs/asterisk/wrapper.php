@@ -79,6 +79,10 @@ if (! isset($conf->global->ASTERISK_TYPE))      $conf->global->ASTERISK_TYPE="SI
 if (! isset($conf->global->ASTERISK_INDICATIF)) $conf->global->ASTERISK_INDICATIF="0";
 if (! isset($conf->global->ASTERISK_PORT))      $conf->global->ASTERISK_PORT=5038;
 if ($conf->global->ASTERISK_INDICATIF=='NONE')  $conf->global->ASTERISK_INDICATIF='';
+if (! isset($conf->global->ASTERISK_CONTEXT))   $conf->global->ASTERISK_CONTEXT="from-internal";
+if (! isset($conf->global->ASTERISK_WAIT_TIME)) $conf->global->ASTERISK_WAIT_TIME="30";
+if (! isset($conf->global->ASTERISK_PRIORITY))  $conf->global->ASTERISK_PRIORITY="1";
+if (! isset($conf->global->ASTERISK_MAX_RETRY)) $conf->global->ASTERISK_MAX_RETRY="2";
 
 
 $login = $_GET['login'];
@@ -96,14 +100,13 @@ $prefix = $conf->global->ASTERISK_INDICATIF;
 // Port
 $port = $conf->global->ASTERISK_PORT;
 // Context ( generalement from-internal )
-$strContext = "from-internal";
-
+$strContext = $conf->global->ASTERISK_CONTEXT;
 // Delai d'attente avant de raccrocher
-$strWaitTime = "30";
+$strWaitTime = $conf->global->ASTERISK_WAIT_TIME;
 // Priority
-$strPriority = "1";
+$strPriority = $conf->global->ASTERISK_PRIORITY;
 // Nomber of try
-$strMaxRetry = "2";
+$strMaxRetry = $conf->global->ASTERISK_MAX_RETRY;
 
 
 /*
