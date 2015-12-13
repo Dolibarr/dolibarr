@@ -467,7 +467,7 @@ if ($id > 0 || $ref)
 							window.location = "'.DOL_URL_ROOT.'/product/dynamic_price/editor.php?id='.$id.'&tab=fournisseurs&eid=" + $("#eid").attr("value");
 						}
 						function on_change() {
-							if ($("#eid").attr("value") == 0) {
+							if ($("#eid").val() == 0) {
 								jQuery("#price_numeric").show();
 							} else {
 								jQuery("#price_numeric").hide();
