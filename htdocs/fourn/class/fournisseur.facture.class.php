@@ -1245,7 +1245,7 @@ class FactureFournisseur extends CommonInvoice
      */
     function updateline($id, $desc, $pu, $vatrate, $txlocaltax1=0, $txlocaltax2=0, $qty=1, $idproduct=0, $price_base_type='HT', $info_bits=0, $type=0, $remise_percent=0, $notrigger=false, $date_start='', $date_end='', $array_options=0, $fk_unit = null)
     {
-    	global $mysoc, $langs;
+    	global $mysoc, $langs, $conf;
         dol_syslog(get_class($this)."::updateline $id,$desc,$pu,$vatrate,$qty,$idproduct,$price_base_type,$info_bits,$type,$remise_percent,$fk_unit", LOG_DEBUG);
         include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
@@ -1282,13 +1282,15 @@ class FactureFournisseur extends CommonInvoice
             if ($result > 0)
             {
                 $product_type = $product->type;
-                if ($product_type == Product::TYPE_SERVICE && $date_start && $date_end && $product->duration_value && $product->duration_unit)
-                {
-                    require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-                    $durationqty = calculateDurationQuantity($date_start, $date_end, $product->duration_value, $product->duration_unit);
-                    if ($durationqty <= 0) {
-                        $this->error = $langs->trans('DateRangeShortForDuration');
-                        return -2;
+                if (!empty($conf->global->MAIN_USE_DURATION_DATERANGE)) {
+                    if ($product_type == Product::TYPE_SERVICE && $date_start && $date_end && $product->duration_value && $product->duration_unit)
+                    {
+                        require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+                        $durationqty = calculateDurationQuantity($date_start, $date_end, $product->duration_value, $product->duration_unit);
+                        if ($durationqty <= 0) {
+                            $this->error = $langs->trans('DateRangeShortForDuration');
+                            return -2;
+                        }
                     }
                 }
             }

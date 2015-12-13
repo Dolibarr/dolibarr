@@ -429,13 +429,15 @@ class Propal extends CommonObject
 				{
 					$product_type = $product->type;
 
-					if ($product_type == Product::TYPE_SERVICE && $date_start && $date_end && $product->duration_value && $product->duration_unit)
-					{
-						require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-						$durationqty = calculateDurationQuantity($date_start, $date_end, $product->duration_value, $product->duration_unit);
-			        	if ($durationqty <= 0) {
-							$this->error = $langs->trans('DateRangeShortForDuration');
-							return -4;
+					if (!empty($conf->global->MAIN_USE_DURATION_DATERANGE))
+						if ($product_type == Product::TYPE_SERVICE && $date_start && $date_end && $product->duration_value && $product->duration_unit)
+						{
+							require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+							$durationqty = calculateDurationQuantity($date_start, $date_end, $product->duration_value, $product->duration_unit);
+							if ($durationqty <= 0) {
+								$this->error = $langs->trans('DateRangeShortForDuration');
+								return -4;
+							}
 						}
 					}
 
@@ -588,7 +590,7 @@ class Propal extends CommonObject
      */
 	function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0.0, $txlocaltax2=0.0, $desc='', $price_base_type='HT', $info_bits=0, $special_code=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=0, $pa_ht=0, $label='', $type=0, $date_start='', $date_end='', $array_options=0, $fk_unit=null)
     {
-        global $mysoc, $langs;
+        global $mysoc, $langs, $conf;
 
         dol_syslog(get_class($this)."::updateLine rowid=$rowid, pu=$pu, qty=$qty, remise_percent=$remise_percent,
         txtva=$txtva, desc=$desc, price_base_type=$price_base_type, info_bits=$info_bits, special_code=$special_code, fk_parent_line=$fk_parent_line, pa_ht=$pa_ht, type=$type, date_start=$date_start, date_end=$date_end");
@@ -625,7 +627,7 @@ class Propal extends CommonObject
 			{
 				$product=new Product($this->db);
 				$result=$product->fetch($this->line->fk_product);
-				if ($result > 0)
+				if ($result > 0 && !empty($conf->global->MAIN_USE_DURATION_DATERANGE))
 				{
 					if ($product->type == Product::TYPE_SERVICE && $date_start && $date_end && $product->duration_value && $product->duration_unit)
 					{

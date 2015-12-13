@@ -736,7 +736,7 @@ if (empty($reshook))
 				setEventMessage($langs->trans('ErrorStartDateGreaterEnd'), 'errors');
 				$error++;
 			}
-			else
+			else if (!empty($conf->global->MAIN_USE_DURATION_DATERANGE))
 			{
 				$duration = GETPOST('durationvalue', 'int');
 				if (is_numeric($duration) && $duration > 0) {
@@ -1042,7 +1042,7 @@ if (empty($reshook))
 				setEventMessage($langs->trans('ErrorStartDateGreaterEnd'), 'errors');
 				$error++;
 			}
-			else
+			else if (!empty($conf->global->MAIN_USE_DURATION_DATERANGE))
 			{
 				$duration = GETPOST('durationvalue', 'int');
 				if (is_numeric($duration) && $duration > 0) {
