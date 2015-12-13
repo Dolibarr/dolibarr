@@ -92,6 +92,19 @@ elseif ($action == 'delbookkeepingyear') {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
+}
+elseif ($action == 'delbookkeepingyear') {
+	
+	$delyear = GETPOST('delyear', 'int');
+	
+	if (! empty($delyear)) {
+		$object = new BookKeeping($db);
+		$result = $object->delete_by_year($delyear);
+		Header("Location: list.php");
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
 }// Export
 else if ($action == 'export_csv') {
 	

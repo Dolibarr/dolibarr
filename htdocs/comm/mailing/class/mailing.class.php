@@ -554,11 +554,11 @@ class Mailing extends CommonObject
 
 		if ($mode == 0)
 		{
-			return $langs->trans($this->statut_dest[$statut]);
+			return $langs->trans('MailingStatusError');
 		}
 		if ($mode == 1)
 		{
-			return $langs->trans($this->statut_dest[$statut]);
+			return $langs->trans('MailingStatusSent');
 		}
 		if ($mode == 2)
 		{
