@@ -149,9 +149,10 @@ class CSMSFile
 		            $sms->message=$this->message;
 
                     $res=$sms->SmsSend();
+                    $this->error = $sms->error;
+                    $this->errors = $sms->errors;
     				if ($res <= 0)
     				{
-    					$this->error=$sms->error;
     					dol_syslog("CSMSFile::sendfile: sms send error=".$this->error, LOG_ERR);
     				}
     				else
