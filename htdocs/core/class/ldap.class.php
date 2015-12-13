@@ -149,7 +149,7 @@ class Ldap
 	 */
 	function connect_bind()
 	{
-		global $langs;
+		global $langs, $conf;
 
 		$connected=0;
 		$this->bind=0;
@@ -186,7 +186,18 @@ class Ldap
 
 			if (is_resource($this->connection))
 			{
-				// Execute the ldap_set_option here (after connect and before bind)
+				// Begin TLS if requested by the configuration
+    			if (! empty($conf->global->LDAP_SERVER_USE_TLS)) 
+    			{
+    			    if (! ldap_start_tls($this->connection)) 
+    			    {
+    			        dol_syslog(get_class($this)."::connect_bind failed to start tls", LOG_WARNING);
+    			        $connected = 0;
+    			        $this->close();
+    				}
+    			}
+			
+			    // Execute the ldap_set_option here (after connect and before bind)
 				$this->setVersion();
 				ldap_set_option($this->connection, LDAP_OPT_SIZELIMIT, 0); // no limit here. should return true.
 
