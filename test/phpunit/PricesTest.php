@@ -42,7 +42,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 if (! empty($conf->global->MAIN_ROUNDING_RULE_TOT))
 {
     print "Parameter MAIN_ROUNDING_RULE_TOT must be set to 0 or not set.\n";
-    exit;
+    exit(1);
 }
 
 /**

@@ -2,7 +2,7 @@
 /* Copyright (C) 2010-2014	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2011		Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2011-2012	Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2011-2013	Philippe Grand		<philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2015	Philippe Grand		<philippe.grand@atoo-net.com>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2015		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
@@ -935,6 +935,5 @@ else
 }
 print '</tr></table></form>';
 
-$db->close();
-
 llxFooter();
+$db->close();

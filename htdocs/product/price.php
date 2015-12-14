@@ -841,13 +841,13 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 			<script type="text/javascript">
 				jQuery(document).ready(function() {
 					jQuery("#expression_editor").click(function() {
-						window.location = "<?php echo DOL_URL_ROOT ?>/product/dynamic_price/editor.php?id=<?php echo $id ?>&tab=price&eid=" + $("#eid").attr("value");
+						window.location = "<?php echo DOL_URL_ROOT ?>/product/dynamic_price/editor.php?id=<?php echo $id ?>&tab=price&eid=" + $("#eid").val();
 					});
 					jQuery("#eid").change(on_change);
 					on_change();
 				});
 				function on_change() {
-					if ($("#eid").attr("value") == 0) {
+					if ($("#eid").val() == 0) {
 						jQuery("#price_numeric").show();
 					} else {
 						jQuery("#price_numeric").hide();

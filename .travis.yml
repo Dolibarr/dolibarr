@@ -1,154 +1,308 @@
 # This script is used by Travis CI to run automatically Continuous test integration
 # from Dolibarr GitHub repository.
-# Command run is phpunit
 # For syntax, see http://about.travis-ci.org/docs/user/languages/php/
+
+sudo: required
+
+language: php
+
+php:
+- '5.3'
+- '5.4'
+- '5.5'
+- '5.6'
+- '7.0'
+- nightly
+
+addons:
+  mariadb: '10.0'
+  # FIXME: find a way to import a MySQL dump into PostgreSQL
+  #postgresql: '9.3'
+  apt:
+    packages:
+    # We need a webserver to test the webservices
+    # Let's install Apache with.
+    - apache2
+    # mod_php is not supported by Travis. Add fcgi. We install FPM later on.
+    - libapache2-mod-fastcgi
+
+# Start on every boot
+services:
+- memcached
+
+env:
+  global:
+  # Set to true for very verbose output
+  - DEBUG=false
+  matrix:
+  # MariaDB overrides MySQL installation so it's not possible to test both yet
+  #- DB=mysql
+  - DB=mariadb
+  # FIXME: find a way to import a MySQL dump into PostgreSQL
+  #- DB=postgresql
+  # TODO
+  #- DB=sqlite
+  # See https://docs.travis-ci.com/user/languages/php/#Apache-%2B-PHP
+  #- WS=apache
+  # See https://github.com/DracoBlue/travis-ci-nginx-php-fpm-test
+  #- WS=nginx
+
+matrix:
+  fast_finish: true
+  allow_failures:
+  - php: '7.0'
+  - php: nightly
+  # FIXME
+  #- env: DB=postgresql
+  # TODO
+  #- env: DB=sqlite
 
 notifications:
   email:
     on_success: never # [always|never|change] default: change
     on_failure: change # [always|never|change] default: always
-    
-addons:
-  postgresql: "9.3"
+  irc:
+    channels:
+    - "chat.freenode.net#dolibarr"
+    on_success: change
+    on_failure: always
+    use_notice: true
 
-services:
- - memcached # will start memcached
+before_install:
+- |
+  echo "Disabling Xdebug for composer"
+  export PHP_VERSION_NAME=$(phpenv version-name)
+  cp ~/.phpenv/versions/$PHP_VERSION_NAME/etc/conf.d/xdebug.ini /tmp/xdebug.ini
+  phpenv config-rm xdebug.ini
+  echo
 
-# This will tell travis to run phpunit
-language: php
-php:
- - 5.3
- - 5.4
- - 5.5 
- - 5.6
- - 7.0
+install:
+- |
+  echo "Updating Composer"
+  composer self-update
+  echo
 
-matrix:
-  allow_failures:
-    - php: 7.0
+- |
+  echo "Installing Parallel Lint"
+  composer -n require jakub-onderka/php-parallel-lint ^0
+  composer -n require jakub-onderka/php-console-highlighter ^0
+  echo
 
-env:
- - DB=mysql
-# - DB=postgres  
+- |
+  echo "Installing PHP Unit"
+  if [ "$TRAVIS_PHP_VERSION" = '5.3' ] || [ "$TRAVIS_PHP_VERSION" = '5.4' ] || [ "$TRAVIS_PHP_VERSION" = '5.5' ]; then
+    composer -n require phpunit/phpunit ^4
+  fi
+  if [ "$TRAVIS_PHP_VERSION" = '5.6' ] || [ "$TRAVIS_PHP_VERSION" = '7.0' ] || [ "$TRAVIS_PHP_VERSION" = 'nightly' ]; then
+    composer -n require phpunit/phpunit ^5
+  fi
+  echo
 
-before_script: 
- - echo Start travis
- - echo Current dir is `pwd`
- - echo Home dir is `echo ~`
- - export PHPV=`phpenv version-name`
- - echo PHP version $PHPV 
-# - echo Update composer
-# - ~/.phpenv/versions/$(phpenv version-name)/bin/composer.phar self-update 
- - echo PHPUnit version
- - which phpunit
- - phpunit --version
- - echo Install phpcs then show installed rules
- - cp composer.json composer.json.old
- - cp composer.json.phpcs composer.json
- - composer self-update
- - composer require squizlabs/php_codesniffer:"^2.0.0"
- - composer install
- - phpenv rehash
- - htdocs/includes/squizlabs/php_codesniffer/scripts/phpcs --version
- - htdocs/includes/squizlabs/php_codesniffer/scripts/phpcs -i
-# - which phpcs
-# - phpcs --version
-# - phpcs -i
- - echo Create dir $(pwd)/htdocs/documents
- - sudo mkdir -p $(pwd)/htdocs/documents/admin/temp;
- - sudo touch $(pwd)/htdocs/documents/dolibarr.log;
- - sudo chmod a+rwx /home; sudo chmod a+rwx /home/travis; sudo chmod -R a+rwx /home/travis/build;
- - sudo chmod -R a+rwx $(pwd);
- - sudo chown -R www-data:travis $(pwd)/htdocs/documents;
- - find $(pwd)/htdocs/documents -type d -exec ls -alt {} \;
- - echo Edit php.ini file
- - echo 'date.timezone = "Europe/Paris"' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
-# - echo "extension = memcache.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
- - echo "extension = memcached.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
- - sh -c "if [ '$PHPV' = '5.3' ]; then echo 'extension = apc.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi"
- - sh -c "if [ '$PHPV' = '5.4' ]; then echo 'extension = apc.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi"
- - sh -c "if [ '$PHPV' = '5.3' ]; then echo 'zend_extension_ts = xdebug.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi"
- - sh -c "if [ '$PHPV' = '5.4' ]; then echo 'zend_extension_ts = xdebug.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi"
- - cat ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
- - echo Mysql version
-# INSTALL MYSQL 5.6
-# (https://github.com/piwik/piwik/commit/20bd2e1c24e5d673dce3feb256204ad48c29f160)
-# TODO: Remove when mysql 5.6 is provided by travis.
-# Otherwise, our migrations will raise a syntax error.
-# - "sudo apt-get remove mysql-common mysql-server-5.5 mysql-server-core-5.5 mysql-client-5.5 mysql-client-core-5.5"
-# - "sudo apt-get autoremove"
-# - "sudo apt-get install libaio1"
-# - "wget -O mysql-5.6.14.deb http://dev.mysql.com/get/Downloads/MySQL-5.6/mysql-5.6.14-debian6.0-x86_64.deb/from/http://cdn.mysql.com/"
-# - "sudo dpkg -i mysql-5.6.14.deb"
-# - "sudo cp /opt/mysql/server-5.6/support-files/mysql.server /etc/init.d/mysql.server"
-# - "sudo ln -s /opt/mysql/server-5.6/bin/* /usr/bin/"
-# - "sudo sed -i'' 's/table_cache/table_open_cache/' /etc/mysql/my.cnf"
-# - "sudo sed -i'' 's/log_slow_queries/slow_query_log/' /etc/mysql/my.cnf"
-# - "sudo sed -i'' 's/basedir[^=]\\+=.*$/basedir = \\/opt\\/mysql\\/server-5.6/' /etc/mysql/my.cnf"
-# - "sudo /etc/init.d/mysql.server start"
-# /END MYSQL 5.6- mysql --version
- - mysql --version
- - mysql -e "SELECT VERSION();"
- - echo Init database
- - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'DROP DATABASE IF EXISTS myapp_test;' -U postgres; fi"
- - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'CREATE DATABASE myapp_test;' -U postgres; fi"
- - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'DROP DATABASE IF EXISTS myapp_test;'; fi"
- - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'CREATE DATABASE IF NOT EXISTS myapp_test;'; fi"
- - sh -c "if [ '$DB' = 'mysql' ]; then mysql -D myapp_test < $(pwd)/dev/initdata/mysqldump_dolibarr_3.5.0.sql; fi"
- - echo Create config file htdocs/conf/conf.php
- - echo '<?php ' > htdocs/conf/conf.php
- - sh -c "if [ '$DB' = 'pgsql' ]; then echo '$'dolibarr_main_db_type=\'pgsql\'';' >> htdocs/conf/conf.php; fi"
- - sh -c "if [ '$DB' = 'mysql' ]; then echo '$'dolibarr_main_db_type=\'mysqli\'';' >> htdocs/conf/conf.php; fi"
- - echo '$'dolibarr_main_url_root=\'http://localhost/\'';' >> htdocs/conf/conf.php
- - echo '$'dolibarr_main_document_root=\'$(pwd)/htdocs\'';' >> htdocs/conf/conf.php
- - echo '$'dolibarr_main_data_root=\'$(pwd)/htdocs/documents\'';' >> htdocs/conf/conf.php
- - echo '$'dolibarr_main_db_host=\'localhost\'';' >> htdocs/conf/conf.php
- - echo '$'dolibarr_main_db_name=\'myapp_test\'';' >> htdocs/conf/conf.php
- - echo '$'dolibarr_main_db_user=\'travis\'';' >> htdocs/conf/conf.php
- - echo '$'dolibarr_main_authentication=\'dolibarr\'';' >> htdocs/conf/conf.php
- - echo '?>' >> htdocs/conf/conf.php
- - echo Show conf.php content
- - cat htdocs/conf/conf.php
- - echo Install apache server
- - sudo apt-get update
- - sudo apt-get install -y --force-yes apache2 libapache2-mod-php5 php5-curl php5-mysql php5-pgsql php5-intl
- - sudo sed -i -e "s,/var/www,$(pwd)/htdocs,g" /etc/apache2/sites-available/default
- - echo Show default virtual host
- - sudo cat /etc/apache2/sites-available/default
- - sudo /etc/init.d/apache2 restart
- - wget http://localhost/
- - sudo cat /etc/apache2/envvars
- - sudo cat /var/log/apache2/error.log
- - cat index.html
+- |
+  echo "Installing PHP CodeSniffer"
+  composer require squizlabs/php_codesniffer ^2
+  echo
 
+- |
+  echo "Adding Composer binaries to the path"
+  export PATH="$TRAVIS_BUILD_DIR/htdocs/includes/bin:$PATH"
+  echo
 
+before_script:
+- |
+  echo "Re-enabling Xdebug for PHP CodeSniffer and PHP Unit"
+  phpenv config-add /tmp/xdebug.ini
+  echo
 
-script: 
- - cd htdocs/install
- - date
-# - php upgrade.php 3.4.0 3.5.0 ignoredbversion > upgrade340350.log
-# - php upgrade2.php 3.4.0 3.5.0 ignoredbversion > upgrade340350-2.log
- - php upgrade.php 3.5.0 3.6.0 ignoredbversion > upgrade350360.log
- - php upgrade2.php 3.5.0 3.6.0 ignoredbversion > upgrade350360-2.log
- - php upgrade.php 3.6.0 3.7.0 ignoredbversion > upgrade360370.log
- - php upgrade2.php 3.6.0 3.7.0 ignoredbversion > upgrade360370-2.log
- - php upgrade.php 3.7.0 3.8.0 ignoredbversion > upgrade370380.log
-# - cat upgrade370380.log
- - php upgrade2.php 3.7.0 3.8.0 ignoredbversion > upgrade370380-2.log
- - php upgrade.php 3.8.0 3.9.0 ignoredbversion > upgrade380390.log
-# - cat upgrade380390.log
- - php upgrade2.php 3.8.0 3.9.0 ignoredbversion > upgrade380390-2.log
-# - cat upgrade380390-2.log
- - cd ../..
- - date
- - phpunit -d memory_limit=-1 --configuration test/phpunit/phpunittest.xml test/phpunit/AllTests.php
- - date
-# - phpcs -p --warning-severity=0 -s --report-summary --standard=dev/codesniffer/ruleset.xml --tab-width=4 --ignore=/build/html/,/dev/vagrant/,/documents/,/includes/,/test/report/ htdocs/core/class/dolgraph.class.php 2>&1
- - htdocs/includes/squizlabs/php_codesniffer/scripts/phpcs -p --warning-severity=0 -s --report-checkstyle --report-summary --standard=dev/codesniffer/ruleset.xml --tab-width=4 --ignore=/htdocs/conf/conf.php,/build/html/,/dev/vagrant/,/documents/,/includes/,/test/report/ . 2>&1
- - date
+- |
+  echo "Setting up PHP"
+  echo
+  echo "Set timezone"
+  echo 'date.timezone = "Europe/Paris"' >> ~/.phpenv/versions/$PHP_VERSION_NAME/etc/php.ini
+  if [ "$TRAVIS_PHP_VERSION" = '5.3' ] || [ "$TRAVIS_PHP_VERSION" = '5.4' ]; then
+    echo
+    echo "Enabling APC for PHP <= 5.4"
+    #   Documentation says it should be available for PHP <= 5.6 but it's not for 5.5 and 5.6!
+    echo 'extension = apc.so' >> ~/.phpenv/versions/$PHP_VERSION_NAME/etc/php.ini
+    echo
+    echo "Enabling Memcached for PHP <= 5.4"
+    #   Documentation says it should be available for all PHP versions but it's not for 5.5 and 5.6, 7.0 and nightly!
+    echo 'extension = memcached.so' >> ~/.phpenv/versions/$PHP_VERSION_NAME/etc/php.ini
+  fi
+  phpenv rehash
+  echo
+
+- |
+  if [ "$DEBUG" = true ]; then
+    echo "Debugging informations"
+    # Check PHP
+    php -i
+    # Check PHP CodeSniffer installation
+    which phpcs
+    phpcs --version
+    phpcs -i
+    # Check PHPUnit installation
+    which phpunit
+    phpunit --version
+    # Check MySQL
+    mysql --version
+    mysql -e "SELECT VERSION();"
+    echo
+  fi
+
+- |
+  echo "Setting up database"
+  if [ "$DB" = 'mysql' ] || [ "$DB" = 'mariadb' ]; then
+    echo "MySQL"
+    mysql -e 'DROP DATABASE IF EXISTS travis;'
+    mysql -e 'CREATE DATABASE IF NOT EXISTS travis;'
+    mysql -D travis < dev/initdata/mysqldump_dolibarr_3.5.0.sql
+  fi
+  # FIXME: find a way to import a MySQL dump into PostgreSQL
+  #if [ "$DB" = 'postgresql' ]; then
+  #  pgsql travis < dev/initdata/mysqldump_dolibarr_3.5.0.sql
+  #fi
+  # TODO: SQLite
+  echo
+
+- |
+  echo "Setting up Dolibarr"
+  export CONF_FILE=htdocs/conf/conf.php
+  echo '<?php ' > $CONF_FILE
+  echo '$'dolibarr_main_url_root=\'http://127.0.0.1\'';' >> $CONF_FILE
+  echo '$'dolibarr_main_document_root=\'$TRAVIS_BUILD_DIR/htdocs\'';' >> $CONF_FILE
+  echo '$'dolibarr_main_data_root=\'$TRAVIS_BUILD_DIR/documents\'';' >> $CONF_FILE
+  echo '$'dolibarr_main_db_host=\'127.0.0.1\'';' >> $CONF_FILE
+  echo '$'dolibarr_main_db_name=\'travis\'';' >> $CONF_FILE
+  echo '$'dolibarr_main_db_user=\'travis\'';' >> $CONF_FILE
+  if [ "$DB" = 'mysql' ] || [ "$DB" = 'mariadb' ]; then
+    echo '$'dolibarr_main_db_type=\'mysqli\'';' >> $CONF_FILE
+  fi
+  # FIXME
+  #if [ "$DB" = 'postgresql' ]; then
+  #  echo '$'dolibarr_main_db_type=\'pgsql\'';' >> $CONF_FILE
+  #fi
+  # TODO: SQLite
+  echo '$'dolibarr_main_authentication=\'dolibarr\'';' >> $CONF_FILE
+  echo
+
+- |
+  if [ "$DEBUG" = true ]; then
+    echo "Debugging informations"
+    cat $CONF_FILE
+    echo
+  fi
+
+- |
+  echo "Create documents directory and set permissions"
+  # and admin/temp subdirectory needed for unit tests
+  mkdir -p documents/admin/temp
+  echo
+
+- |
+  echo "Setting up Apache + FPM"
+  # enable php-fpm
+  cp ~/.phpenv/versions/$PHP_VERSION_NAME/etc/php-fpm.conf.default ~/.phpenv/versions/$PHP_VERSION_NAME/etc/php-fpm.conf
+  if [ "$TRAVIS_PHP_VERSION" = '7.0' ] || [ "$TRAVIS_PHP_VERSION" = 'nightly' ]; then
+    # Copy the included pool
+    cp ~/.phpenv/versions/$PHP_VERSION_NAME/etc/php-fpm.d/www.conf.default ~/.phpenv/versions/$PHP_VERSION_NAME/etc/php-fpm.d/www.conf
+  fi
+  if [ "$DEBUG" = true ]; then
+    cat ~/.phpenv/versions/$PHP_VERSION_NAME/etc/php-fpm.conf
+  fi
+  sudo a2enmod rewrite actions fastcgi alias
+  echo "cgi.fix_pathinfo = 1" >> ~/.phpenv/versions/$PHP_VERSION_NAME/etc/php.ini
+  if [ "$DEBUG" = true ]; then
+    cat ~/.phpenv/versions/$PHP_VERSION_NAME/etc/php.ini
+  fi
+  ~/.phpenv/versions/$PHP_VERSION_NAME/sbin/php-fpm
+  # configure apache virtual hosts
+  sudo cp -f build/travis-ci/apache.conf /etc/apache2/sites-available/default
+  sudo sed -e "s?%TRAVIS_BUILD_DIR%?$TRAVIS_BUILD_DIR?g" --in-place /etc/apache2/sites-available/default
+  if [ "$DEBUG" = true ]; then
+    sudo cat /etc/apache2/sites-available/default
+  fi
+  sudo service apache2 restart
+  echo
+
+script:
+- |
+  echo "Checking webserver availability"
+  # Ensure we catch errors
+  set -e
+  wget http://127.0.0.1
+  if [ "$DEBUG" = true ]; then
+    cat index.html
+  fi
+  set +e
+  echo
+
+- |
+  echo "Checking PHP syntax errors"
+  # Ensure we catch errors
+  set -e
+  parallel-lint --exclude htdocs/includes --blame .
+  set +e
+  echo
+
+# TODO: dev/* checks
+
+- |
+  echo "Checking coding style"
+  # Ensure we catch errors
+  set -e
+  # Exclusions are defined in the ruleset.xml file
+  phpcs -s -n -p -d memory_limit=-1 --colors --tab-width=4 --standard=dev/codesniffer/ruleset.xml --encoding=utf-8 .
+  set +e
+  echo
+
+# TODO: Check Javascript (jshint?)
+
+# TODO: Check CSS (csslint?)
+
+# TODO: check SQL syntax (pgsanity?)
+
+- |
+  echo "Upgrading Dolibarr"
+  # Ensure we catch errors
+  set -e
+  cd htdocs/install
+  php upgrade.php 3.5.0 3.6.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade350360.log
+  php upgrade2.php 3.5.0 3.6.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade350360-2.log
+  php upgrade.php 3.6.0 3.7.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade360370.log
+  php upgrade2.php 3.6.0 3.7.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade360370-2.log
+  php upgrade.php 3.7.0 3.8.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade370380.log
+  php upgrade2.php 3.7.0 3.8.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade370380-2.log
+  php upgrade.php 3.8.0 3.9.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade380390.log
+  php upgrade2.php 3.8.0 3.9.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade380390-2.log
+  cd -
+  set +e
+  echo
+
+- |
+  echo "Unit testing"
+  # Ensure we catch errors
+  set -e
+  phpunit -d memory_limit=-1 -c test/phpunit/phpunittest.xml test/phpunit/AllTests.php
+  set +e
+  echo
+
+after_success:
+
+after_failure:
+- |
+  if [ "$DEBUG" = true ]; then
+    echo "Debugging informations"
+    # Upgrade log files
+    cat *.log
+    # Dolibarr log file
+    cat documents/dolibarr.log
+    # Apache log file
+    sudo cat /var/log/apache2/error.log
+    # MariaDB log file
+    sudo cat /var/log/mysql/error.log
+    # TODO: PostgreSQL log file
+    echo
+  fi
 
 after_script:
-# - echo Output dolibarr log file; cat $(pwd)/htdocs/documents/dolibarr.log
- - echo Output apache log file; sudo cat /var/log/apache2/error.log
- - echo End travis
-

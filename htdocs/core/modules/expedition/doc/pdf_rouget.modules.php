@@ -71,6 +71,14 @@ class pdf_rouget extends ModelePdfExpedition
 		$this->posxdesc=$this->marge_gauche+1;
 		$this->posxqtyordered=$this->page_largeur - $this->marge_droite - 70;
 		$this->posxqtytoship=$this->page_largeur - $this->marge_droite - 35;
+		$this->posxpicture=$this->posxqtyordered - (empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH)?20:$conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH);	// width of images
+		
+		if ($this->page_largeur < 210) // To work with US executive format
+		{
+		    $this->posxpicture-=20;
+		    $this->posxqtyordered-=20;
+		    $this->posxqtytoship-=20;
+		}
 	}
 
 	/**
@@ -103,6 +111,68 @@ class pdf_rouget extends ModelePdfExpedition
 		$outputlangs->load("deliveries");
         $outputlangs->load("sendings");
 
+		$nblignes = count($object->lines);
+
+        // Loop on each lines to detect if there is at least one image to show
+        $realpatharray=array();
+        if (! empty($conf->global->MAIN_GENERATE_SHIPMENT_WITH_PICTURE))
+        {
+            $objphoto = new Product($this->db);
+        
+            for ($i = 0 ; $i < $nblignes ; $i++)
+            {
+                if (empty($object->lines[$i]->fk_product)) continue;
+        
+                $objphoto->fetch($object->lines[$i]->fk_product);
+                //var_dump($objphoto->ref);exit;
+                if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))
+                {
+                    $pdir[0] = get_exdir($objphoto->id,2,0,0,$objphoto,'product') . $objphoto->id ."/photos/";
+                    $pdir[1] = get_exdir(0,0,0,0,$objphoto,'product') . dol_sanitizeFileName($objphoto->ref).'/';
+                }
+                else
+                {
+                    $pdir[0] = get_exdir(0,0,0,0,$objphoto,'product') . dol_sanitizeFileName($objphoto->ref).'/';				// default
+                    $pdir[1] = get_exdir($objphoto->id,2,0,0,$objphoto,'product') . $objphoto->id ."/photos/";	// alternative
+                }
+        
+                $arephoto = false;
+                foreach ($pdir as $midir)
+                {
+                    if (! $arephoto)
+                    {
+                        $dir = $conf->product->dir_output.'/'.$midir;
+        
+                        foreach ($objphoto->liste_photos($dir,1) as $key => $obj)
+                        {
+                            if (empty($conf->global->CAT_HIGH_QUALITY_IMAGES))		// If CAT_HIGH_QUALITY_IMAGES not defined, we use thumb if defined and then original photo
+                            {
+                                if ($obj['photo_vignette'])
+                                {
+                                    $filename= $obj['photo_vignette'];
+                                }
+                                else
+                                {
+                                    $filename=$obj['photo'];
+                                }
+                            }
+                            else
+                            {
+                                $filename=$obj['photo'];
+                            }
+        
+                            $realpath = $dir.$filename;
+                            $arephoto = true;
+                        }
+                    }
+                }
+        
+                if ($realpath && $arephoto) $realpatharray[$i]=$realpath;
+            }
+        }
+        
+        if (count($realpatharray) == 0) $this->posxpicture=$this->posxqtyordered;        
+        
 		if ($conf->expedition->dir_output)
 		{
 			// Definition de $dir et $file
@@ -139,8 +209,6 @@ class pdf_rouget extends ModelePdfExpedition
 				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
 				global $action;
 				$reshook=$hookmanager->executeHooks('beforePDFCreation',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
-
-				$nblignes = count($object->lines);
 
 				$pdf=pdf_getInstance($this->format);
 				$default_font_size = pdf_getPDFFontSize($outputlangs);
@@ -278,26 +346,97 @@ class pdf_rouget extends ModelePdfExpedition
 				$curY = $tab_top + 7;
 				$nexY = $tab_top + 7;
 
-				$num=count($object->lines);
 				// Loop on each lines
-				for ($i = 0; $i < $num; $i++)
+				for ($i = 0; $i < $nblignes; $i++)
 				{
 					$curY = $nexY;
 					$pdf->SetFont('','', $default_font_size - 1);   // Into loop to work with multipage
 					$pdf->SetTextColor(0,0,0);
 
+					// Define size of image if we need it
+					$imglinesize=array();
+					if (! empty($realpatharray[$i])) $imglinesize=pdf_getSizeForImage($realpatharray[$i]);
+
 					$pdf->setTopMargin($tab_top_newpage);
 					$pdf->setPageOrientation('', 1, $heightforfooter+$heightforfreetext+$heightforinfotot);	// The only function to edit the bottom margin of current page to set it.
 					$pageposbefore=$pdf->getPage();
 
-					// Description de la ligne produit
-					pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxqtyordered-10,3,$this->posxdesc,$curY,0,1);
+					$showpricebeforepagebreak=1;
+					$posYAfterImage=0;
+					$posYAfterDescription=0;
 
+					// We start with Photo of product line
+					if (isset($imglinesize['width']) && isset($imglinesize['height']) && ($curY + $imglinesize['height']) > ($this->page_hauteur-($heightforfooter+$heightforfreetext+$heightforinfotot)))	// If photo too high, we moved completely on new page
+					{
+						$pdf->AddPage('','',true);
+						if (! empty($tplidx)) $pdf->useTemplate($tplidx);
+						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+						$pdf->setPage($pageposbefore+1);
+
+						$curY = $tab_top_newpage;
+						$showpricebeforepagebreak=0;
+					}
+
+					if (isset($imglinesize['width']) && isset($imglinesize['height']))
+					{
+						$curX = $this->posxpicture-1;
+						$pdf->Image($realpatharray[$i], $curX + (($this->posxqtyordered-$this->posxpicture-$imglinesize['width'])/2), $curY, $imglinesize['width'], $imglinesize['height'], '', '', '', 2, 300);	// Use 300 dpi
+						// $pdf->Image does not increase value return by getY, so we save it manually
+						$posYAfterImage=$curY+$imglinesize['height'];
+					}
+
+					// Description of product line
+					$curX = $this->posxdesc-1;
+
+					$pdf->startTransaction();
+					// Description de la ligne produit
+					pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxpicture-$curX,3,$curX,$curY,$hideref,$hidedesc);
+						
+					$pageposafter=$pdf->getPage();
+					if ($pageposafter > $pageposbefore)	// There is a pagebreak
+					{
+						$pdf->rollbackTransaction(true);
+						$pageposafter=$pageposbefore;
+						//print $pageposafter.'-'.$pageposbefore;exit;
+						$pdf->setPageOrientation('', 1, $heightforfooter);	// The only function to edit the bottom margin of current page to set it.
+						pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxpicture-$curX,3,$curX,$curY,$hideref,$hidedesc);
+
+						$pageposafter=$pdf->getPage();
+						$posyafter=$pdf->GetY();
+						//var_dump($posyafter); var_dump(($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot))); exit;
+						if ($posyafter > ($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot)))	// There is no space left for total+free text
+						{
+							if ($i == ($nblignes-1))	// No more lines, and no space left to show total, so we create a new page
+							{
+								$pdf->AddPage('','',true);
+								if (! empty($tplidx)) $pdf->useTemplate($tplidx);
+								if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+								$pdf->setPage($pageposafter+1);
+							}
+						}
+						else
+						{
+							// We found a page break
+							$showpricebeforepagebreak=0;
+						}
+					}
+					else	// No pagebreak
+					{
+						$pdf->commitTransaction();
+					}
+					$posYAfterDescription=$pdf->GetY();
+					
 					$nexY = $pdf->GetY();
 					$pageposafter=$pdf->getPage();
+					
 					$pdf->setPage($pageposbefore);
 					$pdf->setTopMargin($this->marge_haute);
 					$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
+
+					// We suppose that a too long description or photo were moved completely on next page
+					if ($pageposafter > $pageposbefore && empty($showpricebeforepagebreak)) {
+						$pdf->setPage($pageposafter); $curY = $tab_top_newpage;
+					}
 
 					// We suppose that a too long description is moved completely on next page
 					if ($pageposafter > $pageposbefore) {
@@ -316,7 +455,7 @@ class pdf_rouget extends ModelePdfExpedition
 					if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblignes - 1))
 					{
 						$pdf->setPage($pageposafter);
-						$pdf->SetLineStyle(array('dash'=>'1,1','color'=>array(60,60,60)));
+						$pdf->SetLineStyle(array('dash'=>'1,1','color'=>array(80,80,80)));
 						//$pdf->SetDrawColor(190,190,200);
 						$pdf->line($this->marge_gauche, $nexY+1, $this->page_largeur - $this->marge_droite, $nexY+1);
 						$pdf->SetLineStyle(array('dash'=>0));
@@ -563,12 +702,15 @@ class pdf_rouget extends ModelePdfExpedition
 		$pdf->SetTextColor(0,0,60);
 		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("RefSending") ." : ".$object->ref, '', 'R');
 
-		// Date Expedition
-		$posy+=4;
-		$pdf->SetXY($posx,$posy);
-		$pdf->SetTextColor(0,0,60);
-		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("DateDeliveryPlanned")." : ".dol_print_date($object->date_delivery,"daytext",false,$outputlangs,true), '', 'R');
-
+		// Date planned delivery
+		if (! empty($object->date_delivery))
+		{
+    		$posy+=4;
+    		$pdf->SetXY($posx,$posy);
+    		$pdf->SetTextColor(0,0,60);
+    		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("DateDeliveryPlanned")." : ".dol_print_date($object->date_delivery,"day",false,$outputlangs,true), '', 'R');
+		}
+		
 		if (! empty($object->client->code_client))
 		{
 			$posy+=4;

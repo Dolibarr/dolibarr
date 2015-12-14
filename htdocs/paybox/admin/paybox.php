@@ -67,7 +67,7 @@ if ($action == 'setvalue' && $user->admin)
     if (! $error)
   	{
   		$db->commit();
-	    setEventMessage($langs->trans("SetupSaved"));
+	    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
   	}
   	else
   	{

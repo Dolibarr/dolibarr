@@ -29,6 +29,8 @@ ALTER TABLE llx_don ADD COLUMN fk_country integer NOT NULL DEFAULT 0 after count
 UPDATE llx_commande_fourn set billed=1 where statut = 8;
 UPDATE llx_commande_fourn set statut=5 where statut = 8 and billed=1;
 
+ALTER TABLE llx_user MODIFY COLUMN pass varchar(128);
+ALTER TABLE llx_user MODIFY COLUMN pass_temp varchar(128); 
 
 ALTER TABLE llx_askpricesupplier RENAME TO llx_supplier_proposal;
 ALTER TABLE llx_askpricesupplierdet RENAME TO llx_supplier_proposaldet;
@@ -475,3 +477,51 @@ INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, nc
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('110', 5209, '', 0, '', 'Manuripi', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('111', 5209, '', 0, '', 'Nicolás Suárez', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('112', 5209, '', 0, '', 'General Federico Román', 1);
+
+
+
+-- Regions Austria (id country=41)
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  41, 4101, '', 0, 'Österreich', 1);
+
+-- Provinces Austria (id country=41)
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (4101,'B','BURGENLAND','Burgenland',1);
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (4101,'K','KAERNTEN','Kärnten',1);
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (4101,'N','NIEDEROESTERREICH','Niederösterreich',1);
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (4101,'O','OBEROESTERREICH','Oberösterreich',1);
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (4101,'S','SALZBURG','Salzburg',1);
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (4101,'ST','STEIERMARK','Steiermark',1);
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (4101,'T','TIROL','Tirol',1);
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (4101,'V','VORARLBERG','Vorarlberg',1);
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (4101,'W','WIEN','Wien',1);
+
+
+-- Juridical status Austria
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (41, '4100', 'GmbH - Gesellschaft mit beschränkter Haftung', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (41, '4101', 'GesmbH - Gesellschaft mit beschränkter Haftung', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (41, '4102', 'AG - Aktiengesellschaft', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (41, '4103', 'EWIV - Europäische wirtschaftliche Interessenvereinigung', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (41, '4104', 'KEG - Kommanditerwerbsgesellschaft', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (41, '4105', 'OEG - Offene Erwerbsgesellschaft', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (41, '4106', 'OHG - Offene Handelsgesellschaft', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (41, '4107', 'AG & Co KG - Kommanditgesellschaft', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (41, '4108', 'GmbH & Co KG - Kommanditgesellschaft', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (41, '4109', 'KG - Kommanditgesellschaft', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (41, '4110', 'OG - Offene Gesellschaft', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (41, '4111', 'GbR - Gesellschaft nach bürgerlichem Recht', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (41, '4112', 'GesbR - Gesellschaft nach bürgerlichem Recht', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (41, '4113', 'GesnbR - Gesellschaft nach bürgerlichem Recht', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (41, '4114', 'e.U. - eingetragener Einzelunternehmer', 1);
+
+-- Social contributions Austria
+insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values (4101, 'Krankenversicherung',				1,1,'TAXATKV'   ,'41');
+insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values (4102, 'Unfallversicherung',				1,1,'TAXATUV'   ,'41');
+insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values (4103, 'Pensionsversicherung',				1,1,'TAXATPV'   ,'41');
+insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values (4104, 'Arbeitslosenversicherung',			1,1,'TAXATAV'   ,'41');
+insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values (4105, 'Insolvenzentgeltsicherungsfond',   1,1,'TAXATIESG' ,'41');
+insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values (4106, 'Wohnbauförderung',					1,1,'TAXATWF'   ,'41');
+insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values (4107, 'Arbeiterkammerumlage',				1,1,'TAXATAK'   ,'41');
+insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values (4108, 'Mitarbeitervorsorgekasse',			1,1,'TAXATMVK'  ,'41');
+insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values (4109, 'Familienlastenausgleichsfond',		1,1,'TAXATFLAF' ,'41');
+
+ALTER TABLE llx_accounting_bookkeeping MODIFY COLUMN doc_ref varchar(255) NOT NULL;
+

@@ -364,6 +364,5 @@ if ($user->rights->ecm->read)
 */
 
 // End of page
-$db->close();
-
 llxFooter();
+$db->close();

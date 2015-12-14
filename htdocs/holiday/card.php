@@ -60,7 +60,7 @@ if ($action == 'create')
     if (($userid == $user->id && empty($user->rights->holiday->write)) || ($userid != $user->id && empty($user->rights->holiday->write_all)))
     {
     	$error++;
-    	setEventMessage($langs->trans('CantCreateCP'));
+    	setEventMessages($langs->trans('CantCreateCP'), null, 'errors');
     	$action='request';
     }
 
@@ -130,7 +130,7 @@ if ($action == 'create')
 	    // If no validator designated
 	    if ($valideur < 1)
 	    {
-	        setEventMessage($langs->transnoentitiesnoconv('InvalidValidatorCP'), 'errors');
+	        setEventMessages($langs->transnoentitiesnoconv('InvalidValidatorCP'), null, 'errors');
 	        $error++;
 	    }
 
@@ -138,7 +138,7 @@ if ($action == 'create')
 
         if ($type < 1)
 	    {
-	        setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Type")), 'errors');
+	        setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Type")), null, 'errors');
 	        $error++;
 	    }
 
@@ -723,7 +723,7 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
                     break;
             }
 
-	        setEventMessage($errors, 'errors');
+	        setEventMessages($errors, null, 'errors');
         }
 
 
@@ -946,7 +946,7 @@ else
                         break;
                 }
 
-	            setEventMessage($errors, 'errors');
+	            setEventMessages($errors, null, 'errors');
             }
 
             // On vérifie si l'utilisateur à le droit de lire cette demande

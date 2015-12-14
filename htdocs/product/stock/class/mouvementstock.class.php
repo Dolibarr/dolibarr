@@ -626,17 +626,18 @@ class MouvementStock extends CommonObject
 		return $result;
 	}
 
-    /**
-     * Get origin
-     *
-     * @param   variant $fk_origin  id of origin
-     * @param   int $origintype     origin type
-     * @return  string              Url link to object
-     */
-	function get_origin($fk_origin, $origintype)
+	/**
+	 * Return Url link of origin object
+	 * 
+	 * @param  int     $fk_origin      Id origin
+	 * @param  int     $origintype     Type origin
+	 * @return string
+	 */
+	function get_origin($fk_origin, $origintype) 
 	{
-		switch ($origintype)
-		{
+	    $origin='';
+	    
+		switch ($origintype) {
 			case 'commande':
 				require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 				$origin = new Commande($this->db);
@@ -673,8 +674,11 @@ class MouvementStock extends CommonObject
 
 		if (empty($origin) || ! is_object($origin)) return '';
 		
-		$origin->fetch($fk_origin);
-		return $origin->getNomUrl(1);
+		if ($origin->fetch($fk_origin) > 0) {
+			return $origin->getNomUrl(1);
+		}
+
+		return '';
 	}
 
 

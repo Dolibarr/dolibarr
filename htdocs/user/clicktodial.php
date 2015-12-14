@@ -135,7 +135,7 @@ if ($id > 0)
 
         print '<tr><td>ClickToDial '.$langs->trans("Password").'</td>';
         print '<td class="valeur">';
-        print '<input name="password" value="'.(! empty($object->clicktodial_password)?$object->clicktodial_password:'').'"></td>';
+        print '<input type="password" name="password" value="'.(! empty($object->clicktodial_password)?$object->clicktodial_password:'').'"></td>';
         print "</tr>\n";
 
         print '</table>';

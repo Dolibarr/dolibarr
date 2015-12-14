@@ -226,6 +226,5 @@ print '</div>';
 
 print '</form>';
 
-$db->close();
-
 llxFooter();
+$db->close();

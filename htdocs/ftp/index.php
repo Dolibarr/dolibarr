@@ -108,15 +108,15 @@ if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
 			$langs->load("errors");
 			if ($resupload < 0)	// Unknown error
 			{
-				setEventMessage($langs->trans("ErrorFileNotUploaded"), 'errors');
+				setEventMessages($langs->trans("ErrorFileNotUploaded"), null, 'errors');
 			}
 			else if (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload))	// Files infected by a virus
 			{
-				setEventMessage($langs->trans("ErrorFileIsInfectedWithAVirus"), 'errors');
+				setEventMessages($langs->trans("ErrorFileIsInfectedWithAVirus"), null, 'errors');
 			}
 			else	// Known error
 			{
-				setEventMessage($langs->trans($resupload), 'errors');
+				setEventMessages($langs->trans($resupload), null, 'errors');
 			}
 		}
 	}
@@ -124,7 +124,7 @@ if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
 	{
 		// Echec transfert (fichier depassant la limite ?)
 		$langs->load("errors");
-		setEventMessage($langs->trans("ErrorFailToCreateDir",$upload_dir), 'errors');
+		setEventMessages($langs->trans("ErrorFailToCreateDir",$upload_dir), null, 'errors');
 	}
 }
 
@@ -143,8 +143,7 @@ if ($action == 'add' && $user->rights->ftp->setup)
 	}
 	else
 	{
-		//TODO: Translate
-		setEventMessage('Error '.$langs->trans($ecmdir->error));
+		setEventMessages($langs->trans("ErrorFailToCreateDir"), null, 'errors');
 		$action = "create";
 	}
 }
@@ -176,12 +175,12 @@ if ($action == 'confirm_deletefile' && $_REQUEST['confirm'] == 'yes')
 		$result=@ftp_delete($conn_id, $newremotefileiso);
 		if ($result)
 		{
-			setEventMessage($langs->trans("FileWasRemoved",$file));
+			setEventMessages($langs->trans("FileWasRemoved",$file), null, 'mesgs');
 		}
 		else
 		{
 			dol_syslog("ftp/index.php ftp_delete", LOG_ERR);
-			setEventMessage($langs->trans("FTPFailedToRemoveFile",$file), 'errors');
+			setEventMessages($langs->trans("FTPFailedToRemoveFile",$file), null, 'errors');
 		}
 
 		//ftp_close($conn_id);	Close later
@@ -226,12 +225,12 @@ if ($_POST["const"] && $_POST["delete"] && $_POST["delete"] == $langs->trans("De
 				$result=@ftp_delete($conn_id, $newremotefileiso);
 				if ($result)
 				{
-					setEventMessage($langs->trans("FileWasRemoved",$file));
+					setEventMessages($langs->trans("FileWasRemoved",$file), null, 'mesgs');
 				}
 				else
 				{
 					dol_syslog("ftp/index.php ftp_delete", LOG_ERR);
-					setEventMessage($langs->trans("FTPFailedToRemoveFile",$file), 'errors');
+					setEventMessages($langs->trans("FTPFailedToRemoveFile",$file), null, 'errors');
 				}
 
 				//ftp_close($conn_id);	Close later
@@ -270,11 +269,11 @@ if ($action == 'confirm_deletesection' && $confirm == 'yes')
 		$result=@ftp_rmdir($conn_id, $newremotefileiso);
 		if ($result)
 		{
-			setEventMessage($langs->trans("DirWasRemoved",$file));
+			setEventMessages($langs->trans("DirWasRemoved",$file), null, 'mesgs');
 		}
 		else
 		{
-			setEventMessage($langs->trans("FTPFailedToRemoveDir",$file), 'errors');
+			setEventMessages($langs->trans("FTPFailedToRemoveDir",$file), null, 'errors');
 		}
 
 		//ftp_close($conn_id);	Close later

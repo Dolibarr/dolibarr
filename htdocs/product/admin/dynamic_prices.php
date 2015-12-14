@@ -43,14 +43,14 @@ $price_globals = new PriceGlobalVariable($db);
 if ($action == 'edit_variable') {
     $res = $price_globals->fetch($selection);
     if ($res < 1) {
-        setEventMessage($price_globals->error, 'errors');
+        setEventMessages($price_globals->error, $price_globals->errors, 'errors');
     }
 }
 $price_updaters = new PriceGlobalVariableUpdater($db);
 if ($action == 'edit_updater') {
     $res = $price_updaters->fetch($selection);
     if ($res < 1) {
-        setEventMessage($price_updaters->error, 'errors');
+        setEventMessages($price_updaters->error, $price_updaters->errors, 'errors');
     }
 }
 
@@ -67,7 +67,7 @@ if (!empty($action) && empty($cancel)) {
         if (!empty($save)) {
             foreach ($price_globals->listGlobalVariables() as $entry) {
                 if ($price_globals->id != $entry->id && dol_strtolower($price_globals->code) == dol_strtolower($entry->code)) {
-                    setEventMessage($langs->trans("ErrorRecordAlreadyExists"), 'errors');
+                    setEventMessages($langs->trans("ErrorRecordAlreadyExists"), null, 'errors');
                     $save = null;
                 }
             }
@@ -78,21 +78,21 @@ if (!empty($action) && empty($cancel)) {
         if ($res > 0) {
             $action = '';
         } else {
-            setEventMessage($price_globals->error, 'errors');
+            setEventMessages($price_globals->error, $price_globals->errors, 'errors');
         }
     } elseif ($action == 'edit_variable' && !empty($save)) {
         $res = $price_globals->update($user);
         if ($res > 0) {
             $action = '';
         } else {
-            setEventMessage($price_globals->error, 'errors');
+            setEventMessages($price_globals->error, $price_globals->errors, 'errors');
         }
     } elseif ($action == 'delete_variable') {
         $res = $price_globals->delete($selection, $user);
         if ($res > 0) {
             $action = '';
         } else {
-            setEventMessage($price_globals->error, 'errors');
+            setEventMessages($price_globals->error, $price_globals->errors, 'errors');
         }
     }
 
@@ -113,7 +113,7 @@ if (!empty($action) && empty($cancel)) {
         if ($res > 0) {
             $action = '';
         } else {
-            setEventMessage($price_updaters->error, 'errors');
+            setEventMessages($price_updaters->error, $price_updaters->errors, 'errors');
         }
     } elseif ($action == 'edit_updater' && !empty($save)) {
         //Verify if process() works
@@ -124,14 +124,14 @@ if (!empty($action) && empty($cancel)) {
         if ($res > 0) {
             $action = '';
         } else {
-            setEventMessage($price_updaters->error, 'errors');
+            setEventMessages($price_updaters->error, $price_updaters->errors, 'errors');
         }
     } elseif ($action == 'delete_updater') {
         $res = $price_updaters->delete($selection, $user);
         if ($res > 0) {
             $action = '';
         } else {
-            setEventMessage($price_updaters->error, 'errors');
+            setEventMessages($price_updaters->error, $price_updaters->errors, 'errors');
         }
     }
 } elseif (!empty($cancel)) {

@@ -1041,8 +1041,5 @@ else
 
 }
 
-
-
-$db->close();
-
 llxFooter();
+$db->close();

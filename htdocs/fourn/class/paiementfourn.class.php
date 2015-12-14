@@ -128,10 +128,9 @@ class PaiementFourn extends Paiement
 		$this->total = 0;
 		foreach ($this->amounts as $key => $value)
 		{
-			$value = price2num($value);
-			$val = round($value, 2);
-			$this->amounts[$key] = $val;
-			$this->total += $val;
+			$newvalue = price2num($value, 'MT');
+			$this->amounts[$key] = $newvalue;
+			$this->total += $newvalue;
 		}
 		$this->total = price2num($this->total);
 

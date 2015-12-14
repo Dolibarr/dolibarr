@@ -57,7 +57,7 @@ if ($action == 'convert')
 	if ($oldvatrate == $newvatrate)
 	{
 		$langs->load("errors");
-		setEventMessage($langs->trans("ErrorNewValueCantMatchOldValue"),'errors');
+		setEventMessages($langs->trans("ErrorNewValueCantMatchOldValue"), null, 'errors');
 		$error++;
 	}
 
@@ -225,12 +225,12 @@ if ($action == 'convert')
 		// Output result
 		if (! $error)
 		{
-			if ($nbrecordsmodified > 0) setEventMessage($langs->trans("RecordsModified",$nbrecordsmodified));
-			else setEventMessage($langs->trans("NoRecordFound"),'warnings');
+			if ($nbrecordsmodified > 0) setEventMessages($langs->trans("RecordsModified",$nbrecordsmodified), null, 'mesgs');
+			else setEventMessages($langs->trans("NoRecordFound"), null, 'warnings');
 		}
 		else
 		{
-			setEventMessage($langs->trans("Error"),'errors');
+			setEventMessages($langs->trans("Error"), null, 'errors');
 		}
 
 	}
