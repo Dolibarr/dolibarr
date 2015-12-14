@@ -891,7 +891,7 @@ class ActionComm extends CommonObject
             $agenda_static = new ActionComm($this->db);
 
 	        $response = new WorkboardResponse();
-	        $response->warning_delay = $conf->actions->warning_delay/60/60/24;
+	        $response->warning_delay = $conf->agenda->warning_delay/60/60/24;
 	        $response->label = $langs->trans("ActionsToDo");
 	        $response->url = DOL_URL_ROOT.'/comm/action/listactions.php?status=todo&amp;mainmenu=agenda';
 	        $response->img = img_object($langs->trans("Actions"),"action");
@@ -1380,7 +1380,7 @@ class ActionComm extends CommonObject
 
         $now = dol_now();
 
-        return $this->datep && ($this->datep < ($now - $conf->actions->warning_delay));
+        return $this->datep && ($this->datep < ($now - $conf->agenda->warning_delay));
     }
 
 }
