@@ -2505,7 +2505,13 @@ a.impayee:visited { font-weight: bold; color: #550000; }
 a.impayee:active { font-weight: bold; color: #550000; }
 a.impayee:hover { font-weight: bold; color: #550000; }
 
-
+/* Translation input */
+textarea.height200 {
+    min-height: 200px;
+}
+input.alertsubs, textarea.alertsubs{
+    background-color: #eff299;
+}
 
 /*
  *  Other
