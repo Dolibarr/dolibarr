@@ -37,7 +37,10 @@ if( (array) $linked_resources && count($linked_resources) > 0)
 	{
 		$var=!$var;
 		$object_resource = fetchObjectByElement($linked_resource['resource_id'],$linked_resource['resource_type']);
-		if($mode == 'edit' && $linked_resource['rowid'] == GETPOST('lineid'))
+		
+		//$element_id = $linked_resource['rowid'];
+		
+		if ($mode == 'edit' && $linked_resource['rowid'] == GETPOST('lineid'))
 		{
 
 			print '<form class="tagtr '.($var==true?'pair':'impair').'" action="'.$_SERVER["PHP_SELF"].'?element='.$element.'&element_id='.$element_id.'" method="POST">';
@@ -58,7 +61,7 @@ if( (array) $linked_resources && count($linked_resources) > 0)
 		else
 		{
 			$style='';
-			if($linked_resource['rowid'] == GETPOST('lineid'))
+			if ($linked_resource['rowid'] == GETPOST('lineid'))
 				$style='style="background: orange;"';
 
 			print '<div class="tagtr '.($var==true?"pair":"impair").'" '.$style.'>';
@@ -91,8 +94,6 @@ if( (array) $linked_resources && count($linked_resources) > 0)
 
 			print '</div>';
 		}
-
-
 	}
 
 	print '</div>';

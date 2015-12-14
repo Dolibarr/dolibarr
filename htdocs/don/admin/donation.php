@@ -3,6 +3,7 @@
  * Copyright (C) 2012-2015	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013-2015  Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2015       Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015  		Benoit Bruchard			<benoitb21@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,6 +40,7 @@ if (!$user->admin) accessforbidden();
 $typeconst=array('yesno','texte','chaine');
 
 $action = GETPOST('action','alpha');
+$value = GETPOST('value');
 
 $type='donation';
 
@@ -377,18 +379,18 @@ if (is_resource($handle))
                 // Active
                 if (in_array($name, $def))
                 {
-                    print "<td align=\"center\">\n";
                     if ($conf->global->DON_ADDON_MODEL == $name)
                     {
-                        print img_picto($langs->trans("Enabled"),'switch_on');
-                    }
+						print "<td align=\"center\">\n";
+                    	print img_picto($langs->trans("Enabled"),'switch_on');
+						print '</td>';
+					}
                     else
                     {
-                        print '&nbsp;';
-                        print '</td><td align="center">';
+                        print "<td align=\"center\">\n";
                         print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
-                    }
-                    print '</td>';
+						print '</td>';
+					}
                 }
                 else
                 {
@@ -398,16 +400,18 @@ if (is_resource($handle))
                 }
 
                 // Defaut
-                print "<td align=\"center\">";
                 if ($conf->global->DON_ADDON_MODEL == "$name")
                 {
-                    print img_picto($langs->trans("Default"),'on');
+					print "<td align=\"center\">";
+					print img_picto($langs->trans("Default"),'on');
+					print '</td>';
                 }
                 else
                 {
-                    print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
-                }
-                print '</td>';
+                    print "<td align=\"center\">";
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+					print '</td>';
+				}                
 
                 // Info
                 $htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
@@ -437,10 +441,6 @@ if (is_resource($handle))
 
 print '</table>';
 
-
-print "<br>";
-
+llxFooter();
 
 $db->close();
-
-llxFooter();

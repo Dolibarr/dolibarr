@@ -69,7 +69,7 @@ class DoliDBMysqli extends DoliDB
 
         //print "Name DB: $host,$user,$pass,$name<br>";
 
-        if (! function_exists("mysqli_connect"))
+        if (! class_exists('mysqli'))
         {
             $this->connected = false;
             $this->ok = false;

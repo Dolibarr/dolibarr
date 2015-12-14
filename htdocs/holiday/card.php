@@ -60,7 +60,7 @@ if ($action == 'create')
     if (($userid == $user->id && empty($user->rights->holiday->write)) || ($userid != $user->id && empty($user->rights->holiday->write_all)))
     {
     	$error++;
-    	setEventMessage($langs->trans('CantCreateCP'));
+    	setEventMessages($langs->trans('CantCreateCP'), null, 'errors');
     	$action='request';
     }
 
@@ -130,12 +130,18 @@ if ($action == 'create')
 	    // If no validator designated
 	    if ($valideur < 1)
 	    {
-	        header('Location: card.php?action=request&error=Valideur');
-	        exit;
+	        setEventMessages($langs->transnoentitiesnoconv('InvalidValidatorCP'), null, 'errors');
+	        $error++;
 	    }
 
 	    $result = 0;
-	    
+
+        if ($type < 1)
+	    {
+	        setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Type")), null, 'errors');
+	        $error++;
+	    }
+
 	    if (! $error)
 	    {
     	    $cp->fk_user = $userid;
@@ -150,7 +156,7 @@ if ($action == 'create')
 	    }
 	    
 	    // If no SQL error we redirect to the request card
-	    if ($result > 0)
+	    if (! $error && $result > 0)
 	    {
 			$db->commit();
 
@@ -160,10 +166,6 @@ if ($action == 'create')
 	    else
 		{
 	    	$db->rollback();
-
-	        // Otherwise we display the request form with the SQL error message
-	        header('Location: card.php?action=request');
-	        exit;
 	    }
     }
 }
@@ -721,7 +723,7 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
                     break;
             }
 
-	        setEventMessage($errors, 'errors');
+	        setEventMessages($errors, null, 'errors');
         }
 
 
@@ -793,7 +795,7 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         print '<td>';
         if (empty($user->rights->holiday->write_all))
         {
-        	print $form->select_dolusers($userid,'useridbis',0,'',1);
+        	print $form->select_dolusers($userid, 'useridbis', 0, '', 1, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
         	print '<input type="hidden" name="userid" value="'.$userid.'">';
         }
         else print $form->select_dolusers(GETPOST('userid')?GETPOST('userid'):$user->id,'userid',0,'',0);
@@ -813,6 +815,7 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
 			$arraytypeleaves[$val['rowid']]=$labeltoshow;
         }
         print $form->selectarray('type', $arraytypeleaves, (GETPOST('type')?GETPOST('type'):''), 1);
+        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
         print '</td>';
         print '</tr>';
 
@@ -821,10 +824,10 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         print '<td class="fieldrequired">'.$langs->trans("DateDebCP").' ('.$langs->trans("FirstDayOfHoliday").')</td>';
         print '<td>';
         // Si la demande ne vient pas de l'agenda
-        if(!isset($_GET['datep'])) {
+        if (! GETPOST('date_debut_')) {
             $form->select_date(-1,'date_debut_');
         } else {
-            $tmpdate = dol_mktime(0, 0, 0, GETPOST('datepmonth'), GETPOST('datepday'), GETPOST('datepyear'));
+            $tmpdate = dol_mktime(0, 0, 0, GETPOST('date_debut_month'), GETPOST('date_debut_day'), GETPOST('date_debut_year'));
             $form->select_date($tmpdate,'date_debut_');
         }
         print ' &nbsp; &nbsp; ';
@@ -837,10 +840,10 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         print '<td class="fieldrequired">'.$langs->trans("DateFinCP").' ('.$langs->trans("LastDayOfHoliday").')</td>';
         print '<td>';
         // Si la demande ne vient pas de l'agenda
-        if(!isset($_GET['datep'])) {
+        if (! GETPOST('date_fin_')) {
             $form->select_date(-1,'date_fin_');
         } else {
-            $tmpdate = dol_mktime(0, 0, 0, GETPOST('datefmonth'), GETPOST('datefday'), GETPOST('datefyear'));
+            $tmpdate = dol_mktime(0, 0, 0, GETPOST('date_fin_month'), GETPOST('date_fin_day'), GETPOST('date_fin_year'));
             $form->select_date($tmpdate,'date_fin_');
         }
         print ' &nbsp; &nbsp; ';
@@ -857,7 +860,7 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         $valideurarray = array();
         foreach($valideurobjects as $val) $valideurarray[$val->id]=$val->id;
         print '<td>';
-        print $form->select_dolusers($user->fk_user, "valideur", 1, "", 0, $valideurarray);	// By default, hierarchical parent
+        print $form->select_dolusers((GETPOST('valideur')>0?GETPOST('valideur'):$user->fk_user), "valideur", 1, "", 0, $valideurarray, 0, 0, 0, 0, '', 0, '', '', 1);	// By default, hierarchical parent
         print '</td>';
         print '</tr>';
 
@@ -943,7 +946,7 @@ else
                         break;
                 }
 
-	            setEventMessage($errors, 'errors');
+	            setEventMessages($errors, null, 'errors');
             }
 
             // On vérifie si l'utilisateur à le droit de lire cette demande
@@ -984,7 +987,6 @@ else
 
                 $head=holiday_prepare_head($cp);
 
-                dol_fiche_head($head,'card',$langs->trans("CPTitreMenu"),0,'holiday');
 
                 if ($action == 'edit' && $cp->statut == 1)
                 {
@@ -994,6 +996,8 @@ else
                     print '<input type="hidden" name="holiday_id" value="'.$id.'" />'."\n";
                 }
 
+                dol_fiche_head($head,'card',$langs->trans("CPTitreMenu"),0,'holiday');
+                
                 print '<table class="border" width="100%">';
                 print '<tbody>';
 
@@ -1168,19 +1172,20 @@ else
                 print '</tbody>';
                 print '</table>';
 
+                dol_fiche_end();
+                
                 if ($action == 'edit' && $cp->statut == 1)
                 {
-                    print '<br><div align="center">';
+                    print '<div align="center">';
                     if ($canedit && $cp->statut == 1)
                     {
-                        print '<input type="submit" value="'.$langs->trans("UpdateButtonCP").'" class="button">';
+                        print '<input type="submit" value="'.$langs->trans("Save").'" class="button">';
                     }
                     print '</div>';
 
                     print '</form>';
                 }
 
-                dol_fiche_end();
 
                 if (! $edit)
                 {

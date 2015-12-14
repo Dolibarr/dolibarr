@@ -131,7 +131,7 @@ if ($resql)
     {
         print '<tr class="impair"><td align="center" colspan="2">';
         $data=array('series'=>$dataseries);
-        dol_print_graph('stats',300,180,$data,1,'pie',1);
+        dol_print_graph('stats',300,180,$data,1,'pie',1,'',0);
         print '</td></tr>';
     }
     //if ($totalinprocess != $total)

@@ -30,7 +30,7 @@ $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 
 $langs->load("bills");
 echo '<br>';
-print load_fiche_titre($langs->trans("RelatedSupplierInvoices"));
+print load_fiche_titre($langs->trans("RelatedSupplierInvoices"), '', '');
 ?>
 
 <table class="noborder allwidth">
@@ -65,7 +65,7 @@ foreach($linkedObjectBlock as $key => $objectlink)
 }
 ?>
 <tr class="liste_total">
-	<td align="left" colspan="2"><?php echo $langs->trans("TotalHT"); ?></td>
+	<td align="left" colspan="3"><?php echo $langs->trans("TotalHT"); ?></td>
 	<td align="right"><?php
 		if ($user->rights->fournisseur->facture->lire) {
 			echo price($total);

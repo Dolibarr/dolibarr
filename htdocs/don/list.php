@@ -149,7 +149,7 @@ if ($resql)
     if ($search_all)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-        print $langs->trans("FilterOnInto", $search_all, join(', ',$fieldstosearchall));
+        print $langs->trans("FilterOnInto", $search_all) . join(', ',$fieldstosearchall);
     }
     
 	print "<table class=\"noborder\" width=\"100%\">";
@@ -236,7 +236,5 @@ else
 	dol_print_error($db);
 }
 
-
-$db->close();
-
 llxFooter();
+$db->close();

@@ -22,15 +22,10 @@
  */
 
 
-// Change this following line to use the correct relative path (../, ../../, etc)
-$res=0;
-$res=@include("../main.inc.php");				// For root directory
-if (! $res) $res=@include("../../main.inc.php");	// For "custom" directory
-if (! $res) die("Include of main fails");
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/resource/class/resource.class.php';
 
-require 'class/resource.class.php';
-
-// Load traductions files requiredby by page
+// Load translations files requiredby by page
 $langs->load("resource");
 $langs->load("companies");
 $langs->load("other");
@@ -52,7 +47,7 @@ $object = new Resource($db);
 
 $hookmanager->initHooks(array('resource_list'));
 
-if (empty($sortorder)) $sortorder="DESC";
+if (empty($sortorder)) $sortorder="ASC";
 if (empty($sortfield)) $sortfield="t.rowid";
 if (empty($arch)) $arch = 0;
 
@@ -82,14 +77,11 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 /*
  * View
  */
-$pagetitle=$langs->trans('ResourcePageIndex');
-llxHeader('',$pagetitle,'');
-
-
 
 $form=new Form($db);
 
-print load_fiche_titre($pagetitle,'','title_generic');
+$pagetitle=$langs->trans('ResourcePageIndex');
+llxHeader('',$pagetitle,'');
 
 // Confirmation suppression resource line
 if ($action == 'delete_resource')
@@ -102,6 +94,8 @@ $ret = $object->fetch_all($sortorder, $sortfield, $limit, $offset);
 if($ret == -1) {
 	dol_print_error($db,$object->error);
 	exit;
+} else {
+    print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $ret+1, $object->num_all,'title_generic.png');
 }
 if(!$ret) {
 	print '<div class="warning">'.$langs->trans('NoResourceInDatabase').'</div>';

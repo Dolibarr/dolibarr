@@ -85,47 +85,62 @@ $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);   
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook)) {
-    if ($action == 'update' && ($caneditfield || !empty($user->admin))) {
-        if (!$_POST["cancel"]) {
-            $tabparam = array();
+	if ($action == 'update' && ($caneditfield || !empty($user->admin))) {
+		if (!$_POST["cancel"]) {
+			$tabparam = array();
 
-            if ($_POST["check_MAIN_LANG_DEFAULT"] == "on") {
-                $tabparam["MAIN_LANG_DEFAULT"] = $_POST["main_lang_default"];
-            } else {
-                $tabparam["MAIN_LANG_DEFAULT"] = '';
-            }
+			if (GETPOST("check_MAIN_LANG_DEFAULT") == "on") {
+				$tabparam["MAIN_LANG_DEFAULT"] = $_POST["main_lang_default"];
+			} else {
+				$tabparam["MAIN_LANG_DEFAULT"] = '';
+			}
 
-            if ($_POST["check_SIZE_LISTE_LIMIT"] == "on") {
-                $tabparam["MAIN_SIZE_LISTE_LIMIT"] = $_POST["main_size_liste_limit"];
-            } else {
-                $tabparam["MAIN_SIZE_LISTE_LIMIT"] = '';
-            }
+			if (GETPOST("check_SIZE_LISTE_LIMIT") == "on") {
+				$tabparam["MAIN_SIZE_LISTE_LIMIT"] = $_POST["main_size_liste_limit"];
+			} else {
+				$tabparam["MAIN_SIZE_LISTE_LIMIT"] = '';
+			}
 
-    	$val=(join(',',(colorStringToArray(GETPOST('THEME_ELDY_TOPMENU_BACK1'),array()))));
-    	if ($val == '') $tabparam['THEME_ELDY_TOPMENU_BACK1']='';
-        else $tabparam['THEME_ELDY_TOPMENU_BACK1']=join(',',colorStringToArray(GETPOST('THEME_ELDY_TOPMENU_BACK1'),array()));
-    
-    	$val=(join(',',(colorStringToArray(GETPOST('THEME_ELDY_BACKTITLE1'),array()))));
-    	if ($val == '') $tabparam['THEME_ELDY_BACKTITLE1']='';
-        else $tabparam['THEME_ELDY_BACKTITLE1']=join(',',colorStringToArray(GETPOST('THEME_ELDY_BACKTITLE1'),array()));
-        
-	    if (GETPOST('check_THEME_ELDY_USE_HOVER') == 'on') $tabparam["THEME_ELDY_USE_HOVER"]=1;
-    	else $tabparam["THEME_ELDY_USE_HOVER"]=0;
-        
-	    $tabparam["MAIN_SEARCHFORM_CONTACT"]=$_POST["main_searchform_contact"];
-        $tabparam["MAIN_SEARCHFORM_SOCIETE"]=$_POST["main_searchform_societe"];
-        $tabparam["MAIN_SEARCHFORM_PRODUITSERVICE"]=$_POST["main_searchform_produitservice"];
+			if (GETPOST("check_MAIN_THEME") == "on") {
+				$tabparam["MAIN_THEME"] = $_POST["main_theme"];
+			} else {
+				$tabparam["MAIN_THEME"] = '';
+			}
 
-            $tabparam["MAIN_SEARCHFORM_CONTACT"] = $_POST["main_searchform_contact"];
-            $tabparam["MAIN_SEARCHFORM_SOCIETE"] = $_POST["main_searchform_societe"];
-            $tabparam["MAIN_SEARCHFORM_PRODUITSERVICE"] = $_POST["main_searchform_produitservice"];
+			$tabparam["MAIN_SEARCHFORM_CONTACT"] = $_POST["main_searchform_contact"];
 
-            $result = dol_set_user_param($db, $conf, $object, $tabparam);
+			$val = (implode(',', (colorStringToArray(GETPOST('THEME_ELDY_TOPMENU_BACK1'), array()))));
+			if ($val == '') {
+				$tabparam['THEME_ELDY_TOPMENU_BACK1'] = '';
+			} else {
+				$tabparam['THEME_ELDY_TOPMENU_BACK1'] = join(',',
+					colorStringToArray(GETPOST('THEME_ELDY_TOPMENU_BACK1'), array()));
+			}
 
-            header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
-            exit;
-        }
-    }
+			$val = (implode(',', (colorStringToArray(GETPOST('THEME_ELDY_BACKTITLE1'), array()))));
+			if ($val == '') {
+				$tabparam['THEME_ELDY_BACKTITLE1'] = '';
+			} else {
+				$tabparam['THEME_ELDY_BACKTITLE1'] = join(',',
+					colorStringToArray(GETPOST('THEME_ELDY_BACKTITLE1'), array()));
+			}
+
+			if (GETPOST('check_THEME_ELDY_USE_HOVER') == 'on') {
+				$tabparam["THEME_ELDY_USE_HOVER"] = 1;
+			} else {
+				$tabparam["THEME_ELDY_USE_HOVER"] = 0;
+			}
+
+			$tabparam["MAIN_SEARCHFORM_SOCIETE"] = $_POST["main_searchform_societe"];
+
+			$tabparam["MAIN_SEARCHFORM_PRODUITSERVICE"] = $_POST["main_searchform_produitservice"];
+
+			$result = dol_set_user_param($db, $conf, $object, $tabparam);
+
+			header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $id);
+			exit;
+		}
+	}
 }
 
 /*

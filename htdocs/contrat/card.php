@@ -830,10 +830,34 @@ if (empty($reshook))
 	            setEventMessages($object->error, $object->errors, 'errors');
 	        }
 	
-	        $result = $object->setValueFrom('ref',GETPOST('ref','alpha'));;
+	        $result = $object->setValueFrom('ref',GETPOST('ref','alpha'));
 	        if ($result < 0) {
 	            setEventMessages($object->error, $object->errors, 'errors');
 	            $action = 'editref';
+	        } else {
+	            header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $object->id);
+	            exit;
+	        }
+	    }
+	    else {
+	        header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $id);
+	        exit;
+	    }
+	} 
+	elseif ($action=='setdate_contrat') 
+	{
+	    $cancelbutton = GETPOST('cancel');
+	
+	    if (!$cancelbutton) {
+	        $result = $object->fetch($id);
+	        if ($result < 0) {
+	            setEventMessages($object->error, $object->errors, 'errors');
+	        }
+			$datacontrat=dol_mktime(GETPOST('date_contrathour'), GETPOST('date_contratmin'), 0, GETPOST('date_contratmonth'), GETPOST('date_contratday'), GETPOST('date_contratyear'));
+	        $result = $object->setValueFrom('date_contrat',$datacontrat,'',null,'date');
+	        if ($result < 0) {
+	            setEventMessages($object->error, $object->errors, 'errors');
+	            $action = 'editdate_contrat';
 	        } else {
 	            header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $object->id);
 	            exit;
@@ -1278,8 +1302,15 @@ else
         print "</td></tr>";
 
         // Date
-        print '<tr><td>'.$langs->trans("Date").'</td>';
-        print '<td colspan="3">'.dol_print_date($object->date_contrat,"dayhour")."</td></tr>\n";
+        print '<tr>';
+		print '<td  width="20%">';
+		print $form->editfieldkey("Date",'date_contrat',$object->date_contrat,$object,$user->rights->contrat->creer);
+		print '</td><td>';
+		print $form->editfieldval("Date",'date_contrat',$object->date_contrat,$object,$user->rights->contrat->creer,'datehourpicker');
+		print '</td>';
+		print '</tr>';
+       /* print '<tr><td>'.$langs->trans("Date").'</td>';
+        print '<td colspan="3">'.dol_print_date($object->date_contrat,"dayhour")."</td></tr>\n";*/
 
         // Projet
         if (! empty($conf->projet->enabled))
@@ -1565,13 +1596,14 @@ else
 					    if ($objp->fk_product) print '<select id="fournprice" name="fournprice"></select>';
 						print '<input id="buying_price" type="text" size="5" name="buying_price" value="'.price($objp->pa_ht,0,'',0).'"></td>';
 					}
-                    print '<td align="center" rowspan="2" valign="middle"><input type="submit" class="button" name="save" value="'.$langs->trans("Modify").'">';
+                    print '<td align="center">';
+                    print '<input type="submit" class="button" name="save" value="'.$langs->trans("Modify").'">';
                     print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
                     print '</td>';
 
-                    $colspan=5;
+                    $colspan=6;
                     if (! empty($conf->margin->enabled) && ! empty($conf->global->MARGIN_SHOW_ON_CONTRACT)) $colspan++;
-	              if($conf->global->PRODUCT_USE_UNITS) $colspan++;
+	                if($conf->global->PRODUCT_USE_UNITS) $colspan++;
 
                     // Ligne dates prevues
                     print "<tr ".$bc[$var].">";
@@ -1746,22 +1778,23 @@ else
                     }
                 }
 
-                print '<tr '.$bc[$var].'><td>'.$langs->trans("DateServiceActivate").'</td><td>';
+                print '<tr '.$bc[$var].'>';
+                print '<td class="nohover">'.$langs->trans("DateServiceActivate").'</td><td>';
                 print $form->select_date($dateactstart,'',$usehm,$usehm,'',"active",1,0,1);
                 print '</td>';
 
-                print '<td>'.$langs->trans("DateEndPlanned").'</td><td>';
+                print '<td class="nohover">'.$langs->trans("DateEndPlanned").'</td><td>';
                 print $form->select_date($dateactend,"end",$usehm,$usehm,'',"active",1,0,1);
                 print '</td>';
 
-                print '<td align="center" rowspan="2" valign="middle">';
+                print '<td align="center nohover" rowspan="2" valign="middle">';
                 print '<input type="submit" class="button" name="activate" value="'.$langs->trans("Activate").'"><br>';
                 print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
                 print '</td>';
 
                 print '</tr>';
 
-                print '<tr '.$bc[$var].'><td>'.$langs->trans("Comment").'</td><td colspan="'.($conf->margin->enabled?4:3).'"><input size="80" type="text" name="comment" value="'.$_POST["comment"].'"></td></tr>';
+                print '<tr '.$bc[$var].'><td class="nohover">'.$langs->trans("Comment").'</td><td class="nohover" colspan="'.($conf->margin->enabled?4:3).'"><input size="80" type="text" name="comment" value="'.$_POST["comment"].'"></td></tr>';
 
                 print '</table>';
 
@@ -1798,7 +1831,7 @@ else
                 $now=dol_now();
                 if ($dateactend > $now) $dateactend=$now;
 
-                print '<tr '.$bc[$var].'><td colspan="2">';
+                print '<tr '.$bc[$var].'><td colspan="2" class="nohover">';
                 if ($objp->statut >= 4)
                 {
                     if ($objp->statut == 4)
@@ -1809,11 +1842,12 @@ else
                 }
                 print '</td>';
 
-                print '<td align="right" rowspan="2"><input type="submit" class="button" name="close" value="'.$langs->trans("Close").'"><br>';
+                print '<td align="right" rowspan="2" class="nohover">';
+                print '<input type="submit" class="button" name="close" value="'.$langs->trans("Close").'"><br>';
                 print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
                 print '</td></tr>';
 
-                print '<tr '.$bc[$var].'><td>'.$langs->trans("Comment").'</td><td><input size="70" type="text" class="flat" name="comment" value="'.GETPOST('comment').'"></td></tr>';
+                print '<tr '.$bc[$var].'><td class="nohover">'.$langs->trans("Comment").'</td><td class="nohover"><input size="70" type="text" class="flat" name="comment" value="'.GETPOST('comment').'"></td></tr>';
                 print '</table>';
 
                 print '</form>';

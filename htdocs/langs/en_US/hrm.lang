@@ -1,5 +1,4 @@
 # Dolibarr language file - en_US - hrm
-CHARSET=UTF-8
 # Admin
 HRM_EMAIL_EXTERNAL_SERVICE=Email to prevent HRM external service
 Establishments=Establishments

@@ -5,7 +5,7 @@
  * Copyright (C) 2005		Marc Barilley			<marc@ocebo.fr>
  * Copyright (C) 2005-2013	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2013		Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2013-2015	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
  *
@@ -128,7 +128,7 @@ if (empty($reshook))
 	        else
 	        {
 	            $langs->load("errors");
-		        setEventMessage($langs->trans($object->error), 'errors');
+		        setEventMessages($langs->trans($object->error), null, 'errors');
 	            $action='';
 	        }
 	//    }
@@ -161,7 +161,7 @@ if (empty($reshook))
 	        if (! $idwarehouse || $idwarehouse == -1)
 	        {
 	            $error++;
-		        setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Warehouse")), 'errors');
+		        setEventMessages($langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
 	            $action='';
 	        }
 	    }
@@ -188,7 +188,7 @@ if (empty($reshook))
 	    }
 	    else
 	    {
-		    setEventMessage($object->error, 'errors');
+		    setEventMessages($object->error, $object->errors, 'errors');
 	    }
 	}
 
@@ -219,7 +219,7 @@ if (empty($reshook))
 		}
 		else
 		{
-			setEventMessage($object->error, 'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 			/* Fix bug 1485 : Reset action to avoid asking again confirmation on failure */
 			$action='';
 		}
@@ -231,7 +231,7 @@ if (empty($reshook))
 	    $result=$object->set_paid($user);
 	    if ($result<0)
 	    {
-	        setEventMessage($object->error,'errors');
+	        setEventMessages($object->error, $object->errors, 'errors');
 	    }
 	}
 
@@ -242,13 +242,13 @@ if (empty($reshook))
 	    if ($result < 0) dol_print_error($db, $object->error);
 	}
 
-	// conditions de reglement
+	// payments conditions
 	if ($action == 'setconditions' && $user->rights->fournisseur->commande->creer)
 	{
 	    $result=$object->setPaymentTerms(GETPOST('cond_reglement_id','int'));
 	}
 
-	// mode de reglement
+	// payment mode
 	else if ($action == 'setmode' && $user->rights->fournisseur->commande->creer)
 	{
 	    $result = $object->setPaymentMethods(GETPOST('mode_reglement_id','int'));
@@ -282,7 +282,7 @@ if (empty($reshook))
 	    if (! empty($object->date_echeance) && $object->date_echeance < $object->date)
 	    {
 	    	$object->date_echeance=$object->date;
-	    	setEventMessage($langs->trans("DatePaymentTermCantBeLowerThanObjectDate"),'warnings');
+	    	setEventMessages($langs->trans("DatePaymentTermCantBeLowerThanObjectDate"), null, 'warnings');
 	    }
 	    $result=$object->update($user);
 	    if ($result < 0) dol_print_error($db,$object->error);
@@ -298,7 +298,7 @@ if (empty($reshook))
 	        $result=$paiementfourn->fetch(GETPOST('paiement_id'));
 	        if ($result > 0) $result=$paiementfourn->delete(); // If fetch ok and found
 	        if ($result < 0) {
-		        setEventMessage($paiementfourn->error, 'errors');
+		        setEventMessages($paiementfourn->error, $paiementfourn->errors, 'errors');
 	        }
 	    }
 	}
@@ -313,21 +313,21 @@ if (empty($reshook))
 
 	    if (GETPOST('socid','int')<1)
 	    {
-		    setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentities('Supplier')), 'errors');
+		    setEventMessages($langs->trans('ErrorFieldRequired',$langs->transnoentities('Supplier')), null, 'errors');
 	    	$action='create';
 	    	$error++;
 	    }
 
 	    if ($datefacture == '')
 	    {
-		    setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentities('DateInvoice')), 'errors');
+		    setEventMessages($langs->trans('ErrorFieldRequired',$langs->transnoentities('DateInvoice')), null, 'errors');
 	        $action='create';
 	        $_GET['socid']=$_POST['socid'];
 	        $error++;
 	    }
 	    if (! GETPOST('ref_supplier'))
 	    {
-		    setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentities('RefSupplier')), 'errors');
+		    setEventMessages($langs->trans('ErrorFieldRequired',$langs->transnoentities('RefSupplier')), null, 'errors');
 	        $action='create';
 	        $_GET['socid']=$_POST['socid'];
 	        $error++;
@@ -575,8 +575,8 @@ if (empty($reshook))
 	            $type = $_POST["type"]?$_POST["type"]:0;
 	        }
 
-	    	$date_start=dol_mktime(GETPOST('date_start'.$date_pf.'hour'), GETPOST('date_start'.$date_pf.'min'), 0, GETPOST('date_start'.$date_pf.'month'), GETPOST('date_start'.$date_pf.'day'), GETPOST('date_start'.$date_pf.'year'));
-	    	$date_end=dol_mktime(GETPOST('date_end'.$date_pf.'hour'), GETPOST('date_end'.$date_pf.'min'), 0, GETPOST('date_end'.$date_pf.'month'), GETPOST('date_end'.$date_pf.'day'), GETPOST('date_end'.$date_pf.'year'));
+		    $date_start=dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), GETPOST('date_startsec'), GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
+		    $date_end=dol_mktime(GETPOST('date_endhour'), GETPOST('date_endmin'), GETPOST('date_endsec'), GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
 
 	        $localtax1_tx= get_localtax($_POST['tauxtva'], 1, $mysoc,$object->thirdparty);
 	        $localtax2_tx= get_localtax($_POST['tauxtva'], 2, $mysoc,$object->thirdparty);
@@ -602,7 +602,7 @@ if (empty($reshook))
 	        else
 	        {
 	        	$db->rollback();
-	            setEventMessage($object->error,'errors');
+	            setEventMessages($object->error, $object->errors, 'errors');
 	        }
 	}
 
@@ -640,6 +640,9 @@ if (empty($reshook))
 		$qty = GETPOST('qty'.$predef);
 		$remise_percent=GETPOST('remise_percent'.$predef);
 
+		$date_start=dol_mktime(GETPOST('date_start'.$predef.'hour'), GETPOST('date_start'.$predef.'min'), GETPOST('date_start' . $predef . 'sec'), GETPOST('date_start'.$predef.'month'), GETPOST('date_start'.$predef.'day'), GETPOST('date_start'.$predef.'year'));
+		$date_end=dol_mktime(GETPOST('date_end'.$predef.'hour'), GETPOST('date_end'.$predef.'min'), GETPOST('date_end' . $predef . 'sec'), GETPOST('date_end'.$predef.'month'), GETPOST('date_end'.$predef.'day'), GETPOST('date_end'.$predef.'year'));
+
 	    // Extrafields
 	    $extrafieldsline = new ExtraFields($db);
 	    $extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
@@ -654,27 +657,27 @@ if (empty($reshook))
 
 	    if (GETPOST('prod_entry_mode')=='free' && GETPOST('price_ht') < 0 && $qty < 0)
 	    {
-	        setEventMessage($langs->trans('ErrorBothFieldCantBeNegative', $langs->transnoentitiesnoconv('UnitPrice'), $langs->transnoentitiesnoconv('Qty')), 'errors');
+	        setEventMessages($langs->trans('ErrorBothFieldCantBeNegative', $langs->transnoentitiesnoconv('UnitPrice'), $langs->transnoentitiesnoconv('Qty')), null, 'errors');
 	        $error++;
 	    }
 	    if (GETPOST('prod_entry_mode')=='free'  && ! GETPOST('idprodfournprice') && GETPOST('type') < 0)
 	    {
-	        setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Type')), 'errors');
+	        setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Type')), null, 'errors');
 	        $error++;
 	    }
 	    if (GETPOST('prod_entry_mode')=='free' && GETPOST('price_ht')==='' && GETPOST('price_ttc')==='') // Unit price can be 0 but not ''
 	    {
-	        setEventMessage($langs->trans($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('UnitPrice'))), 'errors');
+	        setEventMessages($langs->trans($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('UnitPrice'))), null, 'errors');
 	        $error++;
 	    }
 	    if (GETPOST('prod_entry_mode')=='free' && ! GETPOST('dp_desc'))
 	    {
-	        setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Description')), 'errors');
+	        setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Description')), null, 'errors');
 	        $error++;
 	    }
 	    if (! GETPOST('qty'))
 	    {
-	        setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), 'errors');
+	        setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
 	        $error++;
 	    }
 
@@ -710,7 +713,7 @@ if (empty($reshook))
 	            $price_base_type = 'HT';
 
 	            // TODO Save the product supplier ref into database into field ref_supplier (must rename field ref into ref_supplier first)
-	            $result=$object->addline($desc, $productsupplier->fourn_pu, $tvatx, $localtax1_tx, $localtax2_tx, $qty, $idprod, $remise_percent, '', '', 0, $npr, $price_base_type, $type, -1, 0, $array_options, $productsupplier->fk_unit);
+	            $result=$object->addline($desc, $productsupplier->fourn_pu, $tvatx, $localtax1_tx, $localtax2_tx, $qty, $idprod, $remise_percent, $date_start, $date_end, 0, $npr, $price_base_type, $type, -1, 0, $array_options, $productsupplier->fk_unit);
 	        }
 	    	if ($idprod == -2 || $idprod == 0)
 	        {
@@ -724,7 +727,7 @@ if (empty($reshook))
 	            // Quantity too low
 	            $error++;
 	            $langs->load("errors");
-		        setEventMessage($langs->trans("ErrorQtyTooLowForThisSupplier"), 'errors');
+		        setEventMessages($langs->trans("ErrorQtyTooLowForThisSupplier"), null, 'errors');
 	        }
 	    }
 	    else if( GETPOST('price_ht')!=='' || GETPOST('price_ttc')!=='' )
@@ -757,7 +760,7 @@ if (empty($reshook))
 	            $price_base_type = 'HT';
 	        }
 
-			$result=$object->addline($product_desc, $ht, $tva_tx, $localtax1_tx, $localtax2_tx, $qty, 0, $remise_percent, $datestart, $dateend, 0, $npr, $price_base_type, $type, -1, 0, $array_options, $fk_unit);
+			$result=$object->addline($product_desc, $ht, $tva_tx, $localtax1_tx, $localtax2_tx, $qty, 0, $remise_percent, $date_start, $date_end, 0, $npr, $price_base_type, $type, -1, 0, $array_options, $fk_unit);
 	    }
 
 	    //print "xx".$tva_tx; exit;
@@ -817,7 +820,7 @@ if (empty($reshook))
 	    else
 		{
 	    	$db->rollback();
-		    setEventMessage($object->error, 'errors');
+		    setEventMessages($object->error, $object->errors, 'errors');
 	    }
 
 	    $action = '';
@@ -883,7 +886,7 @@ if (empty($reshook))
 	        }
 	        else
 	        {
-		        setEventMessage($object->error, 'errors');
+		        setEventMessages($object->error, $object->errors, 'errors');
 	        }
 	    }
 	}
@@ -992,7 +995,7 @@ if (empty($reshook))
                 $mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt,-1);
                 if ($mailfile->error)
                 {
-                    setEventMessage($mailfile->error,'errors');
+                    setEventMessages($mailfile->error, $mailfile->errors, 'errors');
                 }
                 else
                 {
@@ -1000,7 +1003,7 @@ if (empty($reshook))
                     if ($result)
                     {
                         $mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));		// Must not contain "
-                        setEventMessage($mesg);
+                        setEventMessages($mesg, null, 'mesgs');
 
                         $error=0;
 
@@ -1045,7 +1048,7 @@ if (empty($reshook))
                         {
                             $mesg.='No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS';
                         }
-	                    setEventMessage($mesg, 'errors');
+	                    setEventMessages($mesg, null, 'errors');
                     }
                 }
             }
@@ -1053,14 +1056,14 @@ if (empty($reshook))
             else
             {
                 $langs->load("other");
-	            setEventMessage($langs->trans('ErrorMailRecipientIsEmpty'), 'errors');
+	            setEventMessages($langs->trans('ErrorMailRecipientIsEmpty'), null, 'errors');
                 dol_syslog('Recipient email is empty');
             }
 	    }
 	    else
 	    {
 	        $langs->load("other");
-		    setEventMessage($langs->trans('ErrorFailedToReadEntity',$langs->trans("Invoice")), 'errors');
+		    setEventMessages($langs->trans('ErrorFailedToReadEntity',$langs->trans("Invoice")), null, 'errors');
 	        dol_syslog('Unable to read data from the invoice. The invoice file has perhaps not been generated.');
 	    }
 
@@ -1117,8 +1120,8 @@ if (empty($reshook))
 	        $upload_dir =	$conf->fournisseur->facture->dir_output . "/";
 	        $file =	$upload_dir	. '/' .	GETPOST('file');
 	        $ret=dol_delete_file($file,0,0,0,$object);
-	        if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-	        else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+	        if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
+	        else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
 	    }
 	}
 
@@ -1182,11 +1185,11 @@ if (empty($reshook))
 				if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 				{
 					$langs->load("errors");
-					setEventMessage($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), 'errors');
+					setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
 				}
 				else
 				{
-					setEventMessage($object->error, 'errors');
+					setEventMessages($object->error, $object->errors, 'errors');
 				}
 			}
 		}
@@ -1521,7 +1524,7 @@ if ($action == 'create')
         $cntinvoice=count($objectsrc->linkedObjects['invoice_supplier']);
         if ($cntinvoice>=1)
         {
-        	setEventMessage('WarningBillExist','warnings');
+        	setEventMessages('WarningBillExist', null, 'warnings');
         	echo ' ('.$langs->trans('LatestRelatedBill').end($objectsrc->linkedObjects['invoice_supplier'])->getNomUrl(1).')';
         }
         echo '</td></tr>';
@@ -2338,13 +2341,13 @@ else
 			$formmail->withto=GETPOST("sendto")?GETPOST("sendto"):$liste;
 			$formmail->withtocc=$liste;
             $formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
-            $formmail->withtopic=$outputlangs->trans('SendBillRef','__FACREF__');
+            $formmail->withtopic=$outputlangs->trans('SendBillRef','__REF__');
             $formmail->withfile=2;
             $formmail->withbody=1;
             $formmail->withdeliveryreceipt=1;
             $formmail->withcancel=1;
             // Tableau des substitutions
-            $formmail->substit['__FACREF__']=$object->ref;
+            $formmail->substit['__REF__']=$object->ref;
             $formmail->substit['__SIGNATURE__']=$user->signature;
             $formmail->substit['__PERSONALIZED__']='';
             $formmail->substit['__CONTACTCIVNAME__']='';

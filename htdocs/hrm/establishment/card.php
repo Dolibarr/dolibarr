@@ -62,7 +62,7 @@ if ($action == 'confirm_delete' && $confirm == "yes")
     }
     else
     {
-        setEventMessage($object->error, 'errors');
+        setEventMessages($object->error, $object->errors, 'errors');
     }
 }
 
@@ -75,7 +75,7 @@ else if ($action == 'add')
 		$object->name = GETPOST('name', 'alpha');
         if (empty($object->name))
         {
-	        setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Name")), 'errors');
+	        setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Name")), null, 'errors');
             $error++;
         }
 
@@ -124,7 +124,7 @@ else if ($action == 'update')
 
 		$name = GETPOST('name', 'alpha');
 		if (empty($name)) {
-			setEventMessage($langs->trans('ErrorFieldRequired', $langs->trans('Name')), 'errors');
+			setEventMessages($langs->trans('ErrorFieldRequired', $langs->trans('Name')), null, 'errors');
 			$error ++;
 		}
 

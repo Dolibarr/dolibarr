@@ -1552,7 +1552,6 @@ else
     }
     else if ($action != 'create')
     {
-        header("Location: index.php");
         exit;
     }
 }

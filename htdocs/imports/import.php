@@ -139,11 +139,11 @@ if ($action == 'builddoc')
 	$result=$objimport->build_file($user, GETPOST('model','alpha'), $datatoimport, $array_match_file_to_database);
 	if ($result < 0)
 	{
-		setEventMessage($objimport->error, 'errors');
+		setEventMessages($objimport->error, $objimport->errors, 'errors');
 	}
 	else
 	{
-		setEventMessage($langs->trans("FileSuccessfullyBuilt"));
+		setEventMessages($langs->trans("FileSuccessfullyBuilt"), null, 'mesgs');
 	}
 }
 
@@ -176,17 +176,17 @@ if ($action == 'add_import_model')
 		$result = $objimport->create($user);
 		if ($result >= 0)
 		{
-			setEventMessage($langs->trans("ImportModelSaved",$objimport->model_name));
+			setEventMessages($langs->trans("ImportModelSaved", $objimport->model_name), null, 'mesgs');
 		}
 		else
 		{
 			$langs->load("errors");
 			if ($objimport->errno == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 			{
-				setEventMessage($langs->trans("ErrorImportDuplicateProfil"), 'errors');
+				setEventMessages($langs->trans("ErrorImportDuplicateProfil"), null, 'errors');
 			}
 			else {
-				setEventMessage($objimport->error, 'errors');
+				setEventMessages($objimport->error, null, 'errors');
 			}
 		}
 	}
@@ -211,7 +211,7 @@ if ($step == 3 && $datatoimport)
 		else
 		{
 			$langs->load("errors");
-			setEventMessage($langs->trans("ErrorFailedToSaveFile"), 'errors');
+			setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
 		}
 	}
 
@@ -225,8 +225,8 @@ if ($step == 3 && $datatoimport)
 
 		$file = $conf->import->dir_temp . '/' . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
 		$ret=dol_delete_file($file);
-		if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-		else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+		if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
+		else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
 		Header('Location: '.$_SERVER["PHP_SELF"].'?step='.$step.$param);
 		exit;
 	}
@@ -896,8 +896,9 @@ if ($step == 4 && $datatoimport)
 		}
 		else
 		{
-		    if ($objimport->array_import_convertvalue[0][$code]['rule']=='fetchidfromref')    $htmltext.=$langs->trans("SourceExample").': <b>'.$langs->transnoentitiesnoconv("ExampleAnyRefFoundIntoElement",$entitylang).($example?' ('.$langs->transnoentitiesnoconv("Example").': '.$example.')':'').'</b><br>';
-		    if ($objimport->array_import_convertvalue[0][$code]['rule']=='fetchidfromcodeid') $htmltext.=$langs->trans("SourceExample").': <b>'.$langs->trans("ExampleAnyCodeOrIdFoundIntoDictionary",$langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$code]['dict'])).($example?' ('.$langs->transnoentitiesnoconv("Example").': '.$example.')':'').'</b><br>';
+		    if ($objimport->array_import_convertvalue[0][$code]['rule']=='fetchidfromref')        $htmltext.=$langs->trans("SourceExample").': <b>'.$langs->transnoentitiesnoconv("ExampleAnyRefFoundIntoElement",$entitylang).($example?' ('.$langs->transnoentitiesnoconv("Example").': '.$example.')':'').'</b><br>';
+		    elseif ($objimport->array_import_convertvalue[0][$code]['rule']=='fetchidfromcodeid') $htmltext.=$langs->trans("SourceExample").': <b>'.$langs->trans("ExampleAnyCodeOrIdFoundIntoDictionary",$langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$code]['dict'])).($example?' ('.$langs->transnoentitiesnoconv("Example").': '.$example.')':'').'</b><br>';
+		    elseif ($example) $htmltext.=$langs->trans("SourceExample").': <b>'.$example.'</b><br>';
 		}
 		// Format control rule
 		if (! empty($objimport->array_import_regex[0][$code]))

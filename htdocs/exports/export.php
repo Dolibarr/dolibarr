@@ -177,7 +177,7 @@ if ($action=='selectfield')
 	    //print_r($array_selected);
 	    $_SESSION["export_selected_fields"]=$array_selected;
 
-	    setEventMessage($warnings, 'warnings');
+	    setEventMessages($warnings, null, 'warnings');
     }
 
 }
@@ -243,12 +243,12 @@ if ($action == 'builddoc')
 	$result=$objexport->build_file($user, GETPOST('model','alpha'), $datatoexport, $array_selected, $array_filtervalue);
 	if ($result < 0)
 	{
-		setEventMessage($objexport->error, 'errors');
+		setEventMessages($objexport->error, $objexport->errors, 'errors');
 		$sqlusedforexport=$objexport->sqlusedforexport;
 	}
 	else
 	{
-		setEventMessage($langs->trans("FileSuccessfullyBuilt"));
+		setEventMessages($langs->trans("FileSuccessfullyBuilt"), null, 'mesgs');
 	    $sqlusedforexport=$objexport->sqlusedforexport;
     }
 }
@@ -259,8 +259,8 @@ if ($step == 5 && $action == 'confirm_deletefile' && $confirm == 'yes')
 	$file = $upload_dir . "/" . GETPOST('file');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
 
 	$ret=dol_delete_file($file);
-	if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('file')));
-	else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('file')), 'errors');
+	if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('file')), null, 'mesgs');
+	else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('file')), null, 'errors');
 	header('Location: '.$_SERVER["PHP_SELF"].'?step='.$step.'&datatoexport='.$datatoexport);
 	exit;
 }
@@ -307,15 +307,15 @@ if ($action == 'add_export_model')
 	    $result = $objexport->create($user);
 		if ($result >= 0)
 		{
-			setEventMessage($langs->trans("ExportModelSaved",$objexport->model_name));
+			setEventMessages($langs->trans("ExportModelSaved",$objexport->model_name), null, 'mesgs');
 		}
 		else
 		{
 			$langs->load("errors");
 			if ($objexport->errno == 'DB_ERROR_RECORD_ALREADY_EXISTS')
-				setEventMessage($langs->trans("ErrorExportDuplicateProfil"), 'errors');
+				setEventMessages($langs->trans("ErrorExportDuplicateProfil"), null, 'errors');
 			else
-				setEventMessage($objexport->error, 'errors');
+				setEventMessages($objexport->error, $objexport->errors, 'errors');
 		}
 	}
 	else

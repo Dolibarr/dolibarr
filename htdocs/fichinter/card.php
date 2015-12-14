@@ -6,6 +6,7 @@
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 201		Charlie Benke           <charlies@patas-monkey.com>
+ * Copyright (C) 2015       Abbes Bahfir            <bafbes@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -385,7 +386,7 @@ if (empty($reshook))
 
 		$result=$object->update($user);
 		if ($result<0) {
-			setEventMessage($object->error,'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 
@@ -428,8 +429,8 @@ if (empty($reshook))
 		$upload_dir = $conf->ficheinter->dir_output;
 		$file = $upload_dir . '/' . GETPOST('file');
 		$ret=dol_delete_file($file,0,0,0,$object);
-		if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-		else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+		if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
+		else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
 	}
 
 	// Set into a project
@@ -450,7 +451,7 @@ if (empty($reshook))
 	{
 		$result=$object->delete($user);
 		if ($result<0) {
-			setEventMessage($object->error,'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 
 		header('Location: '.DOL_URL_ROOT.'/fichinter/list.php?leftmenu=ficheinter');
@@ -466,8 +467,8 @@ if (empty($reshook))
 	// Add line
 	else if ($action == "addline" && $user->rights->ficheinter->creer)
 	{
-		if (!GETPOST('np_desc'))
-		{
+		if (!GETPOST('np_desc') && empty($conf->global->FICHINTER_EMPTY_LINE_DESC) )
+ 		{
 			$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Description")).'</div>';
 			$error++;
 		}
@@ -801,7 +802,7 @@ if (empty($reshook))
 				if ($result)
 				{
 					$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));
-					setEventMessage($mesg);
+					setEventMessages($mesg, null, 'mesgs');
 					$error=0;
 
 					// Initialisation donnees
@@ -1215,7 +1216,7 @@ else if ($id > 0 || ! empty($ref))
 			if (empty($numref))
 			{
 				$error++;
-				setEventMessage($object->error, 'errors');
+				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
 		else
@@ -1566,16 +1567,18 @@ else if ($id > 0 || ! empty($ref))
 
 				$var=true;
 
-				print '<tr '.$bcnd[$var].">\n";
-				print '<td>';
-				// editeur wysiwyg
-				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-				$doleditor=new DolEditor('np_desc',GETPOST('np_desc','alpha'),'',100,'dolibarr_details','',false,true,$conf->global->FCKEDITOR_ENABLE_DETAILS,ROWS_2,70);
-				$doleditor->Create();
-				print '</td>';
+				print '<tr '.$bcnd[$var] . ">\n";
+                print '<td>';
+                // editeur wysiwyg
+                if (empty($conf->global->FICHINTER_EMPTY_LINE_DESC)) {
+                    require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
+                    $doleditor = new DolEditor('np_desc', GETPOST('np_desc', 'alpha'), '', 100, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_DETAILS, ROWS_2, 70);
+                    $doleditor->Create();
+                }
+                print '</td>';
 
-				// Date intervention
-				print '<td align="center" class="nowrap">';
+                // Date intervention
+                print '<td align="center" class="nowrap">';
 				$now=dol_now();
 				$timearray=dol_getdate($now);
 				if (! GETPOST('diday','int')) $timewithnohour=dol_mktime(0,0,0,$timearray['mon'],$timearray['mday'],$timearray['year']);

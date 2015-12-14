@@ -89,13 +89,13 @@ if ($_POST) {
 			SET fk_level = ".$db->escape($i_fk_level).", var_percent = ".$i_var_percent.", var_min_percent = ".$i_var_min_percent." WHERE level = ".$i;
 
 			if (!$db->query($sql)) {
-				setEventMessage($langs->trans('ErrorSavingChanges'), 'errors');
+				setEventMessages($langs->trans('ErrorSavingChanges'), null, 'errors');
 			}
 		}
 
 	}
 
-	setEventMessage($langs->trans("RecordSaved"));
+	setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 }
 
 /*

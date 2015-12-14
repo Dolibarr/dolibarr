@@ -98,7 +98,7 @@ if (($action == 'create') || ($action == 'add'))
 		if (! (GETPOST('entrepot_id','int') > 0))
 		{
 			$langs->load("errors");
-			setEventMessage($langs->trans("WarehouseMustBeSelectedAtFirstStepWhenProductBatchModuleOn"),'errors');
+			setEventMessages($langs->trans("WarehouseMustBeSelectedAtFirstStepWhenProductBatchModuleOn"), null, 'errors');
 			header("Location: ".DOL_URL_ROOT.'/expedition/shipment.php?id='.$origin_id);
 			exit;
 		}
@@ -303,7 +303,7 @@ if (empty($reshook))
 	    if ($result < 0)
 	    {
 			$langs->load("errors");
-	        setEventMessage($langs->trans($object->error),'errors');
+	        setEventMessages($langs->trans($object->error), null, 'errors');
 	    }
 	    else
 	    {
@@ -338,7 +338,7 @@ if (empty($reshook))
 	    else
 		{
 			$langs->load("errors");
-	        setEventMessage($langs->trans($object->error),'errors');
+	        setEventMessages($langs->trans($object->error), null, 'errors');
 	    }
 	}
 
@@ -395,7 +395,7 @@ if (empty($reshook))
 	            header("Location: card.php?id=".$object->id);
 	            exit;
 	        }
-	        setEventMessage($object->error,'errors');
+	        setEventMessages($object->error, $object->errors, 'errors');
 	    }
 
 	    $action="";
@@ -433,8 +433,8 @@ if (empty($reshook))
 		$upload_dir =	$conf->expedition->dir_output . "/sending";
 		$file =	$upload_dir	. '/' .	GETPOST('file');
 		$ret=dol_delete_file($file,0,0,0,$object);
-		if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-		else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+		if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
+		else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
 	}
 
 	elseif ($action == 'classifybilled')
@@ -482,7 +482,7 @@ if ($action == 'create')
     print load_fiche_titre($langs->trans("CreateASending"));
     if (! $origin)
     {
-        setEventMessage($langs->trans("ErrorBadParameters"),'errors');
+        setEventMessages($langs->trans("ErrorBadParameters"), null, 'errors');
     }
 
     dol_htmloutput_mesg($mesg);

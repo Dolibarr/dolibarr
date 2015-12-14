@@ -100,6 +100,6 @@ else
 {
   print $db->error();
 }
-$db->close();
 
 llxFooter();
+$db->close();

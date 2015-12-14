@@ -393,7 +393,7 @@ if ($result)
     }
 	if ($search_firstlast_only)
 	{
-        print $langs->trans("FilterOnInto", $search_firstlast_only, $langs->trans("Lastname").", ".$langs->trans("Firstname"));
+        print $langs->trans("FilterOnInto", $search_firstlast_only) . $langs->trans("Lastname").", ".$langs->trans("Firstname");
 	}
     
     if (! empty($conf->categorie->enabled))

@@ -702,8 +702,8 @@ function hash_call($methodName,$nvpStr)
      exit;*/
     curl_setopt($ch, CURLOPT_URL, $API_Endpoint);
     curl_setopt($ch, CURLOPT_VERBOSE, 1);
-	//curl_setopt($ch, CURLOPT_SSLVERSION, 3); // Force SSLv3
-    curl_setopt($ch, CURLOPT_SSLVERSION, 1); // Force TLSv1
+    // TLSv1 by default or change to TLSv1.2 in module configuration
+    curl_setopt($ch, CURLOPT_SSLVERSION, (empty($conf->global->PAYPAL_SSLVERSION)?1:$conf->global->PAYPAL_SSLVERSION));
 
     //turning off the server and peer verification(TrustManager Concept).
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);

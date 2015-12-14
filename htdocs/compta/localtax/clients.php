@@ -318,7 +318,5 @@ if($conf->global->$calc ==0){
 }
 print '</table>';
 
-
-$db->close();
-
 llxFooter();
+$db->close();

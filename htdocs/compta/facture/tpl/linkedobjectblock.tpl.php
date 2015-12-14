@@ -30,7 +30,7 @@ $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 
 $langs->load("bills");
 echo '<br>';
-print load_fiche_titre($langs->trans("RelatedCustomerInvoices"));
+print load_fiche_titre($langs->trans("RelatedCustomerInvoices"), '', '');
 ?>
 <table class="noborder allwidth">
 <tr class="liste_titre">

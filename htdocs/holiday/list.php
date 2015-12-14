@@ -275,7 +275,7 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 if ($sall)
 {
     foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-    print $langs->trans("FilterOnInto", $sall, join(', ',$fieldstosearchall));
+    print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
 }
     
 print '<table class="noborder" width="100%;">';
@@ -419,7 +419,7 @@ if (! empty($holiday->holiday))
 if($holiday_payes == '2')
 {
     print '<tr>';
-    print '<td colspan="9" '.$bc[false].'">'.$langs->trans('None').'</td>';
+    print '<td colspan="10" '.$bc[false].'">'.$langs->trans('None').'</td>';
     print '</tr>';
 }
 

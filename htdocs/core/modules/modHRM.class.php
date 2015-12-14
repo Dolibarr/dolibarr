@@ -96,7 +96,7 @@ class modHRM extends DolibarrModules
 			),
 			'tabsql'=>array(
 				'SELECT rowid, pos, code, label, active FROM '.MAIN_DB_PREFIX.'c_hrm_department',
-				'SELECT rowid, pos, code, label, c_level, active FROM '.MAIN_DB_PREFIX.'c_hrm_department'
+				'SELECT rowid, pos, code, label, c_level, active FROM '.MAIN_DB_PREFIX.'c_hrm_function'
 			),
 			'tabsqlsort'=>array(
 				'rowid ASC',

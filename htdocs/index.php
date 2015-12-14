@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2013 Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2015 Regis Houssin	<regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2012 Juanjo Menent	<jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
@@ -146,6 +146,7 @@ if (empty($user->societe_id))
     {
 	    // Condition to be checked for each display line dashboard
 	    $conditions=array(
+	    $user->rights->user->user->lire,
 	    ! empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS),
 	    ! empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS),
 	    ! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS),
@@ -160,21 +161,24 @@ if (empty($user->societe_id))
 		! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->lire,
 		! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire);
 	    // Class file containing the method load_state_board for each line
-	    $includes=array(DOL_DOCUMENT_ROOT."/societe/class/client.class.php",
-	    DOL_DOCUMENT_ROOT."/societe/class/client.class.php",
-	    DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.class.php",
-	    DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php",
-	    DOL_DOCUMENT_ROOT."/product/class/product.class.php",
-	    DOL_DOCUMENT_ROOT."/product/class/service.class.php",
-	    DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php",
-	    DOL_DOCUMENT_ROOT."/commande/class/commande.class.php",
-	    DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php",
-	    DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php",
-	    DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.commande.class.php",
-	    DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.facture.class.php",
-		DOL_DOCUMENT_ROOT."/expensereport/class/expensereport.class.php");
+	    $includes=array(
+	        DOL_DOCUMENT_ROOT."/user/class/user.class.php",
+	        DOL_DOCUMENT_ROOT."/societe/class/client.class.php",
+	        DOL_DOCUMENT_ROOT."/societe/class/client.class.php",
+    	    DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.class.php",
+    	    DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php",
+    	    DOL_DOCUMENT_ROOT."/product/class/product.class.php",
+    	    DOL_DOCUMENT_ROOT."/product/class/service.class.php",
+    	    DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php",
+    	    DOL_DOCUMENT_ROOT."/commande/class/commande.class.php",
+    	    DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php",
+    	    DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php",
+    	    DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.commande.class.php",
+    	    DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.facture.class.php",
+    		DOL_DOCUMENT_ROOT."/expensereport/class/expensereport.class.php");
 	    // Name class containing the method load_state_board for each line
-	    $classes=array('Client',
+	    $classes=array('User',
+	                   'Client',
 	                   'Client',
 	                   'Fournisseur',
 	                   'Adherent',
@@ -188,7 +192,8 @@ if (empty($user->societe_id))
 	                   'FactureFournisseur',
 					   'ExpenseReport');
 	    // Cle array returned by the method load_state_board for each line
-	    $keys=array('customers',
+	    $keys=array('users',
+	                'customers',
 	                'prospects',
 	                'suppliers',
 	                'members',
@@ -202,7 +207,8 @@ if (empty($user->societe_id))
 	                'supplier_invoices',
 					'expensereports');
 	    // Dashboard Icon lines
-	    $icons=array('company',
+	    $icons=array('user',
+	                 'company',
 	                 'company',
 	                 'company',
 	                 'user',
@@ -216,7 +222,8 @@ if (empty($user->societe_id))
 	                 'bill',
 					 'trip');
 	    // Translation keyword
-	    $titres=array("ThirdPartyCustomersStats",
+	    $titres=array("Users",
+	                  "ThirdPartyCustomersStats",
 	                  "ThirdPartyProspectsStats",
 	                  "Suppliers",
 	                  "Members",
@@ -231,21 +238,23 @@ if (empty($user->societe_id))
 					  "ExpenseReports");
 	    // Dashboard Link lines
 	    $links=array(
-	    DOL_URL_ROOT.'/societe/list.php?type=c',
-	    DOL_URL_ROOT.'/societe/list.php?type=p',
-	    DOL_URL_ROOT.'/societe/list.php?type=f',
-	    DOL_URL_ROOT.'/adherents/list.php?statut=1&mainmenu=members',
-	    DOL_URL_ROOT.'/product/list.php?type=0&mainmenu=products',
-	    DOL_URL_ROOT.'/product/list.php?type=1&mainmenu=products',
-	    DOL_URL_ROOT.'/comm/propal/list.php?mainmenu=commercial',
-	    DOL_URL_ROOT.'/commande/list.php?mainmenu=commercial',
-	    DOL_URL_ROOT.'/compta/facture/list.php?mainmenu=accountancy',
-	    DOL_URL_ROOT.'/contrat/list.php',
-	    DOL_URL_ROOT.'/fourn/commande/list.php',
-	    DOL_URL_ROOT.'/fourn/facture/list.php',
-		DOL_URL_ROOT.'/expensereport/list.php?mainmenu=hrm');
+	        DOL_URL_ROOT.'/user/index.php',
+    	    DOL_URL_ROOT.'/societe/list.php?type=c',
+    	    DOL_URL_ROOT.'/societe/list.php?type=p',
+    	    DOL_URL_ROOT.'/societe/list.php?type=f',
+    	    DOL_URL_ROOT.'/adherents/list.php?statut=1&mainmenu=members',
+    	    DOL_URL_ROOT.'/product/list.php?type=0&mainmenu=products',
+    	    DOL_URL_ROOT.'/product/list.php?type=1&mainmenu=products',
+    	    DOL_URL_ROOT.'/comm/propal/list.php?mainmenu=commercial',
+    	    DOL_URL_ROOT.'/commande/list.php?mainmenu=commercial',
+    	    DOL_URL_ROOT.'/compta/facture/list.php?mainmenu=accountancy',
+    	    DOL_URL_ROOT.'/contrat/list.php',
+    	    DOL_URL_ROOT.'/fourn/commande/list.php',
+    	    DOL_URL_ROOT.'/fourn/facture/list.php',
+    		DOL_URL_ROOT.'/expensereport/list.php?mainmenu=hrm');
 	    // Translation lang files
-	    $langfile=array("companies",
+	    $langfile=array("users",
+	                    "companies",
 	                    "prospects",
 	                    "suppliers",
 	                    "members",

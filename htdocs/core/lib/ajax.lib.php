@@ -170,8 +170,8 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
     					}
     					,delay: 500
 					}).data("ui-autocomplete")._renderItem = function( ul, item ) {
-						return $("<li></li>")
-						.data( "item.autocomplete", item )
+						return $("<li>")
+						.data( "ui-autocomplete-item", item ) // jQuery UI > 1.10.0
 						.append( \'<a><span class="tag">\' + item.label + "</span></a>" )
 						.appendTo(ul);
 					};
@@ -345,7 +345,7 @@ function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $
 {
 	global $conf;
 
-	//if (! empty($conf->browser->phone)) return '';	// combobox disabled for smartphones (does not works)
+	if (! empty($conf->browser->phone)) return '';	// select2 disabled for smartphones with standard browser (does not works, popup appears outside screen)
 	if (! empty($conf->dol_use_jmobile)) return '';	// select2 works with jmobile but it breaks the autosize feature of jmobile.
 	if (! empty($conf->global->MAIN_DISABLE_AJAX_COMBOX)) return '';
 	if (empty($conf->use_javascript_ajax)) return '';

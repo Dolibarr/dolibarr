@@ -94,12 +94,12 @@ if (GETPOST("creation_sondage_date") || GETPOST("creation_sondage_autre"))
 			$_SESSION['champdatefin'] = dol_print_date($champdatefin,'dayrfc');
 			//$testdate = false;
 			//$_SESSION['champdatefin'] = dol_print_date($champdatefin,'dayrfc');
-			setEventMessage('ExpireDate','warnings');
+			setEventMessages('ExpireDate', null, 'warnings');
 		}
 	}
 
 	if (! $testdate) {
-		setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("ExpireDate")), 'errors');
+		setEventMessages($langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("ExpireDate")), null, 'errors');
 	}
 
 	if ($titre && $testdate)

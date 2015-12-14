@@ -191,7 +191,7 @@ else
 {
 	$sql.= " WHERE u.entity IN (".getEntity('user',1).")";
 }
-if ($mode = "employee") $sql.= " AND u.employee = 1";
+if ($mode == "employee") $sql.= " AND u.employee = 1";
 if ($socid > 0) $sql.= " AND u.fk_soc = ".$socid;
 //if ($search_user != '')       $sql.=natural_search(array('u.login', 'u.lastname', 'u.firstname'), $search_user);
 if ($search_supervisor > 0)   $sql.= " AND u.fk_user = ".$search_supervisor;
@@ -263,13 +263,15 @@ if ($result)
     if ($sall)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-        print $langs->trans("FilterOnInto", $sall, join(', ',$fieldstosearchall));
+        print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
     }
 	
+    $moreforfilter='';
+    
 	$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
 	$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
     
-	print '<table class="liste">';
+    print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
     print '<tr class="liste_titre">';
     if (! empty($arrayfields['u.login']['checked']))          print_liste_field_titre($langs->trans("Login"),$_SERVER['PHP_SELF'],"u.login",$param,"","",$sortfield,$sortorder);
     if (! empty($arrayfields['u.lastname']['checked']))       print_liste_field_titre($langs->trans("Lastname"),$_SERVER['PHP_SELF'],"u.lastname",$param,"","",$sortfield,$sortorder);

@@ -150,7 +150,7 @@ class InterfaceDemo extends DolibarrTriggers
 		    case 'LINEPROPAL_UPDATE':
 		    case 'LINEPROPAL_DELETE':
 
-			// Askpricesupplier
+			// SupplierProposal
 		    case 'SUPPLIER_PROPOSAL_CREATE':
 		    case 'SUPPLIER_PROPOSAL_CLONE':
 		    case 'SUPPLIER_PROPOSAL_MODIFY':

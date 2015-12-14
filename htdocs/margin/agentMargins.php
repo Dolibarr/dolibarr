@@ -94,7 +94,7 @@ print '<table class="border" width="100%">';
 if ($user->rights->margins->read->all) {
 	print '<tr><td width="20%">'.$langs->trans('SalesRepresentative').'</td>';
 	print '<td colspan="4">';
-	print $form->select_dolusers($agentid, 'agentid', 1);
+	print $form->select_dolusers($agentid, 'agentid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 	print '</td></tr>';
 }
 
