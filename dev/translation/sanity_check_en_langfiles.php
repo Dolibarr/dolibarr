@@ -1,4 +1,4 @@
-#!/usr/bin/php
+#!/usr/bin/env php
 <?php
 /* Copyright (c) 2015 Tommaso Basilici    <t.basilici@19.coop>
  * Copyright (c) 2015 Laurent Destailleur <eldy@destailleur.fr>

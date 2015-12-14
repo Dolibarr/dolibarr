@@ -1,4 +1,4 @@
-#!/usr/bin/php
+#!/usr/bin/env php
 <?php
 /* Copyright (C) 2007-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015 Jean Heimburger  <http://tiaris.eu>
