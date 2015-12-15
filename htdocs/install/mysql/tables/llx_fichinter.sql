@@ -36,6 +36,7 @@ create table llx_fichinter
   fk_statut			smallint  DEFAULT 0,
   dateo				date,						-- date de début d'intervention
   datee				date,						-- date de fin d'intervention
+  datet				date,						-- date de terminaison de l'intervention
   duree				real,                       -- duree totale de l'intervention
   description		text,
   note_private		text,
