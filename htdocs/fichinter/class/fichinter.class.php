@@ -51,9 +51,10 @@ class Fichinter extends CommonObject
 	var $datev;
 	var $dateo;
 	var $datee;
+	var $datet;
 	var $datem;
 	var $duration;
-	var $statut;		// 0=draft, 1=validated, 2=invoiced
+	var $statut;		// 0=draft, 1=validated, 2=invoiced, 3=Terminate
 	var $description;
 	var $fk_contrat;
 	var $extraparams=array();
@@ -77,12 +78,15 @@ class Fichinter extends CommonObject
 		$this->statuts[0]='Draft';
 		$this->statuts[1]='Validated';
 		$this->statuts[2]='StatusInterInvoiced';
+		$this->statuts[3]='Close';
 		$this->statuts_short[0]='Draft';
 		$this->statuts_short[1]='Validated';
 		$this->statuts_short[2]='StatusInterInvoiced';
+		$this->statuts_short[3]='Close';
 		$this->statuts_logo[0]='statut0';
-		$this->statuts_logo[1]='statut4';
+		$this->statuts_logo[1]='statut1';
 		$this->statuts_logo[2]='statut6';
+		$this->statuts_logo[3]='statut4';
 	}
 
 
@@ -280,7 +284,7 @@ class Fichinter extends CommonObject
 	function fetch($rowid,$ref='')
 	{
 		$sql = "SELECT f.rowid, f.ref, f.description, f.fk_soc, f.fk_statut,";
-		$sql.= " f.datec, f.dateo, f.datee,";
+		$sql.= " f.datec, f.dateo, f.datee, f.datet,";
 		$sql.= " f.date_valid as datev,";
 		$sql.= " f.tms as datem,";
 		$sql.= " f.duree, f.fk_projet, f.note_public, f.note_private, f.model_pdf, f.extraparams, fk_contrat";
@@ -305,6 +309,7 @@ class Fichinter extends CommonObject
 				$this->datec        = $this->db->jdate($obj->datec);
 				$this->datee        = $this->db->jdate($obj->dateo);
 				$this->dateo        = $this->db->jdate($obj->datee);
+				$this->datet        = $this->db->jdate($obj->datet);
 				$this->datev        = $this->db->jdate($obj->datev);
 				$this->datem        = $this->db->jdate($obj->datem);
 				$this->fk_project   = $obj->fk_projet;
