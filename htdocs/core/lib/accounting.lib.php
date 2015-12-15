@@ -99,23 +99,9 @@ function accounting_prepare_head(AccountingAccount $object)
  */
 function clean_account($account)
 {
-	global $conf;
-
-	// Clean parameters
-	$i = strlen($account);
-
-	if ($i >= 1) {
-		if (substr($account, -1) == 0) {
-			while ( $i >= 1 ) {
-				$account = substr($account, $i);
-
-				$i --;
-			}
-			return $account;
-		}
-	} else {
-		return $account;
-	}
+	$account = rtrim($account,"0");
+	
+	return $account;
 }
 
 /**
