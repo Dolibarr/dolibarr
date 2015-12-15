@@ -2349,9 +2349,22 @@ div.tabBar .noborder {
     border: 1px solid #AAA;
     text-align: center;
     border-radius: 2px;
+    min-height: 38px;
 }
 .boxstats:hover {
+<?php if ($colorbacklinepairhover) { ?>
+	background: rgb(<?php echo $colorbacklinepairhover; ?>) !important;
+<?php } else { ?>
 	background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklinepair1)); ?>;
+<?php } ?>
+}
+span.boxstatsindicator {
+	font-size: 110%;
+	font-weight: bold;
+}
+span.dashboardlineindicator, span.dashboardlineindicatorlate {
+	font-size: 120%;
+	font-weight: bold;
 }
 
 .boxtable {
@@ -3189,7 +3202,6 @@ ui-layout-north {
 }
 
 ul.ecmjqft {
-	font-size: 11px;
 	line-height: 16px;
 	padding: 0px;
 	margin: 0px;

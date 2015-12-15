@@ -65,8 +65,8 @@ else
 
 <h1>
 This page is a sample of page using tables. It is designed to make test with<br>
-- css (add parameter &theme=newtheme to test another theme or edit css of current theme)<br>
-- jmobile (add parameter <a href="<?php echo $_SERVER["PHP_SELF"].'?dol_use_jmobile=1&dol_optimize_smallscreen=1'; ?>">dol_use_jmobile=1&dol_optimize_smallscreen=1</a> to enable view with jmobile)<br>
+- css (add parameter &amp;theme=newtheme to test another theme or edit css of current theme)<br>
+- jmobile (add parameter <a href="<?php echo $_SERVER["PHP_SELF"].'?dol_use_jmobile=1&dol_optimize_smallscreen=1'; ?>">dol_use_jmobile=1&amp;dol_optimize_smallscreen=1</a> to enable view with jmobile)<br>
 - no javascript / usage for bind people (add parameter <a href="<?php echo $_SERVER["PHP_SELF"].'?nojs=1'; ?>">nojs=1</a> to force disable javascript)<br>
 - dataTables<br>
 - tablednd<br>
@@ -181,8 +181,8 @@ if (! empty($moreforfilter))
     print '</div>';
 }
 
-print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'" id="tablelines3">';
 ?>
+<table class="tagtable liste<?php echo $moreforfilter?" listwithfilterbefore":""; ?>" id="tablelines3">
 <tr class="liste_titre">
 <?php print getTitleFieldOfList($langs->trans('title1'),0,$_SERVER["PHP_SELF"],'aaa','','','align="left"',$sortfield,$sortorder); ?>
 <?php print getTitleFieldOfList($langs->trans('title2'),0,$_SERVER["PHP_SELF"],'bbb','','','align="right"',$sortfield,$sortorder); ?>
@@ -190,9 +190,7 @@ print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"")
 </tr>
 <tr class="pair"><td><?php echo $productspecimen->getNomUrl(1); ?></td><td align="right">b1</td><td class="tdlineupdown" align="left">c1</td></tr>
 <tr class="impair"><td>a2</td><td align="right">b2</td><td class="tdlineupdown" align="left">c2</td></tr>
-<?php 
-print '</table>';
-?>
+</table>
 <br>
 
 
