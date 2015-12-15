@@ -3202,7 +3202,6 @@ ui-layout-north {
 }
 
 ul.ecmjqft {
-	font-size: 11px;
 	line-height: 16px;
 	padding: 0px;
 	margin: 0px;
