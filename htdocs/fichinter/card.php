@@ -1304,6 +1304,12 @@ else if ($id > 0 || ! empty($ref))
 		print '</td>';
 		print '</tr>';
 		
+		// Date Terminate/close
+		print '<tr><td>'.$langs->trans("Datet").'</td>';
+		print '<td colspan="3">';
+		print $object->datet ? dol_print_date($object->datet, 'daytext') : '&nbsp;';
+		print '</td>';
+		print '</tr>';
 	}
 
 	// Description (must be a textarea and not html must be allowed (used in list view)
