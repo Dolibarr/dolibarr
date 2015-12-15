@@ -23,6 +23,7 @@
 
 
 -- Was done into a 3.8 fix, so we must do it also in 3.9 
+ALTER TABLE llx_fichinter ADD COLUMN datet date  after duree;
 ALTER TABLE llx_fichinter ADD COLUMN datee date  after duree;
 ALTER TABLE llx_fichinter ADD COLUMN dateo date  after duree;
 
