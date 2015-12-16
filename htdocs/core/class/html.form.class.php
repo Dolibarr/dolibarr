@@ -2017,8 +2017,8 @@ class Form
             {
                 $dur=array("h"=>$langs->trans("Hour"),"d"=>$langs->trans("Day"),"w"=>$langs->trans("Week"),"m"=>$langs->trans("Month"),"y"=>$langs->trans("Year"));
             }
-            $opt.= ' - '.$duration_value.' '.$langs->trans($dur[$duration_unit]);
-            $outval.=' - '.$duration_value.' '.$langs->transnoentities($dur[$duration_unit]);
+            $opt.= ' - '.$duration_value.' '.($dur[$duration_unit]?$langs->trans($dur[$duration_unit]):'');
+            $outval.=' - '.$duration_value.' '.($dur[$duration_unit]?$langs->transnoentities($dur[$duration_unit]):'');
         }
 
         $opt.= "</option>\n";
