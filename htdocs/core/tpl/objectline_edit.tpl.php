@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+/* Copyright (C) 2010-2015	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Christophe Battarel	<christophe.battarel@altairis.fr>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
@@ -282,25 +282,27 @@ if (! empty($conf->margin->enabled))
 
 		if (! $.isNumeric(rate.val().replace(',','.')))
 		{
-			alert('<?php echo $langs->trans("rateMustBeNumeric"); ?>');
+			alert('<?php echo $langs->transnoentities("rateMustBeNumeric"); ?>');
 			e.stopPropagation();
 			setTimeout(function () { rate.focus() }, 50);
 			return false;
 		}
 		if (npRate == "np_markRate" && rate.val() >= 100)
 		{
-			alert('<?php echo $langs->trans("markRateShouldBeLesserThan100"); ?>');
+			alert('<?php echo $langs->transnoentities("markRateShouldBeLesserThan100"); ?>');
 			e.stopPropagation();
 			setTimeout(function () { rate.focus() }, 50);
 			return false;
 		}
 
-		var price = 0;
 		remisejs=price2numjs(remise.val());
+		if (remisejs == '') remisejs=0;
 
-		if (remisejs != 100)
+		bpjs=price2numjs(buying_price.val());
+
+		if (bpjs > 0 && remisejs != 100)	// If buying_price and a discount not 100 or no discount
 		{
-			bpjs=price2numjs(buying_price.val());
+			var price = 0;
 			ratejs=price2numjs(rate.val());
 
 			/* console.log(npRate+" - "+bpjs+" - "+ratejs); */
@@ -309,8 +311,9 @@ if (! empty($conf->margin->enabled))
 				price = ((bpjs * (1 + ratejs / 100)) / (1 - remisejs / 100));
 			else if (npRate == "np_markRate")
 				price = ((bpjs / (1 - ratejs / 100)) / (1 - remisejs / 100));
+
+			$("input[name='price_ht']:first").val(price);	// TODO Must use a function like php price to have here a formated value
 		}
-		$("input[name='price_ht']:first").val(price);	// TODO Must use a function like php price to have here a formated value
 
 		return true;
 	}
