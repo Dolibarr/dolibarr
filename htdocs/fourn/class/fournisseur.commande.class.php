@@ -996,7 +996,7 @@ class CommandeFournisseur extends CommonOrder
         {
             $result = -1;
             $this->error = $langs->trans('NotAuthorized');
-            $this->errors[] = $lanfs->trans('NotAuthorized');
+            $this->errors[] = $langs->trans('NotAuthorized');
             dol_syslog(get_class($this)."::commande User not Authorized", LOG_ERR);
         }
         return $result ;
