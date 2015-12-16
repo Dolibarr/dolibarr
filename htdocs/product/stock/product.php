@@ -77,7 +77,7 @@ if ($action == 'setstocklimit')
     $object->seuil_stock_alerte=$stocklimit;
     $result=$object->update($object->id,$user,0,'update');
     if ($result < 0)
-    	setEventMessage($object->error, 'errors');
+    	setEventMessages($object->error, $object->errors, 'errors');
     $action='';
 }
 
@@ -89,7 +89,7 @@ if ($action == 'setdesiredstock')
     $object->desiredstock=$desiredstock;
     $result=$object->update($object->id,$user,0,'update');
     if ($result < 0)
-    	setEventMessage($object->error, 'errors');
+    	setEventMessages($object->error, $object->errors, 'errors');
     $action='';
 }
 

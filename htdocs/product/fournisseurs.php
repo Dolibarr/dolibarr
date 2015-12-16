@@ -101,7 +101,7 @@ if (empty($reshook))
 			if ($result > 0)
 			{
 				$object->cost_price = price2num($cost_price);
-				setEventMessage($langs->trans("RecordSaved"));
+				setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 			}
 			else
 			{
@@ -119,7 +119,7 @@ if (empty($reshook))
 			$action = '';
 			$result=$object->remove_product_fournisseur_price($rowid);
 			if($result > 0){
-				setEventMessage($langs->trans("PriceRemoved"));
+				setEventMessages($langs->trans("PriceRemoved"), null, 'mesgs');
 			}else{
 				$error++;
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -151,7 +151,7 @@ if (empty($reshook))
 		{
 			$error++;
 			$langs->load("errors");
-			setEventMessage($langs->trans("ErrorFieldMustBeANumeric",'eeee'), 'errors');
+			setEventMessages($langs->trans("ErrorFieldMustBeANumeric",'eeee'), null, 'errors');
 		}
 		if (empty($quantity))
 		{
@@ -199,12 +199,12 @@ if (empty($reshook))
 					$object->fetch($object->product_id_already_linked);
 					$productLink = $object->getNomUrl(1,'supplier');
 
-					setEventMessage($langs->trans("ReferenceSupplierIsAlreadyAssociatedWithAProduct",$productLink), 'errors');
+					setEventMessages($langs->trans("ReferenceSupplierIsAlreadyAssociatedWithAProduct",$productLink), null, 'errors');
 				}
 				else if ($ret < 0)
 				{
 					$error++;
-					setEventMessage($object->error, 'errors');
+					setEventMessages($object->error, $object->errors, 'errors');
 				}
 			}
 
@@ -220,7 +220,7 @@ if (empty($reshook))
 				{
 
 					$error++;
-					setEventMessage($object->error, $object->errors, 'errors');
+					setEventMessages($object->error, $object->errors, 'errors');
 				}
 				else
 				{
@@ -231,7 +231,7 @@ if (empty($reshook))
 						$price_result = $priceparser->parseProductSupplier($id, $price_expression, $quantity, $tva_tx);
 						if ($price_result < 0) { //Expression is not valid
 							$error++;
-							setEventMessage($priceparser->translatedError(), 'errors');
+							setEventMessages($priceparser->translatedError(), null, 'errors');
 						}
 					}
 					if (! $error && ! empty($conf->dynamicprices->enabled)) {
@@ -239,7 +239,7 @@ if (empty($reshook))
 						if ($ret < 0)
 						{
 							$error++;
-							setEventMessage($object->error, 'errors');
+							setEventMessages($object->error, $object->errors, 'errors');
 						}
 					}
 				}

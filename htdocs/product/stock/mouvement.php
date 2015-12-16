@@ -100,7 +100,7 @@ if ($action == "correct_stock")
 	if (! is_numeric($_POST["nbpiece"]))
 	{
 		$error++;
-		setEventMessage($langs->trans("ErrorFieldMustBeANumeric", $langs->transnoentitiesnoconv("NumberOfUnit")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldMustBeANumeric", $langs->transnoentitiesnoconv("NumberOfUnit")), null, 'errors');
 		$action='correction';
 	}
 

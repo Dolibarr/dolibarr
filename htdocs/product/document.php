@@ -105,7 +105,7 @@ if (empty($reshook))
 			$filetomerge->file_name=$filename;
 			$result=$filetomerge->delete_by_file($user);
 			if ($result<0) {
-				setEventMessage($filetomerge->error,'errors');
+				setEventMessages($filetomerge->error, $filetomerge->errors, 'errors');
 			}
 		}
 	}
@@ -137,7 +137,7 @@ if ($action=='filemerge')
 			$result=$filetomerge->delete_by_product($user, $object->id);
 		}
 		if ($result<0) {
-			setEventMessage($filetomerge->error,'errors');
+			setEventMessages($filetomerge->error, $filetomerge->errors, 'errors');
 		}
 
 		// for each file checked add it to the product
@@ -152,7 +152,7 @@ if ($action=='filemerge')
 
 				$result=$filetomerge->create($user);
 				if ($result<0) {
-					setEventMessage($filetomerge->error,'errors');
+					setEventMessages($filetomerge->error, $filetomerge->errors, 'errors');
 				}
 			}
 		}

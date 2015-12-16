@@ -293,7 +293,7 @@ else
 
     	// Displays product removal confirmation
     	if (GETPOST('delprod'))	{
-		    setEventMessage($langs->trans("ProductDeleted", GETPOST('delprod')));
+		    setEventMessages($langs->trans("ProductDeleted", GETPOST('delprod')), null, 'mesgs');
 	    }
 
     	if ($sref) $param="&amp;sref=".$sref;
