@@ -287,12 +287,10 @@ if (empty($user->societe_id))
 	            $var=!$var;
 	            if (!empty($langfile[$key])) $langs->load($langfile[$key]);
 	            $text=$langs->trans($titres[$key]);
-	            print '<a href="'.$links[$key].'" class="thumbstat nobold nounderline">';
+	            print '<a href="'.$links[$key].'" class="boxstatsindicator thumbstat nobold nounderline">';
 	            print '<div class="boxstats">';
 	            print img_object("",$icons[$key]).' '.$text.'<br>';
-	            //print '</a>';
-	            //print '<a href="'.$links[$key].'">';
-	            print $board->nb[$val];
+	            print '<span class="boxstatsindicator">'.$board->nb[$val].'</span>';
 	            print '</div>';
 	            print '</a>';
 	        }
@@ -454,13 +452,17 @@ foreach($valid_dashboardlines as $board)
 {
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="16">'.$board->img.'</td><td>'.$board->label.'</td>';
-    print '<td align="right"><a href="'.$board->url.'">'.$board->nbtodo.'</a></td>';
+    print '<td align="right"><a class="dashboardlineindicator" href="'.$board->url.'"><span class="dashboardlineindicator">'.$board->nbtodo.'</span></a></td>';
     print '<td align="right">';
-    print '<a href="'.$board->url.'">';
-    print $board->nbtodolate;
-    print '</a></td>';
+    //if ($board->nbtodolate > 0)
+    //{
+        print '<a class="dashboardlineindicatorlate" href="'.$board->url.'"><span class="dashboardlineindicatorlate">';
+        print $board->nbtodolate;
+        print '</span></a>';
+    //}
+    print '</td>';
     print '<td align="left">';
-    if ($board->nbtodolate > 0) print img_picto($langs->trans("NActionsLate",$board->nbtodolate),"warning");
+    if ($board->nbtodolate > 0) print img_picto($langs->trans("NActionsLate",$board->nbtodolate).' (>'.ceil($board->warning_delay).' '.$langs->trans("days").')',"warning");
     else print '&nbsp;';
     print '</td>';
     print '<td class="nowrap" align="right">';

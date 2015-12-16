@@ -2323,8 +2323,6 @@ div.pagination li.paginationafterarrows {
 {
 <?php if ($colorbacklinepairhover) { ?>
 	background: rgb(<?php echo $colorbacklinepairhover; ?>) !important;
-<?php } else { ?>
-	/* background: rgba(0, 0, 0, 0.05) !important; */
 <?php } ?>
 }
 
@@ -2524,9 +2522,20 @@ div.tabBar .noborder {
     border-radius: 4px;
 }
 .boxstats:hover {
+<?php if ($colorbacklinepairhover) { ?>
+	background: rgb(<?php echo $colorbacklinepairhover; ?>) !important;
+<?php } else { ?>
 	background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklinepair1)); ?>;
+<?php } ?>
 }
-
+span.boxstatsindicator {
+	font-size: 110%;
+	font-weight: bold;
+}
+span.dashboardlineindicator, span.dashboardlineindicatorlate {
+	font-size: 120%;
+	font-weight: bold;
+}
 .boxtable {
     -moz-box-shadow: 3px 3px 4px #DDD;
     -webkit-box-shadow: 3px 3px 4px #DDD;
@@ -3352,7 +3361,6 @@ ul.filedirelem li {
 }
 
 ul.ecmjqft {
-	font-size: 11px;
 	line-height: 16px;
 	padding: 0px;
 	margin: 0px;
