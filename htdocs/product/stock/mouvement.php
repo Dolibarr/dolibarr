@@ -54,11 +54,12 @@ $search_warehouse = trim(GETPOST("search_warehouse"));
 $search_inventorycode = trim(GETPOST("search_inventorycode"));
 $search_user = trim(GETPOST("search_user"));
 $search_batch = trim(GETPOST("search_batch"));
+$limit = $conf->liste_limit;
 $page = GETPOST("page",'int');
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 if ($page < 0) $page = 0;
-$offset = $conf->liste_limit * $page;
+$offset = $limit * $page;
 
 if (! $sortfield) $sortfield="m.datem";
 if (! $sortorder) $sortorder="DESC";

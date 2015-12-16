@@ -44,13 +44,14 @@ $search_doc_ref = GETPOST("search_doc_ref");
 $search_account = GETPOST("search_account");
 $search_thirdparty = GETPOST("search_thirdparty");
 $search_journal = GETPOST("search_journal");
+$limit = $conf->liste_limit;
 
 if ($sortorder == "")
 	$sortorder = "ASC";
 if ($sortfield == "")
 	$sortfield = "bk.rowid";
 
-$offset = $conf->liste_limit * $page;
+$offset = $limit * $page;
 
 $formventilation = new FormVentilation($db);
 $formother = new FormOther($db);
