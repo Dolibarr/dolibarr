@@ -92,6 +92,19 @@ function accounting_prepare_head(AccountingAccount $object)
 }
 
 /**
+ * Return accounting account without zero on the right
+ *
+ * @param 	string	$account		Accounting account
+ * @return	string          		String without zero on the right
+ */
+function clean_account($account)
+{
+	$account = rtrim($account,"0");
+	
+	return $account;
+}
+
+/**
  * Return general accounting account with defined length
  *
  * @param 	string	$account		General accounting account
@@ -131,7 +144,7 @@ function length_accountg($account)
  */
 function length_accounta($accounta)
 {
-	global $conf, $langs;
+	global $conf;
 
 	$a = $conf->global->ACCOUNTING_LENGTH_AACCOUNT;
 
