@@ -1068,6 +1068,7 @@ class Expedition extends CommonObject
 								break;
 							}
 						}
+						if ($error) break; // break for loop incase of error
 					} 
 				}
 			}
