@@ -151,21 +151,21 @@ if (empty($reshook))
         	else $errors[] = 'FailedToValidateBarCode';
 
 			$error++;
-			setEventMessage($errors,'errors');
+			setEventMessages($errors, null, 'errors');
 		}
     }
 
     if ($action == 'setaccountancy_code_buy') {
 
 	    $result = $object->setAccountancyCode('buy', GETPOST('accountancy_code_buy'));
-        if ($result < 0) setEventMessage(join(',',$object->errors), 'errors');
+        if ($result < 0) setEventMessages(join(',',$object->errors), null, 'errors');
         $action="";
     }
 
     if ($action == 'setaccountancy_code_sell')
     {
 	    $result = $object->setAccountancyCode('sell', GETPOST('accountancy_code_sell'));
-	    if ($result < 0) setEventMessage(join(',',$object->errors), 'errors');
+	    if ($result < 0) setEventMessages(join(',',$object->errors), null, 'errors');
 	    $action="";
     }
 
@@ -176,17 +176,23 @@ if (empty($reshook))
 
         if (! GETPOST('label'))
         {
-            setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentities('Label')), 'errors');
+            setEventMessages($langs->trans('ErrorFieldRequired',$langs->transnoentities('Label')), null, 'errors');
             $action = "create";
             $error++;
         }
         if (empty($ref))
         {
-            setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentities('Ref')), 'errors');
+            setEventMessages($langs->trans('ErrorFieldRequired',$langs->transnoentities('Ref')), null, 'errors');
             $action = "create";
             $error++;
         }
-
+        if (! empty(GETPOST('duration_value')) && empty(GETPOST('duration_unit')))
+        {
+            setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentities('Unit')), 'errors');
+            $action = "create";
+            $error++;
+        }
+        
         if (! $error)
         {
 	        $units = GETPOST('units', 'int');
@@ -226,7 +232,8 @@ if (empty($reshook))
             if ($result < 0)
             {
             	$error++;
-            	setEventMessage('Failed to get bar code type information '.$stdobject->error, 'errors');
+            	$mesg='Failed to get bar code type information ';
+            	setEventMessages($mesg.$stdobject->error, $mesg.$stdobject->errors, 'errors');
             }
             $object->barcode_type_code      = $stdobject->barcode_type_code;
             $object->barcode_type_coder     = $stdobject->barcode_type_coder;
@@ -295,8 +302,8 @@ if (empty($reshook))
             }
             else
 			{
-            	if (count($object->errors)) setEventMessage($object->errors, 'errors');
-				else setEventMessage($langs->trans($object->error), 'errors');
+            	if (count($object->errors)) setEventMessages($object->error, $object->errors, 'errors');
+				else setEventMessages($langs->trans($object->error), null, 'errors');
                 $action = "create";
             }
         }
@@ -358,7 +365,8 @@ if (empty($reshook))
     	        if ($result < 0)
     	        {
     	        	$error++;
-    	        	setEventMessage('Failed to get bar code type information '.$stdobject->error, 'errors');
+    	        	$mesg='Failed to get bar code type information ';
+            		setEventMessages($mesg.$stdobject->error, $mesg.$stdobject->errors, 'errors');
     	        }
     	        $object->barcode_type_code      = $stdobject->barcode_type_code;
     	        $object->barcode_type_coder     = $stdobject->barcode_type_coder;
@@ -383,15 +391,15 @@ if (empty($reshook))
                     }
                     else
 					{
-						if (count($object->errors)) setEventMessage($object->errors, 'errors');
-                    	else setEventMessage($langs->trans($object->error), 'errors');
+						if (count($object->errors)) setEventMessages($object->error, $object->errors, 'errors');
+                    	else setEventMessages($langs->trans($object->error), null, 'errors');
                         $action = 'edit';
                     }
                 }
                 else
 				{
-					if (count($object->errors)) setEventMessage($object->errors, 'errors');
-                	else setEventMessage($langs->trans("ErrorProductBadRefOrLabel"), 'errors');
+					if (count($object->errors)) setEventMessages($object->error, $object->errors, 'errors');
+                	else setEventMessages($langs->trans("ErrorProductBadRefOrLabel"), null, 'errors');
                     $action = 'edit';
                 }
             }
@@ -405,7 +413,7 @@ if (empty($reshook))
     {
         if (! GETPOST('clone_content') && ! GETPOST('clone_prices') )
         {
-        	setEventMessage($langs->trans("NoCloneOptionsSpecified"), 'errors');
+        	setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
         }
         else
         {
@@ -432,7 +440,7 @@ if (empty($reshook))
                             if ($result < 1)
                             {
                                 $db->rollback();
-                                setEventMessage($langs->trans('ErrorProductClone'), 'errors');
+                                setEventMessages($langs->trans('ErrorProductClone'), null, 'errors');
                                 header("Location: ".$_SERVER["PHP_SELF"]."?id=".$originalId);
                                 exit;
                             }
@@ -459,7 +467,7 @@ if (empty($reshook))
 
                             $mesg=$langs->trans("ErrorProductAlreadyExists",$object->ref);
                             $mesg.=' <a href="'.$_SERVER["PHP_SELF"].'?ref='.$object->ref.'">'.$langs->trans("ShowCardHere").'</a>.';
-                            setEventMessage($mesg, 'errors');
+                            setEventMessages($mesg, null, 'errors');
                             $object->fetch($id);
                         }
                         else
@@ -467,12 +475,12 @@ if (empty($reshook))
                             $db->rollback();
                             if (count($object->errors))
                             {
-                            	setEventMessage($object->errors, 'errors');
+                            	setEventMessages($object->error, $object->errors, 'errors');
                             	dol_print_error($db,$object->errors);
                             }
                             else
                             {
-                            	setEventMessage($langs->trans($object->error), 'errors');
+                            	setEventMessages($langs->trans($object->error), null, 'errors');
                             	dol_print_error($db,$object->error);
                             }
                         }
@@ -503,7 +511,7 @@ if (empty($reshook))
         }
         else
         {
-        	setEventMessage($langs->trans($object->error), 'errors');
+        	setEventMessages($langs->trans($object->error), null, 'errors');
             $reload = 0;
             $action='';
         }
@@ -629,7 +637,7 @@ if (empty($reshook))
                     return;
                 }
 
-                setEventMessage($langs->trans("ErrorUnknown") . ": $result", 'errors');
+                setEventMessages($langs->trans("ErrorUnknown") . ": $result", null, 'errors');
             } elseif (GETPOST('commandeid') > 0) {
                 $result = $commande->addline(
                     $desc,
@@ -701,7 +709,7 @@ if (empty($reshook))
         }
         else {
             $action="";
-            setEventMessage($langs->trans("WarningSelectOneDocument"), 'warnings');
+            setEventMessages($langs->trans("WarningSelectOneDocument"), null, 'warnings');
 
         }
     }

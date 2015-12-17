@@ -38,9 +38,10 @@ $status=GETPOST('status');
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
+$limit = $conf->liste_limit;
 $page = GETPOST("page",'int');
 if ($page == -1) { $page = 0; }
-$offset = $conf->liste_limit * $page;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortfield) $sortfield="p.date_fin";
@@ -48,8 +49,6 @@ if (! $sortorder) $sortorder="DESC";
 if ($page < 0) {
 	$page = 0;
 }
-$limit = $conf->liste_limit;
-$offset = $limit * $page;
 
 $langs->load("opensurvey");
 

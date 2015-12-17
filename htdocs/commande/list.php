@@ -67,13 +67,13 @@ $result = restrictedArea($user, 'commande', $id,'');
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
+$limit = $conf->liste_limit;
 if ($page == -1) { $page = 0; }
-$offset = $conf->liste_limit * $page;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortfield) $sortfield='c.rowid';
 if (! $sortorder) $sortorder='DESC';
-$limit = $conf->liste_limit;
 
 $viewstatut=GETPOST('viewstatut');
 

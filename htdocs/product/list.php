@@ -61,7 +61,7 @@ $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
 if ($page == -1) { $page = 0; }
-$offset = $liste_limit * $page;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortfield) $sortfield="p.ref";
@@ -293,7 +293,7 @@ else
 
     	// Displays product removal confirmation
     	if (GETPOST('delprod'))	{
-		    setEventMessage($langs->trans("ProductDeleted", GETPOST('delprod')));
+		    setEventMessages($langs->trans("ProductDeleted", GETPOST('delprod')), null, 'mesgs');
 	    }
 
     	if ($sref) $param="&amp;sref=".$sref;

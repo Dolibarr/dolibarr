@@ -44,9 +44,10 @@ $result = restrictedArea($user, 'ficheinter', $fichinterid,'fichinter');
 
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
+$limit = $conf->liste_limit;
 $page = GETPOST('page','int');
 if ($page == -1) { $page = 0; }
-$offset = $conf->liste_limit * $page;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) $sortorder="DESC";
@@ -55,7 +56,6 @@ if (! $sortfield)
  	if (empty($conf->global->FICHINTER_DISABLE_DETAILS)) $sortfield="fd.date";
  	else $sortfield="f.ref";
 }
-$limit = $conf->liste_limit;
 
 $search_ref=GETPOST('search_ref')?GETPOST('search_ref','alpha'):GETPOST('search_inter','alpha');
 $search_company=GETPOST('search_company','alpha');
