@@ -186,12 +186,14 @@ if (empty($reshook))
             $action = "create";
             $error++;
         }
+		/*
         if (! empty(GETPOST('duration_value')) && empty(GETPOST('duration_unit')))
         {
             setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentities('Unit')), 'errors');
             $action = "create";
             $error++;
         }
+		*/
         
         if (! $error)
         {
@@ -263,7 +265,7 @@ if (empty($reshook))
 			if (GETPOST('accountancy_code_sell') <= 0) { $accountancy_code_sell = ''; } else { $accountancy_code_sell = GETPOST('accountancy_code_sell'); }
             if (GETPOST('accountancy_code_buy') <= 0) { $accountancy_code_buy = ''; } else { $accountancy_code_buy = GETPOST('accountancy_code_buy'); }
 			$object->accountancy_code_sell   = $accountancy_code_sell;
-			$object->accountancy_code_buy    = GETPOST('accountancy_code_buy');
+			$object->accountancy_code_buy    = $accountancy_code_buy;
 
             // MultiPrix
             if (! empty($conf->global->PRODUIT_MULTIPRICES))
@@ -372,6 +374,8 @@ if (empty($reshook))
     	        $object->barcode_type_coder     = $stdobject->barcode_type_coder;
     	        $object->barcode_type_label     = $stdobject->barcode_type_label;
 
+			    if (GETPOST('accountancy_code_sell') <= 0) { $accountancy_code_sell = ''; } else { $accountancy_code_sell = GETPOST('accountancy_code_sell'); }
+                if (GETPOST('accountancy_code_buy') <= 0) { $accountancy_code_buy = ''; } else { $accountancy_code_buy = GETPOST('accountancy_code_buy'); }
             	$object->accountancy_code_sell  = GETPOST('accountancy_code_sell');
                 $object->accountancy_code_buy   = GETPOST('accountancy_code_buy');
 
@@ -1367,7 +1371,7 @@ else
                 print '<tr><td class="nowrap">';
                 print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
                 print $langs->trans("BarcodeType");
-                print '<td>';
+                print '</td>';
                 if (($action != 'editbarcodetype') && ! empty($user->rights->barcode->creer)) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbarcodetype&amp;id='.$object->id.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
                 print '</tr></table>';
                 print '</td><td colspan="2">';
@@ -1388,7 +1392,7 @@ else
                 print '<tr><td class="nowrap">';
                 print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
                 print $langs->trans("BarcodeValue");
-                print '<td>';
+                print '</td>';
                 if (($action != 'editbarcode') && ! empty($user->rights->barcode->creer)) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbarcode&amp;id='.$object->id.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
                 print '</tr></table>';
                 print '</td><td colspan="2">';
@@ -1409,13 +1413,23 @@ else
             }
 
             // Accountancy sell code
-            print '<tr><td>'.$form->editfieldkey("ProductAccountancySellCode",'accountancy_code_sell',$object->accountancy_code_sell,$object,$user->rights->produit->creer||$user->rights->service->creer,'string').'</td><td colspan="2">';
-            print $form->editfieldval("ProductAccountancySellCode",'accountancy_code_sell',$object->accountancy_code_sell,$object,$user->rights->produit->creer||$user->rights->service->creer,'string');
+			print '<tr><td class="nowrap">';
+            print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+            print $langs->trans("ProductAccountancySellCode");
+            print '</td>';
+			print '</tr></table>';
+            print '</td><td colspan="2">';
+			print length_accountg($object->accountancy_code_sell);
             print '</td></tr>';
 
-            // Accountancy buy code
-            print '<tr><td>'.$form->editfieldkey("ProductAccountancyBuyCode",'accountancy_code_buy',$object->accountancy_code_buy,$object,$user->rights->produit->creer||$user->rights->service->creer,'string').'</td><td colspan="2">';
-            print $form->editfieldval("ProductAccountancyBuyCode",'accountancy_code_buy',$object->accountancy_code_buy,$object,$user->rights->produit->creer||$user->rights->service->creer,'string');
+            // Accountancy sell code
+			print '<tr><td class="nowrap">';
+            print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+            print $langs->trans("ProductAccountancyBuyCode");
+            print '</td>';
+			print '</tr></table>';
+            print '</td><td colspan="2">';
+			print length_accountg($object->accountancy_code_buy);
             print '</td></tr>';
 
             // Status (to sell)
