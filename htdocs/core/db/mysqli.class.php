@@ -76,7 +76,6 @@ class DoliDBMysqli extends DoliDB
             $this->ok = false;
             $this->error="Mysqli PHP functions for using Mysqli driver are not available in this version of PHP. Try to use another driver.";
             dol_syslog(get_class($this)."::DoliDBMysqli : Mysqli PHP functions for using Mysqli driver are not available in this version of PHP. Try to use another driver.",LOG_ERR);
-            return $this->ok;
         }
 
         if (! $host)
@@ -85,7 +84,6 @@ class DoliDBMysqli extends DoliDB
             $this->ok = false;
             $this->error=$langs->trans("ErrorWrongHostParameter");
             dol_syslog(get_class($this)."::DoliDBMysqli : Connect error, wrong host parameters",LOG_ERR);
-            return $this->ok;
         }
 
 		// Try server connection
@@ -97,7 +95,6 @@ class DoliDBMysqli extends DoliDB
 			$this->ok = false;
 			$this->error = $this->db->connect_error;
 			dol_syslog(get_class($this) . "::DoliDBMysqli Connect error: " . $this->error, LOG_ERR);
-			return $this->ok;
 		} else {
 			$this->connected = true;
 			$this->ok = true;
@@ -145,8 +142,6 @@ class DoliDBMysqli extends DoliDB
 				}
             }
         }
-
-        return $this->ok;
     }
 
 
