@@ -200,7 +200,7 @@ class DoliDBMysqli extends DoliDB
      */
     function getVersion()
     {
-        return $this->db->get_server_info();
+        return $this->db->server_info;
     }
 
     /**
@@ -210,7 +210,7 @@ class DoliDBMysqli extends DoliDB
      */
 	function getDriverInfo()
 	{
-		return $this->db->get_client_info();
+		return $this->db->client_info;
 	}
 
 
