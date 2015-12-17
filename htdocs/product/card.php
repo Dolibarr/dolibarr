@@ -186,7 +186,7 @@ if (empty($reshook))
         }
         if (! empty(GETPOST('duration_value')) && empty(GETPOST('duration_unit')))
         {
-            setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentities('Unit')), 'errors');
+            setEventMessages($langs->trans('ErrorFieldRequired',$langs->transnoentities('Unit')), null, 'errors');
             $action = "create";
             $error++;
         }
