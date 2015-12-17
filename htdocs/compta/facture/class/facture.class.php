@@ -2401,18 +2401,20 @@ class Facture extends CommonInvoice
 	/**
 	 * Update invoice line with percentage
 	 *
-	 * @param FactureLigne $line Invoice line
-	 * @param int $percent Percentage
+	 * @param  FactureLigne $line       Invoice line
+	 * @param  int          $percent    Percentage
 	 * @return void
 	 */
 	function update_percent($line, $percent)
 	{
+	    global $mysoc;
+	    
 		include_once(DOL_DOCUMENT_ROOT . '/core/lib/price.lib.php');
 
 		// Cap percentages to 100
 		if ($percent > 100) $percent = 100;
 		$line->situation_percent = $percent;
-		$tabprice = calcul_price_total($line->qty, $line->subprice, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, $line->product_type, 'HT', 0, 0, '', '', $percent);
+		$tabprice = calcul_price_total($line->qty, $line->subprice, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, $line->product_type, 'HT', 0, 0, $mysoc, '', $percent);
 		$line->total_ht = $tabprice[0];
 		$line->total_tva = $tabprice[1];
 		$line->total_ttc = $tabprice[2];
