@@ -4,6 +4,7 @@
  * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -115,11 +116,9 @@ class DoliDBMysqli extends DoliDB
                 $clientmustbe='';
                 if (preg_match('/UTF-8/i',$conf->file->character_set_client))      $clientmustbe='utf8';
                 if (preg_match('/ISO-8859-1/i',$conf->file->character_set_client)) $clientmustbe='latin1';
-                if ($this->db->character_set_name() != $clientmustbe)
-                {
-                    $this->query("SET NAMES '".$clientmustbe."'", $this->db);
-                    //$this->query("SET CHARACTER SET ". $this->forcecharset);
-                }
+				if ($this->db->character_set_name() != $clientmustbe) {
+					$this->db->set_charset($clientmustbe);
+				}
             }
             else
             {
@@ -141,11 +140,9 @@ class DoliDBMysqli extends DoliDB
                 $clientmustbe='';
                 if (preg_match('/UTF-8/i',$conf->file->character_set_client))      $clientmustbe='utf8';
                 if (preg_match('/ISO-8859-1/i',$conf->file->character_set_client)) $clientmustbe='latin1';
-                if ($this->db->character_set_name() != $clientmustbe)
-                {
-                    $this->query("SET NAMES '".$clientmustbe."'", $this->db);
-                    //$this->query("SET CHARACTER SET ". $this->forcecharset);
-                }
+				if ($this->db->character_set_name() != $clientmustbe) {
+					$this->db->set_charset($clientmustbe);
+				}
             }
         }
 
