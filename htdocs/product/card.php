@@ -43,9 +43,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-if (! empty($conf->propal->enabled))   require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
-if (! empty($conf->facture->enabled))  require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-if (! empty($conf->commande->enabled)) require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+if (! empty($conf->propal->enabled))     require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+if (! empty($conf->facture->enabled))    require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+if (! empty($conf->commande->enabled))   require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/accountancy/class/html.formventilation.class.php';
 
 $langs->load("products");
 $langs->load("other");
@@ -250,8 +252,11 @@ if (empty($reshook))
             $object->volume_units       	 = GETPOST('volume_units');
             $object->finished           	 = GETPOST('finished');
 	        $object->fk_unit                 = GETPOST('units');
-            $object->accountancy_code_sell = GETPOST('accountancy_code_sell');
-            $object->accountancy_code_buy  = GETPOST('accountancy_code_buy');
+			
+			if (GETPOST('accountancy_code_sell') <= 0) { $accountancy_code_sell = ''; } else { $accountancy_code_sell = GETPOST('accountancy_code_sell'); }
+            if (GETPOST('accountancy_code_buy') <= 0) { $accountancy_code_buy = ''; } else { $accountancy_code_buy = GETPOST('accountancy_code_buy'); }
+			$object->accountancy_code_sell   = $accountancy_code_sell;
+			$object->accountancy_code_buy    = GETPOST('accountancy_code_buy');
 
             // MultiPrix
             if (! empty($conf->global->PRODUIT_MULTIPRICES))
@@ -719,6 +724,7 @@ llxHeader('', $title, $helpurl);
 
 $form = new Form($db);
 $formproduct = new FormProduct($db);
+if (! empty($conf->accounting->enabled)) $formaccountancy = New FormVentilation($db);
 
 
 if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
@@ -1003,20 +1009,34 @@ else
         }
 
         print '<table class="border" width="100%">';
+		
+		if (! empty($conf->accounting->enabled))
+		{
+            // Accountancy_code_sell
+            print '<tr><td width="20%">'.$langs->trans("ProductAccountancySellCode").'</td>';
+            print '<td>';
+		    print $formaccountancy->select_account($object->accountancy_code_sell, 'accountancy_code_sell', 1, '', 0, 1);
+            print '</td></tr>';
 
-        // Accountancy_code_sell
-        print '<tr><td>'.$langs->trans("ProductAccountancySellCode").'</td>';
-        print '<td><input name="accountancy_code_sell" size="16" value="'.$object->accountancy_code_sell.'">';
-        print '</td></tr>';
+            // Accountancy_code_buy
+            print '<tr><td width="20%">'.$langs->trans("ProductAccountancyBuyCode").'</td>';
+            print '<td>';
+			print $formaccountancy->select_account($object->accountancy_code_buy, 'accountancy_code_buy', 1, '', 0, 1);
+            print '</td></tr>';
+		}			
+		else // For external software 
+		{
+            // Accountancy_code_sell
+            print '<tr><td width="20%">'.$langs->trans("ProductAccountancySellCode").'</td>';
+            print '<td><input name="accountancy_code_sell" size="16" value="'.$object->accountancy_code_sell.'">';
+            print '</td></tr>';
 
-        // Accountancy_code_buy
-        print '<tr><td width="20%">'.$langs->trans("ProductAccountancyBuyCode").'</td>';
-        print '<td><input name="accountancy_code_buy" size="16" value="'.$object->accountancy_code_buy.'">';
-        print '</td></tr>';
-
-        print '</table>';
-
-        print '<br>';
+            // Accountancy_code_buy
+            print '<tr><td width="20%">'.$langs->trans("ProductAccountancyBuyCode").'</td>';
+            print '<td><input name="accountancy_code_buy" size="16" value="'.$object->accountancy_code_buy.'">';
+            print '</td></tr>';
+        }
+		print '</table>';
 
         dol_fiche_end();
 
@@ -1263,14 +1283,24 @@ else
 
             print '<br>';
 
-            /*if (empty($conf->accounting->enabled) && empty($conf->comptabilite->enabled) && empty($conf->accountingexpert->enabled))
-            {
-                // Don't show accounting field when accounting id disabled.
-            }
-            else
-            {*/
-                print '<table class="border" width="100%">';
+            print '<table class="border" width="100%">';
 
+			if (! empty($conf->accounting->enabled))
+			{
+                // Accountancy_code_sell
+                print '<tr><td width="20%">'.$langs->trans("ProductAccountancySellCode").'</td>';
+                print '<td>';
+				print $formaccountancy->select_account($object->accountancy_code_sell, 'accountancy_code_sell', 1, '', 1, 1);
+                print '</td></tr>';
+
+                // Accountancy_code_buy
+                print '<tr><td width="20%">'.$langs->trans("ProductAccountancyBuyCode").'</td>';
+                print '<td>';
+				print $formaccountancy->select_account($object->accountancy_code_buy, 'accountancy_code_buy', 1, '', 1, 1);
+                print '</td></tr>';
+			}			
+			else // For external software 
+			{
                 // Accountancy_code_sell
                 print '<tr><td width="20%">'.$langs->trans("ProductAccountancySellCode").'</td>';
                 print '<td><input name="accountancy_code_sell" size="16" value="'.$object->accountancy_code_sell.'">';
@@ -1280,9 +1310,8 @@ else
                 print '<tr><td width="20%">'.$langs->trans("ProductAccountancyBuyCode").'</td>';
                 print '<td><input name="accountancy_code_buy" size="16" value="'.$object->accountancy_code_buy.'">';
                 print '</td></tr>';
-
-                print '</table>';
-            //}
+            }
+			print '</table>';
 
             dol_fiche_end();
 

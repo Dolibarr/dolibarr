@@ -94,7 +94,7 @@ class FormVentilation extends Form
 	 *  @param	array	$event			Event options
      *	@param	int		$select_in		$selectid value is a aa.rowid (0 default) or aa.account_number (1)
      *	@param	int		$select_out		set value returned by select 0=rowid (default), 1=account_number
-     *	@param	int		$aabase			set accounting_account base class to display empty=all or from 1 to 8 will display only account beginning by
+     *	@param	int		$aabase			set accounting_account base class to display empty=all or from 1 to 8 will display only account beginning by this number
      *
 	 *	@return	string					String with HTML select
 	 */
