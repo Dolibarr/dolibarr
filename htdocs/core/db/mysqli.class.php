@@ -378,7 +378,7 @@ class DoliDBMysqli extends DoliDB
      */
     function escape($stringtoencode)
     {
-        return addslashes($stringtoencode);
+        return $this->db->real_escape_string($stringtoencode);
     }
 
     /**
