@@ -340,6 +340,54 @@ create table llx_categorie_project
   import_key    varchar(14)
 )ENGINE=innodb;
 
+
+
+
+-- Extrafields Expedition (shipment)
+create table llx_expedition_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;
+
+ALTER TABLE llx_expedition_extrafields ADD INDEX idx_expedition_extrafields (fk_object);
+
+create table llx_expeditiondet_extrafields
+(
+  rowid            integer AUTO_INCREMENT PRIMARY KEY,
+  tms              timestamp,
+  fk_object        integer NOT NULL,    -- object id
+  import_key       varchar(14)      	-- import key
+)ENGINE=innodb;
+
+ALTER TABLE llx_expeditiondet_extrafields ADD INDEX idx_expeditiondet_extrafields (fk_object);
+
+
+
+-- Extrafields Expedition (delivery receipts)
+create table llx_livraison_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;
+
+ALTER TABLE llx_livraison_extrafields ADD INDEX idx_livraison_extrafields (fk_object);
+
+create table llx_livraisondet_extrafields
+(
+  rowid            integer AUTO_INCREMENT PRIMARY KEY,
+  tms              timestamp,
+  fk_object        integer NOT NULL,    -- object id
+  import_key       varchar(14)      	-- import key
+)ENGINE=innodb;
+
+ALTER TABLE llx_livraisondet_extrafields ADD INDEX idx_livraisondet_extrafields (fk_object);
+
+
 ALTER TABLE llx_categorie_project ADD PRIMARY KEY pk_categorie_project (fk_categorie, fk_project);
 ALTER TABLE llx_categorie_project ADD INDEX idx_categorie_project_fk_categorie (fk_categorie);
 ALTER TABLE llx_categorie_project ADD INDEX idx_categorie_project_fk_project (fk_project);

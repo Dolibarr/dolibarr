@@ -30,6 +30,7 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/expedition.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 
 $langs->load("admin");
@@ -219,30 +220,9 @@ llxHeader("","");
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("SendingsSetup"),$linkback,'title_setup');
 print '<br>';
+$head = expedition_admin_prepare_head();
 
-
-//if ($mesg) print $mesg.'<br>';
-
-
-$h = 0;
-
-$head[$h][0] = DOL_URL_ROOT."/admin/confexped.php";
-$head[$h][1] = $langs->trans("Setup");
-$h++;
-
-$head[$h][0] = DOL_URL_ROOT."/admin/expedition.php";
-$head[$h][1] = $langs->trans("Shipment");
-$hselected=$h;
-$h++;
-
-if (! empty($conf->global->MAIN_SUBMODULE_LIVRAISON))
-{
-    $head[$h][0] = DOL_URL_ROOT."/admin/livraison.php";
-    $head[$h][1] = $langs->trans("Receivings");
-    $h++;
-}
-
-dol_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
+dol_fiche_head($head, 'shipment', $langs->trans("Sendings"), 0, 'sending');
 
 /*
  * Expedition numbering model
