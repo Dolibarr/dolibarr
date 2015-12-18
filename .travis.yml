@@ -113,6 +113,7 @@ before_script:
   echo Start travis
   echo Current dir is `pwd`
   echo Home dir is `echo ~`
+  echo TRAVIS_BUILD_DIR is $TRAVIS_BUILD_DIR
 
 - |
   echo "Re-enabling Xdebug for PHP CodeSniffer and PHP Unit"
@@ -138,22 +139,20 @@ before_script:
   echo
 
 - |
-  if [ "$DEBUG" = true ]; then
-    echo "Debugging informations"
-    # Check PHP
-    php -i
-    # Check PHP CodeSniffer installation
-    which phpcs
-    phpcs --version
-    phpcs -i
-    # Check PHPUnit installation
-    which phpunit
-    phpunit --version
-    # Check MySQL
-    mysql --version
-    mysql -e "SELECT VERSION();"
-    echo
-  fi
+  echo "Debugging informations"
+  # Check PHP
+  php -i
+  # Check PHP CodeSniffer installation
+  which phpcs
+  phpcs --version
+  phpcs -i
+  # Check PHPUnit installation
+  which phpunit
+  phpunit --version
+  # Check MySQL
+  mysql --version
+  mysql -e "SELECT VERSION();"
+  echo
 
 - |
   echo "Setting up database"
@@ -311,3 +310,4 @@ after_failure:
   fi
 
 after_script:
+
