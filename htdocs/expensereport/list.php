@@ -93,15 +93,15 @@ $sortfield     = GETPOST("sortfield");
 $page          = GETPOST("page");
 if (!$sortorder) $sortorder="DESC";
 if (!$sortfield) $sortfield="d.date_debut";
+$limit = $conf->liste_limit;
 
 if ($page == -1) {
 	$page = 0 ;
 }
 
-$offset = $conf->liste_limit * $page;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-$limit = $conf->liste_limit;
 
 $sql = "SELECT d.rowid, d.ref, d.fk_user_author, d.total_ht, d.total_tva, d.total_ttc, d.fk_statut as status,";
 $sql.= " d.date_debut, d.date_fin,";

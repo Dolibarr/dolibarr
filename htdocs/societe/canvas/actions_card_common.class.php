@@ -89,7 +89,8 @@ abstract class ActionsCardCommon
     }
 
     /**
-     *	Load data control
+     *  doActions of a canvas is not the doActions of the hook
+     *  @deprecated Use the doActions of hooks instead of this.
      *
      *	@param	int		$action	Action code
      *	@return	void

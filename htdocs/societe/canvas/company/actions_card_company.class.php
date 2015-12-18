@@ -68,7 +68,8 @@ class ActionsCardCompany extends ActionsCardCommon
 
 
 	/**
-	 * 	Execute actions
+     *  doActions of a canvas is not the doActions of the hook
+     *  @deprecated Use the doActions of hooks instead of this.
 	 *
 	 *  @param	string	$action    Type of action
 	 *  @param	int		$id			Id of object

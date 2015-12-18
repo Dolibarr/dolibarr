@@ -166,7 +166,11 @@ class modMyModule extends DolibarrModules
 		// Add here list of php file(s) stored in core/boxes that contains class to show a box.
         $this->boxes = array();			// List of boxes
 		// Example:
-		//$this->boxes=array(array(0=>array('file'=>'myboxa.php','note'=>'','enabledbydefaulton'=>'Home'),1=>array('file'=>'myboxb.php','note'=>''),2=>array('file'=>'myboxc.php','note'=>'')););
+		//$this->boxes=array(
+		//    0=>array('file'=>'myboxa.php@mymodule','note'=>'','enabledbydefaulton'=>'Home'),
+		//    1=>array('file'=>'myboxb.php@mymodule','note'=>''),
+		//    2=>array('file'=>'myboxc.php@mymodule','note'=>'')
+		//);
 
 		// Cronjobs
 		$this->cronjobs = array();			// List of cron jobs entries to add

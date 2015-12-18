@@ -176,7 +176,7 @@ if ($action == 'order' && isset($_POST['valid']))
                     $fail++;
                     $msg = $langs->trans('OrderFail') . "&nbsp;:&nbsp;";
                     $msg .= $order->error;
-                    setEventMessage($msg, 'errors');
+                    setEventMessages($msg, null, 'errors');
                 } else {
                     $id = $result;
                 }
@@ -195,7 +195,7 @@ if ($action == 'order' && isset($_POST['valid']))
                     $fail++;
                     $msg = $langs->trans('OrderFail') . "&nbsp;:&nbsp;";
                     $msg .= $order->error;
-                    setEventMessage($msg, 'errors');
+                    setEventMessages($msg, null, 'errors');
                 }
                 $i++;
             }
@@ -205,7 +205,7 @@ if ($action == 'order' && isset($_POST['valid']))
         {
         	$db->commit();
 
-            setEventMessage($langs->trans('OrderCreated'), 'mesgs');
+            setEventMessages($langs->trans('OrderCreated'), null, 'mesgs');
             header('Location: replenishorders.php');
             exit;
         }
@@ -216,7 +216,7 @@ if ($action == 'order' && isset($_POST['valid']))
     }
     if ($box == 0)
     {
-        setEventMessage($langs->trans('SelectProductWithNotNullQty'), 'warnings');
+        setEventMessages($langs->trans('SelectProductWithNotNullQty'), null, 'warnings');
     }
 }
 

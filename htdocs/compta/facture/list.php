@@ -77,14 +77,14 @@ if ($option == 'late') $filter = 'paye:0';
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
+$limit = $conf->liste_limit;
 $page = GETPOST("page",'int');
 if ($page == -1) {
     $page = 0;
 }
-$offset = $conf->liste_limit * $page;
+$offset = $limit * $page;
 if (! $sortorder) $sortorder='DESC';
 if (! $sortfield) $sortfield='f.datef';
-$limit = $conf->liste_limit;
 
 $pageprev = $page - 1;
 $pagenext = $page + 1;
