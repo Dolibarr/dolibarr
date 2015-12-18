@@ -1230,7 +1230,10 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                     }
                     else
                  	{
-                 		$numother++; $cssclass='family_other';
+                 		$numother++; 
+                 		$color=$event->icalcolor;
+                 		$cssclass=(! empty($event->icalname)?'family_ext'.md5($event->icalname):'family_other');
+                 		
 
 						if (empty($cacheusers[$event->userownerid]))
 						{
