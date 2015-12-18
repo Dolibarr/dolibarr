@@ -71,11 +71,11 @@ else if ($action == 'updateMask')
 
 	if (! $error)
 	{
-		setEventMessage($langs->trans("SetupSaved"));
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
 	else
 	{
-		setEventMessage($langs->trans("Error"), 'errors');
+		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
 
@@ -90,11 +90,11 @@ if ($action == 'updateMaskTask')
 
 	if (! $error)
 	{
-		setEventMessage($langs->trans("SetupSaved"));
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
 	else
 	{
-		setEventMessage($langs->trans("Error"), 'errors');
+		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
 
@@ -132,13 +132,13 @@ else if ($action == 'specimen')
 		}
 		else
 		{
-			setEventMessage($obj->error, 'errors');
+			setEventMessages($obj->error, $obj->errors, 'errors');
 			dol_syslog($obj->error, LOG_ERR);
 		}
 	}
 	else
 	{
-		setEventMessage($langs->trans("ErrorModuleNotFound"), 'errors');
+		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
 		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
 }
@@ -177,13 +177,13 @@ else if ($action == 'specimentask')
 		}
 		else
 		{
-			setEventMessage($obj->error, 'errors');
+			setEventMessages($obj->error, $obj->errors, 'errors');
 			dol_syslog($obj->error, LOG_ERR);
 		}
 	}
 	else
 	{
-		setEventMessage($langs->trans("ErrorModuleNotFound"), 'errors');
+		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
 		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
 }
@@ -208,12 +208,12 @@ if ($action == 'setModuleOptions')
 	if (! $error)
 	{
 		$db->commit();
-		setEventMessage($langs->trans("SetupSaved"));
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
 	else
 	{
 		$db->rollback();
-        setEventMessage($langs->trans("Error"),'errors');
+        setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
 

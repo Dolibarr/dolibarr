@@ -293,17 +293,21 @@ if ($action=="addelement")
 	$tablename = GETPOST("tablename");
 	$elementselectid = GETPOST("elementselect");
 	$result=$object->update_element($tablename, $elementselectid);
-	if ($result<0) {
-		setEventMessage($object->error,'errors');
+	if ($result<0) 
+	{
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
-}elseif ($action == "unlink") {
+}
+elseif ($action == "unlink") 
+{
 
 	$tablename = GETPOST("tablename");
 	$elementselectid = GETPOST("elementselect");
 
 	$result = $object->remove_element($tablename, $elementselectid);
-	if ($result < 0) {
-		setEventMessage($object->error, 'errors');
+	if ($result < 0) 
+	{
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
 

@@ -1,5 +1,4 @@
 # Dolibarr language file - en_US - Accounting Expert
-CHARSET=UTF-8
 ACCOUNTING_EXPORT_SEPARATORCSV=Column separator for export file
 ACCOUNTING_EXPORT_DATE=Date format for export file
 ACCOUNTING_EXPORT_PIECE=Export the number of piece
@@ -12,8 +11,6 @@ ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
 
 Accounting=Boekhouding
 Globalparameters=Globale instellingen
-Chartofaccounts=Rekeningschema
-Fiscalyear=Boekjaren
 Menuaccount=Accounting accounts
 Menuthirdpartyaccount=Thirdparty accounts
 MenuTools=Gereedschap
@@ -33,23 +30,17 @@ Back=Terug
 
 Definechartofaccounts=Define a chart of accounts
 Selectchartofaccounts=Select a chart of accounts
-Validate=Valideer
 Addanaccount=Add an accounting account
 AccountAccounting=Accounting account
 AccountAccountingSuggest=Accounting account suggest
 Ventilation=Breakdown
-ToDispatch=Te verzenden
-Dispatched=Verzonden
 
 CustomersVentilation=Breakdown customers
 SuppliersVentilation=Breakdown suppliers
 TradeMargin=Trade margin
 Reports=Reports
 ByCustomerInvoice=By invoices customers
-ByMonth=By Month
 NewAccount=New accounting account
-Update=Update
-List=List
 Create=Create
 CreateMvts=Create movement
 UpdateAccount=Modification of an accounting account
@@ -61,7 +52,6 @@ AccountBalanceByMonth=Account balance by month
 AccountingVentilation=Breakdown accounting
 AccountingVentilationSupplier=Breakdown accounting supplier
 AccountingVentilationCustomer=Breakdown accounting customer
-Line=Line
 
 CAHTF=Total purchase supplier before tax
 InvoiceLines=Lines of invoice to be ventilated
@@ -112,22 +102,19 @@ Docref=Reference
 Numerocompte=Account
 Code_tiers=Thirdparty
 Labelcompte=Label account
-Debit=Debit
-Credit=Credit
-Amount=Amount
 Sens=Sens
 Codejournal=Journal
 
 DelBookKeeping=Delete the records of the general ledger
 
-SellsJournal=Sells journal
-PurchasesJournal=Purchases journal
 DescSellsJournal=Sells journal
 DescPurchasesJournal=Purchases journal
 BankJournal=Bank journal
 DescBankJournal=Bank journal including all the types of payments other than cash
 CashJournal=Cash journal
 DescCashJournal=Cash journal including the type of payment cash
+FinanceJournal=Finance journal
+DescFinanceJournal=Finance journal including all the types of payments by bank account
 
 CashPayment=Cash Payment
 
@@ -150,9 +137,6 @@ Pcgversion=Version of the plan
 Pcgtype=Class of account
 Pcgsubtype=Under class of account
 Accountparent=Root of the account
-Active=Statement
-
-NewFiscalYear=New fiscal year
 
 DescVentilCustomer=Consult here the annual breakdown accounting of your invoices customers
 TotalVente=Total turnover before tax

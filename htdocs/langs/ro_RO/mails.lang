@@ -84,9 +84,12 @@ EachInvoiceWillBeAttachedToEmail=Un document folosind modelul implicit al docume
 MailTopicSendRemindUnpaidInvoices=Memento la factura %s (%s)
 SendRemind=Trimite memento prin e-mailuri
 RemindSent=%s Memento(ri) trimise
-AllRecipientSelectedForRemind=Toţi terţii selectaţi ţi dacă un e-mail este setat (rețineți că un email pe factură va fi trimis)
+AllRecipientSelected=All thirdparties selected and if an email is set.
 NoRemindSent=Niciun email de relansare trimis
-ResultOfMassSending=Rezultatul trimiterii in masa prin email a relansării
+ResultOfMailSending=Result of mass EMail sending
+NbSelected=Nb selected
+NbIgnored=Nb ignored
+NbSent=Nb sent
 
 # Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=De contact ale tuturor părţilor terţe (client, perspectiva, furnizor, ...)
@@ -97,7 +100,7 @@ MailingModuleDescEmailsFromUser=EMailuri de la un utilizator (email; nume; prenu
 MailingModuleDescContactsCategories=De contact ale tuturor părţilor terţe (pe categorii)
 MailingModuleDescDolibarrContractsLinesExpired=Terţe părţi, cu contract expirat de linii
 MailingModuleDescContactsByCompanyCategory=Date de contact ale terţilor (de către părţi a treia categorie)
-MailingModuleDescContactsByCategory=Contacte/adrese ale terţilor după caegorie
+MailingModuleDescContactsByCategory=Contacts/addresses of third parties (by category)
 MailingModuleDescMembersCategories=Membrii fundaţiei (pe categorii)
 MailingModuleDescContactsByFunction=Date de contact ale terţilor (de poziţie / funcţie)
 LineInFile=Linia %s în fişierul

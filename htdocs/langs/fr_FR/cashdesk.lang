@@ -38,3 +38,4 @@ ShowStock=Voir entrepôt
 DeleteArticle=Cliquez pour enlever cet article
 FilterRefOrLabelOrBC=Recherche (Ref/Lib.)
 UserNeedPermissionToEditStockToUsePos=Vous avez demandé de réduire le stock sur création de facture, aussi l'utilisateur qui utilise le Point De Vente doit avoir la permission d'éditer le stock.
+DolibarrReceiptPrinter=Dolibarr Receipt Printer

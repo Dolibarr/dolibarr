@@ -121,7 +121,6 @@ AttributeName=Nome attributo
 String=String
 Text=Testo
 Int=Intero
-Date=Data
 DateAndTime=Data e ora
 PublicMemberCard=Scheda membro pubblico
 MemberNotOrNoMoreExpectedToSubscribe=Membri non iscritti o non più attesi per iscrizione

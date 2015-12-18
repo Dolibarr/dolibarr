@@ -84,9 +84,12 @@ EachInvoiceWillBeAttachedToEmail=A document using default invoice document templ
 MailTopicSendRemindUnpaidInvoices=Rēķina atgādinātājs %s (%s)
 SendRemind=Sūtīt atgādinājumu pa e-pastiem
 RemindSent=%s atgādiājums(i) nosūtīti
-AllRecipientSelectedForRemind=All thirdparties selected and if an email is set (note that one mail per invoice will be sent)
+AllRecipientSelected=All thirdparties selected and if an email is set.
 NoRemindSent=No EMail reminder sent
-ResultOfMassSending=Result of mass EMail reminders sending
+ResultOfMailSending=Result of mass EMail sending
+NbSelected=Nb selected
+NbIgnored=Nb ignored
+NbSent=Nb sent
 
 # Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=Kontakti / adreses visām trešo personu (klientu, izredzes, piegādātāju, ...)
@@ -97,7 +100,7 @@ MailingModuleDescEmailsFromUser=Pastus no lietotāja ievadi (e-pasts, Uzvārds, 
 MailingModuleDescContactsCategories=Trešās personas (pēc sadaļas)
 MailingModuleDescDolibarrContractsLinesExpired=Trešās personas ar beidzies līgums ir līnijas
 MailingModuleDescContactsByCompanyCategory=Kontakti/adreses trešajām personām (trešo personu sadaļas)
-MailingModuleDescContactsByCategory=Kontakti / adreses trešajām personām kategorijā
+MailingModuleDescContactsByCategory=Contacts/addresses of third parties (by category)
 MailingModuleDescMembersCategories=Fonda biedri (pa kategorijām)
 MailingModuleDescContactsByFunction=Kontakti / adreses trešajām personām (pēc pozīcijas / funkciju)
 LineInFile=Line %s failā

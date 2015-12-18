@@ -7,6 +7,7 @@ DeliveryOrders=Narudžbe za isporuku
 DeliveryDate=Datum dostave
 DeliveryDateShort=Datum dostave
 CreateDeliveryOrder=Generiraj narudžbu dostave
+DeliveryStateSaved=Delivery state saved
 QtyDelivered=Količina dostavljena
 SetDeliveryDate=Postavi dan za slanje
 ValidateDeliveryReceipt=Ovjeriti otpremnicu

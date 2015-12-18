@@ -7,6 +7,7 @@ DeliveryOrders=Bons de réception
 DeliveryDate=Date de livraison
 DeliveryDateShort=Date réc.
 CreateDeliveryOrder=Générer bon de réception
+DeliveryStateSaved=Delivery state saved
 QtyDelivered=Qté livrée
 SetDeliveryDate=Définir la date de livraison
 ValidateDeliveryReceipt=Valider le bon de livraison

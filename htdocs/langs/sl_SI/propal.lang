@@ -53,6 +53,7 @@ ListOfProposals=Seznam komercialnih ponudb
 ActionsOnPropal=Aktivnosti v zvezi s ponudbo
 NoOpenedPropals=Ni odprtih komercialnih ponudb
 NoOtherOpenedPropals=Ni drugih odprtih komercialnih ponudb
+NoPropal=Ni komercialnih ponudb
 RefProposal=Referenca komercialne ponudbe
 SendPropalByMail=Pošlji komercialno ponudbo po pošti
 AssociatedDocuments=Dokumenti, povezani s ponudbo:

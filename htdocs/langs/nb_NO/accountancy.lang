@@ -1,5 +1,4 @@
 # Dolibarr language file - en_US - Accounting Expert
-CHARSET=UTF-8
 ACCOUNTING_EXPORT_SEPARATORCSV=Kolonneseparator for eksportfil
 ACCOUNTING_EXPORT_DATE=Datoformat for eksportfil
 ACCOUNTING_EXPORT_PIECE=Export the number of piece
@@ -12,8 +11,6 @@ ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
 
 Accounting=Regnskap
 Globalparameters=Globale parametre
-Chartofaccounts=Diagram over kontoer
-Fiscalyear=Regnskapsår
 Menuaccount=Regnskapskonti
 Menuthirdpartyaccount=Tredjepart-kontoer
 MenuTools=Verktøy
@@ -33,23 +30,17 @@ Back=Retur
 
 Definechartofaccounts=Definer et kontodiagram
 Selectchartofaccounts=Velg et kontodiagram
-Validate=Valider
 Addanaccount=Legg til regnskapskonto
 AccountAccounting=Regnskapskonto
 AccountAccountingSuggest=Accounting account suggest
 Ventilation=Fordeling
-ToDispatch=Skal sendes
-Dispatched=Sendt
 
 CustomersVentilation=Kundefordeling
 SuppliersVentilation=Leverandørfordeling
 TradeMargin=Handelsmargin
 Reports=Rapporter
 ByCustomerInvoice=Etter kundefakturaer
-ByMonth=Etter måned
 NewAccount=Ny regnskapskonto
-Update=Oppdater
-List=Liste
 Create=Opprett
 CreateMvts=Opprett bevegelse
 UpdateAccount=Endring av regnskapskonto
@@ -61,7 +52,6 @@ AccountBalanceByMonth=Kontobalanse etter måned
 AccountingVentilation=Regnskapsfordeling
 AccountingVentilationSupplier=Regnskapsfordeling leverandører
 AccountingVentilationCustomer=Regnskapsfordeling kunder
-Line=Linje
 
 CAHTF=Total purchase supplier before tax
 InvoiceLines=Fakturalinjer som skal ventileres
@@ -112,22 +102,19 @@ Docref=Referanse
 Numerocompte=Konto
 Code_tiers=Tredjepart
 Labelcompte=Kontoetikett
-Debit=Debet
-Credit=Kredit
-Amount=Beløp
 Sens=Sens
 Codejournal=Journal
 
 DelBookKeeping=Slett innholdet i hovedboken
 
-SellsJournal=Salgsjournal
-PurchasesJournal=Innkjøpsjournal
 DescSellsJournal=Salgsjournal
 DescPurchasesJournal=Innkjøpsjournal
 BankJournal=Bankjournal
 DescBankJournal=Bankjournal inkludert alle typer annet enn kontantbetalinger
 CashJournal=Kontantjournal
 DescCashJournal=Kontantjournal med kontantbetalinger
+FinanceJournal=Finance journal
+DescFinanceJournal=Finance journal including all the types of payments by bank account
 
 CashPayment=Kontant Betaling
 
@@ -150,9 +137,6 @@ Pcgversion=Planversjon
 Pcgtype=Kontoklasse
 Pcgsubtype=Konto underklasse
 Accountparent=Konto-base
-Active=Uttalelse
-
-NewFiscalYear=Nytt regnskapsår
 
 DescVentilCustomer=Årlig regnskapsfordelingfordeling over kundefakturaer
 TotalVente=Total turnover before tax

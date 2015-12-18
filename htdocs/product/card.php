@@ -64,6 +64,8 @@ $action=(GETPOST('action','alpha') ? GETPOST('action','alpha') : 'view');
 $cancel=GETPOST('cancel');
 $confirm=GETPOST('confirm','alpha');
 $socid=GETPOST('socid','int');
+$duration_value = GETPOST('duration_value');
+$duration_unit = GETPOST('duration_unit');
 if (! empty($user->societe_id)) $socid=$user->societe_id;
 
 $object = new Product($db);
@@ -184,9 +186,9 @@ if (empty($reshook))
             $action = "create";
             $error++;
         }
-        if (GETPOST('duration_value') && ! GETPOST('duration_unit'))
+        if (! empty($duration_value) && empty($duration_unit))
         {
-            setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentities('Unit')), 'errors');
+            setEventMessages($langs->trans('ErrorFieldRequired',$langs->transnoentities('Unit')), null, 'errors');
             $action = "create";
             $error++;
         }
@@ -242,8 +244,8 @@ if (empty($reshook))
             $object->note               	 = dol_htmlcleanlastbr(GETPOST('note'));
             $object->customcode              = GETPOST('customcode');
             $object->country_id              = GETPOST('country_id');
-            $object->duration_value     	 = GETPOST('duration_value');
-            $object->duration_unit      	 = GETPOST('duration_unit');
+            $object->duration_value     	 = $duration_value;
+            $object->duration_unit      	 = $duration_unit;
             $object->seuil_stock_alerte 	 = GETPOST('seuil_stock_alerte')?GETPOST('seuil_stock_alerte'):0;
             $object->desiredstock            = GETPOST('desiredstock')?GETPOST('desiredstock'):0;
             $object->canvas             	 = GETPOST('canvas');
@@ -329,8 +331,8 @@ if (empty($reshook))
                 $object->status_batch	        = GETPOST('status_batch');
                 $object->seuil_stock_alerte     = GETPOST('seuil_stock_alerte');
                 $object->desiredstock           = GETPOST('desiredstock');
-                $object->duration_value         = GETPOST('duration_value');
-                $object->duration_unit          = GETPOST('duration_unit');
+                $object->duration_value         = $duration_value;
+                $object->duration_unit          = $duration_unit;
                 $object->canvas                 = GETPOST('canvas');
                 $object->weight                 = GETPOST('weight');
                 $object->weight_units           = GETPOST('weight_units');
@@ -898,7 +900,7 @@ else
         // Duration
         if ($type == 1)
         {
-            print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="3"><input name="duration_value" size="6" maxlength="5" value="'.GETPOST('duration_value').'"> &nbsp;';
+            print '<tr><td>' . $langs->trans("Duration") . '</td><td colspan="3"><input name="duration_value" size="6" maxlength="5" value="' . $duration_value . '"> &nbsp;';
             print '<input name="duration_unit" type="radio" value="h">'.$langs->trans("Hour").'&nbsp;';
             print '<input name="duration_unit" type="radio" value="d">'.$langs->trans("Day").'&nbsp;';
             print '<input name="duration_unit" type="radio" value="w">'.$langs->trans("Week").'&nbsp;';

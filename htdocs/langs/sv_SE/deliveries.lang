@@ -7,6 +7,7 @@ DeliveryOrders=Leveransorder
 DeliveryDate=Leveransdatum
 DeliveryDateShort=Leve. datum
 CreateDeliveryOrder=Generera leveransorder
+DeliveryStateSaved=Delivery state saved
 QtyDelivered=Antal levererade
 SetDeliveryDate=Ställ in leveransdatum
 ValidateDeliveryReceipt=ttestera kvitto

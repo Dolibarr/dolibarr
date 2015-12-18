@@ -1,5 +1,4 @@
 # Dolibarr language file - en_US - Accounting Expert
-CHARSET=UTF-8
 ACCOUNTING_EXPORT_SEPARATORCSV=Column separator for export file
 ACCOUNTING_EXPORT_DATE=Date format for export file
 ACCOUNTING_EXPORT_PIECE=Export the number of piece
@@ -12,8 +11,6 @@ ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
 
 Accounting=Apskaita
 Globalparameters=Bendrieji parametrai
-Chartofaccounts=Sąskaitų planas
-Fiscalyear=Fiskaliniai metai
 Menuaccount=Apskaitos sąskaitos
 Menuthirdpartyaccount=Trečios šalies sąskaitos
 MenuTools=Įrankiai
@@ -33,23 +30,17 @@ Back=Grįžti
 
 Definechartofaccounts=Nustatyti sąskaitų planą
 Selectchartofaccounts=Pasirinkite sąskaitų planą
-Validate=Patvirtinti
 Addanaccount=Pridėti apskaitos sąskaitą
 AccountAccounting=Apskaitos sąskaita
 AccountAccountingSuggest=Accounting account suggest
 Ventilation=Schema
-ToDispatch=Išsiųsti
-Dispatched=Išsiųsta
 
 CustomersVentilation=Schemos klientai
 SuppliersVentilation=Schemos tiekėjai
 TradeMargin=Prekybos marža
 Reports=Ataskaitos
 ByCustomerInvoice=Pagal sąskaitų-faktūrų klientus
-ByMonth=Pagal mėnesį
 NewAccount=Nauja apskaitos sąskaita
-Update=Atnaujinimas
-List=Sąrašas
 Create=Sukurti
 CreateMvts=Create movement
 UpdateAccount=Apskaitos sąskaitos modifikavimas
@@ -61,7 +52,6 @@ AccountBalanceByMonth=Sąskaitos balansas pagal mėnesį
 AccountingVentilation=Aapskaitos schema
 AccountingVentilationSupplier=Apskaitos tiekėjo schema
 AccountingVentilationCustomer=Apskaitos kliento schema
-Line=Eilutė
 
 CAHTF=Total purchase supplier before tax
 InvoiceLines=Sąskaitos eilutės, kurios turi būti apsvarstytos
@@ -112,22 +102,19 @@ Docref=Nuoroda
 Numerocompte=Sąskaita
 Code_tiers=Trečioji Šalis
 Labelcompte=Sąskaitos etiketė
-Debit=Debetas
-Credit=Kreditas
-Amount=Suma
 Sens=Sens
 Codejournal=Žurnalas
 
 DelBookKeeping=Panaikinti Didžiosios knygos įrašus
 
-SellsJournal=Pardavimų žurnalas
-PurchasesJournal=Pirkimų žurnalas
 DescSellsJournal=Pardavimų žurnalas
 DescPurchasesJournal=Pirkimų žurnalas
 BankJournal=Banko žurnalas
 DescBankJournal=Banko žurnale įtraukiami visų tipų mokėjimai, išskyrus grynais pinigais
 CashJournal=Pinigų žurnalas
 DescCashJournal=Pinigų žurnale įtraukiami mokėjimai grynaisiais pinigais
+FinanceJournal=Finance journal
+DescFinanceJournal=Finance journal including all the types of payments by bank account
 
 CashPayment=Mokėjimai grynaisiais pinigais
 
@@ -150,9 +137,6 @@ Pcgversion=Plano versija
 Pcgtype=Sąskaitų klasė
 Pcgsubtype=Sąskaitų poklasis
 Accountparent=Sąskaitos šaknys
-Active=Ataskaita
-
-NewFiscalYear=Nauji fiskaliniai metai
 
 DescVentilCustomer=Consult here the annual breakdown accounting of your invoices customers
 TotalVente=Total turnover before tax

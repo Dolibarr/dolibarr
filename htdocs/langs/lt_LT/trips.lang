@@ -28,8 +28,6 @@ AnyOtherInThisListCanValidate=Asmuo informuojamas patvirtinimui.
 TripSociete=Informacijos įmonė
 TripSalarie=Informacijos vartotojas
 TripNDF=Informacijos išlaidų ataskaiata
-DeleteLine=Delete a line of the expense report
-ConfirmDeleteLine=Ar tikrai norite ištrinti šią eilutę ?
 PDFStandardExpenseReports=Standartinis šablonas PDF dokumento išlaidų ataskaitoje generavimui
 ExpenseReportLine=Išlaidų ataskaitos eilutė
 TF_OTHER=Kitas
@@ -53,8 +51,6 @@ AddLineMini=Pridėti
 Date_DEBUT=Laikotarpio pradžia
 Date_FIN=Laikotarpio pabaiga
 ModePaiement=Mokėjimo būdas
-Note=Pranešimas
-Project=Projektas
 
 VALIDATOR=User responsible for approval
 VALIDOR=Patvirtinta

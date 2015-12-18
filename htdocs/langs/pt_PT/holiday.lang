@@ -128,7 +128,7 @@ ErrorMailNotSend=An error occurred while sending email:
 NoCPforMonth=No leave this month.
 nbJours=Number days
 TitleAdminCP=Configuration of Leaves
-NoticePeriod=Notice period
+NoticePeriod=Período de aviso
 #Messages
 HolidaysToValidate=Validate leave requests
 HolidaysToValidateBody=Below is a leave request to validate
@@ -140,5 +140,5 @@ HolidaysRefused=Request denied
 HolidaysRefusedBody=Your leave request for %s to %s has been denied for the following reason :
 HolidaysCanceled=Canceled leaved request
 HolidaysCanceledBody=Your leave request for %s to %s has been canceled.
-NewByMonth=Added per month
+NewByMonth=Adicionado mensalmente
 GoIntoDictionaryHolidayTypes=Go into <strong>Home - Setup - Dictionaries - Type of leaves</strong> to setup the different types of leaves.

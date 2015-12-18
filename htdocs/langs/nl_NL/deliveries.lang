@@ -7,6 +7,7 @@ DeliveryOrders=Ontvangstbonnen
 DeliveryDate=Leveringsdatum
 DeliveryDateShort=Leveringsdatum
 CreateDeliveryOrder=Genereer ontvangstbon\n
+DeliveryStateSaved=Delivery state saved
 QtyDelivered=Aantal geleverd
 SetDeliveryDate=Stel verzenddatum in
 ValidateDeliveryReceipt=Valideer ontvangstbewijs

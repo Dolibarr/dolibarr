@@ -7,6 +7,7 @@ DeliveryOrders=Zamówień na dostawy
 DeliveryDate=Data dostawy
 DeliveryDateShort=Data dostarczenia
 CreateDeliveryOrder=Generowanie zamówienia dostawy
+DeliveryStateSaved=Stan dostawy zapisany
 QtyDelivered=Ilość dostarczona
 SetDeliveryDate=Ustaw datę wysyłki
 ValidateDeliveryReceipt=Potwierdzenie otrzymania dostawy

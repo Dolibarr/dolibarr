@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is en_US - users
+# Dolibarr language file - Source file is en_US - salaries
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Kod rachunkowości dla wypłat
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Kod rachunkowości dla obciązeń finansowych
 Salary=Wypłata
@@ -11,5 +11,5 @@ ShowSalaryPayment=Pokaż wypłaty wynagrodzeń
 THM=Średnia cena za godzine
 TJM=Średnia cena za dzień
 CurrentSalary=Aktualne wynagrodzenie
-THMDescription=This value may be used to calculate cost of time consumed on a project entered by users if module project is used
-TJMDescription=This value is currently as information only and is not used for any calculation
+THMDescription=Ta wartość może być użyta do obliczenia kosztów poniesionych przy projekcie wprowadzonym przez użytkowników jeżeli moduł projektów jest używany
+TJMDescription=Ta wartośc jest aktualni ejedyni einformacją i ni ejest wykorzystywana do jakichkolwiek obliczeń

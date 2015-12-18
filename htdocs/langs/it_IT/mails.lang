@@ -84,9 +84,12 @@ EachInvoiceWillBeAttachedToEmail=Un documento che usa il template di fattura di 
 MailTopicSendRemindUnpaidInvoices=Promemoria di fattura %s (%s)
 SendRemind=Invia promemoria per Email
 RemindSent=%s promemoria inviati.
-AllRecipientSelectedForRemind=Tutte le terze parti sono selezionate e le mail dove inserite (nota che sarà inviata una mail per fattura)
+AllRecipientSelected=All thirdparties selected and if an email is set.
 NoRemindSent=Nessun promemoria email inviato
-ResultOfMassSending=Risultato del mass Email di promemoria inviato
+ResultOfMailSending=Result of mass EMail sending
+NbSelected=Nb selected
+NbIgnored=Nb ignored
+NbSent=Nb sent
 
 # Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=Contatti di soggetti terzi (clienti, clienti potenziali, fornitori)
@@ -97,7 +100,7 @@ MailingModuleDescEmailsFromUser=Emails da input dell'utente (email;cognome;nome;
 MailingModuleDescContactsCategories=Contatti di tutti i soggetti terzi (per categoria)
 MailingModuleDescDolibarrContractsLinesExpired=Soggetti terzi con contratti scaduti
 MailingModuleDescContactsByCompanyCategory=Contatti di soggetti terzi (per categoria)
-MailingModuleDescContactsByCategory=Contatti/Indirizzi dei soggetti terzi per categoria
+MailingModuleDescContactsByCategory=Contacts/addresses of third parties (by category)
 MailingModuleDescMembersCategories=Membri della Fondazione (per categoria)
 MailingModuleDescContactsByFunction=Contatti di soggetti terzi (per posizione/funzione)
 LineInFile=Riga %s nel file
