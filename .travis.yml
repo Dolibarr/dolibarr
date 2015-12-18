@@ -33,7 +33,7 @@ services:
 env:
   global:
   # Set to true for very verbose output
-  - DEBUG=false
+  - DEBUG=true
   matrix:
   # MariaDB overrides MySQL installation so it's not possible to test both yet
   #- DB=mysql
