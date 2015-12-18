@@ -258,7 +258,7 @@ class ExtraFields
 
 		if (! empty($attrname) && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname) && ! is_numeric($attrname))
 		{
-			if(is_array($param) and count($param) > 0)
+			if(is_array($param) && count($param) > 0)
 			{
 				$params = $this->db->escape(serialize($param));
 			}
@@ -818,7 +818,7 @@ class ExtraFields
 				}
 				else 
 				{
-					$sqlwhere.= ' WHERE 1';
+					$sqlwhere.= ' WHERE 1=1';
 				}
 				if (in_array($InfoFieldList[0],array('tablewithentity'))) $sqlwhere.= ' AND entity = '.$conf->entity;	// Some tables may have field, some other not. For the moment we disable it.
 				$sql.=$sqlwhere;
@@ -986,7 +986,7 @@ class ExtraFields
 						$sqlwhere .= ' WHERE ' . $InfoFieldList[4];
 					}
 				} else {
-					$sqlwhere .= ' WHERE 1';
+					$sqlwhere .= ' WHERE 1=1';
 				}
 				if (in_array($InfoFieldList[0], array (
 						'tablewithentity'

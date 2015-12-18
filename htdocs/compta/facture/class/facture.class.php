@@ -675,7 +675,7 @@ class Facture extends CommonInvoice
 				$facture->lines[$i]->total_ttc = -$facture->lines[$i]->total_ttc;
 			}
 		}
-		
+
 		dol_syslog(get_class($this)."::createFromCurrent invertdetail=".$invertdetail." socid=".$this->socid." nboflines=".count($facture->lines));
 
 		$facid = $facture->create($user);
@@ -1662,7 +1662,6 @@ class Facture extends CommonInvoice
 	            // Call trigger
 	            $result=$this->call_trigger('BILL_PAYED',$user);
 	            if ($result < 0) $error++;
-               
 	            // End call triggers
 			}
 			else
@@ -2351,6 +2350,7 @@ class Facture extends CommonInvoice
 			{
 				// Reorder if child line
 				if (! empty($fk_parent_line)) $this->line_order(true,'DESC');
+
 				// Mise a jour informations denormalisees au niveau de la facture meme
 				$result=$this->update_price(1,'auto',0,$mysoc);	// This method is designed to add line from user input so total calculation must be done using 'auto' mode.
 				if ($result > 0)
@@ -2416,7 +2416,7 @@ class Facture extends CommonInvoice
 
 		if ($this->brouillon)
 		{
-			if ($this->is_last_in_cycle() != 1)
+			if (!$this->is_last_in_cycle())
 			{
 				if (!$this->checkProgressLine($rowid, $situation_percent))
 				{
@@ -3765,6 +3765,7 @@ class Facture extends CommonInvoice
 	 */
 	function get_prev_sits()
 	{
+
 		$sql = 'SELECT rowid FROM ' . MAIN_DB_PREFIX . 'facture';
 		$sql .= ' where situation_cycle_ref = ' . $this->situation_cycle_ref;
 		$sql .= ' and situation_counter < ' . $this->situation_counter;
@@ -3818,22 +3819,22 @@ class Facture extends CommonInvoice
 	 */
 	function is_last_in_cycle()
 	{
-		if (empty($this->situation_cycle_ref)) {
+		if (!empty($this->situation_cycle_ref)) {
 			// No point in testing anything if we're not inside a cycle
-			return false;
-		}
-
-		$sql = 'SELECT max(situation_counter) FROM ' . MAIN_DB_PREFIX . 'facture WHERE situation_cycle_ref = ' . (int) $this->situation_cycle_ref . ' AND entity in ('.getEntity('facture').')';
-		$resql = $this->db->query($sql);
-
-		if ($resql && $resql->num_rows > 0) {
-			$res = $this->db->fetch_array($resql);
-			$last = $res['max(situation_counter)'];
-			return ($last == $this->situation_counter);
+			$sql = 'SELECT max(situation_counter) FROM ' . MAIN_DB_PREFIX . 'facture WHERE situation_cycle_ref = ' . $this->situation_cycle_ref. ' AND entity in ('.getEntity('facture').')';
+			$resql = $this->db->query($sql);
+	
+			if ($resql && $resql->num_rows > 0) {
+				$res = $this->db->fetch_array($resql);
+				$last = $res['max(situation_counter)'];
+				return ($last == $this->situation_counter);
+			} else {
+				$this->error = $this->db->lasterror();
+				dol_syslog(get_class($this) . "::select Error " . $this->error, LOG_ERR);
+				return false;
+			}
 		} else {
-			$this->error = $this->db->lasterror();
-			dol_syslog(get_class($this) . "::select Error " . $this->error, LOG_ERR);
-			return false;
+			return true;
 		}
 	}
 

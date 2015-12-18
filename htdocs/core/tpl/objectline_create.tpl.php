@@ -557,7 +557,7 @@ jQuery(document).ready(function() {
 
 	      		/* Define default price at loading */
 	      		var defaultprice = $("#fournprice_predef").find('option:selected').attr("price");
-	      		$("#buying_price").val(Math.round(defaultprice,<?php print ($conf->global->MAIN_MAX_DECIMALS_UNIT ? $conf->global->MAIN_MAX_DECIMALS_UNIT : 5); ?>));
+			    $("#buying_price").val(defaultprice);
 
 	      		$("#fournprice_predef").change(function() {
 		      		console.log("change on fournprice_predef");

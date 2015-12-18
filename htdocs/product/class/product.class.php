@@ -880,7 +880,7 @@ class Product extends CommonObject
    			// Delete all child tables
 			if (! $error)
 			{
-    			$elements = array('product_fournisseur_price','product_price','product_lang','categorie_product','product_stock');
+			    $elements = array('product_fournisseur_price','product_price','product_lang','categorie_product','product_stock','product_customer_price');
     			foreach($elements as $table)
     			{
     				if (! $error)
@@ -3293,23 +3293,23 @@ class Product extends CommonObject
         if (! empty($conf->commande->enabled))
         {
             $result=$this->load_stats_commande(0,'1,2');
-            if ($result < 0) dol_print_error($db,$this->error);
+            if ($result < 0) dol_print_error($this->db,$this->error);
             $stock_commande_client=$this->stats_commande['qty'];
         }
         if (! empty($conf->expedition->enabled))
         {
             $result=$this->load_stats_sending(0,'1,2');
-            if ($result < 0) dol_print_error($db,$this->error);
+            if ($result < 0) dol_print_error($this->db,$this->error);
             $stock_sending_client=$this->stats_expedition['qty'];
         }
         if (! empty($conf->fournisseur->enabled))
         {
             $result=$this->load_stats_commande_fournisseur(0,'1,2,3,4');
-            if ($result < 0) dol_print_error($db,$this->error);
+            if ($result < 0) dol_print_error($this->db,$this->error);
             $stock_commande_fournisseur=$this->stats_commande_fournisseur['qty'];
 
             $result=$this->load_stats_reception(0,'4');
-            if ($result < 0) dol_print_error($db,$this->error);
+            if ($result < 0) dol_print_error($this->db,$this->error);
             $stock_reception_fournisseur=$this->stats_reception['qty'];
         }
 

@@ -21,7 +21,7 @@
 
 /**
  * \file		htdocs/accountancy/customer/list.php
- * \ingroup		Accounting Expert
+ * \ingroup		Accountancy
  * \brief		Ventilation page from customers invoices
  */
 require '../../main.inc.php';
@@ -87,10 +87,9 @@ if (! $user->rights->accounting->ventilation->dispatch)
 	accessforbidden();
 
 $formventilation = new FormVentilation($db);
-
 $accounting = new AccountingAccount($db);
-$aarowid_s = $accounting->fetch('', ACCOUNTING_SERVICE_SOLD_ACCOUNT);
-$aarowid_p = $accounting->fetch('', ACCOUNTING_PRODUCT_SOLD_ACCOUNT);
+$aarowid_s = $accounting->fetch('', $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT,1);
+$aarowid_p = $accounting->fetch('',$conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT,1);
 
 // Purge search criteria
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) {
@@ -165,16 +164,27 @@ if ($action == 'ventil' && !empty($btn_ventil)) {
  * Customer Invoice lines
  */
 
-$sql = "SELECT f.facnumber, f.rowid as facid, f.datef, f.type as ftype, l.fk_product, l.description, l.total_ht, l.rowid, l.fk_code_ventilation,";
-$sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type, p.accountancy_code_sell as code_sell, p.tva_tx as tva_tx_prod";
-$sql .= " , aa.rowid as aarowid";
-$sql .= " , l.product_type as type_l, l.tva_tx as tva_tx_line";
+if (! empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)) {
+	$limit = $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION;
+} else if ($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION <= 0) {
+	$limit = $conf->liste_limit;
+} else {
+	$limit = $conf->liste_limit;
+}
+
+$offset = $limit * $page;
+
+$sql = "SELECT f.facnumber, f.rowid as facid, f.datef, f.type as ftype, l.fk_product, l.description, l.total_ht, l.rowid, l.fk_code_ventilation, l.product_type as type_l, l.tva_tx as tva_tx_line,";
+$sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type, p.accountancy_code_sell as code_sell, p.tva_tx as tva_tx_prod,";
+$sql .= "  aa.rowid as aarowid";
 $sql .= " FROM " . MAIN_DB_PREFIX . "facture as f";
 $sql .= " INNER JOIN " . MAIN_DB_PREFIX . "facturedet as l ON f.rowid = l.fk_facture";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON p.rowid = l.fk_product";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accountingaccount as aa ON p.accountancy_code_sell = aa.account_number";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_system as accsys ON accsys.pcg_version = aa.fk_pcg_version";
-$sql .= " WHERE f.fk_statut > 0 AND fk_code_ventilation <= 0";
+$sql .= " WHERE f.fk_statut > 0";
+$sql .= " AND fk_code_ventilation <= 0";
+$sql .= " AND product_type <= 2";
 $sql .= " AND (accsys.rowid='" . $conf->global->CHARTOFACCOUNTS . "' OR p.accountancy_code_sell IS NULL OR p.accountancy_code_sell ='')";
 
 // Add search filter like
@@ -231,7 +241,7 @@ if ($result) {
 	print_liste_field_titre($langs->trans("Description"), $_SERVER["PHP_SELF"], "l.description", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Amount"), $_SERVER["PHP_SELF"],"l.total_ht","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("VATRate"), $_SERVER["PHP_SELF"], "l.tva_tx", "", $param, 'align="center"', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("AccountAccounting"), '', '', '', '', 'align="center"');
+	print_liste_field_titre($langs->trans("AccountAccountingSuggest"), '', '', '', '', 'align="center"');
 	print_liste_field_titre($langs->trans("IntoAccount"), '', '', '', '', 'align="center"');
 	print_liste_field_titre('');
 	print_liste_field_titre($langs->trans("Ventilate") . '<br><label id="select-all">' . $langs->trans('All') . '</label>/<label id="unselect-all">' . $langs->trans('None') . '</label>', '', '', '', '', 'align="center"');
@@ -281,12 +291,14 @@ if ($result) {
 		}
 		if ($objp->type_l == 1) {
 			$objp->code_sell_l = (! empty($conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT : $langs->trans("CodeNotDef"));
-			if ($objp->aarowid == '')
+			if ($objp->aarowid == '') {
 				$objp->aarowid_suggest = $aarowid_s;
+			}
 		} elseif ($objp->type_l == 0) {
 			$objp->code_sell_l = (! empty($conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT : $langs->trans("CodeNotDef"));
-			if ($objp->aarowid == '')
+			if ($objp->aarowid == '') {
 				$objp->aarowid_suggest = $aarowid_p;
+			}
 		}
 		if ($objp->code_sell_l != $objp->code_sell_p)
 			$code_sell_p_l_differ = 'color:red';
@@ -322,7 +334,7 @@ if ($result) {
 		if ($objp->code_sell_l == $objp->code_sell_p) {
 			print $objp->code_sell_l;
 		} else {
-			print 'lines=' . $objp->code_sell_l . '<br />product=' . $objp->code_sell_p;
+			print $langs->trans("Purchase") . ' = ' . $objp->code_sell_l . '<br />' . $langs->trans("Sell") . ' = ' . $objp->code_sell_p;
 		}
 		print '</td>';
 		
