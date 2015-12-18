@@ -121,7 +121,6 @@ AttributeName=Attributname
 String=Zeichenkette
 Text=Text
 Int=Integer
-Date=Datum
 DateAndTime=Datum und Uhrzeit
 PublicMemberCard=Öffentliche Mitgliedskarte
 MemberNotOrNoMoreExpectedToSubscribe=Mitglied ohne (und ohne Aussicht auf) Abonnement

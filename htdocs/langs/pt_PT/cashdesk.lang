@@ -37,4 +37,5 @@ ShowCompany=Mostrar empresa
 ShowStock=Mostrar armazém
 DeleteArticle=Clique para remover este artigo
 FilterRefOrLabelOrBC=Procurar (Ref/Etiqueta)
-# UserNeedPermissionToEditStockToUsePos=You ask to decrease stock on invoice creation, so user that use POS need to have permission to edit stock.
+UserNeedPermissionToEditStockToUsePos=You ask to decrease stock on invoice creation, so user that use POS need to have permission to edit stock.
+DolibarrReceiptPrinter=Dolibarr Receipt Printer

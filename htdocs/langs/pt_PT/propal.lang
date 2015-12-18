@@ -53,6 +53,7 @@ ListOfProposals=Lista de Orçamentos
 ActionsOnPropal=Acções sobre o Orçamento
 NoOpenedPropals=No open commercial proposals
 NoOtherOpenedPropals=No other open commercial proposals
+NoPropal=No commercial proposal
 RefProposal=Ref. Orçamento
 SendPropalByMail=Enviar Orçamento por E-mail
 AssociatedDocuments=Documentos Associados ao Orçamento :

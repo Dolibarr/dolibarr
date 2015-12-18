@@ -1,5 +1,4 @@
 # Dolibarr language file - en_US - Accounting Expert
-CHARSET=UTF-8
 ACCOUNTING_EXPORT_SEPARATORCSV=Column separator for export file
 ACCOUNTING_EXPORT_DATE=Date format for export file
 ACCOUNTING_EXPORT_PIECE=Export the number of piece
@@ -12,8 +11,6 @@ ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
 
 Accounting=حسابداری
 Globalparameters=پارامترهای کلی
-Chartofaccounts=نمودار حساب ها
-Fiscalyear=سال مالی
 Menuaccount=حساب های حسابداری
 Menuthirdpartyaccount=حساب Thirdparty
 MenuTools=ابزار ها
@@ -27,29 +24,23 @@ Modelcsv=مدل خروجی اطلاعات
 OptionsDeactivatedForThisExportModel=For this export model, options are deactivated
 Selectmodelcsv=انتخاب مدل استخراج
 Modelcsv_normal=استخراج سنتی
-Modelcsv_CEGID=استخراج بصورت کارشناس CEGID 
+Modelcsv_CEGID=استخراج بصورت کارشناس CEGID
 BackToChartofaccounts=برگردان جدول حساب ها
 Back=برگشت
 
 Definechartofaccounts=تعریف یک جدول از حساب ها
 Selectchartofaccounts=انتخاب یک جدول از حساب ها
-Validate=معتبر سازی
 Addanaccount=اضافه کردن یک حساب حسابداری
 AccountAccounting=حساب حسابداری
 AccountAccountingSuggest=Accounting account suggest
 Ventilation=ورشکستگی
-ToDispatch=ارسال کردن
-Dispatched=ارسال شده
 
 CustomersVentilation=مشتریان ورشکسته
 SuppliersVentilation=Breakdown suppliers
 TradeMargin=حاشیه سود معامله
 Reports=گزارش ها
 ByCustomerInvoice=توسط فاکتورهای مشتریان
-ByMonth=در ماه
 NewAccount=حساب حسابداری جدید
-Update=به روز رسانی
-List=فهرست
 Create=ایجاد کردن
 CreateMvts=Create movement
 UpdateAccount=اصلاح حساب حسابداری
@@ -61,7 +52,6 @@ AccountBalanceByMonth=تراز حساب های ماه
 AccountingVentilation=حسابداری تفکیک
 AccountingVentilationSupplier=Breakdown accounting supplier
 AccountingVentilationCustomer=Breakdown accounting customer
-Line=خط
 
 CAHTF=Total purchase supplier before tax
 InvoiceLines=Lines of invoice to be ventilated
@@ -112,22 +102,19 @@ Docref=مرجع
 Numerocompte=حساب
 Code_tiers=Thirdparty
 Labelcompte=برچسب حساب
-Debit=بدهی
-Credit=اعتبار
-Amount=میزان
 Sens=SENS
 Codejournal=روزنامه
 
 DelBookKeeping=حذف پرونده از دفتر کل
 
-SellsJournal=مجله فروش
-PurchasesJournal=مجله خرید 
 DescSellsJournal=مجله فروش
 DescPurchasesJournal=Purchases journal
 BankJournal=مجله بانک
 DescBankJournal=مجله بانک شامل انواع پرداختها بغیر از پول نقد
 CashJournal=مجله های نقدی
 DescCashJournal=Cash journal including the type of payment cash
+FinanceJournal=Finance journal
+DescFinanceJournal=Finance journal including all the types of payments by bank account
 
 CashPayment=پرداخت نقدی
 
@@ -150,9 +137,6 @@ Pcgversion=نسخه هدف
 Pcgtype=کلاس حساب
 Pcgsubtype=تحت دسته از حساب
 Accountparent=ریشه حساب
-Active=بیانیه
-
-NewFiscalYear=سال مالی جدید
 
 DescVentilCustomer=Consult here the annual breakdown accounting of your invoices customers
 TotalVente=Total turnover before tax

@@ -2,7 +2,6 @@
 FilesUpdated=Mettre à jour les fichiers
 InstrucToEncodePass=Pour chiffrer le mot de passe de la base dans le fichier de configuration <b>conf.php</b>, remplacer la ligne<br><b>$dolibarr_main_db_pass="...";</b><br>par<br><b>$dolibarr_main_db_pass="crypted:%s";</b>
 InstrucToClearPass=Pour avoir le mot de passe de la base décodé (en clair) dans le fichier de configuration <b>conf.php</b>, remplacer dans ce fichier la ligne<br><b>$dolibarr_main_db_pass="crypted:..."</b><br>par<br><b>$dolibarr_main_db_pass="%s"</b>
-SubmitTranslation=If translation for this language is not complete or you find errors, you can correct this by editing files into directory <b>langs/%s</b> and submit your change to www.transifex.com/dolibarr-association/dolibarr/
 DownloadPackageFromWebSite=Télécharger le package %s.
 UnpackPackageInDolibarrRoot=Décompresser le paquet dans le répertoire dédié aux modules externes : <b>%s</b>
 YouCanSubmitFile=Sélectionner le module :
@@ -15,7 +14,6 @@ Module500Name=Dépenses spéciales (taxes, charges, dividendes)
 Module500Desc=Gestion des dépenses spéciales comme les taxes, charges sociales et dividendes
 Module600Desc=Envoi de notifications Email sur certains événements métiers Dolibarr, aux contacts de tiers (configuration réalisé sur chaque tiers)
 Module770Name=Note de frais
-Module2600Name=WebServices
 Module2600Desc=Active le serveur de Web Services de Dolibarr
 Module20000Name=Gestion des demandes de congès
 Module20000Desc=Déclaration et suivi des congès des employés
@@ -43,4 +41,5 @@ NotificationsDesc=La fonction des notifications par emails permet d'envoyer auto
 ShippableOrderIconInList=Ajouter un icône dans la liste des commandes qui indique si la commande est expédiable.
 TaxSetup=Configuration du module Taxes, charges sociales et dividendes
 YourCompanyDoesNotUseVAT=Votre institution est configurée comme non assujettie à la TVA (TPS) (Accueil - Configuration - Société/Institution), aussi il n'y a aucune option sur la gestion TVA à paramétrer.
-Opened=Ouverte
+AGENDA_USE_EVENT_TYPE=Utilisez les types des évenements (administrable dans Configuration -> Dictionnaires -> Liste des types d'évenements de l'agenda)
+SalariesSetup=Configuration du module salariés

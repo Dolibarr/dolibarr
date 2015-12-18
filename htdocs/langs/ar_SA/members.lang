@@ -121,7 +121,6 @@ AttributeName=اسم السمة
 String=سلسلة
 Text=النص
 Int=Int
-Date=تاريخ
 DateAndTime=التاريخ والوقت
 PublicMemberCard=عضو بطاقة العامة
 MemberNotOrNoMoreExpectedToSubscribe=أو ليست عضوا في أي أكثر من المتوقع للاكتتاب

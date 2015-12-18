@@ -28,8 +28,6 @@ AnyOtherInThisListCanValidate=Persona da informare per la convalida
 TripSociete=Informazioni azienda
 TripSalarie=Informazioni utente
 TripNDF=Informazioni nota spese
-DeleteLine=Delete a line of the expense report
-ConfirmDeleteLine=Vuoi davvero eliminare questa riga?
 PDFStandardExpenseReports=Template standard per la generazione dei PDF delle not spese
 ExpenseReportLine=Riga di nota spese
 TF_OTHER=Altro
@@ -53,8 +51,6 @@ AddLineMini=Aggiungi
 Date_DEBUT=Data di inizio
 Date_FIN=Data di fine
 ModePaiement=Modalità di pagamento
-Note=Nota
-Project=Progetto
 
 VALIDATOR=User responsible for approval
 VALIDOR=Approvata da

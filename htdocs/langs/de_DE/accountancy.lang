@@ -1,5 +1,4 @@
 # Dolibarr language file - en_US - Accounting Expert
-CHARSET=UTF-8
 ACCOUNTING_EXPORT_SEPARATORCSV=Spaltentrennzeichen für die Export-Datei
 ACCOUNTING_EXPORT_DATE=Das Datumsformat für die Exportdatei.
 ACCOUNTING_EXPORT_PIECE=Export the number of piece
@@ -12,13 +11,11 @@ ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
 
 Accounting=Buchhaltung
 Globalparameters=Globale Parameter
-Chartofaccounts=Kontenplan
-Fiscalyear=Fiskalische Jahre
 Menuaccount=Buchhaltung Konten
 Menuthirdpartyaccount=Partnerkonten
 MenuTools=Hilfsprogramme
 
-ConfigAccountingExpert=Konfiguration des Experten Buchhaltungsmodul 
+ConfigAccountingExpert=Konfiguration des Experten Buchhaltungsmodul
 Journaux=Journale
 JournalFinancial=Finanz-Journale
 Exports=Exports
@@ -29,27 +26,21 @@ Selectmodelcsv=Wählen Sie ein Exportmodell
 Modelcsv_normal=Klassischer Export
 Modelcsv_CEGID=Export zu CEGID Expert
 BackToChartofaccounts=Zurück zum  Kontenplan
-Back=Rückkehr 
+Back=Rückkehr
 
 Definechartofaccounts=Kontenplan definieren
 Selectchartofaccounts=Kontenplan wählen
-Validate=Freigeben
 Addanaccount=Fügen Sie ein Buchhaltungskonto hinzu
 AccountAccounting=Buchhaltungs Konto
 AccountAccountingSuggest=Accounting account suggest
 Ventilation=Abbauen
-ToDispatch=Zu versenden
-Dispatched=Versandt
 
 CustomersVentilation=Kundenabbau
 SuppliersVentilation=Lieferantenabbau
 TradeMargin=Handelsspanne
 Reports=Berichte
 ByCustomerInvoice=Nach Kundenrechnungen
-ByMonth=Nach Monat
 NewAccount=Neues Buchhaltungskonto
-Update=Aktualisieren
-List=Liste
 Create=Erstelle
 CreateMvts=Erstelle Lagerbewegung
 UpdateAccount=Änderung eines Bilanz-Kontos
@@ -61,7 +52,6 @@ AccountBalanceByMonth=Kontostand pro Monat
 AccountingVentilation=Rechnungswesenabbau
 AccountingVentilationSupplier=Abbau von Buchhaltungs-Lieferanten
 AccountingVentilationCustomer=Abbau von Buchhaltungs-Kunden
-Line=Zeile
 
 CAHTF=Total purchase supplier before tax
 InvoiceLines=Rechnungszeile bereinigen
@@ -112,22 +102,19 @@ Docref=Referenz
 Numerocompte=Konto
 Code_tiers=Partner
 Labelcompte=Konto-Beschriftung
-Debit=Soll
-Credit=Haben
-Amount=Betrag
 Sens=Zweck
 Codejournal=Journal
 
 DelBookKeeping=Löschen Sie die Einträge des Hauptbuchs
 
-SellsJournal=Verkaufsjournal
-PurchasesJournal=Einkaufsjournal
 DescSellsJournal=Verkaufsjournal
 DescPurchasesJournal=Einkaufsjournal
 BankJournal=Bankauszug
 DescBankJournal=Bankjournal enthält alle Arten von anderen Zahlungsmitteln als Barzahlungen
 CashJournal=Kassenbeleg
 DescCashJournal=Barjournal enthält die Zahlungsart: bar
+FinanceJournal=Finance journal
+DescFinanceJournal=Finance journal including all the types of payments by bank account
 
 CashPayment=Barzahlung
 
@@ -150,9 +137,6 @@ Pcgversion=Version des Plans
 Pcgtype=Kontenklasse
 Pcgsubtype=Unterkontenklasse
 Accountparent=Wurzeln des Kontos
-Active=Auszug
-
-NewFiscalYear=Neues fiskalisches Jahr
 
 DescVentilCustomer=Konsultieren Sie hier die jährliche Aufteilung der Buchhaltung Ihrer Rechnungs-Kunden
 TotalVente=Total turnover before tax

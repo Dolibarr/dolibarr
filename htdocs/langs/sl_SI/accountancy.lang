@@ -1,5 +1,4 @@
 # Dolibarr language file - en_US - Accounting Expert
-CHARSET=UTF-8
 ACCOUNTING_EXPORT_SEPARATORCSV=Ločilo za stolpce za izvozno datoteko
 ACCOUNTING_EXPORT_DATE=Format datuma za izvozno datoteko
 ACCOUNTING_EXPORT_PIECE=Export the number of piece
@@ -12,8 +11,6 @@ ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
 
 Accounting=Računovodstvo
 Globalparameters=Globalni parametri
-Chartofaccounts=Kontni plan
-Fiscalyear=Fiskalna leta
 Menuaccount=Računovodski izkazi
 Menuthirdpartyaccount=Thirdparty računi
 MenuTools=Orodja
@@ -33,23 +30,17 @@ Back=Return
 
 Definechartofaccounts=Določite kontni plan
 Selectchartofaccounts=Izberite kontni plan
-Validate=Potrjevanje
 Addanaccount=Dodaj računovodskega račun
 AccountAccounting=Računovodstvo račun
 AccountAccountingSuggest=Accounting account suggest
 Ventilation=Pregled
-ToDispatch=Odpremo
-Dispatched=Odpošlje
 
 CustomersVentilation=Pregled kupcev
 SuppliersVentilation=Pregled dobaviteljev
 TradeMargin=Trgovska marža
 Reports=Poročila
 ByCustomerInvoice=Z računov strank,
-ByMonth=Po mesecih
 NewAccount=Novi računovodski račun
-Update=Update
-List=Seznam
 Create=Ustvari
 CreateMvts=Ustvari spremembo
 UpdateAccount=Sprememba obračunskega računa
@@ -61,7 +52,6 @@ AccountBalanceByMonth=Stanje na računu po mesecu
 AccountingVentilation=Pregled računov
 AccountingVentilationSupplier=Pregled računov dobaviteljev
 AccountingVentilationCustomer=Pregled računov kupcev
-Line=Line
 
 CAHTF=Total purchase supplier before tax
 InvoiceLines=Linije računa, ki se prezračuje
@@ -112,22 +102,19 @@ Docref=Reference
 Numerocompte=Račun
 Code_tiers=Thirdparty
 Labelcompte=Račun Label
-Debit=Debetne
-Credit=Credit
-Amount=Znesek
 Sens=Sens
 Codejournal=Revija
 
 DelBookKeeping=Izbriši zapise v glavno knjigo
 
-SellsJournal=Sells revija
-PurchasesJournal=Nakupi revija
 DescSellsJournal=Sells revija
 DescPurchasesJournal=Nakupi revija
 BankJournal=Bank revija
 DescBankJournal=Bank revija vključno z vsemi vrstami, razen gotovine plačila
 CashJournal=Cash revija
 DescCashJournal=Cash revija, vključno z načinom plačila gotovine
+FinanceJournal=Finance journal
+DescFinanceJournal=Finance journal including all the types of payments by bank account
 
 CashPayment=Gotovina Plačilo
 
@@ -150,9 +137,6 @@ Pcgversion=Različica načrta
 Pcgtype=Razred račun
 Pcgsubtype=Pod razred račun
 Accountparent=Root računa
-Active=Izjava
-
-NewFiscalYear=Novo poslovno leto
 
 DescVentilCustomer=Tukaj poglejte letni pregled vaših računov kupcem
 TotalVente=Total turnover before tax

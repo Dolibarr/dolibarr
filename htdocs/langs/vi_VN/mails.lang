@@ -84,9 +84,12 @@ EachInvoiceWillBeAttachedToEmail=Một tài liệu mặc định sử dụng hó
 MailTopicSendRemindUnpaidInvoices=Nhắc nhở các hóa đơn %s (%s)
 SendRemind=Gửi lời nhắc nhở bằng email
 RemindSent=Nhắc nhở %s (các) gửi
-AllRecipientSelectedForRemind=Tất cả thirdparties chọn, và nếu một email được thiết lập (lưu ý rằng một email cho mỗi hóa đơn sẽ được gửi)
+AllRecipientSelected=All thirdparties selected and if an email is set.
 NoRemindSent=Không có lời nhắc nhở gửi thư điện tử
-ResultOfMassSending=Kết quả của khối lượng thư điện tử gửi nhắc nhở
+ResultOfMailSending=Result of mass EMail sending
+NbSelected=Nb selected
+NbIgnored=Nb ignored
+NbSent=Nb sent
 
 # Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=Liên hệ / địa chỉ của tất cả các bên thứ ba (khách hàng, khách hàng tiềm năng, nhà cung cấp, ...)
@@ -97,7 +100,7 @@ MailingModuleDescEmailsFromUser=Email từ người dùng nhập vào (email, La
 MailingModuleDescContactsCategories=Các bên thứ ba (theo thể loại)
 MailingModuleDescDolibarrContractsLinesExpired=Các bên thứ ba với những đường nét hết hạn hợp đồng của
 MailingModuleDescContactsByCompanyCategory=Liên hệ / địa chỉ của các bên thứ ba (theo thể loại bên thứ ba)
-MailingModuleDescContactsByCategory=Liên hệ / địa chỉ của các bên thứ ba theo thể loại
+MailingModuleDescContactsByCategory=Contacts/addresses of third parties (by category)
 MailingModuleDescMembersCategories=Thành viên sáng lập (theo loại)
 MailingModuleDescContactsByFunction=Liên hệ / địa chỉ của các bên thứ ba (bởi vị trí / chức năng)
 LineInFile=Dòng %s trong tập tin

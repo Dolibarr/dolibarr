@@ -38,3 +38,4 @@ ShowStock=Näita ladu
 DeleteArticle=Klõpsa selle artikli eemaldamiseks
 FilterRefOrLabelOrBC=Otsi (viide/nimi)
 UserNeedPermissionToEditStockToUsePos=Hetkeseadistuste järgi vähendatakse laoseisu arve loomisel, seega peab kassa kasutajal olema õigus laoseisu muutmiseks.
+DolibarrReceiptPrinter=Dolibarr Receipt Printer

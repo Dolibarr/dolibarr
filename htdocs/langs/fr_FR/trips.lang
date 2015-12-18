@@ -28,8 +28,6 @@ AnyOtherInThisListCanValidate=Personne à informer pour la validation.
 TripSociete=Information société
 TripSalarie=Informations utilisateur
 TripNDF=Informations note de frais
-DeleteLine=Supprimer une ligne d'une note de frais
-ConfirmDeleteLine=Êtes-vous sûr de vouloir supprimer cette ligne ?
 PDFStandardExpenseReports=Modèle de note de frais PDF standard
 ExpenseReportLine=Ligne de la note de frais
 TF_OTHER=Autre
@@ -53,8 +51,6 @@ AddLineMini=Ajouter
 Date_DEBUT=Date début
 Date_FIN=Date fin
 ModePaiement=Mode de paiement
-Note=Note
-Project=Projet
 
 VALIDATOR=Utilisateur responsable de l'approbation
 VALIDOR=Approuvé par

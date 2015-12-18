@@ -1,0 +1,5 @@
+# Dolibarr language file - Source file is en_US - products
+SetDefaultBarcodeType=Wählen Sie den standardmässigen Barcode-Typ
+FillBarCodeTypeAndValueFromThirdParty=Barcode-Typ und -Wert von einem Geschäftspartner wählen.
+DefinitionOfBarCodeForThirdpartyNotComplete=Barcode-Typ oder -Wert bei Geschäftspartner %s unvollständig.
+BarCodeDataForThirdparty=Barcode-Information von Geschäftspartner %s:

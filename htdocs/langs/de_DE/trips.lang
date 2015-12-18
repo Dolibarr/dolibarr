@@ -28,8 +28,6 @@ AnyOtherInThisListCanValidate=Person für die Validierung zu informieren .
 TripSociete=Partner
 TripSalarie=Mitarbeiter
 TripNDF=Hinweise Spesenabrechnung 
-DeleteLine=Enferne eine Zeile von der Spesenabrechnung
-ConfirmDeleteLine=Möchten Sie diese Zeile wirklich löschen?
 PDFStandardExpenseReports=Standard-Vorlage, um ein PDF-Dokument für die Spesenabrechnung zu erzeugen
 ExpenseReportLine=Spesenabrechnung Zeile
 TF_OTHER=Andere
@@ -53,8 +51,6 @@ AddLineMini=Hinzufügen
 Date_DEBUT=Beginndatum
 Date_FIN=Enddatum
 ModePaiement=Zahlungsart
-Note=Hinweis
-Project=Projekt
 
 VALIDATOR=verantwortlicher Benutzer für Genehmigung
 VALIDOR=genehmigt durch
@@ -103,4 +99,4 @@ ConfirmSaveTrip=Sind Sie sicher, dass Sie diese Spesenabrechnung überprüfen wo
 NoTripsToExportCSV=Keine Spesenabrechnung für diesen Zeitraum zu exportieren.
 ExpenseReportPayment=Spesenabrechnung Zahlung
 
-ExpenseReportsToPay=Expense reports to pay
+ExpenseReportsToPay=Spesenabrechnungen zu entrichten

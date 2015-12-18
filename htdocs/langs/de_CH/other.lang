@@ -1,0 +1,13 @@
+# Dolibarr language file - Source file is en_US - other
+Notify_COMPANY_SENTBYMAIL=Von Geschäftspartner-Karte gesendete Mails
+TotalSizeOfAttachedFiles=Gesamtgrösse der angehängten Dateien/Dokumente
+MaxSize=Maximalgrösse
+PredefinedMailContentSendProposal=__CONTACTCIVNAME__ \n\n Bitte entnehmen Sie dem Anhang unser Angebot __PROPREF__ \n\n__PERSONALIZED__Mit freundlichen Grüssen\n\n__SIGNATURE__
+PredefinedMailContentSendOrder=__CONTACTCIVNAME__ \n\n Bitte entnehmen Sie dem Anhang die Bestellung __ORDERREF__ \n\n__PERSONALIZED__Mit freundlichen Grüssen\n\n__SIGNATURE__
+PredefinedMailContentSendSupplierOrder=__CONTACTCIVNAME__ \n\n Bitte entnehmen Sie dem Anhang die Bestellung __ORDERREF__ \n\n__PERSONALIZED__Mit freundlichen Grüssen\n\n__SIGNATURE__
+PredefinedMailContentSendShipping=__CONTACTCIVNAME__ \n\n Als Anlage erhalten Sie unsere Lieferung __ SHIPPINGREF__ \n\n__PERSONALIZED__Mit freundlichen Grüssen\n\n__SIGNATURE__
+PredefinedMailContentSendFichInter=__CONTACTCIVNAME__ \n\n Anbei finden Sie die Intervention __ FICHINTERREF__ \n\n__PERSONALIZED__Mit freundlichen Grüssen\n\n__SIGNATURE__
+SizeUnitfoot=Fuss
+ProfIdShortDesc=<b>Prof ID %s</b> dient zur Speicherung landesabhängiger Geschäftspartnerdaten. <br> Für das Land <b>%s</b> ist dies beispielsweise Code <b>%s</b>.
+NewSizeAfterCropping=Neue Grösse nach dem Zuschneiden
+FileIsTooBig=Dateien sind zu gross

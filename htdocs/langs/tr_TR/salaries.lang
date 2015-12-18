@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is en_US - users
+# Dolibarr language file - Source file is en_US - salaries
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Ücret ödemeleri muhasebe kodu
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Mali yükümlülük için muhasebe kodu
 Salary=Ücret

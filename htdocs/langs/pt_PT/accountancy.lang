@@ -1,5 +1,4 @@
 # Dolibarr language file - en_US - Accounting Expert
-CHARSET=UTF-8
 ACCOUNTING_EXPORT_SEPARATORCSV=Column separator for export file
 ACCOUNTING_EXPORT_DATE=Date format for export file
 ACCOUNTING_EXPORT_PIECE=Export the number of piece
@@ -12,8 +11,6 @@ ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
 
 Accounting=Contabilista
 Globalparameters=Parâmetros Globais
-Chartofaccounts=Plano de contas
-Fiscalyear=Anos fiscais
 Menuaccount=Contas contabilísticas
 Menuthirdpartyaccount=Contas de terceiros
 MenuTools=Ferramentas
@@ -27,41 +24,34 @@ Modelcsv=Modelo de exportação
 OptionsDeactivatedForThisExportModel=Para este modelo de esportação, as opções estão desativadas
 Selectmodelcsv=Selecione um modelo de exportação
 Modelcsv_normal=Exportação classica
-Modelcsv_CEGID=Exportação em direção Especialista CEGID 
+Modelcsv_CEGID=Exportação em direção Especialista CEGID
 BackToChartofaccounts=Voltar ao plano de contas
 Back=Voltar
 
 Definechartofaccounts=Defenir plano de contas
 Selectchartofaccounts=Selecione plano de contas
-Validate=Valide
 Addanaccount=Adicione uma conta contabilistica
 AccountAccounting=Conta contabilistica
 AccountAccountingSuggest=Accounting account suggest
 Ventilation=Separação
-ToDispatch=A despachar
-Dispatched=Despachado
 
 CustomersVentilation=Separação de Cliente
 SuppliersVentilation=Separação de Fornecedor
 TradeMargin=Margem de distribuição
 Reports=Relatórios
 ByCustomerInvoice=Por fatura de cliente
-ByMonth=Por mês
 NewAccount=Nova Conta Contabilistica
-Update=Atualizar
-List=Lista
 Create=Criar
 CreateMvts=Create movement
 UpdateAccount=Modificação de conta contabilistica
 UpdateMvts=modificação de movimento
-WriteBookKeeping= Gravar conta em contabilidade geral
+WriteBookKeeping=Gravar conta em contabilidade geral
 Bookkeeping=Contabilidade geral
 AccountBalanceByMonth=Balanço de contas mensal
 
 AccountingVentilation=contabilidade desagregada
 AccountingVentilationSupplier=Contabilidade desagregada de Fornecedor
 AccountingVentilationCustomer=Contabilidade desagregada de Cliente
-Line=Linha
 
 CAHTF=Total purchase supplier before tax
 InvoiceLines=Linhas de fatura a ser limpa
@@ -69,7 +59,7 @@ InvoiceLinesDone=Linhas limpas de fatura
 IntoAccount=Ventilate in the accounting account
 
 Ventilate=Limpar
-VentilationAuto=Desagregação automática 
+VentilationAuto=Desagregação automática
 
 Processing=Processando
 EndProcessing=Fim de processamento
@@ -98,10 +88,10 @@ ACCOUNTING_MISCELLANEOUS_JOURNAL=Diário de diversos
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Expense report journal
 ACCOUNTING_SOCIAL_JOURNAL=Diário social
 
-ACCOUNTING_ACCOUNT_TRANSFER_CASH=Conta de transferencia 
+ACCOUNTING_ACCOUNT_TRANSFER_CASH=Conta de transferencia
 ACCOUNTING_ACCOUNT_SUSPENSE=conta de espera
 
-ACCOUNTING_PRODUCT_BUY_ACCOUNT= Conta de contabilidade padrão para produtos comprados (se não for definido na folha de produto)
+ACCOUNTING_PRODUCT_BUY_ACCOUNT=Conta de contabilidade padrão para produtos comprados (se não for definido na folha de produto)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Conta de contabilidade padrão para produtos vendidos (se não for definido na folha de produto)
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Conta de contabilidade padrão para compra de serviços (se não for definido na folha de serviços)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=Conta de contabilidade padrão para serviços vendidos (se não for definido na folha de serviços)
@@ -112,22 +102,19 @@ Docref=Referencia
 Numerocompte=Conta
 Code_tiers=Terceiros
 Labelcompte=Etiqueta de conta
-Debit=Débito
-Credit=Crédito
-Amount=Valor
 Sens=Sentido
 Codejournal=Diário
 
 DelBookKeeping=Apagar os registos em Contabilidade geral
 
-SellsJournal=Diário de vendas
-PurchasesJournal=Diário de compras
 DescSellsJournal=Diário de vendas
 DescPurchasesJournal=Diário de compras
 BankJournal=Diário de bancos
 DescBankJournal=Diário de bancos incluindo  todos os tipos de pagamentos excepto em moeda
 CashJournal=Diário de caixa
-DescCashJournal=Diário de caixa incluído pagamentos em moeda 
+DescCashJournal=Diário de caixa incluído pagamentos em moeda
+FinanceJournal=Finance journal
+DescFinanceJournal=Finance journal including all the types of payments by bank account
 
 CashPayment=Pagamento em moeda
 
@@ -150,9 +137,6 @@ Pcgversion=Versão do plano
 Pcgtype=Classe de conta
 Pcgsubtype=sub-classe de conta
 Accountparent=raiz da conta
-Active=Declaração
-
-NewFiscalYear=Novo ano fiscal
 
 DescVentilCustomer=Consulte aqui a repartição anual das contas de faturas a clientes
 TotalVente=Total turnover before tax
@@ -165,7 +149,7 @@ DescVentilSupplier=Consulte aqui a desagregação anual das suas faturas de forn
 DescVentilTodoSupplier=Verifique as suas linhas da fatura de fornecedor com a conta de contabilidade
 DescVentilDoneSupplier=Consulte  as suas linhas da fatura de fornecedor com a conta de contabilidade
 
-ValidateHistory=Validação automatica 
+ValidateHistory=Validação automatica
 
 ErrorAccountancyCodeIsAlreadyUse=Erro, Não pode apagar uma conta em uso
 

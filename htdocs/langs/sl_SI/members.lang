@@ -121,7 +121,6 @@ AttributeName=Ime atributa
 String=Niz
 Text=Tekst
 Int=Int
-Date=Datum
 DateAndTime=Datum in ura
 PublicMemberCard=Javna kartica člana
 MemberNotOrNoMoreExpectedToSubscribe=Član nima več naročnine in se tudi ne pričakuje

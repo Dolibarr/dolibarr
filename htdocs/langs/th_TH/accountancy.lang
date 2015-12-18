@@ -1,5 +1,4 @@
 # Dolibarr language file - en_US - Accounting Expert
-CHARSET=UTF-8
 ACCOUNTING_EXPORT_SEPARATORCSV=คั่นคอลัมน์สำหรับแฟ้มส่งออก
 ACCOUNTING_EXPORT_DATE=รูปแบบวันที่สำหรับไฟล์การส่งออก
 ACCOUNTING_EXPORT_PIECE=Export the number of piece
@@ -12,8 +11,6 @@ ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
 
 Accounting=การบัญชี
 Globalparameters=พารามิเตอร์ทั่วโลก
-Chartofaccounts=ผังบัญชี
-Fiscalyear=รอบระยะเวลาบัญชี
 Menuaccount=บัญชีการบัญชี
 Menuthirdpartyaccount=บัญชี Thirdparty
 MenuTools=เครื่องมือ
@@ -33,23 +30,17 @@ Back=กลับ
 
 Definechartofaccounts=กำหนดผังบัญชี
 Selectchartofaccounts=เลือกผังบัญชี
-Validate=ตรวจสอบ
 Addanaccount=เพิ่มบัญชีบัญชี
 AccountAccounting=บัญชีการบัญชี
 AccountAccountingSuggest=Accounting account suggest
 Ventilation=การเสีย
-ToDispatch=ที่จะส่ง
-Dispatched=ส่ง
 
 CustomersVentilation=รายละเอียดของลูกค้า
 SuppliersVentilation=ซัพพลายเออร์ที่พังทลาย
 TradeMargin=อัตรากำไรขั้นต้นการค้า
 Reports=รายงาน
 ByCustomerInvoice=โดยลูกค้าใบแจ้งหนี้
-ByMonth=โดยเดือน
 NewAccount=บัญชีการบัญชีใหม่
-Update=ปรับปรุง
-List=รายการ
 Create=สร้าง
 CreateMvts=Create movement
 UpdateAccount=การเปลี่ยนแปลงของบัญชีบัญชี
@@ -61,7 +52,6 @@ AccountBalanceByMonth=ยอดเงินในบัญชีโดย
 AccountingVentilation=รายละเอียดบัญชี
 AccountingVentilationSupplier=รายละเอียดผู้จัดจำหน่ายบัญชี
 AccountingVentilationCustomer=รายละเอียดบัญชีของลูกค้า
-Line=สาย
 
 CAHTF=Total purchase supplier before tax
 InvoiceLines=เส้นของใบแจ้งหนี้ที่จะต้องมีการระบายอากาศ
@@ -112,22 +102,19 @@ Docref=การอ้างอิง
 Numerocompte=บัญชี
 Code_tiers=Thirdparty
 Labelcompte=บัญชีฉลาก
-Debit=หักบัญชี
-Credit=เครดิต
-Amount=จำนวน
 Sens=ซองส์
 Codejournal=วารสาร
 
 DelBookKeeping=ลบบันทึกบัญชีแยกประเภททั่วไป
 
-SellsJournal=วารสารขาย
-PurchasesJournal=ซื้อวารสาร
 DescSellsJournal=วารสารขาย
 DescPurchasesJournal=ซื้อวารสาร
 BankJournal=ธนาคารวารสาร
 DescBankJournal=วารสารธนาคารรวมถึงประเภททั้งหมดของการชำระเงินอื่นที่ไม่ใช่เงินสด
 CashJournal=วารสารเงินสด
 DescCashJournal=วารสารเงินสดรวมทั้งประเภทของการชำระเงินเงินสด
+FinanceJournal=Finance journal
+DescFinanceJournal=Finance journal including all the types of payments by bank account
 
 CashPayment=ชำระด้วยเงินสด
 
@@ -150,9 +137,6 @@ Pcgversion=รุ่นของแผน
 Pcgtype=ชั้นบัญชี
 Pcgsubtype=ภายใต้ระดับบัญชี
 Accountparent=รากของบัญชี
-Active=คำแถลง
-
-NewFiscalYear=ปีงบประมาณใหม่
 
 DescVentilCustomer=ที่นี่ให้คำปรึกษารายละเอียดบัญชีของลูกค้าประจำปีของใบแจ้งหนี้ของคุณ
 TotalVente=Total turnover before tax

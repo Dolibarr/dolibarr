@@ -48,7 +48,6 @@ RefusedReason=拒否理由
 RefusedInvoicing=拒絶反応を請求
 NoInvoiceRefused=拒絶反応を充電しないでください
 InvoiceRefused=Invoice refused (Charge the rejection to customer)
-Status=ステータス
 StatusUnknown=未知の
 StatusWaiting=待っている
 StatusTrans=送信

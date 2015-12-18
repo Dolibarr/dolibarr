@@ -69,7 +69,7 @@ ProductQtyInCustomersOrdersRunning=Varekvantum i åpnede kundeordre
 ProductQtyInSuppliersOrdersRunning=Varekvantum i åpnede leverandørordre
 ProductQtyInShipmentAlreadySent=Varekvantum i åpnede kundeordre som er sendt
 ProductQtyInSuppliersShipmentAlreadyRecevied=Varekvantum i åpnede leverandørordre som er mottatt
-NoProductToShipFoundIntoStock=No product to ship found into warehouse <b>%s</b>. Correct sotck or go back to choose another warehouse.
+NoProductToShipFoundIntoStock=Ingen varer for utsendelse funnet på lager <b>%s</b>. Korriger varebeholdning eller gå tilbake for å velge et annet lager.
 
 # Sending methods
 SendingMethodCATCH=Hentet av kunde

@@ -69,7 +69,6 @@ NoRecordedContracts=Aucun contrat enregistré
 NoRecordedInterventions=Aucune intervention enregistrée
 BoxTitleLatestSupplierOrders=%s dernières commandes fournisseur
 BoxTitleLatestModifiedSupplierOrders=%s dernières commandes fournisseur modifiées
-NoSupplierOrder=Aucune commande fournisseur enregistrée
 BoxCustomersInvoicesPerMonth=Factures client par mois
 BoxSuppliersInvoicesPerMonth=Factures fournisseur par mois
 BoxCustomersOrdersPerMonth=Commandes client par mois

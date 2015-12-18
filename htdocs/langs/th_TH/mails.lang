@@ -84,9 +84,12 @@ EachInvoiceWillBeAttachedToEmail=เอกสารที่ใช้แม่�
 MailTopicSendRemindUnpaidInvoices=เตือนความทรงจำของใบแจ้งหนี้% (% s)
 SendRemind=ส่งการแจ้งเตือนโดยอีเมล์
 RemindSent=เตือน% s (s) ส่ง
-AllRecipientSelectedForRemind=thirdparties เลือกและถ้าอีเมลที่มีการตั้งค่า (โปรดทราบว่าหนึ่งอีเมลต่อใบแจ้งหนี้จะถูกส่ง)
+AllRecipientSelected=All thirdparties selected and if an email is set.
 NoRemindSent=ไม่มีการแจ้งเตือนอีเมลที่ส่ง
-ResultOfMassSending=ผลการแจ้งเตือนมวลส่งอีเมล์
+ResultOfMailSending=Result of mass EMail sending
+NbSelected=Nb selected
+NbIgnored=Nb ignored
+NbSent=Nb sent
 
 # Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=รายชื่อ / ที่อยู่ของบุคคลที่สามทั้งหมด (ลูกค้าโอกาสผู้จัดจำหน่าย, ... )
@@ -97,7 +100,7 @@ MailingModuleDescEmailsFromUser=อีเมลจากผู้ใช้ป้
 MailingModuleDescContactsCategories=บุคคลที่สาม (ตามหมวดหมู่)
 MailingModuleDescDolibarrContractsLinesExpired=บุคคลที่สามที่มีเส้นที่หมดอายุสัญญา
 MailingModuleDescContactsByCompanyCategory=รายชื่อ / ที่อยู่ของบุคคลที่สาม (โดยบุคคลที่สามหมวดหมู่)
-MailingModuleDescContactsByCategory=รายชื่อ / ที่อยู่ของบุคคลที่สามตามหมวดหมู่
+MailingModuleDescContactsByCategory=Contacts/addresses of third parties (by category)
 MailingModuleDescMembersCategories=สมาชิกมูลนิธิ (ตามประเภท)
 MailingModuleDescContactsByFunction=รายชื่อ / ที่อยู่ของบุคคลที่สาม (โดยตำแหน่ง / ฟังก์ชั่น)
 LineInFile=สาย% s ในแฟ้ม

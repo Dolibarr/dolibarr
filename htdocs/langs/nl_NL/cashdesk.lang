@@ -38,3 +38,4 @@ ShowStock=Tonen magazijn
 DeleteArticle=Klik om dit artikel te verwijderen
 FilterRefOrLabelOrBC=Zoeken (Ref / Label)
 UserNeedPermissionToEditStockToUsePos=U vraagt ​​om de stock te verminderen op factuur creatie, zodat de gebruiker die POS gebruikt rechten moet hebben om stock te bewerke.
+DolibarrReceiptPrinter=Dolibarr Kassabon Printer

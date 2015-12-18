@@ -28,8 +28,6 @@ AnyOtherInThisListCanValidate=Person som skal informeres for godkjenning
 TripSociete=Firmainformasjon
 TripSalarie=Brukerinformasjon
 TripNDF=Informasjon om reiseregning
-DeleteLine=Slett en linje i reiseregningen
-ConfirmDeleteLine=Er du sikker på at du vil slette denne linjen?
 PDFStandardExpenseReports=Standardmal for å generere PDF av reiseregning
 ExpenseReportLine=Linje i reiseregningen
 TF_OTHER=Annet
@@ -53,8 +51,6 @@ AddLineMini=Legg til
 Date_DEBUT=Dato for periodestart
 Date_FIN=Dato for periodeslutt
 ModePaiement=Betalingsmåte
-Note=Notat
-Project=Prosjekt
 
 VALIDATOR=Bruker som er ansvarlig for godkjenning
 VALIDOR=Godkjent av
@@ -103,4 +99,4 @@ ConfirmSaveTrip=Er du sikker på at du vil validere denne reiseregningen?
 NoTripsToExportCSV=Ingen reiseregning å eksportere for denne perioden
 ExpenseReportPayment=Betaling av utgiftsrapport
 
-ExpenseReportsToPay=Expense reports to pay
+ExpenseReportsToPay=Utgiftsrapport å betale

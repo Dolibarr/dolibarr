@@ -1,4 +1,4 @@
-
+# Dolibarr language file - Source file is en_US - resource
 MenuResourceIndex=Recursos
 MenuResourceAdd=Nou recurs
 MenuResourcePlanning=Planificació de recursos
@@ -17,6 +17,7 @@ ResourceFormLabel_description=Descripció de recurs
 
 ResourcesLinkedToElement=Recurs enllaçat a element
 
+ShowResource=Mostra recursos
 ShowResourcePlanning=Veure planificació de recursos
 GotoDate=Anar a la data
 

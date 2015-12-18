@@ -1,4 +1,4 @@
-
+# Dolibarr language file - Source file is en_US - resource
 MenuResourceIndex=Tài nguyên
 MenuResourceAdd=Tạo tài nguyên
 MenuResourcePlanning=Tài nguyên đang kế hoạch
@@ -17,6 +17,7 @@ ResourceFormLabel_description=Mô tả tài nguyên
 
 ResourcesLinkedToElement=Tài nguyên được liên kết tới các thành phần
 
+ShowResource=Show resource
 ShowResourcePlanning=Hiển thị tài nguyên đang kế hoạch
 GotoDate=Đến ngày
 

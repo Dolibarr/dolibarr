@@ -1,0 +1,17 @@
+# Dolibarr language file - Source file is en_US - bills
+BillsCustomers=Klantenfacturen
+BillStatusDraft=Conceptfactuur (moet worden gevalideerd)
+BillShortStatusClosedUnpaid=Afgesloten
+CustomersDraftInvoices=Klantenconceptfacturen
+RemainderToBill=Nog te factureren
+DateMaxPayment=Te betalen vóór
+GlobalDiscount=Globale korting
+CloneInvoice=Kopieer factuur
+PaymentTypeVIR=Overschrijving
+PaymentTypeShortVIR=Overschrijving
+PaymentTypeTIP=Interbancaire betaling
+PaymentTypeShortTIP=Interbancaire betaling
+PaymentTypeTRA=Wissel
+PaymentTypeShortTRA=Wissel
+ShowUnpaidAll=Bekijk alle onbetaalde facturen
+TypeContact_facture_external_BILLING=Klant contact

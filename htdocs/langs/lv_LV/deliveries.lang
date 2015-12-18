@@ -7,6 +7,7 @@ DeliveryOrders=Piegādes pasūtījumi
 DeliveryDate=Piegādes datums
 DeliveryDateShort=Ie. datums
 CreateDeliveryOrder=Izveidot piegādes pasūtījumu
+DeliveryStateSaved=Delivery state saved
 QtyDelivered=Piegādātais daudz
 SetDeliveryDate=Uzstādīt piegādes datumu
 ValidateDeliveryReceipt=Apstiprināt piegādes saņemšanu

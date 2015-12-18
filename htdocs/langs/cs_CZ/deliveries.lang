@@ -7,6 +7,7 @@ DeliveryOrders=Dodací objednávky
 DeliveryDate=Termín dodání
 DeliveryDateShort=Term. dodání
 CreateDeliveryOrder=Generovat objednávku k dodání
+DeliveryStateSaved=Delivery state saved
 QtyDelivered=Množství dodáno
 SetDeliveryDate=Nastavit datem odeslání
 ValidateDeliveryReceipt=Potvrzení o doručení

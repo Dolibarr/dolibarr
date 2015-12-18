@@ -84,9 +84,12 @@ EachInvoiceWillBeAttachedToEmail=A document using default invoice document templ
 MailTopicSendRemindUnpaidInvoices=Reminder of invoice %s (%s)
 SendRemind=Send reminder by EMails
 RemindSent=%s reminder(s) sent
-AllRecipientSelectedForRemind=All thirdparties selected and if an email is set (note that one mail per invoice will be sent)
+AllRecipientSelected=All thirdparties selected and if an email is set.
 NoRemindSent=No EMail reminder sent
-ResultOfMassSending=Result of mass EMail reminders sending
+ResultOfMailSending=Result of mass EMail sending
+NbSelected=Nb selected
+NbIgnored=Nb ignored
+NbSent=Nb sent
 
 # Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=所有第三方（联系客户，潜在客户，供应商，...）
@@ -97,7 +100,7 @@ MailingModuleDescEmailsFromUser=从用户输入的邮件（电子邮件名字;�
 MailingModuleDescContactsCategories=第三方的电子邮件（按类别）
 MailingModuleDescDolibarrContractsLinesExpired=与合同到期的路线第三方
 MailingModuleDescContactsByCompanyCategory=联系第三方（第三方类）
-MailingModuleDescContactsByCategory=第三方联系人/地址按类别
+MailingModuleDescContactsByCategory=Contacts/addresses of third parties (by category)
 MailingModuleDescMembersCategories=基金会的成员（按类别）
 MailingModuleDescContactsByFunction=第三方联系（职位/职务）
 LineInFile=在文件%s的线
