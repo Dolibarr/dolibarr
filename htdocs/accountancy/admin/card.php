@@ -148,14 +148,14 @@ if ($action == 'create')
 	dol_fiche_head();
 
 	print '<table class="border" width="100%">';
-
-	print '<tr><td width="25%">' . $langs->trans("AccountNumber") . '</td>';
+	
+	print '<tr><td width="25%"><span class="fieldrequired">' . $langs->trans("AccountNumber") . '</span></td>';
 	print '<td><input name="account_number" size="30" value="' . $accounting->account_number . '"</td></tr>';
-	print '<tr><td>' . $langs->trans("Label") . '</td>';
+	print '<tr><td><span class="fieldrequired">' . $langs->trans("Label") . '</span></td>';
 	print '<td><input name="label" size="70" value="' . $accounting->label . '"</td></tr>';
 	print '<tr><td>' . $langs->trans("Accountparent") . '</td>';
 	print '<td>';
-	print $htmlacc->select_account($accounting->account_parent, 'account_parent');
+	print $htmlacc->select_account($accounting->account_parent, 'account_parent', 1);
 	print '</td></tr>';
 	print '<tr><td>' . $langs->trans("Pcgtype") . '</td>';
 	print '<td>';
@@ -204,13 +204,13 @@ else if ($id)
 
 			print '<table class="border" width="100%">';
 
-			print '<tr><td width="25%">' . $langs->trans("AccountNumber") . '</td>';
+			print '<tr><td width="25%"><span class="fieldrequired">' . $langs->trans("AccountNumber") . '</span></td>';
 			print '<td><input name="account_number" size="30" value="' . $accounting->account_number . '"</td></tr>';
-			print '<tr><td>' . $langs->trans("Label") . '</td>';
+			print '<tr><td><span class="fieldrequired">' . $langs->trans("Label") . '</span></td>';
 			print '<td><input name="label" size="70" value="' . $accounting->label . '"</td></tr>';
 			print '<tr><td>' . $langs->trans("Accountparent") . '</td>';
 			print '<td>';
-			print $htmlacc->select_account($accounting->account_parent, 'account_parent');
+			print $htmlacc->select_account($accounting->account_parent, 'account_parent', 1);
 			print '</td></tr>';
 			print '<tr><td>' . $langs->trans("Pcgtype") . '</td>';
 			print '<td>';

@@ -124,7 +124,7 @@
     <!-- Tweaks to metrics -->
     <rule ref="Generic.Metrics.CyclomaticComplexity">
         <properties>
-            <property name="complexity" value="80" />
+            <property name="complexity" value="120" />
             <property name="absoluteComplexity" value="250" />
         </properties>
     </rule>
