@@ -6,17 +6,151 @@ WARNING:
 
 Do not try to make any Dolibarr upgrade if you are running Mysql version 5.5.40.
 Mysql version 5.5.40 has a very critical bug making your data beeing definitely lost.
-You may also experience troubles with Mysql 5.5.41 with error "Lost connection" during migration.
+You may also experience troubles with Mysql 5.5.41/42/43 with error "Lost connection"
+during migration.
 Upgrading to any other version or any other database system is abolutely required BEFORE trying
 make a Dolibarr upgrade.
 
 
 ***** ChangeLog for 3.9 compared to 3.8.* *****
+For users:
+NEW: A new and more modern look for "eldy" theme.
+NEW: Introduce a new theme called "Material Design". 
+NEW: #3767 Allow changing multiple prices of a product at once
+NEW: Add a button to purge criteria in user list
+NEW: Add a filter field to restrict list of member when doing a LDAP list request. Use also this filter into ldap command line script making sync from ldap to dolibarr.
+NEW: Add all assigned users and all extrafields data in new event when we createFromClone
+NEW: Add hidden option to use standard position address in crabe model For electronic sending solutions
+NEW: Add a refresh button on page list of direct print jobs.
+NEW: Add a tab "document" in donation card
+NEW: Add cancel button on thirdparty create page
+NEW: Add chart of product statistics
+NEW: Add color on categories
+NEW: Add css class and ids on column of detail lines to allow module to easily manipulate fields.
+NEW: Add date value filter on account records list
+NEW: Add __PROJECT_NAME__ tag for customer invoice emails
+NEW: Add option PDF_ALLOW_HTML_FOR_FREE_TEXT to be able to enter pdf footer text with wysiwyg editor.
+NEW: Add fields into llx_cronjobs to be able to use job table to queue one shot jobs.
+NEW: Add filter on status on invoice list
+NEW: Add filter on status on shipments
+NEW: Add gender property managed on user card FIX: Better error messages when uploading photo of user when permission to write are not granted
+NEW: Add help tooltips on fields of dictionary edit pages.
+NEW: Add hidden option MAIN_MAILFORM_DISABLE_ENTERKEY to disable the key enter into the form to send email.
+NEW: Add hook in send mail
+NEW: Add hooks on list of members to allow an external module to add more fields into list view.
+NEW: Add hooks to allow an external module to complete list of events into calendar views.
+NEW: Add $ID$ into extrafields management to allow use of current object id on filter for select list from table and checkbox list from table
+NEW: Add info page on product card
+NEW: Add into about page, a sample text to use to promote new version release (visible only if version is last stable)
+NEW: Add none/all selection into list of files for FTP browser module
+NEW: Add opportunity amount on project card.
+NEW: Add parameter to add a link to use "date of invoice" in one click when fille a payment card.
+NEW: Add planned workload and declared progress on project summary list on project home page (data aggregated from tasks of project)
+NEW: Add "productpricecard" hook and uniformize code
+NEW: Add ref and label of project into export
+NEW: Add status into filters of graph
+NEW: Add tab document on salaries payment
+NEW: Add thumb of users into thumbs stats on home page
+NEW: A link to the bugtracker can be enabled in the GUI
+NEW: Better look for POS. More responsive design.
+NEW: Can add project search on left menu search area
+NEW: Can assign a task to yourself to have it appear on timesheet
+NEW: Can choose fields to show on project list
+NEW: Can close a project that has draft status with no need to switch it to validate status before.
+NEW: Can edit Background color for Top menu and Background color for table title line.
+NEW: Can edit email template using WYSIWYG editor
+NEW: Can edit list of prospect status for customers/prospects. Add a new entry into dictionary table to manage list fo status. Removed deprecated files.
+NEW: Can filter on contact status in prospect list. Removed deprecated menu entry.
+NEW: Can filter proposal on a tag of a product Enhance also the prototype test_arrays to include select form before table.
+NEW: Can filter proposal, orders or invoices with criteria "contain at least one product with following tag"
+NEW: Can select fields to show in product list. Extrafields are also supported.
+NEW: Can select fields to show into the contact list. Extrafields are also supported.
+NEW: Can select which field to show into list of users. Extrafields are also supported.
+NEW: Can set default value of event type when creating an event (if type of event option is used).
+NEW: Can upload files on leave requests. Use more standard permissions.
+NEW: Can use a "|" to make a OR search on several different criterias into text filters of tables.
+NEW: Can use the * as a joker characters into search boxes of lists
+NEW: Clean code into salary module, debug and add indexes NEW: Can filter on user list and salary payments on user with naural search.
+NEW: clone action on agenda events
+NEW: Color category is visible onto the thumb of tags on thirdparty, or products cards.
+NEW: conf to use next product/service ref when we clone a product/service
+NEW: Contract module can be used to follow both sold and bought contracts/recurring subscriptions.
+NEW: Enhance prototype, project list and proposal list with new hooks to have an external module able to add more fields.
+NEW: Enhance style engine. Add option to set color of links.
+NEW: Enter amount for withdraws requests
+NEW: FEATURE PROPOSAL: on proposal, order or invoice creation from scratch, reload page after customer selection so its informations can be loaded
+NEW: Filter "active" by default on user list. Fix label of permission of project module.
+NEW: Forms are using the tab look, even in creation mode.
+NEW: Free text for cheque deposit receipt can be HTML content.
+NEW: Hidden option THEME_ELDY_USE_HOVER is stable enough to become officialy visible into setup.
+NEW: If module salaries is on, you can set a hourly value for time consumed by users. Each time a user enter its time consumed on a project, a calculation is done to provide the cost for human services. This value appears into the "Transversal view" of project.
+NEW: Import Sales representatives of third parties
+NEW: Increase length of bank code to 128 char #3704
+NEW: info function for product card
+NEW: Into the overview of projects, the name of thirdparty appears into combo lists of elements to link to project.
+NEW: Introduce a "code" into fiels to describe vat. This will allow to suggest different vat lines with same value with ability to differentiate them.
+NEW: Introduce cost price on product.
+NEW: Introduce hidden option MAIN_LANDING_PAGE to decide the home page visible just after login.
+NEW: Introduce hidden option MAIN_REPLACE_TRANS_xx_XX to allow simple replacement of translated string on the fly.
+NEW: Introduce table llx_overwrite_trans to be able to overwrite translations by simple database edition.
+NEW: Introduce use of cache for thumbs images of users
+NEW: Experimental level multiprice generator based on per cent variations over base price
+NEW: List of projects of a thirdparty are visible on a project tab
+NEW: Merge all left menu search boxes into one.
+NEW: Merge all search fields of an area page into one search box
+NEW: next ref on clone doesn't need conf, it's used if mask exists
+NEW: ODT generators can set meta properties of ODT file
+NEW: On list of thirdparties, user can select fields to show. Make phpunit test working again localy. Add missing columns into llx_expedition.
+NEW: Only arrow of current sorted field is visible into table views. This save a lot of spaces. You can click on the column title to sort. This make clickable area larger and click to sort is easier.
+NEW: On page to see/edit contact of an ojbect, the status of contact is visible (for both external and internal users).
+NEW: Option encrypt password into databae is set to on by default on first install.
+NEW: print event type on third party card tab agenda list (only if AGENDA_USE_EVENT_TYPE = 1)
+NEW: Provide an easier way to understand if an order can be shipped.
+NEW: Quick searh filter works on invoice, proposal, order, intervention, contract
+NEW: Rename install "etape" into english "step"
+NEW: Replace category edition page on members with new select2 component.
+NEW: Show photo of logged user into login top right block. NEW: If no photo is available for user, we show a generic photo depending on gender
+NEW: Show photo of user into user list. A new function getImageFileNameForSize was also introduced to choose image best size according to usage to save bandwith.
+NEW: Show which fields are used for search when doing a generic search from the quick search form.
+NEW: Statistic graphs on products offer a filter on product type (product / service or both)
+NEW: Support logging to a Sentry server
+NEW: Syslog displays configuration errors
+NEW: The clicktodial module is now able to provide link "tel:" on phone numbers. So it is also possible to use clicktodial with a client solution like the "xivo" local client.
+NEW: The conditional IF into ODT templates works also on not defined var so we can show data only if defined. Close #3819
+NEW: The free text in PDF footer can now be a HTML content. So the WYSIWYG editor is on by default to edit it into module setup.
+NEW: The quick search box on left menu can also search into expense reports.
+NEW: The search box and the bookmarks are now rendered by the menu manager.
+NEW: The thirdparties tabs, the contacts tabs and the members tabs are now presented using a new top banner, saving space and using a same way to show address, status and navigation arrows.
+NEW: Thumbs for statistics on main page are fully clicable (not only link inside the thumb)
+NEW: Translate extrafield's labels
+NEW: Uniformize way of working for search filters. One filter per object.
+NEW: Used matching icons for Material Design theme
+NEW: Use new select2 component for juridical status, country and state selection.
+NEW: When creating order, proposal or invoice from thirdparty card, the project is asked during creation. A link to create project if it does not exists is also available. NEW: Uniformize form creation of proposal to add public and private notes during creation like done for order and invoice.
+
+For developers:
+NEW: Add a new widget $form->selectArrayAjax() to use combo list with content coming from an Ajax URL.
+NEW: Add doActions hook method call in contract card
+NEW: Added doActions hooks to user cards
+NEW: Add a new component to select categories/tags from the main edit page of product. The dedicated tab is also removed.
+NEW: upgrade jQuery Component Datable (and extras) to 1.10.7
+NEW: script to build API class from existing class
+NEW: Prepare database to store information per files (for example to define if an image can be used as a cover or not)
+NEW: log hooks loading
+NEW: Introduce property module_position so a module can decide where it appears into list of modules.
+NEW: Introduce function dolGetFirstLineOfText
+NEW: Introduce a method getDefaultCreateValueForField for developers to get a default value to use for a form in create mode. Implement it for public and private notes.
+NEW: A module can add its entries into cron module.
+NEW: Framework feature. To have a page being loaded at same scrollbar level after a click on a href link, just add the class "reposition" on this link.
+NEW: Add exemple of setup for multitail to render dolibarr log files
+NEW: Add restler framework. First step to build REST API into Dolibarr.
+
 
 WARNING: 
 
 Following changes may create regression for some external modules, but were necessary to make
 Dolibarr better:
+- Deprecated Product::setPriceExpression. Use Product::update instead
 - Deprecated hidden option MAIN_USE_CUSTOM_TRANSLATION has been removed. Use table llx_overwrite_trans instead.
 - Trigger LINECONTRACT_INSERT has been renamed into LINECONTRACT_CREATE to match common denomination.
 - A lot hooks used into PDF generation were not correctly implemented. We had to fix this. The result si that
@@ -26,6 +160,8 @@ This is list of hooks modified:
 'pdf_getlinenum', 'pdf_getlineref', 'pdf_getlineref_supplier', 'pdf_getlinevatrate', 'pdf_getlineupexcltax',
 'pdf_getlineupwithtax', 'pdf_getlineqty', 'pdf_getlineqty_asked', 'pdf_getlineqty_shipped', 'pdf_getlineqty_keeptoship',
 'pdf_getlineunit', 'pdf_getlineremisepercent', 'pdf_getlineprogress', 'pdf_getlinetotalexcltax', 'pdf_getlinetotalwithtax'
+- Renamed Product::isservice and Product::isproduct to match PSR-2
+- Remove deprecated Product::hidden property
 
 
  

@@ -188,6 +188,5 @@ print '<br><div class="center"><input type="submit" class="button" value="'.$lan
 
 print "</form>";
 
-$db->close();
-
 llxFooter();
+$db->close();

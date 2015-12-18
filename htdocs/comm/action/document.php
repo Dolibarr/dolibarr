@@ -196,7 +196,7 @@ if ($object->id > 0)
 		}
 	}
 	print '<div class="assignedtouser">';
-	print $form->select_dolusers_forevent('view','assignedtouser',1);
+	print $form->select_dolusers_forevent('view', 'assignedtouser', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 	print '</div>';
 	if (in_array($user->id,array_keys($listofuserid))) 
 	{

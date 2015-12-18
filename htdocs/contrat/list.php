@@ -168,7 +168,7 @@ if ($resql)
     if ($sall)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-        print $langs->trans("FilterOnInto", $sall, join(', ',$fieldstosearchall));
+        print $langs->trans("FilterOnInto", $all) . join(', ',$fieldstosearchall);
     }
     
     // If the user can view prospects other than his'
@@ -178,7 +178,7 @@ if ($resql)
     	$langs->load("commercial");
     	$moreforfilter.='<div class="divsearchfield">';
     	$moreforfilter.=$langs->trans('ThirdPartiesOfSaleRepresentative'). ': ';
-    	$moreforfilter.=$formother->select_salesrepresentatives($search_sale,'search_sale',$user);
+    	$moreforfilter.=$formother->select_salesrepresentatives($search_sale,'search_sale',$user,0,1,'maxwidth300');
     	$moreforfilter.='</div>';
     }
 	// If the user can view other users

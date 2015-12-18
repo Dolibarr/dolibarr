@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2006-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2015	    Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -92,6 +93,15 @@ function user_prepare_head($object)
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname);   												to remove a tab
     complete_head_from_modules($conf,$langs,$object,$head,$h,'user');
+
+	if (! empty($conf->hrm->enabled) && $user->rights->hrm->employee->read)
+    {
+		// Bank
+    	$head[$h][0] = DOL_URL_ROOT.'/user/bank.php?id='.$object->id;
+    	$head[$h][1] = $langs->trans("Bank");
+    	$head[$h][2] = 'bank';
+    	$h++;
+	}
 
     //Info on users is visible only by internal user
     if (empty($user->societe_id))
@@ -307,8 +317,8 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
     {
     	print '<tr class="liste_titre"><th width="35%">'.$langs->trans("DefaultSkin").'</th>';
     	print '<th align="right">';
-    	$url='http://www.dolistore.com/lang-en/4-skins';
-    	if (preg_match('/fr/i',$langs->defaultlang)) $url='http://www.dolistore.com/lang-fr/4-themes';
+    	$url='https://www.dolistore.com/lang-en/4-skins';
+    	if (preg_match('/fr/i',$langs->defaultlang)) $url='https://www.dolistore.com/fr/4-themes';
     	//if (preg_match('/es/i',$langs->defaultlang)) $url='http://www.dolistore.com/lang-es/4-themes';
     	print '<a href="'.$url.'" target="_blank">';
     	print $langs->trans('DownloadMoreSkins');
@@ -467,7 +477,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 			if ($color) print '<input type="text" class="colorthumb" disabled="disabled" style="padding: 1px; margin-top: 0; margin-bottom: 0; width: 40px; background-color: #'.$color.'" value="'.$color.'">';
 			else print $langs->trans("Default");
 	   	}
-    	print ' &nbsp; ('.$langs->trans("Default").': <strong>6e7896</strong>, '.$langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis").')';
+    	print ' &nbsp; ('.$langs->trans("Default").': <strong>7882aa</strong>, '.$langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis").')';
 	    print '</td>';
 	}
 	
@@ -494,6 +504,32 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
     	print ' &nbsp; ('.$langs->trans("Default").': <strong>e6e6e6</strong>, '.$langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis").')';
 	    print '</td>';
 
+	    print '</tr>';
+	}
+
+	// TextTitleColor
+	if ($foruserprofile)
+	{
+	     
+	     
+	}
+	else
+	{
+	    $var=!$var;
+	    print '<tr '.$bc[$var].'>';
+	    print '<td>'.$langs->trans("TextTitleColor").'</td>';
+	    print '<td colspan="'.($colspan-1).'">';
+	    if ($edit)
+	    {
+	        print $formother->selectColor(colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_TEXTTITLENOTAB,array()),''),'THEME_ELDY_TEXTTITLENOTAB','formcolor',1).' ';
+	    }
+	    else
+	    {
+	        print $formother->showColor($conf->global->THEME_ELDY_TEXTTITLENOTAB, $langs->trans("Default"));
+	    }
+	    print ' &nbsp; ('.$langs->trans("Default").': <strong>3c3c14</strong>, '.$langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis").')';
+	    print '</td>';
+	
 	    print '</tr>';
 	}
 	
@@ -529,7 +565,11 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 	    {
 	        if ($conf->global->THEME_ELDY_USE_HOVER == '1') $color='edf4fb';
 	        else $color = colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_USE_HOVER,array()),'');
-	        if ($color) print '<input type="text" class="colorthumb" disabled="disabled" style="padding: 1px; margin-top: 0; margin-bottom: 0; width: 40px; background-color: #'.$color.'" value="'.$color.'">';
+	        if ($color) 
+	        {
+	            if ($color != 'edf4fb') print '<input type="text" class="colorthumb" disabled="disabled" style="padding: 1px; margin-top: 0; margin-bottom: 0; width: 40px; background-color: #'.$color.'" value="'.$color.'">';
+	            else print $langs->trans("Default");
+	        }
 	        else print $langs->trans("None");
 	    }
 	    print ' &nbsp; ('.$langs->trans("Default").': <strong>edf4fb</strong>, '.$langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis").')';

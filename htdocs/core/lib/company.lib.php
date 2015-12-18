@@ -658,6 +658,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
 	if ($num || (GETPOST('button_search') || GETPOST('button_search.x') || GETPOST('button_search_x')))
     {
         print '<tr class="liste_titre">';
+        
         // Name - Position
         print '<td class="liste_titre">';
         print '<input type="text" class="flat" name="search_name" size="20" value="'.$search_name.'">';
@@ -766,10 +767,8 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
 
     print '</form>'."\n";
 
-    print "<br>\n";
-?>
-<div id="dialog" title="<?php echo dol_escape_htmltag($langs->trans('Address')); ?>" style="display: none;"></div>
-<?php
+    // A div for the address popup
+    print '<div id="dialog" title="'.dol_escape_htmltag($langs->trans('Address')).'" style="display: none;"></div>';
 
     return $i;
 }
@@ -1343,7 +1342,7 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
             $i++;
         }
         $out.="</table>\n";
-        $out.="<br>\n";
+        //$out.="<br>\n";
     }
 
     if ($noprint) return $out;

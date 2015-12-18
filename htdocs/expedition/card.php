@@ -109,7 +109,7 @@ if (($action == 'create') || ($action == 'add'))
 		if (! (GETPOST('entrepot_id','int') > 0))
 		{
 			$langs->load("errors");
-			setEventMessage($langs->trans("WarehouseMustBeSelectedAtFirstStepWhenProductBatchModuleOn"),'errors');
+			setEventMessages($langs->trans("WarehouseMustBeSelectedAtFirstStepWhenProductBatchModuleOn"), null, 'errors');
 			header("Location: ".DOL_URL_ROOT.'/expedition/shipment.php?id='.$origin_id);
 			exit;
 		}
@@ -276,7 +276,7 @@ if (empty($reshook))
 						$ret=$object->addline($entrepot_id,GETPOST($idl,'int'),GETPOST($qty,'int'),$array_options[$i]);
 						if ($ret < 0)
 						{
-							$mesg='<div class="error">'.$object->error.'</div>';
+							setEventMessages($object->error, $object->errors, 'errors');
 							$error++;
 						}
 					}
@@ -289,7 +289,7 @@ if (empty($reshook))
 						$ret=$object->addline_batch($batch_line[$i],$array_options[$i]);
 						if ($ret < 0)
 						{
-							$mesg='<div class="error">'.$object->error.'</div>';
+							setEventMessages($object->error, $object->errors, 'errors');
 							$error++;
 						}
 					}
@@ -304,14 +304,14 @@ if (empty($reshook))
 	            $ret=$object->create($user);		// This create shipment (like Odoo picking) and line of shipments. Stock movement will when validating shipment.
 	            if ($ret <= 0)
 	            {
-	                $mesg='<div class="error">'.$object->error.'</div>';
+	                setEventMessages($object->error, $object->errors, 'errors');
 	                $error++;
 	            }
 	        }
 	    }
 	    else
 	    {
-	        $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Qty")).'</div>';
+	        setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("QtyToShip")), null, 'errors');
 	        $error++;
 	    }
 
@@ -342,7 +342,7 @@ if (empty($reshook))
 	    }
 	    else
 	    {
-	        $mesg=$object->error;
+	        setEventMessages($object->error, $object->errors, 'errors');
 	    }
 	}
 
@@ -358,7 +358,7 @@ if (empty($reshook))
 	    if ($result < 0)
 	    {
 			$langs->load("errors");
-	        setEventMessage($langs->trans($object->error),'errors');
+	        setEventMessages($langs->trans($object->error), null, 'errors');
 	    }
 	    else
 	    {
@@ -392,19 +392,18 @@ if (empty($reshook))
 	    }
 	    else
 		{
-			$langs->load("errors");
-	        setEventMessage($langs->trans($object->error),'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 	    }
 	}
-
-	else if ($action == 'reopen' && (! empty($user->rights->expedition->creer) || ! empty($user->rights->expedition->shipping_advance->validate)))
+	// TODO add alternative status
+	/*else if ($action == 'reopen' && (! empty($user->rights->expedition->creer) || ! empty($user->rights->expedition->shipping_advance->validate)))
 	{
 	    $result = $object->setStatut(0);
 	    if ($result < 0)
 	    {
-	        $mesg = $object->error;
+	        setEventMessages($object->error, $object->errors, 'errors');
 	    }
-	}
+	}*/
 
 	else if ($action == 'setdate_livraison' && $user->rights->expedition->creer)
 	{
@@ -415,7 +414,7 @@ if (empty($reshook))
 	    $result=$object->set_date_livraison($user,$datedelivery);
 	    if ($result < 0)
 	    {
-	        $mesg='<div class="error">'.$object->error.'</div>';
+	        setEventMessages($object->error, $object->errors, 'errors');
 	    }
 	}
 
@@ -450,7 +449,7 @@ if (empty($reshook))
 	            header("Location: card.php?id=".$object->id);
 	            exit;
 	        }
-	        setEventMessage($object->error,'errors');
+	        setEventMessages($object->error, $object->errors, 'errors');
 	    }
 
 	    $action="";
@@ -488,8 +487,8 @@ if (empty($reshook))
 		$upload_dir =	$conf->expedition->dir_output . "/sending";
 		$file =	$upload_dir	. '/' .	GETPOST('file');
 		$ret=dol_delete_file($file,0,0,0,$object);
-		if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-		else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+		if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
+		else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
 	}
 
 	elseif ($action == 'classifybilled')
@@ -537,10 +536,8 @@ if ($action == 'create')
     print load_fiche_titre($langs->trans("CreateASending"));
     if (! $origin)
     {
-        setEventMessage($langs->trans("ErrorBadParameters"),'errors');
+        setEventMessages($langs->trans("ErrorBadParameters"), null, 'errors');
     }
-
-    dol_htmloutput_mesg($mesg);
 
     if ($origin)
     {
@@ -999,8 +996,6 @@ else if ($id || $ref)
 
 	if ($object->id > 0)
 	{
-		dol_htmloutput_mesg($mesg);
-
 		if (!empty($object->origin))
 		{
 			$typeobject = $object->origin;
@@ -1015,8 +1010,6 @@ else if ($id || $ref)
 
 		$head=shipping_prepare_head($object);
 		dol_fiche_head($head, 'shipping', $langs->trans("Shipment"), 0, 'sending');
-
-		dol_htmloutput_mesg($mesg);
 
 		/*
 		 * Confirmation de la suppression

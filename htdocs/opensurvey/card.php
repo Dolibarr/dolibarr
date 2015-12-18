@@ -99,7 +99,7 @@ if ($action == 'update')
 		$res=$object->update($user);
 		if ($res < 0)
 		{
-			setEventMessage($object->error,'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 			$action='edit';
 		}
 	}
@@ -131,7 +131,7 @@ if (GETPOST('ajoutcomment'))
 
 		if (! $resql)
 		{
-			setEventMessage($langs->trans('ErrorInsertingComment'), 'errors');
+			setEventMessages($langs->trans('ErrorInsertingComment'), null, 'errors');
 		}
 	}
 }

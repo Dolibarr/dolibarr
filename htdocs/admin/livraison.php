@@ -505,6 +505,6 @@ print '</form>';
 
 print '</table>';
 
+llxFooter();
 $db->close();
 
-llxFooter();

@@ -344,13 +344,13 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				{
 					// Project ref
 					print "<td>";
-					if ($showlineingray) print '<i>';
+					//if ($showlineingray) print '<i>';
 					$projectstatic->id=$lines[$i]->fk_project;
 					$projectstatic->ref=$lines[$i]->projectref;
 					$projectstatic->public=$lines[$i]->public;
 					if ($lines[$i]->public || in_array($lines[$i]->fk_project,$projectsArrayId) || ! empty($user->rights->projet->all->lire)) print $projectstatic->getNomUrl(1);
 					else print $projectstatic->getNomUrl(1,'nolink');
-					if ($showlineingray) print '</i>';
+					//if ($showlineingray) print '</i>';
 					print "</td>";
 
 					// Project status
@@ -794,14 +794,14 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 		        	$dayWorkLoad = $projectstatic->weekWorkLoadPerTask[$tmpday][$lines[$i]->id];
 		        	$alreadyspent='';
 		        	if ($dayWorkLoad > 0) $alreadyspent=convertSecondToTime($dayWorkLoad,'allhourmin');
-                    $tableCell ='<td align="center">';
-                    $tableCell.='<span class="timesheetalreadyrecorded"><input type="text" class="center" size="2" disabled id="timespent['.$inc.']['.$idw.']" name="task['.$lines[$i]->id.']['.$idw.']" value="'.$alreadyspent.'"></span>';
+                    $tableCell ='<td align="center" class="hide'.$idw.'">';
+                    $tableCell.='<span class="timesheetalreadyrecorded"><input type="text" class="center smallpadd" size="2" disabled id="timespent['.$inc.']['.$idw.']" name="task['.$lines[$i]->id.']['.$idw.']" value="'.$alreadyspent.'"></span>';
                     //$placeholder=' placeholder="00:00"';
                     $placeholder='';
                     //if (! $disabledtask)
                     //{
                     	$tableCell.='+';
-                    	$tableCell.='<input type="text" alt="'.$langs->trans("AddHereTimeSpentForDay",$tmparray['day'],$tmparray['mon']).'" title="'.$langs->trans("AddHereTimeSpentForDay",$tmparray['day'],$tmparray['mon']).'" '.($disabledtask?'disabled':$placeholder).' class="center" size="2" id="timeadded['.$inc.']['.$idw.']" name="task['.$lines[$i]->id.']['.$idw.']" value="" cols="2"  maxlength="5"';
+                    	$tableCell.='<input type="text" alt="'.$langs->trans("AddHereTimeSpentForDay",$tmparray['day'],$tmparray['mon']).'" title="'.$langs->trans("AddHereTimeSpentForDay",$tmparray['day'],$tmparray['mon']).'" '.($disabledtask?'disabled':$placeholder).' class="center smallpadd" size="2" id="timeadded['.$inc.']['.$idw.']" name="task['.$lines[$i]->id.']['.$idw.']" value="" cols="2"  maxlength="5"';
 		        		$tableCell.=' onkeypress="return regexEvent(this,event,\'timeChar\')"';
                     	$tableCell.= 'onblur="regexEvent(this,event,\''.$modeinput.'\'); updateTotal('.$idw.',\''.$modeinput.'\')" />';
                     //}
@@ -874,11 +874,11 @@ function searchTaskInChild(&$inc, $parent, &$lines, &$taskrole)
  * @param	DoliDB	$db					Database handler
  * @param	Form	$form				Object form
  * @param   int		$socid				Id thirdparty
- * @param   int		$projectsListId     Id of project i have permission on
- * @param   int		$mytasks            Limited to task i am contact to
+ * @param   int		$projectsListId     Id of project I have permission on
+ * @param   int		$mytasks            Limited to task I am contact to
  * @param	int		$statut				-1=No filter on statut, 0 or 1 = Filter on status
  * @param	array	$listofoppstatus	List of opportunity status
- * @param   array   $hiddenfields       List of fields to not show
+ * @param   array   $hiddenfields       List of info to not show ('projectlabel', 'declaredprogress', '...', )
  * @return	void
  */
 function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks=0, $statut=-1, $listofoppstatus=array(),$hiddenfields=array())
@@ -993,7 +993,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks=
     	if (empty($conf->global->PROJECT_HIDE_TASKS)) 
     	{
             print_liste_field_titre($langs->trans("Tasks"),"","","","",'align="right"',$sortfield,$sortorder);
-            print_liste_field_titre($langs->trans("PlannedWorkload"),"","","","",'align="right"',$sortfield,$sortorder);
+            if (! in_array('plannedworkload', $hiddenfields))  print_liste_field_titre($langs->trans("PlannedWorkload"),"","","","",'align="right"',$sortfield,$sortorder);
             if (! in_array('declaredprogress', $hiddenfields)) print_liste_field_titre($langs->trans("ProgressDeclared"),"","","","",'align="right"',$sortfield,$sortorder);
     	}
     	print_liste_field_titre($langs->trans("Status"),"","","","",'align="right"',$sortfield,$sortorder);
@@ -1016,7 +1016,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks=
 				print '<td>';
 				$projectstatic->ref=$objp->ref;
 				print $projectstatic->getNomUrl(1);
-				print ' - '.dol_trunc($objp->title,24);
+				if (! in_array('projectlabel', $hiddenfields)) print ' - '.dol_trunc($objp->title,24);
 				print '</td>';
 				print '<td>';
 				if ($objp->fk_soc > 0)
@@ -1044,8 +1044,10 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks=
     	       
     				$plannedworkload=$objp->planned_workload;
     				$total_plannedworkload+=$plannedworkload;
-    				print '<td align="right">'.($plannedworkload?convertSecondToTime($plannedworkload):'').'</td>';
-    
+    				if (! in_array('plannedworkload', $hiddenfields))
+    				{
+    				    print '<td align="right">'.($plannedworkload?convertSecondToTime($plannedworkload):'').'</td>';
+    				}
     				if (! in_array('declaredprogress', $hiddenfields)) 
     				{
     				    $declaredprogressworkload=$objp->declared_progess_workload;
@@ -1073,12 +1075,12 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks=
 		if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 		{
 			print '<td class="liste_total" align="right">'.price($total_opp_amount, 0, '', 1, -1, -1, $conf->currency).'</td>';
-			print '<td class="liste_total" align="right">'.$form->textwithpicto(price($ponderated_opp_amount, 0, '', 1, -1, -1, $conf->currency), $langs->trans("OpportunityPonderatedAmount"), 1).'</td>';
+			print '<td class="liste_total" align="right">'.$form->textwithpicto(price($ponderated_opp_amount, 0, '', 1, -1, -1, $conf->currency), $langs->trans("OpportunityPonderatedAmountDesc"), 1).'</td>';
 		}
 		if (empty($conf->global->PROJECT_HIDE_TASKS)) 
 		{
             print '<td class="liste_total" align="right">'.$total_task.'</td>';
-            print '<td class="liste_total" align="right">'.($total_plannedworkload?convertSecondToTime($total_plannedworkload):'').'</td>';
+            if (! in_array('plannedworkload', $hiddenfields))  print '<td class="liste_total" align="right">'.($total_plannedworkload?convertSecondToTime($total_plannedworkload):'').'</td>';
             if (! in_array('declaredprogress', $hiddenfields)) print '<td class="liste_total" align="right">'.($total_plannedworkload?round(100*$total_declaredprogressworkload/$total_plannedworkload,0).'%':'').'</td>';
 		}
 		print '<td class="liste_total"></td>';

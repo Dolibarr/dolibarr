@@ -140,6 +140,5 @@ print '</div>';
 
 print info_admin($langs->trans("NoNeedForDeliveryReceipts"));
 
-$db->close();
-
 llxFooter();
+$db->close();

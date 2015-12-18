@@ -26,7 +26,7 @@ $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 
 $langs->load("contracts");
 echo '<br>';
-print load_fiche_titre($langs->trans('RelatedContracts'));
+print load_fiche_titre($langs->trans('RelatedContracts'), '', '');
 ?>
 <table class="noborder allwidth">
 <tr class="liste_titre">

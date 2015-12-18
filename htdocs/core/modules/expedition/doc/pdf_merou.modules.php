@@ -262,9 +262,11 @@ class pdf_merou extends ModelePdfExpedition
 
 					$pdf->SetFont('','', $default_font_size - 3);
 
-					//Creation des cases a cocher
+					// Check boxes
+					$pdf->SetDrawColor(120,120,120);
 					$pdf->Rect(10+3, $curY, 3, 3);
 					$pdf->Rect(20+3, $curY, 3, 3);
+					
 					//Insertion de la reference du produit
 					$pdf->SetXY(30, $curY);
 					$pdf->SetFont('','B', $default_font_size - 3);
@@ -280,7 +282,7 @@ class pdf_merou extends ModelePdfExpedition
 					if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblignes - 1))
 					{
 						$pdf->setPage($pageposafter);
-						$pdf->SetLineStyle(array('dash'=>'1,1','color'=>array(60,60,60)));
+						$pdf->SetLineStyle(array('dash'=>'1,1','color'=>array(80,80,80)));
 						//$pdf->SetDrawColor(190,190,200);
 						$pdf->line($this->marge_gauche, $nexY+1, $this->page_largeur - $this->marge_droite, $nexY+1);
 						$pdf->SetLineStyle(array('dash'=>0));
@@ -522,7 +524,7 @@ class pdf_merou extends ModelePdfExpedition
 		$origin_id 	= $object->origin_id;
 
 		// Add list of linked elements
-		$posy = pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, 100, 3, 'R', $default_font_size, $hookmanager);
+		$posy = pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, 100, 3, 'R', $default_font_size - 1, $hookmanager);
 
 		//$this->Code39($Xoff+43, $Yoff+1, $object->commande->ref,$ext = true, $cks = false, $w = 0.4, $h = 4, $wide = true);
 		//Definition Emplacement du bloc Societe
@@ -560,18 +562,18 @@ class pdf_merou extends ModelePdfExpedition
 		$Yoff = $Yoff+7;
 		$pdf->SetXY($blSocX-80,$blSocY+17);
 
-		$pdf->SetFont('','B', $default_font_size - 2);
+		$pdf->SetFont('','B', $default_font_size - 3);
 		$pdf->SetTextColor(0,0,0);
-		$pdf->MultiCell(50, 8, $outputlangs->transnoentities("DateDelivery")." : " . dol_print_date($object->date_delivery,'day',false,$outputlangs,true), '', 'L');
+		$pdf->MultiCell(50, 8, $outputlangs->transnoentities("DateDeliveryPlanned")." : " . dol_print_date($object->date_delivery,'day',false,$outputlangs,true), '', 'L');
 
 		$pdf->SetXY($blSocX-80,$blSocY+20);
-		$pdf->SetFont('','B', $default_font_size - 2);
+		$pdf->SetFont('','B', $default_font_size - 3);
 		$pdf->SetTextColor(0,0,0);
 		$pdf->MultiCell(50, 8, $outputlangs->transnoentities("TrackingNumber")." : " . $object->tracking_number, '', 'L');
 
 		// Deliverer
 		$pdf->SetXY($blSocX-80,$blSocY+23);
-		$pdf->SetFont('','', $default_font_size - 2);
+		$pdf->SetFont('','', $default_font_size - 3);
 		$pdf->SetTextColor(0,0,0);
 
 		if (! empty($object->tracking_number))
@@ -592,7 +594,7 @@ class pdf_merou extends ModelePdfExpedition
 						$label.=" : ";
 						$label.=$object->tracking_url;
 					}
-					$pdf->SetFont('','B', $default_font_size - 2);
+					$pdf->SetFont('','B', $default_font_size - 3);
 					$pdf->writeHTMLCell(50, 8, '', '', $label, '', 'L');
 				}
 			}
@@ -603,9 +605,7 @@ class pdf_merou extends ModelePdfExpedition
 		}
 
 
-		/**********************************/
-		//Emplacement Informations Expediteur (My Company)
-		/**********************************/
+		// Shipping company (My Company)
 		$Yoff = $blSocY;
 		$blExpX=$Xoff-20;
 		$blW=52;
@@ -623,7 +623,7 @@ class pdf_merou extends ModelePdfExpedition
 			$result=$object->fetch_contact($arrayidcontact[0]);
 		}
 
-		//Recipient name
+		// Recipient name
 		// On peut utiliser le nom de la societe du contact
 		if ($usecontact && !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) {
 			$thirdparty = $object->contact;
@@ -631,15 +631,15 @@ class pdf_merou extends ModelePdfExpedition
 			$thirdparty = $object->client;
 		}
 
-		$carac_client_name= pdfBuildThirdpartyName($thirdparty, $outputlangs);
+		$carac_client_name=pdfBuildThirdpartyName($thirdparty, $outputlangs);
 
 		$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,((!empty($object->contact))?$object->contact:null),$usecontact,'targetwithdetails');
 
 		$blDestX=$blExpX+55;
-		$blW=50;
+		$blW=54;
 		$Yoff = $Ydef +1;
 
-		// Show recipient frame
+		// Show Recipient frame
 		$pdf->SetFont('','B', $default_font_size - 3);
 		$pdf->SetXY($blDestX,$Yoff-4);
 		$pdf->MultiCell($blW,3, $outputlangs->transnoentities("Recipient"), 0, 'L');
@@ -653,8 +653,8 @@ class pdf_merou extends ModelePdfExpedition
 		$posy = $pdf->getY();
 
 		// Show recipient information
-		$pdf->SetFont('','', $default_font_size - 1);
-		$pdf->SetXY($posx+2,$posy);
+		$pdf->SetFont('','', $default_font_size - 3);
+		$pdf->SetXY($blDestX,$posy);
 		$pdf->MultiCell($widthrecbox, 4, $carac_client, 0, 'L');
 	}
 }

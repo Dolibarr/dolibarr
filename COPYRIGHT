@@ -19,7 +19,7 @@ EvalMath               1.0           BSD                         Yes            
 Escpos-php                           MIT License                 Yes             Thermal receipt printer library, for use with ESC/POS compatible printers
 FPDI                   1.5.2         Apache Software License 2.0 Yes             PDF templates management
 GeoIP                  1.4           LGPL-2.1+                   Yes             Sample code to make geoip convert (not into deb package)
-Mobiledetect           2.8.3         MIT License                 Yes             Detect mobile devices browsers
+Mobiledetect           2.8.17        MIT License                 Yes             Detect mobile devices browsers
 NuSoap                 0.9.5         LGPL 2.1+                   Yes             Library to develop SOAP Web services (not into rpm and deb package)
 PEAR Mail_MIME         1.8.9         BSD                         Yes             NuSoap dependency
 odtPHP                 1.0.1         GPL-2+  b                   Yes             Library to build/edit ODT files
@@ -28,7 +28,7 @@ php-iban               1.4.7         LGPL-3+                     Yes            
 PHPoAuthLib            0.8.2         MIT License                 Yes             Library to provide oauth1 and oauth2 to different service
 PHPPrintIPP            1.3           GPL-2+                      Yes             Library to send print IPP requests
 Restler                3.0           LGPL-3+                     Yes             Library to develop REST Web services
-TCPDF                  6.2.6         LGPL-3+                     Yes             PDF generation
+TCPDF                  6.2.12        LGPL-3+                     Yes             PDF generation
 TCPDI                  1.0.0         LGPL-3+ / Apache 2.0        Yes             FPDI replacement
 
 JS libraries:

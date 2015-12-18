@@ -79,7 +79,7 @@ class pdf_baleine extends ModelePDFProjects
 		$this->posxref=$this->marge_gauche+1;
 		$this->posxlabel=$this->marge_gauche+25;
 		$this->posxworkload=$this->marge_gauche+100;
-		$this->posxprogress=$this->marge_gauche+140;
+		$this->posxprogress=$this->marge_gauche+130;
 		$this->posxdatestart=$this->marge_gauche+150;
 		$this->posxdateend=$this->marge_gauche+170;
 	}
@@ -250,7 +250,7 @@ class pdf_baleine extends ModelePDFProjects
 					if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblignes - 1))
 					{
 						$pdf->setPage($pageposafter);
-						$pdf->SetLineStyle(array('dash'=>'1,1','color'=>array(60,60,60)));
+						$pdf->SetLineStyle(array('dash'=>'1,1','color'=>array(80,80,80)));
 						//$pdf->SetDrawColor(190,190,200);
 						$pdf->line($this->marge_gauche, $nexY+1, $this->page_largeur - $this->marge_droite, $nexY+1);
 						$pdf->SetLineStyle(array('dash'=>0));

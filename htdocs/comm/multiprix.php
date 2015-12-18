@@ -105,7 +105,10 @@ if ($_socid > 0)
 		print '<option value="'.$i.'"' ;
 		if($i == $objsoc->price_level)
 		print 'selected';
-		print '>'.$i.'</option>';
+		print '>'.$i;
+		$keyforlabel='PRODUIT_MULTIPRICES_LABEL'.$i;
+		if (! empty($conf->global->$keyforlabel)) print ' - '.$langs->trans($conf->global->$keyforlabel);
+		print '</option>';
 	}
 	print '</select>';
 	print '</td></tr>';
@@ -171,6 +174,5 @@ if ($_socid > 0)
 
 }
 
-$db->close();
-
 llxFooter();
+$db->close();

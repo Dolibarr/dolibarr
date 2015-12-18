@@ -218,7 +218,7 @@ if ($user->rights->bookmark->creer)
 
 print '</div>';
 
-
+llxFooter();
 $db->close();
 
-llxFooter();
+

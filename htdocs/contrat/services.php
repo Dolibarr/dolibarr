@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  *
@@ -48,6 +48,7 @@ $filter=GETPOST("filter");
 $search_name=GETPOST("search_name");
 $search_contract=GETPOST("search_contract");
 $search_service=GETPOST("search_service");
+$search_status=GETPOST("search_status","alpha");
 $statut=GETPOST('statut')?GETPOST('statut'):1;
 $socid=GETPOST('socid','int');
 
@@ -65,6 +66,23 @@ $contratid = GETPOST('id','int');
 if (! empty($user->societe_id)) $socid=$user->societe_id;
 $result = restrictedArea($user, 'contrat',$contratid);
 
+if ($search_status != '')
+{
+    $tmp=explode('&', $search_status);
+    $mode=$tmp[0];
+    if (empty($tmp[1])) $filter='';
+    else
+    {
+        if ($tmp[1] == 'filter=notexpired') $filter='notexpired';
+        if ($tmp[1] == 'filter=expired') $filter='expired';
+    }
+}
+else
+{
+    $search_status = $mode;
+    if ($filter == 'expired') $search_status.='&filter=expired';
+    if ($filter == 'notexpired') $search_status.='&filter=notexpired';
+}
 
 $staticcontrat=new Contrat($db);
 $staticcontratligne=new ContratLigne($db);
@@ -75,6 +93,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 	$search_name="";
 	$search_contract="";
 	$search_service="";
+	$search_status=-1;
 	$op1month="";
 	$op1day="";
 	$op1year="";
@@ -83,6 +102,8 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 	$op2day="";
 	$op2year="";
 	$filter_op2="";
+	$mode='';
+	$filter='';
 }
 
 /*
@@ -117,6 +138,7 @@ if ($mode == "0") $sql.= " AND cd.statut = 0";
 if ($mode == "4") $sql.= " AND cd.statut = 4";
 if ($mode == "5") $sql.= " AND cd.statut = 5";
 if ($filter == "expired") $sql.= " AND cd.date_fin_validite < '".$db->idate($now)."'";
+if ($filter == "notexpired") $sql.= " AND cd.date_fin_validite >= '".$db->idate($now)."'";
 if ($search_name)     $sql.= " AND s.nom LIKE '%".$db->escape($search_name)."%'";
 if ($search_contract) $sql.= " AND c.rowid = '".$db->escape($search_contract)."'";
 if ($search_service)  $sql.= " AND (p.ref LIKE '%".$db->escape($search_service)."%' OR p.description LIKE '%".$db->escape($search_service)."%' OR cd.description LIKE '%".$db->escape($search_service)."%')";
@@ -169,6 +191,7 @@ if ($resql)
 	if ($mode == "" || $mode < 5) print_liste_field_titre($langs->trans("DateEndPlannedShort"),$_SERVER["PHP_SELF"], "cd.date_fin_validite",$param,'',' align="center"',$sortfield,$sortorder);
 	else print_liste_field_titre($langs->trans("DateEndRealShort"),$_SERVER["PHP_SELF"], "cd.date_cloture",$param,'',' align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"], "cd.statut,c.statut",$param,"","align=\"right\"",$sortfield,$sortorder);
+	print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
@@ -179,11 +202,11 @@ if ($resql)
 	print '</td>';
 	// Service label
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" size="18" name="search_service" value="'.dol_escape_htmltag($search_service).'">';
+	print '<input type="text" class="flat" size="12" name="search_service" value="'.dol_escape_htmltag($search_service).'">';
 	print '</td>';
 	// Third party
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" size="24" name="search_name" value="'.dol_escape_htmltag($search_name).'">';
+	print '<input type="text" class="flat" size="12" name="search_name" value="'.dol_escape_htmltag($search_name).'">';
 	print '</td>';
 	print '<td class="liste_titre" align="center">';
 	$arrayofoperators=array('<'=>'<','>'=>'>');
@@ -198,6 +221,16 @@ if ($resql)
 	print ' ';
 	$filter_date2=dol_mktime(0,0,0,$op2month,$op2day,$op2year);
 	print $form->select_date($filter_date2,'op2',0,0,1,'',1,0,1);
+	print '</td>';
+	print '<td align="right">';
+	$arrayofstatus=array(
+	    '0'=>$langs->trans("ServiceStatusInitial"),
+	    '4'=>$langs->trans("ServiceStatusRunning"),
+	    '4&filter=notexpired'=>$langs->trans("ServiceStatusNotLate"),
+	    '4&filter=expired'=>$langs->trans("ServiceStatusLate"),
+	    '5'=>$langs->trans("ServiceStatusClosed")
+	);
+	print $form->selectarray('search_status',$arrayofstatus,(strstr($search_status, ',')?-1:$search_status),1);
 	print '</td>';
     print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
@@ -272,6 +305,7 @@ if ($resql)
 			print $staticcontratligne->LibStatut($obj->statut,5,($obj->date_fin_validite && $db->jdate($obj->date_fin_validite) < $now)?1:0);
 		}
 		print '</td>';
+		print '<td></td>';
 		print "</tr>\n";
 		$i++;
 	}
@@ -286,6 +320,6 @@ else
 }
 
 
-$db->close();
-
 llxFooter();
+
+$db->close();

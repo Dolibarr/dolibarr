@@ -4,12 +4,13 @@ TCPDF - README
 I WISH TO IMPROVE AND EXPAND TCPDF BUT I NEED YOUR SUPPORT.
 PLEASE MAKE A DONATION:
 http://sourceforge.net/donate/index.php?group_id=128076
+or via PayPal at paypal@tecnick.com
 
 ------------------------------------------------------------
 
 Name: TCPDF
-Version: 6.2.6
-Release date: 2015-01-28
+Version: 6.2.12
+Release date: 2015-09-12
 Author:	Nicola Asuni
 
 Copyright (c) 2002-2015:
@@ -20,6 +21,7 @@ Copyright (c) 2002-2015:
 URLs:
 	http://www.tcpdf.org
 	http://www.sourceforge.net/projects/tcpdf
+	https://github.com/tecnickcom/TCPDF
 
 Description:
 	TCPDF is a PHP class for generating PDF files on-the-fly without requiring external extensions.
@@ -34,7 +36,7 @@ Main Features:
     * font subsetting;
     * methods to publish some XHTML + CSS code, Javascript and Forms;
     * images, graphic (geometric figures) and transformation methods;
-    * supports JPEG, PNG and SVG images natively, all images supported by GD (GD, GD2, GD2PART, GIF, JPEG, PNG, BMP, XBM, XPM) and all images supported via ImagMagick (http:  www.imagemagick.org/www/formats.html)
+    * supports JPEG, PNG and SVG images natively, all images supported by GD (GD, GD2, GD2PART, GIF, JPEG, PNG, BMP, XBM, XPM) and all images supported via ImagMagick (http://www.imagemagick.org/script/formats.php)
     * 1D and 2D barcodes: CODE 39, ANSI MH10.8M-1983, USD-3, 3 of 9, CODE 93, USS-93, Standard 2 of 5, Interleaved 2 of 5, CODE 128 A/B/C, 2 and 5 Digits UPC-Based Extension, EAN 8, EAN 13, UPC-A, UPC-E, MSI, POSTNET, PLANET, RMS4CC (Royal Mail 4-state Customer Code), CBC (Customer Bar Code), KIX (Klant index - Customer index), Intelligent Mail Barcode, Onecode, USPS-B-3200, CODABAR, CODE 11, PHARMACODE, PHARMACODE TWO-TRACKS, Datamatrix, QR-Code, PDF417;
     * JPEG and PNG ICC profiles, Grayscale, RGB, CMYK, Spot Colors and Transparencies;
     * automatic page header and footer management;

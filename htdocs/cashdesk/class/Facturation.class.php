@@ -89,7 +89,7 @@ class Facturation
      */
     public function ajoutArticle()
     {
-        global $conf,$db;
+        global $conf,$db,$mysoc;
 
         $thirdpartyid = $_SESSION['CASHDESK_ID_THIRDPARTY'];
 
@@ -118,7 +118,7 @@ class Facturation
         }
 
         // Define part of HT, VAT, TTC
-        $resultarray=calcul_price_total($this->qte,$this->prix(),$this->remisePercent(),$vat_rate,0,0,0,'HT',0,$product->type,0);
+        $resultarray=calcul_price_total($this->qte,$this->prix(),$this->remisePercent(),$vat_rate,0,0,0,'HT',0,$product->type,$mysoc);
 
         // Calcul du total ht sans remise
         $total_ht = $resultarray[0];

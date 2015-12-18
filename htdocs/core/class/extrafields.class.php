@@ -830,7 +830,7 @@ class ExtraFields
 				}
 				else 
 				{
-					$sqlwhere.= ' WHERE 1';
+					$sqlwhere.= ' WHERE 1=1';
 				}
 				// Some tables may have field, some other not. For the moment we disable it.
 				if (in_array($InfoFieldList[0],array('tablewithentity'))) 
@@ -1015,7 +1015,7 @@ class ExtraFields
 						$sqlwhere .= ' WHERE ' . $InfoFieldList[4];
 					}
 				} else {
-					$sqlwhere .= ' WHERE 1';
+					$sqlwhere .= ' WHERE 1=1';
 				}
 				// Some tables may have field, some other not. For the moment we disable it.
 				if (in_array($InfoFieldList[0], array ('tablewithentity'))) 
@@ -1551,6 +1551,8 @@ class ExtraFields
 				else if (in_array($key_type,array('checkbox')))
 				{
 					$value_arr=GETPOST($keysuffix."options_".$key.$keyprefix);
+					// Make sure we get an array even if there's only one checkbox
+					$value_arr=(array) $value_arr;
 					$value_key=implode(',', $value_arr);
 				}
 				else if (in_array($key_type,array('price','double')))

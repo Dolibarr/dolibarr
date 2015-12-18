@@ -326,6 +326,5 @@ if ($id)
     print '</table>';
 }
 
-$db->close();
-
 llxFooter();
+$db->close();

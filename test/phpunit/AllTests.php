@@ -36,17 +36,17 @@ require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 if ($langs->defaultlang != 'en_US')
 {
     print "Error: Default language for company to run tests must be set to en_US or auto. Current is ".$langs->defaultlang."\n";
-    exit;
+    exit(1);
 }
 if (empty($conf->adherent->enabled))
 {
-	print "Error: Module member must be enabled to have significatn results.\n";
-	exit;
+	print "Error: Module member must be enabled to have significant results.\n";
+	exit(1);
 }
 if (! empty($conf->ldap->enabled))
 {
     print "Error: LDAP module should not be enabled.\n";
-    exit;
+    exit(1);
 }
 if (! empty($conf->google->enabled))
 {

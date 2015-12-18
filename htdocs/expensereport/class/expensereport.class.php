@@ -1503,7 +1503,6 @@ class ExpenseReport extends CommonObject
             $this->error=$this->db->error();
             return -1;
         }
-
     }
 
     /**
@@ -1591,7 +1590,7 @@ class ExpenseReportLine
      *
      * @param DoliDB    $db     Handlet database
      */
-    function ExpenseReportLine($db)
+    function __construct($db)
     {
         $this->db= $db;
     }
@@ -1801,9 +1800,10 @@ class ExpenseReportLine
  *    @param    int     $selected       preselect status
  *    @param    string  $htmlname       Name of HTML select
  *    @param    int     $useempty       1=Add empty line
+ *    @param    int     $useshortlabel  Use short labels
  *    @return   string                  HTML select with status
  */
-function select_expensereport_statut($selected='',$htmlname='fk_statut',$useempty=1)
+function select_expensereport_statut($selected='',$htmlname='fk_statut',$useempty=1, $useshortlabel=0)
 {
     global $db, $langs;
 
@@ -1811,7 +1811,9 @@ function select_expensereport_statut($selected='',$htmlname='fk_statut',$useempt
 
     print '<select class="flat" name="'.$htmlname.'">';
     if ($useempty) print '<option value="-1">&nbsp;</option>';
-    foreach ($tmpep->statuts as $key => $val)
+    $arrayoflabels=$tmpep->statuts;
+    if ($useshortlabel) $arrayoflabels=$tmpep->statuts_short;
+    foreach ($arrayoflabels as $key => $val)
     {
         if ($selected != '' && $selected == $key)
         {

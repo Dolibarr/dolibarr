@@ -663,6 +663,5 @@ else
 	$i++;
 }
 
-$db->close();
-
 llxFooter();
+$db->close();

@@ -250,7 +250,7 @@ if ($action == 'create')
 	// Employee
 	print '<tr><td>';
 	print fieldLabel('Employee','fk_user',1).'</td><td>';
-	print $form->select_dolusers(GETPOST('fk_user','int'),'fk_user',1);
+	print $form->select_dolusers(GETPOST('fk_user','int'), 'fk_user', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 	print '</td></tr>';
 
 	// Label

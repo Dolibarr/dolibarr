@@ -83,7 +83,7 @@ if ($action == 'add_payment')
         $amount = GETPOST('amount_capital') + GETPOST('amount_insurance') + GETPOST('amount_interest');
         if ($amount == 0)
         {
-            setEventMessage($langs->trans('ErrorNoPaymentDefined'), 'errors');
+            setEventMessages($langs->trans('ErrorNoPaymentDefined'), null, 'errors');
             $error++;
         }
 
@@ -109,7 +109,7 @@ if ($action == 'add_payment')
     		    $paymentid = $payment->create($user);
                 if ($paymentid < 0)
                 {
-                    setEventMessage($payment->error, 'errors');
+                    setEventMessages($payment->error, $payment->errors, 'errors');
                     $error++;
                 }
     		}
@@ -119,7 +119,7 @@ if ($action == 'add_payment')
                 $result = $payment->addPaymentToBank($user, 'payment_loan', '(LoanPayment)', GETPOST('accountid', 'int'), '', '');
                 if (! $result > 0)
                 {
-                    setEventMessage($payment->error, 'errors');
+                    setEventMessages($payment->error, $payment->errors, 'errors');
                     $error++;
                 }
             }
@@ -307,7 +307,5 @@ if ($_GET["action"] == 'create')
 	print "</form>\n";
 }
 
-
-$db->close();
-
 llxFooter();
+$db->close();

@@ -87,10 +87,10 @@ if (! $user->rights->accounting->ventilation->dispatch)
 	accessforbidden();
 
 $formventilation = new FormVentilation($db);
-
 $accounting = new AccountingAccount($db);
-$aarowid_s = $accounting->fetch('', ACCOUNTING_SERVICE_SOLD_ACCOUNT);
-$aarowid_p = $accounting->fetch('', ACCOUNTING_PRODUCT_SOLD_ACCOUNT);
+$aarowid_s = $accounting->fetch('', $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT,1);
+$aarowid_p = $accounting->fetch('',$conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT,1);
+
 
 // Purge search criteria
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) {
@@ -278,6 +278,8 @@ if ($result) {
 		
 		$code_sell_p_notset = '';
 		$objp->aarowid_suggest = $objp->aarowid;
+		
+		
 		if (! empty($objp->code_sell)) {
 			$objp->code_sell_p = $objp->code_sell;
 		} else {
@@ -290,12 +292,14 @@ if ($result) {
 		}
 		if ($objp->type_l == 1) {
 			$objp->code_sell_l = (! empty($conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT : $langs->trans("CodeNotDef"));
-			if ($objp->aarowid == '')
+			if ($objp->aarowid == '') {
 				$objp->aarowid_suggest = $aarowid_s;
+			}
 		} elseif ($objp->type_l == 0) {
 			$objp->code_sell_l = (! empty($conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT : $langs->trans("CodeNotDef"));
-			if ($objp->aarowid == '')
+			if ($objp->aarowid == '') {
 				$objp->aarowid_suggest = $aarowid_p;
+			}
 		}
 		if ($objp->code_sell_l != $objp->code_sell_p)
 			$code_sell_p_l_differ = 'color:red';
@@ -311,10 +315,12 @@ if ($result) {
 		$product_static->id = $objp->product_id;
 		$product_static->type = $objp->type;
 		print '<td>';
+		
 		if ($product_static->id)
 			print $product_static->getNomUrl(1);
 		else
 			print '&nbsp;';
+		
 		print '</td>';
 		
 		print '<td style="' . $code_sell_p_l_differ . '">' . dol_trunc($objp->product_label, 24) . '</td>';

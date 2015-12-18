@@ -557,10 +557,10 @@ class Task extends CommonObject
      * @param	string	$filteronprojstatus	Filter on project status
      * @param	string	$morewherefilter	Add more filter into where SQL request
      * @param	string	$filteronprojuser	Filter on user that is a contact of project
-     * @param	string	$filterontaskuse	Filter on user assigned to task
+     * @param	string	$filterontaskuser	Filter on user assigned to task
      * @return 	array						Array of tasks
      */
-    function getTasksArray($usert=0, $userp=0, $projectid=0, $socid=0, $mode=0, $filteronprojref='', $filteronprojstatus=-1, $morewherefilter='',$filteronprojuser=0,$filterontaskuse=0)
+    function getTasksArray($usert=0, $userp=0, $projectid=0, $socid=0, $mode=0, $filteronprojref='', $filteronprojstatus=-1, $morewherefilter='',$filteronprojuser=0,$filterontaskuser=0)
     {
         global $conf;
 
@@ -575,25 +575,60 @@ class Task extends CommonObject
         if ($mode == 0)
         {
             $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
+            if ($filteronprojuser > 0)
+            {
+                $sql.= ", ".MAIN_DB_PREFIX."element_contact as ec";
+                $sql.= ", ".MAIN_DB_PREFIX."c_type_contact as ctc";
+            }
             $sql.= ", ".MAIN_DB_PREFIX."projet_task as t";
+            if ($filterontaskuser > 0)
+            {
+                $sql.= ", ".MAIN_DB_PREFIX."element_contact as ec2";
+                $sql.= ", ".MAIN_DB_PREFIX."c_type_contact as ctc2";
+            }
             $sql.= " WHERE p.entity = ".$conf->entity;
             $sql.= " AND t.fk_projet = p.rowid";
         }
         elseif ($mode == 1)
         {
             $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
-            $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t on t.fk_projet = p.rowid";
+            if ($filteronprojuser > 0)
+            {
+                $sql.= ", ".MAIN_DB_PREFIX."element_contact as ec";
+                $sql.= ", ".MAIN_DB_PREFIX."c_type_contact as ctc";
+            }
+            if ($filterontaskuser > 0)
+            {
+                $sql.= ", ".MAIN_DB_PREFIX."projet_task as t";
+                $sql.= ", ".MAIN_DB_PREFIX."element_contact as ec2";
+                $sql.= ", ".MAIN_DB_PREFIX."c_type_contact as ctc2";
+            }
+            else 
+            {
+                $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t on t.fk_projet = p.rowid";
+            }
             $sql.= " WHERE p.entity = ".$conf->entity;
         }
         else return 'BadValueForParameterMode';
 
-        if ($filteronprojuser)
+        if ($filteronprojuser > 0)
         {
-			// TODO
+            $sql.= " AND p.rowid = ec.element_id";
+            $sql.= " AND ctc.rowid = ec.fk_c_type_contact";
+            $sql.= " AND ctc.element = 'project'";
+            $sql.= " AND ec.fk_socpeople = ".$filteronprojuser;
+            $sql.= " AND ec.statut = 4";
+            $sql.= " AND ctc.source = 'internal'";
         }
-        if ($filterontaskuser)
+        if ($filterontaskuser > 0)
         {
-			// TODO
+            $sql.= " AND t.fk_projet = p.rowid";
+            $sql.= " AND p.rowid = ec2.element_id";
+            $sql.= " AND ctc2.rowid = ec2.fk_c_type_contact";
+            $sql.= " AND ctc2.element = 'project_task'";
+            $sql.= " AND ec2.fk_socpeople = ".$filterontaskuser;
+            $sql.= " AND ec2.statut = 4";
+            $sql.= " AND ctc2.source = 'internal'";
         }
         if ($socid)	$sql.= " AND p.fk_soc = ".$socid;
         if ($projectid) $sql.= " AND p.rowid in (".$projectid.")";
@@ -665,15 +700,16 @@ class Task extends CommonObject
     }
 
     /**
-     * Return list of roles for a user for each projects or each tasks (or a particular project or task).
+     * Return list of roles for a user for each projects or each tasks (or a particular project or a particular task).
      *
-     * @param	User	$userp			Return roles on project for this internal user (task id can't be defined)
-     * @param	User	$usert			Return roles on task for this internal user
-     * @param 	int		$projectid		Project id list separated with , to filter on project
-     * @param 	int		$taskid			Task id to filter on a task
-     * @return 	array					Array (projectid => 'list of roles for project' or taskid => 'list of roles for task')
+     * @param	User	$userp			      Return roles on project for this internal user. If set, usert and taskid must not be defined.
+     * @param	User	$usert			      Return roles on task for this internal user. If set userp must not be defined.
+     * @param 	int		$projectid		      Project id list separated with , to filter on project
+     * @param 	int		$taskid			      Task id to filter on a task
+     * @param	string	$filteronprojstatus	  Filter on project status if userp is set. Not used if userp not defined.
+     * @return 	array					      Array (projectid => 'list of roles for project' or taskid => 'list of roles for task')
      */
-    function getUserRolesForProjectsOrTasks($userp,$usert,$projectid='',$taskid=0)
+    function getUserRolesForProjectsOrTasks($userp, $usert, $projectid='', $taskid=0, $filteronprojstatus=-1)
     {
         $arrayroles = array();
 
@@ -694,10 +730,12 @@ class Task extends CommonObject
         /* Liste des taches et role sur les projets ou taches */
         $sql = "SELECT pt.rowid as pid, ec.element_id, ctc.code, ctc.source";
         if ($userp) $sql.= " FROM ".MAIN_DB_PREFIX."projet as pt";
-        if ($usert) $sql.= " FROM ".MAIN_DB_PREFIX."projet_task as pt";
+        if ($usert) $sql.= " FROM ".MAIN_DB_PREFIX."projet as p, ".MAIN_DB_PREFIX."projet_task as pt";
         $sql.= ", ".MAIN_DB_PREFIX."element_contact as ec";
         $sql.= ", ".MAIN_DB_PREFIX."c_type_contact as ctc";
         $sql.= " WHERE pt.rowid = ec.element_id";
+        if ($userp && $filteronprojstatus > -1) $sql.= " AND pt.fk_statut = ".$filteronprojstatus;
+        if ($usert && $filteronprojstatus > -1) $sql.= " AND pt.fk_projet = p.rowid AND p.fk_statut = ".$filteronprojstatus;
         if ($userp) $sql.= " AND ctc.element = 'project'";
         if ($usert) $sql.= " AND ctc.element = 'project_task'";
         $sql.= " AND ctc.rowid = ec.fk_c_type_contact";

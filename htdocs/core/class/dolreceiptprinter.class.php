@@ -80,7 +80,7 @@
  * <dol_print_customer_points>                      Print customer points
  * <dol_print_order_points>                         Print number of points for this order
  *
- * Conditional code at line start (if…then Print)
+ * Conditional code at line start (ifï¿½then Print)
  * <dol_print_if_customer>                          Print the line IF a customer is affected to the order
  * <dol_print_if_vendor>                            Print the line IF a vendor is affected to the order
  * <dol_print_if_happy_hour>                        Print the line IF Happy Hour
@@ -520,8 +520,12 @@ class dolReceiptPrinter extends Escpos
         $ret = $this->InitPrinter($printerid);
         if ($ret>0) {
             setEventMessages($this->error, $this->errors, 'errors');
-        } else {
-            for ($line=0; $line < count($vals); $line++) {
+        } 
+        else 
+        {
+            $nboflines = count($vals);
+            for ($line=0; $line < $nboflines; $line++) 
+            {
                 switch ($vals[$line]['tag']) {
                     case 'DOL_ALIGN_CENTER':
                         $this->printer->setJustification(Escpos::JUSTIFY_CENTER);

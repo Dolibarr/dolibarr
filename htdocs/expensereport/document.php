@@ -108,7 +108,7 @@ if ($object->id)
 
 	// Ref
 	print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
-	print $form->showrefnav($object, 'id', $linkback, 1, 'rowid', 'ref', '');
+	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '');
 	print '</td></tr>';
 
 	// Societe

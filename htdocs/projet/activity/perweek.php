@@ -215,19 +215,18 @@ $taskstatic = new Task($db);
 $title=$langs->trans("TimeSpent");
 if ($mine) $title=$langs->trans("MyTimeSpent");
 
-//$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1);
-$projectsListId = $projectstatic->getProjectsAuthorizedForUser($usertoprocess,0,1);  // Return all project i have permission on. I want my tasks and some of my task may be on a public projet that is not my project
-
+$projectsListId = $projectstatic->getProjectsAuthorizedForUser($usertoprocess,0,1);  // Return all project i have permission on (assigned to me+public). I want my tasks and some of my task may be on a public projet that is not my project
+//var_dump($projectsListId);
 if ($id)
 {
     $project->fetch($id);
     $project->fetch_thirdparty();
 }
 
-$onlyopened=1;	// or -1
-$tasksarray=$taskstatic->getTasksArray(0,0,($project->id?$project->id:$projectsListId),$socid,0,'',$onlyopened);    // We want to see all task of opened project i am allowed to see, not only mine. Later only mine will be editable later.
-$projectsrole=$taskstatic->getUserRolesForProjectsOrTasks($usertoprocess,0,($project->id?$project->id:$projectsListId),0);
-$tasksrole=$taskstatic->getUserRolesForProjectsOrTasks(0,$usertoprocess,($project->id?$project->id:$projectsListId),0);
+$onlyopenedproject=1;	// or -1
+$tasksarray=$taskstatic->getTasksArray(0, 0, ($project->id?$project->id:0), $socid, 0, '', $onlyopenedproject);    // We want to see all task of opened project i am allowed to see, not only mine. Later only mine will be editable later.
+$projectsrole=$taskstatic->getUserRolesForProjectsOrTasks($usertoprocess, 0, ($project->id?$project->id:0), 0, $onlyopenedproject);
+$tasksrole=$taskstatic->getUserRolesForProjectsOrTasks(0, $usertoprocess, ($project->id?$project->id:0), 0, $onlyopenedproject);
 //var_dump($tasksarray);
 //var_dump($projectsrole);
 //var_dump($taskrole);
@@ -261,11 +260,11 @@ $head=project_timesheet_prepare_head($mode);
 dol_fiche_head($head, 'inputperweek', '', 0, 'task');
 
 // Show description of content
-if ($mine) print $langs->trans("MyTasksDesc").($onlyopened?' '.$langs->trans("OnlyOpenedProject"):'').'<br>';
+if ($mine) print $langs->trans("MyTasksDesc").($onlyopenedproject?' '.$langs->trans("OnlyOpenedProject"):'').'<br>';
 else
 {
-	if ($user->rights->projet->all->lire && ! $socid) print $langs->trans("ProjectsDesc").($onlyopened?' '.$langs->trans("OnlyOpenedProject"):'').'<br>';
-	else print $langs->trans("ProjectsPublicTaskDesc").($onlyopened?' '.$langs->trans("AlsoOnlyOpenedProject"):'').'<br>';
+	if ($user->rights->projet->all->lire && ! $socid) print $langs->trans("ProjectsDesc").($onlyopenedproject?' '.$langs->trans("OnlyOpenedProject"):'').'<br>';
+	else print $langs->trans("ProjectsPublicTaskDesc").($onlyopenedproject?' '.$langs->trans("AlsoOnlyOpenedProject"):'').'<br>';
 }
 if ($mine)
 {
@@ -317,7 +316,7 @@ $startday=dol_mktime(12, 0, 0, $startdayarray['first_month'], $startdayarray['fi
 
 for($i=0;$i<7;$i++)
 {
-	print '<td width="7%" align="center">'.dol_print_date($startday + ($i * 3600 * 24), '%a').'<br>'.dol_print_date($startday + ($i * 3600 * 24), 'day').'</td>';
+	print '<td width="7%" align="center" class="hide'.$i.'">'.dol_print_date($startday + ($i * 3600 * 24), '%a').'<br>'.dol_print_date($startday + ($i * 3600 * 24), 'day').'</td>';
 }
 print '<td class="liste_total"></td>';
 
@@ -328,18 +327,22 @@ $restrictviewformytask=(empty($conf->global->PROJECT_TIME_SHOW_TASK_NOT_ASSIGNED
 
 if (count($tasksarray) > 0)
 {
+    //var_dump($tasksarray);
+    //var_dump($tasksrole);
+    
 	$j=0;
+	$level=0;
 	projectLinesPerWeek($j, $firstdaytoshow, $usertoprocess, 0, $tasksarray, $level, $projectsrole, $tasksrole, $mine, $restrictviewformytask);
 
 	print '<tr class="liste_total">
                 <td class="liste_total" colspan="7" align="right">'.$langs->trans("Total").'</td>
-                <td class="liste_total" width="7%" align="center"><div id="totalDay[0]">&nbsp;</div></td>
-                <td class="liste_total" width="7%" align="center"><div id="totalDay[1]">&nbsp;</div></td>
-                <td class="liste_total" width="7%" align="center"><div id="totalDay[2]">&nbsp;</div></td>
-                <td class="liste_total" width="7%" align="center"><div id="totalDay[3]">&nbsp;</div></td>
-                <td class="liste_total" width="7%" align="center"><div id="totalDay[4]">&nbsp;</div></td>
-                <td class="liste_total" width="7%" align="center"><div id="totalDay[5]">&nbsp;</div></td>
-                <td class="liste_total" width="7%" align="center"><div id="totalDay[6]">&nbsp;</div></td>
+                <td class="liste_total hide0" width="7%" align="center"><div id="totalDay[0]">&nbsp;</div></td>
+                <td class="liste_total hide1" width="7%" align="center"><div id="totalDay[1]">&nbsp;</div></td>
+                <td class="liste_total hide2" width="7%" align="center"><div id="totalDay[2]">&nbsp;</div></td>
+                <td class="liste_total hide3" width="7%" align="center"><div id="totalDay[3]">&nbsp;</div></td>
+                <td class="liste_total hide4" width="7%" align="center"><div id="totalDay[4]">&nbsp;</div></td>
+                <td class="liste_total hide5" width="7%" align="center"><div id="totalDay[5]">&nbsp;</div></td>
+                <td class="liste_total hide6" width="7%" align="center"><div id="totalDay[6]">&nbsp;</div></td>
                 <td class="liste_total"></td>
     </tr>';
 }

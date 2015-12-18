@@ -77,7 +77,7 @@ class Form
      * @param   string	$preselected	Name of Value to show/edit (not used in this function)
      * @param	object	$object			Object
      * @param	boolean	$perm			Permission to allow button to edit parameter. Set it to 0 to have a not edited field.
-     * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'numeric:99', 'text' or 'textarea:rows:cols', 'day' or 'datepicker', 'ckeditor:dolibarr_zzz:width:height:savemethod:1:rows:cols', 'select;xxx[:class]'...)
+     * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols', 'day' or 'datepicker', 'ckeditor:dolibarr_zzz:width:height:savemethod:1:rows:cols', 'select;xxx[:class]'...)
      * @param	string	$moreparam		More param to add on a href URL
      * @return	string					HTML edit field
      */
@@ -122,7 +122,7 @@ class Form
      * @param	string	$value			Value to show/edit
      * @param	object	$object			Object
      * @param	boolean	$perm			Permission to allow button to edit parameter
-     * @param	string	$typeofdata		Type of data ('string' by default, 'amount', 'email', 'numeric:99', 'text' or 'textarea:rows:cols', 'day' or 'datepicker', 'ckeditor:dolibarr_zzz:width:height:savemethod:toolbarstartexpanded:rows:cols', 'select:xxx'...)
+     * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols', 'day' or 'datepicker', 'ckeditor:dolibarr_zzz:width:height:savemethod:toolbarstartexpanded:rows:cols', 'select:xxx'...)
      * @param	string	$editvalue		When in edit mode, use this value as $value instead of value (for example, you can provide here a formated price instead of value). Use '' to use same than $value
      * @param	object	$extObject		External object
      * @param	mixed	$custommsg		String or Array of custom messages : eg array('success' => 'MyMessage', 'error' => 'MyMessage')
@@ -154,10 +154,15 @@ class Form
                 $ret.='<input type="hidden" name="id" value="'.$object->id.'">';
                 $ret.='<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
                 $ret.='<tr><td>';
-                if (preg_match('/^(string|email|numeric|amount)/',$typeofdata))
+                if (preg_match('/^(string|email)/',$typeofdata))
                 {
                     $tmp=explode(':',$typeofdata);
                     $ret.='<input type="text" id="'.$htmlname.'" name="'.$htmlname.'" value="'.($editvalue?$editvalue:$value).'"'.($tmp[1]?' size="'.$tmp[1].'"':'').'>';
+                }
+                else if (preg_match('/^(numeric|amount)/',$typeofdata))
+                {
+                    $tmp=explode(':',$typeofdata);
+                    $ret.='<input type="text" id="'.$htmlname.'" name="'.$htmlname.'" value="'.price(price2num($editvalue?$editvalue:$value)).'"'.($tmp[1]?' size="'.$tmp[1].'"':'').'>';
                 }
                 else if (preg_match('/^text/',$typeofdata) || preg_match('/^note/',$typeofdata))
                 {
@@ -203,8 +208,8 @@ class Form
             }
             else
 			{
-				if ($typeofdata == 'email')   $ret.=dol_print_email($value,0,0,0,0,1);
-                elseif ($typeofdata == 'amount')   $ret.=($value != '' ? price($value,'',$langs,0,-1,-1,$conf->currency) : '');
+				if (preg_match('/^(email)/',$typeofdata))              $ret.=dol_print_email($value,0,0,0,0,1);
+                elseif (preg_match('/^(amount|numeric)/',$typeofdata)) $ret.=($value != '' ? price($value,'',$langs,0,-1,-1,$conf->currency) : '');
                 elseif (preg_match('/^text/',$typeofdata) || preg_match('/^note/',$typeofdata))  $ret.=dol_htmlentitiesbr($value);
                 elseif ($typeofdata == 'day' || $typeofdata == 'datepicker') $ret.=dol_print_date($value,'day');
                 elseif ($typeofdata == 'dayhour' || $typeofdata == 'datehourpicker') $ret.=dol_print_date($value,'dayhour');
@@ -477,6 +482,72 @@ class Form
         return $this->textwithtooltip($text, $htmltext, 2, $direction, $img, $extracss, $notabs, '', $noencodehtmltext);
     }
 
+    /**
+     * Generate select HTML to choose massaction
+     * 
+     * @param	string	$selected		Selected value
+     * @param	int		$arrayofaction	array('code'=>'label', ...)
+     * @return	string					Select list
+     */
+    function selectMassAction($selected, $arrayofaction)
+    {
+    	global $conf,$langs,$hookmanager;
+    	
+    	if (count($arrayofaction) == 0) return;
+    	
+    	$disabled=0;
+    	$ret='<div class="centpercent center"><select class="flat hideobject massaction massactionselect" name="massaction"'.($disabled?' disabled="disabled"':'').'>';
+    	$ret.='<option value="0"'.($disabled?' disabled="disabled"':'').'>-- '.$langs->trans("SelectAction").' --</option>';
+    	foreach($arrayofaction as $code => $label)
+    	{
+    		$ret.='<option value="'.$code.'"'.($disabled?' disabled="disabled"':'').'>'.$label.'</option>';
+    	}
+    	$ret.='</select>';
+    	$ret.='<input type="submit" name="confirmmassaction" disabled="disabled" class="button hideobject massaction massactionconfirmed" value="'.dol_escape_htmltag($langs->trans("Confirm")).'">';
+    	$ret.='</div>';
+    	
+    	$ret.='<!-- JS CODE TO ENABLE mass action select -->
+		<script type="text/javascript">
+    	jQuery(document).ready(function () {
+    		function initCheckForSelect()
+    		{
+    			atleastoneselected=0;
+	    		jQuery(".checkforselect").each(function( index ) {
+	  				/* console.log( index + ": " + $( this ).text() ); */
+	  				if ($(this).is(\':checked\')) atleastoneselected++;
+	  			});
+	  			console.log(atleastoneselected);
+	  			if (atleastoneselected)
+	  			{
+	  				jQuery(".massaction").show();
+	  			}
+	  			else
+	  			{
+	  				jQuery(".massaction").hide();
+	  			}
+    		}
+    		initCheckForSelect();
+    		jQuery(".checkforselect").click(function() {
+    			initCheckForSelect();
+	  		});
+	  		jQuery(".massactionselect").change(function() {
+	  			console.log( $( this ).val() );
+	  			if ($(this).val() != \'0\')
+	  			{
+	  				jQuery(".massactionconfirmed").prop(\'disabled\', false);
+	  			}
+	  			else
+	  			{
+	  				jQuery(".massactionconfirmed").prop(\'disabled\', true);
+	  			}
+	  		});
+    	});
+		</script>
+    	';
+    	
+    	return $ret;
+    }
+    
     /**
      *  Return combo list of activated countries, into language of user
      *
@@ -1261,10 +1332,11 @@ class Form
      *  @param	string	$show_every		0=default list, 1=add also a value "Everybody" at beginning of list
      *  @param	string	$enableonlytext	If option $enableonly is set, we use this text to explain into label why record is disabled. Not used if enableonly is empty.
      *  @param	string	$morecss		More css
+     *  @param  int     $noactive       Show only active users (this will also happened whatever is this option if USER_HIDE_INACTIVE_IN_COMBOBOX is on). 
      * 	@return	string					HTML select string
      *  @see select_dolgroups
      */
-    function select_dolusers($selected='', $htmlname='userid', $show_empty=0, $exclude='', $disabled=0, $include='', $enableonly='', $force_entity=0, $maxlength=0, $showstatus=0, $morefilter='', $show_every=0, $enableonlytext='', $morecss='')
+    function select_dolusers($selected='', $htmlname='userid', $show_empty=0, $exclude='', $disabled=0, $include='', $enableonly='', $force_entity=0, $maxlength=0, $showstatus=0, $morefilter='', $show_every=0, $enableonlytext='', $morecss='', $noactive=0)
     {
         global $conf,$user,$langs;
 
@@ -1324,7 +1396,7 @@ class Form
         if (! empty($user->societe_id)) $sql.= " AND u.fk_soc = ".$user->societe_id;
         if (is_array($exclude) && $excludeUsers) $sql.= " AND u.rowid NOT IN ('".$excludeUsers."')";
         if (is_array($include) && $includeUsers) $sql.= " AND u.rowid IN ('".$includeUsers."')";
-        if (! empty($conf->global->USER_HIDE_INACTIVE_IN_COMBOBOX)) $sql.= " AND u.statut <> 0";
+        if (! empty($conf->global->USER_HIDE_INACTIVE_IN_COMBOBOX) || $noactive) $sql.= " AND u.statut <> 0";
         if (! empty($morefilter)) $sql.=" ".$morefilter;
         $sql.= " ORDER BY u.lastname ASC";
 
@@ -1945,8 +2017,8 @@ class Form
             {
                 $dur=array("h"=>$langs->trans("Hour"),"d"=>$langs->trans("Day"),"w"=>$langs->trans("Week"),"m"=>$langs->trans("Month"),"y"=>$langs->trans("Year"));
             }
-            $opt.= ' - '.$duration_value.' '.$langs->trans($dur[$duration_unit]);
-            $outval.=' - '.$duration_value.' '.$langs->transnoentities($dur[$duration_unit]);
+            $opt.= ' - '.$duration_value.' '.($dur[$duration_unit]?$langs->trans($dur[$duration_unit]):'');
+            $outval.=' - '.$duration_value.' '.($dur[$duration_unit]?$langs->transnoentities($dur[$duration_unit]):'');
         }
 
         $opt.= "</option>\n";
@@ -2643,7 +2715,7 @@ class Form
      *      @param  int		$maxlength      Max length of label
      * 		@return	void
      */
-    function select_types_paiements($selected='',$htmlname='paiementtype',$filtertype='',$format=0, $empty=0, $noadmininfo=0,$maxlength=0)
+    function select_types_paiements($selected='', $htmlname='paiementtype', $filtertype='', $format=0, $empty=0, $noadmininfo=0, $maxlength=0)
     {
         global $langs,$user;
 
@@ -4231,7 +4303,7 @@ class Form
                 $retstring.='<option value="'.$hour.'"'.(($hour == $shour)?' selected':'').'>'.$hour.(empty($conf->dol_optimize_smallscreen)?'':'H').'</option>';
             }
             $retstring.='</select>';
-            if (empty($conf->dol_optimize_smallscreen)) $retstring.=":";
+            if ($m && empty($conf->dol_optimize_smallscreen)) $retstring.=":";
         }
 
         if ($m)
@@ -4954,7 +5026,7 @@ class Form
 		if (((! is_array($restrictlinksto)) || in_array('order',$restrictlinksto))
 			&& ! empty($conf->commande->enabled))
 		{
-			$linktoelem.=($linktoelem?' &nbsp; ':'').'<a href="#" id="linktoorder">' . $langs->trans('LinkedOrder') . '</a>';
+			$linktoelem.=($linktoelem?' &nbsp; ':'').'<a href="#linktoorder" id="linktoorder">' . $langs->trans('LinkedOrder') . '</a>';
 
 			print '
 				<script type="text/javascript" language="javascript">
@@ -5020,7 +5092,7 @@ class Form
 		if (((! is_array($restrictlinksto)) || in_array('supplier_order',$restrictlinksto))
 			&& ! empty($conf->fournisseur->enabled))
 		{
-			$linktoelem.=($linktoelem?' &nbsp; ':'').'<a href="#" id="linktoorder">' . $langs->trans('LinkedOrder') . '</a>';
+			$linktoelem.=($linktoelem?' &nbsp; ':'').'<a href="#linktoorder" id="linktoorder">' . $langs->trans('LinkedOrder') . '</a>';
 
 			print '
 			<script type="text/javascript" language="javascript">
@@ -5094,7 +5166,7 @@ class Form
      *	@param	string		$value			Pre-selected value
      *	@param	int			$option			0 return yes/no, 1 return 1/0
      *	@param	bool		$disabled		true or false
-     *  @param	useempty	$useempty		1=Add empty line
+     *  @param	int      	$useempty		1=Add empty line
      *	@return	mixed						See option
      */
     function selectyesno($htmlname,$value='',$option=0,$disabled=false,$useempty='')

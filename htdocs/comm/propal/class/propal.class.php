@@ -2901,8 +2901,7 @@ class Propal extends CommonObject
 
 
 /**
- *	\class      PropaleLigne
- *	\brief      Class to manage commercial proposal lines
+ *	Class to manage commercial proposal lines
  */
 class PropaleLigne  extends CommonObjectLine
 {

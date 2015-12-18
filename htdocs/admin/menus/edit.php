@@ -466,7 +466,5 @@ elseif ($action == 'edit')
     print '<br>';
 }
 
-
-$db->close();
-
 llxFooter();
+$db->close();

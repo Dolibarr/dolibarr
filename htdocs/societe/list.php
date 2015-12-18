@@ -514,7 +514,7 @@ if ($resql)
 	 	{
 		 	$moreforfilter.='<div class="divsearchfield">';
 		 	$moreforfilter.=$langs->trans('SalesRepresentatives'). ': ';
-			$moreforfilter.=$formother->select_salesrepresentatives($search_sale,'search_sale',$user);
+			$moreforfilter.=$formother->select_salesrepresentatives($search_sale,'search_sale',$user, 0, 1, 'maxwidth300');
 			$moreforfilter.='</div>';
 	 	}
 	}
@@ -634,14 +634,14 @@ if ($resql)
     if (! empty($arrayfields['s.town']['checked']))
     {
         print '<td class="liste_titre">';
-    	print '<input class="flat" size="8" type="text" name="search_town" value="'.dol_escape_htmltag($search_town).'">';
+    	print '<input class="flat" size="6" type="text" name="search_town" value="'.dol_escape_htmltag($search_town).'">';
     	print '</td>';
     }
 	// Zip
     if (! empty($arrayfields['s.zip']['checked']))
     {
         print '<td class="liste_titre">';
-    	print '<input class="flat" size="8" type="text" name="search_zip" value="'.dol_escape_htmltag($search_zip).'">';
+    	print '<input class="flat" size="4" type="text" name="search_zip" value="'.dol_escape_htmltag($search_zip).'">';
     	print '</td>';
     }
     // Country
@@ -966,21 +966,21 @@ if ($resql)
         // Date creation
         if (! empty($arrayfields['s.datec']['checked']))
         {
-            print '<td align="center">';
+            print '<td align="center" class="nowrap">';
             print dol_print_date($db->jdate($obj->date_creation), 'dayhour');
             print '</td>';
         }
         // Date modification
         if (! empty($arrayfields['s.tms']['checked']))
         {
-            print '<td align="center">';
+            print '<td align="center" class="nowrap">';
             print dol_print_date($db->jdate($obj->date_update), 'dayhour');
             print '</td>';
         }
 	    // Status
         if (! empty($arrayfields['s.status']['checked']))
         {
-            print '<td align="center">'.$companystatic->getLibStatut(3).'</td>';
+            print '<td align="center" class="nowrap">'.$companystatic->getLibStatut(3).'</td>';
         }
         // Action column
         print '<td></td>';

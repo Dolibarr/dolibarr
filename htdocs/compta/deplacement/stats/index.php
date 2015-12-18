@@ -242,7 +242,7 @@ print '</td></tr>';
 print '<tr><td>'.$langs->trans("User").'</td><td>';
 $include='';
 if (empty($user->rights->deplacement->readall) && empty($user->rights->deplacement->lire_tous)) $include='hierarchy';
-print $form->select_dolusers($userid,'userid',1,'',0,$include);
+print $form->select_dolusers($userid, 'userid', 1, '', 0, $include, '', 0, 0, 0, '', 0, '', 'maxwidth300');
 print '</td></tr>';
 // Year
 print '<tr><td>'.$langs->trans("Year").'</td><td>';

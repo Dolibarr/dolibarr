@@ -244,10 +244,10 @@ class FormActions
      *
      *  @param	string		$selected       Type pre-selected (can be 'manual', 'auto' or 'AC_xxx')
      *  @param  string		$htmlname       Nom champ formulaire
-     *  @param	string		$excludetype	Type to exclude
-     *  @param	string		$onlyautoornot	Group list by auto events or not: We keep only the 2 generic lines (AC_OTH and AC_OTH_AUTO)
+     *  @param	string		$excludetype	A type to exclude ('systemauto', 'system', '')
+     *  @param	string		$onlyautoornot	1=Group all type AC_XXX into 1 line AC_MANUAL. 0=Keep details of type
      *  @param	int		    $hideinfohelp	1=Do not show info help
-     *  @param  int		    $multiselect    1=Allow multiselect of action type for filter or search
+     *  @param  int		    $multiselect    1=Allow multiselect of action type
      * 	@return	void
      */
     function select_type_actions($selected='',$htmlname='actioncode',$excludetype='',$onlyautoornot=0, $hideinfohelp=0, $multiselect=0)
@@ -270,16 +270,15 @@ class FormActions
 
        	if (! empty($conf->global->AGENDA_ALWAYS_HIDE_AUTO)) unset($arraylist['AC_OTH_AUTO']);
 
-		if ($multiselect==1) 
+		if (! empty($multiselect)) 
 		{
 	        if(!is_array($selected) && !empty($selected)) $selected = explode(',', $selected);
-			print $form->multiselectarray($htmlname, $arraylist, $selected, 0, 0, '', 0, 0);
-			
+			print $form->multiselectarray($htmlname, $arraylist, $selected, 0, 0, 'centpercent', 0, 0);
 		}
-		else {
+		else 
+		{
 			print $form->selectarray($htmlname, $arraylist, $selected);
 		}
-        
 		
         if ($user->admin && empty($onlyautoornot) && empty($hideinfohelp)) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
     }

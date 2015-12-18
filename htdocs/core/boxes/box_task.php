@@ -104,7 +104,7 @@ class box_task extends ModeleBoxes
                     $this->info_box_contents[$i][] = array(
                         'td' => 'align="right"',
                         'text' => $objp->nb."&nbsp;".$langs->trans("Tasks"),
-                        'url' => DOL_URL_ROOT."/projet/tasks/index.php?leftmenu=projects&viewstatut=".$objp->fk_statut,
+                        'url' => DOL_URL_ROOT."/projet/tasks/list.php?leftmenu=projects&viewstatut=".$objp->fk_statut,
                     );
 					$totalnb += $objp->nb;
 					$this->info_box_contents[$i][] = array('td' => 'align="right"', 'text' => ConvertSecondToTime($objp->plannedtot,'all',25200,5));

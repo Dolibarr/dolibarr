@@ -78,7 +78,7 @@ if ($action == 'add' && $user->rights->stock->creer)
 		$id = $object->create($user);
 		if ($id > 0)
 		{
-			setEventMessage($langs->trans("RecordSaved"));
+			setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 
 			if (! empty($backtopage))
 			{
@@ -94,11 +94,12 @@ if ($action == 'add' && $user->rights->stock->creer)
 		else
 		{
 			$action = 'create';
-			setEventMessage($object->error, 'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
-	else {
-		setEventMessage($langs->trans("ErrorWarehouseRefRequired"), 'errors');
+	else 
+	{
+		setEventMessages($langs->trans("ErrorWarehouseRefRequired"), null, 'errors');
 		$action="create";   // Force retour sur page creation
 	}
 }
@@ -116,7 +117,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->stock->su
 	}
 	else
 	{
-		setEventMessage($object->error, 'errors');
+		setEventMessages($object->error, $object->errors, 'errors');
 		$action='';
 	}
 }
@@ -143,13 +144,13 @@ if ($action == 'update' && $cancel <> $langs->trans("Cancel"))
 		else
 		{
 			$action = 'edit';
-			setEventMessage($object->error, 'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 	else
 	{
 		$action = 'edit';
-		setEventMessage($object->error, 'errors');
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
 

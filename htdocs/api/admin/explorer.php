@@ -162,4 +162,5 @@ foreach($listofapis['v1'] as $key => $val)
 }
 
 llxFooter();
+$db->close();
 
