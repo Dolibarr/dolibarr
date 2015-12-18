@@ -48,7 +48,6 @@ RefusedReason=Ablehnungsgrund
 RefusedInvoicing=Ablehnung in Rechnung stellen
 NoInvoiceRefused=Ablehnung nicht in Rechnung stellen
 InvoiceRefused=Rechnung abgelehnt (Abweisung dem Kunden berechnen)
-Status=Status
 StatusUnknown=Unbekannt
 StatusWaiting=Wartend
 StatusTrans=Gesendet

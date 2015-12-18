@@ -56,7 +56,6 @@ ReportByCustomers=گزارش های مشتریان
 ReportByQuarter=گزارش های نرخ
 CivilityCode=کد تمدن
 RegisteredOffice=دفتر ثبت نام
-Name=نام
 Lastname=نام خانوادگی
 Firstname=نام
 PostOrFunction=ارسال / تابع
@@ -64,6 +63,7 @@ UserTitle=عنوان
 Surname=نام خانوادگی / شبه
 Address=نشانی
 State=ایالت / استان
+StateShort=State
 Region=منطقه
 Country=کشور
 CountryCode=کد کشور
@@ -88,8 +88,10 @@ VATIsNotUsed=مالیات بر ارزش افزوده استفاده نمی شو�
 CopyAddressFromSoc=آدرس با آدرس thirdparty را پر کنید
 NoEmailDefined=هیچ ایمیل تعریف شده وجود دارد
 ##### Local Taxes #####
+LocalTax1IsUsed=Use second tax
 LocalTax1IsUsedES= RE استفاده شده است
 LocalTax1IsNotUsedES= RE استفاده نمی شود
+LocalTax2IsUsed=Use third tax
 LocalTax2IsUsedES= IRPF استفاده شده است
 LocalTax2IsNotUsedES= IRPF استفاده نمی شود
 LocalTax1ES=RE
@@ -109,7 +111,7 @@ ProfId2Short=پروفسور شناسه (شماره) 2
 ProfId3Short=پروفسور شناسه (شماره) 3
 ProfId4Short=پروفسور شناسه (شماره) 4
 ProfId5Short=پروفسور شناسه (شماره) 5
-ProfId6Short=پروفسور شناسه (شماره) 5
+ProfId6Short=Prof. id 6
 ProfId1=ID حرفه ای 1
 ProfId2=ID حرفه ای 2
 ProfId3=ID حرفه ای 3
@@ -284,6 +286,8 @@ PersonalInformations=اطلاعات شخصی
 AccountancyCode=کد حسابداری
 CustomerCode=کد مشتری
 SupplierCode=کد تامین کننده
+CustomerCodeShort=Customer code
+SupplierCodeShort=Supplier code
 CustomerAccount=حساب کاربری مشتری
 SupplierAccount=حساب تامین کننده
 CustomerCodeDesc=کد مشتری، منحصر به فرد برای همه مشتریان
@@ -302,7 +306,7 @@ ListOfCustomersContacts=فهرست تماس مشتری
 ListOfSuppliersContacts=لیست مخاطبین با عرضه کننده کالا
 ListOfCompanies=فهرست شرکت
 ListOfThirdParties=فهرست اشخاص ثالث
-ShowCompany=نمایش شرکت
+ShowCompany=Show thirdparty
 ShowContact=نمایش تماس
 ContactsAllShort=همه (بدون فیلتر)
 ContactType=تماس با نوع
@@ -414,7 +418,7 @@ UniqueThirdParties=مجموع اشخاص ثالث منحصر به فرد
 InActivity=باز
 ActivityCeased=بسته
 ActivityStateFilter=وضعیت فعالیت
-ProductsIntoElements=لیست محصولات را به٪ s
+ProductsIntoElements=List of products/services into %s
 CurrentOutstandingBill=لایحه برجسته کنونی
 OutstandingBill=حداکثر. برای لایحه برجسته
 OutstandingBillReached=رسیدم حداکثر. برای لایحه برجسته

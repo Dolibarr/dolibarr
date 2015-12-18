@@ -69,7 +69,7 @@ ProductQtyInCustomersOrdersRunning=Quantitat de comandes de clients obertes
 ProductQtyInSuppliersOrdersRunning=Quantitat de comandes a proveïdors obertes
 ProductQtyInShipmentAlreadySent=Quantitat de productes de comandes de client obertes i enviades
 ProductQtyInSuppliersShipmentAlreadyRecevied=Quantitat de comandes a proveïdors ja rebudes
-NoProductToShipFoundIntoStock=No s'ha trobat cap producte per enviar al magatzem <b>%s</b>. Corregeix l'estoc o torna a triar un altre magatzem.
+NoProductToShipFoundIntoStock=No s'ha trobat el producte per enviar en el magatzem <b>%s</b>. Corregeix l'estoc o torna enrera per triar un altre magatzem.
 
 # Sending methods
 SendingMethodCATCH=Recollit pel client

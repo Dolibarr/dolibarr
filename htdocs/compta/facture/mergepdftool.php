@@ -732,7 +732,7 @@ if ($resql)
 		$formmail->withtocc=1;
 		$formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
 		$formmail->withtopic=$langs->transnoentities($topicmail, '__REF__', '__REFCLIENT__');
-		$formmail->withfile=$langs->trans("EachInvoiceWillBeAttachedToEmail");
+		$formmail->withfile=$langs->trans("OnlyPDFattachmentSupported");
 		$formmail->withbody=1;
 		$formmail->withdeliveryreceipt=1;
 		$formmail->withcancel=1;

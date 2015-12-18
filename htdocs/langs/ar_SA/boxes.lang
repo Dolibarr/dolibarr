@@ -58,7 +58,7 @@ BoxLastExpiredServices=%s مشاركة أقدم اتصالات مع خدمات �
 BoxTitleLastActionsToDo=ق ٪ الإجراءات الأخيرة للقيام
 BoxTitleLastContracts=%s العقود الماضية
 BoxTitleLastModifiedDonations=%s آخر تعديل التبرعات
-BoxTitleLastModifiedExpenses=%s آخر تعديل النفقات
+BoxTitleLastModifiedExpenses=Last %s modified expense reports
 BoxGlobalActivity=Global activity (invoices, proposals, orders)
 FailedToRefreshDataInfoNotUpToDate=فشلت في تجديد تدفق RSS. اخر تحديث تاريخ : ٪ ق
 LastRefreshDate=تاريخ آخر تجديد

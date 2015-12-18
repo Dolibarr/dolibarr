@@ -1,0 +1,8 @@
+# Dolibarr language file - Source file is en_US - mails
+MailingModuleDescContactCompanies=Kontakte aller Geschäftspartner (Kunden, Leads, Lieferanten, ...)
+MailingModuleDescContactsCategories=Geschäftspartner-Kontakte (nach Kategorie)
+MailingModuleDescDolibarrContractsLinesExpired=Geschäftspartner mit abgelaufenen Vertragspositionen
+MailingModuleDescContactsByCompanyCategory=Kontakt über Geschäftspartner (durch Kategorie)
+MailingModuleDescContactsByFunction=Kontakt über Geschäftspartner (durch Position/Funktion)
+NbOfCompaniesContacts=Einzigartige Geschäftspartner-Kontakte
+NoNotificationsWillBeSent=Für dieses Ereignis und diesen Geschäftspartner sind keine Benachrichtigungen geplant

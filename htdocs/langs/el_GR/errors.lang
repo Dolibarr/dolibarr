@@ -3,8 +3,6 @@
 # No errors
 NoErrorCommitIsDone=Κανένα σφάλμα
 # Errors
-Error=Σφάλμα
-Errors=Λάθη
 ErrorButCommitIsDone=Σφάλματα που διαπιστώθηκαν αλλά παρόλα αυτά επικυρώνει
 ErrorBadEMail=%s email είναι λάθος
 ErrorBadUrl=%s url είναι λάθος
@@ -172,8 +170,11 @@ ErrorFieldMustBeANumeric=Field <b>%s</b> must be a numeric value
 ErrorFieldMustBeAnInteger=Field <b>%s</b> must be an integer
 ErrorMandatoryParametersNotProvided=Mandatory parameter(s) not provided
 ErrorOppStatusRequiredIfAmount=You set an estimated amount for this opportunity/lead. So you must also enter its status
+ErrorBadDefinitionOfMenuArrayInModuleDescriptor=Bad Definition Of Menu Array In Module Descriptor (bad value for key fk_menu)
+ErrorSavingChanges=An error has ocurred when saving the changes
 
 # Warnings
+WarningPasswordSetWithNoAccount=A password was set for this member. However, no user account was created. So this password is stored but can't be used to login to Dolibarr. It may be used by an external module/interface but if you don't need to define any login nor password for a member, you can disable option "Manage a login for each member" from Member module setup. If you need to manage a login but don't need any password, you can keep this field empty to avoid this warning. Note: Email can also be used as a login if the member is linked to a user.
 WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined
 WarningSafeModeOnCheckExecDir=Προειδοποίηση, PHP <b>safe_mode</b> επιλογή είναι τόσο εντολή αυτή πρέπει να αποθηκεύονται σε ένα κατάλογο που δηλώνονται από <b>safe_mode_exec_dir</b> παράμετρο php.
 WarningAllowUrlFopenMustBeOn=<b>Allow_url_fopen</b> παράμετρος πρέπει να είναι <b>ενεργοποιημένη</b> στο <b>php.ini</b> filer για το γεγονός ότι αυτή την ενότητα εργασίας εντελώς. Θα πρέπει να τροποποιήσετε αυτό το αρχείο χειροκίνητα.

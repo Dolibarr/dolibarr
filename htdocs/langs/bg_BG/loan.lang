@@ -1,53 +1,53 @@
 # Dolibarr language file - Source file is en_US - loan
-Loan=Loan
-Loans=Loans
-NewLoan=New Loan
-ShowLoan=Show Loan
-PaymentLoan=Loan payment
-ShowLoanPayment=Show Loan Payment
-Capital=Capital
-Insurance=Insurance
-Interest=Interest
+Loan=Заем
+Loans=Заеми
+NewLoan=Нов Заем
+ShowLoan=Показване на Заем
+PaymentLoan=Плащане на Заем
+ShowLoanPayment=Показване на плащането на Заем
+Capital=Капитал
+Insurance=Застраховка
+Interest=Лихва
 Nbterms=Number of terms
 LoanAccountancyCapitalCode=Accountancy code capital
 LoanAccountancyInsuranceCode=Accountancy code insurance
 LoanAccountancyInterestCode=Accountancy code interest
-LoanPayment=Loan payment
-ConfirmDeleteLoan=Confirm deleting this loan
-LoanDeleted=Loan Deleted Successfully
+LoanPayment=Плащане на заем
+ConfirmDeleteLoan=Потвърдете изтриването на този заем
+LoanDeleted=Заемът е изтрит успешно
 ConfirmPayLoan=Confirm classify paid this loan
-LoanPaid=Loan Paid
-ErrorLoanCapital=Loan amount has to be numeric and greater than zero.
-ErrorLoanLength=Loan length has to be numeric and greater than zero.
-ErrorLoanInterest=Annual interest has to be numeric and greater than zero.
+LoanPaid=Заем Платен
+ErrorLoanCapital=Сумата на заема трябва да бъде цифрена и по-голяма от нула.
+ErrorLoanLength=Продължителността на заема трябва да бъде цифрена или по-голяма от нула.
+ErrorLoanInterest=Годишната лихва трябва да бъде цифрена или по-голяма от нула.
 # Calc
-LoanCalc=Bank Loans Calculator
-PurchaseFinanceInfo=Purchase & Financing Information
-SalePriceOfAsset=Sale Price of Asset
-PercentageDown=Percentage Down
-LengthOfMortgage=Length of Mortgage
-AnnualInterestRate=Annual Interest Rate
-ExplainCalculations=Explain Calculations
-ShowMeCalculationsAndAmortization=Show me the calculations and amortization
-MortgagePaymentInformation=Mortgage Payment Information
-DownPayment=Down Payment
+LoanCalc=Калкулатор Банкови Заеми
+PurchaseFinanceInfo=Покупна и Финансова Информация
+SalePriceOfAsset=Продажна цена на Актив
+PercentageDown=Процетна Вноска
+LengthOfMortgage=Продъжителност на Ипотека
+AnnualInterestRate=Годишна Лихвена Тарифа
+ExplainCalculations=Обясняване на изчисленията
+ShowMeCalculationsAndAmortization=Покажате ми изчисленията и сумата за погашение
+MortgagePaymentInformation=Информация за Плащане на Ипотека
+DownPayment=Вноска
 DownPaymentDesc=The <b>down payment</b> = The price of the home multiplied by the percentage down divided by 100 (for 5% down becomes 5/100 or 0.05)
-InterestRateDesc=The <b>interest rate</b> = The annual interest percentage divided by 100
+InterestRateDesc=<b>Лихвената тарифа</b> = Годишният лихвен процент разделен на 100 
 MonthlyFactorDesc=The <b>monthly factor</b> = The result of the following formula
-MonthlyInterestRateDesc=The <b>monthly interest rate</b> = The annual interest rate divided by 12 (for the 12 months in a year)
+MonthlyInterestRateDesc=<b>Месечната лихвена тарифа</b> = Годишната лихвена тарифа разделена на 12 (за 12-те месеца в година)
 MonthTermDesc=The <b>month term</b> of the loan in months = The number of years you've taken the loan out for times 12
-MonthlyPaymentDesc=The montly payment is figured out using the following formula
+MonthlyPaymentDesc=Месечното плащане е базирано на следната формула
 AmortizationPaymentDesc=The <a href="#amortization">amortization</a> breaks down how much of your monthly payment goes towards the bank's interest, and how much goes into paying off the principal of your loan.
-AmountFinanced=Amount Financed
-AmortizationMonthlyPaymentOverYears=Amortization For Monthly Payment: <b>%s</b> over %s years
+AmountFinanced=Сума на финансиране
+AmortizationMonthlyPaymentOverYears=Сума за погасяване при Месечно Плащане: <b>%s</b> за %s години
 Totalsforyear=Totals for year
-MonthlyPayment=Monthly Payment
+MonthlyPayment=Месечно Плащане
 LoanCalcDesc=This <b>mortgage calculator</b> can be used to figure out monthly payments of a home mortgage loan, based on the home's sale price, the term of the loan desired, buyer's down payment percentage, and the loan's interest rate.<br> This calculator factors in PMI (Private Mortgage Insurance) for loans where less than 20% is put as a down payment. Also taken into consideration are the town property taxes, and their effect on the total monthly mortgage payment.<br>
-GoToInterest=%s will go towards INTEREST
-GoToPrincipal=%s will go towards PRINCIPAL
-YouWillSpend=You will spend %s on your house in year %s
+GoToInterest=%s ще върви към ЛИХВАТА
+GoToPrincipal=%s ще върви към ГЛАВНИЦАТА
+YouWillSpend=Ще спестите %s за Вашата къща за %s години
 # Admin
-ConfigLoan=Configuration of the module loan
+ConfigLoan=Конфигурация на модула заем
 LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Accountancy code capital by default
 LOAN_ACCOUNTING_ACCOUNT_INTEREST=Accountancy code interest by default
 LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Accountancy code insurance by default

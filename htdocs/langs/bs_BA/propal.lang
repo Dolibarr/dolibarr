@@ -53,6 +53,7 @@ ListOfProposals=Lista poslovnih prijedloga
 ActionsOnPropal=Events on proposal
 NoOpenedPropals=No open commercial proposals
 NoOtherOpenedPropals=No other open commercial proposals
+NoPropal=No commercial proposal
 RefProposal=Ref poslovnog prijedloga
 SendPropalByMail=Pošalji poslovni prijedlog e-mailom
 AssociatedDocuments=Documents associated with the proposal:

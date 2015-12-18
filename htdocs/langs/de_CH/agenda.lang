@@ -1,0 +1,3 @@
+# Dolibarr language file - Source file is en_US - agenda
+AgendaAutoActionDesc=Definieren Sie hier Termine zur automatischen Übernahme in den Terminkalender. Ist nichts aktviert (Standardmässig), umfasst der Terminkalender nur manuell eingetragene Termine.
+NewCompanyToDolibarr=Geschäftspartner erstellt

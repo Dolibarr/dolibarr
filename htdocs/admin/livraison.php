@@ -7,6 +7,7 @@
  * Copyright (C) 2005-2014 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2013 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2011-2015 Philippe Grand       <philippe.grand@atoo-net.com>
+ * Copyright (C) 2015			 Claudio Aschieri			<c.aschieri@19.coop>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +30,7 @@
  */
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/expedition.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/livraison/class/livraison.class.php';
 
 $langs->load("admin");
@@ -210,28 +212,10 @@ $form=new Form($db);
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("SendingsSetup"),$linkback,'title_setup');
 print '<br>';
+$head = expedition_admin_prepare_head();
 
+dol_fiche_head($head, 'receivings', $langs->trans("Receivings"), 0, 'sending');
 
-$h = 0;
-
-$head[$h][0] = DOL_URL_ROOT."/admin/confexped.php";
-$head[$h][1] = $langs->trans("Setup");
-$h++;
-
-if (! empty($conf->global->MAIN_SUBMODULE_EXPEDITION))
-{
-    $head[$h][0] = DOL_URL_ROOT."/admin/expedition.php";
-    $head[$h][1] = $langs->trans("Shipment");
-    $h++;
-}
-
-$head[$h][0] = DOL_URL_ROOT."/admin/livraison.php";
-$head[$h][1] = $langs->trans("Receivings");
-$hselected=$h;
-$h++;
-
-
-dol_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
 
 /*
  * Livraison numbering model

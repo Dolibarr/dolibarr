@@ -53,6 +53,7 @@ ListOfProposals=فهرست طرح های تجاری
 ActionsOnPropal=رویدادهای پیشنهاد
 NoOpenedPropals=No open commercial proposals
 NoOtherOpenedPropals=No other open commercial proposals
+NoPropal=No commercial proposal
 RefProposal=کد عکس طرح تجاری
 SendPropalByMail=ارسال پیشنهاد تجاری از طریق پست
 AssociatedDocuments=اسناد مرتبط با طرح:

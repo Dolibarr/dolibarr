@@ -1,4 +1,4 @@
-
+# Dolibarr language file - Source file is en_US - resource
 MenuResourceIndex=Zdroje
 MenuResourceAdd=Nový zdroj
 MenuResourcePlanning=Plánování zdrojů
@@ -17,6 +17,7 @@ ResourceFormLabel_description=Popis zdroje
 
 ResourcesLinkedToElement=Zdroje propojené s prvkem
 
+ShowResource=Show resource
 ShowResourcePlanning=Zobrazení plánování zdrojů
 GotoDate=Jdi na datum
 

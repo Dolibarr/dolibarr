@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is en_US - users
+# Dolibarr language file - Source file is en_US - salaries
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Standard Buchhaltungs-Konto für die Zahlung der Löhne/Gehälter
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Standard Buchhaltungs-Konto für Finanzaufwendungen
 Salary=Lohn

@@ -1,5 +1,4 @@
 # Dolibarr language file - en_US - Accounting Expert
-CHARSET=UTF-8
 ACCOUNTING_EXPORT_SEPARATORCSV=Column separator for export file
 ACCOUNTING_EXPORT_DATE=Date format for export file
 ACCOUNTING_EXPORT_PIECE=Export the number of piece
@@ -12,8 +11,6 @@ ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
 
 Accounting=Regnskab
 Globalparameters=Globale parametre
-Chartofaccounts=Kontoplan
-Fiscalyear=Finansår
 Menuaccount=Regnskabskonti
 Menuthirdpartyaccount=Trediepartskonti
 MenuTools=Værktøjer
@@ -33,23 +30,17 @@ Back=Returner
 
 Definechartofaccounts=Definer en kontoplan
 Selectchartofaccounts=Vælg en kontoplan
-Validate=Godkend
 Addanaccount=Tilføj en regnskabsmæssig konto
 AccountAccounting=Regnskabsmæssig konto
 AccountAccountingSuggest=Accounting account suggest
 Ventilation=Sammenbrud
-ToDispatch=Afsend
-Dispatched=Afsendt
 
 CustomersVentilation=Udspecificer kunder
 SuppliersVentilation=Udspecificer leverandører
 TradeMargin=Handelsforskel
 Reports=Reporter
 ByCustomerInvoice=Efter fakturakunder
-ByMonth=Efter måned
 NewAccount=By regnskabskonto
-Update=Opdater
-List=Liste
 Create=Opret
 CreateMvts=Create movement
 UpdateAccount=Ændring af en regnskabsmæssig konto
@@ -61,7 +52,6 @@ AccountBalanceByMonth=Kontobalance efter måned
 AccountingVentilation=Udspecificer regnskab
 AccountingVentilationSupplier=Udspecificer regnskab leverandører
 AccountingVentilationCustomer=Udspecificer regnskab kunder
-Line=Linje
 
 CAHTF=Total purchase supplier before tax
 InvoiceLines=Linjer af faktura, der skal fornyes
@@ -112,22 +102,19 @@ Docref=Reference
 Numerocompte=Konto
 Code_tiers=Trediepart
 Labelcompte=Kontonavn
-Debit=Debet
-Credit=Kredit
-Amount=Beløb
 Sens=Sens
 Codejournal=Journal
 
 DelBookKeeping=Slet posterne i kontoplanen
 
-SellsJournal=Salgskladde
-PurchasesJournal=Købskladde
 DescSellsJournal=Salgskladde
 DescPurchasesJournal=Købskladde
 BankJournal=Bankjournal
 DescBankJournal=Bankkladden herunder alle de typer af andre betalinger end kontanter
 CashJournal=Kontantkladde
 DescCashJournal=Kontantkladde herunder betalinger med kontanter
+FinanceJournal=Finance journal
+DescFinanceJournal=Finance journal including all the types of payments by bank account
 
 CashPayment=Kontant betaling
 
@@ -150,9 +137,6 @@ Pcgversion=Version af planen
 Pcgtype=Kontoens klasse
 Pcgsubtype=Kontoens underklasse
 Accountparent=Roden af kontoen
-Active=Erklæring
-
-NewFiscalYear=Nyt finansår
 
 DescVentilCustomer=Consult here the annual breakdown accounting of your invoices customers
 TotalVente=Total turnover before tax
