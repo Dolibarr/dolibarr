@@ -109,9 +109,10 @@ install:
   echo
 
 before_script:
- - echo Start travis
- - echo Current dir is `pwd`
- - echo Home dir is `echo ~`
+- |
+  echo Start travis
+  echo Current dir is `pwd`
+  echo Home dir is `echo ~`
 
 - |
   echo "Re-enabling Xdebug for PHP CodeSniffer and PHP Unit"
