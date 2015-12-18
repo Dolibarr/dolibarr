@@ -109,6 +109,10 @@ install:
   echo
 
 before_script:
+ - echo Start travis
+ - echo Current dir is `pwd`
+ - echo Home dir is `echo ~`
+
 - |
   echo "Re-enabling Xdebug for PHP CodeSniffer and PHP Unit"
   phpenv config-add /tmp/xdebug.ini
@@ -238,11 +242,11 @@ script:
   echo
 
 - |
-  #echo "Checking PHP syntax errors"
+  echo "Checking PHP syntax errors"
   # Ensure we catch errors
-  #set -e
-  #parallel-lint --exclude htdocs/includes --blame .
-  #set +e
+  set -e
+  parallel-lint --exclude htdocs/includes --blame .
+  set +e
   echo
 
 # TODO: dev/* checks
