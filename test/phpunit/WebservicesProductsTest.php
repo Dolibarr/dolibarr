@@ -40,7 +40,6 @@ if (empty($user->id))
 	$user->getrights();
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS=1;
-print 'DOL_MAIN_URL_ROOT='.DOL_MAIN_URL_ROOT;
 
 
 /**
