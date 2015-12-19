@@ -140,19 +140,19 @@ before_script:
 
 - |
   if [ "$DEBUG" = true ]; then
-	  # Check PHP
-	  php -i
-	  # Check PHP CodeSniffer installation
-	  which phpcs
-	  phpcs --version
-	  phpcs -i
-	  # Check PHPUnit installation
-	  which phpunit
-	  phpunit --version
-	  # Check MySQL
-	  mysql --version
-	  mysql -e "SELECT VERSION();"
-	  echo
+    # Check PHP
+    php -i
+    # Check PHP CodeSniffer installation
+    which phpcs
+    phpcs --version
+    phpcs -i
+    # Check PHPUnit installation
+    which phpunit
+    phpunit --version
+    # Check MySQL
+    mysql --version
+    mysql -e "SELECT VERSION();"
+    echo
   fi
   
 - |
