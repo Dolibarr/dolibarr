@@ -636,6 +636,7 @@ div.ficheaddleft {
 	padding-right: 1px;
 	padding-top: 1px;
 	padding-bottom: 1px;
+	width: 44px;
 }
 div.attacharea {
 	padding-top: 10px;
@@ -3642,7 +3643,21 @@ a span.select2-chosen
 
 .noborderoncategories {
 	border: none !important;
+	border-radius: 5px !important;
+	box-shadow: none;
+	-webkit-box-shadow: none !important;
+    box-shadow: none !important;
+    color: #fff !important;
 }
+span.noborderoncategories a, li.noborderoncategories a {
+	color: #fff;
+	line-height: normal;
+	vertical-align: top;
+}
+span.noborderoncategories {
+	padding: 3px 5px 0px 5px;
+}
+
 
 /* ============================================================================== */
 /*  Multiselect with checkbox                                                     */
