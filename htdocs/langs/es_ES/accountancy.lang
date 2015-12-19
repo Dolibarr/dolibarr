@@ -1,157 +1,1820 @@
-# Dolibarr language file - en_US - Accounting Expert
-ACCOUNTING_EXPORT_SEPARATORCSV=Separador de columnas en el archivo de exportación
-ACCOUNTING_EXPORT_DATE=Formato de fecha en el archivo de exportación
-ACCOUNTING_EXPORT_PIECE=Export the number of piece
-ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account
-ACCOUNTING_EXPORT_LABEL=Export the label
-ACCOUNTING_EXPORT_AMOUNT=Export the amount
-ACCOUNTING_EXPORT_DEVISE=Export the devise
-Selectformat=Select the format for the file
-ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
 
-Accounting=Contabilidad
-Globalparameters=Configuración global
-Menuaccount=Cuentas contables
-Menuthirdpartyaccount=Cuentas de terceros
-MenuTools=Utilidades
 
-ConfigAccountingExpert=Configuración del módulo contable
-Journaux=Diarios
-JournalFinancial=Diarios financieros
-Exports=Exportaciones
-Export=Exportar
-Modelcsv=Modelo de exportación
-OptionsDeactivatedForThisExportModel=Las opciones están desactivadas para este modelo de exportación
-Selectmodelcsv=Seleccione un modelo de exportación
-Modelcsv_normal=Exportación clásica
-Modelcsv_CEGID=Exportar a Cegid Expert
-BackToChartofaccounts=Volver al plan contable
-Back=Volver
 
-Definechartofaccounts=Definir plan contable
-Selectchartofaccounts=Seleccione un plan contable
-Addanaccount=Añadir una cuenta contable
-AccountAccounting=Cuenta contable
-AccountAccountingSuggest=Accounting account suggest
-Ventilation=Contabilizar
 
-CustomersVentilation=Contabilizar clientes
-SuppliersVentilation=Contabilizar proveedores
-TradeMargin=Margen de beneficio
-Reports=Informes
-ByCustomerInvoice=Por facturas a clientes
-NewAccount=Nueva cuenta contable
-Create=Crear
-CreateMvts=Crear movimiento
-UpdateAccount=Modificar una cuenta contable
-UpdateMvts=Modificar un movimiento
-WriteBookKeeping=Registrar los asientos en el libro mayor
-Bookkeeping=Libro Mayor
-AccountBalanceByMonth=Saldo mensual
+<!DOCTYPE html>
+<html lang="en" class="">
+<head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# object: http://ogp.me/ns/object# article: http://ogp.me/ns/article# profile: http://ogp.me/ns/profile#">
+<meta charset='utf-8'>
+<meta charset='utf-8'>
+<meta charset='utf-8'>
+<meta charset='utf-8'>
 
-AccountingVentilation=Descuadre contabilidad
-AccountingVentilationSupplier=Contablilización compras
-AccountingVentilationCustomer=Contabilización ventas
 
-CAHTF=Total purchase supplier before tax
-InvoiceLines=Líneas de factura para contabilizar
-InvoiceLinesDone=Líneas de facturas contabilizadas
-IntoAccount=Ventilate in the accounting account
+<title>dolibarr/accountancy.lang at develop · Dolibarr/dolibarr · GitHub</title>
+<link rel="search" type="application/opensearchdescription+xml" href="/opensearch.xml" title="GitHub">
+<link rel="search" type="application/opensearchdescription+xml" href="/opensearch.xml" title="GitHub">
+<link rel="search" type="application/opensearchdescription+xml" href="/opensearch.xml" title="GitHub">
+<link rel="search" type="application/opensearchdescription+xml" href="/opensearch.xml" title="GitHub">
+<link rel="search" type="application/opensearchdescription+xml" href="/opensearch.xml" title="GitHub">
+<link rel="search" type="application/opensearchdescription+xml" href="/opensearch.xml" title="GitHub">
+<meta charset='utf-8'>
 
-Ventilate=Contabilizar
-VentilationAuto=Contabilización automática
+<meta charset='utf-8'>
+<meta charset='utf-8'>
+<meta charset='utf-8'>
+<meta charset='utf-8'>
+<link rel="search" type="application/opensearchdescription+xml" href="/opensearch.xml" title="GitHub">
 
-Processing=Tratamiento
-EndProcessing=Final del tratamiento
-AnyLineVentilate=No hay líneas para contabilizar
-SelectedLines=Líneas seleccionadas
-Lineofinvoice=Línea de la factura
-VentilatedinAccount=Contabilizada con éxito en la cuenta contable
-NotVentilatedinAccount=Cuenta sin contabilización en la contabilidad
+<meta charset='utf-8'>
 
-ACCOUNTING_SEPARATORCSV=Separador de columnas en el archivo de exportación
 
-ACCOUNTING_LIMIT_LIST_VENTILATION=Número de elementos a contabilizar que se muestran por página (máximo recomendado: 50)
-ACCOUNTING_LIST_SORT_VENTILATION_TODO=Ordenar las páginas de contabilización "A contabilizar" por los elementos más recientes
-ACCOUNTING_LIST_SORT_VENTILATION_DONE=Ordenar las páginas de contabilización "Contabilizadas" por los elementos más recientes
+<meta charset='utf-8'>
+<meta charset='utf-8'>
+<meta charset='utf-8'>
 
-AccountLength=Longitud de las cuentas contables mostradas en Dolibarr
-AccountLengthDesc=Función para simular una longitud de cuenta contable sustituyendo los espacios por cero. Esta función sólo afecta a la pantalla, no cambia las cuentas contables registradas en Dolibarr. Esta función es necesaria para la exportación, para ser compatible con algunos programas.
-ACCOUNTING_LENGTH_DESCRIPTION=Longitud para la visualización de productos y servicios en los listados (Ideal = 50)
-ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Longitud para la visualización de la descripción de productos y servicios en los listados (Ideal = 50)
-ACCOUNTING_LENGTH_GACCOUNT=Longitud de las cuentas generales
-ACCOUNTING_LENGTH_AACCOUNT=Longitud de las subcuentas
+<meta charset='utf-8'>
+<meta charset='utf-8'>
 
-ACCOUNTING_SELL_JOURNAL=Diario de ventas
-ACCOUNTING_PURCHASE_JOURNAL=Diario de compras
-ACCOUNTING_MISCELLANEOUS_JOURNAL=Diario de operaciones diversas
-ACCOUNTING_EXPENSEREPORT_JOURNAL=Informe de gastos diario
-ACCOUNTING_SOCIAL_JOURNAL=Diario social
+<meta charset='utf-8'>
+<meta charset='utf-8'>
+<meta charset='utf-8'>
 
-ACCOUNTING_ACCOUNT_TRANSFER_CASH=Cuenta de caja
-ACCOUNTING_ACCOUNT_SUSPENSE=Cuenta operaciones pendientes de asignar
 
-ACCOUNTING_PRODUCT_BUY_ACCOUNT=Cuenta contable predeterminada para los productos comprados (si no se define en el producto)
-ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Cuenta contable predeterminada para los productos vendidos (si no se define en el producto)
-ACCOUNTING_SERVICE_BUY_ACCOUNT=Cuenta contable predeterminada para los servicios comprados (si no se define en el servicio)
-ACCOUNTING_SERVICE_SOLD_ACCOUNT=Cuenta contable predeterminada para los servicios vendidos (si no se define en el servicio)
+<meta charset='utf-8'>
 
-Doctype=Tipo de documento
-Docdate=Fecha
-Docref=Referencia
-Numerocompte=Cuenta
-Code_tiers=Tercero
-Labelcompte=Descripción
-Sens=Sentido
-Codejournal=Diario
 
-DelBookKeeping=Eliminar los registros del Diario Mayor
 
-DescSellsJournal=Diario de ventas
-DescPurchasesJournal=Diario de compras
-BankJournal=Diario bancario
-DescBankJournal=El diario bancario incluye todos los tipos pagos que no sean de efectivo
-CashJournal=Diario de caja
-DescCashJournal=El diario de caja incluye el tipo de pago efectivo
-FinanceJournal=Diario financiero
-DescFinanceJournal=El diario financiero incluye todos los tipos de pagos por cuenta bancaria
+<meta charset='utf-8'>
+<meta charset='utf-8'>
 
-CashPayment=Pago en efectivo
+<meta charset='utf-8'>
 
-SupplierInvoicePayment=Pago de factura de proveedor
-CustomerInvoicePayment=Cobro de factura a cliente
+<link rel="search" type="application/opensearchdescription+xml" href="/opensearch.xml" title="GitHub">
+<link rel="search" type="application/opensearchdescription+xml" href="/opensearch.xml" title="GitHub">
 
-ThirdPartyAccount=Cuenta de tercero
+<meta charset='utf-8'>
 
-NewAccountingMvt=Nuevo movimiento
-NumMvts=Número del movimiento
-ListeMvts=Listado del movimiento
-ErrorDebitCredit=Debe y Haber no pueden contener un valor al mismo tiempo
+<link rel="search" type="application/opensearchdescription+xml" href="/opensearch.xml" title="GitHub">
+<link rel="search" type="application/opensearchdescription+xml" href="/opensearch.xml" title="GitHub">
 
-ReportThirdParty=Listado cuentas de terceros
-DescThirdPartyReport=Consulte aquí el listado de clientes y proveedores y sus códigos contables
 
-ListAccounts=Listado de cuentas contables
 
-Pcgversion=Versión del plan
-Pcgtype=Tipo del plan
-Pcgsubtype=Subcuenta
-Accountparent=Padre de la cuenta
 
-DescVentilCustomer=Consulte aquí la contabilización anual de sus facturas a clientes
-TotalVente=Total turnover before tax
-TotalMarge=Total margen ventas
-DescVentilDoneCustomer=Consulte aquí las líneas de facturas a clientes y sus cuentas contables
-DescVentilTodoCustomer=Contabilice sus líneas de facturas a clientes con una cuenta contable
-ChangeAccount=Cambie la cuenta para las líneas seleccionadas a la cuenta:
-Vide=-
-DescVentilSupplier=Consulte aquí la contabilidad anual de sus facturas de proveedores
-DescVentilTodoSupplier=Contabilize sus líneas de facturas de proveedores
-DescVentilDoneSupplier=Consulte aquí la lista de facturas de proveedores y sus cuentas contables
+<meta charset='utf-8'>
 
-ValidateHistory=Validar automáticamente
 
-ErrorAccountancyCodeIsAlreadyUse=Error, no puede eliminar esta cuenta ya que está siendo usada
+<meta charset='utf-8'>
+<meta charset='utf-8'>
 
-FicheVentilation=Ficha contable
-GeneralLedgerIsWritten=Operations are written in the general ledger
+<meta charset='utf-8'>
+<link rel="search" type="application/opensearchdescription+xml" href="/opensearch.xml" title="GitHub">
+
+</head>
+
+
+<body class="logged_out   env-production  vis-public page-blob">
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+
+
+
+
+
+
+
+
+<div class="header header-logged-out" role="banner">
+<div class="header header-logged-out" role="banner">
+
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+<span class="mega-octicon octicon-logo-github"></span>
+</a>
+
+<div class="header header-logged-out" role="banner">
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+</div>
+
+<div class="header header-logged-out" role="banner">
+<!-- </textarea> --><!-- '"` --><form accept-charset="UTF-8" action="/Dolibarr/dolibarr/search" class="js-site-search-form" data-global-search-url="/search" data-repo-search-url="/Dolibarr/dolibarr/search" method="get"><div style="margin:0;padding:0;display:inline"><input name="utf8" type="hidden" value="&#x2713;" /></div>
+<label class="js-chromeless-input-container form-control">
+<div class="header header-logged-out" role="banner">
+<input type="text"
+class="js-site-search-focus js-site-search-field is-clearable chromeless-input"
+data-hotkey="s"
+name="q"
+placeholder="Search"
+aria-label="Search this repository"
+data-global-scope-placeholder="Search GitHub"
+data-repo-scope-placeholder="Search"
+tabindex="1"
+autocapitalize="off">
+</label>
+</form>
+</div>
+
+<ul class="header-nav left" role="navigation">
+<li class="header-nav-item">
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+</li>
+<li class="header-nav-item">
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+</li>
+<li class="header-nav-item">
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+</li>
+<li class="header-nav-item">
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+</li>
+</ul>
+
+</div>
+</div>
+
+
+
+<div class="header header-logged-out" role="banner">
+
+<div class="header header-logged-out" role="banner">
+</div>
+
+
+<div class="header header-logged-out" role="banner">
+<div class="header header-logged-out" role="banner">
+<div class="header header-logged-out" role="banner">
+
+<div class="header header-logged-out" role="banner">
+<div class="header header-logged-out" role="banner">
+
+
+
+<ul class="header-nav left" role="navigation">
+
+<li>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+class="js-site-search-focus js-site-search-field is-clearable chromeless-input"
+aria-label="Search this repository"
+<span class="mega-octicon octicon-logo-github"></span>
+Watch
+</a>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+100
+</a>
+
+</li>
+
+<li>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+class="js-site-search-focus js-site-search-field is-clearable chromeless-input"
+aria-label="Search this repository"
+<span class="mega-octicon octicon-logo-github"></span>
+Star
+</a>
+
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+428
+</a>
+
+</li>
+
+<li>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+class="js-site-search-focus js-site-search-field is-clearable chromeless-input"
+aria-label="Search this repository"
+<span class="mega-octicon octicon-logo-github"></span>
+Fork
+</a>
+
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+394
+</a>
+</li>
+</ul>
+
+<h1 itemscope itemtype="http://data-vocabulary.org/Breadcrumb" class="entry-title public ">
+<span class="mega-octicon octicon-logo-github"></span>
+<span class="mega-octicon octicon-logo-github"></span>
+--><span class="path-divider">/</span><!--
+--><strong><a href="/Dolibarr/dolibarr" data-pjax="#js-repo-pjax-container">dolibarr</a></strong>
+
+<span class="mega-octicon octicon-logo-github"></span>
+<img alt="" height="16" src="https://assets-cdn.github.com/images/spinners/octocat-spinner-32.gif" width="16" />
+</span>
+
+</h1>
+
+</div>
+<div class="header header-logged-out" role="banner">
+
+<nav class="reponav js-repo-nav js-sidenav-container-pjax js-octicon-loaders"
+role="navigation"
+data-pjax="#js-repo-pjax-container">
+
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+<span class="mega-octicon octicon-logo-github"></span>
+Code
+</a>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+<span class="mega-octicon octicon-logo-github"></span>
+Issues
+<span class="mega-octicon octicon-logo-github"></span>
+</a>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+<span class="mega-octicon octicon-logo-github"></span>
+Pull requests
+<span class="mega-octicon octicon-logo-github"></span>
+</a>
+
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+<span class="mega-octicon octicon-logo-github"></span>
+Pulse
+</a>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+<span class="mega-octicon octicon-logo-github"></span>
+Graphs
+</a>
+
+</nav>
+
+</div>
+</div>
+
+<div class="header header-logged-out" role="banner">
+<div class="header header-logged-out" role="banner">
+
+
+
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+
+<!-- </textarea> --><!-- '"` --><form accept-charset="UTF-8" action="/Dolibarr/dolibarr/search" class="js-site-search-form" data-global-search-url="/search" data-repo-search-url="/Dolibarr/dolibarr/search" method="get"><div style="margin:0;padding:0;display:inline"><input name="utf8" type="hidden" value="&#x2713;" /></div>
+
+<div class="header header-logged-out" role="banner">
+
+<div class="header header-logged-out" role="banner">
+<button class="btn btn-sm select-menu-button js-menu-target css-truncate" data-hotkey="w"
+title="develop"
+type="button" aria-label="Switch branches or tags" tabindex="0" aria-haspopup="true">
+<i>Branch:</i>
+<span class="mega-octicon octicon-logo-github"></span>
+</button>
+
+<div class="header header-logged-out" role="banner">
+
+<div class="header header-logged-out" role="banner">
+<div class="header header-logged-out" role="banner">
+<span class="mega-octicon octicon-logo-github"></span>
+<span class="mega-octicon octicon-logo-github"></span>
+</div>
+
+<div class="header header-logged-out" role="banner">
+<div class="header header-logged-out" role="banner">
+<input type="text"
+</div>
+<div class="header header-logged-out" role="banner">
+<ul>
+<li class="header-nav-item">
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+</li>
+<li class="header-nav-item">
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+</li>
+</ul>
+</div>
+</div>
+
+<div class="header header-logged-out" role="banner">
+
+<div class="header header-logged-out" role="banner">
+
+
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+href="/Dolibarr/dolibarr/blob/2.8/htdocs/langs/en_US/accountancy.lang"
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+<span class="mega-octicon octicon-logo-github"></span>
+<span class="mega-octicon octicon-logo-github"></span>
+2.8
+</span>
+</a>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+href="/Dolibarr/dolibarr/blob/2.8/htdocs/langs/en_US/accountancy.lang"
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+<span class="mega-octicon octicon-logo-github"></span>
+<span class="mega-octicon octicon-logo-github"></span>
+2.9
+</span>
+</a>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+href="/Dolibarr/dolibarr/blob/2.8/htdocs/langs/en_US/accountancy.lang"
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+<span class="mega-octicon octicon-logo-github"></span>
+<span class="mega-octicon octicon-logo-github"></span>
+3.0
+</span>
+</a>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+href="/Dolibarr/dolibarr/blob/2.8/htdocs/langs/en_US/accountancy.lang"
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+<span class="mega-octicon octicon-logo-github"></span>
+<span class="mega-octicon octicon-logo-github"></span>
+3.1
+</span>
+</a>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+href="/Dolibarr/dolibarr/blob/2.8/htdocs/langs/en_US/accountancy.lang"
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+<span class="mega-octicon octicon-logo-github"></span>
+<span class="mega-octicon octicon-logo-github"></span>
+3.2_backported
+</span>
+</a>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+href="/Dolibarr/dolibarr/blob/2.8/htdocs/langs/en_US/accountancy.lang"
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+<span class="mega-octicon octicon-logo-github"></span>
+<span class="mega-octicon octicon-logo-github"></span>
+3.2
+</span>
+</a>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+href="/Dolibarr/dolibarr/blob/2.8/htdocs/langs/en_US/accountancy.lang"
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+<span class="mega-octicon octicon-logo-github"></span>
+<span class="mega-octicon octicon-logo-github"></span>
+3.3_backported
+</span>
+</a>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+href="/Dolibarr/dolibarr/blob/2.8/htdocs/langs/en_US/accountancy.lang"
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+<span class="mega-octicon octicon-logo-github"></span>
+<span class="mega-octicon octicon-logo-github"></span>
+3.3
+</span>
+</a>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+href="/Dolibarr/dolibarr/blob/2.8/htdocs/langs/en_US/accountancy.lang"
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+<span class="mega-octicon octicon-logo-github"></span>
+<span class="mega-octicon octicon-logo-github"></span>
+3.4_backported
+</span>
+</a>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+href="/Dolibarr/dolibarr/blob/2.8/htdocs/langs/en_US/accountancy.lang"
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+<span class="mega-octicon octicon-logo-github"></span>
+<span class="mega-octicon octicon-logo-github"></span>
+3.4
+</span>
+</a>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+href="/Dolibarr/dolibarr/blob/2.8/htdocs/langs/en_US/accountancy.lang"
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+<span class="mega-octicon octicon-logo-github"></span>
+<span class="mega-octicon octicon-logo-github"></span>
+3.5_backported
+</span>
+</a>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+href="/Dolibarr/dolibarr/blob/2.8/htdocs/langs/en_US/accountancy.lang"
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+<span class="mega-octicon octicon-logo-github"></span>
+<span class="mega-octicon octicon-logo-github"></span>
+3.5
+</span>
+</a>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+href="/Dolibarr/dolibarr/blob/2.8/htdocs/langs/en_US/accountancy.lang"
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+<span class="mega-octicon octicon-logo-github"></span>
+<span class="mega-octicon octicon-logo-github"></span>
+3.6_backported
+</span>
+</a>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+href="/Dolibarr/dolibarr/blob/2.8/htdocs/langs/en_US/accountancy.lang"
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+<span class="mega-octicon octicon-logo-github"></span>
+<span class="mega-octicon octicon-logo-github"></span>
+3.6
+</span>
+</a>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+href="/Dolibarr/dolibarr/blob/2.8/htdocs/langs/en_US/accountancy.lang"
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+<span class="mega-octicon octicon-logo-github"></span>
+<span class="mega-octicon octicon-logo-github"></span>
+3.7_backported
+</span>
+</a>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+href="/Dolibarr/dolibarr/blob/2.8/htdocs/langs/en_US/accountancy.lang"
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+<span class="mega-octicon octicon-logo-github"></span>
+<span class="mega-octicon octicon-logo-github"></span>
+3.7
+</span>
+</a>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+href="/Dolibarr/dolibarr/blob/2.8/htdocs/langs/en_US/accountancy.lang"
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+<span class="mega-octicon octicon-logo-github"></span>
+<span class="mega-octicon octicon-logo-github"></span>
+3.8_backported
+</span>
+</a>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+href="/Dolibarr/dolibarr/blob/2.8/htdocs/langs/en_US/accountancy.lang"
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+<span class="mega-octicon octicon-logo-github"></span>
+<span class="mega-octicon octicon-logo-github"></span>
+3.8
+</span>
+</a>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+href="/Dolibarr/dolibarr/blob/2.8/htdocs/langs/en_US/accountancy.lang"
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+<span class="mega-octicon octicon-logo-github"></span>
+<span class="mega-octicon octicon-logo-github"></span>
+develop
+</span>
+</a>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+href="/Dolibarr/dolibarr/blob/2.8/htdocs/langs/en_US/accountancy.lang"
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+<span class="mega-octicon octicon-logo-github"></span>
+<span class="mega-octicon octicon-logo-github"></span>
+gh-pages
+</span>
+</a>
+</div>
+
+<div class="header header-logged-out" role="banner">
+</div>
+
+<div class="header header-logged-out" role="banner">
+<div class="header header-logged-out" role="banner">
+
+
+<div class="header header-logged-out" role="banner">
+<span class="mega-octicon octicon-logo-github"></span>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+class="js-site-search-focus js-site-search-field is-clearable chromeless-input"
+title="develop"
+</div>
+<div class="header header-logged-out" role="banner">
+<span class="mega-octicon octicon-logo-github"></span>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+class="js-site-search-focus js-site-search-field is-clearable chromeless-input"
+title="develop"
+</div>
+<div class="header header-logged-out" role="banner">
+<span class="mega-octicon octicon-logo-github"></span>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+class="js-site-search-focus js-site-search-field is-clearable chromeless-input"
+title="develop"
+</div>
+<div class="header header-logged-out" role="banner">
+<span class="mega-octicon octicon-logo-github"></span>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+class="js-site-search-focus js-site-search-field is-clearable chromeless-input"
+title="develop"
+</div>
+<div class="header header-logged-out" role="banner">
+<span class="mega-octicon octicon-logo-github"></span>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+class="js-site-search-focus js-site-search-field is-clearable chromeless-input"
+title="develop"
+</div>
+<div class="header header-logged-out" role="banner">
+<span class="mega-octicon octicon-logo-github"></span>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+class="js-site-search-focus js-site-search-field is-clearable chromeless-input"
+title="develop"
+</div>
+<div class="header header-logged-out" role="banner">
+<span class="mega-octicon octicon-logo-github"></span>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+class="js-site-search-focus js-site-search-field is-clearable chromeless-input"
+title="develop"
+</div>
+<div class="header header-logged-out" role="banner">
+<span class="mega-octicon octicon-logo-github"></span>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+class="js-site-search-focus js-site-search-field is-clearable chromeless-input"
+title="develop"
+</div>
+<div class="header header-logged-out" role="banner">
+<span class="mega-octicon octicon-logo-github"></span>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+class="js-site-search-focus js-site-search-field is-clearable chromeless-input"
+title="develop"
+</div>
+<div class="header header-logged-out" role="banner">
+<span class="mega-octicon octicon-logo-github"></span>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+class="js-site-search-focus js-site-search-field is-clearable chromeless-input"
+title="develop"
+</div>
+<div class="header header-logged-out" role="banner">
+<span class="mega-octicon octicon-logo-github"></span>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+class="js-site-search-focus js-site-search-field is-clearable chromeless-input"
+title="develop"
+</div>
+<div class="header header-logged-out" role="banner">
+<span class="mega-octicon octicon-logo-github"></span>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+class="js-site-search-focus js-site-search-field is-clearable chromeless-input"
+title="develop"
+</div>
+<div class="header header-logged-out" role="banner">
+<span class="mega-octicon octicon-logo-github"></span>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+class="js-site-search-focus js-site-search-field is-clearable chromeless-input"
+title="develop"
+</div>
+<div class="header header-logged-out" role="banner">
+<span class="mega-octicon octicon-logo-github"></span>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+class="js-site-search-focus js-site-search-field is-clearable chromeless-input"
+title="develop"
+</div>
+<div class="header header-logged-out" role="banner">
+<span class="mega-octicon octicon-logo-github"></span>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+class="js-site-search-focus js-site-search-field is-clearable chromeless-input"
+title="develop"
+</div>
+<div class="header header-logged-out" role="banner">
+<span class="mega-octicon octicon-logo-github"></span>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+class="js-site-search-focus js-site-search-field is-clearable chromeless-input"
+title="develop"
+</div>
+<div class="header header-logged-out" role="banner">
+<span class="mega-octicon octicon-logo-github"></span>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+class="js-site-search-focus js-site-search-field is-clearable chromeless-input"
+title="develop"
+</div>
+<div class="header header-logged-out" role="banner">
+<span class="mega-octicon octicon-logo-github"></span>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+class="js-site-search-focus js-site-search-field is-clearable chromeless-input"
+title="develop"
+</div>
+<div class="header header-logged-out" role="banner">
+<span class="mega-octicon octicon-logo-github"></span>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+class="js-site-search-focus js-site-search-field is-clearable chromeless-input"
+title="develop"
+</div>
+<div class="header header-logged-out" role="banner">
+<span class="mega-octicon octicon-logo-github"></span>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+class="js-site-search-focus js-site-search-field is-clearable chromeless-input"
+title="develop"
+</div>
+<div class="header header-logged-out" role="banner">
+<span class="mega-octicon octicon-logo-github"></span>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+class="js-site-search-focus js-site-search-field is-clearable chromeless-input"
+title="develop"
+</div>
+<div class="header header-logged-out" role="banner">
+<span class="mega-octicon octicon-logo-github"></span>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+class="js-site-search-focus js-site-search-field is-clearable chromeless-input"
+title="develop"
+</div>
+<div class="header header-logged-out" role="banner">
+<span class="mega-octicon octicon-logo-github"></span>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+class="js-site-search-focus js-site-search-field is-clearable chromeless-input"
+title="develop"
+</div>
+<div class="header header-logged-out" role="banner">
+<span class="mega-octicon octicon-logo-github"></span>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+class="js-site-search-focus js-site-search-field is-clearable chromeless-input"
+title="develop"
+</div>
+<div class="header header-logged-out" role="banner">
+<span class="mega-octicon octicon-logo-github"></span>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+class="js-site-search-focus js-site-search-field is-clearable chromeless-input"
+title="develop"
+</div>
+<div class="header header-logged-out" role="banner">
+<span class="mega-octicon octicon-logo-github"></span>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+class="js-site-search-focus js-site-search-field is-clearable chromeless-input"
+title="develop"
+</div>
+<div class="header header-logged-out" role="banner">
+<span class="mega-octicon octicon-logo-github"></span>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+class="js-site-search-focus js-site-search-field is-clearable chromeless-input"
+title="develop"
+</div>
+<div class="header header-logged-out" role="banner">
+<span class="mega-octicon octicon-logo-github"></span>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+class="js-site-search-focus js-site-search-field is-clearable chromeless-input"
+title="develop"
+</div>
+<div class="header header-logged-out" role="banner">
+<span class="mega-octicon octicon-logo-github"></span>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+class="js-site-search-focus js-site-search-field is-clearable chromeless-input"
+title="develop"
+</div>
+<div class="header header-logged-out" role="banner">
+<span class="mega-octicon octicon-logo-github"></span>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+class="js-site-search-focus js-site-search-field is-clearable chromeless-input"
+title="develop"
+</div>
+<div class="header header-logged-out" role="banner">
+<span class="mega-octicon octicon-logo-github"></span>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+class="js-site-search-focus js-site-search-field is-clearable chromeless-input"
+title="develop"
+</div>
+<div class="header header-logged-out" role="banner">
+<span class="mega-octicon octicon-logo-github"></span>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+class="js-site-search-focus js-site-search-field is-clearable chromeless-input"
+title="develop"
+</div>
+<div class="header header-logged-out" role="banner">
+<span class="mega-octicon octicon-logo-github"></span>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+class="js-site-search-focus js-site-search-field is-clearable chromeless-input"
+title="develop"
+</div>
+<div class="header header-logged-out" role="banner">
+<span class="mega-octicon octicon-logo-github"></span>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+class="js-site-search-focus js-site-search-field is-clearable chromeless-input"
+title="develop"
+</div>
+<div class="header header-logged-out" role="banner">
+<span class="mega-octicon octicon-logo-github"></span>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+class="js-site-search-focus js-site-search-field is-clearable chromeless-input"
+title="develop"
+</div>
+<div class="header header-logged-out" role="banner">
+<span class="mega-octicon octicon-logo-github"></span>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+class="js-site-search-focus js-site-search-field is-clearable chromeless-input"
+title="develop"
+</div>
+<div class="header header-logged-out" role="banner">
+<span class="mega-octicon octicon-logo-github"></span>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+class="js-site-search-focus js-site-search-field is-clearable chromeless-input"
+title="develop"
+</div>
+<div class="header header-logged-out" role="banner">
+<span class="mega-octicon octicon-logo-github"></span>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+class="js-site-search-focus js-site-search-field is-clearable chromeless-input"
+title="develop"
+</div>
+<div class="header header-logged-out" role="banner">
+<span class="mega-octicon octicon-logo-github"></span>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+class="js-site-search-focus js-site-search-field is-clearable chromeless-input"
+title="develop"
+</div>
+<div class="header header-logged-out" role="banner">
+<span class="mega-octicon octicon-logo-github"></span>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+class="js-site-search-focus js-site-search-field is-clearable chromeless-input"
+title="develop"
+</div>
+<div class="header header-logged-out" role="banner">
+<span class="mega-octicon octicon-logo-github"></span>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+class="js-site-search-focus js-site-search-field is-clearable chromeless-input"
+title="develop"
+</div>
+<div class="header header-logged-out" role="banner">
+<span class="mega-octicon octicon-logo-github"></span>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+class="js-site-search-focus js-site-search-field is-clearable chromeless-input"
+title="develop"
+</div>
+<div class="header header-logged-out" role="banner">
+<span class="mega-octicon octicon-logo-github"></span>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+class="js-site-search-focus js-site-search-field is-clearable chromeless-input"
+title="develop"
+</div>
+<div class="header header-logged-out" role="banner">
+<span class="mega-octicon octicon-logo-github"></span>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+class="js-site-search-focus js-site-search-field is-clearable chromeless-input"
+title="develop"
+</div>
+<div class="header header-logged-out" role="banner">
+<span class="mega-octicon octicon-logo-github"></span>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+class="js-site-search-focus js-site-search-field is-clearable chromeless-input"
+title="develop"
+</div>
+<div class="header header-logged-out" role="banner">
+<span class="mega-octicon octicon-logo-github"></span>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+class="js-site-search-focus js-site-search-field is-clearable chromeless-input"
+title="develop"
+</div>
+<div class="header header-logged-out" role="banner">
+<span class="mega-octicon octicon-logo-github"></span>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+class="js-site-search-focus js-site-search-field is-clearable chromeless-input"
+title="develop"
+</div>
+<div class="header header-logged-out" role="banner">
+<span class="mega-octicon octicon-logo-github"></span>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+class="js-site-search-focus js-site-search-field is-clearable chromeless-input"
+title="develop"
+</div>
+<div class="header header-logged-out" role="banner">
+<span class="mega-octicon octicon-logo-github"></span>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+class="js-site-search-focus js-site-search-field is-clearable chromeless-input"
+title="develop"
+</div>
+<div class="header header-logged-out" role="banner">
+<span class="mega-octicon octicon-logo-github"></span>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+class="js-site-search-focus js-site-search-field is-clearable chromeless-input"
+title="develop"
+</div>
+<div class="header header-logged-out" role="banner">
+<span class="mega-octicon octicon-logo-github"></span>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+class="js-site-search-focus js-site-search-field is-clearable chromeless-input"
+title="develop"
+</div>
+<div class="header header-logged-out" role="banner">
+<span class="mega-octicon octicon-logo-github"></span>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+data-name="2.8"
+data-skip-pjax="true"
+rel="nofollow">
+class="js-site-search-focus js-site-search-field is-clearable chromeless-input"
+title="develop"
+</div>
+</div>
+
+<div class="header header-logged-out" role="banner">
+</div>
+
+</div>
+</div>
+</div>
+
+<div class="header header-logged-out" role="banner">
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+class="js-site-search-focus js-site-search-field is-clearable chromeless-input"
+data-pjax
+data-hotkey="s"
+Find file
+</a>
+<button class="btn btn-sm select-menu-button js-menu-target css-truncate" data-hotkey="w"
+</div>
+<div class="header header-logged-out" role="banner">
+<span class="mega-octicon octicon-logo-github"></span>
+</div>
+</div>
+
+<include-fragment class="commit-tease" src="/Dolibarr/dolibarr/contributors/develop/htdocs/langs/en_US/accountancy.lang">
+<div>
+Fetching contributors&hellip;
+</div>
+
+<div class="header header-logged-out" role="banner">
+<img alt="" height="16" src="https://assets-cdn.github.com/images/spinners/octocat-spinner-32.gif" width="16" />
+<span class="mega-octicon octicon-logo-github"></span>
+</div>
+</include-fragment>
+<div class="header header-logged-out" role="banner">
+<div class="header header-logged-out" role="banner">
+<div class="header header-logged-out" role="banner">
+
+<div class="header header-logged-out" role="banner">
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+</div>
+
+
+<button class="btn btn-sm select-menu-button js-menu-target css-truncate" data-hotkey="w"
+aria-label="Search this repository"
+<span class="mega-octicon octicon-logo-github"></span>
+</button>
+<button class="btn btn-sm select-menu-button js-menu-target css-truncate" data-hotkey="w"
+aria-label="Search this repository"
+<span class="mega-octicon octicon-logo-github"></span>
+</button>
+</div>
+
+<div class="header header-logged-out" role="banner">
+172 lines (142 sloc)
+<span class="mega-octicon octicon-logo-github"></span>
+6.88 KB
+</div>
+</div>
+
+
+
+<div class="header header-logged-out" role="banner">
+<table class="highlight tab-size js-file-line-container" data-tab-size="8">
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+<tr>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+<td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
+</tr>
+</table>
+
+</div>
+
+</div>
+
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+<div class="header header-logged-out" role="banner">
+<!-- </textarea> --><!-- '"` --><form accept-charset="UTF-8" action="/Dolibarr/dolibarr/search" class="js-site-search-form" data-global-search-url="/search" data-repo-search-url="/Dolibarr/dolibarr/search" method="get"><div style="margin:0;padding:0;display:inline"><input name="utf8" type="hidden" value="&#x2713;" /></div>
+<input type="text"
+<button class="btn btn-sm select-menu-button js-menu-target css-truncate" data-hotkey="w"
+</form></div>
+
+</div>
+<div class="header header-logged-out" role="banner">
+</div>
+
+</div>
+</div>
+
+</div>
+
+<div class="header header-logged-out" role="banner">
+<div class="header header-logged-out" role="banner">
+<ul class="header-nav left" role="navigation">
+<li><a href="https://status.github.com/" data-ga-click="Footer, go to status, text:status">Status</a></li>
+<li><a href="https://status.github.com/" data-ga-click="Footer, go to status, text:status">Status</a></li>
+<li><a href="https://status.github.com/" data-ga-click="Footer, go to status, text:status">Status</a></li>
+<li><a href="https://status.github.com/" data-ga-click="Footer, go to status, text:status">Status</a></li>
+<li><a href="https://status.github.com/" data-ga-click="Footer, go to status, text:status">Status</a></li>
+<li><a href="https://status.github.com/" data-ga-click="Footer, go to status, text:status">Status</a></li>
+<li><a href="https://status.github.com/" data-ga-click="Footer, go to status, text:status">Status</a></li>
+
+</ul>
+
+<a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+<span class="mega-octicon octicon-logo-github"></span>
+</a>
+<ul class="header-nav left" role="navigation">
+<li>&copy; 2015 <span title="0.06230s from github-fe136-cp1-prd.iad.github.net">GitHub</span>, Inc.</li>
+<li><a href="https://status.github.com/" data-ga-click="Footer, go to status, text:status">Status</a></li>
+<li><a href="https://status.github.com/" data-ga-click="Footer, go to status, text:status">Status</a></li>
+<li><a href="https://status.github.com/" data-ga-click="Footer, go to status, text:status">Status</a></li>
+<li><a href="https://status.github.com/" data-ga-click="Footer, go to status, text:status">Status</a></li>
+<li><a href="https://status.github.com/" data-ga-click="Footer, go to status, text:status">Status</a></li>
+</ul>
+</div>
+</div>
+
+
+
+
+
+
+
+<div class="header header-logged-out" role="banner">
+<span class="mega-octicon octicon-logo-github"></span>
+<button class="btn btn-sm select-menu-button js-menu-target css-truncate" data-hotkey="w"
+<span class="mega-octicon octicon-logo-github"></span>
+</button>
+Something went wrong with that request. Please try again.
+</div>
+
+
+<script crossorigin="anonymous" src="https://assets-cdn.github.com/assets/frameworks-ef8eb4a89ee9f3c8b7613307fe589a8f5705817f7cee27bec51ce5e963234abf.js"></script>
+<script crossorigin="anonymous" src="https://assets-cdn.github.com/assets/frameworks-ef8eb4a89ee9f3c8b7613307fe589a8f5705817f7cee27bec51ce5e963234abf.js"></script>
+
+
+
+<div class="header header-logged-out" role="banner">
+<span class="mega-octicon octicon-logo-github"></span>
+<span class="mega-octicon octicon-logo-github"></span>
+<span class="mega-octicon octicon-logo-github"></span>
+</div>
+</body>
+</html>
+
