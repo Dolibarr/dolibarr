@@ -7,6 +7,7 @@ DeliveryOrders=Phiếu giao hàng
 DeliveryDate=Ngày giao hàng
 DeliveryDateShort=Ngày giao hàng
 CreateDeliveryOrder=Tạo phiếu giao hàng
+DeliveryStateSaved=Delivery state saved
 QtyDelivered=Số lượng đã giao hàng
 SetDeliveryDate=Lập ngày vận chuyển
 ValidateDeliveryReceipt=Xác nhận chứng từ giao hàng

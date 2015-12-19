@@ -521,9 +521,6 @@ class Cronjob extends CommonObject
 
 		// Check parameters
 		// Put here code to add a control on parameters values
-		if (empty($this->status)) {
-			$this->dateend=dol_now();
-		}
 		if (dol_strlen($this->datestart)==0) {
 			$this->errors[]=$langs->trans('CronFieldMandatory',$langs->trans('CronDtStart'));
 			$error++;
@@ -830,7 +827,9 @@ class Cronjob extends CommonObject
 
 
 	/**
-	 * Run a job
+	 * Run a job.
+	 * Once job is finished, status and nb of of run is updated. 
+	 * This function does not plan the next run. This is done by function ->reprogram_jobs 
 	 *
 	 * @param  string		$userlogin    	User login
 	 * @return	int					 		<0 if KO, >0 if OK
@@ -843,7 +842,8 @@ class Cronjob extends CommonObject
 
 		$langs->load('cron');
 
-			if (empty($userlogin)) {
+		if (empty($userlogin)) 
+		{
 			$this->error="User login is mandatory";
 			dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
 			return -1;
@@ -891,7 +891,7 @@ class Cronjob extends CommonObject
 		$this->datelastrun=$now;
 		$this->lastoutput='';
 		$this->lastresult='';
-		$this->nbrun=$this->nbrun+1;
+		$this->nbrun=$this->nbrun + 1;
 		$result = $this->update($user);
 		if ($result<0) {
 			dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
@@ -1055,23 +1055,28 @@ class Cronjob extends CommonObject
 	/**
 	 * Reprogram a job
 	 *
-	 * @param  string		$userlogin    User login
-	 * @return	int					 <0 if KO, >0 if OK
-	 *
+	 * @param  string		$userlogin      User login
+	 * @return int					        <0 if KO, >0 if OK
 	 */
 	function reprogram_jobs($userlogin)
 	{
 		dol_syslog(get_class($this)."::reprogram_jobs userlogin:$userlogin", LOG_DEBUG);
-
+        
+		$now = dol_now();
+		
 		require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 		$user=new User($this->db);
 		$result=$user->fetch('',$userlogin);
-		if ($result<0) {
+		if ($result<0) 
+		{
 			$this->error="User Error:".$user->error;
 			dol_syslog(get_class($this)."::reprogram_jobs ".$this->error, LOG_ERR);
 			return -1;
-		}else {
-			if (empty($user->id)) {
+		}
+		else 
+		{
+			if (empty($user->id)) 
+			{
 				$this->error=" User user login:".$userlogin." do not exists";
 				dol_syslog(get_class($this)."::reprogram_jobs ".$this->error, LOG_ERR);
 				return -1;
@@ -1080,17 +1085,41 @@ class Cronjob extends CommonObject
 
 		dol_syslog(get_class($this)."::reprogram_jobs  ", LOG_DEBUG);
 
-		if (empty($this->datenextrun)) {
-			$this->datenextrun=dol_now()+$this->frequency;
-		} else {
-			if ($this->datenextrun<dol_now()) {
-				$this->datenextrun=dol_now()+$this->frequency;
-			} else {
-				$this->datenextrun=$this->datenextrun+$this->frequency;
+		
+		if (empty($this->datenextrun)) 
+		{
+			$this->datenextrun = $now + $this->frequency;
+		}
+		else 
+		{
+			if ($this->datenextrun < $now && $this->frequency > 0) 
+			{
+			    // Loop until date is after future
+			    while ($this->datenextrun < $now)
+			    {
+			        $this->datenextrun += $this->frequency;
+			    }
+			}
+			else 
+			{
+				//$this->datenextrun=$this->datenextrun+$this->frequency;
 			}
 		}
+
+		// Archive job
+		if ($this->autodelete == 2)
+		{
+		    if (($this->maxrun > 0 && ($this->nbrun >= $this->maxrun))
+		        || ($this->dateend && ($this->datenextrun > $this->dateend)))
+		    {
+		        $this->status = 2;
+		        dol_syslog(get_class($this)."::reprogram_jobs Job must be set to archived", LOG_ERR);
+		    }
+		}
+		
 		$result = $this->update($user);
-		if ($result<0) {
+		if ($result<0) 
+		{
 			dol_syslog(get_class($this)."::reprogram_jobs ".$this->error, LOG_ERR);
 			return -1;
 		}

@@ -1,0 +1,6 @@
+# Dolibarr language file - Source file is en_US - mails
+MailCard=EMailings kaart
+LastMailings=Laatste %s E-mailings
+SearchAMailing=Zoek een E-mailing
+SendMailing=Verzend E-mailing
+AddNewNotification=Activeer een niewe e-mail notificatie doel

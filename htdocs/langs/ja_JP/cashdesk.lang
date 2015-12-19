@@ -38,3 +38,4 @@ ShowStock=倉庫を表示
 DeleteArticle=この記事を削除するときにクリックします
 FilterRefOrLabelOrBC=Search (Ref/Label)
 UserNeedPermissionToEditStockToUsePos=You ask to decrease stock on invoice creation, so user that use POS need to have permission to edit stock.
+DolibarrReceiptPrinter=Dolibarr Receipt Printer

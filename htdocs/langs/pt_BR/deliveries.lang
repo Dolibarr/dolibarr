@@ -7,3 +7,5 @@ DeliveryNotValidated=Entrega nao validada
 GoodStatusDeclaration=Recebi a mercadorias acima em bom estado,
 Deliverer=Destinatario:
 Sender=Remetente
+Shippable=Disponivel para envio
+NonShippable=Não disponivel para envio

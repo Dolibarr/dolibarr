@@ -48,7 +48,6 @@ RefusedReason=Noraidījuma iemesls
 RefusedInvoicing=Rēķinu noraidījumu
 NoInvoiceRefused=Nav maksas noraidīšanu
 InvoiceRefused=Invoice refused (Charge the rejection to customer)
-Status=Statuss
 StatusUnknown=Nezināms
 StatusWaiting=Gaidīšana
 StatusTrans=Sūtīt

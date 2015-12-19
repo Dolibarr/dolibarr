@@ -38,3 +38,4 @@ ShowStock=Εμφάνιση αποθήκης
 DeleteArticle=Κάντε κλικ για να καταργήσετε αυτό το προϊόν
 FilterRefOrLabelOrBC=Αναζήτηση (Κωδ. / Ετικέτα)
 UserNeedPermissionToEditStockToUsePos=Θα ζητήσει να μειώσει το απόθεμα κατά την δημιουργία του τιμολογίου, έτσι ώστε ο χρήστης που χρησιμοποιεί το POS να χρειάζεται να έχει άδεια για να επεξεργαστείτε το απόθεμα.
+DolibarrReceiptPrinter=Dolibarr εκτυπωτής αποδείξεων

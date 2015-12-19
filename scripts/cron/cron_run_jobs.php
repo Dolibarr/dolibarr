@@ -1,8 +1,8 @@
 #!/usr/bin/env php
 <?php
-/* Copyright (C) 2012   Nicolas Villa aka Boyquotes http://informetic.fr
- * Copyright (C) 2013   Florian Henry <forian.henry@open-concept.pro
- * Copyright (C) 2013   Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2012      Nicolas Villa aka Boyquotes http://informetic.fr
+ * Copyright (C) 2013      Florian Henry <forian.henry@open-concept.pro
+ * Copyright (C) 2013-2015 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -147,7 +147,7 @@ if(is_array($object->lines) && (count($object->lines)>0))
 					exit(-1);
 				}
 
-					// we re-program the next execution and stores the last execution time for this job
+				// we re-program the next execution and stores the last execution time for this job
 				$result=$cronjob->reprogram_jobs($userlogin);
 				if ($result<0) {
 					echo "Error:".$cronjob->error;

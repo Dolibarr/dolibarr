@@ -32,7 +32,7 @@
  *
  * Parent class for module descriptor class files
  */
-class DolibarrModules           // Can not be abstract, because we need to instantiant it into unActivateModule to be able to disable a module whose files were removed.
+class DolibarrModules           // Can not be abstract, because we need to instantiate it into unActivateModule to be able to disable a module whose files were removed.
 {
     /**
      * @var DoliDb Database handler
@@ -432,7 +432,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
         }
         else
         {
-            // If module description translation using it's unique id does not exists, we take use its name to find translation
+            // If module description translation does not exist using its unique id, we can use its name to find translation
             if (is_array($this->langfiles))
             {
                 foreach($this->langfiles as $val)
@@ -510,12 +510,12 @@ class DolibarrModules           // Can not be abstract, because we need to insta
         $langstring="ExportDataset_".$this->export_code[$r];
         if ($langs->trans($langstring) == $langstring)
         {
-            // Traduction non trouvee
+            // Translation not found
             return $langs->trans($this->export_label[$r]);
         }
         else
         {
-            // Traduction trouvee
+            // Translation found
             return $langs->trans($langstring);
         }
     }
@@ -536,12 +536,12 @@ class DolibarrModules           // Can not be abstract, because we need to insta
         //print "x".$langstring;
         if ($langs->trans($langstring) == $langstring)
         {
-            // Traduction non trouvee
+            // Translation not found
             return $langs->trans($this->import_label[$r]);
         }
         else
         {
-            // Traduction trouvee
+            // Translation found
             return $langs->trans($langstring);
         }
     }
@@ -1223,7 +1223,7 @@ print $sql;
             $obj=$this->db->fetch_object($resql);
             if ($obj !== null && ! empty($obj->value) && ! empty($this->rights))
             {
-                // Si module actif
+                // If the module is active
                 foreach ($this->rights as $key => $value)
                 {
                     $r_id       = $this->rights[$key][0];

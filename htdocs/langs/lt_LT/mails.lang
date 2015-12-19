@@ -84,9 +84,12 @@ EachInvoiceWillBeAttachedToEmail=Dokumentas, naudojantis sąskaitos-faktūros š
 MailTopicSendRemindUnpaidInvoices=Sąskaitos-faktūros %s (%s) priminimas
 SendRemind=Siųsti priminimą e-paštu
 RemindSent=%s priminimas (-ai) išsiųstas (-i)
-AllRecipientSelectedForRemind=Visos trečiosios šalys atrinktos ir e-paštas yra nustatytas (atkreipkite dėmesį, kad prie sąskaitos-faktūros bus išsiųstas vienas e-laiškas)
+AllRecipientSelected=All thirdparties selected and if an email is set.
 NoRemindSent=Priminimo e-paštu nėra išsiųsta
-ResultOfMassSending=Masinių e-pašto priminimų siuntimo rezultatas
+ResultOfMailSending=Result of mass EMail sending
+NbSelected=Nb selected
+NbIgnored=Nb ignored
+NbSent=Nb sent
 
 # Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=Visų treąiųjų šalių kontaktai/adresai (kliento, numatomo kliento, tiekėjo, ...)
@@ -97,7 +100,7 @@ MailingModuleDescEmailsFromUser=E-paštas iš vartotojo įvedimo (email;lastname
 MailingModuleDescContactsCategories=Trečiosios šalys (pagal kategoriją)
 MailingModuleDescDolibarrContractsLinesExpired=Trečiosios šalys, kurių pasibaigusios sutarties eilutės
 MailingModuleDescContactsByCompanyCategory=Trečiųjų šalių kontaktai/adresai (pagal trečiųjų šalių kategorijas)
-MailingModuleDescContactsByCategory=Trečiųjų šalių kontaktai/adresai pagal kategorijas
+MailingModuleDescContactsByCategory=Contacts/addresses of third parties (by category)
 MailingModuleDescMembersCategories=Organizacijos nariai (pagal kategorijas)
 MailingModuleDescContactsByFunction=Trečiųjų šalių kontaktai/adresai (pagal poziciją/funkciją)
 LineInFile=Failo eilutė %s

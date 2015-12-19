@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is en_US - users
+# Dolibarr language file - Source file is en_US - salaries
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Código contable pago de salarios
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Código contable cargas financieras
 Salary=Salario
@@ -11,3 +11,5 @@ ShowSalaryPayment=Ver pago
 THM=Precio medio por hora
 TJM=Precio medio por día
 CurrentSalary=Salario actual
+THMDescription=Este valor puede ser usado para calcular los costos de tiempo consumidos en un proyecto indicados por los usuarios si se utiliza el módulo proyectos
+TJMDescription=Este valor actualmente es informativo y no se utiliza para realizar cualquier tipo de cálculo

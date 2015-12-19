@@ -48,7 +48,6 @@ RefusedReason=Ret nedeni
 RefusedInvoicing=Rettin faturalandırılması
 NoInvoiceRefused=Reddi borç yazmayın
 InvoiceRefused=Fatura reddedildi (Reddedileni müşterinin hesabına yaz)
-Status=Durum
 StatusUnknown=Bilinmeyen
 StatusWaiting=Bekliyor
 StatusTrans=Gönderildi

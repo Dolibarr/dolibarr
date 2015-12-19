@@ -33,19 +33,19 @@ CREATE TABLE llx_cronjob
 	md5params 		varchar(32),
   	module_name 	varchar(255),
   	priority 		integer DEFAULT 0,
-  	datelastrun 	datetime,					-- date last run and when should be next
+  	datelastrun 	datetime,					-- date last run start (see datelastresult for end with a result)
   	datenextrun 	datetime,					-- job will be run if current date higher that this date
   	datestart		datetime,						-- before this date no jobs will be run
   	dateend			datetime,						-- after this date, no more jobs will be run
-  	datelastresult  datetime,				
+  	datelastresult  datetime,						-- date last run end
   	lastresult      text,
   	lastoutput      text,
   	unitfrequency	integer NOT NULL DEFAULT 0,
   	frequency 		integer NOT NULL DEFAULT 0,
     maxrun          integer NOT NULL DEFAULT 0,		-- set this to 1 for a job queued for on run only
 	nbrun			integer,						-- nb of run complete (failed or not)
-    autodelete      integer DEFAULT 0,				-- Job can be delete once finished
-  	status 			integer NOT NULL DEFAULT 1,
+    autodelete      integer DEFAULT 0,				-- 0=Job is kept unchanged once nbrun > maxrun or date > dateend, 2=Job must be archived (archive = status 2) once nbrun > maxrun or date > dateend 
+  	status 			integer NOT NULL DEFAULT 1,		-- 0=disabled, 1=enabled, 2=archived
   	fk_user_author 	integer DEFAULT NULL,
   	fk_user_mod 	integer DEFAULT NULL,
     fk_mailing      integer DEFAULT NULL,		-- id of emailing if job was queued to send mass emailing

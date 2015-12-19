@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - bills
+BillsCustomer=Facturas a clientes
 ErrorVATIntraNotConfigured=IVA aún no configurado
 IntracommunityVATNumber=Número de IVA
 VATIsNotUsedForInvoice=-

@@ -1,5 +1,4 @@
 # Dolibarr language file - en_US - Accounting Expert
-CHARSET=UTF-8
 ACCOUNTING_EXPORT_SEPARATORCSV=Column separator for export file
 ACCOUNTING_EXPORT_DATE=Date format for export file
 ACCOUNTING_EXPORT_PIECE=Export the number of piece
@@ -12,8 +11,6 @@ ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
 
 Accounting=Akuntansi
 Globalparameters=Parameter Global
-Chartofaccounts=Tabel Akun
-Fiscalyear=Tahun Pajak
 Menuaccount=Akun akuntansi
 Menuthirdpartyaccount=Akun Pihak Ketiga
 MenuTools=Alat
@@ -33,23 +30,17 @@ Back=Kembali
 
 Definechartofaccounts=Menetapkan bagan akun
 Selectchartofaccounts=Pilih bagan akun
-Validate=Validasi
 Addanaccount=Tambahkan sebuah akun akuntansi
 AccountAccounting=Akun akuntansi
 AccountAccountingSuggest=Accounting account suggest
 Ventilation=Perincian
-ToDispatch=Untuk Pengiriman
-Dispatched=Dikirim
 
 CustomersVentilation=Perincian pelanggan
 SuppliersVentilation=Perincian pemasok
 TradeMargin=Margin Perdagangan
 Reports=Laporan
 ByCustomerInvoice=Berdasarkan invoice langganan
-ByMonth=Bulanan
 NewAccount=Akun akuntansi baru
-Update=Membarui
-List=Daftar
 Create=Buat
 CreateMvts=Create movement
 UpdateAccount=Modifikasi akun akuntansi
@@ -61,7 +52,6 @@ AccountBalanceByMonth=Saldo per bulan
 AccountingVentilation=Perincian Akunting
 AccountingVentilationSupplier=Perincian Akunting Pemasok
 AccountingVentilationCustomer=Perincian Akunting Pelanggan
-Line=Baris
 
 CAHTF=Total purchase supplier before tax
 InvoiceLines=\nBaris faktur untuk ventilasi
@@ -112,22 +102,19 @@ Docref=Referensi
 Numerocompte=Akun
 Code_tiers=Pihak ketiga
 Labelcompte=Label Akun
-Debit=Debet
-Credit=Kredit
-Amount=Jumlah
 Sens=Sen
 Codejournal=Jurnal
 
 DelBookKeeping=Hapus catatan buku besar
 
-SellsJournal=Jurnal Penjualan
-PurchasesJournal=Jurnal Pembelian
 DescSellsJournal=Jurnal Penjualan
 DescPurchasesJournal=Jurnal Pembelian
 BankJournal=Jurnal Bank
 DescBankJournal=Jurnal Bank termasuk semua tipe pembayaran kecuali tunai
 CashJournal=Jurnal Tunai
 DescCashJournal=Jurnal Tunai termasuk tipe pembayaran tunai
+FinanceJournal=Finance journal
+DescFinanceJournal=Finance journal including all the types of payments by bank account
 
 CashPayment=Pembayaran Tunai
 
@@ -150,9 +137,6 @@ Pcgversion=Version of the plan
 Pcgtype=Class of account
 Pcgsubtype=Under class of account
 Accountparent=Root of the account
-Active=Statement
-
-NewFiscalYear=Tahun Pajak Baru
 
 DescVentilCustomer=Consult here the annual breakdown accounting of your invoices customers
 TotalVente=Total turnover before tax

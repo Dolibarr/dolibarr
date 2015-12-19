@@ -121,7 +121,6 @@ AttributeName=Attribute ชื่อ
 String=เชือก
 Text=ข้อความ
 Int=Int
-Date=วันที่
 DateAndTime=วันที่และเวลา
 PublicMemberCard=สมาชิกบัตรประชาชน
 MemberNotOrNoMoreExpectedToSubscribe=สมาชิกไม่ได้หรือไม่มีเลยที่คาดว่าจะมากขึ้นในการสมัครเป็นสมาชิก

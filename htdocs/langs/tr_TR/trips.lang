@@ -28,8 +28,6 @@ AnyOtherInThisListCanValidate=Doğrulama için bilgilendirilecek kişi
 TripSociete=Firma bilgisi
 TripSalarie=Kullanıcı bilgisi
 TripNDF=Gider raporu bilgileri
-DeleteLine=Gider raporundan bir satır sil
-ConfirmDeleteLine=Bu satırı silmek istediğinizden emin misiniz?
 PDFStandardExpenseReports=Bu gider raporu için PDF belgesi oluşturulacak standart şablon
 ExpenseReportLine=Gider rapor satırı
 TF_OTHER=Diğer
@@ -53,8 +51,6 @@ AddLineMini=Ekle
 Date_DEBUT=Dönem tarihi başı
 Date_FIN=Dönem tarihi sonu
 ModePaiement=Ödeme biçimi
-Note=Not
-Project=Proje
 
 VALIDATOR=Onaylama için sorumlu kişi
 VALIDOR=Onaylayan

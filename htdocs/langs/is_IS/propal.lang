@@ -53,6 +53,7 @@ ListOfProposals=Listi yfir auglýsing tillögur
 ActionsOnPropal=Aðgerðir á tillögu
 NoOpenedPropals=No open commercial proposals
 NoOtherOpenedPropals=No other open commercial proposals
+NoPropal=No commercial proposal
 RefProposal=Auglýsing tillögu dómari
 SendPropalByMail=Senda auglýsing tillögu með tölvupósti
 AssociatedDocuments=Skjöl sem tengd er við tillögu:

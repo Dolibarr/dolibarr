@@ -1,5 +1,4 @@
 # Dolibarr language file - en_US - Accounting Expert
-CHARSET=UTF-8
 ACCOUNTING_EXPORT_SEPARATORCSV=Column separator for export file
 ACCOUNTING_EXPORT_DATE=Date format for export file
 ACCOUNTING_EXPORT_PIECE=Export the number of piece
@@ -12,8 +11,6 @@ ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
 
 Accounting=Księgowość
 Globalparameters=Parametry globalne
-Chartofaccounts=Plan kont
-Fiscalyear=Lat podatkowych
 Menuaccount=Konta księgowe
 Menuthirdpartyaccount=Rachunki Thirdparty
 MenuTools=Narzędzia
@@ -33,23 +30,17 @@ Back=Powrót
 
 Definechartofaccounts=Definiowanie planu kont
 Selectchartofaccounts=Wybierz plan kont
-Validate=Uprawomocnić
 Addanaccount=Dodaj konto księgowe
 AccountAccounting=Konto księgowe
 AccountAccountingSuggest=Accounting account suggest
 Ventilation=Awaria
-ToDispatch=Wysyłką
-Dispatched=Wywoływane
 
 CustomersVentilation=Podział klientów
 SuppliersVentilation=Dostawcy Breakdown
 TradeMargin=Marża handlowa
 Reports=Raporty
 ByCustomerInvoice=Fakturami klientów
-ByMonth=Przez miesiąc
 NewAccount=Nowe konto księgowe
-Update=Aktualizacja
-List=Lista
 Create=Utworzyć
 CreateMvts=Create movement
 UpdateAccount=Modyfikacja konta księgowego
@@ -61,7 +52,6 @@ AccountBalanceByMonth=Stan konta na miesiąc
 AccountingVentilation=Rachunkowości podział
 AccountingVentilationSupplier=Dostawca rachunkowości podział
 AccountingVentilationCustomer=Podział klientów rachunkowości
-Line=Linia
 
 CAHTF=Total purchase supplier before tax
 InvoiceLines=Linie faktury być wentylowane
@@ -112,22 +102,19 @@ Docref=Odniesienie
 Numerocompte=Konto
 Code_tiers=Thirdparty
 Labelcompte=Konto Wytwórnia
-Debit=Debet
-Credit=Kredyt
-Amount=Ilość
 Sens=Sens
 Codejournal=Czasopismo
 
 DelBookKeeping=Usuń zapisy w księdze głównej
 
-SellsJournal=Sprzedaje w czasopiśmie
-PurchasesJournal=Zakupy czasopisma
 DescSellsJournal=Sprzedaje w czasopiśmie
 DescPurchasesJournal=Zakupy czasopisma
 BankJournal=Czasopismo Banku
 DescBankJournal=Czasopismo Banku w tym wszystkich rodzajów płatności innych niż gotówka
 CashJournal=Czasopismo Gotówka
 DescCashJournal=Czasopismo pieniężnych w tym rodzaju płatności gotówką
+FinanceJournal=Finance journal
+DescFinanceJournal=Finance journal including all the types of payments by bank account
 
 CashPayment=Płatność gotówką
 
@@ -150,9 +137,6 @@ Pcgversion=Wersja planu
 Pcgtype=Klasa konta
 Pcgsubtype=W ramach klasy uwagę
 Accountparent=Korzeń konta
-Active=Oświadczenie
-
-NewFiscalYear=Nowy rok podatkowy
 
 DescVentilCustomer=Skonsultuj się tutaj rocznego rozliczenia przebicia faktur klientów
 TotalVente=Total turnover before tax

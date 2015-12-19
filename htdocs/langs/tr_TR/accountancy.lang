@@ -1,5 +1,4 @@
 # Dolibarr language file - en_US - Accounting Expert
-CHARSET=UTF-8
 ACCOUNTING_EXPORT_SEPARATORCSV=Dışaaktarma dosyası için sütun ayırıcısı
 ACCOUNTING_EXPORT_DATE=Dışaaktarma dosyası için tarih biçimi
 ACCOUNTING_EXPORT_PIECE=Export the number of piece
@@ -12,8 +11,6 @@ ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
 
 Accounting=Muhasebe
 Globalparameters=Genel parametreler
-Chartofaccounts=Hesap planı
-Fiscalyear=Mali yıllar
 Menuaccount=Muhasebe hesapları
 Menuthirdpartyaccount=Üçüncü parti hesapları
 MenuTools=Araçlar
@@ -33,23 +30,17 @@ Back=Ciro
 
 Definechartofaccounts=Hesap planı tanımla
 Selectchartofaccounts=Hesap planı seç
-Validate=Doğrula
 Addanaccount=Muhasebe hesabı ekle
 AccountAccounting=Muhasebe hesabı
 AccountAccountingSuggest=Accounting account suggest
 Ventilation=Analiz
-ToDispatch=Gönderilecek
-Dispatched=Gönderilmiş
 
 CustomersVentilation=Müşteri analizi
 SuppliersVentilation=Tedarikç analizi
 TradeMargin=Ticaret kar oranı
 Reports=Raporlar
 ByCustomerInvoice=Müşteri faturalarına göre
-ByMonth=Aya göre
 NewAccount=Yeni muhasebe hesabı
-Update=Güncelle
-List=Liste
 Create=Oluştur
 CreateMvts=Hareket oluştur
 UpdateAccount=Bir muhasebe hesabının değiştirilmesi
@@ -61,7 +52,6 @@ AccountBalanceByMonth=Aylık hesap bakiyesi
 AccountingVentilation=Analiz muhasebesi
 AccountingVentilationSupplier=Tedarikçi hesabı analizi
 AccountingVentilationCustomer=Müşteri hesabı analizi
-Line=Satır
 
 CAHTF=Total purchase supplier before tax
 InvoiceLines=Analiz edilecek fatura kalemleri
@@ -112,22 +102,19 @@ Docref=Referans
 Numerocompte=Hesap
 Code_tiers=Üçüncü parti
 Labelcompte=Hesap etiketi
-Debit=Borç
-Credit=Alacak
-Amount=Tutar
 Sens=Sens (borsa haberleri yayınlama günlüğü)
 Codejournal=Günlük
 
 DelBookKeeping=Büyük defter kayıtlarını sil
 
-SellsJournal=Satış günlüğü
-PurchasesJournal=Alış günlüğü
 DescSellsJournal=Satış günlüğü
 DescPurchasesJournal=Alış günlüğü
 BankJournal=Banka günlüğü
 DescBankJournal=Nakit dışında her türlü ödemeyi içeren banka günlüğü
 CashJournal=Kasa günlüğü
 DescCashJournal=Nakit ödeme türünü içeren kasa günlüğü
+FinanceJournal=Finance journal
+DescFinanceJournal=Finance journal including all the types of payments by bank account
 
 CashPayment=Nakit ödeme
 
@@ -150,9 +137,6 @@ Pcgversion=Plan sürümü
 Pcgtype=Hesap sınıfı
 Pcgsubtype=Hesap sınıfı altında
 Accountparent=Hesabın kökü
-Active=Hesap özeti
-
-NewFiscalYear=Yeni mali yıl
 
 DescVentilCustomer=Müşteri faturalarınızın yıllık hesap analizi için buraya danışın
 TotalVente=Total turnover before tax

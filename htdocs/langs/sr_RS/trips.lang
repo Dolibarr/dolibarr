@@ -28,8 +28,6 @@ AnyOtherInThisListCanValidate=Osoba koju treba obavestiti za odobrenje.
 TripSociete=Informacije kompanije
 TripSalarie=Informacije korisnika
 TripNDF=Informacije o trošku
-DeleteLine=Obriši liniju troška
-ConfirmDeleteLine=Da li ste sigurni da želite da obrišete ovu liniju ?
 PDFStandardExpenseReports=Standardni template za generisanje PDF dokumenta o trošku
 ExpenseReportLine=Linija troška
 TF_OTHER=Ostalo
@@ -53,8 +51,6 @@ AddLineMini=Dodaj
 Date_DEBUT=Pošetak
 Date_FIN=Kraj
 ModePaiement=Način plaćanja
-Note=Beleška
-Project=Projekat
 
 VALIDATOR=Korisnik odgovoran za odobrenje
 VALIDOR=Odobrio

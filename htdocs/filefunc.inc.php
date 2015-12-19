@@ -167,9 +167,9 @@ $tmp='';
 $found=0;
 $real_dolibarr_main_document_root=str_replace('\\','/',realpath($dolibarr_main_document_root));	// A) Value found into config file, to say where are store htdocs files. Ex: C:/xxx/dolibarr, C:/xxx/dolibarr/htdocs
 if (!empty($_SERVER["DOCUMENT_ROOT"])) {
-	$pathroot = $_SERVER["DOCUMENT_ROOT"];                                                      // B) Value reported by web server setup, to say where is root of web server instance. Ex: C:/xxx/dolibarr, C:/xxx/dolibarr/htdocs
+    $pathroot = $_SERVER["DOCUMENT_ROOT"];                                                      // B) Value reported by web server setup (not defined on CLI mode), to say where is root of web server instance. Ex: C:/xxx/dolibarr, C:/xxx/dolibarr/htdocs
 } else {
-	$pathroot = 'BOGUS';
+    $pathroot = 'NOTDEFINED';
 }
 $paths=explode('/',str_replace('\\','/',$_SERVER["SCRIPT_NAME"]));								// C) Value reported by web server, to say full path on filesystem of a file. Ex: /dolibarr/htdocs/admin/system/phpinfo.php
 // Try to detect if $_SERVER["DOCUMENT_ROOT"]+start of $_SERVER["SCRIPT_NAME"] is $dolibarr_main_document_root. If yes, relative url to add before dol files is this start part.
@@ -189,6 +189,7 @@ foreach($paths as $tmppath)	// We check to find (B+start of C)=A
     }
     //else print "Not found yet for concatpath=".$concatpath."<br>\n";
 }
+//print "found=".$found." dolibarr_main_url_root=".$dolibarr_main_url_root."\n";
 if (! $found) $tmp=$dolibarr_main_url_root; // If autodetect fails (Ie: when using apache alias that point outside default DOCUMENT_ROOT).
 else $tmp='http'.(((empty($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] != 'on') && (empty($_SERVER["SERVER_PORT"])||$_SERVER["SERVER_PORT"]!=443))?'':'s').'://'.$_SERVER["SERVER_NAME"].((empty($_SERVER["SERVER_PORT"])||$_SERVER["SERVER_PORT"]==80||$_SERVER["SERVER_PORT"]==443)?'':':'.$_SERVER["SERVER_PORT"]).($tmp3?(preg_match('/^\//',$tmp3)?'':'/').$tmp3:'');
 //print "tmp1=".$tmp1." tmp2=".$tmp2." tmp3=".$tmp3." tmp=".$tmp."\n";

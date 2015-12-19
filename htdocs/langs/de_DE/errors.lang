@@ -3,8 +3,6 @@
 # No errors
 NoErrorCommitIsDone=Kein Fehler, Befehl wurde ausgeführt
 # Errors
-Error=Fehler
-Errors=Fehler
 ErrorButCommitIsDone=Fehler aufgetreten, Freigabe erfolgt dennoch
 ErrorBadEMail=E-Mailadresse  %s ist nicht korrekt
 ErrorBadUrl=URL %s ist nicht korrekt
@@ -63,7 +61,7 @@ ErrorSizeTooLongForVarcharType=Die Größe überschreitet das Maximum für den T
 ErrorNoValueForSelectType=Bitte Wert für Auswahlliste eingeben
 ErrorNoValueForCheckBoxType=Bitte Wert für Checkbox-Liste eingeben
 ErrorNoValueForRadioType=Bitte Wert für Radiobutton-Liste eingeben
-ErrorBadFormatValueList=The list value cannot have more than one comma: <u>%s</u>, but need at least one: key,value
+ErrorBadFormatValueList=Die Listewerte kann nicht mehr als ein Komma:<u>%s</u> , muss jedoch mindestens einen Schlüssel, Wert beinhalten
 ErrorFieldCanNotContainSpecialCharacters=Das Feld <b>%s</b> darf keine Sonderzeichen enthalten.
 ErrorFieldCanNotContainSpecialNorUpperCharacters=Das Feld <b>%s</b> darf keine Sonderzeichen, Großbuchstaben und Zahlen enthalten.
 ErrorNoAccountancyModuleLoaded=Kein Buchhaltungsmodul aktiviert
@@ -172,8 +170,11 @@ ErrorFieldMustBeANumeric=Feld <b>%s</b> muss ein numerischer Wert sein
 ErrorFieldMustBeAnInteger=Feld <b>%s</b> muss eine ganze Zahl sein
 ErrorMandatoryParametersNotProvided=Erforderliche(r) Parameter wird nicht angeboten
 ErrorOppStatusRequiredIfAmount=Sie legen einen geschätzten Betrag für diese Verkaufschance/Lead erfasst. Deshalb müssen Sie auch den Status eingeben
+ErrorBadDefinitionOfMenuArrayInModuleDescriptor=Falsche Definition von Menü Array in  Module Descriptor (falscher Wert für den Key  fk_menu)
+ErrorSavingChanges=An error has ocurred when saving the changes
 
 # Warnings
+WarningPasswordSetWithNoAccount=A password was set for this member. However, no user account was created. So this password is stored but can't be used to login to Dolibarr. It may be used by an external module/interface but if you don't need to define any login nor password for a member, you can disable option "Manage a login for each member" from Member module setup. If you need to manage a login but don't need any password, you can keep this field empty to avoid this warning. Note: Email can also be used as a login if the member is linked to a user.
 WarningMandatorySetupNotComplete=Zwingend notwendige Parameter sind noch nicht definiert
 WarningSafeModeOnCheckExecDir=Achtung: Der PHP-Option <b>safe_mode</b> ist aktiviert, entsprechend müssen Befehle in einem mit <b>safe_mode_exec_dir</b> gekennzeichneten Verzeichnis ausgeführt werden.
 WarningAllowUrlFopenMustBeOn=Der Parameter <b>allow_url_fopen</b> muss in der php.ini-Datei auf <b>ON</b> stehen, damit dieses Modul funktioniert. Bitte passen Sie die Datei manuell an.
@@ -191,5 +192,5 @@ WarningClickToDialUserSetupNotComplete=Die ClickToDial-Informationen für Ihren 
 WarningNotRelevant=Operation für dieses Daten-Set nicht relevant
 WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=Funktion deaktiviert, wenn die Bildschirm-Ausgabe für Blinde oder Text-Browser optimiert ist.
 WarningPaymentDateLowerThanInvoiceDate=Zahlungsdatum (%s) liegt vor dem Rechnungsdatum (%s) für Rechnung %s.
-WarningTooManyDataPleaseUseMoreFilters=Too many data (more than %s lines). Please use more filters or set the constant %s to a higher limit.
+WarningTooManyDataPleaseUseMoreFilters=Zu viele Ergebnisse (mehr als %s Zeilen). Bitte benutzen Sie mehr Filter oder erhöhen sie die Konstante %s auf einen höheren Wert.
 WarningSomeLinesWithNullHourlyRate=Einige Zeiten wurden durch Benutzer erfasst bei denen der Stundenansatz nicht definiert war. Ein Stundenansatz von 0 wird verwendet, was aber Fehlerhafte Zeitauswertungen zur Folge haben kann.

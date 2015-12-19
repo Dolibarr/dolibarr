@@ -53,6 +53,7 @@ ListOfProposals=商業建議名單
 ActionsOnPropal=行動上的建議
 NoOpenedPropals=No open commercial proposals
 NoOtherOpenedPropals=No other open commercial proposals
+NoPropal=No commercial proposal
 RefProposal=商業建議參考
 SendPropalByMail=通過郵件發送的商業建議
 AssociatedDocuments=相關文件的建議：

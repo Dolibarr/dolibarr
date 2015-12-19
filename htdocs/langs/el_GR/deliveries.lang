@@ -7,6 +7,7 @@ DeliveryOrders=Παράδοση παραγγελιών
 DeliveryDate=Ημερ. παράδοσης
 DeliveryDateShort=Ημερ. παράδ.
 CreateDeliveryOrder=Δημιουργία παράδοσης παραγγελίας
+DeliveryStateSaved=Delivery state saved
 QtyDelivered=Ποσότητα που παραδόθηκε
 SetDeliveryDate=Ορισμός ημερ. αποστολής
 ValidateDeliveryReceipt=Επικύρωση παράδοσης παραλαβής

@@ -1,15 +1,15 @@
-# Dolibarr language file - Source file is en_US - users
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Accountancy code for salaries payments
-SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Accountancy code for financial charge
+# Dolibarr language file - Source file is en_US - salaries
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Счетоводен код за заплащания на заплати
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Счетоводен код за финансова такса
 Salary=Заплата
 Salaries=Заплати
 Employee=Служител
-NewSalaryPayment=New salary payment
-SalaryPayment=Salary payment
-SalariesPayments=Salaries payments
-ShowSalaryPayment=Show salary payment
-THM=Average hourly price
-TJM=Average daily price
-CurrentSalary=Current salary
-THMDescription=This value may be used to calculate cost of time consumed on a project entered by users if module project is used
-TJMDescription=This value is currently as information only and is not used for any calculation
+NewSalaryPayment=Ново заплащане на заплата
+SalaryPayment=Плащане на заплата
+SalariesPayments=Заплащания заплати
+ShowSalaryPayment=Показване заплащане на заплата
+THM=Средна цена на час
+TJM=Средна цена на ден
+CurrentSalary=Сегашна заплата
+THMDescription=Тази стойност може да използва за изчисляване на отнето време по проект отделено от потребителите ако модул проект се използва
+TJMDescription=Тази стойност е само сега като информация и не се използва за никакво изчисление

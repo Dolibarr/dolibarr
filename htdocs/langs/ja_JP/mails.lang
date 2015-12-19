@@ -84,9 +84,12 @@ EachInvoiceWillBeAttachedToEmail=A document using default invoice document templ
 MailTopicSendRemindUnpaidInvoices=Reminder of invoice %s (%s)
 SendRemind=Send reminder by EMails
 RemindSent=%s reminder(s) sent
-AllRecipientSelectedForRemind=All thirdparties selected and if an email is set (note that one mail per invoice will be sent)
+AllRecipientSelected=All thirdparties selected and if an email is set.
 NoRemindSent=No EMail reminder sent
-ResultOfMassSending=Result of mass EMail reminders sending
+ResultOfMailSending=Result of mass EMail sending
+NbSelected=Nb selected
+NbIgnored=Nb ignored
+NbSent=Nb sent
 
 # Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=すべてのサードパーティの連絡先（顧客、見込み客、サプラ​​イヤー、...）
@@ -97,7 +100,7 @@ MailingModuleDescEmailsFromUser=EMails from user input (email;lastname;firstname
 MailingModuleDescContactsCategories=第三者（カテゴリ別）
 MailingModuleDescDolibarrContractsLinesExpired=期限切れの契約のラインを持つ第三者
 MailingModuleDescContactsByCompanyCategory=サードパーティの連絡先（第三者のカテゴリ別）
-MailingModuleDescContactsByCategory=Contacts/addresses of third parties by category
+MailingModuleDescContactsByCategory=Contacts/addresses of third parties (by category)
 MailingModuleDescMembersCategories=財団のメンバー（種類）
 MailingModuleDescContactsByFunction=サードパーティの連絡先（位置/機能別）
 LineInFile=ファイル内の行%s

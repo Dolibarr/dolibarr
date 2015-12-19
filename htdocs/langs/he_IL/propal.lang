@@ -53,6 +53,7 @@ ListOfProposals=List of commercial proposals
 ActionsOnPropal=Events on proposal
 NoOpenedPropals=No open commercial proposals
 NoOtherOpenedPropals=No other open commercial proposals
+NoPropal=No commercial proposal
 RefProposal=Commercial proposal ref
 SendPropalByMail=Send commercial proposal by mail
 AssociatedDocuments=Documents associated with the proposal:

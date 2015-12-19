@@ -486,6 +486,9 @@ div.divsearchfield {
 div.confirmmessage {
 	padding-top: 6px;
 }
+div.myavailability {
+	padding-top: 6px;
+}
 /* Style to move picto into left of button */
 /*
 .buttonactionview {

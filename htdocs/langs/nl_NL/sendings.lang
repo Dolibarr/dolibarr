@@ -69,7 +69,7 @@ ProductQtyInCustomersOrdersRunning=Hoeveelheid producte in geopende klant bestel
 ProductQtyInSuppliersOrdersRunning=Hoeveelheid producten in geopende leveranciers bestellingen
 ProductQtyInShipmentAlreadySent=Product quantity from opened customer order already sent
 ProductQtyInSuppliersShipmentAlreadyRecevied=Hoeveelheid producte uit geopende leverancier bestelling reeds ontvangen
-NoProductToShipFoundIntoStock=No product to ship found into warehouse <b>%s</b>. Correct sotck or go back to choose another warehouse.
+NoProductToShipFoundIntoStock=No product to ship found into warehouse <b>%s</b>. Correct stock or go back to choose another warehouse.
 
 # Sending methods
 SendingMethodCATCH=Afhalen door de afnemer

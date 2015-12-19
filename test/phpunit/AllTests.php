@@ -30,7 +30,7 @@ global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql'); // This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
-
+print 'DOL_MAIN_URL_ROOT='.DOL_MAIN_URL_ROOT."\n";  // constant will be used by other tests
 
 
 if ($langs->defaultlang != 'en_US')
@@ -59,6 +59,7 @@ if (empty($user->id))
     $user->getrights();
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS=1;
+
 
 
 /**

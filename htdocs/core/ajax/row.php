@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2012 Regis Houssin  <regis.houssin@capnetworks.com>
+/* Copyright (C) 2010-2015 Regis Houssin  <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,15 +17,17 @@
 
 /**
  *       \file       htdocs/core/ajax/row.php
- *       \brief      File to return Ajax response on Row move
+ *       \brief      File to return Ajax response on Row move. 
+ *                   This ajax page is called when doing an up or down drag and drop. 
  */
 
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1'); // Disables token renewal
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1'); // Disable token renewal
 if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
 if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
 if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
 if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
 if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
+if (! defined('NOREQUIREHOOK'))  define('NOREQUIREHOOK','1');  // Disable "main.inc.php" hooks
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
@@ -63,7 +65,7 @@ if ((isset($_POST['roworder']) && ! empty($_POST['roworder'])) && (isset($_POST[
 	$row->line_ajaxorder($newrowordertab);
 
 	// Reorder line to have position of chilren lines sharing same counter than parent lines
-	// This should be useless because there is no need to have children sharing same counter that parent.
+	// This should be useless because there is no need to have children sharing same counter than parent, but well, it's cleaner into database.
 	if (in_array($fk_element,array('fk_facture','fk_propal','fk_commande')))
 	{
 		$result=$row->line_order(true);

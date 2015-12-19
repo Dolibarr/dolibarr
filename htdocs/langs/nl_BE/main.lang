@@ -19,3 +19,7 @@ FormatDateHourShort=%d-%m-%Y %H:%M
 FormatDateHourSecShort=%d/%m/%Y %I:%M:%S %p
 FormatDateHourTextShort=%d %b %Y %H:%M
 FormatDateHourText=%d %B %Y %H:%M
+ShowTransaction=Toon transactie op bankrekening
+Deny=Weigeren
+Denied=Geweigerd
+Sincerely=Met vriendelijke groeten

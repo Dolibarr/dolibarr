@@ -53,6 +53,7 @@ ListOfProposals=قائمة مقترحات تجارية
 ActionsOnPropal=الإجراءات على الاقتراح
 NoOpenedPropals=No open commercial proposals
 NoOtherOpenedPropals=No other open commercial proposals
+NoPropal=No commercial proposal
 RefProposal=اقتراح المرجع التجارية
 SendPropalByMail=اقتراح ارسال التجارية عن طريق البريد
 AssociatedDocuments=الوثائق المرتبطة الاقتراح :

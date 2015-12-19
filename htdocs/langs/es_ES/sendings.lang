@@ -69,7 +69,7 @@ ProductQtyInCustomersOrdersRunning=Cantidad en pedidos de clientes abiertos
 ProductQtyInSuppliersOrdersRunning=Cantidad en pedidos a proveedores abiertos
 ProductQtyInShipmentAlreadySent=Ya ha sido enviada la cantidad del producto del pedido de cliente abierto
 ProductQtyInSuppliersShipmentAlreadyRecevied=Cantidad en pedidos a proveedores ya recibidos
-NoProductToShipFoundIntoStock=No product to ship found into warehouse <b>%s</b>. Correct sotck or go back to choose another warehouse.
+NoProductToShipFoundIntoStock=Sin stock disponible en el almacén <b>%s</b>. Corrija el stock o vuelva atrás para seleccionar otro almacén.
 
 # Sending methods
 SendingMethodCATCH=Recogido por el cliente

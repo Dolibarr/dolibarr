@@ -48,7 +48,6 @@ RefusedReason=Motivul respingerii
 RefusedInvoicing=Facturare respingerea
 NoInvoiceRefused=Nu încărcaţi respingerea
 InvoiceRefused=Factura refuzată (Încărcați  refuzul la client)
-Status=Status
 StatusUnknown=Necunoscut
 StatusWaiting=Aşteptare
 StatusTrans=Trimis

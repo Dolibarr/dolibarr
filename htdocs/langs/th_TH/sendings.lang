@@ -69,7 +69,7 @@ ProductQtyInCustomersOrdersRunning=ปริมาณสินค้าเข้
 ProductQtyInSuppliersOrdersRunning=ปริมาณสินค้าลงในคำสั่งเปิดซัพพลายเออร์
 ProductQtyInShipmentAlreadySent=ปริมาณสินค้าจากการสั่งซื้อของลูกค้าที่เปิดส่งแล้ว
 ProductQtyInSuppliersShipmentAlreadyRecevied=ปริมาณการสั่งซื้อสินค้าจากซัพพลายเออร์ที่เปิดรับอยู่แล้ว
-NoProductToShipFoundIntoStock=No product to ship found into warehouse <b>%s</b>. Correct sotck or go back to choose another warehouse.
+NoProductToShipFoundIntoStock=No product to ship found into warehouse <b>%s</b>. Correct stock or go back to choose another warehouse.
 
 # Sending methods
 SendingMethodCATCH=จับลูกค้า

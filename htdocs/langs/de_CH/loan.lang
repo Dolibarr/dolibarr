@@ -1,0 +1,5 @@
+# Dolibarr language file - Source file is en_US - loan
+ErrorLoanCapital=Die Kreditsumme muss eine Nummer sein und grösser als 0
+ErrorLoanLength=Die Kreditdauer muss eine Nummer sein und grösser als 0
+ErrorLoanInterest=Die jährlichen Zinsen müssen eine Nummer sein und grösser als 0
+AmortizationPaymentDesc=Die <a href="#amortization">Amortisation</a> reisst ab wie viel von Ihrer monatlichen Zahlung geht für die Bankzinsen, und wie viel für die Tilgung des Haupt-Darlehen geht.

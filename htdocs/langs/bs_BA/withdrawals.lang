@@ -48,7 +48,6 @@ RefusedReason=Razlog za odbijanje
 RefusedInvoicing=Naplate odbijanja
 NoInvoiceRefused=Ne naplatiti odbijanje
 InvoiceRefused=Invoice refused (Charge the rejection to customer)
-Status=Status
 StatusUnknown=Nepoznato
 StatusWaiting=Čekanje
 StatusTrans=Sent

@@ -316,10 +316,25 @@ class FormMail extends Form
 	        	$out.= $langs->trans('SelectMailModel').': '.$this->selectarray('modelmailselected', $modelmail_array, 0, 1);
 	        	if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 	        	$out.= ' &nbsp; ';
-	        	$out.= '<input class="button" type="submit" value="'.$langs->trans('Valid').'" name="modelselected" id="modelselected">';
+	        	$out.= '<input class="button" type="submit" value="'.$langs->trans('Use').'" name="modelselected" id="modelselected">';
 	        	$out.= ' &nbsp; ';
 	        	$out.= '</div>';
         	}
+        	elseif (! empty($this->param['models']) && in_array($this->param['models'], array(
+        	        'propal_send','order_send','facture_send',
+        	        'shipping_send','fichinter_send','supplier_proposal_send','order_supplier_send',
+        	        'invoice_supplier_send','thirdparty'
+           	    )))
+        	{
+        	    $out.= '<div style="padding: 3px 0 3px 0">'."\n";
+        	    $out.= $langs->trans('SelectMailModel').': <select name="modelmailselected" disabled="disabled"><option value="none" disabled="disabled">'.$langs->trans("NoTemplateDefined").'</option></select>';
+        	    if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+        	    $out.= ' &nbsp; ';
+        	    $out.= '<input class="button" type="submit" value="'.$langs->trans('Use').'" name="modelselected" disabled="disabled" id="modelselected">';
+        	    $out.= ' &nbsp; ';
+        	    $out.= '</div>';
+        	}
+        	    
 
 
         	$out.= '<table class="border" width="100%">'."\n";

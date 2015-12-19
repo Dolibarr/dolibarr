@@ -1,0 +1,6 @@
+# Dolibarr language file - Source file is en_US - members
+MemberStatusDraftShort=Entwurf
+DeleteType=Löschen
+LastMembers=Letzte %s Mitglieder
+LastSubscriptionDate=Datum der letzten Mitgliedschaft
+LastSubscriptionAmount=Höhe des letzten Mitgliedsbeitrags

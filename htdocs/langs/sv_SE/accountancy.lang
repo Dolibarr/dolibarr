@@ -1,5 +1,4 @@
 # Dolibarr language file - en_US - Accounting Expert
-CHARSET=UTF-8
 ACCOUNTING_EXPORT_SEPARATORCSV=Kolumnseparator för exportfil
 ACCOUNTING_EXPORT_DATE=Datumformat för exportfil
 ACCOUNTING_EXPORT_PIECE=Export the number of piece
@@ -12,8 +11,6 @@ ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
 
 Accounting=Redovisning
 Globalparameters=Globala parametrar
-Chartofaccounts=Kontoplan
-Fiscalyear=Räkenskapsår
 Menuaccount=Redovisnings konton
 Menuthirdpartyaccount=Tredjeparts konton
 MenuTools=Verktyg
@@ -33,23 +30,17 @@ Back=Avkastning
 
 Definechartofaccounts=Definiera en kontoplan
 Selectchartofaccounts=Välj en kontoplan
-Validate=Validera
 Addanaccount=Lägg till ett redovisningskonto
 AccountAccounting=Redovisningskonto
 AccountAccountingSuggest=Accounting account suggest
 Ventilation=Fördelning
-ToDispatch=Avsändandet
-Dispatched=Levereras
 
 CustomersVentilation=Fördelning kunder
 SuppliersVentilation=Fördelning leverantörerna
 TradeMargin=Handelsmarginal
 Reports=Rapporter
 ByCustomerInvoice=Enligt faktura kunder
-ByMonth=Enligt månad
 NewAccount=Nytt redovisningskonto
-Update=Uppdatera
-List=Lista
 Create=Skapa
 CreateMvts=Skapa rörelse
 UpdateAccount=Ändring av ett redovisningskonto
@@ -61,7 +52,6 @@ AccountBalanceByMonth=Saldo per månad
 AccountingVentilation=Uppdelning redovisning
 AccountingVentilationSupplier=Uppdelning redovisnings leverantör
 AccountingVentilationCustomer=Uppdelning redovisnings kund
-Line=Linje
 
 CAHTF=Total purchase supplier before tax
 InvoiceLines=Linjer av faktura som ska ventileras
@@ -112,22 +102,19 @@ Docref=Referens
 Numerocompte=Konto
 Code_tiers=Tredjeparts
 Labelcompte=Etikett konto
-Debit=Debit
-Credit=Kredit
-Amount=Belopp
 Sens=Sens
 Codejournal=Journal
 
 DelBookKeeping=Ta bort posterna i huvudboken
 
-SellsJournal=Försäljnings journal
-PurchasesJournal=Inköp tidskrift
 DescSellsJournal=Sells tidskrift
 DescPurchasesJournal=Inköp tidskrift
 BankJournal=Bank tidskrift
 DescBankJournal=Bank journal inklusive alla typer av annat än pengar betalningar
 CashJournal=Cash journal
 DescCashJournal=Cash journal inklusive typ av betalning kontant
+FinanceJournal=Finance journal
+DescFinanceJournal=Finance journal including all the types of payments by bank account
 
 CashPayment=Kontantbetalning
 
@@ -150,9 +137,6 @@ Pcgversion=Version av planen
 Pcgtype=Klass konto
 Pcgsubtype=Under klass konto
 Accountparent=Roten till kontot
-Active=Uttalande
-
-NewFiscalYear=Nytt räkenskapsår
 
 DescVentilCustomer=Rådgör här den årliga fördelningen redovisning av era fakturor kunder
 TotalVente=Total turnover before tax

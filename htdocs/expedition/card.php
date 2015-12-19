@@ -8,6 +8,7 @@
  * Copyright (C) 2013       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2014		Cedric GROSS			<c.gross@kreiz-it.fr>
  * Copyright (C) 2014		Francis Appels			<francis.appels@yahoo.com>
+ * Copyright (C) 2015		Claudio Aschieri		<c.aschieri@19.coop>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/sendings.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/expedition/modules_expedition.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))  require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 if (! empty($conf->propal->enabled))   require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 if (! empty($conf->commande->enabled)) require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
@@ -75,6 +77,15 @@ $hidedesc 	 = (GETPOST('hidedesc','int') ? GETPOST('hidedesc','int') : (! empty(
 $hideref 	 = (GETPOST('hideref','int') ? GETPOST('hideref','int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
 
 $object = new Expedition($db);
+$extrafields = new ExtraFields($db);
+$extrafieldsline = new ExtraFields($db);
+
+// fetch optionals attributes and labels
+$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+
+// fetch optionals attributes lines and labels
+$extralabelslines=$extrafieldsline->fetch_name_optionals_label($object->table_element_line);
+
 
 // Load object. Make an object->fetch
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once
@@ -111,6 +122,33 @@ if ($action == 'set_incoterms' && !empty($conf->incoterm->enabled))
 	$result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
 }
 
+if ($action == 'update_extras')
+{
+	// Fill array 'array_options' with data from update form
+	$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+	$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
+	if ($ret < 0) $error++;
+
+	if (! $error)
+	{
+		// Actions on extra fields (by external module or standard code)
+		// TODO le hook fait double emploi avec le trigger !!
+		$hookmanager->initHooks(array('expeditiondao'));
+		$parameters = array('id' => $object->id);
+		$reshook = $hookmanager->executeHooks('insertExtraFields', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+		if (empty($reshook)) {
+			$result = $object->insertExtraFields();
+			if ($result < 0) {
+				$error++;
+			}
+		} else if ($reshook < 0)
+			$error++;
+	}
+
+	if ($error)
+		$action = 'edit_extras';
+}
+
 $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -119,9 +157,10 @@ if (empty($reshook))
 {
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';		// Must be include, not include_once
 
-	if ($action == 'add')
+	if ($action == 'add' && $user->rights->expedition->creer)
 	{
 	    $error=0;
+	    $predef='';
 
 	    $db->begin();
 
@@ -157,7 +196,8 @@ if (empty($reshook))
 		$object->location_incoterms 	= GETPOST('location_incoterms', 'alpha');
 
 	    $batch_line = array();
-
+	    $array_options=array();
+	    
 	    $num=count($objectsrc->lines);
 	    $totalqty=0;
 
@@ -201,8 +241,20 @@ if (empty($reshook))
 				//shipment line for product with no batch management
 				if (GETPOST($qty,'int') > 0) $totalqty+=GETPOST($qty,'int');
 			}
+			
+			// Extrafields
+			$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
+	    $array_options[$i] = $extrafieldsline->getOptionalsFromPost($extralabelsline, $i);
+			// Unset extrafield
+			if (is_array($extralabelsline)) {
+				// Get extra fields
+				foreach ($extralabelsline as $key => $value) {
+					unset($_POST["options_" . $key]);
+				}
+			}
+			
 	    }
-		
+	
 	    //var_dump($batch_line[2]);
 
 	    if ($totalqty > 0)		// There is at least one thing to ship
@@ -220,8 +272,8 @@ if (empty($reshook))
 						$idl = "idl".$i;
 						$entrepot_id = is_numeric(GETPOST($ent,'int'))?GETPOST($ent,'int'):GETPOST('entrepot_id','int');
 						if ($entrepot_id < 0) $entrepot_id='';
-
-						$ret=$object->addline($entrepot_id,GETPOST($idl,'int'),GETPOST($qty,'int'));
+						
+						$ret=$object->addline($entrepot_id,GETPOST($idl,'int'),GETPOST($qty,'int'),$array_options[$i]);
 						if ($ret < 0)
 						{
 							setEventMessages($object->error, $object->errors, 'errors');
@@ -234,7 +286,7 @@ if (empty($reshook))
 					// batch mode
 					if ($batch_line[$i]['qty']>0)
 					{
-						$ret=$object->addline_batch($batch_line[$i]);
+						$ret=$object->addline_batch($batch_line[$i],$array_options[$i]);
 						if ($ret < 0)
 						{
 							setEventMessages($object->error, $object->errors, 'errors');
@@ -242,8 +294,11 @@ if (empty($reshook))
 						}
 					}
 				}
-	        }
-
+	        }	        
+	        // Fill array 'array_options' with data from add form
+	        $ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+	        if ($ret < 0) $error++;
+	        
 	        if (! $error)
 	        {
 	            $ret=$object->create($user);		// This create shipment (like Odoo picking) and line of shipments. Stock movement will when validating shipment.
@@ -603,6 +658,15 @@ if ($action == 'create')
             print '<td colspan="3">';
             print '<input name="tracking_number" size="20" value="'.GETPOST('tracking_number','alpha').'">';
             print "</td></tr>\n";
+            
+            // Other attributes
+            $parameters = array('objectsrc' => $objectsrc, 'colspan' => ' colspan="3"', 'socid'=>$socid);
+            $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$expe,$action);    // Note that $action and $object may have been modified by hook
+            
+            if (empty($reshook) && ! empty($extrafields->attribute_label)) {
+            	print $expe->showOptionals($extrafields, 'edit');
+            }
+            
 
             // Incoterms
 			if (!empty($conf->incoterm->enabled))
@@ -621,17 +685,13 @@ if ($action == 'create')
 			$liste = ModelePdfExpedition::liste_modeles($db);
 			print $form->selectarray('model', $liste, $conf->global->EXPEDITION_ADDON_PDF);
             print "</td></tr>\n";
-
-            // Other attributes
-            $parameters=array('colspan' => ' colspan="3"');
-            $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$expe,$action);    // Note that $action and $object may have been modified by hook
-
+            
             print "</table>";
 
             dol_fiche_end();
 
             /*
-             * Lignes de commandes
+             * Expedition Lines
              */
 
             $numAsked = count($object->lines);
@@ -895,6 +955,17 @@ if ($action == 'create')
 						print img_warning().' '.$langs->trans("NoProductToShipFoundIntoStock", $staticwarehouse->libelle);
 					}
 				}
+				
+				
+				//Display lines extrafields
+				if (is_array($extralabelslines) && count($extralabelslines)>0) {
+					$colspan=5;
+					$line = new ExpeditionLigne($db);
+					$line->fetch_optionals($object->id,$extralabelslines);
+					print '<tr '.$bc[$var].'>';
+					print $line->showOptionals($extrafieldsline, 'edit', array('style'=>$bc[$var], 'colspan'=>$colspan),$indiceAsked);
+					print '</tr>';
+				}
 
                 $indiceAsked++;
             }
@@ -934,6 +1005,8 @@ else if ($id || $ref)
 
 		$soc = new Societe($db);
 		$soc->fetch($object->socid);
+		
+		$res = $object->fetch_optionals($object->id, $extralabels);
 
 		$head=shipping_prepare_head($object);
 		dol_fiche_head($head, 'shipping', $langs->trans("Shipment"), 0, 'sending');
@@ -1252,9 +1325,9 @@ else if ($id || $ref)
 		}
 
 		// Other attributes
-		$parameters=array('colspan' => ' colspan="3"');
-		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-
+		$cols = 3;
+		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
+		
 		print "</table>\n";
 
 		/*
@@ -1437,6 +1510,16 @@ else if ($id || $ref)
 				}
 			}
 			print "</tr>";
+			
+			//Display lines extrafields
+			if (is_array($extralabelslines) && count($extralabelslines)>0) {
+				$colspan= empty($conf->productbatch->enabled) ? 5 : 6;
+				$line = new ExpeditionLigne($db);
+				$line->fetch_optionals($lines[$i]->id,$extralabelslines);
+				print '<tr '.$bc[$var].'>';
+				print $line->showOptionals($extrafieldsline, 'view', array('style'=>$bc[$var], 'colspan'=>$colspan),$indiceAsked);
+				print '</tr>';
+			}
 
 			$var=!$var;
 		}

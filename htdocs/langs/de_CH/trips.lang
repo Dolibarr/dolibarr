@@ -1,0 +1,6 @@
+# Dolibarr language file - Source file is en_US - trips
+CompanyVisited=Besuchte Firma/Stiftung
+AnyOtherInThisListCanValidate=Zu informierende Person für die Bestätigung
+TripSociete=Information Firma
+NOT_VALIDATOR=Sie sind nicht berechtigt, diese Spesennabrechnung zu genehmigen.
+RefuseTrip=Verweigern einer Spesenabrechnung

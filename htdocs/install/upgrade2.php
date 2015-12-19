@@ -1292,7 +1292,10 @@ function migrate_paiementfourn_facturefourn($db,$langs,$conf)
 function migrate_price_facture($db,$langs,$conf)
 {
     $err=0;
-
+    
+    $tmpmysoc=new Societe($db);
+    $tmpmysoc->setMysoc($conf);
+    
     $db->begin();
 
     print '<tr><td colspan="4">';
@@ -1333,7 +1336,7 @@ function migrate_price_facture($db,$langs,$conf)
                 $facligne= new FactureLigne($db);
                 $facligne->fetch($rowid);
 
-                $result=calcul_price_total($qty,$pu,$remise_percent,$vatrate, 0, 0,$remise_percent_global,'HT',$info_bits,0);
+                $result=calcul_price_total($qty,$pu,$remise_percent,$vatrate, 0, 0,$remise_percent_global,'HT',$info_bits,$facligne->product_type,$tmpmysoc);
                 $total_ht  = $result[0];
                 $total_tva = $result[1];
                 $total_ttc = $result[2];
@@ -1407,6 +1410,9 @@ function migrate_price_facture($db,$langs,$conf)
  */
 function migrate_price_propal($db,$langs,$conf)
 {
+   	$tmpmysoc=new Societe($db);
+	$tmpmysoc->setMysoc($conf);
+    
     $db->begin();
 
     print '<tr><td colspan="4">';
@@ -1445,7 +1451,7 @@ function migrate_price_propal($db,$langs,$conf)
                 $propalligne= new PropaleLigne($db);
                 $propalligne->fetch($rowid);
 
-                $result=calcul_price_total($qty,$pu,$remise_percent,$vatrate,0,0,$remise_percent_global,'HT',$info_bits,0);
+                $result=calcul_price_total($qty,$pu,$remise_percent,$vatrate,0,0,$remise_percent_global,'HT',$info_bits,$propalligne->product_type,$tmpmysoc);
                 $total_ht  = $result[0];
                 $total_tva = $result[1];
                 $total_ttc = $result[2];
@@ -1552,9 +1558,9 @@ function migrate_price_contrat($db,$langs,$conf)
                 // On met a jour les 3 nouveaux champs
                 $contratligne= new ContratLigne($db);
                 //$contratligne->fetch($rowid); Non requis car le update_total ne met a jour que chp redefinis
-                $contratligne->id=$rowid;
+                $contratligne->fetch($rowid);
 
-                $result=calcul_price_total($qty,$pu,$remise_percent,$vatrate,0,0,0,'HT',$info_bits,0,$tmpmysoc);
+                $result=calcul_price_total($qty,$pu,$remise_percent,$vatrate,0,0,0,'HT',$info_bits,$contratligne->product_type,$tmpmysoc);
                 $total_ht  = $result[0];
                 $total_tva = $result[1];
                 $total_ttc = $result[2];
@@ -1603,6 +1609,9 @@ function migrate_price_commande($db,$langs,$conf)
 {
     $db->begin();
 
+    $tmpmysoc=new Societe($db);
+    $tmpmysoc->setMysoc($conf);
+    
     print '<tr><td colspan="4">';
 
     print '<br>';
@@ -1639,7 +1648,7 @@ function migrate_price_commande($db,$langs,$conf)
                 $commandeligne= new OrderLine($db);
                 $commandeligne->fetch($rowid);
 
-                $result=calcul_price_total($qty,$pu,$remise_percent,$vatrate,0,0,$remise_percent_global,'HT',$info_bits,0);
+                $result=calcul_price_total($qty,$pu,$remise_percent,$vatrate,0,0,$remise_percent_global,'HT',$info_bits,$commandeligne->product_type,$tmpmysoc);
                 $total_ht  = $result[0];
                 $total_tva = $result[1];
                 $total_ttc = $result[2];
@@ -1716,7 +1725,10 @@ function migrate_price_commande($db,$langs,$conf)
 function migrate_price_commande_fournisseur($db,$langs,$conf)
 {
     $db->begin();
-
+    
+    $tmpmysoc=new Societe($db);
+    $tmpmysoc->setMysoc($conf);
+    
     print '<tr><td colspan="4">';
 
     print '<br>';
@@ -1753,7 +1765,7 @@ function migrate_price_commande_fournisseur($db,$langs,$conf)
                 $commandeligne= new CommandeFournisseurLigne($db);
                 $commandeligne->fetch($rowid);
 
-                $result=calcul_price_total($qty,$pu,$remise_percent,$vatrate,0,0,$remise_percent_global,'HT',$info_bits,0);
+                $result=calcul_price_total($qty,$pu,$remise_percent,$vatrate,0,0,$remise_percent_global,'HT',$info_bits,$commandeligne->product_type,$tmpsoc);
                 $total_ht  = $result[0];
                 $total_tva = $result[1];
                 $total_ttc = $result[2];

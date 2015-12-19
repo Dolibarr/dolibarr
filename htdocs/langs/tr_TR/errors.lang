@@ -3,8 +3,6 @@
 # No errors
 NoErrorCommitIsDone=Hata yok, taahüt ediyoruz
 # Errors
-Error=Hata
-Errors=Hatalar
 ErrorButCommitIsDone=Hatalar bulundu, buna rağmen doğruluyoruz
 ErrorBadEMail=%s EPostası yanlış
 ErrorBadUrl=URL %s yanlış
@@ -63,7 +61,7 @@ ErrorSizeTooLongForVarcharType=Dize türü için boyut çok uzun (ençok %s kara
 ErrorNoValueForSelectType=Değer gir ya da liste seç
 ErrorNoValueForCheckBoxType=Lütfen onay kutusu listesi için değer girin
 ErrorNoValueForRadioType=Lütfen onay düğmesi için değer girin
-ErrorBadFormatValueList=The list value cannot have more than one comma: <u>%s</u>, but need at least one: key,value
+ErrorBadFormatValueList=Liste değerinde birden çok virgül bulunmaz: <u>%s</u>, ancak enaz bir: anahtar, değer gerekir
 ErrorFieldCanNotContainSpecialCharacters=<b>%s</b> alanı özel karakterler içermemelidir.
 ErrorFieldCanNotContainSpecialNorUpperCharacters=<b>%s</b> Alanı özel karakter ve büyük harf içermemeli yalnızca sayı içermelidir.
 ErrorNoAccountancyModuleLoaded=Etkinleştirilmiş muhasebe modülü yok
@@ -172,8 +170,11 @@ ErrorFieldMustBeANumeric=<b>%s</b> alanı sayısal bir değer olmalıdır
 ErrorFieldMustBeAnInteger=<b>%s</b> alanı tamsayı olmalıdır
 ErrorMandatoryParametersNotProvided=Zorunlu parametre(ler) girilmemiş
 ErrorOppStatusRequiredIfAmount=Bu fırsat/aday için tahmini bir tutar ayarladınız. Durumunu da girmelisiniz
+ErrorBadDefinitionOfMenuArrayInModuleDescriptor=Modül Tanımlayıcıda hatalı Menu Dizisi tanımı (fk_menu anahtarı için hatalı değer)
+ErrorSavingChanges=Değişiklikler kaydedilirken bir hata oluştu
 
 # Warnings
+WarningPasswordSetWithNoAccount=Bu üye için bir parola ayarlıdır. Ancak, hiçbir kullanıcı hesabı oluşturulmamıştır. Yani bu şifre saklanır ama Dolibarr'a giriş için kullanılamaz. Dış bir modül/arayüz tarafından kullanılıyor olabilir, ama bir üye için ne bir kullanıcı adı ne de parola tanımlamanız gerekmiyorsa "Her üye için bir kullanıcı adı yönet" seçeneğini devre dışı bırakabilirsiniz. Bir kullanıcı adı yönetmeniz gerekiyorsa ama herhangi bir parolaya gereksinim duymuyorsanız bu uyarıyı engellemek için bu alanı boş bırakabilirsiniz. Not: Eğer bir üye bir kullanıcıya bağlıysa kullanıcı adı olarak eposta adresi de kullanılabilir.
 WarningMandatorySetupNotComplete=Zorunlu kurulum parametreleri henüz tanımlanmamış
 WarningSafeModeOnCheckExecDir=Uyarı, PHP seçeneği <b>güvenli_mode</b> açıktır, böylece komut php parametresi <b>güvenli_mode_exec_dir</b> tarafından bildirilen bir dizine saklanabilir.
 WarningAllowUrlFopenMustBeOn=<b>allow_url_fopen</b> Parametresi <b>php.ini</b> dosyalayıcısında bu modülün tam olarak çalışması için <b>on</b> ye ayarlanmalıdır. Bu dosyayı el ile değiştirmeniz gerekir.
@@ -191,5 +192,5 @@ WarningClickToDialUserSetupNotComplete=Kullanıcınızın ClickToDial bilgileri 
 WarningNotRelevant=Bu veri kümesi için alakasız işlem
 WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=Bu özellik, ekran görme engelliler için ya da metin tarayıcılar için ayarlandığında devre dışı kalır.
 WarningPaymentDateLowerThanInvoiceDate=Ödeme tarihi (%s) fatura tarihinden (%s) daha önce, bu fatura için %s.
-WarningTooManyDataPleaseUseMoreFilters=Too many data (more than %s lines). Please use more filters or set the constant %s to a higher limit.
+WarningTooManyDataPleaseUseMoreFilters=Çok fazla veri (%s değerinden fazla satır). Daha çok süzgeç kullanın ya da %s değişmezini daha yüksek bir sınıra getirin.
 WarningSomeLinesWithNullHourlyRate=Saatlik ücretleri tanımlanmadığında bazen kullanıcılar tarafından kayıt edilir. 0 Değeri kullanılmıştır ancak harcanan sürenin yanlış değerlendirilmesine neden olabilir.
