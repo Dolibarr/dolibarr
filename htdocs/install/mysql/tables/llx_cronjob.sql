@@ -44,8 +44,8 @@ CREATE TABLE llx_cronjob
   	frequency 		integer NOT NULL DEFAULT 0,
     maxrun          integer NOT NULL DEFAULT 0,		-- set this to 1 for a job queued for on run only
 	nbrun			integer,						-- nb of run complete (failed or not)
-    autodelete      integer DEFAULT 0,				-- Job can be delete once finished
-  	status 			integer NOT NULL DEFAULT 1,
+    autodelete      integer DEFAULT 0,				-- 1=Job must be deleted once finished, 2=Job must be archived once finished (archive = status 2) 
+  	status 			integer NOT NULL DEFAULT 1,		-- 0=disabled, 1=enabled, 2=archived
   	fk_user_author 	integer DEFAULT NULL,
   	fk_user_mod 	integer DEFAULT NULL,
     fk_mailing      integer DEFAULT NULL,		-- id of emailing if job was queued to send mass emailing

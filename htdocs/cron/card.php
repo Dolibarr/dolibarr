@@ -43,6 +43,11 @@ $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
 $cancel=GETPOST('cancel');
 
+
+/*
+ * Actions
+ */
+
 $object = new Cronjob($db);
 if (!empty($id))
 {
@@ -53,7 +58,7 @@ if (!empty($id))
 	}
 }
 
-if(!empty($cancel))
+if (!empty($cancel))
 {
 	if (!empty($id))
 	{
@@ -61,7 +66,7 @@ if(!empty($cancel))
 	}
 	else
 	{
-		Header("Location: ".DOL_URL_ROOT.'/cron/list.php?status=1');
+		Header("Location: ".DOL_URL_ROOT.'/cron/list.php?status=-2');
 		exit;
 	}
 }
@@ -78,7 +83,7 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->cron->del
 	}
 	else
 	{
-		Header("Location: ".DOL_URL_ROOT.'/cron/list.php?status=1');
+		Header("Location: ".DOL_URL_ROOT.'/cron/list.php?status=-2');
 		exit;
 	}
 }
