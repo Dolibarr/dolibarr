@@ -139,21 +139,23 @@ before_script:
   echo
 
 - |
-  echo "Debugging informations"
-  # Check PHP
-  php -i
-  # Check PHP CodeSniffer installation
-  which phpcs
-  phpcs --version
-  phpcs -i
-  # Check PHPUnit installation
-  which phpunit
-  phpunit --version
-  # Check MySQL
-  mysql --version
-  mysql -e "SELECT VERSION();"
-  echo
-
+  if [ "$DEBUG" = true ]; then
+    echo "Debugging informations"
+    # Check PHP
+    php -i
+    # Check PHP CodeSniffer installation
+    which phpcs
+    phpcs --version
+    phpcs -i
+    # Check PHPUnit installation
+    which phpunit
+    phpunit --version
+    # Check MySQL
+    mysql --version
+    mysql -e "SELECT VERSION();"
+    echo
+  fi
+  
 - |
   echo "Setting up database"
   if [ "$DB" = 'mysql' ] || [ "$DB" = 'mariadb' ]; then
@@ -170,8 +172,8 @@ before_script:
   echo
 
 - |
-  echo "Setting up Dolibarr"
   export CONF_FILE=htdocs/conf/conf.php
+  echo "Setting up Dolibarr $CONF_FILE"
   echo '<?php ' > $CONF_FILE
   echo '$'dolibarr_main_url_root=\'http://127.0.0.1\'';' >> $CONF_FILE
   echo '$'dolibarr_main_document_root=\'$TRAVIS_BUILD_DIR/htdocs\'';' >> $CONF_FILE
@@ -188,14 +190,8 @@ before_script:
   #fi
   # TODO: SQLite
   echo '$'dolibarr_main_authentication=\'dolibarr\'';' >> $CONF_FILE
+  cat $CONF_FILE
   echo
-
-- |
-  if [ "$DEBUG" = true ]; then
-    echo "Debugging informations"
-    cat $CONF_FILE
-    echo
-  fi
 
 - |
   echo "Create documents directory and set permissions"
