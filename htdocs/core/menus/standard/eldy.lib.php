@@ -499,8 +499,12 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 					$newmenu->add("/admin/modules.php?mainmenu=home", $langs->trans("Modules").$warnpicto,1);
 					$newmenu->add("/admin/menus.php?mainmenu=home", $langs->trans("Menus"),1);
 					$newmenu->add("/admin/ihm.php?mainmenu=home", $langs->trans("GUISetup"),1);
-					$newmenu->add("/accountancy/admin/fiscalyear.php?mainmenu=home", $langs->trans("Fiscalyear"),1);
-				
+					
+					if (! empty($conf->accounting->enabled))
+					{
+						$newmenu->add("/accountancy/admin/fiscalyear.php?mainmenu=home", $langs->trans("Fiscalyear"),1);
+					}
+
 					if (! in_array($langs->defaultlang,array('en_US')))
 					{
 						$newmenu->add("/admin/translation.php", $langs->trans("Translation"),1);
