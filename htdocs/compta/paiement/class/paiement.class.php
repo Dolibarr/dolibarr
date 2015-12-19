@@ -29,8 +29,8 @@
 require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
 
 
-/**     \class      Paiement
- *		\brief      Classe permettant la gestion des paiements des factures clients
+/**
+ *	Class to manage payments of customer invoices
  */
 class Paiement extends CommonObject
 {
@@ -78,7 +78,7 @@ class Paiement extends CommonObject
 	 *    @param	int		$id			Id of payment to get
 	 *    @param	string	$ref		Ref of payment to get (currently ref = id but this may change in future)
 	 *    @param	int		$fk_bank	Id of bank line associated to payment
-	 *    @return   int		<0 if KO, 0 if not found, >0 if OK
+	 *    @return   int		            <0 if KO, 0 if not found, >0 if OK
 	 */
 	function fetch($id, $ref='', $fk_bank='')
 	{
@@ -96,14 +96,12 @@ class Paiement extends CommonObject
 		else if ($fk_bank)
 			$sql.= ' AND p.fk_bank = '.$fk_bank;
 
-		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
-		$result = $this->db->query($sql);
-
-		if ($result)
+		$resql = $this->db->query($sql);
+		if ($resql)
 		{
-			if ($this->db->num_rows($result))
+			if ($this->db->num_rows($resql))
 			{
-				$obj = $this->db->fetch_object($result);
+				$obj = $this->db->fetch_object($resql);
 				$this->id             = $obj->rowid;
 				$this->ref            = $obj->ref;
 				$this->date           = $this->db->jdate($obj->dp);
@@ -120,12 +118,12 @@ class Paiement extends CommonObject
 				$this->fk_account     = $obj->fk_account;
 				$this->bank_line      = $obj->fk_bank;
 
-				$this->db->free($result);
+				$this->db->free($resql);
 				return 1;
 			}
 			else
 			{
-				$this->db->free($result);
+				$this->db->free($resql);
 				return 0;
 			}
 		}
