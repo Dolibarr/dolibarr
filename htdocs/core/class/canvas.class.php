@@ -179,13 +179,14 @@ class Canvas
 	}
 
 	/**
-	 * 	Shared method for canvas to execute actions
+	 * 	Shared method for canvas to execute actions.
+     *  @deprecated Use the doActions of hooks instead of this.
+	 * 	            This function is called if you add a doActions class inside your canvas. Try to not
+	 * 				do that and add action code into a hook instead.
 	 *
 	 * 	@param		string		$action	Action string
 	 * 	@param		int			$id			Object id
 	 * 	@return		mixed					Return return code of doActions of canvas
-	 * 	@deprecated	This function is called if you add a doActions class inside your canvas. Try to not
-	 * 				do that and add action code into a hook instead.
 	 * 	@see		http://wiki.dolibarr.org/index.php/Canvas_development
 	 */
 	function doActions(&$action='view', $id=0)

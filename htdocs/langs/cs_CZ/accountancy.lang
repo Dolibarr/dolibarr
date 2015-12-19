@@ -1,5 +1,4 @@
 # Dolibarr language file - en_US - Accounting Expert
-CHARSET=UTF-8
 ACCOUNTING_EXPORT_SEPARATORCSV=Oddělovač sloupců pro export souboru
 ACCOUNTING_EXPORT_DATE=Formát data pro export souboru
 ACCOUNTING_EXPORT_PIECE=Export the number of piece
@@ -12,8 +11,6 @@ ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
 
 Accounting=Účetnictví
 Globalparameters=Globální parametry
-Chartofaccounts=Graf účtů
-Fiscalyear=Fiskální roky
 Menuaccount=Účetní závěrka
 Menuthirdpartyaccount=Účty třetích stran
 MenuTools=Nástroje
@@ -33,23 +30,17 @@ Back=Návrat
 
 Definechartofaccounts=Definovat účtové osnovy
 Selectchartofaccounts=Vyberte účtové osnovy
-Validate=Potvrdit
 Addanaccount=Přidat účetní účet
 AccountAccounting=Účetní účet
 AccountAccountingSuggest=Accounting account suggest
 Ventilation=Přerušení
-ToDispatch=Nahlásit
-Dispatched=Odesláno
 
 CustomersVentilation=Členění zákazníků
 SuppliersVentilation=Členění dodvatelů
 TradeMargin=Obchodní marže
 Reports=Zprávy
 ByCustomerInvoice=Fakturováno zákazníky
-ByMonth=Měsíčně
 NewAccount=Nový účetní účet
-Update=Aktualizovat
-List=Seznam
 Create=Vytvořit
 CreateMvts=Create movement
 UpdateAccount=Změna účetního účtu
@@ -61,7 +52,6 @@ AccountBalanceByMonth=Zůstatek na účtu podle měsíce
 AccountingVentilation=Členění účetnictví
 AccountingVentilationSupplier=Členění účetnictví dodavatel
 AccountingVentilationCustomer=Členění účetnictví zákazník
-Line=Linka
 
 CAHTF=Total purchase supplier before tax
 InvoiceLines=Řádky faktury, které mají být prověřeny
@@ -112,22 +102,19 @@ Docref=Reference
 Numerocompte=Účet
 Code_tiers=Třetí strana
 Labelcompte=Štítek účtu
-Debit=Debet
-Credit=Kredit
-Amount=Částka
 Sens=Sens
 Codejournal=Deník
 
 DelBookKeeping=Odstranit záznamy hlavní knihy
 
-SellsJournal=Prodejní denák
-PurchasesJournal=Nákupní deník
 DescSellsJournal=Prodejní deník
 DescPurchasesJournal=Nákupní deník
 BankJournal=Bankovní deník
 DescBankJournal=Bankovní deník včetně všech typů jiných než hotovostních plateb
 CashJournal=Peněžní deník
 DescCashJournal=Peněžní deník včetně typů platby v hotovosti
+FinanceJournal=Finance journal
+DescFinanceJournal=Finance journal including all the types of payments by bank account
 
 CashPayment=Platba v hotovosti
 
@@ -150,9 +137,6 @@ Pcgversion=Verze plánu
 Pcgtype=Třída účtu
 Pcgsubtype=Podle třídy účtu
 Accountparent=kořen účtu
-Active=Prohlášení
-
-NewFiscalYear=Nový fiskální rok
 
 DescVentilCustomer=Seznamte se zde s ročním rozdělením účetnictví faktur zákazníků
 TotalVente=Total turnover before tax
@@ -163,7 +147,7 @@ ChangeAccount=Změna účetních účtů pro řádky vybraných účtů:
 Vide=-
 DescVentilSupplier=Poraďte se zde s ročním rozdělením účetnictví faktur dodavatelů
 DescVentilTodoSupplier=Prověřte zde své řádky dodavatelských faktur s účetním účtem
-DescVentilDoneSupplier=Poraďte se zde se seznamem linek faktur dodavatele a jejich účetních účtů 
+DescVentilDoneSupplier=Poraďte se zde se seznamem linek faktur dodavatele a jejich účetních účtů
 
 ValidateHistory=Ověřit automaticky
 

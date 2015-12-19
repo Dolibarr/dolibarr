@@ -121,7 +121,6 @@ AttributeName=Attributnamn
 String=String
 Text=Text
 Int=Int
-Date=Datum
 DateAndTime=Datum och tid
 PublicMemberCard=Medlem offentlig kort
 MemberNotOrNoMoreExpectedToSubscribe=Medlem som inte eller inte mer förväntas prenumerera

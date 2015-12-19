@@ -28,8 +28,6 @@ AnyOtherInThisListCanValidate=Persona a informar para la validación
 TripSociete=Información de la empresa
 TripSalarie=Información del usuario
 TripNDF=Información del gasto
-DeleteLine=Eliminar una línea del gasto
-ConfirmDeleteLine=¿Está seguro de querer eliminar esta línea?
 PDFStandardExpenseReports=Plantilla estandard para generar un documento de gasto
 ExpenseReportLine=Línea de gasto
 TF_OTHER=Otro
@@ -53,8 +51,6 @@ AddLineMini=Añadir
 Date_DEBUT=Fecha de inicio del periodo
 Date_FIN=Fecha fin del periodo
 ModePaiement=Modo de pago
-Note=Nota
-Project=Proyecto
 
 VALIDATOR=Usuario responsable para aprobación
 VALIDOR=Aprobado por
@@ -103,4 +99,4 @@ ConfirmSaveTrip=¿Está seguro de querer validar este gasto?
 NoTripsToExportCSV=Sin gastos a exportar para este periodo.
 ExpenseReportPayment=Informe de pagos de gastos
 
-ExpenseReportsToPay=Expense reports to pay
+ExpenseReportsToPay=Informe de gastos a pagar

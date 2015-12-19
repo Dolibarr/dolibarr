@@ -154,16 +154,16 @@ class LangTest extends PHPUnit_Framework_TestCase
         	$tmplangs->setDefaultLang($langcode);
 			$tmplangs->load("main");
 
-			$result=$tmplangs->trans("SeparatorDecimal");
+			$result=$tmplangs->transnoentitiesnoconv("SeparatorDecimal");
 			print __METHOD__." SeparatorDecimal=".$result."\n";
 			$this->assertContains($result,array('.',',','/',' ','','None'), 'Error for decimal separator for lang code '.$code);	// Note that ، that is coma for RTL languages is not supported
 
-			$result=$tmplangs->trans("SeparatorThousand");
+			$result=$tmplangs->transnoentitiesnoconv("SeparatorThousand");
 			print __METHOD__." SeparatorThousand=".$result."\n";
-			$this->assertContains($result, array('.',',','/',' ','','None','Space'), 'Error for thousand separator for lang code '.$code);	// Note that ، that is coma for RTL languages is not supported
+			$this->assertContains($result, array('.',',','/',' ','','\'','None','Space'), 'Error for thousand separator for lang code '.$code);	// Note that ، that is coma for RTL languages is not supported
 
 			// Test java string contains only d,M,y,/,-,. and not m,...
-			$result=$tmplangs->trans("FormatDateShortJava");
+			$result=$tmplangs->transnoentitiesnoconv("FormatDateShortJava");
 			print __METHOD__." FormatDateShortJava=".$result."\n";
 			$this->assertRegExp('/^[dMy\/\-\.]+$/',$result,'FormatDateShortJava KO for lang code '.$code);
 			$result=$tmplangs->trans("FormatDateShortJavaInput");

@@ -53,6 +53,7 @@ ListOfProposals=Elenco delle proposte commerciali
 ActionsOnPropal=Azioni su proposta
 NoOpenedPropals=Nessuna proposta commerciale aperta
 NoOtherOpenedPropals=No other open commercial proposals
+NoPropal=No commercial proposal
 RefProposal=Rif. Proposta commerciale
 SendPropalByMail=Invia proposta commerciale via e-mail
 AssociatedDocuments=Documenti associati con la proposta:

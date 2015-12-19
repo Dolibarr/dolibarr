@@ -24,14 +24,12 @@ ClassifyRefunded=Classificar 'Reembolsado'
 ExpenseReportWaitingForApproval=A new expense report has been submitted for approval
 ExpenseReportWaitingForApprovalMessage=A new expense report has been submitted and is waiting for approval.\n- User: %s\n- Period: %s\nClick here to validate: %s
 TripId=Id expense report
-AnyOtherInThisListCanValidate=Person to inform for validation.
+AnyOtherInThisListCanValidate=Pessoa para informar para validação.
 TripSociete=Informação da Empresa
 TripSalarie=Informations user
 TripNDF=Informations expense report
-DeleteLine=Delete a line of the expense report
-ConfirmDeleteLine=Are you sure you want to delete this line ?
 PDFStandardExpenseReports=Standard template to generate a PDF document for expense report
-ExpenseReportLine=Expense report line
+ExpenseReportLine=Linha do relatório de despesas
 TF_OTHER=Outro
 TF_TRANSPORTATION=Meio de Transporte
 TF_LUNCH=Alimentação
@@ -52,21 +50,19 @@ AddLineMini=Adicionar
 
 Date_DEBUT=Period date start
 Date_FIN=Period date end
-ModePaiement=Payment mode
-Note=Nota
-Project=Projeto
+ModePaiement=Modo de pagamento
 
-VALIDATOR=User responsible for approval
+VALIDATOR=Utilizador responsável pela aprovação
 VALIDOR=Aprovado por
 AUTHOR=Registado por
-AUTHORPAIEMENT=Paid by
+AUTHORPAIEMENT=Paga por
 REFUSEUR=Negado por
-CANCEL_USER=Deleted by
+CANCEL_USER=Eliminada por
 
 MOTIF_REFUS=Motivo
 MOTIF_CANCEL=Motivo
 
-DATE_REFUS=Deny date
+DATE_REFUS=Negada em
 DATE_SAVE=Data da validação
 DATE_VALIDE=Data da validação
 DATE_CANCEL=Data do cancelamento

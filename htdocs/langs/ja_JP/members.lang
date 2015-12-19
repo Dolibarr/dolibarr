@@ -121,7 +121,6 @@ AttributeName=属性名
 String=文字列
 Text=テキスト
 Int=int型
-Date=日付
 DateAndTime=日時
 PublicMemberCard=メンバーパブリックカード
 MemberNotOrNoMoreExpectedToSubscribe=メンバーは、より多くのサブスクライブしないと予想されていないかない

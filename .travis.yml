@@ -110,6 +110,12 @@ install:
 
 before_script:
 - |
+  echo Start travis
+  echo Current dir is `pwd`
+  echo Home dir is `echo ~`
+  echo TRAVIS_BUILD_DIR is $TRAVIS_BUILD_DIR
+
+- |
   echo "Re-enabling Xdebug for PHP CodeSniffer and PHP Unit"
   phpenv config-add /tmp/xdebug.ini
   echo
@@ -149,7 +155,7 @@ before_script:
     mysql -e "SELECT VERSION();"
     echo
   fi
-
+  
 - |
   echo "Setting up database"
   if [ "$DB" = 'mysql' ] || [ "$DB" = 'mariadb' ]; then
@@ -166,8 +172,8 @@ before_script:
   echo
 
 - |
-  echo "Setting up Dolibarr"
   export CONF_FILE=htdocs/conf/conf.php
+  echo "Setting up Dolibarr $CONF_FILE"
   echo '<?php ' > $CONF_FILE
   echo '$'dolibarr_main_url_root=\'http://127.0.0.1\'';' >> $CONF_FILE
   echo '$'dolibarr_main_document_root=\'$TRAVIS_BUILD_DIR/htdocs\'';' >> $CONF_FILE
@@ -184,14 +190,8 @@ before_script:
   #fi
   # TODO: SQLite
   echo '$'dolibarr_main_authentication=\'dolibarr\'';' >> $CONF_FILE
+  cat $CONF_FILE
   echo
-
-- |
-  if [ "$DEBUG" = true ]; then
-    echo "Debugging informations"
-    cat $CONF_FILE
-    echo
-  fi
 
 - |
   echo "Create documents directory and set permissions"
@@ -306,3 +306,4 @@ after_failure:
   fi
 
 after_script:
+

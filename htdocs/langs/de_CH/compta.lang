@@ -1,0 +1,8 @@
+# Dolibarr language file - Source file is en_US - compta
+PaymentsNotLinkedToInvoice=Zahlungen mit keiner Rechnung und damit auch keinem Geschäftspartner verbunden
+ByThirdParties=Durch Geschäftspartner
+AnnualByCompaniesDueDebtMode=Die Einnahmen/Ausgaben-Bilanz nach Geschäftspartnern im Modus <b>%sForderungen-Verbindlichkeiten%s</b> meldet <b>Kameralistik</b>.
+LT2ReportByCustomersInInputOutputModeES=Bericht von Geschäftspartner EKSt.
+SeeVATReportInInputOutputMode=Siehe <b>%sMwSt.-Einnahmen%s</b>-Bericht für eine standardmässige Berechnung
+ThirdPartyMustBeEditAsCustomer=Geschäftspartner muss als Kunde definiert werden
+CalculationRuleDescSupplier=Gemäss Ihrem Lieferanten, wählen Sie die  geeignete Methode, um die gleiche Berechnungsregel anzuwenden um das selbe Ergebnis wie Ihr Lieferant zu bekommen.

@@ -84,9 +84,12 @@ EachInvoiceWillBeAttachedToEmail=Et dokument med standard faktura dokumentmal vi
 MailTopicSendRemindUnpaidInvoices=Påminnelse om faktura %s (%s)
 SendRemind=Send påminnelse som e-post
 RemindSent=%s påminnelse(er) sendt
-AllRecipientSelectedForRemind=Alle valgte tredjeparter der e-post er satt (merk at én e-post per faktura vil bli sendt)
+AllRecipientSelected=Alle valgte trdjeparter og hvis epost er definert.
 NoRemindSent=Ingen e-post påminnelse sendt
-ResultOfMassSending=Resultatet av masse e-post påminnelser sending
+ResultOfMailSending=Resultat av masseutsendelse av epost
+NbSelected=Ant. valgt
+NbIgnored=Ant. ignorert
+NbSent=Ant. sent
 
 # Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=Alle tredjeparters kontaktpersoner (kunder, prospekter, leverandører, ...)
@@ -97,7 +100,7 @@ MailingModuleDescEmailsFromUser=E-poster fra brukere (epost, etternavn, fornavn,
 MailingModuleDescContactsCategories=Tredjeparter (etter kategori)
 MailingModuleDescDolibarrContractsLinesExpired=Tredjeparter med utløpte kontraktlinjer
 MailingModuleDescContactsByCompanyCategory=Kontakter til tredjeparter (fra kategorien tredjeparter)
-MailingModuleDescContactsByCategory=Kontakter / adresser til tredjeparter etter kategori
+MailingModuleDescContactsByCategory=Kontakter/adresser til tredjeparter (etter kategori)
 MailingModuleDescMembersCategories=Organisasjonsmedlemmer (etter kategorier)
 MailingModuleDescContactsByFunction=Kontakter til tredjeparter (etter stilling/funksjon)
 LineInFile=Antall linjer i filen: %s

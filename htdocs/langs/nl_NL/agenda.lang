@@ -73,7 +73,7 @@ AgendaUrlOptions1=U kunt ook de volgende parameters gebruiken om te filteren:
 AgendaUrlOptions2=<b>login=%s</b> om uitvoer van acties gecreëerd door, toegewezen aan of gedaan door gebruiker <b>%s</b> te beperken.
 AgendaUrlOptions3=<b>login=%s</b> om uitvoer van acties gedaan door gebruiker <b>%s</b> te beperken.
 AgendaUrlOptions4=<b>login=%s</b> om uitvoer van acties toegewezen aan gebruiker <b>%s</b> te beperken.
-AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> to restrict output to actions associated to project <b>PROJECT_ID</b>.
+AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> om uitvoer van acties toegewezen aan project <b>PROJECT_ID</b>.
 AgendaShowBirthdayEvents=Toon verjaardagen van contacten
 AgendaHideBirthdayEvents=Verberg verjaardagen van contacten
 Busy=Bezig
@@ -90,17 +90,17 @@ ExtSiteUrlAgenda=URL aan. Ical bestand te openen
 ExtSiteNoLabel=Geen omschrijving
 WorkingTimeRange=Werktijd
 WorkingDaysRange=Werkdagen
-VisibleTimeRange=Visible time range
-VisibleDaysRange=Visible days range
+VisibleTimeRange=Zichtbare werktijd
+VisibleDaysRange=Zichtbare werkdagen
 AddEvent=Creëer gebeurtenis/taak
 MyAvailability=Beschikbaarheid
 ActionType=Taak type
 DateActionBegin=Begindatum
-CloneAction=Clone event
-ConfirmCloneEvent=Are you sure you want to clone the event <b>%s</b> ?
-RepeatEvent=Repeat event
-EveryWeek=Every week
-EveryMonth=Every month
-DayOfMonth=Day of month
-DayOfWeek=Day of week
-DateStartPlusOne=Date start + 1 hour
+CloneAction=Kloon gebeurtenis/taak
+ConfirmCloneEvent=Weet u zeker dat u de gebeurtenis/taak <b>%s</b> wilt klonen?
+RepeatEvent=Herhaal gebeurtenis/taak
+EveryWeek=Elke week
+EveryMonth=Elke maand
+DayOfMonth=Dag van de maand
+DayOfWeek=Dag van de week
+DateStartPlusOne=Begindatum + 1 uur

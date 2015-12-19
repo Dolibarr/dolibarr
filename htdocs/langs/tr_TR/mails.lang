@@ -84,9 +84,12 @@ EachInvoiceWillBeAttachedToEmail=Varsayılan fatura belgesi şablonu kullanan bi
 MailTopicSendRemindUnpaidInvoices=%s (%s) faturası için anımsatma
 SendRemind=Anımsatmayı Eposta ile gönder
 RemindSent=%s anımsatma(lar) gönderildi
-AllRecipientSelectedForRemind=Tüm üçüncü partiler seçilmiş ve bir eposta ayarlanmışsa (fatura başına bir posta gönderileceğini unutmayın)
+AllRecipientSelected=Seçilen tüm üçüncü partiler, bir eposta kuruluysa.
 NoRemindSent=Gönderile Eposta anımsatması yok
-ResultOfMassSending=Toplu Eposta anımsatması gönderme sonucu
+ResultOfMailSending=Toplu Eposta gönderimi sonuçu
+NbSelected=Seçilen sayısı
+NbIgnored=Yoksayılan sayısı
+NbSent=Gönderilen sayısı
 
 # Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=Tüm üçüncü partilerin kişileri (müşteri, aday, tedarikçi, ...)
@@ -97,7 +100,7 @@ MailingModuleDescEmailsFromUser=Kullanıcı girişli Epostalar (eposta;soyadı;i
 MailingModuleDescContactsCategories=Üçüncü partiler (kategoriye göre)
 MailingModuleDescDolibarrContractsLinesExpired=Süresi dolmuş sözleşme kalemleri ile üçüncü partiler
 MailingModuleDescContactsByCompanyCategory=Üçüncü parti kişileri (üçüncü parti kategorilerine göre)
-MailingModuleDescContactsByCategory=Kategoriye göre üçüncü parti kişileri/adresleri
+MailingModuleDescContactsByCategory=Üçüncü parti kişileri/adresleri (kategoriye göre)
 MailingModuleDescMembersCategories=Kurum üyeleri (kategoriye göre)
 MailingModuleDescContactsByFunction=Üçüncü parti kişileri (konumuna/görevine göre)
 LineInFile=Satır %s dosyası

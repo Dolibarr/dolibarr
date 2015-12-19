@@ -1,8 +1,8 @@
 # Dolibarr language file - Source file is en_US - users
 HRMArea=Personalmanagment - Übersicht
-UserCard=Benutzerkarte
-ContactCard=Kontaktkarte
-GroupCard=Firmenverbundkarte
+UserCard=Benutzer-Karte
+ContactCard=Kontakt-Karte
+GroupCard=Gruppe-Karte
 NoContactCard=Keine Kontaktkarte
 Permission=Berechtigung
 Permissions=Berechtigungen
@@ -41,10 +41,10 @@ SearchAUser=Benutzer suchen
 LoginNotDefined=Benutzername ist nicht gesetzt.
 NameNotDefined=Name ist nicht gesetzt.
 ListOfUsers=Liste der Benutzer
-Administrator=Administrator
 SuperAdministrator=Super Administrator
 SuperAdministratorDesc=Administrator mit allen Rechten
 AdministratorDesc=Administrator
+AdministratorDescEntity=Administrator (für sein Unternehmen)
 DefaultRights=Standardberechtigungen
 DefaultRightsDesc=Definieren Sie hier die neu erstellten Benutzern automatisch zugewiesenen Standardberechtigungen.
 DolibarrUsers=Benutzer

@@ -7,6 +7,7 @@ DeliveryOrders=Notas de recepción
 DeliveryDate=Fecha de entrega
 DeliveryDateShort=Fecha entrega
 CreateDeliveryOrder=Generar nota de recepción
+DeliveryStateSaved=Estado de entrega guardado
 QtyDelivered=Cant. enviada
 SetDeliveryDate=Indicar la fecha de entrega
 ValidateDeliveryReceipt=Validar la nota de entrega

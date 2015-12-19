@@ -108,7 +108,6 @@ ErrorMailNotSend=Ocorreu um erro durante o envio de e-mail:
 NoCPforMonth=Não deixe este mês.
 nbJours=Número de dias
 TitleAdminCP=Configuração das folhas
-NoticePeriod=Período de aviso
 HolidaysToValidate=Validar as solicitações de licença
 HolidaysToValidateBody=Abaixo está um pedido de licença para validar
 HolidaysToValidateDelay=Este pedido de licença terá lugar dentro de um período de menos de %s dias.

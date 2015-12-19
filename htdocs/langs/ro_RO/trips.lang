@@ -28,8 +28,6 @@ AnyOtherInThisListCanValidate=Persoana de informare pentru validare.
 TripSociete=Informații   companie
 TripSalarie=Informații Utilizator 
 TripNDF=Informations expense report
-DeleteLine=Delete a line of the expense report
-ConfirmDeleteLine=Sunteţi sigur că doriţi să ştergeţi această linie?
 PDFStandardExpenseReports=Standard template to generate a PDF document for expense report
 ExpenseReportLine=Line raport de cheltuieli
 TF_OTHER=Altele
@@ -53,8 +51,6 @@ AddLineMini=Adaugă
 Date_DEBUT=Perioada Dată început
 Date_FIN=Perioada Dată sfârşit
 ModePaiement=Mod plata
-Note=Notă
-Project=Proiect
 
 VALIDATOR=User responsible for approval
 VALIDOR=Aprobat de

@@ -1,4 +1,6 @@
 # Dolibarr language file - Source file is en_US - withdrawals
+Withdrawals=Abhebungen
+Withdrawal=Abhebung
 LastWithdrawalReceipt=%s neuste Abbuchungsbelege
 WithdrawalRefused=Abbuchungen abgelehnt
 InvoiceRefused=Ablehnung in Rechnung stellen

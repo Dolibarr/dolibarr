@@ -53,6 +53,7 @@ ListOfProposals=Oversikt over tilbud
 ActionsOnPropal=Handlinger i forbindelse med tilbud
 NoOpenedPropals=Ingen åpne tilbud
 NoOtherOpenedPropals=Ingen andre åpne tilbud
+NoPropal=Ingen tilbud
 RefProposal=Tilbudsreferanser
 SendPropalByMail=Send tilbud med e-post
 AssociatedDocuments=Dokumenter relatert til tilbudet:

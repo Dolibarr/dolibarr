@@ -1,5 +1,4 @@
 # Dolibarr language file - en_US - Accounting Expert
-CHARSET=UTF-8
 ACCOUNTING_EXPORT_SEPARATORCSV=Separador de columnas en el archivo de exportación
 ACCOUNTING_EXPORT_DATE=Formato de fecha en el archivo de exportación
 ACCOUNTING_EXPORT_PIECE=Export the number of piece
@@ -12,8 +11,6 @@ ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
 
 Accounting=Contabilidad
 Globalparameters=Configuración global
-Chartofaccounts=Plan contable
-Fiscalyear=Años fiscales
 Menuaccount=Cuentas contables
 Menuthirdpartyaccount=Cuentas de terceros
 MenuTools=Utilidades
@@ -33,23 +30,17 @@ Back=Volver
 
 Definechartofaccounts=Definir plan contable
 Selectchartofaccounts=Seleccione un plan contable
-Validate=Validar
 Addanaccount=Añadir una cuenta contable
 AccountAccounting=Cuenta contable
 AccountAccountingSuggest=Accounting account suggest
 Ventilation=Contabilizar
-ToDispatch=A realizar
-Dispatched=Realizadas
 
 CustomersVentilation=Contabilizar clientes
 SuppliersVentilation=Contabilizar proveedores
 TradeMargin=Margen de beneficio
 Reports=Informes
 ByCustomerInvoice=Por facturas a clientes
-ByMonth=Por mes
 NewAccount=Nueva cuenta contable
-Update=Actualizar
-List=Listado
 Create=Crear
 CreateMvts=Crear movimiento
 UpdateAccount=Modificar una cuenta contable
@@ -61,7 +52,6 @@ AccountBalanceByMonth=Saldo mensual
 AccountingVentilation=Descuadre contabilidad
 AccountingVentilationSupplier=Contablilización compras
 AccountingVentilationCustomer=Contabilización ventas
-Line=Línea
 
 CAHTF=Total purchase supplier before tax
 InvoiceLines=Líneas de factura para contabilizar
@@ -112,22 +102,19 @@ Docref=Referencia
 Numerocompte=Cuenta
 Code_tiers=Tercero
 Labelcompte=Descripción
-Debit=Debe
-Credit=Crédito
-Amount=Cantidad
 Sens=Sentido
 Codejournal=Diario
 
 DelBookKeeping=Eliminar los registros del Diario Mayor
 
-SellsJournal=Diario de ventas
-PurchasesJournal=Diario de compras
 DescSellsJournal=Diario de ventas
 DescPurchasesJournal=Diario de compras
 BankJournal=Diario bancario
 DescBankJournal=El diario bancario incluye todos los tipos pagos que no sean de efectivo
 CashJournal=Diario de caja
 DescCashJournal=El diario de caja incluye el tipo de pago efectivo
+FinanceJournal=Diario financiero
+DescFinanceJournal=El diario financiero incluye todos los tipos de pagos por cuenta bancaria
 
 CashPayment=Pago en efectivo
 
@@ -150,9 +137,6 @@ Pcgversion=Versión del plan
 Pcgtype=Tipo del plan
 Pcgsubtype=Subcuenta
 Accountparent=Padre de la cuenta
-Active=Estado
-
-NewFiscalYear=Nuevo año fiscal
 
 DescVentilCustomer=Consulte aquí la contabilización anual de sus facturas a clientes
 TotalVente=Total turnover before tax

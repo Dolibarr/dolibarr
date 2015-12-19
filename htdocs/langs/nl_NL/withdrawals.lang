@@ -48,7 +48,6 @@ RefusedReason=Reden voor afwijzing
 RefusedInvoicing=Facturering van de afwijzing
 NoInvoiceRefused=Factureer de afwijzing niet
 InvoiceRefused=Invoice refused (Charge the rejection to customer)
-Status=Status
 StatusUnknown=Onbekend
 StatusWaiting=Wachtend
 StatusTrans=Verzonden

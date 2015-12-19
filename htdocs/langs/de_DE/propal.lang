@@ -53,6 +53,7 @@ ListOfProposals=Liste der Angebote
 ActionsOnPropal=Ereignisse zum Angebot
 NoOpenedPropals=Keine offenen Angebote
 NoOtherOpenedPropals=Keine weiteren offenen Angebote
+NoPropal=No commercial proposal
 RefProposal=Angebots-Nr.
 SendPropalByMail=Angebot per E-Mail versenden
 AssociatedDocuments=Dokumente verknüpft mit dem Angebot:

@@ -53,6 +53,7 @@ ListOfProposals=Zoznam obchodných návrhov
 ActionsOnPropal=Udalosti na návrhu
 NoOpenedPropals=No open commercial proposals
 NoOtherOpenedPropals=No other open commercial proposals
+NoPropal=No commercial proposal
 RefProposal=Komerčné návrh ref
 SendPropalByMail=Poslať obchodný návrh poštou
 AssociatedDocuments=Dokumenty súvisiace s návrhom:

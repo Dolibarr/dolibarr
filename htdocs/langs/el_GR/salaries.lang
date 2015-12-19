@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is en_US - users
+# Dolibarr language file - Source file is en_US - salaries
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Κωδικός Λογιστικής για τις πληρωμές των μισθών
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Κωδικός Λογιστικής για οικονομική επιβάρυνση
 Salary=Mισθός

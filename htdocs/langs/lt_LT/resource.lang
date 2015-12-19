@@ -1,4 +1,4 @@
-
+# Dolibarr language file - Source file is en_US - resource
 MenuResourceIndex=Resursai
 MenuResourceAdd=Naujas resursas
 MenuResourcePlanning=Resursų planavimas
@@ -17,6 +17,7 @@ ResourceFormLabel_description=Resurso aprašymas
 
 ResourcesLinkedToElement=Resursai susiję su elementu
 
+ShowResource=Show resource
 ShowResourcePlanning=Parodyti resurso planavimą
 GotoDate=Eiti į datą
 

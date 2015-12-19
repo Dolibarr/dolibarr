@@ -53,6 +53,7 @@ ListOfProposals=Teklif listesi
 ActionsOnPropal=Tekliler için yapılan etkinlikler
 NoOpenedPropals=Açık teklif yok
 NoOtherOpenedPropals=Başka açık teklif yok
+NoPropal=Hiç teklif yok
 RefProposal=Teklif ref
 SendPropalByMail=Teklifi postayla gönder
 AssociatedDocuments=Bu teklif ile ilişkili belgeler:

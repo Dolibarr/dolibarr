@@ -53,6 +53,7 @@ ListOfProposals=商業的提案のリスト
 ActionsOnPropal=提案のイベント
 NoOpenedPropals=No open commercial proposals
 NoOtherOpenedPropals=No other open commercial proposals
+NoPropal=No commercial proposal
 RefProposal=商業的な提案のref
 SendPropalByMail=メールでの商用の提案を送る
 AssociatedDocuments=提案に関連するドキュメント：

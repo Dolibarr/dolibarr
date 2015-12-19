@@ -97,7 +97,7 @@ if ($action == 'setModuleOptions')
 
  	if (! $error)
     {
-        setEventMessages($langs->trans("SetupSaved"), null, 'msgs');
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
     else
     {

@@ -13,7 +13,6 @@ ServiceStatusLate=Em Serviço, Expirado
 ServiceStatusClosed=Encerrado
 ServicesLegend=Legenda para os Serviços
 Contracts=Contratos
-ContractsAndLine=Contratos e linha de contratos
 ContractLine=Linha contrato
 Closing=Fechando
 NoContracts=Sem Contratos

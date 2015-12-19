@@ -264,6 +264,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 					} 
 				}
 			}
+			
 			// Send mail
 			require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 			$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,$sendtobcc,$deliveryreceipt,-1,'','',$trackid);
@@ -277,6 +278,8 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 				if ($result)
 				{
 					$error=0;
+					
+					// FIXME This must be moved into a trigger for action $trigger_name
 					if (! empty($conf->dolimail->enabled))
 					{
 						$mid = (GETPOST('mid','int') ? GETPOST('mid','int') : 0);	// Original mail id is set ?
@@ -295,7 +298,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 							else setEventMessages($langs->trans("MailMovedToImapFolder_Warning",$folder), null, 'warnings'); 
 				 	 	}
 				 	}
-				 	
+
 					// Initialisation of datas
 					$object->socid			= $sendtosocid;	// To link to a company
 					$object->sendtoid		= $sendtoid;	// To link to a contact/address

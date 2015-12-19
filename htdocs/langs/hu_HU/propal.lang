@@ -53,6 +53,7 @@ ListOfProposals=Üzleti ajánlatok listája
 ActionsOnPropal=Események javaslatára
 NoOpenedPropals=No open commercial proposals
 NoOtherOpenedPropals=No other open commercial proposals
+NoPropal=No commercial proposal
 RefProposal=Üzleti ajánlat ref
 SendPropalByMail=Küldés e-mailben kereskedelmi javaslat
 AssociatedDocuments=Dokumentumok kapcsolódó javaslatot:

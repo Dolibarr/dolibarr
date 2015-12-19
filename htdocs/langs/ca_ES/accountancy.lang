@@ -1,5 +1,4 @@
 # Dolibarr language file - en_US - Accounting Expert
-CHARSET=UTF-8
 ACCOUNTING_EXPORT_SEPARATORCSV=Separador de columna pel fitxer d'exportació
 ACCOUNTING_EXPORT_DATE=Format de data pel fitxer d'exportació
 ACCOUNTING_EXPORT_PIECE=Export the number of piece
@@ -12,8 +11,6 @@ ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
 
 Accounting=Comptabilitat experta
 Globalparameters=Paràmetres globals
-Chartofaccounts=Pla comptable
-Fiscalyear=Anys fiscals
 Menuaccount=Comptes de comptabilitat
 Menuthirdpartyaccount=Comptes de tercers
 MenuTools=Utilitats
@@ -33,23 +30,17 @@ Back=Tornar
 
 Definechartofaccounts=Definir el Pla comptable
 Selectchartofaccounts=Seleccionar el Pla comptable
-Validate=Validar
 Addanaccount=Afegir un compte comptable
 AccountAccounting=Compte comptable
 AccountAccountingSuggest=Accounting account suggest
 Ventilation=Desglossament
-ToDispatch=A desglossar
-Dispatched=Desglossats
 
 CustomersVentilation=Desglossament de clients
 SuppliersVentilation=Desglossament de proveïdors
 TradeMargin=Marge comercial
 Reports=Informes
 ByCustomerInvoice=Per factures de clients
-ByMonth=Per mes
 NewAccount=Nou compte comptable
-Update=Actualitzar
-List=Llistat
 Create=Crear
 CreateMvts=Crear moviment
 UpdateAccount=Modificació d'un compte comptable
@@ -61,7 +52,6 @@ AccountBalanceByMonth=Balanç comptable per mes
 AccountingVentilation=Desglossament de comptabilitat
 AccountingVentilationSupplier=Desglossament de comptabilitat de proveïdor
 AccountingVentilationCustomer=Desglossament de comptabilitat de clients
-Line=Línia
 
 CAHTF=Total purchase supplier before tax
 InvoiceLines=Línies de factura per ser ventilades
@@ -112,22 +102,19 @@ Docref=Referència
 Numerocompte=Compte
 Code_tiers=Tercer
 Labelcompte=Etiqueta de compte
-Debit=Dèbit
-Credit=Crèdit
-Amount=Import
 Sens=Significat
 Codejournal=Diari
 
 DelBookKeeping=Eliminar els registres del llibre major
 
-SellsJournal=Diari de vendes
-PurchasesJournal=Diari de compres
 DescSellsJournal=Diari de vendes
 DescPurchasesJournal=Diari de compres
 BankJournal=Diari del banc
 DescBankJournal=Diari del banc incloent tots els tipus de pagaments diferents de caixa
 CashJournal=Efectiu diari
 DescCashJournal=Efectiu diari inclòs el tipus de pagament al comptat
+FinanceJournal=Finance journal
+DescFinanceJournal=Finance journal including all the types of payments by bank account
 
 CashPayment=Pagament al comptat
 
@@ -150,9 +137,6 @@ Pcgversion=Versió del pla
 Pcgtype=Classe de compte
 Pcgsubtype=Sota la classe de compte
 Accountparent=Arrel del compte
-Active=Extracte
-
-NewFiscalYear=Nou any fiscal
 
 DescVentilCustomer=Consulta aquí el desglossament anual comptable de les teves factures de clients
 TotalVente=Total turnover before tax

@@ -886,7 +886,8 @@ if ($action == "addline")
 		$object_ligne->fk_expensereport = $_POST['fk_expensereport'];
 
 		$type = 0;	// TODO What if service ?
-		$tmp = calcul_price_total($qty, $up, 0, $vatrate, 0, 0, 0, 'TTC', 0, $type);
+		$seller = '';  // seller is unknown
+		$tmp = calcul_price_total($qty, $up, 0, $vatrate, 0, 0, 0, 'TTC', 0, $type, $seller);
 
 		$object_ligne->vatrate = price2num($vatrate);
 		$object_ligne->total_ttc = $tmp[2];
