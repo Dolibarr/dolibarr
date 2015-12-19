@@ -498,7 +498,7 @@ class CommandeFournisseur extends CommonOrder
      */
     function getLibStatut($mode=0)
     {
-        return $this->LibStatut($this->statut,$mode);
+        return $this->LibStatut($this->statut,$mode,$this->billed);
     }
 
     /**
@@ -506,16 +506,17 @@ class CommandeFournisseur extends CommonOrder
      *
      * 	@param  int		$statut		Id statut
      *  @param  int		$mode       0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto
+     *  @param  int     $billed     1=Billed
      *  @return string				Label of status
      */
-    function LibStatut($statut,$mode=0)
+    function LibStatut($statut,$mode=0,$billed=0)
     {
         global $langs;
         $langs->load('orders');
 
         $billedtext='';
 		//if ($statut==5 && $this->billed == 1) $statut = 8;
-        if ($this->billed == 1) $billedtext=$langs->trans("Billed");
+        if ($billed == 1) $billedtext=$langs->trans("Billed");
         
         // List of language codes for status
         $statutshort[0] = 'StatusOrderDraftShort';
