@@ -173,14 +173,14 @@ print '<tr class="liste_titre">';
 print_liste_field_titre($langs->trans("ID"),$_SERVER["PHP_SELF"],"t.rowid","",$param,'',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("CronLabel"),$_SERVER["PHP_SELF"],"t.label","",$param,'',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("CronTask"),'','',"",$param,'',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("CronDtStart"),$_SERVER["PHP_SELF"],"t.datestart","",$param,'',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("CronDtEnd"),$_SERVER["PHP_SELF"],"t.dateend","",$param,'',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("CronDtLastLaunch"),$_SERVER["PHP_SELF"],"t.datelastrun","",$param,'',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("CronDtNextLaunch"),$_SERVER["PHP_SELF"],"t.datenextrun","",$param,'',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("CronDtStart"),$_SERVER["PHP_SELF"],"t.datestart","",$param,'align="center"',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("CronDtEnd"),$_SERVER["PHP_SELF"],"t.dateend","",$param,'align="center"',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("CronDtNextLaunch"),$_SERVER["PHP_SELF"],"t.datenextrun","",$param,'align="center"',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("CronFrequency"),'',"","",$param,'',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("CronNbRun"),$_SERVER["PHP_SELF"],"t.nbrun","",$param,'',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("CronMaxRun"),$_SERVER["PHP_SELF"],"t.maxrun","",$param,'',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("CronLastResult"),$_SERVER["PHP_SELF"],"t.lastresult","",$param,'',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("CronMaxRun"),$_SERVER["PHP_SELF"],"t.maxrun","",$param,'align="right"',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("CronNbRun"),$_SERVER["PHP_SELF"],"t.nbrun","",$param,'align="right"',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("CronDtLastLaunch"),$_SERVER["PHP_SELF"],"t.datelastrun","",$param,'align="center"',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("CronLastResult"),$_SERVER["PHP_SELF"],"t.lastresult","",$param,'align="center"',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("CronLastOutput"),$_SERVER["PHP_SELF"],"t.lastoutput","",$param,'',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"t.status","",$param,'align="center"',$sortfield,$sortorder);
 print_liste_field_titre('');
@@ -259,19 +259,15 @@ if ($num > 0)
 		}
 		print '</td>';
 
-		print '<td>';
+		print '<td class="center">';
 		if(!empty($line->datestart)) {print dol_print_date($line->datestart,'dayhour');}
 		print '</td>';
 
-		print '<td>';
+		print '<td class="center">';
 		if(!empty($line->dateend)) {print dol_print_date($line->dateend,'dayhour');}
 		print '</td>';
 
-		print '<td>';
-		if(!empty($line->datelastrun)) {print dol_print_date($line->datelastrun,'dayhour');}
-		print '</td>';
-
-		print '<td>';
+		print '<td class="center">';
 		if(!empty($line->datenextrun)) {print dol_print_date($line->datenextrun,'dayhour');}
 		print '</td>';
 
@@ -282,15 +278,19 @@ if ($num > 0)
 		if($line->unitfrequency == "604800") print $langs->trans('CronEach')." ".($line->frequency/$line->unitfrequency)." ".$langs->trans('Weeks');
 		print '</td>';
 
-		print '<td>';
-		if (!empty($line->nbrun)) {print $line->nbrun;} else {print '0';}
-		print '</td>';
-
-		print '<td>';
+		print '<td align="right">';
 		if (!empty($line->maxrun)) {print $line->maxrun;}
 		print '</td>';
 		
-		print '<td>';
+		print '<td align="right">';
+		if (!empty($line->nbrun)) {print $line->nbrun;} else {print '0';}
+		print '</td>';
+
+		print '<td class="center">';
+		if(!empty($line->datelastrun)) {print dol_print_date($line->datelastrun,'dayhour');}
+		print '</td>';
+
+		print '<td class="center">';
 		if(!empty($line->lastresult)) {print dol_trunc($line->lastresult);}
 		print '</td>';
 
