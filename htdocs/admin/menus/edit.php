@@ -75,6 +75,7 @@ if ($action == 'update')
             $menu->perms=$_POST['perms'];
             $menu->target=$_POST['target'];
             $menu->user=$_POST['user'];
+            $menu->fk_menu=$_POST['fk_menu'];
             $result=$menu->update($user);
             if ($result > 0)
             {
@@ -415,7 +416,7 @@ elseif ($action == 'edit')
     print '<tr><td class="fieldrequired">'.$langs->trans('Type').'</td><td>'.$langs->trans(ucfirst($menu->type)).'</td><td>'.$langs->trans('DetailType').'</td></tr>';
 
     // MenuId Parent
-    print '<tr><td class="fieldrequired">'.$langs->trans('MenuIdParent').'</td>';
+    print '<td><input type="text" name="fk_menu" value="'.$menu->fk_menu.'" size=10></td>';
     //$menu_handler
     //print '<td><input type="text" size="50" name="handler" value="all"></td>';
     print '<td>'.$menu->fk_menu.'</td>';
