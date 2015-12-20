@@ -53,6 +53,8 @@ $action = GETPOST('action', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 $eid = GETPOST('eid', 'int');
 
+$search_soc = GETPOST('search_soc');
+
 // Security check
 $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref : ''));
 $fieldtype = (! empty($ref) ? 'ref' : 'rowid');
@@ -84,6 +86,11 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
+    if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+    {
+        $search_soc = '';        
+    }
+    
 	if (($action == 'update_vat') && !$cancel && ($user->rights->produit->creer || $user->rights->service->creer))
 	{
 	    $object->tva_tx = GETPOST('tva_tx');
@@ -1164,7 +1171,6 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		// Build filter to diplay only concerned lines
 	$filter = array('t.fk_product' => $object->id);
 
-	$search_soc = GETPOST('search_soc');
 	if (! empty($search_soc)) {
 		$filter['soc.nom'] = $search_soc;
 	}
@@ -1447,7 +1453,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		print '<td>&nbsp;</td>';
 		print '</tr>';
 
-		if (count($prodcustprice->lines) > 0)
+		if (count($prodcustprice->lines) > 0 || $search_soc)
 		{
     		print '<tr class="liste_titre">';
     		print '<td><input type="text" class="flat" name="search_soc" value="' . $search_soc . '" size="20"></td>';
@@ -1455,9 +1461,14 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
     		// Print the search button
     		print '<td class="liste_titre" align="right">';
     		print '<input class="liste_titre" name="button_search" type="image" src="' . DOL_URL_ROOT . '/theme/' . $conf->theme . '/img/search.png" value="' . dol_escape_htmltag($langs->trans("Search")) . '" title="' . dol_escape_htmltag($langs->trans("Search")) . '">';
+    		print ' ';
+    		print '<input class="liste_titre" name="button_removefilter" type="image" src="' . DOL_URL_ROOT . '/theme/' . $conf->theme . '/img/searchclear.png" value="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '" title="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '">';
     		print '</td>';
     		print '</tr>';
-		    
+		}
+		
+		if (count($prodcustprice->lines) > 0)
+		{
 		    $var = False;
 
 			foreach ($prodcustprice->lines as $line)
