@@ -44,7 +44,7 @@ $result = restrictedArea($user, 'ficheinter', $fichinterid,'fichinter');
 
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
-$limit = $conf->liste_limit;
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $page = GETPOST('page','int');
 if ($page == -1) { $page = 0; }
 $offset = $limit * $page;
@@ -152,7 +152,7 @@ if ($result)
     if ($sall)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-        print $langs->trans("FilterOnInto", $sall, join(', ',$fieldstosearchall));
+        print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
     }
     
     print '<table class="noborder" width="100%">';
