@@ -3495,11 +3495,11 @@ a span.select2-chosen
 span.noborderoncategories a, li.noborderoncategories a {
 	color: #fff !important;
 	line-height: normal;
-	vertical-align: top;
 }
 span.noborderoncategories {
-	padding: 3px 5px 0px 5px;
+	padding: 5px 5px 0px 5px;
 }
+
 
 
 /* ============================================================================== */
