@@ -44,13 +44,14 @@ $search_doc_ref = GETPOST("search_doc_ref");
 $search_account = GETPOST("search_account");
 $search_thirdparty = GETPOST("search_thirdparty");
 $search_journal = GETPOST("search_journal");
+$limit = $conf->liste_limit;
 
 if ($sortorder == "")
 	$sortorder = "ASC";
 if ($sortfield == "")
 	$sortfield = "bk.rowid";
 
-$offset = $conf->liste_limit * $page;
+$offset = $limit * $page;
 
 $formventilation = new FormVentilation($db);
 $formother = new FormOther($db);
@@ -74,6 +75,19 @@ if ($action == 'delbookkeeping') {
 	if (! empty($import_key)) {
 		$object = new BookKeeping($db);
 		$result = $object->delete_by_importkey($import_key);
+		Header("Location: list.php");
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
+}
+elseif ($action == 'delbookkeepingyear') {
+	
+	$delyear = GETPOST('delyear', 'int');
+	
+	if (! empty($delyear)) {
+		$object = new BookKeeping($db);
+		$result = $object->delete_by_year($delyear);
 		Header("Location: list.php");
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');

@@ -52,6 +52,8 @@ $date_endmonth = GETPOST('date_endmonth');
 $date_endday = GETPOST('date_endday');
 $date_endyear = GETPOST('date_endyear');
 
+$now = dol_now();
+
 // Security check
 if ($user->societe_id > 0)
 	accessforbidden();
@@ -266,14 +268,9 @@ $companystatic = new Fournisseur($db);
 if ($action == 'export_csv')
 {
 	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
-	$purchase_journal = $conf->global->ACCOUNTING_PURCHASE_JOURNAL;
+	$journal = $conf->global->ACCOUNTING_PURCHASE_JOURNAL;
 
-	header('Content-Type: text/csv');
-	if ($conf->global->EXPORT_PREFIX_SPEC)
-		$filename=$conf->global->EXPORT_PREFIX_SPEC."_"."journal_achats.csv";
-	else
-		$filename="journal_achats.csv";
-	header('Content-Disposition: attachment;filename='.$filename);
+	include DOL_DOCUMENT_ROOT.'/accountancy/tpl/export_journal.tpl.php';
 
 	if ($conf->global->ACCOUNTING_EXPORT_MODELCSV == 2) 	// Model Cegid Expert Export
 	{
@@ -491,7 +488,7 @@ if ($action == 'export_csv')
 
 	print "</table>";
 
-	// End of page
-	llxFooter();
+	// End of page	
 }
+llxFooter();
 $db->close();

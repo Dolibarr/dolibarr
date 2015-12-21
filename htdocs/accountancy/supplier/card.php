@@ -55,7 +55,7 @@ if ($action == 'ventil' && $user->rights->accounting->ventilation->dispatch) {
 		dol_syslog('accountancy/supplier/card.php:: $sql=' . $sql);
 		$resql = $db->query($sql);
 		if (! $resql) {
-			setEventMessage($db->lasterror(), 'errors');
+			setEventMessages($db->lasterror(), null, 'errors');
 		}
 	} else {
 		header("Location: ./lines.php");
@@ -106,7 +106,7 @@ if (! empty($id)) {
 			print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
 			print '<input type="hidden" name="action" value="ventil">';
 			
-			print_fiche_titre($langs->trans('SuppliersVentilation'),'','title_setup');
+			print load_fiche_titre($langs->trans('SuppliersVentilation'),'','title_setup');
 
             dol_fiche_head();
 			
