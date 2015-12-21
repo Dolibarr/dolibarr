@@ -794,6 +794,7 @@ ALTER TABLE llx_c_paiement MODIFY COLUMN libelle varchar(62);
 ALTER TABLE llx_societe_remise_except MODIFY COLUMN description text NOT NULL;
 
 -- Fix bad data
-update llx_opensurvey_sondage set format = 'D' where format = 'D+';
-update llx_opensurvey_sondage set format = 'A' where format = 'A+';
+UPDATE llx_opensurvey_sondage SET format = 'D' WHERE format = 'D+';
+UPDATE llx_opensurvey_sondage SET format = 'A' WHERE format = 'A+';
 
+ALTER TABLE llx_accounting_bookkeeping MODIFY COLUMN doc_ref varchar(300) NOT NULL;
