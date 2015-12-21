@@ -130,13 +130,13 @@ if ($action == 'confirm_delete_linked_resource' && $user->rights->resource->dele
 
     if ($result >= 0)
     {
-        setEventMessage($langs->trans('RessourceLineSuccessfullyDeleted'));
+        setEventMessages($langs->trans('RessourceLineSuccessfullyDeleted'), null, 'mesgs');
         header("Location: ".$_SERVER['PHP_SELF']."?element=".$element."&element_id=".$element_id);
         exit;
     }
     else 
     {
-        setEventMessage($object->error,'errors');
+        setEventMessages($object->error, $object->errors, 'errors');
     }
 }
 
