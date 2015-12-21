@@ -571,5 +571,5 @@ insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays
 insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values (4108, 'Mitarbeitervorsorgekasse',			1,1,'TAXATMVK'  ,'41');
 insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values (4109, 'Familienlastenausgleichsfond',		1,1,'TAXATFLAF' ,'41');
 
-ALTER TABLE llx_accounting_bookkeeping MODIFY COLUMN doc_ref varchar(255) NOT NULL;
+ALTER TABLE llx_accounting_bookkeeping MODIFY COLUMN doc_ref varchar(300) NOT NULL;
 

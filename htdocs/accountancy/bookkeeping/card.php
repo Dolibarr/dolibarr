@@ -27,6 +27,7 @@ require '../../main.inc.php';
 
 // Class
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
+require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
 
 // Langs
 $langs->load("accountancy");
@@ -41,11 +42,23 @@ $piece_num = GETPOST("piece_num");
 
 $mesg = '';
 
-$numero_compte = GETPOST('numero_compte');
+$account_number = GETPOST('account_number');
 $code_tiers = GETPOST('code_tiers');
+if ($code_tiers==-1) {
+	$code_tiers=null;
+}
 $label_compte = GETPOST('label_compte');
 $debit = price2num(GETPOST('debit'));
 $credit = price2num(GETPOST('credit'));
+
+$save=GETPOST('save');
+if (!empty($save)) {
+	$action='add';
+}
+$update=GETPOST('update');
+if (!empty($update)) {
+	$action='confirm_update';
+}
 
 if ($action == "confirm_update") {
 
@@ -63,7 +76,7 @@ if ($action == "confirm_update") {
         if ($result < 0) {
             setEventMessages($book->error, $book->errors, 'errors');
         } else {
-            $book->numero_compte = $numero_compte;
+			$book->numero_compte = $account_number;
             $book->code_tiers = $code_tiers;
             $book->label_compte = $label_compte;
             $book->debit = $debit;
@@ -92,15 +105,15 @@ if ($action == "confirm_update") {
 else if ($action == "add") {
     $error = 0;
 
-    if ((intval($debit) != 0) && (intval($credit) != 0)) {
-        setEventMessages($langs->trans('ErrorDebitCredit'), null, 'errors');
-        $error ++;
-    }
+	if ((floatval($debit) != 0.0) && (floatval($credit) != 0.0)) {
+		setEventMessages($langs->trans('ErrorDebitCredit'), null, 'errors');
+		$error ++;
+	}
 
     if (empty($error)) {
         $book = new BookKeeping($db);
 
-        $book->numero_compte = $numero_compte;
+		$book->numero_compte = $account_number;
         $book->code_tiers = $code_tiers;
         $book->label_compte = $label_compte;
         $book->debit = $debit;
@@ -113,11 +126,12 @@ else if ($action == "add") {
         $book->fk_doc = GETPOST('fk_doc');
         $book->fk_docdet = GETPOST('fk_docdet');
 
-        if (! empty($debit)) {
+		if (floatval($debit) != 0.0) {
             $book->montant = $debit;
             $book->sens = 'D';
         }
-        if (! empty($credit)) {
+		
+		if (floatval($credit) != 0.0) {
             $book->montant = $credit;
             $book->sens = 'C';
         }
@@ -179,6 +193,7 @@ else if ($action == "confirm_create") {
 llxHeader();
 
 $html = new Form($db);
+$formventilation = new FormVentilation($db);
 
 /*
  *  Confirmation to delete the command
@@ -281,9 +296,21 @@ if ($action == 'create') {
         } else {
 
             print load_fiche_titre($langs->trans("ListeMvts"));
+			
+			print '<form action="' . $_SERVER["PHP_SELF"] . '?piece_num=' . $book->piece_num . '" method="post">';
+			print '<input type="hidden" name="doc_date" value="' . $book->doc_date . '">' . "\n";
+			print '<input type="hidden" name="doc_type" value="' . $book->doc_type . '">' . "\n";
+			print '<input type="hidden" name="doc_ref" value="' . $book->doc_ref . '">' . "\n";
+			print '<input type="hidden" name="code_journal" value="' . $book->code_journal . '">' . "\n";
+			print '<input type="hidden" name="fk_doc" value="' . $book->fk_doc . '">' . "\n";
+			print '<input type="hidden" name="fk_docdet" value="' . $book->fk_docdet . '">' . "\n";
+			
             print "<table class=\"noborder\" width=\"100%\">";
             if (count($book->linesmvt) > 0) {
 
+				$total_debit=0;
+				$total_credit=0;
+				
                 print '<tr class="liste_titre">';
 
                 print_liste_field_titre($langs->trans("Numerocompte"));
@@ -301,21 +328,26 @@ if ($action == 'create') {
                     $var = ! $var;
                     print "<tr $bc[$var]>";
 
+					$total_debit+=$line->debit;
+					$total_credit+=$line->credit;
+					
                     if ($action == 'update' && $line->id == $id) {
 
-                        print '<form action="' . $_SERVER["PHP_SELF"] . '?piece_num=' . $book->piece_num . '" method="post">';
-                        print '<input type="hidden" name="id" value="' . $line->id . '">' . "\n";
-                        print '<input type="hidden" name="action" value="confirm_update">' . "\n";
-                        print '<td><input type="text" size="6" name="numero_compte" value="' . $line->numero_compte . '"/></td>';
-                        print '<td><input type="text" size="15" name="code_tiers" value="' . $line->code_tiers . '"/></td>';
+					
+						print '<td>';
+						print $formventilation->select_account($line->numero_compte, 'account_number', 0, array (), 1, 1,'');
+						print '</td>';
+						print '<td>';
+						print $formventilation->select_auxaccount($line->code_tiers, 'code_tiers',1);
+						print '</td>';
                         print '<td><input type="text" size="15" name="label_compte" value="' . $line->label_compte . '"/></td>';
                         print '<td><input type="text" size="6" name="debit" value="' . price($line->debit) . '"/></td>';
                         print '<td><input type="text" size="6" name="credit" value="' . price($line->credit) . '"/></td>';
                         print '<td>' . $line->montant . '</td>';
                         print '<td>' . $line->sens . '</td>';
                         print '<td>';
-                        print '<input type="submit" class="button" value="' . $langs->trans("Update") . '">';
-                        print '</form>';
+						print '<input type="hidden" name="id" value="' . $line->id . '">' . "\n";
+						print '<input type="submit" class="button" name="update" value="' . $langs->trans("Update") . '">';
                         print '</td>';
                     } else {
                         print '<td>' . $line->numero_compte . '</td>';
@@ -327,10 +359,10 @@ if ($action == 'create') {
                         print '<td>' . $line->sens . '</td>';
 
                         print '<td>';
-                        print '<a href="./card.php?action=update&id=' . $line->id . '&piece_num=' . $line->piece_num . '">';
+						print '<a href="./card.php?action=update&amp;id=' . $line->id . '&amp;piece_num=' . $line->piece_num . '">';
                         print img_edit();
                         print '</a>&nbsp;';
-                        print '<a href="./card.php?action=delete&id=' . $line->id . '&piece_num=' . $line->piece_num . '">';
+						print '<a href="./card.php?action=delete&amp;id=' . $line->id . '&amp;piece_num=' . $line->piece_num . '">';
                         print img_delete();
                         print '</a>';
 
@@ -339,34 +371,32 @@ if ($action == 'create') {
                     print "</tr>\n";
                 }
 
+				if ($total_debit!=$total_credit) {
+					setEventMessages(null, array('MvtNotCorrectlyBalanced',$total_credit,$total_debit),'errors');
+				}
+				
                 if ($action == "" || $action == 'add') {
                     $var = ! $var;
                     print "<tr $bc[$var]>";
-
-                    print '<form action="' . $_SERVER["PHP_SELF"] . '?piece_num=' . $book->piece_num . '" method="post">';
-                    print '<input type="hidden" name="action" value="add">' . "\n";
-                    print '<input type="hidden" name="doc_date" value="' . $book->doc_date . '">' . "\n";
-                    print '<input type="hidden" name="doc_type" value="' . $book->doc_type . '">' . "\n";
-                    print '<input type="hidden" name="doc_ref" value="' . $book->doc_ref . '">' . "\n";
-                    print '<input type="hidden" name="code_journal" value="' . $book->code_journal . '">' . "\n";
-                    print '<input type="hidden" name="fk_doc" value="' . $book->fk_doc . '">' . "\n";
-                    print '<input type="hidden" name="fk_docdet" value="' . $book->fk_docdet . '">' . "\n";
-                    print '<td><input type="text" size="6" name="numero_compte" value="' . $numero_compte . '"/></td>';
-                    print '<td><input type="text" size="15" name="code_tiers" value="' . $code_tiers . '"/></td>';
+					print '<td>';
+					print $formventilation->select_account($account_number, 'account_number', 0, array (), 1, 1, '');
+					print '</td>';
+					print '<td>';
+					print $formventilation->select_auxaccount($code_tiers, 'code_tiers',1);
+					print '</td>';
                     print '<td><input type="text" size="15" name="label_compte" value="' . $label_compte . '"/></td>';
                     print '<td><input type="text" size="6" name="debit" value="' . price($debit) . '"/></td>';
                     print '<td><input type="text" size="6" name="credit" value="' . price($credit) . '"/></td>';
                     print '<td></td>';
                     print '<td></td>';
-                    print '<td><input type="submit" class="button" value="' . $langs->trans("Save") . '"></td>';
+					print '<td><input type="submit" class="button" name="save" value="' . $langs->trans("Save") . '"></td>';
                     print '</tr>';
                 }
                 print '</table>';
                 print '</form>';
             }
         }
-    }
-    else {
+    } else {
         print load_fiche_titre($langs->trans("NoRecords"));
     }
 }

@@ -22,7 +22,7 @@ CREATE TABLE llx_accounting_bookkeeping
   rowid				integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
   doc_date			date NOT NULL,
   doc_type			varchar(30) NOT NULL,	-- facture_client/reglement_client/facture_fournisseur/reglement_fournisseur
-  doc_ref			varchar(255) NOT NULL,	-- facture_client/reglement_client/... reference number
+  doc_ref			varchar(300) NOT NULL,	-- facture_client/reglement_client/... reference number
   fk_doc			integer NOT NULL,		-- facture_client/reglement_client/... rowid
   fk_docdet			integer NOT NULL,		-- facture_client/reglement_client/... line rowid
   code_tiers		varchar(24),			-- code tiers

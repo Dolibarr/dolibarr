@@ -5,7 +5,7 @@
  * Copyright (C) 2012		Regis Houssin		<regis@dolibarr.fr>
  * Copyright (C) 2013-2015  Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2013-2014  Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2014  Florian Henry	    <florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2016  Florian Henry	    <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -487,7 +487,9 @@ if ($action == 'export_csv')
 	}
 
 	print "</table>";
-
+	
+	// End of page
+	llxFooter();
 }
-llxFooter();
+
 $db->close();
