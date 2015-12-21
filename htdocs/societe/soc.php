@@ -121,14 +121,14 @@ if (empty($reshook))
 		{
 			$langs->load('errors');
 			$langs->load('companies');
-			setEventMessage($langs->trans('ErrorProdIdIsMandatory', $langs->trans('MergeOriginThirdparty')), 'errors');
+			setEventMessages($langs->trans('ErrorProdIdIsMandatory', $langs->trans('MergeOriginThirdparty')), null, 'errors');
 		}
 		else
 		{
 
 			if (!$errors && $soc_origin->fetch($soc_origin_id) < 1)
 			{
-				setEventMessage($langs->trans('ErrorRecordNotFound'), 'errors');
+				setEventMessages($langs->trans('ErrorRecordNotFound'), null, 'errors');
 				$errors++;
 			}
 
@@ -197,10 +197,12 @@ if (empty($reshook))
 
 				if (!$errors)
 				{
-					setEventMessage($langs->trans('ThirdpartiesMergeSuccess'));
+					setEventMessages($langs->trans('ThirdpartiesMergeSuccess'), null, 'mesgs');
 					$db->commit();
-				} else {
-					setEventMessage($langs->trans('ErrorsThirdpartyMerge'), 'errors');
+				} 
+				else 
+				{
+					setEventMessages($langs->trans('ErrorsThirdpartyMerge'), null, 'errors');
 					$db->rollback();
 				}
 			}

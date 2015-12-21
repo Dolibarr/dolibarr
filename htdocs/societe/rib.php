@@ -81,7 +81,7 @@ if ($action == 'update' && ! $_POST["cancel"])
 	$result = $account->update($user);
 	if (! $result)
 	{
-		setEventMessage($account->error, 'errors');
+		setEventMessages($account->error, $account->errors, 'errors');
 		$_GET["action"]='edit';     // Force chargement page edition
 	}
 	else
@@ -161,8 +161,10 @@ if ($action == 'setasdefault')
         $url=DOL_URL_ROOT.'/societe/rib.php?socid='.$object->id;
         header('Location: '.$url);
         exit;
-    } else {
-	    setEventMessage($db->lasterror, 'errors');
+    } 
+    else 
+    {
+	    setEventMessages($db->lasterror, null, 'errors');
     }
 }
 
@@ -180,12 +182,12 @@ if ($action == 'confirm_delete' && $_GET['confirm'] == 'yes')
 		}
 		else
 		{
-			setEventMessage($account->error, 'errors');
+			setEventMessages($account->error, $account->errors, 'errors');
 		}
 	}
 	else
 	{
-		setEventMessage($account->error, 'errors');
+		setEventMessages($account->error, $account->errors, 'errors');
     }
 }
 
