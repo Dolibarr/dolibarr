@@ -5328,7 +5328,7 @@ class Form
         {
             $ret.='</ul></div>';
         }
-		$ret.='<div class="statusref">'.$morehtmlright.'</div>';
+		if ($morehtmlright) $ret.='<div class="statusref">'.$morehtmlright.'</div>';
         $ret.='</div>';
 		
         return $ret;
@@ -5386,19 +5386,15 @@ class Form
         $id = (! empty($object->id) ? $object->id : $object->rowid);
 
         $ret='';$dir='';$file='';$originalfile='';$altfile='';$email='';
-
         if ($modulepart=='societe')
         {
             $dir=$conf->societe->multidir_output[$entity];
-            $smallfile=$object->logo;
-            $smallfile=preg_replace('/(\.png|\.gif|\.jpg|\.jpeg|\.bmp)/i','_small\\1',$smallfile);
             if (! empty($object->logo)) 
             {
-                // TODO Introduce get_exdir
-                if ((string) $imagesize == 'mini') $file=$id.'/logos/thumbs/'.getImageFileNameForSize($object->logo, '_mini');
-                else if ((string) $imagesize == 'small') $file=$id.'/logos/thumbs/'.getImageFileNameForSize($object->logo, '_small');
-                else $file=$id.'/logos/thumbs/'.$smallfile;
-                $originalfile=$id.'/logos/thumbs/'.$smallfile;
+                if ((string) $imagesize == 'mini') $file=get_exdir(0, 0, 0, 0, $object, 'thirdparty').'/logos/'.getImageFileNameForSize($object->logo, '_mini');             // getImageFileNameForSize include the thumbs
+                else if ((string) $imagesize == 'small') $file=get_exdir(0, 0, 0, 0, $object, 'thirdparty').'/logos/'.getImageFileNameForSize($object->logo, '_small');
+                else $file=get_exdir(0, 0, 0, 0, $object, 'thirdparty').'/logos/'.$object->logo;
+                $originalfile=get_exdir(0, 0, 0, 0, $object, 'thirdparty').'/logos/'.$object->logo;
             }
         }
         else if ($modulepart=='contact')
@@ -5406,11 +5402,10 @@ class Form
             $dir=$conf->societe->multidir_output[$entity].'/contact';
             if (! empty($object->photo))
             {
-                // TODO Introduce get_exdir
-                if ((string) $imagesize == 'mini') $file=$id.'/photos/thumbs/'.getImageFileNameForSize($object->photo, '_mini');
-                else if ((string) $imagesize == 'small') $file=$id.'/photos/thumbs/'.getImageFileNameForSize($object->photo, '_small');
-                else $file=$id.'/photos/'.$object->photo;
-                $originalfile=$id.'/photos/'.$object->photo;
+                if ((string) $imagesize == 'mini') $file=get_exdir(0, 0, 0, 0, $object, 'contact').'/photos/'.getImageFileNameForSize($object->photo, '_mini');
+                else if ((string) $imagesize == 'small') $file=get_exdir(0, 0, 0, 0, $object, 'contact').'/photos/'.getImageFileNameForSize($object->photo, '_small');
+                else $file=get_exdir(0, 0, 0, 0, $object, 'contact').'/photos/'.$object->photo;
+                $originalfile=get_exdir(0, 0, 0, 0, $object, 'contact').'/photos/'.$object->photo;
             }
         }
         else if ($modulepart=='userphoto')
