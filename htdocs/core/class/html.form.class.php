@@ -2619,7 +2619,7 @@ class Form
     /**
      *      Charge dans cache la liste des types de paiements possibles
      *
-     *      @return     int             Nb of lines loaded, <0 if KO
+     *      @return     int                 Nb of lines loaded, <0 if KO
      */
     function load_cache_types_paiements()
     {
@@ -2632,9 +2632,9 @@ class Form
 
         $this->cache_types_paiements = array();
 
-        $sql = "SELECT id, code, libelle as label, type";
+        $sql = "SELECT id, code, libelle as label, type, active";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_paiement";
-        $sql.= " WHERE active > 0";
+        //if ($active >= 0) $sql.= " WHERE active = ".$active;
 
         $resql = $this->db->query($sql);
         if ($resql)
@@ -2651,6 +2651,7 @@ class Form
                 $this->cache_types_paiements[$obj->id]['code'] =$obj->code;
                 $this->cache_types_paiements[$obj->id]['label']=$label;
                 $this->cache_types_paiements[$obj->id]['type'] =$obj->type;
+                $this->cache_types_paiements[$obj->id]['active'] =$obj->active;
                 $i++;
             }
 
@@ -2708,14 +2709,15 @@ class Form
      *
      *      @param	string	$selected       Id du mode de paiement pre-selectionne
      *      @param  string	$htmlname       Nom de la zone select
-     *      @param  string	$filtertype     To filter on field type in llx_c_paiement (array('code'=>xx,'label'=>zz))
+     *      @param  string	$filtertype     To filter on field type in llx_c_paiement ('CRDT' or 'DBIT' or array('code'=>xx,'label'=>zz))
      *      @param  int		$format         0=id+libelle, 1=code+code, 2=code+libelle, 3=id+code
      *      @param  int		$empty			1=peut etre vide, 0 sinon
      * 		@param	int		$noadmininfo	0=Add admin info, 1=Disable admin info
      *      @param  int		$maxlength      Max length of label
+     *      @param  int     $active         Active or not, -1 = all
      * 		@return	void
      */
-    function select_types_paiements($selected='', $htmlname='paiementtype', $filtertype='', $format=0, $empty=0, $noadmininfo=0, $maxlength=0)
+    function select_types_paiements($selected='', $htmlname='paiementtype', $filtertype='', $format=0, $empty=0, $noadmininfo=0, $maxlength=0, $active=1)
     {
         global $langs,$user;
 
@@ -2732,6 +2734,9 @@ class Form
         if ($empty) print '<option value="">&nbsp;</option>';
         foreach($this->cache_types_paiements as $id => $arraytypes)
         {
+            // If not good status
+            if ($active >= 0 && $arraytypes['active'] != $active) continue;
+            
             // On passe si on a demande de filtrer sur des modes de paiments particuliers
             if (count($filterarray) && ! in_array($arraytypes['type'],$filterarray)) continue;
 
@@ -3685,9 +3690,10 @@ class Form
      *    @param    int		$selected    	Id mode pre-selectionne
      *    @param    string	$htmlname    	Name of select html field
      *    @param  	string	$filtertype		To filter on field type in llx_c_paiement (array('code'=>xx,'label'=>zz))
+     *    @param    int     $active         Active or not, -1 = all
      *    @return	void
      */
-    function form_modes_reglement($page, $selected='', $htmlname='mode_reglement_id', $filtertype='')
+    function form_modes_reglement($page, $selected='', $htmlname='mode_reglement_id', $filtertype='', $active=1)
     {
         global $langs;
         if ($htmlname != "none")
@@ -3697,7 +3703,7 @@ class Form
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
             print '<tr><td>';
-            $this->select_types_paiements($selected,$htmlname,$filtertype);
+            $this->select_types_paiements($selected,$htmlname,$filtertype,0,0,0,0,$active);
             print '</td>';
             print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
             print '</tr></table></form>';
@@ -3707,7 +3713,6 @@ class Form
             if ($selected)
             {
                 $this->load_cache_types_paiements();
-
                 print $this->cache_types_paiements[$selected]['label'];
             } else {
                 print "&nbsp;";

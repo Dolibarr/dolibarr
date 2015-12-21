@@ -44,7 +44,7 @@ $search_doc_ref = GETPOST("search_doc_ref");
 $search_account = GETPOST("search_account");
 $search_thirdparty = GETPOST("search_thirdparty");
 $search_journal = GETPOST("search_journal");
-$limit = $conf->liste_limit;
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 
 if ($sortorder == "")
 	$sortorder = "ASC";

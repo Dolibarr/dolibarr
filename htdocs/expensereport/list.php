@@ -93,7 +93,7 @@ $sortfield     = GETPOST("sortfield");
 $page          = GETPOST("page");
 if (!$sortorder) $sortorder="DESC";
 if (!$sortfield) $sortfield="d.date_debut";
-$limit = $conf->liste_limit;
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 
 if ($page == -1) {
 	$page = 0 ;

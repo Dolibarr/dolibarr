@@ -43,7 +43,7 @@ if (! $sortfield) $sortfield="e.label";
 if (! $sortorder) $sortorder="ASC";
 $page = GETPOST("page");
 if ($page < 0) $page = 0;
-$limit = $conf->liste_limit;
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $offset = $limit * $page;
 
 $year = strftime("%Y",time());
