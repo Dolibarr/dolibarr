@@ -157,6 +157,7 @@ if (empty($reshook))
 		}
     }
 
+	/*
     if ($action == 'setaccountancy_code_buy') {
 
 	    $result = $object->setAccountancyCode('buy', GETPOST('accountancy_code_buy'));
@@ -170,6 +171,7 @@ if (empty($reshook))
 	    if ($result < 0) setEventMessages(join(',',$object->errors), null, 'errors');
 	    $action="";
     }
+	*/
 
     // Add a product or service
     if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service->creer))
@@ -262,10 +264,11 @@ if (empty($reshook))
             $object->finished           	 = GETPOST('finished');
 	        $object->fk_unit                 = GETPOST('units');
 			
-			if (GETPOST('accountancy_code_sell') <= 0) { $accountancy_code_sell = ''; } else { $accountancy_code_sell = GETPOST('accountancy_code_sell'); }
-            if (GETPOST('accountancy_code_buy') <= 0) { $accountancy_code_buy = ''; } else { $accountancy_code_buy = GETPOST('accountancy_code_buy'); }
-			$object->accountancy_code_sell   = $accountancy_code_sell;
-			$object->accountancy_code_buy    = $accountancy_code_buy;
+			$accountancy_code_sell 			 = GETPOST('accountancy_code_sell');
+			$accountancy_code_buy 			 = GETPOST('accountancy_code_buy');
+
+			if ($accountancy_code_sell <= 0) { $object->accountancy_code_sell = ''; } else { $object->accountancy_code_sell = $accountancy_code_sell; }
+			if ($accountancy_code_buy <= 0) { $object->accountancy_code_buy = ''; } else { $object->accountancy_code_buy = $accountancy_code_buy; }
 
             // MultiPrix
             if (! empty($conf->global->PRODUIT_MULTIPRICES))
@@ -374,10 +377,11 @@ if (empty($reshook))
     	        $object->barcode_type_coder     = $stdobject->barcode_type_coder;
     	        $object->barcode_type_label     = $stdobject->barcode_type_label;
 
-			    if (GETPOST('accountancy_code_sell') <= 0) { $accountancy_code_sell = ''; } else { $accountancy_code_sell = GETPOST('accountancy_code_sell'); }
-                if (GETPOST('accountancy_code_buy') <= 0) { $accountancy_code_buy = ''; } else { $accountancy_code_buy = GETPOST('accountancy_code_buy'); }
-            	$object->accountancy_code_sell  = GETPOST('accountancy_code_sell');
-                $object->accountancy_code_buy   = GETPOST('accountancy_code_buy');
+				$accountancy_code_sell 			 = GETPOST('accountancy_code_sell');
+				$accountancy_code_buy 			 = GETPOST('accountancy_code_buy');
+				
+				if ($accountancy_code_sell <= 0) { $object->accountancy_code_sell = ''; } else { $object->accountancy_code_sell = $accountancy_code_sell; }
+				if ($accountancy_code_buy <= 0) { $object->accountancy_code_buy = ''; } else { $object->accountancy_code_buy = $accountancy_code_buy; }
 
                 // Fill array 'array_options' with data from add form
         		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
