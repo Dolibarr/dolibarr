@@ -992,6 +992,17 @@ else
 		    print '<td>'.$langs->trans('Prefix').'</td><td><input type="text" size="5" maxlength="5" name="prefix_comm" value="'.$object->prefix_comm.'"></td>';
 	    }
 	    print '</tr>';
+	    
+// pag
+// add Parent Company here!
+/*
+	// Set parent company
+    if ($action == 'set_thirdparty' && $user->rights->societe->creer)
+    {
+	$object->fetch($socid);
+    	$result = $object->set_parent(GETPOST('editparentcompany','int'));
+    } 
+ */	    
 
         // If javascript on, we show option individual
         if ($conf->use_javascript_ajax)
