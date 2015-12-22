@@ -3058,7 +3058,7 @@ class Product extends CommonObject
 	{
 		global $langs;
 		$langs->load('products');
-		if (!empty($conf->productbatch->enabled)) $langs->load("productbatch");
+		if (! empty($conf->productbatch->enabled)) $langs->load("productbatch");
 
 		if ($type == 2)
 		{
