@@ -62,6 +62,7 @@ $formpropal=new FormPropal($db);
 
 $langs->load('propal');
 $langs->load('other');
+$langs->load("companies");
 
 llxHeader('', $langs->trans("ProposalsStatistics"));
 

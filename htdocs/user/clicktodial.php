@@ -63,8 +63,9 @@ if (empty($reshook)) {
         $edituser->clicktodial_poste = GETPOST("poste");
 
         $result = $edituser->update_clicktodial();
-        if ($result < 0) {
-            setEventMessage($edituser->error, 'errors');
+        if ($result < 0) 
+        {
+            setEventMessages($edituser->error, $edituser->errors, 'errors');
         }
     }
 }

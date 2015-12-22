@@ -122,7 +122,7 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x"))		// bout
 		$num_rows = $db->num_rows($resql);
 		if ($num_rows > 0)
 		{
-			setEventMessage($langs->trans("VoteNameAlreadyExists"),'errors');
+			setEventMessages($langs->trans("VoteNameAlreadyExists"), null, 'errors');
 			$error++;
 		}
 		else
@@ -181,7 +181,7 @@ for ($i=0; $i<$nblignes; $i++)
 		$testligneamodifier=true;
 	}
 
-	//test pour voir si une ligne est a modifier
+	//test to see if a line is to be modified
 	if (isset($_POST['validermodifier'.$i]))
 	{
 		$modifier=$i;
@@ -293,11 +293,11 @@ print '<table class="resultats">'."\n";
 // Show choice titles
 if ($object->format=="D")
 {
-	//affichage des sujets du sondage
+	//display of survey topics
 	print '<tr>'."\n";
 	print '<td></td>'."\n";
 
-	//affichage des années
+	//display of years
 	$colspan=1;
 	$nbofsujet=count($toutsujet);
 	for ($i=0;$i<$nbofsujet;$i++)
@@ -314,7 +314,7 @@ if ($object->format=="D")
 	print '<tr>'."\n";
 	print '<td></td>'."\n";
 
-	//affichage des mois
+	//display of months
 	$colspan=1;
 	for ($i=0;$i<$nbofsujet;$i++) {
 		$cur = intval($toutsujet[$i]);	// intval() est utiliser pour supprimer le suffixe @* qui déplaît logiquement à strftime()
@@ -337,7 +337,7 @@ if ($object->format=="D")
 	print '<tr>'."\n";
 	print '<td></td>'."\n";
 
-	//affichage des jours
+	//display of days
 	$colspan=1;
 	for ($i=0;$i<$nbofsujet;$i++) {
 		$cur = intval($toutsujet[$i]);
@@ -356,7 +356,7 @@ if ($object->format=="D")
 
 	print '</tr>'."\n";
 
-	//affichage des horaires
+	//Display schedules
 	if (strpos($object->sujet, '@') !== false) {
 		print '<tr>'."\n";
 		print '<td></td>'."\n";
@@ -375,7 +375,7 @@ if ($object->format=="D")
 }
 else
 {
-	//affichage des sujets du sondage
+	//display of survey topics
 	print '<tr>'."\n";
 	print '<td></td>'."\n";
 

@@ -61,9 +61,9 @@ $pagenext = $page + 1;
 if (! empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)) {
 	$limit = $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION;
 } else if ($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION <= 0) {
-	$limit = $conf->liste_limit;
+	$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 } else {
-	$limit = $conf->liste_limit;
+	$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 }
 $offset = $limit * $page;
 

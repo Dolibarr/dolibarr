@@ -73,12 +73,12 @@ if ($action == 'dolibarr2ldap')
 
 	if ($result >= 0)
 	{
-		setEventMessage($langs->trans("GroupSynchronized"));
+		setEventMessages($langs->trans("GroupSynchronized"), null, 'mesgs');
 		$db->commit();
 	}
 	else
 	{
-		setEventMessage($ldap->error);
+		setEventMessages($ldap->error, $ldap->errors, 'errors');
 		$db->rollback();
 	}
 }

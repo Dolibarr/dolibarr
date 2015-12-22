@@ -121,14 +121,14 @@ if (empty($reshook))
 		{
 			$langs->load('errors');
 			$langs->load('companies');
-			setEventMessage($langs->trans('ErrorProdIdIsMandatory', $langs->trans('MergeOriginThirdparty')), 'errors');
+			setEventMessages($langs->trans('ErrorProdIdIsMandatory', $langs->trans('MergeOriginThirdparty')), null, 'errors');
 		}
 		else
 		{
 
 			if (!$errors && $soc_origin->fetch($soc_origin_id) < 1)
 			{
-				setEventMessage($langs->trans('ErrorRecordNotFound'), 'errors');
+				setEventMessages($langs->trans('ErrorRecordNotFound'), null, 'errors');
 				$errors++;
 			}
 
@@ -197,10 +197,12 @@ if (empty($reshook))
 
 				if (!$errors)
 				{
-					setEventMessage($langs->trans('ThirdpartiesMergeSuccess'));
+					setEventMessages($langs->trans('ThirdpartiesMergeSuccess'), null, 'mesgs');
 					$db->commit();
-				} else {
-					setEventMessage($langs->trans('ErrorsThirdpartyMerge'), 'errors');
+				} 
+				else 
+				{
+					setEventMessages($langs->trans('ErrorsThirdpartyMerge'), null, 'errors');
 					$db->rollback();
 				}
 			}
@@ -567,16 +569,15 @@ if (empty($reshook))
                 // Logo/Photo save
                 $dir     = $conf->societe->multidir_output[$object->entity]."/".$object->id."/logos";
                 $file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
+                if (GETPOST('deletephoto') && $object->photo)
+                {
+                    $fileimg=$dir.'/'.$object->logo;
+                    $dirthumbs=$dir.'/thumbs';
+                    dol_delete_file($fileimg);
+                    dol_delete_dir_recursive($dirthumbs);
+                }
                 if ($file_OK)
                 {
-                    if (GETPOST('deletephoto'))
-                    {
-                        $fileimg=$dir.'/'.$object->logo;
-                        $dirthumbs=$dir.'/thumbs';
-                        dol_delete_file($fileimg);
-                        dol_delete_dir_recursive($dirthumbs);
-                    }
-
                     if (image_format_supported($_FILES['photo']['name']) > 0)
                     {
                         dol_mkdir($dir);
@@ -1837,7 +1838,7 @@ else
             {
                 if ($object->logo) print "<br>\n";
                 print '<table class="nobordernopadding">';
-                if ($object->logo) print '<tr><td><input type="checkbox" class="flat" name="deletephoto photodelete" id="photodelete"> '.$langs->trans("Delete").'<br><br></td></tr>';
+                if ($object->logo) print '<tr><td><input type="checkbox" class="flat photodelete" name="deletephoto" id="photodelete"> '.$langs->trans("Delete").'<br><br></td></tr>';
                 //print '<tr><td>'.$langs->trans("PhotoFile").'</td></tr>';
                 print '<tr><td><input type="file" class="flat" name="photo" id="photoinput"></td></tr>';
                 print '</table>';

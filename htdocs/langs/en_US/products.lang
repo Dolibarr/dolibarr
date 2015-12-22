@@ -312,3 +312,4 @@ IncludingProductWithTag=Including product/service with tag
 DefaultPriceRealPriceMayDependOnCustomer=Default price, real price may depend on customer
 WarningSelectOneDocument=Please select at least one document
 DefaultUnitToShow=Units
+NbOfQtyInProposals=Qty in proposals

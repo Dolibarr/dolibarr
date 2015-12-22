@@ -70,11 +70,14 @@ if (empty($reshook)) {
 
         $result = $ldap->update($dn, $info, $user, $olddn);
 
-        if ($result >= 0) {
-            setEventMessage($langs->trans("UserSynchronized"));
+        if ($result >= 0) 
+        {
+            setEventMessages($langs->trans("UserSynchronized"), null, 'mesgs');
             $db->commit();
-        } else {
-            setEventMessage($ldap->error, 'errors');
+        } 
+        else 
+        {
+            setEventMessages($ldap->error, $ldap->errors, 'errors');
             $db->rollback();
         }
     }

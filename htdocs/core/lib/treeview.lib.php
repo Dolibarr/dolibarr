@@ -98,6 +98,7 @@ function tree_showpad(&$fulltree,$key,$silent=0)
 
 /**
  *  Recursive function to output menu tree. <ul id="iddivjstree"><li>...</li></ul>
+ *  It is also used for the tree of categories.
  *  Note: To have this function working, check you have loaded the js and css for treeview.
  *  $arrayofjs=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.js',
  *                   '/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js');
@@ -132,7 +133,7 @@ function tree_recur($tab, $pere, $rang, $iddivjstree='iddivjstree')
 		print '<ul id="'.$iddivjstree.'">';
 	}
 
-	if ($rang > 10)	return;	// Protection contre boucle infinie
+	if ($rang > 50)	return;	// Protect against infinite loop. Max 50 depth
 
 	//ballayage du tableau
 	$sizeoftab=count($tab);

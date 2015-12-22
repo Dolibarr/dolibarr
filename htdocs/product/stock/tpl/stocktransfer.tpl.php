@@ -75,7 +75,7 @@
 		if ((! empty($conf->productbatch->enabled)) && $product->hasbatch())
 		{
 			print '<tr>';
-			print '<td>'.$langs->trans("batch_number").'</td><td colspan="5">';
+			print '<td class="fieldrequired">'.$langs->trans("batch_number").'</td><td colspan="5">';
 			print '<input type="text" name="batch_number" size="40"'.($pdluoid > 0 ? ' disabled':'').' value="'.(GETPOST('batch_number')?GETPOST('batch_number'):$pdluo->batch).'">';			// If form was opened for a specific pdluoid, field is disabled
 			print '</td>';
 			print '</tr><tr>';

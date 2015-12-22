@@ -288,17 +288,16 @@ if (empty($reshook))
             // Photo save
             $dir = $conf->societe->dir_output."/contact/".$object->id."/photos";
             $file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
+            if (GETPOST('deletephoto') && $object->photo)
+            {
+                $fileimg=$dir.'/'.$object->photo;
+                $dirthumbs=$dir.'/thumbs';
+                dol_delete_file($fileimg);
+                dol_delete_dir_recursive($dirthumbs);
+                $object->photo = '';
+            }
             if ($file_OK)
             {
-                if (GETPOST('deletephoto'))
-                {
-                    $fileimg=$dir.'/'.$object->photo;
-                    $dirthumbs=$dir.'/thumbs';
-                    dol_delete_file($fileimg);
-                    dol_delete_dir_recursive($dirthumbs);
-                    $object->photo = '';
-                }
-
                 if (image_format_supported($_FILES['photo']['name']) > 0)
                 {
                     dol_mkdir($dir);
@@ -980,7 +979,7 @@ else
                 print "<br>\n";
             }
             print '<table class="nobordernopadding">';
-            if ($object->photo) print '<tr><td><input type="checkbox" class="flat" name="deletephoto" id="photodelete"> '.$langs->trans("Delete").'<br><br></td></tr>';
+            if ($object->photo) print '<tr><td><input type="checkbox" class="flat photodelete" name="deletephoto" id="photodelete"> '.$langs->trans("Delete").'<br><br></td></tr>';
             //print '<tr><td>'.$langs->trans("PhotoFile").'</td></tr>';
             print '<tr><td><input type="file" class="flat" name="photo" id="photoinput"></td></tr>';
             print '</table>';
