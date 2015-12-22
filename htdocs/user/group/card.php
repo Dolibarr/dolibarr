@@ -80,7 +80,7 @@ if ($action == 'confirm_delete' && $confirm == "yes")
     else
     {
     	$langs->load("errors");
-        setEventMessage($langs->trans('ErrorForbidden'), 'errors');
+        setEventMessages($langs->trans('ErrorForbidden'), null, 'errors');
     }
 }
 
@@ -92,7 +92,7 @@ if ($action == 'add')
     if ($caneditperms)
     {
         if (! $_POST["nom"]) {
-            setEventMessage($langs->trans("NameNotDefined"), 'errors');
+            setEventMessages($langs->trans("NameNotDefined"), null, 'errors');
             $action="create";       // Go back to create page
         } else {
 			$object->nom	= trim($_POST["nom"]);	// For backward compatibility
@@ -122,7 +122,7 @@ if ($action == 'add')
                 $db->rollback();
 
                 $langs->load("errors");
-                setEventMessage($langs->trans("ErrorGroupAlreadyExists",$object->name), 'errors');
+                setEventMessages($langs->trans("ErrorGroupAlreadyExists",$object->name), null, 'errors');
                 $action="create";       // Go back to create page
             }
         }
@@ -130,7 +130,7 @@ if ($action == 'add')
     else
     {
     	$langs->load("errors");
-	    setEventMessage($langs->trans('ErrorForbidden'), 'errors');
+	    setEventMessages($langs->trans('ErrorForbidden'), null, 'errors');
     }
 }
 
@@ -156,14 +156,14 @@ if ($action == 'adduser' || $action =='removeuser')
             }
             else
             {
-                setEventMessage($edituser->error, 'errors');
+                setEventMessages($edituser->error, $edituser->errors, 'errors');
             }
         }
     }
     else
     {
     	$langs->load("errors");
-	    setEventMessage($langs->trans('ErrorForbidden'), 'errors');
+	    setEventMessages($langs->trans('ErrorForbidden'), null, 'errors');
     }
 }
 
@@ -193,19 +193,19 @@ if ($action == 'update')
 
         if ($ret >= 0 && ! count($object->errors))
         {
-	        setEventMessage($langs->trans("GroupModified"));
+	        setEventMessages($langs->trans("GroupModified"), null, 'mesgs');
             $db->commit();
         }
         else
         {
-            setEventMessage($object->error);
+            setEventMessages($object->error, $object->errors, 'errors');
             $db->rollback();
         }
     }
     else
     {
     	$langs->load("errors");
-        setEventMessage($langs->trans('ErrorForbidden'));
+        setEventMessages($langs->trans('ErrorForbidden'), null, 'mesgs');
     }
 }
 

@@ -24,7 +24,6 @@ TripSalarie=Informações do usuário
 TripNDF=Informações relatório de despesas
 PDFStandardExpenseReports=Template padrão para gerar um documento PDF para relatório de despesa
 ExpenseReportLine=Linha de relatório de despesas
-TF_TRANSPORTATION=Transporte
 TF_TRAIN=Trem
 TF_BUS=Onibus
 TF_PEAGE=Pedágio

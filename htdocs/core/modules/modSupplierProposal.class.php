@@ -142,7 +142,7 @@ class modSupplierProposal extends DolibarrModules
 		$this->menu[$r]=array(
 			'fk_menu'=>'fk_mainmenu=commercial',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type'=>'left',			                // This is a Left menu entry
-			'titre'=>'supplier_proposalMENU_LEFT_TITLE',
+			'titre'=>'SupplierProposalShort',
 			'leftmenu'=>'supplier_proposalsubmenu',
 			'url'=>'/supplier_proposal/index.php',
 			'langs'=>'supplier_proposal',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
@@ -156,7 +156,7 @@ class modSupplierProposal extends DolibarrModules
 		$this->menu[$r]=array(
 			'fk_menu'=>'fk_mainmenu=commercial,fk_leftmenu=supplier_proposalsubmenu',
 			'type'=>'left',
-			'titre'=>'supplier_proposalMENU_LEFT_TITLE_NEW',
+			'titre'=>'SupplierProposalNew',
 			'url'=>'/supplier_proposal/card.php?action=create',
 			'langs'=>'supplier_proposal',
 			'enabled'=>'$conf->supplier_proposal->enabled',
@@ -169,7 +169,7 @@ class modSupplierProposal extends DolibarrModules
 		$this->menu[$r]=array(
 			'fk_menu'=>'fk_mainmenu=commercial,fk_leftmenu=supplier_proposalsubmenu',
 			'type'=>'left',
-			'titre'=>'supplier_proposalMENU_LEFT_TITLE_LIST',
+			'titre'=>'List',
 			'url'=>'/supplier_proposal/list.php',
 			'langs'=>'supplier_proposal',
 			'enabled'=>'$conf->supplier_proposal->enabled',

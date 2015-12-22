@@ -51,7 +51,7 @@ if ($page == -1) {
 $offset = $conf->liste_limit * $page;
 if (! $sortorder) $sortorder='DESC';
 if (! $sortfield) $sortfield='dateprint';
-$limit = $conf->liste_limit;
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 
 // Search fields
 $sref=GETPOST("sref");

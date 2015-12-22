@@ -53,7 +53,7 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="p.rowid";
-$limit = $conf->liste_limit;
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 
 $sql = "SELECT p.rowid, p.datep as dp, p.amount, p.statut";
 $sql.=", c.libelle as paiement_type, p.num_paiement";

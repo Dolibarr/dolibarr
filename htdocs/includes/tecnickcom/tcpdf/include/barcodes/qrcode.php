@@ -236,7 +236,7 @@ if (!defined('QRCODEDEFS')) {
 	/**
 	 * if false, checks all masks available, otherwise value tells count of masks need to be checked, mask id are got randomly
 	 */
-	define('QR_FIND_FROM_RANDOM', 2);
+	define('QR_FIND_FROM_RANDOM', false);
 
 	/**
 	 * when QR_FIND_BEST_MASK === false
@@ -730,7 +730,7 @@ class QRcode {
 		$this->eccLength = $this->rsEccLength($spec);
 		$this->ecccode = array_fill(0, $this->eccLength, 0);
 		$this->blocks = $this->rsBlockNum($spec);
-		$ret = $this->init($spec);
+        $ret = $this->init($spec);
 		if ($ret < 0) {
 			return NULL;
 		}

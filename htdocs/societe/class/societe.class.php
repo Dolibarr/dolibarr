@@ -1835,7 +1835,7 @@ class Societe extends CommonObject
         {
             $label.= '</br><div class="photointooltip">';
             //if (! is_object($form)) $form = new Form($db);
-            $label.= Form::showphoto('societe', $this, 80);
+            $label.= Form::showphoto('societe', $this, 80, 0, 0, 'photowithmargin', 'mini');
             $label.= '</div><div style="clear: both;"></div>';
         }
         $label.= '</div>';
