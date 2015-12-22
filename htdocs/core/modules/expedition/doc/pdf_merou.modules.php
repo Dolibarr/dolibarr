@@ -633,7 +633,8 @@ class pdf_merou extends ModelePdfExpedition
 
 		$carac_client_name= pdfBuildThirdpartyName($thirdparty, $outputlangs);
 
-		$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,((!empty($object->contact))?$object->contact:null),$usecontact,'targetwithdetails');
+		// $carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,((!empty($object->contact))?$object->contact:null),$usecontact,'targetwithdetails');
+		$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,((!empty($object->contact))?$object->contact:null),$usecontact,'target'); // pag 2015-11-18
 
 		$blDestX=$blExpX+55;
 		$blW=50;
@@ -653,8 +654,11 @@ class pdf_merou extends ModelePdfExpedition
 		$posy = $pdf->getY();
 
 		// Show recipient information
-		$pdf->SetFont('','', $default_font_size - 1);
+		// $pdf->SetFont('','', $default_font_size - 1);
+		$pdf->SetFont('','', $default_font_size - 3); // pag 2015-11-18
 		$pdf->SetXY($posx+2,$posy);
+		// pdf->SetXY($blDestX,$posy); // pag 2015-11-18
+        $pdf->SetXY($blDestX, $Yoff+3);
 		$pdf->MultiCell($widthrecbox, 4, $carac_client, 0, 'L');
 	}
 }

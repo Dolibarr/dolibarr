@@ -792,6 +792,18 @@ else
         dol_fiche_head('');
 
         print '<table class="border" width="100%">';
+
+// pag  MODIFY  colorize/bold columns
+
+        print '<colgroup>';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print ' </colgroup>';
+// pag */
+
+
         print '<tr>';
         $tmpcode='';
 		if (! empty($modCodeProduct->code_auto)) $tmpcode=$modCodeProduct->getNextValue($object,$type);
@@ -983,6 +995,17 @@ else
 		{
             print '<table class="border" width="100%">';
 
+// pag  MODIFY  colorize/bold columns
+
+        print '<colgroup>';
+        print '<col span="1" style="background-color:#cebac9;">';
+        print '<col span="1" style="background-color:white">';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print ' </colgroup>';
+// pag */
+
+
             // Price
             print '<tr><td>'.$langs->trans("SellingPrice").'</td>';
             print '<td><input name="price" size="10" value="'.$object->price.'">';
@@ -1005,6 +1028,17 @@ else
         }
 
         print '<table class="border" width="100%">';
+
+// pag  MODIFY  colorize/bold columns
+
+        print '<colgroup>';
+        print '<col span="1" style="background-color:#78a9a8;">';
+        print '<col span="1" style="background-color:white">';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print ' </colgroup>';
+// pag */
+
 
         // Accountancy_code_sell
         print '<tr><td>'.$langs->trans("ProductAccountancySellCode").'</td>';
@@ -1056,6 +1090,17 @@ else
             dol_fiche_head($head, 'card', $titre, 0, $picto);
 
             print '<table class="border allwidth">';
+
+// pag  MODIFY  colorize/bold columns
+
+        print '<colgroup>';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print ' </colgroup>';
+// pag */
+
 
             // Ref
             print '<tr><td width="20%" class="fieldrequired">'.$langs->trans("Ref").'</td><td colspan="3"><input name="ref" size="32" maxlength="128" value="'.dol_escape_htmltag($object->ref).'"></td></tr>';
@@ -1309,6 +1354,16 @@ else
 
             // En mode visu
             print '<table class="border" width="100%"><tr>';
+
+// pag  MODIFY  colorize/bold columns
+
+        print '<colgroup>';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print ' </colgroup>';
+// pag */
 
             // Ref
             print '<td width="15%">'.$langs->trans("Ref").'</td><td colspan="'.(2+(($showphoto||$showbarcode)?1:0)).'">';

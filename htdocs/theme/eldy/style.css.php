@@ -232,6 +232,7 @@ body {
 	background: rgb(<?php print $colorbackbody; ?>);
 <?php } ?>
 	color: #101010;
+	/* font-weight: bold; pag */
 	font-size: <?php print $fontsize ?>px;
 	font-family: <?php print $fontlist ?>;
     margin-top: 0;
@@ -241,7 +242,10 @@ body {
     <?php print 'direction: '.$langs->trans("DIRECTION").";\n"; ?>
 }
 
-a:link, a:visited, a:hover, a:active { font-family: <?php print $fontlist ?>; font-weight: bold; color: #4A4A4A; text-decoration: none;  }
+/* a:link, a:visited, a:hover, a:active { font-family: <?php print $fontlist ?>; font-weight: bold; color: #4A4A4A; text-decoration: none;  }
+*/
+
+a:link, a:visited, a:hover, a:active { font-family: <?php print $fontlist ?>; font-weight: bold; color: #0000ff; text-decoration: none;  }
 
 a:hover { text-decoration: underline; color: #000000;}
 
@@ -264,12 +268,20 @@ input, input.flat, textarea, textarea.flat, form.flat select, select, select.fla
     margin: 0px 0px 0px 0px;
 }
 
+/* pag label 
+label {
+background: #F0F0F0;
+}
+*/
+
 input, textarea, select {
+	background: #ffffc4; /* pag */
 	border-radius:4px;
-	border:solid 1px rgba(0,0,0,.3);
+/*	border:solid 1px rgba(0,0,0,.3); */
+	border:solid 3px rgba(100,100,77,.3);
 	border-top:solid 1px rgba(0,0,0,.3);
 	border-bottom:solid 1px rgba(0,0,0,.2);
-	/* box-shadow: 1px 1px 1px rgba(0,0,0,.2) inset;*/
+	/* pag */ box-shadow: 1px 1px 1px rgba(0,0,0,.2) inset;*/
 	padding:4px;
 	margin-left:0px;
 	margin-bottom:1px;
@@ -283,7 +295,7 @@ input.removedassigned  {
 <?php } ?>
 
 select.flat, form.flat select {
-	font-weight: normal;
+	font-weight: bold; /* normal; */
 }
 input:disabled {
 	background:#ddd;
@@ -929,8 +941,9 @@ form#login {
 	vertical-align: middle;
 }
 .login_table_title {
+	font-size: 40px; // pag
 	max-width: 530px;
-	color: #888888;
+	color: #000; // #888888;
 	text-shadow: 1px 1px 1px #FFF;
 }
 .login_table label {
@@ -1498,15 +1511,15 @@ div.tabsAction {
 
 
 a.tabTitle {
-/*    background: #657090;
-    color: white;*/
-    color:rgba(0,0,0,.5);
+    background: #007F7F; /*  #657090; */
+    color: white;
+/*    color:rgba(0,0,0,.5); */
     margin-right:10px;
-    text-shadow:1px 1px 1px #ffffff;
+    /* text-shadow:1px 1px 1px #ffffff; */
 	font-family: <?php print $fontlist ?>;
-	font-weight: normal;
+	font-weight: bold; /* normal; */
     padding: 4px 6px 2px 6px;
-    margin: 0px 6px;
+    /* margin: 0px 6px; */
     text-decoration: none;
     white-space: nowrap;
 }
@@ -2537,7 +2550,7 @@ a.impayee:hover { font-weight: bold; color: #550000; }
 .product_line_stock_ok { color: #002200; }
 .product_line_stock_too_low { color: #664400; }
 
-.fieldrequired { font-weight: bold; color: #000055; }
+.fieldrequired { font-weight: bold; color: #C00000; }
 
 .dolgraphtitle { margin-top: 6px; margin-bottom: 4px; }
 .dolgraphtitlecssboxes { margin: 0px; }
@@ -2811,9 +2824,10 @@ table.cal_month    { border-spacing: 0px; }
 .cal_past_month    { opacity: 0.6; background: #EEEEEE; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_current_month { background: #FFFFFF; border-left: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_current_month_peruserleft { background: #FFFFFF; border-left: solid 3px #6C7C7B; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
-.cal_today         { background: #FDFDF0; border-left: solid 1px #E0E0E0; border-bottom: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
-.cal_today_peruser { background: #FDFDF0; border-right: solid 1px #E0E0E0; border-bottom: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
-.cal_today_peruser_peruserleft { background: #FDFDF0; border-left: solid 3px #6C7C7B; border-right: solid 1px #E0E0E0; border-bottom: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
+/* pag 2015-12-04 */
+.cal_today         { background: /*#FDFDF0;*/ yellow; border-left: solid 1px #E0E0E0; border-bottom: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
+.cal_today_peruser { background: /*#FDFDF0;*/ yellow; border-right: solid 1px #E0E0E0; border-bottom: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
+.cal_today_peruser_peruserleft { background: /*#FDFDF0;*/ yellow; border-left: solid 3px #6C7C7B; border-right: solid 1px #E0E0E0; border-bottom: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_past          { }
 .cal_peruser       { padding: 0px; }
 .cal_impair        { background: #F8F8F8; }
@@ -3692,6 +3706,15 @@ border-top-right-radius: 6px;
 }
 
 
+/* pag additions */
+.dvtCellLabel, .cellLabel {
+    padding-right: 5px;
+    padding-left: 5px;
+    color: #545454;
+	background_color: silver;
+    white-space: nowrap;
+    height: 10px;
+}
 
 <?php
 if (is_object($db)) $db->close();

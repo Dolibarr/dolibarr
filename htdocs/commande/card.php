@@ -1328,6 +1328,16 @@ if ($action == 'create' && $user->rights->commande->creer)
 
 	print '<table class="border" width="100%">';
 
+// pag  MODIFY  colorize/bold columns
+
+        print '<colgroup>';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print ' </colgroup>';
+// pag */
+
 	// Reference
 	print '<tr><td width="25%" class="fieldrequired">' . $langs->trans('Ref') . '</td><td colspan="2">' . $langs->trans("Draft") . '</td></tr>';
 
@@ -1781,6 +1791,16 @@ if ($action == 'create' && $user->rights->commande->creer)
 		print '<table class="border" width="100%">';
 
 		$linkback = '<a href="' . DOL_URL_ROOT . '/commande/list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+
+// pag  MODIFY  colorize/bold columns
+
+        print '<colgroup>';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print ' </colgroup>';
+// pag */
 
 		// Ref
 		print '<tr><td width="18%">' . $langs->trans('Ref') . '</td>';

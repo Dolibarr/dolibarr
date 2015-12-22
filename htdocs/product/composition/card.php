@@ -190,6 +190,16 @@ if ($id > 0 || ! empty($ref))
 	{
 		print '<table class="border" width="100%">';
 
+// pag  MODIFY  colorize/bold columns
+
+        print '<colgroup>';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print ' </colgroup>';
+// pag */
+
 		print "<tr>";
 
 		$nblignes=6;
@@ -316,6 +326,16 @@ if ($id > 0 || ! empty($ref))
 			print '<input type="hidden" name="id" value="'.$id.'" />';
 
 			print '<table class="centpercent noborder">';
+
+// pag  MODIFY  colorize/bold columns
+
+        print '<colgroup>';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print ' </colgroup>';
+// pag */
 
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans('ComposedProduct').'</td>';

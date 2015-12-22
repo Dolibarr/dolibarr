@@ -774,6 +774,17 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         //print '<span>'.$langs->trans('DelayToRequestCP',$cp->getConfCP('delayForRequest')).'</span><br /><br />';
 
         print '<table class="border" width="100%">';
+
+// pag colorize/bold columns
+
+        print '<colgroup>';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print ' </colgroup>';
+// pag */
+
         print '<tbody>';
 
         // User
@@ -984,6 +995,17 @@ else
                 }
 
                 print '<table class="border" width="100%">';
+
+// pag colorize/bold columns
+
+        print '<colgroup>';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print ' </colgroup>';
+// pag */
+
                 print '<tbody>';
 
                 $linkback='';
@@ -1090,12 +1112,33 @@ else
                 }
 
                 print '</tbody>';
+
+// pag colorize/bold columns
+
+        print '<colgroup>';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print ' </colgroup>';
+// pag */
+
                 print '</table>'."\n";
 
                 print '<br><br>';
 
 				// Info workflow
                 print '<table class="border" width="50%">'."\n";
+// pag colorize/bold columns
+
+        print '<colgroup>';
+        print '<col span="1" style="background-color:#cebac9;">';
+        print '<col span="1" style="background-color:white">';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print ' </colgroup>';
+// pag */
+
                 print '<tbody>';
                 print '<tr class="liste_titre">';
                 print '<td colspan="2">'.$langs->trans("InfosWorkflowCP").'</td>';

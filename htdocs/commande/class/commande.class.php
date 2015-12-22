@@ -3013,6 +3013,12 @@ class Commande extends CommonOrder
             $label.= '<br><b>' . $langs->trans('TVA') . ':</b> ' . price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
         if (! empty($this->total_ttc))
             $label.= '<br><b>' . $langs->trans('AmountTTC') . ':</b> ' . price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
+// pag
+	if (! empty($this->ref))
+            $label .= '<br><b>' . $langs->trans('SocID') . ':</b> ' . $this->fk_project;
+
+
+// pag end
 
         $linkstart = '<a href="'.$url.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
         $linkend='</a>';

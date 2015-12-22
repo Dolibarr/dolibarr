@@ -241,10 +241,21 @@ if ($socid && $action != 'edit' && $action != "create")
 
     print '<table class="border" width="100%">';
 
-    print '<tr><td width="35%">'.$langs->trans("LabelRIB").'</td>';
-    print '<td colspan="4">'.$account->label.'</td></tr>';
+// pag colorize/bold columns
 
-	print '<tr><td valign="top">'.$langs->trans("BankName").'</td>';
+        print '<colgroup>';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print ' </colgroup>';
+// pag */
+
+// pag
+	print '<tr><td width="30%">'.$langs->trans("LabelRIB").'</td>';
+    	print '<td colspan="4">'.$account->label.'</td></tr>';
+// pag
+	print '<tr><td>'.$langs->trans("BankName").'</td>';
 	print '<td colspan="4">'.$account->bank.'</td></tr>';
 
 	// Show fields of bank account
@@ -307,8 +318,8 @@ if ($socid && $action != 'edit' && $action != "create")
 			}
 		}
 	}
-
-	print '<tr><td valign="top">'.$langs->trans("IBAN").'</td>';
+// pag
+	print '<tr><td width="30%" class="fieldrequired">'.$langs->trans("IBAN").'</td>';
 	print '<td colspan="4">'.$account->iban . '&nbsp;';
     if (! empty($account->iban)) {
         if (! checkIbanForAccount($account)) {
@@ -318,8 +329,8 @@ if ($socid && $action != 'edit' && $action != "create")
         }
     }
     print '</td></tr>';
-
-	print '<tr><td valign="top">'.$langs->trans("BIC").'</td>';
+// pag
+	print '<tr><td width="30%" class="fieldrequired">'.$langs->trans("BIC").'</td>';
 	print '<td colspan="4">'.$account->bic.'&nbsp;';
     if (! empty($account->bic)) {
         if (! checkSwiftForAccount($account)) {
@@ -330,15 +341,15 @@ if ($socid && $action != 'edit' && $action != "create")
     }
     print '</td></tr>';
 
-	print '<tr><td valign="top">'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="4">';
+	print '<tr><td>'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="4">';
 	print $account->domiciliation;
 	print "</td></tr>\n";
 
-	print '<tr><td valign="top">'.$langs->trans("BankAccountOwner").'</td><td colspan="4">';
+	print '<tr><td>'.$langs->trans("BankAccountOwner").'</td><td colspan="4">';
 	print $account->proprio;
 	print "</td></tr>\n";
 
-	print '<tr><td valign="top">'.$langs->trans("BankAccountOwnerAddress").'</td><td colspan="4">';
+	print '<tr><td>'.$langs->trans("BankAccountOwnerAddress").'</td><td colspan="4">';
 	print $account->owner_address;
 	print "</td></tr>\n";
 
@@ -454,9 +465,20 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
 
 	print '<table class="border" width="100%">';
 
-    print '<tr><td valign="top" width="35%" class="fieldrequired">'.$langs->trans("LabelRIB").'</td>';
+// pag colorize/bold columns
+print '</tr></table>';
+print '<table class="border" width="100%">';
+        print '<colgroup>';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print ' </colgroup>';
+// pag */
+// pag
+    print '<tr><td width="30%" class="fieldrequired">'.$langs->trans("LabelRIB").'</td>';
     print '<td colspan="4"><input size="30" type="text" name="label" value="'.$account->label.'"></td></tr>';
-
+// pag
     print '<tr><td class="fieldrequired">'.$langs->trans("BankName").'</td>';
     print '<td><input size="30" type="text" name="bank" value="'.$account->bank.'"></td></tr>';
 
@@ -522,23 +544,25 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
 		}
 	}
 
-    // IBAN
-    print '<tr><td valign="top" class="fieldrequired">'.$langs->trans("IBAN").'</td>';
+	// IBAN
+// pag
+    print '<tr><td width="30%" class="fieldrequired">'.$langs->trans("IBAN").'</td>';
     print '<td colspan="4"><input size="30" type="text" name="iban" value="'.$account->iban.'"></td></tr>';
-
-    print '<tr><td valign="top" class="fieldrequired">'.$langs->trans("BIC").'</td>';
+// pag
+    print '<tr><td class="fieldrequired">'.$langs->trans("BIC").'</td>';
     print '<td colspan="4"><input size="12" type="text" name="bic" value="'.$account->bic.'"></td></tr>';
 
-    print '<tr><td valign="top">'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="4">';
+
+    print '<tr><td>'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="4">';
     print '<textarea name="domiciliation" rows="4" cols="40">';
     print $account->domiciliation;
     print "</textarea></td></tr>";
 
-    print '<tr><td valign="top">'.$langs->trans("BankAccountOwner").'</td>';
+    print '<tr><td>'.$langs->trans("BankAccountOwner").'</td>';
     print '<td colspan="4"><input size="30" type="text" name="proprio" value="'.$account->proprio.'"></td></tr>';
     print "</td></tr>\n";
 
-    print '<tr><td valign="top">'.$langs->trans("BankAccountOwnerAddress").'</td><td colspan="4">';
+    print '<tr><td>'.$langs->trans("BankAccountOwnerAddress").'</td><td colspan="4">';
     print "<textarea name=\"owner_address\" rows=\"4\" cols=\"40\">";
     print $account->owner_address;
     print "</textarea></td></tr>";
@@ -581,10 +605,19 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
 
 	print '<table class="border" width="100%">';
 
+// pag colorize/bold columns
 
-    print '<tr><td valign="top" width="35%" class="fieldrequired">'.$langs->trans("LabelRIB").'</td>';
+        print '<colgroup>';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print ' </colgroup>';
+// pag */
+// pag
+    print '<tr><td width="30%" class="fieldrequired">'.$langs->trans("LabelRIB").'</td>';
     print '<td colspan="4"><input size="30" type="text" name="label" value="'.GETPOST('label').'"></td></tr>';
-
+// pag
     print '<tr><td class="fieldrequired">'.$langs->trans("Bank").'</td>';
     print '<td><input size="30" type="text" name="bank" value="'.GETPOST('bank').'"></td></tr>';
 
@@ -618,22 +651,24 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
     }
 
     // IBAN
-    print '<tr><td valign="top">'.$langs->trans("IBAN").'</td>';
+// pag
+    print '<tr><td width="30%" class="fieldrequired">'.$langs->trans("IBAN").'</td>';
     print '<td colspan="4"><input size="30" type="text" name="iban" value="'.GETPOST('iban').'"></td></tr>';
-
-    print '<tr><td valign="top">'.$langs->trans("BIC").'</td>';
+// pag
+    print '<tr><td width="30%" class="fieldrequired">'.$langs->trans("BIC").'</td>';
     print '<td colspan="4"><input size="12" type="text" name="bic" value="'.GETPOST('bic').'"></td></tr>';
 
-    print '<tr><td valign="top">'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="4">';
+
+    print '<tr><td>'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="4">';
     print '<textarea name="domiciliation" rows="4" cols="40">';
     print GETPOST('domiciliation');
     print "</textarea></td></tr>";
 
-    print '<tr><td valign="top">'.$langs->trans("BankAccountOwner").'</td>';
+    print '<tr><td>'.$langs->trans("BankAccountOwner").'</td>';
     print '<td colspan="4"><input size="30" type="text" name="proprio" value="'.GETPOST('proprio').'"></td></tr>';
     print "</td></tr>\n";
 
-    print '<tr><td valign="top">'.$langs->trans("BankAccountOwnerAddress").'</td><td colspan="4">';
+    print '<tr><td>'.$langs->trans("BankAccountOwnerAddress").'</td><td colspan="4">';
     print '<textarea name="owner_address" rows="4" cols="40">';
     print GETPOST('owner_address');
     print "</textarea></td></tr>";

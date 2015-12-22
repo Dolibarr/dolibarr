@@ -120,7 +120,7 @@ else {
 	{
 		echo '<label for="prod_entry_mode_free">';
 		echo '<input type="radio" name="prod_entry_mode" id="prod_entry_mode_free" value="free"';
-		//echo (GETPOST('prod_entry_mode')=='free' ? ' checked' : ((empty($forceall) && (empty($conf->product->enabled) || empty($conf->service->enabled)))?' checked':'') );
+		// (GETPOST('prod_entry_mode')=='free' ? ' checked' : ((empty($forceall) && (empty($conf->product->enabled) || empty($conf->service->enabled)))?' checked':'') );
 		echo (GETPOST('prod_entry_mode')=='free' ? ' checked' : '');
 		echo '> ';
 		// Show type selector

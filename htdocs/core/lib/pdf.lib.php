@@ -868,6 +868,7 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 		$pdf->SetXY($dims['lm'],-$posy);
 		$pdf->MultiCell(0, 3, $line, 0, $align, 0);
 		$posy-=$freetextheight;
+		$posy-=3; // pag 2015-11-19
 	}
 
 	$pdf->SetY(-$posy);

@@ -643,6 +643,16 @@ if ($action == 'create')
 
 	print '<table class="border" width="100%">';
 
+// pag colorize/bold columns
+
+        print '<colgroup>';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print ' </colgroup>';
+// pag */
+
 	// Type of event
 	if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
 	{
@@ -731,6 +741,16 @@ if ($action == 'create')
 	print '<br><br>';
 	print '<table class="border" width="100%">';
 
+// pag colorize/bold columns
+
+        print '<colgroup>';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print ' </colgroup>';
+// pag */
+
 	// Societe, contact
 	print '<tr><td width="30%" class="nowrap">'.$langs->trans("ActionOnCompany").'</td><td>';
 	if (GETPOST('socid','int') > 0)
@@ -749,14 +769,23 @@ if ($action == 'create')
 		if (!empty($user->societe_id)) {
 			print $form->select_thirdparty_list($user->societe_id,'socid','',1,1,0,$events);
 		} else {
-			print $form->select_thirdparty_list('','socid','',1,1,0,$events);
+		print $form->select_thirdparty_list('','socid','',1,1,0,$events);
+// pag 2015-12-04 AAAA
+			print '&nbsp; <a href="'.DOL_URL_ROOT.'/societe/soc.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit').'" target="_blank">'.$langs->trans("AddCompany").'</a>';
+			print '</td>';
+		
 		}
 
 	}
-	print '</td></tr>';
+	// print '</td>';
 
-	print '<tr><td class="nowrap">'.$langs->trans("ActionOnContact").'</td><td>';
+	print '<td class="nowrap">'.$langs->trans("ActionOnContact").'</td><td>';
 	$form->select_contacts(GETPOST('socid','int'), GETPOST('contactid'), 'contactid', 1, '', '', 0, 'minwidth200');
+// pag 2015-12-04 BBBB
+// print $object_id . "xxxxxx";
+// die;
+	print '&nbsp; <a href="'.DOL_URL_ROOT.'/contact/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit').'"target="_blank">'.$langs->trans("AddContact").'</a>';
+
 	print '</td></tr>';
 
 
@@ -768,7 +797,7 @@ if ($action == 'create')
 		// Projet associe
 		$langs->load("projects");
 
-		print '<tr><td>'.$langs->trans("Project").'</td><td>';
+		print '<tr><td width="30%">'.$langs->trans("Project").'</td><td colspan="3">';
 
 		$numproject=$formproject->select_projects((! empty($societe->id)?$societe->id:0),GETPOST("projectid")?GETPOST("projectid"):'','projectid');
 		if ($numproject==0)
@@ -799,7 +828,7 @@ if ($action == 'create')
 	print '</td></tr>';
 
     // Description
-    print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
+    print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td colspan="3">';
     require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
     $doleditor=new DolEditor('note',(GETPOST('note')?GETPOST('note'):$object->note),'',180,'dolibarr_notes','In',true,true,$conf->fckeditor->enabled,ROWS_6,90);
     $doleditor->Create();
@@ -902,6 +931,16 @@ if ($id > 0)
 		dol_fiche_head($head, 'card', $langs->trans("Action"),0,'action');
 
 		print '<table class="border" width="100%">';
+
+// pag colorize/bold columns
+
+        print '<colgroup>';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print ' </colgroup>';
+// pag */
 
 		// Ref
 		print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">'.$object->id.'</td></tr>';
@@ -1044,19 +1083,34 @@ if ($id > 0)
 
 		print '<table class="border" width="100%">';
 
+// pag colorize/bold columns
+
+        print '<colgroup>';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print ' </colgroup>';
+// pag */
+
 		// Thirdparty - Contact
 		if ($conf->societe->enabled)
 		{
-			print '<tr><td width="30%">'.$langs->trans("ActionOnCompany").'</td>';
+			print '<tr><td colspan="1" width="30%">'.$langs->trans("ActionOnCompany").'</td>';
 			print '<td>';
 			$events=array();
 			$events[]=array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php',1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
 			print $form->select_company($object->socid,'socid','',1,1,0,$events);
+// pag 2015-12-03
+			print ' &nbsp; <a href="'.DOL_URL_ROOT.'/societe/soc.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit').'">'.$langs->trans("AddCompany").'</a>';
 			print '</td>';
 
 			// Contact
-			print '<td>'.$langs->trans("Contact").'</td><td>';
+			print '<td class="nowrap">'.$langs->trans("ActionOnContact").'</td><td>';
 			$form->select_contacts($object->socid, $object->contactid, 'contactid', 1, '', '', 0, 'minwidth200');
+// pag 2015-12-03
+			print ' &nbsp; <a href="'.DOL_URL_ROOT.'/contact/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit').'">'.$langs->trans("AddContact").'</a>';
+
 			print '</td></tr>';
 		}
 

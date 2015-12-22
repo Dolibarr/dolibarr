@@ -175,6 +175,17 @@ dol_fiche_head($head, 'translation', $titre, 0, $picto);
 
 print '<table class="border" width="100%">';
 
+// pag  MODIFY  colorize/bold columns
+
+        print '<colgroup>';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print ' </colgroup>';
+// pag */
+
+
 // Reference
 print '<tr>';
 print '<td width="15%">'.$langs->trans("Ref").'</td><td colspan="2">';
@@ -199,6 +210,17 @@ if ($action == 'edit')
 		{
 			print "<br><b><u>".$langs->trans('Language_'.$key)." :</u></b><br>";
 			print '<table class="border" width="100%">';
+
+// pag  MODIFY  colorize/bold columns
+
+        print '<colgroup>';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print ' </colgroup>';
+// pag */
+
 			print '<tr><td valign="top" width="15%" class="fieldrequired">'.$langs->trans('Label').'</td><td><input name="libelle-'.$key.'" size="40" value="'.$product->multilangs[$key]["label"].'"></td></tr>';
 			print '<tr><td valign="top" width="15%">'.$langs->trans('Description').'</td><td>';
 
@@ -283,6 +305,18 @@ if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service
 	print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
 
 	print '<table class="border" width="100%">';
+
+// pag  MODIFY  colorize/bold columns
+
+        print '<colgroup>';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print ' </colgroup>';
+// pag */
+
+
 	print '<tr><td valign="top" width="15%" class="fieldrequired">'.$langs->trans('Language').'</td><td>';
     print $formadmin->select_language('','forcelangprod',0,$product->multilangs,1);
 	print '</td></tr>';

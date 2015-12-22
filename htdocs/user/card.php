@@ -734,6 +734,16 @@ if (($action == 'create') || ($action == 'adduserldap'))
 
     print '<table class="border" width="100%">';
 
+// pag colorize/bold columns
+
+        print '<colgroup>';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print ' </colgroup>';
+// pag */
+
     print '<tr>';
 
     // Lastname
@@ -993,6 +1003,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     }
 
     // Hierarchy
+	print '<tr></tr>';
     print '<tr><td>'.$langs->trans("HierarchicalResponsible").'</td>';
     print '<td>';
     print $form->select_dolusers($object->fk_user,'fk_user',1,array($object->id),0,'',0,$conf->entity);
@@ -1193,6 +1204,15 @@ else
 
             print '<table class="border" width="100%">';
 
+// pag colorize/bold columns
+
+        print '<colgroup>';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print ' </colgroup>';
+// pag */
             // Ref
             print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
             print '<td colspan="3">';
@@ -1760,7 +1780,17 @@ else
 
             print '<table width="100%" class="border">';
 
-			print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
+// pag colorize/bold columns
+
+        print '<colgroup>';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print ' </colgroup>';
+// pag */
+
+		print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
             print '<td colspan="2">';
             print $object->id;
             print '</td>';

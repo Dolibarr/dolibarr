@@ -623,7 +623,8 @@ class pdf_rouget extends ModelePdfExpedition
 		 		$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Name").": ".$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs))."\n";
 		 	}
 
-		 	$carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, $object->client);
+		 	// $carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, $object->client);
+            $carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, $object->client,'','','source'); // pag		 	
 
 			// Show sender
 			$posx=$this->marge_gauche;
@@ -672,7 +673,8 @@ class pdf_rouget extends ModelePdfExpedition
 
 			$carac_client_name= pdfBuildThirdpartyName($thirdparty, $outputlangs);
 
-			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,(!empty($object->contact)?$object->contact:null),$usecontact,'targetwithdetails');
+			// $carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,(!empty($object->contact)?$object->contact:null),$usecontact,'targetwithdetails');
+			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,(!empty($object->contact)?$object->contact:null),$usecontact,'target'); // pag 
 
 			// Show recipient
 			$widthrecbox=100;

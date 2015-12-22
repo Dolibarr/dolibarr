@@ -30,6 +30,12 @@
  */
 
 require '../main.inc.php';
+// pag *** STUB *** testing Contact Hierarchy
+require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
+
+// pag
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/contact.lib.php';
@@ -468,6 +474,15 @@ else
 
             print '<table class="border" width="100%">';
 
+ // pag  NEW  colorize/bold columns
+
+        print '<colgroup>';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print ' </colgroup>';
+// pag */
 
             // Name
             print '<tr><td width="20%" class="fieldrequired"><label for="lastname">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</label></td>';
@@ -499,8 +514,21 @@ else
             print $formcompany->select_civility(GETPOST("civility_id",'alpha')?GETPOST("civility_id",'alpha'):$object->civility_id);
             print '</td></tr>';
 
-            print '<tr><td><label for="title">'.$langs->trans("PostOrFunction").'</label></td>';
-	        print '<td colspan="3"><input name="poste" id="title" type="text" size="50" maxlength="80" value="'.dol_escape_htmltag(GETPOST("poste",'alpha')?GETPOST("poste",'alpha'):$object->poste).'"></td>';
+            print '<tr><td  class="dvtCellLabel"><label for="title">'.$langs->trans("PostOrFunction").'</label></td>';
+	        print '<td colspan="1"><input name="poste" id="title" type="text" size="50" maxlength="80" value="'.dol_escape_htmltag(GETPOST("poste",'alpha')?GETPOST("poste",'alpha'):$object->poste).'"></td>';
+
+// pag *** SUB *** Testing Contact Hierarchy to be replaced with Contacts of Third Party
+    // Hierarchy
+    print '<td  class="dvtCellLabel">'.$langs->trans("HierarchicalResponsible").'</td>'; //  New
+    print '<td>';
+// Adjust for socpeople
+// Was:     print $form->select_dolusers($object->fk_user,'fk_user',1,array($object->id),0,'',0,$conf->entity);
+    print $form->select_dolusers($object->fk_user,'fk_user',1,array($object->id),0,'',0,$conf->entity);
+    print '</td>';
+    print "</tr>\n";
+// pag
+
+
 
             $colspan=3;
             if ($conf->use_javascript_ajax && $socid > 0) $colspan=2;
@@ -603,6 +631,40 @@ else
 					null, '90%' );
 				print "</td></tr>";
 			}
+
+
+/* pag *** STUB *** Create Contact from User List for testing
+// Hierarchy
+            print '<tr><td>'.$langs->trans("HierarchicalResponsible").'</td>';
+            print '<td colspan="2">';
+            if (empty($object->fk_user)) print $langs->trans("None");
+            else {
+            	$huser=new User($db);
+            	$huser->fetch($object->fk_user);
+            	print $huser->getNomUrl(1);
+            }
+            print '</td>';
+            print "</tr>\n";
+
+
+/* Hierarchy
+            print '<tr><td>'.$langs->trans("HierarchicalResponsible").'</td>';
+            print '<td>';
+            if ($caneditfield)
+            {
+            	print $form->select_dolusers($object->fk_user,'fk_user',1,array($object->id),0,'',0,$object->entity);
+            }
+            else
+          {
+          	print '<input type="hidden" name="fk_user" value="'.$object->fk_user.'">';
+            	$huser=new User($db);
+            	$huser->fetch($object->fk_user);
+            	print $huser->getNomUrl(1);
+            }
+            print '</td>';
+            print "</tr>\n";
+// pag */
+
 
             // Other attributes
             $parameters=array('colspan' => ' colspan="3"');
@@ -712,6 +774,16 @@ else
 
             print '<table class="border" width="100%">';
 
+// pag  MODIFY  colorize/bold columns
+
+        print '<colgroup>';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print ' </colgroup>';
+// pag */
+
             // Ref
             print '<tr><td>'.$langs->trans("Ref").'</td><td colspan="3">';
             print $object->ref;
@@ -739,7 +811,17 @@ else
             print '</td></tr>';
 
             print '<tr><td><label for="title">'.$langs->trans("PostOrFunction").'</label></td>';
-	        print '<td colspan="3"><input name="poste" id="title" type="text" size="50" maxlength="80" value="'.(isset($_POST["poste"])?$_POST["poste"]:$object->poste).'"></td></tr>';
+	    print '<td colspan="1"><input name="poste" id="title" type="text" size="50" maxlength="80" value="'.(isset($_POST["poste"])?$_POST["poste"]:$object->poste).'"></td>';
+// pag
+    // Hierarchy
+    print '<td>'.$langs->trans("HierarchicalResponsible").'</td>'; // Modify 
+    print '<td>';
+    print $form->select_dolusers($object->fk_user,'fk_user',1,array($object->id),0,'',0,$conf->entity);
+    print '</td>';
+    print "</tr>\n";
+// pag
+
+
 
             // Address
             print '<tr><td><label for="address">'.$langs->trans("Address").'</label></td>';
@@ -857,6 +939,16 @@ else
 				print "</td></tr>";
 			}
 
+
+/* pag
+    // Hierarchy
+    print '<tr><td>'.$langs->trans("HierarchicalResponsible").'BBBBBB</td>';
+    print '<td>';
+    print $form->select_dolusers($object->fk_user,'fk_user',1,array($object->id),0,'',0,$conf->entity);
+    print '</td>';
+    print "</tr>\n";
+// pag */
+
             // Other attributes
             $parameters=array('colspan' => ' colspan="3"');
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -964,6 +1056,20 @@ else
 
         print '<table class="border" width="100%">';
 
+
+// pag  VIEW colorize/bold columns
+
+        print '<colgroup>';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+	print '<col span="1" style="background-color:white">';
+	print ' </colgroup>';
+// pag */
+
+
+
+
         $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php">'.$langs->trans("BackToList").'</a>';
 
         // Ref
@@ -997,7 +1103,23 @@ else
         print '</td></tr>';
 
         // Role
-        print '<tr><td>'.$langs->trans("PostOrFunction").'</td><td colspan="3">'.$object->poste.'</td>';
+        print '<tr><td>'.$langs->trans("PostOrFunction").'</td><td colspan="1">'.$object->poste.'</td>';
+
+// pag
+// Hierarchy
+            print '<td>'.$langs->trans("HierarchicalResponsible").'</td>'; // List View 
+            print '<td colspan="1">';
+            if (empty($object->fk_user)) print $langs->trans("None");
+            else {
+            	$huser=new User($db);
+            	$huser->fetch($object->fk_user);
+            	print $huser->getNomUrl(1);
+            }
+            print '</td>';
+            print "</tr>\n";
+// pag */
+
+
 
         // Address
         print '<tr><td>'.$langs->trans("Address").'</td><td colspan="3">';

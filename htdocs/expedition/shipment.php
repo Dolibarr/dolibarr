@@ -169,6 +169,16 @@ if ($id > 0 || ! empty($ref))
 
 		print '<table class="border" width="100%">';
 
+// pag  MODIFY  colorize/bold columns
+
+        print '<colgroup>';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print ' </colgroup>';
+// pag */
+
 		// Ref
 		print '<tr><td width="18%">'.$langs->trans('Ref').'</td>';
 		print '<td colspan="3">';
