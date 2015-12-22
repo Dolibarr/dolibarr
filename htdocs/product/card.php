@@ -1317,6 +1317,18 @@ else
             {*/
                 print '<table class="border" width="100%">';
 
+// pag Accountancy
+// pag  MODIFY  colorize/bold columns
+
+        print '<colgroup>';
+        print '<col span="1" style="background-color:#78a9a8;">';
+        print '<col span="1" style="background-color:white">';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print ' </colgroup>';
+// pag */
+
+
                 // Accountancy_code_sell
                 print '<tr><td width="20%">'.$langs->trans("ProductAccountancySellCode").'</td>';
                 print '<td><input name="accountancy_code_sell" size="16" value="'.$object->accountancy_code_sell.'">';

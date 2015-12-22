@@ -238,6 +238,16 @@ if ($user->rights->categorie->creer)
 
 		print '<table width="100%" class="border">';
 
+// pag colorize/bold columns
+
+        print '<colgroup>';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print ' </colgroup>';
+// pag */
+
 		// Ref
 		print '<tr>';
 		print '<td width="20%" class="fieldrequired">'.$langs->trans("Ref").'</td><td><input id="label" class="flat" name="label" size="25" value="'.$label.'">';

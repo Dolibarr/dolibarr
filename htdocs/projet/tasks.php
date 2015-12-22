@@ -208,6 +208,16 @@ if ($id > 0 || ! empty($ref))
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php">'.$langs->trans("BackToList").'</a>';
 
+// pag colorize/bold columns
+
+        print '<colgroup>';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print ' </colgroup>';
+// pag */
+
 	// Ref
 	print '<tr><td width="30%">';
 	print $langs->trans("Ref");
@@ -278,6 +288,16 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	dol_fiche_head('');
 
 	print '<table class="border" width="100%">';
+
+// pag colorize/bold columns
+
+        print '<colgroup>';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print ' </colgroup>';
+// pag */
 
 	$defaultref='';
 	$obj = empty($conf->global->PROJECT_TASK_ADDON)?'mod_task_simple':$conf->global->PROJECT_TASK_ADDON;

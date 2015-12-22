@@ -1187,6 +1187,16 @@ if ($id > 0)
 		// Affichage fiche action en mode visu
 		print '<table class="border" width="100%">';
 
+// pag colorize/bold columns
+
+        print '<colgroup>';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print ' </colgroup>';
+// pag */
+
 		$linkback = '<a href="'.DOL_URL_ROOT.'/comm/action/listactions.php">'.$langs->trans("BackToList").'</a>';
 
 		// Ref
@@ -1281,6 +1291,16 @@ if ($id > 0)
 		print '<br><br>';
 
 		print '<table class="border" width="100%">';
+
+// pag colorize/bold columns
+
+        print '<colgroup>';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print ' </colgroup>';
+// pag */
 
 		// Third party - Contact
 		if ($conf->societe->enabled)

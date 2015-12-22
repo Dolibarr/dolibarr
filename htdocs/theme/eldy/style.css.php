@@ -263,7 +263,7 @@ input, input.flat, textarea, textarea.flat, form.flat select, select, select.fla
     font-size: <?php print $fontsize ?>px;
     font-family: <?php print $fontlist ?>;
     background: #FFF;
-    color: #111;
+    color: #000; /* #111; */
     border: 1px solid #C0C0C0;
     margin: 0px 0px 0px 0px;
 }
@@ -1150,7 +1150,7 @@ div.blockvmenusearch
     padding-top: 3px;
     padding-bottom: 3px;
     margin: 1px 0px 8px 2px;
-	background: rgb(<?php echo $colorbackvmenu1; ?>);
+	background: rgb(<?php echo $colorbackvmenu2; ?>);
 
     border-left: 1px solid #AAA;
     border-right: 1px solid #CCC;

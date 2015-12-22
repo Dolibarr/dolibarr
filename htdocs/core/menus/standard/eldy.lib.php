@@ -623,7 +623,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 			}
 
 // pag *** STUB *** for Hierarchy
-$newmenu->add("/user/hierarchy.php", $langs->trans("*HierarchicView"), 1, $user->rights->user->user->lire || $user->admin);
+// $newmenu->add("/user/hierarchy.php", $langs->trans("*HierarchicView"), 1, $user->rights->user->user->lire || $user->admin);
 // pag
 
 			// Contacts
@@ -636,7 +636,7 @@ $newmenu->add("/user/hierarchy.php", $langs->trans("*HierarchicView"), 1, $user-
 			$newmenu->add("/contact/list.php?leftmenu=contacts&type=o", $langs->trans("Others"), 2, $user->rights->societe->contact->lire);
 			$newmenu->add("/contact/list.php?userid=$user->id", $langs->trans("MyContacts"), 1, $user->rights->societe->contact->lire);
 // pag *** STUB *** for Hierarchy
-$newmenu->add("/user/hierarchy.php", $langs->trans("*HierarchicView"), 1, $user->rights->user->user->lire || $user->admin); 
+// $newmenu->add("/user/hierarchy.php", $langs->trans("*HierarchicView"), 1, $user->rights->user->user->lire || $user->admin); 
 // pag
 
 

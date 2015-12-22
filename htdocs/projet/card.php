@@ -449,6 +449,17 @@ if ($action == 'create' && $user->rights->projet->creer)
 
     if (is_numeric($defaultref) && $defaultref <= 0) $defaultref='';
 
+
+// pag colorize/bold columns
+
+        print '<colgroup>';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print ' </colgroup>';
+// pag */
+
     // Ref
     print '<tr><td><span class="fieldrequired">'.$langs->trans("Ref").'</span></td><td><input size="12" type="text" name="ref" value="'.($_POST["ref"]?$_POST["ref"]:$defaultref).'"></td></tr>';
 
@@ -616,6 +627,16 @@ else
     {
         print '<table class="border" width="100%">';
 
+// pag colorize/bold columns
+
+        print '<colgroup>';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print ' </colgroup>';
+// pag */
+
         // Ref
         print '<tr><td class="fieldrequired" width="30%">'.$langs->trans("Ref").'</td>';
         print '<td><input size="12" name="ref" value="'.$object->ref.'"></td></tr>';
@@ -696,6 +717,16 @@ else
         print '<table class="border" width="100%">';
 
         $linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php">'.$langs->trans("BackToList").'</a>';
+
+// pag colorize/bold columns
+
+        print '<colgroup>';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print ' </colgroup>';
+// pag */
 
         // Ref
         print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';

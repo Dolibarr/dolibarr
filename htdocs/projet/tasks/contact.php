@@ -191,6 +191,16 @@ if ($id > 0 || ! empty($ref))
 
     		print '<table class="border" width="100%">';
 
+// pag colorize/bold columns
+
+        print '<colgroup>';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print ' </colgroup>';
+// pag */
+
     		// Ref
     		print '<tr><td width="30%">';
     		print $langs->trans("Ref");
@@ -251,6 +261,16 @@ if ($id > 0 || ! empty($ref))
 
 		$param=(GETPOST('withproject')?'&withproject=1':'');
 		$linkback=GETPOST('withproject')?'<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.'">'.$langs->trans("BackToList").'</a>':'';
+
+// pag colorize/bold columns
+
+        print '<colgroup>';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print ' </colgroup>';
+// pag */
 
 		// Ref
 		print '<tr><td width="30%">'.$langs->trans('Ref').'</td><td colspan="3">';

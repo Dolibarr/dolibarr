@@ -119,6 +119,17 @@ dol_fiche_head($head, 'element', $langs->trans("Project"),0,($object->public?'pr
 
 print '<table class="border" width="100%">';
 
+// pag colorize/bold columns
+
+        print '<colgroup>';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print ' </colgroup>';
+// pag */
+
+
 $linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php">'.$langs->trans("BackToList").'</a>';
 
 print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
@@ -183,6 +194,15 @@ dol_fiche_end();
  */
 
 $listofreferent=array(
+'project_task'=>array(
+        'name'=>"TaskTimeValorised",
+        'title'=>"ListTaskTimeUserProject",
+        'class'=>'Task',
+        'margin'=>'minus',
+        'table'=>'projet_task',
+        'datefieldname'=>'task_date',
+        'disableamount'=>0,
+        'test'=>$conf->projet->enabled && $user->rights->projet->lire && $conf->salaries->enabled),
 'propal'=>array(
 	'name'=>"Proposals",
 	'title'=>"ListProposalsAssociatedProject",
@@ -533,6 +553,15 @@ foreach ($listofreferent as $key => $value)
 		print_fiche_titre($langs->trans($title), $addform, '');
 
 		print '<table class="noborder" width="100%">';
+// pag colorize/bold columns
+
+        print '<colgroup>';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print '<col span="1" style="background-color:#f8f8f8;">';
+        print '<col span="1" style="background-color:white">';
+        print ' </colgroup>';
+// pag */
 
 		print '<tr class="liste_titre">';
 		// Remove link
