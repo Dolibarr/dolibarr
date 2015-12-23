@@ -711,6 +711,7 @@ div.statusref {
 	padding-right: 12px;
 	margin-top: 8px;
 	margin-bottom: 10px;
+	clear: both;
 }
 img.photoref {
 	height: 80px;
@@ -3492,13 +3493,13 @@ a span.select2-chosen
     color: #fff !important;
 }
 span.noborderoncategories a, li.noborderoncategories a {
-	color: #fff;
+	color: #fff !important;
 	line-height: normal;
-	vertical-align: top;
 }
 span.noborderoncategories {
-	padding: 3px 5px 0px 5px;
+	padding: 5px 5px 0px 5px;
 }
+
 
 
 /* ============================================================================== */

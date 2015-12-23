@@ -77,7 +77,7 @@ if ($option == 'late') $filter = 'paye:0';
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
-$limit = $conf->liste_limit;
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $page = GETPOST("page",'int');
 if ($page == -1) {
     $page = 0;
@@ -743,7 +743,7 @@ if ($resql)
     print_liste_field_titre($langs->trans('Date'),$_SERVER['PHP_SELF'],'f.datef','',$param,'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("DateDue"),$_SERVER['PHP_SELF'],"f.date_lim_reglement",'',$param,'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans('ThirdParty'),$_SERVER['PHP_SELF'],'s.nom','',$param,'',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("PaymentModeShort"),$_SERVER["PHP_SELF"],"f.fk_reglement_mode","",$param,"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("PaymentModeShort"),$_SERVER["PHP_SELF"],"f.fk_mode_reglement","",$param,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans('AmountHT'),$_SERVER['PHP_SELF'],'f.total','',$param,'align="right"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans('Taxes'),$_SERVER['PHP_SELF'],'f.tva','',$param,'align="right"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans('AmountTTC'),$_SERVER['PHP_SELF'],'f.total_ttc','',$param,'align="right"',$sortfield,$sortorder);
@@ -866,7 +866,7 @@ if ($resql)
 
             // Payment mode
             print '<td>';
-            $form->form_modes_reglement($_SERVER['PHP_SELF'], $objp->fk_mode_reglement, 'none');
+            $form->form_modes_reglement($_SERVER['PHP_SELF'], $objp->fk_mode_reglement, 'none', '', -1);
             print '</td>';
             
             print '<td align="right">'.price($objp->total_ht,0,$langs).'</td>';

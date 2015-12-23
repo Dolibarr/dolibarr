@@ -49,7 +49,7 @@ $sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
 $page = $_GET["page"];
 if ($page < 0) $page = 0;
 
-//$limit = $conf->liste_limit;
+//$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 //$offset = $limit * $page ;
 
 if (! $sortfield) $sortfield="cs.date_ech";

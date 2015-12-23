@@ -74,7 +74,7 @@ if ($action == 'confirm_add_resource')
 		if (empty($ref))
 		{
 			$mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Ref"));
-			setEventMessage($mesg, 'errors');
+			setEventMessages($mesg, null, 'errors');
 			$error++;
 		}
 
@@ -90,14 +90,14 @@ if ($action == 'confirm_add_resource')
 			{
 				// Creation OK
 				$db->commit();
-				setEventMessage($langs->trans('ResourceCreatedWithSuccess'));
+				setEventMessages($langs->trans('ResourceCreatedWithSuccess'), null, 'mesgs');
 				Header("Location: card.php?id=" . $object->id);
 				return;
 			}
 			else
 			{
 				// Creation KO
-				setEventMessage($object->error, 'errors');
+				setEventMessages($object->error, $object->errors, 'errors');
 				$action = '';
 			}
 		}

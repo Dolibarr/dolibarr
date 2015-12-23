@@ -908,7 +908,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 	}
 	else 
 	{
-	    if ($showimage) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$form->showphoto($modulepart,$object,0,0,0,'photoref','small',1,0,$maxvisiblephotos).'</div>';
+        if ($showimage) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$form->showphoto($modulepart,$object,0,0,0,'photoref','small',1,0,$maxvisiblephotos).'</div>';
 	}
 	if ($showbarcode) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$form->showbarcode($object).'</div>';
 	if ($object->element == 'societe' && ! empty($conf->use_javascript_ajax) && $user->rights->societe->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
@@ -3961,9 +3961,12 @@ function get_exdir($num,$level,$alpha,$withoutslash,$object,$modulepart)
 	else
 	{
 		// TODO
-		// We will introduce here a common way of forging path for document storage
+		// We will enhance here a common way of forging path for document storage
 		// Here, object->id, object->ref and object->modulepart are required.
-
+        if (in_array($modulepart, array('thirdparty','contact')))
+        {
+            $path=$object->ref?$object->ref:$object->id;
+        }
 	}
 
 	if (empty($withoutslash) && ! empty($path)) $path.='/';
