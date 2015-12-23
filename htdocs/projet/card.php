@@ -165,7 +165,7 @@ if (empty($reshook))
 	        else
 	        {
 	            $langs->load("errors");
-		        setEventMessage($langs->trans($object->error), null, 'errors');
+		        setEventMessages($langs->trans($object->error), null, 'errors');
 	            $error++;
 	        }
 
@@ -204,13 +204,13 @@ if (empty($reshook))
 	    if (empty($ref))
 	    {
 	        $error++;
-	        //$_GET["id"]=$_POST["id"]; // On retourne sur la fiche projet
+	        //$_GET["id"]=$_POST["id"]; // We return on the project card
 		    setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Ref")), null, 'errors');
 	    }
 	    if (empty($_POST["title"]))
 	    {
 	        $error++;
-	        //$_GET["id"]=$_POST["id"]; // On retourne sur la fiche projet
+	        //$_GET["id"]=$_POST["id"]; // We return on the project card
 		    setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
 	    }
 
