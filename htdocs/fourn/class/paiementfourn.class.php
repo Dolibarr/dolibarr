@@ -251,6 +251,8 @@ class PaiementFourn extends Paiement
 	 */
 	function delete($notrigger=0)
 	{
+	    global $conf, $user, $langs;
+	    
 		$bank_line_id = $this->bank_line;
 
 		$this->db->begin();
