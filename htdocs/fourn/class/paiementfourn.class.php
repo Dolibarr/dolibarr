@@ -319,6 +319,19 @@ class PaiementFourn extends Paiement
     	    		return -4;
     		    }
 			}
+			
+			if (! $notrigger)
+			{
+			    // Appel des triggers
+			    $result=$this->call_trigger('PAYMENT_SUPPLIER_DELETE', $user);
+			    if ($result < 0)
+			    {
+			        $this->db->rollback();
+			        return -1;
+			    }
+			    // Fin appel triggers
+			}
+			
 			$this->db->commit();
 			return 1;
 		}

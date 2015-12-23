@@ -376,7 +376,7 @@ class Paiement extends CommonObject
 			if (! $notrigger)
 			{
 				// Appel des triggers
-				$result=$this->call_trigger('PAYMENT_DELETE', $user);
+				$result=$this->call_trigger('PAYMENT_CUSTOMER_DELETE', $user);
 				if ($result < 0)
 				{
 				    $this->db->rollback();
