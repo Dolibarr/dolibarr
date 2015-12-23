@@ -1,5 +1,4 @@
 # Dolibarr language file - en_US - Accounting Expert
-CHARSET=UTF-8
 ACCOUNTING_EXPORT_SEPARATORCSV=Column separator for export file
 ACCOUNTING_EXPORT_DATE=Date format for export file
 ACCOUNTING_EXPORT_PIECE=Export the number of piece
@@ -12,8 +11,6 @@ ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
 
 Accounting=Kế toán
 Globalparameters=Các thông số toàn cầu
-Chartofaccounts=Biểu đồ tài khoản
-Fiscalyear=Năm tài chính
 Menuaccount=Tài khoản kế toán
 Menuthirdpartyaccount=Tài khoản của bên thứ ba
 MenuTools=Công cụ
@@ -33,23 +30,17 @@ Back=Quay trở lại
 
 Definechartofaccounts=Xác định một biểu đồ của tài khoản
 Selectchartofaccounts=Chọn một biểu đồ của tài khoản
-Validate=Xác nhận
 Addanaccount=Thêm một tài khoản kế toán
 AccountAccounting=Tài khoản kế toán
 AccountAccountingSuggest=Accounting account suggest
 Ventilation=Breakdown
-ToDispatch=Gửi đi
-Dispatched=Đã gửi đi
 
 CustomersVentilation=Breakdown customers
 SuppliersVentilation=Breakdown suppliers
 TradeMargin=Lợi nhuận thương mại
 Reports=Báo cáo
 ByCustomerInvoice=Hoá đơn cho khách hàng
-ByMonth=Theo tháng
 NewAccount=Tài khoản kế toán mới
-Update=Cập nhật
-List=Danh sách
 Create=Tạo
 CreateMvts=Create movement
 UpdateAccount=Sự biến đổi của một tài khoản kế toán
@@ -61,7 +52,6 @@ AccountBalanceByMonth=Số dư tài khoản theo tháng
 AccountingVentilation=Breakdown accounting
 AccountingVentilationSupplier=Breakdown accounting supplier
 AccountingVentilationCustomer=Breakdown accounting customer
-Line=Dòng
 
 CAHTF=Total purchase supplier before tax
 InvoiceLines=Dòng hoá đơn được ventilation
@@ -112,22 +102,19 @@ Docref=Tài liệu tham khảo
 Numerocompte=Tài khoản
 Code_tiers=Của bên thứ ba
 Labelcompte=Tài khoản Label
-Debit=Nợ
-Credit=Tín dụng
-Amount=Số tiền
 Sens=Sens
 Codejournal=Tạp chí
 
 DelBookKeeping=Xóa các bản ghi của sổ kế toán tổng
 
-SellsJournal=Bán tạp chí
-PurchasesJournal=Mua tạp chí
 DescSellsJournal=Bán tạp chí
 DescPurchasesJournal=Mua tạp chí
 BankJournal=Tạp chí Ngân hàng
 DescBankJournal=Tạp chí Ngân hàng bao gồm tất cả các loại chi phí khác hơn tiền mặt
 CashJournal=Tạp chí Tiền
 DescCashJournal=Tiền tạp chí bao gồm cả các loại tiền thanh toán
+FinanceJournal=Finance journal
+DescFinanceJournal=Finance journal including all the types of payments by bank account
 
 CashPayment=Thanh toán bằng tiền mặt
 
@@ -150,9 +137,6 @@ Pcgversion=Phiên bản kế hoạch
 Pcgtype=Lớp tài khoản
 Pcgsubtype=Trong lớp học của các tài khoản
 Accountparent=Gốc của tài khoản
-Active=Trữ
-
-NewFiscalYear=Năm tài chính mới
 
 DescVentilCustomer=Consult here the annual breakdown accounting of your invoices customers
 TotalVente=Total turnover before tax

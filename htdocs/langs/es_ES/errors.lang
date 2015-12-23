@@ -3,8 +3,6 @@
 # No errors
 NoErrorCommitIsDone=Sin errores,  es válido
 # Errors
-Error=Error
-Errors=Errores
 ErrorButCommitIsDone=Errores encontrados, pero es válido a pesar de todo
 ErrorBadEMail=E-mail %s incorrecto
 ErrorBadUrl=Url %s inválida
@@ -63,7 +61,7 @@ ErrorSizeTooLongForVarcharType=Longitud del campo demasiado largo para el tipo c
 ErrorNoValueForSelectType=Los valores de la lista deben ser indicados
 ErrorNoValueForCheckBoxType=Los valores de la lista deben ser indicados
 ErrorNoValueForRadioType=Los valores de la lista deben ser indicados
-ErrorBadFormatValueList=The list value cannot have more than one comma: <u>%s</u>, but need at least one: key,value
+ErrorBadFormatValueList=El valor de la lista no puede tener más de una coma: <u>%s</u>, pero es necesaria al menos una: clave,valor
 ErrorFieldCanNotContainSpecialCharacters=El campo <b>%s</b> no debe contener carácteres especiales
 ErrorFieldCanNotContainSpecialNorUpperCharacters=El campo <b>%s</b> no debe contener carácteres especiales, ni caracteres en mayúsculas y no puede contener sólo números
 ErrorNoAccountancyModuleLoaded=Módulo de contabilidad no activado
@@ -172,8 +170,11 @@ ErrorFieldMustBeANumeric=El campo <b>%s</b> debe contener un valor numérico
 ErrorFieldMustBeAnInteger=El campo <b>%s</b> debe de ser un entero
 ErrorMandatoryParametersNotProvided=Los parámetro(s) obligatorio(s) no están todavía definidos
 ErrorOppStatusRequiredIfAmount=Ha indicado un importe estimado para esta oportunidad/lead. Debe indicar también su estado
+ErrorBadDefinitionOfMenuArrayInModuleDescriptor=Definición incorrecta de la matriz de menú en el descriptor del módulo (valor incorrecto para la clave fk_menu)
+ErrorSavingChanges=Ha ocurrido un error al guardar los cambios
 
 # Warnings
+WarningPasswordSetWithNoAccount=Se fijó una contraseña para este miembro. Sin embargo, no se ha creado ninguna cuenta de usuario. Así que esta contraseña no se puede utilizar para acceder a Dolibarr. Puede ser utilizada por un módulo/interfaz externo, pero si no necesitar definir accesos de un miembro, puede desactivar la opción "Administrar un inicio de sesión para cada miembro" en la configuración del módulo miembros. Si necesita administrar un inicio de sesión, pero no necesita ninguna contraseña, puede dejar este campo vacío para evitar esta advertencia. Nota: También puede usarse el correo electrónico como inicio de sesión si el miembro está vinculada a un usuario.
 WarningMandatorySetupNotComplete=Los parámetros obligatorios de configuración no están todavía definidos
 WarningSafeModeOnCheckExecDir=Atención, está activada la opción PHP <b>safe_mode</b>, el comando deberá estar dentro de un directorio declarado dentro del parámetro php <b>safe_mode_exec_dir</b>.
 WarningAllowUrlFopenMustBeOn=El parámetro <b>allow_url_fopen</b> debe ser especificado a <b>on</b> en el archivo <b>php.ini</b> para disponer de este módulo completamente activo. Debe modificar este archivo manualmente
@@ -191,5 +192,5 @@ WarningClickToDialUserSetupNotComplete=La configuración de ClickToDial para su 
 WarningNotRelevant=Operación irrelevante para este conjunto de datos
 WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=Funcionalidad desactivada cuando la configuración de visualización es optimizada para personas ciegas o navegadores de texto.
 WarningPaymentDateLowerThanInvoiceDate=La fecha de pago (%s) es anterior a la fecha (%s) de la factura %s.
-WarningTooManyDataPleaseUseMoreFilters=Too many data (more than %s lines). Please use more filters or set the constant %s to a higher limit.
+WarningTooManyDataPleaseUseMoreFilters=Demasiados datos (más de %s líneas). Utilice más filtros o establezca la constante %s a un límite más alto.
 WarningSomeLinesWithNullHourlyRate=Algunas veces fueron registradas por usuarios sin su precio por hora. Se utilizó un valor de 0, pero esto puede resultar en la valoración equivocada del tiempo pasado.

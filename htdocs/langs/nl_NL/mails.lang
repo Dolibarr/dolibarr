@@ -84,9 +84,12 @@ EachInvoiceWillBeAttachedToEmail=Een document met behulp van standaard factuur d
 MailTopicSendRemindUnpaidInvoices=Herinnering van de factuur %s (%s)
 SendRemind=Stuur herinnering door e-mails
 RemindSent=%s herinnering(en) verstuurd
-AllRecipientSelectedForRemind=Alle relaties geselecteerd en als een e-mail is ingesteld (houd er rekening mee dat een e-mail per factuur wordt verzonden)
+AllRecipientSelected=All thirdparties selected and if an email is set.
 NoRemindSent=Geen e-mail reminder gestuurd
-ResultOfMassSending=Resultaat van massale e-mail herinneringen verzending
+ResultOfMailSending=Result of mass EMail sending
+NbSelected=Nb selected
+NbIgnored=Nb ignored
+NbSent=Nb sent
 
 # Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=Contacten van alle derde partijen (afnemer, prospect, leverancier, etc)
@@ -97,7 +100,7 @@ MailingModuleDescEmailsFromUser=E-mails van gebruikers input  (e-mail;achternaam
 MailingModuleDescContactsCategories=Contacten van alle derde partijen (Door categorie)
 MailingModuleDescDolibarrContractsLinesExpired=Derde partijen met verlopen contractregels
 MailingModuleDescContactsByCompanyCategory=Contacten van derden (door derden categorie)
-MailingModuleDescContactsByCategory=Voeg een contact toe per Categorieën
+MailingModuleDescContactsByCategory=Contacts/addresses of third parties (by category)
 MailingModuleDescMembersCategories=Stichting leden (per categorie)
 MailingModuleDescContactsByFunction=Contacten van derden (door de positie / functie)
 LineInFile=Regel %s in bestand

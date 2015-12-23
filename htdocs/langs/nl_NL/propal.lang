@@ -53,6 +53,7 @@ ListOfProposals=Offertelijst
 ActionsOnPropal=Offerte-acties
 NoOpenedPropals=No open commercial proposals
 NoOtherOpenedPropals=No other open commercial proposals
+NoPropal=No commercial proposal
 RefProposal=Offertereferentie
 SendPropalByMail=Stuur offerte per e-mail
 AssociatedDocuments=Documenten gelinkt aan de offerte:

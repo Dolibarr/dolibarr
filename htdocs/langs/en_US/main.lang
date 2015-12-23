@@ -24,6 +24,7 @@ FormatDateHourSecShort=%m/%d/%Y %I:%M:%S %p
 FormatDateHourTextShort=%b %d, %Y, %I:%M %p
 FormatDateHourText=%B %d, %Y, %I:%M %p
 DatabaseConnection=Database connection
+NoTemplateDefined=No template defined for this email type
 NoTranslation=No translation
 NoRecordFound=No record found
 NoError=No error

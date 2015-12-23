@@ -46,7 +46,7 @@ if ($page == -1) { $page = 0; }
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-$limit = $conf->liste_limit;
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 if (! $sortfield) $sortfield="s.datep";
 if (! $sortorder) $sortorder="DESC";
 $optioncss = GETPOST('optioncss','alpha');

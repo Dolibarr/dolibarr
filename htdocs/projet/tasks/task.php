@@ -180,8 +180,8 @@ if ($action == 'remove_file' && $user->rights->projet->creer)
 		$file =	$upload_dir	. '/' .	GETPOST('file');
 
 		$ret=dol_delete_file($file);
-		if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-		else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+		if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
+		else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
 	}
 }
 

@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is en_US - users
+# Dolibarr language file - Source file is en_US - salaries
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Codi comptable pagament de salaris
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Codi comptable càrregues financeres
 Salary=Sou
@@ -11,5 +11,5 @@ ShowSalaryPayment=Veure pagament de sous
 THM=Preu mig per hora
 TJM=Preu mig per dia
 CurrentSalary=Salari actual
-THMDescription=This value may be used to calculate cost of time consumed on a project entered by users if module project is used
-TJMDescription=This value is currently as information only and is not used for any calculation
+THMDescription=Aquest valor es pot utilitzar per calcular el cost del temps consumit per usuaris en un projecte sencer (si el mòdul del projecte està en ús)
+TJMDescription=Aquest valor només és informatiu i no s'utilitza en cap càlcul

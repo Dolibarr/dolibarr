@@ -1,5 +1,4 @@
 # Dolibarr language file - en_US - Accounting Expert
-CHARSET=UTF-8
 ACCOUNTING_EXPORT_SEPARATORCSV=Διαχωριστής στηλών για το αρχείο που θα εξαχθεί
 ACCOUNTING_EXPORT_DATE=Μορφή ημερομηνίας για το αρχείο που θα εξαγθεί
 ACCOUNTING_EXPORT_PIECE=Export the number of piece
@@ -12,8 +11,6 @@ ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
 
 Accounting=Λογιστική
 Globalparameters=Βασικοί Παράμετροι
-Chartofaccounts=Διάγραμμα των λογαριασμών
-Fiscalyear=Οικονομικά έτη
 Menuaccount=Λογαριασμοί Λογιστικής
 Menuthirdpartyaccount=Λογαριασμοί Πελ./Προμ.
 MenuTools=Εργαλεία
@@ -33,23 +30,17 @@ Back=Επιστροφή
 
 Definechartofaccounts=Ορίστε ένα διάγραμμα των λογαριασμών
 Selectchartofaccounts=Επιλέξτε ένα διάγραμμα των λογαριασμών
-Validate=Επικύρωση
 Addanaccount=Προσθέστε ένα λογιστικό λογαριασμό
 AccountAccounting=Λογιστική λογαριασμού
 AccountAccountingSuggest=Accounting account suggest
 Ventilation=Ανάλυση
-ToDispatch=Για την αποστολή
-Dispatched=Αποστέλλονται
 
 CustomersVentilation=Ανάλυση πελατών
 SuppliersVentilation=Ανάλυση προμηθευτών
 TradeMargin=Εμπορικό Περιθώριο
 Reports=Αναφορές
 ByCustomerInvoice=Με τιμολόγια πελατών
-ByMonth=Μέχρι το μήνα
 NewAccount=Νέος λογιστικός λογαριασμός
-Update=Ενημέρωση
-List=Λίστα
 Create=Δημιουργία
 CreateMvts=Create movement
 UpdateAccount=Τροποποίηση του λογιστικού λογαριασμού
@@ -61,7 +52,6 @@ AccountBalanceByMonth=Το υπόλοιπο του λογαριασμού ανά
 AccountingVentilation=Ανάλυση των λογαριασμών
 AccountingVentilationSupplier=Ανάλυση λογιστικών προμηθευτή
 AccountingVentilationCustomer=Ανάλυση λογιστικών των πελατών
-Line=Γραμμή
 
 CAHTF=Total purchase supplier before tax
 InvoiceLines=Εγγραφές τιμολογίου για ανανέωση
@@ -112,22 +102,19 @@ Docref=Παραπομπή
 Numerocompte=Λογαριασμός
 Code_tiers=Πελ./Προμ.
 Labelcompte=Ετικέτα λογαριασμού
-Debit=Χρέωση
-Credit=Πίστωση
-Amount=Σύνολο
 Sens=Σημασία
 Codejournal=Ημερολόγιο
 
 DelBookKeeping=Διαγράψτε τα αρχεία της γενικής λογιστικής
 
-SellsJournal=Ημερολόγιο πωλήσεων
-PurchasesJournal=Ημερολόγιο αγορών
 DescSellsJournal=Ημερολόγιο πωλήσεων
 DescPurchasesJournal=Ημερολόγιο αγορών
 BankJournal=Τραπεζικό ημερολόγιο
 DescBankJournal=Ημερολόγιο Τράπεζας, συμπεριλαμβανομένων όλων των ειδών πληρωμών εκτός από τα μετρητά
 CashJournal=Ημερολόγιο μετρητών
 DescCashJournal=Ημερολόγιο μετρητών καθώς και το είδος των ταμειακών πληρωμών
+FinanceJournal=Finance journal
+DescFinanceJournal=Finance journal including all the types of payments by bank account
 
 CashPayment=Καταβολή Μετρητών
 
@@ -150,9 +137,6 @@ Pcgversion=Έκδοση του σχεδίου
 Pcgtype=Τύπος λογαριασμού
 Pcgsubtype=Δευτερεύουσα κατηγορία λογαριασμού
 Accountparent=Ρίζα του λογαριασμού
-Active=Δήλωση
-
-NewFiscalYear=Νέα οικονομική χρονιά
 
 DescVentilCustomer=Συμβουλευτείτε εδώ την ετήσια κατανομή των λογαριασμών των τιμολογίων των πελατών σας
 TotalVente=Total turnover before tax

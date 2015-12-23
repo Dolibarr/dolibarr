@@ -53,6 +53,7 @@ ListOfProposals=Pakkumiste nimekiri
 ActionsOnPropal=Tegevused pakkumisel
 NoOpenedPropals=No open commercial proposals
 NoOtherOpenedPropals=No other open commercial proposals
+NoPropal=No commercial proposal
 RefProposal=Pakkumise viide
 SendPropalByMail=Saada pakkumine kirja teel
 AssociatedDocuments=Pakkumisega seotud dokumendid:

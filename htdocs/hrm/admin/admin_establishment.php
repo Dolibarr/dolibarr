@@ -61,7 +61,7 @@ if ($page == -1) {
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-$limit = $conf->liste_limit;
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 
 $form = new Form($db);
 $establishmenttmp=new Establishment($db);

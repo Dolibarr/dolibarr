@@ -1,5 +1,4 @@
 # Dolibarr language file - en_US - Accounting Expert
-CHARSET=UTF-8
 ACCOUNTING_EXPORT_SEPARATORCSV=Column separator for export file
 ACCOUNTING_EXPORT_DATE=Date format for export file
 ACCOUNTING_EXPORT_PIECE=Export the number of piece
@@ -12,8 +11,6 @@ ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
 
 Accounting=Računovodstvo
 Globalparameters=Globalni parametri
-Chartofaccounts=Tabela računa
-Fiscalyear=Fiskalne godine
 Menuaccount=Računovodstveni nalozi
 Menuthirdpartyaccount=Ostali računi
 MenuTools=Alati
@@ -33,23 +30,17 @@ Back=Vrati
 
 Definechartofaccounts=Definiši tabelu računa
 Selectchartofaccounts=Izaberi tabelu računa
-Validate=Potvrdi
 Addanaccount=Dodaj računovodstveni nalog
 AccountAccounting=Računovodstveni nalog
 AccountAccountingSuggest=Accounting account suggest
 Ventilation=Presek
-ToDispatch=Za slanje
-Dispatched=Isporučeno
 
 CustomersVentilation=Presek kupaca
 SuppliersVentilation=Presek dobavljača
 TradeMargin=Trgovinske marže
 Reports=Izveštaji
 ByCustomerInvoice=Po računima kupaca
-ByMonth=Po mesecu
 NewAccount=Novi knjigovodstveni račun
-Update=Ažuriraj
-List=Lista
 Create=Kreiraj
 CreateMvts=Create movement
 UpdateAccount=Izmena računovodstvenog naloga
@@ -61,7 +52,6 @@ AccountBalanceByMonth=Mesečno stanje računa
 AccountingVentilation=Računovodstveni presek
 AccountingVentilationSupplier=Presek računa dobavljača
 AccountingVentilationCustomer=Presek računa kupca
-Line=Linija
 
 CAHTF=Total purchase supplier before tax
 InvoiceLines=Linije računa za kontrolu
@@ -112,22 +102,19 @@ Docref=Referenca
 Numerocompte=Račun
 Code_tiers=Treće lice
 Labelcompte=Oznaka računa
-Debit=Zaduženje
-Credit=Kredit
-Amount=Iznos
 Sens=Sens
 Codejournal=Izveštaj
 
 DelBookKeeping=Brisanje evidencije glavne knjige
 
-SellsJournal=Izveštaj prodaje
-PurchasesJournal=Izveštaj nabavke
 DescSellsJournal=Izveštaj prodaje
 DescPurchasesJournal=Izveštaj nabavke
 BankJournal=Izvod banke
 DescBankJournal=Bank journal including all the types of payments other than cash
 CashJournal=Cash journal
 DescCashJournal=Cash journal including the type of payment cash
+FinanceJournal=Finance journal
+DescFinanceJournal=Finance journal including all the types of payments by bank account
 
 CashPayment=Cash Payment
 
@@ -150,9 +137,6 @@ Pcgversion=Version of the plan
 Pcgtype=Class of account
 Pcgsubtype=Under class of account
 Accountparent=Root of the account
-Active=Statement
-
-NewFiscalYear=New fiscal year
 
 DescVentilCustomer=Consult here the annual breakdown accounting of your invoices customers
 TotalVente=Total turnover before tax

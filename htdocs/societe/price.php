@@ -69,10 +69,13 @@ if ($action == 'add_customer_price_confirm' && ! $_POST ["cancel"] && ($user->ri
 
 	$result = $prodcustprice->create($user, 0, $update_child_soc);
 
-	if ($result < 0) {
-		setEventMessage($prodcustprice->error, 'errors');
-	} else {
-		setEventMessage($langs->trans('Save'), 'mesgs');
+	if ($result < 0) 
+	{
+		setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
+	} 
+	else 
+	{
+		setEventMessages($langs->trans('Save'), null, 'mesgs');
 	}
 
 	$action = '';
@@ -83,10 +86,13 @@ if ($action == 'delete_customer_price' && ($user->rights->produit->creer || $use
 	$prodcustprice->id = GETPOST('lineid');
 	$result = $prodcustprice->delete($user);
 
-	if ($result < 0) {
-		setEventMessage($prodcustprice->error, 'mesgs');
-	} else {
-		setEventMessage($langs->trans('Delete'), 'errors');
+	if ($result < 0) 
+	{
+		setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
+	} 
+	else 
+	{
+		setEventMessages($langs->trans('Delete'), null, 'mesgs');
 	}
 	$action = '';
 }
@@ -105,10 +111,13 @@ if ($action == 'update_customer_price_confirm' && ! $_POST ["cancel"] && ($user-
 	$prodcustprice->recuperableonly = (preg_match('/\*/', GETPOST("tva_tx")) ? 1 : 0);
 
 	$result = $prodcustprice->update($user, 0, $update_child_soc);
-	if ($result < 0) {
-		setEventMessage($prodcustprice->error, 'errors');
-	} else {
-		setEventMessage($langs->trans('Save'), 'mesgs');
+	if ($result < 0) 
+	{
+		setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
+	} 
+	else 
+	{
+		setEventMessages($langs->trans('Save'), null, 'mesgs');
 	}
 
 	$action = '';
@@ -181,11 +190,12 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 	$sortfield = GETPOST("sortfield", 'alpha');
 	$sortorder = GETPOST("sortorder", 'alpha');
+    $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 	$page = GETPOST("page", 'int');
 	if ($page == - 1) {
 		$page = 0;
 	}
-	$offset = $conf->liste_limit * $page;
+	$offset = $limit * $page;
 	$pageprev = $page - 1;
 	$pagenext = $page + 1;
 	if (! $sortorder)
@@ -200,7 +210,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 	$search_soc = GETPOST('search_soc');
 	if (! empty($search_soc)) {
-		$filter ['soc.nom'] = $search_soc;
+		$filter['soc.nom'] = $search_soc;
 	}
 
 	if ($action == 'add_customer_price') {
@@ -283,8 +293,9 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print load_fiche_titre($langs->trans('PriceByCustomer'));
 
 		$result = $prodcustprice->fetch(GETPOST('lineid', 'int'));
-		if ($result < 0) {
-			setEventMessage($prodcustprice->error, 'errors');
+		if ($result < 0) 
+		{
+			setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
 		}
 
 		print '<form action="' . $_SERVER["PHP_SELF"] . '?socid=' . $object->id . '" method="POST">';
@@ -368,8 +379,9 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		}
 
 		$result = $prodcustprice->fetch_all_log($sortorder, $sortfield, $conf->liste_limit, $offset, $filter);
-		if ($result < 0) {
-			setEventMessage($prodcustprice->error, 'errors');
+		if ($result < 0) 
+		{
+			setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
 		}
 
 		$option = '&socid=' . GETPOST('socid', 'int') . '&prodid=' . GETPOST('prodid', 'int');
@@ -422,7 +434,9 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 				print '</td>';
 			}
 			print "</table>";
-		} else {
+		} 
+		else 
+		{
 			print $langs->trans('None');
 		}
 
@@ -458,7 +472,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
         $result = $prodcustprice->fetch_all($sortorder, $sortfield, $conf->liste_limit, $offset, $filter);
         if ($result < 0)
         {
-            setEventMessage($prodcustprice->error, 'errors');
+            setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
         }
         
         $option = '&search_soc=' . $search_soc . '&id=' . $object->id;

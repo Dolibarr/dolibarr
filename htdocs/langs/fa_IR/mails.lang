@@ -84,9 +84,12 @@ EachInvoiceWillBeAttachedToEmail=یک سند با استفاده از پیش ف�
 MailTopicSendRemindUnpaidInvoices=یادآوری از فاکتور از٪ s (٪ بازدید کنندگان)
 SendRemind=ارسال یادآور شده توسط ایمیل
 RemindSent=٪ s را یادآور (بازدید کنندگان) ارسال می شود
-AllRecipientSelectedForRemind=همه thirdparties انتخاب شده و اگر یک ایمیل تنظیم شده است (توجه داشته باشید که یک پست الکترونیکی در صورتحساب ارسال خواهد شد)
+AllRecipientSelected=All thirdparties selected and if an email is set.
 NoRemindSent=آدرس ایمیل یادآوری ارسال
-ResultOfMassSending=نتیجه شده از یادآوری ایمیل انبوه ارسال
+ResultOfMailSending=Result of mass EMail sending
+NbSelected=Nb selected
+NbIgnored=Nb ignored
+NbSent=Nb sent
 
 # Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=تماس / آدرس تمام اشخاص ثالث (مشتری، چشم انداز، تامین کننده، ...)
@@ -97,7 +100,7 @@ MailingModuleDescEmailsFromUser=ایمیل از ورودی کاربر (ایمی�
 MailingModuleDescContactsCategories=احزاب سوم (بر اساس طبقه بندی)
 MailingModuleDescDolibarrContractsLinesExpired=احزاب سوم با خطوط قرارداد منقضی شده است
 MailingModuleDescContactsByCompanyCategory=تماس / آدرس اشخاص ثالث (بر اساس طبقه بندی اشخاص ثالث)
-MailingModuleDescContactsByCategory=تماس / آدرس اشخاص ثالث بر اساس طبقه بندی
+MailingModuleDescContactsByCategory=Contacts/addresses of third parties (by category)
 MailingModuleDescMembersCategories=اعضای بنیاد (دسته)
 MailingModuleDescContactsByFunction=تماس / آدرس اشخاص ثالث (موقعیت / تابع)
 LineInFile=خط٪ در فایل

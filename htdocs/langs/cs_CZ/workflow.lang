@@ -3,9 +3,9 @@ WorkflowSetup=Nastavení workflow modulu
 WorkflowDesc=Tento modul je určen k úpravě chování automatických akcí, v aplikaci. Ve výchozím nastavení workflow je otevřen (uděláte něco, co chcete). Můžete aktivovat automatické akce, které jsou zajímavé.
 ThereIsNoWorkflowToModify=There is no workflow modifications available with the activated modules.
 descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Vytvoření objednávky zákazníka automaticky po podepsání komerčního návrhu
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICEAutomatically Vytvoření zákaznické faktury po podepsání komerčního návrhu
-descWORKFLOW_CONTRACT_AUTOCREATE_INVOICEAutomatically Vytvoření zákaznické faktury  po schválení kontraktu
-descWORKFLOW_ORDER_AUTOCREATE_INVOICEAutomatically Vytvoření zákaznické faktury  po uzavření objednávky zákazníka
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Automatically create a customer invoice after a commercial proposal is signed
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Automatically create a customer invoice after a contract is validated
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Automatically create a customer invoice after a customer order is closed
 descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Označit propojený zdrojový návrh jako zaúčtovaný, když je objednávka zákazníka nastavena jako placená
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Označit propojenou zdrojovou objednávku zákazníka(ů) jako zaúčtované, když jsou zákaznické faktury nastaveny jako placené
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Označit propojenou zdrojovou objednávku zákazníka(ů) jako zaúčtovanou, když je ověřená zákaznická faktura

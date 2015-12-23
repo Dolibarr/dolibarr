@@ -94,7 +94,7 @@ $cancel != $langs->trans("Cancel") &&
 	else
 	{
 		$action = 'add';
-		setEventMessage($object->error,'errors');
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
 
@@ -130,7 +130,7 @@ $cancel != $langs->trans("Cancel") &&
 	else
 	{
 		$action = 'edit';
-		setEventMessage($object->error,'errors');
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
 
@@ -151,7 +151,7 @@ $cancel != $langs->trans("Cancel") &&
 	else
 	{
 		$action = 'edit';
-		setEventMessage($object->error,'errors');
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
 

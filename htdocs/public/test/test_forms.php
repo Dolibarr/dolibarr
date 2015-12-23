@@ -16,8 +16,8 @@ llxHeader();
 
 <h1>
 This page is a sample of page using Dolibarr HTML widget methods. It is designed to make test with<br>
-- css (add parameter &theme=newtheme to test another theme or edit css of current theme)<br>
-- jmobile (add parameter <a href="<?php echo $_SERVER["PHP_SELF"].'?dol_use_jmobile=1&dol_optimize_smallscreen=1'; ?>">dol_use_jmobile=1&dol_optimize_smallscreen=1</a> to enable view with jmobile)<br>
+- css (add parameter &amp;theme=newtheme to test another theme or edit css of current theme)<br>
+- jmobile (add parameter <a href="<?php echo $_SERVER["PHP_SELF"].'?dol_use_jmobile=1&dol_optimize_smallscreen=1'; ?>">dol_use_jmobile=1&amp;dol_optimize_smallscreen=1</a> to enable view with jmobile)<br>
 - no javascript / usage for bind people (add parameter <a href="<?php echo $_SERVER["PHP_SELF"].'?nojs=1'; ?>">nojs=1</a> to force disable javascript)<br>
 </h1>
 <br>

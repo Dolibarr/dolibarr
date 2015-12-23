@@ -84,9 +84,12 @@ EachInvoiceWillBeAttachedToEmail=Dokument s použitím šablony výchozí faktur
 MailTopicSendRemindUnpaidInvoices=Upomínka faktury %s (%s)
 SendRemind=Zaslání upomínky na maily
 RemindSent=%s upomínka(y) odesláno
-AllRecipientSelectedForRemind=Všechny třetí strany vybrány pokud je nastaven e-mail (všimněte si, že pouze jeden mail pro fakturu bude odeslán)
+AllRecipientSelected=All thirdparties selected and if an email is set.
 NoRemindSent=Žádná upomínka nebyla e.mailem odeslána
-ResultOfMassSending=Výsledek hromadného rozeslání upomínek mailem
+ResultOfMailSending=Result of mass EMail sending
+NbSelected=Nb selected
+NbIgnored=Nb ignored
+NbSent=Nb sent
 
 # Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=Kontakty/adresy všech třetích stran (zákazník, cíl, dodavatel, ...)
@@ -97,7 +100,7 @@ MailingModuleDescEmailsFromUser=E-maily z uživatelského vstupu (e-mail, příj
 MailingModuleDescContactsCategories=Třetí strany (podle kategorie)
 MailingModuleDescDolibarrContractsLinesExpired=Třetí strany s prošlým řádky kontraktu
 MailingModuleDescContactsByCompanyCategory=Kontakty/adresy třetích stran (pro kategorie Třetí strany)
-MailingModuleDescContactsByCategory=Kontakty/adresy třetích stran podle kategorie
+MailingModuleDescContactsByCategory=Contacts/addresses of third parties (by category)
 MailingModuleDescMembersCategories=Členové nadace (podle kategorií)
 MailingModuleDescContactsByFunction=Kontakty/adresy třetích stran (podle pozice/funkce)
 LineInFile=Řádek  %s v souboru

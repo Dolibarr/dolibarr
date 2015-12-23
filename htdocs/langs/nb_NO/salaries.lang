@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is en_US - users
+# Dolibarr language file - Source file is en_US - salaries
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Regnskapskode for lønnsutbetalinger
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Regnskapskode for finansiell belastning
 Salary=Lønn

@@ -1081,8 +1081,10 @@ if ($id > 0)
 
 		print '</table>';
 
+		
 		print '<br><br>';
 
+		
 		print '<table class="border" width="100%">';
 
 		// Thirdparty - Contact

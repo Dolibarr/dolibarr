@@ -1,20 +1,20 @@
 # Dolibarr language file - Source file is en_US - marges
 
-Margin=Margines
+Margin=Marża
 Margins=Marże
-TotalMargin=Razem Margines
-MarginOnProducts=Margin / Produkty
-MarginOnServices=Margin / Usługi
+TotalMargin=Marża Total
+MarginOnProducts=Marża / Produkty
+MarginOnServices=Marża / Usługi
 MarginRate=Stopa marży
 MarkRate=Stawka Mark
 DisplayMarginRates=Stawki marży wyświetlacz
 DisplayMarkRates=Stawki znaków wyświetlanych
 InputPrice=Cena wejściowa
-margin=Zarządzanie marże
-margesSetup=Marże ustawień zarządzania
-MarginDetails=Szczegóły marginesów
-ProductMargins=Marginesy produktu
-CustomerMargins=Marginesy klientów
+margin=Zarządzanie zyskiem z marż
+margesSetup=Ustawienie zarządzania zyskiem z marż
+MarginDetails=Szczegóły marży
+ProductMargins=Marża produktu
+CustomerMargins=Marża klienta
 SalesRepresentativeMargins=Sprzedaż marże reprezentatywne
 UserMargins=Marginesy użytkownika
 ProductService=Produkt lub usługa
@@ -23,20 +23,20 @@ ChooseProduct/Service=Wybierz produkt lub usługę
 StartDate=Data rozpoczęcia
 EndDate=Data zakończenia
 Launch=Start
-ForceBuyingPriceIfNull=Siła cena skupu, jeżeli wartość null
-ForceBuyingPriceIfNullDetails=jeśli "ON", marża będzie zero na linii (zakup cenę = cena sprzedaży), w przeciwnym razie ("OFF"), Marge będzie równa cena sprzedaży (cena zakupu = 0)
-MARGIN_METHODE_FOR_DISCOUNT=Metoda marży dla globalnych zniżki
+ForceBuyingPriceIfNull=Wymuszaj cenę zakupu/cenę fabryczną jako cenę sprzedaży jeżeli ta nie jest zdefiniowana
+ForceBuyingPriceIfNullDetails=Jeżeli cena zakupu/koszt nie jest zdefiniowana, a ta opcja jest "ON", marża będzie równa 0 (cena zakupu/koszt = cena sprzedaży), w przeciwnym razie ("OFF"), marża będzie równa sugerowanej domyślnie.
+MARGIN_METHODE_FOR_DISCOUNT=Sposób na marżę dla globalnych rabatów
 UseDiscountAsProduct=Jako produkt
 UseDiscountAsService=Jako usługa
 UseDiscountOnTotal=Na podsumy
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Określa, czy globalne rabatu jest traktowana jako produktu, usługi lub tylko na sumy częściowej obliczania marży.
-MARGIN_TYPE=Buying/Cost price suggested by default for margin calculation
+MARGIN_TYPE=Cena zakupu/cena fabryczna jest sugerowana jako domyślna do obliczenia marży
 MargeBrute=Raw marża
 MargeNette=Rentowność netto
-MargeType1=Margin on Best supplier price
-MargeType2=Margin on Weighted Average Price (WAP)
+MargeType1=Marża na najlepszej cenie dostawcy
+MargeType2=Marża na średniej cenie ważonej
 MARGIN_TYPE_DETAILS=Raw margin: Cena sprzedaży - cena zakupu <br/> Rentowność netto: Cena sprzedaży - cena kosztów
-MarginTypeDesc=Margin on best buying price : Selling price - Best supplier price defined on product card<br/>Margin on Weighted Average Price (WAP) : Selling price - Product Weighted Average Price
+MarginTypeDesc=Marża na najlepszej cenie zakupu: Cena sprzedaży - Najlepsza cena dostawcy zdefiniowana na karcie produktu <br/> Marża na cenie średnio ważonej (WAP): Cena sprzedaży - średnio ważona cena produktu (WAP) lub najlepszs cena dostawcy jeśli WAP jeszcze niezdefiniowana
 CostPrice=Cena fabryczna
 BuyingCost=Cena fabryczna
 UnitCharges=Koszty jednostkowe

@@ -84,9 +84,12 @@ EachInvoiceWillBeAttachedToEmail=Ένα έγγραφο χρησιμοποιών�
 MailTopicSendRemindUnpaidInvoices=Υπενθύμιση του τιμολογίου %s (%s)
 SendRemind=Αποστολή υπενθύμισης με EMails
 RemindSent=%s υπενθύμιση (εις) αποστέλλονται
-AllRecipientSelectedForRemind=Όλοι Πελ./Προμ. έχουν επιλεγεί και αν ένα email έχει οριστεί (υπόψη ότι ένα μήνυμα ανά τιμολόγιο θα αποσταλεί)
+AllRecipientSelected=All thirdparties selected and if an email is set.
 NoRemindSent=Τα  EMail να αποσταλούν χωρίς υπενθύμιση
-ResultOfMassSending=Αποτέλεσμα της μαζικής αποστολής email υπενθύμισης
+ResultOfMailSending=Result of mass EMail sending
+NbSelected=Nb selected
+NbIgnored=Nb ignored
+NbSent=Nb sent
 
 # Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=Επαφές για όλα τα στοιχεία (πελάτης, προοπτική, προμηθευτής, ...)
@@ -97,7 +100,7 @@ MailingModuleDescEmailsFromUser=E-mail από την είσοδο του χρή�
 MailingModuleDescContactsCategories=Στοιχεία με emails (ανά κατηγορία)
 MailingModuleDescDolibarrContractsLinesExpired=Πελ./Προμ. με ληγμένες γραμμές συμβολαίων
 MailingModuleDescContactsByCompanyCategory=Επαφές των τρίτων (από τρίτη κατηγορία μέρη)
-MailingModuleDescContactsByCategory=Επαφές/διευθύνσεις Πέλ./Προμ. κατά κατηγορία
+MailingModuleDescContactsByCategory=Contacts/addresses of third parties (by category)
 MailingModuleDescMembersCategories=Τα ιδρυτικά μέλη (ανά κατηγορία)
 MailingModuleDescContactsByFunction=Επαφές των τρίτων (από τη θέση / λειτουργία)
 LineInFile=Σειρά %s στο αρχείο

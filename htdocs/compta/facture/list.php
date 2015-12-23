@@ -77,14 +77,14 @@ if ($option == 'late') $filter = 'paye:0';
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $page = GETPOST("page",'int');
 if ($page == -1) {
     $page = 0;
 }
-$offset = $conf->liste_limit * $page;
+$offset = $limit * $page;
 if (! $sortorder) $sortorder='DESC';
 if (! $sortfield) $sortfield='f.datef';
-$limit = $conf->liste_limit;
 
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -329,10 +329,11 @@ if (empty($reshook))
 						$result=$mailfile->sendfile();
 						if ($result)
 						{
-							$resaction.=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));		// Must not contain "
+							$resaction.=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2)).'<br>';		// Must not contain "
 	
 							$error=0;
 	
+							// Insert logs into agenda
 							foreach($listofqualifiedinvoice as $invid => $object)
 							{
 								$actiontypecode='AC_FAC';
@@ -357,16 +358,13 @@ if (empty($reshook))
 								include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 								$interface=new Interfaces($db);
 								$result=$interface->run_triggers('BILL_SENTBYMAIL',$object,$user,$langs,$conf);
-								if ($result < 0) { $error++; $this->errors=$interface->errors; }
+								if ($result < 0) { $error++; $errors=$interface->errors; }
 								// Fin appel triggers
 		
-								if (! $error)
+								if ($error)
 								{
-									$resaction.=$langs->trans("MailSent").': '.$sendto."<br>\n";
-								}
-								else
-								{
-									dol_print_error($db);
+									setEventMessages($db->lasterror(), $errors, 'errors');
+									dol_syslog("Error in trigger BILL_SENTBYMAIL ".$db->lasterror(), LOG_ERR);
 								}
 								$nbsent++;
 							}
@@ -615,7 +613,7 @@ if ($resql)
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 		$formmail = new FormMail($db);		
 		
-		dol_fiche_head(null, '', $langs->trans("SendByMail"));
+		dol_fiche_head(null, '', '');
 
 		$topicmail="SendBillRef";
 		$modelmail="facture_send";
@@ -660,7 +658,7 @@ if ($resql)
 		$formmail->withtocc=1;
 		$formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
 		$formmail->withtopic=$langs->transnoentities($topicmail, '__REF__', '__REFCLIENT__');
-		$formmail->withfile=$langs->trans("EachInvoiceWillBeAttachedToEmail");
+		$formmail->withfile=$langs->trans("OnlyPDFattachmentSupported");
 		$formmail->withbody=1;
 		$formmail->withdeliveryreceipt=1;
 		$formmail->withcancel=1;
@@ -745,7 +743,7 @@ if ($resql)
     print_liste_field_titre($langs->trans('Date'),$_SERVER['PHP_SELF'],'f.datef','',$param,'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("DateDue"),$_SERVER['PHP_SELF'],"f.date_lim_reglement",'',$param,'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans('ThirdParty'),$_SERVER['PHP_SELF'],'s.nom','',$param,'',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("PaymentModeShort"),$_SERVER["PHP_SELF"],"f.fk_reglement_mode","",$param,"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("PaymentModeShort"),$_SERVER["PHP_SELF"],"f.fk_mode_reglement","",$param,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans('AmountHT'),$_SERVER['PHP_SELF'],'f.total','',$param,'align="right"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans('Taxes'),$_SERVER['PHP_SELF'],'f.tva','',$param,'align="right"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans('AmountTTC'),$_SERVER['PHP_SELF'],'f.total_ttc','',$param,'align="right"',$sortfield,$sortorder);
@@ -868,7 +866,7 @@ if ($resql)
 
             // Payment mode
             print '<td>';
-            $form->form_modes_reglement($_SERVER['PHP_SELF'], $objp->fk_mode_reglement, 'none');
+            $form->form_modes_reglement($_SERVER['PHP_SELF'], $objp->fk_mode_reglement, 'none', '', -1);
             print '</td>';
             
             print '<td align="right">'.price($objp->total_ht,0,$langs).'</td>';

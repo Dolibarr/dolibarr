@@ -98,7 +98,7 @@ if (empty($reshook)) {
 			$enabled = trim(GETPOST('AGENDA_EXT_ENABLED_'.$id.'_'.$i, 'alpha'));
 
 			if (!empty($src) && !dol_is_url($src)) {
-				setEventMessage($langs->trans("ErrorParamMustBeAnUrl"), 'errors');
+				setEventMessages($langs->trans("ErrorParamMustBeAnUrl"), null, 'errors');
 				$error ++;
 				$errorsaved ++;
 				break;
@@ -122,11 +122,11 @@ if (empty($reshook)) {
 
 		if (!$error) {
 			$db->commit();
-			setEventMessage($langs->trans("SetupSaved"));
+			setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 		} else {
 			$db->rollback();
 			if (empty($errorsaved)) {
-				setEventMessage($langs->trans("Error"), 'errors');
+				setEventMessages($langs->trans("Error"), null, 'errors');
 			}
 		}
 	}

@@ -110,9 +110,12 @@ $h++;
 dol_fiche_head($head,'popularityprop',$langs->trans("Statistics"));
 
 
+// Array of liens to show
+$infoprod=array();
 
 
-$sql  = "SELECT p.rowid, p.label, p.ref, p.fk_product_type as type, count(*) as c";
+// Add lines for proposals
+$sql  = "SELECT p.rowid, p.label, p.ref, p.fk_product_type as type, SUM(pd.qty) as c";
 $sql.= " FROM ".MAIN_DB_PREFIX."propaldet as pd";
 $sql.= ", ".MAIN_DB_PREFIX."product as p";
 $sql.= ' WHERE p.entity IN ('.getEntity('product', 1).')';
@@ -120,7 +123,7 @@ $sql.= " AND p.rowid = pd.fk_product";
 if ($type !== '') {
 	$sql.= " AND fk_product_type = ".$type;
 }
-$sql.= " GROUP BY (p.rowid)";
+$sql.= " GROUP BY p.rowid, p.label, p.ref, p.fk_product_type";
 
 $result=$db->query($sql);
 if ($result)
@@ -131,67 +134,81 @@ if ($result)
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit+1, $offset);
 
-$result=$db->query($sql);
-if ($result)
+$resql=$db->query($sql);
+if ($resql)
 {
-	$num = $db->num_rows($result);
-	$i = 0;
+    $num = $db->num_rows($resql);
+    $i = 0;
 
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, "", $num, $totalnboflines, '');
+    $var=True;
+    while ($i < $num)
+    {
+        $objp = $db->fetch_object($resql);
+        
+        $infoprod[$objp->rowid]=array('type'=>$objp->type, 'ref'=>$objp->ref, 'label'=>$objp->label);
+        $infoprod[$objp->rowid]['nblineproposal']=$objp->c;
+        
+        $i++;
+    }
+    $db->free($resql);
+}
+else
+{
+    dol_print_error($db);
+}
+//var_dump($infoprod);
 
-	print '<table class="noborder" width="100%">';
 
-	print "<tr class=\"liste_titre\">";
-	print_liste_field_titre($langs->trans('Ref'), $_SERVER["PHP_SELF"], 'p.ref', '', $param, '', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans('Type'), $_SERVER["PHP_SELF"], 'p.fk_product_type', '', $param, '', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans('Label'), $_SERVER["PHP_SELF"], 'p.label', '', $param, '', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans('NbOfProposals'), $_SERVER["PHP_SELF"], 'c', '', $param, 'align="right"', $sortfield, $sortorder);
-	print "</tr>\n";
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, "", $num, $totalnboflines, '');
 
+print '<table class="noborder" width="100%">';
 
-	$var=True;
-	while ($i < $num)
+print "<tr class=\"liste_titre\">";
+print_liste_field_titre($langs->trans('Ref'), $_SERVER["PHP_SELF"], 'p.ref', '', $param, '', $sortfield, $sortorder);
+print_liste_field_titre($langs->trans('Type'), $_SERVER["PHP_SELF"], 'p.fk_product_type', '', $param, '', $sortfield, $sortorder);
+print_liste_field_titre($langs->trans('Label'), $_SERVER["PHP_SELF"], 'p.label', '', $param, '', $sortfield, $sortorder);
+print_liste_field_titre($langs->trans('NbOfQtyInProposals'), $_SERVER["PHP_SELF"], 'c', '', $param, 'align="right"', $sortfield, $sortorder);
+print "</tr>\n";
+
+$var=True;
+foreach($infoprod as $prodid => $vals)
+{
+	// Multilangs
+	if (! empty($conf->global->MAIN_MULTILANGS)) // si l'option est active
 	{
-		$objp = $db->fetch_object($result);
+		$sql = "SELECT label";
+		$sql.= " FROM ".MAIN_DB_PREFIX."product_lang";
+		$sql.= " WHERE fk_product=".$prodid;
+		$sql.= " AND lang='". $langs->getDefaultLang() ."'";
+		$sql.= " LIMIT 1";
 
-		// Multilangs
-		if (! empty($conf->global->MAIN_MULTILANGS)) // si l'option est active
+		$resultp = $db->query($sql);
+		if ($resultp)
 		{
-			$sql = "SELECT label";
-			$sql.= " FROM ".MAIN_DB_PREFIX."product_lang";
-			$sql.= " WHERE fk_product=".$objp->rowid;
-			$sql.= " AND lang='". $langs->getDefaultLang() ."'";
-			$sql.= " LIMIT 1";
-
-			$resultp = $db->query($sql);
-			if ($resultp)
-			{
-				$objtp = $db->fetch_object($resultp);
-				if (! empty($objtp->label)) $objp->label = $objtp->label;
-			}
+			$objtp = $db->fetch_object($resultp);
+			if (! empty($objtp->label)) $vals['label'] = $objtp->label;
 		}
-
-		$var=!$var;
-		print "<tr ".$bc[$var].">";
-		print '<td><a href="'.DOL_URL_ROOT.'/product/stats/card.php?id='.$objp->rowid.'">';
-		if ($objp->type==1) print img_object($langs->trans("ShowService"),"service");
-		else print img_object($langs->trans("ShowProduct"),"product");
-		print " ";
-		print $objp->ref.'</a></td>';
-		print '<td>';
-		if ($objp->type==1) print $langs->trans("Service");
-		else print $langs->trans("Product");
-		print '</td>';
-		print '<td>'.$objp->label.'</td>';
-		print '<td align="right">'.$objp->c.'</td>';
-		print "</tr>\n";
-		$i++;
 	}
 
-	$db->free();
-
-	print "</table>";
+	$var=!$var;
+	print "<tr ".$bc[$var].">";
+	print '<td><a href="'.DOL_URL_ROOT.'/product/stats/card.php?id='.$prodid.'">';
+	if ($vals['type'] == 1) print img_object($langs->trans("ShowService"),"service");
+	else print img_object($langs->trans("ShowProduct"),"product");
+	print " ";
+	print $vals['ref'].'</a></td>';
+	print '<td>';
+	if ($vals['type'] == 1) print $langs->trans("Service");
+	else print $langs->trans("Product");
+	print '</td>';
+	print '<td>'.$vals['label'].'</td>';
+	print '<td align="right">'.$vals['nblineproposal'].'</td>';
+	print "</tr>\n";
+	$i++;
 }
+
+print "</table>";
+
 
 
 dol_fiche_end();

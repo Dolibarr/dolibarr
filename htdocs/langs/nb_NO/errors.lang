@@ -3,8 +3,6 @@
 # No errors
 NoErrorCommitIsDone=Ingen feil
 # Errors
-Error=Feil
-Errors=Feil
 ErrorButCommitIsDone=Valider selv om feil ble funnet
 ErrorBadEMail=E-post %s er feil
 ErrorBadUrl=Url %s er feil
@@ -63,7 +61,7 @@ ErrorSizeTooLongForVarcharType=Størrelse for lang for streng-type (%s tegn maks
 ErrorNoValueForSelectType=Sett inn verdi for å velge liste
 ErrorNoValueForCheckBoxType=Sett inn verdi for å velge avkrysningsboks-liste
 ErrorNoValueForRadioType=Sett i verdi for radioknapp-liste
-ErrorBadFormatValueList=The list value cannot have more than one comma: <u>%s</u>, but need at least one: key,value
+ErrorBadFormatValueList=Listeverdien kan ikke ha mer enn ett komma: <u>%s</u>, men må ha minst ett: nøkkel,verdi
 ErrorFieldCanNotContainSpecialCharacters=Feltet <b>%s</b> kan ikke inneholde spesialtegn.
 ErrorFieldCanNotContainSpecialNorUpperCharacters=Feltet <b>%s</b> må ikke inneholde spesialkarakterer, ikke store bokstaver og ikke bare tall
 ErrorNoAccountancyModuleLoaded=Ingen regnskapsmodul aktivert
@@ -172,8 +170,11 @@ ErrorFieldMustBeANumeric=Feltet <b>%s</b> må være en numerisk verdi
 ErrorFieldMustBeAnInteger=Feltet <b>%s</b> må være et heltall
 ErrorMandatoryParametersNotProvided=Obligatorisk(e) parametre ikke angitt
 ErrorOppStatusRequiredIfAmount=Sett inn et estimert beløp for denne muligheten. Status må også settes
+ErrorBadDefinitionOfMenuArrayInModuleDescriptor=Bad Definition Of Menu Array In Module Descriptor (bad value for key fk_menu)
+ErrorSavingChanges=En feil oppsto under lagring av endringer
 
 # Warnings
+WarningPasswordSetWithNoAccount=Et passord ble satt for dette medlemmet, men ingen brukerkonto ble opprettet. Det fører til at passordet ikke kan benyttes for å logge inn på Dolibarr. Det kan brukes av en ekstern modul/grensesnitt, men hvis du ikke trenger å definere noen innlogging eller passord for et medlem, kan du deaktivere alternativet "opprett en pålogging for hvert medlem" fra medlemsmodul-oppsettet. Hvis du trenger å administrere en pålogging, men ikke trenger noe passord, kan du holde dette feltet tomt for å unngå denne advarselen. Merk: E-post kan også brukes som en pålogging dersom medlemmet er knyttet til en bruker.
 WarningMandatorySetupNotComplete=Obligatoriske parametre er enda ikke satt opp
 WarningSafeModeOnCheckExecDir=Advarsel, PHP alternativet <b>safe_mode</b> er på så kommandere må lagres i en mappe erklært av php parameter <b>safe_mode_exec_dir.</b>
 WarningAllowUrlFopenMustBeOn=Parameteret <b>allow_url_fopen</b> må settes til <b>on</b> i filen <b>php.ini</b> for at denne modulen skal virke ordentlig. Du må endre denne filen manuelt.
@@ -191,5 +192,5 @@ WarningClickToDialUserSetupNotComplete=Oppsett av KlikkForÅRinge informasjon fo
 WarningNotRelevant=Irrelevant operasjon for dette datasettet
 WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=Egenskapen er deaktivert når visningsoppsettet er optimalisert for blinde personer eller tekstbaserte nettlesere.
 WarningPaymentDateLowerThanInvoiceDate=Betalingsdato (%s) er tidligere enn fakturadato (%s) for faktura %s.
-WarningTooManyDataPleaseUseMoreFilters=Too many data (more than %s lines). Please use more filters or set the constant %s to a higher limit.
+WarningTooManyDataPleaseUseMoreFilters=For mange data (mer enn %s linjer). Bruk flere filtre eller sett konstanten %s til en høyere grense.
 WarningSomeLinesWithNullHourlyRate=Når brukere ikke legger inn timeprisen riktig, kan 0 bli registrert. Dette kan resultere i feil verdisetting av tidsbruk

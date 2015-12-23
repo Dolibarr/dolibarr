@@ -3,6 +3,7 @@ Suppliers=Dobavitelji
 AddSupplier=Ustvari dobavitelja
 SupplierRemoved=Dobavitelj odstranjen
 SuppliersInvoice=Računi dobavitelja
+ShowSupplierInvoice=Pokaži račun dobavitelja
 NewSupplier=Nov dobavitelj
 History=Zgodovina
 ListOfSuppliers=Seznam dobaviteljev

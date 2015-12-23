@@ -48,7 +48,6 @@ RefusedReason=Lý do từ chối
 RefusedInvoicing=Thanh toán từ chối
 NoInvoiceRefused=Không sạc từ chối
 InvoiceRefused=Hóa đơn bị từ chối (Khách hàng từ chối thanh toán)
-Status=Tình trạng
 StatusUnknown=Không biết
 StatusWaiting=Chờ
 StatusTrans=Gửi

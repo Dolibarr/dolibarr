@@ -38,3 +38,4 @@ ShowStock=Показать склад
 DeleteArticle=Нажмите, чтобы удалить эту статью
 FilterRefOrLabelOrBC=Поиск (ссылке/метке)
 UserNeedPermissionToEditStockToUsePos=Вы просите уменьшить запас на складе при создании счёта, поэтому пользователь, использующий POS-терминал, должен иметь права доступа для редактирования запаса на складе.
+DolibarrReceiptPrinter=Dolibarr Receipt Printer

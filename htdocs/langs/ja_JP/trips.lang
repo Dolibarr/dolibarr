@@ -28,8 +28,6 @@ AnyOtherInThisListCanValidate=Person to inform for validation.
 TripSociete=Information company
 TripSalarie=Informations user
 TripNDF=Informations expense report
-DeleteLine=Delete a line of the expense report
-ConfirmDeleteLine=Are you sure you want to delete this line ?
 PDFStandardExpenseReports=Standard template to generate a PDF document for expense report
 ExpenseReportLine=Expense report line
 TF_OTHER=その他
@@ -53,8 +51,6 @@ AddLineMini=Add
 Date_DEBUT=Period date start
 Date_FIN=Period date end
 ModePaiement=Payment mode
-Note=Note
-Project=Project
 
 VALIDATOR=User responsible for approval
 VALIDOR=Approved by

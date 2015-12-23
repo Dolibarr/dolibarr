@@ -28,7 +28,7 @@ if (GETPOST('dol_use_jmobile')) $conf->dol_use_jmobile=1;
 // If we force to use jmobile, then we reenable javascript
 if (! empty($conf->dol_use_jmobile)) $conf->use_javascript_ajax=1;
 
-print top_htmlhead('',$langs->trans('Login').' '.$title);
+print top_htmlhead('',$langs->trans('SendNewPassword'));
 ?>
 <!-- BEGIN PHP TEMPLATE PASSWORDFORGOTTEN.TPL.PHP -->
 
@@ -48,7 +48,7 @@ $(document).ready(function () {
 <div class="login_vertical_align">
 
 
-<form id="login" name="login" method="post" action="<?php echo $php_self; ?>">
+<form id="login" name="login" method="POST" action="<?php echo $php_self; ?>">
 <input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">
 <input type="hidden" name="action" value="buildnewpassword">
 
@@ -77,7 +77,7 @@ $(document).ready(function () {
 <tr>
 <td valign="bottom" class="nowrap center">
 <span class="span-icon-user">
-<input type="text" placeholder="<?php echo $langs->trans("Login"); ?>" <?php echo $disabled; ?> id="username" name="username" class="flat input-icon-user" size="20" value="<?php echo dol_escape_htmltag($login); ?>" tabindex="1" />
+<input type="text" placeholder="<?php echo $langs->trans("Login"); ?>" <?php echo $disabled; ?> id="username" name="username" class="flat input-icon-user" size="20" value="<?php echo dol_escape_htmltag($username); ?>" tabindex="1" />
 </span>
 </td>
 </tr>

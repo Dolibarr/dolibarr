@@ -76,7 +76,7 @@ CronMethodHelp=The object method to launch. <BR> For exemple to fetch method of 
 CronArgsHelp=The method arguments. <BR> For exemple to fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value of paramters can be <i>0, ProductRef</i>
 CronCommandHelp=The system command line to execute.
 CronCreateJob=Create new Scheduled Job
-CronFrom=From
+CronFrom=De
 # Info
 CronInfoPage=Informação
 # Common

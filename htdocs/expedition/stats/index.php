@@ -48,6 +48,7 @@ $endyear=$year;
 
 $langs->load("sendings");
 $langs->load("other");
+$langs->load("companies");
 
 
 /*

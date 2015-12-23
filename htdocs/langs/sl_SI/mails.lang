@@ -84,9 +84,12 @@ EachInvoiceWillBeAttachedToEmail=Ustvarjen bo dokument na osnovi privzete predlo
 MailTopicSendRemindUnpaidInvoices=Opomin k računu %s (%s)
 SendRemind=Pošlji opomin po E-pošti
 RemindSent=%s poslanih opomin(ov)
-AllRecipientSelectedForRemind=Izbrani so vsi partnerji in če je nastavljen en e-naslov (opomba: poslano bo eno sporočilo za vsak račun)
+AllRecipientSelected=Izbrani vsi partnerji, ki jim je bila poslana pošta
 NoRemindSent=Noben opomin ni bil poslan po e-pošti
-ResultOfMassSending=Rezultat masovnega pošiljanja opominov po e-pošti
+ResultOfMailSending=Rezultati masovnega e-poštnega pošiljanja
+NbSelected=Št. izbranih
+NbIgnored=Št. ignoriranih
+NbSent=Št. poslanih
 
 # Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=Kontakti vseh partnerjev (kupci, možne stranke, dobavitelji, ...)
@@ -97,7 +100,7 @@ MailingModuleDescEmailsFromUser=E-pošta iz uporabnikovega vnosa (e-naslov;priim
 MailingModuleDescContactsCategories=Partnerji z e-naslovi (po kategorijah)
 MailingModuleDescDolibarrContractsLinesExpired=Partnerji s pretečenimi pogodbami
 MailingModuleDescContactsByCompanyCategory=Kontakt partnerja (po kategorijah partnerjev)
-MailingModuleDescContactsByCategory=Kontakti/naslovi partnerjev po kategorijah
+MailingModuleDescContactsByCategory=Kontakti/naslovi partnerjev (po kategorijah)
 MailingModuleDescMembersCategories=Člani fundacij (po kategorijah)
 MailingModuleDescContactsByFunction=Kontakti partnerjev (po delovnem mestu/funkciji)
 LineInFile=%s vrstica v datoteki

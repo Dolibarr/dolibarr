@@ -1,4 +1,4 @@
-
+# Dolibarr language file - Source file is en_US - resource
 MenuResourceIndex=Zasoby
 MenuResourceAdd=Nowe zasoby
 MenuResourcePlanning=Planowane Zasoby
@@ -17,6 +17,7 @@ ResourceFormLabel_description=Opis zasobów
 
 ResourcesLinkedToElement=Zasaby połączone z elementem
 
+ShowResource=Pokaż źródło
 ShowResourcePlanning=Pokaż zasoby planowane
 GotoDate=Idz do daty
 

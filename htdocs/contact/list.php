@@ -36,7 +36,9 @@ $langs->load("companies");
 $langs->load("suppliers");
 
 // Security check
+$id = GETPOST('id','int');
 $contactid = GETPOST('id','int');
+$ref = '';  // There is no ref for contacts
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'contact', $contactid,'');
 
@@ -74,7 +76,7 @@ $begin=GETPOST('begin');
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="p.lastname";
 if ($page < 0) { $page = 0; }
-$limit = $conf->liste_limit;
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $offset = $limit * $page;
 
 $langs->load("companies");
@@ -150,13 +152,20 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
    }
 }
 
+$object=new Contact($db);
+if (($id > 0 || ! empty($ref)) && $action != 'add')
+{
+    $result=$object->fetch($id,$ref);
+    if ($result < 0) dol_print_error($db);
+}
+
 
 /*
  * Actions
  */
 
 $parameters=array();
-$reshook=$hookmanager->executeHooks('doActions',$parameters);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('doActions',$parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';

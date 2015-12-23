@@ -1,2 +1,4 @@
 # Dolibarr language file - Source file is en_US - orders
+StatusOrderDraft=Borrador (debe ser validado)
+ClassifyBilled=Clasificar pago
 OrderSource0=Cotización

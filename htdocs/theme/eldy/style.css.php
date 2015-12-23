@@ -490,6 +490,9 @@ div.divsearchfield {
 div.confirmmessage {
 	padding-top: 6px;
 }
+div.myavailability {
+	padding-top: 6px;
+}
 /* Style to move picto into left of button */
 /*
 .buttonactionview {
@@ -633,6 +636,7 @@ div.ficheaddleft {
 	padding-right: 1px;
 	padding-top: 1px;
 	padding-bottom: 1px;
+	width: 44px;
 }
 div.attacharea {
 	padding-top: 10px;
@@ -658,6 +662,7 @@ div.statusref {
 	padding-right: 12px;
 	margin-top: 6px;
 	margin-bottom: 10px;
+	clear: both;
 }
 img.photoref {
 	border: 1px solid #CCC;
@@ -2323,8 +2328,6 @@ div.pagination li.paginationafterarrows {
 {
 <?php if ($colorbacklinepairhover) { ?>
 	background: rgb(<?php echo $colorbacklinepairhover; ?>) !important;
-<?php } else { ?>
-	/* background: rgba(0, 0, 0, 0.05) !important; */
 <?php } ?>
 }
 
@@ -2524,9 +2527,20 @@ div.tabBar .noborder {
     border-radius: 4px;
 }
 .boxstats:hover {
+<?php if ($colorbacklinepairhover) { ?>
+	background: rgb(<?php echo $colorbacklinepairhover; ?>) !important;
+<?php } else { ?>
 	background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklinepair1)); ?>;
+<?php } ?>
 }
-
+span.boxstatsindicator {
+	font-size: 110%;
+	font-weight: bold;
+}
+span.dashboardlineindicator, span.dashboardlineindicatorlate {
+	font-size: 120%;
+	font-weight: bold;
+}
 .boxtable {
     -moz-box-shadow: 3px 3px 4px #DDD;
     -webkit-box-shadow: 3px 3px 4px #DDD;
@@ -3352,7 +3366,6 @@ ul.filedirelem li {
 }
 
 ul.ecmjqft {
-	font-size: 11px;
 	line-height: 16px;
 	padding: 0px;
 	margin: 0px;
@@ -3631,7 +3644,21 @@ a span.select2-chosen
 
 .noborderoncategories {
 	border: none !important;
+	border-radius: 5px !important;
+	box-shadow: none;
+	-webkit-box-shadow: none !important;
+    box-shadow: none !important;
+    color: #fff !important;
 }
+span.noborderoncategories a, li.noborderoncategories a {
+	color: #fff !important;
+	line-height: normal;
+	vertical-align: top;
+}
+span.noborderoncategories {
+	padding: 3px 5px 0px 5px;
+}
+
 
 /* ============================================================================== */
 /*  Multiselect with checkbox                                                     */

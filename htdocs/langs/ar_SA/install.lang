@@ -52,9 +52,7 @@ ServerPortDescription=قاعدة بيانات الميناء. تبقي فارغ�
 DatabaseServer=خادم قاعدة البيانات
 DatabaseName=اسم قاعدة البيانات
 DatabasePrefix=قاعدة بيانات بادئة الجدول
-Login=تسجيل الدخول
 AdminLogin=ادخل لDolibarr مدير قاعدة البيانات. تبقي فارغة إذا لم يذكر اسمه في اتصال
-Password=كلمة السر
 PasswordAgain=أعد كتابة كلمة المرور مرة ثانية
 AdminPassword=Dolibarr كلمة السر لمدير قاعدة البيانات. تبقي فارغة إذا لم يذكر اسمه في اتصال
 CreateDatabase=إنشاء قاعدة بيانات
@@ -62,14 +60,11 @@ CreateUser=إنشاء مستخدم
 DatabaseSuperUserAccess=قاعدة بيانات -- وصول مستخدم الكومبيوتر ذو الصلاحيات العليا
 CheckToCreateDatabase=المربع إذا كان لا وجود قاعدة بيانات ، ويجب تهيئة. <br> في هذه الحالة ، يجب عليك ملء ادخل كلمة السر لحساب المستعملين المتميزين في أسفل هذه الصفحة.
 CheckToCreateUser=المربع اذا ادخل لا وجود له ، ويجب تهيئة. <br> في هذه الحالة ، يجب عليك ملء ادخل كلمة السر لحساب المستعملين المتميزين في أسفل هذه الصفحة.
-Experimental=(التجريبية وغير التشغيلية)
-Deprecated=(deprecated)
 DatabaseRootLoginDescription=ادخل يسمح للمستخدم لإنشاء قواعد بيانات جديدة أو المستخدمين الجدد ، وإذا كانت غير مجدية وقاعدة البيانات وقاعدة البيانات ادخل موجود بالفعل (مثل عندما كنت استضافته استضافة ويب).
 KeepEmptyIfNoPassword=ترك فارغا إذا لم المستخدم كلمة السر (تجنب هذا؟)
 SaveConfigurationFile=إنقاذ القيم
 ConfigurationSaving=إنقاذ ملفات
 ServerConnection=اتصال الخادم
-DatabaseConnection=قاعدة بيانات الصدد
 DatabaseCreation=إنشاء قاعدة بيانات
 UserCreation=إنشاء مستخدم
 CreateDatabaseObjects=إنشاء قاعدة بيانات الأجسام
@@ -92,7 +87,6 @@ GoToDolibarr=الذهاب إلى Dolibarr
 GoToSetupArea=الذهاب إلى Dolibarr (مجال الإعداد)
 MigrationNotFinished=نسخة من قاعدة البيانات الخاصة بك لا يصل تماما حتى الآن ، لذلك سيكون لديك لتشغيل عملية الترقية مرة أخرى.
 GoToUpgradePage=الذهاب لتحديث الصفحة مرة أخرى
-Examples=أمثلة
 WithNoSlashAtTheEnd=بدون خفض "/" في نهاية
 DirectoryRecommendation=وrecommanded به لاستخدام دليل خارج الدليل الخاص من صفحات موقعك.
 LoginAlreadyExists=موجود بالفعل
@@ -113,7 +107,6 @@ Upgrade=ترقية
 UpgradeDesc=استخدام هذه الطريقة إذا كنت قد حلت محل القديمة Dolibarr الملفات من الملفات مع إصدار أحدث. وهذا من شأنه رفع مستوى قاعدة البيانات والبيانات.
 Start=يبدأ
 InstallNotAllowed=الإعداد غير مسموح به <b>conf.php</b> الاذونات
-NotAvailable=غير متاحة
 YouMustCreateWithPermission=يجب إنشاء ملف ق ٪ ومجموعة الكتابة على أذونات لملقم الويب أثناء عملية التثبيت.
 CorrectProblemAndReloadPage=يرجى تحديد المشكلة والصحافة F5 لإعادة تحميل الصفحة.
 AlreadyDone=بالفعل هاجر
@@ -155,7 +148,7 @@ MigrationFinished=الانتهاء من الهجرة
 LastStepDesc=<strong>الخطوة الأخيرة</strong> : تعريف المستخدم وكلمة السر هنا كنت تخطط لاستخدامها للاتصال البرمجيات. لا تفقد هذا كما هو حساب لإدارة جميع الآخرين.
 ActivateModule=تفعيل وحدة %s
 ShowEditTechnicalParameters=انقر هنا لعرض/تحرير المعلمات المتقدمة (وضع الخبراء)
-WarningUpgrade=Warning:\nDid your run a database backup first ?\nThis is highly recommanded: for example, due to some bugs into databases systems (for example mysql version 5.5.40), some data or tables may be lost during this process, so it is highly recommanded to have a complete dump of your database before starting migration.\n\nClick OK to start migration process...
+WarningUpgrade=Warning:\nDid your run a database backup first ?\nThis is highly recommanded: for example, due to some bugs into databases systems (for example mysql version 5.5.40/41/42/43), some data or tables may be lost during this process, so it is highly recommanded to have a complete dump of your database before starting migration.\n\nClick OK to start migration process...
 ErrorDatabaseVersionForbiddenForMigration=Your database version is %s. It has a critical bug making data loss if you make structure change on your database, like it is required by the migration process. For his reason, migration will not be allowed until you upgrade your database to a higher fixed version (list of known bugged version: %s)
 
 #########

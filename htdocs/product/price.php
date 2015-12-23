@@ -6,7 +6,7 @@
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2014		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014		Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2014 	    Philippe Grand 		    <philippe.grand@atoo-net.com>
+ * Copyright (C) 2014-2015 	Philippe Grand 		    <philippe.grand@atoo-net.com>
  * Copyright (C) 2014		Ion agorria				<ion@agorria.com>
  * Copyright (C) 2015		Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
@@ -53,6 +53,8 @@ $action = GETPOST('action', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 $eid = GETPOST('eid', 'int');
 
+$search_soc = GETPOST('search_soc');
+
 // Security check
 $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref : ''));
 $fieldtype = (! empty($ref) ? 'ref' : 'rowid');
@@ -84,6 +86,11 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
+    if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+    {
+        $search_soc = '';        
+    }
+    
 	if (($action == 'update_vat') && !$cancel && ($user->rights->produit->creer || $user->rights->service->creer))
 	{
 	    $object->tva_tx = GETPOST('tva_tx');
@@ -131,7 +138,7 @@ if (empty($reshook))
 
 				if ($priceparser->parseProduct($object) < 0) {
 					$error ++;
-					setEventMessage($priceparser->translatedError(), 'errors');
+					setEventMessages($priceparser->translatedError(), null, 'errors');
 				}
 			}
 		}
@@ -194,7 +201,7 @@ if (empty($reshook))
 				$newprice_min = price2num($val['price_min'], 'MU');
 
 				if (!empty($conf->global->PRODUCT_MINIMUM_RECOMMENDED_PRICE) && $newprice_min < $maxpricesupplier) {
-					setEventMessage($langs->trans("MinimumPriceLimit", price($maxpricesupplier, 0, '', 1, - 1, - 1, 'auto')), 'errors');
+					setEventMessages($langs->trans("MinimumPriceLimit", price($maxpricesupplier, 0, '', 1, - 1, - 1, 'auto')), null, 'errors');
 					$error ++;
 					break;
 				}
@@ -203,7 +210,7 @@ if (empty($reshook))
 
 				if ($res < 0) {
 					$error ++;
-					setEventMessage($object->error, 'errors');
+					setEventMessages($object->error, $object->errors, 'errors');
 					break;
 				}
 			}
@@ -211,12 +218,12 @@ if (empty($reshook))
 
 		if (!$error && $object->update($object->id, $user) < 0) {
 			$error++;
-			setEventMessage($object->error, 'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 
 		if (empty($error)) {
 			$action = '';
-			setEventMessage($langs->trans("RecordSaved"));
+			setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 			$db->commit();
 		} else {
 			$action = 'edit_price';
@@ -229,7 +236,7 @@ if (empty($reshook))
 	{
 		$result = $object->log_price_delete($user, $_GET ["lineid"]);
 		if ($result < 0) {
-			setEventMessage($object->error, 'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 
@@ -341,7 +348,7 @@ if (empty($reshook))
 
 		if (! empty($conf->global->PRODUCT_MINIMUM_RECOMMENDED_PRICE) && $prodcustprice->price_min<$maxpricesupplier)
 		{
-			setEventMessage($langs->trans("MinimumPriceLimit",price($maxpricesupplier,0,'',1,-1,-1,'auto')),'errors');
+			setEventMessages($langs->trans("MinimumPriceLimit",price($maxpricesupplier,0,'',1,-1,-1,'auto')), null, 'errors');
 			$error++;
 			$action='add_customer_price';
 		}
@@ -351,9 +358,9 @@ if (empty($reshook))
 			$result = $prodcustprice->create($user, 0, $update_child_soc);
 
 			if ($result < 0) {
-				setEventMessage($prodcustprice->error, 'errors');
+				setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
 			} else {
-				setEventMessage($langs->trans('RecordSaved'), 'mesgs');
+				setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 			}
 
 			$action = '';
@@ -367,9 +374,9 @@ if (empty($reshook))
 		$result = $prodcustprice->delete($user);
 
 		if ($result < 0) {
-			setEventMessage($prodcustprice->error, 'mesgs');
+			setEventMessages($prodcustprice->error, $prodcustprice->errors, 'mesgs');
 		} else {
-			setEventMessage($langs->trans('RecordDeleted'), 'errors');
+			setEventMessages($langs->trans('RecordDeleted'), null, 'errors');
 		}
 		$action = '';
 	}
@@ -391,7 +398,7 @@ if (empty($reshook))
 
 		if ($prodcustprice->price_min<$maxpricesupplier && !empty($conf->global->PRODUCT_MINIMUM_RECOMMENDED_PRICE))
 		{
-			setEventMessage($langs->trans("MinimumPriceLimit",price($maxpricesupplier,0,'',1,-1,-1,'auto')),'errors');
+			setEventMessages($langs->trans("MinimumPriceLimit",price($maxpricesupplier,0,'',1,-1,-1,'auto')), null, 'errors');
 			$error++;
 			$action='update_customer_price';
 		}
@@ -401,9 +408,9 @@ if (empty($reshook))
 			$result = $prodcustprice->update($user, 0, $update_child_soc);
 
 			if ($result < 0) {
-				setEventMessage($prodcustprice->error, 'errors');
+				setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
 			} else {
-				setEventMessage($langs->trans('Save'), 'mesgs');
+				setEventMessages($langs->trans('Save'), null, 'mesgs');
 			}
 
 			$action = '';
@@ -1164,7 +1171,6 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		// Build filter to diplay only concerned lines
 	$filter = array('t.fk_product' => $object->id);
 
-	$search_soc = GETPOST('search_soc');
 	if (! empty($search_soc)) {
 		$filter['soc.nom'] = $search_soc;
 	}
@@ -1257,7 +1263,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 
 		$result = $prodcustprice->fetch(GETPOST('lineid', 'int'));
 		if ($result < 0) {
-			setEventMessage($prodcustprice->error, 'errors');
+			setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
 		}
 
 		print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
@@ -1346,7 +1352,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 
 		$result = $prodcustprice->fetch_all_log($sortorder, $sortfield, $conf->liste_limit, $offset, $filter);
 		if ($result < 0) {
-			setEventMessage($prodcustprice->error, 'errors');
+			setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
 		}
 
 		$option = '&socid=' . GETPOST('socid', 'int') . '&id=' . $object->id;
@@ -1422,7 +1428,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 
 		$result = $prodcustprice->fetch_all($sortorder, $sortfield, $conf->liste_limit, $offset, $filter);
 		if ($result < 0) {
-			setEventMessage($prodcustprice->error, 'errors');
+			setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
 		}
 
 		$option = '&search_soc=' . $search_soc . '&id=' . $object->id;
@@ -1447,7 +1453,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		print '<td>&nbsp;</td>';
 		print '</tr>';
 
-		if (count($prodcustprice->lines) > 0)
+		if (count($prodcustprice->lines) > 0 || $search_soc)
 		{
     		print '<tr class="liste_titre">';
     		print '<td><input type="text" class="flat" name="search_soc" value="' . $search_soc . '" size="20"></td>';
@@ -1455,9 +1461,14 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
     		// Print the search button
     		print '<td class="liste_titre" align="right">';
     		print '<input class="liste_titre" name="button_search" type="image" src="' . DOL_URL_ROOT . '/theme/' . $conf->theme . '/img/search.png" value="' . dol_escape_htmltag($langs->trans("Search")) . '" title="' . dol_escape_htmltag($langs->trans("Search")) . '">';
+    		print ' ';
+    		print '<input class="liste_titre" name="button_removefilter" type="image" src="' . DOL_URL_ROOT . '/theme/' . $conf->theme . '/img/searchclear.png" value="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '" title="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '">';
     		print '</td>';
     		print '</tr>';
-		    
+		}
+		
+		if (count($prodcustprice->lines) > 0)
+		{
 		    $var = False;
 
 			foreach ($prodcustprice->lines as $line)

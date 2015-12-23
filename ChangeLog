@@ -148,6 +148,8 @@ NEW: Add restler framework. First step to build REST API into Dolibarr.
 
 WARNING: 
 
+Dolibarr 3.9 is not yet fully compatible with PHP 7.
+
 Following changes may create regression for some external modules, but were necessary to make
 Dolibarr better:
 - Deprecated Product::setPriceExpression. Use Product::update instead

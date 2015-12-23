@@ -1,7 +1,7 @@
-# Dolibarr language file - Source file is en_US - users
+# Dolibarr language file - Source file is en_US - salaries
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Code comptable pour les paiements des salaires
-SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Code comptable pour les charges financières
-Salary=Salaires
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Code comptable pour les charges de personnel
+Salary=Salaire
 Salaries=Salaires
 Employee=Employé
 NewSalaryPayment=Nouveau règlement de salaire

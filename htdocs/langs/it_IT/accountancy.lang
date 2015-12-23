@@ -1,5 +1,4 @@
 # Dolibarr language file - en_US - Accounting Expert
-CHARSET=UTF-8
 ACCOUNTING_EXPORT_SEPARATORCSV=Column separator for export file
 ACCOUNTING_EXPORT_DATE=Date format for export file
 ACCOUNTING_EXPORT_PIECE=Export the number of piece
@@ -12,8 +11,6 @@ ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
 
 Accounting=Contabilità avanzata
 Globalparameters=Parametri globali
-Chartofaccounts=Lista degli account
-Fiscalyear=Anni fiscali
 Menuaccount=Account contabilità
 Menuthirdpartyaccount=Account terze parti
 MenuTools=Strumenti
@@ -33,23 +30,17 @@ Back=Indietro
 
 Definechartofaccounts=Definisci una lista degli account
 Selectchartofaccounts=Seleziona una lista degli account
-Validate=Convalida
 Addanaccount=Aggiungi un account di contabilità
 AccountAccounting=Account di contabilità
 AccountAccountingSuggest=Accounting account suggest
 Ventilation=Breakdown
-ToDispatch=Da spedire
-Dispatched=Spedito
 
 CustomersVentilation=Breakdown customers
 SuppliersVentilation=Breakdown suppliers
 TradeMargin=Margine commerciale
 Reports=Report
 ByCustomerInvoice=Per fatture clienti
-ByMonth=Per mese
 NewAccount=Nuovo account di contabilità
-Update=Aggiorna
-List=Elenco
 Create=Crea
 CreateMvts=Create movement
 UpdateAccount=Modifica di un account di contabilità
@@ -61,7 +52,6 @@ AccountBalanceByMonth=Salso del conto per mese
 AccountingVentilation=Breakdown accounting
 AccountingVentilationSupplier=Breakdown accounting supplier
 AccountingVentilationCustomer=Breakdown accounting customer
-Line=Riga
 
 CAHTF=Total purchase supplier before tax
 InvoiceLines=Lines of invoice to be ventilated
@@ -112,22 +102,19 @@ Docref=Riferimento
 Numerocompte=Account
 Code_tiers=Terza parte
 Labelcompte=Etichetta account
-Debit=Debito
-Credit=Credito
-Amount=Importo
 Sens=Verso
 Codejournal=Giornale
 
 DelBookKeeping=Delete the records of the general ledger
 
-SellsJournal=Giornale di vendita
-PurchasesJournal=Giornale acquisti
 DescSellsJournal=Giornale di vendita
 DescPurchasesJournal=Giornale acquisti
 BankJournal=Giornale bancario
 DescBankJournal=Bank journal including all the types of payments other than cash
 CashJournal=Cash journal
 DescCashJournal=Cash journal including the type of payment cash
+FinanceJournal=Finance journal
+DescFinanceJournal=Finance journal including all the types of payments by bank account
 
 CashPayment=Cash Payment
 
@@ -150,9 +137,6 @@ Pcgversion=Version of the plan
 Pcgtype=Class of account
 Pcgsubtype=Under class of account
 Accountparent=Root of the account
-Active=Statement
-
-NewFiscalYear=Nuovo anno fiscale
 
 DescVentilCustomer=Consult here the annual breakdown accounting of your invoices customers
 TotalVente=Total turnover before tax

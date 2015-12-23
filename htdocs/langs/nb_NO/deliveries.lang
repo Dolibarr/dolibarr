@@ -7,6 +7,7 @@ DeliveryOrders=Leveringsordre
 DeliveryDate=Leveringsdato
 DeliveryDateShort=Lev. dato
 CreateDeliveryOrder=Opprett leveringsordre
+DeliveryStateSaved=Leveringsstatus lagret
 QtyDelivered=Ant. levert
 SetDeliveryDate=Angi leveringsdato
 ValidateDeliveryReceipt=Godkjenn leveringskvittering

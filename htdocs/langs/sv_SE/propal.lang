@@ -53,6 +53,7 @@ ListOfProposals=Förteckning över kommersiella förslag
 ActionsOnPropal=Åtgärder för förslag
 NoOpenedPropals=No open commercial proposals
 NoOtherOpenedPropals=No other open commercial proposals
+NoPropal=No commercial proposal
 RefProposal=Kommersiella förslag ref
 SendPropalByMail=Skicka kommersiella förslag per post
 AssociatedDocuments=Handlingar i samband med förslaget:

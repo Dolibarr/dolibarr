@@ -2733,10 +2733,24 @@ elseif (! empty($object->id))
 				// Reopen
 				if (in_array($object->statut, array(2)))
 				{
-					if ($user->rights->fournisseur->commande->commander)
-					{
-						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("Disapprove").'</a>';
-					}
+				    $buttonshown=0;
+				    if (! $buttonshown && $user->rights->fournisseur->commande->approuver)
+				    {
+				        if (empty($conf->global->SUPPLIER_ORDER_REOPEN_BY_APPROVER_ONLY)
+				            || (! empty($conf->global->SUPPLIER_ORDER_REOPEN_BY_APPROVER_ONLY) && $user->id == $object->user_approve_id))
+				        {
+				            print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("Disapprove").'</a>';
+				            $buttonshown++;
+				        }
+				    }
+				    if (! $buttonshown && $user->rights->fournisseur->commande->approve2 && ! empty($conf->global->SUPPLIER_ORDER_DOUBLE_APPROVAL))
+				    {
+				        if (empty($conf->global->SUPPLIER_ORDER_REOPEN_BY_APPROVER2_ONLY)
+				            || (! empty($conf->global->SUPPLIER_ORDER_REOPEN_BY_APPROVER2_ONLY) && $user->id == $object->user_approve_id2))
+				        {
+				            print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("Disapprove").'</a>';
+				        }
+				    }
 				}
 				if (in_array($object->statut, array(3, 5, 6, 7, 9)) || ($object->statut == 4 && $object->billed))
 				{

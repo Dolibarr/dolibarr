@@ -53,6 +53,7 @@ ListOfProposals=Llistat de pressupostos
 ActionsOnPropal=Esdeveniments sobre el pressupost
 NoOpenedPropals=Sense pressupostos oberts
 NoOtherOpenedPropals=No hi ha altres pressupostos oberts
+NoPropal=Sense pressupost
 RefProposal=Ref. pressupost
 SendPropalByMail=Enviar pressupost per e-mail
 AssociatedDocuments=Documents associats al pressupost:

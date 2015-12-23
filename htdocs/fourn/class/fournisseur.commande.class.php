@@ -498,7 +498,7 @@ class CommandeFournisseur extends CommonOrder
      */
     function getLibStatut($mode=0)
     {
-        return $this->LibStatut($this->statut,$mode);
+        return $this->LibStatut($this->statut,$mode,$this->billed);
     }
 
     /**
@@ -506,16 +506,17 @@ class CommandeFournisseur extends CommonOrder
      *
      * 	@param  int		$statut		Id statut
      *  @param  int		$mode       0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto
+     *  @param  int     $billed     1=Billed
      *  @return string				Label of status
      */
-    function LibStatut($statut,$mode=0)
+    function LibStatut($statut,$mode=0,$billed=0)
     {
         global $langs;
         $langs->load('orders');
 
         $billedtext='';
 		//if ($statut==5 && $this->billed == 1) $statut = 8;
-        if ($this->billed == 1) $billedtext=$langs->trans("Billed");
+        if ($billed == 1) $billedtext=$langs->trans("Billed");
         
         // List of language codes for status
         $statutshort[0] = 'StatusOrderDraftShort';
@@ -732,7 +733,8 @@ class CommandeFournisseur extends CommonOrder
 
             // Do we have to change status now ? (If double approval is required and first approval, we keep status to 1 = validated)
 			$movetoapprovestatus=true;
-
+			$comment='';
+			
             $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
 			$sql.= " SET ref='".$this->db->escape($num)."',";
 			if (empty($secondlevel))	// standard or first level approval
@@ -741,7 +743,11 @@ class CommandeFournisseur extends CommonOrder
     	        $sql.= " fk_user_approve = ".$user->id;
     	        if (! empty($conf->global->SUPPLIER_ORDER_DOUBLE_APPROVAL) && $conf->global->MAIN_FEATURES_LEVEL > 0 && $this->total_ht >= $conf->global->SUPPLIER_ORDER_DOUBLE_APPROVAL)
     	        {
-    	        	if (empty($this->user_approve_id2)) $movetoapprovestatus=false;		// second level approval not done
+    	        	if (empty($this->user_approve_id2)) 
+    	        	{
+    	        	    $movetoapprovestatus=false;		// second level approval not done
+    	        	    $comment=' (first level)';
+    	        	}
     	        }
 			}
 			else	// request a second level approval
@@ -749,6 +755,7 @@ class CommandeFournisseur extends CommonOrder
             	$sql.= " date_approve2='".$this->db->idate($now)."',";
             	$sql.= " fk_user_approve2 = ".$user->id;
     	        if (empty($this->user_approve_id)) $movetoapprovestatus=false;		// first level approval not done
+    	        $comment=' (second level)';
 			}
 			// If double approval is required and first approval, we keep status to 1 = validated
 			if ($movetoapprovestatus) $sql.= ", fk_statut = 2";
@@ -758,7 +765,7 @@ class CommandeFournisseur extends CommonOrder
 
             if ($this->db->query($sql))
             {
-                $this->log($user, 2, time());	// Statut 2
+                $this->log($user, 2, time(), $comment);	// Statut 2
 
             	if (! empty($conf->global->SUPPLIER_ORDER_AUTOADD_USER_CONTACT))
 	            {

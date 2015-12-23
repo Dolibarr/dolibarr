@@ -19,6 +19,7 @@ ServiceStatusLateShort=Abgelaufen
 ServiceStatusClosed=Geschlossen
 ServicesLegend=Services Legende
 Contracts=Verträge
+ContractsSubscriptions=Contracts/Subscriptions
 ContractsAndLine=Verträge und Zeilen von Verträgen
 Contract=Vertrag
 ContractLine=Vertragszeile
@@ -30,6 +31,7 @@ MenuRunningServices=Laufende Leistungen
 MenuExpiredServices=Abgelaufene Leistungen
 MenuClosedServices=Geschlossene Services
 NewContract=Neuer Vertrag
+NewContractSubscription=New contract/subscription
 AddContract=Vertrag erstellen
 SearchAContract=Kundenvertrag suchen
 DeleteAContract=Löschen eines Vertrages
@@ -98,8 +100,8 @@ OnlyLinesWithTypeServiceAreUsed=Nur die Zeile der Kategorie "Service" wird kopie
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Vertragsunterzeichnung durch Vertreter
-TypeContact_contrat_internal_SALESREPFOLL=Vertragsnachverfolgung durch Vertreter
+TypeContact_contrat_internal_SALESREPFOLL=Vertrag Nachbetreuung durch Vertreter
 TypeContact_contrat_external_BILLING=Rechnungskontakt des Kunden
-TypeContact_contrat_external_CUSTOMER=Nachverfolgung durch Kundenkontakt
+TypeContact_contrat_external_CUSTOMER=Nachbetreuung durch Kundenkontakt
 TypeContact_contrat_external_SALESREPSIGN=Vertragsunterzeichnung durch Kundenkontakt
 Error_CONTRACT_ADDON_NotDefined=Die Konstante CONTRACT_ADDON ist nicht definiert

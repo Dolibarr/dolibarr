@@ -84,9 +84,12 @@ EachInvoiceWillBeAttachedToEmail=A document using default invoice document templ
 MailTopicSendRemindUnpaidInvoices=Reminder of invoice %s (%s)
 SendRemind=Send reminder by EMails
 RemindSent=%s reminder(s) sent
-AllRecipientSelectedForRemind=All thirdparties selected and if an email is set (note that one mail per invoice will be sent)
+AllRecipientSelected=All thirdparties selected and if an email is set.
 NoRemindSent=No EMail reminder sent
-ResultOfMassSending=Result of mass EMail reminders sending
+ResultOfMailSending=Result of mass EMail sending
+NbSelected=Nb selected
+NbIgnored=Nb ignored
+NbSent=Nb sent
 
 # Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=Kapcsolatok minden harmadik felek (vevő, kilátás, szállító, ...)
@@ -97,7 +100,7 @@ MailingModuleDescEmailsFromUser=EMails from user input (email;lastname;firstname
 MailingModuleDescContactsCategories=Harmadik felek (kategóriánként)
 MailingModuleDescDolibarrContractsLinesExpired=Harmadik feleknek a lejárt szerződést vonalak
 MailingModuleDescContactsByCompanyCategory=Kapcsolatok harmadik fél (a harmadik felek által kategória)
-MailingModuleDescContactsByCategory=Contacts/addresses of third parties by category
+MailingModuleDescContactsByCategory=Contacts/addresses of third parties (by category)
 MailingModuleDescMembersCategories=Alapítvány tagjai (a kategóriák)
 MailingModuleDescContactsByFunction=Kapcsolatok harmadik fél (a pozíció / funkció)
 LineInFile=Vonal %s fájlban

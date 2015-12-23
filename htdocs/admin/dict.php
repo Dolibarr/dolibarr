@@ -478,20 +478,16 @@ if ($id == 11)
 if ($id == 25)
 {
 	// We save list of template type Dolibarr can manage. This list can found by a grep into code on "->param['models']"
-	$elementList = array(
-			'propal_send'    => $langs->trans('MailToSendProposal'),
-			'order_send'     => $langs->trans('MailToSendOrder'),
-			'facture_send'   => $langs->trans('MailToSendInvoice'),
-
-			'shipping_send'  => $langs->trans('MailToSendShipment'),
-			'fichinter_send' => $langs->trans('MailToSendIntervention'),
-
-			'supplier_proposal_send'  => $langs->trans('MailToSendSupplierRequestForQuotation'),
-			'order_supplier_send'    => $langs->trans('MailToSendSupplierOrder'),
-			'invoice_supplier_send'  => $langs->trans('MailToSendSupplierInvoice'),
-
-			'thirdparty'    => $langs->trans('MailToThirdparty')
-	);
+	$elementList = array();
+	if ($conf->propal->enabled) $elementList['propal_send']=$langs->trans('MailToSendProposal');
+	if ($conf->commande->enabled) $elementList['order_send']=$langs->trans('MailToSendOrder');
+	if ($conf->facture->enabled) $elementList['facture_send']=$langs->trans('MailToSendInvoice');
+	if ($conf->expedition->enabled) $elementList['shipping_send']=$langs->trans('MailToSendShipment');
+	if ($conf->ficheinter->enabled) $elementList['fichinter_send']=$langs->trans('MailToSendIntervention');
+	if ($conf->supplier_proposal->enabled) $elementList['supplier_proposal_send']=$langs->trans('MailToSendSupplierRequestForQuotation');
+	if ($conf->fournisseur->enabled) $elementList['order_supplier_send']=$langs->trans('MailToSendSupplierOrder');
+	if ($conf->fournisseur->enabled) $elementList['invoice_supplier_send']=$langs->trans('MailToSendSupplierInvoice');
+	if ($conf->societe->enabled) $elementList['thirdparty']=$langs->trans('MailToThirdparty');
 }
 
 // Define localtax_typeList (used for dictionary "llx_c_tva")

@@ -65,18 +65,28 @@ class PaiementFourn extends Paiement
 	/**
 	 *	Load payment object
 	 *
-	 *	@param	int		$id     Id if payment to get
-	 *	@return int     		<0 if ko, >0 if ok
+	 *	@param	int		$id         Id if payment to get
+	 *  @param	string	$ref		Ref of payment to get (currently ref = id but this may change in future)
+	 *  @param	int		$fk_bank	Id of bank line associated to payment
+	 *  @return int		            <0 if KO, -2 if not found, >0 if OK
 	 */
-	function fetch($id)
+	function fetch($id, $ref='', $fk_bank='')
 	{
+	    $error=0;
+	    
 		$sql = 'SELECT p.rowid, p.datep as dp, p.amount, p.statut, p.fk_bank,';
 		$sql.= ' c.code as paiement_code, c.libelle as paiement_type,';
 		$sql.= ' p.num_paiement, p.note, b.fk_account';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'c_paiement as c, '.MAIN_DB_PREFIX.'paiementfourn as p';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid ';
 		$sql.= ' WHERE p.fk_paiement = c.id';
-		$sql.= ' AND p.rowid = '.$id;
+		if ($id > 0)
+			$sql.= ' AND p.rowid = '.$id;
+		else if ($ref)
+			$sql.= ' AND p.rowid = '.$ref;
+		else if ($fk_bank)
+			$sql.= ' AND p.fk_bank = '.$fk_bank;
+
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -99,7 +109,7 @@ class PaiementFourn extends Paiement
 			}
 			else
 			{
-				$error = -2;
+				$error = -2;    // TODO Use 0 instead
 			}
 			$this->db->free($resql);
 		}

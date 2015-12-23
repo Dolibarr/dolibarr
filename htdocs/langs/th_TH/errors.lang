@@ -3,8 +3,6 @@
 # No errors
 NoErrorCommitIsDone=ไม่มีข้อผิดพลาดที่เรากระทำ
 # Errors
-Error=ความผิดพลาด
-Errors=ข้อผิดพลาด
 ErrorButCommitIsDone=พบข้อผิดพลาด แต่เราตรวจสอบอย่างไรก็ตามเรื่องนี้
 ErrorBadEMail=อีเมล% s ไม่ถูกต้อง
 ErrorBadUrl=% s url ที่ไม่ถูกต้อง
@@ -172,8 +170,11 @@ ErrorFieldMustBeANumeric=<b>s สนาม%</b> จะต้องเป็น�
 ErrorFieldMustBeAnInteger=<b>s สนาม%</b> ต้องเป็นจำนวนเต็ม
 ErrorMandatoryParametersNotProvided=พารามิเตอร์บังคับ (s) ไม่ได้ให้
 ErrorOppStatusRequiredIfAmount=You set an estimated amount for this opportunity/lead. So you must also enter its status
+ErrorBadDefinitionOfMenuArrayInModuleDescriptor=Bad Definition Of Menu Array In Module Descriptor (bad value for key fk_menu)
+ErrorSavingChanges=An error has ocurred when saving the changes
 
 # Warnings
+WarningPasswordSetWithNoAccount=A password was set for this member. However, no user account was created. So this password is stored but can't be used to login to Dolibarr. It may be used by an external module/interface but if you don't need to define any login nor password for a member, you can disable option "Manage a login for each member" from Member module setup. If you need to manage a login but don't need any password, you can keep this field empty to avoid this warning. Note: Email can also be used as a login if the member is linked to a user.
 WarningMandatorySetupNotComplete=พารามิเตอร์การตั้งค่าบังคับไม่ได้กำหนดไว้ยัง
 WarningSafeModeOnCheckExecDir=เตือนตัวเลือก PHP <b>safe_mode</b> อยู่ในคำสั่งดังนั้นจะต้องเก็บไว้ในไดเรคทอประกาศโดย PHP พารามิเตอร์ <b>safe_mode_exec_dir</b>
 WarningAllowUrlFopenMustBeOn=<b>allow_url_fopen พารามิเตอร์จะต้องตั้งค่าใน php.ini</b> filer มีโมดูลนี้ทำงานได้อย่างสมบูรณ์ คุณต้องแก้ไขไฟล์นี้ด้วยตนเอง

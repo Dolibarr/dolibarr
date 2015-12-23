@@ -28,8 +28,6 @@ AnyOtherInThisListCanValidate=Informovat osobu o schválení.
 TripSociete=Informace o firmě
 TripSalarie=Informace o uživateli
 TripNDF=Informace o správě nákladů
-DeleteLine=Odstranění řádku zprávy výdajů
-ConfirmDeleteLine=Jste si jisti, že chcete smazat tento řádek?
 PDFStandardExpenseReports=Standardní šablona pro vytvoření PDF dokumentu pro zprávy o výdajích
 ExpenseReportLine=Výdajová zpráva řádek
 TF_OTHER=Ostatní
@@ -53,8 +51,6 @@ AddLineMini=Přidat
 Date_DEBUT=Datum zahájení období
 Date_FIN=Datum ukončení období
 ModePaiement=Režim platby
-Note=poznámka
-Project=Projekt
 
 VALIDATOR=Uživatel odpovídá za schválení
 VALIDOR=Schváleno
