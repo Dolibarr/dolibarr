@@ -573,3 +573,5 @@ insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays
 
 ALTER TABLE llx_accounting_bookkeeping MODIFY COLUMN doc_ref varchar(255) NOT NULL;
 
+ALTER TABLE llx_holiday ADD COLUMN tms timestamp;
+ALTER TABLE llx_holiday ADD COLUMN entity integer DEFAULT 1 NOT NULL;

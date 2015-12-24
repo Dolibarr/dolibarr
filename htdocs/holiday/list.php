@@ -102,6 +102,9 @@ $holiday = new Holiday($db);
 $holidaystatic=new Holiday($db);
 $fuser = new User($db);
 
+$childids = $user->getAllChildIds();
+$childids[]=$user->id;
+
 // Update sold
 $result = $holiday->updateBalance();
 
@@ -184,6 +187,7 @@ if (!empty($sall))
 	$filter.= natural_search(array_keys($fieldstosearchall), $sall);
 }
 
+if (empty($user->rights->holiday->read_all)) $filter.=' AND cp.fk_user IN ('.join(',',$childids).')';
 
 /*************************************
  * Fin des filtres de recherche
