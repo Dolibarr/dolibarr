@@ -140,7 +140,82 @@ $max=10;
 
 $langs->load("boxes");
 
-// Last trips
+
+
+// Last expense report (new module)
+if (! empty($conf->holiday->enabled) && $user->rights->holiday->read)
+{
+    $sql = "SELECT u.rowid as uid, u.lastname, u.firstname, x.rowid, x.rowid as ref, x.fk_type, x.date_debut as date_start, x.date_fin as date_end, x.halfday, x.tms as dm, x.statut as status";
+    $sql.= " FROM ".MAIN_DB_PREFIX."holiday as x, ".MAIN_DB_PREFIX."user as u";
+    $sql.= " WHERE u.rowid = x.fk_user";
+    $sql.= " AND x.entity = ".$conf->entity;
+    if (empty($user->rights->holiday->read_all)) $sql.=' AND x.fk_user IN ('.join(',',$childids).')';
+    //if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND x.fk_soc = s. rowid AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+    //if (!empty($socid)) $sql.= " AND x.fk_soc = ".$socid;
+    $sql.= $db->order("x.tms","DESC");
+    $sql.= $db->plimit($max, 0);
+
+    $result = $db->query($sql);
+    if ($result)
+    {
+        $var=false;
+        $num = $db->num_rows($result);
+
+        $holidaystatic=new Holiday($db);
+        $userstatic=new User($db);
+        
+        $listhalfday=array('morning'=>$langs->trans("Morning"),"afternoon"=>$langs->trans("Afternoon"));
+        $typeleaves=$holidaystatic->getTypes(1,-1);
+        
+        $i = 0;
+
+        print '<table class="noborder" width="100%">';
+        print '<tr class="liste_titre">';
+        print '<td colspan="3">'.$langs->trans("BoxTitleLastLeaveRequests",min($max,$num)).'</td>';
+        print '<td>'.$langs->trans("from").'</td>';
+        print '<td>'.$langs->trans("to").'</td>';
+        print '<td align="right">'.$langs->trans("DateModificationShort").'</td>';
+        print '<td width="16">&nbsp;</td>';
+        print '</tr>';
+        if ($num)
+        {
+            while ($i < $num && $i < $max)
+            {
+                $obj = $db->fetch_object($result);
+                $holidaystatic->id=$obj->rowid;
+                $holidaystatic->ref=$obj->ref;
+                $userstatic->id=$obj->uid;
+                $userstatic->lastname=$obj->lastname;
+                $userstatic->firstname=$obj->firstname;
+                print '<tr '.$bc[$var].'>';
+                print '<td>'.$holidaystatic->getNomUrl(1).'</td>';
+                print '<td>'.$userstatic->getNomUrl(1).'</td>';
+                print '<td>'.$typeleaves[$obj->fk_type]['label'].'</td>';
+                
+                $starthalfday=($obj->halfday == -1 || $obj->halfday == 2)?'afternoon':'morning';
+                $endhalfday=($obj->halfday == 1 || $obj->halfday == 2)?'morning':'afternoon';
+                
+                print '<td>'.dol_print_date($obj->date_start,'day').' '.$langs->trans($listhalfday[$endhalfday]);
+                print '<td>'.dol_print_date($obj->date_end,'day').' '.$langs->trans($listhalfday[$endhalfday]);
+                print '<td align="right">'.dol_print_date($db->jdate($obj->dm),'day').'</td>';
+                print '<td>'.$holidaystatic->LibStatut($obj->status,3).'</td>';
+                print '</tr>';
+                $var=!$var;
+                $i++;
+            }
+
+        }
+        else
+        {
+            print '<tr '.$bc[$var].'><td colspan="5">'.$langs->trans("None").'</td></tr>';
+        }
+        print '</table><br>';
+    }
+    else dol_print_error($db);
+}
+
+
+// Last expense report (old module)
 if (! empty($conf->deplacement->enabled) && $user->rights->deplacement->lire)
 {
 	$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, d.rowid, d.dated as date, d.tms as dm, d.km, d.fk_statut";
@@ -204,6 +279,7 @@ if (! empty($conf->deplacement->enabled) && $user->rights->deplacement->lire)
 	else dol_print_error($db);
 }
 
+// Last expense report (new module)
 if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire)
 {
 	$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, x.rowid, x.ref, x.date_debut as date, x.tms as dm, x.total_ttc, x.fk_statut as status";

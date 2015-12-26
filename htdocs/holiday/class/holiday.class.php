@@ -732,6 +732,16 @@ class Holiday extends CommonObject
 			if ($statut == 4) return img_picto($langs->trans('CancelCP'),'statut5').' '.$langs->trans('CancelCP');
 			if ($statut == 5) return img_picto($langs->trans('RefuseCP'),'statut5').' '.$langs->trans('RefuseCP');
 		}
+		if ($mode == 3)
+		{
+			$pictoapproved='statut6';
+			if (! empty($startdate) && $startdate > dol_now()) $pictoapproved='statut4';
+			if ($statut == 1) return img_picto($langs->trans('DraftCP'),'statut0');
+			if ($statut == 2) return img_picto($langs->trans('ToReviewCP'),'statut1');
+			if ($statut == 3) return img_picto($langs->trans('ApprovedCP'),$pictoapproved);
+			if ($statut == 4) return img_picto($langs->trans('CancelCP'),'statut5');
+			if ($statut == 5) return img_picto($langs->trans('RefuseCP'),'statut5');
+		}
 		if ($mode == 5)
 		{
 			$pictoapproved='statut6';
@@ -1795,7 +1805,7 @@ class Holiday extends CommonObject
      *  Return array with list of types
      *
      *  @param		int		$active		Status of type
-     *  @param		int		$affect		Filter on affect
+     *  @param		int		$affect		Filter on affect (a request will change sold or not)
      *  @return     array	    		Return array with list of types
      */
     function getTypes($active=-1, $affect=-1)

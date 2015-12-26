@@ -84,7 +84,7 @@ if ($action == 'create')
 	    $description = trim(GETPOST('description'));
 	    $userID = GETPOST('userID');
 
-    	// If no start date
+    	// If no type
 	    if ($type <= 0)
 	    {
 	        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
@@ -135,12 +135,6 @@ if ($action == 'create')
 	    }
 
 	    $result = 0;
-
-        if ($type < 1)
-	    {
-	        setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Type")), null, 'errors');
-	        $error++;
-	    }
 
 	    if (! $error)
 	    {
@@ -769,7 +763,7 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         dol_fiche_head();
 
         $out='';
-        $typeleaves=$cp->getTypes(1,1);
+        $typeleaves=$cp->getTypes(1,-1);
     	foreach($typeleaves as $key => $val)
 		{
 			$nb_type = $cp->getCPforUser($user->id, $val['rowid']);
@@ -806,7 +800,7 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         print '<tr>';
         print '<td class="fieldrequired">'.$langs->trans("Type").'</td>';
         print '<td>';
-        $typeleaves=$cp->getTypes(1,1);
+        $typeleaves=$cp->getTypes(1,-1);
         $arraytypeleaves=array();
         foreach($typeleaves as $key => $val)
         {
@@ -1019,7 +1013,7 @@ else
 		        print '<tr>';
 		        print '<td>'.$langs->trans("Type").'</td>';
 		        print '<td>';
-		        $typeleaves=$cp->getTypes(1,1);
+		        $typeleaves=$cp->getTypes(1,-1);
 		        print $typeleaves[$cp->fk_type]['label'];
 		        print '</td>';
 		        print '</tr>';

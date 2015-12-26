@@ -1016,6 +1016,7 @@ class Form
             // Do not use textempty = ' ' or '&nbsp;' here, or search on key will search on ' key'.
             //$textifempty=' ';
             //if (! empty($conf->use_javascript_ajax) || $forcecombo) $textifempty='';
+            if (! empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT)) $textifempty.=$langs->trans("NoFilter");
             if ($showempty) $out.= '<option value="-1">'.$textifempty.'</option>'."\n";
 
             $num = $this->db->num_rows($resql);

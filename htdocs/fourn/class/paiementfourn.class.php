@@ -251,6 +251,8 @@ class PaiementFourn extends Paiement
 	 */
 	function delete($notrigger=0)
 	{
+	    global $conf, $user, $langs;
+	    
 		$bank_line_id = $this->bank_line;
 
 		$this->db->begin();
@@ -319,6 +321,19 @@ class PaiementFourn extends Paiement
     	    		return -4;
     		    }
 			}
+			
+			if (! $notrigger)
+			{
+			    // Appel des triggers
+			    $result=$this->call_trigger('PAYMENT_SUPPLIER_DELETE', $user);
+			    if ($result < 0)
+			    {
+			        $this->db->rollback();
+			        return -1;
+			    }
+			    // Fin appel triggers
+			}
+			
 			$this->db->commit();
 			return 1;
 		}
