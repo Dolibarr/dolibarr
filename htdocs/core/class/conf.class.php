@@ -209,6 +209,7 @@ class Conf
 	        if(! empty($this->global->LOCAL_CONSTS_FILES)) {
 	            $filesList = explode(":", $this->global->LOCAL_CONSTS_FILES);
 	            foreach ($filesList as $file) {
+	                $file=dol_sanitizeFileName($file);
 	                include_once DOL_DOCUMENT_ROOT . "/$file/{$file}_consts.php";
 	                foreach ($file2bddconsts as $key=>$value) {
 	                    $conf->global->$key=constant($value);
