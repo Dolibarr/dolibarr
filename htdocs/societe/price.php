@@ -49,78 +49,82 @@ if ($user->societe_id)
 	$socid = $user->societe_id;
 $result = restrictedArea($user, 'societe', $socid, '&societe');
 
+$object = new Societe($db);
+
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('thirdpartycustomerprice','globalcard'));
+
+
 
 /*
  * Actions
  */
 
-if ($action == 'add_customer_price_confirm' && ! $_POST ["cancel"] && ($user->rights->produit->creer || $user->rights->service->creer)) {
+$parameters=array('id'=>$socid);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-	$update_child_soc = GETPOST('updatechildprice');
-
-	// add price by customer
-	$prodcustprice->fk_soc = $socid;
-	$prodcustprice->fk_product = GETPOST('prodid', 'int');
-	$prodcustprice->price = price2num(GETPOST("price"), 'MU');
-	$prodcustprice->price_min = price2num(GETPOST("price_min"), 'MU');
-	$prodcustprice->price_base_type = GETPOST("price_base_type", 'alpha');
-	$prodcustprice->tva_tx = str_replace('*', '', GETPOST("tva_tx"));
-	$prodcustprice->recuperableonly = (preg_match('/\*/', GETPOST("tva_tx")) ? 1 : 0);
-
-	$result = $prodcustprice->create($user, 0, $update_child_soc);
-
-	if ($result < 0) 
-	{
-		setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
-	} 
-	else 
-	{
-		setEventMessages($langs->trans('Save'), null, 'mesgs');
-	}
-
-	$action = '';
-}
-
-if ($action == 'delete_customer_price' && ($user->rights->produit->creer || $user->rights->service->creer)) {
-	// Delete price by customer
-	$prodcustprice->id = GETPOST('lineid');
-	$result = $prodcustprice->delete($user);
-
-	if ($result < 0) 
-	{
-		setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
-	} 
-	else 
-	{
-		setEventMessages($langs->trans('Delete'), null, 'mesgs');
-	}
-	$action = '';
-}
-
-if ($action == 'update_customer_price_confirm' && ! $_POST ["cancel"] && ($user->rights->produit->creer || $user->rights->service->creer)) {
-
-	$prodcustprice->fetch(GETPOST('lineid', 'int'));
-
-	$update_child_soc = GETPOST('updatechildprice');
-
-	// update price by customer
-	$prodcustprice->price = price2num(GETPOST("price"), 'MU');
-	$prodcustprice->price_min = price2num(GETPOST("price_min"), 'MU');
-	$prodcustprice->price_base_type = GETPOST("price_base_type", 'alpha');
-	$prodcustprice->tva_tx = str_replace('*', '', GETPOST("tva_tx"));
-	$prodcustprice->recuperableonly = (preg_match('/\*/', GETPOST("tva_tx")) ? 1 : 0);
-
-	$result = $prodcustprice->update($user, 0, $update_child_soc);
-	if ($result < 0) 
-	{
-		setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
-	} 
-	else 
-	{
-		setEventMessages($langs->trans('Save'), null, 'mesgs');
-	}
-
-	$action = '';
+if (empty($reshook))
+{
+    if ($action == 'add_customer_price_confirm' && ! $_POST ["cancel"] && ($user->rights->produit->creer || $user->rights->service->creer)) {
+    
+    	$update_child_soc = GETPOST('updatechildprice');
+    
+    	// add price by customer
+    	$prodcustprice->fk_soc = $socid;
+    	$prodcustprice->fk_product = GETPOST('prodid', 'int');
+    	$prodcustprice->price = price2num(GETPOST("price"), 'MU');
+    	$prodcustprice->price_min = price2num(GETPOST("price_min"), 'MU');
+    	$prodcustprice->price_base_type = GETPOST("price_base_type", 'alpha');
+    	$prodcustprice->tva_tx = str_replace('*', '', GETPOST("tva_tx"));
+    	$prodcustprice->recuperableonly = (preg_match('/\*/', GETPOST("tva_tx")) ? 1 : 0);
+    
+    	$result = $prodcustprice->create($user, 0, $update_child_soc);
+    
+    	if ($result < 0) {
+    		setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
+    	} else {
+    		setEventMessages($langs->trans('Save'), null, 'mesgs');
+    	}
+    
+    	$action = '';
+    }
+    
+    if ($action == 'delete_customer_price' && ($user->rights->produit->creer || $user->rights->service->creer)) {
+    	// Delete price by customer
+    	$prodcustprice->id = GETPOST('lineid');
+    	$result = $prodcustprice->delete($user);
+    
+    	if ($result < 0) {
+    		setEventMessages($prodcustprice->error, $prodcustprice->errors, 'mesgs');
+    	} else {
+    		setEventMessages($langs->trans('Delete'), null, 'errors');
+    	}
+    	$action = '';
+    }
+    
+    if ($action == 'update_customer_price_confirm' && ! $_POST ["cancel"] && ($user->rights->produit->creer || $user->rights->service->creer)) {
+    
+    	$prodcustprice->fetch(GETPOST('lineid', 'int'));
+    
+    	$update_child_soc = GETPOST('updatechildprice');
+    
+    	// update price by customer
+    	$prodcustprice->price = price2num(GETPOST("price"), 'MU');
+    	$prodcustprice->price_min = price2num(GETPOST("price_min"), 'MU');
+    	$prodcustprice->price_base_type = GETPOST("price_base_type", 'alpha');
+    	$prodcustprice->tva_tx = str_replace('*', '', GETPOST("tva_tx"));
+    	$prodcustprice->recuperableonly = (preg_match('/\*/', GETPOST("tva_tx")) ? 1 : 0);
+    
+    	$result = $prodcustprice->update($user, 0, $update_child_soc);
+    	if ($result < 0) {
+    		setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
+    	} else {
+    		setEventMessages($langs->trans('Save'), null, 'mesgs');
+    	}
+    
+    	$action = '';
+    }
 }
 
 
