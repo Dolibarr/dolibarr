@@ -761,11 +761,12 @@ class Account extends CommonObject
 
 
     /**
-     *    Delete bank account from database
+     *  Delete bank account from database
      *
-     *    @return      int         <0 if KO, >0 if OK
+     *	@param	User	$user	User deleting
+     *  @return int             <0 if KO, >0 if OK
      */
-    function delete()
+    function delete($user='')
     {
         global $conf;
 
