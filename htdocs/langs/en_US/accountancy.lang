@@ -166,3 +166,5 @@ ErrorAccountancyCodeIsAlreadyUse=Error, you cannot delete this accounting accoun
 
 FicheVentilation=Breakdown card
 GeneralLedgerIsWritten=Operations are written in the general ledger
+
+MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s, debit = %s

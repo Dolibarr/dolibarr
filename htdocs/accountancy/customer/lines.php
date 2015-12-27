@@ -109,14 +109,14 @@ if (is_array($changeaccount) && count($changeaccount) > 0) {
 	$resql1 = $db->query($sql1);
 	if (! $resql1) {
 		$error ++;
-		setEventMessage($db->lasterror(), 'errors');
+		setEventMessages($db->lasterror(), null, 'errors');
 	}
 	if (! $error) {
 		$db->commit();
-		setEventMessage($langs->trans('Save'), 'mesgs');
+		setEventMessages($langs->trans('Save'), null, 'mesgs');
 	} else {
 		$db->rollback();
-		setEventMessage($db->lasterror(), 'errors');
+		setEventMessages($db->lasterror(), null, 'errors');
 	}
 }
 
@@ -184,6 +184,14 @@ if (strlen(trim($search_vat)))
 if (! empty($conf->multicompany->enabled)) {
 	$sql .= " AND f.entity IN (" . getEntity("facture", 1) . ")";
 }
+// Count total nb of records with no order and no limits
+$nbtotalofrecords = 0;
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+{
+	$resql = $db->query($sql);
+	if ($resql) $nbtotalofrecords = $db->num_rows($resql);
+	else dol_print_error($db);
+}
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit + 1,$offset);
 
@@ -193,8 +201,15 @@ if ($result) {
 	$num_lines = $db->num_rows($result);
 	$i = 0;
 	
-	print_barre_liste($langs->trans("InvoiceLinesDone"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num_lines);
+	$param="";
+	if ($search_facture)   $param.="&search_facture=".$search_facture;
+	if ($search_ref) $param.="&search_ref=".$search_ref;
+	if ($search_label)   $param.="&search_label=".$search_label;
+	if ($search_desc)   $param.="&search_desc=".$search_desc;
+	if ($search_account)   $param.="&search_account=".$search_account;
+	if ($filter)       $param.="&filter=".$filter;	
 	
+	print_barre_liste($langs->trans("InvoiceLinesDone"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num_lines,$nbtotalofrecords);
 	print '<td align="left"><b>' . $langs->trans("DescVentilDoneCustomer") . '</b></td>';
 	
 	print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '">';
@@ -276,6 +291,11 @@ if ($result) {
 }
 
 print "</table></form>";
+
+	if ($num_lines > $conf->liste_limit)
+	{
+		print_barre_liste('',$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num_lines,$nbtotalofrecords,'');
+	}
 
 llxFooter();
 $db->close();

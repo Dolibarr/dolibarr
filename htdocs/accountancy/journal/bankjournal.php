@@ -347,7 +347,7 @@ if ($action == 'writebookkeeping')
 			$bookkeeping = new BookKeeping($db);
 			$bookkeeping->doc_date = $val["date"];
 			$bookkeeping->doc_ref = $val["ref"];
-			$bookkeeping->doc_type = 'banque';
+			$bookkeeping->doc_type = 'bank';
 			$bookkeeping->fk_doc = $key;
 			$bookkeeping->fk_docdet = $val["fk_bank"];
 			$bookkeeping->label_compte = $tabcompany[$key]['name'];
@@ -430,8 +430,7 @@ if ($action == 'export_csv')
 {
 	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
 
-	header('Content-Type: text/csv');
-	header('Content-Disposition: attachment;filename=journal_banque.csv');
+	include DOL_DOCUMENT_ROOT.'/accountancy/tpl/export_journal.tpl.php';
 
 	$companystatic = new Client($db);
 
@@ -557,7 +556,9 @@ if ($action == 'export_csv')
 			}
 		}
 	}
-} else {
+} 
+else 
+{
 	$form = new Form($db);
 
 	llxHeader('', $langs->trans("FinanceJournal"));
@@ -667,7 +668,6 @@ if ($action == 'export_csv')
 
 	print "</table>";
 
-	// End of page
 	llxFooter();
 }
 $db->close();

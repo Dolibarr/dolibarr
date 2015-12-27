@@ -1,7 +1,5 @@
 <?php
-/* Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2013-2014 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
- * Copyright (C) 2013-2014  Florian Henry	    <florian.henry@open-concept.pro>
+/* Copyright (C) 2015  Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,32 +13,16 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
  */
-
-/**
- * \file		htdocs/accountancy/journal/index.php
- * \ingroup		Accounting Expert
- * \brief		Index
- */
-
-require '../../main.inc.php';
+ 
+$prefix = $conf->global->ACCOUNTING_EXPORT_PREFIX_SPEC;
+$format = $conf->global->ACCOUNTING_EXPORT_FORMAT;
 	
-// Langs
-$langs->load("compta");
-$langs->load("bills");
-$langs->load("other");
-$langs->load("main");
-$langs->load("accountancy");
+$date_export = dol_print_date($now, '%Y%m%d%H%M%S');
 
-// Security check
-if ($user->societe_id > 0)
-	accessforbidden();
-
-llxHeader('', 'Journaux', '');
-
-$form = new Form($db);
-
-// End of page
-llxFooter();
-$db->close();
+header('Content-Type: text/csv');
+if ($prefix)
+	$filename = $prefix . "_" . "journal_" . $journal . $date_export . "." . $format;
+else
+	$filename = "journal_" . $journal . $date_export . "." . $format;
+header('Content-Disposition: attachment;filename='.$filename);

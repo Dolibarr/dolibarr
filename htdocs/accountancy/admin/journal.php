@@ -68,9 +68,9 @@ if ($action == 'update') {
 	}
 	
 	if (! $error) {
-		setEventMessage($langs->trans("SetupSaved"));
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
-		setEventMessage($langs->trans("Error"), 'errors');
+		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
 
@@ -83,7 +83,7 @@ llxHeader();
 $form = new Form($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans('ConfigAccountingExpert'),$linkback,'title_setup');
+print load_fiche_titre($langs->trans('ConfigAccountingExpert'),$linkback,'title_setup');
 
 $head = admin_accounting_prepare_head(null);
 

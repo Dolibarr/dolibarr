@@ -54,6 +54,8 @@ $date_endmonth = GETPOST('date_endmonth');
 $date_endday = GETPOST('date_endday');
 $date_endyear = GETPOST('date_endyear');
 
+$now = dol_now();
+
 // Security check
 if ($user->societe_id > 0)
 	accessforbidden();
@@ -295,14 +297,9 @@ if ($action == 'writebookkeeping')
 if ($action == 'export_csv')
 {
 	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
-	$sell_journal = $conf->global->ACCOUNTING_SELL_JOURNAL;
+	$journal = $conf->global->ACCOUNTING_SELL_JOURNAL;
 
-	header('Content-Type: text/csv');
-	if ($conf->global->EXPORT_PREFIX_SPEC)
-		$filename=$conf->global->EXPORT_PREFIX_SPEC."_"."journal_ventes.csv";
-	else
-		$filename="journal_ventes.csv";
-	header('Content-Disposition: attachment;filename='.$filename);
+	include DOL_DOCUMENT_ROOT.'/accountancy/tpl/export_journal.tpl.php';
 
 	$companystatic = new Client($db);
 

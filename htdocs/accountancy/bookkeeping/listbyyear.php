@@ -36,6 +36,7 @@ $langs->load("accountancy");
 $page = GETPOST("page");
 $sortorder = GETPOST("sortorder");
 $sortfield = GETPOST("sortfield");
+$limit = $conf->liste_limit;
 
 // Filter
 $year = GETPOST("year", 'int');
@@ -52,7 +53,7 @@ if ($sortorder == "")
 if ($sortfield == "")
 	$sortfield = "bk.rowid";
 
-$offset = $conf->liste_limit * $page;
+$offset = $limit * $page;
 
 llxHeader('', $langs->trans("Bookkeeping"));
 
