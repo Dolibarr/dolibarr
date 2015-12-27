@@ -100,7 +100,7 @@ if ($action == 'del')
 {
 	$bankline=new AccountLine($db);
 
-    if ($bankline->fetch($_GET["rowid"]) > 1) {
+    if ($bankline->fetch($_GET["rowid"]) > 0) {
         $result = $bankline->delete($user);
         if ($result < 0) {
             dol_print_error($db, $bankline->error);
