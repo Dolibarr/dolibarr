@@ -68,6 +68,12 @@ if ($search_label) $sql.= natural_search("e.lieu", $search_label);		// label
 if ($search_status != '' && $search_status >= 0) $sql.= " AND e.statut = ".$search_status;
 if ($sall) $sql.= natural_search(array('e.label','e.description','e.lieu','e.address','e.town'), $sall);
 $sql.= " GROUP BY e.rowid, e.label, e.statut, e.lieu, e.address, e.zip, e.town, e.fk_pays";
+$totalnboflines=0;
+$result=$db->query($sql);
+if ($result)
+{
+    $totalnboflines = $db->num_rows($result);
+}
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit+1, $offset);
 
@@ -81,7 +87,7 @@ if ($result)
 	$help_url='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
 	llxHeader("",$langs->trans("ListOfWarehouses"),$help_url);
 
-	print_barre_liste($langs->trans("ListOfWarehouses"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder,'',$num);
+	print_barre_liste($langs->trans("ListOfWarehouses"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num, $totalnboflines);
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -168,20 +174,23 @@ if ($result)
             $i++;
 		}
 
-		print '<tr class="liste_total">';
-        print '<td colspan="2" align="right">'.$langs->trans("Total").'</td>';
-        print '<td align="right">'.price(price2num($total,'MT'),1,$langs,0,0,-1,$conf->currency).'</td>';
-        print '<td align="right">';
-		if (empty($conf->global->PRODUIT_MULTIPRICES)) print price(price2num($totalsell,'MT'),1,$langs,0,0,-1,$conf->currency);
-        else
+		if ($totalnboflines <= $limit)
 		{
-			$htmltext=$langs->trans("OptionMULTIPRICESIsOn");
-           	print $form->textwithtooltip($langs->trans("Variable"),$htmltext);
+    		print '<tr class="liste_total">';
+            print '<td colspan="2" align="right">'.$langs->trans("Total").'</td>';
+            print '<td align="right">'.price(price2num($total,'MT'),1,$langs,0,0,-1,$conf->currency).'</td>';
+            print '<td align="right">';
+    		if (empty($conf->global->PRODUIT_MULTIPRICES)) print price(price2num($totalsell,'MT'),1,$langs,0,0,-1,$conf->currency);
+            else
+    		{
+    			$htmltext=$langs->trans("OptionMULTIPRICESIsOn");
+               	print $form->textwithtooltip($langs->trans("Variable"),$htmltext);
+    		}
+            print '</td>';
+            print '<td></td>';
+            print '<td></td>';
+            print "</tr>\n";
 		}
-        print '</td>';
-        print '<td></td>';
-        print '<td></td>';
-        print "</tr>\n";
 	}
 
 	$db->free($result);
