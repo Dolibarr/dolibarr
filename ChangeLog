@@ -3,6 +3,17 @@ English Dolibarr ChangeLog
 --------------------------------------------------------------
 
 
+***** ChangeLog for 3.6.6 compared to 3.6.5 *****
+FIX: #3734 Do not show empty links of deleted source objects in stock movement list
+FIX: #4081 Added missing translation
+FIX: #4097 Public holiday calculation
+FIX: #4242 Allow disabling dashes in documents
+FIX: #4243 sql injection
+FIX: Add a protection to not make release if ChangeLog was not generated. Prepare package 3.6.5
+FIX: export with category contact extrafields
+FIX: Not delete a product when have customer price
+FIX: Not deleting contrats on element_element table
+
 ***** ChangeLog for 3.6.5 compared to 3.6.4 *****
 FIX: #2957 : missing $langs object for trigger
 FIX: #2983 Load gravatar avatar images securely over HTTPS
