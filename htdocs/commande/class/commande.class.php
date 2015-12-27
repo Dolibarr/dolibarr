@@ -2917,7 +2917,7 @@ class Commande extends CommonOrder
      */
     function LibStatut($statut,$billed,$mode)
     {
-        global $langs;
+        global $langs, $conf;
         //print 'x'.$statut.'-'.$billed;
         if ($mode == 0)
         {
