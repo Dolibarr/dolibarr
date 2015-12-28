@@ -627,7 +627,7 @@ class Resource extends CommonObject
      *	 	@param  int		$fieldid   	Name of field to use for the select MAX and MIN
      *      @return int         		<0 if KO, >0 if OK
      */
-    function load_previous_next_ref($filter,$fieldid)
+    function load_previous_next_ref($filter, $fieldid, $nodbprefix ='')
     {
     	global $conf, $user;
 
