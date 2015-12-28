@@ -878,7 +878,6 @@ class Product extends CommonObject
 
    			// Delete all child tables
 			if (! $error)
-			foreach($elements as $table)
 			{
 			    $elements = array('product_fournisseur_price','product_price','product_lang','categorie_product','product_stock','product_customer_price');
     			foreach($elements as $table)
@@ -3080,7 +3079,7 @@ class Product extends CommonObject
 	{
 		global $langs;
 		$langs->load('products');
-		if (!empty($conf->productbatch->enabled)) $langs->load("productbatch");
+		if (! empty($conf->productbatch->enabled)) $langs->load("productbatch");
 
 		if ($type == 2)
 		{
