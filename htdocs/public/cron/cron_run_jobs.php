@@ -133,7 +133,7 @@ if (is_array($object->lines) && (count($object->lines)>0))
 		dol_syslog("cron_run_jobs.php fetch cronjobid: ".$line->id, LOG_WARNING);
 
 		//If date_next_jobs is less of current dat, execute the program, and store the execution time of the next execution in database
-		if ((($line->datenextrun <= $now) && $line->dateend < $now)
+		if ((($line->datenextrun <= $now) && $line->dateend >= $now)
 				|| ((empty($line->datenextrun)) && (empty($line->dateend))))
 		{
 
