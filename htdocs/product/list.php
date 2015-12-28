@@ -79,6 +79,8 @@ $extrafields = new ExtraFields($db);
 $extralabels = $extrafields->fetch_name_optionals_label('product');
 $search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
 
+if (empty($action)) $action='list';
+
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
 $canvas=GETPOST("canvas");
 $objcanvas=null;
@@ -165,8 +167,8 @@ $form=new Form($db);
 
 if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 {
-	$objcanvas->assign_values('list');       // This must contains code to load data (must call LoadListDatas($limit, $offset, $sortfield, $sortorder))
-    $objcanvas->display_canvas('list');  	 // This is code to show template
+	$objcanvas->assign_values($action);       // This must contains code to load data (must call LoadListDatas($limit, $offset, $sortfield, $sortorder))
+    $objcanvas->display_canvas($action);  	  // This is code to show template
 }
 else
 {

@@ -99,11 +99,14 @@ if ($action == 'rappro' && $user->rights->banque->consolidate)
 if ($action == 'del')
 {
 	$bankline=new AccountLine($db);
-	$bankline->fetch($_GET["rowid"]);
-	$result=$bankline->delete($user);
-    if ($result < 0)
-	{
-        dol_print_error($db,$bankline->error);
+
+    if ($bankline->fetch($_GET["rowid"]) > 0) {
+        $result = $bankline->delete($user);
+        if ($result < 0) {
+            dol_print_error($db, $bankline->error);
+        }
+    } else {
+        setEventMessage($langs->trans('ErrorRecordNotFound'), 'errors');
     }
 }
 
