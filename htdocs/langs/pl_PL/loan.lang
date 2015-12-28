@@ -1,10 +1,10 @@
 # Dolibarr language file - Source file is en_US - loan
-Loan=Pożyczka
+Loan=Kredyt
 Loans=Kredyty
-NewLoan=Nowa pożyczka
-ShowLoan=Pokaż Pożyczka
+NewLoan=Nowy kredyt
+ShowLoan=Pokaż kredyt
 PaymentLoan=Spłata kredytu
-ShowLoanPayment=Pokaż Pożyczka Płatność
+ShowLoanPayment=Pokaż spłatę kredytu
 Capital=Kapitał
 Insurance=Ubezpieczenie
 Interest=Odsetki
@@ -17,19 +17,19 @@ ConfirmDeleteLoan=Potwierdź usunięcie tego kredytu
 LoanDeleted=Pożyczka została usunięta
 ConfirmPayLoan=Potwierdź sklasyfikować wypłacane pożyczka
 LoanPaid=Pożyczka Płatny
-ErrorLoanCapital=Kwota kredytu musi być numeryczny i większa od zera.
-ErrorLoanLength=Długość pożyczka musi być numeryczne, a większy od zera.
-ErrorLoanInterest=Roczne odsetki musi być numeryczne, a większy od zera.
+ErrorLoanCapital=Kwota kredytu musi być liczbą większą od zera.
+ErrorLoanLength=Długość kredytu musi być lczbą większą od 0.
+ErrorLoanInterest=Roczne odsetki musi być liczbą większą od zera.
 # Calc
-LoanCalc=Kredyty bankowe Kalkulator
+LoanCalc=Kalkulator kredytu bankowego
 PurchaseFinanceInfo=Zakup i Finansowanie informacji
 SalePriceOfAsset=Cena sprzedaży aktywów
 PercentageDown=Procent w dół
-LengthOfMortgage=Długość hipoteczny
+LengthOfMortgage=Długość kredytu hipotecznego
 AnnualInterestRate=Roczna stopa procentowa
 ExplainCalculations=Wyjaśnij Obliczenia
 ShowMeCalculationsAndAmortization=Pokaż mi obliczenia i amortyzację
-MortgagePaymentInformation=Informacje hipoteczny Płatność
+MortgagePaymentInformation=Informacje o płatności za kredyt hipoteczny
 DownPayment=Zaliczka
 DownPaymentDesc=<b>Zaliczka</b> = cena domu pomnożona przez procent w dół, podzielona przez 100 (dla 5% w dół staje 5/100 lub 0,05)
 InterestRateDesc=<b>Oprocentowanie</b> = Roczna wartość procentowa odsetek podzielony przez 100
@@ -47,7 +47,7 @@ GoToInterest=% s zostanie przeznaczona INTERESÓW
 GoToPrincipal=% s zostanie przeznaczona PODSTAWOWA
 YouWillSpend=Spędzisz% s na dom w rok% s
 # Admin
-ConfigLoan=Konfiguracja modułu pożyczki
+ConfigLoan=Konfiguracja modułu kredytu
 LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Kapitał Kod domyślnie Rachunkowości
 LOAN_ACCOUNTING_ACCOUNT_INTEREST=Zainteresowanie Kod domyślnie Rachunkowości
 LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Ubezpieczenie Kod domyślnie Rachunkowości
