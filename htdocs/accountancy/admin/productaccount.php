@@ -70,7 +70,7 @@ if (! empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION) && $conf->global->
 	// } else if ($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION <= 0) {
 	// $limit = $conf->liste_limit;
 } else {
-	$limit = $conf->liste_limit;
+	$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 }
 $offset = $limit * $page;
 
