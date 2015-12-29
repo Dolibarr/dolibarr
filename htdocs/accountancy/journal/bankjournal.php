@@ -355,7 +355,7 @@ if ($action == 'writebookkeeping')
 			$bookkeeping = new BookKeeping($db);
 			$bookkeeping->doc_date = $val["date"];
 			$bookkeeping->doc_ref = $val["ref"];
-			$bookkeeping->doc_type = 'banque';
+			$bookkeeping->doc_type = 'bank';
 			$bookkeeping->fk_doc = $key;
 			$bookkeeping->fk_docdet = $val["fk_bank"];
 			$bookkeeping->label_compte = $tabcompany[$key]['name'];
@@ -675,6 +675,7 @@ else
 
 	print "</table>";
 
+	llxFooter();
 }
-llxFooter();
+
 $db->close();

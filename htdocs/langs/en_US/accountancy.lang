@@ -169,3 +169,5 @@ Param=Additionnal parameters
 EnabledProduct=In Product
 EnabledTiers=In Tiers
 EnabledVat=In Vat
+
+MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s

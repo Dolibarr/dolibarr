@@ -106,6 +106,7 @@ NotePrivate=Note (private)
 PrecisionUnitIsLimitedToXDecimals=Dolibarr was setup to limit precision of unit prices to <b>%s</b> decimals.
 DoTest=Test
 ToFilter=Filter
+NoFilter=No filter
 WarningYouHaveAtLeastOneTaskLate=Warning, you have at least one element that has exceeded the tolerance delay.
 yes=yes
 Yes=Yes

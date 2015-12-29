@@ -39,6 +39,7 @@ $langs->load('holidays');
 // Protection if external user
 if ($user->societe_id > 0) accessforbidden();
 
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
@@ -47,7 +48,7 @@ $page = $page == -1 ? 0 : $page;
 
 if (! $sortfield) $sortfield="cp.rowid";
 if (! $sortorder) $sortorder="DESC";
-$offset = $conf->liste_limit * $page ;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
@@ -102,6 +103,9 @@ $holiday = new Holiday($db);
 $holidaystatic=new Holiday($db);
 $fuser = new User($db);
 
+$childids = $user->getAllChildIds();
+$childids[]=$user->id;
+
 // Update sold
 $result = $holiday->updateBalance();
 
@@ -111,7 +115,7 @@ $filter='';
 
 llxHeader(array(),$langs->trans('CPTitreMenu'));
 
-$order = $db->order($sortfield,$sortorder).$db->plimit($conf->liste_limit + 1, $offset);
+$order = $db->order($sortfield,$sortorder).$db->plimit($limit + 1, $offset);
 
 // WHERE
 if(!empty($search_ref))
@@ -184,10 +188,8 @@ if (!empty($sall))
 	$filter.= natural_search(array_keys($fieldstosearchall), $sall);
 }
 
+if (empty($user->rights->holiday->read_all)) $filter.=' AND cp.fk_user IN ('.join(',',$childids).')';
 
-/*************************************
- * Fin des filtres de recherche
-*************************************/
 
 // Récupération de l'ID de l'utilisateur
 $user_id = $user->id;
@@ -200,7 +202,7 @@ if ($id > 0)
 	$user_id = $fuser->id;
 }
 // Récupération des congés payés de l'utilisateur ou de tous les users
-if (empty($user->rights->holiday->write_all) || $id > 0)
+if (empty($user->rights->holiday->read_all) || $id > 0)
 {
 	$holiday_payes = $holiday->fetchByUser($user_id,$order,$filter);	// Load array $holiday->holiday
 }
@@ -220,7 +222,8 @@ if ($holiday_payes == '-1')
 
 // Show table of vacations
 
-$var=true; $num = count($holiday->holiday);
+$var=true;
+$num = count($holiday->holiday);
 $form = new Form($db);
 $formother = new FormOther($db);
 
@@ -242,7 +245,9 @@ if ($id > 0)
 }
 else
 {
-	print_barre_liste($langs->trans("ListeCP"), $page, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, "", $num, 0, 'title_hrm.png');
+    //print $num;
+    //print count($holiday->holiday);
+	print_barre_liste($langs->trans("ListeCP"), $page, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, "", $num, count($holiday->holiday), 'title_hrm.png', 0, '', '', $limit);
 
 	dol_fiche_head('');
 }

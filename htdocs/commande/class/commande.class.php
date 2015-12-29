@@ -76,9 +76,41 @@ class Commande extends CommonOrder
 
     var $brouillon;
     var $cond_reglement_code;
+
+    var $fk_account;
+
+    /**
+     * It holds the label of the payment mode. Use it in case translation cannot be found.
+     * @var string
+     */
+    var $mode_reglement;
+
+    /**
+     * Payment mode id
+     * @var int
+     */
+    var $mode_reglement_id;
+    /**
+     * Payment mode code
+     * @var string
+     */
     var $mode_reglement_code;
+    /**
+     * Availability delivery time id
+     * @var int
+     */
     var $availability_id;
+    /**
+     * Availability delivery time code
+     * @var string
+     */
     var $availability_code;
+    /**
+     * Label of availability delivery time. Use it in case translation cannot be found.
+     * @var string
+     */
+    var $availability;
+
     var $demand_reason_id;
     var $demand_reason_code;
     var $address;
@@ -1435,7 +1467,7 @@ class Commande extends CommonOrder
         $sql.= ", i.libelle as libelle_incoterms";
         $sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
         $sql.= ', cr.code as cond_reglement_code, cr.libelle as cond_reglement_libelle, cr.libelle_facture as cond_reglement_libelle_doc';
-        $sql.= ', ca.code as availability_code';
+        $sql.= ', ca.code as availability_code, ca.label as availability_label';
         $sql.= ', dr.code as demand_reason_code';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'commande as c';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as cr ON (c.fk_cond_reglement = cr.rowid)';
@@ -1492,6 +1524,7 @@ class Commande extends CommonOrder
                 $this->fk_account           = $obj->fk_account;
                 $this->availability_id		= $obj->fk_availability;
                 $this->availability_code	= $obj->availability_code;
+                $this->availability	    	= $obj->availability_label;
                 $this->demand_reason_id		= $obj->fk_input_reason;
                 $this->demand_reason_code	= $obj->demand_reason_code;
                 $this->date_livraison		= $this->db->jdate($obj->date_livraison);

@@ -82,6 +82,7 @@ UserName=Name
 Employee=Employee
 FirstDayOfHoliday=First day of vacation
 LastDayOfHoliday=Last day of vacation
+BoxTitleLastLeaveRequests=Last %s modified leave requests 
 HolidaysMonthlyUpdate=Monthly update
 ManualUpdate=Manual update
 HolidaysCancelation=Leave request cancelation

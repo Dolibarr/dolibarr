@@ -1,13 +1,13 @@
 # Dolibarr language file - Source file is en_US - holiday
 HRM=HRM
-Holidays=Leaves
-CPTitreMenu=Leaves
+Holidays=休假
+CPTitreMenu=休假
 MenuReportMonth=Monthly statement
-MenuAddCP=New leave request
-NotActiveModCP=You must enable the module Leaves to view this page.
-NotConfigModCP=You must configure the module Leaves to view this page. To do this, <a href="./admin/holiday.php?leftmenu=setup&mainmenu=home" style="font-weight: normal; color: red; text-decoration: underline;"> click here </ a>.
-NoCPforUser=You don't have any available day.
-AddCP=Make a leave request
+MenuAddCP=新的請假單
+NotActiveModCP=您必須要啟用排休模組才能看到此頁面
+NotConfigModCP=若要啟用 <a href="./admin/holiday.php?leftmenu=setup&mainmenu=home" style="font-weight: normal; color: red; text-decoration: underline;"> 前往此頁面</ a>.
+NoCPforUser=你的休假日已經全部用完
+AddCP=提出假單
 Employe=Employee
 DateDebCP=開始日期
 DateFinCP=結束日期

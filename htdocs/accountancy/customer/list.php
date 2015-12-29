@@ -72,7 +72,7 @@ if (! empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)) {
 $offset = $limit * $page;
 
 if (! $sortfield)
-	$sortfield = "f.facnumber";
+	$sortfield = "f.datef, f.facnumber, l.rowid";
 
 if (! $sortorder) {
 	if ($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_TODO > 0) {
