@@ -73,7 +73,7 @@ $hookmanager->initHooks(array('admin'));
 // Put here declaration of dictionaries properties
 
 // Sort order to show dictionary (0 is space). All other dictionaries (added by modules) will be at end of this.
-$taborder=array(9,0,4,3,2,0,1,8,19,16,27,0,5,11,0,6,0,29,0,7,17,24,28,0,10,23,12,13,0,14,0,22,20,18,21,0,15,0,25,0,26);
+$taborder=array(9,0,4,3,2,0,1,8,19,16,27,0,5,11,0,6,0,29,0,7,17,24,28,0,10,23,12,13,0,14,0,22,20,18,21,0,15,0,25,0,26,0,30);
 
 // Name of SQL tables of dictionaries
 $tabname=array();
@@ -106,6 +106,7 @@ $tabname[26]= MAIN_DB_PREFIX."c_units";
 $tabname[27]= MAIN_DB_PREFIX."c_stcomm";
 $tabname[28]= MAIN_DB_PREFIX."c_holiday_types";
 $tabname[29]= MAIN_DB_PREFIX."c_lead_status";
+$tabname[30]= MAIN_DB_PREFIX."c_field_cases";
 
 // Dictionary labels
 $tablib=array();
@@ -138,6 +139,7 @@ $tablib[26]= "DictionaryUnits";
 $tablib[27]= "DictionaryProspectStatus";
 $tablib[28]= "DictionaryHolidayTypes";
 $tablib[29]= "DictionaryOpportunityStatus";
+$tablib[30]= "DictionaryFieldCases";
 
 // Requests to extract data
 $tabsql=array();
@@ -170,6 +172,7 @@ $tabsql[26]= "SELECT rowid   as rowid, code, label, short_label, active FROM ".M
 $tabsql[27]= "SELECT id      as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_stcomm";
 $tabsql[28]= "SELECT h.rowid as rowid, h.code, h.label, h.delay, h.newByMonth, h.fk_country as country_id, c.code as country_code, c.label as country, h.active FROM ".MAIN_DB_PREFIX."c_holiday_types as h LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON h.fk_country=c.rowid";
 $tabsql[29]= "SELECT rowid   as rowid, code, label, percent, position, active FROM ".MAIN_DB_PREFIX."c_lead_status";
+$tabsql[30]= "SELECT rowid   as rowid, table_name, field_name, transformation, active FROM ".MAIN_DB_PREFIX."c_field_cases";
 
 // Criteria to sort dictionaries
 $tabsqlsort=array();
@@ -202,6 +205,7 @@ $tabsqlsort[26]="code ASC";
 $tabsqlsort[27]="code ASC";
 $tabsqlsort[28]="country ASC, code ASC";
 $tabsqlsort[29]="position ASC";
+$tabsqlsort[30]="table_name ASC,field_name ASC";
 
 // Nom des champs en resultat de select pour affichage du dictionnaire
 $tabfield=array();
@@ -234,6 +238,7 @@ $tabfield[26]= "code,label,short_label";
 $tabfield[27]= "code,libelle";
 $tabfield[28]= "code,label,delay,newByMonth,country_id,country";
 $tabfield[29]= "code,label,percent,position";
+$tabfield[30]= "table_name,field_name,transformation";
 
 // Nom des champs d'edition pour modification d'un enregistrement
 $tabfieldvalue=array();
@@ -266,6 +271,7 @@ $tabfieldvalue[26]= "code,label,short_label";
 $tabfieldvalue[27]= "code,libelle";
 $tabfieldvalue[28]= "code,label,delay,newByMonth,country";
 $tabfieldvalue[29]= "code,label,percent,position";
+$tabfieldvalue[30]= "table_name,field_name,transformation";
 
 // Nom des champs dans la table pour insertion d'un enregistrement
 $tabfieldinsert=array();
@@ -298,6 +304,7 @@ $tabfieldinsert[26]= "code,label,short_label";
 $tabfieldinsert[27]= "code,libelle";
 $tabfieldinsert[28]= "code,label,delay,newByMonth,fk_country";
 $tabfieldinsert[29]= "code,label,percent,position";
+$tabfieldinsert[30]= "table_name,field_name,transformation";
 
 // Nom du rowid si le champ n'est pas de type autoincrement
 // Example: "" if id field is "rowid" and has autoincrement on
@@ -332,6 +339,7 @@ $tabrowid[26]= "";
 $tabrowid[27]= "id";
 $tabrowid[28]= "";
 $tabrowid[29]= "";
+$tabrowid[30]= "";
 
 // Condition to show dictionary in setup page
 $tabcond=array();
@@ -364,6 +372,7 @@ $tabcond[26]= ! empty($conf->product->enabled);
 $tabcond[27]= ! empty($conf->societe->enabled);
 $tabcond[28]= ! empty($conf->holiday->enabled);
 $tabcond[29]= ! empty($conf->projet->enabled);
+$tabcond[30] = true;
 
 // List of help for fields
 $tabhelp=array();
@@ -396,6 +405,7 @@ $tabhelp[26] = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[27] = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[28] = array('delay'=>$langs->trans("MinimumNoticePeriod"), 'newByMonth'=>$langs->trans("NbAddedAutomatically"));
 $tabhelp[29] = array('code'=>$langs->trans("EnterAnyCode"), 'percent'=>$langs->trans("OpportunityPercent"), 'position'=>$langs->trans("PositionIntoComboList"));
+$tabhelp[30] = array();
 
 // List of check for fields (NOT USED YET)
 $tabfieldcheck=array();
@@ -428,6 +438,7 @@ $tabfieldcheck[26] = array();
 $tabfieldcheck[27] = array();
 $tabfieldcheck[28] = array();
 $tabfieldcheck[29] = array();
+$tabfieldcheck[30] = array();
 
 // Complete all arrays with entries found into modules
 complete_dictionary_with_modules($taborder,$tabname,$tablib,$tabsql,$tabsqlsort,$tabfield,$tabfieldvalue,$tabfieldinsert,$tabrowid,$tabcond,$tabhelp,$tabfieldcheck);
@@ -605,6 +616,10 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
                 dol_print_error($db);
             }
         }
+		
+		$object=new stdClass();
+		$object->table = $tabname[$id];
+		$object->fields = array();
 
         // Add new entry
         $sql = "INSERT INTO ".$tabname[$id]." (";
@@ -630,6 +645,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
             if ($i) $sql.=",";
             if ($_POST[$listfieldvalue[$i]] == '') $sql.="null";
             else $sql.="'".$db->escape($_POST[$listfieldvalue[$i]])."'";
+			$object->fields[$field]=$_POST[$listfieldvalue[$i]];
             $i++;
         }
         $sql.=",1)";
@@ -640,6 +656,11 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         {
             setEventMessages($langs->transnoentities("RecordSaved"), null, 'mesgs');
         	$_POST=array('id'=>$id);	// Clean $_POST array, we keep only
+        	
+        	//Exécution d'un trigger
+        	include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+			$interface=new Interfaces($db);
+			$result=$interface->run_triggers('DICT_CREATE',$_POST,$user,$langs,$conf);
         }
         else
         {
@@ -659,6 +680,12 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         else { $rowidcol="rowid"; }
 
         // Modify entry
+        $object=new stdClass();
+		$object->table = $tabname[$id];
+		$object->fields = array();
+		$object->rowidcol = $rowidcol;
+		$object->rowid = $rowid;
+		
         $sql = "UPDATE ".$tabname[$id]." SET ";
         // Modifie valeur des champs
         if ($tabrowid[$id] && ! in_array($tabrowid[$id],$listfieldmodify))
@@ -679,7 +706,9 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
             $sql.= $field."=";
             if ($_POST[$listfieldvalue[$i]] == '') $sql.="null";
             else $sql.="'".$db->escape($_POST[$listfieldvalue[$i]])."'";
-            $i++;
+            
+			$object->fields[$field]=$_POST[$listfieldvalue[$i]];
+			$i++;
         }
         $sql.= " WHERE ".$rowidcol." = '".$rowid."'";
 
@@ -690,6 +719,13 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         {
             setEventMessages($db->error(), null, 'errors');
         }
+		else 
+		{
+			//Exécution d'un trigger
+        	include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+			$interface=new Interfaces($db);
+			$result=$interface->run_triggers('DICT_MODIFY',$object,$user,$langs,$conf);
+		}
     }
     //$_GET["id"]=GETPOST('id', 'int');       // Force affichage dictionnaire en cours d'edition
 }

@@ -831,6 +831,7 @@ DictionaryUnits=Unités
 DictionaryProspectStatus=Statuts de prospection
 DictionaryHolidayTypes=Type de congès
 DictionaryOpportunityStatus=Statut d'opportunités pour les affaires/projets
+DictionaryFieldCases=Mise en forme forcée de certains champs (majuscules, camelCase, RegEx...)
 SetupSaved=Configuration sauvegardée
 BackToModuleList=Retour liste des modules
 BackToDictionaryList=Retour liste des dictionnaires
