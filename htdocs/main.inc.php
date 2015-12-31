@@ -829,7 +829,7 @@ $bcnd=array(0=>'class="impair nodrag nodrop nohover"',1=>'class="pair nodrag nod
 
 // Define messages variables
 $mesg=''; $warning=''; $error=0;
-// deprecated, see setEventMessage() and dol_htmloutput_events()
+// deprecated, see setEventMessages() and dol_htmloutput_events()
 $mesgs=array(); $warnings=array(); $errors=array();
 
 // Constants used to defined number of lines in textarea

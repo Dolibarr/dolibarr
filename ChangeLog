@@ -150,6 +150,8 @@ WARNING:
 
 Dolibarr 3.9 is not yet fully compatible with PHP 7.
 
+Mysql minimum version is now 5.0.3 
+
 Following changes may create regression for some external modules, but were necessary to make
 Dolibarr better:
 - Deprecated Product::setPriceExpression. Use Product::update instead

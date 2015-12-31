@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - supplier_proposal
 supplier_proposalDESC=Preisanfragen Lieferant verwalten
-supplier_proposalMENU_LEFT_TITLE_NEW=Neue Anfrage
 CommRequest=Generelle Preisanfrage
 CommRequests=Generelle Preisanfragen
 SearchRequest=Anfragen finden

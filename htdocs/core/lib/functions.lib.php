@@ -2959,16 +2959,18 @@ function load_fiche_titre($titre, $mesg='', $picto='title_generic.png', $pictois
  *	@param	int		$pictoisfullpath	1=Icon name is a full absolute url of image
  *  @param	string	$morehtml			More html to show
  *  @param  string  $morecss            More css to the table
+ *  @param  int     $limit              Limit ofnumber of lines on each page
  *	@return	void
  */
-function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='', $center='', $num=-1, $totalnboflines=0, $picto='title_generic.png', $pictoisfullpath=0, $morehtml='', $morecss='')
+function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='', $center='', $num=-1, $totalnboflines=0, $picto='title_generic.png', $pictoisfullpath=0, $morehtml='', $morecss='', $limit=0)
 {
 	global $conf,$langs;
 
 	if ($picto == 'setup') $picto='title_setup.png';
 	if (($conf->browser->name == 'ie') && $picto=='title_generic.png') $picto='title.gif';
-
-	if (($num > $conf->liste_limit) || ($num == -1))
+	if ($limit < 1) $limit = $conf->liste_limit;
+	
+	if (($num > $limit) || ($num == -1))
 	{
 		$nextpage = 1;
 	}
@@ -2997,13 +2999,13 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 	if ($sortorder) $options .= "&amp;sortorder=".$sortorder;
 	// Show navigation bar
 	$pagelist = '';
-	if ($page > 0 || $num > $conf->liste_limit)
+	if ($page > 0 || $num > $limit)
 	{
 		if ($totalnboflines)	// If we know total nb of lines
 		{
 			$maxnbofpage=(empty($conf->dol_optimize_smallscreen) ? 6 : 3);		// nb before and after selected page + ... + first or last
 
-			$nbpages=ceil($totalnboflines/$conf->liste_limit);
+			$nbpages=ceil($totalnboflines/$limit);
 			$cpt=($page-$maxnbofpage);
 			if ($cpt < 0) { $cpt=0; }
 

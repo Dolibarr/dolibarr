@@ -531,6 +531,7 @@ if ($action == 'export_csv')
 
 	print "</table>";
 
+	llxFooter();
 }
-llxFooter();
+
 $db->close();

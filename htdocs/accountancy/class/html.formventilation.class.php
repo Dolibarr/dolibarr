@@ -265,4 +265,81 @@ class FormVentilation extends Form
 		$this->db->free($resql);
 		return $out;
 	}
+	
+	/**
+	 * Return list of auxilary thirdparty accounts
+	 *
+	 * @param string $selectid Preselected pcg_type
+	 * @param string $htmlname Name of field in html form
+	 * @param int $showempty Add an empty field
+	 * @param array $event Event options
+	 *       
+	 * @return string String with HTML select
+	 */
+	function select_auxaccount($selectid, $htmlname = 'account_num_aux', $showempty = 0, $event = array()) {
+		global $conf;
+		
+		$out = '';
+		
+		$aux_account = array ();
+		
+		// Auxiliary customer account
+		$sql = "SELECT DISTINCT code_compta, nom ";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "societe";
+		$sql .= " ORDER BY code_compta";
+		dol_syslog(get_class($this) . "::select_auxaccount", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			while ( $obj = $this->db->fetch_object($resql) ) {
+				if (! empty($obj->code_compta)) {
+					$aux_account[$obj->code_compta] = $obj->code_compta . ' (' . $obj->nom . ')';
+				}
+			}
+		} else {
+			$this->error = "Error " . $this->db->lasterror();
+			dol_syslog(get_class($this) . "::select_pcgsubtype " . $this->error, LOG_ERR);
+			return - 1;
+		}
+		$this->db->free($resql);
+		
+		// Auxiliary supplier account
+		$sql = "SELECT DISTINCT code_compta_fournisseur, nom ";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "societe";
+		$sql .= " ORDER BY code_compta";
+		dol_syslog(get_class($this) . "::select_auxaccount", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			while ( $obj = $this->db->fetch_object($resql) ) {
+				if (! empty($obj->code_compta_fournisseur)) {
+					$aux_account[$obj->code_compta_fournisseur] = $obj->code_compta_fournisseur . ' (' . $obj->nom . ')';
+				}
+			}
+		} else {
+			$this->error = "Error " . $this->db->lasterror();
+			dol_syslog(get_class($this) . "::select_pcgsubtype " . $this->error, LOG_ERR);
+			return - 1;
+		}
+		$this->db->free($resql);
+		
+		
+		//Build select
+		if (count($aux_account) > 0) {
+			
+			$out .= ajax_combobox($htmlname, $event);
+			
+			$out .= '<select id="' . $htmlname . '" class="flat" name="' . $htmlname . '">';
+			if ($showempty)
+				$out .= '<option value="-1"></option>';
+			foreach ( $aux_account as $key => $val ) {
+				if (($selectid != '') && $selectid == $key) {
+					$out .= '<option value="' . $key . '" selected>' . $val . '</option>';
+				} else {
+					$out .= '<option value="' . $key . '">' . $val . '</option>';
+				}
+			}
+			$out .= '</select>';
+		}
+		
+		return $out;
+	}
 }

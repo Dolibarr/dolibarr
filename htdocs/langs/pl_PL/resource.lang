@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - resource
 MenuResourceIndex=Zasoby
 MenuResourceAdd=Nowe zasoby
-MenuResourcePlanning=Planowane Zasoby
+MenuResourcePlanning=Planowanie zasobów
 DeleteResource=Usuń zasoby
 ConfirmDeleteResourceElement=Potwierdz usunięcie zasobów dla tego elementu
 NoResourceInDatabase=Brak zasobów w bazie danych
