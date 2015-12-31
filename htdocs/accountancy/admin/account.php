@@ -49,7 +49,7 @@ if (!$user->admin)
 
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'sortorder');
-$limit = $conf->liste_limit;
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $page = GETPOST("page", 'int');
 if ($page == - 1) {
 	$page = 0;
