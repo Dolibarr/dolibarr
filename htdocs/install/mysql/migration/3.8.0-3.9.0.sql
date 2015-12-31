@@ -26,6 +26,9 @@
 ALTER TABLE llx_don ADD COLUMN fk_country integer NOT NULL DEFAULT 0 after country;
 
 
+UPDATE llx_user set api_key = null where api_key = '';
+
+
 UPDATE llx_commande_fourn set billed=1 where statut = 8;
 UPDATE llx_commande_fourn set statut=5 where statut = 8 and billed=1;
 

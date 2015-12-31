@@ -536,5 +536,5 @@ $(".runupgrade").click(function() {
 </script>';
 
 dolibarr_install_syslog("--- check: end");
-pFooter(true);	// Never display next button
+pFooter(1);	// Never display next button
 
