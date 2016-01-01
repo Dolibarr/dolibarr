@@ -591,7 +591,7 @@ abstract class CommonDocGenerator
 				}
 				else
 				{
-					$object->array_options['options_'.$key] = ''
+					$object->array_options['options_'.$key] = '';
 					$object->array_options['options_'.$key.'_rfc'] = '';
 					$object->array_options['options_'.$key.'_dayall'] = '';
 				}
