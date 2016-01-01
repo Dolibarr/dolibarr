@@ -3,7 +3,6 @@ SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Accountancy code for salaries payments
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Accountancy code for financial charge
 Salary=Salary
 Salaries=Salaries
-Employee=Employee
 NewSalaryPayment=New salary payment
 SalaryPayment=Salary payment
 SalariesPayments=Salaries payments

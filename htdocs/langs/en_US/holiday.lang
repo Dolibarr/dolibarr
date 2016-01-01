@@ -8,7 +8,6 @@ NotActiveModCP=You must enable the module Leaves to view this page.
 NotConfigModCP=You must configure the module Leaves to view this page. To do this, <a href="./admin/holiday.php?leftmenu=setup&mainmenu=home" style="font-weight: normal; color: red; text-decoration: underline;"> click here </ a>.
 NoCPforUser=You don't have any available day.
 AddCP=Make a leave request
-Employe=Employee
 DateDebCP=Start date
 DateFinCP=End date
 DateCreateCP=Creation date
@@ -79,7 +78,6 @@ PrevSoldeCP=Previous Balance
 NewSoldeCP=New Balance
 alreadyCPexist=A leave request has already been done on this period.
 UserName=Name
-Employee=Employee
 FirstDayOfHoliday=First day of vacation
 LastDayOfHoliday=Last day of vacation
 BoxTitleLastLeaveRequests=Last %s modified leave requests 

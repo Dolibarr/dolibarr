@@ -87,6 +87,7 @@ $langs->load("users");
 $langs->load("companies");
 $langs->load("ldap");
 $langs->load("admin");
+$langs->load('hrm');
 
 $object = new User($db);
 $extrafields = new ExtraFields($db);

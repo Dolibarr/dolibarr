@@ -90,9 +90,9 @@ $colorbacklineimpair2='255,255,255';    // line impair
 $colorbacklinepair1='250,250,250';    // line pair
 $colorbacklinepair2='248,248,248';    // line pair
 $colorbacklinepairhover='244,244,244';    // line pair
-$colorbackbody='255,255,255';
+$colorbackbody='248,248,248';
 $colortexttitlenotab='90,90,90';
-$colortexttitle='0,0,0';
+$colortexttitle='20,20,20';
 $colortext='0,0,0';
 $colortextlink='0,0,120';
 $fontsize='13';
@@ -165,7 +165,7 @@ else { $colortextbackvmenu='000000'; }
 $tmppart=explode(',',$colorbacktitle1);
 $tmpval=(! empty($tmppart[1]) ? $tmppart[1] : '')+(! empty($tmppart[2]) ? $tmppart[2] : '')+(! empty($tmppart[3]) ? $tmppart[3] : '');
 if ($tmpval <= 260) { $colortexttitle='FFFFFF'; $colorshadowtitle='888888'; }
-else { $colortexttitle='000000'; $colorshadowtitle='FFFFFF'; }
+else { $colortexttitle='404040'; $colorshadowtitle='FFFFFF'; }
 $tmppart=explode(',',$colorbacktabcard1);
 $tmpval=(! empty($tmppart[1]) ? $tmppart[1] : '')+(! empty($tmppart[2]) ? $tmppart[2] : '')+(! empty($tmppart[3]) ? $tmppart[3] : '');
 if ($tmpval <= 340) { $colortextbacktab='FFFFFF'; }
@@ -1925,6 +1925,8 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	-webkit-box-shadow: 2px 2px 4px #CCC;
 	box-shadow: 2px 2px 4px #CCC;
     */
+	box-shadow: 0 0 3px rgba(0,0,0,0.16);
+	
 	-moz-border-radius: 0.1em;
 	-webkit-border-radius: 0.1em;
 	border-radius: 0.1em;
@@ -1943,10 +1945,10 @@ table.noborder tr, div.noborder form {
 	min-height: 26px;
 }
 
-table.liste th, table.noborder th {
-	padding: 5px 2px 5px 3px;			/* t r b l */
+table.liste th, table.noborder th, table.noborder tr.liste_titre td {
+	padding: 12px 2px 12px 3px;			/* t r b l */
 }
-table.noborder th, table.noborder td, div.noborder form, div.noborder form div {
+table.noborder td, div.noborder form, div.noborder form div {
 	padding: 4px 2px 4px 3px;			/* t r b l */
 }
 
@@ -2245,7 +2247,6 @@ div.liste_titre, tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.list
 {
     /* TO MATCH BOOTSTRAP */
 	background: #ddd;
-	color: #000 !important;
 
 	/* TO MATCH ELDY */
 	/*
@@ -2773,7 +2774,10 @@ table.dp {
     vertical-align:middle;
     cursor: pointer;
 }
-
+.datenowlink
+{
+	color: rgb(<?php print $colortextlink; ?>);
+}
 
 /* ============================================================================== */
 /*  Afficher/cacher                                                               */

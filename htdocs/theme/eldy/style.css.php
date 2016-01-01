@@ -2931,6 +2931,10 @@ table.dp {
     vertical-align:middle;
     cursor: pointer;
 }
+.datenowlink
+{
+	color: rgb(<?php print $colortextlink; ?>);
+}
 
 
 /* ============================================================================== */
