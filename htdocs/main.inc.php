@@ -1952,7 +1952,10 @@ if (! function_exists("llxFooter"))
         		jQuery(".classfortooltip").tipTip({maxWidth: "'.dol_size(600,'width').'px", edgeOffset: 10, delay: 50, fadeIn: 50, fadeOut: 50});
         	});
         </script>' . "\n";
-
+        
+		// A div for the address popup
+		print "\n<!-- A div to allow dialog popup -->\n";
+		print '<div id="dialogforpopup" style="display: none;"></div>'."\n";
         
         print "</body>\n";
         print "</html>\n";
