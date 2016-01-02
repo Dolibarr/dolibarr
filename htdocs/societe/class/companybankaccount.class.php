@@ -206,7 +206,7 @@ class CompanyBankAccount extends Account
      *	@param	User	$user	User deleting
      *  @return int         	<0 if KO, >0 if OK
      */
-    function delete($user)
+    function delete($user='')
     {
         global $conf;
 
