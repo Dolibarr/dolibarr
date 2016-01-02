@@ -148,7 +148,7 @@ NEW: Add restler framework. First step to build REST API into Dolibarr.
 
 WARNING: 
 
-Dolibarr 3.9 is not yet fully compatible with PHP 7.
+Dolibarr 3.9 is not yet fully compatible with PHP 7 even if most features seems to work.
 
 Mysql minimum version is now 5.0.3 
 
@@ -169,6 +169,84 @@ This is list of hooks modified:
 
 
  
+***** ChangeLog for 3.8.3 compared to 3.8.2 *****
+FIX: #3805
+FIX: #3231 [Members] Public subscription page displays GeoIP error
+FIX: #3240
+FIX: #3293 Login page form icons not shown
+FIX: #3508 Useless tooltip in 3.8 boxes
+FIX: #3661 Margin is not selected correctly when adding a product
+FIX: #3679 Error when deleting a Localtax2 special payment
+FIX: #3707 Thirdparty bank account page table has a glitch
+FIX: #3726 When upload file, don't test if PRODUCT_USE_OLD_PATH_FOR_PHOTO variable is empty or not
+FIX: #3734 Do not show empty links of deleted source objects in stock movement list
+FIX: #3836 Unable to upload a document to an invoice under some circunstances
+FIX: #3878 Storing and deleting files on emailing was done at wrong place
+FIX: #3880
+FIX: #3882
+FIX: #3890 Expected transactions bank account page, shows negative numbers
+FIX: #3912
+FIX: #3928 Creating a Customer order and a Customer invoice from a project, does not inherit payment conditions and method of payment of customer card
+FIX: #3953 Don't round supplier price
+FIX: #3953 rounding of buying price
+FIX: #3980 Search field in "product by supplier" list sends empty result 3.8 and 3.7
+FIX: #3987 Undefined variable $newref in CommandeFournisseur::approve
+FIX: #3988 Undefined variable $conf and $error in CommandeFournisseur::addline
+FIX: #3989 Undefined variable $conf in CommandeFournisseur::getNomUrl
+FIX: #3990
+FIX: #3992 CommandeFournisseur::ref is marked as deprecated and it shouldn't be
+FIX: #3996 Dictionnary hooks are not working in 3.8
+FIX: #3997 Wrong permission key used for Margins > Read all
+FIX: #4016 User link is not correctly formed in emailing receivers
+FIX: #4018 SQL error if trying to access the mailing/card.php page without an ID defined
+FIX: #4036 Direct printing module without any driver configured, shows an unformatted error message
+FIX: #4043 Incorrect translation in error mesage in menu creation admin page
+FIX: #4049 PHP warning when trying to access a non-existing product/service
+FIX: #4055 SQL error when trying to access a non-existing expedition
+FIX: #4081 Added missing translation
+FIX: #4097 Public holiday calculation
+FIX: #4182 SQL error when deleting an unexisting bank entry
+FIX: #4242 Allow disabling dashes in documents
+FIX: #4243 sql injection
+FIX: #4281
+FIX: #4282 Defined shipping time were not shown in Customer order's PDF documents
+FIX: #4285 SQL query shown when accessing an unexisting invoice
+FIX: #4287 SQL error when accessing an unexisting proposal
+FIX: #4302 Undefined variable $conf in Commande::LibStatut
+FIX: Allow to search on alias name into select
+FIX: Add a protection to not make release if ChangeLog was not generated.
+FIX: autofocus on input search product
+FIX: bad calculation for stock value
+FIX: Better compatibility for users that used the not supported option MAIN_USE_JQUERY_MULTISELECT set to 1.
+FIX: Bug: $this is not accessible in static context in Mailing::libStatutDest #4050
+FIX: can not have access to the new ids or propal lines on PROPAL_CLONE
+FIX: Can't update line's duration
+FIX: Can use formated float number on old expense report module.
+FIX: change object statut on close shipping and remove erratic db commit
+FIX: change order date on clone (as everywhere else)
+FIX: event's data lost on user assign update
+FIX: export propal and order with extrafields
+FIX: export with category contact extrafields
+FIX: jquery select of project generate js error on change event
+FIX: label of line is set in description field if empty
+FIX: loss data also if update was cancel by error of ended state with no end date, try a generic patch
+FIX: mail isn't display in title on event in mode view
+FIX: Missing to set context into workflow actions, so triggers can't know we are creating an invoice from order or an order from a proposal.
+FIX: NB task and percent progress in box project
+FIX: Not delete a product when have customer price
+FIX: Not deleting contrats on element_element table
+FIX: Not use localtaxes when invoice some orders
+FIX: only active customer should be available into select list thirdparty on invoice creation
+FIX: only active customer should be return into new invoice creation select list
+FIX: AWP calculation
+FIX: product link in project box
+FIX: Remove  column creation for table llx_product_fournisseur_price, the column use un calss is fk_supplier_price_expression, and fk_price_expression does not exist into lx_product_fournisseur_price sql file declaration
+FIX: Show category selector if we have permission to view products or services
+FIX: showrefnav htmlspecialchar instead of < >
+FIX: The label hidden was not supported when using jmobile
+FIX: Too many information were hidden. A lot of users still need bank account on PDF.
+FIX: Use "WHERE true" instead of "WHERE 1" #4132
+
 ***** ChangeLog for 3.8.2 compared to 3.8.1 *****
 FIX: Add a protection to not make release if ChangeLog was not generated.
 FIX: 1/ update_extra() function must not be in  "if(!empty(MAIN_DISABLE_CONTACTS_TAB)" test. 2/ Reindented code
@@ -513,6 +591,25 @@ Dolibarr better:
 - Function get_exdir require now 6 parameters. This is to prepare a future feature.
 
 
+***** ChangeLog for 3.7.3 compared to 3.7.2 *****
+FIX: #3734 Do not show empty links of deleted source objects in stock movement list
+FIX: #3890 Expected transactions bank account page, shows negative numbers
+FIX: #3928 Creating a Customer order and a Customer invoice from a project, does not inherit payment conditions and method of payment of customer card
+FIX: #3980 Search field in "product by supplier" list sends empty result 3.8 and 3.7
+FIX: #4081 Added missing translation
+FIX: #4097 Public holiday calculation
+FIX: #4242 Allow disabling dashes in documents
+FIX: #4243 sql injection
+FIX: Can use formated float number on old expense report module.
+FIX: Change object statut when closing shipment and remove erratic db commit
+FIX: Export with category contact extrafields
+FIX: NB task and percent progress in box project
+FIX: Not delete a product when have customer price
+FIX: Not deleting contrats on element_element table
+FIX: Not use localtaxes when invoice some orders
+FIX: Product link in project box
+FIX: Use "WHERE true" instead of "WHERE 1" #4132
+
 ***** ChangeLog for 3.7.2 compared to 3.7.1 *****
 FIX: #2957 : missing $langs object for trigger
 FIX: #2983 Load gravatar avatar images securely over HTTPS
@@ -825,6 +922,17 @@ Dolibarr better:
   warehouse module and your Point Of Sale module setup if you use one.
 - Replaced USER_UPDATE_SESSION trigger with an updateSession hook may break modules using it.
 
+
+***** ChangeLog for 3.6.6 compared to 3.6.5 *****
+FIX: #3734 Do not show empty links of deleted source objects in stock movement list
+FIX: #4081 Added missing translation
+FIX: #4097 Public holiday calculation
+FIX: #4242 Allow disabling dashes in documents
+FIX: #4243 sql injection
+FIX: Add a protection to not make release if ChangeLog was not generated. Prepare package 3.6.5
+FIX: export with category contact extrafields
+FIX: Not delete a product when have customer price
+FIX: Not deleting contrats on element_element table
 
 ***** ChangeLog for 3.6.5 compared to 3.6.4 *****
 FIX: #2957 : missing $langs object for trigger
