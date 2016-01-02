@@ -1,9 +1,10 @@
 <?php
 /* Copyright (C) 2003-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2004		Eric Seigne				<eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2004-2010	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2004		Eric Seigne		<eric.seigne@ryxeo.com>
+ * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2015       	Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2016       	Charlie Benke           <charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -581,8 +582,20 @@ abstract class CommonDocGenerator
 				$object->array_options['options_'.$key] = $extrafields->attribute_param[$key]['options'][$object->array_options['options_'.$key]];
 			}
 			else if($extrafields->attribute_type[$key] == 'date')
-			{
-				$object->array_options['options_'.$key] = (strlen($object->array_options['options_'.$key])>0?dol_print_date($object->array_options['options_'.$key],'day'):'');
+			{	
+				if (strlen($object->array_options['options_'.$key])>0)
+				{
+					$object->array_options['options_'.$key] = dol_print_date($object->array_options['options_'.$key],'day');
+					$object->array_options['options_'.$key.'_rfc'] = dol_print_date($object->array_options['options_'.$key],'dayrfc');
+					$object->array_options['options_'.$key.'_dayall'] = dol_print_date($object->array_options['options_'.$key],'dayall');
+				}
+				else
+				{
+					$object->array_options['options_'.$key] = '';
+					$object->array_options['options_'.$key.'_rfc'] = '';
+					$object->array_options['options_'.$key.'_dayall'] = '';
+				}
+				
 			}
 			else if($extrafields->attribute_type[$key] == 'datetime')
 			{
