@@ -55,6 +55,9 @@ $langs->setDefaultLang($setuplang);
 $versionfrom=GETPOST("versionfrom",'',3)?GETPOST("versionfrom",'',3):(empty($argv[1])?'':$argv[1]);
 $versionto=GETPOST("versionto",'',3)?GETPOST("versionto",'',3):(empty($argv[2])?'':$argv[2]);
 $versionmodule=GETPOST("versionmodule",'',3)?GETPOST("versionmodule",'',3):(empty($argv[3])?'':$argv[3]);
+$versionmodule=(GETPOST("versionmodule",'',3) && GETPOST("versionmodule",'',3) != 'ignoredbversion')?GETPOST("versionmodule",'',3):((empty($argv[3]) || $argv[3] == 'ignoredbversion')?'':$argv[3]);
+$ignoredbversion=(GETPOST('ignoredbversion','',3)=='ignoredbversion')?GETPOST('ignoredbversion','',3):((empty($argv[3]) || $argv[3] != 'ignoredbversion')?'':$argv[3]);
+
 
 $langs->load("admin");
 $langs->load("install");
