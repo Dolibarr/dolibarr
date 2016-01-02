@@ -60,7 +60,7 @@ class DolEditor
 	 *		@param	int		$uselocalbrowser		Enabled to add links to local object with local browser. If false, only external images can be added in content.
 	 *      @param  int		$okforextendededitor    True=Allow usage of extended editor tool (like fckeditor)
      *      @param  int		$rows                   Size of rows for textarea tool
-	 *      @param  int		$cols                   Size of cols for textarea tool (textarea number of cols or %)
+	 *      @param  string	$cols                   Size of cols for textarea tool (textarea number of cols '70' or percent 'x%')
 	 *      @param	int		$readonly				0=Read/Edit, 1=Read only
 	 */
     function __construct($htmlname,$content,$width='',$height=200,$toolbarname='Basic',$toolbarlocation='In',$toolbarstartexpanded=false,$uselocalbrowser=true,$okforextendededitor=true,$rows=0,$cols=0,$readonly=0)

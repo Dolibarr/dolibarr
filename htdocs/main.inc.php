@@ -1220,15 +1220,25 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             	if (empty($conf->dol_use_jmobile) || ($conf->dol_use_jmobile != 2 && $conf->dol_use_jmobile != 3))
             	{
             		print '<script type="text/javascript">
-	            		$(document).bind("mobileinit", function(){
-           				$.extend(  $.mobile , {
-           					autoInitializePage : true,	/* We need this to run jmobile */
-           					/* loadingMessage : \'xxxxx\', */
-           					touchOverflowEnabled : true,
-           					defaultPageTransition : \'none\',
-           					defaultDialogTransition : \'none\',
-           					ajaxEnabled : false			/* old param was ajaxFormsEnabled and ajaxLinksEnabled */
-           					});
+	            		$(document).bind("mobileinit", function() {
+            		    ';
+            		if ($conf->theme == 'md')
+            		{
+                		print '
+                		    /* Disabled decoration for some css */
+                		    $.mobile.keepNative = \'input[type="submit"]\';                        /* jQuery Mobile 1.4 and higher */
+                		    $.mobile.page.prototype.options.keepNative = \'input[type="submit"]\'; /* jQuery Mobile 1.4 and lower */
+                		   ';
+            		}
+                    print '                		        
+               				$.extend(  $.mobile , {
+               					autoInitializePage : true,	/* We need this to run jmobile */
+               					/* loadingMessage : \'xxxxx\', */
+               					touchOverflowEnabled : true,
+               					defaultPageTransition : \'none\',
+               					defaultDialogTransition : \'none\',
+               					ajaxEnabled : false			/* old param was ajaxFormsEnabled and ajaxLinksEnabled */
+               					});
            				});
             			</script>';
             	}

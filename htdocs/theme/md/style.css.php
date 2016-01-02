@@ -188,8 +188,6 @@ $colortexttitle=join(',',colorStringToArray($colortexttitle));
 $colortext=join(',',colorStringToArray($colortext));
 $colortextlink=join(',',colorStringToArray($colortextlink));
 
-if (! empty($conf->dol_optimize_smallscreen)) $fontsize=11;
-
 $nbtopmenuentries=$menumanager->showmenu('topnb');
 
 print '/*'."\n";
@@ -213,6 +211,7 @@ print 'dol_no_mouse_hover='.$dol_no_mouse_hover."\n";
 print 'dol_use_jmobile='.$dol_use_jmobile."\n";
 print 'dol_screenwidth='.$_SESSION['dol_screenwidth']."\n";
 print 'dol_screenheight='.$_SESSION['dol_screenheight']."\n";
+print 'fontsize='.$fontsize."\n";
 print 'nbtopmenuentries='.$nbtopmenuentries."\n";
 print '*/'."\n";
 
@@ -1755,11 +1754,13 @@ span.butAction, span.butActionDelete {
 	color: #ffffff !important;
 	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
 	background-color: #006dcc;
+	<?php // if (empty($conf->dol_use_jmobile)) { ?>
 	background-image: -moz-linear-gradient(top, #0088cc, #0044cc);
 	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0088cc), to(#0044cc));
 	background-image: -webkit-linear-gradient(top, #0088cc, #0044cc);
 	background-image: -o-linear-gradient(top, #0088cc, #0044cc);
 	background-image: linear-gradient(to bottom, #0088cc, #0044cc);
+	<?php // } ?>
 	background-repeat: repeat-x;
 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff0088cc', endColorstr='#ff0044cc', GradientType=0);
 	border-color: #0044cc #0044cc #002a80;
@@ -3683,7 +3684,7 @@ ul.ulmenu {
 
 /* Style for first level menu with jmobile */
 .ui-bar-b, .lilevel0 {
-	border: 1px solid #5f5f7a !important;
+	border: 1px solid #888 !important;
     background: rgb(<?php echo $colorbacktitle1; ?>);
     background-repeat: repeat-x;
 
@@ -3712,7 +3713,7 @@ ul.ulmenu {
 	text-shadow: none;
 }
 .ui-body-c .ui-link, .ui-body-c .ui-link:visited, .ui-body-c .ui-link:hover {
-	color: rgb(<?php print $colortext; ?>);
+	color: rgb(<?php print $colortextlink; ?>);
 }
 .ui-btn-up-c .vsmenudisabled {
 	color: #<?php echo $colorshadowtitle; ?> !important;

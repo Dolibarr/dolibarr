@@ -193,8 +193,6 @@ $colortexttitle=join(',',colorStringToArray($colortexttitle));
 $colortext=join(',',colorStringToArray($colortext));
 $colortextlink=join(',',colorStringToArray($colortextlink));
 
-if (! empty($conf->dol_optimize_smallscreen)) $fontsize=11;
-
 $nbtopmenuentries=$menumanager->showmenu('topnb');
 
 print '/*'."\n";
@@ -584,8 +582,8 @@ td.showDragHandle {
 
 
 div.fiche {
-	margin-<?php print $left; ?>: <?php print (GETPOST("optioncss") == 'print'?6:((empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT))?($dol_hide_leftmenu?'4':'20'):'24')); ?>px;
-	margin-<?php print $right; ?>: <?php print (GETPOST("optioncss") == 'print'?8:(empty($conf->dol_optimize_smallscreen)?'12':'4')); ?>px;
+	margin-<?php print $left; ?>: <?php print (GETPOST("optioncss") == 'print'?6:((empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT))?($dol_hide_leftmenu?'8':'20'):'24')); ?>px;
+	margin-<?php print $right; ?>: <?php print (GETPOST("optioncss") == 'print'?8:(empty($conf->dol_optimize_smallscreen)?'12':'8')); ?>px;
 	<?php if (! empty($conf->dol_hide_leftmenu) && ! empty($conf->dol_hide_topmenu)) print 'margin-top: 4px;'; ?>
 }
 
@@ -1626,13 +1624,11 @@ div.tabsAction > a {
 }
 
 a.tabTitle {
-/*    background: #657090;
-    color: white;*/
-    color:rgba(0,0,0,.5);
+    color:rgba(0,0,0,.5) !important;
     margin-right:10px;
     text-shadow:1px 1px 1px #ffffff;
 	font-family: <?php print $fontlist ?>;
-	font-weight: normal;
+	font-weight: normal !important;
     padding: 4px 6px 2px 6px;
     margin: 0px 6px;
     text-decoration: none;
@@ -2142,7 +2138,7 @@ table.listwithfilterbefore {
 
 /* Pagination */
 div.refidpadding  {
-	padding-top: <?php print empty($conf->dol_use_jmobile)?'3':'14'; ?>px;
+	padding-top: <?php print empty($conf->dol_use_jmobile)?'3':'7'; ?>px;
 }
 div.refid  {
 	font-weight: bold;
@@ -3758,6 +3754,9 @@ a.ui-link, a.ui-link:hover, .ui-btn:hover, span.ui-btn-text:hover, span.ui-btn-i
 .ui-select .ui-btn-icon-left .ui-btn-inner {
 	padding-left: 38px;
 }
+.ui-select {
+    display: inline-block;
+}
 .fiche .ui-controlgroup {
 	margin: 0px;
 	padding-bottom: 0px;
@@ -3841,7 +3840,7 @@ ul.ulmenu {
 
 /* Style for first level menu with jmobile */
 .ui-bar-b, .lilevel0 {
-	border: 1px solid #5f5f7a !important;
+	border: 1px solid #888 !important;
     background: rgb(<?php echo $colorbacktitle1; ?>);
     background-repeat: repeat-x;
 
@@ -3870,7 +3869,7 @@ ul.ulmenu {
 	text-shadow: none;
 }
 .ui-body-c .ui-link, .ui-body-c .ui-link:visited, .ui-body-c .ui-link:hover {
-	color: rgb(<?php print $colortext; ?>);
+	color: rgb(<?php print $colortextlink; ?>);
 }
 .ui-btn-up-c .vsmenudisabled {
 	color: #<?php echo $colorshadowtitle; ?> !important;
