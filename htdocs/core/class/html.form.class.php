@@ -4850,7 +4850,7 @@ class Form
             </dt>
             <dd>
                 <div class="multiselectcheckbox'.$htmlname.'">
-                    <ul>
+                    <ul class="ul'.$htmlname.'">
                     '.$lis.'
                     </ul>
                 </div>

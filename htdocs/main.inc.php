@@ -1683,32 +1683,10 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
 
 	    print '<div class="vmenu">'."\n\n";
 
-    	// Show other forms
-	    /*if ($searchform)
-	    {
-	        print "\n";
-	        print "<!-- Begin SearchForm -->\n";
-	        print '<div id="blockvmenusearch" class="blockvmenusearch">'."\n";
-	        print $searchform;
-	        print '</div>'."\n";
-	        print "<!-- End SearchForm -->\n";
-	    }*/
-
+    	// Show left menu with other forms
 	    $menumanager->menu_array = $menu_array_before;
     	$menumanager->menu_array_after = $menu_array_after;
 	    $menumanager->showmenu('left', array('searchform'=>$searchform, 'bookmarks'=>$bookmarks)); // output menu_array and menu found in database
-
-	    // Bookmarks
-	    /*
-	    if ($bookmarks)
-	    {
-	        print "\n";
-	        print "<!-- Begin Bookmarks -->\n";
-	        print '<div id="blockvmenubookmarks" class="blockvmenubookmarks">'."\n";
-	        print $bookmarks;
-	        print '</div>'."\n";
-	        print "<!-- End Bookmarks -->\n";
-	    }*/
 
         // Dolibarr version + help + bug report link
 		print "\n";

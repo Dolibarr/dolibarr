@@ -2039,13 +2039,13 @@ div.pagination li.pagination span {
   color: #000;
   text-decoration: none;
 
-	background-color: #f5f5f5;
-	background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6);
-	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#e6e6e6));
-	background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e6);
-	background-image: -o-linear-gradient(top, #ffffff, #e6e6e6);
-	background-image: linear-gradient(to bottom, #ffffff, #e6e6e6);
-	background-repeat: repeat-x;
+    background-color: #f5f5f5;
+    background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#e6e6e6));
+    background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e6);
+    background-image: -o-linear-gradient(top, #ffffff, #e6e6e6);
+    background-image: linear-gradient(to bottom, #ffffff, #e6e6e6);
+    background-repeat: repeat-x;
 <?php } ?>
 }
 div.pagination li.pagination span.inactive {
@@ -3511,6 +3511,9 @@ span.noborderoncategories {
 /*  Multiselect with checkbox                                                     */
 /* ============================================================================== */
 
+ul.ulselectedfields {
+    z-index: 100;			/* To have the select box appears on first plan even when near buttons are decorated by jmobile */
+}
 dl.dropdown {
     margin:0px;
     padding:0px;

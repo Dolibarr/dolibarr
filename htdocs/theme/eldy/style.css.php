@@ -582,8 +582,8 @@ td.showDragHandle {
 
 
 div.fiche {
-	margin-<?php print $left; ?>: <?php print (GETPOST("optioncss") == 'print'?6:((empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT))?($dol_hide_leftmenu?'8':'20'):'24')); ?>px;
-	margin-<?php print $right; ?>: <?php print (GETPOST("optioncss") == 'print'?8:(empty($conf->dol_optimize_smallscreen)?'12':'8')); ?>px;
+	margin-<?php print $left; ?>: <?php print (GETPOST("optioncss") == 'print'?6:((empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT))?($dol_hide_leftmenu?'6':'20'):'24')); ?>px;
+	margin-<?php print $right; ?>: <?php print (GETPOST("optioncss") == 'print'?8:(empty($conf->dol_optimize_smallscreen)?'12':'6')); ?>px;
 	<?php if (! empty($conf->dol_hide_leftmenu) && ! empty($conf->dol_hide_topmenu)) print 'margin-top: 4px;'; ?>
 }
 
@@ -3664,6 +3664,9 @@ span.noborderoncategories {
 /*  Multiselect with checkbox                                                     */
 /* ============================================================================== */
 
+ul.ulselectedfields {
+    z-index: 100;			/* To have the select box appears on first plan even when near buttons are decorated by jmobile */
+}
 dl.dropdown {
     margin:0px;
     padding:0px;
@@ -3754,8 +3757,12 @@ a.ui-link, a.ui-link:hover, .ui-btn:hover, span.ui-btn-text:hover, span.ui-btn-i
 .ui-select .ui-btn-icon-left .ui-btn-inner {
 	padding-left: 38px;
 }
-.ui-select {
-    display: inline-block;
+select {
+    /* display: inline-block; */	/* We can't set this. This disable ability to make */
+    /* TODO added by jmobile, replace jmobile with pure css*/ 
+    overflow:hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis; 
 }
 .fiche .ui-controlgroup {
 	margin: 0px;
