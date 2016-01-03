@@ -89,14 +89,6 @@ if (((! empty($conf->product->enabled) && $user->rights->produit->lire) || (! em
 	$nbofsearch++;
 }
 
-if (((! empty($conf->product->enabled) && $user->rights->produit->lire) || (! empty($conf->service->enabled) && $user->rights->service->lire))
-	&& ! empty($conf->global->MAIN_SEARCHFORM_PRODUITSERVICE))
-{
-	$langs->load("products");
-	$searchform.=printSearchForm(DOL_URL_ROOT.'/fourn/product/list.php', DOL_URL_ROOT.'/fourn/product/list.php', img_object('','product').' '.$langs->trans("SupplierRef"), 'products', 'srefsupplier');
-	$nbofsearch++;
-}
-
 if (! empty($conf->adherent->enabled) && ! empty($conf->global->MAIN_SEARCHFORM_ADHERENT) && $user->rights->adherent->lire)
 {
 	$langs->load("members");
