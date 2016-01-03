@@ -219,9 +219,9 @@ if (isset($_SERVER["HTTP_USER_AGENT"]))
     $conf->browser->name=$tmp['browsername'];
     $conf->browser->os=$tmp['browseros'];
     $conf->browser->version=$tmp['browserversion'];
-    $conf->browser->layout=$tmp['layout'];
-    $conf->browser->phone=$tmp['phone'];	// deprecated, use layout
-    $conf->browser->tablet=$tmp['tablet'];	// deprecated, use layout
+    $conf->browser->layout=$tmp['layout'];     // 'classic', 'phone', 'tablet'
+    $conf->browser->phone=$tmp['phone'];	   // deprecated, use layout
+    $conf->browser->tablet=$tmp['tablet'];	   // deprecated, use layout
     //var_dump($conf->browser);
 }
 
@@ -1606,7 +1606,7 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
 
 	    print "\n";
 
-	    if ($conf->use_javascript_ajax)
+	    if ($conf->use_javascript_ajax && $conf->browser->layout != 'phone')
 	    {
     	    if (! is_object($form)) $form=new Form($db);
     	    $selected=-1;
@@ -1621,7 +1621,7 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
     	        $searchform.=printSearchForm(DOL_URL_ROOT.'/societe/list.php', DOL_URL_ROOT.'/societe/list.php', $langs->trans("ThirdParties"), 'soc', 'sall', 'T', 'searchleftt', img_object('','company'));
     	    }
     
-    	    if (! empty($conf->societe->enabled) && ! empty($conf->global->MAIN_SEARCHFORM_CONTACT) && $user->rights->societe->lire)
+    	    if (! empty($conf->societe->enabled) && empty($conf->global->MAIN_SEARCHFORM_CONTACT) && $user->rights->societe->lire)
     	    {
     	        $langs->load("companies");
     	        $searchform.=printSearchForm(DOL_URL_ROOT.'/contact/list.php', DOL_URL_ROOT.'/contact/list.php', $langs->trans("Contacts"), 'contact', 'sall', 'A', 'searchleftc', img_object('','contact'));
@@ -1632,13 +1632,6 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
     	    {
     	        $langs->load("products");
     	        $searchform.=printSearchForm(DOL_URL_ROOT.'/product/list.php', DOL_URL_ROOT.'/product/list.php', $langs->trans("Products")."/".$langs->trans("Services"), 'products', 'sall', 'P', 'searchleftp', img_object('','product'));
-    	    }
-    
-    	    if (((! empty($conf->product->enabled) && $user->rights->produit->lire) || (! empty($conf->service->enabled) && $user->rights->service->lire)) && ! empty($conf->fournisseur->enabled)
-    	    && ! empty($conf->global->MAIN_SEARCHFORM_PRODUITSERVICE_SUPPLIER))
-    	    {
-    	        $langs->load("products");
-    	        $searchform.=printSearchForm(DOL_URL_ROOT.'/fourn/product/list.php', DOL_URL_ROOT.'/fourn/product/list.php', $langs->trans("SupplierRef"), 'products', 'srefsupplier', '', 'searchlefts', img_object('','product'));
     	    }
     
             if (! empty($conf->projet->enabled) && ! empty($conf->global->MAIN_SEARCHFORM_PROJECT) && $user->rights->projet->lire)
