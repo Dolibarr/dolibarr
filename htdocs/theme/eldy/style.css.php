@@ -1187,14 +1187,14 @@ font.vsmenudisabledmargin { margin: 1px 1px 1px 8px; }
 
 a.help:link, a.help:visited, a.help:hover, a.help:active { font-size:<?php print $fontsizesmaller ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #666666; text-decoration: none; }
 
-.vmenu div.blockvmenufirst, .vmenu div.blockvmenulogo, .vmenu div.blockvmenubookmarks
+.vmenu div.blockvmenufirst, .vmenu div.blockvmenulogo, .vmenu div.blockvmenusearchphone, .vmenu div.blockvmenubookmarks
 {
     border-top: 1px solid #BBB;
 }
 a.vsmenu.addbookmarkpicto {
     padding-right: 10px;
 }
-.vmenu div.blockvmenubookmarks, .vmenu div.blockvmenuend, .vmenu div.blockvmenulogo
+.vmenu div.blockvmenubookmarks, .vmenu div.blockvmenuend, .vmenu div.blockvmenulogo, .vmenu div.blockvmenusearchphone
 {
 	border-bottom: 1px solid #BBB;
 }

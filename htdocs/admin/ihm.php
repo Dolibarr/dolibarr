@@ -48,6 +48,7 @@ if (! defined("MAIN_MOTD")) define("MAIN_MOTD","");
 
 // List of supported permanent search area
 $searchform=array();
+/* deprecated
 if (empty($conf->use_javascript_ajax))
 {
     $searchform=array("MAIN_SEARCHFORM_SOCIETE", "MAIN_SEARCHFORM_CONTACT", "MAIN_SEARCHFORM_PRODUITSERVICE", "MAIN_SEARCHFORM_ADHERENT", "MAIN_SEARCHFORM_PROJECT", "MAIN_SEARCHFORM_EMPLOYEE");
@@ -55,6 +56,7 @@ if (empty($conf->use_javascript_ajax))
     $searchformtitle=array($langs->trans("Companies"), $langs->trans("Contacts"), $langs->trans("ProductsAndServices"), $langs->trans("Members"), $langs->trans("Projects"), $langs->trans("Users"));
     $searchformmodule=array('Module1Name','Module1Name','Module50Name','Module310Name','Module400Name');
 }
+*/
 
 
 /*

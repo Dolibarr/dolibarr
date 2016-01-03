@@ -1615,38 +1615,38 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
 	    else
 	    {
     	    // Define $searchform
-    	    if ((( ! empty($conf->societe->enabled) && (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) || empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))) || ! empty($conf->fournisseur->enabled)) && ! empty($conf->global->MAIN_SEARCHFORM_SOCIETE) && $user->rights->societe->lire)
+    	    if ((( ! empty($conf->societe->enabled) && (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) || empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))) || ! empty($conf->fournisseur->enabled)) && $user->rights->societe->lire)
     	    {
     	        $langs->load("companies");
     	        $searchform.=printSearchForm(DOL_URL_ROOT.'/societe/list.php', DOL_URL_ROOT.'/societe/list.php', $langs->trans("ThirdParties"), 'soc', 'sall', 'T', 'searchleftt', img_object('','company'));
     	    }
     
-    	    if (! empty($conf->societe->enabled) && empty($conf->global->MAIN_SEARCHFORM_CONTACT) && $user->rights->societe->lire)
+    	    if (! empty($conf->societe->enabled) && $user->rights->societe->lire)
     	    {
     	        $langs->load("companies");
     	        $searchform.=printSearchForm(DOL_URL_ROOT.'/contact/list.php', DOL_URL_ROOT.'/contact/list.php', $langs->trans("Contacts"), 'contact', 'sall', 'A', 'searchleftc', img_object('','contact'));
     	    }
     
     	    if (((! empty($conf->product->enabled) && $user->rights->produit->lire) || (! empty($conf->service->enabled) && $user->rights->service->lire))
-    	    && ! empty($conf->global->MAIN_SEARCHFORM_PRODUITSERVICE))
+    	    )
     	    {
     	        $langs->load("products");
     	        $searchform.=printSearchForm(DOL_URL_ROOT.'/product/list.php', DOL_URL_ROOT.'/product/list.php', $langs->trans("Products")."/".$langs->trans("Services"), 'products', 'sall', 'P', 'searchleftp', img_object('','product'));
     	    }
     
-            if (! empty($conf->projet->enabled) && ! empty($conf->global->MAIN_SEARCHFORM_PROJECT) && $user->rights->projet->lire)
+            if (! empty($conf->projet->enabled) && $user->rights->projet->lire)
     	    {
     	        $langs->load("projects");
     	        $searchform.=printSearchForm(DOL_URL_ROOT.'/projet/list.php', DOL_URL_ROOT.'/projet/list.php', $langs->trans("Projects"), 'project', 'search_all', 'Q', 'searchleftproj', img_object('','projectpub'));
     	    }
     
-    	    if (! empty($conf->adherent->enabled) && ! empty($conf->global->MAIN_SEARCHFORM_ADHERENT) && $user->rights->adherent->lire)
+    	    if (! empty($conf->adherent->enabled) && $user->rights->adherent->lire)
     	    {
     	        $langs->load("members");
     	        $searchform.=printSearchForm(DOL_URL_ROOT.'/adherents/list.php', DOL_URL_ROOT.'/adherents/list.php', $langs->trans("Members"), 'member', 'sall', 'M', 'searchleftm', img_object('','user'));
     	    }
     
-    		if (! empty($conf->user->enabled) && ! empty($conf->global->MAIN_SEARCHFORM_USER) && $user->rights->user->user->lire)
+    		if (! empty($conf->user->enabled) && $user->rights->user->user->lire)
     	    {
     	        $langs->load("users");
     	        $searchform.=printSearchForm(DOL_URL_ROOT.'/user/list.php', DOL_URL_ROOT.'/user/list.php', $langs->trans("Users"), 'user', 'sall', 'M', 'searchleftuser', img_object('','user'));
@@ -1662,6 +1662,19 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
 		}
 		else $searchform=$hookmanager->resPrint;
 
+		if ($conf->use_javascript_ajax && $conf->browser->layout == 'phone')
+	    {
+	        $searchform='<div class="blockvmenuimpair blockvmenusearchphone"><div id="divsearchforms1"><a href="#" alt="'.dol_escape_htmltag($langs->trans("ShowSearchFields")).'">'.$langs->trans("Search").'...</a></div><div id="divsearchforms2" style="display: none">'.$searchform.'</div>';
+	        $searchform.='<script type="text/javascript">
+            	jQuery(document).ready(function () {
+            		jQuery("#divsearchforms1").click(function(){
+	                   jQuery("#divsearchforms2").toggle();
+	               });
+            	});
+                </script>' . "\n";
+	        $searchform.='</div>';
+	    }
+		
 	    // Define $bookmarks
 	    if (! empty($conf->bookmark->enabled) && $user->rights->bookmark->lire)
 	    {
