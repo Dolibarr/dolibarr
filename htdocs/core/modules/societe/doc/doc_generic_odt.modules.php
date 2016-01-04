@@ -355,12 +355,12 @@ class doc_generic_odt extends ModeleThirdPartyDoc
                 }
 
                 // Make substitutions into odt of thirdparty + external modules
-				$tmparray=$this->get_substitutionarray_thirdparty($object,$outputlangs);
+		$tmparray=$this->get_substitutionarray_thirdparty($object,$outputlangs);
                 complete_substitutions_array($tmparray, $outputlangs, $object);
 
                 // Call the ODTSubstitution hook
-                $parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray);
-                $reshook=$hookmanager->executeHooks('ODTSubstitution',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+                $parameters=array('odfHandler'=>&$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray);
+		$reshook=$hookmanager->executeHooks('ODTSubstitution',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 
                 // Replace variables into document
 				foreach($tmparray as $key=>$value)
@@ -395,7 +395,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 				}
 
                 // Call the beforeODTSave hook
-				$parameters=array('odfHandler'=>&$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
+                		$parameters=array('odfHandler'=>&$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray);
 				$reshook=$hookmanager->executeHooks('beforeODTSave',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 
 				// Write new file
@@ -425,7 +425,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 						return -1;
 					}
 				}
-
+				$parameters=array('odfHandler'=>&$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray);
 				$reshook=$hookmanager->executeHooks('afterODTCreation',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 				
 				if (! empty($conf->global->MAIN_UMASK))
