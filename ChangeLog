@@ -26,7 +26,6 @@ NEW: Add a tab "document" in donation card
 NEW: Add cancel button on thirdparty create page
 NEW: Add chart of product statistics
 NEW: Add color on categories
-NEW: Add css class and ids on column of detail lines to allow module to easily manipulate fields.
 NEW: Add date value filter on account records list
 NEW: Add __PROJECT_NAME__ tag for customer invoice emails
 NEW: Add option PDF_ALLOW_HTML_FOR_FREE_TEXT to be able to enter pdf footer text with wysiwyg editor.
@@ -36,99 +35,88 @@ NEW: Add filter on status on shipments
 NEW: Add gender property managed on user card FIX: Better error messages when uploading photo of user when permission to write are not granted
 NEW: Add help tooltips on fields of dictionary edit pages.
 NEW: Add hidden option MAIN_MAILFORM_DISABLE_ENTERKEY to disable the key enter into the form to send email.
-NEW: Add hook in send mail
-NEW: Add hooks on list of members to allow an external module to add more fields into list view.
-NEW: Add hooks to allow an external module to complete list of events into calendar views.
 NEW: Add $ID$ into extrafields management to allow use of current object id on filter for select list from table and checkbox list from table
 NEW: Add info page on product card
 NEW: Add into about page, a sample text to use to promote new version release (visible only if version is last stable)
 NEW: Add none/all selection into list of files for FTP browser module
 NEW: Add opportunity amount on project card.
-NEW: Add parameter to add a link to use "date of invoice" in one click when fille a payment card.
+NEW: Add link "date of invoice" to select date of invoice when creating a payment in one click.
 NEW: Add planned workload and declared progress on project summary list on project home page (data aggregated from tasks of project)
-NEW: Add "productpricecard" hook and uniformize code
 NEW: Add ref and label of project into export
 NEW: Add status into filters of graph
 NEW: Add tab document on salaries payment
-NEW: Add thumb of users into thumbs stats on home page
-NEW: A link to the bugtracker can be enabled in the GUI
+NEW: Add thumb of users into stats box on home page
+NEW: A link to the bugtracker report tool can be enabled in the GUI
 NEW: Better look for POS. More responsive design.
 NEW: Can add project search on left menu search area
-NEW: Can assign a task to yourself to have it appear on timesheet
-NEW: Can choose fields to show on project list
+NEW: Can assign a task to yourself to have it appear on timesheet.
 NEW: Can close a project that has draft status with no need to switch it to validate status before.
 NEW: Can edit Background color for Top menu and Background color for table title line.
-NEW: Can edit email template using WYSIWYG editor
-NEW: Can edit list of prospect status for customers/prospects. Add a new entry into dictionary table to manage list fo status. Removed deprecated files.
+NEW: Can edit email templates using WYSIWYG editor.
+NEW: Can edit list of prospect status for customers/prospects. Add a new entry into dictionary table to manage list fo status.
 NEW: Can filter on contact status in prospect list. Removed deprecated menu entry.
-NEW: Can filter proposal on a tag of a product Enhance also the prototype test_arrays to include select form before table.
+NEW: Can filter proposal on a tag of a product.
 NEW: Can filter proposal, orders or invoices with criteria "contain at least one product with following tag"
-NEW: Can select fields to show in product list. Extrafields are also supported.
-NEW: Can select fields to show into the contact list. Extrafields are also supported.
-NEW: Can select which field to show into list of users. Extrafields are also supported.
-NEW: Can set default value of event type when creating an event (if type of event option is used).
+NEW: Can choose fields to show on project list.
+NEW: Can choose fields to show in product list. Extrafields are also supported.
+NEW: Can choose fields to show into the contact list. Extrafields are also supported.
+NEW: Can choose fields to show into list of users. Extrafields are also supported.
+NEW: Can set default value of event type when creating an event (if option "manage type of event" is used).
 NEW: Can upload files on leave requests. Use more standard permissions.
-NEW: Can use a "|" to make a OR search on several different criterias into text filters of tables.
-NEW: Can use the * as a joker characters into search boxes of lists
-NEW: Clean code into salary module, debug and add indexes NEW: Can filter on user list and salary payments on user with naural search.
-NEW: clone action on agenda events
+NEW: Can use a "|" to make a OR search on several different criterias into search text filters of tables.
+NEW: Can use the * as a joker characters into search boxes of lists.
+NEW: Clean code into salary module, debug and add indexes 
+NEW: Can filter on user list and salary payments on user with naural search.
+NEW: Can clone agenda events.
 NEW: Color category is visible onto the thumb of tags on thirdparty, or products cards.
-NEW: conf to use next product/service ref when we clone a product/service
+NEW: Conf to use next product/service ref when we clone a product/service
 NEW: Contract module can be used to follow both sold and bought contracts/recurring subscriptions.
-NEW: Enhance prototype, project list and proposal list with new hooks to have an external module able to add more fields.
-NEW: Enhance style engine. Add option to set color of links.
-NEW: Enter amount for withdraws requests
+NEW: Can change amount when creating withdraws requests.
 NEW: FEATURE PROPOSAL: on proposal, order or invoice creation from scratch, reload page after customer selection so its informations can be loaded
 NEW: Filter "active" by default on user list. Fix label of permission of project module.
-NEW: Forms are using the tab look, even in creation mode.
+NEW: Forms are using the "tab look", even in creation mode.
 NEW: Free text for cheque deposit receipt can be HTML content.
 NEW: Hidden option THEME_ELDY_USE_HOVER is stable enough to become officialy visible into setup.
-NEW: If module salaries is on, you can set a hourly value for time consumed by users. Each time a user enter its time consumed on a project, a calculation is done to provide the cost for human services. This value appears into the "Transversal view" of project.
-NEW: Import Sales representatives of third parties
+NEW: If module salaries is on, you can set a hourly value for time consumed by users. When a user enter its time consumed on a project, a calculation is done to provide the cost for human services. This value appears into the "Overview" of project.
+NEW: Add import profile to import sales representatives of third parties.
 NEW: Increase length of bank code to 128 char #3704
-NEW: info function for product card
 NEW: Into the overview of projects, the name of thirdparty appears into combo lists of elements to link to project.
-NEW: Introduce a "code" into fiels to describe vat. This will allow to suggest different vat lines with same value with ability to differentiate them.
-NEW: Introduce cost price on product.
+NEW: Introduce a "code" into table of vats to describe VAT. This will allow to suggest different vat lines with same value with ability to differentiate them.
+NEW: Introduce cost price on products.
 NEW: Introduce hidden option MAIN_LANDING_PAGE to decide the home page visible just after login.
-NEW: Introduce hidden option MAIN_REPLACE_TRANS_xx_XX to allow simple replacement of translated string on the fly.
+NEW: Introduce hidden option MAIN_REPLACE_TRANS_xx_XX to allow simple replacement of translated string on the fly. Prefer to use next method.
 NEW: Introduce table llx_overwrite_trans to be able to overwrite translations by simple database edition.
-NEW: Introduce use of cache for thumbs images of users
-NEW: Experimental level multiprice generator based on per cent variations over base price
-NEW: List of projects of a thirdparty are visible on a project tab
+NEW: Introduce use of cache for thumbs images of users to save bandwith.
+NEW: Experimental level multiprice generator based on per cent variations over base price.
+NEW: List of projects of a thirdparty are visible on a project tab for the thirdparty.
 NEW: Merge all left menu search boxes into one.
-NEW: Merge all search fields of an area page into one search box
-NEW: next ref on clone doesn't need conf, it's used if mask exists
-NEW: ODT generators can set meta properties of ODT file
-NEW: On list of thirdparties, user can select fields to show. Make phpunit test working again localy. Add missing columns into llx_expedition.
-NEW: Only arrow of current sorted field is visible into table views. This save a lot of spaces. You can click on the column title to sort. This make clickable area larger and click to sort is easier.
+NEW: Merge all search fields of an area page into one search box.
+NEW: Next ref on clone doesn't need conf, it's used if mask exists.
+NEW: Only arrow of current sorted field is visible into table views. This save a lot of space. You can click on the column title to sort. This make clickable area larger and click to sort is easier.
 NEW: On page to see/edit contact of an ojbect, the status of contact is visible (for both external and internal users).
-NEW: Option encrypt password into databae is set to on by default on first install.
-NEW: print event type on third party card tab agenda list (only if AGENDA_USE_EVENT_TYPE = 1)
+NEW: Option "encrypt password" into database is set to on by default on first install.
+NEW: Print event type on third party card tab agenda list (only if AGENDA_USE_EVENT_TYPE = 1)
 NEW: Provide an easier way to understand if an order can be shipped.
-NEW: Quick searh filter works on invoice, proposal, order, intervention, contract
-NEW: Rename install "etape" into english "step"
+NEW: Quick search filter works also on invoice, proposal, order, intervention, contract and expense reports.
 NEW: Replace category edition page on members with new select2 component.
-NEW: Show photo of logged user into login top right block. NEW: If no photo is available for user, we show a generic photo depending on gender
-NEW: Show photo of user into user list. A new function getImageFileNameForSize was also introduced to choose image best size according to usage to save bandwith.
-NEW: Show which fields are used for search when doing a generic search from the quick search form.
+NEW: Show photo of logged user into login top right block. 
+NEW: If no photo is available for user, we show a generic photo depending on gender.
+NEW: Show photo of user into user list.
+NEW: Show which fields were used for search when doing a "generic search" from the "quick search" form on left menu.
 NEW: Statistic graphs on products offer a filter on product type (product / service or both)
-NEW: Support logging to a Sentry server
 NEW: Syslog displays configuration errors
 NEW: The clicktodial module is now able to provide link "tel:" on phone numbers. So it is also possible to use clicktodial with a client solution like the "xivo" local client.
 NEW: The conditional IF into ODT templates works also on not defined var so we can show data only if defined. Close #3819
-NEW: The free text in PDF footer can now be a HTML content. So the WYSIWYG editor is on by default to edit it into module setup.
-NEW: The quick search box on left menu can also search into expense reports.
-NEW: The search box and the bookmarks are now rendered by the menu manager.
-NEW: The thirdparties tabs, the contacts tabs and the members tabs are now presented using a new top banner, saving space and using a same way to show address, status and navigation arrows.
+NEW: The free text in PDF footers can now be a HTML content. So the WYSIWYG editor is on by default to edit it into module setup.
+NEW: The thirdparties tabs, the contacts tabs and the members tabs are now presented using a new "top banner", saving space and using a same way to show address, status and navigation arrows.
 NEW: Thumbs for statistics on main page are fully clicable (not only link inside the thumb)
-NEW: Translate extrafield's labels
-NEW: Uniformize way of working for search filters. One filter per object.
-NEW: Used matching icons for Material Design theme
+NEW: Translate extrafield's labels.
 NEW: Use new select2 component for juridical status, country and state selection.
-NEW: When creating order, proposal or invoice from thirdparty card, the project is asked during creation. A link to create project if it does not exists is also available. NEW: Uniformize form creation of proposal to add public and private notes during creation like done for order and invoice.
+NEW: When creating order, proposal or invoice from thirdparty card, the project is asked during creation. A link to create project if it does not exists is also available. 
+NEW: Uniformize form creation of proposal to add public and private notes during creation like for order and invoice.
 
 For developers:
+NEW: The search box and the bookmarks are now rendered by the menu manager.
 NEW: Add a new widget $form->selectArrayAjax() to use combo list with content coming from an Ajax URL.
 NEW: Add doActions hook method call in contract card
 NEW: Added doActions hooks to user cards
@@ -144,11 +132,22 @@ NEW: A module can add its entries into cron module.
 NEW: Framework feature. To have a page being loaded at same scrollbar level after a click on a href link, just add the class "reposition" on this link.
 NEW: Add exemple of setup for multitail to render dolibarr log files
 NEW: Add restler framework. First step to build REST API into Dolibarr.
-
+NEW: Add css class and ids on column of detail lines to allow module to easily manipulate fields.
+NEW: Add hook in send mail
+NEW: Add hooks on list of members to allow an external module to add more fields into list view.
+NEW: Add hooks to allow an external module to complete list of events into calendar views.
+NEW: Add "productpricecard" hook and uniformize code
+NEW: Enhance also the prototype test_arrays to include select form before table.
+NEW: Enhance prototype, project list and proposal list with new hooks to have an external module able to add more fields.
+NEW: Enhance style engine. Add option to set color of links.
+NEW: ODT generators can now also set meta properties of ODT file.
+NEW: Add missing columns into llx_expedition to match other tables.
+NEW: A new function getImageFileNameForSize was also introduced to choose image best size according to usage to save bandwith.
+NEW: Support logging to a Sentry server
 
 WARNING: 
 
-Dolibarr 3.9 is not yet fully compatible with PHP 7.
+Dolibarr 3.9 is not yet fully compatible with PHP 7 even if most features seems to work.
 
 Mysql minimum version is now 5.0.3 
 
@@ -169,6 +168,84 @@ This is list of hooks modified:
 
 
  
+***** ChangeLog for 3.8.3 compared to 3.8.2 *****
+FIX: #3805
+FIX: #3231 [Members] Public subscription page displays GeoIP error
+FIX: #3240
+FIX: #3293 Login page form icons not shown
+FIX: #3508 Useless tooltip in 3.8 boxes
+FIX: #3661 Margin is not selected correctly when adding a product
+FIX: #3679 Error when deleting a Localtax2 special payment
+FIX: #3707 Thirdparty bank account page table has a glitch
+FIX: #3726 When upload file, don't test if PRODUCT_USE_OLD_PATH_FOR_PHOTO variable is empty or not
+FIX: #3734 Do not show empty links of deleted source objects in stock movement list
+FIX: #3836 Unable to upload a document to an invoice under some circunstances
+FIX: #3878 Storing and deleting files on emailing was done at wrong place
+FIX: #3880
+FIX: #3882
+FIX: #3890 Expected transactions bank account page, shows negative numbers
+FIX: #3912
+FIX: #3928 Creating a Customer order and a Customer invoice from a project, does not inherit payment conditions and method of payment of customer card
+FIX: #3953 Don't round supplier price
+FIX: #3953 rounding of buying price
+FIX: #3980 Search field in "product by supplier" list sends empty result 3.8 and 3.7
+FIX: #3987 Undefined variable $newref in CommandeFournisseur::approve
+FIX: #3988 Undefined variable $conf and $error in CommandeFournisseur::addline
+FIX: #3989 Undefined variable $conf in CommandeFournisseur::getNomUrl
+FIX: #3990
+FIX: #3992 CommandeFournisseur::ref is marked as deprecated and it shouldn't be
+FIX: #3996 Dictionnary hooks are not working in 3.8
+FIX: #3997 Wrong permission key used for Margins > Read all
+FIX: #4016 User link is not correctly formed in emailing receivers
+FIX: #4018 SQL error if trying to access the mailing/card.php page without an ID defined
+FIX: #4036 Direct printing module without any driver configured, shows an unformatted error message
+FIX: #4043 Incorrect translation in error mesage in menu creation admin page
+FIX: #4049 PHP warning when trying to access a non-existing product/service
+FIX: #4055 SQL error when trying to access a non-existing expedition
+FIX: #4081 Added missing translation
+FIX: #4097 Public holiday calculation
+FIX: #4182 SQL error when deleting an unexisting bank entry
+FIX: #4242 Allow disabling dashes in documents
+FIX: #4243 sql injection
+FIX: #4281
+FIX: #4282 Defined shipping time were not shown in Customer order's PDF documents
+FIX: #4285 SQL query shown when accessing an unexisting invoice
+FIX: #4287 SQL error when accessing an unexisting proposal
+FIX: #4302 Undefined variable $conf in Commande::LibStatut
+FIX: Allow to search on alias name into select
+FIX: Add a protection to not make release if ChangeLog was not generated.
+FIX: autofocus on input search product
+FIX: bad calculation for stock value
+FIX: Better compatibility for users that used the not supported option MAIN_USE_JQUERY_MULTISELECT set to 1.
+FIX: Bug: $this is not accessible in static context in Mailing::libStatutDest #4050
+FIX: can not have access to the new ids or propal lines on PROPAL_CLONE
+FIX: Can't update line's duration
+FIX: Can use formated float number on old expense report module.
+FIX: change object statut on close shipping and remove erratic db commit
+FIX: change order date on clone (as everywhere else)
+FIX: event's data lost on user assign update
+FIX: export propal and order with extrafields
+FIX: export with category contact extrafields
+FIX: jquery select of project generate js error on change event
+FIX: label of line is set in description field if empty
+FIX: loss data also if update was cancel by error of ended state with no end date, try a generic patch
+FIX: mail isn't display in title on event in mode view
+FIX: Missing to set context into workflow actions, so triggers can't know we are creating an invoice from order or an order from a proposal.
+FIX: NB task and percent progress in box project
+FIX: Not delete a product when have customer price
+FIX: Not deleting contrats on element_element table
+FIX: Not use localtaxes when invoice some orders
+FIX: only active customer should be available into select list thirdparty on invoice creation
+FIX: only active customer should be return into new invoice creation select list
+FIX: AWP calculation
+FIX: product link in project box
+FIX: Remove  column creation for table llx_product_fournisseur_price, the column use un calss is fk_supplier_price_expression, and fk_price_expression does not exist into lx_product_fournisseur_price sql file declaration
+FIX: Show category selector if we have permission to view products or services
+FIX: showrefnav htmlspecialchar instead of < >
+FIX: The label hidden was not supported when using jmobile
+FIX: Too many information were hidden. A lot of users still need bank account on PDF.
+FIX: Use "WHERE true" instead of "WHERE 1" #4132
+
 ***** ChangeLog for 3.8.2 compared to 3.8.1 *****
 FIX: Add a protection to not make release if ChangeLog was not generated.
 FIX: 1/ update_extra() function must not be in  "if(!empty(MAIN_DISABLE_CONTACTS_TAB)" test. 2/ Reindented code
@@ -513,6 +590,25 @@ Dolibarr better:
 - Function get_exdir require now 6 parameters. This is to prepare a future feature.
 
 
+***** ChangeLog for 3.7.3 compared to 3.7.2 *****
+FIX: #3734 Do not show empty links of deleted source objects in stock movement list
+FIX: #3890 Expected transactions bank account page, shows negative numbers
+FIX: #3928 Creating a Customer order and a Customer invoice from a project, does not inherit payment conditions and method of payment of customer card
+FIX: #3980 Search field in "product by supplier" list sends empty result 3.8 and 3.7
+FIX: #4081 Added missing translation
+FIX: #4097 Public holiday calculation
+FIX: #4242 Allow disabling dashes in documents
+FIX: #4243 sql injection
+FIX: Can use formated float number on old expense report module.
+FIX: Change object statut when closing shipment and remove erratic db commit
+FIX: Export with category contact extrafields
+FIX: NB task and percent progress in box project
+FIX: Not delete a product when have customer price
+FIX: Not deleting contrats on element_element table
+FIX: Not use localtaxes when invoice some orders
+FIX: Product link in project box
+FIX: Use "WHERE true" instead of "WHERE 1" #4132
+
 ***** ChangeLog for 3.7.2 compared to 3.7.1 *****
 FIX: #2957 : missing $langs object for trigger
 FIX: #2983 Load gravatar avatar images securely over HTTPS
@@ -825,6 +921,17 @@ Dolibarr better:
   warehouse module and your Point Of Sale module setup if you use one.
 - Replaced USER_UPDATE_SESSION trigger with an updateSession hook may break modules using it.
 
+
+***** ChangeLog for 3.6.6 compared to 3.6.5 *****
+FIX: #3734 Do not show empty links of deleted source objects in stock movement list
+FIX: #4081 Added missing translation
+FIX: #4097 Public holiday calculation
+FIX: #4242 Allow disabling dashes in documents
+FIX: #4243 sql injection
+FIX: Add a protection to not make release if ChangeLog was not generated. Prepare package 3.6.5
+FIX: export with category contact extrafields
+FIX: Not delete a product when have customer price
+FIX: Not deleting contrats on element_element table
 
 ***** ChangeLog for 3.6.5 compared to 3.6.4 *****
 FIX: #2957 : missing $langs object for trigger

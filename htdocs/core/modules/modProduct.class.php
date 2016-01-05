@@ -84,13 +84,6 @@ class modProduct extends DolibarrModules
 		$this->const[$r][4] = 0;
 		$r++;
 
-		$this->const[$r][0] = "MAIN_SEARCHFORM_PRODUITSERVICE";
-		$this->const[$r][1] = "yesno";
-		$this->const[$r][2] = "1";
-		$this->const[$r][3] = "Show form for quick product search";
-		$this->const[$r][4] = 0;
-		$r++;
-
 		// Boxes
 		$this->boxes = array(
 			0=>array('file'=>'box_produits.php','enabledbydefaulton'=>'Home'),

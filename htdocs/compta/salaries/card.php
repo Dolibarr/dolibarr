@@ -36,6 +36,7 @@ $langs->load("banks");
 $langs->load("bills");
 $langs->load("users");
 $langs->load("salaries");
+$langs->load('hrm');
 
 $id=GETPOST("id",'int');
 $action=GETPOST('action');

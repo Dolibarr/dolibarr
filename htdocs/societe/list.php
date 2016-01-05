@@ -654,7 +654,7 @@ if ($resql)
 	// Company type
     if (! empty($arrayfields['typent.code']['checked']))
     {
-        print '<td class="liste_titre" align="center">';
+        print '<td class="liste_titre maxwidthonsmartphone" align="center">';
     	print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?'ASC':$conf->global->SOCIETE_SORT_ON_TYPEENT));
     	print '</td>';
     }
@@ -702,7 +702,7 @@ if ($resql)
     }
     
     // Type (customer/prospect/supplier)
-    print '<td class="liste_titre" align="middle">';
+    print '<td class="liste_titre maxwidthonsmartphone" align="middle">';
 	print '<select class="flat" name="search_type">';
 	print '<option value="-1"'.($search_type==''?' selected':'').'>&nbsp;</option>';
 	if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) print '<option value="1,3"'.($search_type=='1,3'?' selected':'').'>'.$langs->trans('Customer').'</option>';
@@ -743,7 +743,7 @@ if ($resql)
     if (! empty($arrayfields['s.fk_stcomm']['checked']))
     {
 	    // Prospect status
-	    print '<td class="liste_titre" align="center">';
+	    print '<td class="liste_titre maxwidthonsmartphone" align="center">';
 	    $arraystcomm=array();
 		foreach($prospectstatic->cacheprospectstatus as $key => $val)
 		{
@@ -783,7 +783,7 @@ if ($resql)
     // Status
     if (! empty($arrayfields['s.status']['checked']))
     {
-        print '<td class="liste_titre" align="center">';
+        print '<td class="liste_titre maxwidthonsmartphone" align="center">';
         print $form->selectarray('search_status', array('0'=>$langs->trans('ActivityCeased'),'1'=>$langs->trans('InActivity')),$search_status);
         print '</td>';
     }

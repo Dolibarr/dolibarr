@@ -67,9 +67,11 @@ $object->fetch($id);
 $object->getrights();
 
 // Liste des zone de recherche permanentes supportees
+/* deprecated
 $searchform=array("main_searchform_societe","main_searchform_contact","main_searchform_produitservice");
 $searchformconst=array($conf->global->MAIN_SEARCHFORM_SOCIETE,$conf->global->MAIN_SEARCHFORM_CONTACT,$conf->global->MAIN_SEARCHFORM_PRODUITSERVICE);
 $searchformtitle=array($langs->trans("Companies"),$langs->trans("Contacts"),$langs->trans("ProductsAndServices"));
+*/
 
 $form = new Form($db);
 $formadmin=new FormAdmin($db);
@@ -107,8 +109,6 @@ if (empty($reshook)) {
 				$tabparam["MAIN_THEME"] = '';
 			}
 
-			$tabparam["MAIN_SEARCHFORM_CONTACT"] = $_POST["main_searchform_contact"];
-
 			$val = (implode(',', (colorStringToArray(GETPOST('THEME_ELDY_TOPMENU_BACK1'), array()))));
 			if ($val == '') {
 				$tabparam['THEME_ELDY_TOPMENU_BACK1'] = '';
@@ -130,10 +130,6 @@ if (empty($reshook)) {
 			} else {
 				$tabparam["THEME_ELDY_USE_HOVER"] = 0;
 			}
-
-			$tabparam["MAIN_SEARCHFORM_SOCIETE"] = $_POST["main_searchform_societe"];
-
-			$tabparam["MAIN_SEARCHFORM_PRODUITSERVICE"] = $_POST["main_searchform_produitservice"];
 
 			$result = dol_set_user_param($db, $conf, $object, $tabparam);
 

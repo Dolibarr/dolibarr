@@ -40,6 +40,7 @@ $action=GETPOST('action');
 $holiday = new Holiday($db);
 
 $langs->load('users');
+$langs->load('hrm');
 
 
 /*

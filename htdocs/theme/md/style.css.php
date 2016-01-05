@@ -80,7 +80,7 @@ $dol_use_jmobile=$conf->dol_use_jmobile;
 //var_dump($user->conf->THEME_ELDY_RGB);
 
 // Colors
-$colorbackhmenu1='0,0,0';      // topmenu
+$colorbackhmenu1='0,0,80';      // topmenu
 $colorbackvmenu1='255,255,255';      // vmenu
 $colorbacktitle1='230,230,230';      // title of array
 $colorbacktabcard1='255,255,255';  // card
@@ -90,9 +90,9 @@ $colorbacklineimpair2='255,255,255';    // line impair
 $colorbacklinepair1='250,250,250';    // line pair
 $colorbacklinepair2='248,248,248';    // line pair
 $colorbacklinepairhover='244,244,244';    // line pair
-$colorbackbody='255,255,255';
+$colorbackbody='248,248,248';
 $colortexttitlenotab='90,90,90';
-$colortexttitle='0,0,0';
+$colortexttitle='20,20,20';
 $colortext='0,0,0';
 $colortextlink='0,0,120';
 $fontsize='13';
@@ -102,7 +102,7 @@ $useboldtitle=1;
 
 // Case of option always editable
 if (! isset($conf->global->THEME_ELDY_BACKBODY)) $conf->global->THEME_ELDY_BACKBODY=$colorbackbody;
-if (! isset($conf->global->THEME_ELDY_TOPMENU_BACK1)) $conf->global->THEME_ELDY_TOPMENU_BACK1='0,0,0';
+if (! isset($conf->global->THEME_ELDY_TOPMENU_BACK1)) $conf->global->THEME_ELDY_TOPMENU_BACK1='50,50,60';
 if (! isset($conf->global->THEME_ELDY_BACKTITLE1)) $conf->global->THEME_ELDY_BACKTITLE1=$colorbacktitle1;
 if (! isset($conf->global->THEME_ELDY_USE_HOVER)) $conf->global->THEME_ELDY_USE_HOVER=='238,246,252';
 if (! isset($conf->global->THEME_ELDY_TEXTTITLENOTAB)) $conf->global->THEME_ELDY_TEXTTITLENOTAB=$colortexttitlenotab;
@@ -165,7 +165,7 @@ else { $colortextbackvmenu='000000'; }
 $tmppart=explode(',',$colorbacktitle1);
 $tmpval=(! empty($tmppart[1]) ? $tmppart[1] : '')+(! empty($tmppart[2]) ? $tmppart[2] : '')+(! empty($tmppart[3]) ? $tmppart[3] : '');
 if ($tmpval <= 260) { $colortexttitle='FFFFFF'; $colorshadowtitle='888888'; }
-else { $colortexttitle='000000'; $colorshadowtitle='FFFFFF'; }
+else { $colortexttitle='404040'; $colorshadowtitle='FFFFFF'; }
 $tmppart=explode(',',$colorbacktabcard1);
 $tmpval=(! empty($tmppart[1]) ? $tmppart[1] : '')+(! empty($tmppart[2]) ? $tmppart[2] : '')+(! empty($tmppart[3]) ? $tmppart[3] : '');
 if ($tmpval <= 340) { $colortextbacktab='FFFFFF'; }
@@ -187,8 +187,6 @@ $colortexttitlenotab=join(',',colorStringToArray($colortexttitlenotab));
 $colortexttitle=join(',',colorStringToArray($colortexttitle));
 $colortext=join(',',colorStringToArray($colortext));
 $colortextlink=join(',',colorStringToArray($colortextlink));
-
-if (! empty($conf->dol_optimize_smallscreen)) $fontsize=11;
 
 $nbtopmenuentries=$menumanager->showmenu('topnb');
 
@@ -213,6 +211,7 @@ print 'dol_no_mouse_hover='.$dol_no_mouse_hover."\n";
 print 'dol_use_jmobile='.$dol_use_jmobile."\n";
 print 'dol_screenwidth='.$_SESSION['dol_screenwidth']."\n";
 print 'dol_screenheight='.$_SESSION['dol_screenheight']."\n";
+print 'fontsize='.$fontsize."\n";
 print 'nbtopmenuentries='.$nbtopmenuentries."\n";
 print '*/'."\n";
 
@@ -1755,11 +1754,13 @@ span.butAction, span.butActionDelete {
 	color: #ffffff !important;
 	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
 	background-color: #006dcc;
+	<?php // if (empty($conf->dol_use_jmobile)) { ?>
 	background-image: -moz-linear-gradient(top, #0088cc, #0044cc);
 	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0088cc), to(#0044cc));
 	background-image: -webkit-linear-gradient(top, #0088cc, #0044cc);
 	background-image: -o-linear-gradient(top, #0088cc, #0044cc);
 	background-image: linear-gradient(to bottom, #0088cc, #0044cc);
+	<?php // } ?>
 	background-repeat: repeat-x;
 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff0088cc', endColorstr='#ff0044cc', GradientType=0);
 	border-color: #0044cc #0044cc #002a80;
@@ -1925,6 +1926,8 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	-webkit-box-shadow: 2px 2px 4px #CCC;
 	box-shadow: 2px 2px 4px #CCC;
     */
+	box-shadow: 0 0 3px rgba(0,0,0,0.16);
+	
 	-moz-border-radius: 0.1em;
 	-webkit-border-radius: 0.1em;
 	border-radius: 0.1em;
@@ -1943,10 +1946,10 @@ table.noborder tr, div.noborder form {
 	min-height: 26px;
 }
 
-table.liste th, table.noborder th {
-	padding: 5px 2px 5px 3px;			/* t r b l */
+table.liste th, table.noborder th, table.noborder tr.liste_titre td {
+	padding: 12px 2px 12px 3px;			/* t r b l */
 }
-table.noborder th, table.noborder td, div.noborder form, div.noborder form div {
+table.noborder td, div.noborder form, div.noborder form div {
 	padding: 4px 2px 4px 3px;			/* t r b l */
 }
 
@@ -2036,13 +2039,13 @@ div.pagination li.pagination span {
   color: #000;
   text-decoration: none;
 
-	background-color: #f5f5f5;
-	background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6);
-	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#e6e6e6));
-	background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e6);
-	background-image: -o-linear-gradient(top, #ffffff, #e6e6e6);
-	background-image: linear-gradient(to bottom, #ffffff, #e6e6e6);
-	background-repeat: repeat-x;
+    background-color: #f5f5f5;
+    background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#e6e6e6));
+    background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e6);
+    background-image: -o-linear-gradient(top, #ffffff, #e6e6e6);
+    background-image: linear-gradient(to bottom, #ffffff, #e6e6e6);
+    background-repeat: repeat-x;
 <?php } ?>
 }
 div.pagination li.pagination span.inactive {
@@ -2245,7 +2248,6 @@ div.liste_titre, tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.list
 {
     /* TO MATCH BOOTSTRAP */
 	background: #ddd;
-	color: #000 !important;
 
 	/* TO MATCH ELDY */
 	/*
@@ -2773,7 +2775,10 @@ table.dp {
     vertical-align:middle;
     cursor: pointer;
 }
-
+.datenowlink
+{
+	color: rgb(<?php print $colortextlink; ?>);
+}
 
 /* ============================================================================== */
 /*  Afficher/cacher                                                               */
@@ -3506,6 +3511,9 @@ span.noborderoncategories {
 /*  Multiselect with checkbox                                                     */
 /* ============================================================================== */
 
+ul.ulselectedfields {
+    z-index: 100;			/* To have the select box appears on first plan even when near buttons are decorated by jmobile */
+}
 dl.dropdown {
     margin:0px;
     padding:0px;
@@ -3679,7 +3687,7 @@ ul.ulmenu {
 
 /* Style for first level menu with jmobile */
 .ui-bar-b, .lilevel0 {
-	border: 1px solid #5f5f7a !important;
+	border: 1px solid #888 !important;
     background: rgb(<?php echo $colorbacktitle1; ?>);
     background-repeat: repeat-x;
 
@@ -3708,7 +3716,7 @@ ul.ulmenu {
 	text-shadow: none;
 }
 .ui-body-c .ui-link, .ui-body-c .ui-link:visited, .ui-body-c .ui-link:hover {
-	color: rgb(<?php print $colortext; ?>);
+	color: rgb(<?php print $colortextlink; ?>);
 }
 .ui-btn-up-c .vsmenudisabled {
 	color: #<?php echo $colorshadowtitle; ?> !important;

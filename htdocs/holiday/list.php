@@ -35,6 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 
 $langs->load('users');
 $langs->load('holidays');
+$langs->load('hrm');
 
 // Protection if external user
 if ($user->societe_id > 0) accessforbidden();

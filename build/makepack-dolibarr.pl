@@ -495,6 +495,8 @@ if ($nboftargetok) {
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/cabinetmed*`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/calling*`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/bootstrap*`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/dolimed*`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/dolimod*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/factory*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/lead*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/management*`;
@@ -506,6 +508,7 @@ if ($nboftargetok) {
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/teclib*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/timesheet*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/themes/oblyon*`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/themes/allscreen*`;
 		# Removed other test files
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/themes/eldy/*.new`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/public/api/explorer`;				# This is a dev tool

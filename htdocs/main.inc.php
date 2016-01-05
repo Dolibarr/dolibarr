@@ -219,9 +219,9 @@ if (isset($_SERVER["HTTP_USER_AGENT"]))
     $conf->browser->name=$tmp['browsername'];
     $conf->browser->os=$tmp['browseros'];
     $conf->browser->version=$tmp['browserversion'];
-    $conf->browser->layout=$tmp['layout'];
-    $conf->browser->phone=$tmp['phone'];	// deprecated, use layout
-    $conf->browser->tablet=$tmp['tablet'];	// deprecated, use layout
+    $conf->browser->layout=$tmp['layout'];     // 'classic', 'phone', 'tablet'
+    $conf->browser->phone=$tmp['phone'];	   // deprecated, use layout
+    $conf->browser->tablet=$tmp['tablet'];	   // deprecated, use layout
     //var_dump($conf->browser);
 }
 
@@ -1220,15 +1220,25 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             	if (empty($conf->dol_use_jmobile) || ($conf->dol_use_jmobile != 2 && $conf->dol_use_jmobile != 3))
             	{
             		print '<script type="text/javascript">
-	            		$(document).bind("mobileinit", function(){
-           				$.extend(  $.mobile , {
-           					autoInitializePage : true,	/* We need this to run jmobile */
-           					/* loadingMessage : \'xxxxx\', */
-           					touchOverflowEnabled : true,
-           					defaultPageTransition : \'none\',
-           					defaultDialogTransition : \'none\',
-           					ajaxEnabled : false			/* old param was ajaxFormsEnabled and ajaxLinksEnabled */
-           					});
+	            		$(document).bind("mobileinit", function() {
+            		    ';
+            		if ($conf->theme == 'md')
+            		{
+                		print '
+                		    /* Disabled decoration for some css */
+                		    $.mobile.keepNative = \'input[type="submit"]\';                        /* jQuery Mobile 1.4 and higher */
+                		    $.mobile.page.prototype.options.keepNative = \'input[type="submit"]\'; /* jQuery Mobile 1.4 and lower */
+                		   ';
+            		}
+                    print '                		        
+               				$.extend(  $.mobile , {
+               					autoInitializePage : true,	/* We need this to run jmobile */
+               					/* loadingMessage : \'xxxxx\', */
+               					touchOverflowEnabled : true,
+               					defaultPageTransition : \'none\',
+               					defaultDialogTransition : \'none\',
+               					ajaxEnabled : false			/* old param was ajaxFormsEnabled and ajaxLinksEnabled */
+               					});
            				});
             			</script>';
             	}
@@ -1596,7 +1606,7 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
 
 	    print "\n";
 
-	    if ($conf->use_javascript_ajax)
+	    if ($conf->use_javascript_ajax && $conf->browser->layout != 'phone')
 	    {
     	    if (! is_object($form)) $form=new Form($db);
     	    $selected=-1;
@@ -1605,45 +1615,38 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
 	    else
 	    {
     	    // Define $searchform
-    	    if ((( ! empty($conf->societe->enabled) && (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) || empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))) || ! empty($conf->fournisseur->enabled)) && ! empty($conf->global->MAIN_SEARCHFORM_SOCIETE) && $user->rights->societe->lire)
+    	    if ((( ! empty($conf->societe->enabled) && (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) || empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))) || ! empty($conf->fournisseur->enabled)) && $user->rights->societe->lire)
     	    {
     	        $langs->load("companies");
     	        $searchform.=printSearchForm(DOL_URL_ROOT.'/societe/list.php', DOL_URL_ROOT.'/societe/list.php', $langs->trans("ThirdParties"), 'soc', 'sall', 'T', 'searchleftt', img_object('','company'));
     	    }
     
-    	    if (! empty($conf->societe->enabled) && ! empty($conf->global->MAIN_SEARCHFORM_CONTACT) && $user->rights->societe->lire)
+    	    if (! empty($conf->societe->enabled) && $user->rights->societe->lire)
     	    {
     	        $langs->load("companies");
     	        $searchform.=printSearchForm(DOL_URL_ROOT.'/contact/list.php', DOL_URL_ROOT.'/contact/list.php', $langs->trans("Contacts"), 'contact', 'sall', 'A', 'searchleftc', img_object('','contact'));
     	    }
     
     	    if (((! empty($conf->product->enabled) && $user->rights->produit->lire) || (! empty($conf->service->enabled) && $user->rights->service->lire))
-    	    && ! empty($conf->global->MAIN_SEARCHFORM_PRODUITSERVICE))
+    	    )
     	    {
     	        $langs->load("products");
     	        $searchform.=printSearchForm(DOL_URL_ROOT.'/product/list.php', DOL_URL_ROOT.'/product/list.php', $langs->trans("Products")."/".$langs->trans("Services"), 'products', 'sall', 'P', 'searchleftp', img_object('','product'));
     	    }
     
-    	    if (((! empty($conf->product->enabled) && $user->rights->produit->lire) || (! empty($conf->service->enabled) && $user->rights->service->lire)) && ! empty($conf->fournisseur->enabled)
-    	    && ! empty($conf->global->MAIN_SEARCHFORM_PRODUITSERVICE_SUPPLIER))
-    	    {
-    	        $langs->load("products");
-    	        $searchform.=printSearchForm(DOL_URL_ROOT.'/fourn/product/list.php', DOL_URL_ROOT.'/fourn/product/list.php', $langs->trans("SupplierRef"), 'products', 'srefsupplier', '', 'searchlefts', img_object('','product'));
-    	    }
-    
-            if (! empty($conf->projet->enabled) && ! empty($conf->global->MAIN_SEARCHFORM_PROJECT) && $user->rights->projet->lire)
+            if (! empty($conf->projet->enabled) && $user->rights->projet->lire)
     	    {
     	        $langs->load("projects");
     	        $searchform.=printSearchForm(DOL_URL_ROOT.'/projet/list.php', DOL_URL_ROOT.'/projet/list.php', $langs->trans("Projects"), 'project', 'search_all', 'Q', 'searchleftproj', img_object('','projectpub'));
     	    }
     
-    	    if (! empty($conf->adherent->enabled) && ! empty($conf->global->MAIN_SEARCHFORM_ADHERENT) && $user->rights->adherent->lire)
+    	    if (! empty($conf->adherent->enabled) && $user->rights->adherent->lire)
     	    {
     	        $langs->load("members");
     	        $searchform.=printSearchForm(DOL_URL_ROOT.'/adherents/list.php', DOL_URL_ROOT.'/adherents/list.php', $langs->trans("Members"), 'member', 'sall', 'M', 'searchleftm', img_object('','user'));
     	    }
     
-    		if (! empty($conf->user->enabled) && ! empty($conf->global->MAIN_SEARCHFORM_USER) && $user->rights->user->user->lire)
+    		if (! empty($conf->user->enabled) && $user->rights->user->user->lire)
     	    {
     	        $langs->load("users");
     	        $searchform.=printSearchForm(DOL_URL_ROOT.'/user/list.php', DOL_URL_ROOT.'/user/list.php', $langs->trans("Users"), 'user', 'sall', 'M', 'searchleftuser', img_object('','user'));
@@ -1659,6 +1662,19 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
 		}
 		else $searchform=$hookmanager->resPrint;
 
+		if ($conf->use_javascript_ajax && $conf->browser->layout == 'phone')
+	    {
+	        $searchform='<div class="blockvmenuimpair blockvmenusearchphone"><div id="divsearchforms1"><a href="#" alt="'.dol_escape_htmltag($langs->trans("ShowSearchFields")).'">'.$langs->trans("Search").'...</a></div><div id="divsearchforms2" style="display: none">'.$searchform.'</div>';
+	        $searchform.='<script type="text/javascript">
+            	jQuery(document).ready(function () {
+            		jQuery("#divsearchforms1").click(function(){
+	                   jQuery("#divsearchforms2").toggle();
+	               });
+            	});
+                </script>' . "\n";
+	        $searchform.='</div>';
+	    }
+		
 	    // Define $bookmarks
 	    if (! empty($conf->bookmark->enabled) && $user->rights->bookmark->lire)
 	    {
@@ -1673,32 +1689,10 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
 
 	    print '<div class="vmenu">'."\n\n";
 
-    	// Show other forms
-	    /*if ($searchform)
-	    {
-	        print "\n";
-	        print "<!-- Begin SearchForm -->\n";
-	        print '<div id="blockvmenusearch" class="blockvmenusearch">'."\n";
-	        print $searchform;
-	        print '</div>'."\n";
-	        print "<!-- End SearchForm -->\n";
-	    }*/
-
+    	// Show left menu with other forms
 	    $menumanager->menu_array = $menu_array_before;
     	$menumanager->menu_array_after = $menu_array_after;
 	    $menumanager->showmenu('left', array('searchform'=>$searchform, 'bookmarks'=>$bookmarks)); // output menu_array and menu found in database
-
-	    // Bookmarks
-	    /*
-	    if ($bookmarks)
-	    {
-	        print "\n";
-	        print "<!-- Begin Bookmarks -->\n";
-	        print '<div id="blockvmenubookmarks" class="blockvmenubookmarks">'."\n";
-	        print $bookmarks;
-	        print '</div>'."\n";
-	        print "<!-- End Bookmarks -->\n";
-	    }*/
 
         // Dolibarr version + help + bug report link
 		print "\n";
@@ -1952,7 +1946,10 @@ if (! function_exists("llxFooter"))
         		jQuery(".classfortooltip").tipTip({maxWidth: "'.dol_size(600,'width').'px", edgeOffset: 10, delay: 50, fadeIn: 50, fadeOut: 50});
         	});
         </script>' . "\n";
-
+        
+		// A div for the address popup
+		print "\n<!-- A div to allow dialog popup -->\n";
+		print '<div id="dialogforpopup" style="display: none;"></div>'."\n";
         
         print "</body>\n";
         print "</html>\n";

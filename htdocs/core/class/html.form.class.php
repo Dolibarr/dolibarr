@@ -4248,6 +4248,7 @@ class Form
             // Show date with combo selects
             else
 			{
+			    //$retstring.='<div class="inline-block">';
                 // Day
                 $retstring.='<select'.($disabled?' disabled':'').' class="flat" id="'.$prefix.'day" name="'.$prefix.'day">';
 
@@ -4293,6 +4294,7 @@ class Form
                     }
                     $retstring.="</select>\n";
                 }
+                //$retstring.='</div>';
             }
         }
 
@@ -4848,7 +4850,7 @@ class Form
             </dt>
             <dd>
                 <div class="multiselectcheckbox'.$htmlname.'">
-                    <ul>
+                    <ul class="ul'.$htmlname.'">
                     '.$lis.'
                     </ul>
                 </div>

@@ -36,6 +36,7 @@ if ($user->societe_id > 0) accessforbidden();
 // Si l'utilisateur n'a pas le droit de lire cette page
 if(!$user->rights->holiday->read_all) accessforbidden();
 
+$langs->load('hrm');
 
 
 /*

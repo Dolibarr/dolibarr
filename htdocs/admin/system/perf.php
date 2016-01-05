@@ -297,7 +297,7 @@ jQuery(document).ready(function() {
   var compjsstring;
   getjsurl = $.ajax({
     type: "GET",
-    url: \''.DOL_URL_ROOT.'/core/js/lib_head.js\',
+    url: \''.DOL_URL_ROOT.'/core/js/lib_rare.js\',
     cache: false,
     /* async: false, */
     /* crossDomain: true,*/

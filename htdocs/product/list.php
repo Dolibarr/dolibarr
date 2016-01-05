@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2012-2013  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2013       Juanjo Menent           <jmenent@2byte.es>
@@ -41,6 +41,8 @@ if (! empty($conf->categorie->enabled))
 $langs->load("products");
 $langs->load("stocks");
 $langs->load("suppliers");
+$langs->load("companies");
+if (! empty($conf->productbatch->enabled)) $langs->load("productbatch");
 
 $action = GETPOST('action');
 $sref=GETPOST("sref");
@@ -54,6 +56,9 @@ $tosell = GETPOST("tosell", 'int');
 $tobuy = GETPOST("tobuy", 'int');
 $fourn_id = GETPOST("fourn_id",'int');
 $catid = GETPOST('catid','int');
+$search_tobatch = GETPOST("search_tobatch",'int');
+$search_accountancy_code_sell = GETPOST("search_accountancy_code_sell",'alpha');
+$search_accountancy_code_buy = GETPOST("search_accountancy_code_buy",'alpha');
 $optioncss = GETPOST('optioncss','alpha');
 
 $limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
@@ -99,6 +104,7 @@ else $result=restrictedArea($user,'produit|service','','','','','',$objcanvas);
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
 	'p.ref'=>"Ref",
+    'pfp.ref_fourn'=>"RefSupplier",
 	'p.label'=>"ProductLabel",
 	'p.description'=>"Description",
     "p.note"=>"Note",
@@ -117,13 +123,17 @@ if (! empty($conf->barcode->enabled)) {
 // Definition of fields for lists
 $arrayfields=array(
     'p.ref'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
+    //'pfp.ref_fourn'=>array('label'=>$langs->trans("RefSupplier"), 'checked'=>1, 'enabled'=>(! empty($conf->barcode->enabled))),
     'p.label'=>array('label'=>$langs->trans("Label"), 'checked'=>1),
 	'p.barcode'=>array('label'=>$langs->trans("Gencod"), 'checked'=>($contextpage != 'servicelist'), 'enabled'=>(! empty($conf->barcode->enabled))),
     'p.duration'=>array('label'=>$langs->trans("Duration"), 'checked'=>($contextpage != 'productlist'), 'enabled'=>(! empty($conf->service->enabled))),
 	'p.sellprice'=>array('label'=>$titlesellprice, 'checked'=>1, 'enabled'=>empty($conf->global->PRODUIT_MULTIPRICES)),
     'p.minbuyprice'=>array('label'=>$langs->trans("BuyingPriceMinShort"), 'checked'=>1, 'enabled'=>(! empty($user->rights->fournisseur->lire))),
 	'p.desiredstock'=>array('label'=>$langs->trans("DesiredStock"), 'checked'=>1, 'enabled'=>(! empty($conf->stock->enabled) && $user->rights->stock->lire && $contextpage != 'service')),
-	'p.stock'=>array('label'=>$langs->trans("PhysicalStock"), 'checked'=>1, 'enabled'=>(! empty($conf->stock->enabled) && $user->rights->stock->lire && $contextpage != 'service')),
+	'p.tobatch'=>array('label'=>$langs->trans("ManageLotSerial"), 'checked'=>0, 'enabled'=>(! empty($conf->productbatch->enabled))),
+    'p.stock'=>array('label'=>$langs->trans("PhysicalStock"), 'checked'=>1, 'enabled'=>(! empty($conf->stock->enabled) && $user->rights->stock->lire && $contextpage != 'service')),
+	'p.accountancy_code_sell'=>array('label'=>$langs->trans("ProductAccountancySellCode"), 'checked'=>0),
+	'p.accountancy_code_buy'=>array('label'=>$langs->trans("ProductAccountancyBuyCode"), 'checked'=>0),
 	'p.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
     'p.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
     'p.tosell'=>array('label'=>$langs->trans("Status").' ('.$langs->trans("Sell").')', 'checked'=>1, 'position'=>1000),
@@ -154,6 +164,9 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
 	$search_categ=0;
 	$tosell="";
 	$tobuy="";
+	$search_tobatch='';
+	$search_accountancy_code_sell='';
+	$search_accountancy_code_buy='';
 	$search_array_options=array();
 }
 
@@ -192,7 +205,9 @@ else
 
     $sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type, p.entity,';
     $sql.= ' p.fk_product_type, p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock,';
+    $sql.= ' p.tobatch, p.accountancy_code_sell, p.accountancy_code_buy,';
     $sql.= ' p.datec as date_creation, p.tms as date_update,';
+    //$sql.= ' pfp.ref_fourn as ref_supplier, ';
     $sql.= ' MIN(pfp.unitprice) as minsellprice';
 	// Add fields from extrafields
 	foreach ($extrafields->attribute_label as $key => $val) $sql.=",ef.".$key.' as options_'.$key;
@@ -227,7 +242,10 @@ else
     if ($search_categ > 0)   $sql.= " AND cp.fk_categorie = ".$db->escape($search_categ);
     if ($search_categ == -2) $sql.= " AND cp.fk_categorie IS NULL";
     if ($fourn_id > 0) $sql.= " AND pfp.fk_soc = ".$fourn_id;
-	// Add where from extra fields
+    if ($search_tobatch != '' && $search_tobatch >= 0)   $sql.= " AND p.tobatch = ".$db->escape($search_tobatch);
+    if ($search_accountancy_code_sell)   $sql.= natural_search('p.accountancy_code_sell', $search_accountancy_code_sell);
+    if ($search_accountancy_code_sell)   $sql.= natural_search('p.accountancy_code_buy', $search_accountancy_code_buy);
+    // Add where from extra fields
 	foreach ($search_array_options as $key => $val)
 	{
 	    $crit=$val;
@@ -299,6 +317,7 @@ else
 	    }
 
     	if ($sref) $param="&amp;sref=".$sref;
+    	if ($search_ref_supplier) $param="&amp;search_ref_supplier=".$search_ref_supplier;
     	if ($sbarcode) $param.=($sbarcode?"&amp;sbarcode=".$sbarcode:"");
     	if ($snom) $param.="&amp;snom=".$snom;
     	if ($sall) $param.="&amp;sall=".$sall;
@@ -308,7 +327,10 @@ else
     	if ($seach_categ) $param.=($search_categ?"&amp;search_categ=".$search_categ:"");
     	if ($type != '') $param.='&amp;type='.urlencode($type);
 		if ($optioncss != '') $param.='&optioncss='.$optioncss;
-        // Add $param from extra fields
+    	if ($search_tobatch) $param="&amp;search_ref_supplier=".$search_ref_supplier;
+    	if ($search_accountancy_code_sell) $param="&amp;search_accountancy_code_sell=".$search_accountancy_code_sell;
+    	if ($search_accountancy_code_buy) $param="&amp;search_accountancy_code_buy=".$search_accountancy_code_buy;
+    	// Add $param from extra fields
 	    foreach ($search_array_options as $key => $val)
 	    {
 	        $crit=$val;
@@ -396,13 +418,17 @@ else
             print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
     		print '<tr class="liste_titre">';
     		if (! empty($arrayfields['p.ref']['checked']))  print_liste_field_titre($arrayfields['p.ref']['label'], $_SERVER["PHP_SELF"],"p.ref","",$param,"",$sortfield,$sortorder);
+    		if (! empty($arrayfields['pfp.ref_fourn']['checked']))  print_liste_field_titre($arrayfields['pfp.ref_fourn']['label'], $_SERVER["PHP_SELF"],"pfp.ref_fourn","",$param,"",$sortfield,$sortorder);
     		if (! empty($arrayfields['p.label']['checked']))  print_liste_field_titre($arrayfields['p.label']['label'], $_SERVER["PHP_SELF"],"p.label","",$param,"",$sortfield,$sortorder);
     		if (! empty($arrayfields['p.barcode']['checked']))  print_liste_field_titre($arrayfields['p.barcode']['label'], $_SERVER["PHP_SELF"],"p.barcode","",$param,"",$sortfield,$sortorder);
     		if (! empty($arrayfields['p.duration']['checked']))  print_liste_field_titre($arrayfields['p.duration']['label'], $_SERVER["PHP_SELF"],"p.duration","",$param,"",$sortfield,$sortorder);
     		if (! empty($arrayfields['p.sellprice']['checked']))  print_liste_field_titre($arrayfields['p.sellprice']['label'], $_SERVER["PHP_SELF"],"","",$param,'align="right"',$sortfield,$sortorder);
     		if (! empty($arrayfields['p.minbuyprice']['checked']))  print_liste_field_titre($arrayfields['p.minbuyprice']['label'], $_SERVER["PHP_SELF"],"","",$param,'align="right"',$sortfield,$sortorder);
     		if (! empty($arrayfields['p.desiredstock']['checked']))  print_liste_field_titre($arrayfields['p.desiredstock']['label'], $_SERVER["PHP_SELF"],"p.desirestock","",$param,'align="right"',$sortfield,$sortorder);
+    		if (! empty($arrayfields['p.tobatch']['checked']))  print_liste_field_titre($arrayfields['p.tobatch']['label'], $_SERVER["PHP_SELF"],"p.tobatch","",$param,'align="center"',$sortfield,$sortorder);
     		if (! empty($arrayfields['p.stock']['checked']))  print_liste_field_titre($arrayfields['p.stock']['label'], $_SERVER["PHP_SELF"],"p.stock","",$param,'align="right"',$sortfield,$sortorder);
+    		if (! empty($arrayfields['p.accountancy_code_sell']['checked']))  print_liste_field_titre($arrayfields['p.accountancy_code_sell']['label'], $_SERVER["PHP_SELF"],"p.accountancy_code_sell","",$param,'',$sortfield,$sortorder);
+    		if (! empty($arrayfields['p.accountancy_code_buy']['checked']))  print_liste_field_titre($arrayfields['p.accountancy_code_buy']['label'], $_SERVER["PHP_SELF"],"p.accountancy_code_buy","",$param,'',$sortfield,$sortorder);
     		if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 			{
 			   foreach($extrafields->attribute_label as $key => $val) 
@@ -431,6 +457,12 @@ else
     		{
     			print '<td class="liste_titre" align="left">';
     			print '<input class="flat" type="text" name="sref" size="8" value="'.dol_escape_htmltag($sref).'">';
+    			print '</td>';
+    		}
+    	    if (! empty($arrayfields['pfp.ref_fourn']['checked']))
+    		{
+    			print '<td class="liste_titre" align="left">';
+    			print '<input class="flat" type="text" name="search_ref_supplier" size="8" value="'.dol_escape_htmltag($search_ref_supplier).'">';
     			print '</td>';
     		}
     		if (! empty($arrayfields['p.label']['checked']))
@@ -473,13 +505,14 @@ else
     			print '&nbsp;';
     			print '</td>';
     		}
+    		// To batch
+			if (! empty($arrayfields['p.tobatch']['checked'])) print '<td class="liste_titre center">'.$form->selectyesno($search_tobatch, '', '', '', 1).'</td>';
     		// Stock
-			if (! empty($arrayfields['p.stock']['checked']))
-    		{
-    			print '<td class="liste_titre">';
-    			print '&nbsp;';
-    			print '</td>';
-    		}
+			if (! empty($arrayfields['p.stock']['checked'])) print '<td class="liste_titre">&nbsp;</td>';
+    	    // Accountancy code sell
+    		if (! empty($arrayfields['p.accountancy_code_sell']['checked'])) print '<td class="liste_titre"><input class="flat" type="text" name="search_accountancy_code_sell" size="6" value="'.dol_escape_htmltag($search_accountancy_code_sell).'"></td>';
+    	    // Accountancy code sell
+    		if (! empty($arrayfields['p.accountancy_code_buy']['checked'])) print '<td class="liste_titre"><input class="flat" type="text" name="search_accountancy_code_buy" size="6" value="'.dol_escape_htmltag($search_accountancy_code_buy).'"></td>';
     		// Extra fields
 			if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 			{
@@ -551,6 +584,7 @@ else
 
     			$product_static->id = $objp->rowid;
     			$product_static->ref = $objp->ref;
+    			$product_static->ref_fourn = $objp->ref_supplier;
                 $product_static->label = $objp->label;
     			$product_static->type = $objp->fk_product_type;
     			$product_static->status_buy = $objp->tobuy;
@@ -567,7 +601,13 @@ else
 	    			print $product_static->getNomUrl(1,'',24);
 	    			print "</td>\n";
 			    }
-			    
+       			// Ref supplier
+			    if (! empty($arrayfields['pfp.ref_fourn']['checked']))
+			    {
+	    			print '<td class="nowrap">';
+	    			print $product_static->getNomUrl(1,'',24);
+	    			print "</td>\n";
+			    }
     			// Label
 			    if (! empty($arrayfields['p.label']['checked']))
 			    {
@@ -648,11 +688,18 @@ else
     				{
                         print $objp->desiredstock;
     				}
+    				print '</td>';
         		}
+    		    // Desired stock
+		        if (! empty($arrayfields['p.tobatch']['checked']))
+        		{
+                    print '<td align="center">';
+    				print yn($objp->tobatch);
+    				print '</td>';
+        		}        		
 				// Stock
 		        if (! empty($arrayfields['p.stock']['checked']))
         		{
-    				print '</td>';
    					print '<td align="right">';
     				if ($objp->fk_product_type != 1)
     				{
@@ -661,8 +708,11 @@ else
     				}
     				print '</td>';
     			}
-    			
-   				// Extra fields
+    			// Accountancy code sell
+		        if (! empty($arrayfields['p.accountancy_code_sell']['checked'])) print '<td>'.$objp->accountancy_code_sell.'</td>';
+    			// Accountancy code sell
+		        if (! empty($arrayfields['p.accountancy_code_buy']['checked'])) print '<td>'.$objp->accountancy_code_buy.'</td>';
+		        // Extra fields
 				if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 				{
 				   foreach($extrafields->attribute_label as $key => $val) 

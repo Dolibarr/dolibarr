@@ -412,7 +412,7 @@ function pHeader($subtitle,$next,$action='set',$param='',$forcejqueryurl='')
 /**
  * Print HTML footer of install pages
  *
- * @param 	integer	$nonext				No button "Next step"
+ * @param 	integer	$nonext				1=No button "Next step", 2=Show button but disabled
  * @param	string	$setuplang			Language code
  * @param	string	$jscheckfunction	Add a javascript check function
  * @param	integer	$withpleasewait		Add also please wait tags
@@ -429,9 +429,9 @@ function pFooter($nonext=0,$setuplang='',$jscheckfunction='', $withpleasewait=0)
     print '</td></tr></table>'."\n";
     print '</td></tr></table>'."\n";
 
-    if (! $nonext)
+    if (! $nonext || ($nonext == '2'))
     {
-        print '<div class="nextbutton" id="nextbutton"><input type="submit" value="'.$langs->trans("NextStep").' ->"';
+        print '<div class="nextbutton" id="nextbutton"><input type="submit" '.($nonext == '2' ? 'disabled="disabled" title="DisabledBecauseOfErrorAddParamignoreerrors"':'').'value="'.$langs->trans("NextStep").' ->"';
         if ($jscheckfunction) print ' onClick="return '.$jscheckfunction.'();"';
         print '></div>';
         if ($withpleasewait) print '<div style="visibility: hidden;" class="pleasewait" id="pleasewait"><br>'.$langs->trans("NextStepMightLastALongTime").'<br><br><div class="blinkwait">'.$langs->trans("PleaseBePatient").'</div></div>';

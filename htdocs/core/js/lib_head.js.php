@@ -940,10 +940,11 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
 function copyToClipboard(text,text2) 
 {
 	text = text.replace(/<br>/g,"\n");
-	var newElem = '<textarea id="coords" style="border: none; width: 90%; height: 120px;">'+text+'</textarea><br><br>'+text2;
-	$("#dialog").html(newElem);
-	$("#dialog").dialog();
-	$("#coords").select();
+	var newElem = '<textarea id="coordsforpopup" style="border: none; width: 90%; height: 120px;">'+text+'</textarea><br><br>'+text2;
+	/* alert(newElem); */
+	$("#dialogforpopup").html(newElem);
+	$("#dialogforpopup").dialog();
+	$("#coordsforpopup").select();
 	return false;
 }
 

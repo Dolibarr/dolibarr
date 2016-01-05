@@ -447,7 +447,7 @@ if (empty($reshook))
 	                            'HT',
 	                            $product_type,
 	                        	$lines[$i]->rang,
-	                        	1,
+	                        	0,
 	                        	$lines[$i]->array_options,
 	                        	$lines[$i]->fk_unit
 	                        );

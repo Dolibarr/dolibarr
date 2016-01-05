@@ -767,9 +767,6 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
 
     print '</form>'."\n";
 
-    // A div for the address popup
-    print '<div id="dialog" title="'.dol_escape_htmltag($langs->trans('Address')).'" style="display: none;"></div>';
-
     return $i;
 }
 
