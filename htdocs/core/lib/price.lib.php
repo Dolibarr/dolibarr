@@ -170,7 +170,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
         if ($type == 1) $apply_tax = true;
         break;
     }
-    if ($uselocaltax1_rate && $apply_tax) {
+    if ($uselocaltax1_rate!=0 && $apply_tax) {
   		$result[14] = price2num(($tot_sans_remise_wt * (1 + ( $localtax1_rate / 100))) - $tot_sans_remise_wt, 'MT');
   		$localtaxes[0] += $result[14];
 
@@ -193,7 +193,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
         if ($type == 1) $apply_tax = true;
         break;
     }
-    if ($uselocaltax2_rate && $apply_tax) {
+    if ($uselocaltax2_rate!=0 && $apply_tax) {
   		$result[15] = price2num(($tot_sans_remise_wt * (1 + ( $localtax2_rate / 100))) - $tot_sans_remise_wt, 'MT');
   		$localtaxes[0] += $result[15];
 
@@ -264,7 +264,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
         if ($type == 1) $apply_tax = true;
         break;
     }
-    if ($uselocaltax1_rate && $apply_tax) {
+    if ($uselocaltax1_rate!=0 && $apply_tax) {
   		$result[14] = price2num(($tot_sans_remise * (1 + ( $localtax1_rate / 100))) - $tot_sans_remise, 'MT');	// amount tax1 for total_ht_without_discount
   		$result[8] += $result[14];																				// total_ttc_without_discount + tax1
 
@@ -287,7 +287,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
         if ($type == 1) $apply_tax = true;
         break;
     }
-    if ($uselocaltax2_rate && $apply_tax) {
+    if ($uselocaltax2_rate!=0 && $apply_tax) {
   		$result[15] = price2num(($tot_sans_remise * (1 + ( $localtax2_rate / 100))) - $tot_sans_remise, 'MT');	// amount tax2 for total_ht_without_discount
   		$result[8] += $result[15];																				// total_ttc_without_discount + tax2
 
