@@ -250,7 +250,9 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
 
     		$tva_tx	= get_default_tva($object->thirdparty, $mysoc, $productsupplier->id, GETPOST('idprodfournprice'));
     		$type = $productsupplier->type;
-
+			
+			if (!empty($productsupplier->remise_percent)) $remise_percent = $productsupplier->remise_percent;
+			
     		// Local Taxes
     		$localtax1_tx= get_localtax($tva_tx, 1,$mysoc,$object->thirdparty);
     		$localtax2_tx= get_localtax($tva_tx, 2,$mysoc,$object->thirdparty);
