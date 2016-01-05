@@ -580,10 +580,10 @@ if ($action == 'confirm_cancel' && GETPOST('confirm') == 'yes')
         	$newSolde = $soldeActuel + ($nbopenedday * $cp->getConfCP('nbHolidayDeducted'));
 
         	// On ajoute la modification dans le LOG
-        	$result1=$cp->addLogCP($user->id, $cp->fk_user, $langs->transnoentitiesnoconv("HolidaysCancelation"), $newSolde);
+        	$result1=$cp->addLogCP($user->id, $cp->fk_user, $langs->transnoentitiesnoconv("HolidaysCancelation"), $newSolde, $cp->fk_type);
 
         	// Mise à jour du solde
-        	$result2=$cp->updateSoldeCP($cp->fk_user, $newSolde);
+        	$result2=$cp->updateSoldeCP($cp->fk_user, $newSolde, $cp->fk_type);
 
         	if ($result1 < 0 || $result2 < 0)
         	{
