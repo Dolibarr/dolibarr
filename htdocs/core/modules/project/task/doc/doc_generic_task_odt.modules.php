@@ -458,6 +458,9 @@ class doc_generic_task_odt extends ModelePDFTask
 				'__FROM_EMAIL__' => $this->emetteur->email,
 				);
 				complete_substitutions_array($substitutionarray, $langs, $object);
+				// Call the ODTSubstitutionInit hook
+				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray);
+				$reshook=$hookmanager->executeHooks('ODTSubstitutionInit',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 
 				// Open and load template
 				require_once ODTPHP_PATH.'odf.php';
