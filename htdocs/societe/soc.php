@@ -2360,7 +2360,7 @@ else
 			$action='send';
 			$modelmail='thirdparty';
 
-			print '<br>';
+			//print '<br>';
 			print load_fiche_titre($langs->trans($titreform));
 
 			dol_fiche_head();
