@@ -379,7 +379,7 @@ print '<input type="hidden" name="month" value="'.$month.'">';
 print '<input type="hidden" name="day" value="'.$day.'">';
 print $langs->trans("AssignTaskToMe").'<br>';
 $formproject->selectTasks($socid?$socid:-1, $taskid, 'taskid', 32, 0, 1, 1);
-print $formcompany->selectTypeContact($object, '', 'type','internal','rowid', 1);
+print $formcompany->selectTypeContact($object, '', 'type','internal','rowid', 0);
 print '<input type="submit" class="button" name="submit" value="'.$langs->trans("AssignTask").'">';
 print '</form>';
 
