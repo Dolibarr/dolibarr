@@ -610,6 +610,7 @@ TotalMan=Total
 NeverReceived=Never received
 Canceled=Canceled
 YouCanChangeValuesForThisListFromDictionarySetup=You can change values for this list from menu setup - dictionary
+YouCanSetDefaultValueInModuleSetup=You can set the default value used when creating a new record into module setup
 Color=Color
 Documents=Linked files
 DocumentsNb=Linked files (%s)
