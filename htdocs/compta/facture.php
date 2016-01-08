@@ -2551,12 +2551,12 @@ else if ($id > 0 || ! empty($ref))
 
 	$objectidnext = $object->getIdReplacingInvoice();
 
-        $parameters = array('id' => $id);
-        $reshook=$hookmanager->executeHooks('fichePrepareHead', $parameters, $object, $action);
-        if(empty($reshook)) {
-	    $head = facture_prepare_head($object);
-            dol_fiche_head($head, 'compta', $langs->trans('InvoiceCustomer'), 0, 'bill');
-        }
+	$parameters = array('id' => $id);
+	$reshook=$hookmanager->executeHooks('fichePrepareHead', $parameters, $object, $action);
+	if(empty($reshook)) {
+		$head = facture_prepare_head($object);
+		dol_fiche_head($head, 'compta', $langs->trans('InvoiceCustomer'), 0, 'bill');
+	}
 
 	$formconfirm = '';
 
