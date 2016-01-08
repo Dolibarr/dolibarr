@@ -91,6 +91,8 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->cron->del
 // Execute jobs
 if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->execute)
 {
+    $now = dol_now();   // Date we start
+    
 	$result=$object->run_jobs($user->login);
 
 	if ($result < 0)
@@ -100,7 +102,7 @@ if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->ex
 	}
 	else
 	{
-		$res = $object->reprogram_jobs($user->login);
+		$res = $object->reprogram_jobs($user->login, $now);
 		if ($res > 0)
 		{
 			if ($object->lastresult > 0) setEventMessages($langs->trans("JobFinished"), null, 'warnings');
