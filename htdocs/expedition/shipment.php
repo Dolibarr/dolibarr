@@ -578,7 +578,7 @@ if ($id > 0 || ! empty($ref))
 				}
 
 				// Qty ordered
-				print '<td align="center">' . ($objp->qty!=1?'<span class="badge">'.$objp->qty.'</span>':$objp->qty) . '</td>';
+				print '<td align="center">' . $objp->qty . '</td>';
 
 				// Qty already shipped
 				$qtyProdCom=$objp->qty;
