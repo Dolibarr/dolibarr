@@ -111,7 +111,9 @@ if ($result)
 	    print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
 	}
 	
-	print '<table class="noborder" width="100%">';
+	$moreforfilter='';
+	
+	print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
 
 	print "<tr class=\"liste_titre\">";
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"], "e.label","","","",$sortfield,$sortorder);
