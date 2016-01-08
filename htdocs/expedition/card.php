@@ -244,7 +244,7 @@ if (empty($reshook))
 			
 			// Extrafields
 			$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-	    $array_options[$i] = $extrafieldsline->getOptionalsFromPost($extralabelsline, $i);
+            $array_options[$i] = $extrafieldsline->getOptionalsFromPost($extralabelsline, $i);
 			// Unset extrafield
 			if (is_array($extralabelsline)) {
 				// Get extra fields
@@ -272,6 +272,7 @@ if (empty($reshook))
 						$idl = "idl".$i;
 						$entrepot_id = is_numeric(GETPOST($ent,'int'))?GETPOST($ent,'int'):GETPOST('entrepot_id','int');
 						if ($entrepot_id < 0) $entrepot_id='';
+						if (! ($objectsrc->lines[$i]->fk_product > 0)) $entrepot_id = 0;
 						
 						$ret=$object->addline($entrepot_id,GETPOST($idl,'int'),GETPOST($qty,'int'),$array_options[$i]);
 						if ($ret < 0)
@@ -863,21 +864,24 @@ if ($action == 'create')
 	                if (! empty($conf->stock->enabled))
 	                {
 	                    print '<td align="left">';
-	                    if ($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
+	                    if ($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))   // Type of product need stock change ?
 	                    {
-	                        // Show warehouse combo list
-	                    	$ent = "entl".$indiceAsked;
-	                    	$idl = "idl".$indiceAsked;
-	                    	$tmpentrepot_id = is_numeric(GETPOST($ent,'int'))?GETPOST($ent,'int'):$warehouse_id;
-	                        print $formproduct->selectWarehouses($tmpentrepot_id,'entl'.$indiceAsked,'',1,0,$line->fk_product);
-	                    	if ($tmpentrepot_id > 0 && $tmpentrepot_id == $warehouse_id)
-	                        {
-	                            //print $stock.' '.$quantityToBeDelivered;
-	                            if ($stock < $quantityToBeDelivered)
-	                            {
-	                                print ' '.img_warning($langs->trans("StockTooLow"));	// Stock too low for this $warehouse_id but you can change warehouse
-	                            }
-	                        }
+                            // Show warehouse combo list
+  	                    	$ent = "entl".$indiceAsked;
+   	                    	$idl = "idl".$indiceAsked;
+   	                    	$tmpentrepot_id = is_numeric(GETPOST($ent,'int'))?GETPOST($ent,'int'):$warehouse_id;
+   	                    	if ($line->fk_product > 0)
+   	                    	{
+    	                        print $formproduct->selectWarehouses($tmpentrepot_id,'entl'.$indiceAsked,'',1,0,$line->fk_product);
+    	                    	if ($tmpentrepot_id > 0 && $tmpentrepot_id == $warehouse_id)
+    	                        {
+    	                            //print $stock.' '.$quantityToBeDelivered;
+    	                            if ($stock < $quantityToBeDelivered)
+    	                            {
+    	                                print ' '.img_warning($langs->trans("StockTooLow"));	// Stock too low for this $warehouse_id but you can change warehouse
+    	                            }
+    	                        }
+                            }
 	                    }
 	                    else
 	                    {
@@ -1602,7 +1606,6 @@ else if ($id || $ref)
 		}
 
 		print '</div>';
-		print "<br>\n";
 	}
 
 
