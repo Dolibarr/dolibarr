@@ -1,16 +1,17 @@
 <?php
-/* Copyright (C) 2000-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2008      Raphael Bertrand (Resultic)       <raphael.bertrand@resultic.fr>
- * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
- * Copyright (C) 2013      Alexandre Spangaro   <alexandre.spangaro@gmail.com>
- * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
+/* Copyright (C) 2000-2007  Rodolphe Quiedeville        <rodolphe@quiedeville.org>
+ * Copyright (C) 2003       Jean-Louis Bergamo          <jlb@j1b.org>
+ * Copyright (C) 2004-2013  Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2004       Sebastien Di Cintio         <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004       Benoit Mortier              <benoit.mortier@opensides.be>
+ * Copyright (C) 2004       Christophe Combelles        <ccomb@free.fr>
+ * Copyright (C) 2005-2012  Regis Houssin               <regis.houssin@capnetworks.com>
+ * Copyright (C) 2008       Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
+ * Copyright (C) 2010-2011  Juanjo Menent               <jmenent@2byte.es>
+ * Copyright (C) 2013       Cédric Salvador             <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2013       Alexandre Spangaro          <alexandre.spangaro@gmail.com>
+ * Copyright (C) 2014-2015  Marcos García               <marcosgdf@gmail.com>
+ * Copyright (C) 2016       Raphaël Doursenaud          <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -194,10 +195,10 @@ function GETPOST($paramname,$check='',$method=0)
 		elseif ($check == 'alpha')
 		{
 			$out=trim($out);
-			// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
 			// '../' is dangerous because it allows dir transversals
-			if (preg_match('/"/',$out)) $out='';
-			else if (preg_match('/\.\.\//',$out)) $out='';
+			if (preg_match('/\.\.\//',$out)) $out='';
+			// Quotes are dangerous because param in url can close the href= or src= and add javascript functions.
+			$out = htmlspecialchars($out, ENT_QUOTES);
 		}
 		elseif ($check == 'aZ')
 		{
