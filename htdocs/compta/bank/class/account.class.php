@@ -168,12 +168,24 @@ class Account extends CommonObject
 	 */
 	public $min_desired;
 
+	/**
+	 * Notes
+	 * @var string
+	 */
 	public $comment;
+	public $domiciliation;
+
+	/**
+	 * Date of the initial balance. Used in Account::create
+	 * @var int
+	 */
+	public $date_solde;
 
 	/**
 	 * Current account
 	 */
 	const TYPE_CURRENT = 1;
+
 	/**
 	 * Cash account
 	 */
@@ -182,11 +194,10 @@ class Account extends CommonObject
 	 * Savings account
 	 */
 	const TYPE_SAVINGS = 0;
-
 	const STATUS_OPEN = 0;
 	const STATUS_CLOSED = 1;
 
-    /**
+	/**
      *  Constructor
      *
      *  @param	DoliDB		$db		Database handler
