@@ -49,32 +49,15 @@ class FormBank
      *  @param  string	$htmlname        Nom champ formulaire
      *  @return	void
      */
-    function select_type_comptes_financiers($selected=1,$htmlname='type')
+    function select_type_comptes_financiers($selected = Account::TYPE_CURRENT, $htmlname = 'type')
     {
         global $langs;
         $langs->load("banks");
 
-        $type_available=array(0,1,2);
+        $account = new Account($this->db);
+        $form = new Form($this->db);
 
-        print '<select id="select'.$htmlname.'" class="flat" name="'.$htmlname.'">';
-        $num = count($type_available);
-        $i = 0;
-        if ($num)
-        {
-            while ($i < $num)
-            {
-                if ($selected == $type_available[$i])
-                {
-                    print '<option value="'.$type_available[$i].'" selected>'.$langs->trans("BankType".$type_available[$i]).'</option>';
-                }
-                else
-                {
-                    print '<option value="'.$type_available[$i].'">'.$langs->trans("BankType".$type_available[$i]).'</option>';
-                }
-                $i++;
-            }
-        }
-        print '</select>';
+        print $form->selectarray($htmlname, $account->type_lib, $selected);
     }
 
 }

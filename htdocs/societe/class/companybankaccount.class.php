@@ -46,12 +46,11 @@ class CompanyBankAccount extends Account
 	 *
 	 *  @param      DoliDB		$db      Database handler
      */
-    function __construct($db)
+    function __construct(DoliDB $db)
     {
         $this->db = $db;
 
         $this->socid = 0;
-        $this->clos = 0;
         $this->solde = 0;
         $this->error_number = 0;
         $this->default_rib = 0;
