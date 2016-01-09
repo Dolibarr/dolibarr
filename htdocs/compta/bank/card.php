@@ -33,6 +33,8 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formbank.class.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
+if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/accountancy/class/html.formventilation.class.php';
 
 $langs->load("banks");
 $langs->load("bills");
@@ -85,7 +87,8 @@ if ($_POST["action"] == 'add')
     $account->proprio 	      = trim($_POST["proprio"]);
     $account->owner_address   = trim($_POST["owner_address"]);
 
-    $account->account_number  = trim($_POST["account_number"]);
+	if (GETPOST('account_number') <= 0) { $accountancy_code_number = ''; } else { $accountancy_code_number = GETPOST('account_number'); }
+    $account->account_number  = $accountancy_code_number;
 	$account->accountancy_journal  = trim($_POST["accountancy_journal"]);
 
     $account->solde           = $_POST["solde"];
@@ -163,7 +166,8 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
     $account->proprio 	      = trim($_POST["proprio"]);
     $account->owner_address   = trim($_POST["owner_address"]);
 
-    $account->account_number  = trim($_POST["account_number"]);
+    if (GETPOST('account_number') <= 0) { $accountancy_code_number = ''; } else { $accountancy_code_number = GETPOST('account_number'); }
+    $account->account_number  = $accountancy_code_number;
 	$account->accountancy_journal = trim($_POST["accountancy_journal"]);
 
     $account->currency_code   = trim($_POST["account_currency_code"]);
@@ -231,6 +235,7 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes" && $user-
 $form = new Form($db);
 $formbank = new FormBank($db);
 $formcompany = new FormCompany($db);
+if (! empty($conf->accounting->enabled)) $formaccountancy = New FormVentilation($db);
 
 $countrynotdefined=$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
@@ -476,14 +481,34 @@ if ($action == 'create')
 	// Accountancy code
     if (! empty($conf->global->MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED))
     {
-        print '<tr><td class="fieldrequired"  width="25%">'.$langs->trans("AccountancyCode").'</td>';
-        print '<td colspan="3"><input type="text" name="account_number" value="'.(GETPOST("account_number")?GETPOST('account_number'):$account->account_number).'"></td></tr>';
-    }
+		if (! empty($conf->accounting->enabled))
+		{
+			print '<tr><td class="fieldrequired" width="25%">'.$langs->trans("AccountancyCode").'</td>';
+			print '<td>';
+			print $formaccountancy->select_account($account->account_number, 'account_number', 1, '', 1, 1);
+			print '</td></tr>';
+		}
+		else
+		{
+			print '<tr><td class="fieldrequired" width="25%">'.$langs->trans("AccountancyCode").'</td>';
+			print '<td colspan="3"><input type="text" name="account_number" value="'.(GETPOST("account_number")?GETPOST('account_number'):$account->account_number).'"></td></tr>';
+		}
+	}
     else
     {
-        print '<tr><td width="25%">'.$langs->trans("AccountancyCode").'</td>';
-        print '<td colspan="3"><input type="text" name="account_number" value="'.(GETPOST("account_number")?GETPOST('account_number'):$account->account_number).'"></td></tr>';
-    }
+		if (! empty($conf->accounting->enabled))
+		{
+			print '<tr><td width="25%">'.$langs->trans("AccountancyCode").'</td>';
+			print '<td>';
+			print $formaccountancy->select_account($account->account_number, 'account_number', 1, '', 1, 1);
+			print '</td></tr>';
+		}
+		else
+		{
+			print '<tr><td width="25%">'.$langs->trans("AccountancyCode").'</td>';
+			print '<td colspan="3"><input type="text" name="account_number" value="'.(GETPOST("account_number")?GETPOST('account_number'):$account->account_number).'"></td></tr>';
+		}
+	}
 
 	// Accountancy journal
 	if (! empty($conf->accounting->enabled))
@@ -732,7 +757,7 @@ else
 		print '<table class="border" width="100%">';
 		// Accountancy code
 		print '<tr><td width="25%">'.$langs->trans("AccountancyCode").'</td>';
-		print '<td colspan="3">'.$account->account_number.'</td></tr>';
+		print '<td colspan="3">'.length_accountg($account->account_number).'</td></tr>';
 
 		// Accountancy journal
 		if (! empty($conf->accounting->enabled))
@@ -1008,16 +1033,36 @@ else
 		print '<table class="border" width="100%">';
 
 		// Accountancy code
-        if (! empty($conf->global->MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED))
-        {
-            print '<tr><td class="fieldrequired" width="25%">'.$langs->trans("AccountancyCode").'</td>';
-            print '<td colspan="3"><input type="text" name="account_number" value="'.(isset($_POST["account_number"])?$_POST["account_number"]:$account->account_number).'"></td></tr>';
-        }
-        else
-        {
-            print '<tr><td width="25%">'.$langs->trans("AccountancyCode").'</td>';
-            print '<td colspan="3"><input type="text" name="account_number" value="'.(isset($_POST["account_number"])?$_POST["account_number"]:$account->account_number).'"></td></tr>';
-        }
+		if (! empty($conf->global->MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED))
+		{
+			if (! empty($conf->accounting->enabled))
+			{
+				print '<tr><td class="fieldrequired" width="25%">'.$langs->trans("AccountancyCode").'</td>';
+				print '<td>';
+				print $formaccountancy->select_account($account->account_number, 'account_number', 1, '', 1, 1);
+				print '</td></tr>';
+			}
+			else
+			{
+				print '<tr><td class="fieldrequired" width="25%">'.$langs->trans("AccountancyCode").'</td>';
+				print '<td colspan="3"><input type="text" name="account_number" value="'.(GETPOST("account_number")?GETPOST("account_number"):$account->account_number).'"></td></tr>';
+			}
+		}
+		else
+		{
+			if (! empty($conf->accounting->enabled))
+			{
+				print '<tr><td width="25%">'.$langs->trans("AccountancyCode").'</td>';
+				print '<td>';
+				print $formaccountancy->select_account($account->account_number, 'account_number', 1, '', 1, 1);
+				print '</td></tr>';
+			}
+			else
+			{
+				print '<tr><td width="25%">'.$langs->trans("AccountancyCode").'</td>';
+				print '<td colspan="3"><input type="text" name="account_number" value="'.(GETPOST("account_number")?GETPOST("account_number"):$account->account_number).'"></td></tr>';
+			}
+		}
 
 		// Accountancy journal
 		if (! empty($conf->accounting->enabled))
