@@ -439,17 +439,14 @@ if ($action == 'create')
 	}
 
 	print '<table class="border" width="100%">';
+
 	// Accountancy code
-    if (! empty($conf->global->MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED))
-    {
-        print '<tr><td class="fieldrequired"  width="25%">'.$langs->trans("AccountancyCode").'</td>';
-        print '<td colspan="3"><input type="text" name="account_number" value="'.(GETPOST("account_number")?GETPOST('account_number'):$account->account_number).'"></td></tr>';
-    }
-    else
-    {
-        print '<tr><td width="25%">'.$langs->trans("AccountancyCode").'</td>';
-        print '<td colspan="3"><input type="text" name="account_number" value="'.(GETPOST("account_number")?GETPOST('account_number'):$account->account_number).'"></td></tr>';
-    }
+	print '<tr><td';
+    if (! empty($conf->global->MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED)) {
+		print ' class="fieldrequired"';
+	}
+	print $langs->trans("AccountancyCode").'</td>';
+	print '<td colspan="3"><input type="text" name="account_number" value="'.(GETPOST("account_number")?GETPOST('account_number'):$account->account_number).'"></td></tr>';
 
 	// Accountancy journal
 	if (! empty($conf->accounting->enabled))
@@ -894,16 +891,12 @@ else
 		print '<table class="border" width="100%">';
 
 		// Accountancy code
-        if (! empty($conf->global->MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED))
-        {
-            print '<tr><td class="fieldrequired" width="25%">'.$langs->trans("AccountancyCode").'</td>';
-            print '<td colspan="3"><input type="text" name="account_number" value="'.(isset($_POST["account_number"])?$_POST["account_number"]:$account->account_number).'"></td></tr>';
-        }
-        else
-        {
-            print '<tr><td width="25%">'.$langs->trans("AccountancyCode").'</td>';
-            print '<td colspan="3"><input type="text" name="account_number" value="'.(isset($_POST["account_number"])?$_POST["account_number"]:$account->account_number).'"></td></tr>';
-        }
+		print '<tr><td';
+		if (! empty($conf->global->MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED)) {
+			print ' class="fieldrequired"';
+		}
+		print $langs->trans("AccountancyCode").'</td>';
+		print '<td colspan="3"><input type="text" name="account_number" value="'.(isset($_POST["account_number"])?$_POST["account_number"]:$account->account_number).'"></td></tr>';
 
 		// Accountancy journal
 		if (! empty($conf->accounting->enabled))
