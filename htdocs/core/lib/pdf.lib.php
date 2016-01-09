@@ -579,6 +579,9 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 {
 	global $mysoc, $conf;
 
+	//Used for getIbanLabel function
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbank.class.php';
+
 	$diffsizetitle=(empty($conf->global->PDF_DIFFSIZE_TITLE)?3:$conf->global->PDF_DIFFSIZE_TITLE);
 	$diffsizecontent=(empty($conf->global->PDF_DIFFSIZE_CONTENT)?4:$conf->global->PDF_DIFFSIZE_CONTENT);
 	$pdf->SetXY($curx, $cury);
@@ -594,7 +597,6 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 
 	// Use correct name of bank id according to country
 	$bickey="BICNumber";
-	if ($account->getCountryCode() == 'IN') $bickey="SWIFT";
 
 	// Get format of bank account according to its country
 	$usedetailedbban=$account->useDetailedBBAN();
@@ -698,8 +700,8 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 	else if (! $usedetailedbban) $cury+=1;
 
 	// Use correct name of bank id according to country
-	$ibankey="IBANNumber";
-	if ($account->getCountryCode() == 'IN') $ibankey="IFSC";
+	$formbank = new FormBank($this->db);
+	$ibankey= $formbank->getIbanLabel($account);
 	if (! empty($account->iban))
 	{
 		//Remove whitespaces to ensure we are dealing with the format we expect

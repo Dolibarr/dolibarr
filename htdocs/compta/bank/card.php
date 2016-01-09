@@ -415,10 +415,8 @@ if ($action == 'create')
 			print '</tr>';
 		}
 
-		$ibankey="IBANNumber";
+		$ibankey= $formbank->getIbanLabel($account);
 		$bickey="BICNumber";
-		if ($account->getCountryCode() == 'IN') $ibankey="IFSC";
-		if ($account->getCountryCode() == 'IN') $bickey="SWIFT";
 
 		// IBAN
 		print '<tr><td>'.$langs->trans($ibankey).'</td>';
@@ -636,10 +634,8 @@ else
 				print '</tr>';
 			}
 
-			$ibankey="IBANNumber";
+			$ibankey= $formbank->getIbanLabel($account);
 			$bickey="BICNumber";
-			if ($account->getCountryCode() == 'IN') $ibankey="IFSC";
-			if ($account->getCountryCode() == 'IN') $bickey="SWIFT";
 
 			print '<tr><td>'.$langs->trans($ibankey).'</td>';
 			print '<td colspan="3">'.$account->iban.'&nbsp;';
@@ -892,10 +888,8 @@ else
 				print '</tr>';
 			}
 
-			$ibankey="IBANNumber";
+			$ibankey= $formbank->getIbanLabel($account);
 			$bickey="BICNumber";
-			if ($account->getCountryCode() == 'IN') $ibankey="IFSC";
-			if ($account->getCountryCode() == 'IN') $bickey="SWIFT";
 
 			// IBAN
 			print '<tr><td>'.$langs->trans($ibankey).'</td>';
