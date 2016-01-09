@@ -167,7 +167,7 @@ if (! empty($hookmanager->resArray['options'])) {
 <br>
 
 <?php if ($message) { ?>
-	<div class="center login_main_message" style="max-width: 520px">
+	<div class="center login_main_message">
 	<?php echo dol_htmloutput_mesg($message,'','',1); ?>
 	</div>
 <?php } ?>
