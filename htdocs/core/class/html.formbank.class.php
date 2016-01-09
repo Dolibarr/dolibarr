@@ -60,5 +60,20 @@ class FormBank
         print $form->selectarray($htmlname, $account->type_lib, $selected);
     }
 
+    /**
+     * Returns the name of the Iban label. India uses 'IFSC' and the rest of the world 'IBAN' name.
+     *
+     * @param Account $account Account object
+     * @return string
+     */
+    public function getIbanLabel(Account $account)
+    {
+        if ($account->getCountryCode() == 'IN') {
+            return 'IFSC';
+        }
+
+        return 'IBANNumber';
+    }
+
 }
 
