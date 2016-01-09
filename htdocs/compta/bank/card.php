@@ -367,10 +367,10 @@ if ($action == 'create')
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("BalanceMinimalAllowed").'</td>';
-	print '<td colspan="3"><input size="12" type="text" class="flat" name="account_min_allowed" value="'.($_POST["account_min_allowed"]?$_POST["account_min_allowed"]:$account->account_min_allowed).'"></td></tr>';
+	print '<td colspan="3"><input size="12" type="text" class="flat" name="account_min_allowed" value="'.($_POST["account_min_allowed"]?$_POST["account_min_allowed"]:$account->min_allowed).'"></td></tr>';
 
 	print '<tr><td>'.$langs->trans("BalanceMinimalDesired").'</td>';
-	print '<td colspan="3"><input size="12" type="text" class="flat" name="account_min_desired" value="'.($_POST["account_min_desired"]?$_POST["account_min_desired"]:$account->account_min_desired).'"></td></tr>';
+	print '<td colspan="3"><input size="12" type="text" class="flat" name="account_min_desired" value="'.($_POST["account_min_desired"]?$_POST["account_min_desired"]:$account->min_desired).'"></td></tr>';
 
 	print '</table>';
 	print '<br>';
