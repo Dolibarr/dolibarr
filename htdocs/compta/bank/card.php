@@ -286,7 +286,7 @@ if ($action == 'create')
 	// Type
 	print '<tr><td class="fieldrequired">'.$langs->trans("AccountType").'</td>';
 	print '<td colspan="3">';
-	$formbank->select_type_comptes_financiers(isset($_POST["type"])?$_POST["type"]:1,"type");
+	$formbank->select_type_comptes_financiers(isset($_POST["type"])?$_POST["type"]: Account::TYPE_CURRENT,"type");
 	print '</td></tr>';
 
 	// Currency
@@ -302,7 +302,10 @@ if ($action == 'create')
 	// Status
     print '<tr><td class="fieldrequired">'.$langs->trans("Status").'</td>';
     print '<td colspan="3">';
-    print $form->selectarray("clos",array(0=>$account->status[0],1=>$account->status[1]),(isset($_POST["clos"])?$_POST["clos"]:$account->clos));
+    print $form->selectarray("clos",array(
+		Account::STATUS_OPEN => $account->status[0],
+		Account::STATUS_CLOSED => $account->status[1]
+	),(isset($_POST["clos"])?$_POST["clos"]:$account->clos));
     print '</td></tr>';
 
     // Country
@@ -643,7 +646,7 @@ else
 
 		print '<br>';
 
-		if ($account->type == 0 || $account->type == 1)
+		if ($account->type == Account::TYPE_SAVINGS || $account->type == Account::TYPE_CURRENT)
 		{
 			print '<table class="border" width="100%">';
 
@@ -861,7 +864,10 @@ else
 		// Status
         print '<tr><td class="fieldrequired">'.$langs->trans("Status").'</td>';
         print '<td colspan="3">';
-        print $form->selectarray("clos",array(0=>$account->status[0],1=>$account->status[1]),(isset($_POST["clos"])?$_POST["clos"]:$account->clos));
+		print $form->selectarray("clos",array(
+			Account::STATUS_OPEN => $account->status[0],
+			Account::STATUS_CLOSED => $account->status[1]
+		),(isset($_POST["clos"])?$_POST["clos"]:$account->clos));
         print '</td></tr>';
 
 		// Country

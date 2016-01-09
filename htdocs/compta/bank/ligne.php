@@ -102,7 +102,7 @@ if ($user->rights->banque->modifier && $action == "update")
 	$ac = new Account($db);
 	$ac->fetch($id);
 
-	if ($ac->courant == 2 && $_POST['value'] != 'LIQ')
+	if ($ac->courant == Account::TYPE_CASH && $_POST['value'] != 'LIQ')
 	{
 		setEventMessages($langs->trans("ErrorCashAccountAcceptsOnlyCashMoney"), null, 'errors');
 		$error++;

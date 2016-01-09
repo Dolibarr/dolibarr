@@ -143,7 +143,7 @@ if (empty($num))
 
 		print '<div class="tabsAction">';
 		
-		if ($object->type != 2 && $object->rappro) 
+		if ($object->canBeConciliated())
 		{ 
 			// If not cash account and can be reconciliate
 			if ($user->rights->banque->consolidate) 
