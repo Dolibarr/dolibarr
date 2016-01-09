@@ -1804,8 +1804,8 @@ class Holiday extends CommonObject
     /**
      *  Return array with list of types
      *
-     *  @param		int		$active		Status of type
-     *  @param		int		$affect		Filter on affect (a request will change sold or not)
+     *  @param		int		$active		Status of type. -1 = Both
+     *  @param		int		$affect		Filter on affect (a request will change sold or not). -1 = Both
      *  @return     array	    		Return array with list of types
      */
     function getTypes($active=-1, $affect=-1)
