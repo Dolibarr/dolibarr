@@ -77,7 +77,7 @@ function pdf_getFormat($outputlangs='')
  *      @param	string		$format         Array(width,height). Keep empty to use default setup.
  *      @param	string		$metric         Unit of format ('mm')
  *      @param  string		$pagetype       'P' or 'l'
- *      @return TPDF						PDF object
+ *      @return TCPDF						PDF object
  */
 function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 {
@@ -566,7 +566,7 @@ function pdf_watermark(&$pdf, $outputlangs, $h, $w, $unit, $text)
 /**
  *  Show bank informations for PDF generation
  *
- *  @param	PDF			$pdf            		Object PDF
+ *  @param	TCPDF			$pdf            		Object PDF
  *  @param  Translate	$outputlangs     		Object lang
  *  @param  int			$curx            		X
  *  @param  int			$cury            		Y
@@ -620,64 +620,38 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 		    // number = account number
 		    // key = check control key used only when $usedetailedbban = 1
     		if (empty($onlynumber)) $pdf->line($curx+1, $cury+1, $curx+1, $cury+6);
-    
-    		if ($usedetailedbban == 1)
+
+    		foreach ($account->getFieldsToShow() as $val)
     		{
-    			$fieldstoshow=array('bank','desk','number','key');
-    			if ($conf->global->BANK_SHOW_ORDER_OPTION == 1) $fieldstoshow=array('bank','desk','key','number');
-    		}
-    		else if ($usedetailedbban == 2)
-    		{
-    			$fieldstoshow=array('bank','number');
-    		}
-    		else dol_print_error('','Value returned by function useDetailedBBAN not managed');
-    
-    		foreach ($fieldstoshow as $val)
-    		{
-    			if ($val == 'bank')
-    			{
-    				// Bank code
-    				$tmplength=18;
-    				$pdf->SetXY($curx, $cury+4);
-    				$pdf->SetFont('','',$default_font_size - 3);$pdf->MultiCell($tmplength, 3, $outputlangs->convToOutputCharset($account->code_banque), 0, 'C', 0);
-    				$pdf->SetXY($curx, $cury+1);
-    				$curx+=$tmplength;
-    				$pdf->SetFont('','B',$default_font_size - 4);$pdf->MultiCell($tmplength, 3, $outputlangs->transnoentities("BankCode"), 0, 'C', 0);
-    				if (empty($onlynumber)) $pdf->line($curx, $cury+1, $curx, $cury+7);
-    			}
-    			if ($val == 'desk')
-    			{
-    				// Desk
-    				$tmplength=18;
-    				$pdf->SetXY($curx, $cury+4);
-    				$pdf->SetFont('','',$default_font_size - 3);$pdf->MultiCell($tmplength, 3, $outputlangs->convToOutputCharset($account->code_guichet), 0, 'C', 0);
-    				$pdf->SetXY($curx, $cury+1);
-    				$curx+=$tmplength;
-    				$pdf->SetFont('','B',$default_font_size - 4);$pdf->MultiCell($tmplength, 3, $outputlangs->transnoentities("DeskCode"), 0, 'C', 0);
-    				if (empty($onlynumber)) $pdf->line($curx, $cury+1, $curx, $cury+7);
-    			}
-    			if ($val == 'number')
-    			{
-    				// Number
-    				$tmplength=24;
-    				$pdf->SetXY($curx, $cury+4);
-    				$pdf->SetFont('','',$default_font_size - 3);$pdf->MultiCell($tmplength, 3, $outputlangs->convToOutputCharset($account->number), 0, 'C', 0);
-    				$pdf->SetXY($curx, $cury+1);
-    				$curx+=$tmplength;
-    				$pdf->SetFont('','B',$default_font_size - 4);$pdf->MultiCell($tmplength, 3, $outputlangs->transnoentities("BankAccountNumber"), 0, 'C', 0);
-    				if (empty($onlynumber)) $pdf->line($curx, $cury+1, $curx, $cury+7);
-    			}
-    			if ($val == 'key')
-    			{
-    				// Key
-    				$tmplength=13;
-    				$pdf->SetXY($curx, $cury+4);
-    				$pdf->SetFont('','',$default_font_size - 3);$pdf->MultiCell($tmplength, 3, $outputlangs->convToOutputCharset($account->cle_rib), 0, 'C', 0);
-    				$pdf->SetXY($curx, $cury+1);
-    				$curx+=$tmplength;
-    				$pdf->SetFont('','B',$default_font_size - 4);$pdf->MultiCell($tmplength, 3, $outputlangs->transnoentities("BankAccountNumberKey"), 0, 'C', 0);
-    				if (empty($onlynumber)) $pdf->line($curx, $cury+1, $curx, $cury+7);
-    			}
+				$pdf->SetXY($curx, $cury + 4);
+				$pdf->SetFont('', '', $default_font_size - 3);
+
+				if ($val == 'BankCode') {
+					$tmplength = 18;
+					$content = $account->code_banque;
+				} elseif ($val == 'DeskCode') {
+					$tmplength = 18;
+					$content = $account->code_guichet;
+				} elseif ($val == 'BankAccountNumber') {
+					$tmplength = 24;
+					$content = $account->number;
+				} elseif ($val == 'BankAccountNumberKey') {
+					$tmplength = 13;
+					$content = $account->cle_rib;
+				} else {
+					dol_print_error($this->db, 'Unexpected value for getFieldsToShow: '.$val);
+					break;
+				}
+
+				$pdf->MultiCell($tmplength, 3, $outputlangs->convToOutputCharset($content), 0, 'C', 0);
+				$pdf->SetXY($curx, $cury + 1);
+				$curx += $tmplength;
+				$pdf->SetFont('', 'B', $default_font_size - 4);
+				$pdf->MultiCell($tmplength, 3, $outputlangs->transnoentities($val), 0, 'C', 0);
+
+				if (empty($onlynumber)) {
+					$pdf->line($curx, $cury + 1, $curx, $cury + 7);
+				}
     		}
     
     		$curx=$savcurx;
