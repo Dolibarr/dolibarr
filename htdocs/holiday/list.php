@@ -253,6 +253,7 @@ else
 	dol_fiche_head('');
 }
 
+$alltypeleaves=$holiday->getTypes(1,-1);    // To have labels
 
 $out='';
 $typeleaves=$holiday->getTypes(1,1);
@@ -291,7 +292,7 @@ print_liste_field_titre($langs->trans("DateCreateCP"),$_SERVER["PHP_SELF"],"cp.d
 print_liste_field_titre($langs->trans("Employe"),$_SERVER["PHP_SELF"],"cp.fk_user","",'','',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("ValidatorCP"),$_SERVER["PHP_SELF"],"cp.fk_validator","",'','',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],'','','','',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("Duration"),$_SERVER["PHP_SELF"],'','','','align="center"',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("Duration"),$_SERVER["PHP_SELF"],'','','','align="right"',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("DateDebCP"),$_SERVER["PHP_SELF"],"cp.date_debut","",'','align="center"',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("DateFinCP"),$_SERVER["PHP_SELF"],"cp.date_fin","",'','align="center"',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"cp.statut","",'','align="center"',$sortfield,$sortorder);
@@ -407,7 +408,10 @@ if (! empty($holiday->holiday))
 		print '<td style="text-align: center;">'.dol_print_date($date,'day').'</td>';
 		print '<td>'.$userstatic->getNomUrl('1').'</td>';
 		print '<td>'.$approbatorstatic->getNomUrl('1').'</td>';
-		print '<td>'.$infos_CP['fk_type'].'</td>';
+		print '<td>';
+		$label=$alltypeleaves[$infos_CP['fk_type']]['label'];
+		print $label?$label:$infos_CP['fk_type'];
+		print '</td>';
 		print '<td align="right">';
 		$nbopenedday=num_open_day($infos_CP['date_debut_gmt'], $infos_CP['date_fin_gmt'], 0, 1, $infos_CP['halfday']);
 		print $nbopenedday.' '.$langs->trans('DurationDays');
