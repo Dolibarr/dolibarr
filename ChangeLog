@@ -114,6 +114,7 @@ NEW: Translate extrafield's labels.
 NEW: Use new select2 component for juridical status, country and state selection.
 NEW: When creating order, proposal or invoice from thirdparty card, the project is asked during creation. A link to create project if it does not exists is also available. 
 NEW: Uniformize form creation of proposal to add public and private notes during creation like for order and invoice.
+NEW: More robust antiXSS engine.
 
 For developers:
 NEW: The search box and the bookmarks are now rendered by the menu manager.
@@ -144,6 +145,7 @@ NEW: ODT generators can now also set meta properties of ODT file.
 NEW: Add missing columns into llx_expedition to match other tables.
 NEW: A new function getImageFileNameForSize was also introduced to choose image best size according to usage to save bandwith.
 NEW: Support logging to a Sentry server
+NEW: Prepare database to have agenda able to store more detailed emails events. 
 
 WARNING: 
 

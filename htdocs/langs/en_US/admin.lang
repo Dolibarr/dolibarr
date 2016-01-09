@@ -416,6 +416,7 @@ ConfirmEraseAllCurrentBarCode=Are you sure you want to erase all current barcode
 AllBarcodeReset=All barcode values have been removed
 NoBarcodeNumberingTemplateDefined=No numbering barcode template enabled into barcode module setup.
 NoRecordWithoutBarcodeDefined=No record with no barcode value defined.
+EnableFileCache=Enable file cache
 
 # Modules
 Module0Name=Users & groups

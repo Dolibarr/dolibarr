@@ -507,6 +507,8 @@ if ($nboftargetok) {
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/pos*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/teclib*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/timesheet*`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/webmail*`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/accountingexport*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/themes/oblyon*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/themes/allscreen*`;
 		# Removed other test files

@@ -651,7 +651,7 @@ if ($action == 'create')
 	{
 		print '<tr><td width="30%"><span class="fieldrequired">'.$langs->trans("Type").'</span></b></td><td>';
 		$default=(empty($conf->global->AGENDA_USE_EVENT_TYPE_DEFAULT)?'':$conf->global->AGENDA_USE_EVENT_TYPE_DEFAULT);
-		$formactions->select_type_actions(GETPOST("actioncode")?GETPOST("actioncode"):($object->type_code?$object->type_code:$default), "actioncode","systemauto");
+		$formactions->select_type_actions(GETPOST("actioncode")?GETPOST("actioncode"):($object->type_code?$object->type_code:$default), "actioncode", "systemauto", 0, -1);
 		print '</td></tr>';
 	}
 

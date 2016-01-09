@@ -1056,14 +1056,13 @@ class Cronjob extends CommonObject
 	 * Reprogram a job
 	 *
 	 * @param  string		$userlogin      User login
+	 * @param  timestamp    $now            Date returned by dol_now()
 	 * @return int					        <0 if KO, >0 if OK
 	 */
-	function reprogram_jobs($userlogin)
+	function reprogram_jobs($userlogin, $now)
 	{
 		dol_syslog(get_class($this)."::reprogram_jobs userlogin:$userlogin", LOG_DEBUG);
         
-		$now = dol_now();
-		
 		require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 		$user=new User($this->db);
 		$result=$user->fetch('',$userlogin);

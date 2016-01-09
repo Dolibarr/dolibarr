@@ -97,7 +97,8 @@ function test_sql_and_script_inject($val, $type)
     // All examples on page: http://ha.ckers.org/xss.html#XSScalc
     $sql_inj += preg_match('/<script/i', $val);
     if (! defined('NOSTYLECHECK')) $sql_inj += preg_match('/<style/i', $val);
-    $sql_inj += preg_match('/base[\s]+href/i', $val);
+    $sql_inj += preg_match('/base[\s]+href/si', $val);
+    $sql_inj += preg_match('/<.*onmouseover/si', $val);       // onmouseover can be set on img or any html tag like <img title='>' onmouseover=alert(1)>
     if ($type == 1)
     {
         $sql_inj += preg_match('/javascript:/i', $val);

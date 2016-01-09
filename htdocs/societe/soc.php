@@ -2360,9 +2360,11 @@ else
 			$action='send';
 			$modelmail='thirdparty';
 
-			print '<br>';
+			//print '<br>';
 			print load_fiche_titre($langs->trans($titreform));
 
+			dol_fiche_head();
+			
 			// Define output language
 			$outputlangs = $langs;
 			$newlang = '';
@@ -2446,7 +2448,7 @@ else
 			}
 			print $formmail->get_form();
 
-			print '<br>';
+			dol_fiche_end();
 		}
 		else
 		{

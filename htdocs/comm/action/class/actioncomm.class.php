@@ -157,7 +157,17 @@ class ActionComm extends CommonObject
 
     var $actions=array();
 
+    // Fields for emails
+    var $email_msgid;
+    var $email_from;
+    var $email_sender;
+    var $email_to;
+    var $email_tocc;
+    var $email_tobcc;
+    var $email_subject;
+    var $errors_to;
 
+    
     /**
      *      Constructor
      *

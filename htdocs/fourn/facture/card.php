@@ -1007,22 +1007,29 @@ if (empty($reshook))
 
                         $error=0;
 
-                        // Initialisation donnees
+                        // Init data for trigger
                         $object->sendtoid		= $sendtoid;
                         $object->actiontypecode	= $actiontypecode;
                         $object->actionmsg		= $actionmsg;
                         $object->actionmsg2		= $actionmsg2;
                         $object->fk_element		= $object->id;
                         $object->elementtype	= $object->element;
+                        
+                        $object->email_subject  = $subject;
+                        $object->email_to       = $sendto;
+                        $object->email_tocc     = $sendtocc;
+                        $object->email_tobcc    = $sendtobcc;
+                        $object->email_from     = $from;
+                        $object->email_content  = $_POST['message'];
 
-                        // Appel des triggers
+                        // Call triggers
                         include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                         $interface=new Interfaces($db);
                         $result=$interface->run_triggers('BILL_SUPPLIER_SENTBYMAIL',$object,$user,$langs,$conf);
                         if ($result < 0) {
                             $error++; $object->errors=$interface->errors;
                         }
-                        // Fin appel triggers
+                        // End call triggers
 
                         if ($error)
                         {

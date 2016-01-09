@@ -37,6 +37,7 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture-rec.class.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/modules/facture/modules_facture.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/discount.class.php';
@@ -810,7 +811,7 @@ if (empty($reshook))
 		}
 
 		// Standard invoice or Deposit invoice created from a Predefined invoice
-		if (($_POST['type'] == Facture::TYPE_STANDARD || $_POST['type'] == Facture::TYPE_DEPOSIT) && $_POST['fac_rec'] > 0)
+		if (($_POST['type'] == Facture::TYPE_STANDARD || $_POST['type'] == Facture::TYPE_DEPOSIT) && GETPOST('fac_rec') > 0)
 		{
 			$dateinvoice = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 			if (empty($dateinvoice))
@@ -832,14 +833,14 @@ if (empty($reshook))
 				$object->modelpdf       = $_POST['model'];
 
 				// Source facture
-				$object->fac_rec = $_POST['fac_rec'];
+				$object->fac_rec = GETPOST('fac_rec');
 
 				$id = $object->create($user);
 			}
 		}
 
 		// Standard or deposit or proforma invoice
-		if (($_POST['type'] == Facture::TYPE_STANDARD || $_POST['type'] == Facture::TYPE_DEPOSIT || $_POST['type'] == Facture::TYPE_PROFORMA || ($_POST['type'] == Facture::TYPE_SITUATION && empty($_POST['situations']))) && $_POST['fac_rec'] <= 0)
+		if (($_POST['type'] == Facture::TYPE_STANDARD || $_POST['type'] == Facture::TYPE_DEPOSIT || $_POST['type'] == Facture::TYPE_PROFORMA || ($_POST['type'] == Facture::TYPE_SITUATION && empty($_POST['situations']))) && GETPOST('fac_rec') <= 0)
 		{
 			if (GETPOST('socid', 'int') < 1)
 			{
@@ -1955,7 +1956,7 @@ if ($action == 'create')
 
 	// Thirdparty
 	print '<td class="fieldrequired">' . $langs->trans('Customer') . '</td>';
-	if ($soc->id > 0)
+	if ($soc->id > 0 && ! GETPOST('fac_rec'))
 	{
 		print '<td colspan="2">';
 		print $soc->getNomUrl(1);
@@ -1975,7 +1976,7 @@ if ($action == 'create')
 	else
 	{
 		print '<td colspan="2">';
-		print $form->select_company('', 'socid', '(s.client = 1 OR s.client = 3) AND status=1', 1);
+		print $form->select_company($soc->id, 'socid', '(s.client = 1 OR s.client = 3) AND status=1', 1);
 		// Option to reload page to retrieve customer informations. Note, this clear other input
 		if (!empty($conf->global->RELOAD_PAGE_ON_CUSTOMER_CHANGE))
 		{
@@ -1994,11 +1995,14 @@ if ($action == 'create')
 	print '</tr>' . "\n";
 
 	// Predefined invoices
-	if (empty($origin) && empty($originid) && $socid > 0)
+	if (empty($origin) && empty($originid) && GETPOST('fac_rec','int') > 0)
 	{
+	    $invoice_predefined = new FactureRec($db);
+	    $invoice_predefined->fetch(GETPOST('fac_rec','int'));
+	    
 		$sql = 'SELECT r.rowid, r.titre, r.total_ttc';
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . 'facture_rec as r';
-		$sql .= ' WHERE r.fk_soc = ' . $soc->id;
+		$sql .= ' WHERE r.fk_soc = ' . $invoice_predefined->socid;
 
 		$resql = $db->query($sql);
 		if ($resql)

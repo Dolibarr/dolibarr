@@ -93,17 +93,18 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->cron->del
 // Execute jobs
 if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->execute){
 
-	//Execute jobs
 	$object = new Cronjob($db);
 	$job = $object->fetch($id);
 
-	$result = $object->run_jobs($user->login);
+    $now = dol_now();   // Date we start
+
+    $result = $object->run_jobs($user->login);
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 	else
 	{
-		$res = $object->reprogram_jobs($user->login);
+		$res = $object->reprogram_jobs($user->login, $now);
 		if ($res > 0)
 		{
 			if ($object->lastresult > 0) setEventMessages($langs->trans("JobFinished"), null, 'warnings');

@@ -258,7 +258,7 @@ $out='';
 $typeleaves=$holiday->getTypes(1,1);
 foreach($typeleaves as $key => $val)
 {
-	$nb_type = $holiday->getCPforUser($user->id, $val['rowid']);
+	$nb_type = $holiday->getCPforUser($user_id, $val['rowid']);
 	$nb_holiday += $nb_type;
 	$out .= ' - '.$val['label'].': <strong>'.($nb_type?price2num($nb_type):0).'</strong><br>';
 }

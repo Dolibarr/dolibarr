@@ -29,6 +29,11 @@ ALTER TABLE llx_don ADD COLUMN fk_country integer NOT NULL DEFAULT 0 after count
 UPDATE llx_user set api_key = null where api_key = '';
 
 
+ALTER TABLE llx_actioncomm ADD COLUMN email_subject varchar(256) after email_msgid;
+ALTER TABLE llx_actioncomm ADD COLUMN email_tocc varchar(256) after email_to;
+ALTER TABLE llx_actioncomm ADD COLUMN email_tobcc varchar(256) after email_tocc;
+
+
 UPDATE llx_commande_fourn set billed=1 where statut = 8;
 UPDATE llx_commande_fourn set statut=5 where statut = 8 and billed=1;
 
