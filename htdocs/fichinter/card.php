@@ -5,7 +5,7 @@
  * Copyright (C) 2011-2013  Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015  Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 201		Charlie Benke           <charlies@patas-monkey.com>
+ * Copyright (C) 2014-2015  Charlie Benke           <charlie@patas-monkey.com>
  * Copyright (C) 2015       Abbes Bahfir            <bafbes@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1274,6 +1274,41 @@ else if ($id > 0 || ! empty($ref))
 		// Duration
 		print '<tr><td>'.$langs->trans("TotalDuration").'</td>';
 		print '<td colspan="3">'.convertSecondToTime($object->duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY).'</td>';
+		print '</tr>';
+
+		// Date create
+		print '<tr><td>'.$langs->trans("Datec").'</td>';
+		print '<td colspan="3">';
+		print $object->datec ? dol_print_date($object->datec, 'daytext') : '&nbsp;';
+		print '</td>';
+		print '</tr>';
+
+		// Date Validation
+		print '<tr><td>'.$langs->trans("Datev").'</td>';
+		print '<td colspan="3">';
+		print $object->datev ? dol_print_date($object->datev, 'daytext') : '&nbsp;';
+		print '</td>';
+		print '</tr>';
+		
+		// Date Start
+		print '<tr><td>'.$langs->trans("Dateo").'</td>';
+		print '<td colspan="3">';
+		print $object->dateo ? dol_print_date($object->dateo, 'daytext') : '&nbsp;';
+		print '</td>';
+		print '</tr>';
+		
+		// Date End
+		print '<tr><td>'.$langs->trans("Datee").'</td>';
+		print '<td colspan="3">';
+		print $object->datee ? dol_print_date($object->datee, 'daytext') : '&nbsp;';
+		print '</td>';
+		print '</tr>';
+		
+		// Date Terminate/close
+		print '<tr><td>'.$langs->trans("Datet").'</td>';
+		print '<td colspan="3">';
+		print $object->datet ? dol_print_date($object->datet, 'daytext') : '&nbsp;';
+		print '</td>';
 		print '</tr>';
 	}
 
