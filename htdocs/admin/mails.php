@@ -505,7 +505,6 @@ if ($action == 'edit')
 	print '</div>';
 
 	print '</form>';
-	print '<br>';
 }
 else
 {
@@ -662,7 +661,6 @@ else
 	// Run the test to connect
 	if ($action == 'testconnect')
 	{
-		print '<br>';
 		print load_fiche_titre($langs->trans("DoTestServerAvailability"));
 
 		// If we use SSL/TLS
@@ -688,7 +686,6 @@ else
 	// Show email send test form
 	if ($action == 'test' || $action == 'testhtml')
 	{
-		print '<br>';
 		print load_fiche_titre($action == 'testhtml'?$langs->trans("DoTestSendHTML"):$langs->trans("DoTestSend"));
 
 		// Cree l'objet formulaire mail

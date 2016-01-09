@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2015	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2013  Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
@@ -1056,7 +1056,7 @@ if ($action == 'create')
 		print '<tr><td class="fieldrequired">'.$langs->trans('Ref').'</td><td colspan="2">'.$langs->trans("Draft").'</td></tr>';
 
 		// Description (must be a textarea and not html must be allowed (used in list view)
-		print '<tr><td valign="top">'.$langs->trans("Description").'</td>';
+		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
 		print '<td>';
 		print '<textarea name="description" cols="80" rows="'.ROWS_3.'">'.GETPOST('description').'</textarea>';
 		print '</td></tr>';
@@ -1068,7 +1068,7 @@ if ($action == 'create')
 
 			$langs->load("project");
 
-            print '<tr><td valign="top">'.$langs->trans("Project").'</td><td>';
+            print '<tr><td>'.$langs->trans("Project").'</td><td>';
             /* Fix: If a project must be linked to any companies (suppliers or not), project must be not be set as limited to customer but must be not linked to any particular thirdparty
             if ($societe->fournisseur==1)
             	$numprojet=select_projects(-1,$_POST["projectid"],'projectid');
@@ -1087,7 +1087,7 @@ if ($action == 'create')
 		if ($conf->contrat->enabled)
 		{
 			$langs->load("contracts");
-			print '<tr><td valign="top">'.$langs->trans("Contract").'</td><td>';
+			print '<tr><td>'.$langs->trans("Contract").'</td><td>';
 			$numcontrat=$formcontract->select_contract($soc->id,GETPOST('contratid','int'),'contratid',0,1);
 			if ($numcontrat==0)
 			{
@@ -1106,19 +1106,19 @@ if ($action == 'create')
 
         // Public note
         print '<tr>';
-        print '<td class="border" valign="top">'.$langs->trans('NotePublic').'</td>';
-        print '<td valign="top" colspan="2">';
+        print '<td tdtop">'.$langs->trans('NotePublic').'</td>';
+        print '<td colspan="2">';
         $doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
         print $doleditor->Create(1);
         //print '<textarea name="note_public" cols="80" rows="'.ROWS_3.'">'.$note_public.'</textarea>';
         print '</td></tr>';
 
         // Private note
-        if (!empty($user->societe_id))
+        if (empty($user->societe_id))
         {
         	print '<tr>';
-        	print '<td class="border" valign="top">'.$langs->trans('NotePrivate').'</td>';
-        	print '<td valign="top" colspan="2">';
+        	print '<td class="tdtop">'.$langs->trans('NotePrivate').'</td>';
+        	print '<td colspan="2">';
         	$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
         	print $doleditor->Create(1);
         	//print '<textarea name="note_private" cols="80" rows="'.ROWS_3.'">'.$note_private.'</textarea>';
@@ -1313,7 +1313,7 @@ else if ($id > 0 || ! empty($ref))
 	}
 
 	// Description (must be a textarea and not html must be allowed (used in list view)
-	print '<tr><td valign="top">';
+	print '<tr><td>';
 	print $form->editfieldkey("Description",'description',$object->description,$object,$user->rights->ficheinter->creer,'textarea');
 	print '</td><td colspan="3">';
 	print $form->editfieldval("Description",'description',$object->description,$object,$user->rights->ficheinter->creer,'textarea:8:80');

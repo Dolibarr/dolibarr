@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2011      Dimitri Mouillard    <dmouillard@teclib.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -101,10 +101,10 @@ foreach($cp->logs as $logs_CP)
 
 }
 
-if($log_holiday == '2')
+if ($log_holiday == '2')
 {
     print '<tr>';
-    print '<td colspan="7" class="pair" style="text-align: center; padding: 5px;">'.$langs->trans('NoResults').'</td>';
+    print '<td colspan="8" '.$bc[false].'>'.$langs->trans('None').'</td>';
     print '</tr>';
 }
 

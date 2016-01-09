@@ -100,14 +100,14 @@ dol_fiche_head($head, 'ldap', $langs->trans("Group"), 0, 'group');
 print '<table class="border" width="100%">';
 
 // Ref
-print '<tr><td width="25%" valign="top">'.$langs->trans("Ref").'</td>';
+print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
 print '<td colspan="2">';
 print $form->showrefnav($fgroup,'id','',$canreadperms);
 print '</td>';
 print '</tr>';
 
 // Name
-print '<tr><td width="25%" valign="top">'.$langs->trans("Name").'</td>';
+print '<tr><td width="25%">'.$langs->trans("Name").'</td>';
 print '<td width="75%" class="valeur">'.$fgroup->name;
 if (!$fgroup->entity)
 {
@@ -116,7 +116,7 @@ if (!$fgroup->entity)
 print "</td></tr>\n";
 
 // Note
-print '<tr><td width="25%" valign="top">'.$langs->trans("Note").'</td>';
+print '<tr><td width="25%" class="tdtop">'.$langs->trans("Note").'</td>';
 print '<td class="valeur">'.nl2br($fgroup->note).'&nbsp;</td>';
 print "</tr>\n";
 

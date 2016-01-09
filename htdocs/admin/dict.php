@@ -43,6 +43,7 @@ $langs->load("errors");
 $langs->load("admin");
 $langs->load("companies");
 $langs->load("resource");
+$langs->load("holiday");
 
 $action=GETPOST('action','alpha')?GETPOST('action','alpha'):'view';
 $confirm=GETPOST('confirm','alpha');
@@ -170,7 +171,7 @@ $tabsql[24]= "SELECT rowid   as rowid, code, label, active FROM ".MAIN_DB_PREFIX
 $tabsql[25]= "SELECT rowid   as rowid, label, type_template, private, position, topic, content, active FROM ".MAIN_DB_PREFIX."c_email_templates";
 $tabsql[26]= "SELECT rowid   as rowid, code, label, short_label, active FROM ".MAIN_DB_PREFIX."c_units";
 $tabsql[27]= "SELECT id      as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_stcomm";
-$tabsql[28]= "SELECT h.rowid as rowid, h.code, h.label, h.delay, h.newByMonth, h.fk_country as country_id, c.code as country_code, c.label as country, h.active FROM ".MAIN_DB_PREFIX."c_holiday_types as h LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON h.fk_country=c.rowid";
+$tabsql[28]= "SELECT h.rowid as rowid, h.code, h.label, h.affect, h.delay, h.newByMonth, h.fk_country as country_id, c.code as country_code, c.label as country, h.active FROM ".MAIN_DB_PREFIX."c_holiday_types as h LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON h.fk_country=c.rowid";
 $tabsql[29]= "SELECT rowid   as rowid, code, label, percent, position, active FROM ".MAIN_DB_PREFIX."c_lead_status";
 
 // Criteria to sort dictionaries
@@ -234,7 +235,7 @@ $tabfield[24]= "code,label";
 $tabfield[25]= "label,type_template,position,topic,content";
 $tabfield[26]= "code,label,short_label";
 $tabfield[27]= "code,libelle";
-$tabfield[28]= "code,label,delay,newByMonth,country_id,country";
+$tabfield[28]= "code,label,affect,delay,newByMonth,country_id,country";
 $tabfield[29]= "code,label,percent,position";
 
 // Nom des champs d'edition pour modification d'un enregistrement
@@ -266,7 +267,7 @@ $tabfieldvalue[24]= "code,label";
 $tabfieldvalue[25]= "label,type_template,position,topic,content";
 $tabfieldvalue[26]= "code,label,short_label";
 $tabfieldvalue[27]= "code,libelle";
-$tabfieldvalue[28]= "code,label,delay,newByMonth,country";
+$tabfieldvalue[28]= "code,label,affect,delay,newByMonth,country";
 $tabfieldvalue[29]= "code,label,percent,position";
 
 // Nom des champs dans la table pour insertion d'un enregistrement
@@ -298,7 +299,7 @@ $tabfieldinsert[24]= "code,label";
 $tabfieldinsert[25]= "label,type_template,position,topic,content";
 $tabfieldinsert[26]= "code,label,short_label";
 $tabfieldinsert[27]= "code,libelle";
-$tabfieldinsert[28]= "code,label,delay,newByMonth,fk_country";
+$tabfieldinsert[28]= "code,label,affect,delay,newByMonth,fk_country";
 $tabfieldinsert[29]= "code,label,percent,position";
 
 // Nom du rowid si le champ n'est pas de type autoincrement
@@ -396,7 +397,7 @@ $tabhelp[24] = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[25] = array('type_template'=>$langs->trans("TemplateForElement"),'private'=>$langs->trans("TemplateIsVisibleByOwnerOnly"), 'position'=>$langs->trans("PositionIntoComboList"));
 $tabhelp[26] = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[27] = array('code'=>$langs->trans("EnterAnyCode"));
-$tabhelp[28] = array('delay'=>$langs->trans("MinimumNoticePeriod"), 'newByMonth'=>$langs->trans("NbAddedAutomatically"));
+$tabhelp[28] = array('affect'=>$langs->trans("FollowedByACounter"),'delay'=>$langs->trans("MinimumNoticePeriod"), 'newByMonth'=>$langs->trans("NbAddedAutomatically"));
 $tabhelp[29] = array('code'=>$langs->trans("EnterAnyCode"), 'percent'=>$langs->trans("OpportunityPercent"), 'position'=>$langs->trans("PositionIntoComboList"));
 
 // List of check for fields (NOT USED YET)
