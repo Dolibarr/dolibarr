@@ -294,13 +294,6 @@ class BankCateg // extends CommonObject
             $error++;
         }
 
-        if (! $error)
-        {
-
-
-
-        }
-
         unset($object->context['createfromclone']);
 
         // End

@@ -1323,33 +1323,62 @@ class Account extends CommonObject
     }
 
 
-    /**
-     * Returns unconciled transactions for this account. Limited to 1000 entries by default
-     *
-     * @param int $limit Limit transaction lines
-     * @return AccountLine[]
-     */
-    public function getUnconciledTransactions($limit = 1000)
-    {
-        $return = array();
+	/**
+	 * Returns unconciled transactions for this account. Limited to 1000 entries by default
+	 *
+	 * @param int $limit Limit transaction lines
+	 * @return AccountLine[]
+	 */
+	public function getUnconciledTransactions($limit = 1000)
+	{
+		$return = array();
 
-        $sql = "SELECT b.rowid";
-        $sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
-        $sql.= " WHERE rappro=0 AND fk_account=".$this->id;
-        $sql.= " ORDER BY dateo ASC";
-        $sql.= " LIMIT ".(int) $limit;
+		$sql = "SELECT b.rowid";
+		$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
+		$sql .= " WHERE rappro=0 AND fk_account=".$this->id;
+		$sql .= " ORDER BY dateo ASC";
+		$sql .= " LIMIT ".(int)$limit;
 
-        $resql = $this->db->query($sql);
+		$resql = $this->db->query($sql);
 
-        while ($objp = $this->db->fetch_object($resql)) {
-            $tmp = new AccountLine($this->db);
-            $tmp->fetch($objp->rowid);
+		while ($objp = $this->db->fetch_object($resql)) {
+			$tmp = new AccountLine($this->db);
+			$tmp->fetch($objp->rowid);
 
-            $return[] = $tmp;
-        }
+			$return[] = $tmp;
+		}
 
-        return $return;
-    }
+		return $return;
+	}
+
+	/**
+	 * Returns transactions related to this bank account and the provided bank statement
+	 *
+	 * @param string $releve Bank statement
+	 * @return AccountLine[]
+	 */
+	public function getConciledTransactions($releve)
+	{
+		$return = array();
+
+		$sql = "SELECT b.rowid ";
+		$sql.= "FROM ".MAIN_DB_PREFIX."bank as b";
+		$sql.= " WHERE b.num_releve='".$this->db->escape($releve)."'";
+		$sql.= " AND b.fk_account = ".$this->id;
+		// We add date of creation to have correct order when everything is done the same day
+		$sql.= $this->db->order("b.datev, b.datec", "ASC");
+
+		$resql = $this->db->query($sql);
+
+		while ($objp = $this->db->fetch_object($resql)) {
+			$tmp = new AccountLine($this->db);
+			$tmp->fetch($objp->rowid);
+
+			$return[] = $tmp;
+		}
+
+		return $return;
+	}
 
     /**
      *  Initialise an instance with random values.
@@ -1524,13 +1553,20 @@ class AccountLine extends CommonObject
     /**
      * Returns the translated string for the payment type
      *
+	 * @param bool $short Use short labels
      * @return string
      */
-    public function getPaymentType()
+    public function getPaymentType($short = false)
     {
         global $langs;
 
-        $label=($langs->trans("PaymentType".$this->fk_type)!="PaymentType".$this->fk_type)?$langs->trans("PaymentType".$this->fk_type):$this->fk_type;
+		if ($short) {
+			$transkey = 'PaymentTypeShort';
+		} else {
+			$transkey = 'PaymentType';
+		}
+
+        $label=($langs->trans($transkey.$this->fk_type)!=$transkey.$this->fk_type)?$langs->trans($transkey.$this->fk_type):$this->fk_type;
         if ($label=='SOLD') $label='';
 
         return $label.($this->num_chq?' '.$this->num_chq:'');
@@ -1850,6 +1886,43 @@ class AccountLine extends CommonObject
 
         return $result;
     }
+
+	/**
+	 * Returns the categories linked to this transaction
+	 *
+	 * @return BankCateg[]
+	 */
+	public function getCategories()
+	{
+		global $conf;
+
+		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/bankcateg.class.php';
+
+		$return = array();
+
+		// Categories
+		$sql = "SELECT label";
+		$sql.= " FROM ".MAIN_DB_PREFIX."bank_categ as ct";
+		$sql.= ", ".MAIN_DB_PREFIX."bank_class as cl";
+		$sql.= " WHERE ct.rowid = cl.fk_categ";
+		$sql.= " AND ct.entity = ".$conf->entity;
+		$sql.= " AND cl.lineid = ".$this->id;
+
+		$resc = $this->db->query($sql);
+
+		if ($resc)
+		{
+			while ($objc = $this->db->fetch_object($resc)) {
+				$tmp = new BankCateg($this->db);
+				$tmp->id = $objc->id;
+				$tmp->label = $objc->label;
+
+				$return[$tmp->id] = $tmp;
+			}
+		}
+
+		return $return;
+	}
 
 }
 
