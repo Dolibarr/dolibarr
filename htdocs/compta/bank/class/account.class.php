@@ -5,7 +5,7 @@
  * Copyright (C) 2004		Christophe Combelles	<ccomb@free.fr>
  * Copyright (C) 2005-2010	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
- * Copyright (C) 2015-2016	Marcos García			<marcosgdf@gmail.com>
+ * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2015		Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1323,34 +1323,6 @@ class Account extends CommonObject
 
 
     /**
-     * Returns unconciled transactions for this account. Limited to 1000 entries by default
-     *
-     * @param int $limit Limit transaction lines
-     * @return AccountLine[]
-     */
-    public function getUnconciledTransactions($limit = 1000)
-    {
-        $return = array();
-
-        $sql = "SELECT b.rowid";
-        $sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
-        $sql.= " WHERE rappro=0 AND fk_account=".$this->id;
-        $sql.= " ORDER BY dateo ASC";
-        $sql.= " LIMIT ".(int) $limit;
-
-        $resql = $this->db->query($sql);
-
-        while ($objp = $this->db->fetch_object($resql)) {
-            $tmp = new AccountLine($this->db);
-            $tmp->fetch($objp->rowid);
-
-            $return[] = $tmp;
-        }
-
-        return $return;
-    }
-
-    /**
      *  Initialise an instance with random values.
      *  Used to build previews or test instances.
      *	id must be 0 if object instance is a specimen.
@@ -1499,41 +1471,6 @@ class AccountLine extends CommonObject
         }
     }
 
-    /**
-     * Returns the label of the transaction.
-     *
-     * @return string
-     */
-    public function getLabel()
-    {
-        global $langs;
-
-        $reg=array();
-
-        //If the text is between parenthesis, then we have to look for the translation
-        preg_match('/\((.+)\)/i',$this->label,$reg);
-
-        if ($reg[1] && $langs->trans($reg[1])!=$reg[1]) {
-            return $langs->trans($reg[1]);
-        }
-
-        return $this->label;
-    }
-
-    /**
-     * Returns the translated string for the payment type
-     *
-     * @return string
-     */
-    public function getPaymentType()
-    {
-        global $langs;
-
-        $label=($langs->trans("PaymentType".$this->fk_type)!="PaymentType".$this->fk_type)?$langs->trans("PaymentType".$this->fk_type):$this->fk_type;
-        if ($label=='SOLD') $label='';
-
-        return $label.($this->num_chq?' '.$this->num_chq:'');
-    }
 
     /**
      *      Delete transaction bank line record
