@@ -595,9 +595,6 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 
 	$outputlangs->load("banks");
 
-	// Use correct name of bank id according to country
-	$bickey="BICNumber";
-
 	// Get format of bank account according to its country
 	$usedetailedbban=$account->useDetailedBBAN();
 
@@ -725,7 +722,7 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 	{
 		$pdf->SetFont('','B',$default_font_size - 3);
 		$pdf->SetXY($curx, $cury);
-		$pdf->MultiCell(100, 3, $outputlangs->transnoentities($bickey).': ' . $outputlangs->convToOutputCharset($account->bic), 0, 'L', 0);
+		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("BICNumber").': ' . $outputlangs->convToOutputCharset($account->bic), 0, 'L', 0);
 	}
 
 	return $pdf->getY();
