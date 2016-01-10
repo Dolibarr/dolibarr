@@ -31,9 +31,8 @@
 require '../../main.inc.php';
 	
 // Class
-require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 
 $langs->load("compta");
 $langs->load("bills");
@@ -52,10 +51,7 @@ $list = array (
         'ACCOUNTING_LENGTH_DESCRIPTION',				// adjust size displayed for lines description for dol_trunc
 		'ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT',		// adjust size displayed for select account description for dol_trunc
 		'ACCOUNTING_LENGTH_GACCOUNT',
-		'ACCOUNTING_LENGTH_AACCOUNT'
-);
-
-$list_account = array (
+		'ACCOUNTING_LENGTH_AACCOUNT',
 		'ACCOUNTING_ACCOUNT_CUSTOMER',
 		'ACCOUNTING_ACCOUNT_SUPPLIER',
 		'ACCOUNTING_PRODUCT_BUY_ACCOUNT',
@@ -113,14 +109,6 @@ if ($action == 'update')
         }
     }
 
-	foreach ($list_account as $constname) {
-        $constvalue = GETPOST($constname, 'alpha');
-
-        if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
-            $error++;
-        }
-    }
-
     if (! $error)
     {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
@@ -163,7 +151,6 @@ if ($action == 'setlistsortdone') {
 llxHeader();
 
 $form = new Form($db);
-$formaccountancy = New FormVentilation($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans('ConfigAccountingExpert'),$linkback,'title_setup');
@@ -272,22 +259,6 @@ foreach ($list as $key)
 	// Value
 	print '<td>';
 	print '<input type="text" size="20" id="'.$key.'" name="'.$key.'" value="'.$conf->global->$key.'">';
-	print '</td></tr>';
-}
-
-foreach ($list_account as $key)
-{
-	$var=!$var;
-
-	print '<tr '.$bc[$var].' class="value">';
-
-	// Param
-	$label = $langs->trans($key); 
-	print '<td><label for="'.$key.'">'.$label.'</label></td>';
-
-	// Value
-	print '<td>';
-	print $formaccountancy->select_account($conf->global->$key, $key, 1, '', 1, 1);
 	print '</td></tr>';
 }
 

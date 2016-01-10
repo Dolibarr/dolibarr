@@ -64,7 +64,7 @@ function bank_prepare_head(Account $object)
     $head[$h][2] = 'graph';
     $h++;
 
-    if ($object->courant != 2)
+    if ($object->courant != Account::TYPE_CASH)
     {
     	$head[$h][0] = DOL_URL_ROOT."/compta/bank/releve.php?account=".$object->id;
 	    $head[$h][1] = $langs->trans("AccountStatements");

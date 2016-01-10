@@ -132,8 +132,7 @@ elseif($action == 'add_event')
         $new_holiday = $nb_holiday + $add_holiday;
 
         // add event to existing types of vacation
-        foreach ($typeleaves as $key => $leave) 
-        {
+        foreach ($typeleaves as $key => $leave) {
         	$vacationTypeID = $leave['rowid'];
 
 	        // On ajoute la modification dans le LOG
@@ -159,18 +158,8 @@ llxHeader(array(),$langs->trans('CPTitreMenu'));
 print load_fiche_titre($langs->trans('MenuConfCP'), '', 'title_hrm.png');
 
 print '<div class="info">'.$langs->trans('LastUpdateCP').': '."\n";
-$lastUpdate = $holiday->getConfCP('lastUpdate', 0);
-if ($lastUpdate) 
-{
-    $monthLastUpdate = $lastUpdate[4].$lastUpdate[5];
-    $yearLastUpdate = $lastUpdate[0].$lastUpdate[1].$lastUpdate[2].$lastUpdate[3];
-    print '<strong>'.dol_print_date($db->jdate($holiday->getConfCP('lastUpdate')),'dayhour','tzuser').'</strong>';
-    print '<br>'.$langs->trans("MonthOfLastMonthlyUpdate").': <strong>'.$yearLastUpdate.'-'.$monthLastUpdate.'</strong>'."\n";
-}
+if ($holiday->getConfCP('lastUpdate')) print '<strong>'.dol_print_date($db->jdate($holiday->getConfCP('lastUpdate')),'dayhour','tzuser').'</strong>';
 else print $langs->trans('None');
-
-
-
 print "</div><br>\n";
 
 $result = $holiday->updateBalance();	// Create users into table holiday if they don't exists. TODO Remove this whif we use field into table user.
@@ -204,76 +193,51 @@ if ($cp_events == 1)
 
 $typeleaves=$holiday->getTypes(1,1);
 
-if (count($typeleaves) == 0)
+print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+print '<input type="hidden" name="action" value="update" />';
+
+print '<table class="noborder" width="100%;">';
+print "<tr class=\"liste_titre\">";
+print '<td width="55%">'.$langs->trans('Employee').'</td>';
+foreach($typeleaves as $key => $val)
 {
-    //print '<div class="info">';
-    print $langs->trans("NoLeaveWithCounterDefined")."<br>\n";
-    print $langs->trans("GoIntoDictionaryHolidayTypes");
-    //print '</div>';
+	print '<td width="20%" style="text-align:center">'.$val['label'].'</td>';
 }
-else
+print '<td width="20%" style="text-align:center">'.$langs->trans('Note').'</td>';
+print '<td></td>';
+print '</tr>';
+
+
+foreach($listUsers as $users)
 {
-    print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
-    print '<input type="hidden" name="action" value="update" />';
-    
-    print '<table class="noborder" width="100%;">';
-    print "<tr class=\"liste_titre\">";
-    print '<td width="55%">'.$langs->trans('Employee').'</td>';
-    if (count($typeleaves))
-    {
-        foreach($typeleaves as $key => $val)
-        {
-        	print '<td width="20%" style="text-align:center">'.$val['label'].'</td>';
-        }
-    }
-    else
-    {
-        print '<td>'.$langs->trans("NoLeaveWithCounterDefined").'</td>';
-    }
-    print '<td width="20%" style="text-align:center">'.$langs->trans('Note').'</td>';
-    print '<td></td>';
+    $var=!$var;
+
+    print '<tr '.$bc[$var].' style="height: 20px;">';
+    print '<td>';
+    $userstatic->id=$users['rowid'];
+    $userstatic->lastname=$users['name'];
+    $userstatic->firstname=$users['firstname'];
+    print $userstatic->getNomUrl(1);
+    print '</td>';
+	foreach($typeleaves as $key => $val)
+	{
+		$nbtoshow='';
+		if ($holiday->getCPforUser($users['rowid'], $val['rowid']) != '') $nbtoshow=price2num($holiday->getCPforUser($users['rowid'], $val['rowid']), 5);
+    	print '<td style="text-align:center">';
+    	print '<input type="text" value="'.$nbtoshow.'" name="nb_holiday_'.$val['rowid'].'['.$users['rowid'].']" size="5" style="text-align: center;"/>';
+	    //print ' '.$langs->trans('days');
+    	print '</td>'."\n";
+	}
+    print '<td style="text-align:center"><input type="text" value="" name="note_holiday['.$users['rowid'].']" size="30"/></td>';
+    print '<td><input type="submit" name="update_cp['.$users['rowid'].']" value="'.dol_escape_htmltag($langs->trans("Update")).'" class="button"/></td>'."\n";
     print '</tr>';
-    
-    
-    foreach($listUsers as $users)
-    {
-        $var=!$var;
-    
-        print '<tr '.$bc[$var].' style="height: 20px;">';
-        print '<td>';
-        $userstatic->id=$users['rowid'];
-        $userstatic->lastname=$users['name'];
-        $userstatic->firstname=$users['firstname'];
-        print $userstatic->getNomUrl(1);
-        print '</td>';
-    
-        if (count($typeleaves))
-        {
-        	foreach($typeleaves as $key => $val)
-        	{
-        		$nbtoshow='';
-        		if ($holiday->getCPforUser($users['rowid'], $val['rowid']) != '') $nbtoshow=price2num($holiday->getCPforUser($users['rowid'], $val['rowid']), 5);
-            	print '<td style="text-align:center">';
-            	print '<input type="text" value="'.$nbtoshow.'" name="nb_holiday_'.$val['rowid'].'['.$users['rowid'].']" size="5" style="text-align: center;"/>';
-        	    //print ' '.$langs->trans('days');
-            	print '</td>'."\n";
-        	}
-        }
-        else
-        {
-            print '<td></td>';   
-        }
-        print '<td style="text-align:center"><input type="text" value="" name="note_holiday['.$users['rowid'].']" size="30"/></td>';
-        print '<td><input type="submit" name="update_cp['.$users['rowid'].']" value="'.dol_escape_htmltag($langs->trans("Update")).'" class="button"/></td>'."\n";
-        print '</tr>';
-    
-        $i++;
-    }
-    
-    print '</table>';
-    
-    print '</form>';
+
+    $i++;
 }
+
+print '</table>';
+
+print '</form>';
 
 llxFooter();
 

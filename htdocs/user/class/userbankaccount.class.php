@@ -44,12 +44,11 @@ class UserBankAccount extends Account
 	 *
 	 *  @param      DoliDB		$db      Database handler
      */
-    function __construct($db)
+    function __construct(DoliDB $db)
     {
         $this->db = $db;
 
         $this->socid = 0;
-        $this->clos = 0;
         $this->solde = 0;
         $this->error_number = 0;
         return 1;
@@ -188,70 +187,17 @@ class UserBankAccount extends Account
      */
     function getRibLabel($displayriblabel = true)
     {
-    	global $langs,$conf;
+        $rib = '';
 
-    	if ($this->code_banque || $this->code_guichet || $this->number || $this->cle_rib)
-    	{
+        if ($this->code_banque || $this->code_guichet || $this->number || $this->cle_rib)
+        {
             if ($this->label && $displayriblabel) $rib = $this->label." : ";
 
-    		// Show fields of bank account
-			$fieldlists='BankCode DeskCode AccountNumber BankAccountNumberKey';
-			if (! empty($conf->global->BANK_SHOW_ORDER_OPTION))
-			{
-				if (is_numeric($conf->global->BANK_SHOW_ORDER_OPTION))
-				{
-					if ($conf->global->BANK_SHOW_ORDER_OPTION == '1') $fieldlists='BankCode DeskCode BankAccountNumberKey AccountNumber';
-				}
-				else $fieldlists=$conf->global->BANK_SHOW_ORDER_OPTION;
-			}
-			$fieldlistsarray=explode(' ',$fieldlists);
+            //Check __toString function
+            $rib .= (string) $this;
+        }
 
-			foreach($fieldlistsarray as $val)
-			{
-				if ($val == 'BankCode')
-				{
-					if ($this->useDetailedBBAN()  == 1)
-					{
-						$rib.=$this->code_banque.'&nbsp;';
-					}
-				}
-
-				if ($val == 'DeskCode')
-				{
-					if ($this->useDetailedBBAN()  == 1)
-					{
-						$rib.=$this->code_guichet.'&nbsp;';
-					}
-				}
-
-				if ($val == 'BankCode')
-				{
-					if ($this->useDetailedBBAN()  == 2)
-			        {
-			            $rib.=$this->code_banque.'&nbsp;';
-			        }
-				}
-
-				if ($val == 'AccountNumber')
-				{
-					$rib.=$this->number.'&nbsp;';
-				}
-
-				if ($val == 'BankAccountNumberKey')
-				{
-					if ($this->useDetailedBBAN() == 1)
-					{
-						$rib.=$this->cle_rib.'&nbsp;';
-					}
-				}
-			}
-    	}
-    	else
-    	{
-    		$rib='';
-    	}
-
-    	return $rib;
+        return $rib;
     }
 }
 

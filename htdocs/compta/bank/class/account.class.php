@@ -5,7 +5,7 @@
  * Copyright (C) 2004		Christophe Combelles	<ccomb@free.fr>
  * Copyright (C) 2005-2010	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
- * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
+ * Copyright (C) 2015-2016	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2015		Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -35,78 +35,295 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
  */
 class Account extends CommonObject
 {
-    public $element='bank_account';
-    public $table_element='bank_account';
+	public $element = 'bank_account';
+	public $table_element = 'bank_account';
 
-    /**
-     * @var	int		Use id instead of rowid
-     * @deprecated
-     * @see id
-     */
-    var $rowid;
+	/**
+	 * @var    int        Use id instead of rowid
+	 * @deprecated
+	 * @see id
+	 */
+	public $rowid;
 
-    var $label;
-    //! 1=Compte courant/check/carte, 2=Compte liquide, 0=Compte épargne
-    var $courant;
-    var $type;      // same as courant
-    //! Name
-    var $bank;
-    var $clos;
-    var $rappro=1;    // If bank need to be conciliated
-    var $url;
-    //! BBAN field for French Code banque
-    var $code_banque;
-    //! BBAN field for French Code guichet
-    var $code_guichet;
-    //! BBAN main account number
-    var $number;
-    //! BBAN field for French Cle de controle
-    var $cle_rib;
-    //! BIC/SWIFT number
-    var $bic;
-    //! IBAN number (International Bank Account Number)
-    var $iban;			// stored into iban_prefix field into database
-    var $proprio;
-    var $owner_address;
+	/**
+	 * Label
+	 * @var string
+	 */
+	public $label;
 
-    var $state_id;
-    var $state_code;
-    var $state;
+	/**
+	 * Bank account type
+	 * @var int
+	 */
+	public $courant;
 
-    var $type_lib=array();
+	/**
+	 * Bank account type. Check TYPE_ constants
+	 * @var int
+	 */
+	public $type;
 
-    var $account_number;
-	var $accountancy_journal;
+	/**
+	 * Status. Check STATUS_ constants
+	 * @var int
+	 */
+	public $clos = self::STATUS_OPEN;
 
-    var $currency_code;
-    var $min_allowed;
-    var $min_desired;
-    var $comment;
+	/**
+	 * Does it need to be conciliated?
+	 * @var bool
+	 */
+	public $rappro = 1;
 
+	/**
+	 * Webpage
+	 * @var string
+	 */
+	public $url;
 
-    /**
+	/**
+	 * Bank name
+	 * @var string
+	 */
+	public $bank;
+
+	/**
+	 * Bank number. If in SEPA area, you should move to IBAN field
+	 * @var string
+	 */
+	public $code_banque;
+
+	/**
+	 * Branch number. If in SEPA area, you should move to IBAN field
+	 * @var string
+	 */
+	public $code_guichet;
+
+	/**
+	 * Account number. If in SEPA area, you should move to IBAN field
+	 * @var string
+	 */
+	public $number;
+
+	/**
+	 * Bank account number control digit. If in SEPA area, you should move to IBAN field
+	 * @var string
+	 */
+	public $cle_rib;
+
+	/**
+	 * BIC/Swift code
+	 * @var string
+	 */
+	public $bic;
+
+	/**
+	 * IBAN number (International Bank Account Number)
+	 * stored into iban_prefix field into database
+	 *
+	 * @var string
+	 */
+	public $iban;
+
+	/**
+	 * Name of account holder
+	 * @var string
+	 */
+	public $proprio;
+
+	/**
+	 * Address of account holder
+	 * @var string
+	 */
+	public $owner_address;
+
+	public $state_id;
+	public $state_code;
+	public $state;
+
+	public $type_lib = array();
+
+	/**
+	 * Accountancy code
+	 * @var string
+	 */
+	public $account_number;
+	public $accountancy_journal;
+
+	/**
+	 * Currency code
+	 * @var string
+	 */
+	public $currency_code;
+
+	/**
+	 * Authorized minimum balance
+	 * @var float
+	 */
+	public $min_allowed;
+
+	/**
+	 * Desired minimum balance
+	 * @var float
+	 */
+	public $min_desired;
+
+	/**
+	 * Notes
+	 * @var string
+	 */
+	public $comment;
+	public $domiciliation;
+
+	/**
+	 * Date of the initial balance. Used in Account::create
+	 * @var int
+	 */
+	public $date_solde;
+
+	/**
+	 * Current account
+	 */
+	const TYPE_CURRENT = 1;
+
+	/**
+	 * Cash account
+	 */
+	const TYPE_CASH = 2;
+	/**
+	 * Savings account
+	 */
+	const TYPE_SAVINGS = 0;
+	const STATUS_OPEN = 0;
+	const STATUS_CLOSED = 1;
+
+	/**
      *  Constructor
      *
      *  @param	DoliDB		$db		Database handler
      */
-    function __construct($db)
+    function __construct(DoliDB $db)
     {
         global $langs;
 
         $this->db = $db;
 
-        $this->clos = 0;
         $this->solde = 0;
 
-        $this->type_lib[0]=$langs->trans("BankType0");
-        $this->type_lib[1]=$langs->trans("BankType1");
-        $this->type_lib[2]=$langs->trans("BankType2");
+		$this->type_lib = array(
+			self::TYPE_SAVINGS => $langs->trans("BankType0"),
+			self::TYPE_CURRENT => $langs->trans("BankType1"),
+			self::TYPE_CASH => $langs->trans("BankType2"),
+		);
 
-        $this->status[0]=$langs->trans("StatusAccountOpened");
-        $this->status[1]=$langs->trans("StatusAccountClosed");
+        $this->status = array(
+			self::STATUS_OPEN => $langs->trans("StatusAccountOpened"),
+			self::STATUS_CLOSED => $langs->trans("StatusAccountOpened")
+		);
 
         return 1;
     }
+
+	/**
+	 * Shows the account number in the appropiate format
+	 *
+	 * @return string
+	 */
+	public function __toString()
+	{
+		$string = '';
+
+		foreach ($this->getFieldsToShow() as $val) {
+
+			if ($val == 'BankCode') {
+				$string .= $this->code_banque.' ';
+			} elseif ($val == 'BankAccountNumber') {
+				$string .= $this->number.' ';
+			} elseif ($val == 'DeskCode') {
+				$string .= $this->code_guichet.' ';
+			} elseif ($val == 'BankAccountNumberKey') {
+				$string .= $this->cle_rib.' ';
+			}
+		}
+
+		return trim($string);
+	}
+
+	/**
+	 * Returns the fields in order that this bank account should show to the user
+	 * Will return an array with the following values:
+	 * - BankAccountNumber
+	 * - BankCode
+	 * - BankAccountNumberKey
+	 * - DeskCode
+	 *
+	 * Some countries show less or more bank account properties to the user
+	 *
+	 * @return array
+	 * @see useDetailedBBAN
+	 */
+	public function getFieldsToShow()
+	{
+		//Get the required properties depending on the country
+		$detailedBBAN = $this->useDetailedBBAN();
+
+		if ($detailedBBAN == 0) {
+			return array(
+				'BankAccountNumber'
+			);
+		} elseif ($detailedBBAN == 2) {
+			return array(
+				'BankCode',
+				'BankAccountNumber'
+			);
+		}
+
+		//Get the order the properties are shown
+		return self::getAccountNumberOrder();
+	}
+
+	/**
+	 * Returns the components of the bank account in order.
+	 * Will return an array with the following values:
+	 * - BankAccountNumber
+	 * - BankCode
+	 * - BankAccountNumberKey
+	 * - DeskCode
+	 *
+	 * @return array
+	 */
+	public static function getAccountNumberOrder()
+	{
+		global $conf;
+
+		$fieldlists = array(
+			'BankCode',
+			'DeskCode',
+			'BankAccountNumber',
+			'BankAccountNumberKey'
+		);
+
+		if (!empty($conf->global->BANK_SHOW_ORDER_OPTION)) {
+			if (is_numeric($conf->global->BANK_SHOW_ORDER_OPTION)) {
+				if ($conf->global->BANK_SHOW_ORDER_OPTION == '1') {
+					$fieldlists = array(
+						'BankCode',
+						'DeskCode',
+						'BankAccountNumberKey',
+						'BankAccountNumber'
+					);
+				}
+			} else {
+				//Replace the old AccountNumber key with the new BankAccountNumber key
+				$fieldlists = explode(
+					' ',
+					preg_replace('/ ?[^Bank]AccountNumber ?/', 'BankAccountNumber', $conf->global->BANK_SHOW_ORDER_OPTION)
+				);
+			}
+		}
+
+		return $fieldlists;
+	}
 
 
     /**
@@ -119,7 +336,7 @@ class Account extends CommonObject
         global $conf;
 
         if (empty($this->rappro)) return -1;
-        if ($this->courant == 2 && empty($conf->global->BANK_CAN_RECONCILIATE_CASHACCOUNT)) return -2;
+        if ($this->courant == Account::TYPE_CASH && empty($conf->global->BANK_CAN_RECONCILIATE_CASHACCOUNT)) return -2;
         if ($this->clos) return -3;
         return 1;
     }
@@ -276,7 +493,7 @@ class Account extends CommonObject
             $this->error="this->rowid not defined";
             return -2;
         }
-        if ($this->courant == 2 && $oper != 'LIQ')
+        if ($this->courant == Account::TYPE_CASH && $oper != 'LIQ')
         {
             $this->error="ErrorCashAccountAcceptsOnlyCashMoney";
             return -3;
@@ -700,7 +917,7 @@ class Account extends CommonObject
                 $obj = $this->db->fetch_object($result);
 
                 $this->id            = $obj->rowid;
-                $this->rowid         = $obj->rowid;		// deprecated
+                $this->rowid         = $obj->rowid;
                 $this->ref           = $obj->ref;
                 $this->label         = $obj->label;
                 $this->type          = $obj->courant;
@@ -1106,6 +1323,34 @@ class Account extends CommonObject
 
 
     /**
+     * Returns unconciled transactions for this account. Limited to 1000 entries by default
+     *
+     * @param int $limit Limit transaction lines
+     * @return AccountLine[]
+     */
+    public function getUnconciledTransactions($limit = 1000)
+    {
+        $return = array();
+
+        $sql = "SELECT b.rowid";
+        $sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
+        $sql.= " WHERE rappro=0 AND fk_account=".$this->id;
+        $sql.= " ORDER BY dateo ASC";
+        $sql.= " LIMIT ".(int) $limit;
+
+        $resql = $this->db->query($sql);
+
+        while ($objp = $this->db->fetch_object($resql)) {
+            $tmp = new AccountLine($this->db);
+            $tmp->fetch($objp->rowid);
+
+            $return[] = $tmp;
+        }
+
+        return $return;
+    }
+
+    /**
      *  Initialise an instance with random values.
      *  Used to build previews or test instances.
      *	id must be 0 if object instance is a specimen.
@@ -1117,8 +1362,8 @@ class Account extends CommonObject
         $this->ref             = 'MBA';
         $this->label           = 'My Bank account';
         $this->bank            = 'MyBank';
-        $this->courant         = 1;
-        $this->clos            = 0;
+        $this->courant         = Account::TYPE_CURRENT;
+        $this->clos            = Account::STATUS_OPEN;
         $this->code_banque     = '123';
         $this->code_guichet    = '456';
         $this->number          = 'ABC12345';
@@ -1254,6 +1499,41 @@ class AccountLine extends CommonObject
         }
     }
 
+    /**
+     * Returns the label of the transaction.
+     *
+     * @return string
+     */
+    public function getLabel()
+    {
+        global $langs;
+
+        $reg=array();
+
+        //If the text is between parenthesis, then we have to look for the translation
+        preg_match('/\((.+)\)/i',$this->label,$reg);
+
+        if ($reg[1] && $langs->trans($reg[1])!=$reg[1]) {
+            return $langs->trans($reg[1]);
+        }
+
+        return $this->label;
+    }
+
+    /**
+     * Returns the translated string for the payment type
+     *
+     * @return string
+     */
+    public function getPaymentType()
+    {
+        global $langs;
+
+        $label=($langs->trans("PaymentType".$this->fk_type)!="PaymentType".$this->fk_type)?$langs->trans("PaymentType".$this->fk_type):$this->fk_type;
+        if ($label=='SOLD') $label='';
+
+        return $label.($this->num_chq?' '.$this->num_chq:'');
+    }
 
     /**
      *      Delete transaction bank line record
