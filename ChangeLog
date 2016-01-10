@@ -430,6 +430,25 @@ Dolibarr better:
 - Function get_exdir require now 6 parameters. This is to prepare a future feature.
 
 
+***** ChangeLog for 3.7.3 compared to 3.7.2 *****
+FIX: #3734 Do not show empty links of deleted source objects in stock movement list
+FIX: #3890 Expected transactions bank account page, shows negative numbers
+FIX: #3928 Creating a Customer order and a Customer invoice from a project, does not inherit payment conditions and method of payment of customer card
+FIX: #3980 Search field in "product by supplier" list sends empty result 3.8 and 3.7
+FIX: #4081 Added missing translation
+FIX: #4097 Public holiday calculation
+FIX: #4242 Allow disabling dashes in documents
+FIX: #4243 sql injection
+FIX: Can use formated float number on old expense report module.
+FIX: Change object statut when closing shipment and remove erratic db commit
+FIX: Export with category contact extrafields
+FIX: NB task and percent progress in box project
+FIX: Not delete a product when have customer price
+FIX: Not deleting contrats on element_element table
+FIX: Not use localtaxes when invoice some orders
+FIX: Product link in project box
+FIX: Use "WHERE true" instead of "WHERE 1" #4132
+
 ***** ChangeLog for 3.7.2 compared to 3.7.1 *****
 FIX: #2957 : missing $langs object for trigger
 FIX: #2983 Load gravatar avatar images securely over HTTPS
@@ -737,6 +756,17 @@ Dolibarr better:
   warehouse module and your Point Of Sale module setup if you use one.
 - Replaced USER_UPDATE_SESSION trigger with an updateSession hook may break modules using it.
 
+
+***** ChangeLog for 3.6.6 compared to 3.6.5 *****
+FIX: #3734 Do not show empty links of deleted source objects in stock movement list
+FIX: #4081 Added missing translation
+FIX: #4097 Public holiday calculation
+FIX: #4242 Allow disabling dashes in documents
+FIX: #4243 sql injection
+FIX: Add a protection to not make release if ChangeLog was not generated. Prepare package 3.6.5
+FIX: export with category contact extrafields
+FIX: Not delete a product when have customer price
+FIX: Not deleting contrats on element_element table
 
 ***** ChangeLog for 3.6.5 compared to 3.6.4 *****
 FIX: #2957 : missing $langs object for trigger
