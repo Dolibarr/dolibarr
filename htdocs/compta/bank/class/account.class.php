@@ -352,35 +352,14 @@ class Account extends CommonObject
      *      @param  string	$label      Link label
      *      @param  string	$type       Type of link ('payment', 'company', 'member', ...)
      *      @return int         		<0 if KO, id line if OK
+	 * @deprecated Use AccountLine::addUrl
      */
     function add_url_line($line_id, $url_id, $url, $label, $type)
-    {
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_url (";
-        $sql.= "fk_bank";
-        $sql.= ", url_id";
-        $sql.= ", url";
-        $sql.= ", label";
-        $sql.= ", type";
-        $sql.= ") VALUES (";
-        $sql.= "'".$line_id."'";
-        $sql.= ", '".$url_id."'";
-        $sql.= ", '".$url."'";
-        $sql.= ", '".$this->db->escape($label)."'";
-        $sql.= ", '".$type."'";
-        $sql.= ")";
-
-        dol_syslog(get_class($this)."::add_url_line", LOG_DEBUG);
-        if ($this->db->query($sql))
-        {
-            $rowid = $this->db->last_insert_id(MAIN_DB_PREFIX."bank_url");
-            return $rowid;
-        }
-        else
-        {
-            $this->error=$this->db->lasterror();
-            return -1;
-        }
-    }
+	{
+		$accountline = new AccountLine($this->db);
+		$accountline->fetch($line_id);
+		return $accountline->addUrl($url_id, $url, $label, $type);
+	}
 
     /**
      * 		TODO Move this into AccountLine
@@ -1945,6 +1924,44 @@ class AccountLine extends CommonObject
 		}
 
 		return $return;
+	}
+
+	/**
+	 * Add a link between bank line record and its source
+	 *
+	 * @param  int $url_id Id parametre url
+	 * @param  string $url Url
+	 * @param  string $label Link label
+	 * @param  string $type Type of link ('payment', 'company', 'member', ...)
+	 * @return int                <0 if KO, id line if OK
+	 */
+	public function addUrl($url_id, $url, $label, $type)
+	{
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_url (";
+		$sql.= "fk_bank";
+		$sql.= ", url_id";
+		$sql.= ", url";
+		$sql.= ", label";
+		$sql.= ", type";
+		$sql.= ") VALUES (";
+		$sql.= "'".$this->id."'";
+		$sql.= ", '".$url_id."'";
+		$sql.= ", '".$url."'";
+		$sql.= ", '".$this->db->escape($label)."'";
+		$sql.= ", '".$type."'";
+		$sql.= ")";
+
+		dol_syslog(get_class($this)."::add_url_line", LOG_DEBUG);
+		if ($this->db->query($sql))
+		{
+			$rowid = $this->db->last_insert_id(MAIN_DB_PREFIX."bank_url");
+			return $rowid;
+		}
+		else
+		{
+			$this->error=$this->db->lasterror();
+			return -1;
+		}
 	}
 
 }
