@@ -598,7 +598,11 @@ class FormOther
     	include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
     	$color = colorArrayToHex(colorStringToArray($color,array()),'');
-		if ($color) print '<input type="text" class="colorthumb" disabled style="padding: 1px; margin-top: 0; margin-bottom: 0; background-color: #'.$color.'" value="'.$color.'">';
+    	$textcolor='000';
+    	$tmpcolorweight=0;
+    	foreach(colorStringToArray($color,array()) as $x) $tmpcolorweight+=$x;
+    	if ($tmpcolorweight < 400) $textcolor='FFF';
+		if ($color) print '<input type="text" class="colorthumb" disabled style="padding: 1px; margin-top: 0; margin-bottom: 0; color: #'.$textcolor.'; background-color: #'.$color.'" value="'.$color.'">';
 		else print $textifnotdefined;
     }
 
