@@ -139,10 +139,6 @@ class Commande extends CommonOrder
 	 */
 	var $lines = array();
 
-    // Pour board
-    var $nbtodo;
-    var $nbtodolate;
-
     /**
      * ERR Not enough stock
      */
