@@ -308,7 +308,13 @@ if (! empty($conf->margin->enabled))
 			if (npRate == "np_marginRate")
 				price = ((bpjs * (1 + ratejs / 100)) / (1 - remisejs / 100));
 			else if (npRate == "np_markRate")
-				price = ((bpjs / (1 - ratejs / 100)) / (1 - remisejs / 100));
+			{
+				if (ratejs != 100)	// If markRate is 100, it means buying price is 0, so it is not possible to retreive price from it and markRate. We keep it unchange
+				{
+					price = ((bpjs / (1 - (ratejs / 100))) / (1 - remisejs / 100));
+				}
+				else price=$("input[name='price_ht']:first").val();
+			}
 		}
 		$("input[name='price_ht']:first").val(price);	// TODO Must use a function like php price to have here a formated value
 
