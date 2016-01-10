@@ -1527,7 +1527,7 @@ class AccountLine extends CommonObject
 		$sql.= ", '".$this->fk_account."'";
 		$sql.= ", '".$this->db->escape($this->fk_type)."'";
 		$sql.= ", ".($this->emetteur?"'".$this->db->escape($this->emetteur)."'":"null");
-		$sql.= ", ".($this-bank_chq?"'".$this->db->escape($this->bank_chq)."'":"null");
+		$sql.= ", ".($this->bank_chq?"'".$this->db->escape($this->bank_chq)."'":"null");
 		$sql.= ", ".(int) $this->rappro;
 		$sql.= ")";
 
