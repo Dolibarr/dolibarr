@@ -14,7 +14,7 @@ Component              Version       License                     GPL Compatible 
 PHP libraries:
 AdoDb-Date             0.36          Modified BSD License        Yes             Date convertion (not into rpm package)
 ChromePHP              4.1.0         Apache Software License 2.0 Yes             Return server log to chrome browser console
-CKEditor               4.3.3         LGPL-2.1+                   Yes             Editor WYSIWYG
+CKEditor               4.5.6         LGPL-2.1+                   Yes             Editor WYSIWYG
 EvalMath               1.0           BSD                         Yes             Safe math expressions evaluation
 Escpos-php                           MIT License                 Yes             Thermal receipt printer library, for use with ESC/POS compatible printers
 FPDI                   1.5.2         Apache Software License 2.0 Yes             PDF templates management
