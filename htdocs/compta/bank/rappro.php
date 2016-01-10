@@ -110,28 +110,14 @@ if ($action == 'del')
     }
 }
 
-
 // Load bank groups
-$sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_categ ORDER BY label";
-$resql = $db->query($sql);
-$options="";
-if ($resql)
-{
-    $var=True;
-    $num = $db->num_rows($resql);
-    if ($num > 0) $options .= '<option value="0"'.(GETPOST('cat')?'':' selected').'>&nbsp;</option>';
-    $i = 0;
-    while ($i < $num)
-    {
-        $obj = $db->fetch_object($resql);
-        $options .= '<option value="'.$obj->rowid.'"'.(GETPOST('cat')==$obj->rowid?' selected':'').'>'.$obj->label.'</option>'."\n";
-        $i++;
-    }
-    $db->free($resql);
-    //print $options;
-}
-else dol_print_error($db);
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/bankcateg.class.php';
+$bankcateg = new BankCateg($db);
+$options = array();
 
+foreach ($bankcateg->fetchAll() as $bankcategory) {
+    $options[$bankcategory->id] = $bankcategory->label;
+}
 
 /*
  * View
@@ -225,7 +211,9 @@ print '<input class="flat" name="num_releve" type="text" value="'.(GETPOST('num_
 print '<br>';
 if ($options)
 {
-    print $langs->trans("EventualyAddCategory").': <select class="flat" name="cat">'.$options.'</select><br>';
+    print $langs->trans("EventualyAddCategory").': ';
+	print $form->selectarray('cat', $options, GETPOST('cat'), 1);
+	print '<br>';
 }
 print '<br>'.$langs->trans("ThenCheckLinesAndConciliate").' "'.$langs->trans("Conciliate").'"<br>';
 

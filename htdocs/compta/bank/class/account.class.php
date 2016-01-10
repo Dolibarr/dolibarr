@@ -194,6 +194,7 @@ class Account extends CommonObject
 	 * Savings account
 	 */
 	const TYPE_SAVINGS = 0;
+
 	const STATUS_OPEN = 0;
 	const STATUS_CLOSED = 1;
 

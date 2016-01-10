@@ -205,24 +205,13 @@ $form = new Form($db);
 
 llxHeader();
 
-// The list of categories is initialized
-$sql = "SELECT rowid, label";
-$sql.= " FROM ".MAIN_DB_PREFIX."bank_categ";
-$sql.= " ORDER BY label";
-$result = $db->query($sql);
-if ($result)
-{
-    $var=True;
-    $num = $db->num_rows($result);
-    $i = 0;
-    $options = "<option value=\"0\" selected>&nbsp;</option>";
-    while ($i < $num)
-    {
-        $obj = $db->fetch_object($result);
-        $options .= "<option value=\"$obj->rowid\">$obj->label</option>\n";
-        $i++;
-    }
-    $db->free($result);
+// Load bank groups
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/bankcateg.class.php';
+$bankcateg = new BankCateg($db);
+$options = array();
+
+foreach ($bankcateg->fetchAll() as $bankcategory) {
+    $options[$bankcategory->id] = $bankcategory->label;
 }
 
 $var=false;
@@ -620,7 +609,7 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Rubriques").'</td><td colspan="2">';
 if ($user->rights->banque->modifier)
 {
-    print '<select class="flat" name="cat1">'.$options.'</select>&nbsp;';
+    print $form->selectarray('cat1', $options, '', 1).' ';
     print '<input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
 }
 print '</tr>';

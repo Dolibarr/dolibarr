@@ -209,29 +209,13 @@ if ($id > 0 || ! empty($ref))
 
 	$result=$object->fetch($id, $ref);
 
-	// Chargement des categories bancaires dans $options
-	$nbcategories=0;
+	// Load bank groups
+	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/bankcateg.class.php';
+	$bankcateg = new BankCateg($db);
+	$options = array();
 
-	$sql = "SELECT rowid, label";
-	$sql.= " FROM ".MAIN_DB_PREFIX."bank_categ";
-	$sql.= " WHERE entity = ".$conf->entity;
-	$sql.= " ORDER BY label";
-
-	$result = $db->query($sql);
-	if ($result)
-	{
-		$var=True;
-		$num = $db->num_rows($result);
-		$i = 0;
-		$options = '<option value="0" selected>&nbsp;</option>';
-		while ($i < $num)
-		{
-			$obj = $db->fetch_object($result);
-			$options.= '<option value="'.$obj->rowid.'">'.$obj->label.'</option>'."\n";
-			$nbcategories++;
-			$i++;
-		}
-		$db->free($result);
+	foreach ($bankcateg->fetchAll() as $bankcategory) {
+		$options[$bankcategory->id] = $bankcategory->label;
 	}
 
 	// Definition de sql_rech et param
@@ -494,9 +478,10 @@ if ($id > 0 || ! empty($ref))
 		print '<input name="num_chq" class="flat" type="text" size="4" value="'.GETPOST("num_chq").'"></td>';
 		print '<td colspan="2">';
 		print '<input name="label" class="flat" type="text" size="24"  value="'.GETPOST("label").'">';
-		if ($nbcategories)
+		if ($options)
 		{
-			print '<br>'.$langs->trans("Rubrique").': <select class="flat" name="cat1">'.$options.'</select>';
+			print '<br>'.$langs->trans("Rubrique").': ';
+			print $form->selectarray('cat1', $options, GETPOST('cat1'), 1);
 		}
 		print '</td>';
 		print '<td align=right><input name="debit" class="flat" type="text" size="4" value="'.GETPOST("debit").'"></td>';
