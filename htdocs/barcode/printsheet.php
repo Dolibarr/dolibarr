@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003	   Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003	   Jean-Louis Bergamo	<jlb@j1b.org>
- * Copyright (C) 2006-2013 Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2016 Laurent Destailleur	<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,7 +85,7 @@ if (GETPOST('submitthirdparty') && GETPOST('submitthirdparty'))
 
 		if (empty($forbarcode) || empty($fk_barcode_type))
 		{
-			setEventMessages($langs->trans("DefinitionOfBarCodeForProductNotComplete",$thirdpartytmp->getNomUrl()), null, 'warnings');
+			setEventMessages($langs->trans("DefinitionOfBarCodeForThirdpartyNotComplete",$thirdpartytmp->getNomUrl()), null, 'warnings');
 		}
 	}
 }
@@ -387,11 +387,11 @@ print '<br>';
 
 if ($producttmp->id > 0)
 {
-	print $langs->trans("BarCodeDataForProduct",$producttmp->getNomUrl(1)).'<br>';
+	print $langs->trans("BarCodeDataForProduct",'').' '.$producttmp->getNomUrl(1).'<br>';
 }
 if ($thirdpartytmp->id > 0)
 {
-	print $langs->trans("BarCodeDataForThirdparty",$thirdpartytmp->getNomUrl(1)).'<br>';
+	print $langs->trans("BarCodeDataForThirdparty",'').' '.$thirdpartytmp->getNomUrl(1).'<br>';
 }
 
 print '<div class="tagtable">';

@@ -1438,56 +1438,71 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
 		dol_syslog('dol_add_file_process upload_dir='.$upload_dir.' allowoverwrite='.$allowoverwrite.' donotupdatesession='.$donotupdatesession.' savingdocmask='.$savingdocmask, LOG_DEBUG);
 		if (dol_mkdir($upload_dir) >= 0)
 		{
-			// Define $destpath (path to file including filename) and $destfile (only filename)
-			$destpath=$upload_dir . "/" . $_FILES[$varfiles]['name'];
-			$destfile=$_FILES[$varfiles]['name'];
-
-			$savingdocmask = dol_sanitizeFileName($savingdocmask);
-
-			if ($savingdocmask)
+			$TFile = $_FILES[$varfiles];
+			if (!is_array($TFile['name']))
 			{
-				$destpath=$upload_dir . "/" . preg_replace('/__file__/',$_FILES[$varfiles]['name'],$savingdocmask);
-				$destfile=preg_replace('/__file__/',$_FILES[$varfiles]['name'],$savingdocmask);
-			}
-
-			$resupload = dol_move_uploaded_file($_FILES[$varfiles]['tmp_name'], $destpath, $allowoverwrite, 0, $_FILES[$varfiles]['error'], 0, $varfiles);
-			if (is_numeric($resupload) && $resupload > 0)
-			{
-				include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
-				if (empty($donotupdatesession))
+				foreach ($TFile as $key => &$val)
 				{
-					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-					$formmail = new FormMail($db);
-					$formmail->add_attached_files($destpath, $destfile, $_FILES[$varfiles]['type']);
-				}
-				if (image_format_supported($destpath) == 1)
-				{
-					// Create small thumbs for image (Ratio is near 16/9)
-					// Used on logon for example
-					$imgThumbSmall = vignette($destpath, 160, 120, '_small', 50, "thumbs");
-					// Create mini thumbs for image (Ratio is near 16/9)
-					// Used on menu or for setup page for example
-					$imgThumbMini = vignette($destpath, 160, 120, '_mini', 50, "thumbs");
-				}
-
-				setEventMessages($langs->trans("FileTransferComplete"), null, 'mesgs');
-			}
-			else
-			{
-				$langs->load("errors");
-				if ($resupload < 0)	// Unknown error
-				{
-					setEventMessages($langs->trans("ErrorFileNotUploaded"), null, 'errors');
-				}
-				else if (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload))	// Files infected by a virus
-				{
-					setEventMessages($langs->trans("ErrorFileIsInfectedWithAVirus"), null, 'errors');
-				}
-				else	// Known error
-				{
-					setEventMessages($langs->trans($resupload), null, 'errors');
+					$val = array($val);
 				}
 			}
+			
+			$nbfile = count($TFile['name']);
+			
+			for ($i = 0; $i < $nbfile; $i++)
+			{
+				// Define $destpath (path to file including filename) and $destfile (only filename)
+				$destpath=$upload_dir . "/" . $TFile['name'][$i];
+				$destfile=$TFile['name'][$i];
+	
+				$savingdocmask = dol_sanitizeFileName($savingdocmask);
+	
+				if ($savingdocmask)
+				{
+					$destpath=$upload_dir . "/" . preg_replace('/__file__/',$TFile['name'][$i],$savingdocmask);
+					$destfile=preg_replace('/__file__/',$TFile['name'][$i],$savingdocmask);
+				}
+	
+				$resupload = dol_move_uploaded_file($TFile['tmp_name'][$i], $destpath, $allowoverwrite, 0, $TFile['error'][$i], 0, $varfiles);
+				if (is_numeric($resupload) && $resupload > 0)
+				{
+					include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+					if (empty($donotupdatesession))
+					{
+						include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+						$formmail = new FormMail($db);
+						$formmail->add_attached_files($destpath, $destfile, $TFile['type'][$i]);
+					}
+					if (image_format_supported($destpath) == 1)
+					{
+						// Create small thumbs for image (Ratio is near 16/9)
+						// Used on logon for example
+						$imgThumbSmall = vignette($destpath, 160, 120, '_small', 50, "thumbs");
+						// Create mini thumbs for image (Ratio is near 16/9)
+						// Used on menu or for setup page for example
+						$imgThumbMini = vignette($destpath, 160, 120, '_mini', 50, "thumbs");
+					}
+	
+					setEventMessages($langs->trans("FileTransferComplete"), null, 'mesgs');
+				}
+				else
+				{
+					$langs->load("errors");
+					if ($resupload < 0)	// Unknown error
+					{
+						setEventMessages($langs->trans("ErrorFileNotUploaded"), null, 'errors');
+					}
+					else if (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload))	// Files infected by a virus
+					{
+						setEventMessages($langs->trans("ErrorFileIsInfectedWithAVirus"), null, 'errors');
+					}
+					else	// Known error
+					{
+						setEventMessages($langs->trans($resupload), null, 'errors');
+					}
+				}
+			}
+			
 		}
 	} elseif ($link) {
 		if (dol_mkdir($upload_dir) >= 0) {

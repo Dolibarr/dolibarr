@@ -270,6 +270,13 @@ Parameters:
 
 - `int $height`: Height in dots. If not specified, 8 will be used.
 
+### setColor($color)
+Select print color - on printers that support multiple colors.
+
+Parameters:
+
+- `int $color`: Color to use. Must be either `Escpos::COLOR_1` (default), or `Escpos::COLOR_2`
+
 ### setDoubleStrike($on)
 Turn double-strike mode on/off.
 

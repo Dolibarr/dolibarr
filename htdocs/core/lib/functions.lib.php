@@ -2985,7 +2985,11 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 
 	// Left
 	if ($picto && $titre) print '<td class="nobordernopadding hideonsmartphone" width="40" align="left" valign="middle">'.img_picto('', $picto, '', $pictoisfullpath).'</td>';
-	print '<td class="nobordernopadding"><div class="titre">'.$titre.'</div></td>';
+	print '<td class="nobordernopadding"><div class="titre">'.$titre;
+	if (!empty($totalnboflines) && !empty($titre)) {
+		print ' ('.$totalnboflines.')';
+	}
+	print '</div></td>';
 
 	// Center
 	if ($center)

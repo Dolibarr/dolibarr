@@ -169,7 +169,7 @@ else
 if (empty($mysoc->country_code))
 {
 	$langs->load("errors");
-	$warnpicto=img_error($langs->trans("WarningMandatorySetupNotComplete"));
+	$warnpicto=img_warning($langs->trans("WarningMandatorySetupNotComplete"));
 	print '<br><a href="'.DOL_URL_ROOT.'/admin/company.php?mainmenu=home">'.$warnpicto.' '.$langs->trans("WarningMandatorySetupNotComplete").'</a>';
 }
 else

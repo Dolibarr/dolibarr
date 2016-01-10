@@ -85,6 +85,10 @@ class Escpos {
 	const BARCODE_TEXT_ABOVE = 1;
 	const BARCODE_TEXT_BELOW = 2;
 	
+	/* Colors */
+	const COLOR_1 = 0;
+	const COLOR_2 = 1;
+	
 	/* Cut types */
 	const CUT_FULL = 65;
 	const CUT_PARTIAL = 66;
@@ -581,7 +585,17 @@ class Escpos {
 		self::validateBoolean($on, __FUNCTION__);
 		$this -> connector -> write(self::ESC . "G". ($on ? chr(1) : chr(0)));
 	}
-	
+
+	/**
+	 * Select print color on printers that support multiple colors.
+	 * 
+	 * @param int $color Color to use. Must be either Escpos::COLOR_1 (default), or Escpos::COLOR_2.
+	 */
+	function setColor($color = self::COLOR_1) {
+		self::validateInteger($color, 0, 1, __FUNCTION__, "Color");
+		$this -> connector -> write(self::ESC . "r" . chr($color));
+	}
+
 	/**
 	 * Turn emphasized mode on/off.
 	 *

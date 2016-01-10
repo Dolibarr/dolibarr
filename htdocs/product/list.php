@@ -222,10 +222,7 @@ else
 	// multilang
 	if (! empty($conf->global->MAIN_MULTILANGS)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid AND pl.lang = '".$langs->getDefaultLang() ."'";
 	$sql.= ' WHERE p.entity IN ('.getEntity('product', 1).')';
-	if ($sall)
-	{
-		$sql .= natural_search(array_keys($fieldstosearchall), $sall);
-	}
+	if ($sall) $sql .= natural_search(array_keys($fieldstosearchall), $sall);
     // if the type is not 1, we show all products (type = 0,2,3)
     if (dol_strlen($type))
     {

@@ -23,3 +23,7 @@
 
 
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN validated tinyint DEFAULT 0 NOT NULL;
+
+ALTER TABLE llx_fichinter ADD COLUMN datet date  after duree;
+ALTER TABLE llx_fichinter ADD COLUMN datee date  after duree;
+ALTER TABLE llx_fichinter ADD COLUMN dateo date  after duree;

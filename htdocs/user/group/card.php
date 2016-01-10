@@ -235,7 +235,7 @@ if ($action == 'create')
     print '<table class="border" width="100%">';
 
 	print "<tr>";
-	print '<td valign="top" class="fieldrequired" width="15%">'.$langs->trans("Name").'</td>';
+	print '<td class="fieldrequired" width="15%">'.$langs->trans("Name").'</td>';
 	print '<td class="valeur"><input size="30" type="text" id="nom" name="nom" value=""></td></tr>';
 
 	// Multicompany
@@ -253,7 +253,7 @@ if ($action == 'create')
 		}
 	}
 
-    print "<tr>".'<td valign="top">'.$langs->trans("Description").'</td><td>';
+    print "<tr>".'<td class="tdtop">'.$langs->trans("Description").'</td><td>';
     require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
     $doleditor=new DolEditor('note','','',240,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_SOCIETE,ROWS_8,90);
     $doleditor->Create();
@@ -310,14 +310,14 @@ else
 			print '<table class="border" width="100%">';
 
 			// Ref
-			print '<tr><td width="25%" valign="top">'.$langs->trans("Ref").'</td>';
+			print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
 			print '<td colspan="2">';
 			print $form->showrefnav($object,'id','',$user->rights->user->user->lire || $user->admin);
 			print '</td>';
 			print '</tr>';
 
 			// Name
-			print '<tr><td width="25%" valign="top">'.$langs->trans("Name").'</td>';
+			print '<tr><td width="25%">'.$langs->trans("Name").'</td>';
 			print '<td width="75%" class="valeur">'.$object->name;
 			if (empty($object->entity))
 			{
@@ -335,7 +335,7 @@ else
 			}
 
 			// Note
-			print '<tr><td width="25%" valign="top">'.$langs->trans("Description").'</td>';
+			print '<tr><td width="25%" class="tdtop">'.$langs->trans("Description").'</td>';
 			print '<td class="valeur">'.dol_htmlentitiesbr($object->note).'&nbsp;</td>';
 			print "</tr>\n";
 

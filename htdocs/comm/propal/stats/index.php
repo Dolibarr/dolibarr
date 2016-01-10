@@ -240,7 +240,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	// Company
 	print '<tr><td align="left">'.$langs->trans("ThirdParty").'</td><td align="left">';
 	$filter='s.client in (1,2,3)';
-	print $form->select_company($socid,'socid',$filter,1);
+	print $form->select_company($socid,'socid',$filter,1,0,0,array(),0,'','style="width: 95%"');
 	print '</td></tr>';
 	// User
 	print '<tr><td align="left">'.$langs->trans("CreatedBy").'</td><td align="left">';

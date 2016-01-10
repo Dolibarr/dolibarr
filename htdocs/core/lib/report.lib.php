@@ -48,8 +48,6 @@ function report_header($nom,$variante,$period,$periodlink,$description,$builddat
 	
 	if(! empty($varlink)) $varlink = '?'.$varlink;
 
-	if(! empty($varlink)) $varlink = '?'.$varlink;
-
 	$h=0;
 	$head[$h][0] = $_SERVER["PHP_SELF"].$varlink;
 	$head[$h][1] = $langs->trans("Report");

@@ -231,8 +231,8 @@ For licensing, see LICENSE.md or http://ckeditor.com/license
 						var html = CKEDITOR.instances.editor1.getData() ;
 
 						// Quick fix for link color.
-						html = html.replace( /<a /g, '<font color="#0000FF"><u><a ' )
-						html = html.replace( /<\/a>/g, '</a></u></font>' )
+						html = html.replace( /<a /g, '<font color="#0000FF"><u><a ' );
+						html = html.replace( /<\/a>/g, '</a></u></font>' );
 
 						var flash = document.getElementById( 'ckFlashContainer' ) ;
 						flash.setData( html ) ;

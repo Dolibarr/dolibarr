@@ -1077,6 +1077,12 @@ form#login {
 }
 .login_main_message {
 	text-align: center;
+	max-width: 560px;
+	margin-bottom: 10px;
+}
+.login_main_message .error {
+	border: 1px solid #caa;
+	padding: 10px;
 }
 div#login_left, div#login_right {
 	display: inline-block;

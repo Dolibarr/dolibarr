@@ -17,46 +17,46 @@
  */
 
 body {
-font-size:13px;
-font-family: Verdana, Arial, Helvetica, Tahoma, sans-serif;
-background: #f0f0f0;
-margin: 15px 30px 10px;
+	font-size:13px;
+	font-family: Verdana, Arial, Helvetica, Tahoma, sans-serif;
+	background: #fcfcfc;
+	margin: 15px 30px 10px;
 }
 
 div.titre {
-padding: 5px 5px 5px 5px;
-margin: 0 0 0 0;
+	padding: 5px 5px 5px 5px;
+	margin: 0 0 0 0;
 }
 
 span.titre {
-font-size: 1.1em;
-font-weight: bold;
-background: #FFFFFF;
-color: #444;
-border: 1px solid #999;
-padding: 5px 5px 5px 5px;
-margin: 0 0 0 20px;
+	font-size: 90%;
+	font-weight: bold;
+	background: #FFFFFF;
+	color: #444;
+	border: 1px solid #999;
+	padding: 5px 5px 5px 5px;
+	margin: 0 0 0 15px;
 }
 
 div.soustitre {
-font-size: 15px;
-font-weight: bold;
-color: #4965B3;
-padding: 0 1.2em 0.5em 2em;
-margin: 1.2em 1.2em 1.2em 1.2em;
-border-bottom: 1px solid #999;
-border-right: 1px solid #999;
-text-align: right;
+	font-size: 15px;
+	font-weight: bold;
+	color: #4965B3;
+	padding: 0 1.2em 0.5em 2em;
+	margin: 1.2em 1.2em 1.2em 1.2em;
+	border-bottom: 1px solid #999;
+	border-right: 1px solid #999;
+	text-align: right;
 }
 
 input:disabled
 {
-background: #FDFDFD;
-border: 1px solid #ACBCBB;
-padding: 0 0 0 0;
-margin: 0 0 0 0;
-color: #AAA !important;
-cursor: not-allowed !important; 
+	background: #FDFDFD;
+	border: 1px solid #ACBCBB;
+	padding: 0 0 0 0;
+	margin: 0 0 0 0;
+	color: #AAA !important;
+	cursor: not-allowed !important; 
 }
 
 input[type=submit] {
@@ -105,36 +105,32 @@ input:-webkit-autofill {
 }
 
 table.main {
-margin-left: 10px;
-margin-right: 10px;
-padding-left: 6px;
-padding-right: 6px;
-padding-top: 12px;
-padding-bottom: 12px;
-border: 1px solid #A0A0A0;
-border-radius: 8px;
-border: solid 1px rgba(90,90,90,.4);
--moz-box-shadow: 0 4px 23px 5px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(60,60,60,0.15);
--webkit-box-shadow: 0 4px 23px 5px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(60,60,60,0.15);
-box-shadow: 0 4px 23px 5px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(60,60,60,0.15);
-background-color: #FFFFFF;
-background: -webkit-gradient(linear, center top, center bottom, color-stop(0%, #fff), color-stop(100%, #f8f8f8));
-background: -moz-linear-gradient(top, #fff, #f8f8f8);
+	padding-left: 6px;
+	padding-right: 6px;
+	padding-top: 12px;
+	padding-bottom: 12px;
+	border: 1px solid #A0A0A0;
+	border-radius: 8px;
+	border: solid 1px rgba(90,90,90,.4);
+	background-color: #fff;
+	-moz-box-shadow: 0px 1px 6px 2px rgba(0, 0, 0, 0.2);
+	-webkit-box-shadow: 0px 1px 6px 2px rgba(0, 0, 0, 0.2);
+	box-shadow: 0px 1px 6px 2px rgba(0, 0, 0, 0.2);
 }
 
 table.main-inside {
-padding-left: 10px;
-padding-right: 10px;
-margin-bottom: 10px;
-margin-top: 10px;
-color: #000000;
+	padding-left: 10px;
+	padding-right: 10px;
+	margin-bottom: 10px;
+	margin-top: 10px;
+	color: #000000;
 }
 
 table.listofchoices, tr.listofchoices, td.listofchoices {
-border-collapse: collapse;
+	border-collapse: collapse;
     padding: 4px;
     color: #000000;
-border: 1px solid #999 !important;
+	border: 1px solid #999 !important;
 }
 
 tr.listofchoices {
@@ -147,119 +143,119 @@ tr.listofchoices {
 }
 
 .installchoices table tr td  {
-margin-left: 2px;
-margin-right: 2px;
-border-bottom: 1px solid #999;
-border-right: 1px solid #999;
-color: #000000;
+	margin-left: 2px;
+	margin-right: 2px;
+	border-bottom: 1px solid #999;
+	border-right: 1px solid #999;
+	color: #000000;
 }
 
 /* OK */
 div.ok {
-color: #114466;
+	color: #114466;
 }
 font.ok {
-color: #114466;
+	color: #114466;
 }
 
 /* Warning */
 div.warning {
-color: #777711;
+	color: #777711;
 }
 font.warning {
-color: #777711;
+	color: #777711;
 }
 
 /* Error */
 div.error {
-color: #550000;
-font-weight: bold;
-padding: 0.2em 0.2em 0.2em 0.2em;
-margin: 0.5em 0 0.5em 0;
-border: 1px solid #6C7C8B;
+	color: #550000;
+	font-weight: bold;
+	padding: 0.2em 0.2em 0.2em 0.2em;
+	margin: 0.5em 0 0.5em 0;
+	border: 1px solid #6C7C8B;
 }
 font.error {
-color: #550000;
-font-weight: bold;
+	color: #550000;
+	font-weight: bold;
 }
 
 /* Next button */
 div.nextbutton {
-text-align: right;
-margin-top: 10px;
-padding-top: 5px;
-padding-bottom: 5px;
-padding-right: 10px;
+	text-align: right;
+	margin-top: 10px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	padding-right: 10px;
 }
 
 
 div.header {
-background-color: #dcdff4;
-border-bottom: solid black 1px;
-padding-left: 5px;
-text-align: center;
+	background-color: #dcdff4;
+	border-bottom: solid black 1px;
+	padding-left: 5px;
+	text-align: center;
 }
 
 a:link,a:visited,a:active {
-text-decoration:none;
+	text-decoration:none;
 }
 a:hover {
-text-decoration:underline;
+	text-decoration:underline;
 }
 
 a.titre {
-text-decoration:none;
+	text-decoration:none;
 }
 
 
 div.comment {
-text-decoration:none;
-color:black;
-font-size: 13px;
+	text-decoration:none;
+	color:black;
+	font-size: 13px;
 }
 
 h3 {
-margin-top: 10px;
-font-size:16px;
-font-weight: normal;
-color: #4965B3;
-text-shadow: 1px 1px 1px #c0c0c0;
+	margin-top: 10px;
+	font-size:16px;
+	font-weight: normal;
+	color: #4965B3;
+	text-shadow: 1px 1px 1px #c0c0c0;
 }
 
 tr.bg1 {
-background-color: #E5E5E5;
+	background-color: #E5E5E5;
 }
 
 tr.bg2 {
-background-color: #B5C5C5;
+	background-color: #B5C5C5;
 }
 
 /* Class for parameters key and value */
 td.label {
-color: #5945A3;
-padding: 5px 5px 5px 5px;
-margin: 0 0 0 0;
-border-bottom: 1px solid #CCCCDB;
+	color: #5945A3;
+	padding: 5px 5px 5px 5px;
+	margin: 0 0 0 0;
+	border-bottom: 1px solid #CCCCDB;
 }
 
 /* Class for parameters example */
 td.comment {
-color: black;
-padding: 5px 5px 5px 5px;
-margin: 0 0 0 0;
-text-decoration:none;
-font-size: 11px;
-border-bottom: 1px solid #CCCCDB;
+	color: black;
+	padding: 5px 5px 5px 5px;
+	margin: 0 0 0 0;
+	text-decoration:none;
+	font-size: 11px;
+	border-bottom: 1px solid #CCCCDB;
 }
 
 table {
-font-size: 12px;
+	font-size: 12px;
 }
 
 .install
 {
-border: 1px solid #999;
-padding: 4px 4px 4px 4px;
+	border: 1px solid #999;
+	padding: 4px 4px 4px 4px;
 }
 
 div.visible {
@@ -294,9 +290,9 @@ a.button:hover {
 }
 
 .choiceselected {
-background-color: #dfd;
-background-repeat: repeat-x;
-background-position: top left;
+	background-color: #dfd;
+	background-repeat: repeat-x;
+	background-position: top left;
 }
 
 .center {

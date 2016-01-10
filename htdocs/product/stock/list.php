@@ -48,6 +48,17 @@ $offset = $limit * $page;
 
 $year = strftime("%Y",time());
 
+// List of fields to search into when doing a "search in all"
+$fieldstosearchall = array(
+    'e.label'=>"Ref",
+    'e.lieu'=>"LocationSummary",
+    'e.description'=>"Description",
+    'e.address'=>"Address",
+    'e.zip'=>'Zip',
+    'e.town'=>'Town',
+);
+
+
 
 /*
  *	View
@@ -62,11 +73,10 @@ $sql.= " FROM ".MAIN_DB_PREFIX."entrepot as e";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON e.rowid = ps.fk_entrepot";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON ps.fk_product = p.rowid";
 $sql.= " WHERE e.entity IN (".getEntity('stock', 1).")";
-
 if ($search_ref) $sql.= natural_search("e.label", $search_ref);			// ref
 if ($search_label) $sql.= natural_search("e.lieu", $search_label);		// label
 if ($search_status != '' && $search_status >= 0) $sql.= " AND e.statut = ".$search_status;
-if ($sall) $sql.= natural_search(array('e.label','e.description','e.lieu','e.address','e.town'), $sall);
+if ($sall) $sql .= natural_search(array_keys($fieldstosearchall), $sall);
 $sql.= " GROUP BY e.rowid, e.label, e.statut, e.lieu, e.address, e.zip, e.town, e.fk_pays";
 $totalnboflines=0;
 $result=$db->query($sql);
@@ -95,7 +105,15 @@ if ($result)
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
-	print '<table class="noborder" width="100%">';
+	if ($sall)
+	{
+	    foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
+	    print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+	}
+	
+	$moreforfilter='';
+	
+	print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
 
 	print "<tr class=\"liste_titre\">";
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"], "e.label","","","",$sortfield,$sortorder);

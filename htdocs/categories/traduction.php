@@ -158,10 +158,23 @@ print '<table class="border" width="100%">';
 
 // Reference
 print '<tr>';
-print '<td width="15%">'.$langs->trans("Ref").'</td><td colspan="2">';
-print $object->label;
+print '<td width="20%" class="notopnoleft">';
+$ways = $object->print_all_ways();
+print $langs->trans("Ref").'</td><td>';
+print '<a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("Root").'</a> >> ';
+foreach ($ways as $way)
+{
+    print $way."<br>\n";
+}
 print '</td>';
 print '</tr>';
+
+// Description
+print '<tr><td width="20%" class="notopnoleft">';
+print $langs->trans("Description").'</td><td>';
+print dol_htmlentitiesbr($object->description);
+print '</td></tr>';
+
 print '</table>';
 
 if ($action == 'edit')
