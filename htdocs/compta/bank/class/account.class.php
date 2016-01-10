@@ -1766,6 +1766,7 @@ class AccountLine extends CommonObject
             {
                 if ($this->db->affected_rows($result))
                 {
+					$this->datev = $newdate;
                     return 1;
                 }
             }
@@ -1779,11 +1780,32 @@ class AccountLine extends CommonObject
         return 0;
     }
 
+	/**
+	 * 	Increase value date of a rowid
+	 *
+	 *	@return	int				>0 if OK, 0 if KO
+	 */
+	public function increaseValueDate()
+	{
+		return $this->datev_change($this->id, 1);
+	}
+
+	/**
+	 * 	Decrease value date of a rowid
+	 *
+	 *	@return	int				>0 if OK, 0 if KO
+	 */
+	public function decreaseValueDate()
+	{
+		return $this->datev_change($this->id, -1);
+	}
+
     /**
      * 	Increase value date of a rowid
      *
      *	@param	int		$id		Id of line to change
      *	@return	int				>0 if OK, 0 if KO
+	 * @deprecated use increaseValueDate after fetching the transaction
      */
     function datev_next($id)
     {
@@ -1795,6 +1817,7 @@ class AccountLine extends CommonObject
      *
      *	@param	int		$id		Id of line to change
      *	@return	int				>0 if OK, 0 if KO
+	 * @deprecated use decreaseValueDate after fetching the transaction
      */
     function datev_previous($id)
     {
