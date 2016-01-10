@@ -971,7 +971,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 					// Accountancy journals
 					if (! empty($conf->accounting->enabled) && !empty($user->rights->accounting->mouvements->lire) && $mainmenu == 'accountancy')
 					{
-						$newmenu->add('/accountancy/journal/index.php?leftmenu=journal',$langs->trans("Journaux"),0,$user->rights->banque->lire);
+						$newmenu->add('?leftmenu=journal',$langs->trans("Journaux"),0,$user->rights->banque->lire);
 
 						if ($leftmenu == 'journal')
 						{
