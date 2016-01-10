@@ -38,7 +38,6 @@ $result = restrictedArea($user, 'expedition',$expeditionid,'');
 $search_ref_exp = GETPOST("search_ref_exp");
 $search_ref_liv = GETPOST('search_ref_liv');
 $search_company = GETPOST("search_company");
-$sall = GETPOST('sall');
 $optioncss = GETPOST('optioncss','alpha');
 
 $sortfield = GETPOST('sortfield','alpha');
@@ -63,13 +62,6 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
     $search_company='';
     $viewstatut='';
 }
-
-// List of fields to search into when doing a "search in all"
-$fieldstosearchall = array(
-    'e.ref'=>"Ref",
-    's.nom'=>"ThirdParty"
-);
-
 
 /*
  * View
@@ -108,7 +100,6 @@ if ($viewstatut <> '') {
 if ($search_ref_exp) $sql .= natural_search('e.ref', $search_ref_exp);
 if ($search_ref_liv) $sql .= natural_search('l.ref', $search_ref_liv);
 if ($search_company) $sql .= natural_search('s.nom', $search_company);
-if ($sall) $sql .= natural_search(array_keys($fieldstosearchall), $sall);
 
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit + 1,$offset);
@@ -132,21 +123,12 @@ if ($resql)
 	$i = 0;
     print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">'."\n";
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-
-    if ($sall)
-    {
-        foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-        print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
-    }
-    
-    $moreforfilter='';
-    
-    print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
+	print '<table class="noborder" width="100%">';
 
 	print '<tr class="liste_titre">';
 
 	print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"],"e.ref","",$param,'',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("ThirdParty"), $_SERVER["PHP_SELF"],"s.nom", "", $param,'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Company"), $_SERVER["PHP_SELF"],"s.nom", "", $param,'align="left"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateDeliveryPlanned"), $_SERVER["PHP_SELF"],"e.date_delivery","",$param, 'align="center"',$sortfield,$sortorder);
     if($conf->livraison_bon->enabled)
     {

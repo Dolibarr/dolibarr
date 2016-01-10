@@ -21,7 +21,7 @@ class EscposTest extends PHPUnit_Framework_TestCase {
 	protected function tearDown() {
 		$this -> outputConnector -> finalize();
 	}
-
+	
 	protected function requireGraphicsLibrary() {
 		if(!EscposImage::isGdLoaded() && !EscposImage::isImagickLoaded()) {
 			// If the test is about to do something which requires a library,
@@ -746,22 +746,6 @@ class EscposTest extends PHPUnit_Framework_TestCase {
 	public function testSetTextSizeInvalid() {
 		$this -> setExpectedException('InvalidArgumentException');
 		$this -> printer -> setTextSize(0, 9);
-	}
-	
-	/* Set color */
-	public function testSetColorDefault() {
-		$this -> printer -> setColor(Escpos::COLOR_1);
-		$this -> checkOutput("\x1b@\x1br\x00");
-	}
-	
-	public function testSetColorAlternative() {
-		$this -> printer -> setColor(Escpos::COLOR_2);
-		$this -> checkOutput("\x1b@\x1br\x01");
-	}
-	
-	public function testSetColorInvalid() {
-		$this -> setExpectedException('InvalidArgumentException');
-		$this -> printer -> setColor(3);
 	}
 }
 
