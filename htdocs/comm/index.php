@@ -37,6 +37,7 @@ if (! empty($conf->fournisseur->enabled)) require_once DOL_DOCUMENT_ROOT.'/fourn
 if (! $user->rights->societe->lire) accessforbidden();
 
 $langs->load("commercial");
+$langs->load("propal");
 
 $action=GETPOST('action', 'alpha');
 $bid=GETPOST('bid', 'int');
