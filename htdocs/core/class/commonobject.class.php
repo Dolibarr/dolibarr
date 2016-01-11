@@ -2756,6 +2756,7 @@ abstract class CommonObject
 
     /**
      *  Return if a country is inside the EEC (European Economic Community)
+     *  TODO Add a field into dictionary
      *
      *  @return     boolean		true = country inside EEC, false = country outside EEC
      */
@@ -2777,7 +2778,8 @@ abstract class CommonObject
     			'FR',	// France
     			'GB',	// United Kingdom
     			'GR',	// Greece
-    			'NL',	// Holland
+    			'HR',   // Croatia
+                'NL',	// Holland
     			'HU',	// Hungary
     			'IE',	// Ireland
     			'IM',	// Isle of Man - Included in UK
@@ -2787,7 +2789,7 @@ abstract class CommonObject
     			'LV',	// Latvia
     			'MC',	// Monaco - Included in France
     			'MT',	// Malta
-        //'NO',	// Norway
+                //'NO',	// Norway
     			'PL',	// Poland
     			'PT',	// Portugal
     			'RO',	// Romania
