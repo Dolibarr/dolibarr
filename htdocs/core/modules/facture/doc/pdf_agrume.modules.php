@@ -1751,16 +1751,11 @@ class pdf_agrume extends ModelePDFFactures
 			}
 		}
 		
-		/*
-var_dump('VAT : '.$this->posxup. ' - '.$this->posxtva);
-var_dump('PriceUHT : '.$this->posxqty. ' - '.$this->posxup);
-var_dump('Qty : '.$this->posxdiscount. ' - '.$this->posxqty);
-exit;
-*/
-//var_dump($this->posxdiscount, $this->posxprogress);exit;
 		if ($this->situationinvoice)
 		{
-			$pdf->line($this->posxprogress - 2, $tab_top, $this->posxprogress - 2, $tab_top + $tab_height);
+			if ($this->atleastonediscount) $pdf->line($this->posxprogress - 2, $tab_top, $this->posxprogress - 2, $tab_top + $tab_height);
+			else $pdf->line($this->postotalht, $tab_top, $this->postotalht, $tab_top + $tab_height);
+			
 			if (empty($hidetop)) {
 				$pdf->SetXY($this->posxprogress-1, $tab_top + 1);
 				if($conf->global->PRODUCT_USE_UNITS) 
@@ -1772,8 +1767,6 @@ exit;
 					$pdf->MultiCell(20, 2, $outputlangs->transnoentities("Progress"), '', 'C');	
 				}
 			}
-			//var_dump($this->posxprogress, $this->posxqty);exit;
-		
 		}
 		
 		if ($this->atleastonediscount)
