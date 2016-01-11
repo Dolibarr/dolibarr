@@ -51,10 +51,10 @@ $result = restrictedArea($user, 'societe',$socid,'');
 
 
 /*
-*	View
-*/
+ * View
+ */
 
-llxHeader('','Contacts');
+llxHeader('',$langs->trans("Contacts"));
 
 if ($type == "c" || $type == "p")
 {
@@ -68,8 +68,7 @@ if ($type == "f")
 }
 
 /*
- * Mode liste
- *
+ * List mode
  */
 
 $sql = "SELECT s.rowid, s.nom as name, st.libelle as stcomm";
