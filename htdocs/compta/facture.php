@@ -3031,10 +3031,10 @@ else if ($id > 0 || ! empty($ref))
 
 	print '<td rowspan="' . $nbrows . '" colspan="2" valign="top">';
 
-	print '<table class="nobordernopadding paymenttable" width="100%">';
-
 	if ($object->type == Facture::TYPE_SITUATION && !empty($conf->global->INVOICE_USE_SITUATION))
 	{
+		if (count($object->tab_previous_situation_invoice) > 0 || count($object->tab_next_situation_invoice) > 0) print '<table class="nobordernopadding paymenttable" width="100%">';
+		
 		if (count($object->tab_previous_situation_invoice) > 0)
 		{
 			//List of previous invoices
@@ -3043,32 +3043,35 @@ else if ($id > 0 || ! empty($ref))
 			print '<td></td>';
 			if (! empty($conf->banque->enabled))
 				print '<td align="right"></td>';
-			print '<td align="right">' . $langs->trans('Amount') . '</td>';
+			print '<td align="right">' . $langs->trans('AmountHT') . '</td>';
+			print '<td align="right">' . $langs->trans('AmountTTC') . '</td>';
 			print '<td width="18">&nbsp;</td>';
 			print '</tr>';
 			
-			$total_prev = 0;
-			
+			$total_prev_ht = $total_prev_ttc = 0;
 			$var = true;
 			foreach ($object->tab_previous_situation_invoice as $prev_invoice)
 			{
-				$total_prev += $prev_invoice->total_ttc;
+				$totalpaye = $prev_invoice->getSommePaiement();
+				$total_prev_ht += $prev_invoice->total_ht;
+				$total_prev_ttc += $prev_invoice->total_ttc;
 				print '<tr '.$bc [$var].'>';
 				print '<td>'.$prev_invoice->getNomUrl(1).'</td>';
 				print '<td></td>';
 				if (! empty($conf->banque->enabled))
 					print '<td align="right"></td>';
+				print '<td align="right">' . price($prev_invoice->total_ht) . '</td>';
 				print '<td align="right">' . price($prev_invoice->total_ttc) . '</td>';
-				print '<td width="18">&nbsp;</td>';
+				print '<td align="right">'.$prev_invoice->getLibStatut(3, $totalpaye).'</td>';
 				print '</tr>';
 				
 				$var = !$var;
 			}
 			
 			print '<tr '.$bc [$var].'>';
-			print '<td colspan="3" align="right">'.$langs->trans('Total').'</td>';
-			
-			print '<td align="right"><b>' . price($total_prev) . '</b></td>';
+			print '<td colspan="2" align="right"></td>';
+			print '<td align="right"><b>' . price($total_prev_ht) . '</b></td>';
+			print '<td align="right"><b>' . price($total_prev_ttc) . '</b></td>';
 			print '<td width="18">&nbsp;</td>';
 			print '</tr>';
 		}
@@ -3081,37 +3084,44 @@ else if ($id > 0 || ! empty($ref))
 			print '<td></td>';
 			if (! empty($conf->banque->enabled))
 				print '<td align="right"></td>';
-			print '<td align="right">' . $langs->trans('Amount') . '</td>';
+			print '<td align="right">' . $langs->trans('AmountHT') . '</td>';
+			print '<td align="right">' . $langs->trans('AmountTTC') . '</td>';
 			print '<td width="18">&nbsp;</td>';
 			print '</tr>';
 			
-			$total_next = 0;
+			$total_next_ht = $total_next_ttc = 0;
 			
 			$var = true;
 			foreach ($object->tab_next_situation_invoice as $next_invoice)
 			{
-				$total_next += $next_invoice->total_ttc;
+				$totalpaye = $next_invoice->getSommePaiement();
+				$total_next_ht += $next_invoice->total_ht;
+				$total_next_ttc += $next_invoice->total_ttc;
 				print '<tr '.$bc [$var].'>';
 				print '<td>'.$next_invoice->getNomUrl(1).'</td>';
 				print '<td></td>';
 				if (! empty($conf->banque->enabled))
 					print '<td align="right"></td>';
+				print '<td align="right">' . price($next_invoice->total_ht) . '</td>';
 				print '<td align="right">' . price($next_invoice->total_ttc) . '</td>';
-				print '<td width="18">&nbsp;</td>';
+				print '<td align="right">'.$next_invoice->getLibStatut(3, $totalpaye).'</td>';
 				print '</tr>';
 				
 				$var = !$var;
 			}
 			
 			print '<tr '.$bc [$var].'>';
-			print '<td colspan="3" align="right">'.$langs->trans('Total').'</td>';
-			
-			print '<td align="right"><b>' . price($total_next) . '</b></td>';
+			print '<td colspan="2" align="right"></td>';
+			print '<td align="right"><b>' . price($total_next_ht) . '</b></td>';
+			print '<td align="right"><b>' . price($total_next_ttc) . '</b></td>';
 			print '<td width="18">&nbsp;</td>';
 			print '</tr>';
 		}
 		
+		if (count($object->tab_previous_situation_invoice) > 0 || count($object->tab_next_situation_invoice) > 0) print '</table>';
 	}
+
+	print '<table class="nobordernopadding paymenttable" width="100%">';
 
 	// List of payments already done
 	print '<tr class="liste_titre">';
