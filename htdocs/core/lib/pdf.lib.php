@@ -697,10 +697,13 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 	else if (! $usedetailedbban) $cury+=1;
 
 	// Use correct name of bank id according to country
-	$formbank = new FormBank($this->db);
-	$ibankey= $formbank->getIbanLabel($account);
 	if (! empty($account->iban))
 	{
+		global $db;
+
+		$formbank = new FormBank($db);
+		$ibankey= $formbank->getIbanLabel($account);
+
 		//Remove whitespaces to ensure we are dealing with the format we expect
 		$ibanDisplay_temp = str_replace(' ', '', $outputlangs->convToOutputCharset($account->iban));
 		$ibanDisplay = "";
