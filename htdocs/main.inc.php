@@ -10,7 +10,7 @@
  * Copyright (C) 2011-2013  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2012       Christophe Battarel     <christophe.battarel@altairis.fr>
  * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2015-2016  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1210,7 +1210,20 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             {
             	$tmpplugin=empty($conf->global->MAIN_USE_JQUERY_MULTISELECT)?constant('REQUIRE_JQUERY_MULTISELECT'):$conf->global->MAIN_USE_JQUERY_MULTISELECT;
             	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/'.$tmpplugin.'/'.$tmpplugin.'.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
-                print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/select2_locale.js.php'.($ext?'?'.$ext:'').'"></script>'."\n";
+				// Load select2 translations if available
+				if($tmpplugin == 'select2') {
+					// Reformat language code
+					$select2_lang = str_replace('_', '-', $langs->getDefaultLang());
+					// Long language code path
+					$select2_locale_path = DOL_URL_ROOT . '/includes/jquery/plugins/' . $tmpplugin . '/' . $tmpplugin . '_locale_' . $select2_lang . '.js';
+					if(! file_exists(dol_buildpath($select2_locale_path, 0))) {
+						// Short language code path
+						$select2_locale_path = DOL_URL_ROOT . '/includes/jquery/plugins/' . $tmpplugin . '/' . $tmpplugin . '_locale_' . $langs->getDefaultLang(1) . '.js';
+					}
+					if(file_exists(dol_buildpath($select2_locale_path, 0))) {
+						print '<script type="text/javascript" src="' . $select2_locale_path . ($ext ? '?' . $ext : '') . '"></script>' . "\n";
+					}
+				}
             }
             // jQuery jMobile
             if (! empty($conf->global->MAIN_USE_JQUERY_JMOBILE) || defined('REQUIRE_JQUERY_JMOBILE') || (! empty($conf->dol_use_jmobile) && $conf->dol_use_jmobile > 0))
