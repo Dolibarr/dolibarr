@@ -880,7 +880,7 @@ class Product extends CommonObject
    			// Delete all child tables
 			if (! $error)
 			{
-    			$elements = array('product_fournisseur_price','product_price','product_lang','categorie_product','product_stock');
+			    $elements = array('product_fournisseur_price','product_price','product_lang','categorie_product','product_stock','product_customer_price');
     			foreach($elements as $table)
     			{
     				if (! $error)
@@ -2747,7 +2747,8 @@ class Product extends CommonObject
 					'type'=>$type,				// Nb of units that compose parent product
 					'desiredstock'=>$this->desiredstock,
 					'level'=>$level,
-					'incdec'=>$incdec
+					'incdec'=>$incdec,
+					'entity'=>$this->entity
 				);
 
 				// Recursive call if there is childs to child
@@ -2829,7 +2830,7 @@ class Product extends CommonObject
 	 */
 	function getFather()
 	{
-		$sql = "SELECT p.rowid, p.label as label, p.ref as ref, pa.fk_product_pere as id, p.fk_product_type, pa.qty, pa.incdec";
+		$sql = "SELECT p.rowid, p.label as label, p.ref as ref, pa.fk_product_pere as id, p.fk_product_type, pa.qty, pa.incdec, p.entity";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_association as pa,";
 		$sql.= " ".MAIN_DB_PREFIX."product as p";
 		$sql.= " WHERE p.rowid = pa.fk_product_pere";
@@ -2847,6 +2848,7 @@ class Product extends CommonObject
 				$prods[$record['id']]['qty'] = $record['qty'];
 				$prods[$record['id']]['incdec'] = $record['incdec'];
 				$prods[$record['id']]['fk_product_type'] =  $record['fk_product_type'];
+				$prods[$record['id']]['entity'] =  $record['entity'];
 			}
 			return $prods;
 		}
@@ -3056,7 +3058,7 @@ class Product extends CommonObject
 	{
 		global $langs;
 		$langs->load('products');
-		if (!empty($conf->productbatch->enabled)) $langs->load("productbatch");
+		if (! empty($conf->productbatch->enabled)) $langs->load("productbatch");
 
 		if ($type == 2)
 		{
@@ -3291,23 +3293,23 @@ class Product extends CommonObject
         if (! empty($conf->commande->enabled))
         {
             $result=$this->load_stats_commande(0,'1,2');
-            if ($result < 0) dol_print_error($db,$this->error);
+            if ($result < 0) dol_print_error($this->db,$this->error);
             $stock_commande_client=$this->stats_commande['qty'];
         }
         if (! empty($conf->expedition->enabled))
         {
             $result=$this->load_stats_sending(0,'1,2');
-            if ($result < 0) dol_print_error($db,$this->error);
+            if ($result < 0) dol_print_error($this->db,$this->error);
             $stock_sending_client=$this->stats_expedition['qty'];
         }
         if (! empty($conf->fournisseur->enabled))
         {
             $result=$this->load_stats_commande_fournisseur(0,'1,2,3,4');
-            if ($result < 0) dol_print_error($db,$this->error);
+            if ($result < 0) dol_print_error($this->db,$this->error);
             $stock_commande_fournisseur=$this->stats_commande_fournisseur['qty'];
 
             $result=$this->load_stats_reception(0,'4');
-            if ($result < 0) dol_print_error($db,$this->error);
+            if ($result < 0) dol_print_error($this->db,$this->error);
             $stock_reception_fournisseur=$this->stats_reception['qty'];
         }
 
@@ -3388,7 +3390,7 @@ class Product extends CommonObject
 
 		$dir = $sdir;
 		if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) $dir .= '/'. get_exdir($this->id,2,0,0,$this,'product') . $this->id ."/photos";
-		else $dir .= '/'.dol_sanitizeFileName($this->ref);
+		else $dir .= '/'.get_exdir(0,0,0,0,$this,'product').dol_sanitizeFileName($this->ref);
 
 		dol_mkdir($dir);
 
@@ -3426,7 +3428,7 @@ class Product extends CommonObject
 
 		$dir = $sdir;
 		if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) $dir .= '/'. get_exdir($this->id,2,0,0,$this,'product') . $this->id ."/photos/";
-		else $dir .= '/'.dol_sanitizeFileName($this->ref).'/';
+		else $dir .= '/'.get_exdir(0,0,0,0,$this,'product').dol_sanitizeFileName($this->ref).'/';
 
 		$nbphoto=0;
 
@@ -3477,8 +3479,8 @@ class Product extends CommonObject
 		}
 		else
 		{
-			$dir .= $this->ref.'/';
-			$pdir .= $this->ref.'/';
+			$dir .= get_exdir(0,0,0,0,$this,'product').$this->ref.'/';
+			$pdir .= get_exdir(0,0,0,0,$this,'product').$this->ref.'/';
 		}
 
 		$dirthumb = $dir.'thumbs/';

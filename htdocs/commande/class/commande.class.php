@@ -89,10 +89,39 @@ class Commande extends CommonOrder
     var $cond_reglement_id;
     var $cond_reglement_code;
     var $fk_account;
+    /**
+     * It holds the label of the payment mode. Use it in case translation cannot be found.
+     * @var string
+     */
+    var $mode_reglement;
+
+    /**
+     * Payment mode id
+     * @var int
+     */
     var $mode_reglement_id;
+
+    /**
+     * Payment mode code
+     * @var string
+     */
     var $mode_reglement_code;
+    /**
+     * Availability delivery time id
+     * @var int
+     */
     var $availability_id;
+    /**
+     * Availability delivery time code
+     * @var string
+     */
     var $availability_code;
+    /**
+     * Label of availability delivery time. Use it in case translation cannot be found.
+     * @var string
+     */
+    var $availability;
+
     var $demand_reason_id;
     var $demand_reason_code;
     var $fk_delivery_address;
@@ -453,7 +482,7 @@ class Commande extends CommonOrder
                     {
                         $mouvP = new MouvementStock($this->db);
                         // We increment stock of product (and sub-products)
-                        $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("OrderBackToDraftInDolibarr",$this->ref));
+                        $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->trans("OrderBackToDraftInDolibarr",$this->ref));
                         if ($result < 0) { $error++; }
                     }
                 }
@@ -637,7 +666,7 @@ class Commande extends CommonOrder
 					{
 						$mouvP = new MouvementStock($this->db);
 						// We increment stock of product (and sub-products)
-						$result=$mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("OrderCanceledInDolibarr",$this->ref));
+						$result=$mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->trans("OrderCanceledInDolibarr",$this->ref));  // price is 0, we don't want WAP to be changed
 						if ($result < 0)
 						{
 							$error++;
@@ -978,26 +1007,19 @@ class Commande extends CommonOrder
         }
 
         $this->id=0;
+		$this->ref = '';
         $this->statut=self::STATUS_DRAFT;
 
         // Clear fields
         $this->user_author_id     = $user->id;
         $this->user_valid         = '';
+		$this->date				  = dol_now();
         $this->date_creation      = '';
         $this->date_validation    = '';
         $this->ref_client         = '';
-
-        // Set ref
-		$this->ref = '(PROV)';
-
+		
         // Create clone
         $result=$this->create($user);
-        if ($result < 0) $error++;
-
-		// Set new ref
-		$newref='(PROV'.$this->id.')';
-        $sql = 'UPDATE '.MAIN_DB_PREFIX."commande SET ref='".$this->db->escape($newref)."' WHERE rowid=".$this->id;
-        $result=$this->db->query($sql);
         if ($result < 0) $error++;
 
         if (! $error)
@@ -1195,7 +1217,7 @@ class Commande extends CommonOrder
     {
     	global $mysoc, $conf, $langs;
 
-        dol_syslog(get_class($this)."::addline commandeid=$this->id, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_percent=$remise_percent, info_bits=$info_bits, fk_remise_except=$fk_remise_except, price_base_type=$price_base_type, pu_ttc=$pu_ttc, date_start=$date_start, date_end=$date_end, type=$type, fk_unit=$fk_unit", LOG_DEBUG);
+        dol_syslog(get_class($this)."::addline commandeid=$this->id, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_percent=$remise_percent, info_bits=$info_bits, fk_remise_except=$fk_remise_except, price_base_type=$price_base_type, pu_ttc=$pu_ttc, date_start=$date_start, date_end=$date_end, type=$type special_code=$special_code, fk_unit=$fk_unit", LOG_DEBUG);
 
         include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
@@ -1477,7 +1499,7 @@ class Commande extends CommonOrder
         $sql.= ", i.libelle as libelle_incoterms";
         $sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
         $sql.= ', cr.code as cond_reglement_code, cr.libelle as cond_reglement_libelle, cr.libelle_facture as cond_reglement_libelle_doc';
-        $sql.= ', ca.code as availability_code';
+        $sql.= ', ca.code as availability_code, ca.label as availability_label';
         $sql.= ', dr.code as demand_reason_code';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'commande as c';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as cr ON (c.fk_cond_reglement = cr.rowid)';
@@ -1534,6 +1556,7 @@ class Commande extends CommonOrder
                 $this->fk_account           = $obj->fk_account;
                 $this->availability_id		= $obj->fk_availability;
                 $this->availability_code	= $obj->availability_code;
+                $this->availability	    	= $obj->availability_label;
                 $this->demand_reason_id		= $obj->fk_input_reason;
                 $this->demand_reason_code	= $obj->demand_reason_code;
                 $this->date_livraison		= $this->db->jdate($obj->date_livraison);
@@ -2924,7 +2947,7 @@ class Commande extends CommonOrder
      */
     function LibStatut($statut,$billed,$mode)
     {
-        global $langs;
+        global $langs, $conf;
         //print 'x'.$statut.'-'.$billed;
         if ($mode == 0)
         {

@@ -544,7 +544,7 @@ if (empty($reshook))
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-	    dol_remove_file_process($_POST['removedfile'],0);
+	    dol_remove_file_process($_POST['removedfile'],0,0);    // We really delete file linked to mailing
 
 		$action="edit";
 	}
@@ -1093,7 +1093,10 @@ else
 			}
 
 			print '</table>';
-			print "</div>";
+			
+			dol_fiche_end();
+			
+			
 
 			print "\n";
 			print '<form name="edit_mailing" action="card.php" method="post" enctype="multipart/form-data">'."\n";
@@ -1103,6 +1106,9 @@ else
 
 			// Print mail content
 			print_fiche_titre($langs->trans("EMail"),'','');
+
+			dol_fiche_head();
+			
 			print '<table class="border" width="100%">';
 
 			// Subject
@@ -1168,7 +1174,9 @@ else
 
 			print '</table>';
 
-			print '<br><div class="center">';
+			dol_fiche_end();
+			
+			print '<div class="center">';
 			print '<input type="submit" class="button" value="'.$langs->trans("Save").'" name="save">';
 			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 			print '<input type="submit" class="button" value="'.$langs->trans("Cancel").'" name="cancel">';

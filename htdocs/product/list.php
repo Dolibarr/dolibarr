@@ -67,6 +67,7 @@ if (! $sortorder) $sortorder="ASC";
 
 $limit = $conf->liste_limit;
 
+if (empty($action)) $action='list';
 
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
 $canvas=GETPOST("canvas");
@@ -108,8 +109,8 @@ $form=new Form($db);
 
 if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 {
-	$objcanvas->assign_values('list');       // This must contains code to load data (must call LoadListDatas($limit, $offset, $sortfield, $sortorder))
-    $objcanvas->display_canvas('list');  	 // This is code to show template
+	$objcanvas->assign_values($action);       // This must contains code to load data (must call LoadListDatas($limit, $offset, $sortfield, $sortorder))
+    $objcanvas->display_canvas($action);  	  // This is code to show template
 }
 else
 {
@@ -133,7 +134,7 @@ else
     // Add what we are searching for
     if (! empty($sall)) $texte.= " - ".$sall;
 
-    $sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type,';
+    $sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type, p.entity,';
     $sql.= ' p.fk_product_type, p.tms as datem,';
     $sql.= ' p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock,';
     $sql.= ' MIN(pfp.unitprice) as minsellprice';
@@ -431,6 +432,7 @@ else
     			$product_static->ref = $objp->ref;
                 $product_static->label = $objp->label;
     			$product_static->type = $objp->fk_product_type;
+				$product_static->entity = $objp->entity;
     			print $product_static->getNomUrl(1,'',24);
     			print "</td>\n";
 

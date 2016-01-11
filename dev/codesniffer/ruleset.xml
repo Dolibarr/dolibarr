@@ -124,7 +124,7 @@
     <!-- Tweaks to metrics -->
     <rule ref="Generic.Metrics.CyclomaticComplexity">
         <properties>
-            <property name="complexity" value="80" />
+            <property name="complexity" value="120" />
             <property name="absoluteComplexity" value="250" />
         </properties>
     </rule>
@@ -289,6 +289,15 @@
 
 	<rule ref="PEAR.Functions.FunctionCallSignature" />
 
+    <rule ref="PEAR.Functions.FunctionCallSignature.CloseBracketLine">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Functions.FunctionCallSignature.ContentAfterOpenBracket">
+        <severity>0</severity>
+    </rule>
+	<rule ref="PEAR.Functions.FunctionCallSignature.EmptyLine">
+	    <severity>0</severity>
+	</rule>
 	<rule ref="PEAR.Functions.FunctionCallSignature.Indent">
 	    <severity>0</severity>
 	</rule>
@@ -302,12 +311,6 @@
         <severity>0</severity>
     </rule>
     <rule ref="PEAR.Functions.FunctionCallSignature.SpaceAfterCloseBracket">
-        <severity>0</severity>
-    </rule>
-    <rule ref="PEAR.Functions.FunctionCallSignature.CloseBracketLine">
-        <severity>0</severity>
-    </rule>
-    <rule ref="PEAR.Functions.FunctionCallSignature.ContentAfterOpenBracket">
         <severity>0</severity>
     </rule>
 	

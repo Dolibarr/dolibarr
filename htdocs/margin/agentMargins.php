@@ -36,7 +36,7 @@ $langs->load("margins");
 
 // Security check
 
-if ($user->rights->margin->read->all) {
+if ($user->rights->margins->read->all) {
 	$agentid = GETPOST('agentid', 'int');
 } else {
 	$agentid = $user->id;
@@ -91,7 +91,7 @@ dol_fiche_head($head, 'agentMargins', $titre, 0, $picto);
 print '<form method="post" name="sel" action="'.$_SERVER['PHP_SELF'].'">';
 print '<table class="border" width="100%">';
 
-if ($user->rights->margin->read->all) {
+if ($user->rights->margins->read->all) {
 	print '<tr><td width="20%">'.$langs->trans('SalesRepresentative').'</td>';
 	print '<td colspan="4">';
 	print $form->select_dolusers($agentid, 'agentid', 1);

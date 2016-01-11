@@ -53,12 +53,10 @@ class CommandeFournisseur extends CommonOrder
     var $id;
 
 	/**
-	 * TODO: Remove
-	 * @deprecated
-	 * @see product_ref
+	 * Supplier invoice reference
+	 * @var string
 	 */
     var $ref;
-    var $product_ref;
     var $ref_supplier;
     var $brouillon;
     var $statut;			// 0=Draft -> 1=Validated -> 2=Approved -> 3=Process runing -> 4=Received partially -> 5=Received totally -> (reopen) 4=Received partially
@@ -575,7 +573,7 @@ class CommandeFournisseur extends CommonOrder
      */
     function getNomUrl($withpicto=0,$option='')
     {
-        global $langs;
+        global $langs, $conf;
 
         $result='';
         $label = '<u>' . $langs->trans("ShowOrder") . '</u>';
@@ -698,7 +696,8 @@ class CommandeFournisseur extends CommonOrder
 
             // Do we have to change status now ? (If double approval is required and first approval, we keep status to 1 = validated)
 			$movetoapprovestatus=true;
-
+			$comment='';
+			
             $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
 			$sql.= " SET ref='".$this->db->escape($num)."',";
 			if (empty($secondlevel))	// standard or first level approval
@@ -707,7 +706,11 @@ class CommandeFournisseur extends CommonOrder
     	        $sql.= " fk_user_approve = ".$user->id;
     	        if (! empty($conf->global->SUPPLIER_ORDER_DOUBLE_APPROVAL) && $conf->global->MAIN_FEATURES_LEVEL > 0 && $this->total_ht >= $conf->global->SUPPLIER_ORDER_DOUBLE_APPROVAL)
     	        {
-    	        	if (empty($this->user_approve_id2)) $movetoapprovestatus=false;		// second level approval not done
+    	        	if (empty($this->user_approve_id2)) 
+    	        	{
+    	        	    $movetoapprovestatus=false;		// second level approval not done
+    	        	    $comment=' (first level)';
+    	        	}
     	        }
 			}
 			else	// request a second level approval
@@ -715,6 +718,7 @@ class CommandeFournisseur extends CommonOrder
             	$sql.= " date_approve2='".$this->db->idate($now)."',";
             	$sql.= " fk_user_approve2 = ".$user->id;
     	        if (empty($this->user_approve_id)) $movetoapprovestatus=false;		// first level approval not done
+    	        $comment=' (second level)';
 			}
 			// If double approval is required and first approval, we keep status to 1 = validated
 			if ($movetoapprovestatus) $sql.= ", fk_statut = 2";
@@ -724,7 +728,7 @@ class CommandeFournisseur extends CommonOrder
 
             if ($this->db->query($sql))
             {
-                $this->log($user, 2, time());	// Statut 2
+                $this->log($user, 2, time(), $comment);	// Statut 2
 
             	if (! empty($conf->global->SUPPLIER_ORDER_AUTOADD_USER_CONTACT))
 	            {
@@ -768,7 +772,8 @@ class CommandeFournisseur extends CommonOrder
 
                 if (! $error)
                 {
-                	$this->ref=$newref;
+                	$this->ref = $this->newref;
+                	
                 	if ($movetoapprovestatus) $this->statut = 2;
 					else $this->statut = 1;
            			if (empty($secondlevel))	// standard or first level approval
@@ -1214,7 +1219,9 @@ class CommandeFournisseur extends CommonOrder
      */
 	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0.0, $txlocaltax2=0.0, $fk_product=0, $fk_prod_fourn_price=0, $fourn_ref='', $remise_percent=0.0, $price_base_type='HT', $pu_ttc=0.0, $type=0, $info_bits=0, $notrigger=false, $date_start=null, $date_end=null, $array_options=0, $fk_unit=null)
     {
-        global $langs,$mysoc;
+        global $langs,$mysoc, $conf;
+
+        $error = 0;
 
         dol_syslog(get_class($this)."::addline $desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2. $fk_product, $fk_prod_fourn_price, $fourn_ref, $remise_percent, $price_base_type, $pu_ttc, $type, $fk_unit");
         include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
@@ -1572,6 +1579,7 @@ class CommandeFournisseur extends CommonOrder
         $result=$this->call_trigger('ORDER_SUPPLIER_DELETE',$user);
         if ($result < 0)
         {
+        	$this->errors[]='ErrorWhenRunningTrigger';
         	dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
         	return -1;
         }
@@ -1584,6 +1592,8 @@ class CommandeFournisseur extends CommonOrder
         dol_syslog(get_class($this)."::delete", LOG_DEBUG);
         if (! $this->db->query($sql) )
         {
+            $this->error=$this->db->lasterror();
+            $this->errors[]=$this->db->lasterror();
             $error++;
         }
 
@@ -1594,12 +1604,14 @@ class CommandeFournisseur extends CommonOrder
             if ($this->db->affected_rows($resql) < 1)
             {
                 $this->error=$this->db->lasterror();
+                $this->errors[]=$this->db->lasterror();
                 $error++;
             }
         }
         else
         {
             $this->error=$this->db->lasterror();
+            $this->errors[]=$this->db->lasterror();
             $error++;
         }
 
@@ -1609,6 +1621,8 @@ class CommandeFournisseur extends CommonOrder
         	$result=$this->deleteExtraFields();
         	if ($result < 0)
         	{
+        		$this->error='FailToDeleteExtraFields';
+        		$this->errors[]='FailToDeleteExtraFields';
         		$error++;
         		dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
         	}
@@ -1616,7 +1630,11 @@ class CommandeFournisseur extends CommonOrder
 
 		// Delete linked object
     	$res = $this->deleteObjectLinked();
-    	if ($res < 0) $error++;
+    	if ($res < 0) {
+    		$this->error='FailToDeleteObjectLinked';
+    		$this->errors[]='FailToDeleteObjectLinked';
+    		$error++;
+    	}
 
         if (! $error)
         {
@@ -1631,6 +1649,7 @@ class CommandeFournisseur extends CommonOrder
         			if (! dol_delete_file($file,0,0,0,$this)) // For triggers
         			{
         				$this->error='ErrorFailToDeleteFile';
+        				$this->errors[]='ErrorFailToDeleteFile';
         				$error++;
         			}
         		}
@@ -1640,6 +1659,7 @@ class CommandeFournisseur extends CommonOrder
         			if (! $res)
         			{
         				$this->error='ErrorFailToDeleteDir';
+        				$this->errors[]='ErrorFailToDeleteDir';
         				$error++;
         			}
         		}
@@ -2279,7 +2299,7 @@ class CommandeFournisseur extends CommonOrder
 
         $clause = " WHERE";
 
-        $sql = "SELECT c.rowid, c.date_creation as datec, c.fk_statut,c.date_livraison as delivery_date";
+        $sql = "SELECT c.rowid, c.date_creation as datec, c.date_commande, c.fk_statut, c.date_livraison as delivery_date";
         $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
         if (!$user->rights->societe->client->voir && !$user->societe_id)
         {
@@ -2299,15 +2319,15 @@ class CommandeFournisseur extends CommonOrder
 	        $response = new WorkboardResponse();
 	        $response->warning_delay=$conf->commande->fournisseur->warning_delay/60/60/24;
 	        $response->label=$langs->trans("SuppliersOrdersToProcess");
-	        $response->url=DOL_URL_ROOT.'/fourn/commande/index.php';
+	        $response->url=DOL_URL_ROOT.'/fourn/commande/list.php?statut=1,2,3';
 	        $response->img=img_object($langs->trans("Orders"),"order");
 
             while ($obj=$this->db->fetch_object($resql))
             {
                 $response->nbtodo++;
 
-				$date_to_test = empty($obj->delivery_date) ? $obj->datec : $obj->delivery_date;
-                if ($obj->fk_statut != 3 && $this->db->jdate($date_to_test) < ($now - $conf->commande->fournisseur->warning_delay)) {
+				$date_to_test = empty($obj->delivery_date) ? $obj->date_commande : $obj->delivery_date;
+                if ($obj->fk_statut != 3 && $date_to_test && $this->db->jdate($date_to_test) < ($now - $conf->commande->fournisseur->warning_delay)) {
 	                $response->nbtodolate++;
                 }
             }
