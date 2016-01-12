@@ -60,6 +60,7 @@ $alwayseditable=$extrafields->attribute_alwayseditable[$attrname];
 $param=$extrafields->attribute_param[$attrname];
 $perms=$extrafields->attribute_perms[$attrname];
 $list=$extrafields->attribute_list[$attrname];
+$printable=$extrafields->attribute_printable[$attrname];
 
 if((($type == 'select') || ($type == 'checkbox') || ($type == 'radio')) && is_array($param))
 {
@@ -122,6 +123,14 @@ if(($type == 'select') || ($type == 'sellist') || ($type == 'checkbox') || ($typ
 <tr><td><?php echo $langs->trans("ByDefaultInList"); ?>
 <?php echo img_info($langs->trans("FeatureNotYetSupported")); ?>
 </td><td class="valeur"><input id="list" type="checkbox" name="list" <?php echo ($list?' checked':''); ?>></td></tr>
+<!-- Printable -->
+<tr>
+	<td>
+		<?php echo $langs->trans("PrintOnDocuments"); ?>
+		<?php echo img_info($langs->trans("FeatureNotYetSupported")); ?>
+	</td>
+	<td class="valeur"><input id="printable" type="checkbox" name="printable" <?php echo($printable ? ' checked' : ''); ?>></td>
+</tr>
 <?php } ?>
 </table>
 

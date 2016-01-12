@@ -161,7 +161,8 @@ if ($action == 'add')
                 	$params,
                 	(GETPOST('alwayseditable')?1:0),
                 	(GETPOST('perms')?GETPOST('perms'):''),
-                	(GETPOST('list')?1:0)
+                	(GETPOST('list')?1:0),
+					(GETPOST('printable') ? true : false)
                 );
     			if ($result > 0)
     			{
@@ -311,7 +312,8 @@ if ($action == 'update')
     				$params,
     				(GETPOST('alwayseditable')?1:0),
     				(GETPOST('perms')?GETPOST('perms'):''),
-                	(GETPOST('list')?1:0)
+                	(GETPOST('list')?1:0),
+					(GETPOST('printable') ? true : false)
     			);
     			if ($result > 0)
     			{

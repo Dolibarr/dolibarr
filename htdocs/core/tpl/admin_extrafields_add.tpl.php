@@ -123,6 +123,14 @@
 <tr><td><?php echo $langs->trans("ByDefaultInList"); ?>
 <?php echo img_info($langs->trans("FeatureNotYetSupported")); ?>
 </td><td class="valeur"><input id="list" type="checkbox" name="list" <?php echo (GETPOST('list')?' checked':''); ?>></td></tr>
+<!-- Printable -->
+<tr>
+	<td>
+		<?php echo $langs->trans("PrintOnDocuments"); ?>
+		<?php echo img_info($langs->trans("FeatureNotYetSupported")); ?>
+	</td>
+	<td class="valeur"><input id="printable" type="checkbox" name="printable" <?php echo(GETPOST('printable') ? ' checked' : ''); ?>></td>
+</tr>
 <?php } ?>
 </table>
 
