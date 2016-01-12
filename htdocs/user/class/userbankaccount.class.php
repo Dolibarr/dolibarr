@@ -133,15 +133,14 @@ class UserBankAccount extends Account
      * 	Load record from database
      *
      *	@param	int		$id			Id of record
-     * 	@param	int		$socid		Id of company. If this is filled, function will return the default RIB of company
      * 	@return	int					<0 if KO, >0 if OK
      */
-    function fetch($id, $socid=0)
+    function fetch($id)
     {
-        if (empty($id) && empty($socid)) return -1;
+        if (empty($id)) return -1;
 
         $sql = "SELECT rowid, fk_user, entity, bank, number, code_banque, code_guichet, cle_rib, bic, iban_prefix as iban, domiciliation, proprio,";
-        $sql.= " owner_address, default_rib, label, datec, tms as datem";
+        $sql.= " owner_address, label, datec, tms as datem";
         $sql.= " FROM ".MAIN_DB_PREFIX."user_rib";
         if ($id)    $sql.= " WHERE rowid = ".$id;
         if ($socid) $sql.= " WHERE fk_user  = ".$userid;
