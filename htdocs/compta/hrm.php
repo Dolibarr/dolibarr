@@ -142,7 +142,7 @@ $langs->load("boxes");
 
 
 
-// Last expense report (new module)
+// Last leave requests
 if (! empty($conf->holiday->enabled) && $user->rights->holiday->read)
 {
     $sql = "SELECT u.rowid as uid, u.lastname, u.firstname, x.rowid, x.rowid as ref, x.fk_type, x.date_debut as date_start, x.date_fin as date_end, x.halfday, x.tms as dm, x.statut as status";
@@ -207,7 +207,7 @@ if (! empty($conf->holiday->enabled) && $user->rights->holiday->read)
         }
         else
         {
-            print '<tr '.$bc[$var].'><td colspan="5">'.$langs->trans("None").'</td></tr>';
+            print '<tr '.$bc[$var].'><td colspan="7">'.$langs->trans("None").'</td></tr>';
         }
         print '</table><br>';
     }
