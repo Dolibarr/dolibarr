@@ -820,8 +820,8 @@ class Holiday extends CommonObject
      *  Retourne la valeur d'un paramètre de configuration
      *
      *  @param	string	$name       name du paramètre de configuration
-     *  @param	int		$fk_type	Filter on type
-     *  @return string      		retourne la valeur du paramètre
+     *  @param	int     $fk_type    filter on type
+     *  @return string      		return parameter value
      */
     function getConfCP($name, $fk_type=0)
     {
