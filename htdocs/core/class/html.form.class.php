@@ -898,9 +898,10 @@ class Form
      *  @param	array	$events			Ajax event options to run on change. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
      *	@param	int		$limit			Maximum number of elements
      *  @param	string	$morecss		Add more css styles to the SELECT component
+     *	@param  string	$moreparam      Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
      * 	@return	string					HTML string with select box for thirdparty.
      */
-    function select_company($selected='', $htmlname='socid', $filter='', $showempty=0, $showtype=0, $forcecombo=0, $events=array(), $limit=0, $morecss='minwidth100')
+    function select_company($selected='', $htmlname='socid', $filter='', $showempty=0, $showtype=0, $forcecombo=0, $events=array(), $limit=0, $morecss='minwidth100', $moreparam='')
     {
     	$out='';
 
@@ -934,7 +935,7 @@ class Form
     	}
     	else
     	{*/
-    		$out.=$this->select_thirdparty_list($selected, $htmlname, $filter, $showempty, $showtype, $forcecombo, $events, '', 0, $limit, $morecss);
+    		$out.=$this->select_thirdparty_list($selected, $htmlname, $filter, $showempty, $showtype, $forcecombo, $events, '', 0, $limit, $morecss, $moreparam);
     	//}
 
     	return $out;
@@ -954,9 +955,10 @@ class Form
      *  @param	int		$outputmode		0=HTML select string, 1=Array
      *  @param	int		$limit			Limit number of answers
      *  @param	string	$morecss		Add more css styles to the SELECT component
+     *	@param  string	$moreparam      Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
      * 	@return	string					HTML string with
      */
-    function select_thirdparty_list($selected='',$htmlname='socid',$filter='',$showempty=0, $showtype=0, $forcecombo=0, $events=array(), $filterkey='', $outputmode=0, $limit=0, $morecss='minwidth100')
+    function select_thirdparty_list($selected='',$htmlname='socid',$filter='',$showempty=0, $showtype=0, $forcecombo=0, $events=array(), $filterkey='', $outputmode=0, $limit=0, $morecss='minwidth100', $moreparam='')
     {
         global $conf,$user,$langs;
 
@@ -1010,12 +1012,13 @@ class Form
             }
 
             // Construct $out and $outarray
-            $out.= '<select id="'.$htmlname.'" class="flat'.($morecss?' '.$morecss:'').'" name="'.$htmlname.'"'.$nodatarole.'>'."\n";
+            $out.= '<select id="'.$htmlname.'" class="flat'.($morecss?' '.$morecss:'').'"'.($moreparam?' '.$moreparam:'').' name="'.$htmlname.'"'.$nodatarole.'>'."\n";
 
             $textifempty='';
             // Do not use textempty = ' ' or '&nbsp;' here, or search on key will search on ' key'.
             //$textifempty=' ';
             //if (! empty($conf->use_javascript_ajax) || $forcecombo) $textifempty='';
+            if (! empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT)) $textifempty.=$langs->trans("NoFilter");
             if ($showempty) $out.= '<option value="-1">'.$textifempty.'</option>'."\n";
 
             $num = $this->db->num_rows($resql);
@@ -1099,7 +1102,7 @@ class Form
         $sql = "SELECT re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc,";
         $sql.= " re.description, re.fk_facture_source";
         $sql.= " FROM ".MAIN_DB_PREFIX ."societe_remise_except as re";
-        $sql.= " WHERE fk_soc = ".$socid;
+        $sql.= " WHERE fk_soc = ".(int) $socid;
         if ($filter) $sql.= " AND ".$filter;
         $sql.= " ORDER BY re.description ASC";
 
@@ -1718,13 +1721,13 @@ class Form
             foreach ($scrit as $crit)
             {
             	if ($i > 0) $sql.=" AND ";
-                $sql.="(p.ref LIKE '".$prefix.$crit."%' OR p.label LIKE '".$prefix.$crit."%'";
-                if (! empty($conf->global->MAIN_MULTILANGS)) $sql.=" OR pl.label LIKE '".$prefix.$crit."%'";
+                $sql.="(p.ref LIKE '".$db->escape($prefix.$crit)."%' OR p.label LIKE '".$db->escape($prefix.$crit)."%'";
+                if (! empty($conf->global->MAIN_MULTILANGS)) $sql.=" OR pl.label LIKE '".$db->escape($prefix.$crit)."%'";
                 $sql.=")";
                 $i++;
             }
             if (count($scrit) > 1) $sql.=")";
-          	if (! empty($conf->barcode->enabled)) $sql.= " OR p.barcode LIKE '".$prefix.$filterkey."%'";
+          	if (! empty($conf->barcode->enabled)) $sql.= " OR p.barcode LIKE '".$db->escape($prefix.$filterkey)."%'";
         	$sql.=')';
         }
         $sql.= $db->order("p.ref");
@@ -2087,7 +2090,7 @@ class Form
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON pfp.fk_soc = s.rowid";
         $sql.= " WHERE p.entity IN (".getEntity('product', 1).")";
         $sql.= " AND p.tobuy = 1";
-        if (strval($filtertype) != '') $sql.=" AND p.fk_product_type=".$filtertype;
+        if (strval($filtertype) != '') $sql.=" AND p.fk_product_type=".$this->db->escape($filtertype);
         if (! empty($filtre)) $sql.=" ".$filtre;
         // Add criteria on ref/label
         if ($filterkey != '')
@@ -2101,11 +2104,11 @@ class Form
         	foreach ($scrit as $crit)
         	{
         		if ($i > 0) $sql.=" AND ";
-        		$sql.="(pfp.ref_fourn LIKE '".$prefix.$crit."%' OR p.ref LIKE '".$prefix.$crit."%' OR p.label LIKE '".$prefix.$crit."%')";
+        		$sql.="(pfp.ref_fourn LIKE '".$this->db->escape($prefix.$crit)."%' OR p.ref LIKE '".$this->db->escape($prefix.$crit)."%' OR p.label LIKE '".$this->db->escape($prefix.$crit)."%')";
         		$i++;
         	}
         	if (count($scrit) > 1) $sql.=")";
-        	if (! empty($conf->barcode->enabled)) $sql.= " OR p.barcode LIKE '".$prefix.$filterkey."%'";
+        	if (! empty($conf->barcode->enabled)) $sql.= " OR p.barcode LIKE '".$this->db->escape($prefix.$filterkey)."%'";
         	$sql.=')';
         }
         $sql.= " ORDER BY pfp.ref_fourn DESC, pfp.quantity ASC";
@@ -2619,7 +2622,7 @@ class Form
     /**
      *      Charge dans cache la liste des types de paiements possibles
      *
-     *      @return     int             Nb of lines loaded, <0 if KO
+     *      @return     int                 Nb of lines loaded, <0 if KO
      */
     function load_cache_types_paiements()
     {
@@ -2632,9 +2635,9 @@ class Form
 
         $this->cache_types_paiements = array();
 
-        $sql = "SELECT id, code, libelle as label, type";
+        $sql = "SELECT id, code, libelle as label, type, active";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_paiement";
-        $sql.= " WHERE active > 0";
+        //if ($active >= 0) $sql.= " WHERE active = ".$active;
 
         $resql = $this->db->query($sql);
         if ($resql)
@@ -2651,6 +2654,7 @@ class Form
                 $this->cache_types_paiements[$obj->id]['code'] =$obj->code;
                 $this->cache_types_paiements[$obj->id]['label']=$label;
                 $this->cache_types_paiements[$obj->id]['type'] =$obj->type;
+                $this->cache_types_paiements[$obj->id]['active'] =$obj->active;
                 $i++;
             }
 
@@ -2708,14 +2712,15 @@ class Form
      *
      *      @param	string	$selected       Id du mode de paiement pre-selectionne
      *      @param  string	$htmlname       Nom de la zone select
-     *      @param  string	$filtertype     To filter on field type in llx_c_paiement (array('code'=>xx,'label'=>zz))
+     *      @param  string	$filtertype     To filter on field type in llx_c_paiement ('CRDT' or 'DBIT' or array('code'=>xx,'label'=>zz))
      *      @param  int		$format         0=id+libelle, 1=code+code, 2=code+libelle, 3=id+code
      *      @param  int		$empty			1=peut etre vide, 0 sinon
      * 		@param	int		$noadmininfo	0=Add admin info, 1=Disable admin info
      *      @param  int		$maxlength      Max length of label
+     *      @param  int     $active         Active or not, -1 = all
      * 		@return	void
      */
-    function select_types_paiements($selected='', $htmlname='paiementtype', $filtertype='', $format=0, $empty=0, $noadmininfo=0, $maxlength=0)
+    function select_types_paiements($selected='', $htmlname='paiementtype', $filtertype='', $format=0, $empty=0, $noadmininfo=0, $maxlength=0, $active=1)
     {
         global $langs,$user;
 
@@ -2732,6 +2737,9 @@ class Form
         if ($empty) print '<option value="">&nbsp;</option>';
         foreach($this->cache_types_paiements as $id => $arraytypes)
         {
+            // If not good status
+            if ($active >= 0 && $arraytypes['active'] != $active) continue;
+            
             // On passe si on a demande de filtrer sur des modes de paiments particuliers
             if (count($filterarray) && ! in_array($arraytypes['type'],$filterarray)) continue;
 
@@ -3685,9 +3693,10 @@ class Form
      *    @param    int		$selected    	Id mode pre-selectionne
      *    @param    string	$htmlname    	Name of select html field
      *    @param  	string	$filtertype		To filter on field type in llx_c_paiement (array('code'=>xx,'label'=>zz))
+     *    @param    int     $active         Active or not, -1 = all
      *    @return	void
      */
-    function form_modes_reglement($page, $selected='', $htmlname='mode_reglement_id', $filtertype='')
+    function form_modes_reglement($page, $selected='', $htmlname='mode_reglement_id', $filtertype='', $active=1)
     {
         global $langs;
         if ($htmlname != "none")
@@ -3697,7 +3706,7 @@ class Form
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
             print '<tr><td>';
-            $this->select_types_paiements($selected,$htmlname,$filtertype);
+            $this->select_types_paiements($selected,$htmlname,$filtertype,0,0,0,0,$active);
             print '</td>';
             print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
             print '</tr></table></form>';
@@ -3707,7 +3716,6 @@ class Form
             if ($selected)
             {
                 $this->load_cache_types_paiements();
-
                 print $this->cache_types_paiements[$selected]['label'];
             } else {
                 print "&nbsp;";
@@ -4242,8 +4250,9 @@ class Form
             // Show date with combo selects
             else
 			{
+			    //$retstring.='<div class="inline-block">';
                 // Day
-                $retstring.='<select'.($disabled?' disabled':'').' class="flat" name="'.$prefix.'day">';
+                $retstring.='<select'.($disabled?' disabled':'').' class="flat" id="'.$prefix.'day" name="'.$prefix.'day">';
 
                 if ($emptydate || $set_time == -1)
                 {
@@ -4257,7 +4266,7 @@ class Form
 
                 $retstring.="</select>";
 
-                $retstring.='<select'.($disabled?' disabled':'').' class="flat" name="'.$prefix.'month">';
+                $retstring.='<select'.($disabled?' disabled':'').' class="flat" id="'.$prefix.'month" name="'.$prefix.'month">';
                 if ($emptydate || $set_time == -1)
                 {
                     $retstring.='<option value="0" selected>&nbsp;</option>';
@@ -4275,11 +4284,11 @@ class Form
                 // Year
                 if ($emptydate || $set_time == -1)
                 {
-                    $retstring.='<input'.($disabled?' disabled':'').' placeholder="'.dol_escape_htmltag($langs->trans("Year")).'" class="flat" type="text" size="3" maxlength="4" name="'.$prefix.'year" value="'.$syear.'">';
+                    $retstring.='<input'.($disabled?' disabled':'').' placeholder="'.dol_escape_htmltag($langs->trans("Year")).'" class="flat" type="text" size="3" maxlength="4" id="'.$prefix.'year" name="'.$prefix.'year" value="'.$syear.'">';
                 }
                 else
                 {
-                    $retstring.='<select'.($disabled?' disabled':'').' class="flat" name="'.$prefix.'year">';
+                    $retstring.='<select'.($disabled?' disabled':'').' class="flat" id="'.$prefix.'year" name="'.$prefix.'year">';
 
                     for ($year = $syear - 5; $year < $syear + 10 ; $year++)
                     {
@@ -4287,6 +4296,7 @@ class Form
                     }
                     $retstring.="</select>\n";
                 }
+                //$retstring.='</div>';
             }
         }
 
@@ -4502,7 +4512,7 @@ class Form
      *	@param	int				$show_empty     0 no empty value allowed, 1 to add an empty value into list (value is '' or '&nbsp;'), <0 to add an empty value with key that is this value.
      *	@param	int				$key_in_label   1 pour afficher la key dans la valeur "[key] value"
      *	@param	int				$value_as_key   1 to use value as key
-     *	@param  string			$moreparam      Add more parameters onto the select tag
+     *	@param  string			$moreparam      Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
      *	@param  int				$translate		Translate and encode value
      * 	@param	int				$maxlen			Length maximum for labels
      * 	@param	int				$disabled		Html select box is disabled
@@ -4842,7 +4852,7 @@ class Form
             </dt>
             <dd>
                 <div class="multiselectcheckbox'.$htmlname.'">
-                    <ul>
+                    <ul class="ul'.$htmlname.'">
                     '.$lis.'
                     </ul>
                 </div>
@@ -4909,7 +4919,7 @@ class Form
 				$ways = $c->print_all_ways();       // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formated text
 				foreach($ways as $way)
 				{
-					$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories"'.($c->color?' style="background: #'.$c->color.';"':'').'>'.img_object('','category').' '.$way.'</li>';
+					$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories"'.($c->color?' style="background: #'.$c->color.';"':' style="background: #aaa"').'>'.img_object('','category').' '.$way.'</li>';
 				}
 			}
 			return '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">'.implode(' ', $toprint).'</ul></div>';
@@ -5323,7 +5333,7 @@ class Form
         {
             $ret.='</ul></div>';
         }
-		$ret.='<div class="statusref">'.$morehtmlright.'</div>';
+		if ($morehtmlright) $ret.='<div class="statusref">'.$morehtmlright.'</div>';
         $ret.='</div>';
 		
         return $ret;
@@ -5381,19 +5391,15 @@ class Form
         $id = (! empty($object->id) ? $object->id : $object->rowid);
 
         $ret='';$dir='';$file='';$originalfile='';$altfile='';$email='';
-
         if ($modulepart=='societe')
         {
             $dir=$conf->societe->multidir_output[$entity];
-            $smallfile=$object->logo;
-            $smallfile=preg_replace('/(\.png|\.gif|\.jpg|\.jpeg|\.bmp)/i','_small\\1',$smallfile);
             if (! empty($object->logo)) 
             {
-                // TODO Introduce get_exdir
-                if ((string) $imagesize == 'mini') $file=$id.'/logos/thumbs/'.getImageFileNameForSize($object->logo, '_mini');
-                else if ((string) $imagesize == 'small') $file=$id.'/logos/thumbs/'.getImageFileNameForSize($object->logo, '_small');
-                else $file=$id.'/logos/thumbs/'.$smallfile;
-                $originalfile=$id.'/logos/thumbs/'.$smallfile;
+                if ((string) $imagesize == 'mini') $file=get_exdir(0, 0, 0, 0, $object, 'thirdparty').'/logos/'.getImageFileNameForSize($object->logo, '_mini');             // getImageFileNameForSize include the thumbs
+                else if ((string) $imagesize == 'small') $file=get_exdir(0, 0, 0, 0, $object, 'thirdparty').'/logos/'.getImageFileNameForSize($object->logo, '_small');
+                else $file=get_exdir(0, 0, 0, 0, $object, 'thirdparty').'/logos/'.$object->logo;
+                $originalfile=get_exdir(0, 0, 0, 0, $object, 'thirdparty').'/logos/'.$object->logo;
             }
         }
         else if ($modulepart=='contact')
@@ -5401,11 +5407,10 @@ class Form
             $dir=$conf->societe->multidir_output[$entity].'/contact';
             if (! empty($object->photo))
             {
-                // TODO Introduce get_exdir
-                if ((string) $imagesize == 'mini') $file=$id.'/photos/thumbs/'.getImageFileNameForSize($object->photo, '_mini');
-                else if ((string) $imagesize == 'small') $file=$id.'/photos/thumbs/'.getImageFileNameForSize($object->photo, '_small');
-                else $file=$id.'/photos/'.$object->photo;
-                $originalfile=$id.'/photos/'.$object->photo;
+                if ((string) $imagesize == 'mini') $file=get_exdir(0, 0, 0, 0, $object, 'contact').'/photos/'.getImageFileNameForSize($object->photo, '_mini');
+                else if ((string) $imagesize == 'small') $file=get_exdir(0, 0, 0, 0, $object, 'contact').'/photos/'.getImageFileNameForSize($object->photo, '_small');
+                else $file=get_exdir(0, 0, 0, 0, $object, 'contact').'/photos/'.$object->photo;
+                $originalfile=get_exdir(0, 0, 0, 0, $object, 'contact').'/photos/'.$object->photo;
             }
         }
         else if ($modulepart=='userphoto')

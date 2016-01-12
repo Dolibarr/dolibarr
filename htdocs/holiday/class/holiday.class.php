@@ -33,7 +33,9 @@ class Holiday extends CommonObject
 {
 	public $element='holiday';
 	public $table_element='holiday';
-
+	protected $isnolinkedbythird = 1;     // No field fk_soc
+	protected $ismultientitymanaged = 0;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	
 	/**
 	 * @deprecated
 	 * @see id
@@ -211,7 +213,8 @@ class Holiday extends CommonObject
         $sql.= " cp.note_private,";
         $sql.= " cp.note_public,";
         $sql.= " cp.fk_user_create,";
-        $sql.= " cp.fk_type";
+        $sql.= " cp.fk_type,";
+        $sql.= " cp.entity";
         $sql.= " FROM ".MAIN_DB_PREFIX."holiday as cp";
         $sql.= " WHERE cp.rowid = ".$id;
 
@@ -247,6 +250,7 @@ class Holiday extends CommonObject
                 $this->note_public = $obj->note_public;
                 $this->fk_user_create = $obj->fk_user_create;
                 $this->fk_type = $obj->fk_type;
+                $this->entity = $obj->entity;
             }
             $this->db->free($resql);
 
@@ -731,6 +735,16 @@ class Holiday extends CommonObject
 			if ($statut == 3) return img_picto($langs->trans('ApprovedCP'),$pictoapproved).' '.$langs->trans('ApprovedCP');
 			if ($statut == 4) return img_picto($langs->trans('CancelCP'),'statut5').' '.$langs->trans('CancelCP');
 			if ($statut == 5) return img_picto($langs->trans('RefuseCP'),'statut5').' '.$langs->trans('RefuseCP');
+		}
+		if ($mode == 3)
+		{
+			$pictoapproved='statut6';
+			if (! empty($startdate) && $startdate > dol_now()) $pictoapproved='statut4';
+			if ($statut == 1) return img_picto($langs->trans('DraftCP'),'statut0');
+			if ($statut == 2) return img_picto($langs->trans('ToReviewCP'),'statut1');
+			if ($statut == 3) return img_picto($langs->trans('ApprovedCP'),$pictoapproved);
+			if ($statut == 4) return img_picto($langs->trans('CancelCP'),'statut5');
+			if ($statut == 5) return img_picto($langs->trans('RefuseCP'),'statut5');
 		}
 		if ($mode == 5)
 		{
@@ -1794,8 +1808,8 @@ class Holiday extends CommonObject
     /**
      *  Return array with list of types
      *
-     *  @param		int		$active		Status of type
-     *  @param		int		$affect		Filter on affect
+     *  @param		int		$active		Status of type. -1 = Both
+     *  @param		int		$affect		Filter on affect (a request will change sold or not). -1 = Both
      *  @return     array	    		Return array with list of types
      */
     function getTypes($active=-1, $affect=-1)

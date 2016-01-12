@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2014 Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2013-2014 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013-2015 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015      Ari Elbaz (elarifr)  <github@accedinfo.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -94,7 +94,7 @@ class FormVentilation extends Form
 	 *  @param	array	$event			Event options
      *	@param	int		$select_in		$selectid value is a aa.rowid (0 default) or aa.account_number (1)
      *	@param	int		$select_out		set value returned by select 0=rowid (default), 1=account_number
-     *	@param	int		$aabase			set accounting_account base class to display empty=all or from 1 to 8 will display only account beginning by
+     *	@param	int		$aabase			set accounting_account base class to display empty=all or from 1 to 8 will display only account beginning by this number
      *
 	 *	@return	string					String with HTML select
 	 */
@@ -126,7 +126,7 @@ class FormVentilation extends Form
 			if ($num) {
 				while ( $i < $num ) {
 					$obj = $this->db->fetch_object($resql);
-					$label = $obj->account_number . ' - ' . $obj->label;
+					$label = length_accountg($obj->account_number) . ' - ' . $obj->label;
 					$label = dol_trunc($label, $trunclength);
 					if ($select_in == 0 )  $select_value_in =  $obj->rowid;
 					if ($select_in == 1 )  $select_value_in =  $obj->account_number;
@@ -263,6 +263,83 @@ class FormVentilation extends Form
 			return - 1;
 		}
 		$this->db->free($resql);
+		return $out;
+	}
+	
+	/**
+	 * Return list of auxilary thirdparty accounts
+	 *
+	 * @param string $selectid Preselected pcg_type
+	 * @param string $htmlname Name of field in html form
+	 * @param int $showempty Add an empty field
+	 * @param array $event Event options
+	 *       
+	 * @return string String with HTML select
+	 */
+	function select_auxaccount($selectid, $htmlname = 'account_num_aux', $showempty = 0, $event = array()) {
+		global $conf;
+		
+		$out = '';
+		
+		$aux_account = array ();
+		
+		// Auxiliary customer account
+		$sql = "SELECT DISTINCT code_compta, nom ";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "societe";
+		$sql .= " ORDER BY code_compta";
+		dol_syslog(get_class($this) . "::select_auxaccount", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			while ( $obj = $this->db->fetch_object($resql) ) {
+				if (! empty($obj->code_compta)) {
+					$aux_account[$obj->code_compta] = $obj->code_compta . ' (' . $obj->nom . ')';
+				}
+			}
+		} else {
+			$this->error = "Error " . $this->db->lasterror();
+			dol_syslog(get_class($this) . "::select_pcgsubtype " . $this->error, LOG_ERR);
+			return - 1;
+		}
+		$this->db->free($resql);
+		
+		// Auxiliary supplier account
+		$sql = "SELECT DISTINCT code_compta_fournisseur, nom ";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "societe";
+		$sql .= " ORDER BY code_compta";
+		dol_syslog(get_class($this) . "::select_auxaccount", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			while ( $obj = $this->db->fetch_object($resql) ) {
+				if (! empty($obj->code_compta_fournisseur)) {
+					$aux_account[$obj->code_compta_fournisseur] = $obj->code_compta_fournisseur . ' (' . $obj->nom . ')';
+				}
+			}
+		} else {
+			$this->error = "Error " . $this->db->lasterror();
+			dol_syslog(get_class($this) . "::select_pcgsubtype " . $this->error, LOG_ERR);
+			return - 1;
+		}
+		$this->db->free($resql);
+		
+		
+		//Build select
+		if (count($aux_account) > 0) {
+			
+			$out .= ajax_combobox($htmlname, $event);
+			
+			$out .= '<select id="' . $htmlname . '" class="flat" name="' . $htmlname . '">';
+			if ($showempty)
+				$out .= '<option value="-1"></option>';
+			foreach ( $aux_account as $key => $val ) {
+				if (($selectid != '') && $selectid == $key) {
+					$out .= '<option value="' . $key . '" selected>' . $val . '</option>';
+				} else {
+					$out .= '<option value="' . $key . '">' . $val . '</option>';
+				}
+			}
+			$out .= '</select>';
+		}
+		
 		return $out;
 	}
 }

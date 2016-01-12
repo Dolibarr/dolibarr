@@ -405,7 +405,7 @@ RevenueStamp=Znaczek skarbowy
 YouMustCreateInvoiceFromThird=Ta opcja jest dostępna tylko podczas tworzenia faktury z zakładki "klienta" z thirdparty
 PDFCrabeDescription=Faktura Crabe modelu. Pełna faktura modelu (VAT Wsparcie opcji, rabaty, warunki płatności, logo, itp. ..)
 TerreNumRefModelDesc1=Zwróć numer w formacie %srrmm-nnnn dla standardowych faktur i %srrmm-nnnn dla not kredytowych, gdzie rr oznacza rok, mm to miesiąc, a nnnn to kolejny niepowtarzalny numer rozpoczynający się od 0
-MarsNumRefModelDesc1=Zwróć numer w formacie %srrmm-nnnn dla standardowych faktur, %srrmm-nnnn dla duplikatow faktur, %srrmm-nnnn dla faktur zaliczkowych i %srrmm-nnnn dla not kredytowych, gdzie rr to rok, mm to miesiąc, a nnnn to kolejny niepowtarzalny numer rozpoczynający się od 0
+MarsNumRefModelDesc1=Zwraca numer w formacie %srrmm-nnnn dla standardowych faktur, %srrmm-nnnn dla duplikatow faktur, %srrmm-nnnn dla faktur zaliczkowych i %srrmm-nnnn dla not kredytowych, gdzie rr to rok, mm to miesiąc, a nnnn to kolejny niepowtarzalny numer rozpoczynający się od 0
 TerreNumRefModelError=Rachunek zaczynające się od $ syymm już istnieje i nie jest kompatybilne z tym modelem sekwencji. Usuń go lub zmienić jego nazwę, aby włączyć ten moduł.
 ##### Types de contacts #####
 TypeContact_facture_internal_SALESREPFOLL=Przedstawiciela w ślad za klienta faktura

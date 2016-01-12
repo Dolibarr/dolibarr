@@ -276,13 +276,13 @@ MAIN_SMS_SENDMODE=Uporabljen način pošiljanja SMS
 MAIN_MAIL_SMS_FROM=Privzeta pošiljateljeva telefonska številka za pošiljanje SMS
 FeatureNotAvailableOnLinux=Funkcija ni na voljo pri Unix sistemih. Preverite program za pošiljanje pošte lokalno.
 SubmitTranslationENUS=If translation for this language is not complete or you find errors, you can correct this by editing files into directory <b>langs/%s</b> and submit modified files on dolibarr.org/forum or for developers on github.com/Dolibarr/dolibarr.
-SubmitTranslation=If translation for this language is not complete or you find errors, you can correct this by editing files into directory <b>langs/%s</b> and submit your change to www.transifex.com/dolibarr-association/dolibarr/
+SubmitTranslation=Če prevod v ta jezik ni narejen v celoti ali če ste v prevodu našli napake, lahko popravite datoteke v mapi <b>langs/%s</b> in pošljete vaše spremembe na www.transifex.com/dolibarr-association/dolibarr/
 ModuleSetup=Nastavitve modula
 ModulesSetup=Nastavitve modulov
 ModuleFamilyBase=Sistem
 ModuleFamilyCrm=Upravljanje odnosov s strankami (CRM)
-ModuleFamilyProducts=Products Management (PM)
-ModuleFamilyHr=Human Resource Management (HR)
+ModuleFamilyProducts=Upravljanje proizvodov (Products Management - PM)
+ModuleFamilyHr=Upravljanje s človeškimi viri (Human Resource Management - HR)
 ModuleFamilyProjects=Delo na projektih/sodelovanje
 ModuleFamilyOther=Ostalo
 ModuleFamilyTechnic=Orodja za različne module
@@ -329,7 +329,7 @@ UMaskExplanation=Ta parameter omogoča definicijo privzetih dovoljenj za datotek
 SeeWikiForAllTeam=Za celoten seznam vseh udeležencev in njihove organizacije poglejte na wiki stran
 UseACacheDelay= Zakasnitev predpomnilnika za izvozni odziv v sekundah (0 ali prazno pomeni, da ni predpomnilnika)
 DisableLinkToHelpCenter=Skrij link "<b>Potrebujete pomoč ali podporo</b>" na prijavni strani
-DisableLinkToHelp=Hide link to online help "<b>%s</b>"
+DisableLinkToHelp=Skrij povezavo do on-line pomoči "<b>%s</b>"
 AddCRIfTooLong=Ni avtomatskega prelamljanja besedila, zato morate v predolgo vrstico, ki sega preko robu strani, vstaviti znak za novo vrstico.
 ModuleDisabled=Modul je onemogočen
 ModuleDisabledSoNoEvent=Modul je onemogočen, zato dogodek ni bil kreiran
@@ -338,7 +338,7 @@ MinLength=Minimalna dolžina
 LanguageFilesCachedIntoShmopSharedMemory=Datoteke .lang naložene v spomin v skupni rabi
 ExamplesWithCurrentSetup=Primeri pri trenutno veljavnih nastavitvah
 ListOfDirectories=Seznam map z OpenDocument predlogami
-ListOfDirectoriesForModelGenODT=List of directories containing templates files with OpenDocument format.<br><br>Put here full path of directories.<br>Add a carriage return between eah directory.<br>To add a directory of the GED module, add here <b>DOL_DATA_ROOT/ecm/yourdirectoryname</b>.<br><br>Files in those directories must end with <b>.odt</b> or <b>.ods</b>.
+ListOfDirectoriesForModelGenODT=Seznam map, ki vsebujejo predloge v OpenDocument formatu.<br><br>Tukaj navedite celotno pot do mape.<br>Med mapami vstavite CR.<br>Mapo GED modula dodajte tukaj <b>DOL_DATA_ROOT/ecm/yourdirectoryname</b>.<br><br>Datoteke v tej mapi morajo imeti končnico <b>.odt</b> ali <b>.ods</b>.
 NumberOfModelFilesFound=Število ODT/ODS predlog v teh mapah
 ExampleOfDirectoriesForModelGen=Primeri sintakse:<br>c:\\mydir<br>/home/mydir <br>DOL_DATA_ROOT/ecm/ecmdir
 FollowingSubstitutionKeysCanBeUsed=Z dodatkom takih oznak v predlogo, boste ob kreiranju dokumenta dobili personalizirane vrednosti:
@@ -352,7 +352,7 @@ ThemeDir=Mapa s preoblekami
 ConnectionTimeout=Časovna omejitev povezave
 ResponseTimeout=Časovna omejitev odziva
 SmsTestMessage=Testno sporočilo od __PHONEFROM__ za __PHONETO__
-ModuleMustBeEnabledFirst=Module <b>%s</b> must be enabled first if you need this feature.
+ModuleMustBeEnabledFirst=Če potrebujete to funkcijo, morate najprej omogočiti Modul <b>%s</b>.
 SecurityToken=Ključ za šifriranje url
 NoSmsEngine=Na voljo ni nobenega upravljalnika SMS pošiljanja. Upravljalniki SMS pošiljanja niso nameščeni z običajno distribucijo (ker so odvisni od zunanjih dobaviteljev), vendar nekatere lahko najdete na http://www.dolistore.com
 PDF=PDF
@@ -393,8 +393,8 @@ ExtrafieldLink=Poveži z objektom
 ExtrafieldParamHelpselect=Seznam parametrov mora biti kot ključ,vrednost<br><br> na primer : <br>1,vrednost1<br>2,vrednost2<br>3,vrednost3<br>...<br><br>Če želite imeti seznam odvisen od drugega :<br>1,vrednost1|parent_list_code:parent_key<br>2,vrednost2|parent_list_code:parent_key
 ExtrafieldParamHelpcheckbox=Seznam parametrov mora biti kot ključ,vrednost<br><br> na primer : <br>1,vrednost1<br>2,vrednost2<br>3,vrednost3<br>...
 ExtrafieldParamHelpradio=Seznam parametrov mora biti kot ključ,vrednost<br><br> na primer : <br>1,vrednost1<br>2,vrednost2<br>3,vrednost3<br>...
-ExtrafieldParamHelpsellist=Parameters list comes from a table<br>Syntax : table_name:label_field:id_field::filter<br>Example : c_typent:libelle:id::filter<br><br>filter can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter witch is the current id of current object<br>To do a SELECT in filter use $SEL$<br>if you want to filter on extrafields use syntaxt  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another :<br>c_typent:libelle:id:parent_list_code|parent_column:filter
-ExtrafieldParamHelpchkbxlst=Parameters list comes from a table<br>Syntax : table_name:label_field:id_field::filter<br>Example : c_typent:libelle:id::filter<br><br>filter can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter witch is the current id of current object<br>To do a SELECT in filter use $SEL$<br>if you want to filter on extrafields use syntaxt  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another :<br>c_typent:libelle:id:parent_list_code|parent_column:filter
+ExtrafieldParamHelpsellist=Seznam parametrov je določen v tabeli<br>Syntax : table_name:label_field:id_field::filter<br>Primer : c_typent:libelle:id::filter<br><br>filter je lahko enostaven test (npr. active=1) za prikaz samo aktivnih vrednosti<br>V filtru lahko tudi uporabite $ID$ , ki je trenutni id trenutnega objekta<br>Če želite izbrati SELECT v filtru, uporabite $SEL$<br>če želite filter v posebnih poljih, uporabite  extra.fieldcode=... (kjer je koda polja koda posebnega polja)<br><br>Če želite odvisen seznam :<br>c_typent:libelle:id:parent_list_code|parent_column:filter
+ExtrafieldParamHelpchkbxlst=Seznam parametrov je določen v tabeli<br>Syntax : table_name:label_field:id_field::filter<br>Primer : c_typent:libelle:id::filter<br><br>filter je lahko enostaven test (npr. active=1) za prikaz samo aktivnih vrednosti<br>V filtru lahko tudi uporabite $ID$ , ki je trenutni id trenutnega objekta<br>Če želite izbrati SELECT v filtru, uporabite $SEL$<br>če želite filter v posebnih poljih, uporabite  extra.fieldcode=... (kjer je koda polja koda posebnega polja)<br><br>Če želite odvisen seznam :<br>c_typent:libelle:id:parent_list_code|parent_column:filter
 ExtrafieldParamHelplink=Parameters must be ObjectName:Classpath<br>Syntax : ObjectName:Classpath<br>Example : Societe:societe/class/societe.class.php
 LibraryToBuildPDF=Uporabljena knjižnica za ustvarjanje PDF
 WarningUsingFPDF=Pozor: vaš <b>conf.php</b> vsebuje direktivo <b>dolibarr_pdf_force_fpdf=1</b>. To pomeni, da uporabljate knjižnico FPDF za generiranje PDF datotek. Ta knjižnica je stara in ne podpira številnih značilnosti (Unicode, transparentnost slike, cirilico, arabske in azijske jezike, ...), zado lahko med generiranjem PDF pride do napak.<br>Za rešitev tega problema in polno podporo PDF generiranja, prosimo da naložite <a href="http://www.tcpdf.org/" target="_blank">TCPDF knjižnico</a>, nato označite kot komentar ali odstranite vrstico <b>$dolibarr_pdf_force_fpdf=1</b>, in namesto nje dodajte <b>$dolibarr_lib_TCPDF_PATH='path_to_TCPDF_dir'</b>

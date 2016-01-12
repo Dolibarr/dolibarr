@@ -207,7 +207,7 @@ if (file_exists($fullpathselecteddir))
 
     		// Enable jquery handlers on new generated HTML objects
             print '<script type="text/javascript">';
-            print 'jQuery(".classfortooltip").tipTip({ maxWidth: "600px", edgeOffset: 10, delay: 50, fadeIn: 50, fadeOut: 50});';
+            print 'jQuery(".classfortooltip").tipTip({ maxWidth: "'.dol_size(600,'width').'px", edgeOffset: 10, delay: 50, fadeIn: 50, fadeOut: 50});';
 			// TODO Remove this. Is replaced with function as 3rd parameter of fileTree
             print 'jQuery(".fmdirlia").click(function(e) {
             			id=jQuery(this).attr(\'id\').substr(12);

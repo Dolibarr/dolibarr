@@ -624,10 +624,11 @@ class Resource extends CommonObject
      *      Load properties id_previous and id_next
      *
      *      @param	string	$filter		Optional filter
-     *	 	@param  int		$fieldid   	Name of field to use for the select MAX and MIN
+     *	    @param  	int		$fieldid   	Name of field to use for the select MAX and MIN
+     *	    @param	int		$nodbprefix		Do not include DB prefix to forge table name
      *      @return int         		<0 if KO, >0 if OK
      */
-    function load_previous_next_ref($filter,$fieldid)
+    function load_previous_next_ref($filter, $fieldid, $nodbprefix =0)
     {
     	global $conf, $user;
 

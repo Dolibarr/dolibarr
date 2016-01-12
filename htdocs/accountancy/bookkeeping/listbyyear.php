@@ -36,7 +36,7 @@ $langs->load("accountancy");
 $page = GETPOST("page");
 $sortorder = GETPOST("sortorder");
 $sortfield = GETPOST("sortfield");
-$limit = $conf->liste_limit;
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 
 // Filter
 $year = GETPOST("year", 'int');

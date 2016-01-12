@@ -8,6 +8,7 @@
  * Copyright (C) 2013		Christophe Battarel		<christophe.battarel@altairis.fr>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015	Marcos García			<marcosgdf@gmail.com>
+ * Copyright (C) 2015		Ferran Marcet			<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -987,6 +988,13 @@ class Contrat extends CommonObject
 				dol_syslog(get_class($this)."::delete error", LOG_ERR);
 				$error++;
 			}
+		}
+
+		if (! $error)
+		{
+			// Delete linked object
+			$res = $this->deleteObjectLinked();
+			if ($res < 0) $error++;
 		}
 
 		if (! $error)

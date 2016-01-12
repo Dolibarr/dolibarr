@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
@@ -115,8 +115,9 @@ if ($action == "correct_stock" && ! $cancel)
 		$object = new Product($db);
 		$result=$object->fetch($id);
 
-		if ($object->hasbatch() && (! GETPOST("sellby")) && (! GETPOST("eatby")) && (! GETPOST("batch_number"))) {
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("atleast1batchfield")), null, 'errors');
+		if ($object->hasbatch() && ! GETPOST("batch_number"))
+		{
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("batch_number")), null, 'errors');
 			$error++;
 			$action='correction';
 		}
@@ -202,7 +203,19 @@ if ($action == "transfert_stock" && ! $cancel)
 		$error++;
 		$action='transfert';
 	}
-
+	if (! empty($conf->productbatch->enabled))
+	{
+	    $object = new Product($db);
+	    $result=$object->fetch($id);
+	
+	    if ($object->hasbatch() && ! GETPOST("batch_number"))
+	    {
+	        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("batch_number")), null, 'errors');
+	        $error++;
+	        $action='transfert';
+	    }
+	}
+	
 	if (! $error)
 	{
 		if ($id)

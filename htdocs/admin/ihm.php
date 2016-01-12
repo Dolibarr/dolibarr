@@ -48,13 +48,15 @@ if (! defined("MAIN_MOTD")) define("MAIN_MOTD","");
 
 // List of supported permanent search area
 $searchform=array();
+/* deprecated
 if (empty($conf->use_javascript_ajax))
 {
-    $searchform=array("MAIN_SEARCHFORM_SOCIETE", "MAIN_SEARCHFORM_CONTACT", "MAIN_SEARCHFORM_PRODUITSERVICE", "MAIN_SEARCHFORM_PRODUITSERVICE_SUPPLIER", "MAIN_SEARCHFORM_ADHERENT", "MAIN_SEARCHFORM_PROJECT", "MAIN_SEARCHFORM_EMPLOYEE");
-    $searchformconst=array($conf->global->MAIN_SEARCHFORM_SOCIETE,$conf->global->MAIN_SEARCHFORM_CONTACT,$conf->global->MAIN_SEARCHFORM_PRODUITSERVICE,$conf->global->MAIN_SEARCHFORM_PRODUITSERVICE_SUPPLIER,$conf->global->MAIN_SEARCHFORM_ADHERENT,$conf->global->MAIN_SEARCHFORM_PROJECT,$conf->global->MAIN_SEARCHFORM_EMPLOYEE);
-    $searchformtitle=array($langs->trans("Companies"), $langs->trans("Contacts"), $langs->trans("ProductsAndServices"), $langs->trans("ProductsAndServices").' ('.$langs->trans("SupplierRef").')', $langs->trans("Members"), $langs->trans("Projects"), $langs->trans("Users"));
-    $searchformmodule=array('Module1Name','Module1Name','Module50Name','Module50Name','Module310Name','Module400Name');
+    $searchform=array("MAIN_SEARCHFORM_SOCIETE", "MAIN_SEARCHFORM_CONTACT", "MAIN_SEARCHFORM_PRODUITSERVICE", "MAIN_SEARCHFORM_ADHERENT", "MAIN_SEARCHFORM_PROJECT", "MAIN_SEARCHFORM_EMPLOYEE");
+    $searchformconst=array($conf->global->MAIN_SEARCHFORM_SOCIETE,$conf->global->MAIN_SEARCHFORM_CONTACT,$conf->global->MAIN_SEARCHFORM_PRODUITSERVICE,$conf->global->MAIN_SEARCHFORM_ADHERENT,$conf->global->MAIN_SEARCHFORM_PROJECT,$conf->global->MAIN_SEARCHFORM_EMPLOYEE);
+    $searchformtitle=array($langs->trans("Companies"), $langs->trans("Contacts"), $langs->trans("ProductsAndServices"), $langs->trans("Members"), $langs->trans("Projects"), $langs->trans("Users"));
+    $searchformmodule=array('Module1Name','Module1Name','Module50Name','Module310Name','Module400Name');
 }
+*/
 
 
 /*
@@ -96,16 +98,6 @@ if ($action == 'update')
 	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_TEXTLINK', $conf->entity);
     else dolibarr_set_const($db, 'THEME_ELDY_TEXTLINK', join(',',colorStringToArray(GETPOST('THEME_ELDY_TEXTLINK'),array())),'chaine',0,'',$conf->entity);
 	
-	/*
-    dolibarr_set_const($db, "MAIN_SEARCHFORM_CONTACT",			$_POST["MAIN_SEARCHFORM_CONTACT"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_SEARCHFORM_SOCIETE",			$_POST["MAIN_SEARCHFORM_SOCIETE"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_SEARCHFORM_PRODUITSERVICE",	$_POST["MAIN_SEARCHFORM_PRODUITSERVICE"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_SEARCHFORM_PRODUITSERVICE_SUPPLIER",$_POST["MAIN_SEARCHFORM_PRODUITSERVICE_SUPPLIER"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_SEARCHFORM_ADHERENT",			$_POST["MAIN_SEARCHFORM_ADHERENT"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_SEARCHFORM_PROJECT",			$_POST["MAIN_SEARCHFORM_PROJECT"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_SEARCHFORM_EMPLOYEE",			$_POST["MAIN_SEARCHFORM_EMPLOYEE"],'chaine',0,'',$conf->entity);
-    */
-    
     dolibarr_set_const($db, "MAIN_SIZE_LISTE_LIMIT",			$_POST["main_size_liste_limit"],'chaine',0,'',$conf->entity);
     dolibarr_set_const($db, "MAIN_SIZE_SHORTLISTE_LIMIT",		$_POST["main_size_shortliste_limit"],'chaine',0,'',$conf->entity);
     dolibarr_set_const($db, "MAIN_DISABLE_JAVASCRIPT",			$_POST["main_disable_javascript"],'chaine',0,'',$conf->entity);

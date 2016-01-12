@@ -51,7 +51,7 @@ if ($page == -1) {
 $offset = $conf->liste_limit * $page;
 if (! $sortorder) $sortorder='DESC';
 if (! $sortfield) $sortfield='dateprint';
-$limit = $conf->liste_limit;
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 
 // Search fields
 $sref=GETPOST("sref");
@@ -180,10 +180,8 @@ dol_fiche_end();
 print '<br>';
 
 
-print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?socid='.$socid.'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="socid" value="'.$socid.'">'."\n";
-
 
 $sql_select='';
 /*if ($type_element == 'action')

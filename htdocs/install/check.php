@@ -391,7 +391,8 @@ else
 								array('from'=>'3.5.0', 'to'=>'3.6.0'),
 								array('from'=>'3.6.0', 'to'=>'3.7.0'),
 								array('from'=>'3.7.0', 'to'=>'3.8.0'),
-		                        array('from'=>'3.8.0', 'to'=>'3.9.0')
+		                        array('from'=>'3.8.0', 'to'=>'3.9.0'),
+		                        array('from'=>'3.9.0', 'to'=>'4.0.0')
 		);
 
 		$count=0;
@@ -536,5 +537,5 @@ $(".runupgrade").click(function() {
 </script>';
 
 dolibarr_install_syslog("--- check: end");
-pFooter(true);	// Never display next button
+pFooter(1);	// Never display next button
 

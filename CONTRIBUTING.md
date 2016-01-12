@@ -76,7 +76,7 @@ Feel free to express technical details, use cases or anything relevant to the cu
 
 This section can span multiple lines.
 
-Try to keep lines under 72 characters.
+Try to keep lines under 120 characters.
 
 #### Samples
 <pre>

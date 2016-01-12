@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005       Matthieu Valleton	<mv@seeschloss.org>
- * Copyright (C) 2006-2010  Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2015  Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007       Patrick Raguin		<patrick.raguin@gmail.com>
  * Copyright (C) 2005-2012  Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
@@ -294,6 +294,7 @@ else
 	print "</table>\n";
 }
 
+
 // List of products or services (type is type of category)
 if ($object->type == Categorie::TYPE_PRODUCT)
 {
@@ -339,7 +340,7 @@ if ($object->type == Categorie::TYPE_PRODUCT)
 				$var=!$var;
 				print "\t<tr ".$bc[$var].">\n";
 				print '<td class="nowrap" valign="top">';
-				print $prod->getNomUrl(1,'category');
+				print $prod->getNomUrl(1);
 				print "</td>\n";
 				print '<td valign="top">'.$prod->label."</td>\n";
 				// Link to delete from category
@@ -390,7 +391,7 @@ if ($object->type == Categorie::TYPE_SUPPLIER)
 				print "\t<tr ".$bc[$var].">\n";
 
 				print '<td class="nowrap" valign="top">';
-				print $soc->getNomUrl(1,'category_supplier');
+				print $soc->getNomUrl(1);
 				print "</td>\n";
 				// Link to delete from category
 				print '<td align="right">';
@@ -444,7 +445,7 @@ if($object->type == Categorie::TYPE_CUSTOMER)
 				$var=!$var;
 				print "\t<tr ".$bc[$var].">\n";
 				print '<td class="nowrap" valign="top">';
-				print $soc->getNomUrl(1,'category');
+				print $soc->getNomUrl(1);
 				print "</td>\n";
 				// Link to delete from category
 				print '<td align="right">';
@@ -497,7 +498,7 @@ if ($object->type == Categorie::TYPE_MEMBER)
 				print "\t<tr ".$bc[$var].">\n";
 				print '<td class="nowrap" valign="top">';
 				$member->ref=$member->login;
-				print $member->getNomUrl(1,0,'category');
+				print $member->getNomUrl(1,0);
 				print "</td>\n";
 				print '<td valign="top">'.$member->lastname."</td>\n";
 				print '<td valign="top">'.$member->firstname."</td>\n";
@@ -526,7 +527,7 @@ if ($object->type == Categorie::TYPE_MEMBER)
 	}
 }
 
-//Categorie contact
+// Categorie contact
 if($object->type == Categorie::TYPE_CONTACT)
 {
 	$contacts = $object->getObjectsInCateg("contact");

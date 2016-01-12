@@ -323,4 +323,4 @@ $dolibarr_main_db_prefix='';
 // Examples:
 // $multicompany_transverse_mode='1';
 
-?>
+

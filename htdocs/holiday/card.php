@@ -84,7 +84,7 @@ if ($action == 'create')
 	    $description = trim(GETPOST('description'));
 	    $userID = GETPOST('userID');
 
-    	// If no start date
+    	// If no type
 	    if ($type <= 0)
 	    {
 	        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
@@ -135,12 +135,6 @@ if ($action == 'create')
 	    }
 
 	    $result = 0;
-
-        if ($type < 1)
-	    {
-	        setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Type")), null, 'errors');
-	        $error++;
-	    }
 
 	    if (! $error)
 	    {
@@ -362,7 +356,7 @@ if ($action == 'confirm_send')
             if ($cp->getConfCP('AlertValidatorSolde'))
             {
             	$nbopenedday=num_open_day($cp->date_debut_gmt,$cp->date_fin_gmt,0,1,$cp->halfday);
-                if ($nbopenedday > $cp->getCPforUser($cp->fk_user))
+                if ($nbopenedday > $cp->getCPforUser($cp->fk_user, $cp->fk_type))
                 {
                     $message.= "\n";
                     $message.= $langs->transnoentities("HolidaysToValidateAlertSolde")."\n";
@@ -419,14 +413,14 @@ if ($action == 'confirm_valid')
             // Calculcate number of days consummed
             $nbopenedday=num_open_day($cp->date_debut_gmt,$cp->date_fin_gmt,0,1,$cp->halfday);
 
-            $soldeActuel = $cp->getCpforUser($cp->fk_user);
+            $soldeActuel = $cp->getCpforUser($cp->fk_user, $cp->fk_type);
             $newSolde = $soldeActuel - ($nbopenedday * $cp->getConfCP('nbHolidayDeducted'));
 
             // On ajoute la modification dans le LOG
-            $cp->addLogCP($user->id, $cp->fk_user, $langs->transnoentitiesnoconv("Holidays"), $newSolde);
+            $cp->addLogCP($user->id, $cp->fk_user, $langs->transnoentitiesnoconv("Holidays"), $newSolde, $cp->fk_type);
 
             // Mise à jour du solde
-            $cp->updateSoldeCP($cp->fk_user, $newSolde);
+            $cp->updateSoldeCP($cp->fk_user, $newSolde, $cp->fk_type);
 
             // To
             $destinataire = new User($db);
@@ -584,14 +578,14 @@ if ($action == 'confirm_cancel' && GETPOST('confirm') == 'yes')
         	// Calculcate number of days consummed
         	$nbopenedday=num_open_day($cp->date_debut_gmt,$cp->date_fin_gmt,0,1,$cp->halfday);
 
-        	$soldeActuel = $cp->getCpforUser($cp->fk_user);
+        	$soldeActuel = $cp->getCpforUser($cp->fk_user, $cp->fk_type);
         	$newSolde = $soldeActuel + ($nbopenedday * $cp->getConfCP('nbHolidayDeducted'));
 
         	// On ajoute la modification dans le LOG
-        	$result1=$cp->addLogCP($user->id, $cp->fk_user, $langs->transnoentitiesnoconv("HolidaysCancelation"), $newSolde);
+        	$result1=$cp->addLogCP($user->id, $cp->fk_user, $langs->transnoentitiesnoconv("HolidaysCancelation"), $newSolde, $cp->fk_type);
 
         	// Mise à jour du solde
-        	$result2=$cp->updateSoldeCP($cp->fk_user, $newSolde);
+        	$result2=$cp->updateSoldeCP($cp->fk_user, $newSolde, $cp->fk_type);
 
         	if ($result1 < 0 || $result2 < 0)
         	{
@@ -806,7 +800,7 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         print '<tr>';
         print '<td class="fieldrequired">'.$langs->trans("Type").'</td>';
         print '<td>';
-        $typeleaves=$cp->getTypes(1,1);
+        $typeleaves=$cp->getTypes(1,-1);
         $arraytypeleaves=array();
         foreach($typeleaves as $key => $val)
         {
@@ -1019,7 +1013,7 @@ else
 		        print '<tr>';
 		        print '<td>'.$langs->trans("Type").'</td>';
 		        print '<td>';
-		        $typeleaves=$cp->getTypes(1,1);
+		        $typeleaves=$cp->getTypes(1,-1);
 		        print $typeleaves[$cp->fk_type]['label'];
 		        print '</td>';
 		        print '</tr>';

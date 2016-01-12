@@ -76,13 +76,6 @@ class modAdherent extends DolibarrModules
         $this->const = array();
         $r=0;
         
-        $this->const[$r][0] = "MAIN_SEARCHFORM_ADHERENT";
-        $this->const[$r][1] = "yesno";
-        $this->const[$r][2] = "1";
-        $this->const[$r][3] = "Show form for quick member search";
-        $this->const[$r][4] = 0;
-        $r++;
-        
         $this->const[$r][0] = "ADHERENT_MAIL_RESIL";
         $this->const[$r][1] = "texte";
         $this->const[$r][2] = "Votre adhésion vient d'être résiliée.\r\nNous espérons vous revoir très bientôt";

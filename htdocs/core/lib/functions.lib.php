@@ -908,7 +908,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 	}
 	else 
 	{
-	    if ($showimage) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$form->showphoto($modulepart,$object,0,0,0,'photoref','small',1,0,$maxvisiblephotos).'</div>';
+        if ($showimage) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$form->showphoto($modulepart,$object,0,0,0,'photoref','small',1,0,$maxvisiblephotos).'</div>';
 	}
 	if ($showbarcode) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$form->showbarcode($object).'</div>';
 	if ($object->element == 'societe' && ! empty($conf->use_javascript_ajax) && $user->rights->societe->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
@@ -2959,16 +2959,18 @@ function load_fiche_titre($titre, $mesg='', $picto='title_generic.png', $pictois
  *	@param	int		$pictoisfullpath	1=Icon name is a full absolute url of image
  *  @param	string	$morehtml			More html to show
  *  @param  string  $morecss            More css to the table
+ *  @param  int     $limit              Limit ofnumber of lines on each page
  *	@return	void
  */
-function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='', $center='', $num=-1, $totalnboflines=0, $picto='title_generic.png', $pictoisfullpath=0, $morehtml='', $morecss='')
+function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='', $center='', $num=-1, $totalnboflines=0, $picto='title_generic.png', $pictoisfullpath=0, $morehtml='', $morecss='', $limit=0)
 {
 	global $conf,$langs;
 
 	if ($picto == 'setup') $picto='title_setup.png';
 	if (($conf->browser->name == 'ie') && $picto=='title_generic.png') $picto='title.gif';
-
-	if (($num > $conf->liste_limit) || ($num == -1))
+	if ($limit < 1) $limit = $conf->liste_limit;
+	
+	if (($num > $limit) || ($num == -1))
 	{
 		$nextpage = 1;
 	}
@@ -2983,7 +2985,11 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 
 	// Left
 	if ($picto && $titre) print '<td class="nobordernopadding hideonsmartphone" width="40" align="left" valign="middle">'.img_picto('', $picto, '', $pictoisfullpath).'</td>';
-	print '<td class="nobordernopadding"><div class="titre">'.$titre.'</div></td>';
+	print '<td class="nobordernopadding"><div class="titre">'.$titre;
+	if (!empty($totalnboflines) && !empty($titre)) {
+		print ' ('.$totalnboflines.')';
+	}
+	print '</div></td>';
 
 	// Center
 	if ($center)
@@ -2997,13 +3003,13 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 	if ($sortorder) $options .= "&amp;sortorder=".$sortorder;
 	// Show navigation bar
 	$pagelist = '';
-	if ($page > 0 || $num > $conf->liste_limit)
+	if ($page > 0 || $num > $limit)
 	{
 		if ($totalnboflines)	// If we know total nb of lines
 		{
 			$maxnbofpage=(empty($conf->dol_optimize_smallscreen) ? 6 : 3);		// nb before and after selected page + ... + first or last
 
-			$nbpages=ceil($totalnboflines/$conf->liste_limit);
+			$nbpages=ceil($totalnboflines/$limit);
 			$cpt=($page-$maxnbofpage);
 			if ($cpt < 0) { $cpt=0; }
 
@@ -3961,9 +3967,12 @@ function get_exdir($num,$level,$alpha,$withoutslash,$object,$modulepart)
 	else
 	{
 		// TODO
-		// We will introduce here a common way of forging path for document storage
+		// We will enhance here a common way of forging path for document storage
 		// Here, object->id, object->ref and object->modulepart are required.
-
+        if (in_array($modulepart, array('thirdparty','contact')))
+        {
+            $path=$object->ref?$object->ref:$object->id;
+        }
 	}
 
 	if (empty($withoutslash) && ! empty($path)) $path.='/';

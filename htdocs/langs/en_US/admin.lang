@@ -362,7 +362,7 @@ HideAnyVATInformationOnPDF=Hide all information related to VAT on generated PDF
 HideDescOnPDF=Hide products description on generated PDF
 HideRefOnPDF=Hide products ref. on generated PDF
 HideDetailsOnPDF=Hide products lines details on generated PDF
-PlaceCustomerAddressToIsoLocation=Use french standard position (La Posteà for customer address position
+PlaceCustomerAddressToIsoLocation=Use french standard position (La Poste) for customer address position
 Library=Library
 UrlGenerationParameters=Parameters to secure URLs
 SecurityTokenIsUnique=Use a unique securekey parameter for each URL
@@ -416,6 +416,7 @@ ConfirmEraseAllCurrentBarCode=Are you sure you want to erase all current barcode
 AllBarcodeReset=All barcode values have been removed
 NoBarcodeNumberingTemplateDefined=No numbering barcode template enabled into barcode module setup.
 NoRecordWithoutBarcodeDefined=No record with no barcode value defined.
+EnableFileCache=Enable file cache
 
 # Modules
 Module0Name=Users & groups
@@ -499,7 +500,7 @@ Module510Desc=Management of employees salaries and payments
 Module520Name=Loan
 Module520Desc=Management of loans
 Module600Name=Notifications
-Module600Desc=Send EMail notifications on some Dolibarr business events to third-party contacts (setup defined on each thirdparty)
+Module600Desc=Send EMail notifications (triggered by some business events) to third-party contacts (setup defined on each thirdparty) or fixed emails
 Module700Name=Donations
 Module700Desc=Donation management
 Module770Name=Expense reports

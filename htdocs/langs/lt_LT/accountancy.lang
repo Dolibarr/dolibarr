@@ -155,3 +155,19 @@ ErrorAccountancyCodeIsAlreadyUse=Error, you cannot delete this accounting accoun
 
 FicheVentilation=Suskirstymo kortelė
 GeneralLedgerIsWritten=Operations are written in the general ledger
+
+##Export Journal Feature
+ExportFormat=Format of Export
+Prefixname=Prefix of export File
+Separate=Export separator
+Textframe=Frame of text value
+Headercol=Colname in header of file
+Fieldname=Name of Field
+Headername=Name in header
+Type=Type of fields
+Param=Additionnal parameters
+EnabledProduct=In Product
+EnabledTiers=In Tiers
+EnabledVat=In Vat
+
+MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s

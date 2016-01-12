@@ -93,7 +93,7 @@ if ($action == 'add_element_resource' && ! $cancel)
 	}
 	if (! $error && $res > 0)
 	{
-		setEventMessage($langs->trans('ResourceLinkedWithSuccess'),'mesgs');
+		setEventMessages($langs->trans('ResourceLinkedWithSuccess'), null, 'mesgs');
 		header("Location: ".$_SERVER['PHP_SELF'].'?element='.$element.'&element_id='.$element_id);
 		exit;
 	}
@@ -112,12 +112,13 @@ if ($action == 'update_linked_resource' && $user->rights->resource->write && !GE
 
 		if ($result >= 0)
 		{
-			setEventMessage($langs->trans('RessourceLineSuccessfullyUpdated'));
+			setEventMessages($langs->trans('RessourceLineSuccessfullyUpdated'), null, 'mesgs');
 			header("Location: ".$_SERVER['PHP_SELF']."?element=".$element."&element_id=".$element_id);
 			exit;
 		}
-		else {
-			setEventMessage($object->error,'errors');
+		else 
+		{
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 }
@@ -129,13 +130,13 @@ if ($action == 'confirm_delete_linked_resource' && $user->rights->resource->dele
 
     if ($result >= 0)
     {
-        setEventMessage($langs->trans('RessourceLineSuccessfullyDeleted'));
+        setEventMessages($langs->trans('RessourceLineSuccessfullyDeleted'), null, 'mesgs');
         header("Location: ".$_SERVER['PHP_SELF']."?element=".$element."&element_id=".$element_id);
         exit;
     }
     else 
     {
-        setEventMessage($object->error,'errors');
+        setEventMessages($object->error, $object->errors, 'errors');
     }
 }
 

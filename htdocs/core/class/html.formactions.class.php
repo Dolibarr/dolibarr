@@ -243,10 +243,10 @@ class FormActions
      *  Output html select list of type of event
      *
      *  @param	string		$selected       Type pre-selected (can be 'manual', 'auto' or 'AC_xxx')
-     *  @param  string		$htmlname       Nom champ formulaire
+     *  @param  string		$htmlname       Name of select field
      *  @param	string		$excludetype	A type to exclude ('systemauto', 'system', '')
      *  @param	string		$onlyautoornot	1=Group all type AC_XXX into 1 line AC_MANUAL. 0=Keep details of type
-     *  @param	int		    $hideinfohelp	1=Do not show info help
+     *  @param	int		    $hideinfohelp	1=Do not show info help, 0=Show, -1=Show+Add info to tell how to set default value
      *  @param  int		    $multiselect    1=Allow multiselect of action type
      * 	@return	void
      */
@@ -280,7 +280,10 @@ class FormActions
 			print $form->selectarray($htmlname, $arraylist, $selected);
 		}
 		
-        if ($user->admin && empty($onlyautoornot) && empty($hideinfohelp)) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+        if ($user->admin && empty($onlyautoornot) && $hideinfohelp <= 0) 
+        {
+            print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup").($hideinfohelp == -1 ? ". ".$langs->trans("YouCanSetDefaultValueInModuleSetup") : ''),1);
+        }
     }
 
 }

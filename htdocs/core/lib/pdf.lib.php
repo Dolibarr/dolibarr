@@ -1008,17 +1008,16 @@ function pdf_writeLinkedObjects(&$pdf,$object,$outputlangs,$posx,$posy,$w,$h,$al
 	{
 		foreach($linkedobjects as $linkedobject)
 		{
+		    $reftoshow = $linkedobject["ref_title"].' : '.$linkedobject["ref_value"];
+		    if (! empty($linkedobject["date_value"]))
+		    {
+		        $reftoshow .= ' / '.$linkedobject["date_value"];
+		    }
+		    
 			$posy+=3;
 			$pdf->SetXY($posx,$posy);
 			$pdf->SetFont('','', $default_font_size - 2);
-			$pdf->MultiCell($w, $h, $linkedobject["ref_title"].' : '.$linkedobject["ref_value"], '', $align);
-
-			if (! empty($linkedobject["date_title"]) && ! empty($linkedobject["date_value"]))
-			{
-				$posy+=3;
-				$pdf->SetXY($posx,$posy);
-				$pdf->MultiCell($w, $h, $linkedobject["date_title"].' : '.$linkedobject["date_value"], '', $align);
-			}
+			$pdf->MultiCell($w, $h, $reftoshow, '', $align);
 		}
 	}
 
@@ -1826,10 +1825,11 @@ function pdf_getTotalQty($object,$type,$outputlangs)
 
 /**
  * 	Return linked objects
+ *  FIXME This function returns only one link per link type instead of all links. If we fix this, we must also fix function pdf_writeLinkedObjects
  *
  * 	@param	object		$object			Object
  * 	@param	Translate	$outputlangs	Object lang for output
- * 	@return	array   Linked objects
+ * 	@return	array                       Linked objects
  */
 function pdf_getLinkedObjects($object,$outputlangs)
 {

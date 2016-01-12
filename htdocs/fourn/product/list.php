@@ -49,7 +49,7 @@ if ($page < 0) {
     $page = 0 ;
 }
 
-$limit = $conf->liste_limit;
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $offset = $limit * $page ;
 
 if (! $sortfield) $sortfield = 'p.ref';
@@ -109,7 +109,7 @@ if ($sref)
 }
 if ($snom)
 {
-	$sql .= natural_search('s.nom', $snom);
+	$sql .= natural_search('p.label', $snom);
 }
 if($catid)
 {

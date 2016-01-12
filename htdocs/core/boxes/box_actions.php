@@ -173,7 +173,8 @@ class box_actions extends ModeleBoxes
 	{
 		global $langs, $conf;
 		parent::showBox($this->info_box_head, $this->info_box_contents);
-        if ($conf->global->SHOW_DIALOG_HOMEPAGE) {
+        if (! empty($conf->global->SHOW_DIALOG_HOMEPAGE)) 
+        {
 			$actioncejour=false;
 			$contents=$this->info_box_contents;
 			$nblines=count($contents);
@@ -182,7 +183,7 @@ class box_actions extends ModeleBoxes
 			$bcx[1] = 'class="box_impair"';
 			if ($contents[0][0]['text'] != $langs->trans("NoActionsToDo"))
 			{
-				print '<div id="dialog" title="'.$nblines." ".$langs->trans("ActionsToDo").'">';
+				print '<div id="dialogboxaction" title="'.$nblines." ".$langs->trans("ActionsToDo").'">';
 				print '<table width=100%>';
 				for ($line=0, $n=$nblines; $line < $n; $line++)
 				{
@@ -219,11 +220,11 @@ class box_actions extends ModeleBoxes
 			if ($actioncejour)
 			{
 				print '<script>';
-				print '$( "#dialog" ).dialog({ autoOpen: true });';
-				if ($conf->global->SHOW_DIALOG_HOMEPAGE > 1)
+				print '$("#dialogboxaction").dialog({ autoOpen: true });';
+				if ($conf->global->SHOW_DIALOG_HOMEPAGE > 1)    // autoclose after this delay
 				{
 					print 'setTimeout(function(){';
-					print '$("#dialog").dialog("close");';
+					print '$("#dialogboxaction").dialog("close");';
 					print '}, '.($conf->global->SHOW_DIALOG_HOMEPAGE*1000).');';
 				}
 				print '</script>';
@@ -231,7 +232,7 @@ class box_actions extends ModeleBoxes
 			else
 			{
 				print '<script>';
-				print '$( "#dialog" ).dialog({ autoOpen: false });';
+				print '$("#dialogboxaction").dialog({ autoOpen: false });';
 				print '</script>';
 			}
 		}

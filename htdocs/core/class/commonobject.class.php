@@ -2054,7 +2054,7 @@ abstract class CommonObject
 
         $forcedroundingmode=$roundingadjust;
         if ($forcedroundingmode == 'auto' && isset($conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND)) $forcedroundingmode=$conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND;
-        if ($forcedroundingmode == 'auto') $forcedroundingmode='0';
+        elseif ($forcedroundingmode == 'auto') $forcedroundingmode='0';
 
         $error=0;
 

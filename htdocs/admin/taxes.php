@@ -26,7 +26,8 @@
  */
 
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
+if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
 
 $langs->load('admin');
 
@@ -112,6 +113,7 @@ if ($action == 'update') {
 
 llxHeader();
 $form=new Form($db);
+if (! empty($conf->accounting->enabled)) $formaccountancy = New FormVentilation($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans('TaxSetup'),$linkback,'title_setup');
@@ -212,7 +214,14 @@ foreach ($list as $key)
 
 	// Value
 	print '<td>';
-	print '<input type="text" size="20" id="'.$key.'" name="'.$key.'" value="'.$conf->global->$key.'">';
+	if (! empty($conf->accounting->enabled))
+	{
+		print $formaccountancy->select_account($conf->global->$key, $key, 1, '', 1, 1);
+	}
+	else
+	{
+		print '<input type="text" size="20" id="'.$key.'" name="'.$key.'" value="'.$conf->global->$key.'">';
+	}
 	print '</td></tr>';
 }
 

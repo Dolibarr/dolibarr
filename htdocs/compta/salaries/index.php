@@ -46,7 +46,7 @@ if ($page == -1) { $page = 0; }
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-$limit = $conf->liste_limit;
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 if (! $sortfield) $sortfield="s.datep";
 if (! $sortorder) $sortorder="DESC";
 $optioncss = GETPOST('optioncss','alpha');
@@ -108,6 +108,12 @@ if ($typeid) {
     $sql .= " AND s.fk_typepayment=".$typeid;
 }
 //$sql.= " GROUP BY u.rowid, u.lastname, u.firstname, s.rowid, s.fk_user, s.amount, s.label, s.datev, s.fk_typepayment, s.num_payment, pst.code";
+$totalnboflines=0;
+$result=$db->query($sql);
+if ($result)
+{
+    $totalnboflines = $db->num_rows($result);
+}
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit+1,$offset);
 

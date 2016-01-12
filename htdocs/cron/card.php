@@ -43,6 +43,11 @@ $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
 $cancel=GETPOST('cancel');
 
+
+/*
+ * Actions
+ */
+
 $object = new Cronjob($db);
 if (!empty($id))
 {
@@ -53,7 +58,7 @@ if (!empty($id))
 	}
 }
 
-if(!empty($cancel))
+if (!empty($cancel))
 {
 	if (!empty($id))
 	{
@@ -61,7 +66,7 @@ if(!empty($cancel))
 	}
 	else
 	{
-		Header("Location: ".DOL_URL_ROOT.'/cron/list.php?status=1');
+		Header("Location: ".DOL_URL_ROOT.'/cron/list.php?status=-2');
 		exit;
 	}
 }
@@ -78,7 +83,7 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->cron->del
 	}
 	else
 	{
-		Header("Location: ".DOL_URL_ROOT.'/cron/list.php?status=1');
+		Header("Location: ".DOL_URL_ROOT.'/cron/list.php?status=-2');
 		exit;
 	}
 }
@@ -86,6 +91,8 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->cron->del
 // Execute jobs
 if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->execute)
 {
+    $now = dol_now();   // Date we start
+    
 	$result=$object->run_jobs($user->login);
 
 	if ($result < 0)
@@ -95,7 +102,7 @@ if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->ex
 	}
 	else
 	{
-		$res = $object->reprogram_jobs($user->login);
+		$res = $object->reprogram_jobs($user->login, $now);
 		if ($res > 0)
 		{
 			if ($object->lastresult > 0) setEventMessages($langs->trans("JobFinished"), null, 'warnings');
@@ -312,7 +319,7 @@ if (($action=="create") || ($action=="edit"))
 	print "</tr>\n";
 
 	print "<tr><td>";
-	print $langs->trans('CronHourStart')."</td><td>";
+	print $langs->trans('CronDtStart')."</td><td>";
 	if(!empty($object->datestart))
 	{
 		$form->select_date($object->datestart,'datestart',1,1,'',"cronform");
@@ -513,15 +520,22 @@ else
 	print "</td></tr>";
 
 	print "<tr><td>";
-	print $langs->trans('CronHourStart')."</td><td>";
-	if(!empty($object->datestart)) {print dol_print_date($object->datestart,'dayhourtext');} else {print $langs->trans('CronNone');}
+	print $langs->trans('CronDtStart')."</td><td>";
+	if(!empty($object->datestart)) {print dol_print_date($object->datestart,'dayhourtext');}
 	print "</td></tr>";
 
 	print "<tr><td>";
 	print $langs->trans('CronDtEnd')."</td><td>";
-	if(!empty($object->dateend)) {print dol_print_date($object->dateend,'dayhourtext');} else {print $langs->trans('CronNone');}
+	if(!empty($object->dateend)) {print dol_print_date($object->dateend,'dayhourtext');}
 	print "</td></tr>";
 
+	print '<tr><td>';
+	print $langs->trans('CronDtNextLaunch');
+	print ' ('.$langs->trans('CronFrom').')';
+	print "</td><td>";
+	if(!empty($object->datenextrun)) {print dol_print_date($object->datenextrun,'dayhoursec');} else {print $langs->trans('CronNone');}
+	print "</td></tr>";
+	
 	print "<tr><td>";
 	print $langs->trans('CronPriority')."</td>";
 	print "<td>".$object->priority;
@@ -586,23 +600,17 @@ else
 
 	print '<br>';
 
+	
 	print '<table class="border" width="100%">';
 
 	print '<tr><td width="30%">';
 	print $langs->trans('CronDtLastLaunch')."</td><td>";
-	if(!empty($object->datelastrun)) {print dol_print_date($object->datelastrun,'dayhourtext');} else {print $langs->trans('CronNone');}
-	print "</td></tr>";
-
-	print '<tr><td>';
-	print $langs->trans('CronDtNextLaunch');
-	print ' ('.$langs->trans('CronFrom').')';
-	print "</td><td>";
-	if(!empty($object->datenextrun)) {print dol_print_date($object->datenextrun,'dayhourtext');} else {print $langs->trans('CronNone');}
+	if(!empty($object->datelastrun)) {print dol_print_date($object->datelastrun,'dayhoursec');} else {print $langs->trans('CronNone');}
 	print "</td></tr>";
 
 	print '<tr><td>';
 	print $langs->trans('CronDtLastResult')."</td><td>";
-	if(!empty($object->datelastresult)) {print dol_print_date($object->datelastresult,'dayhourtext');} else {print $langs->trans('CronNone');}
+	if(!empty($object->datelastresult)) {print dol_print_date($object->datelastresult,'dayhoursec');} else {print $langs->trans('CronNone');}
 	print "</td></tr>";
 
 	print '<tr><td>';

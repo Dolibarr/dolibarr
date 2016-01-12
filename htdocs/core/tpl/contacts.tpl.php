@@ -50,7 +50,7 @@ $userstatic=new User($db);
 <?php if ($permission) { ?>
 	<form class="tagtr liste_titre">
 		<div class="tagtd"><?php echo $langs->trans("Source"); ?></div>
-		<div class="tagtd"><?php echo $langs->trans("Company"); ?></div>
+		<div class="tagtd"><?php echo $langs->trans("ThirdParty"); ?></div>
 		<div class="tagtd"><?php echo $langs->trans("Contacts"); ?></div>
 		<div class="tagtd"><?php echo $langs->trans("ContactType"); ?></div>
 		<div class="tagtd">&nbsp;</div>
@@ -102,10 +102,10 @@ $userstatic=new User($db);
 			<?php $selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$object->socid; ?>
 			<?php 
 			// add company icon for direct link 
-			if ($selectedCompany) 
+			if ($selectedCompany && empty($conf->dol_use_jmobile)) 
 			{
 				$companystatic->fetch($selectedCompany);
-				echo $companystatic->getNomUrl(2); 
+				echo $companystatic->getNomUrl(2, '', 0, 1); 
 			}
 			?>
 			<?php $selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany', '', 0); ?>
@@ -130,7 +130,7 @@ $userstatic=new User($db);
 
 	<form class="tagtr liste_titre">
 		<div class="tagtd"><?php echo $langs->trans("Source"); ?></div>
-		<div class="tagtd"><?php echo $langs->trans("Company"); ?></div>
+		<div class="tagtd"><?php echo $langs->trans("ThirdParty"); ?></div>
 		<div class="tagtd"><?php echo $langs->trans("Contacts"); ?></div>
 		<div class="tagtd"><?php echo $langs->trans("ContactType"); ?></div>
 		<div class="tagtd" align="center"><?php echo $langs->trans("Status"); ?></div>

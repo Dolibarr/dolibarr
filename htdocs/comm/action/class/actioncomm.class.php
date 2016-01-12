@@ -157,7 +157,17 @@ class ActionComm extends CommonObject
 
     var $actions=array();
 
+    // Fields for emails
+    var $email_msgid;
+    var $email_from;
+    var $email_sender;
+    var $email_to;
+    var $email_tocc;
+    var $email_tobcc;
+    var $email_subject;
+    var $errors_to;
 
+    
     /**
      *      Constructor
      *
@@ -834,7 +844,7 @@ class ActionComm extends CommonObject
         if (! empty($elementtype))
         {
             if ($elementtype == 'project') $sql.= ' AND a.fk_project = '.$fk_element;
-            else $sql.= " AND a.fk_element = ".$fk_element." AND a.elementtype = '".$elementtype."'";
+            else $sql.= " AND a.fk_element = ".(int) $fk_element." AND a.elementtype = '".$elementtype."'";
         }
         if (! empty($filter)) $sql.= $filter;
 		if ($sortorder && $sortfield) $sql.=$db->order($sortfield, $sortorder);

@@ -392,7 +392,8 @@ foreach ($dirmodels as $reldir)
                     print "<td>\n";
                     require_once $dir.$file;
                     $module = new $classname($db,$specimenthirdparty);
-                    print $module->description;
+		    if (method_exists($module,'info')) print $module->info($langs);
+	            else print $module->description;
                     print "</td>\n";
 
                     // Active

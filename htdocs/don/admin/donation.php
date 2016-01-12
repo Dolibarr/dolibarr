@@ -25,10 +25,11 @@
  *		\brief      Page to setup the donation module
  */
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/donation.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/donation.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/don/class/don.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
+if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
 
 $langs->load("admin");
 $langs->load("donations");
@@ -198,6 +199,7 @@ else if ($action == 'setart885') {
 
 $dir = "../../core/modules/dons/";
 $form=new Form($db);
+if (! empty($conf->accounting->enabled)) $formaccountancy = New FormVentilation($db);
 
 llxHeader('',$langs->trans("DonationsSetup"),'DonConfiguration');
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
@@ -228,9 +230,16 @@ print '<tr '.$bc[$var].'>';
 
 print '<td width="50%">';
 $label = $langs->trans("AccountAccounting");
-print '<label for="'.$langs->trans("AccountAccounting").'">' . $label . '</label></td>';
+print '<label for="DONATION_ACCOUNTINGACCOUNT">' . $label . '</label></td>';
 print '<td>';
-print '<input type="text" size="10" id="DONATION_ACCOUNTINGACCOUNT" name="DONATION_ACCOUNTINGACCOUNT" value="' . $conf->global->DONATION_ACCOUNTINGACCOUNT . '">';
+if (! empty($conf->accounting->enabled))
+{
+	print $formaccountancy->select_account($conf->global->DONATION_ACCOUNTINGACCOUNT, 'DONATION_ACCOUNTINGACCOUNT', 1, '', 1, 1);
+}
+else
+{
+	print '<input type="text" size="10" id="DONATION_ACCOUNTINGACCOUNT" name="DONATION_ACCOUNTINGACCOUNT" value="' . $conf->global->DONATION_ACCOUNTINGACCOUNT . '">';
+}
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" />';
 print "</td></tr>\n";

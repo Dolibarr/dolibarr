@@ -53,7 +53,7 @@ if ($page == -1) { $page = 0; }
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-$limit = $conf->liste_limit;
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="p.rowid";
 $optioncss = GETPOST('optioncss','alpha');
@@ -454,7 +454,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 if (empty($action))
 {
     if ($page == -1) $page = 0 ;
-    $limit = $conf->liste_limit;
+    $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
     $offset = $limit * $page ;
 
     if (! $sortorder) $sortorder='DESC';

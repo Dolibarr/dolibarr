@@ -61,7 +61,7 @@ $sortorder = GETPOST("sortorder",'alpha');
 $sortfield = GETPOST("sortfield",'alpha');
 
 if ($page == -1) { $page = 0 ; }
-$limit = $conf->liste_limit;
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $offset = $limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -261,7 +261,8 @@ if ($resql)
 	if ($optioncss != '') $param.='&optioncss='.$optioncss;
 	if ($search_status >= 0)  	$param.="&search_status=".$search_status;
 
-	print_barre_liste($langs->trans("BillsSuppliers").($socid?" $soc->name.":""),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
+	print_barre_liste($langs->trans("BillsSuppliers").($socid?" $soc->name.":""),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords,'title_accountancy');
+	
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';

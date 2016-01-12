@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 /**
  *  	\file       htdocs/fourn/recap-fourn.php
  *		\ingroup    fournisseur
- *		\brief      Page de fiche recap fournisseur
+ *		\brief      Page de fiche recap supplier
  */
 
 require '../main.inc.php';
@@ -30,7 +30,7 @@ $langs->load("companies");
 $langs->load("bills");
 
 // Security check
-$socid = $_GET["socid"];
+$socid = GETPOST("socid",'int');
 if ($user->societe_id > 0)
 {
     $action = '';
@@ -42,6 +42,9 @@ if ($user->societe_id > 0)
 /*
  * View
  */
+
+$form = new Form($db);
+$userstatic=new User($db);
 
 llxHeader();
 
@@ -56,36 +59,12 @@ if ($socid > 0)
     $head = societe_prepare_head($societe);
 
     dol_fiche_head($head, 'supplier', $langs->trans("ThirdParty"), 0, 'company');
-
-
-    print "<table width=\"100%\">\n";
-    print '<tr><td valign="top" width="50%">';
-
-    print '<table class="border" width="100%">';
-
-    // Nom
-    print '<tr><td width="20%">'.$langs->trans("Name").'</td><td width="80%" colspan="3">'.$societe->nom.'</td></tr>';
-
-    // Prefix
-    if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
-    {
-        print '<tr><td>'.$langs->trans("Prefix").'</td><td colspan="3">';
-        print ($societe->prefix_comm?$societe->prefix_comm:'&nbsp;');
-        print '</td></tr>';
-    }
-
-    print "</table>";
-
-    print "</td></tr></table>\n";
-
-    print '</div>';
-
-
-
+	dol_banner_tab($societe, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
+	dol_fiche_end();
 
     if (! empty($conf->fournisseur->enabled) && $user->rights->facture->lire)
     {
-        // Invoices list
+        // Invoice list
         print load_fiche_titre($langs->trans("SupplierPreview"));
 
         print '<table class="noborder" width="100%">';
@@ -203,10 +182,9 @@ if ($socid > 0)
         {
             dol_print_error($db);
         }
+        
         print "</table>";
-        print "<br>";
     }
-
 }
 else
 {

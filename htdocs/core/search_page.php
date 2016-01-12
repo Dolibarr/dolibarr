@@ -66,48 +66,62 @@ $hookmanager->initHooks(array('searchform'));
 
 // Define $searchform
 $searchform = '';
+
 // TODO Mutualize code here with function left_menu into main.inc.php page
-if ((( ! empty($conf->societe->enabled) && (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) || empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))) || ! empty($conf->fournisseur->enabled)) && ! empty($conf->global->MAIN_SEARCHFORM_SOCIETE) && $user->rights->societe->lire)
+if ($conf->use_javascript_ajax && 1 == 2)
 {
-	$langs->load("companies");
-	$searchform.=printSearchForm(DOL_URL_ROOT.'/societe/list.php', DOL_URL_ROOT.'/societe/list.php', img_object('','company').' '.$langs->trans("ThirdParties"), 'soc', 'sall', '', 'company');
-	$nbofsearch++;
+    if (! is_object($form)) $form=new Form($db);
+    $selected=-1;
+    $searchform.=$form->selectArrayAjax('searchselectcombo', DOL_URL_ROOT.'/core/ajax/selectsearchbox.php', $selected, 'data-role="none"', '', 0, 1, 'vmenusearchselectcombo', 1, $langs->trans("Search"), 0);
 }
-
-if (! empty($conf->societe->enabled) && ! empty($conf->global->MAIN_SEARCHFORM_CONTACT) && $user->rights->societe->lire)
+else
 {
-	$langs->load("companies");
-	$searchform.=printSearchForm(DOL_URL_ROOT.'/contact/list.php', DOL_URL_ROOT.'/contact/list.php', img_object('','contact').' '.$langs->trans("Contacts"), 'contact', 'sall', '', 'contact');
-	$nbofsearch++;
-}
+    // Define $searchform
+    if ((( ! empty($conf->societe->enabled) && (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) || empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))) || ! empty($conf->fournisseur->enabled)) && $user->rights->societe->lire)
+    {
+        $langs->load("companies");
+        $searchform.=printSearchForm(DOL_URL_ROOT.'/societe/list.php', DOL_URL_ROOT.'/societe/list.php', $langs->trans("ThirdParties"), 'soc', 'sall', 'T', 'searchleftt', img_object('','company'));
+    }
 
-if (((! empty($conf->product->enabled) && $user->rights->produit->lire) || (! empty($conf->service->enabled) && $user->rights->service->lire))
-	&& ! empty($conf->global->MAIN_SEARCHFORM_PRODUITSERVICE))
-{
-	$langs->load("products");
-	$searchform.=printSearchForm(DOL_URL_ROOT.'/product/list.php', DOL_URL_ROOT.'/product/list.php', img_object('','product').' '.$langs->trans("Products")."/".$langs->trans("Services"), 'products', 'sall', '', 'product');
-	$nbofsearch++;
-}
+    if (! empty($conf->societe->enabled) && $user->rights->societe->lire)
+    {
+        $langs->load("companies");
+        $searchform.=printSearchForm(DOL_URL_ROOT.'/contact/list.php', DOL_URL_ROOT.'/contact/list.php', $langs->trans("Contacts"), 'contact', 'sall', 'A', 'searchleftc', img_object('','contact'));
+    }
 
-if (((! empty($conf->product->enabled) && $user->rights->produit->lire) || (! empty($conf->service->enabled) && $user->rights->service->lire))
-	&& ! empty($conf->global->MAIN_SEARCHFORM_PRODUITSERVICE))
-{
-	$langs->load("products");
-	$searchform.=printSearchForm(DOL_URL_ROOT.'/fourn/product/list.php', DOL_URL_ROOT.'/fourn/product/list.php', img_object('','product').' '.$langs->trans("SupplierRef"), 'products', 'srefsupplier');
-	$nbofsearch++;
-}
+    if (((! empty($conf->product->enabled) && $user->rights->produit->lire) || (! empty($conf->service->enabled) && $user->rights->service->lire))
+    )
+    {
+        $langs->load("products");
+        $searchform.=printSearchForm(DOL_URL_ROOT.'/product/list.php', DOL_URL_ROOT.'/product/list.php', $langs->trans("Products")."/".$langs->trans("Services"), 'products', 'sall', 'P', 'searchleftp', img_object('','product'));
+    }
 
-if (! empty($conf->adherent->enabled) && ! empty($conf->global->MAIN_SEARCHFORM_ADHERENT) && $user->rights->adherent->lire)
-{
-	$langs->load("members");
-	$searchform.=printSearchForm(DOL_URL_ROOT.'/adherents/list.php', DOL_URL_ROOT.'/adherents/list.php', img_object('','user').' '.$langs->trans("Members"), 'member', 'sall', '', 'member');
-	$nbofsearch++;
+    if (! empty($conf->projet->enabled) && $user->rights->projet->lire)
+    {
+        $langs->load("projects");
+        $searchform.=printSearchForm(DOL_URL_ROOT.'/projet/list.php', DOL_URL_ROOT.'/projet/list.php', $langs->trans("Projects"), 'project', 'search_all', 'Q', 'searchleftproj', img_object('','projectpub'));
+    }
+
+    if (! empty($conf->adherent->enabled) && $user->rights->adherent->lire)
+    {
+        $langs->load("members");
+        $searchform.=printSearchForm(DOL_URL_ROOT.'/adherents/list.php', DOL_URL_ROOT.'/adherents/list.php', $langs->trans("Members"), 'member', 'sall', 'M', 'searchleftm', img_object('','user'));
+    }
+
+	if (! empty($conf->user->enabled) && $user->rights->user->user->lire)
+    {
+        $langs->load("users");
+        $searchform.=printSearchForm(DOL_URL_ROOT.'/user/list.php', DOL_URL_ROOT.'/user/list.php', $langs->trans("Users"), 'user', 'sall', 'M', 'searchleftuser', img_object('','user'));
+    }
 }
 
 // Execute hook printSearchForm
-$parameters=array();
-$reshook=$hookmanager->executeHooks('printSearchForm',$parameters);
-if (empty($reshook)) $searchform.=$hookmanager->resPrint;
+$parameters=array('searchform'=>$searchform);
+$reshook=$hookmanager->executeHooks('printSearchForm',$parameters);    // Note that $action and $object may have been modified by some hooks
+if (empty($reshook))
+{
+	$searchform.=$hookmanager->resPrint;
+}
 else $searchform=$hookmanager->resPrint;
 
 
@@ -121,7 +135,7 @@ print $searchform;
 print '</div>'."\n";
 //print '</div></div>';
 print '</div></div>';
-print "<!-- End SearchForm -->\n";
+print "\n<!-- End SearchForm -->\n";
 
 print '</div>';
 print '</body></html>'."\n";

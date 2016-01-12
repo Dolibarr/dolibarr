@@ -9,21 +9,21 @@ ACCOUNTING_EXPORT_DEVISE=Export the devise
 Selectformat=Select the format for the file
 ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
 
-Accounting=Raamatupidamine
-Globalparameters=Globaalsed parameetrid
+Accounting=Accounting
+Globalparameters=Global parameters
 Menuaccount=Accounting accounts
 Menuthirdpartyaccount=Thirdparty accounts
-MenuTools=Tööriistad
+MenuTools=Tools
 
 ConfigAccountingExpert=Configuration of the module accounting expert
 Journaux=Journals
 JournalFinancial=Financial journals
-Exports=Eksportimised
-Export=Eksport
-Modelcsv=Eksportimise mudel
+Exports=Exports
+Export=Export
+Modelcsv=Model of export
 OptionsDeactivatedForThisExportModel=For this export model, options are deactivated
-Selectmodelcsv=Vali eksportimise mudel
-Modelcsv_normal=Tavaline eksportimine
+Selectmodelcsv=Select a model of export
+Modelcsv_normal=Classic export
 Modelcsv_CEGID=Export towards CEGID Expert
 BackToChartofaccounts=Return chart of accounts
 Back=Return
@@ -41,8 +41,8 @@ TradeMargin=Trade margin
 Reports=Reports
 ByCustomerInvoice=By invoices customers
 NewAccount=New accounting account
-Create=Loo
-CreateMvts=Loo liikumine
+Create=Create
+CreateMvts=Create movement
 UpdateAccount=Modification of an accounting account
 UpdateMvts=Modification of a movement
 WriteBookKeeping=Record accounts in general ledger
@@ -96,10 +96,10 @@ ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Accounting account by default for the sold produ
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Accounting account by default for the bought services (if not defined in the service sheet)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=Accounting account by default for the sold services (if not defined in the service sheet)
 
-Doctype=Dokumendi tüüp
-Docdate=Kuupäev
-Docref=Viide
-Numerocompte=Konto
+Doctype=Type of document
+Docdate=Date
+Docref=Reference
+Numerocompte=Account
 Code_tiers=Thirdparty
 Labelcompte=Label account
 Sens=Sens
@@ -107,7 +107,7 @@ Codejournal=Journal
 
 DelBookKeeping=Delete the records of the general ledger
 
-DescSellsJournal=Sells journal
+DescSellsJournal=Sales journal
 DescPurchasesJournal=Purchases journal
 BankJournal=Bank journal
 DescBankJournal=Bank journal including all the types of payments other than cash
@@ -155,3 +155,19 @@ ErrorAccountancyCodeIsAlreadyUse=Error, you cannot delete this accounting accoun
 
 FicheVentilation=Breakdown card
 GeneralLedgerIsWritten=Operations are written in the general ledger
+
+##Export Journal Feature
+ExportFormat=Format of Export
+Prefixname=Prefix of export File
+Separate=Export separator
+Textframe=Frame of text value
+Headercol=Colname in header of file
+Fieldname=Name of Field
+Headername=Name in header
+Type=Type of fields
+Param=Additionnal parameters
+EnabledProduct=In Product
+EnabledTiers=In Tiers
+EnabledVat=In Vat
+
+MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s

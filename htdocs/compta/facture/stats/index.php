@@ -240,7 +240,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
 	if ($mode == 'customer') $filter='s.client in (1,2,3)';
 	if ($mode == 'supplier') $filter='s.fournisseur = 1';
-	print $form->selectarray('socid', $companies, $socid, 1, 0, 0, 'style="width: 100%"');
+	print $form->selectarray('socid', $companies, $socid, 1, 0, 0, 'style="width: 95%"', 0, 0, 0, '', '', 1);
 	print '</td></tr>';
 	// User
 	print '<tr><td>'.$langs->trans("CreatedBy").'</td><td>';
