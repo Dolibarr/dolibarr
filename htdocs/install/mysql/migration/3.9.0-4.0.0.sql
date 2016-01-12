@@ -33,4 +33,5 @@ UPDATE llx_projet as p set opp_percent = (SELECT percent from llx_c_lead_status 
 
 ALTER TABLE llx_overwrite_trans ADD UNIQUE INDEX uk_overwrite_trans(lang, transkey);
 
-
+-- Extrafields printing support
+ALTER TABLE llx_extrafields ADD COLUMN printable boolean DEFAULT FALSE;

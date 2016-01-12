@@ -1,6 +1,7 @@
 -- ===================================================================
 -- Copyright (C) 2011-2012 Regis Houssin        <regis.houssin@capnetworks.com>
 -- Copyright (C) 2011-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2016      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -33,5 +34,6 @@ create table llx_extrafields
 	pos             integer DEFAULT 0,
 	alwayseditable  integer DEFAULT 0,							-- 1 if field can be edited whatever is element status
 	param			text,										-- extra parameters to define possible values of field
-	list			integer DEFAULT 0							-- list of values for field that are combo lists
+	list			integer DEFAULT 0,							-- list of values for field that are combo lists
+	printable		boolean DEFAULT FALSE						-- is the extrafield printable
 )ENGINE=innodb;
