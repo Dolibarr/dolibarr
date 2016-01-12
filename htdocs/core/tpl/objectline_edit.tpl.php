@@ -341,7 +341,7 @@ if (! empty($conf->margin->enabled))
 			setTimeout(function () { rate.focus() }, 50);
 			return false;
 		}
-		if (npRate == "np_markRate" && rate.val() >= 100)
+		if (npRate == "np_markRate" && rate.val() > 100)
 		{
 			alert('<?php echo $langs->transnoentitiesnoconv("markRateShouldBeLesserThan100"); ?>');
 			e.stopPropagation();
