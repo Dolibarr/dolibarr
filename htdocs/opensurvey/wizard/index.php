@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2013      Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2014      Marcos García       <marcosgdf@gmail.com>
+/* Copyright (C) 2013	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2014	Marcos García		<marcosgdf@gmail.com>
+ * Copyright (C) 2016	Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +23,7 @@
 //if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
 //if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1');
-if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
+//if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
