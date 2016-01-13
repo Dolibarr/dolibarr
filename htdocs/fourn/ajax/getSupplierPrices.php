@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
- * Copyright (C) 2015      Francis Appels      <francis.appels@z-application.com>
+ * Copyright (C) 2015      Francis Appels       <francis.appels@z-application.com>
+ * Copyright (C) 2016      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +19,7 @@
 
 /**
  *	\file       /htdocs/fourn/ajax/getSupplierPrices.php
- *	\brief      File to return an Ajax response to get a supplier prices
+ *	\brief      File to return an Ajax response to get list of possible prices for margin calculation
  */
 
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1'); // Disables token renewal
@@ -36,6 +37,8 @@ $idprod=GETPOST('idprod','int');
 $prices = array();
 
 $langs->load('stocks');
+$langs->load('margins');
+
 
 /*
  * View
@@ -92,6 +95,10 @@ if ($idprod > 0)
 	// Add price for pmp
 	$price=$producttmp->pmp;
 	$prices[] = array("id" => 'pmpprice', "price" => price2num($price), "label" => $langs->trans("PMPValueShort").': '.price($price,0,$langs,0,0,-1,$conf->currency), "title" => $langs->trans("PMPValueShort").': '.price($price,0,$langs,0,0,-1,$conf->currency));  // For price field, we must use price2num(), for label or title, price()
+
+	// Add price for costprice
+	$price=$producttmp->cost_price;
+	$prices[] = array("id" => 'costprice', "price" => price2num($price), "label" => $langs->trans("CostPrice").': '.price($price,0,$langs,0,0,-1,$conf->currency), "title" => $langs->trans("PMPValueShort").': '.price($price,0,$langs,0,0,-1,$conf->currency));  // For price field, we must use price2num(), for label or title, price()
 }
 
 echo json_encode($prices);

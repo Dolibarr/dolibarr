@@ -4191,10 +4191,11 @@ abstract class CommonObject
 		return true;
 	}
 	
-	 /**
-	 * define buy price if not defined
+	/**
+	 * Get buy price to use for margin calculation. This function is called when buy price is unknown.
 	 *	set buy price = sell price if ForceBuyingPriceIfNull configured,
-	 *	 else if calculation MARGIN_TYPE = 'pmp' and pmp is calculated, set pmp as buyprice
+	 *   else if calculation MARGIN_TYPE = 'costprice' and costprice is defined, use costprice as buyprice
+	 *	 else if calculation MARGIN_TYPE = 'pmp' and pmp is calculated, use pmp as buyprice
 	 *	 else set min buy price as buy price
 	 *	 
 	 * @param float		$unitPrice		 product unit price
@@ -4209,16 +4210,16 @@ abstract class CommonObject
 	
 		$buyPrice = 0;
 		
-		if (($unitPrice > 0) && (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1))
+		if (($unitPrice > 0) && (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1)) // In most cases, test here is false
 		{
 			$buyPrice = $unitPrice * (1 - $discountPercent / 100);
 		}
 		else
 		{
-			// Get PMP
+			// Get cost price for margin calculation
 			if (! empty($fk_product))
 			{
-				if (isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == 'pmp')
+				if (isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == 'costprice')
 				{
 					require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 					$product = new Product($this->db);
@@ -4228,13 +4229,32 @@ abstract class CommonObject
 						$this->errors[] = 'ErrorProductIdDoesNotExists';
 						return -1;
 					}
-					if (($product->pmp > 0))
+					if ($product->cost_price > 0)
+					{
+						$buyPrice = $product->cost_price;
+					}
+					else if ($product->pmp > 0)
 					{
 						$buyPrice = $product->pmp;
 					}
-					// TODO add option to set PMP of product
 				}
-				else if (isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == '1')
+				else if (isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == 'pmp')
+				{
+					require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+					$product = new Product($this->db);
+					$result = $product->fetch($fk_product);
+					if ($result <= 0)
+					{
+						$this->errors[] = 'ErrorProductIdDoesNotExists';
+						return -1;
+					}
+					if ($product->pmp > 0)
+					{
+						$buyPrice = $product->pmp;
+					}
+				}
+				
+				if (empty($buyPrice) && isset($conf->global->MARGIN_TYPE) && in_array($conf->global->MARGIN_TYPE, array('1','pmp','costprice')))
 				{
 					require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 					$productFournisseur = new ProductFournisseur($this->db);
