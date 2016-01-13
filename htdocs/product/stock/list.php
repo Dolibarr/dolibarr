@@ -68,7 +68,7 @@ $form=new Form($db);
 $warehouse=new Entrepot($db);
 
 $sql = "SELECT e.rowid, e.label as ref, e.statut, e.lieu, e.address, e.zip, e.town, e.fk_pays,";
-$sql.= " SUM(p.pmp * ps.reel) as estimatedvalue, SUM(p.price * ps.reel) as sellvalue, SUM(ps.reel) as stockqty";
+$sql.= " SUM(p.pmp * ps.reel) as estimatedvalue, SUM(p.price * ps.reel) as sellvalue";
 $sql.= " FROM ".MAIN_DB_PREFIX."entrepot as e";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON e.rowid = ps.fk_entrepot";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON ps.fk_product = p.rowid";
@@ -118,8 +118,7 @@ if ($result)
 	print "<tr class=\"liste_titre\">";
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"], "e.label","","","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("LocationSummary"),$_SERVER["PHP_SELF"], "e.lieu","","","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("PhysicalStock"), $_SERVER["PHP_SELF"], "stockqty",'','','align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("EstimatedStockValue"), $_SERVER["PHP_SELF"], "e.valo_pmp",'','','align="right"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("EstimatedStockValue"), $_SERVER["PHP_SELF"], "e.valo_pmp",'','','align="right"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("EstimatedStockValueSell"), $_SERVER["PHP_SELF"], "",'','','align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"], "e.statut",'','','align="right"',$sortfield,$sortorder);
 	print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
@@ -136,7 +135,7 @@ if ($result)
 	print '<input class="flat" type="text" name="search_label" size="10" value="'.dol_escape_htmltag($search_label).'">';
 	print '</td>';
 
-	print '<td class="liste_titre" colspan="3">';
+	print '<td class="liste_titre" colspan="2">';
 	print '</td>';
 
 	print '<td class="liste_titre" align="right">';
@@ -153,7 +152,7 @@ if ($result)
 	if ($num)
 	{
 		$entrepot=new Entrepot($db);
-        $total = $totalsell = $totalStock = 0;
+        $total = $totalsell = 0;
         $var=false;
 		while ($i < min($num,$limit))
 		{
@@ -165,8 +164,6 @@ if ($result)
             print '<td>' . $entrepot->getNomUrl(1) . '</td>';
             // Location
             print '<td>'.$objp->lieu.'</td>';
-            // Stock qty
-            print '<td align="right">'.price2num($objp->stockqty,5).'</td>';
             // PMP value
             print '<td align="right">';
             if (price2num($objp->estimatedvalue,'MT')) print price(price2num($objp->estimatedvalue,'MT'),1);
@@ -190,7 +187,6 @@ if ($result)
 
             $total += price2num($objp->estimatedvalue,'MU');
             $totalsell += price2num($objp->sellvalue,'MU');
-			$totalStock += $objp->stockqty;
 
             $var=!$var;
             $i++;
@@ -200,7 +196,6 @@ if ($result)
 		{
     		print '<tr class="liste_total">';
             print '<td colspan="2" align="right">'.$langs->trans("Total").'</td>';
-			print '<td align="right">'.price2num($totalStock,5).'</td>';
             print '<td align="right">'.price(price2num($total,'MT'),1,$langs,0,0,-1,$conf->currency).'</td>';
             print '<td align="right">';
     		if (empty($conf->global->PRODUIT_MULTIPRICES)) print price(price2num($totalsell,'MT'),1,$langs,0,0,-1,$conf->currency);
