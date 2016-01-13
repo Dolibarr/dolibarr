@@ -103,7 +103,7 @@ $extrafields = new ExtraFields($db);
 
 // Load object
 if ($id > 0 || ! empty($ref)) {
-	$ret = $object->fetch($id, $ref);
+	$ret = $object->fetch($id, $ref, '', '', $conf->global->INVOICE_USE_SITUATION);
 }
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
@@ -1163,6 +1163,18 @@ if (empty($reshook))
 				$object->fk_facture_source = $_POST['situations'];
 				$object->type = Facture::TYPE_SITUATION;
 
+				if (!empty($origin) && !empty($originid))
+				{
+					$object->origin = $origin;
+					$object->origin_id = $originid;
+					
+					foreach ($object->lines as &$line) 
+					{
+						$line->origin = $object->origin;
+						$line->origin_id = $line->id;
+					}
+				}
+
 				$object->fetch_thirdparty();
 				$object->date = $datefacture;
 				$object->note_public = trim($_POST['note_public']);
@@ -1492,11 +1504,11 @@ if (empty($reshook))
 		$date_end = '';
 		$date_start = dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), GETPOST('date_startsec'), GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
 		$date_end = dol_mktime(GETPOST('date_endhour'), GETPOST('date_endmin'), GETPOST('date_endsec'), GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
-		$description = dol_htmlcleanlastbr(GETPOST('product_desc'));
+		$description = dol_htmlcleanlastbr(GETPOST('product_desc') ? GETPOST('product_desc') : GETPOST('desc'));
 		$pu_ht = GETPOST('price_ht');
 		$vat_rate = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
 		$qty = GETPOST('qty');
-
+		
 		// Define info_bits
 		$info_bits = 0;
 		if (preg_match('/\*/', $vat_rate))
@@ -2131,7 +2143,7 @@ if ($action == 'create')
 			$opt = $form->selectSituationInvoices(GETPOST('originid'), $socid);
 			print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
 			$tmp='<input type="radio" name="type" value="5"' . (GETPOST('type') == 5 && GETPOST('originid') ? ' checked' : '');
-			if ($opt == ('<option value ="0" selected>' . $langs->trans('NoSituations') . '</option>') || (GETPOST('origin') && GETPOST('origin') != 'facture')) $tmp.=' disabled';
+			if ($opt == ('<option value ="0" selected>' . $langs->trans('NoSituations') . '</option>') || (GETPOST('origin') && GETPOST('origin') != 'facture' && GETPOST('origin') != 'commande')) $tmp.=' disabled';
 			$tmp.= '> ';
 			$text = $tmp.$langs->trans("InvoiceSituationAsk") . ' ';
 			$text .= '<select class="flat" id="situations" name="situations">';
@@ -3018,6 +3030,96 @@ else if ($id > 0 || ! empty($ref))
 
 	print '<td rowspan="' . $nbrows . '" colspan="2" valign="top">';
 
+	if ($object->type == Facture::TYPE_SITUATION && !empty($conf->global->INVOICE_USE_SITUATION))
+	{
+		if (count($object->tab_previous_situation_invoice) > 0 || count($object->tab_next_situation_invoice) > 0) print '<table class="nobordernopadding paymenttable" width="100%">';
+		
+		if (count($object->tab_previous_situation_invoice) > 0)
+		{
+			//List of previous invoices
+			print '<tr class="liste_titre">';
+			print '<td>' . $langs->trans('ListOfPreviousSituationInvoices') . '</td>';
+			print '<td></td>';
+			if (! empty($conf->banque->enabled))
+				print '<td align="right"></td>';
+			print '<td align="right">' . $langs->trans('AmountHT') . '</td>';
+			print '<td align="right">' . $langs->trans('AmountTTC') . '</td>';
+			print '<td width="18">&nbsp;</td>';
+			print '</tr>';
+			
+			$total_prev_ht = $total_prev_ttc = 0;
+			$var = true;
+			foreach ($object->tab_previous_situation_invoice as $prev_invoice)
+			{
+				$totalpaye = $prev_invoice->getSommePaiement();
+				$total_prev_ht += $prev_invoice->total_ht;
+				$total_prev_ttc += $prev_invoice->total_ttc;
+				print '<tr '.$bc [$var].'>';
+				print '<td>'.$prev_invoice->getNomUrl(1).'</td>';
+				print '<td></td>';
+				if (! empty($conf->banque->enabled))
+					print '<td align="right"></td>';
+				print '<td align="right">' . price($prev_invoice->total_ht) . '</td>';
+				print '<td align="right">' . price($prev_invoice->total_ttc) . '</td>';
+				print '<td align="right">'.$prev_invoice->getLibStatut(3, $totalpaye).'</td>';
+				print '</tr>';
+				
+				$var = !$var;
+			}
+			
+			print '<tr '.$bc [$var].'>';
+			print '<td colspan="2" align="right"></td>';
+			print '<td align="right"><b>' . price($total_prev_ht) . '</b></td>';
+			print '<td align="right"><b>' . price($total_prev_ttc) . '</b></td>';
+			print '<td width="18">&nbsp;</td>';
+			print '</tr>';
+		}
+		
+		if (count($object->tab_next_situation_invoice) > 0)
+		{
+			//List of next invoices
+			print '<tr class="liste_titre">';
+			print '<td>' . $langs->trans('ListOfNextSituationInvoices') . '</td>';
+			print '<td></td>';
+			if (! empty($conf->banque->enabled))
+				print '<td align="right"></td>';
+			print '<td align="right">' . $langs->trans('AmountHT') . '</td>';
+			print '<td align="right">' . $langs->trans('AmountTTC') . '</td>';
+			print '<td width="18">&nbsp;</td>';
+			print '</tr>';
+			
+			$total_next_ht = $total_next_ttc = 0;
+			
+			$var = true;
+			foreach ($object->tab_next_situation_invoice as $next_invoice)
+			{
+				$totalpaye = $next_invoice->getSommePaiement();
+				$total_next_ht += $next_invoice->total_ht;
+				$total_next_ttc += $next_invoice->total_ttc;
+				print '<tr '.$bc [$var].'>';
+				print '<td>'.$next_invoice->getNomUrl(1).'</td>';
+				print '<td></td>';
+				if (! empty($conf->banque->enabled))
+					print '<td align="right"></td>';
+				print '<td align="right">' . price($next_invoice->total_ht) . '</td>';
+				print '<td align="right">' . price($next_invoice->total_ttc) . '</td>';
+				print '<td align="right">'.$next_invoice->getLibStatut(3, $totalpaye).'</td>';
+				print '</tr>';
+				
+				$var = !$var;
+			}
+			
+			print '<tr '.$bc [$var].'>';
+			print '<td colspan="2" align="right"></td>';
+			print '<td align="right"><b>' . price($total_next_ht) . '</b></td>';
+			print '<td align="right"><b>' . price($total_next_ttc) . '</b></td>';
+			print '<td width="18">&nbsp;</td>';
+			print '</tr>';
+		}
+		
+		if (count($object->tab_previous_situation_invoice) > 0 || count($object->tab_next_situation_invoice) > 0) print '</table>';
+	}
+
 	print '<table class="nobordernopadding paymenttable" width="100%">';
 
 	// List of payments already done
@@ -3576,7 +3678,7 @@ else if ($id > 0 || ! empty($ref))
 
 				if ($resteapayer == $object->total_ttc && empty($object->paye) && $ventilExportCompta == 0) 
 				{
-					if (! $objectidnext && $object->is_last_in_cycle()) 
+					if (! $objectidnext) 
 					{
 					    if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->facture->creer))
        						|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->facture->invoice_advance->unvalidate)))

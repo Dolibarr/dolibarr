@@ -1171,14 +1171,14 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 
     // Line with td contains all div of each events
     print '<tr height="'.$minheight.'"><td valign="top" colspan="2" class="sortable" style="padding-bottom: 2px;">';
-	print '<div style="width: 100%; position: relative;">';
+    print '<div style="width: 100%; position: relative;">';
 
     //$curtime = dol_mktime (0, 0, 0, $month, $day, $year);
     $i=0; $nummytasks=0; $numother=0; $numbirthday=0; $numical=0; $numicals=array();
     $ymd=sprintf("%04d",$year).sprintf("%02d",$month).sprintf("%02d",$day);
 
     $nextindextouse=count($colorindexused);	// At first run this is 0, so fist user has 0, next 1, ...
-	//print $nextindextouse;
+    //print $nextindextouse;
 
     foreach ($eventarray as $daykey => $notused)
     {
@@ -1191,23 +1191,23 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
             {
                 if ($i < $maxprint || $maxprint == 0 || ! empty($conf->global->MAIN_JS_SWITCH_AGENDA))
                 {
-					$keysofuserassigned=array_keys($event->userassigned);
+		    $keysofuserassigned=array_keys($event->userassigned);
 
-                	$ponct=($event->date_start_in_calendar == $event->date_end_in_calendar);
+                    $ponct=($event->date_start_in_calendar == $event->date_end_in_calendar);
 
                     // Define $color (Hex string like '0088FF') and $cssclass of event
                     $color=-1; $colorindex=-1;
-       				if (in_array($user->id, $keysofuserassigned))
-					{
-						$nummytasks++; $cssclass='family_mytasks';
+       		    if (in_array($user->id, $keysofuserassigned))
+		    {
+			$nummytasks++; $cssclass='family_mytasks';
 
-						if (empty($cacheusers[$event->userownerid]))
-						{
-							$newuser=new User($db);
-							$newuser->fetch($event->userownerid);
-							$cacheusers[$event->userownerid]=$newuser;
-						}
-						//var_dump($cacheusers[$event->userownerid]->color);
+			if (empty($cacheusers[$event->userownerid]))
+			{
+				$newuser=new User($db);
+				$newuser->fetch($event->userownerid);
+				$cacheusers[$event->userownerid]=$newuser;
+			}
+			//var_dump($cacheusers[$event->userownerid]->color);
 
                     	// We decide to choose color of owner of event (event->userownerid is user id of owner, event->userassigned contains all users assigned to event)
                     	if (! empty($cacheusers[$event->userownerid]->color)) $color=$cacheusers[$event->userownerid]->color;
@@ -1221,7 +1221,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                     		}
                     		$numicals[dol_string_nospecial($event->icalname)]++;
                     	}
-                    	$color=$event->icalcolor;
+                    	$color=($event->icalcolor?$event->icalcolor:-1);
                     	$cssclass=(! empty($event->icalname)?'family_ext'.md5($event->icalname):'family_other');
                     }
                     else if ($event->type_code == 'BIRTHDAY')
@@ -1229,20 +1229,22 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                     	$numbirthday++; $colorindex=2; $cssclass='family_birthday unmovable'; $color=sprintf("%02x%02x%02x",$theme_datacolor[$colorindex][0],$theme_datacolor[$colorindex][1],$theme_datacolor[$colorindex][2]);
                     }
                     else
-                 	{
-                 		$numother++; $cssclass='family_other';
+               	    {
+                	$numother++; 
+                	$color=($event->icalcolor?$event->icalcolor:-1);
+                	$cssclass=(! empty($event->icalname)?'family_ext'.md5($event->icalname):'family_other');
 
-						if (empty($cacheusers[$event->userownerid]))
-						{
-							$newuser=new User($db);
-							$newuser->fetch($event->userownerid);
-							$cacheusers[$event->userownerid]=$newuser;
-						}
-						//var_dump($cacheusers[$event->userownerid]->color);
+			if (empty($cacheusers[$event->userownerid]))
+			{
+				$newuser=new User($db);
+				$newuser->fetch($event->userownerid);
+				$cacheusers[$event->userownerid]=$newuser;
+			}
+			//var_dump($cacheusers[$event->userownerid]->color);
 
                     	// We decide to choose color of owner of event (event->userownerid is user id of owner, event->userassigned contains all users assigned to event)
                     	if (! empty($cacheusers[$event->userownerid]->color)) $color=$cacheusers[$event->userownerid]->color;
-                 	}
+                    }
                     if ($color == -1)	// Color was not forced. Set color according to color index.
                     {
                     	// Define color index if not yet defined
@@ -1253,14 +1255,14 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                     	}
                     	else
                     	{
-                   			$colorindex=$nextindextouse;
-                   			$colorindexused[$idusertouse]=$colorindex;
+                   		$colorindex=$nextindextouse;
+                   		$colorindexused[$idusertouse]=$colorindex;
                     		if (! empty($theme_datacolor[$nextindextouse+1])) $nextindextouse++;	// Prepare to use next color
                     	}
                     	//print '|'.($color).'='.($idusertouse?$idusertouse:0).'='.$colorindex.'<br>';
-						// Define color
+			// Define color
                     	$color=sprintf("%02x%02x%02x",$theme_datacolor[$colorindex][0],$theme_datacolor[$colorindex][1],$theme_datacolor[$colorindex][2]);
-                  	}
+                    }
                     $cssclass=$cssclass.' '.$cssclass.'_day_'.$ymd;
 
                     // Defined style to disable drag and drop feature

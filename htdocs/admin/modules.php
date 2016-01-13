@@ -142,10 +142,10 @@ foreach ($modulesdir as $dir)
 
     		    		        if (! $objMod->numero > 0)
     		            		{
-    		         		    	dol_syslog('The module descriptor '.$modName.' must have a numero property', LOG_ERR);   
+    		         		    	dol_syslog('The module descriptor '.$modName.' must have a numero property', LOG_ERR);
     		            		}
 								$j = $objMod->numero;
-								
+
     							$modulequalified=1;
 
 		    					// We discard modules according to features level (PS: if module is activated we always show it)
@@ -161,17 +161,25 @@ foreach ($modulesdir as $dir)
 		    					{
 		    						$modules[$i] = $objMod;
 		    			            $filename[$i]= $modName;
-		    					
+
 		    			            $special = $objMod->special;
-		    			            $familykey = $objMod->family;
+
+		    			            // Gives the possibility to the module, to provide his own family info and position of this family
+		    			            if (is_array($objMod->familyinfo) && !empty($objMod->familyinfo)) {
+		    			            	$familyinfo = array_merge($familyinfo, $objMod->familyinfo);
+		    			            	$familykey = key($objMod->familyinfo);
+		    			            } else {
+		    			            	$familykey = $objMod->family;
+		    			            }
+
 		    			            $moduleposition = ($objMod->module_position?$objMod->module_position:'500');
 		    			            if ($moduleposition == 500 && ($objMod->isCoreOrExternalModule() == 'external'))
 		    			            {
 		    			                $moduleposition = 800;
 		    			            }
-		    			            
+
 		    			            if ($special == 1) $familykey='interface';
-		    			            
+
 		    			            $orders[$i]  = $familyinfo[$familykey]['position']."_".$familykey."_".$moduleposition."_".$j;   // Sort by family, then by module position then number
 		    						$dirmod[$i]  = $dir;
 		    			            // Set categ[$i]
@@ -323,7 +331,7 @@ if ($mode != 'marketplace')
     	$objMod  = $modules[$key];
 
     	$special = $objMod->special;
-    	
+
     	//print $objMod->name." - ".$key." - ".$objMod->special.' - '.$objMod->version."<br>";
     	//if (($mode != (isset($specialtostring[$special])?$specialtostring[$special]:'unknown') && $mode != 'expdev')
     	if (($special >= 4 && $mode != 'expdev')

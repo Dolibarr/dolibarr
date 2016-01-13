@@ -1241,7 +1241,7 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $bankaccountstatic=new Account($db);
 
-llxHeader('','','');
+llxHeader('',$langs->trans('SupplierInvoice'),'');
 
 // Mode creation
 if ($action == 'create')

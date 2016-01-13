@@ -618,7 +618,7 @@ if ($action == 'confirm_cancel' && GETPOST('confirm') == 'yes')
 
             // From
             $expediteur = new User($db);
-            $expediteur->fetch($cp->fk_validator);
+            $expediteur->fetch($cp->fk_user_cancel);
             $emailFrom = $expediteur->email;
 
             // Subject

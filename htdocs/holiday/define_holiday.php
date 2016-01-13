@@ -159,7 +159,7 @@ llxHeader(array(),$langs->trans('CPTitreMenu'));
 print load_fiche_titre($langs->trans('MenuConfCP'), '', 'title_hrm.png');
 
 print '<div class="info">'.$langs->trans('LastUpdateCP').': '."\n";
-$lastUpdate = $holiday->getConfCP('lastUpdate', 0);
+$lastUpdate = $holiday->getConfCP('lastUpdate');
 if ($lastUpdate) 
 {
     $monthLastUpdate = $lastUpdate[4].$lastUpdate[5];
