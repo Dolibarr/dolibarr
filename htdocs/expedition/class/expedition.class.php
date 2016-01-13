@@ -789,9 +789,9 @@ class Expedition extends CommonObject
 
 
 	/**
-	 *	Cree un bon de livraison a partir de l'expedition
+	 *	Create a delivery receipt from a shipment
 	 *
-	 *	@param	User	$user       Utilisateur
+	 *	@param	User	$user       User
 	 *  @return int  				<0 if KO, >=0 if OK
 	 */
 	function create_delivery($user)
