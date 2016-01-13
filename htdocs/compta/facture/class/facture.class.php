@@ -2021,7 +2021,8 @@ class Facture extends CommonInvoice
 
 	/**
 	 * Update price of next invoice
-	 * @param Translate	Translate object
+	 * 
+	 * @param	Translate	$langs	Translate object
 	 * @return bool		false if KO, true if OK
 	 */
 	function updatePriceNextInvoice(&$langs)
@@ -2522,6 +2523,8 @@ class Facture extends CommonInvoice
 	/**
 	 * Check if the percent edited is lower of next invoice line 
 	 * 
+	 * @param	int		$idline				id of line to check
+	 * @param	float	$situation_percent	progress percentage need to be test
 	 * @return false if KO, true if OK
 	 */
 	function checkProgressLine($idline, $situation_percent)
