@@ -149,7 +149,7 @@ if ($action == 'delbookkeeping') {
 			print '"' . $line->numero_compte . '",';
 			print '"' . substr($line->code_journal, 0, 2) . '",';
 			print '"' . substr($line->doc_ref, 0, 40) . '",';
-			print '"' . $line->num_piece . '",';
+			print '"' . $line->piece_num . '",';
 			print '"' . $line->debit . '",';
 			print '"' . $line->credit . '",';
 			print '"' . $conf->currency . '",';
@@ -165,7 +165,7 @@ if ($action == 'delbookkeeping') {
 			print '"' . $line->numero_compte . '",';
 			print '"' . substr($line->code_journal, 0, 2) . '",';
 			print '"' . substr($line->doc_ref, 0, 40) . '",';
-			print '"' . $line->num_piece . '",';
+			print '"' . $line->piece_num . '",';
 			print '"' . $line->montant . '",';
 			print '"' . $line->sens . '",';
 			print '"' . dol_print_date($line->doc_date, '%d%m%Y') . '",';
@@ -182,7 +182,7 @@ if ($action == 'delbookkeeping') {
 			print '"' . $line->numero_compte . '",';
 			print '"' . substr($line->code_journal, 0, 2) . '",';
 			print '"' . substr($line->doc_ref, 0, 40) . '",';
-			print '"' . $line->num_piece . '",';
+			print '"' . $line->piece_num . '",';
 			print '"' . $line->montant . '",';
 			print '"' . $line->sens . '",';
 			print '"' . dol_print_date($line->doc_date, '%d%m%Y') . '",';
