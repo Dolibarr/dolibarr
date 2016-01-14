@@ -344,7 +344,7 @@ class Conf
 			$this->fournisseur->facture->dir_temp   =$rootfordata."/fournisseur/facture/temp";
 			
 			// To prepare split of module fournisseur into fournisseur + supplier_order + supplier_invoice
-			if (empty($this->global->MAIN_USE_NEW_SUPPLIERMOD))  // By default, test is true
+			if (! empty($this->fournisseur->enabled) && empty($this->global->MAIN_USE_NEW_SUPPLIERMOD))  // By default, if module supplier is on, we set new properties
 			{
     			$this->supplier_order=new stdClass();
     			$this->supplier_order->enabled=1;
