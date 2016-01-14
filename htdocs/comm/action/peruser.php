@@ -686,7 +686,7 @@ else
 // Load array of colors by type
 $colorsbytype=array();
 $labelbytype=array();
-$sql="SELECT code, color, libelle FROM ".MAIN_DB_PREFIX."c_actioncomm";
+$sql="SELECT code, color, libelle FROM ".MAIN_DB_PREFIX."c_actioncomm ORDER BY position";
 $resql=$db->query($sql);
 while ($obj = $db->fetch_object($resql))
 {
