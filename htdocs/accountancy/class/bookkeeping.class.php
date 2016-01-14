@@ -379,7 +379,7 @@ class BookKeeping extends CommonObject
 	}
 
 	/**
-	 * Delete bookkepping by importkey
+	 * Delete bookkepping by year
 	 *
 	 * @param	string 	$delyear		year to delete
 	 * @return	int						Result
@@ -391,6 +391,36 @@ class BookKeeping extends CommonObject
 		$sql = "DELETE";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping ";
 		$sql .= " WHERE YEAR(doc_date) = ".$delyear;
+	
+		$resql = $this->db->query($sql);
+	
+		if (! $resql) {
+			$this->errors[] = "Error " . $this->db->lasterror();
+			foreach ( $this->errors as $errmsg ) {
+				dol_syslog(get_class($this) . "::delete " . $errmsg, LOG_ERR);
+				$this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
+			}
+			$this->db->rollback();
+			return - 1;
+		}
+	
+		$this->db->commit();
+		return 1;
+	}
+	
+	/**
+	 * Delete bookkepping by piece number
+	 *
+	 * @param	int 	$piecenum		peicenum to delete
+	 * @return	int						Result
+	 */
+	function delete_piece_num($piecenum) {
+		$this->db->begin();
+	
+		// first check if line not yet in bookkeeping
+		$sql = "DELETE";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping ";
+		$sql .= " WHERE piece_num = ".$piecenum;
 	
 		$resql = $this->db->query($sql);
 	

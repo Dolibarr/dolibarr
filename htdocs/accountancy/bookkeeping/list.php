@@ -54,6 +54,7 @@ $offset = $limit * $page;
 
 $formventilation = new FormVentilation($db);
 $formother = new FormOther($db);
+$form = new Form($db);
 
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
@@ -91,21 +92,20 @@ if ($action == 'delbookkeeping') {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
-} elseif ($action == 'delbookkeepingyear') {
+} elseif ($action == 'delmouvconfirm') {
 	
-	$delyear = GETPOST('delyear', 'int');
+	$piece_num = GETPOST('piece_num', 'int');
 	
-	if (! empty($delyear)) {
+	if (! empty($piece_num)) {
 		$object = new BookKeeping($db);
-		$result = $object->delete_by_year($delyear);
+		$result = $object->delete_piece_num($piece_num);
 		Header("Location: list.php");
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
-}  // Export
-else if ($action == 'export_csv') {
-	
+} else if ($action == 'export_csv') {
+	// Export
 	header('Content-Type: text/csv');
 	header('Content-Disposition: attachment;filename=export_csv.csv');
 	
@@ -201,6 +201,12 @@ else {
 	
 	$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit + 1, $offset);
 	
+	if ($action == 'delmouv') {
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?piece_num=' . GETPOST('piece_num'), $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvt'), 'delmouvconfirm', '', 0, 1);
+		print $formconfirm;
+	}
+	
+	
 	dol_syslog('accountancy/bookkeeping/list.php:: $sql=' . $sql);
 	$resql = $db->query($sql);
 	if ($resql) {
@@ -226,6 +232,7 @@ else {
 		print $formother->select_year(GETPOST('delyear'), 'delyear');
 		
 		print '<div class="inline-block divButAction"><input type="submit" class="butAction" value="' . $langs->trans("DelBookKeeping") . '" /></div>';
+		print '<a class="butAction" href="./card.php?action=create">' . $langs->trans("NewAccountingMvt") . '</a>';
 		
 		print '</form>';
 		
@@ -280,7 +287,7 @@ else {
 			
 			print "<tr $bc[$var]>";
 			
-		/*	if ($old_piecenum!=$obj->piece_num) {
+			/*if ($old_piecenum!=$obj->piece_num) {
 				$total_debit=0;
 				$total_credit=0;
 			} else {
@@ -289,7 +296,7 @@ else {
 			}
 			*/
 			
-			print '<td>' . $obj->piece_num . '</td>';
+			print '<td><a href="./card.php?piece_num=' . $obj->piece_num . '">' . $obj->piece_num . '</a></td>';
 			print '<td align="center">' . dol_print_date($db->jdate($obj->doc_date), 'day') . '</td>';
 			print '<td>' . $obj->doc_ref . '</td>';
 			print '<td>' . length_accountg($obj->numero_compte) . '</td>';
@@ -300,17 +307,16 @@ else {
 			print '<td align="right">' . price($obj->montant) . '</td>';
 			print '<td align="center">' . $obj->sens . '</td>';
 			print '<td>' . $obj->code_journal . '</td>';
-			print '<td align="center"><a href="./card.php?piece_num=' . $obj->piece_num . '">' . img_edit() . '</a></td>';
+			print '<td align="center">';
+			print '<a href="./card.php?piece_num=' . $obj->piece_num . '">' . img_edit() . '</a>';
+			print '<a href="'.$_SERVER['PHP_SELF'] .'?action=delmouv&piece_num=' . $obj->piece_num . '">' . img_delete() . '</a>';
+			print '</td>';
 			print "</tr>\n";
 			
 			//$old_piecenum= $obj->piece_num;
 			$i ++;
 		}
 		print "</table>";
-		
-		print '<div class="tabsAction">';
-		print '<a class="butAction" href="./card.php?action=create">' . $langs->trans("NewAccountingMvt") . '</a>';
-		print '</div>';
 		
 		$db->free($resql);
 	} else {
