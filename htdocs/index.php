@@ -147,8 +147,8 @@ if (empty($user->societe_id))
 	    // Condition to be checked for each display line dashboard
 	    $conditions=array(
 	    $user->rights->user->user->lire,
-	    ! empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS),
-	    ! empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS),
+	    ! empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS),
+	    ! empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS),
 	    ! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS),
 	    ! empty($conf->adherent->enabled) && $user->rights->adherent->lire,
 	    ! empty($conf->product->enabled) && $user->rights->produit->lire,
@@ -157,8 +157,8 @@ if (empty($user->societe_id))
 	    ! empty($conf->commande->enabled) && $user->rights->commande->lire,
 	    ! empty($conf->facture->enabled) && $user->rights->facture->lire,
 	    ! empty($conf->contrat->enabled) && $user->rights->contrat->activer,
-		! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande->lire,
-		! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->lire,
+		! empty($conf->supplier_order->enabled) && $user->rights->fournisseur->commande->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_ORDERS_STATS),
+		! empty($conf->supplier_invoice->enabled) && $user->rights->fournisseur->facture->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_INVOICES_STATS),
 		! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire);
 	    // Class file containing the method load_state_board for each line
 	    $includes=array(
@@ -348,7 +348,7 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 }
 
 // Number of suppliers orders a deal
-if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande->lire)
+if (! empty($conf->supplier_order->enabled) && $user->rights->fournisseur->commande->lire)
 {
     include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
     $board=new CommandeFournisseur($db);
@@ -386,7 +386,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 }
 
 // Number of supplier invoices (has paid)
-if (! empty($conf->fournisseur->enabled) && ! empty($conf->facture->enabled) && $user->rights->facture->lire)
+if (! empty($conf->supplier_invoice->enabled) && ! empty($conf->facture->enabled) && $user->rights->facture->lire)
 {
     include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
     $board=new FactureFournisseur($db);

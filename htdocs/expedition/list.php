@@ -102,7 +102,7 @@ if ($socid)
 {
 	$sql.= " AND e.fk_soc = ".$socid;
 }
-if ($viewstatut <> '') {
+if ($viewstatut <> '' && $viewstatut >= 0) {
 	$sql.= " AND e.fk_statut = ".$viewstatut;
 }
 if ($search_ref_exp) $sql .= natural_search('e.ref', $search_ref_exp);
@@ -120,6 +120,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit + 1,$offset);
 
+//print $sql;
 $resql=$db->query($sql);
 if ($resql)
 {
@@ -232,7 +233,8 @@ if ($resql)
         if ($conf->livraison_bon->enabled)
         {
 		    $shipment->fetchObjectLinked($shipment->id,$shipment->element);
-            $receiving=(! empty($shipment->linkedObjects['delivery'][0])?$shipment->linkedObjects['delivery'][0]:'');
+            $receiving='';
+            if (count($shipment->linkedObjects['delivery']) > 0) $receiving=reset($shipment->linkedObjects['delivery']);
 
         	// Ref
             print '<td>';
