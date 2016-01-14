@@ -4099,7 +4099,7 @@ abstract class CommonObject
 					}
 
 					if($extrafields->attribute_required[$key])
-						$label = '<span class="fieldrequired">'.$label.'</span>';
+						$label = '<span'.($mode != 'view' ? ' class="fieldrequired"':'').'>'.$label.'</span>';
 
 					$out .= '<td>'.$langs->trans($label).'</td>';
 					$out .='<td'.($colspan?' colspan="'.$colspan.'"':'').'>';
