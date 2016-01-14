@@ -342,6 +342,19 @@ class Conf
 			$this->fournisseur->facture=new stdClass();
 			$this->fournisseur->facture->dir_output =$rootfordata."/fournisseur/facture";
 			$this->fournisseur->facture->dir_temp   =$rootfordata."/fournisseur/facture/temp";
+			
+			// To prepare split of module fournisseur into fournisseur + supplier_order + supplier_invoice
+			if (empty($this->global->MAIN_USE_OLD_SUPPLIERMOD))  // By default, test is true
+			{
+    			$this->supplier_order=new stdClass();
+    			$this->supplier_order->enabled=1;
+    			$this->supplier_order->dir_output=$rootfordata."/fournisseur/commande";
+    			$this->supplier_order->dir_temp=$rootfordata."/fournisseur/commande/temp";
+    			$this->supplier_invoice=new stdClass();
+    			$this->supplier_invoice->enabled=1;
+    			$this->supplier_order->dir_output=$rootfordata."/fournisseur/facture";
+    			$this->supplier_order->dir_temp=$rootfordata."/fournisseur/facture/temp";
+			}
 		}
 
 		// Module product/service
