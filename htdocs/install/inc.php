@@ -176,7 +176,7 @@ if (preg_match('/install.lock/i',$_SERVER["SCRIPT_FILENAME"]))
 }
 
 $lockfile = DOL_DATA_ROOT . '/install.lock';
-if (constant(DOL_DATA_ROOT) === null) {
+if (constant('DOL_DATA_ROOT') === null) {
 	// We don't have a configuration file yet
 	// Try to detect any lockfile in the default documents path
 	$lockfile = '../../documents/install.lock';
