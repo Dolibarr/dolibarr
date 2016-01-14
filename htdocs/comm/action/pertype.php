@@ -22,9 +22,9 @@
 
 
 /**
- *  \file       htdocs/comm/action/peruser.php
+ *  \file       htdocs/comm/action/pertype.php
  *  \ingroup    agenda
- *  \brief      Tab of calendar events per user
+ *  \brief      Tab of calendar events per type
  */
 
 require '../../main.inc.php';
@@ -75,7 +75,7 @@ if (! $user->rights->agenda->allactions->read || $filter =='mine')  // If no per
 }
 
 //$action=GETPOST('action','alpha');
-$action='show_peruser'; //We use 'show_week' mode
+$action='show_pertype';
 //$year=GETPOST("year");
 $year=GETPOST("year","int")?GETPOST("year","int"):date("Y");
 $month=GETPOST("month","int")?GETPOST("month","int"):date("m");
@@ -115,11 +115,8 @@ if ($end_h <= $begin_h) $end_h = $begin_h + 1;
 
 $tmp=empty($conf->global->MAIN_DEFAULT_WORKING_DAYS)?'1-5':$conf->global->MAIN_DEFAULT_WORKING_DAYS;
 $tmparray=explode('-',$tmp);
-$begin_d = GETPOST('begin_d')?GETPOST('begin_d','int'):($tmparray[0] != '' ? $tmparray[0] : 1);
-$end_d   = GETPOST('end_d')?GETPOST('end_d'):($tmparray[1] != '' ? $tmparray[1] : 5);
-if ($begin_d < 1 || $begin_d > 7) $begin_d = 1;
-if ($end_d < 1 || $end_d > 7) $end_d = 7;
-if ($end_d < $begin_d) $end_d = $begin_d + 1;
+$begin_d = 1;
+$end_d   = 53;
 
 if ($status == ''   && ! isset($_GET['status']) && ! isset($_POST['status'])) $status=(empty($conf->global->AGENDA_DEFAULT_FILTER_STATUS)?'':$conf->global->AGENDA_DEFAULT_FILTER_STATUS);
 if (empty($action) && ! isset($_GET['action']) && ! isset($_POST['action'])) $action=(empty($conf->global->AGENDA_DEFAULT_VIEW)?'show_month':$conf->global->AGENDA_DEFAULT_VIEW);
@@ -133,6 +130,9 @@ if (GETPOST('viewweek') || $action == 'show_week') {
 if (GETPOST('viewday') || $action == 'show_day')  {
     $action='show_day'; $day=($day?$day:date("d"));
 }                                  // View by day
+if (GETPOST('viewyear') || $action == 'show_year')  {
+    $action='show_year';
+}                                  // View by year
 
 
 $langs->load("users");
@@ -177,18 +177,18 @@ $nowday=$nowarray['mday'];
 // Define list of all external calendars (global setup)
 $listofextcals=array();
 
-$prev = dol_get_first_day_week($day, $month, $year);
-$first_day   = $prev['first_day'];
-$first_month = $prev['first_month'];
-$first_year  = $prev['first_year'];
+$prev = dol_get_first_day($year, $month);
+$first_day   = 1;
+$first_month = 1;
+$first_year  = $year;
 
 $week = $prev['week'];
 
 $day = (int) $day;
-$next = dol_get_next_week($day, $week, $month, $year);
-$next_year  = $next['year'];
-$next_month = $next['month'];
-$next_day   = $next['day'];
+$next = dol_get_next_day($day, $month, $year);
+$next_year  = year + 1;
+$next_month = $month;
+$next_day   = $day;
 
 $max_day_in_month = date("t",dol_mktime(0,0,0,$month,1,$year));
 
@@ -210,26 +210,24 @@ if ($socid)   $param.="&socid=".$socid;
 if ($showbirthday) $param.="&showbirthday=1";
 if ($pid)     $param.="&projectid=".$pid;
 if ($type)   $param.="&type=".$type;
-if ($action == 'show_day' || $action == 'show_week' || $action == 'show_month' || $action != 'show_peruser') $param.='&action='.$action;
+if ($action == 'show_day' || $action == 'show_week' || $action == 'show_month' || $action != 'show_peruser' || $action != 'show_pertype') $param.='&action='.$action;
 $param.="&maxprint=".$maxprint;
 
-$prev = dol_get_first_day_week($day, $month, $year);
-//print "day=".$day." month=".$month." year=".$year;
-//var_dump($prev); exit;
-$prev_year  = $prev['prev_year'];
-$prev_month = $prev['prev_month'];
-$prev_day   = $prev['prev_day'];
-$first_day  = $prev['first_day'];
-$first_month= $prev['first_month'];
-$first_year = $prev['first_year'];
+$prev = dol_get_first_day($year, 1);
+$prev_year  = $year - 1;
+$prev_month = $month;
+$prev_day   = $day;
+$first_day  = 1;
+$first_month= 1;
+$first_year = $year;
 
 $week = $prev['week'];
 
 $day = (int) $day;
-$next = dol_get_next_week($first_day, $week, $first_month, $first_year);
-$next_year  = $next['year'];
-$next_month = $next['month'];
-$next_day   = $next['day'];
+$next = dol_get_next_day(31, 12, $year);
+$next_year  = $year + 1;
+$next_month = $month;
+$next_day   = $day;
 
 // Define firstdaytoshow and lastdaytoshow (warning: lastdaytoshow is last second to show + 1)
 $firstdaytoshow=dol_mktime(0,0,0,$first_month,$first_day,$first_year);
@@ -243,8 +241,7 @@ $max_day_in_month = date("t",dol_mktime(0,0,0,$month,1,$year));
 $tmpday = $first_day;
 
 $nav ="<a href=\"?year=".$prev_year."&amp;month=".$prev_month."&amp;day=".$prev_day.$param."\">".img_previous($langs->trans("Previous"))."</a>\n";
-$nav.=" <span id=\"month_name\">".dol_print_date(dol_mktime(0,0,0,$first_month,$first_day,$first_year),"%Y").", ".$langs->trans("Week")." ".$week;
-$nav.=" </span>\n";
+$nav.=" <span id=\"month_name\">".dol_print_date(dol_mktime(0,0,0,$first_month,$first_day,$first_year),"%Y")."</span> \n";
 $nav.="<a href=\"?year=".$next_year."&amp;month=".$next_month."&amp;day=".$next_day.$param."\">".img_next($langs->trans("Next"))."</a>\n";
 $nav.=" &nbsp; (<a href=\"?year=".$nowyear."&amp;month=".$nowmonth."&amp;day=".$nowday.$param."\">".$langs->trans("Today")."</a>)";
 $picto='calendarweek';
@@ -275,12 +272,7 @@ $param.='&year='.$year.'&month='.$month.($day?'&day='.$day:'');
 
 
 
-$tabactive='';
-if ($action == 'show_month') $tabactive='cardmonth';
-if ($action == 'show_week') $tabactive='cardweek';
-if ($action == 'show_day')  $tabactive='cardday';
-if ($action == 'show_list') $tabactive='cardlist';
-if ($action == 'show_peruser') $tabactive='cardperuser';
+$tabactive='cardpertype';
 
 $paramnoaction=preg_replace('/action=[a-z_]+/','',$param);
 
@@ -392,14 +384,14 @@ else
 {
     // To limit array
     $sql.= " AND (";
-    $sql.= " (a.datep BETWEEN '".$db->idate(dol_mktime(0,0,0,$month,1,$year)-(60*60*24*7))."'";   // Start 7 days before
-    $sql.= " AND '".$db->idate(dol_mktime(23,59,59,$month,28,$year)+(60*60*24*10))."')";            // End 7 days after + 3 to go from 28 to 31
+    $sql.= " (a.datep BETWEEN '".$db->idate(dol_mktime(0,0,0,1,1,$year)-(60*60*24*7))."'";   // Start 7 days before
+    $sql.= " AND '".$db->idate(dol_mktime(23,59,59,12,31,$year)+(60*60*24*7))."')";     // End 7 days after
     $sql.= " OR ";
-    $sql.= " (a.datep2 BETWEEN '".$db->idate(dol_mktime(0,0,0,$month,1,$year)-(60*60*24*7))."'";
-    $sql.= " AND '".$db->idate(dol_mktime(23,59,59,$month,28,$year)+(60*60*24*10))."')";
+    $sql.= " (a.datep2 BETWEEN '".$db->idate(dol_mktime(0,0,0,1,1,$year)-(60*60*24*7))."'";
+    $sql.= " AND '".$db->idate(dol_mktime(23,59,59,12,31,$year)+(60*60*24*7))."')";
     $sql.= " OR ";
-    $sql.= " (a.datep < '".$db->idate(dol_mktime(0,0,0,$month,1,$year)-(60*60*24*7))."'";
-    $sql.= " AND a.datep2 > '".$db->idate(dol_mktime(23,59,59,$month,28,$year)+(60*60*24*10))."')";
+    $sql.= " (a.datep < '".$db->idate(dol_mktime(0,0,0,12,1,$year)-(60*60*24*7))."'";
+    $sql.= " AND a.datep2 > '".$db->idate(dol_mktime(23,59,59,12,31,$year)+(60*60*24*7))."')";
     $sql.= ')';
 }
 if ($type) $sql.= " AND ca.id = ".$type;
@@ -569,119 +561,27 @@ echo '<table width="100%" class="nocellnopadd cal_month">';
 echo '<tr class="liste_titre">';
 echo '<td></td>';
 $i=0;	// 0 = sunday,
-while ($i < 7)
-{
-	if (($i + 1) < $begin_d || ($i + 1) > $end_d)
-	{
-		$i++;
-		continue;
-	}
-	echo '<td align="center" colspan="'.($end_h - $begin_h).'">';
-	echo $langs->trans("Day".(($i+(isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:1)) % 7));
-	print "<br>";
-	if ($i) print dol_print_date(dol_time_plus_duree($firstdaytoshow, $i, 'd'),'day');
-	else print dol_print_date($firstdaytoshow,'day');
-	echo "</td>\n";
-	$i++;
-}
+echo '<td align="center" colspan="'.($end_d - $begin_d).'">';
+echo $langs->trans("Year");
+print "<br>";
+print $year;
+echo "</td>\n";
 echo "</tr>\n";
 
 echo '<tr class="liste_titre">';
 echo '<td></td>';
 $i=0;
-while ($i < 7)
+for ($h = $begin_d; $h < $end_d; $h++)
 {
-	if (($i + 1) < $begin_d || ($i + 1) > $end_d)
-	{
-		$i++;
-		continue;
-	}
-	for ($h = $begin_h; $h < $end_h; $h++)
-	{
-		echo '<td align="center">';
-		print '<small style="font-family: courier">'.sprintf("%02d",$h).'</small>';
-		print "</td>";
-	}
-	echo "</td>\n";
-	$i++;
+	echo '<td align="center">';
+	print '<small style="font-family: courier">'.sprintf("%02d",$h).'</small>';
+	print "</td>";
 }
+echo "</td>\n";
 echo "</tr>\n";
 
 
-// Define $usernames
-$usernames = array(); //init
-$usernamesid = array();
-/* Use this to have list of users only if users have events */
-if (! empty($conf->global->AGENDA_SHOWOWNERONLY_ONPERUSERVIEW))
-{
-	foreach ($eventarray as $daykey => $notused)
-	{
-	   // Get all assigned users for each event
-	   foreach ($eventarray[$daykey] as $index => $event)
-	   {
-		   	$event->fetch_userassigned();
-			$listofuserid=$event->userassigned;
-			foreach($listofuserid as $userid => $tmp)
-			{
-			   	if (! in_array($userid, $usernamesid)) $usernamesid[$userid] = $userid;
-			}
-	   }
-	}
-}
-/* Use this list to have for all users */
-else
-{
-	$sql = "SELECT u.rowid, u.lastname as lastname, u.firstname, u.statut, u.login, u.admin, u.entity";
-	$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-	if ($usergroup > 0)	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ug ON u.rowid = ug.fk_user";
-	$sql.= " WHERE u.entity IN (".getEntity('user',1).")";
-	if ($usergroup > 0)	$sql.= " AND ug.fk_usergroup = ".$usergroup;
-	//if (GETPOST("usertodo","int",3) > 0) $sql.=" AND u.rowid = ".GETPOST("usertodo","int",3);
-	//print $sql;
-	$resql=$db->query($sql);
-	if ($resql)
-	{
-	    $num = $db->num_rows($resql);
-	    $i = 0;
-	    if ($num)
-	    {
-	        while ($i < $num)
-	        {
-	            $obj = $db->fetch_object($resql);
-				$usernamesid[$obj->rowid]=$obj->rowid;
-				$i++;
-	        }
-	    }
-	}
-	else dol_print_error($db);
-}
-//var_dump($usernamesid);
-foreach($usernamesid as $id)
-{
-	$tmpuser=new User($db);
-	$result=$tmpuser->fetch($id);
-	$usernames[]=$tmpuser;
-}
-
-/*
-if ($filtert > 0)
-{
-	$tmpuser = new User($db);
-	$tmpuser->fetch($filtert);
-	$usernames[] = $tmpuser;
-}
-else if ($usergroup)
-{
-	$tmpgroup = new UserGroup($db);
-	$tmpgroup->fetch($usergroup);
-	$usernames = $tmpgroup->listUsersForGroup();
-}
-else
-{
-	$tmpgroup = new UserGroup($db);
-	//$tmpgroup->fetch($usergroup); No fetch, we want all users for all groups
-	$usernames = $tmpgroup->listUsersForGroup();
-}*/
+$typeofevents=array();
 
 // Load array of colors by type
 $colorsbytype=array();
@@ -699,7 +599,7 @@ $todayarray=dol_getdate($now,'fast');
 $sav = $tmpday;
 $showheader = true;
 $var = false;
-foreach ($usernames as $username)
+foreach ($typeofevents as $typeofevent)
 {
 	$var = ! $var;
 	echo "<tr>";

@@ -174,8 +174,14 @@ if (preg_match('/install.lock/i',$_SERVER["SCRIPT_FILENAME"]))
     }
     exit;
 }
-$lockfile=DOL_DATA_ROOT.'/install.lock';
-if (constant('DOL_DATA_ROOT') && file_exists($lockfile))
+
+$lockfile = DOL_DATA_ROOT . '/install.lock';
+if (constant('DOL_DATA_ROOT') === null) {
+	// We don't have a configuration file yet
+	// Try to detect any lockfile in the default documents path
+	$lockfile = '../../documents/install.lock';
+}
+if (@file_exists($lockfile))
 {
     print 'Install pages have been disabled for security reason (by lock file install.lock into dolibarr root directory).<br>';
     if (! empty($dolibarr_main_url_root))

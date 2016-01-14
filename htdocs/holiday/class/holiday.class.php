@@ -817,18 +817,17 @@ class Holiday extends CommonObject
     }
 
     /**
-     *  Retourne la valeur d'un paramètre de configuration
+     *  Return value of a conf parameterfor leave module
+     *  TODO Move this into llx_const table
      *
-     *  @param	string	$name       name du paramètre de configuration
-     *  @param	int		$fk_type	Filter on type
-     *  @return string      		retourne la valeur du paramètre
+     *  @param	string	$name       name of parameter
+     *  @return string      		value of parameter
      */
-    function getConfCP($name, $fk_type=0)
+    function getConfCP($name)
     {
         $sql = "SELECT value";
         $sql.= " FROM ".MAIN_DB_PREFIX."holiday_config";
         $sql.= " WHERE name = '".$name."'";
-        if ($fk_type > 0) $sql.=" AND fk_type = ".$fk_type;
 
         dol_syslog(get_class($this).'::getConfCP name='.$name.'', LOG_DEBUG);
         $result = $this->db->query($sql);

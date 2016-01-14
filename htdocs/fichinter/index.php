@@ -57,8 +57,6 @@ llxHeader("",$langs->trans("Interventions"),$help_url);
 
 print load_fiche_titre($langs->trans("InterventionsArea"));
 
-//print '<table width="100%" class="notopnoleftnoright">';
-//print '<tr><td valign="top" width="30%" class="notopnoleft">';
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
@@ -204,14 +202,13 @@ if (! empty($conf->ficheinter->enabled))
 }
 
 
-//print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 $max=5;
 
 /*
- * Last modified orders
+ * Last modified interventions
  */
 
 $sql = "SELECT f.rowid, f.ref, f.fk_statut, f.date_valid as datec, f.tms as datem,";
@@ -281,16 +278,17 @@ else dol_print_error($db);
 
 
 /*
- * Orders to process
+ * interventions to process
  */
-if (! empty($conf->commande->enabled))
+/*
+if (! empty($conf->fichinter->enabled))
 {
 	$sql = "SELECT f.rowid, f.ref, f.fk_statut, s.nom as name, s.rowid as socid";
 	$sql.=" FROM ".MAIN_DB_PREFIX."fichinter as f";
 	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE f.fk_soc = s.rowid";
-	$sql.= " AND f.entity IN (".getEntity('commande', 1).")";
+	$sql.= " AND f.entity IN (".getEntity('fichinter', 1).")";
 	$sql.= " AND f.fk_statut = 1";
 	if ($socid) $sql.= " AND f.fk_soc = ".$socid;
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
@@ -303,7 +301,7 @@ if (! empty($conf->commande->enabled))
 
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td colspan="3">'.$langs->trans("OrdersToProcess").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut=1"><span class="badge">'.$num.'</span></a></td></tr>';
+		print '<td colspan="3">'.$langs->trans("FichinterToProcess").' <a href="'.DOL_URL_ROOT.'/fichinter/list.php?viewstatut=1"><span class="badge">'.$num.'</span></a></td></tr>';
 
 		if ($num)
 		{
@@ -350,11 +348,10 @@ if (! empty($conf->commande->enabled))
 	}
 	else dol_print_error($db);
 }
+*/
 
 
 
-
-//print '</td></tr></table>';
 print '</div></div></div>';
 
 

@@ -375,7 +375,7 @@ if ($action == 'export_csv')
 	}
 } else {
 
-	llxHeader('', '', '');
+	llxHeader('', $langs->trans("PurchasesJournal"));
 
 	$form = new Form($db);
 

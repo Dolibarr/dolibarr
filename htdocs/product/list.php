@@ -230,7 +230,8 @@ else
     	else $sql.= " AND p.fk_product_type <> '1'";
     }
 	if ($sref)     $sql .= natural_search('p.ref', $sref);
-    if ($sbarcode) $sql .= natural_search('p.barcode', $sbarcode);
+	if ($snom)     $sql .= natural_search('p.label', $snom);
+	if ($sbarcode) $sql .= natural_search('p.barcode', $sbarcode);
     if (isset($tosell) && dol_strlen($tosell) > 0  && $tosell!=-1) $sql.= " AND p.tosell = ".$db->escape($tosell);
     if (isset($tobuy) && dol_strlen($tobuy) > 0  && $tobuy!=-1)   $sql.= " AND p.tobuy = ".$db->escape($tobuy);
     if (dol_strlen($canvas) > 0)                    $sql.= " AND p.canvas = '".$db->escape($canvas)."'";

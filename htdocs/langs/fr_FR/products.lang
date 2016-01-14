@@ -133,7 +133,6 @@ ParentProductsNumber=Nbre de produits virtuels/packages parent
 IfZeroItIsNotAVirtualProduct=Si 0, ce produit n'est pas utilisé par un produit package
 IfZeroItIsNotUsedByVirtualProduct=Si 0, ce produit n'est pas un produit package
 EditAssociate=Composer comme produit virtuel
-Translation=Traduction
 KeywordFilter=Filtre par mot-clé
 CategoryFilter=Filtre par catégorie
 ProductToAddSearch=Recherche des produits à ajouter

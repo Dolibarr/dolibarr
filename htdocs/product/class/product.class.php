@@ -106,6 +106,8 @@ class Product extends CommonObject
 
 	//! Stock
 	var $stock_reel;
+	//! Cost price
+	var $cost_price;
 	//! Average price value for product entry into stock (PMP)
 	var $pmp;
     //! Stock alert
