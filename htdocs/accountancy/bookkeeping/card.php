@@ -90,7 +90,7 @@ if ($action == "confirm_update") {
 				$book->sens = 'C';
 			}
 			
-			$result = $book->update();
+			$result = $book->update($user);
 			if ($result < 0) {
 				setEventMessages($book->error, $book->errors, 'errors');
 			} else {

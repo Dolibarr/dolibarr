@@ -317,6 +317,151 @@ class BookKeeping extends CommonObject {
 	}
 	
 	/**
+	 * Create object into database
+	 *
+	 * @param  User $user      User that creates
+	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
+	 *
+	 * @return int <0 if KO, Id of created object if OK
+	 */
+	public function create_std(User $user, $notrigger = false)
+	{
+		dol_syslog(__METHOD__, LOG_DEBUG);
+	
+		$error = 0;
+	
+		// Clean parameters
+	
+		if (isset($this->doc_type)) {
+			$this->doc_type = trim($this->doc_type);
+		}
+		if (isset($this->doc_ref)) {
+			$this->doc_ref = trim($this->doc_ref);
+		}
+		if (isset($this->fk_doc)) {
+			$this->fk_doc = trim($this->fk_doc);
+		}
+		if (isset($this->fk_docdet)) {
+			$this->fk_docdet = trim($this->fk_docdet);
+		}
+		if (isset($this->code_tiers)) {
+			$this->code_tiers = trim($this->code_tiers);
+		}
+		if (isset($this->numero_compte)) {
+			$this->numero_compte = trim($this->numero_compte);
+		}
+		if (isset($this->label_compte)) {
+			$this->label_compte = trim($this->label_compte);
+		}
+		if (isset($this->debit)) {
+			$this->debit = trim($this->debit);
+		}
+		if (isset($this->credit)) {
+			$this->credit = trim($this->credit);
+		}
+		if (isset($this->montant)) {
+			$this->montant = trim($this->montant);
+		}
+		if (isset($this->sens)) {
+			$this->sens = trim($this->sens);
+		}
+		if (isset($this->fk_user_author)) {
+			$this->fk_user_author = trim($this->fk_user_author);
+		}
+		if (isset($this->import_key)) {
+			$this->import_key = trim($this->import_key);
+		}
+		if (isset($this->code_journal)) {
+			$this->code_journal = trim($this->code_journal);
+		}
+		if (isset($this->piece_num)) {
+			$this->piece_num = trim($this->piece_num);
+		}
+	
+	
+	
+		// Check parameters
+		// Put here code to add control on parameters values
+	
+		// Insert request
+		$sql = 'INSERT INTO ' . MAIN_DB_PREFIX . $this->table_element . '(';
+	
+		$sql.= 'doc_date,';
+		$sql.= 'doc_type,';
+		$sql.= 'doc_ref,';
+		$sql.= 'fk_doc,';
+		$sql.= 'fk_docdet,';
+		$sql.= 'code_tiers,';
+		$sql.= 'numero_compte,';
+		$sql.= 'label_compte,';
+		$sql.= 'debit,';
+		$sql.= 'credit,';
+		$sql.= 'montant,';
+		$sql.= 'sens,';
+		$sql.= 'fk_user_author,';
+		$sql.= 'import_key,';
+		$sql.= 'code_journal,';
+		$sql.= 'piece_num';
+	
+	
+		$sql .= ') VALUES (';
+	
+		$sql .= ' '.(! isset($this->doc_date) || dol_strlen($this->doc_date)==0?'NULL':"'".$this->db->idate($this->doc_date)."'").',';
+		$sql .= ' '.(! isset($this->doc_type)?'NULL':"'".$this->db->escape($this->doc_type)."'").',';
+		$sql .= ' '.(! isset($this->doc_ref)?'NULL':"'".$this->db->escape($this->doc_ref)."'").',';
+		$sql .= ' '.(empty($this->fk_doc)?'0':$this->fk_doc).',';
+		$sql .= ' '.(empty($this->fk_docdet)?'0':$this->fk_docdet).',';
+		$sql .= ' '.(! isset($this->code_tiers)?'NULL':"'".$this->db->escape($this->code_tiers)."'").',';
+		$sql .= ' '.(! isset($this->numero_compte)?'NULL':"'".$this->db->escape($this->numero_compte)."'").',';
+		$sql .= ' '.(! isset($this->label_compte)?'NULL':"'".$this->db->escape($this->label_compte)."'").',';
+		$sql .= ' '.(! isset($this->debit)?'NULL':"'".$this->debit."'").',';
+		$sql .= ' '.(! isset($this->credit)?'NULL':"'".$this->credit."'").',';
+		$sql .= ' '.(! isset($this->montant)?'NULL':"'".$this->montant."'").',';
+		$sql .= ' '.(! isset($this->sens)?'NULL':"'".$this->db->escape($this->sens)."'").',';
+		$sql .= ' '.$user->id.',';
+		$sql .= ' '.(! isset($this->import_key)?'NULL':"'".$this->db->escape($this->import_key)."'").',';
+		$sql .= ' '.(! isset($this->code_journal)?'NULL':"'".$this->db->escape($this->code_journal)."'").',';
+		$sql .= ' '.(! isset($this->piece_num)?'NULL':$this->piece_num);
+	
+	
+		$sql .= ')';
+	
+		$this->db->begin();
+	
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$error ++;
+			$this->errors[] = 'Error ' . $this->db->lasterror();
+			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
+		}
+	
+		if (!$error) {
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . $this->table_element);
+	
+			if (!$notrigger) {
+				// Uncomment this and change MYOBJECT to your own tag if you
+				// want this action to call a trigger.
+	
+				//// Call triggers
+				//$result=$this->call_trigger('MYOBJECT_CREATE',$user);
+				//if ($result < 0) $error++;
+				//// End call triggers
+			}
+		}
+	
+		// Commit or rollback
+		if ($error) {
+			$this->db->rollback();
+	
+			return - 1 * $error;
+		} else {
+			$this->db->commit();
+	
+			return $this->id;
+		}
+	}
+	
+	/**
 	 * Load object in memory from the database
 	 *
 	 * @param int $id Id object
