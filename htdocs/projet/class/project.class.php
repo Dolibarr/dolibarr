@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013	   Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
@@ -65,6 +65,7 @@ class Project extends CommonObject
 
     var $statut;			// 0=draft, 1=opened, 2=closed
     var $opp_status;		// opportunity status, into table llx_c_lead_status
+	var $opp_percent;		// opportunity probability
 
     var $oldcopy;
 
@@ -140,6 +141,7 @@ class Project extends CommonObject
         $sql.= ", fk_user_creat";
         $sql.= ", fk_statut";
         $sql.= ", fk_opp_status";
+        $sql.= ", opp_percent";
         $sql.= ", public";
         $sql.= ", datec";
         $sql.= ", dateo";
@@ -155,6 +157,7 @@ class Project extends CommonObject
         $sql.= ", " . $user->id;
         $sql.= ", ".(is_numeric($this->statut) ? $this->statut : '0');
         $sql.= ", ".(is_numeric($this->opp_status) ? $this->opp_status : 'NULL');
+        $sql.= ", ".(is_numeric($this->opp_percent) ? $this->opp_percent : 'NULL');
         $sql.= ", " . ($this->public ? 1 : 0);
         $sql.= ", '".$this->db->idate($now)."'";
         $sql.= ", " . ($this->date_start != '' ? "'".$this->db->idate($this->date_start)."'" : 'null');
@@ -245,6 +248,7 @@ class Project extends CommonObject
             $sql.= ", fk_soc = " . ($this->socid > 0 ? $this->socid : "null");
             $sql.= ", fk_statut = " . $this->statut;
             $sql.= ", fk_opp_status = " . ($this->opp_status > 0 ? $this->opp_status : 'null');
+			$sql.= ", opp_percent = " . ((is_numeric($this->opp_percent) && $this->opp_percent != '') ? $this->opp_percent : 'null');
             $sql.= ", public = " . ($this->public ? 1 : 0);
             $sql.= ", datec=" . ($this->date_c != '' ? "'".$this->db->idate($this->date_c)."'" : 'null');
             $sql.= ", dateo=" . ($this->date_start != '' ? "'".$this->db->idate($this->date_start)."'" : 'null');
@@ -339,7 +343,7 @@ class Project extends CommonObject
         if (empty($id) && empty($ref)) return -1;
 
         $sql = "SELECT rowid, ref, title, description, public, datec, opp_amount, budget_amount,";
-        $sql.= " tms, dateo, datee, date_close, fk_soc, fk_user_creat, fk_user_close, fk_statut, fk_opp_status, note_private, note_public, model_pdf";
+        $sql.= " tms, dateo, datee, date_close, fk_soc, fk_user_creat, fk_user_close, fk_statut, fk_opp_status, opp_percent, note_private, note_public, model_pdf";
         $sql.= " FROM " . MAIN_DB_PREFIX . "projet";
         if (! empty($id))
         {
@@ -380,6 +384,7 @@ class Project extends CommonObject
                 $this->statut = $obj->fk_statut;
                 $this->opp_status = $obj->fk_opp_status;
                 $this->opp_amount	= $obj->opp_amount;
+                $this->opp_percent	= $obj->opp_percent;
                 $this->budget_amount	= $obj->budget_amount;
                 $this->modelpdf	= $obj->model_pdf;
 
