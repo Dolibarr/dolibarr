@@ -289,6 +289,7 @@ if ($resql)
 	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Action"),$_SERVER["PHP_SELF"],"a.label",$param,"","",$sortfield,$sortorder);
+	if (! empty($conf->global->AGENDA_USE_EVENT_TYPE)) print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"c.libelle",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateStart"),$_SERVER["PHP_SELF"],"a.datep",$param,'','align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateEnd"),$_SERVER["PHP_SELF"],"a.datep2",$param,'','align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom",$param,"","",$sortfield,$sortorder);
@@ -299,6 +300,11 @@ if ($resql)
 
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre"></td>';
+	if (! empty($conf->global->AGENDA_USE_EVENT_TYPE)) 
+	{
+	    print '<td class="liste_titre"></td>';
+	    //print '<td class="liste_titre"><input type="text" name="search_type" value="'.$search_type.'"></td>';
+	}
 	print '<td class="liste_titre" align="center">';
 	print $form->select_date($datestart, 'datestart', 0, 0, 1, '', 1, 0, 1);
 	print '</td>';
@@ -318,6 +324,10 @@ if ($resql)
 	$now=dol_now();
 	$delay_warning=$conf->global->MAIN_DELAY_ACTIONS_TODO*24*60*60;
 
+	require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
+	$caction=new CActionComm($db);
+	$arraylist=$caction->liste_array(1, 'code', '', (empty($conf->global->AGENDA_USE_EVENT_TYPE)?1:0));
+	
 	$var=true;
 	while ($i < min($num,$limit))
 	{
@@ -343,6 +353,13 @@ if ($resql)
 		print $actionstatic->getNomUrl(1,28);
 		print '</td>';
 
+		if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
+		{
+		    $labeltype=$obj->type_code;
+		    if (! empty($arraylist[$labeltype])) $labeltype=$arraylist[$labeltype];
+		    print '<td>'.dol_trunc($labeltype,24).'</td>';   
+		}
+		
 		// Start date
 		print '<td align="center" class="nowrap">';
 		print dol_print_date($db->jdate($obj->dp),"dayhour");
