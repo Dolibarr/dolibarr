@@ -29,6 +29,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/bookkeeping.class.php';
+require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
 
 // Langs
 $langs->load("accountancy");
@@ -43,13 +44,30 @@ $search_doc_type=GETPOST('search_doc_type','alpha');
 $search_doc_date=dol_mktime(0, 0, 0, GETPOST('doc_datemonth', 'int'), GETPOST('doc_dateday', 'int'), GETPOST('doc_dateyear', 'int'));
 $search_doc_ref=GETPOST('search_doc_ref','alpha');
 $search_numero_compte=GETPOST('search_numero_compte','alpha');
+$search_numero_compte_start=GETPOST('search_numero_compte_start','alpha');
+if ($search_numero_compte_start==-1) {
+	$search_numero_compte_start='';
+}
+$search_numero_compte_end=GETPOST('search_numero_compte_end','alpha');
+if ($search_numero_compte_end==-1) {
+	$search_numero_compte_end='';
+}
 $search_code_tiers=GETPOST('search_code_tiers','alpha');
+$search_code_tiers_start=GETPOST('search_code_tiers_start','alpha');
+if ($search_code_tiers_start==-1) {
+	$search_code_tiers_start='';
+}
+$search_code_tiers_end=GETPOST('search_code_tiers_end','alpha');
+if ($search_code_tiers_end==-1) {
+	$search_code_tiers_end='';
+}
 $search_label_compte=GETPOST('search_label_compte','alpha');
 $search_sens=GETPOST('search_sens','alpha');
 $search_code_journal=GETPOST('search_code_journal','alpha');
 
 $object = new BookKeeping($db);
 $form = new Form($db);
+$formventilation = new FormVentilation($db);
 
 // Filter
 if (empty($search_date_start)) {
@@ -103,9 +121,25 @@ if (! empty($search_numero_compte)) {
 	$filter['t.numero_compte'] = $search_numero_compte;
 	$options .= '&amp;search_numero_compte=' . $search_numero_compte;
 }
+if (! empty($search_numero_compte_start)) {
+	$filter['t.numero_compte>='] = $search_numero_compte_start;
+	$options .= '&amp;search_numero_compte_start=' . $search_numero_compte_start;
+}
+if (! empty($search_numero_compte_end)) {
+	$filter['t.numero_compte<='] = $search_numero_compte_end;
+	$options .= '&amp;search_numero_compte_end=' . $search_numero_compte_end;
+}
 if (! empty($search_code_tiers)) {
 	$filter['t.code_tiers'] = $search_code_tiers;
 	$options .= '&amp;search_code_tiers=' . $search_code_tiers;
+}
+if (! empty($search_code_tiers_start)) {
+	$filter['t.code_tiers>='] = $search_code_tiers_start;
+	$options .= '&amp;search_code_tiers_start=' . $search_code_tiers_start;
+}
+if (! empty($search_code_tiers_end)) {
+	$filter['t.code_tiers<='] = $search_code_tiers_end;
+	$options .= '&amp;search_code_tiers_end=' . $search_code_tiers_end;
 }
 if (! empty($search_label_compte)) {
 	$filter['t.label_compte'] = $search_label_compte;
@@ -146,9 +180,22 @@ print $form->select_date($search_date_start, 'date_start');
 print $langs->trans('DateEnd') . ': ';
 print $form->select_date($search_date_end, 'date_end');
 print '</div>';
+print '<div class="liste_titre">';
+print $langs->trans('From').' '.$langs->trans('AccountAccounting') . ': ';
+print $formventilation->select_account($search_numero_compte_start,'search_numero_compte_start', 1, array (), 1, 1,'');
+print $langs->trans('To').' '.$langs->trans('AccountAccounting') . ': ';
+print $formventilation->select_account($search_numero_compte_end,'search_numero_compte_end', 1, array (), 1, 1,'');
+print '</div>';
+print '<div class="liste_titre">';
+print $langs->trans('From').' '.$langs->trans('ThirdPartyAccount') . ': ';
+print $formventilation->select_auxaccount($search_code_tiers_start,'search_code_tiers_start', 1);
+print $langs->trans('To').' '.$langs->trans('ThirdPartyAccount') . ': ';
+print $formventilation->select_auxaccount($search_code_tiers_end,'searchcode_tiers_end', 1);
+print '</div>';
 print "<table class=\"noborder\" width=\"100%\">";
 
 print '<tr class="liste_titre">';
+print_liste_field_titre($langs->trans("NumPiece"), $_SERVER['PHP_SELF'], "t.piece_num", "", $options, "", $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("Doctype"), $_SERVER['PHP_SELF'], "t.doc_type", "", $options, "", $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("Date"), $_SERVER['PHP_SELF'], "t.doc_date", "", $options, "", $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("Docref"), $_SERVER['PHP_SELF'], "t.doc_ref", "", $options, "", $sortfield, $sortorder);
@@ -164,6 +211,10 @@ print '<th class="liste_titre" align="right"><input type="image" class="liste_ti
 print '<input type="image" class="liste_titre" name="button_removefilter" src="' . img_picto($langs->trans("Search"), 'searchclear.png', '', '', 1) . '" value="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '" title="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '"></td>';
 print "</tr>\n";
 print '<tr class="liste_titre">';
+
+print '<td class="liste_titre">';
+print '<input type="text" size=4 class="flat" name="search_piece_num" value="'.$search_piece_num.'"/>';
+print '</td>';
 
 print '<td class="liste_titre">';
 print '<input type="text" size=7 class="flat" name="search_doc_type" value="'.$search_doc_type.'"/>';
@@ -218,6 +269,7 @@ foreach ( $object->lines as $line ) {
 	
 	print "<tr $bc[$var]>";
 	
+	print '<td>' . $line->piece_num . '</td>' . "\n";
 	print '<td>' . $line->doc_type . '</td>' . "\n";
 	print '<td>' . dol_print_date($line->doc_date) . '</td>';
 	print '<td>' . $line->doc_ref . '</td>';
