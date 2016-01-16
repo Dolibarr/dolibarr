@@ -2018,7 +2018,7 @@ function extractExtrafieldsText($extrafields, $labels, $values)
 			if (!($text === null)) {
 				$text .= '<br>';
 			}
-			$text .= $label . $langs->trans("SeparatorColon") . ' '. $value;
+			$text .= $label . $langs->trans("SeparatorColon") . ' '. $extrafields->showOutputField($code, $value);
 		}
 	}
 	return $text;
