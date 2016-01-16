@@ -6,7 +6,7 @@
  * Copyright (C) 2010		Juanjo Menent       	<jmenent@2byte.es>
  * Copyright (C) 2012		Christophe Battarel		<christophe.battarel@altairis.fr>
  * Copyright (C) 2012       Cédric Salvador         <csalvador@gpcsolutions.fr>
- * Copyright (C) 2012-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2012-2016  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2014		Cedric GROSS			<c.gross@kreiz-it.fr>
  * Copyright (C) 2014		Teddy Andreotti			<125155@supinfo.com>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
@@ -1947,3 +1947,79 @@ function pdf_getSizeForImage($realpath)
 	return array('width'=>$width,'height'=>$height);
 }
 
+/**
+ * Output printable object extrafields to PDF
+ *
+ * @param TCPDI $pdf PDF object
+ * @param CommonObject $object Business object
+ */
+function pdf_writeMainExtrafields(&$pdf, $object)
+{
+	require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
+	global $db;
+
+	// Is there any extrafields?
+	if ($object->fetch_optionals()) {
+
+		$extrafields = new ExtraFields($db);
+		$labels = $extrafields->fetch_name_optionals_label($object->table_element);
+		$values = $object->array_options;
+
+		$text = extractExtrafieldsText($extrafields, $labels, $values);
+
+		if (!($text === null)) {
+			$pdf->writeHTMLCell(190, 3, $pdf->GetX(), $pdf->GetY(), $text, 0, 1);
+		}
+	}
+}
+
+/**
+ * Output printable line extrafields to PDF line description
+ *
+ * @param TCPDI $pdf PDF object
+ * @param CommonObject $object Business object
+ * @param int $i Current line number
+ */
+function pdf_writeLineExtrafields(&$pdf, $object, $i)
+{
+	require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
+	global $db;
+
+	// Is there any line extrafields?
+	if($object->lines[$i]->fetch_optionals()) {
+
+		$extrafields = new ExtraFields($db);
+		$labels = $extrafields->fetch_name_optionals_label($object->table_element_line);
+		$values = $object->lines[$i]->array_options;
+
+		$text = extractExtrafieldsText($extrafields, $labels, $values);
+
+		if(!($text === null)) {
+			$pdf->writeHTMLCell(190, 3, $pdf->GetX(), $pdf->GetY(), $text, 0, 1);
+		}
+	}
+}
+
+/**
+ * Extract text from extrafields
+ *
+ * @param ExtraFields $extrafields Extrafields boject
+ * @param array $labels Labels list
+ * @param array $values Values list
+ * @return string
+ */
+function extractExtrafieldsText($extrafields, $labels, $values)
+{
+	global $langs;
+	$text = null;
+	foreach ($labels as $code => $label) {
+		$value = $values['options_' . $code];
+		if (!empty($value) && $extrafields->attribute_printable[$code]) {
+			if (!($text === null)) {
+				$text .= '<br>';
+			}
+			$text .= $label . $langs->trans("SeparatorColon") . ' '. $value;
+		}
+	}
+	return $text;
+}

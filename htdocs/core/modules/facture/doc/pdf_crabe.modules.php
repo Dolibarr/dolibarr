@@ -5,7 +5,7 @@
  * Copyright (C) 2010-2014	Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2012      	Christophe Battarel <christophe.battarel@altairis.fr>
  * Copyright (C) 2012       Cédric Salvador     <csalvador@gpcsolutions.fr>
- * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2012-2016  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -387,6 +387,11 @@ class pdf_crabe extends ModelePDFFactures
 					$height_note=0;
 				}
 
+				// Main extrafields
+				$pdf->setY($tab_top); // FIXME: Ugly hack to fit current code. All the document should use relative positions instead.
+				pdf_writeMainExtrafields($pdf, $object);
+				$tab_top = $pdf->GetY() + 6; // FIXME: Ugly hack to fit current code. All the document should use relative positions instead.
+
 				$iniY = $tab_top + 7;
 				$curY = $tab_top + 7;
 				$nexY = $tab_top + 7;
@@ -435,6 +440,10 @@ class pdf_crabe extends ModelePDFFactures
 
 					$pdf->startTransaction();
 					pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxpicture-$curX,3,$curX,$curY,$hideref,$hidedesc);
+
+					// Line extrafields
+					pdf_writeLineExtrafields($pdf, $object, $i);
+
 					$pageposafter=$pdf->getPage();
 					if ($pageposafter > $pageposbefore)	// There is a pagebreak
 					{

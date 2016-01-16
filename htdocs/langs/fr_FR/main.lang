@@ -8,6 +8,7 @@ FONTFORPDF=helvetica
 FONTSIZEFORPDF=10
 SeparatorDecimal=,
 SeparatorThousand=Space
+SeparatorColon= :
 FormatDateShort=%d/%m/%Y
 FormatDateShortInput=%d/%m/%Y
 FormatDateShortJava=dd/MM/yyyy
