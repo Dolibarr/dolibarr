@@ -518,10 +518,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 						$newmenu->add("/accountancy/admin/fiscalyear.php?mainmenu=home", $langs->trans("Fiscalyear"),1);
 					}
 
-					if (! in_array($langs->defaultlang,array('en_US')))
-					{
-						$newmenu->add("/admin/translation.php", $langs->trans("Translation"),1);
-					}
+					$newmenu->add("/admin/translation.php", $langs->trans("Translation"),1);
 					$newmenu->add("/admin/boxes.php?mainmenu=home", $langs->trans("Boxes"),1);
 					$newmenu->add("/admin/delais.php?mainmenu=home",$langs->trans("Alerts"),1);
 					$newmenu->add("/admin/security_other.php?mainmenu=home", $langs->trans("Security"),1);
