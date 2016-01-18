@@ -430,6 +430,7 @@ class Propal extends CommonObject
 					$product_type = $product->type;
 
 					if (!empty($conf->global->MAIN_USE_DURATION_DATERANGE))
+					{
 						if ($product_type == Product::TYPE_SERVICE && $date_start && $date_end && $product->duration_value && $product->duration_unit)
 						{
 							require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
