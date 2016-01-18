@@ -2376,12 +2376,13 @@ div.tabBar .noborder {
 }
 span.boxstatsindicator {
 	font-size: 110%;
-	font-weight: bold;
+	font-weight: normal;
 }
 span.dashboardlineindicator, span.dashboardlineindicatorlate {
 	font-size: 120%;
 	font-weight: bold;
 }
+
 
 .boxtable {
     -moz-box-shadow: 3px 3px 4px #f4f4f4;

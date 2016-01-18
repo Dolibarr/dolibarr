@@ -293,6 +293,10 @@ input.smallpadd {
 select.flat, form.flat select {
 	font-weight: normal;
 }
+.optiongrey {
+	opacity: 0.5;
+}
+select:invalid { color: gray; }
 input:disabled {
 	background:#ddd;
 }
@@ -2540,10 +2544,17 @@ div.tabBar .noborder {
 }
 span.boxstatsindicator {
 	font-size: 110%;
-	font-weight: bold;
+	font-weight: normal;
 }
 span.dashboardlineindicator, span.dashboardlineindicatorlate {
 	font-size: 120%;
+	font-weight: normal;
+}
+span.dashboardlineok {
+	color: #008800;
+}
+span.dashboardlineko {
+	color: #880000;
 	font-weight: bold;
 }
 .boxtable {

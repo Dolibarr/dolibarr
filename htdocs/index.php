@@ -322,7 +322,7 @@ print '<th class="liste_titre" colspan="2">'.$langs->trans("DolibarrWorkBoard").
 print '<th class="liste_titre" align="right">'.$langs->trans("Number").'</th>';
 print '<th class="liste_titre" align="right">'.$langs->trans("Late").'</th>';
 print '<th class="liste_titre">&nbsp;</th>';
-print '<th class="liste_titre" width="20">&nbsp;</th>';
+//print '<th class="liste_titre" width="20">&nbsp;</th>';
 if ($showweather) print '<th class="liste_titre hideonsmartphone" width="80">&nbsp;</th>';
 print '</tr>'."\n";
 
@@ -469,7 +469,8 @@ foreach($valid_dashboardlines as $board)
     print '<td align="right">';
     //if ($board->nbtodolate > 0)
     //{
-        print '<a class="dashboardlineindicatorlate" href="'.$board->url.'"><span class="dashboardlineindicatorlate">';
+        $textlate = $langs->trans("Late").' = '.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil($board->warning_delay) >= 0 ? '+' : '').ceil($board->warning_delay).' '.$langs->trans("days");
+        print '<a title="'.dol_escape_htmltag($textlate).'" class="dashboardlineindicatorlate'.($board->nbtodolate>0?' dashboardlineko':' dashboardlineok').'" href="'.$board->url.'"><span class="dashboardlineindicatorlate'.($board->nbtodolate>0?' dashboardlineko':' dashboardlineok').'">';
         print $board->nbtodolate;
         print '</span></a>';
     //}
@@ -478,9 +479,9 @@ foreach($valid_dashboardlines as $board)
     if ($board->nbtodolate > 0) print img_picto($langs->trans("NActionsLate",$board->nbtodolate).' (>'.ceil($board->warning_delay).' '.$langs->trans("days").')',"warning");
     else print '&nbsp;';
     print '</td>';
-    print '<td class="nowrap" align="right">';
+    /*print '<td class="nowrap" align="right">';
     print ' (>'.ceil($board->warning_delay).' '.$langs->trans("days").')';
-    print '</td>';
+    print '</td>';*/
     if ($showweather)
     {
         print '<td class="nohover hideonsmartphone" rowspan="'.$rowspan.'" width="80" style="border-left: 1px solid #DDDDDD" align="center">';
