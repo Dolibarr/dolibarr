@@ -39,6 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 if (! empty($conf->supplier_proposal->enabled))
 	require DOL_DOCUMENT_ROOT . '/supplier_proposal/class/supplier_proposal.class.php';
@@ -316,6 +317,33 @@ if (empty($reshook))
 	        $error++;
 	    }
 
+		$durationqty = 1;
+		if ($date_start && $date_end)
+		{
+			if ($date_start > $date_end)
+			{
+				setEventMessage($langs->trans('ErrorStartDateGreaterEnd'), 'errors');
+				$error++;
+			}
+			else if (!empty($conf->global->MAIN_USE_DURATION_DATERANGE))
+			{
+				$duration = GETPOST('durationvalue', 'int');
+				if (is_numeric($duration) && $duration > 0) {
+					$durationqty=calculateDurationQuantity($date_start, $date_end, $duration, GETPOST('durationunit', 'alpha'));
+					if ($durationqty < 1)
+					{
+						setEventMessage($langs->trans('DateRangeShortForDuration', 'errors'));
+						$error++;
+					}
+				}
+			}
+		}
+		if (empty($qty))
+		{
+		    setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), 'errors');
+		    $error++;
+		}
+
 	    // Ecrase $pu par celui	du produit
 	    // Ecrase $desc	par	celui du produit
 	    // Ecrase $txtva  par celui du produit
@@ -328,7 +356,7 @@ if (empty($reshook))
 
 	    	if (GETPOST('idprodfournprice') > 0)
 	    	{
-	    		$idprod=$productsupplier->get_buyprice(GETPOST('idprodfournprice'), $qty);    // Just to see if a price exists for the quantity. Not used to found vat.
+	    		$idprod=$productsupplier->get_buyprice(GETPOST('idprodfournprice'), $qty * $durationqty);    // Just to see if a price exists for the quantity. Not used to found vat.
 	    	}
 
 	    	if ($idprod > 0)

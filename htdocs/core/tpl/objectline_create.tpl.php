@@ -173,14 +173,22 @@ else {
 		$filtertype='';
 		if (! empty($object->element) && $object->element == 'contrat' && empty($conf->global->CONTRACT_SUPPORT_PRODUCTS)) $filtertype='1';
 
+		//type must be changed after duration because the change() is hooked on seltype
+		echo '<input type="hidden" id="durationvalue" name="durationvalue" value="">';
+		echo '<input type="hidden" id="durationunit" name="durationunit" value="">';
+		echo '<input type="hidden" id="seltype" name="seltype" value="">';
+
 		if (empty($senderissupplier))
 		{
-			$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, 1, 2, '', 1, array(),$buyer->id);
+			$ajaxoptions=array(
+					'update' => array('durationunit' => 'durationunit', 'durationvalue'=>'durationvalue', 'seltype' => 'type'),	// html id tags that will be edited with which ajax json response key
+			);
+			$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, 1, 2, '', 1, $ajaxoptions,$buyer->id);
 		}
 		else
 		{
 			$ajaxoptions=array(
-					'update' => array('qty'=>'qty','remise_percent' => 'discount'),	// html id tags that will be edited with which ajax json response key
+					'update' => array('durationunit' => 'durationunit', 'durationvalue'=>'durationvalue', 'seltype' => 'type', 'qty'=>'qty','remise_percent' => 'discount'),	// html id tags that will be edited with which ajax json response key
 					'option_disabled' => 'addPredefinedProductButton',	// html id to disable once select is done
 					'warning' => $langs->trans("NoPriceDefinedForThisSupplier") // translation of an error saved into var 'error'
 			);
@@ -367,6 +375,7 @@ if ((! empty($conf->service->enabled) || ($object->element == 'contrat')) && $da
 	<?php
 	$date_start=dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), 0, GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
 	$date_end=dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), 0, GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
+	$usehm=(isset($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE:'');
 	if (! empty($object->element) && $object->element == 'contrat')
 	{
 		print $langs->trans("DateStartPlanned").' ';
@@ -377,9 +386,9 @@ if ((! empty($conf->service->enabled) || ($object->element == 'contrat')) && $da
 	else
 	{
 		echo $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
-		echo $form->select_date($date_start,'date_start',empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?0:1,empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?0:1,1,"addproduct",1,0,1);
+		echo $form->select_date($date_start,'date_start',$usehm,$usehm,1,"addproduct",1,0,1);
 		echo ' '.$langs->trans('to').' ';
-		echo $form->select_date($date_end,'date_end',empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?0:1,empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?0:1,1,"addproduct",1,0,1);
+		echo $form->select_date($date_end,'date_end',$usehm,$usehm,1,"addproduct",1,0,1);
 	}
 	?>
 	</td>
@@ -487,21 +496,39 @@ jQuery(document).ready(function() {
    				if (editor) { editor.focus(); }
 			}
 		}
-		if (jQuery('#select_type').val() == '0') jQuery('#trlinefordates').hide();
+		if (jQuery('#select_type').val() == '<?php echo Product::TYPE_PRODUCT ?>') jQuery('#trlinefordates').hide();
 		else jQuery('#trlinefordates').show();
 	});
 
 	$("#prod_entry_mode_predef").on( "click", function() {
-		console.log("click prod_entry_mode_predef");
 		setforpredef();
-		jQuery('#trlinefordates').show();
+	});
+
+	/* Hide date range when not service, also hide some end date params for big durations */
+	$("#seltype").change(function() {
+		if ($('#seltype').val() == '<?php echo Product::TYPE_SERVICE ?>') {
+			var durationunit = $('#durationunit').val();
+			//Hide non necessary units
+			if (durationunit == 'd' || durationunit == 'h') {
+				jQuery("#date_endhour").show();
+			} else {
+				jQuery("#date_endhour").hide();
+			}
+			if (durationunit == 'h') {
+				jQuery("#date_endmin").show();
+			} else {
+				jQuery("#date_endmin").hide();
+			}
+			$('#trlinefordates').show();
+		} else {
+			$('#trlinefordates').hide();
+		}
 	});
 
 	/* When changing predefined product, we reload list of supplier prices */
 	$("#idprod, #idprodfournprice").change(function()
 	{
 		setforpredef();
-		jQuery('#trlinefordates').show();
 
 		<?php
 		if (! empty($usemargins) && $user->rights->margins->creer)
@@ -623,6 +650,10 @@ jQuery(document).ready(function() {
 
 	<?php if (GETPOST('prod_entry_mode') == 'predef') { // When we submit with a predef product and it fails we must start with predef ?>
 		setforpredef();
+	<?php } else { //Reloading page with predef selected leaves in mixed state, so set free as default ?>
+		setforfree();
+		if (jQuery('#select_type').val() == '<?php echo Product::TYPE_SERVICE ?>') jQuery('#trlinefordates').show();
+		else jQuery('#trlinefordates').hide();
 	<?php } ?>
 
 });

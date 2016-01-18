@@ -837,3 +837,21 @@ function monthArray($outputlangs,$short=0)
 	return $montharray;
 }
 
+
+/**
+ * Function to calculate proper quantity based on date range and duration
+ *
+ * @param  int		$start_date		Start date
+ * @param  int		$end_date		End date
+ * @param  int		$duration		Duration
+ * @param  int		$duration_unit	Duration unit, empty for seconds
+ * @return int		Quantity as result
+ */
+function calculateDurationQuantity($start_date, $end_date, $duration, $duration_unit)
+{
+	if (!empty($duration_unit)) {
+		$duration = dol_time_plus_duree(0, $duration, $duration_unit);
+	}
+	$qty = floor(($end_date - $start_date) / $duration);
+	return ($qty<0) ? 0 : $qty;
+}
