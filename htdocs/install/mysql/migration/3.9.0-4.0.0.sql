@@ -37,3 +37,102 @@ ALTER TABLE llx_cronjob MODIFY COLUMN unitfrequency	varchar(255) NOT NULL DEFAUL
 
 ALTER TABLE llx_facture ADD INDEX idx_facture_fk_statut (fk_statut);
 
+
+CREATE TABLE IF NOT EXISTS `llx_multicurrency` 
+( 
+	`rowid` integer AUTO_INCREMENT PRIMARY KEY, 
+	`date_create` datetime DEFAULT NULL, 
+	`code` varchar(255) DEFAULT NULL, 
+	`name` varchar(255) DEFAULT NULL, 
+	`entity` integer DEFAULT NULL,
+	`fk_user` integer DEFAULT NULL,
+	KEY `code` (`code`)
+) ENGINE=innodb;
+
+CREATE TABLE IF NOT EXISTS `llx_multicurrency_rate` 
+( 
+	`rowid` integer AUTO_INCREMENT PRIMARY KEY, 
+	`date_sync` datetime DEFAULT NULL,  
+	`rate` double NOT NULL DEFAULT '0', 
+	`fk_multicurrency` integer NOT NULL DEFAULT '0', 
+	`entity` integer NOT NULL DEFAULT '0', 
+	KEY `fk_multicurrency` (`fk_multicurrency`), 
+	KEY `entity` (`entity`) 
+) ENGINE=innodb;
+
+ALTER TABLE llx_societe ADD COLUMN fk_multicurrency integer;
+ALTER TABLE llx_societe ADD COLUMN multicurrency_code varchar(255);
+
+ALTER TABLE llx_product_price ADD COLUMN fk_multicurrency integer;
+ALTER TABLE llx_product_price ADD COLUMN multicurrency_code varchar(255);
+ALTER TABLE llx_product_price ADD COLUMN multicurrency_price double(24,8) DEFAULT 0;
+
+ALTER TABLE llx_commande ADD COLUMN fk_multicurrency integer;
+ALTER TABLE llx_commande ADD COLUMN multicurrency_code varchar(255);
+ALTER TABLE llx_commande ADD COLUMN multicurrency_tx double(24,8) DEFAULT 1;
+ALTER TABLE llx_commande ADD COLUMN multicurrency_total_ht double(24,8) DEFAULT 0;
+ALTER TABLE llx_commande ADD COLUMN multicurrency_total_tva double(24,8) DEFAULT 0;
+ALTER TABLE llx_commande ADD COLUMN multicurrency_total_ttc double(24,8) DEFAULT 0;
+
+ALTER TABLE llx_commandedet ADD COLUMN fk_multicurrency integer;
+ALTER TABLE llx_commandedet ADD COLUMN multicurrency_code varchar(255);
+ALTER TABLE llx_commandedet ADD COLUMN multicurrency_subprice double(24,8) DEFAULT 0;
+ALTER TABLE llx_commandedet ADD COLUMN multicurrency_total_ht double(24,8) DEFAULT 0;
+ALTER TABLE llx_commandedet ADD COLUMN multicurrency_total_tva double(24,8) DEFAULT 0;
+ALTER TABLE llx_commandedet ADD COLUMN multicurrency_total_ttc double(24,8) DEFAULT 0;
+
+ALTER TABLE llx_commande_fournisseur ADD COLUMN fk_multicurrency integer;
+ALTER TABLE llx_commande_fournisseur ADD COLUMN multicurrency_code varchar(255);
+ALTER TABLE llx_commande_fournisseur ADD COLUMN multicurrency_tx double(24,8) DEFAULT 1;
+ALTER TABLE llx_commande_fournisseur ADD COLUMN multicurrency_total_ht double(24,8) DEFAULT 0;
+ALTER TABLE llx_commande_fournisseur ADD COLUMN multicurrency_total_tva double(24,8) DEFAULT 0;
+ALTER TABLE llx_commande_fournisseur ADD COLUMN multicurrency_total_ttc double(24,8) DEFAULT 0;
+
+ALTER TABLE llx_commande_fournisseurdet ADD COLUMN fk_multicurrency integer;
+ALTER TABLE llx_commande_fournisseurdet ADD COLUMN multicurrency_code varchar(255);
+ALTER TABLE llx_commande_fournisseurdet ADD COLUMN multicurrency_subprice double(24,8) DEFAULT 0;
+ALTER TABLE llx_commande_fournisseurdet ADD COLUMN multicurrency_total_ht double(24,8) DEFAULT 0;
+ALTER TABLE llx_commande_fournisseurdet ADD COLUMN multicurrency_total_tva double(24,8) DEFAULT 0;
+ALTER TABLE llx_commande_fournisseurdet ADD COLUMN multicurrency_total_ttc double(24,8) DEFAULT 0;
+
+ALTER TABLE llx_facture_fourn ADD COLUMN fk_multicurrency integer;
+ALTER TABLE llx_facture_fourn ADD COLUMN multicurrency_code varchar(255);
+ALTER TABLE llx_facture_fourn ADD COLUMN multicurrency_tx double(24,8) DEFAULT 1;
+ALTER TABLE llx_facture_fourn ADD COLUMN multicurrency_total_ht double(24,8) DEFAULT 0;
+ALTER TABLE llx_facture_fourn ADD COLUMN multicurrency_total_tva double(24,8) DEFAULT 0;
+ALTER TABLE llx_facture_fourn ADD COLUMN multicurrency_total_ttc double(24,8) DEFAULT 0;
+
+ALTER TABLE llx_facture_fourn_det ADD COLUMN fk_multicurrency integer;
+ALTER TABLE llx_facture_fourn_det ADD COLUMN multicurrency_code varchar(255);
+ALTER TABLE llx_facture_fourn_det ADD COLUMN multicurrency_subprice double(24,8) DEFAULT 0;
+ALTER TABLE llx_facture_fourn_det ADD COLUMN multicurrency_total_ht double(24,8) DEFAULT 0;
+ALTER TABLE llx_facture_fourn_det ADD COLUMN multicurrency_total_tva double(24,8) DEFAULT 0;
+ALTER TABLE llx_facture_fourn_det ADD COLUMN multicurrency_total_ttc double(24,8) DEFAULT 0;
+
+ALTER TABLE llx_facture ADD COLUMN fk_multicurrency integer;
+ALTER TABLE llx_facture ADD COLUMN multicurrency_code varchar(255);
+ALTER TABLE llx_facture ADD COLUMN multicurrency_tx double(24,8) DEFAULT 1;
+ALTER TABLE llx_facture ADD COLUMN multicurrency_total_ht double(24,8) DEFAULT 0;
+ALTER TABLE llx_facture ADD COLUMN multicurrency_total_tva double(24,8) DEFAULT 0;
+ALTER TABLE llx_facture ADD COLUMN multicurrency_total_ttc double(24,8) DEFAULT 0;
+
+ALTER TABLE llx_facturedet ADD COLUMN fk_multicurrency integer;
+ALTER TABLE llx_facturedet ADD COLUMN multicurrency_code varchar(255);
+ALTER TABLE llx_facturedet ADD COLUMN multicurrency_subprice double(24,8) DEFAULT 0;
+ALTER TABLE llx_facturedet ADD COLUMN multicurrency_total_ht double(24,8) DEFAULT 0;
+ALTER TABLE llx_facturedet ADD COLUMN multicurrency_total_tva double(24,8) DEFAULT 0;
+ALTER TABLE llx_facturedet ADD COLUMN multicurrency_total_ttc double(24,8) DEFAULT 0;
+
+ALTER TABLE llx_propal ADD COLUMN fk_multicurrency integer;
+ALTER TABLE llx_propal ADD COLUMN multicurrency_code varchar(255);
+ALTER TABLE llx_propal ADD COLUMN multicurrency_tx double(24,8) DEFAULT 1;
+ALTER TABLE llx_propal ADD COLUMN multicurrency_total_ht double(24,8) DEFAULT 0;
+ALTER TABLE llx_propal ADD COLUMN multicurrency_total_tva double(24,8) DEFAULT 0;
+ALTER TABLE llx_propal ADD COLUMN multicurrency_total_ttc double(24,8) DEFAULT 0;
+
+ALTER TABLE llx_propaldet ADD COLUMN fk_multicurrency integer;
+ALTER TABLE llx_propaldet ADD COLUMN multicurrency_code varchar(255);
+ALTER TABLE llx_propaldet ADD COLUMN multicurrency_subprice double(24,8) DEFAULT 0;
+ALTER TABLE llx_propaldet ADD COLUMN multicurrency_total_ht double(24,8) DEFAULT 0;
+ALTER TABLE llx_propaldet ADD COLUMN multicurrency_total_tva double(24,8) DEFAULT 0;
+ALTER TABLE llx_propaldet ADD COLUMN multicurrency_total_ttc double(24,8) DEFAULT 0;

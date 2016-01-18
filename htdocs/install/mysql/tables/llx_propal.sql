@@ -69,6 +69,12 @@ create table llx_propal
   location_incoterms    varchar(255),								-- for incoterms
   import_key			varchar(14),
   extraparams			varchar(255),					-- for stock other parameters with json format
-  fk_delivery_address	integer							-- delivery address (deprecated)
+  fk_delivery_address	integer,							-- delivery address (deprecated)
   
+  fk_multicurrency			integer,
+  multicurrency_code			varchar(255),
+  multicurrency_tx			double(24,8) DEFAULT 1,
+  multicurrency_total_ht		double(24,8) DEFAULT 0,
+  multicurrency_total_tva	double(24,8) DEFAULT 0,
+  multicurrency_total_ttc	double(24,8) DEFAULT 0
 )ENGINE=innodb;

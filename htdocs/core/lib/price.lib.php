@@ -49,6 +49,7 @@
  *		@param  Societe	$seller						Thirdparty seller (we need $seller->country_id property). Provided only if seller is the supplier, otherwise $seller will be $mysoc.
  *		@param  array	$localtaxes_array			Array with localtaxes info (loaded by getLocalTaxesFromRate(vatrate, 0, ...) function).
  *		@param  integer	$progress                   Situation invoices progress (value from 0 to 100, 100 by default)
+ *		@param  double	$multicurrency_tx           Currency rate (1 by default)
  *		@return result[ 0=total_ht,
  *						 1=total_vat, (main vat only)
  *						 2=total_ttc, (total_ht + main vat + local taxes)
@@ -65,8 +66,11 @@
  *						13=!! should not be used
  *						14=total_tax1 for total_ht_without_discount,
  *						15=total_tax2 for total_ht_without_discount]
+ * 						16=multicurrency_total_ht
+ * 						17=multicurrency_total_tva
+ * 						18=multicurrency_total_ttc
  */
-function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocaltax1_rate, $uselocaltax2_rate, $remise_percent_global, $price_base_type, $info_bits, $type, $seller = '', $localtaxes_array='', $progress=100)
+function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocaltax1_rate, $uselocaltax2_rate, $remise_percent_global, $price_base_type, $info_bits, $type, $seller = '', $localtaxes_array='', $progress=100, $multicurrency_tx=1)
 {
 	global $conf,$mysoc,$db;
 
@@ -241,6 +245,11 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 		$result3bis= price2num($pu / (1 + ($txtva / 100)), 'MU');	// Si TVA consideree normale (non NPR)
 		$result[4] = price2num($result[5] - ($result3bis + $localtaxes[2]), 'MU');
 	}
+
+	// Multicurrency
+	$result[16] = price2num($result[0] * $multicurrency_tx, 'MT');
+	$result[17] = price2num($result[1] * $multicurrency_tx, 'MT');
+	$result[18] = price2num($result[2] * $multicurrency_tx, 'MT');
 
 	// if there's some localtax without vat, we calculate localtaxes (we will add them at end)
 

@@ -3722,6 +3722,65 @@ class Form
             }
         }
     }
+	
+	/**
+     *    Show form with multicurrency code
+     *
+     *    @param	string	$page        	Page
+     *    @param    string	$selected    	code pre-selectionne
+     *    @param    string	$htmlname    	Name of select html field
+     *    @return	void
+     */
+    function form_multicurrency_code($page, $selected='', $htmlname='multicurrency_code')
+    {
+        global $langs;
+        if ($htmlname != "none")
+        {
+            print '<form method="POST" action="'.$page.'">';
+            print '<input type="hidden" name="action" value="setmulticurrencycode">';
+            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
+            print '<tr><td>';
+            print $this->selectMultiCurrency($selected,$htmlname);
+            print '</td>';
+            print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+            print '</tr></table></form>';
+        }
+        else
+        {
+        	dol_include_once('/core/lib/company.lib.php');
+        	print !empty($selected) ? currency_name($selected,1) : '&nbsp;';
+        }
+    }
+	
+	/**
+     *    Show form with multicurrency rate
+     *
+     *    @param	string	$page        	Page
+     *    @param    double	$rate	    	Current rate
+     *    @param    string	$htmlname    	Name of select html field
+     *    @return	void
+     */
+    function form_multicurrency_rate($page, $rate='', $htmlname='multicurrency_tx')
+    {
+        global $langs;
+        if ($htmlname != "none")
+        {
+            print '<form method="POST" action="'.$page.'">';
+            print '<input type="hidden" name="action" value="setmulticurrencyrate">';
+            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
+            print '<tr><td>';
+            print '<input type="text" name="'.$htmlname.'" value="'.(!empty($rate) ? $rate : 1).'" size="10" />';
+            print '</td>';
+            print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+            print '</tr></table></form>';
+        }
+        else
+        {
+        	print !empty($rate) ? $rate : 1;
+        }
+    }
 
 
     /**
@@ -3925,7 +3984,53 @@ class Form
         return $out;
     }
 
+	/**
+     *	Return array of currencies in user language
+	 * 
+     *  @param	string	$selected    preselected currency code
+     *  @param  string	$htmlname    name of HTML select list
+     *  @param  integer	$useempty    1=Add empty line
+     * 	@return	string
+     */
+    function selectMultiCurrency($selected='',$htmlname='multicurrency_code', $useempty=0)
+    {
+        global $db,$conf,$langs,$user;
 
+        $langs->loadCacheCurrencies('');
+
+		$TCurrency = array();
+		
+		$sql = 'SELECT code FROM '.MAIN_DB_PREFIX.'multicurrency';
+		$resql = $db->query($sql);
+		
+		if ($resql)
+		{
+			while ($obj = $db->fetch_object($resql)) $TCurrency[$obj->code] = $obj->code;
+		}
+		
+		$out='';
+        $out.= '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
+		if ($useempty) $out .= '<option value="">&nbsp;</option>';
+		if (count($TCurrency) > 0)
+		{
+			foreach ($langs->cache_currencies as $code_iso => $currency)
+	        {
+	        	if (isset($TCurrency[$code_iso]))
+				{
+					if (!empty($selected) && $selected == $code_iso) $out.= '<option value="'.$code_iso.'" selected>';
+		        	else $out.= '<option value="'.$code_iso.'">';
+		        	
+		        	$out.= $currency['label'];
+		        	$out.= ' ('.$langs->getCurrencySymbol($code_iso).')';
+		        	$out.= '</option>';	
+				}
+	        }
+		}
+        
+        $out.= '</select>';
+        return $out;
+    }
+	
     /**
      *	Load into the cache vat rates of a country
      *

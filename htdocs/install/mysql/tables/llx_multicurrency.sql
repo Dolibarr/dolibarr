@@ -1,5 +1,5 @@
--- ===================================================================
--- Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- ========================================================================
+-- Copyright (C) 2016		Pierre-Henry Favre		<phf@atm-consulting.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -14,16 +14,15 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
--- ===================================================================
+-- ========================================================================
 
-create table llx_paiement_facture
-(
-  rowid           integer AUTO_INCREMENT PRIMARY KEY,
-  fk_paiement     integer,
-  fk_facture      integer,
-  amount          double(24,8)     DEFAULT 0,
-  
-  multicurrency_code		varchar(255),
-  multicurrency_tx		double(24,8) DEFAULT 1,
-  multicurrency_amount	double(24,8) DEFAULT 0
-)ENGINE=innodb;
+CREATE TABLE llx_multicurrency
+( 
+	rowid integer AUTO_INCREMENT PRIMARY KEY, 
+	date_create datetime DEFAULT NULL, 
+	code varchar(255) DEFAULT NULL, 
+	name varchar(255) DEFAULT NULL, 
+	entity integer DEFAULT NULL,
+	fk_user integer DEFAULT NULL,
+	KEY code (code)
+) ENGINE=innodb;
