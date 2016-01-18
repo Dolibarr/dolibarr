@@ -593,12 +593,12 @@ div.fichecenter {
 }
 div.fichethirdleft {
 	<?php if ($conf->browser->layout != 'phone')   { print "float: ".$left.";\n"; } ?>
-	<?php if ($conf->browser->layout != 'phone')   { print "width: 35%;\n"; } ?>
+	<?php if ($conf->browser->layout != 'phone')   { print "width: 50%;\n"; } ?>
 	<?php if ($conf->browser->layout == 'phone') { print "padding-bottom: 6px;\n"; } ?>
 }
 div.fichetwothirdright {
 	<?php if ($conf->browser->layout != 'phone')   { print "float: ".$right.";\n"; } ?>
-	<?php if ($conf->browser->layout != 'phone')   { print "width: 65%;\n"; } ?>
+	<?php if ($conf->browser->layout != 'phone')   { print "width: 50%;\n"; } ?>
 	<?php if ($conf->browser->layout == 'phone') { print "padding-bottom: 6px\n"; } ?>
 }
 div.fichehalfleft {

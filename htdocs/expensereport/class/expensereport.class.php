@@ -1509,9 +1509,10 @@ class ExpenseReport extends CommonObject
      *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
      *
      *      @param	User	$user   		Objet user
+     *      @param  string  $option         'topay' or 'toapprove'
      *      @return WorkboardResponse|int 	<0 if KO, WorkboardResponse if OK
      */
-    function load_board($user)
+    function load_board($user, $option='topay')
     {
         global $conf, $langs;
 
@@ -1521,7 +1522,8 @@ class ExpenseReport extends CommonObject
 
         $sql = "SELECT ex.rowid, ex.date_valid";
         $sql.= " FROM ".MAIN_DB_PREFIX."expensereport as ex";
-        $sql.= " WHERE ex.fk_statut = 5";
+        if ($option == 'toapprove') $sql.= " WHERE ex.fk_statut = 2";
+        else $sql.= " WHERE ex.fk_statut = 5";
         $sql.= " AND ex.entity IN (".getEntity('expensereport', 1).")";
 
         $resql=$this->db->query($sql);
@@ -1530,18 +1532,36 @@ class ExpenseReport extends CommonObject
 	        $langs->load("members");
 
 	        $response = new WorkboardResponse();
-	        $response->warning_delay=$conf->expensereport->payment->warning_delay/60/60/24;
-	        $response->label=$langs->trans("ExpenseReportsToPay");
-	        $response->url=DOL_URL_ROOT.'/expensereport/list.php?mainmenu=hrm&amp;statut=5';
+	        if ($option == 'toapprove')
+	        {
+	           $response->warning_delay=$conf->expensereport->approve->warning_delay/60/60/24;
+	           $response->label=$langs->trans("ExpenseReportsToApprove");
+	           $response->url=DOL_URL_ROOT.'/expensereport/list.php?mainmenu=hrm&amp;statut=2';
+	        }
+	        else
+	        {
+	            $response->warning_delay=$conf->expensereport->payment->warning_delay/60/60/24;
+	            $response->label=$langs->trans("ExpenseReportsToPay");
+	            $response->url=DOL_URL_ROOT.'/expensereport/list.php?mainmenu=hrm&amp;statut=5';
+	        }
 	        $response->img=img_object($langs->trans("ExpenseReports"),"trip");
 
             while ($obj=$this->db->fetch_object($resql))
             {
 	            $response->nbtodo++;
-
-                if ($this->db->jdate($obj->datevalid) < ($now - $conf->expensereport->payment->warning_delay)) {
-	                $response->nbtodolate++;
-                }
+                
+	            if ($option == 'toapprove')
+	            {
+	                if ($this->db->jdate($obj->datevalid) < ($now - $conf->expensereport->approve->warning_delay)) {
+	                    $response->nbtodolate++;
+	                }
+	            }
+	            else
+	            {
+                    if ($this->db->jdate($obj->datevalid) < ($now - $conf->expensereport->payment->warning_delay)) {
+    	                $response->nbtodolate++;
+                    }
+	            }
             }
 
             return $response;

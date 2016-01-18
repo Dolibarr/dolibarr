@@ -71,7 +71,11 @@ if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $title=$langs->trans("HomeAr
 
 llxHeader('',$title);
 
-print load_fiche_titre($langs->trans("HomeArea"),'','title_home');
+
+$resultboxes=FormOther::printBoxesArea($user,"0");
+
+
+print load_fiche_titre($langs->trans("HomeArea"),$resultboxes['selectboxlist'],'title_home');
 
 if (! empty($conf->global->MAIN_MOTD))
 {
@@ -417,13 +421,22 @@ if (! empty($conf->adherent->enabled) && $user->rights->adherent->lire && ! $use
     $dashboardlines[] = $board->load_board($user);
 }
 
-// Number of expense reports to pay
-if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire)
+// Number of expense reports to approve
+if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->approve)
 {
     include_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
     $board=new ExpenseReport($db);
 
-	$dashboardlines[] = $board->load_board($user);
+	$dashboardlines[] = $board->load_board($user,'toapprove');
+}
+
+// Number of expense reports to pay
+if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->to_paid)
+{
+    include_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
+    $board=new ExpenseReport($db);
+
+	$dashboardlines[] = $board->load_board($user,'topay');
 }
 
 // Calculate total nb of late
@@ -491,13 +504,11 @@ print '</table>';   // End table array
 print '</div></div></div><div class="fichecenter"><br>';
 
 
-
 /*
  * Show boxes
  */
 
-FormOther::printBoxesArea($user,"0");
-
+print $resultboxes['boxlist'];
 
 print '</div>';
 
