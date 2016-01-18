@@ -36,6 +36,7 @@ $action=GETPOST('action');
 $hookmanager->initHooks(array('index'));
 
 
+
 /*
  * Actions
  */
@@ -342,6 +343,35 @@ if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->read)
     $dashboardlines[] = $board->load_board($user);
 }
 
+// Number of project opened
+if (! empty($conf->projet->enabled) && $user->rights->projet->lire)
+{
+    include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+    $board=new Project($db);
+
+    $dashboardlines[] = $board->load_board($user);
+}
+
+// Number of tasks to do (late)
+if (! empty($conf->projet->enabled) && empty($conf->global->PROJECT_HIDE_TASKS) && $user->rights->projet->lire)
+{
+    include_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+    $board=new Task($db);
+
+    $dashboardlines[] = $board->load_board($user);
+}
+
+// Number of commercial proposals opened (expired)
+if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
+{
+    include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+    $board=new Propal($db);
+	$dashboardlines[] = $board->load_board($user,"opened");
+
+	// Number of commercial proposals CLOSED signed (billed)
+	$dashboardlines[] = $board->load_board($user,"signed");
+}
+
 // Number of customer orders a deal
 if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 {
@@ -358,17 +388,6 @@ if (! empty($conf->supplier_order->enabled) && $user->rights->fournisseur->comma
     $board=new CommandeFournisseur($db);
 
 	$dashboardlines[] = $board->load_board($user);
-}
-
-// Number of commercial proposals opened (expired)
-if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
-{
-    include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
-    $board=new Propal($db);
-	$dashboardlines[] = $board->load_board($user,"opened");
-
-	// Number of commercial proposals CLOSED signed (billed)
-	$dashboardlines[] = $board->load_board($user,"signed");
 }
 
 // Number of services enabled (delayed)
@@ -482,6 +501,7 @@ foreach($valid_dashboardlines as $board)
     /*print '<td class="nowrap" align="right">';
     print ' (>'.ceil($board->warning_delay).' '.$langs->trans("days").')';
     print '</td>';*/
+    
     if ($showweather)
     {
         print '<td class="nohover hideonsmartphone" rowspan="'.$rowspan.'" width="80" style="border-left: 1px solid #DDDDDD" align="center">';

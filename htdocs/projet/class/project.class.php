@@ -891,6 +891,10 @@ class Project extends CommonObject
             $label .= ($label?'<br>':'').'<b>' . $langs->trans('Ref') . ': </b>' . $this->ref;	// The space must be after the : to not being explode when showing the title in img_picto
         if (! empty($this->title))
             $label .= ($label?'<br>':'').'<b>' . $langs->trans('Label') . ': </b>' . $this->title;	// The space must be after the : to not being explode when showing the title in img_picto
+        if (! empty($this->dateo))
+            $label .= ($label?'<br>':'').'<b>' . $langs->trans('DateStart') . ': </b>' . dol_print_date($this->dateo, 'day');	// The space must be after the : to not being explode when showing the title in img_picto
+        if (! empty($this->datee))
+            $label .= ($label?'<br>':'').'<b>' . $langs->trans('DateEnd') . ': </b>' . dol_print_date($this->datee, 'day');	// The space must be after the : to not being explode when showing the title in img_picto
         if ($moreinpopup) $label.='<br>'.$moreinpopup;
         $linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 
@@ -1558,6 +1562,70 @@ class Project extends CommonObject
         }
     }
 
+
+    /**
+     * Load indicators for dashboard (this->nbtodo and this->nbtodolate)
+     *
+     * @param	User	$user   Objet user
+     * @return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
+     */
+    function load_board($user)
+    {
+        global $conf, $langs;
+    
+        $mine=0; $socid=$user->societe_id;
+        
+        $projectsListId = $this->getProjectsAuthorizedForUser($user,$mine?$mine:($user->rights->projet->all->lire?2:0),1,$socid);
+        
+        $sql = "SELECT p.rowid, p.fk_statut as status, p.fk_opp_status, p.datee as datee";
+        $sql.= " FROM (".MAIN_DB_PREFIX."projet as p";
+        $sql.= ")";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
+        if (! $user->rights->societe->client->voir && ! $socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
+        $sql.= " WHERE p.fk_statut = 1";
+        $sql.= " AND p.entity IN (".getEntity('project').')';
+        if ($mine || ! $user->rights->projet->all->lire) $sql.= " AND p.rowid IN (".$projectsListId.")";
+        // No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
+        //if ($socid || ! $user->rights->societe->client->voir)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
+        if ($socid) $sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
+        if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND ((s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id.") OR (s.rowid IS NULL))";
+        
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            $project_static = new Project($this->db);
+    
+            $response = new WorkboardResponse();
+            $response->warning_delay = $conf->projet->warning_delay/60/60/24;
+            $response->label = $langs->trans("OpenedProjects");
+            if ($user->rights->projet->all->lire) $response->url = DOL_URL_ROOT.'/projet/index.php?search_status=1&mainmenu=project';
+            else $response->url = DOL_URL_ROOT.'/projet/index.php?mode=mine&search_status=1&mainmenu=project';
+            $response->img = img_object($langs->trans("Projects"),"project");
+    
+            // This assignment in condition is not a bug. It allows walking the results.
+            while ($obj=$this->db->fetch_object($resql))
+            {
+                $response->nbtodo++;
+    
+                $project_static->statut = $obj->status;
+                $project_static->opp_status = $obj->opp_status;
+                $project_static->datee = $this->db->jdate($obj->datee);
+    
+                if ($project_static->hasDelay()) {
+                    $response->nbtodolate++;
+                }
+            }
+    
+            return $response;
+        }
+        else
+        {
+            $this->error=$this->db->error();
+            return -1;
+        }
+    }
+    
+    
 	/**
 	 * Function used to replace a thirdparty id with another one.
 	 *
@@ -1574,6 +1642,24 @@ class Project extends CommonObject
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
 	}
+	
+	/**
+	 * Is the action delayed?
+	 *
+	 * @return bool
+	 */
+	public function hasDelay()
+	{
+	    global $conf;
+	
+        if (! ($this->statut == 1)) {
+            return false;
+        }
+
+        $now = dol_now();
+
+        return $this->datee < ($now - $conf->projet->warning_delay);
+	}	
 
 }
 

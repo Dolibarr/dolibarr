@@ -36,8 +36,8 @@ $id=GETPOST('id','int');
 
 $search_all=GETPOST('search_all');
 $search_project=GETPOST('search_project');
-if (! isset($_GET['search_status']) && ! isset($_POST['search_status'])) $search_status=1;
-else $search_status=GETPOST('search_status');
+if (! isset($_GET['search_projectstatus']) && ! isset($_POST['search_projectstatus'])) $search_projectstatus=1;
+else $search_projectstatus=GETPOST('search_projectstatus');
 $search_task_ref=GETPOST('search_task_ref');
 $search_task_label=GETPOST('search_task_label');
 $search_project_user=GETPOST('search_project_user');
@@ -62,13 +62,13 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
 {
     $search_all="";
 	$search_project="";
-	$search_status="";
+	$search_projectstatus="";
 	$search_task_ref="";
 	$search_task_label="";
 	$search_task_user=-1;
 	$search_project_user=-1;
 }
-if (empty($search_status) && $search_status == '') $search_status=1;
+if (empty($search_projectstatus) && $search_projectstatus == '') $search_projectstatus=1;
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
@@ -128,8 +128,8 @@ if ($search_all)        $morewherefilter.=natural_search(array_keys($fieldstosea
 if ($search_task_ref)   $morewherefilter.=natural_search('t.ref', $search_task_ref);
 if ($search_task_label) $morewherefilter.=natural_search('t.label', $search_task_label);
 
-$tasksarray=$taskstatic->getTasksArray(0, 0, $projectstatic->id, $socid, 0, $search_project, $search_status, $morewherefilter, $search_project_user, 0);    // We don't use filter on task user. Because sometimes a task is assigned but not the parent one and we want to show also parent, so filtering is done during output
-$tasksrole=$taskstatic->getUserRolesForProjectsOrTasks(0, ($tuser->id?$tuser:null), $projectstatic->id, 0, $search_status); // We load also tasks limited to a particular user
+$tasksarray=$taskstatic->getTasksArray(0, 0, $projectstatic->id, $socid, 0, $search_project, $search_projectstatus, $morewherefilter, $search_project_user, 0);    // We don't use filter on task user. Because sometimes a task is assigned but not the parent one and we want to show also parent, so filtering is done during output
+$tasksrole=$taskstatic->getUserRolesForProjectsOrTasks(0, ($tuser->id?$tuser:null), $projectstatic->id, 0, $search_projectstatus); // We load also tasks limited to a particular user
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -185,9 +185,9 @@ print '<td align="right">'.$langs->trans("PlannedWorkload");
 // TODO Replace 86400 and 7 to take account working hours per day and working day per weeks
 //print '<br>('.$langs->trans("DelayWorkHour").')';
 print '</td>';
-print '<td align="right">'.$langs->trans("ProgressDeclared").'</td>';
 print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
 print '<td align="right">'.$langs->trans("ProgressCalculated").'</td>';
+print '<td align="right">'.$langs->trans("ProgressDeclared").'</td>';
 print "</tr>\n";
 
 print '<tr class="liste_titre">';
@@ -197,7 +197,7 @@ print '</td>';
 print '<td class="liste_titre">';
 $listofstatus=array(-1=>'&nbsp;');
 foreach($projectstatic->statuts_short as $key => $val) $listofstatus[$key]=$langs->trans($val);
-print $form->selectarray('search_status', $listofstatus, $search_status);
+print $form->selectarray('search_projectstatus', $listofstatus, $search_projectstatus);
 print '</td>';
 print '<td class="liste_titre">';
 print '<input type="text" class="flat" name="search_task_ref" value="'.dol_escape_htmltag($search_task_ref).'" size="4">';

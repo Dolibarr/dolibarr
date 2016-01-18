@@ -1417,7 +1417,7 @@ class FactureFournisseur extends CommonInvoice
      */
     function load_board($user)
     {
-        global $conf, $user, $langs;
+        global $conf, $langs;
 
         $sql = 'SELECT ff.rowid, ff.date_lim_reglement as datefin, ff.fk_statut';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as ff';

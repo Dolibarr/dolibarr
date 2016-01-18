@@ -29,6 +29,7 @@ OfficerProject=Officer project
 LastProjects=Last %s projects
 AllProjects=All projects
 OpenedProjects=Opened projects
+OpenedTasks=Opened tasks
 OpportunitiesStatusForOpenedProjects=Opportunities amount of opened projects by status
 ProjectsList=List of projects
 ShowProject=Show project

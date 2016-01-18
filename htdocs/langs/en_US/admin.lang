@@ -964,6 +964,7 @@ DelaysBeforeWarning=Delays before warning
 DelaysOfToleranceBeforeWarning=Tolerance delays before warning
 DelaysOfToleranceDesc=This screen allows you to define the tolerated delays before an alert is reported on screen with picto %s for each late element.
 Delays_MAIN_DELAY_ACTIONS_TODO=Delay tolerance (in days) before alert on planned events not yet realised
+Delays_MAIN_DELAY_TASKS_TODO=Delay tolerance (in days) before alert on planned tasks not yet realised
 Delays_MAIN_DELAY_ORDERS_TO_PROCESS=Delay tolerance (in days) before alert on orders not yet processed
 Delays_MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS=Delay tolerance (in days) before alert on suppliers orders not yet processed
 Delays_MAIN_DELAY_PROPALS_TO_CLOSE=Delay tolerance (in days) before alert on proposals to close

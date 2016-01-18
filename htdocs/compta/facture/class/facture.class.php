@@ -3328,7 +3328,7 @@ class Facture extends CommonInvoice
 	 */
 	function load_board($user)
 	{
-		global $conf, $user, $langs;
+		global $conf, $langs;
 
 		$clause = " WHERE";
 

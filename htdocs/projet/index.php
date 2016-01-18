@@ -197,7 +197,7 @@ print "</table>";
 print '<br>';
 
 
-print_projecttasks_array($db,$form,$socid,$projectsListId,0,1,$listofoppstatus);
+print_projecttasks_array($db, $form, $socid, $projectsListId, 0, 1, $listofoppstatus, array());
 
 
 

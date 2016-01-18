@@ -1889,7 +1889,7 @@ class Contrat extends CommonObject
 	 */
 	function load_board($user,$mode)
 	{
-		global $conf, $user, $langs;
+		global $conf, $langs;
 
 		$this->from = " FROM ".MAIN_DB_PREFIX."contrat as c";
 		$this->from.= ", ".MAIN_DB_PREFIX."contratdet as cd";
