@@ -501,8 +501,7 @@ foreach($valid_dashboardlines as $board)
 print '</table>';   // End table array
 
 
-print '</div></div></div><div class="fichecenter"><br>';
-
+print '</div></div></div><div class="clearboth"></div><div class="fichecenter fichecenterbis">';
 
 /*
  * Show boxes
