@@ -348,6 +348,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 					$projectstatic->id=$lines[$i]->fk_project;
 					$projectstatic->ref=$lines[$i]->projectref;
 					$projectstatic->public=$lines[$i]->public;
+					$projectstatic->title=$lines[$i]->projectlabel;
 					if ($lines[$i]->public || in_array($lines[$i]->fk_project,$projectsArrayId) || ! empty($user->rights->projet->all->lire)) print $projectstatic->getNomUrl(1);
 					else print $projectstatic->getNomUrl(1,'nolink');
 					//if ($showlineingray) print '</i>';
