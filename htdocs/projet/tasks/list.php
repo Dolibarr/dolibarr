@@ -234,18 +234,6 @@ print "</table>";
 
 print '</form>';
 
-print '</div>';
-
-/*
- * Actions
- */
-if ($user->rights->projet->creer)
-{
-	print '<div class="tabsAction">';
-	print '<a class="butAction" href="'.DOL_URL_ROOT.'/projet/tasks.php?action=create">'.$langs->trans('AddTask').'</a>';
-	print '</div>';
-}
-
 
 llxFooter();
 
