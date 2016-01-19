@@ -504,43 +504,6 @@ class FactureRec extends Facture
 		}
 	}
 
-
-	/**
-	 *	Rend la facture automatique
-	 *
-	 *	@param		User	$user		User object
-	 *	@param		int		$freq		Freq
-	 *	@param		string	$courant	Courant
-	 *	@return		int					0 if OK, <0 if KO
-	 */
-	function set_auto($user, $freq, $courant)
-	{
-		if ($user->rights->facture->creer)
-		{
-			$sql = "UPDATE ".MAIN_DB_PREFIX."facture_rec ";
-			$sql .= " SET frequency = '".$freq."', last_gen='".$courant."'";
-			$sql .= " WHERE rowid = ".$this->id;
-
-			$resql = $this->db->query($sql);
-
-			if ($resql)
-			{
-				$this->frequency 	= $freq;
-				$this->last_gen 	= $courant;
-				return 0;
-			}
-			else
-			{
-				dol_print_error($this->db);
-				return -1;
-			}
-		}
-		else
-		{
-			return -2;
-		}
-	}
-
 	/**
 	 *	Return clicable name (with picto eventually)
 	 *

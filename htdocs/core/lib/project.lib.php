@@ -251,7 +251,7 @@ function project_admin_prepare_head()
  * @param	string	   	$inc				Line number (start to 0, then increased by recursive call)
  * @param   string		$parent				Id of parent project to show (0 to show all)
  * @param   Task[]		$lines				Array of lines
- * @param   int			$level				Level (start to 0, then increased/decrease by recursive call)
+ * @param   int			$level				Level (start to 0, then increased/decrease by recursive call), or -1 to show all level in order of $lines without the recursive groupment feature.
  * @param 	string		$var				Color
  * @param 	int			$showproject		Show project columns
  * @param	int			$taskrole			Array of roles of user for each tasks
@@ -281,12 +281,12 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 
 	for ($i = 0 ; $i < $numlines ; $i++)
 	{
-		if ($parent == 0) $level = 0;
+		if ($parent == 0 && $level >= 0) $level = 0;              // if $level = -1, we dont' use sublevel recursion, we show all lines
 
 		// Process line
 		// print "i:".$i."-".$lines[$i]->fk_project.'<br>';
 
-		if ($lines[$i]->fk_parent == $parent)
+		if ($lines[$i]->fk_parent == $parent || $level < 0)       // if $level = -1, we dont' use sublevel recursion, we show all lines
 		{
 			// Show task line.
 			$showline=1;
@@ -459,9 +459,13 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 
 				if (! $showlineingray) $inc++;
 
-				$level++;
-				if ($lines[$i]->id) projectLinesa($inc, $lines[$i]->id, $lines, $level, $var, $showproject, $taskrole, $projectsListId, $addordertick);
-				$level--;
+				if ($level >= 0)    // Call sublevels
+				{
+    				$level++;
+    				if ($lines[$i]->id) projectLinesa($inc, $lines[$i]->id, $lines, $level, $var, $showproject, $taskrole, $projectsListId, $addordertick);
+    				$level--;
+				}
+				
 				$total_projectlinesa_spent += $lines[$i]->duration;
 				$total_projectlinesa_planned += $lines[$i]->planned_workload;
 				if ($lines[$i]->planned_workload) $total_projectlinesa_spent_if_planned += $lines[$i]->duration;
@@ -473,7 +477,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 		}
 	}
 
-	if (($total_projectlinesa_planned > 0 || $total_projectlinesa_spent > 0) && $level==0)
+	if (($total_projectlinesa_planned > 0 || $total_projectlinesa_spent > 0) && $level <= 0)
 	{
 		print '<tr class="liste_total nodrag nodrop">';
 		print '<td class="liste_total">'.$langs->trans("Total").'</td>';

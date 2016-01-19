@@ -78,12 +78,12 @@ $optioncss = GETPOST('optioncss','alpha');
 $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 if ($mine) $search_user = $user->id;
 
-$day	= GETPOST('day','int');
-$month	= GETPOST('month','int');
-$year	= GETPOST('year','int');
 $sday	= GETPOST('sday','int');
 $smonth	= GETPOST('smonth','int');
 $syear	= GETPOST('syear','int');
+$day	= GETPOST('day','int');
+$month	= GETPOST('month','int');
+$year	= GETPOST('year','int');
 
 if ($search_status == '') $search_status=-1;	// -1 or 1
 
@@ -150,12 +150,12 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
 	$search_public="";
 	$search_sale="";
 	$search_user='';
-	$day="";
-	$month="";
-	$year="";
 	$sday="";
 	$smonth="";
 	$syear="";
+	$day="";
+	$month="";
+	$year="";
 	$search_array_options=array();
 }
 

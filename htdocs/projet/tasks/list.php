@@ -28,6 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 $langs->load('projects');
 $langs->load('users');
@@ -45,6 +46,13 @@ $search_task_user=GETPOST('search_task_user');
 
 $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 if ($mine) $search_task_user = $user->id;
+
+$sday	= GETPOST('sday','int');
+$smonth	= GETPOST('smonth','int');
+$syear	= GETPOST('syear','int');
+$day	= GETPOST('day','int');
+$month	= GETPOST('month','int');
+$year	= GETPOST('year','int');
 
 // Security check
 $socid=0;
@@ -67,6 +75,12 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
 	$search_task_label="";
 	$search_task_user=-1;
 	$search_project_user=-1;
+	$sday='';
+	$smonth='';
+	$syear='';
+	$day='';
+	$month='';
+	$year='';
 }
 if (empty($search_projectstatus) && $search_projectstatus == '') $search_projectstatus=1;
 
@@ -74,7 +88,35 @@ if (empty($search_projectstatus) && $search_projectstatus == '') $search_project
 $fieldstosearchall = array(
 	't.ref'=>"Ref",
 	't.label'=>"Label",
+    't.note_public'=>"NotePublic",
 );
+if (empty($user->socid)) $fieldstosearchall['t.note_private']="NotePrivate";
+
+$arrayfields=array(
+    'p.ref'=>array('label'=>$langs->trans("Project"), 'checked'=>1),
+    'p.title'=>array('label'=>$langs->trans("ProjectLabel"), 'checked'=>1),
+    'p.fk_statut'=>array('label'=>$langs->trans("ProjectStatus"), 'checked'=>1),
+    //'s.nom'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>1),
+    't.title'=>array('label'=>$langs->trans("TaskLabel"), 'checked'=>1, 'position'=>80),
+    't.dateo'=>array('label'=>$langs->trans("DateStart"), 'checked'=>1, 'position'=>100),
+    't.datee'=>array('label'=>$langs->trans("DateEnd"), 'checked'=>1, 'position'=>101),
+    't.planned_workload'=>array('label'=>$langs->trans("Workload"), 'checked'=>1, 'position'=>102),
+    't.duration_effective'=>array('label'=>$langs->trans("TimeConsumed"), 'checked'=>1, 'position'=>103),
+    // Calculated progression
+    't.progress'=>array('label'=>$langs->trans("TimeDeclared"), 'checked'=>1, 'position'=>105),
+    
+    't.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
+    't.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
+    't.fk_statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
+);
+// Extra fields
+if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+{
+    foreach($extrafields->attribute_label as $key => $val)
+    {
+        $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>$extrafields->attribute_list[$key], 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
+    }
+}
 
 
 /*
@@ -89,6 +131,7 @@ $fieldstosearchall = array(
  */
 
 $form=new Form($db);
+$formother=new FormOther($db);
 $projectstatic = new Project($db);
 $taskstatic = new Task($db);
 $puser=new User($db);
@@ -121,15 +164,43 @@ else
 $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1,$socid);
 //var_dump($projectsListId);
 
+
+
 // Get list of tasks in tasksarray and taskarrayfiltered
 // We need all tasks (even not limited to a user because a task assigned to a user can have a parent that is not assigned to him and we need such parents).
 $morewherefilter='';
 if ($search_all)        $morewherefilter.=natural_search(array_keys($fieldstosearchall), $search_all);
 if ($search_task_ref)   $morewherefilter.=natural_search('t.ref', $search_task_ref);
 if ($search_task_label) $morewherefilter.=natural_search('t.label', $search_task_label);
+if ($smonth > 0)
+{
+    if ($syear > 0 && empty($sday))
+        $morewherefilter.= " AND t.dateo BETWEEN '".$db->idate(dol_get_first_day($syear,$smonth,false))."' AND '".$db->idate(dol_get_last_day($syear,$smonth,false))."'";
+        else if ($syear > 0 && ! empty($sday))
+            $morewherefilter.= " AND t.dateo BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $smonth, $sday, $syear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $smonth, $sday, $syear))."'";
+            else
+                $morewherefilter.= " AND date_format(t.dateo, '%m') = '".$smonth."'";
+}
+else if ($syear > 0)
+{
+    $morewherefilter.= " AND t.dateo BETWEEN '".$db->idate(dol_get_first_day($syear,1,false))."' AND '".$db->idate(dol_get_last_day($syear,12,false))."'";
+}
+if ($month > 0)
+{
+    if ($year > 0 && empty($day))
+        $morewherefilter.= " AND t.datee BETWEEN '".$db->idate(dol_get_first_day($year,$month,false))."' AND '".$db->idate(dol_get_last_day($year,$month,false))."'";
+        else if ($year > 0 && ! empty($day))
+            $morewherefilter.= " AND t.datee BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year))."'";
+            else
+                $morewherefilter.= " AND date_format(t.datee, '%m') = '".$month."'";
+}
+else if ($year > 0)
+{
+    $morewherefilter.= " AND t.datee BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
+}
 
-$tasksarray=$taskstatic->getTasksArray(0, 0, $projectstatic->id, $socid, 0, $search_project, $search_projectstatus, $morewherefilter, $search_project_user, 0);    // We don't use filter on task user. Because sometimes a task is assigned but not the parent one and we want to show also parent, so filtering is done during output
-$tasksrole=$taskstatic->getUserRolesForProjectsOrTasks(0, ($tuser->id?$tuser:null), $projectstatic->id, 0, $search_projectstatus); // We load also tasks limited to a particular user
+//$tasksarray=$taskstatic->getTasksArray(0, 0, $projectstatic->id, $socid, 0, $search_project, $search_projectstatus, $morewherefilter, $search_project_user, 0);    // We don't use filter on task user. Because sometimes a task is assigned but not the parent one and we want to show also parent, so filtering is done during output
+//$tasksrole=$taskstatic->getUserRolesForProjectsOrTasks(0, ($tuser->id?$tuser:null), $projectstatic->id, 0, $search_projectstatus); // We load also tasks limited to a particular user
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -142,7 +213,7 @@ print '<input type="hidden" name="type" value="'.$type.'">';
 if ($search_all)
 {
     foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-    print $langs->trans("FilterOnInto", $search_all, join(', ',$fieldstosearchall));
+    print $langs->trans("FilterOnInto", $search_all) . join(', ',$fieldstosearchall);
 }
 
 
@@ -205,15 +276,34 @@ print '</td>';
 print '<td class="liste_titre">';
 print '<input type="text" class="flat" name="search_task_label" value="'.dol_escape_htmltag($search_task_label).'" size="8">';
 print '</td>';
-print '<td class="liste_titre" colspan="5">';
+// Start date
+if (! empty($arrayfields['t.dateo']['checked']))
+{
+    print '<td class="liste_titre center">';
+    if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="sday" value="'.$sday.'">';
+    print '<input class="flat" type="text" size="1" maxlength="2" name="smonth" value="'.$smonth.'">';
+    $formother->select_year($syear?$syear:-1,'syear',1, 20, 5);
+    print '</td>';
+}
+// End date
+if (! empty($arrayfields['t.datee']['checked']))
+{
+    print '<td class="liste_titre center">';
+    if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.$day.'">';
+    print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
+    $formother->select_year($year?$year:-1,'year',1, 20, 5);
+    print '</td>';
+}
+print '<td class="liste_titre" colspan="3">';
 print '&nbsp;';
 print '<td class="liste_titre nowrap" align="right">';
 print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("RemoveFilter"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
 print '</td>';
+print '</tr>';
 
+/*
 $max=10000;
-
 if (count($tasksarray) > (empty($conf->global->PROJECT_LIMIT_TASK_PROJECT_AREA)?$max:$conf->global->PROJECT_LIMIT_TASK_PROJECT_AREA))
 {
 	$langs->load("errors");
@@ -226,9 +316,14 @@ else
 {
 	// Show all lines in taskarray (recursive function to go down on tree)
 	$j=0; $level=0;
+	if ($morewherefilter) $level=-1;   // No recursive output when there is search criteria
 	//var_dump($tasksarray);
 	$nboftaskshown=projectLinesa($j, 0, $tasksarray, $level, true, 1, $tasksrole, $projectsListId, 0);
 }
+*/
+
+
+
 
 print "</table>";
 
