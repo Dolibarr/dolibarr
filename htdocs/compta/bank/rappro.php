@@ -412,7 +412,7 @@ if ($resql)
                     print '</a>';
                 }
                 else {
-                    print "&nbsp;";	// On n'empeche la suppression car le raprochement ne pourra se faire qu'apr�s la date pass�e et que l'�criture apparaisse bien sur le compte.
+                    print "&nbsp;";	// On empeche la suppression car le raprochement ne pourra se faire qu'après la date passée et que l'écriture apparaisse bien sur le compte.
                 }
                 print "</td>";
             }
