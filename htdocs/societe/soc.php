@@ -2312,7 +2312,10 @@ else
         	print '</td><td colspan="3">';
         	if ($action == 'editparentcompany')
         	{
-        		$form->form_thirdparty($_SERVER['PHP_SELF'].'?socid='.$object->id,$object->parent,'editparentcompany','s.rowid <> '.$object->id,1);
+        		// limit search to a given enttype
+        		$filter = '';
+        		if (!empty($conf->global->SOCIETE_PARENT_SEARCH_TYPE)) $filter = 's.fk_typent = '.$conf->global->SOCIETE_PARENT_SEARCH_TYPE.' AND ';
+        		$form->form_thirdparty($_SERVER['PHP_SELF'].'?socid='.$object->id,$object->parent,'editparentcompany',$filter.'s.rowid <> '.$object->id,1);
         	}
         	else
         	{
