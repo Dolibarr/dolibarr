@@ -1564,7 +1564,7 @@ function dol_print_skype($skype,$cid=0,$socid=0,$addlink=0,$max=64)
  *  @param	string	$titlealt	    Text to show on alt
  * 	@return string 				    Formated phone number
  */
-function dol_print_phone($phone,$countrycode='',$cid=0,$socid=0,$addlink='',$separ="&nbsp;",$withpicto='',$titlealt='')
+function dol_print_phone($phone,$countrycode='',$cid=0,$socid=0,$addlink='',$separ="&nbsp;",$withpicto='',$titlealt='',$adddivfloat=0)
 {
 	global $conf,$user,$langs,$mysoc;
 
@@ -1648,7 +1648,13 @@ function dol_print_phone($phone,$countrycode='',$cid=0,$socid=0,$addlink='',$sep
 	{
 		$titlealt=($withpicto=='fax'?$langs->trans("Fax"):$langs->trans("Phone"));
 	}
-	return '<div class="nospan float" style="margin-right: 10px">'.($withpicto?img_picto($titlealt, 'object_'.($withpicto=='fax'?'phoning_fax':'phoning').'.png').' ':'').$newphone.'</div>';
+	$rep='';
+	if ($adddivfloat) $rep.='<div class="nospan float" style="margin-right: 10px">';
+	else $rep.='<span style="margin-right: 10px;">';
+	$rep.=($withpicto?img_picto($titlealt, 'object_'.($withpicto=='fax'?'phoning_fax':'phoning').'.png').' ':'').$newphone;
+	if ($adddivfloat) $rep.='</div>';
+	else $rep.='</span>';
+	return $rep;
 }
 
 /**
