@@ -209,15 +209,15 @@ if ($search_societe) $sql .= natural_search('s.nom', $search_societe);
 if ($smonth > 0)
 {
     if ($syear > 0 && empty($sday))
-    	$sql.= " AND p.datee BETWEEN '".$db->idate(dol_get_first_day($syear,$smonth,false))."' AND '".$db->idate(dol_get_last_day($syear,$smonth,false))."'";
+    	$sql.= " AND p.dateo BETWEEN '".$db->idate(dol_get_first_day($syear,$smonth,false))."' AND '".$db->idate(dol_get_last_day($syear,$smonth,false))."'";
     else if ($syear > 0 && ! empty($sday))
-    	$sql.= " AND p.datee BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $smonth, $sday, $syear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $smonth, $sday, $syear))."'";
+    	$sql.= " AND p.dateo BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $smonth, $sday, $syear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $smonth, $sday, $syear))."'";
     else
-    	$sql.= " AND date_format(p.datee, '%m') = '".$smonth."'";
+    	$sql.= " AND date_format(p.dateo, '%m') = '".$smonth."'";
 }
 else if ($syear > 0)
 {
-    $sql.= " AND p.datee BETWEEN '".$db->idate(dol_get_first_day($syear,1,false))."' AND '".$db->idate(dol_get_last_day($syear,12,false))."'";
+    $sql.= " AND p.dateo BETWEEN '".$db->idate(dol_get_first_day($syear,1,false))."' AND '".$db->idate(dol_get_last_day($syear,12,false))."'";
 }
 if ($month > 0)
 {
