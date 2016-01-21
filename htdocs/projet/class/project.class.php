@@ -1016,7 +1016,7 @@ class Project extends CommonObject
      * Return array of projects a user has permission on, is affected to, or all projects
      *
      * @param 	User	$user			User object
-     * @param 	int		$mode			0=All project I have permission on, 1=Projects affected to me only, 2=Will return list of all projects with no test on contacts
+     * @param 	int		$mode			0=All project I have permission on (assigned to me and public), 1=Projects assigned to me only, 2=Will return list of all projects with no test on contacts
      * @param 	int		$list			0=Return array,1=Return string list
      * @param	int		$socid			0=No filter on third party, id of third party
      * @return 	array or string			Array of projects id, or string with projects id separated with ","
@@ -1031,29 +1031,42 @@ class Project extends CommonObject
         if ($mode == 0 || $mode == 1)
         {
             $sql.= ", " . MAIN_DB_PREFIX . "element_contact as ec";
-            $sql.= ", " . MAIN_DB_PREFIX . "c_type_contact as ctc";
         }
         $sql.= " WHERE p.entity IN (".getEntity('project',1).")";
         // Internal users must see project he is contact to even if project linked to a third party he can't see.
         //if ($socid || ! $user->rights->societe->client->voir)	$sql.= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
         if ($socid > 0) $sql.= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = " . $socid . ")";
 
+        // Get id of types of contacts for projects (This list never contains a lot of elements)
+        $listofprojectcontacttype=array();
+        $sql2 = "SELECT ctc.rowid, ctc.code FROM ".MAIN_DB_PREFIX."c_type_contact as ctc";
+        $sql2.= " WHERE ctc.element = '" . $this->element . "'";
+        $sql2.= " AND ctc.source = 'internal'";
+        $resql = $this->db->query($sql2);
+        if ($resql)
+        {
+            while($obj = $this->db->fetch_object($resql))
+            {
+                $listofprojectcontacttype[$obj->rowid]=$obj->code;
+            }
+        }
+        else dol_print_error($this->db);
+        if (count($listofprojectcontacttype) == 0) $listofprojectcontacttype[0]='0';    // To avoid syntax error if not found
+        
         if ($mode == 0)
         {
             $sql.= " AND ec.element_id = p.rowid";
             $sql.= " AND ( p.public = 1";
-            $sql.= " OR ( ctc.rowid = ec.fk_c_type_contact";
-            $sql.= " AND ctc.element = '" . $this->element . "'";
-            $sql.= " AND ( (ctc.source = 'internal' AND ec.fk_socpeople = ".$user->id.")";
+            $sql.= " OR ( ec.fk_c_type_contact IN (".join(',', array_keys($listofprojectcontacttype)).")";
+            $sql.= " AND ec.fk_socpeople = ".$user->id.")";
             $sql.= " )";
-            $sql.= " ))";
         }
         if ($mode == 1)
         {
             $sql.= " AND ec.element_id = p.rowid";
-            $sql.= " AND ctc.rowid = ec.fk_c_type_contact";
-            $sql.= " AND ctc.element = '" . $this->element . "'";
-            $sql.= " AND ( (ctc.source = 'internal' AND ec.fk_socpeople = ".$user->id.")";
+            $sql.= " AND (";
+            $sql.= "  ( ec.fk_c_type_contact IN (".join(',', array_keys($listofprojectcontacttype)).")";
+            $sql.= " AND ec.fk_socpeople = ".$user->id.")";
             $sql.= " )";
         }
         if ($mode == 2)
