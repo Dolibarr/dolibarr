@@ -38,26 +38,26 @@ ALTER TABLE llx_cronjob MODIFY COLUMN unitfrequency	varchar(255) NOT NULL DEFAUL
 ALTER TABLE llx_facture ADD INDEX idx_facture_fk_statut (fk_statut);
 
 
-CREATE TABLE IF NOT EXISTS `llx_multicurrency` 
+CREATE TABLE IF NOT EXISTS llx_multicurrency 
 ( 
-	`rowid` integer AUTO_INCREMENT PRIMARY KEY, 
-	`date_create` datetime DEFAULT NULL, 
-	`code` varchar(255) DEFAULT NULL, 
-	`name` varchar(255) DEFAULT NULL, 
-	`entity` integer DEFAULT NULL,
-	`fk_user` integer DEFAULT NULL,
-	KEY `code` (`code`)
+	rowid integer AUTO_INCREMENT PRIMARY KEY, 
+	date_create datetime DEFAULT NULL, 
+	code varchar(255) DEFAULT NULL, 
+	name varchar(255) DEFAULT NULL, 
+	entity integer DEFAULT NULL,
+	fk_user integer DEFAULT NULL,
+	KEY code (code)
 ) ENGINE=innodb;
 
-CREATE TABLE IF NOT EXISTS `llx_multicurrency_rate` 
+CREATE TABLE IF NOT EXISTS llx_multicurrency_rate 
 ( 
-	`rowid` integer AUTO_INCREMENT PRIMARY KEY, 
-	`date_sync` datetime DEFAULT NULL,  
-	`rate` double NOT NULL DEFAULT '0', 
-	`fk_multicurrency` integer NOT NULL DEFAULT '0', 
-	`entity` integer NOT NULL DEFAULT '0', 
-	KEY `fk_multicurrency` (`fk_multicurrency`), 
-	KEY `entity` (`entity`) 
+	rowid integer AUTO_INCREMENT PRIMARY KEY, 
+	date_sync datetime DEFAULT NULL,  
+	rate double NOT NULL DEFAULT '0', 
+	fk_multicurrency integer NOT NULL DEFAULT '0', 
+	entity integer NOT NULL DEFAULT '0', 
+	KEY fk_multicurrency (fk_multicurrency), 
+	KEY entity (entity) 
 ) ENGINE=innodb;
 
 ALTER TABLE llx_societe ADD COLUMN fk_multicurrency integer;
