@@ -537,7 +537,7 @@ if ($resql)
         	if (! empty($arrayfields['p.ref']['checked']))
         	{
         		print '<td class="nowrap">';
-        		print $projectstatic->getNomUrl(1);
+        		print $projectstatic->getNomUrl(1, 'task');
         		print '</td>';
         	}
     		// Title
@@ -574,7 +574,7 @@ if ($resql)
         	if (! empty($arrayfields['t.ref']['checked']))
         	{
         	    print '<td>';
-        	    print $taskstatic->getNomUrl(1);
+        	    print $taskstatic->getNomUrl(1,'withproject');
         	    print '</td>';
         	}        	 
     	    // Label
