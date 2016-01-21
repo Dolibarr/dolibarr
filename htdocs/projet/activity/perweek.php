@@ -316,7 +316,7 @@ $startday=dol_mktime(12, 0, 0, $startdayarray['first_month'], $startdayarray['fi
 
 for($i=0;$i<7;$i++)
 {
-	print '<td width="7%" align="center" class="hide'.$i.'">'.dol_print_date($startday + ($i * 3600 * 24), '%a').'<br>'.dol_print_date($startday + ($i * 3600 * 24), 'day').'</td>';
+	print '<td width="7%" align="center" class="hide'.$i.'">'.dol_print_date($startday + ($i * 3600 * 24), '%a').'<br>'.dol_print_date($startday + ($i * 3600 * 24), 'dayreduceformat').'</td>';
 }
 print '<td class="liste_total"></td>';
 
