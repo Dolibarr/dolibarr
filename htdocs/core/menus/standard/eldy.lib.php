@@ -1191,7 +1191,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				{
 					// Project affected to user
 					$newmenu->add("/projet/activity/index.php?mode=mine", $langs->trans("MyActivities"), 0, $user->rights->projet->lire);
-					$newmenu->add("/projet/tasks.php?action=create&mode=mine", $langs->trans("NewTask"), 1, $user->rights->projet->creer);
+					$newmenu->add("/projet/tasks.php?action=create", $langs->trans("NewTask"), 1, $user->rights->projet->creer);
 					$newmenu->add("/projet/tasks/list.php?mode=mine", $langs->trans("List"), 1, $user->rights->projet->lire);
 					$newmenu->add("/projet/activity/perweek.php?mode=mine", $langs->trans("NewTimeSpent"), 1, $user->rights->projet->creer);
 

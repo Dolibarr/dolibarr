@@ -224,6 +224,7 @@ NonPercuRecuperable=Non-recoverable
 SetConditions=Set payment terms
 SetMode=Set payment mode
 Billed=Billed
+RecurringInvoices=Recurring invoices
 RepeatableInvoice=Template invoice
 RepeatableInvoices=Template invoices
 Repeatable=Template

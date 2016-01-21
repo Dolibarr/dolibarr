@@ -284,9 +284,14 @@ input.removedassigned  {
 	vertical-align: text-bottom;
 	margin-bottom: -3px;
 }
-input.smallpadd {
+input.smallpadd {	/* Used for timesheet input */
 	padding-left: 0px !important;
 	padding-right: 0px !important;
+}
+span.timesheetalreadyrecorded input {
+    /*font-size: smaller;*/
+    border: none;
+    /*background:	transparent;*/
 }
 <?php } ?>
 
