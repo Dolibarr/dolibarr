@@ -35,3 +35,5 @@ ALTER TABLE llx_overwrite_trans ADD UNIQUE INDEX uk_overwrite_trans(lang, transk
 
 ALTER TABLE llx_cronjob MODIFY COLUMN unitfrequency	varchar(255) NOT NULL DEFAULT '3600';
 
+ALTER TABLE llx_facture ADD INDEX idx_facture_fk_statut (fk_statut);
+
