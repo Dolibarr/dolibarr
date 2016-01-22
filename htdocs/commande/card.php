@@ -260,7 +260,9 @@ if (empty($reshook))
 			$object->contactid = GETPOST('contactid');
 			$object->fk_incoterms = GETPOST('incoterm_id', 'int');
 			$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
-
+			$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
+			$object->multicurrency_tx = GETPOST('originmulticurrency_tx', 'int');
+			
 			// If creation from another object of another module (Example: origin=propal, originid=1)
 			if (! empty($origin) && ! empty($originid))
 			{
@@ -490,7 +492,17 @@ if (empty($reshook))
 		if ($result < 0)
 			dol_print_error($db, $object->error);
 	}
+	
+	// Multicurrency Code
+	else if ($action == 'setmulticurrencycode' && $user->rights->commande->creer) {
+		$result = $object->setMulticurrencyCode(GETPOST('multicurrency_code', 'alpha'));
+	}
 
+	// Multicurrency rate
+	else if ($action == 'setmulticurrencyrate' && $user->rights->commande->creer) {
+		$result = $object->setMulticurrencyRate(GETPOST('multicurrency_tx', 'int'));
+	}
+	
 	else if ($action == 'setavailability' && $user->rights->commande->creer) {
 		$result = $object->availability(GETPOST('availability_id'));
 		if ($result < 0)
@@ -1260,7 +1272,8 @@ if ($action == 'create' && $user->rights->commande->creer)
 
 	$projectid = 0;
 	$remise_absolue = 0;
-		
+	$currency_code = $conf->currency;
+	
 	if (! empty($origin) && ! empty($originid)) {
 		// Parse element/subelement (ex: project_task)
 		$element = $subelement = $origin;
@@ -1328,6 +1341,12 @@ if ($action == 'create' && $user->rights->commande->creer)
 
 			$datedelivery = (! empty($objectsrc->date_livraison) ? $objectsrc->date_livraison : '');
 
+			if (!empty($conf->multicurrency->enabled))
+			{
+				if (!empty($objectsrc->multicurrency_code)) $currency_code = $objectsrc->multicurrency_code;
+				if (!empty($conf->global->MULTICURRENCY_USE_ORIGIN_TX) && !empty($objectsrc->multicurrency_tx))	$currency_tx = $objectsrc->multicurrency_tx; 
+			}
+
 			$note_private = $object->getDefaultCreateValueFor('note_private', (! empty($objectsrc->note_private) ? $objectsrc->note_private : null));
 			$note_public = $object->getDefaultCreateValueFor('note_public', (! empty($objectsrc->note_public) ? $objectsrc->note_public : null));
 
@@ -1348,6 +1367,8 @@ if ($action == 'create' && $user->rights->commande->creer)
 		$remise_absolue     = 0;
 		$dateorder          = empty($conf->global->MAIN_AUTOFILL_DATE_ORDER)?-1:'';
 		$projectid          = 0;
+		
+		if (!empty($conf->multicurrency->enabled) && !empty($soc->multicurrency_code)) $currency_code = $soc->multicurrency_code;
 
 		$note_private = $object->getDefaultCreateValueFor('note_private');
 		$note_public = $object->getDefaultCreateValueFor('note_public');
@@ -1363,6 +1384,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 	print '<input type="hidden" name="remise_percent" value="' . $soc->remise_percent . '">';
 	print '<input type="hidden" name="origin" value="' . $origin . '">';
 	print '<input type="hidden" name="originid" value="' . $originid . '">';
+	if (!empty($currency_tx)) print '<input type="hidden" name="originmulticurrency_tx" value="' . $currency_tx . '">';
 
 	dol_fiche_head('');
 
@@ -1532,6 +1554,16 @@ if ($action == 'create' && $user->rights->commande->creer)
 	print $form->selectarray('model', $liste, $conf->global->COMMANDE_ADDON_PDF);
 	print "</td></tr>";
 
+	// Multicurrency
+	if (! empty($conf->multicurrency->enabled))
+	{
+		print '<tr>';
+		print '<td>'.fieldLabel('Currency','multicurrency_code').'</td>';
+        print '<td colspan="3" class="maxwidthonsmartphone">';
+	    print $form->selectMultiCurrency($currency_code, 'multicurrency_code');
+		print '</td></tr>';
+	}
+
 	// Note public
 	print '<tr>';
 	print '<td class="border" valign="top">' . $langs->trans('NotePublic') . '</td>';
@@ -1603,6 +1635,13 @@ if ($action == 'create' && $user->rights->commande->creer)
 		}
 
 		print '<tr><td>' . $langs->trans('TotalTTC') . '</td><td colspan="2">' . price($objectsrc->total_ttc) . "</td></tr>";
+		
+		if (!empty($conf->multicurrency->enabled))
+		{
+			print '<tr><td>' . $langs->trans('MulticurrencyTotalHT') . '</td><td colspan="2">' . price($objectsrc->multicurrency_total_ht) . '</td></tr>';
+			print '<tr><td>' . $langs->trans('MulticurrencyTotalVAT') . '</td><td colspan="2">' . price($objectsrc->multicurrency_total_tva) . "</td></tr>";
+			print '<tr><td>' . $langs->trans('MulticurrencyTotalTTC') . '</td><td colspan="2">' . price($objectsrc->multicurrency_total_ttc) . "</td></tr>";	
+		}
 	}
 	else
 	{
@@ -2145,6 +2184,43 @@ if ($action == 'create' && $user->rights->commande->creer)
 	        print '</td></tr>';
 		}
 
+		// Multicurrency
+		if (! empty($conf->multicurrency->enabled))
+		{
+			// Multicurrency code
+			print '<tr>';
+			print '<td width="25%">';
+			print '<table class="nobordernopadding" width="100%"><tr><td>';
+			print fieldLabel('Currency','multicurrency_code');
+			print '</td>';
+			if ($action != 'editmulticurrencycode' && ! empty($object->brouillon))
+				print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencycode&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
+			print '</tr></table>';
+			print '</td><td colspan="5">';
+			if ($action == 'editmulticurrencycode') {
+				$form->form_multicurrency_code($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_code, 'multicurrency_code');
+			} else {
+				$form->form_multicurrency_code($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_code, 'none');
+			}
+			print '</td></tr>';
+		
+			// Multicurrency rate
+			print '<tr>';
+			print '<td width="25%">';
+			print '<table class="nobordernopadding" width="100%"><tr><td>';
+			print fieldLabel('Rate','multicurrency_tx');
+			print '</td>';
+			if ($action != 'editmulticurrencyrate' && ! empty($object->brouillon))
+				print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencyrate&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
+			print '</tr></table>';
+			print '</td><td colspan="5">';
+			if ($action == 'editmulticurrencyrate') {
+				$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'multicurrency_tx');
+			} else {
+				$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'none');
+			}
+			print '</td></tr>';
+		}
 		// Other attributes
 		$cols = 3;
 		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
@@ -2206,6 +2282,24 @@ if ($action == 'create' && $user->rights->commande->creer)
 
 		// Total TTC
 		print '<tr><td>' . $langs->trans('AmountTTC') . '</td><td>' . price($object->total_ttc, 1, '', 1, - 1, - 1, $conf->currency) . '</td></tr>';
+
+		if (!empty($conf->multicurrency->enabled))
+		{
+			// Multicurrency Amount HT
+			print '<tr><td height="10">' . fieldLabel('MulticurrencyAmountHT','multicurrency_total_ht') . '</td>';
+			print '<td class="nowrap" colspan="2">' . price($object->multicurrency_total_ht, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
+			print '</tr>';
+			
+			// Multicurrency Amount VAT
+			print '<tr><td height="10">' . fieldLabel('MulticurrencyAmountVAT','multicurrency_total_tva') . '</td>';
+			print '<td class="nowrap" colspan="2">' . price($object->multicurrency_total_tva, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
+			print '</tr>';
+			
+			// Multicurrency Amount TTC
+			print '<tr><td height="10">' . fieldLabel('MulticurrencyAmountTTC','multicurrency_total_ttc') . '</td>';
+			print '<td class="nowrap" colspan="2">' . price($object->multicurrency_total_ttc, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
+			print '</tr>';	
+		}
 
 		// Statut
 		print '<tr><td>' . $langs->trans('Status') . '</td><td>' . $object->getLibStatut(4) . '</td></tr>';

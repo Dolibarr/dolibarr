@@ -3382,6 +3382,7 @@ abstract class CommonObject
         print '<td>'.$langs->trans('Description').'</td>';
         print '<td align="right">'.$langs->trans('VAT').'</td>';
         print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
+		if (!empty($conf->multicurrency->enabled)) print '<td align="right">'.$langs->trans('PriceUHTCurrency').'</td>';
         print '<td align="right">'.$langs->trans('Qty').'</td>';
 	    if($conf->global->PRODUCT_USE_UNITS)
 	    {
@@ -3512,6 +3513,7 @@ abstract class CommonObject
 
         $this->tpl['vat_rate'] = vatrate($line->tva_tx, true);
         $this->tpl['price'] = price($line->subprice);
+		$this->tpl['multicurrency_price'] = price($line->multicurrency_subprice);
         $this->tpl['qty'] = (($line->info_bits & 2) != 2) ? $line->qty : '&nbsp;';
 	    if($conf->global->PRODUCT_USE_UNITS) $this->tpl['unit'] = $line->getLabelOfUnit('long');
         $this->tpl['remise_percent'] = (($line->info_bits & 2) != 2) ? vatrate($line->remise_percent, true) : '&nbsp;';
