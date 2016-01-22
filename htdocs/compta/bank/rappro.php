@@ -154,6 +154,7 @@ $acct->fetch($id);
 $now=dol_now();
 
 $sql = "SELECT b.rowid, b.dateo as do, b.datev as dv, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type as type";
+$sql.= ", b.fk_bordereau";
 $sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 $sql.= " WHERE rappro=0 AND fk_account=".$acct->id;
 $sql.= " ORDER BY dateo ASC";
@@ -291,7 +292,7 @@ if ($resql)
 		// Type + Number
 		$label=($langs->trans("PaymentType".$objp->type)!="PaymentType".$objp->type)?$langs->trans("PaymentType".$objp->type):$objp->type;  // $objp->type is a code
 		if ($label=='SOLD') $label='';
-		print '<td class="nowrap">'.$label.($objp->num_chq?' '.$objp->num_chq:'').'</td>';
+		print '<td class="nowrap">'.$label.($objp->num_chq?' '.$objp->num_chq:'').($objp->fk_bordereau>0?' ('.$objp->fk_bordereau.')':'').'</td>';
 
 		// Description
         print '<td valign="center"><a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$acct->id.'">';
