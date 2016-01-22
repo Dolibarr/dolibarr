@@ -1471,6 +1471,13 @@ abstract class CommonObject
     		if ($this->db->query($sql))
     		{
     			$this->multicurrency_tx = $rate;
+				
+				// Update line price
+				if (!empty($this->lines))
+				{
+					foreach ($this->lines as &$line) $this->updateline($line->id, $line->subprice, $line->qty, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, $line->desc, 'HT', $line->info_bits, $line->special_code, $line->fk_parent_line, $line->skip_update_total, $line->fk_fournprice, $line->pa_ht, $line->label, $line->product_type, $line->date_start, $line->date_end, $line->array_options, $line->fk_unit);
+				}
+				
     			return 1;
     		}
     		else
