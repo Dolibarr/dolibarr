@@ -175,6 +175,14 @@ else
 	$reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
 	$sql.=$hookmanager->resPrint;
 }
+
+$nbtotalofrecords = 0;
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+{
+	$result = $db->query($sql);
+	$nbtotalofrecords = $db->num_rows($result);
+}
+
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit+1, $offset);
 //print "$sql";
@@ -192,7 +200,7 @@ if ($resql)
     $paramlist.=($search_company?"&search_company=".$search_company:"");
     $paramlist.=($search_amount?"&search_amount=".$search_amount:"");
 
-    print_barre_liste($langs->trans("ReceivedCustomersPayments"), $page, $_SERVER["PHP_SELF"],$paramlist,$sortfield,$sortorder,'',$num,'','title_accountancy.png');
+    print_barre_liste($langs->trans("ReceivedCustomersPayments"), $page, $_SERVER["PHP_SELF"],$paramlist,$sortfield,$sortorder,'',$num, $nbtotalofrecords,'title_accountancy.png');
 
     print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
     print '<table class="noborder" width="100%">';
