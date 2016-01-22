@@ -81,14 +81,14 @@ if ($socid)
 	dol_fiche_head($head, 'agenda', $langs->trans("ThirdParty"),0,'company');
 
     dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
-        
+
     print '<div class="fichecenter">';
     
     print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent">';
 
 	// Alias names (commercial, trademark or alias names)
-	print '<tr><td class="titlefield">'.$langs->trans('AliasNames').'</td><td colspan="3">';
+	print '<tr><td class="titlefield" width="25%">'.$langs->trans('AliasNames').'</td><td colspan="3">';
 	print $object->name_alias;
 	print "</td></tr>";
 
