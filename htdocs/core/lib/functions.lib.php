@@ -1562,6 +1562,7 @@ function dol_print_skype($skype,$cid=0,$socid=0,$addlink=0,$max=64)
  * 	@param 	string	$separ 		    Separation between numbers for a better visibility example : xx.xx.xx.xx.xx
  *  @param	string  $withpicto      Show picto
  *  @param	string	$titlealt	    Text to show on alt
+ *  @param  int     $adddivfloat    Add div float around phone.
  * 	@return string 				    Formated phone number
  */
 function dol_print_phone($phone,$countrycode='',$cid=0,$socid=0,$addlink='',$separ="&nbsp;",$withpicto='',$titlealt='',$adddivfloat=0)
