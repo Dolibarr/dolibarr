@@ -65,9 +65,9 @@ class Livraison extends CommonObject
 		$this->products = array();
 
 		// List of short language codes for status
-		$this->statuts[-1] = 'StatusSendingCanceled';
-		$this->statuts[0]  = 'StatusSendingDraft';
-		$this->statuts[1]  = 'StatusSendingValidated';
+		$this->statuts[-1] = 'StatusDeliveryCanceled';
+		$this->statuts[0]  = 'StatusDeliveryDraft';
+		$this->statuts[1]  = 'StatusDeliveryValidated';
 	}
 
 	/**
@@ -801,9 +801,9 @@ class Livraison extends CommonObject
 
 		if ($mode==0)
 		{
-			if ($statut==-1) return $langs->trans('StatusSendingCanceled');
-			if ($statut==0)  return $langs->trans('StatusSendingDraft');
-			if ($statut==1)  return $langs->trans('StatusSendingValidated');
+			if ($statut==-1) return $langs->trans('StatusDeliveryCanceled');
+			if ($statut==0)  return $langs->trans('StatusDeliveryDraft');
+			if ($statut==1)  return $langs->trans('StatusDeliveryValidated');
 		}
 		if ($mode==1)
 		{
@@ -813,9 +813,9 @@ class Livraison extends CommonObject
 		}
 		if ($mode == 4)
 		{
-			if ($statut==-1) return img_picto($langs->trans('StatusSendingCanceled'),'statut5').' '.$langs->trans('StatusSendingCanceled');
-			if ($statut==0)  return img_picto($langs->trans('StatusSendingDraft'),'statut0').' '.$langs->trans('StatusSendingDraft');
-			if ($statut==1)  return img_picto($langs->trans('StatusSendingValidated'),'statut4').' '.$langs->trans('StatusSendingValidated');
+			if ($statut==-1) return img_picto($langs->trans('StatusDeliveryCanceled'),'statut5').' '.$langs->trans('StatusDeliveryCanceled');
+			if ($statut==0)  return img_picto($langs->trans('StatusDeliveryDraft'),'statut0').' '.$langs->trans('StatusDeliveryDraft');
+			if ($statut==1)  return img_picto($langs->trans('StatusDeliveryValidated'),'statut4').' '.$langs->trans('StatusDeliveryValidated');
 		}
 	}
 

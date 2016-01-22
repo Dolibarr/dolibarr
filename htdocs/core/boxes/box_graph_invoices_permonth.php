@@ -170,6 +170,8 @@ class box_graph_invoices_permonth extends ModeleBoxes
 				$mesg = $px2->isGraphKo();
 				if (! $mesg)
 				{
+				    $langs->load("bills");
+				    
 					$px2->SetData($data2);
 					unset($data2);
 					$px2->SetPrecisionY(0);

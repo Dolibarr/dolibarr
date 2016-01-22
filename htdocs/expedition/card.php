@@ -338,7 +338,7 @@ if (empty($reshook))
 	    $result = $object->create_delivery($user);
 	    if ($result > 0)
 	    {
-	        header("Location: ".DOL_URL_ROOT.'/livraison/card.php?id='.$result);
+	        header("Location: ".DOL_URL_ROOT.'/livraison/card.php?action=create_delivery&id='.$result);
 	        exit;
 	    }
 	    else
@@ -529,7 +529,7 @@ if ($action == 'create2')
     $action=''; $id=''; $ref='';
 }
 
-// Mode creation
+// Mode creation. TODO This part seems to not be used at all. Receipt record is created by the action "create_delivery" not from a form. 
 if ($action == 'create')
 {
     $expe = new Expedition($db);
@@ -1583,7 +1583,8 @@ else if ($id || $ref)
 		}
 
 		// This is just to generate a delivery receipt
-		if ($conf->livraison_bon->enabled && ($object->statut == 1 || $object->statut == 2) && $user->rights->expedition->livraison->creer && empty($object->linkedObjectsIds['delivery'][0]))
+		//var_dump($object->linkedObjectsIds['delivery']);
+		if ($conf->livraison_bon->enabled && ($object->statut == 1 || $object->statut == 2) && $user->rights->expedition->livraison->creer && count($object->linkedObjectsIds['delivery']) == 0)
 		{
 			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=create_delivery">'.$langs->trans("CreateDeliveryOrder").'</a>';
 		}
