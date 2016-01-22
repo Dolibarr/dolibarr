@@ -327,6 +327,7 @@ else
 	// Recherche les ecritures pour le releve
 	$sql = "SELECT b.rowid, b.dateo as do, b.datev as dv,";
 	$sql.= " b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type,";
+	$sql.= " b.fk_bordereau,";
 	$sql.= " ba.rowid as bankid, ba.ref as bankref, ba.label as banklabel";
 	$sql.= " FROM ".MAIN_DB_PREFIX."bank_account as ba";
 	$sql.= ", ".MAIN_DB_PREFIX."bank as b";
@@ -373,7 +374,7 @@ else
             } else {
                 $type_label=($langs->trans("PaymentTypeShort".$objp->fk_type)!="PaymentTypeShort".$objp->fk_type)?$langs->trans("PaymentTypeShort".$objp->fk_type):$objp->fk_type;
             }
-			print '<td class="nowrap">'.$type_label.' '.($objp->num_chq?$objp->num_chq:'').'</td>';
+			print '<td class="nowrap">'.$type_label.' '.($objp->num_chq?$objp->num_chq:'').($objp->fk_bordereau>0?' ('.$objp->fk_bordereau.')':'').'</td>';
 
 			// Description
 			print '<td valign="center"><a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$object->id.'">';
