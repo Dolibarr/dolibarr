@@ -458,6 +458,9 @@ if (empty($reshook))
 	                            break;
 	                        }
 	                    }
+	                    
+	                    // Now reload line
+	                    $object->fetch_lines();
 	                }
 	                else
 	                {
@@ -1321,7 +1324,6 @@ if ($action == 'create')
         $datedue=($datetmp==''?-1:$datetmp);
     }
 
-    dol_fiche_head();
 
     print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="post">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -1329,6 +1331,8 @@ if ($action == 'create')
     print '<input type="hidden" name="origin" value="'.GETPOST('origin').'">';
     print '<input type="hidden" name="originid" value="'.GETPOST('originid').'">';
 
+    dol_fiche_head();
+    
     print '<table class="border" width="100%">';
 
     // Ref
