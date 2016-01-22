@@ -322,9 +322,9 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 				'__TOTAL_VAT__' => $object->total_vat
 				);
 				complete_substitutions_array($substitutionarray, $langs, $object);
-				// Call the ODTSubstitutionInit hook
+				// Call the ODTSubstitution hook
 				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$substitutionarray);
-				$reshook=$hookmanager->executeHooks('ODTSubstitutionInit',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+				$reshook=$hookmanager->executeHooks('ODTSubstitution',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 
 				// Line of free text
 				$newfreetext='';
