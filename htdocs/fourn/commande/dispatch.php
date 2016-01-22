@@ -33,6 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 if (! empty($conf->projet->enabled))	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 $langs->load('orders');
@@ -130,17 +131,17 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 	$pos=0;
 	foreach($_POST as $key => $value)
 	{
-		if (preg_match('/^product_([0-9]+)$/i', $key, $reg))	// without batch module enabled
+		if (preg_match('/^product_([0-9]+)_([0-9]+)$/i', $key, $reg))	// without batch module enabled	
 		{
 			$pos++;
 
-			//$numline=$reg[1] + 1;	// line of product
+			//$numline=$reg[2] + 1;	// line of product
 			$numline=$pos;
-			$prod = "product_".$reg[1];
-			$qty = "qty_".$reg[1];
-			$ent = "entrepot_".$reg[1];
-			$pu = "pu_".$reg[1];	// This is unit price including discount
-			$fk_commandefourndet = "fk_commandefourndet_".$reg[1];
+			$prod = "product_".$reg[1].'_'.$reg[2];
+			$qty = "qty_".$reg[1].'_'.$reg[2];
+			$ent = "entrepot_".$reg[1].'_'.$reg[2];
+			$pu = "pu_".$reg[1].'_'.$reg[2];	// This is unit price including discount
+			$fk_commandefourndet = "fk_commandefourndet_".$reg[1].'_'.$reg[2];
 
 			if (GETPOST($qty) > 0)	// We ask to move a qty
 			{
@@ -163,14 +164,14 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 				}
 			}
 		}
-		if (preg_match('/^product_([0-9]+)_([0-9]+)$/i', $key, $reg))	// with batch module enabled
+		if (preg_match('/^product_batch_([0-9]+)_([0-9]+)$/i', $key, $reg))	// with batch module enabled
 		{
 			$pos++;
 
 			//eat-by date dispatch
 			//$numline=$reg[2] + 1;	// line of product
 			$numline=$pos;
-			$prod = 'product_'.$reg[1].'_'.$reg[2];
+			$prod = 'product_batch_'.$reg[1].'_'.$reg[2];
 			$qty = 'qty_'.$reg[1].'_'.$reg[2];
 			$ent = 'entrepot_'.$reg[1].'_'.$reg[2];
 			$pu = 'pu_'.$reg[1].'_'.$reg[2];
@@ -191,7 +192,7 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 					$error++;
 				}
 
-				if (! ($_POST[$lot] || $dDLUO || $dDLC))
+				if (! (GETPOST($lot, 'alpha') || $dDLUO || $dDLC))
 				{
 					dol_syslog('No dispatch for line '.$key.' as serial/eat-by/sellby date are not set');
 					$text = $langs->transnoentities('atleast1batchfield').', '.$langs->transnoentities('Line').' ' .($numline).'-'.($reg[1]+1);
@@ -245,19 +246,13 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
  */
 
 $form =	new Form($db);
+$formproduct = new FormProduct($db);
 $warehouse_static = new Entrepot($db);
 $supplierorderdispatch = new CommandeFournisseurDispatch($db);
 
 
 $help_url='EN:CommandeFournisseur';
-if (!empty($conf->productbatch->enabled))
-{
-	llxHeader('',$langs->trans("OrderCard"),$help_url,'',0,0,array('/core/js/lib_batch.js'));
-}
-else
-{
-	llxHeader('',$langs->trans("OrderCard"),$help_url);
-}
+llxHeader('',$langs->trans("OrderCard"),$help_url,'',0,0,array('/fourn/js/lib_dispatch.js'));
 
 $now=dol_now();
 
@@ -425,7 +420,7 @@ if ($id > 0 || ! empty($ref))
 				$nbfreeproduct=0;
 				$nbproduct=0;
 
-				$var=true;
+				$var=false;
 				while ($i < $num)
 				{
 					$objp = $db->fetch_object($resql);
@@ -449,13 +444,7 @@ if ($id > 0 || ! empty($ref))
 							// To show detail cref and description value, we must make calculation by cref
 							//print ($objp->cref?' ('.$objp->cref.')':'');
 							//if ($objp->description) print '<br>'.nl2br($objp->description);
-							if ((empty($conf->productbatch->enabled)) || $objp->tobatch==0)
-							{
-								$suffix='_'.$i;
-							} else {
-								$suffix='_0_'.$i;
-							}
-
+							$suffix='_0_'.$i;
 
 							print "\n";
 							print '<!-- Line '.$suffix.' -->'."\n";
@@ -489,6 +478,7 @@ if ($id > 0 || ! empty($ref))
 								print "</td>";
 							}
 
+							$var=!$var;
 							$up_ht_disc=$objp->subprice;
 							if (! empty($objp->remise_percent) && empty($conf->global->STOCK_EXCLUDE_DISCOUNT_FOR_PMP)) $up_ht_disc=price2num($up_ht_disc * (100 - $objp->remise_percent) / 100, 'MU');
 
@@ -500,15 +490,19 @@ if ($id > 0 || ! empty($ref))
 
 							if (! empty($conf->productbatch->enabled) && $objp->tobatch==1)
 							{
-								print '<td align="right">'.img_picto($langs->trans('AddDispatchBatchLine'),'split.png','onClick="addLineBatch('.$i.')"').'</td>';	// Dispatch column
+								$type = 'batch';
+								print '<td align="right">'.img_picto($langs->trans('AddDispatchBatchLine'),'split.png','onClick="addDispatchLine('.$i.',\''.$type.'\')"').'</td>';	// Dispatch column
 								print '<td></td>';																													// Warehouse column
 								print '</tr>';
 
-								print '<tr '.$bc[$var].' name="dluo'.$suffix.'">';
+								print '<tr '.$bc[$var].' name="'.$type.$suffix.'">';
 								print '<td>';
 								print '<input name="fk_commandefourndet'.$suffix.'" type="hidden" value="'.$objp->rowid.'">';
-								print '<input name="product'.$suffix.'" type="hidden" value="'.$objp->fk_product.'">';
+								print '<input name="product_batch'.$suffix.'" type="hidden" value="'.$objp->fk_product.'">';
 								print '<input name="pu'.$suffix.'" type="hidden" value="'.$up_ht_disc.'"><!-- This is a up including discount -->';
+								// hidden fields for js function
+								print '<input id="qty_ordered'.$suffix.'" type="hidden" value="'.$objp->qty.'">';
+								print '<input id="qty_dispatched'.$suffix.'" type="hidden" value="'.(float) $products_dispatched[$objp->rowid].'">';
 								print '</td>';
 
 								print '<td>';
@@ -524,15 +518,24 @@ if ($id > 0 || ! empty($ref))
 								print '</td>';
 								print '<td colspan="2">&nbsp</td>';		// Qty ordered + qty already dispatached
 							}
-
-							// Dispatch
-							print '<td align="right">';
-							if (empty($conf->productbatch->enabled) || $objp->tobatch!=1)
+							else
 							{
+								$type = 'dispatch';
+								print '<td align="right">'.img_picto($langs->trans('AddStockLocationLine'),'split.png','onClick="addDispatchLine('.$i.',\''.$type.'\')"').'</td>';	// Dispatch column
+								print '<td></td>';
+								print '</tr>';
+								print '<tr '.$bc[$var].' name="'.$type.$suffix.'">';
+								print '<td colspan="6">';
 								print '<input name="fk_commandefourndet'.$suffix.'" type="hidden" value="'.$objp->rowid.'">';
 								print '<input name="product'.$suffix.'" type="hidden" value="'.$objp->fk_product.'">';
 								print '<input name="pu'.$suffix.'" type="hidden" value="'.$up_ht_disc.'"><!-- This is a up including discount -->';
+								// hidden fields for js function
+								print '<input id="qty_ordered'.$suffix.'" type="hidden" value="'.$objp->qty.'">';
+								print '<input id="qty_dispatched'.$suffix.'" type="hidden" value="'.(float) $products_dispatched[$objp->rowid].'">';
+								print '</td>';
 							}
+							// Dispatch
+							print '<td align="right">';
 							print '<input id="qty'.$suffix.'" name="qty'.$suffix.'" type="text" size="8" value="'.(GETPOST('qty'.$suffix)!='' ? GETPOST('qty'.$suffix) : $remaintodispatch).'">';
 							print '</td>';
 
@@ -540,11 +543,11 @@ if ($id > 0 || ! empty($ref))
 							print '<td align="right">';
 							if (count($listwarehouses)>1)
 							{
-								print $form->selectarray("entrepot".$suffix, $listwarehouses, GETPOST("entrepot".$suffix), 1, 0, 0, '', 0, 0, $disabled);
+								print $formproduct->selectWarehouses(GETPOST("entrepot".$suffix), "entrepot".$suffix,'',1,0,$objp->fk_product);
 							}
 							elseif  (count($listwarehouses)==1)
 							{
-								print $form->selectarray("entrepot".$suffix, $listwarehouses, GETPOST("entrepot".$suffix), 0, 0, 0, '', 0, 0, $disabled);
+								print $formproduct->selectWarehouses(GETPOST("entrepot".$suffix), "entrepot".$suffix,'',0,0,$objp->fk_product);
 							}
 							else
 							{
