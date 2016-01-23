@@ -1675,7 +1675,7 @@ class Product extends CommonObject
 						$sql.= " WHERE entity IN (".getEntity('productprice', 1).")";
 						$sql.= " AND price_level=".$i;
 						$sql.= " AND fk_product = '".$this->id."'";
-						$sql.= " ORDER BY date_price DESC";
+						$sql.= " ORDER BY date_price, rowid DESC";
 						$sql.= " LIMIT 1";
 						$resql = $this->db->query($sql);
 						if ($resql)
@@ -1736,7 +1736,7 @@ class Product extends CommonObject
 					$sql.= " price_base_type, tva_tx, tosell, price_by_qty, rowid";
 					$sql.= " FROM ".MAIN_DB_PREFIX."product_price";
 					$sql.= " WHERE fk_product = '".$this->id."'";
-					$sql.= " ORDER BY date_price DESC";
+					$sql.= " ORDER BY date_price, rowid DESC";
 					$sql.= " LIMIT 1";
 					$resql = $this->db->query($sql);
 					if ($resql)

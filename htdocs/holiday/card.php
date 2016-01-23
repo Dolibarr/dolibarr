@@ -136,6 +136,8 @@ if ($action == 'create')
 
 	    $result = 0;
 
+	    $result = 0;
+	    
 	    if (! $error)
 	    {
     	    $cp->fk_user = $userid;
@@ -300,8 +302,10 @@ if ($action == 'confirm_send')
     $cp = new Holiday($db);
     $cp->fetch($id);
 
+    $canedit=(($user->id == $cp->fk_user && $user->rights->holiday->write) || ($user->id != $cp->fk_user && $user->rights->holiday->write_all));
+    
     // Si brouillon et créateur
-    if($cp->statut == 1 && $user->id == $cp->fk_user)
+    if($cp->statut == 1 && $canedit)
     {
         $cp->statut = 2;
 
@@ -955,7 +959,7 @@ else
                 }
 
                 // Si envoi en validation
-                if ($action == 'sendToValidate' && $cp->statut == 1 && $user->id == $cp->fk_user)
+                if ($action == 'sendToValidate' && $cp->statut == 1)
                 {
                     print $form->formconfirm("card.php?id=".$id,$langs->trans("TitleToValidCP"),$langs->trans("ConfirmToValidCP"),"confirm_send", '', 1, 1);
                 }
