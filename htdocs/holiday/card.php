@@ -60,7 +60,7 @@ if ($action == 'create')
     if (($userid == $user->id && empty($user->rights->holiday->write)) || ($userid != $user->id && empty($user->rights->holiday->write_all)))
     {
     	$error++;
-    	setEventMessage($langs->trans('CantCreateCP'));
+    	setEventMessages($langs->trans('CantCreateCP'), null, 'errors');
     	$action='request';
     }
 
@@ -84,6 +84,14 @@ if ($action == 'create')
 	    $description = trim(GETPOST('description'));
 	    $userID = GETPOST('userID');
 
+        // If no type
+	    if ($type <= 0)
+	    {
+	        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
+	        $error++;
+	        $action='create';
+	    }
+	    
 	    // If no start date
 	    if (empty($date_debut))
 	    {
@@ -134,6 +142,8 @@ if ($action == 'create')
 	        $error++;
 	    }
 
+	    $result = 0;
+	    
 	    if (! $error)
 	    {
     	    $cp->fk_user = $userid;
@@ -144,15 +154,15 @@ if ($action == 'create')
     		$cp->halfday = $halfday;
     		$cp->fk_type = $type;
     
-    		$verif = $cp->create($user);
+    		$result = $cp->create($user);
 	    }
 	    
 	    // If no SQL error we redirect to the request card
-	    if (! $error && $verif > 0)
+	    if (! $error && $result > 0)
 	    {
 			$db->commit();
 
-	    	header('Location: card.php?id='.$verif);
+	    	header('Location: card.php?id='.$result);
 	        exit;
 	    }
 	    else
@@ -298,8 +308,10 @@ if ($action == 'confirm_send')
     $cp = new Holiday($db);
     $cp->fetch($id);
 
+    $canedit=(($user->id == $cp->fk_user && $user->rights->holiday->write) || ($user->id != $cp->fk_user && $user->rights->holiday->write_all));
+    
     // Si brouillon et créateur
-    if($cp->statut == 1 && $user->id == $cp->fk_user)
+    if($cp->statut == 1 && $canedit)
     {
         $cp->statut = 2;
 
@@ -354,7 +366,7 @@ if ($action == 'confirm_send')
             if ($cp->getConfCP('AlertValidatorSolde'))
             {
             	$nbopenedday=num_open_day($cp->date_debut_gmt,$cp->date_fin_gmt,0,1,$cp->halfday);
-                if ($nbopenedday > $cp->getCPforUser($cp->fk_user))
+                if ($nbopenedday > $cp->getCPforUser($cp->fk_user, $cp->fk_type))
                 {
                     $message.= "\n";
                     $message.= $langs->transnoentities("HolidaysToValidateAlertSolde")."\n";
@@ -411,15 +423,15 @@ if ($action == 'confirm_valid')
             // Calculcate number of days consummed
             $nbopenedday=num_open_day($cp->date_debut_gmt,$cp->date_fin_gmt,0,1,$cp->halfday);
 
-            $soldeActuel = $cp->getCpforUser($cp->fk_user);
+            $soldeActuel = $cp->getCpforUser($cp->fk_user, $cp->fk_type);
             $newSolde = $soldeActuel - ($nbopenedday * $cp->getConfCP('nbHolidayDeducted'));
 
             // On ajoute la modification dans le LOG
-            $cp->addLogCP($user->id, $cp->fk_user, $langs->transnoentitiesnoconv("Holidays"), $newSolde);
+            $cp->addLogCP($user->id, $cp->fk_user, $langs->transnoentitiesnoconv("Holidays"), $newSolde, $cp->fk_type);
 
             // Mise à jour du solde
-            $cp->updateSoldeCP($cp->fk_user, $newSolde);
-
+            $cp->updateSoldeCP($cp->fk_user, $newSolde, $cp->fk_type);
+            
             // To
             $destinataire = new User($db);
             $destinataire->fetch($cp->fk_user);
@@ -576,7 +588,7 @@ if ($action == 'confirm_cancel' && GETPOST('confirm') == 'yes')
         	// Calculcate number of days consummed
         	$nbopenedday=num_open_day($cp->date_debut_gmt,$cp->date_fin_gmt,0,1,$cp->halfday);
 
-        	$soldeActuel = $cp->getCpforUser($cp->fk_user);
+        	$soldeActuel = $cp->getCpforUser($cp->fk_user, $cp->fk_type);
         	$newSolde = $soldeActuel + ($nbopenedday * $cp->getConfCP('nbHolidayDeducted'));
 
         	// On ajoute la modification dans le LOG
@@ -616,7 +628,7 @@ if ($action == 'confirm_cancel' && GETPOST('confirm') == 'yes')
 
             // From
             $expediteur = new User($db);
-            $expediteur->fetch($cp->fk_validator);
+            $expediteur->fetch($cp->fk_user_cancel);
             $emailFrom = $expediteur->email;
 
             // Subject
@@ -798,7 +810,7 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         print '<tr>';
         print '<td class="fieldrequired">'.$langs->trans("Type").'</td>';
         print '<td>';
-        $typeleaves=$cp->getTypes(1,1);
+        $typeleaves=$cp->getTypes(1,-1);
         $arraytypeleaves=array();
         foreach($typeleaves as $key => $val)
         {
@@ -953,7 +965,7 @@ else
                 }
 
                 // Si envoi en validation
-                if ($action == 'sendToValidate' && $cp->statut == 1 && $user->id == $cp->fk_user)
+                if ($action == 'sendToValidate' && $cp->statut == 1)
                 {
                     print $form->formconfirm("card.php?id=".$id,$langs->trans("TitleToValidCP"),$langs->trans("ConfirmToValidCP"),"confirm_send", '', 1, 1);
                 }
@@ -1011,7 +1023,7 @@ else
 		        print '<tr>';
 		        print '<td>'.$langs->trans("Type").'</td>';
 		        print '<td>';
-		        $typeleaves=$cp->getTypes(1,1);
+		        $typeleaves=$cp->getTypes(1,-1);
 		        print $typeleaves[$cp->fk_type]['label'];
 		        print '</td>';
 		        print '</tr>';
