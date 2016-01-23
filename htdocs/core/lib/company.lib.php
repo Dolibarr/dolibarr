@@ -184,7 +184,7 @@ function societe_prepare_head(Societe $object)
         
         $head[$h][0] = DOL_URL_ROOT.'/societe/document.php?socid='.$object->id;
         $head[$h][1] = $langs->trans("Documents");
-		if($nbFiles > 0) $head[$h][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
+		if (($nbFiles+$nbLinks) > 0) $head[$h][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
         $head[$h][2] = 'document';
         $h++;
     }

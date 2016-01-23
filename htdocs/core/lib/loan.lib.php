@@ -64,7 +64,7 @@ function loan_prepare_head($object)
     $nbLinks=Link::count($db, $object->element, $object->id);
 	$head[$tab][0] = DOL_URL_ROOT.'/loan/document.php?id='.$object->id;
 	$head[$tab][1] = $langs->trans("Documents");
-	if($nbFiles > 0) $head[$tab][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
+	if (($nbFiles+$nbLinks) > 0) $head[$tab][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
 	$head[$tab][2] = 'documents';
 	$tab++;
 

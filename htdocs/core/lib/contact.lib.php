@@ -80,7 +80,7 @@ function contact_prepare_head(Contact $object)
     $nbLinks=Link::count($db, $object->element, $object->id);
     $head[$tab][0] = DOL_URL_ROOT.'/contact/document.php?id='.$object->id;
     $head[$tab][1] = $langs->trans("Documents");
-    if($nbFiles > 0) $head[$tab][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
+    if (($nbFiles+$nbLinks) > 0) $head[$tab][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
     $head[$tab][2] = 'documents';
     $tab++;
 
