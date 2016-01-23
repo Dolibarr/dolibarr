@@ -191,7 +191,6 @@ if (!empty($sall))
 
 if (empty($user->rights->holiday->read_all)) $filter.=' AND cp.fk_user IN ('.join(',',$childids).')';
 
-
 // Récupération de l'ID de l'utilisateur
 $user_id = $user->id;
 
