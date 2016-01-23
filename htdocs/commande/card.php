@@ -2090,6 +2090,44 @@ if ($action == 'create' && $user->rights->commande->creer)
 		}
 		print '</td></tr>';
 
+		// Multicurrency
+		if (! empty($conf->multicurrency->enabled))
+		{
+			// Multicurrency code
+			print '<tr>';
+			print '<td width="25%">';
+			print '<table class="nobordernopadding" width="100%"><tr><td>';
+			print fieldLabel('Currency','multicurrency_code');
+			print '</td>';
+			if ($action != 'editmulticurrencycode' && ! empty($object->brouillon))
+				print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencycode&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
+			print '</tr></table>';
+			print '</td><td colspan="5">';
+			if ($action == 'editmulticurrencycode') {
+				$form->form_multicurrency_code($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_code, 'multicurrency_code');
+			} else {
+				$form->form_multicurrency_code($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_code, 'none');
+			}
+			print '</td></tr>';
+		
+			// Multicurrency rate
+			print '<tr>';
+			print '<td width="25%">';
+			print '<table class="nobordernopadding" width="100%"><tr><td>';
+			print fieldLabel('Rate','multicurrency_tx');
+			print '</td>';
+			if ($action != 'editmulticurrencyrate' && ! empty($object->brouillon))
+				print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencyrate&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
+			print '</tr></table>';
+			print '</td><td colspan="5">';
+			if ($action == 'editmulticurrencyrate') {
+				$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'multicurrency_tx');
+			} else {
+				$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'none');
+			}
+			print '</td></tr>';
+		}
+
 		// Availability
 		print '<tr><td height="10">';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
@@ -2184,43 +2222,6 @@ if ($action == 'create' && $user->rights->commande->creer)
 	        print '</td></tr>';
 		}
 
-		// Multicurrency
-		if (! empty($conf->multicurrency->enabled))
-		{
-			// Multicurrency code
-			print '<tr>';
-			print '<td width="25%">';
-			print '<table class="nobordernopadding" width="100%"><tr><td>';
-			print fieldLabel('Currency','multicurrency_code');
-			print '</td>';
-			if ($action != 'editmulticurrencycode' && ! empty($object->brouillon))
-				print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencycode&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
-			print '</tr></table>';
-			print '</td><td colspan="5">';
-			if ($action == 'editmulticurrencycode') {
-				$form->form_multicurrency_code($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_code, 'multicurrency_code');
-			} else {
-				$form->form_multicurrency_code($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_code, 'none');
-			}
-			print '</td></tr>';
-		
-			// Multicurrency rate
-			print '<tr>';
-			print '<td width="25%">';
-			print '<table class="nobordernopadding" width="100%"><tr><td>';
-			print fieldLabel('Rate','multicurrency_tx');
-			print '</td>';
-			if ($action != 'editmulticurrencyrate' && ! empty($object->brouillon))
-				print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencyrate&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
-			print '</tr></table>';
-			print '</td><td colspan="5">';
-			if ($action == 'editmulticurrencyrate') {
-				$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'multicurrency_tx');
-			} else {
-				$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'none');
-			}
-			print '</td></tr>';
-		}
 		// Other attributes
 		$cols = 3;
 		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';

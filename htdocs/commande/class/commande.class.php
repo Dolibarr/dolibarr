@@ -3289,7 +3289,7 @@ class Commande extends CommonOrder
         $sql.= ' l.total_ht, l.total_tva, l.total_ttc, l.fk_product_fournisseur_price as fk_fournprice, l.buy_price_ht as pa_ht, l.localtax1_tx, l.localtax2_tx,';
         $sql.= ' l.date_start, l.date_end,';
 	    $sql.= ' l.fk_unit,';
-		$sql.= ' l.fk_multicurrency, l.multicurrency_code, l.multicurrency_subprice, l.multicurrency_total_ht, l.multicurrency_total_tva, l.multicurrency_total_ttc';
+		$sql.= ' l.fk_multicurrency, l.multicurrency_code, l.multicurrency_subprice, l.multicurrency_total_ht, l.multicurrency_total_tva, l.multicurrency_total_ttc,';
         $sql.= ' p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid, ';
         $sql.= ' p.description as product_desc, p.stock as stock_reel,';
         $sql.= ' p.entity';
@@ -3342,12 +3342,12 @@ class Commande extends CommonOrder
 	            $this->lines[$i]->fk_unit			= $obj->fk_unit;
 				
 				// Multicurrency
-				$line->fk_multicurrency 		= $obj->fk_multicurrency;
-				$line->multicurrency_code 		= $obj->multicurrency_code;
-				$line->multicurrency_subprice 	= $obj->multicurrency_subprice;
-				$line->multicurrency_total_ht 	= $obj->multicurrency_total_ht;
-				$line->multicurrency_total_tva 	= $obj->multicurrency_total_tva;
-				$line->multicurrency_total_ttc 	= $obj->multicurrency_total_ttc;
+				$this->lines[$i]->fk_multicurrency 			= $obj->fk_multicurrency;
+				$this->lines[$i]->multicurrency_code 		= $obj->multicurrency_code;
+				$this->lines[$i]->multicurrency_subprice 	= $obj->multicurrency_subprice;
+				$this->lines[$i]->multicurrency_total_ht 	= $obj->multicurrency_total_ht;
+				$this->lines[$i]->multicurrency_total_tva 	= $obj->multicurrency_total_tva;
+				$this->lines[$i]->multicurrency_total_ttc 	= $obj->multicurrency_total_ttc;
 				
                 $i++;
             }
@@ -3850,6 +3850,13 @@ class OrderLine extends CommonOrderLine
 		$sql.= " , fk_parent_line=".(! empty($this->fk_parent_line)?$this->fk_parent_line:"null");
 		if (! empty($this->rang)) $sql.= ", rang=".$this->rang;
 		$sql.= " , fk_unit=".(!$this->fk_unit ? 'NULL' : $this->fk_unit);
+		
+		// Multicurrency
+		$sql.= " , multicurrency_subprice=".price2num($this->multicurrency_subprice)."";
+        $sql.= " , multicurrency_total_ht=".price2num($this->multicurrency_total_ht)."";
+        $sql.= " , multicurrency_total_tva=".price2num($this->multicurrency_total_tva)."";
+        $sql.= " , multicurrency_total_ttc=".price2num($this->multicurrency_total_ttc)."";
+		
 		$sql.= " WHERE rowid = ".$this->rowid;
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
