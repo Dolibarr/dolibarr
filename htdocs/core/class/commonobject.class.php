@@ -1434,6 +1434,10 @@ abstract class CommonObject
     		if ($this->db->query($sql))
     		{
     			$this->multicurrency_code = $code;
+				
+				list($fk_multicurrency, $rate) = MultiCurrency::getIdAndTxFromCode($this->db, $code);
+				if ($rate) $this->setMulticurrencyRate($rate);
+				
     			return 1;
     		}
     		else
@@ -1475,7 +1479,24 @@ abstract class CommonObject
 				// Update line price
 				if (!empty($this->lines))
 				{
-					foreach ($this->lines as &$line) $this->updateline($line->id, $line->subprice, $line->qty, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, $line->desc, 'HT', $line->info_bits, $line->special_code, $line->fk_parent_line, $line->skip_update_total, $line->fk_fournprice, $line->pa_ht, $line->label, $line->product_type, $line->date_start, $line->date_end, $line->array_options, $line->fk_unit);
+					foreach ($this->lines as &$line) 
+					{
+						switch ($this->element) {
+							case 'propal':
+								$this->updateline($line->id, $line->subprice, $line->qty, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, $line->desc, 'HT', $line->info_bits, $line->special_code, $line->fk_parent_line, $line->skip_update_total, $line->fk_fournprice, $line->pa_ht, $line->label, $line->product_type, $line->date_start, $line->date_end, $line->array_options, $line->fk_unit);
+								break;
+							case 'commande':
+								$this->updateline($line->id, $line->desc, $line->subprice, $line->qty, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->date_start, $line->date_end, $line->product_type, $line->fk_parent_line, $line->skip_update_total, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->fk_unit);
+								break;
+							case 'facture':
+								$this->updateline($line->id, $line->desc, $line->subprice, $line->qty, $line->remise_percent, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, $line->skip_update_total, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
+								break;
+							default:
+								dol_syslog(get_class($this).'::setMulticurrencyRate no updateline defined', LOG_DEBUG);
+								break;
+						}
+						
+					}
 				}
 				
     			return 1;
