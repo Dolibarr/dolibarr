@@ -41,6 +41,7 @@ require_once DOL_DOCUMENT_ROOT . '/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/modules/propale/modules_propale.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/propal.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
 if (! empty($conf->projet->enabled)) {
@@ -725,6 +726,35 @@ if (empty($reshook))
 			$error ++;
 		}
 
+		$date_start = dol_mktime(GETPOST('date_start' . $predef . 'hour'), GETPOST('date_start' . $predef . 'min'), GETPOST('date_start' . $predef . 'sec'), GETPOST('date_start' . $predef . 'month'), GETPOST('date_start' . $predef . 'day'), GETPOST('date_start' . $predef . 'year'));
+		$date_end = dol_mktime(GETPOST('date_end' . $predef . 'hour'), GETPOST('date_end' . $predef . 'min'), GETPOST('date_end' . $predef . 'sec'), GETPOST('date_end' . $predef . 'month'), GETPOST('date_end' . $predef . 'day'), GETPOST('date_end' . $predef . 'year'));
+
+		if ($date_start && $date_end)
+		{
+			if ($date_start > $date_end)
+			{
+				setEventMessage($langs->trans('ErrorStartDateGreaterEnd'), 'errors');
+				$error++;
+			}
+			else if (!empty($conf->global->MAIN_USE_DURATION_DATERANGE))
+			{
+				$duration = GETPOST('durationvalue', 'int');
+				if (is_numeric($duration) && $duration > 0) {
+					$durationqty=calculateDurationQuantity($date_start, $date_end, $duration, GETPOST('durationunit', 'alpha'));
+					if ($durationqty < 1)
+					{
+						setEventMessage($langs->trans('DateRangeShortForDuration', 'errors'));
+						$error++;
+					}
+				}
+			}
+		}
+		if (empty($qty))
+		{
+		    setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), 'errors');
+		    $error++;
+		}
+
 		if (! $error && ($qty >= 0) && (! empty($product_desc) || ! empty($idprod))) {
 			$pu_ht = 0;
 			$pu_ttc = 0;
@@ -1005,10 +1035,37 @@ if (empty($reshook))
 			}
 		}
 
+		if ($date_start && $date_end)
+		{
+			if ($date_start > $date_end)
+			{
+				setEventMessage($langs->trans('ErrorStartDateGreaterEnd'), 'errors');
+				$error++;
+			}
+			else if (!empty($conf->global->MAIN_USE_DURATION_DATERANGE))
+			{
+				$duration = GETPOST('durationvalue', 'int');
+				if (is_numeric($duration) && $duration > 0) {
+					$durationqty=calculateDurationQuantity($date_start, $date_end, $duration, GETPOST('durationunit', 'alpha'));
+					if ($durationqty < 1)
+					{
+						setEventMessage($langs->trans('DateRangeShortForDuration', 'errors'));
+						$error++;
+					}
+				}
+			}
+		}
+		$qty = GETPOST('qty');
+		if (empty($qty))
+		{
+		    setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), 'errors');
+		    $error++;
+		}
+
 		if (! $error) {
 			$db->begin();
 
-			$result = $object->updateline(GETPOST('lineid'), $pu_ht, GETPOST('qty'), GETPOST('remise_percent'), $vat_rate, $localtax1_rate, $localtax2_rate, $description, 'HT', $info_bits, $special_code, GETPOST('fk_parent_line'), 0, $fournprice, $buyingprice, $label, $type, $date_start, $date_end, $array_options, $_POST["units"]);
+			$result = $object->updateline(GETPOST('lineid'), $pu_ht, $qty, GETPOST('remise_percent'), $vat_rate, $localtax1_rate, $localtax2_rate, $description, 'HT', $info_bits, $special_code, GETPOST('fk_parent_line'), 0, $fournprice, $buyingprice, $label, $type, $date_start, $date_end, $array_options, $_POST["units"]);
 
 			if ($result >= 0) {
 				$db->commit();

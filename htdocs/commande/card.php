@@ -42,6 +42,7 @@ require_once DOL_DOCUMENT_ROOT . '/commande/class/commande.class.php';
 require_once DOL_DOCUMENT_ROOT . '/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/order.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 if (! empty($conf->propal->enabled))
 	require DOL_DOCUMENT_ROOT . '/comm/propal/class/propal.class.php';
@@ -624,6 +625,32 @@ if (empty($reshook))
 			$error++;
 		}
 
+		if ($date_start && $date_end)
+		{
+			if ($date_start > $date_end)
+			{
+				setEventMessage($langs->trans('ErrorStartDateGreaterEnd'), 'errors');
+				$error++;
+			}
+			else if (!empty($conf->global->MAIN_USE_DURATION_DATERANGE))
+			{
+				$duration = GETPOST('durationvalue', 'int');
+				if (is_numeric($duration) && $duration > 0) {
+					$durationqty=calculateDurationQuantity($date_start, $date_end, $duration, GETPOST('durationunit', 'alpha'));
+					if ($durationqty < 1)
+					{
+						setEventMessage($langs->trans('DateRangeShortForDuration', 'errors'));
+						$error++;
+					}
+				}
+			}
+		}
+		if (empty($qty))
+		{
+		    setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), 'errors');
+		    $error++;
+		}
+
 		if (! $error && ($qty >= 0) && (! empty($product_desc) || ! empty($idprod))) {
 			// Clean parameters
 			$date_start=dol_mktime(GETPOST('date_start'.$predef.'hour'), GETPOST('date_start'.$predef.'min'), GETPOST('date_start'.$predef.'sec'), GETPOST('date_start'.$predef.'month'), GETPOST('date_start'.$predef.'day'), GETPOST('date_start'.$predef.'year'));
@@ -830,14 +857,15 @@ if (empty($reshook))
 	 */
 	else if ($action == 'updateline' && $user->rights->commande->creer && GETPOST('save'))
 	{
+		$error = 0;
+
 		// Clean parameters
-		$date_start='';
-		$date_end='';
 		$date_start=dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), GETPOST('date_startsec'), GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
 		$date_end=dol_mktime(GETPOST('date_endhour'), GETPOST('date_endmin'), GETPOST('date_endsec'), GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
 		$description=dol_htmlcleanlastbr(GETPOST('product_desc'));
 		$pu_ht=GETPOST('price_ht');
 		$vat_rate=(GETPOST('tva_tx')?GETPOST('tva_tx'):0);
+		$qty=GETPOST('qty');
 
 		// Define info_bits
 		$info_bits = 0;
@@ -866,7 +894,7 @@ if (empty($reshook))
 
 		// Define special_code for special lines
 		$special_code=GETPOST('special_code');
-		if (! GETPOST('qty')) $special_code=3;
+		if (!$qty) $special_code=3;
 
 		// Check minimum price
 		$productid = GETPOST('productid', 'int');
@@ -897,8 +925,34 @@ if (empty($reshook))
 			}
 		}
 
+		if ($date_start && $date_end)
+		{
+			if ($date_start > $date_end)
+			{
+				setEventMessage($langs->trans('ErrorStartDateGreaterEnd'), 'errors');
+				$error++;
+			}
+			else if (!empty($conf->global->MAIN_USE_DURATION_DATERANGE))
+			{
+				$duration = GETPOST('durationvalue', 'int');
+				if (is_numeric($duration) && $duration > 0) {
+					$durationqty=calculateDurationQuantity($date_start, $date_end, $duration, GETPOST('durationunit', 'alpha'));
+					if ($durationqty < 1)
+					{
+						setEventMessage($langs->trans('DateRangeShortForDuration', 'errors'));
+						$error++;
+					}
+				}
+			}
+		}
+		if (empty($qty))
+		{
+		    setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), 'errors');
+		    $error++;
+		}
+
 		if (! $error) {
-			$result = $object->updateline(GETPOST('lineid'), $description, $pu_ht, GETPOST('qty'), GETPOST('remise_percent'), $vat_rate, $localtax1_rate, $localtax2_rate, 'HT', $info_bits, $date_start, $date_end, $type, GETPOST('fk_parent_line'), 0, $fournprice, $buyingprice, $label, $special_code, $array_options, GETPOST('units'));
+			$result = $object->updateline(GETPOST('lineid'), $description, $pu_ht, $qty, GETPOST('remise_percent'), $vat_rate, $localtax1_rate, $localtax2_rate, 'HT', $info_bits, $date_start, $date_end, $type, GETPOST('fk_parent_line'), 0, $fournprice, $buyingprice, $label, $special_code, $array_options, GETPOST('units'));
 
 			if ($result >= 0) {
 				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
