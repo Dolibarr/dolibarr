@@ -146,6 +146,7 @@ class html_cerfafr extends ModeleDon
 				$ModePaiement = '<td width="25%"><input type="checkbox"> Remise d\'espèces</td><td width="25%"><input type="checkbox"> Chèque</td><td width="50%"><input type="checkbox"> Virement, prélèvement, carte bancaire</td>';
 				}
 				
+				/*
 				if (empty($don->societe))
 				{
 				$CodeDon = '<td width="33%"><input type="checkbox" disabled="true" checked="checked" > 200 du CGI</td><td width="33%"><input type="checkbox" disabled="true" > 238 bis du CGI</td><td width="33%"><input type="checkbox" disabled="true" > 885-0 V bis A du CGI</td>';
@@ -154,6 +155,7 @@ class html_cerfafr extends ModeleDon
 				{
 				$CodeDon = '<td width="33%"><input type="checkbox" disabled="true" > 200 du CGI</td><td width="33%"><input type="checkbox" disabled="true" checked="checked" > 238 bis du CGI</td><td width="33%"><input type="checkbox" disabled="true" > 885-0 V bis A du CGI</td>';
 				}
+				*/
 				
 		        // Define contents
 		        $donmodel=DOL_DOCUMENT_ROOT ."/core/modules/dons/html_cerfafr.html";
@@ -186,7 +188,7 @@ class html_cerfafr extends ModeleDon
 		        $form = str_replace('__DonationRecipient__',$outputlangs->trans("DonationRecipient"),$form);
 		        $form = str_replace('__DonationDatePayment__',$outputlangs->trans("DonationDatePayment"),$form);
 				$form = str_replace('__PaymentMode__',$outputlangs->trans("PaymentMode"),$form);
-				$form = str_replace('__CodeDon__',$CodeDon,$form);
+				// $form = str_replace('__CodeDon__',$CodeDon,$form);
 		        $form = str_replace('__Name__',$outputlangs->trans("Name"),$form);
 		        $form = str_replace('__Address__',$outputlangs->trans("Address"),$form);
 		        $form = str_replace('__Zip__',$outputlangs->trans("Zip"),$form);

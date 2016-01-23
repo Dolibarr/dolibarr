@@ -37,6 +37,7 @@ if (! empty($conf->fournisseur->enabled)) require_once DOL_DOCUMENT_ROOT.'/fourn
 if (! $user->rights->societe->lire) accessforbidden();
 
 $langs->load("commercial");
+$langs->load("propal");
 
 $action=GETPOST('action', 'alpha');
 $bid=GETPOST('bid', 'int');
@@ -193,6 +194,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 		}
 		else
 		{
+			$var=!$var;
 			print '<tr colspan="3" '.$bc[$var].'><td>'.$langs->trans("NoProposal").'</td></tr>';
 		}
 		print "</table><br>";
@@ -272,6 +274,7 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 		}
 		else
 		{
+			$var=!$var;
 			print '<tr colspan="3" '.$bc[$var].'><td>'.$langs->trans("NoOrder").'</td></tr>';
 		}
 		print "</table><br>";
@@ -352,6 +355,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande
         }
         else
         {
+			$var=!$var;
             print '<tr colspan="3" '.$bc[$var].'><td>'.$langs->trans("NoSupplierOrder").'</td></tr>';
         }
         print "</table><br>";

@@ -1088,7 +1088,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 		$pdf->SetTextColor(0,0,60);
 		$usehourmin='day';
-		if (empty($conf->global->SUPPLIER_ORDER_USE_HOUR_FOR_DELIVERY_DATE)) $usehourmin='dayhour';
+		if (!empty($conf->global->SUPPLIER_ORDER_USE_HOUR_FOR_DELIVERY_DATE)) $usehourmin='dayhour';
 		if (! empty($object->date_livraison))
 		{
 			$posy+=4;

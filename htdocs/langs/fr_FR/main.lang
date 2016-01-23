@@ -24,6 +24,7 @@ FormatDateHourSecShort=%d/%m/%Y %H:%M:%S
 FormatDateHourTextShort=%d %b %Y %H:%M
 FormatDateHourText=%d %B %Y %H:%M
 DatabaseConnection=Connexion à la base
+Translation=Traduction
 NoTranslation=Pas de traduction
 NoRecordFound=Aucun enregistrement trouvé
 NoError=Aucune erreur

@@ -642,14 +642,17 @@ div.fichecenter {
 	width: 100%;
 	clear: both;	/* This is to have div fichecenter that are true rectangles */
 }
+div.fichecenterbis {
+	margin-top: 8px;
+}
 div.fichethirdleft {
 	<?php if ($conf->browser->layout != 'phone')   { print "float: ".$left.";\n"; } ?>
-	<?php if ($conf->browser->layout != 'phone')   { print "width: 35%;\n"; } ?>
+	<?php if ($conf->browser->layout != 'phone')   { print "width: 50%;\n"; } ?>
 	<?php if ($conf->browser->layout == 'phone') { print "padding-bottom: 6px;\n"; } ?>
 }
 div.fichetwothirdright {
 	<?php if ($conf->browser->layout != 'phone')   { print "float: ".$right.";\n"; } ?>
-	<?php if ($conf->browser->layout != 'phone')   { print "width: 65%;\n"; } ?>
+	<?php if ($conf->browser->layout != 'phone')   { print "width: 50%;\n"; } ?>
 	<?php if ($conf->browser->layout == 'phone') { print "padding-bottom: 6px\n"; } ?>
 }
 div.fichehalfleft {
@@ -2373,10 +2376,17 @@ div.tabBar .noborder {
 }
 span.boxstatsindicator {
 	font-size: 110%;
-	font-weight: bold;
+	font-weight: normal;
 }
 span.dashboardlineindicator, span.dashboardlineindicatorlate {
 	font-size: 120%;
+	font-weight: bold;
+}
+span.dashboardlineok {
+	color: #008800;
+}
+span.dashboardlineko {
+	color: #880000;
 	font-weight: bold;
 }
 

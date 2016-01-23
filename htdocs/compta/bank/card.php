@@ -281,7 +281,7 @@ if ($action == 'create')
 
 	// Label
 	print '<tr><td class="fieldrequired">'.$langs->trans("LabelBankCashAccount").'</td>';
-	print '<td colspan="3"><input size="30" type="text" class="flat" name="label" value="'.GETPOST("label").'"></td></tr>';
+	print '<td colspan="3"><input size="30" type="text" class="flat" name="label" value="'.GETPOST("label", 'alpha').'"></td></tr>';
 
 	// Type
 	print '<tr><td class="fieldrequired">'.$langs->trans("AccountType").'</td>';
@@ -445,18 +445,42 @@ if ($action == 'create')
 	print '<table class="border" width="100%">';
 
 	// Accountancy code
-	print '<tr><td';
-    if (! empty($conf->global->MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED)) {
-		print ' class="fieldrequired"';
+    if (! empty($conf->global->MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED))
+    {
+		if (! empty($conf->accounting->enabled))
+		{
+			print '<tr><td class="fieldrequired" width="25%">'.$langs->trans("AccountancyCode").'</td>';
+			print '<td>';
+			print $formaccountancy->select_account($account->account_number, 'account_number', 1, '', 1, 1);
+			print '</td></tr>';
+		}
+		else
+		{
+			print '<tr><td class="fieldrequired" width="25%">'.$langs->trans("AccountancyCode").'</td>';
+			print '<td colspan="3"><input type="text" name="account_number" value="'.(GETPOST("account_number")?GETPOST('account_number', 'alpha'):$account->account_number).'"></td></tr>';
+		}
 	}
-	print $langs->trans("AccountancyCode").'</td>';
-	print '<td colspan="3"><input type="text" name="account_number" value="'.(GETPOST("account_number")?GETPOST('account_number'):$account->account_number).'"></td></tr>';
+    else
+    {
+		if (! empty($conf->accounting->enabled))
+		{
+			print '<tr><td width="25%">'.$langs->trans("AccountancyCode").'</td>';
+			print '<td>';
+			print $formaccountancy->select_account($account->account_number, 'account_number', 1, '', 1, 1);
+			print '</td></tr>';
+		}
+		else
+		{
+			print '<tr><td width="25%">'.$langs->trans("AccountancyCode").'</td>';
+			print '<td colspan="3"><input type="text" name="account_number" value="'.(GETPOST("account_number")?GETPOST('account_number', 'alpha'):$account->account_number).'"></td></tr>';
+		}
+	}
 
 	// Accountancy journal
 	if (! empty($conf->accounting->enabled))
 	{
 		print '<tr><td>'.$langs->trans("AccountancyJournal").'</td>';
-	    print '<td colspan="3"><input type="text" name="accountancy_journal" value="'.(GETPOST("accountancy_journal")?GETPOST('accountancy_journal'):$account->accountancy_journal).'"></td></tr>';
+	    print '<td colspan="3"><input type="text" name="accountancy_journal" value="'.(GETPOST("accountancy_journal")?GETPOST('accountancy_journal', 'alpha'):$account->accountancy_journal).'"></td></tr>';
 	}
 
 	print '</table>';

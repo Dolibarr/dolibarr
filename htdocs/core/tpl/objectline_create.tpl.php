@@ -521,30 +521,56 @@ jQuery(document).ready(function() {
     	  		var defaultkey = '';
     	  		var defaultprice = '';
 	      		var bestpricefound = 0;
+	      		
+	      		var bestpriceid = 0; var bestpricevalue = 0;
+	      		var pmppriceid = 0; var pmppricevalue = 0;
+	      		var costpriceid = 0; var costpricevalue = 0;
+
+				/* setup of margin calculation */
+	      		var defaultbuyprice = '<?php 
+	      		if (isset($conf->global->MARGIN_TYPE))
+	      		{
+	      		    if ($conf->global->MARGIN_TYPE == '1')   print 'bestsupplierprice';
+	      		    if ($conf->global->MARGIN_TYPE == 'pmp') print 'pmp';
+	      		    if ($conf->global->MARGIN_TYPE == 'costprice') print 'costprice';
+	      		} ?>';
+	      		console.log("defaultbuyprice="+defaultbuyprice);
+	      		
 	      		var i = 0;
 	      		$(data).each(function() {
-	      			if (this.id != 'pmpprice')
+	      			if (this.id != 'pmpprice' && this.id != 'costprice')
 		      		{
 		        		i++;
-                        this.price = parseFloat(this.price);//fix this.price >0
-
+                        this.price = parseFloat(this.price); // to fix when this.price >0
 			      		// If margin is calculated on best supplier price, we set it by defaut (but only if value is not 0)
-		      			var defaultbuyprice = '<?php echo ((isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == '1')?'bestsupplierprice':''); ?>';	// We set here default value to use
-			      		console.log(this.id+" "+this.price+" "+defaultbuyprice+" "+(this.price > 0));
-		      			if (bestpricefound == 0 && this.price > 0 && 'bestsupplierprice' == defaultbuyprice) { defaultkey = this.id; defaultprice = this.price; bestpricefound=1; }	// bestpricefound is used to take the first price > 0
+			      		console.log("id="+this.id+"-price="+this.price+"-"+(this.price > 0));
+		      			if (bestpricefound == 0 && this.price > 0) { defaultkey = this.id; defaultprice = this.price; bestpriceid = this.id; bestpricevalue = this.price; bestpricefound=1; }	// bestpricefound is used to take the first price > 0
 		      		}
 	      			if (this.id == 'pmpprice')
 	      			{
 	      				// If margin is calculated on PMP, we set it by defaut (but only if value is not 0)
-		      			var defaultbuyprice = '<?php echo ((isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == 'pmp')?'pmp':''); ?>';
-			      		console.log(this.id+" "+this.price+" "+defaultbuyprice);
-		      			if (this.price > 0 && 'pmp' == defaultbuyprice) { defaultkey = this.id; defaultprice = this.price; }
+			      		console.log("id="+this.id+"-price="+this.price);
+			      		if ('pmp' == defaultbuyprice || 'costprice' == defaultbuyprice)
+			      		{
+			      			if (this.price > 0) { defaultkey = this.id; defaultprice = this.price; pmppriceid = this.id; pmppricevalue = this.price;
+			      			console.log("pmppricevalue="+pmppricevalue); }
+			      		}
+	      			}
+	      			if (this.id == 'costprice')
+	      			{
+	      				// If margin is calculated on Cost price, we set it by defaut (but only if value is not 0)
+			      		console.log("id="+this.id+"-price="+this.price+"-pmppricevalue="+pmppricevalue);
+			      		if ('costprice' == defaultbuyprice)
+			      		{
+		      				if (this.price > 0) { defaultkey = this.id; defaultprice = this.price; costpriceid = this.id; costpricevalue = this.price; }
+		      				else if (pmppricevalue > 0) { defaultkey = pmppriceid; defaultprice = pmppricevalue; }
+			      		}
 	      			}
 	        		options += '<option value="'+this.id+'" price="'+this.price+'">'+this.label+'</option>';
 	      		});
 	      		options += '<option value="inputprice" price="'+defaultprice+'"><?php echo $langs->trans("InputPrice"); ?></option>';
 
-	      		console.log("defaultkey="+defaultkey);
+	      		console.log("finally selected defaultkey="+defaultkey+" defaultprice="+defaultprice);
 
 	      		$("#fournprice_predef").html(options).show();
 	      		if (defaultkey != '')

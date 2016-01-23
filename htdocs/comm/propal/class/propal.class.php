@@ -2465,7 +2465,7 @@ class Propal extends CommonObject
      */
     function load_board($user,$mode)
     {
-        global $conf, $user, $langs;
+        global $conf, $langs;
 
         $clause = " WHERE";
 

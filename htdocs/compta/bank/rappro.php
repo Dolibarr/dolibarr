@@ -362,17 +362,22 @@ foreach ($transactions as $transaction) {
         print img_edit();
         print '</a>&nbsp; ';
 
-        if ($db->jdate($transaction->dateo) <= $now) {
-            print '<a href="'.DOL_URL_ROOT.'/compta/bank/rappro.php?action=del&amp;rowid='.$transaction->id.'&amp;account='.$acct->id.'">';
-            print img_delete();
-            print '</a>';
+                if ($db->jdate($transaction->dateo) <= $now) {
+                    print '<a href="'.DOL_URL_ROOT.'/compta/bank/rappro.php?action=del&amp;rowid='.$transaction->id.'&amp;account='.$acct->id.'">';
+                    print img_delete();
+                    print '</a>';
+                }
+                else {
+                    print "&nbsp;";	// We prevents the deletion because reconciliation can not be achieved until the date has elapsed and that writing appears well on the account.
+                }
+                print "</td>";
+            }
+            else
+            {
+                print "<td align=\"center\">&nbsp;</td>";
+            }
         }
-        print "</td>";
-    }
-    else
-    {
-        print "<td align=\"center\">&nbsp;</td>";
-    }
+
 
     // Show checkbox for conciliation
     if ($db->jdate($transaction->dateo) <= $now)

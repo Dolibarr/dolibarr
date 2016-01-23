@@ -2,6 +2,7 @@
 /* Copyright (C) 2010-2012 	Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2013		Florian Henry		<florian.henry@ope-concept.pro>
+ * Copyright (C) 2016		Charlie Benke		<charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -457,6 +458,9 @@ class doc_generic_task_odt extends ModelePDFTask
 				'__FROM_EMAIL__' => $this->emetteur->email,
 				);
 				complete_substitutions_array($substitutionarray, $langs, $object);
+				// Call the ODTSubstitution hook
+				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray);
+				$reshook=$hookmanager->executeHooks('ODTSubstitution',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 
 				// Open and load template
 				require_once ODTPHP_PATH.'odf.php';
@@ -585,9 +589,9 @@ class doc_generic_task_odt extends ModelePDFTask
 						$odfHandler->mergeSegment($listlinestaskres);
 					}
 
-					//Time ressources
+					// Time ressources
 					$sql = "SELECT t.rowid, t.task_date, t.task_duration, t.fk_user, t.note";
-					$sql.= ", u.name, u.firstname";
+					$sql.= ", u.lastname, u.firstname";
 					$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
 					$sql .= " , ".MAIN_DB_PREFIX."user as u";
 					$sql .= " WHERE t.fk_task =".$object->id;
@@ -607,6 +611,7 @@ class doc_generic_task_odt extends ModelePDFTask
 							if (!empty($row['fk_user'])) {
 								$objectdetail=new User($this->db);
 								$objectdetail->fetch($row['fk_user']);
+								// TODO Use a cache to aoid fetch for same user
 								$row['fullcivname']=$objectdetail->getFullName($outputlangs,1);
 							} else {
 								$row['fullcivname']='';
@@ -775,7 +780,7 @@ class doc_generic_task_odt extends ModelePDFTask
 
 
 				// Call the beforeODTSave hook
-				$parameters=array('odfHandler'=>&$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
+				$parameters=array('odfHandler'=>&$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray);
 				$reshook=$hookmanager->executeHooks('beforeODTSave',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 
 
@@ -796,7 +801,7 @@ class doc_generic_task_odt extends ModelePDFTask
 						return -1;
 					}
 				}
-
+				$parameters=array('odfHandler'=>&$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray);
 				$reshook=$hookmanager->executeHooks('afterODTCreation',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 
 				if (! empty($conf->global->MAIN_UMASK))

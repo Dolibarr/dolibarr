@@ -21,7 +21,8 @@
 
 /**
  * addLineBatch
- * 
+ * @deprecated replaced by addDispatchLine and moved to module folder and file fourn/js/lib_dispatch.js
+ *
  * @param	index	int		number of produt. 0 = first product line
  */
 function addLineBatch(index) 
