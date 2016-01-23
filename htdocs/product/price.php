@@ -1026,7 +1026,7 @@ $sql .= " WHERE fk_product = " . $object->id;
 $sql .= " AND p.entity IN (" . getEntity('productprice', 1) . ")";
 $sql .= " AND p.fk_user_author = u.rowid";
 if (! empty($socid) && ! empty($conf->global->PRODUIT_MULTIPRICES)) $sql .= " AND p.price_level = " . $soc->price_level;
-$sql .= " ORDER BY p.date_price DESC, p.price_level ASC, p.rowid DESC";
+$sql .= " ORDER BY p.date_price, p.rowid DESC, p.price_level ASC";
 // $sql .= $db->plimit();
 
 $result = $db->query($sql);

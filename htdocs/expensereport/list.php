@@ -222,7 +222,7 @@ if ($resql)
 	print_liste_field_titre($langs->trans("TotalHT"),$_SERVER["PHP_SELF"],"d.total_ht","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("TotalVAT"),$_SERVER["PHP_SELF"],"d.total_tva","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("TotalTTC"),$_SERVER["PHP_SELF"],"d.total_ttc","",$param,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Statut"),$_SERVER["PHP_SELF"],"","",$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
 	print "</tr>\n";
 
@@ -335,10 +335,12 @@ if ($resql)
 
 	print "</form>";
 
+	/*
 	print '<div class="tabsAction">';
 	print '<a href="'.dol_buildpath('/expensereport/card.php',1).'?action=create" class="butAction">'.$langs->trans("NewTrip").'</a>';
 	print '</div>';
-
+	*/
+	
 	$db->free($resql);
 }
 else

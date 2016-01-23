@@ -254,7 +254,7 @@ class pdf_strato extends ModelePDFContract
 				{
 					$objectligne = $object->lines[$i];
 
-					$valide = $objectligne->id ? $objectligne->fetch($objectligne->id) : 0;
+					$valide = $objectligne->id ? 1 : 0;
 
 					if ($valide > 0 || $object->specimen)
 					{
