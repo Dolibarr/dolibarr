@@ -90,12 +90,13 @@ if (empty($usemargins)) $usemargins=0;
 	}
 	else
 	{
+		$format = $conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE?'dayhourtextshort':'daytextshort';
 		if ($line->fk_product > 0)
 		{
 			echo $form->textwithtooltip($text,$description,3,'','',$i,0,(!empty($line->fk_parent_line)?img_picto('', 'rightarrow'):''));
 			
 			// Show range
-			echo get_date_range($line->date_start, $line->date_end);
+			echo get_date_range($line->date_start,$line->date_end, $format);
 
 			// Add description in form
 			if (! empty($conf->global->PRODUIT_DESC_IN_FORM))
@@ -119,7 +120,7 @@ if (empty($usemargins)) $usemargins=0;
 			}
 
 			// Show range
-			echo get_date_range($line->date_start,$line->date_end);
+			echo get_date_range($line->date_start,$line->date_end, $format);
 		}
 	}
 	?>

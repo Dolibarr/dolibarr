@@ -65,7 +65,7 @@ $coldisplay=-1; // We remove first td
 
 		<a href="<?php echo DOL_URL_ROOT.'/product/card.php?id='.$line->fk_product; ?>">
 		<?php
-		if ($line->product_type==1) echo img_object($langs->trans('ShowService'),'service');
+		if ($line->product_type==Product::TYPE_SERVICE) echo img_object($langs->trans('ShowService'),'service');
 		else print img_object($langs->trans('ShowProduct'),'product');
 		echo ' '.$line->ref;
 		?>
@@ -217,14 +217,30 @@ $coldisplay=-1; // We remove first td
 	?>
 </tr>
 
-<?php if (! empty($conf->service->enabled) && $line->product_type == 1 && $dateSelector)	 { ?>
+<?php if (! empty($conf->service->enabled) && $line->product_type == Product::TYPE_SERVICE && $dateSelector)	 { ?>
 <tr id="service_duration_area" <?php echo $bc[$var]; ?>>
 	<td colspan="11"><?php echo $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' '; ?>
 	<?php
 	$hourmin=(isset($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE:'');
-	echo $form->select_date($line->date_start,'date_start',$hourmin,$hourmin,$line->date_start?0:1,"updateligne",1,0,1);
+	echo $form->select_date($line->date_start,'date_start',$hourmin,$hourmin,1,"updateligne",1,0,1);
 	echo ' '.$langs->trans('to').' ';
-	echo $form->select_date($line->date_end,'date_end',$hourmin,$hourmin,$line->date_end?0:1,"updateligne",1,0,1);
+	$h = 1; $m = 1;
+	if ($line->fk_product > 0)
+	{
+		global $db;
+		$lineproduct = new Product($db);
+		$ret = $lineproduct->fetch($line->fk_product);
+		if ($ret > 0)
+		{
+			$duration_value = $lineproduct->duration_value;
+			$duration_unit = $lineproduct->duration_unit;
+			$h = $hourmin && ($duration_unit=='h' || $duration_unit=='d');
+			$m = $hourmin &&  $duration_unit=='h';
+			echo '<input type="hidden" id="duration_unit" name="duration_unit" value="'.$duration_unit.'">';
+		}
+		unset($lineproduct);
+	}
+	echo $form->select_date($line->date_end,'date_end',$h,$m,1,"updateligne",1,0,1);
 	?>
 	</td>
 </tr>
