@@ -436,13 +436,13 @@ if($holiday_payes == '2')
 print '</table>';
 print '</form>';
 
-if ($user_id == $user->id)
+/*if ($user_id == $user->id)
 {
 	print '<br>';
 	print '<div style="float: right; margin-top: 8px;">';
 	print '<a href="./card.php?action=request" class="butAction">'.$langs->trans('AddCP').'</a>';
 	print '</div>';
-}
+}*/
 
 llxFooter();
 
