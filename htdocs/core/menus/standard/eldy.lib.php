@@ -60,7 +60,7 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0)
 	if (empty($noout)) print_start_menu_entry($idsel,$classname,$showmode);
 	if (empty($noout)) print_text_menu_entry($langs->trans("Home"), 1, DOL_URL_ROOT.'/index.php?mainmenu=home&amp;leftmenu=', $id, $idsel, $classname, $atarget);
 	if (empty($noout)) print_end_menu_entry($showmode);
-	$menu->add('/index.php?mainmenu=home&amp;leftmenu=', $langs->trans("Home"), 0, $showmode, $atarget, "home", '');
+	$menu->add('/index.php?mainmenu=home&amp;leftmenu=home', $langs->trans("Home"), 0, $showmode, $atarget, "home", '');
 
 	// Third parties
 	$tmpentry=array('enabled'=>(( ! empty($conf->societe->enabled) && (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) || empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))) || ! empty($conf->fournisseur->enabled)), 'perms'=>(! empty($user->rights->societe->lire) || ! empty($user->rights->fournisseur->lire)), 'module'=>'societe|fournisseur');
@@ -486,114 +486,113 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 		{
 			$langs->load("users");
 
-			//if ($user->admin)
-			//{
+			// Home - dashboard
+			$newmenu->add("/index.php?mainmenu=home&amp;leftmenu=home", $langs->trans("Home"), 0, 1, '', $mainmenu, 'home');
+		
+			// Setup
+			$newmenu->add("/admin/index.php?mainmenu=home&amp;leftmenu=setup", $langs->trans("Setup"), 0, $user->admin, '', $mainmenu, 'setup');
+			if (empty($leftmenu) || $leftmenu=="setup")
+			{
+				$langs->load("admin");
+				$langs->load("help");
 
-				// Setup
-				$newmenu->add("/admin/index.php?mainmenu=home&amp;leftmenu=setup", $langs->trans("Setup"), 0, $user->admin, '', $mainmenu, 'setup');
-				if (empty($leftmenu) || $leftmenu=="setup")
+				$warnpicto='';
+				if (empty($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INFO_SOCIETE_COUNTRY))
 				{
-					$langs->load("admin");
-					$langs->load("help");
-
-					$warnpicto='';
-					if (empty($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INFO_SOCIETE_COUNTRY))
-					{
-						$langs->load("errors");
-						$warnpicto =' '.img_warning($langs->trans("WarningMandatorySetupNotComplete"));
-					}
-					$newmenu->add("/admin/company.php?mainmenu=home", $langs->trans("MenuCompanySetup").$warnpicto,1);
-					$warnpicto='';
-					if (count($conf->modules) <= (empty($conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING)?1:$conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING))	// If only user module enabled
-					{
-						$langs->load("errors");
-						$warnpicto = ' '.img_warning($langs->trans("WarningMandatorySetupNotComplete"));
-					}
-					$newmenu->add("/admin/modules.php?mainmenu=home", $langs->trans("Modules").$warnpicto,1);
-					$newmenu->add("/admin/menus.php?mainmenu=home", $langs->trans("Menus"),1);
-					$newmenu->add("/admin/ihm.php?mainmenu=home", $langs->trans("GUISetup"),1);
-					
-					if (! empty($conf->accounting->enabled))
-					{
-						$newmenu->add("/accountancy/admin/fiscalyear.php?mainmenu=home", $langs->trans("Fiscalyear"),1);
-					}
-
-					$newmenu->add("/admin/translation.php", $langs->trans("Translation"),1);
-					$newmenu->add("/admin/boxes.php?mainmenu=home", $langs->trans("Boxes"),1);
-					$newmenu->add("/admin/delais.php?mainmenu=home",$langs->trans("Alerts"),1);
-					$newmenu->add("/admin/security_other.php?mainmenu=home", $langs->trans("Security"),1);
-					$newmenu->add("/admin/limits.php?mainmenu=home", $langs->trans("MenuLimits"),1);
-					$newmenu->add("/admin/pdf.php?mainmenu=home", $langs->trans("PDF"),1);
-					$newmenu->add("/admin/mails.php?mainmenu=home", $langs->trans("Emails"),1);
-					$newmenu->add("/admin/sms.php?mainmenu=home", $langs->trans("SMS"),1);
-					$newmenu->add("/admin/dict.php?mainmenu=home", $langs->trans("Dictionary"),1);
-					$newmenu->add("/admin/const.php?mainmenu=home", $langs->trans("OtherSetup"),1);
+					$langs->load("errors");
+					$warnpicto =' '.img_warning($langs->trans("WarningMandatorySetupNotComplete"));
+				}
+				$newmenu->add("/admin/company.php?mainmenu=home", $langs->trans("MenuCompanySetup").$warnpicto,1);
+				$warnpicto='';
+				if (count($conf->modules) <= (empty($conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING)?1:$conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING))	// If only user module enabled
+				{
+					$langs->load("errors");
+					$warnpicto = ' '.img_warning($langs->trans("WarningMandatorySetupNotComplete"));
+				}
+				$newmenu->add("/admin/modules.php?mainmenu=home", $langs->trans("Modules").$warnpicto,1);
+				$newmenu->add("/admin/menus.php?mainmenu=home", $langs->trans("Menus"),1);
+				$newmenu->add("/admin/ihm.php?mainmenu=home", $langs->trans("GUISetup"),1);
+				
+				if (! empty($conf->accounting->enabled))
+				{
+					$newmenu->add("/accountancy/admin/fiscalyear.php?mainmenu=home", $langs->trans("Fiscalyear"),1);
 				}
 
-				// System tools
-				$newmenu->add("/admin/tools/index.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("SystemTools"), 0, $user->admin, '', $mainmenu, 'admintools');
-				if (empty($leftmenu) || preg_match('/^admintools/',$leftmenu))
-				{
-					$langs->load("admin");
-					$langs->load("help");
+				$newmenu->add("/admin/translation.php", $langs->trans("Translation"),1);
+				$newmenu->add("/admin/boxes.php?mainmenu=home", $langs->trans("Boxes"),1);
+				$newmenu->add("/admin/delais.php?mainmenu=home",$langs->trans("Alerts"),1);
+				$newmenu->add("/admin/security_other.php?mainmenu=home", $langs->trans("Security"),1);
+				$newmenu->add("/admin/limits.php?mainmenu=home", $langs->trans("MenuLimits"),1);
+				$newmenu->add("/admin/pdf.php?mainmenu=home", $langs->trans("PDF"),1);
+				$newmenu->add("/admin/mails.php?mainmenu=home", $langs->trans("Emails"),1);
+				$newmenu->add("/admin/sms.php?mainmenu=home", $langs->trans("SMS"),1);
+				$newmenu->add("/admin/dict.php?mainmenu=home", $langs->trans("Dictionary"),1);
+				$newmenu->add("/admin/const.php?mainmenu=home", $langs->trans("OtherSetup"),1);
+			}
 
-					$newmenu->add('/admin/system/dolibarr.php?mainmenu=home&amp;leftmenu=admintools_info', $langs->trans('InfoDolibarr'), 1);
-					if (empty($leftmenu) || $leftmenu=='admintools_info') $newmenu->add('/admin/system/modules.php?mainmenu=home&amp;leftmenu=admintools_info', $langs->trans('Modules'), 2);
-					if (empty($leftmenu) || $leftmenu=='admintools_info') $newmenu->add('/admin/triggers.php?mainmenu=home&amp;leftmenu=admintools_info', $langs->trans('Triggers'), 2);
-					//if (empty($leftmenu) || $leftmenu=='admintools_info') $newmenu->add('/admin/system/filecheck.php?mainmenu=home&amp;leftmenu=admintools_info', $langs->trans('FileCheck'), 2);
-					$newmenu->add('/admin/system/browser.php?mainmenu=home&amp;leftmenu=admintools', $langs->trans('InfoBrowser'), 1);
-					$newmenu->add('/admin/system/os.php?mainmenu=home&amp;leftmenu=admintools', $langs->trans('InfoOS'), 1);
-					$newmenu->add('/admin/system/web.php?mainmenu=home&amp;leftmenu=admintools', $langs->trans('InfoWebServer'), 1);
-					$newmenu->add('/admin/system/phpinfo.php?mainmenu=home&amp;leftmenu=admintools', $langs->trans('InfoPHP'), 1);
-					//if (function_exists('xdebug_is_enabled')) $newmenu->add('/admin/system/xdebug.php', $langs->trans('XDebug'),1);
-					$newmenu->add('/admin/system/database.php?mainmenu=home&amp;leftmenu=admintools', $langs->trans('InfoDatabase'), 1);
-					if (function_exists('eaccelerator_info')) $newmenu->add("/admin/tools/eaccelerator.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("EAccelerator"),1);
-					//$newmenu->add("/admin/system/perf.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("InfoPerf"),1);
-					$newmenu->add("/admin/tools/purge.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("Purge"),1);
-					$newmenu->add("/admin/tools/dolibarr_export.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("Backup"),1);
-					$newmenu->add("/admin/tools/dolibarr_import.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("Restore"),1);
-					$newmenu->add("/admin/tools/update.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("MenuUpgrade"),1);
-					$newmenu->add("/admin/tools/listevents.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("Audit"),1);
-					$newmenu->add("/admin/tools/listsessions.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("Sessions"),1);
-					$newmenu->add('/admin/system/about.php?mainmenu=home&amp;leftmenu=admintools', $langs->trans('About'), 1);
-					$newmenu->add("/support/index.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("HelpCenter"),1,1,'targethelp');
-				}
+			// System tools
+			$newmenu->add("/admin/tools/index.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("SystemTools"), 0, $user->admin, '', $mainmenu, 'admintools');
+			if (empty($leftmenu) || preg_match('/^admintools/',$leftmenu))
+			{
+				$langs->load("admin");
+				$langs->load("help");
 
-				// Modules system tools
-				if (! empty($conf->product->enabled) || ! empty($conf->service->enabled) || ! empty($conf->barcode->enabled)	// TODO We should enabled module system tools entry without hardcoded test, but when at least one modules bringing such entries are on
-					|| ! empty($conf->global->MAIN_MENU_ENABLE_MODULETOOLS))	// Some external modules may need to force to have this entry on.
+				$newmenu->add('/admin/system/dolibarr.php?mainmenu=home&amp;leftmenu=admintools_info', $langs->trans('InfoDolibarr'), 1);
+				if (empty($leftmenu) || $leftmenu=='admintools_info') $newmenu->add('/admin/system/modules.php?mainmenu=home&amp;leftmenu=admintools_info', $langs->trans('Modules'), 2);
+				if (empty($leftmenu) || $leftmenu=='admintools_info') $newmenu->add('/admin/triggers.php?mainmenu=home&amp;leftmenu=admintools_info', $langs->trans('Triggers'), 2);
+				//if (empty($leftmenu) || $leftmenu=='admintools_info') $newmenu->add('/admin/system/filecheck.php?mainmenu=home&amp;leftmenu=admintools_info', $langs->trans('FileCheck'), 2);
+				$newmenu->add('/admin/system/browser.php?mainmenu=home&amp;leftmenu=admintools', $langs->trans('InfoBrowser'), 1);
+				$newmenu->add('/admin/system/os.php?mainmenu=home&amp;leftmenu=admintools', $langs->trans('InfoOS'), 1);
+				$newmenu->add('/admin/system/web.php?mainmenu=home&amp;leftmenu=admintools', $langs->trans('InfoWebServer'), 1);
+				$newmenu->add('/admin/system/phpinfo.php?mainmenu=home&amp;leftmenu=admintools', $langs->trans('InfoPHP'), 1);
+				//if (function_exists('xdebug_is_enabled')) $newmenu->add('/admin/system/xdebug.php', $langs->trans('XDebug'),1);
+				$newmenu->add('/admin/system/database.php?mainmenu=home&amp;leftmenu=admintools', $langs->trans('InfoDatabase'), 1);
+				if (function_exists('eaccelerator_info')) $newmenu->add("/admin/tools/eaccelerator.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("EAccelerator"),1);
+				//$newmenu->add("/admin/system/perf.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("InfoPerf"),1);
+				$newmenu->add("/admin/tools/purge.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("Purge"),1);
+				$newmenu->add("/admin/tools/dolibarr_export.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("Backup"),1);
+				$newmenu->add("/admin/tools/dolibarr_import.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("Restore"),1);
+				$newmenu->add("/admin/tools/update.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("MenuUpgrade"),1);
+				$newmenu->add("/admin/tools/listevents.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("Audit"),1);
+				$newmenu->add("/admin/tools/listsessions.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("Sessions"),1);
+				$newmenu->add('/admin/system/about.php?mainmenu=home&amp;leftmenu=admintools', $langs->trans('About'), 1);
+				$newmenu->add("/support/index.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("HelpCenter"),1,1,'targethelp');
+			}
+
+			// Modules system tools
+			if (! empty($conf->product->enabled) || ! empty($conf->service->enabled) || ! empty($conf->barcode->enabled)	// TODO We should enabled module system tools entry without hardcoded test, but when at least one modules bringing such entries are on
+				|| ! empty($conf->global->MAIN_MENU_ENABLE_MODULETOOLS))	// Some external modules may need to force to have this entry on.
+			{
+				if (empty($user->societe_id))
 				{
-					if (empty($user->societe_id))
+					$newmenu->add("/admin/tools/index.php?mainmenu=home&amp;leftmenu=modulesadmintools", $langs->trans("ModulesSystemTools"), 0, $user->admin, '', $mainmenu, 'modulesadmintools');
+					// Special case: This entry can't be embedded into modules because we need it for both module service and products and we don't want duplicate lines.
+					if ((empty($leftmenu) || $leftmenu=="modulesadmintools") && $user->admin)
 					{
-						$newmenu->add("/admin/tools/index.php?mainmenu=home&amp;leftmenu=modulesadmintools", $langs->trans("ModulesSystemTools"), 0, $user->admin, '', $mainmenu, 'modulesadmintools');
-						// Special case: This entry can't be embedded into modules because we need it for both module service and products and we don't want duplicate lines.
-						if ((empty($leftmenu) || $leftmenu=="modulesadmintools") && $user->admin)
+						$langs->load("products");
+						$newmenu->add("/product/admin/product_tools.php?mainmenu=home&amp;leftmenu=modulesadmintools", $langs->trans("ProductVatMassChange"), 1, $user->admin);
+
+						if (! empty($conf->accounting->enabled))
 						{
-							$langs->load("products");
-							$newmenu->add("/product/admin/product_tools.php?mainmenu=home&amp;leftmenu=modulesadmintools", $langs->trans("ProductVatMassChange"), 1, $user->admin);
-
-							if (! empty($conf->accounting->enabled))
-							{
-								$langs->load("accountancy");
-								$newmenu->add("/accountancy/admin/productaccount.php?mainmenu=home&amp;leftmenu=modulesadmintools", $langs->trans("InitAccountancy"), 1, $user->admin);
-							}
+							$langs->load("accountancy");
+							$newmenu->add("/accountancy/admin/productaccount.php?mainmenu=home&amp;leftmenu=modulesadmintools", $langs->trans("InitAccountancy"), 1, $user->admin);
 						}
 					}
 				}
-			//}
+			}
 
 			$newmenu->add("/user/home.php?leftmenu=users", $langs->trans("MenuUsersAndGroups"), 0, $user->rights->user->user->lire, '', $mainmenu, 'users');
 			if ($user->rights->user->user->lire)
 			{
-				if (empty($leftmenu) || $leftmenu == 'none' || $leftmenu=="users")
+				if (! empty($leftmenu) && $leftmenu=="users")
 				{
 					$newmenu->add("", $langs->trans("Users"), 1, $user->rights->user->user->lire || $user->admin);
-					$newmenu->add("/user/card.php?action=create", $langs->trans("NewUser"),2, $user->rights->user->user->creer || $user->admin, '', 'home');
-					$newmenu->add("/user/index.php", $langs->trans("ListOfUsers"), 2, $user->rights->user->user->lire || $user->admin);
-					$newmenu->add("/user/hierarchy.php", $langs->trans("HierarchicView"), 2, $user->rights->user->user->lire || $user->admin);
+					$newmenu->add("/user/card.php?leftmenu=users&action=create", $langs->trans("NewUser"),2, $user->rights->user->user->creer || $user->admin, '', 'home');
+					$newmenu->add("/user/index.php?leftmenu=users", $langs->trans("ListOfUsers"), 2, $user->rights->user->user->lire || $user->admin);
+					$newmenu->add("/user/hierarchy.php?leftmenu=users", $langs->trans("HierarchicView"), 2, $user->rights->user->user->lire || $user->admin);
 					$newmenu->add("", $langs->trans("Groups"), 1, $user->rights->user->user->lire || $user->admin);
-					$newmenu->add("/user/group/card.php?action=create", $langs->trans("NewGroup"), 2, ($conf->global->MAIN_USE_ADVANCED_PERMS?$user->rights->user->group_advance->write:$user->rights->user->user->creer) || $user->admin);
-					$newmenu->add("/user/group/index.php", $langs->trans("ListOfGroups"), 2, ($conf->global->MAIN_USE_ADVANCED_PERMS?$user->rights->user->group_advance->read:$user->rights->user->user->lire) || $user->admin);
+					$newmenu->add("/user/group/card.php?leftmenu=users&action=create", $langs->trans("NewGroup"), 2, ($conf->global->MAIN_USE_ADVANCED_PERMS?$user->rights->user->group_advance->write:$user->rights->user->user->creer) || $user->admin);
+					$newmenu->add("/user/group/index.php?leftmenu=users", $langs->trans("ListOfGroups"), 2, ($conf->global->MAIN_USE_ADVANCED_PERMS?$user->rights->user->group_advance->read:$user->rights->user->user->lire) || $user->admin);
 				}
 			}
 		}
