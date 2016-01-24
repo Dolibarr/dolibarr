@@ -16,19 +16,19 @@
  */
 
 /**
- * 	\defgroup   website     Module website
- *  \brief      Website module descriptor.
- *  \file       htdocs/core/modules/modWebsite.class.php
- *  \ingroup    website
- *  \brief      Description and activation file for module Website
+ * 	\defgroup   websites     Module websites
+ *  \brief      Websites module descriptor.
+ *  \file       htdocs/core/modules/modWebsites.class.php
+ *  \ingroup    websites
+ *  \brief      Description and activation file for module Websites
  */
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *	Class to describe Website module
+ *	Class to describe Websites module
  */
-class modWebsite extends DolibarrModules
+class modWebsites extends DolibarrModules
 {
 
     /**
@@ -63,7 +63,7 @@ class modWebsite extends DolibarrModules
 
         // Config pages
         //-------------
-        $this->config_page_url = array('website.php');
+        $this->config_page_url = array('websites.php');
 
         // Dependancies
         //-------------
@@ -71,7 +71,7 @@ class modWebsite extends DolibarrModules
 		$this->depends = array();		// List of modules id that must be enabled if this module is enabled
         $this->requiredby = array();	// List of modules id to disable if this one is disabled
 		$this->conflictwith = array();	// List of modules id this module is in conflict with
-        $this->langfiles = array("website");
+        $this->langfiles = array("websites");
 
         // Constants
         //-----------
@@ -87,7 +87,7 @@ class modWebsite extends DolibarrModules
 
 		// Permissions
 		$this->rights = array();		// Permission array used by this module
-		$this->rights_class = 'website';
+		$this->rights_class = 'websites';
 		$r=0;
 
 		$this->rights[$r][0] = 10001;
@@ -110,14 +110,15 @@ class modWebsite extends DolibarrModules
 
         // Main menu entries
         $r=0;
-        $this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=home',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+        $this->menu[$r]=array(	'fk_menu'=>'0',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 						        'type'=>'top',			                // This is a Left menu entry
-						        'titre'=>'Website',
-						        'url'=>'/website/index.php',
-						        'langs'=>'website',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+						        'titre'=>'Websites',
+                                'mainmenu'=>'websites',
+						        'url'=>'/websites/index.php',
+						        'langs'=>'websites',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 						        'position'=>100,
-						        'enabled'=>'$conf->website->enabled',  		// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-						        'perms'=>'$user->rights->website->read',	// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+						        'enabled'=>'$conf->websites->enabled',  		// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+						        'perms'=>'$user->rights->websites->read',	// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 						        'target'=>'',
 						        'user'=>2);				                // 0=Menu for internal users, 1=external users, 2=both
         $r++;
