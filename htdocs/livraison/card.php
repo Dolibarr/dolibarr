@@ -297,7 +297,7 @@ $formfile = new FormFile($db);
  * Mode creation
  *
  *********************************************************************/
-if ($action == 'create')
+if ($action == 'create')    // Seems to no be used
 {
 
 	print load_fiche_titre($langs->trans("CreateADeliveryOrder"));
@@ -538,8 +538,17 @@ else
 			$soc->fetch($object->socid);
 
 			$head=delivery_prepare_head($object);
-			dol_fiche_head($head, 'delivery', $langs->trans("Shipment"), 0, 'sending');
 
+			
+			print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="action" value="update_extras_line">';
+			print '<input type="hidden" name="origin" value="'.$origin.'">';
+			print '<input type="hidden" name="id" value="'.$object->id.'">';
+			print '<input type="hidden" name="ref" value="'.$object->ref.'">';
+				
+			dol_fiche_head($head, 'delivery', $langs->trans("Shipment"), 0, 'sending');
+				
 			/*
 			 * Confirmation de la suppression
 			 *
@@ -565,13 +574,6 @@ else
 			 *   Livraison
 			 */
 			
-			print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			print '<input type="hidden" name="action" value="update_extras_line">';
-			print '<input type="hidden" name="origin" value="'.$origin.'">';
-			print '<input type="hidden" name="id" value="'.$object->id.'">';
-			print '<input type="hidden" name="ref" value="'.$object->ref.'">';
-			
 			print '<table class="border" width="100%">';
 
 			// Shipment
@@ -590,7 +592,9 @@ else
 
 			// Ref
 			print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
-			print '<td colspan="3">'.$object->ref.'</td></tr>';
+    		print '<td colspan="3">';
+    		print $object->ref;
+    		print '</td></tr>';
 
 			// Client
 			print '<tr><td width="20%">'.$langs->trans("Customer").'</td>';
@@ -818,15 +822,13 @@ else
 
 			print "</table>\n";
 			
-			if($object->statut == 0)	// only if draft
-				print '<br><div class="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></div>';
-			
+            dol_fiche_end();
+
+			//if ($object->statut == 0)	// only if draft
+			//	print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></div>';
+            
 			print '</form>';
-				
-			
-
-			print "\n</div>\n";
-
+            
 
 			/*
 			 *    Boutons actions
@@ -899,6 +901,7 @@ else
 
 			print '</td></tr></table>';
 
+			// List of existing shipment and delivery receipts
 			if ($expedition->origin_id)
 			{
 				print '<br>';

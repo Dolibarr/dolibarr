@@ -823,7 +823,7 @@ class Holiday extends CommonObject
      *  @param	string	$name       name of parameter
      *  @return string      		value of parameter
      */
-    function getConfCP($name, $fk_type=0)
+    function getConfCP($name)
     {
         $sql = "SELECT value";
         $sql.= " FROM ".MAIN_DB_PREFIX."holiday_config";

@@ -421,6 +421,20 @@ class ActionComm extends CommonObject
 
         $this->id=0;
 
+		if (!is_object($fuser))
+		{
+			if ($fuser > 0)
+			{
+				$u = new User($db);
+				$u->fetch($fuser);
+				$fuser = $u;
+			}
+			else 
+			{
+				$fuser = $user;
+			}
+		}
+
         // Create clone
         $result=$this->add($fuser);
         if ($result < 0) $error++;

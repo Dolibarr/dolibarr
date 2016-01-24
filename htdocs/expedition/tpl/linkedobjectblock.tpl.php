@@ -37,7 +37,7 @@ print load_fiche_titre($langs->trans('RelatedShippings'), '', '');
 	<td><?php echo $langs->trans("Ref"); ?></td>
 	<td align="center"><?php echo $langs->trans("Date"); ?></td>
 	<td align="center"><?php echo $langs->trans("DateDeliveryPlanned"); ?></td>
-	<td align="right"><?php echo $langs->trans("AmountHTShort"); ?></td>
+	<td align="right"><?php echo $langs->trans(""); ?></td>
 	<td align="right"><?php echo $langs->trans("Status"); ?></td>
 	<td></td>
 </tr>
@@ -53,10 +53,10 @@ foreach($linkedObjectBlock as $key => $objectlink)
 	<td align="center"><?php echo dol_print_date($objectlink->date_creation,'day'); ?></td>
 	<td align="center"><?php echo dol_print_date($objectlink->date_delivery,'day'); ?></td>
 	<td align="right"><?php
-		if ($user->rights->expedition->lire) {
+		/*if ($user->rights->expedition->lire) {
 			$total = $total + $objectlink->total_ht;
 			echo price($objectlink->total_ht);
-		} ?></td>
+		}*/ ?></td>
 	<td align="right"><?php echo $objectlink->getLibStatut(3); ?></td>
 	<td align="right"><a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_delete($langs->transnoentitiesnoconv("RemoveLink")); ?></a></td>
 </tr>
@@ -64,15 +64,17 @@ foreach($linkedObjectBlock as $key => $objectlink)
 }
 
 ?>
+<!-- 
 <tr class="liste_total">
 	<td align="left" colspan="3"><?php echo $langs->trans('TotalHT'); ?></td>
 	<td align="right"><?php
-		if ($user->rights->expedition->lire) {
+		/*if ($user->rights->expedition->lire) {
 			echo price($total);
-		} ?></td>
+		}*/ ?></td>
 	<td></td>
 	<td></td>
 </tr>
 </table>
-
+ -->
+ 
 <!-- END PHP TEMPLATE -->

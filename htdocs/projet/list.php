@@ -76,16 +76,27 @@ $search_sale=GETPOST('search_sale','int');
 $optioncss = GETPOST('optioncss','alpha');
 
 $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
-if ($mine) $search_user = $user->id;
+if ($mine) { $search_user = $user->id; $mine=0; }
 
-$day	= GETPOST('day','int');
-$month	= GETPOST('month','int');
-$year	= GETPOST('year','int');
 $sday	= GETPOST('sday','int');
 $smonth	= GETPOST('smonth','int');
 $syear	= GETPOST('syear','int');
+$day	= GETPOST('day','int');
+$month	= GETPOST('month','int');
+$year	= GETPOST('year','int');
 
 if ($search_status == '') $search_status=-1;	// -1 or 1
+
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
+$page = GETPOST("page",'int');
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+if ($page == -1) { $page = 0; }
+$offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+if (! $sortfield) $sortfield='p.ref';
+if (! $sortorder) $sortorder='DESC';
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $contextpage='projectlist';
@@ -115,11 +126,11 @@ $arrayfields=array(
 	'p.dateo'=>array('label'=>$langs->trans("DateStart"), 'checked'=>1, 'position'=>100),
     'p.datee'=>array('label'=>$langs->trans("DateEnd"), 'checked'=>1, 'position'=>101),
     'p.public'=>array('label'=>$langs->trans("Visibility"), 'checked'=>1, 'position'=>102),
-    'p.opp_amount'=>array('label'=>$langs->trans("OpportunityAmount"), 'checked'=>1, 'enabled'=>$conf->global->PROJECT_USE_OPPORTUNITIES, 'position'=>103),
-	'p.fk_opp_status'=>array('label'=>$langs->trans("OpportunityStatus"), 'checked'=>1, 'enabled'=>$conf->global->PROJECT_USE_OPPORTUNITIES, 'position'=>104),
-	'p.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
+    'p.opp_amount'=>array('label'=>$langs->trans("OpportunityAmountShort"), 'checked'=>1, 'enabled'=>$conf->global->PROJECT_USE_OPPORTUNITIES, 'position'=>103),
+	'p.fk_opp_status'=>array('label'=>$langs->trans("OpportunityStatusShort"), 'checked'=>1, 'enabled'=>$conf->global->PROJECT_USE_OPPORTUNITIES, 'position'=>104),
+	'p.datec'=>array('label'=>$langs->trans("DateCreationShort"), 'checked'=>0, 'position'=>500),
     'p.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
-    'p.statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
+    'p.fk_statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
 );
 // Extra fields
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
@@ -150,12 +161,12 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
 	$search_public="";
 	$search_sale="";
 	$search_user='';
-	$day="";
-	$month="";
-	$year="";
 	$sday="";
 	$smonth="";
 	$syear="";
+	$day="";
+	$month="";
+	$year="";
 	$search_array_options=array();
 }
 
@@ -171,12 +182,32 @@ $form = new Form($db);
 $formother = new FormOther($db);
 $formproject = new FormProjets($db);
 
-llxHeader("",$langs->trans("Projects"),"EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos");
+$title=$langs->trans("Projects");
+if ($search_user == $user->id) $title=$langs->trans("MyProjects");
 
+llxHeader("",$title,"EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos");
 
-$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,($mine?$mine:($user->rights->projet->all->lire?2:0)),1,$socid);
+// Get list of project id allowed to user (in a string list separated by coma)
+if (! $user->rights->projet->all->lire) $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,1,$socid);
 
-$sql = "SELECT p.rowid as projectid, p.ref, p.title, p.fk_statut, p.fk_opp_status, p.public, p.fk_user_creat";
+// Get id of types of contacts for projects (This list never contains a lot of elements)
+$listofprojectcontacttype=array();
+$sql = "SELECT ctc.rowid, ctc.code FROM ".MAIN_DB_PREFIX."c_type_contact as ctc";
+$sql.= " WHERE ctc.element = '" . $projectstatic->element . "'";
+$sql.= " AND ctc.source = 'internal'";
+$resql = $db->query($sql);
+if ($resql)
+{
+    while($obj = $db->fetch_object($resql))
+    {
+        $listofprojectcontacttype[$obj->rowid]=$obj->code;
+    }
+}
+else dol_print_error($db);
+if (count($listofprojectcontacttype) == 0) $listofprojectcontacttype[0]='0';    // To avoid sql syntax error if not found
+
+$distinct='DISTINCT';   // We add distinct until we are added a protection to be sure a contact of a project and task is only once.
+$sql = "SELECT ".$distinct." p.rowid as projectid, p.ref, p.title, p.fk_statut, p.fk_opp_status, p.public, p.fk_user_creat";
 $sql.= ", p.datec as date_creation, p.dateo as date_start, p.datee as date_end, p.opp_amount, p.tms as date_update";
 $sql.= ", s.nom as name, s.rowid as socid";
 $sql.= ", cls.code as opp_status_code";
@@ -194,14 +225,12 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_lead_status as cls on p.fk_opp_status = c
 if ($search_sale > 0 || (! $user->rights->societe->client->voir && ! $socid)) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
 if ($search_user > 0)
 {
-	$sql.=", ".MAIN_DB_PREFIX."element_contact as c";
-	$sql.=", ".MAIN_DB_PREFIX."c_type_contact as tc";
+	$sql.=", ".MAIN_DB_PREFIX."element_contact as ecp";
 }
 
-$sql.= " WHERE p.entity = ".$conf->entity;
-if ($mine || ! $user->rights->projet->all->lire) $sql.= " AND p.rowid IN (".$projectsListId.")";
+$sql.= " WHERE p.entity IN (".getEntity('project').')';
+if (! $user->rights->projet->all->lire) $sql.= " AND p.rowid IN (".$projectsListId.")";     // public and assigned to, or restricted to company for external users
 // No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
-//if ($socid || ! $user->rights->societe->client->voir)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
 if ($socid) $sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
 if ($search_ref) $sql .= natural_search('p.ref', $search_ref);
 if ($search_label) $sql .= natural_search('p.title', $search_label);
@@ -209,15 +238,15 @@ if ($search_societe) $sql .= natural_search('s.nom', $search_societe);
 if ($smonth > 0)
 {
     if ($syear > 0 && empty($sday))
-    	$sql.= " AND p.datee BETWEEN '".$db->idate(dol_get_first_day($syear,$smonth,false))."' AND '".$db->idate(dol_get_last_day($syear,$smonth,false))."'";
+    	$sql.= " AND p.dateo BETWEEN '".$db->idate(dol_get_first_day($syear,$smonth,false))."' AND '".$db->idate(dol_get_last_day($syear,$smonth,false))."'";
     else if ($syear > 0 && ! empty($sday))
-    	$sql.= " AND p.datee BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $smonth, $sday, $syear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $smonth, $sday, $syear))."'";
+    	$sql.= " AND p.dateo BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $smonth, $sday, $syear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $smonth, $sday, $syear))."'";
     else
-    	$sql.= " AND date_format(p.datee, '%m') = '".$smonth."'";
+    	$sql.= " AND date_format(p.dateo, '%m') = '".$smonth."'";
 }
 else if ($syear > 0)
 {
-    $sql.= " AND p.datee BETWEEN '".$db->idate(dol_get_first_day($syear,1,false))."' AND '".$db->idate(dol_get_last_day($syear,12,false))."'";
+    $sql.= " AND p.dateo BETWEEN '".$db->idate(dol_get_first_day($syear,1,false))."' AND '".$db->idate(dol_get_last_day($syear,12,false))."'";
 }
 if ($month > 0)
 {
@@ -243,26 +272,36 @@ if ($search_opp_status)
 if ($search_public!='') $sql .= " AND p.public = ".$db->escape($search_public);
 if ($search_sale > 0) $sql.= " AND sc.fk_user = " .$search_sale;
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND ((s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id.") OR (s.rowid IS NULL))";
-if ($search_user > 0) $sql.= " AND c.fk_c_type_contact = tc.rowid AND tc.element='project' AND tc.source='internal' AND c.element_id = p.rowid AND c.fk_socpeople = ".$search_user;
+if ($search_user > 0) $sql.= " AND ecp.fk_c_type_contact IN (".join(',',array_keys($listofprojectcontacttype)).") AND ecp.element_id = p.rowid AND ecp.fk_socpeople = ".$search_user; 
 // Add where from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
-
 $sql.= $db->order($sortfield,$sortorder);
-$sql.= $db->plimit($conf->liste_limit+1, $offset);
-//print $sql;
+
+$nbtotalofrecords = 0;
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+{
+    $result = $db->query($sql);
+    $nbtotalofrecords = $db->num_rows($result);
+}
+
+$sql.= $db->plimit($limit + 1,$offset);
+
 
 dol_syslog("list allowed project", LOG_DEBUG);
+//print $sql;
 $resql = $db->query($sql);
 if ($resql)
 {
 	$var=true;
 	$num = $db->num_rows($resql);
-	$i = 0;
 
 	$param='';
-	//if ($mine)				        $param.='&mode=mine';
+	if ($sday)              		$param.='&sday='.$day;
+	if ($smonth)              		$param.='&smonth='.$smonth;
+	if ($syear)               		$param.='&syear=' .$syear;
+	if ($day)               		$param.='&day='.$day;
 	if ($month)              		$param.='&month='.$month;
 	if ($year)               		$param.='&year=' .$year;
 	if ($socid)				        $param.='&socid='.$socid;
@@ -311,12 +350,6 @@ if ($resql)
         print $langs->trans("FilterOnInto", $search_all) . join(', ',$fieldstosearchall);
 	}
 
-
-	$colspan=8;
-	if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES)) $colspan+=2;
-	if (empty($conf->global->PROJECT_LIST_HIDE_STARTDATE)) $colspan++;
-
-	
 	// If the user can view thirdparties other than his'
 	if ($user->rights->societe->client->voir || $socid)
 	{
@@ -327,7 +360,7 @@ if ($resql)
 		$moreforfilter.='</div>';
 	}
 
-	// If the user can view prospects other than his'
+	// If the user can view user other than himself
 	$moreforfilter.='<div class="divsearchfield">';
 	$moreforfilter.=$langs->trans('ProjectsWithThisUserAsContact'). ': ';
 	$includeonly='';
@@ -351,15 +384,15 @@ if ($resql)
     print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
     		
 	print '<tr class="liste_titre">';
-	if (! empty($arrayfields['p.ref']['checked']))           print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"p.ref","",$param,"",$sortfield,$sortorder);
-	if (! empty($arrayfields['p.title']['checked']))         print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"p.title","",$param,"",$sortfield,$sortorder);
-	if (! empty($arrayfields['s.nom']['checked']))           print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
-	if (! empty($arrayfields['commercial']['checked']))      print_liste_field_titre($langs->trans("SalesRepresentative"),$_SERVER["PHP_SELF"],"","",$param,"",$sortfield,$sortorder);
-	if (! empty($arrayfields['p.dateo']['checked']))         print_liste_field_titre($langs->trans("DateStart"),$_SERVER["PHP_SELF"],"p.dateo","",$param,'align="center"',$sortfield,$sortorder);
-	if (! empty($arrayfields['p.datee']['checked']))         print_liste_field_titre($langs->trans("DateEnd"),$_SERVER["PHP_SELF"],"p.datee","",$param,'align="center"',$sortfield,$sortorder);
-	if (! empty($arrayfields['p.public']['checked']))        print_liste_field_titre($langs->trans("Visibility"),$_SERVER["PHP_SELF"],"p.public","",$param,"",$sortfield,$sortorder);
-    if (! empty($arrayfields['p.opp_amount']['checked']))    print_liste_field_titre($langs->trans("OpportunityAmountShort"),$_SERVER["PHP_SELF"],'p.opp_amount',"",$param,'align="right"',$sortfield,$sortorder);
-    if (! empty($arrayfields['p.fk_opp_status']['checked'])) print_liste_field_titre($langs->trans("OpportunityStatusShort"),$_SERVER["PHP_SELF"],'p.fk_opp_status',"",$param,'align="center"',$sortfield,$sortorder);
+	if (! empty($arrayfields['p.ref']['checked']))           print_liste_field_titre($arrayfields['p.ref']['label'],$_SERVER["PHP_SELF"],"p.ref","",$param,"",$sortfield,$sortorder);
+	if (! empty($arrayfields['p.title']['checked']))         print_liste_field_titre($arrayfields['p.title']['label'],$_SERVER["PHP_SELF"],"p.title","",$param,"",$sortfield,$sortorder);
+	if (! empty($arrayfields['s.nom']['checked']))           print_liste_field_titre($arrayfields['s.nom']['label'],$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
+	if (! empty($arrayfields['commercial']['checked']))      print_liste_field_titre($arrayfields['commercial']['label'],$_SERVER["PHP_SELF"],"","",$param,"",$sortfield,$sortorder);
+	if (! empty($arrayfields['p.dateo']['checked']))         print_liste_field_titre($arrayfields['p.dateo']['label'],$_SERVER["PHP_SELF"],"p.dateo","",$param,'align="center"',$sortfield,$sortorder);
+	if (! empty($arrayfields['p.datee']['checked']))         print_liste_field_titre($arrayfields['p.datee']['label'],$_SERVER["PHP_SELF"],"p.datee","",$param,'align="center"',$sortfield,$sortorder);
+	if (! empty($arrayfields['p.public']['checked']))        print_liste_field_titre($arrayfields['p.public']['label'],$_SERVER["PHP_SELF"],"p.public","",$param,"",$sortfield,$sortorder);
+    if (! empty($arrayfields['p.opp_amount']['checked']))    print_liste_field_titre($arrayfields['p.opp_amount']['label'],$_SERVER["PHP_SELF"],'p.opp_amount',"",$param,'align="right"',$sortfield,$sortorder);
+    if (! empty($arrayfields['p.fk_opp_status']['checked'])) print_liste_field_titre($arrayfields['p.fk_opp_status']['label'],$_SERVER["PHP_SELF"],'p.fk_opp_status',"",$param,'align="center"',$sortfield,$sortorder);
 	// Extra fields
 	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 	{
@@ -376,9 +409,9 @@ if ($resql)
 	$parameters=array('arrayfields'=>$arrayfields);
 	$reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
-	if (! empty($arrayfields['p.datec']['checked']))  print_liste_field_titre($langs->trans("DateCreationShort"),$_SERVER["PHP_SELF"],"p.datec","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
-	if (! empty($arrayfields['p.tms']['checked']))    print_liste_field_titre($langs->trans("DateModificationShort"),$_SERVER["PHP_SELF"],"p.tms","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
-	if (! empty($arrayfields['p.statut']['checked'])) print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"p.fk_statut","",$param,'align="center"',$sortfield,$sortorder);
+	if (! empty($arrayfields['p.datec']['checked']))  print_liste_field_titre($arrayfields['p.datec']['label'],$_SERVER["PHP_SELF"],"p.datec","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
+	if (! empty($arrayfields['p.tms']['checked']))    print_liste_field_titre($arrayfields['p.tms']['label'],$_SERVER["PHP_SELF"],"p.tms","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
+	if (! empty($arrayfields['p.fk_statut']['checked'])) print_liste_field_titre($arrayfields['p.fk_statut']['label'],$_SERVER["PHP_SELF"],"p.fk_statut","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="right"',$sortfield,$sortorder,'maxwidthsearch ');
 	print "</tr>\n";
 
@@ -466,7 +499,7 @@ if ($resql)
         print '<td class="liste_titre">';
         print '</td>';
     }
-    if (! empty($arrayfields['p.statut']['checked']))
+    if (! empty($arrayfields['p.fk_statut']['checked']))
     {
     	print '<td class="liste_titre nowrap" align="right">';
     	print $form->selectarray('search_status', array('-1'=>'', '0'=>$langs->trans('Draft'),'1'=>$langs->trans('Opened'),'2'=>$langs->trans('Closed')),$search_status);
@@ -480,17 +513,17 @@ if ($resql)
 
     print '</tr>'."\n";
 
-
-    while ($i < $num)
+    $i = 0;
+    while ($i < min($num,$limit))
     {
     	$obj = $db->fetch_object($resql);
 
     	$projectstatic->id = $obj->projectid;
     	$projectstatic->user_author_id = $obj->fk_user_creat;
     	$projectstatic->public = $obj->public;
-
-    	$userAccess = $projectstatic->restrictedProjectArea($user);
-
+    	$projectstatic->ref = $obj->ref;
+    	 
+    	$userAccess = $projectstatic->restrictedProjectArea($user);    // why this ?
     	if ($userAccess >= 0)
     	{
     		$var=!$var;
@@ -500,7 +533,6 @@ if ($resql)
         	if (! empty($arrayfields['p.ref']['checked']))
         	{
         		print '<td class="nowrap">';
-        		$projectstatic->ref = $obj->ref;
         		print $projectstatic->getNomUrl(1);
         		print '</td>';
         	}
@@ -636,7 +668,7 @@ if ($resql)
     		    print '</td>';
     		}
     		// Status
-    		if (! empty($arrayfields['p.statut']['checked']))
+    		if (! empty($arrayfields['p.fk_statut']['checked']))
     		{
         		$projectstatic->statut = $obj->fk_statut;
         		print '<td align="right">'.$projectstatic->getLibStatut(5).'</td>';
