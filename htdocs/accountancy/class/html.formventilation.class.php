@@ -341,17 +341,13 @@ class FormVentilation extends Form {
 	}
 	
 	/**
-	 * Return HTML combo list of years
+	 * Return HTML combo list of years existing into book keepping
 	 *
-	 * @param string $selected Preselected value (''=current year, -1=none, year otherwise)
+	 * @param string $selected Preselected value 
 	 * @param string $htmlname Name of HTML select object
 	 * @param int $useempty Affiche valeur vide dans liste
-	 * @param int $min_year Offset of minimum year into list (by default current year -10)
-	 * @param int $max_year Offset of maximum year into list (by default current year + 5)
-	 * @param int $offset Offset
-	 * @param int $invert Invert
-	 * @param string $option Option
-	 * @return string
+	 * @param string $output_format (html/opton (for option html only)/array (to return options arrays
+	 * @return string/array
 	 */
 	function selectyear_accountancy_bookkepping($selected = '', $htmlname = 'yearid', $useempty = 0, $output_format = 'html') {
 		$out = '';
