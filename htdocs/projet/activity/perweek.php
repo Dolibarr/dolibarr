@@ -100,8 +100,10 @@ if (GETPOST('submitdateselect'))
 	$action = '';
 }
 
-if ($action == 'assign')
+if ($action == 'addtime' && GETPOST('assigntask'))
 {
+    $action = 'assigntask';
+    
     if ($taskid > 0)
     {
 		$result = $object->fetch($taskid, $ref);
@@ -298,7 +300,24 @@ print "\n";
 */
 
 
-print '<div align="right">'.$nav.'</div>';
+// Add a new project/task
+//print '<br>';
+//print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+//print '<input type="hidden" name="action" value="assigntask">';
+//print '<input type="hidden" name="mode" value="'.$mode.'">';
+//print '<input type="hidden" name="year" value="'.$year.'">';
+//print '<input type="hidden" name="month" value="'.$month.'">';
+//print '<input type="hidden" name="day" value="'.$day.'">';
+print '<div class="float">';
+print $langs->trans("AssignTaskToMe").'<br>';
+$formproject->selectTasks($socid?$socid:-1, $taskid, 'taskid', 32, 0, 1, 1);
+print $formcompany->selectTypeContact($object, '', 'type','internal','rowid', 0);
+print '<input type="submit" class="button" name="assigntask" value="'.$langs->trans("AssignTask").'">';
+//print '</form>';
+print '</div>';
+
+print '<div class="floatright">'.$nav.'</div>';
+print '<div class="clearboth" style="padding-bottom: 8px;"></div>';
 
 
 print '<table class="noborder" width="100%">';
@@ -376,22 +395,6 @@ while ($i < 7)
 }
 print "});";
 print '</script>';
-
-
-// Add a new project/task
-print '<br>';
-print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-print '<input type="hidden" name="action" value="assign">';
-print '<input type="hidden" name="mode" value="'.$mode.'">';
-print '<input type="hidden" name="year" value="'.$year.'">';
-print '<input type="hidden" name="month" value="'.$month.'">';
-print '<input type="hidden" name="day" value="'.$day.'">';
-print $langs->trans("AssignTaskToMe").'<br>';
-$formproject->selectTasks($socid?$socid:-1, $taskid, 'taskid', 32, 0, 1, 1);
-print $formcompany->selectTypeContact($object, '', 'type','internal','rowid', 0);
-print '<input type="submit" class="button" name="submit" value="'.$langs->trans("AssignTask").'">';
-print '</form>';
-
 
 
 llxFooter();

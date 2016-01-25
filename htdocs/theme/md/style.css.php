@@ -2374,6 +2374,10 @@ div.tabBar .noborder {
 	background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklinepair1)); ?>;
 <?php } ?>
 }
+span.boxstatstext {
+	opacity: 0.8;
+    line-height: 18px;
+}
 span.boxstatsindicator {
 	font-size: 110%;
 	font-weight: normal;
