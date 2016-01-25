@@ -64,8 +64,6 @@ $langs->load('suppliers');
 
 $form=new Form($db);
 
-llxHeader();
-
 if ($mode == 'customer')
 {
     $title=$langs->trans("OrdersStatistics");
@@ -76,6 +74,8 @@ if ($mode == 'supplier')
     $title=$langs->trans("OrdersStatisticsSuppliers").' ('.$langs->trans("SentToSuppliers").")";
     $dir=$conf->fournisseur->dir_output.'/commande/temp';
 }
+
+llxHeader('', $title);
 
 print load_fiche_titre($title,'','title_commercial.png');
 

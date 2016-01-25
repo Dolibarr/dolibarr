@@ -33,6 +33,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formpropal.class.php';
 $WIDTH=DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT=DolGraph::getDefaultGraphSizeForStats('height');
 
+$mode=GETPOST("mode")?GETPOST("mode"):'customer';
+if ($mode == 'customer' && ! $user->rights->propale->lire) accessforbidden();
+if ($mode == 'supplier' && ! $user->rights->supplier_proposal->lire) accessforbidden();
+
 $object_statut=GETPOST('propal_statut');
 
 $userid=GETPOST('userid','int');
@@ -50,7 +54,10 @@ $year = GETPOST('year')>0?GETPOST('year'):$nowyear;
 $startyear=$year-1;
 $endyear=$year;
 
-$mode=GETPOST('mode');
+$langs->load('orders');
+$langs->load('companies');
+$langs->load('other');
+$langs->load('suppliers');
 
 
 /*
@@ -64,16 +71,26 @@ $langs->load('propal');
 $langs->load('other');
 $langs->load("companies");
 
-llxHeader('', $langs->trans("ProposalsStatistics"));
+if ($mode == 'customer')
+{
+    $title=$langs->trans("ProposalsStatistics");
+    $dir=$conf->propale->dir_temp;
+}
+if ($mode == 'supplier')
+{
+    $title=$langs->trans("ProposalsStatisticsSuppliers").' ('.$langs->trans("SentToSuppliers").")";
+    $dir=$conf->supplier_proposal->dir_temp;
+}
 
-print load_fiche_titre($langs->trans("ProposalsStatistics"),'','title_commercial.png');
+llxHeader('', $title);
 
-$dir=$conf->propal->dir_temp;
+print load_fiche_titre($title,'','title_commercial.png');
+
 
 dol_mkdir($dir);
 
 
-$stats = new PropaleStats($db, $socid, ($userid>0?$userid:0));
+$stats = new PropaleStats($db, $socid, ($userid>0?$userid:0), $mode);
 if ($object_statut != '' && $object_statut >= 0) $stats->where .= ' AND p.fk_statut IN ('.$object_statut.')';
 
 // Build graphic number of object

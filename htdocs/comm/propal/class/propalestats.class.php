@@ -26,6 +26,7 @@
 
 include_once DOL_DOCUMENT_ROOT . '/core/class/stats.class.php';
 include_once DOL_DOCUMENT_ROOT . '/comm/propal/class/propal.class.php';
+include_once DOL_DOCUMENT_ROOT . '/supplier_proposal/class/supplier_proposal.class.php';
 include_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 
 
@@ -50,8 +51,9 @@ class PropaleStats extends Stats
 	 * @param 	DoliDB	$db		   Database handler
 	 * @param 	int		$socid	   Id third party for filter. This value must be forced during the new to external user company if user is an external user.
      * @param   int		$userid    Id user for filter (creation user)
+	 * @param 	string	$mode	   Option ('customer', 'supplier')
 	 */
-	function __construct($db, $socid=0, $userid=0)
+	function __construct($db, $socid=0, $userid=0, $mode='customer')
 	{
 		global $user, $conf;
 
@@ -59,15 +61,37 @@ class PropaleStats extends Stats
         $this->socid = ($socid > 0 ? $socid : 0);
         $this->userid = $userid;
 
-		$object=new Propal($this->db);
-
-		$this->from = MAIN_DB_PREFIX.$object->table_element." as p";
-		$this->from_line = MAIN_DB_PREFIX.$object->table_element_line." as tl";
-
-		$this->field='total_ht';
-		$this->field_line='total_ht';
-
-		$this->where.= " p.fk_statut > 0";
+        if ($mode == 'customer')
+        {
+    		$object=new Propal($this->db);
+    
+    		$this->from = MAIN_DB_PREFIX.$object->table_element." as p";
+    		$this->from_line = MAIN_DB_PREFIX.$object->table_element_line." as tl";
+    
+    		$this->field='total_ht';
+    		$this->field_line='total_ht';
+    
+    		$this->where.= " p.fk_statut > 0";
+        }
+        if ($mode == 'supplier')
+        {
+    		$object=new SupplierProposal($this->db);
+    
+    		$this->from = MAIN_DB_PREFIX.$object->table_element." as p";
+    		$this->from_line = MAIN_DB_PREFIX.$object->table_element_line." as tl";
+    
+    		$this->field='total_ht';
+    		$this->field_line='total_ht';
+    
+    		$this->where.= " p.fk_statut > 0";
+            
+    		$object=new CommandeFournisseur($this->db);
+            $this->from = MAIN_DB_PREFIX.$object->table_element." as c";
+            $this->from_line = MAIN_DB_PREFIX.$object->table_element_line." as tl";
+            $this->field='total_ht';
+            $this->field_line='total_ht';
+            $this->where.= " c.fk_statut > 2";    // Only approved & ordered
+        }        
 		//$this->where.= " AND p.fk_soc = s.rowid AND p.entity = ".$conf->entity;
 		$this->where.= " AND p.entity IN (".getEntity('propal', 1).")";
 		if (!$user->rights->societe->client->voir && !$this->socid) $this->where .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
