@@ -265,7 +265,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	print '</td></tr>';
 	// Status
 	print '<tr><td align="left">'.$langs->trans("Status").'</td><td align="left">';
-	$formpropal->selectProposalStatus($object_statut,0,1);
+	$formpropal->selectProposalStatus($object_statut,0,1,1,$mode);
 	print '</td></tr>';
 	// Year
 	print '<tr><td align="left">'.$langs->trans("Year").'</td><td align="left">';

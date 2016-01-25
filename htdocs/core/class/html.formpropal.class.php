@@ -49,66 +49,85 @@ class FormPropal
      *    @param	int		$short			Use short labels
      *    @param	int		$excludedraft	0=All status, 1=Exclude draft status
      *    @param	int 	$showempty		1=Add empty line
+     *    @param    string  $mode           'customer', 'supplier'
      *    @return	void
      */
-    function selectProposalStatus($selected='',$short=0, $excludedraft=0, $showempty=1)
+    function selectProposalStatus($selected='',$short=0, $excludedraft=0, $showempty=1, $mode='customer')
     {
         global $langs;
 
-        $sql = "SELECT id, code, label, active FROM ".MAIN_DB_PREFIX."c_propalst";
-        $sql .= " WHERE active = 1";
-
-        dol_syslog(get_class($this)."::selectProposalStatus", LOG_DEBUG);
-        $resql=$this->db->query($sql);
-        if ($resql)
+        $prefix='';
+        $listofstatus=array();
+        if ($mode == 'supplier') 
         {
-            print '<select class="flat" name="propal_statut">';
-            if ($showempty) print '<option value="">&nbsp;</option>';
-            $num = $this->db->num_rows($resql);
-            $i = 0;
-            if ($num)
-            {
-                while ($i < $num)
-                {
-                    $obj = $this->db->fetch_object($resql);
-                    if ($excludedraft)
-                    {
-						if ($obj->code == 'Draft' || $obj->code == 'PR_DRAFT')
-						{
-							$i++;
-							continue;
-						}
-                    }
-                    if ($selected == $obj->id)
-                    {
-                        print '<option value="'.$obj->id.'" selected>';
-                    }
-                    else
-                    {
-                        print '<option value="'.$obj->id.'">';
-                    }
-                    $key=$obj->code;
-                    if ($langs->trans("PropalStatus".$key.($short?'Short':'')) != "PropalStatus".$key.($short?'Short':''))
-                    {
-                        print $langs->trans("PropalStatus".$key.($short?'Short':''));
-                    }
-                    else
-					{
-                        $conv_to_new_code=array('PR_DRAFT'=>'Draft','PR_OPEN'=>'Opened','PR_CLOSED'=>'Closed','PR_SIGNED'=>'Signed','PR_NOTSIGNED'=>'NotSigned','PR_FAC'=>'Billed');
-                        if (! empty($conv_to_new_code[$obj->code])) $key=$conv_to_new_code[$obj->code];
-                        print ($langs->trans("PropalStatus".$key.($short?'Short':''))!="PropalStatus".$key.($short?'Short':''))?$langs->trans("PropalStatus".$key.($short?'Short':'')):$obj->label;
-                    }
-                    print '</option>';
-                    $i++;
-                }
-            }
-            print '</select>';
+            $prefix='SupplierProposalStatus';
+            
+            $langs->load("supplier_proposal");
+            $listofstatus=array(0=>array('code'=>'PR_DRAFT'), 1=>array('code'=>'PR_OPEN'), 2=>array('code'=>'PR_SIGNED'), 3=>array('code'=>'PR_NOTSIGNED'), 4=>array('code'=>'PR_CLOSED'));
         }
         else
         {
-            dol_print_error($this->db);
+            $prefix="PropalStatus";
+            
+            $sql = "SELECT id, code, label, active FROM ".MAIN_DB_PREFIX."c_propalst";
+            $sql .= " WHERE active = 1";
+            dol_syslog(get_class($this)."::selectProposalStatus", LOG_DEBUG);
+            $resql=$this->db->query($sql);
+            if ($resql)
+            {
+                $num = $this->db->num_rows($resql);
+                $i = 0;
+                if ($num)
+                {
+                    while ($i < $num)
+                    {
+                        $obj = $this->db->fetch_object($resql);
+                        $listofstatus[$obj->id]=array('id'=>$obj->id,'code'=>$obj->code,'label'=>$obj->label);
+                    }
+                }
+            }
+            else
+            {
+                dol_print_error($this->db);
+            }
         }
-    }
 
+        print '<select class="flat" name="propal_statut">';
+        if ($showempty) print '<option value="">&nbsp;</option>';
+
+        foreach($listofstatus as $key => $obj)
+        {
+            if ($excludedraft)
+            {
+				if ($obj['code'] == 'Draft' || $obj['code'] == 'PR_DRAFT')
+				{
+					$i++;
+					continue;
+				}
+            }
+            if ($selected == $obj['id'])
+            {
+                print '<option value="'.$obj['id'].'" selected>';
+            }
+            else
+            {
+                print '<option value="'.$obj['id'].'">';
+            }
+            $key=$obj['code'];
+            if ($langs->trans($prefix."PropalStatus".$key.($short?'Short':'')) != $prefix."PropalStatus".$key.($short?'Short':''))
+            {
+                print $langs->trans($prefix."PropalStatus".$key.($short?'Short':''));
+            }
+            else
+			{
+                $conv_to_new_code=array('PR_DRAFT'=>'Draft','PR_OPEN'=>'Opened','PR_CLOSED'=>'Closed','PR_SIGNED'=>'Signed','PR_NOTSIGNED'=>'NotSigned','PR_FAC'=>'Billed');
+                if (! empty($conv_to_new_code[$obj['code']])) $key=$conv_to_new_code[$obj['code']];
+                print ($langs->trans($prefix.$key.($short?'Short':''))!=$prefix.$key.($short?'Short':''))?$langs->trans($prefix.$key.($short?'Short':'')):$obj['label'];
+            }
+            print '</option>';
+            $i++;
+        }
+        print '</select>';
+    }
 }
 
