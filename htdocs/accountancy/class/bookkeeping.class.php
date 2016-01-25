@@ -818,7 +818,7 @@ class BookKeeping extends CommonObject
 	 * @param	string 	$importkey		Import key
 	 * @return	int						Result
 	 */
-	function delete_by_importkey($importkey) {
+	function deleteByImportkey($importkey) {
 		$this->db->begin();
 	
 		// first check if line not yet in bookkeeping
@@ -848,7 +848,7 @@ class BookKeeping extends CommonObject
 	 * @param	string 	$delyear		year to delete
 	 * @return	int						Result
 	 */
-	function delete_by_year($delyear) {
+	function deleteByYear($delyear) {
 		$this->db->begin();
 	
 		// first check if line not yet in bookkeeping
@@ -878,7 +878,7 @@ class BookKeeping extends CommonObject
 	 * @param	int 	$piecenum		peicenum to delete
 	 * @return	int						Result
 	 */
-	function delete_piece_num($piecenum) {
+	function deleteMvtNum($piecenum) {
 		$this->db->begin();
 	
 		// first check if line not yet in bookkeeping
