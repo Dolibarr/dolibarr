@@ -487,7 +487,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 			$langs->load("users");
 
 			// Home - dashboard
-			$newmenu->add("/index.php?mainmenu=home&amp;leftmenu=home", $langs->trans("Home"), 0, 1, '', $mainmenu, 'home');
+			$newmenu->add("/index.php?mainmenu=home&amp;leftmenu=home", $langs->trans("Dashboard"), 0, 1, '', $mainmenu, 'home');
 		
 			// Setup
 			$newmenu->add("/admin/index.php?mainmenu=home&amp;leftmenu=setup", $langs->trans("Setup"), 0, $user->admin, '', $mainmenu, 'setup');
