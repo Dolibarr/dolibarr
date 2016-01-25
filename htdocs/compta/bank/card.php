@@ -281,7 +281,7 @@ if ($action == 'create')
 
 	// Label
 	print '<tr><td class="fieldrequired">'.$langs->trans("LabelBankCashAccount").'</td>';
-	print '<td colspan="3"><input size="30" type="text" class="flat" name="label" value="'.GETPOST("label").'"></td></tr>';
+	print '<td colspan="3"><input size="30" type="text" class="flat" name="label" value="'.GETPOST("label", 'alpha').'"></td></tr>';
 
 	// Type
 	print '<tr><td class="fieldrequired">'.$langs->trans("AccountType").'</td>';
@@ -491,7 +491,7 @@ if ($action == 'create')
 		else
 		{
 			print '<tr><td class="fieldrequired" width="25%">'.$langs->trans("AccountancyCode").'</td>';
-			print '<td colspan="3"><input type="text" name="account_number" value="'.(GETPOST("account_number")?GETPOST('account_number'):$account->account_number).'"></td></tr>';
+			print '<td colspan="3"><input type="text" name="account_number" value="'.(GETPOST("account_number")?GETPOST('account_number', 'alpha'):$account->account_number).'"></td></tr>';
 		}
 	}
     else
@@ -506,7 +506,7 @@ if ($action == 'create')
 		else
 		{
 			print '<tr><td width="25%">'.$langs->trans("AccountancyCode").'</td>';
-			print '<td colspan="3"><input type="text" name="account_number" value="'.(GETPOST("account_number")?GETPOST('account_number'):$account->account_number).'"></td></tr>';
+			print '<td colspan="3"><input type="text" name="account_number" value="'.(GETPOST("account_number")?GETPOST('account_number', 'alpha'):$account->account_number).'"></td></tr>';
 		}
 	}
 
@@ -514,7 +514,7 @@ if ($action == 'create')
 	if (! empty($conf->accounting->enabled))
 	{
 		print '<tr><td>'.$langs->trans("AccountancyJournal").'</td>';
-	    print '<td colspan="3"><input type="text" name="accountancy_journal" value="'.(GETPOST("accountancy_journal")?GETPOST('accountancy_journal'):$account->accountancy_journal).'"></td></tr>';
+	    print '<td colspan="3"><input type="text" name="accountancy_journal" value="'.(GETPOST("accountancy_journal")?GETPOST('accountancy_journal', 'alpha'):$account->accountancy_journal).'"></td></tr>';
 	}
 
 	print '</table>';

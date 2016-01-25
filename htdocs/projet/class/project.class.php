@@ -903,7 +903,14 @@ class Project extends CommonObject
             if (preg_match('/\.php$/',$option)) {
                 $link = '<a href="' . dol_buildpath($option,1) . '?id=' . $this->id . $linkclose;
                 $linkend = '</a>';
-            } else {
+            }
+            else if ($option == 'task')
+            {
+                $link = '<a href="' . DOL_URL_ROOT . '/projet/tasks.php?id=' . $this->id . $linkclose;
+                $linkend = '</a>';
+            }
+            else
+            {
                 $link = '<a href="' . DOL_URL_ROOT . '/projet/card.php?id=' . $this->id . $linkclose;
                 $linkend = '</a>';
             }

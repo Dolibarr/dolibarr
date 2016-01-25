@@ -42,7 +42,7 @@ create table llx_propal
   fk_user_modif         integer,                       -- user making last change
   fk_user_valid			integer,						-- user validating
   fk_user_cloture		integer,						-- user closing (signed or not)
-  fk_statut				smallint DEFAULT 0 NOT NULL,
+  fk_statut				smallint DEFAULT 0 NOT NULL,	-- 0=draft, 1=validated, 2=accepted, 3=refused, 4=billed/closed
   price					real         DEFAULT 0,			-- (obsolete)
   remise_percent		real         DEFAULT 0,			-- remise globale relative en pourcent (obsolete)
   remise_absolue		real         DEFAULT 0,			-- remise globale absolue (obsolete)

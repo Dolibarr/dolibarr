@@ -31,7 +31,7 @@ CREATE TABLE llx_supplier_proposal (
   fk_user_modif integer DEFAULT NULL,
   fk_user_valid integer DEFAULT NULL,
   fk_user_cloture integer DEFAULT NULL,
-  fk_statut smallint NOT NULL DEFAULT '0',
+  fk_statut smallint NOT NULL DEFAULT '0',		-- 0=draft, 1=validated, 2=accepted, 3=refused, 4=closed
   price double DEFAULT '0',
   remise_percent double DEFAULT '0',
   remise_absolue double DEFAULT '0',

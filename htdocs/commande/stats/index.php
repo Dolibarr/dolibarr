@@ -64,8 +64,6 @@ $langs->load('suppliers');
 
 $form=new Form($db);
 
-llxHeader();
-
 if ($mode == 'customer')
 {
     $title=$langs->trans("OrdersStatistics");
@@ -76,6 +74,8 @@ if ($mode == 'supplier')
     $title=$langs->trans("OrdersStatisticsSuppliers").' ('.$langs->trans("SentToSuppliers").")";
     $dir=$conf->fournisseur->dir_output.'/commande/temp';
 }
+
+llxHeader('', $title);
 
 print load_fiche_titre($title,'','title_commercial.png');
 
@@ -277,12 +277,12 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre" height="24">';
 print '<td align="center">'.$langs->trans("Year").'</td>';
-print '<td align="center">'.$langs->trans("NbOfOrders").'</td>';
-print '<td align="center">%</td>';
-print '<td align="center">'.$langs->trans("AmountTotal").'</td>';
-print '<td align="center">%</td>';
-print '<td align="center">'.$langs->trans("AmountAverage").'</td>';
-print '<td align="center">%</td>';
+print '<td align="right">'.$langs->trans("NbOfOrders").'</td>';
+print '<td align="right">%</td>';
+print '<td align="right">'.$langs->trans("AmountTotal").'</td>';
+print '<td align="right">%</td>';
+print '<td align="right">'.$langs->trans("AmountAverage").'</td>';
+print '<td align="right">%</td>';
 print '</tr>';
 
 $oldyear=0;

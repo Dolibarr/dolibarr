@@ -98,7 +98,7 @@ function test_sql_and_script_inject($val, $type)
     $sql_inj += preg_match('/<script/i', $val);
     if (! defined('NOSTYLECHECK')) $sql_inj += preg_match('/<style/i', $val);
     $sql_inj += preg_match('/base[\s]+href/si', $val);
-    $sql_inj += preg_match('/<.*onmouseover/si', $val);       // onmouseover can be set on img or any html tag like <img title='>' onmouseover=alert(1)>
+    $sql_inj += preg_match('/<.*onmouse/si', $val);       // onmouseover can be set on img or any html tag like <img title='>' onmouseover=alert(1)>
     if ($type == 1)
     {
         $sql_inj += preg_match('/javascript:/i', $val);
@@ -354,7 +354,7 @@ if (! defined('NOLOGIN'))
         exit;
     }
 
-    // If requested by the login has already occurred, it is retrieved from the session
+    // If login request was already post, we retrieve login from the session
     // Call module if not realized that his request.
     // At the end of this phase, the variable $login is defined.
     $resultFetchUser='';
@@ -516,7 +516,7 @@ if (! defined('NOLOGIN'))
             exit;
         }
 
-        $resultFetchUser=$user->fetch('', $login, '', 0, ($entitytotest ? $entitytotest : -1));
+        $resultFetchUser=$user->fetch('', $login, '', 1, ($entitytotest ? $entitytotest : -1));
         if ($resultFetchUser <= 0)
         {
             dol_syslog('User not found, connexion refused');
@@ -692,10 +692,12 @@ if (! defined('NOLOGIN'))
 		{
             $db->commit();
         }
-        
-        if (! empty($conf->global->MAIN_LANDING_PAGE))    // Example: /index.php
+
+        // Change landing page if defined.
+        $landingpage=(empty($user->conf->MAIN_LANDING_PAGE)?(empty($conf->global->MAIN_LANDING_PAGE)?'':$conf->global->MAIN_LANDING_PAGE):$user->conf->MAIN_LANDING_PAGE);
+        if (! empty($landingpage))    // Example: /index.php
         {
-            $newpath=dol_buildpath($conf->global->MAIN_LANDING_PAGE, 1);
+            $newpath=dol_buildpath($landingpage, 1);
             if ($_SERVER["PHP_SELF"] != $newpath)   // not already on landing page (avoid infinite loop)
             {
                 header('Location: '.$newpath);

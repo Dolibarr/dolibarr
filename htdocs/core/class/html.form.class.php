@@ -1890,7 +1890,7 @@ class Form
             $sql.= " WHERE fk_product='".$objp->rowid."'";
             $sql.= " AND entity IN (".getEntity('productprice', 1).")";
             $sql.= " AND price_level=".$price_level;
-            $sql.= " ORDER BY date_price";
+            $sql.= " ORDER BY date_price, rowid";
             $sql.= " DESC LIMIT 1";
 
             dol_syslog(get_class($this).'::constructProductListOption search price for level '.$price_level.'', LOG_DEBUG);
@@ -5072,13 +5072,13 @@ class Form
         	{
         		$tplpath = $element = $subelement = $objecttype;
 
-        		if (preg_match('/^([^_]+)_([^_]+)/i',$objecttype,$regs))
+        		if ($objecttype != 'supplier_proposal' && preg_match('/^([^_]+)_([^_]+)/i',$objecttype,$regs))
         		{
         			$element = $regs[1];
         			$subelement = $regs[2];
         			$tplpath = $element.'/'.$subelement;
         		}
-
+        		   		
         		// To work with non standard path
         		if ($objecttype == 'facture')          {
         			$tplpath = 'compta/'.$element;
@@ -5089,7 +5089,6 @@ class Form
         			if (empty($conf->propal->enabled)) continue;	// Do not show if module disabled
         		}
         		else if ($objecttype == 'supplier_proposal')           {
-        			$tplpath = 'comm/'.$element;
         			if (empty($conf->supplier_proposal->enabled)) continue;	// Do not show if module disabled
         		}
         		else if ($objecttype == 'shipping' || $objecttype == 'shipment') {
@@ -5106,7 +5105,7 @@ class Form
         		else if ($objecttype == 'order_supplier')   {
         			$tplpath = 'fourn/commande';
         		}
-
+        		
         		global $linkedObjectBlock;
         		$linkedObjectBlock = $objects;
 

@@ -416,25 +416,39 @@ class Expedition extends CommonObject
 	function create_line_batch($line_ext,$array_options=0)
 	{
 		$error = 0;
-
-		if ($this->create_line(($line_ext->entrepot_id?$line_ext->entrepot_id:'null'),$line_ext->origin_line_id,$line_ext->qty,$array_options) < 0)
+		$stockLocationQty = array(); // associated array with batch qty in stock location
+		
+		$tab=$line_ext->detail_batch;
+		// create stockLocation Qty array
+		foreach ($tab as $detbatch)
 		{
-			$error++;
-		}
-
-		if (! $error)
-		{
-			$line_id= $this->db->last_insert_id(MAIN_DB_PREFIX."expeditiondet");
-			$tab=$line_ext->detail_batch;
-			foreach ($tab as $detbatch)
+			if ($detbatch->entrepot_id)
 			{
-				if (! ($detbatch->create($line_id) >0))		// Create an expeditionlinebatch
+				$stockLocationQty[$detbatch->entrepot_id] += $detbatch->dluo_qty;
+			}
+		}
+		// create shipment lines
+		foreach ($stockLocationQty as $stockLocation => $qty)
+		{
+			if ($this->create_line($stockLocation,$line_ext->origin_line_id,$qty,$array_options) < 0)
+			{
+				$error++;
+			}
+			else
+			{
+				// create shipment batch lines for stockLocation
+				$line_id= $this->db->last_insert_id(MAIN_DB_PREFIX."expeditiondet");
+				foreach ($tab as $detbatch)
 				{
-					$error++;
+					if ($detbatch->entrepot_id == $stockLocation){
+						if (! ($detbatch->create($line_id) >0))		// Create an expeditionlinebatch
+						{
+							$error++;
+						}
+					}					
 				}
 			}
 		}
-
 
 		if (! $error) return 1;
 		else return -1;
@@ -1334,9 +1348,11 @@ class Expedition extends CommonObject
 				$this->total_ttc+= $tabprice[2];
 				$this->total_localtax1+= $tabprice[9];
 				$this->total_localtax2+= $tabprice[10];
-
-                $line->detail_batch = array();
-
+				
+				if ($originline != $obj->fk_origin_line) 
+				{
+					$line->detail_batch = array();
+				}
 				// Eat-by date
 				if (! empty($conf->productbatch->enabled) && $obj->line_id > 0)
 				{

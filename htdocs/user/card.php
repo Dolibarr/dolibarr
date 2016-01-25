@@ -1408,16 +1408,6 @@ else
 				print '<td>'.$object->accountancy_code.'</td>';
 			}
 
-			// Color user
-			if (! empty($conf->agenda->enabled))
-            {
-				print '<tr><td>'.$langs->trans("ColorUser").'</td>';
-				print '<td>';
-				print $formother->showColor($object->color, '');
-				print '</td>';
-				print "</tr>\n";
-			}
-
 			print '</table>';
 
 	        print '</div>';
@@ -1426,21 +1416,16 @@ else
 	        print '<div class="underbanner clearboth"></div>';
 	        print '<table class="border tableforfield" width="100%">';
 
-        	print '<tr><td class="titlefield">'.$langs->trans("LastConnexion").'</td>';
-            print '<td>'.dol_print_date($object->datelastlogin,"dayhour").'</td>';
-            print "</tr>\n";
-
-            print '<tr><td>'.$langs->trans("PreviousConnexion").'</td>';
-            print '<td>'.dol_print_date($object->datepreviouslogin,"dayhour").'</td>';
-            print "</tr>\n";
-
-            if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file->main_authentication) && ! empty($conf->global->MAIN_OPENIDURL_PERUSER))
+            // Color user
+            if (! empty($conf->agenda->enabled))
             {
-                print '<tr><td>'.$langs->trans("OpenIDURL").'</td>';
-                print '<td>'.$object->openid.'</td>';
+                print '<tr><td>'.$langs->trans("ColorUser").'</td>';
+                print '<td>';
+                print $formother->showColor($object->color, '');
+                print '</td>';
                 print "</tr>\n";
             }
-
+            
             // Company / Contact
             if (! empty($conf->societe->enabled))
             {
@@ -1509,7 +1494,22 @@ else
 	            }
             }
 
-          	// Other attributes
+            if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file->main_authentication) && ! empty($conf->global->MAIN_OPENIDURL_PERUSER))
+            {
+                print '<tr><td>'.$langs->trans("OpenIDURL").'</td>';
+                print '<td>'.$object->openid.'</td>';
+                print "</tr>\n";
+            }
+
+            print '<tr><td class="titlefield">'.$langs->trans("LastConnexion").'</td>';
+            print '<td>'.dol_print_date($object->datelastlogin,"dayhour").'</td>';
+            print "</tr>\n";
+
+            print '<tr><td>'.$langs->trans("PreviousConnexion").'</td>';
+            print '<td>'.dol_print_date($object->datepreviouslogin,"dayhour").'</td>';
+            print "</tr>\n";
+
+            // Other attributes
 			$parameters=array();
 			$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 			if (empty($reshook) && ! empty($extrafields->attribute_label))
@@ -1602,12 +1602,11 @@ else
             }
 
             print "</div>\n";
-            print "<br>\n";
 
 
 
             /*
-             * Liste des groupes dans lequel est l'utilisateur
+             * List of groups of user
              */
 
             if ($canreadgroup)
@@ -1636,9 +1635,17 @@ else
                     print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">'."\n";
                     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
                     print '<input type="hidden" name="action" value="addgroup" />';
-                    print '<table class="noborder" width="100%">'."\n";
-                    print '<tr class="liste_titre"><th class="liste_titre" width="25%">'.$langs->trans("GroupsToAdd").'</th>'."\n";
-                    print '<th>';
+                }
+                
+                print '<table class="noborder" width="100%">'."\n";
+                print '<tr class="liste_titre"><th class="liste_titre" width="25%">'.$langs->trans("Groups").'</th>'."\n";
+                if(! empty($conf->multicompany->enabled) && !empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
+                {
+                    print '<td class="liste_titre" width="25%">'.$langs->trans("Entity").'</td>';
+                }
+                print '<th align="right">';
+                if ($caneditgroup)
+                {
                     print $form->select_dolgroups('', 'group', 1, $exclude, 0, '', '', $object->entity);
                     print ' &nbsp; ';
                     // Multicompany
@@ -1659,24 +1666,12 @@ else
                     	print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
                     }
                     print '<input type="submit" class="button" value="'.$langs->trans("Add").'" />';
-                    print '</th></tr>'."\n";
-                    print '</table></form>'."\n";
-
-                    print '<br>';
                 }
+                print '</th></tr>'."\n";
 
                 /*
                  * Groups assigned to user
                  */
-                print '<table class="noborder" width="100%">';
-                print '<tr class="liste_titre">';
-                print '<td class="liste_titre" width="25%">'.$langs->trans("Groups").'</td>';
-                if(! empty($conf->multicompany->enabled) && !empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
-                {
-                	print '<td class="liste_titre" width="25%">'.$langs->trans("Entity").'</td>';
-                }
-                print "<td>&nbsp;</td></tr>\n";
-
                 if (! empty($groupslist))
                 {
                     $var=true;
@@ -1733,6 +1728,11 @@ else
                 }
 
                 print "</table>";
+                
+                if ($caneditgroup)
+                {
+                    print '</form>';
+                }
                 print "<br>";
             }
         }
@@ -1786,7 +1786,7 @@ else
 
             // Photo
             print '<td align="center" valign="middle" width="25%" rowspan="'.$rowspan.'">';
-            print $form->showphoto('userphoto',$object,100,0,$caneditfield);
+            print $form->showphoto('userphoto',$object,100,0,$caneditfield,'photowithmargin','small');
             print '</td>';
 
             print '</tr>';

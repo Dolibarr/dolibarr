@@ -27,7 +27,7 @@
  */
 
 /**
- *	\file       htdocs/supplier_proposal/class/supplier_propal.class.php
+ *	\file       htdocs/supplier_proposal/class/supplier_proposal.class.php
  *	\brief      File of class to manage supplier proposals
  */
 
@@ -151,16 +151,16 @@ class SupplierProposal extends CommonObject
         $this->remise_absolue = 0;
 
         $langs->load("supplier_proposal");
-        $this->labelstatut[0]=(! empty($conf->global->SUPPLIER_PROPOSAL_STATUS_DRAFT_LABEL) ? $conf->global->SUPPLIER_PROPOSAL_STATUS_DRAFT_LABEL : $langs->trans("SupplierProposalStatusDraft"));
-        $this->labelstatut[1]=(! empty($conf->global->SUPPLIER_PROPOSAL_STATUS_VALIDATED_LABEL) ? $conf->global->SUPPLIER_PROPOSAL_STATUS_VALIDATED_LABEL : $langs->trans("SupplierProposalStatusValidated"));
-        $this->labelstatut[2]=(! empty($conf->global->SUPPLIER_PROPOSAL_STATUS_SIGNED_LABEL) ? $conf->global->SUPPLIER_PROPOSAL_STATUS_SIGNED_LABEL : $langs->trans("SupplierProposalStatusSigned"));
-        $this->labelstatut[3]=(! empty($conf->global->SUPPLIER_PROPOSAL_STATUS_NOTSIGNED_LABEL) ? $conf->global->SUPPLIER_PROPOSAL_STATUS_NOTSIGNED_LABEL : $langs->trans("SupplierProposalStatusNotSigned"));
-        $this->labelstatut[4]=(! empty($conf->global->SUPPLIER_PROPOSAL_STATUS_BILLED_LABEL) ? $conf->global->SUPPLIER_PROPOSAL_STATUS_BILLED_LABEL : $langs->trans("SupplierProposalStatusBilled"));
-        $this->labelstatut_short[0]=(! empty($conf->global->SUPPLIER_PROPOSAL_STATUS_DRAFTSHORT_LABEL) ? $conf->global->SUPPLIER_PROPOSAL_STATUS_DRAFTSHORT_LABEL : $langs->trans("SupplierProposalStatusDraftShort"));
-        $this->labelstatut_short[1]=(! empty($conf->global->SUPPLIER_PROPOSAL_STATUS_VALIDATEDSHORT_LABEL) ? $conf->global->SUPPLIER_PROPOSAL_STATUS_VALIDATEDSHORT_LABEL : $langs->trans("Opened"));
-        $this->labelstatut_short[2]=(! empty($conf->global->SUPPLIER_PROPOSAL_STATUS_SIGNEDSHORT_LABEL) ? $conf->global->SUPPLIER_PROPOSAL_STATUS_SIGNEDSHORT_LABEL : $langs->trans("SupplierProposalStatusSignedShort"));
-        $this->labelstatut_short[3]=(! empty($conf->global->SUPPLIER_PROPOSAL_STATUS_NOTSIGNEDSHORT_LABEL) ? $conf->global->SUPPLIER_PROPOSAL_STATUS_NOTSIGNEDSHORT_LABEL : $langs->trans("SupplierProposalStatusNotSignedShort"));
-        $this->labelstatut_short[4]=(! empty($conf->global->SUPPLIER_PROPOSAL_STATUS_BILLEDSHORT_LABEL) ? $conf->global->SUPPLIER_PROPOSAL_STATUS_BILLEDSHORT_LABEL : $langs->trans("SupplierProposalStatusBilledShort"));
+        $this->labelstatut[0]=$langs->trans("SupplierProposalStatusDraft");
+        $this->labelstatut[1]=$langs->trans("SupplierProposalStatusValidated");
+        $this->labelstatut[2]=$langs->trans("SupplierProposalStatusSigned");
+        $this->labelstatut[3]=$langs->trans("SupplierProposalStatusNotSigned");
+        $this->labelstatut[4]=$langs->trans("SupplierProposalStatusClosed");
+        $this->labelstatut_short[0]=$langs->trans("SupplierProposalStatusDraftShort");
+        $this->labelstatut_short[1]=$langs->trans("Opened");
+        $this->labelstatut_short[2]=$langs->trans("SupplierProposalStatusSignedShort");
+        $this->labelstatut_short[3]=$langs->trans("SupplierProposalStatusNotSignedShort");
+        $this->labelstatut_short[4]=$langs->trans("SupplierProposalStatusClosedShort");
     }
 
 
@@ -1257,7 +1257,7 @@ class SupplierProposal extends CommonObject
         $now=dol_now();
 
         if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->supplier_proposal->creer))
-       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->supplier_proposal->validate)))
+       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->supplier_proposal->validate_advance)))
         {
             $this->db->begin();
 
@@ -1545,7 +1545,7 @@ class SupplierProposal extends CommonObject
                 $soc=new Societe($this->db);
                 $soc->id = $this->socid;
                 $result=$soc->set_as_client();
-
+                
                 if ($result < 0)
                 {
                     $this->error=$this->db->error();
@@ -1554,14 +1554,17 @@ class SupplierProposal extends CommonObject
                 }
 				else
 				{
-					$this->updateOrCreatePriceFournisseur($user);
+				    if (! empty($conf->global->SUPPLIER_PROPOSAL_UPDATE_PRICE_ON_SUPPlIER_PROPOSAL))     // TODO This option was not tested correctly. Error if product ref does not exists
+				    {
+                        $result = $this->updateOrCreatePriceFournisseur($user);
+				    }
 				}
             }
             if ($statut == 4)
             {
             	$trigger_name='SUPPLIER_PROPOSAL_CLASSIFY_BILLED';
             }
-
+            
             if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
             {
              	// Define output language
@@ -1594,25 +1597,27 @@ class SupplierProposal extends CommonObject
         }
         else
         {
-            $this->error=$this->db->error();
+            $this->error=$this->db->lasterror();
+            $this->errors[]=$this->db->lasterror();
             $this->db->rollback();
             return -1;
         }
     }
 
 	/**
-     *	Choose between update or create ProductFournisseur
+     *	Add or update supplier price according to result of proposal
      *
-	 *	@param      User	$user		Object user
+	 *	@param     User	    $user       Object user
+	 *  @return    int                  > 0 if OK
      */
 	function updateOrCreatePriceFournisseur($user)
 	{
 		$productsupplier = new ProductFournisseur($this->db);
 
 		dol_syslog(get_class($this)."::updateOrCreatePriceFournisseur", LOG_DEBUG);
-		foreach ($this->lines as $product) {
-			if ($product->subprice <= 0)
-				continue;
+		foreach ($this->lines as $product) 
+		{
+			if ($product->subprice <= 0) continue;
 
 			$idProductFourn = $productsupplier->find_min_price_product_fournisseur($product->fk_product, $product->qty);
 			$res = $productsupplier->fetch($idProductFourn);
@@ -1627,6 +1632,8 @@ class SupplierProposal extends CommonObject
 				$this->createPriceFournisseur($product, $user);
 			}
 		}
+		
+		return 1;
 	}
 
 	/**

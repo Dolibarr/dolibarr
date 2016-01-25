@@ -294,7 +294,7 @@ if (empty($user->societe_id))
 	            $text=$langs->trans($titres[$key]);
 	            print '<a href="'.$links[$key].'" class="boxstatsindicator thumbstat nobold nounderline">';
 	            print '<div class="boxstats">';
-	            print img_object("",$icons[$key]).' '.$text.'<br>';
+	            print '<span class="boxstatstext">'.img_object("",$icons[$key]).' '.$text.'</span><br>';
 	            print '<span class="boxstatsindicator">'.$board->nb[$val].'</span>';
 	            print '</div>';
 	            print '</a>';
