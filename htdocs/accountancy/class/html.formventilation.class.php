@@ -319,8 +319,7 @@ class FormVentilation extends Form {
 		}
 		$this->db->free($resql);
 		
-		
-		//Build select
+		// Build select
 		if (count($aux_account) > 0) {
 			
 			$out .= ajax_combobox($htmlname, $event);
@@ -339,5 +338,71 @@ class FormVentilation extends Form {
 		}
 		
 		return $out;
+	}
+	
+	/**
+	 * Return HTML combo list of years
+	 *
+	 * @param string $selected Preselected value (''=current year, -1=none, year otherwise)
+	 * @param string $htmlname Name of HTML select object
+	 * @param int $useempty Affiche valeur vide dans liste
+	 * @param int $min_year Offset of minimum year into list (by default current year -10)
+	 * @param int $max_year Offset of maximum year into list (by default current year + 5)
+	 * @param int $offset Offset
+	 * @param int $invert Invert
+	 * @param string $option Option
+	 * @return string
+	 */
+	function selectyear_accountancy_bookkepping($selected = '', $htmlname = 'yearid', $useempty = 0, $output_format = 'html') {
+		$out = '';
+		$out_array = array ();
+		
+		if ($output_format == 'html') {
+			$out .= '<select class="flat" placeholder="aa" id="' . $htmlname . '" name="' . $htmlname . '"' . $option . ' >';
+		}
+		if ($useempty) {
+			$selected_html = '';
+			if ($selected == '') {
+				$selected_html = ' selected';
+			}
+			if ($output_format == 'html' || $output_format == 'options') {
+				$out .= '<option value=""' . $selected_html . '>&nbsp;</option>';
+			} elseif ($output_format == 'array') {
+				$out_array[''] = '';
+			}
+		}
+		
+		$sql = "SELECT DISTINCT date_format(doc_date,'%Y') as dtyear";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping";
+		$sql .= " ORDER BY doc_date";
+		dol_syslog(get_class($this) . "::".__METHOD__, LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			while ( $obj = $this->db->fetch_object($resql) ) {
+				$selected_html = '';
+				if ($selected > 0 && $obj->dtyear == $selected)
+					$selected_html = ' selected';
+				if ($output_format == 'html' || $output_format == 'options') {
+					$out .= '<option value="' . $obj->dtyear . '"' . $selected_html . ' >' . $obj->dtyear . '</option>';
+				} elseif ($output_format == 'array') {
+					$out_array[$obj->dtyear] = $obj->dtyear;
+				}
+			}
+		} else {
+			$this->error = "Error " . $this->db->lasterror();
+			dol_syslog(get_class($this) . "::".__METHOD__ . $this->error, LOG_ERR);
+			return - 1;
+		}
+		$this->db->free($resql);
+		
+		if ($output_format == 'html') {
+			$out .= "</select>\n";
+		}
+		
+		if ($output_format == 'html' || $output_format == 'options') {
+			return $out;
+		} elseif ($output_format == 'array') {
+			return $out_array;
+		}
 	}
 }

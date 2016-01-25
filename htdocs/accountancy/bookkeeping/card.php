@@ -276,7 +276,7 @@ if ($action == 'create') {
 	}
 	if (! empty($book->piece_num)) {
 		
-		print load_fiche_titre($langs->trans("UpdateMvts"));
+		print load_fiche_titre($langs->trans("UpdateMvts"),'<a href="list.php">'.$langs->trans('BackToList').'</a>');
 		
 		print '<table class="border" width="100%">';
 		print '<tr class="pair">';
