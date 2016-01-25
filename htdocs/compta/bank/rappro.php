@@ -110,28 +110,14 @@ if ($action == 'del')
     }
 }
 
-
 // Load bank groups
-$sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_categ ORDER BY label";
-$resql = $db->query($sql);
-$options="";
-if ($resql)
-{
-    $var=True;
-    $num = $db->num_rows($resql);
-    if ($num > 0) $options .= '<option value="0"'.(GETPOST('cat')?'':' selected').'>&nbsp;</option>';
-    $i = 0;
-    while ($i < $num)
-    {
-        $obj = $db->fetch_object($resql);
-        $options .= '<option value="'.$obj->rowid.'"'.(GETPOST('cat')==$obj->rowid?' selected':'').'>'.$obj->label.'</option>'."\n";
-        $i++;
-    }
-    $db->free($resql);
-    //print $options;
-}
-else dol_print_error($db);
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/bankcateg.class.php';
+$bankcateg = new BankCateg($db);
+$options = array();
 
+foreach ($bankcateg->fetchAll() as $bankcategory) {
+    $options[$bankcategory->id] = $bankcategory->label;
+}
 
 /*
  * View
@@ -153,12 +139,6 @@ $acct->fetch($id);
 
 $now=dol_now();
 
-$sql = "SELECT b.rowid, b.dateo as do, b.datev as dv, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type as type";
-$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
-$sql.= " WHERE rappro=0 AND fk_account=".$acct->id;
-$sql.= " ORDER BY dateo ASC";
-$sql.= " LIMIT 1000";	// Limit to avoid page overload
-
 /// ajax adjust value date
 print '
 <script type="text/javascript">
@@ -179,235 +159,211 @@ $(function() {
 
 ';
 
-$resql = $db->query($sql);
-if ($resql)
+$transactions = $acct->getUnconciledTransactions();
+
+$var = true;
+
+print load_fiche_titre($langs->trans("Reconciliation").': <a href="account.php?account='.$acct->id.'">'.$acct->label.'</a>', '', 'title_bank.png');
+print '<br>';
+
+// Show last bank receipts
+$nbmax=15;      // We accept to show last 15 receipts (so we can have more than one year)
+$liste="";
+$sql = "SELECT DISTINCT num_releve FROM ".MAIN_DB_PREFIX."bank";
+$sql.= " WHERE fk_account=".$acct->id." AND num_releve IS NOT NULL";
+$sql.= $db->order("num_releve","DESC");
+$sql.= $db->plimit($nbmax+1);
+print $langs->trans("LastAccountStatements").' : ';
+$resqlr=$db->query($sql);
+if ($resqlr)
 {
-    $var=True;
-    $num = $db->num_rows($resql);
-
-    print load_fiche_titre($langs->trans("Reconciliation").': <a href="account.php?account='.$acct->id.'">'.$acct->label.'</a>', '', 'title_bank.png');
-    print '<br>';
-
-    // Show last bank receipts
-    $nbmax=15;      // We accept to show last 15 receipts (so we can have more than one year)
-    $liste="";
-    $sql = "SELECT DISTINCT num_releve FROM ".MAIN_DB_PREFIX."bank";
-    $sql.= " WHERE fk_account=".$acct->id." AND num_releve IS NOT NULL";
-    $sql.= $db->order("num_releve","DESC");
-    $sql.= $db->plimit($nbmax+1);
-    print $langs->trans("LastAccountStatements").' : ';
-    $resqlr=$db->query($sql);
-    if ($resqlr)
+    $numr=$db->num_rows($resqlr);
+    $i=0;
+    $last_ok=0;
+    while (($i < $numr) && ($i < $nbmax))
     {
-        $numr=$db->num_rows($resqlr);
-        $i=0;
-        $last_ok=0;
-        while (($i < $numr) && ($i < $nbmax))
-        {
-            $objr = $db->fetch_object($resqlr);
-            if (! $last_ok) {
-            $last_releve = $objr->num_releve;
-                $last_ok=1;
-            }
-            $i++;
-            $liste='<a href="'.DOL_URL_ROOT.'/compta/bank/releve.php?account='.$acct->id.'&amp;num='.$objr->num_releve.'">'.$objr->num_releve.'</a> &nbsp; '.$liste;
+        $objr = $db->fetch_object($resqlr);
+        if (! $last_ok) {
+        $last_releve = $objr->num_releve;
+            $last_ok=1;
         }
-        if ($numr >= $nbmax) $liste="... &nbsp; ".$liste;
-        print $liste;
-        if ($numr > 0) print '<br><br>';
-        else print '<b>'.$langs->trans("None").'</b><br><br>';
+        $i++;
+        $liste='<a href="'.DOL_URL_ROOT.'/compta/bank/releve.php?account='.$acct->id.'&amp;num='.$objr->num_releve.'">'.$objr->num_releve.'</a> &nbsp; '.$liste;
     }
-    else
+    if ($numr >= $nbmax) $liste="... &nbsp; ".$liste;
+    print $liste;
+    if ($numr > 0) print '<br><br>';
+    else print '<b>'.$langs->trans("None").'</b><br><br>';
+}
+else
+{
+    dol_print_error($db);
+}
+
+
+print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?account='.$acct->id.'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="rappro">';
+print '<input type="hidden" name="account" value="'.$acct->id.'">';
+
+print '<strong>'.$langs->trans("InputReceiptNumber").'</strong>: ';
+print '<input class="flat" name="num_releve" type="text" value="'.(GETPOST('num_releve')?GETPOST('num_releve'):'').'" size="10">';  // The only default value is value we just entered
+print '<br>';
+if ($options)
+{
+    print $langs->trans("EventualyAddCategory").': ';
+	print $form->selectarray('cat', $options, GETPOST('cat'), 1);
+	print '<br>';
+}
+print '<br>'.$langs->trans("ThenCheckLinesAndConciliate").' "'.$langs->trans("Conciliate").'"<br>';
+
+print '<br>';
+
+print '<table class="liste" width="100%">';
+print '<tr class="liste_titre">'."\n";
+print '<td align="center">'.$langs->trans("DateOperationShort").'</td>';
+print '<td align="center">'.$langs->trans("DateValueShort").'</td>';
+print '<td>'.$langs->trans("Type").'</td>';
+print '<td>'.$langs->trans("Description").'</td>';
+print '<td align="right" width="60" class="nowrap">'.$langs->trans("Debit").'</td>';
+print '<td align="right" width="60" class="nowrap">'.$langs->trans("Credit").'</td>';
+print '<td align="center" width="80">'.$langs->trans("Action").'</td>';
+print '<td align="center" width="60" class="nowrap">'.$langs->trans("ToConciliate").'</td>';
+print "</tr>\n";
+
+foreach ($transactions as $transaction) {
+
+    $var=!$var;
+    print "<tr ".$bc[$var].">\n";
+
+    // Date op
+    print '<td align="center" class="nowrap">'.dol_print_date($db->jdate($transaction->dateo),"day").'</td>';
+
+    // Date value
+    if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
     {
-        dol_print_error($db);
-    }
-
-
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?account='.$acct->id.'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<input type="hidden" name="action" value="rappro">';
-	print '<input type="hidden" name="account" value="'.$acct->id.'">';
-
-    print '<strong>'.$langs->trans("InputReceiptNumber").'</strong>: ';
-    print '<input class="flat" name="num_releve" type="text" value="'.(GETPOST('num_releve')?GETPOST('num_releve'):'').'" size="10">';  // The only default value is value we just entered
-    print '<br>';
-    if ($options)
-    {
-        print $langs->trans("EventualyAddCategory").': <select class="flat" name="cat">'.$options.'</select><br>';
-    }
-    print '<br>'.$langs->trans("ThenCheckLinesAndConciliate").' "'.$langs->trans("Conciliate").'"<br>';
-
-    print '<br>';
-
-    print '<table class="liste" width="100%">';
-    print '<tr class="liste_titre">'."\n";
-    print '<td align="center">'.$langs->trans("DateOperationShort").'</td>';
-    print '<td align="center">'.$langs->trans("DateValueShort").'</td>';
-    print '<td>'.$langs->trans("Type").'</td>';
-    print '<td>'.$langs->trans("Description").'</td>';
-    print '<td align="right" width="60" class="nowrap">'.$langs->trans("Debit").'</td>';
-    print '<td align="right" width="60" class="nowrap">'.$langs->trans("Credit").'</td>';
-    print '<td align="center" width="80">'.$langs->trans("Action").'</td>';
-    print '<td align="center" width="60" class="nowrap">'.$langs->trans("ToConciliate").'</td>';
-    print "</tr>\n";
-
-
-    $i = 0;
-    while ($i < $num)
-    {
-        $objp = $db->fetch_object($resql);
-
-        $var=!$var;
-        print "<tr ".$bc[$var].">\n";
-//         print '<form method="post" action="rappro.php?account='.$_GET["account"].'">';
-//         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-
-//         print "<input type=\"hidden\" name=\"rowid\" value=\"".$objp->rowid."\">";
-
-        // Date op
-        print '<td align="center" class="nowrap">'.dol_print_date($db->jdate($objp->do),"day").'</td>';
-
-        // Date value
-		if (! $objp->rappro && ($user->rights->banque->modifier || $user->rights->banque->consolidate))
-		{
-			print '<td align="center" class="nowrap">'."\n";
-			print '<span id="datevalue_'.$objp->rowid.'">'.dol_print_date($db->jdate($objp->dv),"day")."</span>";
-			print '&nbsp;';
-			print '<span>';
-			print '<a class="ajax" href="'.$_SERVER['PHP_SELF'].'?action=dvprev&amp;account='.$acct->id.'&amp;rowid='.$objp->rowid.'">';
-			print img_edit_remove() . "</a> ";
-			print '<a class="ajax" href="'.$_SERVER['PHP_SELF'].'?action=dvnext&amp;account='.$acct->id.'&amp;rowid='.$objp->rowid.'">';
-			print img_edit_add() ."</a>";
-			print '</span>';
-			print '</td>';
-		}
-		else
-		{
-			print '<td align="center">';
-			print dol_print_date($db->jdate($objp->dv),"day");
-			print '</td>';
-		}
-
-		// Type + Number
-		$label=($langs->trans("PaymentType".$objp->type)!="PaymentType".$objp->type)?$langs->trans("PaymentType".$objp->type):$objp->type;  // $objp->type is a code
-		if ($label=='SOLD') $label='';
-		print '<td class="nowrap">'.$label.($objp->num_chq?' '.$objp->num_chq:'').'</td>';
-
-		// Description
-        print '<td valign="center"><a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$acct->id.'">';
-		$reg=array();
-		preg_match('/\((.+)\)/i',$objp->label,$reg);	// Si texte entoure de parentheses on tente recherche de traduction
-		if ($reg[1] && $langs->trans($reg[1])!=$reg[1]) print $langs->trans($reg[1]);
-		else print $objp->label;
-        print '</a>';
-
-        /*
-         * Ajout les liens (societe, company...)
-         */
-        $newline=1;
-        $links = $acct->get_url($objp->rowid);
-        foreach($links as $key=>$val)
-        {
-            if ($newline == 0) print ' - ';
-            else if ($newline == 1) print '<br>';
-            if ($links[$key]['type']=='payment') {
-	            $paymentstatic->id=$links[$key]['url_id'];
-	            print ' '.$paymentstatic->getNomUrl(2);
-                $newline=0;
-            }
-            elseif ($links[$key]['type']=='payment_supplier') {
-				$paymentsupplierstatic->id=$links[$key]['url_id'];
-				$paymentsupplierstatic->ref=$links[$key]['label'];
-				print ' '.$paymentsupplierstatic->getNomUrl(1);
-                $newline=0;
-			}
-            elseif ($links[$key]['type']=='company') {
-                $societestatic->id=$links[$key]['url_id'];
-                $societestatic->name=$links[$key]['label'];
-                print $societestatic->getNomUrl(1,'',24);
-                $newline=0;
-            }
-			else if ($links[$key]['type']=='sc') {
-				$chargestatic->id=$links[$key]['url_id'];
-				$chargestatic->ref=$links[$key]['url_id'];
-				$chargestatic->lib=$langs->trans("SocialContribution");
-				print ' '.$chargestatic->getNomUrl(1);
-			}
-			else if ($links[$key]['type']=='payment_sc')
-			{
-			    // We don't show anything because there is 1 payment for 1 social contribution and we already show link to social contribution
-				/*print '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/card.php?id='.$links[$key]['url_id'].'">';
-				print img_object($langs->trans('ShowPayment'),'payment').' ';
-				print $langs->trans("SocialContributionPayment");
-				print '</a>';*/
-			    $newline=2;
-			}
-			else if ($links[$key]['type']=='payment_vat')
-			{
-				$paymentvatstatic->id=$links[$key]['url_id'];
-				$paymentvatstatic->ref=$links[$key]['url_id'];
-				$paymentvatstatic->ref=$langs->trans("VATPayment");
-				print ' '.$paymentvatstatic->getNomUrl(1);
-			}
-			else if ($links[$key]['type']=='banktransfert') {
-				print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$links[$key]['url_id'].'">';
-				print img_object($langs->trans('ShowTransaction'),'payment').' ';
-				print $langs->trans("TransactionOnTheOtherAccount");
-				print '</a>';
-			}
-			else if ($links[$key]['type']=='member') {
-				print '<a href="'.DOL_URL_ROOT.'/adherents/card.php?rowid='.$links[$key]['url_id'].'">';
-				print img_object($langs->trans('ShowMember'),'user').' ';
-				print $links[$key]['label'];
-				print '</a>';
-			}
-			else {
-				//print ' - ';
-				print '<a href="'.$links[$key]['url'].$links[$key]['url_id'].'">';
-				if (preg_match('/^\((.*)\)$/i',$links[$key]['label'],$reg))
-				{
-					// Label generique car entre parentheses. On l'affiche en le traduisant
-					if ($reg[1]=='paiement') $reg[1]='Payment';
-					print $langs->trans($reg[1]);
-				}
-				else
-				{
-					print $links[$key]['label'];
-				}
-				print '</a>';
-                $newline=0;
-            }
-        }
+        print '<td align="center" class="nowrap">'."\n";
+        print '<span id="datevalue_'.$transaction->id.'">'.dol_print_date($db->jdate($transaction->datev),"day")."</span>";
+        print '&nbsp;';
+        print '<span>';
+        print '<a class="ajax" href="'.$_SERVER['PHP_SELF'].'?action=dvprev&amp;account='.$acct->id.'&amp;rowid='.$transaction->id.'">';
+        print img_edit_remove() . "</a> ";
+        print '<a class="ajax" href="'.$_SERVER['PHP_SELF'].'?action=dvnext&amp;account='.$acct->id.'&amp;rowid='.$transaction->id.'">';
+        print img_edit_add() ."</a>";
+        print '</span>';
         print '</td>';
+    }
 
-        if ($objp->amount < 0)
-        {
-            print "<td align=\"right\" nowrap>".price($objp->amount * -1)."</td><td>&nbsp;</td>\n";
-        }
-        else
-        {
-            print "<td>&nbsp;</td><td align=\"right\" nowrap>".price($objp->amount)."</td>\n";
-        }
+	// Type + Number
+	print '<td class="nowrap">'.$transaction->getPaymentType().'</td>';
 
-        if ($objp->rappro)
-        {
-            // If line already reconciliated, we show receipt
-            print "<td align=\"center\" nowrap=\"nowrap\"><a href=\"releve.php?num=$objp->num_releve&amp;account=$acct->id\">$objp->num_releve</a></td>";
+	// Description
+	print '<td valign="center"><a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$transaction->id.'&amp;account='.$acct->id.'">';
+	print $transaction->getLabel();
+	print '</a>';
+
+    //Ajout les liens (societe, company...)
+    $newline=1;
+    $links = $acct->get_url($transaction->id);
+    foreach($links as $key=>$val)
+    {
+        if ($newline == 0) print ' - ';
+        else if ($newline == 1) print '<br>';
+        if ($links[$key]['type']=='payment') {
+            $paymentstatic->id=$links[$key]['url_id'];
+            print ' '.$paymentstatic->getNomUrl(2);
+            $newline=0;
         }
-        else
+        elseif ($links[$key]['type']=='payment_supplier') {
+            $paymentsupplierstatic->id=$links[$key]['url_id'];
+            $paymentsupplierstatic->ref=$links[$key]['label'];
+            print ' '.$paymentsupplierstatic->getNomUrl(1);
+            $newline=0;
+        }
+        elseif ($links[$key]['type']=='company') {
+            $societestatic->id=$links[$key]['url_id'];
+            $societestatic->name=$links[$key]['label'];
+            print $societestatic->getNomUrl(1,'',24);
+            $newline=0;
+        }
+        else if ($links[$key]['type']=='sc') {
+            $chargestatic->id=$links[$key]['url_id'];
+            $chargestatic->ref=$links[$key]['url_id'];
+            $chargestatic->lib=$langs->trans("SocialContribution");
+            print ' '.$chargestatic->getNomUrl(1);
+        }
+        else if ($links[$key]['type']=='payment_sc')
         {
-            // If not already reconciliated
-            if ($user->rights->banque->modifier)
+            // We don't show anything because there is 1 payment for 1 social contribution and we already show link to social contribution
+            /*print '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/card.php?id='.$links[$key]['url_id'].'">';
+            print img_object($langs->trans('ShowPayment'),'payment').' ';
+            print $langs->trans("SocialContributionPayment");
+            print '</a>';*/
+            $newline=2;
+        }
+        else if ($links[$key]['type']=='payment_vat')
+        {
+            $paymentvatstatic->id=$links[$key]['url_id'];
+            $paymentvatstatic->ref=$links[$key]['url_id'];
+            $paymentvatstatic->ref=$langs->trans("VATPayment");
+            print ' '.$paymentvatstatic->getNomUrl(1);
+        }
+        else if ($links[$key]['type']=='banktransfert') {
+            print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$links[$key]['url_id'].'">';
+            print img_object($langs->trans('ShowTransaction'),'payment').' ';
+            print $langs->trans("TransactionOnTheOtherAccount");
+            print '</a>';
+        }
+        else if ($links[$key]['type']=='member') {
+            print '<a href="'.DOL_URL_ROOT.'/adherents/card.php?rowid='.$links[$key]['url_id'].'">';
+            print img_object($langs->trans('ShowMember'),'user').' ';
+            print $links[$key]['label'];
+            print '</a>';
+        }
+        else {
+            //print ' - ';
+            print '<a href="'.$links[$key]['url'].$links[$key]['url_id'].'">';
+            if (preg_match('/^\((.*)\)$/i',$links[$key]['label'],$reg))
             {
-                print '<td align="center" width="30" class="nowrap">';
+                // Label generique car entre parentheses. On l'affiche en le traduisant
+                if ($reg[1]=='paiement') $reg[1]='Payment';
+                print $langs->trans($reg[1]);
+            }
+            else
+            {
+                print $links[$key]['label'];
+            }
+            print '</a>';
+            $newline=0;
+        }
+    }
+    print '</td>';
 
-                print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$acct->id.'&amp;orig_account='.$acct->id.'">';
-                print img_edit();
-                print '</a>&nbsp; ';
+	//Debit
+	print '<td align="right" nowrap>';
+	if ($transaction->amount < 0) {
+		print price(abs($transaction->amount));
+	}
+	print '</td>';
 
-                $now=dol_now();
-                if ($db->jdate($objp->do) <= $now) {
-                    print '<a href="'.DOL_URL_ROOT.'/compta/bank/rappro.php?action=del&amp;rowid='.$objp->rowid.'&amp;account='.$acct->id.'">';
+	//Credit
+	print '<td align="right" nowrap>';
+	if ($transaction->amount > 0) {
+		print price(abs($transaction->amount));
+	}
+	print '</td>';
+
+    //Actions
+    if ($user->rights->banque->modifier)
+    {
+        print '<td align="center" width="30" class="nowrap">';
+
+        print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$transaction->id.'&amp;account='.$acct->id.'&amp;orig_account='.$acct->id.'">';
+        print img_edit();
+        print '</a>&nbsp; ';
+
+                if ($db->jdate($transaction->dateo) <= $now) {
+                    print '<a href="'.DOL_URL_ROOT.'/compta/bank/rappro.php?action=del&amp;rowid='.$transaction->id.'&amp;account='.$acct->id.'">';
                     print img_delete();
                     print '</a>';
                 }
@@ -423,47 +379,28 @@ if ($resql)
         }
 
 
-        // Show checkbox for conciliation
-        if ($db->jdate($objp->do) <= $now)
-        {
-
-            print '<td align="center" class="nowrap">';
-            print '<input class="flat" name="rowid['.$objp->rowid.']" type="checkbox" value="'.$objp->rowid.'" size="1"'.(! empty($_POST['rowid'][$objp->rowid])?' checked':'').'>';
-//             print '<input class="flat" name="num_releve" type="text" value="'.$objp->num_releve.'" size="8">';
-//             print ' &nbsp; ';
-//             print "<input class=\"button\" type=\"submit\" value=\"".$langs->trans("Conciliate")."\">";
-//             if ($options)
-//             {
-//                 print "<br><select class=\"flat\" name=\"cat\">$options";
-//                 print "</select>";
-//             }
-            print "</td>";
-        }
-        else
-        {
-            print '<td align="left">';
-            print $langs->trans("FutureTransaction");
-            print '</td>';
-        }
-
-        print "</tr>\n";
-
-        $i++;
+    // Show checkbox for conciliation
+    if ($db->jdate($transaction->dateo) <= $now)
+    {
+        print '<td align="center" class="nowrap">';
+        print '<input class="flat" name="rowid['.$transaction->id.']" type="checkbox" value="'.$transaction->id.'" size="1"'.(! empty($_POST['rowid'][$transaction->id])?' checked':'').'>';
+        print "</td>";
     }
-    $db->free($resql);
+    else
+    {
+        print '<td align="left">';
+        print $langs->trans("FutureTransaction");
+        print '</td>';
+    }
 
-    print "</table><br>\n";
-
-    print '<div align="right"><input class="button" type="submit" value="'.$langs->trans("Conciliate").'"></div><br>';
-
-    print "</form>\n";
-
-}
-else
-{
-  dol_print_error($db);
+    print "</tr>\n";
 }
 
+print "</table><br>\n";
+
+print '<div align="right"><input class="button" type="submit" value="'.$langs->trans("Conciliate").'"></div><br>';
+
+print "</form>\n";
 
 llxFooter();
 

@@ -59,16 +59,16 @@ if (! $user->rights->banque->lire && ! $user->rights->banque->consolidate) acces
  * Actions
  */
 
-if ($user->rights->banque->consolidate && $action == 'dvnext')
+if ($user->rights->banque->consolidate)
 {
     $al = new AccountLine($db);
-    $al->datev_next($_GET["rowid"]);
-}
+    $al->fetch($_GET["rowid"]);
 
-if ($user->rights->banque->consolidate && $action == 'dvprev')
-{
-    $al = new AccountLine($db);
-    $al->datev_previous($_GET["rowid"]);
+    if ($action == 'dvnext') {
+        $al->increaseValueDate();
+    } elseif ($action == 'dvprev') {
+        $al->decreaseValueDate();
+    }
 }
 
 if ($action == 'confirm_delete_categ' && $confirm == "yes" && $user->rights->banque->modifier)
@@ -102,7 +102,7 @@ if ($user->rights->banque->modifier && $action == "update")
 	$ac = new Account($db);
 	$ac->fetch($id);
 
-	if ($ac->courant == 2 && $_POST['value'] != 'LIQ')
+	if ($ac->courant == Account::TYPE_CASH && $_POST['value'] != 'LIQ')
 	{
 		setEventMessages($langs->trans("ErrorCashAccountAcceptsOnlyCashMoney"), null, 'errors');
 		$error++;
@@ -205,24 +205,13 @@ $form = new Form($db);
 
 llxHeader();
 
-// The list of categories is initialized
-$sql = "SELECT rowid, label";
-$sql.= " FROM ".MAIN_DB_PREFIX."bank_categ";
-$sql.= " ORDER BY label";
-$result = $db->query($sql);
-if ($result)
-{
-    $var=True;
-    $num = $db->num_rows($result);
-    $i = 0;
-    $options = "<option value=\"0\" selected>&nbsp;</option>";
-    while ($i < $num)
-    {
-        $obj = $db->fetch_object($result);
-        $options .= "<option value=\"$obj->rowid\">$obj->label</option>\n";
-        $i++;
-    }
-    $db->free($result);
+// Load bank groups
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/bankcateg.class.php';
+$bankcateg = new BankCateg($db);
+$options = array();
+
+foreach ($bankcateg->fetchAll() as $bankcategory) {
+    $options[$bankcategory->id] = $bankcategory->label;
 }
 
 $var=false;
@@ -620,7 +609,7 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Rubriques").'</td><td colspan="2">';
 if ($user->rights->banque->modifier)
 {
-    print '<select class="flat" name="cat1">'.$options.'</select>&nbsp;';
+    print $form->selectarray('cat1', $options, '', 1).' ';
     print '<input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
 }
 print '</tr>';
