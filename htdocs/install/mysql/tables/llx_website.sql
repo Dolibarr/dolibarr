@@ -17,16 +17,13 @@
 -- ========================================================================
 
 
-CREATE TABLE llx_website_page
+CREATE TABLE llx_website
 (
 	rowid         integer AUTO_INCREMENT NOT NULL PRIMARY KEY,
-	fk_website    integer,
-	pageurl       varchar(16) NOT NULL,
-	title         varchar(255),						
-	description   varchar(255),						
-	keywords      varchar(255),
-	content		  text,
-    status        integer,
+	entity        integer,
+	shortname     varchar(24) NOT NULL,
+	description   varchar(255),
+	status		  integer,
     date_creation     datetime,
     date_modification datetime,
 	tms           timestamp
