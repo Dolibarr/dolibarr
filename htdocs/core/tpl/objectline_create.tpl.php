@@ -477,7 +477,7 @@ if (! empty($usemargins) && $user->rights->margins->creer)
 
 /* JQuery for product free or predefined select */
 jQuery(document).ready(function() {
-	$("#prod_entry_mode_free").on( "click", function() {
+	$("#tablelines").on( "click", "#prod_entry_mode_free", function() {
 		setforfree();
 	});
 	$("#select_type").change(function()
@@ -488,7 +488,7 @@ jQuery(document).ready(function() {
 		else jQuery('#trlinefordates').show();
 	});
 
-	$("#prod_entry_mode_predef").on( "click", function() {
+	$("#tablelines").on( "click", "#prod_entry_mode_predef", function() {
 		console.log("click prod_entry_mode_predef");
 		setforpredef();
 		jQuery('#trlinefordates').show();
