@@ -4112,7 +4112,11 @@ class FactureLigne extends CommonInvoiceLine
 		if (! isset($this->situation_percent) || $this->situation_percent > 100 || (string) $this->situation_percent == '') $this->situation_percent = 100;
 
 		if (empty($this->pa_ht)) $this->pa_ht=0;
-
+		if (empty($this->multicurrency_subprice)) $this->multicurrency_subprice=0;
+		if (empty($this->multicurrency_total_ht)) $this->multicurrency_total_ht=0;
+		if (empty($this->multicurrency_total_tva)) $this->multicurrency_total_tva=0;
+		if (empty($this->multicurrency_total_ttc)) $this->multicurrency_total_ttc=0;
+		
 		// if buy price not defined, define buyprice as configured in margin admin
 		if ($this->pa_ht == 0 && $pa_ht_isemptystring) 
 		{
@@ -4188,12 +4192,12 @@ class FactureLigne extends CommonInvoiceLine
 		$sql .= ", " . $this->situation_percent;
 		$sql .= ", " . $this->fk_prev_id;
 		$sql .= ", ".(!$this->fk_unit ? 'NULL' : $this->fk_unit);
-		$sql.= ", ".$this->fk_multicurrency;
+		$sql.= ", ".(int) $this->fk_multicurrency;
 		$sql.= ", '".$this->db->escape($this->multicurrency_code)."'";
-		$sql.= ", ".$this->multicurrency_subprice;
-		$sql.= ", ".$this->multicurrency_total_ht;
-		$sql.= ", ".$this->multicurrency_total_tva;
-		$sql.= ", ".$this->multicurrency_total_ttc;
+		$sql.= ", ".price2num($this->multicurrency_subprice);
+		$sql.= ", ".price2num($this->multicurrency_total_ht);
+		$sql.= ", ".price2num($this->multicurrency_total_tva);
+		$sql.= ", ".price2num($this->multicurrency_total_ttc);
 		$sql.= ')';
 
 		dol_syslog(get_class($this)."::insert", LOG_DEBUG);

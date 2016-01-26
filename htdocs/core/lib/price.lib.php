@@ -250,11 +250,6 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 		$result[4] = price2num($result[5] - ($result3bis + $localtaxes[2]), 'MU');
 	}
 
-	// Multicurrency
-	$result[16] = price2num($result[0] * $multicurrency_tx, 'MT');
-	$result[17] = price2num($result[1] * $multicurrency_tx, 'MT');
-	$result[18] = price2num($result[2] * $multicurrency_tx, 'MT');
-
 	// if there's some localtax without vat, we calculate localtaxes (we will add them at end)
 
     //If input unit price is 'TTC', we need to have the totals without main VAT for a correct calculation
@@ -331,9 +326,14 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 			$result[10]=round($result[10]/$conf->global->MAIN_ROUNDING_RULE_TOT, 0)*$conf->global->MAIN_ROUNDING_RULE_TOT;
 		}
 	}
-
+	
+	// Multicurrency
+	$result[16] = price2num($result[0] * $multicurrency_tx, 'MT');
+	$result[17] = price2num($result[1] * $multicurrency_tx, 'MT');
+	$result[18] = price2num($result[2] * $multicurrency_tx, 'MT');
+	
 	// initialize result array
-	//for ($i=0; $i <= 15; $i++) $result[$i] = (float) $result[$i];
+	//for ($i=0; $i <= 18; $i++) $result[$i] = (float) $result[$i];
 
 	dol_syslog('Price.lib::calcul_price_total MAIN_ROUNDING_RULE_TOT='.$conf->global->MAIN_ROUNDING_RULE_TOT.' pu='.$pu.' qty='.$qty.' price_base_type='.$price_base_type.' total_ht='.$result[0].'-total_vat='.$result[1].'-total_ttc='.$result[2]);
 
