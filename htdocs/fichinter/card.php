@@ -1737,7 +1737,7 @@ else if ($id > 0 || ! empty($ref))
 				}
 
 				// Delete
-				if (($object->statut == 0 && $user->rights->ficheinter->creer) || $user->rights->ficheinter->supprimer)
+				if ($user->rights->ficheinter->supprimer)
 				{
 					print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete"';
 					print '>'.$langs->trans('Delete').'</a></div>';
