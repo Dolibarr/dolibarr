@@ -395,7 +395,7 @@ if ($id > 0 || ! empty($ref))
 			if (count($contactsoftask)>0)
 			{
 				$userid=$contactsoftask[0];
-				print $form->select_dolusers((GETPOST('userid')?GETPOST('userid'):$userid), 'userid', 0, '', 0, '', $contactsoftask, 0, 0, 0, '', 0, $langs->trans("ResourceNotAssignedToTask"));
+				print $form->select_dolusers((GETPOST('userid')?GETPOST('userid'):$userid), 'userid', 0, '', 0, '', $contactsoftask, 0, 0, 0, '', 0, $langs->trans("ResourceNotAssignedToTheTask"));
 			}
 			else
 			{
@@ -405,7 +405,7 @@ if ($id > 0 || ! empty($ref))
 
 			// Note
 			print '<td class="nowrap">';
-			print '<textarea name="timespent_note" cols="80" rows="'.ROWS_2.'">'.($_POST['timespent_note']?$_POST['timespent_note']:'').'</textarea>';
+			print '<textarea name="timespent_note" width="95%" rows="'.ROWS_2.'">'.($_POST['timespent_note']?$_POST['timespent_note']:'').'</textarea>';
 			print '</td>';
 
 			// Progress declared
@@ -528,7 +528,7 @@ if ($id > 0 || ! empty($ref))
 			print '<td align="left">';
 			if ($_GET['action'] == 'editline' && $_GET['lineid'] == $task_time->rowid)
 			{
-				print '<textarea name="timespent_note_line" cols="80" rows="'.ROWS_2.'">'.$task_time->note.'</textarea>';
+				print '<textarea name="timespent_note_line" width="95%" rows="'.ROWS_2.'">'.$task_time->note.'</textarea>';
 			}
 			else
 			{
