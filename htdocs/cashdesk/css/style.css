@@ -337,7 +337,7 @@ p.titre {
 /* -------------- Boutons --------------------- */
 .bouton_ajout_article {
 	margin-top: 10px;
-	width: 100%;
+	width: 60%;
 	height: 40px;
 }
 
