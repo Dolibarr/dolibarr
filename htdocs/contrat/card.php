@@ -706,6 +706,11 @@ if (empty($reshook))
 	    $result = $object->validate($user);
 	}
 	
+	else if ($action == 'reopen' && $user->rights->contrat->creer)
+	{
+	    $result = $object->reopen($user);
+	}
+	
 	// Close all lines
 	else if ($action == 'confirm_close' && $confirm == 'yes' && $user->rights->contrat->creer)
 	{
@@ -1077,7 +1082,7 @@ if ($action == 'create')
 	else
 	{
 		print '<td colspan="2">';
-		print $form->select_company('','socid','',1);
+		print $form->select_company('','socid','',1,1);
 		print '</td>';
 	}
 	print '</tr>'."\n";
@@ -1110,12 +1115,13 @@ if ($action == 'create')
     $form->select_date($datecontrat,'',0,0,'',"contrat");
     print "</td></tr>";
 
+    // Project
     if (! empty($conf->projet->enabled))
     {
     	$formproject=new FormProjets($db);
 
         print '<tr><td>'.$langs->trans("Project").'</td><td>';
-        $formproject->select_projects($soc->id,$projectid,"projectid");
+        $formproject->select_projects(($soc->id>0?$soc->id:-1),$projectid,"projectid",0,0,1,1);
         print "</td></tr>";
     }
 
@@ -1325,11 +1331,11 @@ else
             print '</td><td colspan="3">';
             if ($action == "classify")
             {
-                $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id,$object->socid,$object->fk_project,"projectid", 0, 0, 1);
+                $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, "projectid", 1, 0, 1);
             }
             else
             {
-                $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id,$object->socid,$object->fk_project,"none", 0, 0);
+                $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, "none", 0, 0);
             }
             print "</td></tr>";
         }
@@ -1915,7 +1921,12 @@ else
                 if ($user->rights->contrat->creer) print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=valid">'.$langs->trans("Validate").'</a></div>';
                 else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("Validate").'</a></div>';
             }
-
+            if ($object->statut == 1 && $nbofservices)
+            {
+                if ($user->rights->contrat->creer) print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("Modify").'</a></div>';
+                else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("Modify").'</a></div>';
+            }
+            
             if (! empty($conf->facture->enabled) && $object->statut > 0 && $object->nbofservicesclosed < $nbofservices)
             {
                 $langs->load("bills");
@@ -1975,6 +1986,12 @@ else
 
         print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
+		// List of actions on element
+		include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
+		$formactions = new FormActions($db);
+		$somethingshown = $formactions->showactions($object, 'contract', $socid);
+        
+        
         print '</div></div></div>';
     }
 }
