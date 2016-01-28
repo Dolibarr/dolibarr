@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Bariley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
@@ -70,6 +70,7 @@ $search_year=GETPOST("search_year");
 $search_all=GETPOST("search_all");
 $search_status=GETPOST("search_status",'int');
 $search_opp_status=GETPOST("search_opp_status",'alpha');
+$search_opp_percent=GETPOST("search_opp_percent",'alpha');
 $search_public=GETPOST("search_public",'int');
 $search_user=GETPOST('search_user','int');
 $search_sale=GETPOST('search_sale','int');
@@ -127,8 +128,9 @@ $arrayfields=array(
     'p.datee'=>array('label'=>$langs->trans("DateEnd"), 'checked'=>1, 'position'=>101),
     'p.public'=>array('label'=>$langs->trans("Visibility"), 'checked'=>1, 'position'=>102),
     'p.opp_amount'=>array('label'=>$langs->trans("OpportunityAmountShort"), 'checked'=>1, 'enabled'=>$conf->global->PROJECT_USE_OPPORTUNITIES, 'position'=>103),
-	'p.fk_opp_status'=>array('label'=>$langs->trans("OpportunityStatusShort"), 'checked'=>1, 'enabled'=>$conf->global->PROJECT_USE_OPPORTUNITIES, 'position'=>104),
-	'p.datec'=>array('label'=>$langs->trans("DateCreationShort"), 'checked'=>0, 'position'=>500),
+    'p.fk_opp_status'=>array('label'=>$langs->trans("OpportunityStatusShort"), 'checked'=>1, 'enabled'=>$conf->global->PROJECT_USE_OPPORTUNITIES, 'position'=>104),
+    'p.opp_percent'=>array('label'=>$langs->trans("OpportunityProbabilityShort"), 'checked'=>1, 'enabled'=>$conf->global->PROJECT_USE_OPPORTUNITIES, 'position'=>105),
+    'p.datec'=>array('label'=>$langs->trans("DateCreationShort"), 'checked'=>0, 'position'=>500),
     'p.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
     'p.fk_statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
 );
@@ -208,7 +210,7 @@ if (count($listofprojectcontacttype) == 0) $listofprojectcontacttype[0]='0';    
 
 $distinct='DISTINCT';   // We add distinct until we are added a protection to be sure a contact of a project and task is only once.
 $sql = "SELECT ".$distinct." p.rowid as projectid, p.ref, p.title, p.fk_statut, p.fk_opp_status, p.public, p.fk_user_creat";
-$sql.= ", p.datec as date_creation, p.dateo as date_start, p.datee as date_end, p.opp_amount, p.tms as date_update";
+$sql.= ", p.datec as date_creation, p.dateo as date_start, p.datee as date_end, p.opp_amount, p.opp_percent, p.tms as date_update";
 $sql.= ", s.nom as name, s.rowid as socid";
 $sql.= ", cls.code as opp_status_code";
 // Add fields for extrafields
@@ -311,6 +313,7 @@ if ($resql)
 	if ($search_societe != '') 		$param.='&search_societe='.$search_societe;
 	if ($search_status >= 0) 		$param.='&search_status='.$search_status;
 	if ((is_numeric($search_opp_status) && $search_opp_status >= 0) || in_array($search_opp_status, array('all','none'))) 	$param.='&search_opp_status='.urlencode($search_opp_status);
+	if ((is_numeric($search_opp_percent) && $search_opp_percent >= 0) || in_array($search_opp_percent, array('all','none'))) 	$param.='&search_opp_percent='.urlencode($search_opp_percent);
 	if ($search_public != '') 		$param.='&search_public='.$search_public;
 	if ($search_user > 0)    		$param.='&search_user='.$search_user;
 	if ($search_sale > 0)    		$param.='&search_sale='.$search_sale;
@@ -392,7 +395,8 @@ if ($resql)
 	if (! empty($arrayfields['p.datee']['checked']))         print_liste_field_titre($arrayfields['p.datee']['label'],$_SERVER["PHP_SELF"],"p.datee","",$param,'align="center"',$sortfield,$sortorder);
 	if (! empty($arrayfields['p.public']['checked']))        print_liste_field_titre($arrayfields['p.public']['label'],$_SERVER["PHP_SELF"],"p.public","",$param,"",$sortfield,$sortorder);
     if (! empty($arrayfields['p.opp_amount']['checked']))    print_liste_field_titre($arrayfields['p.opp_amount']['label'],$_SERVER["PHP_SELF"],'p.opp_amount',"",$param,'align="right"',$sortfield,$sortorder);
-    if (! empty($arrayfields['p.fk_opp_status']['checked'])) print_liste_field_titre($arrayfields['p.fk_opp_status']['label'],$_SERVER["PHP_SELF"],'p.fk_opp_status',"",$param,'align="center"',$sortfield,$sortorder);
+	if (! empty($arrayfields['p.fk_opp_status']['checked'])) print_liste_field_titre($arrayfields['p.fk_opp_status']['label'],$_SERVER["PHP_SELF"],'p.fk_opp_status',"",$param,'align="center"',$sortfield,$sortorder);
+    if (! empty($arrayfields['p.opp_percent']['checked']))   print_liste_field_titre($arrayfields['p.opp_percent']['label'],$_SERVER["PHP_SELF"],'p.opp_percent',"",$param,'align="right"',$sortfield,$sortorder);
 	// Extra fields
 	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 	{
@@ -475,6 +479,11 @@ if ($resql)
 		print $formproject->selectOpportunityStatus('search_opp_status',$search_opp_status,1,1,1);
 	    print '</td>';
     }
+	if (! empty($arrayfields['p.opp_percent']['checked']))
+	{
+		print '<td class="liste_titre nowrap">';
+	    print '</td>';
+	}
     // Extra fields
     if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
     {
@@ -559,7 +568,7 @@ if ($resql)
         		}
         		print '</td>';
         	}
-    		// Sales Rapresentatives
+    		// Sales Representatives
         	if (! empty($arrayfields['commercial']['checked']))
         	{
             	print '<td>';
@@ -623,7 +632,7 @@ if ($resql)
         	if (! empty($arrayfields['p.opp_amount']['checked']))
         	{
     			print '<td align="right">';
-    			if ($obj->opp_status_code) print price($obj->opp_amount, 1, '', 1, - 1, - 1, $conf->currency);
+    			if ($obj->opp_status_code) print price($obj->opp_amount, 1, '', 1, -1, -1, $conf->currency);
     			print '</td>';
         	}
         	if (! empty($arrayfields['p.fk_opp_status']['checked']))
@@ -632,6 +641,12 @@ if ($resql)
     			if ($obj->opp_status_code) print $langs->trans("OppStatusShort".$obj->opp_status_code);
     			print '</td>';
     		}
+    	    if (! empty($arrayfields['p.opp_percent']['checked']))
+        	{
+    			print '<td align="right">';
+    			if ($obj->opp_percent) print price($obj->opp_percent, 1, '', 1, 0).'%';
+    			print '</td>';
+        	}
     		// Extra fields
     		if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
     		{

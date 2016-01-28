@@ -42,6 +42,7 @@ $backtopage=GETPOST('backtopage','alpha');
 $cancel=GETPOST('cancel','alpha');
 $status=GETPOST('status','int');
 $opp_status=GETPOST('opp_status','int');
+$opp_percent=price2num(GETPOST('opp_percent','alpha'));
 
 if ($id == '' && $ref == '' && ($action != "create" && $action != "add" && $action != "update" && ! $_POST["cancel"])) accessforbidden();
 
@@ -145,6 +146,7 @@ if (empty($reshook))
 	        $object->date_end=$date_end;
 	        $object->statuts         = $status;
 	        $object->opp_status      = $opp_status;
+	        $object->opp_percent     = $opp_percent;
 
 	        // Fill array 'array_options' with data from add form
 	        $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
@@ -232,7 +234,8 @@ if (empty($reshook))
 	        if (isset($_POST['opp_amount']))    $object->opp_amount   = price2num(GETPOST('opp_amount'));
 	        if (isset($_POST['budget_amount'])) $object->budget_amount= price2num(GETPOST('budget_amount'));
 	        if (isset($_POST['opp_status']))    $object->opp_status   = $opp_status;
-
+	        if (isset($_POST['opp_percent']))   $object->opp_percent  = $opp_percent;
+	         
 	        // Fill array 'array_options' with data from add form
 	        $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 			if ($ret < 0) $error++;
@@ -505,6 +508,13 @@ if ($action == 'create' && $user->rights->projet->creer)
 	    print $formproject->selectOpportunityStatus('opp_status',$object->opp_status);
 	    print '</tr>';
 
+	    // Opportunity probability
+	    print '<tr><td>'.$langs->trans("OpportunityProbability").'</td>';
+	    print '<td><input size="5" type="text" id="opp_percent" name="opp_percent" value="'.(GETPOST('opp_percent')!=''?price(GETPOST('opp_percent')):'').'"> %';
+	    print '<input type="hidden" name="opp_percent_not_set" id="opp_percent_not_set" value="'.(GETPOST('opp_percent')!=''?'0':'1').'">';
+	    print '</td>';
+	    print '</tr>';
+	    
 	    // Opportunity amount
 	    print '<tr><td>'.$langs->trans("OpportunityAmount").'</td>';
 	    print '<td><input size="5" type="text" name="opp_amount" value="'.(GETPOST('opp_amount')!=''?price(GETPOST('opp_amount')):'').'"></td>';
@@ -544,7 +554,23 @@ if ($action == 'create' && $user->rights->projet->creer)
     print '</div>';
 
     print '</form>';
-
+    
+    // Change probability from status
+    print '<script type="text/javascript" language="javascript">
+        jQuery(document).ready(function() {
+        	function change_percent()
+        	{
+                var element = jQuery("#opp_status option:selected"); 
+                var defaultpercent = element.attr("defaultpercent");
+                /*if (jQuery("#opp_percent_not_set").val() == "") */
+                jQuery("#opp_percent").val(defaultpercent);
+        	}
+        	/*init_myfunc();*/
+        	jQuery("#opp_status").change(function() {
+        		change_percent();
+        	});
+        });
+        </script>';
 }
 else
 {
@@ -670,15 +696,20 @@ else
 		    print '</td>';
 		    print '</tr>';
 
+		    // Opportunity probability
+		    print '<tr><td>'.$langs->trans("OpportunityProbability").'</td>';
+		    print '<td><input size="5" type="text" id="opp_percent" name="opp_percent" value="'.(isset($_POST['opp_percent'])?GETPOST('opp_percent'):(strcmp($object->opp_percent,'')?price($object->opp_percent,0,$langs,1,0):'')).'"> %</td>';
+		    print '</tr>';
+		    
 		    // Opportunity amount
 		    print '<tr><td>'.$langs->trans("OpportunityAmount").'</td>';
-		    print '<td><input size="5" type="text" name="opp_amount" value="'.(isset($_POST['opp_amount'])?GETPOST('opp_amount'):(strcmp($object->opp_amount,'')?price($object->opp_amount):'')).'"></td>';
+		    print '<td><input size="5" type="text" name="opp_amount" value="'.(isset($_POST['opp_amount'])?GETPOST('opp_amount'):(strcmp($object->opp_amount,'')?price($object->opp_amount,0,$langs,1,0):'')).'"></td>';
 		    print '</tr>';
 	    }
 
 	    // Budget
 	    print '<tr><td>'.$langs->trans("Budget").'</td>';
-	    print '<td><input size="5" type="text" name="budget_amount" value="'.(isset($_POST['budget_amount'])?GETPOST('budget_amount'):(strcmp($object->budget_amount,'')?price($object->budget_amount):'')).'"></td>';
+	    print '<td><input size="5" type="text" name="budget_amount" value="'.(isset($_POST['budget_amount'])?GETPOST('budget_amount'):(strcmp($object->budget_amount,'')?price($object->budget_amount,0,$langs,1,0):'')).'"></td>';
 	    print '</tr>';
 
 	    // Description
@@ -750,15 +781,20 @@ else
 	        if ($code) print $langs->trans("OppStatus".$code);
 	        print '</td></tr>';
 
+	        // Opportunity percent
+	        print '<tr><td>'.$langs->trans("OpportunityProbability").'</td><td>';
+	        if (strcmp($object->opp_percent,'')) print price($object->opp_percent,'',$langs,1,0).' %';
+	        print '</td></tr>';
+	        
 	        // Opportunity Amount
 	        print '<tr><td>'.$langs->trans("OpportunityAmount").'</td><td>';
-	        if (strcmp($object->opp_amount,'')) print price($object->opp_amount,'',$langs,0,0,0,$conf->currency);
+	        if (strcmp($object->opp_amount,'')) print price($object->opp_amount,'',$langs,1,0,0,$conf->currency);
 	        print '</td></tr>';
 	    }
 
         // Budget
         print '<tr><td>'.$langs->trans("Budget").'</td><td>';
-        if (strcmp($object->budget_amount, '')) print price($object->budget_amount,'',$langs,0,0,0,$conf->currency);
+        if (strcmp($object->budget_amount, '')) print price($object->budget_amount,'',$langs,1,0,0,$conf->currency);
         print '</td></tr>';
 
         // Description
@@ -788,7 +824,24 @@ else
 
     print '</form>';
 
-
+    // Change probability from status
+    print '<script type="text/javascript" language="javascript">
+        jQuery(document).ready(function() {
+        	function change_percent()
+        	{
+                var element = jQuery("#opp_status option:selected");
+                var defaultpercent = element.attr("defaultpercent");
+                /*if (jQuery("#opp_percent_not_set").val() == "") */
+                jQuery("#opp_percent").val(defaultpercent);
+        	}
+        	/*init_myfunc();*/
+        	jQuery("#opp_status").change(function() {
+        		change_percent();
+        	});
+        });
+        </script>';
+    
+    
     /*
      * Boutons actions
      */
