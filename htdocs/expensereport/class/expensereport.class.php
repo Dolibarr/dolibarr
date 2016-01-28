@@ -370,7 +370,7 @@ class ExpenseReport extends CommonObject
     function set_paid($id, $fuser)
     {
         $sql = "UPDATE ".MAIN_DB_PREFIX."expensereport";
-        $sql.= " SET fk_statut = 6";
+        $sql.= " SET fk_statut = 6, paid=1";
         $sql.= " WHERE rowid = ".$id." AND fk_statut = 5";
 
         dol_syslog(get_class($this)."::set_paid sql=".$sql, LOG_DEBUG);
