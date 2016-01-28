@@ -137,6 +137,7 @@ class Fichinter extends CommonObject
 		$sql.= ", ref";
 		$sql.= ", entity";
 		$sql.= ", fk_user_author";
+		$sql.= ", fk_user_modif";
 		$sql.= ", description";
 		$sql.= ", model_pdf";
 		$sql.= ", fk_projet";
@@ -150,6 +151,7 @@ class Fichinter extends CommonObject
 		$sql.= ", '".$this->db->idate($now)."'";
 		$sql.= ", '".$this->db->escape($this->ref)."'";
 		$sql.= ", ".$conf->entity;
+		$sql.= ", ".$user->id;
 		$sql.= ", ".$user->id;
 		$sql.= ", ".($this->description?"'".$this->db->escape($this->description)."'":"null");
 		$sql.= ", '".$this->db->escape($this->modelpdf)."'";

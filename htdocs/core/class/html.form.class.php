@@ -3444,7 +3444,7 @@ class Form
      *    @param	int		$socid       		Id third party (-1=all, 0=only projects not linked to a third party, id=projects not linked or linked to third party id)
      *    @param    int		$selected    		Id pre-selected project
      *    @param    string	$htmlname    		Name of select field
-     *    @param	int		$discard_closed		Discard closed projects (0=Keep,1=hide completely,2=Disable)
+     *    @param	int		$discard_closed		Discard closed projects (0=Keep,1=hide completely except $selected,2=Disable)
      *    @param	int		$maxlength			Max length
      *    @param	int		$forcefocus			Force focus on field (works with javascript only)
      *    @return	void
@@ -3467,7 +3467,7 @@ class Form
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
             print '<tr><td>';
-            $formproject->select_projects($socid,$selected,$htmlname,$maxlength,0,1,$discard_closed, $forcefocus);
+            $formproject->select_projects($socid, $selected, $htmlname, $maxlength, 0, 1, $discard_closed, $forcefocus);
             print '</td>';
             print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
             print '</tr></table></form>';
@@ -4967,13 +4967,13 @@ class Form
         	{
         		$tplpath = $element = $subelement = $objecttype;
 
-        		if (preg_match('/^([^_]+)_([^_]+)/i',$objecttype,$regs))
+        		if ($objecttype != 'supplier_proposal' && preg_match('/^([^_]+)_([^_]+)/i',$objecttype,$regs))
         		{
         			$element = $regs[1];
         			$subelement = $regs[2];
         			$tplpath = $element.'/'.$subelement;
         		}
-
+        		   		
         		// To work with non standard path
         		if ($objecttype == 'facture')          {
         			$tplpath = 'compta/'.$element;
@@ -4984,7 +4984,6 @@ class Form
         			if (empty($conf->propal->enabled)) continue;	// Do not show if module disabled
         		}
         		else if ($objecttype == 'supplier_proposal')           {
-        			$tplpath = 'comm/'.$element;
         			if (empty($conf->supplier_proposal->enabled)) continue;	// Do not show if module disabled
         		}
         		else if ($objecttype == 'shipping' || $objecttype == 'shipment') {
@@ -5001,7 +5000,7 @@ class Form
         		else if ($objecttype == 'order_supplier')   {
         			$tplpath = 'fourn/commande';
         		}
-
+        		
         		global $linkedObjectBlock;
         		$linkedObjectBlock = $objects;
 

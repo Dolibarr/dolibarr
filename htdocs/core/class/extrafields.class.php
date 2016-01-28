@@ -748,8 +748,9 @@ class ExtraFields
 
 			$out.='<select class="flat" name="'.$keysuffix.'options_'.$key.$keyprefix.'" id="options_'.$key.$keyprefix.'" '.($moreparam?$moreparam:'').'>';
 			$out.='<option value="0">&nbsp;</option>';
-			foreach ($param['options'] as $key=>$val )
+			foreach ($param['options'] as $key => $val)
 			{
+			    if ($key == '') continue;
 				list($val, $parent) = explode('|', $val);
 				$out.='<option value="'.$key.'"';
 				$out.= ($value==$key?' selected':'');
@@ -1160,7 +1161,6 @@ class ExtraFields
 		$list=$this->attribute_list[$key];
 
 		$showsize=0;
-		
 		if ($type == 'date')
 		{
 			$showsize=10;

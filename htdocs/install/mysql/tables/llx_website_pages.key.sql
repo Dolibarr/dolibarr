@@ -1,4 +1,4 @@
--- ========================================================================
+-- ============================================================================
 -- Copyright (C) 2016	Laurent Destailleur	<eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -14,20 +14,10 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
--- ========================================================================
+-- ===========================================================================
+
+ALTER TABLE llx_website_page ADD UNIQUE INDEX uk_website_page_url (fk_website,pageurl);
+
+ALTER TABLE llx_website_page ADD CONSTRAINT fk_website_page_website FOREIGN KEY (fk_website) REFERENCES llx_website (rowid);
 
 
-CREATE TABLE llx_website_page
-(
-	rowid         integer AUTO_INCREMENT NOT NULL PRIMARY KEY,
-	fk_website    integer,
-	pageurl       varchar(16) NOT NULL,
-	title         varchar(255),						
-	description   varchar(255),						
-	keywords      varchar(255),
-	content		  text,
-    status        integer,
-    date_creation     datetime,
-    date_modification datetime,
-	tms           timestamp
-) ENGINE=innodb;

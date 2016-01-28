@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2014 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2016 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne           <eric.seigne@ryxeo.com>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@capnetworks.com>
@@ -45,6 +45,7 @@ $langs->load('companies');
 $langs->load('supplier_proposal');
 $langs->load('compta');
 $langs->load('bills');
+$langs->load('propal');
 $langs->load('orders');
 $langs->load('products');
 $langs->load("deliveries");
@@ -173,7 +174,7 @@ if (empty($reshook))
 	// Validation
 	else if ($action == 'confirm_validate' && $confirm == 'yes' &&
         ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->supplier_proposal->creer))
-       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->supplier_proposal->validate)))
+       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->supplier_proposal->validate_advance)))
 	)
 	{
 		$result = $object->valid($user);
@@ -434,6 +435,14 @@ if (empty($reshook))
 	}
 
 	// Close proposal
+	else if ($action == 'close' && $user->rights->supplier_proposal->cloturer && ! GETPOST('cancel')) {
+		// prevent browser refresh from reopening proposal several times
+		if ($object->statut == 2) {
+			$object->setStatut(4);
+		}
+	}
+
+	// Set accepted/refused
 	else if ($action == 'setstatut' && $user->rights->supplier_proposal->cloturer && ! GETPOST('cancel')) {
 		if (! GETPOST('statut')) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("CloseAs")), null, 'errors');
@@ -441,7 +450,7 @@ if (empty($reshook))
 		} else {
 			// prevent browser refresh from closing proposal several times
 			if ($object->statut == 1) {
-				$object->cloture($user, GETPOST('statut'), GETPOST('note'));
+                $object->cloture($user, GETPOST('statut'), GETPOST('note'));
 			}
 		}
 	}
@@ -1596,11 +1605,9 @@ if ($action == 'create')
 
 	if ($action == 'statut')
 	{
-		/*
-		 * Form to close proposal (signed or not)
-		 */
+		// Form to set proposal accepted/refused
 		$form_close = '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="post">';
-		$form_close .= '<p class="notice">'.$langs->trans('SupplierProposalRefFournNotice').'</p>';
+		if (! empty($conf->global->SUPPLIER_PROPOSAL_UPDATE_PRICE_ON_SUPPlIER_PROPOSAL)) $form_close .= '<p class="notice">'.$langs->trans('SupplierProposalRefFournNotice').'</p>';  // TODO Suggest a permanent checkbox instead of option
 		$form_close .= '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 		$form_close .= '<table class="border" width="100%">';
 		$form_close .= '<tr><td width="150"  align="left">' . $langs->trans("CloseAs") . '</td><td align="left">';
@@ -1615,9 +1622,9 @@ if ($action == 'create')
 		$form_close .= $object->note;
 		$form_close .= '</textarea></td></tr>';
 		$form_close .= '<tr><td align="center" colspan="2">';
-		$form_close .= '<input type="submit" class="button" name="validate" value="' . $langs->trans('Validate') . '">';
+		$form_close .= '<input type="submit" class="button" name="validate" value="' . $langs->trans('Save') . '">';
 		$form_close .= ' &nbsp; <input type="submit" class="button" name="cancel" value="' . $langs->trans('Cancel') . '">';
-		$form_close .= '<a name="close">&nbsp;</a>';
+		$form_close .= '<a name="acceptedrefused">&nbsp;</a>';
 		$form_close .= '</td>';
 		$form_close .= '</tr></table></form>';
 
@@ -1640,7 +1647,7 @@ if ($action == 'create')
 				// Validate
 				if ($object->statut == 0 && $object->total_ttc >= 0 && count($object->lines) > 0 &&
 			        ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->supplier_proposal->creer))
-       				|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->supplier_proposal->validate)))
+       				|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->supplier_proposal->validate_advance)))
 				) {
 					if (count($object->lines) > 0)
 						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=validate">' . $langs->trans('Validate') . '</a></div>';
@@ -1660,7 +1667,7 @@ if ($action == 'create')
 
 				// Send
 				if ($object->statut == 1 || $object->statut == 2) {
-					if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->supplier_proposal->send) {
+					if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->supplier_proposal->send_advance) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=presend&amp;mode=init">' . $langs->trans('SendByMail') . '</a></div>';
 					} else
 						print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">' . $langs->trans('SendByMail') . '</a></div>';
@@ -1673,12 +1680,18 @@ if ($action == 'create')
 					}
 				}
 
-				// Close
+				// Set accepted/refused
 				if ($object->statut == 1 && $user->rights->supplier_proposal->cloturer) {
-					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=statut' . (empty($conf->global->MAIN_JUMP_TAG) ? '' : '#close') . '"';
-					print '>' . $langs->trans('Close') . '</a></div>';
+					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=statut' . (empty($conf->global->MAIN_JUMP_TAG) ? '' : '#acceptedrefused') . '"';
+					print '>' . $langs->trans('SetAcceptedRefused') . '</a></div>';
 				}
 
+				// Close
+				if ($object->statut == 2 && $user->rights->supplier_proposal->cloturer) {
+				    print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=close' . (empty($conf->global->MAIN_JUMP_TAG) ? '' : '#close') . '"';
+				    print '>' . $langs->trans('Close') . '</a></div>';
+				}
+				
 				// Clone
 				if ($user->rights->supplier_proposal->creer) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&amp;socid=' . $object->socid . '&amp;action=clone&amp;object=' . $object->element . '">' . $langs->trans("ToClone") . '</a></div>';

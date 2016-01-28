@@ -2116,7 +2116,7 @@ if ($action == 'create')
 		$form_close .= $object->note;
 		$form_close .= '</textarea></td></tr>';
 		$form_close .= '<tr><td align="center" colspan="2">';
-		$form_close .= '<input type="submit" class="button" name="validate" value="' . $langs->trans('Validate') . '">';
+		$form_close .= '<input type="submit" class="button" name="validate" value="' . $langs->trans('Save') . '">';
 		$form_close .= ' &nbsp; <input type="submit" class="button" name="cancel" value="' . $langs->trans('Cancel') . '">';
 		$form_close .= '<a name="close">&nbsp;</a>';
 		$form_close .= '</td>';
@@ -2204,10 +2204,10 @@ if ($action == 'create')
 					}
 				}
 
-				// Close
+				// Set accepted/refused
 				if ($object->statut == Propal::STATUS_VALIDATED && $user->rights->propal->cloturer) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=statut' . (empty($conf->global->MAIN_JUMP_TAG) ? '' : '#close') . '"';
-					print '>' . $langs->trans('Close') . '</a></div>';
+					print '>' . $langs->trans('SetAcceptedRefused') . '</a></div>';
 				}
 
 				// Clone

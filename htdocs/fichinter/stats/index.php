@@ -1,9 +1,5 @@
 <?php
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
+/* Copyright (C) 2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,22 +16,21 @@
  */
 
 /**
- *	    \file       htdocs/commande/stats/index.php
- *      \ingroup    commande
- *		\brief      Page with customers or suppliers orders statistics
+ *	    \file       htdocs/fichinter/stats/index.php
+ *      \ingroup    fichinter
+ *		\brief      Page with interventions statistics
  */
 
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-require_once DOL_DOCUMENT_ROOT.'/commande/class/commandestats.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinterstats.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 
 $WIDTH=DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT=DolGraph::getDefaultGraphSizeForStats('height');
 
-$mode=GETPOST("mode")?GETPOST("mode"):'customer';
-if ($mode == 'customer' && ! $user->rights->commande->lire) accessforbidden();
-if ($mode == 'supplier' && ! $user->rights->fournisseur->commande->lire) accessforbidden();
+$mode='customer';
+if ($mode == 'customer' && ! $user->rights->ficheinter->lire) accessforbidden();
 
 $userid=GETPOST('userid','int');
 $socid=GETPOST('socid','int');
@@ -52,7 +47,7 @@ $year = GETPOST('year')>0?GETPOST('year'):$nowyear;
 $startyear=$year-1;
 $endyear=$year;
 
-$langs->load('orders');
+$langs->load('interventions');
 $langs->load('companies');
 $langs->load('other');
 $langs->load('suppliers');
@@ -66,13 +61,8 @@ $form=new Form($db);
 
 if ($mode == 'customer')
 {
-    $title=$langs->trans("OrdersStatistics");
-    $dir=$conf->commande->dir_temp;
-}
-if ($mode == 'supplier')
-{
-    $title=$langs->trans("OrdersStatisticsSuppliers").' ('.$langs->trans("SentToSuppliers").")";
-    $dir=$conf->fournisseur->dir_output.'/commande/temp';
+    $title=$langs->trans("InterventionStatistics");
+    $dir=$conf->ficheinter->dir_temp;
 }
 
 llxHeader('', $title);
@@ -81,7 +71,7 @@ print load_fiche_titre($title,'','title_commercial.png');
 
 dol_mkdir($dir);
 
-$stats = new CommandeStats($db, $socid, $mode, ($userid>0?$userid:0));
+$stats = new FichinterStats($db, $socid, $mode, ($userid>0?$userid:0));
 
 // Build graphic number of object
 $data = $stats->getNbByMonthWithPrevYear($endyear,$startyear);
@@ -91,15 +81,13 @@ $data = $stats->getNbByMonthWithPrevYear($endyear,$startyear);
 
 if (!$user->rights->societe->client->voir || $user->societe_id)
 {
-    $filenamenb = $dir.'/ordersnbinyear-'.$user->id.'-'.$year.'.png';
-    if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersnbinyear-'.$user->id.'-'.$year.'.png';
-    if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersnbinyear-'.$user->id.'-'.$year.'.png';
+    $filenamenb = $dir.'/interventionsnbinyear-'.$user->id.'-'.$year.'.png';
+    if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstats&file=interventionsnbinyear-'.$user->id.'-'.$year.'.png';
 }
 else
 {
-    $filenamenb = $dir.'/ordersnbinyear-'.$year.'.png';
-    if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersnbinyear-'.$year.'.png';
-    if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersnbinyear-'.$year.'.png';
+    $filenamenb = $dir.'/interventionsnbinyear-'.$year.'.png';
+    if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstats&file=interventionsnbinyear-'.$year.'.png';
 }
 
 $px1 = new DolGraph();
@@ -119,12 +107,12 @@ if (! $mesg)
     $px1->SetMinValue(min(0,$px1->GetFloorMinValue()));
     $px1->SetWidth($WIDTH);
     $px1->SetHeight($HEIGHT);
-    $px1->SetYLabel($langs->trans("NbOfOrder"));
+    $px1->SetYLabel($langs->trans("NbOfIntervention"));
     $px1->SetShading(3);
     $px1->SetHorizTickIncrement(1);
     $px1->SetPrecisionY(0);
     $px1->mode='depth';
-    $px1->SetTitle($langs->trans("NumberOfOrdersByMonth"));
+    $px1->SetTitle($langs->trans("NumberOfInterventionsByMonth"));
 
     $px1->draw($filenamenb,$fileurlnb);
 }
@@ -136,15 +124,15 @@ $data = $stats->getAmountByMonthWithPrevYear($endyear,$startyear);
 
 if (!$user->rights->societe->client->voir || $user->societe_id)
 {
-    $filenameamount = $dir.'/ordersamountinyear-'.$user->id.'-'.$year.'.png';
-    if ($mode == 'customer') $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersamountinyear-'.$user->id.'-'.$year.'.png';
-    if ($mode == 'supplier') $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersamountinyear-'.$user->id.'-'.$year.'.png';
+    $filenameamount = $dir.'/interventionsamountinyear-'.$user->id.'-'.$year.'.png';
+    if ($mode == 'customer') $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstats&file=interventionsamountinyear-'.$user->id.'-'.$year.'.png';
+    if ($mode == 'supplier') $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstatssupplier&file=interventionsamountinyear-'.$user->id.'-'.$year.'.png';
 }
 else
 {
-    $filenameamount = $dir.'/ordersamountinyear-'.$year.'.png';
-    if ($mode == 'customer') $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersamountinyear-'.$year.'.png';
-    if ($mode == 'supplier') $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersamountinyear-'.$year.'.png';
+    $filenameamount = $dir.'/interventionsamountinyear-'.$year.'.png';
+    if ($mode == 'customer') $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstats&file=interventionsamountinyear-'.$year.'.png';
+    if ($mode == 'supplier') $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstatssupplier&file=interventionsamountinyear-'.$year.'.png';
 }
 
 $px2 = new DolGraph();
@@ -163,12 +151,12 @@ if (! $mesg)
     $px2->SetMinValue(min(0,$px2->GetFloorMinValue()));
     $px2->SetWidth($WIDTH);
     $px2->SetHeight($HEIGHT);
-    $px2->SetYLabel($langs->trans("AmountOfOrders"));
+    $px2->SetYLabel($langs->trans("AmountOfinterventions"));
     $px2->SetShading(3);
     $px2->SetHorizTickIncrement(1);
     $px2->SetPrecisionY(0);
     $px2->mode='depth';
-    $px2->SetTitle($langs->trans("AmountOfOrdersByMonthHT"));
+    $px2->SetTitle($langs->trans("AmountOfinterventionsByMonthHT"));
 
     $px2->draw($filenameamount,$fileurlamount);
 }
@@ -178,15 +166,15 @@ $data = $stats->getAverageByMonthWithPrevYear($endyear, $startyear);
 
 if (!$user->rights->societe->client->voir || $user->societe_id)
 {
-    $filename_avg = $dir.'/ordersaverage-'.$user->id.'-'.$year.'.png';
-    if ($mode == 'customer') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersaverage-'.$user->id.'-'.$year.'.png';
-    if ($mode == 'supplier') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersaverage-'.$user->id.'-'.$year.'.png';
+    $filename_avg = $dir.'/interventionsaverage-'.$user->id.'-'.$year.'.png';
+    if ($mode == 'customer') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstats&file=interventionsaverage-'.$user->id.'-'.$year.'.png';
+    if ($mode == 'supplier') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstatssupplier&file=interventionsaverage-'.$user->id.'-'.$year.'.png';
 }
 else
 {
-    $filename_avg = $dir.'/ordersaverage-'.$year.'.png';
-    if ($mode == 'customer') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersaverage-'.$year.'.png';
-    if ($mode == 'supplier') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersaverage-'.$year.'.png';
+    $filename_avg = $dir.'/interventionsaverage-'.$year.'.png';
+    if ($mode == 'customer') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstats&file=interventionsaverage-'.$year.'.png';
+    if ($mode == 'supplier') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstatssupplier&file=interventionsaverage-'.$year.'.png';
 }
 
 $px3 = new DolGraph();
@@ -277,7 +265,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre" height="24">';
 print '<td align="center">'.$langs->trans("Year").'</td>';
-print '<td align="right">'.$langs->trans("NbOfOrders").'</td>';
+print '<td align="right">'.$langs->trans("NbOfinterventions").'</td>';
 print '<td align="right">%</td>';
 print '<td align="right">'.$langs->trans("AmountTotal").'</td>';
 print '<td align="right">%</td>';
@@ -330,10 +318,10 @@ print '<table class="border" width="100%"><tr valign="top"><td align="center">';
 if ($mesg) { print $mesg; }
 else {
     print $px1->show();
-    print "<br>\n";
+    /*print "<br>\n";
     print $px2->show();
     print "<br>\n";
-    print $px3->show();
+    print $px3->show();*/
 }
 print '</td></tr></table>';
 

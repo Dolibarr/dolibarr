@@ -261,6 +261,13 @@ if (empty($reshook))
 			$object->fk_incoterms = GETPOST('incoterm_id', 'int');
 			$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 
+			// Fill array 'array_options' with data from add form
+			if (! $error)
+			{
+    			$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+    			if ($ret < 0) $error++;
+			}
+			
 			// If creation from another object of another module (Example: origin=propal, originid=1)
 			if (! empty($origin) && ! empty($originid))
 			{
@@ -292,10 +299,6 @@ if (empty($reshook))
 				if (! empty($other_linked_objects)) {
 					$object->linked_objects = array_merge($object->linked_objects, $other_linked_objects);
 				}
-
-				// Fill array 'array_options' with data from add form
-				$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
-				if ($ret < 0) $error++;
 
 				if (! $error)
 				{
@@ -386,10 +389,6 @@ if (empty($reshook))
 					$action = 'create';
 				}
 			} else {
-				// Fill array 'array_options' with data from add form
-				$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
-				if ($ret < 0) $error++;
-
 				if (! $error)
 				{
 					$object_id = $object->create($user);

@@ -2384,14 +2384,14 @@ abstract class CommonObject
                 {
                     // Parse element/subelement (ex: project_task)
                     $module = $element = $subelement = $objecttype;
-                    if ($objecttype != 'order_supplier' && $objecttype != 'invoice_supplier' && preg_match('/^([^_]+)_([^_]+)/i',$objecttype,$regs))
+                    if ($objecttype != 'supplier_proposal' && $objecttype != 'order_supplier' && $objecttype != 'invoice_supplier' 
+                        && preg_match('/^([^_]+)_([^_]+)/i',$objecttype,$regs))
                     {
                         $module = $element = $regs[1];
                         $subelement = $regs[2];
                     }
 
                     $classpath = $element.'/class';
-
                     // To work with non standard classpath or module name
                     if ($objecttype == 'facture')			{
                         $classpath = 'compta/facture/class';
@@ -2427,7 +2427,10 @@ abstract class CommonObject
                     else if ($objecttype == 'order_supplier')   {
                         $classfile = 'fournisseur.commande'; $classname = 'CommandeFournisseur';
                     }
-
+                    else if ($objecttype == 'supplier_proposal')   {
+                        $classfile = 'supplier_proposal'; $classname = 'SupplierProposal';
+                    }
+                    
                     // Here $module, $classfile and $classname are set
                     if ($conf->$module->enabled && (($element != $this->element) || $alsosametype))
                     {
@@ -2595,6 +2598,7 @@ abstract class CommonObject
             $error = 0;
 
             $trigkey='';
+            if ($this->element == 'supplier_proposal' && $status == 2) $trigkey='SUPPLIER_PROPOSAL_CLOSE';
             if ($this->element == 'fichinter' && $status == 2) $trigkey='FICHINTER_CLASSIFY_BILLED';
             if ($this->element == 'fichinter' && $status == 1) $trigkey='FICHINTER_CLASSIFY_UNBILLED';
 
