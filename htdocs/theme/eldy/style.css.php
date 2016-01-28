@@ -2088,6 +2088,10 @@ border: none;
   padding-left: 4px;
   font-weight: bold;
 }
+div.pagination li.litext a:hover {
+	background-color: transparent;
+	background-image: none;
+}
 <?php if (! empty($conf->dol_use_jmobile)) { ?>
 div.pagination li.litext {
   padding-top: 13px;
