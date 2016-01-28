@@ -155,6 +155,7 @@ DepositsAreNotIncluded=- Noguldījumu rēķinus, nedz iekļauti
 DepositsAreIncluded=- Noguldījumu rēķini ir iekļauti
 LT2ReportByCustomersInInputOutputModeES=Ziņojumā, ko trešās puses IRPF
 LT1ReportByCustomersInInputOutputModeES=Report by third party RE
+VATReport=VAT report
 VATReportByCustomersInInputOutputMode=Ziņojums klientu PVN iekasē un izmaksā
 VATReportByCustomersInDueDebtMode=Ziņojums klientu PVN iekasē un izmaksā
 VATReportByQuartersInInputOutputMode=Ziņojums, ko likmi iekasētā PVN un samaksāts

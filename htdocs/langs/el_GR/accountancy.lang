@@ -26,7 +26,6 @@ Selectmodelcsv=Επιλέξτε ένα πρότυπο από την εξαγωγ
 Modelcsv_normal=Κλασική εξαγωγή
 Modelcsv_CEGID=Εξαγωγή προς CEGID εμπειρογνωμόνων
 BackToChartofaccounts=Επιστροφή στο διάγραμμα των λογαριασμών
-Back=Επιστροφή
 
 Definechartofaccounts=Ορίστε ένα διάγραμμα των λογαριασμών
 Selectchartofaccounts=Επιλέξτε ένα διάγραμμα των λογαριασμών
@@ -109,10 +108,6 @@ DelBookKeeping=Διαγράψτε τα αρχεία της γενικής λογ
 
 DescSellsJournal=Ημερολόγιο πωλήσεων
 DescPurchasesJournal=Ημερολόγιο αγορών
-BankJournal=Τραπεζικό ημερολόγιο
-DescBankJournal=Ημερολόγιο Τράπεζας, συμπεριλαμβανομένων όλων των ειδών πληρωμών εκτός από τα μετρητά
-CashJournal=Ημερολόγιο μετρητών
-DescCashJournal=Ημερολόγιο μετρητών καθώς και το είδος των ταμειακών πληρωμών
 FinanceJournal=Finance journal
 DescFinanceJournal=Finance journal including all the types of payments by bank account
 
@@ -152,7 +147,7 @@ DescVentilDoneSupplier=Συμβουλευτείτε εδώ τη λίστα τω�
 ValidateHistory=Αυτόματη επικύρωση
 
 ErrorAccountancyCodeIsAlreadyUse=Σφάλμα, δεν μπορείτε να διαγράψετε αυτόν τον λογιστικό λογαριασμό γιατί χρησιμοποιείται
-
+MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
 FicheVentilation=Φόρμα ανάλυσης
 GeneralLedgerIsWritten=Operations are written in the general ledger
 
@@ -167,7 +162,13 @@ Headername=Name in header
 Type=Type of fields
 Param=Additionnal parameters
 EnabledProduct=In Product
-EnabledTiers=In Tiers
+EnabledTiers=In third party
 EnabledVat=In Vat
-
-MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
+## Tools - Init accounting account on product / service
+InitAccountancy=Init accountancy
+InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accountancy account defined for sales and purchases. Check before that setup of module accountancy is complete.
+Options=Options
+OptionModeProductSell=Mode sales
+OptionModeProductBuy=Mode purchases
+OptionModeProductSellDesc=Show all products with no accounting account defined for sales.
+OptionModeProductBuyDesc=Show all products with no accounting account defined for purchases.

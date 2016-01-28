@@ -81,6 +81,7 @@ ActivateCheckReadKey=Key used to encrypt URL used for "Read Receipt" and "Unsubc
 EMailSentToNRecipients=E-kiri saadetud %s aadressile.
 XTargetsAdded=<b>%s</b> recipients added into target list
 EachInvoiceWillBeAttachedToEmail=A document using default invoice document template will be created and attached to each email.
+OnlyPDFattachmentSupported=If the PDF document was already generated for the invoice, it will be attached to email. If not, no email will be sent (also, note that only pdf invoice are supported as attachment in mass sending in this version).
 MailTopicSendRemindUnpaidInvoices=Reminder of invoice %s (%s)
 SendRemind=Send reminder by EMails
 RemindSent=%s reminder(s) sent

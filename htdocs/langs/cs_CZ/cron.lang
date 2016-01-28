@@ -18,8 +18,9 @@ CronExplainHowToRunUnix=Na Unixových systémech by jste měli použít následu
 CronExplainHowToRunWin=Na Microsoft Windows systémech můžete použít naplánováné nástroje úloh ke spuštění příkazového řádku každých 5 minut
 # Menu
 CronJobs=Naplánované úlohy
-CronListActive=Výpis aktivních/naplánovaných úloh
+CronListActive=List of enabled/scheduled jobs
 CronListInactive=Seznam vypnutých úloh
+EnabledAndDisabled=Enabled and disabled
 # Page list
 CronDateLastRun=Poslední úloha
 CronLastOutput=Výstup poslední úlohy
@@ -35,8 +36,8 @@ CronInfo=Plánovací modul úloh umožňují provádět úlohy, které byly plá
 CronWaitingJobs=Čekající úlohy
 CronTask=Práce
 CronNone=Nikdo
-CronDtStart=Datum zahájení
-CronDtEnd=Datum ukončení
+CronDtStart=Not before
+CronDtEnd=Not after
 CronDtNextLaunch=Další provedení
 CronDtLastLaunch=Poslední provedení
 CronFrequency=Frekvence
@@ -51,6 +52,7 @@ CronNoJobs=Žádné registrované úkoly
 CronPriority=Priorita
 CronLabel=Popis
 CronNbRun=Nb. zahájit
+CronMaxRun=Max nb. launch
 CronEach=Každý
 JobFinished=Práce zahájena a dokončena
 #Page card

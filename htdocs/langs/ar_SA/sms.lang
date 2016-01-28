@@ -49,5 +49,6 @@ SendSms=ارسال الرسائل القصيرة
 SmsInfoCharRemain=ملحوظة من الأحرف المتبقية
 SmsInfoNumero= (تنسيق دولي أي: +33899701761)
 DelayBeforeSending=تأخير قبل إرسال (دقائق)
+SmsNoPossibleSenderFound=No sender available. Check setup of your SMS provider.
 SmsNoPossibleRecipientFound=لا هدف متاح. تحقق الإعداد من مزود خدمات الرسائل القصيرة.
 

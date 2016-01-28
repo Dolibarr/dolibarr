@@ -49,5 +49,6 @@ SendSms=Pošlite SMS v tvare
 SmsInfoCharRemain=Nb zostávajúcich znakov
 SmsInfoNumero= (Medzinárodným formátu, tj: 33899701761)
 DelayBeforeSending=Oneskorenie pred odoslaním (minúty)
+SmsNoPossibleSenderFound=No sender available. Check setup of your SMS provider.
 SmsNoPossibleRecipientFound=Žiadny cieľ k dispozícii. Skontrolujte nastavenia poskytovateľa služieb SMS.
 

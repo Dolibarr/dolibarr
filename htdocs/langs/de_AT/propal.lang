@@ -9,7 +9,6 @@ RefProposal=Angebots Nr.
 DatePropal=Datum des Angebots
 DateEndPropal=Ablauf der Bindefrist
 ValidityDuration=Bindefrist
-CloseAs=Schließen mit dem Status
 Estimate=Geschätzt :
 CopyPropalFrom=Erstelle neues Angebot durch Duplikation
 CreateEmptyPropal=Erstelle leeres Angebot oder aus der Produkt-/Dienstleistungsliste

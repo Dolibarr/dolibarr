@@ -329,7 +329,7 @@ UMaskExplanation=Ce paramètre permet de définir les droits des fichiers créé
 SeeWikiForAllTeam=Voir le wiki pour le détail de tous les acteurs et leur organisation
 UseACacheDelay= Délai de mise en cache de l'export en secondes (0 ou vide pour aucun cache)
 DisableLinkToHelpCenter=Cacher le lien «<b>Besoin d'aide ou d'assistance</b>» sur la page de connexion
-DisableLinkToHelp=Hide link to online help "<b>%s</b>"
+DisableLinkToHelp=Cacher le lien vers l'aide en ligne <b>%s</b>
 AddCRIfTooLong=Il n'y a pas de coupure de ligne automatique, aussi si votre texte est trop long sur les documents, il faudra ajouter vous même des retours chariot dans la zone de saisie du texte
 ModuleDisabled=Module désactivé
 ModuleDisabledSoNoEvent=Module désactivé donc événement jamais créé
@@ -352,7 +352,7 @@ ThemeDir=Répertoire des thèmes
 ConnectionTimeout=Délai expiration de connexion
 ResponseTimeout=Délai expiration de réponse
 SmsTestMessage=Message de test de __PHONEFROM__ vers __PHONETO__
-ModuleMustBeEnabledFirst=Module <b>%s</b> must be enabled first if you need this feature.
+ModuleMustBeEnabledFirst=Le module <b>%s</b> doit être activé pour utiliser cette fonction.
 SecurityToken=Clé de sécurisation des URLs
 NoSmsEngine=Aucun gestionnaire d'envoi de SMS n'est disponible. Les gestionnaires d'envois SMS ne sont pas installés en standard (car dépendent d'un fournisseur) mais vous pourrez en trouver depuis la plateforme %s
 PDF=PDF
@@ -362,7 +362,7 @@ HideAnyVATInformationOnPDF=Cacher toutes les informations en rapport avec la TVA
 HideDescOnPDF=Cacher la description des produits sur les PDF générés
 HideRefOnPDF=Cacher la référence des produits sur les PDF générés
 HideDetailsOnPDF=Cacher les détails des lignes de produits sur les PDF générés
-PlaceCustomerAddressToIsoLocation=Use french standard position (La Posteà for customer address position
+PlaceCustomerAddressToIsoLocation=Use french standard position (La Poste) for customer address position
 Library=Bibliothèque
 UrlGenerationParameters=Sécurisation des URLs
 SecurityTokenIsUnique=Utiliser un paramètre securekey unique pour chaque URL ?
@@ -393,8 +393,8 @@ ExtrafieldLink=Lier à un objet
 ExtrafieldParamHelpselect=La liste doit être de la forme clef,valeur<br><br> par exemple : <br>1,valeur1<br>2,valeur2<br>3,valeur3<br>...<br><br>Pour que la liste soit dépendante d'une autre :<br>1,valeur1|code_liste_parent:clef_parent<br>2,valeur2|code_liste_parent:clef_parent
 ExtrafieldParamHelpcheckbox=La liste doit être de la forme clef,valeur<br><br> par exemple : <br>1,valeur1<br>2,valeur2<br>3,valeur3<br>...
 ExtrafieldParamHelpradio=La liste doit être de la forme clef,valeur<br><br> par exemple : <br>1,valeur1<br>2,valeur2<br>3,valeur3<br>...
-ExtrafieldParamHelpsellist=Parameters list comes from a table<br>Syntax : table_name:label_field:id_field::filter<br>Example : c_typent:libelle:id::filter<br><br>filter can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter witch is the current id of current object<br>To do a SELECT in filter use $SEL$<br>if you want to filter on extrafields use syntaxt  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another :<br>c_typent:libelle:id:parent_list_code|parent_column:filter
-ExtrafieldParamHelpchkbxlst=Parameters list comes from a table<br>Syntax : table_name:label_field:id_field::filter<br>Example : c_typent:libelle:id::filter<br><br>filter can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter witch is the current id of current object<br>To do a SELECT in filter use $SEL$<br>if you want to filter on extrafields use syntaxt  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another :<br>c_typent:libelle:id:parent_list_code|parent_column:filter
+ExtrafieldParamHelpsellist=Les paramètres de la liste viennent de la table<br>Syntax : table_name:label_field:id_field::filter<br>Exemple : c_typent:libelle:id::filter<br><br>Le filtre peut être un simple test (e.g. actif=1) pour seulement montrer la valeur active<br>Vous pouvez aussi utiliser $ID$ dans le filtre qui est le ID actuel de l'objet<br>
+ExtrafieldParamHelpchkbxlst=Les paramètres de la liste viennent de la table<br>Syntax : table_name:label_field:id_field::filter<br>Exemple : c_typent:libelle:id::filter<br><br>Le filtre peut être un simple test (e.g. actif=1) pour seulement montrer la valeur active<br>Vous pouvez aussi utiliser $ID$ dans le filtre qui est le ID actuel de l'objet<br>
 ExtrafieldParamHelplink=Les paramètres doivent être ObjectName: Classpath<br>Syntaxe: ObjectName:Classpath<br>Exemple: Société:societe/class/societe.class.php
 LibraryToBuildPDF=Bibliothèque utilisée pour la génération des PDF
 WarningUsingFPDF=Attention : votre fichier <b>conf.php</b> contient la directive <b>dolibarr_pdf_force_fpdf=1</b>. Cela signifie que vous utilisez la librairie FPDF pour générer vos fichiers PDF. Cette librairie est ancienne et ne couvre pas de nombreuses fonctionnalités (Unicode, transparence des images, langues cyrilliques, arabes ou asiatiques...), aussi vous pouvez rencontrer des problèmes durant la génération des PDF.<br>Pour résoudre cela et avoir une prise en charge complète de PDF, vous pouvez télécharger la <a href="http://www.tcpdf.org/" target="_blank">bibliothèque TCPDF</a> puis commenter ou supprimer la ligne <b>$dolibarr_pdf_force_fpdf=1</b>, et ajouter à la place <b>$dolibarr_lib_TCPDF_PATH='chemin_vers_TCPDF'</b>
@@ -416,6 +416,7 @@ ConfirmEraseAllCurrentBarCode=Etes-vous sur de vouloir effacer toutes les valeur
 AllBarcodeReset=Tous les codes-barre ont été supprimés
 NoBarcodeNumberingTemplateDefined=Aucun modèle de numérotation de code-barre n'a été activé dans la configuration du module code-barre.
 NoRecordWithoutBarcodeDefined=Aucun enregistrement sans code-barre défini.
+EnableFileCache=Enable file cache
 
 # Modules
 Module0Name=Utilisateurs & groupes
@@ -499,7 +500,7 @@ Module510Desc=Gestion des paiements des salaires des employés
 Module520Name=Emprunt
 Module520Desc=Gestion des emprunts
 Module600Name=Notifications
-Module600Desc=Envoi de notifications Email sur certains événements métiers Dolibarr, aux contacts de tiers (configuration réalisée sur chaque tiers)
+Module600Desc=Send EMail notifications (triggered by some business events) to third-party contacts (setup defined on each thirdparty) or fixed emails
 Module700Name=Dons
 Module700Desc=Gestion des dons
 Module770Name=Notes de frais
@@ -930,8 +931,8 @@ DefaultMenuSmartphoneManager=Gestionnaire du menu smartphone
 Skin=Thème visuel
 DefaultSkin=Thème visuel par défaut
 MaxSizeList=Longueur maximale des listes
-DefaultMaxSizeList=Default max length for lists
-DefaultMaxSizeShortList=Default max length for short lists (ie in customer card)
+DefaultMaxSizeList=Longueur maximale par défaut des listes
+DefaultMaxSizeShortList=Longueur maximale par défaut des listes courtes (e.g. dans la carte du client)
 MessageOfDay=Message du jour
 MessageLogin=Message page de connexion
 PermanentLeftSearchForm=Zone de recherche permanente du menu de gauche
@@ -963,6 +964,7 @@ DelaysBeforeWarning=Délais avant alerte
 DelaysOfToleranceBeforeWarning=Délais de tolérance avant alerte
 DelaysOfToleranceDesc=Cet écran permet de définir les délais de tolérance après lesquels une alerte sera signalée à l'écran par le pictogramme %s sur chaque élément en retard.
 Delays_MAIN_DELAY_ACTIONS_TODO=Tolérance de retard avant alerte (en jours) sur actions planifiées non réalisées
+Delays_MAIN_DELAY_TASKS_TODO=Delay tolerance (in days) before alert on planned tasks not yet realised
 Delays_MAIN_DELAY_ORDERS_TO_PROCESS=Tolérance de retard avant alerte (en jours) sur commandes clients non traitées
 Delays_MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS=Tolérance de retard avant alerte (en jours) sur commandes fournisseurs non traitées
 Delays_MAIN_DELAY_PROPALS_TO_CLOSE=Tolérance de retard avant alerte (en jours) sur propales à cloturer
@@ -974,7 +976,7 @@ Delays_MAIN_DELAY_CUSTOMER_BILLS_UNPAYED=Tolérance de retard avant alerte (en j
 Delays_MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE=Tolérance de retard avant alerte (en jours) sur rapprochements bancaires à faire
 Delays_MAIN_DELAY_MEMBERS=Tolérance de retard avant alerte (en jours) sur cotisations adhérents en retard
 Delays_MAIN_DELAY_CHEQUES_TO_DEPOSIT=Tolérance de retard avant alerte (en jours) sur chèques à déposer
-Delays_MAIN_DELAY_EXPENSEREPORTS=Tolerance delay (in days) before alert for expense reports to approve
+Delays_MAIN_DELAY_EXPENSEREPORTS=Tolérance de retard avant alerte (en jours) sur les notes de frais à approuver
 SetupDescription1=Toutes les options de l'espace configuration sont des options permettant de configurer Dolibarr avant de commencer son utilisation.
 SetupDescription2=Les 2 étapes indispensables de configuration sont les 2 premières dans le menu gauche, à savoir, la configuration de la société/institution et la configuration des modules :
 SetupDescription3=Les données du menu <a href="%s">Configuration -> Société/institution</a> sont requises car les informations saisies sont utilisées dans la plupart des écrans, en affichage, ou pour modifier le comportement de Dolibarr (comme par exemple des fonctions qui dépendent de votre pays).
@@ -1087,6 +1089,7 @@ PathDirectory=Répertoire
 SendmailOptionMayHurtBuggedMTA=La fonction d'envoi de mails par la méthode "PHP mail directe" génère un message mail qui peut être mal interprété par certains serveurs mal configurés de réception de mail. Cela se traduit par des mails non lisibles chez les personnes hébergés par ces plateformes boguées. C'est le cas des clients de certains fournisseurs d'accès internet (Ex: Orange). Ce n'est pas un problème, ni dans Dolibarr ni dans PHP mais sur le serveur de réception. Vous pouvez toutefois ajouter l'option MAIN_FIX_FOR_BUGGED_MTA à 1 dans configuration - divers pour modifier Dolibarr afin de compenser le bug. Toutefois ce sont les serveurs respectueux du standard d'envoi de mail qui pourront avoir des problèmes. L'autre solution (recommandée) est d'utiliser la méthode d'envoi SMTP socket library qui n'a aucun de ces inconvénients.
 TranslationSetup=Configuration de la traduction
 TranslationDesc=Le choix de la langue affichée à l'écran se modifie:<br>* Soit de manière globale depuis le menu <strong>Accueil - Configuration - Affichage</strong><br>* Soit de manière spécifique à l'utilisateur depuis l'onglet <strong>Interface utilisateur</strong> de sa fiche utilisateur (cliquer sur l'identifiant en haut de l'écran).
+TranslationOverwriteDesc=You can also overwrite some value by completing/editing the following table. You must use for "%s" the language code, for "%s" the key found into file langs/xx_XX/somefile.lang and "%s" the new value you want to use as new translation.
 TotalNumberOfActivatedModules=Nombre total de modules fonctionnels activés: <b>%s</b>
 YouMustEnableOneModule=Vous devez activer au moins une fonctionnalité
 ClassNotFoundIntoPathWarning=La classe %s n'a pas été trouvée dans le chemin PHP
@@ -1110,10 +1113,10 @@ GetBarCode=Récupérer code barre
 EmptyNumRefModelDesc=Code libre sans vérification. Peut être modifié à tout moment.
 ##### Module password generation
 PasswordGenerationStandard=Renvoie un mot de passe généré selon l'algorithme interne de Dolibarr : 8 caractères, chiffres et caractères en minuscules mélangés.
-PasswordGenerationNone=Do not suggest any generated password. Password must be typed in manually.
-PasswordGenerationPerso=Return a password according to your personally defined configuration.
+PasswordGenerationNone=Ne pas suggérer un mot de passe généré. Le mot de passe doit être entré manuellement. 
+PasswordGenerationPerso=Retourner un mot de passe en fonction de votre configuration personnellement défini.
 SetupPerso=Selon votre configuration
-PasswordPatternDesc=Password pattern description
+PasswordPatternDesc=Description du masque du mot de passe
 ##### Users setup #####
 UserGroupSetup=Configuration module utilisateurs et groupes
 GeneratePassword=Proposer un mot de passe généré
@@ -1177,7 +1180,7 @@ CreditNotePDFModules=Modèles de documents des avoirs
 CreditNote=Avoir
 CreditNotes=Avoirs
 ForceInvoiceDate=Forcer la date de facturation à la date de validation
-AllowCreditNoteWithoutRelatedInvoice=Allow to create credit note without a related invoice
+AllowCreditNoteWithoutRelatedInvoice=Permet de créer une facture d'avoir sans une facture liée
 DisableRepeatable=Désactiver les factures récurrentes
 SuggestedPaymentModesIfNotDefinedInInvoice=Mode de paiement suggéré par défaut si non défini au niveau de la facture
 EnableEditDeleteValidInvoice=Activer la possibilité de rééditer/supprimer une facture validée sans paiement
@@ -1201,13 +1204,13 @@ FreeLegalTextOnProposal=Mention complémentaire sur les propositions commerciale
 WatermarkOnDraftProposal=Filigrane sur les brouillons de propositions commerciales (aucun si vide)
 BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL=Saisir le compte bancaire cible lors de la proposition commerciale
 ##### SupplierProposal #####
-SupplierProposalSetup=Price requests suppliers module setup
-SupplierProposalNumberingModules=Price requests suppliers numbering models
-SupplierProposalPDFModules=Price requests suppliers documents models
-FreeLegalTextOnSupplierProposal=Free text on price requests suppliers
-WatermarkOnDraftSupplierProposal=Watermark on draft price requests suppliers (none if empty)
-BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL=Ask for bank account destination of price request
-WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER=Ask for Warehouse Source for order
+SupplierProposalSetup=Configuration du module Demande de tarifs forunisseurs
+SupplierProposalNumberingModules=Modèles de numérotation des demandes de prix
+SupplierProposalPDFModules=Modèles de documents des demandes de prix
+FreeLegalTextOnSupplierProposal=Texte libre sur les demande de tarifs fournisseurs
+WatermarkOnDraftSupplierProposal=Filigrane sur le brouillon de la demande de prix-fournisseur (aucun si vide)
+BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL=Demander le compte bancaire cible durant la création de la demande de prix fournisseur
+WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER=Demander pour l'entrepôt-source pour la commande
 ##### Orders #####
 OrdersSetup=Configuration du module Commandes
 OrdersNumberingModules=Modèles de numérotation des commandes
@@ -1417,7 +1420,7 @@ SetDefaultBarcodeTypeThirdParties=Type de code-barre utilisé par défaut pour l
 UseUnits=Définir une unité de mesure pour la quantité lors de l'édition de lignes de commande, proposition ou facture
 ProductCodeChecker= Modèles de numérotation des produits / services
 ProductOtherConf= Paramètres des produits / services
-IsNotADir=is not a directory!
+IsNotADir=Ce n'est pas un répertoire!
 ##### Syslog #####
 SyslogSetup=Configuration du module Journaux et traces
 SyslogOutput=Sortie des journaux
@@ -1529,7 +1532,7 @@ DetailLevel=Niveau (-1:menu haut, 0:entête menu, >0 menu et sous menu)
 ModifMenu=Modification du menu
 DeleteMenu=Effacer entrée de menu
 ConfirmDeleteMenu=Êtes-vous sûr de vouloir supprimer l'entrée de menu <b>%s</b> ?
-FailedToInitializeMenu=Failed to initialize menu
+FailedToInitializeMenu=Échec à inisialiser le menu
 ##### Tax #####
 TaxSetup=Configuration du module TVA, charges fiscales ou sociales et dividendes
 OptionVatMode=Option d'exigibilité de TVA par défaut
@@ -1560,9 +1563,9 @@ AGENDA_DEFAULT_FILTER_TYPE=Régler automatiquement ce type d'événement dans le
 AGENDA_DEFAULT_FILTER_STATUS=Régler automatiquement le statut d'événement dans le filtre de recherche de la vue agenda
 AGENDA_DEFAULT_VIEW=Quel onglet voulez-vous voir ouvrir par défaut quand on choisit le menu Agenda
 ##### ClickToDial #####
-ClickToDialDesc=This module allows to make phone numbers clickable. A click on this icon will call make your phone to call the phone number. This can be used to call a call center system from Dolibarr that can call the phone number on a SIP system for example.
-ClickToDialUseTelLink=Use just a link "tel:" on phone numbers
-ClickToDialUseTelLinkDesc=Use this method if your users have a softphone or a software interface installed on same computer than the browser, and called when you click on a link in your browser that start with "tel:". If you need a full server solution (no need of local software installation), you must set this to "No" and fill next field.
+ClickToDialDesc=Ce module permet de rendre un numéro de téléphone cliquable. Un clique sur cet icone fera votre téléphone appeler le numéro cliqué. Ce module peut être utilisé pour appeler un système de centre d'appel à partir de Dolibarr. 
+ClickToDialUseTelLink=Utiliser un lien «Tel.» sur les numéros de téléphone
+ClickToDialUseTelLinkDesc=Utilisez cette méthode si vos utilisateurs ont un softphone ou une interface de logiciel installé sur un même ordinateur que le navigateur, et a appelé lorsque vous cliquez sur un lien dans votre navigateur qui commencent par "tel:". Si vous avez besoin d'une solution de serveur complet (pas besoin d'installation locale du logiciel), vous devez définir ce "Non" et remplissez champ suivant.
 ##### Point Of Sales (CashDesk) #####
 CashDesk=Caisse enregistreuse
 CashDeskSetup=Configuration du module Point de vente/caisse enregistreuse
@@ -1588,7 +1591,7 @@ EndPointIs=Les clients SOAP doivent envoyer leur requêtes vers le point de sort
 ApiSetup=Configuration du module API REST
 ApiDesc=En activant ce module, Dolibarr devient aussi serveur de services API de type REST
 KeyForApiAccess=Clé pour utiliser les API (paramètre "api_key")
-ApiProductionMode=Enable production mode (this will activate use of a caches for services management)
+ApiProductionMode=Activer le mode « production » (ceci activera l'utilisation de la cache pour la gestion des services)
 ApiEndPointIs=Vous pouvez accéder aux API par l'URL
 ApiExporerIs=Vous pouvez consulter la liste des API par l'URL
 OnlyActiveElementsAreExposed=Seuls les éléments en rapport avec un module actif sont présentés.
@@ -1663,8 +1666,9 @@ SomethingMakeInstallFromWebNotPossible2=Pour cette raison, le processus de mise 
 InstallModuleFromWebHasBeenDisabledByFile=L'installation de module externe depuis l'application a été désactivé par l'administrator. Vous devez lui demander de supprimer le fichier <strong>%s</strong> pour permettre cette fonctionnalité.
 ConfFileMuseContainCustom=Installé un module externe pour l'application enregistre les fichiers de module dans le répertoire <strong>%s</strong>. Pour avoir ce répertoire vu par Dolibarr, vous devez configurer votre <strong>conf/conf.php</strong> d'avoir l'option <br> - <strong>$dolibarr_main_url_root_alt</strong> activé à la valeur <strong>$dolibarr_main_url_root_alt="/custom"</strong><br> - <strong>$dolibarr_main_document_root_alt</strong> activé à la valeur <strong>"%s/custom"</strong>
 HighlightLinesOnMouseHover=Mettez en surbrillance les lignes de la table lorsque la souris passe au-dessus
-HighlightLinesColor=Highlight color of the line when the mouse passes over (keep empty for no highlight)
-LinkColor=Color of links
+HighlightLinesColor=Mettez en surbrillance les lignes de la table lorsque la souris passe au-dessus (garder vide pour ne pas avoir de surbrillance)
+TextTitleColor=Color of page title
+LinkColor=Couleur des liens
 PressF5AfterChangingThis=Appuyez sur F5 sur le clavier après avoir modifié cette valeur pour que le changement soit effectif
 NotSupportedByAllThemes=Fonctionne avec le thème eldy mais n'est pas pris en charge par tous les thèmes
 BackgroundColor=Couleur de fond
@@ -1704,4 +1708,4 @@ TitleExampleForMajorRelease=Exemple de message que vous pouvez utiliser pour ann
 TitleExampleForMaintenanceRelease=Exemple de message que vous pouvez utiliser pour annonce une nouvelle version de maintenance (n'hésitez pas à l'utilisez pour vos propres news)
 ExampleOfNewsMessageForMajorRelease=Dolibarr ERP & CRM %s est disponible. La version %s est une version majeure avec de nouvelles fonctionnalités pour les utilisateurs et les développeurs. Vous pouvez la télécharger à partir de la zone de téléchargement du portail http://www.dolibarr.org (sous-répertoire "Versions stables"). Vous pouvez lire le <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> pour la liste complète des changements.
 ExampleOfNewsMessageForMaintenanceRelease=Dolibarr ERP & CRM %s est disponible. La version %s est une version de maintanance, aussi elle ne contient que des correctifs de bugs. Nous recommandons tout personne utilisant une version plus ancienne de migrer sur celle-ci. En tant que version de maintenance, aucune nouvelle fonctionnalité n'est ajouté, ni modification de format de données. Vous pouvez télécharger cette version à partir de la zone de téléchargement du portail http://www.dolibarr.org (sous-répertoire "Versions stables"). Vous pouvez lire le <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> pour la liste complète des changements.
-MultiPriceRuleDesc=When option "Several level of prices per product/service" is on, you can define different prices (one per price level) for each product. To save you time, you can enter here rule to have price for each level autocalculated according to price of first level, so you will have to enter only price for first level on each product. This page is here to save you time and can be usefull only if your prices for each leve are relative to first level. You can ignore this page in most cases.
+MultiPriceRuleDesc=Quand l'option « Plusieurs niveaux de prix par produit/service» est activée, vous pouvez définir différents prix (un par niveau de prix) pour chaque produits. Pour sauver du temps, vous pouvez entrer ici une règle pour avoir un prix pour chaque niveau calculé automatiquement. Cette page est ici pour sauver du temps et peut être utile si vos prix pour chaque niveaux sont relatif au premier niveau. Vous pouvez ignorer cette page dans la plupart des cas

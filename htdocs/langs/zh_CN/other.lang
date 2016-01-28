@@ -238,3 +238,8 @@ ToExport=出口
 NewExport=新的出口
 ##### External sites #####
 ExternalSites=外部网站
+WebsiteSetup=Setup of module website
+WEBSITE_PAGEURL=URL of page
+WEBSITE_TITLE=Title
+WEBSITE_DESCRIPTION=Description
+WEBSITE_KEYWORDS=Keywords

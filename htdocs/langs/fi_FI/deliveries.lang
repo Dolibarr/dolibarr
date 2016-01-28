@@ -17,6 +17,9 @@ DeleteDeliveryReceiptConfirm=Oletko varma että haluat poistaa toimituskuitti <b
 DeliveryMethod=Toimitustapa
 TrackingNumber=Seurantanumero
 DeliveryNotValidated=Toimitus ei validoitu
+StatusDeliveryCanceled=Canceled
+StatusDeliveryDraft=Draft
+StatusDeliveryValidated=Received
 # merou PDF model
 NameAndSignature=Nimi ja allekirjoitus:
 ToAndDate=To___________________________________ on ____ / _____ / __________

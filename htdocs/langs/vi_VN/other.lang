@@ -238,3 +238,8 @@ ToExport=Xuất khẩu
 NewExport=Xuất khẩu mới
 ##### External sites #####
 ExternalSites=Các trang web bên ngoài
+WebsiteSetup=Setup of module website
+WEBSITE_PAGEURL=URL of page
+WEBSITE_TITLE=Title
+WEBSITE_DESCRIPTION=Description
+WEBSITE_KEYWORDS=Keywords

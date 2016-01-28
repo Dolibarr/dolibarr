@@ -26,7 +26,6 @@ Selectmodelcsv=Izberite model izvoza
 Modelcsv_normal=Classic izvoz
 Modelcsv_CEGID=Izvoz v CEGID Expert
 BackToChartofaccounts=Prikaz kontnega plana
-Back=Return
 
 Definechartofaccounts=Določite kontni plan
 Selectchartofaccounts=Izberite kontni plan
@@ -109,10 +108,6 @@ DelBookKeeping=Izbriši zapise v glavno knjigo
 
 DescSellsJournal=Sells revija
 DescPurchasesJournal=Nakupi revija
-BankJournal=Bank revija
-DescBankJournal=Bank revija vključno z vsemi vrstami, razen gotovine plačila
-CashJournal=Cash revija
-DescCashJournal=Cash revija, vključno z načinom plačila gotovine
 FinanceJournal=Finance journal
 DescFinanceJournal=Finance journal including all the types of payments by bank account
 
@@ -152,7 +147,7 @@ DescVentilDoneSupplier=Tukaj poglejte seznam vrstic na računih dobaviteljev in 
 ValidateHistory=Potrditi Samodejno
 
 ErrorAccountancyCodeIsAlreadyUse=Napaka, ne morete izbrisati to računovodsko račun, ker se uporablja
-
+MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
 FicheVentilation=Kartica pregleda
 GeneralLedgerIsWritten=Operations are written in the general ledger
 
@@ -167,7 +162,13 @@ Headername=Name in header
 Type=Type of fields
 Param=Additionnal parameters
 EnabledProduct=In Product
-EnabledTiers=In Tiers
+EnabledTiers=In third party
 EnabledVat=In Vat
-
-MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
+## Tools - Init accounting account on product / service
+InitAccountancy=Init accountancy
+InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accountancy account defined for sales and purchases. Check before that setup of module accountancy is complete.
+Options=Options
+OptionModeProductSell=Mode sales
+OptionModeProductBuy=Mode purchases
+OptionModeProductSellDesc=Show all products with no accounting account defined for sales.
+OptionModeProductBuyDesc=Show all products with no accounting account defined for purchases.

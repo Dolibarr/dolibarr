@@ -155,6 +155,7 @@ DepositsAreNotIncluded=- Zálohové faktury nejsou zahrnuty
 DepositsAreIncluded=- Zálohové faktury jsou zahrnuty
 LT2ReportByCustomersInInputOutputModeES=Zpráva o třetí straně IRPF
 LT1ReportByCustomersInInputOutputModeES=Zpráva třetí strany RE
+VATReport=VAT report
 VATReportByCustomersInInputOutputMode=Zpráva o vybrané a zaplacené DPH zákazníka
 VATReportByCustomersInDueDebtMode=Zpráva o vybrané a zaplacené DPH zákazníka
 VATReportByQuartersInInputOutputMode=Zpráva o sazbách DPH vybrané a odvedené

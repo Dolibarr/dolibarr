@@ -1,19 +1,20 @@
 # Dolibarr language file - en_US - hrm
 # Admin
-HRM_EMAIL_EXTERNAL_SERVICE=Email to prevent HRM external service
-Establishments=Establishments
-Establishment=Establishment
-NewEstablishment=New establishment
-DeleteEstablishment=Delete establishment
-ConfirmDeleteEstablishment=Are-you sure to delete this establishment ?
-OpenEtablishment=Open establishment
-CloseEtablishment=Close establishment
+HRM_EMAIL_EXTERNAL_SERVICE=البريد الإلكتروني لإيقاف شؤون الموظفين الخدمة الخارجية
+Establishments=وثائق
+Establishment=وثيقة
+NewEstablishment=وثيقة جديدة
+DeleteEstablishment=حذف وثيقة
+ConfirmDeleteEstablishment=هل أنت متأكد من حذف هذه الوثيقة
+OpenEtablishment=فتح وثيقة
+CloseEtablishment=إنشاء وثيقة
 # Dictionary
-DictionaryDepartment=HRM - Department list
-DictionaryFunction=HRM - Function list
+DictionaryDepartment=شؤون الموظفين - الأقسام 
+DictionaryFunction=شؤون الموظفين - الوظائف
 # Module
-ListOfEmployees=List of employees
-Employees=Employees
-Employee=Employee
-NewEmployee=New employee
-EmployeeCard=Employee card
+ListOfEmployees=قائمة الموظفين 
+Employees=الموظفين
+Employee=الموظف
+Employe=Employe
+NewEmployee=موظف جديد
+EmployeeCard=بطاقة موظف

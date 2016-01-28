@@ -155,6 +155,7 @@ DepositsAreNotIncluded=- Eelmaksuarved pole lisatud
 DepositsAreIncluded=- Eelmaksuarved on lisatud
 LT2ReportByCustomersInInputOutputModeES=Kolmandate isikute IRPFi aruanne
 LT1ReportByCustomersInInputOutputModeES=Report by third party RE
+VATReport=VAT report
 VATReportByCustomersInInputOutputMode=Sisend- ja väljundkäibemaks kliendi alusel
 VATReportByCustomersInDueDebtMode=Sisend- ja väljundkäibemaks kliendi alusel
 VATReportByQuartersInInputOutputMode=Sisend- ja väljundkäibemaks käibemaksumäärade järgi

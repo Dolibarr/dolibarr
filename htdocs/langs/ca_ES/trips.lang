@@ -31,7 +31,7 @@ TripNDF=Informacions de l'informe de despeses
 PDFStandardExpenseReports=Plantilla estàndard per generar un document PDF per l'informe de despeses
 ExpenseReportLine=Línia de l'informe de despeses
 TF_OTHER=Altre
-TF_TRANSPORTATION=Transport
+TF_TRIP=Transportation
 TF_LUNCH=Dieta
 TF_METRO=Metro
 TF_TRAIN=Tren
@@ -99,4 +99,5 @@ ConfirmSaveTrip=Esteu segur de voler validar aquest informe de despeses?
 NoTripsToExportCSV=No hi ha informe de despeses per exportar en aquest període
 ExpenseReportPayment=Informe de despeses pagades
 
+ExpenseReportsToApprove=Expense reports to approve
 ExpenseReportsToPay=Informes de despeses a pagar

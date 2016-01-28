@@ -3,7 +3,6 @@ SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Kode Akuntansi untuk pembayaran gaji
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=kode akuntansi untuk pembiayaan keuangan
 Salary=Gaji
 Salaries=Gaji
-Employee=karyawan
 NewSalaryPayment=Pembayaran Gaji Baru
 SalaryPayment=Pembayaran Gaji
 SalariesPayments=Pembayaran Gaji

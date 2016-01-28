@@ -31,7 +31,7 @@ TripNDF=Gider raporu bilgileri
 PDFStandardExpenseReports=Bu gider raporu için PDF belgesi oluşturulacak standart şablon
 ExpenseReportLine=Gider rapor satırı
 TF_OTHER=Diğer
-TF_TRANSPORTATION=Nakliye
+TF_TRIP=Transportation
 TF_LUNCH=Öğle yemeği
 TF_METRO=Metro
 TF_TRAIN=Tren
@@ -99,4 +99,5 @@ ConfirmSaveTrip=Bu gider raporunu doğrulamak istediğinizden emin misiniz?
 NoTripsToExportCSV=Bu dönem için dışaaktarılacak gider raporu yok.
 ExpenseReportPayment=Gider raporu ödemesi
 
+ExpenseReportsToApprove=Expense reports to approve
 ExpenseReportsToPay=Ödenecek gider raporları

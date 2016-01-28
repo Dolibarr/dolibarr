@@ -155,6 +155,7 @@ DepositsAreNotIncluded=- Vlog računi so prav tako vključeni
 DepositsAreIncluded=- Vključena so vlog računi
 LT2ReportByCustomersInInputOutputModeES=Poročilo tretjih oseb IRPF
 LT1ReportByCustomersInInputOutputModeES=Report by third party RE
+VATReport=VAT report
 VATReportByCustomersInInputOutputMode=Poročilo o pobranem in plačanem DDV po kupcih
 VATReportByCustomersInDueDebtMode=Poročilo o pobranem in plačanem DDV po kupcih
 VATReportByQuartersInInputOutputMode=Poročilo o pobranem in plačanem DDV po stopnji DDV

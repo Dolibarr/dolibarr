@@ -3,7 +3,6 @@ SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Regnskapskode for lønnsutbetalinger
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Regnskapskode for finansiell belastning
 Salary=Lønn
 Salaries=Lønn
-Employee=Ansatt
 NewSalaryPayment=Ny lønnsutbetaling
 SalaryPayment=Lønnsutbetaling
 SalariesPayments=Lønnsutbetalinger

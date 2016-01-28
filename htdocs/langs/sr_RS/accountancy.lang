@@ -1,13 +1,13 @@
 # Dolibarr language file - en_US - Accounting Expert
-ACCOUNTING_EXPORT_SEPARATORCSV=Column separator for export file
-ACCOUNTING_EXPORT_DATE=Date format for export file
-ACCOUNTING_EXPORT_PIECE=Export the number of piece
-ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account
-ACCOUNTING_EXPORT_LABEL=Export the label
-ACCOUNTING_EXPORT_AMOUNT=Export the amount
+ACCOUNTING_EXPORT_SEPARATORCSV=Separator kolona datoteke za izvoz
+ACCOUNTING_EXPORT_DATE=Format datuma datoteke za izvoz
+ACCOUNTING_EXPORT_PIECE=Broj delova za izvoz
+ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Izvoz sa globalnim računom
+ACCOUNTING_EXPORT_LABEL=Izvoz oznake
+ACCOUNTING_EXPORT_AMOUNT=Izvezi sumu
 ACCOUNTING_EXPORT_DEVISE=Export the devise
-Selectformat=Select the format for the file
-ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
+Selectformat=Odaberi format datoteke
+ACCOUNTING_EXPORT_PREFIX_SPEC=Naznači prefix datoteci
 
 Accounting=Računovodstvo
 Globalparameters=Globalni parametri
@@ -19,20 +19,19 @@ ConfigAccountingExpert=Konfigurisanje eksperta računovodstvenog modula
 Journaux=Izveštaji
 JournalFinancial=Finansijski izveštaji
 Exports=Izvozi
-Export=Export
+Export=Izvoz
 Modelcsv=Model izvoza
-OptionsDeactivatedForThisExportModel=For this export model, options are deactivated
+OptionsDeactivatedForThisExportModel=Za ovaj model izvoza, opcije su deaktivirane
 Selectmodelcsv=Izaberite model izvoza
 Modelcsv_normal=Klasičan izvoz
 Modelcsv_CEGID=Izvoz ka CEGID ekspertu
 BackToChartofaccounts=Vrati tabelu računa
-Back=Vrati
 
 Definechartofaccounts=Definiši tabelu računa
 Selectchartofaccounts=Izaberi tabelu računa
 Addanaccount=Dodaj računovodstveni nalog
 AccountAccounting=Računovodstveni nalog
-AccountAccountingSuggest=Accounting account suggest
+AccountAccountingSuggest=Predlog računovodstvenog naloga
 Ventilation=Presek
 
 CustomersVentilation=Presek kupaca
@@ -42,7 +41,7 @@ Reports=Izveštaji
 ByCustomerInvoice=Po računima kupaca
 NewAccount=Novi knjigovodstveni račun
 Create=Kreiraj
-CreateMvts=Create movement
+CreateMvts=Kreiraj prenos
 UpdateAccount=Izmena računovodstvenog naloga
 UpdateMvts=Izmena prenosa
 WriteBookKeeping=Snimanje računa u glavnoj knjizi
@@ -53,10 +52,10 @@ AccountingVentilation=Računovodstveni presek
 AccountingVentilationSupplier=Presek računa dobavljača
 AccountingVentilationCustomer=Presek računa kupca
 
-CAHTF=Total purchase supplier before tax
+CAHTF=Ukupna nabavka bez PDV-a
 InvoiceLines=Linije računa za kontrolu
 InvoiceLinesDone=Kontrolisane linije računa
-IntoAccount=Ventilate in the accounting account
+IntoAccount=Kontrolisati u knjižnom nalogu
 
 Ventilate=Kontrola
 VentilationAuto=Automatski presek
@@ -69,27 +68,27 @@ Lineofinvoice=Linija računa
 VentilatedinAccount=Kontrola uspešna u obračunskom računu
 NotVentilatedinAccount=Nije kontrolisano u obračunskom računu
 
-ACCOUNTING_SEPARATORCSV=Column separator in export file
+ACCOUNTING_SEPARATORCSV=Separator kolona u datoteci za izvoz
 
-ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to be breakdown shown by page (maximum recommended : 50)
-ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the breakdown pages "Has to breakdown" by the most recent elements
-ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the breakdown pages "Breakdown" by the most recent elements
+ACCOUNTING_LIMIT_LIST_VENTILATION=Broj elemenata predviđeni za presek po strani (maksimalno preporučeno: 50)
+ACCOUNTING_LIST_SORT_VENTILATION_TODO=Započni sortiranje stranica za presek "Predvidjeno za presek" na osnovu najnovijih elemenata
+ACCOUNTING_LIST_SORT_VENTILATION_DONE=Započni sortiranje stranica za presek "Presek" na osnovu najnovijih elemenata
 
 AccountLength=Dužina obračunskih računa prikazanih u Dolibarru
 AccountLengthDesc=Funkcija omogućava pretvaranje dužine obračunskog računa zamenom razmaka nultim znakom . Ova funkcija utiče samo na prikaz, ne modifikuje obračunske račune registrovane u Dolibaru . Za izvoz , ova funkcija je potrebno da bude kompatibilna sa određenim softverom .
-ACCOUNTING_LENGTH_DESCRIPTION=Length for displaying product & services description in listings (Best = 50)
-ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Length for displaying product & services account description form in listings (Best = 50)
+ACCOUNTING_LENGTH_DESCRIPTION=Dužina prikaza opisa proizvoda i usluga na spisku (Najbolje = 50)
+ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Dužina prikaza forme opisa proizvoda i usluga na spisku (Najbolje = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Length of the general accounts
 ACCOUNTING_LENGTH_AACCOUNT=Length of the third party accounts
 
-ACCOUNTING_SELL_JOURNAL=Sell journal
-ACCOUNTING_PURCHASE_JOURNAL=Purchase journal
-ACCOUNTING_MISCELLANEOUS_JOURNAL=Miscellaneous journal
-ACCOUNTING_EXPENSEREPORT_JOURNAL=Expense report journal
-ACCOUNTING_SOCIAL_JOURNAL=Social journal
+ACCOUNTING_SELL_JOURNAL=Izveštaj prodaje
+ACCOUNTING_PURCHASE_JOURNAL=Izveštaj nabavke
+ACCOUNTING_MISCELLANEOUS_JOURNAL=Ostali izveštaji
+ACCOUNTING_EXPENSEREPORT_JOURNAL=Izveštaj troškova
+ACCOUNTING_SOCIAL_JOURNAL=Izveštaj društvenih aktivnosti
 
-ACCOUNTING_ACCOUNT_TRANSFER_CASH=Account of transfer
-ACCOUNTING_ACCOUNT_SUSPENSE=Account of wait
+ACCOUNTING_ACCOUNT_TRANSFER_CASH=Račun prometa
+ACCOUNTING_ACCOUNT_SUSPENSE=Račun čekanja
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Accounting account by default for bought products (if not defined in the product sheet)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Accounting account by default for the sold products (if not defined in the product sheet)
@@ -109,11 +108,7 @@ DelBookKeeping=Brisanje evidencije glavne knjige
 
 DescSellsJournal=Izveštaj prodaje
 DescPurchasesJournal=Izveštaj nabavke
-BankJournal=Izvod banke
-DescBankJournal=Bank journal including all the types of payments other than cash
-CashJournal=Cash journal
-DescCashJournal=Cash journal including the type of payment cash
-FinanceJournal=Finance journal
+FinanceJournal=Finansijski izveštaji
 DescFinanceJournal=Finance journal including all the types of payments by bank account
 
 CashPayment=Cash Payment
@@ -152,22 +147,28 @@ DescVentilDoneSupplier=Consult here the list of the lines of invoices supplier a
 ValidateHistory=Validate Automatically
 
 ErrorAccountancyCodeIsAlreadyUse=Error, you cannot delete this accounting account because it is used
-
+MvtNotCorrectlyBalanced=Transakcija nema dobar balans. Credit = %s. Debit = %s
 FicheVentilation=Breakdown card
 GeneralLedgerIsWritten=Operations are written in the general ledger
 
 ##Export Journal Feature
-ExportFormat=Format of Export
-Prefixname=Prefix of export File
-Separate=Export separator
-Textframe=Frame of text value
-Headercol=Colname in header of file
-Fieldname=Name of Field
-Headername=Name in header
-Type=Type of fields
-Param=Additionnal parameters
-EnabledProduct=In Product
-EnabledTiers=In Tiers
-EnabledVat=In Vat
-
-MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
+ExportFormat=Format eksport
+Prefixname=Prefit eksportovanog fajla
+Separate=Separator za eksport
+Textframe=Okvir tekstualne vrednosti
+Headercol=Imena kolona u začelju
+Fieldname=Ime polja
+Headername=Ime u začelju
+Type=Tip polja
+Param=Dodatni parametri
+EnabledProduct=U Proizvodima
+EnabledTiers=In third party
+EnabledVat=U PDV
+## Tools - Init accounting account on product / service
+InitAccountancy=Init accountancy
+InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accountancy account defined for sales and purchases. Check before that setup of module accountancy is complete.
+Options=Options
+OptionModeProductSell=Mode sales
+OptionModeProductBuy=Mode purchases
+OptionModeProductSellDesc=Show all products with no accounting account defined for sales.
+OptionModeProductBuyDesc=Show all products with no accounting account defined for purchases.

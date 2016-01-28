@@ -155,6 +155,7 @@ DepositsAreNotIncluded=- Les factures de bestreta no estan incloses
 DepositsAreIncluded=- Les factures de bestreta estan incloses
 LT2ReportByCustomersInInputOutputModeES=Informe per tercer del IRPF
 LT1ReportByCustomersInInputOutputModeES=Informe de RE per tercers
+VATReport=VAT report
 VATReportByCustomersInInputOutputMode=Informe per clients d'IVA cobrat i pagat
 VATReportByCustomersInDueDebtMode=Informe per clients d'IVA cobrat i pagat
 VATReportByQuartersInInputOutputMode=Informe per tipus d'IVA cobrat i pagat

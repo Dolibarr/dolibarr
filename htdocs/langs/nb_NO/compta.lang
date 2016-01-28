@@ -155,6 +155,7 @@ DepositsAreNotIncluded=- Innskuddsfakturaer er ikke inkludert
 DepositsAreIncluded=- Innskuddsfakturaer er inkludert
 LT2ReportByCustomersInInputOutputModeES=Rapport over tredjepart IRPF
 LT1ReportByCustomersInInputOutputModeES=Rapport etter tredjepart RE
+VATReport=VAT report
 VATReportByCustomersInInputOutputMode=Rapport over innhentet og betalt MVA etter kunde
 VATReportByCustomersInDueDebtMode=Rapport over innhentet og betalt MVA etter kunde
 VATReportByQuartersInInputOutputMode=Rapport over innhentet og betalt MVA etter sats

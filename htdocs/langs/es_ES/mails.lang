@@ -81,6 +81,7 @@ ActivateCheckReadKey=Clave usada para cifrar la URL utilizada para la función d
 EMailSentToNRecipients=E-Mail enviado a %s destinatarios.
 XTargetsAdded=<b>%s</b> destinatarios agregados a la lista
 EachInvoiceWillBeAttachedToEmail=Se creará y adjuntará a cada e-mail un documento usando el modelo de factura por defecto.
+OnlyPDFattachmentSupported=If the PDF document was already generated for the invoice, it will be attached to email. If not, no email will be sent (also, note that only pdf invoice are supported as attachment in mass sending in this version).
 MailTopicSendRemindUnpaidInvoices=Recordatorio de la factura %s (%s)
 SendRemind=Enviar recordatorios por e-mail
 RemindSent=%s recordatorio(s) enviados

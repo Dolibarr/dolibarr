@@ -8,7 +8,7 @@ ImportableDatas=بيانات وارداتها
 SelectExportDataSet=اختر البيانات التي تريد تصديرها...
 SelectImportDataSet=اختر البيانات التي تريد الاستيراد...
 SelectExportFields=اختيار الحقول التي تريد تصديرها ، أو اختيار ملف التصدير مسبقا
-SelectImportFields=Choose source file fields you want to import and their target field in database by moving them up and down with anchor %s, or select a predefined import profile:
+SelectImportFields=اختيار الحقول في ملف المصدر الذي تريد استيراد والميدان هدفهم في قاعدة البيانات عن طريق نقلها إلى أعلى وأسفل مع مرساة%s ، أو اختر وضعا استيراد مسبقا:
 NotImportedFields=حقول من الملف المصدر يتم استيراد
 SaveExportModel=احفظ هذا التصدير صورة لو كنت تخطط لإعادة استخدامها في وقت لاحق...
 SaveImportModel=إنقاذ هذه استيراد صورة لو كنت تخطط لإعادة استخدامها في وقت لاحق...
@@ -48,7 +48,7 @@ NoImportableData=لا ارداتها البيانات (أي وحدة مع الس
 FileSuccessfullyBuilt=ملف التصدير ولدت
 SQLUsedForExport=SQL طلب استخدامه لبناء ملف التصدير
 LineId=معرف السطر
-LineLabel=Label of line
+LineLabel=تسمية الخط
 LineDescription=وصف خط
 LineUnitPrice=سعر الوحدة من خط
 LineVATRate=ضريبة القيمة المضافة من سعر الخط
@@ -65,7 +65,7 @@ ChooseFormatOfFileToImport=اختيار تنسيق ملف لاستخدام تن�
 ChooseFileToImport=اختيار ملف لاستيراد ثم اضغط على picto ٪ ق...
 SourceFileFormat=مصدر تنسيق ملف
 FieldsInSourceFile=الحقول في ملف المصدر
-FieldsInTargetDatabase=Target fields in Dolibarr database (bold=mandatory)
+FieldsInTargetDatabase=الحقول المستهدفة في قاعدة بيانات Dolibarr (جريئة = إلزامي)
 Field=حقل
 NoFields=لا الحقول
 MoveField=تحرك %s حقل رقم العمود
@@ -82,7 +82,7 @@ DoNotImportFirstLine=لا استيراد السطر الأول من الملف �
 NbOfSourceLines=عدد الأسطر في الملف المصدر
 NowClickToTestTheImport=الاختيار المعلمات استيراد عرفتها. وإذا كانت صحيحة ، انقر على <b>%s</b> "زر" لإطلاق محاكاة لعملية الاستيراد (يمكن تغيير أية بيانات في قاعدة البيانات وسوف ، انها مجرد محاكاة لحظة)...
 RunSimulateImportFile=بدء استيراد محاكاة
-FieldNeedSource=This field requires data from the source file
+FieldNeedSource=يتطلب هذا المجال البيانات من الملف المصدر
 SomeMandatoryFieldHaveNoSource=بعض الحقول إلزامية ليس لديها مصدر من ملف البيانات
 InformationOnSourceFile=معلومات عن الملف المصدر
 InformationOnTargetTables=معلومات عن الهدف الحقول
@@ -90,8 +90,8 @@ SelectAtLeastOneField=التبديل حقل واحد على الأقل مصدر 
 SelectFormat=اختيار تنسيق الملف هذا الاستيراد
 RunImportFile=بدء استيراد الملف
 NowClickToRunTheImport=تحقق نتيجة لمحاكاة الاستيراد. إذا كان كل شيء على ما يرام ، بدء استيراد نهائي.
-DataLoadedWithId=All data will be loaded with the following import id: <b>%s</b>
-ErrorMissingMandatoryValue=البيانات الإلزامية فارغ في الملف المصدر <b>ل%s</b> الميدان.
+DataLoadedWithId=سيتم تحميل كافة البيانات مع معرف استيراد <b>التالي:٪ الصورة</b>
+ErrorMissingMandatoryValue=البيانات الإلزامية فارغ في الملف المصدر <b> %s</b> للحقل.
 TooMuchErrors=لا يزال هناك <b>%s</b> خطوط مصدر آخر مع وجود أخطاء ولكن محدودة الانتاج و.
 TooMuchWarnings=لا يزال هناك <b>%s</b> خطوط مصدر آخر مع تحذيرات ولكن محدودة الانتاج و.
 EmptyLine=سيتم تجاهل سطر فارغ ()
@@ -103,34 +103,34 @@ NbOfLinesImported=عدد خطوط المستوردة بنجاح : <b>%s.</b>
 DataComeFromNoWhere=قيمة لادخال تأتي من أي مكان في الملف المصدر.
 DataComeFromFileFieldNb=قيمة لادخال يأتي من <b>%s</b> عدد الحقول في الملف المصدر.
 DataComeFromIdFoundFromRef=من حقل رقم <b>%s</b> ملف مصدر سوف تستخدم القيمة التي تأتي للعثور على معرف الكائن الأصل لاستخدام (هكذا <b>%s</b> objet الذي يحتوي على المرجع من الملف المصدر يجب أن يوجد في Dolibarr).
-DataComeFromIdFoundFromCodeId=Code that comes from field number <b>%s</b> of source file will be used to find id of parent object to use (So the code from source file must exists into dictionary <b>%s</b>). Note that if you know id, you can also use it into source file instead of code. Import should work in both cases.
+DataComeFromIdFoundFromCodeId=وسيتم استخدام التعليمات البرمجية التي تأتي من رقم <b>الحقل٪ الصورة</b> من ملف المصدر الى ايجاد هوية الكائن الأصل للاستخدام (ذلك الرمز من الملف المصدر بد منه موجود في <b>القاموس%s).</b> لاحظ أنه إذا كنت تعرف الهوية، ويمكنك أيضا استخدامه في ملف مصدر بدلا من التعليمات البرمجية. استيراد يجب أن تعمل في كلتا الحالتين.
 DataIsInsertedInto=البيانات سوف تأتي من الملف المصدر يتم إدراجها في الحقل التالي :
 DataIDSourceIsInsertedInto=العثور على كائن معرف الأصل باستخدام البيانات الموجودة في الملف المصدر ، سيتم إدراج في الحقل التالي :
 DataCodeIDSourceIsInsertedInto=معرف خط الأم وجدت من رمز، سيتم إدراجها في الحقل التالي:
 SourceRequired=بيانات قيمة إلزامية
 SourceExample=مثال على قيمة البيانات ممكن
 ExampleAnyRefFoundIntoElement=أي المرجع تم العثور عليها ل <b>%s</b> العنصر
-ExampleAnyCodeOrIdFoundIntoDictionary=Any code (or id) found into dictionary <b>%s</b>
+ExampleAnyCodeOrIdFoundIntoDictionary=أي رمز (أو قيمة id) وجدت في <b>القاموس٪ الصورة</b>
 CSVFormatDesc=<b>فاصلة فصل</b> ملف <b>القيمة</b> تنسيق (csv.). <br> هذا هو شكل ملف نصي ، حيث يتم فصل الحقول بواسطة فاصل [%s]. إذا تم العثور على فاصل داخل محتوى الحقل ، يتم تقريب الجولة الميدانية التي قام بها حرف] %s [. الهروب حرف وحرف الهروب جولة هو [%s].
-Excel95FormatDesc=<b>Excel</b> file format (.xls)<br>This is native Excel 95 format (BIFF5).
-Excel2007FormatDesc=<b>Excel</b> file format (.xlsx)<br>This is native Excel 2007 format (SpreadsheetML).
-TsvFormatDesc=<b>Tab Separated Value</b> file format (.tsv)<br>This is a text file format where fields are separated by a tabulator [tab].
-ExportFieldAutomaticallyAdded=Field <b>%s</b> was automatically added. It will avoid you to have similar lines to be treated as duplicate records (with this field added, all lines will own their own id and will differ).
-CsvOptions=Csv Options
-Separator=Separator
-Enclosure=Enclosure
-SuppliersProducts=Suppliers Products
+Excel95FormatDesc=شكل <b>ملف</b> اكسل (. XLS) <br> هذا هو الأصلي تنسيق Excel 95 (BIFF5).
+Excel2007FormatDesc=شكل <b>ملف</b> اكسل (. XLSX) <br> هذا هو الأصلي تنسيق Excel 2007 (SpreadsheetML).
+TsvFormatDesc=<b>علامة التبويب</b> تنسيق ملف <b>منفصل القيمة</b> (و .tsv) <br> هذا هو شكل ملف نصي حيث يتم فصل الحقول من قبل الجدوال [التبويب].
+ExportFieldAutomaticallyAdded=وأضافت <b>الحقل٪ الصورة</b> تلقائيا. ذلك تجنب أن يكون لديك خطوط مماثلة إلى أن تعامل على أنها سجلات مكررة (مع هذا المجال وأضاف، أن جميع خطوط امتلاك الهوية الخاصة بهم وسوف تختلف).
+CsvOptions=خيارات CSV
+Separator=الفاصل
+Enclosure=سياج
+SuppliersProducts=المنتوجات
 BankCode=رمز المصرف
 DeskCode=مدونة مكتبية
 BankAccountNumber=رقم الحساب
 BankAccountNumberKey=مفتاح
-SpecialCode=Special code
-ExportStringFilter=%% allows replacing one or more characters in the text
-ExportDateFilter=YYYY, YYYYMM, YYYYMMDD : filters by one year/month/day<br>YYYY+YYYY, YYYYMM+YYYYMM, YYYYMMDD+YYYYMMDD : filters over a range of years/months/days<br> > YYYY, > YYYYMM, > YYYYMMDD : filters on all following years/months/days<br> < YYYY, < YYYYMM, < YYYYMMDD : filters on all previous years/months/days
-ExportNumericFilter='NNNNN' filters by one value<br>'NNNNN+NNNNN' filters over a range of values<br>'&gt;NNNNN' filters by lower values<br>'&gt;NNNNN' filters by higher values
+SpecialCode=رمز خاص
+ExportStringFilter=٪٪ يسمح استبدال حرف واحد أو أكثر في النص
+ExportDateFilter=YYYY، YYYYMM، YYYYMMDD: فلاتر لسنة واحدة / شهر / يوم <br> YYYY + YYYY، YYYYMM + YYYYMM، YYYYMMDD + YYYYMMDD: مرشحات على مجموعة من سنوات / أشهر / أيام <br> > YYYY،> YYYYMM،> YYYYMMDD: مرشحات على جميع السنوات / أشهر / يوما التالية <br> <YYYY، <YYYYMM، <YYYYMMDD: مرشحات على جميع السنوات / أشهر / يوما السابقة
+ExportNumericFilter=مرشحات "NNNNN من حيث القيمة واحد <br> مرشحات "NNNNN + NNNNN" على مجموعة من القيم <br> '> NNNNN' المرشحات من قبل انخفاض القيم <br> '> NNNNN' المرشحات بالقيم العليا
 ## filters
-SelectFilterFields=If you want to filter on some values, just input values here.
-FilterableFields=Filterable Fields
-FilteredFields=Filtered fields
-FilteredFieldsValues=Value for filter
-FormatControlRule=Format control rule
+SelectFilterFields=إذا كنت ترغب في تصفية على بعض القيم، قيم الإدخال فقط هنا.
+FilterableFields=الحقول تصفيتها
+FilteredFields=الحقول التي تمت تصفيتها
+FilteredFieldsValues=قيمة للمرشح
+FormatControlRule=حكم عنصر تنسيق

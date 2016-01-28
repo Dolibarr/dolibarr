@@ -155,6 +155,7 @@ DepositsAreNotIncluded=- Депозитные счета-фактуры и не 
 DepositsAreIncluded=- Депозитные счета включены
 LT2ReportByCustomersInInputOutputModeES=Доклад третьей стороной IRPF
 LT1ReportByCustomersInInputOutputModeES=Report by third party RE
+VATReport=VAT report
 VATReportByCustomersInInputOutputMode=Отчёт по собранному и оплаченному НДС клиента
 VATReportByCustomersInDueDebtMode=Отчёт по собранному и оплаченному НДС клиента
 VATReportByQuartersInInputOutputMode=Отчёт по собранной и оплаченной ставке НДС 

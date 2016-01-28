@@ -35,8 +35,9 @@ MargeBrute=Margen bruto
 MargeNette=Margen neto
 MargeType1=Margen en Mejor precio de proveedor
 MargeType2=Margen en Precio Medio Ponderado (PMP)
-MARGIN_TYPE_DETAILS=Margen bruto: Precio de venta sin IVA - Precio de compra sin IVA<br/>Margen neto: Precio de venta sin IVA - Costos
-MarginTypeDesc=Margen en mejor precio de compra: Precio de venta - Mejor precio de compra definido en la ficha del producto<br/>Margen en Precio Medio Ponderado (PMP): Precio de venta - Precio Medio Ponderado (PMP) o mejor precio de compra si no hay definido PMP 
+MargeType3=Margin on Cost Price
+MARGIN_TYPE_DETAILS=Raw margin : Selling price - Buying price<br>Net margin : Selling price - Cost price
+MarginTypeDesc=* Margin on best buying price = Selling price - Best supplier price defined on product card<br>* Margin on Weighted Average Price (WAP) = Selling price - Product Weighted Average Price (WAP) or best supplier price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAP if cost price not defined, or best supplier price if WAP not yet defined
 CostPrice=Precio de compra
 BuyingCost=Costos
 UnitCharges=Carga unitaria

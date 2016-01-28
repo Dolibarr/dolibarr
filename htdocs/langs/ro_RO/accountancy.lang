@@ -26,7 +26,6 @@ Selectmodelcsv=Selectează un model de export
 Modelcsv_normal=Classic export
 Modelcsv_CEGID=Export către CEGID Expert
 BackToChartofaccounts=Înapi la plan de conturi
-Back=Return
 
 Definechartofaccounts=Defineşte un plan de conturi
 Selectchartofaccounts=Selectează un plan de conturi
@@ -109,10 +108,6 @@ DelBookKeeping=Şterge înregistrări din Cartea Mare
 
 DescSellsJournal=Jurnal Vânzări
 DescPurchasesJournal=Jurnal Cumpărări
-BankJournal=Jurnal Bancă
-DescBankJournal=Jurnal Banca inclusiv toate tipurile plaţilor altele decat numerar
-CashJournal=Jurnal Casă
-DescCashJournal=Jurnal Cash inclusiv tipul plaţii numerar
 FinanceJournal=Finance journal
 DescFinanceJournal=Finance journal including all the types of payments by bank account
 
@@ -152,22 +147,28 @@ DescVentilDoneSupplier=Consultati aici lista liniilor de facturi furnizor și co
 ValidateHistory=Validează automat
 
 ErrorAccountancyCodeIsAlreadyUse=Eroare, nu puteți șterge acest cont contabil, deoarece este folosit
-
+MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
 FicheVentilation=Fişă Ventilare
 GeneralLedgerIsWritten=Operations are written in the general ledger
 
 ##Export Journal Feature
-ExportFormat=Format of Export
-Prefixname=Prefix of export File
-Separate=Export separator
+ExportFormat=Formatul de export
+Prefixname=Prefixul  fișierului export
+Separate=Separator Export 
 Textframe=Frame of text value
 Headercol=Colname in header of file
-Fieldname=Name of Field
-Headername=Name in header
-Type=Type of fields
-Param=Additionnal parameters
-EnabledProduct=In Product
-EnabledTiers=In Tiers
-EnabledVat=In Vat
-
-MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
+Fieldname=Denumire câmp
+Headername=Nume în antet
+Type=Tip campuri
+Param=Parametrii suplimentari
+EnabledProduct=În produse
+EnabledTiers=In third party
+EnabledVat=In TVA-
+## Tools - Init accounting account on product / service
+InitAccountancy=Init accountancy
+InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accountancy account defined for sales and purchases. Check before that setup of module accountancy is complete.
+Options=Options
+OptionModeProductSell=Mode sales
+OptionModeProductBuy=Mode purchases
+OptionModeProductSellDesc=Show all products with no accounting account defined for sales.
+OptionModeProductBuyDesc=Show all products with no accounting account defined for purchases.

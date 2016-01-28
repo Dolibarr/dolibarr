@@ -31,7 +31,7 @@ TripNDF=Informations note de frais
 PDFStandardExpenseReports=Modèle de note de frais PDF standard
 ExpenseReportLine=Ligne de la note de frais
 TF_OTHER=Autre
-TF_TRANSPORTATION=Transport
+TF_TRIP=Transport
 TF_LUNCH=Repas
 TF_METRO=Métro
 TF_TRAIN=Train
@@ -99,4 +99,5 @@ ConfirmSaveTrip=Êtes-vous sûr de vouloir valider cette note de frais ?
 NoTripsToExportCSV=Pas de note de frais à exporter dans cette période
 ExpenseReportPayment=Paiement des notes de frais
 
+ExpenseReportsToApprove=Notes de frais à approuver
 ExpenseReportsToPay=Notes de frais à payer

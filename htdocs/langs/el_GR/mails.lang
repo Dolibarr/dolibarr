@@ -81,6 +81,7 @@ ActivateCheckReadKey=Key used to encrypt URL used for "Read Receipt" and "Unsubc
 EMailSentToNRecipients=EMail αποστέλλονται στους παραλήπτες %s.
 XTargetsAdded=<b>%s</b> παραλήπτες που προστέθηκαν στο κατάλογο των στόχων
 EachInvoiceWillBeAttachedToEmail=Ένα έγγραφο χρησιμοποιώντας το προεπιλεγμένο τιμολόγιο θα δημιουργηθεί και θα επισυνάπτεται σε κάθε email.
+OnlyPDFattachmentSupported=If the PDF document was already generated for the invoice, it will be attached to email. If not, no email will be sent (also, note that only pdf invoice are supported as attachment in mass sending in this version).
 MailTopicSendRemindUnpaidInvoices=Υπενθύμιση του τιμολογίου %s (%s)
 SendRemind=Αποστολή υπενθύμισης με EMails
 RemindSent=%s υπενθύμιση (εις) αποστέλλονται

@@ -3,8 +3,8 @@ Accountancy=المحاسبة
 AccountancyCard=بطاقة المحاسبة
 Treasury=الخزانة
 MenuFinancial=المالية
-TaxModuleSetupToModifyRules=Go to <a href="%s">Taxes module setup</a> to modify rules for calculation
-TaxModuleSetupToModifyRulesLT=Go to <a href="%s">Company setup</a> to modify rules for calculation
+TaxModuleSetupToModifyRules=الذهاب إلى <a href="%s">الإعداد حدة الضرائب</a> لتعديل قواعد حساب
+TaxModuleSetupToModifyRulesLT=الذهاب إلى <a href="%s">إعداد الشركة</a> لتعديل قواعد حساب
 OptionMode=الخيار المحاسبة
 OptionModeTrue=خيار المدخلات والمخرجات
 OptionModeVirtual=الخيار بين اعتمادات الديون
@@ -12,15 +12,15 @@ OptionModeTrueDesc=وفي هذا السياق ، ويحسب حجم المدفو�
 OptionModeVirtualDesc=وفي هذا السياق ، فإن أكثر من الدوران يحسب الفواتير (تاريخ التصديق). إذا كانت هذه الفواتير المستحقة ، وعما إذا كانت قد دفعت أم لا ، فهي مدرجة في حجم الانتاج.
 FeatureIsSupportedInInOutModeOnly=الميزة الوحيدة المتاحة في سداد ديون قروض المحاسبة طريقة (انظر التكوين وحدة المحاسبة)
 VATReportBuildWithOptionDefinedInModule=المبالغ المبينة هنا يتم حسابها باستخدام القواعد التي تحددها وحدة الإعداد الضرائب.
-LTReportBuildWithOptionDefinedInModule=Amounts shown here are calculated using rules defined by Company setup.
+LTReportBuildWithOptionDefinedInModule=وتحسب المبالغ المبينة هنا باستخدام القواعد التي يحددها الإعداد الشركة.
 Param=الإعداد
 RemainingAmountPayment=دفع المبلغ المتبقي :
 AmountToBeCharged=المبلغ الإجمالي للدفع :
 AccountsGeneral=الحسابات
 Account=حساب
 Accounts=الحسابات
-Accountparent=Account parent
-Accountsparent=Accounts parent
+Accountparent=الوالد حساب
+Accountsparent=حسابات الأم
 BillsForSuppliers=فواتير الموردين
 Income=الدخل
 Outcome=نتائج
@@ -29,11 +29,11 @@ ReportTurnover=دوران
 PaymentsNotLinkedToInvoice=المدفوعات ليست مرتبطة بأي الفاتورة ، وذلك ليس مرتبطا بأي طرف ثالث
 PaymentsNotLinkedToUser=المدفوعات ليست مرتبطة بأي مستخدم
 Profit=الأرباح
-AccountingResult=Accounting result
+AccountingResult=نتيجة المحاسبة
 Balance=التوازن
 Debit=الخصم
 Credit=الائتمان
-Piece=Accounting Doc.
+Piece=تمثل الوثيقة.
 Withdrawal=انسحاب
 Withdrawals=انسحابات
 AmountHTVATRealReceived=جمعت HT
@@ -43,74 +43,74 @@ VATReceived=وتلقى الضريبة على القيمة المضافة
 VATToCollect=ضريبة القيمة المضافة مشتريات
 VATSummary=رصيد الضريبة على القيمة المضافة
 LT2SummaryES=IRPF الرصيد
-LT1SummaryES=RE Balance
+LT1SummaryES=RE الميزان
 VATPaid=دفع ضريبة القيمة المضافة
-SalaryPaid=Salary paid
+SalaryPaid=دفع الرواتب
 LT2PaidES=مدفوع IRPF
-LT1PaidES=RE Paid
+LT1PaidES=RE المدفوعة
 LT2CustomerES=مبيعات IRPF
 LT2SupplierES=مشتريات IRPF
-LT1CustomerES=RE sales
-LT1SupplierES=RE purchases
+LT1CustomerES=RE المبيعات
+LT1SupplierES=RE المشتريات
 VATCollected=جمعت ضريبة القيمة المضافة
 ToPay=دفع
 ToGet=العودة
-SpecialExpensesArea=Area for all special payments
-TaxAndDividendsArea=Sale taxes, social/fiscal taxes contributions and dividends area
-SocialContribution=Social or fiscal tax
-SocialContributions=Social or fiscal taxes
-MenuSpecialExpenses=Special expenses
+SpecialExpensesArea=منطقة لجميع المدفوعات الخاصة
+TaxAndDividendsArea=بيع الضرائب، والمساهمات الاجتماعية / مالية الضرائب والأرباح المنطقة
+SocialContribution=الضريبة الاجتماعية أو المالية
+SocialContributions=الضرائب الاجتماعية أو المالية
+MenuSpecialExpenses=المصروفات الخاصة
 MenuTaxAndDividends=الضرائب وعوائد
-MenuSalaries=Salaries
-MenuSocialContributions=Social/fiscal taxes
-MenuNewSocialContribution=New social/fiscal tax
-NewSocialContribution=New social/fiscal tax
-ContributionsToPay=Social/fiscal taxes to pay
+MenuSalaries=الرواتب
+MenuSocialContributions=الضرائب الاجتماعية / المالية
+MenuNewSocialContribution=الضريبة الاجتماعية / مالية جديدة
+NewSocialContribution=الضريبة الاجتماعية / مالية جديدة
+ContributionsToPay=الضرائب الاجتماعية / المالية لدفع
 AccountancyTreasuryArea=المحاسبة / الخزانة المنطقة
 AccountancySetup=المحاسبة الإعداد
 NewPayment=دفع جديدة
 Payments=المدفوعات
 PaymentCustomerInvoice=الزبون تسديد الفاتورة
 PaymentSupplierInvoice=دفع فاتورة المورد
-PaymentSocialContribution=Social/fiscal tax payment
+PaymentSocialContribution=اجتماعي / دفع الضرائب المالية
 PaymentVat=دفع ضريبة القيمة المضافة
-PaymentSalary=Salary payment
+PaymentSalary=دفع المرتبات
 ListPayment=قائمة المدفوعات
 ListOfPayments=قائمة المدفوعات
 ListOfCustomerPayments=قائمة مدفوعات العملاء
 ListOfSupplierPayments=قائمة الموردين المدفوعات
-DateStartPeriod=Date start period
-DateEndPeriod=Date end period
+DateStartPeriod=تاريخ بداية الفترة
+DateEndPeriod=تاريخ انتهاء الفترة
 NewVATPayment=دفع ضريبة القيمة المضافة الجديدة
-newLT1Payment=New tax 2 payment
-newLT2Payment=New tax 3 payment
-LT1Payment=Tax 2 payment
-LT1Payments=Tax 2 payments
-LT2Payment=Tax 3 payment
-LT2Payments=Tax 3 payments
-newLT1PaymentES=New RE payment
+newLT1Payment=جديد الضريبية 2 الدفع
+newLT2Payment=الجديد الضريبة 3 دفع
+LT1Payment=ضريبة دفع 2
+LT1Payments=الضريبة 2 المدفوعات
+LT2Payment=الضريبة 3 دفع
+LT2Payments=الضريبة 3 دفعات
+newLT1PaymentES=دفع RE جديد
 newLT2PaymentES=جديد IRPF دفع
-LT1PaymentES=RE Payment
-LT1PaymentsES=RE Payments
+LT1PaymentES=RE الدفع
+LT1PaymentsES=المدفوعات RE
 LT2PaymentES=IRPF الدفع
 LT2PaymentsES=الدفعات IRPF
 VATPayment=دفع ضريبة القيمة المضافة
 VATPayments=دفع ضريبة القيمة المضافة
-VATRefund=VAT Refund
-Refund=Refund
-SocialContributionsPayments=Social/fiscal taxes payments
+VATRefund=استرداد ضريبة القيمة المضافة
+Refund=رد
+SocialContributionsPayments=الاجتماعية المدفوعات / الضرائب المالية
 ShowVatPayment=وتظهر دفع ضريبة القيمة المضافة
 TotalToPay=على دفع ما مجموعه
 TotalVATReceived=تلقى مجموع الضريبة على القيمة المضافة
 CustomerAccountancyCode=قانون محاسبة العملاء
 SupplierAccountancyCode=مورد قانون المحاسبة
-CustomerAccountancyCodeShort=Cust. account. code
-SupplierAccountancyCodeShort=Sup. account. code
+CustomerAccountancyCodeShort=الزبون. حساب. رمز
+SupplierAccountancyCodeShort=سوب. حساب. رمز
 AccountNumberShort=رقم الحساب
 AccountNumber=رقم الحساب
 NewAccount=حساب جديد
 SalesTurnover=مبيعات
-SalesTurnoverMinimum=Minimum sales turnover
+SalesTurnoverMinimum=الحد الأدنى حجم مبيعات
 ByThirdParties=بو أطراف ثالثة
 ByUserAuthorOfInvoice=فاتورة من قبل المؤلف
 AccountancyExport=المحاسبة التصدير
@@ -118,54 +118,55 @@ ErrorWrongAccountancyCodeForCompany=قانون محاسبة العملاء سي�
 SuppliersProductsSellSalesTurnover=وقد ولدت عن طريق الدوران مبيعات الموردين المنتجات.
 CheckReceipt=التحقق من إيداع
 CheckReceiptShort=التحقق من إيداع
-LastCheckReceiptShort=Last %s check receipts
+LastCheckReceiptShort=مشاركة الصورة٪ إيصالات الاختيار
 NewCheckReceipt=خصم جديد
 NewCheckDeposit=تأكد من ايداع جديدة
 NewCheckDepositOn=تهيئة لتلقي الودائع على حساب : ٪ ق
 NoWaitingChecks=لم ينتظر إيداع الشيكات.
 DateChequeReceived=استقبال المدخلات تاريخ الشيك
 NbOfCheques=ملاحظة : للشيكات
-PaySocialContribution=Pay a social/fiscal tax
-ConfirmPaySocialContribution=Are you sure you want to classify this social or fiscal tax as paid?
-DeleteSocialContribution=Delete a social or fiscal tax payment
-ConfirmDeleteSocialContribution=Are you sure you want to delete this social/fiscal tax payment?
-ExportDataset_tax_1=Social and fiscal taxes and payments
-CalcModeVATDebt=Mode <b>%sVAT on commitment accounting%s</b>.
-CalcModeVATEngagement=Mode <b>%sVAT on incomes-expenses%s</b>.
-CalcModeDebt=Mode <b>%sClaims-Debts%s</b> said <b>Commitment accounting</b>.
-CalcModeEngagement=Mode <b>%sIncomes-Expenses%s</b> said <b>cash accounting</b>
-CalcModeLT1= Mode <b>%sRE on customer invoices - suppliers invoices%s</b>
-CalcModeLT1Debt=Mode <b>%sRE on customer invoices%s</b>
-CalcModeLT1Rec= Mode <b>%sRE on suppliers invoices%s</b>
-CalcModeLT2= Mode <b>%sIRPF on customer invoices - suppliers invoices%s</b>
-CalcModeLT2Debt=Mode <b>%sIRPF on customer invoices%s</b>
-CalcModeLT2Rec= Mode <b>%sIRPF on suppliers invoices%s</b>
-AnnualSummaryDueDebtMode=Balance of income and expenses, annual summary
-AnnualSummaryInputOutputMode=Balance of income and expenses, annual summary
+PaySocialContribution=دفع ضريبة اجتماعية / مالية
+ConfirmPaySocialContribution=هل أنت متأكد أنك تريد أن تصنيف هذه الضريبة الاجتماعية أو المالية كما دفعت؟
+DeleteSocialContribution=حذف دفع الضرائب الاجتماعي أو المالي
+ConfirmDeleteSocialContribution=هل أنت متأكد أنك تريد حذف / دفع الضرائب المالية الاجتماعي؟
+ExportDataset_tax_1=الضرائب والمدفوعات الاجتماعية والمالية
+CalcModeVATDebt=<b>الوضع٪ SVAT بشأن المحاسبة الالتزام٪ الصورة.</b>
+CalcModeVATEngagement=وضع <b>SVAT٪ على مداخيل مصاريف٪ الصورة.</b>
+CalcModeDebt=<b>وقال٪</b> وضع <b>sClaims-الديون٪ الصورة</b> <b>المحاسبة الالتزام.</b>
+CalcModeEngagement=وقال <b>واسطة٪ sIncomes-المصروفات٪ الصورة</b> <b>المحاسبة النقدية</b>
+CalcModeLT1= <b>الوضع٪ زارة العلاقات الخارجية على فواتير العملاء - فواتير الموردين٪ الصورة</b>
+CalcModeLT1Debt=<b>الوضع٪ زارة العلاقات الخارجية على فواتير العملاء٪ الصورة</b>
+CalcModeLT1Rec= <b>الوضع٪ زارة العلاقات الخارجية على فواتير الموردين٪ الصورة</b>
+CalcModeLT2= وضع <b>sIRPF٪ على فواتير العملاء - فواتير الموردين٪ الصورة</b>
+CalcModeLT2Debt=وضع <b>sIRPF٪ على فواتير العملاء٪ الصورة</b>
+CalcModeLT2Rec= وضع <b>sIRPF٪ على فواتير الموردين٪ الصورة</b>
+AnnualSummaryDueDebtMode=ميزان الإيرادات والمصروفات، ملخص سنوي
+AnnualSummaryInputOutputMode=ميزان الإيرادات والمصروفات، ملخص سنوي
 AnnualByCompaniesDueDebtMode=ميزان الإيرادات والنفقات ، وبالتفصيل من قبل أطراف ثالثة ، وطريقة سداد <b>ديون sClaims ٪ ٪ ق</b> قال <b>الالتزام والمحاسبة.</b>
 AnnualByCompaniesInputOutputMode=ميزان الإيرادات والنفقات ، وبالتفصيل من قبل أطراف ثالثة ، واسطة بين <b>sRevenues ٪ من مصروفات ٪ ق</b> قال <b>المحاسبة النقدية.</b>
 SeeReportInInputOutputMode=انظر التقرير <b>sIncomes ٪</b> بين <b>المصروفات ٪ ق</b> قال <b>المحاسبة النقدية</b> لحساب المدفوعات الفعلية
 SeeReportInDueDebtMode=انظر التقرير <b>sClaims ٪</b> بين <b>ديونها ٪ ق الالتزام والمحاسبة</b> وقال لحساب فواتير
-RulesAmountWithTaxIncluded=- Amounts shown are with all taxes included
-RulesResultDue=- It includes outstanding invoices, expenses, VAT, donations whether they are paid or not. Is also includes paid salaries.<br>- It is based on the validation date of invoices and VAT and on the due date for expenses. For salaries defined with Salary module, the value date of payment is used.
-RulesResultInOut=- It includes the real payments made on invoices, expenses, VAT and salaries. <br>- It is based on the payment dates of the invoices, expenses, VAT and salaries. The donation date for donation.
-RulesCADue=- It includes the client's due invoices whether they are paid or not. <br>- It is based on the validation date of these invoices.<br>
+RulesAmountWithTaxIncluded=- المبالغ المبينة لمع جميع الضرائب المدرجة
+RulesResultDue=- وتتضمن الفواتير غير المسددة، والنفقات، ضريبة القيمة المضافة، والتبرعات سواء كانت بأجر أو لا. هو أيضا يتضمن الرواتب المدفوعة. <br> - وهو يستند إلى تاريخ المصادقة على الفواتير وضريبة القيمة المضافة وعلى الموعد المحدد للنفقات. لرواتب محددة مع وحدة الراتب، يتم استخدام قيمة تاريخ الدفع.
+RulesResultInOut=- ويشمل المدفوعات الحقيقية المحرز في الفواتير والمصاريف والضريبة على القيمة المضافة والرواتب. <br> - لأنه يقوم على مواعيد دفع الفواتير والمصاريف والضريبة على القيمة المضافة والرواتب. تاريخ التبرع للتبرع.
+RulesCADue=- ويشمل الفواتير المستحقة على العميل سواء كانت بأجر أو لا. <br> - وهو يستند إلى تاريخ التحقق من هذه الفواتير. <br>
 RulesCAIn=-- ويشمل جميع الفعال دفع الفواتير الواردة من العملاء. <br> -- يقوم على دفع هذه الفواتير تاريخ <br>
 DepositsAreNotIncluded=- يتم ولا تشمل ودائع الفواتير
 DepositsAreIncluded=- وترد الفواتير ودائع
 LT2ReportByCustomersInInputOutputModeES=تقرير من قبل طرف ثالث IRPF
-LT1ReportByCustomersInInputOutputModeES=Report by third party RE
-VATReportByCustomersInInputOutputMode=Report by the customer VAT collected and paid
-VATReportByCustomersInDueDebtMode=Report by the customer VAT collected and paid
-VATReportByQuartersInInputOutputMode=Report by rate of the VAT collected and paid
-LT1ReportByQuartersInInputOutputMode=Report by RE rate
-LT2ReportByQuartersInInputOutputMode=Report by IRPF rate
-VATReportByQuartersInDueDebtMode=Report by rate of the VAT collected and paid
-LT1ReportByQuartersInDueDebtMode=Report by RE rate
-LT2ReportByQuartersInDueDebtMode=Report by IRPF rate
+LT1ReportByCustomersInInputOutputModeES=تقرير RE طرف ثالث
+VATReport=VAT report
+VATReportByCustomersInInputOutputMode=تقرير من ضريبة القيمة المضافة العملاء جمع ودفع
+VATReportByCustomersInDueDebtMode=تقرير من ضريبة القيمة المضافة العملاء جمع ودفع
+VATReportByQuartersInInputOutputMode=تقرير معدل ضريبة القيمة المضافة جمع ودفع
+LT1ReportByQuartersInInputOutputMode=تقرير معدل RE
+LT2ReportByQuartersInInputOutputMode=تقرير معدل IRPF
+VATReportByQuartersInDueDebtMode=تقرير معدل ضريبة القيمة المضافة جمع ودفع
+LT1ReportByQuartersInDueDebtMode=تقرير معدل RE
+LT2ReportByQuartersInDueDebtMode=تقرير معدل IRPF
 SeeVATReportInInputOutputMode=انظر التقرير <b>تغطية sVAT ٪ ق ٪</b> لحساب موحد
 SeeVATReportInDueDebtMode=انظر التقرير <b>عن تدفق sVAT ٪ ق ٪</b> لحساب مع خيار على تدفق
-RulesVATInServices=- For services, the report includes the VAT regulations actually received or issued on the basis of the date of payment.
+RulesVATInServices=- للحصول على خدمات، يتضمن التقرير لوائح ضريبة القيمة المضافة تلقى فعلا أو الصادرة على أساس من تاريخ الدفع.
 RulesVATInProducts=- للحصول على الأصول المادية، فإنه يشمل ضريبة القيمة المضافة على الفواتير على أساس من تاريخ الفاتورة.
 RulesVATDueServices=- للحصول على الخدمات، ويتضمن التقرير فواتير ضريبة القيمة المضافة المستحقة، مدفوعة الأجر أم لا، بناء على تاريخ الفاتورة.
 RulesVATDueProducts=- للحصول على الأصول المادية، فإنه يشمل ضريبة القيمة المضافة على الفواتير، بناء على تاريخ الفاتورة.
@@ -188,35 +189,35 @@ CodeNotDef=لم يتم تعريف
 AddRemind=ارسال المبلغ المتاح
 RemainToDivide= يبقى أن يوفد :
 WarningDepositsNotIncluded=لا يتم تضمين فواتير الودائع في هذا الإصدار مع هذه الوحدة المحاسبة.
-DatePaymentTermCantBeLowerThanObjectDate=Payment term date can't be lower than object date.
-Pcg_version=Pcg version
-Pcg_type=Pcg type
-Pcg_subtype=Pcg subtype
-InvoiceLinesToDispatch=Invoice lines to dispatch
-InvoiceDispatched=Dispatched invoices
-AccountancyDashboard=Accountancy summary
-ByProductsAndServices=By products and services
-RefExt=External ref
-ToCreateAPredefinedInvoice=To create a predefined invoice, create a standard invoice then, without validating it, click onto button "Convert to predefined invoice".
-LinkedOrder=Link to order
-Mode1=Method 1
-Mode2=Method 2
-CalculationRuleDesc=To calculate total VAT, there is two methods:<br>Method 1 is rounding vat on each line, then summing them.<br>Method 2 is summing all vat on each line, then rounding result.<br>Final result may differs from few cents. Default mode is mode <b>%s</b>.
-CalculationRuleDescSupplier=According to supplier, choose appropriate method to apply same calculation rule and get same result expected by your supplier.
-TurnoverPerProductInCommitmentAccountingNotRelevant=Turnover report per product, when using a <b>cash accountancy</b> mode is not relevant. This report is only available when using <b>engagement accountancy</b> mode (see setup of accountancy module).
-CalculationMode=Calculation mode
-AccountancyJournal=Accountancy code journal
-ACCOUNTING_VAT_SOLD_ACCOUNT=Default accountancy code for collecting VAT (VAT on sales)
-ACCOUNTING_VAT_BUY_ACCOUNT=Default accountancy code for recovered VAT (VAT on purchases)
-ACCOUNTING_VAT_PAY_ACCOUNT=Default accountancy code for paying VAT
-ACCOUNTING_ACCOUNT_CUSTOMER=Accountancy code by default for customer thirdparties
-ACCOUNTING_ACCOUNT_SUPPLIER=Accountancy code by default for supplier thirdparties
-CloneTax=Clone a social/fiscal tax
-ConfirmCloneTax=Confirm the clone of a social/fiscal tax payment
-CloneTaxForNextMonth=Clone it for next month
-SimpleReport=Simple report
-AddExtraReport=Extra reports
-OtherCountriesCustomersReport=Foreign customers report
-BasedOnTwoFirstLettersOfVATNumberBeingDifferentFromYourCompanyCountry=Based on the two first letters of the VAT number being different from your own company's country code
-SameCountryCustomersWithVAT=National customers report
-BasedOnTwoFirstLettersOfVATNumberBeingTheSameAsYourCompanyCountry=Based on the two first letters of the VAT number being the same as your own company's country code
+DatePaymentTermCantBeLowerThanObjectDate=تاريخ الدفع الأجل لا يمكن أن يكون أقل من تاريخ الكائن.
+Pcg_version=نسخة PCG
+Pcg_type=نوع PCG
+Pcg_subtype=PCG النوع الفرعي
+InvoiceLinesToDispatch=خطوط الفاتورة لارسال
+InvoiceDispatched=أرسلت الفواتير
+AccountancyDashboard=ملخص المحاسبة
+ByProductsAndServices=المنتجات والخدمات
+RefExt=المرجع الخارجي
+ToCreateAPredefinedInvoice=لإنشاء فاتورة محددة مسبقا، إنشاء فاتورة القياسية ثم، دون التحقق من صحة ذلك، انقر على زر "تحويل إلى فاتورة محددة مسبقا".
+LinkedOrder=تصل إلى النظام
+Mode1=طريقة 1
+Mode2=طريقة 2
+CalculationRuleDesc=لحساب مجموع الضريبة على القيمة المضافة، هناك طريقتين: <br> طريقة 1 والتقريب ضريبة القيمة المضافة في كل سطر، ثم ملخصا لها. <br> طريقة 2 يتم تلخيص كل ضريبة القيمة المضافة في كل سطر، ثم التقريب النتيجة. <br> النتيجة النهائية قد تختلف من بضعة سنتات. الوضع الافتراضي هو وضع <b>الصورة٪.</b>
+CalculationRuleDescSupplier=وفقا لالمورد، واختيار الطريقة المناسبة لتطبيق الحكم حساب نفسها والحصول على نفس النتيجة المتوقعة من المورد الخاص بك.
+TurnoverPerProductInCommitmentAccountingNotRelevant=تقرير دوران لكل منتج، وعند استخدام طريقة <b>المحاسبة النقدية</b> غير ذي صلة. متاح فقط هذا التقرير عند استخدام طريقة <b>المشاركة المحاسبة</b> (انظر إعداد وحدة المحاسبة).
+CalculationMode=وضع الحساب
+AccountancyJournal=كود المحاسبة مجلة
+ACCOUNTING_VAT_SOLD_ACCOUNT=افتراضي كود المحاسبة لجمع ضريبة القيمة المضافة (ضريبة القيمة المضافة على المبيعات)
+ACCOUNTING_VAT_BUY_ACCOUNT=كود المحاسبة الافتراضية لضريبة القيمة المضافة المستردة (ضريبة القيمة المضافة على المشتريات)
+ACCOUNTING_VAT_PAY_ACCOUNT=كود المحاسبة الافتراضي للدفع ضريبة القيمة المضافة
+ACCOUNTING_ACCOUNT_CUSTOMER=كود المحاسبة افتراضيا لthirdparties العملاء
+ACCOUNTING_ACCOUNT_SUPPLIER=كود المحاسبة افتراضيا لthirdparties المورد
+CloneTax=استنساخ ضريبة اجتماعية / مالية
+ConfirmCloneTax=تأكيد استنساخ ل/ دفع الضرائب المالية الاجتماعي
+CloneTaxForNextMonth=استنساخ لشهر المقبل
+SimpleReport=تقرير بسيط
+AddExtraReport=تقارير إضافية
+OtherCountriesCustomersReport=تقرير العملاء الأجانب
+BasedOnTwoFirstLettersOfVATNumberBeingDifferentFromYourCompanyCountry=استنادا الى اثنين من الأحرف الأولى من رقم ضريبة القيمة المضافة بأنهم مختلفون عن رمز البلد شركتك الخاصة لل
+SameCountryCustomersWithVAT=تقرير عملاء الوطني
+BasedOnTwoFirstLettersOfVATNumberBeingTheSameAsYourCompanyCountry=استنادا الى اثنين من الأحرف الأولى من رقم ضريبة القيمة المضافة هي نفس رمز البلد شركتك الخاصة لل

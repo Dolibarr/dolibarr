@@ -17,6 +17,9 @@ DeleteDeliveryReceiptConfirm=Är du säker på att du vill ta bort <b>%s</b> kvi
 DeliveryMethod=Leveransmetod
 TrackingNumber=Spårningsnummer
 DeliveryNotValidated=Leverans är inte attesterad
+StatusDeliveryCanceled=Canceled
+StatusDeliveryDraft=Draft
+StatusDeliveryValidated=Received
 # merou PDF model
 NameAndSignature=Namn och namnteckning:
 ToAndDate=To___________________________________ den ____ / _____ / __________
