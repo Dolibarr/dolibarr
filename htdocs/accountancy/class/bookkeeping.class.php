@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
  *
  * Put here description of your class
  */
-class BookKeeping extends CommonObject 
+class BookKeeping extends CommonObject
 {
 	/**
 	 *
@@ -1136,7 +1136,7 @@ class BookKeeping extends CommonObject
 /**
  * Class BookKeepingLine
  */
-class BookKeepingLine 
+class BookKeepingLine
 {
 	public $id;
 	public $doc_date = '';
