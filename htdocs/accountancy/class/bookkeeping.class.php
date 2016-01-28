@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
  *
  * Put here description of your class
  */
-class BookKeeping extends CommonObject 
+class BookKeeping extends CommonObject
 {
 	/**
 	 *
@@ -325,7 +325,7 @@ class BookKeeping extends CommonObject
 	 *
 	 * @return int <0 if KO, Id of created object if OK
 	 */
-	public function create_std(User $user, $notrigger = false)
+	public function createStd(User $user, $notrigger = false)
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 	
@@ -986,12 +986,12 @@ class BookKeeping extends CommonObject
 	 * @param int $piecenum Accounting document to get
 	 * @return int <0 if KO, >0 if OK
 	 */
-	public function fetch_per_mvt($piecenum) {
+	public function fetchPerMvt($piecenum) {
 		$sql = "SELECT piece_num,doc_date,code_journal,doc_ref,doc_type";
 		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element;
 		$sql .= " WHERE piece_num = " . $piecenum;
 		
-		dol_syslog(get_class($this) . "fetch_per_mvt sql=" . $sql, LOG_DEBUG);
+		dol_syslog(get_class($this) . "fetchPerMvt sql=" . $sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
 			$obj = $this->db->fetch_object($result);
@@ -1003,7 +1003,7 @@ class BookKeeping extends CommonObject
 			$this->doc_type = $obj->doc_type;
 		} else {
 			$this->error = "Error " . $this->db->lasterror();
-			dol_syslog(get_class($this) . "::fetch_per_mvt " . $this->error, LOG_ERR);
+			dol_syslog(get_class($this) . "::fetchPerMvt " . $this->error, LOG_ERR);
 			return - 1;
 		}
 		
@@ -1075,7 +1075,7 @@ class BookKeeping extends CommonObject
 			}
 		} else {
 			$this->error = "Error " . $this->db->lasterror();
-			dol_syslog(get_class($this) . "::fetch_per_mvt " . $this->error, LOG_ERR);
+			dol_syslog(get_class($this) . "::fetchPerMvt " . $this->error, LOG_ERR);
 			return - 1;
 		}
 		
@@ -1142,7 +1142,8 @@ class BookKeeping extends CommonObject
 /**
  * Class BookKeepingLine
  */
-class BookKeepingLine {
+class BookKeepingLine 
+{
 	public $id;
 	public $doc_date = '';
 	public $doc_type;

@@ -135,7 +135,7 @@ else if ($action == "add") {
 			$book->sens = 'C';
 		}
 		
-		$result = $book->create_std($user);
+		$result = $book->createStd($user);
 		if ($result < 0) {
 			setEventMessages($book->error, $book->errors, 'errors');
 		} else {
@@ -179,7 +179,7 @@ else if ($action == "confirm_create") {
 	
 	$book->montant = 0;
 	
-	$result = $book->create_std($user);
+	$result = $book->createStd($user);
 	if ($result < 0) {
 		setEventMessages($book->error, $book->errors, 'errors');
 	} else {
@@ -270,7 +270,7 @@ if ($action == 'create') {
 	print '</form>';
 } else {
 	$book = new BookKeeping($db);
-	$result = $book->fetch_per_mvt($piece_num);
+	$result = $book->fetchPerMvt($piece_num);
 	if ($result < 0) {
 		setEventMessages($book->error, $book->errors, 'errors');
 	}
