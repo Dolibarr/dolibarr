@@ -27,7 +27,7 @@
 /**
  * Class to manage generation of HTML components for bank module
  */
-class FormVentilation extends Form 
+class FormVentilation extends Form
 {
 	var $db;
 	var $error;

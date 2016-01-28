@@ -1142,7 +1142,7 @@ class BookKeeping extends CommonObject
 /**
  * Class BookKeepingLine
  */
-class BookKeepingLine 
+class BookKeepingLine
 {
 	public $id;
 	public $doc_date = '';
