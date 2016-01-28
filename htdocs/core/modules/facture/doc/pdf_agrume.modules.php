@@ -1760,7 +1760,7 @@ exit;
 //var_dump($this->posxdiscount, $this->posxprogress);exit;
 		if ($this->situationinvoice)
 		{
-			$pdf->line($this->posxprogress - 2, $tab_top, $this->posxprogress - 2, $tab_top + $tab_height);
+			$pdf->line($this->postotalht, $tab_top, $this->postotalht, $tab_top + $tab_height);
 			if (empty($hidetop)) {
 				$pdf->SetXY($this->posxprogress-1, $tab_top + 1);
 				if($conf->global->PRODUCT_USE_UNITS) 
