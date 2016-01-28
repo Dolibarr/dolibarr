@@ -119,7 +119,7 @@ class Paiement extends CommonObject
 				$this->bank_line      = $obj->fk_bank;
 
 				$this->db->free($resql);
-				return 1;
+				return $this->fetch_amounts();
 			}
 			else
 			{
@@ -133,6 +133,40 @@ class Paiement extends CommonObject
 			return -1;
 		}
 	}
+
+	/**
+	 *  @abstract Fetch List of Invoices Payments Amounts
+	 *
+	 *  @return   int		>0 if OK
+	 */
+	function fetch_amounts()
+	{
+            //====================================================================//
+            // SELECT SQL Request 
+            $sql = 'SELECT fk_facture, amount';
+            $sql.= ' FROM '.MAIN_DB_PREFIX.'paiement_facture';
+            $sql.= ' WHERE fk_paiement = '.$this->id;
+            $resql = $this->db->query($sql);
+            //====================================================================//
+            // SQL Error 
+            if (!$resql)
+            {
+                $this->error=$this->db->error();
+                dol_syslog(get_class($this).'::fetch_amounts Error '.$this->error.' -', LOG_DEBUG);
+                return -1;
+            }
+            $this->amounts=array();
+            //====================================================================//
+            // Populate Object
+            for ($i=0; $i < $this->db->num_rows($resql); $i++)
+            {
+                $obj = $this->db->fetch_object($resql);
+                $this->amounts[$obj->fk_facture]    =   $obj->amount;
+            }
+            $this->db->free($resql);                    
+            return 1;
+	}             
+
 
 	/**
 	 *    Create payment of invoices into database.
