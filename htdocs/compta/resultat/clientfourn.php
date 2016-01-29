@@ -665,13 +665,10 @@ if (! empty($conf->expensereport->enabled))
 		{
 			$num = $db->num_rows($result);
 			$var=true;
-			$i = 0;
 			if ($num)
 			{
-				while ($i < $num)
+				while ($obj = $db->fetch_object($result))
 				{
-					$obj = $db->fetch_object($result);
-
 					$total_ht -= $obj->amount_ht;
 					$total_ttc -= $obj->amount_ttc;
 					$subtotal_ht += $obj->amount_ht;
@@ -685,7 +682,6 @@ if (! empty($conf->expensereport->enabled))
 					if ($modecompta == 'CREANCES-DETTES') print '<td align="right">'.price(-$obj->amount_ht).'</td>';
 					print '<td align="right">'.price(-$obj->amount_ttc).'</td>';
 					print '</tr>';
-					$i++;
 				}
 			}
 			else
