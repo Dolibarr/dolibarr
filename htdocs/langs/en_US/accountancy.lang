@@ -35,6 +35,7 @@ AccountAccounting=Accounting account
 AccountAccountingSuggest=Accounting account suggest
 Ventilation=Breakdown
 
+MenuAccountancy=Accountancy
 CustomersVentilation=Breakdown customers
 SuppliersVentilation=Breakdown suppliers
 TradeMargin=Trade margin
@@ -109,10 +110,6 @@ DelBookKeeping=Delete the records of the general ledger
 
 DescSellsJournal=Sales journal
 DescPurchasesJournal=Purchases journal
-BankJournal=Bank journal
-DescBankJournal=Bank journal including all the types of payments other than cash
-CashJournal=Cash journal
-DescCashJournal=Cash journal including the type of payment cash
 FinanceJournal=Finance journal
 DescFinanceJournal=Finance journal including all the types of payments by bank account
 
