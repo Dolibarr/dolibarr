@@ -936,9 +936,10 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 
                         if (! $err)
                         {
-                            $sql = "INSERT INTO ".MAIN_DB_PREFIX."cronjob (module_name, datec, label, jobtype, classesname, objectname, methodename, command, params, note, frequency, unitfrequency, entity)";
+                            $sql = "INSERT INTO ".MAIN_DB_PREFIX."cronjob (module_name, datec, datestart, label, jobtype, classesname, objectname, methodename, command, params, note, frequency, unitfrequency, entity)";
                             $sql.= " VALUES (";
                             $sql.= "'".$this->db->escape($this->rights_class)."', ";
+                            $sql.= "'".$this->db->idate($now)."', ";
                             $sql.= "'".$this->db->idate($now)."', ";
                             $sql.= "'".$this->db->escape($label)."', ";
                             $sql.= "'".$this->db->escape($jobtype)."', ";
