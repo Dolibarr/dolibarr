@@ -4,7 +4,7 @@
  * Copyright (C) 2011		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2012		Regis Houssin		<regis@dolibarr.fr>
  * Copyright (C) 2013		Christophe Battarel	<christophe.battarel@altairis.fr>
- * Copyright (C) 2013-2015  Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013-2016  Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2013-2014  Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2013-2014  Olivier Geffroy		<jeff@jeffinfo.com>
  *
@@ -343,7 +343,7 @@ if ($action == 'writebookkeeping')
 				}
 			}
 
-			$result = $bookkeeping->create();
+			$result = $bookkeeping->create($user);
 			if ($result < 0) {
 				$error ++;
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -421,7 +421,7 @@ if ($action == 'writebookkeeping')
 				$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER;
 			}
 
-			$result = $bookkeeping->create();
+			$result = $bookkeeping->create($user);
 			if ($result < 0) {
 				$error ++;
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -571,7 +571,7 @@ else
 
 	llxHeader('', $langs->trans("FinanceJournal"));
 
-	$nom = $langs->trans("FinanceJournal" . ' - ' . $journal);
+	$nom = $langs->trans("FinanceJournal") . ' - ' . $journal;
 	$builddate = time();
 	$description = $langs->trans("DescFinanceJournal") . '<br>';
 	$period = $form->select_date($date_start, 'date_start', 0, 0, 0, '', 1, 0, 1) . ' - ' . $form->select_date($date_end, 'date_end', 0, 0, 0, '', 1, 0, 1);

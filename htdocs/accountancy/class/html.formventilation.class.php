@@ -37,8 +37,7 @@ class FormVentilation extends Form
      *
      * @param		DoliDB		$db      Database handler
      */
-	public function __construct($db)
-    {
+	public function __construct($db) {
         $this->db = $db;
     }
 
@@ -49,8 +48,7 @@ class FormVentilation extends Form
 	 *	@param	string	$selectedkey	Value
 	 *	@return	string					HTML edit field
 	 */
-	function select_bookkeeping_importkey($htmlname = 'importkey', $selectedkey='')
-	{
+	function select_bookkeeping_importkey($htmlname = 'importkey', $selectedkey = '') {
 		$sql  = 'SELECT DISTINCT import_key from ' . MAIN_DB_PREFIX . 'accounting_bookkeeping';
 		$sql .= ' ORDER BY import_key DESC';
 
@@ -94,12 +92,11 @@ class FormVentilation extends Form
 	 *  @param	array	$event			Event options
      *	@param	int		$select_in		$selectid value is a aa.rowid (0 default) or aa.account_number (1)
      *	@param	int		$select_out		set value returned by select 0=rowid (default), 1=account_number
-     *	@param	int		$aabase			set accounting_account base class to display empty=all or from 1 to 8 will display only account beginning by
+	 * @param int $aabase set accountingaccount base class to display empty=all or from 1 to 8 will display only account beginning by
      *
 	 *	@return	string					String with HTML select
 	 */
-	function select_account($selectid, $htmlname = 'account', $showempty = 0, $event = array(), $select_in = 0, $select_out = 0, $aabase = '')
-	{
+	function select_account($selectid, $htmlname = 'account', $showempty = 0, $event = array(), $select_in = 0, $select_out = 0, $aabase = '') {
 		global $conf;
 
 		$out = '';
@@ -128,10 +125,14 @@ class FormVentilation extends Form
 					$obj = $this->db->fetch_object($resql);
 					$label = $obj->account_number . ' - ' . $obj->label;
 					$label = dol_trunc($label, $trunclength);
-					if ($select_in == 0 )  $select_value_in =  $obj->rowid;
-					if ($select_in == 1 )  $select_value_in =  $obj->account_number;
-					if ($select_out == 0 ) $select_value_out = $obj->rowid;
-					if ($select_out == 1 ) $select_value_out = $obj->account_number;
+					if ($select_in == 0)
+						$select_value_in = $obj->rowid;
+					if ($select_in == 1)
+						$select_value_in = $obj->account_number;
+					if ($select_out == 0)
+						$select_value_out = $obj->rowid;
+					if ($select_out == 1)
+						$select_value_out = $obj->account_number;
 					// Remember guy's we store in database llx_facturedet the rowid of accounting_account and not the account_number
 					// Because same account_number can be share between different accounting_system and do have the same meaning
 					if (($selectid != '') && $selectid == $select_value_in) {
@@ -164,8 +165,7 @@ class FormVentilation extends Form
      *
 	 *	@return	string					String with HTML select
 	 */
-	function select_pcgtype($selectid, $htmlname = 'pcg_type', $showempty = 0, $event = array())
-	{
+	function select_pcgtype($selectid, $htmlname = 'pcg_type', $showempty = 0, $event = array()) {
 		global $conf;
 
 		$out = '';
@@ -220,8 +220,7 @@ class FormVentilation extends Form
      *
 	 *	@return	string					String with HTML select
 	 */
-	function select_pcgsubtype($selectid, $htmlname = 'pcg_subtype', $showempty = 0, $event = array())
-	{
+	function select_pcgsubtype($selectid, $htmlname = 'pcg_subtype', $showempty = 0, $event = array()) {
 		global $conf;
 
 		$out = '';
@@ -341,5 +340,67 @@ class FormVentilation extends Form
 		}
 		
 		return $out;
+	}
+	
+	/**
+	 * Return HTML combo list of years existing into book keepping
+	 *
+	 * @param string $selected Preselected value
+	 * @param string $htmlname Name of HTML select object
+	 * @param int $useempty Affiche valeur vide dans liste
+	 * @param string $output_format (html/opton (for option html only)/array (to return options arrays
+	 * @return string/array
+	 */
+	function selectyear_accountancy_bookkepping($selected = '', $htmlname = 'yearid', $useempty = 0, $output_format = 'html') {
+		$out = '';
+		$out_array = array ();
+	
+		if ($output_format == 'html') {
+			$out .= '<select class="flat" placeholder="aa" id="' . $htmlname . '" name="' . $htmlname . '"' . $option . ' >';
+		}
+		if ($useempty) {
+			$selected_html = '';
+			if ($selected == '') {
+				$selected_html = ' selected';
+			}
+			if ($output_format == 'html' || $output_format == 'options') {
+				$out .= '<option value=""' . $selected_html . '>&nbsp;</option>';
+			} elseif ($output_format == 'array') {
+				$out_array[''] = '';
+			}
+		}
+	
+		$sql = "SELECT DISTINCT date_format(doc_date,'%Y') as dtyear";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping";
+		$sql .= " ORDER BY doc_date";
+		dol_syslog(get_class($this) . "::".__METHOD__, LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			while ( $obj = $this->db->fetch_object($resql) ) {
+				$selected_html = '';
+				if ($selected > 0 && $obj->dtyear == $selected)
+					$selected_html = ' selected';
+					if ($output_format == 'html' || $output_format == 'options') {
+						$out .= '<option value="' . $obj->dtyear . '"' . $selected_html . ' >' . $obj->dtyear . '</option>';
+					} elseif ($output_format == 'array') {
+						$out_array[$obj->dtyear] = $obj->dtyear;
+					}
+			}
+		} else {
+			$this->error = "Error " . $this->db->lasterror();
+			dol_syslog(get_class($this) . "::".__METHOD__ . $this->error, LOG_ERR);
+			return - 1;
+		}
+		$this->db->free($resql);
+	
+		if ($output_format == 'html') {
+			$out .= "</select>\n";
+		}
+	
+		if ($output_format == 'html' || $output_format == 'options') {
+			return $out;
+		} elseif ($output_format == 'array') {
+			return $out_array;
+		}
 	}
 }

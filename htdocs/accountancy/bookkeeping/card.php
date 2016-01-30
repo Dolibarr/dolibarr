@@ -91,7 +91,7 @@ if ($action == "confirm_update") {
                 $book->sens = 'C';
             }
 
-            $result = $book->update();
+			$result = $book->update($user);
             if ($result < 0) {
                 setEventMessages($book->error, $book->errors, 'errors');
             } else {
@@ -136,7 +136,7 @@ else if ($action == "add") {
             $book->sens = 'C';
         }
 
-        $result = $book->create_std($user);
+        $result = $book->createStd($user);
         if ($result < 0) {
             setEventMessages($book->error, $book->errors, 'errors');
         } else {
@@ -180,7 +180,7 @@ else if ($action == "confirm_create") {
 
     $book->montant = 0;
 
-    $result = $book->create_std($user);
+    $result = $book->createStd($user);
     if ($result < 0) {
         setEventMessages($book->error, $book->errors, 'errors');
     } else {
@@ -213,6 +213,18 @@ if ($action == 'create') {
             $conf->global->ACCOUNTING_MISCELLANEOUS_JOURNAL => $conf->global->ACCOUNTING_MISCELLANEOUS_JOURNAL,
             $conf->global->ACCOUNTING_EXPENSEREPORT_JOURNAL => $conf->global->ACCOUNTING_EXPENSEREPORT_JOURNAL
     );
+
+    $sql = 'SELECT DISTINCT accountancy_journal FROM '.MAIN_DB_PREFIX.'bank_account WHERE clos=0';
+    $resql=$db->query($sql);
+    if (!$resql) {
+    	setEventMessages($db->lasterror,null,'errors');
+    } else {
+    	while ($obj_bank=$db->fetch_object($resql)) {
+    		if (!empty($obj_bank->accountancy_journal)) {
+    			$code_journal_array[$obj_bank->accountancy_journal]=$obj_bank->accountancy_journal;
+    		}
+    	}
+    }
 
     $book = new BookKeeping($db);
     $next_num_mvt = $book->getNextNumMvt();
@@ -259,7 +271,7 @@ if ($action == 'create') {
     print '</form>';
 } else {
     $book = new BookKeeping($db);
-    $result = $book->fetch_per_mvt($piece_num);
+    $result = $book->fetchPerMvt($piece_num);
     if ($result < 0) {
         setEventMessages($book->error, $book->errors, 'errors');
     }

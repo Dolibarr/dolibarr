@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2015 Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013-2016 Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2014-2015 Ari Elbaz (elarifr)	<github@accedinfo.com>  
  * Copyright (C) 2013-2014 Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
@@ -225,7 +225,7 @@ if ($result) {
 	print '<td class="liste_titre"><input type="text" class="flat" size="15" name="search_label" value="' . $search_label . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" size="15" name="search_desc" value="' . $search_desc . '"></td>';
 	print '<td class="liste_titre" align="center"><input type="text" class="flat" size="8" name="search_amount" value="' . $search_amount . '"></td>';
-	print '<td class="liste_titre" align="center">%<input type="text" class="flat" size="5" name="search_vat" value="' . $search_vat . '"></td>';
+	print '<td class="liste_titre" align="center"><input type="text" class="flat" size="5" name="search_vat" value="' . $search_vat . '">%</td>';
 	print '<td class="liste_titre" align="center"><input type="text" class="flat" size="15" name="search_account" value="' . $search_account . '"></td>';
 	print '<td class="liste_titre" colspan="2">&nbsp;</td>';
   print '<td class="liste_titre" align="center"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';

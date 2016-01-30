@@ -30,6 +30,11 @@
  */
 class AccountingAccount extends CommonObject
 {
+	var $db;
+	var $error;
+	var $errors;
+
+	var $id;
 	var $rowid;
 
 	var $datec; // Creation date

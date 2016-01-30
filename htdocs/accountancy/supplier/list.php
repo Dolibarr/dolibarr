@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2014	Olivier Geffroy			<jeff@jeffinfo.com>
- * Copyright (C) 2013-2015	Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013-2016	Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2014-2015	Ari Elbaz (elarifr)		<github@accedinfo.com>
  * Copyright (C) 2013-2014	Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014		Juanjo Menent			<jmenent@2byte.es>s
@@ -168,7 +168,6 @@ if ($action == 'ventil' && !empty($btn_ventil)) {
 
 /*
  * Supplier Invoice Lines
- *
  */
 
 if (! empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)) {
@@ -252,11 +251,11 @@ if ($result) {
 	
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_invoice" value="' . $search_invoice . '"></td>';
-	print '<td class="liste_titre">%<input type="text" class="flat" size="15" name="search_ref" value="' . $search_ref . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" size="15" name="search_ref" value="' . $search_ref . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" size="20" name="search_label" value="' . $search_label . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" size="20" name="search_desc" value="' . $search_desc . '"></td>';
 	print '<td class="liste_titre" align="right"><input type="text" class="flat" size="10" name="search_amount" value="' . $search_amount . '"></td>';
-	print '<td class="liste_titre" align="center">%<input type="text" class="flat" size="5" name="search_vat" value="' . $search_vat . '"></td>';
+	print '<td class="liste_titre" align="center"><input type="text" class="flat" size="5" name="search_vat" value="' . $search_vat . '">%</td>';
 	print '<td class="liste_titre" align="center">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td align="right" colspan="2" class="liste_titre">';
