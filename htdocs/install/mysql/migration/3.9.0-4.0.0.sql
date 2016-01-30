@@ -38,3 +38,5 @@ ALTER TABLE llx_cronjob MODIFY COLUMN unitfrequency	varchar(255) NOT NULL DEFAUL
 
 ALTER TABLE llx_facture ADD INDEX idx_facture_fk_statut (fk_statut);
 
+UPDATE llx_projet as p set p.opp_percent = (SELECT percent FROM llx_c_lead_status as cls WHERE cls.rowid = p.fk_opp_status)  WHERE p.opp_percent IS NULL AND p.fk_opp_status IS NOT NULL;
+ 

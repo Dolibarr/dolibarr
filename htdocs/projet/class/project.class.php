@@ -231,11 +231,12 @@ class Project extends CommonObject
         global $langs, $conf;
 
 		$error=0;
-
+		
         // Clean parameters
         $this->title = trim($this->title);
         $this->description = trim($this->description);
 		if ($this->opp_amount < 0) $this->opp_amount='';
+		if ($this->opp_percent < 0) $this->opp_percent='';
 
         if (dol_strlen(trim($this->ref)) > 0)
         {
@@ -247,7 +248,7 @@ class Project extends CommonObject
             $sql.= ", description = '" . $this->db->escape($this->description) . "'";
             $sql.= ", fk_soc = " . ($this->socid > 0 ? $this->socid : "null");
             $sql.= ", fk_statut = " . $this->statut;
-            $sql.= ", fk_opp_status = " . ($this->opp_status > 0 ? $this->opp_status : 'null');
+            $sql.= ", fk_opp_status = " . ((is_numeric($this->opp_status) && $this->opp_status != '') ? $this->opp_status : 'null');
 			$sql.= ", opp_percent = " . ((is_numeric($this->opp_percent) && $this->opp_percent != '') ? $this->opp_percent : 'null');
             $sql.= ", public = " . ($this->public ? 1 : 0);
             $sql.= ", datec=" . ($this->date_c != '' ? "'".$this->db->idate($this->date_c)."'" : 'null');

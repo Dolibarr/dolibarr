@@ -54,7 +54,7 @@ if ($status == '') $status=-2;
 $search_label=GETPOST("search_label",'alpha');
 
 if (empty($sortorder)) $sortorder="DESC";
-if (empty($sortfield)) $sortfield="t.datenextrun";
+if (empty($sortfield)) $sortfield="t.status";
 if (empty($arch)) $arch = 0;
 if ($page == -1) {
 	$page = 0 ;
@@ -99,24 +99,26 @@ if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->ex
 
     $now = dol_now();   // Date we start
 
-    $result = $object->run_jobs($user->login);
-	if ($result < 0) {
+    $resrunjob = $object->run_jobs($user->login);
+	if ($resrunjob < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
-	else
+
+	// Programm next run
+	$res = $object->reprogram_jobs($user->login, $now);
+	if ($res > 0)
 	{
-		$res = $object->reprogram_jobs($user->login, $now);
-		if ($res > 0)
+		if ($resrunjob >= 0)	// We add result of reprogram ony if no error message already reported 
 		{
 			if ($object->lastresult > 0) setEventMessages($langs->trans("JobFinished"), null, 'warnings');
 			else setEventMessages($langs->trans("JobFinished"), null, 'mesgs');
-			$action='';
 		}
-		else
-		{
-			setEventMessages($object->error, $object->errors, 'errors');
-			$action='';
-		}
+		$action='';
+	}
+	else
+	{
+		setEventMessages($object->error, $object->errors, 'errors');
+		$action='';
 	}
 
 	header("Location: ".DOL_URL_ROOT.'/cron/list.php?status=-2');		// Make a call to avoid to run twice job when using back
@@ -246,21 +248,19 @@ if ($num > 0)
 		if ($line->jobtype=='method')
 		{
 		    $text=$langs->trans("CronClass");
-			$texttoshow=$langs->trans('CronModule').':'.$line->module_name.'<br>';
-			$texttoshow.=$langs->trans('CronClass').':'. $line->classesname.'<br>';
-			$texttoshow.=$langs->trans('CronObject').':'. $line->objectname.'<br>';
-			$texttoshow.=$langs->trans('CronMethod').':'. $line->methodename;
-			if(!empty($line->params)) {
-				$texttoshow.='<br>'.$langs->trans('CronArgs').':'. $line->params;
-			}
+			$texttoshow=$langs->trans('CronModule').': '.$line->module_name.'<br>';
+			$texttoshow.=$langs->trans('CronClass').': '. $line->classesname.'<br>';
+			$texttoshow.=$langs->trans('CronObject').': '. $line->objectname.'<br>';
+			$texttoshow.=$langs->trans('CronMethod').': '. $line->methodename;
+			$texttoshow.='<br>'.$langs->trans('CronArgs').':'. $line->params;
+			$texttoshow.='<br>'.$langs->trans('Comment').':'. $line->note;
 		}
 		elseif ($line->jobtype=='command') 
 		{
 			$text=$langs->trans('CronCommand');
 			$texttoshow=$langs->trans('CronCommand').': '.dol_trunc($line->command);
-			if(!empty($line->params)) {
-				$texttoshow='<br>'.$langs->trans('CronArgs').':'. $line->params;
-			}
+			$texttoshow.='<br>'.$langs->trans('CronArgs').':'. $line->params;
+			$texttoshow.='<br>'.$langs->trans('Comment').':'. $line->note;
 		}
 		print $form->textwithpicto($text, $texttoshow, 1);
 		print '</td>';
@@ -297,7 +297,7 @@ if ($num > 0)
 		print '</td>';
 
 		print '<td class="center">';
-		if(!empty($line->lastresult)) {print dol_trunc($line->lastresult);}
+		if ($line->lastresult != '') {print dol_trunc($line->lastresult);}
 		print '</td>';
 
 		print '<td>';
