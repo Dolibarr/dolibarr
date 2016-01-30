@@ -182,7 +182,7 @@ if ($action == 'writebookkeeping') {
 			$bookkeeping->code_journal = $conf->global->ACCOUNTING_PURCHASE_JOURNAL;
 			$bookkeeping->fk_user_author = $user->id;
 
-			$result = $bookkeeping->create();
+			$result = $bookkeeping->create($user);
 			if ($result < 0) {
 				$error ++;
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -212,7 +212,7 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->code_journal = $conf->global->ACCOUNTING_PURCHASE_JOURNAL;
 					$bookkeeping->fk_user_author = $user->id;
 
-					$result = $bookkeeping->create();
+					$result = $bookkeeping->create($user);
 					if ($result < 0) {
 						$error ++;
 						setEventMessages($object->error, $object->errors, 'errors');
@@ -243,7 +243,7 @@ if ($action == 'writebookkeeping') {
 				$bookkeeping->code_journal = $conf->global->ACCOUNTING_PURCHASE_JOURNAL;
 				$bookkeeping->fk_user_author = $user->id;
 
-				$result = $bookkeeping->create();
+				$result = $bookkeeping->create($user);
 				if ($result < 0) {
 					$error ++;
 					setEventMessages($object->error, $object->errors, 'errors');

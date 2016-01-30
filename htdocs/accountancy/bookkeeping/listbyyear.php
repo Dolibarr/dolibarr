@@ -19,16 +19,17 @@
  */
 
 /**
- * \file		htdocs/accountancy/bookkeeping/listbyyear.php
- * \ingroup		Accounting Expert
- * \brief		Book keeping by year
+ * \file htdocs/accountancy/bookkeeping/listbyyear.php
+ * \ingroup Accounting Expert
+ * \brief Book keeping by year
  */
-
 require '../../main.inc.php';
-	
+
 // Class
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/accountancy/class/bookkeeping.class.php';
+require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
 
 // Langs
 $langs->load("accountancy");
@@ -36,93 +37,255 @@ $langs->load("accountancy");
 $page = GETPOST("page");
 $sortorder = GETPOST("sortorder");
 $sortfield = GETPOST("sortfield");
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$search_date_start = dol_mktime(0, 0, 0, GETPOST('date_startmonth', 'int'), GETPOST('date_startday', 'int'), GETPOST('date_startyear', 'int'));
+$search_date_end = dol_mktime(0, 0, 0, GETPOST('date_endmonth', 'int'), GETPOST('date_endday', 'int'), GETPOST('date_endyear', 'int'));
+$search_doc_type=GETPOST('search_doc_type','alpha');
+$search_doc_date=dol_mktime(0, 0, 0, GETPOST('doc_datemonth', 'int'), GETPOST('doc_dateday', 'int'), GETPOST('doc_dateyear', 'int'));
+$search_doc_ref=GETPOST('search_doc_ref','alpha');
+$search_numero_compte=GETPOST('search_numero_compte','alpha');
+$search_numero_compte_start=GETPOST('search_numero_compte_start','alpha');
+if ($search_numero_compte_start==-1) {
+	$search_numero_compte_start='';
+}
+$search_numero_compte_end=GETPOST('search_numero_compte_end','alpha');
+if ($search_numero_compte_end==-1) {
+	$search_numero_compte_end='';
+}
+$search_code_tiers=GETPOST('search_code_tiers','alpha');
+$search_code_tiers_start=GETPOST('search_code_tiers_start','alpha');
+if ($search_code_tiers_start==-1) {
+	$search_code_tiers_start='';
+}
+$search_code_tiers_end=GETPOST('search_code_tiers_end','alpha');
+if ($search_code_tiers_end==-1) {
+	$search_code_tiers_end='';
+}
+$search_label_compte=GETPOST('search_label_compte','alpha');
+$search_sens=GETPOST('search_sens','alpha');
+$search_code_journal=GETPOST('search_code_journal','alpha');
+
+$object = new BookKeeping($db);
+$form = new Form($db);
+$formventilation = new FormVentilation($db);
 
 // Filter
-$year = GETPOST("year", 'int');
-if ($year == 0) {
-	$year_current = strftime("%Y", time());
-	$year_start = $year_current;
-} else {
-	$year_current = $year;
-	$year_start = $year;
+if (empty($search_date_start)) {
+	$search_date_start = dol_mktime(0, 0, 0, 1, 1, dol_print_date(dol_now(), '%Y'));
+	$search_date_end = dol_mktime(0, 0, 0, 12, 31, dol_print_date(dol_now(), '%Y'));
 }
-
 if ($sortorder == "")
 	$sortorder = "ASC";
 if ($sortfield == "")
-	$sortfield = "bk.rowid";
+	$sortfield = "t.rowid";
 
 $offset = $limit * $page;
 
 llxHeader('', $langs->trans("Bookkeeping"));
 
-$textprevyear = '<a href="' . $_SERVER["PHP_SELF"] . '?year=' . ($year_current - 1) . '">' . img_previous() . '</a>';
-$textnextyear = '&nbsp;<a href="' . $_SERVER["PHP_SELF"] . '?year=' . ($year_current + 1) . '">' . img_next() . '</a>';
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+{
+	$search_doc_type = "";
+	$search_doc_date = "";
+	$search_doc_ref = "";
+	$search_numero_compte = "";
+	$search_code_tiers = "";
+	$search_label_compte = "";
+	$search_sens = "";
+	$search_code_journal = "";
+}
+
+$options = '';
+$filter = array ();
+if (! empty($search_date_start)) {
+	$filter['t.doc_date>='] = $search_date_start;
+	$options .= '&amp;date_startmonth=' . GETPOST('date_startmonth', 'int') . '&amp;date_startday=' . GETPOST('date_startday', 'int') . '&amp;date_startyear=' . GETPOST('date_startyear', 'int');
+}
+if (! empty($search_date_end)) {
+	$filter['t.doc_date<='] = $search_date_end;
+	$options .= '&amp;date_endmonth=' . GETPOST('date_endmonth', 'int') . '&amp;date_endday=' . GETPOST('date_endday', 'int') . '&amp;date_endyear=' . GETPOST('date_endyear', 'int');
+}
+if (! empty($search_doc_type)) {
+	$filter['t.doc_type'] = $search_doc_type;
+	$options .= '&amp;search_doc_type=' . $search_doc_type;
+}
+if (! empty($search_doc_date)) {
+	$filter['t.doc_date'] = $search_doc_date;
+	$options .= '&amp;doc_datemonth=' . GETPOST('doc_datemonth', 'int') . '&amp;doc_dateday=' . GETPOST('doc_dateday', 'int') . '&amp;doc_dateyear=' . GETPOST('doc_dateyear', 'int');
+}
+if (! empty($search_doc_ref)) {
+	$filter['t.doc_ref'] = $search_doc_ref;
+	$options .= '&amp;search_doc_ref=' . $search_doc_ref;
+}
+if (! empty($search_numero_compte)) {
+	$filter['t.numero_compte'] = $search_numero_compte;
+	$options .= '&amp;search_numero_compte=' . $search_numero_compte;
+}
+if (! empty($search_numero_compte_start)) {
+	$filter['t.numero_compte>='] = $search_numero_compte_start;
+	$options .= '&amp;search_numero_compte_start=' . $search_numero_compte_start;
+}
+if (! empty($search_numero_compte_end)) {
+	$filter['t.numero_compte<='] = $search_numero_compte_end;
+	$options .= '&amp;search_numero_compte_end=' . $search_numero_compte_end;
+}
+if (! empty($search_code_tiers)) {
+	$filter['t.code_tiers'] = $search_code_tiers;
+	$options .= '&amp;search_code_tiers=' . $search_code_tiers;
+}
+if (! empty($search_code_tiers_start)) {
+	$filter['t.code_tiers>='] = $search_code_tiers_start;
+	$options .= '&amp;search_code_tiers_start=' . $search_code_tiers_start;
+}
+if (! empty($search_code_tiers_end)) {
+	$filter['t.code_tiers<='] = $search_code_tiers_end;
+	$options .= '&amp;search_code_tiers_end=' . $search_code_tiers_end;
+}
+if (! empty($search_label_compte)) {
+	$filter['t.label_compte'] = $search_label_compte;
+	$options .= '&amp;search_label_compte=' . $search_label_compte;
+}
+if (! empty($search_sens)) {
+	$filter['t.sens'] = $search_sens;
+	$options .= '&amp;search_sens=' . $search_sens;
+}
+if (! empty($search_code_journal)) {
+	$filter['t.code_journal'] = $search_code_journal;
+	$options .= '&amp;search_code_journal=' . $search_code_journal;
+}
 
 /*
  * Mode List
  */
 
-$sql = "SELECT bk.rowid, bk.doc_date, bk.doc_type, bk.doc_ref, bk.code_tiers, bk.numero_compte , bk.label_compte, bk.debit , bk.credit, bk.montant , bk.sens, bk.code_journal";
-$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as bk";
-// $sql .= " WHERE bk.doc_date >= '".$db->idate(dol_get_first_day($y,1,false))."'";
-// $sql .= " AND bk.doc_date <= '".$db->idate(dol_get_last_day($y,12,false))."'";
-$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit + 1, $offset);
-
-dol_syslog('accountancy/bookkeeping/listbyyear.php:: $sql=' . $sql);
-$resql = $db->query($sql);
-if ($resql) {
-	$num = $db->num_rows($resql);
-	$i = 0;
-	
-	print_barre_liste($langs->trans("Bookkeeping") . " $textprevyear " . $langs->trans("Year") . " $year_start $textnextyear", $page, $_SERVER['PHP_SELF'], "", $sortfield, $sortorder, '', $num);
-	print "<table class=\"noborder\" width=\"100%\">";
-	
-	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Doctype"), $_SERVER['PHP_SELF'], "bk.doc_type", "", "", "", $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Date"), $_SERVER['PHP_SELF'], "bk.doc_date", "", "", "", $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Docref"), $_SERVER['PHP_SELF'], "bk.doc_ref", "", "", "", $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("AccountAccounting"), $_SERVER['PHP_SELF'], "bk.numero_compte", "", "", "", $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("ThirdPartyAccount"), $_SERVER['PHP_SELF'], "bk.code_tiers", "", "", "", $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Label"), $_SERVER['PHP_SELF'], "bk_label_compte", "", "", "", $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Debit"), $_SERVER['PHP_SELF'], "bk.debit", "", "", "", $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Credit"), $_SERVER['PHP_SELF'], "bk.credit", "", "", "", $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Amount"), $_SERVER['PHP_SELF'], "bk.montant", "", "", "", $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Sens"), $_SERVER['PHP_SELF'], "bk.sens", "", "", "", $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Codejournal"), $_SERVER['PHP_SELF'], "bk.code_journal", "", "", "", $sortfield, $sortorder);
-	print_liste_field_titre('');
-	print "</tr>\n";
-	
-	$var = True;
-	
-	while ( $i < min($num, $conf->liste_limit) ) {
-		$obj = $db->fetch_object($resql);
-		$var = ! $var;
-		
-		print "<tr $bc[$var]>";
-		
-		print '<td>' . $obj->doc_type . '</td>' . "\n";
-		print '<td>' . dol_print_date($db->jdate($obj->doc_date)) . '</td>';
-		print '<td>' . $obj->doc_ref . '</td>';
-		print '<td>' . length_accountg($obj->numero_compte) . '</td>';
-		print '<td>' . length_accounta($obj->code_tiers) . '</td>';
-		print '<td>' . $obj->label_compte . '</td>';
-		print '<td align="right">' . price($obj->debit) . '</td>';
-		print '<td align="right">' . price($obj->credit) . '</td>';
-		print '<td align="right">' . price($obj->montant) . '</td>';
-		print '<td>' . $obj->sens . '</td>';
-		print '<td>' . $obj->code_journal . '</td>';
-		print '<td><a href="./card.php?action=update&id=' . $obj->rowid . '">' . img_edit() . '</a></td>';
-		print "</tr>\n";
-		
-		$i ++;
+$nbtotalofrecords = 0;
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+	$nbtotalofrecords = $object->fetchAll($sortorder, $sortfield, 0, 0);
+	if ($nbtotalofrecords < 0) {
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
-	print "</table>";
-	$db->free($resql);
-} else {
-	dol_print_error($db);
 }
+
+$result = $object->fetchAll($sortorder, $sortfield, $limit, $offset, $filter);
+if ($result < 0) {
+	setEventMessages($object->error, $object->errors, 'errors');
+}
+
+print_barre_liste($langs->trans("Bookkeeping") .' '. dol_print_date($search_date_start).'-'.dol_print_date($search_date_end), $page, $_SERVER['PHP_SELF'], $options, $sortfield, $sortorder, '', $result, $nbtotalofrecords);
+
+print '<form method="GET" id="searchFormList" action="' . $_SERVER["PHP_SELF"] . '">';
+print '<div class="liste_titre">';
+print $langs->trans('DateStart') . ': ';
+print $form->select_date($search_date_start, 'date_start');
+print $langs->trans('DateEnd') . ': ';
+print $form->select_date($search_date_end, 'date_end');
+print '</div>';
+print '<div class="liste_titre">';
+print $langs->trans('From').' '.$langs->trans('AccountAccounting') . ': ';
+print $formventilation->select_account($search_numero_compte_start,'search_numero_compte_start', 1, array (), 1, 1,'');
+print $langs->trans('To').' '.$langs->trans('AccountAccounting') . ': ';
+print $formventilation->select_account($search_numero_compte_end,'search_numero_compte_end', 1, array (), 1, 1,'');
+print '</div>';
+print '<div class="liste_titre">';
+print $langs->trans('From').' '.$langs->trans('ThirdPartyAccount') . ': ';
+print $formventilation->select_auxaccount($search_code_tiers_start,'search_code_tiers_start', 1);
+print $langs->trans('To').' '.$langs->trans('ThirdPartyAccount') . ': ';
+print $formventilation->select_auxaccount($search_code_tiers_end,'searchcode_tiers_end', 1);
+print '</div>';
+print "<table class=\"noborder\" width=\"100%\">";
+
+print '<tr class="liste_titre">';
+print_liste_field_titre($langs->trans("NumPiece"), $_SERVER['PHP_SELF'], "t.piece_num", "", $options, "", $sortfield, $sortorder);
+print_liste_field_titre($langs->trans("Doctype"), $_SERVER['PHP_SELF'], "t.doc_type", "", $options, "", $sortfield, $sortorder);
+print_liste_field_titre($langs->trans("Date"), $_SERVER['PHP_SELF'], "t.doc_date", "", $options, "", $sortfield, $sortorder);
+print_liste_field_titre($langs->trans("Docref"), $_SERVER['PHP_SELF'], "t.doc_ref", "", $options, "", $sortfield, $sortorder);
+print_liste_field_titre($langs->trans("AccountAccounting"), $_SERVER['PHP_SELF'], "t.numero_compte", "", $options, "", $sortfield, $sortorder);
+print_liste_field_titre($langs->trans("ThirdPartyAccount"), $_SERVER['PHP_SELF'], "t.code_tiers", "", $options, "", $sortfield, $sortorder);
+print_liste_field_titre($langs->trans("Label"), $_SERVER['PHP_SELF'], "t.label_compte", "", $options, "", $sortfield, $sortorder);
+print_liste_field_titre($langs->trans("Debit"), $_SERVER['PHP_SELF'], "t.debit", "", $options, "", $sortfield, $sortorder);
+print_liste_field_titre($langs->trans("Credit"), $_SERVER['PHP_SELF'], "t.credit", "", $options, "", $sortfield, $sortorder);
+print_liste_field_titre($langs->trans("Amount"), $_SERVER['PHP_SELF'], "t.montant", "", $options, "", $sortfield, $sortorder);
+print_liste_field_titre($langs->trans("Sens"), $_SERVER['PHP_SELF'], "t.sens", "", $options, "", $sortfield, $sortorder);
+print_liste_field_titre($langs->trans("Codejournal"), $_SERVER['PHP_SELF'], "t.code_journal", "", $options, "", $sortfield, $sortorder);
+print '<th class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="' . img_picto($langs->trans("Search"), 'search.png', '', '', 1) . '" value="' . dol_escape_htmltag($langs->trans("Search")) . '" title="' . dol_escape_htmltag($langs->trans("Search")) . '">';
+print '<input type="image" class="liste_titre" name="button_removefilter" src="' . img_picto($langs->trans("Search"), 'searchclear.png', '', '', 1) . '" value="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '" title="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '"></td>';
+print "</tr>\n";
+print '<tr class="liste_titre">';
+
+print '<td class="liste_titre">';
+print '<input type="text" size=4 class="flat" name="search_piece_num" value="'.$search_piece_num.'"/>';
+print '</td>';
+
+print '<td class="liste_titre">';
+print '<input type="text" size=7 class="flat" name="search_doc_type" value="'.$search_doc_type.'"/>';
+print '</td>';
+
+print '<td class="liste_titre">';
+print $form->select_date($search_doc_date,'doc_date',0, 0, 1);
+print '</td>';
+
+print '<td class="liste_titre">';
+print '<input type="text" size=6 class="flat" name="search_doc_ref" value="'.$search_doc_ref.'"/>';
+print '</td>';
+
+print '<td class="liste_titre">';
+print '<input type="text" size=6 class="flat" name="search_numero_compte" value="'.$search_numero_compte.'"/>';
+print '</td>';
+
+print '<td class="liste_titre">';
+print '<input type="text" size=6 class="flat" name="search_code_tiers" value="'.$search_code_tiers.'"/>';
+print '</td>';
+
+print '<td class="liste_titre">';
+print '<input type="text" size=6 class="flat" name="search_label_compte" value="'.$search_label_compte.'"/>';
+print '</td>';
+
+print '<td class="liste_titre">';
+print '</td>';
+
+print '<td class="liste_titre">';
+print '</td>';
+
+print '<td class="liste_titre">';
+print '</td>';
+
+print '<td class="liste_titre">';
+print '<input type="text" size=2 class="flat" name="search_sens" value="'.$search_sens.'"/>';
+print '</td>';
+
+print '<td class="liste_titre">';
+print '<input type="text" size=3 class="flat" name="search_code_journal" value="'.$search_code_journal.'"/>';
+print '</td>';
+
+print '<td class="liste_titre">';
+print '</td>';
+
+print "</tr>\n";
+
+$var = True;
+
+foreach ( $object->lines as $line ) {
+	$var = ! $var;
+	
+	print "<tr $bc[$var]>";
+	
+	print '<td>' . $line->piece_num . '</td>' . "\n";
+	print '<td>' . $line->doc_type . '</td>' . "\n";
+	print '<td>' . dol_print_date($line->doc_date) . '</td>';
+	print '<td>' . $line->doc_ref . '</td>';
+	print '<td>' . length_accountg($line->numero_compte) . '</td>';
+	print '<td>' . length_accounta($line->code_tiers) . '</td>';
+	print '<td>' . $line->label_compte . '</td>';
+	print '<td align="right">' . price($line->debit) . '</td>';
+	print '<td align="right">' . price($line->credit) . '</td>';
+	print '<td align="right">' . price($line->montant) . '</td>';
+	print '<td>' . $line->sens . '</td>';
+	print '<td>' . $line->code_journal . '</td>';
+	print '<td><a href="./card.php?action=update&amp;piece_num=' . $line->piece_num . '">' . img_edit() . '</a></td>';
+	print "</tr>\n";
+}
+print "</table>";
+print '</form>';
 
 llxFooter();
 $db->close();

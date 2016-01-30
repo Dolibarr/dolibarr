@@ -343,7 +343,7 @@ if ($action == 'writebookkeeping')
 				}
 			}
 
-			$result = $bookkeeping->create();
+			$result = $bookkeeping->create($user);
 			if ($result < 0) {
 				$error ++;
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -421,7 +421,7 @@ if ($action == 'writebookkeeping')
 				$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER;
 			}
 
-			$result = $bookkeeping->create();
+			$result = $bookkeeping->create($user);
 			if ($result < 0) {
 				$error ++;
 				setEventMessages($object->error, $object->errors, 'errors');

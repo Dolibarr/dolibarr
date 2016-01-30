@@ -206,7 +206,8 @@ else
 	print '<td>';
 	$listmodelcsv=array(
 		'1'=>$langs->trans("Modelcsv_normal"),
-		'2'=>$langs->trans("Modelcsv_CEGID")
+		'2'=>$langs->trans("Modelcsv_CEGID"),
+		'3'=>$langs->trans("Modelcsv_COALA")
 	);
 	print $form->selectarray("modelcsv",$listmodelcsv,$conf->global->ACCOUNTING_EXPORT_MODELCSV,0);
 
