@@ -27,15 +27,22 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 $module = $object->element;
 
 // Special cases
-if ($module == 'propal')				{ $permission=$user->rights->propale->creer; }
-elseif ($module == 'fichinter')			{ $permission=$user->rights->ficheinter->creer; }
+if ($module == 'propal')		{ $permission=$user->rights->propale->creer; }
+elseif ($module == 'fichinter')		{ $permission=$user->rights->ficheinter->creer; }
 elseif ($module == 'invoice_supplier')	{ $permission=$user->rights->fournisseur->facture->creer; }
 elseif ($module == 'order_supplier')	{ $permission=$user->rights->fournisseur->commande->creer; }
-elseif ($module == 'project')			{ $permission=$user->rights->projet->creer; }
-elseif ($module == 'action')			{ $permission=$user->rights->agenda->myactions->create; }
-elseif ($module == 'shipping')			{ $permission=$user->rights->expedition->creer; }
-elseif ($module == 'project_task')		{ $permission=$user->rights->projet->creer; }
-elseif (! isset($permission))			{ $permission=$user->rights->$module->creer; } // If already defined by caller page
+elseif ($module == 'project')		{ $permission=$user->rights->projet->creer; }
+elseif ($module == 'action')		{ $permission=$user->rights->agenda->myactions->create; }
+elseif ($module == 'shipping')		{ $permission=$user->rights->expedition->creer; }
+elseif ($module == 'project_task')	{ $permission=$user->rights->projet->creer; }
+elseif (! isset($permission) && isset($user->rights->$module->creer))			
+{ 
+	$permission=$user->rights->$module->creer; 
+}
+elseif (! isset($permission)  && isset($user->rights->$module->write))
+{
+	$permission=$user->rights->$module->write; 
+}
 
 $formcompany= new FormCompany($db);
 $companystatic=new Societe($db);
