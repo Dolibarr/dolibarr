@@ -1026,7 +1026,7 @@ $sql .= " WHERE fk_product = " . $object->id;
 $sql .= " AND p.entity IN (" . getEntity('productprice', 1) . ")";
 $sql .= " AND p.fk_user_author = u.rowid";
 if (! empty($socid) && ! empty($conf->global->PRODUIT_MULTIPRICES)) $sql .= " AND p.price_level = " . $soc->price_level;
-$sql .= " ORDER BY p.date_price, p.rowid DESC, p.price_level ASC";
+$sql .= " ORDER BY p.date_price DESC, p.rowid DESC, p.price_level ASC";
 // $sql .= $db->plimit();
 
 $result = $db->query($sql);
@@ -1063,7 +1063,7 @@ if ($result)
 		}
 
 		print '<td align="center">' . $langs->trans("PriceBase") . '</td>';
-		if (! empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL) || ! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY)) print '<td align="right">' . $langs->trans("VATRate") . '</td>';
+		if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES) || ! empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL) || ! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY)) print '<td align="right">' . $langs->trans("VATRate") . '</td>';
 		print '<td align="right">' . $langs->trans("HT") . '</td>';
 		print '<td align="right">' . $langs->trans("TTC") . '</td>';
 		if (! empty($conf->dynamicprices->enabled)) {
@@ -1098,7 +1098,7 @@ if ($result)
 			}
 
 			print '<td align="center">' . $langs->trans($objp->price_base_type) . "</td>";
-			if (! empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL) || ! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY)) print '<td align="right">' . vatrate($objp->tva_tx, true, $objp->recuperableonly) . "</td>";
+			if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES) || ! empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL) || ! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY)) print '<td align="right">' . vatrate($objp->tva_tx, true, $objp->recuperableonly) . "</td>";
 
 			//Price
 			if (! empty($objp->fk_price_expression) && ! empty($conf->dynamicprices->enabled))
