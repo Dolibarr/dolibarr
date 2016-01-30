@@ -175,6 +175,7 @@ INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (14
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (147,'ML','MLI','Mali',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (148,'MT','MLT','Malte',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (149,'MH','MHL','Iles Marshall',1,0);
+INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (150,'MQ','MTQ','Martinique',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (151,'MR','MRT','Mauritanie',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (152,'MU','MUS','Maurice',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (153,'YT','MYT','Mayotte',1,0);
