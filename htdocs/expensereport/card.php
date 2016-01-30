@@ -29,8 +29,8 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
-require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+if (! empty($conf->projet->enabled)) require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
+if (! empty($conf->projet->enabled)) require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/expensereport.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/price.lib.php';
@@ -48,7 +48,7 @@ $cancel=GETPOST('cancel');
 $date_start = dol_mktime(0, 0, 0, GETPOST('date_debutmonth'), GETPOST('date_debutday'), GETPOST('date_debutyear'));
 $date_end = dol_mktime(0, 0, 0, GETPOST('date_finmonth'), GETPOST('date_finday'), GETPOST('date_finyear'));
 $date = dol_mktime(0, 0, 0, GETPOST('datemonth'), GETPOST('dateday'), GETPOST('dateyear'));
-$fk_projet=GETPOST('fk_projet');
+if (! empty($conf->projet->enabled)) $fk_projet=GETPOST('fk_projet');
 $vatrate=GETPOST('vatrate');
 $ref=GETPOST("ref",'alpha');
 $comments=GETPOST('comments');
@@ -842,7 +842,7 @@ if ($action == "addline")
 	$object_ligne->fk_c_tva = GETPOST('fk_c_tva');
 	$object_ligne->vatrate = price2num($vatrate);
 
-	$object_ligne->fk_projet = $fk_projet;
+	if (! empty($conf->projet->enabled)) $object_ligne->fk_projet = $fk_projet;
 
 	if (! GETPOST('fk_c_type_fees') > 0)
 	{
@@ -962,7 +962,7 @@ if ($action == "updateligne" )
 	$rowid = $_POST['rowid'];
 	$type_fees_id = GETPOST('fk_c_type_fees');
 	$object_ligne->vatrate = price2num(GETPOST('vatrate'));
-	$projet_id = $fk_projet;
+	if (! empty($conf->projet->enabled)) $projet_id = $fk_projet;
 	$comments = GETPOST('comments');
 	$qty = GETPOST('qty');
 	$value_unit = GETPOST('value_unit');
@@ -1075,8 +1075,8 @@ llxHeader('', $langs->trans("ExpenseReport"));
 
 $form = new Form($db);
 $formfile = new FormFile($db);
-$formproject = new FormProjets($db);
-$projecttmp = new Project($db);
+if (! empty($conf->projet->enabled)) $formproject = new FormProjets($db);
+if (! empty($conf->projet->enabled)) $projecttmp = new Project($db);
 
 if (! empty($conf->global->DEPLACEMENT_TO_CLEAN))
 {
@@ -1620,13 +1620,14 @@ else
 				print '<br>';
 
 				// Fetch Lines of current expense report
-				$sql = 'SELECT fde.rowid, fde.fk_expensereport, fde.fk_c_type_fees, fde.fk_projet, fde.date,';
-				$sql.= ' fde.tva_tx as vatrate, fde.comments, fde.qty, fde.value_unit, fde.total_ht, fde.total_tva, fde.total_ttc,';
-				$sql.= ' ctf.code as type_fees_code, ctf.label as type_fees_libelle,';
-				$sql.= ' pjt.rowid as projet_id, pjt.title as projet_title, pjt.ref as projet_ref';
+				$sql = 'SELECT fde.rowid, fde.fk_expensereport, fde.fk_c_type_fees, fde.date,';
+                		if (! empty($conf->projet->enabled)) $sql.= ' fde.fk_projet,';
+ 				$sql.= ' fde.tva_tx as vatrate, fde.comments, fde.qty, fde.value_unit, fde.total_ht, fde.total_tva, fde.total_ttc,';
+				$sql.= ' ctf.code as type_fees_code, ctf.label as type_fees_libelle';
+				if (! empty($conf->projet->enabled)) $sql.= ' ,pjt.rowid as projet_id, pjt.title as projet_title, pjt.ref as projet_ref';
 				$sql.= ' FROM '.MAIN_DB_PREFIX.'expensereport_det as fde';
 				$sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'c_type_fees as ctf ON fde.fk_c_type_fees=ctf.id';
-				$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as pjt ON fde.fk_projet=pjt.rowid';
+				if (! empty($conf->projet->enabled)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as pjt ON fde.fk_projet=pjt.rowid';
 				$sql.= ' WHERE fde.fk_expensereport = '.$object->id;
 
 				print '<div style="clear: both;">';
@@ -1652,7 +1653,7 @@ else
 						print '<tr class="liste_titre">';
 						print '<td style="text-align:center;">'.$langs->trans('Piece').'</td>';
 						print '<td style="text-align:center;">'.$langs->trans('Date').'</td>';
-						print '<td>'.$langs->trans('Project').'</td>';
+						if (! empty($conf->projet->enabled)) print '<td>'.$langs->trans('Project').'</td>';
 						print '<td style="text-align:center;">'.$langs->trans('Type').'</td>';
 						print '<td style="text-align:left;">'.$langs->trans('Description').'</td>';
 						print '<td style="text-align:right;">'.$langs->trans('VAT').'</td>';
@@ -1680,14 +1681,14 @@ else
 								print img_picto($langs->trans("Document"), "object_generic");
 								print ' <span>'.$piece_comptable.'</span></td>';
 								print '<td style="text-align:center;">'.dol_print_date($db->jdate($objp->date), 'day').'</td>';
-								print '<td>';
-								if ($objp->projet_id > 0)
+								if (! empty($conf->projet->enabled) && $objp->projet_id > 0)
 								{
+									print '<td>';
 									$projecttmp->id=$objp->projet_id;
 									$projecttmp->ref=$objp->projet_ref;
 									print $projecttmp->getNomUrl(1);
+									print '</td>';
 								}
-								print '</td>';
 								print '<td style="text-align:center;">'.$langs->trans("TF_".strtoupper($objp->type_fees_libelle)).'</td>';
 								print '<td style="text-align:left;">'.$objp->comments.'</td>';
 								print '<td style="text-align:right;">'.vatrate($objp->vatrate,true).'</td>';
@@ -1728,10 +1729,12 @@ else
 									$form->select_date($objp->date,'date');
 									print '</td>';
 
-									// Select project
-									print '<td>';
-									$formproject->select_projects(-1, $objp->fk_projet,'fk_projet', 0, 0, 1, 1);
-									print '</td>';
+                                    					if (!empty($conf->projet->enabled)) {
+										// Select project
+										print '<td>';
+										$formproject->select_projects(-1, $objp->fk_projet,'fk_projet', 0, 0, 1, 1);
+										print '</td>';
+	                                    				}
 
 									// Select type
 									print '<td style="text-align:center;">';
@@ -1790,7 +1793,7 @@ else
 						print '<tr class="liste_titre">';
 						print '<td colspan="2"></td>';
 						//print '<td style="text-align:center;">'.$langs->trans('Date').'</td>';
-						print '<td>'.$langs->trans('Project').'</td>';
+						if (!empty($conf->projet->enabled)) print '<td>'.$langs->trans('Project').'</td>';
 						print '<td align="center">'.$langs->trans('Type').'</td>';
 						print '<td>'.$langs->trans('Description').'</td>';
 						print '<td style="text-align:right;">'.$langs->trans('VAT').'</td>';
@@ -1809,10 +1812,12 @@ else
 						$form->select_date($date?$date:-1,'date');
 						print '</td>';
 
-						// Select project
-						print '<td>';
-						$formproject->select_projects(-1, $fk_projet, 'fk_projet', 0, 0, 1, 1);
-						print '</td>';
+						if (!empty($conf->projet->enabled)) {
+							// Select project
+							print '<td>';
+							$formproject->select_projects(-1, $fk_projet, 'fk_projet', 0, 0, 1, 1);
+							print '</td>';
+						}
 
 						// Select type
 						print '<td align="center">';
