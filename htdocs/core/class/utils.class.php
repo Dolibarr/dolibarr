@@ -43,21 +43,33 @@ class Utils
 	/**
 	 *  Purge files into directory of data files.
 	 *
-	 *  @param	string		$choice		Choice of purge mode ('tempfiles', 'allfiles', 'logfiles')
+	 *  @param	string		$choice		Choice of purge mode ('tempfiles', 'tempfilesold' to purge temp older than 24h, 'allfiles', 'logfiles')
 	 *  @return	int						Nb of files deleted 
 	 */
-	function purgeFiles($choice)
+	function purgeFiles($choice='tempfilesold')
 	{
 		global $conf, $dolibarr_main_data_root;
 		
-		$filesarray=array();
+		dol_syslog("Utils::purgeFiles choice=".$choice, LOG_DEBUG);
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		
-		if ($choice=='tempfiles')
+		$filesarray=array();
+		if (empty($choice)) $choice='tempfilesold';
+		
+		if ($choice=='tempfiles' || $choice=='tempfilesold')
 		{
 			// Delete temporary files
 			if ($dolibarr_main_data_root)
 			{
-				$filesarray=dol_dir_list($dolibarr_main_data_root,"directories",1,'^temp$');
+				$filesarray=dol_dir_list($dolibarr_main_data_root,"directories",1,'^temp$','','','',2);
+				if ($choice == 'tempfilesold')
+				{
+					$now = dol_now();
+					foreach($filesarray as $key => $val)
+					{
+						if ($val['date'] > ($now - (24 * 3600))) unset($filesarray[$key]);	// Discard files not older than 24h
+					}
+				}
 			}
 		}
 	

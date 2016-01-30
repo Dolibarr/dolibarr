@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2012      Nicolas Villa aka Boyquotes http://informetic.fr
  * Copyright (C) 2013      Florian Henry <florian.henry@open-concpt.pro>
- * Copyright (C) 2013-2015 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2013-2016 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -539,7 +539,7 @@ else
 
 	print '<tr><td>';
 	print $langs->trans('CronLabel')."</td>";
-	print "<td>".$object->label;
+	print "<td>".$langs->trans($object->label);
 	print "</td></tr>";
 
 	print "<tr><td>";
@@ -579,7 +579,7 @@ else
 
 	print '<tr><td>';
 	print $langs->trans('CronNote')."</td><td>";
-	print $object->note;
+	print $langs->trans($object->note);
 	print "</td></tr>";
 
 	print '<tr><td>';

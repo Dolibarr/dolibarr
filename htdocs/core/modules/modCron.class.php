@@ -99,6 +99,12 @@ class modCron extends DolibarrModules
 		$this->rights_class = 'cron';
 		$r=0;
 
+		// Cronjobs
+		$this->cronjobs = array(
+			0=>array('label'=>'PurgeDeleteTemporaryFilesShort', 'jobtype'=>'method', 'class'=>'core/class/utils.class.php', 'objectname'=>'Utils', 'method'=>'purgeFiles', 'parameters'=>'', 'comment'=>'PurgeDeleteTemporaryFiles', 'frequency'=>1, 'unitfrequency'=>3600 * 24 * 7),
+			// 1=>array('label'=>'My label', 'jobtype'=>'command', 'command'=>'', 'parameters'=>'', 'comment'=>'Comment', 'frequency'=>1, 'unitfrequency'=>3600*24)
+		);
+		
 		$this->rights[$r][0] = 23001;
 		$this->rights[$r][1] = 'Read cron jobs';
 		$this->rights[$r][3] = 1;
