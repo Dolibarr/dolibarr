@@ -3055,7 +3055,7 @@ class Societe extends CommonObject
      *
      *  @return		boolean					true or false
      */
-    function useNPR($localTaxNum=0)
+    function useNPR()
     {
         $sql  = "SELECT t.rowid";
         $sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
