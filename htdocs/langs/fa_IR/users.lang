@@ -121,3 +121,4 @@ OpenIDURL=URL OpenID
 LoginUsingOpenID=استفاده از حساب کاربری برای ورود به سایت
 WeeklyHours=Weekly hours
 ColorUser=Color of the user
+DisabledInMonoUserMode=Disabled in maintenance mode

@@ -81,6 +81,7 @@ ActivateCheckReadKey=Ključ za enkripcijo URL, ki je uporabljen za funkciji "Bra
 EMailSentToNRecipients=E-pošta poslana %s prejemnikom.
 XTargetsAdded=<b>%s</b> prejemnikov dodanih na ciljni seznam
 EachInvoiceWillBeAttachedToEmail=Ustvarjen bo dokument na osnovi privzete predloge in pripet k vsakemu elektronskemu sporočilu
+OnlyPDFattachmentSupported=If the PDF document was already generated for the invoice, it will be attached to email. If not, no email will be sent (also, note that only pdf invoice are supported as attachment in mass sending in this version).
 MailTopicSendRemindUnpaidInvoices=Opomin k računu %s (%s)
 SendRemind=Pošlji opomin po E-pošti
 RemindSent=%s poslanih opomin(ov)

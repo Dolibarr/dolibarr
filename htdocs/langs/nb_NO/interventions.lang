@@ -54,6 +54,9 @@ PacificNumRefModelDesc1=Gir et nummer med formatet %sååmm-nnnn hvor åå er å
 PacificNumRefModelError=Det finnes allerede et intervensjonskort som starter med  $sååmm, og dette er ikke kompatibelt med denne nummereringsmodellen. Du må fjerne denne for å aktivere denne modellen.
 PrintProductsOnFichinter=Skriv ut varer på intervensjonskortet
 PrintProductsOnFichinterDetails=intervensjoner generert fra ordre
+InterventionStatistics=Statistics of interventions
+NbOfinterventions=Nb of intervention cards
+NumberOfInterventionsByMonth=Nb of intervention cards by month (date of validation)
 ##### Exports #####
 InterId=Intervensjons-ID
 InterRef=Intervensjonsref.

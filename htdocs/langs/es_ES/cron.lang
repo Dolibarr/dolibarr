@@ -18,8 +18,9 @@ CronExplainHowToRunUnix=En entornos Unix se debe utilizar la siguiente entrada c
 CronExplainHowToRunWin=En entornos Microsoft (tm) Windows, puede utilizar las herramienta  tareas programadas para ejecutar el comando cada 5 minutos
 # Menu
 CronJobs=Tareas programadas
-CronListActive=Listado de tareas activas/programadas
+CronListActive=List of enabled/scheduled jobs
 CronListInactive=Tareas Inactivas
+EnabledAndDisabled=Enabled and disabled
 # Page list
 CronDateLastRun=Últ. ejec.
 CronLastOutput=Res. ult. ejec.
@@ -35,8 +36,8 @@ CronInfo=Tareas programadas le permite ejecutar tareas que han sido programadas
 CronWaitingJobs=Trabajos en espera
 CronTask=Tarea
 CronNone=Ninguna
-CronDtStart=Fecha inicio
-CronDtEnd=Fecha fin
+CronDtStart=Not before
+CronDtEnd=Not after
 CronDtNextLaunch=Sig. ejec.
 CronDtLastLaunch=Últ. ejec.
 CronFrequency=Frecuencia
@@ -51,6 +52,7 @@ CronNoJobs=Sin trabajos registrados
 CronPriority=Prioridad
 CronLabel=Descripcion
 CronNbRun=Núm. ejec.
+CronMaxRun=Max nb. launch
 CronEach=Toda(s)
 JobFinished=Tareas lanzadas y finalizadas
 #Page card

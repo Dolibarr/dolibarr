@@ -54,6 +54,9 @@ PacificNumRefModelDesc1=Quay trở lại với các định dạng numero% syymm
 PacificNumRefModelError=Thẻ can thiệp bắt đầu với $ syymm đã tồn tại và không tương thích với mô hình này của chuỗi. Loại bỏ nó hoặc đổi tên nó để kích hoạt module này.
 PrintProductsOnFichinter=Sản phẩm in trên thẻ can thiệp
 PrintProductsOnFichinterDetails=interventions generated from orders
+InterventionStatistics=Statistics of interventions
+NbOfinterventions=Nb of intervention cards
+NumberOfInterventionsByMonth=Nb of intervention cards by month (date of validation)
 ##### Exports #####
 InterId=Intervention id
 InterRef=Intervention ref.

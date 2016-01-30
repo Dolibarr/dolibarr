@@ -3,7 +3,6 @@ SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Ücret ödemeleri muhasebe kodu
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Mali yükümlülük için muhasebe kodu
 Salary=Ücret
 Salaries=Ücretler
-Employee=Çalışan
 NewSalaryPayment=Yeni ücret ödemesi
 SalaryPayment=Ücret ödemesi
 SalariesPayments=Ücret ödemeleri

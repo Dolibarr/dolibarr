@@ -155,6 +155,7 @@ DepositsAreNotIncluded=- Kaucia faktúry, ani zahrnuté
 DepositsAreIncluded=- Kaucia faktúry sú zahrnuté
 LT2ReportByCustomersInInputOutputModeES=Správa o treťou stranou IRPF
 LT1ReportByCustomersInInputOutputModeES=Report by third party RE
+VATReport=VAT report
 VATReportByCustomersInInputOutputMode=Správa zákazníka DPH vyzdvihnúť a zaplatiť
 VATReportByCustomersInDueDebtMode=Správa zákazníka DPH vyzdvihnúť a zaplatiť
 VATReportByQuartersInInputOutputMode=Správa sadzby dane z pridanej hodnoty vybranej a odvedenej

@@ -26,7 +26,6 @@ Selectmodelcsv=Välj en modell av export
 Modelcsv_normal=Klassisk export
 Modelcsv_CEGID=Export mot CEGID Expert
 BackToChartofaccounts=Avkastning kontoplan
-Back=Avkastning
 
 Definechartofaccounts=Definiera en kontoplan
 Selectchartofaccounts=Välj en kontoplan
@@ -109,10 +108,6 @@ DelBookKeeping=Ta bort posterna i huvudboken
 
 DescSellsJournal=Sells tidskrift
 DescPurchasesJournal=Inköp tidskrift
-BankJournal=Bank tidskrift
-DescBankJournal=Bank journal inklusive alla typer av annat än pengar betalningar
-CashJournal=Cash journal
-DescCashJournal=Cash journal inklusive typ av betalning kontant
 FinanceJournal=Finance journal
 DescFinanceJournal=Finance journal including all the types of payments by bank account
 
@@ -152,7 +147,7 @@ DescVentilDoneSupplier=Konsul här listan med linjerna av fakturor leverantör o
 ValidateHistory=Validera Automatiskt
 
 ErrorAccountancyCodeIsAlreadyUse=Fel, du kan inte ta bort denna redovisningskonto eftersom den används
-
+MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
 FicheVentilation=Uppdelning kort
 GeneralLedgerIsWritten=Operations are written in the general ledger
 
@@ -167,7 +162,13 @@ Headername=Name in header
 Type=Type of fields
 Param=Additionnal parameters
 EnabledProduct=In Product
-EnabledTiers=In Tiers
+EnabledTiers=In third party
 EnabledVat=In Vat
-
-MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
+## Tools - Init accounting account on product / service
+InitAccountancy=Init accountancy
+InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accountancy account defined for sales and purchases. Check before that setup of module accountancy is complete.
+Options=Options
+OptionModeProductSell=Mode sales
+OptionModeProductBuy=Mode purchases
+OptionModeProductSellDesc=Show all products with no accounting account defined for sales.
+OptionModeProductBuyDesc=Show all products with no accounting account defined for purchases.

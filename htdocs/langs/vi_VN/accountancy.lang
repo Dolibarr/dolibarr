@@ -26,7 +26,6 @@ Selectmodelcsv=Chọn một mô hình xuất khẩu
 Modelcsv_normal=Cổ điển xuất khẩu
 Modelcsv_CEGID=Xuất khẩu theo hướng CEGID chuyên gia
 BackToChartofaccounts=Quay trở lại biểu đồ của tài khoản
-Back=Quay trở lại
 
 Definechartofaccounts=Xác định một biểu đồ của tài khoản
 Selectchartofaccounts=Chọn một biểu đồ của tài khoản
@@ -109,10 +108,6 @@ DelBookKeeping=Xóa các bản ghi của sổ kế toán tổng
 
 DescSellsJournal=Bán tạp chí
 DescPurchasesJournal=Mua tạp chí
-BankJournal=Tạp chí Ngân hàng
-DescBankJournal=Tạp chí Ngân hàng bao gồm tất cả các loại chi phí khác hơn tiền mặt
-CashJournal=Tạp chí Tiền
-DescCashJournal=Tiền tạp chí bao gồm cả các loại tiền thanh toán
 FinanceJournal=Finance journal
 DescFinanceJournal=Finance journal including all the types of payments by bank account
 
@@ -152,7 +147,7 @@ DescVentilDoneSupplier=Tham khảo ý kiến ​​ở đây là danh sách các
 ValidateHistory=Tự động xác nhận
 
 ErrorAccountancyCodeIsAlreadyUse=Lỗi, bạn không thể xóa tài khoản kế toán này bởi vì nó được sử dụng
-
+MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
 FicheVentilation=Breakdown card
 GeneralLedgerIsWritten=Operations are written in the general ledger
 
@@ -167,7 +162,13 @@ Headername=Name in header
 Type=Type of fields
 Param=Additionnal parameters
 EnabledProduct=In Product
-EnabledTiers=In Tiers
+EnabledTiers=In third party
 EnabledVat=In Vat
-
-MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
+## Tools - Init accounting account on product / service
+InitAccountancy=Init accountancy
+InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accountancy account defined for sales and purchases. Check before that setup of module accountancy is complete.
+Options=Options
+OptionModeProductSell=Mode sales
+OptionModeProductBuy=Mode purchases
+OptionModeProductSellDesc=Show all products with no accounting account defined for sales.
+OptionModeProductBuyDesc=Show all products with no accounting account defined for purchases.

@@ -17,7 +17,6 @@ UnvalidateOrder=Maak validatie bestelling ongedaan
 OrderReopened=Bestelling %s heropend
 NoOpenedOrders=Geen lopende bestellingen
 NoOtherOpenedOrders=Geen andere lopende bestellingen
-NoOrder=Geen bestelling
 NoSupplierOrder=Geen aankooporder
 ClassifyBilled=Wijzig Status naar "gefactureerd"
 DraftSuppliersOrders=Voorlopige Leveranciersorder

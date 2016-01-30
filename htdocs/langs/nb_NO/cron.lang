@@ -18,8 +18,9 @@ CronExplainHowToRunUnix=I Unix-miljøer bør du bruke følgende crontab-oppføri
 CronExplainHowToRunWin=I Microsoft(tm) Windows-miljø kan du bruke planlagte oppgaver-verktøyet for å kjøre kommandolinje hvert 5. minutt
 # Menu
 CronJobs=Planlagte jobber
-CronListActive=Liste over aktive/planlagte jobber
+CronListActive=List of enabled/scheduled jobs
 CronListInactive=Liste over deaktiverte jobber
+EnabledAndDisabled=Enabled and disabled
 # Page list
 CronDateLastRun=Siste kjøring
 CronLastOutput=Resultat av forrige kjøring
@@ -35,8 +36,8 @@ CronInfo=Planlagte jobber-modulen gir deg mulighet til å utføre jobber til øn
 CronWaitingJobs=Ventende jobber
 CronTask=Jobb
 CronNone=Ingen
-CronDtStart=Startdato
-CronDtEnd=Sluttdato
+CronDtStart=Not before
+CronDtEnd=Not after
 CronDtNextLaunch=Neste kjøring
 CronDtLastLaunch=Siste kjøring
 CronFrequency=Frekvens
@@ -51,6 +52,7 @@ CronNoJobs=Ingen registrerte jobber
 CronPriority=Prioritet
 CronLabel=Beskrivelse
 CronNbRun=Antall starter
+CronMaxRun=Max nb. launch
 CronEach=Alle
 JobFinished=Jobb startet og fullført
 #Page card

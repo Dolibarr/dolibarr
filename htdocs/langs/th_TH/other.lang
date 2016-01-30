@@ -238,3 +238,8 @@ ToExport=ส่งออก
 NewExport=การส่งออกใหม่
 ##### External sites #####
 ExternalSites=เว็บไซต์ภายนอก
+WebsiteSetup=Setup of module website
+WEBSITE_PAGEURL=URL of page
+WEBSITE_TITLE=Title
+WEBSITE_DESCRIPTION=Description
+WEBSITE_KEYWORDS=Keywords

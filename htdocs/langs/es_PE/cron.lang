@@ -1,4 +1,0 @@
-# Dolibarr language file - Source file is en_US - cron
-CronListActive=List of active/scheduled jobs
-CronDtStart=Start date
-CronDtEnd=End date

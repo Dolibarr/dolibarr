@@ -7,6 +7,7 @@
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2014      Ion Agorria          <ion@agorria.com>
  * Copyright (C) 2015      Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2016      Ferran Marcet		<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +47,7 @@ $rowid=GETPOST('rowid','int');
 $action=GETPOST('action', 'alpha');
 $cancel=GETPOST('cancel', 'alpha');
 $socid=GETPOST('socid', 'int');
-$cost_price=GETPOST('cost_price', 'int');
+$cost_price=GETPOST('cost_price', 'alpha');
 $backtopage=GETPOST('backtopage','alpha');
 $error=0;
 

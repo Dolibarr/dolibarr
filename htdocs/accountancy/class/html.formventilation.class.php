@@ -37,8 +37,7 @@ class FormVentilation extends Form
      *
      * @param		DoliDB		$db      Database handler
      */
-	public function __construct($db)
-    {
+	public function __construct($db) {
         $this->db = $db;
     }
 
@@ -49,8 +48,7 @@ class FormVentilation extends Form
 	 *	@param	string	$selectedkey	Value
 	 *	@return	string					HTML edit field
 	 */
-	function select_bookkeeping_importkey($htmlname = 'importkey', $selectedkey='')
-	{
+	function select_bookkeeping_importkey($htmlname = 'importkey', $selectedkey = '') {
 		$sql  = 'SELECT DISTINCT import_key from ' . MAIN_DB_PREFIX . 'accounting_bookkeeping';
 		$sql .= ' ORDER BY import_key DESC';
 
@@ -98,10 +96,11 @@ class FormVentilation extends Form
      *
 	 *	@return	string					String with HTML select
 	 */
-	function select_account($selectid, $htmlname = 'account', $showempty = 0, $event = array(), $select_in = 0, $select_out = 0, $aabase = '')
-	{
+	function select_account($selectid, $htmlname = 'account', $showempty = 0, $event = array(), $select_in = 0, $select_out = 0, $aabase = '') {
 		global $conf;
 
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+		
 		$out = '';
 
 		$sql = "SELECT DISTINCT aa.account_number, aa.label, aa.rowid, aa.fk_pcg_version";
@@ -128,10 +127,14 @@ class FormVentilation extends Form
 					$obj = $this->db->fetch_object($resql);
 					$label = length_accountg($obj->account_number) . ' - ' . $obj->label;
 					$label = dol_trunc($label, $trunclength);
-					if ($select_in == 0 )  $select_value_in =  $obj->rowid;
-					if ($select_in == 1 )  $select_value_in =  $obj->account_number;
-					if ($select_out == 0 ) $select_value_out = $obj->rowid;
-					if ($select_out == 1 ) $select_value_out = $obj->account_number;
+					if ($select_in == 0)
+						$select_value_in = $obj->rowid;
+					if ($select_in == 1)
+						$select_value_in = $obj->account_number;
+					if ($select_out == 0)
+						$select_value_out = $obj->rowid;
+					if ($select_out == 1)
+						$select_value_out = $obj->account_number;
 					// Remember guy's we store in database llx_facturedet the rowid of accounting_account and not the account_number
 					// Because same account_number can be share between different accounting_system and do have the same meaning
 					if (($selectid != '') && $selectid == $select_value_in) {
@@ -164,8 +167,7 @@ class FormVentilation extends Form
      *
 	 *	@return	string					String with HTML select
 	 */
-	function select_pcgtype($selectid, $htmlname = 'pcg_type', $showempty = 0, $event = array())
-	{
+	function select_pcgtype($selectid, $htmlname = 'pcg_type', $showempty = 0, $event = array()) {
 		global $conf;
 
 		$out = '';
@@ -220,8 +222,7 @@ class FormVentilation extends Form
      *
 	 *	@return	string					String with HTML select
 	 */
-	function select_pcgsubtype($selectid, $htmlname = 'pcg_subtype', $showempty = 0, $event = array())
-	{
+	function select_pcgsubtype($selectid, $htmlname = 'pcg_subtype', $showempty = 0, $event = array()) {
 		global $conf;
 
 		$out = '';

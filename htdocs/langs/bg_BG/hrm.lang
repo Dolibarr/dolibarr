@@ -15,5 +15,6 @@ DictionaryFunction=HRM - Function list
 ListOfEmployees=Списък на служителите
 Employees=Служители
 Employee=Служител
+Employe=Employe
 NewEmployee=Нов служител
 EmployeeCard=Служител досие

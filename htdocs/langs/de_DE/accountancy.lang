@@ -1,62 +1,61 @@
 # Dolibarr language file - en_US - Accounting Expert
-ACCOUNTING_EXPORT_SEPARATORCSV=Spaltentrennzeichen für die Export-Datei
-ACCOUNTING_EXPORT_DATE=Das Datumsformat für die Exportdatei.
-ACCOUNTING_EXPORT_PIECE=Export the number of piece
-ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account
+ACCOUNTING_EXPORT_SEPARATORCSV=Spaltentrennzeichen der Exportdatei
+ACCOUNTING_EXPORT_DATE=Datumsformat der Exportdatei
+ACCOUNTING_EXPORT_PIECE=Stückzahl exportieren
+ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Mit globalem Konto exportieren
 ACCOUNTING_EXPORT_LABEL=Export the label
-ACCOUNTING_EXPORT_AMOUNT=Export the amount
-ACCOUNTING_EXPORT_DEVISE=Export the devise
+ACCOUNTING_EXPORT_AMOUNT=Betrag exportieren
+ACCOUNTING_EXPORT_DEVISE=Währungskurs exportieren
 Selectformat=Select the format for the file
-ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
+ACCOUNTING_EXPORT_PREFIX_SPEC=Präfix für den Dateinamen angeben
 
 Accounting=Buchhaltung
 Globalparameters=Globale Parameter
-Menuaccount=Buchhaltung Konten
+Menuaccount=Buchhaltungskonten
 Menuthirdpartyaccount=Partnerkonten
 MenuTools=Hilfsprogramme
 
-ConfigAccountingExpert=Konfiguration des Experten Buchhaltungsmodul
+ConfigAccountingExpert=Konfiguration des Experten-Buchhaltungsmoduls
 Journaux=Journale
-JournalFinancial=Finanz-Journale
-Exports=Exports
+JournalFinancial=Finanzjournale
+Exports=Exporte
 Export=Exportieren
 Modelcsv=Exportmodell
-OptionsDeactivatedForThisExportModel=Für dieses Exportierungsmodell, sind die Einstellungen deaktiviert
+OptionsDeactivatedForThisExportModel=Für dieses Exportmodell sind die Einstellungen deaktiviert
 Selectmodelcsv=Wählen Sie ein Exportmodell
 Modelcsv_normal=Klassischer Export
 Modelcsv_CEGID=Export zu CEGID Expert
 BackToChartofaccounts=Zurück zum  Kontenplan
-Back=Rückkehr
 
 Definechartofaccounts=Kontenplan definieren
 Selectchartofaccounts=Kontenplan wählen
 Addanaccount=Fügen Sie ein Buchhaltungskonto hinzu
-AccountAccounting=Buchhaltungs Konto
-AccountAccountingSuggest=Accounting account suggest
-Ventilation=Abbauen
+AccountAccounting=Buchhaltungskonto
+AccountAccountingSuggest=Buchhaltungskontovorschlag
+Ventilation=Aufteilung
 
-CustomersVentilation=Kundenabbau
-SuppliersVentilation=Lieferantenabbau
+CustomersVentilation=Aufteilung Kunden
+SuppliersVentilation=Aufteilung Lieferanten
 TradeMargin=Handelsspanne
 Reports=Berichte
 ByCustomerInvoice=Nach Kundenrechnungen
 NewAccount=Neues Buchhaltungskonto
 Create=Erstelle
-CreateMvts=Erstelle Lagerbewegung
-UpdateAccount=Änderung eines Bilanz-Kontos
-UpdateMvts=Änderung einer Bewegung
+CreateMvts=Lagerbewegung erstellen
+UpdateAccount=Änderung eines Bilanzkontos
+UpdateMvts=Lagerbewegung ändern
 WriteBookKeeping=Konten ins Hauptbuch übernehmen
 Bookkeeping=Hauptbuch
 AccountBalanceByMonth=Kontostand pro Monat
 
-AccountingVentilation=Rechnungswesenabbau
+AccountingVentilation=Überblick Rechnungswesen
 AccountingVentilationSupplier=Abbau von Buchhaltungs-Lieferanten
 AccountingVentilationCustomer=Abbau von Buchhaltungs-Kunden
 
-CAHTF=Total purchase supplier before tax
+CAHTF=Einkaufssume pro Lieferant ohne Steuer
 InvoiceLines=Rechnungszeile bereinigen
 InvoiceLinesDone=Bereinigte Rechnungszeilen
-IntoAccount=Ventilate in the accounting account
+IntoAccount=Erörtern im Sachkonto
 
 Ventilate=erörtern
 VentilationAuto=Automatischer Abbau
@@ -109,12 +108,8 @@ DelBookKeeping=Löschen Sie die Einträge des Hauptbuchs
 
 DescSellsJournal=Verkaufsjournal
 DescPurchasesJournal=Einkaufsjournal
-BankJournal=Bankauszug
-DescBankJournal=Bankjournal enthält alle Arten von anderen Zahlungsmitteln als Barzahlungen
-CashJournal=Kassenbeleg
-DescCashJournal=Barjournal enthält die Zahlungsart: bar
 FinanceJournal=Finance journal
-DescFinanceJournal=Finance journal including all the types of payments by bank account
+DescFinanceJournal=Finanzjournal inklusive aller Arten von Zahlungen mit Bankkonto
 
 CashPayment=Barzahlung
 
@@ -139,35 +134,41 @@ Pcgsubtype=Unterkontenklasse
 Accountparent=Wurzeln des Kontos
 
 DescVentilCustomer=Konsultieren Sie hier die jährliche Aufteilung der Buchhaltung Ihrer Rechnungs-Kunden
-TotalVente=Total turnover before tax
+TotalVente=Verkaufssumme ohne Steuer
 TotalMarge=Gesamt-Spanne
-DescVentilDoneCustomer=Konsultieren Sie hier die Liste der Zeilen der Rechnungs-Kunden und deren Abbrechnungskonto
+DescVentilDoneCustomer=Konsultieren Sie hier die Liste der Zeilen der Rechnungs-Kunden und deren Abrechnungskonto
 DescVentilTodoCustomer=Bereinigen Sie die Zeilen der Kundenrechnung mit einem Rechnungskonto
 ChangeAccount=Ändern sie das Abrechnungskonto für markierte Zeilen durch das Konto:
 Vide=-
 DescVentilSupplier=Konsultieren Sie hier die jährliche Aufteilung der Buchhaltung, Ihrer Rechnungen der Lieferanten
 DescVentilTodoSupplier=Bereinigen Sie die Zeilen der Rechnung für Lieferanten, mit einem Abrechnungskonto
-DescVentilDoneSupplier=Konsultieren Sie hier die Liste der Zeilen der Rechnungs-Kunden und deren Abbrechnungskonto
+DescVentilDoneSupplier=Konsultieren Sie hier die Liste der Zeilen der Rechnungs-Kunden und deren Abrechnungskonto
 
 ValidateHistory=Automatisch geltend machen
 
-ErrorAccountancyCodeIsAlreadyUse=Fehler, Sie können dieses Buchaltungskonto nicht löschen, da es benutzt wird.
-
-FicheVentilation=Abbau-Karte
-GeneralLedgerIsWritten=Operations are written in the general ledger
+ErrorAccountancyCodeIsAlreadyUse=Fehler, Sie können dieses Buchhaltungskonto nicht löschen, da es benutzt wird.
+MvtNotCorrectlyBalanced=Der Saldo der Buchung ist nicht ausgeglichen. Haben = %s. Soll = %s
+FicheVentilation=Zusammensetzung - Karte
+GeneralLedgerIsWritten=Vorgänge werden in das Hauptbuch übertragen.
 
 ##Export Journal Feature
-ExportFormat=Format of Export
-Prefixname=Prefix of export File
-Separate=Export separator
-Textframe=Frame of text value
-Headercol=Colname in header of file
-Fieldname=Name of Field
-Headername=Name in header
-Type=Type of fields
-Param=Additionnal parameters
-EnabledProduct=In Product
-EnabledTiers=In Tiers
-EnabledVat=In Vat
-
-MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
+ExportFormat=Dateiformat
+Prefixname=Präfix der Exportdatei
+Separate=Trennzeichen
+Textframe=Rahmen mit Textinhalt
+Headercol=Spaltenbezeichnung im Kopf der Datei
+Fieldname=Feldname
+Headername=Name im Kopf
+Type=Feldtyp
+Param=zusätzliche Parameter
+EnabledProduct=in Produkt
+EnabledTiers=In third party
+EnabledVat=in Steuer
+## Tools - Init accounting account on product / service
+InitAccountancy=Init accountancy
+InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accountancy account defined for sales and purchases. Check before that setup of module accountancy is complete.
+Options=Options
+OptionModeProductSell=Mode sales
+OptionModeProductBuy=Mode purchases
+OptionModeProductSellDesc=Show all products with no accounting account defined for sales.
+OptionModeProductBuyDesc=Show all products with no accounting account defined for purchases.

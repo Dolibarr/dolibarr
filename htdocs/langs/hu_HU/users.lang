@@ -121,3 +121,4 @@ OpenIDURL=OpenID URL
 LoginUsingOpenID=Használd az OpenID-t a belépéshez
 WeeklyHours=Heti munkaóra
 ColorUser=A felhasználó színe
+DisabledInMonoUserMode=Disabled in maintenance mode

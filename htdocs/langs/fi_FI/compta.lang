@@ -155,6 +155,7 @@ DepositsAreNotIncluded=- Talletus laskut eivät sisälly
 DepositsAreIncluded=- Talletus laskut kuuluvat
 LT2ReportByCustomersInInputOutputModeES=Raportti kolmannen osapuolen IRPF
 LT1ReportByCustomersInInputOutputModeES=Report by third party RE
+VATReport=VAT report
 VATReportByCustomersInInputOutputMode=Report by the customer VAT collected and paid
 VATReportByCustomersInDueDebtMode=Report by the customer VAT collected and paid
 VATReportByQuartersInInputOutputMode=Report by rate of the VAT collected and paid

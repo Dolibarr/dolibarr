@@ -54,6 +54,9 @@ PacificNumRefModelDesc1=Grąžinti numerį su formatu %syymm-nnnn, kur yy yra me
 PacificNumRefModelError=Intervencijos kortelė pradedant $syymm jau egzistuoja ir yra nesuderinama su šios sekos modeliu. Pašalinti ją arba pakeisti vardą šio modulio aktyvavimui.
 PrintProductsOnFichinter=Spausdinti produktus intervencinėje kortelėje
 PrintProductsOnFichinterDetails=interventions generated from orders
+InterventionStatistics=Statistics of interventions
+NbOfinterventions=Nb of intervention cards
+NumberOfInterventionsByMonth=Nb of intervention cards by month (date of validation)
 ##### Exports #####
 InterId=Intervention id
 InterRef=Intervention ref.

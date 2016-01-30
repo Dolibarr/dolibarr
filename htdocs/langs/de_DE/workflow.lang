@@ -3,9 +3,9 @@ WorkflowSetup=Workflow Moduleinstellungen
 WorkflowDesc=Dieses Modul wurde gestaltet um das Verhalten von automatischen Aktionen in den Anwendung zu verändern. Standardmäßig wird der Prozess offen sein. (Sie können die Dinge in der gewünschten Reihenfolge tun). Sie können die automatische Aktionen, die Sie interessieren aktivieren.
 ThereIsNoWorkflowToModify=Es sind keine Workflow Änderungen möglich mit den aktivierten Modulen.
 descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Erstelle einen Kundenauftrag automatisch, nachdem ein Angebot unterzeichnet wurde
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICEAutomatically Erstelle eine Kundenrechnung automatisch, nachdem ein Angebot unterzeichnet wurde
-descWORKFLOW_CONTRACT_AUTOCREATE_INVOICEAutomatically Erstelle eine Kundenrechnung automatisch, nachdem ein Vertrag bestätigt wurde
-descWORKFLOW_ORDER_AUTOCREATE_INVOICEAutomatically Erstelle eine Kundenrechnung automatisch, nachdem ein Kundenauftrag geschlossen wurde
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Erstelle automatisch eine Kundenrechnung, nachdem das Angebot bestätigt wurde.
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Erstelle automatisch eine Kundenrechnung, nachdem der Vertrag bestätigt wurde.
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Erstelle automatisch eine Kundenrechnung,  nachdem ein Auftrag abgeschlossen wurde.
 descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Kennzeichne verknüpftes Angebot als in Rechnung gestellt, wenn der Kundenauftrag als bezahlt markiert wird
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Kennzeichne verknüpfte Kundenaufträge als verrechnet, wenn die Kundenrechnung als bezahlt markiert wird
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Kennzeichne verknüpfte Kundenaufträge als verrechnet, wenn die Kundenrechnung bestätigt wird

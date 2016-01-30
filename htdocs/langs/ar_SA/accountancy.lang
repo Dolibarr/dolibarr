@@ -1,173 +1,174 @@
 # Dolibarr language file - en_US - Accounting Expert
-ACCOUNTING_EXPORT_SEPARATORCSV=Column separator for export file
-ACCOUNTING_EXPORT_DATE=Date format for export file
-ACCOUNTING_EXPORT_PIECE=Export the number of piece
-ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account
-ACCOUNTING_EXPORT_LABEL=Export the label
-ACCOUNTING_EXPORT_AMOUNT=Export the amount
-ACCOUNTING_EXPORT_DEVISE=Export the devise
-Selectformat=Select the format for the file
-ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
+ACCOUNTING_EXPORT_SEPARATORCSV=فاصل العمود لملف التصدير
+ACCOUNTING_EXPORT_DATE=تنسيق التاريخ لملف التصدير
+ACCOUNTING_EXPORT_PIECE=تصدير عدد القطعة
+ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=تصدير مع الحساب العام
+ACCOUNTING_EXPORT_LABEL=تصدير التسمية
+ACCOUNTING_EXPORT_AMOUNT=تصدير الكمية
+ACCOUNTING_EXPORT_DEVISE=تصدير التوصية
+Selectformat=حدد تنسيق للملف
+ACCOUNTING_EXPORT_PREFIX_SPEC=تحديد بادئة لاسم الملف
 
-Accounting=Accounting
-Globalparameters=Global parameters
-Menuaccount=Accounting accounts
-Menuthirdpartyaccount=Thirdparty accounts
-MenuTools=Tools
+Accounting=محاسبة
+Globalparameters=المعايير العالمية
+Menuaccount=حسابات المحاسبة
+Menuthirdpartyaccount=حسابات الأطراف الثالثة
+MenuTools=أدوات
 
-ConfigAccountingExpert=Configuration of the module accounting expert
-Journaux=Journals
-JournalFinancial=Financial journals
-Exports=Exports
-Export=Export
-Modelcsv=Model of export
-OptionsDeactivatedForThisExportModel=For this export model, options are deactivated
-Selectmodelcsv=Select a model of export
-Modelcsv_normal=Classic export
-Modelcsv_CEGID=Export towards CEGID Expert
-BackToChartofaccounts=Return chart of accounts
-Back=Return
+ConfigAccountingExpert=إعدادات وحدة الخبير المحاسبي
+Journaux=دفاتر اليومية
+JournalFinancial=دفاتر اليومية المالية
+Exports=صادرات
+Export=تصدير
+Modelcsv=نموذج التصدير
+OptionsDeactivatedForThisExportModel=تم الغاء الخيارات لنموذج التصدير هذا
+Selectmodelcsv=تحديد نموذج للتصدير
+Modelcsv_normal=تصدير كلاسيكي
+Modelcsv_CEGID=تصدير CEGID Expert
+BackToChartofaccounts=العودة لشجرة الحسابات
 
-Definechartofaccounts=Define a chart of accounts
-Selectchartofaccounts=Select a chart of accounts
-Addanaccount=Add an accounting account
-AccountAccounting=Accounting account
-AccountAccountingSuggest=Accounting account suggest
-Ventilation=Breakdown
+Definechartofaccounts=تعريف شجرة الحسابات
+Selectchartofaccounts=اختر شجرة الحسابات
+Addanaccount=إضافة حساب محاسبي
+AccountAccounting=حساب محاسبي
+AccountAccountingSuggest=اقتراح حساب محاسبي
+Ventilation=تحليل
 
-CustomersVentilation=Breakdown customers
-SuppliersVentilation=Breakdown suppliers
-TradeMargin=Trade margin
-Reports=Reports
-ByCustomerInvoice=By invoices customers
-NewAccount=New accounting account
-Create=Create
-CreateMvts=Create movement
-UpdateAccount=Modification of an accounting account
-UpdateMvts=Modification of a movement
-WriteBookKeeping=Record accounts in general ledger
-Bookkeeping=General ledger
-AccountBalanceByMonth=Account balance by month
+CustomersVentilation=تصنيف العملاء
+SuppliersVentilation=تصنيف الموردين
+TradeMargin=هامش تجاري
+Reports=تقارير
+ByCustomerInvoice=بفواتير العملاء
+NewAccount=حساب محاسبي جديد
+Create=إنشاء
+CreateMvts=إنشاء حركة
+UpdateAccount=تعديل الحساب المحاسبي
+UpdateMvts=تعديل حركة
+WriteBookKeeping=سجل الحسابات في دفتر الأستاذ العام
+Bookkeeping=دفتر الأستاذ العام
+AccountBalanceByMonth=رصيد الحساب خلال الشهر
 
-AccountingVentilation=Breakdown accounting
-AccountingVentilationSupplier=Breakdown accounting supplier
-AccountingVentilationCustomer=Breakdown accounting customer
+AccountingVentilation=المحاسبة التحليلية 
+AccountingVentilationSupplier=المحاسبة التحليلية للمورد
+AccountingVentilationCustomer=المحاسبة التحليلية للعميل
 
-CAHTF=Total purchase supplier before tax
-InvoiceLines=Lines of invoice to be ventilated
-InvoiceLinesDone=Ventilated lines of invoice
-IntoAccount=Ventilate in the accounting account
+CAHTF=إجمالي شراء المورد قبل الضريبة
+InvoiceLines=خطوط الفاتورة الجاهزة للإعلان
+InvoiceLinesDone=خطوط الفاتورة المعلنة
+IntoAccount=الإعلان في الحساب المحاسبي
 
-Ventilate=Ventilate
-VentilationAuto=Automatic breakdown
+Ventilate=أعلن عن
+VentilationAuto=إحلال تلقائي
 
-Processing=Processing
-EndProcessing=The end of processing
-AnyLineVentilate=Any lines to ventilate
-SelectedLines=Selected lines
-Lineofinvoice=Line of invoice
-VentilatedinAccount=Ventilated successfully in the accounting account
-NotVentilatedinAccount=Not ventilated in the accounting account
+Processing=معالجة
+EndProcessing=نهاية المعالجة
+AnyLineVentilate=أي خطوط للإعلان
+SelectedLines=الخطوط المحددة
+Lineofinvoice=خط الفاتورة
+VentilatedinAccount=المعلن عنها في الحساب المحاسبي
+NotVentilatedinAccount=لم يتم الاعلان عنها في الحساب المحاسبي
 
-ACCOUNTING_SEPARATORCSV=Column separator in export file
+ACCOUNTING_SEPARATORCSV=فاصل عمود في ملف التصدير
 
-ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to be breakdown shown by page (maximum recommended : 50)
-ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the breakdown pages "Has to breakdown" by the most recent elements
-ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the breakdown pages "Breakdown" by the most recent elements
+ACCOUNTING_LIMIT_LIST_VENTILATION=عدد العناصر الظاهرة في الصفحة ليتم احلالها (العدد الأقصى الموصى به : 50)
+ACCOUNTING_LIST_SORT_VENTILATION_TODO=بدء الفرز للصفحات المحللة "يجب ان تحل" بناء على احدث العناصر
+ACCOUNTING_LIST_SORT_VENTILATION_DONE=بدء الفرز للصفحات المحللة "إحلال" بناء على أحدث العناصر
 
-AccountLength=Length of the accounting accounts shown in Dolibarr
-AccountLengthDesc=Function allowing to feign a length of accounting account by replacing spaces by the zero figure. This function touches only the display, it does not modify the accounting accounts registered in Dolibarr. For the export, this function is necessary to be compatible with certain software.
-ACCOUNTING_LENGTH_DESCRIPTION=Length for displaying product & services description in listings (Best = 50)
-ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Length for displaying product & services account description form in listings (Best = 50)
-ACCOUNTING_LENGTH_GACCOUNT=Length of the general accounts
-ACCOUNTING_LENGTH_AACCOUNT=Length of the third party accounts
+AccountLength=طول الحسابات المحاسبية الظاهرة في Dollibar
+AccountLengthDesc=وظيفة تسمح باختلاق طول الحساب المحاسبي وذلك باستبدال المسافات بأصفار. هذه الوظيفة تقوم بتعديل الظهور، ولا تقوم بتعديل الحسابات المحاسبية المسجلة في النظام. للتصدير، يجب أن تكون هذه الوظيفة متطابقة مع بعض التطبيقات المتوفرة.
+ACCOUNTING_LENGTH_DESCRIPTION=الطول المستخدم لعرض وصف المنتجات والخدمات في القوائم. (المفضل = 50)
+ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=الطول المستخدم لعرض وصف نماذج المنتجات والخدمات في القوائم. (المفضل = 50)
+ACCOUNTING_LENGTH_GACCOUNT=طول الحسابات العامة
+ACCOUNTING_LENGTH_AACCOUNT=طول حسابات الطرف ثالث
 
-ACCOUNTING_SELL_JOURNAL=Sell journal
-ACCOUNTING_PURCHASE_JOURNAL=Purchase journal
-ACCOUNTING_MISCELLANEOUS_JOURNAL=Miscellaneous journal
-ACCOUNTING_EXPENSEREPORT_JOURNAL=Expense report journal
-ACCOUNTING_SOCIAL_JOURNAL=Social journal
+ACCOUNTING_SELL_JOURNAL=دفتر البيع اليومي
+ACCOUNTING_PURCHASE_JOURNAL=دفتر الشراء اليومي
+ACCOUNTING_MISCELLANEOUS_JOURNAL=دفتر المتفرقات اليومي
+ACCOUNTING_EXPENSEREPORT_JOURNAL=دفتر تقرير المصروف اليومي
+ACCOUNTING_SOCIAL_JOURNAL=دفتر اليومية الاجتماعي
 
-ACCOUNTING_ACCOUNT_TRANSFER_CASH=Account of transfer
-ACCOUNTING_ACCOUNT_SUSPENSE=Account of wait
+ACCOUNTING_ACCOUNT_TRANSFER_CASH=حساب التحويلات
+ACCOUNTING_ACCOUNT_SUSPENSE=حساب الإنتظار
 
-ACCOUNTING_PRODUCT_BUY_ACCOUNT=Accounting account by default for bought products (if not defined in the product sheet)
-ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Accounting account by default for the sold products (if not defined in the product sheet)
-ACCOUNTING_SERVICE_BUY_ACCOUNT=Accounting account by default for the bought services (if not defined in the service sheet)
-ACCOUNTING_SERVICE_SOLD_ACCOUNT=Accounting account by default for the sold services (if not defined in the service sheet)
+ACCOUNTING_PRODUCT_BUY_ACCOUNT=الحساب المحاسبي الافتراضي للمنتجات المشتراة (اذا لم يكن معرف في ورقة المنتج)
+ACCOUNTING_PRODUCT_SOLD_ACCOUNT=الحساب المحاسبي الافتراضي للمنتجات المباعة(اذا لم يكن معرف في ورقة المنتج)
+ACCOUNTING_SERVICE_BUY_ACCOUNT=الحساب المحاسبي الافتراضي للخدمات المشتراة (اذا لم يكن معرف في ورقة الخدمة)
+ACCOUNTING_SERVICE_SOLD_ACCOUNT=الحساب المحاسبي الافتراضي للخدمات المباعة(اذا لم يكن معرف في ورقة الخدمة)
 
-Doctype=Type of document
-Docdate=Date
-Docref=Reference
-Numerocompte=Account
-Code_tiers=Thirdparty
-Labelcompte=Label account
+Doctype=نوع الوثيقة
+Docdate=التاريخ
+Docref=مرجع
+Numerocompte=حساب
+Code_tiers=الطرف الثالث
+Labelcompte=حساب التسمية
 Sens=Sens
-Codejournal=Journal
+Codejournal=دفتر اليومية
 
-DelBookKeeping=Delete the records of the general ledger
+DelBookKeeping=حذف السجلات من دفتر الأستاذ العام
 
-DescSellsJournal=Sells journal
-DescPurchasesJournal=Purchases journal
-BankJournal=Bank journal
-DescBankJournal=Bank journal including all the types of payments other than cash
-CashJournal=Cash journal
-DescCashJournal=Cash journal including the type of payment cash
-FinanceJournal=Finance journal
-DescFinanceJournal=Finance journal including all the types of payments by bank account
+DescSellsJournal=دفتر المبيعات اليومية
+DescPurchasesJournal=دفتر المشتريات اليومية
+FinanceJournal=دفتر المالية اليومي
+DescFinanceJournal=دفتر المالية اليومي المتضمن لجميع الدفعات عن طريق الحساب المصرفي
 
-CashPayment=Cash Payment
+CashPayment=دفعة نقدية
 
-SupplierInvoicePayment=Payment of invoice supplier
-CustomerInvoicePayment=Payment of invoice customer
+SupplierInvoicePayment=دفعة فاتورة المورد
+CustomerInvoicePayment=دفعة فاتورة العميل
 
-ThirdPartyAccount=Thirdparty account
+ThirdPartyAccount=حساب طرف ثالث
 
-NewAccountingMvt=New movement
-NumMvts=Number of movement
-ListeMvts=List of the movement
-ErrorDebitCredit=Debit and Credit cannot have a value at the same time
+NewAccountingMvt=حركة جديدة
+NumMvts=رقم الحركة
+ListeMvts=قائمة الحركة
+ErrorDebitCredit=الدائن والمدين لا يمكن أن يكون لهم قيمة في الوقت نفسه
 
-ReportThirdParty=List thirdparty account
-DescThirdPartyReport=Consult here the list of the thirdparty customers and the suppliers and their accounting accounts
+ReportThirdParty=قائمة حساب الطرف الثالث
+DescThirdPartyReport=استشر هنا قائمة للعملاء والموردين وحساباتهم المحاسبية
 
-ListAccounts=List of the accounting accounts
+ListAccounts=قائمة الحسابات المحاسبية
 
-Pcgversion=Version of the plan
-Pcgtype=Class of account
-Pcgsubtype=Under class of account
-Accountparent=Root of the account
+Pcgversion=نسخة من الخطة
+Pcgtype=فئة الحساب
+Pcgsubtype=تحت فئة الحساب
+Accountparent=أصل الحساب
 
-DescVentilCustomer=Consult here the annual breakdown accounting of your invoices customers
-TotalVente=Total turnover before tax
-TotalMarge=Total sales margin
-DescVentilDoneCustomer=Consult here the list of the lines of invoices customers and their accounting account
-DescVentilTodoCustomer=Ventilate your lines of customer invoice with an accounting account
-ChangeAccount=Change the accounting account for lines selected by the account:
+DescVentilCustomer=استشر هنا الإحلال السنوي المحاسبي لفواتير العملاء
+TotalVente=المبيعات الإجمالية قبل الضريبة
+TotalMarge=إجمالي هامش المبيعات
+DescVentilDoneCustomer=استشر هنا لائحة خطوط الفواتير للعملاء وحساب المحاسبية
+DescVentilTodoCustomer=إعلان الخطوط الخاصة بك من فاتورة العميل مع حساب المحاسبة
+ChangeAccount=تغيير حساب المحاسبية للخطوط التي اختارها الحساب:
 Vide=-
-DescVentilSupplier=Consult here the annual breakdown accounting of your invoices suppliers
-DescVentilTodoSupplier=Ventilate your lines of invoice supplier with an accounting account
-DescVentilDoneSupplier=Consult here the list of the lines of invoices supplier and their accounting account
+DescVentilSupplier=استشر هنا الإحلال السنوي المحاسبي لفواتير الموردين
+DescVentilTodoSupplier=أعلان الخطوط الخاصة بك من فاتورة المورد مع حساب المحاسبة
+DescVentilDoneSupplier=استشر هنا لائحة خطوط فواتير الموردين وحساب المحاسبية
 
-ValidateHistory=Validate Automatically
+ValidateHistory=تحقق تلقائيا
 
-ErrorAccountancyCodeIsAlreadyUse=Error, you cannot delete this accounting account because it is used
-
-FicheVentilation=Breakdown card
-GeneralLedgerIsWritten=Operations are written in the general ledger
+ErrorAccountancyCodeIsAlreadyUse=خطأ، لا يمكنك حذف هذا الحساب المحاسبي لأنه مستخدم
+MvtNotCorrectlyBalanced=الحركة غير متوازنة\nالدائن =%s\nالمدين =%s
+FicheVentilation=بطاقة الإحلال
+GeneralLedgerIsWritten=العمليات مسجلة في دفتر الاستاذ العام
 
 ##Export Journal Feature
-ExportFormat=Format of Export
-Prefixname=Prefix of export File
-Separate=Export separator
-Textframe=Frame of text value
-Headercol=Colname in header of file
-Fieldname=Name of Field
-Headername=Name in header
-Type=Type of fields
-Param=Additionnal parameters
-EnabledProduct=In Product
-EnabledTiers=In Tiers
-EnabledVat=In Vat
-
-MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
+ExportFormat=نسق التصدير
+Prefixname=بادئة تصدير الملف
+Separate=فاصل التصدير
+Textframe=إطار من قيمة النص
+Headercol=ااسم العمود في رأس الملف
+Fieldname=اسم الحقل
+Headername=الاسم في العنوان
+Type=نوع الحقول
+Param=المعايير الإضافية
+EnabledProduct=في المنتج
+EnabledTiers=In third party
+EnabledVat=في ضريبة القيمة المضافة
+## Tools - Init accounting account on product / service
+InitAccountancy=Init accountancy
+InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accountancy account defined for sales and purchases. Check before that setup of module accountancy is complete.
+Options=Options
+OptionModeProductSell=Mode sales
+OptionModeProductBuy=Mode purchases
+OptionModeProductSellDesc=Show all products with no accounting account defined for sales.
+OptionModeProductBuyDesc=Show all products with no accounting account defined for purchases.

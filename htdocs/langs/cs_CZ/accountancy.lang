@@ -26,7 +26,6 @@ Selectmodelcsv=Vyberte způsob exportu
 Modelcsv_normal=Klasický export
 Modelcsv_CEGID=Export směrem CEGID Expert
 BackToChartofaccounts=Návrat účtové osnovy
-Back=Návrat
 
 Definechartofaccounts=Definovat účtové osnovy
 Selectchartofaccounts=Vyberte účtové osnovy
@@ -109,10 +108,6 @@ DelBookKeeping=Odstranit záznamy hlavní knihy
 
 DescSellsJournal=Prodejní deník
 DescPurchasesJournal=Nákupní deník
-BankJournal=Bankovní deník
-DescBankJournal=Bankovní deník včetně všech typů jiných než hotovostních plateb
-CashJournal=Peněžní deník
-DescCashJournal=Peněžní deník včetně typů platby v hotovosti
 FinanceJournal=Finance journal
 DescFinanceJournal=Finance journal including all the types of payments by bank account
 
@@ -152,7 +147,7 @@ DescVentilDoneSupplier=Poraďte se zde se seznamem linek faktur dodavatele a jej
 ValidateHistory=Ověřit automaticky
 
 ErrorAccountancyCodeIsAlreadyUse=Chyba, nelze odstranit tento účetní účet, protože ho zrovna používáte
-
+MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
 FicheVentilation=Karta členění
 GeneralLedgerIsWritten=Operations are written in the general ledger
 
@@ -167,7 +162,13 @@ Headername=Name in header
 Type=Type of fields
 Param=Additionnal parameters
 EnabledProduct=In Product
-EnabledTiers=In Tiers
+EnabledTiers=In third party
 EnabledVat=In Vat
-
-MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
+## Tools - Init accounting account on product / service
+InitAccountancy=Init accountancy
+InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accountancy account defined for sales and purchases. Check before that setup of module accountancy is complete.
+Options=Options
+OptionModeProductSell=Mode sales
+OptionModeProductBuy=Mode purchases
+OptionModeProductSellDesc=Show all products with no accounting account defined for sales.
+OptionModeProductBuyDesc=Show all products with no accounting account defined for purchases.

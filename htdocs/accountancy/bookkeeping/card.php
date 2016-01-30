@@ -213,7 +213,7 @@ if ($action == 'create') {
             $conf->global->ACCOUNTING_MISCELLANEOUS_JOURNAL => $conf->global->ACCOUNTING_MISCELLANEOUS_JOURNAL,
             $conf->global->ACCOUNTING_EXPENSEREPORT_JOURNAL => $conf->global->ACCOUNTING_EXPENSEREPORT_JOURNAL
     );
-    
+
     $sql = 'SELECT DISTINCT accountancy_journal FROM '.MAIN_DB_PREFIX.'bank_account WHERE clos=0';
     $resql=$db->query($sql);
     if (!$resql) {

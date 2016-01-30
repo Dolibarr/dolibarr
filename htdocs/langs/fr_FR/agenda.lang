@@ -35,7 +35,9 @@ AllActions= Tous les événements
 ViewCal=Vue mois
 ViewDay=Vue jour
 ViewWeek=Vue semaine
+ViewYear=Vue an
 ViewPerUser=Vue par utilisateur
+ViewPerType=Vue par type
 ViewWithPredefinedFilters= Vues avec filtres prédéfinis
 AutoActions= Alimentation automatique
 AgendaAutoActionDesc= Définissez dans cet onglet les événements pour lesquels Dolibarr créera automatiquement une action dans l'agenda. Si aucune case n'est cochée (par défaut), seules les actions manuelles seront incluses dans l'agenda.
@@ -59,9 +61,9 @@ OrderSentByEMail=Commande client %s envoyée par email
 InvoiceSentByEMail=Facture client %s envoyée par eMail
 SupplierOrderSentByEMail=Commande fournisseur %s envoyée par email
 SupplierInvoiceSentByEMail=Facture fournisseur %s envoyée par email
-ShippingSentByEMail=Bon expédition %s envoyé par EMail
+ShippingSentByEMail=Bon d'expédition %s envoyé par email
 ShippingValidated= Expédition %s validée
-InterventionSentByEMail=Intervention %s envoyée par EMail
+InterventionSentByEMail=Intervention %s envoyée par email
 NewCompanyToDolibarr= Tiers créé
 DateActionPlannedStart= Date de début de réalisation prévue
 DateActionPlannedEnd= Date de fin de réalisation prévue
@@ -73,7 +75,7 @@ AgendaUrlOptions1=Vous pouvez aussi ajouter les paramètres suivants pour filtre
 AgendaUrlOptions2=<b>login=%s</b> pour limiter l'export aux actions créées par ou assignées à l'utilisateur <b>%s</b>.
 AgendaUrlOptions3=<b>logina=%s</b> pour limiter l'export aux actions dont l'utilisateur <b>%s</b> est propriétaire.
 AgendaUrlOptions4=<b>logint=%s</b> pour limiter l'export aux actions affectées à l'utilisateur <b>%s</b>.
-AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> pour restreindre aux écévements associés au projet <b>PROJECT_ID</b>.
+AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> pour restreindre aux événements associés au projet <b>PROJECT_ID</b>.
 AgendaShowBirthdayEvents=Afficher l'anniversaire des contacts
 AgendaHideBirthdayEvents=Cacher l'anniversaire des contacts
 Busy=Occupé

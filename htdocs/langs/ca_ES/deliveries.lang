@@ -17,6 +17,9 @@ DeleteDeliveryReceiptConfirm=Esteu segur de voler eliminar aquesta nota de lliur
 DeliveryMethod=Mètode d'enviament
 TrackingNumber=Nº de tracking
 DeliveryNotValidated=Nota de recepció no validada
+StatusDeliveryCanceled=Canceled
+StatusDeliveryDraft=Draft
+StatusDeliveryValidated=Received
 # merou PDF model
 NameAndSignature=Nom i signatura:
 ToAndDate=En___________________________________ a ____/_____/__________

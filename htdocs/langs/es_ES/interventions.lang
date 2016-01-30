@@ -54,6 +54,9 @@ PacificNumRefModelDesc1=Devuelve el número con el formato %syymm-nnnn dónde yy
 PacificNumRefModelError=Una factura que empieza por # $$syymm existe en base y es incompatible con esta numeración. Elimínela  o renombrela para activar este módulo.
 PrintProductsOnFichinter=Mostrar los productos en la ficha de intervención
 PrintProductsOnFichinterDetails=Intervenciones generadas desde pedidos
+InterventionStatistics=Statistics of interventions
+NbOfinterventions=Nb of intervention cards
+NumberOfInterventionsByMonth=Nb of intervention cards by month (date of validation)
 ##### Exports #####
 InterId=Id. intervención
 InterRef=Ref. intervención

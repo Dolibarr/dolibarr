@@ -17,6 +17,9 @@ DeleteDeliveryReceiptConfirm=คุณแน่ใจหรือว่าต้
 DeliveryMethod=วิธีการจัดส่ง
 TrackingNumber=ติดตามจำนวน
 DeliveryNotValidated=การจัดส่งสินค้าไม่ได้ผ่านการตรวจสอบ
+StatusDeliveryCanceled=Canceled
+StatusDeliveryDraft=Draft
+StatusDeliveryValidated=Received
 # merou PDF model
 NameAndSignature=ชื่อและลายเซ็น:
 ToAndDate=To___________________________________ บน ____ / _____ / __________

@@ -14,7 +14,7 @@ WithdrawalReceiptShort=Beleg
 LastWithdrawalReceipts=%s neuste Abbuchungsbelege
 WithdrawedBills=Abgebuchte Rechnungen
 WithdrawalsLines=Abbuchungszeilen
-RequestStandingOrderToTreat=Anfrage für Dauerauftrage zu bearbeiten
+RequestStandingOrderToTreat=Anfrage für Daueraufträge zu bearbeiten
 RequestStandingOrderTreated=Anfrage für Lastschriftauftrag bearbeitet
 NotPossibleForThisStatusOfWithdrawReceiptORLine=Funktion nicht verfügbar. Der Status des Abbucher muss auf "durchgeführt"  gesetzt sein bevor eine Erklärung für die Ablehnung eingetragen werden können.
 CustomersStandingOrders=Kunden Lastschriftverfahren
@@ -86,7 +86,7 @@ StatisticsByLineStatus=Statistiken nach Statuszeilen
 RUM=RUM
 RUMWillBeGenerated=RUM Zahl wird beim speichern der Bankinformationen generiert
 WithdrawMode=Abbuchungsmodus (FRST oder RECUR)
-WithdrawRequestAmount=Abbachungsauftrag Betrag:
+WithdrawRequestAmount=Abbuchungsauftrag Betrag:
 WithdrawRequestErrorNilAmount=Es kann keine Abbuchung für einen Nullbetrag erstellt werden.
 
 ### Notifications

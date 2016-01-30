@@ -26,7 +26,6 @@ Selectmodelcsv=Selecciona un model d'exportació
 Modelcsv_normal=Exportació clàssica
 Modelcsv_CEGID=Exporta cap a CEGID Expert
 BackToChartofaccounts=Tornar al Pla comptable
-Back=Tornar
 
 Definechartofaccounts=Definir el Pla comptable
 Selectchartofaccounts=Seleccionar el Pla comptable
@@ -109,10 +108,6 @@ DelBookKeeping=Eliminar els registres del llibre major
 
 DescSellsJournal=Diari de vendes
 DescPurchasesJournal=Diari de compres
-BankJournal=Diari del banc
-DescBankJournal=Diari del banc incloent tots els tipus de pagaments diferents de caixa
-CashJournal=Efectiu diari
-DescCashJournal=Efectiu diari inclòs el tipus de pagament al comptat
 FinanceJournal=Finance journal
 DescFinanceJournal=Finance journal including all the types of payments by bank account
 
@@ -152,22 +147,28 @@ DescVentilDoneSupplier=Consulta aquí el llistat de línies de factures de prove
 ValidateHistory=Valida automàticament
 
 ErrorAccountancyCodeIsAlreadyUse=Error, no pots eliminar aquest compte comptable perquè està en ús
-
+MvtNotCorrectlyBalanced=Moviment no balancejat correctament. Crèdit = %s. Dèbit = %s
 FicheVentilation=Desglossament de targetes
 GeneralLedgerIsWritten=Operations are written in the general ledger
 
 ##Export Journal Feature
-ExportFormat=Format of Export
-Prefixname=Prefix of export File
-Separate=Export separator
-Textframe=Frame of text value
-Headercol=Colname in header of file
-Fieldname=Name of Field
-Headername=Name in header
-Type=Type of fields
-Param=Additionnal parameters
-EnabledProduct=In Product
-EnabledTiers=In Tiers
-EnabledVat=In Vat
-
-MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
+ExportFormat=Format d'exportació
+Prefixname=Prefix del fitxer d'exportació
+Separate=Separador d'exportació
+Textframe=Finestra del valor del text
+Headercol=Nom de columna en capçalera del fitxer
+Fieldname=Nom del camp
+Headername=Nom en la capçalera
+Type=Tipus de camps
+Param=Paràmetres addicionals
+EnabledProduct=En producte
+EnabledTiers=In third party
+EnabledVat=En IVA
+## Tools - Init accounting account on product / service
+InitAccountancy=Init accountancy
+InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accountancy account defined for sales and purchases. Check before that setup of module accountancy is complete.
+Options=Options
+OptionModeProductSell=Mode sales
+OptionModeProductBuy=Mode purchases
+OptionModeProductSellDesc=Show all products with no accounting account defined for sales.
+OptionModeProductBuyDesc=Show all products with no accounting account defined for purchases.

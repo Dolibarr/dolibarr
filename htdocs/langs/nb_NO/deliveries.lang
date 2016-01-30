@@ -17,6 +17,9 @@ DeleteDeliveryReceiptConfirm=Er du sikker på at du vil slette leveringskvitteri
 DeliveryMethod=Leveringsmåte
 TrackingNumber=Trackingnummer
 DeliveryNotValidated=Levering ikke validert
+StatusDeliveryCanceled=Canceled
+StatusDeliveryDraft=Draft
+StatusDeliveryValidated=Received
 # merou PDF model
 NameAndSignature=Navn og signatur :
 ToAndDate=Til___________________________________ den ____/_____/__________

@@ -81,6 +81,7 @@ ActivateCheckReadKey=Nøkkel for å kryptere URL'en brukt til "Les kvittering" o
 EMailSentToNRecipients=E-post sendt til %s mottakere.
 XTargetsAdded=<b>%s</b> mottakere lagt til i målliste
 EachInvoiceWillBeAttachedToEmail=Et dokument med standard faktura dokumentmal vil bli opprettet og sendt med hver e-post.
+OnlyPDFattachmentSupported=If the PDF document was already generated for the invoice, it will be attached to email. If not, no email will be sent (also, note that only pdf invoice are supported as attachment in mass sending in this version).
 MailTopicSendRemindUnpaidInvoices=Påminnelse om faktura %s (%s)
 SendRemind=Send påminnelse som e-post
 RemindSent=%s påminnelse(er) sendt

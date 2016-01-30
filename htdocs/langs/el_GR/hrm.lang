@@ -15,5 +15,6 @@ DictionaryFunction=HRM - Function list
 ListOfEmployees=Λίστα  εργαζομένων
 Employees=Εργαζόμενοι
 Employee=Υπάλληλος
+Employe=Employe
 NewEmployee=Νέος εργαζόμενος
 EmployeeCard=Κάρτα υπαλλήλου

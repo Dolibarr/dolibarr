@@ -155,6 +155,7 @@ DepositsAreNotIncluded=- Storting facturen worden ook niet opgenomen
 DepositsAreIncluded=- Storting facturen zijn opgenomen
 LT2ReportByCustomersInInputOutputModeES=Verslag van derden IRPF
 LT1ReportByCustomersInInputOutputModeES=Report by third party RE
+VATReport=VAT report
 VATReportByCustomersInInputOutputMode=Bevestigd door de klant btw geïnd en betaald
 VATReportByCustomersInDueDebtMode=Bevestigd door de klant btw geïnd en betaald
 VATReportByQuartersInInputOutputMode=Bevestigd door de klant btw geïnd en betaald

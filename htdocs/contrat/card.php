@@ -6,7 +6,7 @@
  * Copyright (C) 2010-2015	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013       Christophe Battarel     <christophe.battarel@altairis.fr>
  * Copyright (C) 2013-2014  Florian Henry		  	<florian.henry@open-concept.pro>
- * Copyright (C) 2014		Ferran Marcet		  	<fmarcet@2byte.es>
+ * Copyright (C) 2014-2016	Ferran Marcet		  	<fmarcet@2byte.es>
  * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
  *
@@ -1718,9 +1718,11 @@ else
                     {
                         $tmpaction='activateline';
                         if ($objp->statut == 4) $tmpaction='unactivateline';
-                        print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;ligne='.$object->lines[$cursorline-1]->id.'&amp;action='.$tmpaction.'">';
-                        print img_edit();
-                        print '</a>';
+						if (($tmpaction=='activateline' && $user->rights->contrat->activer) || ($tmpaction=='unactivateline' && $user->rights->contrat->unactiver)) {
+							print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;ligne=' . $object->lines[$cursorline - 1]->id . '&amp;action=' . $tmpaction . '">';
+							print img_edit();
+							print '</a>';
+						}
                     }
                 }
                 print '</td>';

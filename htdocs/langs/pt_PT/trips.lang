@@ -31,7 +31,7 @@ TripNDF=Informations expense report
 PDFStandardExpenseReports=Standard template to generate a PDF document for expense report
 ExpenseReportLine=Linha do relatório de despesas
 TF_OTHER=Outro
-TF_TRANSPORTATION=Meio de Transporte
+TF_TRIP=Transportation
 TF_LUNCH=Alimentação
 TF_METRO=Metro
 TF_TRAIN=Comboio
@@ -99,4 +99,5 @@ ConfirmSaveTrip=Are you sure you want to validate this expense report ?
 NoTripsToExportCSV=nenhum relatório de despesas para exportar para este período.
 ExpenseReportPayment=Expense report payment
 
+ExpenseReportsToApprove=Expense reports to approve
 ExpenseReportsToPay=Expense reports to pay

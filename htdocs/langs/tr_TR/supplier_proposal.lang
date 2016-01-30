@@ -1,9 +1,8 @@
 # Dolibarr language file - Source file is en_US - supplier_proposal
 SupplierProposal=Tedarikçi teklifleri
 supplier_proposalDESC=Tedarikçilere yapılan fiyat isteklerini yönet
-supplier_proposalMENU_LEFT_TITLE=Tedarikçi teklifleri
-supplier_proposalMENU_LEFT_TITLE_NEW=Yeni istek
-supplier_proposalMENU_LEFT_TITLE_LIST=Liste
+SupplierProposalShort=Supplier proposals
+SupplierProposalNew=New request
 CommRequest=Fiyat isteği
 CommRequests=Fiyat istekleri
 SearchRequest=İstek ara
@@ -11,7 +10,7 @@ DraftRequests=Taslak istekler
 LastModifiedRequests=Değiştirilen son %s fiyat isteği
 RequestsOpened=Fiyat isteği aç
 SupplierProposalArea=Tedarikçi teklifleri alanı
-SupplierProposalShort=Tedarikçi teklifli
+SupplierProposalShort=Supplier proposals
 SupplierProposals=Tedarikçi teklifleri
 NewAskPrice=Yeni fiyat isteği
 NewAsk=Yeni istek

@@ -121,3 +121,4 @@ OpenIDURL=OpenID URL
 LoginUsingOpenID=Použijte OpenID pro přihlášení
 WeeklyHours=Týdenní hodiny
 ColorUser=Barva uživatele
+DisabledInMonoUserMode=Disabled in maintenance mode

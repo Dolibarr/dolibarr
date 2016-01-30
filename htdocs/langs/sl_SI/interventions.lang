@@ -54,6 +54,9 @@ PacificNumRefModelDesc1=Predlaga številko v formatu %syymm-nnnn kjer je yy leto
 PacificNumRefModelError=Kartica intervencije, ki se začne z $syymm že obstaja in ni kompatibilna s tem modelom sekvence. Odstranite jo ali jo preimenujte, če želite aktivirati ta modul.
 PrintProductsOnFichinter=Natisni proizvode na intervencijsko kartico
 PrintProductsOnFichinterDetails=intervencije na osnovi naročil
+InterventionStatistics=Statistics of interventions
+NbOfinterventions=Nb of intervention cards
+NumberOfInterventionsByMonth=Nb of intervention cards by month (date of validation)
 ##### Exports #####
 InterId=Intervention id
 InterRef=Intervention ref.
