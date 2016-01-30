@@ -102,6 +102,8 @@ class FormVentilation extends Form
 	{
 		global $conf;
 
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+		
 		$out = '';
 
 		$sql = "SELECT DISTINCT aa.account_number, aa.label, aa.rowid, aa.fk_pcg_version";
