@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2012      Regis Houssin       <regis.houssin@capnetworks.com>
  * Copyright (C) 2013-2015 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2015	   Charlie BENKE 	<charlie@patas-monkey.com>
+ * Copyright (C) 2015-2016 Charlie BENKE 	<charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -228,4 +228,13 @@ $userstatic=new User($db);
 <?php } } ?>
 
 </div>
+<!-- TEMPLATE CONTACTS HOOK BEGIN HERE -->
+<?php
+	if (is_object($hookmanager))
+	{
+		$hookmanager->initHooks(array('contacttpl'));
+		$parameters=array();
+		$reshook=$hookmanager->executeHooks('formContactTpl',$parameters,$object,$action);
+	}
+?>
 <!-- END PHP TEMPLATE CONTACTS -->
