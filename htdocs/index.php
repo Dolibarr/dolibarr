@@ -321,7 +321,7 @@ print '<table class="noborder" width="100%">'."\n";
 print '<tr class="liste_titre">';
 print '<th class="liste_titre" colspan="2">'.$langs->trans("DolibarrWorkBoard").'</th>';
 print '<th class="liste_titre" align="right">'.$langs->trans("Number").'</th>';
-print '<th class="liste_titre" align="right">'.$langs->trans("Late").'</th>';
+print '<th class="liste_titre" align="right">'.$form->textwithpicto($langs->trans("Late"),$langs->trans("LateDesc")).'</th>';
 print '<th class="liste_titre">&nbsp;</th>';
 //print '<th class="liste_titre" width="20">&nbsp;</th>';
 if ($showweather) print '<th class="liste_titre hideonsmartphone" width="80">&nbsp;</th>';

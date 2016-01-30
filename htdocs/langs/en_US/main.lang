@@ -457,6 +457,7 @@ Datas=Data
 None=None
 NoneF=None
 Late=Late
+LateDesc=Delay to define if a record is late or not depends on your setup. Ask your admin to change delay from menu Home - Setup - Alerts.
 Photo=Picture
 Photos=Pictures
 AddPhoto=Add picture
