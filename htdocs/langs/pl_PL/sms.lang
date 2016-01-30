@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - sms
 Sms=Sms
-SmsSetup=Sms setup
+SmsSetup=Konfiguracja SMS
 SmsDesc=Ta strona pozwala na zdefiniowanie globals opcje SMS funkcji
 SmsCard=SMS karty
 AllSms=Wszystko SMS campains
@@ -49,5 +49,6 @@ SendSms=Wyślij SMS
 SmsInfoCharRemain=Nb z pozostałych znaków
 SmsInfoNumero= (W formacie międzynarodowym np.: +33899701761)
 DelayBeforeSending=Opóźnienie przed wysłaniem (minuty)
+SmsNoPossibleSenderFound=No sender available. Check setup of your SMS provider.
 SmsNoPossibleRecipientFound=Żaden cel nie dostępne. Sprawdź konfigurację dostawcy SMS.
 

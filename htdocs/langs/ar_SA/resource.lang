@@ -1,35 +1,35 @@
 # Dolibarr language file - Source file is en_US - resource
-MenuResourceIndex=Resources
-MenuResourceAdd=New resource
-MenuResourcePlanning=Resource planning
-DeleteResource=Delete resource
-ConfirmDeleteResourceElement=Confirm delete the resource for this element
-NoResourceInDatabase=No resource in database.
-NoResourceLinked=No resource linked
+MenuResourceIndex=مصادر
+MenuResourceAdd=مورد جديد
+MenuResourcePlanning=تخطيط الموارد
+DeleteResource=حذف الموارد
+ConfirmDeleteResourceElement=تأكيد حذف المورد لهذا العنصر
+NoResourceInDatabase=أي مورد في قاعدة البيانات.
+NoResourceLinked=ربط أي مورد
 
-ResourcePageIndex=Resources list
-ResourceSingular=Resource
-ResourceCard=Resource card
-AddResource=Create a resource
-ResourceFormLabel_ref=Resource name
-ResourceType=Resource type
-ResourceFormLabel_description=Resource description
+ResourcePageIndex=قائمة الموارد
+ResourceSingular=مورد
+ResourceCard=بطاقة الموارد
+AddResource=إنشاء مورد
+ResourceFormLabel_ref=اسم المورد
+ResourceType=نوع المورد
+ResourceFormLabel_description=وصف المصادر
 
-ResourcesLinkedToElement=Resources linked to element
+ResourcesLinkedToElement=موارد مرتبطة عنصر
 
-ShowResource=Show resource
-ShowResourcePlanning=Show resource planning
-GotoDate=Go to date
+ShowResource=مشاهدة الموارد
+ShowResourcePlanning=تخطيط الموارد مشاهدة
+GotoDate=إذهب إلى تاريخ
 
-ResourceElementPage=Element resources
-ResourceCreatedWithSuccess=Resource successfully created
-RessourceLineSuccessfullyDeleted=Resource line successfully deleted
-RessourceLineSuccessfullyUpdated=Resource line successfully updated
-ResourceLinkedWithSuccess=Resource linked with success
+ResourceElementPage=الموارد العنصر
+ResourceCreatedWithSuccess=الموارد التي تم إنشاؤها بنجاح
+RessourceLineSuccessfullyDeleted=خط الموارد حذف بنجاح
+RessourceLineSuccessfullyUpdated=تحديث خط الموارد بنجاح
+ResourceLinkedWithSuccess=ربط الموارد بنجاح
 
-TitleResourceCard=Resource card
-ConfirmDeleteResource=Confirm to delete this resource
-RessourceSuccessfullyDeleted=Resource successfully deleted
-DictionaryResourceType=Type of resources
+TitleResourceCard=بطاقة الموارد
+ConfirmDeleteResource=تأكيد لحذف هذا المورد
+RessourceSuccessfullyDeleted=الموارد حذف بنجاح
+DictionaryResourceType=نوع الموارد
 
-SelectResource=Select resource
+SelectResource=حدد الموارد

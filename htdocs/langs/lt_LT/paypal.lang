@@ -8,6 +8,7 @@ PAYPAL_API_SANDBOX=Režimas testas/smėlio dėžė (Sandbox)
 PAYPAL_API_USER=API vartotojo vardas
 PAYPAL_API_PASSWORD=API slaptažodis
 PAYPAL_API_SIGNATURE=API parašas
+PAYPAL_SSLVERSION=Curl SSL Version
 PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Siūlyti mokėjimą "integruotas" (kredito kortelė+PayPal) arba tik PayPal
 PaypalModeIntegral=Integruotas
 PaypalModeOnlyPaypal=Tik PayPal

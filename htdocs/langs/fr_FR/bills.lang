@@ -59,7 +59,6 @@ PaymentBack=Remboursement
 Payments=Règlements
 PaymentsBack=Remboursements
 PaidBack=Remboursé
-DatePayment=Date paiement
 DeletePayment=Supprimer le paiement
 ConfirmDeletePayment=Êtes-vous sûr de vouloir supprimer ce paiement ?
 ConfirmConvertToReduc=Voulez-vous convertir cet avoir ou acompte en réduction future ?<br>Le montant sera alors stocké en réduction fixe en attente pour le client. Cette dernière pourra être utilisée pour réduire le montant d'une facture en cours ou prochaine de ce client.
@@ -74,6 +73,7 @@ PaymentsAlreadyDone=Versements déjà effectués
 PaymentsBackAlreadyDone=Remboursements déjà effectués
 PaymentRule=Mode de paiement
 PaymentMode=Mode de règlement
+PaymentModeShort=Mode de règlement
 IdPaymentMode=Mode de règlement (id)
 LabelPaymentMode=Mode de règlement (libéllé)
 PaymentTerm=Condition de règlement
@@ -90,6 +90,7 @@ ClassifyCanceled=Classer 'Abandonnée'
 ClassifyClosed=Classer 'Fermée'
 ClassifyUnBilled=Classer 'Non facturée'
 CreateBill=Créer Facture
+CreateCreditNote=Créer facture avoir
 AddBill=Créer une facture ou un avoir
 AddToDraftInvoices=Ajouter à facture brouillon
 DeleteBill=Supprimer facture
@@ -103,7 +104,6 @@ ConvertToReduc=Convertir en réduction future
 EnterPaymentReceivedFromCustomer=Saisie d'un règlement reçu du client
 EnterPaymentDueToCustomer=Saisie d'un remboursement d'un avoir client
 DisabledBecauseRemainderToPayIsZero=Désactivé car reste à payer est nul
-Amount=Montant
 PriceBase=Base du prix
 BillStatus=État de la facture
 BillStatusDraft=Brouillon (à valider)
@@ -186,9 +186,12 @@ ShowInvoice=Afficher facture
 ShowInvoiceReplace=Afficher facture de remplacement
 ShowInvoiceAvoir=Afficher facture d'avoir
 ShowInvoiceDeposit=Afficher facture d'acompte
+<<<<<<< HEAD
 ShowInvoiceSituation=Afficher facture de situation
+=======
+ShowInvoiceSituation=Show situation invoice
+>>>>>>> refs/remotes/origin/3.9
 ShowPayment=Afficher règlement
-File=Fichier
 AlreadyPaid=Déjà réglé
 AlreadyPaidBack=Déjà remboursé
 AlreadyPaidNoCreditNotesNoDeposits=Déjà réglé (hors avoirs et acomptes)
@@ -219,12 +222,13 @@ DateEcheance=Date échéance
 DateInvoice=Date facturation
 NoInvoice=Aucune facture
 ClassifyBill=Classer la facture
-SupplierBillsToPay=Factures fournisseurs à payer
+SupplierBillsToPay=Factures fournisseurs impayées
 CustomerBillsUnpaid=Factures clients impayées
 NonPercuRecuperable=Non perçue réc.
 SetConditions=Définir conditions de règlement
 SetMode=Définir mode de règlement
 Billed=Facturé
+RecurringInvoices=Factures récurrentes
 RepeatableInvoice=Facture modèle
 RepeatableInvoices=Factures modèles
 Repeatable=Modèle
@@ -241,7 +245,6 @@ Reduction=Réduction
 ReductionShort=Réduc.
 Reductions=Réductions
 ReductionsShort=Réduc.
-Discount=Remise
 Discounts=Remises
 AddDiscount=Editer remises
 AddRelativeDiscount=Créer remise relative
@@ -274,6 +277,7 @@ HelpAbandonBadCustomer=Ce montant a été abandonné (client jugé mauvais payeu
 HelpAbandonOther=Ce montant a été abandonné car il s'agissait d'une erreur de facturation (saisie mauvais client, facture remplacée par une autre).
 IdSocialContribution=Id de paiement charge fiscale ou sociale
 PaymentId=Id paiement
+PaymentRef=Ref paiement
 InvoiceId=Id facture
 InvoiceRef=Réf. facture
 InvoiceDateCreation=Date création facture
@@ -301,8 +305,15 @@ RelatedSupplierInvoices=Factures fournisseurs liées
 LatestRelatedBill=Dernière facture en rapport
 WarningBillExist=Attention, une ou plusieurs factures existent déjà
 MergingPDFTool=Outil de fusion de PDF
+<<<<<<< HEAD
 ListOfPreviousSituationInvoices=Liste des précédentes factures de situation
 ListOfNextSituationInvoices=Liste des factures suivantes de situation
+=======
+AmountPaymentDistributedOnInvoice=Montant paiement affecté à la facture
+PaymentNote=Note du paiement
+ListOfPreviousSituationInvoices=List of previous situation invoices
+ListOfNextSituationInvoices=List of next situation invoices
+>>>>>>> refs/remotes/origin/3.9
 
 # PaymentConditions
 PaymentConditionShortRECEP=À réception
@@ -356,7 +367,7 @@ ExtraInfos=Informations complémentaires
 RegulatedOn=Réglé le
 ChequeNumber=Chèque N°
 ChequeOrTransferNumber=Chèque/Virement N°
-ChequeMaker=Emetteur du chèque
+ChequeMaker=Chèque/Virement N°
 ChequeBank=Banque du chèque
 CheckBank=Chèque
 NetToBePaid=Net à payer
@@ -400,6 +411,7 @@ Reported=Différé
 DisabledBecausePayments=Non disponible car il existe des paiements
 CantRemovePaymentWithOneInvoicePaid=Suppression impossible quand il existe au moins une facture classée payée.
 ExpectedToPay=Paiement attendu
+CantRemoveConciliatedPayment=Can't remove conciliated payment
 PayedByThisPayment=Règlé par ce paiement
 ClosePaidInvoicesAutomatically=Classer "Payées" les factures standards ou de remplacements ayant un reste à payer nul 
 ClosePaidCreditNotesAutomatically=Classer automatiquement à "Payé" les factures avoirs entièrement remboursées.
@@ -411,7 +423,11 @@ NoteListOfYourUnpaidInvoices=Remarque: Cette liste ne contient que les factures 
 RevenueStamp=Timbre fiscal
 YouMustCreateInvoiceFromThird=Cette option n'est disponible que lorsqu'on accède à la création de facture depuis l'onglet "Client" d'un Tiers.
 PDFCrabeDescription=Modèle de facture PDF complet (modèle recommandé par défaut)
+<<<<<<< HEAD
 PDFCrevetteDescription=Modèle de facture PDF pour les factures de situations
+=======
+PDFCrevetteDescription=Invoice PDF template Crevette. A complete invoice template for invoice situation
+>>>>>>> refs/remotes/origin/3.9
 TerreNumRefModelDesc1=Renvoie le numéro sous la forme %syymm-nnnn pour les factures et factures de remplacement, %syymm-nnnn pour les avoirs et %syymm-nnnn pour les acomptes où yy est l'année, mm le mois et nnnn un compteur séquentiel sans rupture et sans remise à 0
 MarsNumRefModelDesc1=Renvoie le numéro sous la forme %syymm-nnnn pour les factures, %syymm-nnnn pour les factures de remplacement, %syymm-nnnn pour les acomptes et %syymm-nnnn pour les avoirs où yy est l'année, mm le mois et nnnn un compteur séquentiel sans rupture et sans remise à 0
 TerreNumRefModelError=Une facture commençant par $syymm existe déjà et est incompatible avec cet modèle de numérotation. Supprimez-la ou renommez-la pour activer ce module.
@@ -442,6 +458,7 @@ CantBeLessThanMinPercent=La progression ne peut être inférieure à la valeur d
 NoSituations=Pas de situations ouvertes
 InvoiceSituationLast=Dernière facture
 PDFCrevetteSituationNumber=Situation N°%s
+<<<<<<< HEAD
 PDFCrevetteSituationOrderTitle=Commande d'origine
 PDFCrevetteSituationInvoiceTitle=Facture de situation
 PDFCrevetteSituationInvoiceLineDecompte=Facture de situation - DECOMPTE
@@ -449,3 +466,12 @@ PDFCrevetteSituationInvoiceLine=Situation N°%s : Fact. N°%s au %s
 TotalSituationInvoice=Total Situtation
 invoiceLineProgressError=La progression de la ligne de situation ne peut être égale ou supérieure à la ligne de situation suivante
 updatePriceNextInvoiceErrorUpdateline=Erreur de mise à jour d'un prix sur la facture : %s
+=======
+PDFCrevetteSituationInvoiceLineDecompte=Situation invoice - COUNT
+PDFCrevetteSituationInvoiceTitle=Situation invoice
+PDFCrevetteDescription=Invoice PDF template Crevette. A complete invoice template for invoice situation
+PDFCrevetteSituationInvoiceLine=Situation N°%s : Inv. N°%s on %s
+TotalSituationInvoice=Total situation
+invoiceLineProgressError=Invoice line progress can't be egal or upper the next invoice line
+updatePriceNextInvoiceErrorUpdateline=Error : update price on invoice line : %s
+>>>>>>> refs/remotes/origin/3.9

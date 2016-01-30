@@ -54,6 +54,9 @@ PacificNumRefModelDesc1=Αριθμός επιστροφής με μορφή %syy
 PacificNumRefModelError=Μια καρτέλα παρέμβασης με $syymm ήδη υπάρχει και δεν είναι συμβατή με αυτή την ακολουθία. Απομακρύνετε την ή μετονομάστε την για να ενεργοποιήσετε το module.
 PrintProductsOnFichinter=Εκτυπώστε προϊόντα στην κάρτα παρέμβασης
 PrintProductsOnFichinterDetails=παρεμβάσεις που προέρχονται από παραγγελίες
+InterventionStatistics=Statistics of interventions
+NbOfinterventions=Nb of intervention cards
+NumberOfInterventionsByMonth=Nb of intervention cards by month (date of validation)
 ##### Exports #####
 InterId=Intervention id
 InterRef=Intervention ref.

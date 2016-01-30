@@ -54,6 +54,9 @@ PacificNumRefModelDesc1=Връщане Numero с формат %syymm-NNNN, къ�
 PacificNumRefModelError=Интервенционната карта започва с $ syymm вече съществува и не е съвместим с този модел на последователност. Извадете го или го преименувайте да се активира този модул.
 PrintProductsOnFichinter=Принтиране на продукти от картона на намеса
 PrintProductsOnFichinterDetails=намеси генерирани от поръчки
+InterventionStatistics=Statistics of interventions
+NbOfinterventions=Nb of intervention cards
+NumberOfInterventionsByMonth=Nb of intervention cards by month (date of validation)
 ##### Exports #####
 InterId=Intervention id
 InterRef=Intervention ref.

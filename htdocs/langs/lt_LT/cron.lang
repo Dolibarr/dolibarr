@@ -18,8 +18,9 @@ CronExplainHowToRunUnix=On Unix environment you should use the following crontab
 CronExplainHowToRunWin=On Microsoft(tm) Windows environement you can use Scheduled task tools to run the command line each 5 minutes
 # Menu
 CronJobs=Suplanuoti darbai
-CronListActive=List of active/scheduled jobs
+CronListActive=List of enabled/scheduled jobs
 CronListInactive=Išjungtų darbų sąrašas
+EnabledAndDisabled=Enabled and disabled
 # Page list
 CronDateLastRun=Paskutinis paleistas
 CronLastOutput=Paskutinė paleista išvestis
@@ -35,8 +36,8 @@ CronInfo=Scheduled job module allow to execute job that have been planned
 CronWaitingJobs=Waiting jobs
 CronTask=Darbas
 CronNone=Nė vienas
-CronDtStart=Pradžios data
-CronDtEnd=Pabaigos data
+CronDtStart=Not before
+CronDtEnd=Not after
 CronDtNextLaunch=Kitas vykdymas
 CronDtLastLaunch=Paskutinis vykdymas
 CronFrequency=Frequency
@@ -51,6 +52,7 @@ CronNoJobs=Nėra registruotų darbų
 CronPriority=Prioritetas
 CronLabel=Aprašymas
 CronNbRun=Pradėti skaičių
+CronMaxRun=Max nb. launch
 CronEach=Kiekvienas
 JobFinished=Darbas pradėtas ir baigtas
 #Page card

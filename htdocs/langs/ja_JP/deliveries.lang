@@ -17,6 +17,9 @@ DeleteDeliveryReceiptConfirm=あなたは、配信確認<b>%sを</b>削除し<b>
 DeliveryMethod=配送方法
 TrackingNumber=追跡番号
 DeliveryNotValidated=配信検証されません
+StatusDeliveryCanceled=Canceled
+StatusDeliveryDraft=Draft
+StatusDeliveryValidated=Received
 # merou PDF model
 NameAndSignature=名前と署名：
 ToAndDate=To___________________________________ ____ / _____ / __________で

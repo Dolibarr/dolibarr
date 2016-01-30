@@ -54,6 +54,9 @@ PacificNumRefModelDesc1=Sayıyı %syymm-nnnn olarak gösterir, yy: yıl, mm: ay 
 PacificNumRefModelError=$syymm Başlayan bir müdahale kartı zaten var ve sıra bu dizi modeli ile uyumlu değildir. Modülü etkinleştirmek için kaldırın ya da yeniden adlandırın.
 PrintProductsOnFichinter=Müdahale kartında ürünleri yazdır
 PrintProductsOnFichinterDetails=Siparişlerden oluşturulan müdahaleler
+InterventionStatistics=Statistics of interventions
+NbOfinterventions=Nb of intervention cards
+NumberOfInterventionsByMonth=Nb of intervention cards by month (date of validation)
 ##### Exports #####
 InterId=Müdahale kimliği
 InterRef=Müdahele ref.

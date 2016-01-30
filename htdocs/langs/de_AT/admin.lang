@@ -17,6 +17,8 @@ GUISetup=Anischt
 SetupArea=Einstellungen
 UseSearchToSelectCompany=Suchfeld statt Listenansicht für Partnerauswahl verwenden
 NextValue=Nächste Wert
+AntiVirusCommandExample=Beispiel für ClamWin: c:\\Program Files (x86)\\ClamWin\\bin\\clamscan.exe <br>Beispiel für ClamAV: /usr/bin/clamscan
+AntiVirusParamExample=Beispiel für ClamWin: --database="C:\\Program Files (x86)\\ClamWin\\lib"
 ImportMySqlDesc=Zum Wiederherstellen einer Sicherungsdatei müssen Sie folgenden Befehl über die Kommandozeile ausführen:
 GenericMaskCodes2=<b>(cccc)</b> den Client-Code <br> <b>() cccc000</b> den Client-Code auf n Zeichen ist, gefolgt von einer Client-ref Zähler ohne Offset-und zeroized mit der globalen Zähler. <br>
 GenericMaskCodes5=<b>ABC (yy) (mm) - (000000)</b> wird <b>ABC0701-000099</b> <br> <b>(0000 +100)-ZZZ / tt () / XXX</b> wird <b>0199-ZZZ/31/XXX</b>

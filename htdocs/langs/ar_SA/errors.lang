@@ -1,9 +1,9 @@
 # Dolibarr language file - Source file is en_US - errors
 
 # No errors
-NoErrorCommitIsDone=No error, we commit
+NoErrorCommitIsDone=أي خطأ، ونحن نلزم
 # Errors
-ErrorButCommitIsDone=Errors found but we validate despite this
+ErrorButCommitIsDone=تم العثور على أخطاء لكننا تحقق على الرغم من هذا
 ErrorBadEMail=بريد إلكتروني خاطئ %s
 ErrorBadUrl=عنوان الموقع هو الخطأ %s
 ErrorLoginAlreadyExists=ادخل ٪ ق موجود بالفعل.
@@ -21,13 +21,13 @@ ErrorThisContactIsAlreadyDefinedAsThisType=هذا الاتصال هو اتصال
 ErrorCashAccountAcceptsOnlyCashMoney=هذا الحساب المصرفي هو الحساب النقدي ، وذلك ما وافق على نوع من المدفوعات النقدية فقط.
 ErrorFromToAccountsMustDiffers=المصدر والأهداف يجب أن تكون الحسابات المصرفية المختلفة.
 ErrorBadThirdPartyName=سوء قيمة اسم طرف ثالث
-ErrorProdIdIsMandatory=The %s is mandatory
+ErrorProdIdIsMandatory=و٪ s غير إلزامي
 ErrorBadCustomerCodeSyntax=سوء تركيب الزبون مدونة
-ErrorBadBarCodeSyntax=Bad syntax for bar code. May be you set a bad barcode type or you defined a barcode mask for numbering that does not match value scanned.
+ErrorBadBarCodeSyntax=جملة سيئة الباركود. قد تكون قمت بتعيين نوع الباركود سيئة أو قمت بتعريفه قناع الباركود للترقيم لا تطابق قيمة الممسوحة ضوئيا.
 ErrorCustomerCodeRequired=رمز العميل المطلوبة
-ErrorBarCodeRequired=Bar code required
+ErrorBarCodeRequired=رمز شريط المطلوب
 ErrorCustomerCodeAlreadyUsed=الشفرة المستخدمة بالفعل العملاء
-ErrorBarCodeAlreadyUsed=Bar code already used
+ErrorBarCodeAlreadyUsed=الرمز الشريطي تستخدم بالفعل
 ErrorPrefixRequired=المطلوب ببادئة
 ErrorUrlNotValid=موقع معالجة صحيحة
 ErrorBadSupplierCodeSyntax=مورد سوء تركيب لمدونة
@@ -35,9 +35,9 @@ ErrorSupplierCodeRequired=رمز المورد المطلوب
 ErrorSupplierCodeAlreadyUsed=الشفرة المستخدمة بالفعل مورد
 ErrorBadParameters=بارامترات سيئة
 ErrorBadValueForParameter=قيمة خاطئة &quot;%s 'ل' %s&quot; المعلمة غير صحيحة
-ErrorBadImageFormat=Image file has not a supported format (Your PHP does not support functions to convert images of this format)
+ErrorBadImageFormat=ملف الصورة لم تنسيق معتمد (PHP لديك لا يدعم وظائف لتحويل الصور من هذا الشكل)
 ErrorBadDateFormat='%s' قيمة له خاطئ تنسيق التاريخ
-ErrorWrongDate=Date is not correct!
+ErrorWrongDate=تاريخ غير صحيح!
 ErrorFailedToWriteInDir=لم يكتب في دليل ٪ ق
 ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (example line %s with email=العثور على بريد إلكتروني صحيح لتركيب خطوط ق ٪ في ملف (على سبيل المثال خط ٪ ق= ٪ مع البريد الإلكتروني)
 ErrorUserCannotBeDelete=المستخدم لا يمكن حذفها. قد يكون ذلك مرتبطا Dolibarr على الكيانات.
@@ -58,26 +58,26 @@ ErrorUploadBlockedByAddon=حظر حمل من قبل البرنامج المسا�
 ErrorFileSizeTooLarge=حجم الملف كبير جدا.
 ErrorSizeTooLongForIntType=طويل جدا بالنسبة نوع INT (%s أرقام كحد أقصى) حجم
 ErrorSizeTooLongForVarcharType=وقتا طويلا لنوع السلسلة (%s حرف كحد أقصى) حجم
-ErrorNoValueForSelectType=Please fill value for select list
-ErrorNoValueForCheckBoxType=Please fill value for checkbox list
-ErrorNoValueForRadioType=Please fill value for radio list
-ErrorBadFormatValueList=The list value cannot have more than one comma: <u>%s</u>, but need at least one: key,value
+ErrorNoValueForSelectType=يرجى ملء قيمة لقائمة مختارة
+ErrorNoValueForCheckBoxType=يرجى ملء قيمة لقائمة مربع
+ErrorNoValueForRadioType=يرجى ملء قيمة لقائمة الراديو
+ErrorBadFormatValueList=قيمة القائمة لا يمكن أن يكون أكثر من واحد <u>فاصلة:٪ الصورة،</u> ولكن تحتاج إلى واحد على الأقل: مفتاح، قيمة
 ErrorFieldCanNotContainSpecialCharacters=ميدان <b>٪ ق</b> يجب ألا يحتوي على أحرف خاصة.
-ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contain special characters, nor upper case characters and cannot contain only numbers.
+ErrorFieldCanNotContainSpecialNorUpperCharacters=يجب أن لا يحتوي <b>الحقل%s</b> أحرف خاصة، ولا الحروف الكبيرة وليس يمكن أن تحتوي على أرقام فقط.
 ErrorNoAccountancyModuleLoaded=أي وحدة المحاسبة وتفعيل
-ErrorExportDuplicateProfil=This profile name already exists for this export set.
+ErrorExportDuplicateProfil=هذا الاسم الشخصي موجود مسبقا لهذه المجموعة التصدير.
 ErrorLDAPSetupNotComplete=Dolibarr - LDAP المطابقة وليس كاملا.
 ErrorLDAPMakeManualTest=ألف. ldif الملف قد ولدت في الدليل ٪ s. انها محاولة لتحميل يدويا من سطر في الحصول على مزيد من المعلومات عن الأخطاء.
-ErrorCantSaveADoneUserWithZeroPercentage=لا يمكن انقاذ عمل مع "المركز الخاص لم تبدأ" اذا الميدان "الذي قام به" كما شغلها.
+ErrorCantSaveADoneUserWithZeroPercentage=لا يمكن انقاذ عمل مع "المركز الخاص لم تبدأ" اذا الحقل "الذي قام به" كما شغلها.
 ErrorRefAlreadyExists=المرجع المستخدمة لإنشاء موجود بالفعل.
 ErrorPleaseTypeBankTransactionReportName=الرجاء كتابة اسم البنك استلام المعاملات ويقال فيها (شكل YYYYMM أو YYYYMMDD)
 ErrorRecordHasChildren=فشل حذف السجلات منذ نحو الطفل.
-ErrorRecordIsUsedCantDelete=Can't delete record. It is already used or included into other object.
+ErrorRecordIsUsedCantDelete=لا يمكن حذف السجلات. وبالفعل استخدامه أو نشره على كائن آخر.
 ErrorModuleRequireJavascript=يجب عدم تعطيل جافا سكريبت لجعل هذا العمل الميزة. لتمكين / تعطيل جافا سكريبت ، انتقل إلى القائمة الرئيسية -> الإعداد -> العرض.
 ErrorPasswordsMustMatch=ويجب على كلا كلمات المرور المكتوبة تطابق بعضها البعض
 ErrorContactEMail=وقع خطأ فني. من فضلك، اتصل بمسؤول إلى البريد الإلكتروني بعد <b>%s</b> EN توفير <b>%s</b> رمز الخطأ في رسالتك، أو حتى أفضل من خلال إضافة نسخة شاشة من هذه الصفحة.
 ErrorWrongValueForField=قيمة خاطئة لعدد <b>%s</b> الحقل (قيمة <b>'%s'</b> لا يتطابق <b>%s</b> حكم [رجإكس])
-ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b>)
+ErrorFieldValueNotIn=قيمة خاطئة عن رقم <b>الحقل%s</b> (القيمة <b>'٪ ق'</b> ليست قيمة متوفرة في <b>حقل٪ الصورة</b> من <b>الجدول%s)</b>
 ErrorFieldRefNotIn=قيمة خاطئة <b>ل%s</b> عدد حقل <b>('%s</b> &quot;قيمة ليست المرجع <b>%s</b> موجود)
 ErrorsOnXLines=الأخطاء على خطوط مصدر <b>%s</b>
 ErrorFileIsInfectedWithAVirus=وكان برنامج مكافحة الفيروسات غير قادرة على التحقق من صحة الملف (ملف قد يكون مصابا بواسطة فيروس)
@@ -89,8 +89,8 @@ ErrorModuleSetupNotComplete=إعداد وحدة يتطلع إلى أن يكون 
 ErrorBadMask=خطأ في قناع
 ErrorBadMaskFailedToLocatePosOfSequence=خطأ، من دون قناع رقم التسلسل
 ErrorBadMaskBadRazMonth=خطأ، قيمة إعادة سيئة
-ErrorMaxNumberReachForThisMask=Max number reach for this mask
-ErrorCounterMustHaveMoreThan3Digits=Counter must have more than 3 digits
+ErrorMaxNumberReachForThisMask=عدد ماكس متناول هذا القناع
+ErrorCounterMustHaveMoreThan3Digits=يجب أن يكون العداد أكثر من 3 أرقام
 ErrorSelectAtLeastOne=خطأ. حدد واحد على الأقل دخول.
 ErrorProductWithRefNotExist=المنتج مع <i>'%s</i> &quot;إشارة لا وجود لها
 ErrorDeleteNotPossibleLineIsConsolidated=حذف غير ممكن لأنه مرتبط سجل إلى transation البنك الذي يتم التصالح
@@ -98,7 +98,7 @@ ErrorProdIdAlreadyExist=يتم تعيين ثلث آخر إلى %s
 ErrorFailedToSendPassword=لم ترسل كلمة السر
 ErrorFailedToLoadRSSFile=فشل في الحصول على آر إس إس. محاولة إضافة MAIN_SIMPLEXMLLOAD_DEBUG ثابت إذا رسائل الخطأ لا توفر ما يكفي من المعلومات.
 ErrorPasswordDiffers=كلمات السر يختلف، الرجاء كتابتها مرة أخرى.
-ErrorForbidden=Access denied.<br>You try to access to a page, area or feature of a disabled module or without being in an authenticated session or that is not allowed to your user.
+ErrorForbidden=تم الرفض. <br> محاولة الوصول إلى صفحة أو منطقة أو ميزة من وحدة نمطية تعطيل أو دون أن تكون في جلسة مصادقة أو الذي لا يسمح له المستخدم الخاص بك.
 ErrorForbidden2=ويمكن تعريف إذن لهذا الدخول من قبل المسؤول Dolibarr الخاص بك من القائمة %s-> %s.
 ErrorForbidden3=يبدو أن لا يتم استخدام Dolibarr خلال جلسة المصادقة. نلقي نظرة على وثائق الإعداد Dolibarr لمعرفة كيفية إدارة المصادقة (تاكيس، mod_auth أو غيرها ...).
 ErrorNoImagickReadimage=لم يتم العثور على فئة Imagick في هذا PHP. لا يمكن لمعاينة تكون متاحة. يمكن للمسؤولين تعطيل هذا التبويب من إعداد القائمة - عرض.
@@ -114,68 +114,68 @@ ErrorLoginDoesNotExists=لا يستطيع المستخدم الدخول مع <b>
 ErrorLoginHasNoEmail=هذا المستخدم ليس لديه عنوان البريد الإلكتروني. إحباط عملية.
 ErrorBadValueForCode=سيئة قيمة لرمز الحماية. حاول مرة أخرى مع القيمة الجديدة ...
 ErrorBothFieldCantBeNegative=ويمكن لحقول %s و%s لا تكون سلبية
-ErrorQtyForCustomerInvoiceCantBeNegative=Quantity for line into customer invoices can't be negative
+ErrorQtyForCustomerInvoiceCantBeNegative=كمية لخط في فواتير العملاء لا يمكن أن يكون سلبيا
 ErrorWebServerUserHasNotPermission=<b>%s</b> تستخدم حساب مستخدم لتنفيذ خادم الويب لا يوجد لديه إذن لذلك
 ErrorNoActivatedBarcode=لا يوجد نوع الباركود تفعيلها
-ErrUnzipFails=Failed to unzip %s with ZipArchive
-ErrNoZipEngine=No engine to unzip %s file in this PHP
-ErrorFileMustBeADolibarrPackage=The file %s must be a Dolibarr zip package
-ErrorFileRequired=It takes a package Dolibarr file
-ErrorPhpCurlNotInstalled=The PHP CURL is not installed, this is essential to talk with Paypal
-ErrorFailedToAddToMailmanList=Failed to add record %s to Mailman list %s or SPIP base
-ErrorFailedToRemoveToMailmanList=Failed to remove record %s to Mailman list %s or SPIP base
-ErrorNewValueCantMatchOldValue=New value can't be equal to old one
-ErrorFailedToValidatePasswordReset=Failed to reinit password. May be the reinit was already done (this link can be used only one time). If not, try to restart the reinit process.
-ErrorToConnectToMysqlCheckInstance=Connect to database fails. Check Mysql server is running (in most cases, you can launch it from command line with 'sudo /etc/init.d/mysql start').
-ErrorFailedToAddContact=Failed to add contact
-ErrorDateMustBeBeforeToday=The date can not be greater than today
-ErrorPaymentModeDefinedToWithoutSetup=A payment mode was set to type %s but setup of module Invoice was not completed to define information to show for this payment mode.
-ErrorPHPNeedModule=Error, your PHP must have module <b>%s</b> installed to use this feature.
-ErrorOpenIDSetupNotComplete=You setup Dolibarr config file to allow OpenID authentication, but URL of OpenID service is not defined into constant %s
-ErrorWarehouseMustDiffers=Source and target warehouses must differs
-ErrorBadFormat=Bad format!
-ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Error, this member is not yet linked to any thirdparty. Link member to an existing third party or create a new thirdparty before creating subscription with invoice.
-ErrorThereIsSomeDeliveries=Error, there is some deliveries linked to this shipment. Deletion refused.
-ErrorCantDeletePaymentReconciliated=Can't delete a payment that had generated a bank transaction that was conciliated
-ErrorCantDeletePaymentSharedWithPayedInvoice=Can't delete a payment shared by at least one invoice with status Payed
-ErrorPriceExpression1=Cannot assign to constant '%s'
-ErrorPriceExpression2=Cannot redefine built-in function '%s'
-ErrorPriceExpression3=Undefined variable '%s' in function definition
-ErrorPriceExpression4=Illegal character '%s'
-ErrorPriceExpression5=Unexpected '%s'
-ErrorPriceExpression6=Wrong number of arguments (%s given, %s expected)
-ErrorPriceExpression8=Unexpected operator '%s'
-ErrorPriceExpression9=An unexpected error occured
-ErrorPriceExpression10=Iperator '%s' lacks operand
-ErrorPriceExpression11=Expecting '%s'
-ErrorPriceExpression14=Division by zero
-ErrorPriceExpression17=Undefined variable '%s'
-ErrorPriceExpression19=Expression not found
-ErrorPriceExpression20=Empty expression
-ErrorPriceExpression21=Empty result '%s'
-ErrorPriceExpression22=Negative result '%s'
-ErrorPriceExpressionInternal=Internal error '%s'
-ErrorPriceExpressionUnknown=Unknown error '%s'
-ErrorSrcAndTargetWarehouseMustDiffers=Source and target warehouses must differs
-ErrorTryToMakeMoveOnProductRequiringBatchData=Error, trying to make a stock movement without lot/serial information, on a product requiring lot/serial information
-ErrorCantSetReceptionToTotalDoneWithReceptionToApprove=All recorded receptions must first be verified (approved or denied) before being allowed to do this action
-ErrorCantSetReceptionToTotalDoneWithReceptionDenied=All recorded receptions must first be verified (approved) before being allowed to do this action
-ErrorGlobalVariableUpdater0=HTTP request failed with error '%s'
-ErrorGlobalVariableUpdater1=Invalid JSON format '%s'
-ErrorGlobalVariableUpdater2=Missing parameter '%s'
-ErrorGlobalVariableUpdater3=The requested data was not found in result
-ErrorGlobalVariableUpdater4=SOAP client failed with error '%s'
-ErrorGlobalVariableUpdater5=No global variable selected
-ErrorFieldMustBeANumeric=Field <b>%s</b> must be a numeric value
-ErrorFieldMustBeAnInteger=Field <b>%s</b> must be an integer
-ErrorMandatoryParametersNotProvided=Mandatory parameter(s) not provided
-ErrorOppStatusRequiredIfAmount=You set an estimated amount for this opportunity/lead. So you must also enter its status
-ErrorBadDefinitionOfMenuArrayInModuleDescriptor=Bad Definition Of Menu Array In Module Descriptor (bad value for key fk_menu)
-ErrorSavingChanges=An error has ocurred when saving the changes
+ErrUnzipFails=فشل بفك٪ الصورة مع ZipArchive
+ErrNoZipEngine=لا المحرك لبفك الصورة ملف٪ في هذا PHP
+ErrorFileMustBeADolibarrPackage=يجب أن يكون الملف٪ s حزمة البريدي Dolibarr
+ErrorFileRequired=فإنه يأخذ ملف حزمة Dolibarr
+ErrorPhpCurlNotInstalled=وPHP الضفيرة لم يتم تثبيت، وهذا أمر ضروري لاجراء محادثات مع باي بال
+ErrorFailedToAddToMailmanList=فشل لاضافة التسجيلة٪ s إلى قائمة ميلمان٪ الصورة أو قاعدة SPIP
+ErrorFailedToRemoveToMailmanList=فشل لإزالة سجل٪ s إلى قائمة ميلمان٪ الصورة أو قاعدة SPIP
+ErrorNewValueCantMatchOldValue=قيمة جديدة لا يمكن أن يكون مساويا لالقديم
+ErrorFailedToValidatePasswordReset=فشل في reinit كلمة المرور. قد يكون وقد تم بالفعل reinit (هذا الرابط يمكن استخدامها مرة واحدة فقط). إن لم يكن، في محاولة لاستئناف عملية reinit.
+ErrorToConnectToMysqlCheckInstance=الاتصال فشلت قاعدة البيانات. تحقق من خادم MySQL تشغيل (في معظم الحالات، يمكنك تشغيله من سطر الأوامر مع "سودو /etc/init.d/mysql بدء ').
+ErrorFailedToAddContact=فشل في إضافة جهة اتصال
+ErrorDateMustBeBeforeToday=التاريخ لا يمكن أن يكون أكبر مما هو عليه اليوم
+ErrorPaymentModeDefinedToWithoutSetup=وتم تشكيل لطريقة الدفع لكتابة٪ الصورة ولكن لم يكتمل الإعداد من وحدة الفاتورة لتحديد المعلومات لاظهار هذه طريقة الدفع.
+ErrorPHPNeedModule=خطأ، يجب PHP الخاص بتثبيت <b>وحدة٪ s إلى</b> استخدام هذه الميزة.
+ErrorOpenIDSetupNotComplete=يمكنك إعداد Dolibarr ملف التكوين للسماح بالمصادقة رض، ولكن لم يتم تعريف URL الخدمة رض إلى المستمر٪ الصورة
+ErrorWarehouseMustDiffers=يجب المصدر والهدف يختلف المستودعات
+ErrorBadFormat=شكل سيئة!
+ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=خطأ، لا يرتبط هذا العضو حتى الآن أي مرشحين عن. عضو تصل إلى طرف ثالث القائمة أو إنشاء مرشحين عن الجديد قبل إنشاء الاشتراك مع الفاتورة.
+ErrorThereIsSomeDeliveries=خطأ، وهناك بعض الولادات ترتبط هذه الشحنة. رفض الحذف.
+ErrorCantDeletePaymentReconciliated=لا يمكنك حذف الدفع التي قد ولدت المعاملات المصرفية التي تم التصالح
+ErrorCantDeletePaymentSharedWithPayedInvoice=لا يمكنك حذف دفع تتقاسمها فاتورة واحدة على الأقل مع وضع سيولي
+ErrorPriceExpression1=لا يمكن تعيين إلى ثابت '٪ ق'
+ErrorPriceExpression2=لا يمكن إعادة تعريف المدمج في وظيفة '٪ ق'
+ErrorPriceExpression3=متغير غير معرف '٪ s' في تعريف الدالة
+ErrorPriceExpression4=الطابع غير القانوني '٪ ق'
+ErrorPriceExpression5=غير متوقع '٪ ق'
+ErrorPriceExpression6=عدد خاطئ من الوسائط (٪ ق معين،٪ المتوقعة الصورة)
+ErrorPriceExpression8=مشغل غير متوقع '٪ ق'
+ErrorPriceExpression9=حدث خطأ غير متوقع
+ErrorPriceExpression10=Iperator '٪ ق' يفتقر المعامل
+ErrorPriceExpression11=تتوقع '٪ ق'
+ErrorPriceExpression14=القسمة على صفر
+ErrorPriceExpression17=غير معرف متغير '٪ ق'
+ErrorPriceExpression19=التعبير لم يتم العثور على
+ErrorPriceExpression20=التعبير فارغة
+ErrorPriceExpression21=نتيجة فارغة '٪ ق'
+ErrorPriceExpression22=نتيجة سلبية '٪ ق'
+ErrorPriceExpressionInternal=خطأ داخلي '٪ ق'
+ErrorPriceExpressionUnknown=خطأ غير معروف '٪ ق'
+ErrorSrcAndTargetWarehouseMustDiffers=يجب المصدر والهدف يختلف المستودعات
+ErrorTryToMakeMoveOnProductRequiringBatchData=خطأ، في محاولة لجعل حركة المخزون دون الكثير / المعلومات المسلسل، على منتج تتطلب الكثير / المعلومات التسلسلية
+ErrorCantSetReceptionToTotalDoneWithReceptionToApprove=يجب أولا التحقق من جميع الاستقبالات سجلت (قبول او رفض) قبل أن يسمح لهم القيام بذلك العمل
+ErrorCantSetReceptionToTotalDoneWithReceptionDenied=يجب أولا التحقق من جميع الاستقبالات سجلت (المعتمد) قبل أن يسمح لهم القيام بذلك العمل
+ErrorGlobalVariableUpdater0=طلب HTTP فشلت مع الخطأ '٪ ق'
+ErrorGlobalVariableUpdater1=شكل JSON صالح '٪ ق'
+ErrorGlobalVariableUpdater2=المفقودين المعلمة '٪ ق'
+ErrorGlobalVariableUpdater3=لم يتم العثور على البيانات المطلوبة في نتيجة
+ErrorGlobalVariableUpdater4=العميل SOAP فشلت مع الخطأ '٪ ق'
+ErrorGlobalVariableUpdater5=لا متغير عمومي مختارة
+ErrorFieldMustBeANumeric=يجب أن يكون <b>حقل٪ الصورة</b> قيمة رقمية
+ErrorFieldMustBeAnInteger=يجب أن يكون <b>حقل٪ الصورة</b> عدد صحيح
+ErrorMandatoryParametersNotProvided=معيار إلزامي (ق) لم تقدم
+ErrorOppStatusRequiredIfAmount=قمت بتعيين المبلغ المقدر لهذه الفرصة / الرصاص. لذلك يجب عليك أيضا إدخال مكانتها
+ErrorBadDefinitionOfMenuArrayInModuleDescriptor=سيئة تعريف القائمة صفيف في الوحدة واصف (القيمة سيئة لfk_menu مفتاح)
+ErrorSavingChanges=وقد ocurred لخطأ عند حفظ التغييرات
 
 # Warnings
-WarningPasswordSetWithNoAccount=A password was set for this member. However, no user account was created. So this password is stored but can't be used to login to Dolibarr. It may be used by an external module/interface but if you don't need to define any login nor password for a member, you can disable option "Manage a login for each member" from Member module setup. If you need to manage a login but don't need any password, you can keep this field empty to avoid this warning. Note: Email can also be used as a login if the member is linked to a user.
-WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined
+WarningPasswordSetWithNoAccount=تم تعيين كلمة مرور لهذا العضو. ومع ذلك، تم إنشاء أي حساب المستخدم. لذلك يتم تخزين كلمة المرور هذه ولكن لا يمكن استخدامها للدخول إلى Dolibarr. ويمكن استخدامه من قبل وحدة / واجهة خارجية ولكن إذا كنت لا تحتاج إلى تعريف أي تسجيل دخول أو كلمة المرور لأحد أفراد، يمكنك تعطيل خيار "إدارة تسجيل دخول لكل عضو" من إعداد وحدة الأعضاء. إذا كنت بحاجة إلى إدارة تسجيل الدخول ولكن لا تحتاج إلى أي كلمة المرور، يمكنك الحفاظ على هذا الحقل فارغا لتجنب هذا التحذير. ملاحظة: يمكن أيضا أن تستخدم البريد الإلكتروني لتسجيل الدخول إذا تم ربط عضو إلى المستخدم.
+WarningMandatorySetupNotComplete=لا يتم تعريف معلمات الإعداد إلزامية حتى الآن
 WarningSafeModeOnCheckExecDir=انذار ، فب <b>safe_mode</b> الخيار في ذلك تخزين الأمر يجب أن يكون داخل الدليل الذي أعلنته <b>safe_mode_exec_dir</b> المعلمة بي.
 WarningAllowUrlFopenMustBeOn=<b>allow_url_fopen</b> المعلم يجب أن يوضع <b>على</b> المدون في <b>php.ini</b> لتعمل هذه الوحدة بشكل كامل. يجب عليك أن تعدل عن هذا الملف يدويا.
 WarningBuildScriptNotRunned=السيناريو <b>٪ ق</b> لم يكن يتعارض مع بناء الرسومات ، أو عدم وجود بيانات تظهر.
@@ -184,13 +184,13 @@ WarningPassIsEmpty=تحذير كلمة سر قاعدة بيانات فارغة. 
 WarningConfFileMustBeReadOnly=انذار ، ملف (التكوين <b>htdocs / أسيوط / conf.php)</b> الخاص يمكن أن تكون الكتابة بواسطة خادم الويب. هذه هي ثغرة أمنية خطيرة. أذونات تعديل على ملف ليكون في وضع القراءة فقط لمستخدم نظام التشغيل المستخدمة من قبل ملقم ويب. إذا كنت تستخدم ويندوز وشكل نسبة الدهون لمدة القرص الخاص بك ، فإنك يجب أن نعرف أن هذا النظام لا يسمح ملف لإضافة الأذونات على الملف ، بحيث لا تكون آمنة تماما.
 WarningsOnXLines=تحذيرات عن مصدر خطوط <b>%s</b>
 WarningNoDocumentModelActivated=لا يوجد نموذج لجيل وثيقة ، قد تم تنشيط. سيكون نموذج المختار افتراضيا حتى يمكنك التحقق من إعداد وحدة الخاص.
-WarningLockFileDoesNotExists=Warning, once setup is finished, you must disable install/migrate tools by adding a file <b>install.lock</b> into directory <b>%s</b>. Missing this file is a security hole.
+WarningLockFileDoesNotExists=تحذير، بمجرد الانتهاء من الإعداد، يجب عليك تعطيل تثبيت / الهجرة أدوات بإضافة <b>install.lock</b> الملف إلى <b>الدليل٪ الصورة.</b> في عداد المفقودين هذا الملف هو ثغرة أمنية.
 WarningUntilDirRemoved=كل التحذيرات الأمنية (مرئية من قبل المستخدمين مشرف فقط) وسوف تبقى نشطة طالما أن الضعف الحالي (أو لم يضف هذا MAIN_REMOVE_INSTALL_WARNING مستمر في الإعداد&gt; الإعداد الأخرى).
-WarningCloseAlways=Warning, closing is done even if amount differs between source and target elements. Enable this feature with caution.
-WarningUsingThisBoxSlowDown=Warning, using this box slow down seriously all pages showing the box.
-WarningClickToDialUserSetupNotComplete=Setup of ClickToDial information for your user are not complete (see tab ClickToDial onto your user card).
-WarningNotRelevant=Irrelevant operation for this dataset
-WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=Feature disabled when display setup is optimized for blind person or text browsers.
-WarningPaymentDateLowerThanInvoiceDate=Payment date (%s) is earlier than invoice date (%s) for invoice %s.
-WarningTooManyDataPleaseUseMoreFilters=Too many data (more than %s lines). Please use more filters or set the constant %s to a higher limit.
-WarningSomeLinesWithNullHourlyRate=Some times were recorded by users when their hourly rate was not defined. A value of 0 was used but this may result in wrong valuation of time spent.
+WarningCloseAlways=تحذير، ويتم إغلاق حتى إذا قدر يختلف بين عناصر المصدر والهدف. تمكين هذه الميزة بحذر.
+WarningUsingThisBoxSlowDown=تحذير، وذلك باستخدام هذا الإطار تبطئ على محمل الجد كل الصفحات التي تظهر مربع.
+WarningClickToDialUserSetupNotComplete=إعداد المعلومات ClickToDial لالمستخدم الخاص بك ليست كاملة (انظر التبويب ClickToDial على بطاقة المستخدم الخاص بك).
+WarningNotRelevant=العملية غير ذات صلة لهذه البينات.
+WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=ميزة تعطيل عندما تم تحسين عرض الإعداد لالعمياء شخص أو النص المتصفحات.
+WarningPaymentDateLowerThanInvoiceDate=تاريخ الدفع (٪ ق) هو أقدم من تاريخ الفاتورة (٪ ق) لفاتورة%s.
+WarningTooManyDataPleaseUseMoreFilters=عدد كبير جدا من البيانات (أكثر من خطوط%s). يرجى استخدام المزيد من المرشحات أو تعيين ثابت٪ الصورة إلى حد أعلى.
+WarningSomeLinesWithNullHourlyRate=وسجلت بعض الأوقات من قبل المستخدمين عندما لم يتم تعريف معدل في الساعة. وقد استخدم قيمة 0 ولكن هذا قد يؤدي إلى تقييم خاطئ من الوقت الذي يقضيه.

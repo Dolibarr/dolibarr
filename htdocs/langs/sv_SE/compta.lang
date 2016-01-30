@@ -155,6 +155,7 @@ DepositsAreNotIncluded=- Deposit fakturor eller ingår
 DepositsAreIncluded=- Deposit fakturor ingår
 LT2ReportByCustomersInInputOutputModeES=Rapport från tredje part IRPF
 LT1ReportByCustomersInInputOutputModeES=Rapport från tredje part RE
+VATReport=VAT report
 VATReportByCustomersInInputOutputMode=Rapport av kunden moms samlas och betalas
 VATReportByCustomersInDueDebtMode=Rapport av kunden moms samlas och betalas
 VATReportByQuartersInInputOutputMode=Rapport från graden av mervärdesskatten och en betald

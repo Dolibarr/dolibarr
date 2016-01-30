@@ -81,6 +81,7 @@ ActivateCheckReadKey=Key used to encrypt URL used for "Read Receipt" and "Unsubc
 EMailSentToNRecipients=EMail skickas till% s mottagare.
 XTargetsAdded=<b>% s</b> mottagare läggs in i målet listan
 EachInvoiceWillBeAttachedToEmail=Ett dokument med standardfakturadokumentmall kommer att skapas och bifogas varje e-postmeddelande.
+OnlyPDFattachmentSupported=If the PDF document was already generated for the invoice, it will be attached to email. If not, no email will be sent (also, note that only pdf invoice are supported as attachment in mass sending in this version).
 MailTopicSendRemindUnpaidInvoices=Påminnelse om faktura% s (% s)
 SendRemind=Skicka påminnelse av e-post
 RemindSent=% S påminnelse (er) skickas

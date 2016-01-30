@@ -6,7 +6,7 @@ AllSendings=Sve isporuke
 Shipment=Isporuka
 Shipments=Isporuke
 ShowSending=Prikaži isporuke
-Receivings=Prijemnice
+Receivings=Delivery Receipts
 SendingsArea=Oblast isporuka
 ListOfSendings=Lista isporuka
 SendingMethod=Način isporuke
@@ -69,10 +69,10 @@ ProductQtyInCustomersOrdersRunning=Količina proizvoda u otvorenim narudžbinama
 ProductQtyInSuppliersOrdersRunning=Količina proizvoda u otvorenim dobavljačevim narudžbinama
 ProductQtyInShipmentAlreadySent=Količina proizvoda u već poslatim otvorenim narudžbinama klijenta
 ProductQtyInSuppliersShipmentAlreadyRecevied=Količina proizvoda u već primljenim otvorenim dobavljačevim narudžbinama
-NoProductToShipFoundIntoStock=No product to ship found into warehouse <b>%s</b>. Correct stock or go back to choose another warehouse.
+NoProductToShipFoundIntoStock=Nema proizvoda za isporuku u magacin <b>%s</b>. Ispravite zalihu ili izaberite drugi magacin.
 
 # Sending methods
-SendingMethodCATCH=Catch by customer
+SendingMethodCATCH=Klijent preuzima
 SendingMethodTRANS=Transporter
 SendingMethodCOLSUI=Colissimo
 # ModelDocument

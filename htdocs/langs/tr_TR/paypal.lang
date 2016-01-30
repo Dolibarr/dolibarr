@@ -8,6 +8,7 @@ PAYPAL_API_SANDBOX=Test/sandbox modu
 PAYPAL_API_USER=API kullanıcı adı
 PAYPAL_API_PASSWORD=API parolası
 PAYPAL_API_SIGNATURE=API imzası
+PAYPAL_SSLVERSION=Curl SSL Version
 PAYPAL_API_INTEGRAL_OR_PAYPALONLY="Dahili" (kredi kartı+paypal) ya da sadece "Paypal" ödemesi sunar
 PaypalModeIntegral=Tümlev
 PaypalModeOnlyPaypal=Yalnızca PayPal

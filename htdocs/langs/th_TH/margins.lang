@@ -23,8 +23,8 @@ ChooseProduct/Service=เลือกสินค้าหรือบริก�
 StartDate=วันที่เริ่มต้น
 EndDate=วันที่สิ้นสุด
 Launch=เริ่มต้น
-ForceBuyingPriceIfNull=กองทัพราคาซื้อถ้า null
-ForceBuyingPriceIfNullDetails=ถ้า "ON" ขอบจะเป็นศูนย์ในบรรทัด (ซื้อราคา = ราคาขาย) มิฉะนั้น ("OFF"), มาร์จจะเท่ากับราคาขาย (ซื้อราคา = 0)
+ForceBuyingPriceIfNull=Force buying/cost price to selling price if not defined
+ForceBuyingPriceIfNullDetails=If buying/cost price not defined, and this option "ON", margin will be zero on line (buying/cost price = selling price), otherwise ("OFF"), marge will be equal to suggested default.
 MARGIN_METHODE_FOR_DISCOUNT=วิธี Margin ส่วนลดทั่วโลก
 UseDiscountAsProduct=เป็นผลิตภัณฑ์
 UseDiscountAsService=เป็นบริการ
@@ -35,8 +35,9 @@ MargeBrute=ขอบดิบ
 MargeNette=อัตรากำไรสุทธิ
 MargeType1=Margin on Best supplier price
 MargeType2=Margin on Weighted Average Price (WAP)
-MARGIN_TYPE_DETAILS=ขอบดิบ: ราคาขาย - ราคาซื้อ <br/> อัตรากำไรสุทธิ: ราคาขาย - ราคาต้นทุน
-MarginTypeDesc=Margin on best buying price : Selling price - Best supplier price defined on product card<br/>Margin on Weighted Average Price (WAP) : Selling price - Product Weighted Average Price
+MargeType3=Margin on Cost Price
+MARGIN_TYPE_DETAILS=Raw margin : Selling price - Buying price<br>Net margin : Selling price - Cost price
+MarginTypeDesc=* Margin on best buying price = Selling price - Best supplier price defined on product card<br>* Margin on Weighted Average Price (WAP) = Selling price - Product Weighted Average Price (WAP) or best supplier price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAP if cost price not defined, or best supplier price if WAP not yet defined
 CostPrice=ราคาทุน
 BuyingCost=ราคาทุน
 UnitCharges=ค่าใช้จ่ายต่อหน่วย

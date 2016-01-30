@@ -1,28 +1,28 @@
 # Dolibarr language file - Source file is en_US - trips
 ExpenseReport=Spesenabrechnung
-ExpenseReports=Spesenabrechnungen Hinweis
+ExpenseReports=Spesenabrechnungen
 Trip=Spesenabrechnung
 Trips=Spesenabrechnungen
 TripsAndExpenses=Reise- und Fahrtspesen
 TripsAndExpensesStatistics=Reise- und Fahrtspesen Statistik
-TripCard=Reisekosten Karte
+TripCard=Reisekosten - Karte
 AddTrip=Reisekostenabrechnung erstellen
-ListOfTrips=Liste Reise- und Spesenabrechnungen
+ListOfTrips=Aufstellung Spesenabrechnungen
 ListOfFees=Liste der Spesen
-ShowTrip=Spesenreport anzeigen
-NewTrip=neue Reisekostenabrechnung
+ShowTrip=Spesenabrechnung anzeigen
+NewTrip=neue Spesenabrechnung
 CompanyVisited=Besuchter Partner
 Kilometers=Kilometerstand
 FeesKilometersOrAmout=Spesenbetrag bzw. Kilometergeld
 DeleteTrip=Spesenabrechnung löschen
 ConfirmDeleteTrip=Möchten Sie diese Spesenabrechnung wirklich löschen?
-ListTripsAndExpenses=Liste Reise- und Spesenabrechnungen
+ListTripsAndExpenses=Aufstellung Spesenabrechnungen
 ListToApprove=Warten auf Bestätigung
 ExpensesArea=Spesenabrechnungen
 SearchATripAndExpense=Suche nach einer Spesenabrechnung
 ClassifyRefunded=Als 'erstattet' markieren
-ExpenseReportWaitingForApproval=Eine neue Reisekostenabrechnung ist zur Genehmigung vorgelegt worden
-ExpenseReportWaitingForApprovalMessage=Eine neue Kostenabrechnung wurde vorgelegt und steht zur Überprüfung an.\n- Benutzer: %s \n- Zeitraum: %s  \nKlicken Sie hier, um zu überprüfen: %s 
+ExpenseReportWaitingForApproval=Eine neue Spesenabrechnung ist zur Genehmigung vorgelegt worden
+ExpenseReportWaitingForApprovalMessage=Eine neue Spesenabrechnung wurde vorgelegt und steht zur Überprüfung an.\n- Benutzer: %s \n- Zeitraum: %s  \nKlicken Sie hier, um zu überprüfen: %s 
 TripId=Spesenabrechnung ID
 AnyOtherInThisListCanValidate=Person für die Validierung zu informieren .
 TripSociete=Partner
@@ -31,7 +31,7 @@ TripNDF=Hinweise Spesenabrechnung
 PDFStandardExpenseReports=Standard-Vorlage, um ein PDF-Dokument für die Spesenabrechnung zu erzeugen
 ExpenseReportLine=Spesenabrechnung Zeile
 TF_OTHER=Andere
-TF_TRANSPORTATION=Spedition
+TF_TRIP=Transportation
 TF_LUNCH=Bewirtung
 TF_METRO=S- und U-Bahn
 TF_TRAIN=Bahn
@@ -42,13 +42,13 @@ TF_ESSENCE=Kraftstoff
 TF_HOTEL=Hotel
 TF_TAXI=Taxi
 
-ErrorDoubleDeclaration=Sie haben bereits eine andere Spesenabrechnung in einem ähnliche Datumsbereich erstellt.
+ErrorDoubleDeclaration=Sie haben bereits eine andere Spesenabrechnung in einem ähnlichen Datumsbereich erstellt.
 AucuneNDF=Keine Spesenabrechnungen für diese Kriterien gefunden
 AucuneLigne=Es wurde noch keine Spesenabrechnung erstellt.
 AddLine=Neue Zeile hinzufügen
 AddLineMini=Hinzufügen
 
-Date_DEBUT=Beginndatum
+Date_DEBUT=Startdatum Periode
 Date_FIN=Enddatum
 ModePaiement=Zahlungsart
 
@@ -75,10 +75,10 @@ ModifyInfoGen=Bearbeiten
 ValidateAndSubmit=Validieren und zur Genehmigung einreichen
 ValidatedWaitingApproval=Validiert (Wartet auf Genehmigung)
 
-NOT_VALIDATOR=Sie sind nicht berechtigt, diese Spesennabrechnung zu genehmigen
+NOT_VALIDATOR=Sie sind nicht berechtigt, diese Spesenabrechnung zu genehmigen
 NOT_AUTHOR=Sie sind nicht der Autor dieser Spesenabrechnung. Vorgang abgebrochen.
 
-RefuseTrip=Verweigern eine Spesenabrechnung
+RefuseTrip=Ablehnen eine Spesenabrechnung
 ConfirmRefuseTrip=Möchten Sie diese Spesenabrechnung wirklich ablehnen?
 
 ValideTrip=Genehmigen Spesenabrechnung
@@ -87,16 +87,17 @@ ConfirmValideTrip=Möchten Sie diese Spesenabrechnung wirklich genehmigen?
 PaidTrip=Spesenabrechnung bezahlen
 ConfirmPaidTrip=Möchten Sie den Status dieser Spesenabrechnung auf "Bezahlt" ändern?
 
-CancelTrip=Abrechen einer Spesenabrechnung
+CancelTrip=Stornieren einer Spesenabrechnung
 ConfirmCancelTrip=Möchten Sie diese Spesenabrechnung wirklich abbrechen?
 
-BrouillonnerTrip=Spesenabrechnung rückgängig, auf den Status "Entwurf"
+BrouillonnerTrip=Status der Spesenabrechnung auf den Status "Entwurf" ändern
 ConfirmBrouillonnerTrip=Möchten Sie den Status dieser Spesenabrechnung wirklich auf "Entwurf" ändern?
 
 SaveTrip=Bestätige Spesenabrechnung
-ConfirmSaveTrip=Sind Sie sicher, dass Sie diese Spesenabrechnung überprüfen wollen?
+ConfirmSaveTrip=Sind Sie sicher, dass Sie diese Spesenabrechnung bestätigen wollen?
 
 NoTripsToExportCSV=Keine Spesenabrechnung für diesen Zeitraum zu exportieren.
 ExpenseReportPayment=Spesenabrechnung Zahlung
 
-ExpenseReportsToPay=Spesenabrechnungen zu entrichten
+ExpenseReportsToApprove=Expense reports to approve
+ExpenseReportsToPay=zu zahlende Spesenabrechnungen

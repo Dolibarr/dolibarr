@@ -31,7 +31,7 @@ TripNDF=Informasjon om reiseregning
 PDFStandardExpenseReports=Standardmal for å generere PDF av reiseregning
 ExpenseReportLine=Linje i reiseregningen
 TF_OTHER=Annet
-TF_TRANSPORTATION=Transport
+TF_TRIP=Transportation
 TF_LUNCH=Lunsj
 TF_METRO=Trikk/bybane
 TF_TRAIN=Tog
@@ -99,4 +99,5 @@ ConfirmSaveTrip=Er du sikker på at du vil validere denne reiseregningen?
 NoTripsToExportCSV=Ingen reiseregning å eksportere for denne perioden
 ExpenseReportPayment=Betaling av utgiftsrapport
 
+ExpenseReportsToApprove=Expense reports to approve
 ExpenseReportsToPay=Utgiftsrapport å betale

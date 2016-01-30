@@ -26,7 +26,6 @@ Selectmodelcsv=Vælg en eksportmodel
 Modelcsv_normal=Klassisk eksport
 Modelcsv_CEGID=Eksporter med CEGID ekspert
 BackToChartofaccounts=Returner kontoplan
-Back=Returner
 
 Definechartofaccounts=Definer en kontoplan
 Selectchartofaccounts=Vælg en kontoplan
@@ -109,10 +108,6 @@ DelBookKeeping=Slet posterne i kontoplanen
 
 DescSellsJournal=Salgskladde
 DescPurchasesJournal=Købskladde
-BankJournal=Bankjournal
-DescBankJournal=Bankkladden herunder alle de typer af andre betalinger end kontanter
-CashJournal=Kontantkladde
-DescCashJournal=Kontantkladde herunder betalinger med kontanter
 FinanceJournal=Finance journal
 DescFinanceJournal=Finance journal including all the types of payments by bank account
 
@@ -152,7 +147,7 @@ DescVentilDoneSupplier=Gå til en liste over de linjer af fakturaer leverandør 
 ValidateHistory=Forny automatisk
 
 ErrorAccountancyCodeIsAlreadyUse=Fejl, kan du ikke slette denne regnskabsmæssige konto, fordi den bruges
-
+MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
 FicheVentilation=Breakdown card
 GeneralLedgerIsWritten=Operations are written in the general ledger
 
@@ -167,7 +162,13 @@ Headername=Name in header
 Type=Type of fields
 Param=Additionnal parameters
 EnabledProduct=In Product
-EnabledTiers=In Tiers
+EnabledTiers=In third party
 EnabledVat=In Vat
-
-MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
+## Tools - Init accounting account on product / service
+InitAccountancy=Init accountancy
+InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accountancy account defined for sales and purchases. Check before that setup of module accountancy is complete.
+Options=Options
+OptionModeProductSell=Mode sales
+OptionModeProductBuy=Mode purchases
+OptionModeProductSellDesc=Show all products with no accounting account defined for sales.
+OptionModeProductBuyDesc=Show all products with no accounting account defined for purchases.

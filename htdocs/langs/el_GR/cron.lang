@@ -18,8 +18,9 @@ CronExplainHowToRunUnix=Στο Unix περιβάλλον θα πρέπει να 
 CronExplainHowToRunWin=Σε Microsoft (tm) Windows περιβάλλον μπορείτε να χρησιμοποιήσετε τα εργαλεία Προγραμματισμένη εργασία ώστε να εκτελείτε η γραμμή εντολών καθένα 5 λεπτά
 # Menu
 CronJobs=Προγραμματισμένες εργασίες
-CronListActive=Λίστα ενεργών/προγραμματισμένων εργασιών
+CronListActive=List of enabled/scheduled jobs
 CronListInactive=Λίστα με τις απενεργοποιημένες εργασίες
+EnabledAndDisabled=Enabled and disabled
 # Page list
 CronDateLastRun=Τελευταία εκτέλεση
 CronLastOutput=Τελευταία εκτέλεση εξόδου
@@ -35,8 +36,8 @@ CronInfo=Scheduled job module allow to execute job that have been planned
 CronWaitingJobs=Waiting jobs
 CronTask=Εργασία
 CronNone=Καμία
-CronDtStart=Ημερ. έναρξης
-CronDtEnd=Ημερ. τέλους
+CronDtStart=Not before
+CronDtEnd=Not after
 CronDtNextLaunch=Επόμενη εκτέλεση
 CronDtLastLaunch=Τελευταία εκτέλεση
 CronFrequency=Frequency
@@ -51,6 +52,7 @@ CronNoJobs=Δεν έχουν καταχωρηθεί εργασίες
 CronPriority=Προτεραιότητα
 CronLabel=Περιγραφή
 CronNbRun=Nb. έναρξης
+CronMaxRun=Max nb. launch
 CronEach=Κάθε
 JobFinished=Ξεκίνησε και τελείωσε
 #Page card

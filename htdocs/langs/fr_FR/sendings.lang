@@ -6,7 +6,7 @@ AllSendings=Toutes les expéditions
 Shipment=Expédition
 Shipments=Expéditions
 ShowSending=Afficher Expéditions
-Receivings=Réceptions
+Receivings=Delivery Receipts
 SendingsArea=Espace expéditions
 ListOfSendings=Liste des expéditions
 SendingMethod=Méthode d'expédition
@@ -69,7 +69,7 @@ ProductQtyInCustomersOrdersRunning=Quantité de produit en commandes client ouve
 ProductQtyInSuppliersOrdersRunning=Quantité de produit en commandes fournisseur ouvertes
 ProductQtyInShipmentAlreadySent=Quantité du produit parmi les commandes clients déjà envoyées
 ProductQtyInSuppliersShipmentAlreadyRecevied=Quantité de produit déjà reçu en commandes fournisseur ouvertes
-NoProductToShipFoundIntoStock=No product to ship found into warehouse <b>%s</b>. Correct stock or go back to choose another warehouse.
+NoProductToShipFoundIntoStock=Aucun produit à expédier n'a été trouver dans l'entrepôt <b>%s</b>. Corrigez l'inventaire ou retourner choisir un autre entrepôt.
 
 # Sending methods
 SendingMethodCATCH=Enlèvement par le client

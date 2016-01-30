@@ -8,6 +8,7 @@ PAYPAL_API_SANDBOX=Λειτουργία δοκιμής / sandbox
 PAYPAL_API_USER=API όνομα χρήστη
 PAYPAL_API_PASSWORD=API κωδικό πρόσβασης
 PAYPAL_API_SIGNATURE=API υπογραφή
+PAYPAL_SSLVERSION=Curl SSL Version
 PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Προσφορά πληρωμής  "ενσωματωμένο"  (Πιστωτική κάρτα + Paypal) ή "Paypal" μόνο
 PaypalModeIntegral=Ενσωματωμένο
 PaypalModeOnlyPaypal=PayPal μόνο

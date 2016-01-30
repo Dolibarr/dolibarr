@@ -1,13 +1,13 @@
 # Dolibarr language file - en_US - Accounting Expert
 ACCOUNTING_EXPORT_SEPARATORCSV=Dışaaktarma dosyası için sütun ayırıcısı
 ACCOUNTING_EXPORT_DATE=Dışaaktarma dosyası için tarih biçimi
-ACCOUNTING_EXPORT_PIECE=Export the number of piece
-ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account
-ACCOUNTING_EXPORT_LABEL=Export the label
-ACCOUNTING_EXPORT_AMOUNT=Export the amount
-ACCOUNTING_EXPORT_DEVISE=Export the devise
-Selectformat=Select the format for the file
-ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
+ACCOUNTING_EXPORT_PIECE=Parça sayısını dışaaktar
+ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Genel hesapla birlikte dışaaktar
+ACCOUNTING_EXPORT_LABEL=Etiketi dışaaktar
+ACCOUNTING_EXPORT_AMOUNT=Tutarı dışaaktar
+ACCOUNTING_EXPORT_DEVISE=Cihazı dışaaktar
+Selectformat=Dosya için biçimi seçin
+ACCOUNTING_EXPORT_PREFIX_SPEC=Dosya adı için öneki belirtin
 
 Accounting=Muhasebe
 Globalparameters=Genel parametreler
@@ -26,7 +26,6 @@ Selectmodelcsv=Bir dışaaktarım modeli seç
 Modelcsv_normal=Klasik dışaaktarım
 Modelcsv_CEGID=CEGID Uzmanına yönelik dışaaktarım
 BackToChartofaccounts=Hesap planı cirosu
-Back=Ciro
 
 Definechartofaccounts=Hesap planı tanımla
 Selectchartofaccounts=Hesap planı seç
@@ -36,7 +35,7 @@ AccountAccountingSuggest=Accounting account suggest
 Ventilation=Analiz
 
 CustomersVentilation=Müşteri analizi
-SuppliersVentilation=Tedarikç analizi
+SuppliersVentilation=Tedarikçi analizi
 TradeMargin=Ticaret kar oranı
 Reports=Raporlar
 ByCustomerInvoice=Müşteri faturalarına göre
@@ -56,14 +55,14 @@ AccountingVentilationCustomer=Müşteri hesabı analizi
 CAHTF=Total purchase supplier before tax
 InvoiceLines=Analiz edilecek fatura kalemleri
 InvoiceLinesDone=Analiz edilen fatura kalemleri
-IntoAccount=Ventilate in the accounting account
+IntoAccount=Muhasebe hesapları analizi
 
 Ventilate=Analiz
 VentilationAuto=Otomatik analiz
 
 Processing=İşleme
 EndProcessing=İşleme sonu
-AnyLineVentilate=Analiz edilecek herhangi bir kalem
+AnyLineVentilate=Analiz edilecek herhangi bir satır
 SelectedLines=Seçilen satırlar
 Lineofinvoice=Fatura satırı
 VentilatedinAccount=Muhasebe hesabında başarıyla analiz edildi
@@ -109,12 +108,8 @@ DelBookKeeping=Büyük defter kayıtlarını sil
 
 DescSellsJournal=Satış günlüğü
 DescPurchasesJournal=Alış günlüğü
-BankJournal=Banka günlüğü
-DescBankJournal=Nakit dışında her türlü ödemeyi içeren banka günlüğü
-CashJournal=Kasa günlüğü
-DescCashJournal=Nakit ödeme türünü içeren kasa günlüğü
 FinanceJournal=Finance journal
-DescFinanceJournal=Finance journal including all the types of payments by bank account
+DescFinanceJournal=Banka hesabından yapılan tüm ödeme türlerini içeren finans günlüğü
 
 CashPayment=Nakit ödeme
 
@@ -139,7 +134,7 @@ Pcgsubtype=Hesap sınıfı altında
 Accountparent=Hesabın kökü
 
 DescVentilCustomer=Müşteri faturalarınızın yıllık hesap analizi için buraya danışın
-TotalVente=Total turnover before tax
+TotalVente=Vergi öncesi toplam gelir
 TotalMarge=Toplam satışlar kar oranı
 DescVentilDoneCustomer=Burada müşteri faturaları satırlarına ve onların muhasebe hesaplarının listesine bakın.
 DescVentilTodoCustomer=Bir muhasebe hesabıyla müşteri faturanızın kalemlerini analiz edin
@@ -152,22 +147,28 @@ DescVentilDoneSupplier=Burada tedarikçi faturaları ve muhasebe hesapları sat�
 ValidateHistory=Otomatikman doğrula
 
 ErrorAccountancyCodeIsAlreadyUse=Hata, kullanıldığı için bu muhasebe hesabını silemezsiniz
-
+MvtNotCorrectlyBalanced=Hareket doğru denkleştirilmemiş. Alacak = %s. Borç = %s
 FicheVentilation=Analiz kartı
-GeneralLedgerIsWritten=Operations are written in the general ledger
+GeneralLedgerIsWritten=İşlemler büyük deftere yazılır
 
 ##Export Journal Feature
-ExportFormat=Format of Export
-Prefixname=Prefix of export File
-Separate=Export separator
-Textframe=Frame of text value
-Headercol=Colname in header of file
-Fieldname=Name of Field
-Headername=Name in header
-Type=Type of fields
-Param=Additionnal parameters
-EnabledProduct=In Product
-EnabledTiers=In Tiers
-EnabledVat=In Vat
-
-MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
+ExportFormat=Dışaktarım biçimi
+Prefixname=Dışaktarım dosyası öneki
+Separate=Dışaaktarım ayırıcısı
+Textframe=Metin değeri çerçevesi
+Headercol=Dosya başlığındaki kolon adı
+Fieldname=Alan Adı
+Headername=Başlıktaki ad
+Type=Alan türü
+Param=Ek parametreler
+EnabledProduct=Ürünlerde
+EnabledTiers=In third party
+EnabledVat=KDV nde
+## Tools - Init accounting account on product / service
+InitAccountancy=Init accountancy
+InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accountancy account defined for sales and purchases. Check before that setup of module accountancy is complete.
+Options=Options
+OptionModeProductSell=Mode sales
+OptionModeProductBuy=Mode purchases
+OptionModeProductSellDesc=Show all products with no accounting account defined for sales.
+OptionModeProductBuyDesc=Show all products with no accounting account defined for purchases.

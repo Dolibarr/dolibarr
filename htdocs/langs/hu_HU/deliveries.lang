@@ -17,6 +17,9 @@ DeleteDeliveryReceiptConfirm=Biztos benne, hogy törli átvételi elismervényen
 DeliveryMethod=Szállítási mód
 TrackingNumber=Nyomonkövetési szám
 DeliveryNotValidated=Szállítási nem validált
+StatusDeliveryCanceled=Canceled
+StatusDeliveryDraft=Draft
+StatusDeliveryValidated=Received
 # merou PDF model
 NameAndSignature=Név és aláírás :
 ToAndDate=To___________________________________ on ____/_____/__________

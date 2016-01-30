@@ -8,6 +8,7 @@ PAYPAL_API_SANDBOX=Ham próf / sandkassi
 PAYPAL_API_USER=API notandanafn
 PAYPAL_API_PASSWORD=API lykilorð
 PAYPAL_API_SIGNATURE=API undirskrift
+PAYPAL_SSLVERSION=Curl SSL Version
 PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Tilboð greiðslu &quot;órjúfanlegur&quot; (Kreditkort + Paypal) eða &quot;Paypal&quot; aðeins
 PaypalModeIntegral=Integral
 PaypalModeOnlyPaypal=PayPal only

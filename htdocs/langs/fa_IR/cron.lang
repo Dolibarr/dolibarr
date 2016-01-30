@@ -18,8 +18,9 @@ CronExplainHowToRunUnix=On Unix environment you should use the following crontab
 CronExplainHowToRunWin=On Microsoft(tm) Windows environement you can use Scheduled task tools to run the command line each 5 minutes
 # Menu
 CronJobs=شغل برنامه ریزی
-CronListActive=List of active/scheduled jobs
+CronListActive=List of enabled/scheduled jobs
 CronListInactive=لیست شغل ها غیر فعال
+EnabledAndDisabled=Enabled and disabled
 # Page list
 CronDateLastRun=تاریخ و زمان آخرین اجرا
 CronLastOutput=تاریخ و زمان آخرین خروجی اجرا
@@ -35,8 +36,8 @@ CronInfo=Scheduled job module allow to execute job that have been planned
 CronWaitingJobs=Waiting jobs
 CronTask=کار
 CronNone=هیچ یک
-CronDtStart=تاریخ شروع
-CronDtEnd=تاریخ پایان
+CronDtStart=Not before
+CronDtEnd=Not after
 CronDtNextLaunch=اعدام بعدی
 CronDtLastLaunch=تاریخ و زمان آخرین اعدام
 CronFrequency=Frequency
@@ -51,6 +52,7 @@ CronNoJobs=بدون شغل ثبت نام
 CronPriority=اولویت
 CronLabel=توصیف
 CronNbRun=نیوبیوم. راه اندازی
+CronMaxRun=Max nb. launch
 CronEach=هر
 JobFinished=کار راه اندازی به پایان رسید و
 #Page card

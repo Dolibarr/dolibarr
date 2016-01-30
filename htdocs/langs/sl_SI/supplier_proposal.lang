@@ -1,9 +1,8 @@
 # Dolibarr language file - Source file is en_US - supplier_proposal
 SupplierProposal=Supplier commercial proposals
 supplier_proposalDESC=Manage price requests to suppliers
-supplier_proposalMENU_LEFT_TITLE=Ponudbe dobavitelja
-supplier_proposalMENU_LEFT_TITLE_NEW=New request
-supplier_proposalMENU_LEFT_TITLE_LIST=List
+SupplierProposalShort=Supplier proposals
+SupplierProposalNew=New request
 CommRequest=Price request
 CommRequests=Price requests
 SearchRequest=Find a request
@@ -11,7 +10,7 @@ DraftRequests=Draft requests
 LastModifiedRequests=Last %s modified price requests
 RequestsOpened=Open price requests
 SupplierProposalArea=Supplier proposals area
-SupplierProposalShort=Supplier proposal
+SupplierProposalShort=Supplier proposals
 SupplierProposals=Ponudbe dobavitelja
 NewAskPrice=New price request
 NewAsk=New request

@@ -17,6 +17,9 @@ DeleteDeliveryReceiptConfirm=Er du sikker på du vil slette kvittering for modta
 DeliveryMethod=Leveringsmåde
 TrackingNumber=Sporingsnummer
 DeliveryNotValidated=Levering ikke valideret
+StatusDeliveryCanceled=Canceled
+StatusDeliveryDraft=Draft
+StatusDeliveryValidated=Received
 # merou PDF model
 NameAndSignature=Navn og underskrift:
 ToAndDate=To___________________________________ om ____ / _____ / __________

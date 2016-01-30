@@ -18,8 +18,9 @@ CronExplainHowToRunUnix=On Unix environment you should use the following crontab
 CronExplainHowToRunWin=On Microsoft(tm) Windows environement you can use Scheduled task tools to run the command line each 5 minutes
 # Menu
 CronJobs=Plaanitud käivitused
-CronListActive=List of active/scheduled jobs
+CronListActive=List of enabled/scheduled jobs
 CronListInactive=Välja lülitatud tööde nimekiri
+EnabledAndDisabled=Enabled and disabled
 # Page list
 CronDateLastRun=Viimane käivitus
 CronLastOutput=Viimase käivituse väljund
@@ -35,8 +36,8 @@ CronInfo=Scheduled job module allow to execute job that have been planned
 CronWaitingJobs=Waiting jobs
 CronTask=Tegevus
 CronNone=Mitte ükski
-CronDtStart=Alguskuupäev
-CronDtEnd=Lõppkuupäev
+CronDtStart=Not before
+CronDtEnd=Not after
 CronDtNextLaunch=Järgmine käivitus
 CronDtLastLaunch=Viimane käivitus
 CronFrequency=Frequency
@@ -51,6 +52,7 @@ CronNoJobs=Pole ühtki registreeritud programm
 CronPriority=Prioriteet
 CronLabel=Kirjeldus
 CronNbRun=Käivituste arv
+CronMaxRun=Max nb. launch
 CronEach=Iga
 JobFinished=Tegevus käivitatud ja lõpetatud
 #Page card
