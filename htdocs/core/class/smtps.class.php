@@ -1159,7 +1159,7 @@ class SMTPs
 		$_header .= 'Disposition-Notification-To: '.$this->getFrom('addr') . "\r\n";
 		if ( $this->getErrorsTo() )
 		$_header .= 'Errors-To: '.$this->getErrorsTo('addr') . "\r\n";
-
+		$_header .= "Reply-To: ".$this->getFrom('addr') ."\r\n";
 
 		$_header .= 'X-Mailer: Dolibarr version ' . DOL_VERSION .' (using SMTPs Mailer)'                   . "\r\n"
 		.  'Mime-Version: 1.0'                            . "\r\n";
