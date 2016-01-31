@@ -2281,7 +2281,6 @@ class Facture extends CommonInvoice
 
 			$this->line->context = $this->context;
 			
-			$this->line->situation_percent = $situation_percent;
 			$this->line->fk_facture=$this->id;
 			$this->line->label=$label;	// deprecated
 			$this->line->desc=$desc;
