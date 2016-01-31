@@ -75,7 +75,8 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
   	public static function setUpBeforeClass()
     {
     	global $conf,$user,$langs,$db;
-		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
+		
+    	$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
 
     	print __METHOD__."\n";
     }
@@ -145,10 +146,10 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
 		$result2=$localobject->create($user,1);
 		$result3=$localobject->validate($user, $result);		// create invoice by forcing ref
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('1915-0001', $result);				// counter must start to 1
+		$this->assertEquals('1915-0001', $result, 'Test for {yyyy}-{0000}, 1st invoice');				// counter must start to 1
 		$result=$localobject->is_erasable();
 		print __METHOD__." is_erasable=".$result."\n";
-		$this->assertEquals(1, $result, 'Test for {yyyy}-{0000}, 1st invoice');						// Can be deleted
+		$this->assertEquals(1, $result, 'Test for is_erasable, 1st invoice');						   // Can be deleted
 
 		$localobject2=new Facture($this->savdb);
 		$localobject2->initAsSpecimen();
@@ -156,7 +157,7 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
 		$numbering=new mod_facture_mercure();
 		$result=$numbering->getNextValue($mysoc, $localobject2, 'last');
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('1915-0001', $result);
+		$this->assertEquals('1915-0001', $result, "Test to get last value with param 'last'");
 		$result=$numbering->getNextValue($mysoc, $localobject2);
 		$result2=$localobject2->create($user,1);
 		$result3=$localobject2->validate($user, $result);		// create invoice by forcing ref
