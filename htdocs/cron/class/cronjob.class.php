@@ -391,9 +391,10 @@ class Cronjob extends CommonObject
     	$sql.= " t.fk_user_author,";
     	$sql.= " t.fk_user_mod,";
     	$sql.= " t.note,";
-    	$sql.= " t.nbrun";
-    	$sql .= ", t.libname";
-
+    	$sql.= " t.nbrun,";
+    	$sql.= " t.libname,";
+    	$sql.= " t.test";
+    	 
     	$sql.= " FROM ".MAIN_DB_PREFIX."cronjob as t";
     	$sql.= " WHERE 1 = 1";
     	if ($status >= 0) $sql.= " AND t.status = ".(empty($status)?'0':'1');
@@ -465,7 +466,8 @@ class Cronjob extends CommonObject
 	    			$line->fk_user_mod = $obj->fk_user_mod;
 	    			$line->note = $obj->note;
 	    			$line->nbrun = $obj->nbrun;
-        			$line->libname = $obj->libname;
+	    			$line->libname = $obj->libname;
+	    			$line->test = $obj->test;
 	    			$this->lines[]=$line;
 
 	    			$i++;
@@ -905,25 +907,43 @@ class Cronjob extends CommonObject
 		if ($this->jobtype=='method')
 		{
 			// load classes
-			$ret=dol_include_once($this->classesname,$this->objectname);
-			if (! $error && $ret===false)
+			if (! $error)
 			{
-				$this->error=$langs->trans('CronCannotLoadClass',$this->classesname,$this->objectname);
-				dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
-				$this->lastoutput = $this->error;
-				$this->lastresult = -1;
-                $retval = $this->lastresult;
-                $error++;
+    			$ret=dol_include_once($this->classesname);
+    			if ($ret===false || (! class_exists($this->objectname)))
+    			{
+    			    $this->error=$langs->trans('CronCannotLoadClass',$this->classesname,$this->objectname);
+    				dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
+    				$this->lastoutput = $this->error;
+    				$this->lastresult = -1;
+                    $retval = $this->lastresult;
+                    $error++;
+    			}
 			}
 
+			// test if method exists
+			if (! $error)
+			{
+			    if (! method_exists($this->objectname, $this->methodename))
+			    {
+			        $this->error=$langs->trans('CronMethodDoesNotExists',$this->objectname,$this->methodename);
+    				dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
+    				$this->lastoutput = $this->error;
+    				$this->lastresult = -1;
+    				$retval = $this->lastresult;
+    				$error++;
+			    }
+			}
+			
 			// Load langs
 			if (! $error)
 			{
 				$result=$langs->load($this->module_name.'@'.$this->module_name);
-				if ($result<0)
+				if ($result < 0)
 				{
 					dol_syslog(get_class($this)."::run_jobs Cannot load module lang file - ".$langs->error, LOG_ERR);
-					$this->lastoutput = $langs->error;
+					$this->error = $langs->error;
+					$this->lastoutput = $this->error;
 					$this->lastresult = -1;
 	                $retval = $this->lastresult;
 	                $error++;

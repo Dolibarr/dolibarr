@@ -220,6 +220,8 @@ if ($num > 0)
 	$style='pair';
 	foreach($object->lines as $line)
 	{
+	    if (! verifCond($line->test)) continue;        // Discard line with test = false
+	    
 		// title profil
 		if ($style=='pair') {$style='impair';}
 		else {$style='pair';}

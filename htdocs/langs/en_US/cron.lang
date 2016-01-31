@@ -89,3 +89,5 @@ CronMenu=Cron
 CronCannotLoadClass=Cannot load class %s or object %s
 UseMenuModuleToolsToAddCronJobs=Go into menu "Home - Modules tools - Job list" to see and edit scheduled jobs.
 TaskDisabled=Job disabled
+MakeLocalDatabaseDumpShort=Local database backup
+MakeLocalDatabaseDump=Create a local database dump
