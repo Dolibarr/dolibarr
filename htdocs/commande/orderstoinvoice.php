@@ -300,7 +300,8 @@ if (($action == 'create' || $action == 'add') && !$error)
 												$lines[$i]->rowid,
 												$fk_parent_line,
 												$lines[$i]->fk_fournprice,
-												$lines[$i]->pa_ht
+												$lines[$i]->pa_ht,
+												$lines[$i]->label
 										);
 										if ($result > 0)
 										{
@@ -396,9 +397,9 @@ if ($action == 'create' && !$error)
 	print '<input type="hidden" name="origin" value="'.GETPOST('origin').'">';
 	print '<input type="hidden" name="originid" value="'.GETPOST('originid').'">';
 	print '<input type="hidden" name="autocloseorders" value="'.GETPOST('autocloseorders').'">';
-	
+
 	dol_fiche_head();
-	
+
 	print '<table class="border" width="100%">';
 
 	// Ref
@@ -501,15 +502,15 @@ if ($action == 'create' && !$error)
 	}
 
 	dol_fiche_end();
-	
+
 	// Button "Create Draft"
 	print '<div class="center"><input type="submit" class="button" name="bouton" value="'.$langs->trans('CreateDraft').'" /></div>';
 	print "</form>\n";
 
 	print '</td></tr>';
 	print "</table>\n";
-	
-	
+
+
 }
 
 // Mode liste

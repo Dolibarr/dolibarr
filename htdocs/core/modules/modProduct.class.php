@@ -44,7 +44,7 @@ class modProduct extends DolibarrModules
 	 */
 	function __construct($db)
 	{
-		global $conf;
+		global $conf, $mysoc;
 
 		$this->db = $db;
 		$this->numero = 50;
@@ -148,55 +148,20 @@ class modProduct extends DolibarrModules
 		$this->export_label[$r]="Products";	// Translation key (used only if key ExportDataset_xxx_z not found)
 		$this->export_permission[$r]=array(array("produit","export"));
 		$this->export_fields_array[$r]=array('p.rowid'=>"Id",'p.ref'=>"Ref",'p.label'=>"Label",'p.description'=>"Description",'p.url'=>"PublicUrl",'p.accountancy_code_sell'=>"ProductAccountancySellCode",'p.accountancy_code_buy'=>"ProductAccountancyBuyCode",'p.note'=>"Note",'p.length'=>"Length",'p.surface'=>"Surface",'p.volume'=>"Volume",'p.weight'=>"Weight",'p.customcode'=>'CustomCode','p.price_base_type'=>"PriceBase",'p.price'=>"UnitPriceHT",'p.price_ttc'=>"UnitPriceTTC",'p.tva_tx'=>'VATRate','p.tosell'=>"OnSell",'p.tobuy'=>"OnBuy",'p.datec'=>'DateCreation','p.tms'=>'DateModification');
+		if ($mysoc->useNPR()) $this->export_fields_array[$r]['p.recuperableonly']='NPR';
 		if (! empty($conf->stock->enabled)) $this->export_fields_array[$r]=array_merge($this->export_fields_array[$r],array('p.stock'=>'Stock','p.pmp'=>'PMPValue'));
 		if (! empty($conf->barcode->enabled)) $this->export_fields_array[$r]=array_merge($this->export_fields_array[$r],array('p.barcode'=>'BarCode'));
 		if (! empty($conf->fournisseur->enabled)) $this->export_fields_array[$r]=array_merge($this->export_fields_array[$r],array('s.nom'=>'Supplier','pf.ref_fourn'=>'SupplierRef','pf.unitprice'=>'SuppliersPrices'));
 		$this->export_TypeFields_array[$r]=array('p.ref'=>"Text",'p.label'=>"Text",'p.description'=>"Text",'p.url'=>"Text",'p.accountancy_code_sell'=>"Text",'p.accountancy_code_buy'=>"Text",'p.note'=>"Text",'p.length'=>"Numeric",'p.surface'=>"Numeric",'p.volume'=>"Numeric",'p.weight'=>"Numeric",'p.customcode'=>'Text','p.price_base_type'=>"Text",'p.price'=>"Numeric",'p.price_ttc'=>"Numeric",'p.tva_tx'=>'Numeric','p.tosell'=>"Boolean",'p.tobuy'=>"Boolean",'p.datec'=>'Date','p.tms'=>'Date');
-		if (! empty($conf->stock->enabled)) $this->export_TypeFields_array[$r]=array_merge($this->export_TypeFields_array[$r],array('p.pmp'=>'Numeric'));
+		if (! empty($conf->stock->enabled)) $this->export_TypeFields_array[$r]=array_merge($this->export_TypeFields_array[$r],array('p.stock'=>'Numeric','p.pmp'=>'Numeric'));
 		if (! empty($conf->barcode->enabled)) $this->export_TypeFields_array[$r]=array_merge($this->export_TypeFields_array[$r],array('p.barcode'=>'Text'));
 		if (! empty($conf->fournisseur->enabled)) $this->export_TypeFields_array[$r]=array_merge($this->export_TypeFields_array[$r],array('s.nom'=>'Text','pf.ref_fourn'=>'Text','pf.unitprice'=>'Numeric'));
 		$this->export_entities_array[$r]=array('p.rowid'=>"product",'p.ref'=>"product",'p.label'=>"product",'p.description'=>"product",'p.url'=>"product",'p.accountancy_code_sell'=>'product','p.accountancy_code_sell'=>'product','p.note'=>"product",'p.length'=>"product",'p.surface'=>"product",'p.volume'=>"product",'p.weight'=>"product",'p.customcode'=>'product','p.price_base_type'=>"product",'p.price'=>"product",'p.price_ttc'=>"product",'p.tva_tx'=>"product",'p.tosell'=>"product",'p.tobuy'=>"product",'p.datec'=>"product",'p.tms'=>"product");
 		if (! empty($conf->stock->enabled)) $this->export_entities_array[$r]=array_merge($this->export_entities_array[$r],array('p.stock'=>'product','p.pmp'=>'product'));
 		if (! empty($conf->barcode->enabled)) $this->export_entities_array[$r]=array_merge($this->export_entities_array[$r],array('p.barcode'=>'product'));
 		if (! empty($conf->fournisseur->enabled)) $this->export_entities_array[$r]=array_merge($this->export_entities_array[$r],array('s.nom'=>'product','pf.ref_fourn'=>'product','pf.unitprice'=>'product'));
-		// Add extra fields
-		$sql="SELECT name, label, type FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'product' AND entity IN (0, ".$conf->entity.')';
-		$resql=$this->db->query($sql);
-		if ($resql)    // This can fail when class is used on old database (during migration for example)
-		{
-		    while ($obj=$this->db->fetch_object($resql))
-		    {
-		        $fieldname='extra.'.$obj->name;
-		        $fieldlabel=ucfirst($obj->label);
-				$typeFilter="Text";
-				switch($obj->type)
-				{
-					case 'int':
-					case 'double':
-					case 'price':
-						$typeFilter="Numeric";
-						break;
-					case 'date':
-					case 'datetime':
-						$typeFilter="Date";
-						break;
-					case 'boolean':
-						$typeFilter="Boolean";
-						break;
-					case 'sellist':
-						$tmp='';
-						$tmpparam=unserialize($obj->param);	// $tmp ay be array 'options' => array 'c_currencies:code_iso:code_iso' => null
-						if ($tmpparam['options'] && is_array($tmpparam['options'])) $tmp=array_shift(array_keys($tmpparam['options']));
-						if (preg_match('/[a-z0-9_]+:[a-z0-9_]+:[a-z0-9_]+/', $tmp)) $typeFilter="List:".$tmp;
-						break;
-				}
-		        $this->export_fields_array[$r][$fieldname]=$fieldlabel;
-				$this->export_TypeFields_array[$r][$fieldname]=$typeFilter;
-		        $this->export_entities_array[$r][$fieldname]='product';
-		    }
-		}
-		// End add extra fields
-
+		$keyforselect='product'; $keyforelement='product'; $keyforaliasextra='extra';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'product as p';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product_extrafields as extra ON p.rowid = extra.fk_object';
@@ -216,12 +181,14 @@ class modProduct extends DolibarrModules
 				'pr.price_min'=>"MinPriceLevelUnitPriceHT",'pr.price_min_ttc'=>"MinPriceLevelUnitPriceTTC",
 				'pr.tva_tx'=>'PriceLevelVATRate',
 				'pr.date_price'=>'DateCreation');
+			if ($mysoc->useNPR()) $this->export_fields_array[$r]['pr.recuperableonly']='NPR';
 			//$this->export_TypeFields_array[$r]=array('p.ref'=>"Text",'p.label'=>"Text",'p.description'=>"Text",'p.url'=>"Text",'p.accountancy_code_sell'=>"Text",'p.accountancy_code_buy'=>"Text",'p.note'=>"Text",'p.length'=>"Numeric",'p.surface'=>"Numeric",'p.volume'=>"Numeric",'p.weight'=>"Numeric",'p.customcode'=>'Text','p.price_base_type'=>"Text",'p.price'=>"Numeric",'p.price_ttc'=>"Numeric",'p.tva_tx'=>'Numeric','p.tosell'=>"Boolean",'p.tobuy'=>"Boolean",'p.datec'=>'Date','p.tms'=>'Date');
 			$this->export_entities_array[$r]=array('p.rowid'=>"product",'p.ref'=>"product",
 				'pr.price_base_type'=>"product",'pr.price_level'=>"product",'pr.price'=>"product",
 				'pr.price_ttc'=>"product",
 				'pr.price_min'=>"product",'pr.price_min_ttc'=>"product",
 				'pr.tva_tx'=>'product',
+			    'pr.recuperableonly'=>'product',
 				'pr.date_price'=>"product");
 			$this->export_sql_start[$r]='SELECT DISTINCT ';
 			$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'product as p';
@@ -244,6 +211,7 @@ class modProduct extends DolibarrModules
 		$this->import_tables_creator_array[$r]=array('p'=>'fk_user_author');	// Fields to store import user id
 		$this->import_fields_array[$r]=array('p.ref'=>"Ref*",'p.label'=>"Label*",'p.description'=>"Description",'p.url'=>"PublicUrl",'p.accountancy_code_sell'=>"ProductAccountancySellCode",'p.accountancy_code_buy'=>"ProductAccountancyBuyCode",'p.note'=>"Note",'p.length'=>"Length",'p.surface'=>"Surface",'p.volume'=>"Volume",'p.weight'=>"Weight",'p.duration'=>"Duration",'p.customcode'=>'CustomCode','p.price'=>"SellingPriceHT",'p.price_ttc'=>"SellingPriceTTC",'p.tva_tx'=>'VAT','p.tosell'=>"OnSell*",'p.tobuy'=>"OnBuy*",'p.fk_product_type'=>"Type*",'p.finished'=>'Nature','p.datec'=>'DateCreation*');
 		if (! empty($conf->barcode->enabled)) $this->import_fields_array[$r]=array_merge($this->import_fields_array[$r],array('p.barcode'=>'BarCode'));
+		if ($mysoc->useNPR()) $this->import_fields_array[$r]=array_merge($this->import_fields_array[$r],array('p.recuperableonly'=>'NPR'));
 		// Add extra fields
 		$import_extrafield_sample=array();
 		$sql="SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'product' AND entity IN (0, ".$conf->entity.')';
@@ -260,8 +228,8 @@ class modProduct extends DolibarrModules
 		}
 		// End add extra fields
 		$this->import_fieldshidden_array[$r]=array('extra.fk_object'=>'lastrowid-'.MAIN_DB_PREFIX.'product');    // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
-		$this->import_regex_array[$r]=array('p.ref'=>'[^ ]','p.tosell'=>'^[0|1]$','p.tobuy'=>'^[0|1]$','p.fk_product_type'=>'^[0|1]$','p.datec'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$');
-		$import_sample=array('p.ref'=>"PREF123456",'p.label'=>"My product",'p.description'=>"This is a description example for record",'p.note'=>"Some note",'p.price'=>"100",'p.price_ttc'=>"110",'p.tva_tx'=>'10','p.tosell'=>"0 or 1",'p.tobuy'=>"0 or 1",'p.fk_product_type'=>"0 for product/1 for service",'p.finished'=>'','p.duration'=>"1y",'p.datec'=>'2008-12-31');
+		$this->import_regex_array[$r]=array('p.ref'=>'[^ ]','p.tosell'=>'^[0|1]$','p.tobuy'=>'^[0|1]$','p.fk_product_type'=>'^[0|1]$','p.datec'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$','p.recuperableonly'=>'^[0|1]$');
+		$import_sample=array('p.ref'=>"PREF123456",'p.label'=>"My product",'p.description'=>"This is a description example for record",'p.note'=>"Some note",'p.price'=>"100",'p.price_ttc'=>"110",'p.tva_tx'=>'10','p.tosell'=>"0 or 1",'p.tobuy'=>"0 or 1",'p.fk_product_type'=>"0 for product/1 for service",'p.finished'=>'','p.duration'=>"1y",'p.datec'=>'2008-12-31','p.recuperableonly'=>'0 or 1');
 		$this->import_examplevalues_array[$r]=array_merge($import_sample,$import_extrafield_sample);
 
 		if (! empty($conf->fournisseur->enabled))
@@ -309,12 +277,14 @@ class modProduct extends DolibarrModules
 				'pr.price_min'=>"MinPriceLevelUnitPriceHT",'pr.price_min_ttc'=>"MinPriceLevelUnitPriceTTC",
 				'pr.tva_tx'=>'PriceLevelVATRate',
 				'pr.date_price'=>'DateCreation*');
-			$this->import_regex_array[$r]=array('pr.datec'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$');
+			if ($mysoc->useNPR()) $this->import_fields_array[$r]=array_merge($this->import_fields_array[$r],array('pr.recuperableonly'=>'NPR'));
+			$this->import_regex_array[$r]=array('pr.datec'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$','pr.recuperableonly'=>'^[0|1]$');
 			$this->import_examplevalues_array[$r]=array('pr.fk_product'=>"1",
 				'pr.price_base_type'=>"HT",'pr.price_level'=>"1",
 				'pr.price'=>"100",'pr.price_ttc'=>"110",
 				'pr.price_min'=>"100",'pr.price_min_ttc'=>"110",
-				'pr.tva_tx'=>'19.6',
+				'pr.tva_tx'=>'20',
+			    'pr.recuperableonly'=>'0',
 				'pr.date_price'=>'2013-04-10');
 		}
 
