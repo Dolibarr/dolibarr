@@ -40,3 +40,13 @@ ALTER TABLE llx_facture ADD INDEX idx_facture_fk_statut (fk_statut);
 
 UPDATE llx_projet as p set p.opp_percent = (SELECT percent FROM llx_c_lead_status as cls WHERE cls.rowid = p.fk_opp_status)  WHERE p.opp_percent IS NULL AND p.fk_opp_status IS NOT NULL;
  
+ALTER TABLE llx_resource ADD COLUMN asset_number    varchar(255) after ref;
+ALTER TABLE llx_resource ADD COLUMN datec           datetime DEFAULT NULL;
+ALTER TABLE llx_resource ADD COLUMN date_valid      datetime DEFAULT NULL;
+ALTER TABLE llx_resource ADD COLUMN fk_user_author  integer DEFAULT NULL;
+ALTER TABLE llx_resource ADD COLUMN fk_user_modif   integer DEFAULT NULL;
+ALTER TABLE llx_resource ADD COLUMN fk_user_valid   integer DEFAULT NULL;
+ALTER TABLE llx_resource ADD COLUMN fk_statut       smallint NOT NULL DEFAULT '0';
+ALTER TABLE llx_resource ADD COLUMN import_key			varchar(14);
+ALTER TABLE llx_resource ADD COLUMN extraparams			varchar(255);	
+ 
