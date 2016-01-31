@@ -99,7 +99,7 @@ if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->ex
 
     $now = dol_now();   // Date we start
 
-    $resrunjob = $object->run_jobs($user->login);
+    $resrunjob = $object->run_jobs($user->login);   // Return -1 if KO, 1 if OK
 	if ($resrunjob < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
@@ -110,8 +110,8 @@ if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->ex
 	{
 		if ($resrunjob >= 0)	// We add result of reprogram ony if no error message already reported 
 		{
-			if ($object->lastresult > 0) setEventMessages($langs->trans("JobFinished"), null, 'warnings');
-			else setEventMessages($langs->trans("JobFinished"), null, 'mesgs');
+		    if ($object->lastresult >= 0) setEventMessages($langs->trans("JobFinished"), null, 'mesgs');
+		    else setEventMessages($langs->trans("JobFinished"), null, 'errors');
 		}
 		$action='';
 	}
@@ -252,15 +252,15 @@ if ($num > 0)
 			$texttoshow.=$langs->trans('CronClass').': '. $line->classesname.'<br>';
 			$texttoshow.=$langs->trans('CronObject').': '. $line->objectname.'<br>';
 			$texttoshow.=$langs->trans('CronMethod').': '. $line->methodename;
-			$texttoshow.='<br>'.$langs->trans('CronArgs').':'. $line->params;
-			$texttoshow.='<br>'.$langs->trans('Comment').':'. $line->note;
+			$texttoshow.='<br>'.$langs->trans('CronArgs').': '. $line->params;
+			$texttoshow.='<br>'.$langs->trans('Comment').': '. $langs->trans($line->note);
 		}
 		elseif ($line->jobtype=='command') 
 		{
 			$text=$langs->trans('CronCommand');
 			$texttoshow=$langs->trans('CronCommand').': '.dol_trunc($line->command);
-			$texttoshow.='<br>'.$langs->trans('CronArgs').':'. $line->params;
-			$texttoshow.='<br>'.$langs->trans('Comment').':'. $line->note;
+			$texttoshow.='<br>'.$langs->trans('CronArgs').': '. $line->params;
+			$texttoshow.='<br>'.$langs->trans('Comment').': '. $langs->trans($line->note);
 		}
 		print $form->textwithpicto($text, $texttoshow, 1);
 		print '</td>';

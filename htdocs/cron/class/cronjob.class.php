@@ -829,10 +829,10 @@ class Cronjob extends CommonObject
 
 	/**
 	 * Run a job.
-	 * Once job is finished, status and nb of of run is updated. 
+	 * Once job is finished, status and nb of run is updated. 
 	 * This function does not plan the next run. This is done by function ->reprogram_jobs 
 	 *
-	 * @param  string		$userlogin    	User login
+	 * @param   string		$userlogin    	User login
 	 * @return	int					 		<0 if KO, >0 if OK
 	 */
 	function run_jobs($userlogin)
@@ -947,17 +947,19 @@ class Cronjob extends CommonObject
 					$result = call_user_func_array(array($object, $this->methodename), $params_arr);
 				}
 			
-				if ($result===false)
+				if ($result===false || $result != 0)
 				{
-					dol_syslog(get_class($this)."::run_jobs ".$object->error, LOG_ERR);
-					$this->lastoutput = $object->error;
-					$this->lastresult = -1;
+				    $langs->load("errors");
+					dol_syslog(get_class($this)."::run_jobs result=".$result." error=".$object->error, LOG_ERR);
+					$this->error = $object->error?$object->error:$langs->trans('ErrorUnknown');
+					$this->lastoutput = $this->error;
+					$this->lastresult = is_numeric($result)?$result:-1;
 		            $retval = $this->lastresult;
 		            $error++;
 				}
 				else
 				{
-					$this->lastoutput='NA';
+					$this->lastoutput=$object->output;
 					$this->lastresult=var_export($result,true);
 					$retval = $this->lastresult;
 				}
@@ -993,13 +995,15 @@ class Cronjob extends CommonObject
 				$result = call_user_func_array($this->methodename, $params_arr);
 			}
 
-			if ($result === false)
+			if ($result === false || $result != 0)
 			{
-				dol_syslog(get_class($this) . "::run_jobs " . $object->error, LOG_ERR);
-				
-				$this->lastoutput = $object->error;
-				$this->lastresult = -1;
-                $retval = $this->lastresult;
+			    $langs->load("errors");
+			    dol_syslog(get_class($this)."::run_jobs result=".$result, LOG_ERR);
+			    $this->error = $langs->trans('ErrorUnknown');
+			    $this->lastoutput = $this->error;
+			    $this->lastresult = is_numeric($result)?$result:-1;
+			    $retval = $this->lastresult;
+			    $error++;
 			}
 			else
 			{
@@ -1024,6 +1028,16 @@ class Cronjob extends CommonObject
 			if ($execmethod == 1)
 			{
 				exec($command, $output_arr, $retval);
+				if ($retval != 0)
+				{
+				    $langs->load("errors");
+				    dol_syslog(get_class($this)."::run_jobs retval=".$retval, LOG_ERR);
+				    $this->error = 'Error '.$retval;
+				    $this->lastoutput = '';     // Will be filled later
+				    $this->lastresult = $retval;
+				    $retval = $this->lastresult;
+				    $error++;				    
+				}
 			}
 			if ($execmethod == 2)
 			{
@@ -1046,7 +1060,7 @@ class Cronjob extends CommonObject
 			}
 		}
 
-		dol_syslog(get_class($this)."::run_jobs output_arr:".var_export($output_arr,true), LOG_DEBUG);
+		dol_syslog(get_class($this)."::run_jobs output_arr:".var_export($output_arr,true)." lastoutput=".$this->lastoutput." lastresult=".$this->lastresult, LOG_DEBUG);
 
 		// Update with result
 		if (is_array($output_arr) && count($output_arr)>0)

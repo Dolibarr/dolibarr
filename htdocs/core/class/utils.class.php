@@ -44,11 +44,11 @@ class Utils
 	 *  Purge files into directory of data files.
 	 *
 	 *  @param	string		$choice		Choice of purge mode ('tempfiles', 'tempfilesold' to purge temp older than 24h, 'allfiles', 'logfiles')
-	 *  @return	int						Nb of files deleted 
+	 *  @return	int						0 if OK, < 0 if KO (this function is used also by cron so only 0 is OK) 
 	 */
 	function purgeFiles($choice='tempfilesold')
 	{
-		global $conf, $dolibarr_main_data_root;
+		global $conf, $langs, $dolibarr_main_data_root;
 		
 		dol_syslog("Utils::purgeFiles choice=".$choice, LOG_DEBUG);
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -123,7 +123,11 @@ class Utils
 				$result = $ecmdirstatic->refreshcachenboffile(1);
 			}
 		}
-			
-		return $count;
+		
+		if ($count > 0) $this->output=$langs->trans("PurgeNDirectoriesDeleted", $count);
+		else $this->output=$langs->trans("PurgeNothingToDelete");
+
+		//return $count;
+		return 0;     // This function can be called by cron so must return 0 if OK
 	}
 }
