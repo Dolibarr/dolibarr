@@ -4134,7 +4134,7 @@ class Form
      *            	- local date in user area, if set_time is '' (so if set_time is '', output may differs when done from two different location)
      *            	- Empty (fields empty), if set_time is -1 (in this case, parameter empty must also have value 1)
      *
-     *	@param	timestamp	$set_time 		Pre-selected date (must be a local PHP server timestamp), -1 to keep date not preselected, '' to use current date.
+     *	@param	timestamp	$set_time 		Pre-selected date (must be a local PHP server timestamp), -1 to keep date not preselected, '' to use current date (emptydate must be 0).
      *	@param	string		$prefix			Prefix for fields name
      *	@param	int			$h				1=Show also hours
      *	@param	int			$m				1=Show also minutes

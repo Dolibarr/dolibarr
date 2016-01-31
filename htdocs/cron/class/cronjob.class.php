@@ -107,7 +107,8 @@ class Cronjob extends CommonObject
 		if (isset($this->note)) $this->note=trim($this->note);
 		if (isset($this->nbrun)) $this->nbrun=trim($this->nbrun);
 		if (isset($this->libname)) $this->libname = trim($this->libname);
-
+		if (isset($this->test)) $this->test = trim($this->test);
+		
 		// Check parameters
 		// Put here code to add a control on parameters values
 		if (dol_strlen($this->datestart)==0) {
@@ -177,11 +178,9 @@ class Cronjob extends CommonObject
 		$sql.= "note,";
 		$sql.= "nbrun,";
 		$sql.= "maxrun,";
-		$sql.= "libname";
-
-
+		$sql.= "libname,";
+		$sql.= "test";
 		$sql.= ") VALUES (";
-
 		$sql.= " '".$this->db->idate($now)."',";
 		$sql.= " ".(! isset($this->jobtype)?'NULL':"'".$this->db->escape($this->jobtype)."'").",";
 		$sql.= " ".(! isset($this->label)?'NULL':"'".$this->db->escape($this->label)."'").",";
@@ -208,7 +207,8 @@ class Cronjob extends CommonObject
 		$sql.= " ".(! isset($this->note)?'NULL':"'".$this->db->escape($this->note)."'").",";
 		$sql.= " ".(! isset($this->nbrun)?'0':"'".$this->db->escape($this->nbrun)."'").",";
 		$sql.= " ".(empty($this->maxrun)?'null':"'".$this->db->escape($this->maxrun)."'").",";
-		$sql.= " ".(! isset($this->libname)?'NULL':"'".$this->db->escape($this->libname)."'")."";
+		$sql.= " ".(! isset($this->libname)?'NULL':"'".$this->db->escape($this->libname)."'").",";
+		$sql.= " ".(! isset($this->test)?'NULL':"'".$this->db->escape($this->test)."'")."";
 		$sql.= ")";
 
 		$this->db->begin();
@@ -292,9 +292,8 @@ class Cronjob extends CommonObject
 		$sql.= " t.note,";
 		$sql.= " t.nbrun,";
 		$sql.= " t.maxrun,";
-		$sql.= " t.libname";
-
-
+		$sql.= " t.libname,";
+		$sql.= " t.test";
         $sql.= " FROM ".MAIN_DB_PREFIX."cronjob as t";
         $sql.= " WHERE t.rowid = ".$id;
 
@@ -337,7 +336,7 @@ class Cronjob extends CommonObject
 				$this->nbrun = $obj->nbrun;
 				$this->maxrun = $obj->maxrun;
 				$this->libname = $obj->libname;
-
+				$this->test = $obj->test;
             }
             $this->db->free($resql);
 
@@ -394,7 +393,6 @@ class Cronjob extends CommonObject
     	$sql.= " t.nbrun,";
     	$sql.= " t.libname,";
     	$sql.= " t.test";
-    	 
     	$sql.= " FROM ".MAIN_DB_PREFIX."cronjob as t";
     	$sql.= " WHERE 1 = 1";
     	if ($status >= 0) $sql.= " AND t.status = ".(empty($status)?'0':'1');
@@ -521,7 +519,8 @@ class Cronjob extends CommonObject
 		if (isset($this->nbrun)) $this->nbrun=trim($this->nbrun);
 		if (isset($this->maxrun)) $this->maxrun=trim($this->maxrun);
         if (isset($this->libname)) $this->libname = trim($this->libname);
-
+        if (isset($this->test)) $this->test = trim($this->test);
+        
 		// Check parameters
 		// Put here code to add a control on parameters values
 		if (dol_strlen($this->datestart)==0) {
@@ -588,10 +587,11 @@ class Cronjob extends CommonObject
 		$sql.= " status=".(isset($this->status)?$this->status:"null").",";
 		$sql.= " fk_user_mod=".$user->id.",";
 		$sql.= " note=".(isset($this->note)?"'".$this->db->escape($this->note)."'":"null").",";
-		$sql.= " nbrun=".(isset($this->nbrun)?$this->nbrun:"null").",";
-		$sql.= " maxrun=".(isset($this->maxrun)?$this->maxrun:"null").",";
-		$sql.= " libname=".(isset($this->libname)?"'".$this->db->escape($this->libname)."'":"null");
-        $sql.= " WHERE rowid=".$this->id;
+		$sql.= " nbrun=".((isset($this->nbrun) && $this->nbrun >0)?$this->nbrun:"null").",";
+		$sql.= " maxrun=".((isset($this->maxrun) && $this->maxrun > 0)?$this->maxrun:"null").",";
+		$sql.= " libname=".(isset($this->libname)?"'".$this->db->escape($this->libname)."'":"null").",";
+		$sql.= " test=".(isset($this->test)?"'".$this->db->escape($this->test)."'":"null");
+		$sql.= " WHERE rowid=".$this->id;
 
         $this->db->begin();
 

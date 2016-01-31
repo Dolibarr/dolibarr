@@ -228,7 +228,7 @@ if ($num > 0)
 
 		print '<tr class="'.$style.'">';
 
-		print '<td>';
+		print '<td class="nowrap">';
 		print '<a href="'.DOL_URL_ROOT.'/cron/card.php?id='.$line->id.'">';
 		print img_picto('', 'object_cron').' ';
 		print $line->id;

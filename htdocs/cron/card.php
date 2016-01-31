@@ -142,6 +142,7 @@ if ($action=='add')
 	$object->note=GETPOST('note');
 	$object->datestart=dol_mktime(GETPOST('datestarthour','int'), GETPOST('datestartmin','int'), 0, GETPOST('datestartmonth','int'), GETPOST('datestartday','int'), GETPOST('datestartyear','int'));
 	$object->dateend=dol_mktime(GETPOST('dateendhour','int'), GETPOST('dateendmin','int'), 0, GETPOST('dateendmonth','int'), GETPOST('dateendday','int'), GETPOST('dateendyear','int'));
+	$object->datenextrun=dol_mktime(GETPOST('datenextrunhour','int'), GETPOST('datenextrunmin','int'), 0, GETPOST('datenextrunmonth','int'), GETPOST('datenextrunday','int'), GETPOST('datenextrunyear','int'));
 	$object->unitfrequency=GETPOST('unitfrequency','int');
 	$object->frequency=GETPOST('nbfrequency','int');
 	$object->maxrun=GETPOST('maxrun','int');
@@ -177,6 +178,7 @@ if ($action=='update')
 	$object->note=GETPOST('note');
 	$object->datestart=dol_mktime(GETPOST('datestarthour','int'), GETPOST('datestartmin','int'), 0, GETPOST('datestartmonth','int'), GETPOST('datestartday','int'), GETPOST('datestartyear','int'));
 	$object->dateend=dol_mktime(GETPOST('dateendhour','int'), GETPOST('dateendmin','int'), 0, GETPOST('dateendmonth','int'), GETPOST('dateendday','int'), GETPOST('dateendyear','int'));
+	$object->datenextrun=dol_mktime(GETPOST('datenextrunhour','int'), GETPOST('datenextrunmin','int'), 0, GETPOST('datenextrunmonth','int'), GETPOST('datenextrunday','int'), GETPOST('datenextrunyear','int'));
 	$object->unitfrequency=GETPOST('unitfrequency','int');
 	$object->frequency=GETPOST('nbfrequency','int');
 	$object->maxrun=GETPOST('maxrun','int');
@@ -475,7 +477,7 @@ if (($action=="create") || ($action=="edit"))
 	    $form->select_date($object->dateend,'dateend',1,1,'',"cronform");
 	}
 	else{
-	    $form->select_date('','dateend',1,1,1,"cronform");
+	    $form->select_date(-1,'dateend',1,1,1,"cronform");
 	}
 	print "</td>";
 	print "<td>";
@@ -505,6 +507,23 @@ if (($action=="create") || ($action=="edit"))
 	print "<td>";
 	print "</td>";
 	print "</tr>\n";
+	
+	print '<tr><td>';
+	print $langs->trans('CronDtNextLaunch');
+	print ' ('.$langs->trans('CronFrom').')';
+	print "</td><td>";
+	if(!empty($object->datenextrun))
+	{
+	    $form->select_date($object->datenextrun,'datenextrun',1,1,'',"cronform");
+	}
+	else
+	{
+	    $form->select_date(-1,'datenextrun',1,1,'',"cronform");
+	}	
+	print "</td>";
+    print "<td>";
+	print "</td>";
+	print "</tr>";
 	
 	print '</table>';
 
