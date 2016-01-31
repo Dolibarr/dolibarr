@@ -2087,7 +2087,28 @@ if($user->rights->expensereport->export && $object->fk_statut>0 && $action != 'e
 
 print '</div>';
 
+if ($action != 'create' && $action != 'edit' && ($id || $ref))
+{
+    $permissiondellink=$user->rights->facture->creer;	// Used by the include of actions_dellink.inc.php
+	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';		// Must be include, not include_once
 
+    // Link invoice to intervention
+    if (GETPOST('LinkedFichinter')) {
+        $object->fetch($id);
+        $object->fetch_thirdparty();
+        $result = $object->add_object_linked('fichinter', GETPOST('LinkedFichinter'));
+    }
+    // Linked object block
+    $somethingshown = $form->showLinkedObjectBlock($object);
+
+    // Show links to link elements
+    $linktoelements=array();
+    if($conf->global->EXPENSES_LINK_TO_INTERVENTION) $linktoelements[]='fichinter';
+    $linktoelem='';
+    $linktoelem = $form->showLinkToObjectBlock($object,$linktoelements);
+    if ($linktoelem) print '<br>'.$linktoelem;
+
+}
 llxFooter();
 
 $db->close();
