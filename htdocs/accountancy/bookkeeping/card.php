@@ -271,7 +271,7 @@ if ($action == 'create') {
 	print '</form>';
 } else {
 	$book = new BookKeeping($db);
-	$result = $book->fetch_per_mvt($piece_num);
+	$result = $book->fetchPerMvt($piece_num);
 	if ($result < 0) {
 		setEventMessages($book->error, $book->errors, 'errors');
 	}
