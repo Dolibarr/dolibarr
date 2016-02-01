@@ -84,6 +84,50 @@ if ($action == 'validatehistory') {
 		$db->commit();
 		setEventMessages($langs->trans('Dispatched'), null, 'mesgs');
 	}
+} elseif ($action == 'fixaccountancycode') {
+	$error = 0;
+	$db->begin();
+	
+	$sql1 = "UPDATE " . MAIN_DB_PREFIX . "facture_fourn_det as fd";
+	$sql1 .= " SET fd.fk_code_ventilation = 0";
+	$sql1 .= ' WHERE fd.fk_code_ventilation NOT IN ';
+	$sql1 .= '	(SELECT accnt.rowid ';
+	$sql1 .= '	FROM ' . MAIN_DB_PREFIX . 'accountingaccount as accnt';
+	$sql1 .= '	INNER JOIN ' . MAIN_DB_PREFIX . 'accounting_system as syst';
+	$sql1 .= '	ON accnt.fk_pcg_version = syst.pcg_version AND syst.rowid=' . $conf->global->CHARTOFACCOUNTS.')';
+	
+	dol_syslog("htdocs/accountancy/customer/index.php fixaccountancycode", LOG_DEBUG);
+	
+	$resql1 = $db->query($sql1);
+	if (! $resql1) {
+		$error ++;
+		$db->rollback();
+		setEventMessage($db->lasterror(), 'errors');
+	} else {
+		$db->commit();
+		setEventMessage($langs->trans('Done'), 'mesgs');
+	}
+} elseif ($action == 'cleanaccountancycode') {
+	$error = 0;
+	$db->begin();
+	
+	$sql1 = "UPDATE " . MAIN_DB_PREFIX . "facture_fourn_det as fd";
+	$sql1 .= " SET fd.fk_code_ventilation = 0";
+	$sql1 .= " WHERE fd.fk_facture_fourn IN ( SELECT f.rowid FROM " . MAIN_DB_PREFIX . "facture_fourn as f";
+	$sql1 .= " WHERE f.datef >= '" . $db->idate(dol_get_first_day($year_current, 1, false)) . "'";
+	$sql1 .= "  AND f.datef <= '" . $db->idate(dol_get_last_day($year_current, 12, false)) . "')";
+	
+	dol_syslog("htdocs/accountancy/customer/index.php fixaccountancycode", LOG_DEBUG);
+	
+	$resql1 = $db->query($sql1);
+	if (! $resql1) {
+		$error ++;
+		$db->rollback();
+		setEventMessage($db->lasterror(), 'errors');
+	} else {
+		$db->commit();
+		setEventMessage($langs->trans('Done'), 'mesgs');
+	}
 }
 
 /*
@@ -98,7 +142,11 @@ $textnextyear = '&nbsp;<a href="' . $_SERVER["PHP_SELF"] . '?year=' . ($year_cur
 print load_fiche_titre($langs->trans("SuppliersVentilation") . "&nbsp;" . $textprevyear . "&nbsp;" . $langs->trans("Year") . "&nbsp;" . $year_start . "&nbsp;" . $textnextyear);
 
 print '<b>' . $langs->trans("DescVentilSupplier") . '</b>';
-print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?action=validatehistory">' . $langs->trans("ValidateHistory") . '</a></div>';
+print '<div class="inline-block divButAction">';
+print '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?year='.$year_current.'&action=validatehistory">' . $langs->trans("ValidateHistory") . '</a>';
+print '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?year='.$year_current.'&action=fixaccountancycode">' . $langs->trans("CleanFixHistory",$year_current) . '</a>';
+print '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?year='.$year_current.'&action=cleanaccountancycode">' . $langs->trans("CleanHistory",$year_current) . '</a>';
+print '</div>';
 
 $y = $year_current;
 
