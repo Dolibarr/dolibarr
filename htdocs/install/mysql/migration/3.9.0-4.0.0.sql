@@ -35,6 +35,7 @@ UPDATE llx_projet as p set opp_percent = (SELECT percent from llx_c_lead_status 
 ALTER TABLE llx_overwrite_trans ADD UNIQUE INDEX uk_overwrite_trans(lang, transkey);
 
 ALTER TABLE llx_cronjob MODIFY COLUMN unitfrequency	varchar(255) NOT NULL DEFAULT '3600';
+ALTER TABLE llx_cronjob ADD COLUMN test varchar(255) DEFAULT '1';
 
 ALTER TABLE llx_facture ADD INDEX idx_facture_fk_statut (fk_statut);
 

@@ -398,8 +398,8 @@ $formfile = new FormFile($db);
 $formproject = new FormProjets($db);
 $userstatic = new User($db);
 
-$title=$langs->trans("Project").' - '.$object->ref.' '.$object->name;
-if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->ref.' '.$object->name;
+$title=$langs->trans("Project").' - '.$object->ref.($object->thirdparty->name?' - '.$object->thirdparty->name:'').($object->title?' - '.$object->title:'');
+if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/',$conf->global->MAIN_HTML_TITLE)) $title=$object->ref.($object->thirdparty->name?' - '.$object->thirdparty->name:'').($object->title?' - '.$object->title:'');
 $help_url="EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
 
 llxHeader("",$title,$help_url);
@@ -660,7 +660,7 @@ else
         print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
 	    $filteronlist='';
 	    if (! empty($conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST)) $filteronlist=$conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST;
-        $text=$form->select_thirdparty_list($object->thirdparty->id,'socid',$filteronlist,1,1);
+        $text=$form->select_thirdparty_list($object->thirdparty->id, 'socid', $filteronlist, 1, 1);
         $texthelp=$langs->trans("IfNeedToUseOhterObjectKeepEmpty");
         print $form->textwithtooltip($text.' '.img_help(), $texthelp, 1, 0, '', '', 2);
         print '</td></tr>';

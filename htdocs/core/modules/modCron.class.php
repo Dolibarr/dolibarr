@@ -101,8 +101,9 @@ class modCron extends DolibarrModules
 
 		// Cronjobs
 		$this->cronjobs = array(
-			0=>array('label'=>'PurgeDeleteTemporaryFilesShort', 'jobtype'=>'method', 'class'=>'core/class/utils.class.php', 'objectname'=>'Utils', 'method'=>'purgeFiles', 'parameters'=>'', 'comment'=>'PurgeDeleteTemporaryFiles', 'frequency'=>1, 'unitfrequency'=>3600 * 24 * 7),
-			// 1=>array('label'=>'My label', 'jobtype'=>'command', 'command'=>'', 'parameters'=>'', 'comment'=>'Comment', 'frequency'=>1, 'unitfrequency'=>3600*24)
+			0=>array('label'=>'PurgeDeleteTemporaryFilesShort', 'jobtype'=>'method', 'class'=>'core/class/utils.class.php', 'objectname'=>'Utils', 'method'=>'purgeFiles', 'parameters'=>'', 'comment'=>'PurgeDeleteTemporaryFiles', 'frequency'=>1, 'unitfrequency'=>3600 * 24 * 7, 'priority'=>10, 'status'=>1, 'test'=>'1'),
+			1=>array('label'=>'MakeLocalDatabaseDumpShort', 'jobtype'=>'method', 'class'=>'core/class/utils.class.php', 'objectname'=>'Utils', 'method'=>'dumpDatabase', 'parameters'=>'', 'comment'=>'MakeLocalDatabaseDump', 'frequency'=>1, 'unitfrequency'=>3600 * 24 * 7, 'priority'=>20, 'status'=>0, 'test'=>'0'),
+		    // 1=>array('label'=>'My label', 'jobtype'=>'command', 'command'=>'', 'parameters'=>'', 'comment'=>'Comment', 'frequency'=>1, 'unitfrequency'=>3600*24)
 		);
 		
 		$this->rights[$r][0] = 23001;

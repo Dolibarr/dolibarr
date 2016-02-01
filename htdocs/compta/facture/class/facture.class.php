@@ -1992,14 +1992,18 @@ class Facture extends CommonInvoice
 				$this->brouillon=0;
 				$this->date_validation=$now;
 				$i = 0;
-				$final = True;
-				while ($i < count($this->lines) && $final == True) {
-					$final = ($this->lines[$i]->situation_percent == 100);
-					$i++;
-				}
-				if ($final) {
-					$this->setFinal();
-				}
+				
+                if (!empty($conf->global->INVOICE_USE_SITUATION))
+                {
+    				$final = True;
+    				while ($i < count($this->lines) && $final == True) {
+    					$final = ($this->lines[$i]->situation_percent == 100);
+    					$i++;
+    				}
+    				if ($final) {
+    					$this->setFinal();
+    				}
+                }
 			}
 		}
 		else
@@ -2277,7 +2281,6 @@ class Facture extends CommonInvoice
 
 			$this->line->context = $this->context;
 			
-			$this->line->situpation_percent = $situation_percent;
 			$this->line->fk_facture=$this->id;
 			$this->line->label=$label;	// deprecated
 			$this->line->desc=$desc;
@@ -3770,11 +3773,14 @@ class Facture extends CommonInvoice
 	function setFinal()
 	{
 		global $conf, $langs, $user;
+		
+        $this->db->begin();
+        
 		$this->situation_final = 1;
 		$sql = 'update ' . MAIN_DB_PREFIX . 'facture set situation_final = ' . $this->situation_final . ' where rowid = ' . $this->id;
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			// FIXME: call triggers?
+			// FIXME: call triggers MODIFY because we modify invoice
 			$this->db->commit();
 			return 1;
 		} else {

@@ -197,6 +197,7 @@ before_script:
   echo "Create documents directory and set permissions"
   # and admin/temp subdirectory needed for unit tests
   mkdir -p documents/admin/temp
+  echo "first line" > documents/dolibarr.log
   echo
 
 - |
@@ -298,14 +299,15 @@ after_success:
 
 after_failure:
 - |
+  echo "Debugging informations"
+  # Upgrade log files
+  cat *.log
+  echo "Debugging informations"
+  # Apache log file
+  sudo cat /var/log/apache2/error.log
+  # Dolibarr log file
+  cat documents/dolibarr.log
   if [ "$DEBUG" = true ]; then
-    echo "Debugging informations"
-    # Upgrade log files
-    cat *.log
-    # Dolibarr log file
-    cat documents/dolibarr.log
-    # Apache log file
-    sudo cat /var/log/apache2/error.log
     # MariaDB log file
     sudo cat /var/log/mysql/error.log
     # TODO: PostgreSQL log file

@@ -913,7 +913,10 @@ class DolibarrModules           // Can not be abstract, because we need to insta
                 $comment = isset($this->cronjobs[$key]['comment'])?$this->cronjobs[$key]['comment']:'';
                 $frequency = isset($this->cronjobs[$key]['frequency'])?$this->cronjobs[$key]['frequency']:'';
                 $unitfrequency = isset($this->cronjobs[$key]['unitfrequency'])?$this->cronjobs[$key]['unitfrequency']:'';
-
+                $status = isset($this->cronjobs[$key]['status'])?$this->cronjobs[$key]['status']:'';
+                $priority = isset($this->cronjobs[$key]['priority'])?$this->cronjobs[$key]['priority']:'';
+                $test = isset($this->cronjobs[$key]['test'])?$this->cronjobs[$key]['test']:'';
+                
                 // Search if boxes def already present
                 $sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."cronjob";
                 $sql.= " WHERE module_name = '".$this->db->escape($this->rights_class)."'";
@@ -936,7 +939,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 
                         if (! $err)
                         {
-                            $sql = "INSERT INTO ".MAIN_DB_PREFIX."cronjob (module_name, datec, datestart, label, jobtype, classesname, objectname, methodename, command, params, note, frequency, unitfrequency, entity)";
+                            $sql = "INSERT INTO ".MAIN_DB_PREFIX."cronjob (module_name, datec, datestart, label, jobtype, classesname, objectname, methodename, command, params, note, frequency, unitfrequency, priority, status, entity, test)";
                             $sql.= " VALUES (";
                             $sql.= "'".$this->db->escape($this->rights_class)."', ";
                             $sql.= "'".$this->db->idate($now)."', ";
@@ -951,7 +954,10 @@ class DolibarrModules           // Can not be abstract, because we need to insta
                             $sql.= ($comment?"'".$this->db->escape($comment)."'":"null").",";
                             $sql.= "'".$this->db->escape($frequency)."', ";
                             $sql.= "'".$this->db->escape($unitfrequency)."', ";
-                            $sql.= $conf->entity;
+                            $sql.= "'".$this->db->escape($priority)."', ";
+                            $sql.= "'".$this->db->escape($status)."', ";
+                            $sql.= $conf->entity.",";
+                            $sql.= "'".$this->db->escape($test)."'";
                             $sql.= ")";
 
                             dol_syslog(get_class($this)."::insert_cronjobs", LOG_DEBUG);

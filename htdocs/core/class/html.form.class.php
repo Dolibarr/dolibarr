@@ -1018,7 +1018,7 @@ class Form
             // Do not use textempty = ' ' or '&nbsp;' here, or search on key will search on ' key'.
             //$textifempty=' ';
             //if (! empty($conf->use_javascript_ajax) || $forcecombo) $textifempty='';
-            if (! empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT)) $textifempty.=$langs->trans("NoFilter");
+            if (! empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT)) $textifempty.=$langs->trans("All");
             if ($showempty) $out.= '<option value="-1">'.$textifempty.'</option>'."\n";
 
             $num = $this->db->num_rows($resql);
@@ -4134,7 +4134,7 @@ class Form
      *            	- local date in user area, if set_time is '' (so if set_time is '', output may differs when done from two different location)
      *            	- Empty (fields empty), if set_time is -1 (in this case, parameter empty must also have value 1)
      *
-     *	@param	timestamp	$set_time 		Pre-selected date (must be a local PHP server timestamp), -1 to keep date not preselected, '' to use current date.
+     *	@param	timestamp	$set_time 		Pre-selected date (must be a local PHP server timestamp), -1 to keep date not preselected, '' to use current date (emptydate must be 0).
      *	@param	string		$prefix			Prefix for fields name
      *	@param	int			$h				1=Show also hours
      *	@param	int			$m				1=Show also minutes

@@ -144,7 +144,7 @@ if (is_array($object->lines) && (count($object->lines)>0))
 			$result=$cronjob->fetch($line->id);
 			if ($result<0)
 			{
-				echo "Error:".$cronjob->error;
+				echo "Error:".$cronjob->error."<br>\n";
 				dol_syslog("cron_run_jobs.php:: fetch Error".$cronjob->error, LOG_ERR);
 				exit;
 			}
@@ -152,7 +152,7 @@ if (is_array($object->lines) && (count($object->lines)>0))
 			$result=$cronjob->run_jobs($userlogin);
 			if ($result < 0)
 			{
-				echo "Error:".$cronjob->error;
+				echo "Error:".$cronjob->error."<br>\n";
 				dol_syslog("cron_run_jobs.php:: run_jobs Error".$cronjob->error, LOG_ERR);
 				$nbofjobslaunchedko++;
 			}
@@ -165,7 +165,7 @@ if (is_array($object->lines) && (count($object->lines)>0))
 			$result=$cronjob->reprogram_jobs($userlogin, $now);
 			if ($result<0)
 			{
-				echo "Error:".$cronjob->error;
+				echo "Error:".$cronjob->error."<br>\n";
 				dol_syslog("cron_run_jobs.php:: reprogram_jobs Error".$cronjob->error, LOG_ERR);
 				exit;
 			}
