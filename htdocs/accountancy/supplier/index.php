@@ -19,16 +19,15 @@
  */
 
 /**
- * \file		htdocs/accountancy/supplier/index.php
- * \ingroup		Accounting Expert
- * \brief		Home supplier ventilation
+ * \file htdocs/accountancy/supplier/index.php
+ * \ingroup Accounting Expert
+ * \brief Home supplier ventilation
  */
-
 require '../../main.inc.php';
-	
+
 // Class
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 
 // Langs
 $langs->load("compta");
@@ -43,7 +42,7 @@ if ($user->societe_id > 0)
 if (! $user->rights->accounting->ventilation->read)
 	accessforbidden();
 	
-// Filter
+	// Filter
 $year = $_GET["year"];
 if ($year == 0) {
 	$year_current = strftime("%Y", time());
@@ -158,8 +157,8 @@ if ($resql) {
 	while ( $i < $num ) {
 		
 		$row = $db->fetch_row($resql);
-		$var=!$var;
-		print '<tr '.$bc[$var].'><td>' . length_accountg($row[0]) . '</td>';
+		$var = ! $var;
+		print '<tr ' . $bc[$var] . '><td>' . length_accountg($row[0]) . '</td>';
 		print '<td align="left">' . $row[1] . '</td>';
 		print '<td align="right">' . price($row[2]) . '</td>';
 		print '<td align="right">' . price($row[3]) . '</td>';
