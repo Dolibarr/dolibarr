@@ -257,6 +257,10 @@ else
 		}
 	}
 
+	// hook for other elements linked
+	$parameters=array('element'=>$element, 'element_id'=>$element_id );
+	$reshook=$hookmanager->executeHooks('printElementTab',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 
 	//print load_fiche_titre($langs->trans('ResourcesLinkedToElement'),'','');
