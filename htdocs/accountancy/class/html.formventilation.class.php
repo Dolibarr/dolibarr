@@ -133,7 +133,7 @@ class FormVentilation extends Form
 						$select_value_out = $obj->rowid;
 					if ($select_out == 1)
 						$select_value_out = $obj->account_number;
-						// Remember guy's we store in database llx_facturedet the rowid of accounting_account and not the account_number
+						// Remember guy's we store in database llx_facturedet the rowid of accountingaccount and not the account_number
 						// Because same account_number can be share between different accounting_system and do have the same meaning
 					if (($selectid != '') && $selectid == $select_value_in) {
 						// $out .= '<option value="' . $obj->account_number . '" selected>' . $label . '</option>';

@@ -148,7 +148,7 @@ if ($action == 'ventil' && ! empty($btn_ventil)) {
 			
 			dol_syslog("/accountancy/customer/list.php sql=" . $sql, LOG_DEBUG);
 			if ($db->query($sql)) {
-				print '<div><font color="green">' . $langs->trans("Lineofinvoice") . ' ' . $monId . ' - ' . $langs->trans("VentilatedinAccount") . ' : ' . $monCompte . '</font></div>';
+				print '<div><font color="green">' . $langs->trans("Lineofinvoice") . ' ' . $monId . ' ' . $langs->trans("VentilatedinAccount") . ' : ' . $monCompte . '</font></div>';
 			} else {
 				print '<div><font color="red">' . $langs->trans("ErrorDB") . ' : ' . $langs->trans("Lineofinvoice") . ' ' . $monId . ' ' . $langs->trans("NotVentilatedinAccount") . ' : ' . $monCompte . '<br/> <pre>' . $sql . '</pre></font></div>';
 			}

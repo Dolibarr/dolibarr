@@ -629,5 +629,4 @@ if ($action == 'export_csv') {
 	
 	llxFooter();
 }
-
 $db->close();

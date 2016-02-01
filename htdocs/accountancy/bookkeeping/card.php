@@ -136,7 +136,7 @@ else if ($action == "add") {
 			$book->sens = 'C';
 		}
 		
-		$result = $book->create_std($user);
+		$result = $book->createStd($user);
 		if ($result < 0) {
 			setEventMessages($book->error, $book->errors, 'errors');
 		} else {
@@ -180,7 +180,7 @@ else if ($action == "confirm_create") {
 	
 	$book->montant = 0;
 	
-	$result = $book->create_std($user);
+	$result = $book->createStd($user);
 	if ($result < 0) {
 		setEventMessages($book->error, $book->errors, 'errors');
 	} else {
