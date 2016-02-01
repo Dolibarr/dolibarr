@@ -19,13 +19,12 @@
  */
 
 /**
- * \file		htdocs/accountancy/journal/index.php
- * \ingroup		Accounting Expert
- * \brief		Index
+ * \file htdocs/accountancy/journal/index.php
+ * \ingroup Accounting Expert
+ * \brief Index
  */
-
 require '../../main.inc.php';
-	
+
 // Langs
 $langs->load("compta");
 $langs->load("bills");

@@ -344,7 +344,7 @@ class FormVentilation extends Form
 	/**
 	 * Return HTML combo list of years existing into book keepping
 	 *
-	 * @param string $selected Preselected value 
+	 * @param string $selected Preselected value
 	 * @param string $htmlname Name of HTML select object
 	 * @param int $useempty Affiche valeur vide dans liste
 	 * @param string $output_format (html/opton (for option html only)/array (to return options arrays
@@ -372,7 +372,7 @@ class FormVentilation extends Form
 		$sql = "SELECT DISTINCT date_format(doc_date,'%Y') as dtyear";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping";
 		$sql .= " ORDER BY doc_date";
-		dol_syslog(get_class($this) . "::".__METHOD__, LOG_DEBUG);
+		dol_syslog(get_class($this) . "::" . __METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			while ( $obj = $this->db->fetch_object($resql) ) {
@@ -387,7 +387,7 @@ class FormVentilation extends Form
 			}
 		} else {
 			$this->error = "Error " . $this->db->lasterror();
-			dol_syslog(get_class($this) . "::".__METHOD__ . $this->error, LOG_ERR);
+			dol_syslog(get_class($this) . "::" . __METHOD__ . $this->error, LOG_ERR);
 			return - 1;
 		}
 		$this->db->free($resql);

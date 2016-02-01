@@ -19,16 +19,15 @@
  */
 
 /**
- * \file		htdocs/accountancy/supplier/index.php
- * \ingroup		Accounting Expert
- * \brief		Home supplier ventilation
+ * \file htdocs/accountancy/supplier/index.php
+ * \ingroup Accounting Expert
+ * \brief Home supplier ventilation
  */
-
 require '../../main.inc.php';
-	
+
 // Class
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 
 // Langs
 $langs->load("compta");
@@ -43,7 +42,7 @@ if ($user->societe_id > 0)
 if (! $user->rights->accounting->ventilation->read)
 	accessforbidden();
 	
-// Filter
+	// Filter
 $year = $_GET["year"];
 if ($year == 0) {
 	$year_current = strftime("%Y", time());
@@ -94,7 +93,7 @@ if ($action == 'validatehistory') {
 	$sql1 .= '	(SELECT accnt.rowid ';
 	$sql1 .= '	FROM ' . MAIN_DB_PREFIX . 'accountingaccount as accnt';
 	$sql1 .= '	INNER JOIN ' . MAIN_DB_PREFIX . 'accounting_system as syst';
-	$sql1 .= '	ON accnt.fk_pcg_version = syst.pcg_version AND syst.rowid=' . $conf->global->CHARTOFACCOUNTS.')';
+	$sql1 .= '	ON accnt.fk_pcg_version = syst.pcg_version AND syst.rowid=' . $conf->global->CHARTOFACCOUNTS . ')';
 	
 	dol_syslog("htdocs/accountancy/customer/index.php fixaccountancycode", LOG_DEBUG);
 	
@@ -143,9 +142,9 @@ print load_fiche_titre($langs->trans("SuppliersVentilation") . "&nbsp;" . $textp
 
 print '<b>' . $langs->trans("DescVentilSupplier") . '</b>';
 print '<div class="inline-block divButAction">';
-print '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?year='.$year_current.'&action=validatehistory">' . $langs->trans("ValidateHistory") . '</a>';
-print '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?year='.$year_current.'&action=fixaccountancycode">' . $langs->trans("CleanFixHistory",$year_current) . '</a>';
-print '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?year='.$year_current.'&action=cleanaccountancycode">' . $langs->trans("CleanHistory",$year_current) . '</a>';
+print '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?year=' . $year_current . '&action=validatehistory">' . $langs->trans("ValidateHistory") . '</a>';
+print '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?year=' . $year_current . '&action=fixaccountancycode">' . $langs->trans("CleanFixHistory", $year_current) . '</a>';
+print '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?year=' . $year_current . '&action=cleanaccountancycode">' . $langs->trans("CleanHistory", $year_current) . '</a>';
 print '</div>';
 
 $y = $year_current;
@@ -206,8 +205,8 @@ if ($resql) {
 	while ( $i < $num ) {
 		
 		$row = $db->fetch_row($resql);
-		$var=!$var;
-		print '<tr '.$bc[$var].'><td>' . length_accountg($row[0]) . '</td>';
+		$var = ! $var;
+		print '<tr ' . $bc[$var] . '><td>' . length_accountg($row[0]) . '</td>';
 		print '<td align="left">' . $row[1] . '</td>';
 		print '<td align="right">' . price($row[2]) . '</td>';
 		print '<td align="right">' . price($row[3]) . '</td>';
