@@ -213,7 +213,9 @@ Warning: Name and email must match value into debian/control file (Entry added h
 
 * We try to build package
 > rm -fr ../build-area; 
-> git-buildpackage -us -uc --git-debian-branch=[master|jessie] --git-upstream-branch=[upstream|upstream-3.5.x]
+> git-buildpackage -us -uc --git-debian-branch=[master|jessie] --git-upstream-branch=[upstream|upstream-x.y.z]
+ou
+> git-buildpackage -us -uc --git-ignore-branch --git-upstream-branch=[upstream|upstream-x.y.z]
 
 Note: To build an old version, do: git checkout oldtagname -b newbranchname; git-buildpackage -us -uc --git-debian-branch=newbranchname --git-upstream-branch=[upstream|upstream-3.5.x]
 Note: You can use git-buildpackage -us -uc --git-ignore-new  if you want to test build with uncommited file
@@ -221,6 +223,7 @@ Note: You can use git-buildpackage -us -uc -d                if you want to test
 Note: Package is built into directory ../build-area
 Note: To compare 2 packages: debdiff package1.dsc package2.dsc
 
+* Test package (see dedicated chapter to test it with debian unstable env)
 
 * If package .deb is ok:
 Note: If there was errors managed manually, you may need to make a git commit but do not use option "amend" previous commit
