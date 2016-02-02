@@ -50,7 +50,4 @@ ALTER TABLE llx_resource ADD COLUMN fk_statut       smallint NOT NULL DEFAULT '0
 ALTER TABLE llx_resource ADD COLUMN import_key			varchar(14);
 ALTER TABLE llx_resource ADD COLUMN extraparams			varchar(255);	
  
-ALTER TABLE llx_element_resources ADD COLUMN dateo				date;						    -- date start of using ressource
-ALTER TABLE llx_element_resources ADD COLUMN datee				date;						    -- date end of using ressource
-ALTER TABLE llx_element_resources ADD COLUMN datet				date;						    -- date terminaison of using ressource
 ALTER TABLE llx_element_resources ADD COLUMN duree				real;          -- total duration of using ressource
