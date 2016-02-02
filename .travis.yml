@@ -290,12 +290,17 @@ script:
 - |
   echo "Unit testing"
   # Ensure we catch errors
-  set -e
+  set +e
   phpunit -d memory_limit=-1 -c test/phpunit/phpunittest.xml test/phpunit/AllTests.php
   set +e
-  echo
+
+- |
+  echo Output dolibarr.log
+  echo cat documents/dolibarr.log
 
 after_success:
+- |
+  echo Success
 
 after_failure:
 - |
@@ -315,4 +320,7 @@ after_failure:
   fi
 
 after_script:
+- |
+  # Dolibarr log file
+  cat documents/dolibarr.log
 
