@@ -19,17 +19,16 @@
  */
 
 /**
- * \file			htdocs/accountancy/admin/importaccounts.php
- * \ingroup			Accounting Expert
- * \brief			Page import accounting account
+ * \file htdocs/accountancy/admin/importaccounts.php
+ * \ingroup Accounting Expert
+ * \brief Page import accounting account
  */
-
 require '../../main.inc.php';
-	
+
 // Class
-require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
-require_once DOL_DOCUMENT_ROOT.'/accountancy/class/html.formventilation.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
+require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
 
 // langs
 $langs->load("compta");
@@ -38,8 +37,8 @@ $langs->load("main");
 $langs->load("accountancy");
 
 // Security check
-if (!$user->admin)
-    accessforbidden();
+if (! $user->admin)
+	accessforbidden();
 
 llxHeader('', $langs->trans("ImportAccount"));
 
@@ -92,9 +91,9 @@ if ($_POST["action"] == 'import') {
 }
 
 /*
-* list accounting account from product 
-*
-*/
+ * list accounting account from product 
+ *
+ */
 $page = GETPOST("page");
 if ($page < 0)
 	$page = 0;

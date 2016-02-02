@@ -22,24 +22,23 @@
  */
 
 /**
- * \file		htdocs/accountancy/admin/journal.php
- * \ingroup		Accounting Expert
- * \brief		Setup page to configure accounting expert module
+ * \file htdocs/accountancy/admin/journal.php
+ * \ingroup Accounting Expert
+ * \brief Setup page to configure accounting expert module
  */
-
 require '../../main.inc.php';
-	
+
 // Class
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/bank.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
 
 $langs->load("accountancy");
 
 // Security check
-if (!$user->admin)
-    accessforbidden();
+if (! $user->admin)
+	accessforbidden();
 
 $action = GETPOST('action', 'alpha');
 
@@ -49,7 +48,7 @@ $list = array (
 		'ACCOUNTING_PURCHASE_JOURNAL',
 		'ACCOUNTING_SOCIAL_JOURNAL',
 		'ACCOUNTING_MISCELLANEOUS_JOURNAL',
-		'ACCOUNTING_EXPENSEREPORT_JOURNAL'
+		'ACCOUNTING_EXPENSEREPORT_JOURNAL' 
 );
 
 /*
@@ -82,8 +81,8 @@ llxHeader();
 
 $form = new Form($db);
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans('ConfigAccountingExpert'),$linkback,'title_setup');
+$linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php">' . $langs->trans("BackToModuleList") . '</a>';
+print load_fiche_titre($langs->trans('ConfigAccountingExpert'), $linkback, 'title_setup');
 
 $head = admin_accounting_prepare_head(null);
 
@@ -115,9 +114,7 @@ foreach ( $list as $key ) {
 
 print "</table>\n";
 
-
 print '<br>';
-
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -126,39 +123,37 @@ print "</tr>\n";
 
 // Bank account
 $sql = "SELECT rowid, label, accountancy_journal";
-$sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
-$sql.= " WHERE entity = ".$conf->entity;
-$sql.= " AND clos = 0";
-$sql.= " ORDER BY label";
+$sql .= " FROM " . MAIN_DB_PREFIX . "bank_account";
+$sql .= " WHERE entity = " . $conf->entity;
+$sql .= " AND clos = 0";
+$sql .= " ORDER BY label";
 
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	$numr = $db->num_rows($resql);
 	$i = 0;
-
+	
 	if ($numr > 0)
-				
-	while ($i < $numr)
-	{
-		$objp = $db->fetch_object($resql);
 		
-		$var = ! $var;
-	
-		print '<tr ' . $bc[$var] . ' class="value">';
-		
-		// Param
-		print '<td width="50%"><label for="' . $objp->rowid . '">' . $langs->trans("Journal") . ' - ' . $objp->label . '</label></td>';
-	
-		// Value
-		print '<td>';
-		print '<input type="text" size="20" id="' . $objp->rowid . '" name="' . $objp->label . '" value="' . $objp->accountancy_journal . '" disabled>';
-		print '</td></tr>';
-
-		$i++;
-	}
-}
-else dol_print_error($db);
+		while ( $i < $numr ) {
+			$objp = $db->fetch_object($resql);
+			
+			$var = ! $var;
+			
+			print '<tr ' . $bc[$var] . ' class="value">';
+			
+			// Param
+			print '<td width="50%"><label for="' . $objp->rowid . '">' . $langs->trans("Journal") . ' - ' . $objp->label . '</label></td>';
+			
+			// Value
+			print '<td>';
+			print '<input type="text" size="20" id="' . $objp->rowid . '" name="' . $objp->label . '" value="' . $objp->accountancy_journal . '" disabled>';
+			print '</td></tr>';
+			
+			$i ++;
+		}
+} else
+	dol_print_error($db);
 $db->free($resql);
 
 print "</table>\n";
@@ -168,7 +163,6 @@ dol_fiche_end();
 print '<div class="center"><input type="submit" class="button" value="' . $langs->trans('Modify') . '" name="button"></div>';
 
 print '</form>';
-
 
 llxFooter();
 $db->close();

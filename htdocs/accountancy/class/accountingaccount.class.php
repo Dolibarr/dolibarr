@@ -20,9 +20,9 @@
  */
 
 /**
- * \file		htdocs/accountancy/class/accountingaccount.class.php
- * \ingroup		Accounting Expert
- * \brief		Fichier de la classe des comptes comptable
+ * \file htdocs/accountancy/class/accountingaccount.class.php
+ * \ingroup Accounting Expert
+ * \brief Fichier de la classe des comptes comptable
  */
 
 /**
@@ -33,10 +33,8 @@ class AccountingAccount extends CommonObject
 	var $db;
 	var $error;
 	var $errors;
-
 	var $id;
 	var $rowid;
-
 	var $datec; // Creation date
 	var $fk_pcg_version;
 	var $pcg_type;
@@ -47,45 +45,43 @@ class AccountingAccount extends CommonObject
 	var $fk_user_author;
 	var $fk_user_modif;
 	var $active;
-
+	
 	/**
 	 * Constructor
 	 *
-	 * @param 	DoliDB	$db		Database handle
+	 * @param DoliDB $db Database handle
 	 */
-	function __construct($db)
-	{
+	function __construct($db) {
 		$this->db = $db;
 	}
-
+	
 	/**
 	 * Load record in memory
 	 *
-	 * @param	int		$rowid					Id
-	 * @param	string	$account_number			Account number
-	 * @param	int		$limittocurentchart		1=Do not load record if it is into another accounting system
-	 * @return 	int								<0 if KO, >0 if OK
+	 * @param int $rowid Id
+	 * @param string $account_number Account number
+	 * @param int $limittocurentchart 1=Do not load record if it is into another accounting system
+	 * @return int <0 if KO, >0 if OK
 	 */
-	function fetch($rowid = null, $account_number = null, $limittocurentchart=0)
-	{
+	function fetch($rowid = null, $account_number = null, $limittocurentchart = 0) {
 		global $conf;
-
+		
 		if ($rowid || $account_number) {
 			$sql = "SELECT rowid, datec, tms, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, fk_user_author, fk_user_modif, active";
-			$sql.= " FROM " . MAIN_DB_PREFIX . "accounting_account WHERE";
+			$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account WHERE";
 			if ($rowid) {
 				$sql .= " rowid = '" . $rowid . "'";
 			} elseif ($account_number) {
 				$sql .= " account_number = '" . $account_number . "'";
 			}
-			if (!empty($limittocurentchart)) {
-				$sql .=' AND fk_pcg_version IN (SELECT pcg_version FROM '.MAIN_DB_PREFIX.'accounting_system WHERE rowid='.$conf->global->CHARTOFACCOUNTS.')';
+			if (! empty($limittocurentchart)) {
+				$sql .= ' AND fk_pcg_version IN (SELECT pcg_version FROM ' . MAIN_DB_PREFIX . 'accounting_system WHERE rowid=' . $conf->global->CHARTOFACCOUNTS . ')';
 			}
 			dol_syslog(get_class($this) . "::fetch sql=" . $sql, LOG_DEBUG);
 			$result = $this->db->query($sql);
 			if ($result) {
 				$obj = $this->db->fetch_object($result);
-
+				
 				if ($obj) {
 					$this->id = $obj->rowid;
 					$this->rowid = $obj->rowid;
@@ -100,32 +96,31 @@ class AccountingAccount extends CommonObject
 					$this->fk_user_author = $obj->fk_user_author;
 					$this->fk_user_modif = $obj->fk_user_modif;
 					$this->active = $obj->active;
-
+					
 					return $this->id;
 				} else {
 					return 0;
 				}
 			} else {
-				$this->error="Error " . $this->db->lasterror();
+				$this->error = "Error " . $this->db->lasterror();
 				$this->errors[] = "Error " . $this->db->lasterror();
 			}
 		}
-		return -1;
+		return - 1;
 	}
-
+	
 	/**
 	 * Insert line in accounting_account
 	 *
-	 * @param 	User	$user 			Use making action
-	 * @param	int		$notrigger		Disable triggers
-	 * @return 	int						<0 if KO, >0 if OK
+	 * @param User $user Use making action
+	 * @param int $notrigger Disable triggers
+	 * @return int <0 if KO, >0 if OK
 	 */
-	function create($user, $notrigger = 0)
-	{
+	function create($user, $notrigger = 0) {
 		global $conf;
 		$error = 0;
 		$now = dol_now();
-
+		
 		// Clean parameters
 		if (isset($this->fk_pcg_version))
 			$this->fk_pcg_version = trim($this->fk_pcg_version);
@@ -143,13 +138,13 @@ class AccountingAccount extends CommonObject
 			$this->fk_user_author = trim($this->fk_user_author);
 		if (isset($this->active))
 			$this->active = trim($this->active);
-
-		// Check parameters
-		// Put here code to add control on parameters values
-
+			
+			// Check parameters
+			// Put here code to add control on parameters values
+			
 		// Insert request
 		$sql = "INSERT INTO " . MAIN_DB_PREFIX . "accounting_account(";
-
+		
 		$sql .= "datec";
 		$sql .= ", entity";
 		$sql .= ", fk_pcg_version";
@@ -160,9 +155,9 @@ class AccountingAccount extends CommonObject
 		$sql .= ", label";
 		$sql .= ", fk_user_author";
 		$sql .= ", active";
-
+		
 		$sql .= ") VALUES (";
-
+		
 		$sql .= " '" . $this->db->idate($now) . "'";
 		$sql .= ", " . $conf->entity;
 		$sql .= ", " . (! isset($this->fk_pcg_version) ? 'NULL' : "'" . $this->db->escape($this->fk_pcg_version) . "'");
@@ -173,34 +168,34 @@ class AccountingAccount extends CommonObject
 		$sql .= ", " . (! isset($this->label) ? 'NULL' : "'" . $this->db->escape($this->label) . "'");
 		$sql .= ", " . $user->id;
 		$sql .= ", " . (! isset($this->active) ? 'NULL' : "'" . $this->db->escape($this->active) . "'");
-
+		
 		$sql .= ")";
-
+		
 		$this->db->begin();
-
+		
 		dol_syslog(get_class($this) . "::create sql=" . $sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (! $resql) {
 			$error ++;
 			$this->errors[] = "Error " . $this->db->lasterror();
 		}
-
+		
 		if (! $error) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . "accounting_account");
-
-//			if (! $notrigger) {
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action calls a trigger.
-
-				// // Call triggers
-				// include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				// $interface=new Interfaces($this->db);
-				// $result=$interface->run_triggers('MYOBJECT_CREATE',$this,$user,$langs,$conf);
-				// if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				// // End call triggers
-//			}
+			
+			// if (! $notrigger) {
+			// Uncomment this and change MYOBJECT to your own tag if you
+			// want this action calls a trigger.
+			
+			// // Call triggers
+			// include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+			// $interface=new Interfaces($this->db);
+			// $result=$interface->run_triggers('MYOBJECT_CREATE',$this,$user,$langs,$conf);
+			// if ($result < 0) { $error++; $this->errors=$interface->errors; }
+			// // End call triggers
+			// }
 		}
-
+		
 		// Commit or rollback
 		if ($error) {
 			foreach ( $this->errors as $errmsg ) {
@@ -214,17 +209,16 @@ class AccountingAccount extends CommonObject
 			return $this->id;
 		}
 	}
-
+	
 	/**
 	 * Update record
 	 *
-	 * @param 	User 	$user 	Use making update
-	 * @return 	int 			<0 if KO, >0 if OK
+	 * @param User $user Use making update
+	 * @return int <0 if KO, >0 if OK
 	 */
-	function update($user)
-	{
+	function update($user) {
 		$this->db->begin();
-
+		
 		$sql = "UPDATE " . MAIN_DB_PREFIX . "accounting_account ";
 		$sql .= " SET fk_pcg_version = " . ($this->fk_pcg_version ? "'" . $this->db->escape($this->fk_pcg_version) . "'" : "null");
 		$sql .= " , pcg_type = " . ($this->pcg_type ? "'" . $this->db->escape($this->pcg_type) . "'" : "null");
@@ -234,9 +228,9 @@ class AccountingAccount extends CommonObject
 		$sql .= " , label = " . ($this->label ? "'" . $this->db->escape($this->label) . "'" : "null");
 		$sql .= " , fk_user_modif = " . $user->id;
 		$sql .= " , active = '" . $this->active . "'";
-
+		
 		$sql .= " WHERE rowid = " . $this->id;
-
+		
 		dol_syslog(get_class($this) . "::update sql=" . $sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
@@ -248,25 +242,24 @@ class AccountingAccount extends CommonObject
 			return - 1;
 		}
 	}
-
+	
 	/**
 	 * Check usage of accounting code
 	 *
-	 * @return 	int 			<0 if KO, >0 if OK
+	 * @return int <0 if KO, >0 if OK
 	 */
-	function checkUsage()
-	{
+	function checkUsage() {
 		global $langs;
-
+		
 		$sql = "(SELECT fk_code_ventilation FROM " . MAIN_DB_PREFIX . "facturedet";
 		$sql .= " WHERE  fk_code_ventilation=" . $this->id . ")";
 		$sql .= "UNION";
 		$sql .= "(SELECT fk_code_ventilation FROM " . MAIN_DB_PREFIX . "facture_fourn_det";
 		$sql .= " WHERE  fk_code_ventilation=" . $this->id . ")";
-
+		
 		dol_syslog(get_class($this) . "::checkUsage sql=" . $sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
-
+		
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			if ($num > 0) {
@@ -280,42 +273,41 @@ class AccountingAccount extends CommonObject
 			return - 1;
 		}
 	}
-
+	
 	/**
 	 * Delete object in database
 	 *
-	 * @param 	User 	$user 			User that deletes
-	 * @param 	int 	$notrigger 		0=triggers after, 1=disable triggers
-	 * @return 	int 					<0 if KO, >0 if OK
+	 * @param User $user User that deletes
+	 * @param int $notrigger 0=triggers after, 1=disable triggers
+	 * @return int <0 if KO, >0 if OK
 	 */
-	function delete($user, $notrigger = 0)
-	{
+	function delete($user, $notrigger = 0) {
 		$error = 0;
-
+		
 		$result = $this->checkUsage();
-
+		
 		if ($result > 0) {
-
+			
 			$this->db->begin();
-
-//			if (! $error) {
-//				if (! $notrigger) {
-					// Uncomment this and change MYOBJECT to your own tag if you
-					// want this action calls a trigger.
-
-					// // Call triggers
-					// include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-					// $interface=new Interfaces($this->db);
-					// $result=$interface->run_triggers('ACCOUNTANCY_ACCOUNT_DELETE',$this,$user,$langs,$conf);
-					// if ($result < 0) { $error++; $this->errors=$interface->errors; }
-					// // End call triggers
-//				}
-//			}
-
+			
+			// if (! $error) {
+			// if (! $notrigger) {
+			// Uncomment this and change MYOBJECT to your own tag if you
+			// want this action calls a trigger.
+			
+			// // Call triggers
+			// include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+			// $interface=new Interfaces($this->db);
+			// $result=$interface->run_triggers('ACCOUNTANCY_ACCOUNT_DELETE',$this,$user,$langs,$conf);
+			// if ($result < 0) { $error++; $this->errors=$interface->errors; }
+			// // End call triggers
+			// }
+			// }
+			
 			if (! $error) {
 				$sql = "DELETE FROM " . MAIN_DB_PREFIX . "accounting_account";
 				$sql .= " WHERE rowid=" . $this->id;
-
+				
 				dol_syslog(get_class($this) . "::delete sql=" . $sql);
 				$resql = $this->db->query($sql);
 				if (! $resql) {
@@ -323,7 +315,7 @@ class AccountingAccount extends CommonObject
 					$this->errors[] = "Error " . $this->db->lasterror();
 				}
 			}
-
+			
 			// Commit or rollback
 			if ($error) {
 				foreach ( $this->errors as $errmsg ) {
@@ -340,47 +332,48 @@ class AccountingAccount extends CommonObject
 			return - 1;
 		}
 	}
-
+	
 	/**
-	 *	Return clicable name (with picto eventually)
+	 * Return clicable name (with picto eventually)
 	 *
-	 *	@param		int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
-	 *	@return		string					Chaine avec URL
+	 * @param int $withpicto 0=No picto, 1=Include picto into link, 2=Only picto
+	 * @return string Chaine avec URL
 	 */
-	function getNomUrl($withpicto=0)
-	{
+	function getNomUrl($withpicto = 0) {
 		global $langs;
-
-		$result='';
-
-		$link = '<a href="'.DOL_URL_ROOT.'/accountancy/admin/card.php?id='.$this->id.'">';
-		$linkend='</a>';
-
-		$picto='billr';
-
-		$label=$langs->trans("Show").': '.$this->account_number.' - '.$this->label;
-
-		if ($withpicto) $result.=($link.img_object($label,$picto).$linkend);
-		if ($withpicto && $withpicto != 2) $result.=' ';
-		if ($withpicto != 2) $result.=$link.$this->account_number.$linkend;
+		
+		$result = '';
+		
+		$link = '<a href="' . DOL_URL_ROOT . '/accountancy/admin/card.php?id=' . $this->id . '">';
+		$linkend = '</a>';
+		
+		$picto = 'billr';
+		
+		$label = $langs->trans("Show") . ': ' . $this->account_number . ' - ' . $this->label;
+		
+		if ($withpicto)
+			$result .= ($link . img_object($label, $picto) . $linkend);
+		if ($withpicto && $withpicto != 2)
+			$result .= ' ';
+		if ($withpicto != 2)
+			$result .= $link . $this->account_number . $linkend;
 		return $result;
 	}
-
+	
 	/**
 	 * Information on record
 	 *
 	 * @param int $id of record
 	 * @return void
 	 */
-	function info($id)
-	{
+	function info($id) {
 		$sql = 'SELECT a.rowid, a.datec, a.fk_user_author, a.fk_user_modif, a.tms';
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . 'accounting_account as a';
 		$sql .= ' WHERE a.rowid = ' . $id;
-
+		
 		dol_syslog(get_class($this) . '::info sql=' . $sql);
 		$result = $this->db->query($sql);
-
+		
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
@@ -403,27 +396,26 @@ class AccountingAccount extends CommonObject
 			dol_print_error($this->db);
 		}
 	}
-
+	
 	/**
 	 * Account desactivate
 	 *
-	 * @param	int		$id		Id
-	 * @return 	int 			<0 if KO, >0 if OK
+	 * @param int $id Id
+	 * @return int <0 if KO, >0 if OK
 	 */
-	function account_desactivate($id)
-	{
+	function account_desactivate($id) {
 		$result = $this->checkUsage();
-
+		
 		if ($result > 0) {
 			$this->db->begin();
-
+			
 			$sql = "UPDATE " . MAIN_DB_PREFIX . "accounting_account ";
 			$sql .= "SET active = '0'";
-			$sql .= " WHERE rowid = ".$this->db->escape($id);
-
+			$sql .= " WHERE rowid = " . $this->db->escape($id);
+			
 			dol_syslog(get_class($this) . "::desactivate sql=" . $sql, LOG_DEBUG);
 			$result = $this->db->query($sql);
-
+			
 			if ($result) {
 				$this->db->commit();
 				return 1;
@@ -436,21 +428,20 @@ class AccountingAccount extends CommonObject
 			return - 1;
 		}
 	}
-
+	
 	/**
 	 * Account activate
 	 *
-	 * @param 	int		$id		Id
-	 * @return 	int 			<0 if KO, >0 if OK
+	 * @param int $id Id
+	 * @return int <0 if KO, >0 if OK
 	 */
-	function account_activate($id)
-	{
+	function account_activate($id) {
 		$this->db->begin();
-
+		
 		$sql = "UPDATE " . MAIN_DB_PREFIX . "accounting_account ";
 		$sql .= "SET active = '1'";
-		$sql .= " WHERE rowid = ".$this->db->escape($id);
-
+		$sql .= " WHERE rowid = " . $this->db->escape($id);
+		
 		dol_syslog(get_class($this) . "::activate sql=" . $sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
