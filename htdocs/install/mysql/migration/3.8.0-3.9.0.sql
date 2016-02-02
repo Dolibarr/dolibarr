@@ -588,3 +588,5 @@ ALTER TABLE llx_holiday ADD COLUMN entity integer DEFAULT 1 NOT NULL;
 UPDATE llx_c_tva SET taux='17' WHERE rowid=1401 AND fk_pays=140;
 UPDATE llx_c_tva SET taux='14' WHERE rowid=1402 AND fk_pays=140;
 UPDATE llx_c_tva SET taux='8'  WHERE rowid=1403 AND fk_pays=140;
+UPDATE llx_c_tva SET note='VAT intermediary rate'  WHERE rowid=1403 AND fk_pays=140;
+
