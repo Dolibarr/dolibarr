@@ -265,7 +265,7 @@ if (empty($reshook))
 						}
 
 						// Fabrication du mail
-						$mail = new CMailFile($newsubject, $sendto, $from, $newmessage, $arr_file, $arr_mime, $arr_name, '', '', 0, $msgishtml, $errorsto, $arr_css);
+						$mail = new CMailFile($newsubject, $sendto, $from.'<'.$from.'>', $newmessage, $arr_file, $arr_mime, $arr_name, '', '', 0, $msgishtml, $errorsto, $arr_css);
 
 						if ($mail->error)
 						{
