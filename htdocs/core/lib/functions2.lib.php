@@ -894,7 +894,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
         if ($where) $sql.=$where;
         if ($sqlwhere) $sql.=' AND '.$sqlwhere;
 
-        dol_syslog("functions2::get_next_value", LOG_DEBUG);
+        dol_syslog("functions2::get_next_value mode=".$mode."", LOG_DEBUG);
         $resql=$db->query($sql);
         if ($resql)
         {
