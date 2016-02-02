@@ -413,8 +413,9 @@ if ($action == 'export_csv') {
 	
 	$companystatic = new Client($db);
 	
-	if ($conf->global->ACCOUNTING_EXPORT_MODELCSV == 2) // Model Cegid Expert Export
-{
+	// Model Cegid Expert Export
+	if ($conf->global->ACCOUNTING_EXPORT_MODELCSV == 2) 
+	{
 		$sep = ";";
 		
 		foreach ( $tabpay as $key => $val ) {
@@ -473,9 +474,8 @@ if ($action == 'export_csv') {
 					}
 				}
 			}
-		}
-	} else // Model Classic Export
-{
+	} else {
+		// Model Classic Export
 		foreach ( $tabpay as $key => $val ) {
 			$date = dol_print_date($db->jdate($val["date"]), 'day');
 			
@@ -576,10 +576,12 @@ if ($action == 'export_csv') {
 	foreach ( $tabpay as $key => $val ) {
 		$date = dol_print_date($db->jdate($val["date"]), 'day');
 		
-		if ($val["lib"] == '(SupplierInvoicePayment)')
+		if ($val["lib"] == '(SupplierInvoicePayment)') {
 			$reflabel = $langs->trans('SupplierInvoicePayment');
-		if ($val["lib"] == '(CustomerInvoicePayment)')
+		}
+		if ($val["lib"] == '(CustomerInvoicePayment)') {
 			$reflabel = $langs->trans('CustomerInvoicePayment');
+		}
 			
 			// Bank
 		foreach ( $tabbq[$key] as $k => $mt ) {
