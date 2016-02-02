@@ -518,7 +518,7 @@ if ($action == 'export_csv') {
 	
 	llxHeader('', $langs->trans("FinanceJournal"));
 	
-	$nom = $langs->trans("FinanceJournal" . ' - ' . $journal);
+	$nom = $langs->trans("FinanceJournal") . ' - ' . $journal;
 	$builddate = time();
 	$description = $langs->trans("DescFinanceJournal") . '<br>';
 	$period = $form->select_date($date_start, 'date_start', 0, 0, 0, '', 1, 0, 1) . ' - ' . $form->select_date($date_end, 'date_end', 0, 0, 0, '', 1, 0, 1);
