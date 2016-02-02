@@ -221,3 +221,4 @@ OtherCountriesCustomersReport=Rapport client étranger
 BasedOnTwoFirstLettersOfVATNumberBeingDifferentFromYourCompanyCountry=Basé sur les deux premières lettres du numéro de TVA étant différent du code de pays de votre propre entreprise
 SameCountryCustomersWithVAT=Rapport clients nationaux
 BasedOnTwoFirstLettersOfVATNumberBeingTheSameAsYourCompanyCountry=Basé sur les deux premières lettres du numéro de TVA étant les mêmes que le code pays de votre propre entreprise
+LinkedFichinter=Lier à une intervention
