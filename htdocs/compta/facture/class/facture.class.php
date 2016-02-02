@@ -1803,7 +1803,7 @@ class Facture extends CommonInvoice
        	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->facture->invoice_advance->validate)))
 		{
 			$this->error='Permission denied';
-			dol_syslog(get_class($this)."::validate ".$this->error, LOG_ERR);
+			dol_syslog(get_class($this)."::validate ".$this->error.' MAIN_USE_ADVANCED_PERMS='.$conf->global->MAIN_USE_ADVANCED_PERMS, LOG_ERR);
 			return -1;
 		}
 
