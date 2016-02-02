@@ -293,6 +293,8 @@ script:
   set -e
   phpunit -d memory_limit=-1 -c test/phpunit/phpunittest.xml test/phpunit/AllTests.php
   set +e
+
+- |
   echo Output dolibarr.log
   echo cat documents/dolibarr.log
 
