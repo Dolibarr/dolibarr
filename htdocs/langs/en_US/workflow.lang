@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is en_US - admin 
+# Dolibarr language file - Source file is en_US - workflow 
 WorkflowSetup=Workflow module setup
 WorkflowDesc=This module is designed to modify the behaviour of automatic actions into application. By default, workflow is open (you can do things in the order you want). You can activate the automatic actions you are interested in.
 ThereIsNoWorkflowToModify=There is no workflow modifications available with the activated modules.
