@@ -4010,7 +4010,7 @@ class Form
         $defaultnpr=(preg_match('/\*/',$selectedrate) ? 1 : $defaultnpr);
         $defaulttx=str_replace('*','',$selectedrate);
 
-        // Check parameters
+        // Thirdparty seller country must be defined
         if (is_object($societe_vendeuse) && ! $societe_vendeuse->country_code)
         {
             if ($societe_vendeuse->id == $mysoc->id)
@@ -4024,13 +4024,8 @@ class Form
             return $return;
         }
 
-        //var_dump($societe_acheteuse);
-        //print "name=$name, selectedrate=$selectedrate, seller=".$societe_vendeuse->country_code." buyer=".$societe_acheteuse->country_code." buyer is company=".$societe_acheteuse->isACompany()." idprod=$idprod, info_bits=$info_bits type=$type";
-        //exit;
-
-        // Define list of countries to use to search VAT rates to show
-        // First we defined code_country to use to find list
-        if (is_object($societe_vendeuse))
+	//Store vat country code in $code_country
+	if (is_object($societe_vendeuse))
         {
             $code_country="'".$societe_vendeuse->country_code."'";
         }
@@ -4038,6 +4033,7 @@ class Form
        {
             $code_country="'".$mysoc->country_code."'";   // Pour compatibilite ascendente
         }
+        // Adjust $code_country in the case of service ( = Buying company country code )
         if (! empty($conf->global->SERVICE_ARE_ECOMMERCE_200238EC))    // If option to have vat for end customer for services is on
         {
             if (! $societe_vendeuse->isInEEC() && (! is_object($societe_acheteuse) || ($societe_acheteuse->isInEEC() && ! $societe_acheteuse->isACompany())))
@@ -4066,7 +4062,7 @@ class Form
             }
         }
 
-        // Now we get list
+        // Get list of vatrates for vat country - At least one vat rate
         $num = $this->load_cache_vatrates($code_country);
         if ($num > 0)
         {
