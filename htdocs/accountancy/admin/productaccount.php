@@ -20,9 +20,9 @@
  */
 
 /**
- * \file		htdocs/accountancy/admin/productaccount.php
- * \ingroup		Accounting Expert
- * \brief		Onglet de gestion de parametrages des ventilations
+ * \file htdocs/accountancy/admin/productaccount.php
+ * \ingroup Accounting Expert
+ * \brief Onglet de gestion de parametrages des ventilations
  */
 require '../../main.inc.php';
 
@@ -70,7 +70,7 @@ if (! empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION) && $conf->global->
 	// } else if ($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION <= 0) {
 	// $limit = $conf->liste_limit;
 } else {
-	$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+	$limit = GETPOST('limit') ? GETPOST('limit', 'int') : $conf->liste_limit;
 }
 $offset = $limit * $page;
 
@@ -100,7 +100,7 @@ if ($action == 'update') {
 			$error ++;
 		}
 	}
-
+	
 	if (! empty($btn_changeaccount)) {
 		$msg = '<div><font color="red">' . $langs->trans("Processing") . '...</font></div>';
 		if (! empty($chk_prod)) {
@@ -112,11 +112,11 @@ if ($action == 'update') {
 			$cpt = 0;
 			foreach ( $chk_prod as $productid ) {
 				
-				$accounting_account_id=GETPOST('codeventil_'.$productid);
+				$accounting_account_id = GETPOST('codeventil_' . $productid);
 				
-				$result=$accounting->fetch($accounting_account_id,null,1);
-				if ($result<0) {
-					//setEventMessage(null, $accounting->errors,'errors');
+				$result = $accounting->fetch($accounting_account_id, null, 1);
+				if ($result < 0) {
+					// setEventMessage(null, $accounting->errors,'errors');
 					$msg .= '<div><font color="red">' . $langs->trans("ErrorDB") . ' : ' . $langs->trans("Product") . ' ' . $productid . ' ' . $langs->trans("NotVentilatedinAccount") . ' : id=' . $accounting_account_id . '<br/> <pre>' . $sql . '</pre></font></div>';
 				} else {
 					
@@ -143,7 +143,6 @@ if ($action == 'update') {
 			$msg .= '<div><font color="red">' . $langs->trans("AnyLineVentilate") . '</font></div>';
 		}
 		$msg .= '<div><font color="red">' . $langs->trans("EndProcessing") . '</font></div>';
-		
 	}
 }
 
@@ -242,8 +241,8 @@ if ($result) {
 	$i = 0;
 	
 	/*
- * View
- */
+	 * View
+	 */
 	print_barre_liste($langs->trans("ProductAccountingAccountSelect"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num_lines);
 	
 	print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">';
@@ -361,7 +360,7 @@ if ($result) {
 			// TODO: we shoul set a user defined value to adjust user square / wide screen size
 			// $trunclenghform = defined('ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT') ? ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT : 50;
 			print '<td align="left">';
-			print $form->select_account($compta_prodbuy_id, 'codeventil_'.$product_static->id, 1);
+			print $form->select_account($compta_prodbuy_id, 'codeventil_' . $product_static->id, 1);
 			print '</td>';
 		} else {
 			
@@ -371,7 +370,7 @@ if ($result) {
 			// TODO: we shoul set a user defined value to adjust user square / wide screen size
 			// $trunclenghform = defined('ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT') ? ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT : 50;
 			print '<td align="left">';
-			print $form->select_account($compta_prodsell_id,  'codeventil_'.$product_static->id, 1);
+			print $form->select_account($compta_prodsell_id, 'codeventil_' . $product_static->id, 1);
 			print '</td>';
 		}
 		

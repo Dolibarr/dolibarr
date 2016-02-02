@@ -43,20 +43,20 @@ $mesg = '';
 
 $account_number = GETPOST('account_number');
 $code_tiers = GETPOST('code_tiers');
-if ($code_tiers==-1) {
-	$code_tiers=null;
+if ($code_tiers == - 1) {
+	$code_tiers = null;
 }
 $label_compte = GETPOST('label_compte');
 $debit = price2num(GETPOST('debit'));
 $credit = price2num(GETPOST('credit'));
 
-$save=GETPOST('save');
-if (!empty($save)) {
-	$action='add';
+$save = GETPOST('save');
+if (! empty($save)) {
+	$action = 'add';
 }
-$update=GETPOST('update');
-if (!empty($update)) {
-	$action='confirm_update';
+$update = GETPOST('update');
+if (! empty($update)) {
+	$action = 'confirm_update';
 }
 
 if ($action == "confirm_update") {
@@ -135,7 +135,7 @@ else if ($action == "add") {
 			$book->sens = 'C';
 		}
 		
-		$result = $book->create_std($user);
+		$result = $book->createStd($user);
 		if ($result < 0) {
 			setEventMessages($book->error, $book->errors, 'errors');
 		} else {
@@ -179,7 +179,7 @@ else if ($action == "confirm_create") {
 	
 	$book->montant = 0;
 	
-	$result = $book->create_std($user);
+	$result = $book->createStd($user);
 	if ($result < 0) {
 		setEventMessages($book->error, $book->errors, 'errors');
 	} else {
@@ -213,18 +213,18 @@ if ($action == 'create') {
 			$conf->global->ACCOUNTING_EXPENSEREPORT_JOURNAL => $conf->global->ACCOUNTING_EXPENSEREPORT_JOURNAL 
 	);
 	
-    $sql = 'SELECT DISTINCT accountancy_journal FROM '.MAIN_DB_PREFIX.'bank_account WHERE clos=0';
-    $resql=$db->query($sql);
-    if (!$resql) {
-    	setEventMessages($db->lasterror,null,'errors');
-    } else {
-    	while ($obj_bank=$db->fetch_object($resql)) {
-    		if (!empty($obj_bank->accountancy_journal)) {
-    			$code_journal_array[$obj_bank->accountancy_journal]=$obj_bank->accountancy_journal;
-    		}
-    	}
-    }
-
+	$sql = 'SELECT DISTINCT accountancy_journal FROM ' . MAIN_DB_PREFIX . 'bank_account WHERE clos=0';
+	$resql = $db->query($sql);
+	if (! $resql) {
+		setEventMessages($db->lasterror, null, 'errors');
+	} else {
+		while ( $obj_bank = $db->fetch_object($resql) ) {
+			if (! empty($obj_bank->accountancy_journal)) {
+				$code_journal_array[$obj_bank->accountancy_journal] = $obj_bank->accountancy_journal;
+			}
+		}
+	}
+	
 	$book = new BookKeeping($db);
 	$next_num_mvt = $book->getNextNumMvt();
 	
@@ -270,13 +270,13 @@ if ($action == 'create') {
 	print '</form>';
 } else {
 	$book = new BookKeeping($db);
-	$result = $book->fetch_per_mvt($piece_num);
+	$result = $book->fetchPerMvt($piece_num);
 	if ($result < 0) {
 		setEventMessages($book->error, $book->errors, 'errors');
 	}
 	if (! empty($book->piece_num)) {
 		
-		print load_fiche_titre($langs->trans("UpdateMvts"));
+		print load_fiche_titre($langs->trans("UpdateMvts"), '<a href="list.php">' . $langs->trans('BackToList') . '</a>');
 		
 		print '<table class="border" width="100%">';
 		print '<tr class="pair">';
@@ -319,8 +319,8 @@ if ($action == 'create') {
 			print "<table class=\"noborder\" width=\"100%\">";
 			if (count($book->linesmvt) > 0) {
 				
-				$total_debit=0;
-				$total_credit=0;
+				$total_debit = 0;
+				$total_credit = 0;
 				
 				print '<tr class="liste_titre">';
 				
@@ -339,17 +339,16 @@ if ($action == 'create') {
 					$var = ! $var;
 					print "<tr $bc[$var]>";
 					
-					$total_debit+=$line->debit;
-					$total_credit+=$line->credit;
+					$total_debit += $line->debit;
+					$total_credit += $line->credit;
 					
 					if ($action == 'update' && $line->id == $id) {
 						
-					
 						print '<td>';
-						print $formventilation->select_account($line->numero_compte, 'account_number', 0, array (), 1, 1,'');
+						print $formventilation->select_account($line->numero_compte, 'account_number', 0, array (), 1, 1, '');
 						print '</td>';
 						print '<td>';
-						print $formventilation->select_auxaccount($line->code_tiers, 'code_tiers',1);
+						print $formventilation->select_auxaccount($line->code_tiers, 'code_tiers', 1);
 						print '</td>';
 						print '<td><input type="text" size="15" name="label_compte" value="' . $line->label_compte . '"/></td>';
 						print '<td><input type="text" size="6" name="debit" value="' . price($line->debit) . '"/></td>';
@@ -382,8 +381,12 @@ if ($action == 'create') {
 					print "</tr>\n";
 				}
 				
-				if ($total_debit!=$total_credit) {
-					setEventMessages(null, array('MvtNotCorrectlyBalanced',$total_credit,$total_debit),'errors');
+				if ($total_debit != $total_credit) {
+					setEventMessages(null, array (
+							'MvtNotCorrectlyBalanced',
+							$total_credit,
+							$total_debit 
+					), 'errors');
 				}
 				
 				if ($action == "" || $action == 'add') {
@@ -393,7 +396,7 @@ if ($action == 'create') {
 					print $formventilation->select_account($account_number, 'account_number', 0, array (), 1, 1, '');
 					print '</td>';
 					print '<td>';
-					print $formventilation->select_auxaccount($code_tiers, 'code_tiers',1);
+					print $formventilation->select_auxaccount($code_tiers, 'code_tiers', 1);
 					print '</td>';
 					print '<td><input type="text" size="15" name="label_compte" value="' . $label_compte . '"/></td>';
 					print '<td><input type="text" size="6" name="debit" value="' . price($debit) . '"/></td>';

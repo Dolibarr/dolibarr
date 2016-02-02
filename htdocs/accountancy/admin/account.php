@@ -17,17 +17,16 @@
  */
 
 /**
- * \file		htdocs/accountancy/admin/account.php
- * \ingroup		Accounting Expert
- * \brief		List accounting account
+ * \file htdocs/accountancy/admin/account.php
+ * \ingroup Accounting Expert
+ * \brief List accounting account
  */
-
 require '../../main.inc.php';
-	
+
 // Class
-require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
-require_once DOL_DOCUMENT_ROOT.'/accountancy/class/html.formventilation.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
+require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
 
 // Langs
 $langs->load("compta");
@@ -44,12 +43,12 @@ $search_pcgtype = GETPOST("search_pcgtype");
 $search_pcgsubtype = GETPOST("search_pcgsubtype");
 
 // Security check
-if (!$user->admin)
-    accessforbidden();
+if (! $user->admin)
+	accessforbidden();
 
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'sortorder');
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $page = GETPOST("page", 'int');
 if ($page == - 1) {
 	$page = 0;
@@ -90,11 +89,11 @@ if ($action == 'disable') {
 
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
-	$search_account="";
-    $search_label="";
-	$search_accountparent="";
-	$search_pcgtype="";
-	$search_pcgsubtype="";
+	$search_account = "";
+	$search_label = "";
+	$search_accountparent = "";
+	$search_pcgtype = "";
+	$search_pcgsubtype = "";
 }
 
 /*
@@ -156,7 +155,7 @@ if ($result) {
 	print_liste_field_titre($langs->trans("Pcgtype"), $_SERVER["PHP_SELF"], "aa.pcg_type", "", $param, "", $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Pcgsubtype"), $_SERVER["PHP_SELF"], "aa.pcg_subtype", "", $param, "", $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Activated"), $_SERVER["PHP_SELF"], "aa.active", "", $param, "", $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Action"),$_SERVER["PHP_SELF"],"",$param,"",'width="60" align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Action"), $_SERVER["PHP_SELF"], "", $param, "", 'width="60" align="center"', $sortfield, $sortorder);
 	print '</tr>';
 	
 	print '<tr class="liste_titre">';
@@ -167,24 +166,23 @@ if ($result) {
 	print '<td class="liste_titre"><input type="text" class="flat" size="15" name="search_pcgsubtype" value="' . $search_pcgsubtype . '"></td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td align="right" colspan="2" class="liste_titre">';
-	print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	print '<input type="image" class="liste_titre" src="' . img_picto($langs->trans("Search"), 'search.png', '', '', 1) . '" name="button_search" value="' . dol_escape_htmltag($langs->trans("Search")) . '" title="' . dol_escape_htmltag($langs->trans("Search")) . '">';
 	print '&nbsp;';
-	print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" name="button_removefilter" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+	print '<input type="image" class="liste_titre" src="' . img_picto($langs->trans("Search"), 'searchclear.png', '', '', 1) . '" name="button_removefilter" value="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '" title="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '">';
 	print '</td>';
 	print '</tr>';
 	
 	$var = false;
 	
-	$accountstatic=new AccountingAccount($db);
+	$accountstatic = new AccountingAccount($db);
 	
-	while ( $i < min($num, $limit) ) 
-	{
+	while ( $i < min($num, $limit) ) {
 		$obj = $db->fetch_object($resql);
 		
-		$accountstatic->id=$obj->rowid;
-		$accountstatic->label=$obj->label;
-		$accountstatic->account_number=$obj->account_number;
-
+		$accountstatic->id = $obj->rowid;
+		$accountstatic->label = $obj->label;
+		$accountstatic->account_number = $obj->account_number;
+		
 		print '<tr ' . $bc[$var] . '>';
 		print '<td>' . $accountstatic->getNomUrl(1) . '</td>';
 		print '<td>' . $obj->label . '</td>';
@@ -217,7 +215,7 @@ if ($result) {
 		print '</td>' . "\n";
 		
 		print "</tr>\n";
-		$var=!$var;
+		$var = ! $var;
 		$i ++;
 	}
 	
