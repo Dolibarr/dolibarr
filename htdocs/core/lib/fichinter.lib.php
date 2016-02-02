@@ -70,7 +70,7 @@ function fichinter_prepare_head($object)
 	// Tab to link resources
 	if ($conf->resource->enabled)
 	{
-		$head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=ficheinter&element_id='.$object->id;
+		$head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=fichinter&element_id='.$object->id;
 		$head[$h][1] = $langs->trans("Resources");
 		$head[$h][2] = 'resource';
 		$h++;
