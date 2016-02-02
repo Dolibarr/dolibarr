@@ -267,7 +267,8 @@ if ($action == 'export_csv') {
 	
 	include DOL_DOCUMENT_ROOT . '/accountancy/tpl/export_journal.tpl.php';
 	
-	if ($conf->global->ACCOUNTING_EXPORT_MODELCSV == 2) // Model Cegid Expert Export
+	// Model Cegid Expert Export
+	if ($conf->global->ACCOUNTING_EXPORT_MODELCSV == 2) 
 {
 		$sep = ";";
 		
@@ -320,8 +321,8 @@ if ($action == 'export_csv') {
 				print "\n";
 			}
 		}
-	} else // Model Classic Export
-{
+	} else {
+		// Model Classic Export
 		foreach ( $tabfac as $key => $val ) {
 			$date = dol_print_date($db->jdate($val["date"]), 'day');
 			
@@ -380,10 +381,12 @@ if ($action == 'export_csv') {
 	$exportlink = '';
 	$builddate = time();
 	$description = $langs->trans("DescPurchasesJournal") . '<br>';
-	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS))
+	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 		$description .= $langs->trans("DepositsAreNotIncluded");
-	else
+	} else {
 		$description .= $langs->trans("DepositsAreIncluded");
+	}
+	
 	$period = $form->select_date($date_start, 'date_start', 0, 0, 0, '', 1, 0, 1) . ' - ' . $form->select_date($date_end, 'date_end', 0, 0, 0, '', 1, 0, 1);
 	report_header($nom, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, array (
 			'action' => '' 

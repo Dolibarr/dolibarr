@@ -287,13 +287,14 @@ if ($action == 'writebookkeeping') {
 // Export
 if ($action == 'export_csv') {
 	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
-	$journal = $conf->global->ACCOUNTING_SELL_JOURNAL;
+	$sell_journal = $conf->global->ACCOUNTING_SELL_JOURNAL;
 	
 	include DOL_DOCUMENT_ROOT . '/accountancy/tpl/export_journal.tpl.php';
 	
 	$companystatic = new Client($db);
 	
-	if ($conf->global->ACCOUNTING_EXPORT_MODELCSV == 2) // Model Cegid Expert Export
+	// Model Cegid Expert Export
+	if ($conf->global->ACCOUNTING_EXPORT_MODELCSV == 2) 
 {
 		$sep = ";";
 		
@@ -318,14 +319,15 @@ if ($action == 'export_csv') {
 			
 			// Product / Service
 			foreach ( $tabht[$key] as $k => $mt ) {
-				if ($mt) {
+				$accountingaccount_static = new AccountingAccount($db);
+				if ($accountingaccount_static->fetch(null, $k)) {
 					print $date . $sep;
 					print $sell_journal . $sep;
 					print length_accountg(html_entity_decode($k)) . $sep;
 					print $sep;
 					print ($mt < 0 ? 'D' : 'C') . $sep;
 					print ($mt <= 0 ? price(- $mt) : $mt) . $sep;
-					print dol_trunc($val["description"], 32) . $sep;
+					print dol_trunc($accountingaccount_static->label, 32) . $sep;
 					print $val["ref"];
 					print "\n";
 				}
@@ -346,8 +348,8 @@ if ($action == 'export_csv') {
 				}
 			}
 		}
-	} else // Model Classic Export
-{
+	} else {
+		// Model Classic Export
 		foreach ( $tabfac as $key => $val ) {
 			$companystatic->id = $tabcompany[$key]['id'];
 			$companystatic->name = $tabcompany[$key]['name'];
