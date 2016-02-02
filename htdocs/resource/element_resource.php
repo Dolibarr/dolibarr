@@ -259,9 +259,9 @@ else
 	}
 
 	/*
-	 * Specific to agenda module
+	 * Specific to fichinter module
 	 */
-	if ($element_id && $element == 'ficheinter')
+	if ($element_id && $element == 'fichinter')
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/fichinter.lib.php';
 
