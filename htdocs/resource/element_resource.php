@@ -269,7 +269,7 @@ else
 		if (is_object($fichinter)) 
 		{
 			$head=fichinter_prepare_head($fichinter);
-			dol_fiche_head($head, 'resources', $langs->trans("InterventionCard"),0,'intervention');
+			dol_fiche_head($head, 'resource', $langs->trans("InterventionCard"),0,'intervention');
 
 			// Affichage fiche action en mode visu
 			print '<table class="border" width="100%">';
