@@ -500,15 +500,13 @@ if ($action == 'export_csv') {
 				}
 			} else {
 				foreach ( $tabbq[$key] as $k => $mt ) {
-					if (1) {
-						print '"' . $date . '"' . $sep;
-						print '"' . $val["ref"] . '"' . $sep;
-						print '"' . length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE) . '"' . $sep;
-						print '"' . $langs->trans("Bank") . '"' . $sep;
-						print '"' . ($mt < 0 ? price(- $mt) : '') . '"' . $sep;
-						print '"' . ($mt >= 0 ? price($mt) : '') . '"';
-						print "\n";
-					}
+					print '"' . $date . '"' . $sep;
+					print '"' . $val["ref"] . '"' . $sep;
+					print '"' . length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE) . '"' . $sep;
+					print '"' . $langs->trans("Bank") . '"' . $sep;
+					print '"' . ($mt < 0 ? price(- $mt) : '') . '"' . $sep;
+					print '"' . ($mt >= 0 ? price($mt) : '') . '"';
+					print "\n";
 				}
 			}
 		}
