@@ -20,9 +20,9 @@
  */
 
 /**
- * \file		htdocs/accountancy/customer/list.php
- * \ingroup		Accountancy
- * \brief		Ventilation page from customers invoices
+ * \file htdocs/accountancy/customer/list.php
+ * \ingroup Accountancy
+ * \brief Ventilation page from customers invoices
  */
 require '../../main.inc.php';
 
@@ -58,16 +58,16 @@ $btn_ventil = GETPOST('ventil', 'alpha');
 // Getpost Order and column and limit page
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
-$page = GETPOST('page','int');
+$page = GETPOST('page', 'int');
 if ($page < 0)
 	$page = 0;
 
 if (! empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)) {
 	$limit = $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION;
 } else if ($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION <= 0) {
-	$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+	$limit = GETPOST('limit') ? GETPOST('limit', 'int') : $conf->liste_limit;
 } else {
-	$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+	$limit = GETPOST('limit') ? GETPOST('limit', 'int') : $conf->liste_limit;
 }
 $offset = $limit * $page;
 
@@ -88,9 +88,8 @@ if (! $user->rights->accounting->ventilation->dispatch)
 
 $formventilation = new FormVentilation($db);
 $accounting = new AccountingAccount($db);
-$aarowid_s = $accounting->fetch('', $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT,1);
-$aarowid_p = $accounting->fetch('',$conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT,1);
-
+$aarowid_s = $accounting->fetch('', $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT, 1);
+$aarowid_p = $accounting->fetch('', $conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT, 1);
 
 // Purge search criteria
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) {
@@ -130,26 +129,26 @@ print '<script type="text/javascript">
  * Action
  */
 
-if ($action == 'ventil' && !empty($btn_ventil)) {
+if ($action == 'ventil' && ! empty($btn_ventil)) {
 	print '<div><font color="red">' . $langs->trans("Processing") . '...</font></div>';
 	if (! empty($codeventil) && ! empty($mesCasesCochees)) {
 		print '<div><font color="red">' . count($mesCasesCochees) . ' ' . $langs->trans("SelectedLines") . '</font></div>';
 		$mesCodesVentilChoisis = $codeventil;
 		$cpt = 0;
-
+		
 		foreach ( $mesCasesCochees as $maLigneCochee ) {
 			$maLigneCourante = explode("_", $maLigneCochee);
 			$monId = $maLigneCourante[0];
 			$monNumLigne = $maLigneCourante[1];
 			$monCompte = $mesCodesVentilChoisis[$monNumLigne];
-
+			
 			$sql = " UPDATE " . MAIN_DB_PREFIX . "facturedet";
 			$sql .= " SET fk_code_ventilation = " . $monCompte;
 			$sql .= " WHERE rowid = " . $monId;
 			
 			dol_syslog("/accountancy/customer/list.php sql=" . $sql, LOG_DEBUG);
 			if ($db->query($sql)) {
-				print '<div><font color="green">' . $langs->trans("Lineofinvoice") . ' ' . $monId . ' - ' . $langs->trans("VentilatedinAccount") . ' : ' . $monCompte . '</font></div>';
+				print '<div><font color="green">' . $langs->trans("Lineofinvoice") . ' ' . $monId . ' ' . $langs->trans("VentilatedinAccount") . ' : ' . $monCompte . '</font></div>';
 			} else {
 				print '<div><font color="red">' . $langs->trans("ErrorDB") . ' : ' . $langs->trans("Lineofinvoice") . ' ' . $monId . ' ' . $langs->trans("NotVentilatedinAccount") . ' : ' . $monCompte . '<br/> <pre>' . $sql . '</pre></font></div>';
 			}
@@ -169,9 +168,9 @@ if ($action == 'ventil' && !empty($btn_ventil)) {
 if (! empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)) {
 	$limit = $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION;
 } else if ($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION <= 0) {
-	$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+	$limit = GETPOST('limit') ? GETPOST('limit', 'int') : $conf->liste_limit;
 } else {
-	$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+	$limit = GETPOST('limit') ? GETPOST('limit', 'int') : $conf->liste_limit;
 }
 
 $offset = $limit * $page;
@@ -231,7 +230,7 @@ if ($result) {
 	print_liste_field_titre($langs->trans("Date"), $_SERVER["PHP_SELF"], "f.datef", "", $param, '', $sortfield, $sortorder);
 	print '&nbsp;&nbsp;';
 	print_liste_field_titre($langs->trans("RowId"), $_SERVER["PHP_SELF"], "l.rowid", "", $param, '', $sortfield, $sortorder);
-
+	
 	print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">' . "\n";
 	print '<input type="hidden" name="action" value="ventil">';
 	
@@ -241,7 +240,7 @@ if ($result) {
 	print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Label"), $_SERVER["PHP_SELF"], "p.label", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Description"), $_SERVER["PHP_SELF"], "l.description", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Amount"), $_SERVER["PHP_SELF"],"l.total_ht","",$param,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Amount"), $_SERVER["PHP_SELF"], "l.total_ht", "", $param, 'align="center"', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("VATRate"), $_SERVER["PHP_SELF"], "l.tva_tx", "", $param, 'align="center"', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("AccountAccountingSuggest"), '', '', '', '', 'align="center"');
 	print_liste_field_titre($langs->trans("IntoAccount"), '', '', '', '', 'align="center"');
@@ -281,7 +280,6 @@ if ($result) {
 		
 		$code_sell_p_notset = '';
 		$objp->aarowid_suggest = $objp->aarowid;
-		
 		
 		if (! empty($objp->code_sell)) {
 			$objp->code_sell_p = $objp->code_sell;
@@ -332,7 +330,8 @@ if ($result) {
 		print '<td align="right">';
 		print price($objp->total_ht);
 		print '</td>';
-		if ($objp->vat_tx_l <> $objp->vat_tx_p) $code_vat_differ = 'font-weight:bold; text-decoration:blink; color:red';
+		if ($objp->vat_tx_l != $objp->vat_tx_p)
+			$code_vat_differ = 'font-weight:bold; text-decoration:blink; color:red';
 		print '<td style="' . $code_vat_differ . '" align="center">';
 		print price($objp->tva_tx_line);
 		print '</td>';

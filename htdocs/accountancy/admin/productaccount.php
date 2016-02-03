@@ -20,20 +20,24 @@
  */
 
 /**
- * \file		htdocs/accountancy/admin/productaccount.php
- * \ingroup		Accounting Expert
- * \brief		To define accounting account on product / service
+ * \file htdocs/accountancy/admin/productaccount.php
+ * \ingroup Accounting Expert
+<<<<<<< HEAD
+ * \brief To define accounting account on product / service
+=======
+ * \brief Onglet de gestion de parametrages des ventilations
+>>>>>>> refs/remotes/origin/3.9
  */
 require '../../main.inc.php';
 
 // Class
-require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/accountancy/class/html.formventilation.class.php';
-require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/report.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
+require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
+require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
 // Langs
 $langs->load("companies");
@@ -42,9 +46,13 @@ $langs->load("main");
 $langs->load("accountancy");
 
 // Security check
-if (!$user->admin) accessforbidden();
-if (empty($conf->accounting->enabled)) accessforbidden();
-
+if (! $user->admin) {
+	accessforbidden();
+}
+if (empty($conf->accounting->enabled)) {
+	accessforbidden();
+}
+	
 // search & action GETPOST
 $action = GETPOST('action');
 $codeventil_buy = GETPOST('codeventil_buy', 'array');
@@ -73,14 +81,16 @@ $pagenext = $page + 1;
 if (! empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION) && $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION >= $conf->liste_limit) {
 	$limit = $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION;
 } else {
-	$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+	$limit = GETPOST('limit') ? GETPOST('limit', 'int') : $conf->liste_limit;
 }
 $offset = $limit * $page;
 
-if (! $sortfield)
+if (! $sortfield) {
 	$sortfield = "p.ref";
-if (! $sortorder)
+}
+if (! $sortorder) {
 	$sortorder = "ASC";
+}
 	
 // Sales or Purchase mode ?
 if ($action == 'update') {
@@ -103,7 +113,7 @@ if ($action == 'update') {
 			$error ++;
 		}
 	}
-
+	
 	if (! empty($btn_changeaccount)) {
 		$msg = '<div><font color="red">' . $langs->trans("Processing") . '...</font></div>';
 		if (! empty($chk_prod)) {
@@ -115,11 +125,11 @@ if ($action == 'update') {
 			$cpt = 0;
 			foreach ( $chk_prod as $productid ) {
 				
-				$accounting_account_id=GETPOST('codeventil_'.$productid);
+				$accounting_account_id = GETPOST('codeventil_' . $productid);
 				
-				$result=$accounting->fetch($accounting_account_id,null,1);
-				if ($result<0) {
-					//setEventMessages(null, $accounting->errors, 'errors');
+				$result = $accounting->fetch($accounting_account_id, null, 1);
+				if ($result < 0) {
+					// setEventMessages(null, $accounting->errors, 'errors');
 					$msg .= '<div><font color="red">' . $langs->trans("ErrorDB") . ' : ' . $langs->trans("Product") . ' ' . $productid . ' ' . $langs->trans("NotVentilatedinAccount") . ' : id=' . $accounting_account_id . '<br/> <pre>' . $sql . '</pre></font></div>';
 				} else {
 					
@@ -131,7 +141,7 @@ if ($action == 'update') {
 						$sql .= " SET accountancy_code_sell = " . $accounting->account_number;
 					}
 					$sql .= " WHERE rowid = " . $productid;
-
+					
 					dol_syslog("/accountancy/admin/productaccount.php sql=" . $sql, LOG_DEBUG);
 					if ($db->query($sql)) {
 						$msg .= '<div><font color="green">' . $langs->trans("Product") . ' ' . $productid . ' ' . $langs->trans("VentilatedinAccount") . ' : ' . length_accountg($accounting->account_number) . '</font></div>';
@@ -146,7 +156,6 @@ if ($action == 'update') {
 			$msg .= '<div><font color="red">' . $langs->trans("AnyLineVentilate") . '</font></div>';
 		}
 		$msg .= '<div><font color="red">' . $langs->trans("EndProcessing") . '</font></div>';
-		
 	}
 }
 
@@ -236,12 +245,12 @@ if ($result) {
 	$num_lines = $db->num_rows($result);
 	$i = 0;
 	
-	print load_fiche_titre($langs->trans("InitAccountancy"),'','title_setup');
+	print_barre_liste($langs->trans("ProductAccountingAccountSelect"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num_lines);
 	print '<br>';
-
-	print $langs->trans("InitAccountancyDesc").'<br>';
+	
+	print $langs->trans("InitAccountancyDesc") . '<br>';
 	print '<br>';
-
+	
 	print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">';
 	print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
 	print '<input type="hidden" name="action" value="update">';
@@ -272,14 +281,14 @@ if ($result) {
 	print_liste_field_titre($langs->trans("Label"), $_SERVER["PHP_SELF"], "p.label", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Description"), $_SERVER["PHP_SELF"], "l.description", "", $param, '', $sortfield, $sortorder);
 	/*
-	if ($accounting_product_mode == 'ACCOUNTANCY_BUY') {
-		print_liste_field_titre($langs->trans("Accountancy_code_buy"));
-	} else {
-		print_liste_field_titre($langs->trans("Accountancy_code_sell"));
-	}
-	*/
+	 if ($accounting_product_mode == 'ACCOUNTANCY_BUY') {
+	 print_liste_field_titre($langs->trans("Accountancy_code_buy"));
+	 } else {
+	 print_liste_field_titre($langs->trans("Accountancy_code_sell"));
+	 }
+	 */
 	print_liste_field_titre($langs->trans("AccountAccounting"));
-	print_liste_field_titre($langs->trans("Modify") . '<br><label id="select-all">' . $langs->trans('All') . '</label> / <label id="unselect-all">' . $langs->trans('None') . '</label>','','','','','align="center"');
+	print_liste_field_titre($langs->trans("Modify") . '<br><label id="select-all">' . $langs->trans('All') . '</label> / <label id="unselect-all">' . $langs->trans('None') . '</label>', '', '', '', '', 'align="center"');
 	print '</tr>';
 	
 	print '<tr class="liste_titre">';
@@ -345,26 +354,23 @@ if ($result) {
 		print '<td style="' . $code_sell_p_l_differ . '">' . nl2br(dol_trunc($obj->description, $trunclengh)) . '</td>';
 		
 		// Accounting account buy
-		if ($accounting_product_mode == 'ACCOUNTANCY_BUY')
-		{
+		if ($accounting_product_mode == 'ACCOUNTANCY_BUY') {
 			// print '<td align="left">' . $obj->accountancy_code_buy . '</td>';
 			// TODO: replace by select
 			// print '<td align="left">' . $compta_prodbuy . '</td>';
 			// TODO: we shoul set a user defined value to adjust user square / wide screen size
 			// $trunclenghform = defined('ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT') ? ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT : 50;
 			print '<td align="left">';
-			print $form->select_account($compta_prodbuy_id, 'codeventil_'.$product_static->id, 1);
+			print $form->select_account($compta_prodbuy_id, 'codeventil_' . $product_static->id, 1);
 			print '</td>';
-		} 
-		else
-		{	
+		} else {
 			// Accounting account sell
 			// print '<td align="left">' . $obj->accountancy_code_sell . '</td>';
 			// TODO: replace by select
 			// TODO: we shoul set a user defined value to adjust user square / wide screen size
 			// $trunclenghform = defined('ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT') ? ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT : 50;
 			print '<td align="left">';
-			print $form->select_account($compta_prodsell_id,  'codeventil_'.$product_static->id, 1);
+			print $form->select_account($compta_prodsell_id, 'codeventil_' . $product_static->id, 1);
 			print '</td>';
 		}
 		

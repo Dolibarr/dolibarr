@@ -109,16 +109,21 @@ class pdf_standard extends ModeleExpenseReport
 		$this->posxtype=105;
 		$this->posxprojet=125;
 		$this->posxtva=145;
-		$this->posxup=162;
-		$this->posxqty=176;
-		$this->postotalttc=186;
-		if ($this->page_largeur < 210) // To work with US executive format
-		{
-			$this->posxdate-=20;
-			$this->posxtype-=20;
-			$this->posxprojet-=20;
-			$this->posxtva-=20;
-			$this->posxup-=20;
+		$this->posxup = 162;
+        $this->posxqty = 176;
+        $this->postotalttc = 186;
+        if (empty($conf->projet->enabled)) {
+            $this->posxtva-=20;
+            $this->posxup-=20;
+            $this->posxqty-=20;
+            $this->postotalttc-=20;
+        }
+        if ($this->page_largeur < 210) { // To work with US executive format
+            $this->posxdate-=20;
+            $this->posxtype-=20;
+            $this->posxprojet-=20;
+            $this->posxtva-=20;
+            $this->posxup-=20;
 			$this->posxqty-=20;
 			$this->postotalttc-=20;
 		}
@@ -335,10 +340,12 @@ class pdf_standard extends ModeleExpenseReport
 					$pdf->SetXY($this->posxtype, $curY);
 					$pdf->MultiCell($this->posxprojet-$this->posxtype-1, 3,$outputlangs->transnoentities($object->lines[$i]->type_fees_code), 0, 'C');
 
-					// Project
-					$pdf->SetFont('','', $default_font_size - 1);
-					$pdf->SetXY($this->posxprojet, $curY);
-					$pdf->MultiCell($this->posxtva-$this->posxprojet-1, 3,$object->lines[$i]->projet_ref, 0, 'C');
+					if (! empty($conf->projet->enabled)) {
+                        // Project
+                        $pdf->SetFont('','', $default_font_size - 1);
+                        $pdf->SetXY($this->posxprojet, $curY);
+                        $pdf->MultiCell($this->posxtva-$this->posxprojet-1, 3,$object->lines[$i]->projet_ref, 0, 'C');
+                    }
 
 					// VAT Rate
 					if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
@@ -765,23 +772,24 @@ class pdf_standard extends ModeleExpenseReport
 
 		// Type
 		$pdf->line($this->posxtype-1, $tab_top, $this->posxtype-1, $tab_top + $tab_height);
-		$pdf->SetXY($this->posxtype-1, $tab_top+1);
-		$pdf->MultiCell($this->posxprojet-$this->posxtype-1,2, $outputlangs->transnoentities("Type"),'','C');
+		$pdf->SetXY($this->posxtype - 1, $tab_top + 1);
+        $pdf->MultiCell($this->posxprojet - $this->posxtype - 1, 2, $outputlangs->transnoentities("Type"), '', 'C');
 
-		// Project
-		$pdf->line($this->posxprojet-1, $tab_top, $this->posxprojet-1, $tab_top + $tab_height);
-		$pdf->SetXY($this->posxprojet-1, $tab_top+1);
-		$pdf->MultiCell($this->posxtva-$this->posxprojet-1,2, $outputlangs->transnoentities("Project"),'','C');
+        if (!empty($conf->projet->enabled)) {
+            // Project
+            $pdf->line($this->posxprojet - 1, $tab_top, $this->posxprojet - 1, $tab_top + $tab_height);
+            $pdf->SetXY($this->posxprojet - 1, $tab_top + 1);
+            $pdf->MultiCell($this->posxtva - $this->posxprojet - 1, 2, $outputlangs->transnoentities("Project"), '', 'C');
+        }
 
-		// VAT
-		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
-		{
-			$pdf->line($this->posxtva-1, $tab_top, $this->posxtva-1, $tab_top + $tab_height);
-			$pdf->SetXY($this->posxtva-1, $tab_top+1);
-			$pdf->MultiCell($this->posxup-$this->posxtva-1,2, $outputlangs->transnoentities("VAT"),'','C');
-		}
+        // VAT
+        if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT)) {
+            $pdf->line($this->posxtva - 1, $tab_top, $this->posxtva - 1, $tab_top + $tab_height);
+            $pdf->SetXY($this->posxtva - 1, $tab_top + 1);
+            $pdf->MultiCell($this->posxup - $this->posxtva - 1, 2, $outputlangs->transnoentities("VAT"), '', 'C');
+        }
 
-		// Unit price
+        // Unit price
 		$pdf->line($this->posxup-1, $tab_top, $this->posxup-1, $tab_top + $tab_height);
 		$pdf->SetXY($this->posxup-1, $tab_top+1);
 		$pdf->MultiCell($this->posxqty-$this->posxup-1,2, $outputlangs->transnoentities("PriceU"),'','C');

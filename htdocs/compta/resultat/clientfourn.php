@@ -621,6 +621,87 @@ if (! empty($conf->salaries->enabled))
 	print '</tr>';
 }
 
+/*
+ * Expense
+ */
+
+if (! empty($conf->expensereport->enabled))
+{
+	$langs->load('trips');
+	if ($modecompta == 'CREANCES-DETTES') {
+		$sql = "SELECT p.rowid, p.ref, u.firstname, u.lastname, date_format(date_valid,'%Y-%m') as dm, sum(p.total_ht) as amount_ht,sum(p.total_ttc) as amount_ttc";
+		$sql.= " FROM ".MAIN_DB_PREFIX."expensereport as p";
+		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid=p.fk_user_author";
+		$sql.= " WHERE p.entity = ".getEntity('expensereport',1);
+		$sql.= " AND p.fk_statut>5";
+		
+		$column='p.date_valid';
+		
+	} else {
+		$sql = "SELECT p.rowid, p.ref, u.firstname, u.lastname, date_format(pe.datep,'%Y-%m') as dm, sum(p.total_ht) as amount_ht,sum(p.total_ttc) as amount_ttc";
+		$sql.= " FROM ".MAIN_DB_PREFIX."expensereport as p";
+		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid=p.fk_user_author";
+		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."payment_expensereport as pe ON pe.fk_expensereport = p.rowid";
+		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."c_paiement as c ON pe.fk_typepayment = c.id";
+		$sql.= " WHERE p.entity = ".getEntity('expensereport',1);
+		$sql.= " AND p.fk_statut=6";
+		
+		$column='pe.datep';
+	}
+
+	print '<tr><td colspan="4">'.$langs->trans("ExpenseReport").'</td></tr>';
+	
+	if (! empty($date_start) && ! empty($date_end))
+		$sql.= " AND $column >= '".$db->idate($date_start)."' AND $column <= '".$db->idate($date_end)."'";
+
+		$sql.= " GROUP BY p.rowid, p.ref, u.firstname, u.lastname, dm";
+		$sql.= " ORDER BY p.ref";
+
+		dol_syslog("get expense report outcome");
+		$result=$db->query($sql);
+		$subtotal_ht = 0;
+		$subtotal_ttc = 0;
+		if ($result)
+		{
+			$num = $db->num_rows($result);
+			$var=true;
+			if ($num)
+			{
+				while ($obj = $db->fetch_object($result))
+				{
+					$total_ht -= $obj->amount_ht;
+					$total_ttc -= $obj->amount_ttc;
+					$subtotal_ht += $obj->amount_ht;
+					$subtotal_ttc += $obj->amount_ttc;
+
+					$var = !$var;
+					print "<tr ".$bc[$var]."><td>&nbsp;</td>";
+
+					print "<td>".$langs->trans("ExpenseReport")." <a href=\"".DOL_URL_ROOT."/expensereport/card.php?id=".$obj->rowid."\">".$obj->ref.' ('.$obj->firstname." ".$obj->lastname.")</a></td>\n";
+
+					if ($modecompta == 'CREANCES-DETTES') print '<td align="right">'.price(-$obj->amount_ht).'</td>';
+					print '<td align="right">'.price(-$obj->amount_ttc).'</td>';
+					print '</tr>';
+				}
+			}
+			else
+			{
+				$var = !$var;
+				print "<tr ".$bc[$var]."><td>&nbsp;</td>";
+				print '<td colspan="3">'.$langs->trans("None").'</td>';
+				print '</tr>';
+			}
+		}
+		else
+		{
+			dol_print_error($db);
+		}
+		print '<tr class="liste_total">';
+		if ($modecompta == 'CREANCES-DETTES')
+			print '<td colspan="3" align="right">'.price(-$subtotal_ht).'</td>';
+			print '<td colspan="3" align="right">'.price(-$subtotal_ttc).'</td>';
+			print '</tr>';
+}
 
 /*
  * Donation

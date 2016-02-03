@@ -23,9 +23,16 @@
  */
 
 require ("../main.inc.php");
+//require_once (DOL_DOCUMENT_ROOT."/websites/class/website.class.php");
 
 $langs->load("externalsite");
 
 top_htmlhead("","");
 top_menu("","","_top");
 
+
+/*
+$website = new Website($db);
+$listofwebsites = $website->fetchAll();
+*/
+print 'rrr';

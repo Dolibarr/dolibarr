@@ -289,16 +289,30 @@ script:
 
 - |
   echo "Unit testing"
-  # Ensure we catch errors
+  # Ensure we catch errors. Set this to +e if you want to go to this end to see log file.
   set -e
   phpunit -d memory_limit=-1 -c test/phpunit/phpunittest.xml test/phpunit/AllTests.php
   set +e
-  echo
+
+- |
+  #echo "Output dolibarr.log"
+  #echo cat documents/dolibarr.log
+
+after_script:
+- |
+  # Dolibarr log file
+  #echo "After script"
+  #cat documents/dolibarr.log
+
 
 after_success:
+- |
+  echo Success
 
 after_failure:
 - |
+  echo Failure
+  # This part of code seems to be never executed, error or not ???
   echo "Debugging informations"
   # Upgrade log files
   cat *.log
@@ -313,6 +327,4 @@ after_failure:
     # TODO: PostgreSQL log file
     echo
   fi
-
-after_script:
 

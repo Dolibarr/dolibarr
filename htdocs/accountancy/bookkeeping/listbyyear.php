@@ -40,30 +40,30 @@ $sortfield = GETPOST("sortfield");
 $limit = GETPOST('limit') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $search_date_start = dol_mktime(0, 0, 0, GETPOST('date_startmonth', 'int'), GETPOST('date_startday', 'int'), GETPOST('date_startyear', 'int'));
 $search_date_end = dol_mktime(0, 0, 0, GETPOST('date_endmonth', 'int'), GETPOST('date_endday', 'int'), GETPOST('date_endyear', 'int'));
-$search_doc_type=GETPOST('search_doc_type','alpha');
-$search_doc_date=dol_mktime(0, 0, 0, GETPOST('doc_datemonth', 'int'), GETPOST('doc_dateday', 'int'), GETPOST('doc_dateyear', 'int'));
-$search_doc_ref=GETPOST('search_doc_ref','alpha');
-$search_numero_compte=GETPOST('search_numero_compte','alpha');
-$search_numero_compte_start=GETPOST('search_numero_compte_start','alpha');
-if ($search_numero_compte_start==-1) {
-	$search_numero_compte_start='';
+$search_doc_type = GETPOST('search_doc_type', 'alpha');
+$search_doc_date = dol_mktime(0, 0, 0, GETPOST('doc_datemonth', 'int'), GETPOST('doc_dateday', 'int'), GETPOST('doc_dateyear', 'int'));
+$search_doc_ref = GETPOST('search_doc_ref', 'alpha');
+$search_numero_compte = GETPOST('search_numero_compte', 'alpha');
+$search_numero_compte_start = GETPOST('search_numero_compte_start', 'alpha');
+if ($search_numero_compte_start == - 1) {
+	$search_numero_compte_start = '';
 }
-$search_numero_compte_end=GETPOST('search_numero_compte_end','alpha');
-if ($search_numero_compte_end==-1) {
-	$search_numero_compte_end='';
+$search_numero_compte_end = GETPOST('search_numero_compte_end', 'alpha');
+if ($search_numero_compte_end == - 1) {
+	$search_numero_compte_end = '';
 }
-$search_code_tiers=GETPOST('search_code_tiers','alpha');
-$search_code_tiers_start=GETPOST('search_code_tiers_start','alpha');
-if ($search_code_tiers_start==-1) {
-	$search_code_tiers_start='';
+$search_code_tiers = GETPOST('search_code_tiers', 'alpha');
+$search_code_tiers_start = GETPOST('search_code_tiers_start', 'alpha');
+if ($search_code_tiers_start == - 1) {
+	$search_code_tiers_start = '';
 }
-$search_code_tiers_end=GETPOST('search_code_tiers_end','alpha');
-if ($search_code_tiers_end==-1) {
-	$search_code_tiers_end='';
+$search_code_tiers_end = GETPOST('search_code_tiers_end', 'alpha');
+if ($search_code_tiers_end == - 1) {
+	$search_code_tiers_end = '';
 }
-$search_label_compte=GETPOST('search_label_compte','alpha');
-$search_sens=GETPOST('search_sens','alpha');
-$search_code_journal=GETPOST('search_code_journal','alpha');
+$search_label_compte = GETPOST('search_label_compte', 'alpha');
+$search_sens = GETPOST('search_sens', 'alpha');
+$search_code_journal = GETPOST('search_code_journal', 'alpha');
 
 $object = new BookKeeping($db);
 $form = new Form($db);
@@ -74,6 +74,7 @@ if (empty($search_date_start)) {
 	$search_date_start = dol_mktime(0, 0, 0, 1, 1, dol_print_date(dol_now(), '%Y'));
 	$search_date_end = dol_mktime(0, 0, 0, 12, 31, dol_print_date(dol_now(), '%Y'));
 }
+
 if ($sortorder == "")
 	$sortorder = "ASC";
 if ($sortfield == "")
@@ -171,7 +172,7 @@ if ($result < 0) {
 	setEventMessages($object->error, $object->errors, 'errors');
 }
 
-print_barre_liste($langs->trans("Bookkeeping") .' '. dol_print_date($search_date_start).'-'.dol_print_date($search_date_end), $page, $_SERVER['PHP_SELF'], $options, $sortfield, $sortorder, '', $result, $nbtotalofrecords);
+print_barre_liste($langs->trans("Bookkeeping") . ' ' . dol_print_date($search_date_start) . '-' . dol_print_date($search_date_end), $page, $_SERVER['PHP_SELF'], $options, $sortfield, $sortorder, '', $result, $nbtotalofrecords);
 
 print '<form method="GET" id="searchFormList" action="' . $_SERVER["PHP_SELF"] . '">';
 print '<div class="liste_titre">';
@@ -181,16 +182,16 @@ print $langs->trans('DateEnd') . ': ';
 print $form->select_date($search_date_end, 'date_end');
 print '</div>';
 print '<div class="liste_titre">';
-print $langs->trans('From').' '.$langs->trans('AccountAccounting') . ': ';
-print $formventilation->select_account($search_numero_compte_start,'search_numero_compte_start', 1, array (), 1, 1,'');
-print $langs->trans('To').' '.$langs->trans('AccountAccounting') . ': ';
-print $formventilation->select_account($search_numero_compte_end,'search_numero_compte_end', 1, array (), 1, 1,'');
+print $langs->trans('From') . ' ' . $langs->trans('AccountAccounting') . ': ';
+print $formventilation->select_account($search_numero_compte_start, 'search_numero_compte_start', 1, array (), 1, 1, '');
+print $langs->trans('To') . ' ' . $langs->trans('AccountAccounting') . ': ';
+print $formventilation->select_account($search_numero_compte_end, 'search_numero_compte_end', 1, array (), 1, 1, '');
 print '</div>';
 print '<div class="liste_titre">';
-print $langs->trans('From').' '.$langs->trans('ThirdPartyAccount') . ': ';
-print $formventilation->select_auxaccount($search_code_tiers_start,'search_code_tiers_start', 1);
-print $langs->trans('To').' '.$langs->trans('ThirdPartyAccount') . ': ';
-print $formventilation->select_auxaccount($search_code_tiers_end,'searchcode_tiers_end', 1);
+print $langs->trans('From') . ' ' . $langs->trans('ThirdPartyAccount') . ': ';
+print $formventilation->select_auxaccount($search_code_tiers_start, 'search_code_tiers_start', 1);
+print $langs->trans('To') . ' ' . $langs->trans('ThirdPartyAccount') . ': ';
+print $formventilation->select_auxaccount($search_code_tiers_end, 'searchcode_tiers_end', 1);
 print '</div>';
 print "<table class=\"noborder\" width=\"100%\">";
 
@@ -213,48 +214,48 @@ print "</tr>\n";
 print '<tr class="liste_titre">';
 
 print '<td class="liste_titre">';
-print '<input type="text" size=4 class="flat" name="search_piece_num" value="'.$search_piece_num.'"/>';
+print '<input type="text" size=4 class="flat" name="search_piece_num" value="' . $search_piece_num . '"/>';
 print '</td>';
 
 print '<td class="liste_titre">';
-print '<input type="text" size=7 class="flat" name="search_doc_type" value="'.$search_doc_type.'"/>';
+print '<input type="text" size=7 class="flat" name="search_doc_type" value="' . $search_doc_type . '"/>';
 print '</td>';
 
 print '<td class="liste_titre">';
-print $form->select_date($search_doc_date,'doc_date',0, 0, 1);
+print $form->select_date($search_doc_date, 'doc_date', 0, 0, 1);
 print '</td>';
 
 print '<td class="liste_titre">';
-print '<input type="text" size=6 class="flat" name="search_doc_ref" value="'.$search_doc_ref.'"/>';
+print '<input type="text" size=6 class="flat" name="search_doc_ref" value="' . $search_doc_ref . '"/>';
 print '</td>';
 
 print '<td class="liste_titre">';
-print '<input type="text" size=6 class="flat" name="search_numero_compte" value="'.$search_numero_compte.'"/>';
+print '<input type="text" size=6 class="flat" name="search_numero_compte" value="' . $search_numero_compte . '"/>';
 print '</td>';
 
 print '<td class="liste_titre">';
-print '<input type="text" size=6 class="flat" name="search_code_tiers" value="'.$search_code_tiers.'"/>';
+print '<input type="text" size=6 class="flat" name="search_code_tiers" value="' . $search_code_tiers . '"/>';
 print '</td>';
 
 print '<td class="liste_titre">';
-print '<input type="text" size=6 class="flat" name="search_label_compte" value="'.$search_label_compte.'"/>';
-print '</td>';
-
-print '<td class="liste_titre">';
-print '</td>';
-
-print '<td class="liste_titre">';
+print '<input type="text" size=6 class="flat" name="search_label_compte" value="' . $search_label_compte . '"/>';
 print '</td>';
 
 print '<td class="liste_titre">';
 print '</td>';
 
 print '<td class="liste_titre">';
-print '<input type="text" size=2 class="flat" name="search_sens" value="'.$search_sens.'"/>';
 print '</td>';
 
 print '<td class="liste_titre">';
-print '<input type="text" size=3 class="flat" name="search_code_journal" value="'.$search_code_journal.'"/>';
+print '</td>';
+
+print '<td class="liste_titre">';
+print '<input type="text" size=2 class="flat" name="search_sens" value="' . $search_sens . '"/>';
+print '</td>';
+
+print '<td class="liste_titre">';
+print '<input type="text" size=3 class="flat" name="search_code_journal" value="' . $search_code_journal . '"/>';
 print '</td>';
 
 print '<td class="liste_titre">';

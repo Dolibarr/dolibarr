@@ -314,6 +314,7 @@ else
 		    setEventMessages($langs->trans("ProductDeleted", GETPOST('delprod')), null, 'mesgs');
 	    }
 
+	    if ($search_categ > 0) $param.="&amp;search_categ=".$search_categ;
     	if ($sref) $param="&amp;sref=".$sref;
     	if ($search_ref_supplier) $param="&amp;search_ref_supplier=".$search_ref_supplier;
     	if ($sbarcode) $param.=($sbarcode?"&amp;sbarcode=".$sbarcode:"");
