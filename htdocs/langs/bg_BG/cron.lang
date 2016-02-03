@@ -18,8 +18,9 @@ CronExplainHowToRunUnix=В Unix среда би трябвало да изпол
 CronExplainHowToRunWin=В Microsoft(tm)-ска среда може да използвате инструментите за планирани задачи, за да се изпълни командния ред на всеки 5 минути
 # Menu
 CronJobs=Планирани задачи
-CronListActive=Списък на активните/планирани задачи
+CronListActive=List of enabled/scheduled jobs
 CronListInactive=Списък на неактивираните задачи
+EnabledAndDisabled=Enabled and disabled
 # Page list
 CronDateLastRun=Последно изпълнение
 CronLastOutput=Изходен резултат от последно изпълнени 
@@ -35,8 +36,8 @@ CronInfo=Модул Планирана задача позволява да се
 CronWaitingJobs=Чакащи задачи
 CronTask=Задача
 CronNone=Няма
-CronDtStart=Начална дата
-CronDtEnd=Крайна дата
+CronDtStart=Not before
+CronDtEnd=Not after
 CronDtNextLaunch=Следващо изпълнение
 CronDtLastLaunch=Последно изпълнение
 CronFrequency=Честота
@@ -51,6 +52,7 @@ CronNoJobs=Няма регистрирани задачи
 CronPriority=Приоритет
 CronLabel=Описание
 CronNbRun=Nb. зареждане
+CronMaxRun=Max nb. launch
 CronEach=Всеки
 JobFinished=Задачи заредени и приключили
 #Page card

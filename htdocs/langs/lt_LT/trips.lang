@@ -31,7 +31,7 @@ TripNDF=Informacijos išlaidų ataskaiata
 PDFStandardExpenseReports=Standartinis šablonas PDF dokumento išlaidų ataskaitoje generavimui
 ExpenseReportLine=Išlaidų ataskaitos eilutė
 TF_OTHER=Kitas
-TF_TRANSPORTATION=Transportas
+TF_TRIP=Transportation
 TF_LUNCH=Pietūs
 TF_METRO=Metro
 TF_TRAIN=Traukinys
@@ -99,4 +99,5 @@ ConfirmSaveTrip=Ar tikrai norite patvirtinti šią išlaidų ataskaitą ?
 NoTripsToExportCSV=Už šį laikotarpį nėra išlaidų ataskaitų eksportui
 ExpenseReportPayment=Expense report payment
 
+ExpenseReportsToApprove=Expense reports to approve
 ExpenseReportsToPay=Expense reports to pay

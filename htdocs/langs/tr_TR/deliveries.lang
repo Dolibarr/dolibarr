@@ -17,6 +17,9 @@ DeleteDeliveryReceiptConfirm=<b>%s</b> Teslimat fişini silmek istediğiniz emin
 DeliveryMethod=Teslimat yöntemi
 TrackingNumber=İzleme numarası
 DeliveryNotValidated=Teslimat doğrulanmadı
+StatusDeliveryCanceled=Canceled
+StatusDeliveryDraft=Draft
+StatusDeliveryValidated=Received
 # merou PDF model
 NameAndSignature=Adı ve İmzası:
 ToAndDate=Teslim alan ___________________________________ Tarih _____ / _____ /__________

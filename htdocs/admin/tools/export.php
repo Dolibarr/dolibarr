@@ -107,6 +107,10 @@ $dump_buffer_len = 0;
 $time_start = time();
 
 
+$outputdir  = $conf->admin->dir_output.'/backup';
+$result=dol_mkdir($outputdir);
+
+
 // MYSQL
 if ($what == 'mysql')
 {
@@ -116,7 +120,6 @@ if ($what == 'mysql')
         dolibarr_set_const($db, 'SYSTEMTOOLS_MYSQLDUMP', $cmddump,'chaine',0,'',$conf->entity);
     }
 
-    $outputdir  = $conf->admin->dir_output.'/backup';
     $outputfile = $outputdir.'/'.$file;
     // for compression format, we add extension
     $compression=GETPOST('compression') ? GETPOST('compression','alpha') : 'none';
@@ -185,8 +188,6 @@ if ($what == 'mysql')
 
     $errormsg='';
 
-    $result=dol_mkdir($outputdir);
-
     // Debut appel methode execution
     $fullcommandcrypted=$command." ".$paramcrypted." 2>&1";
     $fullcommandclear=$command." ".$paramclear." 2>&1";
@@ -254,7 +255,6 @@ if ($what == 'mysql')
 
 if ($what == 'mysqlnobin')
 {
-    $outputdir  = $conf->admin->dir_output.'/backup';
     $outputfile = $outputdir.'/'.$file;
     $outputfiletemp = $outputfile.'-TMP.sql';
     // for compression format, we add extension
@@ -288,7 +288,6 @@ if ($what == 'postgresql')
         dolibarr_set_const($db, 'SYSTEMTOOLS_POSTGRESQLDUMP', $cmddump,'chaine',0,'',$conf->entity);
     }
 
-    $outputdir  = $conf->admin->dir_output.'/backup';
     $outputfile = $outputdir.'/'.$file;
     // for compression format, we add extension
     $compression=GETPOST('compression') ? GETPOST('compression','alpha') : 'none';
@@ -299,7 +298,7 @@ if ($what == 'postgresql')
 
     // Parameteres execution
     $command=$cmddump;
-    if (preg_match("/\s/",$command)) $command=$command=escapeshellarg($command);	// Use quotes on command
+    if (preg_match("/\s/",$command)) $command=escapeshellarg($command);	// Use quotes on command
 
     //$param=escapeshellarg($dolibarr_main_db_name)." -h ".escapeshellarg($dolibarr_main_db_host)." -u ".escapeshellarg($dolibarr_main_db_user)." -p".escapeshellarg($dolibarr_main_db_pass);
     //$param="-F c";
@@ -352,38 +351,34 @@ if ($what == 'postgresql')
 
 
 
+if ($errormsg)
+{
+	setEventMessages($langs->trans("Error")." : ".$errormsg, null, 'errors');
 
-// Si on a demande une generation
-//if ($what)
-//{
-    if ($errormsg)
-    {
-    	setEventMessages($langs->trans("Error")." : ".$errormsg, null, 'errors');
+	$resultstring='';
+    $resultstring.='<div class="error">'.$langs->trans("Error")." : ".$errormsg.'</div>';
 
-    	$resultstring='';
-        $resultstring.='<div class="error">'.$langs->trans("Error")." : ".$errormsg.'</div>';
+    $_SESSION["commandbackupresult"]=$resultstring;
+}
+else
+{
+	if ($what)
+	{
+        setEventMessages($langs->trans("BackupFileSuccessfullyCreated").'.<br>'.$langs->trans("YouCanDownloadBackupFile"), null, 'mesgs');
+
+        $resultstring='<div class="ok">';
+        $resultstring.=$langs->trans("BackupFileSuccessfullyCreated").'.<br>';
+        $resultstring.=$langs->trans("YouCanDownloadBackupFile");
+        $resultstring.='<div>';
 
         $_SESSION["commandbackupresult"]=$resultstring;
-    }
-    else
+	}
+	else
 	{
-		if ($what)
-		{
-	        setEventMessages($langs->trans("BackupFileSuccessfullyCreated").'.<br>'.$langs->trans("YouCanDownloadBackupFile"), null, 'mesgs');
+		setEventMessages($langs->trans("YouMustRunCommandFromCommandLineAfterLoginToUser",$dolibarr_main_db_user,$dolibarr_main_db_user), null, 'mesgs');
+	}
+}
 
-	        $resultstring='<div class="ok">';
-	        $resultstring.=$langs->trans("BackupFileSuccessfullyCreated").'.<br>';
-	        $resultstring.=$langs->trans("YouCanDownloadBackupFile");
-	        $resultstring.='<div>';
-
-	        $_SESSION["commandbackupresult"]=$resultstring;
-		}
-		else
-		{
-			setEventMessages($langs->trans("YouMustRunCommandFromCommandLineAfterLoginToUser",$dolibarr_main_db_user,$dolibarr_main_db_user), null, 'mesgs');
-		}
-    }
-//}
 
 /*
 $filearray=dol_dir_list($conf->admin->dir_output.'/backup','files',0,'','',$sortfield,(strtolower($sortorder)=='asc'?SORT_ASC:SORT_DESC),1);

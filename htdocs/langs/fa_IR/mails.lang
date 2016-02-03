@@ -81,6 +81,7 @@ ActivateCheckReadKey=Key used to encrypt URL used for "Read Receipt" and "Unsubc
 EMailSentToNRecipients=ارسال به٪ s را دریافت کنندگان ارسال می شود.
 XTargetsAdded=<b>٪ s را</b> دریافت کنندگان اضافه به لیست هدف
 EachInvoiceWillBeAttachedToEmail=یک سند با استفاده از پیش فرض فاکتور قالب سند ایجاد شده و متصل به هر یک از ایمیل.
+OnlyPDFattachmentSupported=If the PDF document was already generated for the invoice, it will be attached to email. If not, no email will be sent (also, note that only pdf invoice are supported as attachment in mass sending in this version).
 MailTopicSendRemindUnpaidInvoices=یادآوری از فاکتور از٪ s (٪ بازدید کنندگان)
 SendRemind=ارسال یادآور شده توسط ایمیل
 RemindSent=٪ s را یادآور (بازدید کنندگان) ارسال می شود

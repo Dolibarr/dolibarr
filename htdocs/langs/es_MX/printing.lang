@@ -1,0 +1,4 @@
+# Dolibarr language file - Source file is en_US - printing
+TestDriver=Probar
+PRINTIPP_USER=Inicio de sesión
+STATE_IPP_none=Ninguno

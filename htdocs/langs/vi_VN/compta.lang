@@ -155,6 +155,7 @@ DepositsAreNotIncluded=- Hóa đơn tiền gửi cũng không được bao gồm
 DepositsAreIncluded=- Hóa đơn tiền gửi mới có
 LT2ReportByCustomersInInputOutputModeES=Báo cáo của bên thứ ba IRPF
 LT1ReportByCustomersInInputOutputModeES=Báo cáo của bên thứ ba RE
+VATReport=VAT report
 VATReportByCustomersInInputOutputMode=Báo cáo của thuế GTGT của khách hàng thu thập và trả
 VATReportByCustomersInDueDebtMode=Báo cáo của thuế GTGT của khách hàng thu thập và trả
 VATReportByQuartersInInputOutputMode=Báo cáo của tỷ lệ thuế GTGT thu, nộp

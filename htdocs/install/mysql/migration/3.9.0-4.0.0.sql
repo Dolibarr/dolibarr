@@ -35,8 +35,47 @@ UPDATE llx_projet as p set opp_percent = (SELECT percent from llx_c_lead_status 
 ALTER TABLE llx_overwrite_trans ADD UNIQUE INDEX uk_overwrite_trans(lang, transkey);
 
 ALTER TABLE llx_cronjob MODIFY COLUMN unitfrequency	varchar(255) NOT NULL DEFAULT '3600';
+ALTER TABLE llx_cronjob ADD COLUMN test varchar(255) DEFAULT '1';
 
 ALTER TABLE llx_facture ADD INDEX idx_facture_fk_statut (fk_statut);
+
+UPDATE llx_projet as p set p.opp_percent = (SELECT percent FROM llx_c_lead_status as cls WHERE cls.rowid = p.fk_opp_status)  WHERE p.opp_percent IS NULL AND p.fk_opp_status IS NOT NULL;
+ 
+ 
+
+CREATE TABLE llx_website
+(
+	rowid         integer AUTO_INCREMENT NOT NULL PRIMARY KEY,
+	entity        integer DEFAULT 1,
+	shortname     varchar(24) NOT NULL,
+	description   varchar(255),
+	status		  integer,
+    date_creation     datetime,
+    date_modification datetime,
+	tms           timestamp
+) ENGINE=innodb;
+ 
+ALTER TABLE llx_website ADD UNIQUE INDEX uk_website_shortname (shortname, entity);
+
+CREATE TABLE llx_website_page
+(
+	rowid         integer AUTO_INCREMENT NOT NULL PRIMARY KEY,
+	fk_website    integer,
+	pageurl       varchar(16) NOT NULL,
+	title         varchar(255),						
+	description   varchar(255),						
+	keywords      varchar(255),
+	content		  text,
+    status        integer,
+    date_creation     datetime,
+    date_modification datetime,
+	tms           timestamp
+) ENGINE=innodb;
+
+ALTER TABLE llx_website_page ADD UNIQUE INDEX uk_website_page_url (fk_website,pageurl);
+
+ALTER TABLE llx_website_page ADD CONSTRAINT fk_website_page_website FOREIGN KEY (fk_website) REFERENCES llx_website (rowid);
+
 
 
 CREATE TABLE IF NOT EXISTS llx_multicurrency 
@@ -137,3 +176,5 @@ ALTER TABLE llx_propaldet ADD COLUMN multicurrency_subprice double(24,8) DEFAULT
 ALTER TABLE llx_propaldet ADD COLUMN multicurrency_total_ht double(24,8) DEFAULT 0;
 ALTER TABLE llx_propaldet ADD COLUMN multicurrency_total_tva double(24,8) DEFAULT 0;
 ALTER TABLE llx_propaldet ADD COLUMN multicurrency_total_ttc double(24,8) DEFAULT 0;
+ 
+ 

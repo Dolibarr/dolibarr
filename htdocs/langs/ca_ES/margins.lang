@@ -35,8 +35,9 @@ MargeBrute=Marge brut
 MargeNette=Marge net
 MargeType1=Marge en el millor preu de proveïdor
 MargeType2=Marge en Preu mitjà ponderat (PMP)
-MARGIN_TYPE_DETAILS=Marge brut: Preu de venda sense IVA - Preu de compra sense IVA <br/> Marge net: Preu de venda sense IVA - Costos
-MarginTypeDesc=Marge amb millor preu de compra: Preu de venda - El millor preu de proveïdor definit en la fitxa del producte <br/> Marge de Preu Mitj Ponderat (PMP): Preu de venda - Preu Mitj Ponderat del producte (PMP) o el millor preu de proveïdor si encara no té definit cap PMP
+MargeType3=Margin on Cost Price
+MARGIN_TYPE_DETAILS=Raw margin : Selling price - Buying price<br>Net margin : Selling price - Cost price
+MarginTypeDesc=* Margin on best buying price = Selling price - Best supplier price defined on product card<br>* Margin on Weighted Average Price (WAP) = Selling price - Product Weighted Average Price (WAP) or best supplier price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAP if cost price not defined, or best supplier price if WAP not yet defined
 CostPrice=Preu de compra
 BuyingCost=Costos
 UnitCharges=Càrrega unitària

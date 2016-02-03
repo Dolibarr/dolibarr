@@ -3,7 +3,6 @@ SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Счетоводен код за запла�
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Счетоводен код за финансова такса
 Salary=Заплата
 Salaries=Заплати
-Employee=Служител
 NewSalaryPayment=Ново заплащане на заплата
 SalaryPayment=Плащане на заплата
 SalariesPayments=Заплащания заплати

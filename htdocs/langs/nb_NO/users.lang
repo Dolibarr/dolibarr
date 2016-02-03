@@ -121,3 +121,4 @@ OpenIDURL=OpenID URL
 LoginUsingOpenID=Bruk OpenID til å logge inn
 WeeklyHours=Uketimer
 ColorUser=Farge på bruker
+DisabledInMonoUserMode=Disabled in maintenance mode

@@ -110,7 +110,7 @@ function vat_by_thirdparty($db, $y, $date_start, $date_end, $modetax, $direction
     if ($modetax == 1)
     {
         // If vat paid on due invoices (non draft)
-        $sql = "SELECT s.rowid as socid, s.nom as name, s.siren as tva_intra, s.tva_assuj as assuj,";
+        $sql = "SELECT s.rowid as socid, s.nom as name, s.tva_intra as tva_intra, s.tva_assuj as assuj,";
         $sql.= " sum(f.$total_ht) as amount, sum(f.".$total_tva.") as tva,";
         $sql.= " sum(f.localtax1) as localtax1,";
         $sql.= " sum(f.localtax2) as localtax2";

@@ -154,6 +154,7 @@ Purge=Purge
 PurgeAreaDesc=This page allows you to delete all files built or stored by Dolibarr (temporary files or all files in <b>%s</b> directory). Using this feature is not necessary. It is provided for users whose Dolibarr is hosted by a provider that does not offer permissions to delete files built by the web server.
 PurgeDeleteLogFile=Delete log file <b>%s</b> defined for Syslog module (no risk to loose data)
 PurgeDeleteTemporaryFiles=Delete all temporary files (no risk to loose data)
+PurgeDeleteTemporaryFilesShort=Delete temporary files
 PurgeDeleteAllFilesInDocumentsDir=Delete all files in directory <b>%s</b>. Temporary files but also database backup dumps, files attached to elements (third parties, invoices, ...) and uploaded into the ECM module will be deleted.
 PurgeRunNow=Purge now
 PurgeNothingToDelete=No directory or file to delete.

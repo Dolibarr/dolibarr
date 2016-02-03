@@ -18,8 +18,9 @@ CronExplainHowToRunUnix=On Unix environment you should use the following crontab
 CronExplainHowToRunWin=On Microsoft(tm) Windows environement you can use Scheduled task tools to run the command line each 5 minutes
 # Menu
 CronJobs=Việc theo lịch trình
-CronListActive=List of active/scheduled jobs
+CronListActive=List of enabled/scheduled jobs
 CronListInactive=Danh sách việc làm người khuyết tật
+EnabledAndDisabled=Enabled and disabled
 # Page list
 CronDateLastRun=Chạy cuối
 CronLastOutput=Bài đầu ra chạy
@@ -35,8 +36,8 @@ CronInfo=Scheduled job module allow to execute job that have been planned
 CronWaitingJobs=Waiting jobs
 CronTask=Công việc
 CronNone=Không
-CronDtStart=Ngày bắt đầu
-CronDtEnd=Ngày kết thúc
+CronDtStart=Not before
+CronDtEnd=Not after
 CronDtNextLaunch=Thực hiện tiếp theo
 CronDtLastLaunch=Thực hiện cuối
 CronFrequency=Frequency
@@ -51,6 +52,7 @@ CronNoJobs=Không có công ăn việc làm đăng ký
 CronPriority=Ưu tiên
 CronLabel=Mô tả
 CronNbRun=Nb. ra mắt
+CronMaxRun=Max nb. launch
 CronEach=Mỗi
 JobFinished=Việc đưa ra và hoàn thành
 #Page card

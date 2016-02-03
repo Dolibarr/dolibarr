@@ -155,6 +155,7 @@ DepositsAreNotIncluded=- Depozitų sąskaitos-faktūros neįtrauktos
 DepositsAreIncluded=- Depozitų sąskaitos-faktūros yra įtrauktos
 LT2ReportByCustomersInInputOutputModeES=Ataskaita pagal trečiosios šalies IRPF
 LT1ReportByCustomersInInputOutputModeES=Report by third party RE
+VATReport=VAT report
 VATReportByCustomersInInputOutputMode=Ataskaita pagal Kliento gautą ir sumokėtą PVM
 VATReportByCustomersInDueDebtMode=Ataskaita pagal Kliento gautą ir sumokėtą PVM
 VATReportByQuartersInInputOutputMode=Ataskaita pagal gauto ir sumokėto PVM tarifą

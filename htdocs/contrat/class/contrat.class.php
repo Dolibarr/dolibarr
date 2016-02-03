@@ -472,7 +472,71 @@ class Contrat extends CommonObject
 
 	}
 
+	/**
+	 * Unvalidate a contract
+	 *
+	 * @param	User	$user      		Objet User
+     * @param	int		$notrigger		1=Does not execute triggers, 0=execute triggers
+	 * @return	int						<0 if KO, >0 if OK
+	 */
+	function reopen($user, $notrigger=0)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+		global $langs, $conf;
 
+		$now=dol_now();
+
+		$error=0;
+		dol_syslog(get_class($this).'::reopen user='.$user->id);
+
+		$this->db->begin();
+
+		$this->fetch_thirdparty();
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."contrat SET statut = 0";
+		//$sql.= ", fk_user_valid = null, date_valid = null";
+		$sql .= " WHERE rowid = ".$this->id . " AND statut = 1";
+
+		dol_syslog(get_class($this)."::validate", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if (! $resql)
+		{
+			dol_print_error($this->db);
+			$error++;
+			$this->error=$this->db->lasterror();
+		}
+
+		// Trigger calls
+		if (! $error && ! $notrigger)
+		{
+			// Call trigger
+			$result=$this->call_trigger('CONTRACT_REOPEN',$user);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
+		}
+
+		// Set new ref and define current statut
+		if (! $error)
+		{
+			$this->statut=0;
+			$this->brouillon=1;
+			$this->date_validation=$now;
+		}
+
+		if (! $error)
+		{
+			$this->db->commit();
+			return 1;
+		}
+		else
+		{
+			$this->db->rollback();
+			return -1;
+		}
+	}
+	
 	/**
 	 *    Load a contract from database
 	 *

@@ -54,6 +54,9 @@ PacificNumRefModelDesc1=Zwróć numer w formacie %syymm-nnnn, gdzie yy to rok, m
 PacificNumRefModelError=karta interwencji rozpoczynająca się od $syymm już istnieje i nie jest zgodna z wzorem numerowania. Usuń ją lub zmień nazwę, aby aktywować ten moduł.
 PrintProductsOnFichinter=Drukuj produkty na karcie interwencji
 PrintProductsOnFichinterDetails=Interwencje generowane z zamówień
+InterventionStatistics=Statistics of interventions
+NbOfinterventions=Nb of intervention cards
+NumberOfInterventionsByMonth=Nb of intervention cards by month (date of validation)
 ##### Exports #####
 InterId=ID interwencji
 InterRef=Numer referencyjny interwencji

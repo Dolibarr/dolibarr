@@ -81,6 +81,7 @@ ActivateCheckReadKey="Okuma Alındısı" ve "Abonelik İptali" için kullanılan
 EMailSentToNRecipients=EMail sent to %s recipients.
 XTargetsAdded=<b>%s</b> alıcılar listesine eklendi
 EachInvoiceWillBeAttachedToEmail=Varsayılan fatura belgesi şablonu kullanan bir belge oluşturulacak ve her epostaya eklenecektir.
+OnlyPDFattachmentSupported=If the PDF document was already generated for the invoice, it will be attached to email. If not, no email will be sent (also, note that only pdf invoice are supported as attachment in mass sending in this version).
 MailTopicSendRemindUnpaidInvoices=%s (%s) faturası için anımsatma
 SendRemind=Anımsatmayı Eposta ile gönder
 RemindSent=%s anımsatma(lar) gönderildi

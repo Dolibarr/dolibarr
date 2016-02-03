@@ -54,6 +54,9 @@ PacificNumRefModelDesc1=بازگشت numero با فرمت٪ syymm-NNNN که در
 PacificNumRefModelError=کارت مداخله با $ شروع میشوند syymm حال حاضر وجود دارد و سازگار با این مدل توالی نیست. آن را حذف و یا تغییر نام آن را به این ماژول را فعال کنید.
 PrintProductsOnFichinter=محصول چاپ بر روی کارت مداخله
 PrintProductsOnFichinterDetails=interventions generated from orders
+InterventionStatistics=Statistics of interventions
+NbOfinterventions=Nb of intervention cards
+NumberOfInterventionsByMonth=Nb of intervention cards by month (date of validation)
 ##### Exports #####
 InterId=Intervention id
 InterRef=Intervention ref.

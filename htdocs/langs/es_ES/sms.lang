@@ -49,5 +49,6 @@ SendSms=Enviar SMS
 SmsInfoCharRemain=Nº restante de caracteres
 SmsInfoNumero= (formato internacional ej : +33899701761)
 DelayBeforeSending=Retraso antes de enviarlo (en minutos)
+SmsNoPossibleSenderFound=No sender available. Check setup of your SMS provider.
 SmsNoPossibleRecipientFound=No hay destinatarios. Compruebe la configuración de su proveedor de SMS.
 

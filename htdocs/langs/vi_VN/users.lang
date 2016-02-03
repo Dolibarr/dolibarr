@@ -121,3 +121,4 @@ OpenIDURL=OpenID URL
 LoginUsingOpenID=Sử dụng OpenID để đăng nhập
 WeeklyHours=Giờ hàng tuần
 ColorUser=Màu của người dùng
+DisabledInMonoUserMode=Disabled in maintenance mode

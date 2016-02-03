@@ -55,13 +55,13 @@ class FormProjets
 	 *  @param	int		$discard_closed Discard closed projects (0=Keep,1=hide completely,2=Disable)
 	 *  @param	int		$forcefocus		Force focus on field (works with javascript only)
 	 *  @param	int		$disabled		Disabled
-	 *  @param int  $mode               0 for HTML mode and 1 for JSON mode
-	 * @param string $filterkey         Key to filter
+	 *  @param  int     $mode           0 for HTML mode and 1 for JSON mode
+	 *  @param  string  $filterkey      Key to filter
 	 *	@return int         			Nber of project if OK, <0 if KO
 	 */
 	function select_projects($socid=-1, $selected='', $htmlname='projectid', $maxlength=16, $option_only=0, $show_empty=1, $discard_closed=0, $forcefocus=0, $disabled=0, $mode = 0, $filterkey = '')
 	{
-		global $langs,$conf;
+		global $langs,$conf,$form;
 
 		if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->PROJECT_USE_SEARCH_TO_SELECT))
 		{
@@ -86,6 +86,14 @@ class FormProjets
 		else
 		{
 			print $this->select_projects_list($socid, $selected, $htmlname, $maxlength, $option_only, $show_empty, $discard_closed, $forcefocus, $disabled, 0, $filterkey);
+			if ($discard_closed) 
+			{
+			    if (class_exists('Form'))
+			    {
+    			    if (empty($form)) $form=new Form($this->db);
+                    print $form->textwithpicto('', $langs->trans("ClosedProjectsAreHidden"));
+			    }
+			}
 		}
 	}
 
@@ -174,7 +182,7 @@ class FormProjets
 					}
 					else
 					{
-						if ($discard_closed == 1 && $obj->fk_statut == 2)
+						if ($discard_closed == 1 && $obj->fk_statut == 2 && $obj->rowid != $selected) // We discard closed except if selected
 						{
 							$i++;
 							continue;
@@ -531,9 +539,10 @@ class FormProjets
 	 *    @param   int         $showempty          Add an empty line
 	 *    @param   int         $useshortlabel      Use short label
 	 *    @param   int         $showallnone        Add choice "All" and "None"
+	 *    @param   int         $showpercent        Show default probability for status
 	 *    @return  int|string                      The HTML select list of element or '' if nothing or -1 if KO
 	 */
-	function selectOpportunityStatus($htmlname, $preselected=0, $showempty=1, $useshortlabel=0, $showallnone=0)
+	function selectOpportunityStatus($htmlname, $preselected=0, $showempty=1, $useshortlabel=0, $showallnone=0, $showpercent=0)
 	{
 		global $conf, $langs;
 
@@ -549,7 +558,7 @@ class FormProjets
 			$i = 0;
 			if ($num > 0)
 			{
-				$sellist = '<select class="flat oppstatus" name="'.$htmlname.'">';
+				$sellist = '<select class="flat oppstatus" id="'.$htmlname.'" name="'.$htmlname.'">';
 				if ($showempty) $sellist.= '<option value="-1"></option>';
 				if ($showallnone) $sellist.= '<option value="all">--'.$langs->trans("Alls").'--</option>';
 				if ($showallnone) $sellist.= '<option value="none">--'.$langs->trans("None").'--</option>';
@@ -557,7 +566,7 @@ class FormProjets
 				{
 					$obj = $this->db->fetch_object($resql);
 
-					$sellist .='<option value="'.$obj->rowid.'"';
+					$sellist .='<option value="'.$obj->rowid.'" defaultpercent="'.$obj->percent.'"';
 					if ($obj->rowid == $preselected) $sellist .= ' selected="selected"';
 					$sellist .= '>';
 					if ($useshortlabel)
@@ -567,7 +576,7 @@ class FormProjets
 					else
 					{
 						$finallabel = ($langs->transnoentitiesnoconv("OppStatus".$obj->code) != "OppStatus".$obj->code ? $langs->transnoentitiesnoconv("OppStatus".$obj->code) : $obj->label);
-						$finallabel.= ' ('.$obj->percent.'%)';
+						if ($showpercent) $finallabel.= ' ('.$obj->percent.'%)';
 					}
 					$sellist .= $finallabel;
 					$sellist .='</option>';

@@ -8,6 +8,7 @@ PAYPAL_API_SANDBOX=Test-/sandkasse-modus
 PAYPAL_API_USER=API brukernavn
 PAYPAL_API_PASSWORD=API passord
 PAYPAL_API_SIGNATURE=API signatur
+PAYPAL_SSLVERSION=Curl SSL Version
 PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Tilby &quot;integrert&quot betaling; (Kredittkort + Paypal) eller bare &quot;Paypal&quot; 
 PaypalModeIntegral=Integrert
 PaypalModeOnlyPaypal=Kun PayPal

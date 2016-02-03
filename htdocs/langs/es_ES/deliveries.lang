@@ -17,6 +17,9 @@ DeleteDeliveryReceiptConfirm=¿Está seguro de querer eliminar esta nota de entr
 DeliveryMethod=Método de envío
 TrackingNumber=Nº de seguimiento
 DeliveryNotValidated=Nota de recepción no validada
+StatusDeliveryCanceled=Canceled
+StatusDeliveryDraft=Draft
+StatusDeliveryValidated=Received
 # merou PDF model
 NameAndSignature=Nombre y firma :
 ToAndDate=En___________________________________ a ____/_____/__________

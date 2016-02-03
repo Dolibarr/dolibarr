@@ -155,6 +155,7 @@ DepositsAreNotIncluded=- 存款發票，也不包括
 DepositsAreIncluded=- 存款發票
 LT2ReportByCustomersInInputOutputModeES=報告由第三方IRPF
 LT1ReportByCustomersInInputOutputModeES=Report by third party RE
+VATReport=VAT report
 VATReportByCustomersInInputOutputMode=Report by the customer VAT collected and paid
 VATReportByCustomersInDueDebtMode=Report by the customer VAT collected and paid
 VATReportByQuartersInInputOutputMode=Report by rate of the VAT collected and paid

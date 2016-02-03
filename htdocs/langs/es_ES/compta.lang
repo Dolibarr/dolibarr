@@ -155,6 +155,7 @@ DepositsAreNotIncluded=- Las facturas de anticipo no están incluidas
 DepositsAreIncluded=- Las facturas de anticipo están incluidas
 LT2ReportByCustomersInInputOutputModeES=Informe por tercero del IRPF
 LT1ReportByCustomersInInputOutputModeES=Informe de RE por terceros
+VATReport=VAT report
 VATReportByCustomersInInputOutputMode=Informe por cliente del IVA repercutido y soportado
 VATReportByCustomersInDueDebtMode=Informe por cliente del IVA repercutido y soportado
 VATReportByQuartersInInputOutputMode=Informe por tasa del IVA repercutido y soportado

@@ -1,32 +1,31 @@
 # Dolibarr language file - en_US - Accounting Expert
-ACCOUNTING_EXPORT_SEPARATORCSV=Column separator for export file
-ACCOUNTING_EXPORT_DATE=Date format for export file
-ACCOUNTING_EXPORT_PIECE=Export the number of piece
+ACCOUNTING_EXPORT_SEPARATORCSV=Separatir kolumn dla exportowanego pliku
+ACCOUNTING_EXPORT_DATE=Format daty dla exportowanego pliku 
+ACCOUNTING_EXPORT_PIECE=Exportuj ilość sztuk
 ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account
 ACCOUNTING_EXPORT_LABEL=Export the label
 ACCOUNTING_EXPORT_AMOUNT=Export the amount
 ACCOUNTING_EXPORT_DEVISE=Export the devise
-Selectformat=Select the format for the file
+Selectformat=Wybierz format dla pliku
 ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
 
 Accounting=Księgowość
 Globalparameters=Parametry globalne
 Menuaccount=Konta księgowe
-Menuthirdpartyaccount=Rachunki Thirdparty
+Menuthirdpartyaccount=Rachunki kontrahenta
 MenuTools=Narzędzia
 
 ConfigAccountingExpert=Konfiguracja modułu eksperta księgowego
-Journaux=Czasopisma
-JournalFinancial=Czasopisma finansowe
-Exports=Eksportuje
+Journaux=Dzienniki
+JournalFinancial=Dzienniki finansowe
+Exports=Eksporty
 Export=Eksport
 Modelcsv=Model eksportu
-OptionsDeactivatedForThisExportModel=Dla tego modelu eksportowego, opcje są wyłączone
+OptionsDeactivatedForThisExportModel=Dla tego modelu eksportu opcje są wyłączone
 Selectmodelcsv=Wybierz model eksportu
-Modelcsv_normal=Klasyczne eksport
+Modelcsv_normal=Standardowy eksport
 Modelcsv_CEGID=Eksport do Cegid Expert
 BackToChartofaccounts=Powrót planu kont
-Back=Powrót
 
 Definechartofaccounts=Definiowanie planu kont
 Selectchartofaccounts=Wybierz plan kont
@@ -41,10 +40,10 @@ TradeMargin=Marża handlowa
 Reports=Raporty
 ByCustomerInvoice=Fakturami klientów
 NewAccount=Nowe konto księgowe
-Create=Utworzyć
-CreateMvts=Create movement
+Create=Utwórz
+CreateMvts=Utwórz przesunięcie
 UpdateAccount=Modyfikacja konta księgowego
-UpdateMvts=Modyfikacja ruch
+UpdateMvts=Modyfikacja przesunięcia
 WriteBookKeeping=Konta rekord w księdze głównej
 Bookkeeping=Księga główna
 AccountBalanceByMonth=Stan konta na miesiąc
@@ -62,14 +61,14 @@ Ventilate=Wietrzyć
 VentilationAuto=Automatyczny podział
 
 Processing=Przetwarzanie
-EndProcessing=Koniec obróbki
+EndProcessing=Koniec przetwarzania
 AnyLineVentilate=Wszelkie linie do wentylacji
 SelectedLines=Wybrane linie
-Lineofinvoice=Linia faktury
+Lineofinvoice=Pozycja faktury
 VentilatedinAccount=Wentylowane z powodzeniem na koncie księgowym
 NotVentilatedinAccount=Nie wentylowane na koncie księgowym
 
-ACCOUNTING_SEPARATORCSV=Separator kolumna w pliku eksportu
+ACCOUNTING_SEPARATORCSV=Separator kolumny w eksportowanym pliku
 
 ACCOUNTING_LIMIT_LIST_VENTILATION=Ilość elementów jest podział przedstawiony przez strony (maksymalna zalecana: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Rozpocząć sortowanie stron rozpadu "Has to podział" przez ostatnich elementów
@@ -79,56 +78,52 @@ AccountLength=Długość rozliczania rachunków przedstawiono w Dolibarr
 AccountLengthDesc=Funkcja pozwala udawać długość koncie księgowym zastępując obowiązuje przez cyfrę zero. Funkcja ta dotyka tylko wyświetlacz, to nie zmienia kont księgowych zarejestrowanych w Dolibarr. Na wywóz, funkcja ta jest konieczna, aby być zgodne z określonym oprogramowaniem.
 ACCOUNTING_LENGTH_DESCRIPTION=Length for displaying product & services description in listings (Best = 50)
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Length for displaying product & services account description form in listings (Best = 50)
-ACCOUNTING_LENGTH_GACCOUNT=Długość ogólnych rachunków
-ACCOUNTING_LENGTH_AACCOUNT=Długość z rachunków osób trzecich
+ACCOUNTING_LENGTH_GACCOUNT=Długość numerów głónych kont bankowych
+ACCOUNTING_LENGTH_AACCOUNT=Długośc nr kont bankowych kontahentów
 
-ACCOUNTING_SELL_JOURNAL=Sprzedam czasopisma
-ACCOUNTING_PURCHASE_JOURNAL=Zakup czasopisma
-ACCOUNTING_MISCELLANEOUS_JOURNAL=Inne czasopisma
-ACCOUNTING_EXPENSEREPORT_JOURNAL=Expense report journal
+ACCOUNTING_SELL_JOURNAL=Dziennik sprzedaży
+ACCOUNTING_PURCHASE_JOURNAL=Dziennik zakupów
+ACCOUNTING_MISCELLANEOUS_JOURNAL=Dziennik różnic
+ACCOUNTING_EXPENSEREPORT_JOURNAL=Dziennik raportów kosztowych
 ACCOUNTING_SOCIAL_JOURNAL=Czasopismo Społecznego
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Konto transferu
 ACCOUNTING_ACCOUNT_SUSPENSE=Konto czekać
 
-ACCOUNTING_PRODUCT_BUY_ACCOUNT=Rachunkowość konto domyślnie dla zakupionych produktów (jeśli nie jest określony w ulotce)
-ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Rachunkowość konto domyślnie dla sprzedawanych produktów (jeśli nie określono w ulotce)
-ACCOUNTING_SERVICE_BUY_ACCOUNT=Rachunkowość konto domyślnie dla zakupionych usług (jeśli nie określona w arkuszu usług)
-ACCOUNTING_SERVICE_SOLD_ACCOUNT=Rachunkowość konto domyślnie dla sprzedanych usług (jeśli nie określona w arkuszu usług)
+ACCOUNTING_PRODUCT_BUY_ACCOUNT=Domyślne konto księgowe dla kupionych produktów (jeżeli nie zdefiniowano w arkuszu produktu)
+ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Domyślne konto księgowe dla sprzedanych produktów (jeżeli nie zdefiniowano w arkuszu produktu)
+ACCOUNTING_SERVICE_BUY_ACCOUNT=Domyślne konto księgowe dla zakupionych usług (jeżeli nie zdefioniowano w arkuszu usługi)
+ACCOUNTING_SERVICE_SOLD_ACCOUNT=Domyślne konto księgowe dla sprzedanych usług (jeżeli nie zdefiowano w arkuszu usługi)
 
 Doctype=Rodzaj dokumentu
 Docdate=Data
 Docref=Odniesienie
 Numerocompte=Konto
-Code_tiers=Thirdparty
+Code_tiers=Kontrahent
 Labelcompte=Konto Wytwórnia
 Sens=Sens
-Codejournal=Czasopismo
+Codejournal=Dziennik
 
-DelBookKeeping=Usuń zapisy w księdze głównej
+DelBookKeeping=Usuń wpisy z księgi głównej
 
-DescSellsJournal=Sprzedaje w czasopiśmie
-DescPurchasesJournal=Zakupy czasopisma
-BankJournal=Czasopismo Banku
-DescBankJournal=Czasopismo Banku w tym wszystkich rodzajów płatności innych niż gotówka
-CashJournal=Czasopismo Gotówka
-DescCashJournal=Czasopismo pieniężnych w tym rodzaju płatności gotówką
-FinanceJournal=Finance journal
-DescFinanceJournal=Finance journal including all the types of payments by bank account
+DescSellsJournal=Dziennik sprzedarzy
+DescPurchasesJournal=Dziennik zakupów
+FinanceJournal=Dziennik finansów
+DescFinanceJournal=Dziennik finansów zawiera wszystkie typy płatności wykonane przez konto bankowe
 
 CashPayment=Płatność gotówką
 
 SupplierInvoicePayment=Zapłata faktury dostawcy
 CustomerInvoicePayment=Zapłata faktury klienta
 
-ThirdPartyAccount=Thirdparty konto
+ThirdPartyAccount=Konto kontrahenta
 
-NewAccountingMvt=Nowy ruch
-NumMvts=Ilość ruchów
-ListeMvts=Lista przemieszczania
+NewAccountingMvt=Nowe przesunięcie
+NumMvts=Ilość przesunięć
+ListeMvts=Lista przesunięć
 ErrorDebitCredit=Debetowych i kredytowych nie może mieć wartość w tym samym czasie
 
-ReportThirdParty=Lista thirdparty konto
+ReportThirdParty=Lista kont kontrahenta
 DescThirdPartyReport=Skonsultuj się tutaj listę thirdparty klientów i dostawców oraz ich kont księgowych
 
 ListAccounts=Lista kont księgowych
@@ -140,7 +135,7 @@ Accountparent=Korzeń konta
 
 DescVentilCustomer=Skonsultuj się tutaj rocznego rozliczenia przebicia faktur klientów
 TotalVente=Total turnover before tax
-TotalMarge=Marża całkowita sprzedaż
+TotalMarge=Całkowita marża sprzedaży
 DescVentilDoneCustomer=Skonsultuj się tutaj listę linii faktur klientów i ich rachunek rachunkowości
 DescVentilTodoCustomer=Wyraź swoje wiersze faktury klienta z kontem rachunkowości
 ChangeAccount=Zmienianie konta księgowego dla wierszy wybranych przez konto:
@@ -151,10 +146,10 @@ DescVentilDoneSupplier=Skonsultuj się tutaj listę linii dostawcy faktur i ich 
 
 ValidateHistory=Weryfikacja Automatycznie
 
-ErrorAccountancyCodeIsAlreadyUse=Błąd, nie można usunąć to konto księgowe, ponieważ jest używany
-
+ErrorAccountancyCodeIsAlreadyUse=Błąd, nie można usunąc tego konta księgowego, ponieważ jest w użyciu
+MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
 FicheVentilation=Karta Podział
-GeneralLedgerIsWritten=Operations are written in the general ledger
+GeneralLedgerIsWritten=Operacje zostały zapisane w głównej księdze
 
 ##Export Journal Feature
 ExportFormat=Format of Export
@@ -167,7 +162,13 @@ Headername=Name in header
 Type=Type of fields
 Param=Additionnal parameters
 EnabledProduct=In Product
-EnabledTiers=In Tiers
+EnabledTiers=In third party
 EnabledVat=In Vat
-
-MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
+## Tools - Init accounting account on product / service
+InitAccountancy=Init accountancy
+InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accountancy account defined for sales and purchases. Check before that setup of module accountancy is complete.
+Options=Options
+OptionModeProductSell=Mode sales
+OptionModeProductBuy=Mode purchases
+OptionModeProductSellDesc=Show all products with no accounting account defined for sales.
+OptionModeProductBuyDesc=Show all products with no accounting account defined for purchases.

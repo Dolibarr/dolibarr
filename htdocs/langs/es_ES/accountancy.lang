@@ -1,13 +1,13 @@
 # Dolibarr language file - en_US - Accounting Expert
 ACCOUNTING_EXPORT_SEPARATORCSV=Separador de columnas en el archivo de exportación
 ACCOUNTING_EXPORT_DATE=Formato de fecha en el archivo de exportación
-ACCOUNTING_EXPORT_PIECE=Export the number of piece
-ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account
-ACCOUNTING_EXPORT_LABEL=Export the label
-ACCOUNTING_EXPORT_AMOUNT=Export the amount
-ACCOUNTING_EXPORT_DEVISE=Export the devise
-Selectformat=Select the format for the file
-ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
+ACCOUNTING_EXPORT_PIECE=Exportar el número de asiento
+ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Exportar con la cuenta global
+ACCOUNTING_EXPORT_LABEL=Exportar la etiqueta
+ACCOUNTING_EXPORT_AMOUNT=Exportar el importe
+ACCOUNTING_EXPORT_DEVISE=Exportar la divisa
+Selectformat=Seleccione el formato del archivo
+ACCOUNTING_EXPORT_PREFIX_SPEC=Especifique el prefijo del nombre de archivo
 
 Accounting=Contabilidad
 Globalparameters=Configuración global
@@ -26,7 +26,6 @@ Selectmodelcsv=Seleccione un modelo de exportación
 Modelcsv_normal=Exportación clásica
 Modelcsv_CEGID=Exportar a Cegid Expert
 BackToChartofaccounts=Volver al plan contable
-Back=Volver
 
 Definechartofaccounts=Definir plan contable
 Selectchartofaccounts=Seleccione un plan contable
@@ -56,7 +55,7 @@ AccountingVentilationCustomer=Contabilización ventas
 CAHTF=Total purchase supplier before tax
 InvoiceLines=Líneas de factura para contabilizar
 InvoiceLinesDone=Líneas de facturas contabilizadas
-IntoAccount=Ventilate in the accounting account
+IntoAccount=Contabilizar en la cuenta
 
 Ventilate=Contabilizar
 VentilationAuto=Contabilización automática
@@ -67,7 +66,7 @@ AnyLineVentilate=No hay líneas para contabilizar
 SelectedLines=Líneas seleccionadas
 Lineofinvoice=Línea de la factura
 VentilatedinAccount=Contabilizada con éxito en la cuenta contable
-NotVentilatedinAccount=Cuenta sin contabilización en la contabilidad
+NotVentilatedinAccount=Cuenta sin contabilizar en la contabilidad
 
 ACCOUNTING_SEPARATORCSV=Separador de columnas en el archivo de exportación
 
@@ -109,10 +108,6 @@ DelBookKeeping=Eliminar los registros del Diario Mayor
 
 DescSellsJournal=Diario de ventas
 DescPurchasesJournal=Diario de compras
-BankJournal=Diario bancario
-DescBankJournal=El diario bancario incluye todos los tipos pagos que no sean de efectivo
-CashJournal=Diario de caja
-DescCashJournal=El diario de caja incluye el tipo de pago efectivo
 FinanceJournal=Diario financiero
 DescFinanceJournal=El diario financiero incluye todos los tipos de pagos por cuenta bancaria
 
@@ -139,7 +134,7 @@ Pcgsubtype=Subcuenta
 Accountparent=Padre de la cuenta
 
 DescVentilCustomer=Consulte aquí la contabilización anual de sus facturas a clientes
-TotalVente=Total turnover before tax
+TotalVente=Total facturación antes de impuestos
 TotalMarge=Total margen ventas
 DescVentilDoneCustomer=Consulte aquí las líneas de facturas a clientes y sus cuentas contables
 DescVentilTodoCustomer=Contabilice sus líneas de facturas a clientes con una cuenta contable
@@ -152,22 +147,28 @@ DescVentilDoneSupplier=Consulte aquí la lista de facturas de proveedores y sus 
 ValidateHistory=Validar automáticamente
 
 ErrorAccountancyCodeIsAlreadyUse=Error, no puede eliminar esta cuenta ya que está siendo usada
-
+MvtNotCorrectlyBalanced=Movimiento descuadrado. Debe = %s. Haber = %s
 FicheVentilation=Ficha contable
 GeneralLedgerIsWritten=Operations are written in the general ledger
 
 ##Export Journal Feature
-ExportFormat=Format of Export
-Prefixname=Prefix of export File
-Separate=Export separator
-Textframe=Frame of text value
-Headercol=Colname in header of file
-Fieldname=Name of Field
-Headername=Name in header
-Type=Type of fields
-Param=Additionnal parameters
-EnabledProduct=In Product
-EnabledTiers=In Tiers
-EnabledVat=In Vat
-
-MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
+ExportFormat=Formato de exportación
+Prefixname=Prefijo del archivo de exportación
+Separate=Separador de exportación
+Textframe=Ventana del valor del texto
+Headercol=Nombre de columna en cabecera del archivo
+Fieldname=Nombre del campo
+Headername=Nombre en la cabecera
+Type=Tipos de campos
+Param=Parámetros adicionales
+EnabledProduct=En producto
+EnabledTiers=In third party
+EnabledVat=En IVA
+## Tools - Init accounting account on product / service
+InitAccountancy=Init accountancy
+InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accountancy account defined for sales and purchases. Check before that setup of module accountancy is complete.
+Options=Options
+OptionModeProductSell=Mode sales
+OptionModeProductBuy=Mode purchases
+OptionModeProductSellDesc=Show all products with no accounting account defined for sales.
+OptionModeProductBuyDesc=Show all products with no accounting account defined for purchases.

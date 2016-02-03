@@ -22,7 +22,7 @@ ToOfferALinkForOnlinePaymentOnMemberSubscription=URL que ofereix una interfície
 YouCanAddTagOnUrl=També pot afegir el paràmetre url <b>&tag=<i>value</i></b> per a qualsevol d'aquestes adreces (obligatori només per al pagament lliure) per veure el seu propi codi de comentari de pagament.
 SetupPayBoxToHavePaymentCreatedAutomatically=Configureu la vostra url Paybox <b>%s</b> per tal que el pagament es creu automàticament al validar.
 YourPaymentHasBeenRecorded=Aquesta pàgina confirma que el pagament s'ha registrat correctament. Gràcies.
-YourPaymentHasNotBeenRecorded=El seu pagament no ha estat registrat i la transacció ha estat anul.lada. Gràcies.
+YourPaymentHasNotBeenRecorded=El pagament no ha estat registrat i la transacció ha estat anul·lada. Gràcies.
 AccountParameter=Paràmetres del compte
 UsageParameter=Paràmetres d'ús
 InformationToFindParameters=Informació per trobar la seva configuració de compte %s

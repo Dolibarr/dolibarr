@@ -49,5 +49,6 @@ SendSms=SMS-
 SmsInfoCharRemain=Nb van de resterende tekens
 SmsInfoNumero= (Formaat internationale ie: +33899701761)
 DelayBeforeSending=Vertraging voor het verzenden (minuten)
+SmsNoPossibleSenderFound=No sender available. Check setup of your SMS provider.
 SmsNoPossibleRecipientFound=Geen doel beschikbaar. Controleer instellingen van uw SMS-aanbieder.
 

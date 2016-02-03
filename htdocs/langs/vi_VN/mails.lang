@@ -81,6 +81,7 @@ ActivateCheckReadKey=Key used to encrypt URL used for "Read Receipt" and "Unsubc
 EMailSentToNRecipients=Thư điện tử gửi đến người nhận %s.
 XTargetsAdded=Người nhận <b>%s</b> thêm vào danh sách mục tiêu
 EachInvoiceWillBeAttachedToEmail=Một tài liệu mặc định sử dụng hóa đơn mẫu tài liệu sẽ được tạo ra và gắn liền với mỗi email.
+OnlyPDFattachmentSupported=If the PDF document was already generated for the invoice, it will be attached to email. If not, no email will be sent (also, note that only pdf invoice are supported as attachment in mass sending in this version).
 MailTopicSendRemindUnpaidInvoices=Nhắc nhở các hóa đơn %s (%s)
 SendRemind=Gửi lời nhắc nhở bằng email
 RemindSent=Nhắc nhở %s (các) gửi

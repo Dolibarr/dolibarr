@@ -1,0 +1,5 @@
+# Dolibarr language file - Source file is en_US - banks
+Conciliable=Ausgleichsfähig
+ConfirmValidateCheckReceipt=Scheck wirklich annehmen? Eine Änderung ist anschliessend nicht mehr möglich.
+DefaultRIB=Standart Bankkonto-Nummer
+StartDate=Anfangsdatum

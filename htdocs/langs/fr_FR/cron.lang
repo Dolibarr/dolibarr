@@ -18,8 +18,9 @@ CronExplainHowToRunUnix=Sur un environnement Unix vous pouvez utiliser l'entrée
 CronExplainHowToRunWin=Sur un environement Microsoft(tm) Windows vous pouvez utiliser le planificateur de tache pour lancer cette commande toute les 5 minutes.
 # Menu
 CronJobs=Travaux programmés
-CronListActive=Liste des travaux
+CronListActive=Liste des travaux activés/planifiés
 CronListInactive=Liste des travaux inactifs
+EnabledAndDisabled=Activés et désactivés
 # Page list
 CronDateLastRun=Dernier lancement
 CronLastOutput=Sortie du dernier lancement
@@ -35,8 +36,8 @@ CronInfo=Le module des travaux planifiés permet d'exécuter des opérations qui
 CronWaitingJobs=Travaux en attente
 CronTask=Travail planifié
 CronNone=Aucun(e)
-CronDtStart=Date de début
-CronDtEnd=Date de fin
+CronDtStart=Pas avant
+CronDtEnd=Pas après
 CronDtNextLaunch=Prochaine exécution
 CronDtLastLaunch=Dernière exécution
 CronFrequency=Fréquence
@@ -51,11 +52,12 @@ CronNoJobs=Aucun travail enregistré
 CronPriority=Priorité
 CronLabel=Description
 CronNbRun=Nb. exec.
+CronMaxRun=Nb max de lancement
 CronEach=Tous les
 JobFinished=Travail lancé et terminé
 #Page card
 CronAdd= Ajoutez des travaux
-CronHourStart= Date et heure de démarrage de la tâche 
+CronHourStart= Date et heure de démarrage de la tâche
 CronEvery=Exécuter chaque tâche
 CronObject=Instance/objet à créer
 CronArgs=Paramètres

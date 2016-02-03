@@ -18,8 +18,9 @@ CronExplainHowToRunUnix=В системах Unix-like вы должны зада
 CronExplainHowToRunWin=В Майкрософт Windows &copy; вы должны использовать Планировщик для запуска команды каждые 5 минут. 
 # Menu
 CronJobs=Запланированные задания
-CronListActive=Список активных/запланированных заданий
+CronListActive=List of enabled/scheduled jobs
 CronListInactive=Список неактивных заданий
+EnabledAndDisabled=Enabled and disabled
 # Page list
 CronDateLastRun=Последний раз выполнено
 CronLastOutput=Последний вывод команды
@@ -35,8 +36,8 @@ CronInfo=Модуль запланированных задач позволяе
 CronWaitingJobs=Ожидающие задачи
 CronTask=Задание
 CronNone=Никакой
-CronDtStart=Начальная дата
-CronDtEnd=Конечная дата
+CronDtStart=Not before
+CronDtEnd=Not after
 CronDtNextLaunch=Следующий запуск
 CronDtLastLaunch=Последний запуск
 CronFrequency=Frequency
@@ -51,6 +52,7 @@ CronNoJobs=Нет зарегистрированных заданий
 CronPriority=Приоритет
 CronLabel=Описание
 CronNbRun=Кол-во запусков
+CronMaxRun=Max nb. launch
 CronEach=Каждый
 JobFinished=Задание запущено и завершено
 #Page card

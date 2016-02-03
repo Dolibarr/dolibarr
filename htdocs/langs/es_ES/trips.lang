@@ -31,7 +31,7 @@ TripNDF=Información del gasto
 PDFStandardExpenseReports=Plantilla estandard para generar un documento de gasto
 ExpenseReportLine=Línea de gasto
 TF_OTHER=Otro
-TF_TRANSPORTATION=Transporte
+TF_TRIP=Transportation
 TF_LUNCH=Dieta
 TF_METRO=Metro
 TF_TRAIN=Tren
@@ -99,4 +99,5 @@ ConfirmSaveTrip=¿Está seguro de querer validar este gasto?
 NoTripsToExportCSV=Sin gastos a exportar para este periodo.
 ExpenseReportPayment=Informe de pagos de gastos
 
+ExpenseReportsToApprove=Expense reports to approve
 ExpenseReportsToPay=Informe de gastos a pagar

@@ -18,8 +18,9 @@ CronExplainHowToRunUnix=On Unix environment you should use the following crontab
 CronExplainHowToRunWin=On Microsoft(tm) Windows environement you can use Scheduled task tools to run the command line each 5 minutes
 # Menu
 CronJobs=Scheduled jobs
-CronListActive=List of active/scheduled jobs
+CronListActive=List of enabled/scheduled jobs
 CronListInactive=List of disabled jobs
+EnabledAndDisabled=Enabled and disabled
 # Page list
 CronDateLastRun=最后运行
 CronLastOutput=最后运行结果
@@ -35,8 +36,8 @@ CronInfo=Scheduled job module allow to execute job that have been planned
 CronWaitingJobs=Waiting jobs
 CronTask=工作
 CronNone=无
-CronDtStart=开始日期
-CronDtEnd=结束日期
+CronDtStart=Not before
+CronDtEnd=Not after
 CronDtNextLaunch=接下来执行
 CronDtLastLaunch=最后执行
 CronFrequency=Frequency
@@ -51,6 +52,7 @@ CronNoJobs=No jobs registered
 CronPriority=优先
 CronLabel=描述
 CronNbRun=Nb. launch
+CronMaxRun=Max nb. launch
 CronEach=Every
 JobFinished=Job launched and finished
 #Page card
@@ -85,5 +87,5 @@ CronType_method=一个Dolibarr类的调用方法
 CronType_command=Shell command
 CronMenu=Cron
 CronCannotLoadClass=Cannot load class %s or object %s
-UseMenuModuleToolsToAddCronJobs=Go into menu "Home - Modules tools - Job list" to see and edit scheduled jobs.
+UseMenuModuleToolsToAddCronJobs=点击菜单 "主页 - 模块工具 - 工作列表" 来查看并编辑任务列表。
 TaskDisabled=Job disabled

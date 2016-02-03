@@ -148,8 +148,8 @@ MigrationFinished=Migraţia terminată
 LastStepDesc=<strong>Ultimul pas:</strong> Definirea aici nume de utilizator şi parola pe care intenţionaţi să îl utilizaţi pentru conectarea la software-ul. Nu pierde aceasta ca este cont pentru a administra toate celelalte.
 ActivateModule=Activaţi modul %s
 ShowEditTechnicalParameters=Click aici pentru a vedea / edita  parametrii avansaţi (mod expert)
-WarningUpgrade=Warning:\nDid your run a database backup first ?\nThis is highly recommanded: for example, due to some bugs into databases systems (for example mysql version 5.5.40/41/42/43), some data or tables may be lost during this process, so it is highly recommanded to have a complete dump of your database before starting migration.\n\nClick OK to start migration process...
-ErrorDatabaseVersionForbiddenForMigration=Your database version is %s. It has a critical bug making data loss if you make structure change on your database, like it is required by the migration process. For his reason, migration will not be allowed until you upgrade your database to a higher fixed version (list of known bugged version: %s)
+WarningUpgrade=Avertisment: \nAti facut o copie de rezervă a bazei de date mai întâi? \nAcest lucru este foarte recomandat: de exemplu, din cauza unor bug-uri în sistemele de baze de date (de exemplu, mysql versiune 5.5.40/41/42/43), unele date sau tabele pot fi pierdute în timpul acestui proces, de aceea este foarte recomandat să aveți o copie completa a bazei de date înaintea pornirii migrariii. \n\nFaceți clic pe OK pentru a începe procesul de migrare ...
+ErrorDatabaseVersionForbiddenForMigration=Versiunea dvs. de baze de date este %s. Un bug va poate face sa pierdeti  date critice dacă faceti o schimbare a structurii pe baza de date,asa cum este impusă de procesul de migrare. De  aceea, migrare nu va fi permisa până când faceți upgrade la  baza de date la o versiune mai mare  (lista bug-urilor  cunoscute versiunea : %s)
 
 #########
 # upgrade
@@ -202,6 +202,6 @@ MigrationActioncommElement=Actualizare date pe acţiuni
 MigrationPaymentMode=Migrare de date pentru modul de plată
 MigrationCategorieAssociation=Migrarea categoriilor
 MigrationEvents=Migrația evenimentelor pentru a adăuga proprietarului evenimentul în tabelul de atribuire
-MigrationReloadModule=Reload module %s
+MigrationReloadModule=Reîncarcă modul %s
 ShowNotAvailableOptions=Afişează opţiunile nedisponibile
 HideNotAvailableOptions=Acunde opţiunile nedisponibile

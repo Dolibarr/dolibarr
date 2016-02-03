@@ -49,5 +49,6 @@ SendSms=Send SMS
 SmsInfoCharRemain=Antall gjenværende tegn
 SmsInfoNumero= (Internasjonal prefix dvs.: +4711223344)
 DelayBeforeSending=Forsinkelse før sending (minutter)
+SmsNoPossibleSenderFound=No sender available. Check setup of your SMS provider.
 SmsNoPossibleRecipientFound=Ingen mål tilgjengelig. Sjekk oppsettet fra din SMS-leverandør.
 

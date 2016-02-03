@@ -81,6 +81,7 @@ ActivateCheckReadKey=Ключ използван за криптиране на 
 EMailSentToNRecipients=Имейл изпратен до %s получатели.
 XTargetsAdded=<b>%s</b> recipients added into target list
 EachInvoiceWillBeAttachedToEmail=Документ използващ шаблон по подразбиране за фактура ще бъде създаден и прикачен към електронно писмо.
+OnlyPDFattachmentSupported=If the PDF document was already generated for the invoice, it will be attached to email. If not, no email will be sent (also, note that only pdf invoice are supported as attachment in mass sending in this version).
 MailTopicSendRemindUnpaidInvoices=Напомняне за фактура %s (%s)
 SendRemind=Изпращане на напомняне по електронна поща
 RemindSent=%s напомняне(ия) изпратени
