@@ -170,11 +170,11 @@ ErrorFieldMustBeANumeric=Le champ <b>%s</b> doit être un numérique
 ErrorFieldMustBeAnInteger=Le champ <b>%s</b> doit être un numérique
 ErrorMandatoryParametersNotProvided=Paramètre(s) obligatoire(s) non fournis
 ErrorOppStatusRequiredIfAmount=Vous avez fixé un montant estimé pour cette opportunité/affaire. Aussi, vous devez également entrer son statut
-ErrorBadDefinitionOfMenuArrayInModuleDescriptor=Bad Definition Of Menu Array In Module Descriptor (bad value for key fk_menu)
-ErrorSavingChanges=An error has ocurred when saving the changes
+ErrorBadDefinitionOfMenuArrayInModuleDescriptor=Mauvaise définition du tableau Menu dans le descripteur de module (mauvaise valeur pour la clé fk_menu)
+ErrorSavingChanges=Une erreur est survenue lors de la sauvegarde des modifications
 
 # Warnings
-WarningPasswordSetWithNoAccount=A password was set for this member. However, no user account was created. So this password is stored but can't be used to login to Dolibarr. It may be used by an external module/interface but if you don't need to define any login nor password for a member, you can disable option "Manage a login for each member" from Member module setup. If you need to manage a login but don't need any password, you can keep this field empty to avoid this warning. Note: Email can also be used as a login if the member is linked to a user.
+WarningPasswordSetWithNoAccount=Un mot de passe a été fixé pour cet adhérent. Cependant, aucun compte d'utilisateur n'a été créé. Donc, ce mot de passe est stocké, mais ne peut être utilisé pour accéder à Dolibarr. Il peut être utilisé par un module/interface externe, mais si vous n'avez pas besoin de définir ni login ni mot de passe pour un adhérent, vous pouvez désactiver l'option «Gérer un login pour chaque adhérent" depuis la configuration du module Adhérents. Si vous avez besoin de gérer un login, mais pas de mot de passe, vous pouvez laisser ce champ vide pour éviter cet avertissement. Remarque: L'email peut également être utilisé comme login si l'adhérent est lié à un utilisateur.
 WarningMandatorySetupNotComplete=Les informations de configuration obligatoire doivent être renseignées
 WarningSafeModeOnCheckExecDir=Attention, l'option PHP <b>safe_mode</b> est active, la commande doit dont être dans un répertoire déclaré dans le paramètre php <b>safe_mode_exec_dir</b>.
 WarningAllowUrlFopenMustBeOn=Attention, le paramètre <b>allow_url_fopen</b> doit être positionné à <b>on</b> dans le fichier <b>php.ini</b> pour que ce module soit pleinement opérationnel. Vous devez modifier ce fichier manuellement.

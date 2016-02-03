@@ -81,6 +81,7 @@ ActivateCheckReadKey=Tlačítko slouží k šifrování URL používané pro "Po
 EMailSentToNRecipients=Email byl odeslán na %s příjemcům.
 XTargetsAdded=<b>%s</b> příjemců přidáno do seznamu cílů
 EachInvoiceWillBeAttachedToEmail=Dokument s použitím šablony výchozí faktury dokumentu bude vytvořen a připojen k každému mailu.
+OnlyPDFattachmentSupported=If the PDF document was already generated for the invoice, it will be attached to email. If not, no email will be sent (also, note that only pdf invoice are supported as attachment in mass sending in this version).
 MailTopicSendRemindUnpaidInvoices=Upomínka faktury %s (%s)
 SendRemind=Zaslání upomínky na maily
 RemindSent=%s upomínka(y) odesláno

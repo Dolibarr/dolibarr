@@ -155,6 +155,7 @@ DepositsAreNotIncluded=- Le fatture d'acconto non sono incluse
 DepositsAreIncluded=- Le fatture d'acconto sono incluse
 LT2ReportByCustomersInInputOutputModeES=IRPF soggetti terzi(Spagna)
 LT1ReportByCustomersInInputOutputModeES=Report by third party RE
+VATReport=VAT report
 VATReportByCustomersInInputOutputMode=Report per IVA cliente riscossa e pagata
 VATReportByCustomersInDueDebtMode=Report per IVA cliente riscossa e pagata
 VATReportByQuartersInInputOutputMode=Report per tasso di IVA riscossa e pagata

@@ -53,8 +53,9 @@ $companystatic=new Societe($db);
 $search_ref=GETPOST("search_ref","int");
 $search_account=GETPOST("search_account","int");
 $search_paymenttype=GETPOST("search_paymenttype");
-$search_amount=GETPOST("search_amount");
-$search_company=GETPOST("search_company");
+$search_amount=GETPOST("search_amount",'alpha');    // alpha because we must be able to search on "< x"
+$search_company=GETPOST("search_company",'alpha');
+$search_payment_num=GETPOST('search_payment_num','alpha');
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
@@ -72,6 +73,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 	$search_account="";
 	$search_amount="";
     $search_paymenttype="";
+    $search_payment_num="";
 	$search_company="";
     $day='';
     $year='';
@@ -165,9 +167,10 @@ else
     {
         $sql.= " AND p.datep BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
     }
-    if ($search_ref)       		$sql .=natural_search('p.ref', $search_ref);
+    if ($search_ref)       		    $sql .=natural_search('p.ref', $search_ref);
     if ($search_account > 0)      	$sql .=" AND b.fk_account=".$search_account;
     if ($search_paymenttype != "")  $sql .=" AND c.code='".$db->escape($search_paymenttype)."'";
+    if ($search_payment_num != '')  $sql .=" AND p.num_paiement = '".$db->escape($search_payment_num)."'";
     if ($search_amount)      		$sql .=" AND p.amount='".$db->escape(price2num($search_amount))."'";
     if ($search_company)     		$sql .= natural_search('s.nom', $search_company);
 	// Add where from hooks
@@ -209,6 +212,7 @@ if ($resql)
     print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"dp","",$paramlist,'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER["PHP_SELF"],"s.nom","",$paramlist,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"c.libelle","",$paramlist,"",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Numero"),$_SERVER["PHP_SELF"],"p.num_paiement","",$paramlist,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Account"),$_SERVER["PHP_SELF"],"ba.label","",$paramlist,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"p.amount","",$paramlist,'align="right"',$sortfield,$sortorder);
     //print_liste_field_titre($langs->trans("Invoices"),"","","",$paramlist,'align="left"',$sortfield,$sortorder);
@@ -236,6 +240,9 @@ if ($resql)
     print '</td>';
     print '<td>';
     $form->select_types_paiements($search_paymenttype,'search_paymenttype','',2,1,1);
+    print '</td>';
+    print '<td align="left">';
+    print '<input class="flat" type="text" size="4" name="search_payment_num" value="'.$search_payment_num.'">';
     print '</td>';
     print '<td>';
     $form->select_comptes($search_account,'search_account',0,'',1);
@@ -279,7 +286,7 @@ if ($resql)
         else print '&nbsp;';
         print '</td>';
 
-        print '<td>'.$langs->trans("PaymentTypeShort".$objp->paiement_code).' '.$objp->num_paiement.'</td>';
+        print '<td>'.$langs->trans("PaymentTypeShort".$objp->paiement_code).'</td><td>'.$objp->num_paiement.'</td>';
         print '<td>';
         if ($objp->bid)
         {

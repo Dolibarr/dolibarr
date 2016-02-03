@@ -155,6 +155,7 @@ DepositsAreNotIncluded=- Τα τιμολόγια ασφαλείας ούτε π�
 DepositsAreIncluded=- Περιλαμβάνονται τιμολόγια ασφαλείας
 LT2ReportByCustomersInInputOutputModeES=Έκθεση του τρίτου IRPF
 LT1ReportByCustomersInInputOutputModeES=Αναφορά Πελ./Προμ. RE
+VATReport=VAT report
 VATReportByCustomersInInputOutputMode=Αναφορά από τον ΦΠΑ των πελατών εισπράττεται και καταβάλλεται
 VATReportByCustomersInDueDebtMode=Αναφορά από τον ΦΠΑ των πελατών εισπράττεται και καταβάλλεται
 VATReportByQuartersInInputOutputMode=Αναφορά συντελεστή του ΦΠΑ που εισπράττεται και καταβάλλεται

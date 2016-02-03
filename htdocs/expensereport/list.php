@@ -335,10 +335,12 @@ if ($resql)
 
 	print "</form>";
 
+	/*
 	print '<div class="tabsAction">';
 	print '<a href="'.dol_buildpath('/expensereport/card.php',1).'?action=create" class="butAction">'.$langs->trans("NewTrip").'</a>';
 	print '</div>';
-
+	*/
+	
 	$db->free($resql);
 }
 else

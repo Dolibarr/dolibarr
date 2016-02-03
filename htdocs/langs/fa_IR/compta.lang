@@ -155,6 +155,7 @@ DepositsAreNotIncluded=- صورت حساب های سپرده ها و نه شام
 DepositsAreIncluded=- صورت حساب های سپرده را شامل می شوند
 LT2ReportByCustomersInInputOutputModeES=گزارش شده توسط شخص ثالث IRPF
 LT1ReportByCustomersInInputOutputModeES=گزارش شده توسط شخص ثالث RE
+VATReport=VAT report
 VATReportByCustomersInInputOutputMode=گزارش های مالیات بر ارزش افزوده مشتری جمع آوری و پرداخت
 VATReportByCustomersInDueDebtMode=گزارش های مالیات بر ارزش افزوده مشتری جمع آوری و پرداخت
 VATReportByQuartersInInputOutputMode=گزارش های نرخ مالیات بر ارزش افزوده جمع آوری و پرداخت

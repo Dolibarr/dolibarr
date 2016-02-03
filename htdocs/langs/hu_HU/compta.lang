@@ -155,6 +155,7 @@ DepositsAreNotIncluded=- Befizetési számla nem tartalmazza
 DepositsAreIncluded=- Fizess számlák kerülnek
 LT2ReportByCustomersInInputOutputModeES=Jelentés a harmadik fél IRPF
 LT1ReportByCustomersInInputOutputModeES=Report by third party RE
+VATReport=VAT report
 VATReportByCustomersInInputOutputMode=Report by the customer VAT collected and paid
 VATReportByCustomersInDueDebtMode=Report by the customer VAT collected and paid
 VATReportByQuartersInInputOutputMode=Report by rate of the VAT collected and paid

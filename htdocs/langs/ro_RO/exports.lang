@@ -48,7 +48,7 @@ NoImportableData=Nu importable de date (nu cu modul de definiţii, pentru a perm
 FileSuccessfullyBuilt=Export fişier generat
 SQLUsedForExport=Cerere SQL folosite pentru a construi export fişier
 LineId=Id-ul de linie
-LineLabel=Label of line
+LineLabel=Eticheta linie
 LineDescription=Descriere de linie
 LineUnitPrice=Preţul unitar de linie
 LineVATRate=TVA de linie
@@ -130,7 +130,7 @@ ExportDateFilter=YYYY, YYYYMM, YYYYMMDD : filtrează după un an/lună/zi<br>YYY
 ExportNumericFilter='NNNNN' filtrează după o valoare<br>'NNNNN+NNNNN' filtrează peste un rang de valori<br>'&gt;NNNNN' filtrează după valori mai mici<br>'&gt;NNNNN' filtrează după valori mai mari
 ## filters
 SelectFilterFields=Dacă doriți să filtrați pe anumite valori, doar introduceţi valorile aici.
-FilterableFields=Filterable Fields
+FilterableFields=Campuri filtrabile
 FilteredFields=Câmpuri filtrate
 FilteredFieldsValues=Valoare pentru filtru
 FormatControlRule=Format control rule

@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric	Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2016 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2015 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2011-2015 Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
@@ -722,7 +722,8 @@ if (empty($reshook))
 	    $result = $object->commande($user, $_REQUEST["datecommande"],	$_REQUEST["methode"], $_REQUEST['comment']);
 	    if ($result > 0)
 	    {
-	        if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+	        if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) 
+	        {
 	            $outputlangs = $langs;
 	            $newlang = '';
 	            if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
@@ -953,12 +954,12 @@ if (empty($reshook))
 						$object->linked_objects = array_merge($object->linked_objects, $other_linked_objects);
 					}
 
-					$object_id = $object->create($user);
-					if ($object_id > 0)
+					$id = $object->create($user);
+					if ($id > 0)
 					{
 						dol_include_once('/' . $element . '/class/' . $subelement . '.class.php');
 
-						$classname = ucfirst($subelement);
+						$classname = 'SupplierProposal';
 						$srcobject = new $classname($db);
 
 						dol_syslog("Try to find source object origin=" . $object->origin . " originid=" . $object->origin_id . " to add lines");
@@ -979,7 +980,7 @@ if (empty($reshook))
 							$num = count($lines);
 
 							$productsupplier = new ProductFournisseur($db);
-
+							
 							for($i = 0; $i < $num; $i ++)
 							{
 
@@ -994,7 +995,7 @@ if (empty($reshook))
 								if (($lines[$i]->product_type != 9 && empty($lines[$i]->fk_parent_line)) || $lines[$i]->product_type == 9) {
 									$fk_parent_line = 0;
 								}
-
+								
 								// Extrafields
 								if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i], 'fetch_optionals')) 							// For avoid conflicts if
 								                                                                                                      // trigger used
@@ -1002,10 +1003,13 @@ if (empty($reshook))
 									$lines[$i]->fetch_optionals($lines[$i]->rowid);
 									$array_option = $lines[$i]->array_options;
 								}
-
-								$idprod = $productsupplier->find_min_price_product_fournisseur($lines[$i]->fk_product, $lines[$i]->qty);
-								$res = $productsupplier->fetch($idProductFourn);
-
+								
+								$res = $productsupplier->find_min_price_product_fournisseur($lines[$i]->fk_product, $lines[$i]->qty);
+								/*if ($productsupplier->id > 0)
+								{
+								    $res = $productsupplier->fetch($productsupplier->id);
+								}*/
+								
 								$result = $object->addline(
 									$desc,
 									$lines[$i]->subprice,
@@ -1029,7 +1033,7 @@ if (empty($reshook))
 								);
 
 								if ($result < 0) {
-									$error ++;
+									$error++;
 									break;
 								}
 
@@ -1039,10 +1043,13 @@ if (empty($reshook))
 								}
 							}
 
+							// Add link between elements
+							
+							
 							// Hooks
 							$parameters = array('objFrom' => $srcobject);
 							$reshook = $hookmanager->executeHooks('createFrom', $parameters, $object, $action); // Note that $action and $object may have been
-							                                                                               // modified by hook
+
 							if ($reshook < 0)
 								$error ++;
 						} else {
@@ -1458,7 +1465,7 @@ if ($action=='create')
 
 		dol_include_once('/' . $element . '/class/' . $subelement . '.class.php');
 
-		$classname = ucfirst($subelement);
+		$classname = 'SupplierProposal';
 		$objectsrc = new $classname($db);
 		$objectsrc->fetch($originid);
 		if (empty($objectsrc->lines) && method_exists($objectsrc, 'fetch_lines'))
@@ -1603,8 +1610,6 @@ if ($action=='create')
 		print '<input type="hidden" name="originid"       value="' . $objectsrc->id . '">';
 
 		$newclassname = $classname;
-		if ($newclassname == 'SupplierProposal')
-			$newclassname = 'CommercialSupplierProposal';
 		print '<tr><td>' . $langs->trans($newclassname) . '</td><td colspan="2">' . $objectsrc->getNomUrl(1) . '</td></tr>';
 		print '<tr><td>' . $langs->trans('TotalHT') . '</td><td colspan="2">' . price($objectsrc->total_ht) . '</td></tr>';
 		print '<tr><td>' . $langs->trans('TotalVAT') . '</td><td colspan="2">' . price($objectsrc->total_tva) . "</td></tr>";
@@ -1980,7 +1985,7 @@ elseif (! empty($object->id))
 		//print "$object->id, $object->socid, $object->fk_project";
 		if ($action == 'classify')
 		{
-			$form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS)?$object->socid:'-1'), $object->fk_project, 'projectid', 0, 0, 1);
+			$form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS)?$object->socid:-1), $object->fk_project, 'projectid', 0, 0, 1);
 		}
 		else
 		{
@@ -2829,7 +2834,7 @@ elseif (! empty($object->id))
 
 		// Linked object block
 		$somethingshown = $form->showLinkedObjectBlock($object);
-
+		
 		// Show links to link elements
 		//$linktoelem = $form->showLinkToObjectBlock($object);
 		//if ($linktoelem) print '<br>'.$linktoelem;

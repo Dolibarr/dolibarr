@@ -294,7 +294,7 @@ if (empty($user->societe_id))
 	            $text=$langs->trans($titres[$key]);
 	            print '<a href="'.$links[$key].'" class="boxstatsindicator thumbstat nobold nounderline">';
 	            print '<div class="boxstats">';
-	            print img_object("",$icons[$key]).' '.$text.'<br>';
+	            print '<span class="boxstatstext">'.img_object("",$icons[$key]).' '.$text.'</span><br>';
 	            print '<span class="boxstatsindicator">'.$board->nb[$val].'</span>';
 	            print '</div>';
 	            print '</a>';
@@ -321,7 +321,7 @@ print '<table class="noborder" width="100%">'."\n";
 print '<tr class="liste_titre">';
 print '<th class="liste_titre" colspan="2">'.$langs->trans("DolibarrWorkBoard").'</th>';
 print '<th class="liste_titre" align="right">'.$langs->trans("Number").'</th>';
-print '<th class="liste_titre" align="right">'.$langs->trans("Late").'</th>';
+print '<th class="liste_titre" align="right">'.$form->textwithpicto($langs->trans("Late"),$langs->trans("LateDesc")).'</th>';
 print '<th class="liste_titre">&nbsp;</th>';
 //print '<th class="liste_titre" width="20">&nbsp;</th>';
 if ($showweather) print '<th class="liste_titre hideonsmartphone" width="80">&nbsp;</th>';

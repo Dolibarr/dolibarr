@@ -1176,6 +1176,8 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=n
 					else $ok=unlink($filename);
 					if ($ok) dol_syslog("Removed file ".$filename, LOG_DEBUG);
 					else dol_syslog("Failed to remove file ".$filename, LOG_WARNING);
+					// TODO Failure to remove can be because file was already removed or because of permission
+					// If error because of not exists, we must can return true but we should return false if this is a permission problem
 				}
 			}
 			else dol_syslog("No files to delete found", LOG_WARNING);
@@ -1186,7 +1188,7 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=n
 			if ($nophperrors) $ok=@unlink($file_osencoded);
 			else $ok=unlink($file_osencoded);
 			if ($ok) dol_syslog("Removed file ".$file_osencoded, LOG_DEBUG);
-			else dol_syslog("Failed to remove file ".$file_osencoded, LOG_WARNING);
+			else dol_syslog("Failed to remove file ".$file_osencoded, LOG_WARNING);      
 		}
 
 		return $ok;
@@ -1466,6 +1468,8 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
 				$resupload = dol_move_uploaded_file($TFile['tmp_name'][$i], $destpath, $allowoverwrite, 0, $TFile['error'][$i], 0, $varfiles);
 				if (is_numeric($resupload) && $resupload > 0)
 				{
+					global $maxwidthsmall, $maxheightsmall, $maxwidthmini, $maxheightmini;
+				
 					include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 					if (empty($donotupdatesession))
 					{
@@ -1477,10 +1481,10 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
 					{
 						// Create small thumbs for image (Ratio is near 16/9)
 						// Used on logon for example
-						$imgThumbSmall = vignette($destpath, 160, 120, '_small', 50, "thumbs");
+						$imgThumbSmall = vignette($destpath, $maxwidthsmall, $maxheigthsmall, '_small', 50, "thumbs");
 						// Create mini thumbs for image (Ratio is near 16/9)
 						// Used on menu or for setup page for example
-						$imgThumbMini = vignette($destpath, 160, 120, '_mini', 50, "thumbs");
+						$imgThumbMini = vignette($destpath, $maxwidthmini, $maxheightmini, '_mini', 50, "thumbs");
 					}
 	
 					setEventMessages($langs->trans("FileTransferComplete"), null, 'mesgs');

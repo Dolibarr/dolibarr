@@ -1,23 +1,24 @@
 # Dolibarr language file - Source file is en_US - projects
-RefProject=Ref. project
-ProjectRef=Project ref.
-ProjectId=Project Id
-ProjectLabel=Project label
+RefProject=المرجع. مشروع
+ProjectRef=المرجع المشروع.
+ProjectId=رقم المشروع
+ProjectLabel=تسمية المشروع
 Project=المشروع
 Projects=المشاريع
-ProjectStatus=Project status
+ProjectStatus=حالة المشروع
 SharedProject=مشاريع مشتركة
 PrivateProject=اتصالات من المشروع
 MyProjectsDesc=ويقتصر هذا الرأي على المشاريع التي تقوم على الاتصال (كل ما هو نوع).
 ProjectsPublicDesc=هذا الرأي يعرض جميع المشاريع ويسمح لك قراءة.
-ProjectsPublicTaskDesc=This view presents all projects and tasks you are allowed to read.
+ProjectsPublicTaskDesc=يمثل هذا العرض جميع المشاريع والمهام يسمح لك للقراءة.
 ProjectsDesc=ويعرض هذا الرأي جميع المشاريع (أذونات المستخدم الخاص أعطى الصلاحية لعرض كل شيء).
 MyTasksDesc=ويقتصر هذا الرأي على المشروعات أو المهام التي هي الاتصال للحصول على (ما هو نوع).
-OnlyOpenedProject=Only open projects are visible (projects in draft or closed status are not visible).
+OnlyOpenedProject=المشاريع المفتوحة فقط مرئية (المشاريع في مشروع أو وضع مغلقة غير مرئية).
+ClosedProjectsAreHidden=Closed projects are not visible.
 TasksPublicDesc=هذا الرأي يعرض جميع المشاريع والمهام ويسمح لك قراءة.
 TasksDesc=هذا الرأي يعرض جميع المشاريع والمهام (أذونات المستخدم الخاص أعطى الصلاحية لعرض كل شيء).
-AllTaskVisibleButEditIfYouAreAssigned=All tasks for such project are visible, but you can enter time only for task you are assigned on. Assign task to you if you want to enter time on it.
-OnlyYourTaskAreVisible=Only tasks you are assigned on are visible. Assign task to you if you want to enter time on it.
+AllTaskVisibleButEditIfYouAreAssigned=جميع المهام لهذا المشروع واضحة، ولكن يمكنك إدخال الوقت فقط لمهمة تم تعيينك على. تعيين مهمة لك إذا كنت تريد أن تدخل من الوقت على ذلك.
+OnlyYourTaskAreVisible=فقط المهام الموكلة لك على مرئية. تعيين مهمة لك إذا كنت تريد أن تدخل من الوقت على ذلك.
 ProjectsArea=مشاريع المنطقة
 NewProject=مشروع جديد
 AddProject=إنشاء مشروع
@@ -28,36 +29,38 @@ ConfirmDeleteATask=هل أنت متأكد من أنك تريد حذف هذه ا�
 OfficerProject=ضابط المشروع
 LastProjects=آخر مشاريع ق ٪
 AllProjects=جميع المشاريع
-OpenedProjects=Opened projects
-OpportunitiesStatusForOpenedProjects=Opportunities amount of opened projects by status
+OpenedProjects=مشاريع فتح
+OpenedTasks=Opened tasks
+OpportunitiesStatusForOpenedProjects=فرص كمية من المشاريع فتحت حسب الحالة
+OpportunitiesStatusForProjects=Opportunities amount of projects by status
 ProjectsList=قائمة المشاريع
 ShowProject=وتبين للمشروع
 SetProject=وضع المشروع
 NoProject=لا يعرف أو المملوكة للمشروع
-NbOpenTasks=Nb of open tasks
+NbOpenTasks=ملحوظة من المهام المفتوحة
 NbOfProjects=ملاحظة : للمشاريع
 TimeSpent=الوقت الذي تستغرقه
-TimeSpentByYou=Time spent by you
-TimeSpentByUser=Time spent by user
+TimeSpentByYou=الوقت الذي يقضيه من قبلك
+TimeSpentByUser=الوقت الذي يقضيه المستخدم
 TimesSpent=قضى وقتا
 RefTask=المرجع. مهمة
 LabelTask=علامة مهمة
-TaskTimeSpent=Time spent on tasks
-TaskTimeUser=User
-TaskTimeNote=Note
+TaskTimeSpent=الوقت المستغرق في المهام
+TaskTimeUser=المستعمل
+TaskTimeNote=ملاحظة
 TaskTimeDate=Date
-TasksOnOpenedProject=Tasks on open projects
-WorkloadNotDefined=Workload not defined
+TasksOnOpenedProject=المهام على المشاريع المفتوحة
+WorkloadNotDefined=عبء العمل غير محددة
 NewTimeSpent=جديد الوقت الذي يقضيه
 MyTimeSpent=وقتي قضى
 MyTasks=مهمتي
 Tasks=المهام
 Task=مهمة
-TaskDateStart=Task start date
-TaskDateEnd=Task end date
-TaskDescription=Task description
+TaskDateStart=تاريخ بدء العمل
+TaskDateEnd=تاريخ انتهاء المهمة
+TaskDescription=وصف المهمة
 NewTask=مهمة جديدة
-AddTask=خلق مهمة
+AddTask=إنشاء مهمة
 AddDuration=تضاف المدة
 Activity=النشاط
 Activities=المهام والأنشطة
@@ -66,8 +69,8 @@ MyActivities=بلدي المهام والأنشطة
 MyProjects=بلدي المشاريع
 DurationEffective=فعالة لمدة
 Progress=تقدم
-ProgressDeclared=Declared progress
-ProgressCalculated=Calculated progress
+ProgressDeclared=أعلن التقدم
+ProgressCalculated=تقدم تحسب
 Time=وقت
 ListProposalsAssociatedProject=قائمة المقترحات التجارية المرتبطة بالمشروع.
 ListOrdersAssociatedProject=قائمة الزبائن المرتبطة بالمشروع.
@@ -77,13 +80,13 @@ ListSupplierOrdersAssociatedProject=قائمة الموردين الأوامر �
 ListSupplierInvoicesAssociatedProject=قائمة الموردين المرتبطة بالمشروع.
 ListContractAssociatedProject=قائمة العقود المرتبطة بالمشروع.
 ListFichinterAssociatedProject=قائمة التدخلات المرتبطة بالمشروع
-ListExpenseReportsAssociatedProject=List of expense reports associated with the project
-ListDonationsAssociatedProject=List of donations associated with the project
+ListExpenseReportsAssociatedProject=قائمة تقارير المصاريف المرتبطة بالمشروع
+ListDonationsAssociatedProject=قائمة التبرعات المرتبطة بالمشروع
 ListActionsAssociatedProject=قائمة الإجراءات المرتبطة بالمشروع
-ListTaskTimeUserProject=List of time consumed on tasks of project
-TaskTimeUserProject=Time consumed on tasks of project
-ActivityOnProjectToday=Activity on project today
-ActivityOnProjectYesterday=Activity on project yesterday
+ListTaskTimeUserProject=قائمة الوقت المستهلك في مهام المشروع
+TaskTimeUserProject=الوقت المستهلك في مهام المشروع
+ActivityOnProjectToday=النشاط على المشروع اليوم
+ActivityOnProjectYesterday=النشاط على المشروع أمس
 ActivityOnProjectThisWeek=نشاط المشروع هذا الاسبوع
 ActivityOnProjectThisMonth=نشاط المشروع هذا الشهر
 ActivityOnProjectThisYear=نشاط المشروع هذا العام
@@ -104,7 +107,7 @@ DeleteATimeSpent=قضى الوقت حذف
 ConfirmDeleteATimeSpent=هل أنت متأكد أنك تريد حذف هذا الوقت الذي يقضيه؟
 DoNotShowMyTasksOnly=انظر أيضا المهام  الغير موكلة الي
 ShowMyTasksOnly=عرض فقط المهام الموكلة الي
-TaskRessourceLinks=Resources
+TaskRessourceLinks=مصادر
 ProjectsDedicatedToThisThirdParty=مشاريع مخصصة لهذا الطرف الثالث
 NoTasks=أية مهام لهذا المشروع
 LinkedToAnotherCompany=ربط طرف ثالث آخر
@@ -114,76 +117,79 @@ ThisWillAlsoRemoveTasks=وهذا العمل أيضا حذف كافة مهام ا
 IfNeedToUseOhterObjectKeepEmpty=إذا كانت بعض الكائنات (فاتورة، والنظام، ...)، الذين ينتمون إلى طرف ثالث آخر، يجب أن تكون مرتبطة بمشروع لإنشاء، والحفاظ على هذا فارغة لديها مشروع كونها متعددة الأطراف الثالثة.
 CloneProject=استنساخ المشروع
 CloneTasks=استنساخ المهام
-CloneContacts=Clone contacts
-CloneNotes=Clone notes
-CloneProjectFiles=Clone project joined files
-CloneTaskFiles=Clone task(s) joined files (if task(s) cloned)
-CloneMoveDate=Update project/tasks dates from now ?
-ConfirmCloneProject=Are you sure to clone this project ?
-ProjectReportDate=Change task date according project start date
-ErrorShiftTaskDate=Impossible to shift task date according to new project start date
-ProjectsAndTasksLines=Projects and tasks
-ProjectCreatedInDolibarr=Project %s created
-TaskCreatedInDolibarr=Task %s created
-TaskModifiedInDolibarr=Task %s modified
-TaskDeletedInDolibarr=Task %s deleted
-OpportunityStatus=Opportunity status
-OpportunityStatusShort=Opp. status
-OpportunityAmount=Opportunity amount
-OpportunityAmountShort=Opp. amount
+CloneContacts=الاتصالات استنساخ
+CloneNotes=ملاحظات استنساخ
+CloneProjectFiles=انضم مشروع استنساخ ملفات
+CloneTaskFiles=مهمة استنساخ (ق) انضم الملفات (إن مهمة (ق) المستنسخة)
+CloneMoveDate=يعود تاريخ تحديث مشروع / المهام من الآن؟
+ConfirmCloneProject=هل أنت متأكد من استنساخ هذا المشروع؟
+ProjectReportDate=تغيير موعد المهمة وفقا المشروع تاريخ بداية
+ErrorShiftTaskDate=من المستحيل تحويل التاريخ المهمة وفقا لتاريخ بدء المشروع الجديد
+ProjectsAndTasksLines=المشاريع والمهام
+ProjectCreatedInDolibarr=مشروع٪ الصورة التي تم إنشاؤها
+TaskCreatedInDolibarr=مهمة٪ الصورة التي تم إنشاؤها
+TaskModifiedInDolibarr=مهمة٪ الصورة المعدلة
+TaskDeletedInDolibarr=مهمة٪ الصورة حذف
+OpportunityStatus=الوضع فرصة
+OpportunityStatusShort=مقابل. الحالة
+OpportunityProbability=Opportunity probability
+OpportunityProbabilityShort=Opp. probab.
+OpportunityAmount=مبلغ فرصة
+OpportunityAmountShort=مقابل. كمية
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=مشروع زعيم
 TypeContact_project_external_PROJECTLEADER=مشروع زعيم
-TypeContact_project_internal_PROJECTCONTRIBUTOR=Contributor
-TypeContact_project_external_PROJECTCONTRIBUTOR=Contributor
+TypeContact_project_internal_PROJECTCONTRIBUTOR=مساهم
+TypeContact_project_external_PROJECTCONTRIBUTOR=مساهم
 TypeContact_project_task_internal_TASKEXECUTIVE=المهمة التنفيذية
 TypeContact_project_task_external_TASKEXECUTIVE=المهمة التنفيذية
-TypeContact_project_task_internal_TASKCONTRIBUTOR=Contributor
-TypeContact_project_task_external_TASKCONTRIBUTOR=Contributor
-SelectElement=Select element
-AddElement=Link to element
-UnlinkElement=Unlink element
+TypeContact_project_task_internal_TASKCONTRIBUTOR=مساهم
+TypeContact_project_task_external_TASKCONTRIBUTOR=مساهم
+SelectElement=حدد العنصر
+AddElement=تصل إلى العنصر
+UnlinkElement=عنصر فك ارتباط
 # Documents models
-DocumentModelBeluga=Project template for linked objects overview
-DocumentModelBaleine=Project report template for tasks
-PlannedWorkload=Planned workload
-PlannedWorkloadShort=Workload
-WorkloadOccupation=Workload assignation
-ProjectReferers=Refering objects
-SearchAProject=Search a project
-SearchATask=Search a task
-ProjectMustBeValidatedFirst=Project must be validated first
-ProjectDraft=Draft projects
-FirstAddRessourceToAllocateTime=Associate a resource to allocate time
-InputPerDay=Input per day
-InputPerWeek=Input per week
-InputPerAction=Input per action
-TimeAlreadyRecorded=Time spent already recorded for this task/day and user %s
-ProjectsWithThisUserAsContact=Projects with this user as contact
-TasksWithThisUserAsContact=Tasks assigned to this user
-ResourceNotAssignedToProject=Not assigned to project
-ResourceNotAssignedToTask=Not assigned to task
-AssignTaskToMe=Assign task to me
-AssignTask=Assign
-ProjectOverview=Overview
-ManageTasks=Use projects to follow tasks and time
-ManageOpportunitiesStatus=Use projects to follow leads/opportinuties
-ProjectNbProjectByMonth=Nb of created projects by month
-ProjectOppAmountOfProjectsByMonth=Amount of opportunities by month
-ProjectWeightedOppAmountOfProjectsByMonth=Weighted amount of opportunities by month
-ProjectOpenedProjectByOppStatus=Opened project/lead by opportunity status
-ProjectsStatistics=Statistics on projects/leads
-TaskAssignedToEnterTime=Task assigned. Entering time on this task should be possible.
-IdTaskTime=Id task time
-YouCanCompleteRef=If you want to complete the ref with some information (to use it as search filters), it is recommanded to add a - character to separate it, so the automatic numbering will still work correctly for next projects. For example %s-ABC. You may also prefer to add search keys into label.
-OpenedProjectsByThirdparties=Opened projects by thirdparties
-OpportunityTotalAmount=Opportunities total amount
-OpportunityPonderatedAmount=Opportunities weighted amount
-OpportunityPonderatedAmountDesc=Opportunities amount weighted with probability (depending on status of opportunity)
-OppStatusPROSP=Prospection
-OppStatusQUAL=Qualification
-OppStatusPROPO=Proposal
+DocumentModelBeluga=قالب مشروع لربط الأشياء نظرة عامة
+DocumentModelBaleine=مشروع نموذج تقرير عن المهام
+PlannedWorkload=عبء العمل المخطط لها
+PlannedWorkloadShort=عبء العمل
+WorkloadOccupation=عبء العمل الرذيلة
+ProjectReferers=اشارة الأجسام
+SearchAProject=بحث مشروع
+SearchATask=بحث مهمة
+ProjectMustBeValidatedFirst=يجب التحقق من صحة المشروع أولا
+ProjectDraft=مشروع المشاريع
+FirstAddRessourceToAllocateTime=ربط الموارد إلى تخصيص وقت
+InputPerDay=إدخال يوميا
+InputPerWeek=مساهمة في الأسبوع
+InputPerAction=مساهمة في عمل
+TimeAlreadyRecorded=الوقت الذي يقضيه سجلت بالفعل لهذه المهمة / يوم والمستخدم٪ الصورة
+ProjectsWithThisUserAsContact=مشاريع مع هذا العضو عن الاتصال
+TasksWithThisUserAsContact=المهام الموكلة إلى هذا المستخدم
+ResourceNotAssignedToProject=لم يتم تعيين إلى المشروع
+ResourceNotAssignedToTask=لم يتم تعيين المهمة
+ResourceNotAssignedToTheTask=Not assigned to the task
+AssignTaskToMe=تعيين مهمة بالنسبة لي
+AssignTask=عين
+ProjectOverview=نظرة عامة
+ManageTasks=استخدام المشاريع لمتابعة المهام والوقت
+ManageOpportunitiesStatus=استخدام مشاريع متابعة القرائن / opportinuties
+ProjectNbProjectByMonth=ملحوظة من المشاريع التي تم إنشاؤها من قبل شهر
+ProjectOppAmountOfProjectsByMonth=كمية الفرص الشهر
+ProjectWeightedOppAmountOfProjectsByMonth=كمية المرجح الفرص من قبل شهر
+ProjectOpenedProjectByOppStatus=افتتح المشروع / بقيادة الوضع فرصة
+ProjectsStatistics=إحصاءات عن المشاريع / يؤدي
+TaskAssignedToEnterTime=المهمة الموكلة. يجب دخول الوقت على هذه المهمة يكون ممكنا.
+IdTaskTime=الوقت مهمة معرف
+YouCanCompleteRef=إذا كنت ترغب في استكمال المرجع مع بعض المعلومات (لاستخدامه بمثابة مرشحات البحث)، وريكومانديد لإضافة - شخصية لفصلها، وبالتالي فإن الترقيم التلقائي سوف لا تزال تعمل بشكل صحيح للمشاريع المقبلة. على سبيل المثال٪ S-ABC. قد تفضل أيضا لإضافة مفاتيح البحث في التسمية.
+OpenedProjectsByThirdparties=مشاريع افتتحه thirdparties
+OpportunityTotalAmount=فرص المبلغ الإجمالي
+OpportunityPonderatedAmount=كمية الفرص المرجحة
+OpportunityPonderatedAmountDesc=Opportunities amount weighted with probability
+OppStatusPROSP=التنقيب
+OppStatusQUAL=المؤهل العلمى
+OppStatusPROPO=مقترح
 OppStatusNEGO=Negociation
-OppStatusPENDING=Pending
-OppStatusWIN=Won
-OppStatusLOST=Lost
+OppStatusPENDING=بانتظار
+OppStatusWIN=فاز
+OppStatusLOST=ضائع

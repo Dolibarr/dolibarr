@@ -18,8 +18,9 @@ CronExplainHowToRunUnix=Unix ortamında komut satırını her 5 dakikada bir ça
 CronExplainHowToRunWin=Mikrosot (tm) Windows ortamında komut satırını her 5 dakikada bir çalıştırmak için Planlanmış görev araçlarını kullanmalısınız
 # Menu
 CronJobs=Planlı işler
-CronListActive=Etkin/programlı işler listesi
+CronListActive=List of enabled/scheduled jobs
 CronListInactive=Etkin olmayan işler listesi
+EnabledAndDisabled=Enabled and disabled
 # Page list
 CronDateLastRun=Son çalıştırma
 CronLastOutput=Son çalıştırma çıktısı
@@ -35,8 +36,8 @@ CronInfo=Planlı iş modülü planlanmış işlerin yürütülmesini sağlar
 CronWaitingJobs=İş bekliyor
 CronTask=İş
 CronNone=Hiçbiri
-CronDtStart=Başlama tarihi
-CronDtEnd=Son tarih
+CronDtStart=Not before
+CronDtEnd=Not after
 CronDtNextLaunch=Sonraki yürütme
 CronDtLastLaunch=Son yürütme
 CronFrequency=Sıklık
@@ -51,6 +52,7 @@ CronNoJobs=Kayıtlı iş yok
 CronPriority=Öncelik
 CronLabel=Açıklama
 CronNbRun=Başlatma sayısı
+CronMaxRun=Max nb. launch
 CronEach=Her
 JobFinished=İş başlatıldı ve bitirildi
 #Page card

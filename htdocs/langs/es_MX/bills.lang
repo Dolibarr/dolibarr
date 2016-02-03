@@ -1,0 +1,17 @@
+# Dolibarr language file - Source file is en_US - bills
+PaymentAmount=Importe de pago
+BillStatusPaid=Pagado
+BillStatusStarted=Iniciado
+BillShortStatusPaid=Pagado
+BillShortStatusValidated=Validado
+BillShortStatusStarted=Iniciado
+BillShortStatusClosedUnpaid=Cerrada
+BillFrom=De
+BillTo=Hacia
+ReasonDiscount=Razón
+PaymentTypeCB=Tarjeta de crédito
+PaymentTypeShortCB=Tarjeta de crédito
+PaymentTypeCHQ=Verificar
+PaymentTypeShortCHQ=Verificar
+IBANNumber=CLABE Interbancaria
+BICNumber=Sucursal

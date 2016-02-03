@@ -35,8 +35,9 @@ MargeBrute=Raw marża
 MargeNette=Rentowność netto
 MargeType1=Marża na najlepszej cenie dostawcy
 MargeType2=Marża na średniej cenie ważonej
-MARGIN_TYPE_DETAILS=Raw margin: Cena sprzedaży - cena zakupu <br/> Rentowność netto: Cena sprzedaży - cena kosztów
-MarginTypeDesc=Marża na najlepszej cenie zakupu: Cena sprzedaży - Najlepsza cena dostawcy zdefiniowana na karcie produktu <br/> Marża na cenie średnio ważonej (WAP): Cena sprzedaży - średnio ważona cena produktu (WAP) lub najlepszs cena dostawcy jeśli WAP jeszcze niezdefiniowana
+MargeType3=Margin on Cost Price
+MARGIN_TYPE_DETAILS=Raw margin : Selling price - Buying price<br>Net margin : Selling price - Cost price
+MarginTypeDesc=* Margin on best buying price = Selling price - Best supplier price defined on product card<br>* Margin on Weighted Average Price (WAP) = Selling price - Product Weighted Average Price (WAP) or best supplier price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAP if cost price not defined, or best supplier price if WAP not yet defined
 CostPrice=Cena fabryczna
 BuyingCost=Cena fabryczna
 UnitCharges=Koszty jednostkowe

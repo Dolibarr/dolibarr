@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - commercial
 Commercial=Vertrieb
 CommercialArea=Vertriebs - Übersicht
-CommercialCard=Vertriebskarte
+CommercialCard=Vertrieb - Karte
 CustomerArea=Kundenübersicht
 Customer=Kunde
 Customers=Kunden
@@ -37,7 +37,7 @@ ListOfProspects=Leads-Liste
 ListOfCustomers=Kundenliste
 LastDoneTasks=Letzte %s abgeschlossene Aufgaben
 LastRecordedTasks=Letzte Aufgaben
-LastActionsToDo=Letzte %s älteste, nicht erled. Aufgaben/Termine
+LastActionsToDo=Letzte %s älteste, nicht erledigte Aufgaben/Termine
 DoneAndToDoActionsFor=Abgeschlossene und unvollständige Ereignisse für %s
 DoneAndToDoActions=Abgeschlossene und zu unvollständige Ereignisse
 DoneActions=Abgeschlossene Ereignisse
@@ -71,7 +71,7 @@ ActionAC_FAX=Fax versenden
 ActionAC_PROP=Angebot senden
 ActionAC_EMAIL=E-Mail senden
 ActionAC_RDV=Treffen
-ActionAC_INT=Eingriff vor Ort
+ActionAC_INT=Serviceaufträge vor Ort
 ActionAC_FAC=Kundenrechnung senden
 ActionAC_REL=Kundenrechnung senden(Erinnerung)
 ActionAC_CLO=Schließen

@@ -1275,21 +1275,10 @@ else if ($id > 0 || ! empty($ref))
 		print '<tr><td>'.$langs->trans("TotalDuration").'</td>';
 		print '<td colspan="3">'.convertSecondToTime($object->duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY).'</td>';
 		print '</tr>';
-
-		// Date create
-		print '<tr><td>'.$langs->trans("Datec").'</td>';
-		print '<td colspan="3">';
-		print $object->datec ? dol_print_date($object->datec, 'daytext') : '&nbsp;';
-		print '</td>';
-		print '</tr>';
-
-		// Date Validation
-		print '<tr><td>'.$langs->trans("Datev").'</td>';
-		print '<td colspan="3">';
-		print $object->datev ? dol_print_date($object->datev, 'daytext') : '&nbsp;';
-		print '</td>';
-		print '</tr>';
-		
+	}
+	
+	if (! empty($conf->global->FICHINTER_USE_PLANNED_AND_DONE_DATES))
+	{
 		// Date Start
 		print '<tr><td>'.$langs->trans("Dateo").'</td>';
 		print '<td colspan="3">';

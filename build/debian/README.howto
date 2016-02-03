@@ -14,8 +14,8 @@ with format .DEB (for Debian, Ubuntu, ...).
 # To build a debian package, you need first
 # With Ubuntu 12.04
 # apt-get install debhelper dpkg-source gpg lintian git-buildpackage pkg-php-tools schroot sbuild dh-linktree dh-make-php
-# With Debian 7
-# apt-get install debhelper dpkg gnupg lintian git-buildpackage pkg-php-tools schroot sbuild dh-linktree dh-make-php
+# With Ubuntu 14.04 ou Debian 7
+# apt-get install debhelper dpkg gnupg lintian git-buildpackage pkg-php-tools schroot sbuild dh-linktree dh-make-php packaging-dev
 
 
 # To generate gpg key for email used into changelog
@@ -49,6 +49,7 @@ Other example:
 export DEBFULLNAME="Laurent Destailleur" 
 export DEBEMAIL="eldy@destailleur.fr"
 
+export QUILT_PATCHES=debian/patches
 
 # To use Alioth.debian.org
 * Create an account login
@@ -212,7 +213,9 @@ Warning: Name and email must match value into debian/control file (Entry added h
 
 * We try to build package
 > rm -fr ../build-area; 
-> git-buildpackage -us -uc --git-debian-branch=[master|jessie] --git-upstream-branch=[upstream|upstream-3.5.x]
+> git-buildpackage -us -uc --git-debian-branch=[master|jessie] --git-upstream-branch=[upstream|upstream-x.y.z]
+ou
+> git-buildpackage -us -uc --git-ignore-branch --git-upstream-branch=[upstream|upstream-x.y.z]
 
 Note: To build an old version, do: git checkout oldtagname -b newbranchname; git-buildpackage -us -uc --git-debian-branch=newbranchname --git-upstream-branch=[upstream|upstream-3.5.x]
 Note: You can use git-buildpackage -us -uc --git-ignore-new  if you want to test build with uncommited file
@@ -220,6 +223,7 @@ Note: You can use git-buildpackage -us -uc -d                if you want to test
 Note: Package is built into directory ../build-area
 Note: To compare 2 packages: debdiff package1.dsc package2.dsc
 
+* Test package (see dedicated chapter to test it with debian unstable env)
 
 * If package .deb is ok:
 Note: If there was errors managed manually, you may need to make a git commit but do not use option "amend" previous commit
@@ -287,17 +291,24 @@ Then check/modify also the user/date signature:
 - Name and email must match value into debian/control file (Entry added here is used by next step).
 
 
-To update dolibarr debian package when only files into debian has changed, or if you include manually backport:
+To update dolibarr debian package when only files into debian has changed:
 
 * Change files and commit.
 * Add a tag debian/x.y.z+dfsgw-2 (increase the last 1 into 2, 3...)
 
 
+To update dolibarr debian package when only files into debian has changed:
+
+* Manually, add patches into debian/patches and update file debian/series, or do the 2 steps with "quilt import filepatch.patch"
+* You can test patching of serie with "quilt push" (autant de fois que de patch). Avec "quilt pop -a", on revien a l'état du upstream sans les patch.
+
 Once files has been prepared, it's time to test:
 
 * Try to build package
 > rm -fr ../build-area;
-> git-buildpackage -us -uc --git-debian-branch=[master|jessie] --git-upstream-branch=[upstream|upstream-3.5.x]
+> git-buildpackage -us -uc --git-debian-branch=[master|jessie] --git-upstream-branch=[upstream|upstream-3.5.x|3.5.5]
+ou
+> git-buildpackage -us -uc --git-ignore-branch --git-upstream-branch=[upstream|upstream-3.5.x|3.5.5]
 
 Note: To build an old version, do: git checkout oldtagname -b newbranchname; git-buildpackage -us -uc --git-debian-branch=newbranchname --git-upstream-branch=[upstream|upstream-3.5.x]
 Note: You can use git-buildpackage -us -uc --git-ignore-new  if you want to test build with uncommited file

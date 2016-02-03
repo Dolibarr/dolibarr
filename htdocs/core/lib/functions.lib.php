@@ -306,7 +306,7 @@ function dol_getprefix()
  *  To link to a module file from a core file, then this function can be used (call by hook / trigger / speciales pages)
  *
  * 	@param	string	$relpath	Relative path to file (Ie: mydir/myfile, ../myfile, ...)
- * 	@param	string	$classname	Class name
+ * 	@param	string	$classname	Class name (deprecated)
  *  @return bool                True if load is a success, False if it fails
  */
 function dol_include_once($relpath, $classname='')
@@ -3963,7 +3963,9 @@ function get_exdir($num,$level,$alpha,$withoutslash,$object,$modulepart)
 
 	$path = '';
 
-	if (! empty($level) && in_array($modulepart, array('cheque','user','category','holiday','shipment', 'member','don','donation','supplier_invoice','invoice_supplier','mailing')))
+	$arrayforoldpath=array('cheque','user','category','holiday','shipment', 'member','don','donation','supplier_invoice','invoice_supplier','mailing');
+	if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) $arrayforoldpath[]='product';	
+	if (! empty($level) && in_array($modulepart, $arrayforoldpath))
 	{
 		// This part should be removed once all code is using "get_exdir" to forge path, with all parameters provided
 		if (empty($alpha)) $num = preg_replace('/([^0-9])/i','',$num);
@@ -5111,21 +5113,24 @@ function printCommonFooter($zone='private')
 	if (! empty($conf->global->MAIN_HTML_FOOTER)) print $conf->global->MAIN_HTML_FOOTER."\n";
 
 	print "\n";
-	print '<script type="text/javascript" language="javascript">jQuery(document).ready(function() {'."\n";
-	
-	print '<!-- If page_y set, we set scollbar with it -->'."\n";
-	print "page_y=getParameterByName('page_y', 0);";
-	print "if (page_y > 0) $('html, body').scrollTop(page_y);";
-	
-	print '<!-- Set handler to add page_y param on some a href links -->'."\n";
-	print 'jQuery(".reposition").click(function() {
-	           var page_y = $(document).scrollTop();
-	           /* alert(page_y); */
-	           this.href=this.href+\'&page_y=\'+page_y;
-	           });'."\n";
-	print '});'."\n";
-	
-	print '</script>'."\n";
+	if (! empty($conf->use_javascript_ajax))
+	{
+    	print '<script type="text/javascript" language="javascript">jQuery(document).ready(function() {'."\n";
+    	
+    	print '<!-- If page_y set, we set scollbar with it -->'."\n";
+    	print "page_y=getParameterByName('page_y', 0);";
+    	print "if (page_y > 0) $('html, body').scrollTop(page_y);";
+    	
+    	print '<!-- Set handler to add page_y param on some a href links -->'."\n";
+    	print 'jQuery(".reposition").click(function() {
+    	           var page_y = $(document).scrollTop();
+    	           /* alert(page_y); */
+    	           this.href=this.href+\'&page_y=\'+page_y;
+    	           });'."\n";
+    	print '});'."\n";
+    	
+    	print '</script>'."\n";
+	}
 	
 	// Google Analytics (need Google module)
 	if (! empty($conf->google->enabled) && ! empty($conf->global->MAIN_GOOGLE_AN_ID))

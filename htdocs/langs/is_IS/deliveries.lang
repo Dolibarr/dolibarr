@@ -17,6 +17,9 @@ DeleteDeliveryReceiptConfirm=Ertu viss um að þú viljir eyða pósti móttöku
 DeliveryMethod=Birtingarmáti
 TrackingNumber=Rekja spor númer
 DeliveryNotValidated=Afhending er ekki fullgilt
+StatusDeliveryCanceled=Canceled
+StatusDeliveryDraft=Draft
+StatusDeliveryValidated=Received
 # merou PDF model
 NameAndSignature=Nafn og Undirskrift:
 ToAndDate=To___________________________________ á ____ / _____ / __________

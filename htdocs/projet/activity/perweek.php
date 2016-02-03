@@ -100,8 +100,10 @@ if (GETPOST('submitdateselect'))
 	$action = '';
 }
 
-if ($action == 'assign')
+if ($action == 'addtime' && GETPOST('assigntask'))
 {
+    $action = 'assigntask';
+    
     if ($taskid > 0)
     {
 		$result = $object->fetch($taskid, $ref);
@@ -120,7 +122,36 @@ if ($action == 'assign')
     if (! $error)
     {
     	$idfortaskuser=$user->id;
-		$result = $object->add_contact($idfortaskuser, GETPOST("type"), 'internal');
+    	$result = $object->add_contact($idfortaskuser, GETPOST("type"), 'internal');
+
+    	if (! $result || $result == -2)	// Contact add ok or already contact of task
+    	{
+    		// Test if we are already contact of the project (should be rare but sometimes we can add as task contact without being contact of project, like when admin user has been removed from contact of project)
+    		$sql='SELECT ec.rowid FROM '.MAIN_DB_PREFIX.'element_contact as ec, '.MAIN_DB_PREFIX.'c_type_contact as tc WHERE tc.rowid = ec.fk_c_type_contact';
+    		$sql.=' AND ec.fk_socpeople = '.$idfortaskuser." AND ec.element_id = '.$object->fk_project.' AND tc.element = 'project' AND source = 'internal'";
+    		$resql=$db->query($sql);
+    		if ($resql)
+    		{
+    			$obj=$db->fetch_object($resql);
+    			if (! $obj)	// User is not already linked to project, so we will create link to first type
+    			{
+    				$project = new Project($db);
+    				$project->fetch($object->fk_project);
+    				// Get type
+    				$listofprojcontact=$project->liste_type_contact('internal');
+    				
+    				if (count($listofprojcontact))
+    				{
+    					$typeforprojectcontact=reset(array_keys($listofprojcontact));
+    					$result = $project->add_contact($idfortaskuser, $typeforprojectcontact, 'internal');
+    				}
+    			}
+    		}
+    		else 
+    		{
+    			dol_print_error($db);
+    		}
+    	}
     }
 
 	if ($result < 0)
@@ -298,7 +329,24 @@ print "\n";
 */
 
 
-print '<div align="right">'.$nav.'</div>';
+// Add a new project/task
+//print '<br>';
+//print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+//print '<input type="hidden" name="action" value="assigntask">';
+//print '<input type="hidden" name="mode" value="'.$mode.'">';
+//print '<input type="hidden" name="year" value="'.$year.'">';
+//print '<input type="hidden" name="month" value="'.$month.'">';
+//print '<input type="hidden" name="day" value="'.$day.'">';
+print '<div class="float">';
+print $langs->trans("AssignTaskToMe").'<br>';
+$formproject->selectTasks($socid?$socid:-1, $taskid, 'taskid', 32, 0, 1, 1);
+print $formcompany->selectTypeContact($object, '', 'type','internal','rowid', 0);
+print '<input type="submit" class="button" name="assigntask" value="'.$langs->trans("AssignTask").'">';
+//print '</form>';
+print '</div>';
+
+print '<div class="floatright">'.$nav.'</div>';
+print '<div class="clearboth" style="padding-bottom: 8px;"></div>';
 
 
 print '<table class="noborder" width="100%">';
@@ -376,22 +424,6 @@ while ($i < 7)
 }
 print "});";
 print '</script>';
-
-
-// Add a new project/task
-print '<br>';
-print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-print '<input type="hidden" name="action" value="assign">';
-print '<input type="hidden" name="mode" value="'.$mode.'">';
-print '<input type="hidden" name="year" value="'.$year.'">';
-print '<input type="hidden" name="month" value="'.$month.'">';
-print '<input type="hidden" name="day" value="'.$day.'">';
-print $langs->trans("AssignTaskToMe").'<br>';
-$formproject->selectTasks($socid?$socid:-1, $taskid, 'taskid', 32, 0, 1, 1);
-print $formcompany->selectTypeContact($object, '', 'type','internal','rowid', 0);
-print '<input type="submit" class="button" name="submit" value="'.$langs->trans("AssignTask").'">';
-print '</form>';
-
 
 
 llxFooter();

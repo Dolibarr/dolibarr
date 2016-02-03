@@ -155,6 +155,7 @@ DepositsAreNotIncluded=- Teminat faturalarını içermez
 DepositsAreIncluded=- Teminat faturalarını içerir
 LT2ReportByCustomersInInputOutputModeES=Üçüncü parti IRPF Raporu
 LT1ReportByCustomersInInputOutputModeES=RE Üçüncü partiye göre rapor
+VATReport=VAT report
 VATReportByCustomersInInputOutputMode=Müşteriye göre alınan ve ödenen KDV raporu
 VATReportByCustomersInDueDebtMode=Müşteriye göre alınan ve ödenen KDV raporu
 VATReportByQuartersInInputOutputMode=Orana göre alınan ve ödenen KDV raporu

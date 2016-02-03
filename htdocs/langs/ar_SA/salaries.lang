@@ -1,15 +1,14 @@
-# Dolibarr language file - Source file is en_US - users
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Accountancy code for salaries payments
-SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Accountancy code for financial charge
-Salary=Salary
-Salaries=Salaries
-Employee=Employee
-NewSalaryPayment=New salary payment
-SalaryPayment=Salary payment
-SalariesPayments=Salaries payments
-ShowSalaryPayment=Show salary payment
-THM=Average hourly price
-TJM=Average daily price
-CurrentSalary=Current salary
-THMDescription=This value may be used to calculate cost of time consumed on a project entered by users if module project is used
-TJMDescription=This value is currently as information only and is not used for any calculation
+# Dolibarr language file - Source file is en_US - salaries
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=كود المحاسبة لدفع رواتب
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=كود المحاسبة للدفع المالي
+Salary=الراتب
+Salaries=الرواتب
+NewSalaryPayment=دفع الرواتب جديد
+SalaryPayment=دفع الرواتب
+SalariesPayments=مدفوعات الرواتب
+ShowSalaryPayment=مشاهدة دفع الرواتب
+THM=متوسط ​​سعر ساعة
+TJM=متوسط ​​السعر اليومي
+CurrentSalary=الراتب الحالي
+THMDescription=يمكن استخدام هذه القيمة لحساب تكلفة الوقت المستهلك في المشروع المدخل من قبل المستخدمين إذا تم استخدام وحدة مشروع 
+TJMDescription=هذه القيمة هي حاليا فقط كمعلومات وليس لاستخدامها في أي حساب

@@ -121,3 +121,4 @@ OpenIDURL=OpenID URL
 LoginUsingOpenID=Izmantojiet OpenID, lai pieteiktos
 WeeklyHours=Nedēļas stundas
 ColorUser=Lietotāja krāsa
+DisabledInMonoUserMode=Disabled in maintenance mode

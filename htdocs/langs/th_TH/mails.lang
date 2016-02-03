@@ -81,6 +81,7 @@ ActivateCheckReadKey=ที่สำคัญที่ใช้ในการ�
 EMailSentToNRecipients=อีเมลที่ส่งไปยังผู้รับ% s
 XTargetsAdded=<b>ผู้รับ% s</b> เพิ่มเข้าไปในรายชื่อเป้าหมาย
 EachInvoiceWillBeAttachedToEmail=เอกสารที่ใช้แม่แบบเอกสารใบแจ้งหนี้ค่าเริ่มต้นจะถูกสร้างขึ้นและแนบมากับอีเมลแต่ละ
+OnlyPDFattachmentSupported=If the PDF document was already generated for the invoice, it will be attached to email. If not, no email will be sent (also, note that only pdf invoice are supported as attachment in mass sending in this version).
 MailTopicSendRemindUnpaidInvoices=เตือนความทรงจำของใบแจ้งหนี้% (% s)
 SendRemind=ส่งการแจ้งเตือนโดยอีเมล์
 RemindSent=เตือน% s (s) ส่ง

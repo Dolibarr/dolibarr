@@ -18,8 +18,9 @@ CronExplainHowToRunUnix=On Unix environment you should use the following crontab
 CronExplainHowToRunWin=On Microsoft(tm) Windows environement you can use Scheduled task tools to run the command line each 5 minutes
 # Menu
 CronJobs=Scheduled jobs
-CronListActive=List of active/scheduled jobs
+CronListActive=List of enabled/scheduled jobs
 CronListInactive=List of disabled jobs
+EnabledAndDisabled=Enabled and disabled
 # Page list
 CronDateLastRun=Last run
 CronLastOutput=Last run output
@@ -35,8 +36,8 @@ CronInfo=Scheduled job module allow to execute job that have been planned
 CronWaitingJobs=Waiting jobs
 CronTask=Job
 CronNone=無
-CronDtStart=開始日期
-CronDtEnd=結束日期
+CronDtStart=Not before
+CronDtEnd=Not after
 CronDtNextLaunch=Next execution
 CronDtLastLaunch=Last execution
 CronFrequency=Frequency
@@ -51,6 +52,7 @@ CronNoJobs=No jobs registered
 CronPriority=優先
 CronLabel=描述
 CronNbRun=Nb. launch
+CronMaxRun=Max nb. launch
 CronEach=Every
 JobFinished=Job launched and finished
 #Page card

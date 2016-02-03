@@ -1,12 +1,12 @@
 # Dolibarr language file - Source file is en_US - sendings
-RefSending=Versand Nr.
+RefSending=Versandnr.
 Sending=Auslieferung
 Sendings=Auslieferungen
 AllSendings=Alle Lieferungen
 Shipment=Versand
 Shipments=Lieferungen
 ShowSending=Zeige Lieferungen
-Receivings=Beleg
+Receivings=Delivery Receipts
 SendingsArea=Versandübersicht
 ListOfSendings=Versandliste
 SendingMethod=Versandart
@@ -16,7 +16,7 @@ SearchASending=Suche Auslieferung
 StatisticsOfSendings=Versandstatistik
 NbOfSendings=Anzahl  Auslieferungen
 NumberOfShipmentsByMonth=Anzahl Auslieferungen pro Monat
-SendingCard=Auslieferungen
+SendingCard=Lieferung - Karte
 NewSending=Neue Auslieferung
 CreateASending=Erstelle Auslieferung
 CreateSending=Auslieferung erstellen
@@ -35,7 +35,7 @@ StatusSendingCanceled=Storniert
 StatusSendingDraft=Entwurf
 StatusSendingValidated=Freigegeben (Artikel versandfertig oder bereits versandt)
 StatusSendingProcessed=Verarbeitete
-StatusSendingCanceledShort=Storno
+StatusSendingCanceledShort=Storniert
 StatusSendingDraftShort=Entwurf
 StatusSendingValidatedShort=Freigegeben
 StatusSendingProcessedShort=Fertig
@@ -46,13 +46,13 @@ CarriersArea=Übersicht Spediteure
 NewCarrier=Neuer Spediteur
 ConfirmDeleteSending=Möchten Sie diese Lieferung wirklich löschen?
 ConfirmValidateSending=Möchten Sie diese Auslieferung <b>%s</b> wirklich freigeben?
-ConfirmCancelSending=Möchten Sie diese Lieferung wirklich wirklich stornieren?
+ConfirmCancelSending=Möchten Sie diese Lieferung wirklich stornieren?
 GenericTransport=Generischer Transport
 Enlevement=Vom Kunden erhalten
 DocumentModelSimple=Einfache Dokumentvorlage
 DocumentModelMerou=Merou A5-Modell
 WarningNoQtyLeftToSend=Achtung, keine Produkte für den Versand
-StatsOnShipmentsOnlyValidated=Versandstatistik (nur Freigegebene). Das Datum ist das der Freigabe (geplantes Lieferdatum ist nicht immer bekannt).
+StatsOnShipmentsOnlyValidated=Versandstatistik (nur freigegebene). Das Datum ist das der Freigabe (geplantes Lieferdatum ist nicht immer bekannt).
 DateDeliveryPlanned=Geplanter Liefertermin
 DateReceived=Datum der Zustellung
 SendShippingByEMail=Versand per E-Mail
@@ -69,19 +69,19 @@ ProductQtyInCustomersOrdersRunning=Produktmenge in geöffneter Kunden Bestellung
 ProductQtyInSuppliersOrdersRunning=Produktmenge in geöffneter Lieferantenbestellungen
 ProductQtyInShipmentAlreadySent=Produktmenge von offenem Kundenauftrag bereits geliefert
 ProductQtyInSuppliersShipmentAlreadyRecevied=Produktmenge aus Lieferantenbestellung bereits erhalten
-NoProductToShipFoundIntoStock=No product to ship found into warehouse <b>%s</b>. Correct stock or go back to choose another warehouse.
+NoProductToShipFoundIntoStock=Kein Artikel zum Versenden gefunden im Lager <b>%s</b>. Korrigieren Sie den Lagerbestand oder wählen Sie ein anderes Lager.
 
 # Sending methods
 SendingMethodCATCH=Abholung durch Kunden
 SendingMethodTRANS=Spedition
 SendingMethodCOLSUI=Expressversand
 # ModelDocument
-DocumentModelSirocco=Einfache Dokumentvorlage für die Lieferungscheine
-DocumentModelTyphon=Vollständig Dokumentvorlage für die Lieferungscheine (Logo, ...)
+DocumentModelSirocco=Einfache Dokumentvorlage für die Lieferscheine
+DocumentModelTyphon=Vollständig Dokumentvorlage für die Lieferscheine (Logo, ...)
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Konstante EXPEDITION_ADDON_NUMBER nicht definiert
-SumOfProductVolumes=Summe der Produktevolumen
-SumOfProductWeights=Summe der Produktegewichte
+SumOfProductVolumes=Summe der Produktvolumen
+SumOfProductWeights=Summe der Produktgewichte
 
 # warehouse details
-DetailWarehouseNumber= Warenlager-Details
+DetailWarehouseNumber= Warenlagerdetails
 DetailWarehouseFormat= W:%s (Menge : %d)

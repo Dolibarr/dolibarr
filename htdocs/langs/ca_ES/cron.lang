@@ -18,8 +18,9 @@ CronExplainHowToRunUnix=A entorns Unix s'ha d'utilitzar la següent entrada cron
 CronExplainHowToRunWin=En entorns Microsoft (tm) Windows, pot utilitzar l'eina 'tareas programadas' per executar la comanda cada 5 minuts
 # Menu
 CronJobs=Tasques programades
-CronListActive=Llistat de tasques actives/programades
+CronListActive=List of enabled/scheduled jobs
 CronListInactive=Llistat de tasques planificades inactives
+EnabledAndDisabled=Enabled and disabled
 # Page list
 CronDateLastRun=Últim llançament
 CronLastOutput=Última sortida
@@ -35,8 +36,8 @@ CronInfo=Tasques programades li permet executar tasques que han sigut programade
 CronWaitingJobs=Treballs en espera
 CronTask=Tasca
 CronNone=Ningún
-CronDtStart=Data inici
-CronDtEnd=Data fi
+CronDtStart=Not before
+CronDtEnd=Not after
 CronDtNextLaunch=Propera execució
 CronDtLastLaunch=Darrera execució
 CronFrequency=Freqüència
@@ -51,6 +52,7 @@ CronNoJobs=Sense treballs actualment
 CronPriority=Prioritat
 CronLabel=Descripció
 CronNbRun=Nº ejec.
+CronMaxRun=Max nb. launch
 CronEach=Tota (s)
 JobFinished=Tasques llançades i finalitzades
 #Page card

@@ -17,6 +17,9 @@ DeleteDeliveryReceiptConfirm=Sunteţi sigur că doriţi să ştergeţi recepţia
 DeliveryMethod=Metoda de livrare
 TrackingNumber=Număr de urmărire
 DeliveryNotValidated=Livrare  nevalidată
+StatusDeliveryCanceled=Canceled
+StatusDeliveryDraft=Draft
+StatusDeliveryValidated=Received
 # merou PDF model
 NameAndSignature=Nume şi Semnătura:
 ToAndDate=To___________________________________ pe ____ / _____ / __________

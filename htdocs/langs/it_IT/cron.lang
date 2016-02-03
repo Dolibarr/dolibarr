@@ -18,8 +18,9 @@ CronExplainHowToRunUnix=In ambienti Unix per lanciare il comando ogni 5 minuti d
 CronExplainHowToRunWin=In ambienti Microsoft(tm) Windows per lanciare il comando ogni 5 minuti dovresti usare le operazioni pianificate
 # Menu
 CronJobs=Azioni pianificate
-CronListActive=Lista dei job attivi/programmati
+CronListActive=List of enabled/scheduled jobs
 CronListInactive=Lista dei job disabilitati
+EnabledAndDisabled=Enabled and disabled
 # Page list
 CronDateLastRun=Ultimo avvio
 CronLastOutput=Output dell'ultimo avvio
@@ -35,8 +36,8 @@ CronInfo=Il modulo per i job programmati permette di eseguire operazioni definit
 CronWaitingJobs=Job in attesa
 CronTask=Azione
 CronNone=Nessuno
-CronDtStart=Data di inizio
-CronDtEnd=Data di fine
+CronDtStart=Not before
+CronDtEnd=Not after
 CronDtNextLaunch=Prossima esecuzione
 CronDtLastLaunch=Ultima esecuzione
 CronFrequency=Frequenza
@@ -51,6 +52,7 @@ CronNoJobs=Nessun job registrato
 CronPriority=Priorità
 CronLabel=Descrizione
 CronNbRun=Num. lancio
+CronMaxRun=Max nb. launch
 CronEach=Ogni
 JobFinished=Azione eseguita e completata
 #Page card

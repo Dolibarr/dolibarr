@@ -81,15 +81,16 @@ ActivateCheckReadKey=Key used to encrypt URL used for "Read Receipt" and "Unsubc
 EMailSentToNRecipients=EMail trimis la %s destinatari.
 XTargetsAdded=<b>%s</b> destinatari adăugaţi în lista target
 EachInvoiceWillBeAttachedToEmail=Un document folosind modelul implicit al documentului va fi creat și atașat la fiecare e-mail.
+OnlyPDFattachmentSupported=If the PDF document was already generated for the invoice, it will be attached to email. If not, no email will be sent (also, note that only pdf invoice are supported as attachment in mass sending in this version).
 MailTopicSendRemindUnpaidInvoices=Memento la factura %s (%s)
 SendRemind=Trimite memento prin e-mailuri
 RemindSent=%s Memento(ri) trimise
 AllRecipientSelected=All thirdparties selected and if an email is set.
 NoRemindSent=Niciun email de relansare trimis
 ResultOfMailSending=Result of mass EMail sending
-NbSelected=Nb selected
-NbIgnored=Nb ignored
-NbSent=Nb sent
+NbSelected=Nr selectat
+NbIgnored=Nr  ignorat
+NbSent=Nr trimis
 
 # Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=De contact ale tuturor părţilor terţe (client, perspectiva, furnizor, ...)
