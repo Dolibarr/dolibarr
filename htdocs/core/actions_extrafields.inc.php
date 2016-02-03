@@ -162,6 +162,7 @@ if ($action == 'add')
                 	(GETPOST('alwayseditable')?1:0),
                 	(GETPOST('perms')?GETPOST('perms'):''),
                 	(GETPOST('list')?1:0)
+					,(GETPOST('ishidden')?1:0)
                 );
     			if ($result > 0)
     			{
@@ -312,6 +313,7 @@ if ($action == 'update')
     				(GETPOST('alwayseditable')?1:0),
     				(GETPOST('perms')?GETPOST('perms'):''),
                 	(GETPOST('list')?1:0)
+					,(GETPOST('ishidden')?1:0)
     			);
     			if ($result > 0)
     			{

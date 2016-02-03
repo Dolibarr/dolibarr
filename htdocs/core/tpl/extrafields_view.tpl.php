@@ -45,7 +45,8 @@ if (empty($reshook) && ! empty($extrafields->attribute_label))
 		}
 		else
 		{
-			print '<tr><td>';
+			if (!empty($extrafields->attribute_hidden[$key])) print '<tr class="hideobject"><td>';
+			else print '<tr><td>';
 			print '<table width="100%" class="nobordernopadding"><tr><td';
 			//var_dump($action);exit;
 			if ((! empty($action) && ($action == 'create' || $action == 'edit')) && ! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
