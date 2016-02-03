@@ -218,7 +218,7 @@ class BookKeeping extends CommonObject
 					$this->date_create = $now;
 				}
 				
-				$sql = "INSERT INTO " . MAIN_DB_PREFIX . $this->table_element." (";
+				$sql = "INSERT INTO " . MAIN_DB_PREFIX . $this->table_element . " (";
 				
 				$sql .= "doc_date";
 				$sql .= ", doc_type";
@@ -291,7 +291,6 @@ class BookKeeping extends CommonObject
 			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
 		}
 		
-		
 		if (! $error) {
 			
 			if (! $notrigger) {
@@ -320,19 +319,18 @@ class BookKeeping extends CommonObject
 	/**
 	 * Create object into database
 	 *
-	 * @param  User $user      User that creates
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 *
+	 * @param User $user User that creates
+	 * @param bool $notrigger false=launch triggers after, true=disable triggers
+	 *       
 	 * @return int <0 if KO, Id of created object if OK
 	 */
-	public function createStd(User $user, $notrigger = false)
-	{
+	public function createStd(User $user, $notrigger = false) {
 		dol_syslog(__METHOD__, LOG_DEBUG);
-	
+		
 		$error = 0;
-	
+		
 		// Clean parameters
-	
+		
 		if (isset($this->doc_type)) {
 			$this->doc_type = trim($this->doc_type);
 		}
@@ -378,86 +376,82 @@ class BookKeeping extends CommonObject
 		if (isset($this->piece_num)) {
 			$this->piece_num = trim($this->piece_num);
 		}
-	
-	
-	
+		
 		// Check parameters
 		// Put here code to add control on parameters values
-	
+		
 		// Insert request
 		$sql = 'INSERT INTO ' . MAIN_DB_PREFIX . $this->table_element . '(';
-	
-		$sql.= 'doc_date,';
-		$sql.= 'doc_type,';
-		$sql.= 'doc_ref,';
-		$sql.= 'fk_doc,';
-		$sql.= 'fk_docdet,';
-		$sql.= 'code_tiers,';
-		$sql.= 'numero_compte,';
-		$sql.= 'label_compte,';
-		$sql.= 'debit,';
-		$sql.= 'credit,';
-		$sql.= 'montant,';
-		$sql.= 'sens,';
-		$sql.= 'fk_user_author,';
-		$sql.= 'import_key,';
-		$sql.= 'code_journal,';
-		$sql.= 'piece_num';
-	
-	
+		
+		$sql .= 'doc_date,';
+		$sql .= 'doc_type,';
+		$sql .= 'doc_ref,';
+		$sql .= 'fk_doc,';
+		$sql .= 'fk_docdet,';
+		$sql .= 'code_tiers,';
+		$sql .= 'numero_compte,';
+		$sql .= 'label_compte,';
+		$sql .= 'debit,';
+		$sql .= 'credit,';
+		$sql .= 'montant,';
+		$sql .= 'sens,';
+		$sql .= 'fk_user_author,';
+		$sql .= 'import_key,';
+		$sql .= 'code_journal,';
+		$sql .= 'piece_num';
+		
 		$sql .= ') VALUES (';
-	
-		$sql .= ' '.(! isset($this->doc_date) || dol_strlen($this->doc_date)==0?'NULL':"'".$this->db->idate($this->doc_date)."'").',';
-		$sql .= ' '.(! isset($this->doc_type)?'NULL':"'".$this->db->escape($this->doc_type)."'").',';
-		$sql .= ' '.(! isset($this->doc_ref)?'NULL':"'".$this->db->escape($this->doc_ref)."'").',';
-		$sql .= ' '.(empty($this->fk_doc)?'0':$this->fk_doc).',';
-		$sql .= ' '.(empty($this->fk_docdet)?'0':$this->fk_docdet).',';
-		$sql .= ' '.(! isset($this->code_tiers)?'NULL':"'".$this->db->escape($this->code_tiers)."'").',';
-		$sql .= ' '.(! isset($this->numero_compte)?'NULL':"'".$this->db->escape($this->numero_compte)."'").',';
-		$sql .= ' '.(! isset($this->label_compte)?'NULL':"'".$this->db->escape($this->label_compte)."'").',';
-		$sql .= ' '.(! isset($this->debit)?'NULL':"'".$this->debit."'").',';
-		$sql .= ' '.(! isset($this->credit)?'NULL':"'".$this->credit."'").',';
-		$sql .= ' '.(! isset($this->montant)?'NULL':"'".$this->montant."'").',';
-		$sql .= ' '.(! isset($this->sens)?'NULL':"'".$this->db->escape($this->sens)."'").',';
-		$sql .= ' '.$user->id.',';
-		$sql .= ' '.(! isset($this->import_key)?'NULL':"'".$this->db->escape($this->import_key)."'").',';
-		$sql .= ' '.(! isset($this->code_journal)?'NULL':"'".$this->db->escape($this->code_journal)."'").',';
-		$sql .= ' '.(! isset($this->piece_num)?'NULL':$this->piece_num);
-	
-	
+		
+		$sql .= ' ' . (! isset($this->doc_date) || dol_strlen($this->doc_date) == 0 ? 'NULL' : "'" . $this->db->idate($this->doc_date) . "'") . ',';
+		$sql .= ' ' . (! isset($this->doc_type) ? 'NULL' : "'" . $this->db->escape($this->doc_type) . "'") . ',';
+		$sql .= ' ' . (! isset($this->doc_ref) ? 'NULL' : "'" . $this->db->escape($this->doc_ref) . "'") . ',';
+		$sql .= ' ' . (empty($this->fk_doc) ? '0' : $this->fk_doc) . ',';
+		$sql .= ' ' . (empty($this->fk_docdet) ? '0' : $this->fk_docdet) . ',';
+		$sql .= ' ' . (! isset($this->code_tiers) ? 'NULL' : "'" . $this->db->escape($this->code_tiers) . "'") . ',';
+		$sql .= ' ' . (! isset($this->numero_compte) ? 'NULL' : "'" . $this->db->escape($this->numero_compte) . "'") . ',';
+		$sql .= ' ' . (! isset($this->label_compte) ? 'NULL' : "'" . $this->db->escape($this->label_compte) . "'") . ',';
+		$sql .= ' ' . (! isset($this->debit) ? 'NULL' : "'" . $this->debit . "'") . ',';
+		$sql .= ' ' . (! isset($this->credit) ? 'NULL' : "'" . $this->credit . "'") . ',';
+		$sql .= ' ' . (! isset($this->montant) ? 'NULL' : "'" . $this->montant . "'") . ',';
+		$sql .= ' ' . (! isset($this->sens) ? 'NULL' : "'" . $this->db->escape($this->sens) . "'") . ',';
+		$sql .= ' ' . $user->id . ',';
+		$sql .= ' ' . (! isset($this->import_key) ? 'NULL' : "'" . $this->db->escape($this->import_key) . "'") . ',';
+		$sql .= ' ' . (! isset($this->code_journal) ? 'NULL' : "'" . $this->db->escape($this->code_journal) . "'") . ',';
+		$sql .= ' ' . (! isset($this->piece_num) ? 'NULL' : $this->piece_num);
+		
 		$sql .= ')';
-	
+		
 		$this->db->begin();
-	
+		
 		$resql = $this->db->query($sql);
-		if (!$resql) {
+		if (! $resql) {
 			$error ++;
 			$this->errors[] = 'Error ' . $this->db->lasterror();
 			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
 		}
-	
-		if (!$error) {
+		
+		if (! $error) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . $this->table_element);
-	
-			if (!$notrigger) {
+			
+			if (! $notrigger) {
 				// Uncomment this and change MYOBJECT to your own tag if you
 				// want this action to call a trigger.
-	
-				//// Call triggers
-				//$result=$this->call_trigger('MYOBJECT_CREATE',$user);
-				//if ($result < 0) $error++;
-				//// End call triggers
+				
+				// // Call triggers
+				// $result=$this->call_trigger('MYOBJECT_CREATE',$user);
+				// if ($result < 0) $error++;
+				// // End call triggers
 			}
 		}
-	
+		
 		// Commit or rollback
 		if ($error) {
 			$this->db->rollback();
-	
+			
 			return - 1 * $error;
 		} else {
 			$this->db->commit();
-	
+			
 			return $this->id;
 		}
 	}
@@ -581,12 +575,16 @@ class BookKeeping extends CommonObject
 		$sqlwhere = array ();
 		if (count($filter) > 0) {
 			foreach ( $filter as $key => $value ) {
-				if ($key=='t.doc_date') {
+				if ($key == 't.doc_date') {
 					$sqlwhere[] = $key . '=\'' . $this->db->idate($value) . '\'';
-				} elseif($key=='t.doc_date>=' || $key=='t.doc_date<=') {
+				} elseif ($key == 't.doc_date>=' || $key == 't.doc_date<=') {
 					$sqlwhere[] = $key . '\'' . $this->db->idate($value) . '\'';
-				}  elseif($key=='t.fk_doc' || $key=='t.fk_docdet' ||$key=='t.piece_num') {
+				} elseif ($key == 't.numero_compte>=' || $key == 't.numero_compte<=' || $key == 't.code_tiers>=' || $key == 't.code_tiers<=') {
+					$sqlwhere[] = $key . '\'' . $this->db->escape($value) . '\'';
+				} elseif ($key == 't.fk_doc' || $key == 't.fk_docdet' || $key == 't.piece_num') {
 					$sqlwhere[] = $key . '=' . $value;
+				} elseif ($key == 't.code_tiers' || $key == 't.numero_compte') {
+					$sqlwhere[] = $key . ' LIKE \'' . $this->db->escape($value) . '%\'';
 				} else {
 					$sqlwhere[] = $key . ' LIKE \'%' . $this->db->escape($value) . '%\'';
 				}
@@ -815,19 +813,19 @@ class BookKeeping extends CommonObject
 	/**
 	 * Delete bookkepping by importkey
 	 *
-	 * @param	string 	$importkey		Import key
-	 * @return	int						Result
+	 * @param string $importkey Import key
+	 * @return int Result
 	 */
 	function deleteByImportkey($importkey) {
 		$this->db->begin();
-	
+		
 		// first check if line not yet in bookkeeping
 		$sql = "DELETE";
 		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element;
 		$sql .= " WHERE import_key = '" . $importkey . "'";
-	
+		
 		$resql = $this->db->query($sql);
-	
+		
 		if (! $resql) {
 			$this->errors[] = "Error " . $this->db->lasterror();
 			foreach ( $this->errors as $errmsg ) {
@@ -837,7 +835,7 @@ class BookKeeping extends CommonObject
 			$this->db->rollback();
 			return - 1;
 		}
-	
+		
 		$this->db->commit();
 		return 1;
 	}
@@ -845,19 +843,19 @@ class BookKeeping extends CommonObject
 	/**
 	 * Delete bookkepping by year
 	 *
-	 * @param	string 	$delyear		year to delete
-	 * @return	int						Result
+	 * @param string $delyear year to delete
+	 * @return int Result
 	 */
 	function deleteByYear($delyear) {
 		$this->db->begin();
-	
+		
 		// first check if line not yet in bookkeeping
 		$sql = "DELETE";
 		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element;
-		$sql .= " WHERE YEAR(doc_date) = ".$delyear;
-	
+		$sql .= " WHERE YEAR(doc_date) = " . $delyear;
+		
 		$resql = $this->db->query($sql);
-	
+		
 		if (! $resql) {
 			$this->errors[] = "Error " . $this->db->lasterror();
 			foreach ( $this->errors as $errmsg ) {
@@ -867,7 +865,7 @@ class BookKeeping extends CommonObject
 			$this->db->rollback();
 			return - 1;
 		}
-	
+		
 		$this->db->commit();
 		return 1;
 	}
@@ -875,19 +873,19 @@ class BookKeeping extends CommonObject
 	/**
 	 * Delete bookkepping by piece number
 	 *
-	 * @param	int 	$piecenum		peicenum to delete
-	 * @return	int						Result
+	 * @param int $piecenum peicenum to delete
+	 * @return int Result
 	 */
 	function deleteMvtNum($piecenum) {
 		$this->db->begin();
-	
+		
 		// first check if line not yet in bookkeeping
 		$sql = "DELETE";
 		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element;
-		$sql .= " WHERE piece_num = ".$piecenum;
-	
+		$sql .= " WHERE piece_num = " . $piecenum;
+		
 		$resql = $this->db->query($sql);
-	
+		
 		if (! $resql) {
 			$this->errors[] = "Error " . $this->db->lasterror();
 			foreach ( $this->errors as $errmsg ) {
@@ -897,7 +895,7 @@ class BookKeeping extends CommonObject
 			$this->db->rollback();
 			return - 1;
 		}
-	
+		
 		$this->db->commit();
 		return 1;
 	}
@@ -997,7 +995,7 @@ class BookKeeping extends CommonObject
 			$this->doc_type = $obj->doc_type;
 		} else {
 			$this->error = "Error " . $this->db->lasterror();
-			dol_syslog(get_class($this) . "::".__METHOD__ . $this->error, LOG_ERR);
+			dol_syslog(get_class($this) . "::" . __METHOD__ . $this->error, LOG_ERR);
 			return - 1;
 		}
 		
@@ -1069,7 +1067,7 @@ class BookKeeping extends CommonObject
 			}
 		} else {
 			$this->error = "Error " . $this->db->lasterror();
-			dol_syslog(get_class($this) . "::fetch_per_mvt " . $this->error, LOG_ERR);
+			dol_syslog(get_class($this) . "::fetch_all_per_mvt " . $this->error, LOG_ERR);
 			return - 1;
 		}
 		
@@ -1079,30 +1077,29 @@ class BookKeeping extends CommonObject
 	/**
 	 * Export bookkeping
 	 *
-	 * @param	string	$model		Model
-	 * @return	int					Result
+	 * @param string $model Model
+	 * @return int Result
 	 */
-	function export_bookkeping($model = 'ebp')
-	{
+	function export_bookkeping($model = 'ebp') {
 		$sql = "SELECT rowid, doc_date, doc_type,";
 		$sql .= " doc_ref, fk_doc, fk_docdet, code_tiers,";
 		$sql .= " numero_compte, label_compte, debit, credit,";
 		$sql .= " montant, sens, fk_user_author, import_key, code_journal, piece_num";
 		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element;
-	
+		
 		dol_syslog(get_class($this) . "::export_bookkeping", LOG_DEBUG);
-	
+		
 		$resql = $this->db->query($sql);
-	
+		
 		if ($resql) {
 			$this->linesexport = array ();
-	
+			
 			$num = $this->db->num_rows($resql);
 			while ( $obj = $this->db->fetch_object($resql) ) {
 				$line = new BookKeepingLine();
-	
+				
 				$line->id = $obj->rowid;
-	
+				
 				$line->doc_date = $this->db->jdate($obj->doc_date);
 				$line->doc_type = $obj->doc_type;
 				$line->doc_ref = $obj->doc_ref;
@@ -1117,15 +1114,13 @@ class BookKeeping extends CommonObject
 				$line->sens = $obj->sens;
 				$line->code_journal = $obj->code_journal;
 				$line->piece_num = $obj->piece_num;
-	
+				
 				$this->linesexport[] = $line;
 			}
 			$this->db->free($resql);
-	
+			
 			return $num;
-		}
-		else
-		{
+		} else {
 			$this->error = "Error " . $this->db->lasterror();
 			dol_syslog(get_class($this) . "::export_bookkeping " . $this->error, LOG_ERR);
 			return - 1;
