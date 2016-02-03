@@ -1640,6 +1640,7 @@ CloseFiscalYear=Exercice fiscal cloturé
 DeleteFiscalYear=Effacer exercice fiscal
 ConfirmDeleteFiscalYear=Êtes-vous sûr de vouloir supprimer cet exercice fiscal ?
 AlwaysEditable=Peut toujours être édité
+IsHidden=Non visible
 MAIN_APPLICATION_TITLE=Forcer la valeur visible du nom de l'application (attention : positionner ici son propre nom rendra inopérante la fonction de remplissage automatique de l'identifiant lorsque vous utilisez l'application mobile DoliDroid)
 NbMajMin=Nombre minimal de caractères majuscules
 NbNumMin=Nombre minimal de caractères numériques

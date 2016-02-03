@@ -240,6 +240,7 @@ ALTER TABLE llx_projet_task_time ADD COLUMN invoice_id integer DEFAULT NULL;
 ALTER TABLE llx_projet_task_time ADD COLUMN invoice_line_id integer DEFAULT NULL;
 
 
+ALTER TABLE llx_extrafields ADD COLUMN ishidden integer DEFAULT 0;
 create table llx_stock_lotserial
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
