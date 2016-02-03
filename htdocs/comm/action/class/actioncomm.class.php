@@ -418,6 +418,20 @@ class ActionComm extends CommonObject
 
         $this->id=0;
 
+		if (!is_object($fuser))
+		{
+			if ($fuser > 0)
+			{
+				$u = new User($db);
+				$u->fetch($fuser);
+				$fuser = $u;
+			}
+			else 
+			{
+				$fuser = $user;
+			}
+		}
+
         // Create clone
         $result=$this->add($fuser);
         if ($result < 0) $error++;
@@ -841,7 +855,7 @@ class ActionComm extends CommonObject
         if (! empty($elementtype))
         {
             if ($elementtype == 'project') $sql.= ' AND a.fk_project = '.$fk_element;
-            else $sql.= " AND a.fk_element = ".$fk_element." AND a.elementtype = '".$elementtype."'";
+            else $sql.= " AND a.fk_element = ".(int) $fk_element." AND a.elementtype = '".$elementtype."'";
         }
         if (! empty($filter)) $sql.= $filter;
 		if ($sortorder && $sortfield) $sql.=$db->order($sortfield, $sortorder);

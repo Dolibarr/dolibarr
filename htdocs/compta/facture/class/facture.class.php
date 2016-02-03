@@ -1074,7 +1074,7 @@ class Facture extends CommonInvoice
 			}
 			else
 			{
-				$this->error='Bill with id '.$rowid.' or ref '.$ref.' not found sql='.$sql;
+				$this->error='Bill with id '.$rowid.' or ref '.$ref.' not found';
 				dol_syslog(get_class($this)."::fetch Error ".$this->error, LOG_ERR);
 				return 0;
 			}
@@ -1953,14 +1953,18 @@ class Facture extends CommonInvoice
 				$this->brouillon=0;
 				$this->date_validation=$now;
 				$i = 0;
-				$final = True;
-				while ($i < count($this->lines) && $final == True) {
-					$final = ($this->lines[$i]->situation_percent == 100);
-					$i++;
-				}
-				if ($final) {
-					$this->setFinal();
-				}
+				
+                if (!empty($conf->global->INVOICE_USE_SITUATION))
+                {
+    				$final = True;
+    				while ($i < count($this->lines) && $final == True) {
+    					$final = ($this->lines[$i]->situation_percent == 100);
+    					$i++;
+    				}
+    				if ($final) {
+    					$this->setFinal();
+    				}
+                }
 			}
 		}
 		else
@@ -2128,8 +2132,8 @@ class Facture extends CommonInvoice
 		if (empty($txlocaltax2)) $txlocaltax2=0;
 		if (empty($fk_parent_line) || $fk_parent_line < 0) $fk_parent_line=0;
 		if (empty($fk_prev_id)) $fk_prev_id = 'null';
-		if (is_null($situation_percent) || $situation_percent > 100) $situation_percent = 100;
-
+		if (! isset($situation_percent) || $situation_percent > 100 || (string) $situation_percent == '') $situation_percent = 100;
+		    
 		$remise_percent=price2num($remise_percent);
 		$qty=price2num($qty);
 		$pu_ht=price2num($pu_ht);
@@ -2315,7 +2319,7 @@ class Facture extends CommonInvoice
 			if (empty($qty)) $qty=0;
 			if (empty($fk_parent_line) || $fk_parent_line < 0) $fk_parent_line=0;
 			if (empty($special_code) || $special_code == 3) $special_code=0;
-			if ($situation_percent > 100 || is_null($situation_percent) || $situation_percent == "") $situation_percent = 100;
+			if (! isset($situation_percent) || $situation_percent > 100 || (string) $situation_percent == '') $situation_percent = 100;
 
 			$remise_percent	= price2num($remise_percent);
 			$qty			= price2num($qty);
@@ -3654,11 +3658,14 @@ class Facture extends CommonInvoice
 	function setFinal()
 	{
 		global $conf, $langs, $user;
+		
+        $this->db->begin();
+        
 		$this->situation_final = 1;
 		$sql = 'update ' . MAIN_DB_PREFIX . 'facture set situation_final = ' . $this->situation_final . ' where rowid = ' . $this->id;
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			// FIXME: call triggers?
+			// FIXME: call triggers MODIFY because we modify invoice
 			$this->db->commit();
 			return 1;
 		} else {
@@ -3897,7 +3904,7 @@ class FactureLigne extends CommonInvoiceLine
 		if (empty($this->special_code)) $this->special_code=0;
 		if (empty($this->fk_parent_line)) $this->fk_parent_line=0;
 		if (empty($this->fk_prev_id)) $this->fk_prev_id = 'null';
-		if (empty($this->situation_percent)) $this->situation_percent = 0;
+		if (! isset($this->situation_percent) || $this->situation_percent > 100 || (string) $this->situation_percent == '') $this->situation_percent = 100;
 
 		if (empty($this->pa_ht)) $this->pa_ht=0;
 
@@ -4092,7 +4099,7 @@ class FactureLigne extends CommonInvoiceLine
 		if (empty($this->special_code)) $this->special_code=0;
 		if (empty($this->product_type)) $this->product_type=0;
 		if (empty($this->fk_parent_line)) $this->fk_parent_line=0;
-		if (is_null($this->situation_percent)) $this->situation_percent=100;
+		if (! isset($this->situation_percent) || $this->situation_percent > 100 || (string) $this->situation_percent == '') $this->situation_percent = 100;
 
 		// Check parameters
 		if ($this->product_type < 0) return -1;

@@ -1213,7 +1213,7 @@ else
 
             // Photo
             print '<td align="center" valign="middle" width="25%" rowspan="'.$rowspan.'">';
-            print $form->showphoto('userphoto',$object,100);
+            print $form->showphoto('userphoto',$object,100,0,0,'photowithmargin','small');
             print '</td>';
 
             print '</tr>'."\n";
@@ -1783,7 +1783,7 @@ else
 
             // Photo
             print '<td align="center" valign="middle" width="25%" rowspan="'.$rowspan.'">';
-            print $form->showphoto('userphoto',$object,100,0,$caneditfield);
+            print $form->showphoto('userphoto',$object,100,0,$caneditfield,'photowithmargin','small');
             print '</td>';
 
             print '</tr>';

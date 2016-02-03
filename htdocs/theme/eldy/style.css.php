@@ -648,7 +648,7 @@ div#tmenu_tooltip {
 <?php if (GETPOST("optioncss") == 'print') {  ?>
 	display:none;
 <?php } else { ?>
-	padding-<?php echo $right; ?>: <? echo ($maxwidthloginblock - 10); ?>px;
+	padding-<?php echo $right; ?>: <?php echo ($maxwidthloginblock - 10); ?>px;
 <?php } ?>
 }
 
@@ -1053,17 +1053,18 @@ img.loginphoto {
 	border-radius: 2px;
 }
 .span-icon-user {
-	background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/object_user.png',1); ?>) no-repeat scroll 7px 7px;
-}
-.span-icon-password {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/lock.png',1); ?>);
+	/* background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/object_user.png',1); ?>); */
 	background-repeat: no-repeat;
 }
-/*
-.span-icon-user input, .span-icon-password input {
-	margin-right: 30px;
+.span-icon-password {
+	/* background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/lock.png',1); ?>); */
+	background-repeat: no-repeat;
 }
-*/
+
+.span-icon-user input, .span-icon-password input {
+	/* margin-left: 18px; */
+	margin-left: 0px;
+}
 
 /* ============================================================================== */
 /* Menu gauche                                                                    */
@@ -2086,6 +2087,10 @@ border: none;
   padding-right: 10px;
   padding-left: 4px;
   font-weight: bold;
+}
+div.pagination li.litext a:hover {
+	background-color: transparent;
+	background-image: none;
 }
 <?php if (! empty($conf->dol_use_jmobile)) { ?>
 div.pagination li.litext {

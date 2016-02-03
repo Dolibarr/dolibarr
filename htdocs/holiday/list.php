@@ -35,10 +35,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 
 $langs->load('users');
 $langs->load('holidays');
+$langs->load('hrm');
 
 // Protection if external user
 if ($user->societe_id > 0) accessforbidden();
 
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
@@ -47,12 +49,13 @@ $page = $page == -1 ? 0 : $page;
 
 if (! $sortfield) $sortfield="cp.rowid";
 if (! $sortorder) $sortorder="DESC";
-$offset = $conf->liste_limit * $page ;
+$offset = $limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 $id = GETPOST('id','int');
 
+$sall            = GETPOST('sall');
 $search_ref      = GETPOST('search_ref');
 $month_create    = GETPOST('month_create');
 $year_create     = GETPOST('year_create');
@@ -64,7 +67,7 @@ $search_employe  = GETPOST('search_employe');
 $search_valideur = GETPOST('search_valideur');
 $search_statut   = GETPOST('select_statut');
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
 	$search_ref="";
 	$month_create="";
@@ -104,7 +107,7 @@ $filter='';
 
 llxHeader(array(),$langs->trans('CPTitreMenu'));
 
-$order = $db->order($sortfield,$sortorder).$db->plimit($conf->liste_limit + 1, $offset);
+$order = $db->order($sortfield,$sortorder).$db->plimit($limit + 1, $offset);
 
 // WHERE
 if(!empty($search_ref))
@@ -172,6 +175,7 @@ if(!empty($search_statut) && $search_statut != -1) {
     $filter.= " AND cp.statut = '".$db->escape($search_statut)."'\n";
 }
 
+
 /*************************************
  * Fin des filtres de recherche
 *************************************/
@@ -207,7 +211,8 @@ if ($holiday_payes == '-1')
 
 // Show table of vacations
 
-$var=true; $num = count($holiday->holiday);
+$var=true;
+$num = count($holiday->holiday);
 $form = new Form($db);
 $formother = new FormOther($db);
 
@@ -246,12 +251,13 @@ else
 	dol_fiche_head('');
 }
 
+$alltypeleaves=$holiday->getTypes(1,-1);    // To have labels
 
 $out='';
 $typeleaves=$holiday->getTypes(1,1);
 foreach($typeleaves as $key => $val)
 {
-	$nb_type = $holiday->getCPforUser($user->id, $val['rowid']);
+	$nb_type = $holiday->getCPforUser($user_id, $val['rowid']);
 	$nb_holiday += $nb_type;
 	$out .= ' - '.$val['label'].': <strong>'.($nb_type?price2num($nb_type):0).'</strong><br>';
 }
@@ -388,7 +394,10 @@ if (! empty($holiday->holiday))
 		print '<td style="text-align: center;">'.dol_print_date($date,'day').'</td>';
 		print '<td>'.$userstatic->getNomUrl('1').'</td>';
 		print '<td>'.$approbatorstatic->getNomUrl('1').'</td>';
-		print '<td>'.$infos_CP['fk_type'].'</td>';
+		print '<td>';
+		$label=$alltypeleaves[$infos_CP['fk_type']]['label'];
+		print $label?$label:$infos_CP['fk_type'];
+		print '</td>';
 		print '<td align="right">';
 		$nbopenedday=num_open_day($infos_CP['date_debut_gmt'], $infos_CP['date_fin_gmt'], 0, 1, $infos_CP['halfday']);
 		print $nbopenedday.' '.$langs->trans('DurationDays');
@@ -406,7 +415,7 @@ if (! empty($holiday->holiday))
 if($holiday_payes == '2')
 {
     print '<tr>';
-    print '<td colspan="9" '.$bc[false].'">'.$langs->trans('None').'</td>';
+    print '<td colspan="10" '.$bc[false].'">'.$langs->trans('None').'</td>';
     print '</tr>';
 }
 
