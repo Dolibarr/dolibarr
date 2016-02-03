@@ -4068,8 +4068,7 @@ class Product extends CommonObject
 	{
 		global $conf, $db;
 
-		// FIXME USing * into select is forbidden
-		$sql = "SELECT * FROM ".MAIN_DB_PREFIX."product_pricerules";
+		$sql = "SELECT rowid, level, fk_level, var_percent, var_min_percent FROM ".MAIN_DB_PREFIX."product_pricerules";
 		$query = $db->query($sql);
 
 		$rules = array();

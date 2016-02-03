@@ -22,7 +22,11 @@
 /**
  * \file htdocs/accountancy/admin/productaccount.php
  * \ingroup Accounting Expert
+<<<<<<< HEAD
  * \brief To define accounting account on product / service
+=======
+ * \brief Onglet de gestion de parametrages des ventilations
+>>>>>>> refs/remotes/origin/3.9
  */
 require '../../main.inc.php';
 
@@ -241,7 +245,7 @@ if ($result) {
 	$num_lines = $db->num_rows($result);
 	$i = 0;
 	
-	print load_fiche_titre($langs->trans("InitAccountancy"), '', 'title_setup');
+	print_barre_liste($langs->trans("ProductAccountingAccountSelect"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num_lines);
 	print '<br>';
 	
 	print $langs->trans("InitAccountancyDesc") . '<br>';

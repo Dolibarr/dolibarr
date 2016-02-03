@@ -78,6 +78,11 @@ else if ($action == 'update')
 		$res = dolibarr_set_const($db, "GENBARCODE_BARCODETYPE_THIRDPARTY", $coder_id,'chaine',0,'',$conf->entity);
 	}
 }
+else if ($action == 'updateengine')
+{
+    // TODO Update engines.
+    
+}
 
 // define constants for models generator that need parameters
 if ($action == 'setModuleOptions')
@@ -190,6 +195,10 @@ $var=true;
 print '<br>';
 print load_fiche_titre($langs->trans("BarcodeEncodeModule"),'','');
 
+print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print "<input type=\"hidden\" name=\"action\" value=\"updateengine\">";
+
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
@@ -282,11 +291,18 @@ if ($resql)
 }
 print "</table>\n";
 
+if (empty($conf->use_javascript_ajax))
+{
+    // TODO Implement code behind action updateengine
+    //print '<div class="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'"></div>';
+}
+print '</form>';
+
 print "<br>";
 
+
 /*
- * Autres options
- *
+ * Other options
  */
 print load_fiche_titre($langs->trans("OtherOptions"),'','');
 

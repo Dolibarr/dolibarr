@@ -415,7 +415,7 @@ if ($action == 'export_csv') {
 	
 	// Model Cegid Expert Export
 	if ($conf->global->ACCOUNTING_EXPORT_MODELCSV == 2) 
-{
+	{
 		$sep = ";";
 		
 		foreach ( $tabpay as $key => $val ) {
@@ -461,18 +461,18 @@ if ($action == 'export_csv') {
 				}
 			} else {
 				foreach ( $tabbq[$key] as $k => $mt ) {
-					print $date . $sep;
-					print $journal . $sep;
-					print length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE) . $sep;
-					print $sep;
-					print ($mt < 0 ? 'D' : 'C') . $sep;
-					print ($mt <= 0 ? price(- $mt) : $mt) . $sep;
-					print $val["type_payment"] . $sep;
-					print $val["ref"] . $sep;
-					print "\n";
+						print $date . $sep;
+						print $journal . $sep;
+						print length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE) . $sep;
+						print $sep;
+						print ($mt < 0 ? 'D' : 'C') . $sep;
+						print ($mt <= 0 ? price(- $mt) : $mt) . $sep;
+						print $val["type_payment"] . $sep;
+						print $val["ref"] . $sep;
+						print "\n";
+					}
 				}
 			}
-		}
 	} else {
 		// Model Classic Export
 		foreach ( $tabpay as $key => $val ) {
@@ -518,7 +518,8 @@ if ($action == 'export_csv') {
 			}
 		}
 	}
-} else {
+}
+else {
 	$form = new Form($db);
 	
 	llxHeader('', $langs->trans("FinanceJournal"));
@@ -628,5 +629,4 @@ if ($action == 'export_csv') {
 	
 	llxFooter();
 }
-
 $db->close();

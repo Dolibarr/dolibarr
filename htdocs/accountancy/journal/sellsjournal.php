@@ -295,7 +295,7 @@ if ($action == 'export_csv') {
 	
 	// Model Cegid Expert Export
 	if ($conf->global->ACCOUNTING_EXPORT_MODELCSV == 2) 
-{
+	{
 		$sep = ";";
 		
 		foreach ( $tabfac as $key => $val ) {
