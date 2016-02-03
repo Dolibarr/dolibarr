@@ -1941,12 +1941,15 @@ if (! function_exists("llxFooter"))
         if (! empty($delayedhtmlcontent)) print $delayedhtmlcontent;
         
 		// Wrapper to show tooltips
-		print "\n<!-- JS CODE TO ENABLE tipTip on all object with class classfortooltip -->\n";
-		print '<script type="text/javascript">
-        	jQuery(document).ready(function () {
-        		jQuery(".classfortooltip").tipTip({maxWidth: "'.dol_size(600,'width').'px", edgeOffset: 10, delay: 50, fadeIn: 50, fadeOut: 50});
-        	});
-        </script>' . "\n";
+        if ($conf->use_javascript_ajax)
+        {
+    		print "\n<!-- JS CODE TO ENABLE tipTip on all object with class classfortooltip -->\n";
+    		print '<script type="text/javascript">
+            	jQuery(document).ready(function () {
+            		jQuery(".classfortooltip").tipTip({maxWidth: "'.dol_size(600,'width').'px", edgeOffset: 10, delay: 50, fadeIn: 50, fadeOut: 50});
+            	});
+            </script>' . "\n";
+        }
         
 		// A div for the address popup
 		print "\n<!-- A div to allow dialog popup -->\n";
