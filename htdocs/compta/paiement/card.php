@@ -201,8 +201,13 @@ if ($action == 'valide')
 
 print '<table class="border" width="100%">';
 
+$linkback = '<a href="' . DOL_URL_ROOT . '/compta/paiement/list.php">' . $langs->trans("BackToList") . '</a>';
+
+
 // Ref
-print '<tr><td width="20%">'.$langs->trans('Ref').'</td><td colspan="3">'.$object->ref.'</td></tr>';
+print '<tr><td width="20%">'.$langs->trans('Ref').'</td><td colspan="3">';
+print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '');
+print '</td></tr>';
 
 // Date payment
 print '<tr><td>'.$form->editfieldkey("Date",'datep',$object->date,$object,$user->rights->facture->paiement).'</td><td colspan="3">';
