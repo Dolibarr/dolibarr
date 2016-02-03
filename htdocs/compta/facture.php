@@ -37,6 +37,7 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture-rec.class.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/modules/facture/modules_facture.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/discount.class.php';
@@ -102,7 +103,7 @@ $extrafields = new ExtraFields($db);
 
 // Load object
 if ($id > 0 || ! empty($ref)) {
-	$ret = $object->fetch($id, $ref);
+	$ret = $object->fetch($id, $ref, '', '', $conf->global->INVOICE_USE_SITUATION);
 }
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
@@ -810,7 +811,7 @@ if (empty($reshook))
 		}
 
 		// Standard invoice or Deposit invoice created from a Predefined invoice
-		if (($_POST['type'] == Facture::TYPE_STANDARD || $_POST['type'] == Facture::TYPE_DEPOSIT) && $_POST['fac_rec'] > 0)
+		if (($_POST['type'] == Facture::TYPE_STANDARD || $_POST['type'] == Facture::TYPE_DEPOSIT) && GETPOST('fac_rec') > 0)
 		{
 			$dateinvoice = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 			if (empty($dateinvoice))
@@ -832,14 +833,14 @@ if (empty($reshook))
 				$object->modelpdf       = $_POST['model'];
 
 				// Source facture
-				$object->fac_rec = $_POST['fac_rec'];
+				$object->fac_rec = GETPOST('fac_rec');
 
 				$id = $object->create($user);
 			}
 		}
 
 		// Standard or deposit or proforma invoice
-		if (($_POST['type'] == Facture::TYPE_STANDARD || $_POST['type'] == Facture::TYPE_DEPOSIT || $_POST['type'] == Facture::TYPE_PROFORMA || ($_POST['type'] == Facture::TYPE_SITUATION && empty($_POST['situations']))) && $_POST['fac_rec'] <= 0)
+		if (($_POST['type'] == Facture::TYPE_STANDARD || $_POST['type'] == Facture::TYPE_DEPOSIT || $_POST['type'] == Facture::TYPE_PROFORMA || ($_POST['type'] == Facture::TYPE_SITUATION && empty($_POST['situations']))) && GETPOST('fac_rec') <= 0)
 		{
 			if (GETPOST('socid', 'int') < 1)
 			{
@@ -1161,6 +1162,18 @@ if (empty($reshook))
 				$result = $object->fetch($_POST['situations']);
 				$object->fk_facture_source = $_POST['situations'];
 				$object->type = Facture::TYPE_SITUATION;
+
+				if (!empty($origin) && !empty($originid))
+				{
+					$object->origin = $origin;
+					$object->origin_id = $originid;
+					
+					foreach ($object->lines as &$line) 
+					{
+						$line->origin = $object->origin;
+						$line->origin_id = $line->id;
+					}
+				}
 
 				$object->fetch_thirdparty();
 				$object->date = $datefacture;
@@ -1491,11 +1504,11 @@ if (empty($reshook))
 		$date_end = '';
 		$date_start = dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), GETPOST('date_startsec'), GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
 		$date_end = dol_mktime(GETPOST('date_endhour'), GETPOST('date_endmin'), GETPOST('date_endsec'), GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
-		$description = dol_htmlcleanlastbr(GETPOST('product_desc'));
+		$description = dol_htmlcleanlastbr(GETPOST('product_desc') ? GETPOST('product_desc') : GETPOST('desc'));
 		$pu_ht = GETPOST('price_ht');
 		$vat_rate = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
 		$qty = GETPOST('qty');
-
+		
 		// Define info_bits
 		$info_bits = 0;
 		if (preg_match('/\*/', $vat_rate))
@@ -1955,7 +1968,7 @@ if ($action == 'create')
 
 	// Thirdparty
 	print '<td class="fieldrequired">' . $langs->trans('Customer') . '</td>';
-	if ($soc->id > 0)
+	if ($soc->id > 0 && ! GETPOST('fac_rec'))
 	{
 		print '<td colspan="2">';
 		print $soc->getNomUrl(1);
@@ -1975,7 +1988,7 @@ if ($action == 'create')
 	else
 	{
 		print '<td colspan="2">';
-		print $form->select_company('', 'socid', '(s.client = 1 OR s.client = 3) AND status=1', 1);
+		print $form->select_company($soc->id, 'socid', '(s.client = 1 OR s.client = 3) AND status=1', 1);
 		// Option to reload page to retrieve customer informations. Note, this clear other input
 		if (!empty($conf->global->RELOAD_PAGE_ON_CUSTOMER_CHANGE))
 		{
@@ -1994,11 +2007,14 @@ if ($action == 'create')
 	print '</tr>' . "\n";
 
 	// Predefined invoices
-	if (empty($origin) && empty($originid) && $socid > 0)
+	if (empty($origin) && empty($originid) && GETPOST('fac_rec','int') > 0)
 	{
+	    $invoice_predefined = new FactureRec($db);
+	    $invoice_predefined->fetch(GETPOST('fac_rec','int'));
+	    
 		$sql = 'SELECT r.rowid, r.titre, r.total_ttc';
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . 'facture_rec as r';
-		$sql .= ' WHERE r.fk_soc = ' . $soc->id;
+		$sql .= ' WHERE r.fk_soc = ' . $invoice_predefined->socid;
 
 		$resql = $db->query($sql);
 		if ($resql)
@@ -2127,7 +2143,7 @@ if ($action == 'create')
 			$opt = $form->selectSituationInvoices(GETPOST('originid'), $socid);
 			print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
 			$tmp='<input type="radio" name="type" value="5"' . (GETPOST('type') == 5 && GETPOST('originid') ? ' checked' : '');
-			if ($opt == ('<option value ="0" selected>' . $langs->trans('NoSituations') . '</option>') || (GETPOST('origin') && GETPOST('origin') != 'facture')) $tmp.=' disabled';
+			if ($opt == ('<option value ="0" selected>' . $langs->trans('NoSituations') . '</option>') || (GETPOST('origin') && GETPOST('origin') != 'facture' && GETPOST('origin') != 'commande')) $tmp.=' disabled';
 			$tmp.= '> ';
 			$text = $tmp.$langs->trans("InvoiceSituationAsk") . ' ';
 			$text .= '<select class="flat" id="situations" name="situations">';
@@ -3014,6 +3030,96 @@ else if ($id > 0 || ! empty($ref))
 
 	print '<td rowspan="' . $nbrows . '" colspan="2" valign="top">';
 
+	if ($object->type == Facture::TYPE_SITUATION && !empty($conf->global->INVOICE_USE_SITUATION))
+	{
+		if (count($object->tab_previous_situation_invoice) > 0 || count($object->tab_next_situation_invoice) > 0) print '<table class="nobordernopadding paymenttable" width="100%">';
+		
+		if (count($object->tab_previous_situation_invoice) > 0)
+		{
+			//List of previous invoices
+			print '<tr class="liste_titre">';
+			print '<td>' . $langs->trans('ListOfPreviousSituationInvoices') . '</td>';
+			print '<td></td>';
+			if (! empty($conf->banque->enabled))
+				print '<td align="right"></td>';
+			print '<td align="right">' . $langs->trans('AmountHT') . '</td>';
+			print '<td align="right">' . $langs->trans('AmountTTC') . '</td>';
+			print '<td width="18">&nbsp;</td>';
+			print '</tr>';
+			
+			$total_prev_ht = $total_prev_ttc = 0;
+			$var = true;
+			foreach ($object->tab_previous_situation_invoice as $prev_invoice)
+			{
+				$totalpaye = $prev_invoice->getSommePaiement();
+				$total_prev_ht += $prev_invoice->total_ht;
+				$total_prev_ttc += $prev_invoice->total_ttc;
+				print '<tr '.$bc [$var].'>';
+				print '<td>'.$prev_invoice->getNomUrl(1).'</td>';
+				print '<td></td>';
+				if (! empty($conf->banque->enabled))
+					print '<td align="right"></td>';
+				print '<td align="right">' . price($prev_invoice->total_ht) . '</td>';
+				print '<td align="right">' . price($prev_invoice->total_ttc) . '</td>';
+				print '<td align="right">'.$prev_invoice->getLibStatut(3, $totalpaye).'</td>';
+				print '</tr>';
+				
+				$var = !$var;
+			}
+			
+			print '<tr '.$bc [$var].'>';
+			print '<td colspan="2" align="right"></td>';
+			print '<td align="right"><b>' . price($total_prev_ht) . '</b></td>';
+			print '<td align="right"><b>' . price($total_prev_ttc) . '</b></td>';
+			print '<td width="18">&nbsp;</td>';
+			print '</tr>';
+		}
+		
+		if (count($object->tab_next_situation_invoice) > 0)
+		{
+			//List of next invoices
+			print '<tr class="liste_titre">';
+			print '<td>' . $langs->trans('ListOfNextSituationInvoices') . '</td>';
+			print '<td></td>';
+			if (! empty($conf->banque->enabled))
+				print '<td align="right"></td>';
+			print '<td align="right">' . $langs->trans('AmountHT') . '</td>';
+			print '<td align="right">' . $langs->trans('AmountTTC') . '</td>';
+			print '<td width="18">&nbsp;</td>';
+			print '</tr>';
+			
+			$total_next_ht = $total_next_ttc = 0;
+			
+			$var = true;
+			foreach ($object->tab_next_situation_invoice as $next_invoice)
+			{
+				$totalpaye = $next_invoice->getSommePaiement();
+				$total_next_ht += $next_invoice->total_ht;
+				$total_next_ttc += $next_invoice->total_ttc;
+				print '<tr '.$bc [$var].'>';
+				print '<td>'.$next_invoice->getNomUrl(1).'</td>';
+				print '<td></td>';
+				if (! empty($conf->banque->enabled))
+					print '<td align="right"></td>';
+				print '<td align="right">' . price($next_invoice->total_ht) . '</td>';
+				print '<td align="right">' . price($next_invoice->total_ttc) . '</td>';
+				print '<td align="right">'.$next_invoice->getLibStatut(3, $totalpaye).'</td>';
+				print '</tr>';
+				
+				$var = !$var;
+			}
+			
+			print '<tr '.$bc [$var].'>';
+			print '<td colspan="2" align="right"></td>';
+			print '<td align="right"><b>' . price($total_next_ht) . '</b></td>';
+			print '<td align="right"><b>' . price($total_next_ttc) . '</b></td>';
+			print '<td width="18">&nbsp;</td>';
+			print '</tr>';
+		}
+		
+		if (count($object->tab_previous_situation_invoice) > 0 || count($object->tab_next_situation_invoice) > 0) print '</table>';
+	}
+
 	print '<table class="nobordernopadding paymenttable" width="100%">';
 
 	// List of payments already done
@@ -3572,7 +3678,7 @@ else if ($id > 0 || ! empty($ref))
 
 				if ($resteapayer == $object->total_ttc && empty($object->paye) && $ventilExportCompta == 0) 
 				{
-					if (! $objectidnext && $object->is_last_in_cycle()) 
+					if (! $objectidnext) 
 					{
 					    if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->facture->creer))
        						|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->facture->invoice_advance->unvalidate)))
@@ -3663,7 +3769,7 @@ else if ($id > 0 || ! empty($ref))
 					}
 					else
 					{
-						print '<div class="inline-block divButAction"><a class="butAction" href="paiement.php?facid='.$object->id.'&amp;action=create">'.$langs->trans('DoPaymentBack').'</a></div>';
+						print '<div class="inline-block divButAction"><a class="butAction" href="paiement.php?facid='.$object->id.'&amp;action=create&amp;accountid='.$object->fk_account.'">'.$langs->trans('DoPaymentBack').'</a></div>';
 					}
 				}
 

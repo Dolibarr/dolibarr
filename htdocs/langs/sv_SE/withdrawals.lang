@@ -48,7 +48,6 @@ RefusedReason=Orsak till avslag
 RefusedInvoicing=Fakturering avslaget
 NoInvoiceRefused=Ladda inte avslaget
 InvoiceRefused=Faktura vägrade (Ladda avslag till kunden)
-Status=Status
 StatusUnknown=Okänd
 StatusWaiting=Väntar
 StatusTrans=Överförs

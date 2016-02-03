@@ -26,6 +26,14 @@
 ALTER TABLE llx_don ADD COLUMN fk_country integer NOT NULL DEFAULT 0 after country;
 
 
+UPDATE llx_user set api_key = null where api_key = '';
+
+
+ALTER TABLE llx_actioncomm ADD COLUMN email_subject varchar(256) after email_msgid;
+ALTER TABLE llx_actioncomm ADD COLUMN email_tocc varchar(256) after email_to;
+ALTER TABLE llx_actioncomm ADD COLUMN email_tobcc varchar(256) after email_tocc;
+
+
 UPDATE llx_commande_fourn set billed=1 where statut = 8;
 UPDATE llx_commande_fourn set statut=5 where statut = 8 and billed=1;
 
@@ -340,6 +348,54 @@ create table llx_categorie_project
   import_key    varchar(14)
 )ENGINE=innodb;
 
+
+
+
+-- Extrafields Expedition (shipment)
+create table llx_expedition_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;
+
+ALTER TABLE llx_expedition_extrafields ADD INDEX idx_expedition_extrafields (fk_object);
+
+create table llx_expeditiondet_extrafields
+(
+  rowid            integer AUTO_INCREMENT PRIMARY KEY,
+  tms              timestamp,
+  fk_object        integer NOT NULL,    -- object id
+  import_key       varchar(14)      	-- import key
+)ENGINE=innodb;
+
+ALTER TABLE llx_expeditiondet_extrafields ADD INDEX idx_expeditiondet_extrafields (fk_object);
+
+
+
+-- Extrafields Expedition (delivery receipts)
+create table llx_livraison_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;
+
+ALTER TABLE llx_livraison_extrafields ADD INDEX idx_livraison_extrafields (fk_object);
+
+create table llx_livraisondet_extrafields
+(
+  rowid            integer AUTO_INCREMENT PRIMARY KEY,
+  tms              timestamp,
+  fk_object        integer NOT NULL,    -- object id
+  import_key       varchar(14)      	-- import key
+)ENGINE=innodb;
+
+ALTER TABLE llx_livraisondet_extrafields ADD INDEX idx_livraisondet_extrafields (fk_object);
+
+
 ALTER TABLE llx_categorie_project ADD PRIMARY KEY pk_categorie_project (fk_categorie, fk_project);
 ALTER TABLE llx_categorie_project ADD INDEX idx_categorie_project_fk_categorie (fk_categorie);
 ALTER TABLE llx_categorie_project ADD INDEX idx_categorie_project_fk_project (fk_project);
@@ -523,5 +579,7 @@ insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays
 insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values (4108, 'Mitarbeitervorsorgekasse',			1,1,'TAXATMVK'  ,'41');
 insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values (4109, 'Familienlastenausgleichsfond',		1,1,'TAXATFLAF' ,'41');
 
-ALTER TABLE llx_accounting_bookkeeping MODIFY COLUMN doc_ref varchar(255) NOT NULL;
+ALTER TABLE llx_accounting_bookkeeping MODIFY COLUMN doc_ref varchar(300) NOT NULL;
 
+ALTER TABLE llx_holiday ADD COLUMN tms timestamp;
+ALTER TABLE llx_holiday ADD COLUMN entity integer DEFAULT 1 NOT NULL;

@@ -64,7 +64,6 @@ CronMethodHelp=O método de objeto para o lançamento. Por exemplo para buscar m
 CronArgsHelp=Os argumentos do método. Por exemplo para buscar método do objeto Product do Dolibarr /htdocs/produto/class/product.class.php, o valor de paramtetros pode ser <i>0, ProductRef</i>
 CronCommandHelp=A linha de comando do sistema a se executar.
 CronCreateJob=Criar novo trabalho agendado
-CronFrom=De
 CronInfoPage=Informaçao
 CronType=Tipo de emprego
 CronType_method=Chamar metodo da classe Dolibarr

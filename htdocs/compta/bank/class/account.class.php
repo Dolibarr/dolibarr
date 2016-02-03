@@ -761,11 +761,12 @@ class Account extends CommonObject
 
 
     /**
-     *    Delete bank account from database
+     *  Delete bank account from database
      *
-     *    @return      int         <0 if KO, >0 if OK
+     *	@param	User	$user	User deleting
+     *  @return int             <0 if KO, >0 if OK
      */
-    function delete()
+    function delete($user='')
     {
         global $conf;
 
@@ -1280,12 +1281,12 @@ class AccountLine extends CommonObject
             $nbko++;
         }
 
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid=".$this->rowid;
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid=".(int) $this->rowid;
         dol_syslog(get_class($this)."::delete", LOG_DEBUG);
         $result = $this->db->query($sql);
         if (! $result) $nbko++;
 
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank WHERE rowid=".$this->rowid;
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank WHERE rowid=".(int) $this->rowid;
         dol_syslog(get_class($this)."::delete", LOG_DEBUG);
         $result = $this->db->query($sql);
         if (! $result) $nbko++;
@@ -1322,7 +1323,7 @@ class AccountLine extends CommonObject
 
         $this->db->begin();
 
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_url WHERE fk_bank=".$this->rowid;
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_url WHERE fk_bank=".(int) $this->rowid;
         dol_syslog(get_class($this)."::delete_urls", LOG_DEBUG);
         $result = $this->db->query($sql);
         if (! $result) $nbko++;

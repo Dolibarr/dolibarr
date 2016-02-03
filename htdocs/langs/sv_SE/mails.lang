@@ -84,9 +84,12 @@ EachInvoiceWillBeAttachedToEmail=Ett dokument med standardfakturadokumentmall ko
 MailTopicSendRemindUnpaidInvoices=Påminnelse om faktura% s (% s)
 SendRemind=Skicka påminnelse av e-post
 RemindSent=% S påminnelse (er) skickas
-AllRecipientSelectedForRemind=Alla thirdparties väljs och om ett e-post sätts (observera att en post per faktura skickas)
+AllRecipientSelected=All thirdparties selected and if an email is set.
 NoRemindSent=Ingen EMail påminnelse
-ResultOfMassSending=Resultat av massa e påminnelser skicka
+ResultOfMailSending=Result of mass EMail sending
+NbSelected=Nb selected
+NbIgnored=Nb ignored
+NbSent=Nb sent
 
 # Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=Kontakter av alla tredje parter (kund, prospekt, leverantör, ...)
@@ -97,7 +100,7 @@ MailingModuleDescEmailsFromUser=E-post från användarens input (email, efternam
 MailingModuleDescContactsCategories=Tredje part med e-post (per kategori)
 MailingModuleDescDolibarrContractsLinesExpired=Tredje part med utgångna avtalets linjer
 MailingModuleDescContactsByCompanyCategory=Kontakter med tredje part (av tredje part kategori)
-MailingModuleDescContactsByCategory=Kontakter / adresser från tredje part efter kategori
+MailingModuleDescContactsByCategory=Contacts/addresses of third parties (by category)
 MailingModuleDescMembersCategories=Foundation medlemmar (per kategori)
 MailingModuleDescContactsByFunction=Kontakter från tredje part (i position / funktion)
 LineInFile=Line %s i filen

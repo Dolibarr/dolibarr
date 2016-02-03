@@ -157,7 +157,17 @@ class ActionComm extends CommonObject
 
     var $actions=array();
 
+    // Fields for emails
+    var $email_msgid;
+    var $email_from;
+    var $email_sender;
+    var $email_to;
+    var $email_tocc;
+    var $email_tobcc;
+    var $email_subject;
+    var $errors_to;
 
+    
     /**
      *      Constructor
      *
@@ -410,6 +420,20 @@ class ActionComm extends CommonObject
 		$this->fetch_userassigned();
 
         $this->id=0;
+
+		if (!is_object($fuser))
+		{
+			if ($fuser > 0)
+			{
+				$u = new User($db);
+				$u->fetch($fuser);
+				$fuser = $u;
+			}
+			else 
+			{
+				$fuser = $user;
+			}
+		}
 
         // Create clone
         $result=$this->add($fuser);
@@ -834,7 +858,7 @@ class ActionComm extends CommonObject
         if (! empty($elementtype))
         {
             if ($elementtype == 'project') $sql.= ' AND a.fk_project = '.$fk_element;
-            else $sql.= " AND a.fk_element = ".$fk_element." AND a.elementtype = '".$elementtype."'";
+            else $sql.= " AND a.fk_element = ".(int) $fk_element." AND a.elementtype = '".$elementtype."'";
         }
         if (! empty($filter)) $sql.= $filter;
 		if ($sortorder && $sortfield) $sql.=$db->order($sortfield, $sortorder);
@@ -872,7 +896,7 @@ class ActionComm extends CommonObject
      */
     function load_board($user)
     {
-        global $conf, $user, $langs;
+        global $conf, $langs;
 
         $sql = "SELECT a.id, a.datep as dp";
         $sql.= " FROM (".MAIN_DB_PREFIX."actioncomm as a";

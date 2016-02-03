@@ -1,11 +1,11 @@
 # Dolibarr language file - Source file is en_US - admin
 WorkflowSetup=Configuració del mòdul workflow
 WorkflowDesc=Aquest mòdul li permet canviar el comportament de les accions automàticament en l'aplicació. De forma predeterminada, el workflow està obert (configuri segons les seves necessitats). Activi les accions automàtiques que li interessin.
-ThereIsNoWorkflowToModify=There is no workflow modifications available with the activated modules.
+ThereIsNoWorkflowToModify=No hi ha modificacions disponibles del fluxe de treball amb els mòduls activats.
 descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Crear una comanda de client automàticament a la signatura d'un pressupost
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICEAutomatically crear una factura a client després de signar un pressupost
-descWORKFLOW_CONTRACT_AUTOCREATE_INVOICEAutomatically crear una factura a client a la validació d'un contracte
-descWORKFLOW_ORDER_AUTOCREATE_INVOICEAutomatically crear una factura a client al tancament d'una comanda de client
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Crear automàticament una factura a client després de signar un pressupost
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Crear automàticament una factura a client després de validar un contracte
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Crear automàticament una factura a client després de tancar una comanda de client
 descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classificar com facturat el pressupost quan la comanda de client relacionada es classifiqui com pagada
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classificar com facturades les comanda(es) quan la factura relacionada es classifiqui com a pagada
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classificar com a facturades les comanda(es) de clients relacionats quan la factura sigui validada

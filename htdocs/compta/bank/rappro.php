@@ -99,11 +99,14 @@ if ($action == 'rappro' && $user->rights->banque->consolidate)
 if ($action == 'del')
 {
 	$bankline=new AccountLine($db);
-	$bankline->fetch($_GET["rowid"]);
-	$result=$bankline->delete($user);
-    if ($result < 0)
-	{
-        dol_print_error($db,$bankline->error);
+
+    if ($bankline->fetch($_GET["rowid"]) > 0) {
+        $result = $bankline->delete($user);
+        if ($result < 0) {
+            dol_print_error($db, $bankline->error);
+        }
+    } else {
+        setEventMessage($langs->trans('ErrorRecordNotFound'), 'errors');
     }
 }
 
@@ -409,7 +412,7 @@ if ($resql)
                     print '</a>';
                 }
                 else {
-                    print "&nbsp;";	// On n'empeche la suppression car le raprochement ne pourra se faire qu'apr�s la date pass�e et que l'�criture apparaisse bien sur le compte.
+                    print "&nbsp;";	// We prevents the deletion because reconciliation can not be achieved until the date has elapsed and that writing appears well on the account.
                 }
                 print "</td>";
             }

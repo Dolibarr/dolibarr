@@ -101,7 +101,7 @@ if (empty($reshook))
 		    else
 		    {
 		        dol_syslog($object->error,LOG_DEBUG);
-			    setEventMessage($langs->trans("CantRemoveProject"), 'errors');
+			    setEventMessages($langs->trans("CantRemoveProject"), null, 'errors');
 		    }
 		}
 		if ($backtopage)
@@ -158,14 +158,14 @@ if (empty($reshook))
 	            if ($result < 0)
 	            {
 	                $langs->load("errors");
-		            setEventMessage($langs->trans($object->error), 'errors');
+		            setEventMessages($langs->trans($object->error), null, 'errors');
 	                $error++;
 	            }
 	        }
 	        else
 	        {
 	            $langs->load("errors");
-		        setEventMessage($langs->trans($object->error), 'errors');
+		        setEventMessages($langs->trans($object->error), null, 'errors');
 	            $error++;
 	        }
 
@@ -204,13 +204,13 @@ if (empty($reshook))
 	    if (empty($ref))
 	    {
 	        $error++;
-	        //$_GET["id"]=$_POST["id"]; // On retourne sur la fiche projet
+	        //$_GET["id"]=$_POST["id"]; // We return on the project card
 		    setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Ref")), null, 'errors');
 	    }
 	    if (empty($_POST["title"]))
 	    {
 	        $error++;
-	        //$_GET["id"]=$_POST["id"]; // On retourne sur la fiche projet
+	        //$_GET["id"]=$_POST["id"]; // We return on the project card
 		    setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
 	    }
 
@@ -241,7 +241,7 @@ if (empty($reshook))
 		if ($object->opp_amount && ($object->opp_status <= 0))
 	    {
 	       	$error++;
-	    	setEventMessage($langs->trans("ErrorOppStatusRequiredIfAmount"),'errors');
+	    	setEventMessages($langs->trans("ErrorOppStatusRequiredIfAmount"), null, 'errors');
 	    }
 	    
 	    if (! $error)
@@ -262,7 +262,7 @@ if (empty($reshook))
 	    		if ($result < 0)
 	    		{
 	    			$error++;
-				    setEventMessage($langs->trans("ErrorShiftTaskDate").':'.$object->error, 'errors');
+				    setEventMessages($langs->trans("ErrorShiftTaskDate").':'.$object->error, $langs->trans("ErrorShiftTaskDate").':'.$object->errors, 'errors');
 	    		}
 	    	}
 	    }
@@ -313,8 +313,8 @@ if (empty($reshook))
 	        $urlfile=GETPOST('urlfile','alpha');
 	        $file =	$upload_dir	. '/' .	$filetodelete;
 	        $ret=dol_delete_file($file);
-	        if ($ret) setEventMessage($langs->trans("FileWasRemoved", $urlfile));
-	        else setEventMessage($langs->trans("ErrorFailToDeleteFile", $urlfile), 'errors');
+	        if ($ret) setEventMessages($langs->trans("FileWasRemoved", $urlfile), null, 'mesgs');
+	        else setEventMessages($langs->trans("ErrorFailToDeleteFile", $urlfile), null, 'errors');
 	    }
 	}
 
@@ -352,7 +352,7 @@ if (empty($reshook))
 	    $result=$object->delete($user);
 	    if ($result > 0)
 	    {
-	        setEventMessage($langs->trans("RecordDeleted"), 'info');
+	        setEventMessagess($langs->trans("RecordDeleted"), null, 'mesgs');
 	    	header("Location: index.php");
 	        exit;
 	    }

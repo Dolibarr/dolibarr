@@ -106,6 +106,8 @@ class Product extends CommonObject
 
 	//! Stock
 	var $stock_reel;
+	//! Cost price
+	var $cost_price;
 	//! Average price value for product entry into stock (PMP)
 	var $pmp;
     //! Stock alert
@@ -3119,7 +3121,7 @@ class Product extends CommonObject
 		global $conf, $langs;
 		
 		$langs->load('products');
-		if (!empty($conf->productbatch->enabled)) $langs->load("productbatch");
+		if (! empty($conf->productbatch->enabled)) $langs->load("productbatch");
 
 		if ($type == 2)
 		{

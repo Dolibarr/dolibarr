@@ -1,5 +1,4 @@
 # Dolibarr language file - en_US - Accounting Expert
-CHARSET=UTF-8
 ACCOUNTING_EXPORT_SEPARATORCSV=列分隔符的导出文件
 ACCOUNTING_EXPORT_DATE=日期格式导出文件
 ACCOUNTING_EXPORT_PIECE=Export the number of piece
@@ -12,8 +11,6 @@ ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
 
 Accounting=会计
 Globalparameters=全局参数
-Chartofaccounts=科目表
-Fiscalyear=财年
 Menuaccount=会计账目
 Menuthirdpartyaccount=第三方帐户
 MenuTools=工具
@@ -33,23 +30,17 @@ Back=返回
 
 Definechartofaccounts=定义会计科目表
 Selectchartofaccounts=选择会计科目表
-Validate=验证
 Addanaccount=添加一个会计帐户
 AccountAccounting=会计账户
 AccountAccountingSuggest=Accounting account suggest
 Ventilation=明细核算
-ToDispatch=派遣
-Dispatched=调度
 
 CustomersVentilation=客户明细
 SuppliersVentilation=供应商明细
 TradeMargin=贸易保证金
 Reports=报告
 ByCustomerInvoice=依据”发票“的客户
-ByMonth=按月份
 NewAccount=”新建“会计账户
-Update=更新
-List=名单
 Create=创建
 CreateMvts=创建运动
 UpdateAccount=修改”会计帐户“
@@ -61,7 +52,6 @@ AccountBalanceByMonth=”账户余额“按月份
 AccountingVentilation=明细核算
 AccountingVentilationSupplier=供应商明细核算
 AccountingVentilationCustomer=客户财务明细
-Line=线
 
 CAHTF=Total purchase supplier before tax
 InvoiceLines=发票行进行通风
@@ -112,22 +102,19 @@ Docref=参考
 Numerocompte=帐户
 Code_tiers=第三方
 Labelcompte=标签帐户
-Debit=借记卡
-Credit=信用
-Amount=金额
 Sens=SENS
 Codejournal=日记帐
 
 DelBookKeeping=删除总帐的记录
 
-SellsJournal=出售的”日记帐“
-PurchasesJournal=购买的”日记帐“
 DescSellsJournal=出售的”日记帐“
 DescPurchasesJournal=购买的”日记帐“
 BankJournal=银行日记账
 DescBankJournal=银行日记账，包括支付现金以外的所有类型
 CashJournal=现金日记账
 DescCashJournal=现金日记账，包括支付现金的类型
+FinanceJournal=Finance journal
+DescFinanceJournal=Finance journal including all the types of payments by bank account
 
 CashPayment=现金付款
 
@@ -150,9 +137,6 @@ Pcgversion=该计划的版本
 Pcgtype=账户类
 Pcgsubtype=在类账户
 Accountparent=该帐户的根
-Active=声明
-
-NewFiscalYear=新财年
 
 DescVentilCustomer=在这里，请咨询您的发票客户每年的分项核算
 TotalVente=Total turnover before tax
@@ -171,3 +155,19 @@ ErrorAccountancyCodeIsAlreadyUse=错误，你不能删除这个会计帐户，�
 
 FicheVentilation=击穿卡
 GeneralLedgerIsWritten=Operations are written in the general ledger
+
+##Export Journal Feature
+ExportFormat=Format of Export
+Prefixname=Prefix of export File
+Separate=Export separator
+Textframe=Frame of text value
+Headercol=Colname in header of file
+Fieldname=Name of Field
+Headername=Name in header
+Type=Type of fields
+Param=Additionnal parameters
+EnabledProduct=In Product
+EnabledTiers=In Tiers
+EnabledVat=In Vat
+
+MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s

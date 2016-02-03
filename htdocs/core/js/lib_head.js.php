@@ -940,10 +940,11 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
 function copyToClipboard(text,text2) 
 {
 	text = text.replace(/<br>/g,"\n");
-	var newElem = '<textarea id="coords" style="border: none; width: 90%; height: 120px;">'+text+'</textarea><br><br>'+text2;
-	$("#dialog").html(newElem);
-	$("#dialog").dialog();
-	$("#coords").select();
+	var newElem = '<textarea id="coordsforpopup" style="border: none; width: 90%; height: 120px;">'+text+'</textarea><br><br>'+text2;
+	/* alert(newElem); */
+	$("#dialogforpopup").html(newElem);
+	$("#dialogforpopup").dialog();
+	$("#coordsforpopup").select();
 	return false;
 }
 
@@ -1034,7 +1035,7 @@ function price2numjs(amount) {
 		print "var dec='" . $dec . "'; var thousand='" . $thousand . "';\n";    // Set var in javascript
 	?>
 
-	var main_max_dec_shown = <?php echo $conf->global->MAIN_MAX_DECIMALS_SHOWN; ?>;
+	var main_max_dec_shown = <?php echo str_replace('.', '', $conf->global->MAIN_MAX_DECIMALS_SHOWN); ?>;
 	var main_rounding_unit = <?php echo $conf->global->MAIN_MAX_DECIMALS_UNIT; ?>;
 	var main_rounding_tot = <?php echo $conf->global->MAIN_MAX_DECIMALS_TOT; ?>;
 

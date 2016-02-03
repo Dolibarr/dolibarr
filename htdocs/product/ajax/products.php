@@ -169,8 +169,9 @@ if (! empty($action) && $action == 'fetch' && ! empty($id))
 
 	$match = preg_grep('/(' . $htmlname . '[0-9]+)/', array_keys($_GET));
 	sort($match);
-	$idprod = (! empty($match [0]) ? $match [0] : '');
 
+	$idprod = (! empty($match[0]) ? $match[0] : '');
+	
 	if (! GETPOST($htmlname) && ! GETPOST($idprod))
 		return;
 

@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2006-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2011	   Juanjo Menent		<jmenent@2byte.es>
+/* Copyright (C) 2006-2014  Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2011       Juanjo Menent       <jmenent@2byte.es>
+ * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -39,7 +40,7 @@ $page = GETPOST("page",'int');
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="date";
 if ($page < 0) { $page = 0; }
-$limit = $conf->liste_limit;
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $offset = $limit * $page;
 
 if (! $user->admin) accessforbidden();
@@ -417,8 +418,14 @@ function backup_tables($outputfile, $tables='*')
     global $errormsg;
 
     // Set to UTF-8
-    $db->query('SET NAMES utf8');
-    $db->query('SET CHARACTER SET utf8');
+	if(is_a($db, 'DoliDBMysqli')) {
+		/** @var DoliDBMysqli $db */
+		$db->db->set_charset('utf8');
+	} else {
+		/** @var DoliDB $db */
+		$db->query('SET NAMES utf8');
+		$db->query('SET CHARACTER SET utf8');
+	}
 
     //get all of the tables
     if ($tables == '*')

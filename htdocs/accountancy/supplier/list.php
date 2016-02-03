@@ -66,9 +66,9 @@ if ($page < 0)
 if (! empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)) {
 	$limit = $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION;
 } else if ($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION <= 0) {
-	$limit = $conf->liste_limit;
+	$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 } else {
-	$limit = $conf->liste_limit;
+	$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 }
 $offset = $limit * $page;
 
@@ -111,7 +111,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 /*
  * View
  */
-llxHeader('', $langs->trans("Ventilation"));
+llxHeader('', $langs->trans("SuppliersVentilation"));
 
 print '<script type="text/javascript">
 			$(function () {
@@ -174,9 +174,9 @@ if ($action == 'ventil' && !empty($btn_ventil)) {
 if (! empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)) {
 	$limit = $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION;
 } else if ($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION <= 0) {
-	$limit = $conf->liste_limit;
+	$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 } else {
-	$limit = $conf->liste_limit;
+	$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 }
 
 $offset = $limit * $page;

@@ -59,6 +59,8 @@ if (empty($reshook) && ! empty($extrafields->attribute_label))
 			if (isset($user->rights->$keyforperm)) $permok=$user->rights->$keyforperm->creer||$user->rights->$keyforperm->create||$user->rights->$keyforperm->write;
 			if ($object->element=='order_supplier') $permok=$user->rights->fournisseur->commande->creer;
 			if ($object->element=='invoice_supplier') $permok=$user->rights->fournisseur->facture->creer;
+			if ($object->element=='shipping') $permok=$user->rights->expedition->creer;
+			if ($object->element=='delivery') $permok=$user->rights->expedition->livraison->creer;
 
 			if (($object->statut == 0 || $extrafields->attribute_alwayseditable[$key])
 				&& $permok && ($action != 'edit_extras' || GETPOST('attribute') != $key))

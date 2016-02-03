@@ -69,7 +69,7 @@ ProductQtyInCustomersOrdersRunning=Množství výrobku do otevřených objednáv
 ProductQtyInSuppliersOrdersRunning=Množství výrobku do otevřených dodavatelů zakázek
 ProductQtyInShipmentAlreadySent=Množství již odeslaných produktů z objednávek zákazníka
 ProductQtyInSuppliersShipmentAlreadyRecevied=Množství již dodaných produktů z otevřených dodavatelských objednávek
-NoProductToShipFoundIntoStock=No product to ship found into warehouse <b>%s</b>. Correct sotck or go back to choose another warehouse.
+NoProductToShipFoundIntoStock=No product to ship found into warehouse <b>%s</b>. Correct stock or go back to choose another warehouse.
 
 # Sending methods
 SendingMethodCATCH=Chytit zákazníka

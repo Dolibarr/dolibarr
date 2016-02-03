@@ -113,7 +113,7 @@ if (count($listofsearchfields))
 	foreach($listofsearchfields as $key => $value)
 	{
 		if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-		print '<tr>';
+		print '<tr '.$bc[false].'>';
 		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label>:</td><td><input type="text" class="flat" name="'.$key.'" id="'.$key.'" size="18"></td>';
 		if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
 		print '</tr>';
@@ -193,13 +193,15 @@ else
 }
 print "</table>";
 
-
-print '<br>';
-
-
-print_projecttasks_array($db,$form,$socid,$projectsListId,0,1,$listofoppstatus);
-
-
+if (! empty($conf->global->PROJECT_SHOW_PROJECT_LIST_ON_PROJECT_AREA))
+{
+    // This list can be very long, so we don't show it by default on task area. We prefer to use the list page.
+    // Add constant PROJECT_SHOW_PROJECT_LIST_ON_PROJECT_AREA to show this list
+    
+    print '<br>';
+    
+    print_projecttasks_array($db, $form, $socid, $projectsListId, 0, 1, $listofoppstatus, array());
+}
 
 print '</div></div></div>';
 

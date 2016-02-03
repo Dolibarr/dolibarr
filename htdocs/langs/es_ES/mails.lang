@@ -84,9 +84,12 @@ EachInvoiceWillBeAttachedToEmail=Se creará y adjuntará a cada e-mail un docume
 MailTopicSendRemindUnpaidInvoices=Recordatorio de la factura %s (%s)
 SendRemind=Enviar recordatorios por e-mail
 RemindSent=%s recordatorio(s) enviados
-AllRecipientSelectedForRemind=Todos los terceros seleccionados y si hay e-mail definido (se enviará un e-mail por factura)
+AllRecipientSelected=Todos los terceros seleccionados y si hay e-mail definido
 NoRemindSent=No se han enviado recordatorios por e-mail
-ResultOfMassSending=Resultado del envío de recordatorios
+ResultOfMailSending=Resultado del envío masivo de e-mails
+NbSelected=Nº seleccionados
+NbIgnored=Nº ignorados
+NbSent=Nº enviados
 
 # Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=Contactos de terceros (clientes potenciales, clientes, proveedores...)
@@ -97,7 +100,7 @@ MailingModuleDescEmailsFromUser=E-mails introducidos por el usuario (email;apell
 MailingModuleDescContactsCategories=Terceros (por categoría)
 MailingModuleDescDolibarrContractsLinesExpired=Terceros con líneas de contratos de servicios expirados
 MailingModuleDescContactsByCompanyCategory=Contactos de terceros (por categoría de terceros)
-MailingModuleDescContactsByCategory=Contactos/direcciones de terceros por categoría
+MailingModuleDescContactsByCategory=Contactos de terceros (por categoría)
 MailingModuleDescMembersCategories=Miembros (por categoría)
 MailingModuleDescContactsByFunction=Contactos de terceros (por puesto/función)
 LineInFile=Línea %s en archivo

@@ -87,6 +87,7 @@ $langs->load("users");
 $langs->load("companies");
 $langs->load("ldap");
 $langs->load("admin");
+$langs->load('hrm');
 
 $object = new User($db);
 $extrafields = new ExtraFields($db);
@@ -127,7 +128,7 @@ if (empty($reshook)) {
 				$nb = $object->getNbOfUsers("active");
 				if ($nb >= $conf->file->main_limit_users) {
 					$error ++;
-					setEventMessage($langs->trans("YourQuotaOfUsersIsReached"), 'errors');
+					setEventMessages($langs->trans("YourQuotaOfUsersIsReached"), null, 'errors');
 				}
 			}
 
@@ -146,7 +147,7 @@ if (empty($reshook)) {
 			$result = $object->delete();
 			if ($result < 0) {
 				$langs->load("errors");
-				setEventMessage($langs->trans("ErrorUserCannotBeDelete"), 'errors');
+				setEventMessages($langs->trans("ErrorUserCannotBeDelete"), null, 'errors');
 			} else {
 				header("Location: index.php");
 				exit;
@@ -160,12 +161,12 @@ if (empty($reshook)) {
 
 		if (!$_POST["lastname"]) {
 			$error ++;
-			setEventMessage($langs->trans("NameNotDefined"), 'errors');
+			setEventMessages($langs->trans("NameNotDefined"), null, 'errors');
 			$action = "create";       // Go back to create page
 		}
 		if (!$_POST["login"]) {
 			$error ++;
-			setEventMessage($langs->trans("LoginNotDefined"), 'errors');
+			setEventMessages($langs->trans("LoginNotDefined"), null, 'errors');
 			$action = "create";       // Go back to create page
 		}
 
@@ -173,7 +174,7 @@ if (empty($reshook)) {
 			$nb = $object->getNbOfUsers("active");
 			if ($nb >= $conf->file->main_limit_users) {
 				$error ++;
-				setEventMessage($langs->trans("YourQuotaOfUsersIsReached"), 'errors');
+				setEventMessages($langs->trans("YourQuotaOfUsersIsReached"), null, 'errors');
 				$action = "create";       // Go back to create page
 			}
 		}
@@ -248,14 +249,15 @@ if (empty($reshook)) {
 
 				header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
 				exit;
-			} else {
+			} 
+			else
+			{
 				$langs->load("errors");
 				$db->rollback();
-				if (is_array($object->errors) && count($object->errors)) {
-					setEventMessage($object->errors, 'errors');
-				} else {
-					setEventMessage($object->error, 'errors');
-				}
+				if (is_array($object->errors) && count($object->errors)) 
+				{
+					setEventMessages($object->error, $object->errors, 'errors');
+				} 
 				$action = "create";       // Go back to create page
 			}
 		}
@@ -281,8 +283,10 @@ if (empty($reshook)) {
 			if ($result > 0) {
 				header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
 				exit;
-			} else {
-				setEventMessage($object->error, 'errors');
+			} 
+			else 
+			{
+				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
 	}
@@ -295,12 +299,12 @@ if (empty($reshook)) {
 			$error = 0;
 
             if (!$_POST["lastname"]) {
-                setEventMessage($langs->trans("NameNotDefined"), 'errors');
+                setEventMessages($langs->trans("NameNotDefined"), null, 'errors');
                 $action = "edit";       // Go back to create page
                 $error ++;
             }
             if (!$_POST["login"]) {
-                setEventMessage($langs->trans("LoginNotDefined"), 'errors');
+                setEventMessages($langs->trans("LoginNotDefined"), null, 'errors');
                 $action = "edit";       // Go back to create page
                 $error ++;
             }
@@ -398,8 +402,10 @@ if (empty($reshook)) {
                         $error ++;
                         if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
                             $langs->load("errors");
-                            setEventMessage($langs->trans("ErrorLoginAlreadyExists", $object->login), 'errors');
-                        } else {
+                            setEventMessages($langs->trans("ErrorLoginAlreadyExists", $object->login), null, 'errors');
+                        } 
+                        else 
+                        {
                             setEventMessages($object->error, $object->errors, 'errors');
                         }
                     }
@@ -427,7 +433,7 @@ if (empty($reshook)) {
                     $resql = $db->query($sql);
                     if (!$resql) {
                         $error ++;
-                        setEventMessage($db->lasterror(), 'errors');
+                        setEventMessages($db->lasterror(), null, 'errors');
                     }
                 }
 
@@ -449,7 +455,7 @@ if (empty($reshook)) {
                             $result = dol_move_uploaded_file($_FILES['photo']['tmp_name'], $newfile, 1, 0, $_FILES['photo']['error']);
 
                             if (!$result > 0) {
-                                setEventMessage($langs->trans("ErrorFailedToSaveFile"), 'errors');
+                                setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
                             } else {
                                 // Create small thumbs for company (Ratio is near 16/9)
                                 // Used on logon for example
@@ -468,7 +474,7 @@ if (empty($reshook)) {
                 }
 
                 if (!$error && !count($object->errors)) {
-                    setEventMessage($langs->trans("UserModified"));
+                    setEventMessages($langs->trans("UserModified"), null, 'mesgs');
                     $db->commit();
 
                     $login = $_SESSION["dol_login"];
@@ -490,8 +496,9 @@ if (empty($reshook)) {
                 $object->oldcopy = dol_clone($object);
 
                 $ret = $object->setPassword($user, $_POST["password"]);
-                if ($ret < 0) {
-                    setEventMessage($object->error, 'errors');
+                if ($ret < 0) 
+                {
+                    setEventMessages($object->error, $object->errors, 'errors');
                 }
             }
         }
@@ -502,7 +509,7 @@ if (empty($reshook)) {
         $ret=$object->setPassword($user,$_POST["password"]);
         if ($ret < 0)
         {
-	        setEventMessage($object->error, 'errors');
+	        setEventMessages($object->error, $object->errors, 'errors');
         }
     }
 
@@ -515,17 +522,22 @@ if (empty($reshook)) {
         $newpassword = $object->setPassword($user, '');
         if ($newpassword < 0) {
             // Echec
-            setEventMessage($langs->trans("ErrorFailedToSetNewPassword"), 'errors');
+            setEventMessages($langs->trans("ErrorFailedToSetNewPassword"), null, 'errors');
         } else {
             // Succes
             if ($action == 'confirm_passwordsend' && $confirm == 'yes') {
-                if ($object->send_password($user, $newpassword) > 0) {
-                    setEventMessage($langs->trans("PasswordChangedAndSentTo", $object->email));
-                } else {
-                    setEventMessage($object->error, 'errors');
+                if ($object->send_password($user, $newpassword) > 0) 
+                {
+                    setEventMessages($langs->trans("PasswordChangedAndSentTo", $object->email), null, 'mesgs');
+                } 
+                else 
+                {
+                    setEventMessages($object->error, $object->errors, 'errors');
                 }
-            } else {
-                setEventMessage($langs->trans("PasswordChangedTo", $newpassword), 'errors');
+            } 
+            else 
+            {
+                setEventMessages($langs->trans("PasswordChangedTo", $newpassword), null, 'errors');
             }
         }
     }
@@ -577,8 +589,10 @@ if (empty($reshook)) {
                     $ldap_sid = $attribute[$conf->global->LDAP_FIELD_SID];
                 }
             }
-        } else {
-            setEventMessage($ldap->error, 'errors');
+        } 
+        else 
+        {
+            setEventMessages($ldap->error, $ldap->errors, 'errors');
         }
     }
 }
@@ -664,12 +678,12 @@ if (($action == 'create') || ($action == 'adduserldap'))
             }
             else
             {
-                setEventMessage($ldap->error, 'errors');
+                setEventMessages($ldap->error, $ldap->errors, 'errors');
             }
         }
         else
         {
-	        setEventMessage($ldap->error, 'errors');
+	        setEventMessages($ldap->error, $ldap->errors, 'errors');
         }
 
         // If user list is full, we show drop-down list
@@ -1123,7 +1137,7 @@ else
                 $entries = $ldap->fetch($object->login,$userSearchFilter);
                 if (! $entries)
                 {
-                    setEventMessage($ldap->error, 'errors');
+                    setEventMessages($ldap->error, $ldap->errors, 'errors');
                 }
 
                 $passDoNotExpire = 0;
@@ -1394,16 +1408,6 @@ else
 				print '<td>'.$object->accountancy_code.'</td>';
 			}
 
-			// Color user
-			if (! empty($conf->agenda->enabled))
-            {
-				print '<tr><td>'.$langs->trans("ColorUser").'</td>';
-				print '<td>';
-				print $formother->showColor($object->color, '');
-				print '</td>';
-				print "</tr>\n";
-			}
-
 			print '</table>';
 
 	        print '</div>';
@@ -1412,21 +1416,16 @@ else
 	        print '<div class="underbanner clearboth"></div>';
 	        print '<table class="border tableforfield" width="100%">';
 
-        	print '<tr><td class="titlefield">'.$langs->trans("LastConnexion").'</td>';
-            print '<td>'.dol_print_date($object->datelastlogin,"dayhour").'</td>';
-            print "</tr>\n";
-
-            print '<tr><td>'.$langs->trans("PreviousConnexion").'</td>';
-            print '<td>'.dol_print_date($object->datepreviouslogin,"dayhour").'</td>';
-            print "</tr>\n";
-
-            if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file->main_authentication) && ! empty($conf->global->MAIN_OPENIDURL_PERUSER))
+            // Color user
+            if (! empty($conf->agenda->enabled))
             {
-                print '<tr><td>'.$langs->trans("OpenIDURL").'</td>';
-                print '<td>'.$object->openid.'</td>';
+                print '<tr><td>'.$langs->trans("ColorUser").'</td>';
+                print '<td>';
+                print $formother->showColor($object->color, '');
+                print '</td>';
                 print "</tr>\n";
             }
-
+            
             // Company / Contact
             if (! empty($conf->societe->enabled))
             {
@@ -1495,7 +1494,22 @@ else
 	            }
             }
 
-          	// Other attributes
+            if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file->main_authentication) && ! empty($conf->global->MAIN_OPENIDURL_PERUSER))
+            {
+                print '<tr><td>'.$langs->trans("OpenIDURL").'</td>';
+                print '<td>'.$object->openid.'</td>';
+                print "</tr>\n";
+            }
+
+            print '<tr><td class="titlefield">'.$langs->trans("LastConnexion").'</td>';
+            print '<td>'.dol_print_date($object->datelastlogin,"dayhour").'</td>';
+            print "</tr>\n";
+
+            print '<tr><td>'.$langs->trans("PreviousConnexion").'</td>';
+            print '<td>'.dol_print_date($object->datepreviouslogin,"dayhour").'</td>';
+            print "</tr>\n";
+
+            // Other attributes
 			$parameters=array();
 			$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 			if (empty($reshook) && ! empty($extrafields->attribute_label))
@@ -1588,12 +1602,11 @@ else
             }
 
             print "</div>\n";
-            print "<br>\n";
 
 
 
             /*
-             * Liste des groupes dans lequel est l'utilisateur
+             * List of groups of user
              */
 
             if ($canreadgroup)
@@ -1622,9 +1635,17 @@ else
                     print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">'."\n";
                     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
                     print '<input type="hidden" name="action" value="addgroup" />';
-                    print '<table class="noborder" width="100%">'."\n";
-                    print '<tr class="liste_titre"><th class="liste_titre" width="25%">'.$langs->trans("GroupsToAdd").'</th>'."\n";
-                    print '<th>';
+                }
+                
+                print '<table class="noborder" width="100%">'."\n";
+                print '<tr class="liste_titre"><th class="liste_titre" width="25%">'.$langs->trans("Groups").'</th>'."\n";
+                if(! empty($conf->multicompany->enabled) && !empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
+                {
+                    print '<td class="liste_titre" width="25%">'.$langs->trans("Entity").'</td>';
+                }
+                print '<th align="right">';
+                if ($caneditgroup)
+                {
                     print $form->select_dolgroups('', 'group', 1, $exclude, 0, '', '', $object->entity);
                     print ' &nbsp; ';
                     // Multicompany
@@ -1645,24 +1666,12 @@ else
                     	print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
                     }
                     print '<input type="submit" class="button" value="'.$langs->trans("Add").'" />';
-                    print '</th></tr>'."\n";
-                    print '</table></form>'."\n";
-
-                    print '<br>';
                 }
+                print '</th></tr>'."\n";
 
                 /*
                  * Groups assigned to user
                  */
-                print '<table class="noborder" width="100%">';
-                print '<tr class="liste_titre">';
-                print '<td class="liste_titre" width="25%">'.$langs->trans("Groups").'</td>';
-                if(! empty($conf->multicompany->enabled) && !empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
-                {
-                	print '<td class="liste_titre" width="25%">'.$langs->trans("Entity").'</td>';
-                }
-                print "<td>&nbsp;</td></tr>\n";
-
                 if (! empty($groupslist))
                 {
                     $var=true;
@@ -1719,6 +1728,11 @@ else
                 }
 
                 print "</table>";
+                
+                if ($caneditgroup)
+                {
+                    print '</form>';
+                }
                 print "<br>";
             }
         }

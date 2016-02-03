@@ -36,6 +36,7 @@ $langs->load("banks");
 $langs->load("bills");
 $langs->load("users");
 $langs->load("salaries");
+$langs->load('hrm');
 
 $id=GETPOST("id",'int');
 $action=GETPOST('action');
@@ -335,9 +336,11 @@ if ($id)
 
 	print '<table class="border" width="100%">';
 
-	print "<tr>";
+    $linkback = '<a href="'.DOL_URL_ROOT.'/compta/salaries/index.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+	
+    print "<tr>";
 	print '<td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
-	print $object->ref;
+	print $form->showrefnav($object, 'id', $linkback, 1, 'rowid', 'ref', '');
 	print '</td></tr>';
 
 	// Employee

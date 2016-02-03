@@ -2054,7 +2054,7 @@ abstract class CommonObject
 
         $forcedroundingmode=$roundingadjust;
         if ($forcedroundingmode == 'auto' && isset($conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND)) $forcedroundingmode=$conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND;
-        if ($forcedroundingmode == 'auto') $forcedroundingmode='0';
+        elseif ($forcedroundingmode == 'auto') $forcedroundingmode='0';
 
         $error=0;
 
@@ -2075,6 +2075,7 @@ abstract class CommonObject
 
         $sql = 'SELECT rowid, qty, '.$fieldup.' as up, remise_percent, total_ht, '.$fieldtva.' as total_tva, total_ttc, '.$fieldlocaltax1.' as total_localtax1, '.$fieldlocaltax2.' as total_localtax2,';
         $sql.= ' tva_tx as vatrate, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, info_bits, product_type';
+		if ($this->table_element_line == 'facturedet') $sql.= ', situation_percent';
         $sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line;
         $sql.= ' WHERE '.$this->fk_element.' = '.$this->id;
         if ($exclspec)
@@ -2109,7 +2110,7 @@ abstract class CommonObject
                 if ($forcedroundingmode == '0')	// Check if data on line are consistent. This may solve lines that were not consistent because set with $forcedroundingmode='auto'
                 {
                 	$localtax_array=array($obj->localtax1_type,$obj->localtax1_tx,$obj->localtax2_type,$obj->localtax2_tx);
-                	$tmpcal=calcul_price_total($obj->qty, $obj->up, $obj->remise_percent, $obj->vatrate, $obj->localtax1_tx, $obj->localtax2_tx, 0, 'HT', $obj->info_bits, $obj->product_type, $seller, $localtax_array);
+                	$tmpcal=calcul_price_total($obj->qty, $obj->up, $obj->remise_percent, $obj->vatrate, $obj->localtax1_tx, $obj->localtax2_tx, 0, 'HT', $obj->info_bits, $obj->product_type, $seller, $localtax_array, (isset($obj->situation_percent) ? $obj->situation_percent : 100));
                 	$diff=price2num($tmpcal[1] - $obj->total_tva, 'MT', 1);
                 	if ($diff)
                 	{
@@ -2918,6 +2919,7 @@ abstract class CommonObject
 
     /**
      *  Return if a country is inside the EEC (European Economic Community)
+     *  TODO Add a field into dictionary
      *
      *  @return     boolean		true = country inside EEC, false = country outside EEC
      */
@@ -2939,7 +2941,8 @@ abstract class CommonObject
     			'FR',	// France
     			'GB',	// United Kingdom
     			'GR',	// Greece
-    			'NL',	// Holland
+    			'HR',   // Croatia
+                'NL',	// Holland
     			'HU',	// Hungary
     			'IE',	// Ireland
     			'IM',	// Isle of Man - Included in UK
@@ -2949,7 +2952,7 @@ abstract class CommonObject
     			'LV',	// Latvia
     			'MC',	// Monaco - Included in France
     			'MT',	// Malta
-        //'NO',	// Norway
+                //'NO',	// Norway
     			'PL',	// Poland
     			'PT',	// Portugal
     			'RO',	// Romania
@@ -4099,7 +4102,7 @@ abstract class CommonObject
 					}
 
 					if($extrafields->attribute_required[$key])
-						$label = '<span class="fieldrequired">'.$label.'</span>';
+						$label = '<span'.($mode != 'view' ? ' class="fieldrequired"':'').'>'.$label.'</span>';
 
 					$out .= '<td>'.$langs->trans($label).'</td>';
 					$out .='<td'.($colspan?' colspan="'.$colspan.'"':'').'>';
@@ -4191,10 +4194,11 @@ abstract class CommonObject
 		return true;
 	}
 	
-	 /**
-	 * define buy price if not defined
+	/**
+	 * Get buy price to use for margin calculation. This function is called when buy price is unknown.
 	 *	set buy price = sell price if ForceBuyingPriceIfNull configured,
-	 *	 else if calculation MARGIN_TYPE = 'pmp' and pmp is calculated, set pmp as buyprice
+	 *   else if calculation MARGIN_TYPE = 'costprice' and costprice is defined, use costprice as buyprice
+	 *	 else if calculation MARGIN_TYPE = 'pmp' and pmp is calculated, use pmp as buyprice
 	 *	 else set min buy price as buy price
 	 *	 
 	 * @param float		$unitPrice		 product unit price
@@ -4209,16 +4213,16 @@ abstract class CommonObject
 	
 		$buyPrice = 0;
 		
-		if (($unitPrice > 0) && (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1))
+		if (($unitPrice > 0) && (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1)) // In most cases, test here is false
 		{
 			$buyPrice = $unitPrice * (1 - $discountPercent / 100);
 		}
 		else
 		{
-			// Get PMP
+			// Get cost price for margin calculation
 			if (! empty($fk_product))
 			{
-				if (isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == 'pmp')
+				if (isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == 'costprice')
 				{
 					require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 					$product = new Product($this->db);
@@ -4228,13 +4232,32 @@ abstract class CommonObject
 						$this->errors[] = 'ErrorProductIdDoesNotExists';
 						return -1;
 					}
-					if (($product->pmp > 0))
+					if ($product->cost_price > 0)
+					{
+						$buyPrice = $product->cost_price;
+					}
+					else if ($product->pmp > 0)
 					{
 						$buyPrice = $product->pmp;
 					}
-					// TODO add option to set PMP of product
 				}
-				else if (isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == '1')
+				else if (isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == 'pmp')
+				{
+					require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+					$product = new Product($this->db);
+					$result = $product->fetch($fk_product);
+					if ($result <= 0)
+					{
+						$this->errors[] = 'ErrorProductIdDoesNotExists';
+						return -1;
+					}
+					if ($product->pmp > 0)
+					{
+						$buyPrice = $product->pmp;
+					}
+				}
+				
+				if (empty($buyPrice) && isset($conf->global->MARGIN_TYPE) && in_array($conf->global->MARGIN_TYPE, array('1','pmp','costprice')))
 				{
 					require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 					$productFournisseur = new ProductFournisseur($this->db);

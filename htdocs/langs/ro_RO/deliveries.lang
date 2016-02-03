@@ -7,6 +7,7 @@ DeliveryOrders=Ordine de livrare
 DeliveryDate=Data de livrare
 DeliveryDateShort=Dată livr.
 CreateDeliveryOrder=Generare ordine de livrare 
+DeliveryStateSaved=Delivery state saved
 QtyDelivered=Cantitate livrată
 SetDeliveryDate=Setaţi data de expediere
 ValidateDeliveryReceipt=Validare recepţie  livrare

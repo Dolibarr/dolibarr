@@ -651,7 +651,7 @@ if ($action == 'create')
 	{
 		print '<tr><td width="30%"><span class="fieldrequired">'.$langs->trans("Type").'</span></b></td><td>';
 		$default=(empty($conf->global->AGENDA_USE_EVENT_TYPE_DEFAULT)?'':$conf->global->AGENDA_USE_EVENT_TYPE_DEFAULT);
-		$formactions->select_type_actions(GETPOST("actioncode")?GETPOST("actioncode"):($object->type_code?$object->type_code:$default), "actioncode","systemauto");
+		$formactions->select_type_actions(GETPOST("actioncode")?GETPOST("actioncode"):($object->type_code?$object->type_code:$default), "actioncode", "systemauto", 0, -1);
 		print '</td></tr>';
 	}
 
@@ -755,7 +755,7 @@ if ($action == 'create')
 	{
 
 		$events=array();
-		$events[]=array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php',1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
+		$events[]=array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php?showempty=1',1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
 		//For external user force the company to user company
 		if (!empty($user->societe_id)) {
 			print $form->select_thirdparty_list($user->societe_id,'socid','',1,1,0,$events);
@@ -1081,8 +1081,10 @@ if ($id > 0)
 
 		print '</table>';
 
+		
 		print '<br><br>';
 
+		
 		print '<table class="border" width="100%">';
 
 		// Thirdparty - Contact

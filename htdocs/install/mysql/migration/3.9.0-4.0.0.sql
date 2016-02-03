@@ -23,3 +23,18 @@
 
 
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN validated tinyint DEFAULT 0 NOT NULL;
+ALTER TABLE llx_bank_account MODIFY COLUMN accountancy_journal varchar(16) DEFAULT NULL;
+
+ALTER TABLE llx_fichinter ADD COLUMN datet date  after duree;
+ALTER TABLE llx_fichinter ADD COLUMN datee date  after duree;
+ALTER TABLE llx_fichinter ADD COLUMN dateo date  after duree;
+
+ALTER TABLE llx_projet ADD COLUMN opp_percent double(5,2) after fk_opp_status;
+UPDATE llx_projet as p set opp_percent = (SELECT percent from llx_c_lead_status as cls where cls.rowid = p.fk_opp_status) where opp_percent IS NULL;
+
+ALTER TABLE llx_overwrite_trans ADD UNIQUE INDEX uk_overwrite_trans(lang, transkey);
+
+ALTER TABLE llx_cronjob MODIFY COLUMN unitfrequency	varchar(255) NOT NULL DEFAULT '3600';
+
+ALTER TABLE llx_facture ADD INDEX idx_facture_fk_statut (fk_statut);
+

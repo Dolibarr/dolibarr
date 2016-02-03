@@ -121,7 +121,6 @@ AttributeName=Atributo pavadinimas
 String=Sąlyga
 Text=Tekstas
 Int=Vidinis
-Date=Data
 DateAndTime=Data ir laikas
 PublicMemberCard=Nario vieša kortelė
 MemberNotOrNoMoreExpectedToSubscribe=Narys, kurio pasirašymo nėra ir daugiau nesitikima

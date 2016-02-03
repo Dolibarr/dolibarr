@@ -37,6 +37,7 @@ if (! empty($conf->fournisseur->enabled)) require_once DOL_DOCUMENT_ROOT.'/fourn
 if (! $user->rights->societe->lire) accessforbidden();
 
 $langs->load("commercial");
+$langs->load("propal");
 
 $action=GETPOST('action', 'alpha');
 $bid=GETPOST('bid', 'int');
@@ -114,7 +115,7 @@ if (count($listofsearchfields))
 	foreach($listofsearchfields as $key => $value)
 	{
 		if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-		print '<tr>';
+		print '<tr '.$bc[false].'>';
 		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label>:</td><td><input type="text" class="flat" name="'.$key.'" id="'.$key.'" size="18"></td>';
 		if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
 		print '</tr>';

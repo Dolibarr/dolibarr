@@ -55,7 +55,6 @@ $langs->load("companies");
 
 $arrayjs=array('http://www.google.com/jsapi');
 if (! empty($conf->dol_use_jmobile)) $arrayjs=array();
-llxHeader('','','','',0,0,$arrayjs);
 
 $title=$langs->trans("Statistics");
 if ($mode == 'memberbycountry') $title=$langs->trans("MembersStatisticsByCountries");
@@ -63,6 +62,7 @@ if ($mode == 'memberbystate') $title=$langs->trans("MembersStatisticsByState");
 if ($mode == 'memberbytown') $title=$langs->trans("MembersStatisticsByTown");
 if ($mode == 'memberbyregion') $title=$langs->trans("MembersStatisticsByRegion");
 
+llxHeader('', $title,'','',0,0,$arrayjs);
 
 print load_fiche_titre($title, $mesg);
 

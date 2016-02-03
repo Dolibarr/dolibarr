@@ -39,7 +39,13 @@ $modules=array(
 						'img' => 'action'
 				)
 		),
-		'propal' => array(
+		'projet' => array(
+				array(
+						'code' => 'MAIN_DELAY_TASKS_TODO',
+						'img' => 'task'
+				)
+		),
+        'propal' => array(
 				array(
 						'code' => 'MAIN_DELAY_PROPALS_TO_CLOSE',
 						'img' => 'propal'
@@ -175,9 +181,9 @@ if ($action == 'edit')
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="120px">'.$langs->trans("Value").'</td></tr>';
 
-	$var=!$var;
+	$var=false;
 	print '<tr '.$bc[$var].'>';
-	print '<td>'.$langs->trans("MAIN_DISABLE_METEO").'</td><td>' .$form->selectyesno('MAIN_DISABLE_METEO',(isset($conf->global->MAIN_DISABLE_METEO)?1:0),1) . '</td></tr>';
+	print '<td>'.$langs->trans("MAIN_DISABLE_METEO").'</td><td>' .$form->selectyesno('MAIN_DISABLE_METEO',(empty($conf->global->MAIN_DISABLE_METEO)?0:1),1) . '</td></tr>';
 
 	print '</table>';
 
@@ -222,7 +228,7 @@ else
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="120px">'.$langs->trans("Value").'</td></tr>';
 
-	$var=!$var;
+	$var=false;
 	print '<tr '.$bc[$var].'>';
 	print '<td>'.$langs->trans("MAIN_DISABLE_METEO").'</td><td>' . yn($conf->global->MAIN_DISABLE_METEO) . '</td></tr>';
 

@@ -8,6 +8,7 @@
  * Copyright (C) 2013		Christophe Battarel		<christophe.battarel@altairis.fr>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015	Marcos García			<marcosgdf@gmail.com>
+ * Copyright (C) 2015		Ferran Marcet			<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -991,6 +992,13 @@ class Contrat extends CommonObject
 
 		if (! $error)
 		{
+			// Delete linked object
+			$res = $this->deleteObjectLinked();
+			if ($res < 0) $error++;
+		}
+
+		if (! $error)
+		{
 			// Delete contratdet_log
 			/*
 			$sql = "DELETE cdl";
@@ -1881,7 +1889,7 @@ class Contrat extends CommonObject
 	 */
 	function load_board($user,$mode)
 	{
-		global $conf, $user, $langs;
+		global $conf, $langs;
 
 		$this->from = " FROM ".MAIN_DB_PREFIX."contrat as c";
 		$this->from.= ", ".MAIN_DB_PREFIX."contratdet as cd";

@@ -578,7 +578,7 @@ if ($id > 0 || ! empty($ref))
 				}
 
 				// Qty ordered
-				print '<td align="center">' . ($objp->qty!=1?'<span class="badge">'.$objp->qty.'</span>':$objp->qty) . '</td>';
+				print '<td align="center">' . $objp->qty . '</td>';
 
 				// Qty already shipped
 				$qtyProdCom=$objp->qty;
@@ -721,10 +721,7 @@ if ($id > 0 || ! empty($ref))
 
 				if (! empty($conf->stock->enabled))
 				{
-					$warehousecanbeselectedlater=1;
-					if (! empty($conf->productbatch->enabled)) $warehousecanbeselectedlater=0;
-
-					print '<td'.($warehousecanbeselectedlater?'':' class="fieldrequired"').'>'.$langs->trans("WarehouseSource").'</td>';
+					print '<td>'.$langs->trans("WarehouseSource").'</td>';
 					print '<td>';
 					print $formproduct->selectWarehouses(! empty($commande->warehouse_id)?$commande->warehouse_id:-1,'entrepot_id','',1);
 					if (count($formproduct->cache_warehouses) <= 0)

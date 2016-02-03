@@ -447,7 +447,7 @@ if (empty($reshook))
 	                            'HT',
 	                            $product_type,
 	                        	$lines[$i]->rang,
-	                        	1,
+	                        	0,
 	                        	$lines[$i]->array_options,
 	                        	$lines[$i]->fk_unit
 	                        );
@@ -458,6 +458,9 @@ if (empty($reshook))
 	                            break;
 	                        }
 	                    }
+	                    
+	                    // Now reload line
+	                    $object->fetch_lines();
 	                }
 	                else
 	                {
@@ -1007,22 +1010,29 @@ if (empty($reshook))
 
                         $error=0;
 
-                        // Initialisation donnees
+                        // Init data for trigger
                         $object->sendtoid		= $sendtoid;
                         $object->actiontypecode	= $actiontypecode;
                         $object->actionmsg		= $actionmsg;
                         $object->actionmsg2		= $actionmsg2;
                         $object->fk_element		= $object->id;
                         $object->elementtype	= $object->element;
+                        
+                        $object->email_subject  = $subject;
+                        $object->email_to       = $sendto;
+                        $object->email_tocc     = $sendtocc;
+                        $object->email_tobcc    = $sendtobcc;
+                        $object->email_from     = $from;
+                        $object->email_content  = $_POST['message'];
 
-                        // Appel des triggers
+                        // Call triggers
                         include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                         $interface=new Interfaces($db);
                         $result=$interface->run_triggers('BILL_SUPPLIER_SENTBYMAIL',$object,$user,$langs,$conf);
                         if ($result < 0) {
                             $error++; $object->errors=$interface->errors;
                         }
-                        // Fin appel triggers
+                        // End call triggers
 
                         if ($error)
                         {
@@ -1234,7 +1244,7 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $bankaccountstatic=new Account($db);
 
-llxHeader('','','');
+llxHeader('',$langs->trans('SupplierInvoice'),'');
 
 // Mode creation
 if ($action == 'create')
@@ -1314,7 +1324,6 @@ if ($action == 'create')
         $datedue=($datetmp==''?-1:$datetmp);
     }
 
-    dol_fiche_head();
 
     print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="post">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -1322,6 +1331,8 @@ if ($action == 'create')
     print '<input type="hidden" name="origin" value="'.GETPOST('origin').'">';
     print '<input type="hidden" name="originid" value="'.GETPOST('originid').'">';
 
+    dol_fiche_head();
+    
     print '<table class="border" width="100%">';
 
     // Ref

@@ -128,7 +128,7 @@ class modCron extends DolibarrModules
         $this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=home,fk_leftmenu=modulesadmintools',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 						        'type'=>'left',			                // This is a Left menu entry
 						        'titre'=>'CronList',
-						        'url'=>'/cron/list.php?status=-1',
+						        'url'=>'/cron/list.php?status=-2',
 						        'langs'=>'cron',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 						        'position'=>200,
 						        'enabled'=>'$leftmenu==\'modulesadmintools\'',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.

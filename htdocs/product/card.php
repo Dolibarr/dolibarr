@@ -42,10 +42,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-if (! empty($conf->propal->enabled))   require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
-if (! empty($conf->facture->enabled))  require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-if (! empty($conf->commande->enabled)) require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+if (! empty($conf->propal->enabled))     require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+if (! empty($conf->facture->enabled))    require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+if (! empty($conf->commande->enabled))   require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/accountancy/class/html.formventilation.class.php';
 
 $langs->load("products");
 $langs->load("other");
@@ -64,6 +67,8 @@ $action=(GETPOST('action','alpha') ? GETPOST('action','alpha') : 'view');
 $cancel=GETPOST('cancel');
 $confirm=GETPOST('confirm','alpha');
 $socid=GETPOST('socid','int');
+$duration_value = GETPOST('duration_value');
+$duration_unit = GETPOST('duration_unit');
 if (! empty($user->societe_id)) $socid=$user->societe_id;
 
 $object = new Product($db);
@@ -153,6 +158,7 @@ if (empty($reshook))
 		}
     }
 
+	/*
     if ($action == 'setaccountancy_code_buy') {
 
 	    $result = $object->setAccountancyCode('buy', GETPOST('accountancy_code_buy'));
@@ -166,6 +172,7 @@ if (empty($reshook))
 	    if ($result < 0) setEventMessages(join(',',$object->errors), null, 'errors');
 	    $action="";
     }
+	*/
 
     // Add a product or service
     if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service->creer))
@@ -184,9 +191,9 @@ if (empty($reshook))
             $action = "create";
             $error++;
         }
-        if (GETPOST('duration_value') && ! GETPOST('duration_unit'))
+        if (! empty($duration_value) && empty($duration_unit))
         {
-            setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentities('Unit')), 'errors');
+            setEventMessages($langs->trans('ErrorFieldRequired',$langs->transnoentities('Unit')), null, 'errors');
             $action = "create";
             $error++;
         }
@@ -242,8 +249,8 @@ if (empty($reshook))
             $object->note               	 = dol_htmlcleanlastbr(GETPOST('note'));
             $object->customcode              = GETPOST('customcode');
             $object->country_id              = GETPOST('country_id');
-            $object->duration_value     	 = GETPOST('duration_value');
-            $object->duration_unit      	 = GETPOST('duration_unit');
+            $object->duration_value     	 = $duration_value;
+            $object->duration_unit      	 = $duration_unit;
             $object->seuil_stock_alerte 	 = GETPOST('seuil_stock_alerte')?GETPOST('seuil_stock_alerte'):0;
             $object->desiredstock            = GETPOST('desiredstock')?GETPOST('desiredstock'):0;
             $object->canvas             	 = GETPOST('canvas');
@@ -257,8 +264,12 @@ if (empty($reshook))
             $object->volume_units       	 = GETPOST('volume_units');
             $object->finished           	 = GETPOST('finished');
 	        $object->fk_unit                 = GETPOST('units');
-            $object->accountancy_code_sell = GETPOST('accountancy_code_sell');
-            $object->accountancy_code_buy  = GETPOST('accountancy_code_buy');
+			
+			$accountancy_code_sell 			 = GETPOST('accountancy_code_sell');
+			$accountancy_code_buy 			 = GETPOST('accountancy_code_buy');
+
+			if ($accountancy_code_sell <= 0) { $object->accountancy_code_sell = ''; } else { $object->accountancy_code_sell = $accountancy_code_sell; }
+			if ($accountancy_code_buy <= 0) { $object->accountancy_code_buy = ''; } else { $object->accountancy_code_buy = $accountancy_code_buy; }
 
             // MultiPrix
             if (! empty($conf->global->PRODUIT_MULTIPRICES))
@@ -329,8 +340,8 @@ if (empty($reshook))
                 $object->status_batch	        = GETPOST('status_batch');
                 $object->seuil_stock_alerte     = GETPOST('seuil_stock_alerte');
                 $object->desiredstock           = GETPOST('desiredstock');
-                $object->duration_value         = GETPOST('duration_value');
-                $object->duration_unit          = GETPOST('duration_unit');
+                $object->duration_value         = $duration_value;
+                $object->duration_unit          = $duration_unit;
                 $object->canvas                 = GETPOST('canvas');
                 $object->weight                 = GETPOST('weight');
                 $object->weight_units           = GETPOST('weight_units');
@@ -367,8 +378,11 @@ if (empty($reshook))
     	        $object->barcode_type_coder     = $stdobject->barcode_type_coder;
     	        $object->barcode_type_label     = $stdobject->barcode_type_label;
 
-            	$object->accountancy_code_sell  = GETPOST('accountancy_code_sell');
-                $object->accountancy_code_buy   = GETPOST('accountancy_code_buy');
+				$accountancy_code_sell 			 = GETPOST('accountancy_code_sell');
+				$accountancy_code_buy 			 = GETPOST('accountancy_code_buy');
+				
+				if ($accountancy_code_sell <= 0) { $object->accountancy_code_sell = ''; } else { $object->accountancy_code_sell = $accountancy_code_sell; }
+				if ($accountancy_code_buy <= 0) { $object->accountancy_code_buy = ''; } else { $object->accountancy_code_buy = $accountancy_code_buy; }
 
                 // Fill array 'array_options' with data from add form
         		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
@@ -727,6 +741,7 @@ llxHeader('', $title, $helpurl);
 
 $form = new Form($db);
 $formproduct = new FormProduct($db);
+if (! empty($conf->accounting->enabled)) $formaccountancy = New FormVentilation($db);
 
 
 if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
@@ -859,7 +874,7 @@ else
         // Description (used in invoice, propal...)
         print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td colspan="3">';
 
-        $doleditor = new DolEditor('desc', GETPOST('desc'), '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 4, 80);
+        $doleditor = new DolEditor('desc', GETPOST('desc'), '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 4, '80%');
         $doleditor->Create();
 
         print "</td></tr>";
@@ -898,7 +913,7 @@ else
         // Duration
         if ($type == 1)
         {
-            print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="3"><input name="duration_value" size="6" maxlength="5" value="'.GETPOST('duration_value').'"> &nbsp;';
+            print '<tr><td>' . $langs->trans("Duration") . '</td><td colspan="3"><input name="duration_value" size="6" maxlength="5" value="' . $duration_value . '"> &nbsp;';
             print '<input name="duration_unit" type="radio" value="h">'.$langs->trans("Hour").'&nbsp;';
             print '<input name="duration_unit" type="radio" value="d">'.$langs->trans("Day").'&nbsp;';
             print '<input name="duration_unit" type="radio" value="w">'.$langs->trans("Week").'&nbsp;';
@@ -963,7 +978,7 @@ else
         print '<tr><td class="tdtop">'.$langs->trans("NoteNotVisibleOnBill").'</td><td colspan="3">';
 
         // We use dolibarr_details as type of DolEditor here, because we must not accept images as description is included into PDF and not accepted by TCPDF.
-        $doleditor = new DolEditor('note', GETPOST('note'), '', 140, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 8, 70);
+        $doleditor = new DolEditor('note', GETPOST('note'), '', 140, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 8, '80%');
 	    $doleditor->Create();
 
         print "</td></tr>";
@@ -1011,20 +1026,34 @@ else
         }
 
         print '<table class="border" width="100%">';
+		
+		if (! empty($conf->accounting->enabled))
+		{
+            // Accountancy_code_sell
+            print '<tr><td width="20%">'.$langs->trans("ProductAccountancySellCode").'</td>';
+            print '<td>';
+		    print $formaccountancy->select_account($object->accountancy_code_sell, 'accountancy_code_sell', 1, '', 0, 1);
+            print '</td></tr>';
 
-        // Accountancy_code_sell
-        print '<tr><td>'.$langs->trans("ProductAccountancySellCode").'</td>';
-        print '<td><input name="accountancy_code_sell" size="16" value="'.$object->accountancy_code_sell.'">';
-        print '</td></tr>';
+            // Accountancy_code_buy
+            print '<tr><td width="20%">'.$langs->trans("ProductAccountancyBuyCode").'</td>';
+            print '<td>';
+			print $formaccountancy->select_account($object->accountancy_code_buy, 'accountancy_code_buy', 1, '', 0, 1);
+            print '</td></tr>';
+		}			
+		else // For external software 
+		{
+            // Accountancy_code_sell
+            print '<tr><td width="20%">'.$langs->trans("ProductAccountancySellCode").'</td>';
+            print '<td><input name="accountancy_code_sell" size="16" value="'.$object->accountancy_code_sell.'">';
+            print '</td></tr>';
 
-        // Accountancy_code_buy
-        print '<tr><td width="20%">'.$langs->trans("ProductAccountancyBuyCode").'</td>';
-        print '<td><input name="accountancy_code_buy" size="16" value="'.$object->accountancy_code_buy.'">';
-        print '</td></tr>';
-
-        print '</table>';
-
-        print '<br>';
+            // Accountancy_code_buy
+            print '<tr><td width="20%">'.$langs->trans("ProductAccountancyBuyCode").'</td>';
+            print '<td><input name="accountancy_code_buy" size="16" value="'.$object->accountancy_code_buy.'">';
+            print '</td></tr>';
+        }
+		print '</table>';
 
         dol_fiche_end();
 
@@ -1271,14 +1300,24 @@ else
 
             print '<br>';
 
-            /*if (empty($conf->accounting->enabled) && empty($conf->comptabilite->enabled) && empty($conf->accountingexpert->enabled))
-            {
-                // Don't show accounting field when accounting id disabled.
-            }
-            else
-            {*/
-                print '<table class="border" width="100%">';
+            print '<table class="border" width="100%">';
 
+			if (! empty($conf->accounting->enabled))
+			{
+                // Accountancy_code_sell
+                print '<tr><td width="20%">'.$langs->trans("ProductAccountancySellCode").'</td>';
+                print '<td>';
+				print $formaccountancy->select_account($object->accountancy_code_sell, 'accountancy_code_sell', 1, '', 1, 1);
+                print '</td></tr>';
+
+                // Accountancy_code_buy
+                print '<tr><td width="20%">'.$langs->trans("ProductAccountancyBuyCode").'</td>';
+                print '<td>';
+				print $formaccountancy->select_account($object->accountancy_code_buy, 'accountancy_code_buy', 1, '', 1, 1);
+                print '</td></tr>';
+			}			
+			else // For external software 
+			{
                 // Accountancy_code_sell
                 print '<tr><td width="20%">'.$langs->trans("ProductAccountancySellCode").'</td>';
                 print '<td><input name="accountancy_code_sell" size="16" value="'.$object->accountancy_code_sell.'">';
@@ -1288,9 +1327,8 @@ else
                 print '<tr><td width="20%">'.$langs->trans("ProductAccountancyBuyCode").'</td>';
                 print '<td><input name="accountancy_code_buy" size="16" value="'.$object->accountancy_code_buy.'">';
                 print '</td></tr>';
-
-                print '</table>';
-            //}
+            }
+			print '</table>';
 
             dol_fiche_end();
 
@@ -1313,7 +1351,7 @@ else
             $picto=($object->type== Product::TYPE_SERVICE?'service':'product');
             dol_fiche_head($head, 'card', $titre, 0, $picto);
 
-            dol_banner_tab($object, 'id', '', ($user->societe_id?0:1), 'ref');
+            dol_banner_tab($object, 'ref', '', ($user->societe_id?0:1), 'ref');
             
             
             print '<div class="fichecenter">';
@@ -1338,7 +1376,7 @@ else
                 print '<tr><td class="nowrap">';
                 print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
                 print $langs->trans("BarcodeType");
-                print '<td>';
+                print '</td>';
                 if (($action != 'editbarcodetype') && ! empty($user->rights->barcode->creer)) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbarcodetype&amp;id='.$object->id.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
                 print '</tr></table>';
                 print '</td><td colspan="2">';
@@ -1359,7 +1397,7 @@ else
                 print '<tr><td class="nowrap">';
                 print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
                 print $langs->trans("BarcodeValue");
-                print '<td>';
+                print '</td>';
                 if (($action != 'editbarcode') && ! empty($user->rights->barcode->creer)) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbarcode&amp;id='.$object->id.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
                 print '</tr></table>';
                 print '</td><td colspan="2">';
@@ -1380,13 +1418,23 @@ else
             }
 
             // Accountancy sell code
-            print '<tr><td>'.$form->editfieldkey("ProductAccountancySellCode",'accountancy_code_sell',$object->accountancy_code_sell,$object,$user->rights->produit->creer||$user->rights->service->creer,'string').'</td><td colspan="2">';
-            print $form->editfieldval("ProductAccountancySellCode",'accountancy_code_sell',$object->accountancy_code_sell,$object,$user->rights->produit->creer||$user->rights->service->creer,'string');
+			print '<tr><td class="nowrap">';
+            print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+            print $langs->trans("ProductAccountancySellCode");
+            print '</td>';
+			print '</tr></table>';
+            print '</td><td colspan="2">';
+			print length_accountg($object->accountancy_code_sell);
             print '</td></tr>';
 
             // Accountancy buy code
-            print '<tr><td>'.$form->editfieldkey("ProductAccountancyBuyCode",'accountancy_code_buy',$object->accountancy_code_buy,$object,$user->rights->produit->creer||$user->rights->service->creer,'string').'</td><td colspan="2">';
-            print $form->editfieldval("ProductAccountancyBuyCode",'accountancy_code_buy',$object->accountancy_code_buy,$object,$user->rights->produit->creer||$user->rights->service->creer,'string');
+			print '<tr><td class="nowrap">';
+            print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+            print $langs->trans("ProductAccountancyBuyCode");
+            print '</td>';
+			print '</tr></table>';
+            print '</td><td colspan="2">';
+			print length_accountg($object->accountancy_code_buy);
             print '</td></tr>';
 
             // Status (to sell)

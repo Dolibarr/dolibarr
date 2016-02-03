@@ -110,6 +110,12 @@ install:
 
 before_script:
 - |
+  echo Start travis
+  echo Current dir is `pwd`
+  echo Home dir is `echo ~`
+  echo TRAVIS_BUILD_DIR is $TRAVIS_BUILD_DIR
+
+- |
   echo "Re-enabling Xdebug for PHP CodeSniffer and PHP Unit"
   phpenv config-add /tmp/xdebug.ini
   echo
@@ -149,7 +155,7 @@ before_script:
     mysql -e "SELECT VERSION();"
     echo
   fi
-
+  
 - |
   echo "Setting up database"
   if [ "$DB" = 'mysql' ] || [ "$DB" = 'mariadb' ]; then
@@ -166,8 +172,8 @@ before_script:
   echo
 
 - |
-  echo "Setting up Dolibarr"
   export CONF_FILE=htdocs/conf/conf.php
+  echo "Setting up Dolibarr $CONF_FILE"
   echo '<?php ' > $CONF_FILE
   echo '$'dolibarr_main_url_root=\'http://127.0.0.1\'';' >> $CONF_FILE
   echo '$'dolibarr_main_document_root=\'$TRAVIS_BUILD_DIR/htdocs\'';' >> $CONF_FILE
@@ -184,14 +190,8 @@ before_script:
   #fi
   # TODO: SQLite
   echo '$'dolibarr_main_authentication=\'dolibarr\'';' >> $CONF_FILE
+  cat $CONF_FILE
   echo
-
-- |
-  if [ "$DEBUG" = true ]; then
-    echo "Debugging informations"
-    cat $CONF_FILE
-    echo
-  fi
 
 - |
   echo "Create documents directory and set permissions"
@@ -269,12 +269,19 @@ script:
   cd htdocs/install
   php upgrade.php 3.5.0 3.6.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade350360.log
   php upgrade2.php 3.5.0 3.6.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade350360-2.log
+  php step5.php 3.5.0 3.6.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade350360-3.log
   php upgrade.php 3.6.0 3.7.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade360370.log
   php upgrade2.php 3.6.0 3.7.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade360370-2.log
+  php step5.php 3.6.0 3.7.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade360370-3.log
   php upgrade.php 3.7.0 3.8.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade370380.log
   php upgrade2.php 3.7.0 3.8.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade370380-2.log
+  php step5.php 3.7.0 3.8.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade370380-3.log
   php upgrade.php 3.8.0 3.9.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade380390.log
   php upgrade2.php 3.8.0 3.9.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade380390-2.log
+  php step5.php 3.8.0 3.9.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade380390-3.log
+  php upgrade.php 3.9.0 4.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade390400.log
+  php upgrade2.php 3.9.0 4.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade390400-2.log
+  php step5.php 3.9.0 4.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade390400-3.log
   cd -
   set +e
   echo
@@ -306,3 +313,4 @@ after_failure:
   fi
 
 after_script:
+

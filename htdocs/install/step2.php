@@ -616,6 +616,6 @@ else
 
 dolibarr_install_syslog("--- step2: end");
 
-pFooter(!$ok,$setuplang);
+pFooter($ok?0:1,$setuplang);
 
 if (isset($db) && is_object($db)) $db->close();

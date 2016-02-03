@@ -168,7 +168,28 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
 		}
 	}
 
-
+    
+	/**
+	 * Standard method to get content of a box
+	 *
+	 * @param   array   $head       Array with properties of box title
+	 * @param   array   $contents   Array with properties of box lines
+	 *
+	 * @return  string              
+	 */
+	function outputBox($head = null, $contents = null)
+	{
+		global $langs, $user, $conf;
+	
+		// Trick to get result into a var from a function that makes print instead of return
+		ob_start();
+		$result = $this->showBox($head, $contents);
+		$output = ob_get_contents();
+		ob_end_clean();
+		
+		return $output;
+	}
+	
 	/**
 	 *Standard method to show a box (usage by boxes not mandatory, a box can still use its own showBox function)
 	 *
@@ -177,7 +198,7 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
 	 *
 	 * @return  void
 	 */
-	function showBox($head, $contents)
+	function showBox($head = null, $contents = null)
 	{
 		global $langs, $user, $conf;
 

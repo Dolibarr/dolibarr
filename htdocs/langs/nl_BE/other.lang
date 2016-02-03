@@ -1,0 +1,9 @@
+# Dolibarr language file - Source file is en_US - other
+Notify_COMPANY_CREATE=Third party aangemaakt
+FileIsTooBig=Bestanden zijn te groot
+ContractValidatedInDolibarr=Contract %s goedgekeurd
+ContractCanceledInDolibarr=Contract %s geannuleerd
+ContractClosedInDolibarr=Contract %s afgesloten
+PaymentDoneInDolibarr=Betaling %s uitgevoerd
+ShipmentValidatedInDolibarr=Shipment %s goedgekeurd
+ShipmentDeletedInDolibarr=Shipment %s gewist

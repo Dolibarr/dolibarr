@@ -116,7 +116,7 @@ if ($action == 'assign')
 		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 		{
 			$langs->load("errors");
-			setEventMessage($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), 'warnings');
+			setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'warnings');
 		}
 		else
 		{
@@ -195,7 +195,7 @@ if ($action == 'addtime' && $user->rights->projet->creer)
 
     	if (! $error)
     	{
-	    	setEventMessage($langs->trans("RecordSaved"));
+	    	setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 
     	    // Redirect to avoid submit twice on back
         	header('Location: '.$_SERVER["PHP_SELF"].($projectid?'?id='.$projectid:'?').($mode?'&mode='.$mode:'').'&year='.$yearofday.'&month='.$monthofday.'&day='.$dayofday);
@@ -204,7 +204,7 @@ if ($action == 'addtime' && $user->rights->projet->creer)
     }
     else
     {
-	    setEventMessage($langs->trans("ErrorTimeSpentIsEmpty"), 'errors');
+	    setEventMessages($langs->trans("ErrorTimeSpentIsEmpty"), null, 'errors');
     }
 }
 
@@ -379,7 +379,7 @@ print '<input type="hidden" name="month" value="'.$month.'">';
 print '<input type="hidden" name="day" value="'.$day.'">';
 print $langs->trans("AssignTaskToMe").'<br>';
 $formproject->selectTasks($socid?$socid:-1, $taskid, 'taskid', 32, 0, 1, 1);
-print $formcompany->selectTypeContact($object, '', 'type','internal','rowid', 1);
+print $formcompany->selectTypeContact($object, '', 'type','internal','rowid', 0);
 print '<input type="submit" class="button" name="submit" value="'.$langs->trans("AssignTask").'">';
 print '</form>';
 

@@ -325,7 +325,7 @@ if (empty($reshook))
 							for($i = 0; $i < $num; $i ++)
 							{
 								$label = (! empty($lines[$i]->label) ? $lines[$i]->label : '');
-								$desc = (! empty($lines[$i]->desc) ? $lines[$i]->desc : $lines[$i]->libelle);
+								$desc = (! empty($lines[$i]->desc) ? $lines[$i]->desc : '');
 								$product_type = (! empty($lines[$i]->product_type) ? $lines[$i]->product_type : 0);
 
 								// Dates

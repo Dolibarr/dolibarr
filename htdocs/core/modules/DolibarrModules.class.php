@@ -32,7 +32,7 @@
  *
  * Parent class for module descriptor class files
  */
-class DolibarrModules           // Can not be abstract, because we need to instantiant it into unActivateModule to be able to disable a module whose files were removed.
+class DolibarrModules           // Can not be abstract, because we need to instantiate it into unActivateModule to be able to disable a module whose files were removed.
 {
     /**
      * @var DoliDb Database handler
@@ -432,7 +432,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
         }
         else
         {
-            // If module description translation using it's unique id does not exists, we take use its name to find translation
+            // If module description translation does not exist using its unique id, we can use its name to find translation
             if (is_array($this->langfiles))
             {
                 foreach($this->langfiles as $val)
@@ -510,12 +510,12 @@ class DolibarrModules           // Can not be abstract, because we need to insta
         $langstring="ExportDataset_".$this->export_code[$r];
         if ($langs->trans($langstring) == $langstring)
         {
-            // Traduction non trouvee
+            // Translation not found
             return $langs->trans($this->export_label[$r]);
         }
         else
         {
-            // Traduction trouvee
+            // Translation found
             return $langs->trans($langstring);
         }
     }
@@ -536,12 +536,12 @@ class DolibarrModules           // Can not be abstract, because we need to insta
         //print "x".$langstring;
         if ($langs->trans($langstring) == $langstring)
         {
-            // Traduction non trouvee
+            // Translation not found
             return $langs->trans($this->import_label[$r]);
         }
         else
         {
-            // Traduction trouvee
+            // Translation found
             return $langs->trans($langstring);
         }
     }
@@ -906,6 +906,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
                 $label  = isset($this->cronjobs[$key]['label'])?$this->cronjobs[$key]['label']:'';
                 $jobtype  = isset($this->cronjobs[$key]['jobtype'])?$this->cronjobs[$key]['jobtype']:'';
                 $class  = isset($this->cronjobs[$key]['class'])?$this->cronjobs[$key]['class']:'';
+                $objectname  = isset($this->cronjobs[$key]['objectname'])?$this->cronjobs[$key]['objectname']:'';
                 $method = isset($this->cronjobs[$key]['method'])?$this->cronjobs[$key]['method']:'';
                 $command  = isset($this->cronjobs[$key]['command'])?$this->cronjobs[$key]['command']:'';
                 $parameters  = isset($this->cronjobs[$key]['parameters'])?$this->cronjobs[$key]['parameters']:'';
@@ -917,6 +918,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
                 $sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."cronjob";
                 $sql.= " WHERE module_name = '".$this->db->escape($this->rights_class)."'";
                 if ($class) $sql.= " AND classesname = '".$this->db->escape($class)."'";
+                if ($objectname) $sql.= " AND objectname = '".$this->db->escape($objectname)."'";
                 if ($method) $sql.= " AND methodename = '".$this->db->escape($method)."'";
                 if ($command) $sql.= " AND command = '".$this->db->escape($command)."'";
                 $sql.= " AND entity = ".$conf->entity;
@@ -934,13 +936,14 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 
                         if (! $err)
                         {
-                            $sql = "INSERT INTO ".MAIN_DB_PREFIX."cronjob (module_name, datec, label, jobtype, classesname, methodename, command, params, note, frequency, unitfrequency, entity)";
+                            $sql = "INSERT INTO ".MAIN_DB_PREFIX."cronjob (module_name, datec, label, jobtype, classesname, objectname, methodename, command, params, note, frequency, unitfrequency, entity)";
                             $sql.= " VALUES (";
                             $sql.= "'".$this->db->escape($this->rights_class)."', ";
                             $sql.= "'".$this->db->idate($now)."', ";
                             $sql.= "'".$this->db->escape($label)."', ";
                             $sql.= "'".$this->db->escape($jobtype)."', ";
                             $sql.= ($class?"'".$this->db->escape($class)."'":"null").",";
+                            $sql.= ($objectname?"'".$this->db->escape($objectname)."'":"null").",";
                             $sql.= ($method?"'".$this->db->escape($method)."'":"null").",";
                             $sql.= ($command?"'".$this->db->escape($command)."'":"null").",";
                             $sql.= ($parameters?"'".$this->db->escape($parameters)."'":"null").",";
@@ -949,7 +952,6 @@ class DolibarrModules           // Can not be abstract, because we need to insta
                             $sql.= "'".$this->db->escape($unitfrequency)."', ";
                             $sql.= $conf->entity;
                             $sql.= ")";
-print $sql;
 
                             dol_syslog(get_class($this)."::insert_cronjobs", LOG_DEBUG);
                             $resql=$this->db->query($sql);
@@ -1223,7 +1225,7 @@ print $sql;
             $obj=$this->db->fetch_object($resql);
             if ($obj !== null && ! empty($obj->value) && ! empty($this->rights))
             {
-                // Si module actif
+                // If the module is active
                 foreach ($this->rights as $key => $value)
                 {
                     $r_id       = $this->rights[$key][0];

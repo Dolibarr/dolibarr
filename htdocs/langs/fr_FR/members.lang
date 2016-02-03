@@ -121,7 +121,6 @@ AttributeName=Nom de l'attribut
 String=Chaîne
 Text=Texte long
 Int=Numérique
-Date=Date
 DateAndTime=Date et heure
 PublicMemberCard=Fiche adhérent publique
 MemberNotOrNoMoreExpectedToSubscribe=Non soumis ou plus soumis à cotisation

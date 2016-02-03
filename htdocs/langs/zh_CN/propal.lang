@@ -53,6 +53,7 @@ ListOfProposals=报价列表
 ActionsOnPropal=报价相关事件
 NoOpenedPropals=No open commercial proposals
 NoOtherOpenedPropals=No other open commercial proposals
+NoPropal=No commercial proposal
 RefProposal=报价单编号
 SendPropalByMail=通过电邮发送报价单
 AssociatedDocuments=报价单关联的文档：

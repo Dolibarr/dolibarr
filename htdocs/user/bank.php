@@ -83,7 +83,7 @@ if ($action == 'update' && ! $_POST["cancel"])
 	$result = $account->update($user);
 	if (! $result)
 	{
-		setEventMessage($account->error, 'errors');
+		setEventMessages($account->error, $account->errors, 'errors');
 		$_GET["action"]='edit';     // Force chargement page edition
 	}
 	else

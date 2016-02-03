@@ -53,6 +53,7 @@ ListOfProposals=Komercinių pasiūlymų sąrašas
 ActionsOnPropal=Pasiūlymų įvykiai
 NoOpenedPropals=No open commercial proposals
 NoOtherOpenedPropals=No other open commercial proposals
+NoPropal=No commercial proposal
 RefProposal=Komercinio pasiūlymo nuoroda
 SendPropalByMail=Siųsti komercinį pasiūlymą paštu
 AssociatedDocuments=Dokumentai, susiję su pasiūlymu:

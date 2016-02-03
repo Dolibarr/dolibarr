@@ -55,7 +55,7 @@ $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
 if (! $sortfield) $sortfield="p.ref";
 if (! $sortorder) $sortorder="ASC";
-$limit = $conf->liste_limit;
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $offset = $limit * $page ;
 
 // Load sale and categ filters

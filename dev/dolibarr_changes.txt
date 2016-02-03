@@ -62,6 +62,13 @@ In htdocs/includes/tcpdf/tcpdf.php
 * Renamed getmypid into dol_getmypid().
 
 
+To avoid to have QRcode changed because generated with a random mask, replace
+define('QR_FIND_FROM_RANDOM', 2);
+with
+define('QR_FIND_FROM_RANDOM', false);
+
+
+
 TCPDI:
 ------
 Add fpdf_tpl.php 1.2

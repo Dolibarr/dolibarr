@@ -1,0 +1,3 @@
+# Dolibarr language file - Source file is en_US - ftp
+ChooseAFTPEntryIntoMenu=Wählen Sie einen FTP Eintrag im Menü ...
+FailedToGetFile=Folgende Dateien konnten nicht geladen werden: %s

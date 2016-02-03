@@ -346,9 +346,7 @@ class Productcustomerprice extends CommonObject
 				}
 			}
 		}
-		if (!empty($sortfield)) {
-			$sql.= $this->db->order($sortfield, $sortorder);
-		}
+		$sql.= $this->db->order($sortfield, $sortorder);
 		if (! empty($limit)) $sql .= ' ' . $this->db->plimit($limit + 1, $offset);
 
 		dol_syslog(get_class($this) . "::fetch_all", LOG_DEBUG);

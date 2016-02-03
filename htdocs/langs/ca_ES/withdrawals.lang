@@ -48,7 +48,6 @@ RefusedReason=Motiu de devolució
 RefusedInvoicing=Facturació de la devolució
 NoInvoiceRefused=No facturar la devolució
 InvoiceRefused=Factura rebutjada (Carregar les despeses al client)
-Status=Estat
 StatusUnknown=Desconegut
 StatusWaiting=En espera
 StatusTrans=Enviada

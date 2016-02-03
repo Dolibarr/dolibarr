@@ -69,7 +69,7 @@ ProductQtyInCustomersOrdersRunning=Количество товара в откр
 ProductQtyInSuppliersOrdersRunning=Количество товара в открытых заказах поставщика
 ProductQtyInShipmentAlreadySent=Product quantity from opened customer order already sent
 ProductQtyInSuppliersShipmentAlreadyRecevied=Количество товара из открытого заказа поставщика уже получено. 
-NoProductToShipFoundIntoStock=No product to ship found into warehouse <b>%s</b>. Correct sotck or go back to choose another warehouse.
+NoProductToShipFoundIntoStock=No product to ship found into warehouse <b>%s</b>. Correct stock or go back to choose another warehouse.
 
 # Sending methods
 SendingMethodCATCH=Получено заказчиком

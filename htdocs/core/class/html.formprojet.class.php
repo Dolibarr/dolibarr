@@ -269,7 +269,7 @@ class FormProjets
 	 *  @param	int		$discard_closed Discard closed projects (0=Keep,1=hide completely,2=Disable)
      *  @param	int		$forcefocus		Force focus on field (works with javascript only)
      *  @param	int		$disabled		Disabled
-	 *	@return int         			Nber of project if OK, <0 if KO
+	 *	@return int         			Nbr of project if OK, <0 if KO
 	 */
 	function selectTasks($socid=-1, $selected='', $htmlname='taskid', $maxlength=24, $option_only=0, $show_empty=1, $discard_closed=0, $forcefocus=0, $disabled=0)
 	{

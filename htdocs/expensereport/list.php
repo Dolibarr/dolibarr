@@ -93,7 +93,7 @@ $sortfield     = GETPOST("sortfield");
 $page          = GETPOST("page");
 if (!$sortorder) $sortorder="DESC";
 if (!$sortfield) $sortfield="d.date_debut";
-$limit = $conf->liste_limit;
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 
 if ($page == -1) {
 	$page = 0 ;
@@ -211,7 +211,6 @@ if ($resql)
     if ($sall)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-        print $langs->trans("FilterOnInto", $sall, join(', ',$fieldstosearchall));
     }
 
 	print '<table class="noborder" width="100%">';
@@ -223,7 +222,7 @@ if ($resql)
 	print_liste_field_titre($langs->trans("TotalHT"),$_SERVER["PHP_SELF"],"d.total_ht","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("TotalVAT"),$_SERVER["PHP_SELF"],"d.total_tva","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("TotalTTC"),$_SERVER["PHP_SELF"],"d.total_ttc","",$param,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Statut"),$_SERVER["PHP_SELF"],"","",$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
 	print "</tr>\n";
 

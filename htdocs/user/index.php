@@ -34,6 +34,7 @@ if (! $user->rights->user->user->lire && ! $user->admin)
 
 $langs->load("users");
 $langs->load("companies");
+$langs->load('hrm');
 
 // Security check (for external users)
 $socid=0;

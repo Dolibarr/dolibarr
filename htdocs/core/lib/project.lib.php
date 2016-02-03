@@ -251,7 +251,7 @@ function project_admin_prepare_head()
  * @param	string	   	$inc				Line number (start to 0, then increased by recursive call)
  * @param   string		$parent				Id of parent project to show (0 to show all)
  * @param   Task[]		$lines				Array of lines
- * @param   int			$level				Level (start to 0, then increased/decrease by recursive call)
+ * @param   int			$level				Level (start to 0, then increased/decrease by recursive call), or -1 to show all level in order of $lines without the recursive groupment feature.
  * @param 	string		$var				Color
  * @param 	int			$showproject		Show project columns
  * @param	int			$taskrole			Array of roles of user for each tasks
@@ -281,12 +281,12 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 
 	for ($i = 0 ; $i < $numlines ; $i++)
 	{
-		if ($parent == 0) $level = 0;
+		if ($parent == 0 && $level >= 0) $level = 0;              // if $level = -1, we dont' use sublevel recursion, we show all lines
 
 		// Process line
 		// print "i:".$i."-".$lines[$i]->fk_project.'<br>';
 
-		if ($lines[$i]->fk_parent == $parent)
+		if ($lines[$i]->fk_parent == $parent || $level < 0)       // if $level = -1, we dont' use sublevel recursion, we show all lines
 		{
 			// Show task line.
 			$showline=1;
@@ -348,6 +348,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 					$projectstatic->id=$lines[$i]->fk_project;
 					$projectstatic->ref=$lines[$i]->projectref;
 					$projectstatic->public=$lines[$i]->public;
+					$projectstatic->title=$lines[$i]->projectlabel;
 					if ($lines[$i]->public || in_array($lines[$i]->fk_project,$projectsArrayId) || ! empty($user->rights->projet->all->lire)) print $projectstatic->getNomUrl(1);
 					else print $projectstatic->getNomUrl(1,'nolink');
 					//if ($showlineingray) print '</i>';
@@ -395,7 +396,12 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 
 				// Date end
 				print '<td align="center">';
-				print dol_print_date($lines[$i]->date_end,'dayhour');
+				$taskstatic->projectstatus = $lines[$i]->projectstatus;
+	            $taskstatic->progress = $lines[$i]->progress;
+	            $taskstatic->fk_statut = $lines[$i]->status;
+	            $taskstatic->datee = $lines[$i]->date_end;
+	            print dol_print_date($lines[$i]->date_end,'dayhour');
+	            if ($taskstatic->hasDelay()) print img_warning($langs->trans("Late"));
 				print '</td>';
 
 				$plannedworkloadoutputformat='allhourmin';
@@ -414,14 +420,6 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 					//if ($workingdelay != $fullhour) print '<br>('.$workingdelay.')';
 				}
 				//else print '--:--';
-				print '</td>';
-
-				// Progress declared
-				print '<td align="right">';
-				if ($lines[$i]->progress != '')
-				{
-					print $lines[$i]->progress.' %';
-				}
 				print '</td>';
 
 				// Time spent
@@ -443,6 +441,14 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				}
 				print '</td>';
 
+				// Progress declared
+				print '<td align="right">';
+				if ($lines[$i]->progress != '')
+				{
+					print $lines[$i]->progress.' %';
+				}
+				print '</td>';
+
 				// Tick to drag and drop
 				if ($addordertick)
 				{
@@ -453,9 +459,13 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 
 				if (! $showlineingray) $inc++;
 
-				$level++;
-				if ($lines[$i]->id) projectLinesa($inc, $lines[$i]->id, $lines, $level, $var, $showproject, $taskrole, $projectsListId, $addordertick);
-				$level--;
+				if ($level >= 0)    // Call sublevels
+				{
+    				$level++;
+    				if ($lines[$i]->id) projectLinesa($inc, $lines[$i]->id, $lines, $level, $var, $showproject, $taskrole, $projectsListId, $addordertick);
+    				$level--;
+				}
+				
 				$total_projectlinesa_spent += $lines[$i]->duration;
 				$total_projectlinesa_planned += $lines[$i]->planned_workload;
 				if ($lines[$i]->planned_workload) $total_projectlinesa_spent_if_planned += $lines[$i]->duration;
@@ -467,7 +477,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 		}
 	}
 
-	if (($total_projectlinesa_planned > 0 || $total_projectlinesa_spent > 0) && $level==0)
+	if (($total_projectlinesa_planned > 0 || $total_projectlinesa_spent > 0) && $level <= 0)
 	{
 		print '<tr class="liste_total nodrag nodrop">';
 		print '<td class="liste_total">'.$langs->trans("Total").'</td>';
@@ -478,13 +488,13 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 		print '<td align="right" class="nowrap liste_total">';
 		print convertSecondToTime($total_projectlinesa_planned, 'allhourmin');
 		print '</td>';
-		print '<td></td>';
 		print '<td align="right" class="nowrap liste_total">';
 		print convertSecondToTime($total_projectlinesa_spent, 'allhourmin');
 		print '</td>';
 		print '<td align="right" class="nowrap liste_total">';
 		if ($total_projectlinesa_planned) print round(100 * $total_projectlinesa_spent / $total_projectlinesa_planned,2).' %';
 		print '</td>';
+		print '<td></td>';
 		if ($addordertick) print '<td class="hideonsmartphone"></td>';
 		print '</tr>';
 	}
@@ -794,17 +804,19 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 		        	$dayWorkLoad = $projectstatic->weekWorkLoadPerTask[$tmpday][$lines[$i]->id];
 		        	$alreadyspent='';
 		        	if ($dayWorkLoad > 0) $alreadyspent=convertSecondToTime($dayWorkLoad,'allhourmin');
+                    $alttitle=$langs->trans("AddHereTimeSpentForDay",$tmparray['day'],$tmparray['mon']);
+		        	
                     $tableCell ='<td align="center" class="hide'.$idw.'">';
-                    $tableCell.='<span class="timesheetalreadyrecorded"><input type="text" class="center smallpadd" size="2" disabled id="timespent['.$inc.']['.$idw.']" name="task['.$lines[$i]->id.']['.$idw.']" value="'.$alreadyspent.'"></span>';
-                    //$placeholder=' placeholder="00:00"';
-                    $placeholder='';
-                    //if (! $disabledtask)
-                    //{
-                    	$tableCell.='+';
-                    	$tableCell.='<input type="text" alt="'.$langs->trans("AddHereTimeSpentForDay",$tmparray['day'],$tmparray['mon']).'" title="'.$langs->trans("AddHereTimeSpentForDay",$tmparray['day'],$tmparray['mon']).'" '.($disabledtask?'disabled':$placeholder).' class="center smallpadd" size="2" id="timeadded['.$inc.']['.$idw.']" name="task['.$lines[$i]->id.']['.$idw.']" value="" cols="2"  maxlength="5"';
-		        		$tableCell.=' onkeypress="return regexEvent(this,event,\'timeChar\')"';
-                    	$tableCell.= 'onblur="regexEvent(this,event,\''.$modeinput.'\'); updateTotal('.$idw.',\''.$modeinput.'\')" />';
-                    //}
+                    if ($alreadyspent)
+                    {
+                        $tableCell.='<span class="timesheetalreadyrecorded"><input type="text" class="center smallpadd" size="2" disabled id="timespent['.$inc.']['.$idw.']" name="task['.$lines[$i]->id.']['.$idw.']" value="'.$alreadyspent.'"></span>';
+                        //$placeholder=' placeholder="00:00"';
+                        $placeholder='';
+                     	//$tableCell.='+';
+                    }
+                  	$tableCell.='<input type="text" alt="'.($disabledtask?'':$alttitle).'" title="'.($disabledtask?'':$alttitle).'" '.($disabledtask?'disabled':$placeholder).' class="center smallpadd" size="2" id="timeadded['.$inc.']['.$idw.']" name="task['.$lines[$i]->id.']['.$idw.']" value="" cols="2"  maxlength="5"';
+	        		$tableCell.=' onkeypress="return regexEvent(this,event,\'timeChar\')"';
+                   	$tableCell.= 'onblur="regexEvent(this,event,\''.$modeinput.'\'); updateTotal('.$idw.',\''.$modeinput.'\')" />';
                     $tableCell.='</td>';
                     print $tableCell;
 		        }
@@ -963,12 +975,13 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks=
 	
 	// Get list of project with calculation on tasks
 	$sql2 = "SELECT p.rowid as projectid, p.ref, p.title, p.fk_soc, s.nom as socname, p.fk_user_creat, p.public, p.fk_statut as status, p.fk_opp_status as opp_status, p.opp_amount,";
+	$sql2.= " p.dateo, p.datee,";
 	$sql2.= " COUNT(t.rowid) as nb, SUM(t.planned_workload) as planned_workload, SUM(t.planned_workload * t.progress / 100) as declared_progess_workload";
 	$sql2.= " FROM ".MAIN_DB_PREFIX."projet as p";
 	$sql2.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = p.fk_soc";
 	$sql2.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t ON p.rowid = t.fk_projet";
 	$sql2.= " WHERE p.rowid IN (".join(',',$arrayidofprojects).")";
-	$sql2.= " GROUP BY p.rowid, p.ref, p.title, p.fk_soc, p.fk_user_creat, p.public, p.fk_statut, p.fk_opp_status, p.opp_amount";
+	$sql2.= " GROUP BY p.rowid, p.ref, p.title, p.fk_soc, p.fk_user_creat, p.public, p.fk_statut, p.fk_opp_status, p.opp_amount, p.dateo, p.datee";
 	$sql2.= " ORDER BY p.title, p.ref";
 
 	$var=true;
@@ -1011,12 +1024,17 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks=
 			$userAccess = $projectstatic->restrictedProjectArea($user);
 			if ($userAccess >= 0)
 			{
+			    $projectstatic->ref=$objp->ref;
+			    $projectstatic->statut = $objp->status;
+			    $projectstatic->title = $objp->title;
+			    $projectstatic->datee = $db->jdate($objp->datee);
+			    $projectstatic->dateo = $db->jdate($objp->dateo);
+			     
 				$var=!$var;
 				print "<tr ".$bc[$var].">";
 				print '<td>';
-				$projectstatic->ref=$objp->ref;
 				print $projectstatic->getNomUrl(1);
-				if (! in_array('projectlabel', $hiddenfields)) print ' - '.dol_trunc($objp->title,24);
+				if (! in_array('projectlabel', $hiddenfields)) print '<br>'.dol_trunc($objp->title,24);
 				print '</td>';
 				print '<td>';
 				if ($objp->fk_soc > 0)
@@ -1037,7 +1055,6 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks=
         			if ($code) print $langs->trans("OppStatus".$code);
 					print '</td>';
 				}
-				$projectstatic->statut = $objp->status;
 				if (empty($conf->global->PROJECT_HIDE_TASKS)) 
 				{
 				    print '<td align="right">'.$objp->nb.'</td>';

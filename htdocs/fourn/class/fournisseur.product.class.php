@@ -122,7 +122,9 @@ class ProductFournisseur extends Product
     function remove_product_fournisseur_price($rowid)
     {
         global $conf, $user;
-
+        
+        $error=0;
+        
         $this->db->begin();
 
         // Call trigger
@@ -289,7 +291,7 @@ class ProductFournisseur extends Product
 		                $error++;
 		            }
 
-		            if (! $error  && !empty($cong->global->PRODUCT_PRICE_SUPPLIER_NO_LOG))
+		            if (! $error  && !empty($conf->global->PRODUCT_PRICE_SUPPLIER_NO_LOG))
 		            {
 		                // Add record into log table
 		                $sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur_price_log(";
@@ -353,7 +355,7 @@ class ProductFournisseur extends Product
     function fetch_product_fournisseur_price($rowid, $ignore_expression = 0)
     {
         $sql = "SELECT pfp.rowid, pfp.price, pfp.quantity, pfp.unitprice, pfp.remise_percent, pfp.remise, pfp.tva_tx, pfp.fk_availability,";
-        $sql.= " pfp.fk_soc, pfp.ref_fourn, pfp.fk_product, pfp.charges, pfp.cost_price, pfp.unitcharges, pfp.fk_supplier_price_expression, pfp.delivery_time_days"; // , pfp.recuperableonly as fourn_tva_npr";  FIXME this field not exist in llx_product_fournisseur_price
+        $sql.= " pfp.fk_soc, pfp.ref_fourn, pfp.fk_product, pfp.charges, pfp.unitcharges, pfp.fk_supplier_price_expression, pfp.delivery_time_days"; // , pfp.recuperableonly as fourn_tva_npr";  FIXME this field not exist in llx_product_fournisseur_price
         $sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
         $sql.= " WHERE pfp.rowid = ".$rowid;
 

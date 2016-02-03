@@ -218,7 +218,7 @@ $listofreferent=array(
 	'class'=>'CommandeFournisseur',
 	'table'=>'commande_fournisseur',
 	'datefieldname'=>'date_commande',
-	'test'=>$conf->fournisseur->enabled && $user->rights->fournisseur->commande->lire),
+	'test'=>$conf->supplier_order->enabled && $user->rights->fournisseur->commande->lire),
 'invoice_supplier'=>array(
 	'name'=>"BillsSuppliers",
 	'title'=>"ListSupplierInvoicesAssociatedProject",
@@ -226,7 +226,7 @@ $listofreferent=array(
 	'margin'=>'minus',
 	'table'=>'facture_fourn',
 	'datefieldname'=>'datef',
-	'test'=>$conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire),
+	'test'=>$conf->supplier_invoice->enabled && $user->rights->fournisseur->facture->lire),
 'contract'=>array(
 	'name'=>"Contracts",
 	'title'=>"ListContractAssociatedProject",
@@ -293,17 +293,21 @@ if ($action=="addelement")
 	$tablename = GETPOST("tablename");
 	$elementselectid = GETPOST("elementselect");
 	$result=$object->update_element($tablename, $elementselectid);
-	if ($result<0) {
-		setEventMessage($object->error,'errors');
+	if ($result<0) 
+	{
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
-}elseif ($action == "unlink") {
+}
+elseif ($action == "unlink") 
+{
 
 	$tablename = GETPOST("tablename");
 	$elementselectid = GETPOST("elementselect");
 
 	$result = $object->remove_element($tablename, $elementselectid);
-	if ($result < 0) {
-		setEventMessage($object->error, 'errors');
+	if ($result < 0) 
+	{
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
 

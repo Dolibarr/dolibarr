@@ -3,8 +3,6 @@
 # No errors
 NoErrorCommitIsDone=Sense errors, és vàlid
 # Errors
-Error=Error
-Errors=Errors
 ErrorButCommitIsDone=Errors trobats, però és vàlid malgrat tot
 ErrorBadEMail=e-mail %s incorrecte
 ErrorBadUrl=Url %s invàlida
@@ -63,7 +61,7 @@ ErrorSizeTooLongForVarcharType=Longitud del camp massa llarg per al tipus cadena
 ErrorNoValueForSelectType=Els valors de la llista han de ser indicats
 ErrorNoValueForCheckBoxType=Els valors de la llista han de ser indicats
 ErrorNoValueForRadioType=Els valors de la llista han de ser indicats
-ErrorBadFormatValueList=The list value cannot have more than one comma: <u>%s</u>, but need at least one: key,value
+ErrorBadFormatValueList=La llista de valors no pot tenir més d'una coma: <u>%s</u>, però necessita com a mínim una: clau,valor
 ErrorFieldCanNotContainSpecialCharacters=El camp <b>%s</b> no ha de contenir caràcters especials
 ErrorFieldCanNotContainSpecialNorUpperCharacters=El camp <b>%s</b> no ha de contenir caràcters especials, ni caràcters en majúscula i no pot contindre només números.
 ErrorNoAccountancyModuleLoaded=Mòdul de comptabilitat no activat
@@ -136,7 +134,7 @@ ErrorPHPNeedModule=Error, el seu PHP ha de tenir instal·lat el mòdul <b>%s</b>
 ErrorOpenIDSetupNotComplete=Ha configurat Dolibarr per acceptar l'autentificació OpenID, però la URL del servei OpenID no es troba definida a la constant %s
 ErrorWarehouseMustDiffers=El magatzem d'origen i destí han de ser diferents
 ErrorBadFormat=El format és incorrecte!
-ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Error, aquest membre encara no estar enllaçat a un tercer. Enllaci el membre a un tercer existent o creï un tercer nou abans de crear la subscripció amb la factura.
+ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Error, aquest soci encara no s'ha enllaçat a un tercer. Enllaci el soci a un tercer existent o creï un tercer nou abans de crear la quota amb la factura.
 ErrorThereIsSomeDeliveries=Error, hi ha entrades vinculades a aquest enviament. No es pot eliminar
 ErrorCantDeletePaymentReconciliated=No es pot eliminar un pagament que ha generat una transacció bancaria que es troba conciliada
 ErrorCantDeletePaymentSharedWithPayedInvoice=No es pot eliminar un pagament de vàries factures amb alguna factura amb l'estat Pagada
@@ -172,8 +170,11 @@ ErrorFieldMustBeANumeric=El camp <b>%s</b> ha de contenir un valor numèric
 ErrorFieldMustBeAnInteger=El camp <b>%s</b> ha de ser un enter
 ErrorMandatoryParametersNotProvided=Paràmetre/s obligatori/s no definits
 ErrorOppStatusRequiredIfAmount=S'estableix una quantitat estimada per aquesta oportunitat/prospecte. Així que també has d'introduir el seu estat
+ErrorBadDefinitionOfMenuArrayInModuleDescriptor=Definició incorrecta del menú Array en el descriptor del mòdul (valor incorrecte per a la clau fk_menu)
+ErrorSavingChanges=Hi ha hagut un error al salvar els canvis
 
 # Warnings
+WarningPasswordSetWithNoAccount=S'ha indicat una contrasenya per aquest soci. En canvi, no s'ha creat cap compte d'usuari, de manera que aquesta contrasenya s'ha desat però no pot ser utilitzada per entrar a Dolibarr. Es pot utilitzar per un mòdul/interfície extern, però si no cal definir cap usuari i contrasenya per un soci, pots deshabilitar la opció "Gestiona l'entrada per tots els socis" des de la configuració del mòdul Socis. Si necessites gestionar una entrada sense contrasenya, pots mantenir aquest camp buit i permetre aquest avís. Nota: El correu electrònic es pot utilitzar per entrar si el soci està enllaçat a un usuarí
 WarningMandatorySetupNotComplete=Els paràmetres obligatoris de configuració no estan encara definits
 WarningSafeModeOnCheckExecDir=Atenció, està activada l'opció PHP <b>safe_mode</b>, la comanda ha d'estar dins d'un directori declarat dins del paràmetre php <b>safe_mode_exec_dir</b>.
 WarningAllowUrlFopenMustBeOn=El paràmetre <b>allow_url_fopen</b> ha de ser especificat a <b>on</b> a l'arxiu <b>php.ini</b> per disposar d'aquest mòdul completament actiu. Ha de modificar aquest arxiu manualment
@@ -191,5 +192,5 @@ WarningClickToDialUserSetupNotComplete=La configuració de ClickToDial per al co
 WarningNotRelevant=Operació irrellevant per a aquest conjunt de dades
 WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=Funcionalitat desactivada quant la configuració de visualització és optimitzada per a persones cegues o navegadors de text.
 WarningPaymentDateLowerThanInvoiceDate=La data de pagament (%s) és anterior a la data (%s) de la factura %s.
-WarningTooManyDataPleaseUseMoreFilters=Too many data (more than %s lines). Please use more filters or set the constant %s to a higher limit.
+WarningTooManyDataPleaseUseMoreFilters=Massa dades (més de %s línies). Utilitza més filtres o modifica la constant %s a un límit superior.
 WarningSomeLinesWithNullHourlyRate=Algunes vegades van ser registrats pels usuaris quan no s'havia definit el seu preu per hora. Es va utilitzar un valor de 0, però això pot resultar en una valoració equivocada del temps invertit.

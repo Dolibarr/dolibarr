@@ -61,13 +61,13 @@ if ($action == 'addtimespent' && $user->rights->projet->creer)
 	$timespent_durationmin = GETPOST('timespent_durationmin','int');
 	if (empty($timespent_durationhour) && empty($timespent_durationmin))
 	{
-		setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Duration")),'errors');
+		setEventMessages($langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Duration")), null, 'errors');
 		$error++;
 	}
 	if (empty($_POST["userid"]))
 	{
 		$langs->load("errors");
-		setEventMessage($langs->trans('ErrorUserNotAssignedToTask'),'errors');
+		setEventMessages($langs->trans('ErrorUserNotAssignedToTask'), null, 'errors');
 		$error++;
 	}
 
@@ -78,7 +78,7 @@ if ($action == 'addtimespent' && $user->rights->projet->creer)
 
 		if (empty($object->projet->statut))
 		{
-			setEventMessage($langs->trans("ProjectMustBeValidatedFirst"),'errors');
+			setEventMessages($langs->trans("ProjectMustBeValidatedFirst"), null, 'errors');
 			$error++;
 		}
 		else
@@ -100,11 +100,11 @@ if ($action == 'addtimespent' && $user->rights->projet->creer)
 			$result=$object->addTimeSpent($user);
 			if ($result >= 0)
 			{
-				setEventMessage($langs->trans("RecordSaved"));
+				setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 			}
 			else
 			{
-				setEventMessage($langs->trans($object->error),'errors');
+				setEventMessages($langs->trans($object->error), null, 'errors');
 				$error++;
 			}
 		}
@@ -121,7 +121,7 @@ if ($action == 'updateline' && ! $_POST["cancel"] && $user->rights->projet->cree
 
 	if (empty($_POST["new_durationhour"]) && empty($_POST["new_durationmin"]))
 	{
-		setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Duration")),'errors');
+		setEventMessages($langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Duration")), null, 'errors');
 		$error++;
 	}
 
@@ -148,11 +148,11 @@ if ($action == 'updateline' && ! $_POST["cancel"] && $user->rights->projet->cree
 		$result=$object->updateTimeSpent($user);
 		if ($result >= 0)
 		{
-			setEventMessage($langs->trans("RecordSaved"));
+			setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 		}
 		else
 		{
-			setEventMessage($langs->trans($object->error),'errors');
+			setEventMessages($langs->trans($object->error), null, 'errors');
 			$error++;
 		}
 	}
@@ -170,7 +170,7 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->projet->c
 	if ($result < 0)
 	{
 		$langs->load("errors");
-		setEventMessage($langs->trans($object->error),'errors');
+		setEventMessages($langs->trans($object->error), null, 'errors');
 		$error++;
 		$action='';
 	}

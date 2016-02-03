@@ -7,6 +7,7 @@ DeliveryOrders=Pristatymo užsakymai
 DeliveryDate=Pristatymo data
 DeliveryDateShort=Pristatymo data
 CreateDeliveryOrder=Sukurti pristatymo užsakymą
+DeliveryStateSaved=Delivery state saved
 QtyDelivered=Pristatytas Kiekis
 SetDeliveryDate=Nustatyti pakrovimo datą
 ValidateDeliveryReceipt=Patvirtinti pristatymo kvitą

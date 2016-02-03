@@ -175,8 +175,9 @@ class Cronjob extends CommonObject
 		$sql.= "fk_user_author,";
 		$sql.= "fk_user_mod,";
 		$sql.= "note,";
-		$sql.= "nbrun";
-		$sql .= ",libname";
+		$sql.= "nbrun,";
+		$sql.= "maxrun,";
+		$sql.= "libname";
 
 
 		$sql.= ") VALUES (";
@@ -206,11 +207,9 @@ class Cronjob extends CommonObject
 		$sql.= " ".$user->id.",";
 		$sql.= " ".(! isset($this->note)?'NULL':"'".$this->db->escape($this->note)."'").",";
 		$sql.= " ".(! isset($this->nbrun)?'0':"'".$this->db->escape($this->nbrun)."'").",";
+		$sql.= " ".(empty($this->maxrun)?'null':"'".$this->db->escape($this->maxrun)."'").",";
 		$sql.= " ".(! isset($this->libname)?'NULL':"'".$this->db->escape($this->libname)."'")."";
-
-
 		$sql.= ")";
-
 
 		$this->db->begin();
 
@@ -291,8 +290,9 @@ class Cronjob extends CommonObject
 		$sql.= " t.fk_user_author,";
 		$sql.= " t.fk_user_mod,";
 		$sql.= " t.note,";
-		$sql.= " t.nbrun";
-		$sql .= ", t.libname";
+		$sql.= " t.nbrun,";
+		$sql.= " t.maxrun,";
+		$sql.= " t.libname";
 
 
         $sql.= " FROM ".MAIN_DB_PREFIX."cronjob as t";
@@ -335,6 +335,7 @@ class Cronjob extends CommonObject
 				$this->fk_user_mod = $obj->fk_user_mod;
 				$this->note = $obj->note;
 				$this->nbrun = $obj->nbrun;
+				$this->maxrun = $obj->maxrun;
 				$this->libname = $obj->libname;
 
             }
@@ -517,13 +518,11 @@ class Cronjob extends CommonObject
 		if (isset($this->status)) $this->status=trim($this->status);
 		if (isset($this->note)) $this->note=trim($this->note);
 		if (isset($this->nbrun)) $this->nbrun=trim($this->nbrun);
+		if (isset($this->maxrun)) $this->maxrun=trim($this->maxrun);
         if (isset($this->libname)) $this->libname = trim($this->libname);
 
 		// Check parameters
 		// Put here code to add a control on parameters values
-		if (empty($this->status)) {
-			$this->dateend=dol_now();
-		}
 		if (dol_strlen($this->datestart)==0) {
 			$this->errors[]=$langs->trans('CronFieldMandatory',$langs->trans('CronDtStart'));
 			$error++;
@@ -588,10 +587,9 @@ class Cronjob extends CommonObject
 		$sql.= " status=".(isset($this->status)?$this->status:"null").",";
 		$sql.= " fk_user_mod=".$user->id.",";
 		$sql.= " note=".(isset($this->note)?"'".$this->db->escape($this->note)."'":"null").",";
-		$sql.= " nbrun=".(isset($this->nbrun)?$this->nbrun:"null");
-		$sql.= ", libname=".(isset($this->libname)?"'".$this->db->escape($this->libname)."'":"null");
-
-
+		$sql.= " nbrun=".(isset($this->nbrun)?$this->nbrun:"null").",";
+		$sql.= " maxrun=".(isset($this->maxrun)?$this->maxrun:"null").",";
+		$sql.= " libname=".(isset($this->libname)?"'".$this->db->escape($this->libname)."'":"null");
         $sql.= " WHERE rowid=".$this->id;
 
 		$this->db->begin();
@@ -789,6 +787,7 @@ class Cronjob extends CommonObject
 		$this->fk_user_mod='';
 		$this->note='';
 		$this->nbrun='';
+		$this->maxrun=100;
         $this->libname = '';
 	}
 
@@ -830,7 +829,9 @@ class Cronjob extends CommonObject
 
 
 	/**
-	 * Run a job
+	 * Run a job.
+	 * Once job is finished, status and nb of of run is updated. 
+	 * This function does not plan the next run. This is done by function ->reprogram_jobs 
 	 *
 	 * @param  string		$userlogin    	User login
 	 * @return	int					 		<0 if KO, >0 if OK
@@ -843,7 +844,8 @@ class Cronjob extends CommonObject
 
 		$langs->load('cron');
 
-			if (empty($userlogin)) {
+		if (empty($userlogin)) 
+		{
 			$this->error="User login is mandatory";
 			dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
 			return -1;
@@ -891,7 +893,7 @@ class Cronjob extends CommonObject
 		$this->datelastrun=$now;
 		$this->lastoutput='';
 		$this->lastresult='';
-		$this->nbrun=$this->nbrun+1;
+		$this->nbrun=$this->nbrun + 1;
 		$result = $this->update($user);
 		if ($result<0) {
 			dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
@@ -1055,23 +1057,27 @@ class Cronjob extends CommonObject
 	/**
 	 * Reprogram a job
 	 *
-	 * @param  string		$userlogin    User login
-	 * @return	int					 <0 if KO, >0 if OK
-	 *
+	 * @param  string		$userlogin      User login
+	 * @param  timestamp    $now            Date returned by dol_now()
+	 * @return int					        <0 if KO, >0 if OK
 	 */
-	function reprogram_jobs($userlogin)
+	function reprogram_jobs($userlogin, $now)
 	{
 		dol_syslog(get_class($this)."::reprogram_jobs userlogin:$userlogin", LOG_DEBUG);
-
+        
 		require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 		$user=new User($this->db);
 		$result=$user->fetch('',$userlogin);
-		if ($result<0) {
+		if ($result<0) 
+		{
 			$this->error="User Error:".$user->error;
 			dol_syslog(get_class($this)."::reprogram_jobs ".$this->error, LOG_ERR);
 			return -1;
-		}else {
-			if (empty($user->id)) {
+		}
+		else 
+		{
+			if (empty($user->id)) 
+			{
 				$this->error=" User user login:".$userlogin." do not exists";
 				dol_syslog(get_class($this)."::reprogram_jobs ".$this->error, LOG_ERR);
 				return -1;
@@ -1080,17 +1086,43 @@ class Cronjob extends CommonObject
 
 		dol_syslog(get_class($this)."::reprogram_jobs  ", LOG_DEBUG);
 
-		if (empty($this->datenextrun)) {
-			$this->datenextrun=dol_now()+$this->frequency;
-		} else {
-			if ($this->datenextrun<dol_now()) {
-				$this->datenextrun=dol_now()+$this->frequency;
-			} else {
-				$this->datenextrun=$this->datenextrun+$this->frequency;
+		
+		if (empty($this->datenextrun)) 
+		{
+			$this->datenextrun = $now + ($this->frequency * $this->unitfrequency);
+		}
+		else 
+		{
+			if ($this->datenextrun < $now && $this->frequency > 0) 
+			{
+			    // Loop until date is after future
+			    while ($this->datenextrun < $now)
+			    {
+			        $this->datenextrun += ($this->frequency * $this->unitfrequency);
+			        
+			        // TODO For exact frequency (every month, every year, ...), use instead a dol_time_plus_duree($time, $duration_value, $duration_unit)
+			    }
+			}
+			else 
+			{
+				//$this->datenextrun=$this->datenextrun + ($this->frequency * $this->unitfrequency);
 			}
 		}
+
+		// Archive job
+		if ($this->autodelete == 2)
+		{
+		    if (($this->maxrun > 0 && ($this->nbrun >= $this->maxrun))
+		        || ($this->dateend && ($this->datenextrun > $this->dateend)))
+		    {
+		        $this->status = 2;
+		        dol_syslog(get_class($this)."::reprogram_jobs Job must be set to archived", LOG_ERR);
+		    }
+		}
+		
 		$result = $this->update($user);
-		if ($result<0) {
+		if ($result<0) 
+		{
 			dol_syslog(get_class($this)."::reprogram_jobs ".$this->error, LOG_ERR);
 			return -1;
 		}
