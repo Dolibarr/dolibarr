@@ -13,6 +13,7 @@
  * Copyright (C) 2014-2015	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2016		Charlie Benke		 <charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,6 +45,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/product/modules_product.php';
+
 if (! empty($conf->propal->enabled))     require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 if (! empty($conf->facture->enabled))    require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 if (! empty($conf->commande->enabled))   require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
@@ -125,7 +128,33 @@ if (empty($reshook))
     	header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
     	exit;
     }
+	/*
+	 * Build doc
+	 */
+	else if ($action == 'builddoc' && $user->rights->produit->creer)
+	{
 
+		// Save last template used to generate document
+		if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
+
+		// Define output language
+		$outputlangs = $langs;
+		$newlang='';
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','alpha')) $newlang=GETPOST('lang_id','alpha');
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+		if (! empty($newlang))
+		{
+			$outputlangs = new Translate("",$conf);
+			$outputlangs->setDefaultLang($newlang);
+		}
+		$result=product_create($db, $object, GETPOST('model','alpha'), $outputlangs);
+		if ($result <= 0)
+		{
+			dol_print_error($db,$result);
+			exit;
+		}
+	}
+	
     // Barcode type
     if ($action ==	'setfk_barcode_type' && $createbarcode)
     {
@@ -1649,7 +1678,28 @@ if (($action == 'clone' && (empty($conf->use_javascript_ajax) || ! empty($conf->
 {
     print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneProduct'),$langs->trans('ConfirmCloneProduct',$object->ref),'confirm_clone',$formquestionclone,'yes','action-clone',250,600);
 }
+print '<div class="fichecenter"><div class="fichehalfleft">';
+print '<a name="builddoc"></a>'; // ancre
 
+/*
+ * Documents generes
+ */
+$filedir=$conf->product->dir_output.'/product/'.$object->id;
+
+$urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
+$genallowed=$user->rights->produit->creer;
+$delallowed=$user->rights->produit->supprimer;
+
+$var=true;
+
+$somethingshown=$formfile->show_documents('product',$object->id,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$object->default_lang);
+
+print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+
+
+print '</div></div></div>';
+
+print '<br><br>';
 
 
 /* ************************************************************************** */
