@@ -178,6 +178,11 @@ function supplierorder_admin_prepare_head()
 	$head[$h][1] = $langs->trans("SuppliersInvoice");
 	$head[$h][2] = 'invoice';
 	$h++;
+	
+	$head[$h][0] = DOL_URL_ROOT."/admin/supplier_payment.php";
+	$head[$h][1] = $langs->trans("SuppliersPayment");
+	$head[$h][2] = 'supplierpayment';
+	$h++;
 
 	complete_head_from_modules($conf,$langs,null,$head,$h,'supplierorder_admin');
 
