@@ -4110,7 +4110,8 @@ abstract class CommonObject
 						$label = '<span'.($mode != 'view' ? ' class="fieldrequired"':'').'>'.$label.'</span>';
 
 					$out .= '<td>'.$langs->trans($label).'</td>';
-					$out .='<td'.($colspan?' colspan="'.$colspan.'"':'').'>';
+					$html_id = !empty($this->id) ? $this->element.'_extras_'.$key.'_'.$this->id : '';
+					$out .='<td id="'.$html_id.'" class="'.$this->element.'_extras_'.$key.'" '.($colspan?' colspan="'.$colspan.'"':'').'>';
 
 					switch($mode) {
 					case "view":
