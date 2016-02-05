@@ -7,6 +7,7 @@
  * Copyright (C) 2011-2012 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2016		Charlie Benke		 <charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,6 +43,9 @@ if (! $user->admin || (empty($conf->product->enabled) && empty($conf->service->e
 
 $action = GETPOST('action','alpha');
 $value = GETPOST('value','alpha');
+$type = GETPOST('type','alpha');
+$label = GETPOST('label','alpha');
+$scandir = GETPOST('scandir','alpha');
 
 // Pricing Rules
 $select_pricing_rules=array(
@@ -98,12 +102,13 @@ if ($action == 'setModuleOptions')
 	if (! $error)
     {
         $db->commit();
-	    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	//setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
     else
     {
         $db->rollback();
-	    setEventMessages($langs->trans("Error"), null, 'errors');
+	// message yet present at the bottom if($action)
+	//setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
 
@@ -171,6 +176,86 @@ if ($action == 'other')
 	$value = GETPOST('activate_usesearchtoselectproduct','alpha');
 	$res = dolibarr_set_const($db, "PRODUIT_USE_SEARCH_TO_SELECT", $value,'chaine',0,'',$conf->entity);
 }
+
+if ($action == 'specimen') // For products
+{
+	$modele= GETPOST('module','alpha');
+
+	$inter = new Fichinter($db);
+	$inter->initAsSpecimen();
+
+	// Search template files
+	$file=''; $classname=''; $filefound=0;
+	$dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
+	foreach($dirmodels as $reldir)
+	{
+	    $file=dol_buildpath($reldir."core/modules/product/doc/pdf_".$modele.".modules.php",0);
+		if (file_exists($file))
+		{
+			$filefound=1;
+			$classname = "pdf_".$modele;
+			break;
+		}
+	}
+
+	if ($filefound)
+	{
+		require_once $file;
+
+		$module = new $classname($db);
+
+		if ($module->write_file($inter,$langs) > 0)
+		{
+			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=products&file=SPECIMEN.pdf");
+			return;
+		}
+		else
+		{
+			setEventMessage($obj->error,'errors');
+			dol_syslog($obj->error, LOG_ERR);
+		}
+	}
+	else
+	{
+		setEventMessage($langs->trans("ErrorModuleNotFound"),'errors');
+		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
+	}
+}
+
+// Activate a model
+if ($action == 'set')
+{
+	$ret = addDocumentModel($value, $type, $label, $scandir);
+}
+
+if ($action == 'del')
+{
+	$ret = delDocumentModel($value, $type);
+	if ($ret > 0)
+	{
+		if ($conf->global->PRODUCT_ADDON_PDF == "$value") dolibarr_del_const($db, 'PRODUCT_ADDON_PDF',$conf->entity);
+	}
+}
+
+// Set default model
+if ($action == 'setdoc')
+{
+	if (dolibarr_set_const($db, "PRODUCT_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
+	{
+		// La constante qui a ete lue en avant du nouveau set
+		// on passe donc par une variable pour avoir un affichage coherent
+		$conf->global->PRODUCT_ADDON_PDF = $value;
+	}
+
+	// On active le modele
+	$ret = delDocumentModel($value, $type);
+	if ($ret > 0)
+	{
+		$ret = addDocumentModel($value, $type, $label, $scandir);
+	}
+}
+
+
 if ($action == 'set')
 {
 	$const = "PRODUCT_SPECIAL_".strtoupper(GETPOST('spe','alpha'));
@@ -311,6 +396,143 @@ foreach ($dirproduct as $dirroot)
     	}
     	closedir($handle);
     }
+}
+print '</table>';
+
+
+print '<br>';
+print_titre($langs->trans("ModelModulesProduct"));
+
+// Load array def with activated templates
+$def = array();
+$sql = "SELECT nom";
+$sql.= " FROM ".MAIN_DB_PREFIX."document_model";
+$sql.= " WHERE type = 'product'";
+$sql.= " AND entity = ".$conf->entity;
+$resql=$db->query($sql);
+if ($resql)
+{
+	$i = 0;
+	$num_rows=$db->num_rows($resql);
+	while ($i < $num_rows)
+	{
+		$array = $db->fetch_array($resql);
+		array_push($def, $array[0]);
+		$i++;
+	}
+}
+else
+{
+	dol_print_error($db);
+}
+
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<td width="140">'.$langs->trans("Name").'</td>';
+print '<td>'.$langs->trans("Description").'</td>';
+print '<td align="center" width="80">'.$langs->trans("Status").'</td>';
+print '<td align="center" width="60">'.$langs->trans("ShortInfo").'</td>';
+print '<td align="center" width="60">'.$langs->trans("Preview").'</td>';
+print "</tr>\n";
+
+$var=true;
+foreach ($dirproduct as $dirroot)
+{
+	$dir = dol_buildpath($dirroot.'core/modules/product/doc/',0);
+	$handle=@opendir($dir);
+	if (is_resource($handle))
+	{
+		while (($file = readdir($handle))!==false)
+		{
+			if (preg_match('/\.modules\.php$/i',$file))
+			{
+				$name = substr($file, 4, dol_strlen($file) -16);
+				$classname = substr($file, 0, dol_strlen($file) -12);
+
+			    try {
+        			dol_include_once($dirroot.'core/modules/product/doc/'.$file);
+    			}
+    			catch(Exception $e)
+    			{
+    			    dol_syslog($e->getMessage(), LOG_ERR);
+    			}
+
+    			$module = new $classname($db);
+
+				$modulequalified=1;
+				if (! empty($module->version)) {
+					if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) $modulequalified=0;
+					else if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) $modulequalified=0;
+				}
+
+				if ($modulequalified)
+				{
+					$var = !$var;
+					print '<tr '.$bc[$var].'><td width="100">';
+					print $module->name;
+					print "</td><td>\n";
+					if (method_exists($module,'info')) print $module->info($langs);
+					else print $module->description;
+					print '</td>';
+
+					// Activate / Disable
+					if (in_array($name, $def))
+					{
+						print "<td align=\"center\">\n";
+						print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&value='.$name.'&type=product&scandir='.$module->scandir.'&label='.urlencode($module->name).'">';
+						print img_picto($langs->trans("Enabled"),'switch_on');
+						print '</a>';
+						print "</td>";
+					}
+					else
+					{
+						if (versioncompare($module->phpmin,versionphparray()) > 0)
+						{
+							print "<td align=\"center\">\n";
+							print img_picto(dol_escape_htmltag($langs->trans("ErrorModuleRequirePHPVersion",join('.',$module->phpmin))),'switch_off');
+							print "</td>";
+						}
+						else
+						{
+							print "<td align=\"center\">\n";
+							print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&type=product&scandir='.$module->scandir.'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+							print "</td>";
+						}
+					}
+
+					// Info
+					$htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
+					$htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
+					if ($module->type == 'pdf')
+					{
+						$htmltooltip.='<br>'.$langs->trans("Height").'/'.$langs->trans("Width").': '.$module->page_hauteur.'/'.$module->page_largeur;
+					}
+					$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
+					$htmltooltip.='<br>'.$langs->trans("WatermarkOnDraft").': '.yn((! empty($module->option_draft_watermark)?$module->option_draft_watermark:''), 1, 1);
+
+					print '<td align="center" class="nowrap">';
+					print $form->textwithpicto('',$htmltooltip,1,0);
+					print '</td>';
+
+					// Preview
+					print '<td align="center" class="nowrap">';
+					if ($module->type == 'pdf')
+					{
+						$linkspec='<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"),'bill').'</a>';
+					}
+					else
+					{
+						$linkspec=img_object($langs->trans("PreviewNotAvailable"),'generic');
+					}
+					print $linkspec;
+					print '</td>';
+
+					print "</tr>\n";
+				}
+			}
+		}
+		closedir($handle);
+	}
 }
 print '</table>';
 

@@ -83,6 +83,7 @@ class FormPropal
                     {
                         $obj = $this->db->fetch_object($resql);
                         $listofstatus[$obj->id]=array('id'=>$obj->id,'code'=>$obj->code,'label'=>$obj->label);
+                        $i++;
                     }
                 }
             }
