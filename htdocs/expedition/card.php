@@ -882,7 +882,7 @@ if ($action == 'create')
 							if ($defaultqty<=0) {
 								$defaultqty=0;
 							} else {
-								$defaultqty -= min($defaultqty,$substock);
+								$defaultqty -= ($substock > 0 ? min($defaultqty,$substock) : 0);
 							}
 							$subj++;
 						}
