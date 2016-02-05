@@ -714,12 +714,12 @@ if ($resql)
 		print '<td align="right">'.(price2num($object->pmp)?price(price2num($object->pmp*$obj->reel,'MT')):'').'</td>';
         // Sell price
 		print '<td align="right">';
-        if (empty($conf->global->PRODUIT_MULTI_PRICES)) print price(price2num($object->price,'MU'),1);
+        if (empty($conf->global->PRODUIT_MULTIPRICES)) print price(price2num($object->price,'MU'),1);
         else print $langs->trans("Variable");
         print '</td>';
         // Value sell
         print '<td align="right">';
-        if (empty($conf->global->PRODUIT_MULTI_PRICES)) print price(price2num($object->price*$obj->reel,'MT'),1).'</td>';
+        if (empty($conf->global->PRODUIT_MULTIPRICES)) print price(price2num($object->price*$obj->reel,'MT'),1).'</td>';
         else print $langs->trans("Variable");
 		print '</tr>'; ;
 		$total += $obj->reel;
@@ -782,12 +782,12 @@ print '<td class="liste_total" align="right">';
 print $totalvalue?price(price2num($totalvalue,'MT'),1):'&nbsp;';
 print '</td>';
 print '<td class="liste_total" align="right">';
-if (empty($conf->global->PRODUIT_MULTI_PRICES)) print ($total?price($totalvaluesell/$total,1):'&nbsp;');
+if (empty($conf->global->PRODUIT_MULTIPRICES)) print ($total?price($totalvaluesell/$total,1):'&nbsp;');
 else print $langs->trans("Variable");
 print '</td>';
 // Value to sell
 print '<td class="liste_total" align="right">';
-if (empty($conf->global->PRODUIT_MULTI_PRICES)) print price(price2num($totalvaluesell,'MT'),1);
+if (empty($conf->global->PRODUIT_MULTIPRICES)) print price(price2num($totalvaluesell,'MT'),1);
 else print $langs->trans("Variable");
 print '</td>';
 print "</tr>";
