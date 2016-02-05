@@ -199,6 +199,7 @@ Rest=Créance
 AmountExpected=Montant réclamé
 ExcessReceived=Trop perçu
 EscompteOffered=Escompte (règlement avant échéance)
+EscompteOfferedShort=Escompte
 SendBillRef=Envoi de la facture %s
 SendReminderBillRef=Relance de la facture %s (rappel)
 StandingOrders=Prélèvements
