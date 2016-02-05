@@ -843,6 +843,10 @@ if ($id > 0)
 	$result5=$object->fetch_optionals($id,$extralabels);
 
 	if($listUserAssignedUpdated || $donotclearsession) {
+		$aphour	= GETPOST('aphour', 'int');
+		$apmin	= GETPOST('apmin', 'int');
+		$p2hour	= GETPOST('p2hour', 'int');
+		$p2min	= GETPOST('p2min', 'int');
 		
 		$datep=dol_mktime($fulldayevent?'00':$aphour, $fulldayevent?'00':$apmin, 0, $_POST["apmonth"], $_POST["apday"], $_POST["apyear"]);
 		$datef=dol_mktime($fulldayevent?'23':$p2hour, $fulldayevent?'59':$p2min, $fulldayevent?'59':'0', $_POST["p2month"], $_POST["p2day"], $_POST["p2year"]);
