@@ -80,13 +80,15 @@ function test_sql_and_script_inject($val, $type)
     // For SQL Injection (only GET and POST are used to be included into bad escaped SQL requests)
     if ($type != 2)
     {
-        $sql_inj += preg_match('/delete[\s]+from/i', $val);
-        $sql_inj += preg_match('/create[\s]+table/i', $val);
-        $sql_inj += preg_match('/update.+set.+=/i', $val);
-        $sql_inj += preg_match('/insert[\s]+into/i', $val);
-        $sql_inj += preg_match('/select.+from/i', $val);
-        $sql_inj += preg_match('/union.+select/i', $val);
-        $sql_inj += preg_match('/(\.\.%2f)+/i', $val);
+        $sql_inj += preg_match('/delete\s+from/i',	 $val);
+        $sql_inj += preg_match('/create\s+table/i',	 $val);
+        $sql_inj += preg_match('/update.+set.+=/i',  $val);
+        $sql_inj += preg_match('/insert\s+into/i', 	 $val);
+        $sql_inj += preg_match('/select.+from/i', 	 $val);
+        $sql_inj += preg_match('/union.+select/i', 	 $val);
+        $sql_inj += preg_match('/into\s+(outfile|dumpfile)/i',  $val);
+        $sql_inj += preg_match('/(\.\.%2f)+/i',		 $val);
+        $sql_inj += preg_match('/onerror=/i', 	     $val);
     }
     // For XSS Injection done by adding javascript with script
     // This is all cases a browser consider text is javascript:
@@ -94,7 +96,8 @@ function test_sql_and_script_inject($val, $type)
     // All examples on page: http://ha.ckers.org/xss.html#XSScalc
     $sql_inj += preg_match('/<script/i', $val);
     if (! defined('NOSTYLECHECK')) $sql_inj += preg_match('/<style/i', $val);
-    $sql_inj += preg_match('/base[\s]+href/i', $val);
+    $sql_inj += preg_match('/base[\s]+href/si', $val);
+    $sql_inj += preg_match('/<.*onmouse/si', $val);       // onmouseover can be set on img or any html tag like <img title='>' onmouseover=alert(1)>
     if ($type == 1)
     {
         $sql_inj += preg_match('/javascript:/i', $val);

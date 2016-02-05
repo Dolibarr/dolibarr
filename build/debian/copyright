@@ -159,7 +159,7 @@ Comments:
  Those files are not shipped in the binary package as we
  configure Dolibarr to use Dejavu fonts from "fonts-dejavu-core".
   
-Files: docs/images/*
+Files: doc/images/*
 Copyright: Laurent Destailleur 
 License: CC-BY-SA-3.0
  You are free:
@@ -176,7 +176,7 @@ License: CC-BY-SA-3.0
  .
  For more information, see http://creativecommons.org/licenses/by-sa/3.0/
 
-Files: htdocs/includes/fpdi/*
+Files: htdocs/includes/fpdfi/*
 Copyright: 2004-2011 Setasign - Jan Slabon
 License: GPL-2+
  This program is free software; you can redistribute it
