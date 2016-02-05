@@ -1989,7 +1989,15 @@ class pdf_crevette extends ModelePDFFactures
 
 			$carac_client_name= pdfBuildThirdpartyName($thirdparty, $outputlangs);
 
-			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,($usecontact?$object->contact:''),$usecontact,'target');
+			// utiliser l'adresse de la maison mère
+			if( !empty($object->client->parent) && count($arrayidcontact) > 0 ){
+				$parent = new Societe($this->db);
+				$parent->fetch($object->client->parent);
+				$carac_client=pdf_build_address($outputlangs,$this->emetteur,$parent,($usecontact?$object->contact:''),$usecontact,'target');
+			}
+			else {
+				$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,($usecontact?$object->contact:''),$usecontact,'target');
+			}
 
 			// Show recipient
 			$widthrecbox=100;
