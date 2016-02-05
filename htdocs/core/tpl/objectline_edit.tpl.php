@@ -124,7 +124,7 @@ $coldisplay=-1; // We remove first td
 	if ($inputalsopricewithtax)
 	{
 		$coldisplay++;
-		print '<td align="right"><input type="text" class="flat" size="8" id="price_ttc" name="price_ttc" value="'.(isset($line->pu_ttc)?price($line->pu_ttc,0,'',0):'').'"';
+		print '<td align="right"><input type="text" class="flat" size="8" id="price_ttc" name="price_ttc" value="'.(isset($pu_ttc)?price($pu_ttc,0,'',0):'').'"';
 		if ($this->situation_counter > 1) print ' readonly';
 		print '></td>';
 	}
