@@ -60,6 +60,7 @@ $alwayseditable=$extrafields->attribute_alwayseditable[$attrname];
 $param=$extrafields->attribute_param[$attrname];
 $perms=$extrafields->attribute_perms[$attrname];
 $list=$extrafields->attribute_list[$attrname];
+$ishidden=$extrafields->attribute_hidden[$attrname];
 
 if((($type == 'select') || ($type == 'checkbox') || ($type == 'radio')) && is_array($param))
 {
@@ -117,6 +118,8 @@ if(($type == 'select') || ($type == 'sellist') || ($type == 'checkbox') || ($typ
 <tr><td><?php echo $langs->trans("Required"); ?></td><td class="valeur"><input id="required" type="checkbox" name="required" <?php echo ($required?' checked':''); ?>></td></tr>
 <!-- Always editable -->
 <tr><td><?php echo $langs->trans("AlwaysEditable"); ?></td><td class="valeur"><input id="alwayseditable" type="checkbox" name="alwayseditable" <?php echo ($alwayseditable?' checked':''); ?>></td></tr>
+<!-- Is visible or not -->
+<tr><td><?php echo $langs->trans("IsHidden"); ?></td><td class="valeur"><input id="ishidden" type="checkbox" name="ishidden" <?php echo ($ishidden ?' checked':''); ?>></td></tr>
 <!-- By default visible into list -->
 <?php if ($conf->global->MAIN_FEATURES_LEVEL >= 2) { ?>
 <tr><td><?php echo $langs->trans("ByDefaultInList"); ?>
