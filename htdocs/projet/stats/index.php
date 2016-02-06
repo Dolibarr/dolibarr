@@ -121,15 +121,15 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 			$px->setShowPointValue($showpointvalue);
 			$px->setShowPercent(1);
 			$px->SetMaxValue($px->GetCeilMaxValue());
-			$px->SetWidth(300);
-			$px->SetHeight(300);
+			$px->SetWidth($WIDTH);
+			$px->SetHeight($HEIGHT);
 			$px->SetShading(3);
 			$px->SetHorizTickIncrement(1);
 			$px->SetCssPrefix("cssboxes");
 			$px->SetType(array (
 					'pie'
 			));
-			$px->SetTitle($langs->trans('OpportunitiesStatusForOpenedProjects'));
+			$px->SetTitle($langs->trans('OpportunitiesStatusForProjects'));
 			$result=$px->draw($filenamenb, $fileurlnb);
 			if ($result<0) {
 				setEventMessages($px->error, null, 'errors');
@@ -304,11 +304,11 @@ print '<br><br>';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre" height="24">';
 print '<td align="center">'.$langs->trans("Year").'</td>';
-print '<td align="center">'.$langs->trans("NbOfProjects").'</td>';
+print '<td align="right">'.$langs->trans("NbOfProjects").'</td>';
 if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 {
-	print '<td align="center">'.$langs->trans("AmountTotal").'</td>';
-	print '<td align="center">'.$langs->trans("AmountAverage").'</td>';
+	print '<td align="right">'.$langs->trans("OpportunityAmount").'</td>';
+	print '<td align="right">'.$langs->trans("AmountAverage").'</td>';
 }
 print '</tr>';
 

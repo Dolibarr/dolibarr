@@ -99,4 +99,5 @@ ConfirmSaveTrip=Are you sure you want to validate this expense report ?
 NoTripsToExportCSV=No expense report to export for this period.
 ExpenseReportPayment=Expense report payment
 
+ExpenseReportsToApprove=Expense reports to approve
 ExpenseReportsToPay=Expense reports to pay

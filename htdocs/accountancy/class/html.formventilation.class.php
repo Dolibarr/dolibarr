@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2013-2014 Florian Henry        <florian.henry@open-concept.pro>
+/* Copyright (C) 2013-2016 Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2013-2014 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013-2016 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015      Ari Elbaz (elarifr)  <github@accedinfo.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -92,12 +92,14 @@ class FormVentilation extends Form
 	 * @param array $event Event options
 	 * @param int $select_in $selectid value is a aa.rowid (0 default) or aa.account_number (1)
 	 * @param int $select_out set value returned by select 0=rowid (default), 1=account_number
-	 * @param int $aabase set accountingaccount base class to display empty=all or from 1 to 8 will display only account beginning by
+	 * @param int $aabase set accounting_account base class to display empty=all or from 1 to 8 will display only account beginning by this number
 	 *       
 	 * @return string String with HTML select
 	 */
 	function select_account($selectid, $htmlname = 'account', $showempty = 0, $event = array(), $select_in = 0, $select_out = 0, $aabase = '') {
 		global $conf;
+		
+		require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 		
 		$out = '';
 		
@@ -123,7 +125,7 @@ class FormVentilation extends Form
 			if ($num) {
 				while ( $i < $num ) {
 					$obj = $this->db->fetch_object($resql);
-					$label = $obj->account_number . ' - ' . $obj->label;
+					$label = length_accountg($obj->account_number) . ' - ' . $obj->label;
 					$label = dol_trunc($label, $trunclength);
 					if ($select_in == 0)
 						$select_value_in = $obj->rowid;
@@ -133,7 +135,7 @@ class FormVentilation extends Form
 						$select_value_out = $obj->rowid;
 					if ($select_out == 1)
 						$select_value_out = $obj->account_number;
-						// Remember guy's we store in database llx_facturedet the rowid of accountingaccount and not the account_number
+						// Remember guy's we store in database llx_facturedet the rowid of accounting_account and not the account_number
 						// Because same account_number can be share between different accounting_system and do have the same meaning
 					if (($selectid != '') && $selectid == $select_value_in) {
 						// $out .= '<option value="' . $obj->account_number . '" selected>' . $label . '</option>';

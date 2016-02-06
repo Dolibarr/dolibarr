@@ -104,7 +104,7 @@ foreach($listofparams as $param)
 	if (GETPOST($param)!='') $morequerystring.=($morequerystring?'&':'').$param.'='.GETPOST($param);
 }
 
-llxHeader('','','','',0,0,'','',$morequerystring);
+llxHeader('',$langs->trans("VATReport"),'','',0,0,'','',$morequerystring);
 
 $form=new Form($db);
 

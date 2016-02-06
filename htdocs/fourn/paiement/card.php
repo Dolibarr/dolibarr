@@ -202,6 +202,7 @@ if ($result > 0)
     print $form->editfieldval("Note",'note',$object->note,$object,$user->rights->fournisseur->facture->creer,'textarea');
     print '</td></tr>';
 
+	$allow_delete = 1 ;
     // Bank account
 	if (! empty($conf->banque->enabled))
 	{
@@ -209,6 +210,11 @@ if ($result > 0)
 		{
             $bankline=new AccountLine($db);
             $bankline->fetch($object->bank_line);
+            if ($bankline->rappro)
+            {
+                $allow_delete=0;
+                $title_button = dol_escape_htmltag($langs->transnoentitiesnoconv("CantRemoveConciliatedPayment"));
+            }
 
             print '<tr>';
             print '<td colspan="2">'.$langs->trans('BankTransactionLine').'</td>';
@@ -236,7 +242,6 @@ if ($result > 0)
 	/**
 	 *	Liste des factures
 	 */
-	$allow_delete = 1 ;
 	$sql = 'SELECT f.rowid, f.ref, f.ref_supplier, f.total_ttc, pf.amount, f.rowid as facid, f.paye, f.fk_statut, s.nom as name, s.rowid as socid';
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf,'.MAIN_DB_PREFIX.'facture_fourn as f,'.MAIN_DB_PREFIX.'societe as s';
 	$sql .= ' WHERE pf.fk_facturefourn = f.rowid AND f.fk_soc = s.rowid';
@@ -288,6 +293,7 @@ if ($result > 0)
 				if ($objp->paye == 1)
 				{
 					$allow_delete = 0;
+                    $title_button = dol_escape_htmltag($langs->transnoentitiesnoconv("CantRemovePaymentWithOneInvoicePaid"));
 				}
 				$total = $total + $objp->amount;
 				$i++;
@@ -323,12 +329,18 @@ if ($result > 0)
 			}
 		}
 	}
-	if ($user->societe_id == 0 && $allow_delete && $object->statut == 0 && $action == '')
+	if ($user->societe_id == 0 && $action == '')
 	{
 		if ($user->rights->fournisseur->facture->supprimer)
 		{
-			print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
-
+            if ($allow_delete)
+            {
+				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+            }
+            else
+            {
+                print '<a class="butActionRefused" href="#" title="'.$title_button.'">'.$langs->trans('Delete').'</a>';
+            }
 		}
 	}
 	print '</div>';

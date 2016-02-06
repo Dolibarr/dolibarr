@@ -1176,6 +1176,8 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=n
 					else $ok=unlink($filename);
 					if ($ok) dol_syslog("Removed file ".$filename, LOG_DEBUG);
 					else dol_syslog("Failed to remove file ".$filename, LOG_WARNING);
+					// TODO Failure to remove can be because file was already removed or because of permission
+					// If error because of not exists, we must can return true but we should return false if this is a permission problem
 				}
 			}
 			else dol_syslog("No files to delete found", LOG_WARNING);
@@ -1186,7 +1188,7 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=n
 			if ($nophperrors) $ok=@unlink($file_osencoded);
 			else $ok=unlink($file_osencoded);
 			if ($ok) dol_syslog("Removed file ".$file_osencoded, LOG_DEBUG);
-			else dol_syslog("Failed to remove file ".$file_osencoded, LOG_WARNING);
+			else dol_syslog("Failed to remove file ".$file_osencoded, LOG_WARNING);      
 		}
 
 		return $ok;
@@ -1438,58 +1440,73 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
 		dol_syslog('dol_add_file_process upload_dir='.$upload_dir.' allowoverwrite='.$allowoverwrite.' donotupdatesession='.$donotupdatesession.' savingdocmask='.$savingdocmask, LOG_DEBUG);
 		if (dol_mkdir($upload_dir) >= 0)
 		{
-			// Define $destpath (path to file including filename) and $destfile (only filename)
-			$destpath=$upload_dir . "/" . $_FILES[$varfiles]['name'];
-			$destfile=$_FILES[$varfiles]['name'];
-
-			$savingdocmask = dol_sanitizeFileName($savingdocmask);
-
-			if ($savingdocmask)
+			$TFile = $_FILES[$varfiles];
+			if (!is_array($TFile['name']))
 			{
-				$destpath=$upload_dir . "/" . preg_replace('/__file__/',$_FILES[$varfiles]['name'],$savingdocmask);
-				$destfile=preg_replace('/__file__/',$_FILES[$varfiles]['name'],$savingdocmask);
+				foreach ($TFile as $key => &$val)
+				{
+					$val = array($val);
+				}
 			}
-
-			$resupload = dol_move_uploaded_file($_FILES[$varfiles]['tmp_name'], $destpath, $allowoverwrite, 0, $_FILES[$varfiles]['error'], 0, $varfiles);
-			if (is_numeric($resupload) && $resupload > 0)
+			
+			$nbfile = count($TFile['name']);
+			
+			for ($i = 0; $i < $nbfile; $i++)
 			{
-				include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
-				global $maxwidthsmall, $maxheightsmall, $maxwidthmini, $maxheightmini;
+				// Define $destpath (path to file including filename) and $destfile (only filename)
+				$destpath=$upload_dir . "/" . $TFile['name'][$i];
+				$destfile=$TFile['name'][$i];
+	
+				$savingdocmask = dol_sanitizeFileName($savingdocmask);
+	
+				if ($savingdocmask)
+				{
+					$destpath=$upload_dir . "/" . preg_replace('/__file__/',$TFile['name'][$i],$savingdocmask);
+					$destfile=preg_replace('/__file__/',$TFile['name'][$i],$savingdocmask);
+				}
+	
+				$resupload = dol_move_uploaded_file($TFile['tmp_name'][$i], $destpath, $allowoverwrite, 0, $TFile['error'][$i], 0, $varfiles);
+				if (is_numeric($resupload) && $resupload > 0)
+				{
+					global $maxwidthsmall, $maxheightsmall, $maxwidthmini, $maxheightmini;
 				
-				if (empty($donotupdatesession))
-				{
-					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-					$formmail = new FormMail($db);
-					$formmail->add_attached_files($destpath, $destfile, $_FILES[$varfiles]['type']);
+					include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+					if (empty($donotupdatesession))
+					{
+						include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+						$formmail = new FormMail($db);
+						$formmail->add_attached_files($destpath, $destfile, $TFile['type'][$i]);
+					}
+					if (image_format_supported($destpath) == 1)
+					{
+						// Create small thumbs for image (Ratio is near 16/9)
+						// Used on logon for example
+						$imgThumbSmall = vignette($destpath, $maxwidthsmall, $maxheigthsmall, '_small', 50, "thumbs");
+						// Create mini thumbs for image (Ratio is near 16/9)
+						// Used on menu or for setup page for example
+						$imgThumbMini = vignette($destpath, $maxwidthmini, $maxheightmini, '_mini', 50, "thumbs");
+					}
+	
+					setEventMessages($langs->trans("FileTransferComplete"), null, 'mesgs');
 				}
-				if (image_format_supported($destpath) == 1)
+				else
 				{
-					// Create small thumbs for image (Ratio is near 16/9)
-					// Used on logon for example
-					$imgThumbSmall = vignette($destpath, $maxwidthsmall, $maxheigthsmall, '_small', 50, "thumbs");
-					// Create mini thumbs for image (Ratio is near 16/9)
-					// Used on menu or for setup page for example
-					$imgThumbMini = vignette($destpath, $maxwidthmini, $maxheightmini, '_mini', 50, "thumbs");
+					$langs->load("errors");
+					if ($resupload < 0)	// Unknown error
+					{
+						setEventMessages($langs->trans("ErrorFileNotUploaded"), null, 'errors');
+					}
+					else if (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload))	// Files infected by a virus
+					{
+						setEventMessages($langs->trans("ErrorFileIsInfectedWithAVirus"), null, 'errors');
+					}
+					else	// Known error
+					{
+						setEventMessages($langs->trans($resupload), null, 'errors');
+					}
 				}
-
-				setEventMessages($langs->trans("FileTransferComplete"), null, 'mesgs');
 			}
-			else
-			{
-				$langs->load("errors");
-				if ($resupload < 0)	// Unknown error
-				{
-					setEventMessages($langs->trans("ErrorFileNotUploaded"), null, 'errors');
-				}
-				else if (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload))	// Files infected by a virus
-				{
-					setEventMessages($langs->trans("ErrorFileIsInfectedWithAVirus"), null, 'errors');
-				}
-				else	// Known error
-				{
-					setEventMessages($langs->trans($resupload), null, 'errors');
-				}
-			}
+			
 		}
 	} elseif ($link) {
 		if (dol_mkdir($upload_dir) >= 0) {

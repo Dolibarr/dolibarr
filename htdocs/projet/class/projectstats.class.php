@@ -57,7 +57,8 @@ class ProjectStats extends Stats
 		$sql .= " SUM(t.opp_amount), t.fk_opp_status, cls.code, cls.label";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "projet as t, ".MAIN_DB_PREFIX."c_lead_status as cls";
 		$sql .= $this->buildWhere();
-		$sql .= " AND t.fk_opp_status = cls.rowid AND t.fk_statut = 1";
+		$sql .= " AND t.fk_opp_status = cls.rowid";
+		$sql .= " AND t.fk_statut <> 0";     // We want historic also, so all projects
 		$sql .= " GROUP BY t.fk_opp_status, cls.code, cls.label";
 
 		$result = array ();

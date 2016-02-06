@@ -36,6 +36,7 @@ $action=GETPOST('action');
 $hookmanager->initHooks(array('index'));
 
 
+
 /*
  * Actions
  */
@@ -71,7 +72,11 @@ if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $title=$langs->trans("HomeAr
 
 llxHeader('',$title);
 
-print load_fiche_titre($langs->trans("HomeArea"),'','title_home');
+
+$resultboxes=FormOther::printBoxesArea($user,"0");
+
+
+print load_fiche_titre($langs->trans("HomeArea"),$resultboxes['selectboxlist'],'title_home');
 
 if (! empty($conf->global->MAIN_MOTD))
 {
@@ -157,8 +162,8 @@ if (empty($user->societe_id))
 	    ! empty($conf->commande->enabled) && $user->rights->commande->lire,
 	    ! empty($conf->facture->enabled) && $user->rights->facture->lire,
 	    ! empty($conf->contrat->enabled) && $user->rights->contrat->activer,
-		! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_ORDERS_STATS),
-		! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_INVOICES_STATS),
+		! empty($conf->supplier_order->enabled) && $user->rights->fournisseur->commande->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_ORDERS_STATS),
+		! empty($conf->supplier_invoice->enabled) && $user->rights->fournisseur->facture->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_INVOICES_STATS),
 		! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire);
 	    // Class file containing the method load_state_board for each line
 	    $includes=array(
@@ -289,7 +294,7 @@ if (empty($user->societe_id))
 	            $text=$langs->trans($titres[$key]);
 	            print '<a href="'.$links[$key].'" class="boxstatsindicator thumbstat nobold nounderline">';
 	            print '<div class="boxstats">';
-	            print img_object("",$icons[$key]).' '.$text.'<br>';
+	            print '<span class="boxstatstext">'.img_object("",$icons[$key]).' '.$text.'</span><br>';
 	            print '<span class="boxstatsindicator">'.$board->nb[$val].'</span>';
 	            print '</div>';
 	            print '</a>';
@@ -316,9 +321,9 @@ print '<table class="noborder" width="100%">'."\n";
 print '<tr class="liste_titre">';
 print '<th class="liste_titre" colspan="2">'.$langs->trans("DolibarrWorkBoard").'</th>';
 print '<th class="liste_titre" align="right">'.$langs->trans("Number").'</th>';
-print '<th class="liste_titre" align="right">'.$langs->trans("Late").'</th>';
+print '<th class="liste_titre" align="right">'.$form->textwithpicto($langs->trans("Late"),$langs->trans("LateDesc")).'</th>';
 print '<th class="liste_titre">&nbsp;</th>';
-print '<th class="liste_titre" width="20">&nbsp;</th>';
+//print '<th class="liste_titre" width="20">&nbsp;</th>';
 if ($showweather) print '<th class="liste_titre hideonsmartphone" width="80">&nbsp;</th>';
 print '</tr>'."\n";
 
@@ -338,22 +343,22 @@ if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->read)
     $dashboardlines[] = $board->load_board($user);
 }
 
-// Number of customer orders a deal
-if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
+// Number of project opened
+if (! empty($conf->projet->enabled) && $user->rights->projet->lire)
 {
-    include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-    $board=new Commande($db);
+    include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+    $board=new Project($db);
 
-	$dashboardlines[] = $board->load_board($user);
+    $dashboardlines[] = $board->load_board($user);
 }
 
-// Number of suppliers orders a deal
-if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande->lire)
+// Number of tasks to do (late)
+if (! empty($conf->projet->enabled) && empty($conf->global->PROJECT_HIDE_TASKS) && $user->rights->projet->lire)
 {
-    include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
-    $board=new CommandeFournisseur($db);
+    include_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+    $board=new Task($db);
 
-	$dashboardlines[] = $board->load_board($user);
+    $dashboardlines[] = $board->load_board($user);
 }
 
 // Number of commercial proposals opened (expired)
@@ -365,6 +370,24 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 
 	// Number of commercial proposals CLOSED signed (billed)
 	$dashboardlines[] = $board->load_board($user,"signed");
+}
+
+// Number of customer orders a deal
+if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
+{
+    include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+    $board=new Commande($db);
+
+	$dashboardlines[] = $board->load_board($user);
+}
+
+// Number of suppliers orders a deal
+if (! empty($conf->supplier_order->enabled) && $user->rights->fournisseur->commande->lire)
+{
+    include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+    $board=new CommandeFournisseur($db);
+
+	$dashboardlines[] = $board->load_board($user);
 }
 
 // Number of services enabled (delayed)
@@ -386,7 +409,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 }
 
 // Number of supplier invoices (has paid)
-if (! empty($conf->fournisseur->enabled) && ! empty($conf->facture->enabled) && $user->rights->facture->lire)
+if (! empty($conf->supplier_invoice->enabled) && ! empty($conf->facture->enabled) && $user->rights->facture->lire)
 {
     include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
     $board=new FactureFournisseur($db);
@@ -417,13 +440,22 @@ if (! empty($conf->adherent->enabled) && $user->rights->adherent->lire && ! $use
     $dashboardlines[] = $board->load_board($user);
 }
 
-// Number of expense reports to pay
-if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire)
+// Number of expense reports to approve
+if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->approve)
 {
     include_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
     $board=new ExpenseReport($db);
 
-	$dashboardlines[] = $board->load_board($user);
+	$dashboardlines[] = $board->load_board($user,'toapprove');
+}
+
+// Number of expense reports to pay
+if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->to_paid)
+{
+    include_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
+    $board=new ExpenseReport($db);
+
+	$dashboardlines[] = $board->load_board($user,'topay');
 }
 
 // Calculate total nb of late
@@ -456,7 +488,8 @@ foreach($valid_dashboardlines as $board)
     print '<td align="right">';
     //if ($board->nbtodolate > 0)
     //{
-        print '<a class="dashboardlineindicatorlate" href="'.$board->url.'"><span class="dashboardlineindicatorlate">';
+        $textlate = $langs->trans("Late").' = '.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil($board->warning_delay) >= 0 ? '+' : '').ceil($board->warning_delay).' '.$langs->trans("days");
+        print '<a title="'.dol_escape_htmltag($textlate).'" class="dashboardlineindicatorlate'.($board->nbtodolate>0?' dashboardlineko':' dashboardlineok').'" href="'.$board->url.'"><span class="dashboardlineindicatorlate'.($board->nbtodolate>0?' dashboardlineko':' dashboardlineok').'">';
         print $board->nbtodolate;
         print '</span></a>';
     //}
@@ -465,9 +498,10 @@ foreach($valid_dashboardlines as $board)
     if ($board->nbtodolate > 0) print img_picto($langs->trans("NActionsLate",$board->nbtodolate).' (>'.ceil($board->warning_delay).' '.$langs->trans("days").')',"warning");
     else print '&nbsp;';
     print '</td>';
-    print '<td class="nowrap" align="right">';
+    /*print '<td class="nowrap" align="right">';
     print ' (>'.ceil($board->warning_delay).' '.$langs->trans("days").')';
-    print '</td>';
+    print '</td>';*/
+    
     if ($showweather)
     {
         print '<td class="nohover hideonsmartphone" rowspan="'.$rowspan.'" width="80" style="border-left: 1px solid #DDDDDD" align="center">';
@@ -488,16 +522,13 @@ foreach($valid_dashboardlines as $board)
 print '</table>';   // End table array
 
 
-print '</div></div></div><div class="fichecenter"><br>';
-
-
+print '</div></div></div><div class="clearboth"></div><div class="fichecenter fichecenterbis">';
 
 /*
  * Show boxes
  */
 
-FormOther::printBoxesArea($user,"0");
-
+print $resultboxes['boxlist'];
 
 print '</div>';
 

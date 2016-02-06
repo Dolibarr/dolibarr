@@ -91,7 +91,7 @@ print '</td></tr>';
 $var=!$var;
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("DefaultLink").'</td><td>';
-print '<input size="92" type="text" name="CLICKTODIAL_URL"'.($conf->global->CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS?' disabled="disabled"':'').' value="'.$conf->global->CLICKTODIAL_URL.'"><br>';
+print '<input style="width: 90%" type="text" name="CLICKTODIAL_URL"'.($conf->global->CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS?' disabled="disabled"':'').' value="'.$conf->global->CLICKTODIAL_URL.'"><br>';
 print '<br>';
 print $langs->trans("ClickToDialUrlDesc").'<br>';
 print $langs->trans("Example").':<br>http://myphoneserver/mypage?login=__LOGIN__&password=__PASS__&caller=__PHONEFROM__&called=__PHONETO__';

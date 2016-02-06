@@ -111,7 +111,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 /*
  * View
  */
-llxHeader('', $langs->trans("Ventilation"));
+llxHeader('', $langs->trans("SuppliersVentilation"));
 
 print '<script type="text/javascript">
 			$(function () {

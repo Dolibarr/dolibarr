@@ -306,7 +306,7 @@ function dol_getprefix()
  *  To link to a module file from a core file, then this function can be used (call by hook / trigger / speciales pages)
  *
  * 	@param	string	$relpath	Relative path to file (Ie: mydir/myfile, ../myfile, ...)
- * 	@param	string	$classname	Class name
+ * 	@param	string	$classname	Class name (deprecated)
  *  @return bool                True if load is a success, False if it fails
  */
 function dol_include_once($relpath, $classname='')
@@ -2994,7 +2994,11 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 
 	// Left
 	if ($picto && $titre) print '<td class="nobordernopadding hideonsmartphone" width="40" align="left" valign="middle">'.img_picto('', $picto, '', $pictoisfullpath).'</td>';
-	print '<td class="nobordernopadding"><div class="titre">'.$titre.'</div></td>';
+	print '<td class="nobordernopadding"><div class="titre">'.$titre;
+	if (!empty($totalnboflines) && !empty($titre)) {
+		print ' ('.$totalnboflines.')';
+	}
+	print '</div></td>';
 
 	// Center
 	if ($center)

@@ -539,9 +539,10 @@ class FormProjets
 	 *    @param   int         $showempty          Add an empty line
 	 *    @param   int         $useshortlabel      Use short label
 	 *    @param   int         $showallnone        Add choice "All" and "None"
+	 *    @param   int         $showpercent        Show default probability for status
 	 *    @return  int|string                      The HTML select list of element or '' if nothing or -1 if KO
 	 */
-	function selectOpportunityStatus($htmlname, $preselected=0, $showempty=1, $useshortlabel=0, $showallnone=0)
+	function selectOpportunityStatus($htmlname, $preselected=0, $showempty=1, $useshortlabel=0, $showallnone=0, $showpercent=0)
 	{
 		global $conf, $langs;
 
@@ -557,7 +558,7 @@ class FormProjets
 			$i = 0;
 			if ($num > 0)
 			{
-				$sellist = '<select class="flat oppstatus" name="'.$htmlname.'">';
+				$sellist = '<select class="flat oppstatus" id="'.$htmlname.'" name="'.$htmlname.'">';
 				if ($showempty) $sellist.= '<option value="-1"></option>';
 				if ($showallnone) $sellist.= '<option value="all">--'.$langs->trans("Alls").'--</option>';
 				if ($showallnone) $sellist.= '<option value="none">--'.$langs->trans("None").'--</option>';
@@ -565,7 +566,7 @@ class FormProjets
 				{
 					$obj = $this->db->fetch_object($resql);
 
-					$sellist .='<option value="'.$obj->rowid.'"';
+					$sellist .='<option value="'.$obj->rowid.'" defaultpercent="'.$obj->percent.'"';
 					if ($obj->rowid == $preselected) $sellist .= ' selected="selected"';
 					$sellist .= '>';
 					if ($useshortlabel)
@@ -575,7 +576,7 @@ class FormProjets
 					else
 					{
 						$finallabel = ($langs->transnoentitiesnoconv("OppStatus".$obj->code) != "OppStatus".$obj->code ? $langs->transnoentitiesnoconv("OppStatus".$obj->code) : $obj->label);
-						$finallabel.= ' ('.$obj->percent.'%)';
+						if ($showpercent) $finallabel.= ' ('.$obj->percent.'%)';
 					}
 					$sellist .= $finallabel;
 					$sellist .='</option>';

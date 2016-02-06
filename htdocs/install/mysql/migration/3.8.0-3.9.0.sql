@@ -584,5 +584,3 @@ ALTER TABLE llx_accounting_bookkeeping MODIFY COLUMN doc_ref varchar(300) NOT NU
 ALTER TABLE llx_holiday ADD COLUMN tms timestamp;
 ALTER TABLE llx_holiday ADD COLUMN entity integer DEFAULT 1 NOT NULL;
 
-ALTER TABLE llx_paiementfourn ADD COLUMN ref varchar(30) AFTER rowid;
-ALTER TABLE llx_paiementfourn ADD COLUMN entity integer AFTER ref;

@@ -2075,6 +2075,7 @@ abstract class CommonObject
 
         $sql = 'SELECT rowid, qty, '.$fieldup.' as up, remise_percent, total_ht, '.$fieldtva.' as total_tva, total_ttc, '.$fieldlocaltax1.' as total_localtax1, '.$fieldlocaltax2.' as total_localtax2,';
         $sql.= ' tva_tx as vatrate, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, info_bits, product_type';
+		if ($this->table_element_line == 'facturedet') $sql.= ', situation_percent';
         $sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line;
         $sql.= ' WHERE '.$this->fk_element.' = '.$this->id;
         if ($exclspec)
@@ -2109,7 +2110,7 @@ abstract class CommonObject
                 if ($forcedroundingmode == '0')	// Check if data on line are consistent. This may solve lines that were not consistent because set with $forcedroundingmode='auto'
                 {
                 	$localtax_array=array($obj->localtax1_type,$obj->localtax1_tx,$obj->localtax2_type,$obj->localtax2_tx);
-                	$tmpcal=calcul_price_total($obj->qty, $obj->up, $obj->remise_percent, $obj->vatrate, $obj->localtax1_tx, $obj->localtax2_tx, 0, 'HT', $obj->info_bits, $obj->product_type, $seller, $localtax_array);
+                	$tmpcal=calcul_price_total($obj->qty, $obj->up, $obj->remise_percent, $obj->vatrate, $obj->localtax1_tx, $obj->localtax2_tx, 0, 'HT', $obj->info_bits, $obj->product_type, $seller, $localtax_array, (isset($obj->situation_percent) ? $obj->situation_percent : 100));
                 	$diff=price2num($tmpcal[1] - $obj->total_tva, 'MT', 1);
                 	if ($diff)
                 	{
@@ -2383,14 +2384,14 @@ abstract class CommonObject
                 {
                     // Parse element/subelement (ex: project_task)
                     $module = $element = $subelement = $objecttype;
-                    if ($objecttype != 'order_supplier' && $objecttype != 'invoice_supplier' && preg_match('/^([^_]+)_([^_]+)/i',$objecttype,$regs))
+                    if ($objecttype != 'supplier_proposal' && $objecttype != 'order_supplier' && $objecttype != 'invoice_supplier' 
+                        && preg_match('/^([^_]+)_([^_]+)/i',$objecttype,$regs))
                     {
                         $module = $element = $regs[1];
                         $subelement = $regs[2];
                     }
 
                     $classpath = $element.'/class';
-
                     // To work with non standard classpath or module name
                     if ($objecttype == 'facture')			{
                         $classpath = 'compta/facture/class';
@@ -2426,7 +2427,10 @@ abstract class CommonObject
                     else if ($objecttype == 'order_supplier')   {
                         $classfile = 'fournisseur.commande'; $classname = 'CommandeFournisseur';
                     }
-
+                    else if ($objecttype == 'supplier_proposal')   {
+                        $classfile = 'supplier_proposal'; $classname = 'SupplierProposal';
+                    }
+                    
                     // Here $module, $classfile and $classname are set
                     if ($conf->$module->enabled && (($element != $this->element) || $alsosametype))
                     {
@@ -2594,6 +2598,7 @@ abstract class CommonObject
             $error = 0;
 
             $trigkey='';
+            if ($this->element == 'supplier_proposal' && $status == 2) $trigkey='SUPPLIER_PROPOSAL_CLOSE';
             if ($this->element == 'fichinter' && $status == 2) $trigkey='FICHINTER_CLASSIFY_BILLED';
             if ($this->element == 'fichinter' && $status == 1) $trigkey='FICHINTER_CLASSIFY_UNBILLED';
 
@@ -4080,6 +4085,7 @@ abstract class CommonObject
 				else
 				{
 					$csstyle='';
+					$class=(!empty($extrafields->attribute_hidden[$key]) ? 'class="hideobject" ' : '');
 					if (is_array($params) && count($params)>0) {
 						if (array_key_exists('style',$params)) {
 							$csstyle=$params['style'];
@@ -4087,12 +4093,12 @@ abstract class CommonObject
 					}
 					if ( !empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && ($e % 2) == 0)
 					{
-						$out .= '<tr '.$csstyle.'>';
+						$out .= '<tr '.$class.$csstyle.'>';
 						$colspan='0';
 					}
 					else
 					{
-						$out .= '<tr '.$csstyle.'>';
+						$out .= '<tr '.$class.$csstyle.'>';
 					}
 					// Convert date into timestamp format
 					if (in_array($extrafields->attribute_type[$key],array('date','datetime')))
@@ -4104,7 +4110,8 @@ abstract class CommonObject
 						$label = '<span'.($mode != 'view' ? ' class="fieldrequired"':'').'>'.$label.'</span>';
 
 					$out .= '<td>'.$langs->trans($label).'</td>';
-					$out .='<td'.($colspan?' colspan="'.$colspan.'"':'').'>';
+					$html_id = !empty($this->id) ? $this->element.'_extras_'.$key.'_'.$this->id : '';
+					$out .='<td id="'.$html_id.'" class="'.$this->element.'_extras_'.$key.'" '.($colspan?' colspan="'.$colspan.'"':'').'>';
 
 					switch($mode) {
 					case "view":
@@ -4193,10 +4200,11 @@ abstract class CommonObject
 		return true;
 	}
 	
-	 /**
-	 * define buy price if not defined
+	/**
+	 * Get buy price to use for margin calculation. This function is called when buy price is unknown.
 	 *	set buy price = sell price if ForceBuyingPriceIfNull configured,
-	 *	 else if calculation MARGIN_TYPE = 'pmp' and pmp is calculated, set pmp as buyprice
+	 *   else if calculation MARGIN_TYPE = 'costprice' and costprice is defined, use costprice as buyprice
+	 *	 else if calculation MARGIN_TYPE = 'pmp' and pmp is calculated, use pmp as buyprice
 	 *	 else set min buy price as buy price
 	 *	 
 	 * @param float		$unitPrice		 product unit price
@@ -4211,16 +4219,16 @@ abstract class CommonObject
 	
 		$buyPrice = 0;
 		
-		if (($unitPrice > 0) && (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1))
+		if (($unitPrice > 0) && (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1)) // In most cases, test here is false
 		{
 			$buyPrice = $unitPrice * (1 - $discountPercent / 100);
 		}
 		else
 		{
-			// Get PMP
+			// Get cost price for margin calculation
 			if (! empty($fk_product))
 			{
-				if (isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == 'pmp')
+				if (isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == 'costprice')
 				{
 					require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 					$product = new Product($this->db);
@@ -4230,13 +4238,32 @@ abstract class CommonObject
 						$this->errors[] = 'ErrorProductIdDoesNotExists';
 						return -1;
 					}
-					if (($product->pmp > 0))
+					if ($product->cost_price > 0)
+					{
+						$buyPrice = $product->cost_price;
+					}
+					else if ($product->pmp > 0)
 					{
 						$buyPrice = $product->pmp;
 					}
-					// TODO add option to set PMP of product
 				}
-				else if (isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == '1')
+				else if (isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == 'pmp')
+				{
+					require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+					$product = new Product($this->db);
+					$result = $product->fetch($fk_product);
+					if ($result <= 0)
+					{
+						$this->errors[] = 'ErrorProductIdDoesNotExists';
+						return -1;
+					}
+					if ($product->pmp > 0)
+					{
+						$buyPrice = $product->pmp;
+					}
+				}
+				
+				if (empty($buyPrice) && isset($conf->global->MARGIN_TYPE) && in_array($conf->global->MARGIN_TYPE, array('1','pmp','costprice')))
 				{
 					require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 					$productFournisseur = new ProductFournisseur($this->db);

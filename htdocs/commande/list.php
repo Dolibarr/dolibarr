@@ -72,10 +72,28 @@ if ($page == -1) { $page = 0; }
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortfield) $sortfield='c.rowid';
+if (! $sortfield) $sortfield='c.ref';
 if (! $sortorder) $sortorder='DESC';
 
 $viewstatut=GETPOST('viewstatut');
+
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('orderlist'));
+
+// List of fields to search into when doing a "search in all"
+$fieldstosearchall = array(
+    'c.ref'=>'Ref',
+    'c.ref_client'=>'RefCustomerOrder',
+    'pd.description'=>'Description',
+    's.nom'=>"ThirdParty",
+    'c.note_public'=>'NotePublic',
+);
+if (empty($user->socid)) $fieldstosearchall["c.note_private"]="NotePrivate";
+
+
+/*
+ * Actions
+ */
 
 // Purge search criteria
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
@@ -95,24 +113,6 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
     $viewstatut='';
     $billed='';
 }
-
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('orderlist'));
-
-// List of fields to search into when doing a "search in all"
-$fieldstosearchall = array(
-    'c.ref'=>'Ref',
-    'c.ref_client'=>'RefCustomerOrder',
-    'pd.description'=>'Description',
-    's.nom'=>"ThirdParty",
-    'c.note_public'=>'NotePublic',
-);
-if (empty($user->socid)) $fieldstosearchall["c.note_private"]="NotePrivate";
-
-
-/*
- * Actions
- */
 
 $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hook
