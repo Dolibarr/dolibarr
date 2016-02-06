@@ -180,6 +180,7 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/fourn
 %_datadir/dolibarr/htdocs/ftp
 %_datadir/dolibarr/htdocs/holiday
+%_datadir/dolibarr/htdocs/hrm
 %_datadir/dolibarr/htdocs/imports
 %_datadir/dolibarr/htdocs/includes
 %_datadir/dolibarr/htdocs/install
@@ -197,6 +198,7 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/public
 %_datadir/dolibarr/htdocs/resource
 %_datadir/dolibarr/htdocs/societe
+%_datadir/dolibarr/htdocs/supplier_proposal
 %_datadir/dolibarr/htdocs/support
 %_datadir/dolibarr/htdocs/theme
 %_datadir/dolibarr/htdocs/user
