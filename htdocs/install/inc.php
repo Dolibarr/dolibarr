@@ -77,7 +77,7 @@ $conffiletoshow = "htdocs/conf/conf.php";
 //$conffiletoshow = "/etc/dolibarr/conf.php";
 
 
-if (! defined('DONOTLOADCONF') && file_exists($conffile))
+if (! defined('DONOTLOADCONF') && file_exists($conffile) && filesize($conffile) > 8)    // Test on filesize is to ensure that conf file is more that an empty template with just <?php in first line
 {
     $result=include_once $conffile;	// Load conf file
     if ($result)
