@@ -535,13 +535,13 @@ class FormProjets
 	 *    Build a HTML select list of element of same thirdparty to suggest to link them to project
 	 *
 	 *    @param   string      $htmlname           HTML name
-	 *    @param   int         $preselected        Preselected
+	 *    @param   string      $preselected        Preselected (int or 'all' or 'none')
 	 *    @param   int         $showempty          Add an empty line
 	 *    @param   int         $useshortlabel      Use short label
 	 *    @param   int         $showallnone        Add choice "All" and "None"
 	 *    @return  int|string                      The HTML select list of element or '' if nothing or -1 if KO
 	 */
-	function selectOpportunityStatus($htmlname, $preselected=0, $showempty=1, $useshortlabel=0, $showallnone=0)
+	function selectOpportunityStatus($htmlname, $preselected='-1', $showempty=1, $useshortlabel=0, $showallnone=0)
 	{
 		global $conf, $langs;
 
@@ -559,8 +559,9 @@ class FormProjets
 			{
 				$sellist = '<select class="flat oppstatus" name="'.$htmlname.'">';
 				if ($showempty) $sellist.= '<option value="-1"></option>';
-				if ($showallnone) $sellist.= '<option value="all">--'.$langs->trans("Alls").'--</option>';
-				if ($showallnone) $sellist.= '<option value="none">--'.$langs->trans("None").'--</option>';
+				if ($showallnone) $sellist.= '<option value="all"'.($preselected == 'all'?' selected="selected"':'').'>--'.$langs->trans("OnlyOpportunitiesShort").'--</option>';
+				if ($showallnone) $sellist.= '<option value="openedopp"'.($preselected == 'openedopp'?' selected="selected"':'').'>--'.$langs->trans("OpenedOpportunitiesShort").'--</option>';
+				if ($showallnone) $sellist.= '<option value="none"'.($preselected == 'none'?' selected="selected"':'').'>--'.$langs->trans("NotAnOpportunityShort").'--</option>';
 				while ($i < $num)
 				{
 					$obj = $this->db->fetch_object($resql);
