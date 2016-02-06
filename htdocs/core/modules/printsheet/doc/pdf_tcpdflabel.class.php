@@ -282,7 +282,14 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 		$this->Tformat = $_Avery_Labels[$this->code];
 		if (empty($this->Tformat)) { dol_print_error('','ErrorBadTypeForCard'.$this->code); exit; }
 		$this->type = 'pdf';
-		$this->format = $this->Tformat['paper-size'];
+        // standard format or custom
+        if ($this->Tformat['paper-size']!='custom') {
+            $this->format = $this->Tformat['paper-size'];
+        } else {
+            //custom
+            $resolution= array($this->Tformat['custom_x'], $this->Tformat['custom_y']);
+            $this->format = $resolution;
+        }
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
@@ -309,7 +316,7 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 			}
 		}
 
-		$pdf=pdf_getInstance($this->format,$this->Tformat['metric']);
+		$pdf=pdf_getInstance($this->format,$this->Tformat['metric'], $this->Tformat['orientation']);
 
 		if (class_exists('TCPDF'))
 		{
