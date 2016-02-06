@@ -117,9 +117,11 @@
 <!-- Required -->
 <tr><td><?php echo $langs->trans("Required"); ?></td><td class="valeur"><input id="required" type="checkbox" name="required" <?php echo (GETPOST('required')?' checked':''); ?>></td></tr>
 <!-- Always editable -->
-<tr><td><?php echo $langs->trans("AlwaysEditable"); ?></td><td class="valeur"><input id="alwayseditable" type="checkbox" name="alwayseditable" <?php echo (GETPOST('alwayseditable')?' checked':''); ?>></td></tr>
+<tr><td><?php echo $langs->trans("AlwaysEditable"); ?></td><td class="valeur"><input id="alwayseditable" type="checkbox" name="alwayseditable" <?php echo ((GETPOST('alwayseditable') || ! GETPOST('button'))?' checked':''); ?>></td></tr>
 <!-- Is visible or not -->
-<tr><td><?php echo $langs->trans("IsHidden"); ?></td><td class="valeur"><input id="ishidden" type="checkbox" name="ishidden" <?php echo (GETPOST('ishidden') ?' checked':''); ?>></td></tr>
+<?php if (! empty($conf->global->MAIN_CAN_HIDE_EXTRAFIELDS)) { ?>
+<tr><td><?php echo $langs->trans("Hidden"); ?></td><td class="valeur"><input id="ishidden" type="checkbox" name="ishidden" <?php echo (GETPOST('ishidden') ?' checked' : ''); ?>></td></tr>
+<?php } ?>
 <?php if ($conf->global->MAIN_FEATURES_LEVEL >= 2) { ?>
 <!-- By default visible into list -->
 <tr><td><?php echo $langs->trans("ByDefaultInList"); ?>

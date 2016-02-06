@@ -44,7 +44,7 @@ print '<td align="right">'.$langs->trans("Size").'</td>';
 print '<td align="center">'.$langs->trans("Unique").'</td>';
 print '<td align="center">'.$langs->trans("Required").'</td>';
 print '<td align="center">'.$langs->trans("AlwaysEditable").'</td>';
-print '<td align="center">'.$langs->trans("IsHidden").'</td>';
+if (! empty($conf->global->MAIN_CAN_HIDE_EXTRAFIELDS)) print '<td align="center">'.$langs->trans("Hidden").'</td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
 
@@ -61,11 +61,10 @@ foreach($extrafields->attribute_type as $key => $value)
     print '<td align="center">'.yn($extrafields->attribute_unique[$key])."</td>\n";
     print '<td align="center">'.yn($extrafields->attribute_required[$key])."</td>\n";
     print '<td align="center">'.yn($extrafields->attribute_alwayseditable[$key])."</td>\n";
-	print '<td align="center">'.yn($extrafields->attribute_hidden[$key])."</td>\n";
+	if (! empty($conf->global->MAIN_CAN_HIDE_EXTRAFIELDS)) print '<td align="center">'.yn($extrafields->attribute_hidden[$key])."</td>\n";	// Add hidden option on not working feature. Why hide if user can't see it.
     print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit&attrname='.$key.'">'.img_edit().'</a>';
     print "&nbsp; <a href=\"".$_SERVER["PHP_SELF"]."?action=delete&attrname=$key\">".img_delete()."</a></td>\n";
     print "</tr>";
-    //      $i++;
 }
 
 print "</table>";
