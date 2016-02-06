@@ -205,6 +205,17 @@ class Conf
 
 		    $db->free($resql);
 		}
+	        // Include local constants files and fetch their values to the corresponding database constants
+	        if(! empty($this->global->LOCAL_CONSTS_FILES)) {
+	            $filesList = explode(":", $this->global->LOCAL_CONSTS_FILES);
+	            foreach ($filesList as $file) {
+	                $file=dol_sanitizeFileName($file);
+	                include_once DOL_DOCUMENT_ROOT . "/$file/{$file}_consts.php";
+	                foreach ($file2bddconsts as $key=>$value) {
+	                    $conf->global->$key=constant($value);
+	                }
+	            }
+	        }
 		//var_dump($this->modules);
 		//var_dump($this->modules_parts['theme']);
 
@@ -331,6 +342,19 @@ class Conf
 			$this->fournisseur->facture=new stdClass();
 			$this->fournisseur->facture->dir_output =$rootfordata."/fournisseur/facture";
 			$this->fournisseur->facture->dir_temp   =$rootfordata."/fournisseur/facture/temp";
+			
+			// To prepare split of module fournisseur into fournisseur + supplier_order + supplier_invoice
+			if (! empty($this->fournisseur->enabled) && empty($this->global->MAIN_USE_NEW_SUPPLIERMOD))  // By default, if module supplier is on, we set new properties
+			{
+    			$this->supplier_order=new stdClass();
+    			$this->supplier_order->enabled=1;
+    			$this->supplier_order->dir_output=$rootfordata."/fournisseur/commande";
+    			$this->supplier_order->dir_temp=$rootfordata."/fournisseur/commande/temp";
+    			$this->supplier_invoice=new stdClass();
+    			$this->supplier_invoice->enabled=1;
+    			$this->supplier_order->dir_output=$rootfordata."/fournisseur/facture";
+    			$this->supplier_order->dir_temp=$rootfordata."/fournisseur/facture/temp";
+			}
 		}
 
 		// Module product/service
@@ -476,7 +500,14 @@ class Conf
 		    $this->adherent->cotisation			= new stdClass();
             $this->adherent->cotisation->warning_delay=(isset($this->global->MAIN_DELAY_MEMBERS)?$this->global->MAIN_DELAY_MEMBERS:0)*24*60*60;
 		}
-        if (isset($this->agenda)) $this->agenda->warning_delay=(isset($this->global->MAIN_DELAY_ACTIONS_TODO)?$this->global->MAIN_DELAY_ACTIONS_TODO:7)*24*60*60;
+		if (isset($this->agenda)) $this->agenda->warning_delay=(isset($this->global->MAIN_DELAY_ACTIONS_TODO)?$this->global->MAIN_DELAY_ACTIONS_TODO:7)*24*60*60;
+		if (isset($this->projet)) 
+		{
+		    $this->projet->warning_delay=(isset($this->global->MAIN_DELAY_PROJECT_TO_CLOSE)?$this->global->MAIN_DELAY_PROJECT_TO_CLOSE:7)*24*60*60;
+		    $this->projet->task                 = new StdClass();
+		    $this->projet->task->warning_delay=(isset($this->global->MAIN_DELAY_TASKS_TODO)?$this->global->MAIN_DELAY_ACTIONS_TODO:7)*24*60*60;
+		}
+		
         if (isset($this->commande)) {
             $this->commande->client				= new stdClass();
     		$this->commande->fournisseur		= new stdClass();

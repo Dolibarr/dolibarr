@@ -193,13 +193,15 @@ else
 }
 print "</table>";
 
-
-print '<br>';
-
-
-print_projecttasks_array($db,$form,$socid,$projectsListId,0,1,$listofoppstatus);
-
-
+if (! empty($conf->global->PROJECT_SHOW_PROJECT_LIST_ON_PROJECT_AREA))
+{
+    // This list can be very long, so we don't show it by default on task area. We prefer to use the list page.
+    // Add constant PROJECT_SHOW_PROJECT_LIST_ON_PROJECT_AREA to show this list
+    
+    print '<br>';
+    
+    print_projecttasks_array($db, $form, $socid, $projectsListId, 0, 1, $listofoppstatus, array());
+}
 
 print '</div></div></div>';
 

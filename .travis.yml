@@ -197,6 +197,7 @@ before_script:
   echo "Create documents directory and set permissions"
   # and admin/temp subdirectory needed for unit tests
   mkdir -p documents/admin/temp
+  echo "first line" > documents/dolibarr.log
   echo
 
 - |
@@ -279,35 +280,51 @@ script:
   php upgrade.php 3.8.0 3.9.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade380390.log
   php upgrade2.php 3.8.0 3.9.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade380390-2.log
   php step5.php 3.8.0 3.9.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade380390-3.log
+  php upgrade.php 3.9.0 4.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade390400.log
+  php upgrade2.php 3.9.0 4.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade390400-2.log
+  php step5.php 3.9.0 4.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade390400-3.log
   cd -
   set +e
   echo
 
 - |
   echo "Unit testing"
-  # Ensure we catch errors
+  # Ensure we catch errors. Set this to +e if you want to go to this end to see log file.
   set -e
   phpunit -d memory_limit=-1 -c test/phpunit/phpunittest.xml test/phpunit/AllTests.php
   set +e
-  echo
+
+- |
+  #echo "Output dolibarr.log"
+  #echo cat documents/dolibarr.log
+
+after_script:
+- |
+  # Dolibarr log file
+  #echo "After script"
+  #cat documents/dolibarr.log
+
 
 after_success:
+- |
+  echo Success
 
 after_failure:
 - |
+  echo Failure
+  # This part of code seems to be never executed, error or not ???
+  echo "Debugging informations"
+  # Upgrade log files
+  cat *.log
+  echo "Debugging informations"
+  # Apache log file
+  sudo cat /var/log/apache2/error.log
+  # Dolibarr log file
+  cat documents/dolibarr.log
   if [ "$DEBUG" = true ]; then
-    echo "Debugging informations"
-    # Upgrade log files
-    cat *.log
-    # Dolibarr log file
-    cat documents/dolibarr.log
-    # Apache log file
-    sudo cat /var/log/apache2/error.log
     # MariaDB log file
     sudo cat /var/log/mysql/error.log
     # TODO: PostgreSQL log file
     echo
   fi
-
-after_script:
 

@@ -56,7 +56,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, 
 
 $form = new Form($db);
 
-llxHeader('',$langs->trans("LoanArea").' - '.$langs->trans("Notes"),'');
+llxHeader('',$langs->trans("LoanArea"),'');
 
 if ($id > 0)
 {

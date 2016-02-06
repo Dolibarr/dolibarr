@@ -126,7 +126,7 @@ if (isset($_REQUEST['extra_report']) && $_REQUEST['extra_report'] == 1) {
 	$special_report = true;
 }
 
-llxHeader('','','','',0,0,'','',$morequerystring);
+llxHeader('',$langs->trans("VATReport"),'','',0,0,'','',$morequerystring);
 
 $fsearch.='<br>';
 $fsearch.='  <input type="hidden" name="year" value="'.$year.'">';

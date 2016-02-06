@@ -583,3 +583,4 @@ ALTER TABLE llx_accounting_bookkeeping MODIFY COLUMN doc_ref varchar(300) NOT NU
 
 ALTER TABLE llx_holiday ADD COLUMN tms timestamp;
 ALTER TABLE llx_holiday ADD COLUMN entity integer DEFAULT 1 NOT NULL;
+

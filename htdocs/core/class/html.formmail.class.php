@@ -630,7 +630,8 @@ class FormMail extends Form
 	        		}
 	        		if ($this->withfile == 2)	// Can add other files
 	        		{
-	        			$out.= '<input type="file" class="flat" id="addedfile" name="addedfile" value="'.$langs->trans("Upload").'" />';
+	        			if (!empty($conf->global->FROM_MAIL_USE_INPUT_FILE_MULTIPLE)) $out.= '<input type="file" class="flat" id="addedfile" name="addedfile[]" value="'.$langs->trans("Upload").'" multiple />';
+						else $out.= '<input type="file" class="flat" id="addedfile" name="addedfile" value="'.$langs->trans("Upload").'" />';
 	        			$out.= ' ';
 	        			$out.= '<input type="submit" class="button" id="'.$addfileaction.'" name="'.$addfileaction.'" value="'.$langs->trans("MailingAddFile").'" />';
 	        		}

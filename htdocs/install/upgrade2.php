@@ -395,6 +395,21 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
         	// Reload menus (this must be always and only into last targeted version)
         	migrate_reload_menu($db,$langs,$conf,$versionto);
         }
+        
+        // Scripts for last version
+        $afterversionarray=explode('.','3.9.9');
+        $beforeversionarray=explode('.','4.0.9');
+        if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
+        {
+        	// Reload modules (this must be always and only into last targeted version)
+        	$listofmodule=array(
+        			'MAIN_MODULE_FACTURE'=>'newboxdefonly',
+        	);
+        	migrate_reload_modules($db,$langs,$conf,$listofmodule);
+        
+        	// Reload menus (this must be always and only into last targeted version)
+        	migrate_reload_menu($db,$langs,$conf,$versionto);
+        }
 
         print '<tr><td colspan="4"><br>'.$langs->trans("MigrationFinished").'</td></tr>';
 

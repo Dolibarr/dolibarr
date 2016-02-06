@@ -74,6 +74,7 @@ if (empty($search_date_start)) {
 	$search_date_start = dol_mktime(0, 0, 0, 1, 1, dol_print_date(dol_now(), '%Y'));
 	$search_date_end = dol_mktime(0, 0, 0, 12, 31, dol_print_date(dol_now(), '%Y'));
 }
+
 if ($sortorder == "")
 	$sortorder = "ASC";
 if ($sortfield == "")

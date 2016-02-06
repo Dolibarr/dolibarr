@@ -4134,7 +4134,7 @@ class Form
      *            	- local date in user area, if set_time is '' (so if set_time is '', output may differs when done from two different location)
      *            	- Empty (fields empty), if set_time is -1 (in this case, parameter empty must also have value 1)
      *
-     *	@param	timestamp	$set_time 		Pre-selected date (must be a local PHP server timestamp), -1 to keep date not preselected, '' to use current date.
+     *	@param	timestamp	$set_time 		Pre-selected date (must be a local PHP server timestamp), -1 to keep date not preselected, '' to use current date (emptydate must be 0).
      *	@param	string		$prefix			Prefix for fields name
      *	@param	int			$h				1=Show also hours
      *	@param	int			$m				1=Show also minutes
@@ -4509,20 +4509,21 @@ class Form
      *	@param	string			$htmlname       Name of html select area. Must start with "multi" if this is a multiselect
      *	@param	array			$array          Array with key+value
      *	@param	string|string[]	$id             Preselected key or preselected keys for multiselect
-     *	@param	int				$show_empty     0 no empty value allowed, 1 to add an empty value into list (value is '' or '&nbsp;'), <0 to add an empty value with key that is this value.
+     *	@param	int				$show_empty     0 no empty value allowed, 1 or string to add an empty value into list (value is '' or '&nbsp;' if 1), <0 to add an empty value with key that is this value.
      *	@param	int				$key_in_label   1 pour afficher la key dans la valeur "[key] value"
      *	@param	int				$value_as_key   1 to use value as key
      *	@param  string			$moreparam      Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
      *	@param  int				$translate		Translate and encode value
      * 	@param	int				$maxlen			Length maximum for labels
      * 	@param	int				$disabled		Html select box is disabled
-     *  @param	int				$sort			'ASC' or 'DESC' = Sort on label, '' or 'NONE' = Do not sort
+     *  @param	string			$sort			'ASC' or 'DESC' = Sort on label, '' or 'NONE' = Do not sort
      *  @param	string			$morecss		Add more class to css styles
      *  @param	int				$addjscombo		Add js combo
+     *  @param  string          $moreparamonempty   Add more param on the empty option line. Not used if show_empty not set.
      * 	@return	string							HTML select string.
      *  @see multiselectarray
      */
-    static function selectarray($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $moreparam='', $translate=0, $maxlen=0, $disabled=0, $sort='', $morecss='', $addjscombo=0)
+    static function selectarray($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $moreparam='', $translate=0, $maxlen=0, $disabled=0, $sort='', $morecss='', $addjscombo=0, $moreparamonempty='')
     {
         global $conf, $langs;
 
@@ -4558,7 +4559,8 @@ class Form
         {
         	$textforempty=' ';
         	if (! empty($conf->use_javascript_ajax)) $textforempty='&nbsp;';	// If we use ajaxcombo, we need &nbsp; here to avoid to have an empty element that is too small.
-            $out.='<option value="'.($show_empty < 0 ? $show_empty : -1).'"'.($id==-2?' selected':'').'>'.$textforempty.'</option>'."\n";     // id is -2 because -1 is already "do not contact"
+            if (! is_numeric($show_empty)) $textforempty=$show_empty;
+        	$out.='<option class="optiongrey" '.($moreparamonempty?$moreparamonempty.' ':'').'value="'.($show_empty < 0 ? $show_empty : -1).'"'.($id == $show_empty ?' selected':'').'>'.$textforempty.'</option>'."\n";
         }
 
         if (is_array($array))
@@ -4965,13 +4967,13 @@ class Form
         	{
         		$tplpath = $element = $subelement = $objecttype;
 
-        		if (preg_match('/^([^_]+)_([^_]+)/i',$objecttype,$regs))
+        		if ($objecttype != 'supplier_proposal' && preg_match('/^([^_]+)_([^_]+)/i',$objecttype,$regs))
         		{
         			$element = $regs[1];
         			$subelement = $regs[2];
         			$tplpath = $element.'/'.$subelement;
         		}
-
+        		   		
         		// To work with non standard path
         		if ($objecttype == 'facture')          {
         			$tplpath = 'compta/'.$element;
@@ -4982,7 +4984,6 @@ class Form
         			if (empty($conf->propal->enabled)) continue;	// Do not show if module disabled
         		}
         		else if ($objecttype == 'supplier_proposal')           {
-        			$tplpath = 'comm/'.$element;
         			if (empty($conf->supplier_proposal->enabled)) continue;	// Do not show if module disabled
         		}
         		else if ($objecttype == 'shipping' || $objecttype == 'shipment') {
@@ -4999,7 +5000,7 @@ class Form
         		else if ($objecttype == 'order_supplier')   {
         			$tplpath = 'fourn/commande';
         		}
-
+        		
         		global $linkedObjectBlock;
         		$linkedObjectBlock = $objects;
 
@@ -5099,7 +5100,68 @@ class Form
 			print '</div>';
 		}
 
-		if (((! is_array($restrictlinksto)) || in_array('supplier_order',$restrictlinksto))
+		if ((in_array('fichinter',$restrictlinksto)) && ! empty($conf->ficheinter->enabled))
+		{
+			$linktoelem.=($linktoelem?' &nbsp; ':'').'<a href="#" id="linktoorder">' . $langs->trans('LinkedFichinter') . '</a>';
+
+			print '
+				<script type="text/javascript" language="javascript">
+				jQuery(document).ready(function() {
+					jQuery("#linktoorder").click(function() {
+						jQuery("#orderlist").toggle();
+						jQuery("#linktoorder").toggle();
+					});
+				});
+				</script>
+				';
+
+			print '<div id="orderlist"'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)?' style="display:none"':'').'>';
+
+			$sql = "SELECT s.rowid as socid, s.nom as name, s.client, f.rowid, f.ref";
+			$sql .= " FROM " . MAIN_DB_PREFIX . "societe as s";
+			$sql .= ", " . MAIN_DB_PREFIX . "fichinter as f";
+			$sql .= ' WHERE f.fk_soc = s.rowid';
+
+			$resqlorderlist = $this->db->query($sql);
+			if ($resqlorderlist)
+			{
+				$num = $this->db->num_rows($resqlorderlist);
+				$i = 0;
+
+				print '<br><form action="" method="POST" name="LinkedFichinter">';
+				print '<table class="noborder">';
+				print '<tr class="liste_titre">';
+				print '<td class="nowrap"></td>';
+				print '<td align="center">' . $langs->trans("Ref") . '</td>';
+				print '<td align="left">' . $langs->trans("Company") . '</td>';
+				print '</tr>';
+				while ($i < $num)
+				{
+					$objp = $this->db->fetch_object($resqlorderlist);
+
+					$var = ! $var;
+					print '<tr ' . $bc [$var] . '>';
+					print '<td aling="left">';
+					print '<input type="radio" name="LinkedFichinter" value=' . $objp->rowid . '>';
+					print '<td align="center">' . $objp->ref . '</td>';
+					print '<td>' . $objp->name . '</td>';
+					print '</td>';
+					print '</tr>';
+
+					$i ++;
+				}
+				print '</table>';
+				print '<div class="center"><input type="submit" class="button" value="' . $langs->trans('ToLink') . '">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" class="button" name="cancel" value="' . $langs->trans('Cancel') . '"></div>';
+				print '</form>';
+				$this->db->free($resqlorderlist);
+			} else {
+				dol_print_error($this->db);
+			}
+
+			print '</div>';
+		}
+
+        if (((! is_array($restrictlinksto)) || in_array('supplier_order',$restrictlinksto))
 			&& ! empty($conf->fournisseur->enabled))
 		{
 			$linktoelem.=($linktoelem?' &nbsp; ':'').'<a href="#linktoorder" id="linktoorder">' . $langs->trans('LinkedOrder') . '</a>';

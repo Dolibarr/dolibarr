@@ -1,7 +1,7 @@
 <?php 
 if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 {
-	$sql = "SELECT COUNT(p.rowid) as nb, SUM(p.opp_amount) as opp_amount, p.fk_opp_status as opp_status";
+	$sql = "SELECT COUNT(p.rowid) as nb, SUM(p.opp_amount) as opp_amount, SUM(p.opp_amount * p.opp_percent) as ponderated_opp_amount, p.fk_opp_status as opp_status";
 	$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 	$sql.= " WHERE p.entity = ".$conf->entity;
 	$sql.= " AND p.fk_statut = 1";
@@ -9,6 +9,7 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	if ($socid)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
 	$sql.= " GROUP BY p.fk_opp_status";
 	$resql = $db->query($sql);
+
 	if ($resql)
 	{
 	    $num = $db->num_rows($resql);
@@ -32,7 +33,7 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	                $valsamount[$obj->opp_status]=$obj->opp_amount;
 	                $totalnb+=$obj->nb;
 	                $totalamount+=$obj->opp_amount;
-	                $ponderated_opp_amount = $ponderated_opp_amount + price2num($listofoppstatus[$obj->opp_status] * $obj->opp_amount / 100);
+	                $ponderated_opp_amount+=$obj->ponderated_opp_amount;
 	            }
 	            $total+=$row[0];
 	        }
@@ -40,6 +41,8 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	    }
 	    $db->free($resql);
 
+	    $ponderated_opp_amount = $ponderated_opp_amount / 100;
+	    
 	    print '<table class="noborder nohover" width="100%">';
 	    print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("OpportunitiesStatusForOpenedProjects").'</td></tr>'."\n";
 	    $var=true;
@@ -53,7 +56,7 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	        if (empty($labelstatus)) $labelstatus=$listofopplabel[$status];
 
 	        //$labelstatus .= ' ('.$langs->trans("Coeff").': '.price2num($listofoppstatus[$status]).')';
-	        $labelstatus .= ' - '.price2num($listofoppstatus[$status]).'%';
+	        //$labelstatus .= ' - '.price2num($listofoppstatus[$status]).'%';
 
 	        $dataseries[]=array('label'=>$labelstatus,'data'=>(isset($valsamount[$status])?(float) $valsamount[$status]:0));
 	        if (! $conf->use_javascript_ajax)
@@ -75,7 +78,7 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	    //if ($totalinprocess != $total)
 	    //print '<tr class="liste_total"><td>'.$langs->trans("Total").' ('.$langs->trans("CustomersOrdersRunning").')</td><td align="right">'.$totalinprocess.'</td></tr>';
 	    print '<tr class="liste_total"><td>'.$langs->trans("OpportunityTotalAmount").'</td><td align="right">'.price($totalamount, 0, '', 1, -1, -1, $conf->currency).'</td></tr>';
-	    print '<tr class="liste_total"><td>'.$langs->trans("OpportunityPonderatedAmount").'</td><td align="right">'.price($ponderated_opp_amount, 0, '', 1, -1, -1, $conf->currency).'</td></tr>';
+	    print '<tr class="liste_total"><td>'.$langs->trans("OpportunityPonderatedAmount").'</td><td align="right">'.price(price2num($ponderated_opp_amount,'MT'), 0, '', 1, -1, -1, $conf->currency).'</td></tr>';
 	    print "</table><br>";
 	}
 	else

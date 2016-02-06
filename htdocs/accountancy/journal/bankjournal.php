@@ -518,7 +518,8 @@ if ($action == 'export_csv') {
 			}
 		}
 	}
-} else {
+}
+else {
 	$form = new Form($db);
 	
 	llxHeader('', $langs->trans("FinanceJournal"));

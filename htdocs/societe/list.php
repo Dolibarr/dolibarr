@@ -54,6 +54,7 @@ $search_account_customer_code=trim(GETPOST('search_account_customer_code'));
 $search_account_supplier_code=trim(GETPOST('search_account_supplier_code'));
 $search_town=trim(GETPOST("search_town"));
 $search_zip=trim(GETPOST("search_zip"));
+$search_state=trim(GETPOST("search_state"));
 $search_idprof1=trim(GETPOST('search_idprof1'));
 $search_idprof2=trim(GETPOST('search_idprof2'));
 $search_idprof3=trim(GETPOST('search_idprof3'));
@@ -148,7 +149,8 @@ $arrayfields=array(
     's.code_compta_fournisseur'=>array('label'=>$langs->trans("SupplierAccountancyCodeShort"), 'checked'=>$checkedsupplieraccountcode, 'enabled'=>(! empty($conf->fournisseur->enabled))),
     's.town'=>array('label'=>$langs->trans("Town"), 'checked'=>1),
     's.zip'=>array('label'=>$langs->trans("Zip"), 'checked'=>1),
-    'country.code_iso'=>array('label'=>$langs->trans("Country"), 'checked'=>0),
+    'state.state_name'=>array('label'=>$langs->trans("State"), 'checked'=>0),
+	'country.code_iso'=>array('label'=>$langs->trans("Country"), 'checked'=>0),
     'typent.code'=>array('label'=>$langs->trans("ThirdPartyType"), 'checked'=>$checkedtypetiers),
     's.siren'=>array('label'=>$langs->trans("ProfId1Short"), 'checked'=>$checkedprofid1),
     's.siret'=>array('label'=>$langs->trans("ProfId2Short"), 'checked'=>$checkedprofid2),
@@ -209,6 +211,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
     $search_account_supplier_code='';
 	$search_town="";
 	$search_zip="";
+	$search_state="";
 	$search_idprof1='';
 	$search_idprof2='';
 	$search_idprof3='';
@@ -340,7 +343,8 @@ $sql = "SELECT s.rowid, s.nom as name, s.name_alias, s.barcode, s.town, s.zip, s
 $sql.= " st.libelle as stcomm, s.fk_stcomm as stcomm_id, s.fk_prospectlevel, s.prefix_comm, s.client, s.fournisseur, s.canvas, s.status as status,";
 $sql.= " s.siren as idprof1, s.siret as idprof2, ape as idprof3, idprof4 as idprof4, s.fk_pays,";
 $sql.= " s.tms as date_update, s.datec as date_creation,";
-$sql.= " typent.code as typent_code";
+$sql.= " typent.code as typent_code,";
+$sql.= " state.code_departement as state_code, state.nom as state_name";
 // We'll need these fields in order to filter by sale (including the case where the user can only see his prospects)
 if ($search_sale) $sql .= ", sc.fk_soc, sc.fk_user";
 // We'll need these fields in order to filter by categ
@@ -353,8 +357,9 @@ $reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // N
 $sql.=$hookmanager->resPrint;
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_extrafields as ef on (s.rowid = ef.fk_object)";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays) ";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent) ";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays)";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent)";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
 $sql.= " ,".MAIN_DB_PREFIX."c_stcomm as st";
 // We'll need this table joined to the select in order to filter by sale
 if ($search_sale || (!$user->rights->societe->client->voir && !$socid)) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -378,6 +383,7 @@ if ($search_account_customer_code) $sql.= natural_search("s.code_compta",$search
 if ($search_account_supplier_code) $sql.= natural_search("s.code_compta_fournisseur",$search_account_supplier_code);
 if ($search_town)     $sql.= natural_search("s.town",$search_town);
 if ($search_zip)      $sql.= natural_search("s.zip",$search_zip);
+if ($search_state)    $sql.= natural_search("state.nom",$search_state);
 if ($search_idprof1)  $sql.= natural_search("s.siren",$search_idprof1);
 if ($search_idprof2)  $sql.= natural_search("s.siret",$search_idprof2);
 if ($search_idprof3)  $sql.= natural_search("s.ape",$search_idprof3);
@@ -435,6 +441,7 @@ if ($resql)
 	if ($search_nom != '') $param.= "&amp;search_nom=".urlencode($search_nom);
 	if ($search_town != '') $param.= "&amp;search_town=".urlencode($search_town);
 	if ($search_zip != '') $param.= "&amp;search_zip=".urlencode($search_zip);
+	if ($search_state != '') $param.= "&amp;search_state=".urlencode($search_state);
 	if ($search_country != '') $param.= "&amp;search_country=".urlencode($search_country);
 	if ($search_customer_code != '') $param.= "&amp;search_customer_code=".urlencode($search_customer_code);
 	if ($search_supplier_code != '') $param.= "&amp;search_supplier_code=".urlencode($search_supplier_code);
@@ -553,6 +560,7 @@ if ($resql)
 	if (! empty($arrayfields['s.code_compta_fournisseur']['checked'])) print_liste_field_titre($arrayfields['s.code_compta_fournisseur']['label'],$_SERVER["PHP_SELF"],"s.code_compta_fournisseur","",$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['s.town']['checked']))           print_liste_field_titre($langs->trans("Town"),$_SERVER["PHP_SELF"],"s.town","",$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['s.zip']['checked']))            print_liste_field_titre($langs->trans("Zip"),$_SERVER["PHP_SELF"],"s.zip","",$param,'',$sortfield,$sortorder);
+	if (! empty($arrayfields['state.state_name']['checked'])) print_liste_field_titre($langs->trans("StateShort"),$_SERVER["PHP_SELF"],"state.state_name","",$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['country.code_iso']['checked'])) print_liste_field_titre($langs->trans("Country"),$_SERVER["PHP_SELF"],"country.code_iso","",$param,'align="center"',$sortfield,$sortorder);
 	if (! empty($arrayfields['typent.code']['checked']))      print_liste_field_titre($langs->trans("ThirdPartyType"),$_SERVER["PHP_SELF"],"typent.code","",$param,'align="center"',$sortfield,$sortorder);
 	if (! empty($arrayfields['s.siren']['checked']))          print_liste_field_titre($form->textwithpicto($langs->trans("ProfId1Short"),$textprofid[1],1,0),$_SERVER["PHP_SELF"],"s.siren","",$param,'class="nowrap"',$sortfield,$sortorder);
@@ -642,6 +650,13 @@ if ($resql)
     {
         print '<td class="liste_titre">';
     	print '<input class="flat" size="4" type="text" name="search_zip" value="'.dol_escape_htmltag($search_zip).'">';
+    	print '</td>';
+    }
+	// State
+    if (! empty($arrayfields['state.state_name']['checked']))
+    {
+        print '<td class="liste_titre">';
+    	print '<input class="flat" size="4" type="text" name="search_state" value="'.dol_escape_htmltag($search_state).'">';
     	print '</td>';
     }
     // Country
@@ -856,7 +871,12 @@ if ($resql)
         {
             print "<td>".$obj->zip."</td>\n";
         }        
-		// Country
+	    // State
+	    if (! empty($arrayfields['state.state_name']['checked']))
+        {
+            print "<td>".$obj->state_name."</td>\n";
+        }        
+        // Country
         if (! empty($arrayfields['country.code_iso']['checked']))
         {
             print '<td align="center">';

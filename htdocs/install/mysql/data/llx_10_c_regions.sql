@@ -285,3 +285,8 @@ INSERT INTO  llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) v
 INSERT INTO  llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values ( 52, 5207, '', 0, 'Santa Cruz', 1);
 INSERT INTO  llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values ( 52, 5208, '', 0, 'El Beni', 1);
 INSERT INTO  llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values ( 52, 5209, '', 0, 'Pando', 1);
+
+-- Regions (districts) Luxembourg (id country=140)
+INSERT INTO  llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values ( 140, 14001, '', 0, 'Diekirch', 1);
+INSERT INTO  llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values ( 140, 14002, '', 0, 'Grevenmacher', 1);
+INSERT INTO  llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values ( 140, 14003, '', 0, 'Luxembourg', 1);

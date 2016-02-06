@@ -39,7 +39,13 @@ $modules=array(
 						'img' => 'action'
 				)
 		),
-		'propal' => array(
+		'projet' => array(
+				array(
+						'code' => 'MAIN_DELAY_TASKS_TODO',
+						'img' => 'task'
+				)
+		),
+        'propal' => array(
 				array(
 						'code' => 'MAIN_DELAY_PROPALS_TO_CLOSE',
 						'img' => 'propal'

@@ -33,7 +33,8 @@
  */
 function facturefourn_prepare_head($object)
 {
-	global $langs, $conf;
+	global $db, $langs, $conf;
+	
 	$h = 0;
 	$head = array();
 
@@ -69,11 +70,13 @@ function facturefourn_prepare_head($object)
     }
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+    require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 	$upload_dir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id,2,0,0,$object,'invoice_supplier').$object->ref;
 	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
+    $nbLinks=Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/fourn/facture/document.php?facid='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
-	if($nbFiles > 0) $head[$h][1].= ' <span class="badge">'.$nbFiles.'</span>';
+	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
 	$head[$h][2] = 'documents';
 	$h++;
 
@@ -96,7 +99,7 @@ function facturefourn_prepare_head($object)
  */
 function ordersupplier_prepare_head($object)
 {
-	global $langs, $conf;
+	global $db, $langs, $conf;
 	$h = 0;
 	$head = array();
 
@@ -141,11 +144,13 @@ function ordersupplier_prepare_head($object)
     }
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+    require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 	$upload_dir = $conf->fournisseur->dir_output . "/commande/" . dol_sanitizeFileName($object->ref);
 	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
+    $nbLinks=Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
-	if($nbFiles > 0) $head[$h][1].= ' <span class="badge">'.$nbFiles.'</span>';
+	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
 	$head[$h][2] = 'documents';
 	$h++;
 
@@ -177,6 +182,11 @@ function supplierorder_admin_prepare_head()
 	$head[$h][0] = DOL_URL_ROOT."/admin/supplier_invoice.php";
 	$head[$h][1] = $langs->trans("SuppliersInvoice");
 	$head[$h][2] = 'invoice';
+	$h++;
+	
+	$head[$h][0] = DOL_URL_ROOT."/admin/supplier_payment.php";
+	$head[$h][1] = $langs->trans("SuppliersPayment");
+	$head[$h][2] = 'supplierpayment';
 	$h++;
 
 	complete_head_from_modules($conf,$langs,null,$head,$h,'supplierorder_admin');

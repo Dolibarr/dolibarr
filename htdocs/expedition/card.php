@@ -7,7 +7,7 @@
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2013       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2014		Cedric GROSS			<c.gross@kreiz-it.fr>
- * Copyright (C) 2014		Francis Appels			<francis.appels@yahoo.com>
+ * Copyright (C) 2014-2015	Francis Appels			<francis.appels@yahoo.com>
  * Copyright (C) 2015		Claudio Aschieri		<c.aschieri@19.coop>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -101,20 +101,6 @@ $permissiondellink=$user->rights->expedition->livraison->creer;	// Used by the i
  * Actions
  */
 
-$warehousecanbeselectedlater=1;
-if (($action == 'create') || ($action == 'add'))
-{
-	if (! empty($conf->productbatch->enabled))
-	{
-		if (! (GETPOST('entrepot_id','int') > 0))
-		{
-			$langs->load("errors");
-			setEventMessages($langs->trans("WarehouseMustBeSelectedAtFirstStepWhenProductBatchModuleOn"), null, 'errors');
-			header("Location: ".DOL_URL_ROOT.'/expedition/shipment.php?id='.$origin_id);
-			exit;
-		}
-	}
-}
 
 // Set incoterm
 if ($action == 'set_incoterms' && !empty($conf->incoterm->enabled))
@@ -196,8 +182,9 @@ if (empty($reshook))
 		$object->location_incoterms 	= GETPOST('location_incoterms', 'alpha');
 
 	    $batch_line = array();
-	    $array_options=array();
-	    
+		$stockLine = array();
+		$array_options=array();
+
 	    $num=count($objectsrc->lines);
 	    $totalqty=0;
 
@@ -210,6 +197,7 @@ if (empty($reshook))
 
 			$j=0;
 			$batch="batchl".$i."_0";
+			$stockLocation="ent1".$i."_0";
 	    	$qty = "qtyl".$i;
 
 			if (isset($_POST[$batch]))
@@ -235,6 +223,22 @@ if (empty($reshook))
 				$batch_line[$i]['ix_l']=GETPOST($idl,'int');
 
 				$totalqty+=$subtotalqty;
+			}
+			else if (isset($_POST[$stockLocation]))
+			{
+			    //shipment line from multiple stock locations
+			    $qty .= '_'.$j;
+			    while (isset($_POST[$stockLocation]))
+			    {
+			        // save sub line of warehouse
+			        $stockLine[$i][$j]['qty']=GETPOST($qty,'int');
+			        $stockLine[$i][$j]['warehouse_id']=GETPOST($stockLocation,'int');
+			        $stockLine[$i][$j]['ix_l']=GETPOST($idl,'int');
+			        
+			        $j++;
+			        $stockLocation="ent1".$i."_".$j;
+			        $qty = "qtyl".$i.'_'.$j;
+			    }			    
 			}
 			else
 			{
@@ -266,6 +270,22 @@ if (empty($reshook))
 				if (! isset($batch_line[$i]))
 				{	
 					// not batch mode
+					if (isset($stockLine[$i]))
+					{
+    					//shipment from multiple stock locations
+    					for($j = 0; $j < count($stockLine[$i]); $j++)
+    					{
+    					    if ($stockLine[$i][$j]['qty']>0)
+    					    {
+    					        $ret=$object->addline($stockLine[$i][$j]['warehouse_id'], $stockLine[$i][$j]['ix_l'], $stockLine[$i][$j]['qty']);
+    					        if ($ret < 0)
+    					        {
+    					            setEventMessages($object->error, $object->errors, 'errors');
+    					            $error++;
+    					        }
+    					    }
+    					}
+					}
 					if (GETPOST($qty,'int') > 0 || (GETPOST($qty,'int') == 0 && $conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS))
 					{
 						$ent = "entl".$i;
@@ -834,129 +854,262 @@ if ($action == 'create')
                 print '</td>';
 
                 $quantityAsked = $line->qty;
-                $quantityToBeDelivered = $quantityAsked - $quantityDelivered;
-
-                $warehouse_id = GETPOST('entrepot_id','int');
-
-                $defaultqty=0;
-                if ($warehouse_id > 0)
-                {
-                    //var_dump($product);
-                    $stock = $product->stock_warehouse[$warehouse_id]->real;
-                    $stock+=0;  // Convertit en numerique
-                    $defaultqty=min($quantityToBeDelivered, $stock);
-                    if (($line->product_type == 1 && empty($conf->global->STOCK_SUPPORTS_SERVICES)) || $defaultqty < 0) $defaultqty=0;
-                }
-
-                if (empty($conf->productbatch->enabled) || ! ($product->hasbatch() && is_object($product->stock_warehouse[$warehouse_id])))
+				if ($line->product_type == 1 && empty($conf->global->STOCK_SUPPORTS_SERVICES))
 				{
-	                // Quantity to send
-	                print '<td align="center">';
-	                if ($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
-	                {
-	                    print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
-	                    print '<input name="qtyl'.$indiceAsked.'" id="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$defaultqty.'">';
-	                }
-	                else print $langs->trans("NA");
-	                print '</td>';
-
-	                // Stock
-	                if (! empty($conf->stock->enabled))
-	                {
-	                    print '<td align="left">';
-	                    if ($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))   // Type of product need stock change ?
-	                    {
-                            // Show warehouse combo list
-  	                    	$ent = "entl".$indiceAsked;
-   	                    	$idl = "idl".$indiceAsked;
-   	                    	$tmpentrepot_id = is_numeric(GETPOST($ent,'int'))?GETPOST($ent,'int'):$warehouse_id;
-   	                    	if ($line->fk_product > 0)
-   	                    	{
-    	                        print $formproduct->selectWarehouses($tmpentrepot_id,'entl'.$indiceAsked,'',1,0,$line->fk_product);
-    	                    	if ($tmpentrepot_id > 0 && $tmpentrepot_id == $warehouse_id)
-    	                        {
-    	                            //print $stock.' '.$quantityToBeDelivered;
-    	                            if ($stock < $quantityToBeDelivered)
-    	                            {
-    	                                print ' '.img_warning($langs->trans("StockTooLow"));	// Stock too low for this $warehouse_id but you can change warehouse
-    	                            }
-    	                        }
-                            }
-	                    }
-	                    else
-	                    {
-	                        print $langs->trans("Service");
-	                    }
-	                    print '</td>';
-	                }
-
-	                print "</tr>\n";
-
-	                // Show subproducts of product
-					if (! empty($conf->global->PRODUIT_SOUSPRODUITS) && $line->fk_product > 0)
-					{
-						$product->get_sousproduits_arbo();
-						$prods_arbo = $product->get_arbo_each_prod($qtyProdCom);
-						if(count($prods_arbo) > 0)
-						{
-							foreach($prods_arbo as $key => $value)
-							{
-								//print $value[0];
-								$img='';
-								if ($value['stock'] < $value['stock_alert'])
-								{
-									$img=img_warning($langs->trans("StockTooLow"));
-								}
-								print "<tr ".$bc[$var]."><td>&nbsp; &nbsp; &nbsp; ->
-									<a href=\"".DOL_URL_ROOT."/product/card.php?id=".$value['id']."\">".$value['fullpath']."
-									</a> (".$value['nb'].")</td><td align=\"center\"> ".$value['nb_total']."</td><td>&nbsp</td><td>&nbsp</td>
-									<td align=\"center\">".$value['stock']." ".$img."</td></tr>";
-							}
-						}
-					}
+					$quantityToBeDelivered = 0;
 				}
 				else
 				{
-					print '<td></td><td></td></tr>';	// end line and start a new one for lot/serial
-
-					$staticwarehouse=new Entrepot($db);
-					$staticwarehouse->fetch($warehouse_id);
-					
-					$subj=0;
-					print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
-					if (count($product->stock_warehouse[$warehouse_id]->detail_batch))
+					$quantityToBeDelivered = $quantityAsked - $quantityDelivered;
+				}
+                $warehouse_id = GETPOST('entrepot_id','int');
+				
+				$warehouseObject = null;
+				if ($warehouse_id > 0)
+				{
+					//ship from preselected location
+					$stock = + $product->stock_warehouse[$warehouse_id]->real; // Convert to number
+					$deliverableQty=min($quantityToBeDelivered, $stock);
+					if (empty($conf->productbatch->enabled) || ! ($product->hasbatch() && is_object($product->stock_warehouse[$warehouse_id])))
 					{
-						foreach ($product->stock_warehouse[$warehouse_id]->detail_batch as $dbatch)
+						// Quantity to send
+						print '<td align="center">';
+						if ($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
 						{
-							//var_dump($dbatch);
-							$substock=$dbatch->qty +0 ;		// To get a numeric
-							print '<tr><td colspan="3" ></td><td align="center">';
-							print '<input name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="'.($substock > 0 ? min($defaultqty,$substock) : '0').'">';
-							print '</td>';
-	
+							print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
+							print '<input name="qtyl'.$indiceAsked.'" id="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$deliverableQty.'">';
+						}
+						else print $langs->trans("NA");
+						print '</td>';
+
+						// Stock
+						if (! empty($conf->stock->enabled))
+						{
 							print '<td align="left">';
-	
-							print $staticwarehouse->getNomUrl(0).' / ';
-	
-							print '<!-- Show details of lot -->';
-							print '<input name="batchl'.$indiceAsked.'_'.$subj.'" type="hidden" value="'.$dbatch->id.'">';
-							print $langs->trans("DetailBatchFormat", $dbatch->batch, dol_print_date($dbatch->eatby,"day"), dol_print_date($dbatch->sellby,"day"), $dbatch->qty);
-							if ($defaultqty<=0) {
-								$defaultqty=0;
-							} else {
-								$defaultqty -= min($defaultqty,$substock);
+							if ($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))   // Type of product need stock change ?
+							{
+								// Show warehouse combo list
+								$ent = "entl".$indiceAsked;
+								$idl = "idl".$indiceAsked;
+								$tmpentrepot_id = is_numeric(GETPOST($ent,'int'))?GETPOST($ent,'int'):$warehouse_id;
+								if ($line->fk_product > 0)
+								{
+									print $formproduct->selectWarehouses($tmpentrepot_id,'entl'.$indiceAsked,'',1,0,$line->fk_product);
+									if ($tmpentrepot_id > 0 && $tmpentrepot_id == $warehouse_id)
+									{
+										//print $stock.' '.$quantityToBeDelivered;
+										if ($stock < $quantityToBeDelivered)
+										{
+											print ' '.img_warning($langs->trans("StockTooLow"));	// Stock too low for this $warehouse_id but you can change warehouse
+										}
+									}
+								}
 							}
-							$subj++;
+							else
+							{
+								print $langs->trans("Service");
+							}
+							print '</td>';
+						}
+
+						print "</tr>\n";
+
+						// Show subproducts of product
+						if (! empty($conf->global->PRODUIT_SOUSPRODUITS) && $line->fk_product > 0)
+						{
+							$product->get_sousproduits_arbo();
+							$prods_arbo = $product->get_arbo_each_prod($qtyProdCom);
+							if(count($prods_arbo) > 0)
+							{
+								foreach($prods_arbo as $key => $value)
+								{
+									//print $value[0];
+									$img='';
+									if ($value['stock'] < $value['stock_alert'])
+									{
+										$img=img_warning($langs->trans("StockTooLow"));
+									}
+									print "<tr ".$bc[$var]."><td>&nbsp; &nbsp; &nbsp; ->
+										<a href=\"".DOL_URL_ROOT."/product/card.php?id=".$value['id']."\">".$value['fullpath']."
+										</a> (".$value['nb'].")</td><td align=\"center\"> ".$value['nb_total']."</td><td>&nbsp</td><td>&nbsp</td>
+										<td align=\"center\">".$value['stock']." ".$img."</td></tr>";
+								}
+							}
 						}
 					}
 					else
+					{
+						print '<td></td><td></td></tr>';	// end line and start a new one for lot/serial
+
+						$staticwarehouse=new Entrepot($db);
+						$staticwarehouse->fetch($warehouse_id);
+						
+						$subj=0;
+						print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
+						if (count($product->stock_warehouse[$warehouse_id]->detail_batch))
+						{
+							foreach ($product->stock_warehouse[$warehouse_id]->detail_batch as $dbatch)
+							{
+								//var_dump($dbatch);
+								$batchStock = + $dbatch->qty;		// To get a numeric
+								$deliverableQty = min($quantityToBeDelivered,$batchStock);
+								print '<tr><td colspan="3" ></td><td align="center">';
+								print '<input name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="'.$deliverableQty.'">';
+								print '</td>';
+		
+								print '<td align="left">';
+		
+								print $staticwarehouse->getNomUrl(0).' / ';
+		
+								print '<!-- Show details of lot -->';
+								print '<input name="batchl'.$indiceAsked.'_'.$subj.'" type="hidden" value="'.$dbatch->id.'">';
+								print $langs->trans("DetailBatchFormat", $dbatch->batch, dol_print_date($dbatch->eatby,"day"), dol_print_date($dbatch->sellby,"day"), $dbatch->qty);
+								$quantityToBeDelivered -= $deliverableQty;
+								if ($quantityToBeDelivered < 0)
+								{
+									$quantityToBeDelivered = 0;
+								}
+								$subj++;
+							}
+						}
+						else
+						{
+							print '<tr><td colspan="3" ></td><td align="center">';
+							print '<input name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="0" disabled="disabled"> ';
+							print '</td>';
+							
+							print '<td align="left">';
+							print img_warning().' '.$langs->trans("NoProductToShipFoundIntoStock", $staticwarehouse->libelle);
+						}
+					}
+				}
+				else 
+				{
+					// ship from multiple locations
+					if (empty($conf->productbatch->enabled) || ! $product->hasbatch())
+					{
+						print '<td></td><td></td></tr>';	// end line and start a new one for each warehouse
+						print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
+						$subj=0;
+						foreach ($product->stock_warehouse as $warehouse_id=>$stock_warehouse) {
+							$warehouseObject=new Entrepot($db);
+							$warehouseObject->fetch($warehouse_id);
+							if ($stock_warehouse->real > 0) {
+								$stock = + $stock_warehouse->real; // Convert it to number
+								$deliverableQty = min($quantityToBeDelivered,$stock);
+								// Quantity to send
+								print '<tr><td colspan="3" ></td><td align="center">';
+								if ($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
+								{
+									print '<input name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$deliverableQty.'">';
+									print '<input name="ent1'.$indiceAsked.'_'.$subj.'" type="hidden" value="'.$warehouse_id.'">';
+								}
+								else print $langs->trans("NA");
+								print '</td>';
+								
+								// Stock
+								if (! empty($conf->stock->enabled))
+								{
+									print '<td align="left">';
+									if ($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
+									{
+										print $warehouseObject->getNomUrl(0).' / ';
+										 
+										print '<!-- Show details of stock -->';
+										print $stock;
+									   
+									}
+									else
+									{
+										print $langs->trans("Service");
+									}
+									print '</td>';
+								}
+								$quantityToBeDelivered -= $deliverableQty;
+								if ($quantityToBeDelivered < 0)
+								{
+									$quantityToBeDelivered = 0;
+								}
+								$subj++;
+								print "</tr>\n";
+							}
+						}
+						// Show subproducts of product
+						if (! empty($conf->global->PRODUIT_SOUSPRODUITS) && $line->fk_product > 0)
+						{
+							$product->get_sousproduits_arbo();
+							$prods_arbo = $product->get_arbo_each_prod($qtyProdCom);
+							if(count($prods_arbo) > 0)
+							{
+								foreach($prods_arbo as $key => $value)
+								{
+									//print $value[0];
+									$img='';
+									if ($value['stock'] < $value['stock_alert'])
+									{
+										$img=img_warning($langs->trans("StockTooLow"));
+									}
+									print "<tr ".$bc[$var]."><td>&nbsp; &nbsp; &nbsp; ->
+									<a href=\"".DOL_URL_ROOT."/product/card.php?id=".$value['id']."\">".$value['fullpath']."
+									</a> (".$value['nb'].")</td><td align=\"center\"> ".$value['nb_total']."</td><td>&nbsp</td><td>&nbsp</td>
+									<td align=\"center\">".$value['stock']." ".$img."</td></tr>";
+								}
+							}
+						}
+					}
+					else
+					{
+						print '<td></td><td></td></tr>';	// end line and start a new one for lot/serial
+						
+						$subj=0;
+						print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
+						
+						foreach ($product->stock_warehouse as $warehouse_id=>$stock_warehouse) {
+							$warehouseObject=new Entrepot($db);
+							$warehouseObject->fetch($warehouse_id);
+							if (($stock_warehouse->real > 0) && (count($stock_warehouse->detail_batch))) {
+								foreach ($stock_warehouse->detail_batch as $dbatch)
+								{
+									//var_dump($dbatch);
+									$batchStock = + $dbatch->qty;		// To get a numeric
+									$deliverableQty = min($quantityToBeDelivered,$batchStock);
+									print '<tr><td colspan="3" ></td><td align="center">';
+									print '<input name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="'.$deliverableQty.'">';
+									print '</td>';
+									 
+									print '<td align="left">';
+									 
+									print $warehouseObject->getNomUrl(0).' / ';
+									 
+									print '<!-- Show details of lot -->';
+									print '<input name="batchl'.$indiceAsked.'_'.$subj.'" type="hidden" value="'.$dbatch->id.'">';
+									print $langs->trans("DetailBatchFormat", $dbatch->batch, dol_print_date($dbatch->eatby,"day"), dol_print_date($dbatch->sellby,"day"), $dbatch->qty);
+									$quantityToBeDelivered -= $deliverableQty;
+									if ($quantityToBeDelivered < 0)
+									{
+										$quantityToBeDelivered = 0;
+									}
+									//dol_syslog('deliverableQty = '.$deliverableQty.' batchStock = '.$batchStock);
+									$subj++;
+								}
+							}
+						}
+					}
+					if ($subj == 0)
 					{
 						print '<tr><td colspan="3" ></td><td align="center">';
 						print '<input name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="0" disabled="disabled"> ';
 						print '</td>';
 						
 						print '<td align="left">';
-						print img_warning().' '.$langs->trans("NoProductToShipFoundIntoStock", $staticwarehouse->libelle);
+						if ($warehouseObject) 
+						{
+							print img_warning().' '.$langs->trans("NoProductToShipFoundIntoStock", $warehouseObject->libelle);
+						}
+						else
+						{
+							print img_warning().' '.$langs->trans("StockTooLow");
+						}
 					}
 				}
 				
