@@ -291,12 +291,12 @@ class Paiement extends CommonObject
 
 
 	/**
-	 *      Supprime un paiement ainsi que les lignes qu'il a genere dans comptes
-	 *      Si le paiement porte sur un ecriture compte qui est rapprochee, on refuse
-	 *      Si le paiement porte sur au moins une facture a "payee", on refuse
+	 *  Delete a payment and generated links into account
+	 *  - Si le paiement porte sur un ecriture compte qui est rapprochee, on refuse
+	 *  - Si le paiement porte sur au moins une facture a "payee", on refuse
 	 *
-	 *      @param	int		$notrigger		No trigger
-	 *      @return int     				<0 si ko, >0 si ok
+	 *  @param	int		$notrigger		No trigger
+	 *  @return int     				<0 si ko, >0 si ok
 	 */
 	function delete($notrigger=0)
 	{
@@ -326,21 +326,43 @@ class Paiement extends CommonObject
 			return -2;
 		}
 
-		$accline = new AccountLine($this->db);
-
 		// Delete bank urls. If payment is on a conciliated line, return error.
-		if ($bank_line_id)
+		if ($bank_line_id > 0)
 		{
+			$accline = new AccountLine($this->db);
+
 			$result=$accline->fetch($bank_line_id);
 			if ($result == 0) $accline->rowid=$bank_line_id;    // If not found, we set artificially rowid to allow delete of llx_bank_url
 
-            $result=$accline->delete_urls($user);
+            // Delete bank account url lines linked to payment
+			$result=$accline->delete_urls($user);
             if ($result < 0)
             {
                 $this->error=$accline->error;
 				$this->db->rollback();
 				return -3;
             }
+
+            // Delete bank account lines linked to payment
+			$result=$accline->delete($user);
+			if ($result < 0)
+			{
+				$this->error=$accline->error;
+				$this->db->rollback();
+				return -4;
+			}
+		}
+
+		if (! $notrigger)
+		{
+			// Call triggers
+			$result=$this->call_trigger('PAYMENT_CUSTOMER_DELETE', $user);
+			if ($result < 0)
+			{
+			    $this->db->rollback();
+			    return -1;
+			 }
+		    // End call triggers
 		}
 
 		// Delete payment (into paiement_facture and paiement)
@@ -359,30 +381,6 @@ class Paiement extends CommonObject
 				$this->error=$this->db->lasterror();
 				$this->db->rollback();
 				return -3;
-			}
-
-			// Supprimer l'ecriture bancaire si paiement lie a ecriture
-			if ($bank_line_id)
-			{
-				$result=$accline->delete($user);
-				if ($result < 0)
-				{
-					$this->error=$accline->error;
-					$this->db->rollback();
-					return -4;
-				}
-			}
-
-			if (! $notrigger)
-			{
-				// Appel des triggers
-				$result=$this->call_trigger('PAYMENT_CUSTOMER_DELETE', $user);
-				if ($result < 0)
-				{
-				    $this->db->rollback();
-				    return -1;
-				 }
-			    // Fin appel triggers
 			}
 
 			$this->db->commit();
