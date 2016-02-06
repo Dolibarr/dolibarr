@@ -1641,6 +1641,7 @@ CloseFiscalYear=Close fiscal year
 DeleteFiscalYear=Delete fiscal year
 ConfirmDeleteFiscalYear=Are you sure to delete this fiscal year ?
 AlwaysEditable=Can always be edited
+IsHidden=Is not visible
 MAIN_APPLICATION_TITLE=Force visible name of application (warning: setting your own name here may break autofill login feature when using DoliDroid mobile application)
 NbMajMin=Minimum number of uppercase characters
 NbNumMin=Minimum number of numeric characters

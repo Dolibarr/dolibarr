@@ -110,6 +110,7 @@ INSERT INTO llx_c_format_cards (rowid, code, name, paper_size, orientation, metr
 INSERT INTO llx_c_format_cards (rowid, code, name, paper_size, orientation, metric, leftmargin, topmargin, nx, ny, spacex, spacey, width, height, font_size, custom_x, custom_y, active) VALUES (10, 'CARD', 'Dolibarr Business cards', 'A4', 'P', 'mm', 15.00000000, 15.00000000, 2, 5, 0.00000000, 0.00000000, 85.00000000, 54.00000000, 10, 0.00000000, 0.00000000, 1);
 INSERT INTO llx_c_format_cards (rowid, code, name, paper_size, orientation, metric, leftmargin, topmargin, nx, ny, spacex, spacey, width, height, font_size, custom_x, custom_y, active) VALUES (11, 'L7163', 'Avery-L7163', 'A4', 'P', 'mm', 5.00000000, 15.00000000, 2, 7, 2.50000000, 0.00000000, 99.10000000, 38.10000000, 8, 0.00000000, 0.00000000, 1);
 
+ALTER TABLE llx_extrafields ADD COLUMN ishidden integer DEFAULT 0;
 
  
  

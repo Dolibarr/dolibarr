@@ -61,6 +61,8 @@ class ExtraFields
 	var $error;
 	var $errno;
 
+	var $attribute_hidden;
+	
 	public static $type2label=array(
 	'varchar'=>'String',
 	'text'=>'TextLong',
@@ -98,6 +100,7 @@ class ExtraFields
 		$this->attribute_required = array();
 		$this->attribute_perms = array();
 		$this->attribute_list = array();
+		$this->attribute_hidden = array();
 	}
 
 	/**
@@ -116,9 +119,10 @@ class ExtraFields
 	 *  @param  int		$alwayseditable		Is attribute always editable regardless of the document status
 	 *  @param	string	$perms				Permission to check
 	 *  @param	int		$list				Into list view by default
+	 *  @param	int		$ishidden			Is hidden extrafield
 	 *  @return int      					<=0 if KO, >0 if OK
 	 */
-	function addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique=0, $required=0, $default_value='', $param=0, $alwayseditable=0, $perms='', $list=0)
+	function addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique=0, $required=0, $default_value='', $param=0, $alwayseditable=0, $perms='', $list=0, $ishidden=0)
 	{
 		if (empty($attrname)) return -1;
 		if (empty($label)) return -1;
@@ -135,7 +139,7 @@ class ExtraFields
 		if ($result > 0 || $err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' || $type == 'separate')
 		{
 			// Add declaration of field into table
-			$result2=$this->create_label($attrname,$label,$type,$pos,$size,$elementtype, $unique, $required, $param, $alwayseditable, $perms, $list);
+			$result2=$this->create_label($attrname,$label,$type,$pos,$size,$elementtype, $unique, $required, $param, $alwayseditable, $perms, $list, $ishidden);
 			$err2=$this->errno;
 			if ($result2 > 0 || ($err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' && $err2 == 'DB_ERROR_RECORD_ALREADY_EXISTS'))
 			{
@@ -243,9 +247,10 @@ class ExtraFields
 	 *  @param  int				$alwayseditable	Is attribute always editable regardless of the document status
 	 *  @param	string			$perms			Permission to check
 	 *  @param	int				$list			Into list view by default
+	 *  @param	int				$ishidden		Is hidden extrafield
 	 *  @return	int								<=0 if KO, >0 if OK
 	 */
-	private function create_label($attrname, $label='', $type='', $pos=0, $size=0, $elementtype='member', $unique=0, $required=0, $param='', $alwayseditable=0, $perms='', $list=0)
+	private function create_label($attrname, $label='', $type='', $pos=0, $size=0, $elementtype='member', $unique=0, $required=0, $param='', $alwayseditable=0, $perms='', $list=0, $ishidden=0)
 	{
 		global $conf;
 
@@ -271,7 +276,7 @@ class ExtraFields
 				$params='';
 			}
 
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."extrafields(name, label, type, pos, size, entity, elementtype, fieldunique, fieldrequired, param, alwayseditable, perms, list)";
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."extrafields(name, label, type, pos, size, entity, elementtype, fieldunique, fieldrequired, param, alwayseditable, perms, list, ishidden)";
 			$sql.= " VALUES('".$attrname."',";
 			$sql.= " '".$this->db->escape($label)."',";
 			$sql.= " '".$type."',";
@@ -285,6 +290,7 @@ class ExtraFields
 			$sql.= " '".$alwayseditable."',";
 			$sql.= " ".($perms?"'".$this->db->escape($perms)."'":"null").",";
 			$sql.= " ".$list;
+			$sql.= ", ".$ishidden;
 			$sql.=')';
 
 			dol_syslog(get_class($this)."::create_label", LOG_DEBUG);
@@ -389,9 +395,10 @@ class ExtraFields
 	 *  @param  int		$alwayseditable		Is attribute always editable regardless of the document status
 	 *  @param	string	$perms				Permission to check
 	 *  @param	int		$list				Into list view by default
+	 *  @param	int		$ishidden			Is hidden extrafield
 	 * 	@return	int							>0 if OK, <=0 if KO
 	 */
-	function update($attrname,$label,$type,$length,$elementtype,$unique=0,$required=0,$pos=0,$param='',$alwayseditable=0, $perms='',$list='')
+	function update($attrname,$label,$type,$length,$elementtype,$unique=0,$required=0,$pos=0,$param='',$alwayseditable=0, $perms='',$list='',$ishidden=0)
 	{
 		if ($elementtype == 'thirdparty') $elementtype='societe';
 		if ($elementtype == 'contact') $elementtype='socpeople';
@@ -432,7 +439,7 @@ class ExtraFields
 			{
 				if ($label)
 				{
-					$result=$this->update_label($attrname,$label,$type,$length,$elementtype,$unique,$required,$pos,$param,$alwayseditable,$perms,$list);
+					$result=$this->update_label($attrname,$label,$type,$length,$elementtype,$unique,$required,$pos,$param,$alwayseditable,$perms,$list,$ishidden);
 				}
 				if ($result > 0)
 				{
@@ -483,12 +490,13 @@ class ExtraFields
 	 *  @param  int		$alwayseditable		Is attribute always editable regardless of the document status
 	 *  @param	string	$perms				Permission to check
 	 *  @param	int		$list				Into list view by default
+	 *  @param	int		$ishidden			Is hidden extrafield
 	 *  @return	int							<=0 if KO, >0 if OK
 	 */
-	private function update_label($attrname,$label,$type,$size,$elementtype,$unique=0,$required=0,$pos=0,$param='',$alwayseditable=0,$perms='',$list=0)
+	private function update_label($attrname,$label,$type,$size,$elementtype,$unique=0,$required=0,$pos=0,$param='',$alwayseditable=0,$perms='',$list=0,$ishidden=0)
 	{
 		global $conf;
-		dol_syslog(get_class($this)."::update_label ".$attrname.", ".$label.", ".$type.", ".$size.", ".$elementtype.", ".$unique.", ".$required.", ".$pos.", ".$alwayseditable.", ".$perms.", ".$list);
+		dol_syslog(get_class($this)."::update_label ".$attrname.", ".$label.", ".$type.", ".$size.", ".$elementtype.", ".$unique.", ".$required.", ".$pos.", ".$alwayseditable.", ".$perms.", ".$list.", ".$ishidden);
 
 		// Clean parameters
 		if ($elementtype == 'thirdparty') $elementtype='societe';
@@ -526,6 +534,7 @@ class ExtraFields
 			$sql.= " alwayseditable,";
 			$sql.= " param,";
 			$sql.= " list";
+			$sql.= ", ishidden";
 			$sql.= ") VALUES (";
 			$sql.= "'".$attrname."',";
 			$sql.= " ".$conf->entity.",";
@@ -540,6 +549,7 @@ class ExtraFields
 			$sql.= " '".$alwayseditable."',";
 			$sql.= " '".$param."',";
 			$sql.= " ".$list;
+			$sql.= ", ".$ishidden;
 			$sql.= ")";
 			dol_syslog(get_class($this)."::update_label", LOG_DEBUG);
 			$resql2=$this->db->query($sql);
@@ -585,7 +595,7 @@ class ExtraFields
 		// For avoid conflicts with external modules
 		if (!$forceload && !empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) return $array_name_label;
 
-		$sql = "SELECT rowid,name,label,type,size,elementtype,fieldunique,fieldrequired,param,pos,alwayseditable,perms,list";
+		$sql = "SELECT rowid,name,label,type,size,elementtype,fieldunique,fieldrequired,param,pos,alwayseditable,perms,list,ishidden";
 		$sql.= " FROM ".MAIN_DB_PREFIX."extrafields";
 		$sql.= " WHERE entity IN (0,".$conf->entity.")";
 		if ($elementtype) $sql.= " AND elementtype = '".$elementtype."'";
@@ -616,6 +626,7 @@ class ExtraFields
 					$this->attribute_alwayseditable[$tab->name]=$tab->alwayseditable;
 					$this->attribute_perms[$tab->name]=$tab->perms;
 					$this->attribute_list[$tab->name]=$tab->list;
+					$this->attribute_hidden[$tab->name]=$tab->ishidden;
 				}
 			}
 		}
