@@ -137,6 +137,19 @@ With only message
 tag 729538 +pending
 
 
+To remove status of a bug without "moreinfo" (bug can be processed)
+
+or replay to email 999999@bugs.debian.org + submitter of bug
+With a message starting with: 
+
+Control: tag -1 -moreinfo
+Thanks. Fixed into git.
+
+or replay to email control@bugs.debian.org
+With only message 
+tag 729538 -moreinfo
+
+
 
 ##### Testing a package into unstable env
 
