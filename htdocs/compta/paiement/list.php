@@ -56,6 +56,7 @@ $search_paymenttype=GETPOST("search_paymenttype");
 $search_amount=GETPOST("search_amount",'alpha');    // alpha because we must be able to search on "< x"
 $search_company=GETPOST("search_company",'alpha');
 $search_payment_num=GETPOST('search_payment_num','alpha');
+
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
@@ -66,6 +67,15 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="p.rowid";
+
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('paymentlist'));
+$extrafields = new ExtraFields($db);
+
+
+/*
+ * Actions
+ */
 
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
@@ -79,10 +89,6 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
     $year='';
     $month='';
 }
-
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('paymentlist'));
-$extrafields = new ExtraFields($db);
 
 
 
@@ -167,11 +173,11 @@ else
     {
         $sql.= " AND p.datep BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
     }
-    if ($search_ref)       		    $sql .=natural_search('p.ref', $search_ref);
+    if ($search_ref)       		    $sql .= natural_search('p.ref', $search_ref);
     if ($search_account > 0)      	$sql .=" AND b.fk_account=".$search_account;
     if ($search_paymenttype != "")  $sql .=" AND c.code='".$db->escape($search_paymenttype)."'";
-    if ($search_payment_num != '')  $sql .=" AND p.num_paiement = '".$db->escape($search_payment_num)."'";
-    if ($search_amount)      		$sql .=" AND p.amount='".$db->escape(price2num($search_amount))."'";
+    if ($search_payment_num != '')  $sql .= natural_search('p.num_paiement', $search_payment_num);
+    if ($search_amount)      		$sql .= natural_search('p.amount', $search_amount, 1); 
     if ($search_company)     		$sql .= natural_search('s.nom', $search_company);
 	// Add where from hooks
 	$parameters=array();
@@ -199,10 +205,12 @@ if ($resql)
 
     $paramlist='';
     $paramlist.=(GETPOST("orphelins")?"&orphelins=1":"");
-    $paramlist.=($search_ref?"&search_ref=".$search_ref:"");
-    $paramlist.=($search_company?"&search_company=".$search_company:"");
-    $paramlist.=($search_amount?"&search_amount=".$search_amount:"");
-
+    $paramlist.=($search_ref?"&search_ref=".urlencode($search_ref):"");
+    $paramlist.=($search_company?"&search_company=".urlencode($search_company):"");
+    $paramlist.=($search_amount?"&search_amount=".urlencode($search_amount):"");
+    $paramlist.=($search_payment_num?"&search_payment_num=".urlencode($search_payment_num):"");
+    if ($optioncss != '') $paramlist.='&optioncss='.urlencode($optioncss);
+    
     print_barre_liste($langs->trans("ReceivedCustomersPayments"), $page, $_SERVER["PHP_SELF"],$paramlist,$sortfield,$sortorder,'',$num, $nbtotalofrecords,'title_accountancy.png');
 
     print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
@@ -273,9 +281,10 @@ if ($resql)
         print $paymentstatic->getNomUrl(1);
         print '</td>';
 
+        // Date
         print '<td align="center">'.dol_print_date($db->jdate($objp->dp),'day').'</td>';
 
-        // Company
+        // Thirdparty
         print '<td>';
         if ($objp->socid)
         {
@@ -286,7 +295,12 @@ if ($resql)
         else print '&nbsp;';
         print '</td>';
 
-        print '<td>'.$langs->trans("PaymentTypeShort".$objp->paiement_code).'</td><td>'.$objp->num_paiement.'</td>';
+        // Type
+        print '<td>'.$langs->trans("PaymentTypeShort".$objp->paiement_code).'</td>';
+        
+        // Payment number
+        print '<td>'.$objp->num_paiement.'</td>';
+        
         print '<td>';
         if ($objp->bid)
         {

@@ -46,6 +46,13 @@ $facid=GETPOST('facid','int');
 $socid=GETPOST('socid','int');
 $accountid	= GETPOST('accountid');
 
+$search_ref=GETPOST("search_ref","int");
+$search_account=GETPOST("search_account","int");
+$search_paymenttype=GETPOST("search_paymenttype");
+$search_amount=GETPOST("search_amount",'alpha');    // alpha because we must be able to search on "< x"
+$search_company=GETPOST("search_company",'alpha');
+$search_payment_num=GETPOST('search_payment_num','alpha');
+
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
@@ -69,12 +76,26 @@ if ($user->societe_id > 0)
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('paymentsupplier'));
+$extrafields = new ExtraFields($db);
 
 
 
 /*
  * Actions
  */
+
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+{
+    $search_ref="";
+    $search_account="";
+    $search_amount="";
+    $search_paymenttype="";
+    $search_payment_num="";
+    $search_company="";
+    $day='';
+    $year='';
+    $month='';
+}
 
 $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -460,21 +481,6 @@ if (empty($action))
     if (! $sortorder) $sortorder='DESC';
     if (! $sortfield) $sortfield='p.datep';
 
-    $search_ref=GETPOST('search_ref');
-    $search_account=GETPOST('search_account');
-    $search_paymenttype=GETPOST('search_paymenttype');
-    $search_amount=GETPOST('search_amount');
-    $search_company=GETPOST('search_company');
-
-	if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
-	{
-		$search_ref="";
-		$search_account="";
-		$search_paymenttype="";
-		$search_amount="";
-		$search_company="";
-	}
-
     $sql = 'SELECT p.rowid as pid, p.datep as dp, p.amount as pamount, p.num_paiement,';
     $sql.= ' s.rowid as socid, s.nom as name,';
     $sql.= ' c.code as paiement_type, c.libelle as paiement_libelle,';
@@ -496,26 +502,12 @@ if (empty($action))
         $sql .= ' AND f.fk_soc = '.$socid;
     }
     // Search criteria
-    if (! empty($search_ref))
-    {
-        $sql .= ' AND p.rowid='.$db->escape($search_ref);
-    }
-    if (! empty($search_account) && $search_account > 0)
-    {
-        $sql .= ' AND b.fk_account='.$db->escape($search_account);
-    }
-    if (! empty($search_paymenttype))
-    {
-        $sql .= " AND c.code='".$db->escape($search_paymenttype)."'";
-    }
-    if (! empty($search_amount))
-    {
-        $sql .= " AND p.amount='".price2num($search_amount)."'";
-    }
-    if (! empty($search_company))
-    {
-        $sql .= " AND s.nom LIKE '%".$db->escape($search_company)."%'";
-    }
+    if ($search_ref)       		    $sql .= natural_search('p.rowid', $search_ref);
+    if ($search_account > 0)      	$sql .=" AND b.fk_account=".$search_account;
+    if ($search_paymenttype != "")  $sql .=" AND c.code='".$db->escape($search_paymenttype)."'";
+    if ($search_payment_num != '')  $sql .= natural_search('p.num_paiement', $search_payment_num);
+    if ($search_amount)      		$sql .= natural_search('p.amount', $search_amount, 1);
+    if ($search_company)     		$sql .= natural_search('s.nom', $search_company);
     $sql.= " GROUP BY p.rowid, p.datep, p.amount, p.num_paiement, s.rowid, s.nom, c.code, c.libelle, ba.rowid, ba.label";
     if (!$user->rights->societe->client->voir) $sql .= ", sc.fk_soc, sc.fk_user";
     $sql.= $db->order($sortfield,$sortorder);
@@ -529,10 +521,11 @@ if (empty($action))
         $var=True;
 
         $paramlist='';
-        $paramlist.=(! empty($search_ref)?"&search_ref=".$search_ref:"");
-        $paramlist.=(! empty($search_company)?"&search_company=".$search_company:"");
-        $paramlist.=(! empty($search_amount)?"&search_amount='".$search_amount:"");
-        if ($optioncss != '') $paramlist.='&optioncss='.$optioncss;
+        $paramlist.=($search_ref?"&search_ref=".urlencode($search_ref):"");
+        $paramlist.=($search_company?"&search_company=".urlencode($search_company):"");
+        $paramlist.=($search_amount?"&search_amount=".urlencode($search_amount):"");
+        $paramlist.=($search_payment_num?"&search_payment_num=".urlencode($search_payment_num):"");
+        if ($optioncss != '') $paramlist.='&optioncss='.urlencode($optioncss);
 
         print_barre_liste($langs->trans('SupplierPayments'), $page, $_SERVER["PHP_SELF"],$paramlist,$sortfield,$sortorder,'',$num);
 
@@ -544,6 +537,7 @@ if (empty($action))
         print_liste_field_titre($langs->trans('Date'),$_SERVER["PHP_SELF"],'dp','',$paramlist,'align="center"',$sortfield,$sortorder);
         print_liste_field_titre($langs->trans('ThirdParty'),$_SERVER["PHP_SELF"],'s.nom','',$paramlist,'',$sortfield,$sortorder);
         print_liste_field_titre($langs->trans('Type'),$_SERVER["PHP_SELF"],'c.libelle','',$paramlist,'',$sortfield,$sortorder);
+        print_liste_field_titre($langs->trans("Numero"),$_SERVER["PHP_SELF"],"p.num_paiement","",$paramlist,"",$sortfield,$sortorder);
         print_liste_field_titre($langs->trans('Account'),$_SERVER["PHP_SELF"],'ba.label','',$paramlist,'',$sortfield,$sortorder);
         print_liste_field_titre($langs->trans('Amount'),$_SERVER["PHP_SELF"],'p.amount','',$paramlist,'align="right"',$sortfield,$sortorder);
         //print_liste_field_titre($langs->trans('Invoice'),$_SERVER["PHP_SELF"],'ref_supplier','',$paramlist,'',$sortfield,$sortorder);
@@ -561,6 +555,9 @@ if (empty($action))
         print '</td>';
         print '<td>';
         $form->select_types_paiements($search_paymenttype,'search_paymenttype','',2,1,1);
+        print '</td>';
+        print '<td align="left">';
+        print '<input class="flat" type="text" size="4" name="search_payment_num" value="'.$search_payment_num.'">';
         print '</td>';
         print '<td>';
         $form->select_comptes($search_account,'search_account',0,'',1);
@@ -585,15 +582,19 @@ if (empty($action))
             // Date
             print '<td class="nowrap" align="center">'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
 
+            // Thirdparty
             print '<td>';
             if ($objp->socid) print '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$objp->socid.'">'.img_object($langs->trans('ShowCompany'),'company').' '.dol_trunc($objp->name,32).'</a>';
             else print '&nbsp;';
             print '</td>';
 
+            // Type
             $payment_type = $langs->trans("PaymentType".$objp->paiement_type)!=("PaymentType".$objp->paiement_type)?$langs->trans("PaymentType".$objp->paiement_type):$objp->paiement_libelle;
-
             print '<td>'.$payment_type.' '.dol_trunc($objp->num_paiement,32)."</td>\n";
 
+            // Payment number
+            print '<td>'.$objp->num_paiement.'</td>';
+            
             print '<td>';
             if ($objp->bid) print '<a href="'.DOL_URL_ROOT.'/compta/bank/account.php?account='.$objp->bid.'">'.img_object($langs->trans("ShowAccount"),'account').' '.dol_trunc($objp->label,24).'</a>';
             else print '&nbsp;';
