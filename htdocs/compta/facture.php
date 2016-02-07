@@ -1827,6 +1827,7 @@ $form = new Form($db);
 $formother = new FormOther($db);
 $formfile = new FormFile($db);
 $formmargin = new FormMargin($db);
+$paymentstatic=new Paiement($db);
 $bankaccountstatic = new Account($db);
 if (! empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
 
@@ -3125,6 +3126,7 @@ else if ($id > 0 || ! empty($ref))
 	// List of payments already done
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre">' . ($object->type == Facture::TYPE_CREDIT_NOTE ? $langs->trans("PaymentsBack") : $langs->trans('Payments')) . '</td>';
+	print '<td class="liste_titre">' . $langs->trans('Date') . '</td>';
 	print '<td class="liste_titre">' . $langs->trans('Type') . '</td>';
 	if (! empty($conf->banque->enabled))
 		print '<td class="liste_titre" align="right">' . $langs->trans('BankAccount') . '</td>';
@@ -3135,10 +3137,10 @@ else if ($id > 0 || ! empty($ref))
 	$var = true;
 
 	// Payments already done (from payment on this invoice)
-	$sql = 'SELECT p.datep as dp, p.num_paiement, p.rowid, p.fk_bank,';
+	$sql = 'SELECT p.datep as dp, p.ref, p.num_paiement, p.rowid, p.fk_bank,';
 	$sql .= ' c.code as payment_code, c.libelle as payment_label,';
 	$sql .= ' pf.amount,';
-	$sql .= ' ba.rowid as baid, ba.ref, ba.label';
+	$sql .= ' ba.rowid as baid, ba.ref as baref, ba.label';
 	$sql .= ' FROM ' . MAIN_DB_PREFIX . 'c_paiement as c, ' . MAIN_DB_PREFIX . 'paiement_facture as pf, ' . MAIN_DB_PREFIX . 'paiement as p';
 	$sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'bank as b ON p.fk_bank = b.rowid';
 	$sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'bank_account as ba ON b.fk_account = ba.rowid';
@@ -3160,15 +3162,21 @@ else if ($id > 0 || ! empty($ref))
 				$objp = $db->fetch_object($result);
 				$var = ! $var;
 				print '<tr ' . $bc [$var] . '><td>';
-				print '<a href="' . DOL_URL_ROOT . '/compta/paiement/card.php?id=' . $objp->rowid . '">' . img_object($langs->trans('ShowPayment'), 'payment') . ' ';
-				print dol_print_date($db->jdate($objp->dp), 'day') . '</a></td>';
+				$paymentstatic->id=$objp->rowid;
+				$paymentstatic->datepaye=$db->jdate($objp->dp);
+				$paymentstatic->ref=$objp->ref;
+				$paymentstatic->num_paiement=$objp->num_paiement;
+				$paymentstatic->payment_code=$objp->payment_code;
+				print $paymentstatic->getNomUrl(1);
+				print '</td>';
+				print '<td>'.dol_print_date($db->jdate($objp->dp), 'day') . '</td>';
 				$label = ($langs->trans("PaymentType" . $objp->payment_code) != ("PaymentType" . $objp->payment_code)) ? $langs->trans("PaymentType" . $objp->payment_code) : $objp->payment_label;
 				print '<td>' . $label . ' ' . $objp->num_paiement . '</td>';
 				if (! empty($conf->banque->enabled))
 				{
 					$bankaccountstatic->id = $objp->baid;
-					$bankaccountstatic->ref = $objp->ref;
-					$bankaccountstatic->label = $objp->ref;
+					$bankaccountstatic->ref = $objp->baref;
+					$bankaccountstatic->label = $objp->baref;
 					print '<td align="right">';
 					if ($bankaccountstatic->id)
 						print $bankaccountstatic->getNomUrl(1, 'transactions');

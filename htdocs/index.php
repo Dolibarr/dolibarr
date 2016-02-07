@@ -121,7 +121,8 @@ $boxinfo.= '</td>';
 $boxinfo.= "</tr>\n";
 $boxinfo.= "</table>\n";
 $boxinfo.= '</div>';
-print $boxinfo;
+//print $boxinfo;
+
 
 /*
  * Dashboard Dolibarr states (statistics)
@@ -309,7 +310,7 @@ if (empty($user->societe_id))
     $boxstat.='</table>';
     $boxstat.='</div>';
 }
-print $boxstat;
+//print $boxstat;
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
@@ -323,6 +324,7 @@ $showweather=empty($conf->global->MAIN_DISABLE_METEO)?1:0;
 $dashboardlines=array();
 
 $boxwork='';
+$boxwork.='<div class="box">';
 $boxwork.='<table summary="'.dol_escape_htmltag($langs->trans("WorkingBoard")).'" class="noborder boxtable" width="100%">'."\n";
 $boxwork.='<tr class="liste_titre">';
 $boxwork.='<th class="liste_titre" colspan="2">'.$langs->trans("DolibarrWorkBoard").'</th>';
@@ -514,8 +516,9 @@ foreach($valid_dashboardlines as $board)
 }
 
 $boxwork.='</table>';   // End table array of working board
+$boxwork.='</div>';
 
-print $boxwork;
+//print $boxwork;
 
 print '</div></div></div><div class="clearboth"></div>';
 
@@ -531,10 +534,13 @@ $boxlist.='<tr><td class="notopnoleftnoright">'."\n";
 
 $boxlist.='<div class="fichehalfleft">';
 
+$boxlist.=$boxinfo;
+$boxlist.=$boxstat;
 $boxlist.=$resultboxes['boxlista'];
 
 $boxlist.= '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
+$boxlist.=$boxwork;
 $boxlist.=$resultboxes['boxlistb'];
 
 $boxlist.= '</div></div>';
@@ -592,8 +598,7 @@ $db->close();
 
 /**
  *  Show weather logo. Logo to show depends on $totallate and values for
- *  $conf->global->MAIN_METEO_OFFSET
- *  $conf->global->MAIN_METEO_GAP
+ *  $conf->global->MAIN_METEO_LEVELx
  *
  *  @param      int     $totallate      Nb of element late
  *  @param      string  $text           Text to show on logo
@@ -606,13 +611,12 @@ function showWeather($totallate,$text,$options)
 
     $out='';
     $offset=0;
-    $cursor=10; // By default
-    //if (! empty($conf->global->MAIN_METEO_OFFSET)) $offset=$conf->global->MAIN_METEO_OFFSET;
-    //if (! empty($conf->global->MAIN_METEO_GAP)) $cursor=$conf->global->MAIN_METEO_GAP;
+    $factor=10; // By default
+    
     $level0=$offset;           if (! empty($conf->global->MAIN_METEO_LEVEL0)) $level0=$conf->global->MAIN_METEO_LEVEL0;
-    $level1=$offset+1*$cursor; if (! empty($conf->global->MAIN_METEO_LEVEL1)) $level1=$conf->global->MAIN_METEO_LEVEL1;
-    $level2=$offset+2*$cursor; if (! empty($conf->global->MAIN_METEO_LEVEL2)) $level2=$conf->global->MAIN_METEO_LEVEL2;
-    $level3=$offset+3*$cursor; if (! empty($conf->global->MAIN_METEO_LEVEL3)) $level3=$conf->global->MAIN_METEO_LEVEL3;
+    $level1=$offset+1*$factor; if (! empty($conf->global->MAIN_METEO_LEVEL1)) $level1=$conf->global->MAIN_METEO_LEVEL1;
+    $level2=$offset+2*$factor; if (! empty($conf->global->MAIN_METEO_LEVEL2)) $level2=$conf->global->MAIN_METEO_LEVEL2;
+    $level3=$offset+3*$factor; if (! empty($conf->global->MAIN_METEO_LEVEL3)) $level3=$conf->global->MAIN_METEO_LEVEL3;
 
     if ($totallate <= $level0) $out.=img_picto_common($text,'weather/weather-clear.png',$options);
     if ($totallate > $level0 && $totallate <= $level1) $out.=img_picto_common($text,'weather/weather-few-clouds.png',$options);
