@@ -848,16 +848,8 @@ if ($resql)
 	print $form->selectarray('filtre', $liststatus, $filter, 1);
 	print '</td>';
 	print '<td class="liste_titre" align="center">';
-	$searchpitco=$form->showFilterAndCheckAddButtons(0);
+	$searchpitco=$form->showFilterAndCheckAddButtons(1, empty($mode)?'checkformerge':'checkforsend');
 	print $searchpitco;
-	if (empty($mode))
-	{
-		if ($conf->use_javascript_ajax) print '<a href="#" id="checkall">'.$langs->trans("All").'</a> / <a href="#" id="checknone">'.$langs->trans("None").'</a>';
-	}
-	else
-	{
-		if ($conf->use_javascript_ajax) print '<a href="#" id="checkallsend">'.$langs->trans("All").'</a> / <a href="#" id="checknonesend">'.$langs->trans("None").'</a>';
-	}
 	print '</td>';
 	print "</tr>\n";
 

@@ -783,8 +783,8 @@ if ($resql)
 	$liststatus=array('0'=>$langs->trans("BillShortStatusDraft"), '1'=>$langs->trans("BillShortStatusNotPaid"), '2'=>$langs->trans("BillShortStatusPaid"), '3'=>$langs->trans("BillShortStatusCanceled"));
 	print $form->selectarray('search_status', $liststatus, $search_status, 1);
     print '</td>';
-    print '<td class="liste_titre" align="right">';
-    $searchpitco=$form->showFilterAndCheckAddButtons(0);
+    print '<td class="liste_titre" align="center">';
+    $searchpitco=$form->showFilterAndCheckAddButtons(1, 'checkforselect', 1);
     print $searchpitco;
     print '</td>';
     print "</tr>\n";

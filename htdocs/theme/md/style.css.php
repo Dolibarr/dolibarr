@@ -503,6 +503,11 @@ div.myavailability {
 	padding-top: 4px;
 	padding-bottom: 4px;
 }
+.checkallactions {
+	vertical-align: top;
+    margin-top: 6px;	
+    margin-left: 4px;	
+}
 
 /* ============================================================================== */
 /* Styles to hide objects                                                         */
