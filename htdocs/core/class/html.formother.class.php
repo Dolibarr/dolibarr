@@ -977,15 +977,19 @@ class FormOther
 
         $confuserzone='MAIN_BOXES_'.$areacode;
 
+        // $boxactivated will be array of boxes enabled into global setup
+        // $boxidactivatedforuser will be array of boxes choosed by user
+        
         $selectboxlist=$boxlist='';
         $boxactivated=InfoBox::listBoxes($db,'activated',$areacode,(empty($user->conf->$confuserzone)?null:$user));	// Search boxes of common+user (or common only if user has no specific setup)
+        //var_dump($boxactivated);
         
         $boxidactivatedforuser=array();
         foreach($boxactivated as $box)
         {
         	if (empty($user->conf->$confuserzone) || $box->fk_user == $user->id) $boxidactivatedforuser[$box->id]=$box->id;	// We keep only boxes to show for user
         }
-
+        
         $arrayboxtoactivatelabel=array();
         if (! empty($user->conf->$confuserzone))
         {
@@ -1174,7 +1178,7 @@ class FormOther
             $boxlist.= "</table>";
         }
 
-        return array('selectboxlist'=>$nbboxactivated?$selectboxlist:'', 'boxactivated'=>$boxactivated, 'boxlist'=>$boxlist);
+        return array('selectboxlist'=>count($boxactivated)?$selectboxlist:'', 'boxactivated'=>$boxactivated, 'boxlist'=>$boxlist);
     }
 
 
