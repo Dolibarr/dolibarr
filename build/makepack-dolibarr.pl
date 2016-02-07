@@ -1154,8 +1154,10 @@ if ($nboftargetok) {
 	    		}
 	    		else
 	    		{
-	    			$destFolder="$NEWPUBLISH";
-		    		print "Publish file ".$file." to $NEWPUBLISH\n";
+	    			$filenameonly=$file;
+	    			$filenameonly =~ s{.*/}{};      # removes path  
+	    			$destFolder="$NEWPUBLISH/$filenameonly";
+		    		print "Publish file ".$file." to $NEWPUBLISH/".$filenameonly."\n";
 	    		}
 
 				# mkdir	   
