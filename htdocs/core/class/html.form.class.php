@@ -645,11 +645,11 @@ class Form
      *  @param	string	$page       			Defined the form action
      *  @param  string	$htmlname       		Name of html select object
      *  @param  string	$htmloption     		Options html on select object
-     * 	@param	int		$forcecombo				Force to use combo box
+     * 	@param	int		$forcecombo				Force to use standard combo box (no ajax use)
      *  @param	array	$events					Event options to run on change. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
      *  @return string           				HTML string with select and input
      */
-    function select_incoterms($selected='', $location_incoterms='', $page='',$htmlname='incoterm_id',$htmloption='', $forcecombo=0, $events=array())
+    function select_incoterms($selected='', $location_incoterms='', $page='', $htmlname='incoterm_id', $htmloption='', $forcecombo=1, $events=array())
     {
         global $conf,$langs;
 
@@ -667,7 +667,7 @@ class Form
         $resql=$this->db->query($sql);
         if ($resql)
         {
-        	if (!$forcecombo)
+        	if ($conf->use_javascript_ajax && ! $forcecombo)
 			{
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
 				$out .= ajax_combobox($htmlname, $events);
@@ -680,8 +680,8 @@ class Form
 	            $out .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			}
 
-            $out.= '<select id="'.$htmlname.'" class="flat selectincoterm" name="'.$htmlname.'" '.$htmloption.'>';
-			$out.= '<option value=""></option>';
+            $out.= '<select id="'.$htmlname.'" class="flat selectincoterm noenlargeonsmartphone" name="'.$htmlname.'" '.$htmloption.'>';
+			$out.= '<option value="0">&nbsp;</option>';
             $num = $this->db->num_rows($resql);
             $i = 0;
             if ($num)
