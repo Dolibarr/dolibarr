@@ -1155,7 +1155,7 @@ if ($nboftargetok) {
 	    		else
 	    		{
 	    			$filenameonly=$file;
-	    			$filenameonly =~ s{.*/}{};      # removes path  
+	    			$filenameonly =~ s/.*\/([^\/]+\/[^\/]+)$/$1/;      # removes path  
 	    			$destFolder="$NEWPUBLISH/$filenameonly";
 		    		print "Publish file ".$file." to $NEWPUBLISH/".$filenameonly."\n";
 	    		}
