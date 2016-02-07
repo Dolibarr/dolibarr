@@ -395,7 +395,8 @@ class Cronjob extends CommonObject
     	$sql.= " t.test";
     	$sql.= " FROM ".MAIN_DB_PREFIX."cronjob as t";
     	$sql.= " WHERE 1 = 1";
-    	if ($status >= 0) $sql.= " AND t.status = ".(empty($status)?'0':'1');
+    	if ($status >= 0 && $status < 2) $sql.= " AND t.status = ".(empty($status)?'0':'1');
+    	if ($status == 2) $sql.= " AND t.status = 2";
     	//Manage filter
     	if (is_array($filter) && count($filter)>0) {
     		foreach($filter as $key => $value) {

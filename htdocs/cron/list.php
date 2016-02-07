@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2012      Nicolas Villa aka Boyquotes http://informetic.fr
- * Copyright (C) 2013      Florian Henry <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2015 Laurent Destailleur <eldy@users.srouceforge.net>
+ * Copyright (C) 2013      Florian Henry       <florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2016 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,11 +35,6 @@ $langs->load("bills");
 
 if (!$user->rights->cron->read) accessforbidden();
 
-
-/*
- * Actions
- */
-
 $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
 $id=GETPOST('id','int');
@@ -57,13 +52,18 @@ if (empty($sortorder)) $sortorder="DESC";
 if (empty($sortfield)) $sortfield="t.status";
 if (empty($arch)) $arch = 0;
 if ($page == -1) {
-	$page = 0 ;
+    $page = 0 ;
 }
 
 $limit = $conf->global->MAIN_SIZE_LISTE_LIMIT;
 $offset = $limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
+
+
+/*
+ * Actions
+ */
 
 // Do we click on purge search criteria ?
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
@@ -79,8 +79,8 @@ if (!empty($search_label))
 }
 
 // Delete jobs
-if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->cron->delete){
-
+if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->cron->delete)
+{
 	//Delete cron task
 	$object = new Cronjob($db);
 	$object->id=$id;
@@ -92,8 +92,8 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->cron->del
 }
 
 // Execute jobs
-if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->execute){
-
+if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->execute)
+{
 	$object = new Cronjob($db);
 	$job = $object->fetch($id);
 
