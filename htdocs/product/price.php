@@ -1459,11 +1459,10 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
     		print '<td><input type="text" class="flat" name="search_soc" value="' . $search_soc . '" size="20"></td>';
     		print '<td colspan="8">&nbsp;</td>';
     		// Print the search button
-    		print '<td class="liste_titre" align="right">';
-    		print '<input class="liste_titre" name="button_search" type="image" src="' . DOL_URL_ROOT . '/theme/' . $conf->theme . '/img/search.png" value="' . dol_escape_htmltag($langs->trans("Search")) . '" title="' . dol_escape_htmltag($langs->trans("Search")) . '">';
-    		print ' ';
-    		print '<input class="liste_titre" name="button_removefilter" type="image" src="' . DOL_URL_ROOT . '/theme/' . $conf->theme . '/img/searchclear.png" value="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '" title="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '">';
-    		print '</td>';
+            print '<td class="liste_titre" align="right">';
+            $searchpitco=$form->showFilterAndCheckAddButtons(0);
+            print $searchpitco;
+            print '</td>';
     		print '</tr>';
 		}
 		

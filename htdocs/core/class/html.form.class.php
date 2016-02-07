@@ -5676,5 +5676,24 @@ class Form
         return $out;
     }
 
+    /**
+     *	Return HTML to show the search and clear seach button
+     *
+     *  @param	int  	$addcheckuncheckall    Add the check all uncheck al button
+     *  @return	string                          
+     */
+    function showFilterAndCheckAddButtons($addcheckuncheckall=0)
+    {   
+        global $langs;
+        
+        $out='';
+        $out.='<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+        if ($addcheckuncheckall)
+        {
+            
+        }
+        $out.='<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+        return $out;
+    }
 }
 

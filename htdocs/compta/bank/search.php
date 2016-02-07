@@ -178,7 +178,9 @@ if ($resql)
 
 	print '<form method="post" action="search.php" name="search_form">'."\n";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
-
+	print '<input type="hidden" name="action" value="search">';
+	if (! empty($_REQUEST['bid'])) print '<input type="hidden" name="bid" value="'.$_REQUEST["bid"].'">';
+	
 	$moreforfilter = '';
 	
 	$moreforfilter.='<div class="divsearchfield">';
@@ -227,12 +229,11 @@ if ($resql)
 	print '<td class="liste_titre" align="right">';
 	print '<input type="text" class="flat" name="credit" size="4" value="'.$credit.'">';
 	print '</td>';
-	print '<td class="liste_titre" align="right">';
-	print '<input type="hidden" name="action" value="search">';
-	if (! empty($_REQUEST['bid'])) print '<input type="hidden" name="bid" value="'.$_REQUEST["bid"].'">';
-	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
-	print "</td></tr>\n";
+    print '<td class="liste_titre" align="right">';
+    $searchpitco=$form->showFilterAndCheckAddButtons(0);
+    print $searchpitco;
+    print '</td>';
+	print "</tr>\n";
 
     // Loop on each record
     $total_debit=0;

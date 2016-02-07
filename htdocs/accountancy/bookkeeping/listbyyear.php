@@ -208,9 +208,10 @@ print_liste_field_titre($langs->trans("Credit"), $_SERVER['PHP_SELF'], "t.credit
 print_liste_field_titre($langs->trans("Amount"), $_SERVER['PHP_SELF'], "t.montant", "", $options, "", $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("Sens"), $_SERVER['PHP_SELF'], "t.sens", "", $options, "", $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("Codejournal"), $_SERVER['PHP_SELF'], "t.code_journal", "", $options, "", $sortfield, $sortorder);
-print '<th class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="' . img_picto($langs->trans("Search"), 'search.png', '', '', 1) . '" value="' . dol_escape_htmltag($langs->trans("Search")) . '" title="' . dol_escape_htmltag($langs->trans("Search")) . '">';
-print '<input type="image" class="liste_titre" name="button_removefilter" src="' . img_picto($langs->trans("Search"), 'searchclear.png', '', '', 1) . '" value="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '" title="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '"></td>';
+print '<td class="liste_titre" align="right">';
+print '</td>';
 print "</tr>\n";
+
 print '<tr class="liste_titre">';
 
 print '<td class="liste_titre">';
@@ -258,7 +259,9 @@ print '<td class="liste_titre">';
 print '<input type="text" size=3 class="flat" name="search_code_journal" value="' . $search_code_journal . '"/>';
 print '</td>';
 
-print '<td class="liste_titre">';
+print '<td class="liste_titre" align="right">';
+$searchpitco=$form->showFilterAndCheckAddButtons(0);
+print $searchpitco;
 print '</td>';
 
 print "</tr>\n";

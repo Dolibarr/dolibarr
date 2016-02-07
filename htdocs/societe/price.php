@@ -509,7 +509,8 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
             print '<td colspan="8">&nbsp;</td>';
             // Print the search button
             print '<td class="liste_titre" align="right">';
-            print '<input class="liste_titre" name="button_search" type="image" src="' . DOL_URL_ROOT . '/theme/' . $conf->theme . '/img/search.png" value="' . dol_escape_htmltag($langs->trans("Search")) . '" title="' . dol_escape_htmltag($langs->trans("Search")) . '">';
+            $searchpitco=$form->showFilterAndCheckAddButtons(0);
+            print $searchpitco;
             print '</td>';
             print '</tr>';
             

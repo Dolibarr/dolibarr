@@ -718,7 +718,8 @@ if ($resql)
     
     // Type (customer/prospect/supplier)
     print '<td class="liste_titre maxwidthonsmartphone" align="middle">';
-	print '<select class="flat" name="search_type">';
+	if ($type != '') print '<input type="hidden" name="type" value="'.$type.'">';
+    print '<select class="flat" name="search_type">';
 	print '<option value="-1"'.($search_type==''?' selected':'').'>&nbsp;</option>';
 	if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) print '<option value="1,3"'.($search_type=='1,3'?' selected':'').'>'.$langs->trans('Customer').'</option>';
 	if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) print '<option value="2,3"'.($search_type=='2,3'?' selected':'').'>'.$langs->trans('Prospect').'</option>';
@@ -803,11 +804,10 @@ if ($resql)
         print '</td>';
     }
     // Action column
-	print '<td class="liste_titre" align="right">';
-	if ($type != '') print '<input type="hidden" name="type" value="'.$type.'">';
-	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
-	print '</td>';
+    print '<td class="liste_titre" align="right">';
+    $searchpitco=$form->showFilterAndCheckAddButtons(0);
+    print $searchpitco;
+    print '</td>';
 
 	print "</tr>\n";
 

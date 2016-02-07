@@ -196,11 +196,13 @@ if ($result)
 
 	print '<td align="right" class="liste_titre">';
 	print '<input class="flat" type="text" name="search_amount" value="'.$search_amount.'" size="4">';
-	print '</td><td align="right" class="liste_titre" width="60px">';
-	print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-	print ' ';
-	print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" name="button_removefilter" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
 	print '</td>';
+	
+    // Action column
+    print '<td class="liste_titre" colspan="2" align="right">';
+    $searchpitco=$form->showFilterAndCheckAddButtons(0);
+    print $searchpitco;
+    print '</td>';  
 
 	print "</tr>\n";
 
