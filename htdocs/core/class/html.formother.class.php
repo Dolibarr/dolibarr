@@ -960,16 +960,15 @@ class FormOther
 
 
 
-
     /**
-     * 	Show a HTML Tab with boxes of a particular area including personalized choices of user.
+     * 	Get array with HTML tabs with boxes of a particular area including personalized choices of user.
      *  Class 'Form' must be known.
      *
      * 	@param	   User         $user		 Object User
      * 	@param	   String       $areacode    Code of area for pages (0=value for Home page)
      * 	@return    array                     array('selectboxlist'=>, 'boxactivated'=>, 'boxlist'=>)
      */
-    static function printBoxesArea($user,$areacode)
+    static function getBoxesArea($user,$areacode)
     {
         global $conf,$langs,$db;
 
@@ -980,9 +979,8 @@ class FormOther
         // $boxactivated will be array of boxes enabled into global setup
         // $boxidactivatedforuser will be array of boxes choosed by user
         
-        $selectboxlist=$boxlist='';
+        $selectboxlist='';
         $boxactivated=InfoBox::listBoxes($db,'activated',$areacode,(empty($user->conf->$confuserzone)?null:$user));	// Search boxes of common+user (or common only if user has no specific setup)
-        //var_dump($boxactivated);
         
         $boxidactivatedforuser=array();
         foreach($boxactivated as $box)
@@ -990,6 +988,7 @@ class FormOther
         	if (empty($user->conf->$confuserzone) || $box->fk_user == $user->id) $boxidactivatedforuser[$box->id]=$box->id;	// We keep only boxes to show for user
         }
         
+        // Define selectboxlist
         $arrayboxtoactivatelabel=array();
         if (! empty($user->conf->$confuserzone))
         {
@@ -1092,8 +1091,8 @@ class FormOther
 	        $selectboxlist.='</script>'."\n";
         }
 
+        // Define boxlista and boxlistb
         $nbboxactivated=count($boxidactivatedforuser);
-        //print load_fiche_titre(($nbboxactivated?$langs->trans("OtherInformationsBoxes"):''),$selectboxlist,'','','otherboxes');
 
         if ($nbboxactivated)
         {
@@ -1102,13 +1101,13 @@ class FormOther
 
         	$emptybox=new ModeleBoxes($db);
 
-            $boxlist.='<table width="100%" class="notopnoleftnoright">';
-            $boxlist.='<tr><td class="notopnoleftnoright">'."\n";
+            //$boxlist.='<table width="100%" class="notopnoleftnoright">';
+            //$boxlist.='<tr><td class="notopnoleftnoright">'."\n";
 
-            $boxlist.='<div class="fichehalfleft">';
+            //$boxlist.='<div class="fichehalfleft">';
 
-            $boxlist.="\n<!-- Box left container -->\n";
-            $boxlist.='<div id="left" class="connectedSortable">'."\n";
+            $boxlista.="\n<!-- Box left container -->\n";
+            $boxlista.='<div id="left" class="connectedSortable">'."\n";
 
             // Define $box_max_lines
             $box_max_lines=5;
@@ -1124,9 +1123,9 @@ class FormOther
                     $ii++;
                     //print 'box_id '.$boxactivated[$ii]->box_id.' ';
                     //print 'box_order '.$boxactivated[$ii]->box_order.'<br>';
-                    // Affichage boite key
+                    // Show box
                     $box->loadBox($box_max_lines);
-                    $boxlist.= $box->outputBox();
+                    $boxlista.= $box->outputBox();
                 }
             }
 
@@ -1135,15 +1134,15 @@ class FormOther
             	$emptybox->box_id='A';
             	$emptybox->info_box_head=array();
             	$emptybox->info_box_contents=array();
-            	$boxlist.= $emptybox->outputBox(array(),array());
+            	$boxlista.= $emptybox->outputBox(array(),array());
             }
-            $boxlist.= "</div>\n";
-            $boxlist.= "<!-- End box left container -->\n";
+            $boxlista.= "</div>\n";
+            $boxlista.= "<!-- End box left container -->\n";
 
-            $boxlist.= '</div><div class="fichehalfright"><div class="ficheaddleft">';
+            //$boxlist.= '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
-            $boxlist.= "\n<!-- Box right container -->\n";
-            $boxlist.= '<div id="right" class="connectedSortable">'."\n";
+            $boxlistb.= "\n<!-- Box right container -->\n";
+            $boxlistb.= '<div id="right" class="connectedSortable">'."\n";
 
             $ii=0;
             foreach ($boxactivated as $key => $box)
@@ -1155,9 +1154,9 @@ class FormOther
                     $ii++;
                     //print 'box_id '.$boxactivated[$ii]->box_id.' ';
                     //print 'box_order '.$boxactivated[$ii]->box_order.'<br>';
-                    // Affichage boite key
+                    // Show box
                     $box->loadBox($box_max_lines);
-                    $boxlist.= $box->outputBox();
+                    $boxlistb.= $box->outputBox();
                 }
             }
 
@@ -1166,19 +1165,19 @@ class FormOther
             	$emptybox->box_id='B';
             	$emptybox->info_box_head=array();
             	$emptybox->info_box_contents=array();
-            	$boxlist.= $emptybox->outputBox(array(),array());
+            	$boxlistb.= $emptybox->outputBox(array(),array());
             }
-            $boxlist.= "</div>\n";
-            $boxlist.= "<!-- End box right container -->\n";
+            $boxlistb.= "</div>\n";
+            $boxlistb.= "<!-- End box right container -->\n";
 
-            $boxlist.= '</div></div>';
-            $boxlist.= "\n";
+            //$boxlist.= '</div></div>';
+            //$boxlist.= "\n";
 
-            $boxlist.= "</td></tr>";
-            $boxlist.= "</table>";
+            //$boxlist.= "</td></tr>";
+            //$boxlist.= "</table>";
         }
 
-        return array('selectboxlist'=>count($boxactivated)?$selectboxlist:'', 'boxactivated'=>$boxactivated, 'boxlist'=>$boxlist);
+        return array('selectboxlist'=>count($boxactivated)?$selectboxlist:'', 'boxactivated'=>$boxactivated, 'boxlista'=>$boxlista, 'boxlistb'=>$boxlistb);
     }
 
 
