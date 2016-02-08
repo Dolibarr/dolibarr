@@ -19,9 +19,9 @@
  */
 
 /**
- * \file htdocs/accountancy/bookkeeping/list.php
+ * \file htdocs/accountancy/bookkeeping/balance.php
  * \ingroup Accounting Expert
- * \brief List operation of book keeping
+ * \brief Balance of book keeping
  */
 require '../../main.inc.php';
 
@@ -227,7 +227,7 @@ if ($action == 'delbookkeeping') {
 	
 	include DOL_DOCUMENT_ROOT . '/accountancy/tpl/export_journal.tpl.php';
 	
-	$result = $object->fetchAll($sortorder, $sortfield, 0, 0, $filter);
+	$result = $object->fetchAllBalance($sortorder, $sortfield, 0, 0, $filter);
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
@@ -291,7 +291,7 @@ if ($action == 'delbookkeeping') {
 
 else {
 	
-	$title_page = $langs->trans("Bookkeeping") . ' ' . dol_print_date($search_date_start) . '-' . dol_print_date($search_date_end);
+	$title_page = $langs->trans("AccountBalance") . ' ' . dol_print_date($search_date_start) . '-' . dol_print_date($search_date_end);
 	
 	llxHeader('', $title_page);
 	
@@ -301,13 +301,13 @@ else {
 	
 	$nbtotalofrecords = 0;
 	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-		$nbtotalofrecords = $object->fetchAll($sortorder, $sortfield, 0, 0, $filter);
+		$nbtotalofrecords = $object->fetchAllBalance($sortorder, $sortfield, 0, 0, $filter);
 		if ($nbtotalofrecords < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 	
-	$result = $object->fetchAll($sortorder, $sortfield, $limit, $offset, $filter);
+	$result = $object->fetchAllBalance($sortorder, $sortfield, $limit, $offset, $filter);
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
@@ -352,19 +352,20 @@ else {
 	
 	print '<form method="GET" id="searchFormList" action="' . $_SERVER["PHP_SELF"] . '">';
 	print '<div class="tabsAction">' . "\n";
-	print '<div class="inline-block divButAction"><input type="submit"  name="button_delmvt" class="butAction" value="' . $langs->trans("DelBookKeeping") . '" /></div>';
-	print '<a class="butAction" href="./card.php?action=create">' . $langs->trans("NewAccountingMvt") . '</a>';
+	//print '<div class="inline-block divButAction"><input type="submit"  name="button_delmvt" class="butAction" value="' . $langs->trans("DelBookKeeping") . '" /></div>';
+	//print '<a class="butAction" href="./card.php?action=create">' . $langs->trans("NewAccountingMvt") . '</a>';
 	// print '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?action=export_csv">' . $langs->trans("Export") . '</a>';
 	print '<div class="inline-block divButAction"><input type="submit" name="button_export_csv" class="butAction" value="' . $langs->trans("Export") . '" /></div>';
 	
 	print '</div>';
 	
-	/*print '<div class="liste_titre">';
+	 print '<div class="liste_titre">';
 	 print $langs->trans('DateStart') . ': ';
 	 print $form->select_date($search_date_start, 'date_start', 0, 0, 1);
 	 print $langs->trans('DateEnd') . ': ';
 	 print $form->select_date($search_date_end, 'date_end', 0, 0, 1);
 	 print '</div>';
+	 /*
 	 print '<div class="liste_titre">';
 	 print $langs->trans('From') . ' ' . $langs->trans('AccountAccounting') . ': ';
 	 print $formventilation->select_account($search_accountancy_code_start, 'search_accountancy_code_start', 1, array (), 1, 1, '');
@@ -380,22 +381,23 @@ else {
 	
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("NumPiece"), $_SERVER['PHP_SELF'], "t.piece_num", "", $options, "", $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Docdate"), $_SERVER['PHP_SELF'], "t.doc_date", "", $options, "", $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Docref"), $_SERVER['PHP_SELF'], "t.doc_ref", "", $options, "", $sortfield, $sortorder);
+	//print_liste_field_titre($langs->trans("NumPiece"), $_SERVER['PHP_SELF'], "t.piece_num", "", $options, "", $sortfield, $sortorder);
+	//print_liste_field_titre($langs->trans("Docdate"), $_SERVER['PHP_SELF'], "t.doc_date", "", $options, "", $sortfield, $sortorder);
+	//print_liste_field_titre($langs->trans("Docref"), $_SERVER['PHP_SELF'], "t.doc_ref", "", $options, "", $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Numerocompte"), $_SERVER['PHP_SELF'], "t.numero_compte", "", $options, "", $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Code_tiers"), $_SERVER['PHP_SELF'], "t.code_tiers", "", $options, "", $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Labelcompte"), $_SERVER['PHP_SELF'], "bk_label_compte", "", $options, "", $sortfield, $sortorder);
+	//print_liste_field_titre($langs->trans("Code_tiers"), $_SERVER['PHP_SELF'], "t.code_tiers", "", $options, "", $sortfield, $sortorder);
+	//print_liste_field_titre($langs->trans("Labelcompte"), $_SERVER['PHP_SELF'], "bk_label_compte", "", $options, "", $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Debit"), $_SERVER['PHP_SELF'], "t.debit", "", $options, 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Credit"), $_SERVER['PHP_SELF'], "t.credit", "", $options, 'align="right"', $sortfield, $sortorder);
 	// print_liste_field_titre($langs->trans("Amount"), $_SERVER['PHP_SELF'], "t.montant", "", $options, 'align="center"', $sortfield, $sortorder);
 	// print_liste_field_titre($langs->trans("Sens"), $_SERVER['PHP_SELF'], "t.sens", "", $options, 'align="center"', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Codejournal"), $_SERVER['PHP_SELF'], "t.code_journal", "", $options, 'align="right"', $sortfield, $sortorder);
+	//print_liste_field_titre($langs->trans("Codejournal"), $_SERVER['PHP_SELF'], "t.code_journal", "", $options, 'align="right"', $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans("Solde"), $_SERVER["PHP_SELF"], "", $options, "", 'width="60" align="center"', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Action"), $_SERVER["PHP_SELF"], "", $options, "", 'width="60" align="center"', $sortfield, $sortorder);
 	print "</tr>\n";
 	
 	print '<tr class="liste_titre">';
-	print '<td><input type="text" name="search_mvt_num" size="8" value="' . $search_mvt_num . '"></td>';
+	/*print '<td><input type="text" name="search_mvt_num" size="8" value="' . $search_mvt_num . '"></td>';
 	print '<td class="liste_titre">';
 	print $langs->trans('From') . ': ';
 	print $form->select_date($search_date_start, 'date_start', 0, 0, 1);
@@ -403,8 +405,8 @@ else {
 	print $langs->trans('To') . ': ';
 	print $form->select_date($search_date_end, 'date_end', 0, 0, 1);
 	// print $form->select_date($search_doc_date, 'doc_date', 0, 0, 1);
-	print '</td>';
-	print '<td><input type="text" name="search_doc_ref" size="8" value="' . $search_doc_ref . '"></td>';
+	print '</td>';*/
+	//print '<td><input type="text" name="search_doc_ref" size="8" value="' . $search_doc_ref . '"></td>';
 	print '<td>';
 	// print $langs->trans('From') . ' ' . $langs->trans('AccountAccounting') . ': ';
 	print $langs->trans('From');
@@ -415,7 +417,7 @@ else {
 	print $formventilation->select_account($search_accountancy_code_end, 'search_accountancy_code_end', 1, array (), 1, 1, '');
 	print '</td>';
 	// print '<td><input type="text" name="search_accountancy_code" size="8" value="' . $search_accountancy_code . '"></td>';
-	print '<td>';
+	/*print '<td>';
 	// print $langs->trans('From') . ' ' . $langs->trans('ThirdPartyAccount') . ': ';
 	print $langs->trans('From');
 	print $formventilation->select_auxaccount($search_accountancy_aux_code_start, 'search_accountancy_aux_code_start', 1);
@@ -423,18 +425,19 @@ else {
 	print '<br>';
 	print $langs->trans('To');
 	print $formventilation->select_auxaccount($search_accountancy_aux_code_end, 'search_accountancy_aux_code_end', 1);
-	print '</td>';
+	print '</td>';*/
 	// print '<td><input type="text" name="search_accountancy_aux_code" size="8" value="' . $search_accountancy_aux_code . '"></td>';
 	
-	print '<td class="liste_titre">';
+	/*print '<td class="liste_titre">';
 	print '<input type="text" size=6 class="flat" name="search_mvt_label" value="' . $search_mvt_label . '"/>';
-	print '</td>';
+	print '</td>';*/
+	print '<td>&nbsp;</td>';
 	print '<td>&nbsp;</td>';
 	print '<td>&nbsp;</td>';
 	// print '<td>&nbsp;</td>';
 	// print '<td>&nbsp;</td>';
-	print '<td  align="right"><input type="text" name="search_ledger_code" size="3" value="' . $search_ledger_code . '"></td>';
-	print '<td align="right" colspan="2" class="liste_titre">';
+	//print '<td  align="right"><input type="text" name="search_ledger_code" size="3" value="' . $search_ledger_code . '"></td>';
+	print '<td align="right" class="liste_titre">';
 	print '<input type="image" class="liste_titre" src="' . img_picto($langs->trans("Search"), 'search.png', '', '', 1) . '" name="button_search" value="' . dol_escape_htmltag($langs->trans("Search")) . '" title="' . dol_escape_htmltag($langs->trans("Search")) . '">';
 	print '&nbsp;';
 	print '<input type="image" class="liste_titre" src="' . img_picto($langs->trans("Search"), 'searchclear.png', '', '', 1) . '" name="button_removefilter" value="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '" title="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '">';
@@ -455,33 +458,35 @@ else {
 		
 		print "<tr $bc[$var]>";
 		
-		print '<td><a href="./card.php?piece_num=' . $line->piece_num . '">' . $line->piece_num . '</a></td>';
-		print '<td align="center">' . dol_print_date($line->doc_date, 'day') . '</td>';
-		print '<td>' . $line->doc_ref . '</td>';
+		//print '<td><a href="./card.php?piece_num=' . $line->piece_num . '">' . $line->piece_num . '</a></td>';
+		//print '<td align="center">' . dol_print_date($line->doc_date, 'day') . '</td>';
+		//print '<td>' . $line->doc_ref . '</td>';
 		print '<td>' . length_accountg($line->numero_compte) . '</td>';
-		print '<td>' . length_accounta($line->code_tiers) . '</td>';
-		print '<td>' . $line->label_compte . '</td>';
+		//print '<td>' . length_accounta($line->code_tiers) . '</td>';
+		//print '<td>' . $line->label_compte . '</td>';
 		print '<td align="right">' . price($line->debit) . '</td>';
 		print '<td align="right">' . price($line->credit) . '</td>';
+		print '<td align="right">' . price($line->credit-$line->debit) . '</td>';
 		// print '<td align="right">' . price($line->montant) . '</td>';
 		// print '<td align="center">' . $line->sens . '</td>';
-		print '<td align="right">' . $line->code_journal . '</td>';
+		//print '<td align="right">' . $line->code_journal . '</td>';
 		print '<td align="center">';
-		print '<a href="./card.php?piece_num=' . $line->piece_num . '">' . img_edit() . '</a>';
-		print '<a href="' . $_SERVER['PHP_SELF'] . '?action=delmouv&mvt_num=' . $line->piece_num . $options . '&page=' . $page . '">' . img_delete() . '</a>';
+		//print '<a href="./card.php?piece_num=' . $line->piece_num . '">' . img_edit() . '</a>';
+		//print '<a href="' . $_SERVER['PHP_SELF'] . '?action=delmouv&mvt_num=' . $line->piece_num . $options . '&page=' . $page . '">' . img_delete() . '</a>';
 		print '</td>';
 		print "</tr>\n";
 	}
 	
 	print '<tr class="liste_total">';
-	print '<td colspan="6"></td>';
+	print '<td></td>';
 	print '<td  align="right">';
 	print price($total_debit);
 	print '</td>';
 	print '<td  align="right">';
 	print price($total_credit);
 	print '</td>';
-	print '<td colspan="2"></td>';
+	print '<td align="right">'.price($total_credit-$total_debit).'</td>';
+	print '<td align="right"></td>';
 	print '</tr>';
 	
 	print "</table>";
