@@ -36,6 +36,7 @@
  */
 
 require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/canvas.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
@@ -80,11 +81,21 @@ $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
+$object = new Product($db);
 if ($id > 0 || ! empty($ref))
 {
-	$object = new Product($db);
-	$object->fetch($id, $ref);
+    $result = $object->fetch($id, $ref);
+
+    if (! empty($conf->product->enabled)) $upload_dir = $conf->product->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 0, $object, 'product').dol_sanitizeFileName($object->ref);
+    elseif (! empty($conf->service->enabled)) $upload_dir = $conf->service->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 0, $object, 'product').dol_sanitizeFileName($object->ref);
+
+    if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))    // For backward compatiblity, we scan also old dirs
+    {
+        if (! empty($conf->product->enabled)) $upload_dirold = $conf->product->multidir_output[$object->entity].'/'.substr(substr("000".$object->id, -2),1,1).'/'.substr(substr("000".$object->id, -2),0,1).'/'.$object->id."/photos";
+        else $upload_dirold = $conf->service->multidir_output[$object->entity].'/'.substr(substr("000".$object->id, -2),1,1).'/'.substr(substr("000".$object->id, -2),0,1).'/'.$object->id."/photos";
+    }
 }
+$modulepart='product';
 
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
 $canvas = !empty($object->canvas)?$object->canvas:GETPOST("canvas");
@@ -769,6 +780,7 @@ else $title = $langs->trans('ProductServiceCard');
 llxHeader('', $title, $helpurl);
 
 $form = new Form($db);
+$formfile = new FormFile($db);
 $formproduct = new FormProduct($db);
 if (! empty($conf->accounting->enabled)) $formaccountancy = New FormVentilation($db);
 
@@ -1678,28 +1690,6 @@ if (($action == 'clone' && (empty($conf->use_javascript_ajax) || ! empty($conf->
 {
     print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneProduct'),$langs->trans('ConfirmCloneProduct',$object->ref),'confirm_clone',$formquestionclone,'yes','action-clone',250,600);
 }
-print '<div class="fichecenter"><div class="fichehalfleft">';
-print '<a name="builddoc"></a>'; // ancre
-
-/*
- * Documents generes
- */
-$filedir=$conf->product->dir_output.'/product/'.$object->id;
-
-$urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
-$genallowed=$user->rights->produit->creer;
-$delallowed=$user->rights->produit->supprimer;
-
-$var=true;
-
-$somethingshown=$formfile->show_documents('product',$object->id,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$object->default_lang);
-
-print '</div><div class="fichehalfright"><div class="ficheaddleft">';
-
-
-print '</div></div></div>';
-
-print '<br><br>';
 
 
 /* ************************************************************************** */
@@ -1872,14 +1862,38 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
         print $html;
         print '</table>';
 		
-		dol_fiche_end();
-
         print '<div class="center">';
         print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
         print '</div>';
 
+        dol_fiche_end();
+
         print '</form>';
     }
+}
+
+
+/*
+ * Documents generes
+ */
+if ($action == '' || $action == 'view')
+{
+    print '<div class="fichecenter"><div class="fichehalfleft">';
+    print '<a name="builddoc"></a>'; // ancre
+
+    $filedir=$upload_dir;
+
+    $urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
+    $genallowed=$user->rights->produit->creer;
+    $delallowed=$user->rights->produit->supprimer;
+
+    $var=true;
+    
+    $somethingshown=$formfile->show_documents($modulepart,$object->id,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$object->default_lang);
+
+    print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+
+    print '</div></div></div>';
 }
 
 

@@ -63,8 +63,6 @@ else $genbarcode_loc = $conf->global->GENBARCODE_LOCATION;
  * @param	string	$encoding	Encoding
  * @param	integer	$scale		Scale
  * @param	string	$mode		'png' or 'jpg' ...
- *
- *
  * @return	array	$bars		array('encoding': the encoding which has been used, 'bars': the bars, 'text': text-positioning info)
  */
 function barcode_print($code, $encoding="ANY", $scale = 2 ,$mode = "png")
@@ -116,8 +114,7 @@ function barcode_encode($code,$encoding)
     global $genbarcode_loc;
 
     if (
-    ((preg_match("/^ean$/i", $encoding)
-    && ( strlen($code)==12 || strlen($code)==13)))
+    (preg_match("/^ean$/i", $encoding))
 
     || (($encoding) && (preg_match("/^isbn$/i", $encoding))
     && (( strlen($code)==9 || strlen($code)==10) ||
@@ -140,7 +137,7 @@ function barcode_encode($code,$encoding)
     }
     else
     {
-        print "barcode_encode needs an external programm for encodings other then EAN/ISBN<BR>\n";
+        print "barcode_encode needs an external programm for encodings other then EAN/ISBN (code=".$code.", encoding=".$encoding.")<BR>\n";
         print "<UL>\n";
         print "<LI>download gnu-barcode from <A href=\"http://www.gnu.org/software/barcode/\">www.gnu.org/software/barcode/</A>\n";
         print "<LI>compile and install them\n";
@@ -151,6 +148,7 @@ function barcode_encode($code,$encoding)
         print "<BR>\n";
         return false;
     }
+
     return $bars;
 }
 
@@ -178,7 +176,7 @@ function barcode_gen_ean_sum($ean)
  *
  * @param	string	$ean		Code
  * @param	string	$encoding	Encoding
- * @return	array				array('encoding': the encoding which has been used, 'bars': the bars, 'text': text-positioning info)
+ * @return	array				array('encoding': the encoding which has been used, 'bars': the bars, 'text': text-positioning info, 'error': error message if error)
  */
 function barcode_encode_ean($ean, $encoding = "EAN-13")
 {
@@ -189,7 +187,7 @@ function barcode_encode_ean($ean, $encoding = "EAN-13")
     $ean=trim($ean);
     if (preg_match("/[^0-9]/i",$ean))
     {
-        return array("text"=>"Invalid EAN-Code");
+        return array("error"=>"Invalid encoding/code. encoding=".$encoding." code=".$ean." (not a numeric)", "text"=>"Invalid encoding/code. encoding=".$encoding." code=".$ean." (not a numeric)");
     }
     $encoding=strtoupper($encoding);
     if ($encoding=="ISBN")
@@ -199,7 +197,7 @@ function barcode_encode_ean($ean, $encoding = "EAN-13")
     if (preg_match("/^978/", $ean)) $encoding="ISBN";
     if (strlen($ean)<12 || strlen($ean)>13)
     {
-        return array("text"=>"Invalid $encoding Code (must have 12/13 numbers)");
+        return array("error"=>"Invalid encoding/code. encoding=".$encoding." code=".$ean." (must have 12/13 numbers)", "text"=>"Invalid encoding/code. encoding=".$encoding." code=".$ean." (must have 12/13 numbers)");
     }
 
     $ean=substr($ean,0,12);
@@ -227,7 +225,8 @@ function barcode_encode_ean($ean, $encoding = "EAN-13")
     }
 
     return array(
-		"encoding" => $encoding,
+        "error" => '',
+        "encoding" => $encoding,
 		"bars" => $line,
 		"text" => $text
     );
