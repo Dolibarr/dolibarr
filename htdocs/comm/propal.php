@@ -2256,6 +2256,12 @@ if ($action == 'create')
 		$linktoelem = $form->showLinkToObjectBlock($object);
 		if ($linktoelem) print '<br>'.$linktoelem;
 
+        // Show links to link elements
+        $linktoelements=array();
+        if($conf->global->PROPALE_LINK_TO_INTERVENTION) $linktoelements[]='fichinter';
+        $linktoelem='';
+        $linktoelem = $form->showLinkToObjectBlock($object,$linktoelements,$object->socid);
+        if ($linktoelem) print '<br>'.$linktoelem;
 
 		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 		// print '</td><td valign="top" width="50%">';
