@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2012 Laurent Destailleur     <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2016 Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2004-2010 Folke Ashberg: Some lines of code were inspired from work
  *                         of Folke Ashberg into PHP-Barcode 0.3pl2, available as GPL
  *                         source code at http://www.ashberg.de/bar.
@@ -59,21 +59,20 @@ else $genbarcode_loc = $conf->global->GENBARCODE_LOCATION;
 /**
  * Print barcode
  *
- * @param	string	$code		Code
- * @param	string	$encoding	Encoding
- * @param	integer	$scale		Scale
- * @param	string	$mode		'png' or 'jpg' ...
- * @return	array	$bars		array('encoding': the encoding which has been used, 'bars': the bars, 'text': text-positioning info)
+ * @param	string	       $code		Code
+ * @param	string	       $encoding	Encoding
+ * @param	integer	       $scale		Scale
+ * @param	string	       $mode		'png' or 'jpg' ...
+ * @return	array|string   $bars		array('encoding': the encoding which has been used, 'bars': the bars, 'text': text-positioning info) or string with error message
  */
 function barcode_print($code, $encoding="ANY", $scale = 2 ,$mode = "png")
 {
-    // DOLCHANGE LDR Add log
     dol_syslog("barcode.lib.php::barcode_print $code $encoding $scale $mode");
 
     $bars=barcode_encode($code,$encoding);
     if (! $bars || ! empty($bars['error']))
     {
-        // DOLCHANGE LDR Return error message instead of array
+        // Return error message instead of array
         if (empty($bars['error'])) $error='Bad Value '.$code.' for encoding '.$encoding;
         else $error=$bars['error'];
         dol_syslog('barcode.lib.php::barcode_print '.$error, LOG_ERR);

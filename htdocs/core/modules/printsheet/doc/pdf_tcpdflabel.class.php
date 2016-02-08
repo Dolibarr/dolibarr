@@ -272,9 +272,10 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 	 *	@param	Translate	$outputlangs		Lang object for output language
 	 *	@param	string		$srctemplatepath	Full path of source filename for generator using a template file
 	 *	@param	string		$outputdir			Output directory for pdf file
+	 *  @param  string      $filename           Short file name of PDF output file
 	 *	@return int								1=OK, 0=KO
 	 */
-	function write_file($arrayofrecords,$outputlangs,$srctemplatepath,$outputdir='')
+	function write_file($arrayofrecords,$outputlangs,$srctemplatepath,$outputdir='',$filename='tmp_address_sheet.pdf')
 	{
 		global $user,$conf,$langs,$mysoc,$_Avery_Labels;
 
@@ -304,7 +305,6 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 		$keywords=$title." ".$outputlangs->convToOutputCharset($mysoc->name);
 
 		$dir = (empty($outputdir)?$conf->adherent->dir_temp:$outputdir);
-		$filename='tmp_address_sheet.pdf';
 		$file = $dir."/".$filename;
 
 		if (! file_exists($dir))
