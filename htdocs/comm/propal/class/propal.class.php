@@ -37,6 +37,7 @@ require_once DOL_DOCUMENT_ROOT ."/core/class/commonobjectline.class.php";
 require_once DOL_DOCUMENT_ROOT .'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT .'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT .'/margin/lib/margins.lib.php';
+dol_include_once('/multicurrency/class/multicurrency.class.php');
 
 /**
  *	Class to manage proposals
@@ -156,6 +157,14 @@ class Propal extends CommonObject
 
     var $specimen;
 
+	// Multicurrency
+	var $fk_multicurrency;
+	var $multicurrency_code;
+	var $multicurrency_tx;
+	var $multicurrency_total_ht;
+	var $multicurrency_total_tva;
+	var $multicurrency_total_ttc;
+	
 	/**
 	 * Draft status
 	 */
@@ -441,13 +450,18 @@ class Propal extends CommonObject
             $localtaxes_type=getLocalTaxesFromRate($txtva,0,$this->thirdparty,$mysoc);
             $txtva = preg_replace('/\s*\(.*\)/','',$txtva);  // Remove code into vatrate.
             
-            $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $product_type, $mysoc, $localtaxes_type);
+            $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $product_type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx);
 
             $total_ht  = $tabprice[0];
             $total_tva = $tabprice[1];
             $total_ttc = $tabprice[2];
             $total_localtax1 = $tabprice[9];
             $total_localtax2 = $tabprice[10];
+
+			// MultiCurrency
+			$multicurrency_total_ht  = $tabprice[16];
+            $multicurrency_total_tva = $tabprice[17];
+            $multicurrency_total_ttc = $tabprice[18];
 
             // Rang to use
             $rangtouse = $rang;
@@ -505,6 +519,14 @@ class Propal extends CommonObject
             $this->line->origin_id = $origin_id;
             $this->line->origin = $origin;
 
+			// Multicurrency
+			$this->line->fk_multicurrency			= $this->fk_multicurrency;
+			$this->line->multicurrency_code			= $this->multicurrency_code;
+			$this->line->multicurrency_subprice		= price2num($pu_ht * $this->multicurrency_tx);
+			$this->line->multicurrency_total_ht 	= $multicurrency_total_ht;
+            $this->line->multicurrency_total_tva 	= $multicurrency_total_tva;
+            $this->line->multicurrency_total_ttc 	= $multicurrency_total_ttc;
+            
             // Mise en option de la ligne
             if (empty($qty) && empty($special_code)) $this->line->special_code=3;
 
@@ -603,13 +625,18 @@ class Propal extends CommonObject
             $localtaxes_type=getLocalTaxesFromRate($txtva,0,$this->thirdparty,$mysoc);
             $txtva = preg_replace('/\s*\(.*\)/','',$txtva);  // Remove code into vatrate.
             
-            $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type);
+            $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx);
             $total_ht  = $tabprice[0];
             $total_tva = $tabprice[1];
             $total_ttc = $tabprice[2];
             $total_localtax1 = $tabprice[9];
             $total_localtax2 = $tabprice[10];
 
+			// MultiCurrency
+			$multicurrency_total_ht  = $tabprice[16];
+            $multicurrency_total_tva = $tabprice[17];
+            $multicurrency_total_ttc = $tabprice[18];
+			
             // Anciens indicateurs: $price, $remise (a ne plus utiliser)
             $price = $pu;
             if ($remise_percent > 0)
@@ -671,6 +698,12 @@ class Propal extends CommonObject
             if (is_array($array_options) && count($array_options)>0) {
             	$this->line->array_options=$array_options;
             }
+
+			// Multicurrency
+			$this->line->multicurrency_subprice		= price2num($pu * $this->multicurrency_tx);
+			$this->line->multicurrency_total_ht 	= $multicurrency_total_ht;
+            $this->line->multicurrency_total_tva 	= $multicurrency_total_tva;
+            $this->line->multicurrency_total_ttc 	= $multicurrency_total_ttc;
 
             $result=$this->line->update();
             if ($result > 0)
@@ -756,6 +789,15 @@ class Propal extends CommonObject
         if (empty($this->availability_id)) $this->availability_id=0;
         if (empty($this->demand_reason_id)) $this->demand_reason_id=0;
 
+		// Multicurrency
+		if (!empty($this->multicurrency_code)) list($this->fk_multicurrency,$this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code);
+		if (empty($this->fk_multicurrency))
+		{
+			$this->multicurrency_code = $conf->currency;
+			$this->fk_multicurrency = 0;
+			$this->multicurrency_tx = 1;
+		}
+		
         dol_syslog(get_class($this)."::create");
 
         // Check parameters
@@ -819,6 +861,9 @@ class Propal extends CommonObject
         $sql.= ", fk_incoterms";
         $sql.= ", location_incoterms";
         $sql.= ", entity";
+        $sql.= ", fk_multicurrency";
+        $sql.= ", multicurrency_code";
+        $sql.= ", multicurrency_tx";
         $sql.= ") ";
         $sql.= " VALUES (";
         $sql.= $this->socid;
@@ -848,6 +893,9 @@ class Propal extends CommonObject
         $sql.= ", ".(int) $this->fk_incoterms;
         $sql.= ", '".$this->db->escape($this->location_incoterms)."'";
         $sql.= ", ".$conf->entity;
+		$sql.= ", ".(int) $this->fk_multicurrency;
+		$sql.= ", '".$this->db->escape($this->multicurrency_code)."'";
+		$sql.= ", ".(double) $this->multicurrency_tx;
         $sql.= ")";
 
         dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -1184,6 +1232,7 @@ class Propal extends CommonObject
         $sql.= ', p.fk_account';
         $sql.= ", p.fk_shipping_method";
         $sql.= ", p.fk_incoterms, p.location_incoterms";
+		$sql.= ", p.fk_multicurrency, p.multicurrency_code, p.multicurrency_tx, p.multicurrency_total_ht, p.multicurrency_total_tva, p.multicurrency_total_ttc";
         $sql.= ", i.libelle as libelle_incoterms";
         $sql.= ", c.label as statut_label";
         $sql.= ", ca.code as availability_code, ca.label as availability";
@@ -1268,6 +1317,14 @@ class Propal extends CommonObject
 				$this->location_incoterms = $obj->location_incoterms;
 				$this->libelle_incoterms = $obj->libelle_incoterms;
 
+				// Multicurrency
+				$this->fk_multicurrency 		= $obj->fk_multicurrency;
+				$this->multicurrency_code 		= $obj->multicurrency_code;
+				$this->multicurrency_tx 		= $obj->multicurrency_tx;
+				$this->multicurrency_total_ht 	= $obj->multicurrency_total_ht;
+				$this->multicurrency_total_tva 	= $obj->multicurrency_total_tva;
+				$this->multicurrency_total_ttc 	= $obj->multicurrency_total_ttc;
+
                 if ($obj->fk_statut == self::STATUS_DRAFT)
                 {
                     $this->brouillon = 1;
@@ -1292,6 +1349,7 @@ class Propal extends CommonObject
 	            $sql.= " d.fk_unit,";
                 $sql.= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label as product_label,';
                 $sql.= ' d.date_start, d.date_end';
+				$sql.= ' ,d.fk_multicurrency, d.multicurrency_code, d.multicurrency_subprice, d.multicurrency_total_ht, d.multicurrency_total_tva, d.multicurrency_total_ttc';
                 $sql.= " FROM ".MAIN_DB_PREFIX."propaldet as d";
                 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON d.fk_product = p.rowid";
                 $sql.= " WHERE d.fk_propal = ".$this->id;
@@ -1356,6 +1414,15 @@ class Propal extends CommonObject
 
                         $line->date_start  		= $objp->date_start;
                         $line->date_end  		= $objp->date_end;
+
+
+						// Multicurrency
+						$line->fk_multicurrency 		= $objp->fk_multicurrency;
+						$line->multicurrency_code 		= $objp->multicurrency_code;
+						$line->multicurrency_subprice 	= $objp->multicurrency_subprice;
+						$line->multicurrency_total_ht 	= $objp->multicurrency_total_ht;
+						$line->multicurrency_total_tva 	= $objp->multicurrency_total_tva;
+						$line->multicurrency_total_ttc 	= $objp->multicurrency_total_ttc;
 
                         $line->fetch_optionals($line->id,$extralabelsline);
 
@@ -2785,6 +2852,7 @@ class Propal extends CommonObject
         $sql.= ' p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid,';
         $sql.= ' p.description as product_desc,';
         $sql.= ' p.entity';
+		$sql.= ' ,pt.fk_multicurrency, pt.multicurrency_code, pt.multicurrency_subprice, pt.multicurrency_total_ht, pt.multicurrency_total_tva, pt.multicurrency_total_ttc';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'propaldet as pt';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product=p.rowid';
         $sql.= ' WHERE pt.fk_propal = '.$this->id;
@@ -2833,6 +2901,14 @@ class Propal extends CommonObject
                 $this->lines[$i]->date_start		= $this->db->jdate($obj->date_start);
                 $this->lines[$i]->date_end			= $this->db->jdate($obj->date_end);
 	            $this->lines[$i]->fk_unit			= $obj->fk_unit;
+				
+				// Multicurrency
+				$this->lines[$i]->fk_multicurrency 			= $obj->fk_multicurrency;
+				$this->lines[$i]->multicurrency_code 		= $obj->multicurrency_code;
+				$this->lines[$i]->multicurrency_subprice 	= $obj->multicurrency_subprice;
+				$this->lines[$i]->multicurrency_total_ht 	= $obj->multicurrency_total_ht;
+				$this->lines[$i]->multicurrency_total_tva 	= $obj->multicurrency_total_tva;
+				$this->lines[$i]->multicurrency_total_ttc 	= $obj->multicurrency_total_ttc;
 
                 $i++;
             }
@@ -3003,6 +3079,14 @@ class PropaleLigne  extends CommonObjectLine
 
     var $skip_update_total; // Skip update price total for special lines
 
+    // Multicurrency
+	var $fk_multicurrency;
+	var $multicurrency_code;
+	var $multicurrency_subprice;
+	var $multicurrency_total_ht;
+	var $multicurrency_total_tva;
+	var $multicurrency_total_ttc;
+	
     /**
      * 	Class line Contructor
      *
@@ -3026,6 +3110,7 @@ class PropaleLigne  extends CommonObjectLine
 		$sql.= ' pd.info_bits, pd.total_ht, pd.total_tva, pd.total_ttc, pd.fk_product_fournisseur_price as fk_fournprice, pd.buy_price_ht as pa_ht, pd.special_code, pd.rang,';
 		$sql.= ' pd.fk_unit,';
 		$sql.= ' pd.localtax1_tx, pd.localtax2_tx, pd.total_localtax1, pd.total_localtax2,';
+		$sql.= ' pd.fk_multicurrency, pd.multicurrency_code, pd.multicurrency_subprice, pd.multicurrency_total_ht, pd.multicurrency_total_tva, pd.multicurrency_total_ttc,';
 		$sql.= ' p.ref as product_ref, p.label as product_label, p.description as product_desc,';
 		$sql.= ' pd.date_start, pd.date_end, pd.product_type';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'propaldet as pd';
@@ -3078,6 +3163,14 @@ class PropaleLigne  extends CommonObjectLine
 			$this->date_start       = $this->db->jdate($objp->date_start);
             $this->date_end         = $this->db->jdate($objp->date_end);
 
+			// Multicurrency
+			$this->fk_multicurrency 		= $objp->fk_multicurrency;
+			$this->multicurrency_code 		= $objp->multicurrency_code;
+			$this->multicurrency_subprice 	= $objp->multicurrency_subprice;
+			$this->multicurrency_total_ht 	= $objp->multicurrency_total_ht;
+			$this->multicurrency_total_tva 	= $objp->multicurrency_total_tva;
+			$this->multicurrency_total_ttc 	= $objp->multicurrency_total_ttc;
+	
 			$this->db->free($result);
 
             return 1;
@@ -3148,7 +3241,8 @@ class PropaleLigne  extends CommonObjectLine
         $sql.= ' info_bits, ';
         $sql.= ' total_ht, total_tva, total_localtax1, total_localtax2, total_ttc, fk_product_fournisseur_price, buy_price_ht, special_code, rang,';
 	    $sql.= ' fk_unit,';
-        $sql.= ' date_start, date_end)';
+        $sql.= ' date_start, date_end';
+		$sql.= ', fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc)';
         $sql.= " VALUES (".$this->fk_propal.",";
         $sql.= " ".($this->fk_parent_line>0?"'".$this->fk_parent_line."'":"null").",";
         $sql.= " ".(! empty($this->label)?"'".$this->db->escape($this->label)."'":"null").",";
@@ -3177,6 +3271,12 @@ class PropaleLigne  extends CommonObjectLine
 	    $sql.= ' '.(!$this->fk_unit ? 'NULL' : $this->fk_unit).',';
         $sql.= " ".(! empty($this->date_start)?"'".$this->db->idate($this->date_start)."'":"null").',';
         $sql.= " ".(! empty($this->date_end)?"'".$this->db->idate($this->date_end)."'":"null");
+		$sql.= ", ".$this->fk_multicurrency;
+		$sql.= ", '".$this->db->escape($this->multicurrency_code)."'";
+		$sql.= ", ".$this->multicurrency_subprice;
+		$sql.= ", ".$this->multicurrency_total_ht;
+		$sql.= ", ".$this->multicurrency_total_tva;
+		$sql.= ", ".$this->multicurrency_total_ttc;
         $sql.= ')';
 
         dol_syslog(get_class($this).'::insert', LOG_DEBUG);
@@ -3349,6 +3449,13 @@ class PropaleLigne  extends CommonObjectLine
         $sql.= " , date_start=".(! empty($this->date_start)?"'".$this->db->idate($this->date_start)."'":"null");
         $sql.= " , date_end=".(! empty($this->date_end)?"'".$this->db->idate($this->date_end)."'":"null");
 	    $sql.= " , fk_unit=".(!$this->fk_unit ? 'NULL' : $this->fk_unit);
+		
+		// Multicurrency
+		$sql.= " , multicurrency_subprice=".price2num($this->multicurrency_subprice)."";
+        $sql.= " , multicurrency_total_ht=".price2num($this->multicurrency_total_ht)."";
+        $sql.= " , multicurrency_total_tva=".price2num($this->multicurrency_total_tva)."";
+        $sql.= " , multicurrency_total_ttc=".price2num($this->multicurrency_total_ttc)."";
+		
         $sql.= " WHERE rowid = ".$this->rowid;
 
         dol_syslog(get_class($this)."::update", LOG_DEBUG);

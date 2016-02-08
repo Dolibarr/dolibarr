@@ -49,5 +49,12 @@ create table llx_facture_fourn_det
   special_code				 integer      DEFAULT 0,      -- code pour les lignes speciales
   rang						 integer      DEFAULT 0,
   import_key        varchar(14),
-  fk_unit         integer    DEFAULT NULL
+  fk_unit         integer    DEFAULT NULL,
+  
+  fk_multicurrency		integer,
+  multicurrency_code			varchar(255),
+  multicurrency_subprice		double(24,8) DEFAULT 0,
+  multicurrency_total_ht		double(24,8) DEFAULT 0,
+  multicurrency_total_tva	double(24,8) DEFAULT 0,
+  multicurrency_total_ttc	double(24,8) DEFAULT 0
 )ENGINE=innodb;

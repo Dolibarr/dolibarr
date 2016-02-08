@@ -55,7 +55,14 @@ create table llx_commandedet
   special_code					integer      DEFAULT 0,      -- code pour les lignes speciales
   rang							integer      DEFAULT 0,
   fk_unit            integer      DEFAULT NULL,           -- lien vers table des unités
-  import_key					varchar(14)
+  import_key					varchar(14),
+  
+  fk_multicurrency		integer,
+  multicurrency_code			varchar(255),
+  multicurrency_subprice		double(24,8) DEFAULT 0,
+  multicurrency_total_ht		double(24,8) DEFAULT 0,
+  multicurrency_total_tva	double(24,8) DEFAULT 0,
+  multicurrency_total_ttc	double(24,8) DEFAULT 0
 )ENGINE=innodb;
 
 -- 

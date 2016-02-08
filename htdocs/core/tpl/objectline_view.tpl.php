@@ -130,7 +130,11 @@ if (empty($usemargins)) $usemargins=0;
 	<td align="right" class="linecolvat nowrap"><?php $coldisplay++; ?><?php echo vatrate($line->tva_tx,'%',$line->info_bits); ?></td>
 
 	<td align="right" class="linecoluht nowrap"><?php $coldisplay++; ?><?php echo price($line->subprice); ?></td>
-
+	
+	<?php if (!empty($conf->multicurrency->enabled)) { ?>
+	<td align="right" class="linecoluht_currency nowrap"><?php $coldisplay++; ?><?php echo price($line->multicurrency_subprice); ?></td>
+	<?php } ?>
+	
 	<?php if ($inputalsopricewithtax) { ?>
 	<td align="right" class="linecoluttc nowrap"><?php $coldisplay++; ?><?php echo (isset($line->pu_ttc)?price($line->pu_ttc):price($line->subprice)); ?></td>
 	<?php } ?>
@@ -190,6 +194,9 @@ if (empty($usemargins)) $usemargins=0;
 	<td align="right" class="linecoloption nowrap"><?php $coldisplay++; ?><?php echo $langs->trans('Option'); ?></td>
 	<?php } else { ?>
 	<td align="right" class="liencolht nowrap"><?php $coldisplay++; ?><?php echo price($line->total_ht); ?></td>
+		<?php if (!empty($conf->multicurrency->enabled)) { ?>
+		<td align="right" class="linecolutotalht_currency nowrap"><?php $coldisplay++; ?><?php echo price($line->multicurrency_total_ht); ?></td>
+		<?php } ?>
 	<?php } ?>
 
 	<?php if ($this->statut == 0  && ($object_rights->creer)) { ?>

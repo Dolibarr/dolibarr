@@ -61,6 +61,9 @@ if (in_array($object->element,array('propal', 'supplier_proposal','facture','inv
 	<?php } ?>
 	<td class="linecolvat" align="right"><span id="title_vat"><?php echo $langs->trans('VAT'); ?></span></td>
 	<td class="linecoluht" align="right"><span id="title_up_ht"><?php echo $langs->trans('PriceUHT'); ?></span></td>
+	<?php if (!empty($conf->multicurrency->enabled)) { $colspan++;?>
+	<td class="linecoluht_currency" align="right"><span id="title_up_ht_currency"><?php echo $langs->trans('PriceUHTCurrency'); ?></span></td>
+	<?php } ?>
 	<?php if (! empty($inputalsopricewithtax)) { ?>
 	<td class="linecoluttc" align="right"><span id="title_up_ttc"><?php echo $langs->trans('PriceUTTC'); ?></span></td>
 	<?php } ?>
@@ -227,6 +230,13 @@ else {
 	<td class="nobottom linecoluht" align="right">
 	<input type="text" size="5" name="price_ht" id="price_ht" class="flat" value="<?php echo (isset($_POST["price_ht"])?$_POST["price_ht"]:''); ?>">
 	</td>
+	
+	<?php if (!empty($conf->multicurrency->enabled)) { $colspan++;?>
+	<td class="nobottom linecoluht_currency" align="right">
+	<input type="text" size="5" name="multicurrency_price_ht" id="multicurrency_price_ht" class="flat" value="<?php echo (isset($_POST["multicurrency_price_ht"])?$_POST["multicurrency_price_ht"]:''); ?>">
+	</td>
+	<?php } ?>
+	
 	<?php if (! empty($inputalsopricewithtax)) { ?>
 	<td class="nobottom linecoluttc" align="right">
 	<input type="text" size="5" name="price_ttc" id="price_ttc" class="flat" value="<?php echo (isset($_POST["price_ttc"])?$_POST["price_ttc"]:''); ?>">
@@ -353,6 +363,8 @@ if ((! empty($conf->service->enabled) || ($object->element == 'contrat')) && $da
 			$colspan++;
 		}
 	}
+
+	if (!empty($conf->multicurrency->enabled)) $colspan+=2;
 
 	if (! empty($usemargins))
 	{

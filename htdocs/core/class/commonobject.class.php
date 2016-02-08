@@ -1414,6 +1414,108 @@ abstract class CommonObject
     	}
     }
 
+	/**
+     *  Change the multicurrency code
+     *
+     *  @param		string	$code	multicurrency code
+     *  @return		int				>0 if OK, <0 if KO
+     */
+    function setMulticurrencyCode($code)
+    {
+    	dol_syslog(get_class($this).'::setMulticurrencyCode('.$id.')');
+    	if ($this->statut >= 0 || $this->element == 'societe')
+    	{
+    		$fieldname = 'multicurrency_code';
+			
+    		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
+    		$sql .= ' SET '.$fieldname.' = "'.$this->db->escape($code).'"';
+    		$sql .= ' WHERE rowid='.$this->id;
+
+    		if ($this->db->query($sql))
+    		{
+    			$this->multicurrency_code = $code;
+				
+				list($fk_multicurrency, $rate) = MultiCurrency::getIdAndTxFromCode($this->db, $code);
+				if ($rate) $this->setMulticurrencyRate($rate);
+				
+    			return 1;
+    		}
+    		else
+    		{
+    			dol_syslog(get_class($this).'::setMulticurrencyCode Erreur '.$sql.' - '.$this->db->error());
+    			$this->error=$this->db->error();
+    			return -1;
+    		}
+    	}
+    	else
+    	{
+    		dol_syslog(get_class($this).'::setMulticurrencyCode, status of the object is incompatible');
+    		$this->error='Status of the object is incompatible '.$this->statut;
+    		return -2;
+    	}
+    }
+	
+	/**
+     *  Change the multicurrency rate
+     *
+     *  @param		double	$rate	multicurrency rate
+     *  @return		int				>0 if OK, <0 if KO
+     */
+    function setMulticurrencyRate($rate)
+    {
+    	dol_syslog(get_class($this).'::setMulticurrencyRate('.$id.')');
+    	if ($this->statut >= 0 || $this->element == 'societe')
+    	{
+    		$fieldname = 'multicurrency_tx';
+			
+    		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
+    		$sql .= ' SET '.$fieldname.' = '.$rate;
+    		$sql .= ' WHERE rowid='.$this->id;
+
+    		if ($this->db->query($sql))
+    		{
+    			$this->multicurrency_tx = $rate;
+				
+				// Update line price
+				if (!empty($this->lines))
+				{
+					foreach ($this->lines as &$line) 
+					{
+						switch ($this->element) {
+							case 'propal':
+								$this->updateline($line->id, $line->subprice, $line->qty, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, $line->desc, 'HT', $line->info_bits, $line->special_code, $line->fk_parent_line, $line->skip_update_total, $line->fk_fournprice, $line->pa_ht, $line->label, $line->product_type, $line->date_start, $line->date_end, $line->array_options, $line->fk_unit);
+								break;
+							case 'commande':
+								$this->updateline($line->id, $line->desc, $line->subprice, $line->qty, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->date_start, $line->date_end, $line->product_type, $line->fk_parent_line, $line->skip_update_total, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->fk_unit);
+								break;
+							case 'facture':
+								$this->updateline($line->id, $line->desc, $line->subprice, $line->qty, $line->remise_percent, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, $line->skip_update_total, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
+								break;
+							default:
+								dol_syslog(get_class($this).'::setMulticurrencyRate no updateline defined', LOG_DEBUG);
+								break;
+						}
+						
+					}
+				}
+				
+    			return 1;
+    		}
+    		else
+    		{
+    			dol_syslog(get_class($this).'::setMulticurrencyRate Erreur '.$sql.' - '.$this->db->error());
+    			$this->error=$this->db->error();
+    			return -1;
+    		}
+    	}
+    	else
+    	{
+    		dol_syslog(get_class($this).'::setMulticurrencyRate, status of the object is incompatible');
+    		$this->error='Status of the object is incompatible '.$this->statut;
+    		return -2;
+    	}
+    }
+
     /**
      *  Change the payments terms
      *
@@ -2076,6 +2178,7 @@ abstract class CommonObject
         $sql = 'SELECT rowid, qty, '.$fieldup.' as up, remise_percent, total_ht, '.$fieldtva.' as total_tva, total_ttc, '.$fieldlocaltax1.' as total_localtax1, '.$fieldlocaltax2.' as total_localtax2,';
         $sql.= ' tva_tx as vatrate, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, info_bits, product_type';
 		if ($this->table_element_line == 'facturedet') $sql.= ', situation_percent';
+		$sql.= ', multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc';
         $sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line;
         $sql.= ' WHERE '.$this->fk_element.' = '.$this->id;
         if ($exclspec)
@@ -2098,6 +2201,9 @@ abstract class CommonObject
             $total_ht_by_vats  = array();
             $total_tva_by_vats = array();
             $total_ttc_by_vats = array();
+			$this->multicurrency_total_ht	= 0;
+            $this->multicurrency_total_tva	= 0;
+           	$this->multicurrency_total_ttc	= 0;
 
             $num = $this->db->num_rows($resql);
             $i = 0;
@@ -2106,11 +2212,11 @@ abstract class CommonObject
                 $obj = $this->db->fetch_object($resql);
 
                 // Note: There is no check on detail line and no check on total, if $forcedroundingmode = 'none'
-
+				$multicurrency_tx = !empty($this->multicurrency_tx) ? $this->multicurrency_tx : 1;
                 if ($forcedroundingmode == '0')	// Check if data on line are consistent. This may solve lines that were not consistent because set with $forcedroundingmode='auto'
                 {
                 	$localtax_array=array($obj->localtax1_type,$obj->localtax1_tx,$obj->localtax2_type,$obj->localtax2_tx);
-                	$tmpcal=calcul_price_total($obj->qty, $obj->up, $obj->remise_percent, $obj->vatrate, $obj->localtax1_tx, $obj->localtax2_tx, 0, 'HT', $obj->info_bits, $obj->product_type, $seller, $localtax_array, (isset($obj->situation_percent) ? $obj->situation_percent : 100));
+                	$tmpcal=calcul_price_total($obj->qty, $obj->up, $obj->remise_percent, $obj->vatrate, $obj->localtax1_tx, $obj->localtax2_tx, 0, 'HT', $obj->info_bits, $obj->product_type, $seller, $localtax_array, (isset($obj->situation_percent) ? $obj->situation_percent : 100), $multicurrency_tx);
                 	$diff=price2num($tmpcal[1] - $obj->total_tva, 'MT', 1);
                 	if ($diff)
                 	{
@@ -2129,6 +2235,7 @@ abstract class CommonObject
                 $this->total_localtax1 += $obj->total_localtax1;
                 $this->total_localtax2 += $obj->total_localtax2;
                 $this->total_ttc       += $obj->total_ttc;
+                
                 if (! isset($total_ht_by_vats[$obj->vatrate]))  $total_ht_by_vats[$obj->vatrate]=0;
                 if (! isset($total_tva_by_vats[$obj->vatrate])) $total_tva_by_vats[$obj->vatrate]=0;
                 if (! isset($total_ttc_by_vats[$obj->vatrate])) $total_ttc_by_vats[$obj->vatrate]=0;
@@ -2174,7 +2281,12 @@ abstract class CommonObject
 					$this->total_ttc -= $sit->total_ttc;
 				}
 			}
-
+			
+			// Multicurrency
+			$this->multicurrency_total_ht	+= $this->total_ht * $multicurrency_tx;
+            $this->multicurrency_total_tva	+= $this->total_tva * $multicurrency_tx;
+            $this->multicurrency_total_ttc	+= $this->total_ttc * $multicurrency_tx;
+			
             $this->db->free($resql);
 
             // Now update global field total_ht, total_ttc and tva
@@ -2198,6 +2310,9 @@ abstract class CommonObject
                 $sql .= " ".$fieldlocaltax1."='".price2num($this->total_localtax1)."',";
                 $sql .= " ".$fieldlocaltax2."='".price2num($this->total_localtax2)."',";
                 $sql .= " ".$fieldttc."='".price2num($this->total_ttc)."'";
+				$sql .= ", multicurrency_total_ht='".price2num($this->multicurrency_total_ht, 'MT', 1)."'";
+				$sql .= ", multicurrency_total_tva='".price2num($this->multicurrency_total_tva, 'MT', 1)."'";
+				$sql .= ", multicurrency_total_ttc='".price2num($this->multicurrency_total_ttc, 'MT', 1)."'";
                 $sql .= ' WHERE rowid = '.$this->id;
 
                 //print "xx".$sql;
@@ -3068,6 +3183,9 @@ abstract class CommonObject
 		// Price HT
 		print '<td class="linecoluht" align="right" width="80">'.$langs->trans('PriceUHT').'</td>';
 
+		// Multicurrency
+		if (!empty($conf->multicurrency->enabled)) print '<td class="linecoluht_currency" align="right" width="80">'.$langs->trans('PriceUHTCurrency').'</td>';
+		
 		if ($inputalsopricewithtax) print '<td align="right" width="80">'.$langs->trans('PriceUTTC').'</td>';
 
 		// Qty
@@ -3100,6 +3218,9 @@ abstract class CommonObject
 
 		// Total HT
 		print '<td class="linecolht" align="right" width="50">'.$langs->trans('TotalHTShort').'</td>';
+
+		// Multicurrency
+		if (!empty($conf->multicurrency->enabled)) print '<td class="linecoltotalht_currency" align="right" width="50">'.$langs->trans('TotalHTShortCurrency').'</td>';
 
 		print '<td class="linecoledit"></td>';  // No width to allow autodim
 
@@ -3288,6 +3409,7 @@ abstract class CommonObject
         print '<td>'.$langs->trans('Description').'</td>';
         print '<td align="right">'.$langs->trans('VAT').'</td>';
         print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
+		if (!empty($conf->multicurrency->enabled)) print '<td align="right">'.$langs->trans('PriceUHTCurrency').'</td>';
         print '<td align="right">'.$langs->trans('Qty').'</td>';
 	    if($conf->global->PRODUCT_USE_UNITS)
 	    {
@@ -3418,6 +3540,7 @@ abstract class CommonObject
 
         $this->tpl['vat_rate'] = vatrate($line->tva_tx, true);
         $this->tpl['price'] = price($line->subprice);
+		$this->tpl['multicurrency_price'] = price($line->multicurrency_subprice);
         $this->tpl['qty'] = (($line->info_bits & 2) != 2) ? $line->qty : '&nbsp;';
 	    if($conf->global->PRODUCT_USE_UNITS) $this->tpl['unit'] = $line->getLabelOfUnit('long');
         $this->tpl['remise_percent'] = (($line->info_bits & 2) != 2) ? vatrate($line->remise_percent, true) : '&nbsp;';
