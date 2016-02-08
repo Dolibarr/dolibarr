@@ -61,8 +61,14 @@ create table llx_facturedet
 
   situation_percent real,   -- % progression of lines invoicing
   fk_prev_id        integer, -- id of the line in the previous situation,
-  fk_unit           integer DEFAULT NULL -- id of the unit code¡
+  fk_unit           integer DEFAULT NULL, -- id of the unit code¡
 
+  fk_multicurrency		integer,
+  multicurrency_code			varchar(255),
+  multicurrency_subprice		double(24,8) DEFAULT 0,
+  multicurrency_total_ht		double(24,8) DEFAULT 0,
+  multicurrency_total_tva	double(24,8) DEFAULT 0,
+  multicurrency_total_ttc	double(24,8) DEFAULT 0
 )ENGINE=innodb;
 
 -- 

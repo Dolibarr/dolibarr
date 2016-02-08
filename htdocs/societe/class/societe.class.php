@@ -33,7 +33,7 @@
  *	\brief      File for third party class
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-
+dol_include_once('/multicurrency/class/multicurrency.class.php');
 
 /**
  *	Class to manage third parties objects (customers, suppliers, prospects...)
@@ -354,6 +354,10 @@ class Societe extends CommonObject
 	var $location_incoterms;
 	var $libelle_incoterms;  //Used into tooltip
 
+	// Multicurrency
+	var $fk_multicurrency;
+	var $multicurrency_code;
+	
     /**
      * To contains a clone of this when we need to save old properties of object
      *  @var Societe
@@ -402,7 +406,14 @@ class Societe extends CommonObject
         if (empty($this->client))      $this->client=0;
         if (empty($this->fournisseur)) $this->fournisseur=0;
         $this->import_key = trim($this->import_key);
-
+		
+		if (!empty($this->multicurrency_code)) $this->fk_multicurrency = MultiCurrency::getIdFromCode($this->db, $this->multicurrency_code);
+		if (empty($this->fk_multicurrency))
+		{
+			$this->multicurrency_code = '';
+			$this->fk_multicurrency = 0;
+		}
+		
         dol_syslog(get_class($this)."::create ".$this->name);
 
         // Check parameters
@@ -427,7 +438,7 @@ class Societe extends CommonObject
 
         if ($result >= 0)
         {
-            $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, name_alias, entity, datec, fk_user_creat, canvas, status, ref_int, ref_ext, fk_stcomm, fk_incoterms, location_incoterms ,import_key)";
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, name_alias, entity, datec, fk_user_creat, canvas, status, ref_int, ref_ext, fk_stcomm, fk_incoterms, location_incoterms ,import_key, fk_multicurrency, multicurrency_code)";
             $sql.= " VALUES ('".$this->db->escape($this->name)."', '".$this->db->escape($this->name_alias)."', ".$conf->entity.", '".$this->db->idate($now)."'";
             $sql.= ", ".(! empty($user->id) ? "'".$user->id."'":"null");
             $sql.= ", ".(! empty($this->canvas) ? "'".$this->db->escape($this->canvas)."'":"null");
@@ -437,7 +448,9 @@ class Societe extends CommonObject
             $sql.= ", 0";
 			$sql.= ", ".(int) $this->fk_incoterms;
 			$sql.= ", '".$this->db->escape($this->location_incoterms)."'";
-            $sql.= ", ".(! empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'":"null").")";
+            $sql.= ", ".(! empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'":"null");
+            $sql.= ", ".(int) $this->fk_multicurrency;
+            $sql.= ", '".$this->db->escape($this->multicurrency_code)."')";
 
             dol_syslog(get_class($this)."::create", LOG_DEBUG);
             $result=$this->db->query($sql);
@@ -670,6 +683,13 @@ class Societe extends CommonObject
         $this->tva_intra	= dol_sanitizeFileName($this->tva_intra,'');
         if (empty($this->status)) $this->status = 0;
 
+		if (!empty($this->multicurrency_code)) $this->fk_multicurrency = MultiCurrency::getIdFromCode($this->db, $this->multicurrency_code);
+		if (empty($this->fk_multicurrency))
+		{
+			$this->multicurrency_code = '';
+			$this->fk_multicurrency = 0;
+		}
+
         // Local taxes
         $this->localtax1_assuj=trim($this->localtax1_assuj);
         $this->localtax2_assuj=trim($this->localtax2_assuj);
@@ -841,6 +861,8 @@ class Societe extends CommonObject
                 $sql .= ", code_compta_fournisseur = ".(! empty($this->code_compta_fournisseur)?"'".$this->db->escape($this->code_compta_fournisseur)."'":"null");
             }
             $sql .= ", fk_user_modif = ".(! empty($user->id)?"'".$user->id."'":"null");
+			$sql .= ", fk_multicurrency = ".(int) $this->fk_multicurrency;
+			$sql .= ', multicurrency_code = "'.$this->db->escape($this->multicurrency_code).'"';
             $sql .= " WHERE rowid = '" . $id ."'";
 
 
@@ -992,6 +1014,7 @@ class Societe extends CommonObject
         $sql .= ', s.fk_departement, s.fk_pays as country_id, s.fk_stcomm, s.remise_client, s.mode_reglement, s.cond_reglement, s.tva_assuj';
         $sql .= ', s.mode_reglement_supplier, s.cond_reglement_supplier, s.localtax1_assuj, s.localtax1_value, s.localtax2_assuj, s.localtax2_value, s.fk_prospectlevel, s.default_lang, s.logo';
         $sql .= ', s.outstanding_limit, s.import_key, s.canvas, s.fk_incoterms, s.location_incoterms';
+		$sql .= ', s.fk_multicurrency, s.multicurrency_code';
         $sql .= ', fj.libelle as forme_juridique';
         $sql .= ', e.libelle as effectif';
         $sql .= ', c.code as country_code, c.label as country';
@@ -1141,6 +1164,10 @@ class Societe extends CommonObject
 				$this->fk_incoterms = $obj->fk_incoterms;
 				$this->location_incoterms = $obj->location_incoterms;
 				$this->libelle_incoterms = $obj->libelle_incoterms;
+
+				// multicurrency
+				$this->fk_multicurrency = $obj->fk_multicurrency;
+				$this->multicurrency_code = $obj->multicurrency_code;
 
                 $result = 1;
 

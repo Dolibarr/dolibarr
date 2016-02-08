@@ -338,6 +338,13 @@ if (empty($reshook))
 			$object->fk_incoterms 		   = GETPOST('incoterm_id', 'int');
 			$object->location_incoterms    = GETPOST('location_incoterms', 'alpha');
 		}
+		
+		// Multicurrency
+		if (!empty($conf->multicurrency->enabled))
+		{
+			$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
+		}
+		
         // Fill array 'array_options' with data from add form
         $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 		if ($ret < 0)
@@ -1249,6 +1256,16 @@ else
 			}
 		}
 
+		// Multicurrency
+		if (! empty($conf->multicurrency->enabled))
+		{
+			print '<tr>';
+			print '<td>'.fieldLabel('Currency','multicurrency_code').'</td>';
+	        print '<td colspan="3" class="maxwidthonsmartphone">';
+	        print $form->selectMultiCurrency(($object->multicurrency_code ? $object->multicurrency_code : $conf->currency), 'multicurrency_code', 1);
+			print '</td></tr>';
+		}
+
         // Other attributes
         $parameters=array('colspan' => ' colspan="3"', 'colspanvalue' => '3');
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -1801,6 +1818,16 @@ else
 				}
 			}
 
+			// Multicurrency
+			if (! empty($conf->multicurrency->enabled))
+			{
+				print '<tr>';
+				print '<td>'.fieldLabel('Currency','multicurrency_code').'</td>';
+		        print '<td colspan="3" class="maxwidthonsmartphone">';
+		        print $form->selectMultiCurrency(($object->multicurrency_code ? $object->multicurrency_code : $conf->currency), 'multicurrency_code', 1);
+				print '</td></tr>';
+			}
+
             // Other attributes
             $parameters=array('colspan' => ' colspan="3"', 'colspanvalue' => '3');
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -2212,6 +2239,16 @@ else
             print '</td></tr>';
 		}
 
+		// Multicurrency
+		if (! empty($conf->multicurrency->enabled))
+		{
+			print '<tr>';
+			print '<td>'.fieldLabel('Currency','multicurrency_code').'</td>';
+	        print '<td>';
+	        print !empty($object->multicurrency_code) ? currency_name($object->multicurrency_code,1) : '';
+			print '</td></tr>';
+		}
+		
         // Other attributes
         $parameters=array('socid'=>$socid, 'colspan' => ' colspan="3"', 'colspanvalue' => '3');
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook

@@ -49,6 +49,7 @@
  *		@param  Societe	$seller						Thirdparty seller (we need $seller->country_id property). Provided only if seller is the supplier, otherwise $seller will be $mysoc.
  *		@param  array	$localtaxes_array			Array with localtaxes info (loaded by getLocalTaxesFromRate(vatrate, 0, ...) function).
  *		@param  integer	$progress                   Situation invoices progress (value from 0 to 100, 100 by default)
+ *		@param  double	$multicurrency_tx           Currency rate (1 by default)
  *		@return result[ 0=total_ht,
  *						 1=total_vat, (main vat only)
  *						 2=total_ttc, (total_ht + main vat + local taxes)
@@ -65,8 +66,11 @@
  *						13=!! should not be used
  *						14=total_tax1 for total_ht_without_discount,
  *						15=total_tax2 for total_ht_without_discount]
+ * 						16=multicurrency_total_ht
+ * 						17=multicurrency_total_tva
+ * 						18=multicurrency_total_ttc
  */
-function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocaltax1_rate, $uselocaltax2_rate, $remise_percent_global, $price_base_type, $info_bits, $type, $seller = '', $localtaxes_array='', $progress=100)
+function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocaltax1_rate, $uselocaltax2_rate, $remise_percent_global, $price_base_type, $info_bits, $type, $seller = '', $localtaxes_array='', $progress=100, $multicurrency_tx=1)
 {
 	global $conf,$mysoc,$db;
 
@@ -322,9 +326,14 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 			$result[10]=round($result[10]/$conf->global->MAIN_ROUNDING_RULE_TOT, 0)*$conf->global->MAIN_ROUNDING_RULE_TOT;
 		}
 	}
-
+	
+	// Multicurrency
+	$result[16] = price2num($result[0] * $multicurrency_tx, 'MT');
+	$result[17] = price2num($result[1] * $multicurrency_tx, 'MT');
+	$result[18] = price2num($result[2] * $multicurrency_tx, 'MT');
+	
 	// initialize result array
-	//for ($i=0; $i <= 15; $i++) $result[$i] = (float) $result[$i];
+	//for ($i=0; $i <= 18; $i++) $result[$i] = (float) $result[$i];
 
 	dol_syslog('Price.lib::calcul_price_total MAIN_ROUNDING_RULE_TOT='.$conf->global->MAIN_ROUNDING_RULE_TOT.' pu='.$pu.' qty='.$qty.' price_base_type='.$price_base_type.' total_ht='.$result[0].'-total_vat='.$result[1].'-total_ttc='.$result[2]);
 

@@ -1414,7 +1414,11 @@ function pdf_getlineupexcltax($object,$i,$outputlangs,$hidedetails=0)
 	}
 	if (empty($reshook))
 	{
-		if (empty($hidedetails) || $hidedetails > 1) $result.=price($sign * $object->lines[$i]->subprice, 0, $outputlangs);
+		if (empty($hidedetails) || $hidedetails > 1) 
+		{
+			$subprice = ($conf->multicurrency->enabled && $object->multicurrency_tx != 1 ? $object->lines[$i]->multicurrency_subprice : $object->lines[$i]->subprice);
+			$result.=price($sign * $subprice, 0, $outputlangs);
+		}
 	}
 	return $result;
 }
@@ -1735,7 +1739,11 @@ function pdf_getlinetotalexcltax($object,$i,$outputlangs,$hidedetails=0)
     	{
     		return $outputlangs->transnoentities("Option");
     	}
-        if (empty($hidedetails) || $hidedetails > 1) $result.=price($sign * $object->lines[$i]->total_ht, 0, $outputlangs);
+        if (empty($hidedetails) || $hidedetails > 1)
+        {
+        	$total_ht = ($conf->multicurrency->enabled && $object->multicurrency_tx != 1 ? $object->lines[$i]->multicurrency_total_ht : $object->lines[$i]->total_ht);
+			$result.=price($sign * $total_ht, 0, $outputlangs);
+        }
 	}
 	return $result;
 }
