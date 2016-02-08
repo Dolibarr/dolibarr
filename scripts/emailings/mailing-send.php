@@ -142,18 +142,18 @@ if ($resql)
 						$sendto = str_replace(',',' ',dolGetFirstLastname($obj2->firstname, $obj2->lastname) ." <".$obj2->email.">");
 
 						// Make subtsitutions on topic and body
-						$other=explode(';',$obj->other);
+						$other=explode(';',$obj2->other);
 						$tmpfield=explode('=',$other[0],2); $other1=(isset($tmpfield[1])?$tmpfield[1]:$tmpfield[0]);
 	                    $tmpfield=explode('=',$other[1],2); $other2=(isset($tmpfield[1])?$tmpfield[1]:$tmpfield[0]);
 	                    $tmpfield=explode('=',$other[2],2); $other3=(isset($tmpfield[1])?$tmpfield[1]:$tmpfield[0]);
 	                    $tmpfield=explode('=',$other[3],2); $other4=(isset($tmpfield[1])?$tmpfield[1]:$tmpfield[0]);
 	                    $tmpfield=explode('=',$other[4],2); $other5=(isset($tmpfield[1])?$tmpfield[1]:$tmpfield[0]);
-	                    $signature = (!empty($user->signature))?$user->signature:'';
+	                    $signature = ((!empty($user->signature) && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN))?$user->signature:'');
 
 						// Array of possible substitutions (See also file mailing-send.php that should manage same substitutions)
 						$substitutionarray=array(
-							'__ID__' => $obj->source_id,
-							'__EMAIL__' => $obj->email,
+							'__ID__' => $obj2->source_id,
+							'__EMAIL__' => $obj2->email,
 							'__LASTNAME__' => $obj2->lastname,
 							'__FIRSTNAME__' => $obj2->firstname,
 							'__MAILTOEMAIL__' => '<a href="mailto:'.$obj2->email.'">'.$obj2->email.'</a>',
