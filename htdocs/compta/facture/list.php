@@ -105,6 +105,9 @@ $fieldid = (! empty($ref)?'facnumber':'rowid');
 if (! empty($user->societe_id)) $socid=$user->societe_id;
 $result = restrictedArea($user, 'facture', $id,'','','fk_soc',$fieldid);
 
+$diroutputpdf=$conf->facture->dir_output . '/unpaid/temp';
+if (! $user->rights->societe->client->voir || $socid) $diroutputpdf.='/private/'.$user->id;	// If user has no permission to see all, output dir is specific to user
+
 $object=new Facture($db);
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
@@ -134,13 +137,19 @@ $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);   
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 if (empty($reshook))
 {
-	// Mass actions
+	// Mass actions. Controls on number of lines checked
+    $maxformassaction=1000;
 	if (! empty($massaction) && count($toselect) < 1)
 	{
 		$error++;
 		setEventMessages($langs->trans("NoLineChecked"), null, "warnings");
 	}
-
+	if (! $error && count($toselect) > $maxformassaction)
+	{
+	    setEventMessages($langs->trans('TooManyRecordForMassAction',$maxformassaction), null, 'errors');
+	    $error++;
+	}
+	
 	if (! $error && $massaction == 'confirm_presend')
 	{
 		$resaction = '';
@@ -149,7 +158,7 @@ if (empty($reshook))
 		$langs->load("mails");
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		
-		if (!isset($user->email))
+		if (!$error && !isset($user->email))
 		{
 			$error++;
 			setEventMessages($langs->trans("NoSenderEmailDefined"), null, 'warnings');
@@ -408,6 +417,127 @@ if (empty($reshook))
 		$action='list';
 		$massaction='';
 	}
+
+	if (! $error && $massaction == "builddoc" && $user->rights->facture->lire && ! GETPOST('button_search'))
+	{
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+         
+        $objecttmp=new Facture($db);
+        $listofobjectid=array();
+        $listofobjectthirdparties=array();
+        $listofobjectref=array();
+        foreach($toselect as $toselectid)
+        {
+            $objecttmp=new Facture($db);	// must create new instance because instance is saved into $listofobjectref array for future use
+            $result=$objecttmp->fetch($toselectid);
+            if ($result > 0)
+            {
+                $listoinvoicesid[$toselectid]=$toselectid;
+                $thirdpartyid=$objecttmp->fk_soc?$objecttmp->fk_soc:$objecttmp->socid;
+                $listofobjectthirdparties[$thirdpartyid]=$thirdpartyid;
+                $listofobjectref[$toselectid]=$objecttmp->ref;
+            }
+        }
+
+        $arrayofinclusion=array();
+        foreach($listofobjectref as $tmppdf) $arrayofinclusion[]=preg_quote($tmppdf.'.pdf','/');
+        $factures = dol_dir_list($conf->facture->dir_output,'all',1,implode('|',$arrayofinclusion),'\.meta$|\.png','date',SORT_DESC,0,true);
+
+        // liste les fichiers
+        $files = array();
+        foreach($listofobjectref as $basename)
+        {
+            foreach($factures as $facture)
+            {
+                if (strstr($facture["name"],$basename))
+                {
+                    $files[] = $conf->facture->dir_output.'/'.$basename.'/'.$facture["name"];
+                    break;
+                }
+            }
+        }
+        
+        // Define output language (Here it is not used because we do only merging existing PDF)
+        $outputlangs = $langs;
+        $newlang='';
+        if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id');
+        if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+        if (! empty($newlang))
+        {
+            $outputlangs = new Translate("",$conf);
+            $outputlangs->setDefaultLang($newlang);
+        }
+
+        // Create empty PDF
+        $pdf=pdf_getInstance();
+        if (class_exists('TCPDF'))
+        {
+            $pdf->setPrintHeader(false);
+            $pdf->setPrintFooter(false);
+        }
+        $pdf->SetFont(pdf_getPDFFont($outputlangs));
+
+        if (! empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) $pdf->SetCompression(false);
+
+        // Add all others
+        foreach($files as $file)
+        {
+            // Charge un document PDF depuis un fichier.
+            $pagecount = $pdf->setSourceFile($file);
+            for ($i = 1; $i <= $pagecount; $i++)
+            {
+                $tplidx = $pdf->importPage($i);
+                $s = $pdf->getTemplatesize($tplidx);
+                $pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
+                $pdf->useTemplate($tplidx);
+            }
+        }
+
+        // Create output dir if not exists
+        dol_mkdir($diroutputpdf);
+
+        // Save merged file
+        $filename=strtolower(dol_sanitizeFileName($langs->transnoentities("Invoices")));
+        if ($filter=='paye:0')
+        {
+            if ($option=='late') $filename.='_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid"))).'_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Late")));
+            else $filename.='_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid")));
+        }
+        if ($year) $filename.='_'.$year;
+        if ($month) $filename.='_'.$month;
+        if ($pagecount)
+        {
+            $now=dol_now();
+            $file=$diroutputpdf.'/'.$filename.'_'.dol_print_date($now,'dayhourlog').'.pdf';
+            $pdf->Output($file,'F');
+            if (! empty($conf->global->MAIN_UMASK))
+                @chmod($file, octdec($conf->global->MAIN_UMASK));
+
+                $langs->load("exports");
+                setEventMessages($langs->trans('FileSuccessfullyBuilt',$filename.'_'.dol_print_date($now,'dayhourlog')), null, 'mesgs');
+        }
+        else
+        {
+            setEventMessages($langs->trans('NoPDFAvailableForDocGenAmongChecked'), null, 'errors');
+        }
+	}
+	
+	// Remove file
+	if ($action == 'remove_file')
+	{
+	    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+	
+	    $langs->load("other");
+	    $upload_dir = $diroutputpdf;
+	    $file = $upload_dir . '/' . GETPOST('file');
+	    $ret=dol_delete_file($file);
+	    if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
+	    else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
+	    $action='';
+	}
+	
 }
 
 // Do we click on purge search criteria ?
@@ -578,7 +708,7 @@ if ($resql)
 	if ($search_paymentmode > 0) $param.='search_paymentmode='.$search_paymentmode;
 	$param.=(! empty($option)?"&amp;option=".$option:"");
 	
-	$massactionbutton=$form->selectMassAction('', $massaction ? array() : array('presend'=>$langs->trans("SendByMail")));
+	$massactionbutton=$form->selectMassAction('', $massaction == 'presend' ? array() : array('presend'=>$langs->trans("SendByMail"), 'builddoc'=>$langs->trans("PDFMerge")));
     
     $i = 0;
     print '<form method="POST" name="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
@@ -917,6 +1047,23 @@ if ($resql)
     print "</table>\n";
     print "</form>\n";
     $db->free($resql);
+    
+    if ($massaction == 'builddoc' || $action == 'remove_file')
+    {
+        /*
+         * Show list of available documents
+         */
+        $urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
+        $urlsource.=str_replace('&amp;','&',$param);
+        
+        $filedir=$diroutputpdf;
+        $genallowed=$user->rights->facture->lire;
+        $delallowed=$user->rights->facture->lire;
+    
+        print '<br>';
+        // We disable multilang because we concat already existing pdf.
+        $formfile->show_documents('unpaid','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$langs->trans("PDFMerge"),'');
+    }    
 }
 else
 {

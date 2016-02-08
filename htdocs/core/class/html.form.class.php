@@ -486,7 +486,7 @@ class Form
      * Generate select HTML to choose massaction
      * 
      * @param	string	$selected		Selected value
-     * @param	int		$arrayofaction	array('code'=>'label', ...)
+     * @param	int		$arrayofaction	array('code'=>'label', ...). The code is the key stored into the GETPOST('massaction') when submitting action.
      * @return	string					Select list
      */
     function selectMassAction($selected, $arrayofaction)
@@ -5813,7 +5813,7 @@ class Form
                             console.log("We uncheck all");
                     		$(".'.$cssclass.'").prop(\'checked\', false);
                         }';
-        if ($calljsfunction) $out.='initCheckForSelect();';
+        if ($calljsfunction) $out.='if (typeof initCheckForSelect == \'function\') { initCheckForSelect(); } else { console.log("No function initCheckForSelect found. Call won\'t done."); }';
         $out.='         });
                 });
               </script>';

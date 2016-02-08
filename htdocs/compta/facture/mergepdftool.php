@@ -385,7 +385,6 @@ if ($action == "builddoc" && $user->rights->facture->lire && ! GETPOST('button_s
 
 		// liste les fichiers
 		$files = array();
-		$factures_bak = $factures ;
 		foreach($_POST['toGenerate'] as $basename)
 		{
 			foreach($factures as $facture)
@@ -458,7 +457,7 @@ if ($action == "builddoc" && $user->rights->facture->lire && ! GETPOST('button_s
 		}
 		else
 		{
-			setEventMessages($langs->trans('NoPDFAvailableForChecked'), null, 'errors');
+			setEventMessages($langs->trans('NoPDFAvailableForDocGenAmongChecked'), null, 'errors');
 		}
 	}
 	else
