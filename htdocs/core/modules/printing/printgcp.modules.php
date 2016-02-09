@@ -113,7 +113,7 @@ class printing_printgcp extends PrintingDriver
          
             if ($this->google_id != '' && $this->google_secret != '') {
                 $this->conf[] = array('varname'=>'PRINTGCP_INFO', 'info'=>'GoogleAuthConfigured', 'type'=>'info');
-                $this->conf[] = array('varname'=>'PRINTGCP_TOKEN_ACCESS', 'info'=>$access, 'type'=>'info', 'renew'=>$urlwithroot.'/core/modules/oauth/google_oauthcallback.php?state=userinfo_email,userinfo_profile,cloud_print&backtourl='.urlencode(DOL_URL_ROOT.'/printing/admin/printing.php?mode=setup&driver=printgcp'), 'delete'=>($storage->hasAccessToken('Google')?$urlwithroot.'/core/modules/oauth/getgoogleoauthcallback.php?action=delete&backtourl='.urlencode(DOL_URL_ROOT.'/printing/admin/printing.php?mode=setup&driver=printgcp'):''));
+                $this->conf[] = array('varname'=>'PRINTGCP_TOKEN_ACCESS', 'info'=>$access, 'type'=>'info', 'renew'=>$urlwithroot.'/core/modules/oauth/google_oauthcallback.php?state=userinfo_email,userinfo_profile,cloud_print&backtourl='.urlencode(DOL_URL_ROOT.'/printing/admin/printing.php?mode=setup&driver=printgcp'), 'delete'=>($storage->hasAccessToken('Google')?$urlwithroot.'/core/modules/oauth/google_oauthcallback.php?action=delete&backtourl='.urlencode(DOL_URL_ROOT.'/printing/admin/printing.php?mode=setup&driver=printgcp'):''));
                 if ($token_ok) {
                     $refreshtoken = $token->getRefreshToken();
                     $this->conf[] = array('varname'=>'PRINTGCP_TOKEN_REFRESH',   'info'=>((! empty($refreshtoken))?'Yes':'No'), 'type'=>'info');
@@ -338,7 +338,7 @@ class printing_printgcp extends PrintingDriver
         $credentials = new Credentials(
             $this->google_id,
             $this->google_secret,
-            DOL_MAIN_URL_ROOT.'/core/modules/oauth/getoauthcallback.php?service=google'
+            DOL_MAIN_URL_ROOT.'/core/modules/oauth/google_oauthcallback.php?service=google'
         );
         $serviceFactory = new \OAuth\ServiceFactory();
         $apiService = $serviceFactory->createService('Google', $credentials, $storage, array());
