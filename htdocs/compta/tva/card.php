@@ -232,12 +232,13 @@ if ($action == 'create')
 
     print '<table class="border" width="100%">';
 
-    print "<tr>";
-    print '<td class="fieldrequired">'.$langs->trans("DatePayment").'</td><td>';
+    print '<tr><td>';
+    print fieldLabel('DatePayment','datep',1).'</td><td>';
     print $form->select_date($datep,"datep",'','','','add');
     print '</td></tr>';
 
-    print '<tr><td class="fieldrequired">'.$langs->trans("DateValue").'</td><td>';
+    print '<tr><td>';
+	print fieldLabel('DateValue','datev',1).'</td><td>';
     print $form->select_date($datev,"datev",'','','','add');
     print '</td></tr>';
 
@@ -247,27 +248,37 @@ if ($action == 'create')
 	} else {
 		$label = $langs->trans("VATPayment");
 	}
-	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" id="label" size="40" value="'.($_POST["label"]?$_POST["label"]:$label).'"></td></tr>';
+	print '<tr><td>';
+	print fieldLabel('Label','label',1).'</td><td>';
+	print '<input name="label" id="label" size="40" value="'.($_POST["label"]?$_POST["label"]:$label).'">';
+	print '</td></tr>';
 
 	// Amount
-	print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input name="amount" size="10" value="'.$_POST["amount"].'"></td></tr>';
+	print '<tr><td>';
+	print fieldLabel('Amount','amount',1).'</td><td>';
+	print '<input name="amount" id="amount" size="10" value="'.$_POST["amount"].'">';
+	print '</td></tr>';
 
     if (! empty($conf->banque->enabled))
     {
-		print '<tr><td class="fieldrequired">'.$langs->trans("Account").'</td><td>';
+		print '<tr><td>';
+		print fieldLabel('Account','selectaccountid',1).'</td><td>';
         $form->select_comptes($_POST["accountid"],"accountid",0,"courant=1",1);  // Affiche liste des comptes courant
         print '</td></tr>';
 
 		// Type payment
-		print '<tr><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td>';
+		print '<tr><td>';
+		print fieldLabel('PaymentMode','selecttype_payment',1).'</td><td>';
 		$form->select_types_paiements(GETPOST("type_payment"), "type_payment");
-		print "</td>\n";
-		print "</tr>";
+		print "</td></tr>";
 		
 		// Number
-		print '<tr><td>'.$langs->trans('Numero');
-		print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
-		print '<td><input name="num_payment" type="text" value="'.GETPOST("num_payment").'"></td></tr>'."\n";
+		print '<tr><td>';
+		print fieldLabel('Numero','number',0);
+		print '&nbsp;';
+		print '<em>('.fieldLabel('ChequeOrTransferNumber','number',0).')</em></td><td>';
+		print '<input name="num_payment" id="number" type="text" value="'.GETPOST("num_payment").'">';
+		print '</td></tr>';
 	}
 
     // Other attributes
@@ -290,7 +301,7 @@ if ($action == 'create')
 
 /* ************************************************************************** */
 /*                                                                            */
-/* Barre d'action                                                             */
+/* View mode                                                             */
 /*                                                                            */
 /* ************************************************************************** */
 
