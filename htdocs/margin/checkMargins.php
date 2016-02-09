@@ -72,7 +72,7 @@ if ($action == 'update') {
 			$tmp_array = explode('_', $key);
 			if (count($tmp_array) > 0) {
 				$invoicedet_id = $tmp_array[1];
-				if (! empty(invoicedet_id)) {
+				if (! empty($invoicedet_id)) {
 					$sql = 'UPDATE ' . MAIN_DB_PREFIX . 'facturedet';
 					$sql .= ' SET buy_price_ht=\'' . price2num($value) . '\'';
 					$sql .= ' WHERE rowid=' . $invoicedet_id;
