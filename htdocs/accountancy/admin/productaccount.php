@@ -1,6 +1,6 @@
-<?PHP
+<?php
 /* Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2013-2014 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013-2016 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2014 	   Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014 	   Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2015      Ari Elbaz (elarifr)	<github@accedinfo.com>
@@ -20,13 +20,9 @@
  */
 
 /**
- * \file htdocs/accountancy/admin/productaccount.php
+ * \file 	htdocs/accountancy/admin/productaccount.php
  * \ingroup Accounting Expert
-<<<<<<< HEAD
- * \brief To define accounting account on product / service
-=======
- * \brief Onglet de gestion de parametrages des ventilations
->>>>>>> refs/remotes/origin/3.9
+ * \brief 	To define accounting account on product / service
  */
 require '../../main.inc.php';
 
@@ -296,7 +292,7 @@ if ($result) {
 	print '<td class="liste_titre"><input type="text" class="flat" size="20" name="search_label" value="' . $search_label . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" size="30" name="search_desc" value="' . $search_desc . '"></td>';
 	
-	print '<td class=liste_titre">&nbsp;</td>';
+	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td align="center" class="liste_titre">';
 	print '<input type="image" class="liste_titre" src="' . img_picto($langs->trans("Search"), 'search.png', '', '', 1) . '" name="button_search" value="' . dol_escape_htmltag($langs->trans("Search")) . '" title="' . dol_escape_htmltag($langs->trans("Search")) . '">';
 	print '&nbsp;';
