@@ -986,6 +986,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 
 				// General Ledger
 				if (preg_match('/accountancy/',$leftmenu)) $newmenu->add("/accountancy/bookkeeping/list.php?leftmenu=accountancy_bookkeeping",$langs->trans("Bookkeeping"),1,$user->rights->accounting->mouvements->lire, '', $mainmenu, 'bookkeeping');
+				if (preg_match('/accountancy_bookkeeping/',$leftmenu)) $newmenu->add("/accountancy/bookkeeping/balance.php?leftmenu=accountancy_bookkeeping",$langs->trans("AccountBalance"),2,$user->rights->accounting->mouvements->lire);
 				if (preg_match('/accountancy_bookkeeping/',$leftmenu)) $newmenu->add("/accountancy/bookkeeping/listbyyear.php?leftmenu=accountancy_bookkeeping",$langs->trans("ByYear"),2,$user->rights->accounting->mouvements->lire);
 				if (preg_match('/accountancy_bookkeeping/',$leftmenu)) $newmenu->add("/accountancy/bookkeeping/balancebymonth.php?leftmenu=accountancy_bookkeeping",$langs->trans("AccountBalanceByMonth"),2,$user->rights->accounting->mouvements->lire);
 
