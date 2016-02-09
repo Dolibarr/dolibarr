@@ -43,7 +43,7 @@ if (!$user->admin)
 
 $action = GETPOST('action', 'alpha');
 
-// Supported OAUTH (a provider is supported when a file xxx_oauth2callback.php is available into htdocs/core/modules/oauth)
+// Supported OAUTH (a provider is supported when a file xxx_oauthcallback.php is available into htdocs/core/modules/oauth)
 $supportedoauth2array=array('OAUTH_GOOGLE_NAME'=>'google');
 
 // API access parameters OAUTH
