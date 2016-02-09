@@ -520,6 +520,9 @@ div.myavailability {
     margin-top: 6px;	
     margin-left: 4px;	
 }
+.selectlimit {
+	margin-right: 10px !important;
+}
 
 /* ============================================================================== */
 /* Styles to hide objects                                                         */
