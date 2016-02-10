@@ -66,7 +66,7 @@ create table llx_actioncomm
   recurdateend      datetime,
      
   fk_element		integer DEFAULT NULL,
-  elementtype		varchar(32) DEFAULT NULL
+  elementtype		varchar(255) DEFAULT NULL
 
 )ENGINE=innodb;
 
