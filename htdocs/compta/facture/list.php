@@ -695,6 +695,7 @@ if ($resql)
     }
 
     $param='&socid='.$socid;
+    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
     if ($month)              $param.='&month='.$month;
     if ($year)               $param.='&year=' .$year;
     if ($search_ref)         $param.='&search_ref=' .$search_ref;

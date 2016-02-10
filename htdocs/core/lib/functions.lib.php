@@ -2961,25 +2961,26 @@ function load_fiche_titre($titre, $mesg='', $picto='title_generic.png', $pictois
  *	@param	string	$options         	parametres complementaires lien ('' par defaut)
  *	@param	string	$sortfield       	champ de tri ('' par defaut)
  *	@param	string	$sortorder       	ordre de tri ('' par defaut)
- *	@param	string	$center          	chaine du centre ('' par defaut)
+ *	@param	string	$center          	chaine du centre ('' par defaut). We often find here string $massaction comming from $form->selectMassAction() 
  *	@param	int		$num				number of records found by select with limit+1
  *	@param	int		$totalnboflines		Total number of records/lines for all pages (if known)
  *	@param	string	$picto				Icon to use before title (should be a 32x32 transparent png file)
  *	@param	int		$pictoisfullpath	1=Icon name is a full absolute url of image
  *  @param	string	$morehtml			More html to show
  *  @param  string  $morecss            More css to the table
- *  @param  int     $limit              Max number of lines
+ *  @param  int     $limit              Max number of lines (-1 = use default, 0 = no limit, > 0 = limit)
  *	@return	void
  */
-function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='', $center='', $num=-1, $totalnboflines=0, $picto='title_generic.png', $pictoisfullpath=0, $morehtml='', $morecss='', $limit=0)
+function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='', $center='', $num=-1, $totalnboflines=0, $picto='title_generic.png', $pictoisfullpath=0, $morehtml='', $morecss='', $limit=-1)
 {
 	global $conf,$langs;
-
+	
+	$savlimit = $limit;
+	
 	if ($picto == 'setup') $picto='title_setup.png';
 	if (($conf->browser->name == 'ie') && $picto=='title_generic.png') $picto='title.gif';
-	if ($limit < 1) $limit = $conf->liste_limit;
-	
-	if (($num > $limit) || ($num == -1))
+	if ($limit < 0) $limit = $conf->liste_limit;
+	if ($savlimit >= 0 && (($num > $limit) || ($num == -1) || ($limit == 0)))
 	{
 		$nextpage = 1;
 	}
@@ -3012,13 +3013,14 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 	if ($sortorder) $options .= "&amp;sortorder=".$sortorder;
 	// Show navigation bar
 	$pagelist = '';
-	if ($page > 0 || $num > $limit)
+	if ($savlimit != 0 && ($page > 0 || $num > $limit))
 	{
 		if ($totalnboflines)	// If we know total nb of lines
 		{
-			$maxnbofpage=(empty($conf->dol_optimize_smallscreen) ? 6 : 3);		// page nb before and after selected page + ... + first or last
+			$maxnbofpage=(empty($conf->dol_optimize_smallscreen) ? 4 : 2);		// page nb before and after selected page + ... + first or last
 
-			$nbpages=ceil($totalnboflines/$limit);
+			if ($limit > 0) $nbpages=ceil($totalnboflines/$limit);
+			else $nbpages=1;
 			$cpt=($page-$maxnbofpage);
 			if ($cpt < 0) { $cpt=0; }
 
@@ -3055,7 +3057,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 			$pagelist.= '<li'.(empty($conf->dol_use_jmobile)?' class="pagination"':'').'><span '.(empty($conf->dol_use_jmobile)?'class="active"':'data-role="button"').'>'.($page+1)."</li>";
 		}
 	}
-	print_fleche_navigation($page, $file, $options, $nextpage, $pagelist, $morehtml, $limit, $totalnboflines);		// output the div and ul for previous/last completed with page numbers into $pagelist
+	print_fleche_navigation($page, $file, $options, $nextpage, $pagelist, $morehtml, $savlimit, $totalnboflines);		// output the div and ul for previous/last completed with page numbers into $pagelist
 	print '</td>';
 
 	print '</tr></table>'."\n";
@@ -3071,22 +3073,30 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
  *	@param	integer			$nextpage	    	Do we show a next page button
  *	@param	string			$betweenarrows		HTML content to show between arrows. MUST contains '<li> </li>' tags or '<li><span> </span></li>'.
  *  @param	string			$afterarrows		HTML content to show after arrows. Must NOT contains '<li> </li>' tags.
- *  @param  string          $limit              Max nb of record to show ('' = unknown = default, '0' = no limit, 'x' = limit)
+ *  @param  int             $limit              Max nb of record to show  (-1 = no combo with limit, 0 = no limit, > 0 = limit)
  *	@param	int		        $totalnboflines		Total number of records/lines for all pages (if known)
  *	@return	void
  */
-function print_fleche_navigation($page, $file, $options='', $nextpage=0, $betweenarrows='', $afterarrows='', $limit='', $totalnboflines=0)
+function print_fleche_navigation($page, $file, $options='', $nextpage=0, $betweenarrows='', $afterarrows='', $limit=-1, $totalnboflines=0)
 {
 	global $conf, $langs;
 
 	print '<div class="pagination"><ul>';
-	if ($limit != '')
+	if ((int) $limit >= 0)
 	{
-	    $pagesizechoices='10:10,20:20,30:30,50:50,100:100,250:250,500:500,1000:1000,0:'.$langs->trans("All");
+	    $pagesizechoices='10:10,20:20,30:30,40:40,50:50,100:100,250:250,500:500,1000:1000,5000:5000';
+	    //$pagesizechoices.=',0:'.$langs->trans("All");     // Not yet supported
+	    //$pagesizechoices.=',2:2';
 	    if (! empty($conf->global->MAIN_PAGESIZE_CHOICES)) $pagesizechoices=$conf->global->MAIN_PAGESIZE_CHOICES;
-	    
-        print '<li class="pagination"><select class="flat selectlimit" name="limit">';
+	     
+        print '<li class="pagination">';
+        print '<select class="flat selectlimit" name="limit">';
         $tmpchoice=explode(',',$pagesizechoices);
+        $tmpkey=$limit.':'.$limit;
+        if (! in_array($tmpkey, $tmpchoice)) $tmpchoice[]=$tmpkey;
+        $tmpkey=$conf->liste_limit.':'.$conf->liste_limit;
+        if (! in_array($tmpkey, $tmpchoice)) $tmpchoice[]=$tmpkey;
+        asort($tmpchoice, SORT_NUMERIC);
         $found=false;
         foreach($tmpchoice as $val)
         {
@@ -3096,7 +3106,7 @@ function print_fleche_navigation($page, $file, $options='', $nextpage=0, $betwee
             $val=$tmp[1];
             if ($key != '' && $val != '')
             {
-                if ($key == $limit)
+                if ((int) $key == (int) $limit)
                 {
                     $selected = ' selected="selected"';
                     $found = true;
@@ -3105,6 +3115,19 @@ function print_fleche_navigation($page, $file, $options='', $nextpage=0, $betwee
             }
         }
         print '</select>';
+        if ($conf->use_javascript_ajax)
+        {
+            print '<!-- JS CODE TO ENABLE select limit to launch submit of page -->
+            		<script type="text/javascript">
+                	jQuery(document).ready(function () {
+            	  		jQuery(".selectlimit").change(function() {
+                            console.log("Change limit. Send submit");
+                            $(this).parents(\'form:first\').submit();
+            	  		});
+                	});
+            		</script>
+                ';
+        }
         print '</li>';	    
 	}
 	if ($page > 0)
