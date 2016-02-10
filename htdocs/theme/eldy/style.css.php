@@ -418,6 +418,9 @@ th .button {
 .valignmiddle {
 	vertical-align: middle;
 }
+.valignbottom {
+	vertical-align: bottom;
+}
 .centpercent {
 	width: 100%;
 }
