@@ -4995,7 +4995,10 @@ class Form
               else {
                   $(\'.'.$htmlname.'\').val( $(\'.'.$htmlname.'\').val().replace(title, \'\') )
               }
-          });        
+              // Now, we submit page
+              $(this).parents(\'form:first\').submit();
+        });
+                      
         </script>            
             
         ';
