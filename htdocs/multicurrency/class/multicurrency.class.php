@@ -475,7 +475,51 @@ class MultiCurrency extends CommonObject
 		$resql = $db->query($sql);
 		if ($resql && $obj = $db->fetch_object($resql)) return array($obj->rowid, $obj->rate);
 		else return array(0, 1);
-	 }
+	 }  
+	 
+	 /**
+	  * Get the conversion of amount with invoice rate
+	  * 
+	  * @param	int		$fk_facture		id of facture
+	  * @param	double	$amount			amount to convert
+	  * @param	string	$way			dolibarr mean the amount is in dolibarr currency
+	  * @param	string	$table			facture or facture_fourn
+	  * 
+	  * @return	double					amount converted
+	  */
+	  public static function getAmountConversionFromInvoiceRate($fk_facture, $amount, $way='dolibarr', $table='facture')
+	  {
+		 global $db;
+		 
+		 $multicurrency_tx = self::getInvoiceRate($fk_facture, $table);
+		 
+		 if ($multicurrency_tx) 
+		 {
+		 	if ($way == 'dolibarr') return $amount * $multicurrency_tx;
+			else return $amount / $multicurrency_tx;
+		 }
+		 else return $amount;
+	  }
+	  
+	  /**
+	   *  Get current invoite rate
+	   * 
+	   *  @param	int 	$fk_facture 	id of facture
+	   *  @param 	string 	$table 			facture or facture_fourn
+	   */
+	   public static function getInvoiceRate($fk_facture, $table='facture')
+	   {
+		 global $db;
+		 
+		 $sql = 'SELECT multicurrency_tx FROM '.MAIN_DB_PREFIX.$table.' WHERE rowid = '.$fk_facture;
+		 $resql = $db->query($sql);
+		 if ($resql && ($line = $db->fetch_object($resql)))
+		 {
+		 	return $line->multicurrency_tx;
+		 }
+		 
+		 return false;
+	   }
 }
 
 /**
