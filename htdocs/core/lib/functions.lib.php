@@ -2410,30 +2410,32 @@ function img_error($titlealt = 'default')
  *	Show next logo
  *
  *	@param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
- *	@return string      		Return img tag
+*	@param	string	$options	Add more attribute on img tag (For example 'style="float: right"')
+  *	@return string      		Return img tag
  */
-function img_next($titlealt = 'default')
+function img_next($titlealt = 'default', $options='')
 {
 	global $conf, $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Next');
 
-	return img_picto($titlealt, 'next.png');
+	return img_picto($titlealt, 'next.png', $options);
 }
 
 /**
  *	Show previous logo
  *
  *	@param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
+ *	@param	string	$options	Add more attribute on img tag (For example 'style="float: right"')
  *	@return string      		Return img tag
  */
-function img_previous($titlealt = 'default')
+function img_previous($titlealt = 'default', $options='')
 {
 	global $conf, $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Previous');
 
-	return img_picto($titlealt, 'previous.png');
+	return img_picto($titlealt, 'previous.png', $options);
 }
 
 /**

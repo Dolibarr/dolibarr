@@ -95,6 +95,7 @@ if ($action == 'add')
 
 			// Add targets into database
 			$obj = new $classname($db);
+			dol_syslog("Call add_to_target on class ".$classname);
 			$result=$obj->add_to_target($id,$filtersarray);
 		}
 	}
