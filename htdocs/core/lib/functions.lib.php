@@ -2955,28 +2955,29 @@ function load_fiche_titre($titre, $mesg='', $picto='title_generic.png', $pictois
 /**
  *	Print a title with navigation controls for pagination
  *
- *	@param	string	$titre				Title to show (required)
- *	@param	string	$page				Numero of page to show in navigation links (required)
- *	@param	string	$file				Url of page (required)
- *	@param	string	$options         	parametres complementaires lien ('' par defaut)
- *	@param	string	$sortfield       	champ de tri ('' par defaut)
- *	@param	string	$sortorder       	ordre de tri ('' par defaut)
- *	@param	string	$center          	chaine du centre ('' par defaut). We often find here string $massaction comming from $form->selectMassAction() 
- *	@param	int		$num				number of records found by select with limit+1
- *	@param	int		$totalnboflines		Total number of records/lines for all pages (if known)
- *	@param	string	$picto				Icon to use before title (should be a 32x32 transparent png file)
- *	@param	int		$pictoisfullpath	1=Icon name is a full absolute url of image
- *  @param	string	$morehtml			More html to show
- *  @param  string  $morecss            More css to the table
- *  @param  int     $limit              Max number of lines (-1 = use default, 0 = no limit, > 0 = limit)
+ *	@param	string	    $titre				Title to show (required)
+ *	@param	string	    $page				Numero of page to show in navigation links (required)
+ *	@param	string	    $file				Url of page (required)
+ *	@param	string	    $options         	parametres complementaires lien ('' par defaut)
+ *	@param	string    	$sortfield       	champ de tri ('' par defaut)
+ *	@param	string	    $sortorder       	ordre de tri ('' par defaut)
+ *	@param	string	    $center          	chaine du centre ('' par defaut). We often find here string $massaction comming from $form->selectMassAction() 
+ *	@param	int		    $num				number of records found by select with limit+1
+ *	@param	int		    $totalnboflines		Total number of records/lines for all pages (if known)
+ *	@param	string	    $picto				Icon to use before title (should be a 32x32 transparent png file)
+ *	@param	int		    $pictoisfullpath	1=Icon name is a full absolute url of image
+ *  @param	string	    $morehtml			More html to show
+ *  @param  string      $morecss            More css to the table
+ *  @param  int|string  $limit              Max number of lines (-1 = use default, 0 = no limit, > 0 = limit).
+ *  @param  int         $hideselectlimit    Force to hide select limit
  *	@return	void
  */
-function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='', $center='', $num=-1, $totalnboflines=0, $picto='title_generic.png', $pictoisfullpath=0, $morehtml='', $morecss='', $limit=-1)
+function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='', $center='', $num=-1, $totalnboflines=0, $picto='title_generic.png', $pictoisfullpath=0, $morehtml='', $morecss='', $limit=-1, $hideselectlimit=0)
 {
 	global $conf,$langs;
 	
 	$savlimit = $limit;
-	
+
 	if ($picto == 'setup') $picto='title_setup.png';
 	if (($conf->browser->name == 'ie') && $picto=='title_generic.png') $picto='title.gif';
 	if ($limit < 0) $limit = $conf->liste_limit;
@@ -3057,7 +3058,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 			$pagelist.= '<li'.(empty($conf->dol_use_jmobile)?' class="pagination"':'').'><span '.(empty($conf->dol_use_jmobile)?'class="active"':'data-role="button"').'>'.($page+1)."</li>";
 		}
 	}
-	print_fleche_navigation($page, $file, $options, $nextpage, $pagelist, $morehtml, $savlimit, $totalnboflines);		// output the div and ul for previous/last completed with page numbers into $pagelist
+	print_fleche_navigation($page, $file, $options, $nextpage, $pagelist, $morehtml, $savlimit, $totalnboflines, $hideselectlimit);		// output the div and ul for previous/last completed with page numbers into $pagelist
 	print '</td>';
 
 	print '</tr></table>'."\n";
@@ -3075,14 +3076,15 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
  *  @param	string			$afterarrows		HTML content to show after arrows. Must NOT contains '<li> </li>' tags.
  *  @param  int             $limit              Max nb of record to show  (-1 = no combo with limit, 0 = no limit, > 0 = limit)
  *	@param	int		        $totalnboflines		Total number of records/lines for all pages (if known)
+ *  @param  int             $hideselectlimit    Force to hide select limit
  *	@return	void
  */
-function print_fleche_navigation($page, $file, $options='', $nextpage=0, $betweenarrows='', $afterarrows='', $limit=-1, $totalnboflines=0)
+function print_fleche_navigation($page, $file, $options='', $nextpage=0, $betweenarrows='', $afterarrows='', $limit=-1, $totalnboflines=0, $hideselectlimit=0)
 {
 	global $conf, $langs;
 
 	print '<div class="pagination"><ul>';
-	if ((int) $limit >= 0)
+	if ((int) $limit >= 0 && empty($hideselectlimit))
 	{
 	    $pagesizechoices='10:10,20:20,30:30,40:40,50:50,100:100,250:250,500:500,1000:1000,5000:5000';
 	    //$pagesizechoices.=',0:'.$langs->trans("All");     // Not yet supported

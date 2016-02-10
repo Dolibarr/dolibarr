@@ -83,7 +83,7 @@ $page=GETPOST("page",'int');
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="s.nom";
 if ($page == -1) { $page = 0 ; }
-$offset = $limit * $page ;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
