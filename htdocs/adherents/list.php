@@ -50,11 +50,12 @@ $catid        = GETPOST("catid",'int');
 $sall=GETPOST("sall");
 $optioncss = GETPOST('optioncss','alpha');
 
+$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
 if ($page == -1) { $page = 0; }
-$offset = $conf->liste_limit * $page ;
+$offset = $limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) { $sortorder=($filter=='outofdate'?"ASC":"DESC"); }
@@ -143,6 +144,7 @@ if ($filter == 'outofdate') $sql.=" AND (datefin IS NULL OR datefin < '".$db->id
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
+$sql.= $db->order($sortfield,$sortorder);
 
 // Count total nb of records with no order and no limits
 $nbtotalofrecords = 0;
@@ -152,9 +154,8 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	if ($resql) $nbtotalofrecords = $db->num_rows($resql);
 	else dol_print_error($db);
 }
-// Add order and limit
-$sql.= $db->order($sortfield,$sortorder);
-$sql.= $db->plimit($conf->liste_limit+1, $offset);
+// Add limit
+$sql.= $db->plimit($limit+1, $offset);
 
 dol_syslog("get list", LOG_DEBUG);
 $resql = $db->query($sql);
@@ -185,7 +186,8 @@ if ($resql)
 		$titre.=" (".$membertype->libelle.")";
 	}
 
-	$param="";
+	$param='';
+    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 	if ($statut != "") $param.="&statut=".$statut;
 	if ($search_nom)   $param.="&search_nom=".$search_nom;
 	if ($search_login) $param.="&search_login=".$search_login;
@@ -193,12 +195,17 @@ if ($resql)
 	if ($filter)       $param.="&filter=".$filter;
 	if ($type > 0)     $param.="&type=".$type;
 	if ($optioncss != '') $param.='&optioncss='.$optioncss;
-	print_barre_liste($titre,$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
-
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].($param?'?'.$param:'').'">';
+	
+	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+	print '<input type="hidden" name="action" value="list">';
+	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
+	print_barre_liste($titre, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_generic.png', 0, '', '', $limit);
+	
 	if ($sall)
 	{
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
@@ -396,10 +403,7 @@ if ($resql)
 	print "</table>\n";
 	print '</form>';
 
-	if ($num > $conf->liste_limit)
-	{
-		print_barre_liste('',$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords,'');
-	}
+	if ($num > $limit || $page) print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_generic.png', 0, '', '', $limit, 1);
 }
 else
 {

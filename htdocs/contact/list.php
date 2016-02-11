@@ -73,7 +73,6 @@ $sortorder = GETPOST('sortorder', 'alpha');
 $page = GETPOST('page', 'int');
 $userid=GETPOST('userid','int');
 $begin=GETPOST('begin');
-
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="p.lastname";
 if ($page < 0) { $page = 0; }
@@ -333,6 +332,16 @@ $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
 
+// Add order
+if($view == "recent")
+{
+    $sql.= $db->order("p.datec","DESC");
+}
+else
+{
+    $sql.= $db->order($sortfield,$sortorder);
+}
+
 // Count total nb of records
 $nbtotalofrecords = 0;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
@@ -341,15 +350,13 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
     $nbtotalofrecords = $db->num_rows($result);
 }
 
-// Add order and limit
+// Add limit
 if($view == "recent")
 {
-    $sql.= $db->order("p.datec","DESC");
     $sql.= $db->plimit($limit+1, $offset);
 }
 else
 {
-    $sql.= $db->order($sortfield,$sortorder);
     $sql.= $db->plimit($limit+1, $offset);
 }
 

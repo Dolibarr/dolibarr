@@ -2965,7 +2965,7 @@ function load_fiche_titre($titre, $mesg='', $picto='title_generic.png', $pictois
  *	@param	string	    $sortorder       	ordre de tri ('' par defaut)
  *	@param	string	    $center          	chaine du centre ('' par defaut). We often find here string $massaction comming from $form->selectMassAction() 
  *	@param	int		    $num				number of records found by select with limit+1
- *	@param	int		    $totalnboflines		Total number of records/lines for all pages (if known)
+ *	@param	int		    $totalnboflines		Total number of records/lines for all pages (if known). Use a negative value to no show number.
  *	@param	string	    $picto				Icon to use before title (should be a 32x32 transparent png file)
  *	@param	int		    $pictoisfullpath	1=Icon name is a full absolute url of image
  *  @param	string	    $morehtml			More html to show
@@ -2979,7 +2979,9 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 	global $conf,$langs;
 	
 	$savlimit = $limit;
-
+    $savtotalnboflines = $totalnboflines;
+    $totalnboflines=abs($totalnboflines);
+    
 	if ($picto == 'setup') $picto='title_setup.png';
 	if (($conf->browser->name == 'ie') && $picto=='title_generic.png') $picto='title.gif';
 	if ($limit < 0) $limit = $conf->liste_limit;
@@ -3000,9 +3002,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 	// Left
 	if ($picto && $titre) print '<td class="nobordernopadding hideonsmartphone" width="40" align="left" valign="middle">'.img_picto('', $picto, '', $pictoisfullpath).'</td>';
 	print '<td class="nobordernopadding"><div class="titre">'.$titre;
-	if (!empty($totalnboflines) && !empty($titre)) {
-		print ' ('.$totalnboflines.')';
-	}
+	if (!empty($titre) && $savtotalnboflines > 0) print ' ('.$totalnboflines.')';
 	print '</div></td>';
 
 	// Center
