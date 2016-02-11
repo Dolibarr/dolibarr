@@ -227,6 +227,10 @@ if ($resql)
 
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">';
 	print '<tr class="liste_titre">';
+	if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER))
+	{
+		print '<td width="5" align="center">&nbsp;</td>';
+	}
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"d.rowid",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Name")." / ".$langs->trans("Company"),$_SERVER["PHP_SELF"],"d.lastname",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Login"),$_SERVER["PHP_SELF"],"d.login",$param,"","",$sortfield,$sortorder);
@@ -245,6 +249,8 @@ if ($resql)
 
 	// Line for filters fields
 	print '<tr class="liste_titre">';
+	
+	print '<td class="liste_titre">&nbsp;</td>';
 
 	print '<td class="liste_titre" align="left">';
 	print '<input class="flat" type="text" name="search_ref" value="'.$search_ref.'" size="4"></td>';
@@ -303,6 +309,11 @@ if ($resql)
 
 		$var=!$var;
 		print "<tr ".$bc[$var].">";
+		
+		if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER))
+		{
+			print '<td align="center">'.($i+1).'</td>';
+		}
 
 		// Ref
 		print "<td>";
