@@ -75,12 +75,42 @@ if ($action == 'add')
 		$error++;
 	}
 
+	$frequency=GETPOST('frequency', 'int');
+	$reyear=GETPOST('reyear');
+	$remonth=GETPOST('remonth');
+	$reday=GETPOST('reday');
+	$nb_gen_max=GETPOST('nb_gen_max', 'int');
+	
+	if (GETPOST('frequency'))
+	{
+		if (empty($reyear) || empty($remonth) || empty($reday)) 
+		{
+			setEventMessages($langs->transnoentities("ErrorFieldRequired",$langs->trans("Date")), null, 'errors');
+			$action = "create";
+			$error++;	
+		}
+		if (empty($nb_gen_max))
+		{
+			setEventMessages($langs->transnoentities("ErrorFieldRequired",$langs->trans("MaxPeriodNumber")), null, 'errors');
+			$action = "create";
+			$error++;
+		}
+	}
+
 	if (! $error)
 	{
 		$object->titre = GETPOST('titre', 'alpha');
 		$object->note_private  = GETPOST('note_private');
 		$object->usenewprice = GETPOST('usenewprice');
-
+		
+		$object->frequency = $frequency;
+		$object->unit_frequency = GETPOST('unit_frequency', 'alpha');
+		$object->nb_gen_max = $nb_gen_max;
+		$object->auto_validate = GETPOST('auto_validate', 'int');
+		
+		$date_next_execution = dol_mktime(12, 0, 0, $remonth, $reday, $reyear);
+		$object->date_when = $date_next_execution;
+		
 		if ($object->create($user, $id) > 0)
 		{
 			$id = $object->id;
@@ -180,6 +210,38 @@ if ($action == 'create')
 			}
 			print "</td></tr>";
 		}
+
+		print "</table>";
+
+		print '<br>';
+
+		
+		// Recurrence
+		$title = $langs->trans("Recurrence");
+		print load_fiche_titre($title);
+		
+		print '<table class="border" width="100%">';
+		
+		// Frequency
+		print "<tr><td>".$form->textwithpicto($langs->trans("Frequency"), $langs->transnoentitiesnoconv('toolTipFrequency'))."</td><td>";
+		print "<input type='text' name='frequency' value='".GETPOST('frequency', 'int')."' size='5' />&nbsp;".$form->selectarray('unit_frequency', array('d'=>$langs->trans('Day'), 'm'=>$langs->trans('Month'), 'y'=>$langs->trans('Year')), (GETPOST('unit_frequency')?GETPOST('unit_frequency'):'m'));
+		print "</td></tr>";
+		
+		// First date of execution for cron
+		print "<tr><td>".$langs->trans('NextDateToExecution')."</td><td>";
+		$date_next_execution = isset($date_next_execution) ? $date_next_execution : dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
+		print $form->select_date($date_next_execution, '', 0, 0, '', "add", 1, 1, 1);
+		print "</td></tr>";
+		
+		// Number max of generation
+		print "<tr><td>".$langs->trans("MaxPeriodNumber")."</td><td>";
+		print "<input type='text' name='nb_gen_max' value='' size='5' />";
+		print "</td></tr>";
+
+		// Auto validate the invoice
+		print "<tr><td>".$langs->trans("InvoiceAutoValidate")."</td><td>";
+		print $form->selectyesno('auto_validate', 0, 1);
+		print "</td></tr>";
 
 		print "</table>";
 
@@ -445,6 +507,34 @@ else
 			print "</table>";
 
 			print '</div>';
+
+			/*
+			 * Recurrence
+			 */
+			if ($object->frequency > 0)
+			{
+				$title = $langs->trans("Recurrence");
+				print load_fiche_titre($title);
+				
+				print '<div class="tabBar">';
+				print '<table class="border" width="100%">';
+
+				print '<tr><td width="25%">'.$langs->trans("Frequency").'</td>';
+				print '<td>'.$langs->trans('FrequencyPer_'.$object->unit_frequency, $object->frequency).'</td>';
+				
+				print '<tr><td width="25%">'.$langs->trans("NextDateToExecution").'</td>';
+				print '<td>'.dol_print_date($object->date_when, 'daytext').'</td>';
+				
+				print '<tr><td width="25%">'.$langs->trans("MaxPeriodNumber").' / '.$langs->trans("RestPeriodNumber").'</td>';
+				print '<td>'.$object->nb_gen_max.' / '.($object->nb_gen_max-$object->nb_gen_done).'</td>';
+				
+				print '<tr><td width="25%">'.$langs->trans("InvoiceAutoValidate").'</td>';
+				print '<td>'.yn($object->auto_validate).'</td>';
+				
+				print '</table>';
+				print '</div>';
+				print '<br />';
+			}
 
 			/*
 			 * Lines

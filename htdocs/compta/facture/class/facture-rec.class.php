@@ -30,6 +30,7 @@
 require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 
 /**
@@ -83,7 +84,20 @@ class FactureRec extends Facture
 		// Clean parameters
 		$this->titre=trim($this->titre);
 		$this->usenewprice=empty($this->usenewprice)?0:$this->usenewprice;
-
+		
+		// No frequency defined then no next date to execution
+		if (empty($this->frequency)) 
+		{
+			$this->frequency=0;
+			$this->date_when=NULL;
+		}
+		
+		
+		$this->frequency=abs($this->frequency);
+		$this->nb_gen_done=0;
+		$this->nb_gen_max=empty($this->nb_gen_max)?0:$this->nb_gen_max;
+		$this->auto_validate=empty($this->auto_validate)?0:$this->auto_validate;
+		
 		$this->db->begin();
 
 		// Charge facture modele
@@ -108,6 +122,13 @@ class FactureRec extends Facture
 			$sql.= ", fk_cond_reglement";
 			$sql.= ", fk_mode_reglement";
 			$sql.= ", usenewprice";
+			$sql.= ", frequency";
+			$sql.= ", unit_frequency";
+			$sql.= ", date_when";
+			$sql.= ", date_last_gen";
+			$sql.= ", nb_gen_done";
+			$sql.= ", nb_gen_max";
+			$sql.= ", auto_validate";
 			$sql.= ") VALUES (";
 			$sql.= "'".$this->titre."'";
 			$sql.= ", ".$facsrc->socid;
@@ -122,6 +143,13 @@ class FactureRec extends Facture
 			$sql.= ", '".$facsrc->cond_reglement_id."'";
 			$sql.= ", '".$facsrc->mode_reglement_id."'";
 			$sql.= ", ".$this->usenewprice;
+			$sql.= ", ".$this->frequency;
+			$sql.= ", '".$this->db->escape($this->unit_frequency)."'";
+			$sql.= ", ".(!empty($this->date_when)?"'".$this->db->idate($this->date_when)."'":'NULL');
+			$sql.= ", ".(!empty($this->date_last_gen)?"'".$this->db->idate($this->date_last_gen)."'":'NULL');
+			$sql.= ", ".$this->nb_gen_done;
+			$sql.= ", ".$this->nb_gen_max;
+			$sql.= ", ".$this->auto_validate;
 			$sql.= ")";
 
 			if ($this->db->query($sql))
@@ -198,6 +226,7 @@ class FactureRec extends Facture
 		$sql.= ', f.date_lim_reglement as dlr';
 		$sql.= ', f.note_private, f.note_public, f.fk_user_author';
 		$sql.= ', f.fk_mode_reglement, f.fk_cond_reglement';
+		$sql.= ', f.frequency, f.unit_frequency, f.date_when, f.date_last_gen, f.nb_gen_done, f.nb_gen_max, f.usenewprice, f.auto_validate';
 		$sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
 		$sql.= ', c.code as cond_reglement_code, c.libelle as cond_reglement_libelle, c.libelle_facture as cond_reglement_libelle_doc';
 		$sql.= ', el.fk_source';
@@ -255,6 +284,14 @@ class FactureRec extends Facture
 				$this->modelpdf               = $obj->model_pdf;
 				$this->rang					  = $obj->rang;
 				$this->special_code			  = $obj->special_code;
+				$this->frequency			  = $obj->frequency;
+				$this->unit_frequency		  = $obj->unit_frequency;
+				$this->date_when			  = $obj->date_when;
+				$this->date_last_gen		  = $obj->date_last_gen;
+				$this->nb_gen_done			  = $obj->nb_gen_done;
+				$this->nb_gen_max			  = $obj->nb_gen_max;
+				$this->usenewprice			  = $obj->usenewprice;
+				$this->auto_validate		  = $obj->auto_validate;
 
 				if ($this->statut == self::STATUS_DRAFT)	$this->brouillon = 1;
 
@@ -468,7 +505,7 @@ class FactureRec extends Facture
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
-
+			
 			$product_type=$type;
 			if ($fk_product)
 			{
@@ -529,6 +566,58 @@ class FactureRec extends Facture
 		}
 	}
 
+	/**
+	 * Return the next date of 
+	 * 
+	 * @return	timestamp	false if KO, timestamp if OK
+	 */
+	function getNextDate()
+	{
+		if (empty($this->date_when)) return false;
+		return dol_time_plus_duree($this->date_when, $this->frequency, $this->unit_frequency);
+	}
+	
+	/**
+	 *  Create all recurrents invoices 
+	 * 
+	 *  @return		int		number of created invoices
+	 */
+	function createRecurringInvoices()
+	{
+		global $db,$user;
+		
+		$nb_create=0;
+		
+		$today = date('Y-m-d 23:59:59');
+		
+		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'facture_rec';
+		$sql.= ' WHERE date_when IS NOT NULL';
+		$sql.= ' AND date_when <= "'.$db->escape($today).'"';
+		$sql.= ' AND nb_gen_done < nb_gen_max';
+		
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			while ($line = $db->fetch_object($resql))
+			{
+				$facturerec = new FactureRec($db);
+				$facturerec->fetch($line->rowid);
+				
+				$facture = new Facture($db);
+				
+				$result = $facture->createFromRec($user, $facturerec);
+				
+				// >0 create and validate if auto_validate
+				// =0 create but not validate if auto_validate
+				// <0 broken
+				if ($result >= 0) $nb_create++;
+
+			}
+		}
+		
+		return $nb_create;
+	}
+	
 	/**
 	 *	Return clicable name (with picto eventually)
 	 *

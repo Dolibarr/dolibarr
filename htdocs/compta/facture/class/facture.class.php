@@ -918,6 +918,66 @@ class Facture extends CommonInvoice
 	}
 
 	/**
+	 *	Create a new invoice in database from facturerec
+	 *
+	 *	@param      User	$user    		Object user that ask creation
+	 *	@return		int						<0 if KO, 0 if not validate, >0 if OK
+	 */
+	function createFromRec($user, $object)
+	{
+
+		// Clean parameters
+		if (! $this->type) $this->type = self::TYPE_STANDARD;
+		$this->ref_client=trim($this->ref_client);
+		$this->note_private=trim($this->note_private);
+		$this->note_public=trim($this->note_public);
+		//if (! $this->remise) $this->remise = 0;
+		if (! $this->mode_reglement_id) $this->mode_reglement_id = 0;
+		$this->brouillon = 1;
+		
+		// Charge facture source
+		$facture=new Facture($object->db);
+
+		$facture->fk_facture_source = $object->fk_facture_source;
+		$facture->type 			    = $object->type;
+		$facture->socid 		    = $object->socid;
+		$facture->date              = dol_mktime(12, 0, 0, date('m'), date('d'), date('Y'));
+		$facture->note_public       = $object->note_public;
+		$facture->note_private      = $object->note_private;
+		$facture->ref_client        = $object->ref_client;
+		$facture->modelpdf          = $object->modelpdf;
+		$facture->fk_project        = $object->fk_project;
+		$facture->cond_reglement_id = $object->cond_reglement_id;
+		$facture->mode_reglement_id = $object->mode_reglement_id;
+		$facture->remise_absolue    = $object->remise_absolue;
+		$facture->remise_percent    = $object->remise_percent;
+		$facture->fk_incoterms		= $object->fk_incoterms;
+		$facture->location_incoterms= $object->location_incoterms;
+
+		$facture->lines		    	= $object->lines;	// Tableau des lignes de factures
+		$facture->products		    = $object->lines;	// Tant que products encore utilise
+
+		// Loop on each line of new invoice
+		foreach($facture->lines as $i => $line)
+		{
+			$facture->lines[$i]->fk_prev_id = $object->lines[$i]->rowid;
+		}
+
+		dol_syslog(get_class($this)."::createFromRec socid=".$this->socid." nboflines=".count($facture->lines));
+
+		$facid = $facture->create($user);
+		if ($facid <= 0) return -1;
+
+		if ($object->auto_validate)
+		{
+			$result = $facture->validate($user);
+			if ($result<=0) return 0;
+		}
+			
+		return $facid;
+	}
+
+	/**
 	 *      Return clicable link of object (with eventually picto)
 	 *
 	 *      @param	int		$withpicto       Add picto into link
