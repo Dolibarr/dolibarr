@@ -2970,7 +2970,7 @@ function load_fiche_titre($titre, $mesg='', $picto='title_generic.png', $pictois
  *	@param	int		    $pictoisfullpath	1=Icon name is a full absolute url of image
  *  @param	string	    $morehtml			More html to show
  *  @param  string      $morecss            More css to the table
- *  @param  int|string  $limit              Max number of lines (-1 = use default, 0 = no limit, > 0 = limit).
+ *  @param  int         $limit              Max number of lines (-1 = use default, 0 = no limit, > 0 = limit).
  *  @param  int         $hideselectlimit    Force to hide select limit
  *	@return	void
  */
@@ -2983,7 +2983,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 	if ($picto == 'setup') $picto='title_setup.png';
 	if (($conf->browser->name == 'ie') && $picto=='title_generic.png') $picto='title.gif';
 	if ($limit < 0) $limit = $conf->liste_limit;
-	if ($savlimit >= 0 && (($num > $limit) || ($num == -1) || ($limit == 0)))
+	if ($savlimit != 0 && (($num > $limit) || ($num == -1) || ($limit == 0)))
 	{
 		$nextpage = 1;
 	}
@@ -2991,7 +2991,8 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 	{
 		$nextpage = 0;
 	}
-
+	//print 'totalnboflines='.$totalnboflines.'-savlimit='.$savlimit.'-limit='.$limit.'-num='.$num.'-nextpage='.$nextpage;
+	
 	print "\n";
 	print "<!-- Begin title '".$titre."' -->\n";
 	print '<table width="100%" border="0" class="notopnoleftnoright'.($morecss?' '.$morecss:'').'" style="margin-bottom: 6px;"><tr>';
