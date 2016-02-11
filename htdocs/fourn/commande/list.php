@@ -197,7 +197,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	$nbtotalofrecords = $db->num_rows($result);
 }
 
-$sql.= $db->plimit($conf->liste_limit+1, $offset);
+$sql.= $db->plimit($limit+1, $offset);
 
 $resql = $db->query($sql);
 if ($resql)
@@ -217,7 +217,6 @@ if ($resql)
 	if ($billed != '')          $param.="billed=".$billed; 
 	if ($optioncss != '') $param.='&optioncss='.$optioncss;
 
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords);
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -226,7 +225,9 @@ if ($resql)
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
 	
-    if ($sall)
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_commercial.png', 0, '', '', $limit);
+	
+	if ($sall)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
         print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
