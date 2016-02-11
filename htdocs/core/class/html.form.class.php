@@ -503,7 +503,8 @@ class Form
     		$ret.='<option value="'.$code.'"'.($disabled?' disabled="disabled"':'').'>'.$label.'</option>';
     	}
     	$ret.='</select>';
-    	$ret.='<input type="submit" name="confirmmassaction" disabled="disabled" class="button hideobject massaction massactionconfirmed" value="'.dol_escape_htmltag($langs->trans("Confirm")).'">';
+    	// Warning: if you set submit button to disabled, post using Enter will no more work
+    	$ret.='<input type="submit" name="confirmmassaction" class="button hideobject massaction massactionconfirmed" value="'.dol_escape_htmltag($langs->trans("Confirm")).'">';
     	$ret.='</div>';
     	
     	$ret.='<!-- JS CODE TO ENABLE mass action select -->
@@ -516,7 +517,6 @@ class Form
 	  				/* console.log( index + ": " + $( this ).text() ); */
 	  				if ($(this).is(\':checked\')) atleastoneselected++;
 	  			});
-	  			console.log(atleastoneselected);
 	  			if (atleastoneselected)
 	  			{
 	  				jQuery(".massaction").show();
@@ -530,6 +530,7 @@ class Form
     		jQuery(".checkforselect").click(function() {
     			initCheckForSelect();
 	  		});
+    	    /* Warning: if you set submit button to disabled, post using Enter will no more work
 	  		jQuery(".massactionselect").change(function() {
 	  			console.log( $( this ).val() );
 	  			if ($(this).val() != \'0\')
@@ -541,6 +542,7 @@ class Form
 	  				jQuery(".massactionconfirmed").prop(\'disabled\', true);
 	  			}
 	  		});
+    	    */
     	});
 		</script>
     	';
