@@ -595,7 +595,7 @@ class FactureRec extends Facture
 		$today = date('Y-m-d 23:59:59');
 		
 		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'facture_rec';
-		$sql.= ' WHERE date_when IS NOT NULL';
+		$sql.= ' WHERE date_when IS NOT NULL AND frequency > 0';
 		$sql.= ' AND date_when <= "'.$db->escape($today).'"';
 		$sql.= ' AND nb_gen_done < nb_gen_max';
 		
