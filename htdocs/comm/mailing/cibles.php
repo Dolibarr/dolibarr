@@ -196,7 +196,9 @@ if ($object->fetch($id) >= 0)
 	print '</td></tr>';
 
 	// Status
-	print '<tr><td width="25%">'.$langs->trans("Status").'</td><td colspan="3">'.$object->getLibStatut(4).'</td></tr>';
+	print '<tr><td width="25%">'.$langs->trans("Status").'</td><td colspan="3">'.$object->getLibStatut(4);
+	if ($object->statut == 2) print ' ('.$object->countNbOfTargets('alreadysent').'/'.$object->nbemail.')';
+	print '</td></tr>';
 
 	// Nb of distinct emails
 	print '<tr><td width="25%">';
@@ -369,8 +371,14 @@ if ($object->fetch($id) >= 0)
 	if (!empty($search_dest_status)) $sql.= " AND mc.statut=".$db->escape($search_dest_status)." ";
 	$sql .= $db->order($sortfield,$sortorder);
 
-	$totalnbofrecord=$object->nbemail;     // nbemail is a denormalized field storing nb of targets
-	
+	// Count total nb of records
+	$nbtotalofrecords = 0;
+	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+	{
+	    $result = $db->query($sql);
+	    $nbtotalofrecords = $db->num_rows($result);
+	}
+	//$nbtotalofrecords=$object->nbemail;     // nbemail is a denormalized field storing nb of targets
 	$sql .= $db->plimit($limit+1, $offset);
 
 	$resql=$db->query($sql);
@@ -394,7 +402,7 @@ if ($object->fetch($id) >= 0)
 			$cleartext='<br></div><div>'.$langs->trans("ToClearAllRecipientsClickHere").': '.'<input type="submit" name="clearlist" class="button" value="'.$langs->trans("TargetsReset").'">';
 		}
 
-		print_barre_liste($langs->trans("MailSelectedRecipients").$cleartext,$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,"",$num,$totalnbofrecord,'',0,'','',$limit);
+		print_barre_liste($langs->trans("MailSelectedRecipients").$cleartext,$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,"",$num,$nbtotalofrecords,'',0,'','',$limit);
 
 		print '</form>';
 
@@ -548,7 +556,12 @@ if ($object->fetch($id) >= 0)
 		}
 		else
 		{
-			print '<tr '.$bc[false].'><td colspan="8">'.$langs->trans("NoTargetYet").'</td></tr>';
+			if ($object->statut < 2) 
+			{
+			    print '<tr '.$bc[false].'><td colspan="8">';
+    			print $langs->trans("NoTargetYet");
+    			print '</td></tr>';
+			}
 		}
 		print "</table><br>";
 
