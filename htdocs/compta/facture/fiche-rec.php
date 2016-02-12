@@ -121,7 +121,8 @@ if ($action == 'add')
 		if ($object->create($user, $id) > 0)
 		{
 			$id = $object->id;
-			$action = '';
+			header("Location: " . $_SERVER['PHP_SELF'] . '?facid=' . $id);
+			exit;
 		}
 		else
 		{
@@ -134,11 +135,10 @@ if ($action == 'add')
 // Delete
 if ($action == 'delete' && $user->rights->facture->supprimer)
 {
-	$object->fetch($id);
 	$object->delete();
-	$id = 0 ;
+	header("Location: " . $_SERVER['PHP_SELF'] );
+	exit;
 }
-
 
 
 // Update field

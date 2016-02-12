@@ -233,27 +233,6 @@ class FactureRec extends Facture
 		$sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
 		$sql.= ', c.code as cond_reglement_code, c.libelle as cond_reglement_libelle, c.libelle_facture as cond_reglement_libelle_doc';
 		$sql.= ', el.fk_source';
-		
-		/*
-		$sql.= ', f.remise_percent, f.remise_absolue, f.remise';
-		$sql.= ', f.datef as df';
-		$sql.= ', f.date_lim_reglement as dlr';
-		$sql.= ', f.datec as datec';
-		$sql.= ', f.date_valid as datev';
-		$sql.= ', f.tms as datem';
-		$sql.= ', f.note_private, f.note_public, f.fk_statut, f.paye, f.close_code, f.close_note, f.fk_user_author, f.fk_user_valid, f.model_pdf';
-		$sql.= ', f.fk_facture_source';
-		$sql.= ', f.fk_mode_reglement, f.fk_cond_reglement, f.fk_projet, f.extraparams';
-		$sql.= ', f.situation_cycle_ref, f.situation_counter, f.situation_final';
-		$sql.= ', f.fk_account';
-		$sql.= ", f.fk_multicurrency, f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht, f.multicurrency_total_tva, f.multicurrency_total_ttc";
-		$sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
-		$sql.= ', c.code as cond_reglement_code, c.libelle as cond_reglement_libelle, c.libelle_facture as cond_reglement_libelle_doc';
-        $sql.= ', f.fk_incoterms, f.location_incoterms';
-        $sql.= ", i.libelle as libelle_incoterms";
-		*/
-		
-		
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture_rec as f';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as c ON f.fk_cond_reglement = c.rowid';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON f.fk_mode_reglement = p.id';
@@ -599,7 +578,7 @@ class FactureRec extends Facture
 	function getNextDate()
 	{
 		if (empty($this->date_when)) return false;
-		return dol_time_plus_duree($this->date_when, $this->frequency, $this->unit_frequency);
+		return dol_time_plus_duree(strtotime($this->date_when), $this->frequency, $this->unit_frequency);
 	}
 	
 	/**
@@ -627,15 +606,20 @@ class FactureRec extends Facture
 			{
 				$facturerec = new FactureRec($db);
 				$facturerec->fetch($line->rowid);
-				
+			
 				$facture = new Facture($db);
-				
 				$result = $facture->createFromRec($user, $facturerec);
 				
 				// >0 create and validate if auto_validate
 				// =0 create but not validate if auto_validate
 				// <0 broken
-				if ($result >= 0) $nb_create++;
+				if ($result >= 0)
+				{
+					$next_date = $facturerec->getNextDate();
+					$facturerec->setNextDate($next_date,1);
+					
+					$nb_create++;
+				}
 
 			}
 		}
@@ -764,10 +748,11 @@ class FactureRec extends Facture
 	/**
      *	Update the next date of execution
      *
-     *	@param     	datetime	$date	date of execution (format timestamp)
-     *	@return		int					<0 if KO, >0 if OK
+     *	@param     	datetime	$date					date of execution
+     *	@param     	int			$increment_nb_gen_done	0 do nothing more, >0 increment nb_gen_done
+     *	@return		int									<0 if KO, >0 if OK
      */
-    function setNextDate($date)
+    function setNextDate($date, $increment_nb_gen_done=0)
     {
         if (! $this->table_element)
         {
@@ -777,6 +762,7 @@ class FactureRec extends Facture
 		$date = $this->db->idate($date);
         $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
         $sql.= ' SET date_when = "'.$date.'"';
+        if ($increment_nb_gen_done>0) $sql.= ', nb_gen_done = nb_gen_done + 1';
         $sql.= ' WHERE rowid = '.$this->id;
 
         dol_syslog(get_class($this)."::setNextDate", LOG_DEBUG);
