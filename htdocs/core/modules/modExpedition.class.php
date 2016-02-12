@@ -83,7 +83,7 @@ class modExpedition extends DolibarrModules
 		// Constants
 		$this->const = array();
 		$r=0;
-
+		
 		$this->const[$r][0] = "EXPEDITION_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "rouget";
@@ -124,7 +124,15 @@ class modExpedition extends DolibarrModules
 		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/delivery";
 		$this->const[$r][3] = "";
 		$this->const[$r][4] = 0;
-
+		$r++;
+		
+		$this->const[$r][0] = "MAIN_SUBMODULE_EXPEDITION";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "1";
+		$this->const[$r][3] = "Enable shipments";
+		$this->const[$r][4] = 0;
+		$r++;
+		
 		// Boxes
 		$this->boxes = array();
 
