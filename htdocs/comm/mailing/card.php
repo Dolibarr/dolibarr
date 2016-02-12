@@ -818,7 +818,9 @@ else
 			print '</td></tr>';
 
 			// Status
-			print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">'.$object->getLibStatut(4).'</td></tr>';
+			print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">'.$object->getLibStatut(4);
+			if ($object->statut == 2) print ' ('.$object->countNbOfTargets('alreadysent').'/'.$object->nbemail.')';
+			print'</td></tr>';
 
 			// Nb of distinct emails
 			print '<tr><td>';
