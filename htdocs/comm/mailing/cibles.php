@@ -38,11 +38,12 @@ $langs->load("mails");
 if (! $user->rights->mailing->lire || $user->societe_id > 0) accessforbidden();
 
 
+$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
 if ($page == -1) { $page = 0; }
-$offset = $conf->liste_limit * $page;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
@@ -367,11 +368,15 @@ if ($object->fetch($id) >= 0)
 	if ($search_email)  $sql.= " AND mc.email  LIKE '%".$db->escape($search_email)."%'";
 	if (!empty($search_dest_status)) $sql.= " AND mc.statut=".$db->escape($search_dest_status)." ";
 	$sql .= $db->order($sortfield,$sortorder);
-	$sql .= $db->plimit($conf->liste_limit+1, $offset);
+
+	$totalnbofrecord=$object->nbemail;     // nbemail is a denormalized field storing nb of targets
+	
+	$sql .= $db->plimit($limit+1, $offset);
 
 	$resql=$db->query($sql);
 	if ($resql)
 	{
+	    
 		$num = $db->num_rows($resql);
 
 		$param = "&amp;id=".$object->id;
@@ -389,7 +394,7 @@ if ($object->fetch($id) >= 0)
 			$cleartext='<br></div><div>'.$langs->trans("ToClearAllRecipientsClickHere").': '.'<input type="submit" name="clearlist" class="button" value="'.$langs->trans("TargetsReset").'">';
 		}
 
-		print_barre_liste($langs->trans("MailSelectedRecipients").$cleartext,$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,"",$num,$object->nbemail,'');
+		print_barre_liste($langs->trans("MailSelectedRecipients").$cleartext,$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,"",$num,$totalnbofrecord,'',0,'','',$limit);
 
 		print '</form>';
 
@@ -399,7 +404,8 @@ if ($object->fetch($id) >= 0)
 		print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
-
+		print '<input type="hidden" name="limit" value="'.$limit.'">';
+		
 
 		if ($page)			$param.= "&amp;page=".$page;
 		print '<table class="noborder" width="100%">';
