@@ -213,3 +213,15 @@ WEBSITE_PAGEURL=URL of page
 WEBSITE_TITLE=Title
 WEBSITE_DESCRIPTION=Description
 WEBSITE_KEYWORDS=Keywords
+##### Schedule #####
+AddSchedule=Add schedule
+DeleteSchedule=Delete schedule
+ConfirmDeleteSchedule=Confirm to delete this schedule
+ScheduleAllSectionsChanged=All sections where changed
+ScheduleSectionsUnchanged=Some sections where not changed
+ErrorScheduleNoSectionGenerated=Error, couldn't generate sections
+ErrorScheduleSameYearExist=Another schedule with same year exists
+SectionDuration=Section duration
+ModifySections=Modify sections
+StartingHour=Starting hour
+ScheduleUniversalTime=All dates are displayed in Universal Time
