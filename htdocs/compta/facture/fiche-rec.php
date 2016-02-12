@@ -58,7 +58,14 @@ if ($sortfield == "")
 $sortfield="f.datef";
 
 $object = new FactureRec($db);
-
+if ($id > 0 && $action != 'create' && $action != 'add')
+{
+	$ret = $object->fetch($id);
+	if (!$ret)
+	{
+		setEventMessages($langs->trans("ErrorRecordNotFound"), null, 'errors');
+	}
+}
 
 /*
  * Actions
@@ -134,6 +141,54 @@ if ($action == 'delete' && $user->rights->facture->supprimer)
 
 
 
+// Update field
+// Set condition
+if ($action == 'setconditions' && $user->rights->facture->creer)
+{
+	$result=$object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'));
+
+}
+// Set mode
+elseif ($action == 'setmode' && $user->rights->facture->creer)
+{
+	$result=$object->setPaymentMethods(GETPOST('mode_reglement_id', 'int'));
+}
+// Set project
+elseif ($action == 'classin' && $user->rights->facture->creer)
+{
+	$object->setProject(GETPOST('projectid', 'int'));
+}
+// Set bank account
+elseif ($action == 'setbankaccount' && $user->rights->facture->creer)
+{
+    $result=$object->setBankAccount(GETPOST('fk_account', 'int'));
+}
+// Set frequency and unit frequency
+elseif ($action == 'setfrequency' && $user->rights->facture->creer)
+{
+	$object->setFrequencyAndUnit(GETPOST('frequency', 'int'), GETPOST('unit_frequency', 'alpha'));
+}
+// Set next date of execution
+elseif ($action == 'setdate_when' && $user->rights->facture->creer)
+{
+	$date = dol_mktime(12, 0, 0, GETPOST('date_whenmonth'), GETPOST('date_whenday'), GETPOST('date_whenyear'));
+	if (!empty($date)) $object->setNextDate($date);
+}
+// Set max period
+elseif ($action == 'setnb_gen_max' && $user->rights->facture->creer)
+{
+	$object->setMaxPeriod(GETPOST('nb_gen_max', 'int'));
+}
+// Set auto validate
+elseif ($action == 'setauto_validate' && $user->rights->facture->creer)
+{
+	$object->setAutoValidate(GETPOST('auto_validate', 'int'));
+}
+// Set note
+$permissionnote=$user->rights->facture->creer;	// Used by the include of actions_setnotes.inc.php
+include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not includ_once
+
+
 /*
  *	View
  */
@@ -164,6 +219,7 @@ if ($action == 'create')
 
 		$rowspan=4;
 		if (! empty($conf->projet->enabled) && $object->fk_project > 0) $rowspan++;
+		if ($object->fk_account > 0) $rowspan++;
 
 		print '<table class="border" width="100%">';
 
@@ -208,6 +264,14 @@ if ($action == 'create')
 				$project->fetch($object->fk_project);
 				print $project->title;
 			}
+			print "</td></tr>";
+		}
+
+		// Project
+		if ($object->fk_account > 0)
+		{
+			print "<tr><td>".$langs->trans('BankAccount')."</td><td>";
+			$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'none');
 			print "</td></tr>";
 		}
 
@@ -456,206 +520,323 @@ else
 	/*
 	 * View mode
 	 */
-	if ($id > 0)
+	if ($object->id > 0)
 	{
-		if ($object->fetch($id) > 0)
+		$object->fetch_thirdparty();
+
+		$author = new User($db);
+		$author->fetch($object->user_author);
+
+		$head=array();
+		$h=0;
+		$head[$h][0] = $_SERVER["PHP_SELF"].'?id='.$object->id;
+		$head[$h][1] = $langs->trans("CardBill");
+		$head[$h][2] = 'card';
+
+		dol_fiche_head($head, 'card', $langs->trans("PredefinedInvoices"),0,'bill');	// Add a div
+
+		print '<table class="border" width="100%">';
+
+		print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
+		print '<td colspan="4">'.$object->titre.'</td>';
+
+		print '<tr><td>'.$langs->trans("Customer").'</td>';
+		print '<td colspan="3">'.$object->thirdparty->getNomUrl(1,'customer').'</td></tr>';
+
+		print "<tr><td>".$langs->trans("Author").'</td><td colspan="3">'.$author->getFullName($langs)."</td></tr>";
+
+		print '<tr><td>'.$langs->trans("AmountHT").'</td>';
+		print '<td colspan="3"><b>'.price($object->total_ht,'',$langs,1,-1,-1,$conf->currency).'</b></td>';
+		print '</tr>';
+
+		print '<tr><td>'.$langs->trans("AmountVAT").'</td><td colspan="3">'.price($object->total_tva,'',$langs,1,-1,-1,$conf->currency).'</td>';
+		print '</tr>';
+		print '<tr><td>'.$langs->trans("AmountTTC").'</td><td colspan="3">'.price($object->total_ttc,'',$langs,1,-1,-1,$conf->currency).'</td>';
+		print '</tr>';
+
+		// Payment term
+		print '<tr><td>';
+		print '<table class="nobordernopadding" width="100%"><tr><td>';
+		print $langs->trans('PaymentConditionsShort');
+		print '</td>';
+		if ($object->type != Facture::TYPE_CREDIT_NOTE && $action != 'editconditions' && ! empty($object->brouillon) && $user->rights->facture->creer)
+			print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editconditions&amp;facid=' . $object->id . '">' . img_edit($langs->trans('SetConditions'), 1) . '</a></td>';
+		print '</tr></table>';
+		print '</td><td colspan="3">';
+		if ($object->type != Facture::TYPE_CREDIT_NOTE)
 		{
-			$object->fetch_thirdparty();
-
-			$author = new User($db);
-			$author->fetch($object->user_author);
-
-			$head=array();
-			$h=0;
-			$head[$h][0] = $_SERVER["PHP_SELF"].'?id='.$object->id;
-			$head[$h][1] = $langs->trans("CardBill");
-			$head[$h][2] = 'card';
-
-			dol_fiche_head($head, 'card', $langs->trans("PredefinedInvoices"),0,'bill');	// Add a div
-
-			print '<table class="border" width="100%">';
-
-			print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
-			print '<td colspan="4">'.$object->titre.'</td>';
-
-			print '<tr><td>'.$langs->trans("Customer").'</td>';
-			print '<td colspan="3">'.$object->thirdparty->getNomUrl(1,'customer').'</td></tr>';
-
-			print "<tr><td>".$langs->trans("Author").'</td><td colspan="3">'.$author->getFullName($langs)."</td></tr>";
-
-			print '<tr><td>'.$langs->trans("AmountHT").'</td>';
-			print '<td colspan="3"><b>'.price($object->total_ht,'',$langs,1,-1,-1,$conf->currency).'</b></td>';
-			print '</tr>';
-
-			print '<tr><td>'.$langs->trans("AmountVAT").'</td><td colspan="3">'.price($object->total_tva,'',$langs,1,-1,-1,$conf->currency).'</td>';
-			print '</tr>';
-			print '<tr><td>'.$langs->trans("AmountTTC").'</td><td colspan="3">'.price($object->total_ttc,'',$langs,1,-1,-1,$conf->currency).'</td>';
-			print '</tr>';
-
-			// Payment term
-			print '<tr><td>'.$langs->trans("PaymentConditions").'</td><td colspan="3">';
-			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->cond_reglement_id,'none');
-			print "</td></tr>";
-
-			// Payment mode
-			print '<tr><td>'.$langs->trans("PaymentMode").'</td><td colspan="3">';
-			$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->mode_reglement_id,'none');
-			print "</td></tr>";
-
-			print '<tr><td>'.$langs->trans("Comment").'</td><td colspan="3">'.nl2br($object->note_private)."</td></tr>";
-
-			print "</table>";
-
-			print '</div>';
-
-			/*
-			 * Recurrence
-			 */
-			if ($object->frequency > 0)
-			{
-				$title = $langs->trans("Recurrence");
-				print load_fiche_titre($title);
-				
-				print '<div class="tabBar">';
-				print '<table class="border" width="100%">';
-
-				print '<tr><td width="25%">'.$langs->trans("Frequency").'</td>';
-				print '<td>'.$langs->trans('FrequencyPer_'.$object->unit_frequency, $object->frequency).'</td>';
-				
-				print '<tr><td width="25%">'.$langs->trans("NextDateToExecution").'</td>';
-				print '<td>'.dol_print_date($object->date_when, 'daytext').'</td>';
-				
-				print '<tr><td width="25%">'.$langs->trans("MaxPeriodNumber").' / '.$langs->trans("RestPeriodNumber").'</td>';
-				print '<td>'.$object->nb_gen_max.' / '.($object->nb_gen_max-$object->nb_gen_done).'</td>';
-				
-				print '<tr><td width="25%">'.$langs->trans("InvoiceAutoValidate").'</td>';
-				print '<td>'.yn($object->auto_validate).'</td>';
-				
-				print '</table>';
-				print '</div>';
-				print '<br />';
+			if ($action == 'editconditions') {
+				$form->form_conditions_reglement($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $object->cond_reglement_id, 'cond_reglement_id');
+			} else {
+				$form->form_conditions_reglement($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $object->cond_reglement_id, 'none');
 			}
+		} else {
+			print '&nbsp;';
+		}
+		print '</td></tr>';
 
-			/*
-			 * Lines
-			 */
-
-			$title = $langs->trans("ProductsAndServices");
-			if (empty($conf->service->enabled))
-				$title = $langs->trans("Products");
-			else if (empty($conf->product->enabled))
-				$title = $langs->trans("Services");
-
-			print load_fiche_titre($title);
-
-			print '<table class="noborder" width="100%">';
-			print '<tr class="liste_titre">';
-			print '<td>'.$langs->trans("Description").'</td>';
-			print '<td align="right">'.$langs->trans("Price").'</td>';
-			print '<td align="center">'.$langs->trans("ReductionShort").'</td>';
-			print '<td align="center">'.$langs->trans("Qty").'</td>';
-			if ($conf->global->PRODUCT_USE_UNITS) {
-				print '<td align="left">'.$langs->trans("Unit").'</td>';
-			}
-			print '</tr>';
-
-			$num = count($object->lines);
-			$i = 0;
-			$var=true;
-			while ($i < $num)
-			{
-				$var=!$var;
-
-				$product_static=new Product($db);
-
-				// Show product and description
-				$type=(isset($object->lines[$i]->product_type)?$object->lines[$i]->product_type:$object->lines[$i]->fk_product_type);
-				// Try to enhance type detection using date_start and date_end for free lines when type
-				// was not saved.
-				if (! empty($objp->date_start)) $type=1;
-				if (! empty($objp->date_end)) $type=1;
-
-				// Show line
-				print "<tr ".$bc[$var].">";
-				if ($object->lines[$i]->fk_product > 0)
-				{
-					print '<td>';
-					print '<a name="'.$object->lines[$i]->id.'"></a>'; // ancre pour retourner sur la ligne
-
-					// Show product and description
-					$product_static->type=$object->lines[$i]->fk_product_type;
-					$product_static->id=$object->lines[$i]->fk_product;
-					$product_static->ref=$object->lines[$i]->product_ref;
-					$text=$product_static->getNomUrl(1);
-					$text.= ' - '.(! empty($object->lines[$i]->label)?$object->lines[$i]->label:$object->lines[$i]->product_label);
-					$description=(! empty($conf->global->PRODUIT_DESC_IN_FORM)?'':dol_htmlentitiesbr($object->lines[$i]->desc));
-					print $form->textwithtooltip($text,$description,3,'','',$i);
-
-					// Show range
-					print_date_range($object->lines[$i]->date_start, $object->lines[$i]->date_end);
-
-					// Add description in form
-					if (! empty($conf->global->PRODUIT_DESC_IN_FORM))
-						print (! empty($object->lines[$i]->desc) && $object->lines[$i]->desc!=$fac->lines[$i]->product_label)?'<br>'.dol_htmlentitiesbr($object->lines[$i]->desc):'';
-
-					print '</td>';
-				}
-				else
-				{
-					print '<td>';
-
-					if ($type==1) $text = img_object($langs->trans('Service'),'service');
-					else $text = img_object($langs->trans('Product'),'product');
-
-					if (! empty($object->lines[$i]->label)) {
-
-						$text.= ' <strong>'.$object->lines[$i]->label.'</strong>';
-						print $form->textwithtooltip($text,dol_htmlentitiesbr($object->lines[$i]->desc),3,'','',$i);
-
-					} else {
-
-						print $text.' '.nl2br($object->lines[$i]->desc);
-					}
-
-					// Show range
-					print_date_range($object->lines[$i]->date_start, $object->lines[$i]->date_end);
-
-					print '</td>';
-				}
-				print '<td align="right">'.price($object->lines[$i]->price).'</td>';
-				print '<td align="center">'.$object->lines[$i]->remise_percent.' %</td>';
-				print '<td align="center">'.$object->lines[$i]->qty.'</td>';
-				if ($conf->global->PRODUCT_USE_UNITS) {
-					print "<td align=\"left\">".$object->lines[$i]->getLabelOfUnit()."</td>";
-				}
-				print "</tr>\n";
-				$i++;
-			}
-			print '</table>';
-
-
-
-			/**
-			 * Barre d'actions
-			 */
-			print '<div class="tabsAction">';
-
-			if ($object->statut == Facture::STATUS_DRAFT && $user->rights->facture->creer)
-			{
-			    	echo '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;socid='.$object->thirdparty->id.'&amp;fac_rec='.$object->id.'">'.$langs->trans("CreateBill").'</a></div>';
-			}
-
-			if ($object->statut == Facture::STATUS_DRAFT && $user->rights->facture->supprimer)
-			{
-				print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&id='.$object->id.'">'.$langs->trans('Delete').'</a></div>';
-			}
-
-			print '</div>';
+		// Payment mode
+		print '<tr><td>';
+		print '<table class="nobordernopadding" width="100%"><tr><td>';
+		print $langs->trans('PaymentMode');
+		print '</td>';
+		if ($action != 'editmode' && ! empty($object->brouillon) && $user->rights->facture->creer)
+			print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmode&amp;facid=' . $object->id . '">' . img_edit($langs->trans('SetMode'), 1) . '</a></td>';
+		print '</tr></table>';
+		print '</td><td colspan="3">';
+		if ($action == 'editmode')
+		{
+			$form->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id, $object->mode_reglement_id, 'mode_reglement_id', 'CRDT');
 		}
 		else
 		{
-			print $langs->trans("ErrorRecordNotFound");
+			$form->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id, $object->mode_reglement_id, 'none', 'CRDT');
 		}
+		print '</td></tr>';
+
+		
+		print '<tr><td>';
+		print $form->editfieldkey($langs->trans("NotePrivate"), 'note_private', $object->note_private, $object, $user->rights->facture->creer);
+		print '</td><td colspan="5">';
+		print $form->editfieldval($langs->trans("NotePrivate"), 'note_private', $object->note_private, $object, $user->rights->facture->creer, 'textarea:'.ROWS_4.':60');
+		print '</td>';
+		print '</tr>';
+		
+		// Project
+		if (! empty($conf->projet->enabled)) {
+			$langs->load('projects');
+			print '<tr>';
+			print '<td>';
+	
+			print '<table class="nobordernopadding" width="100%"><tr><td>';
+			print $langs->trans('Project');
+			print '</td>';
+			if ($action != 'classify') {
+				print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=classify&amp;facid=' . $object->id . '">';
+				print img_edit($langs->trans('SetProject'), 1);
+				print '</a></td>';
+			}
+			print '</tr></table>';
+	
+			print '</td><td colspan="3">';
+			if ($action == 'classify') {
+				$form->form_project($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1);
+			} else {
+				$form->form_project($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0);
+			}
+			print '</td>';
+			print '</tr>';
+		}
+
+		// Bank Account
+		print '<tr><td class="nowrap">';
+		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+		print $langs->trans('BankAccount');
+		print '<td>';
+		if (($action != 'editbankaccount') && $user->rights->commande->creer && ! empty($object->brouillon))
+		    print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'),1).'</a></td>';
+		print '</tr></table>';
+		print '</td><td colspan="3">';
+		if ($action == 'editbankaccount')
+		{
+		    $form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'fk_account', 1);
+		}
+		else
+		{
+		    $form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'none');
+		}
+		print "</td>";
+		print '</tr>';
+
+
+		print "</table>";
+
+		print '</div>';
+
+		/*
+		 * Recurrence
+		 */
+		$title = $langs->trans("Recurrence");
+		print load_fiche_titre($title);
+		
+		print '<div class="tabBar">';
+		print '<table class="border" width="100%">';
+
+		// if "frequency" is empty or = 0, the reccurence is disabled
+		print '<tr><td>';
+		print '<table class="nobordernopadding" width="100%"><tr><td>';
+		print $langs->trans('Frequency');
+		print '</td>';
+		if ($action != 'editfrequency' && ! empty($object->brouillon) && $user->rights->facture->creer)
+			print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editfrequency&amp;facid=' . $object->id . '">' . img_edit($langs->trans('Edit'), 1) . '</a></td>';
+		print '</tr></table>';
+		print '</td><td colspan="3">';
+		if ($action == 'editfrequency')
+		{
+			print '<form method="post" action="'.$_SERVER["PHP_SELF"] . '?facid=' . $object->id.'">';
+            print '<input type="hidden" name="action" value="setfrequency">';
+            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
+            print '<tr><td>';
+            print "<input type='text' name='frequency' value='".$object->frequency."' size='5' />&nbsp;".$form->selectarray('unit_frequency', array('d'=>$langs->trans('Day'), 'm'=>$langs->trans('Month'), 'y'=>$langs->trans('Year')), ($object->unit_frequency?$object->unit_frequency:'m'));
+            print '</td>';
+            print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+            print '</tr></table></form>';
+		}
+		else 
+		{
+			print $langs->trans('FrequencyPer_'.$object->unit_frequency, $object->frequency);
+		}
+		print '</td></tr>';
+		
+		// Date when
+		print '<tr><td>';
+		print $form->editfieldkey($langs->trans("NextDateToExecution"), 'date_when', $object->date_when, $object, $user->rights->facture->creer);
+		print '</td><td colspan="5">';
+		print $form->editfieldval($langs->trans("NextDateToExecution"), 'date_when', $object->date_when, $object, $user->rights->facture->creer, 'datepicker');
+		print '</td>';
+		print '</tr>';
+		
+		
+		// Max period / Rest period
+		print '<tr><td>';
+		print $form->editfieldkey($langs->trans("MaxPeriodNumber"), 'nb_gen_max', $object->nb_gen_max, $object, $user->rights->facture->creer);
+		print '</td><td colspan="5">';
+		print $form->editfieldval($langs->trans("MaxPeriodNumber"), 'nb_gen_max', $object->nb_gen_max, $object, $user->rights->facture->creer);
+		print '</td>';
+		print '</tr>';
+		print '<tr><td width="25%">'.$langs->trans("RestPeriodNumber").'</td>';
+		print '<td>'.($object->nb_gen_max-$object->nb_gen_done).'</td>';
+		
+		// Auto validate
+		print '<tr><td>';
+		print $form->editfieldkey($langs->trans("InvoiceAutoValidate"), 'auto_validate', $object->auto_validate, $object, $user->rights->facture->creer);
+		print '</td><td colspan="5">';
+		$select = 'select;0:'.$langs->trans('No').',1:'.$langs->trans('Yes');
+		print $form->editfieldval($langs->trans("InvoiceAutoValidate"), 'auto_validate', $object->auto_validate, $object, $user->rights->facture->creer, $select);
+		print '</td>';
+		print '</tr>';
+		
+		print '</table>';
+		print '</div>';
+		print '<br />';
+
+		/*
+		 * Lines
+		 */
+
+		$title = $langs->trans("ProductsAndServices");
+		if (empty($conf->service->enabled))
+			$title = $langs->trans("Products");
+		else if (empty($conf->product->enabled))
+			$title = $langs->trans("Services");
+
+		print load_fiche_titre($title);
+
+		print '<table class="noborder" width="100%">';
+		print '<tr class="liste_titre">';
+		print '<td>'.$langs->trans("Description").'</td>';
+		print '<td align="right">'.$langs->trans("Price").'</td>';
+		print '<td align="center">'.$langs->trans("ReductionShort").'</td>';
+		print '<td align="center">'.$langs->trans("Qty").'</td>';
+		if ($conf->global->PRODUCT_USE_UNITS) {
+			print '<td align="left">'.$langs->trans("Unit").'</td>';
+		}
+		print '</tr>';
+
+		$num = count($object->lines);
+		$i = 0;
+		$var=true;
+		while ($i < $num)
+		{
+			$var=!$var;
+
+			$product_static=new Product($db);
+
+			// Show product and description
+			$type=(isset($object->lines[$i]->product_type)?$object->lines[$i]->product_type:$object->lines[$i]->fk_product_type);
+			// Try to enhance type detection using date_start and date_end for free lines when type
+			// was not saved.
+			if (! empty($objp->date_start)) $type=1;
+			if (! empty($objp->date_end)) $type=1;
+
+			// Show line
+			print "<tr ".$bc[$var].">";
+			if ($object->lines[$i]->fk_product > 0)
+			{
+				print '<td>';
+				print '<a name="'.$object->lines[$i]->id.'"></a>'; // ancre pour retourner sur la ligne
+
+				// Show product and description
+				$product_static->type=$object->lines[$i]->fk_product_type;
+				$product_static->id=$object->lines[$i]->fk_product;
+				$product_static->ref=$object->lines[$i]->product_ref;
+				$text=$product_static->getNomUrl(1);
+				$text.= ' - '.(! empty($object->lines[$i]->label)?$object->lines[$i]->label:$object->lines[$i]->product_label);
+				$description=(! empty($conf->global->PRODUIT_DESC_IN_FORM)?'':dol_htmlentitiesbr($object->lines[$i]->desc));
+				print $form->textwithtooltip($text,$description,3,'','',$i);
+
+				// Show range
+				print_date_range($object->lines[$i]->date_start, $object->lines[$i]->date_end);
+
+				// Add description in form
+				if (! empty($conf->global->PRODUIT_DESC_IN_FORM))
+					print (! empty($object->lines[$i]->desc) && $object->lines[$i]->desc!=$fac->lines[$i]->product_label)?'<br>'.dol_htmlentitiesbr($object->lines[$i]->desc):'';
+
+				print '</td>';
+			}
+			else
+			{
+				print '<td>';
+
+				if ($type==1) $text = img_object($langs->trans('Service'),'service');
+				else $text = img_object($langs->trans('Product'),'product');
+
+				if (! empty($object->lines[$i]->label)) {
+
+					$text.= ' <strong>'.$object->lines[$i]->label.'</strong>';
+					print $form->textwithtooltip($text,dol_htmlentitiesbr($object->lines[$i]->desc),3,'','',$i);
+
+				} else {
+
+					print $text.' '.nl2br($object->lines[$i]->desc);
+				}
+
+				// Show range
+				print_date_range($object->lines[$i]->date_start, $object->lines[$i]->date_end);
+
+				print '</td>';
+			}
+			print '<td align="right">'.price($object->lines[$i]->price).'</td>';
+			print '<td align="center">'.$object->lines[$i]->remise_percent.' %</td>';
+			print '<td align="center">'.$object->lines[$i]->qty.'</td>';
+			if ($conf->global->PRODUCT_USE_UNITS) {
+				print "<td align=\"left\">".$object->lines[$i]->getLabelOfUnit()."</td>";
+			}
+			print "</tr>\n";
+			$i++;
+		}
+		print '</table>';
+
+
+
+		/**
+		 * Barre d'actions
+		 */
+		print '<div class="tabsAction">';
+
+		if ($object->statut == Facture::STATUS_DRAFT && $user->rights->facture->creer)
+		{
+		    	echo '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;socid='.$object->thirdparty->id.'&amp;fac_rec='.$object->id.'">'.$langs->trans("CreateBill").'</a></div>';
+		}
+
+		if ($object->statut == Facture::STATUS_DRAFT && $user->rights->facture->supprimer)
+		{
+			print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&id='.$object->id.'">'.$langs->trans('Delete').'</a></div>';
+		}
+
+		print '</div>';
+		
 	}
 	else
 	{

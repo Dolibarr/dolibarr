@@ -119,6 +119,7 @@ class FactureRec extends Facture
 			$sql.= ", note_public";
 			$sql.= ", fk_user_author";
 			$sql.= ", fk_projet";
+			$sql.= ", fk_account";
 			$sql.= ", fk_cond_reglement";
 			$sql.= ", fk_mode_reglement";
 			$sql.= ", usenewprice";
@@ -140,6 +141,7 @@ class FactureRec extends Facture
 			$sql.= ", ".(!empty($this->note_public)?("'".$this->db->escape($this->note_public)."'"):"NULL");
 			$sql.= ", '".$user->id."'";
 			$sql.= ", ".(! empty($facsrc->fk_project)?"'".$facsrc->fk_project."'":"null");
+			$sql.= ", ".(! empty($facsrc->fk_account)?"'".$facsrc->fk_account."'":"null");
 			$sql.= ", '".$facsrc->cond_reglement_id."'";
 			$sql.= ", '".$facsrc->mode_reglement_id."'";
 			$sql.= ", ".$this->usenewprice;
@@ -225,11 +227,33 @@ class FactureRec extends Facture
 		$sql = 'SELECT f.titre,f.fk_soc,f.amount,f.tva,f.total,f.total_ttc,f.remise_percent,f.remise_absolue,f.remise';
 		$sql.= ', f.date_lim_reglement as dlr';
 		$sql.= ', f.note_private, f.note_public, f.fk_user_author';
-		$sql.= ', f.fk_mode_reglement, f.fk_cond_reglement';
+		$sql.= ', f.fk_mode_reglement, f.fk_cond_reglement, f.fk_projet';
+		$sql.= ', f.fk_account';
 		$sql.= ', f.frequency, f.unit_frequency, f.date_when, f.date_last_gen, f.nb_gen_done, f.nb_gen_max, f.usenewprice, f.auto_validate';
 		$sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
 		$sql.= ', c.code as cond_reglement_code, c.libelle as cond_reglement_libelle, c.libelle_facture as cond_reglement_libelle_doc';
 		$sql.= ', el.fk_source';
+		
+		/*
+		$sql.= ', f.remise_percent, f.remise_absolue, f.remise';
+		$sql.= ', f.datef as df';
+		$sql.= ', f.date_lim_reglement as dlr';
+		$sql.= ', f.datec as datec';
+		$sql.= ', f.date_valid as datev';
+		$sql.= ', f.tms as datem';
+		$sql.= ', f.note_private, f.note_public, f.fk_statut, f.paye, f.close_code, f.close_note, f.fk_user_author, f.fk_user_valid, f.model_pdf';
+		$sql.= ', f.fk_facture_source';
+		$sql.= ', f.fk_mode_reglement, f.fk_cond_reglement, f.fk_projet, f.extraparams';
+		$sql.= ', f.situation_cycle_ref, f.situation_counter, f.situation_final';
+		$sql.= ', f.fk_account';
+		$sql.= ", f.fk_multicurrency, f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht, f.multicurrency_total_tva, f.multicurrency_total_ttc";
+		$sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
+		$sql.= ', c.code as cond_reglement_code, c.libelle as cond_reglement_libelle, c.libelle_facture as cond_reglement_libelle_doc';
+        $sql.= ', f.fk_incoterms, f.location_incoterms';
+        $sql.= ", i.libelle as libelle_incoterms";
+		*/
+		
+		
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture_rec as f';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as c ON f.fk_cond_reglement = c.rowid';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON f.fk_mode_reglement = p.id';
@@ -277,6 +301,7 @@ class FactureRec extends Facture
 				$this->cond_reglement         = $obj->cond_reglement_libelle;
 				$this->cond_reglement_doc     = $obj->cond_reglement_libelle_doc;
 				$this->fk_project             = $obj->fk_projet;
+				$this->fk_account             = $obj->fk_account;
 				$this->fk_facture_source      = $obj->fk_facture_source;
 				$this->note_private           = $obj->note_private;
 				$this->note_public            = $obj->note_public;
@@ -690,4 +715,142 @@ class FactureRec extends Facture
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
 	}
+	
+	/**
+     *	Update frequency and unit
+     *
+     *	@param     	int		$frequency		value of frequency
+	 *	@param     	string	$unit 			unit of frequency  (d, m, y)
+     *	@return		int						<0 if KO, >0 if OK
+     */
+    function setFrequencyAndUnit($frequency=0,$unit='')
+    {
+        if (! $this->table_element)
+        {
+            dol_syslog(get_class($this)."::setFrequencyAndUnit was called on objet with property table_element not defined",LOG_ERR);
+            return -1;
+        }
+
+		if (empty($frequency) && empty($unit))
+        {
+            dol_syslog(get_class($this)."::setFrequencyAndUnit was called on objet with params frequency and unit not defined",LOG_ERR);
+            return -2;
+        }
+
+        $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
+        if (!empty($frequency)) $sql.= ' SET frequency = '.$frequency;
+        if (!empty($unit)) 
+        {
+        	if (!empty($frequency)) $sql .= ',';
+			else $sql .= ' SET';
+        	$sql.= ' unit_frequency = "'.$this->db->escape($unit).'"';
+		}
+        $sql.= ' WHERE rowid = '.$this->id;
+
+        dol_syslog(get_class($this)."::setFrequencyAndUnit", LOG_DEBUG);
+        if ($this->db->query($sql))
+        {
+            if (!empty($frequency)) $this->frequency = $frequency;
+			if (!empty($unit)) $this->unit_frequency = $unit;
+            return 1;
+        }
+        else
+        {
+            dol_print_error($this->db);
+            return -1;
+        }
+    }
+    
+	/**
+     *	Update the next date of execution
+     *
+     *	@param     	datetime	$date	date of execution (format timestamp)
+     *	@return		int					<0 if KO, >0 if OK
+     */
+    function setNextDate($date)
+    {
+        if (! $this->table_element)
+        {
+            dol_syslog(get_class($this)."::setNextDate was called on objet with property table_element not defined",LOG_ERR);
+            return -1;
+        }
+		$date = $this->db->idate($date);
+        $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
+        $sql.= ' SET date_when = "'.$date.'"';
+        $sql.= ' WHERE rowid = '.$this->id;
+
+        dol_syslog(get_class($this)."::setNextDate", LOG_DEBUG);
+        if ($this->db->query($sql))
+        {
+            $this->date_when = $date;
+            return 1;
+        }
+        else
+        {
+            dol_print_error($this->db);
+            return -1;
+        }
+    }
+	
+	/**
+     *	Update the maximum period
+     *
+     *	@param     	int		$nb		number of maximum period
+     *	@return		int				<0 if KO, >0 if OK
+     */
+    function setMaxPeriod($nb)
+    {
+        if (! $this->table_element)
+        {
+            dol_syslog(get_class($this)."::setMaxPeriod was called on objet with property table_element not defined",LOG_ERR);
+            return -1;
+        }
+		
+        $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
+        $sql.= ' SET nb_gen_max = '.$nb;
+        $sql.= ' WHERE rowid = '.$this->id;
+
+        dol_syslog(get_class($this)."::setMaxPeriod", LOG_DEBUG);
+        if ($this->db->query($sql))
+        {
+            $this->nb_gen_max = $nb;
+            return 1;
+        }
+        else
+        {
+            dol_print_error($this->db);
+            return -1;
+        }
+    }
+	
+	/**
+     *	Update the auto validate invoice
+     *
+     *	@param     	int		$validate		0 to create in draft, 1 to create and validate invoice
+     *	@return		int						<0 if KO, >0 if OK
+     */
+    function setAutoValidate($validate)
+    {
+        if (! $this->table_element)
+        {
+            dol_syslog(get_class($this)."::setAutoValidate was called on objet with property table_element not defined",LOG_ERR);
+            return -1;
+        }
+		
+        $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
+        $sql.= ' SET auto_validate = '.$validate;
+        $sql.= ' WHERE rowid = '.$this->id;
+
+        dol_syslog(get_class($this)."::setAutoValidate", LOG_DEBUG);
+        if ($this->db->query($sql))
+        {
+            $this->auto_validate = $validate;
+            return 1;
+        }
+        else
+        {
+            dol_print_error($this->db);
+            return -1;
+        }
+    }
 }

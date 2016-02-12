@@ -278,6 +278,8 @@ class Facture extends CommonInvoice
 			$result=$_facrec->fetch($this->fac_rec);
 
 			$this->fk_project        = $_facrec->fk_project;
+			$this->fk_account        = $_facrec->fk_account;
+			$this->note_private      = $_facrec->note_private;
 			$this->cond_reglement_id = $_facrec->cond_reglement_id;
 			$this->mode_reglement_id = $_facrec->mode_reglement_id;
 			$this->remise_absolue    = $_facrec->remise_absolue;
