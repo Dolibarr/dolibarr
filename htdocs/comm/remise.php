@@ -30,6 +30,8 @@ $langs->load("companies");
 $langs->load("orders");
 $langs->load("bills");
 
+$id=GETPOST("id",'int');
+
 $socid = GETPOST('id','int');
 // Security check
 if ($user->societe_id > 0)
@@ -52,9 +54,9 @@ if (GETPOST('cancel') && ! empty($backtopage))
 
 if (GETPOST("action") == 'setremise')
 {
-	$soc = New Societe($db);
-	$soc->fetch($_GET["id"]);
-	$result=$soc->set_remise_client($_POST["remise"],$_POST["note"],$user);
+	$soc = new Societe($db);
+	$soc->fetch($id);
+	$result=$soc->set_remise_client(price2num(GETPOST("remise")),GETPOST("note"),$user);
 
 	if ($result > 0)
 	{

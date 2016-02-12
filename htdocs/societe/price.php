@@ -241,9 +241,9 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		't.fk_soc' => $object->id
 	);
 
-	$search_soc = GETPOST('search_soc');
-	if (! empty($search_soc)) {
-		$filter ['soc.nom'] = $search_soc;
+	$search_prod = GETPOST('search_prod');
+	if (! empty($search_prod)) {
+		$filter ['prod.ref'] = $search_prod;
 	}
 
 	if ($action == 'add_customer_price') {
@@ -487,7 +487,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 			setEventMessage($prodcustprice->error, 'errors');
 		}
 
-		$option = '&search_soc=' . $search_soc . '&id=' . $object->id;
+		$option = '&search_prod=' . $search_prod . '&id=' . $object->id;
 
 		print_barre_liste($langs->trans('PriceByCustomer'), $page, $_SERVEUR ['PHP_SELF'], $option, $sortfield, $sortorder, '', count($prodcustprice->lines), $nbtotalofrecords);
 
@@ -512,7 +512,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 			print '</tr>';
 
 			print '<tr class="liste_titre">';
-			print '<td><input type="text" class="flat" name="search_soc" value="' . $search_soc . '" size="20"></td>';
+			print '<td><input type="text" class="flat" name="search_prod" value="' . $search_prod . '" size="20"></td>';
 			print '<td colspan="8">&nbsp;</td>';
 			// Print the search button
 			print '<td class="liste_titre" align="right">';
