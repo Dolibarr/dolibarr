@@ -311,6 +311,7 @@ FrequencyPer_y=Every %s years
 toolTipFrequency=Examples:<br /><b>Set 7 / day</b>: give a new invoice every 7 days<br /><b>Set 3 / month</b>: give a new invoice every 3 month
 NextDateToExecution=Next date to execution
 MaxPeriodNumber=Max period number
+RestPeriodNumber=Rest period number
 InvoiceAutoValidate=Automatically validate invoice
 # PaymentConditions
 PaymentConditionShortRECEP=Immediate
