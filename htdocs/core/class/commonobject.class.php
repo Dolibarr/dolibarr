@@ -3921,8 +3921,16 @@ abstract class CommonObject
             $langs->load('admin');
             require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
             $extrafields = new ExtraFields($this->db);
-            $extrafields->fetch_name_optionals_label($this->table_element);
-
+            $target_extrafields=$extrafields->fetch_name_optionals_label($this->table_element);
+            
+            //Eliminate copied source object extra_fiels that do not exist in target object
+            $new_array_options=array();
+            foreach ($this->array_options as $key => $value) {
+                if (in_array(substr($key,8), array_keys($target_extrafields)))
+                    $new_array_options[$key] = $value;
+            }
+            $this->array_options =$new_array_options;
+            
             foreach($this->array_options as $key => $value)
             {
                	$attributeKey = substr($key,8);   // Remove 'options_' prefix
