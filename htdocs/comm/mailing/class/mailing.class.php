@@ -481,8 +481,8 @@ class Mailing extends CommonObject
 	/**
 	 *  Count number of target with status
 	 *
-	 *  @param  string     Mode ('alreadysent' = Sent success or error) 
-	 *  @return int        Nb of target with status
+	 *  @param  string	$mode   Mode ('alreadysent' = Sent success or error) 
+	 *  @return int        		Nb of target with status
 	 */
 	function countNbOfTargets($mode)
 	{
