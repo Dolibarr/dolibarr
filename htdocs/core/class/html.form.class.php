@@ -3772,14 +3772,14 @@ class Form
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
             print '<tr><td>';
-            print '<input type="text" name="'.$htmlname.'" value="'.(!empty($rate) ? $rate : 1).'" size="10" />';
+            print '<input type="text" name="'.$htmlname.'" value="'.(!empty($rate) ? price($rate) : 1).'" size="10" />';
             print '</td>';
             print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
             print '</tr></table></form>';
         }
         else
         {
-        	print !empty($rate) ? $rate : 1;
+        	print !empty($rate) ? price(price2num($rate), 1, $langs) : 1;
         }
     }
 
