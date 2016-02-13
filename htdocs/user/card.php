@@ -11,6 +11,7 @@
  * Copyright (C) 2013-2015 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015      Jean-François Ferry  <jfefe@aternatik.fr>
  * Copyright (C) 2015      Ari Elbaz (elarifr)  <github@accedinfo.com>
+ * Copyright (C) 2015      Charlie Benke  	<charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,6 +44,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 if (! empty($conf->ldap->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
 if (! empty($conf->adherent->enabled)) require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 if (! empty($conf->multicompany->enabled)) dol_include_once('/multicompany/class/actions_multicompany.class.php');
+if (! empty($conf->categorie->enabled)) require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+
 
 $id			= GETPOST('id','int');
 $action		= GETPOST('action','alpha');
@@ -244,7 +247,11 @@ if (empty($reshook)) {
 				if (isset($_POST['password']) && trim($_POST['password'])) {
 					$object->setPassword($user, trim($_POST['password']));
 				}
-
+            			if (! empty($conf->categorie->enabled)) {
+					// Categories association
+					$usercats = GETPOST( 'usercats', 'array' );
+					$object->setCategories($usercats);
+				}
 				$db->commit();
 
 				header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
@@ -472,7 +479,13 @@ if (empty($reshook)) {
                         }
                     }
                 }
-
+            	if (! $error && ! count($object->errors))
+            	{
+			// Then we add the associated categories
+			$categories = GETPOST( 'usercats', 'array' );
+			$object->setCategories($categories);
+		}
+			
                 if (!$error && !count($object->errors)) {
                     setEventMessages($langs->trans("UserModified"), null, 'mesgs');
                     $db->commit();
@@ -1081,7 +1094,16 @@ if (($action == 'create') || ($action == 'adduserldap'))
 		print $formother->selectColor(GETPOST('color')?GETPOST('color'):$object->color, 'color', null, 1, '', 'hideifnotset');
 		print '</td></tr>';
 	}
-
+	
+	// Categories
+	if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire)) {
+		print '<tr><td>' . fieldLabel( 'Categories', 'usercats' ) . '</td><td colspan="3">';
+		$cate_arbo = $form->select_all_categories( Categorie::TYPE_USER, null, 'parent', null, null, 1 );
+		print $form->multiselectarray( 'usercats', $cate_arbo, GETPOST( 'usercats', 'array' ), null, null, null,
+			null, '90%' );
+		print "</td></tr>";
+	}
+	
     // Note
     print '<tr><td class="tdtop">';
     print $langs->trans("Note");
@@ -1425,7 +1447,16 @@ else
                 print '</td>';
                 print "</tr>\n";
             }
-            
+
+            // Categories
+	    if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire)) 
+	    {
+		print '<tr><td>' . $langs->trans( "Categories" ) . '</td>';
+		print '<td colspan="3">';
+		print $form->showCategories( $object->id, 'user', 1 );
+		print '</td></tr>';
+	    }
+
             // Company / Contact
             if (! empty($conf->societe->enabled))
             {
@@ -2172,33 +2203,47 @@ else
 		    print '</td>';
 		    print "</tr>\n";
 
-		    // Accountancy code
-			if ($conf->salaries->enabled)
+		// Accountancy code
+		if ($conf->salaries->enabled)
+		{
+			print "<tr>";
+			print '<td>'.$langs->trans("AccountancyCode").'</td>';
+			print '<td>';
+			if ($caneditfield)
 			{
-				print "<tr>";
-				print '<td>'.$langs->trans("AccountancyCode").'</td>';
-				print '<td>';
-				if ($caneditfield)
-				{
-					print '<input size="30" type="text" class="flat" name="accountancy_code" value="'.$object->accountancy_code.'">';
-				}
-				else
-				{
-					print '<input type="hidden" name="accountancy_code" value="'.$object->accountancy_code.'">';
-					print $object->accountancy_code;
-				}
-				print '</td>';
-				print "</tr>";
+				print '<input size="30" type="text" class="flat" name="accountancy_code" value="'.$object->accountancy_code.'">';
 			}
+			else
+			{
+				print '<input type="hidden" name="accountancy_code" value="'.$object->accountancy_code.'">';
+				print $object->accountancy_code;
+			}
+			print '</td>';
+			print "</tr>";
+		}
 
-			// User color
-			if (! empty($conf->agenda->enabled))
-            {
-				print '<tr><td>'.$langs->trans("ColorUser").'</td>';
-				print '<td>';
-				print $formother->selectColor(GETPOST('color')?GETPOST('color'):$object->color, 'color', null, 1, '', 'hideifnotset');
-				print '</td></tr>';
+		// User color
+		if (! empty($conf->agenda->enabled))
+	        {
+			print '<tr><td>'.$langs->trans("ColorUser").'</td>';
+			print '<td>';
+			print $formother->selectColor(GETPOST('color')?GETPOST('color'):$object->color, 'color', null, 1, '', 'hideifnotset');
+			print '</td></tr>';
+		}
+
+		// Categories
+		if (!empty( $conf->categorie->enabled ) && !empty( $user->rights->categorie->lire )) {
+			print '<tr><td>' . fieldLabel( 'Categories', 'usercats' ) . '</td>';
+			print '<td colspan="3">';
+			$cate_arbo = $form->select_all_categories( Categorie::TYPE_CONTACT, null, null, null, null, 1 );
+			$c = new Categorie( $db );
+			$cats = $c->containing( $object->id, Categorie::TYPE_CONTACT );
+			foreach ($cats as $cat) {
+				$arrayselected[] = $cat->id;
 			}
+			print $form->multiselectarray( 'usercats', $cate_arbo, $arrayselected, '', 0, '', 0, '90%' );
+			print "</td></tr>";
+		}
 
             // Status
             print '<tr><td>'.$langs->trans("Status").'</td>';
