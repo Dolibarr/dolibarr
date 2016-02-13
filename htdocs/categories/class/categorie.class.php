@@ -9,6 +9,7 @@
  * Copyright (C) 2013       Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2016       Charlie Benk	    <charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,6 +48,7 @@ class Categorie extends CommonObject
 	const TYPE_CUSTOMER = 2;
 	const TYPE_MEMBER = 3;
 	const TYPE_CONTACT = 4;
+	const TYPE_USER = 4;  // categorie contact and user are same
 
 	/**
 	 * @var array ID mapping from type string
@@ -59,6 +61,7 @@ class Categorie extends CommonObject
 		'customer' => 2,
 		'member'   => 3,
 		'contact'  => 4,
+		'user'     => 4,
 	);
 	/**
 	 * @var array Foreign keys mapping from type string
@@ -71,6 +74,7 @@ class Categorie extends CommonObject
 		'supplier' => 'soc',
 		'member'   => 'member',
 		'contact'  => 'socpeople',
+		'user'  => 'user',
 	);
 	/**
 	 * @var array Category tables mapping from type string
@@ -83,6 +87,7 @@ class Categorie extends CommonObject
 		'supplier' => 'fournisseur',
 		'member'   => 'member',
 		'contact'  => 'contact',
+		'user'  => 'user',
 	);
 	/**
 	 * @var array Object class mapping from type string
@@ -95,6 +100,7 @@ class Categorie extends CommonObject
 		'supplier' => 'Fournisseur',
 		'member'   => 'Adherent',
 		'contact'  => 'Contact',
+		'user'     => 'User',
 	);
 	/**
 	 * @var array Object table mapping from type string
@@ -107,6 +113,7 @@ class Categorie extends CommonObject
 		'supplier' => 'societe',
 		'member'   => 'adherent',
 		'contact'  => 'socpeople',
+		'user'     => 'user',
 	);
 
 	public $element='category';
