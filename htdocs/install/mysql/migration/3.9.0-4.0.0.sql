@@ -22,6 +22,17 @@
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
 
+
+CREATE TABLE IF NOT EXISTS `llx_categorie_user` (
+  `fk_categorie` int(11) NOT NULL,
+  `fk_user` int(11) NOT NULL,
+  `import_key` varchar(14) DEFAULT NULL,
+  PRIMARY KEY (`fk_categorie`,`fk_user`)
+) ENGINE=InnoDB;
+
+ALTER TABLE llx_categorie_user ADD INDEX  `idx_categorie_user_fk_categorie` (`fk_categorie`);
+ALTER TABLE llx_categorie_user ADD INDEX  `idx_categorie_user_fk_user` (`fk_user`);
+
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN validated tinyint DEFAULT 0 NOT NULL;
 ALTER TABLE llx_bank_account MODIFY COLUMN accountancy_journal varchar(16) DEFAULT NULL;
 
