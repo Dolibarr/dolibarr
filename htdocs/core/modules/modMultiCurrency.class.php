@@ -46,7 +46,7 @@ class modMultiCurrency extends DolibarrModules
 
 		// Id for module (must be unique).
 		// Use here a free id (See in Home -> System information -> Dolibarr for list of used modules id).
-		$this->numero = 500000;		// TODO Go on page http://wiki.dolibarr.org/index.php/List_of_modules_id to reserve id number for your module
+		$this->numero = 40000;
 		// Key text used to identify module (for permissions, menus, etc...)
 		$this->rights_class = 'multicurrency';
 
@@ -54,14 +54,12 @@ class modMultiCurrency extends DolibarrModules
 		// It is used to group modules in module setup page
 		$this->family = "financial";
 		// Module position in the family
-		$this->module_position = 500;
-		// Gives the possibility to the module, to provide his own family info and position of this family (Overwrite $this->family and $this->module_position. Avoid this)
-		$this->familyinfo = array('financial' => array('position'=>'009', 'label'=>$langs->trans("ModuleFamilyFinancial")));
+		$this->module_position = 555;
 
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
-		$this->description = "Description of module MyModule";
+		$this->description = "Module to enter elements with a foreign currency";
 		
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or 'dolibarr_deprecated' or version
 		$this->version = 'development';

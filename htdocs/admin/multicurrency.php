@@ -85,7 +85,7 @@ if ($action == 'add_currency')
 
 	if ($currency->create($user) > 0)
 	{
-		if ($currency->addRate($rate)) setEventMessages($langs->trans('SuccessAddRate'), array());
+		if ($currency->addRate($rate)) setEventMessages($langs->trans('RecordSaved'), array());
 		else setEventMessages($langs->trans('ErrorAddRateFail'), array(), 'errors');
 	}
 	else setEventMessages($langs->trans('ErrorAddCurrencyFail'), array());
@@ -112,7 +112,7 @@ elseif ($action == 'update_currency')
 		
 		if ($currency->fetch($fk_multicurrency) > 0)
 		{
-			if ($currency->delete() > 0) setEventMessages($langs->trans('SuccessDeleteCurrency'), array());
+			if ($currency->delete() > 0) setEventMessages($langs->trans('RecordDeleted'), array());
 			else setEventMessages($langs->trans('ErrorDeleteCurrencyFail'), array(), 'errors');
 		}
 	}
@@ -131,10 +131,13 @@ if ($resql)
 	}
 }
 
+
 /*
  * View
  */
-$page_name = "multicurrency";
+
+$page_name = "MultiCurrency";
+
 llxHeader('', $langs->trans($page_name));
 
 // Subheader
@@ -147,7 +150,7 @@ $head = multicurrencyAdminPrepareHead();
 dol_fiche_head(
     $head,
     'settings',
-    $langs->trans("Module500000Name"),
+    $langs->trans("ModuleSetup"),
     0,
     "multicurrency"
 );
