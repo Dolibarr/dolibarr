@@ -418,6 +418,8 @@ $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
 
+$sql.= $db->order($sortfield,$sortorder);
+
 // Count total nb of records
 $nbtotalofrecords = 0;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
@@ -426,7 +428,6 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	$nbtotalofrecords = $db->num_rows($result);
 }
 
-$sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit+1, $offset);
 
 $resql = $db->query($sql);
@@ -815,7 +816,7 @@ if ($resql)
 
 	$var=True;
 
-	while ($i < min($num,$conf->liste_limit))
+	while ($i < min($num, $limit))
 	{
 		$obj = $db->fetch_object($resql);
 		$var=!$var;
