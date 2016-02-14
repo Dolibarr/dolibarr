@@ -51,6 +51,7 @@ class ProductFournisseur extends Product
     var $ref_supplier;			  // ref supplier (can be set by get_buyprice)
     var $vatrate_supplier;		  // default vat rate for this supplier/qty/product (can be set by get_buyprice)
 
+    var $fourn_id;                //supplier id
     var $fourn_qty;               // quantity for price (can be set by get_buyprice)
     var $fourn_pu;			       // unit price for quantity (can be set by get_buyprice)
 
@@ -367,6 +368,7 @@ class ProductFournisseur extends Product
             if ($obj)
             {
             	$this->product_fourn_price_id	= $rowid;
+                $this->fourn_id					= $obj->fk_soc;
             	$this->fourn_ref				= $obj->ref_fourn; // deprecated
 	            $this->ref_supplier             = $obj->ref_fourn;
             	$this->fourn_price				= $obj->price;
@@ -379,6 +381,7 @@ class ProductFournisseur extends Product
             	$this->fourn_tva_tx					= $obj->tva_tx;
             	$this->product_id				= $obj->fk_product;	// deprecated
             	$this->fk_product				= $obj->fk_product;
+            	$this->id						= $obj->fk_product;
             	$this->fk_availability			= $obj->fk_availability;
 				$this->delivery_time_days		= $obj->delivery_time_days;
             	//$this->fourn_tva_npr			= $obj->fourn_tva_npr; // TODO this field not exist in llx_product_fournisseur_price. We should add it ?
