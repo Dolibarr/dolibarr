@@ -2084,7 +2084,7 @@ class Form
 
         $sql = "SELECT p.rowid, p.label, p.ref, p.price, p.duration,";
         $sql.= " pfp.ref_fourn, pfp.rowid as idprodfournprice, pfp.price as fprice, pfp.quantity, pfp.remise_percent, pfp.remise, pfp.unitprice,";
-        $sql.= " pfp.fk_supplier_price_expression, pfp.fk_product, pfp.tva_tx, s.nom as name";
+        $sql.= " pfp.fk_supplier_price_expression, pfp.fk_product, pfp.tva_tx, pfp.fk_soc, s.nom as name";
         $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
         if ($socid) $sql.= " AND pfp.fk_soc = ".$socid;
@@ -2169,8 +2169,14 @@ class Form
                     $outqty=$objp->quantity;
 					$outdiscount=$objp->remise_percent;
                     if (!empty($conf->dynamicprices->enabled) && !empty($objp->fk_supplier_price_expression)) {
+                        $prod_supplier = new ProductFournisseur($this->db);
+                        $prod_supplier->product_fourn_price_id = $objp->idprodfournprice;
+                        $prod_supplier->id = $objp->fk_product;
+                        $prod_supplier->fourn_qty = $objp->quantity;
+                        $prod_supplier->fourn_tva_tx = $objp->tva_tx;
+                        $prod_supplier->fk_supplier_price_expression = $objp->fk_supplier_price_expression;
                         $priceparser = new PriceParser($this->db);
-                        $price_result = $priceparser->parseProductSupplier($objp->fk_product, $objp->fk_supplier_price_expression, $objp->quantity, $objp->tva_tx);
+                        $price_result = $priceparser->parseProductSupplier($prod_supplier);
                         if ($price_result >= 0) {
                             $objp->fprice = $price_result;
                             if ($objp->quantity >= 1)
@@ -2308,8 +2314,14 @@ class Form
                     $opt.= '>'.$objp->name.' - '.$objp->ref_fourn.' - ';
 
                     if (!empty($conf->dynamicprices->enabled) && !empty($objp->fk_supplier_price_expression)) {
+                        $prod_supplier = new ProductFournisseur($this->db);
+                        $prod_supplier->product_fourn_price_id = $objp->idprodfournprice;
+                        $prod_supplier->id = $productid;
+                        $prod_supplier->fourn_qty = $objp->quantity;
+                        $prod_supplier->fourn_tva_tx = $objp->tva_tx;
+                        $prod_supplier->fk_supplier_price_expression = $objp->fk_supplier_price_expression;
                         $priceparser = new PriceParser($this->db);
-                        $price_result = $priceparser->parseProductSupplier($objp->fk_product, $objp->fk_supplier_price_expression, $objp->quantity, $objp->tva_tx);
+                        $price_result = $priceparser->parseProductSupplier($prod_supplier);
                         if ($price_result >= 0) {
                             $objp->fprice = $price_result;
                             if ($objp->quantity >= 1)

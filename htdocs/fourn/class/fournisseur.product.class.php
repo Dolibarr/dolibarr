@@ -476,7 +476,7 @@ class ProductFournisseur extends Product
 
                 if (!empty($conf->dynamicprices->enabled) && !empty($prodfourn->fk_supplier_price_expression)) {
                     $priceparser = new PriceParser($this->db);
-                    $price_result = $priceparser->parseProductSupplier($prodid, $prodfourn->fk_supplier_price_expression, $prodfourn->fourn_qty, $prodfourn->fourn_tva_tx);
+                    $price_result = $priceparser->parseProductSupplier($prodfourn);
                     if ($price_result >= 0) {
                     	$prodfourn->fourn_price = $price_result;
                     	$prodfourn->fourn_unitprice = null; //force recalculation of unitprice, as probably the price changed...
@@ -574,8 +574,14 @@ class ProductFournisseur extends Product
                     $fourn_price = $record["price"];
                     $fourn_unitprice = $record["unitprice"];
                     if (!empty($conf->dynamicprices->enabled) && !empty($record["fk_supplier_price_expression"])) {
+                        $prod_supplier = new ProductFournisseur($this->db);
+                        $prod_supplier->product_fourn_price_id = $record["product_fourn_price_id"];
+                        $prod_supplier->id = $prodid;
+                        $prod_supplier->fourn_qty = $record["quantity"];
+                        $prod_supplier->fourn_tva_tx = $record["tva_tx"];
+                        $prod_supplier->fk_supplier_price_expression = $record["fk_supplier_price_expression"];
                         $priceparser = new PriceParser($this->db);
-                        $price_result = $priceparser->parseProductSupplier($prodid, $record["fk_supplier_price_expression"], $record["quantity"], $record["tva_tx"]);
+                        $price_result = $priceparser->parseProductSupplier($prod_supplier);
                         if ($price_result >= 0) {
                             $fourn_price = price2num($price_result,'MU');
                             if ($record["quantity"] != 0)
