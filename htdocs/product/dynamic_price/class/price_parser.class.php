@@ -188,7 +188,8 @@ class PriceParser
 		$expression = str_replace("\n", $this->separator_chr, $expression);
 		foreach ($values as $key => $value)
 		{
-			$expression = str_replace($this->special_chr.$key.$this->special_chr, "$value", $expression);
+			if ($value === null) $value = "NULL";
+			$expression = str_replace($this->special_chr.$key.$this->special_chr, strval($value), $expression);
 		}
 		$expressions = explode($this->separator_chr, $expression);
 		$expressions = array_slice($expressions, 0, $this->limit);
