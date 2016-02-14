@@ -4,7 +4,7 @@
  * Copyright (C) 2008       Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * Copyright (C) 2014       Marcos García               <marcosgdf@gmail.com>
  * Copyright (C) 2015       Ferran Marcet               <fmarcet@2byte.es>
- * Copyright (C) 2015       Raphaël Doursenaud          <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2015-2016  Raphaël Doursenaud          <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1910,7 +1910,7 @@ function fetchObjectByElement($element_id, $element_type)
 	global $db,$conf;
 
     $element_prop = getElementProperties($element_type);
-    if (is_array($element_prop) && $conf->$element_prop['module']->enabled)
+    if (is_array($element_prop) && $conf->{$element_prop['module']}->enabled)
     {
         dol_include_once('/'.$element_prop['classpath'].'/'.$element_prop['classfile'].'.class.php');
 
