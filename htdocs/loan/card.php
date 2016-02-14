@@ -54,11 +54,11 @@ if ($action == 'confirm_paid' && $confirm == 'yes')
 	$result = $object->set_paid($user);
     if ($result > 0)
     {
-        setEventMessage($langs->trans('LoanPaid'));
+        setEventMessages($langs->trans('LoanPaid'), null, 'mesgs');
     }
     else
     {
-        setEventMessage($loan->error, 'errors');
+        setEventMessages($loan->error, null, 'errors');
     }
 }
 
@@ -69,13 +69,13 @@ if ($action == 'confirm_delete' && $confirm == 'yes')
 	$result=$object->delete($user);
 	if ($result > 0)
 	{
-		setEventMessage($langs->trans('LoanDeleted'));
+		setEventMessages($langs->trans('LoanDeleted'), null, 'mesgs');
 		header("Location: index.php");
 		exit;
 	}
 	else
 	{
-		setEventMessage($loan->error, 'errors');
+		setEventMessages($loan->error, null, 'errors');
 	}
 }
 
@@ -89,17 +89,17 @@ if ($action == 'add' && $user->rights->loan->write)
 
 		if (! $datestart)
 		{
-			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("DateStart")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("DateStart")), null, 'errors');
 			$action = 'create';
 		}
 		elseif (! $dateend)
 		{
-			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("DateEnd")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("DateEnd")), null, 'errors');
 			$action = 'create';
 		}
 		elseif (! $_POST["capital"])
 		{
-			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Capital")), 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Capital")), null, 'errors');
 			$action = 'create';
 		}
 		else
@@ -121,7 +121,7 @@ if ($action == 'add' && $user->rights->loan->write)
 			$id=$object->create($user);
 			if ($id <= 0)
 			{
-				setEventMessage($object->error, 'errors');
+				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
 	}
@@ -157,7 +157,7 @@ else if ($action == 'update' && $user->rights->loan->write)
         }
         else
         {
-	        setEventMessage($object->error, 'errors');
+	        setEventMessages($object->error, $object->errors, 'errors');
         }
     }
     else
@@ -183,7 +183,7 @@ if ($action == 'create')
 	//WYSIWYG Editor
     require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
-    print_fiche_titre($langs->trans("NewLoan"));
+    print load_fiche_titre($langs->trans("NewLoan"));
 
     $datec = dol_mktime(12, 0, 0, GETPOST('remonth','int'), GETPOST('reday','int'), GETPOST('reyear','int'));
 

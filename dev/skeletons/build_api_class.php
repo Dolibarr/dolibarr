@@ -1,4 +1,4 @@
-#!/usr/bin/php
+#!/usr/bin/env php
 <?php
 /* Copyright (C) 2015   Jean-François Ferry <jfefe@aternatik.fr>
  *

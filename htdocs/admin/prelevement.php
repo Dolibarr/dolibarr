@@ -81,12 +81,12 @@ if ($action == "set")
     if (! $error)
 	{
 		$db->commit();
-		setEventMessage($langs->trans("SetupSaved"));
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
 	else
 	{
 		$db->rollback();
-		setEventMessage($langs->trans("Error"),'errors');
+		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
 
@@ -119,7 +119,7 @@ llxHeader('',$langs->trans("WithdrawalsSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 
-print_fiche_titre($langs->trans("WithdrawalsSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("WithdrawalsSetup"),$linkback,'title_setup');
 print '<br>';
 
 print '<form method="post" action="prelevement.php?action=set">';
@@ -135,7 +135,7 @@ print "</tr>";
 print '<tr class="impair"><td>'.$langs->trans("ResponsibleUser").'</td>';
 print '<td align="left">';
 print '<input type="hidden" name="nom0" value="PRELEVEMENT_USER">';
-print $form->select_dolusers($conf->global->PRELEVEMENT_USER,'value0',1);
+print $form->select_dolusers($conf->global->PRELEVEMENT_USER, 'value0', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 print '</td>';
 print '</tr>';
 
@@ -178,7 +178,7 @@ print '<br>';
 if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
 {
     $langs->load("mails");
-    print_titre($langs->trans("Notifications"));
+    print load_fiche_titre($langs->trans("Notifications"));
 
     $sql = "SELECT u.rowid, u.lastname, u.firstname, u.fk_soc, u.email";
     $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
@@ -238,11 +238,11 @@ if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
     print "</tr>\n";
 
     print '<tr class="impair"><td align="left">';
-    print $form->selectarray('user',$internalusers);//  select_users(0,'user',0);
+    print $form->selectarray('user',$internalusers);//  select_dolusers(0,'user',0);
     print '</td>';
 
     print '<td>';
-    print $form->selectarray('action',$actions);//  select_users(0,'user',0);
+    print $form->selectarray('action',$actions);//  select_dolusers(0,'user',0);
     print '</td>';
 
     print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td></tr>';
@@ -284,6 +284,5 @@ if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
 }
 */
 
-$db->close();
-
 llxFooter();
+$db->close();

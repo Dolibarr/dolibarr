@@ -7,6 +7,7 @@ DeliveryOrders=Ordine de livrare
 DeliveryDate=Data de livrare
 DeliveryDateShort=Dată livr.
 CreateDeliveryOrder=Generare ordine de livrare 
+DeliveryStateSaved=Delivery state saved
 QtyDelivered=Cantitate livrată
 SetDeliveryDate=Setaţi data de expediere
 ValidateDeliveryReceipt=Validare recepţie  livrare
@@ -16,6 +17,9 @@ DeleteDeliveryReceiptConfirm=Sunteţi sigur că doriţi să ştergeţi recepţia
 DeliveryMethod=Metoda de livrare
 TrackingNumber=Număr de urmărire
 DeliveryNotValidated=Livrare  nevalidată
+StatusDeliveryCanceled=Canceled
+StatusDeliveryDraft=Draft
+StatusDeliveryValidated=Received
 # merou PDF model
 NameAndSignature=Nume şi Semnătura:
 ToAndDate=To___________________________________ pe ____ / _____ / __________

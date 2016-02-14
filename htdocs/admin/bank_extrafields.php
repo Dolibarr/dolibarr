@@ -66,7 +66,7 @@ llxHeader('',$langs->trans("BankSetupModule"),$help_url);
 
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("BankSetupModule"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("BankSetupModule"),$linkback,'title_setup');
 
 
 $head = bank_admin_prepare_head(null);
@@ -89,27 +89,27 @@ if ($action != 'create' && $action != 'edit')
 
 /* ************************************************************************** */
 /*                                                                            */
-/* Creation d'un champ optionnel
+/* Creation of an optional field
  /*                                                                            */
 /* ************************************************************************** */
 
 if ($action == 'create')
 {
     print "<br>";
-    print_titre($langs->trans('NewAttribute'));
+    print load_fiche_titre($langs->trans('NewAttribute'));
 
     require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_add.tpl.php';
 }
 
 /* ************************************************************************** */
 /*                                                                            */
-/* Edition d'un champ optionnel                                               */
+/* Edition of an optional field                                                */
 /*                                                                            */
 /* ************************************************************************** */
 if ($action == 'edit' && ! empty($attrname))
 {
     print "<br>";
-    print_titre($langs->trans("FieldEdition", $attrname));
+    print load_fiche_titre($langs->trans("FieldEdition", $attrname));
 
     require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_edit.tpl.php';
 }

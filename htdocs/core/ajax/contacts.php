@@ -50,7 +50,7 @@ if (! empty($id) && ! empty($action) && ! empty($htmlname))
 	$return=array();
 	if (empty($showempty)) $showempty=0;
 	
-	$return['value']	= $form->selectcontacts($id,'','contactid',$showempty,'','',0,'',true);
+	$return['value']	= $form->selectcontacts($id,'',$htmlname,$showempty,'','',0,'',true);
 	$return['num']		= $form->num;
 	$return['error']	= $form->error;
 	

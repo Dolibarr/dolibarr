@@ -8,6 +8,7 @@
  * Copyright (C) 2014		Cedric GROSS			<c.gross@kreiz-it.fr>
  * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2014-2015  Francis Appels          <francis.appels@yahoo.com>
+ * Copyright (C) 2015				Claudio Aschieri				<c.aschieri@19.coop>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,11 +31,12 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT."/core/class/commonobjectline.class.php";
 if (! empty($conf->propal->enabled)) require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 if (! empty($conf->commande->enabled)) require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 if (! empty($conf->productbatch->enabled)) require_once DOL_DOCUMENT_ROOT.'/expedition/class/expeditionbatch.class.php';
 
-
+ 
 /**
  *	Class to manage shipments
  */
@@ -43,26 +45,18 @@ class Expedition extends CommonObject
 	public $element="shipping";
 	public $fk_element="fk_expedition";
 	public $table_element="expedition";
+	public $table_element_line="expeditiondet";
 	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
-	var $id;
 	var $socid;
 	var $ref_customer;
-	var $ref_ext;
 	var $ref_int;
 	var $brouillon;
 	var $entrepot_id;
-	var $modelpdf;
-	var $origin;
-	var $origin_id;
 	var $lines=array();
-	var $shipping_method_id;
 	var $tracking_number;
 	var $tracking_url;
-	var $statut;
 	var $billed;
-	var $note_public;
-	var $note_private;
 	var $model_pdf;
 
 	var $trueWeight;
@@ -95,19 +89,7 @@ class Expedition extends CommonObject
 	var $date_creation;
 	var $date_valid;
 
-	// For Invoicing
-	var $total_ht;			// Total net of tax
-	var $total_ttc;			// Total with tax
-	var $total_tva;			// Total VAT
-	var $total_localtax1;   // Total Local tax 1
-	var $total_localtax2;   // Total Local tax 2
-
 	var $listmeths;			// List of carriers
-
-	//Incorterms
-	var $fk_incoterms;
-	var $location_incoterms;
-	var $libelle_incoterms;  //Used into tooltip
 
 	/**
 	 *	Constructor
@@ -188,11 +170,12 @@ class Expedition extends CommonObject
 	 *  Create expedition en base
 	 *
 	 *  @param	User	$user       Objet du user qui cree
+   * 	@param		int		$notrigger	1=Does not execute triggers, 0= execuete triggers
 	 *  @return int 				<0 si erreur, id expedition creee si ok
 	 */
-	function create($user)
+	function create($user, $notrigger=0)
 	{
-		global $conf, $langs;
+		global $conf, $langs, $hookmanager;
 
 		$now=dol_now();
 
@@ -276,14 +259,14 @@ class Expedition extends CommonObject
 				{
 					if (! isset($this->lines[$i]->detail_batch))
 					{	// no batch management
-						if (! $this->create_line($this->lines[$i]->entrepot_id, $this->lines[$i]->origin_line_id, $this->lines[$i]->qty) > 0)
+						if (! $this->create_line($this->lines[$i]->entrepot_id, $this->lines[$i]->origin_line_id, $this->lines[$i]->qty, $this->lines[$i]->array_options) > 0)
 						{
 							$error++;
 						}
 					}
 					else
 					{	// with batch management
-						if (! $this->create_line_batch($this->lines[$i]) > 0)
+						if (! $this->create_line_batch($this->lines[$i],$this->lines[$i]->array_options) > 0)
 						{
 							$error++;
 						}
@@ -305,8 +288,26 @@ class Expedition extends CommonObject
 						$error++;
 					}
 				}
+				
+				// Actions on extra fields (by external module or standard code)
+				// TODO le hook fait double emploi avec le trigger !!
+				$hookmanager->initHooks(array('expeditiondao'));
+				$parameters=array('socid'=>$this->id);
+				$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+				if (empty($reshook))
+				{
+					if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+					{
+						$result=$this->insertExtraFields();
+						if ($result < 0)
+						{
+							$error++;
+						}
+					}
+				}
+				else if ($reshook < 0) $error++;
 
-				if (! $error)
+				if (! $error && ! $notrigger)
 				{
                     // Call trigger
                     $result=$this->call_trigger('SHIPPING_CREATE',$user);
@@ -361,10 +362,12 @@ class Expedition extends CommonObject
 	 * @param 	int		$entrepot_id		Id of warehouse
 	 * @param 	int		$origin_line_id		Id of source line
 	 * @param 	int		$qty				Quantity
+	 * @param	array		$array_options		extrafields array
 	 * @return	int							<0 if KO, >0 if OK
 	 */
-	function create_line($entrepot_id, $origin_line_id, $qty)
+	function create_line($entrepot_id, $origin_line_id, $qty,$array_options=0)
 	{
+		global $conf;
 		$error = 0;
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."expeditiondet (";
@@ -384,6 +387,19 @@ class Expedition extends CommonObject
 		{
 			$error++;
 		}
+		
+		if (!$error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_options) && count($array_options)>0) // For avoid conflicts if trigger used
+		{
+			$expeditionline = new ExpeditionLigne($this->db);
+			$expeditionline->array_options=$array_options;
+			$expeditionline->id= $this->db->last_insert_id(MAIN_DB_PREFIX.$expeditionline->table_element);
+			$result=$expeditionline->insertExtraFields();
+			if ($result < 0)
+			{
+				$this->error[]=$expeditionline->error;
+				$error++;
+			}
+		}
 
 		if (! $error) return 1;
 		else return -1;
@@ -394,30 +410,45 @@ class Expedition extends CommonObject
 	 * Create the detail (eat-by date) of the expedition line
 	 *
 	 * @param 	object		$line_ext		full line informations
+	 * @param	array		$array_options		extrafields array
 	 * @return	int							<0 if KO, >0 if OK
 	 */
-	function create_line_batch($line_ext)
+	function create_line_batch($line_ext,$array_options=0)
 	{
 		$error = 0;
-
-		if ($this->create_line(($line_ext->entrepot_id?$line_ext->entrepot_id:'null'),$line_ext->origin_line_id,$line_ext->qty) < 0)
+		$stockLocationQty = array(); // associated array with batch qty in stock location
+		
+		$tab=$line_ext->detail_batch;
+		// create stockLocation Qty array
+		foreach ($tab as $detbatch)
 		{
-			$error++;
-		}
-
-		if (! $error)
-		{
-			$line_id= $this->db->last_insert_id(MAIN_DB_PREFIX."expeditiondet");
-			$tab=$line_ext->detail_batch;
-			foreach ($tab as $detbatch)
+			if ($detbatch->entrepot_id)
 			{
-				if (! ($detbatch->create($line_id) >0))		// Create an expeditionlinebatch
+				$stockLocationQty[$detbatch->entrepot_id] += $detbatch->dluo_qty;
+			}
+		}
+		// create shipment lines
+		foreach ($stockLocationQty as $stockLocation => $qty)
+		{
+			if ($this->create_line($stockLocation,$line_ext->origin_line_id,$qty,$array_options) < 0)
+			{
+				$error++;
+			}
+			else
+			{
+				// create shipment batch lines for stockLocation
+				$line_id= $this->db->last_insert_id(MAIN_DB_PREFIX."expeditiondet");
+				foreach ($tab as $detbatch)
 				{
-					$error++;
+					if ($detbatch->entrepot_id == $stockLocation){
+						if (! ($detbatch->create($line_id) >0))		// Create an expeditionlinebatch
+						{
+							$error++;
+						}
+					}					
 				}
 			}
 		}
-
 
 		if (! $error) return 1;
 		else return -1;
@@ -521,6 +552,13 @@ class Expedition extends CommonObject
 				 * Thirparty
 				 */
 				$result=$this->fetch_thirdparty();
+				
+				// Retrieve all extrafields for expedition
+				// fetch optionals attributes and labels
+				require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+				$extrafields=new ExtraFields($this->db);
+				$extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
+				$this->fetch_optionals($this->id,$extralabels);
 
 				/*
 				 * Lines
@@ -536,7 +574,7 @@ class Expedition extends CommonObject
 			else
 			{
 				dol_syslog(get_class($this).'::Fetch no expedition found', LOG_ERR);
-				$this->error='Delivery with id '.$id.' not found sql='.$sql;
+				$this->error='Delivery with id '.$id.' not found';
 				return 0;
 			}
 		}
@@ -765,9 +803,9 @@ class Expedition extends CommonObject
 
 
 	/**
-	 *	Cree un bon de livraison a partir de l'expedition
+	 *	Create a delivery receipt from a shipment
 	 *
-	 *	@param	User	$user       Utilisateur
+	 *	@param	User	$user       User
 	 *  @return int  				<0 if KO, >=0 if OK
 	 */
 	function create_delivery($user)
@@ -805,9 +843,10 @@ class Expedition extends CommonObject
 	 * @param 	int		$entrepot_id		Id of warehouse
 	 * @param 	int		$id					Id of source line (order line)
 	 * @param 	int		$qty				Quantity
+	 * @param	array		$array_options		extrafields array
 	 * @return	int							<0 if KO, >0 if OK
 	 */
-	function addline($entrepot_id, $id, $qty)
+	function addline($entrepot_id, $id, $qty,$array_options=0)
 	{
 		global $conf, $langs;
 
@@ -845,7 +884,11 @@ class Expedition extends CommonObject
 				}
 			}
 		}
-
+		
+		// extrafields
+		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_options) && count($array_options)>0) // For avoid conflicts if trigger used
+			$line->array_options = $array_options;
+		
 		$this->lines[$num] = $line;
 	}
 
@@ -853,10 +896,13 @@ class Expedition extends CommonObject
 	 * Add a shipment line with batch record
 	 *
 	 * @param 	array		$dbatch		Array of value (key 'detail' -> Array, key 'qty' total quantity for line, key ix_l : original line index)
+	 * @param	array		$array_options		extrafields array
 	 * @return	int						<0 if KO, >0 if OK
 	 */
-	function addline_batch($dbatch)
+	function addline_batch($dbatch,$array_options=0)
 	{
+		global $conf;
+		
 		$num = count($this->lines);
 		if ($dbatch['qty']>0)
 		{
@@ -893,6 +939,10 @@ class Expedition extends CommonObject
 			$line->qty = $dbatch['qty'];
 			$line->detail_batch=$tab;
 
+			// extrafields
+			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_options) && count($array_options)>0) // For avoid conflicts if trigger used
+				$line->array_options = $array_options;
+			
 			//var_dump($line);
 			$this->lines[$num] = $line;
 		}
@@ -1069,7 +1119,7 @@ class Expedition extends CommonObject
 						// no lot/serial
 						// We increment stock of product (and sub-products)
 						// We use warehouse selected for each line
-						$result=$mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty, $obj->subprice, $langs->trans("ShipmentDeletedInDolibarr", $this->ref));
+						$result=$mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty, 0, $langs->trans("ShipmentDeletedInDolibarr", $this->ref));  // Price is set to 0, because we don't want to see WAP changed
 						if ($result < 0)
 						{
 							$error++;$this->errors=$this->errors + $mouvS->errors;
@@ -1082,13 +1132,14 @@ class Expedition extends CommonObject
 						// We use warehouse selected for each line
 						foreach($lotArray as $lot)
 						{
-							$result=$mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $lot->dluo_qty, $obj->subprice, $langs->trans("ShipmentDeletedInDolibarr", $this->ref), $lot->eatby, $lot->sellby, $lot->batch);
+							$result=$mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $lot->dluo_qty, 0, $langs->trans("ShipmentDeletedInDolibarr", $this->ref), $lot->eatby, $lot->sellby, $lot->batch);  // Price is set to 0, because we don't want to see WAP changed
 							if ($result < 0)
 							{
 								$error++;$this->errors=$this->errors + $mouvS->errors;
 								break;
 							}
 						}
+						if ($error) break; // break for loop incase of error
 					} 
 				}
 			}
@@ -1201,7 +1252,7 @@ class Expedition extends CommonObject
 	 */
 	function fetch_lines()
 	{
-		global $conf;
+		global $conf, $mysoc;
 		// TODO: recuperer les champs du document associe a part
 
 		$sql = "SELECT cd.rowid, cd.fk_product, cd.label as custom_label, cd.description, cd.qty as qty_asked";
@@ -1277,7 +1328,7 @@ class Expedition extends CommonObject
 				$line->volume_units   	= $obj->volume_units;
 
 				// For invoicing
-				$tabprice = calcul_price_total($obj->qty_shipped, $obj->subprice, $obj->remise_percent, $obj->tva_tx, $obj->localtax1_tx, $obj->localtax2_tx, 0, 'HT', $obj->info_bits, $obj->fk_product_type);	// We force type to 0
+				$tabprice = calcul_price_total($obj->qty_shipped, $obj->subprice, $obj->remise_percent, $obj->tva_tx, $obj->localtax1_tx, $obj->localtax2_tx, 0, 'HT', $obj->info_bits, $obj->fk_product_type, $mysoc);	// We force type to 0
 				$line->desc	         	= $obj->description;		// We need ->desc because some code into CommonObject use desc (property defined for other elements)
 				$line->qty 				= $line->qty_shipped;
 				$line->total_ht			= $tabprice[0];
@@ -1297,9 +1348,11 @@ class Expedition extends CommonObject
 				$this->total_ttc+= $tabprice[2];
 				$this->total_localtax1+= $tabprice[9];
 				$this->total_localtax2+= $tabprice[10];
-
-                $line->detail_batch = array();
-
+				
+				if ($originline != $obj->fk_origin_line) 
+				{
+					$line->detail_batch = array();
+				}
 				// Eat-by date
 				if (! empty($conf->productbatch->enabled) && $obj->line_id > 0)
 				{
@@ -1786,7 +1839,7 @@ class Expedition extends CommonObject
 /**
  * Classe de gestion des lignes de bons d'expedition
  */
-class ExpeditionLigne
+class ExpeditionLigne extends CommonObjectLine
 {
 	var $db;
 
@@ -1811,6 +1864,9 @@ class ExpeditionLigne
 	var $total_localtax1;   // Total Local tax 1
 	var $total_localtax2;   // Total Local tax 2
 
+	public $element='expeditiondet';
+	public $table_element='expeditiondet';
+	
 	public $fk_origin_line;
 
 	// Deprecated

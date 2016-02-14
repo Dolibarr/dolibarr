@@ -6,6 +6,9 @@
 -- Requests to clean corrupted database
 
 
+UPDATE llx_user set api_key = null where api_key = '';
+
+
 -- delete foreign key that should never exists
 ALTER TABLE llx_propal DROP FOREIGN KEY fk_propal_fk_currency;
 ALTER TABLE llx_commande DROP FOREIGN KEY fk_commande_fk_currency;

@@ -48,6 +48,7 @@ class modECM extends DolibarrModules
 		// Family can be 'crm','financial','hr','projects','product','ecm','technic','other'
 		// It is used to sort modules in module setup page
 		$this->family = "ecm";
+		$this->module_position = 10;
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		// Module description used if translation string 'ModuleXXXDesc' not found (XXX is id value)
@@ -174,7 +175,7 @@ class modECM extends DolibarrModules
 							  'langs'=>'ecm',
 							  'position'=>103,
 							  'perms'=>'$user->rights->ecm->read || $user->rights->ecm->upload',
-							  'enabled'=>'$user->rights->ecm->read || $user->rights->ecm->upload',
+							  'enabled'=>'($user->rights->ecm->read || $user->rights->ecm->upload) && ! empty($conf->global->ECM_AUTO_TREE_ENABLED)',
 							  'target'=>'',
 							  'user'=>2);			// 0=Menu for internal users, 1=external users, 2=both
 		$r++;

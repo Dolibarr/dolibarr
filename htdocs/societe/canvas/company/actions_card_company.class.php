@@ -29,11 +29,6 @@ include_once DOL_DOCUMENT_ROOT.'/societe/canvas/actions_card_common.class.php';
  */
 class ActionsCardCompany extends ActionsCardCommon
 {
-    var $dirmodule;
-	var $targetmodule;
-    var $canvas;
-    var $card;
-
 	/**
 	 *    Constructor
 	 *
@@ -73,7 +68,8 @@ class ActionsCardCompany extends ActionsCardCommon
 
 
 	/**
-	 * 	Execute actions
+     *  doActions of a canvas is not the doActions of the hook
+     *  @deprecated Use the doActions of hooks instead of this.
 	 *
 	 *  @param	string	$action    Type of action
 	 *  @param	int		$id			Id of object

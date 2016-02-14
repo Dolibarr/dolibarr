@@ -81,7 +81,7 @@ if ($result < 0)
 {
 	$langs->load("errors");
 	$error++;
-	setEventMessage($langs->trans("ErrorFailedToCreateDir"), 'errors');
+	setEventMessages($langs->trans("ErrorFailedToCreateDir"), null, 'errors');
 }
 else
 {
@@ -113,7 +113,7 @@ else
 
 	if ($mode == 'standard')
 	{
-		// Chargement du tableau $amounts
+		// Loading table $amounts
 		$amounts = array();
 
 		$monthnext = $month+1;
@@ -153,7 +153,7 @@ else
 			dol_print_error($db);
 		}
 
-		// Calcul de $solde avant le debut du graphe
+		// Calculation of $solde before the start of the graph
 		$solde = 0;
 
 		$sql = "SELECT SUM(b.amount)";
@@ -265,7 +265,7 @@ else
 
 	if ($mode == 'standard')
 	{
-		// Chargement du tableau $amounts
+		// Loading table $amounts
 		$amounts = array();
 		$sql = "SELECT date_format(b.datev,'%Y%m%d')";
 		$sql.= ", SUM(b.amount)";
@@ -296,7 +296,7 @@ else
 			dol_print_error($db);
 		}
 
-		// Calcul de $solde avant le debut du graphe
+		// Calculation of $solde before the start of the graph
 		$solde = 0;
 
 		$sql = "SELECT SUM(b.amount)";
@@ -403,7 +403,7 @@ else
 
 	if ($mode == 'showalltime')
 	{
-		// Chargement du tableau $amounts
+		// Loading table $amounts
 		$amounts = array();
 
 		$sql = "SELECT date_format(b.datev,'%Y%m%d')";

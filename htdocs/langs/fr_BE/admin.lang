@@ -26,5 +26,4 @@ IfModuleEnabled=Note: oui ne fonctionne que si le module <b>%s</b> est activé
 RemoveLock=Supprimez le fichier <b>%s</b> s'il existe pour autoriser l'utilisation de l'outil de mise à jour.
 AntiVirusCommandExample=Example for ClamWin: c:\\Progra~1\\ClamWin\\bin\\clamscan.exe<br>Example for ClamAv: /usr/bin/clamscan
 AntiVirusParamExample=Example for ClamWin: --database="C:\\Program Files (x86)\\ClamWin\\lib"
-SubmitTranslation=If translation for this language is not complete or you find errors, you can correct this by editing files into directory <b>langs/%s</b> and submit your change to www.transifex.com/dolibarr-association/dolibarr/
 ExampleOfDirectoriesForModelGen=Examples of syntax:<br>c:\\mydir<br>/home/mydir<br>DOL_DATA_ROOT/ecm/ecmdir

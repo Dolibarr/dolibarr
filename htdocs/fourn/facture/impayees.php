@@ -181,7 +181,7 @@ if ($user->rights->fournisseur->facture->lire)
 		$link='';
 		if (empty($option)) $link='<a href="'.$_SERVER["PHP_SELF"].'?option=late'.($socid?'&socid='.$socid:'').'">'.$langs->trans("ShowUnpaidLateOnly").'</a>';
 		elseif ($option == 'late') $link='<a href="'.$_SERVER["PHP_SELF"].'?'.($socid?'&socid='.$socid:'').'">'.$langs->trans("ShowUnpaidAll").'</a>';
-		print_fiche_titre($titre,$link);
+		print load_fiche_titre($titre,$link);
 
 		print_barre_liste('','',$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',0);	// We don't want pagination on this page
 		$i = 0;
@@ -214,10 +214,12 @@ if ($user->rights->fournisseur->facture->lire)
 		print '<input class="flat" type="text" size="8" name="search_amount_no_tax" value="'.$search_amount_no_tax.'">';
 		print '</td><td class="liste_titre" align="right">';
 		print '<input class="flat" type="text" size="8" name="search_amount_all_tax" value="'.$search_amount_all_tax.'">';
-		print '</td><td class="liste_titre" colspan="2" align="right">';
-		print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-		print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
-		print "</td></tr>\n";
+		print '</td>';
+        print '<td class="liste_titre" align="right">';
+        $searchpitco=$form->showFilterAndCheckAddButtons(0);
+        print $searchpitco;
+        print '</td>';
+		print "</tr>\n";
 
 		if ($num > 0)
 		{
@@ -229,6 +231,9 @@ if ($user->rights->fournisseur->facture->lire)
 			while ($i < $num)
 			{
 				$objp = $db->fetch_object($resql);
+
+				$facturestatic->statut = $objp->fk_statut;
+				$facturestatic->date_echeance = $db->jdate($objp->datelimite);
 
 				$var=!$var;
 
@@ -245,7 +250,9 @@ if ($user->rights->fournisseur->facture->lire)
 
 				print '<td class="nowrap" align="center">'.dol_print_date($db->jdate($objp->df),'day')."</td>\n";
 				print '<td class="nowrap" align="center">'.dol_print_date($db->jdate($objp->datelimite),'day');
-				if ($objp->datelimite && $db->jdate($objp->datelimite) < ($now - $conf->facture->fournisseur->warning_delay) && ! $objp->paye && $objp->fk_statut == 1) print img_warning($langs->trans("Late"));
+				if ($facturestatic->hasDelay()) {
+					print img_warning($langs->trans("Late"));
+				}
 				print "</td>\n";
 
 				print '<td>';
@@ -294,5 +301,5 @@ if ($user->rights->fournisseur->facture->lire)
 }
 
 // End of page
-$db->close();
 llxFooter();
+$db->close();

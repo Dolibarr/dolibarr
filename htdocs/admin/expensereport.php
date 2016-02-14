@@ -6,7 +6,7 @@
  * Copyright (C) 2005-2014 Regis Houssin                <regis.houssin@capnetworks.com>
  * Copyright (C) 2008      Raphael Bertrand (Resultic)  <raphael.bertrand@resultic.fr>
  * Copyright (C) 2011-2013 Juanjo Menent			    <jmenent@2byte.es>
- * Copyright (C) 2011-2013 Philippe Grand			    <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2015 Philippe Grand			    <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,11 +60,11 @@ if ($action == 'updateMask')
 
  	if (! $error)
     {
-        setEventMessage($langs->trans("SetupSaved"));
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
     else
     {
-        setEventMessage($langs->trans("Error"),'errors');
+        setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
 
@@ -102,13 +102,13 @@ else if ($action == 'specimen') // For fiche inter
 		}
 		else
 		{
-			setEventMessage($obj->error,'errors');
-			dol_syslog($obj->error, LOG_ERR);
+			setEventMessages($module->error, $module->errors,'errors');
+			dol_syslog($module->error, LOG_ERR);
 		}
 	}
 	else
 	{
-		setEventMessage($langs->trans("ErrorModuleNotFound"),'errors');
+		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
 		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
 }
@@ -133,12 +133,12 @@ if ($action == 'setModuleOptions')
 	if (! $error)
 	{
 		$db->commit();
-		setEventMessage($langs->trans("SetupSaved"));
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
 	else
 	{
 		$db->rollback();
-		setEventMessage($langs->trans("Error"),'errors');
+		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
 
@@ -189,18 +189,18 @@ else if ($action == 'setmod')
 
 else if ($action == 'set_EXPENSEREPORT_FREE_TEXT')
 {
-	$freetext= GETPOST('EXPENSEREPORT_FREE_TEXT','alpha');
+	$freetext= GETPOST('EXPENSEREPORT_FREE_TEXT');	// No alpha here, we want exact string
 	$res = dolibarr_set_const($db, "EXPENSEREPORT_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
 
 	if (! $res > 0) $error++;
 
  	if (! $error)
     {
-        setEventMessage($langs->trans("SetupSaved"));
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
     else
     {
-        setEventMessage($langs->trans("Error"),'errors');
+        setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
 
@@ -214,11 +214,11 @@ else if ($action == 'set_EXPENSEREPORT_DRAFT_WATERMARK')
 
  	if (! $error)
     {
-        setEventMessage($langs->trans("SetupSaved"));
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
     else
     {
-        setEventMessage($langs->trans("Error"),'errors');
+        setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
 
@@ -235,7 +235,7 @@ llxHeader();
 $form=new Form($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("ExpenseReportsSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("ExpenseReportsSetup"),$linkback,'title_setup');
 
 
 $head=expensereport_admin_prepare_head();
@@ -244,7 +244,7 @@ dol_fiche_head($head, 'expensereport', $langs->trans("ExpenseReports"), 0, 'trip
 
 // Interventions numbering model
 /*
-print_titre($langs->trans("FicheinterNumberingModules"));
+print load_fiche_titre($langs->trans("FicheinterNumberingModules"),'','');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -346,7 +346,7 @@ print '</table><br>';
  *  Documents models for Interventions
  */
 
-print_titre($langs->trans("TemplatePDFExpenseReports"));
+print load_fiche_titre($langs->trans("TemplatePDFExpenseReports"));
 
 // Defini tableau def des modeles
 $type='expensereport';

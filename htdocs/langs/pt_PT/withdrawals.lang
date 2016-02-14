@@ -48,7 +48,6 @@ RefusedReason=Motivo da rejeição
 RefusedInvoicing=Faturamento da rejeição
 NoInvoiceRefused=Sem factura Cliente, rejeitada
 InvoiceRefused=Invoice refused (Charge the rejection to customer)
-Status=Estado
 StatusUnknown=Desconhecido
 StatusWaiting=Espera
 StatusTrans=Transmitido

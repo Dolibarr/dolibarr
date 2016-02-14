@@ -6,6 +6,7 @@
  * Copyright (C) 2012	   Andreu Bisquerra Gaya  	<jove@bisquerra.com>
  * Copyright (C) 2012	   David Rodriguez Martinez <davidrm146@gmail.com>
  * Copyright (C) 2012	   Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2015	   Ferran Marcet			<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,7 +75,7 @@ if ($action == 'create')
 	if (is_array($selected) == false)
 	{
 		$error++;
-		setEventMessage($langs->trans('Error_OrderNotChecked'), 'errors');
+		setEventMessages($langs->trans('Error_OrderNotChecked'), null, 'errors');
 	}
 	else
 	{
@@ -179,6 +180,7 @@ if (($action == 'create' || $action == 'add') && !$error)
 					$object->origin_id = $orders_id[$ii];
 					$object->linked_objects = $orders_id;
 					$id = $object->create($user);
+					$object->fetch_thirdparty();
 
 					if ($id>0)
 					{
@@ -251,7 +253,7 @@ if (($action == 'create' || $action == 'add') && !$error)
 										}
 										else
 										{
-											setEventMessage($discount->error, 'errors');
+											setEventMessages($discount->error, $discount->errors, 'errors');
 											$error++;
 											break;
 										}
@@ -298,7 +300,8 @@ if (($action == 'create' || $action == 'add') && !$error)
 												$lines[$i]->rowid,
 												$fk_parent_line,
 												$lines[$i]->fk_fournprice,
-												$lines[$i]->pa_ht
+												$lines[$i]->pa_ht,
+												$lines[$i]->label
 										);
 										if ($result > 0)
 										{
@@ -320,7 +323,7 @@ if (($action == 'create' || $action == 'add') && !$error)
 							}
 							else
 							{
-								setEventMessage($objectsrc->error, 'errors');
+								setEventMessages($objectsrc->error, $objectsrc->errors, 'errors');
 								$error++;
 							}
 							$ii++;
@@ -328,7 +331,7 @@ if (($action == 'create' || $action == 'add') && !$error)
 					}
 					else
 					{
-						setEventMessage($object->error, 'errors');
+						setEventMessages($object->error, $object->errors, 'errors');
 						$error++;
 					}
 				}
@@ -348,7 +351,7 @@ if (($action == 'create' || $action == 'add') && !$error)
 			$action='create';
 			$_GET["origin"]=$_POST["origin"];
 			$_GET["originid"]=$_POST["originid"];
-			setEventMessage($object->error, 'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 			$error++;
 		}
 	}
@@ -370,7 +373,7 @@ if ($action == 'create' && !$error)
 	$facturestatic=new Facture($db);
 
 	llxHeader();
-	print_fiche_titre($langs->trans('NewBill'));
+	print load_fiche_titre($langs->trans('NewBill'));
 
 	$soc = new Societe($db);
 	if ($socid) $res=$soc->fetch($socid);
@@ -394,9 +397,9 @@ if ($action == 'create' && !$error)
 	print '<input type="hidden" name="origin" value="'.GETPOST('origin').'">';
 	print '<input type="hidden" name="originid" value="'.GETPOST('originid').'">';
 	print '<input type="hidden" name="autocloseorders" value="'.GETPOST('autocloseorders').'">';
-	
+
 	dol_fiche_head();
-	
+
 	print '<table class="border" width="100%">';
 
 	// Ref
@@ -499,15 +502,15 @@ if ($action == 'create' && !$error)
 	}
 
 	dol_fiche_end();
-	
+
 	// Button "Create Draft"
 	print '<div class="center"><input type="submit" class="button" name="bouton" value="'.$langs->trans('CreateDraft').'" /></div>';
 	print "</form>\n";
 
 	print '</td></tr>';
 	print "</table>\n";
-	
-	
+
+
 }
 
 // Mode liste
@@ -570,7 +573,7 @@ if (($action != 'create' && $action != 'add') || ($action == 'create' && $error)
 		$title = $langs->trans('ListOfOrders');
 		$title.=' - '.$langs->trans('StatusOrderValidated').', '.$langs->trans("StatusOrderSent").', '.$langs->trans('StatusOrderToBill');
 		$num = $db->num_rows($resql);
-		print_fiche_titre($title);
+		print load_fiche_titre($title);
 		$i = 0;
 		$period=$html->select_date($date_start,'date_start',0,0,1,'',1,0,1).' - '.$html->select_date($date_end,'date_end',0,0,1,'',1,0,1);
 		$periodely=$html->select_date($date_starty,'date_start_dely',0,0,1,'',1,0,1).' - '.$html->select_date($date_endy,'date_end_dely',0,0,1,'',1,0,1);
@@ -601,10 +604,11 @@ if (($action != 'create' && $action != 'add') || ($action == 'create' && $error)
 		//REF
 		print '<input class="flat" size="10" type="text" name="sref" value="'.$sref.'">';
 		print '</td>';
-		//print '<td class="liste_titre">';
+
 		print '<td class="liste_titre" align="left">';
 		print '<input class="flat" type="text" size="10" name="sref_client" value="'.$sref_client.'">';
-
+        print '</td>';
+        
 		//DATE ORDER
 		print '<td class="liste_titre" align="center">';
 		print $period;
@@ -616,15 +620,14 @@ if (($action != 'create' && $action != 'add') || ($action == 'create' && $error)
 		print '</td>';
 
 		//SEARCH BUTTON
-		print '</td><td align="right" class="liste_titre">';
+		print '<td align="right" class="liste_titre">';
 		print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'"  value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 
 		//ALL/NONE
-		print '<td class="liste_titre" align="center">';
 		if ($conf->use_javascript_ajax) print '<a href="#" id="checkall">'.$langs->trans("All").'</a> / <a href="#" id="checknone">'.$langs->trans("None").'</a>';
 		print '</td>';
 
-		print '</td></tr>';
+		print '</tr>';
 		print '</form>';
 
 		print '<form name="orders2invoice" action="orderstoinvoice.php" method="GET">';
@@ -640,6 +643,9 @@ if (($action != 'create' && $action != 'add') || ($action == 'create' && $error)
 
 			$generic_commande->id=$objp->rowid;
 			$generic_commande->ref=$objp->ref;
+			$generic_commande->statut = $objp->fk_statut;
+			$generic_commande->date_commande = $db->jdate($objp->date_commande);
+			$generic_commande->date_livraison = $db->jdate($objp->date_livraison);
 
 			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 			print '<td class="nobordernopadding nowrap">';
@@ -647,7 +653,9 @@ if (($action != 'create' && $action != 'add') || ($action == 'create' && $error)
 			print '</td>';
 
 			print '<td width="20" class="nobordernopadding nowrap">';
-			if (($objp->fk_statut > 0) && ($objp->fk_statut < 3) && $db->jdate($objp->date_valid) < ($now - $conf->commande->client->warning_delay)) print img_picto($langs->trans("Late"),"warning");
+			if ($generic_commande->hasDelay()) {
+				print img_picto($langs->trans("Late"),"warning");
+			}
 			print '</td>';
 
 			print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';

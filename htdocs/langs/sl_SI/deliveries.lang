@@ -7,6 +7,7 @@ DeliveryOrders=Dobavnice
 DeliveryDate=Datum dobave
 DeliveryDateShort=Datum dobave
 CreateDeliveryOrder=Kreiranje dobavnice
+DeliveryStateSaved=Shranjen status dobave
 QtyDelivered=Količina za dobavo
 SetDeliveryDate=Nastavitev datuma dobave
 ValidateDeliveryReceipt=Potrditev prejemnice
@@ -16,6 +17,9 @@ DeleteDeliveryReceiptConfirm=Ali zares želite zbrisati prejemnico <b>%s</b> ?
 DeliveryMethod=Način dobave
 TrackingNumber=Številka za sledenje
 DeliveryNotValidated=Dobava ni potrjena
+StatusDeliveryCanceled=Canceled
+StatusDeliveryDraft=Draft
+StatusDeliveryValidated=Received
 # merou PDF model
 NameAndSignature=Ime in podpis :
 ToAndDate=Za___________________________________ dne ____/_____/__________

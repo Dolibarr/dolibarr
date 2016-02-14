@@ -33,7 +33,7 @@
  */
 function commande_prepare_head(Commande $object)
 {
-	global $langs, $conf, $user;
+	global $db, $langs, $conf, $user;
 	if (! empty($conf->expedition->enabled)) $langs->load("sendings");
 	$langs->load("orders");
 
@@ -95,11 +95,13 @@ function commande_prepare_head(Commande $object)
 	}
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+    require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 	$upload_dir = $conf->commande->dir_output . "/" . dol_sanitizeFileName($object->ref);
 	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
-    $head[$h][0] = DOL_URL_ROOT.'/commande/document.php?id='.$object->id;
+    $nbLinks=Link::count($db, $object->element, $object->id);
+	$head[$h][0] = DOL_URL_ROOT.'/commande/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
-	if($nbFiles > 0) $head[$h][1].= ' <span class="badge">'.$nbFiles.'</span>';
+	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
 	$head[$h][2] = 'documents';
 	$h++;
 

@@ -23,8 +23,8 @@ ChooseProduct/Service=Produkt oder Service wählen
 StartDate=Vertragsbeginn
 EndDate=Vertragsende
 Launch=Start
-ForceBuyingPriceIfNull=Einkaufspreis erzwingen wenn Null
-ForceBuyingPriceIfNullDetails=falls "AN", wird die Spanne der Zeile als Null angezeigt (Kaufpreis = Verkaufspreis), andernfalls ("AUS"), ist die Gewinnspanne gleich dem Verkaufspreis (Kaufpreis = 0)
+ForceBuyingPriceIfNull=Benutze EK-Preis/Herstellkosten als Verkaufspreis, wenn nicht definiert
+ForceBuyingPriceIfNullDetails=Falls die Option aktiviert ist, wird die Spanne der Zeile mit Null angezeigt (EK-Preis/Herstellkosten = Verkaufspreis). Ist die Option deaktiviert, wird die Spanne gleich der Voreinstellung sein.
 MARGIN_METHODE_FOR_DISCOUNT=Margin-Methode für globale Rabatte
 UseDiscountAsProduct=Als Produkt
 UseDiscountAsService=Als Service
@@ -35,8 +35,9 @@ MargeBrute=Roherlös
 MargeNette=Nettoerlös
 MargeType1=Spanne vom besten Lieferantenpreis
 MargeType2=gewichtete Durchschnittspreis (WAP)
-MARGIN_TYPE_DETAILS=Roherlös: Verkaufspreis - Einkaufspreis<br/>Nettoerlös: Verkaufspreis - Kosten
-MarginTypeDesc=Gewinnspanne nach bestem Verkaufpreis: Verkaufspreis - Bester Lieferantenpreis definiert auf Produktkarte <br/> Gewinnspanne nach gewichteten Durchschnittspreis (WAP): Verkaufspreis - gewichteter Produkt Durchschnittspreis
+MargeType3=Margin on Cost Price
+MARGIN_TYPE_DETAILS=Raw margin : Selling price - Buying price<br>Net margin : Selling price - Cost price
+MarginTypeDesc=* Margin on best buying price = Selling price - Best supplier price defined on product card<br>* Margin on Weighted Average Price (WAP) = Selling price - Product Weighted Average Price (WAP) or best supplier price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAP if cost price not defined, or best supplier price if WAP not yet defined
 CostPrice=Selbstkostenpreis
 BuyingCost=Kosten
 UnitCharges=Einheit Kosten

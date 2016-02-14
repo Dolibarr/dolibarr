@@ -51,7 +51,7 @@ llxHeader('',$langs->trans('AccountsArea'),$help_url);
 $link='';
 if ($statut == '') $link='<a href="'.$_SERVER["PHP_SELF"].'?statut=all">'.$langs->trans("IncludeClosedAccount").'</a>';
 if ($statut == 'all') $link='<a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("OnlyOpenedAccount").'</a>';
-print_fiche_titre($langs->trans("AccountsArea"),$link, 'title_bank.png');
+print load_fiche_titre($langs->trans("AccountsArea"),$link, 'title_bank.png');
 
 
 // On charge tableau des comptes financiers (ouverts par defaut)
@@ -113,7 +113,7 @@ foreach ($accounts as $key=>$type)
 		{
 			$result=$acc->load_board($user,$acc->id);
             if ($result<0) {
-                setEventMessage($acc->error, 'errors');
+                setEventMessages($acc->error, $acc->errors, 'errors');
             } else {
                 print $result->nbtodo;
                 if ($result->nbtodolate) print ' ('.$result->nbtodolate.img_warning($langs->trans("Late")).')';
@@ -229,7 +229,7 @@ foreach ($accounts as $key=>$type)
 		{
 			$result=$acc->load_board($user,$acc->id);
             if ($result<0) {
-                setEventMessage($acc->error, 'errors');
+                setEventMessages($acc->error, $acc->errors, 'errors');
             } else {
                 print $result->nbtodo;
                 if ($result->nbtodolate) print ' ('.$result->nbtodolate.img_warning($langs->trans("Late")).')';

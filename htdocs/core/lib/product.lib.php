@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2006-2008  Laurent Destailleur     <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2007       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2009-2010  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +34,7 @@
  */
 function product_prepare_head($object)
 {
-	global $langs, $conf, $user;
+	global $db, $langs, $conf, $user;
 	$langs->load("products");
 
 	$h = 0;
@@ -44,19 +45,27 @@ function product_prepare_head($object)
 	$head[$h][2] = 'card';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/product/price.php?id=".$object->id;
-	$head[$h][1] = $langs->trans("CustomerPrices");
-	$head[$h][2] = 'price';
-	$h++;
-
-	if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire)
+	if (! empty($object->status))
 	{
-		$head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$object->id;
-		$head[$h][1] = $langs->trans("SuppliersPrices");
-		$head[$h][2] = 'suppliers';
-		$h++;
+    	$head[$h][0] = DOL_URL_ROOT."/product/price.php?id=".$object->id;
+    	$head[$h][1] = $langs->trans("SellingPrices");
+    	$head[$h][2] = 'price';
+    	$h++;
 	}
-
+	
+	if (! empty($object->status_buy) || (! empty($conf->margin->enabled) && ! empty($object->status)))   // If margin is on and product on sell, we may need the cost price even if product os not on purchase
+	{
+    	if ((! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire)
+    	|| (! empty($conf->margin->enabled) && $user->rights->margin->liretous)
+    	)
+    	{
+    		$head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$object->id;
+    		$head[$h][1] = $langs->trans("BuyingPrices");
+    		$head[$h][2] = 'suppliers';
+    		$h++;
+    	}
+	}
+	
 	// Show category tab
 	/* No more required. Replaced with new multiselect component
 	if (! empty($conf->categorie->enabled) && $user->rights->categorie->lire)
@@ -97,7 +106,7 @@ function product_prepare_head($object)
 	$head[$h][2] = 'referers';
 	$h++;
 
-    if ($object->isproduct() || ($object->isservice() && ! empty($conf->global->STOCK_SUPPORTS_SERVICES)))    // If physical product we can stock (or service with option)
+    if ($object->isProduct() || ($object->isService() && ! empty($conf->global->STOCK_SUPPORTS_SERVICES)))    // If physical product we can stock (or service with option)
     {
         if (! empty($conf->stock->enabled) && $user->rights->stock->lire)
         {
@@ -123,28 +132,24 @@ function product_prepare_head($object)
 
     // Attachments
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+    require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 	if (! empty($conf->product->enabled)) $upload_dir = $conf->product->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
     elseif (! empty($conf->service->enabled)) $upload_dir = $conf->service->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
 	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
-    $head[$h][0] = DOL_URL_ROOT.'/product/document.php?id='.$object->id;
+    $nbLinks=Link::count($db, $object->element, $object->id);
+	$head[$h][0] = DOL_URL_ROOT.'/product/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
-	if($nbFiles > 0) $head[$h][1].= ' <span class="badge">'.$nbFiles.'</span>';
+	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
 	$head[$h][2] = 'documents';
 	$h++;
 
-
-	// More tabs from canvas
-	// TODO Is this still used ?
-	if (isset($object->onglets) && is_array($object->onglets))
-	{
-		foreach ($object->onglets as $onglet)
-		{
-			$head[$h] = $onglet;
-			$h++;
-		}
-	}
-
     complete_head_from_modules($conf,$langs,$object,$head,$h,'product', 'remove');
+
+    // Log
+    $head[$h][0] = DOL_URL_ROOT.'/product/info.php?id='.$object->id;
+    $head[$h][1] = $langs->trans("Info");
+    $head[$h][2] = 'info';
+    $h++;
 
 	return $head;
 }
@@ -165,6 +170,16 @@ function product_admin_prepare_head()
 	$head[$h][1] = $langs->trans('Parameters');
 	$head[$h][2] = 'general';
 	$h++;
+
+	if (!empty($conf->global->PRODUIT_MULTIPRICES) && ! empty($conf->global->PRODUIT_MULTIPRICES_ALLOW_AUTOCALC_PRICELEVEL))
+	{
+		$head[$h] = array(
+			0 => DOL_URL_ROOT."/product/admin/price_rules.php",
+			1 => $langs->trans('MultipriceRules'),
+			2 => 'generator'
+		);
+		$h++;
+	}
 
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line

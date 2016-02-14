@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2010      Regis Houssin        <regis.houssin@capnetworks.com>
+/* Copyright (C) 2001-2002  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2006-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2010       Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +29,7 @@ define("NOLOGIN",1);	// This means this output page does not require to be logge
 define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 
 require '../../main.inc.php';
+require_once '../../core/lib/functions2.lib.php';
 
 $langs->load("main");
 $langs->load("install");
@@ -61,10 +63,10 @@ if (empty($reshook))
 {
 	$demoprofiles=array(
 		array('default'=>'1', 'key'=>'profdemoservonly','label'=>'DemoCompanyServiceOnly',
-		'disablemodules'=>'adherent,barcode,cashdesk,categorie,don,expedition,externalsite,mailmanspip,margin,prelevement,product,stock',
+		'disablemodules'=>'adherent,barcode,cashdesk,categorie,don,expedition,externalsite,incoterm,mailmanspip,margin,prelevement,product,productbatch,stock',
 		'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot8.png'),
 		array('default'=>'-1','key'=>'profdemoshopwithdesk','label'=>'DemoCompanyShopWithCashDesk',
-		'disablemodules'=>'adherent,categorie,don,externalsite,ficheinter,mailmanspip,prelevement,product,stock',
+		'disablemodules'=>'adherent,categorie,don,externalsite,ficheinter,incoterm,mailmanspip,prelevement,product,productbatch,stock',
 		'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot2.png'),
 		array('default'=>'0', 'key'=>'profdemoprodstock','label'=>'DemoCompanyProductAndStocks',
 		'disablemodules'=>'adherent,contrat,categorie,don,externalsite,ficheinter,mailmanspip,prelevement,service',
@@ -73,16 +75,16 @@ if (empty($reshook))
 		'disablemodules'=>'adherent,don,externalsite,mailmanspip',
 		'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot9.png'),
 		array('default'=>'-1', 'key'=>'profdemofun','label'=>'DemoFundation',
-		'disablemodules'=>'banque,barcode,cashdesk,commande,commercial,compta,comptabilite,contrat,expedition,externalsite,facture,ficheinter,fournisseur,mailmanspip,margin,prelevement,product,projet,propal,propale,service,societe,stock,tax',
+		'disablemodules'=>'banque,barcode,cashdesk,commande,commercial,compta,comptabilite,contrat,expedition,externalsite,facture,ficheinter,fournisseur,incoterm,mailmanspip,margin,prelevement,product,productbatch,projet,propal,propale,service,societe,stock,tax',
 		'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot6.png'),
 		array('default'=>'0', 'key'=>'profdemofun2','label'=>'DemoFundation2',
-		'disablemodules'=>'barcode,cashdesk,commande,commercial,compta,comptabilite,contrat,expedition,externalsite,facture,ficheinter,fournisseur,mailmanspip,margin,prelevement,product,projet,propal,propale,service,societe,stock,tax',
+		'disablemodules'=>'barcode,cashdesk,commande,commercial,compta,comptabilite,contrat,expedition,externalsite,facture,ficheinter,fournisseur,mailmanspip,margin,prelevement,product,productbatch,projet,propal,propale,service,societe,stock,tax',
 		'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot6.png')
 	);
 
 	// Visible
 	$alwayscheckedmodules=array('barcode','bookmark','externalrss','fckeditor','geoipmaxmind','gravatar','memcached','syslog','user','webservices');  // Technical module we always want
-	$alwaysuncheckedmodules=array('paybox','paypal','google','scanner','workflow');  // Module we never want
+	$alwaysuncheckedmodules=array('paybox','paypal','google','printing','resource','scanner','workflow');  // Module we never want
 	// Not visible
 	$alwayshiddencheckedmodules=array('accounting','barcode','bookmark','clicktodial','comptabilite','document','domain','externalrss','externalsite','fckeditor','geoipmaxmind','gravatar','label','ldap',
 									'mailmanspip','notification','syslog','user','webservices',
@@ -99,28 +101,7 @@ $dirlist=$conf->file->dol_document_root;
 
 
 // Search modules dirs
-$modulesdir = array();
-foreach ($conf->file->dol_document_root as $type => $dirroot)
-{
-    $modulesdir[$dirroot . '/core/modules/'] = $dirroot . '/core/modules/';
-
-    $handle=@opendir($dirroot);
-    if (is_resource($handle))
-    {
-        while (($file = readdir($handle))!==false)
-        {
-            if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
-            {
-                if (is_dir($dirroot . '/' . $file . '/core/modules/'))
-                {
-                    $modulesdir[$dirroot . '/' . $file . '/core/modules/'] = $dirroot . '/' . $file . '/core/modules/';
-                }
-            }
-        }
-        closedir($handle);
-    }
-}
-//var_dump($modulesdir);
+$modulesdir = dolGetModulesDirs();
 
 
 $filename = array();

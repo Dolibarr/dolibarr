@@ -727,7 +727,7 @@ function jsinfo()
 
 dolibarr_install_syslog("--- step1: end");
 
-pFooter($error,$setuplang,'jsinfo',1);
+pFooter($error?1:0,$setuplang,'jsinfo',1);
 
 
 /**

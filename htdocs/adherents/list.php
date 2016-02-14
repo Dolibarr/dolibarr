@@ -48,12 +48,14 @@ $search_email=GETPOST("search_email");
 $search_categ = GETPOST("search_categ",'int');
 $catid        = GETPOST("catid",'int');
 $sall=GETPOST("sall");
+$optioncss = GETPOST('optioncss','alpha');
 
+$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
 if ($page == -1) { $page = 0; }
-$offset = $conf->liste_limit * $page ;
+$offset = $limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) { $sortorder=($filter=='outofdate'?"ASC":"DESC"); }
@@ -77,6 +79,21 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 $hookmanager->initHooks(array('memberlist'));
 $extrafields = new ExtraFields($db);
 
+// List of fields to search into when doing a "search in all"
+$fieldstosearchall = array(
+    'd.rowid'=>'Ref',
+    //'d.ref'=>'Ref',
+    'd.lastname'=>'Lastname',
+    'd.firstname'=>'Firstname',
+    'd.societe'=>"Company",
+    'd.email'=>'EMail',
+    'd.address'=>'Address',
+    'd.zip'=>'Zip',
+    'd.town'=>'Town',
+    'd.note_public'=>'NotePublic',
+    'd.note_private'=>'NotePrivate',
+);
+   
 
 /*
  * View
@@ -110,7 +127,7 @@ if ($catid == -2)  $sql.= " AND cm.fk_categorie IS NULL";
 if ($search_categ > 0)   $sql.= " AND cm.fk_categorie = ".$db->escape($search_categ);
 if ($search_categ == -2) $sql.= " AND cm.fk_categorie IS NULL";
 $sql.= " AND d.entity IN (".getEntity('adherent', 1).")";
-if ($sall) $sql.=natural_search(array("d.rowid", "d.firstname", "d.lastname", "d.societe", "d.email", "d.login", "d.address", "d.town", "d.note_public", "d.note_private"), $sall);
+if ($sall) $sql.=natural_search(array_keys($fieldstosearchall), $sall);
 if ($type > 0) $sql.=" AND t.rowid=".$db->escape($type);
 if (isset($_GET["statut"]) || isset($_POST["statut"])) $sql.=" AND d.statut in (".$db->escape($statut).")";     // Peut valoir un nombre ou liste de nombre separes par virgules
 if ($search_ref)
@@ -127,6 +144,7 @@ if ($filter == 'outofdate') $sql.=" AND (datefin IS NULL OR datefin < '".$db->id
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
+$sql.= $db->order($sortfield,$sortorder);
 
 // Count total nb of records with no order and no limits
 $nbtotalofrecords = 0;
@@ -136,9 +154,8 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	if ($resql) $nbtotalofrecords = $db->num_rows($resql);
 	else dol_print_error($db);
 }
-// Add order and limit
-$sql.= $db->order($sortfield,$sortorder);
-$sql.= $db->plimit($conf->liste_limit+1, $offset);
+// Add limit
+$sql.= $db->plimit($limit+1, $offset);
 
 dol_syslog("get list", LOG_DEBUG);
 $resql = $db->query($sql);
@@ -169,36 +186,45 @@ if ($resql)
 		$titre.=" (".$membertype->libelle.")";
 	}
 
-	$param="";
+	$param='';
+    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 	if ($statut != "") $param.="&statut=".$statut;
 	if ($search_nom)   $param.="&search_nom=".$search_nom;
 	if ($search_login) $param.="&search_login=".$search_login;
 	if ($search_email) $param.="&search_email=".$search_email;
 	if ($filter)       $param.="&filter=".$filter;
 	if ($type > 0)     $param.="&type=".$type;
-	print_barre_liste($titre,$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
+	if ($optioncss != '') $param.='&optioncss='.$optioncss;
+	
+	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+	print '<input type="hidden" name="action" value="list">';
+	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
+	print_barre_liste($titre, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_generic.png', 0, '', '', $limit);
+	
 	if ($sall)
 	{
-		print $langs->trans("Filter")." (".$langs->trans("Ref").", ".$langs->trans("Lastname").", ".$langs->trans("Firstname").", ".$langs->trans("EMail").", ".$langs->trans("Address")." ".$langs->trans("or")." ".$langs->trans("Town")."): ";
-		print '<strong>'.$sall.'</strong>';
+        foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
+        print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
 	}
-
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].($param?'?'.$param:'').'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 	// Filter on categories
 	$moreforfilter='';
 	if (! empty($conf->categorie->enabled))
 	{
 		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+        $moreforfilter.='<div class="divsearchfield">';
 		$moreforfilter.=$langs->trans('Categories'). ': ';
 		$moreforfilter.=$formother->select_categories(Categorie::TYPE_MEMBER,$search_categ,'search_categ',1);
-		$moreforfilter.=' &nbsp; &nbsp; &nbsp; ';
+		$moreforfilter.='</div>';
 	}
 	if (! empty($moreforfilter))
 	{
-		print '<div class="liste_titre">';
+		print '<div class="liste_titre liste_titre_bydiv centpercent">';
 		print $moreforfilter;
     	$parameters=array();
     	$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
@@ -206,8 +232,12 @@ if ($resql)
 	    print '</div>';
 	}
 
-	print "<table class=\"noborder\" width=\"100%\">";
+    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">';
 	print '<tr class="liste_titre">';
+	if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER))
+	{
+		print '<td width="5" align="center">&nbsp;</td>';
+	}
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"d.rowid",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Name")." / ".$langs->trans("Company"),$_SERVER["PHP_SELF"],"d.lastname",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Login"),$_SERVER["PHP_SELF"],"d.login",$param,"","",$sortfield,$sortorder);
@@ -221,11 +251,13 @@ if ($resql)
 
     print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"d.statut,d.datefin",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("EndSubscription"),$_SERVER["PHP_SELF"],"d.datefin",$param,"",'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Action"),$_SERVER["PHP_SELF"],"",$param,"",'width="60" align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans(""),$_SERVER["PHP_SELF"],"",$param,"",'width="60" align="center"',$sortfield,$sortorder);
 	print "</tr>\n";
 
 	// Line for filters fields
 	print '<tr class="liste_titre">';
+	
+	print '<td class="liste_titre">&nbsp;</td>';
 
 	print '<td class="liste_titre" align="left">';
 	print '<input class="flat" type="text" name="search_ref" value="'.$search_ref.'" size="4"></td>';
@@ -253,11 +285,11 @@ if ($resql)
     // Status
     print '<td class="liste_titre">&nbsp;</td>';
 
-	print '<td align="right" colspan="2" class="liste_titre">';
-	print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-	print '&nbsp; ';
-	print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" name="button_removefilter" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
-	print '</td>';
+    // Action column
+    print '<td class="liste_titre" colspan="2" align="right">';
+    $searchpitco=$form->showFilterAndCheckAddButtons(0);
+    print $searchpitco;
+    print '</td>';    
 
 	print "</tr>\n";
 
@@ -271,6 +303,8 @@ if ($resql)
 		$memberstatic->ref=$objp->rowid;
 		$memberstatic->lastname=$objp->lastname;
 		$memberstatic->firstname=$objp->firstname;
+		$memberstatic->statut=$objp->statut;
+		$memberstatic->datefin= $datefin;
 
 		if (! empty($objp->fk_soc)) {
 			$memberstatic->socid = $objp->fk_soc;
@@ -282,6 +316,11 @@ if ($resql)
 
 		$var=!$var;
 		print "<tr ".$bc[$var].">";
+		
+		if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER))
+		{
+			print '<td align="center">'.($i+1).'</td>';
+		}
 
 		// Ref
 		print "<td>";
@@ -325,7 +364,9 @@ if ($resql)
 		{
 			print '<td align="center" class="nowrap">';
 			print dol_print_date($datefin,'day');
-			if ($datefin < ($now -  $conf->adherent->cotisation->warning_delay) && $objp->statut > 0) print " ".img_warning($langs->trans("SubscriptionLate"));
+			if ($memberstatic->hasDelay()) {
+				print " ".img_warning($langs->trans("SubscriptionLate"));
+			}
 			print '</td>';
 		}
 		else
@@ -373,10 +414,7 @@ if ($resql)
 	print "</table>\n";
 	print '</form>';
 
-	if ($num > $conf->liste_limit)
-	{
-		print_barre_liste('',$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords,'');
-	}
+	if ($num > $limit || $page) print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_generic.png', 0, '', '', $limit, 1);
 }
 else
 {

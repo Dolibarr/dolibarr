@@ -108,48 +108,6 @@ class MenuManager
     	$menuArbo = new Menubase($this->db,'auguria');
     	$menuArbo->menuLoad($mainmenu, $leftmenu, $this->type_user, 'auguria', $tabMenu);
 
-    	// Modules system tools
-    	// TODO Find a way to add parent menu only if child menu exists. For the moment, no other method than hard coded methods.
-    	if (! empty($conf->product->enabled) || ! empty($conf->service->enabled) || ! empty($conf->barcode->enabled)		// TODO We should enabled module system tools entry without hardcoded test, but when at least one modules bringing such entries are on
-    		|| ! empty($conf->global->MAIN_MENU_ENABLE_MODULETOOLS))
-    	{
-    		if (empty($user->societe_id))
-    		{
-    			if ((! empty($conf->product->enabled) || ! empty($conf->service->enabled)) && ($leftmenu=="modulesadmintools" && $user->admin))
-    			{
-    				$langs->load("products");
-    				$array_menu_product=array(
-			    			'url'=>"/product/admin/product_tools.php?mainmenu=home&leftmenu=modulesadmintools",
-			    			'titre'=>$langs->trans("ProductVatMassChange"),
-			    			'enabled'=>($user->admin?true:false),
-			    			'perms'=>($user->admin?true:false),
-			    			'fk_mainmenu'=>'home',
-			    			'fk_leftmenu'=>'modulesadmintools',
-			    			'fk_menu'=>-1,
-			    			'mainmenu'=>'home',
-			    			'leftmenu'=>'modulesadmintools_massvat',
-			    			'type'=>'left',
-			    			'position'=>20
-			    	);
-			    	array_unshift($tabMenu,$array_menu_product);	// add at beginning of array
-    			}
-    			// Main menu title
-    			$array_menu_product=array(
-		    		'url'=>"/admin/tools/index.php?mainmenu=home&leftmenu=modulesadmintools",
-		    		'titre'=>$langs->trans("ModulesSystemTools"),
-		    		'enabled'=>($user->admin?true:false),
-		    		'perms'=>($user->admin?true:false),
-		    		'fk_mainmenu'=>'home',
-		    		'fk_menu'=>-1,
-		    		'mainmenu'=>'home',
-		    		'leftmenu'=>'modulesadmintools',
-		    		'type'=>'left',
-		    		'position'=>20
-				);
-    			array_unshift($tabMenu,$array_menu_product);	// add at beginning of array
-    		}
-    	}
-
     	$this->tabMenu=$tabMenu;
     }
 
@@ -157,10 +115,11 @@ class MenuManager
     /**
      *  Show menu
      *
-     *	@param	string	$mode		'top', 'left', 'jmobile'
-     *  @return	string
+     *	@param	string	$mode		    'top', 'left', 'jmobile'
+     *  @param	array	$moredata		An array with more data to output
+     *  @return int                     0 or nb of top menu entries if $mode = 'topnb'
 	 */
-	function showmenu($mode)
+	function showmenu($mode, $moredata=null)
 	{
     	global $conf, $langs, $user;
 
@@ -168,15 +127,22 @@ class MenuManager
 
         if ($this->type_user == 1)
         {
-        	$conf->global->MAIN_SEARCHFORM_SOCIETE=0;
-	        $conf->global->MAIN_SEARCHFORM_CONTACT=0;
+        	$conf->global->MAIN_SEARCHFORM_SOCIETE_DISABLED=1;
+	        $conf->global->MAIN_SEARCHFORM_CONTACT_DISABLED=1;
         }
 
 		require_once DOL_DOCUMENT_ROOT.'/core/class/menu.class.php';
         $this->menu=new Menu();
 
         if ($mode == 'top')  print_auguria_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,0);
-        if ($mode == 'left') print_left_auguria_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu,$this->menu,0);
+        if ($mode == 'left') print_left_auguria_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu,$this->menu,0,'','',$moredata);
+		
+		if ($mode == 'topnb')
+		{
+		    print_auguria_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,1);
+		    return $this->menu->getNbOfVisibleMenuEntries();
+		}
+		    
         if ($mode == 'jmobile')
         {
         	print_auguria_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,1);

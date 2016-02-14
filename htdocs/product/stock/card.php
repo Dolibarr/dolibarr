@@ -78,7 +78,7 @@ if ($action == 'add' && $user->rights->stock->creer)
 		$id = $object->create($user);
 		if ($id > 0)
 		{
-			setEventMessage($langs->trans("RecordSaved"));
+			setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 
 			if (! empty($backtopage))
 			{
@@ -94,11 +94,12 @@ if ($action == 'add' && $user->rights->stock->creer)
 		else
 		{
 			$action = 'create';
-			setEventMessage($object->error, 'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
-	else {
-		setEventMessage($langs->trans("ErrorWarehouseRefRequired"), 'errors');
+	else 
+	{
+		setEventMessages($langs->trans("ErrorWarehouseRefRequired"), null, 'errors');
 		$action="create";   // Force retour sur page creation
 	}
 }
@@ -116,7 +117,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->stock->su
 	}
 	else
 	{
-		setEventMessage($object->error, 'errors');
+		setEventMessages($object->error, $object->errors, 'errors');
 		$action='';
 	}
 }
@@ -143,13 +144,13 @@ if ($action == 'update' && $cancel <> $langs->trans("Cancel"))
 		else
 		{
 			$action = 'edit';
-			setEventMessage($object->error, 'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 	else
 	{
 		$action = 'edit';
-		setEventMessage($object->error, 'errors');
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
 
@@ -174,7 +175,7 @@ llxHeader("",$langs->trans("WarehouseCard"),$help_url);
 
 if ($action == 'create')
 {
-	print_fiche_titre($langs->trans("NewWarehouse"));
+	print load_fiche_titre($langs->trans("NewWarehouse"));
 
 	print "<form action=\"card.php\" method=\"post\">\n";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -191,7 +192,7 @@ if ($action == 'create')
 	print '<tr><td >'.$langs->trans("LocationSummary").'</td><td colspan="3"><input name="lieu" size="40" value="'.(!empty($object->lieu)?$object->lieu:'').'"></td></tr>';
 
 	// Description
-	print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="3">';
+	print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td colspan="3">';
 	// Editeur wysiwyg
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 	$doleditor=new DolEditor('desc',(!empty($object->description)?$object->description:''),'',180,'dolibarr_notes','In',false,true,$conf->fckeditor->enabled,5,70);
@@ -269,7 +270,7 @@ else
 			print '<tr><td>'.$langs->trans("LocationSummary").'</td><td colspan="3">'.$object->lieu.'</td></tr>';
 
 			// Description
-			print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="3">'.nl2br($object->description).'</td></tr>';
+			print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td colspan="3">'.nl2br($object->description).'</td></tr>';
 
 			// Address
 			print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3">';
@@ -297,17 +298,17 @@ else
 			$calcproducts=$object->nb_products();
 
 	        // Total nb of different products
-	        print '<tr><td valign="top">'.$langs->trans("NumberOfDifferentProducts").'</td><td colspan="3">';
+	        print '<tr><td>'.$langs->trans("NumberOfDifferentProducts").'</td><td colspan="3">';
 	        print empty($calcproductsunique['nb'])?'0':$calcproductsunique['nb'];
 	        print "</td></tr>";
 
 			// Nb of products
-			print '<tr><td valign="top">'.$langs->trans("NumberOfProducts").'</td><td colspan="3">';
+			print '<tr><td>'.$langs->trans("NumberOfProducts").'</td><td colspan="3">';
 			print empty($calcproducts['nb'])?'0':$calcproducts['nb'];
 			print "</td></tr>";
 
 			// Value
-			print '<tr><td valign="top">'.$langs->trans("EstimatedStockValueShort").'</td><td colspan="3">';
+			print '<tr><td>'.$langs->trans("EstimatedStockValueShort").'</td><td colspan="3">';
 			print price((empty($calcproducts['value'])?'0':price2num($calcproducts['value'],'MT')), 0, $langs, 0, -1, -1, $conf->currency);
 			print "</td></tr>";
 
@@ -325,7 +326,7 @@ else
 			{
 				dol_print_error($db);
 			}
-			print '<tr><td valign="top">'.$langs->trans("LastMovement").'</td><td colspan="3">';
+			print '<tr><td>'.$langs->trans("LastMovement").'</td><td colspan="3">';
 			if ($lastmovementdate)
 			{
 			    print dol_print_date($lastmovementdate,'dayhour').' ';
@@ -528,10 +529,10 @@ else
 			// Ref
 			print '<tr><td width="20%" class="fieldrequired">'.$langs->trans("Ref").'</td><td colspan="3"><input name="libelle" size="20" value="'.$object->libelle.'"></td></tr>';
 
-			print '<tr><td width="20%">'.$langs->trans("LocationSummary").'</td><td colspan="3"><input name="lieu" size="40" value="'.$object->lieu.'"></td></tr>';
+			print '<tr><td>'.$langs->trans("LocationSummary").'</td><td colspan="3"><input name="lieu" size="40" value="'.$object->lieu.'"></td></tr>';
 
 			// Description
-			print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="3">';
+			print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td colspan="3">';
 			// Editeur wysiwyg
 			require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 			$doleditor=new DolEditor('desc',$object->description,'',180,'dolibarr_notes','In',false,true,$conf->fckeditor->enabled,5,70);
@@ -550,12 +551,12 @@ else
 			print '</td></tr>';
 
 			// Country
-			print '<tr><td width="25%">'.$langs->trans('Country').'</td><td colspan="3">';
+			print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
 			print $form->select_country($object->country_id?$object->country_id:$mysoc->country_code,'country_id');
 			if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 			print '</td></tr>';
 
-			print '<tr><td width="20%">'.$langs->trans("Status").'</td><td colspan="3">';
+			print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">';
 			print '<select name="statut" class="flat">';
 			print '<option value="0" '.($object->statut == 0?'selected':'').'>'.$langs->trans("WarehouseClosed").'</option>';
 			print '<option value="1" '.($object->statut == 0?'':'selected').'>'.$langs->trans("WarehouseOpened").'</option>';

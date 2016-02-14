@@ -22,7 +22,6 @@
 
  */
 
-// Put here all includes required by your class file
 require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php";
 
@@ -31,14 +30,8 @@ require_once DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php";
  */
 class Resource extends CommonObject
 {
-	var $db;							//!< To store db handler
-	var $error;							//!< To return error code (or message)
-	var $errors=array();				//!< To return several error codes (or messages)
 	var $element='resource';			//!< Id that identify managed objects
 	var $table_element='resource';	//!< Name of table without prefix where object is stored
-
-    var $id;
-
 
 	var $resource_id;
 	var $resource_type;
@@ -49,7 +42,6 @@ class Resource extends CommonObject
 	var $fk_user_create;
 	var $type_label;
 	var $tms='';
-
 
     /**
      *  Constructor
@@ -86,7 +78,7 @@ class Resource extends CommonObject
     	// Insert request
     	$sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."(";
 
-    	$sql.= " entity,";
+    	$sql.= "entity,";
     	$sql.= "ref,";
     	$sql.= "description,";
     	$sql.= "fk_code_type_resource,";
@@ -403,7 +395,13 @@ class Resource extends CommonObject
     	}
     	$sql.= " GROUP BY t.rowid";
     	$sql.= $this->db->order($sortfield,$sortorder);
-    	if ($limit) $sql.= $this->db->plimit($limit+1,$offset);
+        $this->num_all = 0;
+        if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+        {
+            $result = $this->db->query($sql);
+            $this->num_all = $this->db->num_rows($result);
+        }
+    	if ($limit) $sql.= $this->db->plimit($limit, $offset);
     	dol_syslog(get_class($this)."::fetch_all", LOG_DEBUG);
 
     	$resql=$this->db->query($sql);
@@ -626,10 +624,11 @@ class Resource extends CommonObject
      *      Load properties id_previous and id_next
      *
      *      @param	string	$filter		Optional filter
-     *	 	@param  int		$fieldid   	Name of field to use for the select MAX and MIN
+     *	    @param  	int		$fieldid   	Name of field to use for the select MAX and MIN
+     *	    @param	int		$nodbprefix		Do not include DB prefix to forge table name
      *      @return int         		<0 if KO, >0 if OK
      */
-    function load_previous_next_ref($filter,$fieldid)
+    function load_previous_next_ref($filter, $fieldid, $nodbprefix =0)
     {
     	global $conf, $user;
 

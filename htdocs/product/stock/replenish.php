@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013		Cédric Salvador		<csalvador@gpcsolutions.fr>
- * Copyright (C) 2013-2014	Laurent Destaileur	<ely@users.sourceforge.net>
+ * Copyright (C) 2013-2015	Laurent Destaileur	<ely@users.sourceforge.net>
  * Copyright (C) 2014		Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -58,7 +58,7 @@ $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
 $page = GETPOST('page','int');
 if ($page == -1) { $page = 0; }
-$limit = $conf->liste_limit;
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $offset = $limit * $page ;
 
 if (!$sortfield) {
@@ -176,7 +176,7 @@ if ($action == 'order' && isset($_POST['valid']))
                     $fail++;
                     $msg = $langs->trans('OrderFail') . "&nbsp;:&nbsp;";
                     $msg .= $order->error;
-                    setEventMessage($msg, 'errors');
+                    setEventMessages($msg, null, 'errors');
                 } else {
                     $id = $result;
                 }
@@ -195,7 +195,7 @@ if ($action == 'order' && isset($_POST['valid']))
                     $fail++;
                     $msg = $langs->trans('OrderFail') . "&nbsp;:&nbsp;";
                     $msg .= $order->error;
-                    setEventMessage($msg, 'errors');
+                    setEventMessages($msg, null, 'errors');
                 }
                 $i++;
             }
@@ -205,7 +205,7 @@ if ($action == 'order' && isset($_POST['valid']))
         {
         	$db->commit();
 
-            setEventMessage($langs->trans('OrderCreated'), 'mesgs');
+            setEventMessages($langs->trans('OrderCreated'), null, 'mesgs');
             header('Location: replenishorders.php');
             exit;
         }
@@ -216,7 +216,7 @@ if ($action == 'order' && isset($_POST['valid']))
     }
     if ($box == 0)
     {
-        setEventMessage($langs->trans('SelectProductWithNotNullQty'), 'warnings');
+        setEventMessages($langs->trans('SelectProductWithNotNullQty'), null, 'warnings');
     }
 }
 
@@ -445,8 +445,8 @@ if ($usevirtualstock == 0) $stocklabel = $langs->trans('PhysicalStock');
 
 
 // Lines of title
-print '<tr class="liste_titre"><td><input type="checkbox" onClick="toggle(this)" /></td>';
-
+print '<tr class="liste_titre">';
+print_liste_field_titre('<input type="checkbox" onClick="toggle(this)" />', $_SERVER["PHP_SELF"], '');
 print_liste_field_titre($langs->trans('Ref'), $_SERVER["PHP_SELF"], 'p.ref', $param, '', '', $sortfield, $sortorder);
 print_liste_field_titre($langs->trans('Label'), $_SERVER["PHP_SELF"], 'p.label', $param, '', '', $sortfield, $sortorder);
 if (!empty($conf->service->enabled) && $type == 1) print_liste_field_titre($langs->trans('Duration'), $_SERVER["PHP_SELF"], 'p.duration', $param, '', 'align="center"', $sortfield, $sortorder);
@@ -468,11 +468,11 @@ print '<td class="liste_titre">&nbsp;</td>'.
 	'<td class="liste_titre" align="right">&nbsp;</td>'.
 	'<td class="liste_titre" align="right">' . $langs->trans('AlertOnly') . '&nbsp;<input type="checkbox" id="salert" name="salert" ' . (!empty($alertchecked)?$alertchecked:'') . '></td>'.
 	'<td class="liste_titre" align="right">&nbsp;</td>'.
-	'<td class="liste_titre">&nbsp;</td>'.
-	'<td class="liste_titre" align="right">'.
-	'<input class="liste_titre" name="button_search" type="image" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">'.
-	'<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" name="button_removefilter" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">'.
-	'</td>';
+	'<td class="liste_titre">&nbsp;</td>';
+    print '<td class="liste_titre" align="right">';
+    $searchpitco=$form->showFilterAndCheckAddButtons(0);
+    print $searchpitco;
+    print '</td>';
 print '</tr>';
 
 $prod = new Product($db);

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013	   Philippe Grand		<philippe.grand@atoo-net.com>
  * Copyright (C) 2013	   Florian Henry		<florian.henry@open-concept.pro>
@@ -60,14 +60,15 @@ $page=GETPOST("page",'int');
 $sortorder = GETPOST("sortorder",'alpha');
 $sortfield = GETPOST("sortfield",'alpha');
 
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 if ($page == -1) { $page = 0 ; }
-$limit = $conf->liste_limit;
 $offset = $limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="fac.datef,fac.rowid";
 
+$search_all = GETPOST('sall');
 $search_ref = GETPOST("search_ref","int");
 $search_ref_supplier = GETPOST("search_ref_supplier","alpha");
 $search_label = GETPOST("search_label","alpha");
@@ -81,9 +82,12 @@ $year = GETPOST("year","int");
 $day_lim	= GETPOST('day_lim','int');
 $month_lim	= GETPOST('month_lim','int');
 $year_lim	= GETPOST('year_lim','int');
+$filter = GETPOST("filtre");
+$optioncss = GETPOST('optioncss','alpha');
 
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter"))		// Both test must be present to be compatible with all browsers
 {
+    $search_all="";
 	$search_ref="";
 	$search_ref_supplier="";
 	$search_label="";
@@ -94,6 +98,18 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter"))		// Both
 	$year="";
 	$month="";
 }
+
+// List of fields to search into when doing a "search in all"
+$fieldstosearchall = array(
+    'fac.ref'=>'Ref',
+    'fac.ref_supplier'=>'RefSupplier',
+    //'fd.description'=>'Description',
+    's.nom'=>"ThirdParty",
+    'fac.note_public'=>'NotePublic',
+);
+if (empty($user->socid)) $fieldstosearchall["fac.note_private"]="NotePrivate";
+
+
 
 /*
  * Actions
@@ -146,7 +162,10 @@ if ($socid)
 {
 	$sql .= " AND s.rowid = ".$socid;
 }
-
+if ($search_all)
+{
+    $sql.= natural_search(array_keys($fieldstosearchall), $search_all);
+}
 if ($search_ref)
 {
 	if (is_numeric($search_ref)) $sql .= natural_search(array('fac.ref'), $search_ref);
@@ -214,7 +233,6 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	$nbtotalofrecords = $db->num_rows($result);
 }
 
-
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit+1, $offset);
 
@@ -238,10 +256,26 @@ if ($resql)
 	if ($search_company)      	$param.='&search_company='.urlencode($search_company);
 	if ($search_amount_no_tax)	$param.='&search_amount_no_tax='.urlencode($search_amount_no_tax);
 	if ($search_amount_all_tax)	$param.='&search_amount_all_tax='.urlencode($search_amount_all_tax);
+	if ($filter && $filter != -1) $param.='&filtre='.urlencode($filter);
+	if ($optioncss != '') $param.='&optioncss='.$optioncss;
 	if ($search_status >= 0)  	$param.="&search_status=".$search_status;
 
-	print_barre_liste($langs->trans("BillsSuppliers").($socid?" $soc->name.":""),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
-	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="action" value="list">';
+	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
+
+	print_barre_liste($langs->trans("BillsSuppliers").($socid?" $soc->name.":""),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords,'title_accountancy',0,'','',$limit);
+	
+	if ($search_all)
+    {
+        foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
+        print $langs->trans("FilterOnInto", $search_all) . join(', ',$fieldstosearchall);
+    }
+    
 	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"fac.ref,fac.rowid","",$param,"",$sortfield,$sortorder);
@@ -297,10 +331,11 @@ if ($resql)
 	print '</td><td class="liste_titre" align="right">';
 	$liststatus=array('0'=>$langs->trans("Draft"),'1'=>$langs->trans("Unpaid"), '2'=>$langs->trans("Paid"));
 	print $form->selectarray('filtre', $liststatus, $search_status, 1);
-	print '</td><td class="liste_titre" align="right">';
-	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
 	print '</td>';
+    print '<td class="liste_titre" align="right">';
+    $searchpitco=$form->showFilterAndCheckAddButtons(0);
+    print $searchpitco;
+    print '</td>';
 	print "</tr>\n";
 
 	$facturestatic=new FactureFournisseur($db);
@@ -313,6 +348,10 @@ if ($resql)
 	while ($i < min($num,$limit))
 	{
 		$obj = $db->fetch_object($resql);
+
+		$facturestatic->date_echeance = $db->jdate($obj->date_echeance);
+		$facturestatic->statut = $obj->fk_statut;
+
 		$var=!$var;
 
 		print "<tr ".$bc[$var].">";
@@ -332,7 +371,9 @@ if ($resql)
 
 		print '<td align="center" class="nowrap">'.dol_print_date($db->jdate($obj->datef),'day').'</td>';
 		print '<td align="center" class="nowrap">'.dol_print_date($db->jdate($obj->date_echeance),'day');
-		if (($obj->paye == 0) && ($obj->fk_statut > 0) && $obj->date_echeance && $db->jdate($obj->date_echeance) < ($now - $conf->facture->fournisseur->warning_delay)) print img_picto($langs->trans("Late"),"warning");
+		if ($facturestatic->hasDelay()) {
+			print img_picto($langs->trans("Late"),"warning");
+		}
 		print '</td>';
 		print '<td>'.dol_trunc($obj->libelle,36).'</td>';
 		print '<td>';

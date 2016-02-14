@@ -104,7 +104,7 @@ foreach($listofparams as $param)
 	if (GETPOST($param)!='') $morequerystring.=($morequerystring?'&':'').$param.'='.GETPOST($param);
 }
 
-llxHeader('','','','',0,0,'','',$morequerystring);
+llxHeader('',$langs->trans("VATReport"),'','',0,0,'','',$morequerystring);
 
 $form=new Form($db);
 
@@ -115,7 +115,7 @@ $product_static=new Product($db);
 $payment_static=new Paiement($db);
 $paymentfourn_static=new PaiementFourn($db);
 
-//print_fiche_titre($langs->trans("VAT"),"");
+//print load_fiche_titre($langs->trans("VAT"),"");
 
 //$fsearch.='<br>';
 $fsearch.='  <input type="hidden" name="year" value="'.$year.'">';
@@ -638,6 +638,5 @@ else
 }
 echo '</table>';
 
-$db->close();
-
 llxFooter();
+$db->close();

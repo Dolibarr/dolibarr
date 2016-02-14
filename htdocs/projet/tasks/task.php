@@ -71,7 +71,7 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
 	if (empty($_POST["label"]))
 	{
 		$error++;
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
 	}
 	if (! $error)
 	{
@@ -180,8 +180,8 @@ if ($action == 'remove_file' && $user->rights->projet->creer)
 		$file =	$upload_dir	. '/' .	GETPOST('file');
 
 		$ret=dol_delete_file($file);
-		if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-		else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+		if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
+		else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
 	}
 }
 
@@ -205,7 +205,7 @@ if ($id > 0 || ! empty($ref))
 		$result=$projectstatic->fetch($object->fk_project);
 		if (! empty($projectstatic->socid)) $projectstatic->fetch_thirdparty();
 
-		$object->project = dol_clone($projectstatic);
+		$object->project = clone $projectstatic;
 
 		$userWrite  = $projectstatic->restrictedProjectArea($user,'write');
 
@@ -227,7 +227,7 @@ if ($id > 0 || ! empty($ref))
 			// Define a complementary filter for search of next/prev ref.
 			if (! $user->rights->projet->all->lire)
 			{
-				$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,0);
+				$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,0);
 				$projectstatic->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
 			}
 			print $form->showrefnav($projectstatic,'project_ref','',1,'ref','ref','',$param.'&withproject=1');
@@ -402,7 +402,7 @@ if ($id > 0 || ! empty($ref))
 			print '</td><td colspan="3">';
 			if (! GETPOST('withproject') || empty($projectstatic->id))
 			{
-				$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1);
+				$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,1);
 				$object->next_prev_filter=" fk_projet in (".$projectsListId.")";
 			}
 			else $object->next_prev_filter=" fk_projet = ".$projectstatic->id;

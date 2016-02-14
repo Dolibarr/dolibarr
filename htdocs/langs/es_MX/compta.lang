@@ -1,0 +1,5 @@
+# Dolibarr language file - Source file is en_US - compta
+Param=Configuración
+AccountsGeneral=Cuentas
+PaymentSocialContribution=Pago de impuesto social/fiscal
+ByThirdParties=Por terceros

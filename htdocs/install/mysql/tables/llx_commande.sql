@@ -63,12 +63,19 @@ create table llx_commande
   
   date_livraison		date 	  default NULL,
   fk_shipping_method    integer,                       -- shipping method id
+  fk_warehouse		  integer 	  default NULL,
   fk_availability		integer NULL,
   fk_input_reason		integer,						-- id coming from c_input_reason, '0' if no defined
   fk_delivery_address	integer,						-- delivery address (deprecated)
   fk_incoterms          integer,						-- for incoterms
   location_incoterms    varchar(255),					-- for incoterms
   import_key			varchar(14),
-  extraparams			varchar(255)					-- for stock other parameters with json format
+  extraparams			varchar(255),					-- for stock other parameters with json format
   
+  fk_multicurrency		integer,
+  multicurrency_code			varchar(255),
+  multicurrency_tx			double(24,8) DEFAULT 1,
+  multicurrency_total_ht		double(24,8) DEFAULT 0,
+  multicurrency_total_tva	double(24,8) DEFAULT 0,
+  multicurrency_total_ttc	double(24,8) DEFAULT 0
 )ENGINE=innodb;

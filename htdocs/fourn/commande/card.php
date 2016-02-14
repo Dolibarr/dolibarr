@@ -2,9 +2,9 @@
 /* Copyright (C) 2004-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric	Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2016 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2015 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2015 Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2014      Ion Agorria          <ion@agorria.com>
@@ -40,8 +40,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-if (! empty($conf->askpricesupplier->enabled))
-	require DOL_DOCUMENT_ROOT . '/comm/askpricesupplier/class/askpricesupplier.class.php';
+if (! empty($conf->supplier_proposal->enabled))
+	require DOL_DOCUMENT_ROOT . '/supplier_proposal/class/supplier_proposal.class.php';
 if (!empty($conf->produit->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 if (!empty($conf->projet->enabled))
@@ -54,7 +54,7 @@ $langs->load('sendings');
 $langs->load('companies');
 $langs->load('bills');
 $langs->load('propal');
-$langs->load('askpricesupplier');
+$langs->load('supplier_proposal');
 $langs->load('deliveries');
 $langs->load('products');
 $langs->load('stocks');
@@ -94,9 +94,6 @@ $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
-
-//Date prefix
-$date_pf = '';
 
 // Load object
 if ($id > 0 || ! empty($ref))
@@ -153,14 +150,14 @@ if (empty($reshook))
 		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 	}
 
-	// conditions de reglement
+	// payment conditions
 	if ($action == 'setconditions' && $user->rights->fournisseur->commande->creer)
 	{
 	    $result=$object->setPaymentTerms(GETPOST('cond_reglement_id','int'));
 		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 	}
 
-	// mode de reglement
+	// payment mode
 	if ($action == 'setmode' && $user->rights->fournisseur->commande->creer)
 	{
 	    $result = $object->setPaymentMethods(GETPOST('mode_reglement_id','int'));
@@ -174,7 +171,7 @@ if (empty($reshook))
 		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 	}
 
-	// date de livraison
+	// date of delivery
 	if ($action == 'setdate_livraison' && $user->rights->fournisseur->commande->creer)
 	{
 		$result=$object->set_date_livraison($user,$datelivraison);
@@ -196,7 +193,7 @@ if (empty($reshook))
 
 	if ($action == 'reopen')	// no test on permission here, permission to use will depends on status
 	{
-	    if (in_array($object->statut, array(1, 2, 3, 5, 6, 7, 9)))
+	    if (in_array($object->statut, array(1, 2, 3, 5, 6, 7, 9)) || ($object->statut == 4 && $object->billed))
 	    {
 	        if ($object->statut == 1) $newstatus=0;	// Validated->Draft
 	        else if ($object->statut == 2) $newstatus=0;	// Approved->Draft
@@ -205,13 +202,20 @@ if (empty($reshook))
 	        else if ($object->statut == 6) $newstatus=2;	// Canceled->Approved
 	        else if ($object->statut == 7) $newstatus=3;	// Canceled->Process running
 	        else if ($object->statut == 9) $newstatus=1;	// Refused->Validated
-
+            else $newstatus = 2;
+            
 	        $db->begin();
 
 	        $result = $object->setStatus($user, $newstatus);
 	        if ($result > 0)
 	        {
-	        	if ($newstatus == 0)
+		        $sql = 'UPDATE '.MAIN_DB_PREFIX.'commande_fournisseur';
+	        	$sql.= ' SET billed = 0';
+	        	$sql.= ' WHERE rowid = '.$object->id;
+
+	        	$resql=$db->query($sql);
+	            
+	            if ($newstatus == 0)
 	        	{
 		        	$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande_fournisseur';
 	        		$sql.= ' SET fk_user_approve = null, fk_user_approve2 = null, date_approve = null, date_approve2 = null';
@@ -235,6 +239,17 @@ if (empty($reshook))
 	}
 
 	/*
+	 * Classify supplier order as billed
+	 */
+	if ($action == 'classifybilled' && $user->rights->fournisseur->commande->creer)
+	{
+		$ret=$object->classifyBilled();
+		if ($ret < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
+
+	/*
 	 *	Add a line into product
 	 */
 	if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
@@ -245,8 +260,8 @@ if (empty($reshook))
 		// Set if we used free entry or predefined product
 		$predef='';
 		$product_desc=(GETPOST('dp_desc')?GETPOST('dp_desc'):'');
-		$date_start=dol_mktime(GETPOST('date_start'.$date_pf.'hour'), GETPOST('date_start'.$date_pf.'min'), 0, GETPOST('date_start'.$date_pf.'month'), GETPOST('date_start'.$date_pf.'day'), GETPOST('date_start'.$date_pf.'year'));
-		$date_end=dol_mktime(GETPOST('date_end'.$date_pf.'hour'), GETPOST('date_end'.$date_pf.'min'), 0, GETPOST('date_end'.$date_pf.'month'), GETPOST('date_end'.$date_pf.'day'), GETPOST('date_end'.$date_pf.'year'));
+		$date_start=dol_mktime(GETPOST('date_start'.$predef.'hour'), GETPOST('date_start'.$predef.'min'), GETPOST('date_start' . $predef . 'sec'), GETPOST('date_start'.$predef.'month'), GETPOST('date_start'.$predef.'day'), GETPOST('date_start'.$predef.'year'));
+		$date_end=dol_mktime(GETPOST('date_end'.$predef.'hour'), GETPOST('date_end'.$predef.'min'), GETPOST('date_end' . $predef . 'sec'), GETPOST('date_end'.$predef.'month'), GETPOST('date_end'.$predef.'day'), GETPOST('date_end'.$predef.'year'));
 		if (GETPOST('prod_entry_mode') == 'free')
 		{
 			$idprod=0;
@@ -277,27 +292,27 @@ if (empty($reshook))
 
 	    if (GETPOST('prod_entry_mode')=='free' && GETPOST('price_ht') < 0 && $qty < 0)
 	    {
-	        setEventMessage($langs->trans('ErrorBothFieldCantBeNegative', $langs->transnoentitiesnoconv('UnitPrice'), $langs->transnoentitiesnoconv('Qty')), 'errors');
+	        setEventMessages($langs->trans('ErrorBothFieldCantBeNegative', $langs->transnoentitiesnoconv('UnitPrice'), $langs->transnoentitiesnoconv('Qty')), null, 'errors');
 	        $error++;
 	    }
 	    if (GETPOST('prod_entry_mode')=='free'  && ! GETPOST('idprodfournprice') && GETPOST('type') < 0)
 	    {
-	        setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Type')), 'errors');
+	        setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Type')), null, 'errors');
 	        $error++;
 	    }
 	    if (GETPOST('prod_entry_mode')=='free' && GETPOST('price_ht')==='' && GETPOST('price_ttc')==='') // Unit price can be 0 but not ''
 	    {
-	        setEventMessage($langs->trans($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('UnitPrice'))), 'errors');
+	        setEventMessages($langs->trans($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('UnitPrice'))), null, 'errors');
 	        $error++;
 	    }
 	    if (GETPOST('prod_entry_mode')=='free' && ! GETPOST('dp_desc'))
 	    {
-	        setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Description')), 'errors');
+	        setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Description')), null, 'errors');
 	        $error++;
 	    }
 	    if (! GETPOST('qty'))
 	    {
-	        setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), 'errors');
+	        setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
 	        $error++;
 	    }
 
@@ -359,14 +374,14 @@ if (empty($reshook))
     			// Product not selected
     			$error++;
     			$langs->load("errors");
-    			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("ProductOrService")).' '.$langs->trans("or").' '.$langs->trans("NoPriceDefinedForThisSupplier"), 'errors');
+    			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ProductOrService")).' '.$langs->trans("or").' '.$langs->trans("NoPriceDefinedForThisSupplier"), null, 'errors');
 	    	}
 	    	if ($idprod == -1)
 	    	{
 	    		// Quantity too low
 	    		$error++;
 	    		$langs->load("errors");
-	    		setEventMessage($langs->trans("ErrorQtyTooLowForThisSupplier"), 'errors');
+	    		setEventMessages($langs->trans("ErrorQtyTooLowForThisSupplier"), null, 'errors');
 	    	}
 	    }
 	    else if((GETPOST('price_ht')!=='' || GETPOST('price_ttc')!=='') && empty($error))
@@ -463,7 +478,7 @@ if (empty($reshook))
 	}
 
 	/*
-	 *	Mise a jour	d'une ligne	dans la	commande
+	 *	Updating a line in the order
 	 */
 	if ($action == 'updateline' && $user->rights->fournisseur->commande->creer &&	! GETPOST('cancel'))
 	{
@@ -488,8 +503,8 @@ if (empty($reshook))
 	        if (!$res) dol_print_error($db);
 	    }
 
-	    $date_start=dol_mktime(GETPOST('date_start'.$date_pf.'hour'), GETPOST('date_start'.$date_pf.'min'), 0, GETPOST('date_start'.$date_pf.'month'), GETPOST('date_start'.$date_pf.'day'), GETPOST('date_start'.$date_pf.'year'));
-	    $date_end=dol_mktime(GETPOST('date_end'.$date_pf.'hour'), GETPOST('date_end'.$date_pf.'min'), 0, GETPOST('date_end'.$date_pf.'month'), GETPOST('date_end'.$date_pf.'day'), GETPOST('date_end'.$date_pf.'year'));
+	    $date_start=dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), GETPOST('date_startsec'), GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
+	    $date_end=dol_mktime(GETPOST('date_endhour'), GETPOST('date_endmin'), GETPOST('date_endsec'), GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
 
 	    $localtax1_tx=get_localtax($tva_tx,1,$mysoc,$object->thirdparty);
 	    $localtax2_tx=get_localtax($tva_tx,2,$mysoc,$object->thirdparty);
@@ -657,7 +672,7 @@ if (empty($reshook))
 	        if (! $idwarehouse || $idwarehouse == -1)
 	        {
 	            $error++;
-	            setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Warehouse")), 'errors');
+	            setEventMessages($langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
 	            $action='';
 	        }
 	    }
@@ -704,15 +719,23 @@ if (empty($reshook))
 
 	if ($action == 'confirm_commande' && $confirm	== 'yes' &&	$user->rights->fournisseur->commande->commander)
 	{
-	    $result	= $object->commande($user, $_REQUEST["datecommande"],	$_REQUEST["methode"], $_REQUEST['comment']);
+	    $result = $object->commande($user, $_REQUEST["datecommande"],	$_REQUEST["methode"], $_REQUEST['comment']);
 	    if ($result > 0)
 	    {
-	        if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+	        if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) 
+	        {
+	            $outputlangs = $langs;
+	            $newlang = '';
+	            if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
+	            if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+	            if (! empty($newlang)) {
+	                $outputlangs = new Translate("", $conf);
+	                $outputlangs->setDefaultLang($newlang);
+	            }
 		        $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	        }
-	        header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
-	        exit;
-	    }
+            $action = '';
+        }
 	    else
 	    {
             setEventMessages($object->error, $object->errors, 'errors');
@@ -739,7 +762,7 @@ if (empty($reshook))
 	{
 		if (1==0 && ! GETPOST('clone_content') && ! GETPOST('clone_receivers'))
 		{
-			setEventMessage($langs->trans("NoCloneOptionsSpecified"), 'errors');
+			setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
 		}
 		else
 		{
@@ -767,15 +790,16 @@ if (empty($reshook))
 	    {
 	        $date_liv = dol_mktime(GETPOST('rehour'),GETPOST('remin'),GETPOST('resec'),GETPOST("remonth"),GETPOST("reday"),GETPOST("reyear"));
 
-	        $result	= $object->Livraison($user, $date_liv, GETPOST("type"), GETPOST("comment"));
+	        $result = $object->Livraison($user, $date_liv, GETPOST("type"), GETPOST("comment"));
 	        if ($result > 0)
 	        {
-	            header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
-	            exit;
-	        }
+	            $langs->load("deliveries");
+                setEventMessages($langs->trans("DeliveryStateSaved"), null);
+                $action = '';
+            }
 	        else if($result == -3)
 	        {
-	        	setEventMessage($langs->trans("NotAuthorized"), 'errors');
+                setEventMessages($object->error, $object->errors, 'errors');
 	        }
 	        else
 	        {
@@ -784,7 +808,7 @@ if (empty($reshook))
 	    }
 	    else
 	    {
-		    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Delivery")), 'errors');
+		    setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Delivery")), null, 'errors');
 	    }
 	}
 
@@ -831,8 +855,8 @@ if (empty($reshook))
 	    $upload_dir =	$conf->fournisseur->commande->dir_output;
 	    $file =	$upload_dir	. '/' .	GETPOST('file');
 	    $ret=dol_delete_file($file,0,0,0,$object);
-	    if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-	    else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+	    if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
+	    else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
 	}
 
 	if ($action == 'update_extras')
@@ -872,6 +896,8 @@ if (empty($reshook))
 		}
 	}
 
+	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
+
 
 	/*
 	 * Create an order
@@ -882,7 +908,7 @@ if (empty($reshook))
 
 	    if ($socid <1)
 	    {
-		    setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentities('Supplier')), 'errors');
+		    setEventMessages($langs->trans('ErrorFieldRequired',$langs->transnoentities('Supplier')), null, 'errors');
 	    	$action='create';
 	    	$error++;
 	    }
@@ -915,8 +941,8 @@ if (empty($reshook))
        			// If creation from another object of another module (Example: origin=propal, originid=1)
 				if (! empty($origin) && ! empty($originid))
 				{
-					$element = 'comm/askpricesupplier';
-					$subelement = 'askpricesupplier';
+					$element = 'supplier_proposal';
+					$subelement = 'supplier_proposal';
 
 					$object->origin = $origin;
 					$object->origin_id = $originid;
@@ -928,12 +954,12 @@ if (empty($reshook))
 						$object->linked_objects = array_merge($object->linked_objects, $other_linked_objects);
 					}
 
-					$object_id = $object->create($user);
-					if ($object_id > 0)
+					$id = $object->create($user);
+					if ($id > 0)
 					{
 						dol_include_once('/' . $element . '/class/' . $subelement . '.class.php');
 
-						$classname = ucfirst($subelement);
+						$classname = 'SupplierProposal';
 						$srcobject = new $classname($db);
 
 						dol_syslog("Try to find source object origin=" . $object->origin . " originid=" . $object->origin_id . " to add lines");
@@ -954,7 +980,7 @@ if (empty($reshook))
 							$num = count($lines);
 
 							$productsupplier = new ProductFournisseur($db);
-
+							
 							for($i = 0; $i < $num; $i ++)
 							{
 
@@ -969,7 +995,7 @@ if (empty($reshook))
 								if (($lines[$i]->product_type != 9 && empty($lines[$i]->fk_parent_line)) || $lines[$i]->product_type == 9) {
 									$fk_parent_line = 0;
 								}
-
+								
 								// Extrafields
 								if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i], 'fetch_optionals')) 							// For avoid conflicts if
 								                                                                                                      // trigger used
@@ -977,10 +1003,13 @@ if (empty($reshook))
 									$lines[$i]->fetch_optionals($lines[$i]->rowid);
 									$array_option = $lines[$i]->array_options;
 								}
-
-								$idprod = $productsupplier->find_min_price_product_fournisseur($lines[$i]->fk_product, $lines[$i]->qty);
-								$res = $productsupplier->fetch($idProductFourn);
-
+								
+								$res = $productsupplier->find_min_price_product_fournisseur($lines[$i]->fk_product, $lines[$i]->qty);
+								/*if ($productsupplier->id > 0)
+								{
+								    $res = $productsupplier->fetch($productsupplier->id);
+								}*/
+								
 								$result = $object->addline(
 									$desc,
 									$lines[$i]->subprice,
@@ -1004,7 +1033,7 @@ if (empty($reshook))
 								);
 
 								if ($result < 0) {
-									$error ++;
+									$error++;
 									break;
 								}
 
@@ -1014,10 +1043,13 @@ if (empty($reshook))
 								}
 							}
 
+							// Add link between elements
+							
+							
 							// Hooks
 							$parameters = array('objFrom' => $srcobject);
 							$reshook = $hookmanager->executeHooks('createFrom', $parameters, $object, $action); // Note that $action and $object may have been
-							                                                                               // modified by hook
+
 							if ($reshook < 0)
 								$error ++;
 						} else {
@@ -1083,7 +1115,7 @@ if (empty($reshook))
 	    $upload_dir_tmp = $vardir.'/temp';
 
 		// TODO Delete only files that was uploaded from email form
-	    dol_remove_file_process($_POST['removedfile'],0);
+	    dol_remove_file_process(GETPOST('removedfile','alpha'),0);
 	    $action='presend';
 	}
 
@@ -1162,7 +1194,7 @@ if (empty($reshook))
 	                $mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt,-1);
 	                if ($mailfile->error)
 	                {
-	                	setEventMessage($mailfile->error, 'errors');
+	                	setEventMessages($mailfile->error, $mailfile->errors, 'errors');
 	                }
 	                else
 	                {
@@ -1170,7 +1202,7 @@ if (empty($reshook))
 	                    if ($result)
 	                    {
 	                    	$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));		// Must not contain "
-	                    	setEventMessage($mesg);
+	                    	setEventMessages($mesg, null, 'mesgs');
 
 	                        $error=0;
 
@@ -1191,7 +1223,7 @@ if (empty($reshook))
 
 	                        if ($error)
 	                        {
-	                            setEventMessage($object->error, 'errors');
+	                            setEventMessages($object->error, $object->errors, 'errors');
 	                        }
 	                        else
 	                        {
@@ -1214,7 +1246,7 @@ if (empty($reshook))
 	                            $mesg = 'No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS';
 	                        }
 
-	                        setEventMessage($mesg, 'errors');
+	                        setEventMessages($mesg, null, 'errors');
 	                    }
 	                }
 	/*            }
@@ -1229,14 +1261,14 @@ if (empty($reshook))
 	        else
 	        {
 	            $langs->load("errors");
-	            setEventMessage($langs->trans('ErrorCantReadFile',$file), 'errors');
+	            setEventMessages($langs->trans('ErrorCantReadFile',$file), null, 'errors');
 	            dol_syslog('Failed to read file: '.$file);
 	        }
 	    }
 	    else
 	    {
 	        $langs->load("other");
-	        setEventMessage($langs->trans('ErrorFailedToReadEntity',$langs->trans("Invoice")), 'errors');
+	        setEventMessages($langs->trans('ErrorFailedToReadEntity',$langs->trans("Invoice")), null, 'errors');
 	        dol_syslog('Impossible de lire les donnees de la facture. Le fichier facture n\'a peut-etre pas ete genere.');
 	    }
 	}
@@ -1262,11 +1294,11 @@ if (empty($reshook))
 
 	    //Is sync supplier web services module activated? and everything filled?
 	    if (empty($conf->syncsupplierwebservices->enabled)) {
-	        setEventMessage($langs->trans("WarningModuleNotActive",$langs->transnoentities("Module2650Name")));
+	        setEventMessages($langs->trans("WarningModuleNotActive",$langs->transnoentities("Module2650Name")), null, 'mesgs');
 	    } else if (empty($ws_url) || empty($ws_key)) {
-	        setEventMessage($langs->trans("ErrorWebServicesFieldsRequired"), 'errors');
+	        setEventMessages($langs->trans("ErrorWebServicesFieldsRequired"), null, 'errors');
 	    } else if (empty($ws_user) || empty($ws_password) || empty($ws_thirdparty)) {
-	        setEventMessage($langs->trans("ErrorFieldsRequired"), 'errors');
+	        setEventMessages($langs->trans("ErrorFieldsRequired"),null, 'errors');
 	    }
 	    else
 	    {
@@ -1321,15 +1353,15 @@ if (empty($reshook))
 
 	        if (empty($result_order["result"]["result_code"])) //No result, check error str
 	        {
-	            setEventMessage($langs->trans("SOAPError")." '".$soapclient_order->error_str."'", 'errors');
+	            setEventMessages($langs->trans("SOAPError")." '".$soapclient_order->error_str."'", null, 'errors');
 	        }
 	        else if ($result_order["result"]["result_code"] != "OK") //Something went wrong
 	        {
-	            setEventMessage($langs->trans("SOAPError")." '".$result_order["result"]["result_code"]."' - '".$result_order["result"]["result_label"]."'", 'errors');
+	            setEventMessages($langs->trans("SOAPError")." '".$result_order["result"]["result_code"]."' - '".$result_order["result"]["result_label"]."'", null, 'errors');
 	        }
 	        else
 	        {
-	            setEventMessage($langs->trans("RemoteOrderRef")." ".$result_order["ref"], 'mesgs');
+	            setEventMessages($langs->trans("RemoteOrderRef")." ".$result_order["ref"], null, 'mesgs');
 	        }
 	    }
 	}
@@ -1354,11 +1386,11 @@ if (empty($reshook))
 				if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 				{
 					$langs->load("errors");
-					setEventMessage($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), 'errors');
+					setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
 				}
 				else
 				{
-					setEventMessage($object->error, 'errors');
+					setEventMessages($object->error, $object->errors, 'errors');
 				}
 			}
 		}
@@ -1408,7 +1440,7 @@ $productstatic = new Product($db);
 $now=dol_now();
 if ($action=='create')
 {
-	print_fiche_titre($langs->trans('NewOrder'));
+	print load_fiche_titre($langs->trans('NewOrder'));
 
 	dol_htmloutput_events();
 
@@ -1428,12 +1460,12 @@ if ($action=='create')
 			$subelement = $regs [2];
 		}
 
-		$element = 'comm/askpricesupplier';
-		$subelement = 'askpricesupplier';
+		$element = 'supplier_proposal';
+		$subelement = 'supplier_proposal';
 
 		dol_include_once('/' . $element . '/class/' . $subelement . '.class.php');
 
-		$classname = ucfirst($subelement);
+		$classname = 'SupplierProposal';
 		$objectsrc = new $classname($db);
 		$objectsrc->fetch($originid);
 		if (empty($objectsrc->lines) && method_exists($objectsrc, 'fetch_lines'))
@@ -1460,8 +1492,8 @@ if ($action=='create')
 
 		$datedelivery = (! empty($objectsrc->date_livraison) ? $objectsrc->date_livraison : '');
 
-		$note_private = (! empty($objectsrc->note_private) ? $objectsrc->note_private : (! empty($objectsrc->note_private) ? $objectsrc->note_private : ''));
-		$note_public = (! empty($objectsrc->note_public) ? $objectsrc->note_public : '');
+		$note_private = $object->getDefaultCreateValueFor('note_private', (! empty($objectsrc->note_private) ? $objectsrc->note_private : null));
+		$note_public = $object->getDefaultCreateValueFor('note_public', (! empty($objectsrc->note_public) ? $objectsrc->note_public : null));
 
 		// Object source contacts list
 		$srccontactslist = $objectsrc->liste_contact(- 1, 'external', 1);
@@ -1471,6 +1503,9 @@ if ($action=='create')
 	{
 		$cond_reglement_id 	= $societe->cond_reglement_supplier_id;
 		$mode_reglement_id 	= $societe->mode_reglement_supplier_id;
+
+		$note_private = $object->getDefaultCreateValueFor('note_private');
+		$note_public = $object->getDefaultCreateValueFor('note_public');
 	}
 
 	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="post">';
@@ -1575,8 +1610,6 @@ if ($action=='create')
 		print '<input type="hidden" name="originid"       value="' . $objectsrc->id . '">';
 
 		$newclassname = $classname;
-		if ($newclassname == 'AskPriceSupplier')
-			$newclassname = 'CommercialAskPriceSupplier';
 		print '<tr><td>' . $langs->trans($newclassname) . '</td><td colspan="2">' . $objectsrc->getNomUrl(1) . '</td></tr>';
 		print '<tr><td>' . $langs->trans('TotalHT') . '</td><td colspan="2">' . price($objectsrc->total_ht) . '</td></tr>';
 		print '<tr><td>' . $langs->trans('TotalVAT') . '</td><td colspan="2">' . price($objectsrc->total_tva) . "</td></tr>";
@@ -1952,7 +1985,7 @@ elseif (! empty($object->id))
 		//print "$object->id, $object->socid, $object->fk_project";
 		if ($action == 'classify')
 		{
-			$form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS)?$object->socid:'-1'), $object->fk_project, 'projectid', 0, 0, 1);
+			$form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS)?$object->socid:-1), $object->fk_project, 'projectid', 0, 0, 1);
 		}
 		else
 		{
@@ -2305,7 +2338,7 @@ elseif (! empty($object->id))
 
 		print '<div class="clearboth"></div>';
 		print '<br>';
-		print_fiche_titre($langs->trans('SendOrderByMail'));
+		print load_fiche_titre($langs->trans('SendOrderByMail'));
 
 		dol_fiche_head('');
 
@@ -2317,6 +2350,15 @@ elseif (! empty($object->id))
 		$formmail->fromid   = $user->id;
 		$formmail->fromname = $user->getFullName($langs);
 		$formmail->frommail = $user->email;
+		if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 1))	// If bit 1 is set
+		{
+			$formmail->trackid='sor'.$object->id;
+		}
+		if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2))	// If bit 2 is set
+		{
+			include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+			$formmail->frommail=dolAddEmailTrackId($formmail->frommail, 'sor'.$object->id);
+		}		
 		$formmail->withfrom=1;
 		$liste=array();
 		foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key=>$value)	$liste[$key]=$value;
@@ -2403,11 +2445,11 @@ elseif (! empty($object->id))
 
         //Is everything filled?
         if (empty($ws_url) || empty($ws_key)) {
-            setEventMessage($langs->trans("ErrorWebServicesFieldsRequired"), 'errors');
+            setEventMessages($langs->trans("ErrorWebServicesFieldsRequired"), null, 'errors');
             $mode = "init";
             $error_occurred = true; //Don't allow to set the user/pass if thirdparty fields are not filled
         } else if ($mode != "init" && (empty($ws_user) || empty($ws_password))) {
-            setEventMessage($langs->trans("ErrorFieldsRequired"), 'errors');
+            setEventMessages($langs->trans("ErrorFieldsRequired"), null, 'errors');
             $mode = "init";
         }
 
@@ -2471,7 +2513,7 @@ elseif (! empty($object->id))
                 $ws_thirdparty = $result_user["user"]["fk_thirdparty"];
                 if (empty($ws_thirdparty))
                 {
-                    setEventMessage($langs->trans("RemoteUserMissingAssociatedSoc"), 'errors');
+                    setEventMessages($langs->trans("RemoteUserMissingAssociatedSoc"), null, 'errors');
                     $error_occurred = true;
                 }
                 else
@@ -2494,7 +2536,7 @@ elseif (! empty($object->id))
                         $result_product = $soapclient_product->call("getProductOrService", $ws_parameters, $ws_ns, '');
                         if (!$result_product)
                         {
-                            setEventMessage($line_id.$langs->trans("SOAPError")." ".$soapclient_product->error_str." - ".$soapclient_product->response, 'errors');
+                            setEventMessages($line_id.$langs->trans("SOAPError")." ".$soapclient_product->error_str." - ".$soapclient_product->response, null, 'errors');
                             $error_occurred = true;
                             break;
                         }
@@ -2503,17 +2545,17 @@ elseif (! empty($object->id))
                         $status_code = $result_product["result"]["result_code"];
                         if (empty($status_code)) //No result, check error str
                         {
-                            setEventMessage($langs->trans("SOAPError")." '".$soapclient_order->error_str."'", 'errors');
+                            setEventMessages($langs->trans("SOAPError")." '".$soapclient_order->error_str."'", null, 'errors');
                         }
                         else if ($status_code != "OK") //Something went wrong
                         {
                             if ($status_code == "NOT_FOUND")
                             {
-                                setEventMessage($line_id.$langs->trans("SupplierMissingRef")." '".$ref_supplier."'", 'warnings');
+                                setEventMessages($line_id.$langs->trans("SupplierMissingRef")." '".$ref_supplier."'", null, 'warnings');
                             }
                             else
                             {
-                                setEventMessage($line_id.$langs->trans("ResponseNonOK")." '".$status_code."' - '".$result_product["result"]["result_label"]."'", 'errors');
+                                setEventMessages($line_id.$langs->trans("ResponseNonOK")." '".$status_code."' - '".$result_product["result"]["result_label"]."'", null, 'errors');
                                 $error_occurred = true;
                                 break;
                             }
@@ -2538,12 +2580,12 @@ elseif (! empty($object->id))
                         }
 
                         if ($local_price != NULL && $local_price != $supplier_price) {
-                            setEventMessage($line_id.$langs->trans("RemotePriceMismatch")." ".$supplier_price." - ".$local_price, 'warnings');
+                            setEventMessages($line_id.$langs->trans("RemotePriceMismatch")." ".$supplier_price." - ".$local_price, null, 'warnings');
                         }
 
                         // Check if is in sale
                         if (empty($result_product["product"]["status_tosell"])) {
-                            setEventMessage($line_id.$langs->trans("ProductStatusNotOnSellShort")." '".$ref_supplier."'", 'warnings');
+                            setEventMessages($line_id.$langs->trans("ProductStatusNotOnSellShort")." '".$ref_supplier."'", null, 'warnings');
                         }
                     }
                 }
@@ -2551,17 +2593,17 @@ elseif (! empty($object->id))
             }
             elseif ($user_status_code == "PERMISSION_DENIED")
             {
-                setEventMessage($langs->trans("RemoteUserNotPermission"), 'errors');
+                setEventMessages($langs->trans("RemoteUserNotPermission"), null, 'errors');
                 $error_occurred = true;
             }
             elseif ($user_status_code == "BAD_CREDENTIALS")
             {
-                setEventMessage($langs->trans("RemoteUserBadCredentials"), 'errors');
+                setEventMessages($langs->trans("RemoteUserBadCredentials"), null, 'errors');
                 $error_occurred = true;
             }
             else
             {
-                setEventMessage($langs->trans("ResponseNonOK")." '".$user_status_code."'", 'errors');
+                setEventMessages($langs->trans("ResponseNonOK")." '".$user_status_code."'", null, 'errors');
                 $error_occurred = true;
             }
 
@@ -2696,12 +2738,26 @@ elseif (! empty($object->id))
 				// Reopen
 				if (in_array($object->statut, array(2)))
 				{
-					if ($user->rights->fournisseur->commande->commander)
-					{
-						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("Disapprove").'</a>';
-					}
+				    $buttonshown=0;
+				    if (! $buttonshown && $user->rights->fournisseur->commande->approuver)
+				    {
+				        if (empty($conf->global->SUPPLIER_ORDER_REOPEN_BY_APPROVER_ONLY)
+				            || (! empty($conf->global->SUPPLIER_ORDER_REOPEN_BY_APPROVER_ONLY) && $user->id == $object->user_approve_id))
+				        {
+				            print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("Disapprove").'</a>';
+				            $buttonshown++;
+				        }
+				    }
+				    if (! $buttonshown && $user->rights->fournisseur->commande->approve2 && ! empty($conf->global->SUPPLIER_ORDER_DOUBLE_APPROVAL))
+				    {
+				        if (empty($conf->global->SUPPLIER_ORDER_REOPEN_BY_APPROVER2_ONLY)
+				            || (! empty($conf->global->SUPPLIER_ORDER_REOPEN_BY_APPROVER2_ONLY) && $user->id == $object->user_approve_id2))
+				        {
+				            print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("Disapprove").'</a>';
+				        }
+				    }
 				}
-				if (in_array($object->statut, array(3, 5, 6, 7, 9)))
+				if (in_array($object->statut, array(3, 5, 6, 7, 9)) || ($object->statut == 4 && $object->billed))
 				{
 					if ($user->rights->fournisseur->commande->commander)
 					{
@@ -2712,18 +2768,19 @@ elseif (! empty($object->id))
 				// Create bill
 				if (! empty($conf->facture->enabled))
 				{
-					if (! empty($conf->fournisseur->enabled) && ($object->statut >= 2 && $object->statut != 9))  // 2 means accepted
+					if (! empty($conf->fournisseur->enabled) && ($object->statut >= 2 && $object->billed != 1))  // 2 means accepted
 					{
 						if ($user->rights->fournisseur->facture->creer)
 						{
 							print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a>';
 						}
-
-						//if ($user->rights->fournisseur->commande->creer && $object->statut > 2)
-						//{
-						//	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans("ClassifyBilled").'</a>';
-						//}
+					
+						if ($user->rights->fournisseur->commande->creer && $object->statut >= 2 && !empty($object->linkedObjectsIds['invoice_supplier']))
+						{
+							print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans("ClassifyBilled").'</a>';
+						}
 					}
+
 				}
 
 				// Create a remote order using WebService only if module is activated
@@ -2777,7 +2834,7 @@ elseif (! empty($object->id))
 
 		// Linked object block
 		$somethingshown = $form->showLinkedObjectBlock($object);
-
+		
 		// Show links to link elements
 		//$linktoelem = $form->showLinkToObjectBlock($object);
 		//if ($linktoelem) print '<br>'.$linktoelem;
@@ -2795,7 +2852,7 @@ elseif (! empty($object->id))
 			print '<form name="commande" action="card.php?id='.$object->id.'&amp;action=commande" method="post">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden"	name="action" value="commande">';
-			print_fiche_titre($langs->trans("ToOrder"),'','');
+			print load_fiche_titre($langs->trans("ToOrder"),'','');
 			print '<table class="border" width="100%">';
 			//print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("ToOrder").'</td></tr>';
 			print '<tr><td>'.$langs->trans("OrderDate").'</td><td>';
@@ -2823,7 +2880,7 @@ elseif (! empty($object->id))
 			print '<form action="card.php?id='.$object->id.'" method="post">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden"	name="action" value="livraison">';
-			print_fiche_titre($langs->trans("Receive"),'','');
+			print load_fiche_titre($langs->trans("Receive"),'','');
 			print '<table class="border" width="100%">';
 			//print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Receive").'</td></tr>';
 			print '<tr><td>'.$langs->trans("DeliveryDate").'</td><td>';

@@ -46,6 +46,8 @@ class modProductBatch extends DolibarrModules
 		$this->numero = 39000;
 
 		$this->family = "products";
+		$this->module_position = 45;
+		
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "Batch number, eat-by and sell-by date management module";
 
@@ -116,8 +118,9 @@ class modProductBatch extends DolibarrModules
 
 		$sql = array();
 
-		if(! empty($conf->cashdesk->enabled)) {
-    		if (!$conf->global->CASHDESK_NO_DECREASE_STOCK) {
+		if (! empty($conf->cashdesk->enabled)) {
+    		if (empty($conf->global->CASHDESK_NO_DECREASE_STOCK)) {
+    		    include_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
     		    $res = dolibarr_set_const($db,"CASHDESK_NO_DECREASE_STOCK",1,'chaine',0,'',$conf->entity);
     		}
 		}

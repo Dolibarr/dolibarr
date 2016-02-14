@@ -63,7 +63,7 @@ if ($action == 'setvalue' && $user->admin)
     if (! $error)
     {
     	$db->commit();
-    	setEventMessage($langs->trans("SetupSaved"));
+    	setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
     else
     {
@@ -82,17 +82,16 @@ llxHeader('',$langs->trans("LDAPSetup"),'EN:Module_LDAP_En|FR:Module_LDAP|ES:M&o
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 
-print_fiche_titre($langs->trans("LDAPSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("LDAPSetup"),$linkback,'title_setup');
 
 $head = ldap_prepare_head();
 
 // Test si fonction LDAP actives
 if (! function_exists("ldap_connect"))
 {
-	setEventMessage($langs->trans("LDAPFunctionsNotAvailableOnPHP"),'errors');
+	setEventMessages($langs->trans("LDAPFunctionsNotAvailableOnPHP"), null, 'errors');
 }
 
-dol_fiche_head($head, 'ldap', $langs->trans("LDAPSetup"));
 
 $var=true;
 $form=new Form($db);
@@ -100,6 +99,8 @@ $form=new Form($db);
 
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=setvalue">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+
+dol_fiche_head($head, 'ldap', $langs->trans("LDAPSetup"));
 
 print '<table class="noborder" width="100%">';
 
@@ -135,7 +136,7 @@ if (! empty($conf->societe->enabled))
 	print '</td><td>'.$langs->trans("LDAPDnContactActiveExample").'</td></tr>';
 }
 
-// Synchro adherentt active
+// Synchro member active
 if (! empty($conf->adherent->enabled))
 {
 	$var=!$var;
@@ -143,6 +144,7 @@ if (! empty($conf->adherent->enabled))
 	$arraylist=array();
 	$arraylist['0']=$langs->trans("No");
 	$arraylist['1']=$langs->trans("DolibarrToLDAP");
+	$arraylist['ldap2dolibarr']=$langs->trans("LDAPToDolibarr").' ('.$langs->trans("SupportedForLDAPImportScriptOnly").')';
 	print $form->selectarray('activemembers',$arraylist,$conf->global->LDAP_MEMBER_ACTIVE);
 	print '</td><td>'.$langs->trans("LDAPDnMemberActiveExample").'</td></tr>';
 }
@@ -239,11 +241,11 @@ print '</td><td>secret</td></tr>';
 
 print '</table>';
 
+dol_fiche_end();
+
 print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div>';
 
 print '</form>';
-
-print '</div>';
 
 print '<br>';
 
@@ -323,6 +325,5 @@ if (function_exists("ldap_connect"))
 	}
 }
 
-$db->close();
-
 llxFooter();
+$db->close();

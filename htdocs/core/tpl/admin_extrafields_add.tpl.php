@@ -100,9 +100,12 @@
 <table class="nobordernopadding">
 <tr><td>
 	<textarea name="param" id="param" cols="80" rows="<?php echo ROWS_4 ?>"><?php echo GETPOST('param'); ?></textarea>
-</td><td id="helpselect"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpselect"),1,0)?></td>
-<td><span id="helpsellist"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpsellist"),1,0)?></span>
-<span id="helpchkbxlst"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpchkbxlst"),1,0)?></span></td></tr>
+</td><td>
+<span id="helpselect"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpselect"),1,0)?></span>
+<span id="helpsellist"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpsellist"),1,0)?></span>
+<span id="helpchkbxlst"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpchkbxlst"),1,0)?></span>
+<span id="helplink"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelplink"),1,0)?></span>
+</td></tr>
 </table>
 </td>
 
@@ -114,7 +117,11 @@
 <!-- Required -->
 <tr><td><?php echo $langs->trans("Required"); ?></td><td class="valeur"><input id="required" type="checkbox" name="required" <?php echo (GETPOST('required')?' checked':''); ?>></td></tr>
 <!-- Always editable -->
-<tr><td><?php echo $langs->trans("AlwaysEditable"); ?></td><td class="valeur"><input id="alwayseditable" type="checkbox" name="alwayseditable" <?php echo (GETPOST('alwayseditable')?' checked':''); ?>></td></tr>
+<tr><td><?php echo $langs->trans("AlwaysEditable"); ?></td><td class="valeur"><input id="alwayseditable" type="checkbox" name="alwayseditable" <?php echo ((GETPOST('alwayseditable') || ! GETPOST('button'))?' checked':''); ?>></td></tr>
+<!-- Is visible or not -->
+<?php if (! empty($conf->global->MAIN_CAN_HIDE_EXTRAFIELDS)) { ?>
+<tr><td><?php echo $langs->trans("Hidden"); ?></td><td class="valeur"><input id="ishidden" type="checkbox" name="ishidden" <?php echo (GETPOST('ishidden') ?' checked' : ''); ?>></td></tr>
+<?php } ?>
 <?php if ($conf->global->MAIN_FEATURES_LEVEL >= 2) { ?>
 <!-- By default visible into list -->
 <tr><td><?php echo $langs->trans("ByDefaultInList"); ?>

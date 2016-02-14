@@ -1,0 +1,3 @@
+# Dolibarr language file - Source file is en_US - exports
+ChooseFileToImport=Wählen Sie zu importierende Datei und klicken Sie anschliessend auf das %s Symbol...
+ExportNumericFilter='NNNNN' filtert genau einen Wert<br>'NNNNN+NNNNN' filtert einen Wertebereich<br>'&gt;NNNNN' filtert nach kleineren Werten<br>'&gt;NNNNN' filtert nach grösseren Werten

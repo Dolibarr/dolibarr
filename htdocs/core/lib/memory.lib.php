@@ -58,7 +58,6 @@ function dol_setcache($memoryid,$data)
        	
 	    $memoryid=session_name().'_'.$memoryid;
 		//$dolmemcache->setOption(Memcached::OPT_COMPRESSION, false);
-		//print "Add memoryid=".$memoryid;
 		$dolmemcache->add($memoryid,$data);    // This fails if key already exists
 		$rescode=$dolmemcache->getResultCode();
 		if ($rescode == 0)

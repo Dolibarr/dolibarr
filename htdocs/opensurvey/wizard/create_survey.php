@@ -94,12 +94,12 @@ if (GETPOST("creation_sondage_date") || GETPOST("creation_sondage_autre"))
 			$_SESSION['champdatefin'] = dol_print_date($champdatefin,'dayrfc');
 			//$testdate = false;
 			//$_SESSION['champdatefin'] = dol_print_date($champdatefin,'dayrfc');
-			setEventMessage('ExpireDate','warnings');
+			setEventMessages('ExpireDate', null, 'warnings');
 		}
 	}
 
 	if (! $testdate) {
-		setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("ExpireDate")), 'errors');
+		setEventMessages($langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("ExpireDate")), null, 'errors');
 	}
 
 	if ($titre && $testdate)
@@ -131,7 +131,7 @@ $arrayofjs=array();
 $arrayofcss=array('/opensurvey/css/style.css');
 llxHeader('', $langs->trans("OpenSurvey"), '', "", 0, 0, $arrayofjs, $arrayofcss);
 
-print_fiche_titre($langs->trans("CreatePoll").' (1 / 2)');
+print load_fiche_titre($langs->trans("CreatePoll").' (1 / 2)');
 
 //debut du formulaire
 print '<form name="formulaire" action="" method="POST">'."\n";
@@ -144,7 +144,7 @@ print '<table class="border" width="100%">'."\n";
 print '<tr><td class="fieldrequired">'. $langs->trans("PollTitle") .'</td><td><input type="text" name="titre" size="40" maxlength="80" value="'.$_SESSION["titre"].'"></td>'."\n";
 if (! $_SESSION["titre"] && (GETPOST('creation_sondage_date') || GETPOST('creation_sondage_autre')))
 {
-	setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("PollTitle")), 'errors');
+	setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("PollTitle")), null, 'errors');
 }
 
 print '</tr>'."\n";

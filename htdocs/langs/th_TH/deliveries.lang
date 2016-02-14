@@ -7,6 +7,7 @@ DeliveryOrders=การสั่งซื้อการจัดส่งส�
 DeliveryDate=วันที่ส่งมอบ
 DeliveryDateShort=deliv วันที่
 CreateDeliveryOrder=เพื่อสร้างการส่งมอบ
+DeliveryStateSaved=Delivery state saved
 QtyDelivered=จำนวนการจัดส่ง
 SetDeliveryDate=ตั้งวันที่จัดส่ง
 ValidateDeliveryReceipt=ตรวจสอบการจัดส่งใบเสร็จรับเงิน
@@ -16,6 +17,9 @@ DeleteDeliveryReceiptConfirm=คุณแน่ใจหรือว่าต้
 DeliveryMethod=วิธีการจัดส่ง
 TrackingNumber=ติดตามจำนวน
 DeliveryNotValidated=การจัดส่งสินค้าไม่ได้ผ่านการตรวจสอบ
+StatusDeliveryCanceled=Canceled
+StatusDeliveryDraft=Draft
+StatusDeliveryValidated=Received
 # merou PDF model
 NameAndSignature=ชื่อและลายเซ็น:
 ToAndDate=To___________________________________ บน ____ / _____ / __________

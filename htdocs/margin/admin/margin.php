@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2012	Christophe Battarel	<christophe.battarel@altairis.fr>
+ * Copyright (C) 2016	Laurent Destailleur	<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,7 +74,7 @@ if ($action == 'remises')
 {
     if (dolibarr_set_const($db, 'MARGIN_METHODE_FOR_DISCOUNT', $_POST['MARGIN_METHODE_FOR_DISCOUNT'], 'chaine', 0, '', $conf->entity) > 0)
     {
-          setEventMessage($langs->trans("RecordModifiedSuccessfully"));
+          setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
     }
     else
     {
@@ -85,7 +86,7 @@ if ($action == 'typemarges')
 {
     if (dolibarr_set_const($db, 'MARGIN_TYPE', $_POST['MARGIN_TYPE'], 'chaine', 0, '', $conf->entity) > 0)
     {
-          setEventMessage($langs->trans("RecordModifiedSuccessfully"));
+          setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
     }
     else
     {
@@ -97,7 +98,7 @@ if ($action == 'contact')
 {
     if (dolibarr_set_const($db, 'AGENT_CONTACT_TYPE', $_POST['AGENT_CONTACT_TYPE'], 'chaine', 0, '', $conf->entity) > 0)
     {
-          setEventMessage($langs->trans("RecordModifiedSuccessfully"));
+          setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
     }
     else
     {
@@ -113,14 +114,14 @@ llxHeader('',$langs->trans("margesSetup"));
 
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("margesSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("margesSetup"),$linkback,'title_setup');
 
 
 $head = marges_admin_prepare_head();
 
 dol_fiche_head($head, 'parameters', $langs->trans("Margins"), 0, 'margin');
 
-print_fiche_titre($langs->trans("MemberMainOptions"),'','');
+print load_fiche_titre($langs->trans("MemberMainOptions"),'','');
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td width=300>'.$langs->trans("Description").'</td>';
@@ -145,20 +146,15 @@ if (isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == '1')
 print '/> ';
 print $langs->trans('MargeType1');
 print '<br>';
-/*print $langs->trans('MargeNette');
-print ' <input type="radio" name="MARGIN_TYPE" value="2" ';
-if (isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == '2')
-	print 'checked ';
-print '/>';*/
-// TODO Check that PMP is available when stock module is not enabled. If not, make this choice greyed when stock module disabled.
-//if (! empty($conf->stock->enabled))
-//{
-	print ' <input type="radio" name="MARGIN_TYPE" value="pmp" ';
-	if (isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == 'pmp')
-		print 'checked ';
-	print '/> ';
-	print $langs->trans('MargeType2');
-//}
+print ' <input type="radio" name="MARGIN_TYPE" value="pmp" ';
+if (isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == 'pmp') print 'checked ';
+print '/> ';
+print $langs->trans('MargeType2');
+print '<br>';
+print ' <input type="radio" name="MARGIN_TYPE" value="costprice" ';
+if (isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == 'costprice') print 'checked ';
+print '/> ';
+print $langs->trans('MargeType3');
 print '</td>';
 print '<td>';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" class="button">';

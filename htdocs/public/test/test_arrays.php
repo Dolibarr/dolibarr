@@ -65,8 +65,8 @@ else
 
 <h1>
 This page is a sample of page using tables. It is designed to make test with<br>
-- css (add parameter &theme=newtheme to test another theme or edit css of current theme)<br>
-- jmobile (add parameter <a href="<?php echo $_SERVER["PHP_SELF"].'?dol_use_jmobile=1&dol_optimize_smallscreen=1'; ?>">dol_use_jmobile=1&dol_optimize_smallscreen=1</a> to enable view with jmobile)<br>
+- css (add parameter &amp;theme=newtheme to test another theme or edit css of current theme)<br>
+- jmobile (add parameter <a href="<?php echo $_SERVER["PHP_SELF"].'?dol_use_jmobile=1&dol_optimize_smallscreen=1'; ?>">dol_use_jmobile=1&amp;dol_optimize_smallscreen=1</a> to enable view with jmobile)<br>
 - no javascript / usage for bind people (add parameter <a href="<?php echo $_SERVER["PHP_SELF"].'?nojs=1'; ?>">nojs=1</a> to force disable javascript)<br>
 - dataTables<br>
 - tablednd<br>
@@ -144,11 +144,10 @@ $nav.=$form->select_date($dateselect, 'dateselect', 0, 0, 1, '', 1, 0, 1);
 $nav.=' <input type="submit" name="submitdateselect" class="button" value="'.$langs->trans("Refresh").'">';
 $nav.='</form>';
 
-print_barre_liste('Title of my list', 3, $_SERVER["PHP_SELF"], '', '', '', 'Text in middle', 20, 5000, '', 0, $nav);
+$limit=10;
+print_barre_liste('Title of my list', 12, $_SERVER["PHP_SELF"], '', '', '', 'Text in middle', 20, 500, '', 0, $nav, '', $limit);
 
-?>
-<table class="liste noborder tagtable centpercent" id="tablelines3">
-<?php
+
 $moreforfilter.='<div class="divsearchfield">';
 $moreforfilter.=$langs->trans('This is a select list for a filter A'). ': ';
 $cate_arbo = array('field1'=>'value1a into the select list A','field2'=>'value2a');
@@ -175,12 +174,16 @@ $moreforfilter.='</div>';
 
 if (! empty($moreforfilter))
 {
-    print '<tr class="liste_titre">';
-    print '<td class="liste_titre" colspan="10">';
+    print '<div class="liste_titre liste_titre_bydiv centpercent">';
     print $moreforfilter;
-    print '</td></tr>';
+    $parameters=array();
+    $reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
+    print '</div>';
 }
+
 ?>
+<table class="tagtable liste<?php echo $moreforfilter?" listwithfilterbefore":""; ?>" id="tablelines3">
 <tr class="liste_titre">
 <?php print getTitleFieldOfList($langs->trans('title1'),0,$_SERVER["PHP_SELF"],'aaa','','','align="left"',$sortfield,$sortorder); ?>
 <?php print getTitleFieldOfList($langs->trans('title2'),0,$_SERVER["PHP_SELF"],'bbb','','','align="right"',$sortfield,$sortorder); ?>
@@ -188,6 +191,7 @@ if (! empty($moreforfilter))
 </tr>
 <tr class="pair"><td><?php echo $productspecimen->getNomUrl(1); ?></td><td align="right">b1</td><td class="tdlineupdown" align="left">c1</td></tr>
 <tr class="impair"><td>a2</td><td align="right">b2</td><td class="tdlineupdown" align="left">c2</td></tr>
+<tr class="pair"><td>a3</td><td align="right">b3</td><td class="tdlineupdown" align="left">c3</td></tr>
 </table>
 <br>
 

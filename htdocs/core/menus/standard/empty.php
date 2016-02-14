@@ -61,9 +61,10 @@ class MenuManager
 	 *  Show menu
 	 *
      *	@param	string	$mode			'top', 'left', 'jmobile'
-     *  @return	string
+     *  @param	array	$moredata		An array with more data to output
+     *  @return int                     0 or nb of top menu entries if $mode = 'topnb'
 	 */
-	function showmenu($mode)
+	function showmenu($mode, $moredata=null)
 	{
 		global $user,$conf,$langs,$dolibarr_main_db_name;
 
@@ -77,6 +78,11 @@ class MenuManager
 		$noout=0;
 		if ($mode == 'jmobile') $noout=1;
 
+		if ($mode == 'topnb')
+		{
+		    return 1;
+		}
+		
 		if ($mode == 'top' || $mode == 'jmobile')
 		{
 			if (empty($noout)) print_start_menu_array_empty();
@@ -99,7 +105,7 @@ class MenuManager
 
 			if ($mode == 'jmobile')
 			{
-				$this->topmenu=dol_clone($this->menu);
+				$this->topmenu = clone $this->menu;
 				unset($this->menu->liste);
 			}
 		}
@@ -133,20 +139,22 @@ class MenuManager
 
 			if (empty($noout))
 			{
-				$alt=0;
+				$alt=0; $altok=0; $blockvmenuopened=false;
 				$num=count($this->menu->liste);
 				for ($i = 0; $i < $num; $i++)
 				{
 					$alt++;
 					if (empty($this->menu->liste[$i]['level']))
 					{
+			    		$altok++;
+						$blockvmenuopened=true;
 						if (($alt%2==0))
 						{
-							print '<div class="blockvmenuimpair">'."\n";
+							print '<div class="blockvmenuimpair'.($alt == 1 ? ' blockvmenufirst':'').'">'."\n";
 						}
 						else
 						{
-							print '<div class="blockvmenupair">'."\n";
+							print '<div class="blockvmenupair'.($alt == 1 ? ' blockvmenufirst':'').'">'."\n";
 						}
 					}
 
@@ -201,11 +209,13 @@ class MenuManager
 						print "</div>\n";
 					}
 				}
+		
+				if ($altok) print '<div class="blockvmenuend"></div>';
 			}
 
 			if ($mode == 'jmobile')
 			{
-				$this->leftmenu=dol_clone($this->menu);
+				$this->leftmenu = clone $this->menu;
 				unset($this->menu->liste);
 			}
 		}

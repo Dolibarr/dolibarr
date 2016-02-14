@@ -35,10 +35,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 
 $langs->load('users');
 $langs->load('holidays');
+$langs->load('hrm');
 
 // Protection if external user
 if ($user->societe_id > 0) accessforbidden();
 
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
@@ -47,12 +49,13 @@ $page = $page == -1 ? 0 : $page;
 
 if (! $sortfield) $sortfield="cp.rowid";
 if (! $sortorder) $sortorder="DESC";
-$offset = $conf->liste_limit * $page ;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 $id = GETPOST('id','int');
 
+$sall            = GETPOST('sall');
 $search_ref      = GETPOST('search_ref');
 $month_create    = GETPOST('month_create');
 $year_create     = GETPOST('year_create');
@@ -64,7 +67,7 @@ $search_employe  = GETPOST('search_employe');
 $search_valideur = GETPOST('search_valideur');
 $search_statut   = GETPOST('select_statut');
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
 	$search_ref="";
 	$month_create="";
@@ -77,6 +80,12 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 	$search_valideur="";
 	$search_statut="";
 }
+
+// List of fields to search into when doing a "search in all"
+$fieldstosearchall = array(
+    'cp.rowid'=>'Ref',
+    'cp.description'=>'Description',
+);
 
 
 /*
@@ -95,6 +104,9 @@ $holiday = new Holiday($db);
 $holidaystatic=new Holiday($db);
 $fuser = new User($db);
 
+$childids = $user->getAllChildIds();
+$childids[]=$user->id;
+
 // Update sold
 $result = $holiday->updateBalance();
 
@@ -104,7 +116,7 @@ $filter='';
 
 llxHeader(array(),$langs->trans('CPTitreMenu'));
 
-$order = $db->order($sortfield,$sortorder).$db->plimit($conf->liste_limit + 1, $offset);
+$order = $db->order($sortfield,$sortorder).$db->plimit($limit + 1, $offset);
 
 // WHERE
 if(!empty($search_ref))
@@ -171,10 +183,13 @@ if(!empty($search_valideur) && $search_valideur != -1) {
 if(!empty($search_statut) && $search_statut != -1) {
     $filter.= " AND cp.statut = '".$db->escape($search_statut)."'\n";
 }
+// Search all
+if (!empty($sall))
+{
+	$filter.= natural_search(array_keys($fieldstosearchall), $sall);
+}
 
-/*************************************
- * Fin des filtres de recherche
-*************************************/
+if (empty($user->rights->holiday->read_all)) $filter.=' AND cp.fk_user IN ('.join(',',$childids).')';
 
 // Récupération de l'ID de l'utilisateur
 $user_id = $user->id;
@@ -187,7 +202,7 @@ if ($id > 0)
 	$user_id = $fuser->id;
 }
 // Récupération des congés payés de l'utilisateur ou de tous les users
-if (empty($user->rights->holiday->write_all) || $id > 0)
+if (empty($user->rights->holiday->read_all) || $id > 0)
 {
 	$holiday_payes = $holiday->fetchByUser($user_id,$order,$filter);	// Load array $holiday->holiday
 }
@@ -198,7 +213,7 @@ else
 // Si erreur SQL
 if ($holiday_payes == '-1')
 {
-    print_fiche_titre($langs->trans('CPTitreMenu'), '', 'title_hrm.png');
+    print load_fiche_titre($langs->trans('CPTitreMenu'), '', 'title_hrm.png');
 
     dol_print_error($db, $langs->trans('Error').' '.$holiday->error);
     exit();
@@ -207,51 +222,43 @@ if ($holiday_payes == '-1')
 
 // Show table of vacations
 
-$var=true; $num = count($holiday->holiday);
+$var=true;
+$num = count($holiday->holiday);
 $form = new Form($db);
 $formother = new FormOther($db);
 
 if ($id > 0)
 {
-	$head = user_prepare_head($fuser);
-
 	$title = $langs->trans("User");
+	$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
+	$head = user_prepare_head($fuser);
+	
 	dol_fiche_head($head, 'paidholidays', $title, 0, 'user');
 
-	print '<table class="border" width="100%">';
-
-	// Ref
-	print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
-	print '<td colspan="2">';
-	print $form->showrefnav($fuser,'id','',$user->rights->user->user->lire || $user->admin);
-	print '</td>';
-	print '</tr>';
-
-	// LastName
-	print '<tr><td width="25%">'.$langs->trans("LastName").'</td>';
-	print '<td colspan="2">'.$fuser->lastname.'</td>';
-	print "</tr>\n";
-
-	// FirstName
-	print '<tr><td width="25%">'.$langs->trans("FirstName").'</td>';
-	print '<td colspan="2">'.$fuser->firstname.'</td>';
-	print "</tr>\n";
-
-	print '</table><br>';
+    dol_banner_tab($fuser,'id',$linkback,$user->rights->user->user->lire || $user->admin);
+    
+    
+    print '<div class="underbanner clearboth"></div>';
+    
+    print '<br>';
+    
 }
 else
 {
-	print_barre_liste($langs->trans("ListeCP"), $page, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, "", $num, 0, 'title_hrm.png');
+    //print $num;
+    //print count($holiday->holiday);
+	print_barre_liste($langs->trans("ListeCP"), $page, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, "", $num, count($holiday->holiday), 'title_hrm.png', 0, '', '', $limit);
 
 	dol_fiche_head('');
 }
 
+$alltypeleaves=$holiday->getTypes(1,-1);    // To have labels
 
 $out='';
 $typeleaves=$holiday->getTypes(1,1);
 foreach($typeleaves as $key => $val)
 {
-	$nb_type = $holiday->getCPforUser($user->id, $val['rowid']);
+	$nb_type = $holiday->getCPforUser($user_id, $val['rowid']);
 	$nb_holiday += $nb_type;
 	$out .= ' - '.$val['label'].': <strong>'.($nb_type?price2num($nb_type):0).'</strong><br>';
 }
@@ -265,6 +272,18 @@ if ($id > 0) print '</br>';
 
 
 print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="list">';
+print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+
+if ($sall)
+{
+    foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
+    print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+}
+    
 print '<table class="noborder" width="100%;">';
 print "<tr class=\"liste_titre\">";
 print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"cp.rowid","",'','',$sortfield,$sortorder);
@@ -272,7 +291,7 @@ print_liste_field_titre($langs->trans("DateCreateCP"),$_SERVER["PHP_SELF"],"cp.d
 print_liste_field_titre($langs->trans("Employe"),$_SERVER["PHP_SELF"],"cp.fk_user","",'','',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("ValidatorCP"),$_SERVER["PHP_SELF"],"cp.fk_validator","",'','',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],'','','','',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("Duration"),$_SERVER["PHP_SELF"],'','','','align="center"',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("Duration"),$_SERVER["PHP_SELF"],'','','','align="right"',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("DateDebCP"),$_SERVER["PHP_SELF"],"cp.date_debut","",'','align="center"',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("DateFinCP"),$_SERVER["PHP_SELF"],"cp.date_fin","",'','align="center"',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"cp.statut","",'','align="center"',$sortfield,$sortorder);
@@ -349,9 +368,9 @@ $holiday->selectStatutCP($search_statut);
 print '</td>';
 
 // ACTION
-print '<td align="right">';
-print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+print '<td class="liste_titre" align="right">';
+$searchpitco=$form->showFilterAndCheckAddButtons(0);
+print $searchpitco;
 print '</td>';
 
 print "</tr>\n";
@@ -388,7 +407,10 @@ if (! empty($holiday->holiday))
 		print '<td style="text-align: center;">'.dol_print_date($date,'day').'</td>';
 		print '<td>'.$userstatic->getNomUrl('1').'</td>';
 		print '<td>'.$approbatorstatic->getNomUrl('1').'</td>';
-		print '<td>'.$infos_CP['fk_type'].'</td>';
+		print '<td>';
+		$label=$alltypeleaves[$infos_CP['fk_type']]['label'];
+		print $label?$label:$infos_CP['fk_type'];
+		print '</td>';
 		print '<td align="right">';
 		$nbopenedday=num_open_day($infos_CP['date_debut_gmt'], $infos_CP['date_fin_gmt'], 0, 1, $infos_CP['halfday']);
 		print $nbopenedday.' '.$langs->trans('DurationDays');
@@ -406,20 +428,20 @@ if (! empty($holiday->holiday))
 if($holiday_payes == '2')
 {
     print '<tr>';
-    print '<td colspan="9" '.$bc[false].'">'.$langs->trans('None').'</td>';
+    print '<td colspan="10" '.$bc[false].'">'.$langs->trans('None').'</td>';
     print '</tr>';
 }
 
 print '</table>';
 print '</form>';
 
-if ($user_id == $user->id)
+/*if ($user_id == $user->id)
 {
 	print '<br>';
 	print '<div style="float: right; margin-top: 8px;">';
 	print '<a href="./card.php?action=request" class="butAction">'.$langs->trans('AddCP').'</a>';
 	print '</div>';
-}
+}*/
 
 llxFooter();
 

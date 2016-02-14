@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - other
+Tools=Herramientas
 Notify_PROPAL_VALIDATE=Validación cotización cliente
 Notify_PROPAL_SENTBYMAIL=Envío cotización por e-mail
 PredefinedMailContentSendProposal=Buenos días, __CONTACTCIVNAME__ \n\n Nos ponemos en contacto con usted para facilitarle la cotización __PROPREF__\n\n Ante cualquier duda, consúltenos y será atendido a la mayor brevedad posible.\n\n __PERSONALIZED__Cordialmente\n\n__SIGNATURE__
@@ -7,3 +8,4 @@ NumberOfUnitsProposals=Número de unidades en las cotizaciones en los últimos 1
 EMailTextProposalValidated=La cotización %s que le concierne ha sido validado.
 PropalClosedSignedInDolibarr=Cotización %s firmada en Dolibarr
 PropalClosedRefusedInDolibarr=Cotización %s rechazada en Dolibarr
+Export=Exportar

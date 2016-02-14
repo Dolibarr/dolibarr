@@ -15,7 +15,7 @@
  */
 
 body {
-	background: #eee;
+	background: #fff;
 	color: #333;
 	margin: 0;
 	padding: 0;
@@ -30,9 +30,9 @@ p {
 .conteneur {
 	background: #fff;
 	text-align: left;
-	max-width: 770px;
-	margin: 10px auto;
-	border: 2px solid #000;
+	/*max-width: 770px;*/
+	/*margin: 10px auto;
+	border: 2px solid #000;*/
 }
 
 .conteneur_img_gauche {
@@ -41,6 +41,11 @@ p {
 
 .conteneur_img_droite {
 	/* background: url("../img/bg_conteneur_droite.png") top right repeat-y; */
+}
+
+.contenu {
+	width: 100%;
+	text-align: center;
 }
 
 /* ------------------- Header ------------------- */
@@ -138,6 +143,7 @@ li.menu_choix0 {
 	margin-right: 20px;
 	border: 1px dotted #5ca64d;
 	padding-bottom: 10px;
+	vertical-align: middle;
 }
 
 p.titre {
@@ -192,8 +198,10 @@ p.titre {
 
 /* ------------------- Contenu ------------------- */
 .principal_login {
-	margin: 30px;
+	margin: 10px;
 	padding: 0;
+	max-width: 800px;
+	text-align: left;
 }
 
 .formulaire_login {
@@ -221,8 +229,7 @@ p.titre {
 	float: left;
 	margin: 0 15px;
 	padding: 0;
-	max-width: 500px;
-	width: 100%;
+	max-width: 900px;
 }
 
 .titre1 {
@@ -330,7 +337,7 @@ p.titre {
 /* -------------- Boutons --------------------- */
 .bouton_ajout_article {
 	margin-top: 10px;
-	width: 100%;
+	width: 60%;
 	height: 40px;
 }
 

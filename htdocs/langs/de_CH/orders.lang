@@ -1,0 +1,11 @@
+# Dolibarr language file - Source file is en_US - orders
+OrdersArea=Kundenauftrags-Übersicht
+OrderCard=Bestell-Karte
+CancelOrder=Bestellung verwerfen
+LastModifiedOrders=Die letzen %s bearbeiteten Bestellungen
+CloseOrder=Bestellung schliessen
+ConfirmCloseOrder=Möchten Sie diese Bestellung wirklich schliessen? Nach ihrer Schliessung kann eine Bestellung nur mehr in Rechnung gestellt werden.
+ConfirmCloseOrderIfSending=Möchten Sie diese Bestellung wirklich schliessen? Tun Sie dies erst nachdem alle Versandvorgäng abgeschlossen wurden.
+ComptaCard=Buchhaltungskarte
+UseCustomerContactAsOrderRecipientIfExist=Adresse des Kundenkontakts statt des Geschäftspartners für die Zustellung verwenden
+Error_OrderNotChecked=Keine zu verrechnenden Bestellungen ausgewählt

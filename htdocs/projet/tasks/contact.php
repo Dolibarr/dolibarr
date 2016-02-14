@@ -94,11 +94,11 @@ if ($action == 'addcontact' && $user->rights->projet->creer)
 		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 		{
 			$langs->load("errors");
-			setEventMessage($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), 'errors');
+			setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
 		}
 		else
 		{
-			setEventMessage($object->error, 'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 }
@@ -173,10 +173,12 @@ if ($id > 0 || ! empty($ref))
 {
 	if ($object->fetch($id, $ref) > 0)
 	{
+	    $id = $object->id;     // So when doing a search from ref, id is also set correctly.
+	    
 		$result=$projectstatic->fetch($object->fk_project);
 		if (! empty($projectstatic->socid)) $projectstatic->fetch_thirdparty();
 
-		$object->project = dol_clone($projectstatic);
+		$object->project = clone $projectstatic;
 
 		$userWrite  = $projectstatic->restrictedProjectArea($user,'write');
 

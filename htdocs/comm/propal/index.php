@@ -52,7 +52,7 @@ $help_url="EN:Module_Commercial_Proposals|FR:Module_Propositions_commerciales|ES
 
 llxHeader("",$langs->trans("ProspectionArea"),$help_url);
 
-print_fiche_titre($langs->trans("ProspectionArea"));
+print load_fiche_titre($langs->trans("ProspectionArea"));
 
 //print '<table width="100%" class="notopnoleftnoright">';
 //print '<tr><td valign="top" width="30%" class="notopnoleft">';
@@ -66,11 +66,9 @@ $var=false;
 print '<form method="post" action="'.DOL_URL_ROOT.'/comm/propal/list.php">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<table class="noborder nohover" width="100%">';
-print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchPropal").'</td></tr>';
+print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
 print '<tr '.$bc[$var].'><td>';
-print $langs->trans("Ref").':</td><td><input type="text" class="flat" name="sref" size=18></td><td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-print '<tr '.$bc[$var].'><td class="nowrap">'.$langs->trans("Other").':</td><td><input type="text" class="flat" name="sall" size="18"></td>';
-print '</tr>';
+print $langs->trans("Proposal").':</td><td><input type="text" class="flat" name="sall" size=18></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
 print "</table></form><br>\n";
 
 

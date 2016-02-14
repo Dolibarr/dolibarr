@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
@@ -56,9 +56,9 @@ $fourn_id = GETPOST("fourn_id",'int');
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if (! $sortfield) $sortfield="stock_physique";
+if (! $sortfield) $sortfield="p.ref";
 if (! $sortorder) $sortorder="ASC";
-$limit = $conf->liste_limit;
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $offset = $limit * $page ;
 
 // Load sale and categ filters
@@ -227,27 +227,32 @@ if ($resql)
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="type" value="'.$type.'">';
 
-	print '<table class="liste" width="100%">';
-
 	// Filter on categories
  	$moreforfilter='';
 	if (! empty($conf->categorie->enabled))
 	{
+	 	$moreforfilter.='<div class="divsearchfield">';
 	 	$moreforfilter.=$langs->trans('Categories'). ': ';
 		$moreforfilter.=$htmlother->select_categories(Categorie::TYPE_PRODUCT,$search_categ,'search_categ');
-	 	$moreforfilter.=' &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ';
+	 	$moreforfilter.='</div>';
 	}
 	//$moreforfilter.=$langs->trans("StockTooLow").' <input type="checkbox" name="toolowstock" value="1"'.($toolowstock?' checked':'').'>';
- 	if ($moreforfilter)
-	{
-		print '<tr class="liste_titre">';
-		print '<td class="liste_titre" colspan="11">';
-	    print $moreforfilter;
-	    print '</td></tr>';
-	}
+    
+    if (! empty($moreforfilter))
+    {
+        print '<div class="liste_titre liste_titre_bydiv centpercent">';
+        print $moreforfilter;
+        $parameters=array();
+        $reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+        print $hookmanager->resPrint;
+        print '</div>';
+    }
+	
 
 	$param="&tosell=$tosell&tobuy=$tobuy".(isset($type)?"&type=$type":"")."&fourn_id=$fourn_id&snom=$snom&sref=$sref&batch=$batch&eatby=$eatby&sellby=$sellby";
 
+    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">';
+	
 	// Lignes des titres
 	print "<tr class=\"liste_titre\">";
 	print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"], "p.ref",$param,"","",$sortfield,$sortorder);
@@ -261,9 +266,9 @@ if ($resql)
 	print_liste_field_titre($langs->trans("PhysicalStock"), $_SERVER["PHP_SELF"], "stock_physique",$param,"",'align="right"',$sortfield,$sortorder);
 	// TODO Add info of running suppliers/customers orders
 	//print_liste_field_titre($langs->trans("TheoreticalStock"),$_SERVER["PHP_SELF"], "stock_theorique",$param,"",'align="right"',$sortfield,$sortorder);
-	print '<td class="liste_titre">&nbsp;</td>';
-	print_liste_field_titre($langs->trans("Sell"),$_SERVER["PHP_SELF"], "p.tosell",$param,"",'align="right"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Buy"),$_SERVER["PHP_SELF"], "p.tobuy",$param,"",'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre('');
+	print_liste_field_titre($langs->trans("Status").' ('.$langs->trans("Sell").')',$_SERVER["PHP_SELF"], "p.tosell",$param,"",'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Status").' ('.$langs->trans("Buy").')',$_SERVER["PHP_SELF"], "p.tobuy",$param,"",'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
 	// Lignes des champs de filtre
@@ -287,10 +292,10 @@ if ($resql)
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
-	print '<td class="liste_titre" align="right">';
-	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" alt="'.$langs->trans("Search").'">';
-	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" alt="'.$langs->trans("RemoveFilter").'">';
-	print '</td>';
+    print '<td class="liste_titre" align="right">';
+    $searchpitco=$form->showFilterAndCheckAddButtons(0);
+    print $searchpitco;
+    print '</td>';
 	print '</tr>';
 
 	$product_static=new Product($db);
@@ -345,8 +350,11 @@ if ($resql)
 
 		// Warehouse
 		print '<td>';
-		$warehousetmp->fetch($objp->fk_entrepot);
-		print $warehousetmp->getNomUrl(1);
+		if ($objp->fk_entrepot > 0)
+		{
+    		$warehousetmp->fetch($objp->fk_entrepot);
+    		print $warehousetmp->getNomUrl(1);
+		}
 		print '</td>';
 		print '<td align="center">'.$objp->batch.'</td>';
 		print '<td align="center">'.dol_print_date($db->jdate($objp->eatby), 'day').'</td>';

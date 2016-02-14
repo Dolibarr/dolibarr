@@ -48,7 +48,6 @@ RefusedReason=دلیلی برای رد
 RefusedInvoicing=حسابداری رد
 NoInvoiceRefused=آیا رد اتهام نیست
 InvoiceRefused=Invoice refused (Charge the rejection to customer)
-Status=وضعیت
 StatusUnknown=ناشناخته
 StatusWaiting=انتظار
 StatusTrans=فرستاده

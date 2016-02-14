@@ -1,0 +1,4 @@
+# Dolibarr language file - Source file is en_US - cron
+CronInfo=Das Schedule Cron-Jobs Module  erlaubt die geplanten Cron-Jobs die programmiert wurden durchzuführen.
+CronStatusInactive=Deaktivert
+JobFinished=Job gestarted und beendet

@@ -46,7 +46,7 @@ if ($page == -1) { $page = 0; }
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-$limit = $conf->liste_limit;
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 if (! $sortfield) $sortfield="cs.date_ech";
 if (! $sortorder) $sortorder="DESC";
 
@@ -119,6 +119,12 @@ if ($typeid) {
     $sql .= " AND cs.fk_type=".$typeid;
 }
 $sql.= " GROUP BY cs.rowid, cs.fk_type, cs.amount, cs.date_ech, cs.libelle, cs.paye, cs.periode, c.libelle";
+$totalnboflines=0;
+$result=$db->query($sql);
+if ($result)
+{
+    $totalnboflines = $db->num_rows($result);
+}
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit+1,$offset);
 
@@ -136,7 +142,7 @@ if ($resql)
 
 	if ($year)
 	{
-		print_fiche_titre($langs->trans("SocialContributions"),($year?"<a href='index.php?year=".($year-1)."'>".img_previous()."</a> ".$langs->trans("Year")." $year <a href='index.php?year=".($year+1)."'>".img_next()."</a>":""));
+		print load_fiche_titre($langs->trans("SocialContributions"),($year?"<a href='index.php?year=".($year-1)."'>".img_previous()."</a> ".$langs->trans("Year")." $year <a href='index.php?year=".($year+1)."'>".img_next()."</a>":""));
 	}
 	else
 	{
@@ -187,9 +193,12 @@ if ($resql)
 		print '<td class="liste_titre">&nbsp;</td>';
 		// Status
 		print '<td class="liste_titre">&nbsp;</td>';
-		print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-		print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
-		print "</td></tr>\n";
+
+        print '<td class="liste_titre" align="right">';
+        $searchpitco=$form->showFilterAndCheckAddButtons(0);
+        print $searchpitco;
+        print '</td>';
+		print "</tr>\n";
 
 		while ($i < min($num,$limit))
 		{
@@ -247,9 +256,5 @@ else
 	dol_print_error($db);
 }
 
-
-
-
-$db->close();
-
 llxFooter();
+$db->close();

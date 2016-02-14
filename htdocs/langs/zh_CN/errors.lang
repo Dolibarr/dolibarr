@@ -3,8 +3,6 @@
 # No errors
 NoErrorCommitIsDone=没有错误，我们承诺
 # Errors
-Error=错误
-Errors=错误
 ErrorButCommitIsDone=发现错误我们将进行验证
 ErrorBadEMail=电子邮件%s是错误的
 ErrorBadUrl=网址%s是错误的
@@ -172,8 +170,11 @@ ErrorFieldMustBeANumeric=Field <b>%s</b> must be a numeric value
 ErrorFieldMustBeAnInteger=Field <b>%s</b> must be an integer
 ErrorMandatoryParametersNotProvided=Mandatory parameter(s) not provided
 ErrorOppStatusRequiredIfAmount=You set an estimated amount for this opportunity/lead. So you must also enter its status
+ErrorBadDefinitionOfMenuArrayInModuleDescriptor=Bad Definition Of Menu Array In Module Descriptor (bad value for key fk_menu)
+ErrorSavingChanges=An error has ocurred when saving the changes
 
 # Warnings
+WarningPasswordSetWithNoAccount=A password was set for this member. However, no user account was created. So this password is stored but can't be used to login to Dolibarr. It may be used by an external module/interface but if you don't need to define any login nor password for a member, you can disable option "Manage a login for each member" from Member module setup. If you need to manage a login but don't need any password, you can keep this field empty to avoid this warning. Note: Email can also be used as a login if the member is linked to a user.
 WarningMandatorySetupNotComplete=强制设置参数尚未定义
 WarningSafeModeOnCheckExecDir=警告，PHP的选项<b>safe_mode设置</b>为在此情况下命令必须在<b>safe_mode_exec_dir之</b>存储参数的PHP目录内宣布。
 WarningAllowUrlFopenMustBeOn=参数<b>allow_url_fopen选项</b>必须设置<b>为</b> php.ini <b>在</b>菲勒有这个模块的工作完全。您必须手动修改这个文件。

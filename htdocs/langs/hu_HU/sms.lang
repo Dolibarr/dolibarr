@@ -1,9 +1,9 @@
 # Dolibarr language file - Source file is en_US - sms
 Sms=Sms
-SmsSetup=Sms setup
+SmsSetup=Sms beállítás
 SmsDesc=Ez az oldal lehetővé teszi, hogy meghatározza globals opciók SMS funkciók
 SmsCard=SMS-kártya
-AllSms=Minden SMS campains
+AllSms=Minden SMS kampány
 SmsTargets=Célok
 SmsRecipients=Célok
 SmsRecipient=Cél
@@ -49,5 +49,6 @@ SendSms=SMS küldése
 SmsInfoCharRemain=Nb a fennmaradó karakterek
 SmsInfoNumero= (Nemzetközi formátum, azaz: 33899701761)
 DelayBeforeSending=Késleltetett küldés előtt (perc)
+SmsNoPossibleSenderFound=No sender available. Check setup of your SMS provider.
 SmsNoPossibleRecipientFound=Nincs cél elérhető. Ellenőrizze beállítása az SMS szolgáltató.
 

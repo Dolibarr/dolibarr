@@ -115,41 +115,46 @@ if (! empty($errors)) {
     $form_complete   = false;
 }
 
+
+
 /*
  *	View
  */
 
 llxHeader();
 
-print_fiche_titre($langs->trans("LoanCalc"));
+print load_fiche_titre($langs->trans("LoanCalc"));
 print $langs->trans('LoanCalcDesc');
 
 print '<form method="GET" name="information" action="'.$_SERVER['PHP_SELF'].'">';
-print '<input type="hidden" name="form_complete" value="1">';
-print '<table cellpadding="2" cellspacing="0" border="0" width="100%">';
+print '<input type="hidden" name="form_complete" value="1"><br>';
+
+dol_fiche_head('');
+
+print '<table class="noborder centpercent">';
 //print '<tr>';
 //print '<td align="right"><img src="/images/clear.gif" width="225" height="1" border="0" alt=""></td>';
 //print '<td align="smalltext" width="100%"><img src="/images/clear.gif" width="250" height="1" border="0" alt=""></td>';
 //print '</tr>';
-print '<tr bgcolor="#cccccc">';
+print '<tr>';
 print '<td align="center" colspan="2"><b>'.$langs->trans('PurchaseFinanceInfo').'</b></td>';
 print '</tr>';
-print '<tr bgcolor="#eeeeee">';
+print '<tr>';
 print '<td align="right">'.$langs->trans('SalePriceOfAsset').':</td>';
 print '<td><input type="text" size="10" name="sale_price" value="'.$sale_price.'"> '.$langs->trans("Currency".$conf->currency).'</td>';print '</tr>';
-print '<tr bgcolor="#eeeeee">';
+print '<tr>';
 print '<td align="right">'.$langs->trans('PercentageDown').':</td>';
 print '<td><input type="text" size="5" name="down_percent" value="'.$down_percent.'">%</td>';
 print '</tr>';
-print '<tr bgcolor="#eeeeee">';
+print '<tr>';
 print '<td align="right">'.$langs->trans('LengthOfMortgage').':</td>';
 print '<td><input type="text" size="3" name="year_term" value="'.$year_term.'">years</td>';
 print '</tr>';
-print '<tr bgcolor="#eeeeee">';
+print '<tr>';
 print '<td align="right">'.$langs->trans('AnnualInterestRate').':</td>';
 print '<td><input type="text" size="5" name="annual_interest_percent" value="'.$annual_interest_percent.'">%</td>';
 print '</tr>';
-print '<tr bgcolor="#eeeeee">';
+print '<tr>';
 print '<td align="right">'.$langs->trans('ExplainCalculations').':</td>';
 
 if (! empty($show_progress))
@@ -164,7 +169,9 @@ else
 print '</tr>';
 print '</table>';
 
-print '<br><center><input class="button" type="submit" value="'.$langs->trans("Calculate").'"> &nbsp; &nbsp; ';
+dol_fiche_end();
+
+print '<center><input class="button" type="submit" value="'.$langs->trans("Calculate").'"> &nbsp; &nbsp; ';
 print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></center>';
 
 // If the form has already been calculated, the $down_payment

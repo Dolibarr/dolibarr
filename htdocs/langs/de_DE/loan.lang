@@ -4,7 +4,7 @@ Loans=Kredite
 NewLoan=Neuer Kredit
 ShowLoan=Zeige Kredit
 PaymentLoan=Kreditauszahlung
-ShowLoanPayment=Zeige Kreidtauszahlung
+ShowLoanPayment=Zeige Kreditauszahlung
 Capital=Kapital
 Insurance=Versicherung
 Interest=Zins
@@ -22,13 +22,13 @@ ErrorLoanLength=Die Kreditdauer muss eine Nummer sein und größer als 0
 ErrorLoanInterest=Die jährlichen Zinsen müssen eine Nummer sein und größer als 0
 # Calc
 LoanCalc=Bankkreditrechner
-PurchaseFinanceInfo=Kauf und Finanzierungs Inforamtionen
+PurchaseFinanceInfo=Einkauf- und Finanzierungsinformationen
 SalePriceOfAsset=Verkaufspreis
 PercentageDown=Prozentsatz
 LengthOfMortgage=Kreditlaufzeit
 AnnualInterestRate=Jahreszinssatz
 ExplainCalculations=Berechnungs-Erläuterung
-ShowMeCalculationsAndAmortization=Zeigen Sie mir die Berechnungen und Amortization
+ShowMeCalculationsAndAmortization=Zeigen Sie mir die Berechnungen und Amortisation
 MortgagePaymentInformation=Kredit Zahlung Informationen
 DownPayment=Anzahlung
 DownPaymentDesc=Die <b>Anzahlung</b> = Der Preis des Kredits multipliziert mit dem Prozentsatz geteilt durch 100  (5% wird 5/100 oder 0,05)

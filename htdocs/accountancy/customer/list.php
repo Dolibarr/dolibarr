@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2013-2015 Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013-2016 Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2014-2015 Ari Elbaz (elarifr)	<github@accedinfo.com>
  * Copyright (C) 2013-2014 Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
@@ -20,9 +20,9 @@
  */
 
 /**
- * \file		htdocs/accountancy/customer/list.php
- * \ingroup		Accounting Expert
- * \brief		Ventilation page from customers invoices
+ * \file htdocs/accountancy/customer/list.php
+ * \ingroup Accountancy
+ * \brief Ventilation page from customers invoices
  */
 require '../../main.inc.php';
 
@@ -58,16 +58,16 @@ $btn_ventil = GETPOST('ventil', 'alpha');
 // Getpost Order and column and limit page
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
-$page = GETPOST('page','int');
+$page = GETPOST('page', 'int');
 if ($page < 0)
 	$page = 0;
 
 if (! empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)) {
 	$limit = $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION;
 } else if ($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION <= 0) {
-	$limit = $conf->liste_limit;
+	$limit = GETPOST('limit') ? GETPOST('limit', 'int') : $conf->liste_limit;
 } else {
-	$limit = $conf->liste_limit;
+	$limit = GETPOST('limit') ? GETPOST('limit', 'int') : $conf->liste_limit;
 }
 $offset = $limit * $page;
 
@@ -87,10 +87,9 @@ if (! $user->rights->accounting->ventilation->dispatch)
 	accessforbidden();
 
 $formventilation = new FormVentilation($db);
-
 $accounting = new AccountingAccount($db);
-$aarowid_s = $accounting->fetch('', ACCOUNTING_SERVICE_SOLD_ACCOUNT);
-$aarowid_p = $accounting->fetch('', ACCOUNTING_PRODUCT_SOLD_ACCOUNT);
+$aarowid_s = $accounting->fetch('', $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT, 1);
+$aarowid_p = $accounting->fetch('', $conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT, 1);
 
 // Purge search criteria
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) {
@@ -130,12 +129,13 @@ print '<script type="text/javascript">
  * Action
  */
 
-if ($action == 'ventil' && !empty($btn_ventil)) {
+if ($action == 'ventil' && ! empty($btn_ventil)) {
 	print '<div><font color="red">' . $langs->trans("Processing") . '...</font></div>';
 	if (! empty($codeventil) && ! empty($mesCasesCochees)) {
 		print '<div><font color="red">' . count($mesCasesCochees) . ' ' . $langs->trans("SelectedLines") . '</font></div>';
 		$mesCodesVentilChoisis = $codeventil;
 		$cpt = 0;
+		
 		foreach ( $mesCasesCochees as $maLigneCochee ) {
 			$maLigneCourante = explode("_", $maLigneCochee);
 			$monId = $maLigneCourante[0];
@@ -165,16 +165,27 @@ if ($action == 'ventil' && !empty($btn_ventil)) {
  * Customer Invoice lines
  */
 
-$sql = "SELECT f.facnumber, f.rowid as facid, f.datef, f.type as ftype, l.fk_product, l.description, l.total_ht, l.rowid, l.fk_code_ventilation,";
-$sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type, p.accountancy_code_sell as code_sell, p.tva_tx as tva_tx_prod";
-$sql .= " , aa.rowid as aarowid";
-$sql .= " , l.product_type as type_l, l.tva_tx as tva_tx_line";
+if (! empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)) {
+	$limit = $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION;
+} else if ($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION <= 0) {
+	$limit = GETPOST('limit') ? GETPOST('limit', 'int') : $conf->liste_limit;
+} else {
+	$limit = GETPOST('limit') ? GETPOST('limit', 'int') : $conf->liste_limit;
+}
+
+$offset = $limit * $page;
+
+$sql = "SELECT f.facnumber, f.rowid as facid, f.datef, f.type as ftype, l.fk_product, l.description, l.total_ht, l.rowid, l.fk_code_ventilation, l.product_type as type_l, l.tva_tx as tva_tx_line,";
+$sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type, p.accountancy_code_sell as code_sell, p.tva_tx as tva_tx_prod,";
+$sql .= "  aa.rowid as aarowid";
 $sql .= " FROM " . MAIN_DB_PREFIX . "facture as f";
 $sql .= " INNER JOIN " . MAIN_DB_PREFIX . "facturedet as l ON f.rowid = l.fk_facture";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON p.rowid = l.fk_product";
-$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accountingaccount as aa ON p.accountancy_code_sell = aa.account_number";
+$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON p.accountancy_code_sell = aa.account_number";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_system as accsys ON accsys.pcg_version = aa.fk_pcg_version";
-$sql .= " WHERE f.fk_statut > 0 AND fk_code_ventilation <= 0";
+$sql .= " WHERE f.fk_statut > 0";
+$sql .= " AND fk_code_ventilation <= 0";
+$sql .= " AND product_type <= 2";
 $sql .= " AND (accsys.rowid='" . $conf->global->CHARTOFACCOUNTS . "' OR p.accountancy_code_sell IS NULL OR p.accountancy_code_sell ='')";
 
 // Add search filter like
@@ -229,9 +240,9 @@ if ($result) {
 	print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Label"), $_SERVER["PHP_SELF"], "p.label", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Description"), $_SERVER["PHP_SELF"], "l.description", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Amount"), $_SERVER["PHP_SELF"],"l.total_ht","",$param,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Amount"), $_SERVER["PHP_SELF"], "l.total_ht", "", $param, 'align="center"', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("VATRate"), $_SERVER["PHP_SELF"], "l.tva_tx", "", $param, 'align="center"', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("AccountAccounting"), '', '', '', '', 'align="center"');
+	print_liste_field_titre($langs->trans("AccountAccountingSuggest"), '', '', '', '', 'align="center"');
 	print_liste_field_titre($langs->trans("IntoAccount"), '', '', '', '', 'align="center"');
 	print_liste_field_titre('');
 	print_liste_field_titre($langs->trans("Ventilate") . '<br><label id="select-all">' . $langs->trans('All') . '</label>/<label id="unselect-all">' . $langs->trans('None') . '</label>', '', '', '', '', 'align="center"');
@@ -245,7 +256,7 @@ if ($result) {
 	print '<td class="liste_titre"><input type="text" class="flat" size="20" name="search_label" value="' . $search_label . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" size="20" name="search_desc" value="' . $search_desc . '"></td>';
 	print '<td class="liste_titre" align="right"><input type="text" class="flat" size="10" name="search_amount" value="' . $search_amount . '"></td>';
-	print '<td class="liste_titre" align="center"><input type="text" class="flat" size="5" name="search_vat" value="' . $search_vat . '"></td>';
+	print '<td class="liste_titre" align="center"><input type="text" class="flat" size="5" name="search_vat" value="' . $search_vat . '">%</td>';
 	print '<td align="right" class="liste_titre" colspan="4">';
 	print '<input type="image" class="liste_titre" src="' . img_picto($langs->trans("Search"), 'search.png', '', '', 1) . '" name="button_search" value="' . dol_escape_htmltag($langs->trans("Search")) . '" title="' . dol_escape_htmltag($langs->trans("Search")) . '">';
 	print '&nbsp;';
@@ -269,6 +280,7 @@ if ($result) {
 		
 		$code_sell_p_notset = '';
 		$objp->aarowid_suggest = $objp->aarowid;
+		
 		if (! empty($objp->code_sell)) {
 			$objp->code_sell_p = $objp->code_sell;
 		} else {
@@ -281,12 +293,14 @@ if ($result) {
 		}
 		if ($objp->type_l == 1) {
 			$objp->code_sell_l = (! empty($conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT : $langs->trans("CodeNotDef"));
-			if ($objp->aarowid == '')
+			if ($objp->aarowid == '') {
 				$objp->aarowid_suggest = $aarowid_s;
+			}
 		} elseif ($objp->type_l == 0) {
 			$objp->code_sell_l = (! empty($conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT : $langs->trans("CodeNotDef"));
-			if ($objp->aarowid == '')
+			if ($objp->aarowid == '') {
 				$objp->aarowid_suggest = $aarowid_p;
+			}
 		}
 		if ($objp->code_sell_l != $objp->code_sell_p)
 			$code_sell_p_l_differ = 'color:red';
@@ -302,10 +316,12 @@ if ($result) {
 		$product_static->id = $objp->product_id;
 		$product_static->type = $objp->type;
 		print '<td>';
+		
 		if ($product_static->id)
 			print $product_static->getNomUrl(1);
 		else
 			print '&nbsp;';
+		
 		print '</td>';
 		
 		print '<td style="' . $code_sell_p_l_differ . '">' . dol_trunc($objp->product_label, 24) . '</td>';
@@ -314,7 +330,8 @@ if ($result) {
 		print '<td align="right">';
 		print price($objp->total_ht);
 		print '</td>';
-		if ($objp->vat_tx_l <> $objp->vat_tx_p) $code_vat_differ = 'font-weight:bold; text-decoration:blink; color:red';
+		if ($objp->vat_tx_l != $objp->vat_tx_p)
+			$code_vat_differ = 'font-weight:bold; text-decoration:blink; color:red';
 		print '<td style="' . $code_vat_differ . '" align="center">';
 		print price($objp->tva_tx_line);
 		print '</td>';
@@ -322,7 +339,7 @@ if ($result) {
 		if ($objp->code_sell_l == $objp->code_sell_p) {
 			print $objp->code_sell_l;
 		} else {
-			print 'lines=' . $objp->code_sell_l . '<br />product=' . $objp->code_sell_p;
+			print $langs->trans("Purchase") . ' = ' . $objp->code_sell_l . '<br />' . $langs->trans("Sell") . ' = ' . $objp->code_sell_p;
 		}
 		print '</td>';
 		

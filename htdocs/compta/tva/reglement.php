@@ -49,7 +49,7 @@ if ($page == -1) { $page = 0; }
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-$limit = $conf->liste_limit;
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 if (! $sortfield) $sortfield="t.datev";
 if (! $sortorder) $sortorder="DESC";
 
@@ -115,6 +115,12 @@ if ($filtre) {
 if ($typeid) {
     $sql .= " AND t.fk_typepayment=".$typeid;
 }
+$totalnboflines=0;
+$result=$db->query($sql);
+if ($result)
+{
+    $totalnboflines = $db->num_rows($result);
+}
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit+1,$offset);
 
@@ -156,9 +162,12 @@ if ($result)
 	$form->select_types_paiements($typeid,'typeid','',0,0,1,16);
 	print '</td>';
 	print '<td class="liste_titre" align="right"><input name="search_amount" class="flat" type="text" size="8" value="'.$search_amount.'"></td>';
-	print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
-	print "</td></tr>\n";
+
+    print '<td class="liste_titre" align="right">';
+    $searchpitco=$form->showFilterAndCheckAddButtons(0);
+    print $searchpitco;
+    print '</td>';
+	print "</tr>\n";
 
 	while ($i < min($num,$limit))
     {

@@ -39,16 +39,25 @@ $action=GETPOST('action','alpha');
 $year=GETPOST("year",'int');
 $month=GETPOST("month",'int');
 $day=GETPOST("day",'int');
-$actioncode=GETPOST("actioncode","alpha",3);
 $pid=GETPOST("projectid",'int',3);
 $status=GETPOST("status",'alpha');
 $type=GETPOST('type');
-$actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_USE_EVENT_TYPE)?'AC_OTH':''));
+$optioncss = GETPOST('optioncss','alpha');
+// Set actioncode (this code must be same for setting actioncode into peruser, listacton and index)
+if (GETPOST('actioncode','array')) 
+{
+    $actioncode=GETPOST('actioncode','array',3);
+    if (! count($actioncode)) $actioncode='0';
+}
+else 
+{
+    $actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE));
+}
+if ($actioncode == '' && empty($actioncodearray)) $actioncode=(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE);
+
 $dateselect=dol_mktime(0, 0, 0, GETPOST('dateselectmonth'), GETPOST('dateselectday'), GETPOST('dateselectyear'));
 $datestart=dol_mktime(0, 0, 0, GETPOST('datestartmonth'), GETPOST('datestartday'), GETPOST('datestartyear'));
 $dateend=dol_mktime(0, 0, 0, GETPOST('dateendmonth'), GETPOST('dateendday'), GETPOST('dateendyear'));
-
-if ($actioncode == '') $actioncode=(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE);
 if ($status == ''   && ! isset($_GET['status']) && ! isset($_POST['status'])) $status=(empty($conf->global->AGENDA_DEFAULT_FILTER_STATUS)?'':$conf->global->AGENDA_DEFAULT_FILTER_STATUS);
 if (empty($action) && ! isset($_GET['action']) && ! isset($_POST['action'])) $action=(empty($conf->global->AGENDA_DEFAULT_VIEW)?'show_month':$conf->global->AGENDA_DEFAULT_VIEW);
 
@@ -63,11 +72,11 @@ if (empty($filtert) && empty($conf->global->AGENDA_ALL_CALENDARS))
 	$filtert=$user->id;
 }
 
+$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
 if ($page == -1) { $page = 0 ; }
-$limit = $conf->liste_limit;
 $offset = $limit * $page ;
 if (! $sortorder)
 {
@@ -133,19 +142,8 @@ $form=new Form($db);
 $userstatic=new User($db);
 
 $nav='';
-$nav.='<form name="dateselect" action="'.$_SERVER["PHP_SELF"].'?action=show_peruser'.$param.'">';
-if ($actioncode || isset($_GET['actioncode']) || isset($_POST['actioncode'])) $nav.='<input type="hidden" name="actioncode" value="'.$actioncode.'">';
-if ($status || isset($_GET['status']) || isset($_POST['status']))  $nav.='<input type="hidden" name="status" value="'.$status.'">';
-if ($filter)  $nav.='<input type="hidden" name="filter" value="'.$filter.'">';
-if ($filtert) $nav.='<input type="hidden" name="filtert" value="'.$filtert.'">';
-if ($socid)   $nav.='<input type="hidden" name="socid" value="'.$socid.'">';
-if ($showbirthday)  $nav.='<input type="hidden" name="showbirthday" value="1">';
-if ($pid)    $nav.='<input type="hidden" name="projectid" value="'.$pid.'">';
-if ($type)   $nav.='<input type="hidden" name="type" value="'.$type.'">';
-if ($usergroup) $nav.='<input type="hidden" name="usergroup" value="'.$usergroup.'">';
 $nav.=$form->select_date($dateselect, 'dateselect', 0, 0, 1, '', 1, 0, 1);
 $nav.=' <input type="submit" name="submitdateselect" class="button" value="'.$langs->trans("Refresh").'">';
-$nav.='</form>';
 
 $now=dol_now();
 
@@ -156,7 +154,8 @@ llxHeader('',$langs->trans("Agenda"),$help_url);
 $listofextcals=array();
 
 $param='';
-if ($actioncode || isset($_GET['actioncode']) || isset($_POST['actioncode'])) $param.="&actioncode=".$actioncode;
+if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+if ($actioncode != '') $param.="&actioncode=".$actioncode;
 if ($status || isset($_GET['status']) || isset($_POST['status'])) $param.="&status=".$status;
 if ($filter) $param.="&filter=".$filter;
 if ($filtert) $param.="&filtert=".$filtert;
@@ -165,6 +164,7 @@ if ($showbirthday) $param.="&showbirthday=1";
 if ($pid) $param.="&projectid=".$pid;
 if ($type) $param.="&type=".$type;
 if ($usergroup) $param.="&usergroup=".$usergroup;
+if ($optioncss != '') $param.='&optioncss='.$optioncss;
 
 $sql = "SELECT";
 if ($usergroup > 0) $sql.=" DISTINCT";
@@ -183,7 +183,7 @@ if ($filtert > 0 || $usergroup > 0) $sql.=", ".MAIN_DB_PREFIX."actioncomm_resour
 if ($usergroup > 0) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ugu ON ugu.fk_user = ar.fk_element";
 $sql.= " WHERE c.id = a.fk_action";
 $sql.= ' AND a.entity IN ('.getEntity('agenda', 1).')';
-if ($actioncode) $sql.=" AND c.code='".$db->escape($actioncode)."'";
+if ($actioncode) $sql.=" AND c.code IN ('".$db->escape($actioncode)."')";
 if ($pid) $sql.=" AND a.fk_project=".$db->escape($pid);
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND (a.fk_soc IS NULL OR sc.fk_user = " .$user->id . ")";
 if ($socid > 0) $sql.= " AND s.rowid = ".$socid;
@@ -209,6 +209,14 @@ if ($dateselect > 0) $sql.= " AND ((a.datep2 >= '".$db->idate($dateselect)."' AN
 if ($datestart > 0) $sql.= " AND a.datep BETWEEN '".$db->idate($datestart)."' AND '".$db->idate($datestart+3600*24-1)."'";
 if ($dateend > 0) $sql.= " AND a.datep2 BETWEEN '".$db->idate($dateend)."' AND '".$db->idate($dateend+3600*24-1)."'";
 $sql.= $db->order($sortfield,$sortorder);
+
+$nbtotalofrecords = 0;
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+{
+    $result = $db->query($sql);
+    $nbtotalofrecords = $db->num_rows($result);
+}
+
 $sql.= $db->plimit($limit + 1, $offset);
 //print $sql;
 
@@ -268,15 +276,34 @@ if ($resql)
     	$s = $hookmanager->resPrint;
     }
 
-    print_barre_liste($s, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $link, $num, 0, '', 0, $nav);
 
+	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="action" value="list">';
+    print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+    print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+    print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+    print '<input type="hidden" name="type" value="'.$type.'">';
+    $nav='';
+    if ($optioncss != '') $nav.= '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+    if ($actioncode) $nav.='<input type="hidden" name="actioncode" value="'.$actioncode.'">';
+    if ($status || isset($_GET['status']) || isset($_POST['status']))  $nav.='<input type="hidden" name="status" value="'.$status.'">';
+    if ($filter)  $nav.='<input type="hidden" name="filter" value="'.$filter.'">';
+    if ($filtert) $nav.='<input type="hidden" name="filtert" value="'.$filtert.'">';
+    if ($socid)   $nav.='<input type="hidden" name="socid" value="'.$socid.'">';
+    if ($showbirthday)  $nav.='<input type="hidden" name="showbirthday" value="1">';
+    if ($pid)    $nav.='<input type="hidden" name="projectid" value="'.$pid.'">';
+    if ($usergroup) $nav.='<input type="hidden" name="usergroup" value="'.$usergroup.'">';
+    print $nav;
+    
+    print_barre_liste($s, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $link, $num, -1 * $nbtotalofrecords, '', 0, $nav, '', $limit);
 
-	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'?'.$param.'">'."\n";
-
-	$i = 0;
+    $i = 0;
 	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Action"),$_SERVER["PHP_SELF"],"a.label",$param,"","",$sortfield,$sortorder);
+	if (! empty($conf->global->AGENDA_USE_EVENT_TYPE)) print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"c.libelle",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateStart"),$_SERVER["PHP_SELF"],"a.datep",$param,'','align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateEnd"),$_SERVER["PHP_SELF"],"a.datep2",$param,'','align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom",$param,"","",$sortfield,$sortorder);
@@ -287,6 +314,11 @@ if ($resql)
 
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre"></td>';
+	if (! empty($conf->global->AGENDA_USE_EVENT_TYPE)) 
+	{
+	    print '<td class="liste_titre"></td>';
+	    //print '<td class="liste_titre"><input type="text" name="search_type" value="'.$search_type.'"></td>';
+	}
 	print '<td class="liste_titre" align="center">';
 	print $form->select_date($datestart, 'datestart', 0, 0, 1, '', 1, 0, 1);
 	print '</td>';
@@ -306,6 +338,10 @@ if ($resql)
 	$now=dol_now();
 	$delay_warning=$conf->global->MAIN_DELAY_ACTIONS_TODO*24*60*60;
 
+	require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
+	$caction=new CActionComm($db);
+	$arraylist=$caction->liste_array(1, 'code', '', (empty($conf->global->AGENDA_USE_EVENT_TYPE)?1:0));
+	
 	$var=true;
 	while ($i < min($num,$limit))
 	{
@@ -331,6 +367,13 @@ if ($resql)
 		print $actionstatic->getNomUrl(1,28);
 		print '</td>';
 
+		if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
+		{
+		    $labeltype=$obj->type_code;
+		    if (! empty($arraylist[$labeltype])) $labeltype=$arraylist[$labeltype];
+		    print '<td>'.dol_trunc($labeltype,24).'</td>';   
+		}
+		
 		// Start date
 		print '<td align="center" class="nowrap">';
 		print dol_print_date($db->jdate($obj->dp),"dayhour");

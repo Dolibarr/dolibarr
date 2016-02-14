@@ -67,44 +67,77 @@ $object->fetch($id);
 $object->getrights();
 
 // Liste des zone de recherche permanentes supportees
+/* deprecated
 $searchform=array("main_searchform_societe","main_searchform_contact","main_searchform_produitservice");
 $searchformconst=array($conf->global->MAIN_SEARCHFORM_SOCIETE,$conf->global->MAIN_SEARCHFORM_CONTACT,$conf->global->MAIN_SEARCHFORM_PRODUITSERVICE);
 $searchformtitle=array($langs->trans("Companies"),$langs->trans("Contacts"),$langs->trans("ProductsAndServices"));
+*/
 
 $form = new Form($db);
 $formadmin=new FormAdmin($db);
 
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('usercard','globalcard'));
 
 /*
  * Actions
  */
-if ($action == 'update' && ($caneditfield || ! empty($user->admin)))
-{
-    if (! $_POST["cancel"])
-    {
-        $tabparam=array();
+$parameters=array('id'=>$socid);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-        if ($_POST["check_MAIN_LANG_DEFAULT"]=="on") $tabparam["MAIN_LANG_DEFAULT"]=$_POST["main_lang_default"];
-        else $tabparam["MAIN_LANG_DEFAULT"]='';
+if (empty($reshook)) {
+	if ($action == 'update' && ($caneditfield || !empty($user->admin))) {
+		if (!$_POST["cancel"]) {
+			$tabparam = array();
 
-        if ($_POST["check_SIZE_LISTE_LIMIT"]=="on") $tabparam["MAIN_SIZE_LISTE_LIMIT"]=$_POST["main_size_liste_limit"];
-        else $tabparam["MAIN_SIZE_LISTE_LIMIT"]='';
+			if (GETPOST("check_MAIN_LANG_DEFAULT") == "on") {
+				$tabparam["MAIN_LANG_DEFAULT"] = $_POST["main_lang_default"];
+			} else {
+				$tabparam["MAIN_LANG_DEFAULT"] = '';
+			}
 
-        if ($_POST["check_MAIN_THEME"]=="on") $tabparam["MAIN_THEME"]=$_POST["main_theme"];
-        else $tabparam["MAIN_THEME"]='';
+			if (GETPOST("check_SIZE_LISTE_LIMIT") == "on") {
+				$tabparam["MAIN_SIZE_LISTE_LIMIT"] = $_POST["main_size_liste_limit"];
+			} else {
+				$tabparam["MAIN_SIZE_LISTE_LIMIT"] = '';
+			}
 
-        $tabparam["MAIN_SEARCHFORM_CONTACT"]=$_POST["main_searchform_contact"];
-        $tabparam["MAIN_SEARCHFORM_SOCIETE"]=$_POST["main_searchform_societe"];
-        $tabparam["MAIN_SEARCHFORM_PRODUITSERVICE"]=$_POST["main_searchform_produitservice"];
+			if (GETPOST("check_MAIN_THEME") == "on") {
+				$tabparam["MAIN_THEME"] = $_POST["main_theme"];
+			} else {
+				$tabparam["MAIN_THEME"] = '';
+			}
 
-        $result=dol_set_user_param($db, $conf, $object, $tabparam);
+			$val = (implode(',', (colorStringToArray(GETPOST('THEME_ELDY_TOPMENU_BACK1'), array()))));
+			if ($val == '') {
+				$tabparam['THEME_ELDY_TOPMENU_BACK1'] = '';
+			} else {
+				$tabparam['THEME_ELDY_TOPMENU_BACK1'] = join(',',
+					colorStringToArray(GETPOST('THEME_ELDY_TOPMENU_BACK1'), array()));
+			}
 
-        header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
-        exit;
-    }
+			$val = (implode(',', (colorStringToArray(GETPOST('THEME_ELDY_BACKTITLE1'), array()))));
+			if ($val == '') {
+				$tabparam['THEME_ELDY_BACKTITLE1'] = '';
+			} else {
+				$tabparam['THEME_ELDY_BACKTITLE1'] = join(',',
+					colorStringToArray(GETPOST('THEME_ELDY_BACKTITLE1'), array()));
+			}
+
+			if (GETPOST('check_THEME_ELDY_USE_HOVER') == 'on') {
+				$tabparam["THEME_ELDY_USE_HOVER"] = 1;
+			} else {
+				$tabparam["THEME_ELDY_USE_HOVER"] = 0;
+			}
+
+			$result = dol_set_user_param($db, $conf, $object, $tabparam);
+
+			header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $id);
+			exit;
+		}
+	}
 }
-
-
 
 /*
  * View
@@ -125,44 +158,62 @@ if ($action == 'edit')
 }
 
 
-dol_fiche_head($head, 'guisetup', $title, 0, 'user');
-
-
-print '<table class="border" width="100%">';
-
-// Ref
-print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
-print '<td colspan="2">';
-print $form->showrefnav($object,'id','',$user->rights->user->user->lire || $user->admin);
-print '</td>';
-print '</tr>';
-
-// LastName
-print '<tr><td width="25%">'.$langs->trans("LastName").'</td>';
-print '<td colspan="2">'.$object->lastname.'</td>';
-print "</tr>\n";
-
-// FirstName
-print '<tr><td width="25%">'.$langs->trans("FirstName").'</td>';
-print '<td colspan="2">'.$object->firstname.'</td>';
-print "</tr>\n";
-
-print '</table><br>';
-
-
 if ($action == 'edit')
 {
-	print '<script type="text/javascript" language="javascript">
-	jQuery(document).ready(function() {
-		$("#main_lang_default").change(function() {
-			$("#check_MAIN_LANG_DEFAULT").prop("checked", true);
-		});
-		$("#main_size_liste_limit").keyup(function() {
-			if ($(this).val().length) $("#check_SIZE_LISTE_LIMIT").prop("checked", true);
-			else $("#check_SIZE_LISTE_LIMIT").prop("checked", false);
-		});
-	});
-	</script>';
+    dol_fiche_head($head, 'guisetup', $title, 0, 'user');
+    
+    $linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
+    
+    dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
+    
+    
+    print '<div class="underbanner clearboth"></div>';
+    
+    print '<br>';
+    
+
+    if (! empty($conf->use_javascript_ajax))
+    {/*
+        print '<script type="text/javascript" language="javascript">
+    	jQuery(document).ready(function() {
+    		$("#main_lang_default").change(function() {
+    			$("#check_MAIN_LANG_DEFAULT").prop("checked", true);
+    		});
+    		$("#main_size_liste_limit").keyup(function() {
+    			if ($(this).val().length) $("#check_SIZE_LISTE_LIMIT").prop("checked", true);
+    			else $("#check_SIZE_LISTE_LIMIT").prop("checked", false);
+    		});
+    	});
+    	</script>';*/
+    }	
+    if (! empty($conf->use_javascript_ajax))
+    {
+        print '<script type="text/javascript" language="javascript">
+        jQuery(document).ready(function() {
+        	function init_myfunc()
+        	{
+        		if (jQuery("#check_MAIN_LANG_DEFAULT").prop("checked")) { jQuery("#main_lang_default").removeAttr(\'disabled\'); }
+        		else { jQuery("#main_lang_default").attr(\'disabled\',\'disabled\'); }
+        		
+                if (jQuery("#check_SIZE_LISTE_LIMIT").prop("checked")) { jQuery("#main_size_liste_limit").removeAttr(\'disabled\'); }
+        		else { jQuery("#main_size_liste_limit").attr(\'disabled\',\'disabled\'); }
+        		
+                if (jQuery("#check_MAIN_THEME").prop("checked")) { jQuery(".themethumbs").removeAttr(\'disabled\'); }
+        		else { jQuery(".themethumbs").attr(\'disabled\',\'disabled\'); }
+            
+                if (jQuery("#check_THEME_ELDY_TOPMENU_BACK1").prop("checked")) { jQuery("#colorpickerTHEME_ELDY_TOPMENU_BACK1").removeAttr(\'disabled\'); }
+        		else { jQuery("#colorpickerTHEME_ELDY_TOPMENU_BACK1").attr(\'disabled\',\'disabled\'); }
+            }
+        	init_myfunc();
+        	jQuery("#check_SIZE_LISTE_LIMIT").click(function() { init_myfunc(); });
+            jQuery("#check_MAIN_LANG_DEFAULT").click(function() { init_myfunc(); });
+            jQuery("#check_MAIN_THEME").click(function() { init_myfunc(); });
+            jQuery("#check_THEME_ELDY_TOPMENU_BACK1").click(function() { init_myfunc(); });
+            jQuery("#check_THEME_ELDY_BACKTITLE1").click(function() { init_myfunc(); });
+        });
+        </script>';
+    }
+	
 
     clearstatcache();
     $var=true;
@@ -197,7 +248,7 @@ if ($action == 'edit')
     print '</table><br>';
 
     // Theme
-    show_theme($object,(($user->admin || empty($dolibarr_main_demo))?1:0),true);
+    show_theme($object, (($user->admin || empty($dolibarr_main_demo))?1:0), true);
 
     dol_fiche_end();
 
@@ -208,11 +259,20 @@ if ($action == 'edit')
     print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
     print '</div>';
 
-    print '</form>';
-
 }
 else
 {
+    dol_fiche_head($head, 'guisetup', $title, 0, 'user');
+    
+    $linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
+    
+    dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
+    
+    
+    print '<div class="underbanner clearboth"></div>';
+    
+    print '<br>';
+    
     $var=true;
 
     print '<table class="noborder" width="100%">';
@@ -268,7 +328,10 @@ else
 
 }
 
-dol_fiche_end();
+if ($action == 'edit')
+{
+    print '</form>';
+}
 
 llxFooter();
 $db->close();

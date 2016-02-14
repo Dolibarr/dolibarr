@@ -99,13 +99,14 @@ class CActionComm
     /**
      *  Return list of event types: array(id=>label) or array(code=>label)
      *
-     *  @param	string|int			$active     	1 or 0 to filter on event state active or not ('' by default = no filter)
+     *  @param	string|int	$active     	1 or 0 to filter on event state active or not ('' by default = no filter)
      *  @param	string		$idorcode		'id' or 'code'
-     *  @param	string		$excludetype	Type to exclude
-     *  @param	int		$onlyautoornot	Group list by auto events or not
+     *  @param	string		$excludetype	Type to exclude ('system' or 'systemauto')
+     *  @param	int		    $onlyautoornot	1=Group all type AC_XXX into 1 line AC_MANUAL. 0=Keep details of type
+     *  @param  string      $morefilter     Add more SQL filter
      *  @return mixed      					Array of all event types if OK, <0 if KO
      */
-    function liste_array($active='',$idorcode='id',$excludetype='',$onlyautoornot=0)
+    function liste_array($active='',$idorcode='id',$excludetype='',$onlyautoornot=0, $morefilter='')
     {
         global $langs,$conf;
         $langs->load("commercial");
@@ -115,8 +116,10 @@ class CActionComm
 
         $sql = "SELECT id, code, libelle, module, type, color";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm";
-        if ($active != '') $sql.=" WHERE active=".$active;
-        if (! empty($excludetype)) $sql.=($active != ''?" AND":" WHERE")." type <> '".$excludetype."'";
+        $sql.= " WHERE 1=1";
+        if ($active != '') $sql.=" AND active=".$active;
+        if (! empty($excludetype)) $sql.=" AND type <> '".$excludetype."'";
+        if ($morefilter) $sql.=" AND ".$morefilter;
         $sql.= " ORDER BY module, position";
 
         dol_syslog(get_class($this)."::liste_array", LOG_DEBUG);

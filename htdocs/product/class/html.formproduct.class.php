@@ -51,25 +51,50 @@ class FormProduct
 	 * Load in cache array list of warehouses
 	 * If fk_product is not 0, we do not use cache
 	 *
-	 * @param	int		$fk_product		Add quantity of stock in label for product with id fk_product. Nothing if 0.
-	 * @return  int  		    		Nb of loaded lines, 0 if already loaded, <0 if KO
+	 * @param	int		$fk_product		    Add quantity of stock in label for product with id fk_product. Nothing if 0.
+	 * @param	string	$batch			    Add quantity of batch stock in label for product with batch name batch, batch name precedes batch_id. Nothing if ''.
+	 * @param	int		$fk_product_batch	Add quantity of batch stock in label for product with batch id fk_product_batch. Nothing if 0.
+	 * @param	boolean	$sumStock		    sum total stock of a warehouse, default true
+	 * @return  int  		    		    Nb of loaded lines, 0 if already loaded, <0 if KO
 	 */
-	function loadWarehouses($fk_product=0)
+	function loadWarehouses($fk_product=0, $batch = '', $fk_product_batch=0, $sumStock = true)
 	{
 		global $conf, $langs;
 
 		if (empty($fk_product) && count($this->cache_warehouses)) return 0;    // Cache already loaded and we do not want a list with information specific to a product
 
 		$sql = "SELECT e.rowid, e.label";
-		if ($fk_product) $sql.= ", ps.reel";
-		$sql.= " FROM ".MAIN_DB_PREFIX."entrepot as e";
-		if ($fk_product)
+		if (!empty($fk_product)) 
 		{
-			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps on ps.fk_entrepot = e.rowid";
+			if (!empty($fk_product_batch) || !empty($batch)) 
+			{
+				$sql.= ", pb.qty as stock";
+			}
+			else
+			{
+				$sql.= ", ps.reel as stock";
+			}
+		}
+		else if ($sumStock)
+		{
+			$sql.= ", sum(ps.reel) as stock";
+		}
+		$sql.= " FROM ".MAIN_DB_PREFIX."entrepot as e";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps on ps.fk_entrepot = e.rowid";
+		if (!empty($fk_product))
+		{
 			$sql.= " AND ps.fk_product = '".$fk_product."'";
+			if (!empty($batch)) 
+            {
+                $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_batch as pb on pb.fk_product_stock = ps.rowid AND pb.batch = '".$batch."'";
+            } else if (!empty($fk_product_batch))
+			{
+				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_batch as pb on pb.fk_product_stock = ps.rowid AND pb.rowid = '".$fk_product_batch."'";
+			}
 		}
 		$sql.= " WHERE e.entity IN (".getEntity('stock', 1).")";
 		$sql.= " AND e.statut = 1";
+		if ($sumStock && empty($fk_product)) $sql.= " GROUP BY e.rowid, e.label, e.description";
 		$sql.= " ORDER BY e.label";
 
 		dol_syslog(get_class($this).'::loadWarehouses', LOG_DEBUG);
@@ -81,10 +106,11 @@ class FormProduct
 			while ($i < $num)
 			{
 				$obj = $this->db->fetch_object($resql);
-
+				if ($sumStock) $obj->stock = price2num($obj->stock,5);
 				$this->cache_warehouses[$obj->rowid]['id'] =$obj->rowid;
 				$this->cache_warehouses[$obj->rowid]['label']=$obj->label;
-				if ($fk_product) $this->cache_warehouses[$obj->rowid]['stock']=$obj->reel;
+				$this->cache_warehouses[$obj->rowid]['description'] = $obj->description;
+				$this->cache_warehouses[$obj->rowid]['stock'] = $obj->stock;
 				$i++;
 			}
 			return $num;
@@ -106,18 +132,31 @@ class FormProduct
 	 * 	@param	int		$disabled		1=Select is disabled
 	 * 	@param	int		$fk_product		Add quantity of stock in label for product with id fk_product. Nothing if 0.
 	 *  @param	string	$empty_label	Empty label if needed (only if $empty=1)
+	 *  @param	int		$showstock		1=show stock count
+	 *  @param	int		$forcecombo		force combo iso ajax select2
+	 *  @param	array	$events			events to add to select2
 	 * 	@return	string					HTML select
 	 */
-	function selectWarehouses($selected='',$htmlname='idwarehouse',$filtertype='',$empty=0,$disabled=0,$fk_product=0,$empty_label='')
+	function selectWarehouses($selected='',$htmlname='idwarehouse',$filtertype='',$empty=0,$disabled=0,$fk_product=0,$empty_label='', $showstock=0, $forcecombo=0, $events=array())
 	{
-		global $langs,$user;
+		global $conf,$langs,$user;
 
 		dol_syslog(get_class($this)."::selectWarehouses $selected, $htmlname, $filtertype, $empty, $disabled, $fk_product",LOG_DEBUG);
-
+		
+		$out='';
+		
 		$this->loadWarehouses($fk_product);
 		$nbofwarehouses=count($this->cache_warehouses);
 
-		$out='<select class="flat"'.($disabled?' disabled':'').' id="'.$htmlname.'" name="'.($htmlname.($disabled?'_disabled':'')).'">';
+		if ($conf->use_javascript_ajax && ! $forcecombo)
+		{
+			include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+			$comboenhancement = ajax_combobox($htmlname, $events);
+			$out.= $comboenhancement;
+			$nodatarole=($comboenhancement?' data-role="none"':'');
+		}
+		
+		$out.='<select class="flat"'.($disabled?' disabled':'').' id="'.$htmlname.'" name="'.($htmlname.($disabled?'_disabled':'')).'"'.$nodatarole.'>';
 		if ($empty) $out.='<option value="-1">'.($empty_label?$empty_label:'&nbsp;').'</option>';
 		foreach($this->cache_warehouses as $id => $arraytypes)
 		{
@@ -125,7 +164,7 @@ class FormProduct
 			if ($selected == $id || ($selected == 'ifone' && $nbofwarehouses == 1)) $out.=' selected';
 			$out.='>';
 			$out.=$arraytypes['label'];
-			if ($fk_product) $out.=' ('.$langs->trans("Stock").': '.($arraytypes['stock']>0?$arraytypes['stock']:'?').')';
+			if (($fk_product || ($showstock > 0)) && ($arraytypes['stock'] != 0)) $out.='('.$langs->trans("Stock").':'.$arraytypes['stock'].')';
 			$out.='</option>';
 		}
 		$out.='</select>';
@@ -133,6 +172,40 @@ class FormProduct
 
 		return $out;
 	}
+
+    /**
+     *    Display form to select warehouse
+     *
+     *    @param    string  $page        Page
+     *    @param    int     $selected    Id of warehouse
+     *    @param    string  $htmlname    Name of select html field
+     *    @param    int     $addempty    1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
+     *    @return   void
+     */
+    function formSelectWarehouses($page, $selected='', $htmlname='warehouse_id', $addempty=0)
+    {
+        global $langs;
+        if ($htmlname != "none") {
+            print '<form method="POST" action="'.$page.'">';
+            print '<input type="hidden" name="action" value="setwarehouse">';
+            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
+            print '<tr><td>';
+            print $this->selectWarehouses($selected, $htmlname, '', $addempty);
+            print '</td>';
+            print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+            print '</tr></table></form>';
+        } else {
+            if ($selected) {
+                require_once DOL_DOCUMENT_ROOT .'/product/stock/class/entrepot.class.php';
+                $warehousestatic=new Entrepot($this->db);
+                $warehousestatic->fetch($selected);
+                print $warehousestatic->getNomUrl();
+            } else {
+                print "&nbsp;";
+            }
+        }
+    }
 
 	/**
 	 *  Output a combo box with list of units

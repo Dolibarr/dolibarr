@@ -71,7 +71,7 @@ if ($action == 'rappro' && $user->rights->banque->consolidate)
 					$result=$bankline->update_conciliation($user,$_POST["cat"]);
 					if ($result < 0)
 					{
-						setEventMessage($bankline->error, 'errors');
+						setEventMessages($bankline->error, $bankline->errors, 'errors');
 						$error++;
 						break;
 					}
@@ -83,7 +83,7 @@ if ($action == 'rappro' && $user->rights->banque->consolidate)
     {
     	$error++;
     	$langs->load("errors");
-	    setEventMessage($langs->trans("ErrorPleaseTypeBankTransactionReportName"), 'errors');
+	    setEventMessages($langs->trans("ErrorPleaseTypeBankTransactionReportName"), null, 'errors');
     }
 
     if (! $error)
@@ -99,11 +99,14 @@ if ($action == 'rappro' && $user->rights->banque->consolidate)
 if ($action == 'del')
 {
 	$bankline=new AccountLine($db);
-	$bankline->fetch($_GET["rowid"]);
-	$result=$bankline->delete($user);
-    if ($result < 0)
-	{
-        dol_print_error($db,$bankline->error);
+
+    if ($bankline->fetch($_GET["rowid"]) > 0) {
+        $result = $bankline->delete($user);
+        if ($result < 0) {
+            dol_print_error($db, $bankline->error);
+        }
+    } else {
+        setEventMessage($langs->trans('ErrorRecordNotFound'), 'errors');
     }
 }
 
@@ -151,6 +154,7 @@ $acct->fetch($id);
 $now=dol_now();
 
 $sql = "SELECT b.rowid, b.dateo as do, b.datev as dv, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type as type";
+$sql.= ", b.fk_bordereau";
 $sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 $sql.= " WHERE rappro=0 AND fk_account=".$acct->id;
 $sql.= " ORDER BY dateo ASC";
@@ -182,11 +186,11 @@ if ($resql)
     $var=True;
     $num = $db->num_rows($resql);
 
-    print_fiche_titre($langs->trans("Reconciliation").': <a href="account.php?account='.$acct->id.'">'.$acct->label.'</a>', '', 'title_bank.png');
+    print load_fiche_titre($langs->trans("Reconciliation").': <a href="account.php?account='.$acct->id.'">'.$acct->label.'</a>', '', 'title_bank.png');
     print '<br>';
 
     // Show last bank receipts
-    $nbmax=5;
+    $nbmax=15;      // We accept to show last 15 receipts (so we can have more than one year)
     $liste="";
     $sql = "SELECT DISTINCT num_releve FROM ".MAIN_DB_PREFIX."bank";
     $sql.= " WHERE fk_account=".$acct->id." AND num_releve IS NOT NULL";
@@ -198,10 +202,14 @@ if ($resql)
     {
         $numr=$db->num_rows($resqlr);
         $i=0;
+        $last_ok=0;
         while (($i < $numr) && ($i < $nbmax))
         {
             $objr = $db->fetch_object($resqlr);
+            if (! $last_ok) {
             $last_releve = $objr->num_releve;
+                $last_ok=1;
+            }
             $i++;
             $liste='<a href="'.DOL_URL_ROOT.'/compta/bank/releve.php?account='.$acct->id.'&amp;num='.$objr->num_releve.'">'.$objr->num_releve.'</a> &nbsp; '.$liste;
         }
@@ -218,11 +226,11 @@ if ($resql)
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?account='.$acct->id.'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print "<input type=\"hidden\" name=\"action\" value=\"rappro\">";
-	print "<input type=\"hidden\" name=\"account\" value=\"".$acct->id."\">";
+	print '<input type="hidden" name="action" value="rappro">';
+	print '<input type="hidden" name="account" value="'.$acct->id.'">';
 
     print '<strong>'.$langs->trans("InputReceiptNumber").'</strong>: ';
-    print '<input class="flat" name="num_releve" type="text" value="'.(GETPOST('num_releve')?GETPOST('num_releve'):$objp->num_releve).'" size="10">';
+    print '<input class="flat" name="num_releve" type="text" value="'.(GETPOST('num_releve')?GETPOST('num_releve'):'').'" size="10">';  // The only default value is value we just entered
     print '<br>';
     if ($options)
     {
@@ -284,7 +292,7 @@ if ($resql)
 		// Type + Number
 		$label=($langs->trans("PaymentType".$objp->type)!="PaymentType".$objp->type)?$langs->trans("PaymentType".$objp->type):$objp->type;  // $objp->type is a code
 		if ($label=='SOLD') $label='';
-		print '<td class="nowrap">'.$label.($objp->num_chq?' '.$objp->num_chq:'').'</td>';
+		print '<td class="nowrap">'.$label.($objp->num_chq?' '.$objp->num_chq:'').($objp->fk_bordereau>0?' ('.$objp->fk_bordereau.')':'').'</td>';
 
 		// Description
         print '<td valign="center"><a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$acct->id.'">';
@@ -405,7 +413,7 @@ if ($resql)
                     print '</a>';
                 }
                 else {
-                    print "&nbsp;";	// On n'empeche la suppression car le raprochement ne pourra se faire qu'apr�s la date pass�e et que l'�criture apparaisse bien sur le compte.
+                    print "&nbsp;";	// We prevents the deletion because reconciliation can not be achieved until the date has elapsed and that writing appears well on the account.
                 }
                 print "</td>";
             }

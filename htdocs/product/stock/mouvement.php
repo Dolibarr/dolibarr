@@ -54,11 +54,12 @@ $search_warehouse = trim(GETPOST("search_warehouse"));
 $search_inventorycode = trim(GETPOST("search_inventorycode"));
 $search_user = trim(GETPOST("search_user"));
 $search_batch = trim(GETPOST("search_batch"));
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $page = GETPOST("page",'int');
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 if ($page < 0) $page = 0;
-$offset = $conf->liste_limit * $page;
+$offset = $limit * $page;
 
 if (! $sortfield) $sortfield="m.datem";
 if (! $sortorder) $sortorder="DESC";
@@ -94,13 +95,13 @@ if ($action == "correct_stock")
 	if (empty($product_id))
 	{
 		$error++;
-		setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Product")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Product")), null, 'errors');
 		$action='correction';
 	}
 	if (! is_numeric($_POST["nbpiece"]))
 	{
 		$error++;
-		setEventMessage($langs->trans("ErrorFieldMustBeANumeric", $langs->transnoentitiesnoconv("NumberOfUnit")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldMustBeANumeric", $langs->transnoentitiesnoconv("NumberOfUnit")), null, 'errors');
 		$action='correction';
 	}
 
@@ -203,6 +204,14 @@ if (! empty($search_product))       $sql.= " AND p.label LIKE '%".$db->escape($s
 if (! empty($search_warehouse))     $sql.= " AND e.label LIKE '%".$db->escape($search_warehouse)."%'";
 if (! empty($search_user))          $sql.= " AND u.login LIKE '%".$db->escape($search_user)."%'";
 if (! empty($search_batch))         $sql.= " AND m.batch LIKE '%".$db->escape($search_batch)."%'";
+
+$nbtotalofrecords = 0;
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+{
+    $result = $db->query($sql);
+    $nbtotalofrecords = $db->num_rows($result);
+}
+
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($conf->liste_limit+1, $offset);
 
@@ -248,7 +257,7 @@ if ($resql)
 
         print '<table class="border" width="100%">';
 
-        $linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php">'.$langs->trans("BackToList").'</a>';
+        $linkback = '<a href="'.DOL_URL_ROOT.'/product/stock/list.php">'.$langs->trans("BackToList").'</a>';
 
         // Ref
         print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
@@ -358,7 +367,7 @@ if ($resql)
 	/*
     if ($action == "correction")
     {
-        print_titre($langs->trans("StockCorrection"));
+        print load_fiche_titre($langs->trans("StockCorrection"));
         print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="post">'."\n";
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="action" value="correct_stock">';
@@ -399,7 +408,7 @@ if ($resql)
 
     if ($action == "transfert")
     {
-        print_titre($langs->trans("Transfer"));
+        print load_fiche_titre($langs->trans("Transfer"));
         print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="post">'."\n";
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="action" value="transfert_stock">';
@@ -470,8 +479,8 @@ if ($resql)
     if (!empty($snom)) $param.='&snom='.urlencode($snom); // FIXME $snom is not defined
     if ($search_user)    $param.='&search_user='.urlencode($search_user);
     if ($idproduct > 0)  $param.='&idproduct='.$idproduct;
-    if ($id) print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num,0,'');
-    else print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num);
+    if ($id) print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num, $nbtotalofrecords,'');
+    else print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num, $nbtotalofrecords);
 
     print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">';
     if ($id) print '<input type="hidden" name="id" value="'.$id.'">';
@@ -504,7 +513,7 @@ if ($resql)
     if (empty($conf->productbatch->enabled)) print '&nbsp;';
     //else print '<br>';
     $syear = $year?$year:-1;
-    print '<input class="flat" type="text" size="2" maxlength="4" placeholder="'.dol_escape_htmltag($langs->trans("Year")).'" name="year" value="'.($syear > 0 ? $syear : '').'">';
+    print '<input class="flat" type="text" size="3" maxlength="4" placeholder="'.dol_escape_htmltag($langs->trans("Year")).'" name="year" value="'.($syear > 0 ? $syear : '').'">';
     //print $formother->selectyear($syear,'year',1, 20, 5);
     print '</td>';
     // Product Ref
@@ -576,14 +585,15 @@ if ($resql)
         $productstatic->label=$objp->produit;
         $productstatic->type=$objp->type;
         $productstatic->entity=$objp->entity;
-        print $productstatic->getNomUrl(1,'',16);
+        print $productstatic->getNomUrl(1,'stock',16);
         print "</td>\n";
         // Product label
         print '<td>';
-        $productstatic->id=$objp->rowid;
+        /*$productstatic->id=$objp->rowid;
         $productstatic->ref=$objp->produit;
         $productstatic->type=$objp->type;
-        print $productstatic->getNomUrl(1,'',16);
+        print $productstatic->getNomUrl(1,'',16);*/
+        print $productstatic->label;
         print "</td>\n";
         // Batch
     	if (! empty($conf->productbatch->enabled))

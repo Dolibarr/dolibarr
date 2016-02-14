@@ -31,7 +31,7 @@ ExplainCalculations=Explain Calculations
 ShowMeCalculationsAndAmortization=Show me the calculations and amortization
 MortgagePaymentInformation=Mortgage Payment Information
 DownPayment=Down Payment
-DownPaymentDesc=The <b>down payment</b> = The price of the home multiplied by the percentage down divided by 100 (for 5% down becomes 5/100 or 0.05)
+DownPaymentDesc=这个 <b>预付订金</b>（注：订金，根据中国现行法律的有关规定，其不具有定金，不是订金哦，其不具有定金的性质，只是单方行为，不具有明显的担保性质。交付订金的一方主张定金权利的，人民法院不予支持。 = The price of the home multiplied by the percentage down divided by 100 (for 5% down becomes 5/100 or 0.05)这句数学没学好不译了：）
 InterestRateDesc=The <b>interest rate</b> = The annual interest percentage divided by 100
 MonthlyFactorDesc=The <b>monthly factor</b> = The result of the following formula
 MonthlyInterestRateDesc=The <b>monthly interest rate</b> = The annual interest rate divided by 12 (for the 12 months in a year)

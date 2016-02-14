@@ -23,8 +23,8 @@ ChooseProduct/Service=Ürün veya hizmet seç
 StartDate=İlk tarih
 EndDate=Son tarih
 Launch=Başlat
-ForceBuyingPriceIfNull=Boşsa alış fiyatına zorla
-ForceBuyingPriceIfNullDetails=eğer "AÇIK" sa, kar oranı satırda sıfır olacaktır (alış fiyatı = satış fiyatı), aksi durumda ("KAPALI"), kar oranı satış fiyatına eşit olacaktır (alış fiyatı = 0)
+ForceBuyingPriceIfNull=Eğer tanımlanmamışsa alış/maliyet fiyatını satış fiyatına zorla
+ForceBuyingPriceIfNullDetails=Eğer alış/maliyet fiyatı tanımlanmamışsa ve bu seçenek "AÇIK" ise satırda oran sıfır olacaktır (alış/maliyet fiyatı = satış fiyatı) aksi durumda ("KAPALI") ve oran önerilen varsayılana eşit olacaktır.
 MARGIN_METHODE_FOR_DISCOUNT=Genel indirimler için kar oranı yöntemi
 UseDiscountAsProduct=Ürün olarak
 UseDiscountAsService=Hizmet olarak
@@ -35,8 +35,9 @@ MargeBrute=Ham oran
 MargeNette=Net kar oranı
 MargeType1=En iyi tedarikçi fiyatı kar oranı
 MargeType2=Ağırlıklı Ortalama Fiyatta Kar Oranı (AOF)
-MARGIN_TYPE_DETAILS=Ham kar oranı : Satış fiyatı - Alış fiyatı<br/>Net oran : Satış fiyatı - Maliyet fiyatı
-MarginTypeDesc=En iyi Satınalma fiyatı kar oranı: Satış fiyatı - Ürün kartında tanımlanan eniyi tedarikçi fiyatı<br/>Ağırlıklı Ortalama Fiyatı (AOF) : Satış fiyatı - Ürün Ağırlıklı Ortalama Fiyatı
+MargeType3=Margin on Cost Price
+MARGIN_TYPE_DETAILS=Raw margin : Selling price - Buying price<br>Net margin : Selling price - Cost price
+MarginTypeDesc=* Margin on best buying price = Selling price - Best supplier price defined on product card<br>* Margin on Weighted Average Price (WAP) = Selling price - Product Weighted Average Price (WAP) or best supplier price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAP if cost price not defined, or best supplier price if WAP not yet defined
 CostPrice=Maliyet fiyatı
 BuyingCost=Maliyet fiyatı
 UnitCharges=Birim masrafları

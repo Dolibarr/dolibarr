@@ -7,6 +7,7 @@ DeliveryOrders=تحویل سفارشات
 DeliveryDate=تاریخ تحویل
 DeliveryDateShort=تحویل سیستمهای. تاریخ
 CreateDeliveryOrder=تولید منظور تحویل
+DeliveryStateSaved=Delivery state saved
 QtyDelivered=تعداد تحویل
 SetDeliveryDate=تنظیم تاریخ حمل و نقل
 ValidateDeliveryReceipt=اعتبارسنجی رسید تحویل
@@ -16,6 +17,9 @@ DeleteDeliveryReceiptConfirm=آیا مطمئن هستید که می خواهید
 DeliveryMethod=روش تحویل
 TrackingNumber=تعداد پیگیری
 DeliveryNotValidated=تحویل اعتبار نیست
+StatusDeliveryCanceled=Canceled
+StatusDeliveryDraft=Draft
+StatusDeliveryValidated=Received
 # merou PDF model
 NameAndSignature=نام و امضا:
 ToAndDate=To___________________________________ در ____ / ____ / __________

@@ -161,11 +161,12 @@ if ($action == 'add')
                 	$params,
                 	(GETPOST('alwayseditable')?1:0),
                 	(GETPOST('perms')?GETPOST('perms'):''),
-                	(GETPOST('list')?1:0)
+                	(GETPOST('list')?1:0),
+					(GETPOST('ishidden')?1:0)
                 );
     			if ($result > 0)
     			{
-    				setEventMessage($langs->trans('SetupSaved'));
+    				setEventMessages($langs->trans('SetupSaved'), null, 'mesgs');
     				header("Location: ".$_SERVER["PHP_SELF"]);
     				exit;
     			}
@@ -173,7 +174,7 @@ if ($action == 'add')
     			{
                     $error++;
     			    $mesg=$extrafields->error;
-                    setEventMessage($mesg,'errors');
+                    setEventMessages($mesg, null, 'errors');
     			}
     		}
     		else
@@ -181,13 +182,13 @@ if ($action == 'add')
                 $error++;
     		    $langs->load("errors");
     			$mesg=$langs->trans("ErrorFieldCanNotContainSpecialNorUpperCharacters",$langs->transnoentities("AttributeCode"));
-    			setEventMessage($mesg,'errors');
+    			setEventMessages($mesg, null, 'errors');
     			$action = 'create';
     		}
 	    }
 	    else
 	    {
-	    	setEventMessage($mesg,'errors');
+	    	setEventMessages($mesg, null, 'errors');
 	    }
 	}
 }
@@ -311,11 +312,12 @@ if ($action == 'update')
     				$params,
     				(GETPOST('alwayseditable')?1:0),
     				(GETPOST('perms')?GETPOST('perms'):''),
-                	(GETPOST('list')?1:0)
+                	(GETPOST('list')?1:0),
+					(GETPOST('ishidden')?1:0)
     			);
     			if ($result > 0)
     			{
-    				setEventMessage($langs->trans('SetupSaved'));
+    				setEventMessages($langs->trans('SetupSaved'), null, 'mesgs');
     				header("Location: ".$_SERVER["PHP_SELF"]);
     				exit;
     			}
@@ -323,7 +325,7 @@ if ($action == 'update')
     			{
                     $error++;
     			    $mesg=$extrafields->error;
-    			    setEventMessage($mesg,'errors');
+    			    setEventMessages($mesg, null, 'errors');
     			}
     		}
     		else
@@ -331,12 +333,12 @@ if ($action == 'update')
     		    $error++;
     			$langs->load("errors");
     			$mesg=$langs->trans("ErrorFieldCanNotContainSpecialCharacters",$langs->transnoentities("AttributeCode"));
-    			setEventMessage($mesg,'errors');
+    			setEventMessages($mesg, null, 'errors');
     		}
 	    }
 	    else
 	    {
-	    	setEventMessage($mesg,'errors');
+	    	setEventMessages($mesg, null, 'errors');
 	    }
 	}
 }

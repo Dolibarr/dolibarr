@@ -102,6 +102,8 @@ class CMailFileTest extends PHPUnit_Framework_TestCase
         $langs=$this->savlangs;
         $db=$this->savdb;
 
+        $conf->global->MAIN_DISABLE_ALL_MAILS=1;    // If I comment/remove this lien, unit test still works alone but failed when ran from AllTest. Don't know why.
+        
         print __METHOD__."\n";
     }
     /**

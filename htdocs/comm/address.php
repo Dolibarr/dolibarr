@@ -106,7 +106,7 @@ if ($action == 'add' || $action == 'update')
         }
         else
         {
-	        setEventMessage($object->error, 'errors');
+	        setEventMessages($object->error, $object->errors, 'errors');
             $action='create';
         }
     }
@@ -147,7 +147,7 @@ if ($action == 'add' || $action == 'update')
         else
         {
             $reload = 0;
-	        setEventMessage($object->error, 'errors');
+	        setEventMessages($object->error, $object->errors, 'errors');
             $action= "edit";
         }
     }
@@ -211,7 +211,7 @@ if ($action == 'create')
             $object->country		= $tmparray['label'];
         }
 
-        print_fiche_titre($langs->trans("AddAddress"));
+        print load_fiche_titre($langs->trans("AddAddress"));
 
         print "<br>\n";
 
@@ -306,7 +306,7 @@ elseif ($action == 'edit')
 
     dol_fiche_head($head, 'card', $societe->name);
 
-    print_titre($langs->trans("EditAddress"));
+    print load_fiche_titre($langs->trans("EditAddress"));
     print "<br>\n";
 
     if ($socid)

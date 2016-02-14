@@ -1,11 +1,11 @@
 <?php
 /* Copyright (C) 2002-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2015	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2013  Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2014       Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 201		Charlie Benke           <charlies@patas-monkey.com>
+ * Copyright (C) 2014-2015  Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2014-2015  Charlie Benke           <charlie@patas-monkey.com>
  * Copyright (C) 2015       Abbes Bahfir            <bafbes@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -114,6 +114,7 @@ if (empty($reshook))
 	if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->ficheinter->creer)
 	{
 		$result = $object->setValid($user);
+
 		if ($result >= 0)
 		{
 			// Define output language
@@ -385,7 +386,7 @@ if (empty($reshook))
 
 		$result=$object->update($user);
 		if ($result<0) {
-			setEventMessage($object->error,'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 
@@ -428,8 +429,8 @@ if (empty($reshook))
 		$upload_dir = $conf->ficheinter->dir_output;
 		$file = $upload_dir . '/' . GETPOST('file');
 		$ret=dol_delete_file($file,0,0,0,$object);
-		if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-		else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+		if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
+		else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
 	}
 
 	// Set into a project
@@ -450,7 +451,7 @@ if (empty($reshook))
 	{
 		$result=$object->delete($user);
 		if ($result<0) {
-			setEventMessage($object->error,'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 
 		header('Location: '.DOL_URL_ROOT.'/fichinter/list.php?leftmenu=ficheinter');
@@ -466,8 +467,8 @@ if (empty($reshook))
 	// Add line
 	else if ($action == "addline" && $user->rights->ficheinter->creer)
 	{
-		if (!GETPOST('np_desc')&&($conf->global->FICHINTER_EMPTY_LINE_DESC!=1))
-		{
+		if (!GETPOST('np_desc') && empty($conf->global->FICHINTER_EMPTY_LINE_DESC) )
+ 		{
 			$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Description")).'</div>';
 			$error++;
 		}
@@ -801,7 +802,7 @@ if (empty($reshook))
 				if ($result)
 				{
 					$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));
-					setEventMessage($mesg);
+					setEventMessages($mesg, null, 'mesgs');
 					$error=0;
 
 					// Initialisation donnees
@@ -961,7 +962,7 @@ if ($action == 'create')
 
 	$soc=new Societe($db);
 
-	print_fiche_titre($langs->trans("AddIntervention"));
+	print load_fiche_titre($langs->trans("AddIntervention"));
 
 	dol_htmloutput_mesg($mesg);
 
@@ -1055,7 +1056,7 @@ if ($action == 'create')
 		print '<tr><td class="fieldrequired">'.$langs->trans('Ref').'</td><td colspan="2">'.$langs->trans("Draft").'</td></tr>';
 
 		// Description (must be a textarea and not html must be allowed (used in list view)
-		print '<tr><td valign="top">'.$langs->trans("Description").'</td>';
+		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
 		print '<td>';
 		print '<textarea name="description" cols="80" rows="'.ROWS_3.'">'.GETPOST('description').'</textarea>';
 		print '</td></tr>';
@@ -1067,7 +1068,7 @@ if ($action == 'create')
 
 			$langs->load("project");
 
-            print '<tr><td valign="top">'.$langs->trans("Project").'</td><td>';
+            print '<tr><td>'.$langs->trans("Project").'</td><td>';
             /* Fix: If a project must be linked to any companies (suppliers or not), project must be not be set as limited to customer but must be not linked to any particular thirdparty
             if ($societe->fournisseur==1)
             	$numprojet=select_projects(-1,$_POST["projectid"],'projectid');
@@ -1086,7 +1087,7 @@ if ($action == 'create')
 		if ($conf->contrat->enabled)
 		{
 			$langs->load("contracts");
-			print '<tr><td valign="top">'.$langs->trans("Contract").'</td><td>';
+			print '<tr><td>'.$langs->trans("Contract").'</td><td>';
 			$numcontrat=$formcontract->select_contract($soc->id,GETPOST('contratid','int'),'contratid',0,1);
 			if ($numcontrat==0)
 			{
@@ -1105,19 +1106,19 @@ if ($action == 'create')
 
         // Public note
         print '<tr>';
-        print '<td class="border" valign="top">'.$langs->trans('NotePublic').'</td>';
-        print '<td valign="top" colspan="2">';
+        print '<td tdtop">'.$langs->trans('NotePublic').'</td>';
+        print '<td colspan="2">';
         $doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
         print $doleditor->Create(1);
         //print '<textarea name="note_public" cols="80" rows="'.ROWS_3.'">'.$note_public.'</textarea>';
         print '</td></tr>';
 
         // Private note
-        if (!empty($user->societe_id))
+        if (empty($user->societe_id))
         {
         	print '<tr>';
-        	print '<td class="border" valign="top">'.$langs->trans('NotePrivate').'</td>';
-        	print '<td valign="top" colspan="2">';
+        	print '<td class="tdtop">'.$langs->trans('NotePrivate').'</td>';
+        	print '<td colspan="2">';
         	$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
         	print $doleditor->Create(1);
         	//print '<textarea name="note_private" cols="80" rows="'.ROWS_3.'">'.$note_private.'</textarea>';
@@ -1215,7 +1216,7 @@ else if ($id > 0 || ! empty($ref))
 			if (empty($numref))
 			{
 				$error++;
-				setEventMessage($object->error, 'errors');
+				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
 		else
@@ -1275,9 +1276,33 @@ else if ($id > 0 || ! empty($ref))
 		print '<td colspan="3">'.convertSecondToTime($object->duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY).'</td>';
 		print '</tr>';
 	}
+	
+	if (! empty($conf->global->FICHINTER_USE_PLANNED_AND_DONE_DATES))
+	{
+		// Date Start
+		print '<tr><td>'.$langs->trans("Dateo").'</td>';
+		print '<td colspan="3">';
+		print $object->dateo ? dol_print_date($object->dateo, 'daytext') : '&nbsp;';
+		print '</td>';
+		print '</tr>';
+		
+		// Date End
+		print '<tr><td>'.$langs->trans("Datee").'</td>';
+		print '<td colspan="3">';
+		print $object->datee ? dol_print_date($object->datee, 'daytext') : '&nbsp;';
+		print '</td>';
+		print '</tr>';
+		
+		// Date Terminate/close
+		print '<tr><td>'.$langs->trans("Datet").'</td>';
+		print '<td colspan="3">';
+		print $object->datet ? dol_print_date($object->datet, 'daytext') : '&nbsp;';
+		print '</td>';
+		print '</tr>';
+	}
 
 	// Description (must be a textarea and not html must be allowed (used in list view)
-	print '<tr><td valign="top">';
+	print '<tr><td>';
 	print $form->editfieldkey("Description",'description',$object->description,$object,$user->rights->ficheinter->creer,'textarea');
 	print '</td><td colspan="3">';
 	print $form->editfieldval("Description",'description',$object->description,$object,$user->rights->ficheinter->creer,'textarea:8:80');
@@ -1525,7 +1550,7 @@ else if ($id > 0 || ! empty($ref))
 					print '<td align="right">';
 					$selectmode='select';
 					if (! empty($conf->global->INTERVENTION_ADDLINE_FREEDUREATION)) $selectmode='text';
-					$form->select_duration('duration',$objp->duree, $selectmode);
+					$form->select_duration('duration',$objp->duree,0, $selectmode);
 					print '</td>';
 
 					print '<td align="center" colspan="5" valign="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
@@ -1566,18 +1591,18 @@ else if ($id > 0 || ! empty($ref))
 
 				$var=true;
 
-				print '<tr '.$bcnd[$var].">\n";
-				print '<td>';
-				// editeur wysiwyg
-                if ($conf->global->FICHINTER_EMPTY_LINE_DESC != 1) {
+				print '<tr '.$bcnd[$var] . ">\n";
+                print '<td>';
+                // editeur wysiwyg
+                if (empty($conf->global->FICHINTER_EMPTY_LINE_DESC)) {
                     require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
                     $doleditor = new DolEditor('np_desc', GETPOST('np_desc', 'alpha'), '', 100, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_DETAILS, ROWS_2, 70);
                     $doleditor->Create();
                 }
                 print '</td>';
 
-				// Date intervention
-				print '<td align="center" class="nowrap">';
+                // Date intervention
+                print '<td align="center" class="nowrap">';
 				$now=dol_now();
 				$timearray=dol_getdate($now);
 				if (! GETPOST('diday','int')) $timewithnohour=dol_mktime(0,0,0,$timearray['mon'],$timearray['mday'],$timearray['year']);
@@ -1807,7 +1832,7 @@ else if ($id > 0 || ! empty($ref))
 
 		print '<div class="clearboth"></div>';
 		print '<br>';
-		print_fiche_titre($langs->trans('SendInterventionByMail'));
+		print load_fiche_titre($langs->trans('SendInterventionByMail'));
 
 		dol_fiche_head('');
 
@@ -1819,6 +1844,15 @@ else if ($id > 0 || ! empty($ref))
 		$formmail->fromid   = $user->id;
 		$formmail->fromname = $user->getFullName($langs);
 		$formmail->frommail = $user->email;
+		if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 1))	// If bit 1 is set
+		{
+			$formmail->trackid='int'.$object->id;
+		}
+		if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2))	// If bit 2 is set
+		{
+			include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+			$formmail->frommail=dolAddEmailTrackId($formmail->frommail, 'int'.$object->id);
+		}		
 		$formmail->withfrom=1;
 		$liste=array();
 		foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key=>$value)	$liste[$key]=$value;

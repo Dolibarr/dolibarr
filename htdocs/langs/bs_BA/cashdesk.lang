@@ -38,3 +38,4 @@ ShowStock=Prikaži skladište
 DeleteArticle=Klikni da uklonis ovaj proizvod
 FilterRefOrLabelOrBC=Traži (Ref/Oznaku)
 UserNeedPermissionToEditStockToUsePos=You ask to decrease stock on invoice creation, so user that use POS need to have permission to edit stock.
+DolibarrReceiptPrinter=Dolibarr Receipt Printer

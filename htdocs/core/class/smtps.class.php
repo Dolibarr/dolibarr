@@ -817,7 +817,36 @@ class SMTPs
 		return $_retValue;
 	}
 
-
+	/**
+	 * Reply-To Address from which mail will be the reply-to
+	 *
+	 * @param 	string 	$_strReplyTo 	Address from which mail will be the reply-to
+	 * @return 	void
+	 */
+	function setReplyTo($_strReplyTo)
+	{
+	    if ( $_strReplyTo )
+	        $this->_msgReplyTo = $this->_strip_email($_strReplyTo);
+	}
+	
+	/**
+	 * Retrieves the Address from which mail will be the reply-to
+	 *
+	 * @param  	boolean $_part		To "strip" 'Real name' from address
+	 * @return 	string 				Address from which mail will be the reply-to
+	 */
+	function getReplyTo($_part = true)
+	{
+	    $_retValue = '';
+	
+	    if ( $_part === true )
+	        $_retValue = $this->_msgReplyTo;
+	    else
+	        $_retValue = $this->_msgReplyTo[$_part];
+	
+	    return $_retValue;
+	}
+	
 	/**
 	 * Inserts given addresses into structured format.
 	 * This method takes a list of given addresses, via an array
@@ -1133,8 +1162,10 @@ class SMTPs
 		$trackid = $this->getTrackId();
 		if ($trackid)
 		{
-			$_header .= 'Message-ID: <' . time() . '.SMTPs-'.$trackid.'@' . $host . ">\r\n";
-			$_header .= 'references: <' . time() . '.SMTPs-'.$trackid.'@' . $host . ">\r\n";
+			// References is kept in response and Message-ID is returned into In-Reply-To:
+			$_header .= 'Message-ID: <' . time() . '.SMTPs-dolibarr-'.$trackid.'@' . $host . ">\r\n";
+			$_header .= 'References: <' . time() . '.SMTPs-dolibarr-'.$trackid.'@' . $host . ">\r\n";
+			$_header .= 'X-Dolibarr-TRACKID: ' . $trackid . "\r\n";
 		}
 		else
 		{
@@ -1157,7 +1188,8 @@ class SMTPs
 		$_header .= 'Disposition-Notification-To: '.$this->getFrom('addr') . "\r\n";
 		if ( $this->getErrorsTo() )
 		$_header .= 'Errors-To: '.$this->getErrorsTo('addr') . "\r\n";
-
+		if ( $this->getReplyTo() )
+        $_header .= "Reply-To: ".$this->getReplyTo('addr') ."\r\n";
 
 		$_header .= 'X-Mailer: Dolibarr version ' . DOL_VERSION .' (using SMTPs Mailer)'                   . "\r\n"
 		.  'Mime-Version: 1.0'                            . "\r\n";

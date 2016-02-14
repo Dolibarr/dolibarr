@@ -125,7 +125,7 @@ print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
 // Define a complementary filter for search of next/prev ref.
 if (! $user->rights->projet->all->lire)
 {
-    $projectsListId = $object->getProjectsAuthorizedForUser($user,$mine,0);
+    $projectsListId = $object->getProjectsAuthorizedForUser($user,0,0);
     $object->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
 }
 print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
@@ -218,7 +218,7 @@ $listofreferent=array(
 	'class'=>'CommandeFournisseur',
 	'table'=>'commande_fournisseur',
 	'datefieldname'=>'date_commande',
-	'test'=>$conf->fournisseur->enabled && $user->rights->fournisseur->commande->lire),
+	'test'=>$conf->supplier_order->enabled && $user->rights->fournisseur->commande->lire),
 'invoice_supplier'=>array(
 	'name'=>"BillsSuppliers",
 	'title'=>"ListSupplierInvoicesAssociatedProject",
@@ -226,7 +226,7 @@ $listofreferent=array(
 	'margin'=>'minus',
 	'table'=>'facture_fourn',
 	'datefieldname'=>'datef',
-	'test'=>$conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire),
+	'test'=>$conf->supplier_invoice->enabled && $user->rights->fournisseur->facture->lire),
 'contract'=>array(
 	'name'=>"Contracts",
 	'title'=>"ListContractAssociatedProject",
@@ -293,17 +293,21 @@ if ($action=="addelement")
 	$tablename = GETPOST("tablename");
 	$elementselectid = GETPOST("elementselect");
 	$result=$object->update_element($tablename, $elementselectid);
-	if ($result<0) {
-		setEventMessage($object->error,'errors');
+	if ($result<0) 
+	{
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
-}elseif ($action == "unlink") {
+}
+elseif ($action == "unlink") 
+{
 
 	$tablename = GETPOST("tablename");
 	$elementselectid = GETPOST("elementselect");
 
 	$result = $object->remove_element($tablename, $elementselectid);
-	if ($result < 0) {
-		setEventMessage($object->error, 'errors');
+	if ($result < 0) 
+	{
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
 
@@ -510,27 +514,30 @@ foreach ($listofreferent as $key => $value)
 		$idtofilterthirdparty=0;
 		if (! in_array($tablename, array('facture_fourn', 'commande_fourn'))) $idtofilterthirdparty=$object->thirdparty->id;
 
-		$selectList=$formproject->select_element($tablename, $idtofilterthirdparty, 'minwidth200');
-		if (! $selectList || ($selectList<0))
-		{
-			setEventMessages($formproject->error,$formproject->errors,'errors');
-		}
-		elseif($selectList)
-		{
-			// Define form with the combo list of elements to link
-			$addform.='<form action="'.$_SERVER["PHP_SELF"].'?id='.$projectid.'" method="post">';
-			$addform.='<input type="hidden" name="tablename" value="'.$tablename.'">';
-			$addform.='<input type="hidden" name="action" value="addelement">';
-			$addform.='<input type="hidden" name="datesrfc" value="'.dol_print_date($dates,'dayhourrfc').'">';
-			$addform.='<input type="hidden" name="dateerfc" value="'.dol_print_date($datee,'dayhourrfc').'">';
-			$addform.='<table><tr><td>'.$langs->trans("SelectElement").'</td>';
-			$addform.='<td>'.$selectList.'</td>';
-			$addform.='<td><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("AddElement")).'"></td>';
-			$addform.='</tr></table>';
-			$addform.='</form>';
+       	if (empty($conf->global->PROJECT_LINK_DISABLE)) 
+       	{
+			$selectList=$formproject->select_element($tablename, $idtofilterthirdparty, 'minwidth300');
+			if (! $selectList || ($selectList<0))
+			{
+				setEventMessages($formproject->error,$formproject->errors,'errors');
+			}
+			elseif($selectList)
+			{
+				// Define form with the combo list of elements to link
+				$addform.='<form action="'.$_SERVER["PHP_SELF"].'?id='.$projectid.'" method="post">';
+				$addform.='<input type="hidden" name="tablename" value="'.$tablename.'">';
+				$addform.='<input type="hidden" name="action" value="addelement">';
+				$addform.='<input type="hidden" name="datesrfc" value="'.dol_print_date($dates,'dayhourrfc').'">';
+				$addform.='<input type="hidden" name="dateerfc" value="'.dol_print_date($datee,'dayhourrfc').'">';
+				$addform.='<table><tr><td>'.$langs->trans("SelectElement").'</td>';
+				$addform.='<td>'.$selectList.'</td>';
+				$addform.='<td><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("AddElement")).'"></td>';
+				$addform.='</tr></table>';
+				$addform.='</form>';
+			}
 		}
 
-		print_fiche_titre($langs->trans($title), $addform, '');
+		print load_fiche_titre($langs->trans($title), $addform, '');
 
 		print '<table class="noborder" width="100%">';
 

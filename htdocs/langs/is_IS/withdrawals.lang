@@ -48,7 +48,6 @@ RefusedReason=Ástæða fyrir höfnun
 RefusedInvoicing=Innheimta höfnun
 NoInvoiceRefused=Ekki hlaða höfnun
 InvoiceRefused=Invoice refused (Charge the rejection to customer)
-Status=Status
 StatusUnknown=Óþekkt
 StatusWaiting=Bíð
 StatusTrans=Senda

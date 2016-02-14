@@ -18,8 +18,9 @@ CronExplainHowToRunUnix=I en Unix-miljö bör följande rad läggas i crontab s�
 CronExplainHowToRunWin=I Microsoft(tm) Windows-miljö kan schemalagd aktivitet användas för att exekvera kommandoraden var 5:e minut
 # Menu
 CronJobs=Schemalagda jobb
-CronListActive=Lista över aktiva / schemalagda jobb
+CronListActive=List of enabled/scheduled jobs
 CronListInactive=Lista över handikappade jobb
+EnabledAndDisabled=Enabled and disabled
 # Page list
 CronDateLastRun=Senaste körning
 CronLastOutput=Sista loppet utgång
@@ -35,8 +36,8 @@ CronInfo=Scheduled job module allow to execute job that have been planned
 CronWaitingJobs=Waiting jobs
 CronTask=Jobb
 CronNone=Ingen
-CronDtStart=Startdatum
-CronDtEnd=Slutdatum
+CronDtStart=Not before
+CronDtEnd=Not after
 CronDtNextLaunch=Nästa exekvering
 CronDtLastLaunch=Senaste exekvering
 CronFrequency=Frequency
@@ -51,6 +52,7 @@ CronNoJobs=Inga jobb registrerade
 CronPriority=Prioritet
 CronLabel=Beskrivning
 CronNbRun=Nb. lanseringen
+CronMaxRun=Max nb. launch
 CronEach=Varje
 JobFinished=Job lanserad och klar
 #Page card

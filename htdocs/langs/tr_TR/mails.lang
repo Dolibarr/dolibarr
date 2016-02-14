@@ -81,12 +81,16 @@ ActivateCheckReadKey="Okuma Alındısı" ve "Abonelik İptali" için kullanılan
 EMailSentToNRecipients=EMail sent to %s recipients.
 XTargetsAdded=<b>%s</b> alıcılar listesine eklendi
 EachInvoiceWillBeAttachedToEmail=Varsayılan fatura belgesi şablonu kullanan bir belge oluşturulacak ve her epostaya eklenecektir.
+OnlyPDFattachmentSupported=If the PDF document was already generated for the invoice, it will be attached to email. If not, no email will be sent (also, note that only pdf invoice are supported as attachment in mass sending in this version).
 MailTopicSendRemindUnpaidInvoices=%s (%s) faturası için anımsatma
 SendRemind=Anımsatmayı Eposta ile gönder
 RemindSent=%s anımsatma(lar) gönderildi
-AllRecipientSelectedForRemind=Tüm üçüncü partiler seçilmiş ve bir eposta ayarlanmışsa (fatura başına bir posta gönderileceğini unutmayın)
+AllRecipientSelected=Seçilen tüm üçüncü partiler, bir eposta kuruluysa.
 NoRemindSent=Gönderile Eposta anımsatması yok
-ResultOfMassSending=Toplu Eposta anımsatması gönderme sonucu
+ResultOfMailSending=Toplu Eposta gönderimi sonuçu
+NbSelected=Seçilen sayısı
+NbIgnored=Yoksayılan sayısı
+NbSent=Gönderilen sayısı
 
 # Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=Tüm üçüncü partilerin kişileri (müşteri, aday, tedarikçi, ...)
@@ -97,7 +101,7 @@ MailingModuleDescEmailsFromUser=Kullanıcı girişli Epostalar (eposta;soyadı;i
 MailingModuleDescContactsCategories=Üçüncü partiler (kategoriye göre)
 MailingModuleDescDolibarrContractsLinesExpired=Süresi dolmuş sözleşme kalemleri ile üçüncü partiler
 MailingModuleDescContactsByCompanyCategory=Üçüncü parti kişileri (üçüncü parti kategorilerine göre)
-MailingModuleDescContactsByCategory=Kategoriye göre üçüncü parti kişileri/adresleri
+MailingModuleDescContactsByCategory=Üçüncü parti kişileri/adresleri (kategoriye göre)
 MailingModuleDescMembersCategories=Kurum üyeleri (kategoriye göre)
 MailingModuleDescContactsByFunction=Üçüncü parti kişileri (konumuna/görevine göre)
 LineInFile=Satır %s dosyası

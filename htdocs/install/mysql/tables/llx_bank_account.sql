@@ -33,7 +33,7 @@ create table llx_bank_account
   fk_user_author		integer,
   fk_user_modif			integer,
   bank					varchar(60),
-  code_banque			varchar(8),
+  code_banque			varchar(128),
   code_guichet			varchar(6),
   number				varchar(255),
   cle_rib				varchar(5),
@@ -51,7 +51,7 @@ create table llx_bank_account
   rappro				smallint DEFAULT 1,
   url					varchar(128),
   account_number		varchar(32),				-- bank accountancy number
-  accountancy_journal	varchar(3) DEFAULT NULL,	-- bank accountancy journal
+  accountancy_journal	varchar(16) DEFAULT NULL,	-- bank accountancy journal
   currency_code			varchar(3) NOT NULL,
   min_allowed			integer DEFAULT 0,
   min_desired			integer DEFAULT 0,

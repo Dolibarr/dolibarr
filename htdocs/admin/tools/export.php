@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2006-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2011	   Juanjo Menent		<jmenent@2byte.es>
+/* Copyright (C) 2006-2014  Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2011       Juanjo Menent       <jmenent@2byte.es>
+ * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -39,7 +40,7 @@ $page = GETPOST("page",'int');
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="date";
 if ($page < 0) { $page = 0; }
-$limit = $conf->liste_limit;
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $offset = $limit * $page;
 
 if (! $user->admin) accessforbidden();
@@ -60,8 +61,8 @@ if ($action == 'delete')
 {
 	$file=$conf->admin->dir_output.'/'.GETPOST('urlfile');
 	$ret=dol_delete_file($file, 1);
-	if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-	else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+	if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
+	else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
 	$action='';
 }
 
@@ -95,7 +96,7 @@ $formfile = new FormFile($db);
 //$help_url='EN:Backups|FR:Sauvegardes|ES:Copias_de_seguridad';
 //llxHeader('','',$help_url);
 
-//print_fiche_titre($langs->trans("Backup"),'','title_setup');
+//print load_fiche_titre($langs->trans("Backup"),'','title_setup');
 
 
 // Start with empty buffer
@@ -104,6 +105,10 @@ $dump_buffer_len = 0;
 
 // We will send fake headers to avoid browser timeout when buffering
 $time_start = time();
+
+
+$outputdir  = $conf->admin->dir_output.'/backup';
+$result=dol_mkdir($outputdir);
 
 
 // MYSQL
@@ -115,7 +120,6 @@ if ($what == 'mysql')
         dolibarr_set_const($db, 'SYSTEMTOOLS_MYSQLDUMP', $cmddump,'chaine',0,'',$conf->entity);
     }
 
-    $outputdir  = $conf->admin->dir_output.'/backup';
     $outputfile = $outputdir.'/'.$file;
     // for compression format, we add extension
     $compression=GETPOST('compression') ? GETPOST('compression','alpha') : 'none';
@@ -184,8 +188,6 @@ if ($what == 'mysql')
 
     $errormsg='';
 
-    $result=dol_mkdir($outputdir);
-
     // Debut appel methode execution
     $fullcommandcrypted=$command." ".$paramcrypted." 2>&1";
     $fullcommandclear=$command." ".$paramclear." 2>&1";
@@ -253,7 +255,6 @@ if ($what == 'mysql')
 
 if ($what == 'mysqlnobin')
 {
-    $outputdir  = $conf->admin->dir_output.'/backup';
     $outputfile = $outputdir.'/'.$file;
     $outputfiletemp = $outputfile.'-TMP.sql';
     // for compression format, we add extension
@@ -287,7 +288,6 @@ if ($what == 'postgresql')
         dolibarr_set_const($db, 'SYSTEMTOOLS_POSTGRESQLDUMP', $cmddump,'chaine',0,'',$conf->entity);
     }
 
-    $outputdir  = $conf->admin->dir_output.'/backup';
     $outputfile = $outputdir.'/'.$file;
     // for compression format, we add extension
     $compression=GETPOST('compression') ? GETPOST('compression','alpha') : 'none';
@@ -298,7 +298,7 @@ if ($what == 'postgresql')
 
     // Parameteres execution
     $command=$cmddump;
-    if (preg_match("/\s/",$command)) $command=$command=escapeshellarg($command);	// Use quotes on command
+    if (preg_match("/\s/",$command)) $command=escapeshellarg($command);	// Use quotes on command
 
     //$param=escapeshellarg($dolibarr_main_db_name)." -h ".escapeshellarg($dolibarr_main_db_host)." -u ".escapeshellarg($dolibarr_main_db_user)." -p".escapeshellarg($dolibarr_main_db_pass);
     //$param="-F c";
@@ -351,38 +351,34 @@ if ($what == 'postgresql')
 
 
 
+if ($errormsg)
+{
+	setEventMessages($langs->trans("Error")." : ".$errormsg, null, 'errors');
 
-// Si on a demande une generation
-//if ($what)
-//{
-    if ($errormsg)
-    {
-    	setEventMessage($langs->trans("Error")." : ".$errormsg, 'errors');
+	$resultstring='';
+    $resultstring.='<div class="error">'.$langs->trans("Error")." : ".$errormsg.'</div>';
 
-    	$resultstring='';
-        $resultstring.='<div class="error">'.$langs->trans("Error")." : ".$errormsg.'</div>';
+    $_SESSION["commandbackupresult"]=$resultstring;
+}
+else
+{
+	if ($what)
+	{
+        setEventMessages($langs->trans("BackupFileSuccessfullyCreated").'.<br>'.$langs->trans("YouCanDownloadBackupFile"), null, 'mesgs');
+
+        $resultstring='<div class="ok">';
+        $resultstring.=$langs->trans("BackupFileSuccessfullyCreated").'.<br>';
+        $resultstring.=$langs->trans("YouCanDownloadBackupFile");
+        $resultstring.='<div>';
 
         $_SESSION["commandbackupresult"]=$resultstring;
-    }
-    else
+	}
+	else
 	{
-		if ($what)
-		{
-	        setEventMessage($langs->trans("BackupFileSuccessfullyCreated").'.<br>'.$langs->trans("YouCanDownloadBackupFile"));
+		setEventMessages($langs->trans("YouMustRunCommandFromCommandLineAfterLoginToUser",$dolibarr_main_db_user,$dolibarr_main_db_user), null, 'mesgs');
+	}
+}
 
-	        $resultstring='<div class="ok">';
-	        $resultstring.=$langs->trans("BackupFileSuccessfullyCreated").'.<br>';
-	        $resultstring.=$langs->trans("YouCanDownloadBackupFile");
-	        $resultstring.='<div>';
-
-	        $_SESSION["commandbackupresult"]=$resultstring;
-		}
-		else
-		{
-			setEventMessage($langs->trans("YouMustRunCommandFromCommandLineAfterLoginToUser",$dolibarr_main_db_user,$dolibarr_main_db_user));
-		}
-    }
-//}
 
 /*
 $filearray=dol_dir_list($conf->admin->dir_output.'/backup','files',0,'','',$sortfield,(strtolower($sortorder)=='asc'?SORT_ASC:SORT_DESC),1);
@@ -417,8 +413,14 @@ function backup_tables($outputfile, $tables='*')
     global $errormsg;
 
     // Set to UTF-8
-    $db->query('SET NAMES utf8');
-    $db->query('SET CHARACTER SET utf8');
+	if(is_a($db, 'DoliDBMysqli')) {
+		/** @var DoliDBMysqli $db */
+		$db->db->set_charset('utf8');
+	} else {
+		/** @var DoliDB $db */
+		$db->query('SET NAMES utf8');
+		$db->query('SET CHARACTER SET utf8');
+	}
 
     //get all of the tables
     if ($tables == '*')

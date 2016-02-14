@@ -62,9 +62,10 @@ if ($action == 'remove')
  * View
  */
 
-llxHeader('',$langs->trans("DefaultRights"));
+$wikihelp='EN:Setup_Security|FR:Paramétrage_Sécurité|ES:Configuración_Seguridad';
+llxHeader('',$langs->trans("DefaultRights"), $wikihelp);
 
-print_fiche_titre($langs->trans("SecuritySetup"),'','title_setup');
+print load_fiche_titre($langs->trans("SecuritySetup"),'','title_setup');
 
 print $langs->trans("DefaultRightsDesc");
 print " ".$langs->trans("OnlyActiveElementsAreShown")."<br><br>\n";
@@ -217,7 +218,5 @@ print '</table>';
 
 print '</div>';
 
-
-$db->close();
-
 llxFooter();
+$db->close();

@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2013 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2015      Charlie Benke        <charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,24 +44,19 @@ class Fichinter extends CommonObject
 	 */
 	protected $table_ref_field = 'ref';
 
-	var $id;
-
 	var $socid;		// Id client
-	var $client;		// Objet societe client (a charger par fetch_client)
 
 	var $author;
-	var $ref;
 	var $datec;
 	var $datev;
+	var $dateo;
+	var $datee;
+	var $datet;
 	var $datem;
 	var $duration;
-	var $statut;		// 0=draft, 1=validated, 2=invoiced
+	var $statut;		// 0=draft, 1=validated, 2=invoiced, 3=Terminate
 	var $description;
-	var $note_private;
-	var $note_public;
-	var $fk_project;
 	var $fk_contrat;
-	var $modelpdf;
 	var $extraparams=array();
 
 	var $lines = array();
@@ -82,12 +78,15 @@ class Fichinter extends CommonObject
 		$this->statuts[0]='Draft';
 		$this->statuts[1]='Validated';
 		$this->statuts[2]='StatusInterInvoiced';
+		$this->statuts[3]='Close';
 		$this->statuts_short[0]='Draft';
 		$this->statuts_short[1]='Validated';
 		$this->statuts_short[2]='StatusInterInvoiced';
+		$this->statuts_short[3]='Close';
 		$this->statuts_logo[0]='statut0';
-		$this->statuts_logo[1]='statut4';
+		$this->statuts_logo[1]='statut1';
 		$this->statuts_logo[2]='statut6';
+		$this->statuts_logo[3]='statut4';
 	}
 
 
@@ -138,6 +137,7 @@ class Fichinter extends CommonObject
 		$sql.= ", ref";
 		$sql.= ", entity";
 		$sql.= ", fk_user_author";
+		$sql.= ", fk_user_modif";
 		$sql.= ", description";
 		$sql.= ", model_pdf";
 		$sql.= ", fk_projet";
@@ -151,6 +151,7 @@ class Fichinter extends CommonObject
 		$sql.= ", '".$this->db->idate($now)."'";
 		$sql.= ", '".$this->db->escape($this->ref)."'";
 		$sql.= ", ".$conf->entity;
+		$sql.= ", ".$user->id;
 		$sql.= ", ".$user->id;
 		$sql.= ", ".($this->description?"'".$this->db->escape($this->description)."'":"null");
 		$sql.= ", '".$this->db->escape($this->modelpdf)."'";
@@ -285,7 +286,7 @@ class Fichinter extends CommonObject
 	function fetch($rowid,$ref='')
 	{
 		$sql = "SELECT f.rowid, f.ref, f.description, f.fk_soc, f.fk_statut,";
-		$sql.= " f.datec,";
+		$sql.= " f.datec, f.dateo, f.datee, f.datet,";
 		$sql.= " f.date_valid as datev,";
 		$sql.= " f.tms as datem,";
 		$sql.= " f.duree, f.fk_projet, f.note_public, f.note_private, f.model_pdf, f.extraparams, fk_contrat";
@@ -308,6 +309,9 @@ class Fichinter extends CommonObject
 				$this->statut       = $obj->fk_statut;
 				$this->duration     = $obj->duree;
 				$this->datec        = $this->db->jdate($obj->datec);
+				$this->datee        = $this->db->jdate($obj->dateo);
+				$this->dateo        = $this->db->jdate($obj->datee);
+				$this->datet        = $this->db->jdate($obj->datet);
 				$this->datev        = $this->db->jdate($obj->datev);
 				$this->datem        = $this->db->jdate($obj->datem);
 				$this->fk_project   = $obj->fk_projet;
@@ -1272,7 +1276,7 @@ class FichinterLigne extends CommonObjectLine
 
 		$this->db->begin();
 
-		$sql = "SELECT SUM(duree) as total_duration";
+		$sql = "SELECT SUM(duree) as total_duration, min(date) as dateo, max(date) as datee ";
 		$sql.= " FROM ".MAIN_DB_PREFIX."fichinterdet";
 		$sql.= " WHERE fk_fichinter=".$this->fk_fichinter;
 
@@ -1286,6 +1290,8 @@ class FichinterLigne extends CommonObjectLine
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter";
 			$sql.= " SET duree = ".$total_duration;
+			$sql.= " , dateo = ".(! empty($obj->dateo)?"'".$this->db->idate($obj->dateo)."'":"null");
+			$sql.= " , datee = ".(! empty($obj->datee)?"'".$this->db->idate($obj->datee)."'":"null");
 			$sql.= " WHERE rowid = ".$this->fk_fichinter;
 			$sql.= " AND entity = ".$conf->entity;
 

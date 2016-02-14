@@ -73,7 +73,7 @@ class modCron extends DolibarrModules
 		$this->conflictwith = array();	// List of modules id this module is in conflict with
         $this->langfiles = array("cron");
 
-        // Constantes
+        // Constants
         //-----------
         	$this->const = array(
 				0=>array(
@@ -99,6 +99,13 @@ class modCron extends DolibarrModules
 		$this->rights_class = 'cron';
 		$r=0;
 
+		// Cronjobs
+		$this->cronjobs = array(
+			0=>array('label'=>'PurgeDeleteTemporaryFilesShort', 'jobtype'=>'method', 'class'=>'core/class/utils.class.php', 'objectname'=>'Utils', 'method'=>'purgeFiles', 'parameters'=>'', 'comment'=>'PurgeDeleteTemporaryFiles', 'frequency'=>1, 'unitfrequency'=>3600 * 24 * 7, 'priority'=>10, 'status'=>1, 'test'=>'1'),
+			1=>array('label'=>'MakeLocalDatabaseDumpShort', 'jobtype'=>'method', 'class'=>'core/class/utils.class.php', 'objectname'=>'Utils', 'method'=>'dumpDatabase', 'parameters'=>'', 'comment'=>'MakeLocalDatabaseDump', 'frequency'=>1, 'unitfrequency'=>3600 * 24 * 7, 'priority'=>20, 'status'=>0, 'test'=>'0'),
+		    // 1=>array('label'=>'My label', 'jobtype'=>'command', 'command'=>'', 'parameters'=>'', 'comment'=>'Comment', 'frequency'=>1, 'unitfrequency'=>3600*24)
+		);
+		
 		$this->rights[$r][0] = 23001;
 		$this->rights[$r][1] = 'Read cron jobs';
 		$this->rights[$r][3] = 1;
@@ -128,7 +135,7 @@ class modCron extends DolibarrModules
         $this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=home,fk_leftmenu=modulesadmintools',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 						        'type'=>'left',			                // This is a Left menu entry
 						        'titre'=>'CronList',
-						        'url'=>'/cron/list.php?status=-1',
+						        'url'=>'/cron/list.php?status=-2',
 						        'langs'=>'cron',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 						        'position'=>200,
 						        'enabled'=>'$leftmenu==\'modulesadmintools\'',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.

@@ -43,7 +43,7 @@ llxHeader('',$langs->trans("Setup"),$wikihelp);
 $form = new Form($db);
 
 
-print_fiche_titre($langs->trans("SetupArea"),'','title_setup.png');
+print load_fiche_titre($langs->trans("SetupArea"),'','title_setup.png');
 
 
 if (! empty($conf->global->MAIN_MOTD_SETUPPAGE))

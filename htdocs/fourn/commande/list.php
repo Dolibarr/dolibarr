@@ -38,20 +38,23 @@ $langs->load("orders");
 $langs->load("sendings");
 
 
+$sall=GETPOST('search_all');
 $search_ref=GETPOST('search_ref');
 $search_refsupp=GETPOST('search_refsupp');
 $search_company=GETPOST('search_company');
 $search_user=GETPOST('search_user');
 $search_ht=GETPOST('search_ht');
 $search_ttc=GETPOST('search_ttc');
-$sall=GETPOST('search_all');
 $search_status=(GETPOST('search_status','alpha')!=''?GETPOST('search_status','alpha'):GETPOST('statut','alpha'));	// alpha and not intbecause it can be '6,7'
+$optioncss = GETPOST('optioncss','alpha');
 
 $page  = GETPOST('page','int');
 $socid = GETPOST('socid','int');
 $sortorder = GETPOST('sortorder','alpha');
 $sortfield = GETPOST('sortfield','alpha');
 
+$status=GETPOST('statut','alpha');
+$billed=GETPOST('billed','int');
 $viewstatut=GETPOST('viewstatut');
 
 // Security check
@@ -69,9 +72,21 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 	$search_ht='';
 	$search_ttc='';
 	$search_status='';
+	$billed='';
 }
 
 if ($search_status == '') $search_status=-1;
+
+// List of fields to search into when doing a "search in all"
+$fieldstosearchall = array(
+    'cf.ref'=>'Ref',
+    'cf.ref_supplier'=>'RefSupplier',
+    //'pd.description'=>'Description',
+    's.nom'=>"ThirdParty",
+    'cf.note_public'=>'NotePublic',
+);
+if (empty($user->socid)) $fieldstosearchall["cf.note_private"]="NotePrivate";
+
 
 
 /*
@@ -88,8 +103,16 @@ if ($socid > 0)
 {
 	$fourn = new Fournisseur($db);
 	$fourn->fetch($socid);
-	$title .= ' ('.$fourn->name.')';
+	$title .= ' - '.$fourn->name;
 }
+if ($status) 
+{
+    if ($status == '1,2,3') $title.=' - '.$langs->trans("StatusOrderToProcessShort");
+    if ($status == '6,7') $title.=' - '.$langs->trans("StatusOrderCanceled");
+    else $title.=' - '.$langs->trans($commandestatic->statuts[$status]);
+}
+if ($billed) $title.=' - '.$langs->trans("Billed");
+
 
 llxHeader('',$title);
 
@@ -104,7 +127,7 @@ $offset = $conf->liste_limit * $page ;
  */
 
 $sql = "SELECT s.rowid as socid, s.nom as name, cf.date_commande as dc,";
-$sql.= " cf.rowid,cf.ref, cf.ref_supplier, cf.fk_statut, cf.total_ht, cf.tva as total_tva, cf.total_ttc, cf.fk_user_author,cf.date_livraison,";
+$sql.= " cf.rowid, cf.ref, cf.ref_supplier, cf.fk_statut, cf.billed, cf.total_ht, cf.tva as total_tva, cf.total_ttc, cf.fk_user_author, cf.date_livraison,";
 $sql.= " p.rowid as project_id, p.ref as project_ref,";
 $sql.= " u.firstname,";
 $sql.= " u.lastname,";
@@ -140,15 +163,21 @@ if ($search_ttc != '')
 }
 if ($sall)
 {
-	$sql .= natural_search(array('cf.ref', 'cf.ref_supplier', 'cf.note_public', 'cf.note_private'), $sall);
+	$sql .= natural_search(array_keys($fieldstosearchall), $sall);
 }
 if ($socid) $sql.= " AND s.rowid = ".$socid;
 
 //Required triple check because statut=0 means draft filter
-if (GETPOST('statut', 'int') !== '')
+if (GETPOST('statut', 'alpha') !== '')
 {
-	$sql .= " AND cf.fk_statut IN (".GETPOST('statut').")";
+	$sql .= " AND cf.fk_statut IN (".GETPOST('statut', 'alpha').")";
 }
+
+if ($billed !== '')
+{
+	$sql .= " AND cf.billed = ".$billed;
+}
+
 if ($search_refsupp)
 {
 	$sql.= " AND (cf.ref_supplier LIKE '%".$db->escape($search_refsupp)."%')";
@@ -168,7 +197,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	$nbtotalofrecords = $db->num_rows($result);
 }
 
-$sql.= $db->plimit($conf->liste_limit+1, $offset);
+$sql.= $db->plimit($limit+1, $offset);
 
 $resql = $db->query($sql);
 if ($resql)
@@ -185,9 +214,25 @@ if ($resql)
 	if ($search_refsupp) 		$param.="&search_refsupp=".$search_refsupp;
 	if ($socid)					$param.="&socid=".$socid;
 	if ($search_status >= 0)  	$param.="&search_status=".$search_status;
+	if ($billed != '')          $param.="billed=".$billed; 
+	if ($optioncss != '') $param.='&optioncss='.$optioncss;
 
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords);
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="action" value="list">';
+	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
+	
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_commercial.png', 0, '', '', $limit);
+	
+	if ($sall)
+    {
+        foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
+        print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+    }
+	
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"cf.ref","",$param,'',$sortfield,$sortorder);
@@ -200,6 +245,7 @@ if ($resql)
 	print_liste_field_titre($langs->trans("OrderDate"),$_SERVER["PHP_SELF"],"dc","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('DateDeliveryPlanned'),$_SERVER["PHP_SELF"],'cf.date_livraison','',$param, 'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"cf.fk_statut","",$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('Billed'),$_SERVER["PHP_SELF"],'cf.billed','',$param,'align="center"',$sortfield,$sortorder,'');
 	print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
 	print "</tr>\n";
 
@@ -219,11 +265,16 @@ if ($resql)
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre" align="right">';
-	$formorder->selectSupplierOrderStatus($search_status,1,'search_status');
+	$formorder->selectSupplierOrderStatus((strstr($search_status, ',')?-1:$search_status),1,'search_status');
 	print '</td>';
-	print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
-	print "</td></tr>\n";
+	print '<td align="center">';
+	print $form->selectyesno('billed', $billed, 1, 0, 1);
+	print '</td>';
+    print '<td class="liste_titre" align="right">';
+    $searchpitco=$form->showFilterAndCheckAddButtons(0);
+    print $searchpitco;
+    print '</td>';
+	print "</tr>\n";
 
 	$var=true;
 
@@ -306,10 +357,12 @@ if ($resql)
 		print dol_print_date($db->jdate($obj->date_livraison), 'day');
 		print '</td>';
 
-
 		// Statut
 		print '<td align="right">'.$commandestatic->LibStatut($obj->fk_statut, 5).'</td>';
 
+		// Billed
+		print '<td align="center">'.yn($obj->billed).'</td>';
+		
 		print '<td></td>';
 
 		print "</tr>\n";

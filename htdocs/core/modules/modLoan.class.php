@@ -51,7 +51,7 @@ class modLoan extends DolibarrModules
 		$this->description = "Loans management";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = 'development';
+		$this->version = 'experimental';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 0;
@@ -63,7 +63,7 @@ class modLoan extends DolibarrModules
 		// Config pages
 		$this->config_page_url = array('loan.php');
 
-		// Dependances
+		// Dependencies
 		$this->depends = array();
 		$this->requiredby = array();
 		$this->conflictwith = array();

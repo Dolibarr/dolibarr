@@ -31,7 +31,7 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *	Classe de description et activation du module Banque
+ *	Class to describe and enable module Banque
  */
 class modBanque extends DolibarrModules
 {
@@ -49,6 +49,7 @@ class modBanque extends DolibarrModules
 		$this->numero = 85;
 
 		$this->family = "financial";
+		$this->module_position = 510;
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "Gestion des comptes financiers de type Comptes bancaires ou postaux";
@@ -76,7 +77,7 @@ class modBanque extends DolibarrModules
 		// Constants
 		$this->const = array();
 
-		// Boites
+		// Boxes
 		$this->boxes = array(0=>array('file'=>'box_comptes.php','enabledbydefaulton'=>'Home'));
 
 		// Permissions

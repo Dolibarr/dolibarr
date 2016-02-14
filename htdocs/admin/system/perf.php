@@ -48,7 +48,7 @@ $nowstring=dol_print_date(dol_now(),'dayhourlog');
 
 llxHeader();
 
-print_fiche_titre($langs->trans("PerfDolibarr"),'','title_setup');
+print load_fiche_titre($langs->trans("PerfDolibarr"),'','title_setup');
 
 print $langs->trans("YouMayFindPerfAdviceHere",'http://wiki.dolibarr.org/index.php/FAQ_Increase_Performance').' (<a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("Reload").'</a>)<br>';
 
@@ -107,6 +107,14 @@ if (! $foundcache && $test)
 {
 	$foundcache++;
 	print img_picto('','tick.png').' '.$langs->trans("EAcceleratorInstalled");
+}
+$test=function_exists('opcache_get_status');
+if (! $foundcache && $test)
+{
+	$foundcache++;
+	print img_picto('','tick.png').' '.$langs->trans("ZendOPCacheInstalled");  // Should be by defautl starting with PHP 5.5
+	//$tmp=opcache_get_status();
+	//var_dump($tmp);
 }
 $test=function_exists('apc_cache_info');
 if (! $foundcache && $test)
@@ -289,7 +297,7 @@ jQuery(document).ready(function() {
   var compjsstring;
   getjsurl = $.ajax({
     type: "GET",
-    url: \''.DOL_URL_ROOT.'/core/js/lib_head.js\',
+    url: \''.DOL_URL_ROOT.'/core/js/lib_rare.js\',
     cache: false,
     /* async: false, */
     /* crossDomain: true,*/

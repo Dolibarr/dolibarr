@@ -58,7 +58,7 @@ $form=new Form($db);
 
 llxHeader();
 
-print_fiche_titre($langs->trans("SubscriptionsStatistics"), $mesg);
+print load_fiche_titre($langs->trans("SubscriptionsStatistics"), $mesg);
 
 $dir=$conf->adherent->dir_temp;
 
@@ -155,7 +155,7 @@ $filter='s.client in (1,2,3)';
 print $form->select_company($id,'memberid',$filter,1);
 print '</td></tr>';
 print '<tr><td>'.$langs->trans("User").'</td><td>';
-print $form->select_dolusers($userid,'userid',1);
+print $form->select_dolusers($userid, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 print '</td></tr>';
 print '<tr><td align="center" colspan="2"><input type="submit" name="submit" class="button" value="'.$langs->trans("Refresh").'"></td></tr>';
 print '</table>';
@@ -167,23 +167,24 @@ print '<br><br>';
 $data = $stats->getAllByYear();
 
 
-print '<table class="border" width="100%">';
-print '<tr height="24">';
+print '<table class="noborder">';
+print '<tr class="liste_titre" height="24">';
 print '<td align="center">'.$langs->trans("Year").'</td>';
-print '<td align="center">'.$langs->trans("NbOfSubscriptions").'</td>';
-print '<td align="center">'.$langs->trans("AmountTotal").'</td>';
-print '<td align="center">'.$langs->trans("AmountAverage").'</td>';
+print '<td align="right">'.$langs->trans("NbOfSubscriptions").'</td>';
+print '<td align="right">'.$langs->trans("AmountTotal").'</td>';
+print '<td align="right">'.$langs->trans("AmountAverage").'</td>';
 print '</tr>';
 
 $oldyear=0;
+$var=false;
 foreach ($data as $val)
 {
     $year = $val['year'];
-    print $avg;
     while ($oldyear > $year+1)
     {	// If we have empty year
         $oldyear--;
-        print '<tr height="24">';
+        $var=!$var;
+        print '<tr '.$bc[$var].' height="24">';
         print '<td align="center">';
         print '<a href="month.php?year='.$oldyear.'&amp;mode='.$mode.'">';
         print $oldyear;
@@ -194,7 +195,8 @@ foreach ($data as $val)
         print '<td align="right">0</td>';
         print '</tr>';
     }
-    print '<tr height="24">';
+    $var=!$var;
+    print '<tr '.$bc[$var].' height="24">';
     print '<td align="center">';
     //print '<a href="month.php?year='.$year.'">';
     print $year;

@@ -6,11 +6,11 @@ Agenda=جدول الأعمال
 Agendas=جداول الأعمال
 Calendar=التقويم
 Calendars=التقاويم
-LocalAgenda=Internal calendar
-ActionsOwnedBy=Event owned by
+LocalAgenda=تقويم الداخلي
+ActionsOwnedBy=الحدث يملكها
 AffectedTo=مناط لـ
 DoneBy=أنهي بواسطة
-Event=Event
+Event=حدث
 Events=الأحداث
 EventsNb=عدد الأحداث
 MyEvents=الأحداث الخاصة بي
@@ -23,19 +23,21 @@ MenuToDoActions=جميع الأحداث الغير مكتملة
 MenuDoneActions=جميع الأحداث الملغية
 MenuToDoMyActions=أحداثي الغير مكتملة
 MenuDoneMyActions=أحداثي الملغاة
-ListOfEvents=List of events (internal calendar)
+ListOfEvents=قائمة الأحداث (التقويم الداخلي)
 ActionsAskedBy=أحداث تم رعايتها بواسطة
 ActionsToDoBy=أحداث عينت لـ
 ActionsDoneBy=أحداث انهيت بواسطة
-ActionsForUser=Events for user
-ActionsForUsersGroup=Events for all users of group
-ActionAssignedTo=Event assigned to
+ActionsForUser=أحداث المستخدم
+ActionsForUsersGroup=أحداث لجميع مستخدمي مجموعة
+ActionAssignedTo=الحدث المخصصة ل
 AllMyActions= كل أحداثي/ مهامي
 AllActions= جميع الأحداث / المهام
 ViewCal=عرض شهري
 ViewDay=عرض يومي
 ViewWeek=عرض اسبوعي
-ViewPerUser=Per user view
+ViewYear=Year view
+ViewPerUser=لكل وجهة نظر المستخدم
+ViewPerType=Per type view
 ViewWithPredefinedFilters= قم بالعرض مع الفلاتر المعرفة مسبقاً
 AutoActions= إكمال تلقائي
 AgendaAutoActionDesc= عرف الأحداث التي تريد من دوليبار إنشائها تلقائيا في جدوال الأعمال. إذا لم تقم بإختيار أي شي (الخيار الإفتراضي), سوف يتم فقط إدخال الأنشطلة إلى جدول الأعمال يدوياً
@@ -44,24 +46,24 @@ AgendaExtSitesDesc=تسمح لك هذه الصفحة بتعريف مصادر خ�
 ActionsEvents=الأحداث التي ستمكن دوليبار من إنشاء أعمال تلقائية في جدول الأعمال
 PropalValidatedInDolibarr=تم تفعيل %s من الإقتراح
 InvoiceValidatedInDolibarr=تم توثيق %s من الفاتورة
-InvoiceValidatedInDolibarrFromPos=Invoice %s validated from POS
+InvoiceValidatedInDolibarrFromPos=فاتورة%s التأكد من صلاحيتها من نقاط البيع
 InvoiceBackToDraftInDolibarr=الفاتورة %s للذهاب بها إلى حالة المسودة
 InvoiceDeleteDolibarr=تم حذف %s من الفاتورة
 OrderValidatedInDolibarr=تم توثيق %s من الطلب
-OrderDeliveredInDolibarr=Order %s classified delivered
+OrderDeliveredInDolibarr=ترتيب %s حسب التسليم
 OrderCanceledInDolibarr=تم إلغاء %s من الطلب
-OrderBilledInDolibarr=Order %s classified billed
+OrderBilledInDolibarr=ترتيب %s  حسب التبويب 
 OrderApprovedInDolibarr=تم الموافقة على %s من الطلب
-OrderRefusedInDolibarr=Order %s refused
+OrderRefusedInDolibarr=ترتيب %s رفض
 OrderBackToDraftInDolibarr=الطلب %s للذهاب بها إلى حالة المسودة
 ProposalSentByEMail=تم إرسال العرض الرسمي %s بواسطة البريد الإلكتروني
 OrderSentByEMail=تم إرسال طلبية العميل %s بواسطة البريد الإلكتروني
 InvoiceSentByEMail=تم إرسال فاتروة العميل %s بواسطة البريد الإلكتروني
 SupplierOrderSentByEMail=تم إرسال طلبية المزود %s بواسطة البريد الإلكتروني
 SupplierInvoiceSentByEMail=تم إرسال فاتروة المزود%s بواسطة البريد الإلكتروني
-ShippingSentByEMail=Shipment %s sent by EMail
-ShippingValidated= Shipment %s validated
-InterventionSentByEMail=Intervention %s sent by EMail
+ShippingSentByEMail=شحنة%s إرسالها عن طريق البريد الإلكتروني
+ShippingValidated= شحنة %sالتأكد من صلاحيتها
+InterventionSentByEMail=التدخل%s إرسالها عن طريق البريد الإلكتروني
 NewCompanyToDolibarr= تم إنشاء طرف ثالث أو خارجي
 DateActionPlannedStart= التاريخ المخطط للبدء
 DateActionPlannedEnd= التاريخ المخطط للإنهاء
@@ -70,37 +72,37 @@ DateActionDoneEnd= تاريخ النهاية الفعلية
 DateActionStart= تاريخ البدء
 DateActionEnd= تاريخ النهاية
 AgendaUrlOptions1=يمكنك أيضا إضافة المعايير التالية لترشيح النتائج:
-AgendaUrlOptions2=<b>login=%s</b> to restrict output to actions created by or assigned to user <b>%s</b>.
-AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b>.
+AgendaUrlOptions2=<b>تسجيل الدخول =٪ s إلى</b> تقييد الإخراج إلى الإجراءات التي أنشأتها أو المخصصة <b>للمستخدم%s.</b>
+AgendaUrlOptions3=<b>وجينا =٪ s إلى</b> تقييد الإخراج إلى الإجراءات التي <b>يملكها%s</b> المستخدم.
 AgendaUrlOptions4=<b>logint=<b>logint=%s</b> لتقييد الانتاج للإجراءات المناطة للمستخدم <b>%s</b>
-AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> to restrict output to actions associated to project <b>PROJECT_ID</b>.
+AgendaUrlOptionsProject=<b>مشروع = PROJECT_ID</b> لتقييد الإخراج إلى الإجراءات المرتبطة <b>PROJECT_ID</b> المشروع.
 AgendaShowBirthdayEvents=أظهر تاريخ الميلاد في عناوين الإتصال
 AgendaHideBirthdayEvents=أخفي تاريخ الميلاد في عناوين الإتصال
 Busy=مشغول
 ExportDataset_event1=قائمة الأحداث في جدول الأعمال
-DefaultWorkingDays=Default working days range in week (Example: 1-5, 1-6)
-DefaultWorkingHours=Default working hours in day (Example: 9-18)
+DefaultWorkingDays=افتراضي أيام عمل تتراوح في الأسبوع (على سبيل المثال: 1-5، 1-6)
+DefaultWorkingHours=افتراضي ساعات العمل في اليوم (على سبيل المثال: 9-18)
 # External Sites ical
 ExportCal=تصدير التقويم
 ExtSites=استيراد التقويمات الخارجية
-ExtSitesEnableThisTool=Show external calendars (defined into global setup) into agenda. Does not affect external calendars defined by users.
+ExtSitesEnableThisTool=عرض التقويمات الخارجية (المعرفة في الإعداد العالمي) في جدول الأعمال. لا يؤثر التقويمات الخارجية محددة من قبل المستخدمين.
 ExtSitesNbOfAgenda=عدد التقاويم
 AgendaExtNb=رقم التقويم %s
 ExtSiteUrlAgenda=عنوان المتصفح للدخول لملف .ical
 ExtSiteNoLabel=لا يوجد وصف
-WorkingTimeRange=Working time range
-WorkingDaysRange=Working days range
-VisibleTimeRange=Visible time range
-VisibleDaysRange=Visible days range
-AddEvent=Create event
-MyAvailability=My availability
-ActionType=Event type
-DateActionBegin=Start event date
-CloneAction=Clone event
-ConfirmCloneEvent=Are you sure you want to clone the event <b>%s</b> ?
-RepeatEvent=Repeat event
-EveryWeek=Every week
-EveryMonth=Every month
-DayOfMonth=Day of month
-DayOfWeek=Day of week
-DateStartPlusOne=Date start + 1 hour
+WorkingTimeRange=تعمل مجموعة الوقت
+WorkingDaysRange=أيام عمل تتراوح
+VisibleTimeRange=النطاق الزمني مرئية
+VisibleDaysRange=أيام مرئية مجموعة
+AddEvent=إنشاء الحدث
+MyAvailability=تواجدي
+ActionType=نوع الحدث
+DateActionBegin=تاريخ البدء الحدث
+CloneAction=الحدث استنساخ
+ConfirmCloneEvent=هل أنت متأكد أنك تريد استنساخ <b>الحدث %s ؟</b>
+RepeatEvent=تكرار الحدث
+EveryWeek=كل اسبوع
+EveryMonth=كل شهر
+DayOfMonth=يوم من الشهر
+DayOfWeek=يوم من الأسبوع
+DateStartPlusOne=تاريخ بدء + 1 ساعة

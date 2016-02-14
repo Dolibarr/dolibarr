@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2011-2014 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2011-2015 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2014      Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2015      Charlie BENKE	<charlie@patas-monkey.com> 
@@ -36,6 +36,7 @@ $langs->load("banks");
 $langs->load("bills");
 $langs->load("users");
 $langs->load("salaries");
+$langs->load('hrm');
 
 $id=GETPOST("id",'int');
 $action=GETPOST('action');
@@ -83,7 +84,7 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 	$object->note=GETPOST("note");
 	$object->type_payment=GETPOST("paymenttype");
 	$object->num_payment=GETPOST("num_payment");
-	$object->fk_user_creat=$user->id;
+	$object->fk_user_author=$user->id;
 
 	// Set user current salary as ref salaray for the payment
 	$fuser=new User($db);
@@ -92,27 +93,27 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 
 	if (empty($datep) || empty($datev) || empty($datesp) || empty($dateep))
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date")),'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
 		$error++;
 	}
 	if (empty($object->fk_user) || $object->fk_user < 0)
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Employee")),'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Employee")), null, 'errors');
 		$error++;
 	}
 	if (empty($object->type_payment) || $object->type_payment < 0)
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("PaymentMode")),'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("PaymentMode")), null, 'errors');
 		$error++;
 	}
 	if (empty($object->amount))
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Amount")),'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Amount")), null, 'errors');
 		$error++;
 	}
 	if (! empty($conf->banque->enabled) && ! $object->accountid > 0)
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Account")),'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Account")), null, 'errors');
 		$error++;
 	}
 	
@@ -166,18 +167,18 @@ if ($action == 'delete')
 			{
 				$object->error=$accountline->error;
 				$db->rollback();
-				setEventMessage($object->error,'errors');
+				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
 		else
 		{
 			$db->rollback();
-			setEventMessage($object->error,'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 	else
 	{
-		setEventMessage('Error try do delete a line linked to a conciliated bank transaction','errors');
+		setEventMessages('Error try do delete a line linked to a conciliated bank transaction', null, 'errors');
 	}
 }
 
@@ -201,7 +202,11 @@ if ($id)
 	}
 }
 
-// Formulaire saisie salaire
+/* ************************************************************************** */
+/*                                                                            */
+/* create mode                                                                */
+/*                                                                            */
+/* ************************************************************************** */
 if ($action == 'create')
 {
 	$year_current = strftime("%Y",dol_now());
@@ -225,62 +230,77 @@ if ($action == 'create')
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
 
-	print_fiche_titre($langs->trans("NewSalaryPayment"),'', 'title_accountancy.png');
+	print load_fiche_titre($langs->trans("NewSalaryPayment"),'', 'title_accountancy.png');
 
 	dol_fiche_head('', '');
 	
 	print '<table class="border" width="100%">';
 
-	print "<tr>";
-	print '<td class="fieldrequired">'.$langs->trans("DatePayment").'</td><td>';
+	// Date payment
+	print '<tr><td>';
+	print fieldLabel('DatePayment','datep',1).'</td><td>';
 	print $form->select_date((empty($datep)?-1:$datep),"datep",'','','','add',1,1);
 	print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans("DateValue").'</td><td>';
+	// Date value for bank
+	print '<tr><td>';
+	print fieldLabel('DateValue','datev',0).'</td><td>';
 	print $form->select_date((empty($datev)?-1:$datev),"datev",'','','','add',1,1);
 	print '</td></tr>';
 
 	// Employee
-	print "<tr>";
-	print '<td class="fieldrequired">'.$langs->trans("Employee").'</td><td>';
-	print $form->select_dolusers(GETPOST('fk_user','int'),'fk_user',1);
+	print '<tr><td>';
+	print fieldLabel('Employee','fk_user',1).'</td><td>';
+	print $form->select_dolusers(GETPOST('fk_user','int'), 'fk_user', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 	print '</td></tr>';
 
 	// Label
-	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" size="40" value="'.($_POST["label"]?$_POST["label"]:$langs->trans("SalaryPayment")).'"></td></tr>';
+	print '<tr><td>';
+	print fieldLabel('Label','label',1).'</td><td>';
+	print '<input name="label" id="label" size="40" value="'.($_POST["label"]?$_POST["label"]:$langs->trans("SalaryPayment")).'">';
+	print '</td></tr>';
 
-	print "<tr>";
-	print '<td class="fieldrequired">'.$langs->trans("DateStartPeriod").'</td><td>';
+	// Date start period
+	print '<tr><td>';
+	print fieldLabel('DateStartPeriod','datesp',1).'</td><td>';
 	print $form->select_date($datesp,"datesp",'','','','add');
 	print '</td></tr>';
 
-	print '<tr><td class="fieldrequired">'.$langs->trans("DateEndPeriod").'</td><td>';
+	// Date end period
+	print '<tr><td>';
+	print fieldLabel('DateEndPeriod','dateep',1).'</td><td>';
 	print $form->select_date($dateep,"dateep",'','','','add');
 	print '</td></tr>';
 
 	// Amount
-	print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input name="amount" size="10" value="'.GETPOST("amount").'"></td></tr>';
+	print '<tr><td>';
+	print fieldLabel('Amount','amount',1).'</td><td>';
+	print '<input name="amount" id="amount" size="10" value="'.GETPOST("amount").'">';
+	print '</td></tr>';
 
 	// Bank
 	if (! empty($conf->banque->enabled))
 	{
-		print '<tr><td class="fieldrequired">'.$langs->trans("Account").'</td><td>';
+		print '<tr><td>';
+		print fieldLabel('Account','selectaccountid',1).'</td><td>';
 		$form->select_comptes($_POST["accountid"],"accountid",0,'',1);  // Affiche liste des comptes courant
 		print '</td></tr>';
 	}
 
 	// Type payment
-	print '<tr><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td>';
+	print '<tr><td>';
+	print fieldLabel('PaymentMode','selectpaymenttype',1).'</td><td>';
 	$form->select_types_paiements(GETPOST("paymenttype"), "paymenttype");
-	print "</td>\n";
-	print "</tr>";
+	print '</td></tr>';
 
+	// Number
 	if (! empty($conf->banque->enabled))
 	{
 		// Number
-		print '<tr><td>'.$langs->trans('Numero');
+		print '<tr><td><label for="num_payment">'.$langs->trans('Numero');
 		print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
-		print '<td><input name="num_payment" type="text" value="'.GETPOST("num_payment").'"></td></tr>'."\n";
+		print '</label></td>';
+		print '<td><input name="num_payment" id="num_payment" type="text" value="'.GETPOST("num_payment").'"></td></tr>'."\n";
 	}
 
 	// Other attributes
@@ -303,7 +323,7 @@ if ($action == 'create')
 
 /* ************************************************************************** */
 /*                                                                            */
-/* Barre d'action                                                             */
+/* View mode                                                                  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -314,16 +334,17 @@ if ($id)
 
 	dol_fiche_head($head, 'card', $langs->trans("SalaryPayment"), 0, 'payment');
 
-
 	print '<table class="border" width="100%">';
 
-	print "<tr>";
+    $linkback = '<a href="'.DOL_URL_ROOT.'/compta/salaries/index.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+	
+    print "<tr>";
 	print '<td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
-	print $object->ref;
+	print $form->showrefnav($object, 'id', $linkback, 1, 'rowid', 'ref', '');
 	print '</td></tr>';
 
-	// Person
-	print '<tr><td>'.$langs->trans("Person").'</td><td>';
+	// Employee
+	print '<tr><td>'.$langs->trans("Employee").'</td><td>';
 	$usersal=new User($db);
 	$usersal->fetch($object->fk_user);
 	print $usersal->getNomUrl(1);

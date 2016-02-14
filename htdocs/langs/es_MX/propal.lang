@@ -1,0 +1,10 @@
+# Dolibarr language file - Source file is en_US - propal
+Proposals=Propuestas comerciales
+Prop=Propuestas comerciales
+CommercialProposals=Propuestas comerciales
+PropalsDraft=Borradores
+PropalsOpened=Abierta
+PropalStatusClosed=Cerrada
+PropalStatusOpenedShort=Abierta
+PropalStatusClosedShort=Cerrada
+DateEndPropalShort=Fecha de finalización

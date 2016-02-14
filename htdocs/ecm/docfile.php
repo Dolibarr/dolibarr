@@ -285,6 +285,5 @@ if ($_GET["action"] != 'edit')
 
 
 // End of page
-$db->close();
-
 llxFooter();
+$db->close();

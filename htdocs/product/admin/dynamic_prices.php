@@ -43,14 +43,14 @@ $price_globals = new PriceGlobalVariable($db);
 if ($action == 'edit_variable') {
     $res = $price_globals->fetch($selection);
     if ($res < 1) {
-        setEventMessage($price_globals->error, 'errors');
+        setEventMessages($price_globals->error, $price_globals->errors, 'errors');
     }
 }
 $price_updaters = new PriceGlobalVariableUpdater($db);
 if ($action == 'edit_updater') {
     $res = $price_updaters->fetch($selection);
     if ($res < 1) {
-        setEventMessage($price_updaters->error, 'errors');
+        setEventMessages($price_updaters->error, $price_updaters->errors, 'errors');
     }
 }
 
@@ -67,7 +67,7 @@ if (!empty($action) && empty($cancel)) {
         if (!empty($save)) {
             foreach ($price_globals->listGlobalVariables() as $entry) {
                 if ($price_globals->id != $entry->id && dol_strtolower($price_globals->code) == dol_strtolower($entry->code)) {
-                    setEventMessage($langs->trans("ErrorRecordAlreadyExists"), 'errors');
+                    setEventMessages($langs->trans("ErrorRecordAlreadyExists"), null, 'errors');
                     $save = null;
                 }
             }
@@ -78,21 +78,21 @@ if (!empty($action) && empty($cancel)) {
         if ($res > 0) {
             $action = '';
         } else {
-            setEventMessage($price_globals->error, 'errors');
+            setEventMessages($price_globals->error, $price_globals->errors, 'errors');
         }
     } elseif ($action == 'edit_variable' && !empty($save)) {
         $res = $price_globals->update($user);
         if ($res > 0) {
             $action = '';
         } else {
-            setEventMessage($price_globals->error, 'errors');
+            setEventMessages($price_globals->error, $price_globals->errors, 'errors');
         }
     } elseif ($action == 'delete_variable') {
         $res = $price_globals->delete($selection, $user);
         if ($res > 0) {
             $action = '';
         } else {
-            setEventMessage($price_globals->error, 'errors');
+            setEventMessages($price_globals->error, $price_globals->errors, 'errors');
         }
     }
 
@@ -113,7 +113,7 @@ if (!empty($action) && empty($cancel)) {
         if ($res > 0) {
             $action = '';
         } else {
-            setEventMessage($price_updaters->error, 'errors');
+            setEventMessages($price_updaters->error, $price_updaters->errors, 'errors');
         }
     } elseif ($action == 'edit_updater' && !empty($save)) {
         //Verify if process() works
@@ -124,14 +124,14 @@ if (!empty($action) && empty($cancel)) {
         if ($res > 0) {
             $action = '';
         } else {
-            setEventMessage($price_updaters->error, 'errors');
+            setEventMessages($price_updaters->error, $price_updaters->errors, 'errors');
         }
     } elseif ($action == 'delete_updater') {
         $res = $price_updaters->delete($selection, $user);
         if ($res > 0) {
             $action = '';
         } else {
-            setEventMessage($price_updaters->error, 'errors');
+            setEventMessages($price_updaters->error, $price_updaters->errors, 'errors');
         }
     }
 } elseif (!empty($cancel)) {
@@ -142,17 +142,20 @@ if (!empty($action) && empty($cancel)) {
  * View
  */
 
-//Header
 llxHeader("","",$langs->trans("CardProduct".$product->type));
-print_fiche_titre($langs->trans("DynamicPriceConfiguration"));
+
+print load_fiche_titre($langs->trans("DynamicPriceConfiguration"));
 $form = new Form($db);
+
+print $langs->trans("DynamicPriceDesc").'<br>';
+print '<br>';
 
 //Global variables table
 if ($action != 'create_updater' && $action != 'edit_updater') {
     print $langs->trans("GlobalVariables");
     print '<table summary="listofattributes" class="noborder" width="100%">';
     print '<tr class="liste_titre">';
-    print '<td>'.$langs->trans("Code").'</td>';
+    print '<td>'.$langs->trans("Variable").'</td>';
     print '<td>'.$langs->trans("Description").'</td>';
     print '<td>'.$langs->trans("Value").'</td>';
     print '<td width="80">&nbsp;</td>'; //Space for buttons
@@ -184,7 +187,7 @@ if ($action == 'create_variable' || $action == 'edit_variable') {
     print '<br><table summary="listofattributes" class="border centpercent">';
     //Code
     print '<tr>';
-    print '<td class="fieldrequired">'.$langs->trans("Code").'</td>';
+    print '<td class="fieldrequired">'.$langs->trans("Variable").'</td>';
     print '<td class="valeur"><input type="text" name="code" size="20" value="'.(empty($price_globals->code)?'':$price_globals->code).'"></td>';
     print '</tr>';
     //Description
@@ -205,7 +208,7 @@ if ($action == 'create_variable' || $action == 'edit_variable') {
     print '<input type="submit" class="button" name="cancel" id="cancel" value="'.$langs->trans("Cancel").'">';
     print '</div>';
     print '</form>';
-} else {
+} else if ($action != 'create_updater') {
     //Action Buttons
     print '<div class="tabsAction">';
     print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=create_variable">'.$langs->trans("Add").'</a>';
@@ -219,7 +222,7 @@ if ($action != 'create_variable' && $action != 'edit_variable') {
     print $langs->trans("GlobalVariableUpdaters");
     print '<table summary="listofattributes" class="noborder" width="100%">';
     print '<tr class="liste_titre">';
-    print '<td>'.$langs->trans("Code").'</td>';
+    print '<td>'.$langs->trans("VariableToUpdate").'</td>';
     print '<td>'.$langs->trans("Description").'</td>';
     print '<td>'.$langs->trans("Type").'</td>';
     print '<td>'.$langs->trans("Parameters").'</td>';
@@ -264,7 +267,7 @@ if ($action == 'create_updater' || $action == 'edit_updater') {
     print '<br><table summary="listofattributes" class="border centpercent">';
     //Code
     print '<tr>';
-    print '<td class="fieldrequired">'.$langs->trans("Code").'</td><td>';
+    print '<td class="fieldrequired">'.$langs->trans("VariableToUpdate").'</td><td>';
     $globals_list = array();
     foreach ($price_globals->listGlobalVariables() as $entry) {
         $globals_list[$entry->id]=$entry->code;

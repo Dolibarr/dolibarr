@@ -176,22 +176,24 @@ class FormFile
 	            $out .= '<input type="hidden" id="'.$htmlname.'_link_section_id"  name="link_section_id" value="'.$sectionid.'">';
 	            $out .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
-	            $out .= '<table width="100%" class="nobordernopadding">';
-	            $out .= '<tr>';
-	            $out .= '<td valign="middle" class="nowrap">';
-	            $out .= $langs->trans("URLToLink") . ': ';
-	            $out .= '<input type="text" name="link" size="'.$maxlength.'" id="link">';
-	            $out .= ' &nbsp; ' . $langs->trans("Label") . ': ';
-	            $out .= '<input type="text" name="label" id="label">';
+	            $out .= '<div class="valignmiddle" >';
+	            $out .= '<div class="inline-block" style="padding-right: 10px;">';
+	            if (! empty($conf->global->OPTIMIZEFORTEXTBROWSER)) $out .= '<label for="link">'.$langs->trans("URLToLink") . ':</label> ';
+	            $out .= '<input type="text" name="link" size="'.$maxlength.'" id="link" placeholder="'.dol_escape_htmltag($langs->trans("URLToLink")).'">';
+	            $out .= '</div>';
+	            $out .= '<div class="inline-block" style="padding-right: 10px;">';
+	            if (! empty($conf->global->OPTIMIZEFORTEXTBROWSER)) $out .= '<label for="label">'.$langs->trans("Label") . ':</label> ';
+	            $out .= '<input type="text" name="label" id="label" placeholder="'.dol_escape_htmltag($langs->trans("Label")).'">';
 	            $out .= '<input type="hidden" name="objecttype" value="' . $object->element . '">';
 	            $out .= '<input type="hidden" name="objectid" value="' . $object->id . '">';
-	            $out .= '&nbsp;';
+	            $out .= '</div>';
+	            $out .= '<div class="inline-block" style="padding-right: 10px;">';
 	            $out .= '<input type="submit" class="button" name="linkit" value="'.$langs->trans("ToLink").'"';
 	            $out .= (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm)?' disabled':'');
 	            $out .= '>';
-	            $out .= '</td></tr>';
-	            $out .= '</table>';
-
+	            $out .= '</div>';
+                $out .= '</div>';
+                $out .= '<div class="clearboth"></div>';
 	            $out .= '</form><br>';
 	            $parameters = array('socid'=>(isset($GLOBALS['socid'])?$GLOBALS['socid']:''),'id'=>(isset($GLOBALS['id'])?$GLOBALS['id']:''), 'url'=>$url, 'perm'=>$perm);
 	            $res = $hookmanager->executeHooks('formattachOptions',$parameters,$object);
@@ -283,7 +285,7 @@ class FormFile
         }
 
         $printer=0;
-        if (in_array($modulepart,array('facture','askpricesupplier','propal','proposal','order','commande','expedition')))	// The direct print feature is implemented only for such elements
+        if (in_array($modulepart,array('facture','supplier_proposal','propal','proposal','order','commande','expedition', 'commande_fournisseur')))	// The direct print feature is implemented only for such elements
         {
             $printer = (!empty($user->rights->printing->read) && !empty($conf->printing->enabled))?true:false;
         }
@@ -327,13 +329,13 @@ class FormFile
                     $modellist=ModelePDFPropales::liste_modeles($this->db);
                 }
             }
-			else if ($modulepart == 'askpricesupplier')
+			else if ($modulepart == 'supplier_proposal')
             {
                 if (is_array($genallowed)) $modellist=$genallowed;
                 else
                 {
-                    include_once DOL_DOCUMENT_ROOT.'/core/modules/askpricesupplier/modules_askpricesupplier.php';
-                    $modellist=ModelePDFAskPriceSupplier::liste_modeles($this->db);
+                    include_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_proposal/modules_supplier_proposal.php';
+                    $modellist=ModelePDFSupplierProposal::liste_modeles($this->db);
                 }
             }
             else if ($modulepart == 'commande')
@@ -492,7 +494,7 @@ class FormFile
             $out.= '<input type="hidden" name="action" value="builddoc">';
             $out.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
-            $out.= '<div class="titre">'.$titletoshow.'</div>';
+            $out.= load_fiche_titre($titletoshow, '', '');
             $out.= '<table class="liste formdoc noborder" summary="listofdocumentstable" width="100%">';
 
             $out.= '<tr class="liste_titre">';
@@ -524,7 +526,9 @@ class FormFile
                 include_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
                 $formadmin=new FormAdmin($this->db);
                 $defaultlang=$codelang?$codelang:$langs->getDefaultLang();
-                $out.= $formadmin->select_language($defaultlang);
+                $morecss='maxwidth150';
+                if (! empty($conf->browser->phone)) $morecss='maxwidth100';
+                $out.= $formadmin->select_language($defaultlang, 'lang_id', 0, 0, 0, 0, 0, $morecss);
             }
             else
             {
@@ -790,7 +794,7 @@ class FormFile
 			$param = (isset($object->id)?'&id='.$object->id:'').$param;
 
 			// Show list of existing files
-			if (empty($useinecm)) print_titre($title?$title:$langs->trans("AttachedFiles"));
+			if (empty($useinecm)) print load_fiche_titre($title?$title:$langs->trans("AttachedFiles"));
 			if (empty($url)) $url=$_SERVER["PHP_SELF"];
 			print '<table width="100%" class="'.($useinecm?'nobordernopadding':'liste').'">';
 			print '<tr class="liste_titre">';
@@ -956,7 +960,7 @@ class FormFile
         dol_syslog(get_class($this).'::list_of_autoecmfiles upload_dir='.$upload_dir.' modulepart='.$modulepart);
 
         // Show list of documents
-        if (empty($useinecm)) print_titre($langs->trans("AttachedFiles"));
+        if (empty($useinecm)) print load_fiche_titre($langs->trans("AttachedFiles"));
         if (empty($url)) $url=$_SERVER["PHP_SELF"];
         print '<table width="100%" class="nobordernopadding">';
         print '<tr class="liste_titre">';
@@ -990,10 +994,10 @@ class FormFile
             include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
             $object_instance=new Propal($this->db);
         }
-        else if ($modulepart == 'askpricesupplier')
+        else if ($modulepart == 'supplier_proposal')
         {
-            include_once DOL_DOCUMENT_ROOT.'/comm/askpricesupplier/class/askpricesupplier.class.php';
-            $object_instance=new AskPriceSupplier($this->db);
+            include_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
+            $object_instance=new SupplierProposal($this->db);
         }
         else if ($modulepart == 'order')
         {
@@ -1056,7 +1060,7 @@ class FormFile
                 if ($modulepart == 'invoice')          { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:''); }
                 if ($modulepart == 'invoice_supplier') { preg_match('/([^\/]+)\/[^\/]+$/',$relativefile,$reg); $ref=(isset($reg[1])?$reg[1]:''); if (is_numeric($ref)) { $id=$ref; $ref=''; } }	// $ref may be also id with old supplier invoices
                 if ($modulepart == 'propal')           { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:''); }
-				if ($modulepart == 'askpricesupplier') { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:''); }
+				if ($modulepart == 'supplier_proposal') { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:''); }
                 if ($modulepart == 'order')            { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:''); }
                 if ($modulepart == 'order_supplier')   { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:''); }
                 if ($modulepart == 'contract')         { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:''); }
@@ -1088,7 +1092,9 @@ class FormFile
                         }
                     }
 
-                    if ($result > 0)  { $found=1; $this->cache_objects[$modulepart.'_'.$id.'_'.$ref]=dol_clone($object_instance); }    // Save object into a cache
+					if ($result > 0) {  // Save object into a cache
+						$found=1; $this->cache_objects[$modulepart.'_'.$id.'_'.$ref] = clone $object_instance;
+					}
                     if ($result == 0) { $found=1; $this->cache_objects[$modulepart.'_'.$id.'_'.$ref]='notfound'; unset($filearray[$key]); }
                 }
 
@@ -1197,7 +1203,7 @@ class FormFile
         $param .= (isset($object->id)?'&id=' . $object->id : '');
 
         // Show list of associated links
-        print_titre($langs->trans("LinkedFiles"));
+        print load_fiche_titre($langs->trans("LinkedFiles"));
 
         print '<form action="' . $_SERVER['PHP_SELF'] . ($param?'?'.$param:'') . '" method="POST">';
 

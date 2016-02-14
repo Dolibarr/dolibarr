@@ -87,8 +87,10 @@ if (GETPOST('submitdateselect'))
 }
 
 
-if ($action == 'assign')
+if ($action == 'addtime' && GETPOST('assigntask'))
 {
+    $action = 'assigntask';
+
     if ($taskid > 0)
     {
 		$result = $object->fetch($taskid, $ref);
@@ -108,6 +110,35 @@ if ($action == 'assign')
     {
     	$idfortaskuser=$user->id;
 		$result = $object->add_contact($idfortaskuser, GETPOST("type"), 'internal');
+
+    	if ($result >= 0 || $result == -2)	// Contact add ok or already contact of task
+    	{
+			// Test if we are already contact of the project (should be rare but sometimes we can add as task contact without being contact of project, like when admin user has been removed from contact of project)
+    		$sql='SELECT ec.rowid FROM '.MAIN_DB_PREFIX.'element_contact as ec, '.MAIN_DB_PREFIX.'c_type_contact as tc WHERE tc.rowid = ec.fk_c_type_contact';
+    		$sql.=' AND ec.fk_socpeople = '.$idfortaskuser." AND ec.element_id = '.$object->fk_project.' AND tc.element = 'project' AND source = 'internal'";
+    		$resql=$db->query($sql);
+    		if ($resql)
+    		{
+    			$obj=$db->fetch_object($resql);
+    			if (! $obj)	// User is not already linked to project, so we will create link to first type
+    			{
+    				$project = new Project($db);
+    				$project->fetch($object->fk_project);
+    				// Get type
+    				$listofprojcontact=$project->liste_type_contact('internal');
+    				
+    				if (count($listofprojcontact))
+    				{
+    					$typeforprojectcontact=reset(array_keys($listofprojcontact));
+    					$result = $project->add_contact($idfortaskuser, $typeforprojectcontact, 'internal');
+    				}
+    			}
+    		}
+    		else 
+    		{
+    			dol_print_error($db);
+    		}
+    	}
     }
 
 	if ($result < 0)
@@ -116,7 +147,7 @@ if ($action == 'assign')
 		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 		{
 			$langs->load("errors");
-			setEventMessage($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), 'warnings');
+			setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'warnings');
 		}
 		else
 		{
@@ -195,7 +226,7 @@ if ($action == 'addtime' && $user->rights->projet->creer)
 
     	if (! $error)
     	{
-	    	setEventMessage($langs->trans("RecordSaved"));
+	    	setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 
     	    // Redirect to avoid submit twice on back
         	header('Location: '.$_SERVER["PHP_SELF"].($projectid?'?id='.$projectid:'?').($mode?'&mode='.$mode:'').'&year='.$yearofday.'&month='.$monthofday.'&day='.$dayofday);
@@ -204,7 +235,7 @@ if ($action == 'addtime' && $user->rights->projet->creer)
     }
     else
     {
-	    setEventMessage($langs->trans("ErrorTimeSpentIsEmpty"), 'errors');
+	    setEventMessages($langs->trans("ErrorTimeSpentIsEmpty"), null, 'errors');
     }
 }
 
@@ -245,10 +276,10 @@ if ($id)
     $project->fetch_thirdparty();
 }
 
-$onlyopened=1;	// or -1
-$tasksarray=$taskstatic->getTasksArray(0,0,($project->id?$project->id:$projectsListId),$socid,0,'',$onlyopened);    // We want to see all task of opened project i am allowed to see, not only mine. Later only mine will be editable later.
-$projectsrole=$taskstatic->getUserRolesForProjectsOrTasks($usertoprocess,0,($project->id?$project->id:$projectsListId),0);
-$tasksrole=$taskstatic->getUserRolesForProjectsOrTasks(0,$usertoprocess,($project->id?$project->id:$projectsListId),0);
+$onlyopenedproject=1;	// or -1
+$tasksarray=$taskstatic->getTasksArray(0, 0, ($project->id?$project->id:0), $socid, 0, '', $onlyopenedproject);    // We want to see all task of opened project i am allowed to see, not only mine. Later only mine will be editable later.
+$projectsrole=$taskstatic->getUserRolesForProjectsOrTasks($usertoprocess, 0, ($project->id?$project->id:0), 0, $onlyopenedproject);
+$tasksrole=$taskstatic->getUserRolesForProjectsOrTasks(0, $usertoprocess, ($project->id?$project->id:0), 0, $onlyopenedproject);
 //var_dump($tasksarray);
 //var_dump($projectsrole);
 //var_dump($taskrole);
@@ -284,11 +315,11 @@ $head=project_timesheet_prepare_head($mode);
 dol_fiche_head($head, 'inputperday', '', 0, 'task');
 
 // Show description of content
-if ($mine) print $langs->trans("MyTasksDesc").($onlyopened?' '.$langs->trans("OnlyOpenedProject"):'').'<br>';
+if ($mine) print $langs->trans("MyTasksDesc").($onlyopenedproject?' '.$langs->trans("OnlyOpenedProject"):'').'<br>';
 else
 {
-	if ($user->rights->projet->all->lire && ! $socid) print $langs->trans("ProjectsDesc").($onlyopened?' '.$langs->trans("OnlyOpenedProject"):'').'<br>';
-	else print $langs->trans("ProjectsPublicTaskDesc").($onlyopened?' '.$langs->trans("AlsoOnlyOpenedProject"):'').'<br>';
+	if ($user->rights->projet->all->lire && ! $socid) print $langs->trans("ProjectsDesc").($onlyopenedproject?' '.$langs->trans("OnlyOpenedProject"):'').'<br>';
+	else print $langs->trans("ProjectsPublicTaskDesc").($onlyopenedproject?' '.$langs->trans("AlsoOnlyOpenedProject"):'').'<br>';
 }
 if ($mine)
 {
@@ -322,7 +353,24 @@ print "\n";
 */
 
 
-print '<div align="right">'.$nav.'</div>';
+// Add a new project/task
+//print '<br>';
+//print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+//print '<input type="hidden" name="action" value="assigntask">';
+//print '<input type="hidden" name="mode" value="'.$mode.'">';
+//print '<input type="hidden" name="year" value="'.$year.'">';
+//print '<input type="hidden" name="month" value="'.$month.'">';
+//print '<input type="hidden" name="day" value="'.$day.'">';
+print '<div class="float">';
+print $langs->trans("AssignTaskToMe").'<br>';
+$formproject->selectTasks($socid?$socid:-1, $taskid, 'taskid', 32, 0, 1, 1);
+print $formcompany->selectTypeContact($object, '', 'type','internal','rowid', 0);
+print '<input type="submit" class="button" name="assigntask" value="'.$langs->trans("AssignTask").'">';
+//print '</form>';
+print '</div>';
+
+print '<div class="floatright">'.$nav.'</div>';
+print '<div class="clearboth" style="padding-bottom: 8px;"></div>';
 
 
 print '<table class="noborder" width="100%">';
@@ -367,21 +415,6 @@ print "jQuery(document).ready(function () {\n";
 print '		jQuery(".timesheetalreadyrecorded").tipTip({ maxWidth: "600px", edgeOffset: 10, delay: 50, fadeIn: 50, fadeOut: 50, content: \''.dol_escape_js($langs->trans("TimeAlreadyRecorded", $user->getFullName($langs))).'\'});';
 print "});";
 print '</script>';
-
-
-// Add a new project/task
-print '<br>';
-print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-print '<input type="hidden" name="action" value="assign">';
-print '<input type="hidden" name="mode" value="'.$mode.'">';
-print '<input type="hidden" name="year" value="'.$year.'">';
-print '<input type="hidden" name="month" value="'.$month.'">';
-print '<input type="hidden" name="day" value="'.$day.'">';
-print $langs->trans("AssignTaskToMe").'<br>';
-$formproject->selectTasks($socid?$socid:-1, $taskid, 'taskid', 32, 0, 1, 1);
-print $formcompany->selectTypeContact($object, '', 'type','internal','rowid', 1);
-print '<input type="submit" class="button" name="submit" value="'.$langs->trans("AssignTask").'">';
-print '</form>';
 
 
 llxFooter();

@@ -167,7 +167,7 @@ if (GETPOST("action") == 'create')
 
 	$total = $expensereport->total_ttc;
 
-	print_fiche_titre($langs->trans("DoPayment"));
+	print load_fiche_titre($langs->trans("DoPayment"));
 
 	if ($mesg)
 	{
@@ -313,7 +313,5 @@ if (GETPOST("action") == 'create')
 	print "</form>\n";
 }
 
-
-$db->close();
-
 llxFooter();
+$db->close();

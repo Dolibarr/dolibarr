@@ -39,6 +39,9 @@ InterventionClassifiedUnbilledInDolibarr=Intervention %s set as unbilled
 InterventionSentByEMail=Intervention %s sent by EMail
 InterventionDeletedInDolibarr=Intervention %s deleted
 SearchAnIntervention=Search an intervention
+InterventionsArea=Interventions area
+DraftFichinter=Draft interventions
+LastModifiedInterventions=Last %s modified interventions
 ##### Types de contacts #####
 TypeContact_fichinter_internal_INTERREPFOLL=Representative following-up intervention
 TypeContact_fichinter_internal_INTERVENING=Intervening
@@ -51,6 +54,9 @@ PacificNumRefModelDesc1=Return numero with format %syymm-nnnn where yy is year, 
 PacificNumRefModelError=An intervention card starting with $syymm already exists and is not compatible with this model of sequence. Remove it or rename it to activate this module.
 PrintProductsOnFichinter=Print products on intervention card
 PrintProductsOnFichinterDetails=interventions generated from orders
+InterventionStatistics=Statistics of interventions
+NbOfinterventions=Nb of intervention cards
+NumberOfInterventionsByMonth=Nb of intervention cards by month (date of validation)
 ##### Exports #####
 InterId=Intervention id
 InterRef=Intervention ref.

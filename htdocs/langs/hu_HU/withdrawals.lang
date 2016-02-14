@@ -48,7 +48,6 @@ RefusedReason=Az elutasítás indoka
 RefusedInvoicing=Billing elutasítása
 NoInvoiceRefused=Ne töltse az elutasítás
 InvoiceRefused=Invoice refused (Charge the rejection to customer)
-Status=Állapot
 StatusUnknown=Ismeretlen
 StatusWaiting=Várakozás
 StatusTrans=Küldött

@@ -91,7 +91,7 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x"))		// bout
 		$num_rows = $db->num_rows($resql);
 		if ($num_rows > 0)
 		{
-			setEventMessage($langs->trans("VoteNameAlreadyExists"),'errors');
+			setEventMessages($langs->trans("VoteNameAlreadyExists"), null, 'errors');
 			$error++;
 		}
 		else
@@ -1020,15 +1020,15 @@ if ($nbofcheckbox >= 2)
 
 // S'il a oublié de remplir un nom
 if (isset($_POST["boutonp"]) && $_POST["nom"] == "") {
-	setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Name")), 'errors');
+	setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Name")), null, 'errors');
 }
 
 if (isset($erreur_prenom) && $erreur_prenom) {
-	setEventMessage($langs->trans('VoteNameAlreadyExists'), 'errors');
+	setEventMessages($langs->trans('VoteNameAlreadyExists'), null, 'errors');
 }
 
 if (isset($erreur_ajout_date) && $erreur_ajout_date) {
-	setEventMessage($langs->trans("ErrorWrongDate"), 'errors');
+	setEventMessages($langs->trans("ErrorWrongDate"), null, 'errors');
 }
 
 //fin du tableau

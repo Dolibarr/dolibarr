@@ -333,9 +333,9 @@ if (! empty($force_install_message))
 		            if ($note) $option.=' '.$note;
 		            // Deprecated and experimental
 					if ($type=='mysql') $option.=' ' . $langs->trans("Deprecated");
-		            elseif ($type=='mssql')  $option.=' '.$langs->trans("Experimental");
-		            elseif ($type=='sqlite') $option.=' '.$langs->trans("Experimental");
-		            elseif ($type=='sqlite3') $option.=' '.$langs->trans("Experimental");
+		            elseif ($type=='mssql')  $option.=' '.$langs->trans("VersionExperimental");
+		            elseif ($type=='sqlite') $option.=' '.$langs->trans("VersionExperimental");
+		            elseif ($type=='sqlite3') $option.=' '.$langs->trans("VersionExperimental");
 		            // No available
 		            elseif (! function_exists($testfunction)) $option.=' - '.$langs->trans("FunctionNotAvailableInThisPHP");
 		            $option.='</option>';

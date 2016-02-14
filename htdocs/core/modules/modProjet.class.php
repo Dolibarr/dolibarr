@@ -32,7 +32,7 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *	Classe de description et activation du module Projet
+ *	Class to describe and enable module Projet
  */
 class modProjet extends DolibarrModules
 {
@@ -50,6 +50,7 @@ class modProjet extends DolibarrModules
 		$this->numero = 400;
 
 		$this->family = "projects";
+		$this->module_position = 10;
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "Gestion des projets";
@@ -115,8 +116,8 @@ class modProjet extends DolibarrModules
 		$this->const[$r][3] = "";
 		$this->const[$r][4] = 0;
 		$r++;
-		
-		$this->const[$r][0] = "PROJECT_USE_OPPORTUNIES";
+		                       
+		$this->const[$r][0] = "PROJECT_USE_OPPORTUNITIES";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "1";
 		$this->const[$r][3] = "";

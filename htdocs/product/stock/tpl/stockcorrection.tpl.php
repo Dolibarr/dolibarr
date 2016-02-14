@@ -21,7 +21,9 @@
 
 <!-- BEGIN PHP TEMPLATE STOCKCORRECTION.TPL.PHP -->
 <?php
-$langs->load("productbatch");
+        if (! is_object($product)) $product=$object;
+
+        $langs->load("productbatch");
 
 		if (empty($id)) $id = $object->id;
 
@@ -78,11 +80,11 @@ $langs->load("productbatch");
 		print '<td colspan="4"><input class="flat" name="unitprice" id="unitprice" size="10" value="'.GETPOST("unitprice").'"></td>';
 		print '</tr>';
 
-		// Eat-by date
+		// Serial / Eat-by date
 		if ((! empty($conf->productbatch->enabled)) && is_object($product) && $product->hasbatch())
 		{
 			print '<tr>';
-			print '<td colspan="2">'.$langs->trans("batch_number").'</td><td colspan="4">';
+			print '<td colspan="2" class="fieldrequired">'.$langs->trans("batch_number").'</td><td colspan="4">';
 			print '<input type="text" name="batch_number" size="40" value="'.GETPOST("batch_number").'">';
 			print '</td>';
 			print '</tr><tr>';

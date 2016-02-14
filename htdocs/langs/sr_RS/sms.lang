@@ -39,7 +39,7 @@ SmsSuccessfulySent=SMS uspešno poslat (od %s do %s)
 ErrorSmsRecipientIsEmpty=Broj targeta je prazan
 WarningNoSmsAdded=Nema novih brojeva za dodavanje na listu targeta
 ConfirmValidSms=Da li potvrđujete odobrenje ove kampanje ?
-ConfirmResetMailing=Warning, if you make a reinit of Sms campain <b>%s</b>, you will allow to make a mass sending of it a second time. Is it really what you wan to do ?
+ConfirmResetMailing=Upozorenje, ukoliko reinicijalizujete Sms kampanju <b>%s</b>, obavićete masivno slanje sms-a po drugi put. Da li zaista želite da reinicijalizujete kampanju ?
 ConfirmDeleteMailing=Da li potvrđujete uklanjanje ove kampanje ?
 NbOfRecipients=Broj targeta
 NbOfUniqueSms=Br. jedinstvenih brojeva telefona
@@ -49,5 +49,6 @@ SendSms=Pošalji SMS
 SmsInfoCharRemain=Broj preostalih karaktera
 SmsInfoNumero= (internacionalni format npr: +33899701761)
 DelayBeforeSending=Odloženo slanje (u minutima)
+SmsNoPossibleSenderFound=No sender available. Check setup of your SMS provider.
 SmsNoPossibleRecipientFound=Nema definisanog targeta. Proverite podešavanja Vašeg SMS provajdera.
 

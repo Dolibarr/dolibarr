@@ -5,7 +5,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2011 	    Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2011 	   Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -189,7 +189,7 @@ if ($_POST["delete"])
 llxHeader('',$langs->trans("ExternalRSSSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("ExternalRSSSetup"), $linkback, 'title_setup');
+print load_fiche_titre($langs->trans("ExternalRSSSetup"), $linkback, 'title_setup');
 print '<br>';
 
 // Formulaire ajout
@@ -320,6 +320,5 @@ else
 }
 
 
-$db->close();
-
 llxFooter();
+$db->close();

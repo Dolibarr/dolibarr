@@ -54,6 +54,9 @@ PacificNumRefModelDesc1=Återgå numero med format %syymm-nnnn där YY är år, 
 PacificNumRefModelError=En intervention kort börjar med $ syymm finns redan och är inte förenligt med denna modell för sekvens. Ta bort den eller byta namn på den för att aktivera denna modul.
 PrintProductsOnFichinter=Trycksaker på interventionskort
 PrintProductsOnFichinterDetails=Insatser skapade utifrån order
+InterventionStatistics=Statistics of interventions
+NbOfinterventions=Nb of intervention cards
+NumberOfInterventionsByMonth=Nb of intervention cards by month (date of validation)
 ##### Exports #####
 InterId=Intervention id
 InterRef=Intervention ref.

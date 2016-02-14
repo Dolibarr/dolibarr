@@ -51,7 +51,7 @@ if ($page == -1) {
 $offset = $conf->liste_limit * $page;
 if (! $sortorder) $sortorder='DESC';
 if (! $sortfield) $sortfield='dateprint';
-$limit = $conf->liste_limit;
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 
 // Search fields
 $sref=GETPOST("sref");
@@ -116,14 +116,15 @@ if (empty($socid))
 $head = societe_prepare_head($object);
 dol_fiche_head($head, 'consumption', $langs->trans("ThirdParty"),0,'company');
 
+dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
+    
+print '<div class="fichecenter">';
+
+print '<div class="underbanner clearboth"></div>';
 print '<table class="border" width="100%">';
-print '<tr><td width="25%">'.$langs->trans('ThirdPartyName').'</td>';
-print '<td colspan="3">';
-print $form->showrefnav($object,'socid','',($user->societe_id?0:1),'rowid','nom');
-print '</td></tr>';
 
 // Alias names (commercial, trademark or alias names)
-print '<tr id="name_alias"><td><label for="name_alias_input">'.$langs->trans('AliasNames').'</label></td>';
+print '<tr id="name_alias"><td class="titlefield"><label for="name_alias_input">'.$langs->trans('AliasNames').'</label></td>';
 print '<td colspan="3">'.$object->name_alias.'</td></tr>';
 
 if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
@@ -173,14 +174,14 @@ if ($object->fournisseur)
 }
 print '</table>';
 
+print '</div>';
+
 dol_fiche_end();
 print '<br>';
 
 
-print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?socid='.$socid.'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="socid" value="'.$socid.'">'."\n";
-
 
 $sql_select='';
 /*if ($type_element == 'action')
@@ -347,8 +348,8 @@ print '<td class="liste_titre" align="left">';
 print '<input class="flat" type="text" name="sprod_fulldescr" size="15" value="'.dol_escape_htmltag($sprod_fulldescr).'">';
 print '</td>';
 print '<td class="liste_titre" align="right">';
-print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("resetFilters")).'" title="'.dol_escape_htmltag($langs->trans("resetFilters")).'">';
+$searchpitco=$form->showFilterAndCheckAddButtons(0);
+print $searchpitco;
 print '</td>';
 print '</tr>';
 

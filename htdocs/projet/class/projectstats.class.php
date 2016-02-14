@@ -24,7 +24,6 @@ include_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
  */
 class ProjectStats extends Stats
 {
-	protected $db;
 	private $project;
 	public $userid;
 	public $socid;
@@ -58,7 +57,8 @@ class ProjectStats extends Stats
 		$sql .= " SUM(t.opp_amount), t.fk_opp_status, cls.code, cls.label";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "projet as t, ".MAIN_DB_PREFIX."c_lead_status as cls";
 		$sql .= $this->buildWhere();
-		$sql .= " AND t.fk_opp_status = cls.rowid AND t.fk_statut = 1";
+		$sql .= " AND t.fk_opp_status = cls.rowid";
+		$sql .= " AND t.fk_statut <> 0";     // We want historic also, so all projects
 		$sql .= " GROUP BY t.fk_opp_status, cls.code, cls.label";
 
 		$result = array ();
@@ -371,7 +371,7 @@ class ProjectStats extends Stats
 		if ($foundintocache) // Cache file found and is not too old
 		{
 			dol_syslog(get_class($this) . '::' . __FUNCTION__ . " read data from cache file " . $newpathofdestfile . " " . $filedate . ".");
-			$data = dol_json_decode(file_get_contents($newpathofdestfile), true);
+			$data = json_decode(file_get_contents($newpathofdestfile), true);
 		} else {
 			$year = $startyear;
 			while ( $year <= $endyear ) {
@@ -397,7 +397,7 @@ class ProjectStats extends Stats
 			if (! dol_is_dir($conf->user->dir_temp))
 				dol_mkdir($conf->user->dir_temp);
 			$fp = fopen($newpathofdestfile, 'w');
-			fwrite($fp, dol_json_encode($data));
+			fwrite($fp, json_encode($data));
 			fclose($fp);
 			if (! empty($conf->global->MAIN_UMASK))
 				$newmask = $conf->global->MAIN_UMASK;

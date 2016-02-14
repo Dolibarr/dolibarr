@@ -36,6 +36,7 @@ $langs->load("users");
 
 $sall=GETPOST('sall');
 $search_group=GETPOST('search_group');
+$optioncss = GETPOST('optioncss','alpha');
 
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
@@ -48,6 +49,12 @@ $pagenext = $page + 1;
 if (! $sortfield) $sortfield="g.nom";
 if (! $sortorder) $sortorder="ASC";
 
+// List of fields to search into when doing a "search in all"
+$fieldstosearchall = array(
+    'g.nom'=>"Group",
+    'g.note'=>"Note"
+);
+
 
 /*
  * View
@@ -55,7 +62,7 @@ if (! $sortorder) $sortorder="ASC";
 
 llxHeader();
 
-print_fiche_titre($langs->trans("ListOfGroups"));
+print load_fiche_titre($langs->trans("ListOfGroups"));
 
 $sql = "SELECT g.rowid, g.nom as name, g.entity, g.datec, COUNT(DISTINCT ugu.fk_user) as nb";
 $sql.= " FROM ".MAIN_DB_PREFIX."usergroup as g";
@@ -83,7 +90,20 @@ if ($resql)
     $i = 0;
 
     $param="&search_group=".urlencode($search_group)."&amp;sall=".urlencode($sall);
-    print '<table class="noborder" width="100%">';
+    if ($optioncss != '') $param.='&amp;optioncss='.$optioncss;
+    
+    if ($sall)
+    {
+        foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
+        print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+    }
+    
+    $moreforfilter='';
+    
+	//$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
+	//$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
+    
+    print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans("Group"),$_SERVER["PHP_SELF"],"g.nom",$param,"","",$sortfield,$sortorder);
     //multicompany
@@ -92,7 +112,7 @@ if ($resql)
     	print_liste_field_titre($langs->trans("Entity"),$_SERVER["PHP_SELF"],"g.entity",$param,"",'align="center"',$sortfield,$sortorder);
     }
     print_liste_field_titre($langs->trans("NbOfUsers"),$_SERVER["PHP_SELF"],"nb",$param,"",'align="center"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"g.datec",$param,"",'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("DateCreationShort"),$_SERVER["PHP_SELF"],"g.datec",$param,"",'align="right"',$sortfield,$sortorder);
     print "</tr>\n";
     $var=True;
     while ($i < $num)

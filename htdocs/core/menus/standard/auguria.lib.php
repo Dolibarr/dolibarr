@@ -205,14 +205,15 @@ function print_end_menu_array_auguria()
  * @param	DoliDB		$db                 Database handler
  * @param 	array		$menu_array_before  Table of menu entries to show before entries of menu handler
  * @param   array		$menu_array_after   Table of menu entries to show after entries of menu handler
- * @param  	array		$tabMenu       	If array with menu entries already loaded, we put this array here (in most cases, it's empty)
+ * @param  	array		$tabMenu       		If array with menu entries already loaded, we put this array here (in most cases, it's empty)
  * @param	Menu		$menu				Object Menu to return back list of menu entries
  * @param	int			$noout				Disable output (Initialise &$menu only).
  * @param	string		$forcemainmenu		'x'=Force mainmenu to mainmenu='x'
  * @param	string		$forceleftmenu		'all'=Force leftmenu to '' (= all)
+ * @param	array		$moredata			An array with more data to output
  * @return	int								Nb of entries
  */
-function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabMenu,&$menu,$noout=0,$forcemainmenu='',$forceleftmenu='')
+function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabMenu,&$menu,$noout=0,$forcemainmenu='',$forceleftmenu='',$moredata=null)
 {
 	global $user,$conf,$langs,$dolibarr_main_db_name,$mysoc;
 
@@ -235,7 +236,7 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 		}
 		$title=$langs->trans("GoIntoSetupToChangeLogo");
 		print "\n".'<!-- Show logo on menu -->'."\n";
-		print '<div class="blockvmenuimpair">'."\n";
+		print '<div class="blockvmenuimpair blockvmenulogo">'."\n";
 		print '<div class="menu_titre" id="menu_titre_logo"></div>';
 		print '<div class="menu_top" id="menu_top_logo"></div>';
 		print '<div class="menu_contenu" id="menu_contenu_logo">';
@@ -245,6 +246,16 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 		print '</div>'."\n";
 	}
 
+	if (is_array($moredata) && ! empty($moredata['searchform']))
+	{
+        print "\n";
+        print "<!-- Begin SearchForm -->\n";
+        print '<div id="blockvmenusearch" class="blockvmenusearch">'."\n";
+        print $moredata['searchform'];
+        print '</div>'."\n";
+        print "<!-- End SearchForm -->\n";
+	}
+	
 	// We update newmenu with entries found into database
 	$menuArbo = new Menubase($db,'auguria');
 	$newmenu = $menuArbo->menuLeftCharger($newmenu,$mainmenu,$leftmenu,($user->societe_id?1:0),'auguria',$tabMenu);
@@ -283,38 +294,34 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 
 	if (! empty($conf->accounting->enabled) && !empty($user->rights->accounting->mouvements->lire) && $mainmenu == 'accountancy') 	// Entry in accountancy journal for each bank account
 	{
-		$newmenu->add('/accountancy/journal/index.php?leftmenu=journal',$langs->trans("Journaux"),0,$user->rights->banque->lire);
+		$newmenu->add('',$langs->trans("Journaux"),0,$user->rights->accounting->comptarapport->lire,'','accountancy','accounting');
 
-		if ($leftmenu == 'journal')
+		$sql = "SELECT rowid, label, accountancy_journal";
+		$sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
+		$sql.= " WHERE entity = ".$conf->entity;
+		$sql.= " AND clos = 0";
+		$sql.= " ORDER BY label";
+
+		$resql = $db->query($sql);
+		if ($resql)
 		{
-			$sql = "SELECT rowid, label, accountancy_journal";
-			$sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
-			$sql.= " WHERE entity = ".$conf->entity;
-			$sql.= " AND clos = 0";
-			$sql.= " ORDER BY label";
+			$numr = $db->num_rows($resql);
+			$i = 0;
 
-			$resql = $db->query($sql);
-			if ($resql)
+			if ($numr > 0)
+			while ($i < $numr)
 			{
-				$numr = $db->num_rows($resql);
-				$i = 0;
-
-				if ($numr > 0)
-
-				while ($i < $numr)
-				{
-					$objp = $db->fetch_object($resql);
-					$newmenu->add('/accountancy/journal/bankjournal.php?id_account='.$objp->rowid,$langs->trans("Journal").' - '.$objp->label,1,$user->rights->accounting->comptarapport->lire);
-					$i++;
-				}
+				$objp = $db->fetch_object($resql);
+				$newmenu->add('/accountancy/journal/bankjournal.php?id_account='.$objp->rowid,$langs->trans("Journal").' - '.$objp->label,1,$user->rights->accounting->comptarapport->lire,'','accountancy','accounting');
+				$i++;
 			}
-			else dol_print_error($db);
-			$db->free($resql);
-
-			// Add other journal
-			$newmenu->add("/accountancy/journal/sellsjournal.php?leftmenu=journal",$langs->trans("SellsJournal"),1,$user->rights->accounting->comptarapport->lire);
-			$newmenu->add("/accountancy/journal/purchasesjournal.php?leftmenu=journal",$langs->trans("PurchasesJournal"),1,$user->rights->accounting->comptarapport->lire);
 		}
+		else dol_print_error($db);
+		$db->free($resql);
+
+		// Add other journal
+		$newmenu->add("/accountancy/journal/sellsjournal.php?leftmenu=journal",$langs->trans("SellsJournal"),1,$user->rights->accounting->comptarapport->lire);
+		$newmenu->add("/accountancy/journal/purchasesjournal.php?leftmenu=journal",$langs->trans("PurchasesJournal"),1,$user->rights->accounting->comptarapport->lire);
 	}
 
 	if ($conf->ftp->enabled && $mainmenu == 'ftp')	// Entry for FTP
@@ -348,7 +355,7 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 	// Show menu
 	if (empty($noout))
 	{
-		$alt=0; $blockvmenuopened=false;
+		$alt=0; $altok=0; $blockvmenuopened=false;
 		$num=count($menu_array);
 		for ($i = 0; $i < $num; $i++)
 		{
@@ -358,14 +365,15 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 			$alt++;
 			if (empty($menu_array[$i]['level']) && $showmenu)
 			{
+				$altok++;
 				$blockvmenuopened=true;
-				if (($alt%2==0))
+				if ($altok % 2 == 0)
 				{
-					print '<div class="blockvmenuimpair">'."\n";
+					print '<div class="blockvmenuimpair'.($altok == 1 ? ' blockvmenufirst':'').'">'."\n";
 				}
 				else
 				{
-					print '<div class="blockvmenupair">'."\n";
+					print '<div class="blockvmenupair'.($altok == 1 ? ' blockvmenufirst':'').'">'."\n";
 				}
 			}
 
@@ -437,8 +445,20 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 				if ($blockvmenuopened) { print "</div>\n"; $blockvmenuopened=false; }
 			}
 		}
+		
+		if ($altok) print '<div class="blockvmenuend"></div>';
 	}
 
+	if (is_array($moredata) && ! empty($moredata['bookmarks']))
+	{
+	        print "\n";
+	        print "<!-- Begin Bookmarks -->\n";
+	        print '<div id="blockvmenubookmarks" class="blockvmenubookmarks">'."\n";
+	        print $moredata['bookmarks'];
+	        print '</div>'."\n";
+	        print "<!-- End Bookmarks -->\n";
+	}
+	
 	return count($menu_array);
 }
 

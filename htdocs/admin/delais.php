@@ -39,7 +39,13 @@ $modules=array(
 						'img' => 'action'
 				)
 		),
-		'propal' => array(
+		'projet' => array(
+				array(
+						'code' => 'MAIN_DELAY_TASKS_TODO',
+						'img' => 'task'
+				)
+		),
+        'propal' => array(
 				array(
 						'code' => 'MAIN_DELAY_PROPALS_TO_CLOSE',
 						'img' => 'propal'
@@ -133,7 +139,7 @@ $form = new Form($db);
 
 llxHeader();
 
-print_fiche_titre($langs->trans("DelaysOfToleranceBeforeWarning"),'','title_setup');
+print load_fiche_titre($langs->trans("DelaysOfToleranceBeforeWarning"),'','title_setup');
 
 print $langs->transnoentities("DelaysOfToleranceDesc",img_warning());
 print " ".$langs->trans("OnlyActiveElementsAreShown",DOL_URL_ROOT.'/admin/modules.php')."<br>\n";
@@ -175,9 +181,9 @@ if ($action == 'edit')
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="120px">'.$langs->trans("Value").'</td></tr>';
 
-	$var=!$var;
+	$var=false;
 	print '<tr '.$bc[$var].'>';
-	print '<td>'.$langs->trans("MAIN_DISABLE_METEO").'</td><td>' .$form->selectyesno('MAIN_DISABLE_METEO',(isset($conf->global->MAIN_DISABLE_METEO)?1:0),1) . '</td></tr>';
+	print '<td>'.$langs->trans("MAIN_DISABLE_METEO").'</td><td>' .$form->selectyesno('MAIN_DISABLE_METEO',(empty($conf->global->MAIN_DISABLE_METEO)?0:1),1) . '</td></tr>';
 
 	print '</table>';
 
@@ -222,7 +228,7 @@ else
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="120px">'.$langs->trans("Value").'</td></tr>';
 
-	$var=!$var;
+	$var=false;
 	print '<tr '.$bc[$var].'>';
 	print '<td>'.$langs->trans("MAIN_DISABLE_METEO").'</td><td>' . yn($conf->global->MAIN_DISABLE_METEO) . '</td></tr>';
 
@@ -255,24 +261,24 @@ $text=''; $options='height="60px"';
 print '<table>';
 print '<tr>';
 print '<td>';
-print img_picto_common($text,'weather/weather-clear.png',$options);
+print img_weather($text,'weather-clear.png',$options);
 print '</td><td>= '.$level0.'</td>';
 print '<td> &nbsp; &nbsp; &nbsp; &nbsp; </td>';
 print '<td>';
-print img_picto_common($text,'weather/weather-few-clouds.png',$options);
+print img_weather($text,'weather-few-clouds.png',$options);
 print '</td><td>&lt;= '.$level1.'</td>';
 print '<td> &nbsp; &nbsp; &nbsp; &nbsp; </td>';
 print '<td>';
-print img_picto_common($text,'weather/weather-clouds.png',$options);
+print img_weather($text,'weather-clouds.png',$options);
 print '</td><td>&lt;= '.$level2.'</td>';
 print '</tr>';
 
 print '<tr><td>';
-print img_picto_common($text,'weather/weather-many-clouds.png',$options);
+print img_weather($text,'weather-many-clouds.png',$options);
 print '</td><td>&lt;= '.$level3.'</td>';
 print '<td> &nbsp; &nbsp; &nbsp; &nbsp; </td>';
 print '<td>';
-print img_picto_common($text,'weather/weather-storm.png',$options);
+print img_weather($text,'weather-storm.png',$options);
 print '</td><td>&gt; '.$level3.'</td>';
 print '<td> &nbsp; &nbsp; &nbsp; &nbsp; </td>';
 print '<td> &nbsp; &nbsp; &nbsp; &nbsp; </td>';

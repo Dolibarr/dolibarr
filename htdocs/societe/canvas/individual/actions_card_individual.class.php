@@ -28,11 +28,6 @@ include_once DOL_DOCUMENT_ROOT.'/societe/canvas/actions_card_common.class.php';
  */
 class ActionsCardIndividual extends ActionsCardCommon
 {
-    var $dirmodule;
-	var $targetmodule;
-    var $canvas;
-    var $card;
-
     /**
 	 *    Constructor
 	 *
@@ -74,6 +69,7 @@ class ActionsCardIndividual extends ActionsCardCommon
 
 	/**
 	 * Execute actions
+     * @deprecated Use the doActions of hooks instead of this.
 	 *
 	 * @param	string	$action	Action
 	 * @param	int		$id			Id of object (may be empty for creation)

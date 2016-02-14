@@ -79,7 +79,7 @@ if ($id > 0)
 	if ($res < 0) { dol_print_error($db,$object->error); exit; }
 	$res=$object->fetch_optionals($object->id,$extralabels);
 
-	print_fiche_titre($langs->trans("MemberCard"), '', '');
+	print load_fiche_titre($langs->trans("MemberCard"), '', '');
 
 	if (empty($object->public))
 	{

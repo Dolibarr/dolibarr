@@ -5,7 +5,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio     <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier          <benoit.mortier@opensides.be>
  * Copyright (C) 2010-2013 Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2011-2013 Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2015 Philippe Grand          <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,11 +64,11 @@ if ($action == 'updateMask')
 
 	if (! $error)
 	{
-		setEventMessage($langs->trans("SetupSaved"));
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
 	else
 	{
-		setEventMessage($langs->trans("Error"),'errors');
+		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
 
@@ -107,13 +107,13 @@ else if ($action == 'specimen')  // For orders
     	}
     	else
     	{
-    		setEventMessage($module->error,'errors');
+    		setEventMessages($module->error, $module->errors, 'errors');
     		dol_syslog($module->error, LOG_ERR);
     	}
     }
     else
     {
-    	setEventMessage($langs->trans("ErrorModuleNotFound"),'errors');
+    	setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
     	dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
     }
 }
@@ -210,7 +210,7 @@ $dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
 llxHeader("","");
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("SuppliersSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("SuppliersSetup"),$linkback,'title_setup');
 
 print "<br>";
 
@@ -221,7 +221,7 @@ dol_fiche_head($head, 'order', $langs->trans("Suppliers"), 0, 'company');
 
 // Supplier order numbering module
 
-print_titre($langs->trans("OrdersNumberingModules"));
+print load_fiche_titre($langs->trans("OrdersNumberingModules"),'','');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -325,7 +325,7 @@ print '</table><br>';
  *  Documents models for supplier orders
  */
 
-print_titre($langs->trans("OrdersModelModule"));
+print load_fiche_titre($langs->trans("OrdersModelModule"),'','');
 
 // Defini tableau def de modele
 $def = array();
@@ -376,7 +376,7 @@ foreach ($dirmodels as $reldir)
         {
             while (($file = readdir($handle))!==false)
             {
-                if (preg_match('/\.modules\.php$/i',$file) && substr($file,0,4) == 'pdf_')
+                if (preg_match('/\.modules\.php$/i',$file) && preg_match('/^(pdf_|doc_)/',$file))
                 {
                     $name = substr($file, 4, dol_strlen($file) -16);
                     $classname = substr($file, 0, dol_strlen($file) -12);
@@ -392,7 +392,8 @@ foreach ($dirmodels as $reldir)
                     print "<td>\n";
                     require_once $dir.$file;
                     $module = new $classname($db,$specimenthirdparty);
-                    print $module->description;
+		    if (method_exists($module,'info')) print $module->info($langs);
+	            else print $module->description;
                     print "</td>\n";
 
                     // Active
@@ -464,7 +465,7 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set_SUPPLIER_ORDER_OTHER">';
 
-print_titre($langs->trans("OtherOptions"));
+print load_fiche_titre($langs->trans("OtherOptions"),'','');
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
@@ -487,7 +488,17 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0)
 
 print '<tr '.$bc[$var].'><td colspan="2">';
 print $langs->trans("FreeLegalTextOnOrders").' ('.$langs->trans("AddCRIfTooLong").')<br>';
-print '<textarea name="SUPPLIER_ORDER_FREE_TEXT" class="flat" cols="120">'.$conf->global->SUPPLIER_ORDER_FREE_TEXT.'</textarea>';
+$variablename='SUPPLIER_ORDER_FREE_TEXT';
+if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
+{
+    print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
+}
+else
+{
+    include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+    $doleditor=new DolEditor($variablename, $conf->global->$variablename,'',80,'dolibarr_details');
+    print $doleditor->Create();
+}
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
@@ -502,7 +513,7 @@ print '</form>';
  * Notifications
  */
 
-print_titre($langs->trans("Notifications"));
+print load_fiche_titre($langs->trans("Notifications"),'','');
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';

@@ -121,7 +121,6 @@ AttributeName=Atribuudi nimi
 String=Sõne
 Text=Tekst
 Int=Täisarv
-Date=Kuupäev
 DateAndTime=Kuupäev ja kellaaeg
 PublicMemberCard=Liikme avalik kaar
 MemberNotOrNoMoreExpectedToSubscribe=Ei ole liige või ei ole oodatud liikmeks astuma
