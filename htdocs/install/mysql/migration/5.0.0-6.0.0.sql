@@ -98,3 +98,23 @@ CREATE TABLE llx_product_attribute_combination
   entity INT DEFAULT 1 NOT NULL
 );
 
+CREATE TABLE llx_product_price_schedule
+(
+  rowid               integer AUTO_INCREMENT PRIMARY KEY,
+  entity              integer DEFAULT 1 NOT NULL,	-- multi company id
+  fk_product          integer NOT NULL,
+  fk_product_supplier integer,
+  schedule_type       integer NOT NULL,
+  schedule_year       integer NOT NULL,
+  starting_hour       integer NOT NULL
+)ENGINE=innodb;
+
+CREATE TABLE llx_product_price_schedule_section
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  fk_schedule     integer NOT NULL,
+  date_start      integer NOT NULL,
+  date_end        integer NOT NULL,
+  price           double(24,8) NOT NULL
+)ENGINE=innodb;
+
