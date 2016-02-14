@@ -48,5 +48,12 @@ create table llx_facturedet_rec
   special_code		integer UNSIGNED DEFAULT 0,	-- code pour les lignes speciales
   rang				integer DEFAULT 0,				-- ordre d'affichage
   fk_contract_line  integer NULL,					-- id of contract line when predefined invoice comes from contract lines
-  fk_unit         integer    DEFAULT NULL
+  fk_unit         integer    DEFAULT NULL,
+  
+  fk_multicurrency          integer,
+  multicurrency_code        varchar(255),
+  multicurrency_subprice    double(24,8) DEFAULT 0,
+  multicurrency_total_ht    double(24,8) DEFAULT 0,
+  multicurrency_total_tva   double(24,8) DEFAULT 0,
+  multicurrency_total_ttc   double(24,8) DEFAULT 0
 )ENGINE=innodb;

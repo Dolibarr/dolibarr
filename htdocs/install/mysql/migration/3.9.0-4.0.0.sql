@@ -212,4 +212,23 @@ ALTER TABLE llx_propaldet ADD COLUMN multicurrency_subprice double(24,8) DEFAULT
 ALTER TABLE llx_propaldet ADD COLUMN multicurrency_total_ht double(24,8) DEFAULT 0;
 ALTER TABLE llx_propaldet ADD COLUMN multicurrency_total_tva double(24,8) DEFAULT 0;
 ALTER TABLE llx_propaldet ADD COLUMN multicurrency_total_ttc double(24,8) DEFAULT 0;
+
  
+
+ALTER TABLE llx_facture_rec ADD COLUMN auto_validate integer DEFAULT 0;
+ALTER TABLE llx_facture_rec ADD COLUMN fk_account integer DEFAULT 0;
+
+ALTER TABLE llx_facture_rec ADD COLUMN fk_multicurrency integer;
+ALTER TABLE llx_facture_rec ADD COLUMN multicurrency_code varchar(255);
+ALTER TABLE llx_facture_rec ADD COLUMN multicurrency_tx double(24,8) DEFAULT 1;
+ALTER TABLE llx_facture_rec ADD COLUMN multicurrency_total_ht double(24,8) DEFAULT 0;
+ALTER TABLE llx_facture_rec ADD COLUMN multicurrency_total_tva double(24,8) DEFAULT 0;
+ALTER TABLE llx_facture_rec ADD COLUMN multicurrency_total_ttc double(24,8) DEFAULT 0;
+
+ALTER TABLE llx_facturedet_rec ADD COLUMN fk_multicurrency integer;
+ALTER TABLE llx_facturedet_rec ADD COLUMN multicurrency_code varchar(255);
+ALTER TABLE llx_facturedet_rec ADD COLUMN multicurrency_subprice double(24,8) DEFAULT 0;
+ALTER TABLE llx_facturedet_rec ADD COLUMN multicurrency_total_ht double(24,8) DEFAULT 0;
+ALTER TABLE llx_facturedet_rec ADD COLUMN multicurrency_total_tva double(24,8) DEFAULT 0;
+ALTER TABLE llx_facturedet_rec ADD COLUMN multicurrency_total_ttc double(24,8) DEFAULT 0;
+
