@@ -1790,7 +1790,7 @@ class Form
 				}
 				else
 				{
-                    if (!empty($objp->fk_price_expression)) {
+                    if (!empty($conf->dynamicprices->enabled) && !empty($objp->fk_price_expression)) {
                         $price_product = new Product($this->db);
                         $price_product->fetch($objp->rowid, '', '', 1);
                         $priceparser = new PriceParser($this->db);
@@ -2168,7 +2168,7 @@ class Form
                 {
                     $outqty=$objp->quantity;
 					$outdiscount=$objp->remise_percent;
-                    if (!empty($objp->fk_supplier_price_expression)) {
+                    if (!empty($conf->dynamicprices->enabled) && !empty($objp->fk_supplier_price_expression)) {
                         $priceparser = new PriceParser($this->db);
                         $price_result = $priceparser->parseProductSupplier($objp->fk_product, $objp->fk_supplier_price_expression, $objp->quantity, $objp->tva_tx);
                         if ($price_result >= 0) {
@@ -2307,7 +2307,7 @@ class Form
                     }
                     $opt.= '>'.$objp->name.' - '.$objp->ref_fourn.' - ';
 
-                    if (!empty($objp->fk_supplier_price_expression)) {
+                    if (!empty($conf->dynamicprices->enabled) && !empty($objp->fk_supplier_price_expression)) {
                         $priceparser = new PriceParser($this->db);
                         $price_result = $priceparser->parseProductSupplier($objp->fk_product, $objp->fk_supplier_price_expression, $objp->quantity, $objp->tva_tx);
                         if ($price_result >= 0) {

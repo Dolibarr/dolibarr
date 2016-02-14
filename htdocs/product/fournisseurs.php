@@ -225,7 +225,7 @@ if (empty($reshook))
 				}
 				else
 				{
-					if ($price_expression !== '')
+					if (!empty($conf->dynamicprices->enabled) && $price_expression !== '')
 					{
 						//Check the expression validity by parsing it
 						$priceparser = new PriceParser($db);

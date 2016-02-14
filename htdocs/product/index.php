@@ -307,7 +307,8 @@ if ($result)
 			// Sell price
 			if (empty($conf->global->PRODUIT_MULTIPRICES))
 			{
-                if (!empty($objp->fk_price_expression)) {
+                if (!empty($conf->dynamicprices->enabled) && !empty($objp->fk_price_expression))
+                {
                 	$product = new Product($db);
                 	$product->fetch($objp->rowid);
                     $priceparser = new PriceParser($db);

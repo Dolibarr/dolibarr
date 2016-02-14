@@ -355,6 +355,7 @@ class ProductFournisseur extends Product
      */
     function fetch_product_fournisseur_price($rowid, $ignore_expression = 0)
     {
+        global $conf;
         $sql = "SELECT pfp.rowid, pfp.price, pfp.quantity, pfp.unitprice, pfp.remise_percent, pfp.remise, pfp.tva_tx, pfp.fk_availability,";
         $sql.= " pfp.fk_soc, pfp.ref_fourn, pfp.fk_product, pfp.charges, pfp.unitcharges, pfp.fk_supplier_price_expression, pfp.delivery_time_days"; // , pfp.recuperableonly as fourn_tva_npr";  FIXME this field not exist in llx_product_fournisseur_price
         $sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
@@ -473,7 +474,7 @@ class ProductFournisseur extends Product
                 $prodfourn->fourn_tva_npr					= $record["info_bits"];
                 $prodfourn->fk_supplier_price_expression    = $record["fk_supplier_price_expression"];
 
-                if (!empty($prodfourn->fk_supplier_price_expression)) {
+                if (!empty($conf->dynamicprices->enabled) && !empty($prodfourn->fk_supplier_price_expression)) {
                     $priceparser = new PriceParser($this->db);
                     $price_result = $priceparser->parseProductSupplier($prodid, $prodfourn->fk_supplier_price_expression, $prodfourn->fourn_qty, $prodfourn->fourn_tva_tx);
                     if ($price_result >= 0) {
@@ -572,7 +573,7 @@ class ProductFournisseur extends Product
                 {
                     $fourn_price = $record["price"];
                     $fourn_unitprice = $record["unitprice"];
-                    if (!empty($record["fk_supplier_price_expression"])) {
+                    if (!empty($conf->dynamicprices->enabled) && !empty($record["fk_supplier_price_expression"])) {
                         $priceparser = new PriceParser($this->db);
                         $price_result = $priceparser->parseProductSupplier($prodid, $record["fk_supplier_price_expression"], $record["quantity"], $record["tva_tx"]);
                         if ($price_result >= 0) {

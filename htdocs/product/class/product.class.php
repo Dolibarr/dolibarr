@@ -1278,6 +1278,7 @@ class Product extends CommonObject
 	 */
 	function get_buyprice($prodfournprice,$qty,$product_id=0,$fourn_ref=0)
 	{
+		global $conf;
 		$result = 0;
 
 		// We do select by searching with qty and prodfournprice
@@ -1294,7 +1295,7 @@ class Product extends CommonObject
 			$obj = $this->db->fetch_object($resql);
 			if ($obj && $obj->quantity > 0)		// If found
 			{
-                if (!empty($obj->fk_supplier_price_expression))
+                if (!empty($conf->dynamicprices->enabled) && !empty($obj->fk_supplier_price_expression))
                 {
 					require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
                 	$priceparser = new PriceParser($this->db);
@@ -1329,7 +1330,7 @@ class Product extends CommonObject
 					$obj = $this->db->fetch_object($resql);
 					if ($obj && $obj->quantity > 0)		// If found
 					{
-		                if (!empty($obj->fk_supplier_price_expression))
+		                if (!empty($conf->dynamicprices->enabled) && !empty($obj->fk_supplier_price_expression))
 		                {
 							require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 		                	$priceparser = new PriceParser($this->db);
@@ -1785,7 +1786,7 @@ class Product extends CommonObject
 					}
 				}
 
-                if (!empty($this->fk_price_expression) && empty($ignore_expression))
+                if (!empty($conf->dynamicprices->enabled) && !empty($this->fk_price_expression) && empty($ignore_expression))
                 {
 					require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
                 	$priceparser = new PriceParser($this->db);
