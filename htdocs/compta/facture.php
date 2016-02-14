@@ -2346,7 +2346,7 @@ if ($action == 'create')
 	{
 		print '<tr>';
 		print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $objectsrc->libelle_incoterms, 1).'</label></td>';
-        print '<td colspan="3" class="maxwidthonsmartphone">';
+        print '<td colspan="2" class="maxwidthonsmartphone">';
         print $form->select_incoterms((!empty($objectsrc->fk_incoterms) ? $objectsrc->fk_incoterms : ''), (!empty($objectsrc->location_incoterms)?$objectsrc->location_incoterms:''));
 		print '</td></tr>';
 	}
@@ -2361,7 +2361,7 @@ if ($action == 'create')
 
 	// Template to use by default
 	print '<tr><td>' . $langs->trans('Model') . '</td>';
-	print '<td>';
+	print '<td colspan="2">';
 	include_once DOL_DOCUMENT_ROOT . '/core/modules/facture/modules_facture.php';
 	$liste = ModelePDFFactures::liste_modeles($db);
 	print $form->selectarray('model', $liste, $conf->global->FACTURE_ADDON_PDF);
@@ -2372,7 +2372,7 @@ if ($action == 'create')
 	{
 		print '<tr>';
 		print '<td>'.fieldLabel('Currency','multicurrency_code').'</td>';
-        print '<td colspan="3" class="maxwidthonsmartphone">';
+        print '<td colspan="2" class="maxwidthonsmartphone">';
 	    print $form->selectMultiCurrency($currency_code, 'multicurrency_code');
 		print '</td></tr>';
 	}
@@ -3074,7 +3074,9 @@ else if ($id > 0 || ! empty($ref))
 		$nbrows ++;
 	if ($selleruserevenustamp)
 		$nbrows ++;
-
+	if (! empty($conf->multicurrency->enabled)) $nbrows+=5;
+	if (! empty($conf->incoterm->enabled)) $nbrows+=1;
+        
 	print '<td rowspan="' . $nbrows . '" colspan="2" valign="top">';
 
 	if ($object->type == Facture::TYPE_SITUATION && !empty($conf->global->INVOICE_USE_SITUATION))
@@ -3443,14 +3445,14 @@ else if ($id > 0 || ! empty($ref))
 	{
 		// Multicurrency code
 		print '<tr>';
-		print '<td width="25%">';
+		print '<td>';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print fieldLabel('Currency','multicurrency_code');
 		print '</td>';
 		if ($action != 'editmulticurrencycode' && ! empty($object->brouillon))
 			print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencycode&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
 		print '</tr></table>';
-		print '</td><td colspan="5">';
+		print '</td><td colspan="3">';
 		if ($action == 'editmulticurrencycode') {
 			$form->form_multicurrency_code($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_code, 'multicurrency_code');
 		} else {
@@ -3460,14 +3462,14 @@ else if ($id > 0 || ! empty($ref))
 	
 		// Multicurrency rate
 		print '<tr>';
-		print '<td width="25%">';
+		print '<td>';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print fieldLabel('Rate','multicurrency_tx');
 		print '</td>';
 		if ($action != 'editmulticurrencyrate' && ! empty($object->brouillon))
 			print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencyrate&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
 		print '</tr></table>';
-		print '</td><td colspan="5">';
+		print '</td><td colspan="3">';
 		if ($action == 'editmulticurrencyrate') {
 			$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'multicurrency_tx');
 		} else {
