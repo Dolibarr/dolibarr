@@ -235,8 +235,10 @@ if (empty($reshook))
 							setEventMessages($priceparser->translatedError(), null, 'errors');
 						}
 					}
-					if (! $error && ! empty($conf->dynamicprices->enabled)) {
-						$ret=$object->setPriceExpression($price_expression);
+					if (! $error && ! empty($conf->dynamicprices->enabled))
+					{
+						//Set the price expression for this supplier price
+						$ret=$object->setSupplierPriceExpression($price_expression);
 						if ($ret < 0)
 						{
 							$error++;
