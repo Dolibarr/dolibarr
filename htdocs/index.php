@@ -618,10 +618,10 @@ function showWeather($totallate,$text,$options)
     $level2=$offset+2*$factor; if (! empty($conf->global->MAIN_METEO_LEVEL2)) $level2=$conf->global->MAIN_METEO_LEVEL2;
     $level3=$offset+3*$factor; if (! empty($conf->global->MAIN_METEO_LEVEL3)) $level3=$conf->global->MAIN_METEO_LEVEL3;
 
-    if ($totallate <= $level0) $out.=img_picto_common($text,'weather/weather-clear.png',$options);
-    if ($totallate > $level0 && $totallate <= $level1) $out.=img_picto_common($text,'weather/weather-few-clouds.png',$options);
-    if ($totallate > $level1 && $totallate <= $level2) $out.=img_picto_common($text,'weather/weather-clouds.png',$options);
-    if ($totallate > $level2 && $totallate <= $level3) $out.=img_picto_common($text,'weather/weather-many-clouds.png',$options);
-    if ($totallate > $level3) $out.=img_picto_common($text,'weather/weather-storm.png',$options);
+    if ($totallate <= $level0) $out.=img_weather($text,'weather-clear.png',$options);
+    if ($totallate > $level0 && $totallate <= $level1) $out.=img_weather($text,'weather-few-clouds.png',$options);
+    if ($totallate > $level1 && $totallate <= $level2) $out.=img_weather($text,'weather-clouds.png',$options);
+    if ($totallate > $level2 && $totallate <= $level3) $out.=img_weather($text,'weather-many-clouds.png',$options);
+    if ($totallate > $level3) $out.=img_weather($text,'weather-storm.png',$options);
     return $out;
 }
