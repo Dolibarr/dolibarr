@@ -268,7 +268,7 @@ if (empty($reshook))
 		{
 			$db->begin();
 
-			// Si on a selectionne une propal a copier, on realise la copie
+			// If we select proposal to clone during creation (when option PROPAL_CLONE_ON_CREATE_PAGE is on)
 			if (GETPOST('createmode') == 'copy' && GETPOST('copie_propal'))
 			{
 				if ($object->fetch(GETPOST('copie_propal')) > 0) {
