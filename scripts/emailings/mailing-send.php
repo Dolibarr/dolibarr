@@ -1,8 +1,9 @@
 #!/usr/bin/php
 <?php
 /*
- * Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2016	Regis Houssin			<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -142,17 +143,17 @@ if ($resql)
 
 						// Make subtsitutions on topic and body
 						$other=explode(';',$obj2->other);
-						$other1=$other[0];
-						$other2=$other[1];
-						$other3=$other[2];
-						$other4=$other[3];
-						$other5=$other[4];
-						// Array of possible substitutions (See also fie mailing-send.php that should manage same substitutions)
-						$signature = (!empty($user->signature))?$user->signature:''; 
-						
+						$tmpfield=explode('=',$other[0],2); $other1=(isset($tmpfield[1])?$tmpfield[1]:$tmpfield[0]);
+	                    $tmpfield=explode('=',$other[1],2); $other2=(isset($tmpfield[1])?$tmpfield[1]:$tmpfield[0]);
+	                    $tmpfield=explode('=',$other[2],2); $other3=(isset($tmpfield[1])?$tmpfield[1]:$tmpfield[0]);
+	                    $tmpfield=explode('=',$other[3],2); $other4=(isset($tmpfield[1])?$tmpfield[1]:$tmpfield[0]);
+	                    $tmpfield=explode('=',$other[4],2); $other5=(isset($tmpfield[1])?$tmpfield[1]:$tmpfield[0]);
+	                    $signature = ((!empty($user->signature) && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN))?$user->signature:'');
+
+						// Array of possible substitutions (See also file mailing-send.php that should manage same substitutions)
 						$substitutionarray=array(
-							'__ID__' => $obj->source_id,
-							'__EMAIL__' => $obj->email,
+							'__ID__' => $obj2->source_id,
+							'__EMAIL__' => $obj2->email,
 							'__LASTNAME__' => $obj2->lastname,
 							'__FIRSTNAME__' => $obj2->firstname,
 							'__MAILTOEMAIL__' => '<a href="mailto:'.$obj2->email.'">'.$obj2->email.'</a>',
@@ -251,7 +252,7 @@ if ($resql)
 										$error++;
 									}
 								}
-                                
+
                                 if (!empty($conf->global->MAILING_DELAY)) {
                                     sleep($conf->global->MAILING_DELAY);
                                 }
