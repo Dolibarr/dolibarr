@@ -1,5 +1,6 @@
 -- ========================================================================
 -- Copyright (C) 2016		Pierre-Henry Favre		<phf@atm-consulting.fr>
+-- Copyright (C) 2016       Laurent Destailleur     <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -20,9 +21,7 @@ CREATE TABLE llx_multicurrency_rate
 ( 
 	rowid integer AUTO_INCREMENT PRIMARY KEY, 
 	date_sync datetime DEFAULT NULL,  
-	rate double NOT NULL DEFAULT '0', 
-	fk_multicurrency integer NOT NULL DEFAULT '0', 
-	entity integer NOT NULL DEFAULT '0', 
-	KEY fk_multicurrency (fk_multicurrency), 
-	KEY entity (entity) 
+	rate double NOT NULL DEFAULT 0, 
+	fk_multicurrency integer NOT NULL, 
+	entity integer DEFAULT 1 
 ) ENGINE=innodb;

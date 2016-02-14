@@ -1,5 +1,6 @@
 -- ========================================================================
 -- Copyright (C) 2016		Pierre-Henry Favre		<phf@atm-consulting.fr>
+-- Copyright (C) 2016       Laurent Destailleur     <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -22,7 +23,6 @@ CREATE TABLE llx_multicurrency
 	date_create datetime DEFAULT NULL, 
 	code varchar(255) DEFAULT NULL, 
 	name varchar(255) DEFAULT NULL, 
-	entity integer DEFAULT NULL,
-	fk_user integer DEFAULT NULL,
-	KEY code (code)
+	entity integer DEFAULT 1,
+	fk_user integer DEFAULT NULL
 ) ENGINE=innodb;
