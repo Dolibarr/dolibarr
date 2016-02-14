@@ -2061,8 +2061,8 @@ if ($action == 'create')
 	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
 	// Amount HT
-	print '<tr><td height="10">' . $langs->trans('AmountHT') . '</td>';
-	print '<td class="nowrap" colspan="2">' . price($object->total_ht, '', $langs, 0, - 1, - 1, $conf->currency) . '</td>';
+	print '<tr><td height="10" width="25%">' . $langs->trans('AmountHT') . '</td>';
+	print '<td class="nowrap" colspan="2">' . price($object->total_ht, '', $langs, 1, - 1, - 1, $conf->currency) . '</td>';
 
 	// Margin Infos
 	if (! empty($conf->margin->enabled)) 
@@ -2078,7 +2078,7 @@ if ($action == 'create')
 
 	// Amount VAT
 	print '<tr><td height="10">' . $langs->trans('AmountVAT') . '</td>';
-	print '<td class="nowrap" colspan="2">' . price($object->total_tva, '', $langs, 0, - 1, - 1, $conf->currency) . '</td>';
+	print '<td class="nowrap" colspan="2">' . price($object->total_tva, '', $langs, 1, - 1, - 1, $conf->currency) . '</td>';
 	print '</tr>';
 
 	// Amount Local Taxes
@@ -2097,7 +2097,7 @@ if ($action == 'create')
 
 	// Amount TTC
 	print '<tr><td height="10">' . $langs->trans('AmountTTC') . '</td>';
-	print '<td class="nowrap" colspan="2">' . price($object->total_ttc, '', $langs, 0, - 1, - 1, $conf->currency) . '</td>';
+	print '<td class="nowrap" colspan="2">' . price($object->total_ttc, '', $langs, 1, - 1, - 1, $conf->currency) . '</td>';
 	print '</tr>';
 	
 	if (!empty($conf->multicurrency->enabled))
