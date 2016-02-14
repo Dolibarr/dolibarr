@@ -1001,26 +1001,30 @@ abstract class CommonObject
     {
         global $conf;
 
-        if (empty($this->socid) && empty($this->fk_soc) && empty($this->fk_thirdparty) && empty($force_thirdparty_id)) return 0;
+        if (empty($this->socid) && empty($this->fk_soc) && empty($this->fk_thirdparty) && empty($force_thirdparty_id))
+            return 0;
 
-	    require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+        require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 
-	    $idtofetch=isset($this->socid)?$this->socid:(isset($this->fk_soc)?$this->fk_soc:$this->fk_thirdparty);
-		if ($force_thirdparty_id) $idtofetch=$force_thirdparty_id;
+        $idtofetch = isset($this->socid) ? $this->socid : (isset($this->fk_soc) ? $this->fk_soc : $this->fk_thirdparty);
+        if ($force_thirdparty_id)
+            $idtofetch = $force_thirdparty_id;
 
-        $thirdparty = new Societe($this->db);
-        $result=$thirdparty->fetch($idtofetch);
-        $this->client = $thirdparty;  // deprecated
-        $this->thirdparty = $thirdparty;
+        if ($idtofetch) {
+            $thirdparty = new Societe($this->db);
+            $result = $thirdparty->fetch($idtofetch);
+            $this->client = $thirdparty;  // deprecated
+            $this->thirdparty = $thirdparty;
 
-        // Use first price level if level not defined for third party
-        if (! empty($conf->global->PRODUIT_MULTIPRICES) && empty($this->thirdparty->price_level))
-        {
-            $this->client->price_level=1; // deprecated
-            $this->thirdparty->price_level=1;
-        }
+            // Use first price level if level not defined for third party
+            if (!empty($conf->global->PRODUIT_MULTIPRICES) && empty($this->thirdparty->price_level)) {
+                $this->client->price_level = 1; // deprecated
+                $this->thirdparty->price_level = 1;
+            }
 
-        return $result;
+            return $result;
+        } else
+            return -1;
     }
 
 
