@@ -856,13 +856,23 @@ class Expedition extends CommonObject
 				return -1;
 			}
 
-			if ($conf->global->STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT)	// FIXME Check is done for stock of product, it must be done for stock of product into warehouse if $entrepot_id defined
+			if ($conf->global->STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT)
 			{
+			    // Check must be done for stock of product into warehouse if $entrepot_id defined
 				$product=new Product($this->db);
 				$result=$product->fetch($fk_product);
-				$product_type=$product->type;
 
-				if ($product_type == 0 && $product->stock_reel < $qty)
+				$product_type=$product->type;
+				if ($entrepot_id > 0) {
+                    $product->load_stock();
+				    $product_stock = $product->stock_warehouse[$entrepot_id]->real;
+				}
+				else 
+				{
+				    $product_stock = $product->stock_reel;
+				}
+				
+				if ($product_type == 0 && $product_stock < $qty)
 				{
 					$this->error=$langs->trans('ErrorStockIsNotEnough');
 					$this->db->rollback();
