@@ -293,7 +293,8 @@ if (empty($reshook))
 					$object->note = GETPOST('note');
 					$object->statut = 0;
 
-					$id = $object->create_from($user);
+					// the create is done below and further more the existing create_from function is quite hilarating
+					//$id = $object->create_from($user);
 				} else {
 					setEventMessage($langs->trans("ErrorFailedToCopyProposal", GETPOST('copie_propal')), 'errors');
 				}
