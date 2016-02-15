@@ -42,6 +42,7 @@ $langs->load("companies");
 $langs->load("bills");
 
 $action = GETPOST('action', 'alpha');
+$search_prod = GETPOST('search_prod');
 
 // Security check
 $socid = GETPOST('socid', 'int')?GETPOST('socid', 'int'):GETPOST('id', 'int');
@@ -66,6 +67,11 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
+    if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+    {
+        $search_prod = '';
+    }
+    
     if ($action == 'add_customer_price_confirm' && ! $_POST ["cancel"] && ($user->rights->produit->creer || $user->rights->service->creer)) {
     
     	$update_child_soc = GETPOST('updatechildprice');
@@ -212,7 +218,6 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		't.fk_soc' => $object->id
 	);
 
-	$search_prod = GETPOST('search_prod');
 	if (! empty($search_prod)) {
 		$filter ['prod.ref'] = $search_prod;
 	}
@@ -501,9 +506,8 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
         print '<td>&nbsp;</td>';
         print '</tr>';
         
-        if (count($prodcustprice->lines) > 0)
+        if (count($prodcustprice->lines) > 0 || $search_prod)
         {
-            
             print '<tr class="liste_titre">';
 			print '<td><input type="text" class="flat" name="search_prod" value="' . $search_prod . '" size="20"></td>';
             print '<td colspan="8">&nbsp;</td>';
@@ -513,7 +517,10 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
             print $searchpitco;
             print '</td>';
             print '</tr>';
-            
+        }
+        
+        if (count($prodcustprice->lines) > 0)
+        {
             $var = False;
             
             foreach ($prodcustprice->lines as $line)
@@ -540,7 +547,6 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
                 print $userstatic->getLoginUrl(1);
                 print '</td>';
                 
-                // Todo Edit or delete button
                 // Action
                 if ($user->rights->produit->creer || $user->rights->service->creer)
                 {
@@ -561,9 +567,12 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
                 
                 print "</tr>\n";
             }
-        } else
+        }
+        else
         {
-            print '<tr ' . $bc[false] . '><td colspan="10">' . $langs->trans('NoPriceSpecificToCustomer') . '</td></tr>';
+            $colspan=9;
+            if ($user->rights->produit->supprimer || $user->rights->service->supprimer) $colspan+=1;            
+            print '<tr ' . $bc[false] . '><td colspan="'.$colspan.'">' . $langs->trans('None') . '</td></tr>';
         }
         
         print "</table>";
