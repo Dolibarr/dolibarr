@@ -218,7 +218,7 @@ if ($action == 'create')
 		dol_fiche_head();
 
 		$rowspan=4;
-		if (! empty($conf->projet->enabled) && $object->fk_project > 0) $rowspan++;
+		if (! empty($conf->projet->enabled)) $rowspan++;
 		if ($object->fk_account > 0) $rowspan++;
 
 		print '<table class="border" width="100%">';
@@ -255,7 +255,7 @@ if ($action == 'create')
 		print "</td></tr>";
 
 		// Project
-		if (! empty($conf->projet->enabled) && $object->fk_project > 0)
+		if (! empty($conf->projet->enabled))
 		{
 			print "<tr><td>".$langs->trans("Project")."</td><td>";
 			if ($object->fk_project > 0)
@@ -267,7 +267,7 @@ if ($action == 'create')
 			print "</td></tr>";
 		}
 
-		// Project
+		// Bank account
 		if ($object->fk_account > 0)
 		{
 			print "<tr><td>".$langs->trans('BankAccount')."</td><td>";
@@ -280,7 +280,7 @@ if ($action == 'create')
 		print '<br>';
 
 		
-		// Recurrence
+		// Autogeneration
 		$title = $langs->trans("Recurrence");
 		print load_fiche_titre($title);
 		
@@ -293,7 +293,7 @@ if ($action == 'create')
 		
 		// First date of execution for cron
 		print "<tr><td>".$langs->trans('NextDateToExecution')."</td><td>";
-		$date_next_execution = isset($date_next_execution) ? $date_next_execution : dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
+		$date_next_execution = isset($date_next_execution) ? $date_next_execution : (GETPOST('remonth') ? dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear')) : -1);
 		print $form->select_date($date_next_execution, '', 0, 0, '', "add", 1, 1, 1);
 		print "</td></tr>";
 		

@@ -291,8 +291,14 @@ if ($resql)
         print '<td>';
         if($obj->socid)
         {
-        	$socstatic->fetch($obj->socid);
+        	$result=$socstatic->fetch($obj->socid);
+        	if ($result < 0)
+        	{
+        		dol_print_error($db);
+        		exit;
+        	}
         	$listsalesrepresentatives=$socstatic->getSalesRepresentatives($user);
+        	if ($listsalesrepresentatives < 0) dol_print_error($db);
         	$nbofsalesrepresentative=count($listsalesrepresentatives);
         	if ($nbofsalesrepresentative > 3)   // We print only number
         	{

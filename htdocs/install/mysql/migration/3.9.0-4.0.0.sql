@@ -232,3 +232,9 @@ ALTER TABLE llx_facturedet_rec ADD COLUMN multicurrency_total_ht double(24,8) DE
 ALTER TABLE llx_facturedet_rec ADD COLUMN multicurrency_total_tva double(24,8) DEFAULT 0;
 ALTER TABLE llx_facturedet_rec ADD COLUMN multicurrency_total_ttc double(24,8) DEFAULT 0;
 
+ALTER TABLE llx_contratdet ADD COLUMN fk_multicurrency integer;
+ALTER TABLE llx_contratdet ADD COLUMN multicurrency_code varchar(255);
+ALTER TABLE llx_contratdet ADD COLUMN multicurrency_subprice double(24,8) DEFAULT 0;
+ALTER TABLE llx_contratdet ADD COLUMN multicurrency_total_ht double(24,8) DEFAULT 0;
+ALTER TABLE llx_contratdet ADD COLUMN multicurrency_total_tva double(24,8) DEFAULT 0;
+ALTER TABLE llx_contratdet ADD COLUMN multicurrency_total_ttc double(24,8) DEFAULT 0;
