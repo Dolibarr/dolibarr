@@ -34,9 +34,6 @@ ALTER TABLE llx_actioncomm ADD COLUMN email_tocc varchar(256) after email_to;
 ALTER TABLE llx_actioncomm ADD COLUMN email_tobcc varchar(256) after email_tocc;
 
 
-UPDATE llx_commande_fourn set billed=1 where statut = 8;
-UPDATE llx_commande_fourn set statut=5 where statut = 8 and billed=1;
-
 ALTER TABLE llx_user MODIFY COLUMN pass varchar(128);
 ALTER TABLE llx_user MODIFY COLUMN pass_temp varchar(128); 
 
@@ -110,6 +107,9 @@ ALTER TABLE llx_commande ADD COLUMN fk_warehouse integer DEFAULT NULL AFTER fk_s
 
 ALTER TABLE llx_commande_fournisseur ADD COLUMN billed smallint DEFAULT 0 AFTER fk_statut;
 ALTER TABLE llx_commande_fournisseur ADD INDEX billed (billed);
+
+UPDATE llx_commande_fournisseur set billed=1 where statut = 8;
+UPDATE llx_commande_fournisseur set statut=5 where statut = 8 and billed=1;
 
 ALTER TABLE llx_product ADD COLUMN cost_price	double(24,8) DEFAULT NULL;
 

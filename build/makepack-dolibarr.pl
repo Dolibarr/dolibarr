@@ -1150,14 +1150,16 @@ if ($nboftargetok) {
 	    		
 	    		if ($target eq 'SF') { 
 	    			$destFolder="$NEWPUBLISH/$filestoscan{$file}/".$MAJOR.'.'.$MINOR.'.'.$BUILD;
-		    		print "Publish file ".$file." to $NEWPUBLISH/".$filestoscan{$file}."\n";
+		    		print "Publish file ".$file." to $NEWPUBLISH/".$filestoscan{$file}."/".$MAJOR.'.'.$MINOR.'.'.$BUILD."\n";
 	    		}
 	    		else
 	    		{
+	    			$dirnameonly=$file;
+	    			$dirnameonly =~ s/.*\/([^\/]+)\/[^\/]+$/$1/;  
 	    			$filenameonly=$file;
-	    			$filenameonly =~ s/.*\/([^\/]+\/[^\/]+)$/$1/;      # removes path  
-	    			$destFolder="$NEWPUBLISH/$filenameonly";
-		    		print "Publish file ".$file." to $NEWPUBLISH/".$filenameonly."\n";
+	    			$filenameonly =~ s/.*\/[^\/]+\/([^\/])+$/$1/;  
+	    			$destFolder="$NEWPUBLISH/$dirnameonly";
+		    		print "Publish file ".$file." to $NEWPUBLISH/".$dirnameonly."\n";
 	    		}
 
 				# mkdir	   

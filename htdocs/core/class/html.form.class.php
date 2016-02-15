@@ -503,7 +503,8 @@ class Form
     		$ret.='<option value="'.$code.'"'.($disabled?' disabled="disabled"':'').'>'.$label.'</option>';
     	}
     	$ret.='</select>';
-    	$ret.='<input type="submit" name="confirmmassaction" disabled="disabled" class="button hideobject massaction massactionconfirmed" value="'.dol_escape_htmltag($langs->trans("Confirm")).'">';
+    	// Warning: if you set submit button to disabled, post using Enter will no more work
+    	$ret.='<input type="submit" name="confirmmassaction" class="button hideobject massaction massactionconfirmed" value="'.dol_escape_htmltag($langs->trans("Confirm")).'">';
     	$ret.='</div>';
     	
     	$ret.='<!-- JS CODE TO ENABLE mass action select -->
@@ -515,7 +516,6 @@ class Form
 	  				/* console.log( index + ": " + $( this ).text() ); */
 	  				if ($(this).is(\':checked\')) atleastoneselected++;
 	  			});
-	  			console.log(atleastoneselected);
 	  			if (atleastoneselected)
 	  			{
 	  				jQuery(".massaction").show();
@@ -531,6 +531,7 @@ class Form
     		jQuery(".checkforselect").click(function() {
     			initCheckForSelect();
 	  		});
+    	    /* Warning: if you set submit button to disabled, post using Enter will no more work
 	  		jQuery(".massactionselect").change(function() {
 	  			console.log( $( this ).val() );
 	  			if ($(this).val() != \'0\')
@@ -542,6 +543,7 @@ class Form
 	  				jQuery(".massactionconfirmed").prop(\'disabled\', true);
 	  			}
 	  		});
+    	    */
     	});
 		</script>
     	';
@@ -893,7 +895,7 @@ class Form
      *	@param	string	$selected       Preselected type
      *	@param  string	$htmlname       Name of field in form
      *  @param  string	$filter         optional filters criteras (example: 's.rowid <> x', 's.client IN (1,3)')
-     *	@param	int		$showempty		Add an empty field
+     *	@param	string	$showempty		Add an empty field (Can be '1' or text to use on empty line)
      * 	@param	int		$showtype		Show third party type in combolist (customer, prospect or supplier)
      * 	@param	int		$forcecombo		Force to use combo box
      *  @param	array	$events			Ajax event options to run on change. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
@@ -902,7 +904,7 @@ class Form
      *	@param  string	$moreparam      Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
      * 	@return	string					HTML string with select box for thirdparty.
      */
-    function select_company($selected='', $htmlname='socid', $filter='', $showempty=0, $showtype=0, $forcecombo=0, $events=array(), $limit=0, $morecss='minwidth100', $moreparam='')
+    function select_company($selected='', $htmlname='socid', $filter='', $showempty='', $showtype=0, $forcecombo=0, $events=array(), $limit=0, $morecss='minwidth100', $moreparam='')
     {
     	$out='';
 
@@ -948,7 +950,7 @@ class Form
      *	@param	string	$selected       Preselected type
      *	@param  string	$htmlname       Name of field in form
      *  @param  string	$filter         optional filters criteras (example: 's.rowid <> x', 's.client in (1,3)')
-     *	@param	int		$showempty		Add an empty field
+     *	@param	string	$showempty		Add an empty field (Can be '1' or text to use on empty line)
      * 	@param	int		$showtype		Show third party type in combolist (customer, prospect or supplier)
      * 	@param	int		$forcecombo		Force to use combo box
      *  @param	array	$events			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
@@ -959,7 +961,7 @@ class Form
      *	@param  string	$moreparam      Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
      * 	@return	string					HTML string with
      */
-    function select_thirdparty_list($selected='',$htmlname='socid',$filter='',$showempty=0, $showtype=0, $forcecombo=0, $events=array(), $filterkey='', $outputmode=0, $limit=0, $morecss='minwidth100', $moreparam='')
+    function select_thirdparty_list($selected='',$htmlname='socid',$filter='',$showempty='', $showtype=0, $forcecombo=0, $events=array(), $filterkey='', $outputmode=0, $limit=0, $morecss='minwidth100', $moreparam='')
     {
         global $conf,$user,$langs;
 
@@ -1016,10 +1018,13 @@ class Form
             $out.= '<select id="'.$htmlname.'" class="flat'.($morecss?' '.$morecss:'').'"'.($moreparam?' '.$moreparam:'').' name="'.$htmlname.'"'.$nodatarole.'>'."\n";
 
             $textifempty='';
-            // Do not use textempty = ' ' or '&nbsp;' here, or search on key will search on ' key'.
-            //$textifempty=' ';
+            // Do not use textifempty = ' ' or '&nbsp;' here, or search on key will search on ' key'.
             //if (! empty($conf->use_javascript_ajax) || $forcecombo) $textifempty='';
-            if (! empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT)) $textifempty.=$langs->trans("All");
+            if (! empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT)) 
+            {
+                if ($showempty && ! is_numeric($showempty)) $textifempty=$langs->trans($showempty); 
+                else $textifempty.=$langs->trans("All");
+            }
             if ($showempty) $out.= '<option value="-1">'.$textifempty.'</option>'."\n";
 
             $num = $this->db->num_rows($resql);

@@ -44,6 +44,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 $langs->load("products");
 $langs->load("bills");
+$langs->load("companies");
 
 $mesg=''; $error=0; $errors=array();
 
@@ -346,8 +347,16 @@ if (empty($reshook))
 		$prodcustprice->tva_tx = str_replace('*', '', GETPOST("tva_tx"));
 		$prodcustprice->recuperableonly = (preg_match('/\*/', GETPOST("tva_tx")) ? 1 : 0);
 
+		if (! ($prodcustprice->fk_soc > 0))
+		{
+		    $langs->load("errors");
+		    setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("ThirdParty")), null, 'errors');
+		    $error++;
+		    $action='add_customer_price';
+		}
 		if (! empty($conf->global->PRODUCT_MINIMUM_RECOMMENDED_PRICE) && $prodcustprice->price_min<$maxpricesupplier)
 		{
+		    $langs->load("errors");
 			setEventMessages($langs->trans("MinimumPriceLimit",price($maxpricesupplier,0,'',1,-1,-1,'auto')), null, 'errors');
 			$error++;
 			$action='add_customer_price';
@@ -548,7 +557,7 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES))
 				print '<tr><td>' . $langs->trans("PriceByQuantity") . ' ' . $i;
 				print '</td><td>';
 
-				if ($object->prices_by_qty [$i] == 1) {
+				if ($object->prices_by_qty[$i] == 1) {
 					print '<table width="50%" class="border" summary="List of quantities">';
 
 					print '<tr class="liste_titre">';
@@ -558,7 +567,7 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES))
 					print '<td align="right">' . $langs->trans("Discount") . '</td>';
 					print '<td>&nbsp;</td>';
 					print '</tr>';
-					foreach ($object->prices_by_qty_list [$i] as $ii => $prices) {
+					foreach ($object->prices_by_qty_list[$i] as $ii => $prices) {
 						if ($action == 'edit_price_by_qty' && $rowid == $prices['rowid'] && ($user->rights->produit->creer || $user->rights->service->creer)) {
 							print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
 							print '<input type="hidden" name="action" value="update_price_by_qty">';
@@ -574,7 +583,7 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES))
 							print '</form>';
 						} else {
 							print '<tr class="' . ($ii % 2 == 0 ? 'pair' : 'impair') . '">';
-							print '<td>' . $prices ['quantity'] . '</td>';
+							print '<td>' . $prices['quantity'] . '</td>';
 							print '<td align="right">' . price($prices['price']) . '</td>';
 							print '<td align="right">' . price($prices['unitprice']) . '</td>';
 							print '<td align="right">' . price($prices['remise_percent']) . ' %</td>';
@@ -1177,7 +1186,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 
 	if ($action == 'add_customer_price')
 	{
-		// Create mode
+		// Form to add a new customer price
 		$maxpricesupplier = $object->min_recommended_price();
 
 		print load_fiche_titre($langs->trans('PriceByCustomer'));
@@ -1188,19 +1197,19 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		print '<input type="hidden" name="id" value="' . $object->id . '">';
 		print '<table class="border" width="100%">';
 		print '<tr>';
-		print '<td>' . $langs->trans('ThirdParty') . '</td>';
+		print '<td class="fieldrequired">' . $langs->trans('ThirdParty') . '</td>';
 		print '<td>';
-		print $form->select_company('', 'socid', 's.client in (1,2,3) AND s.rowid NOT IN (SELECT fk_soc FROM ' . MAIN_DB_PREFIX . 'product_customer_price WHERE fk_product='.$object->id.')', 1, 0, 0, array(), 0, 'minwidth300');
+		print $form->select_company('', 'socid', 's.client in (1,2,3) AND s.rowid NOT IN (SELECT fk_soc FROM ' . MAIN_DB_PREFIX . 'product_customer_price WHERE fk_product='.$object->id.')', 'SelectThirdParty', 0, 0, array(), 0, 'minwidth300');
 		print '</td>';
 		print '</tr>';
 
 		// VAT
-		print '<tr><td>' . $langs->trans("VATRate") . '</td><td>';
+		print '<tr><td class="fieldrequired">' . $langs->trans("VATRate") . '</td><td>';
 		print $form->load_tva("tva_tx", $object->tva_tx, $mysoc, '', $object->id, $object->tva_npr);
 		print '</td></tr>';
 
 		// Price base
-		print '<tr><td width="15%">';
+		print '<tr><td class="fieldrequired">';
 		print $langs->trans('PriceBase');
 		print '</td>';
 		print '<td>';
@@ -1209,7 +1218,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		print '</tr>';
 
 		// Price
-		print '<tr><td width="20%">';
+		print '<tr><td class="fieldrequired">';
 		$text = $langs->trans('SellingPrice');
 		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
 		print '</td><td>';

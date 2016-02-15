@@ -1,12 +1,13 @@
 <?php
-/* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004      Benoit Mortier	    <benoit.mortier@opensides.be>
- * Copyright (C) 2009-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2009-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2013	   Florian Henry        <forian.henry@open-concept.pro>
- * Copyright (C) 2015	   Charles-Fr BENKE     <charles.fr@benke.fr>
+/* Copyright (C) 2002-2003  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2002-2003  Jean-Louis Bergamo      <jlb@j1b.org>
+ * Copyright (C) 2004       Sebastien Di Cintio     <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
+ * Copyright (C) 2009-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2009-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2013       Florian Henry           <forian.henry@open-concept.pro>
+ * Copyright (C) 2015       Charles-Fr BENKE        <charles.fr@benke.fr>
+ * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -878,7 +879,7 @@ class ExtraFields
 						}
 						else
 						{
-							$labeltoshow=$obj->$InfoFieldList[1];
+							$labeltoshow=$obj->{$InfoFieldList[1]};
 						}
 						$labeltoshow=dol_trunc($labeltoshow,45);
 
@@ -899,12 +900,12 @@ class ExtraFields
 						{
 							if(!$notrans)
 							{
-								$translabel=$langs->trans($obj->$InfoFieldList[1]);
-								if ($translabel!=$obj->$InfoFieldList[1]) {
+								$translabel=$langs->trans($obj->{$InfoFieldList[1]});
+								if ($translabel!=$obj->{$InfoFieldList[1]}) {
 									$labeltoshow=dol_trunc($translabel,18);
 								}
 								else {
-									$labeltoshow=dol_trunc($obj->$InfoFieldList[1],18);
+									$labeltoshow=dol_trunc($obj->{$InfoFieldList[1]},18);
 								}
 							}
 							if (empty($labeltoshow)) $labeltoshow='(not defined)';
@@ -1055,7 +1056,7 @@ class ExtraFields
 								$labeltoshow .= $obj->$field_toshow . ' ';
 							}
 						} else {
-							$labeltoshow = $obj->$InfoFieldList[1];
+							$labeltoshow = $obj->{$InfoFieldList[1]};
 						}
 						$labeltoshow = dol_trunc($labeltoshow, 45);
 
@@ -1076,11 +1077,11 @@ class ExtraFields
 							$out .= '/>' . $labeltoshow . '<br>';
 						} else {
 							if (! $notrans) {
-								$translabel = $langs->trans($obj->$InfoFieldList[1]);
-								if ($translabel != $obj->$InfoFieldList[1]) {
+								$translabel = $langs->trans($obj->{$InfoFieldList[1]});
+								if ($translabel != $obj->{$InfoFieldList[1]}) {
 									$labeltoshow = dol_trunc($translabel, 18);
 								} else {
-									$labeltoshow = dol_trunc($obj->$InfoFieldList[1], 18);
+									$labeltoshow = dol_trunc($obj->{$InfoFieldList[1]}, 18);
 								}
 							}
 							if (empty($labeltoshow))
@@ -1274,13 +1275,13 @@ class ExtraFields
 				else
 				{
 					$translabel='';
-					if (!empty($obj->$InfoFieldList[1])) {
-						$translabel=$langs->trans($obj->$InfoFieldList[1]);
+					if (!empty($obj->{$InfoFieldList[1]})) {
+						$translabel=$langs->trans($obj->{$InfoFieldList[1]});
 					}
-					if ($translabel!=$obj->$InfoFieldList[1]) {
+					if ($translabel!=$obj->{$InfoFieldList[1]}) {
 						$value=dol_trunc($translabel,18);
 					}else {
-						$value=$obj->$InfoFieldList[1];
+						$value=$obj->{$InfoFieldList[1]};
 					}
 				}
 			}
@@ -1354,13 +1355,13 @@ class ExtraFields
 							}
 						} else {
 							$translabel = '';
-							if (! empty($obj->$InfoFieldList[1])) {
-								$translabel = $langs->trans($obj->$InfoFieldList[1]);
+							if (! empty($obj->{$InfoFieldList[1]})) {
+								$translabel = $langs->trans($obj->{$InfoFieldList[1]});
 							}
-							if ($translabel != $obj->$InfoFieldList[1]) {
+							if ($translabel != $obj->{$InfoFieldList[1]}) {
 								$value .= dol_trunc($translabel, 18) . '<BR>';
 							} else {
-								$value .= $obj->$InfoFieldList[1] . '<BR>';
+								$value .= $obj->{$InfoFieldList[1]} . '<BR>';
 							}
 						}
 					}

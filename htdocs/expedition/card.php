@@ -9,6 +9,7 @@
  * Copyright (C) 2014		Cedric GROSS			<c.gross@kreiz-it.fr>
  * Copyright (C) 2014-2015	Francis Appels			<francis.appels@yahoo.com>
  * Copyright (C) 2015		Claudio Aschieri		<c.aschieri@19.coop>
+ * Copyright (C) 2016		Ferran Marcet			<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -242,7 +243,7 @@ if (empty($reshook))
 			}
 			else
 			{
-			    var_dump($_POST); var_dump($batch);
+			    //var_dump($_POST); var_dump($batch);
 				//shipment line for product with no batch management and no multiple stock location
 				if (GETPOST($qty,'int') > 0) $totalqty+=GETPOST($qty,'int');
 			}
@@ -278,7 +279,7 @@ if (empty($reshook))
     					{
     					    if ($stockLine[$i][$j]['qty']>0)
     					    {
-    					        $ret=$object->addline($stockLine[$i][$j]['warehouse_id'], $stockLine[$i][$j]['ix_l'], $stockLine[$i][$j]['qty']);
+    					        $ret=$object->addline($stockLine[$i][$j]['warehouse_id'], $stockLine[$i][$j]['ix_l'], $stockLine[$i][$j]['qty'], $array_options[$i]);
     					        if ($ret < 0)
     					        {
     					            setEventMessages($object->error, $object->errors, 'errors');
@@ -287,19 +288,22 @@ if (empty($reshook))
     					    }
     					}
 					}
-					if (GETPOST($qty,'int') > 0 || (GETPOST($qty,'int') == 0 && $conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS))
+					else
 					{
-						$ent = "entl".$i;
-						$idl = "idl".$i;
-						$entrepot_id = is_numeric(GETPOST($ent,'int'))?GETPOST($ent,'int'):GETPOST('entrepot_id','int');
-						if ($entrepot_id < 0) $entrepot_id='';
-						if (! ($objectsrc->lines[$i]->fk_product > 0)) $entrepot_id = 0;
-						
-						$ret=$object->addline($entrepot_id,GETPOST($idl,'int'),GETPOST($qty,'int'),$array_options[$i]);
-						if ($ret < 0)
+						if (GETPOST($qty,'int') > 0 || (GETPOST($qty,'int') == 0 && $conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS))
 						{
-							setEventMessages($object->error, $object->errors, 'errors');
-							$error++;
+							$ent = "entl".$i;
+							$idl = "idl".$i;
+							$entrepot_id = is_numeric(GETPOST($ent,'int'))?GETPOST($ent,'int'):GETPOST('entrepot_id','int');
+							if ($entrepot_id < 0) $entrepot_id='';
+							if (! ($objectsrc->lines[$i]->fk_product > 0)) $entrepot_id = 0;
+						
+							$ret=$object->addline($entrepot_id, GETPOST($idl,'int'), GETPOST($qty,'int'), $array_options[$i]);
+							if ($ret < 0)
+							{
+								setEventMessages($object->error, $object->errors, 'errors');
+								$error++;
+							}
 						}
 					}
 				}
@@ -790,7 +794,7 @@ if ($action == 'create')
                 print "<tr ".$bc[$var].">\n";
                 
                 // Product label
-                if ($line->fk_product > 0)  // Predefined product ?
+                if ($line->fk_product > 0)  // If predefined product
                 {
                     $product->fetch($line->fk_product);
                     $product->load_stock();

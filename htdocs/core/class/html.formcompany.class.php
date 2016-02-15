@@ -564,16 +564,21 @@ class FormCompany
 				}
 			}
 
-			// Refresh contacts list on thirdparty list change
-			$htmloption='';
 
 			$events=array();
+			// Add an entry 'method' to say 'yes, we must execute url with param action = method';
+			// Add an entry 'url' to say which url to execute
+			// Add an entry htmlname to say which element we must change once url is called 
+			// Add entry params => array('cssid' => 'attr') to say to remov or add attribute attr if answer of url return  0 or >0 lines 
+			// To refresh contacts list on thirdparty list change
 			$events[]=array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php',1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
+			
 			if (count($events))	// If there is some ajax events to run once selection is done, we add code here to run events
 			{
 				print '<script type="text/javascript">
 				jQuery(document).ready(function() {
 					$("#search_'.$htmlname.'").change(function() {
+					    console.log("Call runJsCodeForEvent'.$htmlname.'");
 						var obj = '.json_encode($events).';
 						$.each(obj, function(key,values) {
 							if (values.method.length) {
@@ -583,7 +588,7 @@ class FormCompany
 						/* Clean contact */
 						$("div#s2id_contactid>a>span").html(\'\');
 					});
-
+								    
 					// Function used to execute events when search_htmlname change
 					function runJsCodeForEvent'.$htmlname.'(obj) {
 						var id = $("#'.$htmlname.'").val();
@@ -609,6 +614,7 @@ class FormCompany
 											}
 										}
 									});
+						            /* console.log("Change select#"+htmlname+" with content "+response.value) */
 									$("select#" + htmlname).html(response.value);
 								}
 							}
@@ -619,8 +625,8 @@ class FormCompany
 			}
 
 			print "\n".'<!-- Input text for third party with Ajax.Autocompleter (selectCompaniesForNewContact) -->'."\n";
-			print '<input type="text" size="30" id="search_'.$htmlname.'" name="search_'.$htmlname.'" value="'.$name.'" '.$htmloption.' />';
-			print ajax_autocompleter(($socid?$socid:-1),$htmlname,DOL_URL_ROOT.'/societe/ajaxcompanies.php','',$minLength);
+			print '<input type="text" size="30" id="search_'.$htmlname.'" name="search_'.$htmlname.'" value="'.$name.'" />';
+			print ajax_autocompleter(($socid?$socid:-1), $htmlname, DOL_URL_ROOT.'/societe/ajaxcompanies.php', '', $minLength, 0);
 			return $socid;
 		}
 		else
