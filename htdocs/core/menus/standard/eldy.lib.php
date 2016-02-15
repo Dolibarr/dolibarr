@@ -968,11 +968,11 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				}
 
 				// General Ledger
-				$newmenu->add("/accountancy/bookkeeping/list.php?leftmenu=bookkeeping",$langs->trans("Bookkeeping"),1,$user->rights->accounting->mouvements->lire, '', $mainmenu, 'bookkeeping');
-				if (empty($leftmenu) || preg_match('/bookkeeping/',$leftmenu)) $newmenu->add("/accountancy/bookkeeping/balance.php",$langs->trans("AccountBalance"),1,$user->rights->accounting->mouvements->lire);
-				if (empty($leftmenu) || preg_match('/bookkeeping/',$leftmenu)) $newmenu->add("/accountancy/bookkeeping/listbyyear.php",$langs->trans("ByYear"),2,$user->rights->accounting->mouvements->lire);
-				if (empty($leftmenu) || preg_match('/bookkeeping/',$leftmenu)) $newmenu->add("/accountancy/bookkeeping/balancebymonth.php",$langs->trans("AccountBalanceByMonth"),2,$user->rights->accounting->mouvements->lire);
-				
+				$newmenu->add("/accountancy/bookkeeping/list.php",$langs->trans("Bookkeeping"),1,$user->rights->accounting->mouvements->lire);
+
+				// Balance
+				$newmenu->add("/accountancy/bookkeeping/balance.php",$langs->trans("AccountBalance"),1,$user->rights->accounting->mouvements->lire);
+
 				// Reports
 				$langs->load("compta");
 

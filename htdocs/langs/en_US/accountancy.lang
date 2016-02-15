@@ -48,7 +48,7 @@ UpdateAccount=Modification of an accounting account
 UpdateMvts=Modification of a movement
 WriteBookKeeping=Record accounts in general ledger
 Bookkeeping=General ledger
-AccountBalanceByMonth=Account balance by month
+AccountBalance=Account balance
 
 AccountingVentilation=Breakdown accounting
 AccountingVentilationSupplier=Breakdown accounting supplier
