@@ -154,6 +154,22 @@ llxHeader('',$langs->trans("Agenda"),$help_url);
 
 // Define list of all external calendars
 $listofextcals=array();
+/*if (empty($conf->global->AGENDA_DISABLE_EXT) && $conf->global->AGENDA_EXT_NB > 0)
+{
+    $i=0;
+    while($i < $conf->global->AGENDA_EXT_NB)
+    {
+        $i++;
+        $paramkey='AGENDA_EXT_SRC'.$i;
+        $url=$conf->global->$paramkey;
+        $paramkey='AGENDA_EXT_NAME'.$i;
+        $namecal = $conf->global->$paramkey;
+        $paramkey='AGENDA_EXT_COLOR'.$i;
+        $colorcal = $conf->global->$paramkey;
+        if ($url && $namecal) $listofextcals[]=array('src'=>$url,'name'=>$namecal,'color'=>$colorcal);
+    }
+}
+*/
 
 $param='';
 if ($actioncode || isset($_GET['actioncode']) || isset($_POST['actioncode'])) $param.="&actioncode=".$actioncode;
@@ -282,6 +298,9 @@ if ($resql)
 	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Contact"),$_SERVER["PHP_SELF"],"a.fk_contact",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("ActionsOwnedBy"),$_SERVER["PHP_SELF"],"",$param,"","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("AffectedTo"),$_SERVER["PHP_SELF"],"ut.login",$param,"","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("DoneBy"),$_SERVER["PHP_SELF"],"ud.login",$param,"","",$sortfield,$sortorder);
+		
 	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"a.percent",$param,"",'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
@@ -331,7 +350,11 @@ if ($resql)
 		print $actionstatic->getNomUrl(1,28);
 		print '</td>';
 
-		// Start date
+		// Titre
+		//print '<td>';
+		//print dol_trunc($obj->label,12);
+		//print '</td>';
+
 		print '<td align="center" class="nowrap">';
 		print dol_print_date($db->jdate($obj->dp),"dayhour");
 		$late=0;
@@ -342,7 +365,6 @@ if ($resql)
 		if ($late) print img_warning($langs->trans("Late")).' ';
 		print '</td>';
 
-		// End date
 		print '<td align="center" class="nowrap">';
 		print dol_print_date($db->jdate($obj->dp2),"dayhour");
 		print '</td>';
@@ -374,11 +396,35 @@ if ($resql)
 		}
 		print '</td>';
 
+		// User author
+		print '<td align="left">';
+		if ($obj->useridauthor)
+		{
+			$userstatic=new User($db);
+			$userstatic->id=$obj->useridauthor;
+			$userstatic->login=$obj->loginauthor;
+			print $userstatic->getLoginUrl(1);
+		}
+		else print '&nbsp;';
+		print '</td>';
+
 		// User to do
 		print '<td align="left">';
 		if ($obj->fk_user_action > 0)
 		{
 			$userstatic->fetch($obj->fk_user_action);
+			print $userstatic->getLoginUrl(1);
+		}
+		else print '&nbsp;';
+		print '</td>';
+
+		// User did
+		print '<td align="left">';
+		if ($obj->useriddone)
+		{
+			$userstatic=new User($db);
+			$userstatic->id=$obj->useriddone;
+			$userstatic->login=$obj->logindone;
 			print $userstatic->getLoginUrl(1);
 		}
 		else print '&nbsp;';
