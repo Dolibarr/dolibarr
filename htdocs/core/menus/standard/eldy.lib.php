@@ -968,10 +968,10 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				}
 
 				// General Ledger
-				$newmenu->add("/accountancy/bookkeeping/list.php",$langs->trans("Bookkeeping"),1,$user->rights->accounting->mouvements->lire, '', $mainmenu, 'bookkeeping');
+				$newmenu->add("/accountancy/bookkeeping/list.php",$langs->trans("Bookkeeping"),1,$user->rights->accounting->mouvements->lire);
 
 				// Balance
-				$newmenu->add("/accountancy/bookkeeping/balance",$langs->trans("AccountBalance"),1,$user->rights->accounting->mouvements->lire, '', $mainmenu, 'balance');
+				$newmenu->add("/accountancy/bookkeeping/balance.php",$langs->trans("AccountBalance"),1,$user->rights->accounting->mouvements->lire);
 
 				// Reports
 				$langs->load("compta");

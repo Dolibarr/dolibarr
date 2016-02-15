@@ -9,6 +9,7 @@
  * Copyright (C) 2014		Cedric GROSS			<c.gross@kreiz-it.fr>
  * Copyright (C) 2014		Francis Appels			<francis.appels@yahoo.com>
  * Copyright (C) 2015		Claudio Aschieri		<c.aschieri@19.coop>
+ * Copyright (C) 2016		Ferran Marcet			<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -944,7 +945,7 @@ if ($action == 'create')
 							if ($defaultqty<=0) {
 								$defaultqty=0;
 							} else {
-								$defaultqty -= min($defaultqty,$substock);
+								$defaultqty -= ($substock > 0 ? min($defaultqty,$substock) : 0);
 							}
 							$subj++;
 						}
