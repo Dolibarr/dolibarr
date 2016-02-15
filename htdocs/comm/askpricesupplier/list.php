@@ -285,7 +285,7 @@ if ($result)
 	print '<td class="liste_titre" align="left">';
 	print '<input class="flat" type="text" size="12" name="search_societe" value="'.$search_societe.'">';
 	print '</td>';
-
+	
 	// Date
 	print '<td class="liste_titre" colspan="1" align="center">';
 	//print $langs->trans('Month').': ';

@@ -503,7 +503,11 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 				if ($facture->type == 2) $alreadypayedlabel=$langs->trans("PaidBack");
 				$remaindertopay=$langs->trans('RemainderToTake');
 				if ($facture->type == 2) $remaindertopay=$langs->trans("RemainderToPayBack");
-
+				
+				
+				$parameters=array();
+				$reshook=$hookmanager->executeHooks('formAddObjectLine',$parameters,$facture,$action);    // Note that $action and $object may have been modified by hook
+				
                 $i = 0;
                 //print '<tr><td colspan="3">';
                 print '<br>';

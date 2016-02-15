@@ -40,6 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+
 if (! empty($conf->askpricesupplier->enabled))
 	require DOL_DOCUMENT_ROOT . '/comm/askpricesupplier/class/askpricesupplier.class.php';
 if (!empty($conf->produit->enabled))
@@ -73,6 +74,10 @@ $lineid         = GETPOST('lineid', 'int');
 $lineid = GETPOST('lineid', 'int');
 $origin = GETPOST('origin', 'alpha');
 $originid = (GETPOST('originid', 'int') ? GETPOST('originid', 'int') : GETPOST('origin_id', 'int')); // For backward compatibility
+
+//Askpricesupplier
+$origin = GETPOST('origin', 'alpha');
+$originid = GETPOST('originid', 'int');
 
 //PDF
 $hidedetails = (GETPOST('hidedetails','int') ? GETPOST('hidedetails','int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
@@ -847,9 +852,147 @@ if (empty($reshook))
 	if ($action == 'update_extras')
 	{
 		// Fill array 'array_options' with data from add form
+
 		$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 		$ret = $extrafields->setOptionalsFromPost($extralabels,$object,GETPOST('attribute'));
 		if ($ret < 0) $error++;
+		
+       	if (! $error)
+       	{
+			$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+			if ($ret < 0) $error++;
+       	}
+
+       	if (! $error)
+       	{
+			// If creation from another object of another module (Example: origin=askpricesupplier, originid=1)
+			if (! empty($origin) && ! empty($originid))
+			{
+				$element = 'comm/askpricesupplier';
+				$subelement = 'askpricesupplier';
+
+				$object->origin = $origin;
+				$object->origin_id = $originid;
+
+				// Possibility to add external linked objects with hooks
+				$object->linked_objects[$object->origin] = $object->origin_id;
+				$other_linked_objects = GETPOST('other_linked_objects', 'array');
+				if (! empty($other_linked_objects)) {
+					$object->linked_objects = array_merge($object->linked_objects, $other_linked_objects);
+				}
+
+				$object_id = $object->create($user);
+
+				if ($object_id > 0)
+				{
+					$id = $object_id; //Askpricesupplier - Compatibility
+					dol_include_once('/' . $element . '/class/' . $subelement . '.class.php');
+
+					$classname = ucfirst($subelement);
+					$srcobject = new $classname($db);
+					$srcobject->fetch($object->origin_id);
+
+					$object->set_date_livraison($user, $srcobject->date_livraison);
+					$object->set_id_projet($user, $srcobject->fk_project);
+
+					dol_syslog("Try to find source object origin=" . $object->origin . " originid=" . $object->origin_id . " to add lines");
+					$result = $srcobject->fetch($object->origin_id);
+					if ($result > 0)
+					{
+						$lines = $srcobject->lines;
+						if (empty($lines) && method_exists($srcobject, 'fetch_lines'))
+						{
+							$srcobject->fetch_lines();
+							$lines = $srcobject->lines;
+						}
+
+						$fk_parent_line = 0;
+						$num = count($lines);
+
+						$productsupplier = new ProductFournisseur($db);
+
+						for($i = 0; $i < $num; $i ++)
+						{
+
+							if (empty($lines[$i]->subprice) || $lines[$i]->qty <= 0)
+								continue;
+
+							$label = (! empty($lines [$i]->label) ? $lines [$i]->label : '');
+							$desc = (! empty($lines [$i]->desc) ? $lines [$i]->desc : $lines [$i]->libelle);
+							$product_type = (! empty($lines [$i]->product_type) ? $lines [$i]->product_type : 0);
+
+							// Reset fk_parent_line for no child products and special product
+							if (($lines [$i]->product_type != 9 && empty($lines [$i]->fk_parent_line)) || $lines [$i]->product_type == 9) {
+								$fk_parent_line = 0;
+							}
+
+							// Extrafields
+							if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines [$i], 'fetch_optionals')) 							// For avoid conflicts if
+							                                                                                                      // trigger used
+							{
+								$lines [$i]->fetch_optionals($lines [$i]->rowid);
+								$array_option = $lines [$i]->array_options;
+							}
+
+							$idprod = $productsupplier->find_min_price_product_fournisseur($lines [$i]->fk_product, $lines [$i]->qty);
+							$res = $productsupplier->fetch($idprod);
+
+							$result = $object->addline(
+								$desc,
+								$lines [$i]->subprice,
+								$lines [$i]->qty,
+								$lines [$i]->tva_tx,
+								$lines [$i]->localtax1_tx,
+								$lines [$i]->localtax2_tx,
+								$lines [$i]->fk_product,
+								$productsupplier->product_fourn_price_id,
+								$productsupplier->ref_fourn,
+								$lines [$i]->remise_percent,
+								'HT',
+								0,
+								$lines [$i]->product_type,
+								'',
+								'',
+								null,
+								null
+							);
+
+							if ($result < 0) {
+								$error ++;
+								break;
+							}
+
+							// Defined the new fk_parent_line
+							if ($result > 0 && $lines [$i]->product_type == 9) {
+								$fk_parent_line = $result;
+							}
+						}
+
+						// Hooks
+						$parameters = array('objFrom' => $srcobject);
+						$reshook = $hookmanager->executeHooks('createFrom', $parameters, $object, $action); // Note that $action and $object may have been
+						                                                                               // modified by hook
+						if ($reshook < 0)
+							$error ++;
+					} else {
+						setEventMessage($srcobject->error, 'errors');
+						$error ++;
+					}
+				} else {
+					setEventMessage($object->error, 'errors');
+					$error ++;
+				}
+			}
+			else
+			{
+	       		$id = $object->create($user);
+	        	if ($id < 0)
+	        	{
+	        		$error++;
+		        	setEventMessage($langs->trans($object->error), 'errors');
+	        	}
+			}
+        }
 
 		if (! $error)
 		{
@@ -1428,6 +1571,7 @@ if ($action=='create')
 		$societe->fetch($socid);
 	}
 
+
 	if (! empty($origin) && ! empty($originid))
 	{
 		// Parse element/subelement (ex: project_task)
@@ -1485,6 +1629,7 @@ if ($action=='create')
 	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
+
 	print '<input type="hidden" name="socid" value="' . $soc->id . '">' . "\n";
 	print '<input type="hidden" name="remise_percent" value="' . $soc->remise_percent . '">';
 	print '<input type="hidden" name="origin" value="' . $origin . '">';
