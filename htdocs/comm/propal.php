@@ -286,7 +286,7 @@ if (empty($reshook))
 		{
 			$db->begin();
 
-			// Si on a selectionne une propal a copier, on realise la copie
+			// If we select proposal to clone during creation (when option PROPAL_CLONE_ON_CREATE_PAGE is on)
 			if (GETPOST('createmode') == 'copy' && GETPOST('copie_propal'))
 			{
 				if ($object->fetch(GETPOST('copie_propal')) > 0) {
@@ -314,7 +314,8 @@ if (empty($reshook))
 					$object->fk_incoterms = GETPOST('incoterm_id', 'int');
 					$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 
-					$id = $object->create_from($user);
+					// the create is done below and further more the existing create_from function is quite hilarating
+					//$id = $object->create_from($user);
 				} else {
 					setEventMessage($langs->trans("ErrorFailedToCopyProposal", GETPOST('copie_propal')), 'errors');
 				}
