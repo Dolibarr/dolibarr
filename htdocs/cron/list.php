@@ -39,9 +39,19 @@ $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
 $id=GETPOST('id','int');
 
-$sortorder=GETPOST('sortorder','alpha');
-$sortfield=GETPOST('sortfield','alpha');
-$page=GETPOST('page','int');
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
+$page = GETPOST("page",'int');
+if ($page == -1) {
+    $page = 0;
+}
+$offset = $limit * $page;
+if (! $sortorder) $sortorder='ASC';
+if (! $sortfield) $sortfield='t.label';
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+
 $status=GETPOST('status','int');
 if ($status == '') $status=-2;
 
@@ -54,11 +64,6 @@ if (empty($arch)) $arch = 0;
 if ($page == -1) {
     $page = 0 ;
 }
-
-$limit = $conf->global->MAIN_SIZE_LISTE_LIMIT;
-$offset = $limit * $page ;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
 
 
 /*
@@ -137,6 +142,7 @@ $pagetitle=$langs->trans("CronList");
 llxHeader('',$pagetitle);
 
 // list of jobs created
+// TODO Replace this with an embedded select.
 $object = new Cronjob($db);
 $result=$object->fetch_all($sortorder, $sortfield, $limit, $offset, $status, $filter);
 if ($result < 0)
@@ -148,12 +154,8 @@ $num=count($object->lines);
 
 $param='&page='.$page.'&status='.$status.'&search_label='.$search_label;
 
+$stringcurrentdate = $langs->trans("CurrentHour").': '.dol_print_date(dol_now(), 'dayhour');
 
-print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_setup');
-
-
-print $langs->trans('CronInfo');
-print "<br><br>";
 
 
 if ($action == 'delete')
@@ -171,6 +173,18 @@ if ($action == 'execute')
 
 print '<form method="GET" action="'.$url_form.'" name="search_form">'."\n";
 print '<input type="hidden" name="status" value="'.$status.'" >';
+if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="list">';
+print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
+
+print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $stringcurrentdate, $num, 0, 'title_setup', 0, '', '', $limit);
+
+print $langs->trans('CronInfo');
+print "<br><br>";
+
 
 print '<table width="100%" class="noborder">';
 print '<tr class="liste_titre">';
@@ -303,7 +317,7 @@ if ($num > 0)
 		print '</td>';
 
 		print '<td>';
-		if(!empty($line->lastoutput)) {print dol_trunc(nl2br($line->lastoutput),100);}
+		if(!empty($line->lastoutput)) {print dol_trunc(nl2br($line->lastoutput),50);}
 		print '</td>';
 
 		// Status

@@ -52,6 +52,11 @@ class FactureRec extends Facture
 	var $db_table;
 	var $propalid;
 
+	var $date_last_gen;
+	var $next_gen;
+	var $nb_gen_done;
+	var $nb_gen_max;
+	
 	var $rang;
 	var $special_code;
 
@@ -214,17 +219,17 @@ class FactureRec extends Facture
 
 
 	/**
-	 *	Recupere l'objet facture et ses lignes de factures
+	 *	Load object and lines
 	 *
 	 *	@param      int		$rowid       	Id of object to load
-	 * 	@param		string	$ref			Reference of invoice
+	 * 	@param		string	$ref			Reference of recurring invoice
 	 * 	@param		string	$ref_ext		External reference of invoice
 	 * 	@param		int		$ref_int		Internal reference of other object
 	 *	@return     int         			>0 if OK, <0 if KO, 0 if not found
 	 */
 	function fetch($rowid, $ref='', $ref_ext='', $ref_int='')
 	{
-		$sql = 'SELECT f.titre,f.fk_soc,f.amount,f.tva,f.total,f.total_ttc,f.remise_percent,f.remise_absolue,f.remise';
+		$sql = 'SELECT f.rowid, f.titre, f.fk_soc, f.amount, f.tva, f.total, f.total_ttc, f.remise_percent, f.remise_absolue, f.remise';
 		$sql.= ', f.date_lim_reglement as dlr';
 		$sql.= ', f.note_private, f.note_public, f.fk_user_author';
 		$sql.= ', f.fk_mode_reglement, f.fk_cond_reglement, f.fk_projet';
@@ -232,19 +237,18 @@ class FactureRec extends Facture
 		$sql.= ', f.frequency, f.unit_frequency, f.date_when, f.date_last_gen, f.nb_gen_done, f.nb_gen_max, f.usenewprice, f.auto_validate';
 		$sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
 		$sql.= ', c.code as cond_reglement_code, c.libelle as cond_reglement_libelle, c.libelle_facture as cond_reglement_libelle_doc';
-		$sql.= ', el.fk_source';
+		//$sql.= ', el.fk_source';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture_rec as f';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as c ON f.fk_cond_reglement = c.rowid';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON f.fk_mode_reglement = p.id';
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = f.rowid AND el.targettype = 'facture'";
-		$sql.= ' WHERE f.rowid='.$rowid;
-		if ($ref)     $sql.= " AND f.titre='".$this->db->escape($ref)."'";
+		//$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = f.rowid AND el.targettype = 'facture'";
+		if ($rowid) $sql.= ' WHERE f.rowid='.$rowid;
+		elseif ($ref) $sql.= " WHERE f.titre='".$this->db->escape($ref)."'";
 		/* This field are not used for template invoice
 		if ($ref_ext) $sql.= " AND f.ref_ext='".$this->db->escape($ref_ext)."'";
 		if ($ref_int) $sql.= " AND f.ref_int='".$this->db->escape($ref_int)."'";
 		*/
 		
-        dol_syslog(get_class($this)."::fetch rowid=".$rowid, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -252,7 +256,7 @@ class FactureRec extends Facture
 			{
 				$obj = $this->db->fetch_object($result);
 
-				$this->id                     = $rowid;
+				$this->id                     = $obj->rowid;
 				$this->titre                  = $obj->titre;
 				$this->ref                    = $obj->titre;
 				$this->ref_client             = $obj->ref_client;
@@ -290,8 +294,8 @@ class FactureRec extends Facture
 				$this->special_code			  = $obj->special_code;
 				$this->frequency			  = $obj->frequency;
 				$this->unit_frequency		  = $obj->unit_frequency;
-				$this->date_when			  = $obj->date_when;
-				$this->date_last_gen		  = $obj->date_last_gen;
+				$this->date_when			  = $this->db->jdate($obj->date_when);
+				$this->date_last_gen		  = $this->db->jdate($obj->date_last_gen);
 				$this->nb_gen_done			  = $obj->nb_gen_done;
 				$this->nb_gen_max			  = $obj->nb_gen_max;
 				$this->usenewprice			  = $obj->usenewprice;
@@ -305,14 +309,14 @@ class FactureRec extends Facture
 				$result=$this->fetch_lines();
 				if ($result < 0)
 				{
-					$this->error=$this->db->error();
+					$this->error=$this->db->lasterror();
 					return -3;
 				}
 				return 1;
 			}
 			else
 			{
-				$this->error='Bill with id '.$rowid.' not found sql='.$sql;
+				$this->error='Bill with id '.$rowid.' or ref '.$ref.' not found sql='.$sql;
 				dol_syslog('Facture::Fetch Error '.$this->error, LOG_ERR);
 				return -2;
 			}
@@ -336,7 +340,7 @@ class FactureRec extends Facture
 		$sql.= ' l.remise, l.remise_percent, l.subprice,';
 		$sql.= ' l.total_ht, l.total_tva, l.total_ttc,';
 		$sql.= ' l.rang, l.special_code,';
-		$sql.= ' l.fk_unit,';
+		$sql.= ' l.fk_unit, l.fk_contract_line,';
 		$sql.= ' p.ref as product_ref, p.fk_product_type as fk_product_type, p.label as product_label, p.description as product_desc';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facturedet_rec as l';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
@@ -380,7 +384,8 @@ class FactureRec extends Facture
 				$line->rang 			= $objp->rang;
 				$line->special_code 	= $objp->special_code;
 				$line->fk_unit          = $objp->fk_unit;
-
+                $line->fk_contract_line = $objp->fk_contract_line;
+                
 				// Ne plus utiliser
 				$line->price            = $objp->price;
 				$line->remise           = $objp->remise;
@@ -578,53 +583,101 @@ class FactureRec extends Facture
 	function getNextDate()
 	{
 		if (empty($this->date_when)) return false;
-		return dol_time_plus_duree(strtotime($this->date_when), $this->frequency, $this->unit_frequency);
+		return dol_time_plus_duree($this->date_when, $this->frequency, $this->unit_frequency);
 	}
 	
 	/**
-	 *  Create all recurrents invoices 
+	 *  Create all recurrents invoices.
+	 *  A result may also be provided into this->output
 	 * 
-	 *  @return		int		number of created invoices
+	 *  @return	int						0 if OK, < 0 if KO (this function is used also by cron so only 0 is OK) 
 	 */
 	function createRecurringInvoices()
 	{
-		global $db,$user;
+		global $langs, $db, $user;
+		
+		$langs->load("bills");
 		
 		$nb_create=0;
 		
-		$today = date('Y-m-d 23:59:59');
+		$now = dol_now();
+		$tmparray=dol_getdate($now);
+		$today = dol_mktime(23,59,59,$tmparray['mon'],$tmparray['mday'],$tmparray['year']);   // Today is last second of current day
 		
+		dol_syslog("createRecurringInvoices");
 		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'facture_rec';
-		$sql.= ' WHERE date_when IS NOT NULL AND frequency > 0';
-		$sql.= ' AND date_when <= "'.$db->escape($today).'"';
-		$sql.= ' AND nb_gen_done < nb_gen_max';
+		$sql.= ' WHERE frequency > 0';      // A recurring invoice is an invoice with a frequency
+		$sql.= " AND (date_when IS NULL OR date_when <= '".$db->idate($today)."')";
+		$sql.= ' AND (nb_gen_done < nb_gen_max OR nb_gen_max = 0)';
+		//print $sql;exit;
 		
 		$resql = $db->query($sql);
 		if ($resql)
 		{
-			while ($line = $db->fetch_object($resql))
+		    $i=0;
+		    $num = $db->num_rows($resql);
+		    
+		    if ($num) $this->output.=$langs->trans("FoundXQualifiedRecurringInvoiceTemplate", $num)."\n";
+		    else $this->output.=$langs->trans("NoQualifiedRecurringInvoiceTemplateFound");
+		    
+		    while ($i < $num)
 			{
+			    $line = $db->fetch_object($resql);
+
+			    $db->begin();
+			    
 				$facturerec = new FactureRec($db);
 				$facturerec->fetch($line->rowid);
 			
-				$facture = new Facture($db);
-				$result = $facture->createFromRec($user, $facturerec);
-				
-				// >0 create and validate if auto_validate
-				// =0 create but not validate if auto_validate
-				// <0 broken
-				if ($result >= 0)
+				dol_syslog("createRecurringInvoices Process invoice template id=".$facturerec->id.", ref=".$facturerec->ref);
+
+			    $error=0;
+
+			    $facture = new Facture($db);
+				$facture->fac_rec = $facturerec->id;    // We will create $facture from this recurring invoice
+			    $facture->type = self::TYPE_STANDARD;
+			    $facture->brouillon = 1;
+			    $facture->date = $now;
+			    $facture->socid = $facturerec->socid;
+			    
+			    $invoiceidgenerated = $facture->create($user);       // This will also update fields of recurring invoice
+			    if ($invoiceidgenerated <= 0)
+			    {
+			        $this->errors = $facture->errors;
+			        $this->error = $facture->error;
+			        $error++;
+			    }
+			    if (! $error && $facturerec->auto_validate)
+			    {
+			        $result = $facture->validate($user);
+			        if ($result <= 0)
+			        {
+    			        $this->errors = $facture->errors;
+    			        $this->error = $facture->error;
+			            $error++;
+			        }
+			    }
+
+				if (! $error && $invoiceidgenerated >= 0)
 				{
-					$next_date = $facturerec->getNextDate();
-					$facturerec->setNextDate($next_date,1);
-					
+					$db->commit();
+					dol_syslog("createRecurringInvoices Process invoice template ".$facturerec->ref." is finished with a success generation");
 					$nb_create++;
+					$this->output.=$langs->trans("InvoiceGeneratedFromTemplate", $facture->ref, $facturerec->ref)."\n";
+				}
+				else
+				{
+				    $db->rollback();
 				}
 
+				$i++;
 			}
 		}
+		else dol_print_error($db);
 		
-		return $nb_create;
+		$this->output=trim($this->output);
+		
+		return $error?$error:0;
 	}
 	
 	/**

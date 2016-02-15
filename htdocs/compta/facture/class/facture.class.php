@@ -217,6 +217,7 @@ class Facture extends CommonInvoice
 	/**
 	 *	Create invoice in database
 	 *  Note: this->ref can be set or empty. If empty, we will use "(PROV)"
+	 *  Note: this->fac_rec must be set to create from recurring invoice
 	 *
 	 *	@param	User	$user      		Object user that create
 	 *	@param  int		$notrigger		1=Does not execute triggers, 0 otherwise
@@ -270,16 +271,17 @@ class Facture extends CommonInvoice
 
 		$this->db->begin();
 
-		// Create invoice from a predefined invoice
+		// Create invoice from a template invoice
 		if ($this->fac_rec > 0)
 		{
 			require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
 			$_facrec = new FactureRec($this->db);
 			$result=$_facrec->fetch($this->fac_rec);
 
+			$this->socid 		     = $_facrec->socid;
+			
 			$this->fk_project        = $_facrec->fk_project;
 			$this->fk_account        = $_facrec->fk_account;
-			$this->note_private      = $_facrec->note_private;
 			$this->cond_reglement_id = $_facrec->cond_reglement_id;
 			$this->mode_reglement_id = $_facrec->mode_reglement_id;
 			$this->remise_absolue    = $_facrec->remise_absolue;
@@ -287,14 +289,31 @@ class Facture extends CommonInvoice
 			$this->fk_incoterms		 = $_facrec->fk_incoterms;
 			$this->location_incoterms= $_facrec->location_incoterms;
 
+			$this->note_public       = $_facrec->note_public;
+			$this->note_private      = $_facrec->note_private;
+			
 			// Clean parameters
 			if (! $this->type) $this->type = self::TYPE_STANDARD;
 			$this->ref_client=trim($this->ref_client);
-			$this->note_private=trim($this->note_private);
 			$this->note_public=trim($this->note_public);
+			$this->note_private=trim($this->note_private);
+		    $this->note_private=dol_concatdesc($facture->note_private, $langs->trans("GeneratedFromRecurringInvoice", $_facrec->ref));
+		    
 			//if (! $this->remise) $this->remise = 0;
 			if (! $this->mode_reglement_id) $this->mode_reglement_id = 0;
 			$this->brouillon = 1;
+		
+			$forceduedate = $this->calculate_date_lim_reglement();
+			
+			// Update date and number of last generation of recurring template invoice, before inserting new invoice
+			if ($_facrec->frequency > 0)
+			{
+                $_facrec->nb_gen_done++;
+                $next_date = $_facrec->getNextDate();   // Calculate next date
+                $_facrec->setValueFrom('date_last_gen', $now, '', null, 'date');
+                $_facrec->setValueFrom('nb_gen_done', $_facrec->nb_gen_done + 1);
+                $_facrec->setNextDate($next_date,1);
+			}
 		}
 
 		// Define due date if not already defined
@@ -917,60 +936,6 @@ class Facture extends CommonInvoice
 			else return -1;
 		}
 		else return -1;
-	}
-
-	/**
-	 *	Create a new invoice in database from facturerec
-	 *
-	 *	@param      User		$user    		Object user that ask creation
-	 *	@param      FactureRec	$facturerec    	Object facturerec source
-	 *	@return		int							<0 if KO, 0 if not validate, >0 if OK
-	 */
-	function createFromRec($user, $facturerec)
-	{
-
-		// Clean parameters
-		$this->type = self::TYPE_STANDARD;
-		$this->brouillon = 1;
-		
-		// Charge facture source
-		$facture=new Facture($facturerec->db);
-
-		$facture->socid 		    = $facturerec->socid;
-		$facture->date              = dol_mktime(12, 0, 0, date('m'), date('d'), date('Y'));
-		$facture->note_public       = $facturerec->note_public;
-		$facture->note_private      = $facturerec->note_private;
-		$facture->fk_project        = $facturerec->fk_project;
-		$facture->fk_account        = $facturerec->fk_account;
-		$facture->cond_reglement_id = $facturerec->cond_reglement_id;
-		$facture->mode_reglement_id = $facturerec->mode_reglement_id;
-		
-		$new_date_lim_reglement = $facture->calculate_date_lim_reglement();
-		$facture->date_lim_reglement = $new_date_lim_reglement;
-		
-		$facture->remise_absolue    = $facturerec->remise_absolue;
-		$facture->remise_percent    = $facturerec->remise_percent;
-
-		$facture->lines		    	= $facturerec->lines;	// Tableau des lignes de factures
-
-		// Loop on each line of new invoice
-		foreach($facture->lines as $i => $line)
-		{
-			$facture->lines[$i]->fk_prev_id = $facturerec->lines[$i]->rowid;
-		}
-
-		dol_syslog(get_class($this)."::createFromRec socid=".$this->socid." nboflines=".count($facture->lines));
-
-		$facid = $facture->create($user);
-		if ($facid <= 0) return -1;
-
-		if ($facturerec->auto_validate)
-		{
-			$result = $facture->validate($user);
-			if ($result<=0) return 0;
-		}
-			
-		return $facid;
 	}
 
 	/**

@@ -1185,7 +1185,7 @@ abstract class CommonObject
     }
 
     /**
-     *	Load value from specific field
+     *	Getter generic. Load value from a specific field
      *
      *	@param	string	$table		Table of element or element line
      *	@param	int		$id			Element id
@@ -1211,7 +1211,7 @@ abstract class CommonObject
     }
 
     /**
-     *	Update a specific field into database
+     *	Setter generic. Update a specific field into database
      *
      *	@param	string		$field		Field to update
      *	@param	mixed		$value		New value

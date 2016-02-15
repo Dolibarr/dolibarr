@@ -38,6 +38,7 @@ $langs->load('compta');
 
 // Security check
 $id=(GETPOST('facid','int')?GETPOST('facid','int'):GETPOST('id','int'));
+$ref=GETPOST('ref','alpha');
 $action=GETPOST('action', 'alpha');
 if ($user->societe_id) $socid=$user->societe_id;
 $objecttype = 'facture_rec';
@@ -58,9 +59,9 @@ if ($sortfield == "")
 $sortfield="f.datef";
 
 $object = new FactureRec($db);
-if ($id > 0 && $action != 'create' && $action != 'add')
+if (($id > 0 || $ref) && $action != 'create' && $action != 'add')
 {
-	$ret = $object->fetch($id);
+	$ret = $object->fetch($id, $ref);
 	if (!$ret)
 	{
 		setEventMessages($langs->trans("ErrorRecordNotFound"), null, 'errors');
@@ -192,6 +193,7 @@ $permissionnote=$user->rights->facture->creer;	// Used by the include of actions
 include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not includ_once
 
 
+
 /*
  *	View
  */
@@ -200,6 +202,11 @@ llxHeader('',$langs->trans("RepeatableInvoices"),'ch-facture.html#s-fac-facture-
 
 $form = new Form($db);
 $companystatic = new Societe($db);
+
+$now = dol_now();
+$tmparray=dol_getdate($now);
+$today = dol_mktime(23,59,59,$tmparray['mon'],$tmparray['mday'],$tmparray['year']);   // Today is last second of current day
+	  
 
 /*
  * Create mode
@@ -211,7 +218,7 @@ if ($action == 'create')
 	$object = new Facture($db);   // Source invoice
 	$product_static = new Product($db);
 
-	if ($object->fetch($id) > 0)
+	if ($object->fetch($id, $ref) > 0)
 	{
 		print '<form action="fiche-rec.php" method="post">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -542,7 +549,7 @@ else
 		print '<table class="border" width="100%">';
 
 		$linkback = '<a href="' . DOL_URL_ROOT . '/compta/facture/fiche-rec.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
-		
+
 		// Ref
 		print '<tr><td width="20%">' . $langs->trans('Ref') . '</td>';
 		print '<td colspan="5">';
@@ -557,7 +564,7 @@ else
 		if ($result < 0) {
 		    dol_print_error('', $discount->error);
 		}*/
-		print $form->showrefnav($object, 'ref', $linkback, 1, 'facnumber', 'ref', $morehtmlref);
+		print $form->showrefnav($object, 'ref', $linkback, 1, 'titre', 'titre', $morehtmlref);
 		print '</td></tr>';
 		
 		
@@ -669,7 +676,6 @@ else
 		print "</td>";
 		print '</tr>';
 
-
 		print "</table>";
 
 		print '<br>';
@@ -716,77 +722,90 @@ else
 		}
 		print '</td></tr>';
 		
-		//if (! empty($object->frequency))    // If no frequency defined, it is not a recurring template invoice
-		//{
-    		// Date when
-    		print '<tr><td>';
-    		if ($action == 'date_when' || $object->frequency > 0)
-    		{
-    		    print $form->editfieldkey($langs->trans("NextDateToExecution"), 'date_when', $object->date_when, $object, $user->rights->facture->creer, 'dayhour');
-    		}
-    		else
-    		{
-    		    print $langs->trans("NextDateToExecution");
-    		}
-    		print '</td><td colspan="5">';
-    		if ($action == 'date_when' || $object->frequency > 0)
-    		{
-    		    print $form->editfieldval($langs->trans("NextDateToExecution"), 'date_when', $object->date_when, $object, $user->rights->facture->creer, 'dayhour');
-    		}
-    		print '</td>';
-    		print '</tr>';
-    		
-    		
-    		// Max period / Rest period
-    		print '<tr><td>';
-    		if ($action == 'nb_gen_max' || $object->frequency > 0)
-    		{
-    		    print $form->editfieldkey($langs->trans("MaxPeriodNumber"), 'nb_gen_max', $object->nb_gen_max, $object, $user->rights->facture->creer);
-    		}
-    		else
-    		{
-    		    print $langs->trans("MaxPeriodNumber");
-    		}
-    		print '</td><td colspan="5">';
-    		if ($action == 'nb_gen_max' || $object->frequency > 0)
-    		{
-    		      print $form->editfieldval($langs->trans("MaxPeriodNumber"), 'nb_gen_max', $object->nb_gen_max, $object, $user->rights->facture->creer);
-    		}
-    		else
-    		{
-    		    print '';
-    		}
-    		print '</td>';
-    		print '</tr>';
-    		
-    		print '<tr><td>'.$langs->trans("RestPeriodNumber").'</td>';
-    		print '<td>';
-    		if ($object->frequency > 0)
-    		{
-    		  print ($object->nb_gen_max-$object->nb_gen_done);
-    		}
-    		print '</td>';
-    		
-    		// Status of generated invoices
-    		print '<tr><td>';
-    		if ($action == 'auto_validate' || $object->frequency > 0)
-    		    print $form->editfieldkey($langs->trans("StatusOfGeneratedInvoices"), 'auto_validate', $object->auto_validate, $object, $user->rights->facture->creer);
-    		else
-    		    print $langs->trans("StatusOfGeneratedInvoices");
-    		print '</td><td colspan="5">';
-        	$select = 'select;0:'.$langs->trans('BillStatusDraft').',1:'.$langs->trans('BillStatusValidated');
-    		if ($action == 'auto_validate' || $object->frequency > 0)
-    		{
-        		print $form->editfieldval($langs->trans("StatusOfGeneratedInvoices"), 'auto_validate', $object->auto_validate, $object, $user->rights->facture->creer, $select);
-    		}
-    		print '</td>';
-    		print '</tr>';
-		//}
+		// Date when
+		print '<tr><td>';
+		if ($action == 'date_when' || $object->frequency > 0)
+		{
+		    print $form->editfieldkey($langs->trans("NextDateToExecution"), 'date_when', $object->date_when, $object, $user->rights->facture->creer, 'day');
+		}
+		else
+		{
+		    print $langs->trans("NextDateToExecution");
+		}
+		print '</td><td colspan="5">';
+		if ($action == 'date_when' || $object->frequency > 0)
+		{
+		    print $form->editfieldval($langs->trans("NextDateToExecution"), 'date_when', $object->date_when, $object, $user->rights->facture->creer, 'day');
+		}
+		print '</td>';
+		print '</tr>';
+				
+		// Max period / Rest period
+		print '<tr><td>';
+		if ($action == 'nb_gen_max' || $object->frequency > 0)
+		{
+		    print $form->editfieldkey($langs->trans("MaxPeriodNumber"), 'nb_gen_max', $object->nb_gen_max, $object, $user->rights->facture->creer);
+		}
+		else
+		{
+		    print $langs->trans("MaxPeriodNumber");
+		}
+		print '</td><td colspan="5">';
+		if ($action == 'nb_gen_max' || $object->frequency > 0)
+		{
+		      print $form->editfieldval($langs->trans("MaxPeriodNumber"), 'nb_gen_max', $object->nb_gen_max?$object->nb_gen_max:'', $object, $user->rights->facture->creer);
+		}
+		else
+		{
+		    print '';
+		}
+		print '</td>';
+		print '</tr>';
+		
+		// Status of generated invoices
+		print '<tr><td>';
+		if ($action == 'auto_validate' || $object->frequency > 0)
+		    print $form->editfieldkey($langs->trans("StatusOfGeneratedInvoices"), 'auto_validate', $object->auto_validate, $object, $user->rights->facture->creer);
+		else
+		    print $langs->trans("StatusOfGeneratedInvoices");
+		print '</td><td colspan="5">';
+    	$select = 'select;0:'.$langs->trans('BillStatusDraft').',1:'.$langs->trans('BillStatusValidated');
+		if ($action == 'auto_validate' || $object->frequency > 0)
+		{
+    		print $form->editfieldval($langs->trans("StatusOfGeneratedInvoices"), 'auto_validate', $object->auto_validate, $object, $user->rights->facture->creer, $select);
+		}
+		print '</td>';
+		print '</tr>';
 		
 		print '</table>';
 		
-		print '<br>';
-
+    	print '<br>';
+		
+		if ($object->frequency > 0)
+		{
+    		
+    		print '<table class="border" width="100%">';
+    		
+    		// Nb of generation already done
+    		print '<tr><td width="20%">'.$langs->trans("NbOfGenerationDone").'</td>';
+    		print '<td>';
+    		print $object->nb_gen_done?$object->nb_gen_done:'';
+    		print '</td>';
+    		print '</tr>';
+    		
+    		// Date last
+    		print '<tr><td>';
+    		print $langs->trans("DateLastGeneration");
+    		print '</td><td colspan="5">';
+    		print dol_print_date($object->date_last_gen, 'dayhour');
+    		print '</td>';
+    		print '</tr>';
+    		
+    		print '</table>';
+    		
+    		print '<br>';
+		}		
+		
 		/*
 		 * Lines
 		 */
@@ -886,9 +905,23 @@ else
 		 */
 		print '<div class="tabsAction">';
 
-		if ($object->statut == Facture::STATUS_DRAFT && $user->rights->facture->creer)
+		if ($object->statut == Facture::STATUS_DRAFT)
 		{
-		    	echo '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;socid='.$object->thirdparty->id.'&amp;fac_rec='.$object->id.'">'.$langs->trans("CreateBill").'</a></div>';
+		    if ($user->rights->facture->creer)
+		    {
+    		    if (empty($object->frequency) || $object->date_when <= $today)
+    		    {
+                    print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;socid='.$object->thirdparty->id.'&amp;fac_rec='.$object->id.'">'.$langs->trans("CreateBill").'</a></div>';
+    		    }
+    		    else
+    		    {
+    		        print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("DateIsNotEnough")).'">'.$langs->trans("CreateBill").'</a></div>';
+    		    }
+		    }
+		    else
+    	    {
+    		    print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">'.$langs->trans("CreateBill").'</a></div>';
+    		}
 		}
 
 		if ($object->statut == Facture::STATUS_DRAFT && $user->rights->facture->supprimer)
@@ -904,20 +937,39 @@ else
 		/*
 		 *  List mode
 		 */
-		$sql = "SELECT s.nom as name, s.rowid as socid, f.rowid as facid, f.titre, f.total, f.tva as total_vat, f.total_ttc, f.frequency";
+		$sql = "SELECT s.nom as name, s.rowid as socid, f.rowid as facid, f.titre, f.total, f.tva as total_vat, f.total_ttc, f.frequency,";
+		$sql.= " f.date_last_gen, f.date_when";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_rec as f";
 		$sql.= " WHERE f.fk_soc = s.rowid";
 		$sql.= " AND f.entity = ".$conf->entity;
 		if ($socid)	$sql .= " AND s.rowid = ".$socid;
 
-		//$sql .= " ORDER BY $sortfield $sortorder, rowid DESC ";
-		//	$sql .= $db->plimit($limit + 1,$offset);
-
+        $nbtotalofrecords = 0;
+        if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+        {
+        	$result = $db->query($sql);
+        	$nbtotalofrecords = $db->num_rows($result);
+        }
+        
+        $sql.= $db->plimit($limit+1,$offset);
+		
 		$resql = $db->query($sql);
 		if ($resql)
 		{
 			$num = $db->num_rows($resql);
-			print_barre_liste($langs->trans("RepeatableInvoices"),$page,$_SERVER['PHP_SELF'],"&socid=$socid",$sortfield,$sortorder,'',$num,'','title_accountancy.png');
+			
+			$param='&socid='.$socid;
+			if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+				
+            print '<form method="POST" name="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+            if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+        	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        	print '<input type="hidden" name="action" value="list">';
+        	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+        	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+        	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
+            
+	       print_barre_liste($langs->trans("RepeatableInvoices"),$page,$_SERVER['PHP_SELF'],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecord,'title_accountancy.png',0,'','',$limit);
 
 			print $langs->trans("ToCreateAPredefinedInvoice").'<br><br>';
 
@@ -930,6 +982,8 @@ else
 			print_liste_field_titre($langs->trans("AmountVAT"),'','','','','align="right"');
 			print_liste_field_titre($langs->trans("AmountTTC"),'','','','','align="right"');
 			print_liste_field_titre($langs->trans("RecurringInvoiceTemplate"),'','','','','align="center"');
+			print_liste_field_titre($langs->trans("DateLastGeneration"),'','','','','align="center"');
+			print_liste_field_titre($langs->trans("NextDateToExecution"),'','','','','align="center"');
 			print_liste_field_titre('');		// Field may contains ling text
 			print "</tr>\n";
 
@@ -954,12 +1008,21 @@ else
 					print '<td align="right">'.price($objp->total_vat).'</td>'."\n";
 					print '<td align="right">'.price($objp->total_ttc).'</td>'."\n";
 					print '<td align="center">'.yn($objp->frequency?1:0).'</td>';
+					print '<td align="center">'.($objp->frequency ? dol_print_date($objp->date_last_gen,'day') : '').'</td>';
+					print '<td align="center">'.($objp->frequency ? dol_print_date($objp->date_when,'day') : '').'</td>';
 						
 					print '<td align="center">';
 					if ($user->rights->facture->creer)
 					{
-                        print '<a href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;socid='.$objp->socid.'&amp;fac_rec='.$objp->facid.'">';
-                        print $langs->trans("CreateBill").'</a>';
+				        if (empty($objp->frequency) || $objp->date_when <= $today)
+				        {
+                            print '<a href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;socid='.$objp->socid.'&amp;fac_rec='.$objp->facid.'">';
+                            print $langs->trans("CreateBill").'</a>';
+				        }
+				        else
+				        {
+				            print $langs->trans("DateIsNotEnough");
+				        }
 					}
 					else
 					{
