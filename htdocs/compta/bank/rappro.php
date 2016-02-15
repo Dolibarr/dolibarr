@@ -33,6 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
 
 $langs->load("banks");
 $langs->load("categories");
@@ -147,6 +148,7 @@ $memberstatic=new Adherent($db);
 $paymentstatic=new Paiement($db);
 $paymentsupplierstatic=new PaiementFourn($db);
 $paymentvatstatic=new TVA($db);
+$remisestatic = new RemiseCheque($db);
 
 $acct = new Account($db);
 $acct->fetch($id);
@@ -155,7 +157,9 @@ $now=dol_now();
 
 $sql = "SELECT b.rowid, b.dateo as do, b.datev as dv, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type as type";
 $sql.= ", b.fk_bordereau";
+$sql.= ", bc.number";
 $sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
+$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bordereau_cheque as bc ON bc.rowid=b.fk_bordereau';
 $sql.= " WHERE rappro=0 AND fk_account=".$acct->id;
 $sql.= " ORDER BY dateo ASC";
 $sql.= " LIMIT 1000";	// Limit to avoid page overload
@@ -292,7 +296,13 @@ if ($resql)
 		// Type + Number
 		$label=($langs->trans("PaymentType".$objp->type)!="PaymentType".$objp->type)?$langs->trans("PaymentType".$objp->type):$objp->type;  // $objp->type is a code
 		if ($label=='SOLD') $label='';
-		print '<td class="nowrap">'.$label.($objp->num_chq?' '.$objp->num_chq:'').($objp->fk_bordereau>0?' ('.$objp->fk_bordereau.')':'').'</td>';
+        $link='';
+        if ($objp->fk_bordereau>0) {
+            $remisestatic->id = $objp->fk_bordereau;
+            $remisestatic->ref = $objp->number;
+            $link = ' '.$remisestatic->getNomUrl(1);
+        }
+		print '<td class="nowrap">'.$label.($objp->num_chq?' '.$objp->num_chq:'').$link.'</td>';
 
 		// Description
         print '<td valign="center"><a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$acct->id.'">';
