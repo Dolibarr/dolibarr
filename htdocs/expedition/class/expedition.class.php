@@ -8,7 +8,8 @@
  * Copyright (C) 2014		Cedric GROSS			<c.gross@kreiz-it.fr>
  * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2014-2015  Francis Appels          <francis.appels@yahoo.com>
- * Copyright (C) 2015				Claudio Aschieri				<c.aschieri@19.coop>
+ * Copyright (C) 2015       Claudio Aschieri        <c.aschieri@19.coop>
+ * Copyright (C) 2016		Ferran Marcet			<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -897,8 +898,8 @@ class Expedition extends CommonObject
 	 */
 	function addline_batch($dbatch,$array_options=0)
 	{
-		global $conf;
-		
+		global $conf,$langs;
+
 		$num = count($this->lines);
 		if ($dbatch['qty']>0)
 		{
@@ -924,7 +925,17 @@ class Expedition extends CommonObject
 
 					if ($conf->global->STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT)
 					{
-						// TODO
+						require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
+						$prod_batch = new Productbatch($this->db);
+						$prod_batch->fetch($value['id_batch']);
+
+						if ($prod_batch->qty < $linebatch->dluo_qty)
+						{
+							$this->errors[] = $langs->trans('ErrorStockIsNotEnough');
+							dol_syslog(get_class($this)."::addline_batch error=Product ".$prod_batch->batch.": ".$this->errorsToString(), LOG_ERR);
+							$this->db->rollback();
+							return -1;
+						}
 					}
 					
 					//var_dump($linebatch);
@@ -941,6 +952,7 @@ class Expedition extends CommonObject
 			
 			//var_dump($line);
 			$this->lines[$num] = $line;
+			return 1;
 		}
 	}
 
