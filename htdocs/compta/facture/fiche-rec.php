@@ -86,7 +86,10 @@ if ($action == 'add')
 	$reyear=GETPOST('reyear');
 	$remonth=GETPOST('remonth');
 	$reday=GETPOST('reday');
+	$rehour=GETPOST('rehour');
+	$remin=GETPOST('remin');
 	$nb_gen_max=GETPOST('nb_gen_max', 'int');
+	if (empty($nb_gen_max)) $nb_gen_max =0;
 	
 	if (GETPOST('frequency'))
 	{
@@ -96,7 +99,7 @@ if ($action == 'add')
 			$action = "create";
 			$error++;	
 		}
-		if (empty($nb_gen_max))
+		if ($nb_gen_max == '')
 		{
 			setEventMessages($langs->transnoentities("ErrorFieldRequired",$langs->trans("MaxPeriodNumber")), null, 'errors');
 			$action = "create";
@@ -115,7 +118,7 @@ if ($action == 'add')
 		$object->nb_gen_max = $nb_gen_max;
 		$object->auto_validate = GETPOST('auto_validate', 'int');
 		
-		$date_next_execution = dol_mktime(12, 0, 0, $remonth, $reday, $reyear);
+		$date_next_execution = dol_mktime($rehour, $remin, 0, $remonth, $reday, $reyear);
 		$object->date_when = $date_next_execution;
 		
 		if ($object->create($user, $id) > 0)
@@ -171,7 +174,7 @@ elseif ($action == 'setfrequency' && $user->rights->facture->creer)
 // Set next date of execution
 elseif ($action == 'setdate_when' && $user->rights->facture->creer)
 {
-	$date = dol_mktime(12, 0, 0, GETPOST('date_whenmonth'), GETPOST('date_whenday'), GETPOST('date_whenyear'));
+	$date = dol_mktime(GETPOST('date_whenhour'), GETPOST('date_whenmin'), 0, GETPOST('date_whenmonth'), GETPOST('date_whenday'), GETPOST('date_whenyear'));
 	if (!empty($date)) $object->setNextDate($date);
 }
 // Set max period
@@ -238,7 +241,7 @@ if ($action == 'create')
 
 		// Note
 		print '<td rowspan="'.$rowspan.'" valign="top">';
-		print '<textarea class="flat" name="note_private" wrap="soft" cols="60" rows="'.ROWS_4.'"></textarea>';
+		print '<textarea class="flat centpercent" name="note_private" wrap="soft" rows="'.ROWS_4.'"></textarea>';
 		print '</td></tr>';
 
 		// Author
@@ -262,7 +265,7 @@ if ($action == 'create')
 			{
 				$project = new Project($db);
 				$project->fetch($object->fk_project);
-				print $project->title;
+				print $project->getNomUrl(1);
 			}
 			print "</td></tr>";
 		}
@@ -277,12 +280,12 @@ if ($action == 'create')
 
 		print "</table>";
 
-		print '<br>';
+		print '<br><br>';
 
 		
 		// Autogeneration
 		$title = $langs->trans("Recurrence");
-		print load_fiche_titre($title);
+		print load_fiche_titre($title, '', 'calendar');
 		
 		print '<table class="border" width="100%">';
 		
@@ -294,7 +297,7 @@ if ($action == 'create')
 		// First date of execution for cron
 		print "<tr><td>".$langs->trans('NextDateToExecution')."</td><td>";
 		$date_next_execution = isset($date_next_execution) ? $date_next_execution : (GETPOST('remonth') ? dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear')) : -1);
-		print $form->select_date($date_next_execution, '', 0, 0, '', "add", 1, 1, 1);
+		print $form->select_date($date_next_execution, '', 1, 1, '', "add", 1, 1, 1);
 		print "</td></tr>";
 		
 		// Number max of generation
@@ -309,7 +312,7 @@ if ($action == 'create')
 
 		print "</table>";
 
-		print '<br>';
+		print '<br><br>';
 
 		$title = $langs->trans("ProductsAndServices");
 		if (empty($conf->service->enabled))
@@ -317,7 +320,7 @@ if ($action == 'create')
 		else if (empty($conf->product->enabled))
 			$title = $langs->trans("Services");
 
-		print load_fiche_titre($title);
+		print load_fiche_titre($title, '', '');
 
 		/*
 		 * Invoice lines
@@ -716,9 +719,9 @@ else
 		//{
     		// Date when
     		print '<tr><td>';
-    		print $form->editfieldkey($langs->trans("NextDateToExecution"), 'date_when', $object->date_when, $object, $user->rights->facture->creer);
+    		print $form->editfieldkey($langs->trans("NextDateToExecution"), 'date_when', $object->date_when, $object, $user->rights->facture->creer, 'dayhour');
     		print '</td><td colspan="5">';
-    		print $form->editfieldval($langs->trans("NextDateToExecution"), 'date_when', $object->date_when, $object, $user->rights->facture->creer, 'datepicker');
+    		print $form->editfieldval($langs->trans("NextDateToExecution"), 'date_when', $object->date_when, $object, $user->rights->facture->creer, 'dayhour');
     		print '</td>';
     		print '</tr>';
     		
@@ -727,7 +730,7 @@ else
     		print '<tr><td>';
     		print $form->editfieldkey($langs->trans("MaxPeriodNumber"), 'nb_gen_max', $object->nb_gen_max, $object, $user->rights->facture->creer);
     		print '</td><td colspan="5">';
-    		if ($object->nb_gen_max > 0) print $form->editfieldval($langs->trans("MaxPeriodNumber"), 'nb_gen_max', $object->nb_gen_max, $object, $user->rights->facture->creer);
+    		print $form->editfieldval($langs->trans("MaxPeriodNumber"), 'nb_gen_max', $object->nb_gen_max, $object, $user->rights->facture->creer);
     		print '</td>';
     		print '</tr>';
     		print '<tr><td>'.$langs->trans("RestPeriodNumber").'</td>';

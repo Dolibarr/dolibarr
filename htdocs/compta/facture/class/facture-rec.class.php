@@ -757,9 +757,8 @@ class FactureRec extends Facture
             dol_syslog(get_class($this)."::setNextDate was called on objet with property table_element not defined",LOG_ERR);
             return -1;
         }
-		$date = $this->db->idate($date);
         $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-        $sql.= ' SET date_when = "'.$date.'"';
+        $sql.= ' SET date_when = "'.$this->db->idate($date).'"';
         if ($increment_nb_gen_done>0) $sql.= ', nb_gen_done = nb_gen_done + 1';
         $sql.= ' WHERE rowid = '.$this->id;
 
@@ -790,6 +789,8 @@ class FactureRec extends Facture
             return -1;
         }
 		
+        if (empty($nb)) $nb=0;
+        
         $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
         $sql.= ' SET nb_gen_max = '.$nb;
         $sql.= ' WHERE rowid = '.$this->id;
