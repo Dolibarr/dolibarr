@@ -306,8 +306,9 @@ if ($action == 'create')
 		print "</td></tr>";
 
 		// Auto validate the invoice
-		print "<tr><td>".$langs->trans("InvoiceAutoValidate")."</td><td>";
-		print $form->selectyesno('auto_validate', 0, 1);
+		print "<tr><td>".$langs->trans("StatusOfGeneratedInvoices")."</td><td>";
+        $select = array('0'=>$langs->trans('BillStatusDraft'),'1'=>$langs->trans('BillStatusValidated'));
+        print $form->selectarray('auto_validate', $select, GETPOST('auto_validate'));
 		print "</td></tr>";
 
 		print "</table>";
@@ -719,31 +720,65 @@ else
 		//{
     		// Date when
     		print '<tr><td>';
-    		print $form->editfieldkey($langs->trans("NextDateToExecution"), 'date_when', $object->date_when, $object, $user->rights->facture->creer, 'dayhour');
+    		if ($action == 'date_when' || $object->frequency > 0)
+    		{
+    		    print $form->editfieldkey($langs->trans("NextDateToExecution"), 'date_when', $object->date_when, $object, $user->rights->facture->creer, 'dayhour');
+    		}
+    		else
+    		{
+    		    print $langs->trans("NextDateToExecution");
+    		}
     		print '</td><td colspan="5">';
-    		print $form->editfieldval($langs->trans("NextDateToExecution"), 'date_when', $object->date_when, $object, $user->rights->facture->creer, 'dayhour');
+    		if ($action == 'date_when' || $object->frequency > 0)
+    		{
+    		    print $form->editfieldval($langs->trans("NextDateToExecution"), 'date_when', $object->date_when, $object, $user->rights->facture->creer, 'dayhour');
+    		}
     		print '</td>';
     		print '</tr>';
     		
     		
     		// Max period / Rest period
     		print '<tr><td>';
-    		print $form->editfieldkey($langs->trans("MaxPeriodNumber"), 'nb_gen_max', $object->nb_gen_max, $object, $user->rights->facture->creer);
+    		if ($action == 'nb_gen_max' || $object->frequency > 0)
+    		{
+    		    print $form->editfieldkey($langs->trans("MaxPeriodNumber"), 'nb_gen_max', $object->nb_gen_max, $object, $user->rights->facture->creer);
+    		}
+    		else
+    		{
+    		    print $langs->trans("MaxPeriodNumber");
+    		}
     		print '</td><td colspan="5">';
-    		print $form->editfieldval($langs->trans("MaxPeriodNumber"), 'nb_gen_max', $object->nb_gen_max, $object, $user->rights->facture->creer);
+    		if ($action == 'nb_gen_max' || $object->frequency > 0)
+    		{
+    		      print $form->editfieldval($langs->trans("MaxPeriodNumber"), 'nb_gen_max', $object->nb_gen_max, $object, $user->rights->facture->creer);
+    		}
+    		else
+    		{
+    		    print '';
+    		}
     		print '</td>';
     		print '</tr>';
+    		
     		print '<tr><td>'.$langs->trans("RestPeriodNumber").'</td>';
     		print '<td>';
-    		print ($object->nb_gen_max-$object->nb_gen_done);
+    		if ($object->frequency > 0)
+    		{
+    		  print ($object->nb_gen_max-$object->nb_gen_done);
+    		}
     		print '</td>';
     		
-    		// Auto validate
+    		// Status of generated invoices
     		print '<tr><td>';
-    		print $form->editfieldkey($langs->trans("StatusOfGeneratedInvoices"), 'auto_validate', $object->auto_validate, $object, $user->rights->facture->creer);
+    		if ($action == 'auto_validate' || $object->frequency > 0)
+    		    print $form->editfieldkey($langs->trans("StatusOfGeneratedInvoices"), 'auto_validate', $object->auto_validate, $object, $user->rights->facture->creer);
+    		else
+    		    print $langs->trans("StatusOfGeneratedInvoices");
     		print '</td><td colspan="5">';
-    		$select = 'select;0:'.$langs->trans('BillStatusDraft').',1:'.$langs->trans('BillStatusValidated');
-    		print $form->editfieldval($langs->trans("StatusOfGeneratedInvoices"), 'auto_validate', $object->auto_validate, $object, $user->rights->facture->creer, $select);
+        	$select = 'select;0:'.$langs->trans('BillStatusDraft').',1:'.$langs->trans('BillStatusValidated');
+    		if ($action == 'auto_validate' || $object->frequency > 0)
+    		{
+        		print $form->editfieldval($langs->trans("StatusOfGeneratedInvoices"), 'auto_validate', $object->auto_validate, $object, $user->rights->facture->creer, $select);
+    		}
     		print '</td>';
     		print '</tr>';
 		//}
@@ -869,7 +904,7 @@ else
 		/*
 		 *  List mode
 		 */
-		$sql = "SELECT s.nom as name, s.rowid as socid, f.rowid as facid, f.titre, f.total, f.tva as total_vat, f.total_ttc";
+		$sql = "SELECT s.nom as name, s.rowid as socid, f.rowid as facid, f.titre, f.total, f.tva as total_vat, f.total_ttc, f.frequency";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_rec as f";
 		$sql.= " WHERE f.fk_soc = s.rowid";
 		$sql.= " AND f.entity = ".$conf->entity;
@@ -894,6 +929,7 @@ else
 			print_liste_field_titre($langs->trans("AmountHT"),'','','','','align="right"');
 			print_liste_field_titre($langs->trans("AmountVAT"),'','','','','align="right"');
 			print_liste_field_titre($langs->trans("AmountTTC"),'','','','','align="right"');
+			print_liste_field_titre($langs->trans("RecurringInvoiceTemplate"),'','','','','align="center"');
 			print_liste_field_titre('');		// Field may contains ling text
 			print "</tr>\n";
 
@@ -917,7 +953,8 @@ else
 					print '<td align="right">'.price($objp->total).'</td>'."\n";
 					print '<td align="right">'.price($objp->total_vat).'</td>'."\n";
 					print '<td align="right">'.price($objp->total_ttc).'</td>'."\n";
-
+					print '<td align="center">'.yn($objp->frequency?1:0).'</td>';
+						
 					print '<td align="center">';
 					if ($user->rights->facture->creer)
 					{

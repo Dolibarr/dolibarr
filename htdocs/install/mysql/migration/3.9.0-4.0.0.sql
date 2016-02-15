@@ -41,7 +41,8 @@ ALTER TABLE llx_facture ADD INDEX idx_facture_fk_statut (fk_statut);
 
 UPDATE llx_projet as p set p.opp_percent = (SELECT percent FROM llx_c_lead_status as cls WHERE cls.rowid = p.fk_opp_status)  WHERE p.opp_percent IS NULL AND p.fk_opp_status IS NOT NULL;
  
- 
+ALTER TABLE llx_facturedet ADD COLUMN fk_contract_line  integer NULL AFTER rang;
+ALTER TABLE llx_facturedet_rec ADD COLUMN import_key varchar(14);
 
 CREATE TABLE llx_website
 (

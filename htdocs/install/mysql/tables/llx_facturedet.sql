@@ -57,6 +57,7 @@ create table llx_facturedet
   fk_code_ventilation			integer    DEFAULT 0 NOT NULL,
   special_code					integer    DEFAULT 0,			    -- code pour les lignes speciales
   rang							integer    DEFAULT 0,				-- position of line
+  fk_contract_line  integer NULL,									-- id of contract line when invoice comes from contract lines
   import_key					varchar(14),
 
   situation_percent real,   -- % progression of lines invoicing

@@ -140,6 +140,7 @@ ErrorCantCancelIfReplacementInvoiceNotValidated=Error, can't cancel an invoice t
 BillFrom=From
 BillTo=To
 ActionsOnBill=Actions on invoice
+RecurringInvoiceTemplate=Recurring invoice
 NotARecurringInvoiceTemplate=Not a recurring template invoice
 NewBill=New invoice
 LastBills=Last %s invoices
