@@ -756,9 +756,10 @@ else
 		print '<table class="noborder noshadow" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Description").'</td>';
-		print '<td align="right">'.$langs->trans("Price").'</td>';
-		print '<td align="center">'.$langs->trans("ReductionShort").'</td>';
+		print '<td align="right">'.$langs->trans("VAT").'</td>';
+		print '<td align="right">'.$langs->trans("PriceUHT").'</td>';
 		print '<td align="center">'.$langs->trans("Qty").'</td>';
+		print '<td align="center">'.$langs->trans("ReductionShort").'</td>';
 		if ($conf->global->PRODUCT_USE_UNITS) {
 			print '<td align="left">'.$langs->trans("Unit").'</td>';
 		}
@@ -827,9 +828,10 @@ else
 
 				print '</td>';
 			}
+			print '<td align="right">'.vatrate($object->lines[$i]->tva_tx, 1).'</td>';
 			print '<td align="right">'.price($object->lines[$i]->price).'</td>';
-			print '<td align="center">'.$object->lines[$i]->remise_percent.' %</td>';
 			print '<td align="center">'.$object->lines[$i]->qty.'</td>';
+			print '<td align="center">'.$object->lines[$i]->remise_percent.' %</td>';
 			if ($conf->global->PRODUCT_USE_UNITS) {
 				print "<td align=\"left\">".$object->lines[$i]->getLabelOfUnit()."</td>";
 			}
