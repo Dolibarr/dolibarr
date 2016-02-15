@@ -707,7 +707,7 @@ class FactureRec extends Facture
 	 *	@param     	string	$unit 			unit of frequency  (d, m, y)
      *	@return		int						<0 if KO, >0 if OK
      */
-    function setFrequencyAndUnit($frequency=0,$unit='')
+    function setFrequencyAndUnit($frequency,$unit)
     {
         if (! $this->table_element)
         {
@@ -715,26 +715,24 @@ class FactureRec extends Facture
             return -1;
         }
 
-		if (empty($frequency) && empty($unit))
+		if (!empty($frequency) && empty($unit))
         {
-            dol_syslog(get_class($this)."::setFrequencyAndUnit was called on objet with params frequency and unit not defined",LOG_ERR);
+            dol_syslog(get_class($this)."::setFrequencyAndUnit was called on objet with params frequency defined but unit not defined",LOG_ERR);
             return -2;
         }
 
         $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-        if (!empty($frequency)) $sql.= ' SET frequency = '.$frequency;
+        $sql.= ' SET frequency = '.($frequency?$this->db->escape($frequency):'null');
         if (!empty($unit)) 
         {
-        	if (!empty($frequency)) $sql .= ',';
-			else $sql .= ' SET';
-        	$sql.= ' unit_frequency = "'.$this->db->escape($unit).'"';
+        	$sql.= ', unit_frequency = "'.$this->db->escape($unit).'"';
 		}
         $sql.= ' WHERE rowid = '.$this->id;
-
+        
         dol_syslog(get_class($this)."::setFrequencyAndUnit", LOG_DEBUG);
         if ($this->db->query($sql))
         {
-            if (!empty($frequency)) $this->frequency = $frequency;
+            $this->frequency = $frequency;
 			if (!empty($unit)) $this->unit_frequency = $unit;
             return 1;
         }

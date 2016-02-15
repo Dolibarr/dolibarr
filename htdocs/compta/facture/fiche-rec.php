@@ -705,38 +705,45 @@ else
 		    {
                 print $langs->trans('FrequencyPer_'.$object->unit_frequency, $object->frequency);
 		    }
+		    else
+		    {
+		        print $langs->trans("NotARecurringInvoiceTemplate");
+		    }
 		}
 		print '</td></tr>';
 		
-		// Date when
-		print '<tr><td>';
-		print $form->editfieldkey($langs->trans("NextDateToExecution"), 'date_when', $object->date_when, $object, $user->rights->facture->creer);
-		print '</td><td colspan="5">';
-		print $form->editfieldval($langs->trans("NextDateToExecution"), 'date_when', $object->date_when, $object, $user->rights->facture->creer, 'datepicker');
-		print '</td>';
-		print '</tr>';
-		
-		
-		// Max period / Rest period
-		print '<tr><td>';
-		print $form->editfieldkey($langs->trans("MaxPeriodNumber"), 'nb_gen_max', $object->nb_gen_max, $object, $user->rights->facture->creer);
-		print '</td><td colspan="5">';
-		if ($object->nb_gen_max > 0) print $form->editfieldval($langs->trans("MaxPeriodNumber"), 'nb_gen_max', $object->nb_gen_max, $object, $user->rights->facture->creer);
-		print '</td>';
-		print '</tr>';
-		print '<tr><td>'.$langs->trans("RestPeriodNumber").'</td>';
-		print '<td>';
-		print ($object->nb_gen_max-$object->nb_gen_done);
-		print '</td>';
-		
-		// Auto validate
-		print '<tr><td>';
-		print $form->editfieldkey($langs->trans("InvoiceAutoValidate"), 'auto_validate', $object->auto_validate, $object, $user->rights->facture->creer);
-		print '</td><td colspan="5">';
-		$select = 'select;0:'.$langs->trans('No').',1:'.$langs->trans('Yes');
-		print $form->editfieldval($langs->trans("InvoiceAutoValidate"), 'auto_validate', $object->auto_validate, $object, $user->rights->facture->creer, $select);
-		print '</td>';
-		print '</tr>';
+		//if (! empty($object->frequency))    // If no frequency defined, it is not a recurring template invoice
+		//{
+    		// Date when
+    		print '<tr><td>';
+    		print $form->editfieldkey($langs->trans("NextDateToExecution"), 'date_when', $object->date_when, $object, $user->rights->facture->creer);
+    		print '</td><td colspan="5">';
+    		print $form->editfieldval($langs->trans("NextDateToExecution"), 'date_when', $object->date_when, $object, $user->rights->facture->creer, 'datepicker');
+    		print '</td>';
+    		print '</tr>';
+    		
+    		
+    		// Max period / Rest period
+    		print '<tr><td>';
+    		print $form->editfieldkey($langs->trans("MaxPeriodNumber"), 'nb_gen_max', $object->nb_gen_max, $object, $user->rights->facture->creer);
+    		print '</td><td colspan="5">';
+    		if ($object->nb_gen_max > 0) print $form->editfieldval($langs->trans("MaxPeriodNumber"), 'nb_gen_max', $object->nb_gen_max, $object, $user->rights->facture->creer);
+    		print '</td>';
+    		print '</tr>';
+    		print '<tr><td>'.$langs->trans("RestPeriodNumber").'</td>';
+    		print '<td>';
+    		print ($object->nb_gen_max-$object->nb_gen_done);
+    		print '</td>';
+    		
+    		// Auto validate
+    		print '<tr><td>';
+    		print $form->editfieldkey($langs->trans("StatusOfGeneratedInvoices"), 'auto_validate', $object->auto_validate, $object, $user->rights->facture->creer);
+    		print '</td><td colspan="5">';
+    		$select = 'select;0:'.$langs->trans('BillStatusDraft').',1:'.$langs->trans('BillStatusValidated');
+    		print $form->editfieldval($langs->trans("StatusOfGeneratedInvoices"), 'auto_validate', $object->auto_validate, $object, $user->rights->facture->creer, $select);
+    		print '</td>';
+    		print '</tr>';
+		//}
 		
 		print '</table>';
 		
