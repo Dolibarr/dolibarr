@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2011-2014 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2011-2016 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2011-2014 Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  *
@@ -86,7 +86,7 @@ if (GETPOST("mode") != 'sconly')
 }
 
 // Payment Salary
-if ($conf->salaries->enabled)
+if (! empty($conf->salaries->enabled) && $user->rights->salaries->read)
 {
 	if (empty($_GET["mode"]) || $_GET["mode"] != 'sconly')
 	{
@@ -167,7 +167,7 @@ if ($conf->salaries->enabled)
 }
 
 
-if ($conf->tax->enabled)
+if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 {
 	// Social contributions only
 	if (GETPOST("mode") != 'sconly')
@@ -278,7 +278,7 @@ if ($conf->tax->enabled)
 }
 
 // VAT
-if ($conf->tax->enabled)
+if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 {
 	if (empty($_GET["mode"]) || $_GET["mode"] != 'sconly')
 	{
