@@ -165,6 +165,7 @@ if ($resql)
 	}
 	print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"d.amount","", $param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"d.fk_statut","", $param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre('');
 	print "</tr>\n";
 
     // Filters lines
@@ -188,7 +189,7 @@ if ($resql)
         print '</td>';
     }
     print '<td class="liste_titre" align="right"><input name="search_amount" class="flat" type="text" size="8" value="'.$search_amount.'"></td>';
-
+    print '<td class="liste_titre" align="right"></td>';
     print '<td class="liste_titre" align="right">';
     $searchpitco=$form->showFilterAndCheckAddButtons(0);
     print $searchpitco;
@@ -226,7 +227,7 @@ if ($resql)
 		}
 		print '<td align="right">'.price($objp->amount).'</td>';
 		print '<td align="right">'.$donationstatic->LibStatut($objp->statut,5).'</td>';
-
+        print '<td></td>';
 		print "</tr>";
 		$i++;
 	}
