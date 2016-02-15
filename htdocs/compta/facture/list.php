@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2006 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Eric Seigne           <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2012 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2016 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2015 Regis Houssin         <regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
@@ -695,6 +695,7 @@ if ($resql)
     }
 
     $param='&socid='.$socid;
+    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
     if ($month)              $param.='&month='.$month;
     if ($year)               $param.='&year=' .$year;
     if ($search_ref)         $param.='&search_ref=' .$search_ref;
@@ -712,8 +713,7 @@ if ($resql)
     
     $i = 0;
     print '<form method="POST" name="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
-    
-	print_barre_liste($langs->trans('BillsCustomers').' '.($socid?' '.$soc->name:''),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,$massactionbutton,$num,$nbtotalofrecords,'title_accountancy.png');
+	print_barre_liste($langs->trans('BillsCustomers').' '.($socid?' '.$soc->name:''),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,$massactionbutton,$num,$nbtotalofrecords,'title_accountancy.png',0,'','',$limit);
 
 	if ($massaction == 'presend')
 	{

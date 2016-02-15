@@ -278,6 +278,8 @@ class Facture extends CommonInvoice
 			$result=$_facrec->fetch($this->fac_rec);
 
 			$this->fk_project        = $_facrec->fk_project;
+			$this->fk_account        = $_facrec->fk_account;
+			$this->note_private      = $_facrec->note_private;
 			$this->cond_reglement_id = $_facrec->cond_reglement_id;
 			$this->mode_reglement_id = $_facrec->mode_reglement_id;
 			$this->remise_absolue    = $_facrec->remise_absolue;
@@ -915,6 +917,60 @@ class Facture extends CommonInvoice
 			else return -1;
 		}
 		else return -1;
+	}
+
+	/**
+	 *	Create a new invoice in database from facturerec
+	 *
+	 *	@param      User		$user    		Object user that ask creation
+	 *	@param      FactureRec	$facturerec    	Object facturerec source
+	 *	@return		int							<0 if KO, 0 if not validate, >0 if OK
+	 */
+	function createFromRec($user, $facturerec)
+	{
+
+		// Clean parameters
+		$this->type = self::TYPE_STANDARD;
+		$this->brouillon = 1;
+		
+		// Charge facture source
+		$facture=new Facture($facturerec->db);
+
+		$facture->socid 		    = $facturerec->socid;
+		$facture->date              = dol_mktime(12, 0, 0, date('m'), date('d'), date('Y'));
+		$facture->note_public       = $facturerec->note_public;
+		$facture->note_private      = $facturerec->note_private;
+		$facture->fk_project        = $facturerec->fk_project;
+		$facture->fk_account        = $facturerec->fk_account;
+		$facture->cond_reglement_id = $facturerec->cond_reglement_id;
+		$facture->mode_reglement_id = $facturerec->mode_reglement_id;
+		
+		$new_date_lim_reglement = $facture->calculate_date_lim_reglement();
+		$facture->date_lim_reglement = $new_date_lim_reglement;
+		
+		$facture->remise_absolue    = $facturerec->remise_absolue;
+		$facture->remise_percent    = $facturerec->remise_percent;
+
+		$facture->lines		    	= $facturerec->lines;	// Tableau des lignes de factures
+
+		// Loop on each line of new invoice
+		foreach($facture->lines as $i => $line)
+		{
+			$facture->lines[$i]->fk_prev_id = $facturerec->lines[$i]->rowid;
+		}
+
+		dol_syslog(get_class($this)."::createFromRec socid=".$this->socid." nboflines=".count($facture->lines));
+
+		$facid = $facture->create($user);
+		if ($facid <= 0) return -1;
+
+		if ($facturerec->auto_validate)
+		{
+			$result = $facture->validate($user);
+			if ($result<=0) return 0;
+		}
+			
+		return $facid;
 	}
 
 	/**

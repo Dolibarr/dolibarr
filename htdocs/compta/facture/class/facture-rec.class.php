@@ -30,6 +30,7 @@
 require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 
 /**
@@ -83,7 +84,20 @@ class FactureRec extends Facture
 		// Clean parameters
 		$this->titre=trim($this->titre);
 		$this->usenewprice=empty($this->usenewprice)?0:$this->usenewprice;
-
+		
+		// No frequency defined then no next date to execution
+		if (empty($this->frequency)) 
+		{
+			$this->frequency=0;
+			$this->date_when=NULL;
+		}
+		
+		
+		$this->frequency=abs($this->frequency);
+		$this->nb_gen_done=0;
+		$this->nb_gen_max=empty($this->nb_gen_max)?0:$this->nb_gen_max;
+		$this->auto_validate=empty($this->auto_validate)?0:$this->auto_validate;
+		
 		$this->db->begin();
 
 		// Charge facture modele
@@ -105,9 +119,17 @@ class FactureRec extends Facture
 			$sql.= ", note_public";
 			$sql.= ", fk_user_author";
 			$sql.= ", fk_projet";
+			$sql.= ", fk_account";
 			$sql.= ", fk_cond_reglement";
 			$sql.= ", fk_mode_reglement";
 			$sql.= ", usenewprice";
+			$sql.= ", frequency";
+			$sql.= ", unit_frequency";
+			$sql.= ", date_when";
+			$sql.= ", date_last_gen";
+			$sql.= ", nb_gen_done";
+			$sql.= ", nb_gen_max";
+			$sql.= ", auto_validate";
 			$sql.= ") VALUES (";
 			$sql.= "'".$this->titre."'";
 			$sql.= ", ".$facsrc->socid;
@@ -119,9 +141,17 @@ class FactureRec extends Facture
 			$sql.= ", ".(!empty($this->note_public)?("'".$this->db->escape($this->note_public)."'"):"NULL");
 			$sql.= ", '".$user->id."'";
 			$sql.= ", ".(! empty($facsrc->fk_project)?"'".$facsrc->fk_project."'":"null");
+			$sql.= ", ".(! empty($facsrc->fk_account)?"'".$facsrc->fk_account."'":"null");
 			$sql.= ", '".$facsrc->cond_reglement_id."'";
 			$sql.= ", '".$facsrc->mode_reglement_id."'";
 			$sql.= ", ".$this->usenewprice;
+			$sql.= ", ".$this->frequency;
+			$sql.= ", '".$this->db->escape($this->unit_frequency)."'";
+			$sql.= ", ".(!empty($this->date_when)?"'".$this->db->idate($this->date_when)."'":'NULL');
+			$sql.= ", ".(!empty($this->date_last_gen)?"'".$this->db->idate($this->date_last_gen)."'":'NULL');
+			$sql.= ", ".$this->nb_gen_done;
+			$sql.= ", ".$this->nb_gen_max;
+			$sql.= ", ".$this->auto_validate;
 			$sql.= ")";
 
 			if ($this->db->query($sql))
@@ -197,7 +227,9 @@ class FactureRec extends Facture
 		$sql = 'SELECT f.titre,f.fk_soc,f.amount,f.tva,f.total,f.total_ttc,f.remise_percent,f.remise_absolue,f.remise';
 		$sql.= ', f.date_lim_reglement as dlr';
 		$sql.= ', f.note_private, f.note_public, f.fk_user_author';
-		$sql.= ', f.fk_mode_reglement, f.fk_cond_reglement';
+		$sql.= ', f.fk_mode_reglement, f.fk_cond_reglement, f.fk_projet';
+		$sql.= ', f.fk_account';
+		$sql.= ', f.frequency, f.unit_frequency, f.date_when, f.date_last_gen, f.nb_gen_done, f.nb_gen_max, f.usenewprice, f.auto_validate';
 		$sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
 		$sql.= ', c.code as cond_reglement_code, c.libelle as cond_reglement_libelle, c.libelle_facture as cond_reglement_libelle_doc';
 		$sql.= ', el.fk_source';
@@ -248,6 +280,7 @@ class FactureRec extends Facture
 				$this->cond_reglement         = $obj->cond_reglement_libelle;
 				$this->cond_reglement_doc     = $obj->cond_reglement_libelle_doc;
 				$this->fk_project             = $obj->fk_projet;
+				$this->fk_account             = $obj->fk_account;
 				$this->fk_facture_source      = $obj->fk_facture_source;
 				$this->note_private           = $obj->note_private;
 				$this->note_public            = $obj->note_public;
@@ -255,6 +288,14 @@ class FactureRec extends Facture
 				$this->modelpdf               = $obj->model_pdf;
 				$this->rang					  = $obj->rang;
 				$this->special_code			  = $obj->special_code;
+				$this->frequency			  = $obj->frequency;
+				$this->unit_frequency		  = $obj->unit_frequency;
+				$this->date_when			  = $obj->date_when;
+				$this->date_last_gen		  = $obj->date_last_gen;
+				$this->nb_gen_done			  = $obj->nb_gen_done;
+				$this->nb_gen_max			  = $obj->nb_gen_max;
+				$this->usenewprice			  = $obj->usenewprice;
+				$this->auto_validate		  = $obj->auto_validate;
 
 				if ($this->statut == self::STATUS_DRAFT)	$this->brouillon = 1;
 
@@ -468,7 +509,7 @@ class FactureRec extends Facture
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
-
+			
 			$product_type=$type;
 			if ($fk_product)
 			{
@@ -529,6 +570,63 @@ class FactureRec extends Facture
 		}
 	}
 
+	/**
+	 * Return the next date of 
+	 * 
+	 * @return	timestamp	false if KO, timestamp if OK
+	 */
+	function getNextDate()
+	{
+		if (empty($this->date_when)) return false;
+		return dol_time_plus_duree(strtotime($this->date_when), $this->frequency, $this->unit_frequency);
+	}
+	
+	/**
+	 *  Create all recurrents invoices 
+	 * 
+	 *  @return		int		number of created invoices
+	 */
+	function createRecurringInvoices()
+	{
+		global $db,$user;
+		
+		$nb_create=0;
+		
+		$today = date('Y-m-d 23:59:59');
+		
+		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'facture_rec';
+		$sql.= ' WHERE date_when IS NOT NULL AND frequency > 0';
+		$sql.= ' AND date_when <= "'.$db->escape($today).'"';
+		$sql.= ' AND nb_gen_done < nb_gen_max';
+		
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			while ($line = $db->fetch_object($resql))
+			{
+				$facturerec = new FactureRec($db);
+				$facturerec->fetch($line->rowid);
+			
+				$facture = new Facture($db);
+				$result = $facture->createFromRec($user, $facturerec);
+				
+				// >0 create and validate if auto_validate
+				// =0 create but not validate if auto_validate
+				// <0 broken
+				if ($result >= 0)
+				{
+					$next_date = $facturerec->getNextDate();
+					$facturerec->setNextDate($next_date,1);
+					
+					$nb_create++;
+				}
+
+			}
+		}
+		
+		return $nb_create;
+	}
+	
 	/**
 	 *	Return clicable name (with picto eventually)
 	 *
@@ -601,4 +699,143 @@ class FactureRec extends Facture
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
 	}
+	
+	/**
+     *	Update frequency and unit
+     *
+     *	@param     	int		$frequency		value of frequency
+	 *	@param     	string	$unit 			unit of frequency  (d, m, y)
+     *	@return		int						<0 if KO, >0 if OK
+     */
+    function setFrequencyAndUnit($frequency,$unit)
+    {
+        if (! $this->table_element)
+        {
+            dol_syslog(get_class($this)."::setFrequencyAndUnit was called on objet with property table_element not defined",LOG_ERR);
+            return -1;
+        }
+
+		if (!empty($frequency) && empty($unit))
+        {
+            dol_syslog(get_class($this)."::setFrequencyAndUnit was called on objet with params frequency defined but unit not defined",LOG_ERR);
+            return -2;
+        }
+
+        $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
+        $sql.= ' SET frequency = '.($frequency?$this->db->escape($frequency):'null');
+        if (!empty($unit)) 
+        {
+        	$sql.= ', unit_frequency = "'.$this->db->escape($unit).'"';
+		}
+        $sql.= ' WHERE rowid = '.$this->id;
+        
+        dol_syslog(get_class($this)."::setFrequencyAndUnit", LOG_DEBUG);
+        if ($this->db->query($sql))
+        {
+            $this->frequency = $frequency;
+			if (!empty($unit)) $this->unit_frequency = $unit;
+            return 1;
+        }
+        else
+        {
+            dol_print_error($this->db);
+            return -1;
+        }
+    }
+    
+	/**
+     *	Update the next date of execution
+     *
+     *	@param     	datetime	$date					date of execution
+     *	@param     	int			$increment_nb_gen_done	0 do nothing more, >0 increment nb_gen_done
+     *	@return		int									<0 if KO, >0 if OK
+     */
+    function setNextDate($date, $increment_nb_gen_done=0)
+    {
+        if (! $this->table_element)
+        {
+            dol_syslog(get_class($this)."::setNextDate was called on objet with property table_element not defined",LOG_ERR);
+            return -1;
+        }
+        $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
+        $sql.= ' SET date_when = "'.$this->db->idate($date).'"';
+        if ($increment_nb_gen_done>0) $sql.= ', nb_gen_done = nb_gen_done + 1';
+        $sql.= ' WHERE rowid = '.$this->id;
+
+        dol_syslog(get_class($this)."::setNextDate", LOG_DEBUG);
+        if ($this->db->query($sql))
+        {
+            $this->date_when = $date;
+            return 1;
+        }
+        else
+        {
+            dol_print_error($this->db);
+            return -1;
+        }
+    }
+	
+	/**
+     *	Update the maximum period
+     *
+     *	@param     	int		$nb		number of maximum period
+     *	@return		int				<0 if KO, >0 if OK
+     */
+    function setMaxPeriod($nb)
+    {
+        if (! $this->table_element)
+        {
+            dol_syslog(get_class($this)."::setMaxPeriod was called on objet with property table_element not defined",LOG_ERR);
+            return -1;
+        }
+		
+        if (empty($nb)) $nb=0;
+        
+        $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
+        $sql.= ' SET nb_gen_max = '.$nb;
+        $sql.= ' WHERE rowid = '.$this->id;
+
+        dol_syslog(get_class($this)."::setMaxPeriod", LOG_DEBUG);
+        if ($this->db->query($sql))
+        {
+            $this->nb_gen_max = $nb;
+            return 1;
+        }
+        else
+        {
+            dol_print_error($this->db);
+            return -1;
+        }
+    }
+	
+	/**
+     *	Update the auto validate invoice
+     *
+     *	@param     	int		$validate		0 to create in draft, 1 to create and validate invoice
+     *	@return		int						<0 if KO, >0 if OK
+     */
+    function setAutoValidate($validate)
+    {
+        if (! $this->table_element)
+        {
+            dol_syslog(get_class($this)."::setAutoValidate was called on objet with property table_element not defined",LOG_ERR);
+            return -1;
+        }
+		
+        $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
+        $sql.= ' SET auto_validate = '.$validate;
+        $sql.= ' WHERE rowid = '.$this->id;
+
+        dol_syslog(get_class($this)."::setAutoValidate", LOG_DEBUG);
+        if ($this->db->query($sql))
+        {
+            $this->auto_validate = $validate;
+            return 1;
+        }
+        else
+        {
+            dol_print_error($this->db);
+            return -1;
+        }
+    }
 }

@@ -54,7 +54,8 @@ function getURLContent($url,$postorget='GET',$param='',$followlocation=1,$addhea
     curl_setopt($ch, CURLOPT_VERBOSE, 1);
 	curl_setopt($ch, CURLOPT_USERAGENT, 'Dolibarr geturl function');
 
-	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, ($followlocation?true:false));
+	@curl_setopt($ch, CURLOPT_FOLLOWLOCATION, ($followlocation?true:false));   // We use @ here because this may return warning if safe mode is on or open_basedir is on
+	
 	if (count($addheaders)) curl_setopt($ch, CURLOPT_HTTPHEADER, $addheaders);
 	curl_setopt($ch, CURLINFO_HEADER_OUT, true);	// To be able to retrieve request header and log it
 

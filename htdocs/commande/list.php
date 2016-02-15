@@ -64,10 +64,10 @@ $id = (GETPOST('orderid')?GETPOST('orderid'):GETPOST('id','int'));
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'commande', $id,'');
 
+$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 if ($page == -1) { $page = 0; }
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -89,6 +89,19 @@ $fieldstosearchall = array(
     'c.note_public'=>'NotePublic',
 );
 if (empty($user->socid)) $fieldstosearchall["c.note_private"]="NotePrivate";
+
+$arrayfields=array(
+);
+// Extra fields
+/*
+ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+ {
+ foreach($extrafields->attribute_label as $key => $val)
+ {
+ $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>$extrafields->attribute_list[$key], 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
+ }
+ }
+ */
 
 
 /*
@@ -257,6 +270,7 @@ if ($resql)
 	$title.=' - '.$langs->trans('StatusOrderValidated').', '.(empty($conf->expedition->enabled)?'':$langs->trans("StatusOrderSent").', ').$langs->trans('StatusOrderToBill');
 
 	$param='';
+    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 	if ($socid > 0)             $param.='&socid='.$socid;
 	if ($viewstatut != '')      $param.='&viewstatut='.$viewstatut;
 	if ($ordermonth)      		$param.='&ordermonth='.$ordermonth;
@@ -272,7 +286,6 @@ if ($resql)
 	if ($optioncss != '')       $param.='&optioncss='.$optioncss;
 
 	$num = $db->num_rows($resql);
-	print_barre_liste($title, $page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords,'title_commercial.png');
 	
 	// Lignes des champs de filtre
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -283,7 +296,9 @@ if ($resql)
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
 
-    if ($sall)
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_commercial.png', 0, '', '', $limit);
+	
+	if ($sall)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
         print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);

@@ -108,7 +108,7 @@ if (empty($reshook))
             exit;
         }    
     }
-    
+
 	if ($action == 'confirm_merge' && $confirm == 'yes')
 	{
 		$object->fetch($socid);
@@ -1921,8 +1921,9 @@ else
 
         dol_htmloutput_errors($error,$errors);
 
+        $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
         
-        dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
+        dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
         
         
         print '<div class="fichecenter">';

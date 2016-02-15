@@ -144,7 +144,8 @@ $nav.=$form->select_date($dateselect, 'dateselect', 0, 0, 1, '', 1, 0, 1);
 $nav.=' <input type="submit" name="submitdateselect" class="button" value="'.$langs->trans("Refresh").'">';
 $nav.='</form>';
 
-print_barre_liste('Title of my list', 3, $_SERVER["PHP_SELF"], '', '', '', 'Text in middle', 20, 5000, '', 0, $nav);
+$limit=10;
+print_barre_liste('Title of my list', 12, $_SERVER["PHP_SELF"], '', '', '', 'Text in middle', 20, 500, '', 0, $nav, '', $limit);
 
 
 $moreforfilter.='<div class="divsearchfield">';
@@ -190,6 +191,7 @@ if (! empty($moreforfilter))
 </tr>
 <tr class="pair"><td><?php echo $productspecimen->getNomUrl(1); ?></td><td align="right">b1</td><td class="tdlineupdown" align="left">c1</td></tr>
 <tr class="impair"><td>a2</td><td align="right">b2</td><td class="tdlineupdown" align="left">c2</td></tr>
+<tr class="pair"><td>a3</td><td align="right">b3</td><td class="tdlineupdown" align="left">c3</td></tr>
 </table>
 <br>
 

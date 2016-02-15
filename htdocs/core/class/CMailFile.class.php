@@ -37,10 +37,11 @@
 class CMailFile
 {
 	var $subject;      	// Topic:       Subject of email
-	var $addr_from;    	// From:		Label and EMail of sender (must include '<>'). For example '<myemail@example.com>' or 'John Doe <myemail@example.com>' or '<myemail+trackingid@example.com>')
+	var $addr_from;    	// From:		Label and EMail of sender (must include '<>'). For example '<myemail@example.com>' or 'John Doe <myemail@example.com>' or '<myemail+trackingid@example.com>'). Note that with gmail smtps, value here is forced by google to account (but not the reply-to).
 	                   	// Sender:      Who send the email ("Sender" has sent emails on behalf of "From").
 	                   	//              Use it when the "From" is an email of a domain that is a SPF protected domain, and sending smtp server is not this domain. In such case, add Sender field with an email of the protected domain.
 	                   	// Return-Path: Email where to send bounds.
+	var $reply_to;		// Reply-To:	Email where to send replies from mailer software (mailer use From if reply-to not defined, Gmail use gmail account if reply-to not defined)
 	var $errors_to;		// Errors-To:	Email where to send errors.
 	var $addr_to;
 	var $addr_cc;
@@ -190,6 +191,7 @@ class CMailFile
 			// Define smtp_headers
 			$this->subject = $subject;
 			$this->addr_from = $from;
+			$this->reply_to = $from;         // Set this property after constructor if you want to use another value
 			$this->errors_to = $errors_to;
 			$this->addr_to = $to;
 			$this->addr_cc = $addr_cc;
@@ -256,7 +258,8 @@ class CMailFile
 			$smtps->setTO($this->getValidAddress($to,0,1));
 			$smtps->setFrom($this->getValidAddress($from,0,1));
 			$smtps->setTrackId($trackid);
-
+			$smtps->setReplyTo($this->getValidAddress($from,0,1));   // Set property with this->smtps->setReplyTo after constructor if you want to use another value than the From
+			
 			if (! empty($this->html))
 			{
 				if (!empty($css))
@@ -308,6 +311,7 @@ class CMailFile
 			$this->phpmailer->Subject($this->encodetorfc2822($subject));
 			$this->phpmailer->setTO($this->getValidAddress($to,0,1));
 			$this->phpmailer->SetFrom($this->getValidAddress($from,0,1));
+			$this->phpmailer->SetReplyTo($this->getValidAddress($from,0,1));   // Set property with this->phpmailer->setReplyTo after constructor if you want to use another value than the From
 			// TODO Add trackid into smtp header
 
 			if (! empty($this->html))
@@ -341,12 +345,10 @@ class CMailFile
 				}
 			}
 
-			$smtps->setCC($addr_cc);
-			$smtps->setBCC($addr_bcc);
-			$smtps->setErrorsTo($errors_to);
-			$smtps->setDeliveryReceipt($deliveryreceipt);
-
-			$this->smtps=$smtps;
+			$this->phpmailer->setCC($addr_cc);
+			$this->phpmailer->setBCC($addr_bcc);
+			$this->phpmailer->setErrorsTo($errors_to);
+			$this->phpmailer->setDeliveryReceipt($deliveryreceipt);
 		}
 		else
 		{
@@ -375,7 +377,7 @@ class CMailFile
 
 		if (empty($conf->global->MAIN_DISABLE_ALL_MAILS))
 		{
-            dol_include_once('/core/class/hookmanager.class.php');
+            require_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
             $hookmanager = new HookManager($db);
             $hookmanager->initHooks(array(
                 'maildao'

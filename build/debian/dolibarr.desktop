@@ -22,5 +22,6 @@ Type=Application
 Categories=Office
 StartupNotify=true
 InitialPreference=5
+Keywords=erp,crm,billing,customer,supplier,stock,agenda,project,order,shipment
 #NoDisplay=true
 #OnlyShowIn=GNOME

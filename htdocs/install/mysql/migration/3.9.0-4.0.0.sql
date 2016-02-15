@@ -112,26 +112,28 @@ INSERT INTO llx_c_format_cards (rowid, code, name, paper_size, orientation, metr
 
 ALTER TABLE llx_extrafields ADD COLUMN ishidden integer DEFAULT 0;
 
-CREATE TABLE IF NOT EXISTS llx_multicurrency 
+
+ALTER TABLE llx_paiementfourn ADD COLUMN ref varchar(30) AFTER rowid;
+ALTER TABLE llx_paiementfourn ADD COLUMN entity integer AFTER ref;
+
+
+CREATE TABLE llx_multicurrency 
 ( 
 	rowid integer AUTO_INCREMENT PRIMARY KEY, 
 	date_create datetime DEFAULT NULL, 
 	code varchar(255) DEFAULT NULL, 
 	name varchar(255) DEFAULT NULL, 
-	entity integer DEFAULT NULL,
-	fk_user integer DEFAULT NULL,
-	KEY code (code)
+	entity integer DEFAULT 1,
+	fk_user integer DEFAULT NULL
 ) ENGINE=innodb;
 
-CREATE TABLE IF NOT EXISTS llx_multicurrency_rate 
+CREATE TABLE llx_multicurrency_rate 
 ( 
 	rowid integer AUTO_INCREMENT PRIMARY KEY, 
 	date_sync datetime DEFAULT NULL,  
-	rate double NOT NULL DEFAULT '0', 
-	fk_multicurrency integer NOT NULL DEFAULT '0', 
-	entity integer NOT NULL DEFAULT '0', 
-	KEY fk_multicurrency (fk_multicurrency), 
-	KEY entity (entity) 
+	rate double NOT NULL DEFAULT 0, 
+	fk_multicurrency integer NOT NULL, 
+	entity integer NOT NULL DEFAULT 1
 ) ENGINE=innodb;
 
 ALTER TABLE llx_societe ADD COLUMN fk_multicurrency integer;
@@ -210,7 +212,33 @@ ALTER TABLE llx_propaldet ADD COLUMN multicurrency_subprice double(24,8) DEFAULT
 ALTER TABLE llx_propaldet ADD COLUMN multicurrency_total_ht double(24,8) DEFAULT 0;
 ALTER TABLE llx_propaldet ADD COLUMN multicurrency_total_tva double(24,8) DEFAULT 0;
 ALTER TABLE llx_propaldet ADD COLUMN multicurrency_total_ttc double(24,8) DEFAULT 0;
+
  
+
+ALTER TABLE llx_facture_rec ADD COLUMN auto_validate integer DEFAULT 0;
+ALTER TABLE llx_facture_rec ADD COLUMN fk_account integer DEFAULT 0;
+
+ALTER TABLE llx_facture_rec ADD COLUMN fk_multicurrency integer;
+ALTER TABLE llx_facture_rec ADD COLUMN multicurrency_code varchar(255);
+ALTER TABLE llx_facture_rec ADD COLUMN multicurrency_tx double(24,8) DEFAULT 1;
+ALTER TABLE llx_facture_rec ADD COLUMN multicurrency_total_ht double(24,8) DEFAULT 0;
+ALTER TABLE llx_facture_rec ADD COLUMN multicurrency_total_tva double(24,8) DEFAULT 0;
+ALTER TABLE llx_facture_rec ADD COLUMN multicurrency_total_ttc double(24,8) DEFAULT 0;
+
+ALTER TABLE llx_facturedet_rec ADD COLUMN fk_multicurrency integer;
+ALTER TABLE llx_facturedet_rec ADD COLUMN multicurrency_code varchar(255);
+ALTER TABLE llx_facturedet_rec ADD COLUMN multicurrency_subprice double(24,8) DEFAULT 0;
+ALTER TABLE llx_facturedet_rec ADD COLUMN multicurrency_total_ht double(24,8) DEFAULT 0;
+ALTER TABLE llx_facturedet_rec ADD COLUMN multicurrency_total_tva double(24,8) DEFAULT 0;
+ALTER TABLE llx_facturedet_rec ADD COLUMN multicurrency_total_ttc double(24,8) DEFAULT 0;
+
+ALTER TABLE llx_contratdet ADD COLUMN fk_multicurrency integer;
+ALTER TABLE llx_contratdet ADD COLUMN multicurrency_code varchar(255);
+ALTER TABLE llx_contratdet ADD COLUMN multicurrency_subprice double(24,8) DEFAULT 0;
+ALTER TABLE llx_contratdet ADD COLUMN multicurrency_total_ht double(24,8) DEFAULT 0;
+ALTER TABLE llx_contratdet ADD COLUMN multicurrency_total_tva double(24,8) DEFAULT 0;
+ALTER TABLE llx_contratdet ADD COLUMN multicurrency_total_ttc double(24,8) DEFAULT 0;
+
 ALTER TABLE llx_paiement ADD COLUMN multicurrency_amount double(24,8) DEFAULT 0;
 ALTER TABLE llx_paiement_facture ADD COLUMN multicurrency_amount double(24,8) DEFAULT 0;
 ALTER TABLE llx_paiementfourn_facturefourn ADD COLUMN multicurrency_amount double(24,8) DEFAULT 0;
@@ -218,4 +246,3 @@ ALTER TABLE llx_paiementfourn_facturefourn ADD COLUMN multicurrency_amount doubl
 ALTER TABLE llx_societe_remise_except ADD COLUMN multicurrency_amount_ht double(24,8) NOT NULL;
 ALTER TABLE llx_societe_remise_except ADD COLUMN multicurrency_amount_tva double(24,8) DEFAULT 0 NOT NULL;
 ALTER TABLE llx_societe_remise_except ADD COLUMN multicurrency_amount_ttc double(24,8) DEFAULT 0 NOT NULL;
-

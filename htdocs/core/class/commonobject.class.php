@@ -384,7 +384,7 @@ abstract class CommonObject
      */
     function errorsToString()
     {
-    	return $this->error.(is_array($this->errors)?(($this->error!=''?' ':'').join(',',$this->errors)):'');
+    	return $this->error.(is_array($this->errors)?(($this->error!=''?', ':'').join(', ',$this->errors)):'');
     }
 
     /**
@@ -1001,26 +1001,30 @@ abstract class CommonObject
     {
         global $conf;
 
-        if (empty($this->socid) && empty($this->fk_soc) && empty($this->fk_thirdparty) && empty($force_thirdparty_id)) return 0;
+        if (empty($this->socid) && empty($this->fk_soc) && empty($this->fk_thirdparty) && empty($force_thirdparty_id))
+            return 0;
 
-	    require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+        require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 
-	    $idtofetch=isset($this->socid)?$this->socid:(isset($this->fk_soc)?$this->fk_soc:$this->fk_thirdparty);
-		if ($force_thirdparty_id) $idtofetch=$force_thirdparty_id;
+        $idtofetch = isset($this->socid) ? $this->socid : (isset($this->fk_soc) ? $this->fk_soc : $this->fk_thirdparty);
+        if ($force_thirdparty_id)
+            $idtofetch = $force_thirdparty_id;
 
-        $thirdparty = new Societe($this->db);
-        $result=$thirdparty->fetch($idtofetch);
-        $this->client = $thirdparty;  // deprecated
-        $this->thirdparty = $thirdparty;
+        if ($idtofetch) {
+            $thirdparty = new Societe($this->db);
+            $result = $thirdparty->fetch($idtofetch);
+            $this->client = $thirdparty;  // deprecated
+            $this->thirdparty = $thirdparty;
 
-        // Use first price level if level not defined for third party
-        if (! empty($conf->global->PRODUIT_MULTIPRICES) && empty($this->thirdparty->price_level))
-        {
-            $this->client->price_level=1; // deprecated
-            $this->thirdparty->price_level=1;
-        }
+            // Use first price level if level not defined for third party
+            if (!empty($conf->global->PRODUIT_MULTIPRICES) && empty($this->thirdparty->price_level)) {
+                $this->client->price_level = 1; // deprecated
+                $this->thirdparty->price_level = 1;
+            }
 
-        return $result;
+            return $result;
+        } else
+            return -1;
     }
 
 
@@ -2322,7 +2326,7 @@ abstract class CommonObject
                 {
                     $error++;
                     $this->error=$this->db->lasterror();
-                    $this->error[]=$this->db->lasterror();
+                    $this->errors[]=$this->db->lasterror();
                 }
             }
 
@@ -3347,6 +3351,8 @@ abstract class CommonObject
 				$text.= ' - '.(! empty($line->label)?$line->label:$label);
 				$description.=(! empty($conf->global->PRODUIT_DESC_IN_FORM)?'':dol_htmlentitiesbr($line->description));	// Description is what to show on popup. We shown nothing if already into desc.
 			}
+			
+			$line->pu_ttc = price2num($line->subprice * (1 + ($line->tva_tx/100)), 'MU');
 
 			// Output template part (modules that overwrite templates must declare this into descriptor)
 			// Use global variables + $dateSelector + $seller and $buyer
@@ -3370,7 +3376,7 @@ abstract class CommonObject
 			if (! empty($conf->global->MAIN_HTML5_PLACEHOLDER)) $placeholder=' placeholder="'.$langs->trans("Label").'"';
 			else $placeholder=' title="'.$langs->trans("Label").'"';
 
-			$pu_ttc = price2num($line->subprice * (1 + ($line->tva_tx/100)), 'MU');
+			$line->pu_ttc = price2num($line->subprice * (1 + ($line->tva_tx/100)), 'MU');
 
 			// Output template part (modules that overwrite templates must declare this into descriptor)
 			// Use global variables + $dateSelector + $seller and $buyer

@@ -67,16 +67,15 @@ $optioncss = GETPOST('optioncss','alpha');
 $type=GETPOST("type");
 $view=GETPOST("view");
 
+$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
 $page = GETPOST('page', 'int');
 $userid=GETPOST('userid','int');
 $begin=GETPOST('begin');
-
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="p.lastname";
 if ($page < 0) { $page = 0; }
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $offset = $limit * $page;
 
 $langs->load("companies");
@@ -333,6 +332,16 @@ $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
 
+// Add order
+if($view == "recent")
+{
+    $sql.= $db->order("p.datec","DESC");
+}
+else
+{
+    $sql.= $db->order($sortfield,$sortorder);
+}
+
 // Count total nb of records
 $nbtotalofrecords = 0;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
@@ -341,16 +350,14 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
     $nbtotalofrecords = $db->num_rows($result);
 }
 
-// Add order and limit
+// Add limit
 if($view == "recent")
 {
-    $sql.= $db->order("p.datec","DESC");
-    $sql.= $db->plimit($conf->liste_limit+1, $offset);
+    $sql.= $db->plimit($limit+1, $offset);
 }
 else
 {
-    $sql.= $db->order($sortfield,$sortorder);
-    $sql.= $db->plimit($conf->liste_limit+1, $offset);
+    $sql.= $db->plimit($limit+1, $offset);
 }
 
 //print $sql;
@@ -361,11 +368,14 @@ if ($result)
 	$num = $db->num_rows($result);
     $i = 0;
 
-	$param ='&begin='.urlencode($begin).'&view='.urlencode($view).'&userid='.urlencode($userid).'&contactname='.urlencode($sall);
-    $param.='&type='.urlencode($type).'&view='.urlencode($view).'&search_lastname='.urlencode($search_lastname).'&search_firstname='.urlencode($search_firstname).'&search_societe='.urlencode($search_societe).'&search_email='.urlencode($search_email);
+    $param='';
+    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+    $param.='&begin='.urlencode($begin).'&view='.urlencode($view).'&userid='.urlencode($userid).'&contactname='.urlencode($sall);
+    $param.='&type='.urlencode($type).'&view='.urlencode($view);
     if (!empty($search_categ)) $param.='&search_categ='.urlencode($search_categ);
     if ($search_lastname != '') $param.='&amp;search_lastname='.urlencode($search_lastname);
     if ($search_firstname != '') $param.='&amp;search_firstname='.urlencode($search_firstname);
+    if ($search_societe != '') $param.='&amp;search_societe='.urlencode($search_societe);
     if ($search_zip != '') $param.='&amp;search_zip='.urlencode($search_zip);
     if ($search_town != '') $param.='&amp;search_town='.urlencode($search_town);
     if ($search_job != '') $param.='&amp;search_job='.urlencode($search_job);
@@ -385,8 +395,6 @@ if ($result)
         if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
     } 	
     
-    print_barre_liste($titre, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords,'title_companies.png');
-
     print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -394,6 +402,8 @@ if ($result)
     print '<input type="hidden" name="view" value="'.dol_escape_htmltag($view).'">';
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+
+    print_barre_liste($titre, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_companies.png', 0, '', '', $limit);
 
     if ($sall)
     {
@@ -739,10 +749,10 @@ if ($result)
 
     print "</table>";
 
+    if ($num > $limit || $page) print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_companies.png', 0, '', '', $limit, 1);
+    
     print '</form>';
-
-    if ($num > $limit) print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '');
-
+    
     $db->free($result);
 }
 else

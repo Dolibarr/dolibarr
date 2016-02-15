@@ -2346,7 +2346,7 @@ if ($action == 'create')
 	{
 		print '<tr>';
 		print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $objectsrc->libelle_incoterms, 1).'</label></td>';
-        print '<td colspan="3" class="maxwidthonsmartphone">';
+        print '<td colspan="2" class="maxwidthonsmartphone">';
         print $form->select_incoterms((!empty($objectsrc->fk_incoterms) ? $objectsrc->fk_incoterms : ''), (!empty($objectsrc->location_incoterms)?$objectsrc->location_incoterms:''));
 		print '</td></tr>';
 	}
@@ -2361,7 +2361,7 @@ if ($action == 'create')
 
 	// Template to use by default
 	print '<tr><td>' . $langs->trans('Model') . '</td>';
-	print '<td>';
+	print '<td colspan="2">';
 	include_once DOL_DOCUMENT_ROOT . '/core/modules/facture/modules_facture.php';
 	$liste = ModelePDFFactures::liste_modeles($db);
 	print $form->selectarray('model', $liste, $conf->global->FACTURE_ADDON_PDF);
@@ -2372,7 +2372,7 @@ if ($action == 'create')
 	{
 		print '<tr>';
 		print '<td>'.fieldLabel('Currency','multicurrency_code').'</td>';
-        print '<td colspan="3" class="maxwidthonsmartphone">';
+        print '<td colspan="2" class="maxwidthonsmartphone">';
 	    print $form->selectMultiCurrency($currency_code, 'multicurrency_code');
 		print '</td></tr>';
 	}
@@ -3074,7 +3074,9 @@ else if ($id > 0 || ! empty($ref))
 		$nbrows ++;
 	if ($selleruserevenustamp)
 		$nbrows ++;
-
+	if (! empty($conf->multicurrency->enabled)) $nbrows+=5;
+	if (! empty($conf->incoterm->enabled)) $nbrows+=1;
+        
 	print '<td rowspan="' . $nbrows . '" colspan="2" valign="top">';
 
 	if ($object->type == Facture::TYPE_SITUATION && !empty($conf->global->INVOICE_USE_SITUATION))
@@ -3443,14 +3445,14 @@ else if ($id > 0 || ! empty($ref))
 	{
 		// Multicurrency code
 		print '<tr>';
-		print '<td width="25%">';
+		print '<td>';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print fieldLabel('Currency','multicurrency_code');
 		print '</td>';
 		if ($action != 'editmulticurrencycode' && ! empty($object->brouillon))
 			print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencycode&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
 		print '</tr></table>';
-		print '</td><td colspan="5">';
+		print '</td><td colspan="3">';
 		if ($action == 'editmulticurrencycode') {
 			$form->form_multicurrency_code($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_code, 'multicurrency_code');
 		} else {
@@ -3460,14 +3462,14 @@ else if ($id > 0 || ! empty($ref))
 	
 		// Multicurrency rate
 		print '<tr>';
-		print '<td width="25%">';
+		print '<td>';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print fieldLabel('Rate','multicurrency_tx');
 		print '</td>';
 		if ($action != 'editmulticurrencyrate' && ! empty($object->brouillon))
 			print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencyrate&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
 		print '</tr></table>';
-		print '</td><td colspan="5">';
+		print '</td><td colspan="3">';
 		if ($action == 'editmulticurrencyrate') {
 			$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'multicurrency_tx');
 		} else {
@@ -3507,7 +3509,9 @@ else if ($id > 0 || ! empty($ref))
 			print ' ';
 
 			print $prevsits[0]->situation_counter;
-			for ($i = 1; $i < count($prevsits); $i++) {
+			$cprevsits = count($prevsits);
+
+		  for ($i = 1; $i < $cprevsits; $i++) {
 				print ' + ';
 				print $prevsits[$i]->situation_counter;
 			}
@@ -3528,7 +3532,7 @@ else if ($id > 0 || ! empty($ref))
 			print '<td>' . $langs->trans('Currency' . $conf->currency) . '</td></tr>';
 
 			// Previous situation(s) deduction(s)
-			for ($i = 0; $i < count($prevsits); $i++) {
+			for ($i = 0; $i < $cprevsits; $i++) {
 				print '<tr><td>';
 				print '<a href="' . $_SERVER['PHP_SELF'] . '?facid=' . $prevsits[$i]->id . '">';
 				print $langs->trans('SituationDeduction');
@@ -3841,6 +3845,7 @@ else if ($id > 0 || ! empty($ref))
 				}
 			}
 
+			// deprecated. Useless because now we can use templates
 			if (! empty($conf->global->FACTURE_SHOW_SEND_REMINDER)) 			// For backward compatibility
 			{
 				if (($object->statut == 1 || $object->statut == 2) && $resteapayer > 0) {
@@ -3896,7 +3901,7 @@ else if ($id > 0 || ! empty($ref))
 
 			// Classify paid
 			if ($object->statut == 1 && $object->paye == 0 && $user->rights->facture->paiement && (($object->type != Facture::TYPE_CREDIT_NOTE && $object->type != Facture::TYPE_DEPOSIT && $resteapayer <= 0) || ($object->type == Facture::TYPE_CREDIT_NOTE && $resteapayer >= 0))
-				|| ($object->type == Facture::TYPE_DEPOSIT && $object->paye == 0 && $resteapayer == 0 && $user->rights->facture->paiement && empty($discount->id))
+				|| ($object->type == Facture::TYPE_DEPOSIT && $object->paye == 0 && $object->total_ttc > 0 && $resteapayer == 0 && $user->rights->facture->paiement && empty($discount->id))
 			)
 			{
 				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'&amp;action=paid">'.$langs->trans('ClassifyPaid').'</a></div>';
@@ -3926,10 +3931,10 @@ else if ($id > 0 || ! empty($ref))
 				print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?facid=' . $object->id . '&amp;action=clone&amp;object=invoice">' . $langs->trans("ToClone") . '</a></div>';
 			}
 
-			// Clone as predefined
+			// Clone as predefined / Create template
 			if (($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_PROFORMA) && $object->statut == 0 && $user->rights->facture->creer)
 			{
-				if (! $objectidnext)
+				if (! $objectidnext && count($object->lines) > 0)
 				{
 					print '<div class="inline-block divButAction"><a class="butAction" href="facture/fiche-rec.php?facid=' . $object->id . '&amp;action=create">' . $langs->trans("ChangeIntoRepeatableInvoice") . '</a></div>';
 				}
@@ -3944,7 +3949,7 @@ else if ($id > 0 || ! empty($ref))
 				}
 			}
 
-			//Create next situation invoice
+			// Create next situation invoice
 			if ($user->rights->facture->creer && ($object->type == 5) && ($object->statut == 1 || $object->statut == 2)) {
 				if ($object->is_last_in_cycle() && $object->situation_final != 1) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?action=create&amp;type=5&amp;origin=facture&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '" >' . $langs->trans('CreateNextSituationInvoice') . '</a></div>';

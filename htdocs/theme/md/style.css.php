@@ -414,6 +414,9 @@ th .button {
 .valignmiddle {
 	vertical-align: middle;
 }
+.valignbottom {
+	vertical-align: bottom;
+}
 .centpercent {
 	width: 100%;
 }
@@ -507,6 +510,9 @@ div.myavailability {
 	vertical-align: top;
     margin-top: 6px;	
     margin-left: 4px;	
+}
+.selectlimit {
+	margin-right: 10px !important;
 }
 
 /* ============================================================================== */

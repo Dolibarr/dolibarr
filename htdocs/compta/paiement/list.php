@@ -57,9 +57,9 @@ $search_amount=GETPOST("search_amount",'alpha');    // alpha because we must be 
 $search_company=GETPOST("search_company",'alpha');
 $search_payment_num=GETPOST('search_payment_num','alpha');
 
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $page = GETPOST("page",'int');
 if ($page == -1) { $page = 0; }
 $offset = $limit * $page;
@@ -184,6 +184,7 @@ else
 	$reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
 	$sql.=$hookmanager->resPrint;
 }
+$sql.= $db->order($sortfield,$sortorder);
 
 $nbtotalofrecords = 0;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
@@ -192,12 +193,10 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	$nbtotalofrecords = $db->num_rows($result);
 }
 
-$sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit+1, $offset);
 //print "$sql";
 
 $resql = $db->query($sql);
-
 if ($resql)
 {
     $num = $db->num_rows($resql);
@@ -211,9 +210,16 @@ if ($resql)
     $paramlist.=($search_payment_num?"&search_payment_num=".urlencode($search_payment_num):"");
     if ($optioncss != '') $paramlist.='&optioncss='.urlencode($optioncss);
     
-    print_barre_liste($langs->trans("ReceivedCustomersPayments"), $page, $_SERVER["PHP_SELF"],$paramlist,$sortfield,$sortorder,'',$num, $nbtotalofrecords,'title_accountancy.png');
-
-    print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
+    print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="action" value="list">';
+    print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+    print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+    print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
+    
+    print_barre_liste($langs->trans("ReceivedCustomersPayments"), $page, $_SERVER["PHP_SELF"],$paramlist,$sortfield,$sortorder,'',$num, $nbtotalofrecords,'title_accountancy.png', 0, '', '', $limit);
+    
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans("RefPayment"),$_SERVER["PHP_SELF"],"p.rowid","",$paramlist,"",$sortfield,$sortorder);

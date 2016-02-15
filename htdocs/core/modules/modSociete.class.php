@@ -131,7 +131,9 @@ class modSociete extends DolibarrModules
         $this->boxes[$r][1] = "box_activity.php";
         $this->boxes[$r][2] = '(WarningUsingThisBoxSlowDown)';
         $r++;
-
+        $this->boxes[$r][1] = "box_goodcustomers.php";
+        $this->boxes[$r][2] = '(WarningUsingThisBoxSlowDown)';
+        $r++;
 		// Permissions
 		$this->rights = array();
 		$this->rights_class = 'societe';
@@ -284,7 +286,11 @@ class modSociete extends DolibarrModules
         			case 'sellist':
 						$tmp='';
 						$tmpparam=unserialize($obj->param);	// $tmp ay be array 'options' => array 'c_currencies:code_iso:code_iso' => null
-						if ($tmpparam['options'] && is_array($tmpparam['options'])) $tmp=array_shift(array_keys($tmpparam['options']));
+						if ($tmpparam['options'] && is_array($tmpparam['options'])) 
+        				{
+							$stack=array_keys($tmpparam['options']);
+							$tmp=array_shift($stack);
+						}
 						if (preg_match('/[a-z0-9_]+:[a-z0-9_]+:[a-z0-9_]+/', $tmp)) $typeFilter="List:".$tmp;
 						break;
         		}

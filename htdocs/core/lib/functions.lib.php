@@ -2037,11 +2037,12 @@ function dol_trunc($string,$size=40,$trunc='right',$stringencoding='UTF-8',$nodo
 {
 	global $conf;
 
-	if (empty($stringencoding)) $stringencoding='UTF-8';
-
 	if ($size==0 || ! empty($conf->global->MAIN_DISABLE_TRUNC)) return $string;
+	
+	if (empty($stringencoding)) $stringencoding='UTF-8';
 	// reduce for small screen
-    if ($conf->dol_optimize_smallscreen==1 && $display==1) $size = round($size/3);
+	if ($conf->dol_optimize_smallscreen==1 && $display==1) $size = round($size/3);
+
 	// We go always here
 	if ($trunc == 'right')
 	{
@@ -2168,6 +2169,27 @@ function img_picto($titlealt, $picto, $options = '', $pictoisfullpath = false, $
 function img_object($titlealt, $picto, $options = '', $pictoisfullpath = false)
 {
 	return img_picto($titlealt, 'object_'.$picto, $options, $pictoisfullpath);
+}
+
+/**
+ *	Show weather picto
+ *
+ *	@param      string		$titlealt         	Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
+ *	@param      string		$picto       		Name of image file to show (If no extension provided, we use '.png'). Image must be stored into htdocs/theme/common directory.
+ *	@param		string		$options			Add more attribute on img tag
+ *	@param		int			$pictoisfullpath	If 1, image path is a full path
+ *	@return     string      					Return img tag
+ *  @see        #img_object, #img_picto
+ */
+function img_weather($titlealt, $picto, $options = '', $pictoisfullpath = 0)
+{
+	global $conf;
+
+	if (! preg_match('/(\.png|\.gif)$/i', $picto)) $picto .= '.png';
+
+	$path = DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/weather/'.$picto;
+
+	return img_picto($titlealt, $path, $options, 1);
 }
 
 /**
@@ -2410,30 +2432,32 @@ function img_error($titlealt = 'default')
  *	Show next logo
  *
  *	@param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
- *	@return string      		Return img tag
+*	@param	string	$options	Add more attribute on img tag (For example 'style="float: right"')
+  *	@return string      		Return img tag
  */
-function img_next($titlealt = 'default')
+function img_next($titlealt = 'default', $options='')
 {
 	global $conf, $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Next');
 
-	return img_picto($titlealt, 'next.png');
+	return img_picto($titlealt, 'next.png', $options);
 }
 
 /**
  *	Show previous logo
  *
  *	@param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
+ *	@param	string	$options	Add more attribute on img tag (For example 'style="float: right"')
  *	@return string      		Return img tag
  */
-function img_previous($titlealt = 'default')
+function img_previous($titlealt = 'default', $options='')
 {
 	global $conf, $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Previous');
 
-	return img_picto($titlealt, 'previous.png');
+	return img_picto($titlealt, 'previous.png', $options);
 }
 
 /**
@@ -2955,31 +2979,35 @@ function load_fiche_titre($titre, $mesg='', $picto='title_generic.png', $pictois
 /**
  *	Print a title with navigation controls for pagination
  *
- *	@param	string	$titre				Title to show (required)
- *	@param	string	$page				Numero of page to show in navigation links (required)
- *	@param	string	$file				Url of page (required)
- *	@param	string	$options         	parametres complementaires lien ('' par defaut)
- *	@param	string	$sortfield       	champ de tri ('' par defaut)
- *	@param	string	$sortorder       	ordre de tri ('' par defaut)
- *	@param	string	$center          	chaine du centre ('' par defaut)
- *	@param	int		$num				number of records found by select with limit+1
- *	@param	int		$totalnboflines		Total number of records/lines for all pages (if known)
- *	@param	string	$picto				Icon to use before title (should be a 32x32 transparent png file)
- *	@param	int		$pictoisfullpath	1=Icon name is a full absolute url of image
- *  @param	string	$morehtml			More html to show
- *  @param  string  $morecss            More css to the table
- *  @param  int     $limit              Limit ofnumber of lines on each page
+ *	@param	string	    $titre				Title to show (required)
+ *	@param	string	    $page				Numero of page to show in navigation links (required)
+ *	@param	string	    $file				Url of page (required)
+ *	@param	string	    $options         	parametres complementaires lien ('' par defaut)
+ *	@param	string    	$sortfield       	champ de tri ('' par defaut)
+ *	@param	string	    $sortorder       	ordre de tri ('' par defaut)
+ *	@param	string	    $center          	chaine du centre ('' par defaut). We often find here string $massaction comming from $form->selectMassAction() 
+ *	@param	int		    $num				number of records found by select with limit+1
+ *	@param	int		    $totalnboflines		Total number of records/lines for all pages (if known). Use a negative value to no show number.
+ *	@param	string	    $picto				Icon to use before title (should be a 32x32 transparent png file)
+ *	@param	int		    $pictoisfullpath	1=Icon name is a full absolute url of image
+ *  @param	string	    $morehtml			More html to show
+ *  @param  string      $morecss            More css to the table
+ *  @param  int         $limit              Max number of lines (-1 = use default, 0 = no limit, > 0 = limit).
+ *  @param  int         $hideselectlimit    Force to hide select limit
  *	@return	void
  */
-function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='', $center='', $num=-1, $totalnboflines=0, $picto='title_generic.png', $pictoisfullpath=0, $morehtml='', $morecss='', $limit=0)
+function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='', $center='', $num=-1, $totalnboflines=0, $picto='title_generic.png', $pictoisfullpath=0, $morehtml='', $morecss='', $limit=-1, $hideselectlimit=0)
 {
 	global $conf,$langs;
-
+	
+	$savlimit = $limit;
+    $savtotalnboflines = $totalnboflines;
+    $totalnboflines=abs($totalnboflines);
+    
 	if ($picto == 'setup') $picto='title_setup.png';
 	if (($conf->browser->name == 'ie') && $picto=='title_generic.png') $picto='title.gif';
-	if ($limit < 1) $limit = $conf->liste_limit;
-	
-	if (($num > $limit) || ($num == -1))
+	if ($limit < 0) $limit = $conf->liste_limit;
+	if ($savlimit != 0 && (($num > $limit) || ($num == -1) || ($limit == 0)))
 	{
 		$nextpage = 1;
 	}
@@ -2987,7 +3015,8 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 	{
 		$nextpage = 0;
 	}
-
+	//print 'totalnboflines='.$totalnboflines.'-savlimit='.$savlimit.'-limit='.$limit.'-num='.$num.'-nextpage='.$nextpage;
+	
 	print "\n";
 	print "<!-- Begin title '".$titre."' -->\n";
 	print '<table width="100%" border="0" class="notopnoleftnoright'.($morecss?' '.$morecss:'').'" style="margin-bottom: 6px;"><tr>';
@@ -2995,9 +3024,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 	// Left
 	if ($picto && $titre) print '<td class="nobordernopadding hideonsmartphone" width="40" align="left" valign="middle">'.img_picto('', $picto, '', $pictoisfullpath).'</td>';
 	print '<td class="nobordernopadding"><div class="titre">'.$titre;
-	if (!empty($totalnboflines) && !empty($titre)) {
-		print ' ('.$totalnboflines.')';
-	}
+	if (!empty($titre) && $savtotalnboflines > 0) print ' ('.$totalnboflines.')';
 	print '</div></td>';
 
 	// Center
@@ -3012,13 +3039,14 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 	if ($sortorder) $options .= "&amp;sortorder=".$sortorder;
 	// Show navigation bar
 	$pagelist = '';
-	if ($page > 0 || $num > $limit)
+	if ($savlimit != 0 && ($page > 0 || $num > $limit))
 	{
 		if ($totalnboflines)	// If we know total nb of lines
 		{
-			$maxnbofpage=(empty($conf->dol_optimize_smallscreen) ? 6 : 3);		// nb before and after selected page + ... + first or last
+			$maxnbofpage=(empty($conf->dol_optimize_smallscreen) ? 4 : 2);		// page nb before and after selected page + ... + first or last
 
-			$nbpages=ceil($totalnboflines/$limit);
+			if ($limit > 0) $nbpages=ceil($totalnboflines/$limit);
+			else $nbpages=1;
 			$cpt=($page-$maxnbofpage);
 			if ($cpt < 0) { $cpt=0; }
 
@@ -3055,7 +3083,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 			$pagelist.= '<li'.(empty($conf->dol_use_jmobile)?' class="pagination"':'').'><span '.(empty($conf->dol_use_jmobile)?'class="active"':'data-role="button"').'>'.($page+1)."</li>";
 		}
 	}
-	print_fleche_navigation($page,$file,$options,$nextpage,$pagelist,$morehtml);		// output the div and ul for previous/last completed with page numbers into $pagelist
+	print_fleche_navigation($page, $file, $options, $nextpage, $pagelist, $morehtml, $savlimit, $totalnboflines, $hideselectlimit);		// output the div and ul for previous/last completed with page numbers into $pagelist
 	print '</td>';
 
 	print '</tr></table>'."\n";
@@ -3071,13 +3099,64 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
  *	@param	integer			$nextpage	    	Do we show a next page button
  *	@param	string			$betweenarrows		HTML content to show between arrows. MUST contains '<li> </li>' tags or '<li><span> </span></li>'.
  *  @param	string			$afterarrows		HTML content to show after arrows. Must NOT contains '<li> </li>' tags.
+ *  @param  int             $limit              Max nb of record to show  (-1 = no combo with limit, 0 = no limit, > 0 = limit)
+ *	@param	int		        $totalnboflines		Total number of records/lines for all pages (if known)
+ *  @param  int             $hideselectlimit    Force to hide select limit
  *	@return	void
  */
-function print_fleche_navigation($page, $file, $options='', $nextpage=0, $betweenarrows='', $afterarrows='')
+function print_fleche_navigation($page, $file, $options='', $nextpage=0, $betweenarrows='', $afterarrows='', $limit=-1, $totalnboflines=0, $hideselectlimit=0)
 {
 	global $conf, $langs;
 
 	print '<div class="pagination"><ul>';
+	if ((int) $limit >= 0 && empty($hideselectlimit))
+	{
+	    $pagesizechoices='10:10,20:20,30:30,40:40,50:50,100:100,250:250,500:500,1000:1000,5000:5000';
+	    //$pagesizechoices.=',0:'.$langs->trans("All");     // Not yet supported
+	    //$pagesizechoices.=',2:2';
+	    if (! empty($conf->global->MAIN_PAGESIZE_CHOICES)) $pagesizechoices=$conf->global->MAIN_PAGESIZE_CHOICES;
+	     
+        print '<li class="pagination">';
+        print '<select class="flat selectlimit" name="limit">';
+        $tmpchoice=explode(',',$pagesizechoices);
+        $tmpkey=$limit.':'.$limit;
+        if (! in_array($tmpkey, $tmpchoice)) $tmpchoice[]=$tmpkey;
+        $tmpkey=$conf->liste_limit.':'.$conf->liste_limit;
+        if (! in_array($tmpkey, $tmpchoice)) $tmpchoice[]=$tmpkey;
+        asort($tmpchoice, SORT_NUMERIC);
+        $found=false;
+        foreach($tmpchoice as $val)
+        {
+            $selected='';
+            $tmp=explode(':',$val);
+            $key=$tmp[0];
+            $val=$tmp[1];
+            if ($key != '' && $val != '')
+            {
+                if ((int) $key == (int) $limit)
+                {
+                    $selected = ' selected="selected"';
+                    $found = true;
+                }
+                print '<option name="'.$key.'"'.$selected.'>'.dol_escape_htmltag($val).'</option>'."\n";
+            }
+        }
+        print '</select>';
+        if ($conf->use_javascript_ajax)
+        {
+            print '<!-- JS CODE TO ENABLE select limit to launch submit of page -->
+            		<script type="text/javascript">
+                	jQuery(document).ready(function () {
+            	  		jQuery(".selectlimit").change(function() {
+                            console.log("Change limit. Send submit");
+                            $(this).parents(\'form:first\').submit();
+            	  		});
+                	});
+            		</script>
+                ';
+        }
+        print '</li>';	    
+	}
 	if ($page > 0)
 	{
 		if (empty($conf->dol_use_jmobile)) print '<li class="pagination"><a class="paginationprevious" href="'.$file.'?page='.($page-1).$options.'"><</a></li>';

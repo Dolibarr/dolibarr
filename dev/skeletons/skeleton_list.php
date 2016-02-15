@@ -237,7 +237,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	$nbtotalofrecords = $db->num_rows($result);
 }	
 
-$sql.= $db->plimit($conf->liste_limit+1, $offset);
+$sql.= $db->plimit($limit+1, $offset);
 
 
 dol_syslog($script_file, LOG_DEBUG);
@@ -257,9 +257,9 @@ if ($resql)
         $tmpkey=preg_replace('/search_options_/','',$key);
         if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
     } 
-    
-    print_barre_liste($title, $page, $_SERVER["PHP_SELF"],$params,$sortfield,$sortorder,'',$num,$nbtotalofrecords,'title_companies');
-    
+
+    print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $params, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_companies', 0, '', '', $limit);
+
 
 	print '<form method="GET" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -359,7 +359,7 @@ if ($resql)
         
     
     $i = 0;
-    while ($i < $num)
+    while ($i < min($num, $limit))
     {
         $obj = $db->fetch_object($resql);
         if ($obj)

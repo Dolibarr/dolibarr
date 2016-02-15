@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2016 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne           <eric.seigne@ryxeo.com>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2013 Regis Houssin         <regis.houssin@capnetworks.com>
@@ -66,6 +66,18 @@ $sall=GETPOST("sall");
 $mesg=(GETPOST("msg") ? GETPOST("msg") : GETPOST("mesg"));
 $year=GETPOST("year");
 $month=GETPOST("month");
+
+$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
+$page = GETPOST("page",'int');
+if ($page == -1) { $page = 0; }
+$offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+if (! $sortfield) $sortfield='p.ref';
+if (! $sortorder) $sortorder='DESC';
+
 
 // Nombre de ligne pour choix de produit/service predefinis
 $NBLINES=4;
@@ -144,19 +156,6 @@ $companystatic=new Societe($db);
 
 $now=dol_now();
 
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
-$offset = $conf->liste_limit * $page;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
-
-if (! $sortfield) $sortfield='p.datep';
-if (! $sortorder) $sortorder='DESC';
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
-
-
 $sql = 'SELECT';
 if ($sall || $search_product_category > 0) $sql = 'SELECT DISTINCT';
 $sql.= ' s.rowid, s.nom as name, s.town, s.client, s.code_client,';
@@ -227,8 +226,6 @@ if ($search_user > 0)
 {
     $sql.= " AND c.fk_c_type_contact = tc.rowid AND tc.element='propal' AND tc.source='internal' AND c.element_id = p.rowid AND c.fk_socpeople = ".$search_user;
 }
-
-
 $sql.= ' ORDER BY '.$sortfield.' '.$sortorder.', p.ref DESC';
 
 $nbtotalofrecords = 0;
@@ -255,6 +252,7 @@ if ($result)
 	}
 
 	$param='&socid='.$socid.'&viewstatut='.$viewstatut;
+    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 	if ($month)              $param.='&month='.$month;
 	if ($year)               $param.='&year='.$year;
     if ($search_ref)         $param.='&search_ref=' .$search_ref;
@@ -267,17 +265,17 @@ if ($result)
 	if ($search_town)		 $param.='&search_town='.$search_town;
 	if ($optioncss != '') $param.='&optioncss='.$optioncss;
 
-	print_barre_liste($langs->trans('ListOfProposals').' '.($socid?'- '.$soc->name:''), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords,'title_commercial.png');
-
 	// Lignes des champs de filtre
-	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
-    if ($sall)
+	print_barre_liste($langs->trans('ListOfProposals').' '.($socid?'- '.$soc->name:''), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords,'title_commercial.png', 0, '', '', $limit);
+	
+	if ($sall)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
         //sort($fieldstosearchall);
