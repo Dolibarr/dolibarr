@@ -533,13 +533,30 @@ else
 		$head[$h][1] = $langs->trans("CardBill");
 		$head[$h][2] = 'card';
 
-		dol_fiche_head($head, 'card', $langs->trans("PredefinedInvoices"),0,'bill');	// Add a div
+		dol_fiche_head($head, 'card', $langs->trans("RepeatableInvoice"),0,'bill');	// Add a div
 
 		print '<table class="border" width="100%">';
 
-		print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
-		print '<td colspan="4">'.$object->titre.'</td>';
-
+		$linkback = '<a href="' . DOL_URL_ROOT . '/compta/facture/fiche-rec.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+		
+		// Ref
+		print '<tr><td width="20%">' . $langs->trans('Ref') . '</td>';
+		print '<td colspan="5">';
+		$morehtmlref = '';
+		/*
+		require_once DOL_DOCUMENT_ROOT . '/core/class/discount.class.php';
+        $discount = new DiscountAbsolute($db);
+		$result = $discount->fetch(0, $object->id);
+		if ($result > 0) {
+		    $morehtmlref = ' (' . $langs->trans("CreditNoteConvertedIntoDiscount", $discount->getNomUrl(1, 'discount')) . ')';
+		}
+		if ($result < 0) {
+		    dol_print_error('', $discount->error);
+		}*/
+		print $form->showrefnav($object, 'ref', $linkback, 1, 'facnumber', 'ref', $morehtmlref);
+		print '</td></tr>';
+		
+		
 		print '<tr><td>'.$langs->trans("Customer").'</td>';
 		print '<td colspan="3">'.$object->thirdparty->getNomUrl(1,'customer').'</td></tr>';
 
@@ -651,26 +668,25 @@ else
 
 		print "</table>";
 
-		print '</div>';
+		print '<br>';
 
 		/*
 		 * Recurrence
 		 */
 		$title = $langs->trans("Recurrence");
-		print load_fiche_titre($title);
+		print load_fiche_titre($title, '', 'calendar');
 		
-		print '<div class="tabBar">';
 		print '<table class="border" width="100%">';
 
 		// if "frequency" is empty or = 0, the reccurence is disabled
-		print '<tr><td>';
+		print '<tr><td width="20%">';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('Frequency');
 		print '</td>';
 		if ($action != 'editfrequency' && ! empty($object->brouillon) && $user->rights->facture->creer)
 			print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editfrequency&amp;facid=' . $object->id . '">' . img_edit($langs->trans('Edit'), 1) . '</a></td>';
 		print '</tr></table>';
-		print '</td><td colspan="3">';
+		print '</td><td colspan="5">';
 		if ($action == 'editfrequency')
 		{
 			print '<form method="post" action="'.$_SERVER["PHP_SELF"] . '?facid=' . $object->id.'">';
@@ -685,7 +701,10 @@ else
 		}
 		else 
 		{
-			print $langs->trans('FrequencyPer_'.$object->unit_frequency, $object->frequency);
+		    if ($object->frequency > 0)
+		    {
+                print $langs->trans('FrequencyPer_'.$object->unit_frequency, $object->frequency);
+		    }
 		}
 		print '</td></tr>';
 		
@@ -702,11 +721,13 @@ else
 		print '<tr><td>';
 		print $form->editfieldkey($langs->trans("MaxPeriodNumber"), 'nb_gen_max', $object->nb_gen_max, $object, $user->rights->facture->creer);
 		print '</td><td colspan="5">';
-		print $form->editfieldval($langs->trans("MaxPeriodNumber"), 'nb_gen_max', $object->nb_gen_max, $object, $user->rights->facture->creer);
+		if ($object->nb_gen_max > 0) print $form->editfieldval($langs->trans("MaxPeriodNumber"), 'nb_gen_max', $object->nb_gen_max, $object, $user->rights->facture->creer);
 		print '</td>';
 		print '</tr>';
-		print '<tr><td width="25%">'.$langs->trans("RestPeriodNumber").'</td>';
-		print '<td>'.($object->nb_gen_max-$object->nb_gen_done).'</td>';
+		print '<tr><td>'.$langs->trans("RestPeriodNumber").'</td>';
+		print '<td>';
+		print ($object->nb_gen_max-$object->nb_gen_done);
+		print '</td>';
 		
 		// Auto validate
 		print '<tr><td>';
@@ -718,22 +739,14 @@ else
 		print '</tr>';
 		
 		print '</table>';
-		print '</div>';
-		print '<br />';
+		
+		print '<br>';
 
 		/*
 		 * Lines
 		 */
 
-		$title = $langs->trans("ProductsAndServices");
-		if (empty($conf->service->enabled))
-			$title = $langs->trans("Products");
-		else if (empty($conf->product->enabled))
-			$title = $langs->trans("Services");
-
-		print load_fiche_titre($title);
-
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder noshadow" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Description").'</td>';
 		print '<td align="right">'.$langs->trans("Price").'</td>';
@@ -818,7 +831,8 @@ else
 		}
 		print '</table>';
 
-
+		dol_fiche_end();
+		
 
 		/**
 		 * Barre d'actions
