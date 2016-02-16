@@ -918,7 +918,7 @@ else
 				print '<td colspan="3">';
 				$cate_arbo = $form->select_all_categories( Categorie::TYPE_CONTACT, null, null, null, null, 1 );
 				$c = new Categorie( $db );
-				$cats = $c->containing( $object->id, Categorie::TYPE_CONTACT );
+				$cats = $c->containing( $object->id, 'contact' );
 				foreach ($cats as $cat) {
 					$arrayselected[] = $cat->id;
 				}

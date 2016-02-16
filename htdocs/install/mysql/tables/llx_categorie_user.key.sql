@@ -1,6 +1,5 @@
 -- ============================================================================
--- Copyright (C) 2007 Patrick Raguin <patrick.raguin@gmail.com>	
--- Copyright (C) 2012 Juanjo Menent  <jmenent@2byte.es>
+-- Copyright (C) 2016	Charlie Benke	<charlie@patas-monkey.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -17,9 +16,10 @@
 --
 -- ============================================================================
 
-create table llx_categorie_societe
-(
-  fk_categorie  integer NOT NULL,
-  fk_soc    	integer NOT NULL,
-  import_key    varchar(14)
-)ENGINE=innodb;
+ALTER TABLE llx_categorie_user ADD PRIMARY KEY pk_categorie_user (fk_categorie, fk_user);
+ALTER TABLE llx_categorie_user ADD INDEX idx_categorie_user_fk_categorie (fk_categorie);
+ALTER TABLE llx_categorie_user ADD INDEX idx_categorie_user_fk_user (fk_user);
+
+ALTER TABLE llx_categorie_user ADD CONSTRAINT fk_categorie_user_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
+ALTER TABLE llx_categorie_user ADD CONSTRAINT fk_categorie_user_fk_user FOREIGN KEY (fk_user) REFERENCES llx_user (rowid);
+
