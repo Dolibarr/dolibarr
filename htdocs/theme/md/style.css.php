@@ -1236,7 +1236,12 @@ div.vmenu, td.vmenu {
 	width: 202px;
 }
 
-.menu_contenu { padding-top: 4px; padding-bottom: 3px;}
+.menu_contenu { 
+	padding-top: 4px; 
+	padding-bottom: 3px;
+	overflow: hidden;
+    text-overflow: ellipsis;
+}
 #menu_contenu_logo { padding-right: 4px; }
 .companylogo { padding-top: 4px; }
 .searchform { padding-top: 8px; }
@@ -1247,7 +1252,7 @@ a.vmenu:link, a.vmenu:visited { color: #<?php echo $colortextbackvmenu; ?>; }
 
 a.vsmenu:link, a.vsmenu:visited, a.vsmenu:hover, a.vsmenu:active, span.vsmenu { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #202020; margin: 1px 1px 1px 8px; }
 font.vsmenudisabled { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #aaa; }
-a.vsmenu:link, a.vsmenu:visited { color: #<?php echo $colortextbackvmenu; ?>; }
+a.vsmenu:link, a.vsmenu:visited { color: #<?php echo $colortextbackvmenu; ?>; white-space: nowrap; }
 font.vsmenudisabledmargin { margin: 1px 1px 1px 8px; }
 
 a.help:link, a.help:visited, a.help:hover, a.help:active { font-size:<?php print $fontsizesmaller ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #666666; text-decoration: none; }
