@@ -22,6 +22,23 @@
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
 
+
+CREATE TABLE llx_categorie_user 
+(
+  fk_categorie 	integer NOT NULL,
+  fk_user 		integer NOT NULL,
+  import_key 	varchar(14)
+) ENGINE=innodb;
+
+ALTER TABLE llx_categorie_user ADD PRIMARY KEY pk_categorie_user (fk_categorie, fk_user);
+ALTER TABLE llx_categorie_user ADD INDEX idx_categorie_user_fk_categorie (fk_categorie);
+ALTER TABLE llx_categorie_user ADD INDEX idx_categorie_user_fk_user (fk_user);
+
+ALTER TABLE llx_categorie_user ADD CONSTRAINT fk_categorie_user_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
+ALTER TABLE llx_categorie_user ADD CONSTRAINT fk_categorie_user_fk_user FOREIGN KEY (fk_user) REFERENCES llx_user (rowid);
+
+
+
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN validated tinyint DEFAULT 0 NOT NULL;
 ALTER TABLE llx_bank_account MODIFY COLUMN accountancy_journal varchar(16) DEFAULT NULL;
 
@@ -215,6 +232,7 @@ ALTER TABLE llx_propaldet ADD COLUMN multicurrency_total_tva double(24,8) DEFAUL
 ALTER TABLE llx_propaldet ADD COLUMN multicurrency_total_ttc double(24,8) DEFAULT 0;
 
  
+-- Add for recurring template invoices
 
 ALTER TABLE llx_facture_rec ADD COLUMN auto_validate integer DEFAULT 0;
 ALTER TABLE llx_facture_rec ADD COLUMN fk_account integer DEFAULT 0;
@@ -239,3 +257,4 @@ ALTER TABLE llx_contratdet ADD COLUMN multicurrency_subprice double(24,8) DEFAUL
 ALTER TABLE llx_contratdet ADD COLUMN multicurrency_total_ht double(24,8) DEFAULT 0;
 ALTER TABLE llx_contratdet ADD COLUMN multicurrency_total_tva double(24,8) DEFAULT 0;
 ALTER TABLE llx_contratdet ADD COLUMN multicurrency_total_ttc double(24,8) DEFAULT 0;
+
