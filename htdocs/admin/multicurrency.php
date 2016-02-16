@@ -18,7 +18,7 @@
 
 /**
  * 	\file		admin/multicurrency.php
- * 	\ingroup	quickpriceupdate
+ * 	\ingroup	multicurrency
  * 	\brief		This file is an example module setup page
  * 				Put some comments here
  */

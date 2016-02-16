@@ -267,3 +267,19 @@ ALTER TABLE llx_paiementfourn_facturefourn ADD COLUMN multicurrency_amount doubl
 ALTER TABLE llx_societe_remise_except ADD COLUMN multicurrency_amount_ht double(24,8) NOT NULL;
 ALTER TABLE llx_societe_remise_except ADD COLUMN multicurrency_amount_tva double(24,8) DEFAULT 0 NOT NULL;
 ALTER TABLE llx_societe_remise_except ADD COLUMN multicurrency_amount_ttc double(24,8) DEFAULT 0 NOT NULL;
+
+
+
+ALTER TABLE llx_supplier_proposal ADD COLUMN fk_multicurrency integer;
+ALTER TABLE llx_supplier_proposal ADD COLUMN multicurrency_code varchar(255);
+ALTER TABLE llx_supplier_proposal ADD COLUMN multicurrency_tx double(24,8) DEFAULT 1;
+ALTER TABLE llx_supplier_proposal ADD COLUMN multicurrency_total_ht double(24,8) DEFAULT 0;
+ALTER TABLE llx_supplier_proposal ADD COLUMN multicurrency_total_tva double(24,8) DEFAULT 0;
+ALTER TABLE llx_supplier_proposal ADD COLUMN multicurrency_total_ttc double(24,8) DEFAULT 0;
+
+ALTER TABLE llx_supplier_proposaldet ADD COLUMN fk_multicurrency integer;
+ALTER TABLE llx_supplier_proposaldet ADD COLUMN multicurrency_code varchar(255);
+ALTER TABLE llx_supplier_proposaldet ADD COLUMN multicurrency_subprice double(24,8) DEFAULT 0;
+ALTER TABLE llx_supplier_proposaldet ADD COLUMN multicurrency_total_ht double(24,8) DEFAULT 0;
+ALTER TABLE llx_supplier_proposaldet ADD COLUMN multicurrency_total_tva double(24,8) DEFAULT 0;
+ALTER TABLE llx_supplier_proposaldet ADD COLUMN multicurrency_total_ttc double(24,8) DEFAULT 0;
