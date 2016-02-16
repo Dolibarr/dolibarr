@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
- * Copyright (C) 2012	   Florian Henry		<florian.henry@open-concept.pro>
+/* Copyright (C) 2005       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2015  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2011       Herve Prot              <herve.prot@symeos.com>
+ * Copyright (C) 2012       Florian Henry           <florian.henry@open-concept.pro>
+ * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -142,7 +143,7 @@ if ($action == 'adduser' || $action =='removeuser')
         if ($userid)
         {
             $object->fetch($id);
-            $object->oldcopy=dol_clone($object);
+			$object->oldcopy = clone($object);
 
 			$edituser = new User($db);
 			$edituser->fetch($userid);
@@ -176,7 +177,7 @@ if ($action == 'update')
 
         $object->fetch($id);
 
-        $object->oldcopy=dol_clone($object);
+		$object->oldcopy = clone($object);
 
 		$object->name	= trim($_POST["group"]);
 		$object->nom	= $object->name;			// For backward compatibility

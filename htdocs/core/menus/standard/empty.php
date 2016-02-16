@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2006-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -99,7 +100,7 @@ class MenuManager
 
 			if ($mode == 'jmobile')
 			{
-				$this->topmenu=dol_clone($this->menu);
+				$this->topmenu = clone($this->menu);
 				unset($this->menu->liste);
 			}
 		}
@@ -205,7 +206,7 @@ class MenuManager
 
 			if ($mode == 'jmobile')
 			{
-				$this->leftmenu=dol_clone($this->menu);
+				$this->leftmenu = clone($this->menu);
 				unset($this->menu->liste);
 			}
 		}

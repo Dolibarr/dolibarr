@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2010-2012 Regis Houssin  <regis.houssin@capnetworks.com>
- * Copyright (C) 2012      Philippe Grand <philippe.grand@atoo-net.com>
+/* Copyright (C) 2010-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2012       Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -211,7 +212,7 @@ abstract class ActionsAdherentCardCommon
             {
                 $this->object->fetch($_POST["adherentid"]);
 
-                $this->object->oldcopy=dol_clone($this->object);
+				$this->object->oldcopy = clone($this->object);
 
                 $this->assign_post();
 

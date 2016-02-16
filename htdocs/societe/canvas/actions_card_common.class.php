@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@capnetworks.com>
- * Copyright (C) 2011-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2010-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2011-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -279,7 +280,7 @@ abstract class ActionsCardCommon
                         exit;
                     }
 
-                    $oldsoccanvas = dol_clone($this->object);
+					$oldsoccanvas = clone($this->object);
 
                     // To avoid setting code if third party is not concerned. But if it had values, we keep them.
                     if (empty($this->object->client) && empty($oldsoccanvas->code_client))             $this->object->code_client='';
