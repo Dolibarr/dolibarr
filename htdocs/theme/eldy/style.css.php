@@ -3655,21 +3655,30 @@ a span.select2-chosen
   overflow: hidden;
 }
 
+
+/* ============================================================================== */
+/*  For categories                                                                */
+/* ============================================================================== */
+
 .noborderoncategories {
 	border: none !important;
 	border-radius: 5px !important;
 	box-shadow: none;
 	-webkit-box-shadow: none !important;
     box-shadow: none !important;
-    color: #fff;
 }
 span.noborderoncategories a, li.noborderoncategories a {
-	color: #fff;
 	line-height: normal;
 	vertical-align: top;
 }
 span.noborderoncategories {
 	padding: 3px 5px 0px 5px;
+}
+.categtextwhite, .treeview .categtextwhite.hover {
+	color: #fff !important;
+}
+.categtextblack {
+	color: #000 !important;
 }
 
 

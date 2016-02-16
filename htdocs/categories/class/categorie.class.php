@@ -1349,6 +1349,7 @@ class Categorie extends CommonObject
 
 	/**
 	 *	Return name and link of category (with picto)
+	 *  Use ->id, ->ref, ->label, ->color
 	 *
 	 *	@param		int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 *	@param		string	$option			Sur quoi pointe le lien ('', 'xyz')
@@ -1363,13 +1364,18 @@ class Categorie extends CommonObject
 		$label=$langs->trans("ShowCategory").': '. ($this->ref?$this->ref:$this->label);
 
 		// Check contrast with background and correct text color
-		$color = colorArrayToHex(colorStringToArray($this->color,array()),'');
-		$forced_color='000';
-		$tmpcolorweight=0;
-		foreach(colorStringToArray($color,array()) as $x) $tmpcolorweight+=$x;
-		if ($tmpcolorweight < 400) $forced_color='FFF';
+		$forced_color='categtextwhite';
+		if ($this->color)
+		{
+    		$hex=$this->color;
+    		$r = hexdec($hex[0].$hex[1]);
+    		$g = hexdec($hex[2].$hex[3]);
+    		$b = hexdec($hex[4].$hex[5]);
+    		$bright = (max($r, $g, $b) + min($r, $g, $b)) / 510.0;    // HSL algorithm
+    		if ($bright > 0.6) $forced_color='categtextblack';        // Higher than 60%
+		}		
 
-        $link = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$this->id.'&type='.$this->type.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip"' . ( $forced_color ? ' style="color: #'.$forced_color.'"' : '' ) .'>';
+        $link = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$this->id.'&type='.$this->type.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip '.$forced_color .'">';
 		$linkend='</a>';
 
 		$picto='category';

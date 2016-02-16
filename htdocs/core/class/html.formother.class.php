@@ -595,13 +595,20 @@ class FormOther
      */
     static function showColor($color, $textifnotdefined='')
     {
+    	$textcolor='FFF';
+    	if ($color)
+    	{
+        	$hex=$color;
+        	$r = hexdec($hex[0].$hex[1]);
+        	$g = hexdec($hex[2].$hex[3]);
+        	$b = hexdec($hex[4].$hex[5]);
+        	$bright = (max($r, $g, $b) + min($r, $g, $b)) / 510.0;    // HSL algorithm
+            if ($bright > 0.6) $textcolor='000';     	   
+    	}
+    	
     	include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-
     	$color = colorArrayToHex(colorStringToArray($color,array()),'');
-    	$textcolor='000';
-    	$tmpcolorweight=0;
-    	foreach(colorStringToArray($color,array()) as $x) $tmpcolorweight+=$x;
-    	if ($tmpcolorweight < 400) $textcolor='FFF';
+    	
 		if ($color) print '<input type="text" class="colorthumb" disabled style="padding: 1px; margin-top: 0; margin-bottom: 0; color: #'.$textcolor.'; background-color: #'.$color.'" value="'.$color.'">';
 		else print $textifnotdefined;
     }
