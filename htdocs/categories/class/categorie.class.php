@@ -229,7 +229,7 @@ class Categorie extends CommonObject
 		$error=0;
 
 		dol_syslog(get_class($this).'::create', LOG_DEBUG);
-		
+
 		// Clean parameters
 		$this->label = trim($this->label);
 		$this->description = trim($this->description);
@@ -405,7 +405,7 @@ class Categorie extends CommonObject
             // End call triggers
 
 			$this->db->commit();
-			
+
 			return 1;
 		}
 		else
@@ -571,12 +571,12 @@ class Categorie extends CommonObject
 		if ($this->id == -1) return -2;
 
 		// For backward compatibility
-		if ($type == 'societe') 
+		if ($type == 'societe')
 		{
 			$type = 'customer';
 			dol_syslog(get_class($this) . "::add_type(): type 'societe' is deprecated, please use 'customer' instead",	LOG_WARNING);
 		}
-		elseif ($type == 'fournisseur') 
+		elseif ($type == 'fournisseur')
 		{
 			$type = 'supplier';
 			dol_syslog(get_class($this) . "::add_type(): type 'fournisseur' is deprecated, please use 'supplier' instead", LOG_WARNING);
@@ -1362,7 +1362,14 @@ class Categorie extends CommonObject
 		$result='';
 		$label=$langs->trans("ShowCategory").': '. ($this->ref?$this->ref:$this->label);
 
-        $link = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$this->id.'&type='.$this->type.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		// Check contrast with background and correct text color
+		$color = colorArrayToHex(colorStringToArray($this->color,array()),'');
+		$forced_color='000';
+		$tmpcolorweight=0;
+		foreach(colorStringToArray($color,array()) as $x) $tmpcolorweight+=$x;
+		if ($tmpcolorweight < 400) $forced_color='FFF';
+
+        $link = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$this->id.'&type='.$this->type.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip"' . ( $forced_color ? ' style="color: #'.$forced_color.'"' : '' ) .'>';
 		$linkend='</a>';
 
 		$picto='category';
