@@ -40,18 +40,19 @@ $langs->load("bills");
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'tax|salaries', '', '', 'charges|');
 
-$year=$_GET["year"];
-$filtre=$_GET["filtre"];
-if (! $year && $_GET["mode"] != 'sconly') { $year=date("Y", time()); }
+$mode=GETPOST("mode",'alpha');
+$year=GETPOST("year",'int');
+$filtre=GETPOST("filtre",'alpha');
+if (! $year && $mode != 'sconly') { $year=date("Y", time()); }
 
-$sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
-$sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
-$page = $_GET["page"];
-if ($page < 0) $page = 0;
-
-//$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
-//$offset = $limit * $page ;
-
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
+$page = GETPOST("page",'int');
+if ($page == -1) { $page = 0; }
+$offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
 if (! $sortfield) $sortfield="cs.date_ech";
 if (! $sortorder) $sortorder="DESC";
 
@@ -68,18 +69,36 @@ $sal_static = new PaymentSalary($db);
 llxHeader('',$langs->trans("SpecialExpensesArea"));
 
 $title=$langs->trans("SpecialExpensesArea");
-if ($_GET["mode"] == 'sconly') $title=$langs->trans("SocialContributionsPayments");
+if ($mode == 'sconly') $title=$langs->trans("SocialContributionsPayments");
 
 $param='';
-if (GETPOST("mode") == 'sconly') $param='&mode=sconly';
+if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+if ($mode == 'sconly') $param='&mode=sconly';
 if ($sortfield) $param.='&sortfield='.$sortfield;
 if ($sortorder) $param.='&sortorder='.$sortorder;
 
-print load_fiche_titre($title, ($year?"<a href='index.php?year=".($year-1).$param."'>".img_previous()."</a> ".$langs->trans("Year")." $year <a href='index.php?year=".($year+1).$param."'>".img_next()."</a>":""), 'title_accountancy.png');
+
+print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+print '<input type="hidden" name="mode" value="'.$mode.'">';
+
+if ($mode != 'sconly') 
+{
+    $center=($year?'<a href="index.php?year='.($year-1).$param.'">'.img_previous($langs->trans("Previous"), 'class="valignbottom"')."</a> ".$langs->trans("Year").' '.$year.' <a href="index.php?year='.($year+1).$param.'">'.img_next($langs->trans("Next"), 'class="valignbottom"')."</a>":"");
+    print_barre_liste($title,$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,$center,$num,$totalnboflines, 'title_accountancy', 0, '', '', $limit, 1);
+}
+else
+{
+    print_barre_liste($title,$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,$center,$num,$totalnboflines, 'title_accountancy', 0, '', '', $limit);
+}
 
 if ($year) $param.='&year='.$year;
 
-if (GETPOST("mode") != 'sconly')
+if ($mode != 'sconly')
 {
 	print $langs->trans("DescTaxAndDividendsArea").'<br>';
 	print "<br>";
@@ -89,7 +108,7 @@ if (GETPOST("mode") != 'sconly')
 if ($conf->tax->enabled)
 {
 	// Social contributions only
-	if (GETPOST("mode") != 'sconly')
+	if ($mode != 'sconly')
 	{
 		print load_fiche_titre($langs->trans("SocialContributionsPayments").($year?' ('.$langs->trans("Year").' '.$year.')':''), '', '');
 	}
@@ -140,7 +159,7 @@ if ($conf->tax->enabled)
 		$totalpaye = 0;
 		$var=true;
 
-		while ($i < $num)
+		while ($i < min($num, $limit))
 		{
 			$obj = $db->fetch_object($resql);
 			$var = !$var;
@@ -199,7 +218,7 @@ if ($conf->tax->enabled)
 // VAT
 if ($conf->tax->enabled)
 {
-	if (empty($_GET["mode"]) || $_GET["mode"] != 'sconly')
+	if (! $mode || $mode != 'sconly')
 	{
 		print "<br>";
 
@@ -300,7 +319,7 @@ else
 
 while($j<$numlt)
 {
-	if (empty($_GET["mode"]) || $_GET["mode"] != 'sconly')
+	if (! $mode || $mode != 'sconly')
 	{
 		print "<br>";
 
@@ -384,7 +403,7 @@ while($j<$numlt)
 // Payment Salary
 if ($conf->salaries->enabled)
 {
-    if (empty($_GET["mode"]) || $_GET["mode"] != 'sconly')
+    if (! $mode || $mode != 'sconly')
     {
         $sal = new PaymentSalary($db);
 
@@ -463,6 +482,7 @@ if ($conf->salaries->enabled)
     }
 }
 
+print '</form>';
 
 
 llxFooter();

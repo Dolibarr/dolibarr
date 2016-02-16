@@ -37,16 +37,16 @@ $socid = GETPOST('socid', 'int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'loan', '', '', '');
 
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
 if ($page == -1) { $page = 0; }
-$offset = $conf->liste_limit * $page;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortfield) $sortfield="l.rowid";
 if (! $sortorder) $sortorder="DESC";
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 
 $search_ref=GETPOST('search_ref','int');
 $search_label=GETPOST('search_label','alpha');
@@ -103,7 +103,8 @@ if ($resql)
 	$i = 0;
 	$var=true;
 
-    $param="";
+    $param='';
+    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
     if ($search_ref) $param.="&amp;search_ref=".$search_ref;
     if ($search_label) $param.="&amp;search_label=".$search_user;
     if ($search_amount) $param.="&amp;search_amount=".$search_amount_ht;
@@ -117,7 +118,7 @@ if ($resql)
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
     
-    print_barre_liste($langs->trans("Loans"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_generic.png', 0, '', '', $limit);
+    print_barre_liste($langs->trans("Loans"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy.png', 0, '', '', $limit);
 
     print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
