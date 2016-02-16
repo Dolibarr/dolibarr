@@ -3272,7 +3272,7 @@ class PropaleLigne  extends CommonObjectLine
 	    $sql.= ' '.(!$this->fk_unit ? 'NULL' : $this->fk_unit).',';
         $sql.= " ".(! empty($this->date_start)?"'".$this->db->idate($this->date_start)."'":"null").',';
         $sql.= " ".(! empty($this->date_end)?"'".$this->db->idate($this->date_end)."'":"null");
-		$sql.= ", ".$this->fk_multicurrency;
+		$sql.= ", ".($this->fk_multicurrency > 0?$this->fk_multicurrency:'null');
 		$sql.= ", '".$this->db->escape($this->multicurrency_code)."'";
 		$sql.= ", ".$this->multicurrency_subprice;
 		$sql.= ", ".$this->multicurrency_total_ht;
