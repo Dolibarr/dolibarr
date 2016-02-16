@@ -1540,17 +1540,12 @@ else
             {
                 // Duration
                 print '<tr><td class="titlefield">'.$langs->trans("Duration").'</td><td colspan="2">'.$object->duration_value.'&nbsp;';
-                if ($object->duration_value > 1)
+                $da=array("h"=>$langs->trans("Hour"),"d"=>$langs->trans("Day"),"w"=>$langs->trans("Week"),"m"=>$langs->trans("Month"),"y"=>$langs->trans("Year"));
+                if ($object->duration_value != '' && ! empty($object->duration_unit) && isset($da[$object->duration_unit]))
                 {
-                    $dur=array("h"=>$langs->trans("Hours"),"d"=>$langs->trans("Days"),"w"=>$langs->trans("Weeks"),"m"=>$langs->trans("Months"),"y"=>$langs->trans("Years"));
+                    print $langs->trans($da[$object->duration_unit].($object->duration_value > 1?'s':''));
                 }
-                else if ($object->duration_value > 0)
-                {
-                    $dur=array("h"=>$langs->trans("Hour"),"d"=>$langs->trans("Day"),"w"=>$langs->trans("Week"),"m"=>$langs->trans("Month"),"y"=>$langs->trans("Year"));
-                }
-                print (! empty($object->duration_unit) && isset($dur[$object->duration_unit]) ? $langs->trans($dur[$object->duration_unit]) : '')."&nbsp;";
-
-                print '</td></tr>';
+                print '&nbsp;</td></tr>';
             }
             else
             {
