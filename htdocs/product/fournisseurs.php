@@ -225,18 +225,26 @@ if (empty($reshook))
 				}
 				else
 				{
-					if ($price_expression !== '')
+					if (!empty($conf->dynamicprices->enabled) && $price_expression !== '')
 					{
 						//Check the expression validity by parsing it
-						$priceparser = new PriceParser($db);
-						$price_result = $priceparser->parseProductSupplier($id, $price_expression, $quantity, $tva_tx);
+                        $prod_supplier = new ProductFournisseur($this->db);
+	                    $prod_supplier->id = $prodid;
+                        $prod_supplier->fourn_qty	= $quantity;
+	                    $prod_supplier->fourn_tva_tx = $tva_tx;
+	                    $prod_supplier->fourn_id = $id_fourn;
+	                    $prod_supplier->fk_supplier_price_expression = $price_expression;
+                        $priceparser = new PriceParser($db);
+                        $price_result = $priceparser->parseProductSupplier($prod_supplier);
 						if ($price_result < 0) { //Expression is not valid
 							$error++;
 							setEventMessages($priceparser->translatedError(), null, 'errors');
 						}
 					}
-					if (! $error && ! empty($conf->dynamicprices->enabled)) {
-						$ret=$object->setPriceExpression($price_expression);
+					if (! $error && ! empty($conf->dynamicprices->enabled))
+					{
+						//Set the price expression for this supplier price
+						$ret=$object->setSupplierPriceExpression($price_expression);
 						if ($ret < 0)
 						{
 							$error++;
