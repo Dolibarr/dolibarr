@@ -1278,6 +1278,7 @@ class Product extends CommonObject
 	 */
 	function get_buyprice($prodfournprice,$qty,$product_id=0,$fourn_ref=0)
 	{
+		global $conf;
 		$result = 0;
 
 		// We do select by searching with qty and prodfournprice
@@ -1294,11 +1295,17 @@ class Product extends CommonObject
 			$obj = $this->db->fetch_object($resql);
 			if ($obj && $obj->quantity > 0)		// If found
 			{
-                if (!empty($obj->fk_supplier_price_expression))
+                if (!empty($conf->dynamicprices->enabled) && !empty($obj->fk_supplier_price_expression))
                 {
 					require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
-                	$priceparser = new PriceParser($this->db);
-                    $price_result = $priceparser->parseProductSupplier($obj->fk_product, $obj->fk_supplier_price_expression, $obj->quantity, $obj->tva_tx);
+                    $prod_supplier = new ProductFournisseur($this->db);
+                    $prod_supplier->product_fourn_price_id = $obj->rowid;
+                    $prod_supplier->id = $obj->fk_product;
+                    $prod_supplier->fourn_qty = $obj->quantity;
+                    $prod_supplier->fourn_tva_tx = $obj->tva_tx;
+                    $prod_supplier->fk_supplier_price_expression = $obj->fk_supplier_price_expression;
+                    $priceparser = new PriceParser($this->db);
+                    $price_result = $priceparser->parseProductSupplier($prod_supplier);
                     if ($price_result >= 0) {
                     	$obj->price = $price_result;
                     }
@@ -1329,11 +1336,17 @@ class Product extends CommonObject
 					$obj = $this->db->fetch_object($resql);
 					if ($obj && $obj->quantity > 0)		// If found
 					{
-		                if (!empty($obj->fk_supplier_price_expression))
+		                if (!empty($conf->dynamicprices->enabled) && !empty($obj->fk_supplier_price_expression))
 		                {
 							require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
-		                	$priceparser = new PriceParser($this->db);
-		                    $price_result = $priceparser->parseProductSupplier($obj->fk_product, $obj->fk_supplier_price_expression, $obj->quantity, $obj->tva_tx);
+		                    $prod_supplier = new ProductFournisseur($this->db);
+		                    $prod_supplier->product_fourn_price_id = $obj->rowid;
+		                    $prod_supplier->id = $obj->fk_product;
+		                    $prod_supplier->fourn_qty = $obj->quantity;
+		                    $prod_supplier->fourn_tva_tx = $obj->tva_tx;
+		                    $prod_supplier->fk_supplier_price_expression = $obj->fk_supplier_price_expression;
+		                    $priceparser = new PriceParser($this->db);
+		                    $price_result = $priceparser->parseProductSupplier($prod_supplier);
 		                    if ($result >= 0) {
 		                    	$obj->price = $price_result;
 		                    }
@@ -1785,7 +1798,7 @@ class Product extends CommonObject
 					}
 				}
 
-                if (!empty($this->fk_price_expression) && empty($ignore_expression))
+                if (!empty($conf->dynamicprices->enabled) && !empty($this->fk_price_expression) && empty($ignore_expression))
                 {
 					require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
                 	$priceparser = new PriceParser($this->db);
