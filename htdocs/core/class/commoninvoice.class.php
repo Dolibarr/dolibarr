@@ -91,9 +91,10 @@ abstract class CommonInvoice extends CommonObject
 	/**
 	 * 	Return amount of payments already done
 	 *
-	 *	@return		int		Amount of payment already done, <0 if KO
+	 *  @param 		int 	$multicurrency 	Return multicurrency_amount instead of amount
+	 *	@return		int						Amount of payment already done, <0 if KO
 	 */
-	function getSommePaiement()
+	function getSommePaiement($multicurrency=0)
 	{
 		$table='paiement_facture';
 		$field='fk_facture';
@@ -103,7 +104,7 @@ abstract class CommonInvoice extends CommonObject
 			$field='fk_facturefourn';
 		}
 
-		$sql = 'SELECT sum(amount) as amount';
+		$sql = 'SELECT sum(amount) as amount, sum(multicurrency_amount) as multicurrency_amount';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.$table;
 		$sql.= ' WHERE '.$field.' = '.$this->id;
 
@@ -113,7 +114,8 @@ abstract class CommonInvoice extends CommonObject
 		{
 			$obj = $this->db->fetch_object($resql);
 			$this->db->free($resql);
-			return $obj->amount;
+			if ($multicurrency) return $obj->multicurrency_amount;
+			else return $obj->amount;
 		}
 		else
 		{

@@ -2823,7 +2823,7 @@ class Facture extends CommonInvoice
 			$field2='fk_paiementfourn';
 		}
 
-		$sql = 'SELECT pf.amount, p.fk_paiement, p.datep, t.code';
+		$sql = 'SELECT pf.amount, pf.multicurrency_amount, p.fk_paiement, p.datep, t.code';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.$table.' as pf, '.MAIN_DB_PREFIX.$table2.' as p, '.MAIN_DB_PREFIX.'c_paiement as t';
 		$sql.= ' WHERE pf.'.$field.' = '.$this->id;
 		$sql.= ' AND pf.'.$field2.' = p.rowid';
@@ -2857,14 +2857,15 @@ class Facture extends CommonInvoice
 	/**
 	 *    	Return amount (with tax) of all credit notes and deposits invoices used by invoice
 	 *
-	 *		@return		int			<0 if KO, Sum of credit notes and deposits amount otherwise
+	 * 		@param 		int 	$multicurrency 	Return multicurrency_amount instead of amount
+	 *		@return		int						<0 if KO, Sum of credit notes and deposits amount otherwise
 	 */
-	function getSumCreditNotesUsed()
+	function getSumCreditNotesUsed($multicurrency=0)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 
 		$discountstatic=new DiscountAbsolute($this->db);
-		$result=$discountstatic->getSumCreditNotesUsed($this);
+		$result=$discountstatic->getSumCreditNotesUsed($this, $multicurrency);
 		if ($result >= 0)
 		{
 			return $result;
@@ -2879,14 +2880,15 @@ class Facture extends CommonInvoice
 	/**
 	 *    	Return amount (with tax) of all deposits invoices used by invoice
 	 *
-	 *		@return		int			<0 if KO, Sum of deposits amount otherwise
+	 * 		@param 		int 	$multicurrency 	Return multicurrency_amount instead of amount
+	 *		@return		int						<0 if KO, Sum of deposits amount otherwise
 	 */
-	function getSumDepositsUsed()
+	function getSumDepositsUsed($multicurrency=0)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 
 		$discountstatic=new DiscountAbsolute($this->db);
-		$result=$discountstatic->getSumDepositsUsed($this);
+		$result=$discountstatic->getSumDepositsUsed($this, $multicurrency);
 		if ($result >= 0)
 		{
 			return $result;

@@ -58,6 +58,7 @@ Payment=Payment
 PaymentBack=Payment back
 Payments=Payments
 PaymentsBack=Payments back
+paymentInInvoiceCurrency=in invoices currency
 PaidBack=Paid back
 DeletePayment=Delete payment
 ConfirmDeletePayment=Are you sure you want to delete this payment ?
