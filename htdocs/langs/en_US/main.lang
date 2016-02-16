@@ -700,6 +700,7 @@ LinkedToSpecificUsers=Linked to a particular user contact
 DeleteAFile=Delete a file
 ConfirmDeleteAFile=Are you sure you want to delete file
 NoResults=No results
+AdminTools=Admin tools
 SystemTools=System tools
 ModulesSystemTools=Modules tools
 Test=Test

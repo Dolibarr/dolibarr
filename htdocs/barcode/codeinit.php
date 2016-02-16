@@ -191,7 +191,7 @@ $form=new Form($db);
 
 llxHeader('',$langs->trans("MassBarcodeInit"));
 
-print load_fiche_titre($langs->trans("MassBarcodeInit"));
+print load_fiche_titre($langs->trans("MassBarcodeInit"), '', 'title_setup.png');
 print '<br>';
 
 print $langs->trans("MassBarcodeInitDesc").'<br>';

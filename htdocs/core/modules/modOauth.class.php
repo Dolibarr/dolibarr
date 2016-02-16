@@ -105,14 +105,14 @@ class modOauth extends DolibarrModules
         $r=0;
 
         // This is to declare the Top Menu entry:
-        //$this->menu[$r]=array(  'fk_menu'=>'fk_mainmenu=home,fk_leftmenu=modulesadmintools',               // Put 0 if this is a top menu
+        //$this->menu[$r]=array(  'fk_menu'=>'fk_mainmenu=home,fk_leftmenu=admintools',               // Put 0 if this is a top menu
         //                        'type'=>'left',                 // This is a Top menu entry
         //                        'titre'=>'MenuOauth',
         //                        'mainmenu'=>'oauth',
         //                        'url'=>'/oauth/index.php',
         //                        'langs'=>'oauth',            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
         //                        'position'=>300,
-        //                        'enabled'=>'$conf->oauth->enabled && $leftmenu==\'modulesadmintools\'',
+        //                        'enabled'=>'$conf->oauth->enabled && $leftmenu==\'admintools\'',
         //                        'perms'=>'$user->rights->oauth->read',    // Use 'perms'=>'1' if you want your menu with no permission rules
         //                        'target'=>'',
         //                        'user'=>0);                     // 0=Menu for internal users, 1=external users, 2=both

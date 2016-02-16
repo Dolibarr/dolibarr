@@ -38,7 +38,7 @@ if (! $user->admin)
 $form = new Form($db);
 
 $title=$langs->trans("SystemToolsArea");
-if (GETPOST('leftmenu') == 'modulesadmintools') $title=$langs->trans("ModulesSystemTools");
+if (GETPOST('leftmenu') == 'admintools') $title=$langs->trans("ModulesSystemTools");
 
 llxHeader(array(),$title);
 
