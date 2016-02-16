@@ -1353,15 +1353,21 @@ class Categorie extends CommonObject
 	 *	@param		int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 *	@param		string	$option			Sur quoi pointe le lien ('', 'xyz')
 	 * 	@param		int		$maxlength		Max length of text
-	 *  @param		string	$forced_color	Hexadecimal code to force link color
 	 *	@return		string					Chaine avec URL
 	 */
-	function getNomUrl($withpicto=0,$option='',$maxlength=0, $forced_color='')
+	function getNomUrl($withpicto=0,$option='',$maxlength=0)
 	{
 		global $langs;
 
 		$result='';
 		$label=$langs->trans("ShowCategory").': '. ($this->ref?$this->ref:$this->label);
+
+		// Check contrast with background and correct text color
+		$color = colorArrayToHex(colorStringToArray($this->color,array()),'');
+		$forced_color='000';
+		$tmpcolorweight=0;
+		foreach(colorStringToArray($color,array()) as $x) $tmpcolorweight+=$x;
+		if ($tmpcolorweight < 400) $forced_color='FFF';
 
         $link = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$this->id.'&type='.$this->type.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip"' . ( $forced_color ? ' style="color: #'.$forced_color.'"' : '' ) .'>';
 		$linkend='</a>';
