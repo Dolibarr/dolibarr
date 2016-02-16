@@ -29,11 +29,11 @@
  *  \ingroup    commande
  *  \brief      Fichier des classes de commandes
  */
-include_once DOL_DOCUMENT_ROOT.'/core/class/commonorder.class.php';
-require_once DOL_DOCUMENT_ROOT ."/core/class/commonobjectline.class.php";
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+include_once DOL_DOCUMENT_ROOT .'/core/class/commonorder.class.php';
+require_once DOL_DOCUMENT_ROOT .'/core/class/commonobjectline.class.php';
+require_once DOL_DOCUMENT_ROOT .'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT .'/margin/lib/margins.lib.php';
-dol_include_once('/multicurrency/class/multicurrency.class.php');
+require_once DOL_DOCUMENT_ROOT .'/multicurrency/class/multicurrency.class.php';
 
 /**
  *  Class to manage customers orders
