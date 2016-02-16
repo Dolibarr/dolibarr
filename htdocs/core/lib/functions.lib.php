@@ -3022,7 +3022,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 	print '<table width="100%" border="0" class="notopnoleftnoright'.($morecss?' '.$morecss:'').'" style="margin-bottom: 6px;"><tr>';
 
 	// Left
-	if ($picto && $titre) print '<td class="nobordernopadding hideonsmartphone" width="40" align="left" valign="middle">'.img_picto('', $picto, '', $pictoisfullpath).'</td>';
+	if ($picto && $titre) print '<td class="nobordernopadding hideonsmartphone" width="40" align="left" valign="middle">'.img_picto('', $picto, 'id="pictotitle"', $pictoisfullpath).'</td>';
 	print '<td class="nobordernopadding"><div class="titre">'.$titre;
 	if (!empty($titre) && $savtotalnboflines > 0) print ' ('.$totalnboflines.')';
 	print '</div></td>';
