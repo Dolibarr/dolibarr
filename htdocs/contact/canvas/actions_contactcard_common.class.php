@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2010-2012 Regis Houssin  <regis.houssin@capnetworks.com>
+/* Copyright (C) 2010-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -207,7 +208,7 @@ abstract class ActionsContactCardCommon
             {
                 $this->object->fetch($_POST["contactid"]);
 
-                $this->object->oldcopy=dol_clone($this->object);
+				$this->object->oldcopy = clone($this->object);
 
                 $this->assign_post();
 

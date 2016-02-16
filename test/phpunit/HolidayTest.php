@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2012       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -183,7 +184,7 @@ class HolidayTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject->oldcopy=dol_clone($localobject);
+		$localobject->oldcopy = clone($localobject);
 
 		$localobject->note_private='New private note after update';
 		$localobject->note_public='New public note after update';

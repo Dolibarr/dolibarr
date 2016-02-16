@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2011      Jean Heimburger      <jean@tiaris.info>
- * Copyright (C) 2014	   Cedric GROSS	        <c.gross@kreiz-it.fr>
+/* Copyright (C) 2003-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2011       Jean Heimburger         <jean@tiaris.info>
+ * Copyright (C) 2014       Cedric GROSS            <c.gross@kreiz-it.fr>
+ * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -433,7 +434,7 @@ class MouvementStock extends CommonObject
 		// Create movement for each subproduct
 		foreach($pids as $key => $value)
 		{
-			$tmpmove = dol_clone($this);
+			$tmpmove = clone($this);
 			$tmpmove->_create($user, $pids[$key], $entrepot_id, ($qty * $pqtys[$key]), $type, 0, $label, $inventorycode);		// This will also call _createSubProduct making this recursive
 			unset($tmpmove);
 		}

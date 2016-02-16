@@ -1,11 +1,12 @@
 <?php
-/* Copyright (C) 2008-2013	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2010-2014	Regis Houssin		<regis.houssin@capnetworks.com>
- * Copyright (C) 2010		Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2013		Charles-Fr BENKE	<charles.fr@benke.fr>
- * Copyright (C) 2013		Cédric Salvador		<csalvador@gpcsolutions.fr>
- * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
- * Copyright (C) 2015		Bahfir Abbes		<bafbes@gmail.com>
+/* Copyright (C) 2008-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2010-2014  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2010       Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2013       Charles-Fr BENKE        <charles.fr@benke.fr>
+ * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2015       Bahfir Abbes            <bafbes@gmail.com>
+ * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1088,7 +1089,11 @@ class FormFile
                         }
                     }
 
-                    if ($result > 0)  { $found=1; $this->cache_objects[$modulepart.'_'.$id.'_'.$ref]=dol_clone($object_instance); }    // Save object into a cache
+					if ($result > 0) {
+						// Save object into a cache
+						$found = 1;
+						$this->cache_objects[$modulepart . '_' . $id . '_' . $ref] = clone($object_instance);
+					}
                     if ($result == 0) { $found=1; $this->cache_objects[$modulepart.'_'.$id.'_'.$ref]='notfound'; unset($filearray[$key]); }
                 }
 
