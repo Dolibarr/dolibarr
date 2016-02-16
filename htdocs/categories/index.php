@@ -148,7 +148,13 @@ foreach($fulltree as $key => $val)
 	$categstatic->ref=$val['label'];
 	$categstatic->color=$val['color'];
 	$categstatic->type=$type;
-	$li=$categstatic->getNomUrl(1,'',60);
+	// Check contrast with background and correct text color
+	$color = colorArrayToHex(colorStringToArray($categstatic->color,array()),'');
+	$textcolor='000';
+	$tmpcolorweight=0;
+	foreach(colorStringToArray($color,array()) as $x) $tmpcolorweight+=$x;
+	if ($tmpcolorweight < 400) $textcolor='FFF';
+	$li=$categstatic->getNomUrl(1,'',60, $textcolor);
 	$desc=dol_htmlcleanlastbr($val['description']);
 
 	$data[] = array(

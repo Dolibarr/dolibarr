@@ -229,7 +229,7 @@ class Categorie extends CommonObject
 		$error=0;
 
 		dol_syslog(get_class($this).'::create', LOG_DEBUG);
-		
+
 		// Clean parameters
 		$this->label = trim($this->label);
 		$this->description = trim($this->description);
@@ -405,7 +405,7 @@ class Categorie extends CommonObject
             // End call triggers
 
 			$this->db->commit();
-			
+
 			return 1;
 		}
 		else
@@ -571,12 +571,12 @@ class Categorie extends CommonObject
 		if ($this->id == -1) return -2;
 
 		// For backward compatibility
-		if ($type == 'societe') 
+		if ($type == 'societe')
 		{
 			$type = 'customer';
 			dol_syslog(get_class($this) . "::add_type(): type 'societe' is deprecated, please use 'customer' instead",	LOG_WARNING);
 		}
-		elseif ($type == 'fournisseur') 
+		elseif ($type == 'fournisseur')
 		{
 			$type = 'supplier';
 			dol_syslog(get_class($this) . "::add_type(): type 'fournisseur' is deprecated, please use 'supplier' instead", LOG_WARNING);
@@ -1353,16 +1353,17 @@ class Categorie extends CommonObject
 	 *	@param		int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 *	@param		string	$option			Sur quoi pointe le lien ('', 'xyz')
 	 * 	@param		int		$maxlength		Max length of text
+	 *  @param		string	$forced_color	Hexadecimal code to force link color
 	 *	@return		string					Chaine avec URL
 	 */
-	function getNomUrl($withpicto=0,$option='',$maxlength=0)
+	function getNomUrl($withpicto=0,$option='',$maxlength=0, $forced_color='')
 	{
 		global $langs;
 
 		$result='';
 		$label=$langs->trans("ShowCategory").': '. ($this->ref?$this->ref:$this->label);
 
-        $link = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$this->id.'&type='.$this->type.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+        $link = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$this->id.'&type='.$this->type.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip"' . ( $forced_color ? ' style="color: #'.$forced_color.'"' : '' ) .'>';
 		$linkend='</a>';
 
 		$picto='category';
