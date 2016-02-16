@@ -110,6 +110,14 @@ if (empty($reshook))
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';	// Must be include, not include_once
 
+	// Link invoice to order
+	if (GETPOST('linkedOrder') && empty($cancel) && $id > 0)
+	{
+	    $object->fetch($id);
+	    $object->fetch_thirdparty();
+	    $result = $object->add_object_linked('order_supplier', GETPOST('linkedOrder'));
+	}
+	
 	// Action clone object
 	if ($action == 'confirm_clone' && $confirm == 'yes')
 	{
@@ -892,13 +900,6 @@ if (empty($reshook))
 		        setEventMessages($object->error, $object->errors, 'errors');
 	        }
 	    }
-	}
-
-	// Link invoice to order
-	if (GETPOST('linkedOrder')) {
-		$object->fetch($id);
-		$object->fetch_thirdparty();
-		$result = $object->add_object_linked('order_supplier', GETPOST('linkedOrder'));
 	}
 
 	// Add file in email form
