@@ -52,7 +52,7 @@ class modAskPriceSupplier extends DolibarrModules
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "askpricesupplierDESC";
 
-		$this->version = 'experimental';
+		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 0;
@@ -221,4 +221,5 @@ class modAskPriceSupplier extends DolibarrModules
 
 		return $this->_init($sql, $options);
 	}
+
 }
