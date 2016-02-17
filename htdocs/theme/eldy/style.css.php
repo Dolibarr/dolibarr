@@ -263,7 +263,7 @@ input, input.flat, textarea, textarea.flat, form.flat select, select, select.fla
     font-size: <?php print $fontsize ?>px;
     font-family: <?php print $fontlist ?>;
     background: #FFF;
-    /* color: #111; */
+    color: #111;
     border: 1px solid #C0C0C0;
     margin: 0px 0px 0px 0px;
 }
