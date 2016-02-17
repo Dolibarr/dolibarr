@@ -753,6 +753,7 @@ class Categorie extends CommonObject
 		$sql .= " WHERE o.entity IN (" . getEntity( $obj->element, 1).")";
 		$sql.= " AND c.fk_categorie = ".$this->id;
 		$sql .= " AND c.fk_" . $this->MAP_CAT_FK[$type] . " = o.rowid";
+		$sql.= " ORDER by o.nom ASC";
 
 		dol_syslog(get_class($this)."::getObjectsInCateg", LOG_DEBUG);
 		$resql = $this->db->query($sql);
