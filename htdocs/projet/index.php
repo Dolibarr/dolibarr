@@ -59,8 +59,8 @@ $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,($mine?$min
 
 llxHeader("",$langs->trans("Projects"),"EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos");
 
-$text=$langs->trans("Projects");
-if ($mine) $text=$langs->trans("MyProjects");
+$text=$langs->trans("ProjectsArea");
+if ($mine) $text=$langs->trans("MyProjectsArea");
 
 print load_fiche_titre($text,'','title_project.png');
 
