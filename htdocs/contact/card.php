@@ -343,7 +343,7 @@ if (empty($reshook))
                 }
             }
 
-			$object->oldcopy = clone$object;
+			$object->oldcopy = clone $object;
 
             $object->old_lastname	= GETPOST("old_lastname");
             $object->old_firstname	= GETPOST("old_firstname");
