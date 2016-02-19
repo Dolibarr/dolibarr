@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2007		Franky Van Liedekerke	<franky.van.liedekerke@telenet.be>
  * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2010-2014	Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2010-2016	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2012-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
@@ -53,7 +53,7 @@ class CommandeFournisseur extends CommonOrder
     var $id;
 
 	/**
-	 * Supplier invoice reference
+	 * Supplier order reference
 	 * @var string
 	 */
     var $ref;
@@ -103,7 +103,7 @@ class CommandeFournisseur extends CommonOrder
     var $user_approve_id;
     var $user_approve_id2;	// Used when SUPPLIER_ORDER_DOUBLE_APPROVAL is set
 
-	//Incorterms
+	//Incoterms
 	var $fk_incoterms;
 	var $location_incoterms;
 	var $libelle_incoterms;  //Used into tooltip
@@ -114,7 +114,7 @@ class CommandeFournisseur extends CommonOrder
 	 * @var CommandeFournisseurLigne[]
 	 */
 	public $lines = array();
-	//Ajout pour supplier_proposal
+	//Add for supplier_proposal
 	var $origin;
     var $origin_id;
     var $linked_objects=array();
@@ -260,7 +260,7 @@ class CommandeFournisseur extends CommonOrder
 
             $this->db->free($resql);
 
-            // Retreive all extrafield
+            // Retrieve all extrafields
             // fetch optionals attributes and labels
             require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
             $extrafields=new ExtraFields($this->db);
@@ -416,7 +416,7 @@ class CommandeFournisseur extends CommonOrder
         {
             $this->db->begin();
 
-            // Definition du nom de modele de numerotation de commande
+            // Definition of supplier order numbering model name
             $soc = new Societe($this->db);
             $soc->fetch($this->fourn_id);
 
@@ -461,7 +461,7 @@ class CommandeFournisseur extends CommonOrder
                 // Rename directory if dir was a temporary ref
                 if (preg_match('/^[\(]?PROV/i', $this->ref))
                 {
-                    // On renomme repertoire ($this->ref = ancienne ref, $num = nouvelle ref)
+                    // We rename directory ($this->ref = ancienne ref, $num = nouvelle ref)
                     // in order not to lose the attached files
                     $oldref = dol_sanitizeFileName($this->ref);
                     $newref = dol_sanitizeFileName($num);
@@ -644,8 +644,8 @@ class CommandeFournisseur extends CommonOrder
 
 
     /**
-     *  Renvoie la reference de commande suivante non utilisee en fonction du modele
-     *                  de numerotation actif defini dans COMMANDE_SUPPLIER_ADDON_NUMBER
+     *  Returns the following order reference not used depending on the numbering model activated
+     *                  defined within COMMANDE_SUPPLIER_ADDON_NUMBER
      *
      *  @param	    Societe		$soc  		objet societe
      *  @return     string                  reference libre pour la facture

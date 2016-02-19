@@ -372,6 +372,8 @@ $head[1][1] = $langs->trans("ReplenishmentOrders");
 $head[1][2] = 'replenishorders';
 
 
+print load_fiche_titre($langs->trans('Replenishment'), '', 'title_generic.png');
+
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formulaire">'.
 	'<input type="hidden" name="token" value="' .$_SESSION['newtoken'] . '">'.
@@ -382,7 +384,7 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formulaire">'
 	'<input type="hidden" name="action" value="order">'.
 	'<input type="hidden" name="mode" value="' . $mode . '">';
 
-dol_fiche_head($head, 'replenish', $langs->trans('Replenishment'), 0, 'stock');
+dol_fiche_head($head, 'replenish', '', 0, '');
 
 print $langs->trans("ReplenishmentStatusDesc").'<br>'."\n";
 if ($usevirtualstock == 1)

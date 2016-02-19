@@ -672,7 +672,7 @@ div.arearef {
 	margin-bottom: 10px;
 }
 div.heightref {
-	min-height: 80px; 
+	min-height: 80px;
 }
 div.divphotoref {
 	padding-right: 20px;
@@ -1196,8 +1196,8 @@ div.vmenu, td.vmenu {
 	width: 188px;
 }
 
-.menu_contenu { 
-	padding-top: 5px; 
+.menu_contenu {
+	padding-top: 5px;
 	padding-bottom: 2px;
 	overflow: hidden;
     text-overflow: ellipsis;
@@ -1268,7 +1268,7 @@ div.blockvmenupair, div.blockvmenuimpair, div.blockvmenubookmarks, div.blockvmen
     -moz-box-shadow: 3px 3px 4px #DDD;
     -webkit-box-shadow: 3px 3px 4px #DDD;
     box-shadow: 3px 3px 4px #DDD;
-  */  
+  */
 }
 
 div.blockvmenusearch
@@ -2099,7 +2099,7 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	border-bottom-width: 1px;
 	border-bottom-color: #BBB;
 	border-bottom-style: solid;
-	
+
 	margin: 0px 0px 5px 0px;
 
 	-moz-box-shadow: 2px 2px 4px #CCC;
@@ -3687,21 +3687,30 @@ a span.select2-chosen
   overflow: hidden;
 }
 
+
+/* ============================================================================== */
+/*  For categories                                                                */
+/* ============================================================================== */
+
 .noborderoncategories {
 	border: none !important;
 	border-radius: 5px !important;
 	box-shadow: none;
 	-webkit-box-shadow: none !important;
     box-shadow: none !important;
-    color: #fff !important;
 }
 span.noborderoncategories a, li.noborderoncategories a {
-	color: #fff !important;
 	line-height: normal;
 	vertical-align: top;
 }
 span.noborderoncategories {
 	padding: 3px 5px 0px 5px;
+}
+.categtextwhite, .treeview .categtextwhite.hover {
+	color: #fff !important;
+}
+.categtextblack {
+	color: #000 !important;
 }
 
 
@@ -3804,10 +3813,10 @@ a.ui-link, a.ui-link:hover, .ui-btn:hover, span.ui-btn-text:hover, span.ui-btn-i
 }
 select {
     /* display: inline-block; */	/* We can't set this. This disable ability to make */
-    /* TODO added by jmobile, replace jmobile with pure css*/ 
+    /* TODO added by jmobile, replace jmobile with pure css*/
     overflow:hidden;
     white-space: nowrap;
-    text-overflow: ellipsis; 
+    text-overflow: ellipsis;
 }
 .fiche .ui-controlgroup {
 	margin: 0px;
@@ -3985,11 +3994,11 @@ border-top-right-radius: 6px;
 @media only screen and (max-width: 767px)
 {
 	.imgopensurveywizard { width:95%; height: auto; }
-	
+
 	#tooltip {
 		position: absolute;
 		width: <?php print dol_size(350,'width'); ?>px;
-	}	
+	}
 
 }
 
@@ -4029,14 +4038,14 @@ border-top-right-radius: 6px;
 		top: 4px;
 		max-width: 82px;
 	}
-	
+
 	div.mainmenu {
     	min-width: 20px;
     }
 	.topmenuimage {
     	background-size: 20px auto;
     }
-    
+
 	#tooltip {
 		position: absolute;
 		width: <?php print dol_size(300,'width'); ?>px;

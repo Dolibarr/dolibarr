@@ -5206,17 +5206,18 @@ class Form
 					print '<tr ' . $bc [$var] . '>';
 					print '<td aling="left">';
 					print '<input type="radio" name="linkedOrder" value=' . $objp->rowid . '>';
+					print '</td>';
 					print '<td align="center">' . $objp->ref . '</td>';
 					print '<td>' . $objp->ref_client . '</td>';
 					print '<td>' . price($objp->total_ht) . '</td>';
 					print '<td>' . $objp->name . '</td>';
-					print '</td>';
 					print '</tr>';
 
 					$i ++;
 				}
 				print '</table>';
 				print '<div class="center"><input type="submit" class="button" value="' . $langs->trans('ToLink') . '">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" class="button" name="cancel" value="' . $langs->trans('Cancel') . '"></div>';
+				
 				print '</form>';
 				$this->db->free($resqlorderlist);
 			} else {
@@ -5333,11 +5334,11 @@ class Form
 					print '<tr ' . $bc [$var] . '>';
 					print '<td aling="left">';
 					print '<input type="radio" name="linkedOrder" value=' . $objp->rowid . '>';
+					print '</td>';
 					print '<td align="center">' . $objp->ref . '</td>';
 					print '<td>' . $objp->ref_supplier . '</td>';
 					print '<td>' . price($objp->total_ht) . '</td>';
 					print '<td>' . $objp->name . '</td>';
-					print '</td>';
 					print '</tr>';
 
 					$i ++;

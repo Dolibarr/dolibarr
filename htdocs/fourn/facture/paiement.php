@@ -527,7 +527,7 @@ if (empty($action))
         $paramlist.=($search_payment_num?"&search_payment_num=".urlencode($search_payment_num):"");
         if ($optioncss != '') $paramlist.='&optioncss='.urlencode($optioncss);
 
-        print_barre_liste($langs->trans('SupplierPayments'), $page, $_SERVER["PHP_SELF"],$paramlist,$sortfield,$sortorder,'',$num);
+        print_barre_liste($langs->trans('SupplierPayments'), $page, $_SERVER["PHP_SELF"],$paramlist,$sortfield,$sortorder,'',$num, 0, 'title_accountancy.png');
 
         print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
         if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';

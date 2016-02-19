@@ -976,10 +976,10 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				}
 
 				// General Ledger
-				if (preg_match('/accountancy/',$leftmenu)) $newmenu->add("/accountancy/bookkeeping/list.php?leftmenu=accountancy_bookkeeping",$langs->trans("Bookkeeping"),1,$user->rights->accounting->mouvements->lire, '', $mainmenu, 'bookkeeping');
-				if (preg_match('/accountancy_bookkeeping/',$leftmenu)) $newmenu->add("/accountancy/bookkeeping/balance.php?leftmenu=accountancy_bookkeeping",$langs->trans("AccountBalance"),2,$user->rights->accounting->mouvements->lire);
-				if (preg_match('/accountancy_bookkeeping/',$leftmenu)) $newmenu->add("/accountancy/bookkeeping/listbyyear.php?leftmenu=accountancy_bookkeeping",$langs->trans("ByYear"),2,$user->rights->accounting->mouvements->lire);
-				if (preg_match('/accountancy_bookkeeping/',$leftmenu)) $newmenu->add("/accountancy/bookkeeping/balancebymonth.php?leftmenu=accountancy_bookkeeping",$langs->trans("AccountBalanceByMonth"),2,$user->rights->accounting->mouvements->lire);
+				$newmenu->add("/accountancy/bookkeeping/list.php",$langs->trans("Bookkeeping"),1,$user->rights->accounting->mouvements->lire);
+
+				// Balance
+				$newmenu->add("/accountancy/bookkeeping/balance.php",$langs->trans("AccountBalance"),1,$user->rights->accounting->mouvements->lire);
 
 				// Reports
 				$langs->load("compta");
@@ -1140,8 +1140,9 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				$newmenu->add("/product/stock/card.php?action=create", $langs->trans("MenuNewWarehouse"), 1, $user->rights->stock->creer);
 				$newmenu->add("/product/stock/list.php", $langs->trans("List"), 1, $user->rights->stock->lire);
 				$newmenu->add("/product/stock/mouvement.php", $langs->trans("Movements"), 1, $user->rights->stock->mouvement->lire);
+
                 if ($conf->supplier_order->enabled) $newmenu->add("/product/stock/replenish.php", $langs->trans("Replenishment"), 1, $user->rights->stock->mouvement->creer && $user->rights->fournisseur->lire);
-                $newmenu->add("/product/stock/massstockmove.php", $langs->trans("StockTransfer"), 1, $user->rights->stock->mouvement->creer);
+                $newmenu->add("/product/stock/massstockmove.php", $langs->trans("MassStockTransferShort"), 1, $user->rights->stock->mouvement->creer);
 			}
 
 			// Expeditions

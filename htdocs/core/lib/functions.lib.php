@@ -3398,7 +3398,7 @@ function price2num($amount,$rounding='',$alreadysqlnb=0)
  *	Return localtax rate for a particular vat, when selling a product with vat $vatrate, from a $thirdparty_buyer to a $thirdparty_seller
  *  Note: This function applies same rules than get_default_tva
  *
- * 	@param	float		$vatrate		        Vat rate
+ * 	@param	float		$vatrate		        Vat rate. Can be '8.5' or '8.5 (8.5NPR)' for example
  * 	@param  int			$local		         	Local tax to search and return (1 or 2 return only tax rate 1 or tax rate 2)
  *  @param  Societe		$thirdparty_buyer    	Object of buying third party
  *  @param	Societe		$thirdparty_seller		Object of selling third party
@@ -3589,7 +3589,7 @@ function get_localtax_by_third($local)
  *  Instead this function must be called when adding a line to get the array of localtax and type, and then
  *  provide it to the function calcul_price_total.
  *
- *  @param	float	$vatrate			VAT Rate
+ *  @param	float	$vatrate			VAT Rate. Value can be '8.5' or '8.5 (8.5NPR)'.
  *  @param	int		$local              Number of localtax (1 or 2, or 0 to return 1 & 2)
  *  @param	Societe	$buyer         		Company object
  *  @param	Societe	$seller        		Company object
@@ -3740,7 +3740,7 @@ function get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournpr
 			}
 			else dol_print_error($db);
 		}
-		else $ret=$conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS;
+		else $ret=$conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS;    // Forced value if autodetect fails
 	}
 
 	dol_syslog("get_product_vat_for_country: ret=".$ret);

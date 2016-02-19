@@ -101,7 +101,7 @@ function product_prepare_head($object)
 	$head[$h][2] = 'stats';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/product/stats/facture.php?id=".$object->id;
+	$head[$h][0] = DOL_URL_ROOT."/product/stats/facture.php?showmessage=1&id=".$object->id;
 	$head[$h][1] = $langs->trans('Referers');
 	$head[$h][2] = 'referers';
 	$h++;
@@ -203,22 +203,25 @@ function product_admin_prepare_head()
  *
  * @param	Product		$product	Product object
  * @param 	int			$socid		Thirdparty id
- * @return	integer
+ * @return	integer					NB of lines shown into array
  */
 function show_stats_for_company($product,$socid)
 {
 	global $conf,$langs,$user,$db;
 
+	$nblines = 0;
+	
 	print '<tr>';
 	print '<td align="left" width="25%" valign="top">'.$langs->trans("Referers").'</td>';
 	print '<td align="right" width="25%">'.$langs->trans("NbOfThirdParties").'</td>';
-	print '<td align="right" width="25%">'.$langs->trans("NbOfReferers").'</td>';
+	print '<td align="right" width="25%">'.$langs->trans("NbOfObjectReferers").'</td>';
 	print '<td align="right" width="25%">'.$langs->trans("TotalQuantity").'</td>';
 	print '</tr>';
 
 	// Propals
 	if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 	{
+		$nblines++;
 		$ret=$product->load_stats_propale($socid);
 		if ($ret < 0) dol_print_error($db);
 		$langs->load("propal");
@@ -236,6 +239,7 @@ function show_stats_for_company($product,$socid)
 	// Commandes clients
 	if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 	{
+		$nblines++;
 		$ret=$product->load_stats_commande($socid);
 		if ($ret < 0) dol_print_error($db);
 		$langs->load("orders");
@@ -253,6 +257,7 @@ function show_stats_for_company($product,$socid)
 	// Commandes fournisseurs
 	if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande->lire)
 	{
+		$nblines++;
 		$ret=$product->load_stats_commande_fournisseur($socid);
 		if ($ret < 0) dol_print_error($db);
 		$langs->load("orders");
@@ -270,6 +275,7 @@ function show_stats_for_company($product,$socid)
 	// Contrats
 	if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 	{
+		$nblines++;
 		$ret=$product->load_stats_contrat($socid);
 		if ($ret < 0) dol_print_error($db);
 		$langs->load("contracts");
@@ -287,6 +293,7 @@ function show_stats_for_company($product,$socid)
 	// Factures clients
 	if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 	{
+		$nblines++;
 		$ret=$product->load_stats_facture($socid);
 		if ($ret < 0) dol_print_error($db);
 		$langs->load("bills");
@@ -304,6 +311,7 @@ function show_stats_for_company($product,$socid)
 	// Factures fournisseurs
 	if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->lire)
 	{
+		$nblines++;
 		$ret=$product->load_stats_facture_fournisseur($socid);
 		if ($ret < 0) dol_print_error($db);
 		$langs->load("bills");
@@ -319,7 +327,7 @@ function show_stats_for_company($product,$socid)
 		print '</tr>';
 	}
 
-	return 0;
+	return $nblines++;
 }
 
 

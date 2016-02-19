@@ -47,7 +47,7 @@
  *		@param	int		$info_bits					Miscellaneous informations on line
  *		@param	int		$type						0/1=Product/service
  *		@param  Societe	$seller						Thirdparty seller (we need $seller->country_id property). Provided only if seller is the supplier, otherwise $seller will be $mysoc.
- *		@param  array	$localtaxes_array			Array with localtaxes info (loaded by getLocalTaxesFromRate(vatrate, 0, ...) function).
+ *		@param  array	$localtaxes_array			Array with localtaxes info array('0'=>type1,'1'=>rate1,'2'=>type2,'3'=>rate2) (loaded by getLocalTaxesFromRate(vatrate, 0, ...) function).
  *		@param  integer	$progress                   Situation invoices progress (value from 0 to 100, 100 by default)
  *		@param  double	$multicurrency_tx           Currency rate (1 by default)
  *		@return result[ 0=total_ht,
@@ -117,7 +117,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 		$localtax2_type = $localtaxes_array[2];
 		$localtax2_rate = $localtaxes_array[3];
 	}
-	else	// deprecated method. values and type for localtaxes must be provided by caller and loade with getLocalTaxesFromRate
+	else	// deprecated method. values and type for localtaxes must be provided by caller and loaded with getLocalTaxesFromRate
 	{
 		$sql = "SELECT taux, localtax1, localtax2, localtax1_type, localtax2_type";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_tva as cv";

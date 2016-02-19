@@ -94,7 +94,43 @@ if (empty($reshook))
     
 	if (($action == 'update_vat') && !$cancel && ($user->rights->produit->creer || $user->rights->service->creer))
 	{
-	    $object->tva_tx = GETPOST('tva_tx');
+	    $tva_tx_txt = GETPOST('tva_tx', 'alpha');           // tva_tx can be '8.5'  or  '8.5*'  or  '8.5
+	    
+	    $tva_tx_txt; 
+
+	    // We must define tva_tx, npr and local taxes
+	    $tva_tx = preg_replace('/[^0-9\.].*$/', '', $tva_tx_txt);     // keep remove all after the numbers and dot
+	    $npr = preg_match('/\*/', $tva_tx_txt) ? 1 : 0;
+	    $localtax1 = 0; $localtax2 = 0; $localtax1_type = '0'; $localtax2_type = '0';
+	    // If value contains the unique code of vat line (new recommanded method), we use it to find npr and local taxes
+	    if (preg_match('/\((.*)\)/', $tva_tx_txt, $reg))
+	    {
+	        // We look into database using code
+	        $vatratecode=$reg[1];
+	        // Get record from code
+	        $sql = "SELECT t.rowid, t.code, t.recuperableonly, t.localtax1, t.localtax2, t.localtax1_type, t.localtax2_type";
+	        $sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
+	        $sql.= " WHERE t.fk_pays = c.rowid AND c.code = '".$mysoc->country_code."'";
+	        $sql.= " AND t.taux = ".((float) $tva_tx)." AND t.active = 1";
+	        $sql.= " AND t.code ='".$vatratecode."'";
+	        $resql=$db->query($sql);
+	        if ($resql)
+	        {
+	            $obj = $db->fetch_object($resql);
+	            $npr = $obj->recuperableonly;
+	            $localtax1 = $obj->localtax1;
+	            $localtax2 = $obj->localtax2;
+	            $localtax1_type = $obj->localtax1_type;
+	            $localtax2_type = $obj->localtax2_type;
+	        }
+	    }
+	    
+	    $object->tva_tx = $tva_tx;
+	    $object->tva_npr = $npr;
+	    $object->localtax1_tx = $localtax1;
+	    $object->localtax2_tx = $localtax2;
+	    $object->localtax1_type = $localtax1_type;
+	    $object->localtax2_type = $localtax2_type;
 	    
 	    $db->begin();
 	    
@@ -106,7 +142,7 @@ if (empty($reshook))
 	    
 	    if ($error)
 	    {
-	       $object->updatePrice($newprice, $newpricebase, $user, $newvat, $newprice_min, $level, $newnpr, $newpsq);
+	       $object->updatePrice($newprice, $newpricebase, $user, $newvat, $newprice_min, $level, $newnpr, $newpsq);    // FIXME Bug $newvat and $newnpr not defined
 	    }
 	    
 	    if (! $error)
@@ -145,31 +181,41 @@ if (empty($reshook))
 		}
 
 		// Multiprices
-		if (!$error && !empty($conf->global->PRODUIT_MULTIPRICES)) {
+		if (! $error && ! empty($conf->global->PRODUIT_MULTIPRICES)) {
 
 			$newprice = GETPOST('price', 'array');
 			$newprice_min = GETPOST('price_min', 'array');
 			$newpricebase = GETPOST('multiprices_base_type', 'array');
 			$newvattx = GETPOST('tva_tx', 'array');
+			$newvatnpr = GETPOST('tva_npr', 'array');
+			$newlocaltax1_tx = GETPOST('localtax1_tx', 'array');
+			$newlocaltax1_type = GETPOST('localtax1_type', 'array');
+			$newlocaltax2_tx = GETPOST('localtax2_tx', 'array');
+			$newlocaltax2_type = GETPOST('localtax2_type', 'array');
 
 			//Shall we generate prices using price rules?
 			$object->price_autogen = GETPOST('usePriceRules') == 'on' ? true : false;
 
-			for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i ++) {
-
+			for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i ++) 
+			{
 				if (!isset($newprice[$i])) {
 					continue;
 				}
 
-				$newnpr = (preg_match('/\*/', $newvattx[$i] ? 1 : 0));
-				$newvat = str_replace('*', '', $newvattx[$i]);
-
+				$tva_tx_txt = $newvattx[$i];
+                $npr = $newvatnpr[$i];
+				$localtax1 = $newlocaltax1_tx[$i];
+				$localtax1_type = $newlocaltax1_type[$i];
+				$localtax2 = $newlocaltax2_tx[$i];
+				$localtax2_type = $newlocaltax2_type[$i];
+				        
 				$pricestoupdate[$i] = array(
 					'price' => $newprice[$i],
 					'price_min' => $newprice_min[$i],
 					'price_base_type' => $newpricebase[$i],
-					'vat_tx' => $newvat,
-					'npr' => $newnpr
+					'vat_tx' => $tva_tx,
+					'npr' => $npr,
+				    'localtaxes_array' => array('0'=>$localtax1_type, '1'=>$localtax1, '2'=>$localtax2_type, '3'=>$localtax2)
 				);
 
 				//If autogeneration is enabled, then we only set the first level
@@ -178,12 +224,41 @@ if (empty($reshook))
 				}
 			}
 		} else {
+		    $tva_tx_txt = GETPOST('tva_tx', 'alpha');     // tva_tx can be '8.5' , '8.5*', '8.5 (8.5NPR) *' for example.
+
+		    // We must define tva_tx, npr and local taxes
+		    $tva_tx = preg_replace('/[^0-9\.].*$/', '', $tva_tx_txt);     // keep remove all after the numbers and dot
+		    $npr = preg_match('/\*/', $tva_tx_txt) ? 1 : 0;
+		    $localtax1 = 0; $localtax2 = 0; $localtax1_type = '0'; $localtax2_type = '0';
+		    // If value contains the unique code of vat line (new recommanded method), we use it to find npr and local taxes
+		    if (preg_match('/\((.*)\)/', $tva_tx_txt, $reg))
+		    {
+		        // We look into database using code
+		        $vatratecode=$reg[1];
+		        // Get record from code
+		        $sql = "SELECT t.rowid, t.code, t.recuperableonly, t.localtax1, t.localtax2, t.localtax1_type, t.localtax2_type";
+		        $sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
+		        $sql.= " WHERE t.fk_pays = c.rowid AND c.code = '".$mysoc->country_code."'";
+		        $sql.= " AND t.taux = ".((float) $tva_tx)." AND t.active = 1";
+		        $sql.= " AND t.code ='".$vatratecode."'";
+		        $resql=$db->query($sql);
+		        if ($resql)
+		        {
+		            $obj = $db->fetch_object($resql);
+		            $npr = $obj->recuperableonly;
+		            $localtax1 = $obj->localtax1;
+		            $localtax2 = $obj->localtax2;
+		            $localtax1_type = $obj->localtax1_type;
+		            $localtax2_type = $obj->localtax2_type;
+		        }
+		    }
 			$pricestoupdate[0] = array(
-				'price' => $_POST ["price"],
-				'price_min' => $_POST ["price_min"],
-				'price_base_type' => $_POST ["price_base_type"],
-				'vat_tx' => str_replace('*', '', $_POST ["tva_tx"]),
-				'npr' => preg_match('/\*/', $_POST ["tva_tx"]) ? 1 : 0
+				'price' => $_POST["price"],
+				'price_min' => $_POST["price_min"],
+				'price_base_type' => $_POST["price_base_type"],
+				'vat_tx' => $tva_tx,
+				'npr' => $npr,
+			    'localtaxes_array' => array('0'=>$localtax1_type, '1'=>$localtax1, '2'=>$localtax2_type, '3'=>$localtax2)
 			);
 		}
 
@@ -207,7 +282,7 @@ if (empty($reshook))
 					break;
 				}
 
-				$res = $object->updatePrice($newprice, $val['price_base_type'], $user, $val['vat_tx'], $newprice_min, $key, $val['npr'], $psq);
+				$res = $object->updatePrice($newprice, $val['price_base_type'], $user, $val['vat_tx'], $newprice_min, $key, $val['npr'], $psq, 0, $val['localtaxes_array']);
 
 				if ($res < 0) {
 					$error ++;
@@ -344,9 +419,43 @@ if (empty($reshook))
 		$prodcustprice->price = price2num(GETPOST("price"), 'MU');
 		$prodcustprice->price_min = price2num(GETPOST("price_min"), 'MU');
 		$prodcustprice->price_base_type = GETPOST("price_base_type", 'alpha');
-		$prodcustprice->tva_tx = str_replace('*', '', GETPOST("tva_tx"));
-		$prodcustprice->recuperableonly = (preg_match('/\*/', GETPOST("tva_tx")) ? 1 : 0);
 
+		$tva_tx_txt = GETPOST("tva_tx");
+		
+		// We must define tva_tx, npr and local taxes
+		$tva_tx = preg_replace('/[^0-9\.].*$/', '', $tva_tx_txt);     // keep remove all after the numbers and dot
+		$npr = preg_match('/\*/', $tva_tx_txt) ? 1 : 0;
+		$localtax1 = 0; $localtax2 = 0; $localtax1_type = '0'; $localtax2_type = '0';
+		// If value contains the unique code of vat line (new recommanded method), we use it to find npr and local taxes
+		if (preg_match('/\((.*)\)/', $tva_tx_txt, $reg))
+		{
+		    // We look into database using code
+		    $vatratecode=$reg[1];
+		    // Get record from code
+		    $sql = "SELECT t.rowid, t.code, t.recuperableonly, t.localtax1, t.localtax2, t.localtax1_type, t.localtax2_type";
+		    $sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
+		    $sql.= " WHERE t.fk_pays = c.rowid AND c.code = '".$mysoc->country_code."'";
+		    $sql.= " AND t.taux = ".((float) $tva_tx)." AND t.active = 1";
+		    $sql.= " AND t.code ='".$vatratecode."'";
+		    $resql=$db->query($sql);
+		    if ($resql)
+		    {
+		        $obj = $db->fetch_object($resql);
+		        $npr = $obj->recuperableonly;
+		        $localtax1 = $obj->localtax1;
+		        $localtax2 = $obj->localtax2;
+		        $localtax1_type = $obj->localtax1_type;
+		        $localtax2_type = $obj->localtax2_type;
+		    }
+		}		
+		
+		$prodcustprice->tva_tx = $tva_tx;
+		$prodcustprice->recuperableonly = $npr;
+		$prodcustprice->localtax1_tx = $localtax1;
+		$prodcustprice->localtax2_tx = $localtax2;
+		$prodcustprice->localtax1_type = $localtax1_type;
+		$prodcustprice->localtax2_type = $localtax2_type;
+		
 		if (! ($prodcustprice->fk_soc > 0))
 		{
 		    $langs->load("errors");
@@ -383,9 +492,9 @@ if (empty($reshook))
 		$result = $prodcustprice->delete($user);
 
 		if ($result < 0) {
-			setEventMessages($prodcustprice->error, $prodcustprice->errors, 'mesgs');
+			setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
 		} else {
-			setEventMessages($langs->trans('RecordDeleted'), null, 'errors');
+			setEventMessages($langs->trans('RecordDeleted'), null, 'mesgs');
 		}
 		$action = '';
 	}
@@ -402,9 +511,43 @@ if (empty($reshook))
 		$prodcustprice->price = price2num(GETPOST("price"), 'MU');
 		$prodcustprice->price_min = price2num(GETPOST("price_min"), 'MU');
 		$prodcustprice->price_base_type = GETPOST("price_base_type", 'alpha');
-		$prodcustprice->tva_tx = str_replace('*', '', GETPOST("tva_tx"));
-		$prodcustprice->recuperableonly = (preg_match('/\*/', GETPOST("tva_tx")) ? 1 : 0);
-
+		
+		$tva_tx_txt = GETPOST("tva_tx");
+		
+		// We must define tva_tx, npr and local taxes
+		$tva_tx = preg_replace('/[^0-9\.].*$/', '', $tva_tx_txt);     // keep remove all after the numbers and dot
+		$npr = preg_match('/\*/', $tva_tx_txt) ? 1 : 0;
+		$localtax1 = 0; $localtax2 = 0; $localtax1_type = '0'; $localtax2_type = '0';
+		// If value contains the unique code of vat line (new recommanded method), we use it to find npr and local taxes
+		if (preg_match('/\((.*)\)/', $tva_tx_txt, $reg))
+		{
+		    // We look into database using code
+		    $vatratecode=$reg[1];
+		    // Get record from code
+		    $sql = "SELECT t.rowid, t.code, t.recuperableonly, t.localtax1, t.localtax2, t.localtax1_type, t.localtax2_type";
+		    $sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
+		    $sql.= " WHERE t.fk_pays = c.rowid AND c.code = '".$mysoc->country_code."'";
+		    $sql.= " AND t.taux = ".((float) $tva_tx)." AND t.active = 1";
+		    $sql.= " AND t.code ='".$vatratecode."'";
+		    $resql=$db->query($sql);
+		    if ($resql)
+		    {
+		        $obj = $db->fetch_object($resql);
+		        $npr = $obj->recuperableonly;
+		        $localtax1 = $obj->localtax1;
+		        $localtax2 = $obj->localtax2;
+		        $localtax1_type = $obj->localtax1_type;
+		        $localtax2_type = $obj->localtax2_type;
+		    }
+		}
+		
+		$prodcustprice->tva_tx = $tva_tx;
+		$prodcustprice->recuperableonly = $npr;
+		$prodcustprice->localtax1_tx = $localtax1;
+		$prodcustprice->localtax2_tx = $localtax2;
+		$prodcustprice->localtax1_type = $localtax1_type;
+		$prodcustprice->localtax2_type = $localtax2_type;
+		
 		if ($prodcustprice->price_min<$maxpricesupplier && !empty($conf->global->PRODUCT_MINIMUM_RECOMMENDED_PRICE))
 		{
 			setEventMessages($langs->trans("MinimumPriceLimit",price($maxpricesupplier,0,'',1,-1,-1,'auto')), null, 'errors');
@@ -792,7 +935,7 @@ if ($action == 'edit_vat' && ($user->rights->produit->creer || $user->rights->se
 
 	// VAT
 	print '<tr><td>' . $langs->trans("VATRate") . '</td><td>';
-	print $form->load_tva("tva_tx", $object->tva_tx, $mysoc, '', $object->id, $object->tva_npr);
+	print $form->load_tva("tva_tx", $object->tva_tx, $mysoc, '', $object->id, $object->tva_npr, $object->type, false, 1);
 	print '</td></tr>';
 
 	print '</table>';
@@ -825,7 +968,7 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 
 		// VAT
 		print '<tr><td>' . $langs->trans("VATRate") . '</td><td colspan="2">';
-		print $form->load_tva("tva_tx", $object->tva_tx, $mysoc, '', $object->id, $object->tva_npr);
+		print $form->load_tva("tva_tx", $object->tva_tx, $mysoc, '', $object->id, $object->tva_npr, $object->type, false, 1);
 		print '</td></tr>';
 
 		// Price base
@@ -981,11 +1124,16 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 
 			// VAT
 			if (empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL)) {
-				print '<input type="hidden" name="tva_tx[' . $i . ']" value="' . $object->tva_tx . '">';
+			    print '<input type="hidden" name="tva_tx[' . $i . ']" value="' . $object->tva_tx . '">';
+			    print '<input type="hidden" name="tva_npr[' . $i . ']" value="' . $object->tva_npr . '">';
+			    print '<input type="hidden" name="localtax1_tx[' . $i . ']" value="' . $object->localtax1_tx . '">';
+			    print '<input type="hidden" name="localtax1_type[' . $i . ']" value="' . $object->localtax1_type . '">';
+			    print '<input type="hidden" name="localtax2_tx[' . $i . ']" value="' . $object->localtax2_tx . '">';
+			    print '<input type="hidden" name="localtax2_type[' . $i . ']" value="' . $object->localtax2_type . '">';
 			} else {
 				// This option is kept for backward compatibility but has no sense
 				print '<td style="text-align: center">';
-				print $form->load_tva("tva_tx[" . $i.']', $object->multiprices_tva_tx[$i], $mysoc, '', $object->id);
+				print $form->load_tva("tva_tx[" . $i.']', $object->multiprices_tva_tx[$i], $mysoc, '', $object->id, false, $object->type, false, 1);
 				print '</td>';
 			}
 
@@ -1205,7 +1353,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 
 		// VAT
 		print '<tr><td class="fieldrequired">' . $langs->trans("VATRate") . '</td><td>';
-		print $form->load_tva("tva_tx", $object->tva_tx, $mysoc, '', $object->id, $object->tva_npr);
+		print $form->load_tva("tva_tx", $object->tva_tx, $mysoc, '', $object->id, $object->tva_npr, $object->type, false, 1);
 		print '</td></tr>';
 
 		// Price base
@@ -1289,7 +1437,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 
 		// VAT
 		print '<tr><td>' . $langs->trans("VATRate") . '</td><td colspan="2">';
-		print $form->load_tva("tva_tx", $prodcustprice->tva_tx, $mysoc, '', $object->id, $prodcustprice->recuperableonly);
+		print $form->load_tva("tva_tx", $prodcustprice->tva_tx, $mysoc, '', $object->id, $prodcustprice->recuperableonly, $object->type, false, 1);
 		print '</td></tr>';
 
 		// Price base

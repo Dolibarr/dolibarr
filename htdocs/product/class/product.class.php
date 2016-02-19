@@ -101,10 +101,12 @@ class Product extends CommonObject
 	var $tva_tx;
 	//! French VAT NPR (0 or 1)
     var $tva_npr=0;
-	//! Spanish local taxes
+	//! Other local taxes
 	var $localtax1_tx;
 	var $localtax2_tx;
-
+	var $localtax1_type;
+	var $localtax2_type;
+	
 	//! Stock
 	var $stock_reel;
 	//! Cost price
@@ -296,7 +298,9 @@ class Product extends CommonObject
 		//Local taxes
 		if (empty($this->localtax1_tx)) $this->localtax1_tx = 0;
 		if (empty($this->localtax2_tx)) $this->localtax2_tx = 0;
-
+		if (empty($this->localtax1_type)) $this->localtax1_type = '0';
+		if (empty($this->localtax2_type)) $this->localtax2_type = '0';
+		
 		if (empty($this->price))     	$this->price = 0;
 		if (empty($this->price_min)) 	$this->price_min = 0;
 
@@ -633,6 +637,8 @@ class Product extends CommonObject
 		if (empty($this->tva_npr))    			$this->tva_npr = 0;
 		if (empty($this->localtax1_tx))			$this->localtax1_tx = 0;
 		if (empty($this->localtax2_tx))			$this->localtax2_tx = 0;
+		if (empty($this->localtax1_type))		$this->localtax1_type = '0';
+		if (empty($this->localtax2_type))		$this->localtax2_type = '0';
 		if (empty($this->status))				$this->status = 0;
 		if (empty($this->status_buy))			$this->status_buy = 0;
 
@@ -700,7 +706,9 @@ class Product extends CommonObject
 			$sql.= ", recuperableonly = " . $this->tva_npr;
 			$sql.= ", localtax1_tx = " . $this->localtax1_tx;
 			$sql.= ", localtax2_tx = " . $this->localtax2_tx;
-
+			$sql.= ", localtax1_type = " . ($this->localtax1_type!=''?"'".$this->localtax1_type."'":"'0'");
+			$sql.= ", localtax2_type = " . ($this->localtax2_type!=''?"'".$this->localtax2_type."'":"'0'");
+				
 			$sql.= ", barcode = ". (empty($this->barcode)?"null":"'".$this->db->escape($this->barcode)."'");
 			$sql.= ", fk_barcode_type = ". (empty($this->barcode_type)?"null":$this->db->escape($this->barcode_type));
 
@@ -1218,10 +1226,10 @@ class Product extends CommonObject
 		if (empty($this->price_by_qty)) $this->price_by_qty=0;
 
 		// Add new price
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_price(price_level,date_price,fk_product,fk_user_author,price,price_ttc,price_base_type,tosell,tva_tx,recuperableonly,";
-		$sql.= " localtax1_tx, localtax2_tx, price_min,price_min_ttc,price_by_qty,entity,fk_price_expression) ";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_price(price_level,date_price,fk_product,fk_user_author,price,price_ttc,price_base_type,tosell, tva_tx, recuperableonly,";
+		$sql.= " localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, price_min,price_min_ttc,price_by_qty,entity,fk_price_expression) ";
 		$sql.= " VALUES(".($level?$level:1).", '".$this->db->idate($now)."',".$this->id.",".$user->id.",".$this->price.",".$this->price_ttc.",'".$this->price_base_type."',".$this->status.",".$this->tva_tx.",".$this->tva_npr.",";
-		$sql.= " ".$this->localtax1_tx.",".$this->localtax2_tx.",".$this->price_min.",".$this->price_min_ttc.",".$this->price_by_qty.",".$conf->entity.",".($this->fk_price_expression > 0?$this->fk_price_expression:'null');
+		$sql.= " ".$this->localtax1_tx.", ".$this->localtax2_tx.", '".$this->localtax1_type."', '".$this->localtax2_type."', ".$this->price_min.",".$this->price_min_ttc.",".$this->price_by_qty.",".$conf->entity.",".($this->fk_price_expression > 0?$this->fk_price_expression:'null');
 		$sql.= ")";
 
 		dol_syslog(get_class($this)."::_log_price", LOG_DEBUG);
@@ -1386,15 +1394,16 @@ class Product extends CommonObject
 	 *	@param  	double	$newprice		New price
 	 *	@param  	string	$newpricebase	HT or TTC
 	 *	@param  	User	$user        	Object user that make change
-	 *	@param  	double	$newvat			New VAT Rate
+	 *	@param  	double	$newvat			New VAT Rate (For example 8.5. Should not be a string)
 	 *  @param		double	$newminprice	New price min
 	 *  @param		int		$level			0=standard, >0 = level if multilevel prices
 	 *  @param     	int		$newnpr         0=Standard vat rate, 1=Special vat rate for French NPR VAT
 	 *  @param     	int		$newpsq         1 if it has price by quantity
 	 *  @param 		int 	$ignore_autogen Used to avoid infinite loops
-	 * 	@return		int						<0 if KO, >0 if OK
+     *	@param      array	$localtaxes_array	Array with localtaxes info array('0'=>type1,'1'=>rate1,'2'=>type2,'3'=>rate2) (loaded by getLocalTaxesFromRate(vatrate, 0, ...) function).
+	 * 	@return		int						    <0 if KO, >0 if OK
 	 */
-	function updatePrice($newprice, $newpricebase, $user, $newvat='',$newminprice='', $level=0, $newnpr=0, $newpsq=0, $ignore_autogen=0)
+	function updatePrice($newprice, $newpricebase, $user, $newvat='',$newminprice='', $level=0, $newnpr=0, $newpsq=0, $ignore_autogen=0, $localtaxes_array=array())
 	{
 		global $conf,$langs;
 
@@ -1463,13 +1472,23 @@ class Product extends CommonObject
 			}
 			//print 'x'.$id.'-'.$newprice.'-'.$newpricebase.'-'.$price.'-'.$price_ttc.'-'.$price_min.'-'.$price_min_ttc;
 
-
-			//Local taxes
-			$localtax1=get_localtax($newvat,1);
-			$localtax2=get_localtax($newvat,2);
+			if (count($localtaxes_array) > 0)
+			{
+			    $localtaxtype1=$localtaxes_array['0'];
+			    $localtax1=$localtaxes_array['1'];
+			    $localtaxtype2=$localtaxes_array['2'];
+			    $localtax2=$localtaxes_array['3'];
+			}
+			else     // old method. deprecated because ot can't retreive type
+			{
+	       		$localtaxtype1='0';
+			    $localtax1=get_localtax($newvat,1);
+	       		$localtaxtype2='0';
+			    $localtax2=get_localtax($newvat,2);
+			}
 			if (empty($localtax1)) $localtax1=0;	// If = '' then = 0
 			if (empty($localtax2)) $localtax2=0;	// If = '' then = 0
-
+			
 			$this->db->begin();
 
 			// Ne pas mettre de quote sur les numeriques decimaux.
@@ -1482,6 +1501,8 @@ class Product extends CommonObject
 			$sql.= " price_min_ttc=".$price_min_ttc.",";
 			$sql.= " localtax1_tx=".($localtax1>=0?$localtax1:'NULL').",";
 			$sql.= " localtax2_tx=".($localtax2>=0?$localtax2:'NULL').",";
+			$sql.= " localtax1_type=".($localtaxtype1!=''?"'".$localtaxtype1."'":"'0'").",";
+			$sql.= " localtax2_type=".($localtaxtype2!=''?"'".$localtaxtype2."'":"'0'").",";
 			$sql.= " tva_tx='".price2num($newvat)."',";
             $sql.= " recuperableonly='".$newnpr."'";
 			$sql.= " WHERE rowid = ".$id;
@@ -1508,7 +1529,9 @@ class Product extends CommonObject
 				//Local taxes
 				$this->localtax1_tx = $localtax1;
 				$this->localtax2_tx = $localtax2;
-
+				$this->localtax1_type = $localtaxtype1;
+				$this->localtax2_type = $localtaxtype2;
+				
 				// Price by quantity
 				$this->price_by_qty = $newpsq;
 
@@ -1579,12 +1602,12 @@ class Product extends CommonObject
 		}
 
 		$sql = "SELECT rowid, ref, ref_ext, label, description, url, note, customcode, fk_country, price, price_ttc,";
-		$sql.= " price_min, price_min_ttc, price_base_type, cost_price, tva_tx, recuperableonly as tva_npr, localtax1_tx, localtax2_tx, tosell,";
+		$sql.= " price_min, price_min_ttc, price_base_type, cost_price, tva_tx, recuperableonly as tva_npr, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, tosell,";
 		$sql.= " tobuy, fk_product_type, duration, seuil_stock_alerte, canvas,";
 		$sql.= " weight, weight_units, length, length_units, surface, surface_units, volume, volume_units, barcode, fk_barcode_type, finished,";
 		$sql.= " accountancy_code_buy, accountancy_code_sell, stock, pmp,";
-		$sql.= " datec, tms, import_key, entity, desiredstock, tobatch, fk_unit";
-		$sql.= " , fk_price_expression, price_autogen";
+		$sql.= " datec, tms, import_key, entity, desiredstock, tobatch, fk_unit,";
+		$sql.= " fk_price_expression, price_autogen";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
 		if ($id) $sql.= " WHERE rowid = ".$this->db->escape($id);
 		else
@@ -1626,10 +1649,12 @@ class Product extends CommonObject
 				$this->tva_tx					= $obj->tva_tx;
 				//! French VAT NPR
 				$this->tva_npr					= $obj->tva_npr;
-				//! Spanish local taxes
+				//! Local taxes
 				$this->localtax1_tx				= $obj->localtax1_tx;
 				$this->localtax2_tx				= $obj->localtax2_tx;
-
+				$this->localtax1_type			= $obj->localtax1_type;
+				$this->localtax2_type			= $obj->localtax2_type;
+				
 				$this->finished					= $obj->finished;
 				$this->duration					= $obj->duration;
 				$this->duration_value			= substr($obj->duration,0,dol_strlen($obj->duration)-1);

@@ -317,3 +317,4 @@ DefaultPriceRealPriceMayDependOnCustomer=Default price, real price may depend on
 WarningSelectOneDocument=Please select at least one document
 DefaultUnitToShow=Unit
 NbOfQtyInProposals=Qty in proposals
+ClinkOnALinkOfColumn=Click on a link of column %s to get a detailed view...
