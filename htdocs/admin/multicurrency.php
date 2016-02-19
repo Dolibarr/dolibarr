@@ -27,9 +27,9 @@
 require '../main.inc.php';
 
 // Libraries
-dol_include_once('/core/lib/admin.lib.php');
-dol_include_once('/core/lib/multicurrency.lib.php');
-dol_include_once('/multicurrency/class/multicurrency.class.php');
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/multicurrency.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 
 // Translations
 $langs->load("multicurrency");
