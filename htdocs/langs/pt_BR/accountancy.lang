@@ -23,7 +23,6 @@ CreateMvts=Criar movimento
 UpdateAccount=Modificação de uma conta contábil
 UpdateMvts=Modificação de um movimento
 WriteBookKeeping=Registo das contas em contabilidade geral
-AccountBalanceByMonth=Saldo da conta por mês
 AccountingVentilation=Cancelar contabilidade
 AccountingVentilationSupplier=Cancelar fornecedor de contabilidade
 AccountingVentilationCustomer=Cancelar contabilidade de cliente

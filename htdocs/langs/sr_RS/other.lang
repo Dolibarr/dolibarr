@@ -238,8 +238,8 @@ ToExport=Export
 NewExport=Novi export
 ##### External sites #####
 ExternalSites=Eksterni sajtovi
-WebsiteSetup=Setup of module website
-WEBSITE_PAGEURL=URL of page
-WEBSITE_TITLE=Title
-WEBSITE_DESCRIPTION=Description
-WEBSITE_KEYWORDS=Keywords
+WebsiteSetup=Podešavanja modula sajta
+WEBSITE_PAGEURL=URL stranice
+WEBSITE_TITLE=Naslov
+WEBSITE_DESCRIPTION=Opis
+WEBSITE_KEYWORDS=Ključne reči

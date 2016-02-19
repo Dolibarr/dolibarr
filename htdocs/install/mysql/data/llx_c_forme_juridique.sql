@@ -288,3 +288,23 @@ INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (140, 
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (140, '14006', 'Société anonyme (SA)', 1);
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (140, '14007', 'Société coopérative (SC)', 1);
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (140, '14008', 'Société européenne (SE)', 1);
+
+-- Romania
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (188, '18801', 'AFJ - Alte forme juridice', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (188, '18802', 'ASF - Asociatie familialã', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (188, '18803', 'CON - Concesiune', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (188, '18804', 'CRL - Soc civilã profesionala cu pers. juridica si rãspundere limitata (SPRL)', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (188, '18805', 'INC - Închiriere', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (188, '18806', 'LOC - Locaţie de gestiune', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (188, '18807', 'OC1 - Organizaţie cooperatistã meşteşugãreascã', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (188, '18808', 'OC2 - Organizaţie cooperatistã de consum', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (188, '18809', 'OC3 - Organizaţie cooperatistã de credit', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (188, '18810', 'PFA - Persoanã fizicã independentã', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (188, '18811', 'RA - Regie autonomã', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (188, '18812', 'SA - Societate comercialã pe acţiuni', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (188, '18813', 'SCS - Societate comercialã în comanditã simplã', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (188, '18814', 'SNC - Societate comercialã în nume colectiv', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (188, '18815', 'SPI - Societate profesionala practicieni in insolventa (SPPI)', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (188, '18816', 'SRL - Societate comercialã cu rãspundere limitatã', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (188, '18817', 'URL - Intreprindere profesionala unipersonala cu rãspundere limitata (IPURL)', 1);
+

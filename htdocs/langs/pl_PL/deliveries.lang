@@ -18,7 +18,7 @@ DeliveryMethod=Metoda dostawy
 TrackingNumber=Numer przesyłki
 DeliveryNotValidated=Dostawa nie zatwierdzona
 StatusDeliveryCanceled=Canceled
-StatusDeliveryDraft=Draft
+StatusDeliveryDraft=Projekt
 StatusDeliveryValidated=Received
 # merou PDF model
 NameAndSignature=Nazwisko i podpis:

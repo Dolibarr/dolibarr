@@ -154,6 +154,7 @@ Purge=Czyszczenie
 PurgeAreaDesc=Ta strona pozwala na usunięcie wszystkich plików zbudowanych lub przechowywanych przez Dolibarr (pliki tymczasowe lub wszystkie pliki w <b>katalogu %s).</b> Korzystanie z tej funkcji nie jest konieczne. Zalecana jest dla użytkowników, których aplikacja Dolibarr jest hostowana przez usługodawcę nie zezwalającego na usuwanie plików utworzonych przez serwer WWW.
 PurgeDeleteLogFile=Usuwanie <b>pliku rejestru %s</b> zdefiniowanego dla modułu Syslog (nie ma ryzyka utraty danych)
 PurgeDeleteTemporaryFiles=Usuń wszystkie pliki tymczasowe (nie ma ryzyka utraty danych)
+PurgeDeleteTemporaryFilesShort=Delete temporary files
 PurgeDeleteAllFilesInDocumentsDir=Usuń wszystkie pliki w <b>katalogu %s.</b> Pliki tymczasowe, jak również kopie zapasowe baz danych oraz pliki dołączone do elementów (kontrahencji, faktury ...) i przesłane do modułu ECM zostaną usunięte.
 PurgeRunNow=Czyść teraz
 PurgeNothingToDelete=Nie ma katalogu lub pliku do usunięcia.
@@ -416,7 +417,7 @@ ConfirmEraseAllCurrentBarCode=Czy na pewno chcesz usunąć wszystkie bieżące w
 AllBarcodeReset=Wszystkie wartości zostały usunięte z kodem kreskowym
 NoBarcodeNumberingTemplateDefined=Nie szablonu numeracji kodów kreskowych włączona w konfiguracji modułu kodów kreskowych.
 NoRecordWithoutBarcodeDefined=Brak zapisu bez wartości kodów kreskowych zdefiniowane.
-EnableFileCache=Enable file cache
+EnableFileCache=Włącz cache plików
 
 # Modules
 Module0Name=Użytkownicy i grupy
@@ -979,7 +980,7 @@ Delays_MAIN_DELAY_CHEQUES_TO_DEPOSIT=Tolerancja opóźnienia (liczba dni) przed 
 Delays_MAIN_DELAY_EXPENSEREPORTS=Opóźnienie tolerancji (w dniach) przed wpisu do zestawienia wydatków do zatwierdzenia
 SetupDescription1=Wszystkie parametry dostępne w konfiguracji obszaru pozwalają na konfigurację Dolibarr przed rozpoczęciem jej używania.
 SetupDescription2=2 Najważniejsze kroki konfiguracji są 2 pierwszych w lewym menu, oznacza to, firmy / fundacji stronie konfiguracji i instalacji modułów strony:
-SetupDescription3=<b>Firma / fundacji</b> konfiguracji jest wymagane, ponieważ wkład informacje są wykorzystywane na Dolibarr wyświetla Dolibarr i zmiany zachowań (na przykład na funkcje związane z danym kraju).
+SetupDescription3=Parametry w menu <a href="%s">Konfiguracja -> Firma/Fundacja</a> są wymagane ponieważ informacje wejściowe są wykorzystywane w widokach Dolibarr i modyfikują środowisko Dolibarr (na przykład zasoby odnoszące się do kraju prowadzenia działalności).
 SetupDescription4=<b>Moduły</b> konfiguracji jest wymagane, ponieważ Dolibarr nie jest proste ERP / CRM, ale suma kilku modułów, wszystkie mniej lub bardziej niezależne. To dopiero po aktywacji modułów jesteś interesująca, widać cechy pojawiły się w Dolibarr menu.
 SetupDescription5=Inne pozycje menu zarządzają opcjonalnymi parametrami.
 EventsSetup=Konfiguracja dzienników zdarzeń
@@ -1006,7 +1007,7 @@ DisplayDesc=Możesz wybrać każdego z parametrów związanych z wyglądem i Dol
 AvailableModules=Dostępne moduły
 DeprecatedModules=Przestarzałe moduły
 ToActivateModule=Aby uaktywnić modules, przejdź na konfigurację Powierzchnia.
-SessionTimeOut=Godzina dla sesji
+SessionTimeOut=Limit czasu dla sesji
 SessionExplanation=Numer ten gwarantuje, że sesja nigdy nie wygaśnie przed upływem tego opóźnienia. Ale PHP sessoin zarządzania nie zawsze gwarantują, że sesja wygasa po tym terminie: Ten problem występuje, jeśli system do czyszczenia Wikisłowniku sesji jest uruchomiony. <br> Uwaga: nie szczególności systemu wewnętrznej PHP będzie czyste sesji każdy <b>temat %s / %s</b> dostępu, ale tylko podczas dostępu przez innych sesji.
 TriggersAvailable=Dostępne wyzwala
 TriggersDesc=Wyzwalacze są pliki, które będą modyfikować zachowania Dolibarr pracy po skopiowaniu do katalogu <b>htdocs / includes / wyzwala.</b> One zrealizowane nowych działań, uaktywnionego Dolibarr na imprezy (utworzenie nowej spółki, zatwierdzania faktur, ...).
@@ -1090,7 +1091,7 @@ SendmailOptionMayHurtBuggedMTA=Funkcja wysłać maile za pomocą metody "PHP poc
 TranslationSetup=Konfiguracja de la traduction
 TranslationDesc=Wybór języka widoczne na ekranie mogą być modyfikowane: <br> * Globalnie z menu <strong>Start - Ustawienia - Wyświetlacz</strong> <br> * Dla użytkowników tylko z <strong>wyświetlaczem</strong> karta <strong>użytkownika</strong> karty użytkownika (kliknij zaloguj się na górze ekranu).
 TranslationOverwriteDesc=You can also overwrite some value by completing/editing the following table. You must use for "%s" the language code, for "%s" the key found into file langs/xx_XX/somefile.lang and "%s" the new value you want to use as new translation.
-TotalNumberOfActivatedModules=Łączna liczba aktywowanych modułów <b>funkcji:% s</b>
+TotalNumberOfActivatedModules=Total number of activated feature modules: <b>%s</b> / <b>%s</b>
 YouMustEnableOneModule=Musisz przynajmniej umożliwić 1 moduł
 ClassNotFoundIntoPathWarning=Klasa% s nie znaleziono na drodze PHP
 YesInSummer=Tak w lecie
@@ -1640,6 +1641,7 @@ CloseFiscalYear=Blisko rok obrotowy
 DeleteFiscalYear=Usuń rok obrotowy
 ConfirmDeleteFiscalYear=Czy na pewno usunąć ten rok podatkowy?
 AlwaysEditable=Zawsze może być edytowany
+IsHidden=Is not visible
 MAIN_APPLICATION_TITLE=Wymusza widoczną nazwę aplikacji (ostrzeżenie: ustawienie własnej nazwy tutaj może złamać Autouzupełnianie funkcji logowania przy użyciu DoliDroid aplikację mobilną)
 NbMajMin=Minimalna liczba wielkich liter
 NbNumMin=Minimalna liczba znaków numerycznych
@@ -1664,7 +1666,7 @@ BackupDumpWizard=Konfigurator wykonywania kopii zapasowej bazy danych
 SomethingMakeInstallFromWebNotPossible=Instalacja zewnętrznych modułów za pomocą interfejsu sieciowego nie jest możliwa z powodu następujących przyczyn:
 SomethingMakeInstallFromWebNotPossible2=Z tego powodu, proces uaktualnienia tutaj opisany jest jednie krokiem manualnym, który wykonać może uprawniony użytkownik.
 InstallModuleFromWebHasBeenDisabledByFile=Instalacja zewnętrznych modułów z poziomu aplikacji została wyłączona przez administratora. Musisz poprosić go o usunięcie pliku <strong>%s</strong> aby włączyć odpowiednią funkcję.
-ConfFileMuseContainCustom=Instalacja zewnętrznego modułu z poziomu aplikacji, zapisuje pliki w katlogu <strong>%s</strong>. Abu katalog ten był przetwarzany przez Dolibarr, musisz skonfigurować Twój plik <strong>conf/conf.php</strong>by w opcji <br>- <strong>$dolibarr_main_url_root_alt</strong> ustawić wartość <strong>$dolibarr_main_url_root_alt="/custom"</strong><br>- <strong>$dolibarr_main_document_root_alt</strong> ustawić wartość <strong>"%s/custom"</strong>
+ConfFileMuseContainCustom=Installing an external module from application save the module files into directory <strong>%s</strong>. To have this directory processed by Dolibarr, you must setup your <strong>conf/conf.php</strong> to have option<br><strong>$dolibarr_main_url_root_alt='/custom';</strong><br><strong>$dolibarr_main_document_root_alt='%s/custom';</strong>
 HighlightLinesOnMouseHover=Highlight table lines when mouse move passes over
 HighlightLinesColor=Color of highlight line when mouse move passes over (keep empty for no highlight)
 TextTitleColor=Color of page title
@@ -1709,3 +1711,5 @@ TitleExampleForMaintenanceRelease=Przykład wiadomości można użyć, aby ogło
 ExampleOfNewsMessageForMajorRelease=Dolibarr ERP i CRM% s jest dostępna. Wersja% s jest głównym wydaniu z wielu nowych funkcji dla użytkowników i deweloperów. Można go pobrać z pobierania obszarze http://www.dolibarr.org Portal (podkatalogów wersji stabilnej). Możesz przeczytać <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> do pełnej listy zmian.
 ExampleOfNewsMessageForMaintenanceRelease=Dolibarr ERP i CRM% s jest dostępna. Wersja% s jest wersja konserwacji, dlatego zawiera tylko poprawki robaki. Polecamy wszystkim, korzystasz ze starszej wersji uaktualnienia do tego. W każdym wydaniu konserwacji, bez nowych funkcji, ani zmiany struktury danych jest obecna w tej wersji. Można go pobrać z pobierania obszarze http://www.dolibarr.org Portal (podkatalogów wersji stabilnej). Możesz przeczytać <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> do pełnej listy zmian.
 MultiPriceRuleDesc=Gdy opcja "Kilka poziom cen na produkt / usługę" jest włączone, można zdefiniować różne ceny (jeden na poziomie cen) dla każdego produktu. Aby zaoszczędzić czas, można wprowadzić tutaj rządzić mieć cenę każdego poziomu autocalculated według ceny pierwszym poziomie, więc trzeba będzie wprowadzić tylko cenę za pierwszego poziomu na każdym produkcie. Ta strona jest tutaj, aby zaoszczędzić czas i może być przydatne tylko wtedy, jeśli ceny każdego poziomó są w stosunku do pierwszego poziomu. Można zignorować tę stronę w większości przypadków.
+ModelModulesProduct=Templates for product documents
+ToGenerateCodeDefineAutomaticRuleFirst=To be able to generate automatically codes, you must first define a manager to auto define barcode number.

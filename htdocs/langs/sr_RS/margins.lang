@@ -35,9 +35,9 @@ MargeBrute=Bruto marža
 MargeNette=Neto marža
 MargeType1=Marža na najpovoljniju cenu dobavljača
 MargeType2=Marža na prosečnu cenu (PC)
-MargeType3=Margin on Cost Price
-MARGIN_TYPE_DETAILS=Raw margin : Selling price - Buying price<br>Net margin : Selling price - Cost price
-MarginTypeDesc=* Margin on best buying price = Selling price - Best supplier price defined on product card<br>* Margin on Weighted Average Price (WAP) = Selling price - Product Weighted Average Price (WAP) or best supplier price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAP if cost price not defined, or best supplier price if WAP not yet defined
+MargeType3=Marža na cenu koštanja
+MARGIN_TYPE_DETAILS=Bruto marža : Prodajna cena - Kupovna cena<br>Neto marža : Prodajna cena - Cena koštanja
+MarginTypeDesc=* Marža na najbolju kupovnu cenu = Prodajna cena - Najbolja cena dobavljača definisana na kartici proizvoda<br>* Marža na izračunatu prosečnu cenu (WAP) = Prodajna cena - Proivod izračun na osnovu prosečne cene  (WAP)  ili najbolja cena dobavljača ako WAP nije još definisan<br>* Marža na cenu koštanja = Prodajna cena definisana na kratici proizvoda ili WAP ako cena koštanja nije definisana, ili najbolja cena dobavjlača ako WAP nije još definisan
 CostPrice=Cena koštanja
 BuyingCost=Cena koštanja
 UnitCharges=Unitarni troškovi

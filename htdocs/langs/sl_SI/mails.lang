@@ -47,6 +47,7 @@ MailingSuccessfullyValidated=E-pošiljanje uspešno potrjeno
 MailUnsubcribe=Odjava
 Unsuscribe=Odjava
 MailingStatusNotContact=Ne kontaktiraj več
+MailingStatusReadAndUnsubscribe=Read and unsubscribe
 ErrorMailRecipientIsEmpty=Prejemnik ni določen
 WarningNoEMailsAdded=Nobenega novega e-sporočila ni za dodajanje na prejemnikov seznam.
 ConfirmValidMailing=Ali zares želite potrditi to e-sporočilo ?

@@ -47,6 +47,7 @@ MailingSuccessfullyValidated=E-postitus edukalt kinnitatud
 MailUnsubcribe=Tühista tellimus
 Unsuscribe=Tühista tellimus
 MailingStatusNotContact=Ära võta enam ühendust
+MailingStatusReadAndUnsubscribe=Read and unsubscribe
 ErrorMailRecipientIsEmpty=E-kirja saaja lahter on tühi
 WarningNoEMailsAdded=Saajate nimekirja pole ühtki uut e-kirja lisada.
 ConfirmValidMailing=Kas oled täiesti kindel, et soovid selle e-postituse kinnitada?

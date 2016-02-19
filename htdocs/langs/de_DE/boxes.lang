@@ -60,6 +60,8 @@ BoxTitleLastContracts=%s zuletzt bearbeitete Verträge
 BoxTitleLastModifiedDonations=Zuletzt geändert %s Spenden
 BoxTitleLastModifiedExpenses=Zuletzt %s geänderte Spesenabrechnungen
 BoxGlobalActivity=Globale Aktivität (Rechnungen, Angebote, Aufträge)
+BoxGoodCustomers=Good Customers
+BoxTitleGoodCustomers=%s Good Customers
 FailedToRefreshDataInfoNotUpToDate=Fehler beim RSS-Abruf. Letzte erfolgreiche Aktualisierung: %s
 LastRefreshDate=Letztes Aktualisierungsdatum
 NoRecordedBookmarks=Keine Lesezeichen gesetzt. Klicken Sie <a href="%s">hier</a>, um ein Lesezeichen zu setzen.
@@ -95,4 +97,4 @@ ForCustomersInvoices=Kundenrechnungen
 ForCustomersOrders=Kundenaufträge
 ForProposals=Angebote
 LastXMonthRolling=Die letzten %s Monate gleitend
-ChooseBoxToAdd=Choose a box to add
+ChooseBoxToAdd=Add a box to your dashboard...

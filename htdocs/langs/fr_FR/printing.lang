@@ -83,4 +83,4 @@ MEDIA_IPP_thermal=Température
 IPP_COLOR_print-black=Imprimante NB
 DirectPrintingJobsDesc=Cette page liste les travaux d'impression trouvés sur les imprimantes disponibles
 GoogleAuthNotConfigured=Configuration Google OAuth non terminé. Activer le module OAuth et entrer un Google ID/Secret
-GoogleAuthConfigured=Google OAuth credentials found into setup of module OAuth.
+GoogleAuthConfigured=Identifiants Google OAuth trouvé dans la configuration du module OAuth.

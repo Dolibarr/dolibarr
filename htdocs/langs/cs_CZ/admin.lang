@@ -154,6 +154,7 @@ Purge=Očistit
 PurgeAreaDesc=Tato stránka vám umožňuje odstranit všechny postavené nebo uložené soubory Dolibarr (dočasné soubory nebo všechny soubory v adresáři <b>%s</b>). Použití této funkce není nutné. Je k dispozici pro uživatele, jejichž Dolibarr je provozován u poskytovatele, který neposkytuje oprávnění k odstranění souborů na webovém serveru.
 PurgeDeleteLogFile=Vymažte log <b>%s</b>, definovaný pro modul Syslog (bez rizika ztráty)
 PurgeDeleteTemporaryFiles=Vymažte všechny dočasné soubory (bez rizika ztráty dat)
+PurgeDeleteTemporaryFilesShort=Delete temporary files
 PurgeDeleteAllFilesInDocumentsDir=Odstraňte všechny soubory v adresáři <b>%s.</b> Dočasné soubory, zálohy databáze, soubory přiložené k prvkům (třetí strany, faktury, ...) a  uploady do modulu ECM budou vymazány.
 PurgeRunNow=Vyčistit nyní
 PurgeNothingToDelete=Žádný adresář nebo soubor k odstranění
@@ -1090,7 +1091,7 @@ SendmailOptionMayHurtBuggedMTA=Funkce se odesílat e-maily pomocí metody "PHP m
 TranslationSetup=Konfigurace de la traduction
 TranslationDesc=Volba jazyka viditelné na obrazovce lze měnit: <br> * Globálně z menu <strong>Domů - Nastavení - Zobrazení</strong> <br> * Pro uživatele pouze ze <strong>zobrazení</strong> na kartě <strong>Uživatelské</strong> uživatelského karty (klikněte na přihlášení v horní části obrazovky).
 TranslationOverwriteDesc=You can also overwrite some value by completing/editing the following table. You must use for "%s" the language code, for "%s" the key found into file langs/xx_XX/somefile.lang and "%s" the new value you want to use as new translation.
-TotalNumberOfActivatedModules=Celkový počet aktivovaných funkcí modulů: <b>%s</b>
+TotalNumberOfActivatedModules=Total number of activated feature modules: <b>%s</b> / <b>%s</b>
 YouMustEnableOneModule=Musíte povolit alespoň jeden modul
 ClassNotFoundIntoPathWarning=Třída %s nenašli cestu do PHP
 YesInSummer=Ano v létě
@@ -1640,6 +1641,7 @@ CloseFiscalYear=Zavřít fiskální rok
 DeleteFiscalYear=Smazat fiskální rok
 ConfirmDeleteFiscalYear=Jste si jisti, že chcete tento fiskální rok smazat?
 AlwaysEditable=Může být vždy upraveno
+IsHidden=Is not visible
 MAIN_APPLICATION_TITLE=Force visible name of application (warning: setting your own name here may break autofill login feature when using DoliDroid mobile application)
 NbMajMin=Minimální počet velkých písmen
 NbNumMin=Minimální počet číselných znaků
@@ -1664,7 +1666,7 @@ BackupDumpWizard=Průvodce vybudovat záložní databázi soubor s výpisem
 SomethingMakeInstallFromWebNotPossible=Instalace externího modulu není možné z webového rozhraní z tohoto důvodu:
 SomethingMakeInstallFromWebNotPossible2=Z tohoto důvodu, proces upgradovat popsáno zde je pouze ruční kroky privilegovaný uživatel může dělat.
 InstallModuleFromWebHasBeenDisabledByFile=Install of external module from application has been disabled by your administrator. You must ask him to remove the file <strong>%s</strong> to allow this feature.
-ConfFileMuseContainCustom=Installing an external module from application save the module files into directory <strong>%s</strong>. To have this directory processed by Dolibarr, you must setup your <strong>conf/conf.php</strong> to have option<br>- <strong>$dolibarr_main_url_root_alt</strong> enabled to value <strong>$dolibarr_main_url_root_alt="/custom"</strong><br>- <strong>$dolibarr_main_document_root_alt</strong> enabled to value <strong>"%s/custom"</strong>
+ConfFileMuseContainCustom=Installing an external module from application save the module files into directory <strong>%s</strong>. To have this directory processed by Dolibarr, you must setup your <strong>conf/conf.php</strong> to have option<br><strong>$dolibarr_main_url_root_alt='/custom';</strong><br><strong>$dolibarr_main_document_root_alt='%s/custom';</strong>
 HighlightLinesOnMouseHover=Highlight table lines when mouse move passes over
 HighlightLinesColor=Highlight color of the line when the mouse passes over (keep empty for no highlight)
 TextTitleColor=Color of page title
@@ -1709,3 +1711,5 @@ TitleExampleForMaintenanceRelease=Example of message you can use to announce thi
 ExampleOfNewsMessageForMajorRelease=Dolibarr ERP & CRM %s is available. Version %s is a major release with a lot of new features for both users and developers. You can download it from the download area of http://www.dolibarr.org portal (subdirectory Stable versions). You can read <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> for complete list of changes.
 ExampleOfNewsMessageForMaintenanceRelease=Dolibarr ERP & CRM %s is available. Version %s is a maintenance version, so it contains only fixes of bugs. We recommend everybody using an older version to upgrade to this one. As any maintenance release, no new features, nor data structure change is present into this version. You can download it from the download area of http://www.dolibarr.org portal (subdirectory Stable versions). You can read <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> for complete list of changes.
 MultiPriceRuleDesc=When option "Several level of prices per product/service" is on, you can define different prices (one per price level) for each product. To save you time, you can enter here rule to have price for each level autocalculated according to price of first level, so you will have to enter only price for first level on each product. This page is here to save you time and can be usefull only if your prices for each leve are relative to first level. You can ignore this page in most cases.
+ModelModulesProduct=Templates for product documents
+ToGenerateCodeDefineAutomaticRuleFirst=To be able to generate automatically codes, you must first define a manager to auto define barcode number.

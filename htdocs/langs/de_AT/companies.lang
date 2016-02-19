@@ -8,6 +8,7 @@ Web=Webadresse
 LocalTax1IsUsedES=RE wird
 LocalTax2IsUsedES=IRPF verwendet wird
 ProfId1AR=Prof Id 1 (CUIL)
+ProfId5MA=Id prof. 5 (C.I.C.E.)
 CustomerCode=Kunden-Code
 CapitalOf=Hauptstadt von %s
 NorProspectNorCustomer=Weder Lead noch Kunde

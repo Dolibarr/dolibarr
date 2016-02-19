@@ -47,6 +47,7 @@ MailingSuccessfullyValidated=E-post validerades
 MailUnsubcribe=Avanmälan
 Unsuscribe=Avanmälan
 MailingStatusNotContact=Kontakta inte längre
+MailingStatusReadAndUnsubscribe=Read and unsubscribe
 ErrorMailRecipientIsEmpty=E-postmottagare är tom
 WarningNoEMailsAdded=Inga nya E-posta lägga till mottagarens lista.
 ConfirmValidMailing=Är du säker på att du vill godkänna denna e-post?
