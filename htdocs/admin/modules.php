@@ -47,7 +47,8 @@ $specialtostring=array(0=>'common', 1=>'interfaces', 2=>'other', 3=>'functional'
 $familyinfo=array(
 	'hr'=>array('position'=>'001', 'label'=>$langs->trans("ModuleFamilyHr")),
 	'crm'=>array('position'=>'006', 'label'=>$langs->trans("ModuleFamilyCrm")),
-	'financial'=>array('position'=>'009', 'label'=>$langs->trans("ModuleFamilyFinancial")),
+	'srm'=>array('position'=>'007', 'label'=>$langs->trans("ModuleFamilySrm")),
+    'financial'=>array('position'=>'009', 'label'=>$langs->trans("ModuleFamilyFinancial")),
 	'products'=>array('position'=>'012', 'label'=>$langs->trans("ModuleFamilyProducts")),
 	'projects'=>array('position'=>'015', 'label'=>$langs->trans("ModuleFamilyProjects")),
 	'ecm'=>array('position'=>'018', 'label'=>$langs->trans("ModuleFamilyECM")),

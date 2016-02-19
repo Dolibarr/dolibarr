@@ -282,6 +282,7 @@ ModuleSetup=Module setup
 ModulesSetup=Modules setup
 ModuleFamilyBase=System
 ModuleFamilyCrm=Customer Relation Management (CRM)
+ModuleFamilySrm=Supplier Relation Management (SRM)
 ModuleFamilyProducts=Products Management (PM)
 ModuleFamilyHr=Human Resource Management (HR)
 ModuleFamilyProjects=Projects/Collaborative work
