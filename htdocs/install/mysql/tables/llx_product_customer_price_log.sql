@@ -21,7 +21,7 @@
 create table llx_product_customer_price_log
 (
   rowid                       integer AUTO_INCREMENT PRIMARY KEY,
- entity				integer DEFAULT 1 NOT NULL,	   -- multi company id
+  entity				integer DEFAULT 1 NOT NULL,	   -- multi company id
   datec                       datetime,
   fk_product			integer NOT NULL,
   fk_soc				integer NOT NULL,	   
@@ -33,7 +33,9 @@ create table llx_product_customer_price_log
   tva_tx					double(6,3),
   recuperableonly           integer NOT NULL DEFAULT '0',   -- Other NPR VAT
   localtax1_tx				double(6,3)  DEFAULT 0,         -- Other local VAT 1 
+  localtax1_type            varchar(10)  NOT NULL DEFAULT '0',
   localtax2_tx				double(6,3)  DEFAULT 0,         -- Other local VAT 2
+  localtax2_type            varchar(10)  NOT NULL DEFAULT '0',
   fk_user				integer,
  import_key			varchar(14)                  -- Import key
 )ENGINE=innodb;
