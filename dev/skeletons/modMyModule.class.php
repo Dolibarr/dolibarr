@@ -144,15 +144,15 @@ class modMyModule extends DolibarrModules
 		// 'user'             to add a tab in user view
         $this->tabs = array();
 
-        // Dictionaries
-	    if (! isset($conf->mymodule->enabled))
+		if (! isset($conf->mymodule) || ! isset($conf->mymodule->enabled))
         {
         	$conf->mymodule=new stdClass();
         	$conf->mymodule->enabled=0;
         }
+        
+        // Dictionaries
 		$this->dictionaries=array();
         /* Example:
-        if (! isset($conf->mymodule->enabled)) $conf->mymodule->enabled=0;	// This is to avoid warnings
         $this->dictionaries=array(
             'langs'=>'mylangfile@mymodule',
             'tabname'=>array(MAIN_DB_PREFIX."table1",MAIN_DB_PREFIX."table2",MAIN_DB_PREFIX."table3"),		// List of tables we want to see into dictonnary editor
