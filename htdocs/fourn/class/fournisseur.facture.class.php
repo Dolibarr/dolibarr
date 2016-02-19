@@ -529,7 +529,7 @@ class FactureFournisseur extends CommonInvoice
         $sql.= ', f.localtax1_tx, f.localtax2_tx, f.total_localtax1, f.total_localtax2 ';
         $sql.= ', f.total_ht, f.tva as total_tva, f.total_ttc, f.fk_product, f.product_type, f.info_bits, f.rang, f.special_code, f.fk_parent_line, f.fk_unit';
         $sql.= ', p.rowid as product_id, p.ref as product_ref, p.label as label, p.description as product_desc';
-		$sql.= ', f.fk_multicurrency, f.multicurrency_code, f.multicurrency_subprice, f.multicurrency_total_ht, f.multicurrency_total_tva, f.multicurrency_total_ttc,';
+		$sql.= ', f.fk_multicurrency, f.multicurrency_code, f.multicurrency_subprice, f.multicurrency_total_ht, f.multicurrency_total_tva, f.multicurrency_total_ttc';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn_det as f';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON f.fk_product = p.rowid';
         $sql.= ' WHERE fk_facture_fourn='.$this->id;
@@ -582,12 +582,12 @@ class FactureFournisseur extends CommonInvoice
                     $line->fk_unit           = $obj->fk_unit;
 
 					// Multicurrency
-					$line->fk_multicurrency 		= $objp->fk_multicurrency;
-					$line->multicurrency_code 		= $objp->multicurrency_code;
-					$line->multicurrency_subprice 	= $objp->multicurrency_subprice;
-					$line->multicurrency_total_ht 	= $objp->multicurrency_total_ht;
-					$line->multicurrency_total_tva 	= $objp->multicurrency_total_tva;
-					$line->multicurrency_total_ttc 	= $objp->multicurrency_total_ttc;
+					$line->fk_multicurrency 		= $obj->fk_multicurrency;
+					$line->multicurrency_code 		= $obj->multicurrency_code;
+					$line->multicurrency_subprice 	= $obj->multicurrency_subprice;
+					$line->multicurrency_total_ht 	= $obj->multicurrency_total_ht;
+					$line->multicurrency_total_tva 	= $obj->multicurrency_total_tva;
+					$line->multicurrency_total_ttc 	= $obj->multicurrency_total_ttc;
 				
 	                $this->lines[$i] = $line;
 
@@ -2025,6 +2025,13 @@ class SupplierInvoiceLine extends CommonObjectLine
 	public $localtax1_type;
 	public $localtax2_type;
 
+	// Multicurrency
+	var $fk_multicurrency;
+	var $multicurrency_code;
+	var $multicurrency_subprice;
+	var $multicurrency_total_ht;
+	var $multicurrency_total_tva;
+	var $multicurrency_total_ttc;
 
 	/**
      *	Constructor
