@@ -261,6 +261,16 @@ if (empty($reshook))
 	{
 	    $result = $object->setPaymentMethods(GETPOST('mode_reglement_id','int'));
 	}
+	
+	// Multicurrency Code
+	else if ($action == 'setmulticurrencycode' && $user->rights->facture->creer) {
+		$result = $object->setMulticurrencyCode(GETPOST('multicurrency_code', 'alpha'));
+	}
+
+	// Multicurrency rate
+	else if ($action == 'setmulticurrencyrate' && $user->rights->facture->creer) {
+		$result = $object->setMulticurrencyRate(GETPOST('multicurrency_tx', 'int'));
+	}
 
 	// bank account
 	else if ($action == 'setbankaccount' && $user->rights->fournisseur->facture->creer) {
@@ -368,6 +378,8 @@ if (empty($reshook))
 	        $object->fk_project    = ($tmpproject > 0) ? $tmpproject : null;
 			$object->fk_incoterms = GETPOST('incoterm_id', 'int');
 	        $object->location_incoterms = GETPOST('location_incoterms', 'alpha');
+			$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
+			$object->multicurrency_tx = GETPOST('originmulticurrency_tx', 'int');
 
 			// Auto calculation of date due if not filled by user
 			if(empty($object->date_echeance)) $object->date_echeance = $object->calculate_date_lim_reglement();
@@ -1264,6 +1276,8 @@ if ($action == 'create')
         $societe->fetch(GETPOST('socid','int'));
     }
 
+	$currency_code = $conf->currency;
+	
     if (GETPOST('origin') && GETPOST('originid'))
     {
         // Parse element/subelement (ex: project_task)
@@ -1308,6 +1322,12 @@ if ($action == 'create')
             $remise_absolue 	= (!empty($objectsrc->remise_absolue)?$objectsrc->remise_absolue:(!empty($soc->remise_absolue)?$soc->remise_absolue:0));
             $dateinvoice		= empty($conf->global->MAIN_AUTOFILL_DATE)?-1:'';
 
+			if (!empty($conf->multicurrency->enabled))
+			{
+				if (!empty($objectsrc->multicurrency_code)) $currency_code = $objectsrc->multicurrency_code;
+				if (!empty($conf->global->MULTICURRENCY_USE_ORIGIN_TX) && !empty($objectsrc->multicurrency_tx))	$currency_tx = $objectsrc->multicurrency_tx; 
+			}
+			
             $datetmp=dol_mktime(12,0,0,$_POST['remonth'],$_POST['reday'],$_POST['reyear']);
             $dateinvoice=($datetmp==''?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:''):$datetmp);
             $datetmp=dol_mktime(12,0,0,$_POST['echmonth'],$_POST['echday'],$_POST['echyear']);
@@ -1323,6 +1343,8 @@ if ($action == 'create')
         $dateinvoice=($datetmp==''?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:''):$datetmp);
         $datetmp=dol_mktime(12,0,0,$_POST['echmonth'],$_POST['echday'],$_POST['echyear']);
         $datedue=($datetmp==''?-1:$datetmp);
+		
+		if (!empty($conf->multicurrency->enabled) && !empty($soc->multicurrency_code)) $currency_code = $soc->multicurrency_code;
     }
 
 
@@ -1331,7 +1353,8 @@ if ($action == 'create')
     print '<input type="hidden" name="action" value="add">';
     print '<input type="hidden" name="origin" value="'.GETPOST('origin').'">';
     print '<input type="hidden" name="originid" value="'.GETPOST('originid').'">';
-
+	if (!empty($currency_tx)) print '<input type="hidden" name="originmulticurrency_tx" value="' . $currency_tx . '">';
+	
     dol_fiche_head();
     
     print '<table class="border" width="100%">';
@@ -1490,6 +1513,16 @@ if ($action == 'create')
     $form->select_comptes($fk_account, 'fk_account', 0, '', 1);
     print '</td></tr>';
 
+	// Multicurrency
+	if (! empty($conf->multicurrency->enabled))
+	{
+		print '<tr>';
+		print '<td>'.fieldLabel('Currency','multicurrency_code').'</td>';
+        print '<td colspan="2" class="maxwidthonsmartphone">';
+	    print $form->selectMultiCurrency($currency_code, 'multicurrency_code');
+		print '</td></tr>';
+	}
+
 	// Public note
 	print '<tr><td>'.$langs->trans('NotePublic').'</td>';
     print '<td>';
@@ -1555,6 +1588,13 @@ if ($action == 'create')
             }
         }
         print '<tr><td>'.$langs->trans('TotalTTC').'</td><td colspan="2">'.price($objectsrc->total_ttc)."</td></tr>";
+		
+		if (!empty($conf->multicurrency->enabled))
+		{
+			print '<tr><td>' . $langs->trans('MulticurrencyTotalHT') . '</td><td colspan="2">' . price($objectsrc->multicurrency_total_ht) . '</td></tr>';
+			print '<tr><td>' . $langs->trans('MulticurrencyTotalVAT') . '</td><td colspan="2">' . price($objectsrc->multicurrency_total_tva) . "</td></tr>";
+			print '<tr><td>' . $langs->trans('MulticurrencyTotalTTC') . '</td><td colspan="2">' . price($objectsrc->multicurrency_total_ttc) . "</td></tr>";	
+		}
     }
     else
     {
@@ -1968,6 +2008,44 @@ else
 		}
 		print '</td></tr>';
 
+		// Multicurrency
+		if (! empty($conf->multicurrency->enabled))
+		{
+			// Multicurrency code
+			print '<tr>';
+			print '<td>';
+			print '<table class="nobordernopadding" width="100%"><tr><td>';
+			print fieldLabel('Currency','multicurrency_code');
+			print '</td>';
+			if ($action != 'editmulticurrencycode' && ! empty($object->brouillon))
+				print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencycode&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
+			print '</tr></table>';
+			print '</td><td colspan="3">';
+			if ($action == 'editmulticurrencycode') {
+				$form->form_multicurrency_code($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_code, 'multicurrency_code');
+			} else {
+				$form->form_multicurrency_code($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_code, 'none');
+			}
+			print '</td></tr>';
+		
+			// Multicurrency rate
+			print '<tr>';
+			print '<td>';
+			print '<table class="nobordernopadding" width="100%"><tr><td>';
+			print fieldLabel('Rate','multicurrency_tx');
+			print '</td>';
+			if ($action != 'editmulticurrencyrate' && ! empty($object->brouillon))
+				print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencyrate&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
+			print '</tr></table>';
+			print '</td><td colspan="3">';
+			if ($action == 'editmulticurrencyrate') {
+				$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'multicurrency_tx');
+			} else {
+				$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'none');
+			}
+			print '</td></tr>';
+		}
+
         // Bank Account
         print '<tr><td class="nowrap">';
         print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
@@ -2018,6 +2096,24 @@ else
             print '</tr>';
         }
         print '<tr><td>'.$langs->trans('AmountTTC').'</td><td colspan="3">'.price($object->total_ttc,1,$langs,0,-1,-1,$conf->currency).'</td></tr>';
+
+		if (!empty($conf->multicurrency->enabled))
+		{
+			// Multicurrency Amount HT
+			print '<tr><td height="10">' . fieldLabel('MulticurrencyAmountHT','multicurrency_total_ht') . '</td>';
+			print '<td class="nowrap" colspan="2">' . price($object->multicurrency_total_ht, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
+			print '</tr>';
+			
+			// Multicurrency Amount VAT
+			print '<tr><td height="10">' . fieldLabel('MulticurrencyAmountVAT','multicurrency_total_tva') . '</td>';
+			print '<td class="nowrap" colspan="2">' . price($object->multicurrency_total_tva, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
+			print '</tr>';
+			
+			// Multicurrency Amount TTC
+			print '<tr><td height="10">' . fieldLabel('MulticurrencyAmountTTC','multicurrency_total_ttc') . '</td>';
+			print '<td class="nowrap" colspan="2">' . price($object->multicurrency_total_ttc, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
+			print '</tr>';	
+		}
 
         // Project
         if (! empty($conf->projet->enabled))
