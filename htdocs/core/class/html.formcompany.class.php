@@ -65,7 +65,7 @@ class FormCompany
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_typent";
 		$sql.= " WHERE active = 1 AND (fk_country IS NULL OR fk_country = ".(empty($mysoc->country_id)?'0':$mysoc->country_id).")";
 		if ($filter) $sql.=" ".$filter;
-		$sql.= " ORDER by id";
+		$sql.= " ORDER by position, id";
 		dol_syslog(get_class($this).'::typent_array', LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
