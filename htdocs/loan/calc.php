@@ -123,7 +123,8 @@ if (! empty($errors)) {
 
 llxHeader();
 
-print load_fiche_titre($langs->trans("LoanCalc"));
+print load_fiche_titre($langs->trans("LoanCalc"), '', 'title_accountancy.png');
+
 print $langs->trans('LoanCalcDesc');
 
 print '<form method="GET" name="information" action="'.$_SERVER['PHP_SELF'].'">';
