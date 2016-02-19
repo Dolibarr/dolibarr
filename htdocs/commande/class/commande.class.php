@@ -3511,6 +3511,7 @@ class OrderLine extends CommonOrderLine
         $sql.= ' cd.remise, cd.remise_percent, cd.fk_remise_except, cd.subprice,';
         $sql.= ' cd.info_bits, cd.total_ht, cd.total_tva, cd.total_localtax1, cd.total_localtax2, cd.total_ttc, cd.fk_product_fournisseur_price as fk_fournprice, cd.buy_price_ht as pa_ht, cd.rang, cd.special_code,';
 	    $sql.= ' cd.fk_unit,';
+		$sql.= ' cd.fk_multicurrency, cd.multicurrency_code, cd.multicurrency_subprice, cd.multicurrency_total_ht, cd.multicurrency_total_tva, cd.multicurrency_total_ttc,';
         $sql.= ' p.ref as product_ref, p.label as product_libelle, p.description as product_desc,';
         $sql.= ' cd.date_start, cd.date_end';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as cd';
@@ -3560,6 +3561,13 @@ class OrderLine extends CommonOrderLine
 
             $this->date_start       = $this->db->jdate($objp->date_start);
             $this->date_end         = $this->db->jdate($objp->date_end);
+
+			$this->fk_multicurrency			= $objp->fk_multicurrency;
+			$this->multicurrency_code		= $objp->multicurrency_code;
+			$this->multicurrency_subprice	= $objp->multicurrency_subprice;
+			$this->multicurrency_total_ht	= $objp->multicurrency_total_ht;
+			$this->multicurrency_total_tva	= $objp->multicurrency_total_tva;
+			$this->multicurrency_total_ttc	= $objp->multicurrency_total_ttc;
 
             $this->db->free($result);
 
