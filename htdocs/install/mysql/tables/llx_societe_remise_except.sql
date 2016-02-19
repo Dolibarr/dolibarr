@@ -35,5 +35,5 @@ create table llx_societe_remise_except
   description			text NOT NULL
   multicurrency_amount_ht	double(24,8) NOT NULL,
   multicurrency_amount_tva	double(24,8) DEFAULT 0 NOT NULL,
-  multicurrency_amount_ttc	double(24,8) DEFAULT 0 NOT NULL,
+  multicurrency_amount_ttc	double(24,8) DEFAULT 0 NOT NULL
 )ENGINE=innodb;
