@@ -5,6 +5,7 @@ ProjectId=رقم المشروع
 ProjectLabel=تسمية المشروع
 Project=المشروع
 Projects=المشاريع
+ProjectsArea=Projects Area
 ProjectStatus=حالة المشروع
 SharedProject=مشاريع مشتركة
 PrivateProject=اتصالات من المشروع
@@ -19,7 +20,7 @@ TasksPublicDesc=هذا الرأي يعرض جميع المشاريع والمه�
 TasksDesc=هذا الرأي يعرض جميع المشاريع والمهام (أذونات المستخدم الخاص أعطى الصلاحية لعرض كل شيء).
 AllTaskVisibleButEditIfYouAreAssigned=جميع المهام لهذا المشروع واضحة، ولكن يمكنك إدخال الوقت فقط لمهمة تم تعيينك على. تعيين مهمة لك إذا كنت تريد أن تدخل من الوقت على ذلك.
 OnlyYourTaskAreVisible=فقط المهام الموكلة لك على مرئية. تعيين مهمة لك إذا كنت تريد أن تدخل من الوقت على ذلك.
-ProjectsArea=مشاريع المنطقة
+ProjectsArea=Projects Area
 NewProject=مشروع جديد
 AddProject=إنشاء مشروع
 DeleteAProject=حذف مشروع
@@ -67,6 +68,7 @@ Activities=المهام والأنشطة
 MyActivity=نشاط بلدي
 MyActivities=بلدي المهام والأنشطة
 MyProjects=بلدي المشاريع
+MyProjectsArea=My projects Area
 DurationEffective=فعالة لمدة
 Progress=تقدم
 ProgressDeclared=أعلن التقدم
@@ -183,6 +185,9 @@ TaskAssignedToEnterTime=المهمة الموكلة. يجب دخول الوقت 
 IdTaskTime=الوقت مهمة معرف
 YouCanCompleteRef=إذا كنت ترغب في استكمال المرجع مع بعض المعلومات (لاستخدامه بمثابة مرشحات البحث)، وريكومانديد لإضافة - شخصية لفصلها، وبالتالي فإن الترقيم التلقائي سوف لا تزال تعمل بشكل صحيح للمشاريع المقبلة. على سبيل المثال٪ S-ABC. قد تفضل أيضا لإضافة مفاتيح البحث في التسمية.
 OpenedProjectsByThirdparties=مشاريع افتتحه thirdparties
+OnlyOpportunitiesShort=Only opportunities
+OpenedOpportunitiesShort=Opened opportunities
+NotAnOpportunityShort=Not an opportunity
 OpportunityTotalAmount=فرص المبلغ الإجمالي
 OpportunityPonderatedAmount=كمية الفرص المرجحة
 OpportunityPonderatedAmountDesc=Opportunities amount weighted with probability

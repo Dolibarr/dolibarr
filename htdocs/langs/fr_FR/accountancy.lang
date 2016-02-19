@@ -34,6 +34,7 @@ AccountAccounting=Compte comptable
 AccountAccountingSuggest=Suggestion du compte
 Ventilation=Ventilation
 
+MenuAccountancy=Accountancy
 CustomersVentilation=Ventilation clients
 SuppliersVentilation=Ventilation fournisseurs
 TradeMargin=Marge commerciale
@@ -46,7 +47,7 @@ UpdateAccount=Modification de compte comptable
 UpdateMvts=Modification de mouvements
 WriteBookKeeping=Enregistrer les écritures dans le grand livre
 Bookkeeping=Grand livre
-AccountBalanceByMonth=Solde par mois
+AccountBalance=Account balance
 
 AccountingVentilation=Ventilation comptable
 AccountingVentilationSupplier=Ventilation comptable client
@@ -103,6 +104,7 @@ Code_tiers=Tiers
 Labelcompte=Libellé du compte
 Sens=Sens
 Codejournal=Journal
+NumPiece=Piece number
 
 DelBookKeeping=Supprimer les écritures du grand livre
 
@@ -151,6 +153,8 @@ MvtNotCorrectlyBalanced=Le mouvement n'est pas équilibré. Crédit = %s. Débit
 FicheVentilation=Fiche ventilation
 GeneralLedgerIsWritten=Les opérations ont été inscrites dans le grand livre
 
+MvtNotCorrectlyBalanced=Le mouvement n'est pas équilibré. Crédit = %s. Débit = %s
+
 ##Export Journal Feature
 ExportFormat=Format de l'export
 Prefixname=Préfixe du fichier d'export
@@ -163,7 +167,8 @@ Type=Type de champs
 Param=Paramètres Supplémentaires
 EnabledProduct=Dans produit
 EnabledTiers=In third party
-EnabledVat=Dans TVA
+EnabledVat=In VAT
+
 ## Tools - Init accounting account on product / service
 InitAccountancy=Init accountancy
 InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accountancy account defined for sales and purchases. Check before that setup of module accountancy is complete.

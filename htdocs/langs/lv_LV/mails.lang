@@ -47,6 +47,7 @@ MailingSuccessfullyValidated=Pasta vēstuļu sūtīšanas veiksmīgi apstiprinā
 MailUnsubcribe=Atrakstīties
 Unsuscribe=Atrakstīties
 MailingStatusNotContact=Nesazināties
+MailingStatusReadAndUnsubscribe=Read and unsubscribe
 ErrorMailRecipientIsEmpty=E-pasta adresāts ir tukšs
 WarningNoEMailsAdded=Nav jaunu e-pasta, lai pievienotu adresāta sarakstā.
 ConfirmValidMailing=Vai jūs tiešām vēlaties, lai apstiprinātu šo pasta vēstuļu sūtīšanas?

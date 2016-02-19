@@ -17,9 +17,9 @@ DeleteDeliveryReceiptConfirm=Êtes-vous sûr de vouloir supprimer ce bon de livr
 DeliveryMethod=Méthode de livraison
 TrackingNumber=Numéro de suivi
 DeliveryNotValidated=Bon de réception non validé
-StatusDeliveryCanceled=Canceled
-StatusDeliveryDraft=Draft
-StatusDeliveryValidated=Received
+StatusDeliveryCanceled=Annulé
+StatusDeliveryDraft=Brouillon
+StatusDeliveryValidated=Reçu
 # merou PDF model
 NameAndSignature=Nom et Signature :
 ToAndDate=A___________________________________ le ____/_____/__________

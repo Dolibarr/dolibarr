@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - install
 InstallEasy=Απλά ακολουθήστε τις οδηγίες βήμα προς βήμα.
-MiscellaneousChecks=Prerequisites check
+MiscellaneousChecks=Ελέγχος Προαπαιτούμενων
 DolibarrWelcome=Καλώς ήρθατε στο Dolibarr
 ConfFileExists=Το αρχείο ρυθμίσεων <b>%s</b> υπάρχει.
 ConfFileDoesNotExists=Το αρχείο ρυθμίσεων <b>%s</b> δεν υπάρχει!

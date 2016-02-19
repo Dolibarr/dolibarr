@@ -1,16 +1,17 @@
 # Dolibarr language file - Source file is en_US - supplier_proposal
 SupplierProposal=Leverandørtilbud
 supplier_proposalDESC=Håndter prisforespørsler til leverandører
-SupplierProposalShort=Supplier proposals
-SupplierProposalNew=New request
+SupplierProposalShort=Leverandørtilbud
+SupplierProposalNew=Ny forespørsel
 CommRequest=Prisforespørsel
 CommRequests=Prisforespørsel
 SearchRequest=Finn en forspørsel
 DraftRequests=Forespørsel-kladder
+SupplierProposalsDraft=Draft supplier proposals
 LastModifiedRequests=Siste %s modifiserte prisforespørsler
 RequestsOpened=Åpne prisforespørsler
 SupplierProposalArea=Område for leverandørtilbud
-SupplierProposalShort=Supplier proposals
+SupplierProposalShort=Leverandørtilbud
 SupplierProposals=Leverandørtilbud
 NewAskPrice=Ny prisforspørsel
 NewAsk=Ny forespørsel

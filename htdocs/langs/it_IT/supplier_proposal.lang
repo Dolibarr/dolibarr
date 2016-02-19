@@ -7,6 +7,7 @@ CommRequest=Price request
 CommRequests=Price requests
 SearchRequest=Find a request
 DraftRequests=Draft requests
+SupplierProposalsDraft=Draft supplier proposals
 LastModifiedRequests=Last %s modified price requests
 RequestsOpened=Open price requests
 SupplierProposalArea=Supplier proposals area

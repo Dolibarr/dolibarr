@@ -47,6 +47,7 @@ MailingSuccessfullyValidated=ตรวจสอบการส่งอีเม
 MailUnsubcribe=ยกเลิก
 Unsuscribe=ยกเลิก
 MailingStatusNotContact=ไม่ติดต่ออีกต่อไป
+MailingStatusReadAndUnsubscribe=Read and unsubscribe
 ErrorMailRecipientIsEmpty=ผู้รับอีเมล์เป็นที่ว่างเปล่า
 WarningNoEMailsAdded=ไม่มีอีเมล์ใหม่เพื่อเพิ่มรายชื่อของผู้รับ
 ConfirmValidMailing=คุณแน่ใจหรือว่าต้องการตรวจสอบการส่งอีเมลนี้หรือไม่?

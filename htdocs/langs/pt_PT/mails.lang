@@ -47,6 +47,7 @@ MailingSuccessfullyValidated=Mailing validado com sucesso
 MailUnsubcribe=Cancelar Subscrição
 Unsuscribe=Cancelar Subscrição
 MailingStatusNotContact=Não efectuar mais contatos
+MailingStatusReadAndUnsubscribe=Read and unsubscribe
 ErrorMailRecipientIsEmpty=A direcção do destinatario está vazia
 WarningNoEMailsAdded=nenhum Novo e-mail a Adicionar à lista destinatarios.
 ConfirmValidMailing=Confirma a validação do mailing?

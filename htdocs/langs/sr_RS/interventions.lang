@@ -54,9 +54,9 @@ PacificNumRefModelDesc1=Vraća broj u formatu %syymm-nnnn gde je yy godina, mm m
 PacificNumRefModelError=Kartica intervencije sa početkom $syymm već postoji i nije kompatibina sa ovim modelom sekvence. Uklonite je ili je preimenujte da biste aktivirali ovaj modul.
 PrintProductsOnFichinter=Štampaj proizvode sa kartice intervencije
 PrintProductsOnFichinterDetails=Intervencije generisane iz narudžbina
-InterventionStatistics=Statistics of interventions
-NbOfinterventions=Nb of intervention cards
-NumberOfInterventionsByMonth=Nb of intervention cards by month (date of validation)
+InterventionStatistics=Statistika intervencija
+NbOfinterventions=Broj kartica intervencije
+NumberOfInterventionsByMonth=Broj kartica intervencije na mesečnom nivou (datum potvrde)
 ##### Exports #####
 InterId=Id intervencije
 InterRef=Ref. intervencije

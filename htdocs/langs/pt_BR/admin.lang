@@ -910,7 +910,6 @@ PathDirectory=Diretório
 SendmailOptionMayHurtBuggedMTA=Função para envios de correspondência usando o método "PHP mail direct" irá gerar uma mensagem na correspondência que pode não estar corretamente analisada por algum servidor de recepção de correspondência. Resultando que essa correspondência não pode ser lida pela pessoa hostiada por essa plataforma bugada. É caso de alguns provedores de internet (Ex: Orange na França). Isso não é um problema para o Dolibarr nem dentro PHP mas para servidor receptor de correspondência. Você pode contudo adicionar a opção MAIN_FIX_FOR_BUGGED_MTA para 1 dentro da configuração, outra modificação do Dolibarr para evitar isso. Contudo você pode sofrer problemas com outros servidores que respeitão estritamente os padrões SMTP. A outra solução (RECOMENDADA) é usar o método "SMTP socket library" que não tem desvantagens.
 TranslationSetup=Configurações de tradução
 TranslationDesc=Escolha a língua visivel na sua tela que pode ser modificada:<br>* Global no menu <strong>Home->Configuração->Aparência</strong><br>* Para somente usuário pela tab <strong>Aparência de usuário</strong> no cartão do usuário (clique no login no topo da tela).
-TotalNumberOfActivatedModules=Número total de funções do módulo: <b>%s</b>
 YouMustEnableOneModule=Você pelo menos deve ativar 1 módulo
 ClassNotFoundIntoPathWarning=Classe %s não achado dentro o caminho PHP
 YesInSummer=Sim em verão

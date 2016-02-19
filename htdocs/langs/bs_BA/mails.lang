@@ -47,6 +47,7 @@ MailingSuccessfullyValidated=E-pošta uspješno potvrđena
 MailUnsubcribe=Ispisati se
 Unsuscribe=Ispisati se
 MailingStatusNotContact=Nemoj kontaktirati više
+MailingStatusReadAndUnsubscribe=Read and unsubscribe
 ErrorMailRecipientIsEmpty=Primalac e-pošte je prazan
 WarningNoEMailsAdded=Nema nove e-pošte za dodati na listu primaoca.
 ConfirmValidMailing=Jeste li sigurni da želite potvrditi ovu e-poštu?

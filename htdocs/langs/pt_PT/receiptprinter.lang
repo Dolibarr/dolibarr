@@ -1,8 +1,10 @@
 # Dolibarr language file - Source file is en_US - receiptprinter
+ReceiptPrinterSetup=Setup of module ReceiptPrinter
 PrinterAdded=Adicionada a impressora %s
 PrinterUpdated=Atualizada a impressora %s
 PrinterDeleted=Eliminada a impressora %s
 TestSentToPrinter=Teste Enviado para a Impressora %s
+ReceiptPrinter=Receipt printers
 ReceiptPrinterDesc=Setup of printers
 ReceiptPrinterTemplateDesc=Setup of Templates
 ReceiptPrinterTypeDesc=Description of Receipt Printer's type

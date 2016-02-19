@@ -36,6 +36,7 @@ LocalTax2IsUsedDesc=Utilisation d'un 3ème type taxe (autre que TVA(TPS))
 LocalTax2IsNotUsedDesc=Pas d'utilisation de 3ème type taxe (autre que TVA(TPS))
 ShowBugTrackLink=Afficher le lien "Signaler un défaut"
 MAIN_ROUNDING_RULE_TOT=Taille du pas des arrondis (pour les très rares pays qui arrondissent sur une autre base que la base 10)
+TotalNumberOfActivatedModules=Total number of activated feature modules: <b>%s</b> / <b>%s</b>
 OnlyFollowingModulesAreOpenedToExternalUsers=Remarque, seuls les modules suivants sont ouverts aux utilisateurs externes (quelles que soient les permissions de ces utilisateurs) :
 NotificationsDesc=La fonction des notifications par emails permet d'envoyer automatiquement un email, lors de certains événements Dolibarr. La cible des notifications peut être défini:<br>* par contacts de tiers (clients, prospects ou fournisseurs), contact par contact.<br>* ou en positionnant un email en paramètre global sur la page de configuration du module Notification.
 ShippableOrderIconInList=Ajouter un icône dans la liste des commandes qui indique si la commande est expédiable.
