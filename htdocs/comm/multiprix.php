@@ -84,12 +84,12 @@ if ($_socid > 0)
 	if ($objsoc->client == 1) $tabchoice='customer';
 	if ($objsoc->client == 2) $tabchoice='prospect';
 
-	dol_fiche_head($head, $tabchoice, $langs->trans("ThirdParty"), 0, 'company');
-
-
 	print '<form method="POST" action="multiprix.php?id='.$objsoc->id.'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="setpricelevel">';
+	
+	dol_fiche_head($head, $tabchoice, $langs->trans("ThirdParty"), 0, 'company');
+
 	print '<table width="100%" border="0">';
 	print '<tr><td valign="top">';
 	print '<table class="border" width="100%">';
@@ -121,12 +121,14 @@ if ($_socid > 0)
 	print "</td></tr>";
 	print "</table>";
 
-	print '<div align="center"><br><input type="submit" class="button" value="'.$langs->trans("Save").'"></div>';
+	dol_fiche_end();
+	
+	print '<div align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></div>';
 
 	print "</form>";
 
-	print "</div>\n";
-	print '<br>';
+	
+	print '<br><br>';
 
 
 	/*
