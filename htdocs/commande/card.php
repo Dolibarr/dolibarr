@@ -2396,7 +2396,6 @@ if ($action == 'create' && $user->rights->commande->creer)
 			}
 			print '</div>';
 		}
-		print '<br>';
 
 		if ($action != 'presend')
 		{
