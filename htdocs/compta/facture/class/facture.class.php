@@ -2471,15 +2471,6 @@ class Facture extends CommonInvoice
 		$txlocaltax1=price2num($txlocaltax1);
 		$txlocaltax2=price2num($txlocaltax2);
 
-		if ($price_base_type=='HT')
-		{
-			$pu=$pu_ht;
-		}
-		else
-		{
-			$pu=$pu_ttc;
-		}
-
 		// Check parameters
 		if ($type < 0) return -1;
 
@@ -2497,6 +2488,20 @@ class Facture extends CommonInvoice
 				{
 					$product_type = $product->type;
 
+					if (!empty($conf->dynamicprices->enabled))
+					{
+						require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
+						$priceparser = new PriceParser($this->db);
+						$extra_values = array('date_start' => $date_start, 'date_end' => $date_end);
+						$price_result = $priceparser->parseProduct($product, $extra_values);
+						if ($price_result >= 0)
+						{
+							$pu_ht = price2num($price_result);
+							//Calculate the VAT
+							$pu_ttc = price2num($pu_ht * (1 + ($txtva / 100)));
+						}
+					}
+
 					if (! empty($conf->global->STOCK_MUST_BE_ENOUGH_FOR_INVOICE) && $product_type == 0 && $product->stock_reel < $qty) {
 	                    $langs->load("errors");
 					    $this->error=$langs->trans('ErrorStockIsNotEnoughToAddProductOnInvoice', $product->ref);
@@ -2504,6 +2509,15 @@ class Facture extends CommonInvoice
 						return -3;
 					}
 				}
+			}
+
+			if ($price_base_type=='HT')
+			{
+				$pu=$pu_ht;
+			}
+			else
+			{
+				$pu=$pu_ttc;
 			}
 
 			// Calcul du total TTC et de la TVA pour la ligne a partir de
