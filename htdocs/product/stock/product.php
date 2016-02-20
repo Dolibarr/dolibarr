@@ -493,16 +493,14 @@ if ($id > 0 || $ref)
         print $form->textwithtooltip($langs->trans("PhysicalStock"), $text_stock_options, 2, 1, img_picto('', 'info'), '', 2);
         print '</td>';
 		print '<td>'.$object->stock_reel;
-		if ($object->seuil_stock_alerte && ($object->stock_reel < $object->seuil_stock_alerte)) print ' '.img_warning($langs->trans("StockLowerThanLimit"));
+		if ($object->seuil_stock_alerte != '' && ($object->stock_reel < $object->seuil_stock_alerte)) print ' '.img_warning($langs->trans("StockLowerThanLimit"));
 		print '</td>';
 		print '</tr>';
 
         // Calculating a theorical value
         print '<tr><td>'.$langs->trans("VirtualStock").'</td>';
         print "<td>".(empty($object->stock_theorique)?0:$object->stock_theorique);
-        if ($object->stock_theorique < $object->seuil_stock_alerte) {
-            print ' '.img_warning($langs->trans("StockLowerThanLimit"));
-        }
+        if ($object->seuil_stock_alerte != '' && ($object->stock_theorique < $object->seuil_stock_alerte)) print ' '.img_warning($langs->trans("StockLowerThanLimit"));
         print '</td>';
         print '</tr>';
 
