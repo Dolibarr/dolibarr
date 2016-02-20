@@ -36,6 +36,12 @@ ALTER TABLE llx_product_customer_price_log ADD COLUMN localtax2_type varchar(10)
 
 ALTER TABLE llx_product ADD COLUMN  model_pdf	varchar(255) default '';
 
+ALTER TABLE llx_product ADD COLUMN width		float        DEFAULT NULL;
+ALTER TABLE llx_product ADD COLUMN width_units	tinyint      DEFAULT NULL;
+ALTER TABLE llx_product ADD COLUMN height		float        DEFAULT NULL;
+ALTER TABLE llx_product ADD COLUMN height_units tinyint      DEFAULT NULL;
+
+
 CREATE TABLE llx_categorie_user 
 (
   fk_categorie 	integer NOT NULL,
