@@ -1493,9 +1493,10 @@ class Product extends CommonObject
 	 *	@param		int		$product_id			Filter on a particular product id
 	 * 	@param		string	$fourn_ref			Filter on a supplier price ref. 'none' to exclude ref in search.
 	 *  @param      int     $fk_soc             If of supplier
+	 *  @param		array	$extra_values		Any aditional values for dynamic price
 	 *  @return    	int 						<-1 if KO, -1 if qty not enough, 0 if OK but nothing found, id_product if OK and found. May also initialize some properties like (->ref_supplier, buyprice, fourn_pu, vatrate_supplier...)
 	 */
-	function get_buyprice($prodfournprice, $qty, $product_id=0, $fourn_ref='', $fk_soc=0)
+	function get_buyprice($prodfournprice, $qty, $product_id=0, $fourn_ref='', $fk_soc=0, $extra_values=array())
 	{
 		global $conf;
 		$result = 0;
@@ -1525,7 +1526,7 @@ class Product extends CommonObject
                     $prod_supplier->fourn_tva_tx = $obj->tva_tx;
                     $prod_supplier->fk_supplier_price_expression = $obj->fk_supplier_price_expression;
                     $priceparser = new PriceParser($this->db);
-                    $price_result = $priceparser->parseProductSupplier($prod_supplier);
+                    $price_result = $priceparser->parseProductSupplier($prod_supplier, $extra_values);
                     if ($price_result >= 0) {
                     	$obj->price = $price_result;
                     }

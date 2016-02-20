@@ -139,9 +139,9 @@ class PriceSchedule extends CommonObject
      *
      *    @param      int   $id                 Id of schedule
      *    @param      int   $product_id         Id of product
-     *    @param      int   $year               Year of schedule
      *    @param      int   $type               Type of schedule
      *    @param      int   $product_supplier   Id of product supplier price
+     *    @param      int   $year               Year of schedule
      *    @return     int                       <0 if KO, >0 if OK
      */
     function fetch($id = 0, $product_id = 0, $type = 0, $product_supplier = 0, $year = 0)

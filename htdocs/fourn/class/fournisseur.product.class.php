@@ -522,9 +522,10 @@ class ProductFournisseur extends Product
      *  @param	int		$prodid	    Product id
      *  @param	int		$qty		Minimum quantity
      *  @param	int		$socid		get min price for specific supplier
+     *  @param	array	$extra_values	Any aditional values for dynamic price
      *  @return int					<0 if KO, 0=Not found of no product id provided, >0 if OK
      */
-    function find_min_price_product_fournisseur($prodid, $qty=0, $socid=0)
+    function find_min_price_product_fournisseur($prodid, $qty=0, $socid=0, $extra_values = array())
     {
         global $conf;
 
@@ -592,7 +593,7 @@ class ProductFournisseur extends Product
                         $prod_supplier->fourn_tva_tx = $record["tva_tx"];
                         $prod_supplier->fk_supplier_price_expression = $record["fk_supplier_price_expression"];
                         $priceparser = new PriceParser($this->db);
-                        $price_result = $priceparser->parseProductSupplier($prod_supplier);
+                        $price_result = $priceparser->parseProductSupplier($prod_supplier, $extra_values);
                         if ($price_result >= 0) {
                             $fourn_price = price2num($price_result,'MU');
                             if ($record["quantity"] != 0)
