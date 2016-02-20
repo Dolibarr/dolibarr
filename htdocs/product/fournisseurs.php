@@ -228,14 +228,8 @@ if (empty($reshook))
 					if (!empty($conf->dynamicprices->enabled) && $price_expression !== '')
 					{
 						//Check the expression validity by parsing it
-                        $prod_supplier = new ProductFournisseur($this->db);
-	                    $prod_supplier->id = $prodid;
-                        $prod_supplier->fourn_qty	= $quantity;
-	                    $prod_supplier->fourn_tva_tx = $tva_tx;
-	                    $prod_supplier->fourn_id = $id_fourn;
-	                    $prod_supplier->fk_supplier_price_expression = $price_expression;
                         $priceparser = new PriceParser($db);
-                        $price_result = $priceparser->parseProductSupplier($prod_supplier);
+                        $price_result = $priceparser->parseProductSupplier($object);
 						if ($price_result < 0) { //Expression is not valid
 							$error++;
 							setEventMessages($priceparser->translatedError(), null, 'errors');
