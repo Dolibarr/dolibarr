@@ -235,6 +235,8 @@ if (empty($reshook))
 			        $stockLine[$i][$j]['qty']=GETPOST($qty,'int');
 			        $stockLine[$i][$j]['warehouse_id']=GETPOST($stockLocation,'int');
 			        $stockLine[$i][$j]['ix_l']=GETPOST($idl,'int');
+
+			        $totalqty+=GETPOST($qty,'int');
 			        
 			        $j++;
 			        $stockLocation="ent1".$i."_".$j;
@@ -247,7 +249,7 @@ if (empty($reshook))
 				//shipment line for product with no batch management and no multiple stock location
 				if (GETPOST($qty,'int') > 0) $totalqty+=GETPOST($qty,'int');
 			}
-			
+				
 			// Extrafields
 			$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
             $array_options[$i] = $extrafieldsline->getOptionalsFromPost($extralabelsline, $i);
@@ -876,7 +878,8 @@ if ($action == 'create')
 						print '<td align="center">';
 						if ($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
 						{
-							print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
+                            if (GETPOST('qtyl'.$indiceAsked)) $defaultqty=GETPOST('qtyl'.$indiceAsked);
+                            print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
 							print '<input name="qtyl'.$indiceAsked.'" id="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$deliverableQty.'">';
 						}
 						else print $langs->trans("NA");
@@ -1002,8 +1005,9 @@ if ($action == 'create')
 							{
 								$stock = + $stock_warehouse->real; // Convert it to number
 								$deliverableQty = min($quantityToBeDelivered,$stock);
+								$deliverableQty = max(0, $deliverableQty);
 								// Quantity to send
-								print '<tr><td colspan="3" ></td><td align="center">';
+								print '<tr><td colspan="3" ></td><td align="center"><!-- qty to ship (no lot management for product line indiceAsked='.$indiceAsked.') -->';
 								if ($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
 								{
 									print '<input name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$deliverableQty.'">';
@@ -1018,10 +1022,10 @@ if ($action == 'create')
 									print '<td align="left">';
 									if ($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
 									{
-										print $warehouseObject->getNomUrl(0).' / ';
+										print $warehouseObject->getNomUrl(0).' ';
 										 
 										print '<!-- Show details of stock -->';
-										print $stock;
+										print '('.$stock.')';
 									   
 									}
 									else

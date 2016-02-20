@@ -1416,7 +1416,6 @@ class Propal extends CommonObject
                         $line->date_start  		= $this->db->jdate($objp->date_start);
                         $line->date_end  		= $this->db->jdate($objp->date_end);
 
-
 						// Multicurrency
 						$line->fk_multicurrency 		= $objp->fk_multicurrency;
 						$line->multicurrency_code 		= $objp->multicurrency_code;
@@ -1436,7 +1435,7 @@ class Propal extends CommonObject
                 }
                 else
                 {
-                    $this->error=$this->db->error();
+                    $this->error=$this->db->lasterror();
                     return -1;
                 }
 
@@ -1449,7 +1448,7 @@ class Propal extends CommonObject
         }
         else
         {
-            $this->error=$this->db->error();
+            $this->error=$this->db->lasterror();
             return -1;
         }
     }
