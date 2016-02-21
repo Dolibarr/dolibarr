@@ -1145,6 +1145,7 @@ if ($step == 5 && $datatoimport)
 		$obj->import_close_file();
 	}
 
+  // TODO, remove this, since it only works for csv
 	$nboflines=dol_count_nb_of_line($conf->import->dir_temp.'/'.$filetoimport);
 
 	$param='&leftmenu=import&format='.$format.'&datatoimport='.$datatoimport.'&filetoimport='.urlencode($filetoimport).'&nboflines='.$nboflines.'&separator='.urlencode($separator).'&enclosure='.urlencode($enclosure);
