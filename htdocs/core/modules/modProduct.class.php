@@ -168,6 +168,40 @@ class modProduct extends DolibarrModules
 		if (! empty($conf->fournisseur->enabled)) $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product_fournisseur_price as pf ON pf.fk_product = p.rowid LEFT JOIN '.MAIN_DB_PREFIX.'societe s ON s.rowid = pf.fk_soc';
 		$this->export_sql_end[$r] .=' WHERE p.fk_product_type = 0 AND p.entity IN ('.getEntity("product", 1).')';
 
+		if (! empty($conf->global->MAIN_MULTILANGS))
+		{
+			// multiline format, you need one line per translated product
+			$this->export_fields_array[$r]=array_merge($this->export_fields_array[$r],array('l.lang'=>'language', 'l.label'=>'translated_label','l.description'=>'translated_description','l.note'=>'translated_note'));
+			$this->export_TypeFields_array[$r]=array_merge($this->export_TypeFields_array[$r],array('l.lang'=>'Text', 'l.label'=>'Text','l.description'=>'Text','l.note'=>'Text'));
+			$this->export_entities_array[$r]=array_merge($this->export_entities_array[$r],array('l.lang'=>'translation', 'l.label'=>'translation','l.description'=>'translation','l.note'=>'translation'));
+			$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product_lang as l ON l.fk_product = p.rowid';
+
+			// single line format, just use one column per translation
+			$sql="SELECT lang FROM ".MAIN_DB_PREFIX."product_lang GROUP BY lang";
+			$langs = array();
+			$resql=$this->db->query($sql);
+			if ($resql) {
+				while ($obj=$this->db->fetch_object($resql)) {
+					// list all language, you need at least one translation available to detect the language
+					$name = $obj->lang;
+					array_push($langs, $name);
+					$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX."product_lang as $name ON $name.fk_product = p.rowid AND $name.lang='$name'";
+					// translate the label
+					$this->export_fields_array[$r][$name.".label"]=$name."_label";
+					$this->export_TypeFields_array[$r][$name.".label"]='Text';
+					$this->export_entities_array[$r][$name.".label"]='translation';
+					// translate the description
+					$this->export_fields_array[$r][$name.".description"]=$name."_description";
+					$this->export_TypeFields_array[$r][$name.".description"]='Text';
+					$this->export_entities_array[$r][$name.".description"]='translation';
+					// translate the note
+					$this->export_fields_array[$r][$name.".note"]=$name."_note";
+					$this->export_TypeFields_array[$r][$name.".note"]='Text';
+					$this->export_entities_array[$r][$name.".note"]='translation';
+				}
+			}
+		}
+
 		if (! empty($conf->global->PRODUIT_MULTIPRICES))
 		{
 			// Exports product multiprice
@@ -188,7 +222,7 @@ class modProduct extends DolibarrModules
 				'pr.price_ttc'=>"product",
 				'pr.price_min'=>"product",'pr.price_min_ttc'=>"product",
 				'pr.tva_tx'=>'product',
-			    'pr.recuperableonly'=>'product',
+				'pr.recuperableonly'=>'product',
 				'pr.date_price'=>"product");
 			$this->export_sql_start[$r]='SELECT DISTINCT ';
 			$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'product as p';
@@ -288,6 +322,26 @@ class modProduct extends DolibarrModules
 				'pr.date_price'=>'2013-04-10');
 		}
 
+		if (! empty($conf->global->MAIN_MULTILANGS))
+		{
+			$this->import_tables_array[$r]['l']=MAIN_DB_PREFIX.'product_lang';
+			// multiline translation, one line per translation
+			$this->import_fields_array[$r]['l.lang']='language';
+			$this->import_fields_array[$r]['l.label']='translated_label';
+			$this->import_fields_array[$r]['l.description']='translated_description';
+			$this->import_fields_array[$r]['l.note']='translated_note';
+			$this->import_examplevalues_array[$r]['l.lang']='en_US';
+
+			// single line translation, one column per translation
+			foreach($langs as $l) {
+				$this->import_tables_array[$r][$l] = MAIN_DB_PREFIX.'product_lang';
+				$this->import_fields_array[$r][$l.'.label']=$l.'_label';
+				$this->import_fields_array[$r][$l.'.description']=$l.'_description';
+				$this->import_fields_array[$r][$l.'.note']=$l.'_note';
+				$this->import_fieldshidden_array[$r][$l.'.lang']="'$l'";
+				$this->import_fieldshidden_array[$r][$l.'.fk_product']='lastrowid-'.MAIN_DB_PREFIX.'product';
+			}
+		}
 	}
 
 
