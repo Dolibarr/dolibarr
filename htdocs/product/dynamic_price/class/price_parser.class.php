@@ -36,7 +36,7 @@ class PriceParser
 	// Limit of expressions per price
 	public $limit = 100;
 	// The error that occurred when parsing price
-	public $error;
+	public $error_parser;
 	// The expression that caused the error
 	public $error_expr;
 	//The special char
@@ -94,10 +94,10 @@ class PriceParser
 		16, internal error
 		18, internal error
 		*/
-		if (empty($this->error)) {
+		if (empty($this->error_parser)) {
 			return $langs->trans("ErrorPriceExpressionUnknown", 0); //this is not supposed to happen
 		}
-		list($code, $info) = $this->error;
+		list($code, $info) = $this->error_parser;
 		if (in_array($code, array(9, 14, 19, 20))) //Errors which have 0 arg
 		{
 			return $langs->trans("ErrorPriceExpression".$code);
@@ -136,7 +136,7 @@ class PriceParser
 		$expression = trim($expression);
 		if (empty($expression))
 		{
-			$this->error = array(20, null);
+			$this->error_parser = array(20, null);
 			return -2;
 		}
 
@@ -198,8 +198,8 @@ class PriceParser
 			if (!empty($expr))
 			{
 				$last_result = $em->evaluate($expr);
-				$this->error = $em->last_error_code;
-				if ($this->error !== null) { //$em->last_error is null if no error happened, so just check if error is not null
+				$this->error_parser = $em->last_error_code;
+				if ($this->error_parser !== null) { //$em->last_error_code is null if no error happened, so just check if error_parser is not null
 					$this->error_expr = $expr;
 					return -3;
 				}
@@ -211,12 +211,12 @@ class PriceParser
 		}
 		if (!isset($vars["price"]))
 		{
-			$this->error = array(21, $expression);
+			$this->error_parser = array(21, $expression);
 			return -4;
 		}
 		if ($vars["price"] < 0)
 		{
-			$this->error = array(22, $expression);
+			$this->error_parser = array(22, $expression);
 			return -5;
 		}
 		return $vars["price"];
@@ -235,7 +235,7 @@ class PriceParser
 		$price_expression = new PriceExpression($this->db);
 		$res = $price_expression->fetch($product->fk_price_expression);
 		if ($res < 1) {
-			$this->error = array(19, null);
+			$this->error_parser = array(19, null);
 			return -1;
 		}
 
@@ -250,7 +250,7 @@ class PriceParser
 
 		//Parse the expression and return the price, if not error occurred check if price is higher than min
 		$result = $this->parseExpression($product, $price_expression->expression, $extra_values);
-		if (empty($this->error)) {
+		if (empty($this->error_parser)) {
 			if ($result < $product->price_min) {
 				$result = $product->price_min;
 			}
@@ -272,7 +272,7 @@ class PriceParser
 		$res = $price_expression->fetch($product_supplier->fk_supplier_price_expression);
 		if ($res < 1)
 		{
-			$this->error = array(19, null);
+			$this->error_parser = array(19, null);
 			return -1;
 		}
 
