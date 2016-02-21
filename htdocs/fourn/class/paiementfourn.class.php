@@ -27,6 +27,7 @@
  */
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
+require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 
 /**
  *	Class to manage payments for supplier invoices
@@ -134,29 +135,58 @@ class PaiementFourn extends Paiement
 		global $langs,$conf;
 
 		$error = 0;
+		$way = $this->getWay();
 
 		// Clean parameters
-		$this->total = 0;
-		foreach ($this->amounts as $key => $value)
+		$totalamount = 0;
+		$totalamount_converted = 0;
+		
+		if ($way == 'dolibarr')
 		{
-			$newvalue = price2num($value, 'MT');
-			$this->amounts[$key] = $newvalue;
-			$this->total += $newvalue;
+			$amounts = &$this->amounts;
+			$amounts_to_update = &$this->multicurrency_amounts;
 		}
-		$this->total = price2num($this->total);
-
+		else
+		{
+			$amounts = &$this->multicurrency_amounts;
+			$amounts_to_update = &$this->amounts;
+		}
+		
+		foreach ($amounts as $key => $value)
+		{
+			$value_converted = Multicurrency::getAmountConversionFromInvoiceRate($key, $value, $way, 'facture_fourn');
+			$totalamount_converted += $value_converted;
+			$amounts_to_update[$key] = price2num($value_converted, 'MT');
+			
+			$newvalue = price2num($value,'MT');
+			$amounts[$key] = $newvalue;
+			$totalamount += $newvalue;
+		}
+		$totalamount = price2num($totalamount);
+		$totalamount_converted = price2num($totalamount_converted);
 
 		$this->db->begin();
 
-		if ($this->total <> 0) // On accepte les montants negatifs
+		if ($totalamount <> 0) // On accepte les montants negatifs
 		{
 			$ref = $this->getNextNumRef('');
 			$now=dol_now();
-
+			
+			if ($way == 'dolibarr')
+			{
+				$total = $totalamount;
+				$mtotal = $totalamount_converted; // Maybe use price2num with MT for the converted value
+			}
+			else
+			{
+				$total = $totalamount_converted; // Maybe use price2num with MT for the converted value
+				$mtotal = $totalamount;
+			}
+		
 			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiementfourn (';
-			$sql.= 'ref, entity, datec, datep, amount, fk_paiement, num_paiement, note, fk_user_author, fk_bank)';
+			$sql.= 'ref, entity, datec, datep, amount, multicurrency_amount, fk_paiement, num_paiement, note, fk_user_author, fk_bank)';
 			$sql.= " VALUES ('".$this->db->escape($ref)."', ".$conf->entity.", '".$this->db->idate($now)."',";
-			$sql.= " '".$this->db->idate($this->datepaye)."', '".$this->total."', ".$this->paiementid.", '".$this->num_paiement."', '".$this->db->escape($this->note)."', ".$user->id.", 0)";
+			$sql.= " '".$this->db->idate($this->datepaye)."', '".$total."', '".$mtotal."', ".$this->paiementid.", '".$this->num_paiement."', '".$this->db->escape($this->note)."', ".$user->id.", 0)";
 
 			dol_syslog("PaiementFourn::create", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -171,8 +201,8 @@ class PaiementFourn extends Paiement
 					if (is_numeric($amount) && $amount <> 0)
 					{
 						$amount = price2num($amount);
-						$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiementfourn_facturefourn (fk_facturefourn, fk_paiementfourn, amount)';
-						$sql .= ' VALUES ('.$facid.','. $this->id.',\''.$amount.'\')';
+						$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiementfourn_facturefourn (fk_facturefourn, fk_paiementfourn, amount, multicurrency_amount)';
+						$sql .= ' VALUES ('.$facid.','. $this->id.',\''.$amount.'\', \''.$this->multicurrency_amounts[$key].'\')';
 						$resql=$this->db->query($sql);
 						if ($resql)
 						{
@@ -229,8 +259,11 @@ class PaiementFourn extends Paiement
 			$error++;
 		}
 
-		if ($this->total <> 0 && $error == 0) // On accepte les montants negatifs
+		if ($totalamount <> 0 && $error == 0) // On accepte les montants negatifs
 		{
+			$this->amount=$total;
+		    $this->total=$total;
+			$this->multicurrency_amount=$mtotal;
 			$this->db->commit();
 			dol_syslog('PaiementFourn::Create Ok Total = '.$this->total);
 			return $this->id;
@@ -624,5 +657,30 @@ class PaiementFourn extends Paiement
 			print $langs->trans("Error")." ".$langs->trans("ErrorModuleSetupNotComplete");
 			return "";
 		}
+	}
+
+	/**
+	 * 	get the right way of payment
+	 * 
+	 * 	@return 	string 	'dolibarr' if standard comportment or paid in dolibarr currency, 'customer' if payment received from multicurrency inputs
+	 */
+	function getWay()
+	{
+		global $conf;
+		
+		$way = 'dolibarr';
+		if (!empty($conf->multicurrency->enabled))
+		{
+			foreach ($this->multicurrency_amounts as $value)
+			{
+				if (!empty($value)) // one value found then payment is in invoice currency
+				{
+					$way = 'customer';
+					break;
+				}
+			}
+		}
+		
+		return $way;
 	}
 }

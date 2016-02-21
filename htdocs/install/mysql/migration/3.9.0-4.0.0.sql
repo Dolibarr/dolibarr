@@ -262,6 +262,7 @@ ALTER TABLE llx_contratdet ADD COLUMN multicurrency_total_ttc double(24,8) DEFAU
 
 ALTER TABLE llx_paiement ADD COLUMN multicurrency_amount double(24,8) DEFAULT 0;
 ALTER TABLE llx_paiement_facture ADD COLUMN multicurrency_amount double(24,8) DEFAULT 0;
+ALTER TABLE llx_paiementfourn ADD COLUMN multicurrency_amount double(24,8) DEFAULT 0;
 ALTER TABLE llx_paiementfourn_facturefourn ADD COLUMN multicurrency_amount double(24,8) DEFAULT 0;
 
 ALTER TABLE llx_societe_remise_except ADD COLUMN multicurrency_amount_ht double(24,8) NOT NULL;

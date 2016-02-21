@@ -497,7 +497,9 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                        print '<tr class="liste_total">';
 	                        print '<td colspan="3" align="left">'.$langs->trans('TotalTTC').':</td>';
 	                        print '<td align="right"><b>'.price($total_ttc).'</b></td>';
+							if (!empty($conf->multicurrency->enabled)) print '<td>&nbsp;</td>';
 	                        print '<td align="right"><b>'.price($totalrecu).'</b></td>';
+							if (!empty($conf->multicurrency->enabled)) print '<td>&nbsp;</td>';
 	                        print '<td align="right"><b>'.price($total_ttc - $totalrecu).'</b></td>';
 	                        print '<td align="center">&nbsp;</td>';
 	                        print "</tr>\n";

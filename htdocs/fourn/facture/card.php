@@ -1269,14 +1269,15 @@ if ($action == 'create')
 
     dol_htmloutput_events();
 
+	$currency_code = $conf->currency;
+	
     $societe='';
     if (GETPOST('socid') > 0)
     {
         $societe=new Societe($db);
         $societe->fetch(GETPOST('socid','int'));
+		if (!empty($conf->multicurrency->enabled) && !empty($societe->multicurrency_code)) $currency_code = $societe->multicurrency_code;
     }
-
-	$currency_code = $conf->currency;
 	
     if (GETPOST('origin') && GETPOST('originid'))
     {
