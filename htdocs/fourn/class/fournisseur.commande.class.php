@@ -141,7 +141,7 @@ class CommandeFournisseur extends CommonOrder
         $this->statuts[5] = 'StatusOrderReceivedAll';
         $this->statuts[6] = 'StatusOrderCanceled';	// Approved->Canceled
         $this->statuts[7] = 'StatusOrderCanceled';	// Process running->canceled
-        //$this->statuts[8] = 'StatusOrderBilled';	// Everything is finish, order received totally and bill received
+        //$this->statuts[8] = 'StatusOrderBilled';	// Everything is finished, order received totally and bill received
         $this->statuts[9] = 'StatusOrderRefused';
     }
 
@@ -585,8 +585,8 @@ class CommandeFournisseur extends CommonOrder
      *	Return clicable name (with picto eventually)
      *
      *	@param		int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
-     *	@param		string	$option			Sur quoi pointe le lien
-     *	@return		string					Chaine avec URL
+     *	@param		string	$option			On what the link points
+     *	@return		string					Chain with URL
      */
     function getNomUrl($withpicto=0,$option='')
     {
@@ -621,8 +621,8 @@ class CommandeFournisseur extends CommonOrder
      *  Returns the following order reference not used depending on the numbering model activated
      *                  defined within COMMANDE_SUPPLIER_ADDON_NUMBER
      *
-     *  @param	    Societe		$soc  		objet societe
-     *  @return     string                  reference libre pour la facture
+     *  @param	    Company		$soc  		company object
+     *  @return     string                  free reference for the invoice
      */
     function getNextNumRef($soc)
     {
@@ -716,7 +716,7 @@ class CommandeFournisseur extends CommonOrder
 
             $this->db->begin();
 
-			// Definition du nom de modele de numerotation de commande
+			// Definition of order numbering model name
             $soc = new Societe($this->db);
             $soc->fetch($this->fourn_id);
 
@@ -904,7 +904,7 @@ class CommandeFournisseur extends CommonOrder
 
     /**
      * 	Cancel an approved order.
-     *	L'annulation se fait apres l'approbation
+     *	The cancellation is done after approval
      *
      * 	@param	User	$user			User making action
      *	@param	int		$idwarehouse	Id warehouse to use for stock change (not used for supplier orders).
@@ -1028,7 +1028,7 @@ class CommandeFournisseur extends CommonOrder
         // Clean parameters
         if (empty($this->source)) $this->source = 0;
 
-        /* On positionne en mode brouillon la commande */
+        /* One positions in draft mode the order  */
         $this->brouillon = 1;
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseur (";
@@ -1078,7 +1078,7 @@ class CommandeFournisseur extends CommonOrder
 				$num=count($this->lines);
 
 	            /*
-	             *  Insertion du detail des produits dans la base
+	             *  integration of products detail in the database
 	             */
 	            for ($i=0;$i<$num;$i++)
 	            {
