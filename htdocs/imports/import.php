@@ -623,6 +623,17 @@ if ($step == 4 && $datatoimport)
 	    $obj->separator = $separator;
 	    $obj->enclosure = $enclosure;
 	}
+    if ($model == 'xlsx') {
+        if (! preg_match('/\.xlsx$/i', $filetoimport))
+        {
+            $langs->load("errors");
+            $param='&datatoimport='.$datatoimport.'&format='.$format;
+            setEventMessages($langs->trans("ErrorFileMustHaveFormat", $model),null,'errors');
+            header("Location: ".$_SERVER["PHP_SELF"].'?step=3'.$param.'&filetoimport='.urlencode($relativepath));
+            exit;
+        }
+        
+    }
 
 	// Load source fields in input file
 	$fieldssource=array();
