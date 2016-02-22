@@ -3559,6 +3559,9 @@ div.dataTables_length select {
 /*  Select2                                                                       */
 /* ============================================================================== */
 
+.select2-container .select2-choice {
+	color: #000;
+}
 .selectoptiondisabledwhite {
 	background: #FFFFFF !important;
 }
