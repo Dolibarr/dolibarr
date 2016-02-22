@@ -49,6 +49,13 @@ Use clear commit messages with the following structure:
 LONGDESC
 ```
 
+We provide a [.gitmessage](/.gitmessage) file to help you fit the template.
+
+You can add it to your git configuration using:
+```
+git config --local commit.template .gitmessage
+```
+
 #### Keyword
 In uppercase if you want to have the log comment appears into the generated ChangeLog file.
 
@@ -100,9 +107,9 @@ Otherwise, please be a bit verbose about what you're providing.
 Your Pull Request must pass the Continuous Integration checks.
 Also, some code changes need a prior approbation:
 
-* if you want to include a new external library (into htdocs/includes directory), please ask before to the project leader to see if such a library can be accepted.
+* if you want to include a new external library (into htdocs/includes directory), please ask before to the project manager (@eldy) to see if such a library can be accepted.
 
-* if you add a new table, you must first create a page on http://wiki.dolibarr.org/index.php/Category:Table_SQL (copy an existing page changing its name to see it into this index page). Than ask the project leader if the new data model you plan to add can be accepted as you suggest.
+* if you add a new table, you must first create a page on http://wiki.dolibarr.org/index.php/Category:Table_SQL (copy an existing page changing its name to see it into this index page). Than ask the project manager (@eldy) if the new data model you plan to add can be accepted as you suggest.
 
 ### Resources
 [Developer documentation](http://wiki.dolibarr.org/index.php/Developer_documentation)
