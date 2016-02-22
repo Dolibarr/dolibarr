@@ -35,9 +35,9 @@ MargeBrute=Bruttomargin
 MargeNette=Nettomargin
 MargeType1=Margin på beste leverandørpris
 MargeType2=Margin på gjennomsnittspris (Weighted Average Price - WAP)
-MargeType3=Margin on Cost Price
-MARGIN_TYPE_DETAILS=Raw margin : Selling price - Buying price<br>Net margin : Selling price - Cost price
-MarginTypeDesc=* Margin on best buying price = Selling price - Best supplier price defined on product card<br>* Margin on Weighted Average Price (WAP) = Selling price - Product Weighted Average Price (WAP) or best supplier price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAP if cost price not defined, or best supplier price if WAP not yet defined
+MargeType3=Marginer på kostpris
+MARGIN_TYPE_DETAILS=Råmargin: Salgspris - Innkjøpspris<br>Nettomargin: Salgspris - Kostpris
+MarginTypeDesc=* Margin på beste kjøpskurs = Salgspris - Beste leverandørpris definert på varekortet<br> * Margin på vektet gjennomsnittlig pris (WAP) = Salgspris - Vektet gjennomsnittspris (WAP) eller beste leverandør pris hvis WAP ennå ikke er definert <br> * Margin på kostpris = Salgspris - Kostpris definert på varekortet, eller WAP hvis kostpris ikke er definert, eller beste leverandør pris hvis WAP ikke er definert
 CostPrice=Kostpris
 BuyingCost=Kostpris
 UnitCharges=Enhets-avgifter

@@ -311,6 +311,7 @@ UnitPriceHT=سعر الوحدة (صافي)
 UnitPriceTTC=سعر الوحدة
 PriceU=إلى أعلى
 PriceUHT=UP (صافي)
+PriceUHTCurrency=U.P (currency)
 SupplierProposalUHT=شبكة UP مطلوب
 PriceUTTC=UP (شركة الضريبة)
 Amount=كمية
@@ -321,6 +322,9 @@ AmountTTCShort=المبلغ (المؤتمر الوطني العراقي. الض�
 AmountHT=المبلغ (صافية من الضرائب)
 AmountTTC=المبلغ (المؤتمر الوطني العراقي. الضريبية)
 AmountVAT=مبلغ الضريبة
+MulticurrencyAmountHT=Amount (net of tax), original currency
+MulticurrencyAmountTTC=Amount (inc. of tax), original currency
+MulticurrencyAmountVAT=Amount tax, original currency
 AmountLT1=مبلغ الضريبة 2
 AmountLT2=مبلغ الضريبة 3
 AmountLT1ES=كمية RE
@@ -335,6 +339,7 @@ Percentage=نسبة مئوية
 Total=الإجمالي الكلي
 SubTotal=حاصل الجمع
 TotalHTShort=المجموع (الصافي)
+TotalHTShortCurrency=Total (net in currency)
 TotalTTCShort=إجمالي (شركة الضريبة)
 TotalHT=مجموع (صافي الضريبة)
 TotalHTforthispage=مجموع (صافي الضريبة) لهذه الصفحة
@@ -457,6 +462,7 @@ Datas=البيانات
 None=لا شيء
 NoneF=لا شيء
 Late=متأخر
+LateDesc=Delay to define if a record is late or not depends on your setup. Ask your admin to change delay from menu Home - Setup - Alerts.
 Photo=صورة
 Photos=الصور
 AddPhoto=إضافة الصورة
@@ -539,6 +545,7 @@ NbOfCustomers=عدد من العملاء
 NbOfLines=عدد الخطوط
 NbOfObjects=عدد الأجسام
 NbOfReferers=عدد المشيرين
+NbOfObjectReferers=Number of refering objects
 Referers=اشارة الأجسام
 TotalQuantity=الكمية الإجمالية
 DateFromTo=From %s to %s
@@ -694,6 +701,7 @@ LinkedToSpecificUsers=يرتبط اسم مستخدم معين
 DeleteAFile=حذف ملف
 ConfirmDeleteAFile=هل أنت متأكد أنك تريد حذف الملف
 NoResults=لا نتائج
+AdminTools=Admin tools
 SystemTools=ادوات النظام
 ModulesSystemTools=أدوات حدات
 Test=اختبار
@@ -732,7 +740,8 @@ Hello=أهلا
 Sincerely=بإخلاص
 DeleteLine=حذف الخط
 ConfirmDeleteLine=هل أنت متأكد أنك تريد حذف هذا الخط؟
-
+NoPDFAvailableForDocGenAmongChecked=No PDF were available for the document generation among checked records
+TooManyRecordForMassAction=Too many records selected for mass action. Such action are restriced to a list of %s records.
 # Week day
 Monday=يوم الاثنين
 Tuesday=الثلاثاء

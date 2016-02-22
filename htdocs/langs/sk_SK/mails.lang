@@ -47,6 +47,7 @@ MailingSuccessfullyValidated=E-mailom úspešne overená
 MailUnsubcribe=Odhlásiť
 Unsuscribe=Odhlásiť
 MailingStatusNotContact=Nedotýkajte sa už
+MailingStatusReadAndUnsubscribe=Read and unsubscribe
 ErrorMailRecipientIsEmpty=Príjemca e-mailu je prázdny
 WarningNoEMailsAdded=Žiadne nové Email pridať do zoznamu príjemcov.
 ConfirmValidMailing=Ste si istí, že chcete overiť túto e-mailom?

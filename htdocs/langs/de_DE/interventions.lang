@@ -54,9 +54,9 @@ PacificNumRefModelDesc1=Liefere Nummer im Format %syymm-nnnn zurück, wobei yy d
 PacificNumRefModelError=Eine Serviceauftragskarte beginnend mit $syymm existiert bereits und ist nicht mir dieser Numerierungssequenz kompatibel. Bitte löschen oder umbenennen.
 PrintProductsOnFichinter=Drucke Produkte auf Serviceauftragskarte
 PrintProductsOnFichinterDetails=Serviceaufträge durch Bestellungen generiert
-InterventionStatistics=Statistics of interventions
-NbOfinterventions=Nb of intervention cards
-NumberOfInterventionsByMonth=Nb of intervention cards by month (date of validation)
+InterventionStatistics=Statistik Serviceaufträge
+NbOfinterventions=Anzahl Karten für Serviceaufträge
+NumberOfInterventionsByMonth=Anzahl Karten für Serviceaufträge pro Monat (Freigabedatum)
 ##### Exports #####
 InterId=Serviceauftrag ID
 InterRef=Serviceauftrag Ref.

@@ -1,8 +1,10 @@
 # Dolibarr language file - Source file is en_US - receiptprinter
+ReceiptPrinterSetup=Setup of module ReceiptPrinter
 PrinterAdded=طابعة٪ الصورة بإضافة
 PrinterUpdated=طابعة%s تجديد
 PrinterDeleted=طابعة٪ الصورة حذفها
 TestSentToPrinter=اختبار المرسلة إلى الطابعة٪ الصورة
+ReceiptPrinter=Receipt printers
 ReceiptPrinterDesc=إعداد الطابعات
 ReceiptPrinterTemplateDesc=إعداد قوالب
 ReceiptPrinterTypeDesc=وصف نوع استلام الطابعة

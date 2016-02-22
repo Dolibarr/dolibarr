@@ -221,3 +221,4 @@ OtherCountriesCustomersReport=Foreign customers report
 BasedOnTwoFirstLettersOfVATNumberBeingDifferentFromYourCompanyCountry=Based on the two first letters of the VAT number being different from your own company's country code
 SameCountryCustomersWithVAT=National customers report
 BasedOnTwoFirstLettersOfVATNumberBeingTheSameAsYourCompanyCountry=Based on the two first letters of the VAT number being the same as your own company's country code
+LinkedFichinter=Link to an intervention

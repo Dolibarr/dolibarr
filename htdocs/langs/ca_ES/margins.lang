@@ -19,7 +19,7 @@ SalesRepresentativeMargins=Marges per comercial
 UserMargins=Marges de l'usuari
 ProductService=Producte o servei
 AllProducts=Tots els productes i serveis
-ChooseProduct/Service=Trieu el producte o servei
+ChooseProduct/Service=Tria el producte o servei
 StartDate=Data d'inici
 EndDate=Data de fi
 Launch=Començar
@@ -35,9 +35,9 @@ MargeBrute=Marge brut
 MargeNette=Marge net
 MargeType1=Marge en el millor preu de proveïdor
 MargeType2=Marge en Preu mitjà ponderat (PMP)
-MargeType3=Margin on Cost Price
-MARGIN_TYPE_DETAILS=Raw margin : Selling price - Buying price<br>Net margin : Selling price - Cost price
-MarginTypeDesc=* Margin on best buying price = Selling price - Best supplier price defined on product card<br>* Margin on Weighted Average Price (WAP) = Selling price - Product Weighted Average Price (WAP) or best supplier price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAP if cost price not defined, or best supplier price if WAP not yet defined
+MargeType3=Marge en preu de cost
+MARGIN_TYPE_DETAILS=Marge Raw : Preu de venda - Preu de compra<br>Marge net : Preu de venda - Preu de cost
+MarginTypeDesc=* Marge en el millor preu de venda = Preu de venda - Millor preu de proveïdor definit en la fitxa de producte<br>* Marge en Preu Mig Ponderat (PMP) = Preu de venda - Preu Mig Ponderat de producte (PMP) o millor preu de proveïdor si el PMP no està definit<br>* Marge en Preu de cost = Preu de venda - Preu de cost definit en la fitxa de producte o PMP si el preu de cost no està definit, o el millor preu de proveïdor si el PMP no està definit
 CostPrice=Preu de compra
 BuyingCost=Costos
 UnitCharges=Càrrega unitària

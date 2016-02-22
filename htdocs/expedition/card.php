@@ -852,9 +852,10 @@ if ($action == 'create')
                 if (empty($conf->productbatch->enabled) || ! ($product->hasbatch() && is_object($product->stock_warehouse[$warehouse_id])))
 				{
 	                // Quantity to send
-	                print '<td align="center">';
+	                print '<td align="center"><!-- qty to ship (no lot management) -->';
 	                if ($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
 	                {
+	                    if (GETPOST('qtyl'.$indiceAsked)) $defaultqty=GETPOST('qtyl'.$indiceAsked);
 	                    print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
 	                    print '<input name="qtyl'.$indiceAsked.'" id="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$defaultqty.'">';
 	                }
@@ -931,7 +932,7 @@ if ($action == 'create')
 						{
 							//var_dump($dbatch);
 							$substock=$dbatch->qty +0 ;		// To get a numeric
-							print '<tr><td colspan="3" ></td><td align="center">';
+							print '<tr><td colspan="3" ></td><td align="center"><!-- qty to ship (with lot management) -->';
 							print '<input name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="'.($substock > 0 ? min($defaultqty,$substock) : '0').'">';
 							print '</td>';
 	

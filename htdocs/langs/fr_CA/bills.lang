@@ -1,5 +1,6 @@
 # Dolibarr language file - Source file is en_US - bills
 ShowSocialContribution=Afficher charge sociale
+EscompteOffered=Escompte (règlement avant échéance)
 AddGlobalDiscount=Créer ligne de déduction
 IdSocialContribution=Id charge sociale
 ClosePaidInvoicesAutomatically=Classer "Payées" touts les factures standards ou de remplacements ayant un reste à payer nul

@@ -47,6 +47,7 @@ MailingSuccessfullyValidated=EMailing successfully validated
 MailUnsubcribe=Unsubscribe
 Unsuscribe=Unsubscribe
 MailingStatusNotContact=Don't contact anymore
+MailingStatusReadAndUnsubscribe=Read and unsubscribe
 ErrorMailRecipientIsEmpty=Sähköposti vastaanottaja on tyhjä
 WarningNoEMailsAdded=Ei uusia Email lisätä vastaanottajan luetteloon.
 ConfirmValidMailing=Oletko varma, että haluat vahvistaa tämän sähköpostitse?

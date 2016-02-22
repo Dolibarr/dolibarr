@@ -1131,29 +1131,57 @@ class Categorie extends CommonObject
 	 * Retourne les chemin de la categorie, avec les noms des categories
 	 * separes par $sep (" >> " par defaut)
 	 *
-	 * @param	string	$sep	Separator
-	 * @param	string	$url	Url
+	 * @param	string	$sep	     Separator
+	 * @param	string	$url	     Url
+	 * @param   int     $nocolor     0
 	 * @return	array
 	 */
-	function print_all_ways($sep = " &gt;&gt; ", $url='')
+	function print_all_ways($sep = " &gt;&gt; ", $url='', $nocolor=0)
 	{
 		$ways = array();
 
-		foreach ($this->get_all_ways() as $way)
+		$allways = $this->get_all_ways(); // Load array of categories
+		foreach ($allways as $way)
 		{
 			$w = array();
+			$i = 0;
 			foreach ($way as $cat)
 			{
+			    $i++;
+
+			    if (empty($nocolor))
+			    {
+    			    $forced_color='toreplace';
+    			    if ($i == count($way))
+    			    {
+    			        // Check contrast with background and correct text color
+    			        $forced_color='categtextwhite';
+    			        if ($cat->color)
+    			        {
+    			            $hex=$cat->color;
+    			            $r = hexdec($hex[0].$hex[1]);
+    			            $g = hexdec($hex[2].$hex[3]);
+    			            $b = hexdec($hex[4].$hex[5]);
+    			            $bright = (max($r, $g, $b) + min($r, $g, $b)) / 510.0;    // HSL algorithm
+    			            if ($bright >= 0.5) $forced_color='categtextblack';        // Higher than 60%
+    			        }
+    			    }
+			    }
+			    
 				if ($url == '')
 				{
-					$w[] = "<a href='".DOL_URL_ROOT."/categories/viewcat.php?id=".$cat->id."&amp;type=".$cat->type."'>".$cat->label."</a>";
+			        $link = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$cat->id.'&type='.$cat->type.'" class="'.$forced_color .'">';
+			        $linkend='</a>';
+				    $w[] = $link.$cat->label.$linkend;
 				}
 				else
 				{
 					$w[] = "<a href='".DOL_URL_ROOT."/$url?catid=".$cat->id."'>".$cat->label."</a>";
 				}
 			}
-			$ways[] = implode($sep, $w);
+			$newcategwithpath = preg_replace('/toreplace/', $forced_color, implode($sep, $w));
+			
+			$ways[] = $newcategwithpath;
 		}
 
 		return $ways;
@@ -1372,7 +1400,7 @@ class Categorie extends CommonObject
     		$g = hexdec($hex[2].$hex[3]);
     		$b = hexdec($hex[4].$hex[5]);
     		$bright = (max($r, $g, $b) + min($r, $g, $b)) / 510.0;    // HSL algorithm
-    		if ($bright > 0.6) $forced_color='categtextblack';        // Higher than 60%
+    		if ($bright >= 0.5) $forced_color='categtextblack';        // Higher than 60%
 		}		
 
         $link = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$this->id.'&type='.$this->type.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip '.$forced_color .'">';

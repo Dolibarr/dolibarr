@@ -41,6 +41,7 @@ AddBill=Erstelle eine Rechnung oder Gutschrift
 DeleteBill=Rechnung löschen
 SendRemindByMail=Mahnung per E-Mail senden
 BillShortStatusConverted=Verarbeitet
+PaymentStatusToValidShort=Freizugeben
 ErrorVATIntraNotConfigured=Intrakommunale MwSt.-Nr. noch nicht definiert
 ErrorNoPaiementModeConfigured=Keine standardmässige Zahlungsart definiert. Beheben Sie diesen Fehler in den Einstellungen des Rechnungsmoduls.
 ErrorCreateBankAccount=Legen Sie ein Bankkonto an und definieren Sie anschliessend die Zahlungsarten in den Einstellungen des Rechnungsmoduls.

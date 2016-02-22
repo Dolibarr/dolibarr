@@ -221,3 +221,4 @@ OtherCountriesCustomersReport=Raport o klientach zagranicznych
 BasedOnTwoFirstLettersOfVATNumberBeingDifferentFromYourCompanyCountry=Oparty na dwóch pierwszych literach numeru VAT EU, które się różnią od kodu kraju , gdzie zarejetrowana jest Twoja firma.
 SameCountryCustomersWithVAT=Raport o klientach krajowych
 BasedOnTwoFirstLettersOfVATNumberBeingTheSameAsYourCompanyCountry=Oparty na dwóch pierwszych literach numeru VAT EU, które są takie same jak kod kraju, gdzie zarejetrowana jest Twoja firma.
+LinkedFichinter=Link to an intervention

@@ -7,6 +7,7 @@ CommRequest=Cerere Preţ
 CommRequests=Cereri Preţ 
 SearchRequest=Cauta o cerere
 DraftRequests=Cereri schiţă
+SupplierProposalsDraft=Draft supplier proposals
 LastModifiedRequests=Last %s modified price requests
 RequestsOpened=Open price requests
 SupplierProposalArea=Oferte Furnizori

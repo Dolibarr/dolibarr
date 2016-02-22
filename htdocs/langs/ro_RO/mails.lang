@@ -47,6 +47,7 @@ MailingSuccessfullyValidated=EMail validat cu succes
 MailUnsubcribe=Dezabonare
 Unsuscribe=Dezabonare
 MailingStatusNotContact=Nu mă mai contacta
+MailingStatusReadAndUnsubscribe=Read and unsubscribe
 ErrorMailRecipientIsEmpty=Email destinatar este gol
 WarningNoEMailsAdded=Nu nou e-mail pentru a adăuga şi a destinatarului, listă.
 ConfirmValidMailing=Sunteţi sigur că doriţi pentru a valida acest email?

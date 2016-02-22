@@ -491,7 +491,7 @@ abstract class CommonObject
 			$outdone++;
 		}
 
-		if (! empty($this->phone_pro) || ! empty($this->phone_mobile) || ! empty($this->phone_perso) || ! empty($this->fax) || ! empty($this->office_phone) || ! empty($this->user_mobile) || ! empty($this->office_fax)) $out.=($outdone?'<br>':'');
+		if (! empty($this->phone) || ! empty($this->phone_pro) || ! empty($this->phone_mobile) || ! empty($this->phone_perso) || ! empty($this->fax) || ! empty($this->office_phone) || ! empty($this->user_mobile) || ! empty($this->office_fax)) $out.=($outdone?'<br>':'');
     	if (! empty($this->phone) && empty($this->phone_pro)) {		// For objects that store pro phone into ->phone
 			$out.=dol_print_phone($this->phone,$this->country_code,$contactid,$thirdpartyid,'AC_TEL','&nbsp;','phone',$langs->trans("PhonePro")); $outdone++;
 		}

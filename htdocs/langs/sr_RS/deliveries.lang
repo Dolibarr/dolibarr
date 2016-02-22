@@ -17,9 +17,9 @@ DeleteDeliveryReceiptConfirm=Da li ste sigurni da želite da obrišete prijemnic
 DeliveryMethod=Način isporuke
 TrackingNumber=Referenca isporuke
 DeliveryNotValidated=Isporuka nije odobrena
-StatusDeliveryCanceled=Canceled
-StatusDeliveryDraft=Draft
-StatusDeliveryValidated=Received
+StatusDeliveryCanceled=Poništeno
+StatusDeliveryDraft=Nacrt
+StatusDeliveryValidated=Primljeno
 # merou PDF model
 NameAndSignature=Ime i potpis:
 ToAndDate=Za___________________________________ dana ____/_____/__________

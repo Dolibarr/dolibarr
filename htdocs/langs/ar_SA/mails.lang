@@ -47,6 +47,7 @@ MailingSuccessfullyValidated=البريد الإلكتروني التحقق من
 MailUnsubcribe=إلغاء الاشتراك
 Unsuscribe=إلغاء الاشتراك
 MailingStatusNotContact=عدم الاتصال بعد الآن
+MailingStatusReadAndUnsubscribe=Read and unsubscribe
 ErrorMailRecipientIsEmpty=البريد الإلكتروني المتلقي فارغة
 WarningNoEMailsAdded=بريد الكتروني جديدة تضاف الى قائمة المتلقي.
 ConfirmValidMailing=هل أنت متأكد أنك تريد إرساله عبر البريد الإلكتروني للتحقق من هذا؟

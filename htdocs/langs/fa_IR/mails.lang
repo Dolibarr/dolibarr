@@ -47,6 +47,7 @@ MailingSuccessfullyValidated=ایمیل با موفقیت معتبر
 MailUnsubcribe=لغو اشتراک
 Unsuscribe=لغو اشتراک
 MailingStatusNotContact=آیا تماس نمی
+MailingStatusReadAndUnsubscribe=Read and unsubscribe
 ErrorMailRecipientIsEmpty=نشانی پست الکترونیکی خالی است
 WarningNoEMailsAdded=آدرس ایمیل جدید برای اضافه کردن به لیست گیرنده.
 ConfirmValidMailing=آیا مطمئن هستید که می خواهید به اعتبار این ایمیل؟

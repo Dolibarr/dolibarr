@@ -7,6 +7,7 @@ CommRequest=Запитване за цена
 CommRequests=Запитвания за цени
 SearchRequest=Намиране на запитване
 DraftRequests=Чернови на запитвания
+SupplierProposalsDraft=Draft supplier proposals
 LastModifiedRequests=Последни %s редактирани запитвания за цени
 RequestsOpened=Отваряне на запитване за цена
 SupplierProposalArea=Зона предложения от доставчици
