@@ -36,7 +36,8 @@ class InterfaceNotification extends DolibarrTriggers
 	public $picto = 'email';
 
     var $listofmanagedevents=array(
-    	'BILL_VALIDATE',
+        'BILL_VALIDATE',
+        'BILL_PAYED',
     	'ORDER_VALIDATE',
     	'PROPAL_VALIDATE',
         'FICHINTER_VALIDATE',
