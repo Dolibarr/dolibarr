@@ -198,10 +198,12 @@ if ($what == 'mysql')
         $ok=0;
         dol_syslog("Run command ".$fullcommandcrypted);
         $handlein = popen($fullcommandclear, 'r');
+        $i=0;
         while (!feof($handlein))
         {
+            $i++;   // output line number
             $read = fgets($handlein);
-            if (preg_match('/'.preg_quote('Warning: Using a password').'/i', $read)) continue;
+            if ($i == 1 && preg_match('/'.preg_quote('Warning: Using a password').'/i', $read)) continue;
             fwrite($handle,$read);
             if (preg_match('/'.preg_quote('-- Dump completed').'/i',$read)) $ok=1;
             elseif (preg_match('/'.preg_quote('SET SQL_NOTES=@OLD_SQL_NOTES').'/i',$read)) $ok=1;
