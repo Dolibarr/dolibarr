@@ -447,7 +447,7 @@ abstract class CommonObject
     {
     	global $conf, $langs;
 
-    	$countriesusingstate=array('AU','US','IN','GB','ES','UK','TR');
+    	$countriesusingstate=array('AU','US','IN','GB','ES','UK','TR');    // See also option MAIN_FORCE_STATE_INTO_ADDRESS
     	
     	$contactid=0;
     	$thirdpartyid=0;
@@ -483,11 +483,11 @@ abstract class CommonObject
 			$out.=dol_print_address($coords, 'address_'.$htmlkey.'_'.$this->id, $this->element, $this->id, 1); $outdone++;
 			$outdone++;
 		}
-		
-		if (! in_array($this->country_code,$countriesusingstate) && empty($conf->global->MAIN_FORCE_STATE_INTO_ADDRESS)
-				&& ! empty($conf->global->SOCIETE_DISABLE_STATE) && $this->state) 
+
+		if (! in_array($this->country_code,$countriesusingstate) && empty($conf->global->MAIN_FORCE_STATE_INTO_ADDRESS)   // If MAIN_FORCE_STATE_INTO_ADDRESS is on, state is already returned previously with getFullAddress
+				&& empty($conf->global->SOCIETE_DISABLE_STATE) && $this->state) 
 		{
-			$out.=($outdone?'<br>':'').$this->state;
+			$out.=($outdone?' - ':'').$this->state;
 			$outdone++;
 		}
 

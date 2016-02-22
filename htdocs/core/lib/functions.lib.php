@@ -1001,7 +1001,7 @@ function dol_format_address($object,$withcountry=0,$sep="\n",$outputlangs='')
 	global $conf,$langs;
 
 	$ret='';
-	$countriesusingstate=array('AU','US','IN','GB','ES','UK','TR');
+	$countriesusingstate=array('AU','US','IN','GB','ES','UK','TR');    // See also MAIN_FORCE_STATE_INTO_ADDRESS
 
 	// Address
 	$ret .= $object->address;
@@ -1009,7 +1009,7 @@ function dol_format_address($object,$withcountry=0,$sep="\n",$outputlangs='')
 	if (in_array($object->country_code,array('US','AU')) || ! empty($conf->global->MAIN_FORCE_STATE_INTO_ADDRESS))   	// US: title firstname name \n address lines \n town, state, zip \n country
 	{
 		$ret .= ($ret ? $sep : '' ).$object->town;
-		if ($object->state && in_array($object->country_code,$countriesusingstate))
+		if ($object->state)
 		{
 			$ret.=", ".$object->state;
 		}
@@ -1018,7 +1018,7 @@ function dol_format_address($object,$withcountry=0,$sep="\n",$outputlangs='')
 	else if (in_array($object->country_code,array('GB','UK'))) // UK: title firstname name \n address lines \n town state \n zip \n country
 	{
 		$ret .= ($ret ? $sep : '' ).$object->town;
-		if ($object->state && in_array($object->country_code,$countriesusingstate))
+		if ($object->state)
 		{
 			$ret.=", ".$object->state;
 		}
@@ -1028,12 +1028,11 @@ function dol_format_address($object,$withcountry=0,$sep="\n",$outputlangs='')
 	{
 		$ret .= ($ret ? $sep : '' ).$object->zip;
 		$ret .= ($object->town?(($object->zip?' ':'').$object->town):'');
-		if ($object->state && in_array($object->country_code,$countriesusingstate))
+		if ($object->state)
 		{
 			$ret.="\n".$object->state;
 		}
 	}
-
 	else                                        		// Other: title firstname name \n address lines \n zip town \n country
 	{
 		$ret .= $object->zip ? (($ret ? $sep : '' ).$object->zip) : '';
