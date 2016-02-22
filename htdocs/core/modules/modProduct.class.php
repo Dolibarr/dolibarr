@@ -153,55 +153,25 @@ class modProduct extends DolibarrModules
 		if (! empty($conf->barcode->enabled)) $this->export_fields_array[$r]=array_merge($this->export_fields_array[$r],array('p.barcode'=>'BarCode'));
 		if (! empty($conf->fournisseur->enabled)) $this->export_fields_array[$r]=array_merge($this->export_fields_array[$r],array('s.nom'=>'Supplier','pf.ref_fourn'=>'SupplierRef','pf.unitprice'=>'SuppliersPrices'));
 		if (! empty($conf->fournisseur->enabled) || !empty($conf->margin->enabled)) $this->export_fields_array[$r]=array_merge($this->export_fields_array[$r],array('p.cost_price'=>'CostPrice'));
+		if (! empty($conf->global->MAIN_MULTILANGS)) $this->export_fields_array[$r]=array_merge($this->export_fields_array[$r],array('l.lang'=>'Language', 'l.label'=>'TranslatedLabel','l.description'=>'TranslatedDescription','l.note'=>'TranslatedNote'));
 		$this->export_TypeFields_array[$r]=array('p.ref'=>"Text",'p.label'=>"Text",'p.description'=>"Text",'p.url'=>"Text",'p.accountancy_code_sell'=>"Text",'p.accountancy_code_buy'=>"Text",'p.note'=>"Text",'p.length'=>"Numeric",'p.surface'=>"Numeric",'p.volume'=>"Numeric",'p.weight'=>"Numeric",'p.customcode'=>'Text','p.price_base_type'=>"Text",'p.price'=>"Numeric",'p.price_ttc'=>"Numeric",'p.tva_tx'=>'Numeric','p.tosell'=>"Boolean",'p.tobuy'=>"Boolean",'p.datec'=>'Date','p.tms'=>'Date');
 		if (! empty($conf->stock->enabled)) $this->export_TypeFields_array[$r]=array_merge($this->export_TypeFields_array[$r],array('p.stock'=>'Numeric','p.pmp'=>'Numeric'));
 		if (! empty($conf->barcode->enabled)) $this->export_TypeFields_array[$r]=array_merge($this->export_TypeFields_array[$r],array('p.barcode'=>'Text'));
 		if (! empty($conf->fournisseur->enabled)) $this->export_TypeFields_array[$r]=array_merge($this->export_TypeFields_array[$r],array('s.nom'=>'Text','pf.ref_fourn'=>'Text','pf.unitprice'=>'Numeric'));
+		if (! empty($conf->global->MAIN_MULTILANGS)) $this->export_TypeFields_array[$r]=array_merge($this->export_TypeFields_array[$r],array('l.lang'=>'Text', 'l.label'=>'Text','l.description'=>'Text','l.note'=>'Text'));
 		$this->export_entities_array[$r]=array('p.rowid'=>"product",'p.ref'=>"product",'p.label'=>"product",'p.description'=>"product",'p.url'=>"product",'p.accountancy_code_sell'=>'product','p.accountancy_code_sell'=>'product','p.note'=>"product",'p.length'=>"product",'p.surface'=>"product",'p.volume'=>"product",'p.weight'=>"product",'p.customcode'=>'product','p.price_base_type'=>"product",'p.price'=>"product",'p.price_ttc'=>"product",'p.tva_tx'=>"product",'p.tosell'=>"product",'p.tobuy'=>"product",'p.datec'=>"product",'p.tms'=>"product");
 		if (! empty($conf->stock->enabled)) $this->export_entities_array[$r]=array_merge($this->export_entities_array[$r],array('p.stock'=>'product','p.pmp'=>'product'));
 		if (! empty($conf->barcode->enabled)) $this->export_entities_array[$r]=array_merge($this->export_entities_array[$r],array('p.barcode'=>'product'));
 		if (! empty($conf->fournisseur->enabled)) $this->export_entities_array[$r]=array_merge($this->export_entities_array[$r],array('s.nom'=>'product','pf.ref_fourn'=>'product','pf.unitprice'=>'product'));
+		if (! empty($conf->global->MAIN_MULTILANGS)) $this->export_entities_array[$r]=array_merge($this->export_entities_array[$r],array('l.lang'=>'translation', 'l.label'=>'translation','l.description'=>'translation','l.note'=>'translation'));
 		$keyforselect='product'; $keyforelement='product'; $keyforaliasextra='extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'product as p';
+		if (! empty($conf->global->MAIN_MULTILANGS)) $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product_lang as l ON l.fk_product = p.rowid';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product_extrafields as extra ON p.rowid = extra.fk_object';
 		if (! empty($conf->fournisseur->enabled)) $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product_fournisseur_price as pf ON pf.fk_product = p.rowid LEFT JOIN '.MAIN_DB_PREFIX.'societe s ON s.rowid = pf.fk_soc';
 		$this->export_sql_end[$r] .=' WHERE p.fk_product_type = 0 AND p.entity IN ('.getEntity("product", 1).')';
-
-		if (! empty($conf->global->MAIN_MULTILANGS))
-		{
-			// multiline format, you need one line per translated product
-			$this->export_fields_array[$r]=array_merge($this->export_fields_array[$r],array('l.lang'=>'language', 'l.label'=>'translated_label','l.description'=>'translated_description','l.note'=>'translated_note'));
-			$this->export_TypeFields_array[$r]=array_merge($this->export_TypeFields_array[$r],array('l.lang'=>'Text', 'l.label'=>'Text','l.description'=>'Text','l.note'=>'Text'));
-			$this->export_entities_array[$r]=array_merge($this->export_entities_array[$r],array('l.lang'=>'translation', 'l.label'=>'translation','l.description'=>'translation','l.note'=>'translation'));
-			$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product_lang as l ON l.fk_product = p.rowid';
-
-			// single line format, just use one column per translation
-			$sql="SELECT lang FROM ".MAIN_DB_PREFIX."product_lang GROUP BY lang";
-			$langs = array();
-			$resql=$this->db->query($sql);
-			if ($resql) {
-				while ($obj=$this->db->fetch_object($resql)) {
-					// list all language, you need at least one translation available to detect the language
-					$name = $obj->lang;
-					array_push($langs, $name);
-					$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX."product_lang as $name ON $name.fk_product = p.rowid AND $name.lang='$name'";
-					// translate the label
-					$this->export_fields_array[$r][$name.".label"]=$name."_label";
-					$this->export_TypeFields_array[$r][$name.".label"]='Text';
-					$this->export_entities_array[$r][$name.".label"]='translation';
-					// translate the description
-					$this->export_fields_array[$r][$name.".description"]=$name."_description";
-					$this->export_TypeFields_array[$r][$name.".description"]='Text';
-					$this->export_entities_array[$r][$name.".description"]='translation';
-					// translate the note
-					$this->export_fields_array[$r][$name.".note"]=$name."_note";
-					$this->export_TypeFields_array[$r][$name.".note"]='Text';
-					$this->export_entities_array[$r][$name.".note"]='translation';
-				}
-			}
-		}
 
 		if (! empty($conf->global->PRODUIT_MULTIPRICES))
 		{
@@ -327,15 +297,22 @@ class modProduct extends DolibarrModules
 
 		if (! empty($conf->global->MAIN_MULTILANGS))
 		{
-			$this->import_tables_array[$r]['l']=MAIN_DB_PREFIX.'product_lang';
+		    $r++;
+			/* FIXME Must be a dedicated import profil. Not working yet
+		    $this->import_code[$r]=$this->rights_class.'_multiprice';
+		    $this->import_label[$r]="ProductTranslations";
+			$this->import_icon[$r]=$this->picto;
+			$this->import_entities_array[$r]=array();		// We define here only fields that use another icon that the one defined into import_icon
+		    $this->import_tables_array[$r]['l']=MAIN_DB_PREFIX.'product_lang';
 			// multiline translation, one line per translation
-			$this->import_fields_array[$r]['l.lang']='language';
-			$this->import_fields_array[$r]['l.label']='translated_label';
-			$this->import_fields_array[$r]['l.description']='translated_description';
-			$this->import_fields_array[$r]['l.note']='translated_note';
+			$this->import_fields_array[$r]['l.lang']='Language';
+			$this->import_fields_array[$r]['l.label']='TranslatedLabel';
+			$this->import_fields_array[$r]['l.description']='TranslatedDescription';
+			$this->import_fields_array[$r]['l.note']='TranslatedNote';
 			$this->import_examplevalues_array[$r]['l.lang']='en_US';
-
+			*/
 			// single line translation, one column per translation
+			/*
 			foreach($langs as $l) {
 				$this->import_tables_array[$r][$l] = MAIN_DB_PREFIX.'product_lang';
 				$this->import_fields_array[$r][$l.'.label']=$l.'_label';
@@ -344,6 +321,7 @@ class modProduct extends DolibarrModules
 				$this->import_fieldshidden_array[$r][$l.'.lang']="'$l'";
 				$this->import_fieldshidden_array[$r][$l.'.fk_product']='lastrowid-'.MAIN_DB_PREFIX.'product';
 			}
+			*/
 		}
 	}
 

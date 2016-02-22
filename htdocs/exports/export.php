@@ -65,7 +65,8 @@ $entitytoicon = array(
     'shipment_line'=> 'sending',
     'expensereport'=> 'trip',
     'expensereport_line'=> 'trip',
-    'contract_line' => 'contract'
+    'contract_line' => 'contract',
+    'translation'  => 'generic'
 );
 
 // Translation code
@@ -105,7 +106,8 @@ $entitytolang = array(
 	'expensereport'=> 'ExpenseReport',
 	'expensereport_line'=> 'ExpenseReportLine',
     'contract'     => 'Contract',
-    'contract_line'=> 'ContractLine'
+    'contract_line'=> 'ContractLine',
+    'translation'  => 'Translation'
 );
 
 $array_selected=isset($_SESSION["export_selected_fields"])?$_SESSION["export_selected_fields"]:array();
