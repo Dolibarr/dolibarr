@@ -219,7 +219,7 @@ if ($error || $mode != 'confirm')
 else
 {
     print "Commit all changes.\n";
-    //$db->commit();
+    $db->commit();
 }
 
 $db->close();
