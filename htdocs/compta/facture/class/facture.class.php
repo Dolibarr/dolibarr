@@ -4030,6 +4030,14 @@ class FactureLigne extends CommonInvoiceLine
 	 */
 	public $fk_prev_id;
 
+	// Multicurrency
+	var $fk_multicurrency;
+	var $multicurrency_code;
+	var $multicurrency_subprice;
+	var $multicurrency_total_ht;
+	var $multicurrency_total_tva;
+	var $multicurrency_total_ttc;
+	
 	/**
 	 *	Load invoice line from database
 	 *

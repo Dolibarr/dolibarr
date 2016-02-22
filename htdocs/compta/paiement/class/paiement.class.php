@@ -150,7 +150,7 @@ class Paiement extends CommonObject
 		global $conf, $langs;
 
 		$error = 0;
-		$way = $this->getWay();  
+		$way = $this->getWay();
 		
 		$now=dol_now();
 		
