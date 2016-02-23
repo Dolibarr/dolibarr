@@ -432,9 +432,10 @@ class PriceSchedule extends CommonObject
      *  Generate sections to $this->sections
      *
      *  @param   bool   $preview    Preview mode, doesn't write sections to db
+     *  @param   mixed  $gm         TZ for first/last day boundary
      *  @return  int                <0 if KO, 0 if no section generated, >0 if OK
      */
-    function generateSections($preview)
+    function generateSections($preview, $gm)
     {
         require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
@@ -449,8 +450,8 @@ class PriceSchedule extends CommonObject
         }
 
         //Initial values
-        $first = dol_get_first_day($this->schedule_year, 1, true);
-        $last = dol_get_last_day($this->schedule_year, 12, true);
+        $first = dol_get_first_day($this->schedule_year, 1, $gm);
+        $last = dol_get_last_day($this->schedule_year, 12, $gm);
         $duration = dol_time_plus_duree(0, $product->duration_value, $product->duration_unit);
         $start = dol_time_plus_duree($first, $this->starting_hour, 'h');
         dol_syslog(__METHOD__." Parameters: schedule_year".$this->schedule_year." preview=".$preview, LOG_DEBUG);

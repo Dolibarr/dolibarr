@@ -117,13 +117,14 @@ if ($type == PriceSchedule::TYPE_SUPPLIER_SERVICE && empty($product_supplier))
 }
 
 //Set defaults if not set
+$gm = "server";
 $now = dol_getdate(dol_now(), true);
 if (empty($year))       $year = $object->schedule_year;
 if (empty($year))       $year = $now['year'];
 if (empty($sel_month))  $sel_month = $now['mon'];
 if (empty($sel_day))    $sel_day = $now['mday'];
-$first_date = dol_getdate(dol_get_first_day($year, $sel_month), true);
-$last_date = dol_getdate(dol_get_last_day($year, $sel_month), true);
+$first_date = dol_getdate(dol_get_first_day($year, $sel_month, $gm), true);
+$last_date = dol_getdate(dol_get_last_day($year, $sel_month, $gm), true);
 $sel_day = min($sel_day, $last_date['mday']);
 if (empty($range_start_month))    $range_start_month = $sel_month;
 if (empty($range_start_day))      $range_start_day = $sel_day;
@@ -210,7 +211,7 @@ if ($action == 'create' && $user->rights->dynamicprices->schedule_write)
 
             //Generate sections, preview mode if error occurred or is not confirmed
             $preview = $error || empty($confirm);
-            $result = $object->generateSections($preview);
+            $result = $object->generateSections($preview, "server");
             if ($result == 0)
             {
                 setEventMessages($langs->trans('ErrorScheduleNoSectionGenerated'), null, 'warnings');
@@ -240,8 +241,8 @@ if ($action == 'create' && $user->rights->dynamicprices->schedule_write)
 }
 else if ($action == 'edit' && !empty($confirm) && $user->rights->dynamicprices->schedule_write)
 {
-    $range_start=dol_mktime($range_start_hour, $range_start_min, 0, $range_start_month, $range_start_day, $year, true);
-    $range_end=dol_mktime($range_end_hour, $range_end_min, 59, $range_end_month, $range_end_day, $year, true);
+    $range_start=dol_mktime($range_start_hour, $range_start_min, 0, $range_start_month, $range_start_day, $year, $gm);
+    $range_end=dol_mktime($range_end_hour, $range_end_min, 59, $range_end_month, $range_end_day, $year, $gm);
     if ($range_start > $range_end)
     {
         setEventMessages($langs->trans('ErrorStartDateGreaterEnd'), null, 'errors');
@@ -379,7 +380,7 @@ if ($action == 'create' && ($user->rights->dynamicprices->schedule_write))
     //Section viewer
     if ($data_correct) {
         print "<br>";
-        print showSectionViewer("sectionviewer", $object, $sel_month, $sel_day, $product->duration_unit, $product->duration_value, false, false, false, $selector, '');
+        print showSectionViewer($object, "sectionviewer", $sel_month, $sel_day, $product->duration_unit, $product->duration_value, false, false, false, $selector, '');
     }
 
     print '</form>';
@@ -387,7 +388,8 @@ if ($action == 'create' && ($user->rights->dynamicprices->schedule_write))
 else if ( $object->id > 0)
 {
     $head=product_prepare_head($product);
-    dol_fiche_head($head, 'schedule', $pagetitle,0,'product@product');
+    $tab=$type==PriceSchedule::TYPE_SUPPLIER_SERVICE?'supplierpriceschedule':'priceschedule';
+    dol_fiche_head($head, $tab, $pagetitle,0,'product@product');
 
     // Confirm deleting price schedule
     if ($action == 'delete')
@@ -460,14 +462,14 @@ else if ( $object->id > 0)
         //Date start
         print '<td style="width: 40%;" class="range_date">';
         print select_monthday($formother, $year, $range_start_month, $range_start_day, 'range_start_');
-        print '&nbsp;'.$langs->trans("Hour").'&nbsp;';
+        print '&nbsp;';
         print $form->select_date('0000-00-00 '.$range_start_hour.':'.$range_start_min, 'range_start_', 1, 0, 0, '', 0, 0, 1).'<br>';
         print '</td>';
 
         //Date end
         print '<td style="width: 40%;" class="range_date">';
         print select_monthday($formother, $year, $range_end_month, $range_end_day, 'range_end_');
-        print '&nbsp;'.$langs->trans("Hour").'&nbsp;';
+        print '&nbsp;';
         print $form->select_date('0000-00-00 '.$range_end_hour.':'.$range_end_min, 'range_end_', 1, 0, 0, '', 0, 0, 1).'<br>';
         print '</td>';
 
@@ -507,8 +509,8 @@ else if ( $object->id > 0)
     print '</div>';
 
     //Load sections
-    $week_date = dol_get_first_day_week($sel_day, $sel_month, $year, true);
-    $week_start=dol_mktime(0,0,0,$week_date['first_month'],$week_date['first_day'],$week_date['first_year'], true);
+    $week_date = dol_get_first_day_week($sel_day, $sel_month, $year, $gm);
+    $week_start=dol_mktime(0,0,0,$week_date['first_month'],$week_date['first_day'],$week_date['first_year'], $gm);
     $week_end = dol_time_plus_duree($week_start, 1, 'w') - 1;
     $result = $object->fetchSections($week_start, $week_end);
     if ($result < 0)
@@ -519,7 +521,7 @@ else if ( $object->id > 0)
     //Section viewer
     $interactive = $action == 'edit' || $action == 'placement';
     $selectable = $action == 'edit';
-    print showSectionViewer("sectionviewer", $object, $sel_month, $sel_day, $product->duration_unit, $product->duration_value, $interactive, $selectable, true, $selector, $params);
+    print showSectionViewer($object, "sectionviewer", $sel_month, $sel_day, $product->duration_unit, $product->duration_value, $interactive, $selectable, true, $selector, $params);
 
     print '</form>';
 }
