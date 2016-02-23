@@ -1285,7 +1285,10 @@ function dol_getdate($timestamp,$fast=false)
  *	@param	int			$month			Month (1 to 12)
  *	@param	int			$day			Day (1 to 31)
  *	@param	int			$year			Year
- *	@param	mixed		$gm				True or 1 or 'gmt'=Input informations are GMT values, False or 0 or 'server' = local to server TZ, 'user' = local to user TZ
+ *	@param	mixed		$gm				True or 1 or 'gmt'=Input informations are GMT values
+ *										False or 0 or 'server' = local to server TZ
+ *										'user' = local to user TZ
+ *										'tz,TimeZone' = use specified timezone
  *	@param	int			$check			0=No check on parameters (Can use day 32, etc...)
  *	@return	int|string					Date as a timestamp, '' or false if error
  * 	@see 								dol_print_date, dol_stringtotime, dol_getdate
@@ -1329,6 +1332,18 @@ function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1)
 			{
 				dol_syslog("Warning dol_tz_string contains an invalid value ".$_SESSION["dol_tz_string"], LOG_WARNING);
 				$default_timezone=@date_default_timezone_get();
+			}
+		}
+		else if (strrpos($gm, "tz,") !== false)
+		{
+			$timezone=str_replace("tz,", "", $gm);  // Example 'tz,Europe/Berlin'
+			try
+			{
+				$localtz = new DateTimeZone($timezone);
+			}
+			catch(Exception $e)
+			{
+				dol_syslog("Warning passed timezone contains an invalid value ".$timezone, LOG_WARNING);
 			}
 		}
 
