@@ -196,6 +196,7 @@ Rest=Pending
 AmountExpected=Amount claimed
 ExcessReceived=Excess received
 EscompteOffered=Discount offered (payment before term)
+EscompteOfferedShort=Discount
 SendBillRef=Submission of invoice %s
 SendReminderBillRef=Submission of invoice %s (reminder)
 StandingOrders=Standing orders

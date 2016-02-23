@@ -1001,7 +1001,7 @@ function dol_format_address($object,$withcountry=0,$sep="\n",$outputlangs='')
 	global $conf,$langs;
 
 	$ret='';
-	$countriesusingstate=array('AU','US','IN','GB','ES','UK','TR');
+	$countriesusingstate=array('AU','US','IN','GB','ES','UK','TR');    // See also MAIN_FORCE_STATE_INTO_ADDRESS
 
 	// Address
 	$ret .= $object->address;
@@ -1009,7 +1009,7 @@ function dol_format_address($object,$withcountry=0,$sep="\n",$outputlangs='')
 	if (in_array($object->country_code,array('US','AU')) || ! empty($conf->global->MAIN_FORCE_STATE_INTO_ADDRESS))   	// US: title firstname name \n address lines \n town, state, zip \n country
 	{
 		$ret .= ($ret ? $sep : '' ).$object->town;
-		if ($object->state && in_array($object->country_code,$countriesusingstate))
+		if ($object->state)
 		{
 			$ret.=", ".$object->state;
 		}
@@ -1018,7 +1018,7 @@ function dol_format_address($object,$withcountry=0,$sep="\n",$outputlangs='')
 	else if (in_array($object->country_code,array('GB','UK'))) // UK: title firstname name \n address lines \n town state \n zip \n country
 	{
 		$ret .= ($ret ? $sep : '' ).$object->town;
-		if ($object->state && in_array($object->country_code,$countriesusingstate))
+		if ($object->state)
 		{
 			$ret.=", ".$object->state;
 		}
@@ -1028,12 +1028,11 @@ function dol_format_address($object,$withcountry=0,$sep="\n",$outputlangs='')
 	{
 		$ret .= ($ret ? $sep : '' ).$object->zip;
 		$ret .= ($object->town?(($object->zip?' ':'').$object->town):'');
-		if ($object->state && in_array($object->country_code,$countriesusingstate))
+		if ($object->state)
 		{
 			$ret.="\n".$object->state;
 		}
 	}
-
 	else                                        		// Other: title firstname name \n address lines \n zip town \n country
 	{
 		$ret .= $object->zip ? (($ret ? $sep : '' ).$object->zip) : '';
@@ -2037,11 +2036,12 @@ function dol_trunc($string,$size=40,$trunc='right',$stringencoding='UTF-8',$nodo
 {
 	global $conf;
 
-	if (empty($stringencoding)) $stringencoding='UTF-8';
-
 	if ($size==0 || ! empty($conf->global->MAIN_DISABLE_TRUNC)) return $string;
+	
+	if (empty($stringencoding)) $stringencoding='UTF-8';
 	// reduce for small screen
-    if ($conf->dol_optimize_smallscreen==1 && $display==1) $size = round($size/3);
+	if ($conf->dol_optimize_smallscreen==1 && $display==1) $size = round($size/3);
+
 	// We go always here
 	if ($trunc == 'right')
 	{
@@ -2410,30 +2410,32 @@ function img_error($titlealt = 'default')
  *	Show next logo
  *
  *	@param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
- *	@return string      		Return img tag
+*	@param	string	$options	Add more attribute on img tag (For example 'style="float: right"')
+  *	@return string      		Return img tag
  */
-function img_next($titlealt = 'default')
+function img_next($titlealt = 'default', $options='')
 {
 	global $conf, $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Next');
 
-	return img_picto($titlealt, 'next.png');
+	return img_picto($titlealt, 'next.png', $options);
 }
 
 /**
  *	Show previous logo
  *
  *	@param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
+ *	@param	string	$options	Add more attribute on img tag (For example 'style="float: right"')
  *	@return string      		Return img tag
  */
-function img_previous($titlealt = 'default')
+function img_previous($titlealt = 'default', $options='')
 {
 	global $conf, $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Previous');
 
-	return img_picto($titlealt, 'previous.png');
+	return img_picto($titlealt, 'previous.png', $options);
 }
 
 /**
@@ -3315,7 +3317,7 @@ function price2num($amount,$rounding='',$alreadysqlnb=0)
  *	Return localtax rate for a particular vat, when selling a product with vat $vatrate, from a $thirdparty_buyer to a $thirdparty_seller
  *  Note: This function applies same rules than get_default_tva
  *
- * 	@param	float		$vatrate		        Vat rate
+ * 	@param	float		$vatrate		        Vat rate. Can be '8.5' or '8.5 (8.5NPR)' for example
  * 	@param  int			$local		         	Local tax to search and return (1 or 2 return only tax rate 1 or tax rate 2)
  *  @param  Societe		$thirdparty_buyer    	Object of buying third party
  *  @param	Societe		$thirdparty_seller		Object of selling third party
@@ -3506,7 +3508,7 @@ function get_localtax_by_third($local)
  *  Instead this function must be called when adding a line to get the array of localtax and type, and then
  *  provide it to the function calcul_price_total.
  *
- *  @param	float	$vatrate			VAT Rate
+ *  @param	float	$vatrate			VAT Rate. Value can be '8.5' or '8.5 (8.5NPR)'.
  *  @param	int		$local              Number of localtax (1 or 2, or 0 to return 1 & 2)
  *  @param	Societe	$buyer         		Company object
  *  @param	Societe	$seller        		Company object
@@ -3657,7 +3659,7 @@ function get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournpr
 			}
 			else dol_print_error($db);
 		}
-		else $ret=$conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS;
+		else $ret=$conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS;    // Forced value if autodetect fails
 	}
 
 	dol_syslog("get_product_vat_for_country: ret=".$ret);
@@ -5109,21 +5111,24 @@ function printCommonFooter($zone='private')
 	if (! empty($conf->global->MAIN_HTML_FOOTER)) print $conf->global->MAIN_HTML_FOOTER."\n";
 
 	print "\n";
-	print '<script type="text/javascript" language="javascript">jQuery(document).ready(function() {'."\n";
-	
-	print '<!-- If page_y set, we set scollbar with it -->'."\n";
-	print "page_y=getParameterByName('page_y', 0);";
-	print "if (page_y > 0) $('html, body').scrollTop(page_y);";
-	
-	print '<!-- Set handler to add page_y param on some a href links -->'."\n";
-	print 'jQuery(".reposition").click(function() {
-	           var page_y = $(document).scrollTop();
-	           /* alert(page_y); */
-	           this.href=this.href+\'&page_y=\'+page_y;
-	           });'."\n";
-	print '});'."\n";
-	
-	print '</script>'."\n";
+	if (! empty($conf->use_javascript_ajax))
+	{
+    	print '<script type="text/javascript" language="javascript">jQuery(document).ready(function() {'."\n";
+    	
+    	print '<!-- If page_y set, we set scollbar with it -->'."\n";
+    	print "page_y=getParameterByName('page_y', 0);";
+    	print "if (page_y > 0) $('html, body').scrollTop(page_y);";
+    	
+    	print '<!-- Set handler to add page_y param on some a href links -->'."\n";
+    	print 'jQuery(".reposition").click(function() {
+    	           var page_y = $(document).scrollTop();
+    	           /* alert(page_y); */
+    	           this.href=this.href+\'&page_y=\'+page_y;
+    	           });'."\n";
+    	print '});'."\n";
+    	
+    	print '</script>'."\n";
+	}
 	
 	// Google Analytics (need Google module)
 	if (! empty($conf->google->enabled) && ! empty($conf->global->MAIN_GOOGLE_AN_ID))

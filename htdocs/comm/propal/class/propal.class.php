@@ -1016,6 +1016,7 @@ class Propal extends CommonObject
      */
     function create_from($user)
     {
+    	// i love this function because $this->products is not used in create function...
         $this->products=$this->lines;
 
         return $this->create($user);
@@ -1354,8 +1355,8 @@ class Propal extends CommonObject
                         $line->fk_product_type  = $objp->fk_product_type;
 	                    $line->fk_unit          = $objp->fk_unit;
 
-                        $line->date_start  		= $objp->date_start;
-                        $line->date_end  		= $objp->date_end;
+                        $line->date_start  		= $this->db->jdate($objp->date_start);
+                        $line->date_end  		= $this->db->jdate($objp->date_end);
 
                         $line->fetch_optionals($line->id,$extralabelsline);
 

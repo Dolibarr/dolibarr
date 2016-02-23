@@ -46,8 +46,10 @@ create table llx_product
   cost_price			    double(24,8) DEFAULT NULL,      -- Cost price without tax. Can be used for margin calculation.
   tva_tx					double(6,3),					-- Default VAT rate of product
   recuperableonly           integer NOT NULL DEFAULT '0',   -- French NPR VAT
-  localtax1_tx				double(6,3)  DEFAULT 0,         -- Spanish local VAT 1
-  localtax2_tx				double(6,3)  DEFAULT 0,         -- Spanish local VAT 2
+  localtax1_tx				double(6,3)  DEFAULT 0,         -- 
+  localtax1_type			varchar(10)  NOT NULL DEFAULT '0',         -- 
+  localtax2_tx				double(6,3)  DEFAULT 0,         -- 
+  localtax2_type			varchar(10)  NOT NULL DEFAULT '0',         -- 
   fk_user_author			integer DEFAULT NULL,			  -- user making creation
   fk_user_modif             integer,                         -- user making last change
   tosell					tinyint      DEFAULT 1,	          -- Product you sell

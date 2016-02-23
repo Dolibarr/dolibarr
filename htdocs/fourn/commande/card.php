@@ -2761,6 +2761,18 @@ elseif (! empty($object->id))
 					}
 				}
 
+				// Ship
+				if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER))
+				{
+					if (in_array($object->statut, array(3,4))) {
+						if ($conf->fournisseur->enabled && $user->rights->fournisseur->commande->receptionner) {
+							print '<div class="inline-block divButAction"><a class="butAction" href="' . DOL_URL_ROOT . '/fourn/commande/dispatch.php?id=' . $object->id . '">' . $langs->trans('OrderDispatch') . '</a></div>';
+						} else {
+							print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . dol_escape_htmltag($langs->trans("NotAllowed")) . '">' . $langs->trans('OrderDispatch') . '</a></div>';
+						}
+					}
+				}
+
 				// Create bill
 				if (! empty($conf->facture->enabled))
 				{

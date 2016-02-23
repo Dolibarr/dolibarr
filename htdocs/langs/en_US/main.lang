@@ -537,6 +537,7 @@ NbOfCustomers=Number of customers
 NbOfLines=Number of lines
 NbOfObjects=Number of objects
 NbOfReferers=Number of referrers
+NbOfObjectReferers=Number of refering objects
 Referers=Refering objects
 TotalQuantity=Total quantity
 DateFromTo=From %s to %s

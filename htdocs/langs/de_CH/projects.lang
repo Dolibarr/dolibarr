@@ -11,3 +11,4 @@ ThisWillAlsoRemoveTasks=Diese Aktion löscht ebenfalls alle Aufgaben zum Projekt
 CloneTaskFiles=Aufgabe (n) clonen beigetreten Dateien (falls Aufgabe (n) geklont)
 OpenedProjectsByThirdparties=Offene Projekte nach Geschäftspartner
 OpportunityPonderatedAmount=Verkaufschancen geschätzer Betrag
+OpportunityPonderatedAmountDesc=Opportunities amount weighted with probability

@@ -152,7 +152,6 @@ CloseFiscalYear=Fiskalisches Jahr schliessen
 NbMajMin=Mindestanzahl Grossbuchstaben
 TemplatePDFExpenseReports=Dokumentvorlagen zur Spesenabrechnung Dokument erstellen
 GoOntoContactCardToAddMore=Gehen Sie auf die Registerkarte "Hinweise" von einem  Geschäftspartner Kontakt , um Hinweise für Kontakte/Adressen zu erstellen oder zu entfernen
-ConfFileMuseContainCustom=Installation eines externen Modul aus der Anwendung speichern Sie die Modul-Dateien in Verzeichnis <strong>%s</strong>. Zu haben dieses Verzeichnis durch Dolibarr verarbeitet, müssen Sie das Setup Ihrer <strong>conf/conf.php</strong> Option haben <br> - - <strong>$dolibarr_main_url_root_alt</strong> auf <<strong>$dolibarr_main_url_root_alt="/custom"</strong> enabled <strong>= "/custom"</strong> <br> - <strong>$dolibarr_main_document_root_alt</strong>  zu Wert aktiviert <strong>"%s/custom"</strong>
 NbAddedAutomatically=Anzahl Tage die den Benutzern jeden Monat automatisch dazuaddiert werden
 RecuperableOnly=Ja für MwSt. "Wahrgenommene nicht Erstattungsfähig" für einige Regionen in Frankreich. Nein für alle anderen Fälle.
 MailToSendIntervention=Um Interventions zu schicken

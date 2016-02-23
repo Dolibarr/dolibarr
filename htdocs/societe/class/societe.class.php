@@ -3026,7 +3026,7 @@ class Societe extends CommonObject
     }
 
     /**
-     *  Check if we must use localtax feature or not according to country (country of $mysocin most cases).
+     *  Check if we must use localtax feature or not according to country (country of $mysoc in most cases).
      *
      *	@param		int		$localTaxNum	To get info for only localtax1 or localtax2
      *  @return		boolean					true or false
@@ -3050,6 +3050,27 @@ class Societe extends CommonObject
     	else return false;
     }
 
+    /**
+     *  Check if we must use NPR Vat (french stupid rule) or not according to country (country of $mysoc in most cases).
+     *
+     *  @return		boolean					true or false
+     */
+    function useNPR()
+    {
+        $sql  = "SELECT t.rowid";
+        $sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
+        $sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$this->country_code."'";
+        $sql .= " AND t.active = 1 AND t.recuperableonly = 1";
+
+        dol_syslog("useNPR", LOG_DEBUG);
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            return ($this->db->num_rows($resql) > 0);
+        }
+        else return false;
+    }
+    
     /**
      *  Check if we must use revenue stamps feature or not according to country (country of $mysocin most cases).
      *

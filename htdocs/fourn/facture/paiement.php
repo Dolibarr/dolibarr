@@ -283,10 +283,11 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             print '<input type="hidden" name="socid" value="'.$obj->socid.'">';
             print '<input type="hidden" name="societe" value="'.$obj->name.'">';
 
+            dol_fiche_head('');
+            
             print '<table class="border" width="100%">';
 
-            print '<tr class="liste_titre"><td colspan="3">'.$langs->trans('Payment').'</td>';
-            print '<tr><td>'.$langs->trans('Company').'</td><td colspan="2">';
+            print '<tr><td class="fieldrequired">'.$langs->trans('Company').'</td><td colspan="2">';
             $supplierstatic->id=$obj->socid;
             $supplierstatic->name=$obj->name;
             print $supplierstatic->getNomUrl(1,'supplier');
@@ -312,7 +313,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                 print '<tr><td colspan="2">&nbsp;</td></tr>';
             }
             print '</table>';
-
+            dol_fiche_end();
 
 			$parameters=array('facid'=>$facid, 'ref'=>$ref, 'objcanvas'=>$objcanvas);
 			$reshook=$hookmanager->executeHooks('paymentsupplierinvoices',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -339,7 +340,6 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                {
 	                    $i = 0;
 	                    print '<br>';
-	                    print $langs->trans('Invoices').'<br>';
 
 						if(!empty($conf->global->FAC_AUTO_FILLJS)){
 							//Add js for AutoFill
@@ -351,15 +351,15 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 							print '	});'."\n";
 							print '	</script>'."\n";
 						}
-						print '<table class="noborder" width="100%">';
+						print '<table class="liste" width="100%">';
 	                    print '<tr class="liste_titre">';
-	                    print '<td>'.$langs->trans('Ref').'</td>';
+	                    print '<td>'.$langs->trans('Invoice').'</td>';
 	                    print '<td>'.$langs->trans('RefSupplier').'</td>';
 	                    print '<td align="center">'.$langs->trans('Date').'</td>';
 	                    print '<td align="right">'.$langs->trans('AmountTTC').'</td>';
 	                    print '<td align="right">'.$langs->trans('AlreadyPaid').'</td>';
 	                    print '<td align="right">'.$langs->trans('RemainderToPay').'</td>';
-	                    print '<td align="center">'.$langs->trans('Amount').'</td>';
+	                    print '<td align="center">'.$langs->trans('PaymentAmount').'</td>';
 	                    print '</tr>';
 
 	                    $var=True;
@@ -425,7 +425,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	        if ($action != 'add_paiement')
 	        {
 				print '<br><div class="center"><input type="checkbox" checked name="closepaidinvoices"> '.$langs->trans("ClosePaidInvoicesAutomatically");
-				print '<br><input type="submit" class="button" value="'.$langs->trans('Save').'"></div>';
+				print '<br><input type="submit" class="button" value="'.$langs->trans('ToMakePayment').'"></div>';
 	        }
 
             // Form to confirm payment
@@ -534,7 +534,7 @@ if (empty($action))
         $paramlist.=(! empty($search_amount)?"&search_amount='".$search_amount:"");
         if ($optioncss != '') $paramlist.='&optioncss='.$optioncss;
 
-        print_barre_liste($langs->trans('SupplierPayments'), $page, $_SERVER["PHP_SELF"],$paramlist,$sortfield,$sortorder,'',$num);
+        print_barre_liste($langs->trans('SupplierPayments'), $page, $_SERVER["PHP_SELF"],$paramlist,$sortfield,$sortorder,'',$num, 0, 'title_accountancy.png');
 
         print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
         if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';

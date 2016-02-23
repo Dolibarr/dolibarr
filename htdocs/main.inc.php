@@ -1008,7 +1008,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
         if (!empty($conf->global->MAIN_APPLICATION_TITLE)) $appli=$conf->global->MAIN_APPLICATION_TITLE;
 
         if ($title && ! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/noapp/',$conf->global->MAIN_HTML_TITLE)) print '<title>'.dol_htmlentities($title).'</title>';
-        if ($title) print '<title>'.dol_htmlentities($appli.' - '.$title).'</title>';
+        else if ($title) print '<title>'.dol_htmlentities($appli.' - '.$title).'</title>';
         else print "<title>".dol_htmlentities($appli)."</title>";
         print "\n";
 
@@ -1578,7 +1578,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 /**
  *  Show left menu bar
  *
- *  @param  array	$menu_array_before 	       	Table of menu entries to show before entries of menu handler
+ *  @param  array	$menu_array_before 	       	Table of menu entries to show before entries of menu handler. This param is deprectaed and must be provided to ''.
  *  @param  string	$helppagename    	       	Name of wiki page for help ('' by default).
  * 				     		                   	Syntax is: For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage
  * 									         		       For other external page: http://server/url
@@ -1597,6 +1597,8 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
     $searchform='';
     $bookmarks='';
 
+    if (! empty($menu_array_before)) dol_syslog("Deprecated parameter menu_array_before was used when calling main::left_menu function. Menu entries of module should now be defined into module descriptor and not provided when calling left_menu.", LOG_WARNING); 
+        
     if (empty($conf->dol_hide_leftmenu))
     {
 	    // Instantiate hooks of thirdparty module
@@ -1941,12 +1943,15 @@ if (! function_exists("llxFooter"))
         if (! empty($delayedhtmlcontent)) print $delayedhtmlcontent;
         
 		// Wrapper to show tooltips
-		print "\n<!-- JS CODE TO ENABLE tipTip on all object with class classfortooltip -->\n";
-		print '<script type="text/javascript">
-        	jQuery(document).ready(function () {
-        		jQuery(".classfortooltip").tipTip({maxWidth: "'.dol_size(600,'width').'px", edgeOffset: 10, delay: 50, fadeIn: 50, fadeOut: 50});
-        	});
-        </script>' . "\n";
+        if ($conf->use_javascript_ajax)
+        {
+    		print "\n<!-- JS CODE TO ENABLE tipTip on all object with class classfortooltip -->\n";
+    		print '<script type="text/javascript">
+            	jQuery(document).ready(function () {
+            		jQuery(".classfortooltip").tipTip({maxWidth: "'.dol_size(600,'width').'px", edgeOffset: 10, delay: 50, fadeIn: 50, fadeOut: 50});
+            	});
+            </script>' . "\n";
+        }
         
 		// A div for the address popup
 		print "\n<!-- A div to allow dialog popup -->\n";

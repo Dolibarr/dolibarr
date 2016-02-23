@@ -47,6 +47,7 @@ MailingSuccessfullyValidated=EMailing successfully validated
 MailUnsubcribe=Unsubscribe
 Unsuscribe=Unsubscribe
 MailingStatusNotContact=Don't contact anymore
+MailingStatusReadAndUnsubscribe=Read and unsubscribe
 ErrorMailRecipientIsEmpty=E-mail-modtager er tom
 WarningNoEMailsAdded=Ingen nye e-mail for at tilføje til modtagerens listen.
 ConfirmValidMailing=Er du sikker på at du ønsker at validere denne e-mail?

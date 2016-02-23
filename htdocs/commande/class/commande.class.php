@@ -3342,14 +3342,14 @@ class Commande extends CommonOrder
     /**
      * Is the customer order delayed?
      *
-     * @return bool
+     * @return bool     true if late, false if not
      */
     public function hasDelay()
     {
         global $conf;
 
-        if (!($this->statut > Commande::STATUS_DRAFT) && ($this->statut < Commande::STATUS_CLOSED)) {
-            return false;
+        if (! ($this->statut > Commande::STATUS_DRAFT && $this->statut < Commande::STATUS_CLOSED)) {
+            return false;   // Never late if not inside this status range
         }
 
         $now = dol_now();

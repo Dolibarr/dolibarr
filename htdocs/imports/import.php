@@ -836,6 +836,7 @@ if ($step == 4 && $datatoimport)
 	print '</td><td width="50%">';
 
 	// List of targets fields
+	$height=24;
 	$i = 0;
 	$var=true;
 	$mandatoryfieldshavesource=true;
@@ -843,7 +844,7 @@ if ($step == 4 && $datatoimport)
 	foreach($fieldstarget as $code=>$label)
 	{
 		$var=!$var;
-		print '<tr '.$bc[$var].' height="20">';
+		print '<tr '.$bc[$var].' height="'.$height.'">';
 
 		$i++;
 
@@ -1704,13 +1705,15 @@ function show_elem($fieldssource,$pos,$key,$var,$nostyle='')
 {
 	global $langs,$bc;
 
+	$height='24';
+	
 	print "\n\n<!-- Box ".$pos." start -->\n";
 	print '<div class="box" style="padding: 0px 0px 0px 0px;" id="boxto_'.$pos.'">'."\n";
 
 	print '<table summary="boxtable'.$pos.'" width="100%" class="nobordernopadding">'."\n";
 	if ($pos && $pos > count($fieldssource))	// No fields
 	{
-		print '<tr '.($nostyle?'':$bc[$var]).' height="20">';
+		print '<tr '.($nostyle?'':$bc[$var]).' height="'.$height.'">';
 		print '<td class="nocellnopadding" width="16" style="font-weight: normal">';
 		print img_picto(($pos>0?$langs->trans("MoveField",$pos):''),'uparrow','class="boxhandle" style="cursor:move;"');
 		print '</td>';
@@ -1721,7 +1724,7 @@ function show_elem($fieldssource,$pos,$key,$var,$nostyle='')
 	}
 	elseif ($key == 'none')	// Empty line
 	{
-		print '<tr '.($nostyle?'':$bc[$var]).' height="20">';
+		print '<tr '.($nostyle?'':$bc[$var]).' height="'.$height.'">';
 		print '<td class="nocellnopadding" width="16" style="font-weight: normal">';
 		print '&nbsp;';
 		print '</td>';
@@ -1732,7 +1735,7 @@ function show_elem($fieldssource,$pos,$key,$var,$nostyle='')
 	}
 	else	// Print field of source file
 	{
-		print '<tr '.($nostyle?'':$bc[$var]).' height="20">';
+		print '<tr '.($nostyle?'':$bc[$var]).' height="'.$height.'">';
 		print '<td class="nocellnopadding" width="16" style="font-weight: normal">';
 		// The image must have the class 'boxhandle' beause it's value used in DOM draggable objects to define the area used to catch the full object
 		print img_picto($langs->trans("MoveField",$pos),'uparrow','class="boxhandle" style="cursor:move;"');

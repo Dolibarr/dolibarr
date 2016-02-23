@@ -422,6 +422,7 @@ if ($resql)
                 $notshippable=0;
                 $warning = 0;
                 $text_info='';
+                $text_warning='';
                 $nbprod=0;
                 
                 $numlines = count($generic_commande->lines); // Loop on each line of order

@@ -175,7 +175,7 @@ class modECM extends DolibarrModules
 							  'langs'=>'ecm',
 							  'position'=>103,
 							  'perms'=>'$user->rights->ecm->read || $user->rights->ecm->upload',
-							  'enabled'=>'$user->rights->ecm->read || $user->rights->ecm->upload',
+							  'enabled'=>'($user->rights->ecm->read || $user->rights->ecm->upload) && ! empty($conf->global->ECM_AUTO_TREE_ENABLED)',
 							  'target'=>'',
 							  'user'=>2);			// 0=Menu for internal users, 1=external users, 2=both
 		$r++;

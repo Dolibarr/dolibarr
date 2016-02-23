@@ -103,7 +103,7 @@ class Paiement extends CommonObject
 			{
 				$obj = $this->db->fetch_object($resql);
 				$this->id             = $obj->rowid;
-				$this->ref            = $obj->ref;
+				$this->ref            = $obj->ref?$obj->ref:$obj->rowid;
 				$this->date           = $this->db->jdate($obj->dp);
 				$this->datepaye       = $this->db->jdate($obj->dp);
 				$this->numero         = $obj->num_paiement;

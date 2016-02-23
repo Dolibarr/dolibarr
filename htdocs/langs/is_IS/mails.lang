@@ -47,6 +47,7 @@ MailingSuccessfullyValidated=EMailing successfully validated
 MailUnsubcribe=Unsubscribe
 Unsuscribe=Unsubscribe
 MailingStatusNotContact=Don't contact anymore
+MailingStatusReadAndUnsubscribe=Read and unsubscribe
 ErrorMailRecipientIsEmpty=Netfang móttakanda er tóm
 WarningNoEMailsAdded=Engin ný Email að bæta við listann viðtakanda.
 ConfirmValidMailing=Ertu viss um að þú viljir að sannprófa þetta póst?

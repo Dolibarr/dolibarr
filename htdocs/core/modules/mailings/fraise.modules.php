@@ -123,7 +123,7 @@ class mailing_fraise extends MailingTargets
         $s.='<option value="0">'.$langs->trans("MemberStatusResiliatedShort").'</option>';
         $s.='</select> ';
         $s.=$langs->trans("Type").': ';
-        $s.='<select name="filter" class="flat">';
+        $s.='<select name="filtertype" class="flat">';
         $sql = "SELECT rowid, libelle, statut";
         $sql.= " FROM ".MAIN_DB_PREFIX."adherent_type";
         $sql.= " WHERE entity = ".$conf->entity;
@@ -212,7 +212,7 @@ class mailing_fraise extends MailingTargets
         if ($dateendsubscriptionafter > 0)  $sql.=" AND datefin > '".$this->db->idate($dateendsubscriptionafter)."'";
         if ($dateendsubscriptionbefore > 0) $sql.=" AND datefin < '".$this->db->idate($dateendsubscriptionbefore)."'";
         $sql.= " AND a.fk_adherent_type = ta.rowid";
-        if ($_POST['filter']) $sql.= " AND ta.rowid='".$_POST['filter']."'";
+        if ($_POST['filtertype']) $sql.= " AND ta.rowid='".$_POST['filtertype']."'";
         $sql.= " ORDER BY a.email";
         //print $sql;
 

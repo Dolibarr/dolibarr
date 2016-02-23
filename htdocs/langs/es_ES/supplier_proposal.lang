@@ -1,16 +1,17 @@
 # Dolibarr language file - Source file is en_US - supplier_proposal
 SupplierProposal=Presupuestos de proveedor
 supplier_proposalDESC=Gestionar presupuestos de proveedor
-SupplierProposalShort=Supplier proposals
-SupplierProposalNew=New request
+SupplierProposalShort=Presupuestos de proveedores
+SupplierProposalNew=Nueva petición
 CommRequest=Presupuesto
 CommRequests=Presupuestos
 SearchRequest=Buscar un presupuesto
 DraftRequests=Presupuestos borrador
+SupplierProposalsDraft=Draft supplier proposals
 LastModifiedRequests=Los %s últimos presupuestos modificados
 RequestsOpened=Presupuestos abiertos
 SupplierProposalArea=Área presupuestos de proveedores
-SupplierProposalShort=Supplier proposals
+SupplierProposalShort=Presupuestos de proveedores
 SupplierProposals=Presupuestos de proveedor
 NewAskPrice=Nuevo presupuesto
 NewAsk=Nuevo presupuesto

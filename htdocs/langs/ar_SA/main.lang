@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - main
-DIRECTION=لتر
+DIRECTION=ltr
 # Note for Chinese:
 # msungstdlight or cid0ct are for traditional Chinese (traditional does not render with Ubuntu pdf reader)
 # stsongstdlight or cid0cs are for simplified Chinese
@@ -7,22 +7,22 @@ DIRECTION=لتر
 FONTFORPDF=DejaVuSans
 FONTSIZEFORPDF=9
 SeparatorDecimal=.
-SeparatorThousand=،
-FormatDateShort=٪ م /٪ د /٪ Y
-FormatDateShortInput=٪ م /٪ د /٪ Y
-FormatDateShortJava=MM / DD / YYYY
-FormatDateShortJavaInput=MM / DD / YYYY
-FormatDateShortJQuery=شهر / يوم / سنة
-FormatDateShortJQueryInput=شهر / يوم / سنة
+SeparatorThousand=None
+FormatDateShort=%d/%m/%Y
+FormatDateShortInput=%d/%m/%Y
+FormatDateShortJava=dd/MM/yyyy
+FormatDateShortJavaInput=dd/MM/yyyy
+FormatDateShortJQuery=dd/mm/yy
+FormatDateShortJQueryInput=dd/mm/yy
 FormatHourShortJQuery=HH: MI
-FormatHourShort=٪عفريت
-FormatHourShortDuration=٪ H:٪ M
-FormatDateTextShort=٪ ب٪ د،٪ Y
-FormatDateText=٪ B٪ د،٪ Y
-FormatDateHourShort=٪ م /٪ د /٪ Y٪ I:٪ M٪ ع
-FormatDateHourSecShort=٪ م /٪ د /٪ Y٪ I:٪ M:٪ S٪ ع
-FormatDateHourTextShort=٪ ب٪ د،٪ Y،٪ I:٪ M٪ ع
-FormatDateHourText=٪ B٪ د،٪ Y،٪ I:٪ M٪ ع
+FormatHourShort=%H:%M
+FormatHourShortDuration=%H:%M
+FormatDateTextShort=%d %b %Y
+FormatDateText=%d %B %Y
+FormatDateHourShort=%d/%m/%Y %H:%M
+FormatDateHourSecShort=%d/%m/%Y %H:%M:%S
+FormatDateHourTextShort=%d %b %Y %H:%M
+FormatDateHourText=%d %B %Y %H:%M
 DatabaseConnection=اتصال قاعدة البيانات
 NoTemplateDefined=No template defined for this email type
 NoTranslation=لا يوجد ترجمة
@@ -30,19 +30,19 @@ NoRecordFound=لا يوجد سجلات
 NoError=لا خطأ
 Error=خطأ
 Errors=أخطاء
-ErrorFieldRequired=مطلوب حقل '٪ ق'
-ErrorFieldFormat=حقل '٪ ق' له قيمة سيئة
-ErrorFileDoesNotExists=الملف غير موجود٪ الصورة
-ErrorFailedToOpenFile=فشل في فتح الملف٪ الصورة
-ErrorCanNotCreateDir=لا يمكن إنشاء DIR٪ الصورة
-ErrorCanNotReadDir=لا يمكن قراءة DIR٪ الصورة
-ErrorConstantNotDefined=المعلمة٪ S غير معرف
+ErrorFieldRequired=Field '%s' is required
+ErrorFieldFormat=Field '%s' has a bad value
+ErrorFileDoesNotExists=File %s does not exist
+ErrorFailedToOpenFile=Failed to open file %s
+ErrorCanNotCreateDir=Can not create dir %s
+ErrorCanNotReadDir=Can not read dir %s
+ErrorConstantNotDefined=Parameter %s not defined
 ErrorUnknown=خطأ غير معروف
 ErrorSQL=خطأ SQL
-ErrorLogoFileNotFound=لم يتم العثور على ملف شعار '٪ ق'
+ErrorLogoFileNotFound=Logo file '%s' was not found
 ErrorGoToGlobalSetup=اذهب إلى 'شركة / مؤسسة' الإعداد لإصلاح هذه
 ErrorGoToModuleSetup=الذهاب إلى الوحدة الإعداد لإصلاح هذه
-ErrorFailedToSendMail=فشل في إرسال البريد (المرسل =٪ ق، استقبال =٪ ق)
+ErrorFailedToSendMail=Failed to send mail (sender=%s, receiver=%s)
 ErrorAttachedFilesDisabled=تم تعطيل إرفاق ملف في هذا الخادم
 ErrorFileNotUploaded=ويتم تحميل الملف. تحقق لا يتجاوز هذا الحجم الأقصى المسموح به، أن المساحة الحرة المتوفرة على القرص والتي لا يوجد بالفعل ملف بنفس الاسم في هذا الدليل.
 ErrorInternalErrorDetected=خطأ الكشف عن
@@ -51,20 +51,20 @@ ErrorWrongHostParameter=المعلمة المضيف خاطئة
 ErrorYourCountryIsNotDefined=لم يتم تعريف بلدك. الذهاب إلى الصفحة الرئيسية الإعداد-تحرير ومشاركة مرة أخرى في النموذج.
 ErrorRecordIsUsedByChild=فشل في حذف هذا السجل. ويستخدم هذا السجل من قبل واحد على الأقل السجلات التابعة.
 ErrorWrongValue=قيمة خاطئة
-ErrorWrongValueForParameterX=قيمة خاطئة للمعلمة٪ الصورة
+ErrorWrongValueForParameterX=Wrong value for parameter %s
 ErrorNoRequestInError=أي طلب في الخطأ
 ErrorServiceUnavailableTryLater=الخدمة غير متوفرة في الوقت الراهن. حاول مجددا لاحقا.
 ErrorDuplicateField=قيمة مكررة في حقل فريد
 ErrorSomeErrorWereFoundRollbackIsDone=تم العثور على بعض الأخطاء. نحن التراجع التغييرات.
-ErrorConfigParameterNotDefined=لم يتم تعريف <b>المعلمة٪ الصورة</b> داخل ملف التكوين Dolibarr <b>conf.php.</b>
-ErrorCantLoadUserFromDolibarrDatabase=فشل في العثور على <b>المستخدم٪ الصورة</b> في قاعدة بيانات Dolibarr.
-ErrorNoVATRateDefinedForSellerCountry=خطأ، لا معدلات ضريبة القيمة المضافة المحددة للبلد '٪ ق'.
-ErrorNoSocialContributionForSellerCountry=خطأ، لا الاجتماعي / المالي نوع الضرائب المحددة للبلد '٪ ق'.
+ErrorConfigParameterNotDefined=Parameter <b>%s</b> is not defined inside Dolibarr config file <b>conf.php</b>.
+ErrorCantLoadUserFromDolibarrDatabase=Failed to find user <b>%s</b> in Dolibarr database.
+ErrorNoVATRateDefinedForSellerCountry=Error, no vat rates defined for country '%s'.
+ErrorNoSocialContributionForSellerCountry=Error, no social/fiscal taxes type defined for country '%s'.
 ErrorFailedToSaveFile=خطأ، فشل في حفظ الملف.
 NotAuthorized=غير مصرح لك ان تفعل ذلك.
 SetDate=التاريخ المحدد
 SelectDate=تحديد تاريخ
-SeeAlso=انظر أيضا الصورة٪
+SeeAlso=See also %s
 SeeHere=انظر هنا
 BackgroundColorByDefault=لون الخلفية الافتراضية
 FileNotUploaded=لم إيداع الملف
@@ -79,7 +79,7 @@ LevelOfFeature=مستوى ميزات
 NotDefined=غير معرف
 DefinedAndHasThisValue=تعريف وقيمة ل
 IsNotDefined=غير محدد
-DolibarrInHttpAuthenticationSoPasswordUseless=Dolibarr وضع مصادقة هو الإعداد <b>إلى٪</b> s في ملف التكوين <b>conf.php.</b> <br> وهذا يعني أن قاعدة بيانات كلمة السر هي خارجي لDolibarr، لذلك تغيير هذا المجال يمكن أن يكون لها أي آثار.
+DolibarrInHttpAuthenticationSoPasswordUseless=Dolibarr authentication mode is setup to <b>%s</b> in configuration file <b>conf.php</b>.<br>This means that password database is extern to Dolibarr, so changing this field may have no effects.
 Administrator=مدير
 Undefined=غير محدد
 PasswordForgotten=نسيت كلمة المرور؟
@@ -103,7 +103,7 @@ TechnicalInformation=المعلومات التقنية
 TechnicalID=ID الفني
 NotePublic=ملاحظة (الجمهور)
 NotePrivate=ملاحظة (خاص)
-PrecisionUnitIsLimitedToXDecimals=كان Dolibarr الإعداد للحد من دقة أسعار الوحدات إلى <b>العشرية٪ الصورة.</b>
+PrecisionUnitIsLimitedToXDecimals=Dolibarr was setup to limit precision of unit prices to <b>%s</b> decimals.
 DoTest=اختبار
 ToFilter=فلتر
 NoFilter=No filter
@@ -140,7 +140,7 @@ AddActionDone=إضافة حدث القيام به
 Close=إغلاق
 Close2=إغلاق
 Confirm=تأكيد
-ConfirmSendCardByMail=هل تريد حقا أن ترسل محتوى هذه البطاقة عن طريق البريد <b>إلى٪</b> s؟
+ConfirmSendCardByMail=Do you really want to send content of this card by mail to <b>%s</b> ?
 Delete=حذف
 Remove=إزالة
 Resiliate=Resiliate
@@ -218,7 +218,7 @@ Limit=حد
 Limits=حدود
 DevelopmentTeam=فريق التطوير
 Logout=تسجيل خروج
-NoLogoutProcessWithAuthMode=أي ميزة قطع تطبيقية مع وضع <b>المصادقة٪ الصورة</b>
+NoLogoutProcessWithAuthMode=No applicative disconnect feature with authentication mode <b>%s</b>
 Connection=الاتصال
 Setup=التثبيت
 Alert=إنذار
@@ -311,6 +311,7 @@ UnitPriceHT=سعر الوحدة (صافي)
 UnitPriceTTC=سعر الوحدة
 PriceU=إلى أعلى
 PriceUHT=UP (صافي)
+PriceUHTCurrency=U.P (currency)
 SupplierProposalUHT=شبكة UP مطلوب
 PriceUTTC=UP (شركة الضريبة)
 Amount=كمية
@@ -321,6 +322,9 @@ AmountTTCShort=المبلغ (المؤتمر الوطني العراقي. الض�
 AmountHT=المبلغ (صافية من الضرائب)
 AmountTTC=المبلغ (المؤتمر الوطني العراقي. الضريبية)
 AmountVAT=مبلغ الضريبة
+MulticurrencyAmountHT=Amount (net of tax), original currency
+MulticurrencyAmountTTC=Amount (inc. of tax), original currency
+MulticurrencyAmountVAT=Amount tax, original currency
 AmountLT1=مبلغ الضريبة 2
 AmountLT2=مبلغ الضريبة 3
 AmountLT1ES=كمية RE
@@ -335,6 +339,7 @@ Percentage=نسبة مئوية
 Total=الإجمالي الكلي
 SubTotal=حاصل الجمع
 TotalHTShort=المجموع (الصافي)
+TotalHTShortCurrency=Total (net in currency)
 TotalTTCShort=إجمالي (شركة الضريبة)
 TotalHT=مجموع (صافي الضريبة)
 TotalHTforthispage=مجموع (صافي الضريبة) لهذه الصفحة
@@ -388,15 +393,15 @@ ContactsAddressesForCompany=اتصالات / عناوين لهذا الطرف ا
 AddressesForCompany=عناوين لهذا الطرف الثالث
 ActionsOnCompany=الأحداث حول هذا الطرف الثالث
 ActionsOnMember=الأحداث عن هذا العضو
-NActions=الأحداث٪ الصورة
-NActionsLate=٪ في وقت متأخر الصورة
+NActions=%s events
+NActionsLate=%s late
 RequestAlreadyDone=طلب المسجل بالفعل
 Filter=فلتر
-FilterOnInto=معايير البحث <strong>'٪ ق'</strong> إلى حقول٪ الصورة
+FilterOnInto=Search criteria '<strong>%s</strong>' into fields %s
 RemoveFilter=إزالة فلتر
 ChartGenerated=الرسم البياني المتولدة
 ChartNotGenerated=الرسم البياني لم تولد
-GeneratedOn=بناء على٪ الصورة
+GeneratedOn=Build on %s
 Generate=توليد
 Duration=المدة الزمنية
 TotalDuration=المدة الإجمالية
@@ -457,6 +462,7 @@ Datas=البيانات
 None=لا شيء
 NoneF=لا شيء
 Late=متأخر
+LateDesc=Delay to define if a record is late or not depends on your setup. Ask your admin to change delay from menu Home - Setup - Alerts.
 Photo=صورة
 Photos=الصور
 AddPhoto=إضافة الصورة
@@ -529,7 +535,7 @@ File=ملف
 Files=ملفات
 NotAllowed=غير مسموح
 ReadPermissionNotAllowed=إذن لا يسمح للقراءة
-AmountInCurrency=المبلغ بالعملة ق ٪
+AmountInCurrency=Amount in %s currency
 Example=مثال
 Examples=أمثلة
 NoExample=على سبيل المثال لا
@@ -539,11 +545,12 @@ NbOfCustomers=عدد من العملاء
 NbOfLines=عدد الخطوط
 NbOfObjects=عدد الأجسام
 NbOfReferers=عدد المشيرين
+NbOfObjectReferers=Number of refering objects
 Referers=اشارة الأجسام
 TotalQuantity=الكمية الإجمالية
-DateFromTo=ل٪ من ق ق ٪
-DateFrom=من ق ٪
-DateUntil=حتى ق ٪
+DateFromTo=From %s to %s
+DateFrom=From %s
+DateUntil=Until %s
 Check=فحص
 Uncheck=قم بإلغاء التحديد
 Internal=الداخلية
@@ -595,11 +602,11 @@ GoBack=العودة
 CanBeModifiedIfOk=يمكن تعديلها إذا كان صحيحا
 CanBeModifiedIfKo=يمكن تعديلها إذا لم يكن صحيحا
 RecordModifiedSuccessfully=سجل تعديل بنجاح
-RecordsModified=السجلات٪ الصورة المعدلة
+RecordsModified=%s records modified
 AutomaticCode=مدونة الآلي
 NotManaged=لم يفلح
 FeatureDisabled=سمة المعوقين
-MoveBox=تحرك المربع ٪ ق
+MoveBox=Move box %s
 Offered=عرض
 NotEnoughPermissions=ليس لديك إذن لهذا العمل
 SessionName=اسم الدورة
@@ -623,7 +630,7 @@ MenuECM=وثائق
 MenuAWStats=AWStats
 MenuMembers=أعضاء
 MenuAgendaGoogle=جوجل جدول الأعمال
-ThisLimitIsDefinedInSetup=Dolibarr الحد (القائمة الرئيسية الإعداد للأمن) : %s كيلو بايت ، PHP الحد : %s كيلو بايت 
+ThisLimitIsDefinedInSetup= 
 NoFileFound=لا الوثائق المحفوظة في هذا المجلد
 CurrentUserLanguage=الصيغة الحالية
 CurrentTheme=الموضوع الحالي
@@ -694,6 +701,7 @@ LinkedToSpecificUsers=يرتبط اسم مستخدم معين
 DeleteAFile=حذف ملف
 ConfirmDeleteAFile=هل أنت متأكد أنك تريد حذف الملف
 NoResults=لا نتائج
+AdminTools=Admin tools
 SystemTools=ادوات النظام
 ModulesSystemTools=أدوات حدات
 Test=اختبار
@@ -707,17 +715,17 @@ toward=نحو
 Access=وصول
 SelectAction=حدد العمل
 HelpCopyToClipboard=استخدم Ctrl + C لنسخ إلى الحافظة
-SaveUploadedFileWithMask=حفظ الملف على الخادم مع اسم <strong>"٪ ق"</strong> (وإلا "٪ ق")
+SaveUploadedFileWithMask=حفظ الملف على الخادم مع اسم <strong>"%s"</strong> (otherwise "%s")
 OriginFileName=اسم الملف الأصلي
 SetDemandReason=مجموعة مصدر
 SetBankAccount=تحديد الحساب المصرفي
 AccountCurrency=عملة الحساب
 ViewPrivateNote=عرض الملاحظات
-XMoreLines=٪ ق خط (ق) مخبأة
+XMoreLines=%s line(s) hidden
 PublicUrl=URL العام
 AddBox=إضافة مربع
 SelectElementAndClickRefresh=حدد عنصر وانقر فوق تحديث
-PrintFile=طباعة ملف٪ الصورة
+PrintFile=Print File %s
 ShowTransaction=عرض الصفقة على حساب مصرفي
 GoIntoSetupToChangeLogo=اذهب إلى الصفحة الرئيسية - إعداد - شركة لتغيير شعار أو الذهاب إلى الصفحة الرئيسية - إعداد - عرض للاختباء.
 Deny=رفض
@@ -732,7 +740,8 @@ Hello=أهلا
 Sincerely=بإخلاص
 DeleteLine=حذف الخط
 ConfirmDeleteLine=هل أنت متأكد أنك تريد حذف هذا الخط؟
-
+NoPDFAvailableForDocGenAmongChecked=No PDF were available for the document generation among checked records
+TooManyRecordForMassAction=Too many records selected for mass action. Such action are restriced to a list of %s records.
 # Week day
 Monday=يوم الاثنين
 Tuesday=الثلاثاء

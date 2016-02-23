@@ -384,7 +384,7 @@ abstract class CommonObject
      */
     function errorsToString()
     {
-    	return $this->error.(is_array($this->errors)?(($this->error!=''?' ':'').join(',',$this->errors)):'');
+    	return $this->error.(is_array($this->errors)?(($this->error!=''?', ':'').join(', ',$this->errors)):'');
     }
 
     /**
@@ -447,7 +447,7 @@ abstract class CommonObject
     {
     	global $conf, $langs;
 
-    	$countriesusingstate=array('AU','US','IN','GB','ES','UK','TR');
+    	$countriesusingstate=array('AU','US','IN','GB','ES','UK','TR');    // See also option MAIN_FORCE_STATE_INTO_ADDRESS
     	
     	$contactid=0;
     	$thirdpartyid=0;
@@ -483,15 +483,15 @@ abstract class CommonObject
 			$out.=dol_print_address($coords, 'address_'.$htmlkey.'_'.$this->id, $this->element, $this->id, 1); $outdone++;
 			$outdone++;
 		}
-		
-		if (! in_array($this->country_code,$countriesusingstate) && empty($conf->global->MAIN_FORCE_STATE_INTO_ADDRESS)
-				&& ! empty($conf->global->SOCIETE_DISABLE_STATE) && $this->state) 
+
+		if (! in_array($this->country_code,$countriesusingstate) && empty($conf->global->MAIN_FORCE_STATE_INTO_ADDRESS)   // If MAIN_FORCE_STATE_INTO_ADDRESS is on, state is already returned previously with getFullAddress
+				&& empty($conf->global->SOCIETE_DISABLE_STATE) && $this->state) 
 		{
-			$out.=($outdone?'<br>':'').$this->state;
+			$out.=($outdone?' - ':'').$this->state;
 			$outdone++;
 		}
 
-		if (! empty($this->phone_pro) || ! empty($this->phone_mobile) || ! empty($this->phone_perso) || ! empty($this->fax) || ! empty($this->office_phone) || ! empty($this->user_mobile) || ! empty($this->office_fax)) $out.=($outdone?'<br>':'');
+		if (! empty($this->phone) || ! empty($this->phone_pro) || ! empty($this->phone_mobile) || ! empty($this->phone_perso) || ! empty($this->fax) || ! empty($this->office_phone) || ! empty($this->user_mobile) || ! empty($this->office_fax)) $out.=($outdone?'<br>':'');
     	if (! empty($this->phone) && empty($this->phone_pro)) {		// For objects that store pro phone into ->phone
 			$out.=dol_print_phone($this->phone,$this->country_code,$contactid,$thirdpartyid,'AC_TEL','&nbsp;','phone',$langs->trans("PhonePro")); $outdone++;
 		}
@@ -3221,6 +3221,8 @@ abstract class CommonObject
 				$text.= ' - '.(! empty($line->label)?$line->label:$label);
 				$description.=(! empty($conf->global->PRODUIT_DESC_IN_FORM)?'':dol_htmlentitiesbr($line->description));	// Description is what to show on popup. We shown nothing if already into desc.
 			}
+			
+			$line->pu_ttc = price2num($line->subprice * (1 + ($line->tva_tx/100)), 'MU');
 
 			// Output template part (modules that overwrite templates must declare this into descriptor)
 			// Use global variables + $dateSelector + $seller and $buyer
@@ -3244,7 +3246,7 @@ abstract class CommonObject
 			if (! empty($conf->global->MAIN_HTML5_PLACEHOLDER)) $placeholder=' placeholder="'.$langs->trans("Label").'"';
 			else $placeholder=' title="'.$langs->trans("Label").'"';
 
-			$pu_ttc = price2num($line->subprice * (1 + ($line->tva_tx/100)), 'MU');
+			$line->pu_ttc = price2num($line->subprice * (1 + ($line->tva_tx/100)), 'MU');
 
 			// Output template part (modules that overwrite templates must declare this into descriptor)
 			// Use global variables + $dateSelector + $seller and $buyer

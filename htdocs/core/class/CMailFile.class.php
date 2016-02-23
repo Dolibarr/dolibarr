@@ -375,7 +375,7 @@ class CMailFile
 
 		if (empty($conf->global->MAIN_DISABLE_ALL_MAILS))
 		{
-            dol_include_once('/core/class/hookmanager.class.php');
+            require_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
             $hookmanager = new HookManager($db);
             $hookmanager->initHooks(array(
                 'maildao'

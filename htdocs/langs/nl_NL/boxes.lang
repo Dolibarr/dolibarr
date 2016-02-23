@@ -60,6 +60,8 @@ BoxTitleLastContracts=Laatste %s contracten
 BoxTitleLastModifiedDonations=Laatst gewijzigd %s donaties
 BoxTitleLastModifiedExpenses=Laatste %s bewerkte onkostendeclaratie
 BoxGlobalActivity=Globale activiteit (facturen, offertes, bestellingen)
+BoxGoodCustomers=Good Customers
+BoxTitleGoodCustomers=%s Good Customers
 FailedToRefreshDataInfoNotUpToDate=Bijwerken van de RSS feed is mislukt. Laatste succesvolle bijwerkingsdatum: %s
 LastRefreshDate=Laatste bijwerkingsdatum
 NoRecordedBookmarks=Geen weblinks ingesteld. Klik <a href="%s">weblinks</a> aan om deze toe te voegen.
@@ -95,4 +97,4 @@ ForCustomersInvoices=Afnemersfacturen
 ForCustomersOrders=Klantenbestellingen
 ForProposals=Zakelijke voorstellen / Offertes
 LastXMonthRolling=De laatste %s maand overschrijdende
-ChooseBoxToAdd=Choose a box to add
+ChooseBoxToAdd=Add a box to your dashboard...

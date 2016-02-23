@@ -414,6 +414,9 @@ th .button {
 .valignmiddle {
 	vertical-align: middle;
 }
+.valignbottom {
+	vertical-align: bottom;
+}
 .centpercent {
 	width: 100%;
 }
@@ -2786,6 +2789,14 @@ table.dp {
 	color: rgb(<?php print $colortextlink; ?>);
 }
 
+.categtextwhite, .treeview .categtextwhite.hover {
+	color: #fff !important;
+}
+.categtextblack {
+	color: #000 !important;
+}
+
+
 /* ============================================================================== */
 /*  Afficher/cacher                                                               */
 /* ============================================================================== */
@@ -3399,6 +3410,9 @@ div.dataTables_length select {
 /*  Select2                                                                       */
 /* ============================================================================== */
 
+.select2-container .select2-choice {
+	color: #000;
+}
 .selectoptiondisabledwhite {
 	background: #FFFFFF !important;
 }
@@ -3495,22 +3509,30 @@ a span.select2-chosen
   overflow: hidden;
 }
 
+
+/* ============================================================================== */
+/*  For categories                                                                */
+/* ============================================================================== */
+
 .noborderoncategories {
 	border: none !important;
 	border-radius: 5px !important;
 	box-shadow: none;
 	-webkit-box-shadow: none !important;
     box-shadow: none !important;
-    color: #fff !important;
 }
 span.noborderoncategories a, li.noborderoncategories a {
-	color: #fff !important;
 	line-height: normal;
 }
 span.noborderoncategories {
 	padding: 5px 5px 0px 5px;
 }
-
+.categtextwhite, .treeview .categtextwhite.hover {
+	color: #fff !important;
+}
+.categtextblack {
+	color: #000 !important;
+}
 
 
 /* ============================================================================== */

@@ -252,6 +252,10 @@ if (! empty($conf->margin->enabled))
 			jQuery("input[name='np_marginRate']:first").val('');
 			jQuery("input[name='np_markRate']:first").val('');
 		});
+		jQuery("#remise_percent").keyup(function() {
+			jQuery("input[name='np_marginRate']:first").val('');
+			jQuery("input[name='np_markRate']:first").val('');
+		});
 		jQuery("#buying_price").keyup(function() {
 			jQuery("input[name='np_marginRate']:first").val('');
 			jQuery("input[name='np_markRate']:first").val('');

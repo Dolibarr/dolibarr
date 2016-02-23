@@ -47,6 +47,7 @@ MailingSuccessfullyValidated=EMailing successfully validated
 MailUnsubcribe=Unsubscribe
 Unsuscribe=Unsubscribe
 MailingStatusNotContact=Don't contact anymore
+MailingStatusReadAndUnsubscribe=Read and unsubscribe
 ErrorMailRecipientIsEmpty=電子郵件收件人是空的
 WarningNoEMailsAdded=沒有新的電子郵件添加到收件人的名單。
 ConfirmValidMailing=你確定要驗證這個電子郵件？

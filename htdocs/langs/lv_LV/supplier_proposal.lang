@@ -7,6 +7,7 @@ CommRequest=Cenas pieprasījums
 CommRequests=Cenas pieprasījumi
 SearchRequest=Atrast pieprasījumu
 DraftRequests=Pieprasījuma melnraksts
+SupplierProposalsDraft=Draft supplier proposals
 LastModifiedRequests=Pēdējie %s labotie cenas pieprasījumi
 RequestsOpened=Atvērt cenas pieprasījumu
 SupplierProposalArea=Supplier proposals area

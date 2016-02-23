@@ -24,21 +24,20 @@
  */
 
 /**
- * \file		htdocs/accountancy/journal/sellsjournal.php
- * \ingroup		Accounting Expert
- * \brief		Page with sells journal
+ * \file htdocs/accountancy/journal/sellsjournal.php
+ * \ingroup Accounting Expert
+ * \brief Page with sells journal
  */
-
 require '../../main.inc.php';
 
 // Class
-require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
-require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
-require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/report.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT . '/societe/class/client.class.php';
+require_once DOL_DOCUMENT_ROOT . '/accountancy/class/bookkeeping.class.php';
+require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
 
 // Langs
 $langs->load("compta");
@@ -61,8 +60,6 @@ if ($user->societe_id > 0)
 	accessforbidden();
 
 $action = GETPOST('action');
-
-
 
 /*
  * View
@@ -105,10 +102,9 @@ if (! empty($conf->multicompany->enabled)) {
 }
 $sql .= " AND f.fk_statut > 0";
 if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
-	$sql.= " AND f.type IN (".Facture::TYPE_STANDARD.",".Facture::TYPE_REPLACEMENT.",".Facture::TYPE_CREDIT_NOTE.",".Facture::TYPE_SITUATION.")";
-}
-else {
-	$sql.= " AND f.type IN (".Facture::TYPE_STANDARD.",".Facture::TYPE_STANDARD.",".Facture::TYPE_CREDIT_NOTE.",".Facture::TYPE_DEPOSIT.",".Facture::TYPE_SITUATION.")";
+	$sql .= " AND f.type IN (" . Facture::TYPE_STANDARD . "," . Facture::TYPE_REPLACEMENT . "," . Facture::TYPE_CREDIT_NOTE . "," . Facture::TYPE_SITUATION . ")";
+} else {
+	$sql .= " AND f.type IN (" . Facture::TYPE_STANDARD . "," . Facture::TYPE_STANDARD . "," . Facture::TYPE_CREDIT_NOTE . "," . Facture::TYPE_DEPOSIT . "," . Facture::TYPE_SITUATION . ")";
 }
 $sql .= " AND fd.product_type IN (0,1)";
 if ($date_start && $date_end)
@@ -123,16 +119,16 @@ if ($result) {
 	$tabtva = array ();
 	$tabttc = array ();
 	$tabcompany = array ();
-
+	
 	$num = $db->num_rows($result);
 	$i = 0;
-
+	
 	while ( $i < $num ) {
 		$obj = $db->fetch_object($result);
 		// les variables
 		$cptcli = (! empty($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER)) ? $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER : $langs->trans("CodeNotDef");
 		$compta_soc = (! empty($obj->code_compta)) ? $obj->code_compta : $cptcli;
-
+		
 		$compta_prod = $obj->compte;
 		if (empty($compta_prod)) {
 			if ($obj->product_type == 0)
@@ -142,12 +138,12 @@ if ($result) {
 		}
 		$cpttva = (! empty($conf->global->ACCOUNTING_VAT_SOLD_ACCOUNT)) ? $conf->global->ACCOUNTING_VAT_SOLD_ACCOUNT : $langs->trans("CodeNotDef");
 		$compta_tva = (! empty($obj->account_tva) ? $obj->account_tva : $cpttva);
-
+		
 		// Situation invoices handling
 		$line = new FactureLigne($db);
 		$line->fetch($obj->rowid);
 		$prev_progress = $line->get_prev_progress();
-		if ($obj->type==Facture::TYPE_SITUATION) {
+		if ($obj->type == Facture::TYPE_SITUATION) {
 			// Avoid divide by 0
 			if ($obj->situation_percent == 0) {
 				$situation_ratio = 0;
@@ -157,7 +153,7 @@ if ($result) {
 		} else {
 			$situation_ratio = 1;
 		}
-
+		
 		// Invoice lines
 		$tabfac[$obj->rowid]["date"] = $obj->df;
 		$tabfac[$obj->rowid]["ref"] = $obj->facnumber;
@@ -176,9 +172,9 @@ if ($result) {
 		$tabcompany[$obj->rowid] = array (
 				'id' => $obj->socid,
 				'name' => $obj->name,
-				'code_client' => $obj->code_compta
+				'code_client' => $obj->code_compta 
 		);
-
+		
 		$i ++;
 	}
 } else {
@@ -191,15 +187,12 @@ if ($result) {
  */
 
 // Bookkeeping Write
-if ($action == 'writebookkeeping')
-{
+if ($action == 'writebookkeeping') {
 	$now = dol_now();
 	$error = 0;
-
-	foreach ($tabfac as $key => $val)
-	{
-		foreach ($tabttc[$key] as $k => $mt)
-		{
+	
+	foreach ( $tabfac as $key => $val ) {
+		foreach ( $tabttc[$key] as $k => $mt ) {
 			$bookkeeping = new BookKeeping($db);
 			$bookkeeping->doc_date = $val["date"];
 			$bookkeeping->doc_ref = $val["ref"];
@@ -216,16 +209,16 @@ if ($action == 'writebookkeeping')
 			$bookkeeping->credit = ($mt < 0) ? $mt : 0;
 			$bookkeeping->code_journal = $conf->global->ACCOUNTING_SELL_JOURNAL;
 			$bookkeeping->fk_user_author = $user->id;
-
+			
 			$result = $bookkeeping->create($user);
 			if ($result < 0) {
 				$error ++;
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
-
+		
 		// Product / Service
-		foreach ($tabht[$key] as $k => $mt) {
+		foreach ( $tabht[$key] as $k => $mt ) {
 			if ($mt) {
 				// get compte id and label
 				$accountingaccount = new AccountingAccount($db);
@@ -246,7 +239,7 @@ if ($action == 'writebookkeeping')
 					$bookkeeping->credit = ($mt >= 0) ? $mt : 0;
 					$bookkeeping->code_journal = $conf->global->ACCOUNTING_SELL_JOURNAL;
 					$bookkeeping->fk_user_author = $user->id;
-
+					
 					$result = $bookkeeping->create($user);
 					if ($result < 0) {
 						$error ++;
@@ -255,13 +248,11 @@ if ($action == 'writebookkeeping')
 				}
 			}
 		}
-
+		
 		// VAT
 		// var_dump($tabtva);
-		foreach ($tabtva[$key] as $k => $mt)
-		{
-			if ($mt)
-			{
+		foreach ( $tabtva[$key] as $k => $mt ) {
+			if ($mt) {
 				$bookkeeping = new BookKeeping($db);
 				$bookkeeping->doc_date = $val["date"];
 				$bookkeeping->doc_ref = $val["ref"];
@@ -278,7 +269,7 @@ if ($action == 'writebookkeeping')
 				$bookkeeping->credit = ($mt >= 0) ? $mt : 0;
 				$bookkeeping->code_journal = $conf->global->ACCOUNTING_SELL_JOURNAL;
 				$bookkeeping->fk_user_author = $user->id;
-
+				
 				$result = $bookkeeping->create($user);
 				if ($result < 0) {
 					$error ++;
@@ -287,33 +278,33 @@ if ($action == 'writebookkeeping')
 			}
 		}
 	}
-
+	
 	if (empty($error)) {
 		setEventMessages($langs->trans("GeneralLedgerIsWritten"), null, 'mesgs');
 	}
 }
 
 // Export
-if ($action == 'export_csv')
-{
+if ($action == 'export_csv') {
 	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
-	$journal = $conf->global->ACCOUNTING_SELL_JOURNAL;
-
-	include DOL_DOCUMENT_ROOT.'/accountancy/tpl/export_journal.tpl.php';
-
+	$sell_journal = $conf->global->ACCOUNTING_SELL_JOURNAL;
+	
+	include DOL_DOCUMENT_ROOT . '/accountancy/tpl/export_journal.tpl.php';
+	
 	$companystatic = new Client($db);
-
-	if ($conf->global->ACCOUNTING_EXPORT_MODELCSV == 2) 	// Model Cegid Expert Export
+	
+	// Model Cegid Expert Export
+	if ($conf->global->ACCOUNTING_EXPORT_MODELCSV == 2) 
 	{
 		$sep = ";";
-
+		
 		foreach ( $tabfac as $key => $val ) {
 			$companystatic->id = $tabcompany[$key]['id'];
 			$companystatic->name = $tabcompany[$key]['name'];
 			$companystatic->client = $tabcompany[$key]['code_client'];
-
+			
 			$date = dol_print_date($db->jdate($val["date"]), '%d%m%Y');
-
+			
 			foreach ( $tabttc[$key] as $k => $mt ) {
 				print $date . $sep;
 				print $sell_journal . $sep;
@@ -325,22 +316,23 @@ if ($action == 'export_csv')
 				print $val["ref"];
 				print "\n";
 			}
-
+			
 			// Product / Service
 			foreach ( $tabht[$key] as $k => $mt ) {
-				if ($mt) {
+				$accountingaccount_static = new AccountingAccount($db);
+				if ($accountingaccount_static->fetch(null, $k)) {
 					print $date . $sep;
 					print $sell_journal . $sep;
 					print length_accountg(html_entity_decode($k)) . $sep;
 					print $sep;
 					print ($mt < 0 ? 'D' : 'C') . $sep;
 					print ($mt <= 0 ? price(- $mt) : $mt) . $sep;
-					print dol_trunc($val["description"], 32) . $sep;
+					print dol_trunc($accountingaccount_static->label, 32) . $sep;
 					print $val["ref"];
 					print "\n";
 				}
 			}
-
+			
 			// TVA
 			foreach ( $tabtva[$key] as $k => $mt ) {
 				if ($mt) {
@@ -356,17 +348,15 @@ if ($action == 'export_csv')
 				}
 			}
 		}
-	}
-	else 	// Model Classic Export
-	{
-		foreach ($tabfac as $key => $val)
-		{
+	} else {
+		// Model Classic Export
+		foreach ( $tabfac as $key => $val ) {
 			$companystatic->id = $tabcompany[$key]['id'];
 			$companystatic->name = $tabcompany[$key]['name'];
 			$companystatic->client = $tabcompany[$key]['code_client'];
-
+			
 			$date = dol_print_date($db->jdate($val["date"]), 'day');
-
+			
 			foreach ( $tabttc[$key] as $k => $mt ) {
 				print '"' . $date . '"' . $sep;
 				print '"' . $val["ref"] . '"' . $sep;
@@ -376,13 +366,12 @@ if ($action == 'export_csv')
 				print '"' . ($mt < 0 ? price(- $mt) : '') . '"';
 				print "\n";
 			}
-
+			
 			// Product / Service
-			foreach ($tabht[$key] as $k => $mt)
-			{
+			foreach ( $tabht[$key] as $k => $mt ) {
 				$accountingaccount = new AccountingAccount($db);
 				$accountingaccount->fetch(null, $k);
-
+				
 				if ($mt) {
 					print '"' . $date . '"' . $sep;
 					print '"' . $val["ref"] . '"' . $sep;
@@ -393,10 +382,9 @@ if ($action == 'export_csv')
 					print "\n";
 				}
 			}
-
+			
 			// VAT
-			foreach ($tabtva[$key] as $k => $mt)
-			{
+			foreach ( $tabtva[$key] as $k => $mt ) {
 				if ($mt) {
 					print '"' . $date . '"' . $sep;
 					print '"' . $val["ref"] . '"' . $sep;
@@ -410,11 +398,11 @@ if ($action == 'export_csv')
 		}
 	}
 } else {
-
+	
 	$form = new Form($db);
-
+	
 	llxHeader('', $langs->trans("SellsJournal"));
-
+	
 	$nom = $langs->trans("SellsJournal");
 	$nomlink = '';
 	$periodlink = '';
@@ -426,12 +414,14 @@ if ($action == 'export_csv')
 	else
 		$description .= $langs->trans("DepositsAreIncluded");
 	$period = $form->select_date($date_start, 'date_start', 0, 0, 0, '', 1, 0, 1) . ' - ' . $form->select_date($date_end, 'date_end', 0, 0, 0, '', 1, 0, 1);
-	report_header($nom, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''));
-
+	report_header($nom, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, array (
+			'action' => '' 
+	));
+	
 	print '<input type="button" class="button" style="float: right;" value="' . $langs->trans("Export") . '" onclick="launch_export();" />';
-
+	
 	print '<input type="button" class="button" value="' . $langs->trans("WriteBookKeeping") . '" onclick="writebookkeeping();" />';
-
+	
 	print '
 	<script type="text/javascript">
 		function launch_export() {
@@ -445,12 +435,12 @@ if ($action == 'export_csv')
 		    $("div.fiche div.tabBar form input[name=\"action\"]").val("");
 		}
 	</script>';
-
+	
 	/*
 	 * Show result array
 	 */
 	print '<br><br>';
-
+	
 	$i = 0;
 	print "<table class=\"noborder\" width=\"100%\">";
 	print "<tr class=\"liste_titre\">";
@@ -461,24 +451,22 @@ if ($action == 'export_csv')
 	print "<td align='right'>" . $langs->trans("Debit") . "</td>";
 	print "<td align='right'>" . $langs->trans("Credit") . "</td>";
 	print "</tr>\n";
-
+	
 	$var = true;
 	$r = '';
-
+	
 	$invoicestatic = new Facture($db);
 	$companystatic = new Client($db);
-
-	foreach ($tabfac as $key => $val)
-	{
+	
+	foreach ( $tabfac as $key => $val ) {
 		$invoicestatic->id = $key;
 		$invoicestatic->ref = $val["ref"];
 		$invoicestatic->type = $val["type"];
-
+		
 		$date = dol_print_date($db->jdate($val["date"]), 'day');
-
+		
 		// Third party
-		foreach ($tabttc[$key] as $k => $mt)
-		{
+		foreach ( $tabttc[$key] as $k => $mt ) {
 			print "<tr " . $bc[$var] . ">";
 			print "<td>" . $date . "</td>";
 			print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
@@ -492,13 +480,12 @@ if ($action == 'export_csv')
 			print "<td align='right'>" . ($mt < 0 ? price(- $mt) : '') . "</td>";
 		}
 		print "</tr>";
-
+		
 		// Product / Service
-		foreach ($tabht[$key] as $k => $mt)
-		{
+		foreach ( $tabht[$key] as $k => $mt ) {
 			$accountingaccount = new AccountingAccount($db);
 			$accountingaccount->fetch(null, $k);
-
+			
 			if ($mt) {
 				print "<tr " . $bc[$var] . ">";
 				print "<td>" . $date . "</td>";
@@ -510,10 +497,9 @@ if ($action == 'export_csv')
 				print "</tr>";
 			}
 		}
-
+		
 		// VAT
-		foreach ($tabtva[$key] as $k => $mt)
-		{
+		foreach ( $tabtva[$key] as $k => $mt ) {
 			if ($mt) {
 				print "<tr " . $bc[$var] . ">";
 				print "<td>" . $date . "</td>";
@@ -525,12 +511,12 @@ if ($action == 'export_csv')
 				print "</tr>";
 			}
 		}
-
+		
 		$var = ! $var;
 	}
-
+	
 	print "</table>";
-
+	
 	// End of page
 	llxFooter();
 }

@@ -493,16 +493,14 @@ if ($id > 0 || $ref)
         print $form->textwithtooltip($langs->trans("PhysicalStock"), $text_stock_options, 2, 1, img_picto('', 'info'), '', 2);
         print '</td>';
 		print '<td>'.$object->stock_reel;
-		if ($object->seuil_stock_alerte && ($object->stock_reel < $object->seuil_stock_alerte)) print ' '.img_warning($langs->trans("StockLowerThanLimit"));
+		if ($object->seuil_stock_alerte != '' && ($object->stock_reel < $object->seuil_stock_alerte)) print ' '.img_warning($langs->trans("StockLowerThanLimit"));
 		print '</td>';
 		print '</tr>';
 
         // Calculating a theorical value
         print '<tr><td>'.$langs->trans("VirtualStock").'</td>';
         print "<td>".(empty($object->stock_theorique)?0:$object->stock_theorique);
-        if ($object->stock_theorique < $object->seuil_stock_alerte) {
-            print ' '.img_warning($langs->trans("StockLowerThanLimit"));
-        }
+        if ($object->seuil_stock_alerte != '' && ($object->stock_theorique < $object->seuil_stock_alerte)) print ' '.img_warning($langs->trans("StockLowerThanLimit"));
         print '</td>';
         print '</tr>';
 
@@ -648,7 +646,7 @@ if (empty($action) && $object->id)
     //if (($user->rights->stock->mouvement->creer) && ! $object->hasbatch())
     if ($user->rights->stock->mouvement->creer)
 	{
-		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=transfert">'.$langs->trans("StockMovement").'</a>';
+		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=transfert">'.$langs->trans("StockTransfer").'</a>';
 	}
 
 	print '</div>';
@@ -714,12 +712,12 @@ if ($resql)
 		print '<td align="right">'.(price2num($object->pmp)?price(price2num($object->pmp*$obj->reel,'MT')):'').'</td>';
         // Sell price
 		print '<td align="right">';
-        if (empty($conf->global->PRODUIT_MULTI_PRICES)) print price(price2num($object->price,'MU'),1);
+        if (empty($conf->global->PRODUIT_MULTIPRICES)) print price(price2num($object->price,'MU'),1);
         else print $langs->trans("Variable");
         print '</td>';
         // Value sell
         print '<td align="right">';
-        if (empty($conf->global->PRODUIT_MULTI_PRICES)) print price(price2num($object->price*$obj->reel,'MT'),1).'</td>';
+        if (empty($conf->global->PRODUIT_MULTIPRICES)) print price(price2num($object->price*$obj->reel,'MT'),1).'</td>';
         else print $langs->trans("Variable");
 		print '</tr>'; ;
 		$total += $obj->reel;
@@ -753,7 +751,7 @@ if ($resql)
 				{
                     print "\n".'<tr><td align="right">';
                     print img_picto($langs->trans("Tranfer"),'uparrow','class="hideonsmartphone"').' ';
-					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=transfert&amp;pdluoid='.$pdluo->id.'">'.$langs->trans("StockMovement").'</a>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=transfert&amp;pdluoid='.$pdluo->id.'">'.$langs->trans("StockTransfer").'</a>';
 					// Disabled, because edition of stock content must use the "Correct stock menu".
 					// Do not use this, or data will be wrong (bad tracking of movement label, inventory code, ...
                     //print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=editline&amp;lineid='.$pdluo->id.'#'.$pdluo->id.'">';
@@ -782,12 +780,12 @@ print '<td class="liste_total" align="right">';
 print $totalvalue?price(price2num($totalvalue,'MT'),1):'&nbsp;';
 print '</td>';
 print '<td class="liste_total" align="right">';
-if (empty($conf->global->PRODUIT_MULTI_PRICES)) print ($total?price($totalvaluesell/$total,1):'&nbsp;');
+if (empty($conf->global->PRODUIT_MULTIPRICES)) print ($total?price($totalvaluesell/$total,1):'&nbsp;');
 else print $langs->trans("Variable");
 print '</td>';
 // Value to sell
 print '<td class="liste_total" align="right">';
-if (empty($conf->global->PRODUIT_MULTI_PRICES)) print price(price2num($totalvaluesell,'MT'),1);
+if (empty($conf->global->PRODUIT_MULTIPRICES)) print price(price2num($totalvaluesell,'MT'),1);
 else print $langs->trans("Variable");
 print '</td>';
 print "</tr>";
