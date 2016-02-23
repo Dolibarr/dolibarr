@@ -2077,8 +2077,8 @@ function colorStringToArray($stringcolor,$colorifnotfound=array(88,88,88))
 /**
  *  Generate html for section viewer
  *
- *  @param   int    $html_id        ID of html
  *  @param   object $object         Object containing sections
+ *  @param   int    $html_id        ID of html
  *  @param   int    $month          Month to show
  *  @param   int    $day            Day to show
  *  @param   string $duration_unit  Duration unit
@@ -2090,7 +2090,7 @@ function colorStringToArray($stringcolor,$colorifnotfound=array(88,88,88))
  *  @param   string $params         Extra URL parameters
  *  @return  string                 HTML code
  */
-function showSectionViewer($html_id, $object, $month, $day, $duration_unit, $duration_value, $interactive, $selectable, $navigator, $title, $params)
+function showSectionViewer($object, $html_id, $month, $day, $duration_unit, $duration_value, $interactive, $selectable, $navigator, $title, $params)
 {
     global $langs, $conf, $user, $hookmanager;
 
@@ -2116,10 +2116,12 @@ function showSectionViewer($html_id, $object, $month, $day, $duration_unit, $dur
     }
 
     //Prepare
+    $gm = "server";
+    $tz_output = "tzserver";
     $year = $object->schedule_year;
     $mode = (dol_time_plus_duree(0, $duration_value, $duration_unit) >= 3600 * 24) ? 1 : 0;
-    $date = dol_get_first_day_week($day, $month, $year, true);
-    $first_time = dol_mktime(0,0,0,$date['first_month'],$date['first_day'],$date['first_year'], true);
+    $date = dol_get_first_day_week($day, $month, $year, $gm);
+    $first_time = dol_mktime(0,0,0,$date['first_month'],$date['first_day'],$date['first_year'], $gm);
 
     //Navigator
     $nav = '';
@@ -2127,9 +2129,9 @@ function showSectionViewer($html_id, $object, $month, $day, $duration_unit, $dur
     {
         //Calculate prev/next week
         $now = dol_getdate(dol_now(), true);
-        $first_date = dol_getdate(dol_get_first_day($year, $month), true);
-        $last_date = dol_getdate(dol_get_last_day($year, $month), true);
-        $sel_time = dol_mktime(0,0,0,$month,$day,$year);
+        $first_date = dol_getdate(dol_get_first_day($year, $month, $gm), true);
+        $last_date = dol_getdate(dol_get_last_day($year, $month, $gm), true);
+        $sel_time = dol_mktime(0,0,0,$month,$day,$year, $gm);
         $current_date = dol_getdate($sel_time);
         $step_time = dol_time_plus_duree(0, '1', 'w');
         $prev_date = dol_getdate($sel_time - $step_time, true);
@@ -2152,7 +2154,7 @@ function showSectionViewer($html_id, $object, $month, $day, $duration_unit, $dur
     {
         $curtime = dol_time_plus_duree($first_time, $iter_day, 'd');
         $out.= '<td class="nowrap" align="center" style="font-weight: bold;">';
-        $out.= dol_print_date($curtime,'daytext').'<br>';
+        $out.= dol_print_date($curtime,'daytext', $tz_output).'<br>';
         $out.= $langs->trans("Day".(($iter_day+(isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:1)) % 7));
         $out.= '</td>';
     }
@@ -2164,11 +2166,11 @@ function showSectionViewer($html_id, $object, $month, $day, $duration_unit, $dur
     {
         //Get current day data
         $curtime = dol_time_plus_duree($first_time, $iter_day, 'd');
-        $curyear = dol_print_date($curtime, '%Y', true);
-        $curmonth = dol_print_date($curtime, '%m', true);
-        $curday = dol_print_date($curtime, '%d', true);
-        $day_start = dol_mktime(0, 0, 0, $curmonth, $curday, $curyear, true);
-        $day_end = dol_mktime(23, 59, 59, $curmonth, $curday, $curyear, true);
+        $curyear = dol_print_date($curtime, '%Y', $tz_output);
+        $curmonth = dol_print_date($curtime, '%m', $tz_output);
+        $curday = dol_print_date($curtime, '%d', $tz_output);
+        $day_start = dol_mktime(0, 0, 0, $curmonth, $curday, $curyear, $gm);
+        $day_end = dol_mktime(23, 59, 59, $curmonth, $curday, $curyear, $gm);
 
         if ($object->element == "resourceschedule")
         {
@@ -2246,18 +2248,18 @@ function showSectionViewer($html_id, $object, $month, $day, $duration_unit, $dur
 
                 //Date start/end
                 $format = $mode == 1 ? 'dayhourtext' : 'hour';
-                $section_data['date_start'] = dol_print_date($section->date_start, $format, true);
-                $section_data['date_end'] = dol_print_date($section->date_end, $format, true);
+                $section_data['date_start'] = dol_print_date($section->date_start, $format, $tz_output);
+                $section_data['date_end'] = dol_print_date($section->date_end, $format, $tz_output);
 
                 //Common data
                 $section_data['data'] = array_merge($section_data['data'], array(
                     'id'               => $section->id,
-                    'start_month'      => intval(dol_print_date($section->date_start, '%m', true)),
-                    'start_day'        => intval(dol_print_date($section->date_start, '%d', true)),
-                    'start_hour'       =>        dol_print_date($section->date_start, '%H', true),
-                    'end_month'        => intval(dol_print_date($section->date_end,   '%m', true)),
-                    'end_day'          => intval(dol_print_date($section->date_end,   '%d', true)),
-                    'end_hour'         =>        dol_print_date($section->date_end,   '%H', true),
+                    'start_month'      => intval(dol_print_date($section->date_start, '%m', $tz_output)),
+                    'start_day'        => intval(dol_print_date($section->date_start, '%d', $tz_output)),
+                    'start_hour'       =>        dol_print_date($section->date_start, '%H', $tz_output),
+                    'end_month'        => intval(dol_print_date($section->date_end,   '%m', $tz_output)),
+                    'end_day'          => intval(dol_print_date($section->date_end,   '%d', $tz_output)),
+                    'end_hour'         =>        dol_print_date($section->date_end,   '%H', $tz_output),
                 ));
                 $sections[] = $section_data;
             }
@@ -2274,7 +2276,6 @@ function showSectionViewer($html_id, $object, $month, $day, $duration_unit, $dur
     }
     $out.= '</tr>';
     $out.= '</table>';
-    $out.= '<div class="info inline-block">&nbsp;'.$langs->trans('ScheduleUniversalTime').'&nbsp;</div>';
 
     //The JS magic for interactivity and click/selection handling
     if ($interactive || $selectable)
