@@ -2095,7 +2095,6 @@ function showSectionViewer($object, $html_id, $month, $day, $duration_unit, $dur
     global $langs, $conf, $user, $hookmanager;
 
     // Hook for external viewer
-    $hookmanager->initHooks(array('showsectionviewer'));
     $parameters=array(
         'html_id'=>$html_id,
         'month'=>$month,
