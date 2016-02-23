@@ -178,8 +178,8 @@ while ($fields=fgetcsv($fhandle, $linelength, $delimiter, $enclosure, $escape))
     // If we use price level, insert price for each level
 	if (! $errorrecord && 1)
 	{
-	    $ret1=$produit->updatePrice($produit->price_ttc, $produit->price_base_type, $user, $produit->tva_tx, $produit->price_min, 0, $produit->tva_npr, 0, 0, array());
-	    $ret2=$produit->updatePrice(price2num($fields[15]), $produit->price_base_type, $user, $produit->tva_tx, $produit->price_min, 1, $produit->tva_npr, 0, 0, array());
+	    $ret1=$produit->updatePrice($produit->price_ttc, $produit->price_base_type, $user, $produit->tva_tx, $produit->price_min, 1, $produit->tva_npr, 0, 0, array());
+	    $ret2=$produit->updatePrice(price2num($fields[15]), $produit->price_base_type, $user, $produit->tva_tx, $produit->price_min, 2, $produit->tva_npr, 0, 0, array());
 	    if ($ret1 < 0 || $ret2 < 0)
         {
             print " - Error in updatePrice result code = ".$ret1." ".$ret2." - ".$produit->errorsToString();
