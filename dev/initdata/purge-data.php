@@ -53,6 +53,10 @@ $error=0;
 
 // List of sql to execute
 $sqls=array(
+    'user'=>array(
+        'DELETE FROM '.MAIN_DB_PREFIX."user_rights WHERE fk_user IN (SELECT rowid FROM ".MAIN_DB_PREFIX."user WHERE admin = 0 and login != 'admin')",
+        'DELETE FROM '.MAIN_DB_PREFIX."user WHERE admin = 0 and login != 'admin'",
+    ),
     'bank'=>array(
         'DELETE FROM '.MAIN_DB_PREFIX.'bank_account',
         'DELETE FROM '.MAIN_DB_PREFIX.'bank_class',
