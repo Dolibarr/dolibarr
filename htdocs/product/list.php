@@ -270,14 +270,13 @@ else
 	$reshook=$hookmanager->executeHooks('printFieldSelect',$parameters);    // Note that $action and $object may have been modified by hook
 	$sql.=$hookmanager->resPrint;
     //if (GETPOST("toolowstock")) $sql.= " HAVING SUM(s.reel) < p.seuil_stock_alerte";    // Not used yet
-    $nbtotalofrecords = 0;
+    $sql.= $db->order($sortfield,$sortorder);
+	$nbtotalofrecords = 0;
 	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	{
 		$result = $db->query($sql);
 		$nbtotalofrecords = $db->num_rows($result);
 	}
-
-    $sql.= $db->order($sortfield,$sortorder);
     $sql.= $db->plimit($limit + 1, $offset);
 
     $resql = $db->query($sql);
