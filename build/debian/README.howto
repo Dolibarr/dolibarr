@@ -394,6 +394,6 @@ Cons are:
 - The patch include more than the only one security reported fxes
 
 So I just need to know if it's ok to push such a version 3.5.7 (fixes for 3.5.* branch) instead of only one fix for only the few (the only) reported debian bugs,
-since it provides more stability and is or me a more secured process.
+since it provides more stability and is for me a more secured process.
 "
 
