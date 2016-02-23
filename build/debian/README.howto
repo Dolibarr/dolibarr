@@ -213,6 +213,9 @@ If script fails with error Bad certificate, you can set "export PERL_LWP_SSL_VER
 
 * Staying into git root directory, run
 > git-import-orig -vv ../tcpdf_x.y.z+dfsg.orig.tar.xz --debian-branch=[master|jessie] --upstream-branch=[upstream|upstream-3.5.x]
+and enter version when requested with format
+x.y.z+dfsgw
+(x.y.z = version, w start from 1 and is increased for each new import)
 
 Note: If there was errors solved manually, you may need to make a git commit
 
@@ -294,8 +297,8 @@ x.y.z+dfsgw
 
 Note: If there was errors solved manually after get-orig-sources.sh, you may need to make a git commit
 
-* Fix debian/* files used to build package.
-Add an entry into debian/changelog
+* Update/fix debian/* files used to build package.
+At least, add an entry into debian/changelog
 > dch -v x.y.z+dfsgw-v "My comment" will add entry.
 For example: dch -v x.y.z+dfsgw-1 "New upstream release." for a new version (x.y.z = version, w start from 1 and increased for each new import)
 Then check/modify changelog to replace "version" or "unstable" with "UNRELEASED".
@@ -310,7 +313,7 @@ To update dolibarr debian package when only files into debian has changed:
 * Add a tag debian/x.y.z+dfsgw-2 (increase the last 1 into 2, 3...)
 
 
-To update dolibarr debian package when only files into debian has changed:
+To update dolibarr debian package when only files not into debian has changed:
 
 * Manually, add patches into debian/patches and update file debian/series, or do the 2 steps with "quilt import filepatch.patch"
 * You can test patching of serie with "quilt push" (autant de fois que de patch). Avec "quilt pop -a", on revien a l'état du upstream sans les patch.
