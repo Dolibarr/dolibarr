@@ -735,7 +735,7 @@ class Translate
 	 *
 	 * 	@param	string	$langdir		Directory to scan
 	 *  @param  integer	$maxlength   	Max length for each value in combo box (will be truncated)
-	 *  @param	int		$usecode		Show code instead of country name for language variant
+	 *  @param	int		$usecode		1=Show code instead of country name for language variant, 2=Show only code
 	 *  @return array     				List of languages
 	 */
 	function get_available_languages($langdir=DOL_DOCUMENT_ROOT,$maxlength=0,$usecode=0)
@@ -751,9 +751,13 @@ class Translate
 			{
 				$this->load("languages");
 
-				if ($usecode || ! empty($conf->global->MAIN_SHOW_LANGUAGE_CODE))
+				if ($usecode == 2)
 				{
-					$langs_available[$dir] = $dir.': '.dol_trunc($this->trans('Language_'.$dir),$maxlength);
+				    $langs_available[$dir] = $dir;
+				}
+				if ($usecode == 1 || ! empty($conf->global->MAIN_SHOW_LANGUAGE_CODE))
+				{
+				    $langs_available[$dir] = $dir.': '.dol_trunc($this->trans('Language_'.$dir),$maxlength);
 				}
 				else
 				{

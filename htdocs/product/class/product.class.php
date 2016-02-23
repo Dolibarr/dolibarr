@@ -734,6 +734,7 @@ class Product extends CommonObject
 			$sql.= ", accountancy_code_buy = '" . $this->db->escape($this->accountancy_code_buy)."'";
 			$sql.= ", accountancy_code_sell= '" . $this->db->escape($this->accountancy_code_sell)."'";
 			$sql.= ", desiredstock = " . ((isset($this->desiredstock) && $this->desiredstock != '') ? $this->desiredstock : "null");
+			$sql.= ", cost_price = " . ($this->cost_price != '' ? $this->db->escape($this->cost_price) : 'null');
 	        $sql.= ", fk_unit= " . (!$this->fk_unit ? 'NULL' : $this->fk_unit);
 	        $sql.= ", price_autogen = " . (!$this->price_autogen ? 0 : 1);
 			$sql.= ", fk_price_expression = ".($this->fk_price_expression != 0 ? $this->fk_price_expression : 'NULL');
@@ -987,8 +988,8 @@ class Product extends CommonObject
 	function setMultiLangs($user)
 	{
 		global $langs;
-
-		$langs_available = $langs->get_available_languages();
+		
+		$langs_available = $langs->get_available_languages(DOL_DOCUMENT_ROOT, 0, 2);
 		$current_lang = $langs->getDefaultLang();
 
 		foreach ($langs_available as $key => $value)
@@ -1017,7 +1018,7 @@ class Product extends CommonObject
 					$sql2.= "','".$this->db->escape($this->description);
 					$sql2.= "','".$this->db->escape($this->note)."')";
 				}
-				dol_syslog(get_class($this).'::setMultiLangs');
+				dol_syslog(get_class($this).'::setMultiLangs key = current_lang = '.$key);
 				if (! $this->db->query($sql2))
 				{
 					$this->error=$this->db->lasterror();
@@ -1051,7 +1052,7 @@ class Product extends CommonObject
 
 				// on ne sauvegarde pas des champs vides
 				if ( $this->multilangs["$key"]["label"] || $this->multilangs["$key"]["description"] || $this->multilangs["$key"]["note"] )
-				dol_syslog(get_class($this).'::setMultiLangs');
+				dol_syslog(get_class($this).'::setMultiLangs key = '.$key);
 				if (! $this->db->query($sql2))
 				{
 					$this->error=$this->db->lasterror();
