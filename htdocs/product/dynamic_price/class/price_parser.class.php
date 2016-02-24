@@ -85,6 +85,7 @@ class PriceParser
 
 		-2 Args
 		 6, wrong number of arguments (%s given, %s expected)
+		23, unknown or non set variable '%s' after %s
 
 		-internal errors
 		 7, internal error
@@ -187,13 +188,25 @@ class PriceParser
 		$this->error_expr = null;
 		$last_result = null;
 
-		//Iterate over each expression splitted by $separator_chr
+		//Fill each variable in expression from values
 		$expression = str_replace("\n", $this->separator_chr, $expression);
 		foreach ($values as $key => $value)
 		{
 			if ($value === null) $value = "NULL";
 			$expression = str_replace($this->special_chr.$key.$this->special_chr, strval($value), $expression);
 		}
+
+		//Check if there is unfilled variable
+		if (strpos($expression, $this->special_chr) !== false)
+		{
+			$data = explode($this->special_chr, $expression);
+			$variable = $this->special_chr.$data[1];
+			if (isset($data[2])) $variable.= $this->special_chr;
+			$this->error_parser = array(23, array($variable, $expression));
+			return -6;
+		}
+
+		//Iterate over each expression splitted by $separator_chr
 		$expressions = explode($this->separator_chr, $expression);
 		$expressions = array_slice($expressions, 0, $this->limit);
 		foreach ($expressions as $expr) {
