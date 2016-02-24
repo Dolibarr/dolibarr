@@ -2282,7 +2282,7 @@ function showSectionViewer($object, $html_id, $month, $day, $duration_unit, $dur
 
     //Generate html calendar
     print load_fiche_titre($title, $nav, '');
-    $out = '<table id="'.$html_id.'" width="100%" class="nocellnopadd cal_month">';
+    $out = '<table id="'.$html_id.'" width="100%" class="noborder nocellnopadd cal_month">';
     $out.= '<tr class="liste_titre">';
     for ($iter_day = 0; $iter_day < 7; $iter_day++)
     {
@@ -2304,10 +2304,10 @@ function showSectionViewer($object, $html_id, $month, $day, $duration_unit, $dur
 
         //Calendar styling
         $style = 'cal_current_month';
-        if ($iter_day == 6) $style.=' cal_other_month_right';
+        if ($iter_day == 6) $style.=' cal_current_month_right';
 
         //Show the day sections
-        $out.= '<td class="'.$style.'" width="14%" valign="top">';
+        $out.= '<td class="'.$style.'" valign="top">';
         $out.= showDaySections($html_id, $sections);
         $out.= "  </td>\n";
     }
