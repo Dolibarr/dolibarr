@@ -135,6 +135,7 @@ class FormProduct
 	 *  @param	int		$showstock		1=show stock count
 	 *  @param	int		$forcecombo		force combo iso ajax select2
 	 *  @param	array	$events			events to add to select2
+	 *  @param  string  $morecss        Add more css classes
 	 * 	@return	string					HTML select
 	 */
 	function selectWarehouses($selected='',$htmlname='idwarehouse',$filtertype='',$empty=0,$disabled=0,$fk_product=0,$empty_label='', $showstock=0, $forcecombo=0, $events=array(), $morecss='')
