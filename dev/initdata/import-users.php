@@ -112,6 +112,7 @@ if (! $fhandleerr)
 $db->begin();
 
 $i=0;
+$nboflines=0;
 while ($fields=fgetcsv($fhandle, $linelength, $delimiter, $enclosure, $escape))
 {
     $i++;
@@ -119,6 +120,8 @@ while ($fields=fgetcsv($fhandle, $linelength, $delimiter, $enclosure, $escape))
     
     if ($startlinenb && $i < $startlinenb) continue;
     if ($endlinenb && $i > $endlinenb) continue;
+    
+    $nboflines++;
     
     $object = new User($db);
     $object->statut = 1;
@@ -158,6 +161,8 @@ while ($fields=fgetcsv($fhandle, $linelength, $delimiter, $enclosure, $escape))
 
 
 // commit or rollback
+print "Nb of lines qualified: ".$nboflines."\n";
+print "Nb of errors: ".$error."\n";
 if ($mode != 'confirmforced' && ($error || $mode != 'confirm'))
 {
     print "Rollback any changes.\n";

@@ -112,6 +112,7 @@ $langs->setDefaultLang($defaultlang);
 $db->begin();
 
 $i=0;
+$nboflines++;
 while ($fields=fgetcsv($fhandle, $linelength, $delimiter, $enclosure, $escape))
 {
     $i++;
@@ -119,6 +120,8 @@ while ($fields=fgetcsv($fhandle, $linelength, $delimiter, $enclosure, $escape))
     
     if ($startlinenb && $i < $startlinenb) continue;
     if ($endlinenb && $i > $endlinenb) continue;
+    
+    $nboflines++;
     
     $produit = new Product($db);
     $produit->type = 0;
@@ -149,14 +152,6 @@ while ($fields=fgetcsv($fhandle, $linelength, $delimiter, $enclosure, $escape))
     $produit->tva_tx = price2num($fields[13]);
     $produit->tva_npr = 0;
     
-    /*$produit->multiprices[$i]=$result["price"];
-    $produit->multiprices_ttc[$i]=$result["price_ttc"];
-    $produit->multiprices_min[$i]=null;
-    $produit->multiprices_min_ttc[$i]=null;
-    $produit->multiprices_base_type[$i]='TTC';
-    $produit->multiprices_tva_tx[$i]=price2num((float) $fields[13]);
-    $produit->multiprices_recuperableonly[$i]=0;*/
-    
     $produit->cost_price = price2num($fields[16]);
     
     // Extrafields
@@ -179,7 +174,7 @@ while ($fields=fgetcsv($fhandle, $linelength, $delimiter, $enclosure, $escape))
 	if (! $errorrecord && 1)
 	{
 	    $ret1=$produit->updatePrice($produit->price_ttc, $produit->price_base_type, $user, $produit->tva_tx, $produit->price_min, 1, $produit->tva_npr, 0, 0, array());
-	    $ret2=$produit->updatePrice(price2num($fields[15]), $produit->price_base_type, $user, $produit->tva_tx, $produit->price_min, 2, $produit->tva_npr, 0, 0, array());
+	    $ret2=$produit->updatePrice(price2num($fields[14]), 'HT', $user, $produit->tva_tx, $produit->price_min, 2, $produit->tva_npr, 0, 0, array());
 	    if ($ret1 < 0 || $ret2 < 0)
         {
             print " - Error in updatePrice result code = ".$ret1." ".$ret2." - ".$produit->errorsToString();
@@ -225,6 +220,8 @@ while ($fields=fgetcsv($fhandle, $linelength, $delimiter, $enclosure, $escape))
 
 
 // commit or rollback
+print "Nb of lines qualified: ".$nboflines."\n";
+print "Nb of errors: ".$error."\n";
 if ($mode != 'confirmforced' && ($error || $mode != 'confirm'))
 {
     print "Rollback any changes.\n";

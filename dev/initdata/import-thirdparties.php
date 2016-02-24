@@ -112,6 +112,7 @@ if (! $fhandleerr)
 $db->begin();
 
 $i=0;
+$nboflines=0;
 while ($fields=fgetcsv($fhandle, $linelength, $delimiter, $enclosure, $escape))
 {
     $i++;
@@ -120,13 +121,15 @@ while ($fields=fgetcsv($fhandle, $linelength, $delimiter, $enclosure, $escape))
     if ($startlinenb && $i < $startlinenb) continue;
     if ($endlinenb && $i > $endlinenb) continue;
 
+    $nboflines++;
+    
     $object = new Societe($db);
     $object->state = $fields[6];
     $object->client = $fields[7];
     $object->fournisseur = $fields[8];
     
-    $object->name = trim($fields[13]);
-    $object->name_alias = trim($fields[0]);
+    $object->name = $fields[13]?trim($fields[13]):$fields[0];
+    $object->name_alias = $fields[0]!=$fields[13]?trim($fields[0]):'';
     
     $object->address = trim($fields[14]);
     $object->zip = trim($fields[15]);
@@ -140,9 +143,18 @@ while ($fields=fgetcsv($fhandle, $linelength, $delimiter, $enclosure, $escape))
     $object->default_lang = trim($fields[43]);
 
     //$condpayment = dol_string_unaccent(trim($fields[36]));
-    $condpayment = trim($fields[36]);
-    $object->cond_reglement_id = dol_getIdFromCode($db, $condpayment, 'c_payment_term', 'libelle_facture', 'rowid');
-    dol_syslog("cond_reglement id=".$object->cond_reglement_id);
+    if ($fields[36])
+    {
+        $condpayment = trim($fields[36]);
+        if ($condpayment == 'A la commande') $condpayment = 'A réception de commande';
+        if ($condpayment == 'A reception facture') $condpayment = 'Réception de facture';
+        $object->cond_reglement_id = dol_getIdFromCode($db, $condpayment, 'c_payment_term', 'libelle_facture', 'rowid');
+        if (empty($object->cond_reglement_id))
+        {
+            print " - Error cant find payment mode for ".$condpayment."\n";
+            $errorrecord++;
+        }
+    }
 
     $object->code_client = $fields[9];
     $object->code_fournisseur = $fields[10];
@@ -160,23 +172,29 @@ while ($fields=fgetcsv($fhandle, $linelength, $delimiter, $enclosure, $escape))
     // Extrafields
     $object->array_options['options_anastate']=price2num($fields[20]);
     $object->array_options['options_anaregion']=price2num($fields[17]);
-    
-    $ret=$object->create($user);
-    if ($ret < 0)
-    {
-        print " - Error in create result code = ".$ret." - ".$object->errorsToString();
-        $errorrecord++;
-    }
-	else 
-	{
-	    print " - Creation OK with name ".$object->name." - id = ".$ret;
-	}
 
-	dol_syslog("Set price level");
-	$object->set_price_level($object->price_level, $user);
-	
+    if (! $errorrecord)
+    {
+        $ret=$object->create($user);
+        if ($ret < 0)
+        {
+            print " - Error in create result code = ".$ret." - ".$object->errorsToString();
+            $errorrecord++;
+        }
+    	else 
+    	{
+    	    print " - Creation OK with name ".$object->name." - id = ".$ret;
+    	}
+    }
+
+    if (! $errorrecord)
+    {
+        dol_syslog("Set price level");
+	    $object->set_price_level($object->price_level, $user);
+    }
+
 	// Assign sales representative
-	if ($fields[3])
+	if (! $errorrecord && $fields[3])
 	{
     	$salesrep=new User($db);
     	
@@ -233,12 +251,12 @@ while ($fields=fgetcsv($fhandle, $linelength, $delimiter, $enclosure, $escape))
 	
 	dol_syslog("Add delivery contacts");
 	// Insert a delivery contact
-	if (! $errorrecord && 1)
+	if (! $errorrecord && $fields[47])
 	{
 	    $ret1=$ret2=0;
 	    
 	    $contact2 = new Contact($db);
-	    $contact2->lastname = $fields[47];
+	    $contact2->lastname = 'Service livraison - '.$fields[47];
 	    $contact2->address = $fields[48];
 	    $contact2->zip = $fields[50];
 	    $contact2->town = $fields[51];
@@ -280,6 +298,8 @@ while ($fields=fgetcsv($fhandle, $linelength, $delimiter, $enclosure, $escape))
 
 
 // commit or rollback
+print "Nb of lines qualified: ".$nboflines."\n";
+print "Nb of errors: ".$error."\n";
 if ($mode != 'confirmforced' && ($error || $mode != 'confirm'))
 {
     print "Rollback any changes.\n";
