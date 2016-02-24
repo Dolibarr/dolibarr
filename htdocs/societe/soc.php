@@ -1289,7 +1289,7 @@ else
         dol_fiche_end();
 
         print '<div class="center">';
-        print '<input type="submit" class="button" name="submit" value="'.$langs->trans('AddThirdParty').'">';
+        print '<input type="submit" class="button" name="create" value="'.$langs->trans('AddThirdParty').'">';
         if ($backtopage)
         {
             print ' &nbsp; ';
