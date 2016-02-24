@@ -3072,7 +3072,7 @@ else if ($id > 0 || ! empty($ref))
 						print $bankaccountstatic->getNomUrl(1, 'transactions');
 					print '</td>';
 				}
-				print '<td align="right">' . price($sign * $objp->amount) . '</td>';
+				print '<td align="right">' . price($sign * $objp->amount,0,'',1,'MT') . '</td>';
 				print '<td>&nbsp;</td>';
 				print '</tr>';
 				$i ++;
@@ -3094,7 +3094,7 @@ else if ($id > 0 || ! empty($ref))
 			print $langs->trans('AlreadyPaidNoCreditNotesNoDeposits');
 		else
 			print $langs->trans('AlreadyPaid');
-		print ' :</td><td align="right">' . price($totalpaye) . '</td><td>&nbsp;</td></tr>';
+		print ' :</td><td align="right">' . price($totalpaye,0,'',1,'MT') . '</td><td>&nbsp;</td></tr>';
 
 		$resteapayeraffiche = $resteapayer;
 
@@ -3122,7 +3122,7 @@ else if ($id > 0 || ! empty($ref))
 					print $langs->trans("Deposit") . ' ';
 				print $invoice->getNomUrl(0);
 				print ' :</td>';
-				print '<td align="right">' . price($obj->amount_ttc) . '</td>';
+				print '<td align="right">' . price($obj->amount_ttc,0,'',1,'MT') . '</td>';
 				print '<td align="right">';
 				print '<a href="' . $_SERVER["PHP_SELF"] . '?facid=' . $object->id . '&action=unlinkdiscount&discountid=' . $obj->rowid . '">' . img_delete() . '</a>';
 				print '</td></tr>';
@@ -3140,21 +3140,21 @@ else if ($id > 0 || ! empty($ref))
 		if (($object->statut == 2 || $object->statut == 3) && $object->close_code == 'discount_vat') {
 			print '<tr><td colspan="' . $nbcols . '" align="right" class="nowrap">';
 			print $form->textwithpicto($langs->trans("Discount") . ':', $langs->trans("HelpEscompte"), - 1);
-			print '</td><td align="right">' . price($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye) . '</td><td>&nbsp;</td></tr>';
+			print '</td><td align="right">' . price($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye,0,'',1,'MT') . '</td><td>&nbsp;</td></tr>';
 			$resteapayeraffiche = 0;
 		}
 		// Paye partiellement ou Abandon 'badcustomer'
 		if (($object->statut == 2 || $object->statut == 3) && $object->close_code == 'badcustomer') {
 			print '<tr><td colspan="' . $nbcols . '" align="right" class="nowrap">';
 			print $form->textwithpicto($langs->trans("Abandoned") . ':', $langs->trans("HelpAbandonBadCustomer"), - 1);
-			print '</td><td align="right">' . price($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye) . '</td><td>&nbsp;</td></tr>';
+			print '</td><td align="right">' . price($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye,0,'',1,'MT') . '</td><td>&nbsp;</td></tr>';
 			// $resteapayeraffiche=0;
 		}
 		// Paye partiellement ou Abandon 'product_returned'
 		if (($object->statut == 2 || $object->statut == 3) && $object->close_code == 'product_returned') {
 			print '<tr><td colspan="' . $nbcols . '" align="right" class="nowrap">';
 			print $form->textwithpicto($langs->trans("ProductReturned") . ':', $langs->trans("HelpAbandonProductReturned"), - 1);
-			print '</td><td align="right">' . price($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye) . '</td><td>&nbsp;</td></tr>';
+			print '</td><td align="right">' . price($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye,0,'',1,'MT') . '</td><td>&nbsp;</td></tr>';
 			$resteapayeraffiche = 0;
 		}
 		// Paye partiellement ou Abandon 'abandon'
@@ -3164,12 +3164,12 @@ else if ($id > 0 || ! empty($ref))
 			if ($object->close_note)
 				$text .= '<br><br><b>' . $langs->trans("Reason") . '</b>:' . $object->close_note;
 			print $form->textwithpicto($langs->trans("Abandoned") . ':', $text, - 1);
-			print '</td><td align="right">' . price($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye) . '</td><td>&nbsp;</td></tr>';
+			print '</td><td align="right">' . price($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye,0,'',1,'MT') . '</td><td>&nbsp;</td></tr>';
 			$resteapayeraffiche = 0;
 		}
 
 		// Billed
-		print '<tr><td colspan="' . $nbcols . '" align="right">' . $langs->trans("Billed") . ' :</td><td align="right" style="border: 1px solid;">' . price($object->total_ttc) . '</td><td>&nbsp;</td></tr>';
+		print '<tr><td colspan="' . $nbcols . '" align="right">' . $langs->trans("Billed") . ' :</td><td align="right" style="border: 1px solid;">' . price($object->total_ttc,0,'',1,'MT') . '</td><td>&nbsp;</td></tr>';
 
 		// Remainder to pay
 		print '<tr><td colspan="' . $nbcols . '" align="right">';
@@ -3178,7 +3178,7 @@ else if ($id > 0 || ! empty($ref))
 		else
 			print $langs->trans('ExcessReceived');
 		print ' :</td>';
-		print '<td align="right" style="border: 1px solid;" bgcolor="#f0f0f0"><b>' . price($resteapayeraffiche) . '</b></td>';
+		print '<td align="right" style="border: 1px solid;" bgcolor="#f0f0f0"><b>' . price($resteapayeraffiche,0,'',1,'MT') . '</b></td>';
 		print '<td class="nowrap">&nbsp;</td></tr>';
 	}
 	else 	// Credit note
@@ -3189,7 +3189,7 @@ else if ($id > 0 || ! empty($ref))
 		print ' :</td><td align="right">' . price($sign * $totalpaye) . '</td><td>&nbsp;</td></tr>';
 
 		// Billed
-		print '<tr><td colspan="' . $nbcols . '" align="right">' . $langs->trans("Billed") . ' :</td><td align="right" style="border: 1px solid;">' . price($sign * $object->total_ttc) . '</td><td>&nbsp;</td></tr>';
+		print '<tr><td colspan="' . $nbcols . '" align="right">' . $langs->trans("Billed") . ' :</td><td align="right" style="border: 1px solid;">' . price($sign * $object->total_ttc,0,'',1,'MT') . '</td><td>&nbsp;</td></tr>';
 
 		// Remainder to pay back
 		print '<tr><td colspan="' . $nbcols . '" align="right">';
@@ -3198,7 +3198,7 @@ else if ($id > 0 || ! empty($ref))
 		else
 			print $langs->trans('ExcessPaydBack');
 		print ' :</td>';
-		print '<td align="right" style="border: 1px solid;" bgcolor="#f0f0f0"><b>' . price($sign * $resteapayeraffiche) . '</b></td>';
+		print '<td align="right" style="border: 1px solid;" bgcolor="#f0f0f0"><b>' . price($sign * $resteapayeraffiche,0,'',1,'MT') . '</b></td>';
 		print '<td class="nowrap">&nbsp;</td></tr>';
 
 		// Sold credit note
@@ -3331,7 +3331,7 @@ else if ($id > 0 || ! empty($ref))
 			}
 			$prevsits_total_amount += $object->total_ht;
 
-			print price($prevsits_total_amount);
+			print price($prevsits_total_amount,0,'',1,'MT');
 			print '</td>';
 			print '<td>' . $langs->trans('Currency' . $conf->currency) . '</td></tr>';
 
@@ -3345,7 +3345,7 @@ else if ($id > 0 || ! empty($ref))
 				print '</a></td>';
 
 				print '<td align="right" colspan="2" class="nowrap">';
-				print '- ' . price($prevsits[$i]->total_ht);
+				print '- ' . price($prevsits[$i]->total_ht,0,'',1,'MT');
 				print '</td>';
 				print '<td>' . $langs->trans('Currency' . $conf->currency) . '</td></tr>';
 			}
@@ -3354,20 +3354,20 @@ else if ($id > 0 || ! empty($ref))
 
 	// Amount
 	print '<tr><td>' . $langs->trans('AmountHT') . '</td>';
-	print '<td colspan="3" class="nowrap">' . price($object->total_ht, 1, '', 1, - 1, - 1, $conf->currency) . '</td></tr>';
-	print '<tr><td>' . $langs->trans('AmountVAT') . '</td><td colspan="3" class="nowrap">' . price($object->total_tva, 1, '', 1, - 1, - 1, $conf->currency) . '</td></tr>';
+	print '<td colspan="3" class="nowrap">' . price($object->total_ht, 1, '', 1, 'MT', - 1, $conf->currency) . '</td></tr>';
+	print '<tr><td>' . $langs->trans('AmountVAT') . '</td><td colspan="3" class="nowrap">' . price($object->total_tva, 1, '', 1, 'MT', - 1, $conf->currency) . '</td></tr>';
 	print '</tr>';
 
 	// Amount Local Taxes
 	if (($mysoc->localtax1_assuj == "1" && $mysoc->useLocalTax(1)) || $object->total_localtax1 != 0) 	// Localtax1
 	{
 		print '<tr><td>' . $langs->transcountry("AmountLT1", $mysoc->country_code) . '</td>';
-		print '<td colspan="3" class="nowrap">' . price($object->total_localtax1, 1, '', 1, - 1, - 1, $conf->currency) . '</td></tr>';
+		print '<td colspan="3" class="nowrap">' . price($object->total_localtax1, 1, '', 1, 'MT', - 1, $conf->currency) . '</td></tr>';
 	}
 	if (($mysoc->localtax2_assuj == "1" && $mysoc->useLocalTax(2)) || $object->total_localtax2 != 0) 	// Localtax2
 	{
 		print '<tr><td>' . $langs->transcountry("AmountLT2", $mysoc->country_code) . '</td>';
-		print '<td colspan="3" class=nowrap">' . price($object->total_localtax2, 1, '', 1, - 1, - 1, $conf->currency) . '</td></tr>';
+		print '<td colspan="3" class=nowrap">' . price($object->total_localtax2, 1, '', 1, 'MT', - 1, $conf->currency) . '</td></tr>';
 	}
 
 	// Revenue stamp
@@ -3390,13 +3390,13 @@ else if ($id > 0 || ! empty($ref))
 			print ' <input type="submit" class="button" value="' . $langs->trans('Modify') . '">';
 			print '</form>';
 		} else {
-			print price($object->revenuestamp, 1, '', 1, - 1, - 1, $conf->currency);
+			print price($object->revenuestamp, 1, '', 1, 'MT', - 1, $conf->currency);
 		}
 		print '</td></tr>';
 	}
 
 	// Total with tax
-	print '<tr><td>' . $langs->trans('AmountTTC') . '</td><td colspan="3" class="nowrap">' . price($object->total_ttc, 1, '', 1, - 1, - 1, $conf->currency) . '</td></tr>';
+	print '<tr><td>' . $langs->trans('AmountTTC') . '</td><td colspan="3" class="nowrap">' . price($object->total_ttc, 1, '', 1, 'MT', - 1, $conf->currency) . '</td></tr>';
 
 	// Statut
 	print '<tr><td>' . $langs->trans('Status') . '</td>';

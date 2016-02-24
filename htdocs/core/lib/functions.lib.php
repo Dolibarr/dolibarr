@@ -3136,7 +3136,6 @@ function vatrate($rate,$addpercent=false,$info_bits=0,$usestarfornpr=0)
 	return $ret;
 }
 
-
 /**
  *		Function to format a value into an amount for visual output
  *		Function used into PDF and HTML pages
@@ -3159,7 +3158,14 @@ function price($amount, $form=0, $outlangs='', $trunc=1, $rounding=-1, $forcerou
 	// Clean parameters
 	if (empty($amount)) $amount=0;	// To have a numeric value if amount not defined or = ''
 	$amount = (is_numeric($amount)?$amount:0); // Check if amount is numeric, for example, an error occured when amount value = o (letter) instead 0 (number)
-	if ($rounding < 0) $rounding=min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT);
+	
+	if ($rounding === 'MU') $rounding=$conf->global->MAIN_MAX_DECIMALS_UNIT;
+	elseif ($rounding === 'MT') $rounding=$conf->global->MAIN_MAX_DECIMALS_TOT;
+	elseif ($rounding === 'MS') $rounding=$conf->global->MAIN_MAX_DECIMALS_SHOWN;
+	else if ($rounding < 0) $rounding=$rounding=$conf->global->MAIN_MAX_DECIMALS_UNIT;
+	
+	
+	
 	$nbdecimal=$rounding;
 
 	// Output separators by default (french)
