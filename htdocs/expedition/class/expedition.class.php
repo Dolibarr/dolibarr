@@ -1792,7 +1792,7 @@ class Expedition extends CommonObject
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-			//TODO: Option to set order billed if 100% of order is shipped
+			//TODO: Add option/checkbox to set order billed if 100% of order is shipped
 			$this->statut=2;
 			$this->billed=1;
 			return 1;
@@ -1804,6 +1804,32 @@ class Expedition extends CommonObject
 		}
 	}
 
+	/**
+	 *	Classify the shipping as validated/opened
+	 *
+	 *	@return     int     <0 if ko, >0 if ok
+	 */
+	function reOpen()
+	{
+		global $conf;
+
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'expedition SET fk_statut=1';
+		$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut > 0';
+
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$this->statut=1;
+			$this->billed=0;
+			return 1;
+		}
+		else
+		{
+			dol_print_error($this->db);
+			return -1;
+		}
+	}
+	
 	/**
 	 *  Create a document onto disk according to template module.
 	 *

@@ -102,40 +102,6 @@ $permissiondellink=$user->rights->expedition->livraison->creer;	// Used by the i
  * Actions
  */
 
-
-// Set incoterm
-if ($action == 'set_incoterms' && !empty($conf->incoterm->enabled))
-{
-	$result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
-}
-
-if ($action == 'update_extras')
-{
-	// Fill array 'array_options' with data from update form
-	$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-	$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
-	if ($ret < 0) $error++;
-
-	if (! $error)
-	{
-		// Actions on extra fields (by external module or standard code)
-		// TODO le hook fait double emploi avec le trigger !!
-		$hookmanager->initHooks(array('expeditiondao'));
-		$parameters = array('id' => $object->id);
-		$reshook = $hookmanager->executeHooks('insertExtraFields', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-		if (empty($reshook)) {
-			$result = $object->insertExtraFields();
-			if ($result < 0) {
-				$error++;
-			}
-		} else if ($reshook < 0)
-			$error++;
-	}
-
-	if ($error)
-		$action = 'edit_extras';
-}
-
 $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -144,6 +110,46 @@ if (empty($reshook))
 {
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';		// Must be include, not include_once
 
+	// Set incoterm
+	if ($action == 'reopen' && $user->rights->expedition->creer)
+	{
+	    $object->fetch($id);
+	    $result = $object->reOpen();
+	}
+	
+	// Set incoterm
+	if ($action == 'set_incoterms' && !empty($conf->incoterm->enabled))
+	{
+	    $result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
+	}
+	
+	if ($action == 'update_extras')
+	{
+	    // Fill array 'array_options' with data from update form
+	    $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+	    $ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
+	    if ($ret < 0) $error++;
+	
+	    if (! $error)
+	    {
+	        // Actions on extra fields (by external module or standard code)
+	        // TODO le hook fait double emploi avec le trigger !!
+	        $hookmanager->initHooks(array('expeditiondao'));
+	        $parameters = array('id' => $object->id);
+	        $reshook = $hookmanager->executeHooks('insertExtraFields', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+	        if (empty($reshook)) {
+	            $result = $object->insertExtraFields();
+	            if ($result < 0) {
+	                $error++;
+	            }
+	        } else if ($reshook < 0)
+	            $error++;
+	    }
+	
+	    if ($error)
+	        $action = 'edit_extras';
+	}
+	
 	if ($action == 'add' && $user->rights->expedition->creer)
 	{
 	    $error=0;
@@ -339,7 +345,7 @@ if (empty($reshook))
 	    }
 	    else
 	    {
-	        setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("QtyToShip")), null, 'errors');
+	        setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("QtyToShip").'/'.$langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
 	        $error++;
 	    }
 
@@ -1108,9 +1114,9 @@ if ($action == 'create')
 							}
 						}
 					}
-					if ($subj == 0) // Line not shown yet
+					if ($subj == 0) // Line not shown yet, we show it
 					{
-						print '<tr><td colspan="3" ></td><td align="center">';
+						print '<tr><td colspan="3" ></td><td align="center"><!-- line not shown yet, we show it -->';
 						if ($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
 						{
     						//$disabled='disabled="disabled"';
@@ -1358,7 +1364,9 @@ else if ($id || $ref)
 		print '</tr>';
 
 		// Weight
-		print '<tr><td>'.$form->editfieldkey("Weight",'trueWeight',$object->trueWeight,$object,$user->rights->expedition->creer).'</td><td colspan="3">';
+		print '<tr><td>';
+		print $form->editfieldkey("Weight",'trueWeight',$object->trueWeight,$object,$user->rights->expedition->creer);
+		print '</td><td colspan="3">';
 
 		if ($action=='edittrueWeight')
 		{
@@ -1379,10 +1387,12 @@ else if ($id || $ref)
 			print ($object->trueWeight && $object->weight_units!='')?' '.measuring_units_string($object->weight_units,"weight"):'';
 		}
 
+        // Calculated
 		if ($totalWeight > 0)
 		{
 			if (!empty($object->trueWeight)) print ' ('.$langs->trans("SumOfProductWeights").': ';
 			print $totalWeight.' '.measuring_units_string(0,"weight");
+			//if (empty($object->trueWeight)) print ' ('.$langs->trans("Calculated").')'; 
 			if (!empty($object->trueWeight)) print ')';
 		}
 		print '</td></tr>';
@@ -1412,9 +1422,7 @@ else if ($id || $ref)
 		{
 			print $object->trueHeight;
 			print ($object->trueHeight && $object->height_units!='')?' '.measuring_units_string($object->height_units,"size"):'';
-
 		}
-
 
 		print '</td></tr>';
 
@@ -1442,6 +1450,7 @@ else if ($id || $ref)
 		{
 			if ($calculatedVolume) print ' ('.$langs->trans("SumOfProductVolumes").': ';
 			print $totalVolume.' '.measuring_units_string(0,"volume");
+			//if (empty($calculatedVolume)) print ' ('.$langs->trans("Calculated").')';
 			if ($calculatedVolume) print ')';
 		}
 		print "</td>\n";
@@ -1743,11 +1752,12 @@ else if ($id || $ref)
 		}
 
 		// TODO add alternative status
-		/* if ($object->statut == 1 && $user->rights->expedition->creer)
+		// 0=draft, 1=validated, 2=billed, we miss a status "delivered" (only available on order)
+		if ($object->statut == 2 && $object->billed && $user->rights->expedition->creer)
 		{
-		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("ReOpen").'</a>';
-		}*/
-
+		    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("ReOpen").'</a>';
+		}
+		
 		// Send
 		if ($object->statut > 0)
 		{
