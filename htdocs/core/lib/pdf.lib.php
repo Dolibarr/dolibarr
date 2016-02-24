@@ -340,22 +340,21 @@ function pdfGetHeightForHtmlContent(&$pdf, $htmlcontent)
 /**
  * Returns the name of the thirdparty
  *
- * @param Societe|Contact $thirdparty Contact or thirdparty
- * @param Translate $outputlangs Output language
+ * @param   Societe|Contact     $thirdparty     Contact or thirdparty
+ * @param   Translate           $outputlangs    Output language
+ * @param   int                 $includealias   1=Include alias name after name
  * @return string
  */
-function pdfBuildThirdpartyName($thirdparty, Translate $outputlangs)
+function pdfBuildThirdpartyName($thirdparty, Translate $outputlangs, $includealias=0)
 {
-	//Recipient name
+	// Recipient name
 	$socname = '';
 
-	// On peut utiliser le nom de la societe du contact
 	if ($thirdparty instanceof Societe) {
-		if (!empty($thirdparty->name_alias)) {
-			$socname = $thirdparty->name_alias."\n";
-		}
-
 		$socname .= $thirdparty->name;
+		if ($includealias && !empty($thirdparty->name_alias)) {
+		    $socname .= "\n".$thirdparty->name_alias;
+		}
 	} elseif ($thirdparty instanceof Contact) {
 		$socname = $thirdparty->socname;
 	} else {
