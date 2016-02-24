@@ -162,10 +162,6 @@ if ($viewstatut <> '')
 	{
 		if ($viewstatut == 1 && empty($conf->expedition->enabled)) $sql.= ' AND c.fk_statut IN (1,2)';	// If module expedition disabled, we include order with status 'sending in process' into 'validated'
 		else $sql.= ' AND c.fk_statut = '.$viewstatut; // brouillon, validee, en cours, annulee
-		if ($viewstatut == 3)
-		{
-			$sql.= ' AND c.facture = 0'; // need to create invoice
-		}
 	}
 	if ($viewstatut == 4)
 	{
@@ -372,7 +368,13 @@ if ($resql)
 	print '<input class="flat" type="text" size="6" name="search_total_ht" value="'.$search_total_ht.'">';
 	print '</td>';
 	print '<td align="right">';
-	$liststatus=array('0'=>$langs->trans("StatusOrderDraftShort"), '1'=>$langs->trans("StatusOrderValidated"), '2'=>$langs->trans("StatusOrderSentShort"), '3'=>$langs->trans("StatusOrderDelivered"), '-1'=>$langs->trans("StatusOrderCanceledShort"));
+	$liststatus=array(
+	    '0'=>$langs->trans("StatusOrderDraftShort"), 
+	    '1'=>$langs->trans("StatusOrderValidated"), 
+	    '2'=>$langs->trans("StatusOrderSentShort"), 
+	    '3'=>$langs->trans("StatusOrderDelivered"), 
+	    '-1'=>$langs->trans("StatusOrderCanceledShort")
+	);
 	print $form->selectarray('viewstatut', $liststatus, $viewstatut, -4);
 	print '</td>';
 	print '<td align="center">';
