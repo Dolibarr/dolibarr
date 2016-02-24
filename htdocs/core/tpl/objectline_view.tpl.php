@@ -191,7 +191,7 @@ if (empty($usemargins)) $usemargins=0;
 	<?php if ($line->special_code == 3)	{ ?>
 	<td align="right" class="linecoloption nowrap"><?php $coldisplay++; ?><?php echo $langs->trans('Option'); ?></td>
 	<?php } else { ?>
-	<td align="right" class="liencolht nowrap"><?php $coldisplay++; ?><?php echo price($line->total_ht); ?></td>
+	<td align="right" class="liencolht nowrap"><?php $coldisplay++; ?><?php echo price($line->total_ht,0,'',1,'MT'); ?></td>
 	<?php } ?>
 
 	<?php if ($this->statut == 0  && ($object_rights->creer)) { ?>
