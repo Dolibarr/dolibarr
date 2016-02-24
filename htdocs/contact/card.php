@@ -1124,14 +1124,6 @@ else
         print '<div class="underbanner clearboth"></div>';
         print '<table class="border tableforfield" width="100%">';
         
-        // Statut
-		/*print '<tr><td>'.$langs->trans("Status").'</td>';
-		print '<td>';
-		print $object->getLibStatut(4);
-		print '</td>';
-		print '</tr>'."\n";
-		*/
-        
 		// Categories
 		if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire)) {
 			print '<tr><td>' . $langs->trans( "Categories" ) . '</td>';
@@ -1151,17 +1143,22 @@ else
 
         $object->load_ref_elements();
 
-        if (! empty($conf->commande->enabled))
-        {
-            print '<tr><td>'.$langs->trans("ContactForOrders").'</td><td colspan="3">';
-            print $object->ref_commande?$object->ref_commande:$langs->trans("NoContactForAnyOrder");
-            print '</td></tr>';
-        }
-
         if (! empty($conf->propal->enabled))
         {
             print '<tr><td>'.$langs->trans("ContactForProposals").'</td><td colspan="3">';
             print $object->ref_propal?$object->ref_propal:$langs->trans("NoContactForAnyProposal");
+            print '</td></tr>';
+        }
+
+        if (! empty($conf->commande->enabled) || ! empty($conf->expedition->enabled))
+        {
+            print '<tr><td>';
+            if (! empty($conf->expedition->enabled)) { print $langs->trans("ContactForOrdersOrShipments"); }
+            else print $langs->trans("ContactForOrders");
+            print '</td><td colspan="3">';
+            $none=$langs->trans("NoContactForAnyOrder");
+            if  (! empty($conf->expedition->enabled)) { $none=$langs->trans("NoContactForAnyOrderOrShipments"); }
+            print $object->ref_commande?$object->ref_commande:$none;
             print '</td></tr>';
         }
 

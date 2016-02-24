@@ -664,10 +664,10 @@ class Contact extends CommonObject
 
 
 	/**
-	 *  Charge le nombre d'elements auquel est lie ce contact
+	 *  Load number of elements the contact is used as a link for
 	 *  ref_facturation
 	 *  ref_contrat
-	 *  ref_commande
+	 *  ref_commande (for order and/or shipments)
 	 *  ref_propale
 	 *
      *  @return     int             					<0 if KO, >=0 if OK
@@ -701,7 +701,7 @@ class Contact extends CommonObject
 		}
 		else
 		{
-			$this->error=$this->db->error()." - ".$sql;
+			$this->error=$this->db->lasterror();
 			return -1;
 		}
 	}
