@@ -165,6 +165,12 @@ if (empty($starting_hour)) $starting_hour = 0;
 if ($starting_hour < 0) $starting_hour = 0;
 if ($starting_hour > 23) $starting_hour = 23;
 
+//Hook init
+$hookmanager->initHooks(array('price_schedule'));
+$parameters=array('id'=>$id);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
 /*******************************************************************
 * ACTIONS
 ********************************************************************/
