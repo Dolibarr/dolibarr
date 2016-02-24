@@ -131,29 +131,35 @@ while ($fields=fgetcsv($fhandle, $linelength, $delimiter, $enclosure, $escape))
     $object->address = trim($fields[14]);
     $object->zip = trim($fields[15]);
     $object->town = trim($fields[16]);
-    $object->country_code = trim($fields[22]);
-    $object->phone = trim($fields[23]);
-    $object->fax = trim($fields[24]);
+    $object->country_id = dol_getIdFromCode($db, trim($fields[21]), 'c_country', 'code', 'rowid');
+    $object->phone = trim($fields[22]);
+    $object->fax = trim($fields[23]);
     $object->email = trim($fields[26]);
-    $object->siret = trim($fields[29]);
+    $object->idprof2 = trim($fields[29]);
     $object->tva_intra = trim($fields[34]);
     $object->default_lang = trim($fields[43]);
-    
+
+    //$condpayment = dol_string_unaccent(trim($fields[36]));
     $condpayment = trim($fields[36]);
-    $object->cond_reglement_id = dol_getIdFromCode($db, $condpayment, 'c_paiement_term', 'label');
-    
+    $object->cond_reglement_id = dol_getIdFromCode($db, $condpayment, 'c_payment_term', 'libelle_facture', 'rowid');
+    dol_syslog("cond_reglement id=".$object->cond_reglement_id);
+
     $object->code_client = $fields[9];
     $object->code_fournisseur = $fields[10];
 
     $labeltype = trim($fields[1]);
-    $object->typent_id = dol_getIdFromCode($db, $labeltype, 'c_typent', 'label');
+    $object->typent_id = dol_getIdFromCode($db, $labeltype, 'c_typent', 'libelle');
 
+    // Set price level
+    $object->price_level = 1;
+    if ($labeltype == 'Revendeur') $object->price_level = 2;
+    
     print "Process line nb ".$i.", name ".$object->name;
 
 
     // Extrafields
-    //$object->array_options['options_state']=price2num($fields[20]);
-    //$object->array_options['options_region']=price2num($fields[18]);
+    $object->array_options['options_anastate']=price2num($fields[20]);
+    $object->array_options['options_anaregion']=price2num($fields[17]);
     
     $ret=$object->create($user);
     if ($ret < 0)
@@ -166,15 +172,54 @@ while ($fields=fgetcsv($fhandle, $linelength, $delimiter, $enclosure, $escape))
 	    print " - Creation OK with name ".$object->name." - id = ".$ret;
 	}
 
-	dol_syslog("Add contacts");
+	dol_syslog("Set price level");
+	$object->set_price_level($object->price_level, $user);
 	
-    // Insert an invoice contact if there is an invoice email != standard email
+	// Assign sales representative
+	if ($fields[3])
+	{
+    	$salesrep=new User($db);
+    	
+    	$tmp=explode(' ',$fields[3],2);
+    	$salesrep->firstname = trim($tmp[0]);
+    	$salesrep->lastname = trim($tmp[1]);
+    	if ($salesrep->lastname) $salesrep->login = strtolower(substr($salesrep->firstname, 0, 1)) . strtolower(substr($salesrep->lastname, 0));
+    	else $salesrep->login=strtolower($salesrep->firstname);
+    	$salesrep->login=preg_replace('/ /','',$salesrep->login);
+    	$salesrep->fetch(0,$salesrep->login);
+    
+    	$result = $object->add_commercial($user, $salesrep->id);
+    	if ($result < 0)
+    	{
+    	    print " - Error in create link with sale representative result code = ".$result." - ".$object->errorsToString();
+    	    $errorrecord++;
+    	}
+    	else
+    	{
+    	    print " - create link sale representative OK";
+    	}
+	}	
+	
+	dol_syslog("Add invoice contacts");
+	// Insert an invoice contact if there is an invoice email != standard email
 	if (! $errorrecord && $fields[27] && $fields[26] != $fields[27])
 	{
+	    $ret1=$ret2=0;
+	    
 	    $contact = new Contact($db);
-	    $contact->firstname = '';
-	    $contact->lastname = '';
-	     
+	    $contact->lastname = $object->name;
+	    $contact->address=$object->address;
+	    $contact->zip=$object->zip;
+	    $contact->town=$object->town;
+	    $contact->country_id=$object->country_id;
+	    $contact->email=$fields[27];
+	    $contact->socid=$object->id;
+	    
+	    $ret1=$contact->create($user);
+	    if ($ret1 > 0)
+	    {
+	        //$ret2=$contact->add_contact($object->id, 'BILLING');
+	    }
 	    if ($ret1 < 0 || $ret2 < 0)
         {
             print " - Error in create contact result code = ".$ret1." ".$ret2." - ".$object->errorsToString();
@@ -186,13 +231,29 @@ while ($fields=fgetcsv($fhandle, $linelength, $delimiter, $enclosure, $escape))
     	}
 	}
 	
+	dol_syslog("Add delivery contacts");
 	// Insert a delivery contact
 	if (! $errorrecord && 1)
 	{
-	    $contact = new Contact($db);
-	    $contact->firstname = '';
-	    $contact->lastname = '';
-	     
+	    $ret1=$ret2=0;
+	    
+	    $contact2 = new Contact($db);
+	    $contact2->lastname = $fields[47];
+	    $contact2->address = $fields[48];
+	    $contact2->zip = $fields[50];
+	    $contact2->town = $fields[51];
+	    $contact2->country_id=dol_getIdFromCode($db, trim($fields[52]), 'c_country', 'code', 'rowid');
+	    $contact2->note_public=$fields[54];
+	    $contact2->socid=$object->id;
+	    
+	    // Extrafields
+	    $contact2->array_options['options_anazoneliv']=price2num($fields[53]);
+	    
+	    $ret1=$contact2->create($user);
+	    if ($ret1 > 0)
+	    {
+	        //$ret2=$contact2->add_contact($object->id, 'SHIPPING');
+	    }
 	    if ($ret1 < 0 || $ret2 < 0)
         {
             print " - Error in create contact result code = ".$ret1." ".$ret2." - ".$object->errorsToString();

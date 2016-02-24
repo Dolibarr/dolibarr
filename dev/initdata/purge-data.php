@@ -124,6 +124,7 @@ $sqls=array(
         'DELETE FROM '.MAIN_DB_PREFIX.'socpeople',
     ),
     'thirdparty'=>array(
+        '@contact',
         'DELETE FROM '.MAIN_DB_PREFIX.'cabinetmed_cons', 
         'UPDATE '.MAIN_DB_PREFIX.'adherent SET fk_soc = NULL',
         'DELETE FROM '.MAIN_DB_PREFIX.'categorie_fournisseur',
@@ -184,6 +185,46 @@ if (! $confirmed)
 }
 
 
+/**
+ * Process sql requests of a family
+ */
+function processfamily($family)
+{
+    global $db, $sqls;
+    
+    $error=0;
+    foreach($sqls[$family] as $sql)
+    {
+        if (preg_match('/^@/',$sql))
+        {
+            $newfamily=preg_replace('/@/','',$sql);
+            processfamily($newfamily);
+            continue;
+        }
+        
+        print "Run sql: ".$sql."\n";
+        $resql=$db->query($sql);
+        if (! $resql)
+        {
+            if ($db->errno() != 'DB_ERROR_NOSUCHTABLE')
+            {
+                $error++;
+            }
+        }
+    
+        if ($error)
+        {
+            print $db->lasterror();
+            $error++;
+            break;
+        }
+    }
+    
+    if ($error) return -1;
+    else return 1;
+}
+
+
 $db->begin();
 
 $oldfamily='';
@@ -193,25 +234,12 @@ foreach($sqls as $family => $familysql)
 
     if ($family != $oldfamily) print "Process action for family ".$family."\n";
     $oldfamily = $family;
-    
-    foreach($familysql as $sql)
+
+    $result=processfamily($family);
+    if ($result < 0) 
     {
-        print "Run sql: ".$sql."\n";
-        $resql=$db->query($sql);
-        if (! $resql) 
-        {
-            if ($db->errno() != 'DB_ERROR_NOSUCHTABLE')
-            {
-                $error++;
-            }
-        }
-        
-        if ($error)
-        {
-            print $db->lasterror();
-            $error++;
-            break 2;
-        }
+        $error++;
+        break;
     }
 }
 

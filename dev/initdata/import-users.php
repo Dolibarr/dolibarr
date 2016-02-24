@@ -124,7 +124,6 @@ while ($fields=fgetcsv($fhandle, $linelength, $delimiter, $enclosure, $escape))
     $object->statut = 1;
     
     $tmp=explode(' ',$fields[3],2);
-    
     $object->firstname = trim($tmp[0]);
     $object->lastname = trim($tmp[1]);
     if ($object->lastname) $object->login = strtolower(substr($object->firstname, 0, 1)) . strtolower(substr($object->lastname, 0));
