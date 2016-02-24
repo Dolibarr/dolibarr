@@ -554,6 +554,8 @@ if ($id > 0 || ! empty($ref))
 
 							print "</tr>\n";
 						}
+
+                        $products_dispatched[$objp->fk_product]-=$objp->qty;
 					}
 					$i++;
 				}

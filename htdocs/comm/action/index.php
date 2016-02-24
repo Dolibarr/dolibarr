@@ -46,6 +46,9 @@ $MAXAGENDA=$conf->global->AGENDA_EXT_NB;
 $filter=GETPOST("filter",'',3);
 $filtert = GETPOST("usertodo","int",3)?GETPOST("usertodo","int",3):GETPOST("filtert","int",3);
 $usergroup = GETPOST("usergroup","int",3);
+$filterd = GETPOST("userdone","int",3)?GETPOST("userdone","int",3):GETPOST("filterd","int",3);
+$filterg = GETPOST("groupid","int",3)?GETPOST("groupid","int",3):GETPOST("filterg","int",3);
+
 $showbirthday = empty($conf->use_javascript_ajax)?GETPOST("showbirthday","int"):1;
 
 // If not choice done on calendar owner, we filter on user.
@@ -74,7 +77,9 @@ if (! $user->rights->agenda->myactions->read) accessforbidden();
 if (! $user->rights->agenda->allactions->read) $canedit=0;
 if (! $user->rights->agenda->allactions->read || $filter =='mine')  // If no permission to see all, we show only affected to me
 {
+    $filtera=$user->id;
     $filtert=$user->id;
+    $filterd=$user->id;
 }
 
 $action=GETPOST('action','alpha');
@@ -484,6 +489,9 @@ if ($filtert > 0 || $usergroup > 0)
     if ($usergroup > 0) $sql.= ($filtert>0?" OR ":"")." ugu.fk_usergroup = ".$usergroup;
     $sql.= ")";
 }
+
+if ($filterg > 0) $sql.= " AND a.fk_user_action IN (SELECT fk_user FROM ".MAIN_DB_PREFIX."usergroup_user WHERE fk_usergroup=".$filterg.")";
+
 // Sort on date
 $sql.= ' ORDER BY datep';
 //print $sql;

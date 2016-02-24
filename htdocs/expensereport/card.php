@@ -1720,7 +1720,7 @@ else
 
 									// Select type
 									print '<td style="text-align:center;">';
-									select_type_fees_id($objp->type_fees_code,'fk_c_type_fees');
+									select_type_fees_id($objp->type_fees_code,'fk_c_type_fees', 0);
 									print '</td>';
 
 									// Add comments
@@ -1805,7 +1805,7 @@ else
 
 						// Select type
 						print '<td>';
-						select_type_fees_id(GETPOST('fk_c_type_fees'),'fk_c_type_fees',1);
+						select_type_fees_id(GETPOST('fk_c_type_fees'),'fk_c_type_fees',0);
 						print '</td>';
 
 						// Add comments
