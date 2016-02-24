@@ -2109,9 +2109,13 @@ function showSectionViewer($object, $html_id, $month, $day, $duration_unit, $dur
     );
     $action='';
     $reshook=$hookmanager->executeHooks('showSectionViewer',$parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
-    if (!empty($reshook) && $reshook > 0)
+    if ($reshook < 0)
     {
-        return "";
+        setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+    }
+    else if ($reshook == 0 && !empty($hookmanager->resPrint))
+    {
+        return $hookmanager->resPrint;
     }
 
     //Prepare
