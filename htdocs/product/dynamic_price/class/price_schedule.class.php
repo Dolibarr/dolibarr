@@ -437,6 +437,7 @@ class PriceSchedule extends CommonObject
      */
     function generateSections($preview, $gm)
     {
+        global $conf;
         require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
         //Load service duration
@@ -461,7 +462,7 @@ class PriceSchedule extends CommonObject
         $i = 0;
         $templates = array();
         //Add starting template if there is hole
-        if ($first < $start)
+        if ($first < $start && empty($conf->global->PRICE_SCHEDULE_IGNORE_LIMITS))
         {
             $templates[] = array(
                 'start' => $first,
@@ -480,7 +481,7 @@ class PriceSchedule extends CommonObject
             $i++;
         }
         //Add ending template if there is hole
-        if ($start < $last)
+        if ($start < $last && empty($conf->global->PRICE_SCHEDULE_IGNORE_LIMITS))
         {
             $templates[] = array(
                 'start' => $start,
