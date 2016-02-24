@@ -1,14 +1,9 @@
 # Instructions
-
-*This is a template to help you report good issues.*
-
-*You may use [Github Markdown](https://help.github.com/articles/getting-started-with-writing-and-formatting-on-github/) syntax to format your issue report.*
-
+*This is a template to help you report good issues. You may use [Github Markdown](https://help.github.com/articles/getting-started-with-writing-and-formatting-on-github/) syntax to format your issue report.*
 *Please:*
-- [ ] *follow the project [contributing guidelines](/.github/CONTRIBUTING.md)*
-- [ ] *only keep the "Bug" or "Feature Request" section*
-- [ ] *replace the bracket enclosed texts with meaningful informations*
-- [ ] *remove any unused sub-section*
+- *only keep the "Bug" or "Feature Request" section*
+- *replace the bracket enclosed texts with meaningful informations*
+- *remove any unused sub-section*
 
 
 # Bug
@@ -22,19 +17,15 @@
 - **Database**: [*Database type and version*]
 - **URL(s)**: [*Affected URL(s)*]
 
-## Report
-
-### Expected behavior
+## Expected and actual behavior
 [*Verbose description*]
 
-### Actual behavior
+## Steps to reproduce the behavior
 [*Verbose description*]
 
-### Steps to reproduce the behavior
-[*Verbose description*]
-
-### [Attached files](https://help.github.com/articles/issue-attachments) (Screenshots, screencasts, dolibarr.log, debugging informations…)
+## [Attached files](https://help.github.com/articles/issue-attachments) (Screenshots, screencasts, dolibarr.log, debugging informations…)
 [*Files*]
+
 
 
 # Feature Request
@@ -46,5 +37,5 @@
 ## Suggested implementation
 [*Verbose description*]
 
-## Tasks
+## Suggested steps
 [*List of tasks to achieve goal*]
