@@ -321,6 +321,19 @@ $server->register(
 	'WS to get list of all products or services for a category'
 );
 
+// Register WSDL
+$server->register(
+	'getProductOrServicePrice',
+	// Entry values
+	array('authentication'=>'tns:authentication','id'=>'xsd:string','date_start'=>'xsd:dateTime','date_end'=>'xsd:dateTime','lang'=>'xsd:string'),
+	// Exit values
+	array('result'=>'tns:result','is_dynamic'=>'xsd:string','price'=>'xsd:string','price_ttc'=>'xsd:string'),
+	$ns,
+	$ns.'#getProductOrServicePrice',
+	$styledoc,
+	$styleuse,
+	'WS to get product or service price in date range'
+);
 
 /**
  * Get produt or service
@@ -1141,6 +1154,111 @@ function getProductsForCategory($authentication,$id,$lang='')
 	}
 
 	return $objectresp;
+}
+
+
+/**
+ * Returns product or service price in specified date range
+ *
+ * @param   array   $authentication Array of authentication information
+ * @param   int     $id             Id of object
+ * @param   int     $date_start     Start date
+ * @param   int     $date_end       End date
+ * @param   $lang   $lang           Force lang
+ * @return  mixed
+ */
+function getProductOrServicePrice($authentication, $id, $date_start, $date_end, $lang='')
+{
+	global $db,$conf,$langs;
+
+	$langcode=($lang?$lang:(empty($conf->global->MAIN_LANG_DEFAULT)?'auto':$conf->global->MAIN_LANG_DEFAULT));
+	$langs->setDefaultLang($langcode);
+
+    dol_syslog("Function: getProductOrServicePrice login=".$authentication['login']);
+    dol_syslog("id=".$id." date_start=".$date_start." date_end=".$date_end);
+
+    // Init and check authentication
+    if ($authentication['entity']) $conf->entity=$authentication['entity'];
+    $objectresp=array();
+    $errorcode='';$errorlabel='';
+    $error=0;
+    $fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+
+    // Check parameters
+    if (! $error && ! $id) { $error++; $errorcode='BAD_PARAMETERS'; $errorlabel="Parameter id is mandatory."; }
+    if (! $error && ! $date_start) { $error++; $errorcode='BAD_PARAMETERS'; $errorlabel="Parameter date_start is mandatory."; }
+    if (! $error && ! $date_end) { $error++; $errorcode='BAD_PARAMETERS'; $errorlabel="Parameter date_end is mandatory."; }
+
+    if (! $error)
+    {
+        $fuser->getrights();
+
+        if ($fuser->rights->produit->lire || $fuser->rights->service->lire)
+        {
+            $product=new Product($db);
+            $result=$product->fetch($id);
+
+            if ($result > 0)
+            {
+                require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+                $date_start = dol_stringtotime($date_start,1);
+                $date_end = dol_stringtotime($date_end,1);
+
+                $is_dynamic = 0;
+                $price = price2num($product->price);
+                $price_ttc = price2num($product->price_ttc);
+                if (!empty($conf->dynamicprices->enabled) && !empty($product->fk_price_expression))
+                {
+                    require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
+                    $priceparser = new PriceParser($db);
+                    $extra_values = array('date_start' => $date_start, 'date_end' => $date_end);
+                    $price_result = $priceparser->parseProduct($product, $extra_values);
+                    if ($price_result >= 0)
+                    {
+                        $is_dynamic = 1;
+                        $price = price2num($price_result);
+                        //Calculate the VAT
+                        $price_ttc = price2num($price * (1 + ($product->tva_tx / 100)));
+                    }
+                    else
+                    {
+                        $error++;
+                        $errorcode='PRICE_ERROR';
+                        $errorlabel='PriceParser result='.$price_result;
+                        $errorlabel.=' error="'.$priceparser->translatedError().'"';
+                    }
+                }
+
+                if (!$error)
+                {
+                    // Create
+                    $objectresp = array(
+                        'result'=>array('result_code'=>'OK', 'result_label'=>''),
+                        'is_dynamic'=>$is_dynamic,
+                        'price'=>$price,
+                        'price_ttc'=>$price_ttc,
+                    );
+                }
+            }
+            else
+            {
+                $error++;
+                $errorcode='NOT_FOUND'; $errorlabel='Object not found for id='.$id;
+            }
+        }
+        else
+        {
+            $error++;
+            $errorcode='PERMISSION_DENIED'; $errorlabel='User does not have permission for this request';
+        }
+    }
+
+    if ($error)
+    {
+        $objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
+    }
+
+    return $objectresp;
 }
 
 // Return the results.
