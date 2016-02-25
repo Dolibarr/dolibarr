@@ -2317,7 +2317,7 @@ function showSectionViewer($object, $html_id, $month, $day, $duration_unit, $dur
         //Calendar styling
         $style = 'cal_current_month';
         if ($iter_day == 6) $style.=' cal_current_month_right';
-        $extra_content = array('<b>', '</b>');
+        $extra_content = array('<br><b>', '</b><br>');
 
         //Show the day sections
         $out.= '<td class="'.$style.'" valign="top">';
@@ -2346,7 +2346,7 @@ function showSectionViewer($object, $html_id, $month, $day, $duration_unit, $dur
  */
 function getScheduleSections($object, $date_start, $date_end, $date_format, $tz_output)
 {
-    global $user, $langs;
+    global $user;
 
     if ($object->element == "resourceschedule") {
         $status_text = ResourceStatus::translated();
@@ -2377,18 +2377,26 @@ function getScheduleSections($object, $date_start, $date_end, $date_format, $tz_
                 //Status and Booker
                 $content = $status_text[$section->status];
                 if (is_object($booker)) {
-                    $content .= ' ' . $langs->trans("By") . ' ';
+                    $text = $content;
+                    $target = "##REPLACEME##";
                     switch ($section->booker_type) {
                         case 'resourceplacement': //Resource placement
-                            $content .= $booker->getNomUrl(0, $booker->name_client);
+                            $original = $booker->name_client;
+                            $content = $booker->getNomUrl(0, $target);
                             break;
                         case 'propal': //Proposal
                         case 'compta': //Bill
                         case 'action': //Event
                         default:
-                            $content .= $booker->getNomUrl();
+                            $original = $object->ref;
+                            $booker->ref = $target;
+                            $content = $booker->getNomUrl();
                             break;
                     }
+                    //Restore the original text in first occurrence (where the tooltip text is)
+                    $content = implode($original, explode($target, $content, 2));
+                    //Put our text in place
+                    $content = str_replace($target, $text, $content);
                 }
                 $section_data['content'] = $content;
                 $section_data['data'] = array(
@@ -2477,11 +2485,11 @@ function showScheduleSections($html_id, $sections, $section_style = '', $hide_da
         $out.= '<tr><td class="cal_event" '.$section_style.'>';
 
         // Show content
-        if (!$hide_dates) $out.= $section['date_start'].'<br>';
+        if (!$hide_dates) $out.= $section['date_start'];
         if ($extra_content) $out.= $extra_content[0];
         $out.= $section['content'];
         if ($extra_content) $out.= $extra_content[1];
-        if (!$hide_dates) $out.= '<br>'.$section['date_end'];
+        if (!$hide_dates) $out.= $section['date_end'];
 
         // Close rect
         $out.= '</td>';
