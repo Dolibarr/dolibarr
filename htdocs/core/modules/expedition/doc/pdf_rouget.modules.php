@@ -932,7 +932,7 @@ class pdf_rouget extends ModelePdfExpedition
 
 			$carac_client_name= pdfBuildThirdpartyName($thirdparty, $outputlangs);
 
-			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,(!empty($object->contact)?$object->contact:null),$usecontact,'targetwithdetails');
+			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,(!empty($object->contact)?$object->contact:null),$usecontact,'targetwithdetails',$object);
 
 			// Show recipient
 			$widthrecbox=!empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 92 : 100;

@@ -1348,7 +1348,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 				$carac_client_name=$outputlangs->convToOutputCharset($object->client->name);
 			}
 
-			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,($usecontact?$object->contact:''),$usecontact,'target');
+			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,($usecontact?$object->contact:''),$usecontact,'target',$object);
 
 			// Show recipient
 			$widthrecbox=100;
